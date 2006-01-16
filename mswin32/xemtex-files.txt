@@ -1,0 +1,1135 @@
+#
+# Purpose: to maintain the list of XEmTeX files.
+#          This file list is used by the update.pl perl script.
+#	   Variables can be used in "source" directives only.
+#	   Change the follwing variables to adapt to your local
+#	   depot.
+# Date:
+#
+# Revision history:
+#	   version 0.1: initial version. 
+#	   teTeX 2.0 packages
+#	   TeX4ht packages	   
+#	   XEmacs 21.5
+#	   XEmacs packages related to Mule, Programming modes and TeX
+#
+$TeXLiveDir = "c:/Program Files/TeXLive"
+$XEmacsDir = "c:/Program Files/XEmacs"
+$GsToolsDir = "c:/Local/GsTools"
+$NetPBMDir = "c:/Local/NetPBM"
+$PerlDir = "c:/Local/Perl"
+$ImageMagick = "c:/Program Files/ImageMagick"
+
+[ source = "c:\Program Files\Microsoft Visual Studio .NET 2003\Visual Studio .NET Enterprise Architect 2003 - English" ]
+
+MSVCR71.DLL => bin/win32/MSVCR71.DLL
+
+[ source = "c:\Local\ActiveState\Perl" ]
+
+bin/perl56.dll => bin/win32/perl56.dll
+
+[source = 
+[ Source = "$TeXLiveDir/bin"]
+#
+# TeX Binaries
+#
+# bin/win32/MSVCR70.DLL
+# bin/win32/bibtex8.exe
+# bin/win32/context.exe
+# bin/win32/dvipdfm.exe
+# bin/win32/dvips.exe
+# bin/win32/e2pall.exe
+# bin/win32/ebb.exe
+# bin/win32/epstopdf.exe
+# bin/win32/fmtutil.exe
+# bin/win32/gunzip.exe
+# bin/win32/gzip.exe
+# bin/win32/bzip2.exe
+# bin/win32/htlatex.exe
+# bin/win32/ispell.exe
+# bin/win32/kpsecheck.exe
+# bin/win32/kpsewhich.exe
+# bin/win32/makeindex.exe
+# bin/win32/makempx.exe
+# bin/win32/makempy.exe
+# bin/win32/metafun.exe
+# bin/win32/mktexdir.exe
+# bin/win32/mktexfmt.exe
+# bin/win32/mktexlsr.exe
+# bin/win32/mktexmf.exe
+# bin/win32/mktexnam.exe
+# bin/win32/mktexpk.exe
+# bin/win32/mktextex.exe
+# bin/win32/mktextfm.exe
+# bin/win32/mktexupd.exe
+# bin/win32/mpost.exe
+# bin/win32/mpto.exe
+# bin/win32/mptopdf.exe
+# bin/win32/pdfclose.exe
+# bin/win32/pdfdde.exe
+# bin/win32/pdfetex.exe
+# bin/win32/pdffonts.exe
+# bin/win32/pdfimages.exe
+# bin/win32/pdfinfo.exe
+# bin/win32/pdfopen.exe
+# bin/win32/pdftops.exe
+# bin/win32/pdftosrc.exe
+# bin/win32/pdftotext.exe
+# bin/win32/perl56.dll
+# bin/win32/pkfix.exe
+# bin/win32/t4ht.exe
+# bin/win32/tex4ht.exe
+# bin/win32/texdoctk.exe
+# bin/win32/texexec.exe
+# bin/win32/texfind.exe
+# bin/win32/texfont.exe
+# bin/win32/texindex.exe
+# bin/win32/texshow.exe
+# bin/win32/texutil.exe
+# bin/win32/thumbpdf.exe
+# bin/win32/tl80bz2.dll
+# bin/win32/tl80getu.dll
+# bin/win32/tl80jpeg.dll
+# bin/win32/tl80kpse.dll
+# bin/win32/tl80mf.dll
+# bin/win32/tl80mktx.dll
+# bin/win32/tl80mp.dll
+# bin/win32/tl80pdfe.dll
+# bin/win32/tl80png.dll
+# bin/win32/tl80regx.dll
+# bin/win32/tl80unzp.dll
+# bin/win32/tl80xpat.dll
+# bin/win32/tl80zlib.dll
+# bin/win32/updmap.exe
+# 
+# [ Source = "$TeXLiveDir"]
+# #
+# # AMS TeX package
+# #
+# texmf/bibtex/bib/amslatex/* => texmf/bibtex/bib/amslatex/*
+# texmf/bibtex/bst/amslatex/* => texmf/bibtex/bst/amslatex/*
+# texmf/doc/amstex/* => texmf/doc/amstex/*
+# texmf/doc/fonts/amsfonts/* => texmf/doc/fonts/amsfonts/*
+# texmf/doc/latex/amscls/* => texmf/doc/latex/amscls/*
+# texmf/doc/latex/amsfonts/* => texmf/doc/latex/amsfonts/*
+# texmf/doc/latex/amsmath/* => texmf/doc/latex/amsmath/*
+# texmf/fonts/tfm/ams/cmextra/* => texmf/fonts/tfm/ams/cmextra/*
+# texmf/fonts/tfm/ams/cyrillic/* => texmf/fonts/tfm/ams/cyrillic/*
+# texmf/fonts/tfm/ams/euler/* => texmf/fonts/tfm/ams/euler/*
+# texmf/fonts/tfm/ams/symbols/* => texmf/fonts/tfm/ams/symbols/*
+# texmf/pdftex/amstex/config/* => texmf/pdftex/amstex/config/*
+# texmf/tex/amstex/base/* => texmf/tex/amstex/base/*
+# texmf/tex/amstex/config/* => texmf/tex/amstex/config/*
+# texmf/tex/latex/amscls/* => texmf/tex/latex/amscls/*
+# texmf/tex/latex/amsfonts/* => texmf/tex/latex/amsfonts/*
+# texmf/tex/latex/amsmath/* => texmf/tex/latex/amsmath/*
+# texmf/tex/plain/amsfonts/* => texmf/tex/plain/amsfonts/*
+# 
+# #
+# # Bibtex support files
+# #
+# texmf/bibtex/bib/* => texmf/bibtex/bib/*
+# texmf/bibtex/bib/base/* => texmf/bibtex/bib/base/*
+# texmf/bibtex/bst/base/* => texmf/bibtex/bst/base/*
+# texmf/doc/bibtex/base/* => texmf/doc/bibtex/base/*
+# 
+# #
+# # Context
+# #
+# texmf/doc/context/* => texmf/doc/context/*
+# texmf/context/* => texmf/context/*
+# texmf/fonts/tfm/hoekwater/context/* => texmf/fonts/tfm/hoekwater/context/*
+# texmf/fonts/type1/hoekwater/context/* => texmf/fonts/type1/hoekwater/context/*
+# texmf/metapost/context/* => texmf/metapost/context/*
+# texmf/pdftex/config/context/* => texmf/pdftex/config/context/*
+# texmf/tex/context/* => texmf/tex/context/*
+# texmf/tex/generic/context/* => texmf/tex/generic/context/*
+# texmf/tex/latex/context/* => texmf/tex/latex/context/*
+# 
+# #
+# # Metapost
+# #
+# texmf/doc/metapost/base/* => texmf/doc/metapost/base/*
+# texmf/metapost/base/* => texmf/metapost/base/*
+# texmf/metapost/config/* => texmf/metapost/config/*
+# texmf/metapost/mfpic/* => texmf/metapost/mfpic/*
+# texmf/metapost/misc/* => texmf/metapost/misc/*
+# 
+# #
+# # TeX4ht
+# #
+# texmf/tex/generic/tex4ht/* => texmf/tex/generic/tex4ht/*
+# texmf/tex4ht/* => texmf/tex4ht/*
+# 
+# #
+# # Fonts
+# #
+# texmf/doc/fonts/ae/* => texmf/doc/fonts/ae/*
+# texmf/doc/fonts/belleek/* => texmf/doc/fonts/belleek/*
+# texmf/doc/fonts/bluesky/* => texmf/doc/fonts/bluesky/*
+# texmf/doc/fonts/cbgreek/* => texmf/doc/fonts/cbgreek/*
+# texmf/doc/fonts/cm/* => texmf/doc/fonts/cm/*
+# texmf/doc/fonts/cmbright/* => texmf/doc/fonts/cmbright/*
+# texmf/doc/fonts/dstroke/* => texmf/doc/fonts/dstroke/*
+# texmf/doc/fonts/ec/* => texmf/doc/fonts/ec/*
+# texmf/doc/fonts/ecc/* => texmf/doc/fonts/ecc/*
+# texmf/doc/fonts/eurosym/* => texmf/doc/fonts/eurosym/*
+# texmf/doc/fonts/fontname/* => texmf/doc/fonts/fontname/*
+# texmf/doc/fonts/hoekwater/* => texmf/doc/fonts/hoekwater/*
+# texmf/doc/fonts/lucidabr/* => texmf/doc/fonts/lucidabr/*
+# texmf/doc/fonts/marvosym/* => texmf/doc/fonts/marvosym/*
+# texmf/doc/fonts/mathpazo/* => texmf/doc/fonts/mathpazo/*
+# texmf/doc/fonts/oldgerman/* => texmf/doc/fonts/oldgerman/*
+# texmf/doc/fonts/pxfonts/* => texmf/doc/fonts/pxfonts/*
+# texmf/doc/fonts/txfonts/* => texmf/doc/fonts/txfonts/*
+# texmf/fonts/afm/adobe/avantgar/* => texmf/fonts/afm/adobe/avantgar/*
+# texmf/fonts/afm/adobe/bookman/* => texmf/fonts/afm/adobe/bookman/*
+# texmf/fonts/afm/adobe/courier/* => texmf/fonts/afm/adobe/courier/*
+# texmf/fonts/afm/adobe/helvetic/* => texmf/fonts/afm/adobe/helvetic/*
+# texmf/fonts/afm/adobe/ncntrsbk/* => texmf/fonts/afm/adobe/ncntrsbk/*
+# texmf/fonts/afm/adobe/palatino/* => texmf/fonts/afm/adobe/palatino/*
+# texmf/fonts/afm/adobe/symbol/* => texmf/fonts/afm/adobe/symbol/*
+# texmf/fonts/afm/adobe/times/* => texmf/fonts/afm/adobe/times/*
+# texmf/fonts/afm/adobe/zapfchan/* => texmf/fonts/afm/adobe/zapfchan/*
+# texmf/fonts/afm/adobe/zapfding/* => texmf/fonts/afm/adobe/zapfding/*
+# texmf/fonts/afm/bitstrea/charter/* => texmf/fonts/afm/bitstrea/charter/*
+# texmf/fonts/afm/public/antp/* => texmf/fonts/afm/public/antp/*
+# texmf/fonts/afm/public/antt/* => texmf/fonts/afm/public/antt/*
+# texmf/fonts/afm/public/marvosym/* => texmf/fonts/afm/public/marvosym/*
+# texmf/fonts/afm/public/mathpazo/* => texmf/fonts/afm/public/mathpazo/*
+# texmf/fonts/afm/public/pl/* => texmf/fonts/afm/public/pl/*
+# texmf/fonts/afm/public/qfonts/* => texmf/fonts/afm/public/qfonts/*
+# texmf/fonts/afm/public/xypic/* => texmf/fonts/afm/public/xypic/*
+# texmf/fonts/afm/urw/avantgar/* => texmf/fonts/afm/urw/avantgar/*
+# texmf/fonts/afm/urw/bookman/* => texmf/fonts/afm/urw/bookman/*
+# texmf/fonts/afm/urw/courier/* => texmf/fonts/afm/urw/courier/*
+# texmf/fonts/afm/urw/helvetic/* => texmf/fonts/afm/urw/helvetic/*
+# texmf/fonts/afm/urw/ncntrsbk/* => texmf/fonts/afm/urw/ncntrsbk/*
+# texmf/fonts/afm/urw/palatino/* => texmf/fonts/afm/urw/palatino/*
+# texmf/fonts/afm/urw/symbol/* => texmf/fonts/afm/urw/symbol/*
+# texmf/fonts/afm/urw/times/* => texmf/fonts/afm/urw/times/*
+# texmf/fonts/afm/urw/zapfchan/* => texmf/fonts/afm/urw/zapfchan/*
+# texmf/fonts/afm/urw/zapfding/* => texmf/fonts/afm/urw/zapfding/*
+# texmf/fonts/afm/yandy/lubright/* => texmf/fonts/afm/yandy/lubright/*
+# texmf/fonts/afm/yandy/lucida/* => texmf/fonts/afm/yandy/lucida/*
+# texmf/fonts/afm/yandy/lucidfax/* => texmf/fonts/afm/yandy/lucidfax/*
+# texmf/fonts/afm/yandy/lucsans/* => texmf/fonts/afm/yandy/lucsans/*
+# texmf/fonts/afm/yandy/lumath/* => texmf/fonts/afm/yandy/lumath/*
+# texmf/fonts/afm/yandy/mathplus/* => texmf/fonts/afm/yandy/mathplus/*
+# texmf/fonts/afm/yandy/mathtime/* => texmf/fonts/afm/yandy/mathtime/*
+# texmf/fonts/tfm/adobe/avantgar/* => texmf/fonts/tfm/adobe/avantgar/*
+# texmf/fonts/tfm/adobe/bookman/* => texmf/fonts/tfm/adobe/bookman/*
+# texmf/fonts/tfm/adobe/courier/* => texmf/fonts/tfm/adobe/courier/*
+# texmf/fonts/tfm/adobe/helvetic/* => texmf/fonts/tfm/adobe/helvetic/*
+# texmf/fonts/tfm/adobe/mathppl/* => texmf/fonts/tfm/adobe/mathppl/*
+# texmf/fonts/tfm/adobe/ncntrsbk/* => texmf/fonts/tfm/adobe/ncntrsbk/*
+# texmf/fonts/tfm/adobe/palatino/* => texmf/fonts/tfm/adobe/palatino/*
+# texmf/fonts/tfm/adobe/pslatex/* => texmf/fonts/tfm/adobe/pslatex/*
+# texmf/fonts/tfm/adobe/symbol/* => texmf/fonts/tfm/adobe/symbol/*
+# texmf/fonts/tfm/adobe/times/* => texmf/fonts/tfm/adobe/times/*
+# texmf/fonts/tfm/adobe/zapfchan/* => texmf/fonts/tfm/adobe/zapfchan/*
+# texmf/fonts/tfm/adobe/zapfding/* => texmf/fonts/tfm/adobe/zapfding/*
+# texmf/fonts/tfm/bh/lubright/* => texmf/fonts/tfm/bh/lubright/*
+# texmf/fonts/tfm/bh/lucida/* => texmf/fonts/tfm/bh/lucida/*
+# texmf/fonts/tfm/bh/lucidfax/* => texmf/fonts/tfm/bh/lucidfax/*
+# texmf/fonts/tfm/bh/lucsans/* => texmf/fonts/tfm/bh/lucsans/*
+# texmf/fonts/tfm/bh/lumath/* => texmf/fonts/tfm/bh/lumath/*
+# texmf/fonts/tfm/bitstrea/charter/* => texmf/fonts/tfm/bitstrea/charter/*
+# texmf/fonts/tfm/cg/albertus/* => texmf/fonts/tfm/cg/albertus/*
+# texmf/fonts/tfm/cg/atqolive/* => texmf/fonts/tfm/cg/atqolive/*
+# texmf/fonts/tfm/cg/clarendo/* => texmf/fonts/tfm/cg/clarendo/*
+# texmf/fonts/tfm/cg/coronet/* => texmf/fonts/tfm/cg/coronet/*
+# texmf/fonts/tfm/cg/courier/* => texmf/fonts/tfm/cg/courier/*
+# texmf/fonts/tfm/cg/garamond/* => texmf/fonts/tfm/cg/garamond/*
+# texmf/fonts/tfm/cg/helvetic/* => texmf/fonts/tfm/cg/helvetic/*
+# texmf/fonts/tfm/cg/lettrgth/* => texmf/fonts/tfm/cg/lettrgth/*
+# texmf/fonts/tfm/cg/marigold/* => texmf/fonts/tfm/cg/marigold/*
+# texmf/fonts/tfm/cg/optima/* => texmf/fonts/tfm/cg/optima/*
+# texmf/fonts/tfm/cg/symbol/* => texmf/fonts/tfm/cg/symbol/*
+# texmf/fonts/tfm/cg/times/* => texmf/fonts/tfm/cg/times/*
+# texmf/fonts/tfm/cg/timesnew/* => texmf/fonts/tfm/cg/timesnew/*
+# texmf/fonts/tfm/cg/univers/* => texmf/fonts/tfm/cg/univers/*
+# texmf/fonts/tfm/cg/wingding/* => texmf/fonts/tfm/cg/wingding/*
+# texmf/fonts/tfm/jknappen/ec/* => texmf/fonts/tfm/jknappen/ec/*
+# texmf/fonts/tfm/jknappen/tc/* => texmf/fonts/tfm/jknappen/tc/*
+# texmf/fonts/tfm/public/ae/* => texmf/fonts/tfm/public/ae/*
+# texmf/fonts/tfm/public/antp/* => texmf/fonts/tfm/public/antp/*
+# texmf/fonts/tfm/public/antt/* => texmf/fonts/tfm/public/antt/*
+# texmf/fonts/tfm/public/bbm/* => texmf/fonts/tfm/public/bbm/*
+# texmf/fonts/tfm/public/bbold/* => texmf/fonts/tfm/public/bbold/*
+# texmf/fonts/tfm/public/cc-pl/* => texmf/fonts/tfm/public/cc-pl/*
+# texmf/fonts/tfm/public/cm/* => texmf/fonts/tfm/public/cm/*
+# texmf/fonts/tfm/public/cmbright/* => texmf/fonts/tfm/public/cmbright/*
+# texmf/fonts/tfm/public/cmcyr/* => texmf/fonts/tfm/public/cmcyr/*
+# texmf/fonts/tfm/public/cmextra/* => texmf/fonts/tfm/public/cmextra/*
+# texmf/fonts/tfm/public/concmath/* => texmf/fonts/tfm/public/concmath/*
+# texmf/fonts/tfm/public/concrete/* => texmf/fonts/tfm/public/concrete/*
+# texmf/fonts/tfm/public/cs/* => texmf/fonts/tfm/public/cs/*
+# texmf/fonts/tfm/public/ecc/* => texmf/fonts/tfm/public/ecc/*
+# texmf/fonts/tfm/public/eurosym/* => texmf/fonts/tfm/public/eurosym/*
+# texmf/fonts/tfm/public/euxm/* => texmf/fonts/tfm/public/euxm/*
+# texmf/fonts/tfm/public/gothic/* => texmf/fonts/tfm/public/gothic/*
+# texmf/fonts/tfm/public/latex/* => texmf/fonts/tfm/public/latex/*
+# texmf/fonts/tfm/public/marvosym/* => texmf/fonts/tfm/public/marvosym/*
+# texmf/fonts/tfm/public/mflogo/* => texmf/fonts/tfm/public/mflogo/*
+# texmf/fonts/tfm/public/misc/* => texmf/fonts/tfm/public/misc/*
+# texmf/fonts/tfm/public/pandora/* => texmf/fonts/tfm/public/pandora/*
+# texmf/fonts/tfm/public/pazo/* => texmf/fonts/tfm/public/pazo/*
+# texmf/fonts/tfm/public/pl/* => texmf/fonts/tfm/public/pl/*
+# texmf/fonts/tfm/public/pxfonts/* => texmf/fonts/tfm/public/pxfonts/*
+# texmf/fonts/tfm/public/qfonts/* => texmf/fonts/tfm/public/qfonts/*
+# texmf/fonts/tfm/public/qpx/* => texmf/fonts/tfm/public/qpx/*
+# texmf/fonts/tfm/public/qtx/* => texmf/fonts/tfm/public/qtx/*
+# texmf/fonts/tfm/public/rsfs/* => texmf/fonts/tfm/public/rsfs/*
+# texmf/fonts/tfm/public/stmaryrd/* => texmf/fonts/tfm/public/stmaryrd/*
+# texmf/fonts/tfm/public/txfonts/* => texmf/fonts/tfm/public/txfonts/*
+# texmf/fonts/tfm/public/vcm/* => texmf/fonts/tfm/public/vcm/*
+# texmf/fonts/tfm/public/vnr/* => texmf/fonts/tfm/public/vnr/*
+# texmf/fonts/tfm/public/wasy/* => texmf/fonts/tfm/public/wasy/*
+# texmf/fonts/tfm/public/xypic/* => texmf/fonts/tfm/public/xypic/*
+# texmf/fonts/tfm/yandy/courier/* => texmf/fonts/tfm/yandy/courier/*
+# texmf/fonts/tfm/yandy/helvetic/* => texmf/fonts/tfm/yandy/helvetic/*
+# texmf/fonts/tfm/yandy/lubright/* => texmf/fonts/tfm/yandy/lubright/*
+# texmf/fonts/tfm/yandy/lucida/* => texmf/fonts/tfm/yandy/lucida/*
+# texmf/fonts/tfm/yandy/lucidfax/* => texmf/fonts/tfm/yandy/lucidfax/*
+# texmf/fonts/tfm/yandy/lucsans/* => texmf/fonts/tfm/yandy/lucsans/*
+# texmf/fonts/tfm/yandy/lumath/* => texmf/fonts/tfm/yandy/lumath/*
+# texmf/fonts/tfm/yandy/mathpi/* => texmf/fonts/tfm/yandy/mathpi/*
+# texmf/fonts/tfm/yandy/mathplus/* => texmf/fonts/tfm/yandy/mathplus/*
+# texmf/fonts/tfm/yandy/mathtime/* => texmf/fonts/tfm/yandy/mathtime/*
+# texmf/fonts/tfm/yandy/symbol/* => texmf/fonts/tfm/yandy/symbol/*
+# texmf/fonts/tfm/yandy/times/* => texmf/fonts/tfm/yandy/times/*
+# texmf/fonts/tfm/yandy/zapfding/* => texmf/fonts/tfm/yandy/zapfding/*
+# texmf/fonts/type1/bitstrea/charter/* => texmf/fonts/type1/bitstrea/charter/*
+# texmf/fonts/type1/bluesky/cm/* => texmf/fonts/type1/bluesky/cm/*
+# texmf/fonts/type1/bluesky/cmextra/* => texmf/fonts/type1/bluesky/cmextra/*
+# texmf/fonts/type1/bluesky/cyrillic/* => texmf/fonts/type1/bluesky/cyrillic/*
+# texmf/fonts/type1/bluesky/euler/* => texmf/fonts/type1/bluesky/euler/*
+# texmf/fonts/type1/bluesky/latex/* => texmf/fonts/type1/bluesky/latex/*
+# texmf/fonts/type1/bluesky/symbols/* => texmf/fonts/type1/bluesky/symbols/*
+# texmf/fonts/type1/hoekwater/mflogo/* => texmf/fonts/type1/hoekwater/mflogo/*
+# texmf/fonts/type1/hoekwater/rsfs/* => texmf/fonts/type1/hoekwater/rsfs/*
+# texmf/fonts/type1/hoekwater/stmaryrd/* => texmf/fonts/type1/hoekwater/stmaryrd/*
+# texmf/fonts/type1/hoekwater/wasy/* => texmf/fonts/type1/hoekwater/wasy/*
+# texmf/fonts/type1/public/antp/* => texmf/fonts/type1/public/antp/*
+# texmf/fonts/type1/public/antt/* => texmf/fonts/type1/public/antt/*
+# texmf/fonts/type1/public/belleek/* => texmf/fonts/type1/public/belleek/*
+# texmf/fonts/type1/public/cc-pl/* => texmf/fonts/type1/public/cc-pl/*
+# texmf/fonts/type1/public/cmcyr/* => texmf/fonts/type1/public/cmcyr/*
+# texmf/fonts/type1/public/cs/* => texmf/fonts/type1/public/cs/*
+# texmf/fonts/type1/public/eurosym/* => texmf/fonts/type1/public/eurosym/*
+# texmf/fonts/type1/public/marvosym/* => texmf/fonts/type1/public/marvosym/*
+# texmf/fonts/type1/public/mathpazo/* => texmf/fonts/type1/public/mathpazo/*
+# texmf/fonts/type1/public/pl/* => texmf/fonts/type1/public/pl/*
+# texmf/fonts/type1/public/pxfonts/* => texmf/fonts/type1/public/pxfonts/*
+# texmf/fonts/type1/public/qfonts/* => texmf/fonts/type1/public/qfonts/*
+# texmf/fonts/type1/public/tt2001/* => texmf/fonts/type1/public/tt2001/*
+# texmf/fonts/type1/public/txfonts/* => texmf/fonts/type1/public/txfonts/*
+# texmf/fonts/type1/public/xypic/* => texmf/fonts/type1/public/xypic/*
+# texmf/fonts/type1/urw/avantgar/* => texmf/fonts/type1/urw/avantgar/*
+# texmf/fonts/type1/urw/bookman/* => texmf/fonts/type1/urw/bookman/*
+# texmf/fonts/type1/urw/courier/* => texmf/fonts/type1/urw/courier/*
+# texmf/fonts/type1/urw/helvetic/* => texmf/fonts/type1/urw/helvetic/*
+# texmf/fonts/type1/urw/ncntrsbk/* => texmf/fonts/type1/urw/ncntrsbk/*
+# texmf/fonts/type1/urw/palatino/* => texmf/fonts/type1/urw/palatino/*
+# texmf/fonts/type1/urw/symbol/* => texmf/fonts/type1/urw/symbol/*
+# texmf/fonts/type1/urw/times/* => texmf/fonts/type1/urw/times/*
+# texmf/fonts/type1/urw/zapfchan/* => texmf/fonts/type1/urw/zapfchan/*
+# texmf/fonts/type1/urw/zapfding/* => texmf/fonts/type1/urw/zapfding/*
+# texmf/fonts/vf/adobe/avantgar/* => texmf/fonts/vf/adobe/avantgar/*
+# texmf/fonts/vf/adobe/bookman/* => texmf/fonts/vf/adobe/bookman/*
+# texmf/fonts/vf/adobe/courier/* => texmf/fonts/vf/adobe/courier/*
+# texmf/fonts/vf/adobe/helvetic/* => texmf/fonts/vf/adobe/helvetic/*
+# texmf/fonts/vf/adobe/mathppl/* => texmf/fonts/vf/adobe/mathppl/*
+# texmf/fonts/vf/adobe/ncntrsbk/* => texmf/fonts/vf/adobe/ncntrsbk/*
+# texmf/fonts/vf/adobe/palatino/* => texmf/fonts/vf/adobe/palatino/*
+# texmf/fonts/vf/adobe/pslatex/* => texmf/fonts/vf/adobe/pslatex/*
+# texmf/fonts/vf/adobe/times/* => texmf/fonts/vf/adobe/times/*
+# texmf/fonts/vf/adobe/zapfchan/* => texmf/fonts/vf/adobe/zapfchan/*
+# texmf/fonts/vf/bh/lubright/* => texmf/fonts/vf/bh/lubright/*
+# texmf/fonts/vf/bh/lucida/* => texmf/fonts/vf/bh/lucida/*
+# texmf/fonts/vf/bh/lucidfax/* => texmf/fonts/vf/bh/lucidfax/*
+# texmf/fonts/vf/bh/lucsans/* => texmf/fonts/vf/bh/lucsans/*
+# texmf/fonts/vf/bitstrea/charter/* => texmf/fonts/vf/bitstrea/charter/*
+# texmf/fonts/vf/cg/albertus/* => texmf/fonts/vf/cg/albertus/*
+# texmf/fonts/vf/cg/atqolive/* => texmf/fonts/vf/cg/atqolive/*
+# texmf/fonts/vf/cg/clarendo/* => texmf/fonts/vf/cg/clarendo/*
+# texmf/fonts/vf/cg/coronet/* => texmf/fonts/vf/cg/coronet/*
+# texmf/fonts/vf/cg/courier/* => texmf/fonts/vf/cg/courier/*
+# texmf/fonts/vf/cg/garamond/* => texmf/fonts/vf/cg/garamond/*
+# texmf/fonts/vf/cg/helvetic/* => texmf/fonts/vf/cg/helvetic/*
+# texmf/fonts/vf/cg/lettrgth/* => texmf/fonts/vf/cg/lettrgth/*
+# texmf/fonts/vf/cg/marigold/* => texmf/fonts/vf/cg/marigold/*
+# texmf/fonts/vf/cg/optima/* => texmf/fonts/vf/cg/optima/*
+# texmf/fonts/vf/cg/times/* => texmf/fonts/vf/cg/times/*
+# texmf/fonts/vf/cg/timesnew/* => texmf/fonts/vf/cg/timesnew/*
+# texmf/fonts/vf/cg/univers/* => texmf/fonts/vf/cg/univers/*
+# texmf/fonts/vf/public/ae/* => texmf/fonts/vf/public/ae/*
+# texmf/fonts/vf/public/cmcyr/* => texmf/fonts/vf/public/cmcyr/*
+# texmf/fonts/vf/public/pazo/* => texmf/fonts/vf/public/pazo/*
+# texmf/fonts/vf/public/pxfonts/* => texmf/fonts/vf/public/pxfonts/*
+# texmf/fonts/vf/public/qpx/* => texmf/fonts/vf/public/qpx/*
+# texmf/fonts/vf/public/qtx/* => texmf/fonts/vf/public/qtx/*
+# texmf/fonts/vf/public/txfonts/* => texmf/fonts/vf/public/txfonts/*
+# texmf/fonts/vf/public/vcm/* => texmf/fonts/vf/public/vcm/*
+# texmf/fonts/vf/yandy/mathplus/* => texmf/fonts/vf/yandy/mathplus/*
+# texmf/fonts/vf/yandy/mathtime/* => texmf/fonts/vf/yandy/mathtime/*
+# texmf/fonts/vf/yandy/times/* => texmf/fonts/vf/yandy/times/*
+# 
+# 
+# texmf/aliases => texmf/aliases
+# texmf/bibtex/bst/adrconv/* => texmf/bibtex/bst/adrconv/*
+# texmf/bibtex/bst/germbib/* => texmf/bibtex/bst/germbib/*
+# texmf/bibtex/bst/misc/* => texmf/bibtex/bst/misc/*
+# texmf/bibtex/bst/natbib/* => texmf/bibtex/bst/natbib/*
+# texmf/bibtex/bst/revtex4/* => texmf/bibtex/bst/revtex4/*
+# texmf/doc/index.html => texmf/doc/index.html
+# texmf/doc/eplain/* => texmf/doc/eplain/*
+# texmf/doc/etex/base/* => texmf/doc/etex/base/*
+# texmf/doc/fontinst/base/* => texmf/doc/fontinst/base/*
+# texmf/doc/generic/babel/* => texmf/doc/generic/babel/*
+# texmf/doc/generic/cmyk-hax/* => texmf/doc/generic/cmyk-hax/*
+# texmf/doc/generic/localloc/* => texmf/doc/generic/localloc/*
+# texmf/doc/generic/mfpic/* => texmf/doc/generic/mfpic/*
+# texmf/doc/generic/multido/* => texmf/doc/generic/multido/*
+# texmf/doc/generic/nohyph/* => texmf/doc/generic/nohyph/*
+# texmf/doc/generic/poligraf/* => texmf/doc/generic/poligraf/*
+# texmf/doc/generic/pstricks/* => texmf/doc/generic/pstricks/*
+# texmf/doc/generic/ruhyphen/* => texmf/doc/generic/ruhyphen/*
+# texmf/doc/generic/styles/* => texmf/doc/generic/styles/*
+# texmf/doc/generic/tap/* => texmf/doc/generic/tap/*
+# texmf/doc/generic/texdraw/* => texmf/doc/generic/texdraw/*
+# texmf/doc/generic/thumbpdf/* => texmf/doc/generic/thumbpdf/*
+# texmf/doc/generic/ukrhyph/* => texmf/doc/generic/ukrhyph/*
+# texmf/doc/generic/xypic/* => texmf/doc/generic/xypic/*
+# texmf/doc/help/* => texmf/doc/help/*
+# texmf/doc/help/ctan/* => texmf/doc/help/ctan/*
+# texmf/doc/help/faq/uktug-faq/* => texmf/doc/help/faq/uktug-faq/*
+# texmf/doc/images/* => texmf/doc/images/*
+# texmf/doc/knuth/* => texmf/doc/knuth/*
+# texmf/doc/knuth/errata/* => texmf/doc/knuth/errata/*
+# texmf/doc/latex/SIunits/* => texmf/doc/latex/SIunits/*
+# texmf/doc/latex/acronym/* => texmf/doc/latex/acronym/*
+# texmf/doc/latex/aeguill/* => texmf/doc/latex/aeguill/*
+# texmf/doc/latex/anysize/* => texmf/doc/latex/anysize/*
+# texmf/doc/latex/base/* => texmf/doc/latex/base/*
+# texmf/doc/latex/booktabs/* => texmf/doc/latex/booktabs/*
+# texmf/doc/latex/caption/* => texmf/doc/latex/caption/*
+# texmf/doc/latex/carlisle/* => texmf/doc/latex/carlisle/*
+# texmf/doc/latex/ccaption/* => texmf/doc/latex/ccaption/*
+# texmf/doc/latex/ccfonts/* => texmf/doc/latex/ccfonts/*
+# texmf/doc/latex/changebar/* => texmf/doc/latex/changebar/*
+# texmf/doc/latex/currvita/* => texmf/doc/latex/currvita/*
+# texmf/doc/latex/custom-bib/* => texmf/doc/latex/custom-bib/*
+# texmf/doc/latex/cyrillic/* => texmf/doc/latex/cyrillic/*
+# texmf/doc/latex/dinbrief/* => texmf/doc/latex/dinbrief/*
+# texmf/doc/latex/draftcopy/* => texmf/doc/latex/draftcopy/*
+# texmf/doc/latex/eepic/* => texmf/doc/latex/eepic/*
+# texmf/doc/latex/eso-pic/* => texmf/doc/latex/eso-pic/*
+# texmf/doc/latex/extsizes/* => texmf/doc/latex/extsizes/*
+# texmf/doc/latex/fancyhdr/* => texmf/doc/latex/fancyhdr/*
+# texmf/doc/latex/fancyvrb/* => texmf/doc/latex/fancyvrb/*
+# texmf/doc/latex/floatflt/* => texmf/doc/latex/floatflt/*
+# texmf/doc/latex/footmisc/* => texmf/doc/latex/footmisc/*
+# texmf/doc/latex/g-brief/* => texmf/doc/latex/g-brief/*
+# texmf/doc/latex/general/* => texmf/doc/latex/general/*
+# texmf/doc/latex/geometry/* => texmf/doc/latex/geometry/*
+# texmf/doc/latex/graphics/* => texmf/doc/latex/graphics/*
+# texmf/doc/latex/hyperref/* => texmf/doc/latex/hyperref/*
+# texmf/doc/latex/images/* => texmf/doc/latex/images/*
+# texmf/doc/latex/jknappen/* => texmf/doc/latex/jknappen/*
+# texmf/doc/latex/koma-script/* => texmf/doc/latex/koma-script/*
+# texmf/doc/latex/latex2e-html/* => texmf/doc/latex/latex2e-html/*
+# texmf/doc/latex/leftidx/* => texmf/doc/latex/leftidx/*
+# texmf/doc/latex/lettrine/* => texmf/doc/latex/lettrine/*
+# texmf/doc/latex/mathtime/* => texmf/doc/latex/mathtime/*
+# texmf/doc/latex/mdwtools/* => texmf/doc/latex/mdwtools/*
+# texmf/doc/latex/mfnfss/* => texmf/doc/latex/mfnfss/*
+# texmf/doc/latex/minitoc/* => texmf/doc/latex/minitoc/*
+# texmf/doc/latex/mltex/* => texmf/doc/latex/mltex/*
+# texmf/doc/latex/ms/* => texmf/doc/latex/ms/*
+# texmf/doc/latex/mwcls/* => texmf/doc/latex/mwcls/*
+# texmf/doc/latex/natbib/* => texmf/doc/latex/natbib/*
+# texmf/doc/latex/nomencl/* => texmf/doc/latex/nomencl/*
+# texmf/doc/latex/ntgclass/* => texmf/doc/latex/ntgclass/*
+# texmf/doc/latex/oberdiek/* => texmf/doc/latex/oberdiek/*
+# texmf/doc/latex/overpic/* => texmf/doc/latex/overpic/*
+# texmf/doc/latex/pb-diagram/* => texmf/doc/latex/pb-diagram/*
+# texmf/doc/latex/pdfpages/* => texmf/doc/latex/pdfpages/*
+# texmf/doc/latex/preprint/* => texmf/doc/latex/preprint/*
+# texmf/doc/latex/program/* => texmf/doc/latex/program/*
+# texmf/doc/latex/psfrag/* => texmf/doc/latex/psfrag/*
+# texmf/doc/latex/psgo/* => texmf/doc/latex/psgo/*
+# texmf/doc/latex/pslatex/* => texmf/doc/latex/pslatex/*
+# texmf/doc/latex/psnfss/* => texmf/doc/latex/psnfss/*
+# texmf/doc/latex/revtex4/* => texmf/doc/latex/revtex4/*
+# texmf/doc/latex/rotating/* => texmf/doc/latex/rotating/*
+# texmf/doc/latex/rotfloat/* => texmf/doc/latex/rotfloat/*
+# texmf/doc/latex/scale/* => texmf/doc/latex/scale/*
+# texmf/doc/latex/seminar/* => texmf/doc/latex/seminar/*
+# texmf/doc/latex/showlabels/* => texmf/doc/latex/showlabels/*
+# texmf/doc/latex/sidecap/* => texmf/doc/latex/sidecap/*
+# texmf/doc/latex/styles/* => texmf/doc/latex/styles/*
+# texmf/doc/latex/supertab/* => texmf/doc/latex/supertab/*
+# texmf/doc/latex/textmerg/* => texmf/doc/latex/textmerg/*
+# texmf/doc/latex/tocbibind/* => texmf/doc/latex/tocbibind/*
+# texmf/doc/latex/tools/* => texmf/doc/latex/tools/*
+# texmf/doc/latex/treesvr/* => texmf/doc/latex/treesvr/*
+# texmf/doc/latex/units/* => texmf/doc/latex/units/*
+# texmf/doc/latex/wasysym/* => texmf/doc/latex/wasysym/*
+# texmf/doc/latex/xtab/* => texmf/doc/latex/xtab/*
+# texmf/doc/latex/yfonts/* => texmf/doc/latex/yfonts/*
+# texmf/doc/makeindex/* => texmf/doc/makeindex/*
+# texmf/doc/pdftex/base/* => texmf/doc/pdftex/base/*
+# texmf/doc/programs/* => texmf/doc/programs/*
+# texmf/doc/tetex/* => texmf/doc/tetex/*
+# texmf/doc/texdoctk/* => texmf/doc/texdoctk/*
+# texmf/dvipdfm/* => texmf/dvipdfm/*
+# texmf/dvips/antp/* => texmf/dvips/antp/*
+# texmf/dvips/antt/* => texmf/dvips/antt/*
+# texmf/dvips/base/* => texmf/dvips/base/*
+# texmf/dvips/bluesky/* => texmf/dvips/bluesky/*
+# texmf/dvips/cc-pl/* => texmf/dvips/cc-pl/*
+# texmf/dvips/config/* => texmf/dvips/config/*
+# texmf/dvips/misc/* => texmf/dvips/misc/*
+# texmf/dvips/pl/* => texmf/dvips/pl/*
+# texmf/dvips/psfrag/* => texmf/dvips/psfrag/*
+# texmf/dvips/psnfss/* => texmf/dvips/psnfss/*
+# texmf/dvips/pstricks/* => texmf/dvips/pstricks/*
+# texmf/dvips/qfonts/* => texmf/dvips/qfonts/*
+# texmf/dvips/tetex/* => texmf/dvips/tetex/*
+# texmf/dvips/xypic/* => texmf/dvips/xypic/*
+# texmf/etex/latex/config/* => texmf/etex/latex/config/*
+# texmf/etex/latex/misc/* => texmf/etex/latex/misc/*
+# texmf/etex/plain/base/* => texmf/etex/plain/base/*
+# texmf/etex/plain/config/* => texmf/etex/plain/config/*
+# texmf/fontname/* => texmf/fontname/*
+# texmf/makeindex/* => texmf/makeindex/*
+# texmf/mft/* => texmf/mft/*
+# texmf/pdfetex/latex/config/* => texmf/pdfetex/latex/config/*
+# texmf/pdfetex/tex/config/* => texmf/pdfetex/tex/config/*
+# texmf/pdftex/config/* => texmf/pdftex/config/*
+# texmf/pdftex/latex/config/* => texmf/pdftex/latex/config/*
+# texmf/pdftex/plain/config/* => texmf/pdftex/plain/config/*
+# texmf/pdftex/plain/misc/* => texmf/pdftex/plain/misc/*
+# texmf/pdftex/platex/config/* => texmf/pdftex/platex/config/*
+# texmf/tex/eplain/* => texmf/tex/eplain/*
+# texmf/tex/fontinst/base/* => texmf/tex/fontinst/base/*
+# texmf/tex/generic/babel/* => texmf/tex/generic/babel/*
+# texmf/tex/generic/config/* => texmf/tex/generic/config/*
+# texmf/tex/generic/eijkhout/* => texmf/tex/generic/eijkhout/*
+# texmf/tex/generic/german/* => texmf/tex/generic/german/*
+# texmf/tex/generic/hyphen/* => texmf/tex/generic/hyphen/*
+# texmf/tex/generic/mfpic/* => texmf/tex/generic/mfpic/*
+# texmf/tex/generic/misc/* => texmf/tex/generic/misc/*
+# texmf/tex/generic/multido/* => texmf/tex/generic/multido/*
+# texmf/tex/generic/pictex/* => texmf/tex/generic/pictex/*
+# texmf/tex/generic/pstricks/* => texmf/tex/generic/pstricks/*
+# texmf/tex/generic/qpx/* => texmf/tex/generic/qpx/*
+# texmf/tex/generic/qtx/* => texmf/tex/generic/qtx/*
+# texmf/tex/generic/ruhyphen/* => texmf/tex/generic/ruhyphen/*
+# texmf/tex/generic/spanishb/* => texmf/tex/generic/spanishb/*
+# texmf/tex/generic/texdraw/* => texmf/tex/generic/texdraw/*
+# texmf/tex/generic/thumbpdf/* => texmf/tex/generic/thumbpdf/*
+# texmf/tex/generic/ukrhyph/* => texmf/tex/generic/ukrhyph/*
+# texmf/tex/generic/vietnam/* => texmf/tex/generic/vietnam/*
+# texmf/tex/generic/xypic/* => texmf/tex/generic/xypic/*
+# texmf/tex/latex/SIunits/* => texmf/tex/latex/SIunits/*
+# texmf/tex/latex/adrconv/* => texmf/tex/latex/adrconv/*
+# texmf/tex/latex/ae/* => texmf/tex/latex/ae/*
+# texmf/tex/latex/antp/* => texmf/tex/latex/antp/*
+# texmf/tex/latex/antt/* => texmf/tex/latex/antt/*
+# texmf/tex/latex/base/* => texmf/tex/latex/base/*
+# texmf/tex/latex/bbm/* => texmf/tex/latex/bbm/*
+# texmf/tex/latex/bbold/* => texmf/tex/latex/bbold/*
+# texmf/tex/latex/caption/* => texmf/tex/latex/caption/*
+# texmf/tex/latex/carlisle/* => texmf/tex/latex/carlisle/*
+# texmf/tex/latex/ccfonts/* => texmf/tex/latex/ccfonts/*
+# texmf/tex/latex/cite/* => texmf/tex/latex/cite/*
+# texmf/tex/latex/cmbright/* => texmf/tex/latex/cmbright/*
+# texmf/tex/latex/concmath/* => texmf/tex/latex/concmath/*
+# texmf/tex/latex/config/* => texmf/tex/latex/config/*
+# texmf/tex/latex/cslatex/* => texmf/tex/latex/cslatex/*
+# texmf/tex/latex/curves/* => texmf/tex/latex/curves/*
+# texmf/tex/latex/custom-bib/* => texmf/tex/latex/custom-bib/*
+# texmf/tex/latex/cyrillic/* => texmf/tex/latex/cyrillic/*
+# texmf/tex/latex/dinbrief/* => texmf/tex/latex/dinbrief/*
+# texmf/tex/latex/dstroke/* => texmf/tex/latex/dstroke/*
+# texmf/tex/latex/dvilj/* => texmf/tex/latex/dvilj/*
+# texmf/tex/latex/eepic/* => texmf/tex/latex/eepic/*
+# texmf/tex/latex/endfloat/* => texmf/tex/latex/endfloat/*
+# texmf/tex/latex/extsizes/* => texmf/tex/latex/extsizes/*
+# texmf/tex/latex/fancyhdr/* => texmf/tex/latex/fancyhdr/*
+# texmf/tex/latex/fancyheadings/* => texmf/tex/latex/fancyheadings/*
+# texmf/tex/latex/fancyvrb/* => texmf/tex/latex/fancyvrb/*
+# texmf/tex/latex/fp/* => texmf/tex/latex/fp/*
+# texmf/tex/latex/g-brief/* => texmf/tex/latex/g-brief/*
+# texmf/tex/latex/graphics/* => texmf/tex/latex/graphics/*
+# texmf/tex/latex/hyperref/* => texmf/tex/latex/hyperref/*
+# texmf/tex/latex/jknappen/* => texmf/tex/latex/jknappen/*
+# texmf/tex/latex/koma-script/* => texmf/tex/latex/koma-script/*
+# texmf/tex/latex/labels/* => texmf/tex/latex/labels/*
+# texmf/tex/latex/lucidabr/* => texmf/tex/latex/lucidabr/*
+# texmf/tex/latex/mathpple/* => texmf/tex/latex/mathpple/*
+# texmf/tex/latex/mathtime/* => texmf/tex/latex/mathtime/*
+# texmf/tex/latex/mdwtools/* => texmf/tex/latex/mdwtools/*
+# texmf/tex/latex/mflogo/* => texmf/tex/latex/mflogo/*
+# texmf/tex/latex/mfnfss/* => texmf/tex/latex/mfnfss/*
+# texmf/tex/latex/minitoc/* => texmf/tex/latex/minitoc/*
+# texmf/tex/latex/misc/* => texmf/tex/latex/misc/*
+# texmf/tex/latex/mltex/* => texmf/tex/latex/mltex/*
+# texmf/tex/latex/ms/* => texmf/tex/latex/ms/*
+# texmf/tex/latex/multirow/* => texmf/tex/latex/multirow/*
+# texmf/tex/latex/mwcls/* => texmf/tex/latex/mwcls/*
+# texmf/tex/latex/natbib/* => texmf/tex/latex/natbib/*
+# texmf/tex/latex/ntgclass/* => texmf/tex/latex/ntgclass/*
+# texmf/tex/latex/oberdiek/* => texmf/tex/latex/oberdiek/*
+# texmf/tex/latex/palatcm/* => texmf/tex/latex/palatcm/*
+# texmf/tex/latex/pb-diagram/* => texmf/tex/latex/pb-diagram/*
+# texmf/tex/latex/preprint/* => texmf/tex/latex/preprint/*
+# texmf/tex/latex/psnfss/* => texmf/tex/latex/psnfss/*
+# texmf/tex/latex/pstricks/* => texmf/tex/latex/pstricks/*
+# texmf/tex/latex/pxfonts/* => texmf/tex/latex/pxfonts/*
+# texmf/tex/latex/qfonts/* => texmf/tex/latex/qfonts/*
+# texmf/tex/latex/revtex4/* => texmf/tex/latex/revtex4/*
+# texmf/tex/latex/seminar/* => texmf/tex/latex/seminar/*
+# texmf/tex/latex/t2/* => texmf/tex/latex/t2/*
+# texmf/tex/latex/texmacs/* => texmf/tex/latex/texmacs/*
+# texmf/tex/latex/textmerg/* => texmf/tex/latex/textmerg/*
+# texmf/tex/latex/titlesec/* => texmf/tex/latex/titlesec/*
+# texmf/tex/latex/tools/* => texmf/tex/latex/tools/*
+# texmf/tex/latex/txfonts/* => texmf/tex/latex/txfonts/*
+# texmf/tex/latex/umlaute/* => texmf/tex/latex/umlaute/*
+# texmf/tex/latex/units/* => texmf/tex/latex/units/*
+# texmf/tex/latex/vnps/* => texmf/tex/latex/vnps/*
+# texmf/tex/latex/vnr/* => texmf/tex/latex/vnr/*
+# texmf/tex/latex/wasysym/* => texmf/tex/latex/wasysym/*
+# texmf/tex/plain/base/* => texmf/tex/plain/base/*
+# texmf/tex/plain/config/* => texmf/tex/plain/config/*
+# texmf/tex/plain/dvips/* => texmf/tex/plain/dvips/*
+# texmf/tex/plain/graphics/* => texmf/tex/plain/graphics/*
+# texmf/tex/plain/mathtime/* => texmf/tex/plain/mathtime/*
+# texmf/tex/plain/misc/* => texmf/tex/plain/misc/*
+# texmf/tex/plain/plnfss/* => texmf/tex/plain/plnfss/*
+# texmf/tex/texinfo/* => texmf/tex/texinfo/*
+# texmf/texconfig/* => texmf/texconfig/*
+# texmf/texdoctk/* => texmf/texdoctk/*
+# texmf/web2c/* => texmf/web2c/*
+# texmf/xdvi/* => texmf/xdvi/*
+# 
+
+#
+# XEmacs binaries
+#
+[source = "$XEmacsDir/xemacs-21.5/i586-pc-win32"]
+## FIXME : we don't need to install from there !
+# config.values => bin/win32/config.values
+# DOC => bin/win32/DOC
+# etags.exe => bin/win32/etags.exe
+# gnuclient.exe => bin/win32/gnuclient.exe
+# gnuclientw.exe => bin/win32/gnuclientw.exe
+# gnuserv.exe => bin/win32/gnuserv.exe
+# hexl.exe => bin/win32/hexl.exe
+# i.exe => bin/win32/i.exe
+# make-docfile.exe => bin/win32/make-docfile.exe
+# make-dump-id.exe => bin/win32/make-dump-id.exe
+# minitar.exe => bin/win32/minitar.exe
+# mmencode.exe => bin/win32/mmencode.exe
+# movemail.exe => bin/win32/movemail.exe
+# MSVCR70.DLL => BIN/WIN32/MSVCR70.DLL
+# sorted-doc.exe => bin/win32/sorted-doc.exe
+# tl80cface.dll => bin/win32/tl80cface.dll
+# tl80jpeg.dll => bin/win32/tl80jpeg.dll
+# tl80png.dll => bin/win32/tl80png.dll
+# tl80tiff.dll => bin/win32/tl80tiff.dll
+# tl80xpm.dll => bin/win32/tl80xpm.dll
+# tl80zlib.dll => bin/win32/tl80zlib.dll
+# wakeup.exe => bin/win32/wakeup.exe
+# winclient.exe => bin/win32/winclient.exe
+# windoit.exe => bin/win32/windoit.exe
+# xemacs.exe => bin/win32/xemacs.exe
+
+[source = "$XEmacsDir/xemacs-21.5"]
+#
+# XEmacs base files
+#
+# etc/* => xemtex/etc/*
+# info/* => xemtex/info/*
+# lisp/* => xemtex/lisp/*
+
+[source = "$XEmacsDir"]
+#
+# XEmacs packages
+#
+
+# xemacs-packages/etc/yow-lines => xemtex/xemacs-packages/etc/yow-lines
+# xemacs-packages/etc/app-defaults/* => xemtex/xemacs-packages/etc/app-defaults/*
+# xemacs-packages/etc/e/* => xemtex/xemacs-packages/etc/e/*
+xemacs-packages/etc/start-files/* => xemtex/xemacs-packages/etc/start-files/*
+xemacs-packages/info/dir => xemtex/xemacs-packages/info/dir
+xemacs-packages/info/send-pr.info => xemtex/xemacs-packages/info/send-pr.info
+xemacs-packages/lib-src/install-sid => xemtex/xemacs-packages/lib-src/install-sid
+xemacs-packages/lib-src/pstogif => xemtex/xemacs-packages/lib-src/pstogif
+xemacs-packages/lib-src/send-pr => xemtex/xemacs-packages/lib-src/send-pr
+
+# AUC-TeX
+xemacs-packages/etc/auctex/* => xemtex/xemacs-packages/etc/auctex/*
+xemacs-packages/info/auctex.* => xemtex/xemacs-packages/info/auctex.*
+xemacs-packages/lisp/auctex/* => xemtex/xemacs-packages/lisp/auctex/*
+xemacs-packages/man/auctex/* => xemtex/xemacs-packages/man/auctex/*
+xemacs-packages/pkginfo/MANIFEST.auctex => xemtex/xemacs-packages/pkginfo/MANIFEST.auctex
+
+# Calc
+# xemacs-packages/info/calc.* => xemtex/xemacs-packages/info/calc.*
+# xemacs-packages/lisp/calc/* => xemtex/xemacs-packages/lisp/calc/*
+# xemacs-packages/man/calc/* => xemtex/xemacs-packages/man/calc/*
+# xemacs-packages/pkginfo/MANIFEST.calc => xemtex/xemacs-packages/pkginfo/MANIFEST.calc
+
+#
+# Ada support
+#
+# xemacs-packages/pkginfo/MANIFEST.ada => xemtex/xemacs-packages/pkginfo/MANIFEST.ada
+# xemacs-packages/lisp/ada/* => xemtex/xemacs-packages/lisp/ada/*
+
+#
+# Build support
+#
+xemacs-packages/pkginfo/MANIFEST.build => xemtex/xemacs-packages/pkginfo/MANIFEST.build
+xemacs-packages/man/build/* => xemtex/xemacs-packages/man/build/*
+xemacs-packages/lisp/build/* => xemtex/xemacs-packages/lisp/build/*
+xemacs-packages/info/build.info => xemtex/xemacs-packages/info/build.info
+
+#
+# C support
+#
+xemacs-packages/pkginfo/MANIFEST.c-support => xemtex/xemacs-packages/pkginfo/MANIFEST.c-support
+xemacs-packages/lisp/c-support/* => xemtex/xemacs-packages/lisp/c-support/*
+
+#
+# Calendar mode
+#
+# xemacs-packages/pkginfo/MANIFEST.calendar => xemtex/xemacs-packages/pkginfo/MANIFEST.calendar
+# xemacs-packages/lisp/calendar/* => xemtex/xemacs-packages/lisp/calendar/*
+
+#
+# CC mode
+#
+xemacs-packages/pkginfo/MANIFEST.cc-mode => xemtex/xemacs-packages/pkginfo/MANIFEST.cc-mode
+xemacs-packages/lisp/cc-mode/* => xemtex/xemacs-packages/lisp/cc-mode/*
+xemacs-packages/man/cc-mode/* => xemtex/xemacs-packages/man/cc-mode/*
+xemacs-packages/info/cc-mode.* => xemtex/xemacs-packages/info/cc-mode.*
+
+#
+# Cookie's fortune
+#
+xemacs-packages/pkginfo/MANIFEST.cookie => xemtex/xemacs-packages/pkginfo/MANIFEST.cookie
+xemacs-packages/lisp/cookie/* => xemtex/xemacs-packages/lisp/cookie/*
+
+#
+# Remote dictionnary access
+#
+# xemacs-packages/pkginfo/MANIFEST.dictionary => xemtex/xemacs-packages/pkginfo/MANIFEST.dictionary
+# xemacs-packages/lisp/dictionary/* => xemtex/xemacs-packages/lisp/dictionary/*
+
+#
+# Directory editor
+#
+xemacs-packages/pkginfo/MANIFEST.dired => xemtex/xemacs-packages/pkginfo/MANIFEST.dired
+xemacs-packages/lisp/dired/* => xemtex/xemacs-packages/lisp/dired/*
+
+#
+# Docbook SGML support
+#
+xemacs-packages/pkginfo/MANIFEST.docbookide => xemtex/xemacs-packages/pkginfo/MANIFEST.docbookide
+xemacs-packages/lisp/docbookide/* => xemtex/xemacs-packages/lisp/docbookide/*
+
+#
+# Emacs lisp debugger
+#
+xemacs-packages/pkginfo/MANIFEST.edebug => xemtex/xemacs-packages/pkginfo/MANIFEST.edebug
+xemacs-packages/lisp/edebug/* => xemtex/xemacs-packages/lisp/edebug/*
+
+#
+#
+#
+# xemacs-packages/pkginfo/MANIFEST.edict => xemtex/xemacs-packages/pkginfo/MANIFEST.edict
+# xemacs-packages/lisp/edict/* => xemtex/xemacs-packages/lisp/edict/*
+# xemacs-packages/etc/edict/* => xemtex/xemacs-packages/etc/edict/*
+
+#
+# Various editing utilities
+#
+xemacs-packages/pkginfo/MANIFEST.edit-utils => xemtex/xemacs-packages/pkginfo/MANIFEST.edit-utils
+xemacs-packages/lisp/edit-utils/* => xemtex/xemacs-packages/lisp/edit-utils/*
+
+#
+# EFS remote file access
+#
+xemacs-packages/pkginfo/MANIFEST.efs => xemtex/xemacs-packages/pkginfo/MANIFEST.efs
+xemacs-packages/lisp/efs/* => xemtex/xemacs-packages/lisp/efs/*
+xemacs-packages/man/efs/* => xemtex/xemacs-packages/man/efs/*
+xemacs-packages/info/efs.* => xemtex/xemacs-packages/info/efs.*
+
+#
+# Object Oriented System for emacs lisp
+#
+# xemacs-packages/pkginfo/MANIFEST.eieio => xemtex/xemacs-packages/pkginfo/MANIFEST.eieio
+# xemacs-packages/lisp/eieio/* => xemtex/xemacs-packages/lisp/eieio/*
+# xemacs-packages/man/eieio/* => xemtex/xemacs-packages/man/eieio/*
+
+#
+# Forms
+#
+xemacs-packages/pkginfo/MANIFEST.forms => xemtex/xemacs-packages/pkginfo/MANIFEST.forms
+xemacs-packages/lisp/forms/* => xemtex/xemacs-packages/lisp/forms/*
+xemacs-packages/man/forms/* => xemtex/xemacs-packages/man/forms/*
+xemacs-packages/info/forms.* => xemtex/xemacs-packages/info/forms.*
+
+#
+# Fortran support
+# 
+# xemacs-packages/pkginfo/MANIFEST.fortran-modes => xemtex/xemacs-packages/pkginfo/MANIFEST.fortran-modes
+# xemacs-packages/lisp/fortran-modes/* => xemtex/xemacs-packages/lisp/fortran-modes/*
+
+#
+# Icons depending on buffer mode
+#
+# xemacs-packages/pkginfo/MANIFEST.frame-icon => xemtex/xemacs-packages/pkginfo/MANIFEST.frame-icon
+# xemacs-packages/lisp/frame-icon/* => xemtex/xemacs-packages/lisp/frame-icon/*
+# xemacs-packages/etc/frame-icon/* => xemtex/xemacs-packages/etc/frame-icon/*
+
+#
+# FSF Emacs compatibility
+#
+xemacs-packages/pkginfo/MANIFEST.fsf-compat => xemtex/xemacs-packages/pkginfo/MANIFEST.fsf-compat
+xemacs-packages/lisp/fsf-compat/* => xemtex/xemacs-packages/lisp/fsf-compat/*
+
+#
+# Haskell support
+#
+# xemacs-packages/pkginfo/MANIFEST.haskell-mode => xemtex/xemacs-packages/pkginfo/MANIFEST.haskell-mode
+# xemacs-packages/lisp/haskell-mode/* => xemtex/xemacs-packages/lisp/haskell-mode/*
+# xemacs-packages/etc/haskell-mode/* => xemtex/xemacs-packages/etc/haskell-mode/*
+
+#
+# HTML edition support
+#
+xemacs-packages/pkginfo/MANIFEST.hm--html-menus => xemtex/xemacs-packages/pkginfo/MANIFEST.hm--html-menus
+xemacs-packages/lisp/hm--html-menus/* => xemtex/xemacs-packages/lisp/hm--html-menus/*
+xemacs-packages/man/hm--html-menus/* => xemtex/xemacs-packages/man/hm--html-menus/*
+xemacs-packages/info/hm--html-mode.* => xemtex/xemacs-packages/info/hm--html-mode.*
+xemacs-packages/etc/hm--html-menus/* => xemtex/xemacs-packages/etc/hm--html-menus/*
+
+#
+# Buffer mode
+#
+xemacs-packages/pkginfo/MANIFEST.ibuffer => xemtex/xemacs-packages/pkginfo/MANIFEST.ibuffer
+xemacs-packages/lisp/ibuffer/* => xemtex/xemacs-packages/lisp/ibuffer/*
+
+#
+# Grep support
+#
+xemacs-packages/pkginfo/MANIFEST.igrep => xemtex/xemacs-packages/pkginfo/MANIFEST.igrep
+xemacs-packages/lisp/igrep/* => xemtex/xemacs-packages/lisp/igrep/*
+
+#
+# Lisp support
+#
+# xemacs-packages/pkginfo/MANIFEST.ilisp => xemtex/xemacs-packages/pkginfo/MANIFEST.ilisp
+# xemacs-packages/lisp/ilisp/* => xemtex/xemacs-packages/lisp/ilisp/*
+# xemacs-packages/man/ilisp/* => xemtex/xemacs-packages/man/ilisp/*
+# xemacs-packages/info/ilisp.* => xemtex/xemacs-packages/info/ilisp.*
+# xemacs-packages/etc/ilisp/* => xemtex/xemacs-packages/etc/ilisp/*
+
+#
+# ISpell support
+#
+xemacs-packages/pkginfo/MANIFEST.ispell => xemtex/xemacs-packages/pkginfo/MANIFEST.ispell
+xemacs-packages/lisp/ispell/* => xemtex/xemacs-packages/lisp/ispell/*
+xemacs-packages/man/ispell/* => xemtex/xemacs-packages/man/ispell/*
+xemacs-packages/info/ispell.* => xemtex/xemacs-packages/info/ispell.*
+
+#
+# Java development environment
+#
+xemacs-packages/pkginfo/MANIFEST.jde => xemtex/xemacs-packages/pkginfo/MANIFEST.jde
+xemacs-packages/lisp/jde/* => xemtex/xemacs-packages/lisp/jde/*
+xemacs-packages/etc/jde/* => xemtex/xemacs-packages/etc/jde/*
+
+#
+# Unify latin encoding variants
+# 
+xemacs-packages/pkginfo/MANIFEST.latin-unity => xemtex/xemacs-packages/pkginfo/MANIFEST.latin-unity
+xemacs-packages/lisp/latin-unity/* => xemtex/xemacs-packages/lisp/latin-unity/*
+xemacs-packages/man/latin-unity/* => xemtex/xemacs-packages/man/latin-unity/*
+xemacs-packages/info/latin-unity.* => xemtex/xemacs-packages/info/latin-unity.*
+xemacs-packages/etc/latin-unity/* => xemtex/xemacs-packages/etc/latin-unity/*
+
+xemacs-packages/pkginfo/MANIFEST.locale => xemtex/xemacs-packages/pkginfo/MANIFEST.locale
+xemacs-packages/lisp/locale/* => xemtex/xemacs-packages/lisp/locale/*
+
+#
+#
+#
+xemacs-packages/pkginfo/MANIFEST.net-utils => xemtex/xemacs-packages/pkginfo/MANIFEST.net-utils
+xemacs-packages/lisp/net-utils/* => xemtex/xemacs-packages/lisp/net-utils/*
+
+#
+# OCaml support
+#
+# xemacs-packages/pkginfo/MANIFEST.ocaml => xemtex/xemacs-packages/pkginfo/MANIFEST.ocaml
+# xemacs-packages/lisp/ocaml/* => xemtex/xemacs-packages/lisp/ocaml/*
+
+#
+# OS support
+#
+xemacs-packages/pkginfo/MANIFEST.os-utils => xemtex/xemacs-packages/pkginfo/MANIFEST.os-utils
+xemacs-packages/lisp/os-utils/* => xemtex/xemacs-packages/lisp/os-utils/*
+
+#
+# PC support
+#
+xemacs-packages/pkginfo/MANIFEST.pc => xemtex/xemacs-packages/pkginfo/MANIFEST.pc
+xemacs-packages/lisp/pc/* => xemtex/xemacs-packages/lisp/pc/*
+
+#
+# Perl support
+#
+xemacs-packages/pkginfo/MANIFEST.perl-modes => xemtex/xemacs-packages/pkginfo/MANIFEST.perl-modes
+xemacs-packages/lisp/perl-modes/* => xemtex/xemacs-packages/lisp/perl-modes/*
+
+#
+# Emacs preview support
+#
+xemacs-packages/pkginfo/MANIFEST.preview => xemtex/xemacs-packages/pkginfo/MANIFEST.preview
+xemacs-packages/lisp/preview/* => xemtex/xemacs-packages/lisp/preview/*
+xemacs-packages/info/preview-latex.* => xemtex/xemacs-packages/info/preview-latex.*
+xemacs-packages/etc/preview/* => xemtex/xemacs-packages/etc/preview/*
+
+#
+# Various programming modes
+#
+# xemacs-packages/pkginfo/MANIFEST.prog-modes => xemtex/xemacs-packages/pkginfo/MANIFEST.prog-modes
+# xemacs-packages/lisp/prog-modes/* => xemtex/xemacs-packages/lisp/prog-modes/*
+
+#
+#
+# Print buffer
+xemacs-packages/pkginfo/MANIFEST.ps-print => xemtex/xemacs-packages/pkginfo/MANIFEST.ps-print
+xemacs-packages/lisp/ps-print-nomule/* => xemtex/xemacs-packages/lisp/ps-print-nomule/*
+
+xemacs-packages/pkginfo/MANIFEST.ps-print-nomule => xemtex/xemacs-packages/pkginfo/MANIFEST.ps-print-nomule
+xemacs-packages/lisp/ps-print/* => xemtex/xemacs-packages/lisp/ps-print/*
+xemacs-packages/etc/ps-print/* => xemtex/xemacs-packages/etc/ps-print/*
+
+#
+# SGML support
+#
+xemacs-packages/pkginfo/MANIFEST.psgml => xemtex/xemacs-packages/pkginfo/MANIFEST.psgml
+xemacs-packages/lisp/psgml/* => xemtex/xemacs-packages/lisp/psgml/*
+xemacs-packages/man/psgml/* => xemtex/xemacs-packages/man/psgml/*
+xemacs-packages/info/psgml-api.* => xemtex/xemacs-packages/info/psgml-api.*
+xemacs-packages/info/psgml.* => xemtex/xemacs-packages/info/psgml.*
+xemacs-packages/etc/psgml/* => xemtex/xemacs-packages/etc/psgml/*
+
+xemacs-packages/pkginfo/MANIFEST.psgml-dtds => xemtex/xemacs-packages/pkginfo/MANIFEST.psgml-dtds
+xemacs-packages/lisp/psgml-dtds/* => xemtex/xemacs-packages/lisp/psgml-dtds/*
+xemacs-packages/etc/psgml-dtds/* => xemtex/xemacs-packages/etc/psgml-dtds/*
+
+#
+# Python support
+#
+# xemacs-packages/pkginfo/MANIFEST.python-modes => xemtex/xemacs-packages/pkginfo/MANIFEST.python-modes
+# xemacs-packages/lisp/python-modes/* => xemtex/xemacs-packages/lisp/python-modes/*
+
+#
+# TeX references
+#
+xemacs-packages/pkginfo/MANIFEST.reftex => xemtex/xemacs-packages/pkginfo/MANIFEST.reftex
+xemacs-packages/lisp/reftex/* => xemtex/xemacs-packages/lisp/reftex/*
+xemacs-packages/man/reftex/* => xemtex/xemacs-packages/man/reftex/*
+xemacs-packages/info/reftex.* => xemtex/xemacs-packages/info/reftex.*
+xemacs-packages/etc/reftex/* => xemtex/xemacs-packages/etc/reftex/*
+
+#
+# Ruby support
+#
+xemacs-packages/pkginfo/MANIFEST.ruby-modes => xemtex/xemacs-packages/pkginfo/MANIFEST.ruby-modes
+xemacs-packages/lisp/ruby-modes/* => xemtex/xemacs-packages/lisp/ruby-modes/*
+
+#
+# Scheme support
+#
+# xemacs-packages/pkginfo/MANIFEST.scheme => xemtex/xemacs-packages/pkginfo/MANIFEST.scheme
+# xemacs-packages/lisp/scheme/* => xemtex/xemacs-packages/lisp/scheme/*
+
+#
+#
+#
+xemacs-packages/pkginfo/MANIFEST.sgml => xemtex/xemacs-packages/pkginfo/MANIFEST.sgml
+xemacs-packages/lisp/sgml/* => xemtex/xemacs-packages/lisp/sgml/*
+
+xemacs-packages/pkginfo/MANIFEST.sh-script => xemtex/xemacs-packages/pkginfo/MANIFEST.sh-script
+xemacs-packages/lisp/sh-script/* => xemtex/xemacs-packages/lisp/sh-script/*
+
+xemacs-packages/pkginfo/MANIFEST.slider => xemtex/xemacs-packages/pkginfo/MANIFEST.slider
+xemacs-packages/lisp/slider/* => xemtex/xemacs-packages/lisp/slider/*
+xemacs-packages/etc/slider/* => xemtex/xemacs-packages/etc/slider/*
+
+#
+# SML support
+#
+xemacs-packages/pkginfo/MANIFEST.sml-mode => xemtex/xemacs-packages/pkginfo/MANIFEST.sml-mode
+xemacs-packages/lisp/sml-mode/* => xemtex/xemacs-packages/lisp/sml-mode/*
+xemacs-packages/man/sml-mode/* => xemtex/xemacs-packages/man/sml-mode/*
+xemacs-packages/info/sml-mode.* => xemtex/xemacs-packages/info/sml-mode.*
+
+#
+# Sounds
+#
+xemacs-packages/pkginfo/MANIFEST.sounds-au => xemtex/xemacs-packages/pkginfo/MANIFEST.sounds-au
+xemacs-packages/lisp/sounds-au/* => xemtex/xemacs-packages/lisp/sounds-au/*
+xemacs-packages/pkginfo/MANIFEST.sounds-wav => xemtex/xemacs-packages/pkginfo/MANIFEST.sounds-wav
+xemacs-packages/lisp/sounds-wav/* => xemtex/xemacs-packages/lisp/sounds-wav/*
+xemacs-packages/etc/sounds/* => xemtex/xemacs-packages/etc/sounds/*
+
+xemacs-packages/pkginfo/MANIFEST.speedbar => xemtex/xemacs-packages/pkginfo/MANIFEST.speedbar
+xemacs-packages/lisp/speedbar/* => xemtex/xemacs-packages/lisp/speedbar/*
+xemacs-packages/man/speedbar/* => xemtex/xemacs-packages/man/speedbar/*
+xemacs-packages/info/speedbar.* => xemtex/xemacs-packages/info/speedbar.*
+
+xemacs-packages/pkginfo/MANIFEST.texinfo => xemtex/xemacs-packages/pkginfo/MANIFEST.texinfo
+xemacs-packages/lisp/texinfo/* => xemtex/xemacs-packages/lisp/texinfo/*
+
+xemacs-packages/pkginfo/MANIFEST.text-modes => xemtex/xemacs-packages/pkginfo/MANIFEST.text-modes
+xemacs-packages/lisp/text-modes/* => xemtex/xemacs-packages/lisp/text-modes/*
+
+xemacs-packages/pkginfo/MANIFEST.textools => xemtex/xemacs-packages/pkginfo/MANIFEST.textools
+xemacs-packages/lisp/textools/* => xemtex/xemacs-packages/lisp/textools/*
+
+xemacs-packages/pkginfo/MANIFEST.time => xemtex/xemacs-packages/pkginfo/MANIFEST.time
+xemacs-packages/lisp/time/* => xemtex/xemacs-packages/lisp/time/*
+xemacs-packages/etc/time/* => xemtex/xemacs-packages/etc/time/*
+
+xemacs-packages/pkginfo/MANIFEST.tramp => xemtex/xemacs-packages/pkginfo/MANIFEST.tramp
+xemacs-packages/lisp/tramp/* => xemtex/xemacs-packages/lisp/tramp/*
+xemacs-packages/man/tramp/* => xemtex/xemacs-packages/man/tramp/*
+xemacs-packages/info/tramp.* => xemtex/xemacs-packages/info/tramp.*
+
+#
+# VHDL support
+#
+# xemacs-packages/pkginfo/MANIFEST.vhdl => xemtex/xemacs-packages/pkginfo/MANIFEST.vhdl
+# xemacs-packages/lisp/vhdl/* => xemtex/xemacs-packages/lisp/vhdl/*
+# xemacs-packages/man/vhdl/* => xemtex/xemacs-packages/man/vhdl/*
+# xemacs-packages/info/vhdl-mode.* => xemtex/xemacs-packages/info/vhdl-mode.*
+
+#
+#
+#
+xemacs-packages/pkginfo/MANIFEST.view-process => xemtex/xemacs-packages/pkginfo/MANIFEST.view-process
+xemacs-packages/lisp/view-process/* => xemtex/xemacs-packages/lisp/view-process/*
+
+#
+# XEmacs base package
+#
+xemacs-packages/pkginfo/MANIFEST.xemacs-base => xemtex/xemacs-packages/pkginfo/MANIFEST.xemacs-base
+xemacs-packages/lisp/xemacs-base/* => xemtex/xemacs-packages/lisp/xemacs-base/*
+
+#
+# XEmacs development package
+#
+
+xemacs-packages/pkginfo/MANIFEST.xemacs-devel => xemtex/xemacs-packages/pkginfo/MANIFEST.xemacs-devel
+xemacs-packages/lisp/xemacs-devel/* => xemtex/xemacs-packages/lisp/xemacs-devel/*
+xemacs-packages/man/xemacs-devel/* => xemtex/xemacs-packages/man/xemacs-devel/*
+
+#
+# XSLT support
+#
+xemacs-packages/pkginfo/MANIFEST.xslide => xemtex/xemacs-packages/pkginfo/MANIFEST.xslide
+xemacs-packages/lisp/xslide/* => xemtex/xemacs-packages/lisp/xslide/*
+
+xemacs-packages/pkginfo/MANIFEST.xslt-process => xemtex/xemacs-packages/pkginfo/MANIFEST.xslt-process
+xemacs-packages/lisp/xslt-process/* => xemtex/xemacs-packages/lisp/xslt-process/*
+xemacs-packages/man/xslt-process/* => xemtex/xemacs-packages/man/xslt-process/*
+xemacs-packages/info/xslt-process.* => xemtex/xemacs-packages/info/xslt-process.*
+xemacs-packages/etc/xslt-process/* => xemtex/xemacs-packages/etc/xslt-process/*
+
+#
+# XEmTeX
+#
+xemacs-packages/pkginfo/MANIFEST.xemtex => xemtex/xemacs-packages/pkginfo/MANIFEST.xemtex
+xemacs-packages/lisp/xemtex/* => xemtex/xemacs-packages/lisp/xemtex/*
+xemacs-packages/man/xemtex/* => xemtex/xemacs-packages/man/xemtex/*
+xemacs-packages/info/xemtex.* => xemtex/xemacs-packages/info/xemtex.*
+xemacs-packages/etc/xemtex/* => xemtex/xemacs-packages/etc/xemtex/*
+
+##
+## GHOSTSCRIPT
+##
+
+[source = "$GsToolsDir/gs7.05"]
+
+bin/* => bin/win32/*
+doc/* => xemtex/doc/ghostscript/*
+examples/* => xemtex/doc/ghostscript/examples/*
+lib/* => xemtex/gslib/*
+
+[source = "$GsToolsDir"]
+
+fonts/* => xemtex/gsfonts/*
+
+##
+## NETPBM
+##
+#[source = "$NetPBMDir"]
+bin/*.dll => bin/win32
+bin/pnmcrop.exe => bin/win32
+bin/ppmtogif => bin/win32
+bin/ppmquant.exe => bin/win32
+bin/pnmflip.exe => bin/win32
+bin/pnmcat.exe => bin/win32
+bin/pnmfile.exe => bin/win32
+bin/pbmmake.exe => bin/win32
+bin/pnmtopng.exe => bin/win32
+
+#FIXME: add converters ? 
+
+##
+## ImageMagick
+##
+[source = "$ImageMagick"]
+
+convert.exe => bin/win32/convert.exe
+X11.dll => bin/win32/X11.dll
+Xext.dll => bin/win32/Xext.dll
+CORE_RL_bzlib_.dll => bin/win32/CORE_RL_bzlib_.dll
+CORE_RL_fpx_.dll => bin/win32/CORE_RL_fpx_.dll
+CORE_RL_jbig_.dll => bin/win32/CORE_RL_jbig_.dll
+CORE_RL_jpeg_.dll => bin/win32/CORE_RL_jpeg_.dll
+CORE_RL_lcms_.dll => bin/win32/CORE_RL_lcms_.dll
+CORE_RL_libxml_.dll => bin/win32/CORE_RL_libxml_.dll
+CORE_RL_Magick++_.dll => bin/win32/CORE_RL_Magick++_.dll
+CORE_RL_magick_.dll => bin/win32/CORE_RL_magick_.dll
+CORE_RL_png_.dll => bin/win32/CORE_RL_png_.dll
+CORE_RL_tiff_.dll => bin/win32/CORE_RL_tiff_.dll
+CORE_RL_ttf_.dll => bin/win32/CORE_RL_ttf_.dll
+CORE_RL_xlib_.dll => bin/win32/CORE_RL_xlib_.dll
+CORE_RL_zlib_.dll => bin/win32/CORE_RL_zlib_.dll
+modules/* => xemtex/imagemagick/modules/*
+*.txt => xemtex/doc/imagemagick/*
+*.html => xemtex/doc/imagemagick/*
+licenses/* => xemtex/doc/imagemagick/licences/*
+www/* => xemtex/doc/imagemagick/www/*
+
+##
+## Perl
+##
+# [source = "$PerlDir"]
+# 
+# bin/perl.exe => bin/win32/perl.exe
+# bin/tl80perl56.dll => bin/win32/tl80perl56.dll
+# lib/* => xemtex/perl/lib/*
+# site/* => xemtex/perl/site/*
+# html/* => xemtex/doc/perl/*
