@@ -1,0 +1,2 @@
+: ${with_cxx_runtime_hack=yes}
+export with_cxx_runtime_hack

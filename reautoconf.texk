@@ -1,0 +1,109 @@
+#! /bin/sh
+
+# A replacement for the "reautoconf" script found at the root of the
+# web2c/teTeX/TeX-Live tree Used to run autoconf Versions 2.13 (old)
+# resp. 2.59 (new) in various directories.  Adapted from Peter
+# Breitenlohner's original version.
+
+# Copyright 2005 Olaf Weber.
+# Copyright 2004 Peter Breitenlohner.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+[ -f ./texk/make/common.mk ] || {
+	echo "*** can't find ./texk/make/common.mk"
+	exit 1
+}
+
+# Remember the topdir.
+topdir=`pwd`
+
+# "acold" runs autoconf-2.13
+# "acnew" runs autoconf-2.59
+
+acold () {	# $dir=current
+	echo "    Running autoconf-2.13 in \`$dir'"
+	$topdir/texk/autoconf2.13 -m "$topdir/texk/etc/autoconf"
+}
+
+# For autoconf-2.59 two things have to be done:
+#
+# 1. Rebuild aclocal.m4, using a patched version of aclocal-1.9.5.
+#
+# The patches (as obtained from one of the automake maintainers)
+# can be found in
+#	ftp://ftpth.mppmu.mpg.de/pub/peb/web2c/autoconf/aclocal.patch
+# and should be part of the next release, i.e., automake-1.9.6.
+#
+# Obviously directories that come with a prebuilt aclocal.m4, but without
+# the ingredients to rebuild it, need special treatment.
+#
+# 2. Run /usr/local/bin/autoconf
+
+###################################
+# The patch quoted above fixes only part of the sinclude problems.
+# The generated aclocal.m4 still contains erroneous m4_include's
+# that have to be removed before running autoconf.
+###################################
+
+acnew () {	# $dir=current, $dir/$rdir->./texk/m4 with the KPSE macros.
+	#arg="-I $rdir"
+	#[ -n "$1" ] && {
+	#	# Move existing aclocal.m4 into subdir and build new one
+	#	mkdir m4
+	#	mv aclocal.m4 m4/oldlocal.m4
+	#	arg="-I m4 $arg"
+	#}
+	#echo "Running aclocal-1.9 (patched) in \`$dir'"
+	#$topdir/config/aclocal-1.9peb --force $arg || return
+	echo "    Running autoconf-2.59 in \`$dir'"
+	/usr/bin/autoconf2.50 --force || return
+	#rm -rf autom4te.cache
+}
+
+# Autoconf in .
+dir=. rdir=texk/m4
+acold
+
+# Autoconf in all other directories
+for dir in `find utils libs texk -name configure.in | sed 's,/configure.in$,,'`; do
+	case $dir in
+		*/texi*)	# texinfo and texi2html are automade
+		;;
+		*/ncurses)	# ncurses has it's own special configure
+		;;
+		utils/*)	# Skip everything in utils for now.
+		;;
+		*/curl)		# Is automade.
+		;;
+		texk)	rdir=m4
+			(cd $dir; acold)
+		;;
+		texk/*)	rdir=`echo $dir | sed -e 's,^texk/,,' -e 's,[^/]*,..,g'`/m4
+			case $dir in
+				*/dvipng|*/devnag|*/dvipdfmx)
+					(cd $dir; acnew);;
+				*)	(cd $dir; acold);;
+			esac
+		;;
+		*)	rdir=`echo $dir | sed 's,[^/]*,..,g'`/texk/m4
+			case $dir in
+			*/t1utils|*/lcdf-typetools|*/curl|*/expat)
+				(cd $dir; acnew) ;;
+			*)	(cd $dir; acold) ;;
+			esac
+		;;
+	esac
+done

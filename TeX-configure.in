@@ -1,0 +1,229 @@
+dnl Top-level configure for TeX Live build.  Public domain.
+
+AC_INIT(texk/make/common.mk)
+
+AC_CONFIG_AUX_DIR(config)
+AC_SET_MAKE
+AC_PROG_CC
+AC_PROG_CXX
+
+AC_PROG_LEX
+case $LEX in
+  lex)
+    OLDIFS=$IFS; IFS=:
+    foundLEX=false
+    for p in $PATH; do
+      if test -f "$p/lex"; then
+        foundLEX=true
+        break
+      fi
+    done
+    IFS=$OLDIFS
+  ;;
+esac
+if $foundLEX; then :; else
+  AC_MSG_ERROR(no working lexical scanner (lex/flex) found)
+fi
+
+AC_PROG_YACC
+case $YACC in
+  yacc)
+    OLDIFS=$IFS; IFS=:
+    foundYACC=false
+    for p in $PATH; do
+      if test -f "$p/yacc"; then
+        foundYACC=true
+        break
+      fi
+    done
+    IFS=$OLDIFS
+  ;;
+esac
+if $foundYACC; then :; else
+  AC_MSG_ERROR(no working parser generator (yacc/bison) found)
+fi
+
+AC_CANONICAL_SYSTEM
+
+dnl Various compiler directives
+dnl Various compiler directives
+AC_MSG_CHECKING(whether to define additional compiler specific flags)
+case "$target" in
+    alpha*-dec*)
+        if test "$CC" = "cc"; then
+          CFLAGS="$CFLAGS -Olimit 1000 -std1"; export CFLAGS
+          AC_MSG_WARN(Digital Unix's cc)
+        fi
+        ;;
+    hp*hpux*)
+        if test "$CC" = "cc"; then
+          CFLAGS="$CFLAGS -Aa +e -D_HPUX_SOURCE"; export CFLAGS
+          AC_MSG_WARN(HP-UX's cc)
+        fi
+        ;;
+    *-darwin*)
+        : ${INSTALL='/usr/bin/install -c -p'}; export INSTALL
+        : ${NCURSES_CPP_FIX=true}; export NCURSES_CPP_FIX
+        ;;
+    *)
+        AC_MSG_RESULT(no)
+        ;;
+esac
+
+dnl We check this here, because otherwise some worse check (from ncurses?)
+dnl is used instead for the cached value.
+AC_HEADER_SYS_WAIT
+
+AC_PROG_INSTALL
+AC_PROG_MAKE_SET
+AC_PROG_LN_S
+AC_FUNC_ALLOCA
+AC_PROG_RANLIB
+AC_PATH_X
+
+dnl These are included for compilation with either teTeX or standalone xdvik
+dnl (tetex will only provide tetex.ac, xdvik only xdvik.ac)    
+sinclude(tetex.ac)
+sinclude(texlive.ac)
+sinclude(xdvik.ac)
+sinclude(withenable.ac)
+sinclude(utils/dialog/withenable.ac)
+sinclude(texk/withenable.ac)
+sinclude(texk/kpathsea/xt.ac)
+sinclude(texk/kpathsea/withenable.ac)
+sinclude(texk/web2c/withenable.ac)
+sinclude(texk/xdvik/withenable.ac)
+sinclude(libs/ncurses/withenable.ac)
+sinclude(libs/libpng/withenable.ac)
+sinclude(libs/t1lib/withenable.ac)
+sinclude(libs/zlib/withenable.ac)
+sinclude(libs/gd/withenable.ac)
+sinclude(libs/freetype/withenable.ac)
+
+NCURSESDIR=libs/ncurses
+LIBT1DIR=libs/t1lib
+LIBTYPE1DIR=libs/type1
+LIBPNGDIR=libs/libpng
+ZLIBDIR=libs/zlib
+LIBXPDFDIR=libs/xpdf
+FREETYPEDIR=libs/freetype
+GDDIR=libs/gd
+
+test "$no_x" = yes && { with_xdvik=no; with_oxdvik=no; }
+export with_xdvik with_oxdvik
+
+# we need libt1 for dvipng, xdvik, oxdvik
+test ! -d $srcdir/$LIBT1DIR   && : ${needs_libt1=no}
+test "$with_dvipng"  != no    && : ${needs_libt1=yes}
+test "$with_xdvik"   != no    && : ${needs_libt1=yes}
+test "$with_oxdvik"  != no    && : ${needs_libt1=yes}
+: ${needs_libt1=no}
+export needs_libt1
+
+# we need ncurses for dialog
+test ! -d $srcdir/$NCURSESDIR && : ${needs_ncurses=no}
+test "$with_dialog"  != no    && : ${needs_ncurses=yes}
+: ${needs_ncurses=no}
+export needs_ncurses
+
+# we need pnglib for dvipng, pdf[ex]tex
+test ! -d $srcdir/$LIBPNGDIR  && : ${needs_pnglib=no}
+test "$with_dvipng"  != no    && : ${needs_pnglib=yes}
+test "$with_pdftex"  != no    && : ${needs_pnglib=yes}
+test "$with_pdfetex" != no    && : ${needs_pnglib=yes}
+: ${needs_pnglib=no}
+export needs_pnglib
+
+# we need zlib for dvipng, texinfo, pdf[ex]tex
+test ! -d $srcdir/$ZLIBDIR    && : ${needs_zlib=no}
+test "$with_dvipng"  != no    && : ${needs_zlib=yes}
+test "$with_pdftex"  != no    && : ${needs_zlib=yes}
+test "$with_pdfetex" != no    && : ${needs_zlib=yes}
+test "$with_texinfo" != no    && : ${needs_zlib=yes}
+: ${needs_zlib=no}
+export needs_zlib
+
+# we need libxpdf for pdf[ex]tex
+test ! -d $srcdir/$LIBXPDFDIR && : ${needs_libxpdf=no}
+test "$with_pdftex"  != no    && : ${needs_libxpdf=yes}
+test "$with_pdfetex"  != no    && : ${needs_libxpdf=yes}
+: ${needs_libxpdf=no}
+export needs_libxpdf
+
+# we need gd for dvipng
+test ! -d $srcdir/$GDDIR && : ${needs_gd=no}
+test "$with_dvipng"  != no    && : ${needs_gd=yes}
+: ${needs_gd=no}
+export needs_gd
+
+# we need freetype for ttf2pk
+test ! -d $srcdir/$FREETYPEDIR  && : ${needs_freetype=no}
+test ! -d $srcdir/texk/ttf2pk   && : ${needs_freetype=no}
+test "$with_ttf2pk" = no        && : ${needs_freetype=no}
+: ${needs_freetype=yes}
+export needs_freetype
+
+dnl We cannot use variables (e.g. $LIBPNGDIR) for sinclude, so...
+sinclude(libs/libpng/libpng.ac)
+sinclude(libs/zlib/zlib.ac)
+sinclude(libs/ncurses/ncurses.ac)
+sinclude(libs/xpdf/libxpdf.ac)
+sinclude(libs/t1lib/t1lib.ac)
+sinclude(libs/gd/gd.ac)
+sinclude(libs/freetype/freetype.ac)
+
+LIBSDEP="$CURSESDEP $ZLIBDEP $LIBPNGDEP $LIBXPDFDEP $LIBT1DEP $GDDEP $FREETYPEDEP"
+
+LIBSDIRS=
+test "$needs_ncurses" = yes && test "$using_system_ncurses" != yes \
+  && LIBSDIRS="$NCURSESDIR $LIBSDIRS"
+test "$needs_pnglib" = yes && test "$using_system_pnglib" != yes \
+  && LIBSDIRS="$LIBPNGDIR $LIBSDIRS"
+test "$needs_zlib" = yes && test "$using_system_zlib" != yes \
+  && LIBSDIRS="$ZLIBDIR $LIBSDIRS"
+test "$needs_libxpdf" = yes \
+  && LIBSDIRS="$LIBXPDFDIR $LIBSDIRS"
+test "$needs_libt1" = yes && test "$using_system_t1lib" != yes \
+  && LIBSDIRS="$LIBT1DIR $LIBTYPE1DIR $LIBSDIRS"
+test "$needs_gd" = yes && test "$using_system_gd" != yes \
+  && LIBSDIRS="$GDDIR $LIBSDIRS"
+test "$needs_freetype" = yes && test "$using_system_freetype" != yes \
+  && LIBSDIRS="$FREETYPEDIR $LIBSDIRS"
+
+AC_CONFIG_SUBDIRS([libs])
+
+PKGS='dialog lcdf-typetools pdfopen psutils t1utils texi2html texinfo'
+ESUBDIRS=
+for pkg in $PKGS; do
+  if test -d $srcdir/utils/$pkg; then
+    if eval "test \"`echo '$with_'${pkg}`\" != no"; then
+      ESUBDIRS="$ESUBDIRS utils/$pkg"
+      AC_CONFIG_SUBDIRS([utils/$pkg])
+      test -d utils || mkdir utils
+    fi
+  fi
+done
+
+AC_SUBST(ESUBDIRS)
+AC_SUBST(LIBSDEP)
+AC_SUBST(LIBSDIRS)
+
+# initialize texmf tree with fmtutil only for teTeX and TeX Live
+if test ! -d $srcdir/texk/tetex || test -n "$xdvik_standalone" || test "x$cross_compiling" = xyes; then
+  FMU=
+else
+  FMU='# '
+fi
+AC_SUBST(FMU)
+
+# more customizations for standalone xdvik
+if test -z "$xdvik_standalone"; then
+  INSTDIRS='$(ESUBDIRS)'
+else
+  INSTDIRS=texk/xdvik
+fi
+AC_SUBST(INSTDIRS)
+
+AC_CONFIG_SUBDIRS([texk])
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT

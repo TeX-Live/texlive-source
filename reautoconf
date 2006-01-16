@@ -1,0 +1,111 @@
+#!/bin/sh
+
+echo .
+autoconf -m texk/etc/autoconf
+sed -e 's@--enable-multiplatform.*put executables in bin/PLATFORM@--disable-multiplatform     put executables in bin instead of bin/PLATFORM@' \
+    -e 's@window-capable METAFONT is mfw@window-capable METAFONT is mfw (default)@' \
+    -e 's@--with-cxx-runtime-hack.*runtime statically@--without-cxx-runtime-hack do not link C++ runtime statically@' \
+  < configure > configure_tmp$$
+cat configure_tmp$$ > configure; rm configure_tmp$$
+
+dir=libs
+  (test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../texk/etc/autoconf)
+
+# Don't pass --cache-file argument to avoid running different autoconf
+# versions with a common cache.
+for f in configure libs/configure; do
+  sed 's@ac_sub_configure_args --cache-file=.ac_sub_cache_file@ac_sub_configure_args@' < $f > configure_tmp$$
+  cat configure_tmp$$ > $f
+  rm -f configure_tmp$$
+done
+
+dir=texk
+  (test -d $dir || exit; cd $dir; echo $dir; autoconf -m etc/autoconf)
+
+dir=utils/dialog
+  (test -d $dir || exit; cd $dir; echo $dir; autoconf)
+
+dir=utils/t1utils
+  (test -d $dir || exit; cd $dir; echo $dir; autoconf)
+
+dir=utils/texinfo
+  (test -d $dir || exit; cd $dir; echo $dir; automake -i Makefile doc/Makefile lib/Makefile makeinfo/Makefile util/Makefile; autoconf; touch aclocal.m4 ; touch Makefile.in;
+ touch stamp-h.in; touch configure)
+
+dir=libs/ncurses
+  (test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../../texk/etc/autoconf)
+
+# just to remember...
+#ed libs/ncurses/configure >/dev/null <<'eof'
+#1a
+#
+## added by Thomas Esser for teTeX to work around a bug in MacOS X (darwin):
+#test "x$NCURSES_CPP_FIX" = xtrue \
+#  && { CPPFLAGS="-no-cpp-precomp $CPPFLAGS"; export CPPFLAGS; }
+#
+#.
+#w
+#q
+#eof
+
+
+dir=libs/libwww
+  (test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../../texk/etc/autoconf)
+dir=libs/xpdf
+  (test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../../texk/etc/autoconf)
+
+dir=libs/t1lib
+  (test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../../texk/etc/autoconf)
+dir=libs/type1
+  (test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../../texk/etc/autoconf)
+
+dir=texk/bibtex8
+(test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../etc/autoconf)
+dir=texk/chktex
+(test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../etc/autoconf)
+dir=texk/devnag
+(test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../etc/autoconf)
+dir=texk/dtl
+(test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../etc/autoconf)
+dir=texk/dvidvi
+(test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../etc/autoconf)
+dir=texk/dviljk
+(test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../etc/autoconf)
+dir=texk/dvipdfm
+(test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../etc/autoconf)
+dir=texk/dvipsk
+(test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../etc/autoconf)
+dir=texk/gsftopk
+(test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../etc/autoconf)
+dir=texk/ispell
+(test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../etc/autoconf)
+dir=texk/kpathsea
+(test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../etc/autoconf)
+dir=texk/lacheck
+(test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../etc/autoconf)
+dir=texk/makeindexk
+(test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../etc/autoconf)
+dir=texk/musixflx
+(test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../etc/autoconf)
+dir=texk/owindvi
+(test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../etc/autoconf)
+dir=texk/ps2pkm
+(test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../etc/autoconf)
+dir=texk/seetexk
+(test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../etc/autoconf)
+dir=texk/tetex
+(test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../etc/autoconf)
+dir=texk/tex4htk
+(test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../etc/autoconf)
+dir=texk/texlive
+(test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../etc/autoconf)
+dir=texk/ttf2pk
+(test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../etc/autoconf)
+dir=texk/ttfdump
+(test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../etc/autoconf)
+dir=texk/web2c
+(test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../etc/autoconf)
+dir=texk/windvi
+(test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../etc/autoconf)
+dir=texk/xdvik
+(test -d $dir || exit; cd $dir; echo $dir; autoconf -m ../etc/autoconf)

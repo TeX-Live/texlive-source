@@ -1,0 +1,62 @@
+# for texinfo
+: ${enable_install_warnings=no}
+export enable_install_warnings
+
+# e.g. for lcdf-typetools
+: ${enable_tetex_build=yes}
+export enable_tetex_build
+
+# we just build pdfetex, not pdftex and not etex:
+: ${with_etex=no} ${with_pdftex=no}
+export with_etex with_pdftex
+
+: ${enable_shared=no}
+export enable_shared
+
+# teTeX uses fmtutil / mktexfmt
+: ${enable_fmtutil=yes} ${with_mktexfmt_default=yes}
+export enable_fmtutil with_mktexfmt_default
+
+: ${enable_multiplatform=yes}
+if test "x$enable_multiplatform" = xyes \
+  && test "x$bindir" = 'x${exec_prefix}/bin'
+then
+  bindir="$bindir/$host"
+  ac_configure_args="$ac_configure_args --bindir=$bindir"
+fi
+test "${enable_nls+set}" = set || { enable_nls=no; export enable_nls; }
+
+AC_PREFIX_DEFAULT(/usr/local/teTeX)
+if test "x$prefix" = xNONE; then
+  prefix=$ac_default_prefix
+  ac_configure_args="$ac_configure_args --prefix=$ac_default_prefix"
+fi
+
+# teTeX enables tex-ipc by default
+enable_ipc=yes; export enable_ipc
+
+case "$target" in
+  *nextstep3*|*NEXTSTEP*)
+     with_xdvik=no; with_oxdvik=no
+     with_nextwin=yes; with_ps=dps
+     export with_xdvik with_oxdvik with_nextwin with_ps;;
+esac
+
+# teTeX uses the mf / mf-nowin split
+if test "x$no_x" != xyes; then
+  : ${with_mf_nowin=yes}
+  : ${with_x=yes}
+  export with_mf_nowin with_x
+fi
+
+# /bin/sh on ULTRIX is too broken for ncurses' configure
+case "$build" in
+  *ultrix4*)
+    case "$CONFIG_SHELL" in
+      /bin/sh|"")
+        if test -f /bin/ksh; then
+          CONFIG_SHELL=/bin/ksh; export CONFIG_SHELL
+          AC_MSG_WARN(Using /bin/ksh as new CONFIG_SHELL)
+        fi;;
+    esac;;
+esac
