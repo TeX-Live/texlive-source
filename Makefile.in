@@ -1,0 +1,107 @@
+# Makefile for texlive distribution.
+
+srcdir = @srcdir@
+VPATH  = $(srcdir)
+
+CC = @CC@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+
+LN	= @LN_S@
+RM	= rm -f
+TAR	= tar
+MKDIR	= mkdir
+
+DEFS = @DEFS@
+LIBS = @LIBS@
+
+SHELL = /bin/sh
+
+CFLAGS = @CFLAGS@
+LDFLAGS = @LDFLAGS@
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+datadir = @datadir@
+bindir = @bindir@
+libdir = @libdir@
+scriptdir = $(bindir)
+manext = 1
+mandir = @mandir@/man$(manext)
+infodir = @infodir@
+texmfmain = @texmfmain@
+
+# Subdirectories that have makefiles
+ESUBDIRS = TeX
+
+MDEFINES = bindir='$(bindir)' scriptdir='$(scriptdir)'
+
+default: all
+install: all 
+	for dir in $(ESUBDIRS); do \
+	   echo making $@ in $$dir; \
+	   (cd $$dir && PATH=$(scriptdir):$(bindir):$(PATH) \
+              $(MAKE) $(MDEFINES) $@) || exit 1; \
+	done
+
+install-exec:
+	for dir in $(ESUBDIRS); do \
+	   echo making $@ in $$dir; \
+	   (cd $$dir && PATH=$(scriptdir):$(bindir):$(PATH) \
+              $(MAKE) $(MDEFINES) $@) || exit 1; \
+	done
+
+uninstall:
+	for dir in $(ESUBDIRS); do \
+	  echo making $@ in $$dir; \
+	  (cd $$dir && $(MAKE) $(MDEFINES) $@) || exit 1; \
+	done
+
+Makefile: Makefile.in config.status
+	$(SHELL) ./config.status
+
+all:
+	for dir in $(ESUBDIRS); do \
+	  echo making $@ in $$dir; \
+	  (if test -f $$dir/Makefile; then cd $$dir && $(MAKE) $(MDEFINES) $@; else true; fi) || exit 1; \
+	done
+
+clean mostlyclean:
+	for dir in $(ESUBDIRS); do \
+	  echo making $@ in $$dir; \
+	  (if test -f $$dir/Makefile; then cd $$dir && $(MAKE) $(MDEFINES) $@; else true; fi) || exit 1; \
+	done
+
+distclean: clean
+	for dir in $(ESUBDIRS) ; do \
+	  echo making $@ in $$dir; \
+	  (if test -f $$dir/Makefile; then cd $$dir && $(MAKE) $(MDEFINES) $@; else true; fi) || exit 1; \
+	done
+	-find .  \( -name config.cache -o -name config.log \) -print -exec rm {} \;
+	-rm Makefile config.status
+	# this should happen somewhere else, but for now, we have it here
+	rm -f TeX/texk/dtl/libtool TeX/texk/lacheck/libtool \
+	TeX/texk/web2c/doc/Makefile TeX/texk/web2c/lib/lib.a \
+	TeX/texk/web2c/gftodvi.h TeX/texk/web2c/vptovf.c \
+	TeX/texk/web2c/conftest TeX/texk/web2c/conftest.C \
+	TeX/texk/web2c/gftopk.h TeX/texk/web2c/window/window.a \
+	TeX/texk/seetexk/libtool TeX/texk/seetexk/libtex.a \
+	TeX/texk/kpathsea/libtool TeX/texk/tex4htk/libtool \
+	TeX/texk/musixflx/libtool TeX/texk/texlive/libtool \
+	TeX/texk/dvidvi/libtool TeX/texk/cjkutils/scripts/Makefile \
+	TeX/utils/texinfo/doc/version.texi \
+	TeX/utils/texinfo/doc/stamp-1 TeX/utils/texinfo/doc/stamp-vti \
+	TeX/utils/texinfo/doc/version-stnd.texi \
+	TeX/texk/conftest TeX/texk/conftest.c TeX/texk/conftest.o
+
+realclean: distclean
+
+world: all install strip
+
+strip: 
+	cd $(bindir); strip * >/dev/null 2>&1 || true
+
+# Prevent GNU make v3 from overflowing arg limit on SysV.
+.NOEXPORT:

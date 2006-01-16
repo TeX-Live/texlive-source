@@ -1,0 +1,65 @@
+dnl Written many years ago by Thomas Esser and others.  Public domain.
+
+AC_INIT(TeX/texk/web2c/tex.web)
+
+AC_CONFIG_AUX_DIR(TeX/config)
+AC_SET_MAKE
+AC_PROG_CC
+AC_CANONICAL_SYSTEM
+
+dnl Various compiler directives
+AC_MSG_CHECKING(whether to define additional compiler specific flags)
+case "$target" in
+    alpha*-dec*)
+        if test "$CC" = "cc"; then
+          CFLAGS="$CFLAGS -Olimit 1000 -std1"; export CFLAGS
+          AC_MSG_WARN(Digital Unix's cc)
+        fi
+        ;;
+    hp*hpux*)
+        if test "$CC" = "cc"; then
+          CFLAGS="$CFLAGS -Aa +e -D_HPUX_SOURCE"; export CFLAGS
+          AC_MSG_WARN(HP-UX's cc)
+        fi
+        ;;
+    *)
+        AC_MSG_RESULT(no)
+        ;;
+esac
+
+# 
+case $CC in
+  egcs)
+    # The egcs compiler (version 1.1) has a problem with force-mem, so:
+    CFLAGS="$CFLAGS -fno-force-mem";;
+esac
+
+AC_PROG_INSTALL
+AC_PROG_MAKE_SET
+AC_PROG_LN_S
+AC_FUNC_ALLOCA
+AC_PROG_RANLIB
+
+sinclude(TeX/tetex.ac)
+sinclude(TeX/withenable.ac)
+sinclude(TeX/utils/dialog/withenable.ac)
+sinclude(TeX/texk/withenable.ac)
+sinclude(TeX/texk/kpathsea/withenable.ac)
+sinclude(TeX/texk/kpathsea/xt.ac)
+sinclude(TeX/texk/web2c/withenable.ac)
+sinclude(TeX/texk/xdvik/withenable.ac)
+sinclude(TeX/libs/ncurses/withenable.ac)
+sinclude(TeX/libs/libtiff/withenable.ac)
+sinclude(TeX/libs/libtiff/libtiff.ac)
+sinclude(TeX/libs/libpng/withenable.ac)
+sinclude(TeX/libs/libpng/libpng.ac)
+sinclude(TeX/libs/zlib/withenable.ac)
+sinclude(TeX/libs/zlib/zlib.ac)
+sinclude(TeX/libs/t1lib/withenable.ac)
+sinclude(TeX/libs/t1lib/t1lib.ac)
+sinclude(TeX/libs/gd/withenable.ac)
+sinclude(TeX/libs/gd/gd.ac)
+
+AC_CONFIG_SUBDIRS(TeX)
+AC_CONFIG_FILES(Makefile)
+AC_OUTPUT()

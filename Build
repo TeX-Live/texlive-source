@@ -1,0 +1,30 @@
+#!/bin/sh
+# Originally written many years ago by Sebastian Rahtz.  Public domain.
+# To build (mostly) without optimization, try CFLAGS=-g Build.
+# Any options given are passed along to configure.
+
+if test "x$1" != "x--no-clean"; then
+  test -f Makefile && make clean 
+  rm -rf Work inst
+else
+  shift
+fi
+
+H=`pwd`
+test -d inst || mkdir inst
+
+unset CDPATH
+test -d Work || mkdir Work
+cd Work || exit 1
+
+rm -f tlbuild.log
+
+# just to avoid the configure warning, since we set datadir.
+TEXMFMAIN=`cd ../../../Master/texmf && pwd`; export TEXMFMAIN
+
+# Force building xdvi-xaw; motif is not always free and/or available.
+#
+(time ../configure --prefix=$H/inst --datadir=$H/inst \
+        --with-xdvi-x-toolkit=xaw \
+        "$@" \
+ && time make world) 2>&1 | tee tlbuild.log

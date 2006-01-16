@@ -1,0 +1,66 @@
+Public domain.  Originally written by Karl Berry, 6jun05.
+
+To build the source tree, run ./Build.
+To build (mostly) without optimization, try CFLAGS=-g Build.
+
+The binaries will be left in ./inst/bin/<stdplatform>.
+Then copy the binaries to texmf/bin/<tlplatform> and p4 add/edit/delete them.
+(Don't worry about the other files and directories in inst.)
+
+Automadness:
+should be oldest > newest in this order (often used alternate names
+in parentheses):
+    Makefile.am  >  configure.ac (configure.in)
+    Makefile.in  >  config.h.in (config.hin)      > configure
+        
+To rerun dvipdfmx:
+  until integration, insert our configure.in, data/Makefile.am,
+    src/Makefile.am changes, copy compile script.
+  p4 edit config.h.in aclocal.m4 configure Makefile.in */Makefile.in
+  aclocal; autoheader; automake; autoconf
+  touch config.h.in; sleep 1; touch Makefile.in  # shouldn't be needed, but ...
+
+Build information:
+  i386-darwin: i686-apple-darwin8.1.0 built by Gerben Wierda, from
+    http://bloch.ling.yale.edu/i-packages/experimental/tex.ii2/tex.30.tar.bz2
+
+  powerpc-darwin: powerpc-apple-darwin6.8 built by Gerben Wierda, from
+    http://bloch.ling.yale.edu/i-packages/experimental/tex.ii2/tex.26.tar.bz2
+
+  x86_64-linux: built by Tigran Aivazian, from
+    http://www.bibles.org.uk/x86_64
+# uname -a
+Linux elpis 2.6.8.1 #18 SMP Fri Mar 25 19:46:16 GMT 2005 x86_64 x86_64 x86_64 G$
+# gcc -v
+Reading specs from /usr/lib/gcc-lib/x86_64-redhat-linux/3.3.3/specs
+Configured with: ../configure --prefix=/usr --mandir=/usr/share/man
+--infodir=/usr/share/info --enable-shared --enable-threads=posix
+--disable-checking --disable-libunwind-exceptions --with-system-zlib
+--enable-__cxa_atexit --host=x86_64-redhat-linux
+Thread model: posix
+gcc version 3.3.3 20040412 (Red Hat Linux 3.3.3-7)
+
+  These three built and checked in by Vladimir Volovich:
+1) sparc-solaris
+OS: Sun Solaris 8
+compiler: gcc (GCC) 3.4.2
+bison (GNU Bison) 1.875d
+flex version 2.5.4
+GNU m4 1.4.2
+GNU Make 3.80
+
+2) sparc-linux
+OS: Debian GNU/Linux 3.1 (Sarge), kernel 2.4.27-2-sparc64
+gcc (GCC) 3.3.5 (Debian 1:3.3.5-13)
+bison (GNU Bison) 1.875d
+flex 2.5.31
+GNU m4 1.4.2
+GNU Make 3.80
+
+3) powerpc-aix
+OS: AIX 4.3
+compiler: IBM C for AIX Compiler, Version 5 (xlc)
+bison (GNU Bison) 1.34
+flex version 2.5.4
+GNU m4 1.4
+GNU Make 3.79.1
