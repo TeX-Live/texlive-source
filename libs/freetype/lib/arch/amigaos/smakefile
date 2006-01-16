@@ -1,0 +1,126 @@
+# This file is part of the FreeType project.
+#
+# It builds the library for amiga using SAS/C and smake
+#
+# Use this file while in the 'lib/arch/amigaos' directory with
+# the following statements:
+#
+#  smake assign
+#  smake
+#
+# the 'assign' step creates an assignment to simplify referencing
+# the core library module, as smake has quite a few limitations in
+# dealing with multi-directory projects.
+#
+#
+# Copyright 1996-2001 by
+# David Turner, Robert Wilhelm, and Werner Lemberg.
+#
+# This file is part of the FreeType project, and may only be used, modified,
+# and distributed under the terms of the FreeType project license,
+# LICENSE.TXT.  By continuing to use, modify, or distribute this file you
+# indicate that you have read the license and understand and accept it
+# fully.
+
+OBJB = ttapi.o    ttcache.o ttcalc.o  ttcmap.o   ttdebug.o \
+       ttextend.o ttfile.o  ttgload.o ttinterp.o ttload.o \
+       ttmemory.o ttmutex.o ttobjs.o  ttraster.o
+
+OBJS = freetype.o
+
+OBJX = ftxgasp.o ftxkern.o ftxpost.o ftxcmap.o ftxwidth.o \
+       ftxsbit.o ftxgsub.o ftxgpos.o ftxgdef.o ftxopen.o
+
+CORE = FT:lib/
+COREXT = $(CORE)extend/
+
+OPTIMIZER = optimize optcomp=5 optdep=4 optinlocal optrdep=4
+
+SCFLAGS = idlen=40 idir=$(CORE)arch/amigaos idir=$(CORE) idir=$(COREXT)
+
+LIB=ttf.lib
+
+all:	ttf.lib
+
+assign:
+	assign FT: ///
+
+ttf.lib: $(OBJS) $(OBJX)
+	oml $@ r $(OBJS) $(OBJX) 
+
+ttfdbg.lib: $(OBJB) $(OBJX)
+	oml $@ r $(OBJB) $(OBJX) 
+
+clean:
+	-delete \#?.o
+	-delete //\#?.o
+
+distclean: clean
+	-delete \#?.lib
+
+
+#
+# freetype library core single object
+#
+freetype.o: $(CORE)arch/amigaos/freetype.c
+	sc $(SCFLAGS) code=far $(OPTIMIZER) objname=$@ $<
+
+#
+# freetype library core as separate objects
+#
+ttapi.o: $(CORE)ttapi.c
+	sc $(SCFLAGS) objname=$@ $<
+ttcache.o: $(CORE)ttcache.c
+	sc $(SCFLAGS) objname=$@ $<
+ttcalc.o: $(CORE)ttcalc.c
+	sc $(SCFLAGS) objname=$@ $<
+ttcmap.o: $(CORE)ttcmap.c
+	sc $(SCFLAGS) objname=$@ $<
+ttdebug.o: $(CORE)ttdebug.c
+	sc $(SCFLAGS) objname=$@ $<
+ttextend.o: $(CORE)ttextend.c
+	sc $(SCFLAGS) objname=$@ $<
+ttfile.o: $(CORE)ttfile.c
+	sc $(SCFLAGS) objname=$@ $<
+ttgload.o: $(CORE)ttgload.c
+	sc $(SCFLAGS) objname=$@ $<
+ttinterp.o: $(CORE)ttinterp.c
+	sc $(SCFLAGS) objname=$@ $<
+ttload.o: $(CORE)ttload.c
+	sc $(SCFLAGS) objname=$@ $<
+ttmemory.o: $(CORE)ttmemory.c
+	sc $(SCFLAGS) objname=$@ $<
+ttmutex.o: $(CORE)ttmutex.c
+	sc $(SCFLAGS) objname=$@ $<
+ttobjs.o: $(CORE)ttobjs.c
+	sc $(SCFLAGS) objname=$@ $<
+ttraster.o: $(CORE)ttraster.c
+	sc $(SCFLAGS) objname=$@ $<
+
+#
+# library extentions
+#
+ftxgasp.o: $(COREXT)ftxgasp.c
+	sc $(SCFLAGS) objname=$@ $<
+ftxkern.o: $(COREXT)ftxkern.c
+	sc $(SCFLAGS) objname=$@ $<
+ftxpost.o: $(COREXT)ftxpost.c
+	sc $(SCFLAGS) objname=$@ $<
+ftxcmap.o: $(COREXT)ftxcmap.c
+	sc $(SCFLAGS) objname=$@ $<
+ftxwidth.o: $(COREXT)ftxwidth.c
+	sc $(SCFLAGS) objname=$@ $<
+ftxerr18.o: $(COREXT)ftxerr18.c
+	sc $(SCFLAGS) objname=$@ $<
+ftxsbit.o: $(COREXT)ftxsbit.c
+	sc $(SCFLAGS) objname=$@ $<
+ftxgsub.o: $(COREXT)ftxgsub.c
+	sc $(SCFLAGS) objname=$@ $<
+ftxgpos.o: $(COREXT)ftxgpos.c
+	sc $(SCFLAGS) objname=$@ $<
+ftxgdef.o: $(COREXT)ftxgdef.c
+	sc $(SCFLAGS) objname=$@ $<
+ftxopen.o: $(COREXT)ftxopen.c
+	sc $(SCFLAGS) objname=$@ $<
+
+# end of smakefile

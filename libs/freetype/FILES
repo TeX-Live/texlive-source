@@ -1,0 +1,80 @@
+This text file contains an  overview of this package's directory and
+file hierarchy.
+
+  howto/              Various system-specific HOWTOs, explaining how
+                      to compile the library on different platforms.
+
+  lib/                The C engine source directory.
+  lib/extend          Some standard engine extensions.
+  lib/arch/<system>   System-specific configuration header files.
+
+  docs/               Documentation.
+  docs/image          GIF images for documentation.
+
+  test/               The C test programs.
+  test/arch/<system>  System-specific  graphics   drivers  for  test
+                      programs.
+
+  contrib/            Contributions directory.
+  contrib/mac         An HQX archive containing a port to the Mac.
+  contrib/ttf2pk      The  ttf2pk TrueType  to  PK converter  source
+                      code.
+  contrib/ttf2pfb     The  ttf2pfb  TrueType  to PS  font  converter
+                      source code.
+  contrib/ttf2bdf     The ttf2bdf  TrueType to BDF  converter source
+                      code.
+  contrib/ftos2       The  FreeType/2 font  server  source code  for
+                      OS/2.
+  contrib/ttfbanner   An ASCII poster program source code.
+
+  po/                 Contributions  to the  internationalized error
+                      message strings extension.
+
+  pascal/             Used to hold  a Pascal version  of the engine,
+                      which is now available separately.
+
+
+The following files might be helpful:
+
+FILES         This file.
+
+readme.1st    A notice  about the  possible  interaction of  patents
+PATENTS       owned by Apple on TrueType, with respect to FreeType.
+
+README        A short and general introduction to FreeType.
+
+INSTALL       The FreeType installation How-To.  Everything you need
+              to know  to build the  library and the  test programs.
+              This file contains only generic explanations.  See the
+              `freetype/howto' directory for system-specific hints.
+
+license.txt   The FreeType licensing conditions.
+docs/FTL.txt
+docs/GPL.txt
+
+announce      The FreeType  UseNet announce post.  This file is sent
+              to some newsgroups when a new release is made.
+
+
+The following  files are Unix-specific  and can be ignored  on other
+platforms:
+
+ft_conf.h.in  Generic   library   configuration   header  file   for
+              autoconf.
+configure.in  Generic configure script for autoconf.
+configure     Configure  script  generated  from  `configure.in'  by
+              autoconf.
+config.sub    Script needed by configure.
+config.guess  Script needed by configure.
+Makefile.in   Generic makefile for configure.
+MakeSub.in    Generic makefile for libtool.
+ltconfig      Libtool configuration script.
+ltmain.sh     Libtool script.
+mkinstalldirs Tool for generating subdirectories.
+aclocal.m4,
+net.m4        Auxiliary data files for autoconf.
+install-sh    Script used to install the library in a portable way
+freetype.spec This file can be used as a specification to build RPMs
+              from the FreeType package.
+
+--- end of FILES ---

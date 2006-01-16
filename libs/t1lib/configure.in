@@ -1,0 +1,179 @@
+AC_REVISION([configure.in 1.00])
+AC_INIT(t1base.c)
+AC_CONFIG_HEADERS(sysconf.h:sysconf.h.in)
+AC_CONFIG_AUX_DIR(../../config)
+
+define( MACRO_T1LIB_LT_CURRENT, 5)
+define( MACRO_T1LIB_LT_REVISION, 2)
+define( MACRO_T1LIB_LT_AGE, 0)
+
+
+dnl  -----------------------------------------------------------
+dnl  -----------------------------------------------------------
+dnl
+dnl         Do not change anything below this line!
+dnl
+dnl  -----------------------------------------------------------
+dnl  -----------------------------------------------------------
+
+dnl Build version string and setup stuff to be substituted in
+dnl Makefile's and t1lib.h
+define( MACRO_T1LIB_IDENTIFIER, "builtin(eval, MACRO_T1LIB_LT_CURRENT - MACRO_T1LIB_LT_AGE).builtin(eval, MACRO_T1LIB_LT_AGE).builtin(eval, MACRO_T1LIB_LT_REVISION)")
+
+T1LIB_LT_CURRENT=builtin(eval, MACRO_T1LIB_LT_CURRENT) 
+T1LIB_LT_REVISION=builtin(eval, MACRO_T1LIB_LT_REVISION) 
+T1LIB_LT_AGE=builtin(eval, MACRO_T1LIB_LT_AGE) 
+T1LIB_IDENTIFIER=MACRO_T1LIB_IDENTIFIER
+
+T1LIB_VERSION=builtin(eval, MACRO_T1LIB_LT_CURRENT - MACRO_T1LIB_LT_AGE) 
+T1LIB_REVISION=builtin(eval, MACRO_T1LIB_LT_AGE) 
+T1LIB_PATCHLEVEL=builtin(eval, MACRO_T1LIB_LT_REVISION) 
+T1LIB_VERSIONSTRING=\"MACRO_T1LIB_IDENTIFIER\"
+
+T1LIB_DATA_DIR="${datadir}/t1lib"
+
+dnl The following variables should be used
+
+AC_SUBST(T1LIB_LT_CURRENT)
+AC_SUBST(T1LIB_LT_REVISION)
+AC_SUBST(T1LIB_LT_AGE)
+AC_SUBST(T1LIB_DATA_DIR)
+AC_SUBST(T1LIB_IDENTIFIER)
+
+AC_SUBST(T1LIB_VERSION)
+AC_SUBST(T1LIB_REVISION)
+AC_SUBST(T1LIB_PATCHLEVEL)
+AC_SUBST(T1LIB_VERSIONSTRING)
+	
+	
+AC_SUBST(T1_AA_TYPE16)
+AC_SUBST(T1_AA_TYPE32)
+AC_SUBST(T1_AA_TYPE64)
+
+AC_PROG_MAKE_SET
+AC_PROG_CC
+AC_PROG_CPP
+AC_PATH_XTRA
+AC_PROG_INSTALL
+AC_PROG_RANLIB
+
+sinclude(../../texk/kpathsea/withenable.ac)
+
+dnl **** Check for some compiler/system characteristics
+AC_C_CHAR_UNSIGNED
+AC_CHECK_SIZEOF(char,0)
+AC_CHECK_SIZEOF(short,0)
+AC_CHECK_SIZEOF(int,0)
+AC_CHECK_SIZEOF(long,0)
+AC_CHECK_SIZEOF(long long,0)
+AC_CHECK_SIZEOF(float,0)
+AC_CHECK_SIZEOF(double,0)
+AC_CHECK_SIZEOF(long double,0)
+AC_CHECK_SIZEOF(void *,0)
+
+dnl **** Check for gcc strength-reduce bug ****
+if test "x${GCC}" = "xyes"
+then
+  CFLAGS="$CFLAGS"
+  AC_CACHE_CHECK( "for gcc strength-reduce bug", ac_cv_c_gcc_strength_bug,
+                  AC_TRY_RUN([
+int main(void) {
+  static int Array[[3]];
+  unsigned int B = 3;
+  int i;
+  for(i=0; i<B; i++) Array[[i]] = i - 3;
+  exit( Array[[1]] != -2 );
+}],
+    ac_cv_c_gcc_strength_bug="no",
+    ac_cv_c_gcc_strength_bug="yes",
+    ac_cv_c_gcc_strength_bug="yes") )
+  if test "$ac_cv_c_gcc_strength_bug" = "yes"
+  then
+    CFLAGS="$CFLAGS -fno-strength-reduce"
+  fi
+fi
+
+dnl **** Check for underscore on external symbols ****
+
+AC_CACHE_CHECK("whether external symbols need an underscore prefix",
+               ac_cv_c_extern_prefix,
+[saved_libs=$LIBS
+LIBS="conftest_asm.s $LIBS"
+cat > conftest_asm.s <<EOF
+	.globl _ac_test
+_ac_test:
+	.long 0
+EOF
+AC_TRY_LINK([extern int ac_test;],[if (ac_test) return 1],
+            ac_cv_c_extern_prefix="yes",ac_cv_c_extern_prefix="no")
+LIBS=$saved_libs])
+if test "$ac_cv_c_extern_prefix" = "yes"
+then
+  AC_DEFINE(NEED_UNDERSCORE_PREFIX)
+fi
+	
+dnl **** Check which ANSI integer type is 16 bit 
+AC_CACHE_CHECK( "which ANSI integer type is 16 bit", ac_16bit_type,
+		AC_TRY_RUN([
+int main(void) {
+  if (sizeof(short)==2)
+    return(0);
+  else if (sizeof(int)==2)
+    return(1);
+  else
+    return(2);
+}], ac_16bit_type="short", ac_16bit_type="int", ac_16bit_type=))
+if test "$ac_16bit_type" = "short"
+then
+  T1_AA_TYPE16="-DT1_AA_TYPE16=short"
+else
+  T1_AA_TYPE16="-DT1_AA_TYPE16=int"
+fi
+
+
+dnl **** Check which ANSI integer type is 32 bit 
+AC_CACHE_CHECK( "which ANSI integer type is 32 bit", ac_32bit_type,
+		AC_TRY_RUN([
+int main(void) {
+  if (sizeof(int)==4)
+    return(0);
+  else if (sizeof(long)==4)
+    return(1);
+  else
+    return(2);
+}], ac_32bit_type="int", ac_32bit_type="long", ac_32bit_type=))
+if test "$ac_32bit_type" = "int"
+then
+  T1_AA_TYPE32="-DT1_AA_TYPE32=int"
+else
+  T1_AA_TYPE32="-DT1_AA_TYPE32=long"
+fi
+
+
+dnl **** Check which ANSI integer type is 64 bit 
+AC_CACHE_CHECK( "which ANSI integer type is 64 bit", ac_64bit_type,
+		AC_TRY_RUN([
+int main(void) {
+  if (sizeof(long)==8)
+    return(0);
+  else
+    return(1);
+}], ac_64bit_type="long", ac_64bit_type="<none>"))
+if test "$ac_64bit_type" = "long"
+then
+  T1_AA_TYPE64="-DT1_AA_TYPE64=long"
+else
+  T1_AA_TYPE64=
+fi
+
+AC_SUBST(T1LIB_IDENTIFIER)
+AC_SUBST(T1LIB_DATA_DIR)
+
+dnl **** Check for functions and header files ****
+
+AC_HEADER_STAT()
+AC_C_CONST()
+AC_TYPE_SIZE_T()
+
+KPSE_CONFIG_FILES([Makefile])
+AC_OUTPUT

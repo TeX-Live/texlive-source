@@ -1,0 +1,10 @@
+/* c-auto.in.  Generated automatically from configure.in by autoheader.  */
+
+#undef MAKE_OMEGA_OCP_BY_DEFAULT
+#undef MAKE_OMEGA_OFM_BY_DEFAULT
+#undef MAKE_TEX_MF_BY_DEFAULT
+#undef MAKE_TEX_PK_BY_DEFAULT
+#undef MAKE_TEX_TFM_BY_DEFAULT
+
+/* Define if you have the memset function.  */
+#undef HAVE_MEMSET

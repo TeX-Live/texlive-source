@@ -1,0 +1,39 @@
+# makedep
+#
+# This shell script creates a dependency file necessary for older compilers
+# on the MS-DOS platform.
+#
+# Copyright 1996-2002 by
+# David Turner, Robert Wilhelm, and Werner Lemberg.
+#
+# This file is part of the FreeType project, and may only be used, modified,
+# and distributed under the terms of the FreeType project license,
+# LICENSE.TXT.  By continuing to use, modify, or distribute this file you
+# indicate that you have read the license and understand and accept it
+# fully.
+
+echo "\
+# This file is part of the FreeType project.
+# Automatically generated, but you can customize to fit your needs.
+# However, changes will be erased if not made in \`makedep'...
+#
+# This dependency file to be used with various MS-DOS compilers
+# has been generated automatically with the script \`makedep' on
+# `date +%Y-%m-%d`.
+" > depend.dos
+
+(cd ../..
+ gcc -MM -Iarch/msdos -I. *.c | \
+   sed -e "s/\.o:/.obj:/" -e "s:/:\\\\:g") >> depend.dos
+
+(cd ../..
+ gcc -MM -Iarch/msdos -I. -Iextend extend/*.c | \
+   sed -e "s/^\(.*\)\.o:/extend\\\\\1.obj:/" -e "s:/:\\\\:g") >> depend.dos
+
+(cd ../..
+ gcc -MM -Iarch/msdos -I. -Iextend \
+     -DTT_HUGE_PTR -Dhuge_alloc -Dhuge_free arch/msdos/*.c | \
+   sed -e "s/^\(.*\)\.o:/arch\\\\msdos\\\\\1.obj:/" \
+       -e "s:/:\\\\:g") >> depend.dos
+
+# eof

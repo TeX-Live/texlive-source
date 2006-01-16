@@ -1,0 +1,76 @@
+<HTML>
+<BODY>
+<PRE>
+<!-- Manpage converted by man2html 3.0.1 -->
+
+</PRE>
+<H2>NAME</H2><PRE>
+     curl_formfree  -  free a previously build multipart/formdata
+     HTTP POST chain
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+     <B>#include</B> <B>&lt;curl/curl.h&gt;</B>
+
+     <B>void</B> <B>curl_formfree(struct</B> <B>HttpPost</B> <B>*</B><I>form);</I>
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+     curl_formfree()  is  used  to  clean  up   data   previously
+     built/appended  with  curl_formadd()/curl_formparse().  This
+     must be called when the data has been used, which  typically
+     means after the curl_easy_perform() has been called.
+
+
+</PRE>
+<H2>RETURN VALUE</H2><PRE>
+     None
+
+
+</PRE>
+<H2>SEE ALSO</H2><PRE>
+     <B>curl_formparse(3)</B> [deprecated], <B>curl_formadd(3)</B>
+
+
+</PRE>
+<H2>BUGS</H2><PRE>
+     libcurl  7.7.1  and  earlier  versions does not allow a NULL
+     pointer to be used as argument.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+<HR>
+<ADDRESS>
+Man(1) output converted with
+<a href="http://www.oac.uci.edu/indiv/ehood/man2html.html">man2html</a>
+</ADDRESS>
+</BODY>
+</HTML>

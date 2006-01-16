@@ -1,0 +1,70 @@
+#========================================================================
+#
+# Xpdf Makefile
+#
+# Copyright 1996 Derek B. Noonburg
+#
+# Heavily modified for pdftex by Thomas Esser, 1998, 1999
+#
+# $Id: //depot/Build/source.development/TeX/libs/xpdf/xpdf/Makefile.in#28 $
+#========================================================================
+
+VPATH = @srcdir@
+srcdir = @srcdir@
+
+srcdirparent = $(srcdir)/..
+goodir = $(srcdirparent)/goo
+fofidir=$(srcdirparent)/fofi
+
+CXXFLAGS = @CXXFLAGS@
+CXX = @CXX@
+ALLCXXFLAGS = $(CXXFLAGS) -DHAVE_CONFIG_H $(XCFLAGS) \
+  -I.. -I$(srcdirparent) -I$(goodir) -I$(fofidir) -I. -I$(srcdir) \
+  -DPDF_PARSER_ONLY
+
+kpse_include ../../texk/make/library.mk
+
+.SUFFIXES:
+.SUFFIXES: .cc .o
+.cc.o:
+	$(CXX) $(ALLCXXFLAGS) -c $<
+
+#------------------------------------------------------------------------
+
+PDFTOEPDF_OBJS = \
+	Array.o BuiltinFont.o BuiltinFontTables.o CMap.o \
+	Catalog.o CharCodeToUnicode.o Decrypt.o Dict.o Error.o \
+	FontEncodingTables.o GfxFont.o GfxState.o\
+	GlobalParams.o JArithmeticDecoder.o JBIG2Stream.o JPXStream.o Lexer.o Link.o \
+	NameToCharCode.o Object.o OutputDev.o Outline.o PDFDoc.o Page.o \
+	Parser.o PDFDocEncoding.o Stream.o UnicodeMap.o XRef.o Function.o \
+	PSTokenizer.o SecurityHandler.o
+
+libxpdf.a: $(PDFTOEPDF_OBJS)
+	rm -f $@
+	$(AR) $(ARFLAGS) $@ $(PDFTOEPDF_OBJS)
+	$(RANLIB) $@
+
+#------------------------------------------------------------------------
+
+mostlyclean clean:
+	rm -f $(PDFTOEPDF_OBJS) libxpdf.a
+	rm -f Makefile.bak
+
+distclean maintainer-clean extraclean: clean
+	rm -f Makefile c-auto.h
+
+#------------------------------------------------------------------------
+
+depend:
+	srcdirparent=`(cd $(srcdirparent) >/dev/null; pwd)`; \
+	  $(CXX) $(ALLCXXFLAGS) -MM $(srcdir)/*.cc \
+	  | sed 's|$(srcdir)|$$(srcdir)|g' \
+	  | sed 's|'$$srcdirparent/'|$$(srcdirparent)/|g' \
+	  | sed 's|$$(srcdirparent)/goo/|$$(goodir)/|g' \
+	  | sed 's|$$(srcdirparent)/fofi/|$$(fofidir)/|g' \
+	  > $(srcdir)/depend.mk
+
+#------------------------------------------------------------------------
+
+kpse_include xpdf/depend.mk

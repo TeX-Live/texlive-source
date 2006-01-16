@@ -1,0 +1,10 @@
+AC_ARG_WITH([system_gd],
+	[  --with-system-gd         use installed gd library])
+
+AC_ARG_WITH([gd_libdir],
+[  --with-gd-libdir=DIR
+                          Specify directory where the gd library resides.])
+
+AC_ARG_WITH([gd_include],
+[  --with-gd-include=DIR
+                          Specify the gd header files location.])

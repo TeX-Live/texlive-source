@@ -1,0 +1,7 @@
+Public domain.  Originally created by Karl Berry, 2005.
+
+Libraries we compile for TeX Live.
+
+libpng 1.2.8 - http://www.libpng.org
+
+zlib 1.2.3 - http://www.zlib.net/

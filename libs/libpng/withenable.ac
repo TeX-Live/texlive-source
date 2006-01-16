@@ -1,0 +1,10 @@
+AC_ARG_WITH([system-pnglib],
+	[  --with-system-pnglib       use installed pnglib library])
+
+AC_ARG_WITH([pnglib_libdir],
+[  --with-pnglib-libdir=DIR
+                          Specify directory where the png library (libpng.a) resides.])
+
+AC_ARG_WITH([pnglib_include],
+[  --with-pnglib-include=DIR
+                          Specify the pnglib header files location.])

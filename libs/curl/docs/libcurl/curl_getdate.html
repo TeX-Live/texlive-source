@@ -1,0 +1,132 @@
+<HTML>
+<BODY>
+<PRE>
+<!-- Manpage converted by man2html 3.0.1 -->
+
+</PRE>
+<H2>NAME</H2><PRE>
+     curl_getdate  -  Convert an date in a ASCII string to number
+     of seconds since January 1, 1970
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+     <B>#include</B> <B>&lt;curl/curl.h&gt;</B>
+
+     <B>time_t</B> <B>curl_getdate(char</B> <B>*</B><I>datestring</I><B>,</B> <B>time_t</B> <B>*</B><I>now</I> <I>);</I>
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+     This function returns the number of  seconds  since  January
+     1st  1970, for the date and time that the <I>datestring</I> parame­
+     ter specifies. The <I>now</I> parameter is there  and  should  hold
+     the current time to allow the datestring to specify relative
+     dates/times. Read further in the date string parser  section
+     below.
+
+
+</PRE>
+<H2>PARSING DATES AND TIMES</H2><PRE>
+     A  "date" is a string, possibly empty, containing many items
+     separated by whitespace.  The whitespace may be omitted when
+     no  ambiguity  arises.  The empty string means the beginning
+     of today (i.e., midnight).  Order of the  items  is  immate­
+     rial.  A date string may contain many flavors of items:
+
+     <B>calendar</B> <B>date</B> <B>items</B>
+             This can be specified in a number of different ways.
+             Including 1970-09-17, 70-9-17, 70-09-17, 9/17/72, 24
+             September 1972, 24 Sept 72, 24 Sep 72, Sep 24, 1972,
+             24-sep-72, 24sep72.  The year can also  be  omitted,
+             for example: 9/17 or "sep 17".
+
+     <B>time</B> <B>of</B> <B>the</B> <B>day</B> <B>items</B>
+             This  string specifies the time on a given day. Syn­
+             tax  supported  includes:  18:19:0,  18:19,  6:19pm,
+             18:19-0500 (for specifying the time zone as well).
+
+     <B>time</B> <B>zone</B> <B>items</B>
+             Specifies  international  time zone. There are a few
+             acronyms  supported,  but  in  general  you   should
+             instead  use  the specific realtive time compared to
+             UTC. Supported formats include: -1200, MST, +0100.
+
+     <B>day</B> <B>of</B> <B>the</B> <B>week</B> <B>items</B>
+             Specifies a day of the week. If  this  is  mentioned
+             alone it means that day of the week in the future.
+
+             Days  of  the week may be spelled out in full: `Sun­
+             day', `Monday', etc or they may  be  abbreviated  to
+             their  first three letters, optionally followed by a
+             period.  The special abbreviations `Tues' for `Tues­
+             day', `Wednes' for `Wednesday' and `Thur' or `Thurs'
+             for `Thursday' are also allowed.
+             A number may precede a day of the week item to  move
+             forward  supplementary  weeks.   It  is best used in
+             expression like `third monday'.   In  this  context,
+             `last  DAY'  or  `next DAY' is also acceptable; they
+             move one week before or after the day  that  DAY  by
+             itself would represent.
+
+     <B>relative</B> <B>items</B>
+             A  relative item adjusts a date (or the current date
+             if  none)  forward  or  backward.   Example   syntax
+             includes:  "1  year",  "1  year  ago",  "2 days", "4
+             weeks".
+
+             The string `tomorrow' is worth one day in the future
+             (equivalent  to  `day'),  the  string `yesterday' is
+             worth one day in the past (equivalent to `day ago').
+
+     <B>pure</B> <B>numbers</B>
+             If the decimal number is of the form YYYYMMDD and no
+             other calendar date item appears before  it  in  the
+             date  string,  then  YYYY is read as the year, MM as
+             the month number and DD as the day of the month, for
+             the specified calendar date.
+
+
+</PRE>
+<H2>RETURN VALUE</H2><PRE>
+     This  function  returns zero when it fails to parse the date
+     string. Otherwise  it  returns  the  number  of  seconds  as
+     described.
+
+
+</PRE>
+<H2>AUTHORS</H2><PRE>
+     Originally     written     by     Steven     M.     Bellovin
+     &lt;smb@research.att.com&gt; while at the University of North Car­
+     olina  at  Chapel Hill.  Later tweaked by a couple of people
+     on   Usenet.    Completely   overhauled   by    Rich    $alz
+     &lt;rsalz@bbn.com&gt;  and Jim Berets &lt;jberets@bbn.com&gt; in August,
+     1990.
+
+
+</PRE>
+<H2>SEE ALSO</H2><PRE>
+
+
+
+</PRE>
+<H2>BUGS</H2><PRE>
+     Surely there are some, you tell me!
+
+
+
+
+
+
+
+
+
+
+</PRE>
+<HR>
+<ADDRESS>
+Man(1) output converted with
+<a href="http://www.oac.uci.edu/indiv/ehood/man2html.html">man2html</a>
+</ADDRESS>
+</BODY>
+</HTML>

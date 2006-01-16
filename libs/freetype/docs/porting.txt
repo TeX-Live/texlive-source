@@ -1,0 +1,1078 @@
+
+
+                     The FreeType Porting Guide
+
+                                 or
+
+            Everything you need to know to make FreeType
+                     run on the weirdest system
+
+
+--------------------------------------------------------------------
+
+                        Table of Contents
+
+
+                Introduction
+    
+                I.   General design and system modules
+    
+                II.  Memory component API
+    
+                  1. The alloction function: TT_Alloc()
+                  2. The release function: TT_Free()
+                  3. The ALLOC() and ALLOC_ARRAY() macros
+                  4. The MEM_xxxx() macros
+    
+                III. File component API
+    
+                  1. Streams and their functions
+                  2. Frames and file access
+                  3. Differences in thread support levels
+    
+                IV.  Mutex component API
+    
+                V.   Summary & Advanced concepts
+    
+                  1. Porting summary
+                  2. Exotic filesystems
+    
+                VI.  Troubleshooting
+
+                Conclusion
+
+
+--------------------------------------------------------------------
+
+Introduction
+============
+
+The FreeType engine is portable in many ways:
+
+- First, it can be compiled  by any ANSI C compliant compiler, which
+  guarantees the widest possible uses.
+
+- Its default  build uses a tiny  fraction of the  ANSI libc, mainly
+  for memory management and I/O access, which should be available on
+  most systems (i.e., malloc(), free(), fopen(), fread(), etc).
+
+- Its design  is modular,  and allows an  implementer to  remove all
+  dependencies  on a  particular runtime  environment, to  adapt the
+  engine to its  specific needs. For example, it  is possible to use
+  memory-mapped files on systems which support them.
+
+This document explains the  engine's design, presenting the `system'
+modules that need  to be changed by porters of  the library, as well
+as how to do it.
+
+Note  that  this  documentation  is  _very_ detailed,  and  you  may
+DIRECTLY  JUMP to SECTION  V (Summary  and advanced  concepts) which
+gives  you a  QUICK STEP-BY-STEP  GUIDE TO  PORTING  each component,
+without the need to understand all the guts of the TrueType engine.
+
+Several  issues are  discussed,  including the  use  of exotic  font
+storage conventions.
+
+
+--------------------------------------------------------------------
+
+
+I. General design, and system modules
+=====================================
+
+  The engine's  design is intentionally highly modular.   It is made
+  of several `components', each  with its own specific goals.  Three
+  of these play an important role with regards to portability.  They
+  are:
+
+  - the memory component:
+
+    Found in  the files  `ttmemory.h' and `ttmemory.c'.   It defines
+    several macros and  a few functions used by  _all_ other modules
+    to allocate, release, copy, and move memory blocks.
+
+  - the file component:
+
+    Found  in  the  files  `ttfile.h' and  `ttfile.c'.   It  defines
+    several types and abstractions  (streams, frames), that are used
+    by _all_ other modules to access font files.
+
+  - the mutex component:
+
+    This component compiles to a  null object if the engine is built
+    in single-thread mode.  Otherwise, for thread-safe and reentrant
+    builds, the macros and functions it defines are used by the rest
+    of the engine to protect shared variables.
+
+    NOTE:
+
+      Because   the  ANSI  libc  does  not  provide  synchronisation
+      primitives (synchronisation isn't portable accross platforms),
+      the default  implementation, found in `ttmutex.c',  is made of
+      dummy  functions  which   always  return  a  successful  error
+      condition.
+
+      You _need_ to re-define this  component for your system if you
+      decide to make  a thread-safe or reentrant build,  even if you
+      use the ANSI libc.
+
+
+  When  specializing  a  component,  i.e.,  rewriting  it  for  your
+  platform, you should respect a few conventions which are explained
+  in  the following  sections.  Note  also that  the system-specific
+  implementations      are      usually      placed      in      the
+  `freetype/lib/arch/<system>' directory.  For example:
+
+    freetype/lib/arch/unix/ttmmap.c
+
+      A   Unix-only  implementation   of  ttfile   which   uses  the
+      memory-mapped  file API  (this greatly  improves  the engine's
+      performance,  due to  the  random access  pattern typicals  of
+      glyph data retrieval).
+
+    freetype/lib/arch/os2/os2file.c
+
+      This is  an implementation of  ttfile specific to  OS/2, which
+      directly calls the system functions DosOpen(), DosRead(), etc.
+
+      The FreeType/2 DLL (a free TrueType font driver for OS/2) also
+      uses its own memory component which calls a special allocation
+      routine required in its runtime environment, and also provides
+      additional statistics  that can  be displayed by  an auxiliary
+      tool while the driver is running in the system.
+
+We ask you to respect  this directory convention.  This really needs
+a minor Makefile change, and still having the ability to compile the
+`default'  ttfile and  ttmemory will  help you  debug  your specific
+ports by easy comparisons.
+
+
+--------------------------------------------------------------------
+
+
+II. Memory component API
+========================
+
+  This  section  presents  the   macros  and  functions  defined  in
+  ttmemory.h, and how  they should be implemented, if  you decide to
+  rewrite  the  source  file  ttmemory.c from  scratch.   An  easier
+  solution would be to replace the calls to malloc() and free() with
+  your own functions, though.
+
+
+1. Allocation routine : TT_Alloc()
+----------------------------------
+
+  This  function is  used to  allocate blocks  of memory,  just like
+  malloc(), but  defines a very different  interface.  Its prototype
+  is:
+
+        TT_Error  TT_Alloc( long  size, void**  p );
+
+  [The FreeType source files use abstract data types like `Long' for
+  all  internal  functions  and  `TT_Long'  for  externally  visible
+  structures.  See tttypes.h and freetype.h, respectively.]
+
+  We can see that:
+
+  - The function  returns an error  code, and _not_ a  pointer.  The
+    reason for  this is that  your own implementation  may perfectly
+    fail  for more  than one  good  reason.  For  example, it  could
+    detect  a corrupted heap,  a memory  exhaustion or  an unusually
+    large block, and  have a different error code  for each of these
+    cases.
+
+    If a memory  allocation error occurs in a  FreeType function, it
+    is always  taken into account  (of course, for  safety reasons),
+    but its  code is directly sent  to the caller.   This means that
+    your own applications and font servers will be able to interpret
+    these errors and let you handle them appropriately.
+
+  - Its  second argument  is the  _address_ of  a  typeless pointer.
+    This means the need to typecast it before calling this function.
+
+    The macro MEM_Alloc() is defined in ttmemory.h to do it for you,
+    as  well  as  the  `memory  extraction'  performed  by  the  `&'
+    operator, so that you can write:
+
+        char*  buffer;
+
+
+        MEM_Alloc( size, buffer );
+
+ instead of
+
+        TT_Alloc( size, (void**)&buffer );
+
+    Note  that the  engine  _never_ uses  this  macro directly,  but
+    ALLOC() instead (see below) in  order to _always_ test the error
+    code.
+
+  *****************
+  *** IMPORTANT ***
+  *****************
+
+  - A newly  allocated block should _always_ be  filled with zeroes!
+    This is a  _very_ strong convention used within  all the engine.
+    It  helps greatly  to reduce  code  size, in  general.  If  your
+    implementation of TT_Alloc() does not respect it, you are pretty
+    certain  to build an  unrunnable (at  best) or  (worse) instable
+    engine!  Beware.
+
+
+2. Release routine: TT_Free()
+-----------------------------
+
+  This  routine  is naturally  used  to  release  any block  created
+  through TT_Alloc().  Its prototype is:
+
+    TT_Error  TT_Free( void**  P );
+
+  We can see that:
+
+  - It also returns an error code.  Note, however, that the error is
+    ignored  in most,  if not  all, parts  of the  engine.   This is
+    because freeing  memory usually happens when  all necessary work
+    has been finished, or when something already wrong happened.
+
+  - It  takes  the address  of  a  typeless-pointer,  and _not_  the
+    pointer's value itself.  This is used to set the pointer's value
+    to NULL just after the block was released, which avoids dangling
+    references in objects.   Of course, there is a  macro defined to
+    simplify source writing.  One can use FREE() like:
+
+        char*  buffer;
+
+
+        MEM_Alloc( size, buffer );
+
+        .... work ....
+
+        FREE( buffer );
+
+        /* now `buffer' is set to NULL; the following line will */
+        /* seg-fault                                            */
+
+        a = buffer[0];
+
+
+  *****************
+  *** IMPORTANT ***
+  *****************
+
+  - The function TT_Free() (and thus the macro FREE()) will accept a
+    NULL pointer  successfully!  This means more  precisely that the
+    address of  a pointer may have  the value NULL; in  this case it
+    will return with a successful error code (TT_Err_Ok == 0).
+
+    This  convention  is  also  _very_  strong in  the  engine,  and
+    simplifies both code size and  style.  One of its primary origin
+    is the engine's object  management which requires the ability to
+    release  an object,  be it  normal or  `partial', with  the same
+    code.
+
+
+3. The ALLOC() and ALLOC_ARRAY() macros
+---------------------------------------
+
+  Two  macros are  also defined  to  make the  FreeType source  code
+  easier  to read  and  understand.   Their role  is  to perform  an
+  allocation,  while saving  the  error condition  in an  _implicit_
+  local variable  called `error', and  returning a boolean  which is
+  set to true in case of error.  Their definition is
+
+    #define ALLOC( pointer, size ) \
+      ( ( error = MEM_Alloc( pointer, size ) ) != TT_Err_Ok )
+
+  and
+
+    #define ALLOC_ARRAY( pointer, count, type ) \
+      ( ( error = MEM_Alloc( pointer, \
+                             (count) * sizeof ( type ) ) ) \
+      != TT_Err_Ok )
+
+  They  are always  used  in  `if' statements,  and  can be  chained
+  together.  Here is some example code:
+
+      char*     buffer1 = 0;   /* temporary buffer 1 */
+      char*     buffer2 = 0;   /* temporary buffer 2 */
+      TT_Error  error;
+ 
+
+      ...
+
+      if ( ALLOC_ARRAY( buffer1, n, TT_F26Dot6 ) ||
+           ALLOC_ARRAY( buffer2, n, short )      )
+        goto Fail;
+
+      ... work ...
+
+    Fail:
+      FREE( buffer2 );
+      FREE( buffer1 );
+      return error;
+
+
+  Notes:
+
+    - If an error occurs during the first allocation, execution will
+      jump immediately to the `Fail' label.
+
+    - The failure code, which releases the buffers, does not need to
+      differentiate  whether the first  allocation succeeded  or not
+      (simply   because  FREE()  accepts   null  pointers   with  no
+      problems).
+
+  The equivalent code, without macros, would be:
+
+      char*     buffer1;
+      char*     buffer2;
+      TT_Error  error;
+
+
+      error = TT_Alloc( n * sizeof ( TT_F26Dot6 ),
+                        (void**)&buffer1 );
+      if ( error ) goto Fail_Buffer1;
+
+      error = TT_Alloc( n * sizeof ( short ),
+                        (void**)&buffer2 );
+      if ( error ) goto Fail_Buffer2;
+
+      .... work ....
+
+    Fail_Buffer2:
+      TT_Free( (void**)&buffer2 );
+
+    Fail_Buffer1:
+      TT_Free( (void**)&buffer1 );
+
+
+  Which is a lot less clear about its intents, and uses more special
+  cases.
+
+
+4. The MEM_xxxx() macros
+------------------------
+
+  Finally, three  macros are defined  to perform some  common memory
+  block operations.  Their names are rather explicative:
+
+  - MEM_Copy()
+
+    Used  by the  engine to  copy  one block  of data  in memory  to
+    another one.
+
+  - MEM_Set()
+
+    Used to set all bytes of a block of memory to a given value.
+
+  - MEM_Move()
+
+    Well, guess what ;-)
+
+
+  These  operations  could  have  been embedded  in  functions  like
+  TT_Mem_Copy(),  TT_Mem_Set(),  and  TT_Mem_Move(),  but a  lot  of
+  compilers are  able to inline  directly calls to  such `intrinsic'
+  functions  as memcpy()  and memmove().   Hence, macros  make sense
+  here.
+
+
+--------------------------------------------------------------------
+
+
+III. File Component API
+=======================
+
+  This section  describes the file  component's API, and  the things
+  that are needed to port it to a specific system.  Note that only a
+  fraction of  the source code  in `ttfile.c' needs to  be rewritten
+  during a port.
+
+
+1. Streams and their functions
+------------------------------
+
+  A  stream   in  FreeType  (version  1.x)   encapsulates  both  the
+  location/naming of  a file,  and its access.   This is due  to the
+  fact that  they were  originally designed to  embed a  simple ANSI
+  `FILE*' file pointer.
+
+  This means several things:
+
+  - A  stream  is  created   and  opened  via  the  TT_Open_Stream()
+    function.  It  takes, in the  default build, a font  pathname of
+    type `char*' that it uses when calling fopen().
+
+  - It can be released/closed via the function TT_Close_Stream().
+
+  - It embeds a `current file  position', just like an ordinary file
+    descriptor.    It  is  thus   seekable,  through   the  function
+    TT_Seek_File().
+
+  - Raw data  can be extracted from a  stream through TT_Read_File()
+    and TT_Read_At_File().
+
+  However, it has certain properties that differ from a libc `FILE*'
+  data type:
+
+  - Because each  face object has  its own stream, and  because most
+    operating systems limit the number of opened system resources in
+    each process,  it is more than  helpful to be able  to `flush' a
+    stream.
+
+    A  stream  is said  to  be flushed  if  the  system resource  it
+    contains  (like a  file descriptor)  has been  closed.  However,
+    this resource is re-opened automatically when needed.
+
+    The function TT_Flush_Stream() is used  to flush a stream.  If a
+    stream has been flushed, it is also said to be `asleep'.
+
+  - The engine calls TT_Use_Stream()  before each new stream access.
+    With it,  the file  component is able  to awake  (or `activate')
+    streams that are flushed, if needed.
+
+  - Consequently,  the  engine calls  TT_Done_Stream()  when it  has
+    performed all  I/O access.  These two  APIs (TT_Use_Stream() and
+    TT_Done_Stream()) let  the file  component track and  manage the
+    engine's access patterns, and  allows it to cache opened streams
+    more cleverly.
+
+    For example, one  could implement an LRU list  used to track the
+    `oldest' streams, and only activate the 10 `freshest' ones, thus
+    limiting the total number of system stream resources used by the
+    library, independently  of the total  number of opened  faces in
+    the engine.
+
+
+2. Frames and file access
+-------------------------
+
+  In  order to resolve  endianess and  alignment issues,  the engine
+  uses  the concept  of `frames'  to  extract data  from a  TrueType
+  table.
+
+  - A frame is  simply a sequence of successive  bytes, taken from a
+    stream from its current position.  A frame can only exist within
+    a stream.
+
+  - The  function  TT_Access_Frame() (ideally)  reads  its data  and
+    places it into  an intermediate buffer, which is  later used for
+    parsing.  This  function also checks  that the whole  frame fits
+    into the original file.  For example, it will return an error if
+    detecting `over-reads' in the file (which can happen if the font
+    file is broken).
+
+    Note  that the  intermediate buffer  disappears in  the  case of
+    memory-mapped files.
+
+  - Each frame has an internal  cursor, which is set to its buffer's
+    base by  the previous function.  Note, however,  that it differs
+    from the stream's current position, which has been advanced once
+    TT_Acess_Frame() is completed.
+
+  - Data is extracted  from the frame through calls  to functions of
+    the form:
+
+      TT_Get_<IntegerType>();
+
+    where <IntegerType>  can be any  of: Byte (unsigned  char), Char
+    (signed char), Short, UShort, Long, or ULong.
+
+    Each  function  returns  the  integer below  the  current  frame
+    cursor, and advances the latter in the buffer.
+
+  - Finally,  when  the frame  access  ends,  the  engine calls  the
+    TT_Forget_Frame() function, which  will release the intermediate
+    buffer and set the cursor to NULL.
+
+  Here is a typical frame read sequence:
+
+      /* first - read the next 12-bytes frame in memory */
+      error = TT_Access_Frame( 12 );
+      if ( error )
+        return error;
+
+      /* now, extract all data */
+      object->field1 = TT_Get_Short();
+      object->field2 = TT_Get_Long();
+      object->field3 = TT_Get_Char();
+      object->filed4 = TT_Get_Long();
+      object->field5 = TT_Get_Byte();
+
+      /* done - now release the frame */
+      TT_Forget_Frame();
+
+      /* now perform some checks */
+      if ( object->field1 == -1 )
+        return Error_1;
+
+      if ( object->field2 > object->field4 )
+        return Error_2;
+
+
+  *****************
+  *** IMPORTANT ***
+  *****************
+
+  A few  things need  to be noticed  by porters when  they implement
+  frame loading (i.e. the TT_Access_Frame() function):
+
+  - The functions  that need to be ported  are TT_Access_Frame() and
+    TT_Forget_Frame().  The  TT_Get_XXXX() functions should  be left
+    as is.
+
+  - A  frame has  a state,  and  must _always_  be released  through
+    TT_Forget_Frame()  in case  of an  error.  This  means  that the
+    engine will _never_ use code like the following:
+
+        error = TT_Access_Frame( 12 );
+        if ( error )
+           goto Fail;
+    
+        object->field1 = TT_Get_Short();
+    
+        /* now check error and return immediately -- */
+        /* WITHOUT RELEASING FRAME!  ERROR!          */
+        if ( object->field1 == -1 )
+          goto Fail;
+    
+        object->field2 = TT_Get_Long();
+        object->field3 = TT_Get_Char();
+        object->field4 = TT_Get_Long();
+    
+        /* check for error, return immediately -- */
+        /* WITHOUT RELEASING FRAME!  ERROR!       */
+        if ( object->field2 > object->field4 )
+          goto Fail;
+    
+        /* now release frame */
+        TT_Forget_Frame();
+
+    This   means  more   simply   that  EACH   successful  call   to
+    TT_Access_Frame()  will   ALWAYS  be  followed  by   a  call  to
+    TT_Forget_Frame()!
+
+  - As a  consequence of the first  rule, and also in  order to keep
+    things  simple,  NESTING  FRAME ACCESSES are not  allowed.   For
+    example, the following code will produce an error:
+
+        /* First frame access */
+        error = TT_Access_Frame( 8 );
+        if ( error )
+          goto Fail;
+
+        /* read a file offset */
+        offset = TT_Get_Long();
+
+        /* seek and load another frame */
+        error = TT_File_Seek( stream, offset );
+        if ( error )
+          goto Fail;
+
+        error = TT_Access_Frame( 4 );
+        /* The function TT_Access_Frame detects nested calls */
+        /* and ALWAYS returns TT_Err_Nested_Frame_Access!    */
+        if ( error )
+          goto Fail;
+
+        data1 = TT_Get_Long();
+
+        /* release second frame */
+         TT_Forget_Frame();
+
+        /* read next integer from the first frame */
+        data2 = TT_Get_Long();
+
+        /* release first frame */
+        TT_Forget_Frame();
+
+    This simplifies the  work that needs to be  done wen porting the
+    TT_Access_Frame() and TT_Forget_Frame() functions.
+
+
+3. Differences in thread support levels
+---------------------------------------
+
+  The FreeType library can be built to three distinct thread-support
+  levels.  This section  will present each other, and  show how this
+  translates within the ttfile.c source code.
+
+  a. Levels
+
+    The three levels are
+
+    - single thread
+
+      No synchronization  primitive is used  to protect the  data in
+      the file component.  Hence, there is only one `current' stream
+      at any one time.  Note, however, that in some cases, more than
+      one stream  may be `active' (or `awakened');  e.g., when using
+      memory-mapped files,  each opened  face needs a  valid mapping
+      before it can be used/parsed by the engine.
+
+    - thread-safe
+
+      The thread  safe mode synchronizes concurrent  accesses to the
+      renderer's component through mutexes.  For the file component,
+      this  means a  single mutex  which is  `locked' by  a  call to
+      TT_Use_Stream(), and `released' by TT_Done_Stream().
+
+      As a consequence, there  is only one possible `current' stream
+      when the engine reads files, like in the single thread case.
+
+    - re-entrant
+
+      In  this  mode,  concurrent  accesses  are  possible  on  many
+      components,   including   ttfile.    This  means   that   each
+      TT_Use_Stream()  must  _really_  create  its  own  system/ANSI
+      stream for a single file, and that the file component _cannot_
+      have any  state (only stream  objects have!), like  a `current
+      stream' and `current frame'.
+
+      This mode must use mutexes to protect all shared variables and
+      lists from concurrent changes/reads.  The only component which
+      is still  serialized in this  mode is the  scan-line converter
+      (a.k.a. ttraster).
+
+  b. Implementation differences
+
+    Because  the  TrueType engine  serves  more  as  a `font  format
+    driver' than a general and high-level text-rendering library, it
+    has  been decided  to keep  its code  as simple  and  compact as
+    possible.
+    
+    This implies  some implementation differences  between the three
+    thread modes, which are briefly explained below:
+    
+    - Single-thread  and thread-safe  mode can  have a  state, which
+      means for ttfile.c, a `current stream' and `current frame'.
+    
+    - In  the  reentrant mode,  the  `state'  must  be stored  in  a
+      thread-local  place, which  means  the stack  (or more  simply
+      local function variables).
+    
+    What follows  is that  some `ttfile'  functions will not take the
+    same number of  arguments depending on  the thread-support  mode.
+    Let us take the example of frame access and parsing:
+
+    In  single-thread and  thread-safe  mode, the  current frame  is
+    automatically set by  the TT_Access_Frame() function, which only
+    takes a `size' argument to determine the run of bytes to extract
+    from the _current_stream_ within ttfile's state.
+    
+    Moreover,  the  TT_Get_XXXX() functions  extract  data from  the
+    current  frame, and need  no arguments.   A simple  frame access
+    then looks like this:
+    
+        /* read the next 12-bytes frame from the _current_stream_ */
+        error = TT_Access_Frame( 12 );
+        if ( error )
+          return error;
+    
+        /* now, extract all data from the _current_frame_ */
+        object->field1 = TT_Get_Short();
+        object->field2 = TT_Get_Long();
+        object->field3 = TT_Get_Char();
+        object->filed4 = TT_Get_Long();
+        object->field5 = TT_Get_Byte();
+    
+        /* done - now release the current frame */
+        TT_Forget_Frame();
+    
+    In  reentrant mode,  things are  a bit  different.   The current
+    stream and current  frame must be passed as  parameters, and the
+    code looks like this (notice the new function parameters!):
+    
+
+        TT_Frame  frame;  /* define a local variable to handle */
+                          /* the current frame                 */
+    
+        ....   /* we suppose we already have a stream variable */
+        ....   /* named `stream' (how surprising ;-)           */
+    
+        /* read the next 12-bytes frame from a given stream */
+        error = TT_Access_Frame( stream, 12, &frame );
+        if ( error )
+          return error;
+    
+        /* now, extract all data from the given frame */
+        object->field1 = TT_Get_Short( frame );
+        object->field2 = TT_Get_Long ( frame );
+        object->field3 = TT_Get_Char ( frame );
+        object->filed4 = TT_Get_Long ( frame );
+        object->field5 = TT_Get_Byte ( frame );
+    
+        /* done - now release the current frame */
+        TT_Forget_Frame( frame );
+
+
+    The differences between these  two schemes are striking.  Though
+    an `easy' solution  would have been to only  write the engine in
+    reentrant-mode, it  would have  resulted in larger  and slightly
+    slower code, as well as the  source a bit more obscure about its
+    intents  and  thus  harder  to maintain.   Also,  the  reentrant
+    version is  only needed in  rare cases and environments,  and it
+    was not thought as a  good idea to  complexify _source_  code in
+    order to comply with rare uses.
+    
+    The problem is  solved within the engine by the use  of a set of
+    carefully  selected macros,  which help  generate  both versions
+    from a _single_ source file.
+    
+    Moreover, as the macros  imitate the non-reentrant syntax (i.e.,
+    the use  of the `stream'  and `frame' parameters is  implicit to
+    the macros),  the source is  kept clear and easy  to understand,
+    even if compiled in re-entrant mode.
+    
+    The code looks then like the following in the engine:
+    
+        /* read the next 12-bytes frame from the current stream  */
+        /* assignment of the error code in the local `error'     */
+        /* variable is also implicit to the ACCESS_Frame macro,  */
+        /* and its result is always a boolean (no ANSI warnings) */
+    
+        if ( ACCESS_Frame( 12 ) )
+          goto Fail;
+    
+        /* Now, extract all data from the current frame.         */
+        /* The macros GET_xxxxx use an implicit local `frame'    */
+        /* variable in reentrant mode.                           */
+
+        object->field1 = GET_Short();
+        object->field2 = GET_Long();
+        object->field3 = GET_Char();
+        object->filed4 = GET_Long();
+        object->field5 = GET_Byte();
+
+        /* done - now release the current frame */
+
+        FORGET_Frame();
+
+    Another advantage  of the above code is  its `expressiveness' in
+    the sense that it really  describes what is happening during the
+    frame load, hiding the  boring but necessary details required by
+    error  checking and  reentrancy.  And  if the  error  checks are
+    within the macros, we are sure we won't forget them because they
+    are `too  boring to  code' (one of  the reason  why `exceptions'
+    caught so quickly in C++ and Java).
+
+  c. Consequences on ttfile
+
+    Of   course,  the   macros   only  hide   real  differences   in
+    implementation which must be reflected in ttfile.h and ttfile.c.
+    In order  to ease this task,  some other macros  are used, which
+    use is reserved for these two files.  There are:
+
+      STREAM_ARG
+      STREAM_ARGS
+      FRAME_ARG
+      FRAME_ARGS     in ttfile.h
+
+      CUR_Stream
+      STREAM_VAR
+      STREAM_VARS
+      FRAME_VAR
+      FRAME_VARS     in ttfile.c
+
+    All of  these macros (with the exception  of CUR_Stream) default
+    to nothing  (i.e. a void macro) in  single-thread and re-entrant
+    mode, which only differ from the use of a mutex lock and release
+    in   the   functions   TT_Use_Stream()   and   TT_Done_Stream().
+    CUR_Stream  defaults  to the  file  component's current  stream,
+    found in its internal state (as you can guess, it designates the
+    `current stream').
+
+    On  the  opposite, the  macros  are  used  to define  additional
+    function parameters (if a  function is called) and arguments (if
+    calling in a function).   For example, the following (fictional)
+    code:
+
+      /* return the size of a given stream */
+      long  Stream_Size( STREAM_ARG )
+      {
+        return CUR_Stream.size;
+      }
+
+    expands to:
+
+      long  Stream_Size()
+      {
+        return file_component.current_stream.size;
+      }
+
+    in non-reentrant mode, and to:
+
+      long  Stream_Size( TT_Stream  stream )
+      {
+        return (*stream).size;
+      }
+
+    otherwise.
+
+    Thus, we can see the following reentrant expansions:
+
+      STREAM_ARG     -->    TT_Stream   stream
+      STREAM_ARGS    -->    TT_Stream   stream, (note the comma)
+
+      FRAME_ARG      -->    TT_Frame    frame
+      FRAME_ARGS     -->    TT_Frame    frame,  (note the comma)
+
+      STREAM_VAR     -->    stream
+      STREAM_VARS    -->    stream,
+
+      FRAME_VAR      -->    frame
+      FRAME_VARS     -->    frame,
+
+    They follow these simple rules:
+
+     - An XXXX_ARG is used to  define a single optional parameter in
+       a function  _prototype_.  The parameter is said  to be single
+       if it is not followed by anything, e.g.
+
+         long  Stream_Size( STREAM_ARG )
+
+     - An XXXX_ARGS  is the same, followed  by a comma,  in order to
+       place other (non-optional) parameters behind, e.g.
+
+         TT_Error  Stream_Seek( STREAM_ARGS  long pos )
+
+     - An  XXXX_VAR is  used, _only_  within ttfile.c,  to  _call_ a
+       function  having an  XXXX_ARG or  XXXX_ARGS in  its prototype
+       resp. declaration.
+
+         long  Stream_Left( STREAM_ARG )
+         {
+           return ( Stream_Size( STREAM_VAR ) -
+                    Stream_Pos( STREAM_VAR ) );
+         }
+
+     - An XXXX_VARS is the same, but can be followed by non-optional
+       parameters.
+
+    The macros  allow you  to write some  code independently  of the
+    thread level within ttfile.c.
+
+    *****************
+    *** IMPORTANT ***
+    *****************
+
+    In general,  porters should  not be concerned  about the  use of
+    these macros.  One easy way to  port is to take the ANSI code in
+    ttfile.c and modify only the parts that really access the system
+    (like fopen(), fread(), fseek(), etc).
+
+    These details are explained here  to make you understand how the
+    code works, in case you are interested in more elaborate ports.
+
+
+--------------------------------------------------------------------
+
+
+IV. Mutex Component API
+=======================
+
+  As said before, the default library source code uses the ANSI libc
+  only,  and  the  source  code  in ttmutex.c  only  contains  dummy
+  functions which return a successful error condition in all cases.
+
+  You  thus NEED to  specialize it  in order  to successfully  use a
+  thread-safe or reentrant build.   Here is explained what is really
+  important:
+
+
+1. The TMutex type
+------------------
+
+  The engine uses  the `TMutex' type defined in  ttmutex.h to handle
+  mutexes.  It  is only a  typedef of a  `void*' and should  be kept
+  that way for the fastest porting.
+
+  Your job will  most probably be to store  a system mutex/semaphore
+  handle or pointer in it.
+
+
+2. The mutex macros and functions
+---------------------------------
+
+  The interface file ttmutex.h  defines several macros that are used
+  within  the engine to  protect all  shared variables  (like lists)
+  from concurrent accesses.  All  macros default to `void' (nothing)
+  in  single  thread  mode,  and  to calls  to  the  TT_Mutex_XXXX()
+  functions in multi-threaded modes.
+
+  These functions are:
+
+  o TT_Mutex_Create()
+    
+    Takes a TMutex  address as an argument.  It  should place a NULL
+    pointer in this output variable in case of failure.
+
+  o TT_Mutex_Lock()
+
+    It also takes  the address of a TMutex as  an argument.  Used to
+    lock the mutex/semaphore, of course.
+
+  o TT_Mutex_Release()
+
+    Guess what ;-) Same interface.
+
+  o TT_Mutex_Delete()
+
+    Destroys a mutex/semaphore.
+
+
+3. Redefining the TMutex type
+-----------------------------
+
+  You can also get rid  of the TT_Mutex_xxxx() functions if you want
+  to use your system's synchronization API.  This can be done in two
+  simple steps:
+
+  a. Redefine the TMutex type to suit your system's handle types.
+
+  b. Redefine the MUTEX_xxxx() macros in order to call directly your
+     API in the case of multi-threaded builds.
+
+  Both  methods   (specializing  the  TT_Mutex_xxx()   functions  or
+  redefining the macros) are possible.
+
+
+--------------------------------------------------------------------------
+
+
+V. Summary and Advanced Concepts
+================================
+
+1. Quick step-by-step guide to porting the system components
+------------------------------------------------------------
+
+  a. Port the memory component
+
+    o Look   at  the  `ttmemory.h'  file  and   change   the  macros
+      MEM_Copy(), MEM_Move(), and MEM_Set() to reflect your system's
+      API providing  the equivalent functionality.   The reason that
+      macros  instead  of functions  are  used  there  is that  many
+      compilers are  able to inline directly  these functions within
+      your code.
+
+    o Look  at the `ttmemory.c'  file.  Replace the  single malloc()
+      call with  your own allocation routine, and  the single free()
+      with your  own release routine.   If your allocator  uses more
+      sophisticated  functions, you  will probably  have  to rewrite
+      more parts of this file.  See section I above.
+
+  b. Port the mutex component
+
+    o Look  at the file  `ttmutex.c' and specialize each  routine to
+      have it use your system's synchronization API.
+
+    o For a  more advanced port, you can  also directly redefine the
+      definition of  the TMutex  type in ttmutex.h,  as well  as the
+      macro definitions (like MUTEX_Create(), MUTEX_Lock(), etc.) to
+      use directly your system's  API.  The TT_Mutex_xxxx() will not
+      be necessary then.
+
+  c. Port the file component
+
+    o For a quick port,  look at the following functions and replace
+      the ANSI libc calls (like fopen(), fclose(), fread(), etc.):
+
+        Stream_Activate(), Stream_Deactivate(), TT_Open_Stream(),
+        TT_Done_Stream(), TT_Seek_File(), TT_Skip_File(),
+        TT_Read_File(), TT_File_Pos()
+
+    o If you plan to use memory-mapped files, you can have a look at
+      the       Unix       file       component       found       in
+      `freetype/lib/arch/unix/ttmmap.c'.   It  should  give  you  an
+      indication of what to do.
+
+
+2. Exotic file systems and font resources
+-----------------------------------------
+    
+  a. Other file naming conventions
+
+    The high-level  library uses the  `TT_Text*' type to  define the
+    type of characters used for a font file's pathname.  By default,
+    it equals  to the `char*' type,  which allow you to  open a face
+    object with the following call:
+
+      error = TT_Open_Face( engine, "c:\fonts\times.ttf", &face );
+
+    The  implementation   of  TT_Open_Face()  passes   directly  the
+    pathname  pointer  to  the internal  TT_Open_Stream()  function,
+    located in the file component, which really opens the file.
+
+    Some filesystems  use different naming  conventions, like UTF-16
+    code, where  each character  is coded in  16 bits.  In  order to
+    help them to use FreeType, all you need to do is the following:
+
+    - Define the macro HAVE_TT_TEXT.
+
+    - Define the type `TT_Text' to the character type you need, like
+      'wchar_t' for Unicode.
+
+    Note that this should apply when compiling the FreeType library,
+    as  well  as  WHEN  INCLUDING  THE  FILE  `freetype.h'  IN  YOUR
+    APPLICATIONS.
+
+    If the configuration macro HAVE_TT_TEXT is not defined, the file
+    `freetype.h'  defines  TT_Text  as  `char*'.  You can  read  its
+    source code  to see it more  explicitly (look at  the very first
+    lines of the code).
+
+    You can  also use TT_Text as  a pointer to  more specific files,
+    like a  simple memory address when  the font is  located in ROM,
+    etc.
+
+    Just   synchronize   the   definition   of  TT_Text   with   the
+    implementation in ttfile.c!
+
+  b. Font Resources
+
+    FreeType 2.0  will feature many architectural  changes that will
+    help make  porting easier, especially  with regards of  the file
+    component.
+    
+    To do this, it will  separate the concepts of a `font resource',
+    i.e.  a  file seen as  a storage, from  a `font stream',  i.e. a
+    file seen as  a stream of data.  Only  the resource related code
+    will be visible  to porters, and it will be  much easier to port
+    (for example,  nearly all  thread-support levels issues  will be
+    treated  internally in  the  rest  of the  engine,  and will  be
+    invisible to the resource component).
+
+    We are sorry for  the current  design and  state,  but TT_Stream
+    started  as a simple  encapsulation of  an ANSI  FILE* variable,
+    before font-specific access patterns  made them become what they
+    now are.
+
+    FreeType 2.0 will be a  good reason to re-design I/O access more
+    clearly, and  fortunately with more power  and flexibility (like
+    using easily files  of different type, ROM-based, memory-mapped,
+    disk-based, in a single engine).
+
+    However,  all of this  does not  mean  than  the current  design
+    does not work.  It does, so do not hesitate to use it :-)
+
+
+--------------------------------------------------------------------
+
+
+VI. Troubleshooting
+===================
+
+  To be written.
+
+
+--------------------------------------------------------------------
+
+
+Conclusion
+==========
+
+  To be written.
+
+
+--- end of porting.txt ---

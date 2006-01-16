@@ -1,0 +1,78 @@
+<HTML>
+<BODY>
+<PRE>
+<!-- Manpage converted by man2html 3.0.1 -->
+
+</PRE>
+<H2>NAME</H2><PRE>
+     curl_getenv - return value for environment name
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+     <B>#include</B> <B>&lt;curl/curl.h&gt;</B>
+
+     <B>char</B> <B>*curl_getenv(const</B> <B>char</B> <B>*</B><I>name</I><B>);</B>
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+     curl_getenv()  is  a portable wrapper for the getenv() func­
+     tion, meant to emulate its behaviour and provide an  identi­
+     cal  interface  for  all operating systems libcurl builds on
+     (including win32).
+
+
+</PRE>
+<H2>RETURN VALUE</H2><PRE>
+     If successful, curl_getenv() returns a pointer to the  value
+     of  the  specified  environment.  The memory it refers to is
+     malloc()ed why the application must  free()  this  when  the
+     data  has completed to serve its purpose. When <I>curl</I><B>_</B><I>getenv()</I>
+     fails to find the specified name, it returns a null pointer.
+
+
+</PRE>
+<H2>NOTE</H2><PRE>
+     Under  unix  operating  systems,  there  isn't  any point in
+     returning an allocated memory, although other systems  won't
+     work  properly  if  this isn't done. The unix implementation
+     thus have to suffer slightly from  the  drawbacks  of  other
+     systems.
+
+
+</PRE>
+<H2>SEE ALSO</H2><PRE>
+     <B>getenv(3C)</B>,
+
+
+</PRE>
+<H2>BUGS</H2><PRE>
+     Surely there are some, you tell me!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+<HR>
+<ADDRESS>
+Man(1) output converted with
+<a href="http://www.oac.uci.edu/indiv/ehood/man2html.html">man2html</a>
+</ADDRESS>
+</BODY>
+</HTML>

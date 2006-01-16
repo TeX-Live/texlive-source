@@ -1,0 +1,916 @@
+
+                        The FreeType Engine
+
+                      Core Library User Guide
+
+                                 or
+
+    How to use the engine in your applications and font servers
+
+        ---------------------------------------------------
+
+                            Introduction
+
+
+                         I. Basic Concepts
+  
+                       1. Concepts
+                       2. Handles
+                       3. Conventions of use
+                       4. Object classes
+
+                          II. Extensions
+
+                     1. What is an extension?
+                     2. Where to find them
+                     3. Writing your own extension
+
+                             Conclusion
+
+--------------------------------------------------------------------
+
+Introduction
+============
+
+  This file has been written to present the FreeType core library to
+  would-be  writers  of applications  and  font  servers.  It  first
+  describes the concepts  on which the engine is  based, then how to
+  use it to obtain glyph metrics, outlines and bitmaps.
+
+  The last part  discusses the ability to add  and use extensions to
+  the  core library to  get access  to supplemental  TrueType tables
+  which are not currently provided by the core engine.  If you would
+  like  to  write  your  own  extensions,  read  also  the  FreeType
+  developer's guide.
+
+
+I. Basic Concepts
+=================
+
+
+  1. Concepts
+  -----------
+
+    FreeType defines  several kinds of  structures called `objects',
+    that  are used to  manage the  various abstractions  required to
+    access and display fonts.
+
+    In care  of good encapsulation,  these objects are  not directly
+    accessible from a client application.  Rather, the user receives
+    a `handle' for  each object he or she queries  and wants to use.
+    This handle is a stand-alone reference; it cannot be used like a
+    pointer to access directly the object's data.
+
+  2. Properties
+  -------------
+
+    It  is however  possible  to obtain  and  set object  properties
+    through  several functions  of the  API.  For  example,  you can
+    query  a face  object's properties  with only  a handle  for it,
+    using the function TT_Get_Face_Properties().
+
+    Note  that  the  data  will  be  returned  in  a  user-allocated
+    structure,  but will also  contain pointers  addressing directly
+    some data found within the object.
+
+    A client application should  never modify the data through these
+    pointers!  In order to set new properties' values, the user must
+    always  call a  specific API  function to  do so,  as  a certain
+    number of  other related data  might not appear in  the returned
+    structure and  imply various non-visible  coherency and coercion
+    rules.
+
+  3. Conventions of use
+  ---------------------
+
+    o All API functions have  their label prefixed by `TT_', as well
+      as all external (i.e. client-side) types.
+
+    o To  allow  the  use  of  FreeType's core  engine  in  threaded
+      environments, nearly  all API functions return  an error code,
+      which is always set to 0 in case of success.
+
+      The error codes' type is  `TT_Error', and a listing of them is
+      given   in   the   API   references  (see   `apiref.txt'   and
+      `apirefx.txt').
+
+      Some functions do  not return an error code.   Their result is
+      usually a value  that becomes negative in case  of error (this
+      is  used for functions  where only  one kind  of error  can be
+      reported, like an invalid glyph index).
+
+      An important  note is that  the engine should not  leak memory
+      when  returning an error,  e.g., querying  the creation  of an
+      object  will allocate  several  internal tables  that will  be
+      freed if a disk error occurs during a load.
+
+    o A handle  is acquired through API functions  labeled along the
+      names:
+
+        TT_Open_xxxx(), TT_New_xxxx()
+
+      where `xxxx' is the object's class (Face, Instance, etc).
+
+      Examples:
+
+        TT_Open_Face(), TT_Open_Collection(),
+        TT_New_Instance(), TT_New_Glyph()
+
+    o A handle is closed through an API labeled
+
+        TT_Close_xxxx() or TT_Done_xxxx()
+
+      where `xxxx' is the object's class (Face, Instance, etc).
+
+      Examples:
+
+        TT_Close_Face(), TT_Done_Instance(), TT_Done_Glyph()
+
+    o Properties are obtained through an API labeled
+
+        TT_Get_xxxx_yyyy()
+
+      where `xxxx' is the object's class, and `yyyy' its property.
+
+      Examples:
+
+        TT_Get_Face_Properties(), TT_Get_Instance_Metrics()
+        TT_Get_Glyph_Outline(), TT_Get_Glyph_Bitmap()
+
+    o Properties are set through an API labeled
+
+        TT_Set_xxxx_yyyy()
+
+      where `xxxx' is the object's class, and `yyyy' its property.
+
+      Examples:
+
+        TT_Set_Instance_Resolutions(),
+        TT_Set_Instance_CharSize()
+
+  4. Object Classes
+  -----------------
+
+    The following object classes are  defined in this release of the
+    engine:
+
+    o The Engine objects
+
+      The FreeType library can be built to be completely re-entrant,
+      even though its default build doesn't support threads (more on
+      this in the `threads.txt').
+
+      As a consequence, it is  possible to open several instances of
+      the library, called `engines'.  Each engine has its own set of
+      current  objects (faces,  instances,  etc.), and  there is  no
+      sharing between them.
+
+      The idea  is that  the library could  be compiled as  a shared
+      library or DLL,  and then be able to  provide several distinct
+      engines  to independent  client applications.   In  this case,
+      each  client   program  must   create  its  own   engine  with
+      TT_Init_FreeType() to hold its data.
+
+      Closing  an  engine  will  destroy  _all_  objects  that  were
+      allocated  since its opening,  releasing all  resources, etc.,
+      with the exception of user-allocated outline objects.
+
+    o The Face objects
+
+      A face contains the data that is specific to a single TrueType
+      font file.   It presents information common to  all glyphs and
+      all point sizes like font-specific metrics and properties.
+
+      You can open a face object  by simply giving a pathname to the
+      TrueType file.   You can later close (i.e.   discard) the face
+      object.
+
+      You  can  also open  a  single  face  embedded in  a  TrueType
+      collection.
+
+      See also:
+
+        TT_Open_Face(), TT_Open_Collection(), TT_Close_Face(),
+        TT_Get_face_Properties()
+
+    o The Instance objects
+
+      An instance  is also called  a `pointsize' or a  `fontsize' in
+      some  windowing systems.   An instance  holds  the information
+      used to  render glyphs on a  specific device at  a given point
+      size; it is always related to an opened face object.
+
+      For instance, if you want to generate glyphs for text from the
+      same typeface at `sizes' of 10  and 12 points, all you need is
+      one  face object,  from  which you  will  create two  distinct
+      instances.
+        
+      A device is defined by its horizontal and vertical resolution,
+      usually specified in  dots per inch (dpi).  A  point size is a
+      scaling number, given as  _absolute_ values in points, where 1
+      point = 1/72 inch.
+
+      The `pixel' size,  also known as the `ppem'  value (for Points
+      Per EM square) is computed from both the device resolution and
+      the point size.  It determines the size of the resulting glyph
+      bitmaps on your screen or sheet of paper.
+
+      The default device resolution for any new instance is 96dpi in
+      both  directions,  which  corresponds  to  VGA  screens.   The
+      default point size is 10pt.   The high-level API allows you to
+      change this whenever you want for any given instance object.
+
+      Note that closing a face object will automatically destroy all
+      its child instances (even though you can release them yourself
+      to free memory).
+
+      See also:
+
+        TT_New_Instance(), TT_Done_Instance(),
+        TT_Get_Instance_Metrics(), TT_Set_Instance_Resolutions(),
+        TT_Set_Instance_Pointsize()
+
+    o The Glyph objects
+
+      A Glyph  object is a  _container_ for the data  that describes
+      any  glyph of  a given  font.   This means  that it  typically
+      holds:
+
+      - Glyph  metrics  information, like  bounding  box or  advance
+        width.
+
+      - Outline arrays sized large enough to hold any glyph from the
+        face.   This  size is  extracted  from  the face's  internal
+        `maxProfile' table to optimize memory costs.
+
+      - Other important  parameters related to  the `fine' rendering
+        of   the   glyphs.     This   includes   things   like   the
+        dropout-control mode used at low sizes.
+
+      - And it doesn't contain a bitmap or a pixmap!
+
+      A glyph object  is used to load, hint,  and rasterize a single
+      glyph, as taken from the font file.
+
+      See also:
+
+        TT_New_Glyph(), TT_Done_Glyph(), TT_Get_Glyph_Metrics(),
+        TT_Get_Glyph_Outline(), TT_Get_Glyph_Bitmap(),
+        TT_Get_Glyph_Pixmap()
+
+    o The Character Map (CharMap) handle
+
+      Glyphs  can  be indexed  in  a  TrueType  file in  any  order,
+      independently of  any standard character  encoding, like ASCII
+      or Unicode.  For this reason, each file comes with one or more
+      character mapping tables, used  to translate from one specific
+      encoding's character codes to font glyph indices.
+
+      There  are  many  encoding   formats,  and  each  one  can  be
+      distinguished by two values:
+
+      - its platform ID
+      - its platform-specific encoding ID
+
+      Their  values are  defined in  the TrueType  specification and
+      won't  be commented there.   The FAQ  lists the  most commonly
+      used (platform,encoding) pairs.
+
+      It  is  possible  to  enumerate  the charmaps  provided  by  a
+      TrueType font and to use any of these to perform translations.
+
+      The charmaps are loaded into memory only on demand to save the
+      space taken  by the maps that  are not needed  on your system.
+      They are part of the face object, however.
+
+      This means that even though  a charmap can be accessed through
+      a handle (obtained  through the TT_Get_CharMap() function), it
+      isn't a  stand-alone object.  For  example, you never  need to
+      de-allocate it; this is  automatically done by the engine when
+      its face object expires.
+
+      See also:
+
+        TT_Get_CharMap_Count(), TT_Get_CharMap_ID(),
+        TT_Get_CharMap(), TT_Char_Index().
+
+    o The Outline Objects
+
+      An outline is a vector  representation of a glyph.  It is made
+      of several  control points joined by line  segments and Bezier
+      arcs, themselves  gathered in closed  paths called `contours'.
+      The outline have also  several flags, or attributes, which are
+      used by  the scan-line converter to select  the best rendering
+      algorithms to convert the glyph's bitmap.
+
+      Unlike  other  objects in  FreeType,  outlines aren't  managed
+      through handles, but directly with the structure `TT_Outline',
+      defined  for   client  applications.   Each   glyph  container
+      contains an outline sized large  enough to hold any glyph from
+      its  parent  face.  Client  applications  can  access it  with
+      TT_Get_Glyph_Outline().  However, one  can also create its own
+      outlines     if    needed     with     TT_New_Outline()    and
+      TT_Clone_Outline().
+
+      Note  that  user-created  outlines  are  NOT  tracked  by  the
+      library.  Hence, the client must release them himself with one
+      or more calls to TT_Done_Outline().
+
+      A  various number  of methods/operations  are defined  for the
+      outline class to simplify its management.
+
+
+      IMPORTANT NOTE: **********************************************
+        
+        The  definition  of TT_Outline  may  change  in the  future.
+        Developers  are  thus  advised  to always  use  the  outline
+        methods provided  by the API rather than  reading or setting
+        data themselves.
+
+      **************************************************************
+        
+      See also:
+
+        TT_New_Outline(), TT_Clone_Outline(), TT_Copy_Outline(),
+        TT_Done_Outline(), TT_Get_Outline_BBox(),
+        TT_Get_Outline_Bitmap(), TT_Get_Outline_Pixmap(),
+        TT_Translate_Outline(), TT_Transform_Outline()
+
+    o Bitmaps and Pixmaps
+
+      One very important aspect of  FreeType is that it is unable to
+      create bitmaps  on its  own.  Rather, it  is up to  the client
+      application to do  it, and pass a reference, in  the form of a
+      TT_Raster_Map,  to the scan-line  converter (the  component in
+      charge of generating bitmaps from outlines).
+
+      Hence the importance of the TT_Raster_Map structure, which
+      layout is:
+
+        struct
+        {
+          int    rows;    /* number of rows                    */
+          int    cols;    /* number of columns (bytes) per row */
+          int    width;   /* number of pixels per line         */
+          int    flow;    /* bitmap orientation                */
+   
+          void*  bitmap;  /* bit/pixmap buffer                 */
+          long   size;    /* bit/pixmap size in bytes          */
+        } TT_Raster_Map;
+
+      - The `rows'  field contains the  total number of rows  in the
+        bitmap.
+    
+      - The `width' field gives the  number of pixels per row (a bit
+        or a byte, depending on the map's nature).
+    
+      - The `cols'  field gives the  number of columns,  i.e. bytes,
+        taken by each row in the map buffer.
+    
+        IMPORTANT: The `cols'  field  must  be a  multiple of  4 for
+                   pixmaps!
+    
+        Typically,  its value should  be `(width+7)/8'  for bitmaps,
+        and `(width+3) & -4' for pixmaps.
+    
+      - The `flow' field gives the map's vertical orientation.
+    
+        For example, if the first bytes of the bitmap buffer pertain
+        to its upper  row, the flow is said to  be going `down', and
+        the field  should take  the value `TT_Flow_Down'.   If these
+        bytes pertain to its lowest row, the flow is going `up', and
+        the value is `TT_Flow_Up'.
+    
+        As an example,  the PC video modes use  a `down' flow, where
+        the first  VRAM byte corresponds  to the upper  and leftmost
+        corner of the screen.
+    
+      - The  `bitmap'  field is  a  typeless  pointer  to the  map's
+        buffer.
+    
+      - The `size' field contains the buffer's size in bytes.  It is
+        usually computed as follows:
+    
+          size = rows * cols;
+    
+        NOTE: For  bitmaps,  the leftmost-pixel  is  related to  the
+              highest  (i.e.   most significant)  bit  of its  byte.
+              There  is  currently   no  support  for  the  opposite
+              convention found in some systems.
+    
+              (It can  be easily added  if you really need  it, just
+              ask the development team.)
+
+
+II. Step-by-step Example
+========================
+
+  Here is an example to show, step by step, how a client application
+  can  open a  font file,  set one  or several  instances,  load any
+  glyph, then render it to a bitmap.
+
+  1. Initialize the engine
+  ------------------------
+
+    This is the first thing to do.  You need to initialize an engine
+    through a call to TT_Init_FreeType().  This function will set up
+    a various number of structures needed by the library.
+
+    This allocates about 68kByte,  of which 64kByte are dedicated to
+    the scan-line  converter's `render  pool', a workspace  used for
+    bitmap generation.  Note that even though this space is bounded,
+    the raster is able to render a glyph to any size or bitmap, even
+    horribly huge ones.
+
+    NOTE: You  can reduce  the size  of this  pool by  modifying the
+          constant RASTER_RENDER_POOL  in the file  `ttraster.c'.  A
+          smaller  pool will  result  in slower  rendering at  large
+          sizes.  Take care of  never assigning a value smaller than
+          4kByte however, as bugs may start to lurk in!
+
+    Example:
+
+      TT_Engine  engine;
+
+
+      error = TT_Init_FreeType( &engine );
+      if ( error )
+      {
+        printf( "could not create engine instance\n");
+        ...
+      }
+
+  2. Initialize the extensions you need
+  -------------------------------------
+
+    FreeType  provides   several  extensions  which   are  optional,
+    separately compilable  components to  add some rare  features to
+    the engine and its API.
+
+    You  need to explicitly  initialize the  extensions you  want to
+    use.   Each extension must  provide an  initialization function,
+    following the naming convention:
+
+      TT_Init_xxx_Extension( engine );
+
+    where `xxx' is the extension's `kind'.
+
+    Example:
+
+      error = TT_Init_Kerning_Extension( engine );
+      if ( error )
+        ...
+
+  3. Open the font file
+  ---------------------
+
+    There are  two ways to open  a font face, depending  on its file
+    format:
+
+    - If it  is a TrueType  file (ttf), you  can simply use  the API
+      named  TT_Open_Face(),  which  takes  the file's  pathname  as
+      argument, as well as the address of the returned face handle.
+
+      Check  the returned error  code to  see if  the file  could be
+      opened and accessed successfully.
+
+        TT_Face  face;  /* face handle */
+
+
+        error = TT_Open_Face( engine, "/fonts/arial.ttf", &face );
+        if ( error )
+        {
+          printf( "could not open the file\n" );
+          ...
+        }
+
+    - If the  font is embedded  in a TrueType collection  (ttc), you
+      can use  the API named TT_Open_Collection(),  which takes also
+      the font's index within the collection's directory.
+
+        TT_Face  face;  /* face handle */
+
+
+        /* Load the collection's second face (index=1) */
+        error = TT_Open_Collection( engine, "/fonts/mingli.ttc",
+                                    1, &face );
+        if ( error )
+        {
+          printf( "could not open the file\n" );
+          ...
+        }
+
+    - Finally, when you do not  know the number of faces embedded in
+      a TrueType collection, the following technique can be used:
+
+      o Call TT_Open_Face()  with  the  collection  file's pathname.
+        This  API recognizes  collections  automatically and  always
+        return a handle for its first embedded font.
+
+      o Get the  face's properties through TT_Get_Face_Properties().
+        These contain, among other things, the total number of fonts
+        embedded in the collection, in its field `num_Faces'.
+
+          TT_Face             face;  /* face handle     */
+          TT_Face_Properties  props; /* face properties */
+
+    
+          /* open the first collection font */
+          error = TT_Open_Face( engine, "/fonts/mingli.ttc",
+                                &face );
+          if ( error )
+          {
+            printf( "could not open the file\n" );
+            ...
+          }
+    
+          /* Get the face properties */
+          TT_Get_Face_Properties( face, &props );
+    
+          /* Now print the number of faces */
+          printf( "there are %d faces in this collection file\n",
+                  props->num_Faces );
+
+  4. Create an instance from the face object
+  ------------------------------------------
+
+    You must create an instance  (also known as a `pointsize') which
+    contains  information  relative to  the  target output  device's
+    resolutions and a given point size.
+
+    o The instance object is created through TT_New_Instance():
+
+        TT_Instance  instance;
+
+
+        error = TT_New_Instance( face, &instance );
+        if ( error )
+        {
+          printf( "could not create instance\n" );
+          ...
+        }
+
+      TECHNICAL NOTE: Creating  a  new  instance  executes its  font
+                      program.  This can fail if the font is broken.
+                      Never assume that the error code returned here
+                      is always 0.
+
+    o You  must set  the instance's properties  to suit  your needs.
+      These   are  simply  its   device  resolutions,   set  through
+      TT_Set_Instance_Resolutions(), and its point size, set through
+      TT_Set_Instance_CharSize():
+
+        /* Set the target horizontal and vertical resolution to */
+        /* 300dpi in each direction (typically for a printer).  */
+        /* A fresh instance's default resolutions are 96dpi in  */
+        /* both directions.                                     */
+        error = TT_Set_Instance_Resolutions( instance, 300, 300 );
+        if ( error )
+        {
+          printf( "could not set resolution\n" );
+          ...
+        }
+
+        /* Now set the point size to 12pt.  Default is 10pt.     */
+        /* Don't forget that the size is expressed in 26.6 fixed */
+        /* float format, so multiply by 64.                      */
+        error = TT_Set_Instance_CharSize( instance, 12 * 64 );
+        if ( error )
+        {
+          printf( "could not set point size\n" );
+          ...
+        }
+
+      TECHNICAL NOTE: These  calls  may  execute the  font's  `prep'
+                      program, which can fail if the font is broken.
+                      Never assume  that the error  code returned is
+                      are always 0.
+
+    o You can  also set the instance's transformation  flags to tell
+      the glyph  loading function  that you are  going to  perform a
+      transformation (like rotation or slanting) on the glyph.  Note
+      that the glyph loader  doesn't perform the transformation.  It
+      only  informs the  glyphs' hinting  instruction  streams about
+      these  flags which  may use  it to  disable or  enable various
+      features (grid-fitting, drop-out control, etc).
+
+      Use e.g.
+
+        TT_Set_Instance_Transforms( FALSE, TRUE );
+
+      to indicate that you're going to stretch, but not rotate, this
+      instance's glyphs.  Default is, of course, both FALSE.
+
+  5. Create a glyph container
+  ---------------------------
+
+    You need a  glyph object to serve as a  container for the glyphs
+    you want to load from the face.  This is done simply by
+
+      TT_Glyph  glyph;  /* glyph object handle */
+
+
+      error = TT_New_Glyph( face, &glyph );
+      if ( error )
+      {
+        printf( "could not create glyph\n" );
+        ...
+      }
+
+  6. Find your platform's character mappings
+  ------------------------------------------
+
+    Each  font file  can come  with  one or  more character  mapping
+    tables, used  to convert character codes to  glyph indices.  You
+    must  know the values  of the  `platformID' and  `encodingID' as
+    defined in  the TrueType  specification for your  platform.  For
+    example,  Windows Unicode  encoding  is (platform:3,encoding:1),
+    while  Apple Unicode  is (platform:0,encoding:0).   Both formats
+    differ in internal storage  layout and can be used transparently
+    with the same inputs with FreeType.
+
+    The  function  TT_Get_CharMap_Count()   returns  the  number  of
+    character mappings  present in a  face.  You can  then enumerate
+    these with the  function TT_Get_CharMap_ID().  Once you've found
+    a  mapping usable  for  your platform,  use TT_Get_CharMap()  to
+    return a TT_CharMap handle that  will be used later to get glyph
+    indices.
+
+  7. Load the glyph
+  -----------------
+
+    The  glyph  loader is  easily  queried through  TT_Load_Glyph().
+    This API function takes several arguments:
+
+    o An  instance  handle  to  specify  at  which  point  size  and
+      resolution the loaded glyph should be scaled and grid-fitted.
+
+    o A  glyph container, used to  hold the glyph's  data in memory.
+      Note that the instance and the glyph must relate to the _same_
+      font file.  An error would be produced immediately otherwise.
+
+    o A  glyph index,  used to reference  the glyph within  the font
+      file.  This  index is not a platform  specific character code,
+      and  a character's  glyph  index  may vary  from  one font  to
+      another.  To  compute glyph indices from  character codes, use
+      the   TT_CharMap   handle    created   in   section   6   with
+      TT_Char_Index().
+        
+      We  strongly  recommend  using  the Unicode  charmap  whenever
+      possible.
+
+    o A load  mode, indicating  what  kind  of operations  you need.
+      There are only two defined for the moment:
+
+        TTLOAD_SCALE_GLYPH:
+
+          If set, this flag indicates  that the loaded glyph will be
+          scaled  (according   to  the  instance   specified  as  an
+          argument) to fractional pixel coordinates (26.6).  If not,
+          the coordinates will  remain integer FUnits.  Please refer
+          to  the  TrueType specification  and  the FreeType  header
+          files for more  details on the 26.6 format  and other data
+          types.
+
+        TTLOAD_HINT_GLYPH:
+
+          This flag is only in effect if the TTLOAD_SCALE_GLYPH flag
+          is set.  It indicates that the glyph must also be `hinted'
+          resp. `grid-fitted' for better display results.  Note that
+          this   also  means   that  the   glyph  metrics   will  be
+          grid-fitted, including the bounding box.
+
+      You  can simply  `or' the  flags.  As  most  applications will
+      require both  flags to be set, the  constant TTLOAD_DEFAULT is
+      defined as:
+
+        #define TTLOAD_DEFAULT  (TTLOAD_SCALE_GLYPH | \
+                                 TTLOAD_HINT_GLYPH )
+
+      Example:
+
+        error = TT_Load_Glyph( instance, glyph, 36,
+                               TTLOAD_DEFAULT );
+        if ( error )
+        {
+          printf("could not load the glyph\n");
+          ...
+        }
+
+  8. Query glyph properties
+  -------------------------
+
+    You're then able to query various glyph properties:
+
+    o The    glyph     metrics    can     be    obtained     through
+      TT_Get_Glyph_Metrics().   The  data  returned in  the  metrics
+      structure is:
+
+      - the glyph's left side bearing (bearingX)
+      - the glyph's top side bearing (bearingY)
+      - the glyph's advance width (advance)
+      - the glyph's bounding box (bbox)
+
+      These values are expressed in  26.6 pixel units when the glyph
+      was  loaded with  scaling, or  in  FUnits if  not.  To  obtain
+      vertical    metrics    you    should    use    the    function
+      TT_Get_Glyph_Big_Metrics().
+
+    o The     glyph    outline     can     be    queried     through
+      TT_Get_Glyph_Outline().   This can  be useful  to  process the
+      point coordinates (e.g.  applying stretching or rotation) with
+      functions        like       TT_Apply_Outline_Matrix()       or
+      TT_Apply_Outline_Translation().  Note  that these functions do
+      not recompute a glyph's metrics after the transformation!
+
+      The  outline's   structure  is  described   in  the  reference
+      `apiref.txt'.
+
+      A bitmap or  pixmap for the glyph can be  queried with the API
+      functions   TT_Get_Glyph_Bitmap()  and  TT_Get_Glyph_Pixmap().
+      These functions take a glyph handle as an argument, as well as
+      a bitmap/pixmap description block and two offsets.
+
+      The target  map is  described through a  TT_Raster_Map object,
+      which   structure   is   defined   in   the   reference   (see
+      `apiref.txt').  The offsets are given in the same units as the
+      points coordinates  and glyph metrics: 26.6 pixel  units for a
+      scaled glyph, and FUnits for an unscaled one.
+
+      IMPORTANT TECHNICAL NOTE: If  the glyph  has  been scaled  and
+                                hinted,   the   offsets  _must_   be
+                                multiples of  64 (i.e. integer pixel
+                                offsets).  Otherwise, you would ruin
+                                the  grid   fitting  (which  usually
+                                results in ugly glyphs).
+
+      Example:
+
+        TT_Glyph_Metrics  metrics;
+        TT_Outline        outline;
+        TT_Raster_Map     bitmap;
+
+
+        TT_Get_Glyph_Metrics( glyph, &metrics );
+        TT_Get_Glyph_Outline( glyph, &outline );
+
+        /* set up the bitmap */
+        ...
+        TT_Get_Glyph_Bitmap( glyph, &bitmap, 0, 0 );
+
+  9. When you are done
+  --------------------
+
+    o You can close any font face object with TT_Close_Face().  This
+      call  will automatically discard  its child  instances, glyphs
+      and charmaps.
+
+    o You  can  also  close  the   engine  with  a  single  call  to
+      TT_Done_FreeType().  This will release _all_ objects that were
+      previously  allocated  (with  the  exception  of  user-created
+      outlines),  and close all  font files,  as well  as extensions
+      that were inited for it.
+
+
+III. Extensions
+===============
+
+  1. What is an extension?
+  ------------------------
+
+    FreeType  allows you  to  access a  various  number of  TrueType
+    tables, as well as to render individual glyphs.  However:
+
+    1. It   doesn't  perform   some   high-level  operations,   like
+       generating a string text from many individual glyphs.
+
+    2. It doesn't perform kerning (which can be needed by operations
+       mentioned in item 1).
+
+    3. It doesn't  give access to  all the defined  TrueType tables,
+       especially the optional ones.
+
+    While item  1 is  a feature that  will never go  into FreeType's
+    core engine, which  goal is to provide easy  access to font data
+    and rendering _individual_ glyphs, point 2 and 3 can be added to
+    the engine's features through extensions.
+
+    An extension  is simply a small  piece of code  that extends the
+    engine's  abilities and  APIs.   It is  possible  to extend  the
+    engine  without  touching  the   core's  source  code,  this  is
+    described in chapter 3 below.
+
+  2. The two kinds of extensions
+  ------------------------------
+
+    There  are  basically two  kinds  of  extensions, which  require
+    different implementations.
+
+    a. API extensions
+
+      An  API  extension is  a  set  of  functions that  extend  the
+      FreeType core  API to give  access to tables that  are already
+      loaded by the engine, but not provided for now.  An example of
+      such data can be:
+
+      - the horizontal metrics table (hmtx)
+      - the `gasp' table
+
+      This kind of extension is made of:
+
+      o an API extension header file, following the usage convention
+        introduced here (all labels  prefixed with `TT_'), and which
+        will  be included  by  the  clients which  want  to use  the
+        extension.   By  convention, such  header  names begin  with
+        `ftx' (for FreeType eXtension).
+
+        Examples: ftxgasp.h, ftxhmtx.h
+  
+      o One or more functions used to give access to the tables that
+        are already loaded and  managed by the engine.  They usually
+        only  copy pointers  to the  target structure  given  by the
+        client application since these structures are not accessible
+        through the 'normal' API.   An API extension doesn't need to
+        be initialized before being used.
+
+    b. Engine extensions
+
+      It can sometimes  be useful to load and  manage several tables
+      that are not considered  by the core engine.  These extensions
+      need to  provide additional  functions to fit  into FreeType's
+      internal object  management model, and  are more sophisticated
+      than API extensions.
+
+      An example  is given in  this distribution to  provide kerning
+      support  (or more  technically spoken,  access to  the kerning
+      tables found within the TrueType files).  It is made of:
+
+      o An  API extension  providing  new interfaces  to the  client
+        applications  that  need   it.   See  the  file  `ftxkern.h'
+        resp. `apirefx.txt'.
+
+      o A specific  implementation,  providing  services  to create,
+        load,  and manage kerning  tables as  additional parts  of a
+        face  object.  In  the  case of  kerning,  the directory  of
+        tables  is  loaded  when  the  face is  opened,  and  tables
+        themselves  are  fetched  from  the file  on  demand.   This
+        implies several  `hooks' in the core engine.   See the files
+        `ttkern.h'  and   `ttkern.c'.   These  are   called  `engine
+        extensions'.
+
+      o A   specific  extension  initialization   function,   namely
+        TT_Init_Kerning_Extension(),  that must  be called  after an
+        engine's  creation, and before  any face  object allocation.
+        This  function  will  `register'  the extension  within  the
+        engine and make its API workable.
+
+  3. Writing your own extensions
+  ------------------------------
+
+    As it  was suggested earlier,  writing an engine extension  is a
+    delicate process,  as the additional code must  follow a certain
+    number of  design rules,  presented in the  FreeType developer's
+    guide.  Unfortunately, there  is currently no extension writer's
+    guide.
+
+    By writing your  own extensions, it will be  possible to support
+    more advanced TrueType formats like TrueType GX or OpenType in a
+    near future, without having to torture the engine core source at
+    each iteration.
+
+    If you  encounter some difficulties  when trying to  create your
+    own extension,  please read the core source  file carefully, and
+    in the  event that you may  need changes that are  not fitted to
+    the current extension mechanism,  do not hesitate to contact the
+    authors at `devel@freetype.org'.
+
+    
+Conclusion
+==========
+
+    The engine source  code has become rather stable  since now, and
+    its quality compares very favorably to Windows and the Macintosh
+    rasterizers.  Its internals will continue to change, though very
+    slowly, even  if the API isn't  expected to grow much  in a near
+    future.
+
+    FreeType  is  really  a  glyph-oriented  TrueType  driver.   Its
+    purpose is to open and manage font files in order to load single
+    glyphs  and render  them as  cleanly as  possible.  A  number of
+    features, important  to developers, like  text string rendering,
+    font  mapping and  underlining/stroking, to  name a  few, aren't
+    provided there even though they'd be highly appreciated.
+   
+    We hope you  have success and fun using  this engine.  Much time
+    has  been  taken to  make  it  one of  the  best  in its  genre.
+    Remember that it is not intended to be a complete font server or
+    text rendering library, but a  pretty solid base for these kinds
+    of applications, as well as others.
+
+    We thank you for your time and consideration.
+
+                       David Turner, Robert Wilhelm, Werner Lemberg,
+                                 and all the FreeType enthusiasts...
+
+
+--- End of user.txt ---

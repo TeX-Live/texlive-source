@@ -1,0 +1,68 @@
+
+
+                             Announcing
+
+
+                    F R E E T Y P E    1 . 4 . 9
+
+
+                   The FREE TrueType Font Engine
+
+
+       Copyright (C) 1996-2001 The FreeType Development Team
+
+
+
+  The FreeType engine is a free and portable TrueType font rendering
+  engine, available in  ANSI C and Pascal source  code.  It has been
+  developed  to  provide TrueType  support  to  a  great variety  of
+  platforms and environments.
+  
+  Notice that  FreeType is a *library*.   It is *not*  a font server
+  for your  preferred environment, even though it  has been designed
+  to  be the  basis of  many  high-level libraries,  tools and  font
+  servers.
+
+
+  DISCLAIMER DISCLAIMER DISCLAIMER DISCLAIMER DISCLAIMER DISCLAIMER
+  DISCLAIMER DISCLAIMER DISCLAIMER DISCLAIMER DISCLAIMER DISCLAIMER
+  DISCLAIMER DISCLAIMER DISCLAIMER DISCLAIMER DISCLAIMER DISCLAIMER
+  DISCLAIMER DISCLAIMER DISCLAIMER DISCLAIMER DISCLAIMER DISCLAIMER
+
+  WE  HAVE  RECENTLY  DISCOVERED  THAT APPLE  OWNS  SEVERAL  PATENTS
+  RELATED TO THE RENDERING OF  TRUETYPE FONTS.  THIS COULD MEAN THAT
+  THE FREE USE OF THE FREETYPE  LIBRARY MIGHT BE ILLEGAL IN  FRANCE,
+  UK, USA, AND  POSSIBLY OTHER COUNTRIES.   FOR MORE INFORMATION, WE
+  STRONGLY ADVISE YOU TO GO TO THE FREETYPE WEB SITE AT:
+
+                http://www.freetype.org/patents.html
+
+  DISCLAIMER DISCLAIMER DISCLAIMER DISCLAIMER DISCLAIMER DISCLAIMER
+  DISCLAIMER DISCLAIMER DISCLAIMER DISCLAIMER DISCLAIMER DISCLAIMER
+  DISCLAIMER DISCLAIMER DISCLAIMER DISCLAIMER DISCLAIMER DISCLAIMER
+  DISCLAIMER DISCLAIMER DISCLAIMER DISCLAIMER DISCLAIMER DISCLAIMER
+
+
+  It's  a clean-room  implementation that  is not  derived  from the
+  original TrueType engine developed  by Apple and Microsoft, though
+  it matches it regarding rendering quality.  To our knowledge, it's
+  the only royalty-free complete TrueType engine available.
+
+  Some news:
+
+  . version 1.5 fixes minor bugs found in 1.3.1.
+  . version 1.4 were never released officially (by us).
+  . full support for GSUB and GPOS tables in OpenType fonts.
+  . enhanced ftdump/ftstrtto test programs using GPOS support.
+  . ftstrpnm supports coloured text.
+  . TT_Char_Index() now uses a TT_ULong for char codes.
+  . support files for BeOS.
+  . the  Pascal version  is no  longer part  of the  package  but is
+    available separately.
+  . uses a new version of libtool, solving some compilation problems
+    with the test programs on some platforms like Solaris.
+
+
+  For more information, please visit the freetype web site at:
+
+                      http://www.freetype.org

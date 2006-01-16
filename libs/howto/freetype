@@ -1,0 +1,7 @@
+The following files have been added:
+  freeetype.ac withenable.ac
+
+Modifications:
+  configure.in:
+    disable AM_DISABLE_STATIC
+    add AM_DISABLE_SHARED

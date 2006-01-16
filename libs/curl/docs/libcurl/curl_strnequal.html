@@ -1,0 +1,74 @@
+<HTML>
+<BODY>
+<PRE>
+<!-- Manpage converted by man2html 3.0.1 -->
+
+</PRE>
+<H2>NAME</H2><PRE>
+     curl_strequal, curl_strnequal - case insensitive string com­
+     parisons
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+     <B>#include</B> <B>&lt;curl/curl.h&gt;</B>
+
+     <B>int</B> <B>curl_strequal(char</B> <B>*</B><I>str1</I><B>,</B> <B>char</B> <B>*</B><I>str2</I><B>);</B>
+
+     <B>int</B> <B>curl_strenqual(char</B> <B>*</B><I>str1</I><B>,</B> <B>char</B> <B>*</B><I>str2</I><B>,</B> <B>size_t</B> <I>len</I>
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+     The <B>curl_strequal()</B> function compares the two  strings  <I>str1</I>
+     and  <I>str2</I>, ignoring the case of the characters. It returns a
+     non-zero (TRUE) integer if the strings are identical.
+
+     The <B>curl_strnequal()</B> function is  similar,  except  it  only
+     compares the first <I>len</I> characters of <I>str1</I>.
+
+     These  functions  are provided by libcurl to enable applica­
+     tions to compare strings in a truly portable  manner.  There
+     are  no standard portable case insensitive string comparison
+     functions. These two works on all platforms.
+
+
+</PRE>
+<H2>RETURN VALUE</H2><PRE>
+     Non-zero if the strings are identical. Zero if they're  not.
+
+
+</PRE>
+<H2>SEE ALSO</H2><PRE>
+     <B>strcmp(3)</B>, <B>strcasecmp(3)</B>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+<HR>
+<ADDRESS>
+Man(1) output converted with
+<a href="http://www.oac.uci.edu/indiv/ehood/man2html.html">man2html</a>
+</ADDRESS>
+</BODY>
+</HTML>

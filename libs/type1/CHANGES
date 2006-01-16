@@ -1,0 +1,71 @@
+This are the sources as I have found them on the X11R5 distribution. In
+order to use them for my purpose (ps2pk: conversion tool for Type1 fonts to
+packed TeX fonts) a number of changes were needed (see Changelog).
+
+--Piet
+
+internet: rcpt@urc.tue.nl       | Piet Tutelaers
+bitnet:   rcpt@heitue5.BITNET   | Computer Center       Room  RC 1.90
+phone:    +31 (0)40 474541      | Eindhoven University of  Technology
+fax:      +31 (0)40 434438      | P.O. Box 513, 5600 MB Eindhoven, NL
+
+Changelog (the main-line):
+--------------------------
+92-02: Start of ps2pk project
+       - decoupling Type1 library from X11 (changes in t1intf.h + t1funcs.h;
+         added Xstuff.h to replace X header files)
+       - user definable encoding schemes (removed hardwired ISOLatin1 and
+         Symbol encodings from t1funcs.c and replaced by encoding paramater
+         in Type1OpenScalable)
+92-03: First release 1.0 (pre-release)
+92-04: - added expansion and slanting features as suggested by Lee
+         Hetherington (changes in spaces.c, t1funcs.c)
+       - changed t1test.c in order to test above features; added ISOLatin1
+	 encoding vector.
+       - README2 replaced by CHANGES (this file)
+       - MSDOS concession (thanks to Sebastian Rahtz): renamed
+	 fontfilest.h to ffilest.h so it does not clash with fontfile.h
+	 (affects: fontfilest.h (->ffilest.h), t1funcs.c, t1info.c and
+	 t1test.c).
+       - MSDOS concession: all file extensions .c.orig and .h.orig renamed
+	 to .crg respectivally .hrg
+       - patch to handle /negationslash and /mapsto from LucidaMath-Symbol
+         correctly in t1funcs.c (ILH: Lee Hetherington).
+92-05: AMIGA/Aztec:
+       - added type1.ami (contains order of objects in library)
+       - added Makefile.ami
+       - added bstring.c (contains a bzero()) 
+92-05: - fixed a reference to a NULL pointer in t1info.c
+       - more verbose error messages in type1 library (NDW: Norman Walsh)
+       - changed memory heuristic in type1 library from static (one chunk)
+         into dynamic (up to a maximum of 10 chunks). This was needed for
+	 big fonts like daysrib.pfa (reported by Norman Walsh).
+	 (Changes in t1funcs.c and t1malloc.c)
+       - added Makefile.tcc for MSDOS/Turbo C, removed Makefile.dos
+92-06: - added Makefile.djg for MSDOS/GCC 386 (djgpp)
+       - fixed bug in t1io.c so MSDOS can read its own .pfb format
+92-08: - fixed alligment problem for machines with wordlength other than 32
+	 bits (patch in util.c). Reported by J"urgen Marenda
+	 <marenda@ford.uni-koblenz.de> for DataGeneral AViiON (Motorola
+	 M88k machine)
+       - The type1 library did not render Oblique fonts correctly.
+	 Erik Schenk <schenk@cpsc.ucalgary.ca> provided a patch for
+	 this problem (patches in fontfcn.c and t1util.c).
+       - Official X11.5 patches (Stephen Gildea 920728) merged in the type1
+         library version of ps2pk. These patches were available on:
+       	   export.lcs.mit.edu:/pub/R5/contrib-fixes/Type1.patch
+       - portability: index() in t1info.c replaced by strchr()
+94-01: Version 1.4 (bug fix release)
+       - types.h: added basic type definitions for non 32-bit platforms
+       - fontfcn.c: made `virtual memory' management dynamically
+         (reported by Norman Walsh, needed for complicated fonts)
+       - Makefile.*: improved
+       - original X11R5 sources no longer included (see X11R5 sources if
+         you want to see them)
+       - t1malloc.c removed, not longer needed.
+95-11  Version 1.5
+       - Makefile.bcc, Makefile.djg and Makefile.wat removed in favour
+         of Makefile.unx and Makefile.emx
+       - bzero() dropped in favour of ANSI C's memset()
+       - Improved cooperation between the master makefile and
+	 its depending makefiles (thanks <ripley@stats.ox.ac.uk>)

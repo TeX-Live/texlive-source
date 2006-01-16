@@ -1,0 +1,74 @@
+<HTML>
+<BODY>
+<PRE>
+<!-- Manpage converted by man2html 3.0.1 -->
+
+</PRE>
+<H2>NAME</H2><PRE>
+     curl_global_cleanup - Global libcurl cleanup
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+     <B>#include</B> <B>&lt;curl/curl.h&gt;</B>
+
+     <B>void</B> <B>curl_global_cleanup(void);</B>
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+     curl_global_cleanup  must be called once (no matter how many
+     threads or libcurl sessions that'll be used) by every appli­
+     cation  that uses libcurl, after all uses of libcurl is com­
+     plete.
+
+     This is the opposite of <I>curl</I><B>_</B><I>global</I><B>_</B><I>init</I>.
+
+     Not calling this function may result in memory leaks.
+
+     This function was added in libcurl 7.8.
+
+
+</PRE>
+<H2>SEE ALSO</H2><PRE>
+     <B>curl_global_init(3)</B>,
+
+
+</PRE>
+<H2>BUGS</H2><PRE>
+     None?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+<HR>
+<ADDRESS>
+Man(1) output converted with
+<a href="http://www.oac.uci.edu/indiv/ehood/man2html.html">man2html</a>
+</ADDRESS>
+</BODY>
+</HTML>

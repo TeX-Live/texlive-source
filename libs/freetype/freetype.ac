@@ -1,0 +1,58 @@
+if test "$needs_freetype" = no; then
+  FREETYPECPPFLAGS=
+  LDFREETYPE=
+  FREETYPEDEP=
+else
+  EXTRA_FREETYPE_INCLUDE=
+  EXTRA_FREETYPE_LIBDIR=
+
+  if test "$with_system_freetype" = yes; then
+    if test "x$with_freetype_libdir" != x; then
+      EXTRA_FREETYPE_LIBDIR="-L$with_freetype_libdir"
+    fi
+    if test "x$with_freetype_include" != x; then
+      EXTRA_FREETYPE_INCLUDE="-I$with_freetype_include"
+    fi
+  fi
+
+  OLD_LDFLAGS=$LDFLAGS
+  OLD_CPP=$CPP
+  OLD_LIBS=$LIBS
+
+  LDFLAGS="$LDFLAGS $EXTRA_FREETYPE_LIBDIR"
+  CPP="$CPP $EXTRA_FREETYPE_INCLUDE"
+
+  if test "$with_system_freetype" = yes; then
+    AC_CHECK_LIB(ttf, TT_Init_FreeType,,
+      AC_MSG_WARN(Standard FREETYPE library not found. Compiling my own.)
+      with_system_freetype=no)
+  fi
+
+  if test "$with_system_freetype" = yes; then
+    AC_CHECK_HEADERS(freetype.h)
+    if test "$ac_cv_header_freetype_h" != yes; then
+      AC_MSG_WARN(freetype.h not found. Using my own freetype sources.)
+      with_system_freetype=no
+    fi
+  fi
+
+  LDFLAGS=$OLD_LDFLAGS
+  CPP=$OLD_CPP
+  LIBS=$OLD_LIBS
+
+  if test "$with_system_freetype" != yes; then
+    FREETYPECPPFLAGS='-I$(FREETYPEDIR)/lib -I$(FREETYPESRCDIR)/lib'
+    LDFREETYPE='$(FREETYPEDIR)/lib/.libs/libttf.a'
+    FREETYPEDEP='$(FREETYPEDIR)/lib/.libs/libttf.a'
+    using_system_freetype=no
+  else
+    FREETYPECPPFLAGS="$EXTRA_FREETYPE_INCLUDE"
+    LDFREETYPE="$EXTRA_FREETYPE_LIBDIR -lttf"
+    FREETYPEDEP=
+    using_system_freetype=yes
+  fi
+fi
+
+AC_SUBST(FREETYPECPPFLAGS)
+AC_SUBST(LDFREETYPE)
+AC_SUBST(FREETYPEDEP)

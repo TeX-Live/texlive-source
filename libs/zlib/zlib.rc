@@ -1,0 +1,36 @@
+/* zlib.rc: zlib resources			-*- C++ -*-
+
+   Copyright (C) 1996-2003 Fabrice Popineau <fabrice.popineau@supelec.fr>
+
+   This file is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published
+   by the Free Software Foundation; either version 2, or (at your
+   option) any later version.
+
+   This file is distributed in the hope that it will be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this file; if not, write to the Free Software
+   Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+   USA. */
+
+#include <texlive-version.h>
+
+#define VER_FILEVERSION TEXLIVE_MAJOR_VERSION,TEXLIVE_MINOR_VERSION,TEXLIVE_BETA_NUMBER,TEXLIVE_ALPHA_NUMBER
+#define VER_FILEVERSION_STR TEXLIVE_PRODUCTVERSION_STR " zlib 1.0.4"
+
+#define VER_INTERNALNAME_STR TEXLIVE_LIBRARYPREFIX_STR "zlib"
+#define VER_ORIGINALFILENAME_STR TEXLIVE_LIBRARYPREFIX_STR "zlib.dll"
+
+#define VER_LEGALCOPYRIGHT_STR "(C) 1995-2002 Jean-loup Gailly & Mark Adler\0"
+
+#define VER_FILEDESCRIPTION_STR "Zlib data compression library"
+
+#define VER_FILETYPE VFT_DLL
+
+#include <texlive.version>
+
+/* zlib.rc ends here */

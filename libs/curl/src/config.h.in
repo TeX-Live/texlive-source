@@ -1,0 +1,21 @@
+/* src/config.h.  Generated automatically by configure.  */
+/* Define cpu-machine-OS */
+#undef OS
+
+/* Define if you have the <unistd.h> header file.  */
+#undef HAVE_UNISTD_H
+
+/* Define if you have the <io.h> header file.  */
+#undef HAVE_IO_H
+
+/* Define if you have strdup() */
+#undef HAVE_STRDUP
+
+/* Define if you have utime() */
+#undef HAVE_UTIME
+
+/* Define if you have the <utime.h> header file */
+#undef HAVE_UTIME_H
+
+/* Define if you have thhe <sys/utime.h> header file */
+#undef HAVE_SYS_UTIME_H

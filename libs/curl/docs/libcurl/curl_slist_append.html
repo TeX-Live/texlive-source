@@ -1,0 +1,76 @@
+<HTML>
+<BODY>
+<PRE>
+<!-- Manpage converted by man2html 3.0.1 -->
+
+</PRE>
+<H2>NAME</H2><PRE>
+     curl_slist_append - add a string to an slist
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+     <B>#include</B> <B>&lt;curl/curl.h&gt;</B>
+
+     <B>struct</B>   <B>curl_slist</B>   <B>*curl_slist_append(struct</B>   <B>curl_slist</B>
+     <B>*</B><I>list,</I> <B>const</B> <B>char</B> <B>*</B> <I>string</I><B>);</B>
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+     curl_slist_append() appends a specified string to  a  linked
+     list  of  strings. The existing <I>list</I> should be passed as the
+     first argument while the new  list  is  returned  from  this
+     function.  The  specified <I>string</I> has been appended when this
+     function returns.
+
+
+</PRE>
+<H2>RETURN VALUE</H2><PRE>
+     A null pointer is returned if anything went wrong, otherwise
+     the new list pointer is returned.
+
+
+</PRE>
+<H2>SEE ALSO</H2><PRE>
+     <B>curl_slist_free_all(3)</B>,
+
+
+</PRE>
+<H2>BUGS</H2><PRE>
+     Surely there are some, you tell me!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+<HR>
+<ADDRESS>
+Man(1) output converted with
+<a href="http://www.oac.uci.edu/indiv/ehood/man2html.html">man2html</a>
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,258 @@
+                The FreeType Unix Compilation HOWTO
+
+Contents
+
+Introduction
+I.   Building the library
+  1. Quick Compilation
+  2. Manual compilation
+  3. Notes
+II.  Building other parts of the package
+  1. Test programs
+  2. Other contribs
+III. Successful Build Reports
+
+
+
+Introduction
+============
+
+This file  describes the  compilation of the  FreeType package  on a
+Unix system.  Using the `configure'  script it should be rather easy
+to  build the  library.  However,  detailed instructions  on  how to
+compile the library manually are given later in this document.
+
+
+
+I. Building the library
+=======================
+
+
+1. Quick Compilation
+--------------------
+
+  The easiest  way to  compile the  library on a  Unix system  is by
+  using the `configure' script that comes with it.  Simply go to the
+  root directory of the FreeType package, then type
+
+    ./configure
+
+  to run  a script  that will probe  your system and  detect various
+  configuration issues, which are explained later in this document.
+
+  From there, you can simply type
+
+    make
+
+  to invoke compilation of the  whole package.  You can also use the
+  following commands:
+
+    make debug     - Make  a  development  version of  the  library.
+                     Only   useful  for   FreeType   developers  and
+                     hackers.   The default  build should  come with
+                     `-g'  (i.e.,  debug info  in  the object  file)
+                     already.
+
+    make clean     - Clean  all  intermediate object  files  created
+                     during  compilation.   Keeps  all  library  and
+                     executables in place.
+
+    make distclean - Clean  everything, leaving the  directories  as
+                     they were  before the compilation.  You'll need
+                     to  run  `./configure'  again  to  be  able  to
+                     re-build it.
+
+    make install   - Install  the library files  libttf.a, libttf.la
+                     or  libttf.so  to   your  system  library  path
+                     (`/usr/local/lib' by default).  The path can be
+                     set manually with ./configure.
+
+    make uninstall - Undo a `make install'.
+
+  Note that the Makefile uses nested variables which causes problems
+  with BSD make.  Use GNU make instead.
+                    
+
+2. Trouble-shooting and simple customization
+--------------------------------------------
+
+  The make  build seems  to fail on  some Solaris systems.   This is
+  mainly  due to  the  fact that  the  test programs  (not the  font
+  library itself)  try to use certain libraries  and/or utilities if
+  they find  them on your system.   In some cases,  the Sun versions
+  are incompatible to the GNU ones.  If you encounter such problems,
+  please report them to us so we can try to fix it.
+
+  The configure script and  makefiles that it generates can/make use
+  of the following things:
+
+  - gettext      - In order  to compile the  internationalized error
+                   message string extension, which isn't part of the
+                   core  library.  You  can disable  this and  get a
+                   clean compile with
+
+                     ./configure --disable-nls
+
+
+  - libtool      - Used  to  generate  shared  libraries.   You  can
+                   disable it by typing
+
+                     ./configure --disable-shared
+
+                   which will generate  and link the FreeType engine
+                   as a static library.
+
+                   By default, static compilation is disabled if the
+                   configure  script   detects  that  your  compiler
+                   and/or    operating   system    supports   shared
+                   libraries.  You can ask for static libraries with
+
+                     ./configure --enable-static
+
+  For more configuration options, type `./configure --help' to see a
+  summary of  what is  possible.  The option  to change  the library
+  installation   path    for   `make   install'    is,   as   usual,
+  `--prefix=<path>'.  Example:
+
+    ./configure --prefix=${HOME}/local/lib --disable-shared
+
+  to install  a static library (libttf.a) in  `~/local/lib' (after a
+  `make install')
+
+
+3. Manual compilation
+---------------------
+
+  Here  are explained  the steps  that are  required to  compile the
+  FreeType _library_ (and only this one) by hand.
+
+  a. Generate a configuration file named `ft_conf.h'
+
+    This  file  contains a  certain  number  of configuration  macro
+    declarations which  must fit your system.   The configure script
+    generates it  automatically for you,  but you can also  take the
+    template  file `freetype/ft_conf.h.in'  and change  it  by hand,
+    then save it as `freetype/ft_conf.h'.
+
+  b. Choose your compilation mode
+
+    Unlike previous versions, FreeType 1.1 and above can be compiled
+    in two modes, called `debug mode' and `single object mode'.
+     
+    Debug mode  is simply  the normal way  of compiling  C programs,
+    i.e., each  *.c file is  compiled into an individual  *.o object
+    file, and all of them are linked together into an archive (i.e.,
+    a *.a library).
+
+    Single  object  mode is  slightly  different:  All  C files  are
+    included in  a single source file  during compilation, resulting
+    in a  single final object file  for the core  library.  This has
+    the  advantage of  letting optimizing  compilers do  more global
+    work, as well  as getting rid of all  external symbols which are
+    used solely for the purpose of components interfacing.
+
+    In both modes,  you need to include the  following paths to your
+    makefile/command line:
+
+    . the location of the `ft_conf.h' file
+    . the location of all `tt*.[hc]' files
+    . the  location of  system-specific files,  i.e.,  `ttmmap.c' on
+      Unix.
+
+    For  example,  if  you  are compiling  from  the  `freetype/lib'
+    directory, you can type for debug mode something like
+
+      gcc -c -I.. -I. -Iarch/unix tt*.c arch/unix/ttmmap.c
+
+    to compile all required files.   Then assemble them in a library
+    with `ar' (and run `runlib' if necessary).
+
+    In single object  mode, you only need to  compile the file named
+    `freetype.c' which is located in `freetype/lib/arch/unix'.  From
+    the same directory as before, one would type:
+
+      gcc -c -I.. -I. -Iarch/unix arch/unix/freetype.c
+
+    You    can   also    compile   the    extensions    located   in
+    `freetype/lib/extend' separately  from the base  engine.  You'll
+    need to include the same paths as before, though.
+
+
+
+II. Building other parts of the package
+=======================================
+
+
+1. Test programs
+----------------
+
+  All test  programs are located  in `freetype/test'.  Most  of them
+  use a  tiny graphics sub-system  which simply display  bitmaps and
+  pixmaps in  a windows on a  variety of platforms.   Of course, the
+  Unix version uses X11.
+
+  The default `make' builds  all tests programs automatically.  Just
+  go the `freetype/test' and launch the programs when you are there.
+  Documentation  on the  test  programs  can be  found  in the  file
+  `freetype/README'.
+
+  NOTE:
+
+    For now, the  graphical test programs only run  on the following
+    platforms: Unix, OS/2, Dos, Amiga, and Windows.
+
+    The library,  being pure  ANSI-C, can be  used on any  system to
+    generate bitmaps and pixmaps.
+
+
+2. Other contributions
+----------------------
+
+  You may find  some other contributions to the  FreeType project in
+  the `freetype/contrib'  directory.  Each of  these programs should
+  have  their own  makefiles and  documentations.  Also  check their
+  licenses,  as  they  are  not necessarily  distributed  under  the
+  FreeType one.
+
+
+
+III. Successful Build Reports
+=============================
+
+Nelson  H. F.  Beebe  <beebe@math.utah.edu>  and others  report  the
+following successfully builds (with gcc 2.8.1) of freetype-1.1 on 
+
+  DEC Alpha 2100-5/250:          OSF/1 3.2   
+  HP 9000/735:                   HP-UX 10.01
+  Intel Pentium (200MHz MMX):    Linux 2.0.30
+  SGI Challenge L:               IRIX 5.3
+  Sun SPARC 20/512:              Solaris 2.6
+  Sun SPARC Ultra-2:             SunOS 5.5.1
+  IBM RS/6000:                   AIX 4.1
+
+Chances  are good the  the current  release will  build on  the same
+machines and platforms.
+
+There are build problems reported on SunOs 4.x which have the form
+
+  ld: /usr/tmp/cca07291.o: assert pure-text failed: 
+  reference to [offset] at f754 in /usr/tmp/cca07291.o
+
+This may be a compiler bug in gcc 2.8.1.
+
+You can work around by just building a static library with
+
+  ./configure --disable-shared --enable-static --disable-nls
+
+Maybe `make debug' will help here too (untested).
+
+Other successful builds:
+
+  Sun SPARC Solaris 2.5 with Sun C compiler+linker
+
+For updated build reports, please consult our web site:
+
+   http://www.freetype.org
+
+
+--- end of unix.txt ---

@@ -1,0 +1,157 @@
+# This file is part of the FreeType project.
+#
+# It builds the library and test programs for IBM VisualAge C++ under OS/2.
+#
+# You will need nmake.
+#
+# Use this file while in the 'test' directory with the following statement:
+#
+#   nmake -f arch\os2\Makefile.icc
+#
+#
+# Copyright 1996-2001 by
+# David Turner, Robert Wilhelm, and Werner Lemberg.
+#
+# This file is part of the FreeType project, and may only be used, modified,
+# and distributed under the terms of the FreeType project license,
+# LICENSE.TXT.  By continuing to use, modify, or distribute this file you
+# indicate that you have read the license and understand and accept it
+# fully.
+
+ARCH = arch\os2
+FT_MAKEFILE = $(ARCH)\Makefile.icc
+FT_MAKE = $(MAKE) -nologo
+
+CC = icc
+
+LIBDIR = ..\lib
+INCDIRS = -I$(LIBDIR) -I$(LIBDIR)\extend -I$(LIBDIR)\$(ARCH) -I.
+CFLAGS = -O+ -Gd+ -Gn+ -Gl+ -Ti- -Tm- -Q+ -Wpro- -Wcnd- $(INCDIRS)
+
+# Fullscreen OS/2 driver
+GFSDRIVER_SRC = $(ARCH)\gfs_os2.c
+GFSDRIVER = $(ARCH)\gfs_os2.obj
+
+# PM OS/2 Driver
+GPMDRIVER = $(ARCH)\gpm_os2.obj
+GPMDRIVER_SRC = $(ARCH)\gpm_os2.c
+GPM_DEF = $(ARCH)\gpm_os2.def
+
+SRC = gmain.c display.c common.c arabic.c textdisp.c \
+      ftzoom.c ftview.c fttimer.c ftlint.c ftdump.c ftstring.c \
+      ftstrpnm.c ftsbit.c ftmetric.c ftstrtto.c \
+      $(GFSDRIVER_SRC)
+
+COMMON  = common.obj
+GFSOBJS = gmain.obj display.obj $(GFSDRIVER) $(COMMON) blitter.obj
+GPMOBJS = gmain.obj display.obj $(GPMDRIVER) $(COMMON) blitter.obj
+OBJ1    = ftzoom.obj 
+OBJ2    = fttimer.obj
+OBJ3    = ftview.obj
+OBJ4    = ftlint.obj
+OBJ5    = ftdump.obj
+OBJ6    = ftstring.obj
+OBJ7    = ftstrpnm.obj
+OBJ8    = ftsbit.obj
+OBJ9    = ftmetric.obj
+OBJ10   = ftstrtto.obj
+OBJ11   = arabic.obj
+OBJ12   = textdisp.obj
+
+
+EXEFILES = fttimefs.exe fttimer.exe \
+           ftzoom.exe ftzoomfs.exe \
+           ftviewfs.exe ftview.exe \
+           ftlint.exe \
+           ftdump.exe \
+           ftstring.exe ftstrfs.exe \
+           ftstrpnm.exe \
+           ftsbit.exe \
+           ftmetric.exe \
+           ftstrtto.exe ftstrtfs.exe
+
+
+all: freetype $(EXEFILES)
+
+debug: freetype_debug $(EXEFILES)
+
+
+freetype:
+  cd $(LIBDIR)
+  $(FT_MAKE) -f $(FT_MAKEFILE) all
+  cd ..\test
+
+freetype_debug:
+  cd $(LIBDIR)
+  $(FT_MAKE) -f $(FT_MAKEFILE) debug
+  cd ..\test
+
+$(GFSDRIVER): $(GFSDRIVER_SRC)
+  $(CC) $(CFLAGS) /c /Fo$@ $** -I.
+
+$(GPMDRIVER): $(GPMDRIVER_SRC)
+  $(CC) $(CFLAGS) /c /Fo$@ $** -I.
+
+ftzoomfs.exe: $(GFSOBJS) $(OBJ1) $(LIBDIR)\libttf.lib
+  $(CC) $(CFLAGS) /Fe$@ $**
+
+ftzoom.exe: $(GPMOBJS) $(OBJ1) $(LIBDIR)\libttf.lib
+  $(CC) $(CFLAGS) $(GPM_DEF) /Fe$@ $**
+
+fttimefs.exe: $(GFSOBJS) $(OBJ2) $(LIBDIR)\libttf.lib
+  $(CC) $(CFLAGS) /Fe$@ $**
+
+fttimer.exe: $(GPMOBJS) $(OBJ2) $(LIBDIR)\libttf.lib
+  $(CC) $(CFLAGS) $(GPM_DEF) /Fe$@ $**
+
+ftviewfs.exe: $(GFSOBJS) $(OBJ3) $(LIBDIR)\libttf.lib
+  $(CC) $(CFLAGS) /Fe$@ $**
+
+ftview.exe: $(GPMOBJS) $(OBJ3) $(LIBDIR)\libttf.lib
+  $(CC) $(CFLAGS) $(GPM_DEF) /Fe$@ $**
+
+ftlint.exe: $(OBJ4) $(LIBDIR)\libttf.lib $(COMMON)
+  $(CC) $(CFLAGS) /Fe$@ $**
+
+ftdump.exe: $(OBJ5) $(LIBDIR)\libttf.lib $(COMMON)
+  $(CC) $(CFLAGS) /Fe$@ $**
+
+ftstrfs.exe: $(GFSOBJS) $(OBJ6) $(LIBDIR)\libttf.lib
+  $(CC) $(CFLAGS) /Fe$@ $**
+
+ftstring.exe: $(GPMOBJS) $(OBJ6) $(LIBDIR)\libttf.lib
+  $(CC) $(CFLAGS) $(GPM_DEF) /Fe$@ $**
+
+ftstrpnm.exe: $(OBJ7) $(LIBDIR)\libttf.lib $(COMMON)
+  $(CC) $(CFLAGS) /Fe$@ $**
+
+ftsbit.exe: $(OBJ8) $(OBJ12) $(LIBDIR)\libttf.lib $(COMMON)
+  $(CC) $(CFLAGS) /Fe$@ $**
+
+ftmetric.exe: $(OBJ9) $(OBJ12) $(LIBDIR)\libttf.lib $(COMMON)
+  $(CC) $(CFLAGS) /Fe$@ $**
+
+ftstrtfs.exe: $(GFSOBJS) $(OBJ10) $(OBJ11) $(LIBDIR)\libttf.lib
+  $(CC) $(CFLAGS) /Fe$@ $**
+
+ftstrtto.exe: $(GPMOBJS) $(OBJ10) $(OBJ11) $(LIBDIR)\libttf.lib
+  $(CC) $(CFLAGS) $(GPM_DEF) /Fe$@ $**
+
+
+clean: do_clean
+  cd $(LIBDIR)
+  $(FT_MAKE) -f $(FT_MAKEFILE) clean
+  cd ..\test
+
+distclean: do_clean
+  cd $(LIBDIR)
+  $(FT_MAKE) -f $(FT_MAKEFILE) distclean
+  cd ..\test
+  -del *.exe
+
+do_clean:
+  -del *.obj
+  -del $(GFSDRIVER)
+  -del $(GPMDRIVER)
+
+# end of Makefile.icc

@@ -1,0 +1,52 @@
+if test "$needs_pnglib" = no; then
+  LIBPNGCPPFLAGS=
+  LDLIBPNG=
+  LIBPNGDEP=
+else
+  EXTRA_LIBPNG_INCLUDE=
+  EXTRA_LIBPNG_LIBDIR=
+
+  if test "$with_system_pnglib" = yes; then
+    if test "x$with_pnglib_libdir" != x; then
+      EXTRA_LIBPNG_LIBDIR="-L$with_pnglib_libdir"
+    fi
+    if test "x$with_pnglib_include" != x; then
+      EXTRA_LIBPNG_INCLUDE="-I$with_pnglib_include"
+    fi
+  fi
+
+  OLD_LDFLAGS=$LDFLAGS
+  OLD_CPP=$CPP
+  OLD_LIBS=$LIBS
+
+  LDFLAGS="$LDFLAGS $EXTRA_LIBPNG_LIBDIR"
+  CPP="$CPP $EXTRA_LIBPNG_INCLUDE"
+
+  if test "$with_system_pnglib" = yes; then
+      AC_CHECK_LIB(png, png_set_read_fn,
+        pnglib=-lpng,
+        AC_MSG_WARN(Standard PNG library not found. Compiling my own.)
+        with_system_pnglib=no,
+        -lz -lm)
+  fi
+
+  LDFLAGS=$OLD_LDFLAGS
+  CPP=$OLD_CPP
+  LIBS=$OLD_LIBS
+
+  if test "$with_system_pnglib" != yes; then
+    LIBPNGCPPFLAGS='-I$(LIBPNGDIR) -I$(LIBPNGSRCDIR)'
+    LDLIBPNG='$(LIBPNGDIR)/libpng.a'
+    LIBPNGDEP='$(LIBPNGDIR)/libpng.a'
+    using_system_pnglib=no
+  else
+    LIBPNGCPPFLAGS="$EXTRA_LIBPNG_INCLUDE"
+    LDLIBPNG="$EXTRA_LIBPNG_LIBDIR -lpng"
+    LIBPNGDEP=
+    using_system_pnglib=yes
+  fi
+fi
+
+AC_SUBST(LIBPNGCPPFLAGS)
+AC_SUBST(LDLIBPNG)
+AC_SUBST(LIBPNGDEP)

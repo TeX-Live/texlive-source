@@ -1,0 +1,58 @@
+if test "$needs_zlib" = no; then
+  ZLIBCPPFLAGS=
+  LDZLIB=
+  ZLIBDEP=
+else
+  EXTRA_ZLIB_INCLUDE=
+  EXTRA_ZLIB_LIBDIR=
+
+  if test "$with_system_zlib" = yes; then
+    if test "x$with_zlib_libdir" != x; then
+      EXTRA_ZLIB_LIBDIR="-L$with_zlib_libdir"
+    fi
+    if test "x$with_zlib_include" != x; then
+      EXTRA_ZLIB_INCLUDE="-I$with_zlib_include"
+    fi
+  fi
+
+  OLD_LDFLAGS=$LDFLAGS
+  OLD_CPP=$CPP
+  OLD_LIBS=$LIBS
+
+  LDFLAGS="$LDFLAGS $EXTRA_ZLIB_LIBDIR"
+  CPP="$CPP $EXTRA_ZLIB_INCLUDE"
+
+  if test "$with_system_zlib" = yes; then
+    AC_CHECK_LIB(z, inflate,,
+      AC_MSG_WARN(Standard ZLIB library not found. Compiling my own.)
+      with_system_zlib=no)
+  fi
+
+  if test "$with_system_zlib" = yes; then
+    AC_CHECK_HEADERS(zlib.h)
+    if test "$ac_cv_header_zlib_h" != yes; then
+      AC_MSG_WARN(zlib.h not found. Using my own zlib sources.)
+      with_system_zlib=no
+    fi
+  fi
+
+  LDFLAGS=$OLD_LDFLAGS
+  CPP=$OLD_CPP
+  LIBS=$OLD_LIBS
+
+  if test "$with_system_zlib" != yes; then
+    ZLIBCPPFLAGS='-I$(ZLIBDIR) -I$(ZLIBSRCDIR)'
+    LDZLIB='$(ZLIBDIR)/libz.a'
+    ZLIBDEP='$(ZLIBDIR)/libz.a'
+    using_system_zlib=no
+  else
+    ZLIBCPPFLAGS="$EXTRA_ZLIB_INCLUDE"
+    LDZLIB="$EXTRA_ZLIB_LIBDIR -lz"
+    ZLIBDEP=
+    using_system_zlib=yes
+  fi
+fi
+
+AC_SUBST(ZLIBCPPFLAGS)
+AC_SUBST(LDZLIB)
+AC_SUBST(ZLIBDEP)

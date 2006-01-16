@@ -1,0 +1,970 @@
+
+           Conventions and Design in the FreeType library
+           ----------------------------------------------
+
+
+Table of Contents
+
+Introduction
+
+I. Style and Formatting
+
+  1. Naming
+  2. Declarations & Statements
+  3. Blocks
+  4. Macros
+
+II. Design conventions
+
+  1. Modularity and Components Layout
+  2. Configuration and Debugging
+
+III. Usage conventions
+
+  1. Error handling
+  2. Font File I/O
+  3. Memory management (due to change soon)
+  4. Support for threaded environments
+  5. Object Management
+
+
+Introduction
+============
+
+This text  introduces the many conventions used  within the FreeType
+library  code.  Please read  it before  trying any  modifications or
+extensions of the source code.
+
+
+
+I. Style and Formatting
+=======================
+
+The  following coding  rules  are extremely  important  to keep  the
+library's  source code  homogeneously.  Keep  in mind  the following
+points:
+
+  - `Humans read source code, not machines' (Donald Knuth)
+
+    The library source code should  be as readable as possible, even
+    by non-C experts.  With `readable', two things are meant: First,
+    the source code  should be pleasant to the  eye, with sufficient
+    whitespace  and newlines,  to not  look like  a boring  stack of
+    characters stuck  to each other.   Second, the source  should be
+    _expressive_ enough  about its goals.   This convention contains
+    rules that  can help the source  focus on its purpose,  not on a
+    particular implementation.
+
+  - `Paper is the _ultimate_ debugger' (David Turner :-)
+
+    There is  nothing like  sheets of paper  (and a large  floor) to
+    help you understand the design of a library you're new to, or to
+    debug it.   The formatting style  presented here is  targeted at
+    printing.  For  example, it is  more than highly  recommended to
+    never produce a source line that is wider than 78 columns.  More
+    on this below.
+
+
+1. Naming
+---------
+
+  a. Components
+
+    A unit of  the library is called a  `component'.  Each component
+    has at least an interface,  and often a body.  The library comes
+    in two language  flavors, C and Pascal (the  latter severely out
+    of  date unfortunately).   A component  in C  is defined  by two
+    files,  one  `.h' header  and  one  `.c'  body, while  a  Pascal
+    component is contained in a single `.pas' file.
+
+    All component source file names begin with the `tt' prefix, with
+    the  exception of  the `FreeType'  component.  For  example, the
+    file   component  is  implemented   by  the   files  `ttfile.h',
+    `ttfile.c', and `ttfile.pas'.   Only lowercase letters should be
+    used, following  the 8+3 naming convention  to allow compilation
+    under DOS.
+
+    In the C  version, a single component can  have multiple bodies.
+    For  example, `ttfile.c'  provides stream  i/o  through standard
+    ANSI  libc calls,  while `ttfile2.c'  implements the  same thing
+    using a Unix memory-mapping API.
+
+    The FreeType component is an interface-only component.
+
+  b. Long and expressive labels
+
+    Never  hesitate to use  long labels  for your  types, variables,
+    etc.!   Except maybe  for things  like very  trivial  types, the
+    longest   is   the   best,   as  it   increases   the   source's
+    _expressiveness_.  Never forget  that the role of a  label is to
+    express  the `function'  of the  entity it  represents,  not its
+    implementation!
+
+    NOTE: Hungarian  notation is  NOT expressive,  as it  sticks the
+          `type' of  a variable to  its name.  A label  like `usFoo'
+          rarely tells the use of the variable it represents.
+
+          And  the state  of  a variable  (global, static,  dynamic)
+          isn't helpful anymore.
+
+    Avoid Hungarian Notation like the *plague*!
+
+
+    When     forging      a     name     with      several     nouns
+    (e.g. `number-of-points'), use an uppercase letter for the first
+    letter of each word (except the first), like:
+
+      numberOfPoints
+
+    You  are also  welcomed  to introduce  underscores  `_' in  your
+    labels,  especially when  sticking large  nouns together,  as it
+    `airs' the code greatly.  E.g.:
+
+      `numberOfPoints' or `number_Of_Points'
+
+      `IncredibleFunction' or `Incredible_Function'
+       
+    And finally,  always put a  capital letter after  an underscore,
+    except in variable labels that are all lowercase:
+
+     `number_of_points' is OK for a variable (_all_ lowercase label)
+
+     `incredible_function' is NOT for a function!
+      ^          ^
+
+     `Microsoft_windows' is a *shame*!
+      ^         ^
+
+     `Microsoft_Windows' isn't  really better,  but at  least  its a
+      ^         ^        correct   function    label   within   this
+                         convention ;-)
+
+  c. Types
+
+    All  types   that  are  defined  for  use   by  FreeType  client
+    applications are  defined in the FreeType  component.  All types
+    defined there have a label beginning with `TT_'.  Examples:
+
+      TT_Face, TT_F26Dot6, etc.
+
+    However, the library uses a  lot more of internal types that are
+    defined in  the Types, Tables, and Objs  components (`tttypes' &
+    `tttables' files).
+
+    By convention, all internal types, except the simplest ones like
+    integers, have their name beginning  with a capital `T', like in
+    'TFoo'.   Note   that  the  first   letter  of  `foo'   is  also
+    capitalized.  The corresponding pointer  type uses a capital `P'
+    instead, i.e. (TFoo*) is simply named 'PFoo'.  Examples:
+
+      typedef struct  _TTableDir
+      {
+        TT_Fixed  version;      /* should be 0x10000 */
+        UShort    numTables;    /* Tables number     */
+    
+        UShort    searchRange;  /* These parameters are only used */
+        UShort    entrySelector;/* for a dichotomy search in the  */
+        UShort    rangeShift;   /* directory.  We ignore them.    */
+      } TTableDir;
+    
+      typedef TTableDir*  PTableDir;
+    
+    Note  that we  _always_ define  a typedef  for  structures.  The
+    original struct label starts with `_T'.
+
+    This convention is a famous one from the Pascal world.
+
+    Try  to use  C  or Pascal  types  to the  very  least!  Rely  on
+    internally defined  equivalent types instead.   For example, not
+    all compilers agree on the sign  of `char'; the size of `int' is
+    platform-specific, etc.
+
+    There are  equivalents to the  most common types in  the `Types'
+    components,  like `Short',  `UShort', etc.   Using  the internal
+    types  will  guarantee that  you  won't  need  to replace  every
+    occurence  of `short'  or  wathever when  compiling  on a  weird
+    platform or with a weird  compiler, and there are many more than
+    you could think of...
+
+  d. Functions
+
+    The  name of  a  function  should always  begin  with a  capital
+    letter, as  lowercase first letters are  reserved for variables.
+    The name  of a function  should be, again,  _expressive_!  Never
+    hesitate to put  long function names in your  code: It will make
+    the code much more readable.
+
+    Expressiveness doesn't necessarily imply lengthiness though; for
+    instance, reading  shorts from a file stream  is performed using
+    the following functions defined in the `File' component:
+
+      Get_Byte, Get_Short, Get_UShort, Get_Long, etc.
+
+    Which is somewhat more readable than:
+
+      cget, sget, usget, lget, etc.
+
+  e. Variables
+
+    Variable  names should  always  begin with  a lowercase  letter.
+    Lowercase  first  letters are  reserved  for  variables in  this
+    convention,  as it  has  been already  explained above.   You're
+    still welcome to use long and expressive variable names.
+
+    Something  like `numP' can  express a  number of  pixels, porks,
+    pancakes, and much more... Something like `num_points' won't.
+
+    Today, we are still using short variable labels in some parts of
+    the library.  We're working on removing them however...
+
+    As a side note, a field name of a structure counts as a variable
+    name  too.  There are  exceptions to  the first-lowercase-letter
+    rule, but these are only  related to fields within the structure
+    defined  by  the  TrueType  specification  (well,  at  least  it
+    _should_ be that way).
+
+
+2. Declarations & Statements
+----------------------------
+
+  a. Columning
+
+    Try  to align  declarations and  assignments in  columns,  if it
+    proves logical.  For example (taken from `ttraster.c'):
+
+    struct _TProfile
+    {                                                                     
+      Int        flow;        /* Profile orientation : Asc/Descending     */
+      Int        height;      /* profile's height in scanlines            */
+      Int        start;       /* profile's start scanline                 */
+      ULong      offset;      /* offset of profile's data in render pool  */
+      PProfile   link;        /* link to next profile                     */
+      Int        index;       /* index of profile's entry in trace table  */
+      Int        count_lines; /* count of lines having to be drawn        */
+      Int        start_line;  /* lines to be rendered before this profile */
+      PTraceRec  trace;       /* pointer to profile's current trace table */
+    };
+ 
+    instead of
+
+    struct _TProfile {
+      Int flow;         /* Profile orientation : Asc/Descending     */
+      Int height;       /* profile's height in scanlines            */
+      Int start;        /* profile's start scanline                 */
+      ULong offset;     /* offset of profile's data in render pool  */
+      PProfile link;    /* link to next profile                     */
+      Int index;        /* index of profile's entry in trace table  */
+      Int count_lines;  /* count of lines having to be drawn        */
+      Int start_line;   /* lines to be rendered before this profile */
+      PTraceRec  trace; /* pointer to profile's current trace table */
+    };
+
+    This  comes from  the fact  that you're  more interested  by the
+    field and its function than by its type.
+
+    Or:
+
+      x   = i + 1;
+      y  += j;
+      min = 100;
+
+    instead of
+
+      x=i+1;
+      y+=j;
+      min=100;
+
+    And  don't  hesitate to  separate  blocks  of declarations  with
+    newlines to `distinguish' logical sections.
+
+    E.g., taken from an old source file, in the declarations of the CMap
+    loader:
+
+      long             n, num_SH;
+      unsigned short   u;
+      long             off;
+      unsigned short   l;
+      long             num_Seg;
+      unsigned short*  glArray;
+      long             table_start;
+      int              limit, i;
+
+      TCMapDir         cmap_dir;
+      TCMapDirEntry    entry_;
+      PCMapTable       Plcmt;
+      PCMap2SubHeader  Plcmsub;
+      PCMap4           Plcm4;
+      PCMap4Segment    segments;
+
+    instead of
+
+      long n, num_SH;
+      unsigned short u;
+      long off;
+      unsigned short l;
+      long num_Seg;
+      unsigned short *glArray;
+      long table_start;
+      int limit, i;
+      TCMapDir cmap_dir;
+      TCMapDirEntry entry_;
+      PCMapTable Plcmt;
+      PCMap2SubHeader Plcmsub;
+      PCMap4 Plcm4;
+      PCMap4Segment segments;
+
+  b. Aliases and the `with' clause
+
+    The Pascal language  comes with a very handy  `with' clause that
+    is often  used when  dealing with the  fields of a  same record.
+    The following Pascal source extract
+
+      with table[incredibly_long_index] do
+      begin
+        x := some_x;
+        y := some_y;
+        z := wathever_the_hell;
+      end;
+
+    is usually translated to:
+
+      table[incredibly_long_index].x = some_x;
+      table[incredibly_long_index].y = some_y;
+      table[incredibly_long_index].z = wathever_the_hell;
+
+    When  a lot of  fields are  involved, it  is usually  helpful to
+    define an `alias' for the record, like in:
+
+      alias = table + incredibly_long_index;
+
+      alias->x = some_x;
+      alias->y = some_y;
+      alias->z = wathever_the_hell;
+
+    which  gives  cleaner  source  code, and  eases  the  compiler's
+    optimization work.
+
+    Though the use of aliases  is currently not fixed in the current
+    library source, it is useful to follow one of these rules:
+
+    - Avoid an alias with a stupid, or cryptic name, something like:
+
+      TFooRecord  tfr;
+      ....
+      [lots of lines snipped]
+      ....
+
+      tfr = weird_table + weird_index;
+
+      ...
+
+      tfr->num = n;  
+
+      It doesn't really help to  guess what 'tfr' stands for several
+      lines  after   its  declaration,  even  if   it's  an  extreme
+      contraction of one particular type.
+
+      Something  like `cur_record' or  `alias_cmap' is  better.  The
+      current source  also uses  a prefix of  `Pl' for  such aliases
+      (like  Pointer  to  Local   alias),  but  this  use  is  _not_
+      encouraged.  If you want  to use prefixes, use `loc_', `cur_',
+      or `al_' at the very least, with a descriptive name following.
+
+    - Or simply use a local variable with a semi-expressive name:
+
+        { 
+          THorizontalHeader  hheader;
+          TVerticalHeader    vheader;
+
+
+          hheader = instance->fontRes->horizontalHeader;
+          vheader = instance->fontRes->verticalHeader;
+
+          hheader->foo = bar;
+          vheader->foo = bar2;
+          ...
+        }
+
+      which is much better than
+
+        { 
+          THorizontalHeader Plhhead;
+          TVerticalHeader Plvhead;
+
+          Plhhead = instance->fontRes->horizontalHeader;
+          Plvhead = instance->fontRes->verticalHeader;
+
+          Plhhead->foo = bar;
+          Plvhead->foo = bar2;
+          ...
+        }
+
+
+3. Blocks
+---------
+
+  Block separation is done with `{'  and `}'.  We do not use the K&R
+  convention  which becomes  only useful  with an  extensive  use of
+  tabs.  The `{'  and its corresponding `}' should  always be on the
+  same column.  It makes it easier to separate a block from the rest
+  of the source, and it  helps your _brain_ associates the accolades
+  easily (ask any Lisp programmer on the topic!).
+  
+  Use two spaces for the next indentation level.
+
+  Never use  tabs in your code,  their widths may  vary with editors
+  and systems.
+
+  Example:
+
+    if (condition_test) {
+            waow mamma;
+            I'm doing K&R format;
+            just like the Linux kernel;
+    } else {
+            This test failed poorly;
+    }
+
+  is _OUT_!
+
+    if ( condition_test )
+    {
+       This code isn't stuck to the condition;
+       read it on paper, you'll find it more;
+       pleasant to the eye;
+    }
+    else
+    {
+       Of course, this is a matter of taste;
+       That's just the way it is in this convention;
+       and you should follow it to be homogenous with;
+       the rest of the FreeType code;
+    }
+
+  is _IN_!
+
+
+4. Macros
+---------
+
+  Macros should be made of uppercase letters.  When a macro label is
+  forged from several words, it  is possible to only uppercasify the
+  first word,  using an underscore  to separate the nouns.   This is
+  used in ttload.c, ttgload.c and ttfile.c with macros like
+
+    ACCESS_Frame, GET_UShort, CUR_Stream
+
+  The role  of the  macros used throughout  the engine  is explained
+  later in this document.
+
+
+
+II. Design Conventions
+======================
+
+
+1. Modularity and Components Layout
+-----------------------------------
+
+  The FreeType  engine has been  designed with portability  in mind.
+  This implies the ability to compile  and run it on a great variety
+  of systems and weird  environments, unlike many packages where the
+  word strictly  means `runs on  a bunch of Unix-like  systems'.  We
+  have thus decided to stick to the following restrictions:
+
+  - The C version is written  in ANSI C. The Pascal version compiles
+    and run under Turbo Pascal 5.0 and compatible compilers.
+  
+  - The library,  if compiled with gcc, doesn't  produce any warning
+    with the  `-ansi -pedantic' flags.  Other  compilers with better
+    checks  may produce  ANSI warnings  that  we'd be  happy to  now
+    about.
+     
+    (NOTE: It can of course  be compiled by an `average' C compiler,
+           and even by a C++ one.)
+
+  - It only requires  in its simplest form an  ANSI libc to compile,
+    and  no utilities other  than a  C pre-processor,  compiler, and
+    linker.
+
+  - It is  written in  a modular fashion.   Each module is  called a
+    `component'  and is  made  of two  files  in the  C version  (an
+    interface with suffix  `.h' and body with suffix  `.c' ) and one
+    file in the Pascal one.
+
+  - The  very  low-level  components   can  be  easily  replaced  by
+    system-specific  ones that  do not  rely on  the  standard libc.
+    These  components  deal  mainly  with  i/o,  memory,  and  mutex
+    operations.
+
+  - A client application must  only include one interface file named
+    `freetype.h' resp. `freetype.pas' to  use the engine.  All other
+    components  should   never  be   used  or  accessed   by  client
+    applications, and their name always begin with a `tt' prefix:
+
+      ttmemory, ttobjs, ttinterp, ttapi, etc.
+
+  - All  configuration  options  are  gathered in  two  files.   One
+    contains  the processor and  OS specific  configuration options,
+    while the other  treats options that may be  enabled or disabled
+    by  the developer  to test  specific features  (like assertions,
+    debugging, etc).
+
+  IMPORTANT NOTES:
+
+    These restrictions  only apply to the core  engine.  The package
+    that comes  with it contains several test  programs sources that
+    are much  less portable,  even if they  present a  modular model
+    inspired from the engine's layout.
+
+  The components currently found in the `lib' directory are:
+
+    -------- high-level interface ----------------------------------
+
+    freetype.h    High-level API, to be used by client applications.
+ 
+    ttapi.c       Implementation of the api found in `freetype.h'.
+ 
+    -------- configuration -----------------------------------------
+
+    ttconfig.h    Engine configuration options.  These are commented
+                  and  switched  by  hand  by  the  developer.   See
+                  section 2 below for more info.
+
+    ft-conf.h     Included  by ttconfig.h, this  file isn't  part of
+                  the  `lib' directory,  but depends  on  the target
+                  environment.  See section 2 blow for more info.
+                 
+    -------- definitions -------------------------------------------
+
+    tttypes.h     The engine's internal types definitions.
+    tttables.h    The TrueType tables definitions, per se the Specs.
+    tttags.h      The TrueType table tags definitions.
+    tterror.[ch]  The error and debugging component.
+
+    ttdebug.[ch]  Only used  by the  debugger, should not  be linked
+                  into a release build.
+
+    ttcalc.[ch]   Math component  used to perform  some computations
+                  with an intermediate 64-bit precision.
+
+    -------- replaceable components --------------------------------
+
+    ttmemory.[ch] Memory component.  This version uses the ANSI libc
+                  but can be replaced easily by your own version.
+
+    ttfile.[ch]   Stream i/o component.   This version uses the ANSI
+                  libc  but  can  be  replaced easily  by  your  own
+                  version.   Compiled only  if  file  memory mapping
+                  isn't available on your system.
+
+    ttfile2.[ch]  Unix-specific file  memory mapping version  of the
+                  file  component.    It  won't  compile   on  other
+                  systems.   Usually  results  in much  faster  file
+                  access (about 2x on a SCSI P166 system)
+
+    ttmutex.[ch]  Generic mutex component.   This version is a dummy
+                  and should only be used for a single-thread build.
+                  You _need_  to replace this  component's body with
+                  your  own implementation  to  be able  to build  a
+                  threaded version of the engine.
+
+    -------- data management ---------------------------------------
+
+    ttengine.h    The engine instance record definition, root of all
+                  engine data.
+
+    ttlists.[ch]  Generic lists manager.
+    ttcache.[ch]  Generic cache manager.
+
+    ttobjs.[ch]   The     engine's     object    definitions     and
+                  implementations    module   contains   structures,
+                  constructors,  destructors  and  methods  for  the
+                  following objects:
+
+                    face, instance, glyph, execution_context
+
+    ttload.[c]    The TrueType tables loader.
+
+    ttgload.[ch]  The glyph  loader.  A component in  itself, due to
+                  the task's complexity.
+
+    ttindex.[ch]  The  character mapping  to glyph  index conversion
+                  routines.    Implements   functions   defined   in
+                  `freetype.h'.
+
+    ttinterp.[ch] The  TrueType instructions  interpreter.  Probably
+                  the  nicest source  in  this engine.   Apparently,
+                  many have  failed to produce a  comparable one due
+                  to the very poorly written specification!  It took
+                  David Turner three months of his spare time to get
+                  it working correctly! :-)
+
+    ttraster.[ch] The  engine's  second  best  piece.  This  is  the
+                  scan-line    converter.     Performs    gray-level
+                  rendering (also  known as font-smoothing)  as well
+                  as dropout-control.
+
+
+2. Configuration and Debugging
+------------------------------
+
+  As stated above, configuration depends on two files:
+
+  The environment configuration file `ft-conf.h':
+
+    This file contains the definitions of many configuration options
+    that are processor and OS-dependent.  On Unix systems, this file
+    is generated automatically by  the `configure' script that comes
+    with the released package.
+    
+    On other environments, it is  located in one of the architecture
+    directories found in `arch' (e.g. `arch/os2/ft-conf.h').
+  
+    The  path to this  file should  be passed  to the  compiler when
+    compiling _each_ component. (typically with an -I option).
+
+  The engine configuration file `ttconfig.h':
+
+    This file contains many configuration options that the developer
+    can turn  on or  off to experiment  with some `features'  of the
+    engine that  are not part  of its `simplest' form.   The options
+    are commented.
+ 
+  Note that the makefiles are compiler-specific.
+
+  It is possible  to enable the dumping of  debugging information by
+  compiling the  components with  the various debug  macros.  Please
+  consult the file `ttconfig.h' for details.
+
+  If you  want to port the  engine to another  environment, you will
+  need to
+
+  - Write a  new `ft-conf.h'  file for it.   Just copy one  of those
+    available  and   change  the  flags   accordingly  (they're  all
+    commented).
+    
+  - Replace  the  memory, file,  and  mutex  components with  yours,
+    presenting the same interface and behaviour.
+    
+  - Eventually   add   some    code   in   ttapi.c   to   initialize
+    system-specific data with the engine.
+
+
+
+III. Usage conventions
+======================
+
+
+1. Error Handling
+-----------------
+
+  Error handling has  been refined to allow reentrant  builds of the
+  library, available  only in the C  version.  We thus  have now two
+  different conventions.
+
+  In Pascal:
+
+    A global error  variable is used to report  errors when they are
+    detected.  All functions return a boolean that indicates success
+    or  failure of  the call.   If an  error occurs  within  a given
+    function,  the latter  must set  the error  variable  and return
+    `false' (which means failure).
+  
+    It  is then  possible to  make several  calls in  a  single `if'
+    statement like:
+  
+       if  not Perform_Action_1( parms_of_1 )  or
+           not Perform_Action_2( parms_of_2 )  or
+           not Perform_Action_3( parms_of_3 )  then goto Fail;
+  
+    where execution will jump to  the `Fail' label whenever an error
+    occurs in the sequence of actions invoked in the condition.
+
+  In C:
+
+    Global errors are forbidden in re-entrant builds.  Each function
+    thus returns directly an error  code.  A return value of 0 means
+    that no error occured, while  a non-zero other value indicates a
+    failure of any kind.
+
+    This convention  is more constraining  than the one used  in the
+    Pascal source.  The above  Pascal statement should be translated
+    into the following C fragment:
+
+      rc = Perform_Action_1( parms_of_1 );
+      if ( rc )
+        goto Fail;
+
+      rc = Perform_Action_2( parms_of_2 );
+      if ( rc )
+        goto Fail;
+
+      rc = Perform_Action_3( parms_of_3 );
+      if ( rc )
+        goto Fail;
+
+    which, while being equivalent, isn't as pleasantly readable.
+
+    One  `simple' way  to match  the original  fragment would  be to
+    write:
+
+      if ( (rc = Perform_Action_1( parms_of_1 )) ||
+           (rc = Perform_Action_2( parms_of_2 )) ||
+           (rc = Perform_Action_3( parms_of_3 )) )
+        goto Fail;
+
+    which is  better but uses assignments  within expressions, which
+    are always delicate to manipulate in C (the risk of writing `=='
+    exists, and  would go unnoticed  by a compiler).   Moreover, the
+    assignments are  a bit redundant  and don't express  much things
+    about  the  actions performed  (they  only  speak  of the  error
+    management issue).
+
+    That  is  why  some  macros  have  been  defined  for  the  most
+    frequently  used functions.  They  relate to  low-level routines
+    that  are  called very  often  (mainly  i/o,  mutex, and  memory
+    handling functions).  Each macro produces an implicit assignment
+    to a variable called `error' and can be used instead as a simple
+    function call.  Example:
+
+      if ( PERFORM_Action_1( parms_of_1 ) ||
+           PERFORM_Action_2( parms_of_2 ) ||
+           PERFORM_Action_3( parms_of_3 ) )
+        goto Fail;
+
+    with
+      
+      #define PERFORM_Action_1( parms_1 ) \
+                ( error = Perform_Action_1( parms_1 ) )
+      #define PERFORM_Action_2( parms_1 ) \
+                ( error = Perform_Action_2( parms_1 ) )
+      #define PERFORM_Action_3( parms_1 ) \
+                ( error = Perform_Action_3( parms_1 ) )
+
+    defined at the beginning of the file.
+
+    There,  the  developer only  needs  to  define  a local  `error'
+    variable and use the macros directly in the code, without caring
+    about the  actual error handling performed.  Examples  of such a
+    usage can be found in `ttload.c' and `ttgload.c'.  Moreover, the
+    structure of  the source files remain very  similar, even though
+    the error handling is very different.
+    
+    This  convention is  very  close  to the  use  of exceptions  in
+    languages  like C++,  Pascal,  Java, etc.   where the  developer
+    focuses on the actions to perform, and not on every little error
+    checking.
+
+
+2. Font File I/O
+----------------
+
+  a. Streams
+
+    The engine uses `streams' to access the font files.  A stream is
+    a   structure  defined  in   the  `File'   component  containing
+    information used  to access files through  a system-specific i/o
+    library.
+
+    The current  implementation of the File component  uses the ANSI
+    libc i/o functions.  However, for the sake of embedding in light
+    systems and independence  of a complete libc, it  is possible to
+    re-implement the component for  a specific system or OS, letting
+    it use system calls.
+    
+    A stream is of type `TStream' defined in the `TTObjs' interface.
+    The type is `(void*)' but actually points to a structure defined
+    within the File component.
+
+    A stream is created, managed and closed through the interface of
+    the  `File'  component.   Several  implementations of  the  same
+    component can co-exist, each taking advantage of specific system
+    features  (the  file `ttfile2.c'  uses  memory-mapped files  for
+    instance) as long as it respects the interface.
+
+  b. Frames
+
+    TrueType is  tied to the  big-endian format, which  implies that
+    reading shorts or longs from  the font file may need conversions
+    depending on the target processor.   To be able to easily detect
+    read  errors and allow  simple conversion  calls or  macros, the
+    engine is able to access a font file using `frames'.
+
+    A frame is simply a  sequence of successive bytes taken from the
+    input file at the current  position.  A frame is pre-loaded into
+    memory by a `TT_Access_Frame()' call of the `File' component.
+
+    It  is then  possible  to read  all  sizes of  data through  the
+    `Get_xxx()'    functions,    like    Get_Byte(),    Get_Short(),
+    Get_UShort(), etc.
+
+    When all important data is read,  the frame can be released by a
+    call to `TT_Forget_Frame()'.
+
+    The  benefits  of  frames   are  various.   Consider  these  two
+    approaches at extracting values:
+
+      if ( (error = Read_Short( &var1 )) ||
+           (error = Read_Long ( &var2 )) ||
+           (error = Read_Long ( &var3 )) ||
+           (error = Read_Short( &var4 )) )
+
+        return FAILURE;
+
+    and
+
+                            /* Read the next 16 bytes */
+      if ( (error = TT_Access_Frame( 16L )) )
+        return error;       /* The Frame could not be read */
+
+      var1 = Get_Short();   /* extract values from the frame */
+      var2 = Get_Long();
+      var3 = Get_Long();
+      var4 = Get_Short();
+
+      TT_Forget_Frame();   /* release the frame */
+
+    In the  first case, there  are four error assignments  with four
+    checks of the file  read.  This unnecessarily increases the size
+    of the generated  code.  Moreover, you must be  sure that `var1'
+    and `var4' are short variables,  `var2' and `var3' long ones, if
+    you want to avoid bugs and/or compiler warnings.
+
+    In the second case, you perform only one check for the read, and
+    exit immediately on failure.  Then the values are extracted from
+    the frame, as the result of function calls.  This means that you
+    can  use  automatic type  conversion;  there  is  no problem  if
+    e.g. `var1' and `var4' are longs, unlike previously.
+
+    On big-endian machines, the  `Get_xxx()' functions could also be
+    simple  macros that  merely peek  the values  directly  from the
+    frame, which speeds up and simplifies the generated code!
+
+    And finally,  frames are ideal when you  are using memory-mapped
+    files, as  the frame is  not really `pre-loaded' and  never uses
+    any `heap' space.
+
+    IMPORTANT: You  CANNOT nest  several frame  accesses.   There is
+               only  one frame available  at a  time for  a specific
+               instance.
+
+               It is  also the programmer's  responsibility to never
+               extract more  data than was pre-loaded  in the frame!
+               (But  you usually know  how many  values you  want to
+               extract from the file before doing so).
+
+
+3. Memory Management
+--------------------
+
+  The library  now uses  a component which  interface is  similar to
+  malloc()/free().  It defines only two functions.
+
+  * Alloc()
+
+    To be used like malloc(),  except that it returns an error code,
+    not an  address.  Its  arguments are the  size of  the requested
+    block  and the  address of  the  target pointer  to the  `fresh'
+    block.  An error  code is returned in case  of failure (and this
+    will also set the target pointer to NULL), 0 in case of success.
+
+    Alloc() should always respect the following rules:
+
+    - Requesting a block of size  0 should set the target pointer to
+      NULL and return no error code (i.e., return 0).
+
+    - The  returned block is  always zeroed.   This is  an important
+      assumption of other parts of the library.
+
+    If  you wish  to replace  the  memory component  with your  own,
+    please  respect  this  behaviour,  or  your  engine  won't  work
+    correctly.
+
+  * Free()
+
+    As   you  may   have  already   guessed,  Free()   is  Alloc()'s
+    counterpart.   It  takes   as  argument  the  _target  pointer's
+    address_!  You should _never_ pass the block's address directly,
+    i.e. the pointer, to Free().
+
+    Free should always respect the following rules:
+
+    - Calling  it with a  NULL argument,  or the  address of  a NULL
+      pointer is valid, and should return success.
+
+    - The  pointer   is  always  set  to  NULL   after  the  block's
+      deallocation.  This  is also  an important assumption  of many
+      other parts of the library.
+
+    If  you wish  to replace  the  memory component  with your  own,
+    please  respect  this  behaviour,  or  your  engine  won't  work
+    correctly.
+
+  As the pointers addresses  needed as arguments are typed `void**',
+  the  component's interface  also provides  in the  C  version some
+  macros to help use them more easily, these are:
+
+    MEM_Alloc     A version of Alloc that casts the argument pointer
+                  to (void**).
+
+    ALLOC         Same  as MEM_Alloc,  but with  an assignment  to a
+                  variable called  `error'.  See the  section `error
+                  handling' above for more info on this.
+
+    FREE          A  version  of  Free()  that  casts  the  argument
+                  pointer to (void**).   There is currently no error
+                  handling by with this macro.
+
+    MEM_Set       An  alias  for  `memset()',  which can  be  easily
+                  changed  to anything  else if  you wish  to  use a
+                  different   memory  manager  than   the  functions
+                  provided by the ANSI libc.
+
+    MEM_Copy      An alias  of `memcpy()' or `bcopy()'  used to move
+                  blocks of memory.  You  may change it to something
+                  different if  you wish to use  something else that
+                  your standard libc.
+
+
+4. Support for threaded environments
+------------------------------------
+
+  Support  for  threaded  environments  have  been added  to  the  C
+  sources, and  only to  these.  It is  now theorically  possible to
+  build three distinct versions of the library:
+
+    single-thread build:
+
+      The  default build.   This one  doesn't known  about different
+      threads.  Hence, no code is generated to perform coherent data
+      sharing and locking.
+
+    thread-safe build:
+
+      With this  build, several threads  can use the library  at the
+      same time.  However,  some key components can only  be used by
+      one single  thread at a time,  and use a  mutex to synchronize
+      access to their functions.   These are mainly the file, raster
+      and interpreter components.
+
+    re-entrant build:
+
+      A  re-entrant version is  able to  perform certain  actions in
+      parallel  that  a   thread-safe  one  cannot.   This  includes
+      accessing   file(s)   in   parallel,  interpreting   different
+      instruction streams in  parallel, or even scan-line converting
+      distinct glyphs at the same time.
+
+  Note that most of the latest  changes in the engine are making the
+  distinction between the  thread-safe and re-entrant builds thinner
+  than ever.
+
+  There is  a `ttmutex' component that presents  a generic interface
+  to  mutex  operations.  It   should  be  re-implemented  for  each
+  platform.
+
+<to be continued>
+
+
+--- end of convntns.txt --- 

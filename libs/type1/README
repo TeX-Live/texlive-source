@@ -1,0 +1,25 @@
+This directory contains a rasterizer for "Type 1" (PostScript) format
+outline fonts.  It was donated by IBM for the R5 contrib tape and has
+been maintained since then by the MIT X Consortium.  This version is
+compatible with X11R5 public patch 13.
+
+To be used, this rasterizer must be bound into the X server and the font
+server.  It is most convenient to do this if this directory is moved
+into the 'mit' directory tree (i.e., mit/font/lib/font/Type1, a peer of
+the 'Speedo' directory).  Of course, mit/font/lib/font/Imakefile must be
+made aware of its new subdirectory and the objects in it.  In any case,
+you must ensure that the library mit/font/lib/font/libfont.a contains
+this code.
+ 
+In addition, the rasterizer must be "registered" with X. The source in
+mit/fonts/lib/font/fontfile/renderers.c, specifically the routine
+FontFileRegisterFontFileFunctions(), must be modified to add the line:
+ 
+    Type1RegisterFontFileFunctions();
+ 
+after the call to "SpeedoRegisterFontFileFunctions".
+ 
+Some Type 1 fonts have been donated; see, for example, the directory
+contrib/fonts/scaled/Type1.  In order to use them, they must be in the
+font path, either by combining them in some existing font object
+directory, or adding a new font directory to the path.

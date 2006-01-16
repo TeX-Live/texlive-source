@@ -1,0 +1,810 @@
+<HTML>
+<BODY>
+<PRE>
+<!-- Manpage converted by man2html 3.0.1 -->
+
+</PRE>
+<H2>NAME</H2><PRE>
+     curl_easy_setopt - Set curl easy-session options
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+     #include &lt;curl/curl.h&gt;
+
+     CURLcode  curl_easy_setopt(CURL  *handle, CURLoption option,
+     parameter);
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+     curl_easy_setopt() is used to tell libcurl  how  to  behave.
+     Most  operations  in  libcurl  have  default actions, and by
+     using the appropriate options to <I>curl</I><B>_</B><I>easy</I><B>_</B><I>setopt</I>,  you  can
+     change  them.   All options are set with the <I>option</I> followed
+     by a <I>parameter</I>. That parameter can be  a  long,  a  function
+     pointer or an object pointer, all depending on what the spe­
+     cific option expects. Read  this  manual  carefully  as  bad
+     input  values  may  cause  libcurl to behave badly!  You can
+     only set one option in each function call. A typical  appli­
+     cation  uses  many  curl_easy_setopt()  calls  in  the setup
+     phase.
+
+     <B>NOTE:</B> strings passed to libcurl as 'char *' arguments,  will
+     not  be  copied by the library. Instead you should keep them
+     available until libcurl no longer needs them. Failing to  do
+     so will cause very odd behavior or even crashes.
+
+     <B>NOTE2:</B> options set with this function call are valid for the
+     forthcoming data  transfers  that  are  performed  when  you
+     invoke  <I>curl</I><B>_</B><I>easy</I><B>_</B><I>perform</I>.   The  options are not in any way
+     reset between transfers, so if you want subsequent transfers
+     with  different  options,  you  must change them between the
+     transfers.
+
+     The <I>handle</I> is the return code from  a  <I>curl</I><B>_</B><I>easy</I><B>_</B><I>init(3)</I>  or
+     <I>curl</I><B>_</B><I>easy</I><B>_</B><I>duphandle(3)</I> call.
+
+
+</PRE>
+<H2>OPTIONS</H2><PRE>
+     The options are listed in a sort of random order, but you'll
+     figure it out!
+
+     <B>CURLOPT_FILE</B>
+             Data pointer to pass to  the  file  write  function.
+             Note  that if you specify the <I>CURLOPT</I><B>_</B><I>WRITEFUNCTION</I>,
+             this is the pointer you'll  get  as  input.  If  you
+             don't  use  a  callback, you must pass a 'FILE *' as
+             libcurl will pass  this  to  fwrite()  when  writing
+             data.
+
+             <B>NOTE:</B>  If  you're  using libcurl as a win32 DLL, you
+             MUST use the <I>CURLOPT</I><B>_</B><I>WRITEFUNCTION</I> if you  set  this
+             option or you will experience crashes.
+
+     <B>CURLOPT_WRITEFUNCTION</B>
+             Function  pointer  that  should  match the following
+             prototype: <B>size_t</B> <B>function(</B> <B>void</B> <B>*ptr,</B> <B>size_t</B>  <B>size,</B>
+             <B>size_t</B>  <B>nmemb,</B>  <B>void</B>  <B>*stream);</B>  This  function gets
+             called by libcurl as soon as there is data available
+             to  pass  available that needs to be saved. The size
+             of the data pointed to by  <I>ptr</I>  is  <I>size</I>  multiplied
+             with  <I>nmemb</I>.   Return  the  number of bytes actually
+             taken care of.  If  that  amount  differs  from  the
+             amount  passed  to  your  function,  it'll signal an
+             error to the library and it will abort the  transfer
+             and return <I>CURLE</I><B>_</B><I>WRITE</I><B>_</B><I>ERROR</I>.
+
+             Set   the  <I>stream</I>  argument  with  the  <B>CURLOPT_FILE</B>
+             option.
+
+             <B>NOTE:</B> you will be passed as much data as possible in
+             all  invokes,  but  you  cannot  possibly  make  any
+             assumptions. It may be one byte,  it  may  be  thou­
+             sands.
+
+     <B>CURLOPT_INFILE</B>
+             Data pointer to pass to the file read function. Note
+             that if you specify the  <I>CURLOPT</I><B>_</B><I>READFUNCTION</I>,  this
+             is  the  pointer  you'll  get as input. If you don't
+             specify a read callback, this must be a  valid  FILE
+             *.
+
+             <B>NOTE:</B>  If  you're  using libcurl as a win32 DLL, you
+             MUST use a  <I>CURLOPT</I><B>_</B><I>READFUNCTION</I>  if  you  set  this
+             option.
+
+     <B>CURLOPT_READFUNCTION</B>
+             Function  pointer  that  should  match the following
+             prototype: <B>size_t</B> <B>function(</B> <B>void</B> <B>*ptr,</B> <B>size_t</B>  <B>size,</B>
+             <B>size_t</B>  <B>nmemb,</B>  <B>void</B>  <B>*stream);</B>  This  function gets
+             called by libcurl as soon as it needs to  read  data
+             in  order  to  send  it  to  the peer. The data area
+             pointed at by the pointer <I>ptr</I> may be filled with  at
+             most  <I>size</I>  multiplied  with  <I>nmemb</I> number of bytes.
+             Your function must return the actual number of bytes
+             that  you  stored  in  that memory area. Returning 0
+             will signal end-of-file to the library and cause  it
+             to stop the current transfer.
+
+     <B>CURLOPT_INFILESIZE</B>
+             When  uploading a file to a remote site, this option
+             should be used to tell  libcurl  what  the  expected
+             size of the infile is.
+
+     <B>CURLOPT_URL</B>
+             The actual URL to deal with. The parameter should be
+             a char * to a zero  terminated  string.  The  string
+             must  remain  present until curl no longer needs it,
+             as it doesn't copy the string.
+
+             <B>NOTE:</B> this option is (the only one) required  to  be
+             set before <I>curl</I><B>_</B><I>easy</I><B>_</B><I>perform(3)</I> is called.
+
+     <B>CURLOPT_PROXY</B>
+             Set  HTTP  proxy  to  use. The parameter should be a
+             char * to a zero terminated string holding the  host
+             name or dotted IP address. To specify port number in
+             this string, append :[port] to the end of  the  host
+             name.  The proxy string may be prefixed with [proto­
+             col]:// since any such prefix will be  ignored.  The
+             proxy's port number may optionally be specified with
+             the separate option <I>CURLOPT</I><B>_</B><I>PROXYPORT</I>.
+
+             <B>NOTE:</B> when you tell the library to use a HTTP proxy,
+             libcurl  will  transparently  convert  operations to
+             HTTP even if you specify a FTP  URL  etc.  This  may
+             have an impact on what other features of the library
+             you can use, such as CURLOPT_QUOTE and  similar  FTP
+             specifics  that don't work unless you tunnel through
+             the HTTP proxy. Such  tunneling  is  activated  with
+             <I>CURLOPT</I><B>_</B><I>HTTPPROXYTUNNEL</I>.
+
+             <B>NOTE2:</B>  libcurl  respects  the environment variables
+             <B>http_proxy</B>, <B>ftp_proxy</B>,  <B>all_proxy</B>  etc,  if  any  of
+             those is set.
+
+     <B>CURLOPT_PROXYPORT</B>
+             Pass  a  long with this option to set the proxy port
+             to connect to unless it is specified  in  the  proxy
+             string <I>CURLOPT</I><B>_</B><I>PROXY</I>.
+
+     <B>CURLOPT_HTTPPROXYTUNNEL</B>
+             Set  the parameter to non-zero to get the library to
+             tunnel all operations through a  given  HTTP  proxy.
+             Note  that there is a big difference between using a
+             proxy and to tunnel through it. If  you  don't  know
+             what  this  means, you probably don't want this tun­
+             neling option. (Added in libcurl 7.3)
+
+     <B>CURLOPT_VERBOSE</B>
+             Set the parameter to non-zero to get the library  to
+             display a lot of verbose information about its oper­
+             ations. Very  useful  for  libcurl  and/or  protocol
+             debugging and understanding.
+
+             You hardly ever want this set in production use, you
+             will almost always want this when  you  debug/report
+             problems.
+
+     <B>CURLOPT_HEADER</B>
+             A  non-zero  parameter  tells the library to include
+             the header in the body output. This is only relevant
+             for  protocols  that actually have headers preceding
+             the data (like HTTP).
+
+     <B>CURLOPT_NOPROGRESS</B>
+             A non-zero parameter tells the library  to  shut  of
+             the built-in progress meter completely.
+
+             <B>NOTE:</B>  future  versions  of libcurl is likely to not
+             have any built-in progress meter at all.
+
+     <B>CURLOPT_NOBODY</B>
+             A  non-zero  parameter  tells  the  library  to  not
+             include  the  body-part  in the output. This is only
+             relevant for protocols that have separate header and
+             body parts.
+
+     <B>CURLOPT_FAILONERROR</B>
+             A  non-zero  parameter  tells  the  library  to fail
+             silently if the HTTP code returned is  equal  to  or
+             larger  than  300.  The  default  action would be to
+             return the page normally, ignoring that code.
+
+     <B>CURLOPT_UPLOAD</B>
+             A non-zero parameter tells the  library  to  prepare
+             for   an   upload.   The   CURLOPT_INFILE  and  CUR­
+             LOPT_INFILESIZE are also interesting for uploads.
+
+     <B>CURLOPT_POST</B>
+             A non-zero parameter tells the library to do a regu­
+             lar  HTTP  post. This is a normal application/x-www-
+             form-urlencoded kind, which  is  the  most  commonly
+             used  one  by HTML forms. See the CURLOPT_POSTFIELDS
+             option for how to specify the data to post and  CUR­
+             LOPT_POSTFIELDSIZE  in  how  to  set  the data size.
+             Starting with libcurl 7.8, this option is  obsolete.
+             Using  the CURLOPT_POSTFIELDS option will imply this
+             option.
+
+     <B>CURLOPT_FTPLISTONLY</B>
+             A non-zero parameter tells the library to just  list
+             the  names  of  an ftp directory, instead of doing a
+             full  directory  listing  that  would  include  file
+             sizes, dates etc.
+
+     <B>CURLOPT_FTPAPPEND</B>
+             A  non-zero parameter tells the library to append to
+             the remote file instead of  overwrite  it.  This  is
+             only useful when uploading to a ftp site.
+
+     <B>CURLOPT_NETRC</B>
+             A  non-zero parameter tells the library to scan your
+             <I>~/.netrc</I> file to find user name and password for the
+             remote  site  you  are about to access. Only machine
+             name, user name and password is taken  into  account
+             (init macros and similar things aren't supported).
+
+             <B>Note:</B>  libcurl does not verify that the file has the
+             correct properties set (as  the  standard  Unix  ftp
+             client does). It should only be readable by user.
+
+     <B>CURLOPT_FOLLOWLOCATION</B>
+             A non-zero parameter tells the library to follow any
+             Location: header that the server sends as part of  a
+             HTTP header.
+
+             <B>NOTE:</B>  this  means that the library will re-send the
+             same request on the  new  location  and  follow  new
+             Location:  headers  all  the  way until no more such
+             headers are returned. <I>CURLOPT</I><B>_</B><I>MAXREDIRS</I> can be  used
+             to  limit  the number of redirects libcurl will fol­
+             low.
+
+     <B>CURLOPT_TRANSFERTEXT</B>
+             A non-zero parameter tells the library to use  ASCII
+             mode  for  ftp  transfers,  instead  of  the default
+             binary transfer. For LDAP transfers it gets the data
+             in  plain text instead of HTML and for win32 systems
+             it does not set the  stdout  to  binary  mode.  This
+             option  can  be  usable  when transferring text data
+             between systems  with  different  views  on  certain
+             characters, such as newlines or similar.
+
+     <B>CURLOPT_PUT</B>
+             A  non-zero  parameter tells the library to use HTTP
+             PUT to transfer data. The data should  be  set  with
+             CURLOPT_INFILE and CURLOPT_INFILESIZE.
+
+     <B>CURLOPT_USERPWD</B>
+             Pass  a  char  * as parameter, which should be [user
+             name]:[password] to use for the connection.  If  the
+             password  is  left out, you will be prompted for it.
+             <I>CURLOPT</I><B>_</B><I>PASSWDFUNCTION</I> can be used to set  your  own
+             prompt function.
+
+     <B>CURLOPT_PROXYUSERPWD</B>
+             Pass  a  char  * as parameter, which should be [user
+             name]:[password] to use for the  connection  to  the
+             HTTP proxy. If the password is left out, you will be
+             prompted for it. <I>CURLOPT</I><B>_</B><I>PASSWDFUNCTION</I> can be  used
+             to set your own prompt function.
+
+     <B>CURLOPT_RANGE</B>
+             Pass a char * as parameter, which should contain the
+             specified range you want. It should be in the format
+             "X-Y",  where X or Y may be left out. HTTP transfers
+             also support several intervals, separated with  com­
+             mas  as  in  <I>"X-Y,N-M"</I>.  Using this kind of multiple
+             intervals will cause the HTTP  server  to  send  the
+             response  document  in  pieces  (using standard MIME
+             separation techniques).
+
+     <B>CURLOPT_ERRORBUFFER</B>
+             Pass a char * to a buffer that the libcurl may store
+             human  readable  error messages in. This may be more
+             helpful than just the return code from the  library.
+             The buffer must be at least CURL_ERROR_SIZE big.
+
+             <B>Note:</B>  if  the library does not return an error, the
+             buffer may not have been touched. Do not rely on the
+             contents in those cases.
+
+     <B>CURLOPT_TIMEOUT</B>
+             Pass a long as parameter containing the maximum time
+             in seconds that you allow the libcurl transfer oper­
+             ation  to  take.  Normally,  name lookups can take a
+             considerable time and limiting  operations  to  less
+             than  a  few  minutes risk aborting perfectly normal
+             operations. This option will cause curl to  use  the
+             SIGALRM to enable time-outing system calls.
+
+             <B>NOTE:</B> this does not work in Unix multi-threaded pro­
+             grams, as it uses signals.
+
+     <B>CURLOPT_POSTFIELDS</B>
+             Pass a char * as parameter, which should be the full
+             data  to  post  in  a HTTP post operation. This is a
+             normal application/x-www-form-urlencoded kind, which
+             is  the  most  commonly  used one by HTML forms. See
+             also  the  CURLOPT_POST.  Since  7.8,   using   CUR­
+             LOPT_POSTFIELDS implies CURLOPT_POST.
+
+             <B>Note:</B>   to   make   multipart/formdata   posts  (aka
+             rfc1867-posts),  check  out   the   <I>CURLOPT</I><B>_</B><I>HTTPPOST</I>
+             option.
+
+     <B>CURLOPT_POSTFIELDSIZE</B>
+             If  you want to post data to the server without let­
+             ting libcurl do a strlen() to measure the data size,
+             this  option  must be used. When this option is used
+             you can post fully binary data, which  otherwise  is
+             likely  to  fail.  If  this size is set to zero, the
+             library will use strlen() to get the size. (Added in
+             libcurl 7.2)
+
+     <B>CURLOPT_REFERER</B>
+             Pass a pointer to a zero terminated string as param­
+             eter. It will be used to set the Referer: header  in
+             the http request sent to the remote server. This can
+             be used to fool servers or scripts. You can also set
+             any custom header with <I>CURLOPT</I><B>_</B><I>HTTPHEADER</I>.
+
+     <B>CURLOPT_USERAGENT</B>
+             Pass a pointer to a zero terminated string as param­
+             eter. It will be used to set the User-Agent:  header
+             in  the http request sent to the remote server. This
+             can be used to fool servers or scripts. You can also
+             set any custom header with <I>CURLOPT</I><B>_</B><I>HTTPHEADER</I>.
+
+     <B>CURLOPT_FTPPORT</B>
+             Pass a pointer to a zero terminated string as param­
+             eter. It will be used to get the IP address  to  use
+             for  the  ftp PORT instruction. The PORT instruction
+             tells the remote server to connect to our  specified
+             IP  address. The string may be a plain IP address, a
+             host name, an network interface name (under Unix) or
+             just  a  '-' letter to let the library use your sys­
+             tems default IP address. Default FTP operations  are
+             passive, and thus won't use PORT.
+
+     <B>CURLOPT_LOW_SPEED_LIMIT</B>
+             Pass  a  long as parameter. It contains the transfer
+             speed in bytes per second that the  transfer  should
+             be  below  during CURLOPT_LOW_SPEED_TIME seconds for
+             the library to consider it too slow and abort.
+
+     <B>CURLOPT_LOW_SPEED_TIME</B>
+             Pass a long as parameter. It contains  the  time  in
+             seconds  that  the transfer should be below the CUR­
+             LOPT_LOW_SPEED_LIMIT for the library to consider  it
+             too slow and abort.
+
+     <B>CURLOPT_RESUME_FROM</B>
+             Pass  a long as parameter. It contains the offset in
+             number of bytes that you want the transfer to  start
+             from.
+
+     <B>CURLOPT_COOKIE</B>
+             Pass a pointer to a zero terminated string as param­
+             eter. It will be used to set a cookie  in  the  http
+             request.   The   format  of  the  string  should  be
+             [NAME]=[CONTENTS]; Where NAME is the cookie name.
+
+     <B>CURLOPT_HTTPHEADER</B>
+             Pass a pointer to a linked list of HTTP  headers  to
+             pass  to the server in your HTTP request. The linked
+             list  should  be  a  fully  valid  list  of   <B>struct</B>
+             <B>curl_slist</B>   structs   properly   filled   in.   Use
+             <I>curl</I><B>_</B><I>slist</I><B>_</B><I>append(3)</I>  to   create   the   list   and
+             <I>curl</I><B>_</B><I>slist</I><B>_</B><I>free</I><B>_</B><I>all(3)</I>  to  clean up an entire list.
+             If you add a header that is otherwise generated  and
+             used  by  libcurl internally, your added one will be
+             used instead. If you add a header with  no  contents
+             as  in  'Accept:'  (no data on the right side of the
+             colon), the internally used  header  will  get  dis­
+             abled. Thus, using this option you can add new head­
+             ers, replace internal headers  and  remove  internal
+             headers.
+
+             <B>NOTE:</B>The most commonly replaced headers have "short­
+             cuts" in the options CURLOPT_COOKIE,  CURLOPT_USERA­
+             GENT and CURLOPT_REFERER.
+
+     <B>CURLOPT_HTTPPOST</B>
+             Tells  libcurl  you  want  a multipart/formdata HTTP
+             POST to be made and you instruct what data  to  pass
+             on  to  the server.  Pass a pointer to a linked list
+             of HTTP post structs as parameter.  The linked  list
+             should  be  a  fully valid list of 'struct HttpPost'
+             structs properly filled in. The best and  most  ele­
+             gant  way  to  do this, is to use <I>curl</I><B>_</B><I>formadd(3)</I> as
+             documented. The data  in  this  list  must  remained
+             intact  until  you close this curl handle again with
+             <I>curl</I><B>_</B><I>easy</I><B>_</B><I>cleanup(3)</I>.
+
+     <B>CURLOPT_SSLCERT</B>
+             Pass a pointer to a zero terminated string as param­
+             eter.  The  string  should  be the file name of your
+             certificate. The default format is "PEM" and can  be
+             changed with <I>CURLOPT</I><B>_</B><I>SSLCERTTYPE</I>.
+
+     <B>CURLOPT_SSLCERTTYPE</B>
+             Pass a pointer to a zero terminated string as param­
+             eter. The string should be the format of  your  cer­
+             tificate.  Supported  formats  are  "PEM" and "DER".
+             (Added in 7.9.3)
+
+     <B>CURLOPT_SSLCERTPASSWD</B>
+             Pass a pointer to a zero terminated string as param­
+             eter.  It  will  be used as the password required to
+             use the CURLOPT_SSLCERT certificate. If the password
+             is  not  supplied, you will be prompted for it. <I>CUR­</I>
+             <I>LOPT</I><B>_</B><I>PASSWDFUNCTION</I> can be  used  to  set  your  own
+             prompt function.
+
+             <B>NOTE:</B>This option is replaced by <I>CURLOPT</I><B>_</B><I>SSLKEYPASSWD</I>
+             and only cept for backward compatibility. You  never
+             needed  a  pass phrase to load a certificate but you
+             need one to load your private key.
+
+     <B>CURLOPT_SSLKEY</B>
+             Pass a pointer to a zero terminated string as param­
+             eter.  The  string  should  be the file name of your
+             private key. The default format is "PEM" and can  be
+             changed with <I>CURLOPT</I><B>_</B><I>SSLKEYTYPE</I>. (Added in 7.9.3)
+
+     <B>CURLOPT_SSLKEYTYPE</B>
+             Pass a pointer to a zero terminated string as param­
+             eter. The string should be the format of  your  pri­
+             vate  key.  Supported  formats  are "PEM", "DER" and
+             "ENG".  (Added in 7.9.3)
+
+             <B>NOTE:</B>The format "ENG" enables you to load  the  pri­
+             vate  key  from  a  crypto engine. in this case <I>CUR­</I>
+             <I>LOPT</I><B>_</B><I>SSLKEY</I> is used as an identifier passed  to  the
+             engine.  You have to set the crypto engine with <I>CUR­</I>
+             <I>LOPT</I><B>_</B><I>SSL</I><B>_</B><I>ENGINE</I>.
+
+     <B>CURLOPT_SSLKEYASSWD</B>
+             Pass a pointer to a zero terminated string as param­
+             eter.  It  will  be used as the password required to
+             use the <I>CURLOPT</I><B>_</B><I>SSLKEY</I> private key. If the  password
+             is  not  supplied, you will be prompted for it. <I>CUR­</I>
+             <I>LOPT</I><B>_</B><I>PASSWDFUNCTION</I> can be  used  to  set  your  own
+             prompt function.  (Added in 7.9.3)
+
+     <B>CURLOPT_SSL_ENGINE</B>
+             Pass a pointer to a zero terminated string as param­
+             eter. It will be used  as  the  identifier  for  the
+             crypto  engine you want to use for your private key.
+             (Added in 7.9.3)
+
+             <B>NOTE:</B>If  the  crypto  device   cannot   be   loaded,
+             <I>CURLE</I><B>_</B><I>SSL</I><B>_</B><I>ENGINE</I><B>_</B><I>NOTFOUND</I> is returned.
+
+     <B>CURLOPT_SSL_ENGINEDEFAULT</B>
+             Sets  the  actual  crypto  engine as the default for
+             (asymetric) crypto operations. (Added in 7.9.3)
+
+             <B>NOTE:</B>If   the   crypto   device   cannot   be   set,
+             <I>CURLE</I><B>_</B><I>SSL</I><B>_</B><I>ENGINE</I><B>_</B><I>SETFAILED</I> is returned.
+
+     <B>CURLOPT_CRLF</B>
+             Convert  Unix  newlines  to  CRLF  newlines  on  FTP
+             uploads.
+
+     <B>CURLOPT_QUOTE</B>
+             Pass a pointer to a linked list of FTP  commands  to
+             pass  to  the  server prior to your ftp request. The
+             linked list should be a fully valid list of  'struct
+             curl_slist'   structs   properly   filled   in.  Use
+             <I>curl</I><B>_</B><I>slist</I><B>_</B><I>append(3)</I> to append strings (commands) to
+             the  list, and clear the entire list afterwards with
+             <I>curl</I><B>_</B><I>slist</I><B>_</B><I>free</I><B>_</B><I>all(3)</I>. Disable this operation again
+             by setting a NULL to this option.
+
+     <B>CURLOPT_POSTQUOTE</B>
+             Pass  a  pointer to a linked list of FTP commands to
+             pass to the server after your ftp transfer  request.
+             The  linked  list  should  be  a fully valid list of
+             struct curl_slist  structs  properly  filled  in  as
+             described  for <I>CURLOPT</I><B>_</B><I>QUOTE</I>. Disable this operation
+             again by setting a NULL to this option.
+
+     <B>CURLOPT_WRITEHEADER</B>
+             Pass a pointer to be used to write the  header  part
+             of  the  received data to. If you don't use your own
+             callback to take care of the writing, this must be a
+             valid  FILE  *.  See also the <I>CURLOPT</I><B>_</B><I>HEADERFUNCTION</I>
+             option below on how to set a custom  get-all-headers
+             callback.
+
+     <B>CURLOPT_HEADERFUNCTION</B>
+             Function  pointer  that  should  match the following
+             prototype: <I>size</I><B>_</B><I>t</I> <I>function(</I> <I>void</I> <I>*ptr,</I> <I>size</I><B>_</B><I>t</I>  <I>size,</I>
+             <I>size</I><B>_</B><I>t</I>  <I>nmemb,</I>  <I>void</I>  <I>*stream);</I>.  This function gets
+             called by libcurl  as  soon  as  there  is  received
+             header data that needs to be written down. The head­
+             ers are guaranteed to be written one-by-one and only
+             complete  lines  are written. Parsing headers should
+             be easy enough using this.  The  size  of  the  data
+             pointed  to  by  <I>ptr</I>  is <I>size</I> multiplied with <I>nmemb</I>.
+             The pointer named <I>stream</I> will be the one you  passed
+             to  libcurl  with  the  <I>CURLOPT</I><B>_</B><I>WRITEHEADER</I>  option.
+             Return the  number  of  bytes  actually  written  or
+             return  -1  to  signal error to the library (it will
+             cause   it   to   abort   the   transfer   with    a
+             <I>CURLE</I><B>_</B><I>WRITE</I><B>_</B><I>ERROR</I>  return  code).  (Added in libcurl
+             7.7.2)
+
+     <B>CURLOPT_COOKIEFILE</B>
+             Pass a pointer to a zero terminated string as param­
+             eter.  It should contain the name of your file hold­
+             ing cookie data. The cookie data may be in  Netscape
+             /  Mozilla  cookie data format or just regular HTTP-
+             style headers dumped to a file.
+
+     <B>CURLOPT_SSLVERSION</B>
+             Pass a long as parameter. Set what version of SSL to
+             attempt  to use, 2 or 3. By default, the SSL library
+             will try to  solve  this  by  itself  although  some
+             servers  make  this  difficult  why you at times may
+             have to use this option.
+
+     <B>CURLOPT_TIMECONDITION</B>
+             Pass a long as parameter. This defines how the  CUR­
+             LOPT_TIMEVALUE  time  value  is treated. You can set
+             this  parameter  to  TIMECOND_IFMODSINCE  or   TIME­
+             COND_IFUNMODSINCE.  This  is  a  HTTP-only  feature.
+             (TBD)
+
+     <B>CURLOPT_TIMEVALUE</B>
+             Pass a long as parameter. This should be the time in
+             seconds  since 1 jan 1970, and the time will be used
+             as specified in  CURLOPT_TIMECONDITION  or  if  that
+             isn't   used,  it  will  be  TIMECOND_IFMODSINCE  by
+             default.
+
+     <B>CURLOPT_CUSTOMREQUEST</B>
+             Pass a pointer to a zero terminated string as param­
+             eter.  It  will  be user instead of GET or HEAD when
+             doing the HTTP request. This  is  useful  for  doing
+             DELETE  or other more or less obscure HTTP requests.
+             Don't do this at will, make sure  your  server  sup­
+             ports the command first.
+
+     <B>CURLOPT_STDERR</B>
+             Pass  a  FILE  * as parameter. This is the stream to
+             use instead  of  stderr  internally  when  reporting
+             errors.
+
+     <B>CURLOPT_INTERFACE</B>
+             Pass  a  char * as parameter. This set the interface
+             name to use as outgoing network interface. The  name
+             can  be  an  interface name, an IP address or a host
+             name. (Added in libcurl 7.3)
+
+     <B>CURLOPT_KRB4LEVEL</B>
+             Pass a char * as parameter. Set  the  krb4  security
+             level,  this also enables krb4 awareness.  This is a
+             string, 'clear',  'safe',  'confidential'  or  'pri­
+             vate'.   If  the string is set but doesn't match one
+             of these, 'private' will be used. Set the string  to
+             NULL to disable kerberos4. The kerberos support only
+             works for FTP. (Added in libcurl 7.3)
+
+     <B>CURLOPT_PROGRESSFUNCTION</B>
+             Function   pointer    that    should    match    the
+             <I>curl</I><B>_</B><I>progress</I><B>_</B><I>callback</I>     prototype     found    in
+             <I>&lt;curl/curl.h&gt;</I>. This function gets called by  libcurl
+             instead  of  its internal equivalent with a frequent
+             interval during data transfer.  Unknown/unused argu­
+             ment  values  will  be set to zero (like if you only
+             download data,  the  upload  size  will  remain  0).
+             Returning  a  non-zero value from this callback will
+             cause libcurl  to  abort  the  transfer  and  return
+             <I>CURLE</I><B>_</B><I>ABORTED</I><B>_</B><I>BY</I><B>_</B><I>CALLBACK</I>.
+
+     <B>CURLOPT_PROGRESSDATA</B>
+             Pass a pointer that will be untouched by libcurl and
+             passed as the first argument in the  progress  call­
+             back set with <I>CURLOPT</I><B>_</B><I>PROGRESSFUNCTION</I>.
+
+     <B>CURLOPT_SSL_VERIFYPEER</B>
+             Pass  a long that is set to a non-zero value to make
+             curl verify the peer's certificate. The  certificate
+             to  verify  against  must be specified with the CUR­
+             LOPT_CAINFO option. (Added in 7.4.2)
+
+     <B>CURLOPT_CAINFO</B>
+             Pass a char * to a zero terminated file naming hold­
+             ing  the  certificate  to verify the peer with. This
+             only makes sense when used in combination  with  the
+             CURLOPT_SSL_VERIFYPEER option. (Added in 7.4.2)
+
+     <B>CURLOPT_PASSWDFUNCTION</B>
+             Pass  a  pointer  to a <I>curl</I><B>_</B><I>passwd</I><B>_</B><I>callback</I> function
+             that will be called instead of the internal  one  if
+             libcurl requests a password. The function must match
+             this prototype: <B>int</B>  <B>my_getpass(void</B>  <B>*client,</B>  <B>char</B>
+             <B>*prompt,</B>  <B>char*</B>  <B>buffer,</B>  <B>int</B>  <B>buflen</B> <B>);</B>.  If set to
+             NULL, it equals to making the function always  fail.
+             If  the  function  returns a non-zero value, it will
+             abort the operation and  an  error  (CURLE_BAD_PASS­
+             WORD_ENTERED) will be returned.  <I>client</I> is a generic
+             pointer, see <I>CURLOPT</I><B>_</B><I>PASSWDDATA</I>.  <I>prompt</I> is a  zero-
+             terminated  string  that  is  text that prefixes the
+             input request.  <I>buffer</I> is a pointer  to  data  where
+             the  entered password should be stored and <I>buflen</I> is
+             the maximum number of bytes that may be  written  in
+             the buffer.  (Added in 7.4.2)
+
+     <B>CURLOPT_PASSWDDATA</B>
+             Pass  a void * to whatever data you want. The passed
+             pointer will be  the  first  argument  sent  to  the
+             specifed  <I>CURLOPT</I><B>_</B><I>PASSWDFUNCTION</I> function. (Added in
+             7.4.2)
+
+     <B>CURLOPT_FILETIME</B>
+             Pass a long. If it is a non-zero value, libcurl will
+             attempt  to  get the modification date of the remote
+             document in this operation. This requires  that  the
+             remote  server  sends  the time or replies to a time
+             querying command. The <I>curl</I><B>_</B><I>easy</I><B>_</B><I>getinfo(3)</I>  function
+             with  the  <I>CURLINFO</I><B>_</B><I>FILETIME</I>  argument  can  be used
+             after a transfer to extract the  received  time  (if
+             any). (Added in 7.5)
+
+     <B>CURLOPT_MAXREDIRS</B>
+             Pass  a long. The set number will be the redirection
+             limit. If that many redirections have been followed,
+             the    next    redirect    will   cause   an   error
+             (<I>CURLE</I><B>_</B><I>TOO</I><B>_</B><I>MANY</I><B>_</B><I>REDIRECTS</I>). This option  only  makes
+             sense  if  the <I>CURLOPT</I><B>_</B><I>FOLLOWLOCATION</I> is used at the
+             same time. (Added in 7.5)
+
+     <B>CURLOPT_MAXCONNECTS</B>
+             Pass a long. The set number will be  the  persistant
+             connection  cache  size.  The set amount will be the
+             maximum  amount  of  simultaneous  connections  that
+             libcurl may cache between file transfers. Default is
+             5, and there isn't much point in changing this value
+             unless  you are perfectly aware of how this work and
+             changes libcurl's behaviour.
+
+             <B>NOTE:</B> if you already have performed  transfers  with
+             this curl handle, setting a smaller MAXCONNECTS than
+             before may cause  open  connections  to  get  closed
+             unnecessarily. (Added in 7.7)
+
+     <B>CURLOPT_CLOSEPOLICY</B>
+             Pass  a  long.  This option sets what policy libcurl
+             should use when the connection cache is  filled  and
+             one of the open connections has to be closed to make
+             room for a new connection. This must be one  of  the
+             CURLCLOSEPOLICY_*    defines.    Use   <I>CURLCLOSEPOL­</I>
+             <I>ICY</I><B>_</B><I>LEAST</I><B>_</B><I>RECENTLY</I><B>_</B><I>USED</I> to make  libcurl  close  the
+             connection  that  was least recently used, that con­
+             nection is also least likely to be  capable  of  re-
+             use.  Use  <I>CURLCLOSEPOLICY</I><B>_</B><I>OLDEST</I>  to  make  libcurl
+             close the oldest connection, the one that  was  cre­
+             ated  first  among the ones in the connection cache.
+             The other close policies are not support yet. (Added
+             in 7.7)
+
+     <B>CURLOPT_FRESH_CONNECT</B>
+             Pass a long. Set to non-zero to make the next trans­
+             fer use a new (fresh) connection by  force.  If  the
+             connection cache is full before this connection, one
+             of  the  existing  connections  will  be  closed  as
+             according  to  the  selected or default policy. This
+             option should be used with caution and only  if  you
+             understand  what  it  does.  Set  this  to 0 to have
+             libcurl  attempt  re-using  an  existing  connection
+             (default behavior).  (Added in 7.7)
+
+     <B>CURLOPT_FORBID_REUSE</B>
+             Pass a long. Set to non-zero to make the next trans­
+             fer explicitly close the connection when done.  Nor­
+             mally,  libcurl keep all connections alive when done
+             with one transfer in case there comes  a  succeeding
+             one  that  can  re-use  them.  This option should be
+             used with caution and only if you understand what it
+             does.  Set  to 0 to have libcurl keep the connection
+             open for possibly later re-use  (default  behavior).
+             (Added in 7.7)
+
+     <B>CURLOPT_RANDOM_FILE</B>
+             Pass  a  char  * to a zero terminated file name. The
+             file will be used to read from to  seed  the  random
+             engine  for  SSL. The more random the specified file
+             is, the more secure will the SSL connection  become.
+
+     <B>CURLOPT_EGDSOCKET</B>
+             Pass  a  char  * to the zero terminated path name to
+             the Entropy Gathering Daemon socket. It will be used
+             to seed the random engine for SSL.
+
+     <B>CURLOPT_CONNECTTIMEOUT</B>
+             Pass  a  long. It should contain the maximum time in
+             seconds that you allow the connection to the  server
+             to  take.   This  only  limits the connection phase,
+             once it has connected, this option  is  of  no  more
+             use.  Set  to zero to disable connection timeout (it
+             will then only  timeout  on  the  system's  internal
+             timeouts). See also the <I>CURLOPT</I><B>_</B><I>TIMEOUT</I> option.
+
+             <B>NOTE:</B> this does not work in unix multi-threaded pro­
+             grams, as it uses signals.
+
+     <B>CURLOPT_HTTPGET</B>
+             Pass a long. If the long is  non-zero,  this  forces
+             the  HTTP  request  to  get back to GET. Only really
+             usable if POST, PUT or a custom  request  have  been
+             used  previously  using the same curl handle. (Added
+             in 7.8.1)
+
+     <B>CURLOPT_SSL_VERIFYHOST</B>
+             Pass a long. Set if we should verify the Common name
+             from  the peer certificate in the SSL handshake, set
+             1 to check existence, 2 to ensure  that  it  matches
+             the provided hostname. (Added in 7.8.1)
+
+     <B>CURLOPT_COOKIEJAR</B>
+             Pass  a  file  name as char *, zero terminated. This
+             will make libcurl dump all internally known  cookies
+             to  the  specified file when <I>curl</I><B>_</B><I>easy</I><B>_</B><I>cleanup(3)</I> is
+             called. If no cookies are known,  no  file  will  be
+             created.  Specify  "-"  to  instead have the cookies
+             written to stdout.
+
+     <B>CURLOPT_SSL_CIPHER_LIST</B>
+             Pass a char *, pointing to a zero terminated  string
+             holding  the list of ciphers to use for the SSL con­
+             nection. The list must be syntactly correct, it con­
+             sists  of  one  or  more cipher strings separated by
+             colons. Commas or spaces are also acceptable separa­
+             tors  but colons are normally used, , - and + can be
+             used as operators. Valid examples  of  cipher  lists
+             include    'RC4-SHA',    ´SHA1+DES´,   'TLSv1'   and
+             'DEFAULT'. The default list is normally set when you
+             compile OpenSSL.
+
+             You'll  find more details about cipher lists on this
+             URL: <I>http://www.openssl.org/docs/apps/ciphers.html</I>
+
+     <B>CURLOPT_HTTP_VERSION</B>
+             Pass a long, set to  one  of  the  values  described
+             below.  They  force libcurl to use the specific HTTP
+             versions. This is not sensible to do unless you have
+             a good reason.
+
+             <B>CURL_HTTP_VERSION_NONE</B>
+                  We  don't  care  about what version the library
+                  uses. libcurl will use whatever it thinks  fit.
+
+             <B>CURL_HTTP_VERSION_1_0</B>
+                  Enforce HTTP 1.0 requests.
+
+             <B>CURL_HTTP_VERSION_1_1</B>
+                  Enforce HTTP 1.1 requests.
+
+     <B>CURLOPT_FTP_USE_EPSV</B>
+             Pass a long. If the value is non-zero, it tells curl
+             to use the EPSV command when doing passive FTP down­
+             loads  (which is always does by default). Using EPSV
+             means that it will first attempt to use EPSV  before
+             using  PASV,  but  if  you pass FALSE (zero) to this
+             option, it will not try using EPSV, only plain PASV.
+
+
+</PRE>
+<H2>RETURN VALUE</H2><PRE>
+     CURLE_OK (zero) means that the option was set properly, non-
+     zero means an error occurred as <I>&lt;curl/curl.h&gt;</I> defines.
+
+
+</PRE>
+<H2>SEE ALSO</H2><PRE>
+     <B>curl_easy_init(3)</B>, <B>curl_easy_cleanup(3)</B>,
+
+
+</PRE>
+<H2>BUGS</H2><PRE>
+     If you find any bugs, or just have questions,  subscribe  to
+     one of the mailing lists and post. We won't bite.
+
+
+
+
+</PRE>
+<HR>
+<ADDRESS>
+Man(1) output converted with
+<a href="http://www.oac.uci.edu/indiv/ehood/man2html.html">man2html</a>
+</ADDRESS>
+</BODY>
+</HTML>

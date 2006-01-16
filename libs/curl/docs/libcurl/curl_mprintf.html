@@ -1,0 +1,126 @@
+<HTML>
+<BODY>
+<PRE>
+<!-- Manpage converted by man2html 3.0.1 -->
+
+</PRE>
+<H2>NAME</H2><PRE>
+     curl_maprintf,  curl_mfprintf, curl_mprintf, curl_msnprintf,
+     curl_msprintf curl_mvaprintf, curl_mvfprintf, curl_mvprintf,
+     curl_mvsnprintf,  curl_mvsprintf  - formatted output conver­
+     sion
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+     <B>#include</B> <B>&lt;curl/mprintf.h&gt;</B>
+
+     <B>int</B> <B>curl_mprintf(const</B> <B>char</B> <B>*</B><I>format</I><B>,</B> <B>...);</B>
+     <B>int</B> <B>curl_mfprintf(FILE</B> <B>*</B><I>fd</I><B>,</B> <B>const</B> <B>char</B> <B>*</B><I>format</I><B>,</B> <B>...);</B>
+     <B>int</B> <B>curl_msprintf(char</B> <B>*</B><I>buffer</I><B>,</B> <B>const</B> <B>char</B> <B>*</B><I>format</I><B>,</B> <B>...);</B>
+     <B>int</B> <B>curl_msnprintf(char</B>  <B>*</B><I>buffer</I><B>,</B>  <B>size_t</B>  <I>maxlength</I><B>,</B>  <B>const</B>
+     <B>char</B> <B>*</B><I>format</I>
+     <B>int</B> <B>curl_mvprintf(const</B> <B>char</B> <B>*</B><I>format</I><B>,</B> <B>va_list</B> <I>args</I><B>);</B>
+     <B>int</B>  <B>curl_mvfprintf(FILE</B>  <B>*</B><I>fd</I><B>,</B>  <B>const</B>  <B>char</B> <B>*</B><I>format</I><B>,</B> <B>va_list</B>
+     <I>args</I>
+     <B>int</B> <B>curl_mvsprintf(char</B> <B>*</B><I>buffer</I><B>,</B> <B>const</B> <B>char</B> <B>*</B><I>format</I><B>,</B> <B>va_list</B>
+     <I>args</I>
+     <B>int</B>  <B>curl_mvsnprintf(char</B>  <B>*</B><I>buffer</I><B>,</B>  <B>size_t</B> <I>maxlength</I><B>,</B> <B>const</B>
+     <B>char</B> <B>*</B><I>format</I>
+     <B>char</B> <B>*curl_maprintf(const</B> <B>char</B> <B>*</B><I>format</I><B>,</B> <B>...);</B>
+     <B>char</B> <B>*curl_mvaprintf(const</B> <B>char</B> <B>*</B><I>format</I><B>,</B> <B>va_list</B> <I>args</I><B>);</B>
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+     These are all functions that produces output according to  a
+     format  string  and given arguments. These are mostly clones
+     of the well-known C-style functions and  there  will  be  no
+     detailed  explanation  of all available formatting rules and
+     usage here.
+
+     See this table for notable exceptions.
+
+          <B>curl_mprintf()</B>
+               Normal printf() clone.
+
+          <B>curl_mfprintf()</B>
+               Normal fprinf() clone.
+
+          <B>curl_msprintf()</B>
+               Normal sprintf() clone.
+
+          <B>curl_msnprintf()</B>
+               snprintf() clone. Many systems don't have this. It
+               is  just  like  <B>sprintf</B> but with an extra argument
+               after the buffer that specifies the length of  the
+               target buffer.
+
+          <B>curl_mvprintf()</B>
+               Normal vprintf() clone.
+
+          <B>curl_mvfprintf()</B>
+               Normal vfprintf() clone.
+
+          <B>curl_mvsprintf()</B>
+               Normal vsprintf() clone.
+
+          <B>curl_mvsnprintf()</B>
+               vsnprintf()  clone.  Many systems don't have this.
+               It is just like <B>vsprintf</B> but with an  extra  argu­
+               ment after the buffer that specifies the length of
+               the target buffer.
+
+          <B>curl_maprintf()</B>
+               Like printf() but returns the output string  as  a
+               malloc()ed  string.  The  returned  string must be
+               free()ed by the receiver.
+
+          <B>curl_mvaprintf()</B>
+               Like curl_maprintf() but takes a  va_list  pointer
+               argument  instead  of  a  variable amount of argu­
+               ments.
+
+     To easily use all these cloned functions instead of the nor­
+     mal  ones,  #define  _MPRINTF_REPLACE before you include the
+     &lt;curl/mprintf.h&gt;  file.  Then  all  the  normal  names  like
+     printf,  fprintf,  sprintf  etc  will use the curl-functions
+     instead.
+
+
+</PRE>
+<H2>RETURN VALUE</H2><PRE>
+     The <B>curl_maprintf</B>  and  <B>curl_mvaprintf</B>  functions  return  a
+     pointer to a newly allocated string, or NULL it it failed.
+
+     All  other  functions  return  the  number of character they
+     actually outputed.
+
+
+</PRE>
+<H2>SEE ALSO</H2><PRE>
+     <B>printf(3)</B>, <B>sprintf(3)</B>, <B>fprintf(3)</B>,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+<HR>
+<ADDRESS>
+Man(1) output converted with
+<a href="http://www.oac.uci.edu/indiv/ehood/man2html.html">man2html</a>
+</ADDRESS>
+</BODY>
+</HTML>

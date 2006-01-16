@@ -1,0 +1,94 @@
+AC_INIT(xpdf/Array.cc)
+AC_CONFIG_AUX_DIR(../../config)
+AC_CONFIG_HEADERS(aconf.h)
+
+dnl ##### Optional features.
+AC_ARG_ENABLE([a4-paper],
+[  --enable-a4-paper       use A4 paper size instead of Letter for
+                          PostScript output],
+[AC_DEFINE(A4_PAPER)])
+AC_ARG_ENABLE(opi,
+[  --enable-opi            include support for OPI comments],
+[AC_DEFINE(OPI_SUPPORT)])
+AC_ARG_ENABLE([multithreaded],
+[  --enable-multithreaded  include support for multithreading],
+[AC_DEFINE(MULTITHREADED)])
+
+dnl ##### Path to xpdfrc.
+dnl This ugly kludge to get the sysconfdir path is needed because
+dnl autoconf doesn't actually set the prefix variable until later.
+if test "$sysconfdir" = '${prefix}/etc'; then
+  if test "x$prefix" = xNONE; then
+    system_xpdfrc="$ac_default_prefix/etc/xpdfrc"
+  else
+    system_xpdfrc="$prefix/etc/xpdfrc"
+  fi
+else
+  system_xpdfrc="$sysconfdir/xpdfrc"
+fi
+AC_DEFINE_UNQUOTED(SYSTEM_XPDFRC, "$system_xpdfrc")
+
+dnl ##### Checks for programs.
+AC_PROG_CC
+AC_ISC_POSIX
+(
+  AC_PROG_CXX
+) && {
+  AC_PROG_CXX
+} || {
+  AC_MSG_WARN(No C++ compiler: xpdf can not be compiled.)
+  true
+}
+
+AC_PROG_RANLIB
+
+dnl These are standard among *NIX systems, but not when cross-compiling
+AC_DEFUN([CF_SUBST],
+[AC_MSG_CHECKING(for $1 (symbol $2))
+AC_CACHE_VAL(cf_cv_subst_$2,[
+test -z "[$]$2" && $2=$3
+cf_cv_subst_$2=[$]$2])
+$2=${cf_cv_subst_$2}
+AC_MSG_RESULT([$]$2)
+AC_SUBST($2)
+])dnl
+CF_SUBST(archiver,AR,ar)
+CF_SUBST(archiver options,ARFLAGS,rc)
+
+AC_HEADER_DIRENT
+
+dnl ##### Switch over to C++.  This will make the checks below a little
+dnl ##### bit stricter (requiring function prototypes in include files).
+dnl ##### (99% of xpdf is written in C++.)
+AC_LANG_CPLUSPLUS
+
+dnl # This should use 'AC_CHECK_FUNCS(mkstemp)' but that fails if
+dnl # the mkstemp exists in the library but isn't declared in the
+dnl # include file (e.g., in cygwin 1.1.2).
+AC_CACHE_CHECK([for mkstemp],
+xpdf_cv_func_mkstemp,
+[AC_TRY_LINK([#include <stdlib.h>
+#include <unistd.h>],
+[mkstemp("foo");],
+xpdf_cv_func_mkstemp=yes, xpdf_cv_func_mkstemp=no)])
+if test "$xpdf_cv_func_mkstemp" = yes; then
+  AC_DEFINE(HAVE_MKSTEMP)
+fi
+dnl # Check for mkstemps, just like mkstemp.
+AC_CACHE_CHECK([for mkstemps],
+xpdf_cv_func_mkstemps,
+[AC_TRY_LINK([#include <stdlib.h>
+#include <unistd.h>],
+[mkstemps("foo", 0);],
+xpdf_cv_func_mkstemps=yes, xpdf_cv_func_mkstemps=no)])
+if test "$xpdf_cv_func_mkstemps" = yes; then
+  AC_DEFINE(HAVE_MKSTEMPS)
+fi
+
+dnl ##### Back to C for the library tests.
+AC_LANG_C
+
+dnl ##### Write the makefiles.
+AC_CONFIG_FILES([Makefile])
+KPSE_CONFIG_FILES([xpdf/Makefile goo/Makefile fofi/Makefile])
+AC_OUTPUT

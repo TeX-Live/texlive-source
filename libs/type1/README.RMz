@@ -1,0 +1,12 @@
+Dear Folks,
+
+this directory basically contains the Type 1 rasterizer code, donated
+to the X11-project by IBM and afterwards modified by Piet Tutelaers
+for his ps2pk-package. But there are several files modified by
+myself. Thus the state of this directory is not an official one and
+subject to further changes!
+
+Before version 0.6 of t1lib I have cleaned the sources, removed the X11-dummy
+function and made the sources more ANSI-C compliant.
+
+			                       (03/09/1998, RMz) 

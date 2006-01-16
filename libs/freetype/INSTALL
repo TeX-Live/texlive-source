@@ -1,0 +1,733 @@
+
+                   The FreeType compilation guide
+
+
+Table of contents
+-----------------
+
+  I. Introduction
+
+ II. Compiling and installing the C library
+
+    1. Choosing a configuration file
+    2. Compiling the library
+    3. System-specific builds
+    4. Compiling the extensions
+    5. Using a Makefile
+    6. Building a dynamic library (`so' or `DLL')
+    7. Internationalization and the `ftxerr18' extension
+    8. TrueType patents
+
+
+III. Compiling the test programs
+
+    1. Compiling the graphics sub-system
+    2. Internationalization on Unix
+    3. Compiling the test programs
+    4. The `fdebug' program
+
+
+ IV. Compiling the Pascal source
+
+
+--------------------------------------------------------------------
+
+
+
+I. Introduction
+===============
+
+  This file gives detailed information on how to compile and install
+  this release of FreeType on your system.
+
+
+********************************************************************
+*                                                                  *
+*  FOR A QUICK INSTALLATION GUIDE,  WE STRONGLY RECOMMEND TO READ  *
+*  THE SYSTEM-SPECIFIC DOCUMENTS LOCATED IN THE `howto' DIRECTORY  *
+*  INSTEAD OF THIS GENERIC DOCUMENTATION.                          *
+*                                                                  *
+********************************************************************
+
+
+  This package,  known as the FreeType 1.5  Public Release, contains
+  several  things  which  are  best  described  by  the  directories
+  containing them:
+
+  - `lib'
+
+    Contains the 1.5 release of the FreeType library.  It is written
+    in portable ANSI C and should compile fine with any type of ANSI
+    C compiler.
+
+    Note however that some system-specific files are provided in the
+    `lib/arch' directory, in order to provide enhanced performance.
+
+    If  you need to  include FreeType  in a  graphics library  or an
+    embedded system,  you will  most probably only  need to  use its
+    contents and discard the rest.
+
+  - `test'
+
+    Contains test  and demo programs used  during development.  Note
+    that some of these programs  might not compile on all platforms,
+    as they need to display graphics.
+
+  - `po'
+
+    On    Unix,   all    of   FreeType    test    programs   support
+    internationalization through  the use of  the `gettext' library.
+    This directory contains `po'  files, which are used to translate
+    the original English text into language-specific one.
+
+    Note  also  that  this  release contains  an  extension,  called
+    `ftxerr18'  used to  return internationalized  strings  from the
+    usual  FreeType  error  codes.   The  `po'  files  also  contain
+    translations for this extension.
+
+    If  you don't  plan to  use `ftxerr18'  or internationalization,
+    simply  ignore  it.  Note  also  that  even  if `gettext'  isn't
+    available  on your system,  the test  programs will  be compiled
+    correctly (using the `--disable-nls' configure switch).
+
+  - `contrib'
+
+    Contains  a set of  contributed tools  and utilities  related to
+    TrueType or FreeType.  Here you  can find real situations how to
+    use the library.
+
+
+  This  file explains  how  to  compile the  library,  and the  test
+  programs on various platforms.
+
+
+
+II. Compiling the C library
+===========================
+
+
+********************************************************************
+*                                                                  *
+*  NOTE THAT  WE STRONGLY  RECOMMEND TO READ  THE SYSTEM-SPECIFIC  *
+*  DOCUMENTS   LOCATED   IN   THE   `howto'   DIRECTORY   FOR   A  *
+*  `QUICK'N'EASY'  COMPILATION  &   INSTALLATION  GUIDE  ON  YOUR  *
+*  PLATFORM.  THE FOLLOWING IS A VERY DETAILED EXPLANATION ON HOW  *
+*  TO COMPILE THE LIBRARY.                                         *
+*                                                                  *
+********************************************************************
+
+
+  The following concepts are important to build the library.
+
+
+  1. Choosing a configuration file
+  --------------------------------
+
+    The  source code  for  the C  library  is located  in the  `lib'
+    directory.
+
+    It uses a file named `ft_conf.h', which contains the definitions
+    of many configuration macros  to toggle various engine features,
+    as well  as tell system-specific information (e.g.,  the size of
+    the `int' type in bytes, etc).
+
+    There  are  several   configuration  files  provided  with  this
+    release.  They are located in the `lib/arch/<system>' directory,
+    where <system> stands for a given architecture or environment.
+
+    For example,  the file `lib/arch/ansi/ft_conf.h' can  be used to
+    build the  library with any ANSI-compliant  compiler and runtime
+    library.
+
+    This release also provides configuration files for the following
+    systems: MS-DOS, OS/2, Unix, VMS, Win 16, Win 32, Amiga OS, Mac,
+    and BeOS.
+
+    Make  sure, when  compiling  each source  file  of the  FreeType
+    library, to include the path  to your configuration file in your
+    include directories.
+
+
+  2. Compiling the library
+  ------------------------
+
+    The library can  be quickly compiled by invoking  a Makefile, as
+    described  in  the  system-specific  documents  in  the  `howto'
+    directory.
+
+    We will now describe how to compile the library by hand.
+
+    Traditionally,  building  a  library  like  FreeType  needs  the
+    following steps:
+
+    - Compile  each  individual  `.c'  file into  the  corresponding
+      object  file,  whose  extension   might  be  `.o'  or  `.obj',
+      depending on the platform.
+
+    - Group all object files into a library (e.g. `libfreetype.a' or
+      `freetype.lib'), which is later used at link time to build the
+      executables using it.
+
+    For  example, to  build a  static  FreeType library  on an  ANSI
+    system, with gcc, one should type
+
+      cd lib                           # go to `lib' directory
+      gcc -c -I arch/ansi tt*.c        # compile base engine sources
+      ar -r libfreetype.a tt*.o        # create library from objects
+
+    Note that we included the  path to the configuration file in the
+    include list during compilation, by using the `-I' switch on the
+    `arch/ansi'   directory.    This   is   required  to   use   the
+    configuration file named `lib/arch/ansi/ft_conf.h'.
+
+    However, we recommend you to build the base FreeType engine as a
+    SINGLE   OBJECT   FILE,   i.e.,   a   single   `freetype.o'   or
+    `freetype.obj' file containing all the code for the base engine.
+    It works  by including all the  `.c' files in a  single one, and
+    has a few advantages over a `traditional build':
+
+    - Because all the  code is `part' of a  single source file, many
+      internal functions need not be declared as `extern' anymore.
+
+      This  means  that  when  compiling  the engine  as  a  dynamic
+      library, only FreeType  external functions will (correctly) be
+      exported as entry points.
+
+      This  also  typically  allows  the compiler  to  perform  more
+      aggressive optimizations  on the  source code, and  results in
+      somewhat faster and/or smaller  overall code size depending on
+      your compiler and environment.
+
+    - Compilation  speed is greatly  improved, as  the pre-processor
+      and compiler need  to be called only once,  instead of a dozen
+      times.
+
+    - During  development,   this  allows  to   detect  very  easily
+      unresolved dependencies  regarding the base  engine's internal
+      symbols.
+
+    To compile the engine as a  single object file, simply go to the
+    `lib'       directory      and       compile       the      file
+    `lib/arch/<system>/freetype.c'.
+
+    For example, to compile the ANSI build with gcc in SINGLE OBJECT
+    MODE, use
+
+      cd lib
+      gcc -c -I arch/ansi -I . arch/ansi/freetype.c
+
+    This will  create a  single file called  `freetype.o' containing
+    the object code for the base TrueType engine.
+
+    Note that  we did  include the paths  to the  configuration file
+    (i.e.   `arch/ansi') AND  to  the current  directory (i.e.  `.',
+    where the included source files are located).
+
+    `freetype.o' only  contains the base engine.   Extensions to the
+    engine  are located in  the `lib/extend'  directory and  must be
+    compiled separately as described later.
+
+
+  3. System-specific builds
+  -------------------------
+
+    The files `ttfile.c', `ttmemory.c',  and `ttmutex.c' are used to
+    provide an implementation of  i/o access, memory management, and
+    thread synchronization for the rest of the library.
+
+    These source files, located in the `lib' directory, use the ANSI
+    C library for i/o and  memory, and simply ignore threads (as the
+    C standard doesn't know about threads at all).
+
+    However,  this release  provides, for  each  supported platform,
+    system-specific  versions   of  these  files,   located  in  the
+    `lib/arch/<system>' hierarchy.  Here are a few examples:
+
+      lib/arch/os2/os2file.c:
+
+        A replacement  for `ttfile' which directly  uses OS/2 system
+        calls  for  i/o access.   This  results  in slightly  better
+        performance, but much reduced resource requirements.
+
+      lib/arch/unix/ttmmap.c:
+
+        A  replacement for `ttfile'  which uses  memory-mapped files
+        instead  of buffered-based  reads on  Unix.   This increases
+        *dramatically*  the engine's  performance when  reading font
+        files and loading glyphs.
+
+    These  files  are directly  included  by  the platform  specific
+    versions    of    `freetype.c'     which    are    located    in
+    `lib/arch/<system>'.    This  means   that,   by  default,   the
+    single-object  build   of  FreeType  always   chooses  the  best
+    implementation available for a supported system.
+
+    Note  that  it  is  also  possible  to  redefine  `ttmemory'  or
+    `ttmutex' with a similar scheme.   This is used, for example, by
+    the  OS/2 font  driver  based on  FreeType (called  FreeType/2),
+    which  uses  some  special   system  calls  to  allocate  memory
+    shareable among distinct processes.
+
+    By  providing  your own  version  of  `ttfile', `ttmemory',  and
+    `ttmutex',  you  are able  to  tailor  the  FreeType engine  for
+    optimal performance and resource usage on your system.
+
+
+  4. Compiling the extensions
+  ---------------------------
+
+    The  base TrueType  engine is  located in  the  `lib' directory.
+    This   release  also  provides   many  specific   extensions  in
+    `lib/extend'.
+
+    An extension is a  simple way to extend FreeType's capabilities.
+    It is used to perform any of the following:
+
+    - Access some  TrueType tables that are not  loaded and returned
+      by the base engine, like
+
+      * the kerning table(s)
+      * the `gasp' table
+      * the glyph Postscript names
+      * the OpenType layout tables (GDEF, GPOS, GSUB)
+
+    - Perform some advanced operations on the TrueType data for very
+      specific uses, like
+
+      * enumerate the contents of a given charmap
+      * access a font file's embedded bitmaps (called sbits)
+      * return an  array containing the dimensions of  each glyph in
+        the font
+
+    The idea  is to keep  the base  engine small  (under  60 kByte),
+    while providing optional enhancements for specific uses.
+
+    Writing an extension is rather easy.  And adding a new extension
+    to  the  engine  doesn't  need  any modifications  to  the  base
+    engine's source code.
+
+    To  compile the extensions,  simply go  to the  `lib' directory,
+    then compile each file in `lib/extend'.  Here is an example with
+    gcc:
+
+      cd lib                   # go to `lib'
+      gcc -c -I arch/ansi -I . -I extend extend/ftx*.c
+                               # compile all extensions
+
+
+    You can  later add  each extension object  file to  the FreeType
+    library file.   For example,  here is how  to create  the static
+    library on Unix:
+
+      cd lib
+      # .. compile the engine, then the extensions
+      ar libfreetype.a *.o     # create static library
+
+
+  5. Using a Makefile
+  -------------------
+
+    This  release  also  provides  Makefiles for  many  systems  and
+    compilers  in  the   `lib/arch/<system>'  hierarchy.   For  more
+    information,  please  read  the  documentation  in  the  `howto'
+    directory, which contains system-specific instructions on how to
+    use them.
+
+    Generally, you  should go the `lib' directory,  then invoke your
+    system-specific Makefile from there.  Here is an example:
+
+      cd lib
+      make -farch\msdos\Makefile.TC
+
+    to compile the  library under DOS with the  Turbo C compiler and
+    Borland make tool.  Or:
+
+      cd lib
+      wmake -f arch\msdos\Makefile.wat
+
+    to compile it under DOS with the Watcom compiler and wmake tool.
+
+    The ANSI  target does not come  with a Makefile, as  there is no
+    standard make tool available on all platforms.  You will have to
+    compile the library by hand as described in section I.3.
+
+    Finally, note that most of  the makefiles will build the library
+    in  single object  mode; for  a `traditional  compile',  try the
+    `debug' target (i.e., say `make debug').
+
+
+  6. Building a dynamic library (`so' or `DLL')
+  ---------------------------------------------
+
+    It is  possible to build the  engine as a  dynamic library.  The
+    method to do so can vary greatly depending on the platform.
+
+    a. Building a shared object on Unix
+
+      NOTE THAT THIS RELEASE  USES `libtool' TO AUTOMATICALLY CREATE
+      A  SHARED OBJECT  FOR FREETYPE  ON UNIX  SYSTEMS  THAT SUPPORT
+      DYNAMIC  LIBRARIES.  WE  STRONGLY  RECOMMEND YOU  TO READ  THE
+      `howto/unix.txt'  FILE  TO KNOW  HOW  TO  USE THE  `configure'
+      SCRIPT.  THIS SUB-SECTION DESCRIBES  HOW TO COMPILE THE SHARED
+      OBJECT BY HAND.
+
+      In  order to build  a shared  object like  `libfreetype.so' on
+      Unix,   one    has   to   compile   each    object   file   as
+      position-independent code (a.k.a. PIC).
+
+      We  also strongly  recommend to  build  the base  engine as  a
+      single object, as this prevents internal `extern' functions to
+      be exported  as entry points  (and creating a  smaller overall
+      .so file).
+
+      For example, this with gcc,  one can use the `-fPIC' flag when
+      compiling the object files.  Here is an example:
+
+        cd lib                               # go to `lib'
+        gcc -c -fPIC -I arch/ansi -I . \
+            arch/ansi/freetype.c             # compile engine
+        gcc -c -fPIC -I arch/ansi -I . -I extend
+            extend/ftx*.c                    # & extensions
+
+      You can  now invoke  your linker to  create the  shared object
+      from   the   various   object   files.   See   your   system's
+      documentation for details, or  read the Unix-specific howto to
+      know how to do it `easily' through the use of `libtool'.
+
+    b. Building a DLL on Windows or OS/2
+
+      The dynamic  linkers of Windows  and OS/2 differ  greatly from
+      Unix ones.
+
+      - The first difference  is that the object files  that make up
+        the DLL  do not need to be  compiled as position-independent
+        code.
+
+      - The second  difference is that  the DLL's entry  points must
+        generally be declared as so in the source file, and/or maybe
+        listed  in  a  `definition'  file  used at  link  time  when
+        creating the DLL.
+
+      Each  FreeType API  function is  declared with  the help  of a
+      special macro named FT_EXPORT_DEF.   For example,  here is the
+      declaration of the  function `FT_Init_FreeType', as written in
+      `freetype.h':
+
+        FT_EXPORT_DEF( TT_Error )
+        TT_Init_FreeType( TT_Engine*  engine );
+
+      If   the  configuration   file   `ft_conf.h'  doesn't   define
+      FT_EXPORT_DEF, it is automatically set to `extern' by default.
+
+      In order to build FreeType as  a DLL, one might need to define
+      FT_EXPORT_DEF in its  `ft_conf.h' to the keywords tagging  the
+      function  as a  DLL  entry point.   This  keyword varies  with
+      compilers    and   platforms;    examples    are   `__system',
+      `__dllentry', `_FAR _PASCAL _export' after the type name, etc.
+      Note that FT_EXPORT_DEF is a (macro) function, taking the type
+      name as argument, in order to allow the last example.
+
+      Please refer to your compiler's user guide for instructions.
+
+      You  can also  `grep' for  FT_EXPORT_DEF  in the  `freetype.h'
+      source  file to obtain the list of  exported functions of  the
+      FreeType API, which could then be used  to write a `def'  file
+      for the DLL. We provide a sample .def file (built with an Unix
+      script) for Windows.
+
+      Note  also that  the definition  (i.e. its  implementation) of
+      each exported  function is  preceded  with the  FT_EXPORT_FUNC
+      macro, as in
+
+        FT_EXPORT_FUNC( TT_Error )
+        TT_Init_FreeType( TT_Engine*  engine )
+        {
+          TT_Error  error;
+          ...
+        }
+
+      (to be found in `ttapi.c').
+
+      By default, FT_EXPORT_FUNC converts to an empty string, but it
+      can also be redefined if you need to.
+
+
+  7. Internationalization and the `ftxerr18' extension
+  ----------------------------------------------------
+
+    The  engine extension  named  `ftxerr18' is  used  to convert  a
+    FreeType error code into a human-readable string of text.
+
+    However,  it is  able  to support  internationalization on  Unix
+    systems through  the use of  the `gettext' library.   This means
+    that  the error  messages  will be  localized  to your  system's
+    language,  provided  it  is  available  in  this  release.   The
+    currently available languages are
+
+      - English (by default)
+      - Czech
+      - German
+      - Spanish
+      - French
+      - Dutch
+
+    One can  add a new language by  adding a `.po' file  in the `po'
+    directory.   Please  read  the  file  `docs/i18n.txt'  for  more
+    details on how to use `gettext'.
+
+    In order to enable localization of the `ftxerr18' extension, one
+    has  to  set  the  macro  HAVE_LIBINTL_H at  compile  time.   By
+    default, the  extension will build with support  for the English
+    language.
+
+    Unix-specific: -------------------------------------------------
+
+      Note  that the Unix  `configure' script  that comes  with this
+      release is  able to  automatically detect whether  your system
+      has  `gettext'   installed  and  set   HAVE_LIBINTL_H  in  the
+      `ft_conf_h' file accordingly.
+    
+      To  disable  internationalization,  run `configure'  with  the
+      option  `--disable-nls'  (NLS  stands for  `National  Language
+      Support').  Then rebuild the library.
+
+    ----------------------------------------------------------------
+
+    Note  that we  do not  support internationalization  on non-Unix
+    platforms, as the  `gettext' library isn't available everywhere,
+    or does not work in a consistent way in different environments.
+
+
+  8. TrueType patents
+  -------------------
+
+    We have recently discovered that Apple owns several patents that
+    relate to the rendering of TrueType fonts.  This could mean that
+    the free use  and distribution of the FreeType  library could be
+    illegal in the US, UK, France, and possibly other countries.
+
+    For more information, please see the FreeType Patents page at:
+
+      http://www.freetype.org/patents.htm
+
+    To avoid  problems, we  have decided to turn off  by default the
+    compilation of the  TrueType bytecode  interpreter (which is the
+    only part of FreeType that might violate an Apple patent).  This
+    has two effects:
+
+    - saving about 18 kbyte of code in the engine
+    - ignoring completely the grid-fitting of vector outlines, which
+      results in extremely low quality at small pixel sizes.
+
+    Nevertheless,  such an  engine can  be used  by font  converters
+    and/or graphics libraries to display glyphs at high pixel sizes.
+
+    If you believe you can  go ahead, this section  will now explain
+    how to build a `complete' engine, at the cost of possible patent
+    violation.  This is done simply by activating the compilation of
+    the  TrueType bytecode  interpreter.  In order to do so,  simply
+    recompile the library (more exactly, it affects only ttinterp.c)
+    while  #defin'ing  TT_CONFIG_OPTION_BYTECODE_INTERPRETER.   Look
+    for the following line in your configuration file `ft_conf.h':
+
+      #undef  FT_CONFIG_OPTION_BYTECODE_INTERPRETER
+
+    Then change the `#undef' into a `#define':
+
+      #define FT_CONFIG_OPTION_BYTECODE_INTERPRETER
+
+    Now rebuild the engine with this new configuration file.
+
+
+
+III. Compiling the test programs
+================================
+
+  This section  explains how to  compile the FreeType  test programs
+  located  in  the `test'  directory.   Note  that  you should  have
+  successfully  compiled  the library,  as  described  in section  I
+  before proceeding.
+
+  WE STRONGLY RECOMMEND TO READ THE SYSTEM-SPECIFIC DOCUMENTS IN THE
+  `howto' DIRECTORY FOR A `QUICK'N'EASY' GUIDE ON HOW TO COMPILE AND
+  RUN THE TEST PROGRAMS.
+
+
+  1. Compile the graphics sub-system and utility sources
+  ------------------------------------------------------
+
+    Some of the  test programs need to display  a graphics window to
+    show their results.  In order to do so, they use a tiny graphics
+    system which  was specifically  written for FreeType  (Note: The
+    code isn't really clean there -- you have been warned).
+
+    Also, some simple C sources  in the `test' directory are utility
+    functions used by nearly all test programs, and they should also
+    be compiled before them.  These are the following files:
+
+      gmain.h:   the sub-system interface
+      gmain.c:   the sub-system device-independent implementation
+      gevents.h: the definition  of  the  events  used  by the  test
+                 program
+      gdriver.h: the system-specific device interface
+      blitter.c: a set of simple bitmap blitting functions
+      common.c:  common routines used by all test programs
+      display.c: some routines dealing with text display
+
+    as well  as a system-specific  `graphics driver' located  in the
+    `test/arch/<system>' hierarchy.  For example:
+
+      test/arch/msdos/gfs_dos.c: used  to  display   graphics  in  a
+                                 full-screen Dos session
+      test/arch/os2/gpm_os2.c:   used to display graphics in an OS/2
+                                 Presentation Manager window
+      test/arch/unix/gwin_x11.c: used to  display graphics in an X11
+                                 window.
+
+    You must  compile the  graphics sub-system and  utilities before
+    compiling the test  programs.  This can be done  simply with gcc
+    as:
+
+      cd test
+      gcc -c -I../lib gmain.c blitter.c common.c display.c
+      gcc -c -I../lib -I. arch/<system>/yourdriver.c -o ./gdriver.o
+
+    Note that a given test program may require some specific include
+    paths (like `/usr/X11/include' with X11 for example).
+
+    The resulting  object files can be  grouped in a  library if you
+    want to.
+
+
+  2. Internationalization on Unix
+  -------------------------------
+
+    On Unix  and Unix-like  systems, the test  programs are  able to
+    support  internationalization through the  use of  the `gettext'
+    library and the `ftxerr18' engine extension (see section I.7).
+
+    To  enable it, one  has to  compile each  test program  with the
+    macro HAVE_LIBINTL_H set.  This is the same macro used to enable
+    it in `ftxerr18'.
+
+    Note  that the  Unix  `configure' script  that  comes with  this
+    release  is able  to automatically  detect whether  `gettext' is
+    available  on your  system and  set the  macro  accordingly when
+    compiling the test programs.
+
+    You  can disable  internationalisation with  the `--disable-nls'
+    option when invoking the `configure' script.
+
+
+  3. Compile the test programs
+  ----------------------------
+        
+    All  test programs  begin with  the  `ft' prefix  in the  `test'
+    directory, as in `ftzoom',  `ftdump', `ftmetric'", etc. are test
+    programs.
+
+    The easiest way  to compile the test programs  is compiling each
+    source  file  to an  object  file,  including  the path  to  the
+    FreeType engine source and its  extensions.  You need to use the
+    following include paths:
+
+    - the path to the engine's public header file, i.e. `freetype.h'
+      which normally is `lib'
+
+    - the  path to  the  engine's extensions  header files,  located
+      normally in `lib/extend'
+
+    - the path to the  configuration file `ft_conf.h'.  This is only
+      required to support internationalisation, as the test programs
+      read  `ft_conf.h'  only   to  see  whether  HAVE_LIBINTL_H  is
+      defined.
+
+      When compiling  your own  programs to FreeType,  you shouldn't
+      normally need this file and path.
+        
+    Here  is an  example, compiling  a  test program  with the  ANSI
+    build:
+
+      cd test
+      gcc -c -I../lib -I../lib/extend -I../lib/arch/ansi \
+          <program name>.c
+
+    Then, link  this object file to the  FreeType library, utilities
+    and graphics sub-system to build an executable.
+    
+    You can then invoke each program directly.
+
+
+  4. The `fdebug' test program
+  ----------------------------
+
+    All  test programs  begin with  the `ft'  prefix (in  the `test'
+    directory) as in `ftzoom', `ftdump', `ftmetric', etc.
+
+    However, one test program  named `fdebug' is used exclusively by
+    FreeType  developers.  It  is  a very  simple TrueType  bytecode
+    debugger,  and  was written  to  inspect  the  execution of  the
+    TrueType interpreter.
+
+    Note that we rather use the Pascal debugger for real work on the
+    interpreter,  as it  provides a  much easier  windowed interface
+    through the use of the  Turbo Vision library.  The C debugger is
+    mainly used to check that  both Pascal and C sources produce the
+    same output.  The Pascal debugger is available in the `ftpascal'
+    package, it is not included with this release.
+
+    You will  need gcc to compile  the debugger.  It  uses a special
+    build of  the FreeType  engine to work.   Follow these  steps to
+    compile it:
+
+      1. Ensure  the bytecode  interpreter is not  turned off (using
+      the debugger with the default build which is patents-compliant
+      is not  really useful).  How to process is explained in part 8
+      of  chapter II  above (but  of course  you should  modify  the
+      `ft_conf.h'  file which  is specific  to the  debugger).  This
+      implies  that  you must  first be  sure  that you  are  really
+      allowed to use such a version of FreeType.
+
+      2. Compile the library for the `debugger' system, i.e.
+
+        cd freetype/lib
+        make -f arch/debugger/Makefile
+
+      this  will create  a file  named `libttf.a'  in  the directory
+      `freetype/lib/arch/debugger'  which  will  NOT interfere  with
+      your normal build (which is located in `freetype/lib').
+
+      3. Compile the debugger:
+
+        cd freetype/test
+        make -f arch/debugger/Makefile
+
+      This  will   create  an  executable   called  `fdebug.exe'  or
+      `fdebug',  which is  linked with  the version  of  the library
+      found in `freetype/lib/arch/debugger' as described above.
+
+      [For old Unix  variants like 4.2BSD please  uncomment the flag
+      HAVE_POSIX_TERMIOS in the makefile.]
+
+    You can invoke the debugger in two ways:
+
+      a. To debug a given glyph program in a given font, type
+
+        fdebug glyph_number pointsize fontfile[.ttf]
+
+      b. To debug a given font's CVT program, type
+
+        fdebug --cvt pointsize fontfile[.ttf]
+
+    Type `?' while running fdebug for a list of key bindings.
+
+
+IV. Compiling the Pascal source
+===============================
+
+  The Pascal source code is no  longer part of this package.  It has
+  been  moved to  another archive  (resp.  CVS  repository).  Please
+  visit http://www.freetype.org for more information.
+
+
+--- end of INSTALL ---

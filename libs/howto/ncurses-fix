@@ -1,0 +1,7 @@
+#!/bin/sh
+
+mv aclocal.m4 aclocal.m4-$$
+sed \
+  -e "s/: .{BUILD_\(.*\):='\(.*\)'}/: \${BUILD_\1=\`echo '\2'\`}/" \
+  -e "s/\`echo ''\`//" < aclocal.m4-$$ > aclocal.m4
+rm -f aclocal.m4-$$

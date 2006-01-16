@@ -1,0 +1,22 @@
+kpse_include ../../texk/make/common.mk
+kpse_include ../../texk/make/programs.mk
+kpse_include ../../texk/make/library.mk
+kpse_include ../../texk/make/paths.mk
+
+OBJS = arith.o bstring.o curves.o fontfcn.o hints.o lines.o objects.o \
+  paths.o regions.o scanfont.o spaces.o t1io.o t1snap.o t1stub.o token.o \
+  type1.o util.o
+
+libtype1.a: $(OBJS)
+	rm -f $@
+	$(AR) $(ARFLAGS) $@ $(OBJS)
+	$(RANLIB) $@
+
+all: libtype1.a
+uninstall:
+
+kpse_include ../../texk/make/clean.mk
+clean::
+	rm -f libtype1.a
+
+# DO NOT DELETE THIS LINE -- make depend depends on it.

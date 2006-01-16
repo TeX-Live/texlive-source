@@ -1,0 +1,843 @@
+                        FreeType 1 User FAQ
+
+--------------------------------------------------------------------
+
+
+                         Table of contents
+
+
+1.  How do I compile the test programs?
+
+2.  What are the test programs?
+
+3.  How do I use them?
+
+4.  How do I only compile the FreeType library?
+
+5.  The library  compiles fine on my system, unfortunately  it seems
+    the test programs won't.  What can I do?
+
+6.  I  did  compile  the  test programs  `out  of  the  box' without
+    problems, but the results are ugly.  What did I have wrong?
+
+7.  What is FreeType, and what is it not?
+
+8.  Can FreeType be ported to other platforms?
+
+9.  My TrueType font only works on a Mac/in Windows.  Will I be able
+    to use it with FreeType?
+
+10. What are the most common character mappings?
+
+11. How do I render text with FreeType?
+
+12. How do I render rotated/slanted text with FreeType?
+
+13. How do I compute a glyph bitmap's dimensions?
+
+14. Why is text rendering so slow?  Does FreeType cache glyphs?
+
+15. Do you always render the same glyphs as Windows or the Mac?
+
+16. The program `ftlint' reports errors with one of my fonts, though
+    it works perfectly under Windows.  What does this mean?
+
+17. What does the `fttimer' test program benchmarks?
+
+18. Is it  possible to perform styling (like  oblique, italic, bold,
+    underline, etc.) with FreeType?
+
+19. When does  glyph hinting takes place?   Is it when  the glyph is
+    loaded, or when it is converted to a bitmap/pixmap?
+
+20. Which is the best, caching outlines or bitmaps?
+
+21. Can I open OpenType and/or TrueType GX fonts with FreeType?
+
+22. How  can  I  access  additional TrueType  tables  that  FreeType
+    doesn't support?
+
+23. When will I be able to use FreeType to display TrueType fonts in
+    X11, Wine, or OS/2, or even other systems?
+
+24. What does the `free' in FreeType really means?
+
+25. Does FreeType support threads?  Is it re-entrant?
+
+26. Does FreeType support `foreign languages'?
+
+27. I'm using fractional char sizes, but the glyphs stay at the same
+    integer size.  Why?
+
+28. Hinting doesn't work at very small sizes.  Why?
+
+--------------------------------------------------------------------
+
+1. How do I compile the test programs?
+
+  Detailed compilation  steps  are given  in the  `freetype/INSTALL'
+  file,  as  well as  system  and  compiler  specific hints  in  the
+  `freetype/howto'  directory.   What  follows  is a  _very_  simple
+  guide:
+
+  For Unix:
+
+    Do the  following on the prompt  while in the  base directory of
+    the FreeType package:
+
+      % ./configure
+      % make
+      % make install
+
+    This will  build and install the library  (shared, if supported)
+    together with  the test  programs.  Say `./configure  --help' to
+    see the available configuring options.
+
+    This should work with any ANSI C compiler.
+
+  For other platforms:
+
+    Go  to the  `test'  directory.   Look at  one  of the  makefiles
+    located   in  the   `arch/<system>'  directory,   and   use  the
+    appropriate makefile from there.
+
+    For example:
+
+      make -f arch/msdos/makefile.gcc    (DJGPP or emx)
+      wmake -f=arch\msdos\makefile.wat   (Watcom DOS)
+      nmake -f arch\os2\makefile.icc     (Visual Age OS/2)
+      make -f arch/amigaos/makefile.gcc  (GCC Amiga)
+
+    This will compile both the library and the test programs.
+
+
+--------------------------------------------------------------------
+
+2. What are the test programs?
+
+  The test programs are simple  sources that `show off' the FreeType
+  library.  They are located in the `test' directory.  They make use
+  of a  small graphics sub-system  which is able to  display bitmaps
+  and  pixmaps  on  a  variety  of  platforms  through  the  use  of
+  system-specific `drivers'.
+
+  The test programs are:
+
+    ftdump:   A  simple  TTF information  dumper.  Also  prints  the
+              memory used  by each  opened font file  with FreeType.
+              Doesn't use the graphics sub-system.
+
+    ftlint:   A simple TrueType  bytecode verifier.  It simply hints
+              all glyphs of  one or more font files  at a given size
+              and   reports  errors.    Doesn't  use   the  graphics
+              sub-system.
+
+    ftview:   A simple  font viewer.  Displays all glyphs  in a font
+              file in a window.
+
+    ftstring: Renders a  simple string to  the screen.  Demonstrates
+              how to produce text with FreeType.
+
+    fttimer:  A  simple  benchmark, used  to  profile the  scan-line
+              conversion  routines (and  only them).   Supports also
+              display.
+
+    ftstrpnm: A version of `ftstring'  which saves a bit/pixmap to a
+              PNM  file  rather than  to  the  screen.  No  graphics
+              sub-system needed.
+
+    ftzoom:   A simple glyph viewer, useful to view, zoom and rotate
+              individual glyphs in a font file.
+
+    fterror:  This  program demonstrates  how  to  use the  ftxerr18
+              extension.   Note that internationalized  strings will
+              be available on some platforms only (e.g. Linux).
+
+    ftmetric: A simple  metric/glyph dumper.  No graphics sub-system
+              needed.
+
+    ftsbit:   Displays  data about  embedded bitmaps  in  a TrueType
+              font.
+
+    ftstrtto: Renders  a  string  to  screen,  using  TrueType  Open
+              features.
+   
+  NOTE: The file  `ftdebug.c' isn't part  of the test suite.   It is
+        used only  by the developers team  to debug the  engine at a
+        higher  level.   It  won't  work  with  a  standard  library
+        compile.
+
+
+  The tiny graphics subsystem is defined in the following files:
+
+    gmain.h/gmain.c: The subsystem's main body/interface.
+
+    gevents.h:       The  definition  of   events  defined  for  the
+                     subsystem
+
+    gdriver.h:       The  generic interface  of  all system-specific
+                     drivers.
+
+  System-specific   drivers    are   in   the   `test/arch/<system>'
+  directories, like:
+
+    test/arch/msdos/gfs_dos.c   Full-Screen DOS driver
+    test/arch/os2/gpm_os2.c     PM (Windowed) OS/2 driver
+    test/arch/unix/gwin_x11.c   X11 Windowed driver
+
+    etc.
+
+
+--------------------------------------------------------------------
+
+3. How do I use them?
+
+  Please read the file freetype/README for a full description.
+
+
+--------------------------------------------------------------------
+
+4. How do I only compile the FreeType library?
+
+  For Unix:
+
+    Do a `configure' run as  described in section 1.  Then change to
+    the lib subdirectory and say `make' and `make install'.
+
+  For other platforms:
+
+    Go to the `lib' directory.  Look at one of the makefiles located
+    in the `arch/<system>' directory, and use it from `lib'.
+
+    For example:
+
+      make -f arch/msdos/makefile.gcc    (DJGPP or emx)
+      wmake -f=arch\msdos\makefile.wat   (Watcom DOS)
+      nmake -f arch\os2\makefile.icc     (Visual Age OS/2)
+      make -f arch/amigaos/makefile.gcc  (GCC Amiga)
+
+    The  library  is   pure  ANSI  C  and  doesn't   depend  on  any
+    system-specific package.  You do not need gcc to compile it.
+
+
+--------------------------------------------------------------------
+
+5. The library  compiles fine on  my system, unfortunately  it seems
+   the test programs won't.  What can I do?
+
+  As  said  before, some test  programs  rely  on a  small  graphics
+  sub-system  to display  the bitmaps  and pixmaps  produced  by the
+  library.  The following systems are currently supported:
+
+    DOS      Full-Screen      Note that the windowed graphics
+    Amiga    Full-Screen      driver are very 'basic', they do
+    Amiga    Windowed         not provide menus, dialog boxes,
+    OS/2     Full-Screen      etc.  Rather, they provide one
+    OS/2     Windowed         windowed bitmap/pixmap and translate
+    X11      Windowed         events to the ones defined in
+    Win32    Windowed         `test/gevents'.
+
+  If you want to add support  to your system, you should write a new
+  graphics driver.  To do that, read the file `test/gdriver.h' which
+  contains  the driver  generic interface,  then browse  the drivers
+  that are already provided.
+
+  The  graphics  drivers  are  located in  the  `test/arch/<system>'
+  directories.  They're not part of the library proper.
+
+  IMPORTANT NOTE:
+
+    You can also  directly link the library to  your own application
+    and render glyphs  directly into your own bitmaps  with very few
+    efforts.
+
+
+--------------------------------------------------------------------
+
+6. I did  compile  the  test  programs  `out  of  the  box'  without
+   problems, but the results are ugly.  What did I have wrong?
+
+  Well,  chances are  you built the  `patents-free'  version  of the
+  Freetype library, which does not enable  the bytecode interpreter,
+  which means that at  small to normal  point sizes,  the glyphs are
+  distorded, hence ugly.
+
+  Apple  Computer  owns  three  patents  that  are  related  to  the
+  processing of glyph outlines within TrueType fonts.   This process
+  if also called hinting or  grid-fitting and is used to enhance the
+  quality of glyphs at small bitmap sizes.
+
+  When  the work  with  Freetype began, we were  not aware  of these
+  patents.  Since version 1.3,  however,  we have provided a way  to
+  build a patent-compliant version of the library,  which completely
+  disables  the TrueType  interpreter  (quite  a rude way).   If the
+  result is usable  with big point sizes,  or for special tasks such
+  as  font converting,  it results about  useless for normal  screen
+  reading.   Beginning with version 1.5,  this behaviour is even  by
+  default, so this is what you get if you compile `out of the box'.
+
+  However,  the source code  for the bytecode  interpreter  is still
+  available and can be  activated at  compile time,  for  those  who
+  want  to use  it anyway  (because they  purchased  a license  from
+  Apple,  or because they are in a country  where the patents do not
+  apply, etc.).  For details, check the `freetype/INSTALL' file.
+
+
+--------------------------------------------------------------------
+
+7. What is FreeType, and what is it not?
+
+  FreeType is a rather low-level  font engine.  It has been designed
+  primarily  to be  the  basis  of several  font  servers, for  very
+  different systems  which all have  their own metrics  and graphics
+  models.  This means that it focuses on the following points:
+
+  - Opening and loading font files in memory.
+
+  - Giving  access to  most important  font properties  and TrueType
+    tables.
+
+  - Providing  a simple way  to translate  system-specific character
+    codes  into  glyph indexes,  according  to  the TrueType  `cmap'
+    specification.
+
+  - Loading and rendering _individual_  glyphs as nicely as possible
+    (either  in  outlines,  bitmaps,  or  pixmaps),  and  performing
+    excellent hinting.
+
+  It isn't a high-level text  rendering library, and many tasks will
+  have to be performed by higher level layers like:
+
+  - glyph caching (outlines and/or maps)
+  - text rendering
+  - justification, kerning
+  - font mapping
+  - rotated/slanted text
+
+  However,  its   API  provides  many  functions   that  ease  these
+  operations considerably:
+
+  - Glyph outlines can be copied and transformed easily with the API
+    functions, then  rendered to bitmaps or  pixmaps with FreeType's
+    scan-line converter, which is very fast.
+
+  - The  glyph loader  places  the  outlines in  order  to ease  the
+    process  of text  rendering.  See  the documentation  file named
+    `glyphs.htm' (resp. `glyphs.txt') or `ftstring's source for more
+    details.
+
+  - The engine gives you access  to several TrueType tables that can
+    be  processed  by  your  application to  provide  more  powerful
+    rendering (e.g. kerning).
+
+  - It  is   possible,  and  rather  simple,   to  write  separately
+    compilable  extensions to  the engine  to access  other TrueType
+    tables that  are not  supported by the  engine in  this release.
+    This can be handy if one  wants to access data in TrueType GX or
+    OpenType fonts  (as these formats comply to  the TrueType `sfnt'
+    file storage format,  they can be opened by  the FreeType engine
+    as a normal TrueType file).
+
+
+--------------------------------------------------------------------
+
+8. Can FreeType be ported to other platforms?
+
+  FreeType is written in pure ANSI  C and should compile well on all
+  16, 32, and 64  bit  processors.  Note,  however, that  the 16-bit
+  port  requires a  large  memory  model.  Furthermore, some  tables
+  found in  TrueType programs  may exceed 64 kBytes, which calls for
+  the so-called huge  memory model.  This is really true for CJK and
+  Unicode fonts.  Nearly  all others should work fine with the large
+  model.
+
+  It does not support  some  very exotic  platforms  though, like  a
+  32-bit only  processor (where the  only word size is  32-bit, even
+  for chars and  shorts).  However, nothing prevents you  to test it
+  by yourself...
+
+  The memory management and  file access routines have been gathered
+  in two  components, namely `ttmemory'  and `ttfile', which  can be
+  specialized for a specific  system.  Their standard version, found
+  in  the `lib'  directory,  uses simply  the  ANSI libc.   However,
+  examples  are given of  alternative file  components for  OS/2 and
+  Unix in:
+
+    lib/arch/os2/ttfile.c 
+    (accessing the low-level OS/2 file API directly)
+
+    lib/arch/unix/ttmmap.c
+    (using memory-mapped files for improved access)
+
+  You would certainly need to rewrite these components if you intend
+  to use FreeType in an embedded system.
+
+
+--------------------------------------------------------------------
+
+9. My TrueType font only works on  a Mac/in Windows.  Will I be able
+   to use it with FreeType?
+
+  Short Answer: YES, but be cautious!
+
+  If you have read section 9 or  25, you know that a font file might
+  have different charMaps entries, used to translate character codes
+  to glyph indexes.  The  problem of most `system-specific' TrueType
+  fonts (sigh)  is that they  only contain one single  mapping, like
+  Apple Roman, or  Windows Glyph List, making it  usable only on the
+  platform it was `designed' for.
+
+  The test  program `ftdump'  can be used  to display  the character
+  encodings supported  in a font  file.  Most fonts come  with Apple
+  Roman and Windows Unicode.
+
+  FreeType can use  every charmap found in a font file,  so it is up
+  to your application to choose the one that fits its task best.  If
+  you use a font which only provides an Apple Roman charcode, you'll
+  probably  have a hard  time rendering  Unicode strings  without an
+  additional translation.
+
+  Note that the tool `ttf_edit'  can actually add missing cmaps to a
+  TrueType font file.  More info on this can be found at:
+
+    http://www.truetex.com
+
+  Another  possibility is  to  use Just  van  Rossum's TTX  compiler
+  (still  beta)  which can  convert  a  TrueType  font into  an  XML
+  description and vice versa; it can be found at
+
+    http://www.letterror.com/ttx/
+    http://sourceforge.net/projects/fonttools/
+
+
+--------------------------------------------------------------------
+
+10. What are the most common character mappings?
+
+  If you don't want to read the TrueType specification, here is some
+  information about the  most used char maps.  Each  map is designed
+  by a `platform ID', followed by a platform-specific `encoding ID':
+
+  Examples:
+
+    0, 0 : Apple Unicode
+    1, 0 : Apple Roman
+    3, 0 : Windows Symbol
+    3, 1 : Windows Unicode
+
+  Windows and Apple Unicode charmaps differ only in internal storage
+  layout.  Both can be used transparently with FreeType.
+
+  Many fonts come also with both Apple Roman and Windows Unicode.
+
+
+--------------------------------------------------------------------
+
+11. How do I render text with FreeType?
+
+  This is  explained with great  detail in the  glyphs documentation
+  file  available in  both text  (glyphs.txt) and  HTML (glyphs.htm,
+  including schematics).
+
+  Text rendering isn't difficult.  One can also look at the code for
+  `ftstring' or `ftstrtto' to see how it is done.
+
+
+--------------------------------------------------------------------
+
+12. How do I render rotated/slanted text with FreeType?
+
+  It is  possible to  transform the outlines  returned by  the glyph
+  loader, hence producing rotated  or slanted text.  Please read the
+  `glyphs' documentation file, which  explains this in great detail,
+  as well as some other important things.
+
+
+--------------------------------------------------------------------
+
+13. How do I compute a glyph bitmap's dimensions?
+
+  You should grid-fit  its bounding box, then compute  its width and
+  height.   This  is explained  in  the `bitmaps.txt'  documentation
+  file.
+
+
+--------------------------------------------------------------------
+
+14. Why is text rendering so slow?
+    Does FreeType cache glyphs?
+
+  The FreeType 1 engine doesn't cache  anything, be  it  outlines or
+  bitmaps.  Hence, a program that  renders text by calling the glyph
+  loader on each letter is slow.
+
+  Because  caching  cannot  be  performed  in  both  an  _easy_  and
+  _portable_  way it  is left  to the  application.   Moreover, some
+  graphics systems already  provide some sort of caching,  and it is
+  better to take advantage of it rather than re-implementing it.
+
+  The `how's  and `when's of  caching are explained in  the `glyphs'
+  documentation file.   The `bitmaps'  documentation file is  also a
+  good  source of  information if  you intend  to  render individual
+  glyph bitmaps.
+
+
+--------------------------------------------------------------------
+
+15. Do you always render the same glyphs as Windows or the Mac?
+
+  Short answer: No for rare cases.
+
+  There are a lot of  technical details, too numerous and lengthy to
+  be put here, that prevents the FreeType library from matching 100%
+  the glyphs produced by the Windows or Macintosh rasterizers.
+
+  This  engine  is a  clean-room  implementation,  and  most of  the
+  reasons  why its  development took  so  much time  is the  largely
+  deficient TrueType specification published by Apple and Microsoft.
+  A number of  key technical aspects are missing,  and we found many
+  `undocumented'  features in the  TrueType bytecode,  after several
+  months of testing and trying.   We are now very satisfied with the
+  current quality, though still try to improve it.
+
+  The glyph metrics (bearings and advances) also match significantly
+  those  computed by  Windows,  or found  in  the TrueType  pre-calc
+  tables.
+
+  As hinting  glyphs also makes use of  several rounding operations,
+  we will be  unable to provide a perfect  clone unless we implement
+  the  exact same  computations  _and_ rounding  errors  -- this  is
+  very unlikely...
+
+
+--------------------------------------------------------------------
+
+16. The program `ftlint' reports errors with one of my fonts, though
+    it works perfectly under Windows.  What does this mean?
+
+  Associated  to each  glyph  is  a small  `program',  written in  a
+  specific  bytecode language,  which is  in charge  of  hinting the
+  glyph's outline to make it perfect on screen as on paper.  Some of
+  these  programs can be  broken (e.g.,  accessing invalid  areas of
+  memory,  performing a  divide by  zero, etc.),  and these  are the
+  errors that are reported by `ftlint'.
+
+  They can also mean a  bug in the TrueType bytecode interpreter (or
+  more likely an `undocumented'  feature we haven't discovered yet),
+  but should now be extremely rare.
+
+  Surprisingly,  even largely distributed  fonts can  contain broken
+  glyph programs.  For example:
+
+  - antqua.ttf, glyph 163 (MS Office 4.2):
+
+    The program  tries to  access point number  0x127, which  is too
+    much.
+
+  - timesbs, arialbs, courbs (MS Office International):
+
+    The  back-slanted versions of  the MS  core fonts  produce stack
+    overflows in  many glyphs, and  other oddities.  It  seems their
+    `maximum profile' table is invalid.
+
+  - a ton of `free' fonts, apparently designed with mediocre tools.
+
+  It seems  the Windows TrueType engine doesn't  check its arguments
+  often,  and let all  overflows run,  possibly writing  to critical
+  portions of  memory.  Please, don't ask  us what this  could do to
+  Windows NT :-)
+
+  The FreeType  engine performs checks  on every opcode.   We cannot
+  guarantee that it is bullet proof, of course, but it seems to work
+  well and catch font bugs accordingly.
+
+  We also have artificially `enlarged' some allocated tables to make
+  the engine  work with the back-slanted  fonts without compromising
+  security,  but it's  clearly a  hack  we would  have preferred  to
+  avoid!
+
+
+--------------------------------------------------------------------
+
+17. What does the `fttimer' test program benchmarks?
+
+  This  test  program  is  only dedicated  to  profiling  FreeType's
+  scan-line converter,  a component also  called `rasterizer', which
+  is in charge of converting a vectorial outline into a bitmap, or a
+  pixmap.
+
+  It simply  loads all glyphs  of a font  file (by slices of  512 at
+  once),  then  converts  them.   Only the  conversion  is  actually
+  benchmarked.
+
+  The glyphs  are rendered  at size 400pt  at a resolution  of 96dpi
+  (this  is  about  500  pixels  high).  As  you'll  see by  running
+  `fttimer', the rasterizer is very fast.
+
+
+--------------------------------------------------------------------
+
+18. Is it  possible to perform styling (like  oblique, italic, bold,
+    underline, etc.) with FreeType?
+
+  Actually, these refer to very different things:
+
+  - Italic  and Bold styles  usually mean  many variations  from the
+    `Regular' font.   This is  why you normally  need a  proper font
+    file for  each of  these.  For example,  the MS core  font Times
+    comes in the following TrueType files:
+
+      TIMES.TTF    Times New Roman Regular
+      TIMESI.TTF   Times New Roman Italic
+      TIMESB.TTF   Times New Roman Bold
+      TIMESBI.TTF  Times New Roman Bold Italic
+                   (sometimes named TIMESZ.TTF)
+
+    With FreeType, you simply need the required font file to use it.
+
+  - Oblique style  refers to a  transformation that is applied  to a
+    regular font  in order to  make it `slanted', likes  italics do.
+    However,  an  italic font  very  frequently  contains small  but
+    important variations that cannot  be produced by this method and
+    make the font more appealing.
+
+    Slanting  can  easily  be   done  with  a  transformation  under
+    FreeType, with the exact same process as rendering rotated text.
+    Please  read  the  `glyphs'   documentation  file  where  it  is
+    explained in details.
+
+    Usually, Windows or the  Macintosh produce oblique versions of a
+    regular  font if  the corresponding  italic TrueType  file isn't
+    available.  They also stretch  regular fonts horizontally if the
+    bold one isn't available.  All  of this can be done with trivial
+    transformations.
+
+  - Underlining  and stroking  are not  really part  of  the glyphs.
+    They're simply lines that are  printed on the glyph after it has
+    been rendered.   Each TrueType file provides, in  its OS/2 table
+    (which  is  accessible through  the  face  object properties  in
+    FreeType), several values that  define the position and width of
+    those lines, in notional font units.
+
+    If you  want to use them,  you'll have to scale  these values to
+    your current instance/point size, then draw the lines yourself.
+
+
+--------------------------------------------------------------------
+
+19. When does  glyph hinting takes place?   Is it when  the glyph is
+    loaded, or when it is converted to a bitmap/pixmap?
+
+  The glyph  loader returns  fitted outlines by  default (it  can be
+  asked to return  a non-fitted one, or simply  the original outline
+  in notional coordinates too).
+     
+  This is important to have a glyph's correct metrics, even if it is
+  not  to be rendered  immediately, like  when caching  outlines for
+  rotated text.
+
+
+--------------------------------------------------------------------
+
+20. Which is the best, caching outlines or bitmaps?
+
+  It depends on your application, and what it does with text.
+
+  Usually, if  all you need is  render some simple  text at specific
+  point sizes, then simply cache the bitmaps or pixmaps.
+
+  However,  if you  want to  do more  advanced things,  like rotated
+  text, which  require sub-pixel placement to look  good, you should
+  then only  cache the outlines, and transform/place  them as needed
+  before sending them to the scan-line converter.
+
+  It's always possible to produce  a bitmap from an outline, and the
+  scan-converter is very fast.  It's up to you then...
+
+
+--------------------------------------------------------------------
+
+21. Can I open OpenType and/or TrueType GX fonts with FreeType?
+
+  TrueType GX  fonts are normal TrueType fonts  with enhanced tables
+  and capabilities.  They can always  be opened by a normal TrueType
+  engine (like  Windows, the Mac,  or FreeType), but  their improved
+  features won't be available.
+
+  On the contrary, OpenType fonts  may vary.  While some may contain
+  legal  TrueType glyphs,  an  `otf' file  may  only contain  glyphs
+  encoded in  the Type 2 format.   You won't be able  to produce any
+  glyphs from such a font file without a dedicated font engine (like
+  the ones promised in NT 5 and Java 2D... or with Freetype 2).
+
+  FreeType 1 is a TrueType  glyph engine and doesn't support  Type 2
+  fonts.  Supporting them would  require a very different philosophy
+  and a different core engine (even though they could share an API).
+
+  Note  that  you can  write  extensions  to  the engine  to  access
+  supplemental tables defined in these formats (see next question).
+
+  Note that  FreeType  version 2  (which  is now  widely  available)
+  includes a PostScript Type 1 / Type 2 interpreter...
+
+
+--------------------------------------------------------------------
+
+22. How  can  I  access  additional TrueType  tables  that  FreeType
+    doesn't support?
+
+  You  can  write  an  `engine  extension'.  This  is  a  separately
+  compilable  component   which  can  enhance   the  base  library's
+  functionalities,   without   recompiling   it.    Some   important
+  extensions are provided in the `lib/extend' directory.
+
+  You'll  need   of  course  to  know   the  TrueType  specification
+  precisely,  as well  as some  of  the conventions  used to  access
+  tables  and to manage  memory.  Read  the documentation  files for
+  more details, or contact the developers at:
+
+    devel@freetype.org
+
+
+--------------------------------------------------------------------
+
+23. When will I be able to use FreeType to display TrueType fonts in
+    X11, Wine or OS/2, or even other systems?
+
+  Actually, an  OS/2 replacement for TRUETYPE.DLL  based on FreeType
+  is part of this package (to be found in contrib/ftos2).  Thanks go
+  to Michal Necasek (mike@mendelu.cz) for his excellent work!
+
+  At least  three X11  TrueType font servers  are available;  two of
+  them  (xfsft and  xtt) are  based on  FreeType, whereas  the third
+  (xfstt) uses a separately developed TrueType engine.
+
+  More information about these  servers is available at the FreeType
+  homepage (http://www.freetype.org).
+
+  Don't hesitate to contact us if you plan to use or port the engine
+  to exotic platforms, we're always interested in helping out.
+
+
+--------------------------------------------------------------------
+
+24. What does the `free' in FreeType really means?
+
+  The previous  releases of FreeType  (alphas and beta)  were placed
+  under the LGPL.  FreeType 1.0, and later releases, come with an an
+  alternate  license, inspired  from  the BSD,  Artistic, and  IJG's
+  (Independent JPEG Group) ones.  In short:
+
+  - You are  encouraged to  use and distribute  this program  in all
+    kinds of products, including commercial ones.
+
+  - You don't have to pay us anything for it (royalty-free).
+
+  - You may not pretend you wrote it, or part of it that you may use
+    in one of  your product, and you have to  state clearly that you
+    use the FreeType code if you distribute products based on it, or
+    parts of it (credits clause).
+
+  - This source code is provided AS IS, with no warranty whatsoever,
+    and we cannot promise support for it.
+
+  From version 1.5  and later releases,  we added the choice for the
+  user of the library to use the GNU General Public License instead.
+  As a result,  you can  link the  Freetype library  with any GPL-ed
+  software,  without any inconvenience;  however, you then have  the
+  obligation to publish  all of the source code  of the products you
+  release.
+
+  The exact  and legal  terms  are in  the files  `docs/FTL.txt' and
+  `docs/GPL.txt', respectively.
+
+  Enjoy ;-)
+     
+
+--------------------------------------------------------------------
+
+25. Does FreeType support threads?  Is it re-entrant?
+
+  Short answer: Basically yes, but not fully tested.
+
+  We have changed  some code since FreeType 1.0  in order to support
+  multi-threaded environments.  However,  these have not been tested
+  yet.  Apparently,  the thread-safe  and reentrant builds  now work
+  well  perfectly  once compiled;  however,  no serious  concurrency
+  testing has been performed (of course, a serious lock analysis was
+  done in order to modify the source).
+
+  Right now, the mutex management  functions are all gathered in the
+  component  `ttmutex', which  has to  be specialized  for  your own
+  system if a thread build will be necessary.
+
+
+--------------------------------------------------------------------
+
+26. Does FreeType support `foreign languages'?
+
+  Short Answer: YES, it does!
+
+  From a TrueType  font file point of view,  there are several parts
+  to  the  file, one  of  them  being  the `glyphs',  i.e.,  picture
+  representations of the symbols.
+
+  Another part is the mapping table, also called `charMap'.
+
+  For example, glyph  #1 could be letter `A', and  glyph #2 could be
+  letter `Z'.  Glyphs can be stored in any order in a font file.
+
+  The  mapping tables  contain  at least  one  char-map entry.   For
+  example, you could have an ASCII-map that maps character code 0x41
+  to glyph #1, and code 0x5A  to glyph #2, etc.  FreeType provides a
+  `charMap' object class to access and use this information easily.
+
+  There are  several character  encodings recognized and  defined by
+  the TrueType specification,  like Latin-1, Unicode, Apple Scripts,
+  WGL, etc., but a font file might only contain one or two of them.
+
+  When using a more `exotic' character encoding like EBCDIC (this is
+  IBM mainframe  stuff!), you would need  to translate it  to one of
+  the available  formats (or  to add a  charmap table to  the font).
+  Cf. section 8.
+
+
+--------------------------------------------------------------------
+
+27. I'm using fractional char sizes, but the glyphs stay at the same
+    integer size.  Why?
+
+  Because hinting  only works well with integer  pixel sizes.  There
+  is a flag that can be set in a TrueType font file to force integer
+  pixel size scaling,  even if you ask for  fractional sizes with an
+  API  function like  TT_Set_Instance_CharSize().  Needless  to say,
+  nearly all fonts have the flag set.  So this is normal.
+
+  Also,  notice that when  giving a  charsize in  fractional points,
+  this will be converted to integer pixels with the formula:
+
+              pixel_size = char_size * y_resolution / 72
+
+  For example, using a resolution of 96 dpi, we would have:
+
+    9.5 pts => 12.666 pixels   => 13 pixels
+   10.0 pts => 13.333 pixels   => 13 pixels, i.e. same size
+   10.5 pts => 14     pixels   => 14 pixels
+   11.0 pts => 14.666 pixels   => 15 pixels
+   11.5 pts => 15.333 pixels   => 15 pixels, i.e. same size
+
+  If you  want to control the  exact size in pixels  of your glyphs,
+  simply use a resolution of 72dpi, where char_size = pixel_size.
+
+
+--------------------------------------------------------------------
+
+28. Hinting doesn't work at very small sizes.  Why?
+
+  This is normal.  There are very good technical reasons why hinting
+  doesn't  work well  at sizes  under  7 ppem,  usually meaning  the
+  appearance of ugly spikes and  glyph distortions.  This is why the
+  engine disables hinting by default at such low sizes.
+
+
+--- end of FAQ ---

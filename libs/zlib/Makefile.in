@@ -1,0 +1,39 @@
+# Thomas Esser, Makefile.in for zlib / teTeX. (C) 2002-2004, public domain.
+
+kpse_include ../texk/make/common.mk
+kpse_include ../texk/make/programs.mk
+kpse_include ../texk/make/library.mk
+
+OBJS = adler32.o compress.o crc32.o gzio.o uncompr.o deflate.o trees.o \
+       zutil.o inflate.o infback.o inftrees.o inffast.o
+
+libz.a: $(OBJS)
+	rm -f $@
+	$(AR) $(ARFLAGS) $@ $(OBJS) $(OBJA)
+	$(RANLIB) $@
+
+all: libz.a
+uninstall:
+
+kpse_include ../texk/make/clean.mk
+
+clean::
+	rm -f libz.a
+
+depend:
+	makedepend -- $(CFLAGS) -- *.[ch]
+
+# DO NOT DELETE THIS LINE -- make depend depends on it.
+
+adler32.o: zlib.h zconf.h
+compress.o: zlib.h zconf.h
+crc32.o: crc32.h zlib.h zconf.h
+deflate.o: deflate.h zutil.h zlib.h zconf.h
+gzio.o: zutil.h zlib.h zconf.h
+inffast.o: zutil.h zlib.h zconf.h inftrees.h inflate.h inffast.h
+inflate.o: zutil.h zlib.h zconf.h inftrees.h inflate.h inffast.h
+infback.o: zutil.h zlib.h zconf.h inftrees.h inflate.h inffast.h
+inftrees.o: zutil.h zlib.h zconf.h inftrees.h
+trees.o: deflate.h zutil.h zlib.h zconf.h trees.h
+uncompr.o: zlib.h zconf.h
+zutil.o: zutil.h zlib.h zconf.h

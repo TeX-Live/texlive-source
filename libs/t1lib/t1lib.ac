@@ -1,0 +1,99 @@
+if test "$needs_libt1" = no; then
+  LIBT1CPPFLAGS=
+  LDLIBT1=
+  LIBT1DEP=
+else
+  EXTRA_LIBT1_INCLUDE=
+  EXTRA_LIBT1_LIBDIR=
+
+  if test "$with_system_t1lib" = yes; then
+    if test "x$with_t1lib_libdir" != x; then
+      EXTRA_LIBT1_LIBDIR="-L$with_t1lib_libdir"
+    fi
+    if test "x$with_t1lib_include" != x; then
+      EXTRA_LIBT1_INCLUDE="-I$with_t1lib_include"
+    fi
+  fi
+
+  OLD_LDFLAGS=$LDFLAGS
+  OLD_CPP=$CPP
+  OLDCPPFLAGS=$CPPFLAGS
+  OLD_LIBS=$LIBS
+
+  LDFLAGS="$LDFLAGS $EXTRA_LIBT1_LIBDIR"
+  CPP="$CPP $EXTRA_LIBT1_INCLUDE"
+  CPPFLAGS="$CPPFLAGS $EXTRA_LIBT1_INCLUDE"
+
+  if test "$with_system_t1lib" = yes; then
+      AC_CHECK_LIB(t1, T1_AddFont,
+        t1lib=-lt1,
+        AC_MSG_WARN(Standard T1 library not found. Compiling my own.)
+        with_system_t1lib=no,
+        -lz -lm)
+  fi
+
+  LIBS="-lt1 -lm $LIBS"
+  if test "$with_system_t1lib" = yes; then
+      AC_MSG_CHECKING(whether installed T1 lib is >= v 5.0.0 )
+      AC_TRY_RUN([
+#include <stdlib.h>
+#include "t1lib.h"
+#define BUFLEN 128
+int main() {
+    char *t1libId = T1_GetLibIdent();
+    char testbuf[BUFLEN];
+    char *p = testbuf;
+    int i;
+    int version_num;
+    /* T1_GetLibIdent() might return something like '0.8-beta2';
+       convert the leading numbers to a single digit: */
+    for (i = 0; i < BUFLEN - 1; i++) {
+	if (t1libId[i] >= '0' && t1libId[i] <= '9')
+	    *p++ = t1libId[i];
+	else if (t1libId[i] != '.' && t1libId[i] != '_' && t1libId[i] != '-')
+	    break;
+    }
+    *p = '\0';
+    version_num = strtoul(testbuf, (char **)NULL, 10);
+    /* xdvik needs >= 5.0.0.
+       Try to deal with version strings with 1 or more digits. */
+    if (version_num >= 500
+        || (version_num < 100 && version_num >= 50)
+        || (version_num < 10 && version_num >= 5))
+        exit(0);
+    exit(1);
+}
+	],
+        ac_compile_t1lib=0,
+        ac_compile_t1lib=1,
+        ac_compile_t1lib=1
+	])
+      if test $ac_compile_t1lib = 0; then
+	  AC_MSG_RESULT(yes)
+      else
+          AC_MSG_RESULT([no, will compile my own version])
+	  with_system_t1lib=no
+      fi
+  fi
+
+  LDFLAGS=$OLD_LDFLAGS
+  CPP=$OLD_CPP
+  CPPFLAGS=$OLDCPPFLAGS
+  LIBS=$OLD_LIBS
+
+  if test "$with_system_t1lib" != yes; then
+    LIBT1CPPFLAGS='-I$(LIBT1DIR) -I$(LIBT1SRCDIR) -I$(LIBT1DIR)/../type1 -I$(LIBT1SRCDIR)/../type1'
+    LDLIBT1='$(LIBT1DIR)/libt1.a $(LIBT1DIR)/../type1/libtype1.a'
+    LIBT1DEP='$(LIBT1DIR)/libt1.a $(LIBT1DIR)/../type1/libtype1.a'
+    using_system_t1lib=no
+  else
+    LIBT1CPPFLAGS="$EXTRA_LIBT1_INCLUDE"
+    LDLIBT1="$EXTRA_LIBT1_LIBDIR -lt1"
+    LIBT1DEP=
+    using_system_t1lib=yes
+  fi
+fi
+
+AC_SUBST(LIBT1CPPFLAGS)
+AC_SUBST(LDLIBT1)
+AC_SUBST(LIBT1DEP)

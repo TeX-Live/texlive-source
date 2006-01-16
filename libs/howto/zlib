@@ -1,0 +1,22 @@
+Downloading:
+  http://www.gzip.org/zlib/
+
+Files in zlib:
+  From the distribution:
+    everything, except:
+      INDEX Make_vms.com Makefile Makefile.riscos algorithm.txt amiga
+      configure descrip.mms msdos nt os2 zlib.html
+
+    Replaced file:
+      Makefile.in
+
+  Added for teTeX:
+    withenable.ac zlib.ac
+
+  Added for fpTeX:
+    win32.mak
+    contrib/minizip/win32.mak
+    contrib/untgz/win32.mak
+
+  Automatically generated:
+    depend.mak

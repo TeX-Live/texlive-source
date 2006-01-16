@@ -1,0 +1,883 @@
+# Czech messages for FreeType
+# Copyright (C) 1998-2002 Pavel Kaòkovský
+# Pavel Kaòkovský <peak@argo.troja.mff.cuni.cz>, 1998-2002
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: FreeType 1.5\n"
+"POT-Creation-Date: 2002-11-08 18:11+0000\n"
+"PO-Revision-Date: 2002-12-25\n"
+"Last-Translator: Pavel Kaòkovský <peak@argo.troja.mff.cuni.cz>, 2002\n"
+"Language-Team: Czech\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-2\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: lib/extend/ftxerr18.c:40
+msgid ""
+"Welcome to the translation of the Freetype v.1 library!\n"
+"\n"
+"This message is not really part of the library (it is bracketed by\n"
+" #if 0 / #endif), but is really intended to be the first one in the .po\n"
+"file, and the first one that a new translator should see, to give hints.\n"
+"\n"
+"First, while this .po might seems big, the real interesting part of it\n"
+"is only the messages in this file, lib/extend/ftxerr18.c. The other\n"
+"messages are part of the demonstration programs, and are more intended\n"
+"to help grasping how to use i18n with the Freetype library. So the real\n"
+"work is the about 65 first ones. Unfortunately they are the harder ones!\n"
+"\n"
+"A difficulty is that there are some specialized vocabulary, about\n"
+"``faces'', ``glyph'' and similar things. These are typographical things,\n"
+"and this should be researched before attempting to translate the whole\n"
+"thing. A quick look across the TrueType documentation might help to\n"
+"understand many things, too.\n"
+"\n"
+"Best wiches for your translation!\n"
+"Antoine Leca - 2002-11-08"
+msgstr ""
+"(Read)"
+
+#: lib/extend/ftxerr18.c:77
+msgid "Successful function call, no error."
+msgstr "Úspì¹né volání funkce, ¾ádná chyba."
+
+#: lib/extend/ftxerr18.c:80
+msgid "Invalid face handle."
+msgstr "Neplatný manipulátor písma."
+
+#: lib/extend/ftxerr18.c:82
+msgid "Invalid instance handle."
+msgstr "Neplatný manipulátor instance."
+
+#: lib/extend/ftxerr18.c:84
+msgid "Invalid glyph handle."
+msgstr "Neplatný manipulátor litery."
+
+#: lib/extend/ftxerr18.c:86
+msgid "Invalid charmap handle."
+msgstr "Neplatný manipulátor znakové mapy."
+
+#: lib/extend/ftxerr18.c:88
+msgid "Invalid result address."
+msgstr "Neplatná adresa výsledku."
+
+#: lib/extend/ftxerr18.c:90
+msgid "Invalid glyph index."
+msgstr "Neplatný index litery."
+
+#: lib/extend/ftxerr18.c:92
+msgid "Invalid argument."
+msgstr "Neplatný argument."
+
+#: lib/extend/ftxerr18.c:94
+msgid "Could not open file."
+msgstr "Nelze otevøít soubor."
+
+#: lib/extend/ftxerr18.c:96
+msgid "File is not a TrueType collection."
+msgstr "Soubor není kolekce písem TrueType."
+
+#: lib/extend/ftxerr18.c:98
+msgid "Mandatory table missing."
+msgstr "Nìkterá z povinných tabulek chybí."
+
+#: lib/extend/ftxerr18.c:100
+msgid "Invalid horizontal metrics (hmtx table broken)."
+msgstr "Neplatná horizontální metrika (tabulka HMTX po¹kozena)."
+
+#: lib/extend/ftxerr18.c:102
+msgid "Invalid charmap format."
+msgstr "Neplatný formát znakové mapy."
+
+#: lib/extend/ftxerr18.c:104
+msgid "Invalid ppem value."
+msgstr "Neplatné rozmìry liter (ppem)."
+
+#: lib/extend/ftxerr18.c:106
+msgid "Invalid vertical metrics (vmtx table broken)."
+msgstr "Neplatná vertikální metrika (tabulka VMTX po¹kozena)."
+
+#: lib/extend/ftxerr18.c:109
+msgid "Invalid file format."
+msgstr "Neplatný formát souboru."
+
+#: lib/extend/ftxerr18.c:112
+msgid "Invalid engine."
+msgstr "Neplatná globální data knihovny."
+
+#: lib/extend/ftxerr18.c:114
+msgid "Too many extensions."
+msgstr "Pøíli¹ mnoho roz¹íøení."
+
+#: lib/extend/ftxerr18.c:116
+msgid "Extensions unsupported."
+msgstr "Roz¹íøení není podporováno."
+
+#: lib/extend/ftxerr18.c:118
+msgid "Invalid extension id."
+msgstr "Neplatný identifikátor roz¹íøení."
+
+#: lib/extend/ftxerr18.c:121
+msgid "No vertical data in font."
+msgstr "V písmu nejsou obsa¾ena ¾ádná vertikální data."
+
+#: lib/extend/ftxerr18.c:124
+msgid "Maximum Profile (maxp) table missing."
+msgstr "Chybìjící tabulka maximálních hodnot (MAXP)."
+
+#: lib/extend/ftxerr18.c:126
+msgid "Font Header (head) table missing."
+msgstr "Chybìjící tabulka hlavièky písma (HEAD)."
+
+#: lib/extend/ftxerr18.c:128
+msgid "Horizontal Header (hhea) table missing."
+msgstr "Chybìjící tabulka horizontální hlavièky (HHEA)."
+
+#: lib/extend/ftxerr18.c:130
+msgid "Index to Location (loca) table missing."
+msgstr "Chybìjící tabulka adres liter (LOCA)."
+
+#: lib/extend/ftxerr18.c:132
+msgid "Naming (name) table missing."
+msgstr "Chybìjící tabulka jmen (NAME)."
+
+#: lib/extend/ftxerr18.c:134
+msgid "Character to Glyph Index Mapping (cmap) tables missing."
+msgstr "Chybìjící tabulky znakových map (CMAP)."
+
+#: lib/extend/ftxerr18.c:136
+msgid "Horizontal Metrics (hmtx) table missing."
+msgstr "Chybìjící tabulka horizontálních metrik (HTMX)."
+
+#: lib/extend/ftxerr18.c:138
+msgid "OS/2 table missing."
+msgstr "Chybìjící tabulka OS/2."
+
+#: lib/extend/ftxerr18.c:140
+msgid "PostScript (post) table missing."
+msgstr "Chybìjící tabulka dat pro PostScript (POST)."
+
+#: lib/extend/ftxerr18.c:142
+msgid "Glyph (glyf) table missing."
+msgstr "Chybìjící tabulka liter (GLYF)."
+
+#: lib/extend/ftxerr18.c:147
+msgid "Out of memory."
+msgstr "Nedostatek pamìti."
+
+#: lib/extend/ftxerr18.c:152
+msgid "Invalid file offset."
+msgstr "Neplatná adresa v souboru."
+
+#: lib/extend/ftxerr18.c:154
+msgid "Invalid file read."
+msgstr "Neplatné ètení ze souboru."
+
+#: lib/extend/ftxerr18.c:156
+msgid "Invalid frame access."
+msgstr "Neplatný pøístup k úseku souboru."
+
+#: lib/extend/ftxerr18.c:161
+msgid "Too many points."
+msgstr "Pøíli¹ mnoho bodù."
+
+#: lib/extend/ftxerr18.c:163
+msgid "Too many contours."
+msgstr "Pøíli¹ mnoho kontur."
+
+#: lib/extend/ftxerr18.c:165
+msgid "Invalid composite glyph."
+msgstr "Neplatná kompozitní litera."
+
+#: lib/extend/ftxerr18.c:167
+msgid "Too many instructions."
+msgstr "Pøíli¹ mnoho instrukcí."
+
+#: lib/extend/ftxerr18.c:169
+msgid "Too many function definitions (FDEF)."
+msgstr "Pøíli¹ mnoho definic funkcí (FDEF)."
+
+#: lib/extend/ftxerr18.c:174
+msgid "Invalid opcode."
+msgstr "Neplatný kód operace."
+
+#: lib/extend/ftxerr18.c:176
+msgid "Too few arguments."
+msgstr "Pøíli¹ málo argumentù."
+
+#: lib/extend/ftxerr18.c:178
+msgid "Stack overflow."
+msgstr "Pøeteèení zásobníku."
+
+#: lib/extend/ftxerr18.c:180
+msgid "Code overflow."
+msgstr "Pøeteèení oblasti instrukcí."
+
+#: lib/extend/ftxerr18.c:182
+msgid "Bad argument."
+msgstr "©patný argument."
+
+#: lib/extend/ftxerr18.c:184
+msgid "Divide by zero."
+msgstr "Dìlení nulou."
+
+#: lib/extend/ftxerr18.c:186
+msgid "Storage overflow."
+msgstr "Pøeteèení oblasti pro ukládání dat."
+
+#: lib/extend/ftxerr18.c:188
+msgid "Control Value (cvt) table overflow."
+msgstr "Pøeteèení tabulky øídících hodnot (CVT)."
+
+#: lib/extend/ftxerr18.c:190
+msgid "Invalid reference."
+msgstr "Neplatný odkaz."
+
+#: lib/extend/ftxerr18.c:192
+msgid "Invalid distance."
+msgstr "Neplatná vzdálenost."
+
+#: lib/extend/ftxerr18.c:194
+msgid "Interpolate twilight points."
+msgstr "Interpolace mezi body v \"soumraèné zónì\"."
+
+#: lib/extend/ftxerr18.c:196
+msgid "`DEBUG' opcode found."
+msgstr "Ladící operace."
+
+#: lib/extend/ftxerr18.c:198
+msgid "`ENDF' in byte-code stream."
+msgstr "Operace ENDF nalezena na ¹patném místì."
+
+#: lib/extend/ftxerr18.c:200
+msgid "Out of code ranges."
+msgstr "Mimo oblasti instrukcí."
+
+#: lib/extend/ftxerr18.c:202
+msgid "Nested function definitions."
+msgstr "Vnoøené definice funkcí."
+
+#: lib/extend/ftxerr18.c:204
+msgid "Invalid code range."
+msgstr "Neplatná oblast instrukcí."
+
+#: lib/extend/ftxerr18.c:206
+msgid "Invalid displacement."
+msgstr "Neplatné posunutí."
+
+#: lib/extend/ftxerr18.c:208
+msgid "Endless loop encountered while executing instructions."
+msgstr "Do¹lo k zacyklení bìhem vykonávání instrukcí."
+
+#: lib/extend/ftxerr18.c:213
+msgid "Nested frame access."
+msgstr "Vnoøené pøístupy k úseku souboru."
+
+#: lib/extend/ftxerr18.c:215
+msgid "Invalid cache list."
+msgstr "Neplatný seznam vyrovnávací pamìti."
+
+#: lib/extend/ftxerr18.c:217
+msgid "Could not find context."
+msgstr "Nelze najít kontext."
+
+#: lib/extend/ftxerr18.c:219
+msgid "Unlisted object."
+msgstr "Objekt není v seznamu."
+
+#: lib/extend/ftxerr18.c:224
+msgid "Raster pool overflow."
+msgstr "Pøeteèení pamìti rasterizéru."
+
+#: lib/extend/ftxerr18.c:226
+msgid "Raster: negative height encountered."
+msgstr "Rasterizér: záporná vý¹ka."
+
+#: lib/extend/ftxerr18.c:228
+msgid "Raster: invalid value."
+msgstr "Rasterizér: neplatná hodnota."
+
+#: lib/extend/ftxerr18.c:230
+msgid "Raster not initialized."
+msgstr "Rasterizér není incializován."
+
+#: lib/extend/ftxerr18.c:235
+msgid "Invalid kerning (kern) table format."
+msgstr "Neplatný formát tabulky kernù (KERN)."
+
+#: lib/extend/ftxerr18.c:237
+msgid "Invalid kerning (kern) table."
+msgstr "Neplatná tabulka kernù (KERN)."
+
+#: lib/extend/ftxerr18.c:240
+msgid "Invalid PostScript (post) table format."
+msgstr "Neplatný formát tabulky PostScript (POST)."
+
+#: lib/extend/ftxerr18.c:242
+msgid "Invalid PostScript (post) table."
+msgstr "Neplatná tabulka PostScript (POST)."
+
+#: lib/extend/ftxerr18.c:247
+msgid "Invalid TrueType Open subtable format."
+msgstr "Neplatný formát podtabulky TrueType Open."
+
+#: lib/extend/ftxerr18.c:249
+msgid "Invalid TrueType Open subtable."
+msgstr "Neplatná podtabulka TrueType Open."
+
+#: lib/extend/ftxerr18.c:251
+msgid "Glyph(s) not covered by lookup."
+msgstr "Jedna èi více liter bìhem prohledávání nenalezena."
+
+#: lib/extend/ftxerr18.c:253
+msgid "Too many nested context substitutions."
+msgstr "Pøíli¹ mnoho vnoøených kontextových substitucí."
+
+#: lib/extend/ftxerr18.c:255
+msgid "No MM (Adobe MultipleMaster) interpreter available."
+msgstr "®ádný interpreter MM (Adobe MultipleMaster) není k dispozici."
+
+#: lib/extend/ftxerr18.c:258
+msgid "Invalid glyph substitution (GSUB) table format."
+msgstr "Neplatný formát tabulky substitucí liter (GSUB)."
+
+#: lib/extend/ftxerr18.c:260
+msgid "Invalid glyph substitution (GSUB) table."
+msgstr "Neplatná tabulka substitucí liter (GSUB)."
+
+#: lib/extend/ftxerr18.c:263
+msgid "Invalid glyph positioning (GPOS) table format."
+msgstr "Neplatný formát tabulky umís»ování liter (GPOS)."
+
+#: lib/extend/ftxerr18.c:265
+msgid "Invalid glyph positioning (GPOS) table."
+msgstr "Neplatná tabulka umís»ování liter (GPOS)."
+
+#: lib/extend/ftxerr18.c:268
+msgid "Invalid glyph definition (GDEF) table format."
+msgstr "Neplatný formát tabulky definic liter (GDEF)."
+
+#: lib/extend/ftxerr18.c:270
+msgid "Invalid glyph definition (GDEF) table."
+msgstr "Neplatná tabulka definic liter (GDEF)."
+
+#: lib/extend/ftxerr18.c:277
+msgid "Invalid Error Number."
+msgstr "Neznámý kód chyby."
+
+#: test/fterror.c:49
+msgid ""
+"fterror: test TT_ErrToString18 functionality\n"
+"\n"
+msgstr ""
+"fterror: test funkce TT_ErrToString18\n"
+"\n"
+
+#: test/fterror.c:50
+msgid ""
+"  with an optional numerical argument, dumps the associated message.\n"
+"\n"
+msgstr ""
+"  pøi zadání èíselného argumentu vypí¹e odpovídající hlá¹ení.\n"
+"\n"
+
+#: test/fterror.c:73
+msgid "Start of fterror.\n"
+msgstr "Zaèátek fterror.\n"
+
+#: test/fterror.c:81
+msgid "End of fterror.\n"
+msgstr "Konec fterror.\n"
+
+#: test/fterror.c:96
+#, c-format
+msgid "Freetype error code 0x%04lX (%lu): %s\n"
+msgstr "Chybové hlá¹ení FreeType 0x%04lX (%lu): %s\n"
+
+#: test/ftdump.c:169 test/ftlint.c:207 test/ftmetric.c:294
+msgid "Could not create glyph container.\n"
+msgstr "Nelze vytvoøit kontejner liter.\n"
+
+#: test/ftdump.c:179 test/ftlint.c:215 test/ftmetric.c:303 test/ftsbit.c:214
+msgid "Could not create instance.\n"
+msgstr "Nelze vytvoøit instanci.\n"
+
+#: test/ftdump.c:188
+msgid "Could not create second instance.\n"
+msgstr "Nelze vytvoøit druhou instanci.\n"
+
+#: test/ftdump.c:194
+msgid "Memory footprint statistics:\n"
+msgstr "Statistika pamì»ových nárokù:\n"
+
+#: test/ftdump.c:202
+msgid "face object"
+msgstr "objekt písma"
+
+#: test/ftdump.c:203
+msgid "glyph object"
+msgstr "objekt litery"
+
+#: test/ftdump.c:204
+msgid "instance object"
+msgstr "objekt instance"
+
+#: test/ftdump.c:208
+msgid "exec. context object"
+msgstr "objekt provádìcího kontextu"
+
+#: test/ftdump.c:215
+msgid "total memory usage"
+msgstr "celková spotøeba pamìti"
+
+#: test/ftdump.c:223 test/ftdump.c:579 test/ftdump.c:789 test/ftdump.c:993
+#: test/ftdump.c:1139 test/ftlint.c:274 test/ftlint.c:287 test/ftmetric.c:390
+#: test/ftsbit.c:286
+#, c-format
+msgid "FreeType error message: %s\n"
+msgstr "Chybové hlá¹ení FreeType: %s\n"
+
+#: test/ftdump.c:300
+msgid "font name table entries\n"
+msgstr "polo¾ky v tabulce jmen\n"
+
+#: test/ftdump.c:310
+#, c-format
+msgid ""
+"PostScript name: %s\n"
+"\n"
+msgstr ""
+"PostScriptové jméno: %s\n"
+"\n"
+
+#: test/ftdump.c:333
+msgid "character map encodings\n"
+msgstr "kódování map znakù\n"
+
+#: test/ftdump.c:340 test/ftdump.c:488
+msgid "The file doesn't seem to have any encoding table.\n"
+msgstr "Soubor zøejmì neobsahuje ¾ádnou mapu znakù.\n"
+
+#: test/ftdump.c:344 test/ftdump.c:492
+#, c-format
+msgid ""
+"There are %hu encodings:\n"
+"\n"
+msgstr ""
+"%hu kódování:\n"
+"\n"
+
+#: test/ftdump.c:349
+#, c-format
+msgid "encoding %2u: "
+msgstr "kódování %2u: "
+
+#: test/ftdump.c:376 test/ftdump.c:385 test/ftdump.c:452
+#, c-format
+msgid "Unknown value %hu"
+msgstr "Neznámá hodnota %hu"
+
+#: test/ftdump.c:459
+msgid "Unknown"
+msgstr "Neznámé"
+
+#: test/ftdump.c:481
+msgid "ftxcmap test\n"
+msgstr "test roz¹íøení ftxcmap\n"
+
+#: test/ftdump.c:498
+#, c-format
+msgid "encoding %2u:\n"
+msgstr "kódování %2u:\n"
+
+#: test/ftdump.c:503
+#, c-format
+msgid "first: glyph index %hu, character code 0x%lx\n"
+msgstr "první:    index litery %hu, kód znaku 0x%lx\n"
+
+#: test/ftdump.c:507
+#, c-format
+msgid "next:  glyph index %hu, character code 0x%lx\n"
+msgstr "dal¹í:    index litery %hu, kód znaku 0x%lx\n"
+
+#: test/ftdump.c:511
+#, c-format
+msgid "last:  glyph index %hu, character code 0x%lx\n"
+msgstr "poslední: index litery %hu, kód znaku 0x%lx\n"
+
+#: test/ftdump.c:533 test/ftmetric.c:284
+msgid "Error while retrieving embedded bitmaps table.\n"
+msgstr "Chyba bìhem naèítání tabulky vlo¾ených bitmap.\n"
+
+#: test/ftdump.c:537
+msgid "embedded bitmap table\n"
+msgstr "tabulka vlo¾ených bitmap\n"
+
+#: test/ftdump.c:540
+#, c-format
+msgid " version of embedded bitmap table:  0x%lx\n"
+msgstr " verze tabulky vlo¾ených bitmap:  0x%lx\n"
+
+#: test/ftdump.c:542
+#, c-format
+msgid " number of embedded bitmap strikes: %lu\n"
+msgstr " poèet blokù vlo¾ených bitmap: %lu\n"
+
+#: test/ftdump.c:552
+#, c-format
+msgid "  bitmap strike %hu/%lu: "
+msgstr "  blok vlo¾ených bitmap %hu/%lu: "
+
+#: test/ftdump.c:555
+#, c-format
+msgid "%hux%hu pixels, %hu-bit depth, glyphs [%hu..%hu]\n"
+msgstr "%hux%hu pixelù, bitová hloubka %hu, litery [%hu..%hu]\n"
+
+#: test/ftdump.c:564
+#, c-format
+msgid "      range format (%hu:%hu) glyphs %hu..%hu\n"
+msgstr "      úsek formátu (%hu:%hu) litery %hu..%hu\n"
+
+#: test/ftdump.c:615
+msgid "Error while loading GSUB table.\n"
+msgstr "Chyba bìhem naèítání tabulky GSUB.\n"
+
+#: test/ftdump.c:619
+msgid "GSUB table\n"
+msgstr "tabulka GSUB\n"
+
+#: test/ftdump.c:626
+msgid "Error while querying GSUB script list.\n"
+msgstr "Chyba bìhem prohledávání seznamu GSUB skriptù.\n"
+
+#: test/ftdump.c:639
+#, c-format
+msgid "Error while selecting GSUB script `%4.4s'.\n"
+msgstr "Chyba pøi pokusu vybrat GSUB skript \"%4.4s\".\n"
+
+#: test/ftdump.c:644 test/ftdump.c:848
+#, c-format
+msgid "  script `%4.4s' (index %hu):\n"
+msgstr "  skript \"%4.4s\" (index %hu):\n"
+
+#: test/ftdump.c:652
+#, c-format
+msgid "Error while querying GSUB default language system for script `%4.4s'.\n"
+msgstr ""
+"Chyba bìhem zkoumání bì¾ného GSUB jazykového systému pro skript \"%4.4s\".\n"
+
+#: test/ftdump.c:657 test/ftdump.c:861
+msgid "    default language system:\n"
+msgstr "    bì¾ný jazykový systém:\n"
+
+#: test/ftdump.c:670
+#, c-format
+msgid ""
+"Error while selecting GSUB feature `%4.4s'\n"
+"for default language system of script `%4.4s'.\n"
+msgstr ""
+"Chyba pøi výbìru GSUB vlastnosti \"%4.4s\"\n"
+"pro bì¾ný jazykový systém skriptu \"%4.4s\".\n"
+
+#: test/ftdump.c:676 test/ftdump.c:757 test/ftdump.c:880 test/ftdump.c:961
+#, c-format
+msgid "      feature `%4.4s' (index %hu; lookup "
+msgstr "      vlastnost \"%4.4s\" (index %hu; vyhledávání "
+
+#: test/ftdump.c:692
+#, c-format
+msgid "Error while querying GSUB language list for script `%4.4s'.\n"
+msgstr "Chyba bìhem zkoumání GSUB seznamu jazykù pro skript \"%4.4s\".\n"
+
+#: test/ftdump.c:709
+#, c-format
+msgid "Error while selecting GSUB language `%4.4s' for script `%4.4s'.\n"
+msgstr "Chyba bìhem výbìru GSUB jazyka \"%4.4s\" pro skript \"%4.4s\".\n"
+
+#: test/ftdump.c:714 test/ftdump.c:918
+#, c-format
+msgid "    language `%4.4s' (index %hu):\n"
+msgstr "    jazyk \"%4.4s\" (index %hu):\n"
+
+#: test/ftdump.c:719 test/ftdump.c:923
+#, c-format
+msgid "      required feature index %hu (lookup "
+msgstr "      po¾adovaná vlastnost (index %hu; vyhledávání "
+
+#: test/ftdump.c:734
+#, c-format
+msgid ""
+"Error while querying GSUB feature list\n"
+"for script `%4.4s', language `%4.4s'.\n"
+msgstr ""
+"Chyba bìhem zkoumání seznamu GSUB vlastností\n"
+"pro skript \"%4.4s\", jazyk \"%4.4s\".\n"
+
+#: test/ftdump.c:751
+#, c-format
+msgid ""
+"Error while selecting GSUB feature `%4.4s'\n"
+"for script `%4.4s', language `%4.4s'.\n"
+msgstr ""
+"Chyba bìhem výbìru GSUB vlastnosti \"%4.4s\"\n"
+"pro skript \"%4.4s\", jazyk \"%4.4s\".\n"
+
+#: test/ftdump.c:776 test/ftdump.c:980
+msgid ""
+"Lookups:\n"
+"\n"
+msgstr ""
+"Vyhledávací údaje:\n"
+"\n"
+
+#: test/ftdump.c:779 test/ftdump.c:983
+#, c-format
+msgid "  %hu: type %hu, flag 0x%x\n"
+msgstr "  %hu: typ %hu, pøíznaky 0x%x\n"
+
+#: test/ftdump.c:819
+msgid "Error while loading GPOS table.\n"
+msgstr "Chyba bìhem naèítání tabulky GPOS.\n"
+
+#: test/ftdump.c:823
+msgid "GPOS table\n"
+msgstr "tabulka GPOS\n"
+
+#: test/ftdump.c:830
+msgid "Error while querying GPOS script list.\n"
+msgstr "Chyba bìhem prohledávání seznamu GPOS skriptù.\n"
+
+#: test/ftdump.c:843
+#, c-format
+msgid "Error while selecting GPOS script `%4.4s'.\n"
+msgstr "Chyba pøi pokusu vybrat GPOS skript \"%4.4s\".\n"
+
+#: test/ftdump.c:856
+#, c-format
+msgid "Error while querying GPOS default language system for script `%4.4s'.\n"
+msgstr ""
+"Chyba bìhem zkoumání bì¾ného GPOS jazykového systému pro skript \"%4.4s\".\n"
+
+#: test/ftdump.c:874
+#, c-format
+msgid ""
+"Error while selecting GPOS feature `%4.4s'\n"
+"for default language system of script `%4.4s'.\n"
+msgstr ""
+"Chyba pøi výbìru GPOS vlastnosti \"%4.4s\"\n"
+"pro bì¾ný jazykový systém skriptu \"%4.4s\".\n"
+
+#: test/ftdump.c:896
+#, c-format
+msgid "Error while querying GPOS language list for script `%4.4s'.\n"
+msgstr "Chyba bìhem zkoumání GPOS seznamu jazykù pro skript \"%4.4s\".\n"
+
+#: test/ftdump.c:913
+#, c-format
+msgid "Error while selecting GPOS language `%4.4s' for script `%4.4s'.\n"
+msgstr "Chyba bìhem výbìru GPOS jazyka \"%4.4s\" pro skript \"%4.4s\".\n"
+
+#: test/ftdump.c:938
+#, c-format
+msgid ""
+"Error while querying GPOS feature list\n"
+"for script `%4.4s', language `%4.4s'.\n"
+msgstr ""
+"Chyba bìhem zkoumání seznamu GPOS vlastností\n"
+"pro skript \"%4.4s\", jazyk \"%4.4s\".\n"
+
+#: test/ftdump.c:955
+#, c-format
+msgid ""
+"Error while selecting GPOS feature `%4.4s'\n"
+"for script `%4.4s', language `%4.4s'.\n"
+msgstr ""
+"Chyba bìhem výbìru GPOS vlastnosti \"%4.4s\"\n"
+"pro skript \"%4.4s\", jazyk \"%4.4s\".\n"
+
+#: test/ftdump.c:1018
+msgid "ftdump: Simple TrueType Dumper -- part of the FreeType project"
+msgstr ""
+"ftdump: jednoduchý výpis obsahu písma TrueType -- souèást projektu FreeType"
+
+#: test/ftdump.c:1022
+#, c-format
+msgid ""
+"Usage: %s fontname[.ttf|.ttc]\n"
+"\n"
+msgstr ""
+"Pou¾ití: %s název-písma[.ttf|.ttc]\n"
+"\n"
+
+#: test/ftdump.c:1054 test/ftlint.c:134 test/ftmetric.c:228 test/ftsbit.c:127
+msgid "Error while initializing engine.\n"
+msgstr "Chyba bìhem inicializace knihovny.\n"
+
+#: test/ftdump.c:1061 test/ftmetric.c:236 test/ftsbit.c:134
+msgid "Error while initializing embedded bitmap extension.\n"
+msgstr "Chyba bìhem inicializace roz¹íøení pro vlo¾ené bitmapy.\n"
+
+#: test/ftdump.c:1068
+msgid "Error while initializing GSUB extension.\n"
+msgstr "Chyba bìhem inicializace roz¹íøení pro substituce liter (GSUB).\n"
+
+#: test/ftdump.c:1075
+msgid "Error while initializing GPOS extension.\n"
+msgstr "Chyba bìhem inicializace roz¹íøení pro umís»ování liter (GPOS).\n"
+
+#: test/ftdump.c:1091 test/ftlint.c:187 test/ftmetric.c:251 test/ftsbit.c:182
+#, c-format
+msgid "Could not find or open %s.\n"
+msgstr "Nelze nalézt nebo otevøít soubor %s.\n"
+
+#: test/ftdump.c:1094 test/ftlint.c:193 test/ftmetric.c:254 test/ftsbit.c:188
+#, c-format
+msgid "Error while opening %s.\n"
+msgstr "Chyba bìhem otevírání souboru %s.\n"
+
+#: test/ftlint.c:94
+msgid ""
+"ftlint: Simple TrueType instruction tester -- part of the FreeType project"
+msgstr "ftlint: test instrukcí písma TrueType -- souèást projektu FreeType"
+
+#: test/ftlint.c:99
+#, c-format
+msgid ""
+"Usage: %s ppem fontname[.ttf|.ttc] [fontname2..]\n"
+"\n"
+msgstr ""
+"Pou¾ití: %s ppem název-písma[.ttf|.ttc] [název-dal¹ího-písma...]\n"
+"\n"
+
+#: test/ftlint.c:226 test/ftsbit.c:225
+#, c-format
+msgid "Could not set point size to %d.\n"
+msgstr "Nelze nastavit velikost písma na %d bodù.\n"
+
+#: test/ftlint.c:239
+msgid ""
+"Error with\n"
+"  "
+msgstr ""
+"Výskyt chyb\n"
+"  "
+
+#: test/ftlint.c:240
+#, c-format
+msgid "glyph %4u: %s\n"
+msgstr "litera %4d: %s\n"
+
+#: test/ftlint.c:253
+msgid "1 fail.\n"
+msgstr "poèet chyb: 1\n"
+
+#: test/ftlint.c:255
+#, c-format
+msgid "%d fails.\n"
+msgstr "poèet chyb: %d\n"
+
+#: test/ftmetric.c:70
+msgid ""
+"ftmetric: Simple TTF metrics/glyph dumper -- part of the FreeType project"
+msgstr "ftmetric: výpis metrik písma TrueType -- souèást projektu FreeType"
+
+#: test/ftmetric.c:74
+#, c-format
+msgid ""
+"Usage: %s [options below] point fontname[.ttf|.ttc]\n"
+"\n"
+"  -B        show sbit's metrics (default: none)\n"
+"  -c C      use C'th font index of TrueType collection  (default: 0)\n"
+"  -i index  glyph index (default: 0)\n"
+"  -r R      use resolution R dpi (default: 72)\n"
+"\n"
+msgstr ""
+"Pou¾ití: %s [volby (viz ní¾e)] bodová-velikost název-písma[.ttf|.ttc]\n"
+"\n"
+"  -B        zobraz rozmìry bitmapy (std: nezobrazuj)\n"
+"  -c C      pou¾ij písmo indexu C z kolekce písem (std: 0)\n"
+"  -i index  index litery (std: 0)\n"
+"  -r R      rozli¹ení R bodù na palec (std: 72 dpi)\n"
+"\n"
+
+#: test/ftmetric.c:261
+#, c-format
+msgid "There are %d fonts in this collection.\n"
+msgstr "Poèet písem v kolekci: %d.\n"
+
+#: test/ftmetric.c:266
+#, c-format
+msgid "There is no collection with index %d in this font file.\n"
+msgstr "V kolekci není ¾ádné písmo s indexem %d.\n"
+
+#: test/ftmetric.c:280
+msgid "There is no embedded bitmap data in the font.\n"
+msgstr "V souboru písma nejsou vlo¾eny ¾ádné bitmapy.\n"
+
+#: test/ftmetric.c:310
+msgid "Could not set device resolutions.\n"
+msgstr "Nelze nastavit rozli¹ení zaøízení.\n"
+
+#: test/ftmetric.c:317
+msgid "Could not reset instance.\n"
+msgstr "Nelze inicializovat instanci.\n"
+
+#: test/ftmetric.c:323
+#, c-format
+msgid "Instance metrics: ppemX %d, ppemY %d\n"
+msgstr "Rozmìry instance: ppemX %d, ppemY %d\n"
+
+#: test/ftmetric.c:333 test/ftsbit.c:234
+msgid "Could not allocate glyph bitmap container.\n"
+msgstr "Nelze vytvoøit kontejner vlo¾ených bitmap.\n"
+
+#: test/ftmetric.c:341 test/ftsbit.c:258
+#, c-format
+msgid "Can't load bitmap for glyph %d.\n"
+msgstr "Nelze naèíst bitmapu pro literu %d.\n"
+
+#: test/ftmetric.c:368
+msgid "Outline's metrics"
+msgstr "Rozmìry obrysu"
+
+#: test/ftmetric.c:370
+msgid "Outline glyph\n"
+msgstr "Obrys litery\n"
+
+#: test/ftsbit.c:90
+msgid "ftsbit: Simple TrueType `sbit' dumper -- part of the FreeType project"
+msgstr ""
+"ftsbit: výpis bitmap vlo¾ených do písma TrueType -- souèást projektu FreeType"
+
+#: test/ftsbit.c:95
+#, c-format
+msgid ""
+"Usage: %s ppem fontname[.ttf|.ttc] glyph_index [glyph_index2..]\n"
+"\n"
+msgstr ""
+"Pou¾ití: %s ppem název-písma[.ttf|.ttc] index-litery [index-dal¹í-litery...]\n"
+"\n"
+
+#: test/ftsbit.c:200
+msgid "Could not find embedded bitmaps in this font.\n"
+msgstr "V souboru písma nelze nalézt ¾ádné vlo¾ené bitmapy.\n"
+
+#: test/ftsbit.c:206
+msgid "Error while loading embedded bitmaps.\n"
+msgstr "Chyba bìhem naèítání vlo¾ených bitmap.\n"
+
+#: test/ftsbit.c:252
+#, c-format
+msgid "  no bitmap for glyph %d.\n"
+msgstr "  litera %d nemá ¾ádnou vlo¾enou bitmapu.\n"
+
+#: test/ftsbit.c:264
+#, c-format
+msgid "glyph index %d = %dx%d pixels, "
+msgstr "litera %d = %dx%d pixelù, "
+
+#: test/ftsbit.c:267
+#, c-format
+msgid "advance = %ld, minBearing = [%ld,%ld]\n"
+msgstr "posun = %ld, minBearing = [%ld,%ld]\n"

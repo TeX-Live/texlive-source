@@ -1,0 +1,267 @@
+# This file is part of the FreeType project.
+#
+# It builds the library and test programs for Turbo C under MSDOS, large model.
+#
+# You will need Borland MAKE.
+# Tested with Turbo C v.1.5, v.2.0,  Turbo C++ v.1.0, v.3.0
+# Turbo C v.1.0 (May '87) is too old (lack of structure assignment)
+#     to compile FreeType.  Update your compiler. ;-)
+# See below for notes regarding the various versions.
+#
+#
+# Use this file while in the 'test' directory with the following statement:
+#
+#   make -farch\msdos\Makefile.TC
+#
+#
+# Debug versions can be obtained (except for TC 1.5, see below) with
+#
+#   make -DDEBUG -farch\msdos\Makefile.TC
+#
+# The main difference is with the compiler options, because due to size
+# constraints, the modules of the library are always compiled separately.
+#
+#
+# Copyright 1996-2001 by
+# David Turner, Robert Wilhelm, and Werner Lemberg.
+#
+# This file is part of the FreeType project, and may only be used, modified,
+# and distributed under the terms of the FreeType project license,
+# LICENSE.TXT.  By continuing to use, modify, or distribute this file you
+# indicate that you have read the license and understand and accept it
+# fully.
+#
+#
+#
+# Various notes about specific versions...
+#
+# The lack of space in the command line prevents us to turn off the
+# -w-use warning (when TCC.CFG file had enabled it).
+#
+# Due to lack of space in the command line, we are not able to
+# switch off all the irrelevant warnings for the demo program.
+# Under the default settings, only one warning should be shown.
+# If more of the ``verbose'' warnings are enabled, much more can
+# appear. However, rest assured that any of them have been dealt
+# with, and they are just that, warnings, not indicating real
+# problems.
+#
+# NOTE: Turbo C++ v. 3.0
+#
+#   The Makefile.TC for this version is common with the older versions.
+#   Alternatively, you can consider using Makefile.BC instead, changing
+#   the name of the compiler from BCC to TCC!
+#
+# NOTE 2: Turbo C v. 2.0
+#
+#   This version lacks an ANSI compliant <time.h> header, so it causes
+#   problems when compiling the demo program fttimer.  We worked around
+#   this difficulty in a very hacky way.
+#   The detection is based on the version of make used, so if you use
+#   a more recent version, please take a closer look at the Makefile.
+#
+# NOTE 3: Turbo C v. 1.5
+#
+#   Yes, this old compiler is able to compile the FreeType library, even
+#   if it predates the ANSI standard by months!  However, this is a
+#   huge piece for such a small compiler, and several things are not
+#   possible. First, as always with real-mode compilers, you need a lot
+#   of available memory, probably more than 512KB at the C> prompt.
+#   Also, compiling for debug is ardeous: both Makefile.TC assume the
+#   -v option, which was not available in this version.
+# 
+#   The hack for <time.h> is used there too, as with v.2.0.
+
+
+ARCH = arch\msdos
+FT_MAKEFILE = $(ARCH)\Makefile.TC
+
+CC = tcc
+
+LIBDIR = ..\lib
+INCDIRS = -I$(LIBDIR);$(LIBDIR)\$(ARCH);.;$(LIBDIR)\extend
+SPURIOUS_WARNINGS = -w-pia -w-par -w-use -w-aus -w-rng
+
+!if ! $d(DEBUG)
+CFLAGS_LEAN = -ml -A -O -Z -G -a $(INCDIRS)
+# The lack of space in the command line prevents us to turn off the
+# warnings, when the TCC.CFG file had enable it with -w.
+# With the normal settings, it should not complain.
+LDFLAGS = -ml
+!else
+# For Turbo C v.1.5, replace the -v option below by -y (2 occurences).
+# You should have applied the same change in the lib Makefile, too.
+CFLAGS_LEAN = -v -N -ml -w-pia -A $(INCDIRS)
+LDFLAGS = -v -ml
+!endif
+
+CFLAGS = $(CFLAGS_LEAN) $(SPURIOUS_WARNINGS)
+
+
+# full-screen MSDOS driver
+GDRIVER = $(ARCH)\.\gfs_dos.obj
+
+# the line below does not work with these old versions of make...
+# GOBJ = $(GSRC:.c=.o)
+
+DISPLAY = display.obj
+
+G1OBJ = gmain.obj blitter.obj $(GDRIVER)
+GOBJ = $(DISPLAY) $(G1OBJ)
+
+SRC = arabic.c \
+      common.c \
+      textdisp.c \
+      ftdump.c \
+      fterror.c \
+      ftlint.c \
+      ftmetric.c \
+      ftsbit.c \
+      ftstring.c \
+      ftstrpnm.c \
+      ftstrtto.c \
+      fttimer.c \
+      ftview.c \
+      ftzoom.c
+
+OBJ = arabic.obj \
+      common.obj \
+      ftdump.obj \
+      fterror.obj \
+      ftlint.obj \
+      ftmetric.obj \
+      ftsbit.obj \
+      ftstring.obj \
+      ftstrpnm.obj \
+      ftstrtto.obj \
+      fttimer.obj \
+      ftview.obj \
+      ftzoom.obj
+
+
+.c.obj:
+	$(CC) $(CFLAGS) -c -o$* $<
+
+
+EXEFILES = ftdump.exe \
+           fterror.exe \
+           ftlint.exe \
+           ftmetric.exe \
+           ftsbit.exe \
+           ftstring.exe \
+           ftstrpnm.exe \
+           ftstrtto.exe \
+           fttimer.exe \
+           ftview.exe \
+           ftzoom.exe
+
+
+!if !$d(DEBUG)
+# Skipped if DEBUG build
+all: freetype $(EXEFILES)
+
+!endif
+
+debug: freetype_debug $(EXEFILES)
+
+freetype:
+	cd $(LIBDIR)
+	make -f$(FT_MAKEFILE) all
+	cd ..\test
+
+freetype_debug:
+	cd $(LIBDIR)
+	make -f$(FT_MAKEFILE) -DDEBUG debug
+	cd ..\test
+
+
+# Borland C compilers are unable to include <dos.h> in ANSI mode.
+# So we have a special rule for this file, to build it outside ANSI.
+# Furthermore, this line exceeds the 128-character limit of COMMAND.COM;
+# as a result, we drop the warnings...
+$(GDRIVER):
+	$(CC) $(CFLAGS_LEAN) -A- -c -o$* $*.c
+
+
+# This old gr... make is unable to have a $ variable to name all the
+# dependencies. :-(  So the job have to be done by hand...
+ftzoom.exe: $(G1OBJ) ftzoom.obj common.obj $(LIBDIR)\libttf.lib
+	$(CC) $(LDFLAGS) ftzoom.obj $(G1OBJ) common.obj $(LIBDIR)\libttf.lib
+
+ftview.exe: $(GOBJ) ftview.obj common.obj $(LIBDIR)\libttf.lib
+	$(CC) $(LDFLAGS) ftview.obj $(GOBJ) common.obj $(LIBDIR)\libttf.lib
+
+ftstring.exe: $(GOBJ) ftstring.obj common.obj $(LIBDIR)\libttf.lib
+	$(CC) $(LDFLAGS) ftstring.obj $(GOBJ) common.obj $(LIBDIR)\libttf.lib
+
+ftstrtto.exe: $(GOBJ) ftstrtto.obj common.obj arabic.obj $(LIBDIR)\libttf.lib
+	$(CC) $(LDFLAGS) ftstrtto.obj $(GOBJ) common.obj \
+			  arabic.obj $(LIBDIR)\libttf.lib
+
+
+# fttimer.exe... Well, there is an additional problem here...
+
+!if $(__MAKE__) < 0x0300
+
+# Also, Turbo C v.1.5 and v.2.0 are not fully ANSI compliant with regard to
+# <time.h>, particularly the clock() function.
+# So we use an ugly hack here: a modified version of time.h, with the
+# necessary machinery, is included in the arch\msdos directory.
+time.h: $(ARCH)\time_tc.h
+	copy $(ARCH)\time_tc.h time.h
+
+# Below is the special rule for forcing recompilation of fttimer.obj
+# using our <time.h>, without using the rule that is pulled in by
+# !include "$(ARCH)\depend.dos" at the end of the Makefile...
+fttimer.exe: $(G1OBJ) fttimer.c time.h common.obj $(LIBDIR)\libttf.lib
+	$(CC) $(CFLAGS) -c -o$* $*.c
+	$(CC) $(LDFLAGS) fttimer.obj $(G1OBJ) common.obj $(LIBDIR)\libttf.lib
+
+# Yes, all of this is really dirty...
+
+!else
+# Normal behaviour
+fttimer.exe: $(G1OBJ) fttimer.obj common.obj $(LIBDIR)\libttf.lib
+	$(CC) $(LDFLAGS) fttimer.obj $(G1OBJ) common.obj $(LIBDIR)\libttf.lib
+!endif
+
+
+
+ftlint.exe: ftlint.obj common.obj $(LIBDIR)\libttf.lib
+	$(CC) $(LDFLAGS) ftlint.obj common.obj $(LIBDIR)\libttf.lib
+
+ftdump.exe: ftdump.obj common.obj $(LIBDIR)\libttf.lib
+	$(CC) $(LDFLAGS) ftdump.obj common.obj $(LIBDIR)\libttf.lib
+
+ftstrpnm.exe: ftstrpnm.obj common.obj $(LIBDIR)\libttf.lib
+	$(CC) $(LDFLAGS) ftstrpnm.obj common.obj $(LIBDIR)\libttf.lib
+
+ftsbit.exe: $(TDOBJ) ftsbit.obj common.obj $(LIBDIR)\libttf.lib
+	$(CC) $(LDFLAGS) ftsbit.obj textdisp.obj common.obj $(LIBDIR)\libttf.lib
+
+ftmetric.exe: $(TDOBJ) ftmetric.obj common.obj $(LIBDIR)\libttf.lib
+	$(CC) $(LDFLAGS) ftmetric.obj textdisp.obj common.obj $(LIBDIR)\libttf.lib
+
+fterror.exe: fterror.obj common.obj $(LIBDIR)\libttf.lib
+	$(CC) $(LDFLAGS) fterror.obj common.obj $(LIBDIR)\libttf.lib
+
+
+clean: do_clean
+	cd $(LIBDIR)
+	make -f$(FT_MAKEFILE) clean
+	cd ..\test
+
+distclean: do_clean
+	cd $(LIBDIR)
+	make -f$(FT_MAKEFILE) distclean
+	cd ..\test
+	-del *.exe
+
+do_clean:
+	-del *.obj
+	-del $(ARCH)\*.obj
+	del time.h		# clean the ugly hack for Turbo C...
+
+!include "$(ARCH)\depend.dos"
+
+# end of Makefile

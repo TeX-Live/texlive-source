@@ -1,0 +1,15 @@
+dnl withenable.ac: --with and --enable options.
+try_ncurses=no
+AC_ARG_WITH([system-ncurses],
+        [  --with-system-ncurses   check for installed ncurses],
+        [test "$withval" = "yes" && try_ncurses=yes],
+        [try_ncurses=no])
+
+AC_ARG_WITH([ncurses_libdir],
+[  --with-ncurses-libdir=DIR
+                          Specify directory where the ncurses library resides.])
+
+AC_ARG_WITH([ncurses_include],
+[  --with-ncurses-include=DIR
+                          Specify the ncurses header files location.])
+

@@ -1,0 +1,27 @@
+kpse_include ../../texk/make/common.mk
+kpse_include ../../texk/make/programs.mk
+kpse_include ../../texk/make/library.mk
+kpse_include ../../texk/make/paths.mk
+
+prog_cflags = @X_CFLAGS@ -DT1LIB_IDENT=\"@T1LIB_IDENTIFIER@\" -DGLOBAL_CONFIG_DIR=\"@T1LIB_DATA_DIR@\"
+
+OBJS = parseAFM.o t1aaset.o t1afmtool.o t1base.o t1delete.o t1enc.o \
+  t1env.o t1finfo.o t1load.o t1outline.o t1set.o t1subset.o t1trans.o
+
+libt1.a: $(OBJS)
+	rm -f $@
+	$(AR) $(ARFLAGS) $@ $(OBJS)
+	$(RANLIB) $@
+
+all: libt1.a
+uninstall:
+
+kpse_include ../../texk/make/clean.mk
+
+clean::
+	rm -f libt1.a
+
+distclean::
+	rm -f sysconf.h
+
+# DO NOT DELETE THIS LINE -- make depend depends on it.

@@ -1,0 +1,88 @@
+# Main Makefile for Gnu-win32 library
+# Copyright (C) 1999-2000 Fabrice Popineau
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+
+ac_include ../make/paths.mk
+ac_include ../make/makevars.mk
+ac_include ../make/common.mk
+ac_include ../make/library.mk
+ac_include ../make/programs.mk
+ac_include ../make/texi.mk
+
+# ??? replace these with your own list of files
+SOURCES=getopt.c	\
+	getopt1.c	\
+	popen.c    	\
+	stat.c     	\
+	system.c   	\
+	string.c   	\
+	filename.c 	\
+	dirent.c   	\
+	time.c     	\
+	user.c     	\
+	home.c     	\
+	volume.c   	\
+	lookcmd.c  	\
+	ghostscr.c 
+
+# DOCS=
+MISC=configure mkinstalldirs install-sh aclocal.m4
+LIB_OBJS=$(SOURCES:.c=.o)
+
+# ??? replace with your targets
+all: libgnuw32.a
+
+# ??? here I make the bindir, libdir and infodir directories; you
+# might not need all of these.  also, I assumed the names PROG and
+# libMYPROG.a for the program and library.
+install: all
+	$(top_srcdir)/mkinstalldirs $(bindir)
+	$(top_srcdir)/mkinstalldirs $(libdir)
+	$(top_srcdir)/mkinstalldirs $(infodir)
+	$(INSTALL) libgnuw32.a $(libdir)/libgnuw32.a
+
+uninstall:
+	/bin/rm -f $(libdir)/libgnuw32.a
+
+libgnuw32.a: $(LIB_OBJS)
+	/bin/rm -f libgnuw32.a
+	$(AR) $(AR_FLAGS) libgnuw32.a $(LIB_OBJS)
+	$(RANLIB) libgnuw32.a
+
+clean:
+	/bin/rm -f core *.o $(LIB_OBJS) libgnuw32.a
+
+distclean: clean
+	/bin/rm -f Makefile config.h config.status config.cache config.log \
+		marklib.dvi
+
+mostlyclean: clean
+
+maintainer-clean: clean
+
+# automatic re-running of configure if the ocnfigure.in file has changed
+${srcdir}/configure: configure.in
+	cd ${srcdir} && autoconf
+
+# autoheader might not change config.h.in, so touch a stamp file
+Makefile: Makefile.in config.status
+	./config.status
+config.status: configure
+	./config.status --recheck
+
+ac_include ../../make/rdepend.mk
+ac_include depend.mk

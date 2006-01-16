@@ -1,0 +1,78 @@
+#========================================================================
+#
+# Goo library Makefile
+#
+# Copyright 1996 Derek B. Noonburg
+#
+#========================================================================
+
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+srcdirparent = $(srcdir)/..
+
+kpathsea_include_dir = -I../../../texk -I$(srcdir)/../../../texk
+ALLCFLAGS = $(CFLAGS) @DEFS@ -I.. -I$(srcdir)/.. -I. -I$(srcdir) $(kpathsea_include_dir)
+ALLCXXFLAGS = $(CXXFLAGS) @DEFS@ -I.. -I$(srcdir)/.. -I. -I$(srcdir) $(kpathsea_include_dir)
+CXXFLAGS = @CXXFLAGS@
+CC = @CC@
+CXX = @CXX@
+CFLAGS = @CFLAGS@
+
+kpse_include ../../texk/make/library.mk
+
+
+#------------------------------------------------------------------------
+
+.SUFFIXES:
+.SUFFIXES: .cc .c .o
+
+.cc.o:
+	$(CXX) $(ALLCXXFLAGS) -c $<
+.c.o:
+	$(CC) $(ALLCFLAGS) -c $<
+
+#------------------------------------------------------------------------
+
+CXX_SRC = \
+	$(srcdir)/FixedPoint.cc \
+	$(srcdir)/GHash.cc \
+	$(srcdir)/GList.cc \
+	$(srcdir)/GString.cc \
+	$(srcdir)/gmempp.cc \
+	$(srcdir)/gfile.cc
+
+C_SRC = \
+	$(srcdir)/gmem.c \
+	$(srcdir)/parseargs.c
+
+#------------------------------------------------------------------------
+
+GOO_CXX_OBJS = FixedPoint.o GHash.o GList.o GString.o gmempp.o gfile.o
+GOO_C_OBJS = gmem.o parseargs.o
+GOO_OBJS = $(GOO_CXX_OBJS) $(GOO_C_OBJS)
+
+libGoo.a: $(GOO_OBJS)
+	rm -f $@
+	$(AR) $(ARFLAGS) $@ $(GOO_OBJS)
+	$(RANLIB) $@
+
+#------------------------------------------------------------------------
+
+mostlyclean clean:
+	rm -f $(GOO_OBJS) libGoo.a
+	rm -f Makefile.bak
+
+distclean maintainer-clean extraclean: clean
+	rm -f Makefile
+
+#------------------------------------------------------------------------
+
+depend:
+	srcdirparent=`(cd $(srcdirparent) >/dev/null; pwd)`; \
+	  ($(CXX) $(ALLCXXFLAGS) -MM $(srcdir)/*.cc; \
+	   $(CC) $(ALLCFLAGS) -MM $(srcdir)/*.c) \
+	     | sed 's|$(srcdir)|$$(srcdir)|' \
+             | sed 's|'$$srcdirparent/'|$$(srcdirparent)/|g' > $(srcdir)/depend.mk
+
+kpse_include goo/depend.mk

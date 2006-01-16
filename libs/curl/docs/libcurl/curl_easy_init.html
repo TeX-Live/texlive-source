@@ -1,0 +1,76 @@
+<HTML>
+<BODY>
+<PRE>
+<!-- Manpage converted by man2html 3.0.1 -->
+
+</PRE>
+<H2>NAME</H2><PRE>
+     curl_easy_init - Start a libcurl easy session
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+     <B>#include</B> <B>&lt;curl/curl.h&gt;</B>
+
+     <B>CURL</B> <B>*curl_easy_init(</B> <B>);</B>
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+     This  function  must  be  the first function to call, and it
+     returns a CURL easy handle that you must  use  as  input  to
+     other  easy-functions.  curl_easy_init  intializes  curl and
+     this   call   MUST   have   a    corresponding    call    to
+     <I>curl</I><B>_</B><I>easy</I><B>_</B><I>cleanup</I> when the operation is complete.
+
+
+
+</PRE>
+<H2>RETURN VALUE</H2><PRE>
+     If  this function returns NULL, something went wrong and you
+     cannot use the other curl functions.
+
+
+</PRE>
+<H2>SEE ALSO</H2><PRE>
+     <B>curl_easy_cleanup(3)</B>, <B>curl_global_init(3)</B>
+
+
+</PRE>
+<H2>BUGS</H2><PRE>
+     Surely there are some, you tell me!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+<HR>
+<ADDRESS>
+Man(1) output converted with
+<a href="http://www.oac.uci.edu/indiv/ehood/man2html.html">man2html</a>
+</ADDRESS>
+</BODY>
+</HTML>

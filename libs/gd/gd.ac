@@ -1,0 +1,64 @@
+if test "$needs_gd" = no; then
+  GDCPPFLAGS=
+  LDGD=
+  GDDEP=
+else
+  EXTRA_GD_INCLUDE=
+  EXTRA_GD_LIBDIR=
+
+  if test "$with_system_gd" = yes; then
+    if test "x$with_gd_libdir" != x; then
+      EXTRA_GD_LIBDIR="-L$with_gd_libdir"
+    fi
+    if test "x$with_gd_include" != x; then
+      EXTRA_GD_INCLUDE="-I$with_gd_include"
+    fi
+  fi
+
+  OLD_LDFLAGS=$LDFLAGS
+  OLD_CPP=$CPP
+  OLD_LIBS=$LIBS
+
+  LDFLAGS="$LDFLAGS $EXTRA_GD_LIBDIR"
+  CPP="$CPP $EXTRA_GD_INCLUDE"
+
+  if test "$with_system_gd" = yes; then
+    AC_CHECK_LIB(gd, gdImageCreateFromPng,,
+      AC_MSG_WARN(Standard gd library not found. Compiling my own.)
+      with_system_gd=no)
+  fi
+
+  if test "$with_system_gd" = yes; then
+    AC_CHECK_LIB(gd, gdImageGif,,
+      AC_MSG_WARN(gd library does not have the necessary gif support. Compiling my own.)
+      with_system_gd=no)
+  fi
+
+  if test "$with_system_gd" = yes; then
+    AC_CHECK_HEADERS(gd.h)
+    if test "$ac_cv_header_gd_h" != yes; then
+      AC_MSG_WARN(gd.h not found. Using my own gd sources.)
+      with_system_gd=no
+    fi
+  fi
+
+  LDFLAGS=$OLD_LDFLAGS
+  CPP=$OLD_CPP
+  LIBS=$OLD_LIBS
+
+  if test "$with_system_gd" != yes; then
+    GDCPPFLAGS='-I$(GDDIR) -I$(GDSRCDIR)'
+    LDGD='$(GDDIR)/libgd.a'
+    GDDEP='$(GDDIR)/libgd.a'
+    using_system_gd=no
+  else
+    GDCPPFLAGS="$EXTRA_GD_INCLUDE"
+    LDGD="$EXTRA_GD_LIBDIR -lgd"
+    GDDEP=
+    using_system_gd=yes
+  fi
+fi
+
+AC_SUBST(GDCPPFLAGS)
+AC_SUBST(LDGD)
+AC_SUBST(GDDEP)
