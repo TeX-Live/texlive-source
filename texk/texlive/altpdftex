@@ -1,0 +1,13 @@
+#!/bin/sh
+
+format=`basename $0|sed 's/altpdf//'`
+
+echo
+echo "This script has been deprecated. Please call"
+echo
+echo "    simpdftex $format $*"
+echo
+echo "instead."
+echo
+
+exit 1

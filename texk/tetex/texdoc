@@ -1,0 +1,206 @@
+#!/bin/sh
+#
+# Thomas Esser, David Aspinall, Simon Wilkinson.
+# Public domain.
+#
+# Simple script to attempt to find documentation for tex files.
+# Uses kpsewhich to find a .dvi, .pdf or .ps file along the
+# 'TeX system documentation' ($TEXDOCS, default: $TEXMF/doc) search path.
+#
+# Original version by David Aspinall <da@dcs.ed.ac.uk>
+#
+# This version rewritten for use with bash 2 and teTeX under Linux by
+# Simon Wilkinson <sxw@dcs.ed.ac.uk>
+#
+# Changes for web2c-7.2 resp. teTeX-0.9 and portability fixes by
+# Thomas Esser <te@dbs.uni-hannover.de>, Jun 14 1998
+#
+# Support for compressed documentation implemented by adopting changes
+# made by debian. Thomas Esser, Dec. 2004.
+
+test -f /bin/sh5 && test -z "$RUNNING_SH5" \
+  && { UNAMES=`uname -s`; test "x$UNAMES" = xULTRIX; } 2>/dev/null \
+  && { RUNNING_SH5=true; export RUNNING_SH5; exec /bin/sh5 $0 ${1+"$@"}; }
+unset RUNNING_SH5
+
+test -f /bin/bsh && test -z "$RUNNING_BSH" \
+  && { UNAMES=`uname -s`; test "x$UNAMES" = xAIX; } 2>/dev/null \
+  && { RUNNING_BSH=true; export RUNNING_BSH; exec /bin/bsh $0 ${1+"$@"}; }
+unset RUNNING_BSH
+
+export PATH
+
+needsCleanup=false
+progname=texdoc
+tmpdir=${TMPDIR-${TEMP-${TMP-/tmp}}}/$progname.$$
+
+###############################################################################
+# setupTmpDir()
+#   set up a temp directory and a trap to remove it
+###############################################################################
+setupTmpDir()
+{
+  $needsCleanup && return
+
+  trap 'cleanup --force' 1 2 3 7 13 15
+  needsCleanup=true
+  mkdir "$tmpdir" || abort "could not create directory \`$tmpdir'"
+}
+
+###############################################################################
+# abort(errmsg) 
+#   print `errmsg' to stderr and exit with error code 1
+###############################################################################
+abort()
+{   
+  warn "$progname: $1."
+  cleanup
+  (exit 1)
+  exit 1
+}                              
+
+###############################################################################
+# cleanup()
+#   clean up the temp area
+###############################################################################
+cleanup()
+{
+  case $1 in
+    --force)
+        $needsCleanup && test -n "$tmpdir" && test -d "$tmpdir" \
+          && { rm -f "$tmpdir"/*; cd /; rmdir "$tmpdir"; }
+        ;;
+    *)  # directory might not be empty if some other viewer is still
+        # running, so be quiet about it
+        rmdir $tmpdir >/dev/null 2>&1;;
+  esac
+}
+
+
+# Viewing programs, according to filename extension.  (You can
+# override or add to them by setting environment variables).
+# MacOS X: does not have X11 by default, so give dvi a low priority
+case `(uname -s) 2>/dev/null` in
+  Darwin)
+	: ${TEXDOCVIEW_dvi='(open %s >/dev/console 2>&1 || xdvi %s &) || echo "Method for opening %s did not work"'}
+	: ${TEXDOCVIEW_ps='open %s'}
+	: ${TEXDOCVIEW_pdf='open %s'}
+	: ${TEXDOCVIEW_html='open %s'}
+	: ${TEXDOCVIEW_txt="open -a TextEdit.app %s"}
+	: ${TEXDOCVIEW_="open -a TextEdit.app %s"} # no extension, default to pager
+        extlist='.pdf .ps .txt .dvi .html'
+	;;
+  *)
+	: ${TEXDOCVIEW_dvi='(xdvi %s) &'}
+	: ${TEXDOCVIEW_pdf='(acroread %s) &'}
+	: ${TEXDOCVIEW_ps='(gv %s) &'}
+	: ${TEXDOCVIEW_html='mozilla -remote openURL'"'(%s)'"' 2>/dev/null || mozilla %s &'}
+	: ${TEXDOCVIEW_txt="${PAGER-more} %s"}
+	: ${TEXDOCVIEW_="${PAGER-more} %s"} # no extension, default to pager
+        extlist='.dvi .dvi.gz .dvi.bz2 .pdf .pdf.gz .pdf.bz2 .ps .ps.gz .ps.bz2 .txt .txt.gz .txt.bz2 .html'
+
+        # Commands run to uncompress files, according to filename extension.
+        : ${TEXDOCUNZIP_gz='gzip -d -c'}
+        : ${TEXDOCUNZIP_bz2='bzip2 -d -c'}
+	;;
+esac
+
+mode=viewer
+help='Usage: texdoc [OPTION]... [NAME]...
+  Search for NAME in the TeX documentation and start a viewer.
+
+  --help        show this help
+  -v		verbose mode: show viewer command
+  -l            just list all matching files. Do not start a viewer.
+  -s            search the disk. remaining arguments will be passed
+                as egrep patterns to filter the find output.'
+
+verbosemode=false
+while 
+  case $1 in
+     -s)     mode=search; shift; break;;
+     -l)     mode=list;;
+     -v)     verbosemode=true;;
+     *-help)
+             echo "$help" >&2
+             exit 1;;
+     -*)     echo "texdoc: option $1 not recognized" 1>&2;;
+      *)     break;;
+  esac
+do shift; done
+
+case $# in
+  0)
+    echo "$help" >&2
+    exit 1
+    ;;
+esac
+
+for name
+do
+  case $mode in
+    search)
+      find `kpsewhich --expand-path='$TEXMF/doc' | tr : ' '` -type f -print |
+        egrep $name
+      continue
+      ;;
+  esac
+
+  case $name in
+    texdoc)
+      man texdoc; continue;;
+  esac
+
+  found=false
+  for ext in "" $extlist; do
+
+    filename=`kpsewhich -format='TeX system documentation' $name$ext 2>/dev/null`
+    test -z "$filename" && continue
+    found=true
+
+    if test $mode = list; then
+      echo $filename
+    else
+      dir=`echo $filename | sed 's%/[^/]*$%%'`
+      ext=`echo $filename | sed -n 's%.*\.\([^/]*\)$%\1%p'`
+
+      eval uncompress="\$TEXDOCUNZIP_$ext"
+      if test -n "$uncompress"
+      then
+        ext=`echo $filename | sed -e "s|\\.$ext\$||" | sed 's%.*\.%%'`
+      fi
+      viewer=\$"TEXDOCVIEW_$ext"
+      if test -n "$uncompress"; then
+        src=`echo "$filename" | sed -e 's%.*/%%' -e 's%\.[^.]*$%%'`
+
+        # only one viewer per file, if the same file is given more
+        # than once
+        test -f "$tmpdir/$src" && break
+
+        setupTmpDir
+        eval "$uncompress $filename > $tmpdir/$src"
+        filename=$tmpdir/$src
+        viewer=`eval echo $viewer | sed -e "s|%s|$filename; rm -f $filename; cleanup|"`
+      else
+        viewer=`eval echo $viewer | sed -e "s|%s|$filename|g"`
+      fi
+
+      if test -z "$viewer"
+      then 
+        echo "Don't know how to view file type $ext" 1>&2
+        echo "(matching file was $filename)" 1>&2
+      else 
+        $verbosemode && echo $viewer
+        test -n "$dir" && test -d "$dir" && cd "$dir"
+        eval $viewer
+        break     # just stop after the first usable extension
+      fi
+    fi
+
+  done
+  $found || echo "Can't find documentation for \`$name'" 1>&2
+done
+
+cleanup
+(exit 0)
+exit 0

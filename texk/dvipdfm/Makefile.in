@@ -1,0 +1,77 @@
+kpse_include ../make/paths.mk
+kpse_include ../make/common.mk
+kpse_include ../make/programs.mk
+
+ZLIBDIR=../../libs/zlib
+ZLIBSRCDIR=$(srcdir)/$(ZLIBDIR)
+ZLIBDEP = @ZLIBDEP@
+LDZLIB = @LDZLIB@
+
+LIBPNGDIR=../../libs/libpng
+LIBPNGSRCDIR=$(srcdir)/$(LIBPNGDIR)
+LIBPNGDEP = @LIBPNGDEP@
+LDLIBPNG = @LDLIBPNG@
+
+LD_ALL_LIBS = $(LDLIBPNG) $(LDZLIB)
+ALL_LIBS_DEP = $(ZLIBDEP) $(LIBPNGDEP)
+
+program = dvipdfm
+programs = $(program) ebb
+default all: $(programs)
+
+prog_cflags = @LIBPNGCPPFLAGS@ @ZLIBCPPFLAGS@
+
+objects=pdfdev.o pdfdoc.o dvi.o mfileio.o mem.o jpeg.o numbers.o pdfobj.o \
+	pdfparse.o pdfspecial.o tfm.o type1.o dvipdfm.o epdf.o vf.o \
+	t1crypt.o pkfont.o tpic.o thumbnail.o pngimage.o htex.o \
+	mpost.o psimage.o psspecial.o colorsp.o encodings.o @TTF_OPT@ ttf.o
+eobjects=ebb.o jpeg.o pdfobj.o mem.o mfileio.o numbers.o pdfparse.o \
+	pngimage.o
+
+$(program): $(objects) $(kpathsea) $(ALL_LIBS_DEP)
+	$(kpathsea_link) $(objects) $(LD_ALL_LIBS) $(LOADLIBES)
+
+ebb: $(eobjects) $(kpathsea) $(ALL_LIBS_DEP)
+	$(kpathsea_link) $(eobjects) $(LD_ALL_LIBS) $(LOADLIBES)
+
+$(LIBPNGDIR)/libpng.a:
+	cd $(LIBPNGDIR); $(MAKE)
+
+$(ZLIBDIR)/libz.a:
+	cd $(ZLIBDIR); $(MAKE)
+
+kpse_include ../make/tkpathsea.mk
+
+install: install-exec install-data
+uninstall: uninstall-exec uninstall-data
+
+distclean::
+	$(RM) config.h
+
+install-exec:
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(bindir)
+	$(INSTALL_LIBTOOL_PROG) $(program) $(bindir)
+	$(INSTALL_LIBTOOL_PROG) ebb $(bindir)
+	$(INSTALL_SCRIPT) $(srcdir)/dvipdft $(bindir)
+
+uninstall-exec:
+	cd $(bindir); rm -f $(programs)
+
+install-data:
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(man1dir)
+	$(INSTALL_DATA) $(srcdir)/$(program).1 $(man1dir)/$(program).$(manext)
+	$(INSTALL_DATA) $(srcdir)/dvipdft.1 $(man1dir)/dvipdft.$(manext)
+	$(INSTALL_DATA) $(srcdir)/ebb.1 $(man1dir)/ebb.$(manext)
+
+uninstall-data:
+	rm -f $(man1dir)/dvilj.$(manext)
+	rm -f $(man1dir)/dvipdft.$(manext)
+	rm -f $(man1dir)/ebb.$(manext)
+
+kpse_include ../make/config.mk
+
+info dvi check:
+
+kpse_include ../make/clean.mk
+kpse_include ../make/rdepend.mk
+kpse_include depend.mk

@@ -1,0 +1,105 @@
+/* c-auto.in.  Generated automatically from configure.in by autoheader 2.13.  */
+/* acconfig.h -- used by autoheader when generating c-auto.in.
+
+   If you're thinking of editing acconfig.h to fix a configuration
+   problem, don't. Edit the c-auto.h file created by configure,
+   instead.  Even better, fix configure to give the right answer.  */
+
+/* Guard against double inclusion. */
+#ifndef WEB2C_C_AUTO_H
+#define WEB2C_C_AUTO_H
+
+/* web2c: the version string. */
+#define WEB2CVERSION "REPLACE-WITH-WEB2CVERSION"
+
+
+/* Define if type char is unsigned and you are not using gcc.  */
+#ifndef __CHAR_UNSIGNED__
+#undef __CHAR_UNSIGNED__
+#endif
+
+/* Define as __inline if that's what the C compiler calls it.  */
+#undef inline
+
+/* Define as the return type of signal handlers (int or void).  */
+#undef RETSIGTYPE
+
+/* Define if your processor stores words with the most significant
+   byte first (like Motorola and SPARC, unlike Intel and VAX).  */
+#undef WORDS_BIGENDIAN
+
+/* Define if the X Window System is missing or not being used.  */
+#undef X_DISPLAY_MISSING
+
+/* Define if lex declares yytext as a char [] by default.  */
+#undef YYTEXT_CHAR
+
+/* Define if lex declares yytext as a char * by default, not a char[].  */
+#undef YYTEXT_POINTER
+
+/* Define if lex declares yytext as a unsigned char [] by default.  */
+#undef YYTEXT_UCHAR
+
+/* tex: Define to enable --ipc.  */
+#undef IPC
+
+/* web2c: Define if gcc asm needs _ on external symbols.  */
+#undef ASM_NEEDS_UNDERSCORE
+
+/* web2c: Define to enable HackyInputFileNameForCoreDump.tex.  */
+#undef FUNNY_CORE_DUMP
+
+/* web2c: Define to disable architecture-independent dump files.
+   Faster on LittleEndian architectures.  */
+#undef NO_DUMP_SHARE
+
+/* web2c: Default editor for interactive `e' option. */
+#define EDITOR "vi +%d %s"
+
+/* web2c: Window system support for Metafont. */
+#undef EPSFWIN
+#undef HP2627WIN
+#undef MFTALKWIN
+#undef NEXTWIN
+#undef REGISWIN
+#undef SUNWIN
+#undef TEKTRONIXWIN
+#undef UNITERMWIN
+#undef X11WIN
+
+/* The number of bytes in a long.  */
+#undef SIZEOF_LONG
+
+/* Define if you have the ftime function.  */
+#undef HAVE_FTIME
+
+/* Define if you have the gettimeofday function.  */
+#undef HAVE_GETTIMEOFDAY
+
+/* Define if you have the mkstemp function.  */
+#undef HAVE_MKSTEMP
+
+/* Define if you have the mktemp function.  */
+#undef HAVE_MKTEMP
+
+/* Define if you have the strerror function.  */
+#undef HAVE_STRERROR
+
+/* Define if you have the <sys/time.h> header file.  */
+#undef HAVE_SYS_TIME_H
+
+/* Define if you have the <sys/timeb.h> header file.  */
+#undef HAVE_SYS_TIMEB_H
+
+/* Define if you have the <zlib.h> header file.  */
+#undef HAVE_ZLIB_H
+
+/* Define if you have the m library (-lm).  */
+#undef HAVE_LIBM
+
+/* Define if you have the posix library (-lposix).  */
+#undef HAVE_LIBPOSIX
+
+/* Define if you have the z library (-lz).  */
+#undef HAVE_LIBZ
+#endif /* !WEB2C_C_AUTO_H */

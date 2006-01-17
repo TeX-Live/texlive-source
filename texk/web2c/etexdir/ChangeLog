@@ -1,0 +1,271 @@
+2005-08-03  Olaf Weber  <olaf@infovore.xs4all.nl>
+
+	* tex.ech: Implement -etex switch.
+
+2004-12-19  Olaf Weber  <olaf@infovore.xs4all.nl>
+
+	* etex.mk (etexextra.c): Depends on etexdir/etexextra.h.
+
+	* etex.mk (etex-check): Add TEXMFCNF=../kpathsea to the mltex
+	test, so the right files are found when the installation is not
+	yet done.  From Peter Breitenlohner <peb@mppmu.mpg.de>.
+
+2004-10-12  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* etex.ch: Fixed a bug in the revised glue rounding code
+	(detected by Tigran Aivazian <tigran@aivazian.fsnet.co.uk>).
+	Version 2.2, dated October 12, 2004.
+			
+2004-09-15  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* etex.ch: Fixed a typo in TeX text, found by Giuseppe
+	Bilotta <bilotta78@hotpop.com>.
+
+2004-09-06  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* etex.ch: Incorporated register recycling bug fix from Bernd
+	Raichle <bernd@dante.de>.
+	Final Version 2.2 (hopefully).
+
+	* etrip/etrip.{fot,log,tex,typ}, etrip/etripin.log:
+	Updated for current version.
+
+	* etex.mk: Modified rule for etex.version.
+
+2004-08-26  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* etex.mk (etrip): Use etex with "--progname=einitex --ini" or
+	"--progname=etex".
+
+2004-08-26  Olaf Weber  <olaf@infovore.xs4all.nl>
+
+	* etex.fix: Include fix for register recycling bug from Bernd
+	Raichle <bernd@dante.de>.
+
+2004-08-25  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* etrip/etripman.tex: Updated to Version 2.2
+
+2004-08-21  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* etex.ch: Version 2.2.
+
+2004-08-20  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* etexextra.in: Peter holds copyright now.
+	
+2004-08-26  Olaf Weber  <olaf@infovore.xs4all.nl>
+
+	* etex.version: Is from now on a generated file.
+
+	* etexextra.in: renamed from etexextra.h.  The current e-TeX
+	version is substituted from etex.version.  Variant of code
+	supplied by Peter Breitenlohner <peb@mppmu.mpg.de>.
+
+	* etex.mk: Added rules to extract current e-TeX version from
+	etex.ch and insert into etex.version and etexextra.h.  Variant of
+	code supplied by Peter Breitenlohner <peb@mppmu.mpg.de>.
+
+2004-08-17  Olaf Weber  <olaf@infovore.xs4all.nl>
+
+	* etex.mk, etex.fix: Resurrected etex.fix, there is again a need
+	to include late-breaking changes.
+
+2004-07-29  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* etex.ch: Somewhat rearrange mixed direction typesetting code
+	in order to reduce interference between eTeX and pdfTeX change
+	files.
+
+2004-07-25  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* etex.ch: Reorganize additional command codes for convert
+	and last_item in order to reduce interference between eTeX and
+	pdfTeX change files.
+
+2004-07-23  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* etex.ch, tex.ch[01], tex.ech: Reorganize handling of banner
+	string in order to reduce interference between eTeX, pdfTeX,
+	and web2c change files.
+
+2004-07-22  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* etex.ch: Reorganize handling of additional token types.
+	This also fixed a bug in error context for additional token list
+	parameters, introduced by their reorganization.
+
+2004-07-21  Olaf Weber  <olaf@infovore.xs4all.nl>
+
+	* etrip/etripin.log: Update from Preter Breitenlohner.
+
+	* etrip/etrip.tex: Update from Peter Breitenlohner.
+
+	* etrip/etrip.fot: Update from Peter Breitenlohner.
+
+2004-07-19  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* etex.ch, tex.ch[01]: Reorganize handling of additional token
+	list and integer parameters and e-TeX's additional penalties in
+	order to reduce interference between eTeX, pdfTeX, and web2c
+	change files.
+
+	* etex.ch: Add a note that this file not only defines etex.web
+	in terms of changes to be applies to tex.web, but in addition
+	is used to define pdfetex.web.
+
+	* tex.ech: Add a note that this file is used to construct the
+	web2c change files for both e-TeX and pdfeTeX.
+
+2004-07-17  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* etex.ch: Towards etex-2.2: Adapt to TeX 3.141592; this is still
+	somewhat preliminary; do_glue still needs to be adapted to the new
+	glue rounding algorithm of TeX 3.141592.
+	Incorporate bug fixes from etex.fix.
+
+	* etex.ch0, etrip/etrip.{fot,tex}, etrip/etripin.log: Adapted
+	to TeX 3.141592.
+
+	* tex.ch1, tex.ech: Change the xmalloc_array calls to the `new'
+	interface (from 2001-11-10).
+
+	* etex.ch0, etex.ch1, etex.fix, tex.ch2: Removed.
+
+	* etex.mk: Rewrite build rules for etex.{web,ch}, add
+	etexdir/etex.mk and remove etex.{ch0,ch1,fix}, tex.ch2.
+
+	* etex.version: add newline.
+
+	* etrip/etrip.log, etrip.diffs: changed due to bug fix.
+
+2004-07-14  Olaf Weber  <olaf@infovore.xs4all.nl>
+
+	* etex.fix: Add fix for typo on line 2737 of etex.ch.  From Peter
+	Breitenlohner.
+
+	* etexextra.h: Add BUG_ADDRESS.
+
+2004-07-04  Olaf Weber  <olaf@infovore.xs4all.nl>
+
+	* etex.mk: Move the creation of the format-related links to
+	format-related install rules; this seems to be a better place for
+	them, as the links are pointless without the corresponding
+	formats.  Make the install-*-pool rules depend on the pool file in
+	question.
+
+2004-07-03  Olaf Weber  <olaf@infovore.xs4all.nl>
+
+	* etex.mk: Set up the make rules so that if etex isn't built (by
+	default) we do not forward from the general to the etex-specific
+	rules.  But the etex-specific rules can be used.
+
+	* etex.mk: Use $(TANGLE), $(TIE) instead ./tangle, ./tie to
+	support cross-compiling.
+
+2004-05-10  Olaf Weber  <olaf@infovore.xs4all.nl>
+
+	* etex.mk (install-etex-programs): Typo resulted in no etex binary
+	being installed.
+
+2004-05-08  Olaf Weber  <olaf@infovore.xs4all.nl>
+
+	* etex.mk (install-etex-programs): This rule didn't have a command
+	attached, so etex didn't get installed.
+	(install-etex-links): Dont install einitex, evirtex links.
+
+	* etex.mk: Formats are now parked in a subdirectory of
+	$(web2cdir).
+
+	* etex.mk: Change the .efmt extension to .fmt.  One consequence is
+	that we don't want to build tex.fmt, where we could safely build
+	tex.efmt.
+
+	* etexextra.h: .efmt -> .fmt.
+
+	* tex.ech: .efmt -> .fmt.
+
+2004-01-27  Olaf Weber  <olaf@infovore.xs4all.nl>
+
+	* etex.fix: The assignment to cur_val instead of cur_val_level
+	would result in \lastnodetype getting confused about what type of
+	value it was supposed to be.  Reported by Hartmut Henkel
+	<hartmut_henkel@gmx.de>, fix found by Fabrice Popineau
+	<Fabrice.Popineau@supelec.fr>.
+
+2003-02-19  Olaf Weber  <olaf@infovore.xs4all.nl>
+
+	* etex.mk: Installation of formats is no longer done via
+	install-data in this file, but just from the install-data ->
+	install-dumps -> install-fmts in the main Makefile.  That way we
+	can prevent automatic installation with a single change in that
+	Makefile.
+	(etex.p): Depend on tangle.
+	(triptrap): Depend on etrip.
+	(install-etex-data): Double-colon rule.
+	(install-data): Combine with install-etex-data.
+
+2003-02-17  Olaf Weber  <olaf@infovore.xs4all.nl>
+
+	* etex.ch1: Reduce to banner changes.
+
+	* etex.ch0: Slightly extend the reverted bits here, so they can be
+	cleared out of etex.ch1 and are now all in one file.
+
+2003-02-16  Olaf Weber  <olaf@infovore.xs4all.nl>
+
+	* etex.ch1: Correct the banners, and revert a final few bits of
+	TeX that use a variable that doesn't exist in e-TeX.
+
+	* etex.ch0: TeX 3.141592 and e-TeX 2.1 require reconciliation.
+	Revert some of TeX's code to 3.14159 to get e-TeX 2.1 to tangle.
+
+	* etexextra.h: Update banner for 3.141592-2.1.
+
+	* etex.mk (etex.web): Add etex.ch0 and etex.ch1 to build rules.
+
+2003-02-15  Olaf Weber  <olaf@infovore.xs4all.nl>
+
+	* etex.mk: From klibtool to libtool.  Based on patches from Albert
+	Chin-A-Young <china@thewrittenword.com>.
+
+	* etex.mk: Changes to make e-TeX, in extended mode, the engine
+	under LaTeX2e.
+
+2003-02-07  Olaf Weber  <olaf@infovore.xs4all.nl>
+
+	* etex.mk: Reorganized to match the new Makefile.in.
+
+2003-01-15  Olaf Weber  <olaf@infovore.xs4all.nl>
+
+	* etex.mk (etestenv): Add LC_ALL=C to the etrip environment.
+
+2002-10-11  Olaf Weber  <olaf@infovore.xs4all.nl>
+
+	* tex.ch1: Settle on a text for the not-TeX banner.
+
+2002-06-02  Olaf Weber  <olaf@infovore.xs4all.nl>
+
+	* tex.ch0, tex.ch1: Changes to account for the banner changing
+	when certain options are specified that make the program
+	not-strictly TeX.
+
+	* tex.ch2: Commented-out changes deleted.  These changes became
+	active in tex.ch1.
+
+Mon Feb 01 18:35:30 1999  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Version 2.1 for Web2c Version 7.2
+
+Thu Feb 19 18:03:12 1998  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Version 2.0 for Web2c Version 7.2
+
+Sat Aug 23 14:14:12 1997  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Integrated e-TeX Version 1.1 into Web2c Version 7.0
+	(by Karl Berry, as of Feb  7 1997.
+
+	All e-TeX (and e-TRIP) source files as well as a Makefile fragment
+	are in a separate directory: web2c/etexdir. This will certainly make
+	it easier to switch to e-TeX Version 2.

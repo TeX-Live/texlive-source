@@ -1,0 +1,122 @@
+*
+*  ChkTeX v1.5, hashes a NULL-terminated string.
+*  Copyright (C) 1995-96 Jens T. Berger Thielemann
+*
+*  This program is free software; you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation; either version 2 of the License, or
+*  (at your option) any later version.
+*
+*  This program is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License
+*  along with this program; if not, write to the Free Software
+*  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+*
+*  Contact the author at:
+*      Jens Berger
+*      Spektrumvn. 4
+*      N-0666 Oslo
+*      Norway
+*      E-mail: <jensthi@ifi.uio.no>
+*
+*
+
+******* HashWord() ****************************************************
+*
+* NAME
+*     HashWord() - hashes a NULL-terminated string
+*
+* SYNOPSIS
+*
+*     HashVal = @HashWord(char *String)
+*     D0.W                A0
+*
+*     HashVal = _HashWord(char *String)
+*     D0.W                4(SP)
+*
+* FUNCTION
+*     Hashes a NULL-terminated string.
+*
+*     Well optimized (I believe), should be near optimal for this 
+*     approach to hashing. Optimized for caches, loops and pipelines.
+*     Inner loop size: 12 bytes.
+*
+*
+* INPUTS
+*     String - a NULL-terminated 8-bit C string. May be passed on
+*              stack or in A0, depending on entry point.
+*
+* RETURNS
+*     HashVal - the hashed value of the string.
+*
+* NOTES
+*     Registers a0 and d1 are destroyed.
+*
+*     This function works best when there's a slight difference in
+*     the length of the strings.
+*
+*     On non-Amiga machines a similar routine is implemented in
+*     "Utility.c" in the ChkTeX distribution.
+*
+*     It should be possible to adopt this to other 680x0 computers,
+*     too.
+*
+* BUGS
+*     None known.
+*
+***********************************************************************
+*
+*
+*
+*
+*
+
+	SECTION text,code
+	XDEF	_HashWord
+	XDEF	@HashWord
+
+HashShift	EQU     5		* Experiments show this to be best;
+					* reasonable, as most TeX commands
+					* only use lowercase letters.
+
+REG_HashVal	EQUR	d0
+REG_TmpChar	EQUR	d1
+REG_StrLen	EQUR	d2
+REG_String	EQUR	a0
+
+Len_Incr	EQU	6
+
+CLRD	MACRO	\1      		* Clears data reg
+	moveq	#0,\1
+	ENDM
+
+_HashWord				* Stack entry
+	move.l	4(sp),REG_String
+@HashWord				* Register entry
+	CLRD	REG_HashVal
+	CLRD	REG_TmpChar
+
+	move.b	(REG_String)+,REG_TmpChar
+	beq.b   return
+
+	move.l	REG_StrLen,-(sp)
+	CLRD	REG_StrLen
+
+loop
+	eor.w	REG_TmpChar,REG_HashVal
+	addq.w	#Len_Incr,REG_StrLen
+	ror.w   #HashShift,REG_HashVal
+	eor.w	REG_StrLen,REG_HashVal
+
+	move.b	(REG_String)+,REG_TmpChar
+	bne.b	loop
+
+	move.l	(sp)+,REG_StrLen
+return
+	rts
+
+	END

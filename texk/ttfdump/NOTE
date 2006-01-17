@@ -1,0 +1,8 @@
+
+The phases of rendering a True Type font glyph
+phase 1. loading
+phase 2. scale from FUnit space to pixel space
+phase 3. instruction are appleid
+phase 4. subdivision of curve into line segments
+phase 5. scan-convert -- filling polygons
+phase 6. drop out control

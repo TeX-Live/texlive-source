@@ -1,0 +1,132 @@
+
+
+
+deweb(1)                                                 deweb(1)
+
+
+NAME
+       deweb - strips away C & CWEB commands from CWEB sources
+
+SYNOPSIS
+       deweb [ file1 file2 ...  ]
+
+DESCRIPTION
+       deweb  filters  away  all  C  &  CWEB commands from a CWEB
+       source  code.  This  leaves  only  the  LaTeX  code.  This
+       stripped  code,  in turn, may then be passed to a suitable
+       syntax checker for LaTeX,  like  ChkTeX  and  lacheck,  or
+       spell-checkers like ispell.
+
+       The  chkweb tool, included in the ChkTeX distribution will
+       do just this; writing similar scripts should be trivial.
+
+       When deweb strips away the C code from your  CWEB  source,
+       it  tries  to  preserve  line breaks.  This means that the
+       error reports  from <your favorite tool> will  be  correct
+       regarding to line numbers. In most cases, the column posi­
+       tion will also be correct. This  significantly  simplifies
+       finding the errors in the LaTeX source (in contrast to the
+       output from cweave, which output  is  truly  difficult  to
+       figure anything out from).
+
+       deweb  accepts  a  list of filenames on the argument line,
+       and will send its output to stdout.  If no  filenames  are
+       given,  it  will  read  from stdin, acting as a filter. No
+       options are currently accepted.
+
+       Macho users may try to pipe the output from deweb directly
+       into  LaTeX,  theoretically,  this should work. This would
+       ease the debugging of the  LaTeX  code  significantly,  as
+       when LaTeX complains about wrong syntax, you'll be able to
+       find the erroneous line much  more  easily.  Don't  expect
+       that  the  output  looks  very  much  like  the final one,
+       though.
+
+       deweb should now understand all correct CWEB  opcodes.  If
+       it  complains  about  not  understanding a correct opcode,
+       please inform the author.
+
+DISTRIBUTION
+       Copyright (C) 1996 Jens T. Berger Thielemann
+
+       This program is free software;  you  can  redistribute  it
+       and/or modify it under the terms of the GNU General Public
+       License as published  by  the  Free  Software  Foundation;
+       either  version  2 of the License, or (at your option) any
+       later version.
+
+       This program is distributed in the hope that  it  will  be
+       useful, but WITHOUT ANY WARRANTY; without even the implied
+       warranty of MERCHANTABILITY or FITNESS  FOR  A  PARTICULAR
+
+
+
+                           June 8, 1996                         1
+
+
+
+
+
+deweb(1)                                                 deweb(1)
+
+
+       PURPOSE.   See  the  GNU  General  Public License for more
+       details.
+
+       You should have received a copy of the GNU General  Public
+       License along with this program; if not, write to the Free
+       Software Foundation, Inc., 675  Mass  Ave,  Cambridge,  MA
+       02139, USA.
+
+ENVIRONMENT
+       No environment variables are used.
+
+FILES
+       None.
+
+AUTHOR
+       Jens T. Berger Thielemann, <jensthi@ifi.uio.no>
+
+SEE ALSO
+       cweave(1), perl(1), chktex, lacheck(1), ispell(1)
+
+BUGS
+       Doesn't  even  compile under Perl versions before perl v5.
+       Unfortunately, this means that we can't even tell the user
+       why  we  failed;  Perl  will just complain about not being
+       able to compile the regexps.
+
+       The program will try to swallow the whole  input  file  at
+       once, instead of processing it on a line-by-line basis.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                           June 8, 1996                         2
+
+

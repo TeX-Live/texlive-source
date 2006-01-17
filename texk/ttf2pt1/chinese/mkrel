@@ -1,0 +1,80 @@
+#!/bin/sh
+#
+#  Copyright (c) 2000
+#   Sergey A. Babkin.  All rights reserved.
+# 
+#  Redistribution and use in source and binary forms, with or without
+#  modification, are permitted provided that the following conditions
+#  are met:
+#  1. Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+#  2. Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+# 
+#  THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+# 
+#  Sergey A. Babkin (sab123@hotmail.com, babkin@users.sourceforge.net)
+# 
+#
+# Script to create a release or shapshot archive.
+# Also checks for very basic inconsistences.
+# Expects that it would be run from the current directory of chinese-maps,
+# that the ttf2pt1 directory with corresponding version is ../ttf2pt1
+# and that the parent directory is the place to create archives.
+# Expects that the CVS environment variables are set properly.
+
+VER=`grep TTF2PT1_VERSION ../ttf2pt1/version.h | cut -d\" -f2`
+
+case "$1" in
+snapshot)
+	echo "$VER" | egrep '^[0-9][0-9]*\.[0-9].*-CURRENT$' || {
+		echo "mkrel: version.h must contain *-CURRENT to create a snapshot" >&2
+		exit 1
+	}
+	snapdate=`date "+ %y  %m  %d " | sed 's/ \([0-9]\) / 0& /g;s/ //g'`
+	NEWVER=`echo "$VER" | sed "s/-CURRENT/-SNAP-$snapdate/"`
+	TAG="-D tomorrow"
+	;;
+release)
+	echo "$VER" | egrep '^[0-9][0-9]*\.[0-9][.0-9]*$' || {
+		echo "mkrel: version.h must not be -CURRENT to create a release" >&2
+		exit 1
+	}
+	NEWVER="$VER"
+	TAG=`echo "-r ttf2pt1-$VER" | sed \
+		's/\(-[0-9][0-9]*\.[0-9]\)$/&.0/;s/\./-/g'`
+	;;
+*)
+	echo "use: mkrel [snapshot|release]" >&2
+	exit 1
+	;;
+esac
+
+cd .. || {
+	echo "mkrel: can't cd to .." >&2
+	exit 1
+}
+
+rm -f ttf2pt1-chinese-$NEWVER.tgz ttf2pt1-chinese-$NEWVER.zip 
+rm -rf ttf2pt1-chinese-$NEWVER
+
+echo "cvs -z9 export $TAG -d ttf2pt1-chinese-$NEWVER chinese-maps"
+cvs -z9 export $TAG -d ttf2pt1-chinese-$NEWVER chinese-maps || {
+	echo "mkrel: unable to export from CVS" >&2
+	echo "mkrel: check that the CVS tree is properly tagged" >&2
+	exit 1
+}
+
+
+tar czvf ttf2pt1-chinese-$NEWVER.tgz ttf2pt1-chinese-$NEWVER || {
+	echo "mkrel: can't create .tgz archive" >&2
+	exit 1
+}
+
+zip -u -r ttf2pt1-chinese-$NEWVER.zip ttf2pt1-chinese-$NEWVER || {
+	echo "mkrel: can't create .zip archive" >&2
+	exit 1
+}

@@ -1,0 +1,104 @@
+2004-10-29  Jan Nieuwenhuizen  <janneke@gnu.org>
+
+        * pdftex.mk (pdftex):  Build fix: pdftexextra.c depends on
+        pdftexextra.h.
+
+2004-09-07  The pdfTeX team:
+
+	* README: pdftex version 1.20a.
+
+	* NEWS: pdftex version 1.20a.
+
+	* pdftex.ch: pdftex version 1.20a.
+
+2004-08-26  Olaf Weber  <olaf@infovore.xs4all.nl>
+
+	* pdftexlib.mk (pdftexdir/libpdf.a): Add pdftexdir/pdftexextra.h
+	to the dependencies, so it gets built before we go and try to
+	build the library.
+
+	* pdftex.version: Is from now on a generated file.
+
+	* pdftexextra.in: Renamed from pdftexextra.h; the current pdfTeX
+	version is substituted from pdftex.version.  Variant of code
+	supplied by Peter Breitenlohner <peb@mppmu.mpg.de>.
+
+	* pdftex.mk: Added rules to extract current pdfTeX version from
+	pdftex.ch and insert into pdftex.version and pdftexextra.h.
+	Variant of code supplied by Peter Breitenlohner
+	<peb@mppmu.mpg.de>.
+
+2004-08-25  Olaf Weber  <olaf@infovore.xs4all.nl>
+
+	* vadjust.ch: Moved here from pdfxtexdir.
+
+	* pdftex.mk: vadjust.ch moved to this directory from pdfxtexdir.
+
+2004-08-23  Olaf Weber  <olaf@infovore.xs4all.nl>
+
+	* pdftex.mk: Scrap rules for pdftexinfo.  These are obsolete.
+
+	* pdftex.mak: Scrap rules for pdftexinfo.
+
+2004-08-06  Olaf Weber  <olaf@infovore.xs4all.nl>
+
+	* Makefile.in: The .cc.o suffix rule should use ALL_CXXFLAGS (as
+	is done for ALL_CFLAGS).  From Jan Nieuwenhuizen
+	<janneke@gnu.org>.
+
+2004-07-29  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* pdftex.ch, hz.ch: Somewhat rearrange handling of kern and
+	math nodes in order to reduce interference between eTeX and
+	pdfTeX change files. Somewhat disentangle margin kerns such
+	that pdftex.web and pdfetex.web can be built with or without
+	hz.ch (not true for pdf*tex.ch).
+
+2004-07-25  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* pdftex.ch: Reorganize additional command codes for convert
+	and last_item in order to reduce interference between eTeX and
+	pdfTeX change files.
+
+	* change-files.txt: Adjust to current status.
+
+2004-07-23  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* pdftex.ch, tex.ch[01], tex.pch: Reorganize handling of banner
+	string in order to reduce interference between eTeX, pdfTeX,
+	and web2c change files.
+
+2004-07-22  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* pdftex.ch: Removed unused token types for pdfTeX's additional
+	token list parameters.
+
+2004-07-19  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* hz.ch, pdftex.ch, tex.ch[01], tex.pch: Reorganize handling of
+	additional token list and integer parameters in order to reduce
+	interference between eTeX, pdfTeX, and web2c change files.
+
+	* pdftex.ch: Add a note that this file not only defines pdftex.web
+	in terms of changes to be applies to tex.web, but in addition
+	is used to define pdfetex.web.
+
+	* tex.pch: Add a note that this file is used to construct the
+	web2c change files for both pdfTeX and pfdeTeX.
+
+	* pdftex.mk (pdftex.ch): Remove tex.ch2 from build rules.
+
+	* tex.ch2: Removed
+
+2004-07-17  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* pdftex.mk: Rewrite build rules for pdftex.{web,ch}.
+
+	* pdftex.ch: Adapt glue and leader box rounding to TeX 3.141592.
+	Remove a few modules that were identical copies of those in TeX.
+
+2004-07-16  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* ttf2afm.c: Add various const's, to avoid compiler warnings.
+
+	* ChangeLog: New file.

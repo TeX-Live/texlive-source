@@ -1,0 +1,142 @@
+% original cmr.map -- Constructed by M. Wicks, 9/28/99
+%
+% Format is as follows:
+% TeX-name encoding AFM-name PFB-name
+% The default behavior is to use the font's built-in
+% encoding, to use the TeX-name as the AFM-name, and
+% to use the AFM-name as the PFB-name.
+% The word "default" may be used in any field to
+% specify the default behavior. You can
+% also say "none", in the PFB field, for example
+% to say that no PFB should be loaded
+%
+% The following entries are used to force an encoding to work around several
+% bugs in Acrobat reader.  The ot1 encoding is used to supply an encoding
+% external to that the the type 1 font definition.  The seems to be necessary 
+% to be able to search ligatures, for example.  The "-r" option
+% is used to remap the character positions that Adobe normally does
+% not use to higher positions.  This seems to fix a variety of problems
+%
+cmr10 ot1r -r
+cmr12 ot1r -r
+cmr17 ot1r -r
+cmr6 ot1r -r
+cmr7 ot1r -r
+cmr8 ot1r -r
+cmr9 ot1r -r
+% cmr5 is encoded somewhat differently
+cmr5 -r
+% Bold
+cmbx10 ot1r -r
+cmbx12 ot1r -r 
+cmbx6 ot1r -r
+cmbx7 ot1r -r
+cmbx8 ot1r -r
+cmbx9 ot1r -r
+% Symbol fonts are remapped, but not reencoded
+cmex10 -r
+cmbsy10 -r
+cmsy10 -r
+cmsy9 -r
+cmsy8 -r
+cmsy7 -r
+cmsy6 -r
+cmsy5 -r
+lasy10 -r
+lasy9 -r
+lasy8 -r
+lasy7 -r
+lasy6 -r
+lasy5 -r
+cmbsy7 -r
+cmbsy5 -r
+euex10 -r
+eufm10 -r
+eufm7 -r
+eufm5 -r
+eufb10 -r
+eufb7 -r
+eufb5 -r
+eurb10 -r
+eurm10 -r
+eurb7 -r
+eurm7 -r
+eurb5 -r
+eurm5 -r
+msam10 -r
+xycmat10 -r
+xycmbt10 -r
+xydash10 -r
+xycirc10 -r
+xyatip10 -r
+xybtip10 -r
+% Likewise for math italic
+cmmi12 -r
+cmmi10 -r
+cmmib10 -r
+cmmi9 -r
+cmmi8 -r
+cmmi7 -r
+cmmi6 -r
+cmmi5 -r
+% Misc
+cmb10 ot1r -r
+cmbxsl10 ot1r -r
+cmbxti10 ot1alt -r
+cmdunh10 ot1r -r
+cmff10  ot1alt -r
+cmfi10 ot1alt -r
+cmfib8 ot1alt -r
+cmssbx10 ot1r -r
+cmssdc10 ot1r -r
+cmssq8 ot1r -r
+cmssqi8 ot1r -r
+cmu10 ot1alt -r
+cmvtt10 ot1r -r
+lcmss8 ot1r -r
+lcmssb8 ot1r -r
+lcmssi8 ot1r -r
+% tt fonts
+cmtt10 -r
+cmtt12 -r
+cmtt8 -r
+cmtt9 -r
+% Italic 
+cmti10 ot1alt -r
+cmti12 ot1alt -r
+cmti7 ot1alt -r
+cmti8 ot1alt -r
+cmti9 ot1alt -r
+% Slanted
+cmsl10 ot1r -r
+cmsl12 ot1r -r
+cmsl8 ot1r -r
+cmsl9 ot1r -r
+% Roman sans serif
+cmss10 ot1r -r
+cmss12 ot1r -r
+cmss17 ot1r -r
+cmss8 ot1r -r
+cmss9 ot1r -r
+% Sans Serif
+cmssi10 ot1r -r
+cmssi12 ot1r -r
+cmssi17 ot1r -r
+cmssi8 ot1r -r
+cmssi9 ot1r -r
+%
+% LaTeX Fonts here too.  They don't
+% seem to fit anywhere else.
+%
+lcirclew10 default lcirclew -r
+lcircle10 default lcircle1 -r
+line10 -r
+
+%
+% Required by psnfss2e
+%
+eurmo10  default  eurm10 -s 0.167 -r
+eurbo10  default  eurb10 -s 0.167 -r
+rsfs5    default  rsfs5
+rsfs7    default  rsfs7
+rsfs10   default  rsfs10%

@@ -1,0 +1,1134 @@
+% teTeX main documentation file. Thomas Esser, 1999, 2003. public domain.
+
+\documentclass[11pt,a4paper]{article}
+
+% \usepackage[13,14,15]{pagesel}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+% \usepackage{pslatex}
+\usepackage{lmodern}
+\usepackage{palatcm}
+\usepackage{ifpdf}
+
+\usepackage{geometry,mflogo,xspace,texnames,path,booktabs,bm}
+\newcommand{\psext}{ps}
+\newcommand{\pdfext}{pdf}
+\newcommand{\dviext}{dvi}
+
+\ifpdf
+\usepackage[bookmarksopen=true, hypertexnames=false, linktocpage, pdfpagelabels, colorlinks, bookmarks]{hyperref}
+\hypersetup{
+  pdfauthor={Thomas Esser},
+  pdftitle={The teTeX Manual}
+}
+\usepackage{thumbpdf}
+\let\docext=\pdfext
+\else
+\let\docext=\dviext
+\usepackage[bookmarks,hypertex]{hyperref}
+\fi
+
+\newcommand{\dlink}[3]{%
+  \ifpdf
+    \ifx\pdfext#3
+      \href{#1/#2.#3}{\texttt{texdoc #2}}%
+    \else
+      \texttt{texdoc #2}%
+    \fi
+  \else
+     \href{#1/#2.#3}{\mbox{\texttt{texdoc #2}}}%
+  \fi}
+
+\newcommand{\teTeX}{\textrm{te}\TeX\xspace}
+\newcommand{\Linux}{\textrm{Linu}\textsf{X}\xspace}
+% \newcommand{\MF}{\textlogo{Metafont}\xspace}
+\newcommand{\smiley}{\texttt{ :-)}\xspace}
+
+\title{\teTeX{} Manual}
+\author{\href{mailto:te@dbs.uni-hannover.de}{Thomas Esser}}
+\date{January 2005}
+
+% \geometry{scale={0.637,0.637}, top=0.121\paperheight, nohead}
+\usepackage{typearea}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+  
+  \teTeX{} is a distribution of \TeX{} and related programs: pdf\TeX,
+  e-\TeX, Omega, Aleph, \LaTeX, Con\TeX{}t, \MF, \MP{}, \texttt{dvips},
+  \texttt{xdvi}, \texttt{dvipdfm}, \texttt{dvipng}, \BibTeX{},
+  \texttt{makeindex} etc.
+
+  \teTeX{} aims to make using and maintaining a \TeX{}
+  system as easy as possible. The programs are built around the
+  \href{http://tug.org/web2c/}{Web2c} distribution by Karl Berry and Olaf
+  Weber. A common part of many programs is \texttt{kpathsea}, a library
+  that provides efficient access by name to files stored hierarchically.
+
+  This document describes how to use and set up the \teTeX{} system.
+  It does not attempt to be a comprehensive guide, instead it tries to
+  give an overview about what software and documentation is contained
+  in the distribution.
+\end{abstract}
+
+\newpage
+\tableofcontents
+
+\newpage
+
+\section{The Components of \teTeX}\label{sec:components}
+
+This document cannot describe all the programs which are part of
+\teTeX{} in detail, but it tries to give you an overview. This section
+describes the packages which form the main components of \teTeX{}.
+
+\subsection{Web2c}
+\href{http://tug.org/web2c/}{Web2c} is a \TeX{} implementation,
+originally for Unix, but also running under Windows, Macintosh,
+DOS, Amiga, and other operating systems. It includes \TeX{} itself and
+the following programs:
+\begin{itemize}
+\item \MF: a font compiler intended to produce typefaces of high
+  quality~\cite{Knuth:1984:M}.
+\item \MP: a program similar to \MF, modified to output Postscript
+  code instead of bitmaps. Documentation for \MP{} is available via
+  the command:
+  \dlink{../../../texmf-dist/doc/metapost/base}{mpman}{\psext}.
+\item \BibTeX: a preprocessor to make bibliographies for \LaTeX. For
+  documentation, see
+  \dlink{../../../texmf-dist/doc/bibtex/base}{btxdoc}{\dviext} and
+  Appendix~B of \cite{Lamport:1994:LDP}.
+\item utilities for converting between different font metric and
+  bitmap formats: \texttt{gftopk}, \texttt{gftodvi}, \texttt{gftype},
+  \texttt{pktogf}, \texttt{pktype}, \texttt{pltotf}, \texttt{tftopl},
+  \texttt{vftovp}, \texttt{vptovf}.
+\item DVI utilities: \texttt{dvicopy, dvitomp, dvitype}.
+\item other tools: \texttt{patgen}, \texttt{pooltype},
+  \texttt{tangle}, \texttt{weave}, \texttt{ctangle}, \texttt{cweave}.
+\end{itemize}
+  
+  
+The main documentation for \href{http://tug.org/web2c/}{Web2c} is the
+``Web2c manual'' and the ``kpathsea manual''. These can be accessed
+via \dlink{../../../texmf-dist/doc/programs}{web2c}{\docext} and
+\dlink{../../../texmf-dist/doc/programs}{kpathsea}{\docext}
+respectively.
+
+\subsection{\TeX{} extensions: pdf\TeX, e-\TeX{}, Omega, Aleph, enc\TeX}
+Besides the standard \TeX{} program, the
+  following extensions to \TeX{} are included in \teTeX:
+\begin{description}
+\item [pdf\TeX] This can optionally write Acrobat PDF format instead
+  of DVI. The user manual can be accessed by the command
+  \dlink{../../../texmf-dist/doc/pdftex/manual}{pdftex-a}{\pdfext}.
+  The \LaTeX{} hyperref package
+  (\dlink{../../../texmf-dist/doc/latex/hyperref}{manual}{\pdfext})
+  has an option ``pdftex'', which turns on all the program features.
+  In DVI mode, pdf\TeX{} works like the usual \TeX{} with the
+  exception of the availability of additional typographic features.
+  
+  In PDF mode, pdf\TeX{} supports graphics inclusion for the following
+  graphic formats:
+  \begin{itemize}
+  \item PNG (portable network graphics)
+  \item PDF (portable document format),
+  \item JPG (jpeg)
+  \item MPS (metapost output)
+  \end{itemize}
+  It does not support EPS (encapsulated postscript), but if you have
+  recent versions of \texttt{ghostscript} (version 5.10 or later) and
+  \texttt{perl} (version 5 or later) installed, you can use the tool
+  \texttt{epstopdf} to convert EPS graphics into PDF. When including a
+  PDF file, pdf\TeX{} is able to access parts of a multi-page file: a
+  complete page or a clipped part of a page. This feature extends
+  pdf\TeX{} beyond its typesetting capabilities into a versatile tool
+  for handling arbitrary generated PDF files.
+
+\item [e-\TeX] adds a small but powerful set of new primitives, and an
+  extension for right to left typesetting. In default mode, e-\TeX{}
+  is 100\,\% compatible with ordinary \TeX.  See
+  \dlink{../../../texmf-dist/doc/etex/base}{etex-man}{\docext} for details.
+
+\item [Omega ($\bm \Omega$)] Omega works internally with 16-bit
+  Unicode characters; this allows it to work directly with
+  almost all the world's scripts simultaneously. It also supports
+  dynamically loaded ``$\Omega$ Translation Processes'' (OTPs), which
+  allow the user to define complex transformations to be performed on
+  arbitrary streams of input. Documentation:
+  \dlink{../../../texmf-dist/doc/omega/base}{doc-1.12}{ps}.
+\item [Aleph] is a \TeX{} engine that combines the good features of
+  e\TeX{} and Omega. The \LaTeX{} based format of Aleph is called
+  Lamed.
+\end{description}
+
+
+\subsection{DVI drivers: dvips, dvilj, xdvi, dvipdfm, dvipng}
+For printing and previewing DVI files, you need to use one of the DVI
+drivers that are available:
+\begin{description}
+\item [dvips] This driver converts DVI files into Postscript.
+  Postscript is a page description language that many laser printers
+  directly support. With the help of the utility \texttt{ghostscript},
+  it is possible to view Postscript documents on screen and to print
+  Postscript documents on non-Postscript printers. This version of
+  \texttt{dvips} supports hypertex and partial font downloading.  In
+  this release, the search path for config files have been changed:
+  the current directory is no longer searched by default.
+  Additionally, secure mode has been turned on by default. For
+  details, consult the documentation:
+  \dlink{../../../texmf-dist/doc/programs}{dvips}{\dviext}.
+\item [dvilj] This is a family of drivers to support HP LaserJet (and
+  compatible) printers: \texttt{dvilj, dvilj2p, dvilj4, dvilj4l,
+    dvilj6}. These drivers are faster than the \texttt{dvips} +
+  \texttt{ghostscript} alternative (which can also be used to print
+  DVI files on HP LaserJet printers), but they lack a few features
+  like support for virtual fonts, rotated or scaled graphics, etc.
+\item [xdvi] This is a previewer for DVI files under the X~Window
+  System. It has support for Postscript specials through Display
+  Postscript, NeWS and \texttt{ghostscript}. Hypertex support was also
+  added for this version of \texttt{xdvi}. A link can be followed by
+  clicking with Button-1 or Button-2 (open link in a new window) on
+  it. With the help of source specials, xdvi can interact with most
+  editors in some way. For details, visit the
+  \href{http://xdvi.sourceforge.net/inverse-search.html}{project
+    page}.
+\item [dvipdfm] This program can convert dvi files into pdf format,
+  while supporting a rich set of features (via TeX's
+  \textbackslash special scheme): hyperlinks, bookmarks, thumbnails,
+  image inclusion etc. For details consult the documentation
+  \dlink{../../../texmf-dist/doc/programs}{dvipdfm}{\docext} and the
+  \href{http://gaspra.kettering.edu/dvipdfm/}{web page}.
+\item [dvipng] makes PNG and/or GIF graphics from DVI files as obtained
+  from TeX and its relatives. For details, consult the documentation:
+  \dlink{../../../texmf-dist/doc/programs}{dvipng}{\docext}.
+
+\end{description}
+
+
+\subsection{Makeindex}
+\texttt{makeindex} is a general purpose hierarchical index generator;
+it accepts one or more input files (often produced by a text formatter
+such as \TeX{} or \texttt{troff}), sorts the entries, and produces an
+output file which can be formatted.  The formats of the input and
+output files are specified in a style file; by default, input is
+assumed to be an \texttt{idx} file, as generated by \LaTeX.
+Documentation: \dlink{../../../texmf-dist/doc/makeindex}{makeindex}{\dviext}
+
+\subsection{Texinfo}
+\texttt{texinfo} is a documentation system. It produces online or
+printed output from a single source. It uses \TeX{} to typeset
+documents for printing (\dlink{../../../texmf-dist/doc/programs}{texinfo}{\dviext}).
+
+
+\subsection{UNIX Scripts / Tools}
+
+If you are using \teTeX{} under UNIX, you can use the following
+scripts. More documentation for a specific tool can either be obtained
+from its UNIX manual page or by running the program with the option
+\texttt{--help}. 
+\begin{description}
+\item[texdoc] allows you to easily access documentation included with
+  \teTeX. You only have to remember the file name of the document that
+  you want to access, without the directory part. If you do not
+  specify a file name extension (such as \texttt{.dvi})
+  \texttt{texdoc} will try a few default extensions. After searching
+  the file, \texttt{texdoc} starts an appropriate viewer.  The command
+  \texttt{texdoc~--help} gives you a list of available command line
+  options. While \texttt{texdoc} is a fast and efficient tool if you
+  exactly know what you are searching for, it is of limited use if you
+  don't know the exact name of the documentation file.
+\item [texdoctk] This \texttt{perl/tk} based tool allows you to browse
+  through the available documentation by some topics and to search for
+  keywords. It uses a simple database file for its configuration
+  (named \texttt{texdoctk.dat}), which you can customize and extend
+  easily.
+\item[texconfig] allows you to carry out the most common configuration
+  tasks in \teTeX. The program can be used in command mode or in
+  interactive mode. For the interactive mode (which is invoked by
+  calling \texttt{texconfig} without arguments), a curses based
+  utility is used for user interaction (menus, check boxes, \ldots).
+  The command \texttt{texconfig help} shows you a list of available
+  command line options (command mode).
+  
+  \verb+texconfig+ can be used to set up \TeX{} format files and their
+  hyphenation patterns, to set up printers (for \verb+dvips+) and for
+  a few other things.  It manipulates configuration files to store the
+  configuration changes.
+  
+  If the use of \verb+texconfig+ causes a change in some configuration
+  file, \verb+texconfig+ will try to save that file into the texmf
+  tree that is specified by the \verb+TEXMFCONFIG+ variable. Variable
+  (cached) runtime data (such as format files generated by
+  \verb+fmtutil+, map files generated by \verb+updmap+) will be stored
+  in the texmf tree specified by the \verb+TEXMFVAR+ variable.
+\item[updmap] Some tools in \teTeX{} support Postscript Type~1
+  fonts: \texttt{dvips}, \texttt{pdf\TeX}, \texttt{xdvi},
+  \texttt{dvipdfm} and \texttt{gsftopk}, \texttt{ps2pk}. The last two
+  in this list just convert outline fonts into a bitmap format which
+  is helpful for applications that don't directly support outline
+  fonts. In an ideal world, all of these programs would share a common
+  configuration file to set up their outline fonts. The reality is
+  different, however, and each tool needs its own configuration. The
+  \texttt{updmap} utility was developed to generate these
+  configuration files from a central repository. Adding font
+  definitions for all supported applications from a map file
+  \texttt{foo.map} can be as easy as %
+  \verb+updmap --enable Map foo.map+. For details, please consult the
+  manual page of \texttt{updmap}.
+\item[dvired] This script can be used to print documents formatted for
+  A4 paper 2-up (i.e.\@ two logical pages to one physical page of
+  paper) by scaling the pages to 70.7\,\% of their original size.
+  \texttt{dvired} can just be used in the same way as \texttt{dvips}
+  (same command line options).
+\item[dvi2fax] This script converts DVI files into FAX G3 format. It
+  uses \texttt{ghostscript} (see:
+  \url{http://www.cs.wisc.edu/~ghost/}) which is not part of \teTeX{}.
+  The DVI file is first converted to Postscript ($204\times 196$\,dpi
+  or $204\times 98$\,dpi) and then to FAX G3 using
+  \texttt{ghostscript} (\texttt{faxg3} device).
+\item[allcm, allec, allneeded] \teTeX's DVI drivers generate missing
+  bitmap fonts on demand (the first time they are needed). If you
+  start with a fresh installation, you don't have any bitmap fonts and
+  the delay caused by font generation might be too annoying for you.
+  In that case, the three scripts \texttt{allcm, allec and allneeded}
+  can help you. \texttt{allcm} and \texttt{allec} create a few DVI
+  files (using \LaTeX) which use lots of fonts at various sizes and run
+  these DVI files through \texttt{dvips}. This triggers the generation
+  of the most commonly used Computer Modern (\texttt{allcm}) and
+  European Computer Modern (\texttt{allec}) fonts respectively. You
+  might already have DVI files and want to generate just the bitmap
+  fonts needed by these documents. This can be done by the
+  \texttt{allneeded} script.  This script will search a given set of
+  directories for DVI files and run them through \texttt{dvips}. All
+  these scripts just trigger font generation. \LaTeX{} and DVI files
+  generated by \texttt{allcm}/\texttt{allec} are removed when the
+  program terminates. Postscript output that is generated by
+  \texttt{dvips} is sent to \texttt{/dev/null}.
+  
+  These programs accept the command line option ``\texttt{-r}'' (must
+  be the first option) to generate files for the magnification $707 /
+  1000$ which is used by \texttt{dvired}. \texttt{allneeded} passes
+  options which correspond to existing file or directory names to
+  \texttt{find} (for locating DVI files). All other options given to
+  any of these three utilities are passed to \texttt{dvips}. So, by
+  passing \texttt{-D \textit{NNN} -mfmode \textit{some-mode}} or
+  \texttt{-P \textit{some-printer}}, you can generate fonts for a
+  specific resolution (\texttt{\textit{NNN}}) and mode
+  (\texttt{\textit{some-mode}}) or for a specific printer
+  (\texttt{\textit{printer}}).
+\end{description}
+
+
+\section{Concepts and configuration}
+
+\subsection{The \TeX{} Directory Structure (TDS)}
+\teTeX{}'s support tree with fonts, macros, documentation and other
+files (from now on called the ``texmf tree'') follows a certain
+structure: the \TeX{} Directory Structure (TDS). This is a standard
+developed by a \TeX{} Working Group of TUG. The TDS is defined in a
+way so that can be used by different implementations of \TeX{} on
+different platforms.  Today, several \TeX{} distributions follow this
+standard: \teTeX, \TeX{} Live, fp\TeX{} and miktex, only to mention
+some.  You need to understand this structure if you want to build your
+own texmf tree (e.g.,\@ with all your local additions) or add files
+into an existing texmf tree.  The list of all texmf trees (optionally
+using some notation called ``brace expansion'' and \verb+!!+
+modifiers; the kpathsea manual
+explains this in detail) can be obtained by:\\
+\null\qquad\verb+kpsewhich -expand-var='$TEXMF'+ %$ 
+
+
+\def\replaceable#1{{\rmfamily $\langle$\textit{#1}$\rangle$}}
+Table
+\ref{tab:tds} gives a short overview of the TDS. It shows the proper
+location inside the TDS tree for several kind of files. The complete
+documentation for TDS can be accessed by
+\dlink{../../../texmf-dist/doc/help}{tds}{\dviext}. If you want to see some examples, just
+look at the main texmf tree of \teTeX. It has several thousand
+files.\bigskip
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{cl}
+    \toprule
+    \TeX{} macros & tex/\replaceable{format}/\replaceable{package}/\\
+    font files &  
+    fonts/\replaceable{type}/\replaceable{supplier}/\replaceable{typeface}/ \\
+    \MF{} files & metafont/\replaceable{package}/ \\
+    documentation & doc/\replaceable{package}/ \\
+    sources & source/\replaceable{package}/\\
+    \BibTeX{} files & bibtex/\{bst,bib\}/\replaceable{package}/\\
+    \bottomrule
+  \end{tabular}
+  \caption{TDS: an overview}
+  \label{tab:tds}
+\end{table}
+
+The replaceable parts in this table mean:
+\begin{description}
+\item[\replaceable{format}] The name of the \TeX{} format, e.g.,\@
+  \texttt{latex} or \texttt{amstex}.
+\item[\replaceable{package}] The name of the package to which the file
+  belongs, e.g.,\@ \texttt{babel} or \texttt{seminar}.
+\item[\replaceable{type}] The name of the type of a font file, e.g.,\@
+  \texttt{pk} (packed bitmap), \texttt{tfm} (tex font metric),
+  \texttt{afm} (adobe font metric), \texttt{vf} (virtual font),
+  or \texttt{source} (\MF{} source).
+\item[\replaceable{supplier}] The name of the font supplier (to whom
+  the font file belongs), e.g.,\@ \texttt{adobe} or \texttt{urw}.
+\item[\replaceable{typeface}] The name of the typeface name (for this
+  font file), e.g.,\@ \texttt{times} or \texttt{cm} (for Computer
+  Modern).
+\end{description}
+
+It is important to know that the default search paths in \teTeX{} rely
+on this directory structure. So, if you add a file to the wrong
+directory tree, e.g.,\@ a TeX macro somewhere in the \texttt{fonts}
+subtree, that file will not be found correctly.
+
+\subsection{Overview of the predefined texmf trees}
+As described in the previous section, each texmf tree follows a well
+defined directory structure. This section lists all predefined texmf
+trees and their intended purpose. The command \verb+texconfig conf+
+shows you the values of the variables below, so that you can easily
+find out how they map to directory names in your installation.
+
+\begin{description}
+\item [TEXMFCONFIG] The tree specified by this variable will be used
+  by te\TeX's utilities \verb+texconfig+, \verb+updmap+ and \verb+fmtutil+
+  to store modified configuration data.
+\item [TEXMFVAR] The tree specified by this variable will by used by
+  the utilities \verb+texconfig+, \verb+updmap+ and \verb+fmtutil+ to
+  store (cached) runtime data such as format files and generated map
+  files.
+\item [TEXMFHOME] The expansion of this variable typically depends on \verb+$HOME+, % $
+  so this dynamically adjusts for each user to an individual
+  directory. The idea is to allow users to store their own versions of
+  macros, fonts etc. in this tree.
+\item [TEXMFSYSCONFIG] The tree specified by this variable will be
+  used by the utilities \verb+texconfig-sys+, \verb+updmap-sys+
+  and \verb+fmtutil-sys+ to store modified configuration data.
+\item [TEXMSYSFVAR] The tree specified by this variable will by used
+  by \verb+texconfig-sys+, \verb+updmap-sys+ and \verb+fmtutil-sys+ to
+  store (cached) runtime data such as format files and generated map
+  files.
+\item [TEXMFMAIN] This variable specifies the texmf tree where some
+  vital parts of the system are installed, such as helper scripts
+  (e.g. \verb+web2c/mktexdir+), pool files and other support files.
+\item [TEXMFLOCAL] This variable names a directory tree which should
+  be used for system-wide installation of additional or updated macro
+  packages, fonts etc.
+\item [TEXMFDIST] This variable names the directory tree which holds
+  the macros, fonts etc. as originally distributed.
+\end{description}
+
+\subsection{The file name database (ls-R)}
+texmf trees can get very large and to speed up searching in such a
+tree, a file name database is used. A file name database exists in the
+root of each texmf tree and has the name \verb+ls-R+. It should list
+each file in the texmf tree. The command \verb+texhash+ can be used to
+build an up-to-date file name database for each texmf tree. It should
+be used after files have been added to a texmf tree. However, you
+don't need to run \verb+texhash+ for files added by the automatic font
+generation or the \texttt{texconfig} utility.
+
+
+\subsection{Runtime configuration (texmf.cnf file)}
+\label{ss:texmfcnf}
+Search paths and other definitions (e.g.,\@ the static sizes of some
+arrays in \TeX{} or other programs) can be set up in configuration
+files named \texttt{texmf.cnf}. By changing the definitions in these
+configuration files (\teTeX's main \texttt{texmf.cnf} is
+\path|web2c/texmf.cnf| in the main texmf tree), the behavior of
+programs can be changed without recompiling them. Chapters 3 and 4 of
+the kpathsea manual (\dlink{../../../texmf-dist/doc/programs}{kpathsea}{\docext}) describe
+the path searching configuration in detail. Section 2.5 of the Web2c
+manual (\dlink{../../../texmf-dist/doc/programs}{web2c}{\docext}) describes some
+interesting runtime parameters that you might want to change.
+
+Some changes to the array sizes require you to rebuild the dump files
+that the program uses. Run the command \verb+texconfig init+ to
+rebuild all dump files after you have changed one of the array sizes.
+
+This implementation of \TeX{} can read and write files (as can every
+implementation of \TeX) and it can also call external commands (via
+the \verb+\write18+ stream). Some variables in the \verb+texmf.cnf+
+file control access to these features. The possibility to call
+external commands can be turned on or off (default is off). Access to
+file beginning ``\verb+.+'' is disallowed in restricted mode (default
+for reading files). In paranoid mode, file access is even more
+restricted and you cannot access files outside the current directory
+tree (default for writing files). If the first line of a document starts with \verb+%&+,
+it can be used to pass the name of the format file and/or a TCX file.
+Parsing the first line, is an extension that can be turned on or off
+(default is off) in the \verb+texmf.cnf+ file.
+
+\subsection{Using Postscript type 1 fonts}
+For every font you use with \TeX, a TFM (\TeX{} font metric) file is
+needed. Type~1 fonts usually do not have the same encoding that is
+used by \TeX{}, so additional metrics that do some re-encoding (virtual
+font files) are often needed. For a lot of font families, these font
+metric files and additional map files that you need (see below) can be
+found on CTAN servers in the directory \path|fonts|. If
+support for your fonts cannot be found there, you can use the
+\verb+fontinst+ utility (documentation:
+\dlink{../../../texmf-dist/doc/fontinst/base}{fontinst}{\dviext}) to create these.
+
+Postscript type 1 fonts can be used by \texttt{dvips}, \texttt{dvipdfm}, \texttt{xdvi},
+\texttt{gsftopk}, \texttt{ps2pk} and pdf\TeX. All of these programs
+require that you set up map files for these fonts. To ease the process
+of adding map file entries to the configuration files that are used by
+these tools, you should follow the following steps:
+\begin{itemize}
+\item if your fonts already come with a map file, put that
+  file into the \path|fonts/map/dvips/misc| directory in the main texmf tree.
+\item otherwise, you will need to create a map file yourself,
+  using the syntax as described in the dvips manual
+  (\dlink{../../../texmf-dist/doc/programs}{dvips}{\dviext}); make sure to set up these fonts
+  as ``download fonts'', not as ``built in'' fonts.
+\item run the command \verb+texhash+ and then make the map file known
+  to \verb+updmap+ by running the command %
+  \verb+updmap --enable Map file.map+ (where %
+  \verb+file.map+ denotes the filename of your map
+  file)
+\end{itemize}
+
+The programs \verb+gsftopk+ and \verb+ps2pk+ convert Postscript type 1
+fonts into bitmap fonts and make these fonts accessible to DVI drivers 
+that do not directly support Postscript type 1 fonts. This
+conversion is automatically invoked by the \verb+mktexpk+
+script. That script calls \verb+gsftopk+ by default. If you do not
+have installed the \verb+ghostscript+ program (which \verb+gsftopk+
+needs), or if you want to use \verb+ps2pk+ for other reasons (e.g.,
+because it is usually faster) you just need to define the variable
+\verb+ps_to_pk+ to \verb+ps2pk+. This variable can be set in your
+environment or in the \verb+mktex.cnf+ file (see below).
+
+\subsection{Configuration files maintained by texconfig}
+\label{sec:cfgtexconfig}
+The \texttt{texconfig} utility is a user interface for changing the
+configuration of the \teTeX{} system. The configuration is stored in
+several individual files. This section documents the names of these
+files, their location in the texmf tree and their content. This
+explains how \texttt{texconfig} works and enables you to manually
+configure parameters which are not supported by \texttt{texconfig}.
+
+\begin{itemize}
+\item \path|dvips/config/config.ps| stores configuration information for
+  \texttt{dvips}. The default values are: 600\,dpi resolution; ljfour
+  \MF{} mode; A4 paper; offset for printing: 0pt,0pt; output goes to
+  \texttt{lpr} command.
+\item \path|tex/generic/config/pdftexconfig.tex| This file sets some
+  defaults for pdf\TeX{}, e.g.\@ the default paper size. This
+  information is dumped into format files, so if you modify this file
+  directly (without using texconfig), you have to rebuild the format
+  files by using the command \verb+fmtutil --all+.
+\item \path|xdvi/XDvi| This file sets some defaults (e.g. media size,
+  metafont mode) for \verb+xdvi+.  It is read via the app-default
+  mechanism of X11. You can override these app-defaults as usual
+  (i.e.\@ via a file \verb+~/.Xdefaults+ or with resources managed by
+  \verb+xrdb+).
+\item \path|dvipdfm/config| defines the defaults for \verb+dvipdfm+,
+  e.g.\@ the default paper size, the command to convert encapsulated
+  postscript graphics into PDF etc.
+\item \path|web2c/mktex.cnf| This file sets the default metafont mode
+  used for automatically generated bitmap fonts, the resolution which
+  is used in scripts (e.g. \verb+mktextfm+) and a list of ``features''
+  used for automatic font generation. The most important ``features''
+  are described below; for a full list, see section 2.2.9.1 of the
+  kpathsea manual
+  (\dlink{../../../texmf-dist/doc/programs}{kpathsea}{\docext}).
+  \begin{description}
+  \item [appendonlydir] Set the sticky bit on directories that have to
+    be created. The sticky bit has the effect that a file in such a
+    directory can only be removed by the owner of that directory or by
+    the owner of that file.
+  \item [varfonts] When this option is enabled, fonts that would
+    otherwise be written to some texmf tree go below the
+    \verb+VARTEXFONTS+ directory instead.  The default value is in
+    \path|/var/tmp/texfonts|.  The ``Linux File System Standard''
+    recommends \path|/var/tex/fonts|.  The \verb+varfonts+ setting in
+    \verb+MT_FEATURES+ is overridden by the environment variable
+    \verb+USE_VARTEXFONTS+: if set to 1, the feature is enabled, and
+    if set to 0, the feature is disabled.
+  \item [texmfvar] Force generated files that would go into a system
+    tree (as defined by \verb+SYSTEXMF+) into \verb+TEXMFVAR+. The
+    \verb+varfonts+ feature takes precedence if also set. A user can
+    override this setting in either direction by setting
+    \verb+USE_TEXMFVAR+ to 1 or 0.
+  \end{description}
+\item \path|web2c/updmap.cfg| controls how \verb+updmap+ generates map
+  files for all supported tools. Besides some general parameters, all
+  active map files are listed here.
+\item \path|web2c/fmtutil.cnf| This file defines which format files
+  are built (and how) and which file can be used to customize the
+  hyphenation patterns that are loaded into these formats. The
+  programs \verb+fmtutil+ and \verb+texlinks+ (which are automatically
+  called if the formats are set up via \verb+texconfig+) operate on
+  this file. \verb+fmtutil+ can be used to create the format files
+  according to the ``rules'' defined in \verb+fmtutil.cnf+ (for a
+  brief description, just call \verb+fmtutil --help+). If you define a
+  new format file, you usually also need a symbolic link with the name
+  for the format to the appropriate \TeX{} engine (e.g.,
+  \verb+latex+~$\to$~\verb+pdfetex+). To create these links, just call the
+  \verb+texlinks+ script.
+\item hyphenation setup files as defined in \path|web2c/fmtutil.cnf|:
+  the third field of the file \path|fmtutil.cnf| defines names of
+  files which can be edited to customize hyphenation (for the format
+  which is named in the first field). Since \path|fmtutil.cnf| itself
+  is a configuration file, the list of files in the third field might
+  vary.  Table~\ref{tab:hyphx} shows the names of the files used in
+  the default configuration.
+  \begin{table}[htbp]
+    \centering
+    \begin{tabular}{ll}
+      \toprule
+      file name & used by format\\
+      \midrule
+      \path|tex/context/config/cont-usr.tex| & cont-en\\
+      \path|tex/generic/config/language.dat| & latex, pdflatex\\
+      \path|tex/lambda/config/language.dat|  & lambda, lamed\\
+      \path|tex/plain/config/language.def|   & etex, pdfetex\\
+      \bottomrule
+    \end{tabular}
+    \caption{files for setting up hyphenation}
+    \label{tab:hyphx}
+  \end{table}
+  Additional files (used by formats that are disabled in the default
+  configuration) are: \path|platex/config/language.dat| and
+  \path|mex/config/mexconf.tex|.
+\end{itemize}
+
+
+\subsection{Automatic font generation}
+By setting various ``features'' (see \ref{sec:cfgtexconfig}) the
+automatic font generation can be customized in many ways.  The tool
+\verb+texconfig+ offers support in configuring and setting up the
+directories where automatically generated fonts end up.
+
+In the default configuration of te\TeX, all automatically generated
+fonts end up in the directory tree which is specified by the
+\verb+VARTEXFONTS+ variable. The command line mode of \verb+texconfig+
+(\emph{not} the interactive mode) allows you to manipulate the path
+and the permissions of this directory tree and also adjusts the
+``features'' for automatic font generation to match the chosen
+directory permissions:
+
+\begin{description}
+\item [texconfig font vardir DIR] This changes the path which is
+  stored in the \verb+VARTEXFONTS+ variable to \verb+DIR+. You must
+  have write permissions to the main \verb+texmf.cnf+ file, because
+  the variable is stored there.
+\item [texconfig font rw] This makes the \verb+VARTEXFONTS+ directory
+  (and subtrees \verb+pk+, \verb+tfm+, \verb+source+) world writable
+  and sets the ``features'' \verb+appendonlydir+ and \verb+varfonts+
+  in the config file \verb+mktex.cnf+. To change the global
+  \verb+mktex.cnf+ file (instead of modifying an individual copy), use
+  \verb+texconfig-sys+ instead of \verb+texconfig+.
+\item [texconfig font ro] This makes the \verb+VARTEXFONTS+ directory
+  (and subtrees \verb+pk+, \verb+tfm+, \verb+source+) writable for the
+  owner only and sets the ``features'' \verb+texmfvar+ in the config
+  file \verb+mktex.cnf+. To change the global \verb+mktex.cnf+ file
+  (instead of modifying an individual copy), use \verb+texconfig-sys+
+  instead of \verb+texconfig+.
+\end{description}
+
+The assumption behind the manipulations of \verb+texconfig+ is that
+you set up a world-writable \verb+VARTEXFONTS+ tree if you want all
+generated fonts (by all users) to be stored there. If you set the
+global \verb+VARTEXFONTS+ tree to read-only, then the \verb+texmfvar+
+is activated which results in a user-specific default destination for
+automatically generated fonts (\verb+$TEXMFVAR/fonts+). % $
+
+\subsection{TCX files}
+TCX (\TeX{} character translation) files help \TeX{} support direct
+input of 8-bit international characters if fonts containing those
+characters are being used.  Specifically, they map an input (keyboard)
+character code to the internal \TeX{} character code (a superset of
+ASCII).
+
+\teTeX{} has the TCX files \verb+il1-t1.tcx+ and \verb+il2-t1.tcx+
+which support ISO Latin 1 and ISO Latin 2, respectively, with
+Cork-encoded fonts (a.k.a.: the T1 encoding).  TCX files for Czech,
+Polish, and Slovak are also provided.
+
+All TCX files that are distributed as part of \teTeX{} can be found in
+the web2c subdirectory of the main texmf tree; their file name
+extension is \verb+.tcx+.
+
+You can specify a TCX file to be used for a particular \TeX{} run by
+specifying the command-line option
+\hbox{\texttt{-translate-file=\textsl{tcxfile}}} or (preferably)
+specifying it explicitly in the first line of the main document
+\hbox{\texttt{\%\& -translate-file=\textsl{tcxfile}}}. Note, however,
+that parsing the first line of an input file in an extension that is
+disabled by default and has to be turned on via command line switch
+(\verb+-parse-first-line+) or in the \verb+texmf.cnf+ file (see
+section \ref{ss:texmfcnf}).
+
+When processing a document using a TCX file, you usually must not
+use \LaTeX's \verb+inputenc+ package. One exception to this rule are
+TCX files that map all characters to their original position such as
+\verb+cp8bit.tcx+, \verb+cp227.tcx+ and \verb+natural.tcx+.  The purpose
+of these TCX files is to manipulate the ``printability'' attribute in
+\TeX's internal tables.
+
+\subsection{Creating PDF files}
+If you want to create PDF documents with the help of \TeX, there are
+at least three different ways to do this
+\begin{enumerate}
+\item translate your \TeX{} sources directly into PDF by using pdf\TeX.
+\item translate DVI files generated by \TeX{} into PDF by using the
+  \texttt{dvipdfm} program (now included in \teTeX).
+\item translate a Postscript file generated by \TeX{} and
+  \texttt{dvips} into PDF by using Adobe Acrobat or
+  the \texttt{ps2pdf} utility included in ghostscript. 
+\end{enumerate}
+When using \texttt{ps2pdf}, you should make sure to use at least
+version 6.50 of ghostscript. Earlier versions are known to have
+serious restrictions on creating PDF output.
+
+No matter which approach you use, there is one common rule when creating
+quality PDF files: you should avoid bitmap fonts. They just display
+very poorly on screen when used in PDF documents (which is caused by
+poor bitmap rendering of Adobe Acrobat Reader in all versions up to 5.x).
+
+Using only the fonts provided by \teTeX, you have more choices for
+which fonts to use.  The following typeface families are included in
+Postscript type~1 format:
+\begin{itemize}
+\item Computer Modern and the AMS fonts (extended versions with
+  polish, czech and slovak and russian letters are available, too); a
+  special extension to Computer Modern providing lots of additional
+  characters (most, but not exclusively accents) are the Latin Modern
+  fonts
+\item the full set of the 35 basic ``LaserWriter fonts'' (see psnfss
+  documentation, supporting other fonts are pazo, tx/px fonts)
+\item Bitstream Charter
+\end{itemize}
+
+The EC fonts are not included in type 1 format in te\TeX. If
+you have a \LaTeX{} document that uses EC fonts, you have at
+least two ways to get around this problem. The first is to stop
+using EC fonts---which can in most cases be done by switching
+to the Latin Modern fonts. Usually, the EC fonts are activated by
+\verb+\usepackage[T1]{fontenc}+ or \verb+\usepackage{t1enc}+ and you
+just have to add \verb+\usepackage{lmodern}+. The second is to use the
+CM-SUPER Type~1 fonts, not included in \teTeX, but available on CTAN
+servers in the directory \path|fonts/ps-type1/cm-super|. This package is
+pretty huge, but it contains all EC fonts in outline format and much more.
+
+If the Latin Modern solution works for you, this is the recommended
+one for the following reasons:
+\begin{itemize}
+\item quality: the Latin Modern fonts have been created by using a
+  better technology and they have been carefully hand-optimized
+  (hinting, kerning, accent positioning etc.)
+\item the Latin Modern fonts are already included in te\TeX
+\item the resulting files are usually much smaller
+\end{itemize}
+
+\section{Release notes for te\TeX{} 2.0}
+Some default settings of ``\texttt{tex}, the Web2C implementation of
+\TeX'' have changed.  We determined that some extensions were in fact
+in conflict with the strict definition of TeX as laid down by Knuth.
+
+The most notable change is that parsing of \verb+%&+ constructs in the
+first line of an input file is now disabled by default -- it can be
+enabled in \texttt{texmf.cnf} if you desire this.  In that case, tex
+will announce itself as ``TeXk'' and print an additional banner line
+saying
+that \verb+%&+-line parsing is enabled.
+  
+We may encounter more places where the default behaviour is not what
+it should be, and proceed to make this optional (and by default off)
+in future versions of Web2C.
+
+
+\section{Release notes for te\TeX{} 3.0}
+This section briefly describes what has changed since the last major
+release.
+
+\subsection{New programs / font support / macro packages}
+Two programs (see section \ref{sec:components}) have been added with
+this release: Aleph and dvipng. Many macro packages have been added,
+too.  The largest additions are the packages beamer and memoir. In the
+fonts sections, some additions and updates have happened, too. The
+largest change in this area is the addition of the Latin Modern Fonts
+(\verb+lmodern+) in Postscript Type 1 format. These fonts are not as
+exhaustive as the \verb+cmsuper+ fonts, but they are of very good
+quality and sufficient for languages which use Latin characters. Using
+the Latin Modern Fonts is in most cases preferable over using the
+\verb+ae+ fonts (e.g. PDF files with accents are searchable, text
+extraction works better).
+
+\subsection{Changes to web2c}
+\begin{itemize}
+\item \TeX{} now uses the new \verb+tex.web+ (version 3.141592) from
+  December 2002 (fixed \verb+\xleaders+, glueset, weird alignments).
+\item enc\TeX{} (see
+  \dlink{../../../texmf-dist/doc/generic/enctex}{encdoc-e}{\dviext})),
+  a \TeX{} extension by Petr Ol\v s\'ak for input reencoding is now
+  available (for non Omega based engines). The new functionality is
+  enabled by setting the \verb+-enc+ switch at format generation time.
+  It defines 10 new primitives which can be used to control \TeX{}'s
+  internal character translation tables and proper multibyte input
+  (e.g. for handling UTF-8).
+\item The \verb+\input+ primitive in \verb+tex+ (and \verb+mf+ and
+  \verb+mpost+) now accepts double quotes containing spaces and other
+  special characters.  Typical examples:
+\begin{verbatim}
+\input "filename with spaces"   % plain
+\input{"filename with spaces"}  % latex
+\end{verbatim}
+See the Web2C manual for more: \dlink{../../../texmf-dist/doc/programs}{web2c}{\docext}.
+\end{itemize}
+
+\subsection{Modifications to the directory structure and file searching}
+\begin{description}
+
+\item [split of texmf trees] The instruction of installing te\TeX{}
+  from the sources that I provide have been changed. The unpacked
+  texmf tarball (\verb+$prefix/share/texmf-dist+, %$
+  set up as \verb+$TEXMFDIST+ %$
+  in \verb+texmf.cnf+) is no longer mixed with the files that are
+  installed via ``\verb+make install+'' from building and installing
+  the program sources. These files (e.\,g. format files) that are more
+  tied up with the programs end up in the directory
+  \verb+$prefix/share/texmf+ (\verb+$TEXMFMAIN+).
+  
+  So, the content of the texmf tarball remains completely unchanged
+  in \verb+$TEXMFDIST+ %$
+  and can easily be replaced with a new version without loosing other
+  runtime files that are not provided elsewhere.
+
+\item [changed location for font map files] Following a change
+  introduced with version 1.1 of the \TeX{} Directory Structure (see
+  \dlink{../../../texmf-dist/doc/help}{tds}{\dviext}), font map files
+  (\verb+.map+) are now only searched in subdirectories of
+  \verb+fonts/map+ in each \verb+texmf+ tree. The subdirectories of
+  \verb+fontname+, \verb+dvips+ and \verb+pdftex+ are no longer
+  searched for these files. The \verb+texmf+ trees from this
+  distribution follows this convention, but you might need to
+  rearrange some files if you maintain a local \verb+texmf+ tree.
+  
+  Within the \verb+fonts/map+ tree the files are organized by syntax
+  and package. Known map file syntaxes are \verb+dvips+ (this is the
+  most common one), \verb+pdftex+ (a superset of the \verb+dvips+
+  syntax, e.\,g. the psname field is optional), \verb+dvipdfm+ and
+  \verb+vtex+. If some file is stored within the
+  \verb+fonts/map/dvips+ subtree, this does not mean that \verb+dvips+
+  is the only program that accesses these files. Other programs which
+  support the same syntax can use these files as well. It's just that
+  the program \verb+dvips+ has given its name for this syntax.
+  
+  The next directory level specifies the package that the map file
+  belongs to.  Example: the file \verb+charter.map+ of the
+  \verb+psnfss+ package follows the syntax of \verb+dvips+, so it is
+  stored in \verb+fonts/map/dvips/psnfss/charter.map+.
+  
+  If you happen to see that some application cannot find a map file
+  which is stored in a wrong location, you have to move that file to
+  the right location. Try to find out the syntax and the package that
+  the file belongs to. If unsure, you can always choose ``unknown'',
+  since the only restriction for the directory tree below
+  \verb+fonts/map+ is that all file names are unique. The precise
+  \verb+<syntax>/<package>+ subdirectory does not affect searching. Do
+  not forget to update the filename database (\verb+ls-R+) by running
+  the command \verb+mktexlsr+ (resp.  \verb+texhash+ which is the
+  same).
+
+\item [changed search path for map files] Map files used to be
+  searched along the \verb+$TEXCONFIG+ % $
+  variable (``dvips config'' format in terms of kpathsea internals).
+  This has been changed to the \verb+$TEXFONTMAPS+ % $
+  variable (``map'' format). The new location of the font map files is
+  included in the new default setting of \verb+$TEXFONTMAPS+, % $
+  but not in the default setting of \verb+$TEXCONFIG+. % $
+  The result is that an old application that searches font map files
+  along the ``dvips config'' format will not work.
+  
+  For the ``C'' API of kpathsea this change means that map files
+  should be accessed using \verb+kpse_fontmap_format+ instead of
+  \verb+kpse_dvips_config_format+. For scripts that use kpsewhich, one
+  has to make sure that \verb+--format=map+ is used to search font map
+  files.
+  
+\item [changed location for font encoding files] Together with font
+  map files (see above), the font encoding files have been given a new
+  location, too. The new location is
+  \verb+fonts/enc/<syntax>/<package>+. So, if you happen to see some
+  application to fail finding a font encoding file, just move it to
+  the right location in the texmf tree and update the filename
+  database.
+  
+\item [omission of ``engine'' directories] Within the texmf trees, the
+  directory trees associated with the names of \TeX{} engines (e.\,g.
+  \verb+etex+, \verb+pdftex+, \verb+omega+, \verb+mltex+) are no
+  longer searched for \TeX{} macro packages. This means that the \verb+$TEXINPUTS+ %$
+  search path now lies completely within the \verb+tex+ subtree.
+  
+  If you are using the above mentioned ``obsolete'' locations for
+  \TeX{} macro packages, you have to move them into the \verb+tex+
+  directory tree.
+\end{description}
+
+
+\subsection{Changes to texconfig / updmap / fmtutil}
+\label{sec:texconfig-changes}
+Following the new directory layout, it is desired not to modify
+the directory tree specified by the \verb+$TEXMFDIST+ % $
+variable any more. This makes it necessary to redirect generated
+output (e.g. map files created by updmap, updated config files)
+somewhere else.
+
+A new approach was taken by the implementation in te\TeX-3.0: two new
+variables have been introduced to specify where to store this data:
+\medskip
+
+\begin{tabular}{ll}
+  TEXMFCONFIG & configuration data\\
+  TEXMFVAR & variable (cached) runtime data
+\end{tabular}
+\medskip
+
+If a te\TeX{} installation is shared among several users, each of them
+can now use te\TeX{}'s configuration tools. For each of the three
+programs, a \verb+-sys+ variant exists. Calling this variant, e.g.
+\verb+texconfig-sys+, is the same as calling the regular variant,
+except that the variables TEXMFCONFIG and TEXMFVAR are redirected to
+TEXMFSYSCONFIG and TEXMFSYSVAR respectively. This means that the
+output trees for these commands will be TEXMFSYSCONFIG and
+TEXMFSYSVAR.
+
+The idea behind this is as follows: in the default settings of te\TeX,
+the variables TEXMFCONFIG and TEXMFVAR point to directories within the
+user's home directories. This means that each user can have his own
+configuration, but this makes it difficult to change the global
+defaults. That's where TEXMFSYSCONFIG and TEXMFSYSVAR come into play.
+These global trees are included in the search paths of all users. By
+using the \verb+-sys+ variant of the tools mentioned above, it becomes
+easy to administrate the global defaults. So, if for example, some
+administrator installs a font-package that comes with a map file in a
+system's tree (e.g.  TEXMFLOCAL), then he should use \verb+updmap-sys+
+to add the new map file to the global configuration.
+
+
+\subsection{Changes to pdf\TeX{}}
+\begin{itemize}
+\item All parameters previously set through the special configuration
+  file \verb+pdftex.cfg+ must now be set through primitives;
+  \verb+pdftex.cfg+ is no longer supported. Some settings (e.g. the
+  default papersize) are loaded via \verb+pdftexconfig.tex+ into the
+  format files.
+\item \verb+\pdfmapfile+ and \verb+\pdfmapline+ provide font map
+  support from within a document.
+\item Microtypographic font expansion can be used more easily.\\
+  \url{http://www.ntg.nl/pipermail/ntg-pdftex/2004-May/000504.html}
+\item See the pdf\TeX\ manual for more:
+  \dlink{../../../texmf-dist/doc/pdftex/manual}{pdftex-a}{\pdfext}.
+\end{itemize}
+
+\subsection{pdfetex: the new default \TeX{} engine}
+te\TeX{} uses \verb+pdfetex+ for all formats except ``good-old''
+\verb+tex+. So, if you run \verb+latex+, the underlying engine will be
+\verb+pdfetex+. Some (broken) \TeX{} macros assume that pdf\TeX{} is
+running in PDF generation mode if they detect primitives that
+pdf\TeX{} has introduced (e.g. \verb+\pdfoutput+). This is wrong,
+since pdf\TeX{} can also be used (and is used) to generate DVI output.
+A reliable way of detecting PDF output mode is implemented in
+\verb+ifpdf.sty+ which works for plain \TeX{} as well as \LaTeX.
+
+
+\subsection{Changes to xdvik}
+\begin{itemize}
+\item On supported platforms the default toolkit of \verb+xdvi+
+   is now Motif. The GUIs for both toolkits (Motif and Xaw) have
+   been updated: There is a page list for easier navigation and
+   improved menus.  The Motif version now has a toolbar and a
+   `Preferences' dialog for advanced customizations.
+
+   User preferences that are set via this dialog, the `Options'
+   menu and other dialogs are now saved in a file
+   \verb+~/.xdvirc+. This file overrides other X defaults, but
+   not the command-line options. (The option `\verb+-q+' and the X resource
+   `\verb+.noInitFile+' can be used to disable
+   this feature).
+
+\item The new GUI elements can be selectively toggled via the
+   option or the X resource `\verb+-expertmode+', which should be
+   used instead of `\verb+-expert+'\slash`\verb+-statusline+'.
+
+\item The functionality of \verb+oxdvi+ has been merged into
+   \verb+xdvi+; \verb+oxdvi+ no longer exists as a separate binary.
+
+\item \verb+Xdvi+ now supports string search and text selection
+   in DVI files (menu `Modes $\rightarrow$ Text Selection'),
+   printing DVI files and exporting them in PDF, Postscript and
+   plain text format. Pages can be marked with Mouse-2 in the
+   page list to select them for printing\slash saving.
+
+\item By default, \verb+xdvi+ will create a backup copy of the
+   DVI file so that viewing and navigating still works when the
+   DVI file is being written by \TeX.
+
+\item Other new features include: Support for color specials and
+   colored hyperlinks (customizable via the `\verb+linkstyle+
+   option and X resource), a `\verb+-watchfile+' option, a
+   `\verb+-unique+' option for loading new files into a running
+   instance of \verb+xdvi+, support for hyperrefs `hdvips'
+   specials, and a history of recently viewed files via the menu
+   `File $\rightarrow$ Open Recent'.
+\end{itemize}
+
+\subsection{Changes to dvipsk}
+\begin{itemize}
+\item The functionality of \verb+odvips+ has been merged into
+  \verb+dvips+; \verb+odvips+ no longer exists as a separate binary.
+\item Fonts used in included graphics files are no longer partially
+  downloaded.
+\end{itemize}
+
+
+\subsection{Improved documentation}
+\begin{itemize}
+\item The file \verb+doc/index.html+ in the distributed texmf tree
+  provides a much improved overview of the included documentation and
+  also provides a search facility for various \TeX{} related
+  information sources.
+  
+  This file is generated by a PHP script which is included in te\TeX{}
+  as well.
+\item The PHP script \verb+doc/texdoc.php+ is able to offer a web
+  interface to the information provided in texdoctk databases.
+\end{itemize}
+
+\section{Resources}
+
+This section describes where you can find further (or more up-to-date)
+material and support in the world of \TeX.
+
+
+\subsection{Helpindex file for the documentation tree}
+The file \path+index.html+ in the root of \teTeX's
+documentation tree is a guide for the documentation that is included
+in \teTeX. It is a good point to start when you want to browse through
+the documentation or search for the solution of a specific problem.
+
+\subsection{Internet Newsgroups}
+If you encounter a problem which might not be \teTeX{} specific, but
+rather a general problem with \TeX{} or \LaTeX{} (e.g.,\@ ``How can I
+format a section heading in a different way?''), you should not raise
+your question on one of the mailing lists for \teTeX. In the following
+newsgroups, \TeX-related matters are discussed:
+\begin{description}
+\item [comp.text.tex] General things about \TeX{}.
+\item [news.answers] FAQs (also \TeX-related FAQs).
+\item [comp.answers] FAQs (also \TeX-related FAQs).
+\item [de.comp.text.tex] General things about \TeX{} (German).
+\item [fr.comp.text.tex] General things about \TeX{} (French).
+\item [comp.fonts] Font matters.
+\item [comp.programming.literate] Literate programming.
+\end{description}
+
+\subsection{\TeX{} User Groups}
+If you enjoy \TeX{}, you can join a \TeX{} user group to get support
+and software and help the \TeX{} community by your membership. The web
+site of the \TeX{} User Group (TUG), \path|http://tug.org/| has the
+necessary contact information for several \TeX{} user groups.
+
+
+\subsection{Mailing Lists}
+All \teTeX{} mailing lists are hosted on the same server which is
+managed by Majordomo software. Administrative requests,
+e.g.,\@ to (un)subscribe or to get an archive of a list are handled by
+the address: \path|majordomo@dbs.uni-hannover.de| To get a list
+of available commands that the Majordomo server understands, just send the
+message ``help'' to the server (in the body of a message, not in the
+header). The lists are:
+\begin{description}
+\item[tetex] General discussions + bug reports about \teTeX. General
+  \TeX{} matters that are not \teTeX-specific are not discussed.
+  Especially general questions about \TeX{} should \emph{not} be
+  directed to this list; use a newsgroup instead.
+\item[tetex-announce] This (moderated, low traffic) list is used for
+  important announcements about \teTeX, such as new releases or important
+  updates.
+\item[tetex-pretest] This is used to discuss beta versions of \teTeX{}
+  and to report bugs in these versions. Bug reports about official
+  (non-beta) releases should not be send here, but to the \texttt{tetex}
+  list.
+\end{description}
+
+Some of the packages which are contained in \teTeX{} (e.g.,\@ Omega
+and pdf\TeX) have special mailing lists or web resources on their own.
+The web site of TUG, \path+http://tug.org/+ has links to many of them.
+
+
+\subsection{Comprehensive TeX Archive Network (CTAN)}
+To aid the archiving and retrieval of \TeX{}-related files, a TUG
+(TeX User Group) working group developed the Comprehensive \TeX{}
+Archive Network (CTAN).  Each CTAN site has identical material, and
+maintains authoritative versions of its material.  These collections
+are extensive; in particular, almost everything mentioned in this
+article is archived at the CTAN sites, even if its location isn't
+explicitly stated.
+
+The CTAN sites are currently \verb|dante.ctan.org|,
+\verb|cam.ctan.org| and \verb|tug.ctan.org|.  The organization of
+\TeX{} files on all these sites is identical and starts at
+\path|/tex-archive|.  To reduce network load, please use the CTAN site
+or mirror closest to you.  A complete and current list of CTAN sites
+and known mirrors can be obtained by using the \verb|finger| utility
+on `user' \verb|ctan@cam.ctan.org| (it also works with the other CTAN
+hosts); it is also available as file \path|help/ctan/CTAN.sites| in
+\teTeX's documentation tree.
+
+
+\subsection{The \TeX{} Catalogue}
+
+This catalogue lists many \TeX, \LaTeX, and related packages and
+tools.  Most are available worldwide online from CTAN, the
+Comprehensive TeX Archive Network. Links are provided in this
+catalogue to available sources and documentation. The \teTeX{}
+documentation tree contains a version of this catalogue in
+\path|help/Catalogue|. The most recent online version is available at
+\begin{center}
+\url{http://texcatalogue.sarovar.org/}
+\end{center}
+
+\subsection{Frequently Asked Questions (FAQs)}
+Documents which list frequently asked questions and their answers (in
+short: FAQs) are collections of solutions to many common problems. The
+documentation tree of \teTeX{} contains the \teTeX{} FAQ in the
+directory \path|tetex| and the UKTUG FAQ in the directory
+\path|help/faq/uktug-faq|. The \teTeX{} FAQ can be read by the
+command \verb+texconfig faq+.
+
+\bibliographystyle{plain}
+\bibliography{TETEXDOC}
+
+\end{document}
+\endinput
+% LocalWords:  teTeX Esser pdf dvips xdvi dvipdfm makeindex kpathsea texmf DVI
+% LocalWords:  Amiga typefaces mpman btxdoc gftopk gftodvi gftype pktogf pktype
+% LocalWords:  pltotf tftopl vftovp vptovf dvicopy dvitomp dvitype patgen tex
+% LocalWords:  pooltype cnf TeXk behaviour pdftexman hyperref pdftex PNG JPG ps
+% LocalWords:  jpeg MPS metapost EPS ghostscript perl epstopdf etex Unicode doc
+% LocalWords:  OTPs dvilj hypertex config LaserJet dvi bookmarks thumbnails idx
+% LocalWords:  Texinfo texinfo texdoc texdoctk tk dat texconfig updmap gsftopk
+% LocalWords:  pk foo dvired dpi faxg allcm allec allneeded NNN mfmode TFM TDS
+% LocalWords:  fp miktex tds metafont bibtex bst amstex babel tfm vf dvipng enc
+% LocalWords:  afm urw ls TCX CTAN fontinst misc def cont usr ljfour pt lpr app
+% LocalWords:  XDvi appendonlydir dosnames fontmaps Fontname nomfdrivers nomode
+% LocalWords:  stripsupplier striptypeface varfonts Slovak tcxfile czech slovak
+% LocalWords:  russian LaserWriter psnfss pazo tx px Bitstream EC AE Ppdf html
+% LocalWords:  preconfigured Helpindex newhelpindex comp Majordomo un tetex faq
+% LocalWords:  Catalogue catalogue UKTUG UK francaise TETEXDOC ctangle cweave
+% LocalWords:  TEXMFCONFIG te TEXMFVAR TEXMFHOME TEXMFSYSCONFIG TEXMSYSFVAR mex
+% LocalWords:  TEXMFMAIN TEXMFLOCAL TEXMFDIST texmfvar fmtutil pdflatex pdfetex
+% LocalWords:  platex vardir DIR rw ro kerning glueset encdoc Petr Ol ak UTF
+% LocalWords:  reencoding multibyte tarball psname resp API kpsewhich papersize
+% LocalWords:  TEXMFSYSVAR Microtypographic xdvik GUIs Xaw hyperrefs hdvips PHP
+% LocalWords:  dvipsk

@@ -1,0 +1,574 @@
+.de EX
+.sp
+.in +5
+.nf
+.ft CW
+..
+.de EE
+.in -5
+.ft R
+.sp
+.fi
+..
+.TH "texexec" "1" "October 2000" "ConTeXt" "ConTeXt" 
+.PP 
+.SH "NAME" 
+texexec \- ConTeXt and PDF auxiliary program and batch processor
+.PP 
+.SH "SYNOPSIS" 
+\fBtexexec\fP [ \fIOPTION\fP \&.\&.\&.  ] \fIFILE\fP [ \&.\&.\&.  ]
+.PP 
+.SH "DESCRIPTION" 
+.PP 
+\fBtexexec\fP is a Perl script that provides several functions:
+.IP o 
+Process a TeX file\&.  This includes performing as many runs as
+necessary of \fBtex\fP(1), \fBtexutil\fP(1), and
+\fBmetapost\fP(1)\&.   Options allow you to select the output
+format, the pages to process, paper size, and so forth\&.
+.IP o 
+Create new ConTeXt formats (with \fB--format\fP)\&.
+.IP o 
+Post-process existing PDF files, including merging multiple
+files, and extracting and rearranging pages within a file
+(similar to the functions provided by \fBpsnup\fP(1) and
+\fBpdfmerge\fP(1))\&.
+.IP o 
+Extract or strip documentation from com{ConTeXt} source files
+(using \fBtexutil\fP(1))\&.
+.IP o 
+Run METAPOST (\fBmpost\fP(1)) to generate figures from METAPOST
+source\&.
+.IP o 
+Produce ``proof sheets\'\' of figures used in a \fBConTeXt\fP source
+file\&.
+.IP 
+.PP 
+.SH "OPTIONS" 
+.PP 
+All switches are specified in full, but can be abbreviated to the
+shortest unique string\&.   Thus, \fB--ver\fP works the same as
+\fB--verbose\fP\&.
+.PP 
+.SH "General Options" 
+.PP 
+.IP "\fB--alone\fP" 
+Avoid calling other programs when possible\&.  For
+example, \fB--alone\fP will prevent \fBtexexec\fP from
+using \fBfmtutil\fP(1) to generate formats (which can
+be handy when tracing installation problems)\&.
+.IP "\fB--environment=\fP\fIENVIRONMENT\fP" 
+Specify a ConTeXt
+\fIENVIRONMENT\fP to use when processing the file\&.
+This option can be useful when converting from
+non-ConTeXt file formats where no environment or layout
+settings are present in the file\&.
+.IP "\fB--help\fP [ \fISWITCH\fP ]" 
+Produce a summary of switches
+and arguments\&.  Many switches have additional
+information that can be seen by typing ``\f(CWtexexec
+--help optvar(SWITCH)\fP\'\'\&.
+.IP "\fB--interface=\fP\fILANGUAGE\fP" 
+Specify the language
+\fBConTeXt\fP should use to communicate with you\&.
+Options are
+.IP 
+.RS 
+.IP "\fBen\fP" 
+US English
+.IP "\fBnl\fP" 
+Dutch
+.IP "\fBde\fP" 
+German
+.IP "\fBuk\fP" 
+British English
+.IP "\fBcz\fP" 
+Czech
+.IP "\fBit\fP" 
+Italian
+.RE 
+.IP "\fB--once\fP" 
+Process a file once and only once\&.  (By default,
+\fBtexexec\fP processes the file as many times as
+necessary to sort out all references, typeset
+\fBMETAPOST\fP code, and so forth\&.)
+.IP "\fB--output=\fP\fIDRIVER\fP" 
+Specify the output \fIDRIVER\fP
+for use with \f(CW\especial\fP primitives\&.  Defaults to the setting in
+the local \fIcont-sys\&.tex\fP file, but can be set to one of
+.IP 
+.RS 
+.IP "\fBpdftex\fP" 
+Native \fBpdftex\fP(1) code
+.IP "\fBdvips\fP" 
+For \fBdvips\fP(1) (the default)
+.IP "\fBdvipsone\fP" 
+For \fBdvipsone\fP
+.IP "\fBdviwindo\fP" 
+For \fBdviwindo\fP, the oldest
+\fBConTeXt\fP drivers
+.IP "\fBdviview\fP" 
+For \fBdviview\fP (experimental)
+.IP 
+.RE 
+.IP 
+There may be other supported drivers -- check the most
+recent \fBConTeXt\fP documentation\&.
+.IP "\fB--pages=\fP\fIPAGENUMBERLIST\fP" 
+Specify the pages or page
+range to appear in the output file\&.
+\fIPAGENUMBERLIST\fP may be the keyword \fBodd\fP
+or \fBeven\fP; one or more pages separated by commas
+(\f(CWx,y\fP); or a page range in the form \f(CW:z\fP\&.
+.IP "\fB--passon=\fP\fISTRING\fP" 
+Pass additional command-line
+switches and arguments to the \fBtex\fP(1) process
+run by \fBtexexec\fP\&.
+.IP 
+For example, the \fBMikTeX\fP TeX system (for
+DOS/Windows) can embed information in the DVI file that
+will allow you to find the line in a source code file
+corresponding to the line in the typeset output\&.  It
+uses a switch called ``--src\'\' to activate this
+functionality, and can be used from \fBtexexec\fP as
+.IP 
+.EX 
+\f(CWtexexec --passon="--src" somefile\fP
+.EE 
+.IP 
+The double quotes (\f(CW"\fP) are required to prevent
+\fBtexexec\fP from using the switch itself\&.
+.IP "\fB--program\fP" 
+The name of the TeX program to use
+(\fBtex\fP(1), by default)\&.
+.IP "\fB--result=\fP\fIFILENAME\fP" 
+Allows you to change the
+basename of the output file\&.  See
+\fB--mode\fP for an example\&.
+.IP "\fB--runs=\fP\fINUMBER\fP" 
+Specify the number of runs to
+perform on a file\&.  Overrides
+\fBtexexec\fP\'s calculations\&.
+.IP "\fB--silent\fP" 
+Suppress diagnostic and progress messages\&.
+.IP "\fB--suffix=\fP\fISUFFIX\fP" 
+Specify the suffix of the output file\&.
+.IP "\fB--tex=\fP\fIPROGRAMNAME\fP" 
+Allows you specify the program
+to use instead of \fBtex\fP(1)\&.  Useful for trying
+different versions of \fBtex\fP(1) installed on the
+same machine\&.
+.IP "\fB--texutil\fP" 
+Force a run of \fBtexutil\fP(1)\&.
+.IP "\fB--verbose\fP" 
+Output diagnostic information, including the
+contents of \fItexexec\&.ini\fP\&.
+.IP 
+.PP 
+.SH "Processing \fBConTeXt\fP Source Files" 
+.PP 
+Including specifying paper sizes, formats, and so forth\&.
+.PP 
+.IP "\fB--arrange\fP" 
+Don\'t perform page rearrangements (e\&.g\&., for
+producing a booklet) until the last run\&.
+.IP "\fB--batch\fP" 
+Process the file in batch mode -- continue to
+typeset the document after finding errors\&.  More
+imformation about batch mode can be found in Donald
+E\&. Knuth\'s \fITeXbook\fP\&.
+.IP "\fB--bodyfont\fP" 
+The name of a font to preload for use in
+setting the body of the text\&.
+.IP "\fB--centerpage\fP" 
+Center the document image on the page\&.
+.IP "\fB--color\fP" 
+Turn on color mode\&.  Color mode can also be set by
+commands embedded in the document\&.  These commands
+override the \fB--color\fP option\&.
+.IP "\fB--convert=\fP\fIFORMAT\fP" 
+Convert the input file to
+ConTeXt format from \fIFORMAT\fP before
+processing\&.  In most cases, this conversion will result
+in a TeX file\&.  Currently supported input
+\fIFORMAT\fPs are \fBxml\fP and
+\fBsgml\fP\&.
+.IP "\fB--dvi\fP" 
+Shortcut for \fB--output=dvi\fP\&.
+.IP "\fB--fast\fP" 
+Typeset the document(s) as fast as possible without
+causing problems\&.
+.IP "\fB--final\fP" 
+Perform a final run without skipping anything\&.
+This option is typically used with \fB--fast\fP\&.
+.IP "\fB--language=\fP\fILANGUAGE\fP" 
+Set the language for
+hyphenation\&.  Can be specified in your source file\&.
+Options are the same as those for \fB--interface\fP\&.
+.IP "\fB--mode=\fP\fIMODELIST\fP" 
+Allows you to change the mode
+(page size and resolution) of the output file\&.
+.IP 
+.EX 
+\f(CWtexexec --pdf --mode=A4     --result=pdftex-a pdftex-t\fP 
+\f(CWtexexec --pdf --mode=letter --result=pdftex-l pdftex-t\fP
+\f(CWtexexec --pdf --mode=screen --result=pdftex-s pdftex-t\fP
+.EE 
+.IP 
+Here the mode switch tells \fBConTeXt\fP to obey
+the mode directives in the layout specifications\&.  The
+\fB--result\fP flag allows you to
+rename the output file\&.
+.IP "\fB--noarrange\fP" 
+Ignore arrangement commands in the source
+file\&.
+.IP "\fB--paper=\fP\fIKEY\fP" 
+For typesetting multiple pages on a
+single piece of paper\&.  \fIKEY\fP can be \fBa4a3\fP
+(for printing A4 pages on A3 paper) or \fBa5a4\fP
+(for printing A5 pages on A4 paper)\&.  The actual layout
+of the pages is specified with the
+\fB--print\fP switch\&.
+.IP "\fB--pdf\fP" 
+Shorthand for \fB--output=pdftex\fP\&.
+.IP "\fB--print=\fP\fIKEY\fP" 
+Specify the layout of the final
+output\&.  \fIKEY\fP can be \fBup\fP, resulting in 2
+pages per sheet, double sided, or \fBdown\fP, resulting
+in 2 rotated pages per sheet, double sided\&.  Use the
+--paper switch to specify the original page
+and sheet size\&.
+.IP 
+.PP 
+.SH "Creating \fBConTeXt\fP Format Files" 
+.PP 
+.IP "\fB--format=\fP\fIFORMATFILE\fP" 
+Specify a \fIFORMATFILE\fP
+to use when typesetting\&.  \fBtexexec\fP will prepend the
+string \f(CWcont- \fP to the name you give, so you can
+type \f(CWplain\fP instead of \f(CWcont-plain\fP, as in
+.IP 
+.EX 
+\f(CWtexexec --format=plain --program=pdftex somefile\fP
+.EE 
+.IP "\fB--make\fP" 
+Generate a \fBConTeXt\fP format file\&. 
+.PP 
+.SH "Postprocess PDF Files" 
+.PP 
+.IP "\fB--combination=\fP\fIROWS\fP\fB*\fP\fICOLS\fP" 
+Specify
+the number of pages to show on a single page\&.  Use with
+\fB--pdfcombine\fP\&.
+.IP "\fB--pdfarrange\fP" 
+For rearranging pages in PDF files\&.
+.IP 
+.EX
+\f(CWtexexec --pdfarrange --paper=a5a4 --print=up foo\&.pdf\fP
+.EE 
+.IP 
+This command creates an A5 booklet from a PDF file
+\fIfoo\&.pdf\fP\&.  \fB--pdfarrange\fP is used in
+conjunction with the following switches: 
+.IP "\fB--paperoffset\fP" 
+Adjust the space between the
+edge of the pages and the beginning of the text block\&.
+.IP "\fB--backspace\fP" 
+Adjust the inside (``gutter\'\')
+margins\&.
+.IP "\fB--topspace\fP" 
+Adjust the top and bottom
+margin\&.
+.IP "\fB--markings\fP" 
+Add crop marks\&.
+.IP "\fB--addempty=\fP\fIPAGES\fP" 
+Add empty pages
+after the pages specified in \fIPAGES\fP\&.  (Useful
+for, among other things, adding blank pages after a
+table of contents\&.)
+.IP "\fB--textwidth=\fP\fIWIDTH\fP" 
+Set the width of
+the original text\&.  Specifying this parameter with a
+single-sided original will allow \fBConTeXt\fP to adjust
+the page layout for double-sided output, producing much
+more attractive results\&.
+.IP 
+With the \fB--pdfarrange\fP flag, specifying more
+than one file will result in all of the files being
+combined in the final result, allowing you to add title
+pages, decorated part separators, and so forth\&.
+.IP 
+You can also do more complex manipulations, such as
+adding additional text to the page by setting up a
+small file with layout definitions and a simple figure
+insertion loop\&.
+.IP "\fB--pdfcombine\fP" 
+Combine multiple pages\&.  Requires you to
+specify the
+\fB--combination\fP
+switch\&.
+.IP "\fB--pdfselect\fP" 
+Extract pages from a file\&.  Use in combination with
+the \fB--selection\fP switch, as
+in
+.IP 
+.RS 
+\f(CWtexexec --pdfselect --paper=S6
+--selection=1,9,14 file-1\fP
+.RE 
+.IP 
+which extracts pages 1, 9, and 14 from
+\fIfile-1\&.pdf\fP, and places them in
+\fItexexec\&.pdf\fP (the default output filename if
+an output file isn\'t specified)\&.
+.IP 
+See \fB--pdfarrange\fP for other
+options\&.
+.IP "\fB--selection=\fP\fIPAGES\fP" 
+Specify pages to be affected by
+another option\&.  See \fB--pdfarrange\fP and
+\fB--pdfselect\fP for examples\&.
+.PP 
+.SH "Extract or Strip Out Documentation" 
+.PP 
+.IP "\fB--listing\fP" 
+Produce a typeset version of the source code in
+\fIFILE\fP\&.  You can specify the form of the output
+file, as in
+.RS 
+\f(CWtexexec --listing --pdf readme\&.now\fP
+.RE 
+.IP 
+which will produce a PDF file called
+\fItexexec\&.pdf\fP\&.  Without the
+\fB--pdf\fP flag, \fBtexexec\fP will
+produce a DVI file\&.
+.IP 
+See also \fB--backspace\fP and
+\fB--topspace\fP\&.
+.IP "\fB--module\fP" 
+Create documentation for \fBConTeXt\fP,
+\fBMetaPost\fP (see \fBmpost\fP(1)), and Perl modules\&.
+Converts the documentation to \fBConTeXt\fP format and
+then typesets that documentation\&.  See
+\fBtexutil\fP(1) for more information about the
+format of the documentation strings\&.
+.PP 
+.SH "Process METAPOST Figures" 
+.PP 
+.IP "\fB--mpformat\fP" 
+The name of a \fBMetaPost\fP format file\&.
+.IP "\fB--mptex\fP" 
+Strips out and typesets TeX code embedded in a
+\fBMetaPost\fP file\&.
+.IP "\fB--nomp\fP" 
+Do not run \fBMetaPost\fP, even if needed\&.
+.IP "\fB--nomprun\fP" 
+Do not run \fBmpost\fP(1) on embedded
+\fBMetaPost\fP code\&.
+.PP 
+.SH "Producing Proof Sheets of Figures" 
+.PP 
+.IP "\fB--figures=\fP\fIALTERNATIVE\fP" 
+Specify one of three
+options to produce a document containing the images
+used in the source file:
+.IP 
+.RS 
+.IP "\fBa\fP" 
+A proof sheet with additional
+information provided for each figure
+.IP "\fBb\fP" 
+A proof sheet with the graphics only
+.IP "\fBc\fP" 
+One figure per page, with the page
+clipped to the bounding box of the
+figure
+.IP 
+See also \fB--paperoffset\fP,
+which allows you to specify an offset to be added to
+the page, as in 
+.IP 
+.EX 
+\f(CWtexexec --figures=c --paperoffset=\&.5cm *\&.pdf
+*\&.png *\&.jpg\fP
+.EE 
+.IP 
+.RE 
+.IP 
+\fBtexexec\fP uses \fBtexutil\fP(1) to obtain the list
+of figures to process\&. 
+.PP 
+.SH "USAGE" 
+.PP 
+.IP o 
+Each \fBConTeXt\fP user interface (language) has its own format\&.  The
+following command generates two formats, one using the English
+interface for typesetting in English, and one for Dutch:
+.IP 
+.EX 
+\f(CWtexexec --make en nl\fP
+.EE 
+.IP 
+By default, the language used for typesetting matches the
+user-interface language (set with
+\fB--interface\fP\&.  It\'s possible to use one
+language for typesetting and another for messages by changing the
+relevant settings in \fIcont-usr\&.tex\fP, but these languages can
+also be changed on the command line with a command such as
+.IP 
+.RS 
+\f(CWtexexec --make --language=pl,cz,sk --bodyfont=plr en\fP
+.RE 
+.IP 
+That command generates a \fBConTeXt\fP format file with an English user
+interface, and the main language set to Polish (\fBpl\fP)\&.  The
+default body font is the Polish version of Computer Modern Roman
+(\fBplr\fP)\&.  Czech and Slovak hyphenation patterns are also loaded
+so that Czech and Slovak text included in a source file will be
+typeset properly (\fBcz\fP and \fBsk\fP)\&.
+.IP o 
+When the appropriate formats are present, a file can be typeset
+by typing
+.IP 
+.EX 
+\f(CWtexexec test\fP
+.EE 
+.IP 
+\fBtexexec\fP tries to determine what interface it should use to
+typeset \fItest\&.tex\fP by looking for a line such as 
+.IP 
+.EX 
+\f(CW% interface=en tex=pdfetex output=pdftex\fP
+.EE 
+.IP 
+at the top of the file (i\&.e\&., on the very first line)\&.  This line is
+equivalent to \fBTeX\fP\'s format line, ``&\fIFORMAT\fP\'\')\&.
+.IP 
+By default, \fBtexexec\fP will produce a DVI file\&.  The
+\fB--pdf\fP flag tells \fBtexexec\fP to produce a PDF
+file, instead (by running \fBpdftex\fP(1))\&.  You can also be more
+specific about what drivers \fBtexexec\fP should use, by specifying a
+command line such as
+.IP 
+.EX 
+\f(CWtexexec --output=dvips,acrobat test\fP
+.EE 
+.IP 
+which specifies the use of the \fBdvips\fP driver (which is the
+default), combined with the use of Acrobat-specific PDF instructions\&.
+.IP 
+After an error-free run, \fBtexexec\fP will run \fBtexutil\fP(1) to
+determine whether additional runs of \fBtex\fP(1) (or
+\fBpdftex\fP(1)) or any utility programs (e\&.g\&., \fBbibtex\fP(1),
+\fBmakeindex\fP(1)) are necessary\&.  You can suppress these
+additional runs by specifying the \fB--once\fP or
+\fB--runs\fP flags:
+.IP 
+.EX 
+\f(CWtexexec --once test\fP 
+\f(CWtexexec --runs=2 test\fP
+.EE 
+.IP 
+.SH "INITIALIZATION" 
+.IP 
+When starting, \fBtexexec\fP first looks for the file
+\fItexexec\&.ini\fP, which specifies the location of various
+programs and configuration files, and specifies the programs to use\&.
+The \fB--verbose\fP flag causes \fBtexexec\fP to print
+the information in \fItexexec\&.ini\fP to the terminal and the log
+file\&.
+.IP 
+\fBtexexec\fP requires Perl\&.  On Unix and Unix-like systems, no special
+steps have to be taken to get \fBtexexec\fP to work beyond installing
+Perl and having the \fBperl\fP(1) binary in your path\&.  On Windows
+systems, however, you may need to run Perl by typing commands such as
+``\f(CWperl texexec\&.pl optvar(ARGS)\fP\'\'\&.
+.IP 
+The \fBfpTeX\fP distribution comes with a program called
+\fBrunperl\&.exe\fP that can be copied and renamed to \fBtexexec\&.exe\fP\&.
+You will also have to rename a copy to \fBtexutil\&.exe\fP (see
+\fBtexutil\fP(1))\&.  The \fBteTeX\fP and \fBfpTeX\fP distributions, at
+least, should perform the necessary steps as part of their
+installation sequence -- if you have problems, however, you may need
+to follow the advice given here\&.
+.IP 
+The file \fItexexec\&.rme\fP contains default configuration
+information\&.  If no file \fItexexec\&.ini\fP exists (in
+\fITEXMF/context/config/\fP, you should copy \fItexexec\&.rme\fP
+to that directory and rename it to \fItexexec\&.ini\fP\&.  Make any
+necessary changes to this file to reflect the layout of programs and
+directories on your system\&. 
+.SH "ENCODINGS" 
+.IP 
+Some languages require specific character encodings to represent their
+alphabets (beyond the basic ASCII encoding)\&.  Although you can use TeX
+commands to represent these characters, such as ``\f(CW\e\&.z\fP\'\', it\'s
+easier to use a text editor that includes direct support for these
+characters and let \fBConTeXt\fP translate them to the necessary TeX
+commands\&.  For some languages, this approach can also improve the
+performance of TeX\'s hyphenation algorithms\&.
+.IP 
+\fBConTeXt\fP supports several of the most commonly used encodings\&.
+Check the files beginning with \fIenco-\fP, \fIlang-\fP, and
+\fIfont-\fP in the \fBConTeXt\fP distribution for more information\&.
+.IP 
+\fBweb2c\fP distributions (such as \fBteTeX\fP) support a mechanism to
+map document encodings to \fBConTeXt\fP\'s internal encoding, font
+encodings, and hyphenation patterns\&.  \fBtexexec\fP provides a document
+option and a command-line flag to pass the necessary information to
+\fBtex\fP(1) or \fBpdftex\fP(1)\&.  You can add lines such as
+.IP 
+.EX 
+\f(CW%& --translate-file=cp1250pl\fP
+.EE 
+or
+.IP 
+.EX 
+\f(CW% --translate=cp1250pl\fP
+.EE 
+.IP 
+to the beginning of your document, or specify the \fB--translate\fP
+flag on the command line, as 
+.IP 
+.EX 
+\f(CWtexexec --translate=il2pl somefile\fP
+.EE 
+.IP 
+Note that using language-specific encodings will make your file less
+portable than using ASCII\&.  It may not be possible for other people to
+typeset your documents on their systems\&. 
+.SH "FILES" 
+.IP 
+.IP "\fITEXMF/context/config/texexec\&.ini\fP" 
+TeXExec configuration file
+.IP "\fITEXMF/context/config/texexec\&.rme\fP" 
+TeXExec configuration file defaults
+.IP 
+.SH "SEE ALSO" 
+.IP 
+\fBbibtex\fP(1), \fBdvips\fP(1), \fBfmtutil\fP(1),
+\fBmakeindex\fP(1), \fBmetapost\fP(1), \fBmpost\fP(1),
+\fBpdfetex\fP(1), \fBpdfmerge\fP(1), \fBpdftex\fP(1),
+\fBperl\fP(1), \fBpsnup\fP(1), \fBtex\fP(1), \fBtexshow\fP(1),
+\fBtexutil\fP(1)\&.
+.IP 
+The TeXExec manual, \fImtexexec\&.pdf\fP\&.
+.IP 
+The TeXExec configuration README files:
+.IP o 
+\fITEXMF/context/config/texexec\&.rme\fP
+.IP o 
+\fITEXMF/context/perltk/texexec\&.rme\fP
+.IP 
+Donald E\&. Knuth\'s \fIThe TeXbook\fP\&.
+.SH "AUTHOR" 
+.IP 
+This manpage was written by Tobias Burnus
+<burnus@gmx\&.de> and C\&.M\&. Connelly
+<c@eskimo\&.com>\&.  It is based on
+the \fBTeXExec\fP manual written by Hans Hagen 
+<pragma@wxs\&.nl>\&.
+.IP 
+The PDF manual and \fBtexexec\fP itself can be obtained from
+<http://www\&.pragma-ade\&.com/pragma-ade/texexec\&.htm>

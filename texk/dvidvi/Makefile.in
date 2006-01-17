@@ -1,0 +1,48 @@
+# Makefile.in for dvidvi  -- S Rahtz s.rahtz@elsevier.co.uk.  Public domain.
+version = 1.0
+kpse_include ../make/paths.mk
+kpse_include ../make/common.mk
+kpse_include ../make/programs.mk
+
+prog_cflags = -DUNIX  -DNeedFunctionPrototypes -DHAVE_CONFIG_H \
+	      -I$(kpathsea_dir) -I$(kpathsea_srcdir)
+# We don't use Kpathsea, so don't overload fopen and stuff
+DEFS = -DNO_DEBUG
+
+program = dvidvi
+objects = dvidvi.o
+
+programs = $(program)
+
+default: $(program)
+all: $(program)
+
+$(program): $(objects) 
+	$(kpathsea_link) $(objects) 
+
+install: install-exec install-data
+
+uninstall: uninstall-exec uninstall-data
+
+install-exec: all
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(bindir)
+	for p in $(programs); do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
+uninstall-exec:
+	for p in $(programs); do rm -f $(bindir)/$$p; done
+
+install-data: 
+	$(SHELL) $(top_srcdir)/../mkinstalldirs  $(man1dir)
+	$(INSTALL_DATA) $(srcdir)/dvidvi.1 $(man1dir)/dvidvi.1
+
+uninstall-data: 
+	rm -f $(man1dir)/dvidvi.1
+
+kpse_include ../make/dist.mk
+kpse_include ../make/config.mk
+
+info dvi check:
+
+kpse_include ../make/clean.mk
+
+kpse_include ../make/rdepend.mk
+kpse_include depend.mk

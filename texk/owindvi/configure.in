@@ -1,0 +1,163 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(xdvi.c)
+
+sinclude(../kpathsea/common.ac)
+
+AC_FUNC_VFORK
+AC_FUNC_VPRINTF
+AC_FUNC_MEMCMP
+AC_HEADER_SYS_WAIT
+AC_TYPE_SIGNAL
+
+# <sys/bsdtypes.h> is for ISC 4.0, to define fd_set in psgs.c.
+AC_CHECK_FUNCS(memcpy strerror waitpid poll sigaction strrchr strchr)
+AC_CHECK_HEADERS(netdb.h sys/bsdtypes.h poll.h)
+
+# For the bitmap size.
+AC_CHECK_SIZEOF(long)
+
+# Do we have the SIGIO signal (and F_SETOWN and FASYNC)?
+AC_MSG_CHECKING(for SIGIO)
+AC_CACHE_VAL(kb_cv_sys_sigio,
+[AC_TRY_COMPILE([#include <signal.h>
+#include <fcntl.h>],
+  [int x = SIGIO + F_SETOWN + FASYNC;],
+  kb_cv_sys_sigio=yes, kb_cv_sys_sigio=no)])dnl
+AC_MSG_RESULT($kb_cv_sys_sigio)
+if test $kb_cv_sys_sigio = yes; then
+  AC_DEFINE(HAVE_SIGIO)
+fi
+
+sinclude(../kpathsea/xt.ac)
+sinclude(withenable.ac)
+sinclude(../libwww/withenable.ac)
+
+libwww_include_list="${libwww_include} ${libwww_dir} \
+  ${libwww_dir}/include ${libwww_dir}/Library/src"
+libwww_libdir_list="${libwww_library_dir} ${libwww_dir} ${libwww_dir}/lib \
+  ${libwww_dir}/Library/src"
+
+libwww_include_found=no
+libwww_libdir_found=no
+
+if test $try_system_wwwlib = yes; then
+  for d in $libwww_include_list; do
+    ok=yes
+    for h in $LibWWW_headers; do
+      if test ! -f $d/$h; then
+        ok=no
+        break
+      fi
+    done
+    if test $ok = yes; then
+      libwww_include=$d
+      libwww_include_found=yes
+      break
+    fi
+  done
+fi
+
+if test $libwww_include_found = yes; then
+  www_cppflags="-I${libwww_include} -DHAVE_LIBWWW -DHAVE_WWWLIB_H"
+else
+  www_cppflags="-DHAVE_LIBWWW -DHAVE_WWWLIB_H"
+  if test $try_system_wwwlib = yes; then
+    libwww_include_found=yes
+    AC_CHECK_HEADERS($LibWWW_headers,, libwww_include_found=no; break )
+    :
+  fi
+fi
+
+# only check for libwww.a if the includes could be found
+if test $libwww_include_found = yes; then
+  for d in $libwww_libdir_list; do
+    if test -f $d/libwww.a; then
+      libwww_libdir=$d
+      libwww_libdir_found=yes
+    fi
+  done
+
+  if test ${libwww_libdir_found} = yes; then
+    www_ldflags="-L${libwww_libdir} -lwww"
+    :
+  else
+    www_ldflags=-lwww
+    libwww_libdir_found=yes
+    AC_CHECK_LIB(www, HTParse,, libwww_libdir_found=no)
+    :
+  fi
+fi
+
+if test "${libwww_include_found}" != yes ||
+  test "${libwww_libdir_found}" != yes; then
+  if test $try_system_wwwlib = yes; then
+    AC_MSG_WARN(Have not found standard LIBWWW library. Shall compile my own one.)
+  fi
+  www_ldflags='-L../libwww -lwww'
+  www_cppflags='-I../libwww -I$(srcdir)/../libwww -DHAVE_LIBWWW -DHAVE_WWWLIB_H'
+  www_dep=../libwww/libwww.a
+else
+  www_dep=
+fi
+
+AC_SUBST(www_ldflags)
+AC_SUBST(www_cppflags)
+AC_SUBST(www_dep)
+
+# For --with-x-toolkit.  Only distinguish `no' from everything else.
+# They don't get to disable X entirely, this is *x*dvi.
+
+# -lXext may not be present, and that may be ok.  Link with it only if it is.
+if test -z "$x_ext_lib"; then # allow envvar override
+  if test -n "$x_libraries"; then
+    XLFLAG="-L$x_libraries"
+  else
+    XLFLAG=
+  fi
+  AC_CHECK_LIB(Xext, XextCreateExtension,
+               x_ext_lib=-lXext, :, -lX11 $X_EXTRA_LIBS $XLFLAG)
+fi
+AC_SUBST(x_ext_lib)
+
+if test "x$with_x_toolkit" = xno -o "x$with_x_toolkit" = xxt; then
+  AC_DEFINE(NOTOOL)
+  x_tool_libs=
+else
+  # Effectively promote --with-x-toolkit=xt to athena since the code
+  # does not distinguish.
+  x_tool_libs="-lXaw -lXmu -lXt"
+fi
+AC_SUBST(x_tool_libs)
+
+# For --with-ps.
+test -z "$PS_DEF" && PS_DEF=-DPS_GS
+test "$PS_DEF" = no && PS_DEF=
+AC_SUBST(PS_DEF)dnl
+dnl
+# If we're on Solaris and we want DPS, then add the extra compilation stuff
+# to get it.
+if echo "$PS_DEF" | grep PS_DPS >/dev/null; then
+   if test "`(uname) 2>/dev/null`" = SunOS \
+      && uname -r | grep '^5' >/dev/null; then
+    AC_MSG_RESULT(adding DPS includes and libraries for Solaris)
+    X_CFLAGS="$X_CFLAGS -I/usr/openwin/include/X11"
+    AC_CHECK_LIB(sunmath, isinf, ac_sunmath=-lsunmath, ac_sunmath="")
+    X_LIBS="$X_LIBS -R/usr/openwin/lib /usr/openwin/lib/libdps.so $ac_sunmath"
+    # We only need isinf and ieeefp.h to work around a Solaris bug in
+    # -ldps; see psdps.c.  isinf is in -lsunmath.
+    AC_CHECK_FUNCS(isinf)
+    AC_CHECK_HEADERS(ieeefp.h)
+  else
+    # SunOS 4.x is simpler.
+    AC_MSG_RESULT(adding DPS includes and libraries for SunOS 4.x)
+    X_LIBS="$X_LIBS -ldps"
+  fi
+elif echo "$PS_DEF" | grep PS_NEWS >/dev/null; then
+    AC_MSG_RESULT(adding NeWS libraries)
+    X_LIBS="$X_LIBS -lxview -lcps -lolgx -lxvps"
+fi
+
+AC_OUTPUT(Makefile)
+
+dnl update `stamp-auto' since we just remade `c-auto.h'
+date >stamp-auto

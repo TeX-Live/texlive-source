@@ -1,0 +1,1110 @@
+$(objdir)/dvi-draw.obj: \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h \
+	dvi.h
+
+$(objdir)/ttf.obj: \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h \
+	dvi.h
+
+$(objdir)/src-spec-1.obj: \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h \
+	$(kpathseadir)/c-stat.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/magstep.h \
+	dvi.h
+
+$(objdir)/winprint.obj: \
+	wingui.h \
+	resource.h \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h
+
+$(objdir)/winevt.obj: \
+	wingui.h \
+	resource.h \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h \
+	dvi.h
+
+$(objdir)/font-open.obj: \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h \
+	$(kpathseadir)/tex-glyph.h
+
+$(objdir)/winxutl.obj: \
+	wingui.h \
+	resource.h \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h \
+	winxutl.h
+
+$(objdir)/winopt.obj: \
+	wingui.h \
+	resource.h \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h \
+	version.h \
+	c-openmx.h \
+	$(kpathseadir)/proginit.h \
+	$(kpathseadir)/tex-hush.h \
+	$(kpathseadir)/tex-make.h \
+	$(kpathseadir)/line.h
+
+$(objdir)/dvi-init.obj: \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h \
+	$(kpathseadir)/c-stat.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/magstep.h \
+	$(kpathseadir)/tex-glyph.h \
+	dvi.h \
+	$(t1dir)/t1lib.h
+
+$(objdir)/mime.obj: \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h
+
+$(objdir)/winlog.obj: \
+	wingui.h \
+	resource.h \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h
+
+$(objdir)/winimg.obj: \
+	wingui.h \
+	resource.h \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h
+
+$(objdir)/squeeze.obj: \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-memstr.h
+
+$(objdir)/t1.obj: \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h
+
+$(objdir)/special.obj: \
+	wingui.h \
+	resource.h \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/c-stat.h \
+	$(kpathseadir)/line.h \
+	dvi.h \
+	$(zlibdir)/zlib.h \
+	$(zlibdir)/zconf.h \
+	$(bzip2dir)/bzlib.h
+
+$(objdir)/vf.obj: \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h \
+	dvi.h
+
+$(objdir)/windraw.obj: \
+	wingui.h \
+	resource.h \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h \
+	version.h
+
+$(objdir)/alloca.obj: \
+	
+
+$(objdir)/dvips.obj: \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h
+
+$(objdir)/winabout.obj: \
+	wingui.h \
+	resource.h
+
+$(objdir)/gf.obj: \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h
+
+$(objdir)/winhtex.obj: \
+	wingui.h \
+	resource.h \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h \
+	winhtex.h \
+	$(kpathseadir)/c-pathch.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h
+
+$(objdir)/tfmload.obj: \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h
+
+$(objdir)/pk.obj: \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h
+
+$(objdir)/util.obj: \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h
+
+$(objdir)/wwwfetch.obj: \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h
+
+$(objdir)/psgs.obj: \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h
+
+$(objdir)/psgsw32.obj: \
+	$(gnuw32dir)/win32lib.h \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h
+
+$(objdir)/xdvi.obj: \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h \
+	c-openmx.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/c-pathch.h \
+	$(kpathseadir)/c-stat.h \
+	$(kpathseadir)/proginit.h \
+	$(kpathseadir)/tex-hush.h \
+	$(kpathseadir)/tex-make.h \
+	version.h \
+	xdvi.icon
+
+$(objdir)/wincfg.obj: \
+	wingui.h \
+	resource.h \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h \
+	mfmodes.h
+
+$(objdir)/src-spec.obj: \
+	$(gnuw32dir)/win32lib.h \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h \
+	$(kpathseadir)/c-stat.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/magstep.h \
+	dvi.h
+
+$(objdir)/events.obj: \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h
+
+$(objdir)/wintransf.obj: \
+	wingui.h \
+	resource.h \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h
+
+$(objdir)/hypertex.obj: \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h
+
+$(objdir)/windvi.obj: \
+	wingui.h \
+	resource.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h
+
+$(objdir)/winver.obj: \
+	wingui.h \
+	resource.h \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h
+
+$(objdir)/wingoto.obj: \
+	wingui.h \
+	resource.h \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h
+
+$(objdir)/wincolor.obj: \
+	wingui.h \
+	resource.h \
+	xdvi-config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	windvi.h \
+	c-auto.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	patchlevel.h
+

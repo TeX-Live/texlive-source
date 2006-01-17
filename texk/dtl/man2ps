@@ -1,0 +1,36 @@
+#!/bin/sh
+# Filter for converting "troff -mxx" to PostScript.  This script is
+# normally linked to the names man2ps, ms2ps, me2ps, and mm2ps.
+#
+# Usage:
+#	man2ps [<] cc.1   >cc.ps
+#	me2ps  [<] foo.me >foo.ps
+#	mm2ps  [<] foo.mm >foo.ps
+#	ms2ps  [<] foo.ms >foo.ps
+#
+# [08-May-1993]
+
+# Choose a troff format according to the scrip name.
+case `basename $0` in
+	man*)	FORMAT=-man ;;
+	me*)	FORMAT=-me ;;
+	mm*)	FORMAT=-mm ;;
+	ms*)	FORMAT=-ms ;;
+	*)	echo "Unknown troff format:" ; exit 1 ;;
+esac
+
+# We can use either GNU groff or Sun Solaris troff + dpost
+if [ -x /usr/local/bin/groff ]
+then	# GNU groff
+	TROFF="groff $FORMAT"
+	TROFF2PS="cat"
+elif [ -x /usr/lib/lp/postscript/dpost ]
+then	# Solaris 2.1
+	TROFF="troff $FORMAT"
+	TROFF2PS="/usr/lib/lp/postscript/dpost"
+else
+	echo "Cannot find troff-to-PostScript filter"
+	exit 1
+fi
+
+tbl $* | eqn | $TROFF | $TROFF2PS

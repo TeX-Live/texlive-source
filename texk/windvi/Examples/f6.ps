@@ -1,0 +1,23 @@
+%!PS
+%%BoundingBox: 0 0 180 180
+/box {newpath
+0 0 moveto
+0 1 lineto
+1 1 lineto
+1 0 lineto
+closepath
+} def
+
+/circle {newpath
+0 0 moveto
+0 0 0.5 0 360 arc
+closepath
+} def
+
+gsave
+
+72 72 scale
+box fill
+2 2 translate
+circle fill
+grestore

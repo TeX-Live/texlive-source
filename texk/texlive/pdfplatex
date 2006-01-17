@@ -1,0 +1,3 @@
+#!/bin/sh
+test -f "`kpsewhich pdfplatex.fmt`" || fmtutil --byfmt pdfplatex
+exec pdftex -fmt=pdfplatex "$@"

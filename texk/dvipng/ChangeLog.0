@@ -1,0 +1,903 @@
+2004-01-16  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* font.c: fix compile without FT2
+
+2004-01-12  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* RELEASE: Prepare for 0.9
+
+	* misc.c: Enable --expand-bbox
+
+	* color.c:
+	* draw.c: 
+	* dvipng.h: 
+	* font.c:
+	* misc.c:
+	* special.c: Enable --no-image-on-warn
+
+	* draw.c: 
+	* dvi.c: 
+	* dvipng.c: 
+	* dvipng.h: 
+	* readme.texi: 
+	* special.c: Fix tightpage behaviour
+
+2004-01-09  Jan-Ake Larsson  <jalar@mai.liu.se>
+	
+	* special.c: Add preview-latex's "tightpage" code
+
+2004-01-08  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* dvipng.texi:
+	* configure.ac: Prepare for 0.9
+
+	* Makefile.in: clean target 
+
+2004-01-07  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* color.c: 
+	* draw.c: 
+	* dvi.c: 
+	* dvipng.c: 
+	* dvipng.h:
+	* enc.c:
+	* font.c:
+	* fontmap.c:
+	* ft.c: 
+	* pk.c: 
+	* set.c: 
+	* special.c: 
+	* tfm.c: 
+	* vf.c: Speedup DEBUG
+
+	* pk.c: Fix subpixel offsets
+
+	* dvipng.c: 
+	* dvipng.h:
+	* font.c:
+	* misc.c: 
+	* set.c: 
+	* special.c: Fix flags
+
+	* draw.c: Fix bbox
+
+	* dvipng.h: Adjust for freetype >= 2.1.6
+
+2003-12-15  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* tfm.c:
+	* fontmap.c: 
+	* font.c: Fix freeeeeeeeeing
+
+2003-12-08  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* dvipng.texi: 
+	* configure.ac: 
+	* RELEASE: Prepare for 0.8 
+
+	* ft.c: Fix debug output
+
+	* draw.c:
+	* dvipng.h:
+	* dvipng.texi:
+	* misc.c: Add --height option 
+
+	* test_dvipng.tex: A nice equation is true. Behave!
+
+2003-12-07  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* enc.c: Encodings are _ps_header_s
+
+2003-12-05  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* misc.c:
+	* dvipng.texi:
+	* dvipng.h:
+	* draw.c: Change --baseline to --depth 
+
+2003-12-01  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* draw.c: 
+	* dvipng.h: 
+	* misc.c: Change to physical pagenumbers, instead of DVI
+	pagenumbers. DVI pagenumbers will be indicated on STDOUT if they
+	differ from physical pagenumbers, but the numbering of PNG files
+	is physical pagenumbers. Old behaviour can be chosen with the
+	option -dvinum.
+
+	* ppagelist.c:
+	* misc.c:
+	* dvipng.texi: Make negative pages render. Now -pp handles
+	negative pages gracefully too. Remove -pp code taken from dvips.
+	
+2003-11-30  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* draw.c: 
+	* dvipng.c: 
+	* dvipng.h: 
+	* font.c: 
+	* ft.c:
+	* misc.c: 
+	* pk.c: 
+	* set.c: 
+	* tfm.c: 
+	* vf.c: Include alloca.h when necessary, start preparing
+	transition to subpixel rendering, do proper cleanup on exit
+
+2003-11-18  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* enc.c: Fix bug 
+
+	* ft.c:
+	* tfm.c:
+	* font.c:
+	* dvipng.h: Add fallback from FT to PK
+	
+2003-11-14  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* Makefile.in: Use $DESTDIR
+
+2003-11-06  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* special.c: Fix postscript inclusion: placement and
+	background color
+
+2003-10-17  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* misc.c:
+	* font.c:
+	* dvipng.texi: 
+	* dvipng.h: Add option for freetype activation 
+
+	* configure.ac: Add message when freetype is present
+
+	* ft.c: Apparently FreeType hinting is a no-no. Load glyphs
+	with FT_LOAD_NO_HINTING. Only then output is acceptable.
+
+2003-10-15  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* fontmap.c: Remove erroneous match
+
+2003-10-13  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* font.c: Fix font searching order
+
+	* RELEASE: Prepare for 0.7
+
+	* fontmap.c:
+	* psfontmap.c:
+	* configure.ac: Rename psfontmap.c to fontmap.c
+
+2003-10-08  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* psfontmap.c: Add third bare word: encoding
+
+2003-10-07  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* misc.c:
+	* dvipng.texi: Allow for -- on options
+
+	* configure.ac: Prepare for 0.7 
+
+	* Makefile.in: Adjust hint
+
+	* configure.ac:
+	* config.h.in: Fix helptext in config.h.in
+
+	* test_dvipng.tex: Add some tests for ligatures and sizes
+
+2003-10-03  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* readme.texi: Document new font support and switches
+
+	* psfontmap.c: Redesign psfontmap loading to use the syntax
+	from dvips' docs
+
+	* font.c: Enhance TrueType font finding
+
+	* draw.c: Warn if setting char from null font 
+
+	* dvipng.h:
+	* color.c: Load and use psnames.def 
+
+2003-09-28  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* misc.c: Warn for all bad options 
+
+2003-09-24  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* dvipng.texi:
+	* install.texi:
+	* misc.c: Fix documentation
+
+2003-09-23  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* ft.c:
+	* enc.c:
+	* dvipng.h: Only load encodings once
+
+2003-09-18  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* draw.c:
+	* dvipng.h:
+	* misc.c: Add -baseline switch 
+
+2003-09-17  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* font.c: Remove compiler warning 
+
+	* config.h.in:
+	* psfontmap.c:
+	* dvipng.c:
+	* configure.ac: Fix SELFAUTO... variables if dvipng is not
+	being installed in main texmf tree. This will make it find config
+	files and fonts anyway. 
+
+2003-09-16  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* tfm.c:
+	* psfontmap.c:
+	* ft.c:
+	* enc.c: Added for postscript font handling with freetype
+
+	* font.c: Use freetype font loading
+
+	* dvipng.h: Add freetype-related types and declarations,
+	and simplify glyph rendering
+
+	* pk.c: Simplify glyph rendering
+
+	* dvipng.c: Init freetype  
+
+	* dvi.c: Fix strlen bugs 
+
+	* draw.c: Add FONT_TYPE_FT drawing
+
+	* configure.ac:
+	* config.h.in:
+	* Makefile.in: Adjust for freetype things 
+
+2003-08-29  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* special.c: fix color handling 
+
+	* dvipng.c: Increase TIMING output 
+
+	* misc.c: 
+	* draw.c: small speedups 
+
+	* dvipng.h: 
+	* configure.ac:
+	* config.h.in: 
+	* Makefile.in: Change handling of the DEBUG and TIMING
+	flags
+
+2003-08-26  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* RELEASE, dvipng.texi, configure.ac:
+	prepare for 0.6
+
+	* Makefile.in: another install-docs fix
+
+2003-08-13  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* configure.ac: new test (ps inclusion speedup)
+
+	* draw.c: simplify preprocessor processing, fix SetSpecial
+	call
+
+	* special.c: speedup for ps image inclusion, fix SetSpecial
+	call
+
+	* Makefile.in: fix install-docs 
+
+2003-08-04  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* special.c: Argh!, fix compilation for non-truecolor version
+
+	* dvipng.h: Argh!, fix image cache
+
+	* dvipng.texi:
+	* configure.ac:
+	* RELEASE: Prepare for 0.5 
+
+	* misc.c: 
+	* dvipng.h: 
+	* set.c: Add preliminary truecolor support 
+
+	* pk.c: Benchmark truecolor rendering, no real code change
+
+	* special.c: 
+	* misc.c:
+	* dvipng.h: Add preliminary image cacheing 
+
+	* draw.c: Small adjustments
+
+2003-07-30  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* draw.c: Fix two bugs so that bounding box again is
+	correct
+
+	* configure.ac: configuration printout improved
+
+
+2003-07-02  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* dvipng.h: Add prototypes 
+
+	* draw.c: minor change 
+
+	* RELEASE: prepare for 0.4
+
+2003-07-01  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* draw.c, set.c:
+	Fix rules (again), this time taking maxdrift into account.
+
+	* pk.c: Unfortunately gdImageColorResolveAlpha only works
+	on truecolor images. Some other day, then. I did fix the
+	performance of PROPER_OVERSTRIKE, though.
+
+	* readme.texi: Add todo
+
+2003-06-30  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* dvipng.texi: small fixes 
+
+	* vf.c: Speedup macro start/end 
+
+	* set.c: Handle offset in draw.c only, allow choice of
+	compression if gd can do this
+
+	* pk.c: Handle overstrike, either with gd alpha level, if
+	support exists for that, or "manually". The latter is active if
+	PROPER_OVERSTRIKE is #defined, currently yes, at roughly 5%
+	performance loss.
+
+	* misc.c: -z option: choose compression if gd can do this
+
+	* dvipng.h: Proper rounding, gd bells and whistles
+
+	* draw.c: Allow drift a la dvitype, maxdrift=1, handle
+	offset here only, speedup vf macro start/end
+
+	* config.h.in: 
+	* configure.ac: New tests for gd bells and whistles  
+
+	* Makefile.in: Clean README 
+
+	* .cvsignore: More files 
+
+2003-06-23  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* configure.ac:
+	* config.h.in: Added tests for newly added C code 
+
+	* Makefile.in: 
+	* dvipng.texi: Reflect move of readme 
+
+	* README: 
+	* readme.texi:  Moved from README to readme.texi
+
+2003-06-19  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* special.c: Fix crash on file not found
+
+	* set.c: Code reformatting 
+
+	* misc.c: Fix switches, and send warnings/errors to stderr.
+
+	* vf.c: 
+	* pk.c: 
+	* draw.c: Include header only used in this file, here. 
+
+	* commands.h: Make draw.c compile without -DDEBUG
+
+	* Makefile.in: Use --disable-debug, fix docs
+	generation/install, and add 'test' target. 
+
+	* README: Update info 
+
+	* configure.ac: Add --disable-debug
+
+	* install.texi: Minor changes 
+
+	* dvipng.texi: Document difference between -pp and -p + -l 
+
+	* dvipng.h: Fix FreeBSD non-C99 header issue 
+
+2003-06-12  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* Makefile.in: Fix SunOS make suffix rule wierdness
+
+	* color.c: Change comment 
+
+	* dvi.c (DVIOpen): bugfix ".dvi" completion
+
+	* dvipng.h (PIXROUND): Round down instead of up, SetRule
+	now has its own rounding mechanism
+
+	* set.c (SetRule): Refine rule drawing, make sure rule is
+	inside bounding box 
+
+2003-06-10  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* README:
+	* RELEASE:
+	* Makefile.in:
+	* configure.ac:
+	* dvipng.texi: Prepare for 0.3 
+
+	* vf.c:
+	* set.c:
+	* pk.c:
+	* font.c:
+	* dvi.c:
+	* draw.c: simplify DEBUG_PRINT
+
+	* configure.ac: Look for gs
+
+	* special.c: Fixes to gs interaction
+
+	* set.c: Enable -o for output file, no segfault on empty
+	image, reposition rule to match dvips
+
+	* draw.c: simplify DEBUG_PRINT macro
+
+	* dvi.c:
+	* misc.c: Enable -o for output file 
+
+	* dvipng.h: Enable -o for output file, simplify DEBUG_PRINT
+	macro
+
+2003-04-17  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* install.texi:
+	* dvipng.texi: Rewrite stuff 
+
+	* dvipng.h: New debug flag 
+
+	* configure.ac: 
+	* config.h.in: Configure GS_PATH 
+
+	* special.c: No tempfiles anymore. Communicate with child
+	through two pipes.
+
+	* configure.ac: 
+	* Makefile.in: Make docs
+
+2003-04-15  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* macros.texi: Added
+
+	* install.texi, dvipng.texi: Initial version
+
+2003-03-28  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* README: 
+	* RELEASE: Release 0.2, PostScript type1 font support and
+	PostScript inclusion.  
+
+	* configure.ac: Added configure error message about where
+	to find libgd. 
+
+	* dvipng.h:
+	* draw.c (DrawCommand):
+	* special.c (SetSpecial): Postscript inclusion now works. 
+
+	* misc.c (DecodeArgs): Fix --help message 
+
+	* COPYING: 
+	* RELEASE: 
+	* README: Added files to repository
+
+2003-03-12  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* dvi.c (DVIFollowToggle): 
+	* misc.c (DecodeArgs): 
+	* dvipng.h: Added '-follow' switch, and code that
+	implements a follow mode. 
+
+2003-02-27  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* draw.c (DrawPages): 
+	* misc.c (Message): Speed up slightly when not in DEBUG
+	mode.
+	
+	* misc.c (DecodeArgs): Adjust copyright notice.
+
+	* set.c (SetRule): Reposition rules, one dot up.
+
+2003-01-30  Jan-흆e Larsson  <jalar@mai.liu.se>
+
+	* Makefile.in: 
+	* configure.ac: Fix includes and linking
+
+	* draw.c: 
+	* font.c: 
+	* pk.c:
+	* vf.c: 
+	* dvipng.h (font_entry): remove unnamed union
+
+	* dvipng.h: simplify includes
+
+2003-01-15  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* misc.c: Use autoconf's stuff, use atoi, fix warning
+	message
+
+	* dvipng.c:
+	* dvipng.h: Localize position and spacing to draw.c. Fix
+	timing
+	
+	* pk.c: 
+	* set.c: 
+	* special.c: 
+	* vf.c: 
+	* draw.c: Localize position and spacing to draw.c 
+
+	* configure.ac: Require gd and kpathsea 
+
+2002-12-03  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* draw.c: unfinished change: repairing
+
+	* draw.c: 
+	* font.c: 	
+	* vf.c: use void* in function call 
+
+	* dvipng.h:
+	* draw.c: 
+	* color.c: 
+	* set.c: change names of some functions
+
+	* dvipng.h:
+	* draw.c: 
+	* dvi.c: 
+	* ppagelist.c: make dvi data more local 
+
+	* .cvsignore: 
+	* dvipng.h:
+	* special.c: 
+	* font.c: 	
+	* misc.c: 
+	* dvipng.c:
+	* configure.ac:
+	* config.h.in: 
+	* Makefile.in: autoconfiscate
+
+2002-11-07  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* dvipng.h: 
+	* dvipng.c (main):
+	* dvi.c (DVIReOpen): Don't re-init, re-open 
+
+2002-10-31  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* dvipng.h: 
+	* dvi.c: Remove globals and Reopen DVI on change (check
+	mtime)
+	
+	* dvipng.c: Reopen DVI on change (check mtime) 
+
+2002-10-30  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* pk.c: Declaration moved here from dvipng.h
+
+	* Makefile: No io.c, no pagequeue.c but ppagelist.c 
+
+	* dvipng.h: Rearranged, some new declarations 
+
+	* dvipng.c (main): minor changes 
+
+	* draw.c (DoPages): use new page-finding mechanisms 
+
+	* dvi.c: outfilename handling fixed, page-finding
+	mechanisms added.
+
+	* misc.c: Ppagelist handling improved, outfilename now
+	works, added functionality from io.c 
+
+	* ppagelist.c: Added. Functionality slightly different from
+	pagequeue.c
+
+	* pagequeue.c: Revamped. Functionality changed and moved to
+	ppagelist.c
+
+	* io.c: Removed. Functionality in misc.c 
+
+	* .cvsignore: Additions
+
+2002-10-24  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* dvipng.c (main):
+	* dvipng.h:
+	* misc.c (DecodeString): Improve stdin parser 
+
+2002-10-21  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* dvipng.h: Remove globals, fix message output
+
+	* vf.c (SetVF, InitVF),
+	* font.c (FontDef), 
+	* draw.c (DrawCommand): Bugfix VF handling, fix message
+	output
+
+	* pk.c (SetPK, InitPK), 
+	* dvi.c (DVIOpen): Fix message output
+
+	* papersiz.c: use int32_t, fix overflow
+
+	* misc.c (DecodeArgs, Message): Fix -d option, remove
+	globals, fix message output 
+
+2002-10-16  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* dvipng.h: Remove globals
+
+	* dvipng.c (main): Remove globals, improve stdin parser
+
+	* misc.c (DecodeArgs): remove globals, fix helptext
+
+	* pagequeue.c (FindQdPage, QueuePage, QueueParse):
+	remove globals
+
+	* dvi.c (FindPage): Remove unnecessary test 
+
+	* draw.c (DoPages): Do more normal read-ahead 
+
+2002-10-15  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* pk.c, font.c: Minor change
+
+	* misc.c: Simplify, remove (some) globals, fix helptext
+
+	* pagequeue.c, dvipng.h, dvipng.c,
+	dvi.c, draw.c: Simplify, remove (some) globals
+
+2002-10-14  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* misc.c, dvipng.h, draw.c:
+	Added '-T tight' switch
+
+2002-10-11  Angus Leeming  <leeming@lyx.org>
+
+	* draw.c:
+	* dvi.c:
+	* dvipng.[ch]:
+	* font.c:
+	* io.c:
+	* misc.c:
+	* pagequeue.c:
+	* papersiz.c:
+	* pk.c:
+	* set.c:
+	* special.c:
+	* vf.c: remove function prototype macros.
+
+	* dvi.c (DVIGetCommand, CommandLength):
+	* set.c (SetChar): add a 'break' to the end of the switch
+	statements (prevents a warning with gcc 3.2).
+
+2002-10-11  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* special.c: Fix DEBUG, prototypes, and code pruning
+
+	* vf.c, set.c, pk.c, io.c,
+	font.c, draw.c: Fix DEBUG
+
+	* misc.c, dvi.c, pagequeue.c,
+	dvipng.h, dvipng.c: Fix pagelist and DEBUG
+
+
+2002-09-20  Jan-Ake Larsson  <jalar@imf.au.dk>
+
+	* dvipng.h: change font structures, add dvi struct, remove old
+	global variables, include relevant bits of config.h, restructure
+	somewhat
+
+	* dvipng.c: remove explicit vf stack
+
+	* special.c: use dvi struct
+
+	* misc.c: minor changes
+
+	* io.c: close file descriptors, not FILE pointers.
+
+	* draw.c: simplify, remove explicit vf stack.
+
+	* set.c: use dvi struct, remove explicit dvi stack.
+
+	* vf.c: use mmap, remove explicit vf stack.
+
+	* pk.c: use mmap
+
+	* font.c: enable dvi struct, prepare for mmap (file descriptors,
+	not FILE pointers), explicit vf stack removed.
+
+	* dvi.c: use dvi struct
+
+	* Makefile: config.h removed
+
+	* config.h, klibtool, klibtool.config: removed.
+
+2002-08-30  Jan-Ake Larsson  <jalar@imf.au.dk>
+
+	* dvi.c: fix bug in STRSIZE zap
+
+	* vf.c: simplify, fix debug info, zap STRSIZE limit
+
+	* misc.c: Fix background transparency
+
+	* dvipng.h, draw.c: Fix FormFeed bug (outfilename
+	wrong)
+
+	* set.c: Fix FormFeed bug (outfilename wrong), and background
+	transparency
+
+2002-08-29  Jan-Ake Larsson  <jalar@imf.au.dk>
+
+	* dvipng.h: type changes, dvi-io abstraction
+
+	* color.c: comment changed
+
+	* dvipng.c: dvi-io abstraction
+
+	* font.c: type changes, STRSIZE killed
+
+	* io.c: ReadCommand and CommandLength moved to dvi.c, preparations
+	for mmap
+
+	* set.c: type changes
+
+	* vf.c, pk.c: prepare for mmap, type changes
+
+	* pagequeue.c: type change
+
+	* misc.c: dvi fopen moved to dvi.c, type changes
+
+	* Makefile: pagelist.o gone, dvi.o new
+
+	* draw.c: SetVF moved to vf.c, type and dvi-io abstraction
+	changes
+
+	* commands.h: added length and debug texts
+
+	* dvi.c: Functionality moved from pagelist.c and misc.c to
+	dvi.c. Still needs work, but is initial stab at proper abstraction
+	of dvi-reading stuff. STRSIZE killed.
+
+	* pagelist.c: Functionality moved to dvi.c
+
+	* special.c: DoSpecial now takes a const char* argument, as
+	opposed to before.
+
+2002-08-19  Jan-Ake Larsson  <jalar@imf.au.dk>
+
+	* misc.c: Added -mode switch
+
+2002-08-14  Jan-Ake Larsson  <jalar@imf.au.dk>
+
+	* dvipng.h: VF additions, general cleanup
+
+	* dvipng.c: Small adjustments connected to the VF support
+
+	* config.h: Remove unnecessary things
+
+	* pagelist.c: Simplifications
+
+	* color.c: Comment changed
+
+	* special.c, set.c: Scale always equal h/v
+
+	* Makefile: Make vf.o
+
+	* io.c: Start pre-conversion to mmap. Much still to be done.
+
+	* misc.c, set.c, font.c, pk.c, draw.c: Adjust for VF support
+
+	* vf.c: VF support added to dvipng
+
+2002-06-24  Jan-Ake Larsson  <jalar@imf.au.dk>
+
+	* Makefile: Cleaned. Vacuumed, in fact.
+
+2002-06-19  Jan-Ake Larsson  <jalar@imf.au.dk>
+
+	* pagelist.c: remove Debug bug (!)
+
+2002-06-13  Jan-Ake Larsson  <jalar@imf.au.dk>
+
+	* Makefile: new object files
+
+	* special.c, set.c, dvipng.h: cleanup
+
+	* misc.c (ActualFactor): moved to font.c + cleanup
+
+	* font.c (ActualFactor): moved here from misc.c
+
+	* draw.c, dvipng.c, pagelist.c: functionality from dvipng.c spread
+	to these three
+
+	* pagequeue.c, pages.c: functionality moved from pages.c to
+	pagequeue.c
+
+	* commands.h: minor adjustments
+
+2002-06-12  Jan-Ake Larsson  <jalar@imf.au.dk>
+
+	* special.c: on unimplemented \special, give pixel position
+
+	* misc.c: Bugfix + literal response on stdin interface
+
+	* font.c, dvipng.h: Font handling fixed
+
+	* dvipng.c: prompt on stdin interface
+
+2002-06-11  Jan-Ake Larsson  <jalar@imf.au.dk>
+
+	* set.c (SetChar): load chars on PASS_DRAW <sigh>
+	-T -O bug fixed
+	
+2002-06-11  Jan-Ake Larsson  <jalar@imf.au.dk>
+
+	* set.c: Cleanup. Still buggy wrt -O, though.
+
+	* Makefile: DEBUG on for now, postamble.? removed
+
+	* postamble.c: Postamble is no longer read
+
+	* pages.c: Improve page handling: now a queue, not an unordered
+	set
+
+	* font.c: Improve font handling: search for fonts only when used
+
+	* dvipng.h: Cleanup
+
+	* dvipng.c: Major rewrite: page handling improved
+
+	* misc.c: Fix DVI init + cleanup
+
+2002-05-30  Jan-Ake Larsson  <jalar@imf.au.dk>
+
+	* misc.c: Transparent border: '-bd'
+
+	* dvipng.h, set.c: Tiding up + transparent border
+
+	* dvipng.c, font.c: Tidying up
+
+2002-05-29  Jan-Ake Larsson  <jalar@imf.au.dk>
+
+	* color.c: Fix cmyk->rgb.
+
+	* misc.c: Add '-fg' and '-bg'.
+
+	* font.c: Tidy up
+
+2002-05-29  Jan-Ake Larsson  <jalar@imf.au.dk>
+
+	* dvipng.h: Tidying up, and new global vars
+
+	* io.c: Tidying up
+
+	* papersiz.c: Pagesize matters, adapted from dvips
+
+	* pages.c: Page choosing, from dvips. Not sufficient for our
+	purposes, but a start
+
+	* dvipng.c, color.c, Makefile, misc.c, set.c: Changed to make
+	pagesize (-T), offset (-O), page choosing (-pp), and output file
+	(-o) work.
+
+2002-05-27  Jan-Ake Larsson  <jalar@imf.au.dk>
+
+	* pk.c: Changed comments
+
+	* .cvsignore, special.c, set.c, postamble.c, pk.c, misc.c, io.c,
+	font.c, dvipng.c, color.c, commands.h, dvipng.h: Initial version
+
+	* config.h, Makefile: Initial version, to be replaced by
+	autoconf'ism
+	
+	* klibtool.config, klibtool: Included for now. To be
+	removed.

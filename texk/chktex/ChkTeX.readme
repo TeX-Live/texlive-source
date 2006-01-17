@@ -1,0 +1,515 @@
+Short:    v1.5. Finds typographic errors in LaTeX
+Author:   <jensthi@ifi.uio.no> (Jens T. Berger Thielemann)
+Uploader: <jensthi@ifi.uio.no> (Jens T. Berger Thielemann)
+Type:     text/tex
+Replaces: text/tex/ChkTeX.lha
+Version:  1.5
+URL:      http://www.ifi.uio.no/~jensthi/chktex/
+Porting:  <bjort@ifi.uio.no> (Bjørn Ove Thue) [MSDOS]
+          <fritsch@hmi.de> (Wolfgang Fritsch) [OS/2]
+
+
+             #####  ###       ###    ########     ###     ##
+           ###   ##  ##        ##       ##          ##   #
+          @@         @@ @@@    @@  @@   @@  #######  @@ @
+          @@         @@@  @@   @@ @@    @@   ##   #   @@
+          &&         &&   &&   &&&&     &&   @@      & &&
+           &&&   &&  &&   &&   && &&    &&   @@@@   &   &&
+             %%%%%  %%%   %%% %%%  %%%  %%   &&   %%%    %%% v1.5
+                                             &&   &
+                                            %%%%%%%
+
+                                 Introduction
+
+   This program has been written in frustration because some constructs
+   in LaTeX are sometimes non-intuitive, and easy to forget. It is _not_
+   a replacement for the built-in checker in LaTeX; however it catches
+   some typographic errors LaTeX oversees. In other words, it is Lint for
+   LaTeX. Filters are also provided for checking the LaTeX parts of CWEB
+   documents.
+
+   It is written in ANSI C and compiles silently under GCC using ``-Wall
+   -ansi -pedantic'' and almost all warning flags. This means that you
+   can compile & use the program on your favorite machine. Full source
+   included.
+
+   The program also supports output formats suitable for further
+   processing by editors or other programs, making errors easy to cycle
+   through. Software is provided for beautifully interfacing against the
+   AUC-TeX Emacs mode, CygnusED, GoldEd and various Amiga message
+   browsers.
+
+   The program itself does not have any machine requirements; Amiga,
+   MSDOS and OS/2 binaries are available. Of course, you'll need ARexx
+   and ScMsg or VBrowse to benefit from the ARexx scripts.
+
+                                   Features
+
+   ChkTeX begins to get quite a few bells & whistles now. However, you
+   should be aware of that in most cases, all this is transparent to the
+   user. As you will see, ChkTeX offers the ability to adapt to many
+   environments and configurations.
+
+New features
+
+   Modifications and additions since v1.4:
+
+  Program
+
+   Modifications to the executable itself:
+     * As usual, a few more warnings:
+          + No space or similar in front/after parenthesis.
+          + Demands a consistent quote style.
+          + Double spaces in input which will not be rendered as one.
+          + Punctuation malplaced regarding to math mode.
+          + Warns about TeX primitives.
+          + Space in front of footnotes.
+          + Bogus \left and \right commands.
+     * The abbreviation recognizer has (for the last time?) been
+       redesigned. We now produce far less false warnings, catch more
+       cases and do all this faster than before. Seems like a win.
+       Done much of the same with the italic correction detection part,
+       too...
+     * Some bugs have been silently fixed. Hot spots in the program have
+       been optimized; in certain cases this in fact doubles the speed!
+       Along with this goes more code elegance and utilization of macro
+       processing and the C language. Take a look at ``Resource.[ch]''.
+     * It's possible to specify separate output-formats depending on
+       whether you are sending the output to a file/pipe or to a
+       terminal.
+     * Column positions are finally correct; we now expand tabs
+       correctly.
+     * ChkTeX will now recursively search for \input'ed files, both in
+       the document and on the commandline. See the ``chktexrc'' file for
+       more info.
+     * The debug switch is now more intelligent; if you wish to hack a
+       bit on ChkTeX for yourself, it is possible to produce selective
+       debugging output. The feature can also be disabled altogether.
+     * MS-DOS and OS/2 version of the program is now more flexible and
+       well-behaved, thanks to Gerd Böhm.
+     * You may now say ``-wall'' to make all messages warnings, and turn
+       them on.
+     * Uses termcap on UNIX boxes; this should ensure that ``-v2'' (or
+       more precisely: ``%i'' and ``%I'') works regardless to what
+       terminal you are using.
+
+  Resource file
+
+   New concepts introduced in the setup file:
+     * You may now specify both case-sensitive and case-insensitive user
+       patterns in the ``chktexrc'' file. In addition; it is now possible
+       to reset/clear lists.
+     * It is possible to specify how many arguments (optional/required)
+       ``WIPEARG'' should wipe; it behaves also somewhat more intelligent
+       when the arguments stretch over multiple lines.
+     * Global files will be read _in addition_ to local ones. The
+       searching order has also been reversed in order to make this more
+       intelligent.
+
+  Other
+
+   Various other stuff I've done to the product:
+
+     * The documentation has been polished and should now be easier to
+       use in practical situations.
+     * ``check'' target in ``Makefile'', so you can check that the
+       installation succeeded. In fact, the ``Makefile'' has been
+       enhanced in several other ways too, amongst other it is now GNU
+       conforming.
+     * ``deweb'' is now documented; you may say ``man deweb'' to get a
+       few words of advice. The support script (chkweb) does now behave
+       as the remaining package (accepting stdin input and flags).
+     * I've written an Emacs hack which magically adds ChkTeX to the list
+       of AUC-TeX commands; thus making the use of the program even more
+       trivial.
+       For those of you who don't wish to mess with Emacs, I've included
+       a trivial lacheck <-> ChkTeX interface.
+       This means that you now can use ChkTeX just as easily as lacheck
+       when you're running AUC-TeX.
+     * Added an ARexx script which lets ChkTeX talk to VBrowse, the
+       message browser of Volker Barthelmann's freely distributable ANSI
+       C compiler. The browser itself is available on Aminet as
+       ``dev/c/vbcc.lha''.
+
+Feature list
+
+     * Supports over 40 warnings. Warnings include:
+          + Commands terminated with space. Ignores ``\tt'', etc.
+          + Space in front of references instead of ``~''.
+          + Forgetting to group parenthesis characters when
+            sub-/superscripting.
+          + Italic correction (``\/'') mistakes (double, missing,
+            unnecessary).
+          + Parenthesis and environment matching.
+          + Ellipsis detection; also checks whether to use ``\dots'',
+            ``\cdots'' or ``\ldots''.
+          + Enforcement of normal space after abbreviation. Detects most
+            abbreviations automagically.
+          + Enforcement of end-of-sentence space when the last sentence
+            ended with capital letter.
+          + Math-mode on/off detection.
+          + Quote checking, both wrong types (``"'') and wrong direction.
+          + Recommends splitting three quotes in a row.
+          + Searching for user patterns.
+          + Displays comments.
+          + Space in front of ``\label'' and similar commands.
+          + Use of ``x'' instead of ``$\times$'' between numbers.
+          + Multiple spaces in input which will be rendered as one space
+            (or multiple spaces, where that is undesirable).
+          + Warns about text which may be ignored.
+          + Mathematical operators typeset as variables.
+          + No space in front of/after parenthesis.
+          + Demands a consistent quote style.
+          + Punctuation inside inner math mode/outside display math mode.
+          + Use of TeX primitives where LaTeX equivalents are available.
+          + Space in front of footnotes.
+          + Bogus characters following commands.
+     * Fully customizable. Intelligent resource format makes it possible
+       to make ChkTeX respect your LaTeX setup. Even command-line options
+       may be specified globally in the ``chktexrc'' file.
+     * Supports ``\input'' command; both TeX and LaTeX version. Actually
+       includes the files. ``TEXINPUTS''-equivalent search path.
+     * Intelligent warning/error handling. The user may promote/mute
+       warnings to suit his preferences. You may also mute warnings in
+       the header of a file; thus killing much unwanted garbage.
+     * Scripts included for checking CWEB files written in LaTeX.
+       (Requires perl v5).
+     * Supports both LaTeX 2.09 and LaTeX2e.
+     * Flexible output handling. Has some predefined formats and lets the
+       user specify his own format. Uses a ``printf()'' similar syntax.
+       ``lacheck'' compatible mode included for interfacing with the
+       AUC-TeX Emacs mode.
+     * ARexx scripts for interfacing with ScMsg and VBrowse are included.
+       Special scripts included for CygnusED/GoldED, for binding to
+       hotkey.
+     * Amiga Workbench support. Parameters may be passed by
+       shift-clicking the LaTeX files and setting the remaining options
+       in the tooltypes.
+     * Wildcard matching (Amiga only). Matches file patterns internally,
+       thus saving a lot of work. This is, however, platform-specific
+       code -- on UNIX boxes this is done by the shell.
+     * Written in ANSI C. ``configure'' script included for easy setup
+       and installation on UNIX systems.
+
+   Still, it is important to realize that the output from ChkTeX is only
+   intended as a _guide_ to fixing faults. However, it is by no means
+   always correct. This means that correct LaTeX code may produce errors
+   in ChkTeX, and vice versa: Incorrect LaTeX code may pass silently
+   through.
+
+                                  Legal stuff
+
+   ChkTeX, documentation, installations scripts, CWEB filters and other
+   materials provided are copyright © 1995-96 Jens T. Berger Thielemann,
+   unless explicitly stated otherwise.
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or (at
+   your option) any later version.
+
+   This program is distributed in the hope that it will be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+   General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to:
+
+     The Free Software Foundation, Inc.
+     675 Mass Ave
+     Cambridge
+     MA 02139
+     USA
+
+Registration
+
+   `ChkTeX' is made available under the concept of Gift-Ware, which is a
+   variant of Share-Ware. Share-Ware software authors often release
+   `crippled' versions of their products, i.e. these programs do not
+   support the same functionality as the registered versions you get when
+   sending monetary contributions to the authors. It all comes down to
+   `pay for the software you are using' in Share-Ware terms. With
+   Gift-Ware registration it is different, you are not required to
+   contribute money, but a gift will do. With `ChkTeX' you always get a
+   fully functional program, there is no `crippled' test release which
+   you can try for a limited time and then have to pay for in order to
+   receive the working registered version.
+
+   It may seem as if `ChkTeX' was free, but this is not the case.
+   Although there is no need to pay the author in order to get a fully
+   functional version of the program you should consider making a
+   contribution. You don't need to feel guilty if you cannot or do not
+   want to give me something in return for the work I have put into
+   `ChkTeX'. Show me that it was worth spending so much time listening to
+   users, updating, rewriting and enhancing this program. Your
+   contributions will provide the motivation for me to keep developing
+   the program.
+
+   Send your contribution to the following address:
+
+     Jens Berger
+     Spektrumvn. 4
+     N-0666 Oslo
+     Norway
+
+                                 Availability
+
+   This program will be uploaded to AmiNet and CTAN; thus it can be found
+   at any mirrors of those.
+
+   Please note that earlier versions of ChkTeX have been uploaded to
+   Aminet under the same archive name, to keep consistent with Aminet's
+   policy of keeping versions out of filenames. Please read the file
+   ``ChkTeX.readme'' (which is in the same directory as the archive) to
+   find out the version number.
+
+   I'm now uploading the archive uncompressed to CTAN; however, most of
+   the ftpservers in that network allow you to retrieve a directory
+   compressed in whatever way you prefer. Aminet will as usual receive a
+   LhArc archive.
+
+   Mirrors of both networks include:
+
+Comprehensive TeX Archive Network (CTAN)
+
+   Directory: support/chktex
+     * ftp://ftp.adfa.oz.au/pub/tex/ctan/, (Australia)
+     * ftp://ftp.cs.rmit.edu.au/tex-archive/, (Australia)
+     * ftp://gw.pacbell.com/mirror/ftp.shsu.edu/tex-archive/,
+       (California, USA)
+     * ftp://sunsite.queensu.ca/pub/tex-archive/, (Canada)
+     * ftp://ftp.dante.de/pub/tex/, (Deutschland)
+     * ftp://ftp.germany.eu.net/pub/packages/TeX/, (Deutschland)
+     * ftp://ftp.gwdg.de/pub/dante/, (Deutschland)
+     * ftp://ftp.tex.ac.uk/pub/tex /, (England)
+     * ftp://src.doc.ic.ac.uk/packages/tex/uk-tex/, (England)
+     * ftp://kadri.ut.ee/pub/tex/, (Estonia)
+     * ftp://ftp.funet.fi/pub/TeX/CTAN/, (Finland)
+     * ftp://ftp.jussieu.fr/pub4/TeX/CTAN/, (France)
+     * ftp://ftp.loria.fr/pub/unix/tex/ctan/, (France)
+     * ftp://ftp.comp.hkbu.edu.hk/pub/TeX/CTAN/, (Hong Kong)
+     * ftp://ftp.unina.it/pub/TeX/, (Italia)
+     * ftp://sunsite.dsi.unimi.it/pub/TeX/, (Italia)
+     * ftp://ftp.riken.go.jp/pub/tex-archive/, (Japan)
+     * ftp://wuarchive.wustl.edu/packages/TeX/, (Missouri, USA)
+     * ftp://ftp.rge.com/pub/tex/, (New York, USA)
+     * ftp://ftp.duke.edu/tex-archive/, (North Carolina, USA)
+     * ftp://sunsite.unc.edu/pub/packages/TeX/, (North Carolina, USA)
+     * ftp://sunsite.icm.edu.pl/pub/CTAN/, (Poland)
+     * ftp://ftpserver.nus.sg/pub/zi/TeX/, (Singapore)
+     * ftp://ftp.ee.up.ac.za/tex-archive/, (South Africa)
+     * ftp://nic.switch.ch/mirror/tex/, (Switzerland)
+     * ftp://dongpo.math.ncu.edu.tw/tex-archive/, (Taiwan)
+     * ftp://ftp.ccu.edu.tw/pub/tex/, (Taiwan)
+     * ftp://ftp.fcu.edu.tw/pub2/tex/, (Taiwan)
+     * ftp://ftp.shsu.edu/pub/tex/, (Texas, USA)
+     * ftp://ftp.muni.cz/pub/tex/CTAN/, (The Czech Republic)
+     * ftp://ftp.cs.ruu.nl/pub/tex-archive/, (The Netherlands)
+     * ftp://ftp.uu.net/pub/text-processing/TeX/, (Virginia, USA)
+     * ftp://ftp.cdrom.com/pub/tex/ctan/, (West coast, USA)
+     * ftp://ftp.univie.ac.at/packages/tex/, (\"Osterreich)
+
+Aminet
+
+   I'm only uploading the Amiga version of the archive to Aminet (so that
+   unsuspecting Amiga users won't have to download hundreds of unwanted
+   kilobytes). If you wish to use ChkTeX on another machine, please refer
+   to CTAN.
+
+   Directory: text/tex/, filename: chktex.lha
+     * ftp://ftp.wustl.edu/pub/aminet/text/tex/, (USA (MO))
+     * ftp://ftp.netnet.net/pub/aminet/text/tex/, (USA (WI))
+     * ftp://ftp.ninemoons.com/pub/aminet/text/tex/, (USA (AZ))
+     * ftp://ftp.livewire.com.au/pub/aminet/text/tex/, (Australia)
+     * ftp://ftp.tas.gov.au/pub/aminet/text/tex/, (Australia)
+     * ftp://ftp.luth.se/pub/aminet/text/tex/, (Scandinavia)
+     * ftp://ftp.eunet.ch/pub/aminet/text/tex/, (Switzerland)
+     * ftp://ftp.germany.aminet.org/pub/aminet/text/tex/, (Germany)
+     * ftp://ftp.pb.aminet.org/pub/aminet/text/tex/, (Germany)
+     * ftp://ftp.uni-stuttgart.de/pub/aminet/text/tex/, (Germany)
+     * ftp://ftp.uni-erlangen.de/pub/aminet/text/tex/, (Germany)
+     * ftp://ftp.cs.tu-berlin.de/pub/aminet/text/tex/, (Germany)
+     * ftp://ftp.tu-chemnitz.de/pub/aminet/text/tex/, (Germany)
+     * ftp://ftp.fh-augsburg.de/pub/aminet/text/tex/, (Germany)
+     * ftp://ftp.uni-bremen.de/pub/aminet/text/tex/, (Germany)
+     * ftp://ftp.uni-kl.de/pub/aminet/text/tex/, (Germany)
+     * ftp://ftp.uni-trier.de/pub/aminet/text/tex/, (Germany)
+     * ftp://ftp.informatik.rwth-aachen.de/pub/aminet/text/tex/,
+       (Germany)
+     * ftp://ftp.uni-siegen.de/pub/aminet/text/tex/, (Germany)
+     * ftp://ftp.uni-regensburg.de/pub/aminet/text/tex/, (Germany)
+     * ftp://sunsite.cnam.fr/pub/aminet/text/tex/, (France)
+     * ftp://aminet.grolier.fr/pub/aminet/text/tex/, (France)
+     * ftp://ftp.giga.or.at/pub/aminet/text/tex/, (Austria)
+     * ftp://sunsite.auc.dk/pub/aminet/text/tex/, (Denmark)
+     * ftp://ftp.acropolis.gr/pub/aminet/text/tex/, (Greece)
+     * ftp://aminet.iit.uni-miskolc.hu/pub/aminet/text/tex/,
+       (Hungary)
+     * ftp://ftp.italy.aminet.org/pub/aminet/text/tex/, (Italy)
+     * ftp://ftp.man.szczecin.pl/pub/aminet/text/tex/, (Poland)
+     * ftp://ftp.portugal.aminet.org/pub/aminet/text/tex/, (Portugal)
+     * ftp://ftp.gui.uva.es/pub/aminet/text/tex/, (Spain)
+     * ftp://ftp.uk.aminet.org/pub/aminet/text/tex/, (UK)
+     * ftp://micros.hensa.ac.uk/pub/aminet/text/tex/, (UK)
+
+                                 Installation
+
+   A few words on installation on various platforms:
+
+   _Amiga:_
+          Use the supplied Installer script.
+
+   _MS-DOS & OS/2:_
+          Copy the binary (``ChkTeX.exe'') to somewhere in your path, and
+          place the ``chktexrc'' file in the same directory.
+
+          If you're running Emacs, you may wish to copy the file
+          ``chktex.el'' to your elisp source directory, and add the
+          following line to your ``.emacs'' file:
+
+(require 'chktex)
+
+   _UNIX:_
+          Type ``configure'', ``make'' and finally ``make install''. To
+          make sure everything proceeded correctly, type ``make check''.
+          If you don't have superuser privileges and thus access to the
+          default system areas, you should type ``configure -help'' to
+          help you set up correct paths.
+
+          If you haven't installed any software like this before, that is
+          distributed in source form, here are some guidelines to help
+          you install it locally at your account. Please note that a mail
+          to the system administrator may be less work for you. :-)
+
+          We assume that you have put the archive (``chktex.tar.gz'') in
+          a subdir of yours, with path ``~/tmp''. We further assume that
+          your shell is ``csh'' or ``tcsh''. Do the following:
+
+         1. First of all, unpack the archive contents.
+> cd ~/tmp
+> gunzip chktex.tar.gz
+> tar xf chktex.tar
+         2. Now, we can configure the program. There are some
+            configuration options you should know about:
+
+              _``-enable-emacs-hack'':_
+                      Install a small file which adds ChkTeX to the
+                      command menu of AUC-TeX. This is to be considered
+                      as a hack, and may break in future versions of
+                      AUC-TeX. It works fine under AUC-TeX v2.9, though.
+
+                      This option needs the path of your elisp directory
+                      as argument, e.g.
+                      ``-enable-emacs-hack=/home/myself/elisp'' or
+                      similar.
+
+                      You'll also have to add the following line to your
+                      ``.emacs'' file:
+
+(require 'chktex)
+
+              You can now access ChkTeX from the ``Command'' menu in
+                      AUC-TeX. To cycle through the messages, type C-x `.
+
+              _``-enable-lacheck-replace''_
+                      This enables a quick hack for making the AUC-TeX
+                      Emacs mode use ChkTeX instead of lacheck. This is
+                      done by installing a stub script which
+                      ``overrides'' the original lacheck executable.
+
+                      While more stable than the previous solution, this
+                      is also significantly less elegant -- in computing
+                      terms, this is the ``brute force'' approach.
+
+              _``-enable-debug-info''_
+                      ChkTeX has an ability to spit out various
+                      diagnostic messages using the ``-d'' flag. This
+                      behaviour is on by default. By adding the flag
+                      ``-disable-debug-info'' to the commandline, this
+                      will not be compiled in.
+
+                      This may be useful if you're running short of disk
+                      space (the time savings are neglible).
+
+            If you are installing the program on your local account, use
+            the following command:
+> configure --prefix ~/
+            Add eventual extra flags as specified above. This command
+            will generate a significant amount of output, this can
+            usually be ignored.
+         3. Finally, we can just build the program and install it.
+> make
+> make install
+         4. Finished! The program is now installed and ready to use. You
+            may now tell other people to put your bindir in their path in
+            order to benefit from your work. All that remains is to make
+            the shell aware of your installation.
+> rehash
+            To make the remaining parts of your system aware of this,
+            you'll have to log out and re-log in, I'm afraid. However,
+            you should delay this until you've completed this
+            installation procedure.
+         5. If you wish to make sure that everything is OK (you ought
+            to), you may now ask ChkTeX to do a self-test:
+> make check
+
+   _Other platforms:_
+          First of all, you have to copy the ``config.h.in'' file to a
+          file named ``config.h''. Then, edit it to reflect your system.
+          Do the same with ``OpSys.h'' (this file has been reduced
+          significantly). If you wish, you may define ``DATADIR'' to the
+          path you want the global resource file to be put.
+
+          Now, I would suggest that you take a peak at the ``OpSys.c''
+          file, and edit it appropiately, for more comfort. This should
+          not be necessary, though, at least not the first time.
+
+          Finally, you may now compile and link all .cfiles. Define
+          ``HAVE_CONFIG_H'' to 1 (on the command-line, for instance). If
+          the ``config.h'' you wish to use has another name, define
+          ``CONFIG_H_NAME'' to that (in that case, don't define
+          ``HAVE_CONFIG_H'').
+
+          Put the directory path of the ``chktexrc'' file in a
+          environment variable named ``CHKTEXRC''. The files ``deweb.in''
+          and ``chkweb'' should be moved to a directory in your path.
+          These files may need further setup, as they haven't got the
+          location of perl initialized.
+
+          If your compiler/the compiled program complains (or crashes!),
+          you may try the hints listed below. Please note that it only
+          makes sense to try these hints if your compiler fails to
+          produce a working program.
+
+         1. Increase the preprocessor buffers and line buffers. The
+            ChkTeX sources define macros sized 3-4k (expanding to about
+            the same), and passes arguments sized about 1k.
+         2. Use the magic switch which lets us use large
+            ``switch(...){...}'' statements; some of these statements
+            have about 120 ``case'' entries.
+         3. The sources require that at least the first 12 of each
+            identifier is significant.
+
+   _Note:_ You _must_ install the new ``chktexrc'' file; ChkTeX will fail
+   to function unless!
+
+   After doing this, you may enhance ChkTeX' behaviour by reading/editing
+   the ``chktexrc'' file.
+
+                             Contacting the author
+
+   If you wish to contact me for any reason or would like to participate
+   in the development of ChkTeX, please write to:
+
+     Jens Berger
+     Spektrumvn. 4
+     N-0666 Oslo
+     Norway
+     E-mail: <jensthi@ifi.uio.no>
+
+   Any signs of intelligent life are welcomed; that should exclude
+   piracy.
+
+   Have fun.
+

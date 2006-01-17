@@ -1,0 +1,53 @@
+# Makefile.in for dtl  -- S Rahtz s.rahtz@elsevier.co.uk.  Public domain.
+version = 1.0
+
+kpse_include ../make/paths.mk
+kpse_include ../make/common.mk
+kpse_include ../make/programs.mk
+
+prog_cflags = -DUNIX  -DNeedFunctionPrototypes -DHAVE_CONFIG_H \
+	-I$(kpathsea_dir) -I$(kpathsea_srcdir)
+# We don't use Kpathsea, so don't overload fopen and stuff
+DEFS = -DNO_DEBUG
+
+objects=dv2dt.o dt2dv.o
+program = dv2dt dt2dv
+
+programs = $(program)
+
+default: $(programs)
+all: $(programs)
+
+dv2dt: dv2dt.o
+	$(kpathsea_link) dv2dt.o
+
+dt2dv: dt2dv.o
+	$(kpathsea_link) dt2dv.o
+
+install: install-exec install-data
+
+uninstall: uninstall-exec uninstall-data
+
+install-exec: all
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(bindir)
+	for p in $(programs); do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
+uninstall-exec:
+	for p in $(programs); do rm -f $(bindir)/$$p; done
+
+install-data: 
+	$(SHELL) $(top_srcdir)/../mkinstalldirs  $(man1dir)
+	$(INSTALL_DATA) $(srcdir)/dv2dt.man $(man1dir)/dv2dt.1
+	$(INSTALL_DATA) $(srcdir)/dt2dv.man $(man1dir)/dt2dv.1
+
+uninstall-data: 
+	rm -f $(man1dir)/dv2dt.1
+	rm -f $(man1dir)/dt2dv.1
+
+kpse_include ../make/dist.mk
+kpse_include ../make/config.mk
+
+info dvi check:
+
+kpse_include ../make/clean.mk
+kpse_include ../make/rdepend.mk
+kpse_include depend.mk

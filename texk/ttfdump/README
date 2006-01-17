@@ -1,0 +1,70 @@
+Introduction
+	Ttfdump is a TrueType font dumper. The man purpose of ttfdump is to 
+dump the various table in a TrueType font file in ASCII form. Ttfdump is the 
+first step in my ILX (Internationalized and Localized X-window) project. For
+more information about ILX project please read the file ILX.
+
+Features
+	Now ttfdump can load and parse all the required tables and most of the
+optional tables defined in the TrueType Specification. The following is a list
+of tables that ttfdump currently implemented.
+
+	Required Tables			Optional Tables
+		cmap				cvt
+		glyf@				fpgm@
+		head				gasp
+		hhea				hdmx
+		hmtx				kern*
+		loca				LTSH
+		maxp				prep@
+		name				VDMX
+		post				vhea*
+		OS/2				vmtx*
+
+	Note: 
+	  	*: The tables with "*" marks are newly implemented in this 
+		version.
+		@: The tables with "@" marks are partialy implemented in this 
+		version.
+	
+File List:
+	ttfdump-0.5.0/
+		|
+		|
+		|---- include/*.h    included header file
+		|
+		|
+		|---- libttf/*.c     c programs for ttfdump
+		|
+		|
+		|---- src/ttfdump.c  the main program
+
+Installation:
+	Ttfdump is integrated with Autoconf so it is very easy to compile the
+package. You need only type configure in the top directory and then make.
+
+Usage:
+	Ttfdump now has better command line options and is easier to use.
+
+	To dump all information in the TrueType font file times.ttf:
+		ttfdump times.ttf
+	To dump the required table \fIcmap\fP in the file:
+		ttfdump -t cmap times.ttf
+	To dump a single glyph with index 50:
+		ttfdump -g 50 times.ttf
+
+Portabality:
+	Ttfdump has been tested under those platforms:
+		
+		Linux 2.0.9
+		OSF1 V3.0
+		AIX 3.2.5
+		IRIX  5.3
+
+Avaliablity:
+	Ttfdump can be downloaded form the URL
+	ftp://sansan.phy.ncu.edu.tw/pub/ttfdump/
+
+BUGS report:
+	Please send any bugs report or suggestion to ollie@ms1.hinet.net
+

@@ -1,0 +1,27 @@
+.TH texconfig 1 "February 2005" "teTeX" "teTeX"
+.SH NAME
+texconfig \- configures teTeX
+.LP
+texconfig-sys \- configures teTeX system\-wide
+.SH SYNOPSIS
+.B texconfig
+.LP
+.B texconfig-sys
+.SH DESCRIPTION
+.I texconfig
+allows to configure and maintain
+.I teTeX
+in an easy and convenient manner. It uses the
+.I dialog
+program to draw nice input boxes. After answering the dialoges, the
+appropriate files are changed automatically and all necessary
+steps are involved to apply the new settings.
+.SH "SEE ALSO"
+.IR dialog (1),
+.IR initex (1),
+.IR mf (1),
+.IR vi (1),
+.IR EDITOR
+environment-variable.
+.SH AUTHOR
+Thomas Esser <te@dbs.uni-hannover.de>

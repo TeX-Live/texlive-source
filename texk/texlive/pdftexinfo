@@ -1,0 +1,3 @@
+#!/bin/sh
+test -f "`kpsewhich pdftexinfo.fmt`" || fmtutil --byfmt pdftexinfo
+exec pdftex -fmt=pdftexinfo -progname=pdftex "$@"

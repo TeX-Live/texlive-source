@@ -1,0 +1,11 @@
+		----- MakeIndex Porting Note -----
+
+You are welcome and encouraged to port MakeIndex to any system not
+support under the current distribution.  The standard way of doing
+that is by adding patches with enclosed #ifdef ... #endif pairs.  You
+can invent your own variables with the OS_ prefix attached in the
+front.  Please report your port back to me, so that I can make it
+available to other people.
+
+						Pehong Chen
+						11/11/1989 

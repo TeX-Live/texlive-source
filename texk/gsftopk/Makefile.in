@@ -1,0 +1,63 @@
+# Makefile for gsftopkk --kb@cs.umb.edu. Modified Yves.Arrouye@imag.fr
+version = 1.19
+
+program = gsftopk
+default all: $(program) gsftopk.1
+
+kpse_include ../make/paths.mk
+kpse_include ../make/common.mk
+kpse_include ../make/programs.mk
+
+gsftopkpsheaderdir = $(psheaderdir)/gsftopk
+
+# (Optional) The fully-qualified path of Ghostscript.
+# GSPATH=-DGS=\"/usr/local/gnu/bin/gs\"
+
+# See INSTALL for compilation options.
+DEFS = @DEFS@ $(XDEFS) $(GSPATH) -DKPATHSEA
+
+objects = gsftopk.o
+
+
+$(program): $(kpathsea) $(objects)
+	$(kpathsea_link) $(objects) $(LOADLIBES)
+
+kpse_include ../make/tkpathsea.mk
+
+gsftopk.1: gsftopk1.sed sedscript
+	sed -f sedscript <$(srcdir)/gsftopk1.sed >$@
+
+sedscript: mksedscript Makefile
+	$(SHELL) $(srcdir)/mksedscript $(DEFS) >$@
+
+install: install-exec install-data
+uninstall: uninstall-exec uninstall-data
+
+install-exec: $(program)
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(bindir)
+	$(INSTALL_LIBTOOL_PROG) $(program) $(bindir)
+uninstall-exec:
+	rm -f $(bindir)/$(program)
+
+install-data: gsftopk.1
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(man1dir) $(gsftopkpsheaderdir)
+	$(INSTALL_DATA) gsftopk.1 $(man1dir)/gsftopk.$(manext)
+	$(INSTALL_DATA) $(srcdir)/render.ps $(gsftopkpsheaderdir)/render.ps
+uninstall-data:
+	rm -f $(man1dir)/gsftopk.$(manext)
+	rm -f $(gsftopkpsheaderdir)/render.ps
+
+kpse_include ../make/clean.mk
+
+clean::
+	rm -f sedscript
+
+distclean::
+	rm -f gsftopk.1
+
+kpse_include ../make/config.mk
+
+info dvi check:
+
+kpse_include ../make/rdepend.mk
+kpse_include depend.mk

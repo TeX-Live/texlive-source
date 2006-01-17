@@ -1,0 +1,12 @@
+Sun Mar  8 20:43:31 1998  Sebastian Rahtz  <srahtz@ogre>
+
+	* lacheck.lex: to version 1.26 from master source
+
+Tue Jan 27 14:32:25 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* configure etc: new configure.in, c-auto.in, Makefile.in from
+	Olaf Weber
+Tue Jan 27 13:57:52 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* Makefile.in: depend inclusion
+

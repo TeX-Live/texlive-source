@@ -1,0 +1,114 @@
+# Thomas Esser, for teTeX. All settings here are my fault, don't blame
+# the dvipng maintainers for it.
+
+kpse_include ../make/paths.mk
+kpse_include ../make/common.mk
+kpse_include ../make/programs.mk
+kpse_include ../make/cross.mk
+
+ZLIBDIR		= ../../libs/zlib
+ZLIBSRCDIR	= $(srcdir)/$(ZLIBDIR)
+ZLIBDEP		= @ZLIBDEP@
+LDZLIB		= @LDZLIB@
+
+LIBPNGDIR	= ../../libs/libpng
+LIBPNGSRCDIR	= $(srcdir)/$(LIBPNGDIR)
+LIBPNGDEP	= @LIBPNGDEP@
+LDLIBPNG	= @LDLIBPNG@
+
+GDDIR		= ../../libs/gd
+GDSRCDIR	= $(srcdir)/$(GDDIR)
+GDDEP		= @GDDEP@
+LDGD		= @LDGD@
+
+LDLIBT1=@LDLIBT1@
+LIBT1CPPFLAGS=@LIBT1CPPFLAGS@
+LIBT1DEP=@LIBT1DEP@
+LIBT1DIR = ../../libs/t1lib
+LIBTYPE1DIR = $(LIBT1DIR)/../type1
+LIBT1SRCDIR = $(srcdir)/$(LIBT1DIR)
+
+LD_ALL_LIBS = $(LDGD) $(LDLIBT1) $(LDLIBPNG) $(LDZLIB)
+ALL_LIBS_DEP = $(ZLIBDEP) $(LIBPNGDEP) $(GDDEP) $(LIBT1DEP)
+
+program = dvipng
+programs = $(program)
+default all: $(programs)
+
+prog_cflags = -DHAVE_KPSE_ENC_FORMATS -DHAVE_PNG_H \
+  -DHAVE_T1LIB_H -DHAVE_LIBKPATHSEA -DHAVE_LIBT1 -DHAVE_GD_H \
+  -DHAVE_LIBGD -DHAVE_GDIMAGEPNGEX -DHAVE_GDIMAGECREATETRUECOLOR \
+  -DHAVE_GDIMAGETRUECOLORTOPALETTE @LIBPNGCPPFLAGS@ @ZLIBCPPFLAGS@ \
+  -DDEBUG=1 -DHAVE_GDIMAGEGIF \
+  $(LIBT1CPPFLAGS) @GDCPPFLAGS@
+
+objects=dvipng.o color.o draw.o dvi.o font.o misc.o pk.o \
+        set.o special.o papersiz.o ppagelist.o \
+        vf.o @PSFONTS_O@
+$(program): $(objects) $(kpathsea) $(ALL_LIBS_DEP)
+	$(kpathsea_link) $(objects) $(LD_ALL_LIBS) $(LOADLIBES)
+
+$(LIBPNGDIR)/libpng.a:
+	cd $(LIBPNGDIR); $(MAKE)
+
+$(ZLIBDIR)/libz.a:
+	cd $(ZLIBDIR); $(MAKE)
+
+$(GDDIR)/libgd.a:
+	cd $(GDDIR); $(MAKE)
+
+$(LIBT1DIR)/libt1.a:
+	cd $(LIBT1DIR); $(MAKE) $(makeargs) libt1.a
+
+$(LIBTYPE1DIR)/libtype1.a:
+	cd $(LIBTYPE1DIR); $(MAKE) $(makeargs) libtype1.a
+
+dvipng.help: dvipng
+	-./dvipng > dvipng.tmp
+	(test -r $(srcdir)/dvipng.help \
+           && diff dvipng.tmp $(srcdir)/dvipng.help) \
+	     || cp dvipng.tmp $(srcdir)/dvipng.help
+	rm -f dvipng.tmp
+
+
+install: install-exec install-data
+uninstall: uninstall-exec uninstall-data
+
+distclean::
+	$(RM) config.h
+
+install-exec:
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(bindir)
+	$(INSTALL_LIBTOOL_PROG) $(program) $(bindir)
+	(cd $(bindir) && rm -f dvigif && ln -s $(program) dvigif)
+
+uninstall-exec:
+	cd $(bindir); rm -f $(programs)
+
+install-data:
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(man1dir) $(infodir)
+	$(INSTALL_DATA) $(srcdir)/$(program).1 $(man1dir)/$(program).$(manext)
+	cd $(srcdir) && for i in $(program).i*; do \
+	  $(INSTALL_DATA) $$i $(infodir)/$$i; done
+	$(POST_INSTALL)
+	if $(SHELL) -c 'install-info --version' >/dev/null 2>&1; then \
+	  install-info --info-dir=$(infodir) $(infodir)/$(program).info; \
+	else true; fi
+
+uninstall-data:
+	$(PRE_UNINSTALL)
+	if $(SHELL) -c 'install-info --version' >/dev/null 2>&1; then \
+	  install-info --delete --info-dir=$(infodir) $(infodir)/$(program).info ; \
+	else true; fi
+	$(NORMAL_UNINSTALL)
+	rm -f $(man1dir)/dvipng.$(manext)
+	rm -f $(infodir)/$(program).i*
+
+kpse_include ../make/config.mk
+
+info dvi check:
+
+kpse_include ../make/clean.mk
+kpse_include ../make/tkpathsea.mk
+kpse_include ../make/rdepend.mk
+kpse_include depend.mk

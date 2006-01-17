@@ -1,0 +1,52 @@
+# Makefile for TeX-project WEB sources to C conversion programs.
+
+# These get expanded from the parent directory, not this one.
+kpse_include ../make/common.mk
+kpse_include ../make/programs.mk
+kpse_include ../make/paths.mk
+kpse_include kpathsea.mk
+
+LEX = @LEX@
+LEXLIB = @LEXLIB@
+LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
+YACC = @YACC@
+
+proglib = ../lib/lib.a
+programs = otp2ocp outocp
+scripts = mkocp mkofm
+
+otp2ocp_objects = otp2ocp.o routines.o y_tab.o $(LEX_OUTPUT_ROOT).o
+all: $(programs)
+otp2ocp: $(otp2ocp_objects)
+	$(kpathsea_link) $(otp2ocp_objects) $(LEXLIB) $(LOADLIBES) 
+
+otp2ocp.o: otp2ocp.c y_tab.h
+y_tab.c y_tab.h: otp.y
+	$(YACC) -d -v $(srcdir)/otp.y
+	-test -f y.tab.c && mv -f y.tab.c y_tab.c
+	-test -f y.tab.h && mv -f y.tab.h y_tab.h
+$(LEX_OUTPUT_ROOT).o: otp.h
+$(LEX_OUTPUT_ROOT).c: otp.l
+	$(LEX) $(srcdir)/otp.l
+
+outocp: outocp.o
+	$(kpathsea_link) outocp.o $(LOADLIBES)
+
+$(programs): $(proglib) $(kpathsea)
+
+install-programs: $(programs)
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(bindir) 
+	for p in $(programs); do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
+	for p in $(scripts); do $(INSTALL_SCRIPT) $(srcdir)/$$p $(scriptdir); done
+
+Makefile: Makefile.in ../config.status
+	cd .. && $(SHELL) config.status
+
+kpse_include ../make/tkpathsea.mk
+kpse_include ../make/clean.mk
+
+clean::
+	rm -f y_tab.c y_tab.h y.out* yacc.* $(LEX_OUTPUT_ROOT).c
+
+kpse_include ../make/rdepend.mk
+kpse_include otps/depend.mk

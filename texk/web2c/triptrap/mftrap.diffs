@@ -1,0 +1,100 @@
+make[1]: Entering directory `/home/olaf/web2c/src/texk/texk/web2c'
+cd lib && make -w CC='gcc' CFLAGS='-g ' LDFLAGS='' 
+make[2]: Entering directory `/home/olaf/web2c/src/texk/texk/web2c/lib'
+make[2]: Nothing to be done for `default'.
+make[2]: Leaving directory `/home/olaf/web2c/src/texk/texk/web2c/lib'
+cd web2c && make -w CC='gcc' CFLAGS='-g ' LDFLAGS=''  fixwrites
+make[2]: Entering directory `/home/olaf/web2c/src/texk/texk/web2c/web2c'
+make[2]: `fixwrites' is up to date.
+make[2]: Leaving directory `/home/olaf/web2c/src/texk/texk/web2c/web2c'
+cd web2c && make -w CC='gcc' CFLAGS='-g ' LDFLAGS=''  splitup
+make[2]: Entering directory `/home/olaf/web2c/src/texk/texk/web2c/web2c'
+make[2]: `splitup' is up to date.
+make[2]: Leaving directory `/home/olaf/web2c/src/texk/texk/web2c/web2c'
+cd web2c && make -w CC='gcc' CFLAGS='-g ' LDFLAGS=''  web2c
+make[2]: Entering directory `/home/olaf/web2c/src/texk/texk/web2c/web2c'
+make[2]: `web2c' is up to date.
+make[2]: Leaving directory `/home/olaf/web2c/src/texk/texk/web2c/web2c'
+rm -f trap.mf trap.base
+rm -f mftrapin.fot mftrapin.log
+rm -f mftrap.fot mftrap.log mftrap.tfm
+rm -f mftrap.pl trap.72270gf trap.typ
+ln -s ./triptrap/trap.mf . # get same filename in log
+/bin/sh -c 'TEXMFCNF=./triptrap ./mf --progname=inimf <./triptrap/mftrap1.in >mftrapin.fot'
+mv trap.log mftrapin.log
+diff ./triptrap/mftrapin.log mftrapin.log
+1c1
+< This is METAFONT, Version 2.71828 (INIMF)  23 DEC 2002 11:57
+---
+> This is METAFONT, Version 2.71828 (Web2C 7.5.5) (INIMF)  3 AUG 2005 10:46
+150c150
+< String usage 26&83 (1895&21534 still untouched)
+---
+> String usage 30&98 (6387&79485 still untouched)
+176,177c176,177
+<  (preloaded base=trap 98.8.8)
+< 1113 strings of total length 20515
+---
+>  (base=trap 2005.8.3)
+> 1122 strings of total length 20565
+/bin/sh -c 'TEXMFCNF=./triptrap ./mf --progname=inimf <./triptrap/mftrap2.in >mftrap.fot'
+mv trap.log mftrap.log
+mv trap.tfm mftrap.tfm
+diff ./triptrap/mftrap.fot mftrap.fot
+1,3c1,2
+< This is METAFONT, Version 2.71828 (INIMF)
+< ** &trap  trap 
+< (trap.mf
+---
+> This is METAFONT, Version 2.71828 (Web2C 7.5.5) (INIMF)
+> **(trap.mf
+39c38
+< String usage 42&168 (1818&17726 still untouched)
+---
+> String usage 50&202 (6301&75642 still untouched)
+diff ./triptrap/mftrap.log mftrap.log
+1c1
+< This is METAFONT, Version 2.71828 (preloaded base=trap 2002.12.23)  23 DEC 2002 11:57
+---
+> This is METAFONT, Version 2.71828 (Web2C 7.5.5) (base=trap 2005.8.3)  3 AUG 2005 10:46
+1825c1825
+< String usage 24&92 (1863&21408 still untouched)
+---
+> String usage 30&119 (6347&79310 still untouched)
+2738c2738
+< Calling BLANKRECTANGLE(100,100,0,1)
+---
+> Calling BLANKRECTANGLE(1664,1664,0,1)
+4235c4235
+< String usage 42&168 (1818&17726 still untouched)
+---
+> String usage 50&202 (6301&75642 still untouched)
+4251,4252c4251,4252
+<  69 strings out of 1887
+<  3759 string characters out of 21485
+---
+>  77 strings out of 6378
+>  3793 string characters out of 79435
+4254,4255c4254,4255
+<  289 symbolic tokens out of 2100
+<  8i,43n,14r,8p,167b stack positions out of 30i,100n,300r,150p,500b
+---
+>  289 symbolic tokens out of 9500
+>  8i,43n,14r,8p,167b stack positions out of 300i,300n,1000r,150p,500b
+4263c4263
+<   out of 256w,16h,16d,64i,5000l,500k,256e,50p)
+---
+>   out of 256w,16h,16d,64i,15000l,2500k,256e,60p)
+./tftopl ./mftrap.tfm mftrap.pl
+diff ./triptrap/mftrap.pl mftrap.pl
+/bin/sh -c 'TEXMFCNF=./triptrap ./gftype -m -i ./trap.72270gf >trap.typ'
+diff ./triptrap/trap.typ trap.typ
+1c1
+< This is GFtype, Version 3.1
+---
+> This is GFtype, Version 3.1 (Web2C 7.5.5)
+3c3
+< ' METAFONT output 2002.12.23:1157'
+---
+> ' METAFONT output 2005.08.03:1046'
+make[1]: Leaving directory `/home/olaf/web2c/src/texk/texk/web2c'

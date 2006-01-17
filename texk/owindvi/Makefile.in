@@ -1,0 +1,92 @@
+# Makefile for oxdvik --kb@mail.tug.org. Public domain.
+version = 20a
+
+ac_include ../make/paths.make
+ac_include ../make/common.make
+ac_include ../make/programs.make
+
+# Make `#include <X11/...>' and `-lX...' work.
+# This matches web2c (needed only for Metafont).
+x_cppflags = @X_CFLAGS@
+x_ldflags = @X_LIBS@
+x_pre_libs = @X_PRE_LIBS@
+x_extra_libs = @X_EXTRA_LIBS@
+x_tool_libs = @x_tool_libs@
+x_ext_lib = @x_ext_lib@
+# Follow the library order used in X11R6 itself:
+#   -lXaw -lXmu -lXt -lSM -lICE -lXext -lX11 (some may not be present).
+x_link = $(www_ldflags) $(x_ldflags) $(x_tool_libs) $(x_pre_libs) $(x_ext_lib) -lX11 $(x_extra_libs)
+
+www_ldflags=@www_ldflags@
+www_cppflags=@www_cppflags@
+www_dep=@www_dep@
+
+# Extra xdvi-specific compiler options.
+ps_def = @PS_DEF@
+prog_cflags = $(www_cppflags) $(ps_def) $(x_cppflags) -DOmega
+
+# We don't use alloca ourselves, but the X library might, and this way
+# we avoid buggy versions in -lPW or -lucb.
+ALLOCA = alloca.o
+
+objects = xdvi.o dvi_draw.o dvi_init.o events.o font-open.o gf.o pk.o \
+  psdps.o psgs.o psheader.o psnews.o special.o util.o vf.o sfDir.o \
+  sfDraw.o sfPath.o sfSelFile.o hypertex.o mime.o wwwfetch.o \
+  $(ALLOCA)
+
+program = oxdvi.bin
+programs = $(program)
+
+default all: $(programs) 
+
+$(program): $(kpathsea) $(objects) $(www_dep)
+	$(kpathsea_link) $(objects) $(x_link) $(LOADLIBES)
+
+squeeze: squeeze.o
+	$(link_command) squeeze.o $(LIBS) $(XLOADLIBES)
+
+psheader.c: psheader.txt squeeze
+	./squeeze $(srcdir)/psheader.txt $@
+
+../libwww/libwww.a:
+	cd ../libwww; $(MAKE) $(makeargs) libwww.a
+
+ac_include ../make/tkpathsea.make
+
+install: install-exec install-data
+uninstall: uninstall-exec uninstall-data
+
+install-exec: $(programs)
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(bindir)
+	for p in $(programs); do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
+	$(INSTALL_SCRIPT) $(srcdir)/oxdvi-sh $(scriptdir)/oxdvi
+uninstall-exec:
+	for p in $(programs); do rm -f $(bindir)/$$p; done
+
+install-data: 
+
+uninstall-data:
+
+
+distname = oxdvik
+program_files = *.man *.ac xdvi.icon xdvi.FAQ psheader.txt mksedscript \
+  MOTIF
+version_files = oxdvi.c
+
+pre-dist-$(distname):
+post-dist-$(distname):
+	cd $(top_distdir); rm -f oxdvik/psheader.c
+
+ac_include ../make/dist.make
+ac_include ../make/config.make
+
+info dvi check:
+
+ac_include ../make/clean.make
+
+distclean::
+	rm -f psheader.c sedscript xdvi.1 
+	(cd ../libwww; $(MAKE) distclean)
+
+ac_include ../make/rdepend.make
+ac_include depend.make

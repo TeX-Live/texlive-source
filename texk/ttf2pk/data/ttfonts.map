@@ -1,0 +1,18 @@
+% These entries are just examples!
+
+arials           arial.ttf     Slant=0.25
+arial            arial.ttf     Slant=0     Extend=1    Pid = 1     Eid = 0
+arialx           arial.ttf     Slant=0     Extend=1.5
+
+times            times.ttf     Encoding=T1-WGL4.enc \
+                               .g0xc7=ring .g0xc9=caron .g0xc4=dotlessi
+times95          times95.ttf   Encoding=T1-WGL4.enc
+
+ntukai@Big5@     ntu_kai.ttf   Pid = 3 Eid = 4
+cyberb@Unicode@  cyberbit.ttf
+
+% the next entry maps the Unicode encoded font to Big 5 encoding; thus you
+% can say \begin{CJK}{Big5}{...} (this is an environment from the CJK
+% package for LaTeX).
+
+mingli@UBig5@    mingliu.ttc   Fontindex = 0

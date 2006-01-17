@@ -1,0 +1,16 @@
+% Here we enumerate all the encodings we want xdvi to recognize as 
+% an "implied" encoding.  Which means that ptmr8r will be recognized as
+% ptmr 8r encoded and ptmr8y is ptmr encoded with 8y.  If the font file
+% we want to 8r encode is named ptmr8a then we need a map file entry.
+
+% NOTE: the enc files used by xdvi are special.  They are NOT identical
+% to the enc files used by dvips.
+
+% This file could easily be used by any other tex program that wants
+% to handle implied encodings.
+
+%	Encoding name		Defined by this file
+
+8r	TeXBase1Encoding	8r.enc
+8c	CorkEncoding		cork.enc
+8y	TeXnANSIEncoding	texnansi.enc

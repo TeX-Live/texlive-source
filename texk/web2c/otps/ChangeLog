@@ -1,0 +1,21 @@
+2002-11-18  Roozbeh Pournader  <roozbeh@sharif.edu>
+	
+	* otp2ocp.c: fixed a bug in detecting the '.otp' suffix (patch by
+	  Behdad Esfahbod).
+	* ChangeLog: some cleanup;
+
+2002-10-23  Roozbeh Pournader  <roozbeh@sharif.edu>
+
+	* otp2ocp.c: added two copyright lines.
+	* otp.l: fixed a buffer overflow bug, now accepts all end of line
+	  formats, fixed error reports on numbers greater than 65535 (patch
+	  by Behdad Esfahbod).
+	* otp.h: changed '#define's to 'enum' (patch by Behdad Esfahbod).
+	* lex.yy.c-dist: rebuilt.
+
+2002-10-15  Roozbeh Pournader  <roozbeh@sharif.edu> 
+
+	* otp2ocp.c: fixed some '.ocp' writing bugs; otp2ocp now fails with
+	  a non-zero return value if parsing the input fails (patch by
+	  Behdad Esfahbod <omega@behdad.org>).
+	* otp2ocp.c, outocp.c: 'indent'-ed.

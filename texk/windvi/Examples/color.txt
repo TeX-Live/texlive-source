@@ -1,0 +1,5 @@
+1.0 1.0 0.0 setrgbcolor 
+newpath 0 0 moveto 829 0 rlineto
+0 1172 rlineto -829 0 rlineto  fill
+1.0 0.0 1.0 setrgbcolor
+showpage

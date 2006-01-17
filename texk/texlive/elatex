@@ -1,0 +1,3 @@
+#!/bin/sh
+test -f "`kpsewhich elatex.efmt`" || fmtutil --byfmt elatex
+exec etex -efmt=elatex "$@"

@@ -1,0 +1,60 @@
+# Makefile for libpdf - te@dbs.uni-hannover.de
+# $Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/Makefile.in#23 $
+
+kpse_include ../make/common.mk
+kpse_include ../make/programs.mk
+kpse_include ../make/library.mk
+
+kpathsea_srcdir_parent = $(srcdir)/../..
+kpathsea_dir_parent = ../..
+
+ALL_CXXFLAGS = @CXXFLAGS@ @DEFS@ $(XXCFLAGS) -I. -I$(srcdir) -I$(kpathsea_dir_parent) -I$(kpathsea_srcdir_parent) @LIBXPDFCPPFLAGS@
+CXX = @CXX@
+
+.SUFFIXES: .cc .o
+.cc.o:
+	$(CXX) $(ALL_CXXFLAGS) -c $<
+
+# XCFLAGS=-Wstrict-prototypes -Wmissing-prototypes 
+
+LIBPNGDIR=../../../libs/libpng
+LIBPNGSRCDIR=$(srcdir)/$(LIBPNGDIR)
+
+ZLIBDIR=../../../libs/zlib
+ZLIBSRCDIR=$(srcdir)/$(ZLIBDIR)
+
+LIBXPDFDIR=../../../libs/xpdf
+LIBXPDFSRCDIR=$(srcdir)/$(LIBXPDFDIR)
+
+LIBMD5DIR=../../../libs/md5
+LIBMD5SRCDIR=$(srcdir)/$(LIBMD5DIR)
+
+XCPPFLAGS=-I.. -I$(srcdir)/.. -I../.. -I$(srcdir)/../.. -I$(LIBMD5DIR) -I$(LIBMD5SRCDIR)\
+@LIBPNGCPPFLAGS@ @ZLIBCPPFLAGS@ -DpdfTeX
+
+
+OBJS = epdf.o mapfile.o utils.o vfpacket.o pkin.o \
+writefont.o writet1.o writet3.o writezip.o writeenc.o writettf.o \
+writejpg.o writepng.o writeimg.o pdftoepdf.o avl.o avlstuff.o
+
+all: libpdf.a
+
+pdftosrc.o: $(srcdir)/pdftosrc.cc
+
+libpdf.a: $(OBJS)
+	rm -f $@
+	$(AR) $(ARFLAGS) $@  $(OBJS)
+	$(RANLIB) $@
+
+kpse_include ../make/clean.mk
+
+clean::
+	rm -f libpdf.a ttf2afm pdftosrc
+
+depend:
+	rm -f $(OBJS) ttf2afm.o pdftosrc.o
+	XXCFLAGS=-MM XCFLAGS=-MM $(MAKE) -k $(OBJS) ttf2afm.o pdftosrc.o | \
+	    grep -v "^$(CC)\|$(CXX)\|$(AR)\|make\|klibtool" | \
+	    sed 's: [^ ]*/\.\./libs/[^ ]*::g' > $(srcdir)/depend.mk
+
+kpse_include pdftexdir/depend.mk

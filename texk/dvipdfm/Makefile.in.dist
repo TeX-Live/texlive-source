@@ -1,0 +1,223 @@
+CC=@CC@
+CFLAGS=@CFLAGS@
+LDFLAGS=@LDFLAGS@
+CPPFLAGS=@CPPFLAGS@ -I.
+INSTALL=@INSTALL@
+LIBS=@LIBS@ -lm 
+srcdir=@srcdir@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+bindir=@bindir@
+datadir=@datadir@
+mandir=@mandir@
+texmf=@TEXMF@
+dvipdfmdir=$(texmf)/dvipdfm
+psheaderdir=$(texmf)/dvips
+programs=dvipdfm ebb
+scripts=dvipdft
+mkinstalldirs=@SHELL@ mkinstalldirs
+.c.o:
+	$(CC) -c $(CPPFLAGS) $(CFLAGS) -o $@ $<
+src=pdfdev.c pdfdoc.c dvi.c mfileio.c mem.c jpeg.c numbers.c pdfobj.c \
+	pdfparse.c pdfspecial.c tfm.c type1.c dvipdfm.c epdf.c vf.c \
+	t1crypt.c pkfont.c tpic.c thumbnail.c pngimage.c ebb.c htex.c \
+	mpost.c psimage.c psspecial.c colorsp.c encodings.c @TTF_OPT@ ttf.c
+objects=pdfdev.o pdfdoc.o dvi.o mfileio.o mem.o jpeg.o numbers.o pdfobj.o \
+        pdfparse.o pdfspecial.o tfm.o type1.o dvipdfm.o epdf.o vf.o \
+	t1crypt.o pkfont.o tpic.o thumbnail.o pngimage.o htex.o \
+	mpost.o psimage.o psspecial.o colorsp.o encodings.o @TTF_OPT@ ttf.o
+manpages=dvipdfm.1
+
+eobjects=ebb.o jpeg.o pdfobj.o mem.o mfileio.o numbers.o pdfparse.o \
+	pngimage.o
+encodings=ot1.enc ot1alt.enc ot1r.enc
+mapfiles=cmr.map psbase14.map lw35urw.map lw35urwa.map
+check default all: $(programs)
+ebb: $(eobjects) Makefile
+	$(CC) -o ebb $(eobjects) $(LDFLAGS) $(LIBS)
+dvipdfm:  $(objects) Makefile
+	$(CC) -o dvipdfm $(objects) $(LDFLAGS) $(LIBS)
+include depend.make
+#
+# Install/uninstall
+#
+install: install-exec install-data install-man
+uninstall: uninstall-exec uninstall-data uninstall-man
+install-exec: all
+	$(mkinstalldirs) $(bindir); \
+	for i in $(programs) $(scripts) ; \
+	  do $(INSTALL) $$i $(bindir); \
+	done
+# t1fonts.map.
+install-man:
+	$(mkinstalldirs) $(mandir)/man1; \
+	for i in $(manpages); \
+  	   do $(INSTALL) -m 644 $$i $(mandir)/man1; \
+	done
+install-data:
+	$(mkinstalldirs) $(dvipdfmdir)/base; \
+	if test -f $(dvipdfmdir)/config; then \
+	  /bin/mv $(dvipdfmdir)/config $(dvipdfmdir)/config.sav; \
+	fi
+	$(mkinstalldirs) $(dvipdfmdir)/config; \
+	if test -f $(dvipdfmdir)/t1fonts.map; then \
+	  /bin/mv $(dvipdfmdir)/t1fonts.map $(dvipdfmdir)/config; \
+	fi
+	if test -f $(dvipdfmdir)/config.sav; then \
+	  /bin/mv $(dvipdfmdir)/config.sav $(dvipdfmdir)/config/config; \
+	fi
+	if test ! -r $(dvipdfmdir)/config/t1fonts.map \
+	   || grep 'original t1fonts.map --' $(dvipdfmdir)/config/t1fonts.map \
+	   >/dev/null; then  \
+	   /bin/rm -f $(dvipdfmdir)/config/t1fonts.map; \
+	   $(INSTALL) -m 644 ./t1fonts.map $(dvipdfmdir)/config; \
+	else true; fi
+	if test ! -r $(dvipdfmdir)/config/config \
+	   || grep 'original config --' $(dvipdfmdir)/config/config \
+	   >/dev/null; then  \
+	   /bin/rm -f $(dvipdfmdir)/config/config; \
+	   $(INSTALL) -m 644 ./config $(dvipdfmdir)/config; \
+	else true; fi
+	for i in $(mapfiles); \
+	   do $(INSTALL) -m 644 $$i $(dvipdfmdir)/config; \
+	done
+	for i in $(encodings); \
+	   do $(INSTALL) -m 644 $$i $(dvipdfmdir)/base; \
+	done
+uninstall-exec:
+	for i in $(programs); \
+	    do rm -f $(bindir)/$$i; \
+	done
+	for i in $(scripts); \
+	    do rm -f $(bindir)/$$i; \
+	done
+uninstall-man:
+	for i in $(manpages); \
+	    do rm -f $(mandir)/man1/$$i; \
+	done
+uninstall-data:
+	if grep 'original pdffonts.map --' $(psheaderdir)/dvipdfm/pdffonts.map \
+	   >/dev/null 2>&1; then rm -f $(psheaderdir)/dvipdfm/pdffonts.map; \
+	else true; fi
+	if grep 'original pdffonts.map --' $(dvipdfmdir)/pdffonts.map \
+	   >/dev/null 2>&1; then rm -f $(dvipdfmdir)/pdffonts.map; \
+	else true; fi
+	if grep 'original t1fonts.map --' $(dvipdfmdir)/t1fonts.map \
+	   >/dev/null 2>&1; then rm -f $(dvipdfmdir)/t1fonts.map; \
+	else true; fi
+	if grep 'original t1fonts.map --' $(dvipdfmdir)/config/t1fonts.map \
+	   >/dev/null 2>&1; then rm -f $(dvipdfmdir)/config/t1fonts.map; \
+	else true; fi
+	if grep 'original config --' $(dvipdfmdir)/config \
+	   >/dev/null 2>&1; then rm -f $(dvipdfmdir)/config; \
+	else true; fi
+	if grep 'original config --' $(dvipdfmdir)/config/config \
+	   >/dev/null 2>&1; then rm -f $(dvipdfmdir)/config/config; \
+	else true; fi
+	for i in $(encodings); \
+	do \
+	    if test -r $(dvipdfmdir)/$$i; then /bin/rm -f $(dvipdfmdir)/$$i; fi; \
+	    if test -r $(dvipdfmdir)/base/$$i; then /bin/rm -f $(dvipdfmdir)/base/$$i; fi; \
+	done
+	for i in $(mapfiles); \
+	do \
+	    if test -r $(dvipdfmdir)/config/$$i; then /bin/rm -f $(dvipdfmdir)/config/$$i; fi; \
+	done
+	for i in base config; \
+	do \
+	  if test -d $(dvipdfmdir)/$$i; then /bin/rmdir $(dvipdfmdir)/$$i > /dev/null 2>&1 ; fi; \
+	done
+	if test -d $(dvipdfmdir); then /bin/rmdir $(dvipdfmdir) > /dev/null 2>&1 ; fi
+#
+# Developer stuff
+#
+maintainerclean: clean distclean
+	rm -f config.h.in configure
+distclean: clean
+	rm -f Makefile config.h config.cache confdefs.h
+clean:
+	rm -f $(programs) *.o *.pdf 
+	for i in . doc latex-support ; \
+	   do rm -f $$i/*.dvi $$i/*.log $$i/*~ $$i/*.out $$i/*.aux $$i/core ; \
+	done
+	rm -f doc/dvipdfm.pdf latex-support/sample.pdf
+TAGS:	$(src)
+	etags *.[ch]
+depend:
+	rm -f depend.make
+	make depend.make
+depend.make:
+	$(CC) $(CPPFLAGS) -MM $(src) > depend.make
+@MAINT@#
+@MAINT@# Autoconf stuff
+@MAINT@#
+@MAINT@Makefile: Makefile.in configure
+@MAINT@	echo "***** You need to rerun ./configure. *****"
+@MAINT@	exit 1
+@MAINT@config.h: config.h.in configure.in
+@MAINT@	echo "***** You need to rerun ./configure. *****"
+@MAINT@	rm config.h
+@MAINT@	exit 1
+@MAINT@config.h.in: acconfig.h configure.in
+@MAINT@	autoheader
+@MAINT@	touch config.h.in
+@MAINT@aclocal.m4:  SCCS/s.aclocal.m4
+@MAINT@	get aclocal.m4
+@MAINT@configure: configure.in aclocal.m4
+@MAINT@	autoconf
+@MAINT@#
+@MAINT@ # Automated distributions
+@MAINT@#
+@MAINT@TOPDIR=${HOME}/Projects/rpmtree
+@MAINT@doc/dvipdfm.dvi:	doc/dvipdfm.tex
+@MAINT@	cd doc; tex dvipdfm
+@MAINT@doc/dvipdfm.pdf:	doc/dvipdfm.dvi
+@MAINT@	cd doc; dvipdft dvipdfm
+@MAINT@tarball: depend configure
+	/bin/rm -rf ../dvipdfm
+	mkdir ../dvipdfm
+	tar -zcf ../dvipdfm-@VERSION@.tar.gz -T distribution-file-list
+	cd ..
+	tar -C ../dvipdfm -zxf ../dvipdfm-@VERSION@.tar.gz
+	tar -C .. -zcf ../dvipdfm-@VERSION@.tar.gz dvipdfm
+	/bin/rm -rf ../dvipdfm
+@MAINT@dvipdfm-static:  $(objects) Makefile
+	$(CC) -o dvipdfm-static $(objects) --static $(LDFLAGS) $(LIBS)
+@MAINT@ebb-static : $(eobjects) Makefile
+	$(CC) -o ebb-static $(eobjects) --static $(LDFLAGS) $(LIBS)
+@MAINT@bin-dist: dvipdfm-static ebb-static dvipdfm ebb VERSION
+@MAINT@	/bin/rm -rf dvipdfm-bin
+@MAINT@	mkdir -p dvipdfm-bin
+@MAINT@	cp -a dvipdfm ebb INSTALL-BINARY COPYING README t1fonts.map dvipdfm-bin
+@MAINT@	strip dvipdfm ebb dvipdfm-static ebb-static
+@MAINT@	tar -zcf ../dvipdfm-binary-linux-i386-glibc-@VERSION@.tar.gz dvipdfm-bin
+@MAINT@	/bin/rm -rf dvipdfm-bin
+@MAINT@	mkdir -p dvipdfm-bin
+@MAINT@	cp -a INSTALL-BINARY COPYING README t1fonts.map dvipdfm-bin
+@MAINT@	cp -a dvipdfm-static dvipdfm-bin/dvipdfm
+@MAINT@	cp -a ebb-static dvipdfm-bin/ebb
+@MAINT@	tar -zcf ../dvipdfm-binary-linux-i386-static-@VERSION@.tar.gz dvipdfm-bin
+@MAINT@	/bin/rm -rf dvipdfm-bin
+@MAINT@rpm-dist: tarball
+@MAINT@	mkdir -p ${TOPDIR}/SOURCES ${TOPDIR}/BUILD ${TOPDIR}/SPECS ${TOPDIR}/RPMS/i386 ${TOPDIR}/SRPMS
+@MAINT@	sed -e s/VERSION/@VERSION@/ dvipdfm.spec.in > ${TOPDIR}/SPECS/dvipdfm-@VERSION@.spec
+@MAINT@	cp -a ../dvipdfm-@VERSION@.tar.gz ${TOPDIR}/SOURCES/
+@MAINT@	rpm -ba ${TOPDIR}/SPECS/dvipdfm-@VERSION@.spec
+@MAINT@web-dist: rpm-dist tarball doc/dvipdfm.pdf
+@MAINT@	rm /home/httpd/html/dvipdfm/dvipdfm.tar.gz
+
+@MAINT@	cp -a ../dvipdfm-@VERSION@.tar.gz ${TOPDIR}/RPMS/i386/dvipdfm-@VERSION@-1.i386.rpm ${TOPDIR}/SRPMS/dvipdfm-@VERSION@-1.src.rpm /home/httpd/html/dvipdfm/
+@MAINT@	ln -s dvipdfm-@VERSION@.tar.gz /home/httpd/html/dvipdfm/dvipdfm.tar.gz
+@MAINT@	cp -a doc/dvipdfm.pdf /home/httpd/html/dvipdfm/dvipdfm-@VERSION@.pdf
+@MAINT@	rm -f /home/httpd/html/dvipdfm/dvipdfm.pdf
+@MAINT@	ln -s dvipdfm-@VERSION@.pdf /home/httpd/html/dvipdfm/dvipdfm.pdf
+@MAINT@	rm -f /home/httpd/html/dvipdfm/dvipdfm-latest.i386.rpm
+@MAINT@	ln -s dvipdfm-@VERSION@-1.i386.rpm /home/httpd/html/dvipdfm/dvipdfm-latest.i386.rpm
+@MAINT@	rm -f /home/httpd/html/dvipdfm/dvipdfm-latest.src.rpm
+@MAINT@	ln -s dvipdfm-@VERSION@-1.src.rpm /home/httpd/html/dvipdfm/dvipdfm-latest.src.rpm
+@MAINT@ftp-dist: rpm-dist tarball doc/dvipdfm.pdf
+@MAINT@	ssh mwicks@ftp 'rm pub/outgoing/mwicks/dvipdfm/*.tar.gz pub/outgoing/mwicks/dvipdfm/*.pdf ; cd pub/outgoing/mwicks/dvipdfm/; ln -s dvipdfm-@VERSION@.tar.gz dvipdfm.tar.gz'
+@MAINT@	scp ../dvipdfm-@VERSION@.tar.gz mwicks@ftp:pub/outgoing/mwicks/dvipdfm/dvipdfm-@VERSION@.tar.gz
+@MAINT@	scp doc/dvipdfm.pdf mwicks@ftp:pub/outgoing/mwicks/dvipdfm/dvipdfm-@VERSION@.pdf
+@MAINT@	ssh mwicks@ftp 'ln -s dvipdfm-@VERSION@.pdf pub/outgoing/mwicks/dvipdfm/dvipdfm.pdf'
+

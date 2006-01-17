@@ -1,0 +1,132 @@
+How change files are applied for pdftex/pdfetex?
+
+============================= pdftex ============================= 
+
+1) pdftex.web is generated from 
+    ./tie -m pdftex.web $(srcdir)/tex.web \
+    $(srcdir)/pdftexdir/pdftex.ch \
+    $(srcdir)/pdftexdir/hz.ch \
+    $(srcdir)/pdftexdir/misc.ch
+
+Input:
+    tex.web:
+        the original tex sources
+
+    pdftexdir/pdftex.ch:
+        PDF-specific changes
+
+    pdftexdir/hz.ch:
+        HZ extension 
+
+    pdftexdir/misc.ch:
+        miscellany extensions
+
+
+Output: 
+    pdftex.web:
+        pdftex without system-dependent changes
+
+2) pdftex.ch is generated from
+    ./tie -c pdftex.ch pdftex.web \
+    $(srcdir)/pdftexdir/tex.ch0 \
+    $(srcdir)/tex.ch \
+    $(srcdir)/pdftexdir/tex.ch1 \
+    $(srcdir)/pdftexdir/tex.pch
+
+Input:
+    pdftex.web: 
+        from step 1), ie pdftex without system-dependent changes
+
+    pdftexdir/tex.ch0:
+        % Change file to assist in creating the web2c-specific change file.
+        % This one comes first, resolves inconsistencies between the
+        % generated pdftex.web and tex.ch
+
+        change the pdftex banner to tex banner, so tex.ch can be applied
+
+    tex.ch: 
+        the main web2c-specific (or other system-dependent) change file
+
+    pdftexdir/tex.ch1:
+        % Change file to assist in creating the web2c-specific change file.
+        % This one resolves inconsistencies between tex.ch and tex.pch.
+
+        change the tex banner to pdftex banner (reverse tex.ch0)
+
+    pdftexdir/tex.pch:
+        % Change file containing web2c-specific or system-dependent changes to
+        % pdftex
+        
+Output:
+    pdftex.ch (not pdftexdir/pdftex.ch):
+        additional & system-dependent changes
+
+
+============================= pdfetex ============================= 
+
+1) pdfetex.web is generated from 
+    ./tie -m pdfetex.web $(srcdir)/tex.web \
+        $(srcdir)/etexdir/etex.ch \
+        $(srcdir)/pdfetexdir/pdfetex.ch1 \
+        $(srcdir)/pdftexdir/pdftex.ch \
+        $(srcdir)/pdftexdir/hz.ch \
+        $(srcdir)/pdftexdir/misc.ch \
+        $(srcdir)/pdfetexdir/pdfetex.ch2
+
+    pdfetex.web should contain system-independent changes only;
+
+Input:
+    etexdir/etex.ch:
+        system-independent changes by etex
+
+    pdfetexdir/pdfetex.ch1:
+        reverse some etex changes so system-independent pdftex change files can
+        be applied
+
+    pdftexdir/{pdftex,hz,misc}.ch:
+        system-independent changes by pdftex 
+
+    pdfetexdir/pdfetex.ch2:
+        merge changes by etexdir/etex.ch & pdftexdir/{pdftex,hz,...}.ch 
+
+Output: 
+    pdfetex.web:
+        pdfetex without system-dependent changes
+
+
+2) pdfetex.ch is generated from 
+    ./tie -c pdfetex.ch pdfetex.web \
+        $(srcdir)/pdfetexdir/tex.ch0 \
+        $(srcdir)/tex.ch \
+        $(srcdir)/etexdir/tex.ch1 \
+        $(srcdir)/etexdir/tex.ech \
+        $(srcdir)/pdfetexdir/tex.ch1 \
+        $(srcdir)/pdftexdir/tex.pch
+
+Input: 
+    pdfetex.web: 
+        from step 1), ie pdfetex without system-dependent changes
+
+    pdfetexdir/tex.ch0:
+        % Change file to assist in creating the web2c-specific change file.
+        % This one comes first, resolves inconsistencies between the generated
+        % pdfetex.web and tex.ch
+
+        change the pdfetex banner to tex banner, so tex.ch can be applied
+
+    tex.ch:
+        the main web2c-specific (or other system-dependent) change file
+
+    the etex changes files:
+        system-dependent changes by etex 
+    
+    pdfetexdir/tex.ch1:
+    	reverses some system-dependent changes by etex (the banner) so
+    	pdftexdir/tex.pch can be applied 
+
+    pdftexdir/tex.pch:
+        system-dependent changes by pdftex
+
+Output:
+    pdfetex.ch:
+        additional & system-dependent changes

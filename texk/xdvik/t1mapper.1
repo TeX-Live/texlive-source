@@ -1,0 +1,146 @@
+.TH t1mapper "1" "15 October 2001"
+.SH NAME
+t1mapper \- A tool to help xdvi use all your t1 fonts
+.SH SYNOPSIS
+.B t1mapper
+[\fIOPTIONS\fR] \fITeX-fontdir Type1-font-file-spec\fR
+.PP
+.B t1mapper
+[\fIOPTIONS\fR] -gs \fIGS-fontmap GS-fontdir TeX-fontdir\fR
+.SH DESCRIPTION
+.B T1mapper
+is a utility script written in Perl. It assists you in making
+new Postscript<tm> Type1 fonts available for use with
+.BR xdvi .
+.PP
+\fINOTE: \fBRunning this utility is only required if your TeX installation
+doesn't already contain the neccessary .pfb files somewhere in the
+texmf/ directory hierarchy.\fR
+.PP
+The first invocation shown above makes any Type1 font you may have floating around
+on your system available to
+.BR xdvi .
+The second invocation is for hi-jacking fonts from your Ghostscript
+installation, which will supply
+.B xdvi
+with all the standard Type1 fonts it needs.
+.PP
+.B T1mapper
+relies on a installed and working
+.B texk
+system to be present. In
+particular it uses
+.B kpsewhich
+to locate the 
+.B fontname
+package .map files which maps between Postscript<tm> font names and TeX
+font names.
+.B teTeX
+is one such
+.B texk
+system.
+.PP
+When invoked without the
+.B -gs
+option, t1mapper will examine each of the fonts specified.  It will
+attempt to determine the Postscript name of the font by looking inside
+the font file, and if that name has a TeX equivalent it will copy,
+link or symlink your the file into the TeX font directory you named
+first on the command line.  The name in the TeX font directory will be
+according to the TeX/KB-fontname scheme, so that the font names used
+in
+.B .dvi
+files matches the names found in the TeX font directories.
+.PP
+When invoked with the 
+.B -gs
+option
+.B t1mapper
+will read the named GS Fontmap file to determine which GS font files
+correspond to which standard Postscript fonts (GS' version of
+Times-Roman is not called \fITimes-Roman\fR, it's actually called
+\fINimbusRomNo9L-Regu\fR), and then proceed to copy or link the files
+in the named GS font directory into the named TeX font directory.
+.PP
+The program's diagnostic output is also written to a logfile
+.IR t1map.log ,
+which is created either in the current working directory or in
+.BR /tmp .
+.SH OPTIONS
+All options except
+.B -gs
+have to do with how the font files are copied or linked into the TeX
+font directories:
+.TP
+.B -cp
+Copy the files from the \fIGS-fontdir\fR or matching the
+\fIType1-font-file-spec\fR into the \fITeX-fontdir\fR.  This is the
+default and will always work.
+.TP
+.B -ln
+Hard link the files.  This requires the fonts to reside on the same
+disk, but it will save space, and the files will not disappear from
+the \fITeX-fontdir\fR if they are removed from the source directory.
+.TP
+.B -lns
+Symlink the files.  This saves space, but if the original files are
+removed the symlinks will be broken.
+.TP
+.B -lnlns
+Attempt hard-link first, if it fails make symlink.
+.TP
+.B -lncp
+Attempt hard-link first, if that fails, copy the font.
+.SH EXAMPLES
+If your Ghostscript is installed in 
+.B /usr/local/share/ghostscript
+and your TeX
+lives in 
+.B /usr/local/teTeX
+then this command will make your GS fonts available to xdvi:
+.PP
+.Vb 4
+\&t1mapper -lns -gs \e
+\&	/usr/local/share/ghostscript/5.50/Fontmap \e
+\&	/usr/local/share/ghostscript/fonts \e
+\&	/usr/local/teTeX/share/texmf/fonts/type1/gs
+.Ve
+.PP
+The first argument here is the full path to the GS Fontmap.  The
+second is the GS font directory, note the lack of wildcards here (as
+opposed to the next example).  The third argument is the TeX font
+directory.  If it does not exist it will be created.  Texk and teTeX uses
+quite finely structured font directories, and the above reflects this.
+.PP
+If you have a Solaris machine with Display Postscript fonts then this
+command will make them available to xdvi:
+.PP
+.Vb 4
+\&t1mapper -lns \e
+\&	/usr/local/teTeX/share/texmf/fonts/type1/gs \e
+\&	/usr/openwin/lib/X11/fonts/Type1/*.pfa
+.Ve
+.PP
+Here the first argument is the TeX font directory and thereafter comes
+a wildcard that specifies which fonts to examine for copying/linking
+into the TeX font directory.
+.SH FILES
+.B fontname
+Postscript to TeX name mapping files from 
+.B http://tug.org/fontname/,
+these are included in teTeX.
+.PP
+.B Ghostscript
+fonts from
+.B http://sourceforge.net/projects/ghostscript/
+or
+.B http://www.gnu.org/software/ghostscript/ghostscript.html
+.SH SEE ALSO
+.BR kpsewhich (1),
+.BR xdvi (1),
+.BR ln (1),
+.B README.t1fonts
+in the source distribution
+.SH AUTHOR
+Nicolai Langfeldt for the xdvik project at SourceForge (see
+.BR http://sourceforge.net/projects/xdvi/ ).

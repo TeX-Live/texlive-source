@@ -1,0 +1,10 @@
+*mfMode:	ljfour
+!
+! This is the default anyway:
+! *pixelsPerInch:	600
+! *shrinkFactor:	8
+!
+! GO! EUROPE! :-)
+*paper:		a4
+!
+*wwwBrowser:	netscape

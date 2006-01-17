@@ -1,0 +1,53 @@
+.TH DVIBOOK 1
+.SH NAME
+dvibook \- rearrange pages in DVI file into signatures
+.SH SYNOPSIS
+.B dvibook
+[
+.B \-q
+] [
+.B \-s\fI<num>
+] [
+.B \-i
+.I infile
+] [
+.B \-o
+.I outfile
+]
+[
+.I infile
+[
+.I outfile
+] ]
+.SH DESCRIPTION
+.I Dvibook
+rearranges pages from a DVI file produced by TeX into ``signatures'' for
+printing books or booklets, creating a new DVI file
+usable by any of the TeX conversion programs.
+.PP
+The
+.I \-s
+option selects the size of signature which will be used. The signature size is
+the number of sides which will be folded and bound together; the number given
+should be a multiple of four. The default is to use one signature for the
+whole file. Extra blank sides will be added if the file does not contain a
+multiple of four pages.
+.PP
+Dvibook normally prints the page numbers of the pages rearranged; the
+.I \-q
+option suppresses this.
+.SH AUTHOR
+Angus Duggan, from dviselect(1), by
+Chris Torek, University of Maryland
+.SH "SEE ALSO"
+dviconcat(1), dviselect(1), latex(1), tex(1)
+.br
+.I "MC-TeX User's Guide"
+.br
+.I "The TeXbook"
+.SH BUGS
+.I Dvibook
+does not adjust the parameters in the postamble; however, since these
+values are normally used only to size certain structures in the output
+conversion programs, and the parameters never need to be adjusted upward,
+this has not proven to be a problem.

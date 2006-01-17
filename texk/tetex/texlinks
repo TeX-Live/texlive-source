@@ -1,0 +1,290 @@
+#!/bin/sh
+
+# Copyright Thomas Esser, 1999, 2002, 2003. public domain.
+
+# texlinks: script to maintain symlinks from format to engine. Interprets
+# the lines given in fmtutil.cnf.
+
+# History:
+#   Sun Aug 28 21:41:06 CEST 2005
+#      remove special cases for csplain,cslatex,pdfcslatex,pdfcsplain
+#   Fr Apr  8 19:15:05 CEST 2005
+#      cleanup now has an argument for the return code
+#   So Mär 27 18:52:06 CEST 2005
+#       honor $TMPDIR, $TEMP and $TMP, not just $TMP
+#   Mon May 10 20:52:48 CEST 2004
+#       kpseaccess instead of access
+#   Thu Dec 25 22:11:53 CET 2003, te:
+#       add version string
+#   Tue Apr  9 22:46:34 CEST 2002, te:
+#       do not create symlinks for cont-??, metafun and mptopdf
+
+test -f /bin/sh5 && test -z "$RUNNING_SH5" \
+  && { UNAMES=`uname -s`; test "x$UNAMES" = xULTRIX; } 2>/dev/null \
+  && { RUNNING_SH5=true; export RUNNING_SH5; exec /bin/sh5 $0 ${1+"$@"}; }
+unset RUNNING_SH5
+
+test -f /bin/bsh && test -z "$RUNNING_BSH" \
+  && { UNAMES=`uname -s`; test "x$UNAMES" = xAIX; } 2>/dev/null \
+  && { RUNNING_BSH=true; export RUNNING_BSH; exec /bin/bsh $0 ${1+"$@"}; }
+unset RUNNING_BSH
+
+export PATH
+
+# hack around a bug in zsh:
+test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
+
+cnf=fmtutil.cnf   # name of the config file
+version=1125258113 # seconds since `00:00:00 1970-01-01 UTC'
+                   # date '+%s' (with GNU date)
+progname=texlinks
+
+usage='texlinks [options] [directories]
+
+Create symbolic links format -> engine according to fmtutil setup.
+
+Valid options:
+  --help
+  -h                    show this help text
+  --version             show version string
+  --cnffile file
+  -f file               use file as config file (default: fmtutil.cnf)
+  --verbose
+  -v                    set verbose mode on (default: off)
+  --multiplatform
+  -m                    operate in all platform specific directories
+                        (default: operate only in directory for this platform)
+  --silent
+  -s                    silently skip over existing scripts / binaries
+                        instead of creating a warning
+
+directories is an optional list of directories in which to operate.
+If no directories are specified the list of directories depends on the
+--multiplatform option.
+'
+
+###############################################################################
+# abort(errmsg)
+#   print `errmsg' to stderr and exit with error code 1
+###############################################################################
+abort() { errmsg "texlinks: $1."; cleanup 1; }
+
+# error message to stderr:
+errmsg() { echo "$@" >&2; }
+
+# give message to stderr only if "verbose" mode is on:
+verbose_echo() { $verbose && errmsg "$@"; }
+
+# in verbose mode: show command that is executed:
+verbose_do() { verbose_echo "$@"; "$@"; }
+
+###############################################################################
+# cleanup()
+#   clean up the temp area and exit with proper exit status
+###############################################################################
+cleanup()
+{
+  rc=$1
+  $needsCleanup && test -n "$tmpdir" && test -d "$tmpdir" \
+    && { rm -f "$tmpdir"/*; cd /; rmdir "$tmpdir"; }
+  exit $rc
+}
+
+###############################################################################
+# setupTmpDir()
+#   set up a temp directory and a trap to remove it
+###############################################################################
+setupTmpDir()
+{
+  $needsCleanup && return
+
+  trap 'cleanup 1' 1 2 3 7 13 15
+  needsCleanup=true
+  (umask 077; mkdir "$tmpdir") \
+    || abort "could not create directory \`$tmpdir'"
+}
+
+
+# search a binary along $PATH:
+check_for_binary()
+{
+  testbin=$1
+  set x `echo "$PATH" | sed 's/^:/.:/; s/:$/:./; s/::/:.:/g; s/:/ /g'`; shift
+  for i
+  do
+    if [ -x "$i/$testbin" ]; then
+      echo "$i/$testbin"
+      return 0
+    fi
+  done
+  return 1
+}
+
+
+###############################################################################
+# install_link(dest src)
+#   create a symlink like ln -s dest src, but make sure that src is not
+#   an existing binary
+###############################################################################
+install_link()
+{
+  # make symlink    src -> dest
+  dest=$1; src=$2
+
+  case $src in
+    */mf)
+      if test $dest = "mf-nowin" && test -f $selfautoloc/mfw; then
+        dest="mfw"
+        verbose_echo "both mfw and mf-nowin exists, $src linked to $dest"
+      fi
+      ;;
+  esac
+
+  case $src in
+    */cont-??|*/metafun|*/mptopdf)
+      verbose_echo "symlink $2 -> $dest skipped (special case)"
+      ;;
+    *)
+      test "x$src" != "x`(ls -ld $src | awk '{print $NF}') 2>/dev/null`" &&
+        verbose_do rm -f "$src"
+  
+      if test -f "$src"; then
+        case $silent in
+          true)
+            ;;
+          *)
+            errmsg "install_link failed for $src. File already exists."
+            ;;
+        esac
+      else
+        verbose_do ln -s "$dest" "$src"
+      fi
+      ;;
+   esac
+}
+
+###############################################################################
+# search_symlinkdir()
+#   look if $PATH has only symlinks to the real binaries and find that
+#   directory. Also check if this directory is writable.
+###############################################################################
+search_symlinkdir()
+{
+  kpsewhich=`check_for_binary kpsewhich`
+  test -z "$kpsewhich" && return 1
+  symlinkdir=`echo $kpsewhich | sed 's@/*kpsewhich$@@'`
+  kpseaccess -w "$symlinkdir" || return 1
+  touch "$symlinkdir/tl$$"
+  if test -f "$selfautoloc/tl$$"; then
+    rm -f "$symlinkdir/tl$$"
+    return 1
+  else
+    rm -f "$symlinkdir/tl$$"
+    return 0
+  fi
+}
+
+###############################################################################
+# upd_symlinkdir()
+#   if $PATH has only symlinks to the real binaries, update that directory
+#   that holds the symlinks
+###############################################################################
+upd_symlinkdir()
+{
+  search_symlinkdir || return 0
+  for i in `sed 's@ .*@@' cnf_file_ln.$$`; do
+    install_link "$selfautoloc/$i" "$symlinkdir/$i"
+  done
+}
+
+###############################################################################
+# main()
+#   parse commandline arguments, initialize variables,
+#   switch into temp. direcrory, execute desired command
+###############################################################################
+main()
+{
+  cnf_file=    # global variable: full name of the config file
+  dirs=
+  needsCleanup=false
+
+  multiplatform=false
+  verbose=false
+  silent=false
+  thisdir=`pwd`
+  : ${KPSE_DOT=$thisdir}; export KPSE_DOT
+  selfautoloc=`kpsewhich --expand-var='$SELFAUTOLOC'`
+  while 
+    case $1 in
+      --h*|-h)
+          echo "$usage"; exit 0;;
+      --version)
+          echo "$progname version $version."; exit 0;;
+      --cnffile|-f)
+          shift; cnf_file=$1;;
+      --v*|-v) verbose=true;;
+      --s*|-s) silent=true;;
+      --m*|-m) multiplatform=true;;
+      -*) errmsg "fmtutil: unknown option \`$1' ignored.";;
+      *)  break;;
+    esac
+  do test $# -gt 0 && shift; done
+  dirs="$*"
+
+  # if no cnf_file from command-line, look it up with kpsewhich:
+  test -z "$cnf_file" && cnf_file=`kpsewhich --format='web2c files' $cnf`
+  test -f "$cnf_file" || abort "config file \`$cnf' not found"
+
+
+  tmpdir=${TMPDIR-${TEMP-${TMP-/tmp}}}/texlinks.$$
+  setupTmpDir
+  cd "$tmpdir" || cleanup 1
+
+  sed '/^[ 	]*#/d; /^[ 	]*$/d' $cnf_file \
+    | awk '{print $1, $2}' > cnf_file_ln.$$
+
+  if test -z "$dirs"; then
+    if test $multiplatform = true; then
+      case $selfautoloc in
+        */bin) dirs=$selfautoloc;;
+        *)     parent=`kpsewhich --expand-var='$SELFAUTODIR'`
+               dirs=`find $parent -type f -name kpsewhich -print \
+                       | sed 's@/kpsewhich$@@'`;;
+      esac
+    else
+      dirs=$selfautoloc
+    fi
+  fi
+  
+  for d in $dirs; do
+    kpseaccess -w $d \
+      || { errmsg "$d: no write permissions. Skipping..."; continue; }
+    # cnf_file_ln.$$ has lines with "format engine" pairs
+    set x `cat cnf_file_ln.$$`; shift
+    while test $# != 0; do
+      fmt=$1; engine=$2; shift; shift
+
+      # Some broken shells destroy the positional arguments when calling a
+      # shellfunction. Therefore, we save and restore them "by hand" in the
+      # main_args_while variable.
+      main_args_while="$@"
+
+      test "x$fmt" = "x$engine" && continue
+      if test -f "$d/$engine"; then
+        install_link "$engine" "$d/$fmt"
+      else
+        verbose_echo "$d/$engine: engine does not exist. Skipping..."
+      fi
+
+      # restore positional arguments:
+      set x $main_args_while; shift
+
+    done
+  done
+  upd_symlinkdir
+}
+
+main ${1+"$@"}
+
+# set successful return code
+cleanup 0

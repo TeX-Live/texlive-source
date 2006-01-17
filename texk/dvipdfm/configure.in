@@ -1,0 +1,63 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(dvipdfm.c)
+
+define([_version_],"0.13.2c")
+
+VERSION=_version_
+AC_SUBST(VERSION)
+AC_DEFINE(VERSION,_version_)
+AC_DEFINE(PACKAGE,"dvipdfm")
+
+AC_CONFIG_HEADERS(config.h)
+
+AC_ARG_ENABLE([maint], [  --enable-maint          enable autoconf portions of Makefile],
+  [MAINT=''], [MAINT='#'])
+AC_SUBST(MAINT)  
+
+dnl Checks for programs.
+AC_PROG_CC
+AC_PROG_CPP
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
+
+sinclude(../kpathsea/withenable.ac)
+sinclude(../../libs/zlib/withenable.ac)
+sinclude(../../libs/libpng/withenable.ac)
+sinclude(../../libs/zlib/zlib.ac)
+sinclude(../../libs/libpng/libpng.ac)
+
+AC_DEFINE(KPATHSEA)
+AC_DEFINE(HAVE_KPATHSEA)
+AC_DEFINE(HAVE_XBASENAME)
+AC_DEFINE(HAVE_ZLIB)
+AC_DEFINE(HAVE_ZLIB_COMPRESS2)
+AC_DEFINE(HAVE_KPSE_FORMATS)
+AC_DEFINE(HAVE_OMEGA_FORMATS)
+AC_DEFINE(HAVE_TTF_FORMATS)
+AC_DEFINE(HAVE_LIBPNG)
+TTF_OPT=''
+AC_SUBST(TTF_OPT)
+
+# TEXMF='${datadir}/texmf'
+# AC_SUBST(TEXMF)
+
+dnl Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS(unistd.h)
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_EXT_TIMEZONE
+AC_TZ_HAS_TM_GMTOFF
+
+AC_C_CONST
+AC_TYPE_SIZE_T
+AC_STRUCT_TM
+
+dnl Checks for library functions.
+AC_FUNC_MEMCMP
+AC_CHECK_FUNCS(strspn system)
+AC_CHECK_LIB(m, main)
+
+KPSE_CONFIG_FILES([Makefile])
+AC_OUTPUT

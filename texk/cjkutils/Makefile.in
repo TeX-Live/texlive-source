@@ -1,0 +1,12 @@
+RM = @RM@
+
+all_subdirs = conv scripts hbf2gf
+
+all check clean configclean default depend dvi extraclean \
+info install install-data install-exec mostlyclean realclean uninstall \
+uninstall-data uninstall-exec:
+	for d in $(all_subdirs); do (cd $$d && $(MAKE) $@); done
+
+distclean::
+	for d in $(all_subdirs); do (test -f $$d/Makefile && { cd $$d && $(MAKE) $@; } || true); done
+	$(RM) -f config.cache config.log stamp-auto config.status Makefile

@@ -1,0 +1,375 @@
+#! /usr/bin/env perl
+
+###########################################################
+# Prepare a LaTeX run for two-way communication with Perl #
+# By Scott Pakin <scott+pt@pakin.org>                     #
+###########################################################
+
+#-------------------------------------------------------------------
+# This is file `perltex.pl',
+# generated with the docstrip utility.
+#
+# The original source files were:
+#
+# perltex.dtx  (with options: `perltex')
+#
+# This is a generated file.
+#
+# Copyright (C) 2004 by Scott Pakin <scott+pt@pakin.org>
+#
+# This file may be distributed and/or modified under the conditions
+# of the LaTeX Project Public License, either version 1.2 of this
+# license or (at your option) any later version.  The latest
+# version of this license is in:
+#
+#    http://www.latex-project.org/lppl.txt
+#
+# and version 1.2 or later is part of all distributions of LaTeX
+# version 1999/12/01 or later.
+#-------------------------------------------------------------------
+
+use Safe;
+use Opcode;
+use Getopt::Long;
+use Pod::Usage;
+use File::Basename;
+use POSIX;
+use warnings;
+use strict;
+my $latexprog;
+my $runsafely = 1;
+my @permittedops;
+my $progname = basename $0;
+my $jobname = "texput";
+my @latexcmdline;
+my $toperl;
+my $fromperl;
+my $toflag;
+my $fromflag;
+my $doneflag;
+my $logfile;
+my $sandbox = new Safe;
+my $latexpid;
+$latexprog = $ENV{"PERLTEX"} || "latex";
+Getopt::Long::Configure("require_order", "pass_through");
+GetOptions("help"     => sub {pod2usage(-verbose => 1)},
+           "latex=s"  => \$latexprog,
+           "safe!"    => \$runsafely,
+           "permit=s" => \@permittedops) || pod2usage(2);
+@latexcmdline = @ARGV;
+my $firstcmd = 0;
+for ($firstcmd=0; $firstcmd<=$#latexcmdline; $firstcmd++) {
+    my $option = $latexcmdline[$firstcmd];
+    next if substr($option, 0, 1) eq "-";
+    if (substr ($option, 0, 1) ne "\\") {
+        $jobname = basename $option, ".tex" ;
+        $latexcmdline[$firstcmd] = "\\input $option";
+    }
+    last;
+}
+push @latexcmdline, "" if $#latexcmdline==-1;
+my $separator = "";
+foreach (1 .. 20) {
+    $separator .= chr(ord("A") + rand(26));
+}
+$toperl = $jobname . ".topl";
+$fromperl = $jobname . ".frpl";
+$toflag = $jobname . ".tfpl";
+$fromflag = $jobname . ".ffpl";
+$doneflag = $jobname . ".dfpl";
+$logfile = $jobname . ".lgpl";
+$latexcmdline[$firstcmd] =
+    sprintf '\makeatletter' . '\def%s{%s}' x 6 . '\makeatother%s',
+    '\plmac@tag', $separator,
+    '\plmac@tofile', $toperl,
+    '\plmac@fromfile', $fromperl,
+    '\plmac@toflag', $toflag,
+    '\plmac@fromflag', $fromflag,
+    '\plmac@doneflag', $doneflag,
+    $latexcmdline[$firstcmd];
+foreach my $file ($toperl, $fromperl, $toflag, $fromflag, $doneflag) {
+    unlink $file while -e $file;
+}
+open (LOGFILE, ">$logfile") || die "open(\"$logfile\"): $!\n";
+defined ($latexpid = fork) || die "fork: $!\n";
+unshift @latexcmdline, $latexprog;
+if (!$latexpid) {
+    exec {$latexcmdline[0]} @latexcmdline;
+    die "exec('@latexcmdline'): $!\n";
+}
+@permittedops=(":browse") if $#permittedops==-1;
+@permittedops=(Opcode::full_opset()) if !$runsafely;
+$sandbox->permit_only (@permittedops);
+while (1) {
+    my $awaitexists = sub {
+      while (!-e $_[0]) {
+          sleep 0;
+          if (waitpid($latexpid, &WNOHANG)==-1) {
+              foreach my $file ($toperl, $fromperl, $toflag,
+                                $fromflag, $doneflag) {
+                  unlink $file while -e $file;
+              }
+              undef $latexpid;
+              exit 0;
+          }
+      }
+    };
+    $awaitexists->($toflag);
+    my $entirefile;
+    {
+        local $/ = undef;
+        open (TOPERL, "<$toperl") || die "open($toperl): $!\n";
+        $entirefile = <TOPERL>;
+        close TOPERL;
+    }
+    my ($optag, $macroname, @otherstuff) =
+        map {chomp; $_} split "$separator\n", $entirefile;
+    $macroname =~ s/^[^A-Za-z]+//;
+    $macroname =~ s/\W/_/g;
+    $macroname = "latex_" . $macroname;
+    if ($optag eq "USE") {
+      foreach (@otherstuff) {
+          s/\\/\\\\/g;
+          s/\'/\\\'/g;
+          $_ = "'$_'";
+      }
+    }
+    my $perlcode;
+    if ($optag eq "DEF") {
+      $perlcode =
+          sprintf "sub %s {%s}\n",
+          $macroname, $otherstuff[0];
+    }
+    else {
+      $perlcode = sprintf "%s (%s);\n", $macroname, join(", ", @otherstuff);
+    }
+    print LOGFILE "#" x 31, " PERL CODE ", "#" x 32, "\n";
+    print LOGFILE $perlcode, "\n";
+    undef $_;
+    my $result;
+    {
+        my $warningmsg;
+        local $SIG{__WARN__} =
+            sub {chomp ($warningmsg=$_[0]); return 0};
+        $result = $sandbox->reval ($perlcode);
+        if (defined $warningmsg) {
+            $warningmsg =~ s/at \(eval \d+\) line \d+\W+//;
+            print LOGFILE "# ===> $warningmsg\n\n";
+        }
+    }
+    $result="" if !$result;
+    if ($@) {
+        my $msg = $@;
+        $msg =~ s/at \(eval \d+\) line \d+\W+//;
+        $msg =~ s/\s+/ /;
+        $result = "\\PackageError{perltex}{$msg}";
+        my @helpstring;
+        if ($msg =~ /\btrapped by\b/) {
+            @helpstring =
+                ("The preceding error message comes from Perl.  Apparently,",
+                 "the Perl code you tried to execute attempted to perform an",
+                 "`unsafe' operation.  If you trust the Perl code (e.g., if",
+                 "you wrote it) then you can invoke perltex with the --nosafe",
+                 "option to allow arbitrary Perl code to execute.",
+                 "Alternatively, you can selectively enable Perl features",
+                 "using perltex's --permit option.  Don't do this if you don't",
+                 "trust the Perl code, however; malicious Perl code can do a",
+                 "world of harm to your computer system.");
+        }
+        else {
+            @helpstring =
+              ("The preceding error message comes from Perl.  Apparently,",
+               "there's a bug in your Perl code.  You'll need to sort that",
+               "out in your document and re-run perltex.");
+        }
+        my $helpstring = join ("\\MessageBreak\n", @helpstring);
+        $helpstring =~ s/\.  /.\\space\\space /g;
+        $result .= "{$helpstring}";
+    }
+    print LOGFILE "%" x 30, " LATEX RESULT ", "%" x 30, "\n";
+    print LOGFILE $result, "\n\n";
+    $result .= '\endinput';
+    open (FROMPERL, ">$fromperl") || die "open($fromperl): $!\n";
+    syswrite FROMPERL, $result;
+    close FROMPERL;
+    unlink $toflag while -e $toflag;
+    unlink $toperl while -e $toperl;
+    unlink $doneflag while -e $doneflag;
+    open (FROMFLAG, ">$fromflag") || die "open($fromflag): $!\n";
+    close FROMFLAG;
+    $awaitexists->($toperl);
+    unlink $fromflag while -e $fromflag;
+    open (DONEFLAG, ">$doneflag") || die "open($doneflag): $!\n";
+    close DONEFLAG;
+}
+END {
+    close LOGFILE;
+    if (defined $latexpid) {
+        kill (9, $latexpid);
+        exit 1;
+    }
+    exit 0;
+}
+
+__END__
+
+=head1 NAME
+
+perltex - enable LaTeX macros to be defined in terms of Perl code
+
+=head1 SYNOPSIS
+
+perltex
+[B<--help>]
+[B<--latex>=I<program>]
+[B<-->[B<no>]B<safe>]
+[B<--permit>=I<feature>]
+[I<latex options>]
+
+=head1 DESCRIPTION
+
+LaTeX -- through the underlying TeX typesetting system -- produces
+beautifully typeset documents but has a macro language that is
+difficult to program.  In particular, support for complex string
+manipulation is largely lacking.  Perl is a popular general-purpose
+programming language whose forte is string manipulation.  However, it
+has no typesetting capabilities whatsoever.
+
+Clearly, Perl's programmability could complement LaTeX's typesetting
+strengths.  B<perltex> is the tool that enables a symbiosis between
+the two systems.  All a user needs to do is compile a LaTeX document
+using B<perltex> instead of B<latex>.  (B<perltex> is actually a
+wrapper for B<latex>, so no B<latex> functionality is lost.)  If the
+document includes a C<\usepackage{perltex}> in its preamble, then
+C<\perlnewcommand> and C<\perlrenewcommand> macros will be made
+available.  These behave just like LaTeX's C<\newcommand> and
+C<\renewcommand> except that the macro body contains Perl code instead
+of LaTeX code.
+
+=head1 OPTIONS
+
+B<perltex> accepts the following command-line options:
+
+=over 4
+
+=item B<--help>
+
+Display basic usage information.
+
+=item B<--latex>=I<program>
+
+Specify a program to use instead of B<latex>.  For example,
+C<--latex=pdflatex> would typeset the given document using
+B<pdflatex> instead of ordinary B<latex>.
+
+=item B<-->[B<no>]B<safe>
+
+Enable or disable sandboxing.  With the default of C<--safe>,
+B<perltex> executes the code from a C<\perlnewcommand> or
+C<\perlrenewcommand> macro within a protected environment that
+prohibits ``unsafe'' operations such as accessing files or executing
+external programs.  Specifying C<--nosafe> gives the LaTeX document
+I<carte blanche> to execute any arbitrary Perl code, including that
+which can harm the user's files.  See L<Safe> for more information.
+
+=item B<--permit>=I<feature>
+
+Permit particular Perl operations to be performed.  The C<--permit>
+option, which can be specified more than once on the command line,
+enables finer-grained control over the B<perltex> sandbox.  See
+L<Opcode> for more information.
+
+=back
+
+These options are then followed by whatever options are normally
+passed to B<latex> (or whatever program was specified with
+C<--latex>), including, for instance, the name of the F<.tex> file to
+compile.
+
+=head1 EXAMPLES
+
+In its simplest form, B<perltex> is run just like B<latex>:
+
+    perltex myfile.tex
+
+To use B<pdflatex> instead of regular B<latex>, use the C<--latex>
+option:
+
+    perltex --latex=pdflatex myfile.tex
+
+If LaTeX gives a ``C<trapped by operation mask>'' error and you trust
+the F<.tex> file you're trying to compile not to execute malicious
+Perl code (e.g., because you wrote it yourself), you can disable
+B<perltex>'s safety mechansisms with C<--nosafe>:
+
+    perltex --nosafe myfile.tex
+
+The following command gives documents only B<perltex>'s default
+permissions (C<:browse>) plus the ability to open files and invoke the
+C<time> command:
+
+    perltex --permit=:browse --permit=:filesys_open
+      --permit=time myfile.tex
+
+=head1 ENVIRONMENT
+
+B<perltex> honors the following environment variables:
+
+=over 4
+
+=item PERLTEX
+
+Specify the filename of the LaTeX compiler.  The LaTeX compiler
+defaults to ``C<latex>''.  The C<PERLTEX> environment variable
+overrides this default, and the C<--latex> command-line option (see
+L</OPTIONS>) overrides that.
+
+=back
+
+=head1 FILES
+
+While compiling F<jobname.tex>, B<perltex> makes use of the following
+files:
+
+=over 4
+
+=item F<jobname.lgpl>
+
+log file written by Perl; helpful for debugging Perl macros
+
+=item F<jobname.topl>
+
+information sent from LaTeX to Perl
+
+=item F<jobname.frpl>
+
+information sent from Perl to LaTeX
+
+=item F<jobname.tfpl>
+
+``flag'' file whose existence indicates that F<jobname.topl> contains
+valid data
+
+=item F<jobname.ffpl>
+
+``flag'' file whose existence indicates that F<jobname.frpl> contains
+valid data
+
+=item F<jobname.dfpl>
+
+``flag'' file whose existence indicates that F<jobname.ffpl> has been
+deleted
+
+=back
+
+=head1 NOTES
+
+B<perltex>'s sandbox defaults to what L<Opcode> calls ``C<:browse>''.
+
+=head1 SEE ALSO
+
+latex(1), pdflatex(1), perl(1), Safe(3pm), Opcode(3pm)
+
+=head1 AUTHOR
+
+Scott Pakin, I<scott+pt@pakin.org>

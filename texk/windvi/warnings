@@ -1,0 +1,153 @@
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic/windvi.obj .\windvi.c
+windvi.c
+.\windvi.c(942) : warning C4018: '>' : signed/unsigned mismatch
+.\windvi.c(954) : warning C4018: '>' : signed/unsigned mismatch
+.\windvi.c(1837) : warning C4018: '<' : signed/unsigned mismatch
+.\windvi.c(1838) : warning C4018: '<' : signed/unsigned mismatch
+.\windvi.c(2092) : warning C4244: '=' : conversion from 'double ' to 'float ', possible loss of data
+.\windvi.c(2096) : warning C4244: '=' : conversion from 'double ' to 'float ', possible loss of data
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic/windraw.obj .\windraw.c
+windraw.c
+.\windraw.c(601) : warning C4018: '<' : signed/unsigned mismatch
+.\windraw.c(602) : warning C4018: '<' : signed/unsigned mismatch
+.\windraw.c(776) : warning C4018: '<' : signed/unsigned mismatch
+.\windraw.c(777) : warning C4018: '<' : signed/unsigned mismatch
+.\windraw.c(1124) : warning C4276: 'initcolor' : no prototype provided; assumed no parameters
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic/winabout.obj .\winabout.c
+winabout.c
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic/wingoto.obj .\wingoto.c
+wingoto.c
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic\wincolor.obj .\wincolor.c
+wincolor.c
+.\wincolor.c(271) : warning C4027: function declared without formal parameter list
+.\wincolor.c(503) : warning C4087: 'init_pix' : declared with 'void' parameter list
+.\wincolor.c(99) : warning C4715: 'CRefPop' : not all control paths return a value
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic/winprint.obj .\winprint.c
+winprint.c
+.\winprint.c(59) : warning C4101: 'pgsdlg' : unreferenced local variable
+.\winprint.c(141) : warning C4033: 'CmdFilePrint' must return a value
+.\winprint.c(873) : warning C4276: 'ReopenDviFile' : no prototype provided; assumed no parameters
+.\winprint.c(873) : warning C4276: 'IsOpenedDviFile' : no prototype provided; assumed no parameters
+.\winprint.c(308) : warning C4715: 'CmdFilePrint' : not all control paths return a value
+.\winprint.c(281) : warning C4700: local variable 'oldprintDIB' used without having been initialized
+.\winprint.c(282) : warning C4700: local variable 'printDIB' used without having been initialized
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic/winver.obj .\winver.c
+winver.c
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic/wincfg.obj .\wincfg.c
+wincfg.c
+.\wincfg.c(374) : warning C4244: '=' : conversion from 'double ' to 'float ', possible loss of data
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic/winlog.obj .\winlog.c
+winlog.c
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic/winopt.obj .\winopt.c
+winopt.c
+.\winopt.c(531) : warning C4244: '=' : conversion from 'double ' to 'float ', possible loss of data
+.\winopt.c(579) : warning C4090: '=' : different 'const' qualifiers
+.\winopt.c(580) : warning C4090: '=' : different 'const' qualifiers
+.\winopt.c(608) : warning C4244: '=' : conversion from 'double ' to 'float ', possible loss of data
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic/winxutl.obj .\winxutl.c
+winxutl.c
+.\winxutl.c(353) : warning C4090: 'initializing' : different 'const' qualifiers
+.\winxutl.c(441) : warning C4101: 'rop' : unreferenced local variable
+.\winxutl.c(813) : warning C4133: '=' : incompatible types - from 'unsigned char *' to 'struct HBITMAP__ *'
+.\winxutl.c(855) : warning C4047: '==' : 'int ' differs in levels of indirection from 'void *'
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic/winevt.obj .\winevt.c
+winevt.c
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic/dvi_draw.obj .\dvi_draw.c
+dvi_draw.c
+.\dvi_draw.c(282) : warning C4244: '=' : conversion from 'double ' to 'float ', possible loss of data
+.\dvi_draw.c(283) : warning C4018: '<' : signed/unsigned mismatch
+.\dvi_draw.c(284) : warning C4018: '<' : signed/unsigned mismatch
+.\dvi_draw.c(289) : warning C4244: '=' : conversion from 'double ' to 'float ', possible loss of data
+.\dvi_draw.c(290) : warning C4018: '<' : signed/unsigned mismatch
+.\dvi_draw.c(291) : warning C4018: '<' : signed/unsigned mismatch
+.\dvi_draw.c(297) : warning C4018: '<' : signed/unsigned mismatch
+.\dvi_draw.c(298) : warning C4018: '<' : signed/unsigned mismatch
+.\dvi_draw.c(373) : warning C4096: '__cdecl' must be used with '...'
+.\dvi_draw.c(726) : warning C4018: '<' : signed/unsigned mismatch
+.\dvi_draw.c(730) : warning C4018: '==' : signed/unsigned mismatch
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic/dvi_init.obj .\dvi_init.c
+dvi_init.c
+.\dvi_init.c(161) : warning C4244: 'initializing' : conversion from 'double ' to 'int ', possible loss of data
+.\dvi_init.c(188) : warning C4244: '=' : conversion from 'int ' to 'float ', possible loss of data
+.\dvi_init.c(311) : warning C4244: '=' : conversion from 'double ' to 'float ', possible loss of data
+.\dvi_init.c(323) : warning C4244: '=' : conversion from 'double ' to 'float ', possible loss of data
+.\dvi_init.c(327) : warning C4244: '=' : conversion from 'double ' to 'int ', possible loss of data
+.\dvi_init.c(364) : warning C4018: '<' : signed/unsigned mismatch
+.\dvi_init.c(461) : warning C4018: '!=' : signed/unsigned mismatch
+.\dvi_init.c(462) : warning C4018: '!=' : signed/unsigned mismatch
+.\dvi_init.c(462) : warning C4018: '!=' : signed/unsigned mismatch
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic/font-open.obj .\font-open.c
+font-open.c
+.\font-open.c(44) : warning C4244: '=' : conversion from 'double ' to 'int ', possible loss of data
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic/gf.obj .\gf.c
+gf.c
+.\gf.c(327) : warning C4244: '=' : conversion from 'double ' to 'long ', possible loss of data
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic/pk.obj .\pk.c
+pk.c
+.\pk.c(186) : warning C4244: '=' : conversion from 'unsigned long ' to 'unsigned short ', possible loss of data
+.\pk.c(187) : warning C4244: '=' : conversion from 'unsigned long ' to 'unsigned short ', possible loss of data
+.\pk.c(189) : warning C4244: '=' : conversion from 'long ' to 'short ', possible loss of data
+.\pk.c(190) : warning C4244: '=' : conversion from 'long ' to 'short ', possible loss of data
+.\pk.c(192) : warning C4244: '=' : conversion from 'double ' to 'long ', possible loss of data
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic/psgsw32.obj .\psgsw32.c
+psgsw32.c
+.\psgsw32.c(296) : warning C4090: 'function' : different 'const' qualifiers
+.\psgsw32.c(296) : warning C4024: 'send' : different types for formal and actual parameter 1
+.\psgsw32.c(369) : warning C4113: 'void (__fastcall *)()' differs in parameter lists from 'void (__fastcall *)(void )'
+.\psgsw32.c(413) : warning C4090: 'function' : different 'const' qualifiers
+.\psgsw32.c(413) : warning C4024: 'send' : different types for formal and actual parameter 1
+.\psgsw32.c(573) : warning C4101: 'buf' : unreferenced local variable
+.\psgsw32.c(631) : warning C4276: 'beginheader_none' : no prototype provided; assumed no parameters
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic\squeeze.obj .\squeeze.c
+squeeze.c
+.\squeeze.c(112) : warning C4007: 'main' : must be '__cdecl'
+	link /OUT:dynamic\squeeze.exe /MACHINE:IX86 /NODEFAULTLIB /INCREMENTAL:NO /PDB:NONE /NOLOGO  /RELEASE /OPT:REF /VERSION:7.2  -subsystem:console -entry:mainCRTStartup  dynamic\squeeze.obj msvcrt.lib oldnames.lib kernel32.lib advapi32.lib  user32.lib 
+	.\dynamic\squeeze ./psheader.txt psheader.c-tmp
+	sed -f psheader.sed < psheader.c-tmp > psheader.c
+	F:\Users\Fabrice\Work\tex\devel\source\gnu\bin\rm -f psheader.c-tmp
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic\psheader.obj .\psheader.c
+psheader.c
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic/special.obj .\special.c
+special.c
+.\../../web2c-7.2/web2c/pdftexdir/zlib/zlib.h(712) : warning C4096: '__cdecl' must be used with '...'
+.\special.c(254) : warning C4244: '=' : conversion from 'double ' to 'int ', possible loss of data
+.\special.c(258) : warning C4244: '=' : conversion from 'double ' to 'int ', possible loss of data
+.\special.c(259) : warning C4244: '=' : conversion from 'double ' to 'int ', possible loss of data
+.\special.c(265) : warning C4244: '=' : conversion from 'double ' to 'int ', possible loss of data
+.\special.c(273) : warning C4244: '=' : conversion from 'double ' to 'int ', possible loss of data
+.\special.c(274) : warning C4244: '=' : conversion from 'double ' to 'int ', possible loss of data
+.\special.c(275) : warning C4244: '=' : conversion from 'double ' to 'int ', possible loss of data
+.\special.c(276) : warning C4244: '=' : conversion from 'double ' to 'int ', possible loss of data
+.\special.c(280) : warning C4244: '=' : conversion from 'double ' to 'int ', possible loss of data
+.\special.c(281) : warning C4244: '=' : conversion from 'double ' to 'int ', possible loss of data
+.\special.c(316) : warning C4244: '=' : conversion from 'double ' to 'int ', possible loss of data
+.\special.c(317) : warning C4244: '=' : conversion from 'double ' to 'int ', possible loss of data
+.\special.c(335) : warning C4244: '=' : conversion from 'double ' to 'int ', possible loss of data
+.\special.c(345) : warning C4244: '=' : conversion from 'double ' to 'int ', possible loss of data
+.\special.c(346) : warning C4244: '=' : conversion from 'double ' to 'int ', possible loss of data
+.\special.c(384) : warning C4244: '=' : conversion from 'double ' to 'float ', possible loss of data
+.\special.c(385) : warning C4244: '=' : conversion from 'double ' to 'float ', possible loss of data
+.\special.c(386) : warning C4244: '=' : conversion from 'double ' to 'int ', possible loss of data
+.\special.c(390) : warning C4244: '=' : conversion from 'double ' to 'float ', possible loss of data
+.\special.c(395) : warning C4305: '+=' : truncation from 'const double ' to 'float '
+.\special.c(612) : warning C4113: 'void (__fastcall *)()' differs in parameter lists from 'void (__fastcall *)(void )'
+.\special.c(1220) : warning C4244: '=' : conversion from 'double ' to 'unsigned int ', possible loss of data
+.\special.c(1223) : warning C4244: '=' : conversion from 'double ' to 'unsigned int ', possible loss of data
+.\special.c(1143) : warning C4101: 'name' : unreferenced local variable
+.\special.c(1301) : warning C4101: 'c' : unreferenced local variable
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic/util.obj .\util.c
+util.c
+.\util.c(57) : warning C4096: '__cdecl' must be used with '...'
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic/vf.obj .\vf.c
+vf.c
+.\vf.c(153) : warning C4244: '=' : conversion from 'double ' to 'long ', possible loss of data
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic/hypertex.obj .\hypertex.c
+hypertex.c
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic/mime.obj .\mime.c
+mime.c
+	cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 -DWIN32_LEAN_AND_MEAN -D_MT -D_DLL -D_IMPORT -DKPATHSEA -DMSBITFIRST -If:\Local/include -IF:\Users\Fabrice\Work\tex\devel\source -I. -I.    -I.. -IF:\Users\Fabrice\Work\tex\devel\source\web2c-7.2  -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  -c /Fodynamic/wwwfetch.obj .\wwwfetch.c
+wwwfetch.c
+	rc -DWIN32 -D_WIN32 -DWINVER=0x0400 -DWINDVI_MAJVER=\""0"\" -DWINDVI_MINVER=\""54"\" /r /IF:\Users\Fabrice\Work\tex\devel\source /fodynamic\windvi.res windvi.rc
+	link /OUT:dynamic\windvi.exe /STACK:256000 /MACHINE:IX86 /NODEFAULTLIB /INCREMENTAL:NO /PDB:NONE /NOLOGO  /RELEASE /OPT:REF /VERSION:7.2  -subsystem:windows -entry:WinMainCRTStartup dynamic\windvi.obj dynamic\windraw.obj                       dynamic\winabout.obj dynamic\wingoto.obj                       dynamic\wincolor.obj                                             dynamic\winprint.obj dynamic\winver.obj dynamic\wincfg.obj   dynamic\winlog.obj dynamic\winopt.obj dynamic\winxutl.obj    dynamic\winevt.obj dynamic\dvi_draw.obj                        dynamic\dvi_init.obj dynamic\font-open.obj dynamic\gf.obj    dynamic\pk.obj dynamic\psgsw32.obj dynamic\psheader.obj      dynamic\special.obj dynamic\util.obj dynamic\vf.obj          dynamic\hypertex.obj dynamic\mime.obj dynamic\wwwfetch.obj    dynamic\windvi.res advapi32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib  version.lib comctl32.lib shell32.lib  F:\Users\Fabrice\Work\tex\devel\source\web2c-7.2\web2c\pdftexdir\zlib\dynamic\zlib.lib F:\Users\Fabrice\Work\tex\devel\source\web2c-7.2\web2c\pdftexdir\zlib\dynamic\zlib.lib  F:\Users\Fabrice\Work\tex\devel\source\web2c-7.2\kpathsea/dynamic/kpathsea.lib msvcrt.lib oldnames.lib kernel32.lib advapi32.lib  user32.lib
+windvi.obj : error LNK2001: unresolved external symbol @init_pix@0
+dynamic\windvi.exe : fatal error LNK1120: 1 unresolved externals

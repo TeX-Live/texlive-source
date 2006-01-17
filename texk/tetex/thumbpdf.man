@@ -1,0 +1,100 @@
+.TH "thumbpdf" "1" "September 2000" "teTeX" "teTeX" 
+.PP 
+.SH "NAME" 
+thumbpdf \- generate thumbnail images for a PDF file
+created with \fBpdftex\fP
+.PP 
+.SH "SYNOPSIS" 
+.PP 
+\fBthumbpdf\fP [ \fIOPTION\fP\&.\&.\&. ]  \fIPDF_FILE\fP
+.PP 
+.SH "DESCRIPTION" 
+.PP 
+\fBthumbpdf\fP is used to create thumbnail images of individual pages
+within a PDF (Portable Document Format) document\&.
+.PP 
+.SH "USAGE" 
+.PP 
+First run \fBpdftex\fP(1) on your document to create a PDF file\&.
+Then run \fBthumbpdf\fP to generate the thumbnails, a PDF file
+containing the thumbnails, and a pdfTeX file to include the thumbnails
+in the PDF file\&.  Finally, run \fBpdftex\fP(1) on your file again to
+create the final PDF file\&.
+.PP 
+\fBthumbpdf\fP calls \fBgs\fP(1) to generate PNG images of the pages
+within \fIPDF_FILE\fP, and \fBpdftex\fP(1) to create a PDF file
+containing the thumbnail images\&.
+.PP 
+.SH "OPTIONS" 
+.PP 
+.IP "\fB--help\fP" 
+print usage
+.IP "\fB--(no)makepng\fP" 
+make PNG thumbnail images (default: true)
+.IP "\fB--(no)makepdf\fP" 
+generate new PDF file containing the
+thumbnails (default: true)
+.IP "\fB--(no)makedef\fP" 
+create a TeX file for \fBpdftex\fP(1) to
+read in (default: true)
+.IP "\fB--(no)quiet\fP" 
+suppress messages (default: false)
+.IP "\fB--(no)verbose\fP" 
+verbose messages (default: false)
+.IP "\fB--(no)debug\fP" 
+print debugging information while parsing
+(default: false)
+.IP "\fB--resolution\fP \fIres\fP" 
+resolution for GhostScript step
+(default: 9)
+.IP "\fB--compress\fP \fIn\fP" 
+\epdfcompresslevel for \fBthumbpdf\&.pdf\fP
+(0-9; default: 9)
+.IP "\fB--device\fP | \fBpng\fP\fIdev\fP" 
+GhostScript PNG device;
+\fIdev\fP = `mono\', `gray\',
+`16\', `256\', `16m\' (default:
+`png16m\')
+.PP 
+.SH "FILES" 
+.PP 
+.IP "\fIthumb\fPnn\fI\&.png\fP" 
+PNG thumbnail images
+.IP "\fIthumbpdf\&.pdf\fP" 
+PDF file containing thumbnail images
+.IP "\fIthumbpdf\&.tex\fP" 
+A pdfTeX program to include the thumbnails
+file
+.IP "\fIthumbpdf\&.log\fP" 
+pdfTeX log file
+.IP "\fIthumbpdf\&.sty\fP" 
+a LaTeX package to be included in files
+for which a user wants to generate thumbnails
+.PP 
+.SH "SEE ALSO" 
+.PP 
+\fBgs\fP(1), \fBpdftex\fP(1)\&.
+.PP 
+Web page: <http://tug\&.org/teTeX/>
+.PP 
+.SH "BUGS" 
+.PP 
+None known, but report any bugs found to the author\&.
+.PP 
+.SH "COPYRIGHT" 
+.PP 
+Copyright © 1999\&.  \fBthumbpdf\fP is distributed under
+version 1, or (at your option) a later version of the LaTeX Project
+Public License\&.
+.PP 
+.SH "AUTHOR" 
+.PP 
+\fBthumbpdf\fP was written by Heiko Oberdiek
+<oberdiek@ruf\&.uni-freiburg\&.de>\&.
+.PP 
+This manual page was written by C\&.M\&. Connelly
+<c@eskimo\&.com>, for
+the Debian GNU/Linux system\&.  It may be used by other distributions
+without contacting the author\&.  Any mistakes or omissions in the
+manual page are my fault; inquiries about or corrections to this
+manual page should be directed to me (and not to the primary author)\&.

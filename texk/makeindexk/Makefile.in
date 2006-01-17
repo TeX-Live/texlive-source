@@ -1,0 +1,53 @@
+# Makefile for makeindexk --te@dbs.uni-hannover.de. Public domain.
+version = 2.13
+
+kpse_include ../make/paths.mk
+kpse_include ../make/common.mk
+kpse_include ../make/programs.mk
+
+objects = genind.o mkind.o qsort.o scanid.o scanst.o sortid.o
+program = makeindex
+programs = $(program)
+
+default all: $(programs)
+
+$(program): $(kpathsea) $(objects)
+	$(kpathsea_link) $(objects) $(LOADLIBES)
+kpse_include ../make/tkpathsea.mk
+
+install: install-exec install-data
+uninstall: uninstall-exec uninstall-data
+
+install-exec: $(programs)
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(bindir)
+	$(INSTALL_LIBTOOL_PROG)  $(program) $(bindir)
+	$(INSTALL_SCRIPT) $(srcdir)/mkindex $(scriptdir)/mkindex
+uninstall-exec:
+	cd $(bindir) && rm -f $(program)
+	cd $(scriptdir) && rm -f mkindex
+
+install-data: makeindex.1
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(man1dir)
+	$(INSTALL_DATA) $(srcdir)/makeindex.1 $(man1dir)/makeindex.$(manext)
+	$(INSTALL_DATA) $(srcdir)/mkindex.1 $(man1dir)/mkindex.$(manext)
+
+uninstall-data:
+
+distname = makeindex
+program_files =
+version_files =
+
+pre-dist-$(distname):
+post-dist-$(distname):
+
+kpse_include ../make/dist.mk
+kpse_include ../make/config.mk
+
+info dvi check:
+
+kpse_include ../make/clean.mk
+
+distclean::
+
+kpse_include ../make/rdepend.mk
+kpse_include depend.mk

@@ -1,0 +1,126 @@
+THIS IS ALPHA QUALITY SOFTWARE!
+
+Did you read the README file?
+
+How to install:
+1. ./configure --prefix=/texmf-prefix
+2. make
+3a. If you dare (I wouldn't): make install
+3b. If you don't: 
+    cp texk/xdvik/xdvi.bin libs/t1lib/type1afm/type1afm /path/for/bin
+4. cp texk/xdvik/texmf/* /usr/local/texmf/share/lib/xdvi
+   That might not be the right path for you though (
+   /usr/local/teTeX/share/texmf/xdvi is another likely path).
+   See point 5.
+   PLEASE NOTE that these enc files are different from the ones used
+   by dvips so they should not be in dvips' way.   Please review xdvi.cfg
+   to see what font maps are appropriate for you.  Update the texk
+   file database (teTeX users run 'texhash').
+5. Ensure that you have a XDVIINPUTS variable in your texmf.cnf or
+   environment which names the directory you installed the above files
+   in so xdvi can find them.
+6. Read XDVIFONTS to install type1 fonts for xdvi.  Probably not needed
+   in a recent teTeX installation.
+
+Here is the normal INSTALL file:
+-------------
+
+Installing xdvik is essentially the same as installing any other
+Kpathsea-using program.  Therefore, for the basic steps involved, the
+file `kpathsea/INSTALL'.
+
+For common problems and information on how to report a bug, see
+`kpathsea/BUGS'.
+
+xdvi-specific items and a terse summary of the steps:
+
+0.1. If you want the hypertext support (recognition of url specials and
+clicking on links), install the W3C reference library and header files
+if necessary: http://www.w3.org/pub/WWW/Library/w3c-libwww.tar.gz.  The
+.h files must be visible to the compiler, so you may have to set the
+environment variable CPPFLAGS=-I/usr/local/include/wwwherever.  (You may
+also be interested in the Java previewer IDVI, available at
+@url{http://www.win.tue.nl/~dickie/idvi}.)
+
+0.2. If you have Aladdin Ghostscript 4.0 or 4.01, get 4.02.  Otherwise,
+xdvi will not be able to run gs to show included eps files.  (You can
+fix this bug by adding a line
+  .clearerror
+before the `% Close up systemdict.' comment.)
+
+1. Run `configure' (in the top-level directory, the one with
+subdirectories `kpathsea' and `xdvi').  This guesses system
+dependencies.  configure --help lists all available options.  See
+../kpathsea/CONFIGURE for options to the configure script; also run
+configure --help.
+
+By default, Ghostscript is used to render PostScript specials.
+To disable this, specify `--without-ps' to configure.
+To use Display PostScript instead of gs, specify `--with-ps=dps'.
+To use NeWS instead of gs, specify `--with-ps=news'.
+(Naturally you must have the dps and news libraries for these to work!)
+You can specify more than one --with-ps option if desired; then Ghostscript
+  is used last.
+
+To use only Xlib routines, specify `--with-x-toolkit=no' to configure.
+Functionality is necessarily reduced.  If you are using an HP, IBM, or
+other system that does not include the Xaw library by default, consider
+installing the freely available X11 distribution, available from
+ftp://ftp.x.org and mirrors.
+
+2. If necessary, change the default paths or other definitions.
+See kpathsea/INSTALL for details.
+
+Things you might want to add to the DEFS or CFLAGS or XCFLAGS Make variables:
+-DA4 to get A4 size windows by default.
+-DALTFONT=\"myfont\" to change the fallback font from cmr10.
+-DBDPI=num to change default resolution to num from 600.
+-DMFMODE=\"mode\" to set the default mode.
+-DSHRINK=\"num\" to change the default shrink factor (yes, a string) from 6.
+-DNOBUTTONS to disable radio buttons for common commands.
+-DNOGREY to disable using grayscale to display shrunken bitmaps 
+   (which also works on monochrome monitors).
+-DNOQUERY if you have trouble compiling drawingWidgetClass?
+-DNOSELFILE to disable SelFile widget support.
+-DNOTEXXET to disable DVI opcodes 250 and 251.
+   
+The following can be set according to what xdvi's CONTROL-P command
+reports for `bitord' and `Unit' for your most common display:
+     bitord = 1  =>  -DMSBITFIRST
+     Unit = 32   =>  -DBMLONG
+     Unit = 16   =>  -DBMSHORT
+If this makes any substantial performance difference in your
+environment, please let me know.
+
+3. `make'.
+
+4. `make install' (by default, files will be installed under /usr/local).
+(Or `make install-exec', to install just the executables,
+or `make install-data', to install just the architecture-independent files.)
+
+5. `make distclean' (or `mostlyclean', or `clean', or `realclean',
+depending on how clean you want to be).
+
+If you wish to preview documents using PostScript fonts, you may find
+ftp://ftp.tug.org/tex/psfonts.tar.gz (Ghostscript-generated bitmaps for
+the standard 35 PS fonts at multiples of 600dpi) useful. The gsftopk
+program that comes with xdvik can generate such bitmaps on the fly; the
+distributed MakeTeXPK attempts to do this.
+
+If problems:
+
+* See kpathsea/INSTALL for common system-dependent problems.
+
+* If you run out of file descriptors (``Too many open files''),
+typically when MakeTeXPK is invoked, you may need to recompile the
+kernel on your system (e.g., SunOS).  Alternatively, the ulimit command
+might allow you to increase this limit (e.g., Solaris).  xdvi tries to
+close files as necessary to avoid this, but if you use lots of fonts on
+one page, it's unavoidable.
+
+* SCO: download libXaw from sosco.sco.com:/TLS/tls005.tar.Z.
+--lieder@skyler.mavd.honeywell.com
+
+* Tadpole Sparcbook: Comes with obsolete X11 libraries in
+  /usr/openwin/lib. You must install more recent libraries.
+--ato@bellcore.com

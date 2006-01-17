@@ -1,0 +1,205 @@
+OF TYPE1 FONTS AND FONTMAPS IN XDVI
+===================================
+
+HOW TO GIVE XDVI TYPE1 FONTS
+----------------------------
+
+Unlike Postscript printers xdvi has no builtin fonts.  So if you want
+to use non-TeX type1 fonts such as Times-Roman you need to install
+such fonts so xdvi can find them.  This file explains the procedure.
+
+The install procedure is somewhat manual, but very rewarding, and it
+need not be repeated unless you want to.
+
+PLEASE NOTE: xdvi does not NEED these fonts, you will be able to use
+xdvi without them.  Most texk and teTeX installations come with the
+Blue Sky Research/Y&Y type1 versions of Knuths fonts, xdvi will be
+able to use them with no further action.
+
+PLEASE NOTE: This file assumes that you use teTeX installed under
+/usr/local/teTeX.  It also assumes things about how your texmf tree is
+organized.  You might have to change many paths to match your setup.
+
+Enclosed in xdvik is a quite powerful type1 filename mapper called
+t1mapper.  It was written to help you install type1 fonts in a way
+such that xdvik can use them.  Here is how to use it.
+
+1. 
+
+Have gs (ghostscript) version 4 or 5 installed or fetched and
+unpacked.  Including both font packages ('std' and 'other').  If you
+have gs on your machine already you can check what version you have
+with the command 'gs -help', this also tells you where the installed
+gs stores its fonts.  Find the Fontmap file and the fonts.  If you
+can't find them pretend you don't have them and follow the
+instructions in the next paragraph.
+
+If you don't have gs installed you need to get it and and the font
+packages.  A likely source of a recent ghostscript is
+ftp.ntnu.no:/pub/ghostscript/aladdin.  --- Please note that that
+package has restrictions on commercial use including any distribution
+for money.  Please read the file PUBLIC for the full licensing terms.
+You can have the fonts under the GPL license as well, see
+ftp.ntnu.no:/pub/ghostscript/gnu.  Please note that there are license
+restrictions on this too, but very different, see the file COPYING
+included in the source package --- From the source package you extract
+the file 'Fontmap'.  Extract the two font packages too.  Now you have
+the files you need.
+
+Decide where to install the type1 files for xdvi.
+/usr/local/teTeX/share/texmf/fonts/type1/gs is a likely place.  Now
+run t1mapper to install fonts there:
+
+t1mapper -gs /usr/local/share/ghostscript/5.50/Fontmap \
+	/usr/local/share/ghostscript/fonts \
+	/usr/local/teTeX/share/texmf/fonts/type1/gs
+
+When the command is complete all the fonts gs knows about will have
+been copied to /usr/local/teTeX/share/texmf/fonts/type1/gs.  This will
+give you the standard PostScript fonts as well as some others.  Use
+the -lns option to make symlinks instead of copying the fonts.
+
+2.
+
+If you already have some type1 fonts, other than the ones from
+ghostscript, we want to add them too, probably.  Some sites have
+extensive postscript font collections.  All these fonts can be used.
+
+Additionaly, if you use a machine with a comercial Unix version (such
+as IRIX, Solaris, AIX, HP-UX...) it is quite likely that some type1
+fonts are installed on the machine.  These can be used by ghostscript
+and xdvi.  If you don't know where they are search for filenames such
+as '*.pfa', '*.pfb', and 'Times-Roman*' and you should be able to find
+them.
+
+To add the fonts found on a Solaris machine so xdvi can find them:
+
+t1mapper -lns /usr/local/teTeX/share/texmf/fonts/type1/gs \
+	/usr/openwin/lib/X11/fonts/Type1/*.pfa
+
+Run the command on all the type1 fonts you want to be able to use in
+xdvi.  
+
+NOTE: Do not run t1mapper on the TeX type1 fonts (cm* and so on).
+NOTE: You should probably not run them on your Lucida fonts.
+	but see xdvi.cfg and lucida.map.
+
+Copying/linking them all to the same directory will ensure that only
+one version of each font is available to xdvi.  t1mapper will remove
+any font version already available in the target directory before
+moving a font there.  
+
+The -lns option will cause t1mapper to symlink the fonts instead of
+copying them, saving a good deal of diskspace.  These options are
+available to modify how t1mapper atempts to copy/link files:
+
+ -cp	copy the font files, this is the default and will always work
+	and never break down on you.
+ -ln	make hard links, this requires all the fonts to be on the same disk.
+ -lns	make symbolic links, this requires that you do not remove the fonts
+	linked, or xdvi will not be able to use them anymore.
+ -lnlns atempt hard-link first, if it fails make symbolic link.
+ -lncp  atempt hard-link first, if it fails copy the file.  This is a way
+	to save some diskspace if possible, with no risk of files
+	disapearing.
+
+3.
+
+You should have .afm files for all those fonts.  xdvi comes with a
+program called type1afm which produces .afm files from type1 files.
+It should be run on each type1 file.  That can be done like this:
+
+  cd /usr/local/teTeX/share/texmf/fonts/type1/gs
+  sh   		
+  for f in *.{pfa,pfb}; do
+	type1afm $f
+  done
+  exit
+
+You don't need to do the 'sh' and 'exit' lines if you already run
+sh/ksh/bash/zsh, but you _do_ need them if you run csh or tcsh.
+
+Now you must move the afm files to where they should be stored:
+
+  mkdir /usr/local/teTeX/share/texmf/fonts/afm/gs
+  mv *.afm /usr/local/teTeX/share/texmf/fonts/afm/gs
+
+4.
+
+If you don't have cmr10.pfb, i.e., the type1 version of the
+traditional TeX fonts get them from CTAN, e.g.,
+ftp.tex.ac.uk:/tex-archive/fonts/cm/ps-type1/bluesky/pfb/.  Just drop
+them in a texmf directory, such as fonts/type1/bluesky/cm/.  Afm files
+are in /tex-archive/fonts/cm/afm.  Drop them in fonts/afm/bluesky/cm.
+No further configuration is needed.
+
+Additionaly, get
+/tex-archive/fonts/amsfonts/ps-type1/amsps-unix.tar.gz and install the
+pfb files in fonts/type1/bluesky/ams and the afm files in
+fonts/afm/bluesky/ams.
+
+There are some more type1 fonts in
+/tex-archive/fonts/cm/ps-type1/bakoma/pfb.  As with the bluesky fonts
+drop them in a directory, such as fonts/type1/bakoma and the afm files
+from /tex-archive/fonts/cm/ps-type1/bakoma/afm in fonts/afm/bakoma.
+There is a large overlap between the bakoma and bluesky fonts, you can
+save some confusion and diskspace by removing the bakoma fonts that
+have bluesky equivalents.
+
+NOTE: There are license restrictions on the use of the bakoma fonts
+which might prevent you from using them.  Including using them in
+finished documents.  The license should be less restricing for xdvi
+use than for dvips use though, since xdvi does not produce lasting ink
+marks on paper.
+
+NOTE: The bakoma fonts was made by an automatic process which results
+in less precise type1 fonts than the manual process used to create the
+bluesky fonts.  Many people would not use the bakoma fonts with
+printers.  They are probably quite fine to use with xdvi though.
+
+5.
+
+All the font files are now where they should be.  If you use a file
+database it's time to update it.  teTeX users run 'texhash' to obtain
+this effect.
+
+xdvi can now find all the nice files and will not need pk versions of
+all those fonts.
+
+Please read the INSTALL file too.  And the README file.
+
+OF FONTMAPS
+-----------
+
+In principle Xdvi only accepts a subset of the fontmaps used by dvips
+and pdftex.  In practice the restrictions are not very restraining.
+
+Xdvi accepts fontmaps that obey these rules:
+
+1. If the font is to be encoded there must be a t1lib version of the
+   encoding vector.  See the enclosed vector files.  The vector file
+   must have a .enc extention or be included by a <[ ... thingy.
+   Encoding is optional.
+
+2. The other file on the map line must be a font file in pfa or pfb format,
+   the extention need not be included for the sake of xdvi (but dvips
+   and pdftex might like it if you include it).  The font file name is
+   REQUIRED.
+
+   Xdvi does not have builtin fonts.  t1mapper hi-jacks the builtin
+   fonts from ghostscript or other places for you.  But xdvi _must_
+   know the name of the font file associated with the font.
+
+3. There may not be any other input files on a fontmap line.
+
+   Xdvi is not a printer and cannot accept arbitrary postscript
+   prologues or setup things in fontmaps.
+
+4. Xdvi decodes the ExtendFont and SlantFont commands in the quoted
+   postscript code and the extention factor and slanting is applied
+   to the font when displayed.  Any other magic done by the quoted
+   postscript code cannot be decoded or duplicated by xdvi.
+
+   In particular Xdvi does not look at the ReEncodeFont command, the
+   encoding is implied by the presense of a encoding file on the map
+   line rather than anything specified in the postscript string.

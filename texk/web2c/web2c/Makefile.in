@@ -1,0 +1,71 @@
+# Makefile for TeX-project WEB sources to C conversion programs.
+
+# This makefile uses static rules with many targets (to be compatible to
+# non-gnu make) and will not work correctly when parallelized.
+# So we switch off parallel makes with gnu make.
+.NOTPARALLEL:
+
+# These get expanded from the parent directory, not this one.
+kpse_include ../make/common.mk
+kpse_include ../make/programs.mk
+kpse_include ../make/cross.mk
+kpse_include kpathsea.mk
+
+LEX = @LEX@
+LEXLIB = @LEXLIB@
+LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
+YACC = @YACC@
+
+programs = web2c fixwrites splitup
+
+web2c_objects = kps.o main.o y_tab.o $(LEX_OUTPUT_ROOT).o
+all: $(programs)
+web2c: $(web2c_objects)
+	$(build_link_command) $(web2c_objects) $(LEXLIB)
+
+# We use y_tab.* for the sake of MS-DOS.
+main.o: main.c y_tab.h
+y_tab.c y_tab.h: web2c.y
+	@echo Expect one shift/reduce conflict.
+	$(YACC) -d -v $(srcdir)/web2c.y
+	-test -f y.tab.c && mv -f y.tab.c y_tab.c
+	-test -f y.tab.h && mv -f y.tab.h y_tab.h
+$(LEX_OUTPUT_ROOT).o: y_tab.h
+$(LEX_OUTPUT_ROOT).c: web2c.l
+	$(LEX) $(srcdir)/web2c.l
+
+fixwrites: fixwrites.o kps.o
+	$(build_link_command) fixwrites.o kps.o
+splitup: splitup.o kps.o
+	$(build_link_command) splitup.o kps.o
+regfix: regfix.o kps.o
+	$(build_link_command) regfix.o kps.o
+
+$(programs):
+
+main.o: main.c
+	$(build_compile) -c $<
+kps.o: kps.c
+	$(build_compile) -c $<
+y_tab.o: y_tab.c
+	$(build_compile) -c $<
+$(LEX_OUTPUT_ROOT).o: $(LEX_OUTPUT_ROOT).c
+	$(build_compile) -c $<
+fixwrites.o: fixwrites.c
+	$(build_compile) -c $<
+splitup.o: splitup.c
+	$(build_compile) -c $<
+regfix.o: regfix.c
+	$(build_compile) -c $<
+
+Makefile: Makefile.in ../config.status
+	cd .. && $(SHELL) config.status
+
+kpse_include ../make/tkpathsea.mk
+kpse_include ../make/clean.mk
+
+clean::
+	rm -f y_tab.c y_tab.h y.out* yacc.* $(LEX_OUTPUT_ROOT).c
+
+kpse_include ../make/rdepend.mk
+kpse_include web2c/depend.mk

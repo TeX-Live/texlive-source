@@ -1,0 +1,1307 @@
+$(objdir)/pathsearch.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-pathch.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/absolute.h \
+	$(kpathseadir)/expand.h \
+	$(kpathseadir)/db.h \
+	$(kpathseadir)/str-list.h \
+	$(kpathseadir)/pathsearch.h \
+	$(kpathseadir)/str-llist.h \
+	$(kpathseadir)/readable.h \
+	$(kpathseadir)/variable.h
+
+$(objdir)/strtol.obj: \
+	config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h
+
+$(objdir)/remote.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-pathch.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/hash.h \
+	$(kpathseadir)/str-list.h \
+	$(geturldir)/geturl.h
+
+$(objdir)/xopendir.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/xopendir.h
+
+$(objdir)/tex-make.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathch.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/concatn.h \
+	$(kpathseadir)/c-vararg.h \
+	$(kpathseadir)/db.h \
+	$(kpathseadir)/str-list.h \
+	$(kpathseadir)/fn.h \
+	$(kpathseadir)/magstep.h \
+	$(kpathseadir)/readable.h \
+	$(kpathseadir)/tex-make.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/variable.h
+
+$(objdir)/getopt.obj: \
+	config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	getopt.h
+
+$(objdir)/concat3.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h
+
+$(objdir)/uppercasify.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h
+
+$(objdir)/kpsewhich.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/c-pathch.h \
+	$(kpathseadir)/expand.h \
+	$(kpathseadir)/getopt.h \
+	$(kpathseadir)/line.h \
+	$(kpathseadir)/pathsearch.h \
+	$(kpathseadir)/str-llist.h \
+	$(kpathseadir)/proginit.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	$(kpathseadir)/tex-glyph.h \
+	$(kpathseadir)/variable.h
+
+$(objdir)/kpsestat.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-stat.h \
+	$(gnuw32dir)/oldnames.h
+
+$(objdir)/xgetcwd.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-dir.h \
+	$(kpathseadir)/xopendir.h \
+	$(kpathseadir)/xstat.h \
+	$(kpathseadir)/c-stat.h \
+	$(gnuw32dir)/oldnames.h
+
+$(objdir)/db.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/absolute.h \
+	$(kpathseadir)/c-stat.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathch.h \
+	$(kpathseadir)/c-ctype.h \
+	$(kpathseadir)/db.h \
+	$(kpathseadir)/str-list.h \
+	$(kpathseadir)/hash.h \
+	$(kpathseadir)/line.h \
+	$(kpathseadir)/pathsearch.h \
+	$(kpathseadir)/str-llist.h \
+	$(kpathseadir)/readable.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	$(kpathseadir)/variable.h
+
+$(objdir)/expand.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-pathch.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/expand.h \
+	$(kpathseadir)/pathsearch.h \
+	$(kpathseadir)/str-llist.h \
+	$(kpathseadir)/tilde.h \
+	$(kpathseadir)/variable.h \
+	$(kpathseadir)/concatn.h \
+	$(kpathseadir)/c-vararg.h \
+	$(kpathseadir)/absolute.h \
+	$(kpathseadir)/str-list.h
+
+$(objdir)/concatn.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/concatn.h \
+	$(kpathseadir)/c-vararg.h
+
+$(objdir)/make-suffix.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-pathch.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h
+
+$(objdir)/rm-suffix.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h
+
+$(objdir)/xfseek.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h
+
+$(objdir)/truncate.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-namemx.h \
+	$(kpathseadir)/c-pathch.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/truncate.h
+
+$(objdir)/dir.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-dir.h \
+	$(kpathseadir)/c-stat.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/hash.h \
+	$(kpathseadir)/str-list.h \
+	$(kpathseadir)/pathsearch.h \
+	$(kpathseadir)/str-llist.h
+
+$(objdir)/tilde.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-pathch.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/tilde.h
+
+$(objdir)/str-llist.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/str-llist.h
+
+$(objdir)/progname.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/absolute.h \
+	$(kpathseadir)/c-pathch.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/c-stat.h \
+	$(kpathseadir)/pathsearch.h \
+	$(kpathseadir)/str-llist.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h
+
+$(objdir)/fn.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/fn.h
+
+$(objdir)/kpsecheck.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/hash.h \
+	$(kpathseadir)/str-list.h \
+	$(kpathseadir)/getopt.h \
+	$(kpathseadir)/c-pathch.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/proginit.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	$(gsw32dir)/gs32lib.h \
+	../../gstools/ghostscript/src/gsdll.h \
+	../../gstools/ghostscript/src/iapi.h \
+	../../gstools/ghostscript/src/errors.h \
+	$(regexdir)/fnmatch.h
+
+$(objdir)/find-suffix.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-pathch.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h
+
+$(objdir)/xcalloc.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h
+
+$(objdir)/access.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h
+
+$(objdir)/xstrdup.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h
+
+$(objdir)/xputenv.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h
+
+$(objdir)/path-elt.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-pathch.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/pathsearch.h \
+	$(kpathseadir)/str-llist.h
+
+$(objdir)/xrealloc.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h
+
+$(objdir)/concat.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h
+
+$(objdir)/xfopen.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h
+
+$(objdir)/xdirname.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-pathch.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h
+
+$(objdir)/str-list.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/str-list.h
+
+$(objdir)/elt-dirs.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-pathch.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/expand.h \
+	$(kpathseadir)/fn.h \
+	$(kpathseadir)/pathsearch.h \
+	$(kpathseadir)/str-llist.h \
+	$(kpathseadir)/xopendir.h
+
+$(objdir)/proginit.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-pathch.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/proginit.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h
+
+$(objdir)/version.obj: \
+	c-auto.h \
+	$(kpathseadir)/c-proto.h
+
+$(objdir)/line.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/line.h
+
+$(objdir)/xftell.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h
+
+$(objdir)/getopt1.obj: \
+	config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	getopt.h
+
+$(objdir)/readlink.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-pathmx.h \
+	$(kpathseadir)/c-stat.h \
+	$(gnuw32dir)/oldnames.h
+
+$(objdir)/variable.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/cnf.h \
+	$(kpathseadir)/fn.h \
+	$(kpathseadir)/variable.h
+
+$(objdir)/tex-glyph.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/absolute.h \
+	$(kpathseadir)/expand.h \
+	$(kpathseadir)/fontmap.h \
+	$(kpathseadir)/hash.h \
+	$(kpathseadir)/str-list.h \
+	$(kpathseadir)/pathsearch.h \
+	$(kpathseadir)/str-llist.h \
+	$(kpathseadir)/tex-glyph.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	$(kpathseadir)/tex-make.h \
+	$(kpathseadir)/variable.h
+
+$(objdir)/strcasecmp.obj: \
+	config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h
+
+$(objdir)/file-p.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/xstat.h \
+	$(kpathseadir)/c-stat.h \
+	$(gnuw32dir)/oldnames.h
+
+$(objdir)/magstep.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/magstep.h
+
+$(objdir)/tex-file.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-pathch.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/c-vararg.h \
+	$(kpathseadir)/cnf.h \
+	$(kpathseadir)/concatn.h \
+	$(kpathseadir)/default.h \
+	$(kpathseadir)/expand.h \
+	$(kpathseadir)/fontmap.h \
+	$(kpathseadir)/hash.h \
+	$(kpathseadir)/str-list.h \
+	$(kpathseadir)/paths.h \
+	$(kpathseadir)/pathsearch.h \
+	$(kpathseadir)/str-llist.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/tex-make.h \
+	$(kpathseadir)/variable.h
+
+$(objdir)/fontmap.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/fontmap.h \
+	$(kpathseadir)/hash.h \
+	$(kpathseadir)/str-list.h \
+	$(kpathseadir)/line.h \
+	$(kpathseadir)/pathsearch.h \
+	$(kpathseadir)/str-llist.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h
+
+$(objdir)/debug.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-pathch.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/remote.h
+
+$(objdir)/atou.obj: \
+	config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h
+
+$(objdir)/xmalloc.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h
+
+$(objdir)/hash.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/hash.h \
+	$(kpathseadir)/str-list.h
+
+$(objdir)/xstat.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/xstat.h \
+	$(kpathseadir)/c-stat.h \
+	$(gnuw32dir)/oldnames.h
+
+$(objdir)/readable.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-stat.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/pathsearch.h \
+	$(kpathseadir)/str-llist.h \
+	$(kpathseadir)/c-pathch.h \
+	$(kpathseadir)/c-ctype.h \
+	$(kpathseadir)/readable.h \
+	$(kpathseadir)/tex-hush.h \
+	$(kpathseadir)/truncate.h
+
+$(objdir)/kdefault.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-pathch.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/default.h
+
+$(objdir)/cnf.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-fopen.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/cnf.h \
+	$(kpathseadir)/db.h \
+	$(kpathseadir)/str-list.h \
+	$(kpathseadir)/hash.h \
+	$(kpathseadir)/line.h \
+	$(kpathseadir)/paths.h \
+	$(kpathseadir)/pathsearch.h \
+	$(kpathseadir)/str-llist.h \
+	$(kpathseadir)/tex-file.h \
+	$(kpathseadir)/c-vararg.h \
+	$(kpathseadir)/variable.h
+
+$(objdir)/xbasename.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-pathch.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h
+
+$(objdir)/win32hash.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h \
+	$(kpathseadir)/hash.h \
+	$(kpathseadir)/str-list.h \
+	$(kpathseadir)/remote.h
+
+$(objdir)/tex-hush.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/pathsearch.h \
+	$(kpathseadir)/str-llist.h \
+	$(kpathseadir)/tex-hush.h \
+	$(kpathseadir)/variable.h
+
+$(objdir)/extend-fname.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h
+
+$(objdir)/absolute.obj: \
+	$(kpathseadir)/config.h \
+	$(kpathseadir)/c-auto.h \
+	$(kpathseadir)/c-std.h \
+	$(kpathseadir)/c-unistd.h \
+	$(kpathseadir)/systypes.h \
+	$(kpathseadir)/c-memstr.h \
+	$(kpathseadir)/c-errno.h \
+	$(kpathseadir)/c-minmax.h \
+	$(kpathseadir)/c-limits.h \
+	$(kpathseadir)/c-proto.h \
+	$(gnuw32dir)/win32lib.h \
+	$(kpathseadir)/debug.h \
+	$(kpathseadir)/types.h \
+	$(kpathseadir)/lib.h \
+	$(kpathseadir)/progname.h \
+	$(kpathseadir)/absolute.h \
+	$(kpathseadir)/c-pathch.h \
+	$(kpathseadir)/c-ctype.h \
+	$(gnuw32dir)/oldnames.h
+

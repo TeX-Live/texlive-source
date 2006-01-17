@@ -1,0 +1,3 @@
+$(objdir)/devnag.obj: \
+	
+

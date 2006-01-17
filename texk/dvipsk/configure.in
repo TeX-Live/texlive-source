@@ -1,0 +1,34 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(dvips.c)
+
+AC_CONFIG_HEADERS([c-auto.h:c-auto.in], [date >stamp-auto])
+
+AC_PROG_CC
+AC_PROG_INSTALL
+AC_PROG_MAKE_SET
+AC_PROG_LN_S
+
+# If libm is present, use it.
+AC_CHECK_LIB(m, main,LIBS="$LIBS -lm")
+
+
+sinclude(../kpathsea/withenable.ac)
+
+dnl These tests prevent reliable cross-compilation.  Sigh.
+dnl Some special hacks are used to make cross-compilation
+dnl succeed in one special case.
+
+AC_UNSET_CC
+AC_CHECK_SIZEOF(int)
+AC_RESET_CC
+
+# If you're cross-compiling, these macros set up the variables in
+# ../make/cross.mk: BUILDCC, BUILDCFLAGS, BUILDCCLD etc.
+KPSE_CROSS_BUILD_VAR(CC, cc)
+KPSE_CROSS_BUILD_VAR(CFLAGS, $(BUILDXCFLAGS))
+KPSE_CROSS_BUILD_VAR(CPPFLAGS, $(BUILDXCPPFLAGS))
+KPSE_CROSS_BUILD_VAR(LDFLAGS, $(BUILDXLDFLAGS))
+KPSE_CROSS_BUILD_VAR(CCLD, $(BUILDCC))
+
+KPSE_CONFIG_FILES([Makefile])
+AC_OUTPUT

@@ -1,0 +1,75 @@
+This is the README file of the `CTIE' distribution, version 1.1
+---------------------------------------------------------------
+
+CTIE is based on the `TIE' program, a program which was first
+developed to allow WEB programmers to use more than one change file
+with their WEB programs.
+
+CWEB introduced a new command, @i, to handle "include files".  The
+original TIE program was not designed to handle this situation, and so
+could not be used for all CWEB programs.  CTIE behaves essentially
+identically to the original TIE, and identical results will be
+generated when TIE is applied to traditional WEB files with changes,
+as long as there are no errors.  (Errors may lead to different output,
+but then the errors need correcting, anyway.)
+
+CTIE can be used to either create a new version of the (C)WEB file
+which incorporates the changes, or to merge multiple change files into
+a single change file.  This program does not depend in an essential
+way on any special WEB dialect, nor on using WEB at all, as the only
+controls to be interpreted are the change requests in the change files
+(delimited by @x, @y and @z) and file include commands (indicated by @i).
+This makes `CTIE' also usable for any other language, or even
+data files.  See the documentation ctiedoc.tex and the example file
+ctie.tie for more information.
+
+
+REQUIREMENTS:
+
+This version of `CTIE' is written in CWEB.  To preprocess and compile
+the source you will need a working `ctangle'.  A pretangled ctie.c is
+supplied if you do not have a working ctangle available.
+
+Please note, that the CWEB by Silvio Levy and Donald E. Knuth must
+probably be at least at version 2.8, to process and compile `ctie'
+without problems.
+
+Furthermore, a ctie-k.ch file is provided which links ctie against
+Karl Berry's kpathsea library.  A tangled version of this file is
+provided as ctie-k.c.  To use this, you will need to link against
+version 3.4.5 or higher of the kpathsea library.  This version
+searches for files, both from the command line and included (@i) files
+using the CWEBINPUTS search path.
+
+
+DISTRIBUTION:
+
+This package has been uploaded to CTAN, and appears in the directory
+web/c_cpp/ctie/.
+
+
+LICENCE:
+
+This program is based on tie.w and common.w (part of CWEB).  It is
+distributed with the following licence.
+
+Copyright (c) 2002,2003 by Julian Gilbey
+All rights reserved.
+
+This program is distributed WITHOUT ANY WARRANTY, express or implied.
+
+Permission is granted to make and distribute verbatim copies of this
+program provided that the copyright notice and this permission notice
+are preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of this
+program under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+
+BUGS/ENHANCEMENTS:
+
+If you detect bugs in the implementation of CTIE or have suggestions
+to enhance functionality or improve portability, please send a message
+to Julian Gilbey <jdg@debian.org>.

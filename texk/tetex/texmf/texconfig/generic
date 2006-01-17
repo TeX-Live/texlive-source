@@ -1,0 +1,10 @@
+#
+# Minimal terminfo configuration to run the dialog program.
+# If this configuration causes problems, please let me know.
+#
+generic,
+	cols#80, lines#25, 
+	clear=^[[H^[[2J,
+	kcud1=^[[B, kcub1=^[[D, kcuf1=^[[C, kcuu1=^[[A,
+	rev=^[[7m, smso=^[[7m, sgr0=^[[m, rmso=^[[m, bold=^[[1m,
+	cup=^[[%i%p1%d;%p2%dH,

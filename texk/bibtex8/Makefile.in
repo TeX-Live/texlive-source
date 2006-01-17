@@ -1,0 +1,49 @@
+# Makefile for bibtex8.  Public domain.
+
+version = 3.71
+# Beware : default char type is unsigned
+XCPPFLAGS = -DSUPPORT_8BIT -DKPATHSEA -DUNIX  -funsigned-char
+
+kpse_include ../make/paths.mk
+kpse_include ../make/common.mk
+kpse_include ../make/programs.mk
+kpse_include ../make/texi.mk
+
+#
+# Object files
+#
+OBJS = bibtex-1.o bibtex-2.o bibtex-3.o \
+	bibtex-4.o bibtex.o utils.o
+
+
+programs = bibtex8
+#
+# Main target
+#
+default: all
+
+all: $(programs)
+
+
+bibtex8:  $(OBJS) $(kpathsea)
+	$(kpathsea_link) $(OBJS) $(LOADLIBES)
+
+install: all install-data install-doc
+	-$(top_srcdir)/../mkinstalldirs $(bindir)
+	-$(INSTALL_LIBTOOL_PROG) bibtex8 $(bindir)/bibtex8
+
+install-data:
+	-$(top_srcdir)/../mkinstalldirs $(texmf)/bibtex/csf
+	-$(INSTALL) -m 644 $(srcdir)/csf/*.csf $(texmf)/bibtex/csf
+
+install-doc:
+	-$(top_srcdir)/../mkinstalldirs $(texmf)/doc/bibtex8
+	for i in 00readme.txt HISTORY csfile.txt file_id.diz ; \
+	   do $(INSTALL) -m 644  $(srcdir)/$$i $(texmf)/doc/bibtex8; \
+	done
+
+kpse_include ../make/tkpathsea.mk
+kpse_include ../make/clean.mk
+kpse_include ../make/rdepend.mk
+kpse_include depend.mk
+

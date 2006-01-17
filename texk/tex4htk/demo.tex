@@ -1,0 +1,261 @@
+% \def\CALL{{tex}{latex}}
+% \let\PC=Y
+% \let\DOS=Y
+% \def\WWW{XXX}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% test.tex                                                  %
+%                                                           %
+% Please DON'T try to understand the code of this file---it %
+% can be harmful to your eyes and brain!                    %
+%                                                           %
+%                                gurari@cis.ohio-state.edu  %
+%                    http://www.cis.ohio-state.edu/~gurari  %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\ifx \SCRIPT\UnDef
+   \ifx \PC\UnDef
+       \def\SCRIPT{
+          \Needs{cp \FN.tex \WWW \FN.txt}
+          \Needs{chmod 644 \WWW \FN.txt}
+          \Needs{ht \TEX\space
+                 \FN\space
+                 \ifx\WWW\empty \else ' -d\WWW\space
+                 -m644'\fi}
+       }
+   \else          % dos batch file
+       \def\SCRIPT{
+             \Needs{call ht \TEX\space  \FN}
+             \Needs{if exist \FN.txt del \FN.txt}
+             \Needs{ren \FN.tex \FN.txt}
+       }
+\fi\fi
+
+%       \def\SCRIPT{
+%             \Needs{call ht \TEX\space  \FN}
+%             \Needs{if exist \FN.txt del /q \FN.txt}
+%             \Needs{ren /q \FN.tex \FN.txt}
+%       }
+
+
+
+
+\ifx \PC\UnDef
+\else
+
+\openin15=clean.bat
+\ifeof15
+\closein15
+\immediate\openout15=clean.bat
+\immediate\write15{DEL hti.bat}
+\immediate\write15{DEL htii.bat}
+\immediate\write15{DEL htiii.bat}
+\immediate\write15{DEL htiv.bat}
+\immediate\write15{DEL htv.bat}
+\immediate\write15{DEL htvi.bat}
+\immediate\write15{DEL htvii.bat}
+\immediate\write15{DEL httest.bat}
+\immediate\write15{DEL i.*}
+\immediate\write15{DEL ia.*}
+\immediate\write15{DEL ii.*}
+\immediate\write15{DEL iia.*}
+\immediate\write15{DEL iii.*}
+\immediate\write15{DEL iiia.*}
+\immediate\write15{DEL iv.*}
+\immediate\write15{DEL iv2.*}
+\immediate\write15{DEL iva2.*}
+\immediate\write15{DEL iva.*}
+\immediate\write15{DEL test*.aux}
+\immediate\write15{DEL test*.bat}
+\immediate\write15{DEL test*.dvi}
+\immediate\write15{DEL test*.htm*}
+\immediate\write15{DEL test*.css}
+\immediate\write15{DEL test*.lg}
+\immediate\write15{DEL test*.idv}
+\immediate\write15{DEL test*.log}
+\immediate\write15{DEL test*.otc}
+\immediate\write15{DEL test*.toc}
+\immediate\write15{DEL test*.txt}
+\immediate\write15{DEL test*.xre*}
+\immediate\write15{DEL tex4ht.ps}
+\immediate\write15{DEL v.*}
+\immediate\write15{DEL va.*}
+\immediate\write15{DEL vi.*}
+\immediate\write15{DEL viIa.*}
+\immediate\write15{DEL via.*}
+\immediate\write15{DEL vii.*}
+\immediate\write15{DEL viia.*}
+\immediate\write15{DEL clean.bat}
+\immediate\closeout15
+\else \closein15 \fi
+
+\fi
+
+\ifx \DOS\UnDef
+       \def\HTML{html}  \def\ARG{}
+ \else \def\HTML{htm}   \def\ARG{[htm]}
+ \fi
+
+\ifx \documentclass\undef \else
+   \documentclass{article}
+\fi
+\input tex4ht.sty
+\def\temp{htm}\ifx \HTML\temp
+   \Preamble{htm,no_,no^}
+\else
+   \Preamble{html,no_,no^}
+\fi
+   \ifx \documentclass\undef \else
+      \begin{document}
+   \fi
+
+   \Configure{Needs}{l. \the\inputlineno\space--- needs --- "#1" ---}
+
+
+\newlinechar=`\^^J
+
+\ifx \WWW\UnDef \let\WWW=\empty \fi
+\ifx \DOS\UnDef\else
+%      \Needs{CLS} % clear screen
+\fi
+
+
+\ifx \CALL\UnDef
+   \def\TEX{\ifx \documentclass\undef \else la\fi tex}
+\else
+   \def\TEX#1#2{\def\TEX{\ifx \documentclass\undef #1\else #2\fi}}
+   \expandafter\TEX\CALL
+\fi
+
+\edef\type{\ifx \documentclass\undef \else  a\fi}
+
+\def\\#1\\{\expandafter\noexpand\csname#1\endcsname}
+\catcode`\#=11 \def\Sharp{#} \catcode`\#=6
+\def\source#1#2{
+   \def\doc##1##2##3{#2}
+   \HAdvance\FileNo by 1
+   \NextFileName
+   \immediate\openout15=\FN.tex
+   \immediate\write16{--- Writing file \FN.tex}%
+   \SCRIPT
+   \immediate\write15{\ifx \documentclass\undef
+      \noexpand \input tex4ht.sty                            ^^J
+      \noexpand \Preamble{\HTML#1}                            ^^J
+      \noexpand \EndPreamble                              ^^J^^J\else
+      \noexpand \documentclass{article}                ^^J
+      \noexpand \usepackage\ARG{tex4ht}                            ^^J
+      \noexpand \begin{document}                           ^^J^^J\fi
+      \doc{PSALMS (131:1)}
+          {My heart is not haughty, nor                      ^^J
+             mine eyes lofty:}
+          {neither do I                                      ^^J
+             exercise  myself in great                       ^^J
+             matters, or in things too high                  ^^J
+            for me.}                                      ^^J^^J
+      {\\it\\ Example \FileNo\space (out of \examples)}   ^^J^^J
+      \noexpand \end\ifx \documentclass\undef \else
+          {document}\fi    }
+   \immediate\closeout15
+   \Link[\jobname\FileNo\type f.\HTML\space TARGET="X"]{}{}\FileNo\EndLink
+   \File+{\jobname\FileNo\type f.\HTML}
+      \HorFrames{*,*}
+         \Frame[\romannumeral\FileNo\type.txt]{}
+         \Frame[\romannumeral\FileNo\type.\HTML]{}
+      \EndPreamble
+         \Link[\romannumeral\FileNo\type.txt]{}{}outcome\EndLink{} /
+         \Link[\romannumeral\FileNo\type.\HTML]{}{}source\EndLink{} /
+         \Link{1}{}pointers\EndLink
+   \EndFile{\jobname\FileNo\type f.\HTML}
+}
+
+\def\NextFileName{\edef\FN{\romannumeral\FileNo\type}}
+
+\HAssign\examples=0\LikeRef{count}
+\HAssign\FileNo=1  \NextFileName
+
+  \VerFrames{7*,*}
+  \Frame[\jobname\FileNo\type f.\HTML\space NAME="X"]{}
+  \Frame[ NAME="Y"]{1}
+
+\EndPreamble
+
+\Link[\FN.txt]{}{}source\EndLink{}  /
+\Link[\FN.\HTML]{}{}outcome\EndLink{} /
+
+\HAssign\FileNo=0
+
+\edef\temp{\noexpand\HPage<\jobname p.\HTML>}
+\temp{Pointers}\Link{}{1}~\EndLink
+
+
+Goto to Example:
+\source{%,fonts
+}{#1^^J^^J#2^^J^^J#3}
+  \def\HR{^^J\\HCode\\{<HR>}^^J}
+\source{%,fonts
+}{\HR #1 \HR #2 \HR #3 \HR}
+\source{%,fonts
+}{{\\bf\\#1}^^J^^J{\\it\\#2}^^J^^J{\\tt\\#3}}
+\source{%,fonts
+}{\\HPage\\{#1}^^J^^J#2^^J^^J#3^^J^^J
+    \\ExitHPage\\{}\\EndHPage\\{}}
+%
+\ifx \documentclass\undef
+\source{%,fonts
+}{\\Contribute\\{halign}{BORDER<>0 1 < 0 2 - 0 3 > }^^J
+\\halign\\{&\Sharp\\cr\\#1^^J&^^J#2^^J&^^J#3\\cr\\}}
+\else
+\source{%,fonts
+}{\string\begin{tabular}{|l|c|r|}^^J
+#1^^J&^^J#2^^J&^^J#3^^J
+\string\end{tabular}}
+\fi
+%
+
+  \def\d{\\scriptstyle\\ \\diamondsuit\\
+    \\diamondsuit\\ \\diamondsuit\\ }
+\ifx \documentclass\undef
+\source{%,fonts
+}{^^J
+\\settabs\\ 6 \\columns\\^^J
+\\+\\PSALMS & (131:1)\\cr\\^^J
+\\+\\My heart & is not haughty,\\cr\\ ^^J
+\\+\\nor mine &  eyes lofty:\\cr\\^^J
+\\settabs\\ \\+\\ neither & do I exercise & \\cr\\^^J
+\\+\\neither & do I exercise \\cr\\^^J
+\\+\\        & myself in & great matters, \\cr\\^^J
+\\+\\or      & in things & too high for me. \\cr\\^^J
+}
+\else
+\source{%,fonts
+}{^^J
+\\begin\\{tabbing}^^J
+XXXXXXXXX \\=\\\\kill\\^^J
+PSALMS \\>\\ (131:1) \string\\^^J
+My heart \\>\\ is not haughty, \string\\^^J
+nor mine \\>\\  eyes lofty:\string\\^^J
+neither \\=\\ do I exercise \\=\\ \\kill\\^^J
+neither \\>\\ do I exercise \string\\^^J
+        \\>\\ myself in \\>\\ great matters, \string\\^^J
+or      \\>\\ in things \\>\\ too high for me. \string\\^^J
+\\end\\{tabbing}^^J
+}
+\fi
+%
+\source{%,fonts
+}{\ifx \documentclass\undef\space
+   \string\def\string\(\string{\string\Picture+\string{\string}\string
+   $\string}^^J
+   \string\def\string\)\string{\string$\string\EndPicture\string}^^J
+\fi
+\\Picture\\+{ ALIGN="LEFT"}\\vtop\\{\\hsize\\=2in^^J
+     \\hrule\\\\smallskip\\ #1\\smallskip\\\\hrule\\}\string
+     \EndPicture^^J #2^^J\\(\\ \d \\)\\ ^^J#3 $\d$}
+\EndHPage{}
+
+ \Tag{count}{\FileNo}
+
+\end{document}
+\endinput
+

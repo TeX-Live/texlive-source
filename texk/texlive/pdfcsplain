@@ -1,0 +1,2 @@
+#!/bin/sh
+pdftex -progname=pdfcsplain -default-translate-file=il2-cs "$@"

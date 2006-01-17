@@ -1,0 +1,67 @@
+   This is dvipdfm, a DVI to PDF translator.  I wrote this mainly as
+exercise to get at the features of PDF I wanted to experiment with. You're
+probably wondering why I don't use PDFTeX.  I am a bit of a purist and I
+would rather use TeX unmodified as Donald Knuth left it.
+You can get it or the manual from
+
+    http://odo.kettering.edu/dvipdfm
+
+or if you prefer FTP:
+
+    ftp://ftp.kettering.edu/pub/outgoing/mwicks/dvipdfm
+    
+
+   Features:
+      - TeX \special's that approximate the functionality 
+        of the PostScript pdfmarks used by Adobe's
+	Acrobat Distiller.  Links, outlines, articles, and named
+	destinations are supported, for example.
+
+      - Ability to include PDF, JPEG, PNG, MetaPost, and self-contained
+	(e.g., eps) PostScript (with help from an external program) files as
+	embedded images.  For PDF files, only the first page is included.
+	Resources will be embedded from the original file as necessary.
+	File inclusion does not work for PDF files that store the page
+	contents in several segments in an array.
+
+      - Support for several \special standards for
+        DVI file portability.
+
+      - Support for thumbnails (with a little help from GhostScript).
+	
+      - Re-encoding support for PostScript fonts.  dvipdfm
+        uses the same .enc files as dvips.  The mapfile is different.
+	
+      - Virtual font support.	
+	
+      - Support for arbitrary linear graphics transformations.
+        Any material on the page can be scaled and rotated.
+
+      - An internal color stack accessible via \special's.
+
+      - Beginning of page (BOP) and end of page (EOP)
+        \special's for placing arbitrary PDF stream
+	graphics on every page.
+	
+      - Partial font embedding and Flate compression
+        for reduced file size.
+	
+      - Balanced page tree and dest tree to improve reader
+        speed on very large documents.
+
+   Limitations (at present):
+
+      - Contents streams consisting of multiple parts cannot be embedded.
+      - All instances of the same Type1 font must have the same encoding.
+     
+   Additional Information:
+   
+   There is a dvipdfm e-mail list.  To join, send
+e-mail to majordomo@gaspra.kettering.edu containing
+the line:
+
+   subscribe dvipdfm
+    
+   Mark A. Wicks
+   Kettering University
+   mwicks@kettering.edu

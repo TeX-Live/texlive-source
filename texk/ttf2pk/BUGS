@@ -1,0 +1,3 @@
+
+Some characters (Arial A) have a bounding box that extends outside the
+character width... such a character will get an italic correction.

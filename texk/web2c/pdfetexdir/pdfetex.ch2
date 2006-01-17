@@ -1,0 +1,242 @@
+%
+% Copyright (c) 1996-2002 Han The Thanh, <thanh@pdftex.org>
+%
+% This file is part of pdfTeX.
+%
+% pdfTeX is free software; you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation; either version 2 of the License, or
+% (at your option) any later version.
+%
+% pdfTeX is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with pdfTeX; if not, write to the Free Software
+% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%
+% $Id: //depot/Build/source.development/TeX/texk/web2c/pdfetexdir/pdfetex.ch2#20 $
+%
+@x limbo
+\def\pdfTeX{pdf\TeX}
+@y
+\def\pdfTeX{pdf\TeX}
+\def\pdfeTeX{pdf\eTeX}
+@z
+
+@x [2]
+@d pdfTeX_banner=='This is pdfTeX, Version 3.141592',pdftex_version_string
+@y
+@d pdfeTeX_banner=='This is pdfeTeX, Version 3.141592',pdftex_version_string,eTeX_version_string
+   {printed when \pdfeTeX\ starts}
+@#
+@d pdfTeX_banner=='This is pdfTeX, Version 3.141592',pdftex_version_string
+@z
+
+@x [2]
+@d banner==pdfTeX_banner
+@y
+@d banner==pdfeTeX_banner
+@z
+
+@x [230] -- first pdfTeX, then e-TeX additional token list parameters
+@d toks_base=pdf_toks {table of 256 token list registers}
+@#
+@d etex_toks_base=tex_toks {base for \eTeX's token list parameters}
+@y
+@d etex_toks_base=pdf_toks {base for \eTeX's token list parameters}
+@z
+
+@x [236] -- first pdfTeX, then e-TeX additional integer parameters
+@d int_pars=pdf_int_pars {total number of integer parameters}
+@#
+@d etex_int_base=tex_int_pars {base for \eTeX's integer parameters}
+@y
+@d etex_int_base=pdf_int_pars {base for \eTeX's integer parameters}
+@z
+
+@x [424]
+ else begin case m of
+  begin case m of
+@y
+ else begin case m of
+@z
+
+@x [424]
+  end; {there are no other cases}
+@y
+@z
+
+@x [468] -- first e-TeX, then pdfTeX additional command codes
+@d pdftex_first_expand_code = 5 {base for \pdfTeX's command codes}
+@y
+@d pdftex_first_expand_code = etex_convert_codes {base for \pdfTeX's command codes}
+@z
+
+@x [32f]
+@!edge:scaled; {left edge of sub-box, or right edge of leader space}
+@y
+@!edge:scaled; {right edge of sub-box or leader space}
+@!prev_p:pointer; {one step behind |p|}
+@z
+
+@x [32f]
+base_line:=cur_v; left_edge:=cur_h;
+@y
+base_line:=cur_v;
+prev_p:=this_box+list_offset;
+@<Initialize |hlist_out| for mixed...@>;
+left_edge:=cur_h;
+@z
+
+@x [32f]
+decr(cur_s);
+@y
+@<Finish |hlist_out| for mixed...@>;
+decr(cur_s);
+@z
+
+@x [32f]
+  p:=link(p);
+@y
+  prev_p:=link(prev_p); {N.B.: not |prev_p:=p|, |p| might be |lig_trick|}
+  p:=link(p);
+@z
+
+@x [32f]
+kern_node,math_node:cur_h:=cur_h+width(p);
+@y
+kern_node:cur_h:=cur_h+width(p);
+math_node: @<Handle a math node in |hlist_out|@>;
+@z
+
+@x [32f]
+othercases do_nothing
+@y
+@/@<Cases of |hlist_out| that arise in mixed direction text only@>@;
+othercases do_nothing
+@z
+
+@x [32f]
+next_p:p:=link(p);
+@y
+next_p:prev_p:=p; p:=link(p);
+@z
+
+@x [32f]
+  temp_ptr:=p; edge:=cur_h;
+@y
+  temp_ptr:=p; edge:=cur_h+width(p);
+  if cur_dir=right_to_left then cur_h:=edge;
+@z
+
+@x [32f]
+  cur_h:=edge+width(p); cur_v:=base_line;
+@y
+  cur_h:=edge; cur_v:=base_line;
+@z
+
+@x [32f]
+rule_wd:=rule_wd+cur_g;
+@y
+rule_wd:=rule_wd+cur_g;
+if eTeX_ex then @<Handle a glue node for mixed...@>;
+@z
+
+@x [32f]
+  edge:=cur_h+rule_wd; lx:=0;
+@y
+  if cur_dir=right_to_left then cur_h:=cur_h-10;
+  edge:=cur_h+rule_wd; lx:=0;
+@z
+
+@x [32f]
+  cur_h:=edge-10; goto next_p;
+@y
+  if cur_dir=right_to_left then cur_h:=edge
+  else cur_h:=edge-10;
+  goto next_p;
+@z
+
+@x [32f]
+save_h:=cur_h; temp_ptr:=leader_box;
+@y
+save_h:=cur_h; temp_ptr:=leader_box;
+if cur_dir=right_to_left then cur_h:=cur_h+leader_wd;
+@z
+
+@x [32f]
+  cur_h:=left_edge+shift_amount(p); {shift the box right}
+@y
+  if cur_dir=right_to_left then cur_h:=left_edge-shift_amount(p)
+  else cur_h:=left_edge+shift_amount(p); {shift the box right}
+@z
+
+@x [32f]
+if (rule_ht>0)and(rule_wd>0) then {we don't output empty rules}
+  pdf_set_rule(cur_h, cur_v, rule_wd, rule_ht);
+@y
+if (rule_ht>0)and(rule_wd>0) then {we don't output empty rules}
+  begin if cur_dir=right_to_left then cur_h:=cur_h-rule_wd;
+  pdf_set_rule(cur_h, cur_v, rule_wd, rule_ht);
+  cur_h:=left_edge;
+  end;
+@z
+
+@x [32f]
+begin cur_h:=left_edge+shift_amount(leader_box);@/
+@y
+begin if cur_dir=right_to_left then
+  cur_h:=left_edge-shift_amount(leader_box)
+  else cur_h:=left_edge+shift_amount(leader_box);
+@z
+
+@x [32f]
+@<(\pdfTeX) Ship box |p| out@>;
+@y
+@<(\pdfTeX) Ship box |p| out@>;
+if eTeX_ex then @<Check for LR anomalies at the end of |ship_out|@>;
+@z
+
+@x
+pdf_print("/Producer (pdfTeX-");
+@y
+pdf_print("/Producer (pdfeTeX-");
+@z
+
+@x [649]
+exit: {|hpack|}
+@y
+@z
+
+@x [651]
+  math_node: x:=x+width(p);
+@y
+@z
+
+@x
+        obj_xform_resources(k) := null;
+    scan_int;
+    if box(cur_val) = null then
+        pdf_error("ext1", "\pdfxform cannot be used with a void box");
+    obj_xform_width(k) := width(box(cur_val));
+    obj_xform_height(k) := height(box(cur_val));
+    obj_xform_depth(k) := depth(box(cur_val));
+    obj_xform_box(k) := box(cur_val); {save pointer to the box}
+    box(cur_val) := null;
+    pdf_last_xform := k;
+@y
+        obj_xform_resources(k) := null;
+    scan_int;
+    fetch_box(p);
+    if p = null then
+        pdf_error("ext1", "\pdfxform cannot be used with a void box");
+    obj_xform_width(k) := width(p);
+    obj_xform_height(k) := height(p);
+    obj_xform_depth(k) := depth(p);
+    obj_xform_box(k) := p; {save pointer to the box}
+    change_box(null);
+    pdf_last_xform := k;
+@z

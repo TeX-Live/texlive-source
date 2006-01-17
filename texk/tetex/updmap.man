@@ -1,0 +1,260 @@
+.TH "updmap" "1" "February 2005" "teTeX" "teTeX"
+.PP
+.SH "NAME"
+updmap \- Update font map files for TeX output drivers\&.
+.PP
+updmap-sys \- Update font map files for TeX output drivers system\-wide\&.
+.PP
+.SH "SYNOPSIS"
+.PP
+\fBupdmap\fP [ \fIOPTION\fP \&.\&.\&. ]  [
+\fICOMMAND\fP  \&.\&.\&. ]
+.PP
+\fBupdmap-sys\fP [ \fIOPTION\fP \&.\&.\&. ]  [
+\fICOMMAND\fP  \&.\&.\&. ]
+.PP
+.SH "DESCRIPTION"
+.PP
+\fBupdmap\fP is a utility that creates font configuration files for
+\fBdvips\fP(1), \fBpdftex\fP(1), \fBxdvi\fP(1),
+\fBps2pk\fP(1), \fBgsftopk\fP(1), \fBdvipdfm\fP(1) and (soon) \fBdvipdfmx\fP(1)\&.
+In an ideal world, updmap would be unnecessary -- each of these
+programs would read the same configuration file to learn what fonts
+are available and how they should be treated\&.  As things stand,
+however, each of these tools has subtly different requirements and
+thereby needs its own font configuration file\&.  \fBupdmap\fP creates
+font configuration files for all of these programs from a single
+source, allowing you to easily keep all the different configuration
+files in sync\&.
+.PP
+\fBupdmap\fP reads a configuration file, \fBupdmap\&.cfg\fP(5) and,
+depending on the options specified in that file and on the command
+line, \fBupdmap\fP will write generated map files to a directory of
+your choosing (via one of the \fB--*outputdir\fP options), or automatically
+determine where to place the files\&.  In the latter case, it tries to
+use the tree where the variable TEXMFVAR points to.
+When used with the options \fB--edit\fP, \fB--setoption\fP,
+\fB--enable\fP, \fB--disable\fP, or \fB--syncwithtrees\fP, \fBupdmap\fP will first write
+\fBupdmap\&.cfg\fP(5) and regenerate the map files only if this file
+has been changed\&.
+.PP
+.SH "OPTIONS"
+.PP
+The following command-line options are available:
+.IP
+.IP "\fB--cnffile\fP \fIfile\fP"
+Specify a configuration \fIfile\fP\&.
+.IP
+.IP "\fB--dvipsoutputdir\fP \fIdirectory\fP"
+Specify the output
+\fIdirectory\fP for map files generated with dvips syntax\&.
+.IP
+.IP "\fB--pdftexoutputdir\fP \fIdirectory\fP"
+Specify the output
+\fIdirectory\fP for map files generated with pdftex syntax\&.
+.IP
+.IP "\fB--dvipdfmoutputdir\fP \fIdirectory\fP"
+Specify the output
+\fIdirectory\fP for map files generated with dvipdfm syntax\&.
+.IP
+.IP "\fB--outputdir\fP \fIdirectory\fP"
+Specify the output
+\fIdirectory\fP for all generated map files\&.
+.IP
+.IP "\fB--nohash\fP"
+Do not run \fBtexhash\fP(1)\&.
+.IP
+.IP "\fB--nomkmap\fP"
+Do not recreate existing map files\&.
+.IP
+.IP "\fB--quiet\fP"
+Reduce verbosity\&.
+.IP
+.PP
+The following commands can be substituted for \fICOMMAND\fP:
+.IP
+.IP "\fB--edit\fP"
+Edit the \fIupdmap\&.cfg\fP file\&.
+.IP
+.IP "\fB--help\fP"
+Show a command and option summary\&.
+.IP
+.IP "\fB--showoptions\fP \fIitem\fP"
+Show alternatives for option
+\fIitem\fP\&.
+.IP
+.IP "\fB--setoption\fP \fIoption\fP \fIvalue\fP"
+Set
+\fIoption\fP to \fIvalue\fP, where \fIoption\fP is one of:
+.IP ""
+\fBdvipsPreferOutline\fP
+.IP ""
+\fBLW35\fP
+.IP ""
+\fBdvipsDownloadBase35\fP
+.IP ""
+\fBpdftexDownloadBase14\fP
+.IP ""
+\fBdvipdfmDownloadBase14\fP
+.IP
+.IP "\fB--enable\fP \fImaptype\fP \fImapfile\fP"
+Add or enable a \fBMap\fP or \fBMixedMap\fP for \fImapfile\fP\&.
+.IP
+.IP "\fB--enable Map=\fImapfile\fP"
+Add or enable a Map for \fImapfile\fP\&.
+.IP
+.IP "\fB--enable MixedMap=\fP\fImapfile\fP"
+Add or enable a MixedMap for \fImapfile\fP\&.
+.IP
+.IP "\fB--disable\fP \fImapfile\fP"
+Disable Map or MixedMap for \fImapfile\fP\&.
+.IP
+.IP "\fB--syncwithtrees\fP"
+Disable entries in the config file that refer to map files which are
+unavailable\&.
+.IP
+.IP "\fB--listmaps\fP"
+List all active and inactive maps\&.
+.IP
+.IP "\fB--listavailablemaps\fP"
+List all active and inactive maps, but restrict output to map files
+that are available in one of the texmf trees\&.
+.PP
+.SH "FILES"
+.PP
+Configuration and input files:
+.IP "\fIupdmap\&.cfg\fP"
+Main configuration file\&.  In
+\fItexmf/web2c\fP by default, but may be located elsewhere
+depending on your distribution\&.
+.IP
+.IP "\fIdvips35\&.map\fP"
+Map file for standard 35 PostScript fonts for
+use with \fBdvips\fP(1)\&.
+.IP
+.IP "\fIpdftex35\&.map\fP"
+Map file for standard 35 PostScript fonts for
+use with \fBpdftex\fP(1)\&.
+.IP
+.IP "\fIdvipdfm35\&.map\fP"
+Map file for standard 35 PostScript fonts for
+use with \fBdvipdfm\fP(1)\&.
+.IP
+.IP "\fIps2pk35\&.map\fP"
+Map file for standard 35 PostScript fonts for
+use with \fBps2pk\fP(1)\&.
+.IP
+.PP
+Output files:
+.IP
+.IP "\fIpsfonts\&.map\fP"
+For \fBdvips\fP(1)\&.
+Soft link
+against \fIpsfonts_t1\&.map\fP if option \fBdvipsPreferOutline\fP active,
+else against \fIpsfonts_pk\&.map\fP.
+.IP
+.IP "\fIpsfonts_pk\&.map\fP"
+For \fBdvips\fP(1)\&.
+Without information from MixedMap files\&.
+(Setting of \fBdvipsPreferOutline\fP ignored\&.)
+.IP
+.IP "\fIpsfonts_t1\&.map\fP"
+For \fBdvips\fP(1)\&.
+With information from MixedMap files\&.
+(Setting of \fBdvipsPreferOutline\fP ignored\&.)
+.IP
+.IP "\fIdownload35\&.map\fP"
+For \fBdvips\fP(1)\&.
+Always downloads the standard 35 fonts\&.
+(Setting of \fBdvipsDownloadBase35\fP ignored\&.)
+.IP
+.IP "\fIbuiltin35\&.map\fP"
+For \fBdvips\fP(1)\&.
+Never downloads the standard 35 fonts\&.
+(Setting of \fBdvipsDownloadBase35\fP ignored\&.)
+.IP
+.IP "\fIpdftex\&.map\fP"
+For \fBpdftex\fP(1)\&.
+Soft link
+against \fIpdftex_dl14\&.map\fP if option \fBpdftexDownloadBase14\fP active,
+else against \fIpdftex_ndl14\&.map\fP.
+.IP
+.IP "\fIpdftex_dl14\&.map\fP"
+For \fBpdftex\fP(1)\&.
+Always downloads the standard 14 fonts\&.
+.IP
+.IP "\fIpdftex_ndl14\&.map\fP"
+For \fBpdftex\fP(1)\&.
+Never downloads the standard 14 fonts\&.
+.IP
+.IP "\fIdvipdfm\&.map\fP"
+For \fBdvipdfm\fP(1)\&.
+Soft link
+against \fIdvipdfm_dl14\&.map\fP if option \fBdvipdfmDownloadBase14\fP active,
+else against \fIdvipdfm_ndl14\&.map\fP.
+.IP "\fIdvipdfm_dl14\&.map\fP"
+For \fBdvipdfm\fP(1)\&.
+Always downloads the standard 14 fonts\&.
+.IP
+.IP "\fIdvipdfm_ndl14\&.map\fP"
+For \fBdvipdfm\fP(1)\&.
+Never downloads the standard 14 fonts\&.
+.IP
+.IP "\fIps2pk\&.map\fP"
+Similar to \fIpsfonts.map\fP file, but
+forces all fonts to be downloaded, so this map file can be used with
+\fBxdvi\fP(1) and \fBps2pk\fP(1)\&.
+.IP
+.PP
+teTeX configuration files for \fBdvips\fP(1) tuned for use with \fBupdmap\fP:
+.IP
+.IP "\fIconfig\&.builtin35\fP"
+Loads \fIbuildin35\&.map\fP instead
+of \fIpsfonts\&.map\fP\&.
+.IP
+.IP "\fIconfig\&.download35\fP"
+Loads \fIdownload35\&.map\fP instead
+of \fIpsfonts\&.map\fP\&.
+.IP
+.IP "\fIconfig\&.outline\fP"
+Loads \fIpsfonts_t1\&.map\fP instead
+of \fIpsfonts\&.map\fP\&.
+.IP
+.IP "\fIconfig\&.pdf\fP"
+Loads \fIpsfonts_t1\&.map\fP instead
+of \fIpsfonts\&.map\fP and has additional optimizations for PDF generation\&.
+.IP
+.IP "\fIconfig\&.pk\fP"
+Loads \fIpsfonts_pk\&.map\fP instead
+of \fIpsfonts\&.map\fP\&.
+.IP
+.IP "\fIconfig\&.www\fP"
+Loads \fIpsfonts_t1\&.map\fP instead
+of \fIpsfonts\&.map\fP\&.
+(For compatibility with previous versions of teTeX\&.)
+.IP
+.IP "\fIconfig\&.gstopk\fP"
+Loads \fIpsfonts_t1\&.map\fP instead
+of \fIpsfonts\&.map\fP\&.
+.IP
+.PP
+.SH "SEE ALSO"
+.PP
+\fBupdmap\&.cfg\fP(5), \fBdvipdfm\fP(1), \fBdvips\fP(1),
+\fBgsftopk\fP(1), \fBpdftex\fP(1), \fBps2pk\fP(1),
+\fBtexhash\fP(1), \fBxdvi\fP(1)\&.
+.PP
+Web page: \fI<http://tug\&.org/teTeX/>\fP
+.PP
+.SH "BUGS"
+.PP
+None known, but report any bugs found to <tetex@dbs\&.uni-hannover\&.de> (mailing list)\&.
+.PP
+.SH "AUTHOR"
+.PP
+\fBupdmap\fP was written by Thomas Esser
+<te@dbs\&.uni-hannover\&.de> and is in the public domain\&.
+.PP
+This manual page was written by C\&.M\&. Connelly
+<cmc@debian\&.org>, for
+the Debian GNU/Linux system and later slightly adapted for teTeX 3\&.

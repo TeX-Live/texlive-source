@@ -1,0 +1,147 @@
+# Makefile for Autoconf.
+# Copyright (C) 1992, 1993, 1994 Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+# 
+# @configure_input@
+
+SHELL = /bin/sh
+
+#### Start of system configuration section. ####
+
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+# If you use gcc, you should either run the fixincludes script that
+# comes with it or else use gcc with the -traditional option.  Otherwise
+# ioctl calls will be compiled incorrectly on some systems.
+CC = @CC@
+AR = ar
+
+# set make command
+@SET_MAKE@
+
+# Set RANLIB = echo if your system doesn't have or need ranlib.
+RANLIB = @RANLIB@
+
+# Use cp if you don't have install.
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+
+DEFS = @DEFS@
+LIBS = @LIBS@
+
+INCLUDES = -I@top_srcdir@/include
+CFLAGS = @CFLAGS@
+LDFLAGS = @LDFLAGS@
+
+MAKEINFO = makeinfo
+TEXI2DVI = texi2dvi
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+# Where to install the executables.
+bindir = $(exec_prefix)/bin
+
+# Where to put the include header
+includedir = $(prefix)/include
+
+# Where to put the Info files
+infodir = $(prefix)/info
+
+# Where to put the library file
+libdir = $(prefix)/lib
+
+# Where to put the manual pages.
+mandir = $(prefix)/man
+
+#### End of system configuration section. ####
+
+SUBDIRS = libttf src
+
+# Set default target.
+all:
+
+.PHONY: all install uninstall
+all check install uninstall: config.h Makefile all-local
+	@for subdir in $(SUBDIRS); do \
+          echo "making $@ in $$subdir"; \
+          ( cd $$subdir && $(MAKE) $(FLAGS_TO_PASS) $@ ) || exit 1; \
+        done
+
+.PHONY: all-local
+all-local:
+
+.PHONY: clean
+clean: clean-local
+	@for dir in $(SUBDIRS); do echo making $@ in $$dir; cd $$dir && $(MAKE) $(FLAGS_TO_PASS) $@ || exit 1; cd ..; done
+
+.PHONY: distclean
+distclean: distclean-local
+	@for dir in $(SUBDIRS); do echo making $@ in $$dir; cd $$dir && $(MAKE) $(FLAGS_TO_PASS) $@ || exit 1; cd ..; done
+	rm -f config.status
+
+.PHONY: realclean
+realclean: realclean-local
+	@for dir in $(SUBDIRS); do echo making $@ in $$dir; cd $$dir && $(MAKE) $(FLAGS_TO_PASS) $@ || exit 1; cd ..; done
+	rm -f config.status
+
+.PHONY: mostlyclean-local
+mostlyclean-local:
+	rm -f *~
+
+.PHONY: clean-local
+clean-local: mostlyclean-local
+
+.PHONY: distclean-local
+distclean-local: clean-local
+	rm -f Makefile config.cache config.h config.log stamp-h
+	rm -f tags TAGS
+
+.PHONY: realclean-local
+realclean-local: distclean-local
+
+#distclean: clean
+#	rm -f Makefile config.log config.cache config.status config.h stamp-h *~
+
+# For the justification of the following Makefile rules, see node
+# `Automatic Remaking' in GNU Autoconf documentation.
+Makefile: Makefile.in config.status
+	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
+config.status: configure
+	./config.status --recheck
+# The rules to run autoconf and autoheader are commented out.  This is because
+# when the user unpacks a tarfile, configure.in might end up newer than
+# configure, but the user might not have (and does not need to have) autoconf
+# installed.
+#configure: configure.in #aclocal.m4
+#       cd $(srcdir); autoconf
+
+config.h: stamp-h
+
+# This used to do a ./config.status --recheck, to update config.status with
+# any new #defines from config.h.in.  The problem was that the rule itself
+# depends on config.status, so that the --recheck would get run several
+# times, which is bad if the user was trying to specify CFLAGS manually.
+# It was a big pain in the neck.
+stamp-h: config.h.in config.status
+	CONFIG_FILES=$@ CONFIG_HEADERS=config.h ./config.status
+
+#config.h.in: stamp-h.in
+#stamp-h.in: configure.in #aclocal.m4 acconfig.h
+#       cd $(srcdir); autoheader
+#       date > $(srcdir)/stamp-h.in

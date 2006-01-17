@@ -1,0 +1,311 @@
+.\" man page for ttf2pk
+.
+.TH TTF2PK 1 10-Jan-2002 "FreeType version 1.5"
+.SH NAME
+ttf2pk \- convert a TrueType font into TeX's PK format
+.SH SYNOPSIS
+.na
+.nh
+.B ttf2pk
+.RB [ \-q ]
+.RB [ \-n ]
+.I "\%font-name \%resolution"
+.br
+.B ttf2pk
+.B \-t
+.RB [ \-q ]
+.I \%font-name
+.br
+.B "ttf2pk \-\^\-version"
+|
+.B \-\^\-help
+.ad
+.hy
+.
+.
+.
+.\" ====
+.\" ==== macro definitions
+.\" ====
+.
+.\" here we define \TeX for troff and nroff
+.if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
+.if n .ds TX TeX
+.
+.\" and here the same for \LaTeX
+.if t \{\
+.ie '\*(.T'dvi' \
+.ds LX \fRL\h'-0.36m'\v'-0.15v'\s-3A\s0\h'-0.15m'\v'0.15v'\fP\*(TX
+.el .ds LX \fRL\h'-0.36m'\v'-0.22v'\s-2A\s0\h'-0.15m'\v'0.22v'\fP\*(TX
+.\}
+.if n .ds LX LaTeX
+.
+.\" \LaTeXe
+.\" note that we need \vareps for TeX instead of \eps which can only be
+.\" accessed with the \N escape sequence (in the Math Italic font)
+.if t \{\
+.ie '\*(.T'dvi' .ds LE \*(LX\h'0.15m'2\v'0.20v'\f(MI\N'34'\fP\v'-0.20v'
+.el .ds LE \*(LX\h'0.15m'2\v'0.20v'\(*e\v'-0.20v'
+.\}
+.if n .ds LE LaTeX\ 2e
+.
+.\" a typewriter font
+.if t \{\
+.de C
+\fC\\$1\fP\\$2
+..
+.\}
+.if n \{\
+.de C
+\\$1\\$2
+..
+.\}
+.
+.\" ====
+.\" ==== end of macro definitions
+.\" ====
+.
+.
+.
+.SH DESCRIPTION
+This program converts a TrueType font into a
+.C PK
+file; the created font can then be used with \*(TX
+or \*(LX.
+.PP
+CJKV (Chinese/Japanese/Korean/old Vietnamese) subfonts as created by 
+.B ttf2tfm
+are also supported.
+.PP
+.B ttf2pk
+always assumes 10pt as the design size for the written \*(TX
+font.
+.
+.
+.SH PARAMETERS
+.TP
+.B \-q
+This optional switch makes
+.B ttf2pk
+quiet.
+It suppresses any informational output except warning and error
+messages.
+.TP
+.B \-n
+Use only `\c
+.C \&.pk '
+as the extension instead of `\c
+.C \&. \c
+.RI < \%resolution >\c
+.C pk '.
+.TP
+.B \-t
+Test for the existence of
+.IR \%font-name .
+Returns 0 on success and prints out the corresponding line of
+a map file (default:
+.C \%ttfonts.map ),
+provided the
+.B \-q
+switch isn't set.
+.TP
+.I font-name
+The \*(TX
+name of the font.
+.B ttf2pk
+looks this name up in a map file (see below) for further information how
+to process the font.
+.TP
+.I resolution
+The resolution, given in dots per inch.
+Currently the horizontal resolution is equal to the vertical
+resolution.
+The design size is always assumed to be 10pt.
+.TP
+.B \-\^\-version
+Shows the current version of
+.B ttf2pk
+and the used file search library (e.g.\ \c
+.BR kpathsea ).
+.TP
+.B \-\^\-help
+Shows usage information.
+.PP
+Environment variables for file searching are described in the manual page
+of
+.BR ttf2tfm .
+.
+.
+.SH "THE CONFIGURATION FILE"
+.B ttf2pk
+uses a small configuration file called
+.C ttf2pk.cfg ;
+in each line it contains a keyword with its value, separated by whitespace.
+Comment lines can start with any of the following characters: `*', `#',
+`;', and `%'.
+Leading whitespace is ignored.
+.PP
+Currently, only one keyword, `map', is recognized in this file; it takes
+a map file name as a parameter.
+If no extension is given to the map file name,
+.C \&.map
+is appended.
+No whitespace is allowed in the map file name.
+The `map' keyword can be given more than once to specify multiple map
+files; if the map file name is prepended by a plus sign, it is added to
+the list of map files to be used.
+Example:
+.PP
+.in +2m
+.C "map  foo"
+.br
+.C "map +bar"
+.PP
+This makes
+.B ttf2pk
+to first read
+.C foo.map ,
+then
+.C bar.map .
+.PP
+If the configuration file is not found,
+.B ttf2pk
+tries to use
+.C \%ttfonts.map
+instead.
+.
+.
+.SH "MAP FILES"
+Parameters specified to
+.B ttf2tfm
+are preserved for
+.B ttf2pk
+in map files\(em\c
+.B ttf2tfm
+writes out to standard output, as the last line, a proper entry for a
+map file.
+.PP
+As an example, a call to
+.PP
+.in +2m
+.C "ttf2tfm arial -p T1.enc -s 0.25 -P 1 -E 0 arials"
+.PP
+will produce the following line:
+.PP
+.in +2m
+.C "arials   arial Slant=0.25 Pid=1 Eid=0 Encoding=T1.enc"
+.PP
+See
+.BR ttf2tfm (1)
+and
+.BR afm2tfm (1)
+of the
+.B dvips
+package for a detailed description of encoding files.
+.PP
+Here a table listing the various
+.B ttf2tfm
+parameters and the corresponding entries in a map file:
+.PP
+.in +4m
+.ta 2i
+-s	Slant
+.br
+-e	Extend
+.br
+-p	Encoding
+.br
+-f	Fontindex
+.br
+-P	Pid
+.br
+-E	Eid
+.br
+-n	PS=Yes
+.br
+-N	PS=Only
+.br
+-R	Replacement
+.br
+-x	Rotate=Yes
+.br
+-y	Y-Offset
+.PP
+Single replacement glyph names given to
+.B ttf2tfm
+with `\c
+.BI \-r \ old-glyphname\ new-glyphname\c
+\&'
+are directly specified with `\c
+.IR old-glyphname = new-glyphname '.
+They will be ignored if in subfont mode or if no encoding file is given.
+.PP
+One additional parameter in a map file is unique to
+.BR ttf2pk :
+`Hinting', which can take the values `On' or `Off'.
+Some fonts (e.g.\ the CJK part of
+.C \%cyberbit.ttf )
+are rendered incorrectly if hinting is activated.
+Default is `On' (you can also use `Yes', `No', `1', and `0').
+.PP
+For a description of subfonts (i.e., entries of the form `\c
+.I <namestem>\c
+.C @\c
+.I <sfd-filename>\c
+.C @ ')
+please refer to
+.BR ttf2tfm (1).
+.PP
+The format of a map file is simple.
+Each line defines a font; first comes the \*(TX
+font name, then its TrueType font file name, followed by the
+parameters in any order.
+Case is significant (even for parameter names); the parameters are
+separated from its values by an equal sign, with whitespace possibly
+surrounding it.
+.B ttf2pk
+reads in all map files line by line in the order given in the
+configuration file, continuing until the \*(TX font specified on the
+command line is found, otherwise the programs exits with error code\ 2.
+Thus you can use any character invalid in a \*(TX
+font name to start a comment line.
+.PP
+You can use `\\' as the final character of a line to indicate that the
+input is continued on the next line.
+The backslash and the following newline character will be removed.
+.PP
+.B ttf2pk
+will abort if it can't find or read the \*(TX
+font metrics file of the given \*(TX
+font name.
+.
+.
+.SH "RETURN VALUE"
+If the call was successful, 0\ will be returned.
+In case of error, the return value is\ 1.
+Finally, if the font can't be found in the map files,
+2\ is returned.
+This simplifies the inclusion of
+.B ttf2pk
+into scripts like
+.B mktexpk
+for automatic font generation.
+.
+.
+.SH "SEE ALSO"
+.BR ttf2tfm (1),
+.BR afm2tfm (1)
+.
+.
+.SH AVAILABILITY
+.B ttf2pk
+is part of the FreeType\ 1 package, a high quality TrueType rendering
+library.
+.
+.
+.SH AUTHORS
+Werner LEMBERG
+.C <wl@gnu.org>
+.br
+Fr\('ed\('eric LOYER
+.C <loyer@ensta.fr>

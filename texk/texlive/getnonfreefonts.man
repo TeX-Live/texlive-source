@@ -1,0 +1,182 @@
+.TH getnonfreefonts 1 "October 2005" "TeXLive" "TeXLive"
+.SH NAME
+getnonfreefonts \- download and install fonts which cannot be
+distributed on a CD
+.LP
+getnonfreefonts-sys \- download and install fonts system\-wide which
+cannot be distributed on a CD
+.SH SYNOPSIS
+.B getnonfreefonts 
+.RI
+[options] [font]
+.LP
+.B getnonfreefonts-sys
+.RI
+[options] [font]
+.SH DESCRIPTION
+Some font suppliers provided fonts which can be used freely but they
+disallow that money is charged for the distribution.  Hence, for
+distributions on CD or DVD it is usually impossible to include
+these fonts.
+
+.BI getnonfreefonts
+is a script which downloads and installs these fonts.  Actually, it
+first downloads the program
+.BI getfont
+from CTAN which is then executed.
+.BI getfont
+does the real work.  It will be updated occasionally to support more
+fonts.
+
+.BI getnonfreefonts
+and
+.BI getnonfreefonts-sys
+are identical except that
+.BI getnonfreefonts
+installs files to
+.RI $TEXMFHOME
+while
+.BI getnonfreefonts-sys
+installs files to
+.RI $TEXMFLOCAL
+\.
+
+.BI getfont 
+will not be installed permanently on your system.  It only
+exists while 
+.BI getnonfreefonts
+is running.  
+.BI getnonfreefonts
+passes all arguments to
+.BI getfont.
+
+If a font is specified, only this font will be installed, otherwise
+all supported fonts will be installed.
+
+To get a list of supported fonts, run
+.BI getnonfreefonts
+.BI --lsfonts
+
+.SH OPTIONS
+Only the options evaluated by 
+.BI getnonfreefonts
+are described here. Run
+.BI getnonfreefonts 
+.BI --help
+to get a complete list.
+
+.TP
+.B --ctan=<CTAN-node>
+.rg
+.B <CTAN-node>
+can be either
+.B
+de
+for ftp://ftp.dante.de (Hamburg, Germany),
+.B
+uk
+for ftp://tex.ac.uk (Cambridge, UK),
+or
+.B us
+for ftp://ctan.tug.org (Colchester, VT, US)
+
+The default is ftp://tex.ac.uk.
+
+.TP
+.B --afm
+.rg
+Install AFM files as well.  They are not installed by default.  You do
+not need them if you don't know what they are good for.
+
+.TP
+.B -n, --noinstall
+.rg
+Do not install anything.  Useful to check whether fonts are available
+which are not installed yet.
+
+
+.TP
+.B --shell
+.rg
+Run
+.BI getnonfreefonts
+in a shell.
+.BI getfont
+can be called directly and will exist on your system until you leave
+the shell.  If your internet connection is very slow, you can save some time.
+Run
+.BI getfont --help
+first.
+
+
+.TP
+.B -h, --help
+.rg
+Get a complete list of options.  This list will be more complete and
+more up-to-date than this manual page. 
+
+.SH ENVIRONMENT
+If the environt variable 
+.BI CTAN 
+is set to 
+.B ftp://<CTAN-node>
+then this will be the default.  The argument is an URL.
+
+.BI Example:
+If your 
+.BI ~/.profile
+contains the line
+.BI CTAN=ftp://ftp.dante.de
+then this will be the default.
+If you are at a university which mirrors CTAN, you can set
+.BI CTAN
+to this mirror.  It will work only if the mirror has the same
+directory structure as CTAN, i.e if the directory
+.BI tex-archive
+is not omitted.
+
+.SH EXAMPLES
+.TP
+.B getnonfreefonts --help
+.rg
+Display all options and a list of supported fonts.  Note that the
+program
+.B getfont
+is installed temporarily and executed.  You get more information than
+this manual page can provide.
+
+.TP
+.B getnonfreefonts
+.rg
+Install all supported fonts which are not installed yet.
+
+.TP
+.B getnonfreefonts utopia
+.rg
+Install Adobe Utopia if it is not installed yet.
+
+.TP
+.B getnonfreefonts --force --afm utopia
+.rg
+Install Adobe Utopia and the corresponding AFM files even if Utopia is
+already installed.
+
+.TP
+.B getnonfreefonts --noinstall
+.rg
+No fonts will be installed.  Instead you are told which fonts are
+available and which of them are already installed.
+
+.TP
+.B getnonfreefonts --shell
+.rg
+No fonts are installed.  You'll get an interactive shell where you can
+invoke
+.BI getfont
+manually.  Run
+.B getfont --help
+first.
+
+
+.SH BUGS
+Please send bug reports to Reinhard Kotucha <reinhard.kotucha@web.de>.

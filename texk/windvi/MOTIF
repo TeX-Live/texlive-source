@@ -1,0 +1,462 @@
+
+This Motif patch does not apply to the current sources.  If you make it
+work, please send me the new patch. --kb@cs.umb.edu
+
+
+Date: Wed, 9 Feb 94 16:29 MET
+From: simon@lia.di.epfl.ch (Simon Leinen)
+To: tex-k@cs.umb.edu
+Subject: First hack at a Motif interface for xdvi
+
+If you find that xdvi isn't ugly enough yet, you can apply this patch
+and recompile xdvi with -DHAVE_MOTIF (and preferably without
+-DBUTTONS).  You also need to link against -lXm.  Tested only on IRIX
+5.1 (X11R5/Motif 1.2.2).
+
+Have fun(???),
+-- 
+Simon.
+
+*** xdvik/xdvi.c	1994/02/08 21:36:30	1.1
+--- xdvik/xdvi.c	1994/02/09 15:21:00
+***************
+*** 96,104 ****
+  #define	XtSpecificationRelease	0
+  #endif
+  #if	XtSpecificationRelease >= 4
+  #include <X11/Xaw/Viewport.h>
+  #ifdef	BUTTONS
+  #include <X11/Xaw/Command.h>
+! #endif
+  #else	/* XtSpecificationRelease < 4 */
+  #define	XtPointer caddr_t
+--- 96,113 ----
+  #define	XtSpecificationRelease	0
+  #endif
++ #ifdef  HAVE_MOTIF
++ #include <Xm/MainW.h>
++ #include <Xm/PushB.h>
++ #include <Xm/ToggleB.h>
++ #include <Xm/BulletinB.h>
++ #include <Xm/Form.h>
++ #include <Xm/RowColumn.h>
++ #include <Xm/MenuShell.h>
++ #else /* not HAVE_MOTIF */
+  #if	XtSpecificationRelease >= 4
+  #include <X11/Xaw/Viewport.h>
+  #ifdef	BUTTONS
+  #include <X11/Xaw/Command.h>
+! #endif /* BUTTONS */
+  #else	/* XtSpecificationRelease < 4 */
+  #define	XtPointer caddr_t
+***************
+*** 108,111 ****
+--- 117,121 ----
+  #endif
+  #endif	/* XtSpecificationRelease */
++ #endif /* not HAVE_MOTIF */
+  #else	/* !TOOLKIT */
+  #define	XtNumber(arr)	(sizeof(arr)/sizeof(arr[0]))
+***************
+*** 319,322 ****
+--- 329,338 ----
+  #ifdef	TOOLKIT
+  static	Widget	top_level, vport_widget, draw_widget, clip_widget;
++ #ifdef HAVE_MOTIF
++ static	Widget	menubar;
++ static	Widget	scale_menu;
++ static	Widget	shrink_button[5];
++ static	unsigned max_shrink_button = 0;
++ #endif /* HAVE_MOTIF */
+  #ifdef	BUTTONS
+  static	Widget	form_widget, line_widget, panel_widget;
+***************
+*** 325,328 ****
+--- 341,347 ----
+  
+  static	Arg	vport_args[] = {
++ #ifdef HAVE_MOTIF
++   {XmNscrollingPolicy, (XtArgVal) XmAUTOMATIC},
++ #else /* not HAVE_MOTIF */
+  #ifdef	BUTTONS
+  	{XtNborderWidth, (XtArgVal) 0},
+***************
+*** 334,337 ****
+--- 353,357 ----
+  	{XtNallowHoriz,	(XtArgVal) True},
+  	{XtNallowVert,	(XtArgVal) True},
++ #endif /* not HAVE_MOTIF */
+  };
+  
+***************
+*** 351,362 ****
+  #ifdef	BUTTONS
+  static	Arg	form_args[] = {
+  	{XtNdefaultDistance, (XtArgVal) 0},
+  };
+  #define	XTRA_WID	79
+  
+  static	Arg	line_args[] = {
+- 	{XtNbackground,	(XtArgVal) 0},
+- 	{XtNwidth,	(XtArgVal) 1},
+  	{XtNheight,	(XtArgVal) 0},
+  	{XtNfromHoriz,	(XtArgVal) NULL},
+  	{XtNborderWidth, (XtArgVal) 0},
+--- 371,390 ----
+  #ifdef	BUTTONS
+  static	Arg	form_args[] = {
++ #ifdef HAVE_MOTIF
++ 	{XmNhorizontalSpacing, (XtArgVal) 0},
++ 	{XmNverticalSpacing, (XtArgVal) 0},
++ #else /* not HAVE_MOTIF */
+  	{XtNdefaultDistance, (XtArgVal) 0},
++ #endif /* not HAVE_MOTIF */
+  };
+  #define	XTRA_WID	79
+  
+  static	Arg	line_args[] = {
+  	{XtNheight,	(XtArgVal) 0},
++ #ifdef HAVE_MOTIF
++ 	{XmNleftWidget,	(XtArgVal) NULL},
++ 	{XmNleftAttachment,	(XtArgVal) XmATTACH_WIDGET},
++ 	{XmNresizable, (XtArgVal) False},
++ #else /* not HAVE_MOTIF */
+  	{XtNfromHoriz,	(XtArgVal) NULL},
+  	{XtNborderWidth, (XtArgVal) 0},
+***************
+*** 365,371 ****
+--- 393,410 ----
+  	{XtNleft,	(XtArgVal) XtChainRight},
+  	{XtNright,	(XtArgVal) XtChainRight},
++ 	{XtNbackground,	(XtArgVal) 0},
++ 	{XtNwidth,	(XtArgVal) 1},
++ #endif /* not HAVE_MOTIF */
+  };
+  
+  static	Arg	panel_args[] = {
++ #ifdef HAVE_MOTIF
++ 	{XmNleftWidget,	(XtArgVal) NULL},
++ 	{XtNwidth,	(XtArgVal) (XTRA_WID - 1)},
++ 	{XtNheight,	(XtArgVal) 0},
++ 	{XtNborderWidth, (XtArgVal) 0},
++ 	{XmNleftAttachment,	(XtArgVal) XmATTACH_WIDGET},
++ 	{XmNresizable, (XtArgVal) False},
++ #else /* not HAVE_MOTIF */
+  	{XtNfromHoriz,	(XtArgVal) NULL},
+  	{XtNwidth,	(XtArgVal) (XTRA_WID - 1)},
+***************
+*** 376,379 ****
+--- 415,419 ----
+  	{XtNleft,	(XtArgVal) XtChainRight},
+  	{XtNright,	(XtArgVal) XtChainRight},
++ #endif /* not HAVE_MOTIF */
+  };
+  
+***************
+*** 406,415 ****
+--- 446,463 ----
+  
+  static	Arg	command_args[] = {
++ #ifdef HAVE_MOTIF
++ 	{XmNlabelString,	(XtArgVal) NULL},
++ #else /* not HAVE_MOTIF */
+  	{XtNlabel,	(XtArgVal) NULL},
++ #endif /* not HAVE_MOTIF */
+  	{XtNx,		(XtArgVal) 6},
+  	{XtNy,		(XtArgVal) 0},
+  	{XtNwidth,	(XtArgVal) 64},
+  	{XtNheight,	(XtArgVal) 30},
++ #ifdef HAVE_MOTIF
++ 	{XmNactivateCallback,	(XtArgVal) command_call},
++ #else /* not HAVE_MOTIF */
+  	{XtNcallback,	(XtArgVal) command_call},
++ #endif /* not HAVE_MOTIF */
+  };
+  
+***************
+*** 420,434 ****
+  	int i;
+  
+! 	line_args[2].value = h;
+! 	line_args[3].value = (XtArgVal) vport_widget;
+  	line_widget = XtCreateManagedWidget("line", widgetClass, form_widget,
+  		line_args, XtNumber(line_args));
+  	panel_args[0].value = (XtArgVal) line_widget;
+  	panel_args[2].value = h;
+  	panel_widget = XtCreateManagedWidget("panel", compositeWidgetClass,
+  		form_widget, panel_args, XtNumber(panel_args));
+  
+  	command_args[2].value = (XtArgVal) vport_widget;
+  	for (i = 0; i < XtNumber(command_table); ++i) {
+  	    command_args[0].value = (XtArgVal) command_table[i].label;
+  	    command_args[2].value = (XtArgVal) command_table[i].y_pos;
+--- 468,498 ----
+  	int i;
+  
+! 	line_args[0].value = h;
+! 	line_args[1].value = (XtArgVal) vport_widget;
+  	line_widget = XtCreateManagedWidget("line", widgetClass, form_widget,
+  		line_args, XtNumber(line_args));
+  	panel_args[0].value = (XtArgVal) line_widget;
+  	panel_args[2].value = h;
++ #ifdef HAVE_MOTIF
++ 	panel_widget = XtCreateManagedWidget("panel", xmBulletinBoardWidgetClass,
++ 		form_widget, panel_args, XtNumber(panel_args));
++ #else /* not HAVE_MOTIF */
+  	panel_widget = XtCreateManagedWidget("panel", compositeWidgetClass,
+  		form_widget, panel_args, XtNumber(panel_args));
++ #endif /* not HAVE_MOTIF */
+  
+  	command_args[2].value = (XtArgVal) vport_widget;
++ #ifdef HAVE_MOTIF
+  	for (i = 0; i < XtNumber(command_table); ++i) {
++ 	    command_args[0].value = (XtArgVal) 
++ 	      XmCvtCTToXmString ((char *) command_table[i].label);
++ 	    command_args[2].value = (XtArgVal) command_table[i].y_pos;
++ 	    command_call[0].closure = (caddr_t) command_table[i].closure;
++ 	    (void) XtCreateManagedWidget(command_table[i].name,
++ 		xmPushButtonWidgetClass, panel_widget,
++ 		command_args, XtNumber(command_args));
++ 	}
++ #else /* not HAVE_MOTIF */
++ 	for (i = 0; i < XtNumber(command_table); ++i) {
+  	    command_args[0].value = (XtArgVal) command_table[i].label;
+  	    command_args[2].value = (XtArgVal) command_table[i].y_pos;
+***************
+*** 438,441 ****
+--- 502,506 ----
+  		command_args, XtNumber(command_args));
+  	}
++ #endif /* not HAVE_MOTIF */
+  }
+  #endif	/* BUTTONS */
+***************
+*** 1036,1040 ****
+  }
+  
+! #ifdef	BUTTONS
+  	/*ARGSUSED*/
+  static	void
+--- 1101,1105 ----
+  }
+  
+! #if defined(BUTTONS) || defined(HAVE_MOTIF)
+  	/*ARGSUSED*/
+  static	void
+***************
+*** 1408,1411 ****
+--- 1473,1498 ----
+  }
+  
++ static void
++ set_shrink_factor(win, shrink)
++      struct WindowRec * win;
++      int shrink;
++ {
++ #ifdef HAVE_MOTIF
++   static Widget active_shrink_button = 0;
++ 
++   if (win->shrinkfactor != shrink || !active_shrink_button)
++     {
++       if (active_shrink_button)
++ 	XmToggleButtonSetState (active_shrink_button, False, False);
++       win->shrinkfactor = shrink;
++       if (shrink <= max_shrink_button
++ 	  && (active_shrink_button = shrink_button[shrink]))
++ 	XmToggleButtonSetState (active_shrink_button, True, False);
++     }
++ #else /* not HAVE_MOTIF */
++   win->shrinkfactor = shrink;
++ #endif /* not HAVE_MOTIF */
++ }
++ 
+  #ifdef	TOOLKIT
+  	/*ARGSUSED*/
+***************
+*** 1648,1652 ****
+  		if (number0 <= 0) goto bad;
+  		if (number0 == mane.shrinkfactor) return;
+! 		mane.shrinkfactor = number0;
+  		init_page();
+  		if (number0 != 1 && number0 != bak_shrink) {
+--- 1735,1739 ----
+  		if (number0 <= 0) goto bad;
+  		if (number0 == mane.shrinkfactor) return;
+! 		set_shrink_factor (&mane, number0);
+  		init_page();
+  		if (number0 != 1 && number0 != bak_shrink) {
+***************
+*** 2746,2749 ****
+--- 2833,2902 ----
+   */
+  
++ static void
++ file_pulldown_callback (w, client_data, call_data)
++      Widget w;
++      XtPointer client_data;
++      XtPointer call_data;
++ {
++   switch ((int) client_data) {
++   case 0:
++     keystroke ('R', 0, False, 0);
++     break;
++   case 1:
++     keystroke ('q', 0, False, 0);
++     break;
++   }
++ }
++ 
++ static void
++ navigate_pulldown_callback (w, client_data, call_data)
++      Widget w;
++      XtPointer client_data;
++      XtPointer call_data;
++ {
++   switch ((int) client_data) {
++   case 0:
++     keystroke ('p', 10, True, 0);
++     break;
++   case 1:
++     keystroke ('p', 5, True, 0);
++     break;
++   case 2:
++     keystroke ('p', 0, False, 0);
++     break;
++   case 5:
++     keystroke ('n', 10, True, 0);
++     break;
++   case 4:
++     keystroke ('n', 5, True, 0);
++     break;
++   case 3:
++     keystroke ('n', 0, False, 0);
++     break;
++   }
++ }
++ 
++ static void
++ scale_pulldown_callback (w, client_data, call_data)
++      Widget w;
++      XtPointer client_data;
++      XtPointer call_data;
++ {
++   switch ((int) client_data) {
++   case 0:
++     keystroke ('s', 1, True, 0);
++     break;
++   case 1:
++     keystroke ('s', 2, True, 0);
++     break;
++   case 2:
++     keystroke ('s', 3, True, 0);
++     break;
++   case 3:
++     keystroke ('s', 4, True, 0);
++     break;
++   }
++ }
++ 
+  int
+  main(argc, argv)
+***************
+*** 2838,2842 ****
+  		dvi_name == NULL) usage();
+  	if (shrink_factor != 1) bak_shrink = shrink_factor;
+! 	mane.shrinkfactor = shrink_factor;
+  	if (RESOURCE(debug_arg) != NULL)
+  	    debug = isdigit(*RESOURCE(debug_arg)) ? atoi(RESOURCE(debug_arg))
+--- 2991,2995 ----
+  		dvi_name == NULL) usage();
+  	if (shrink_factor != 1) bak_shrink = shrink_factor;
+! 	set_shrink_factor (&mane, shrink_factor);
+  	if (RESOURCE(debug_arg) != NULL)
+  	    debug = isdigit(*RESOURCE(debug_arg)) ? atoi(RESOURCE(debug_arg))
+***************
+*** 3012,3017 ****
+--- 3165,3175 ----
+  
+  #ifdef	BUTTONS
++ #ifdef HAVE_MOTIF
++ 	form_widget = XtCreateManagedWidget("form", xmFormWidgetClass,
++ 		top_level, form_args, XtNumber(form_args));
++ #else /* not HAVE_MOTIF */
+  	form_widget = XtCreateManagedWidget("form", formWidgetClass,
+  		top_level, form_args, XtNumber(form_args));
++ #endif /* not HAVE_MOTIF */
+  
+  	line_args[0].value = (XtArgVal) resource.high_color
+***************
+*** 3020,3026 ****
+--- 3178,3237 ----
+  #define	form_widget	top_level	/* for calls to XtAddEventHandler */
+  #endif	/* BUTTONS */
++ #ifdef HAVE_MOTIF
++ 	vport_widget = XtCreateManagedWidget
++ 	  ("vport",
++ 	   xmMainWindowWidgetClass, form_widget,
++ 	   vport_args, XtNumber(vport_args));
++ 	XtVaGetValues (vport_widget, XmNclipWindow, &clip_widget, NULL);
++ 	menubar = XmVaCreateSimpleMenuBar
++ 	  (vport_widget, "menubar",
++ 	   XmVaCASCADEBUTTON, (XtArgVal) XmCvtCTToXmString("File"), 0, 
++ 	   XmVaCASCADEBUTTON, (XtArgVal) XmCvtCTToXmString("Navigate"), 0,
++ 	   XmVaCASCADEBUTTON, (XtArgVal) XmCvtCTToXmString("Scale"), 0,
++ 	   0);
++ 	{
++ 	  XmVaCreateSimplePulldownMenu 
++ 	     (menubar, "file_pulldown", 0, file_pulldown_callback,
++ 	      XmNtearOffModel, (XtArgVal) XmTEAR_OFF_ENABLED,
++ 	      XmVaPUSHBUTTON, (XtArgVal) XmCvtCTToXmString("Reload"), 0, 0, 0,
++ 	      XmVaSEPARATOR,
++ 	      XmVaPUSHBUTTON, (XtArgVal) XmCvtCTToXmString("Quit"), 0, 0, 0,
++ 	      0);
++ 	}
++ 	{
++ 	  XmVaCreateSimplePulldownMenu 
++ 	    (menubar, "navigate_pulldown", 1, navigate_pulldown_callback,
++ 	     XmNtearOffModel, (XtArgVal) XmTEAR_OFF_ENABLED,
++ 	     XmVaPUSHBUTTON, (XtArgVal) XmCvtCTToXmString("Page-10"), 0, 0, 0,
++ 	     XmVaPUSHBUTTON, (XtArgVal) XmCvtCTToXmString("Page-5"), 0, 0, 0,
++ 	     XmVaPUSHBUTTON, (XtArgVal) XmCvtCTToXmString("Prev"), 0, 0, 0,
++ 	     XmVaSEPARATOR,
++ 	     XmVaPUSHBUTTON, (XtArgVal) XmCvtCTToXmString("Next"), 0, 0, 0,
++ 	     XmVaPUSHBUTTON, (XtArgVal) XmCvtCTToXmString("Page+5"), 0, 0, 0,
++ 	     XmVaPUSHBUTTON, (XtArgVal) XmCvtCTToXmString("Page+10"), 0, 0, 0,
++ 	     0);
++ 	}
++ 	{
++ 	  scale_menu = XmVaCreateSimplePulldownMenu 
++ 	    (menubar, "scale_pulldown", 2, scale_pulldown_callback,
++ 	     XmNradioBehavior, (XtArgVal) True,
++ 	     XmNtearOffModel, (XtArgVal) XmTEAR_OFF_ENABLED,
++ 	     XmVaRADIOBUTTON, (XtArgVal) XmCvtCTToXmString("Shrink1"), 0, 0, 0,
++ 	     XmVaRADIOBUTTON, (XtArgVal) XmCvtCTToXmString("Shrink2"), 0, 0, 0,
++ 	     XmVaRADIOBUTTON, (XtArgVal) XmCvtCTToXmString("Shrink3"), 0, 0, 0,
++ 	     XmVaRADIOBUTTON, (XtArgVal) XmCvtCTToXmString("Shrink4"), 0, 0, 0,
++ 	     0);
++ 	  shrink_button[1] = XtNameToWidget(scale_menu, "button_0");
++ 	  shrink_button[2] = XtNameToWidget(scale_menu, "button_1");
++ 	  shrink_button[3] = XtNameToWidget(scale_menu, "button_2");
++ 	  shrink_button[4] = XtNameToWidget(scale_menu, "button_3");
++ 	  max_shrink_button = 4;
++ 	  set_shrink_factor (&mane, mane.shrinkfactor);
++ 	}
++ #else /* not HAVE_MOTIF */
+  	vport_widget = XtCreateManagedWidget("vport", viewportWidgetClass,
+  		form_widget, vport_args, XtNumber(vport_args));
+  	clip_widget = XtNameToWidget(vport_widget, "clip");
++ #endif /* not HAVE_MOTIF */
+  	draw_args[0].value = (XtArgVal) page_w;
+  	draw_args[1].value = (XtArgVal) page_h;
+***************
+*** 3030,3033 ****
+--- 3241,3248 ----
+  	draw_widget = XtCreateManagedWidget("drawing", drawWidgetClass,
+  		vport_widget, draw_args, XtNumber(draw_args));
++ #ifdef HAVE_MOTIF
++ 	XmMainWindowSetAreas(vport_widget, menubar, 0, 0, 0, draw_widget);
++ 	XtManageChild(menubar);
++ #endif /* HAVE_MOTIF */
+  	{	/* set default window size */
+  #ifdef	BUTTONS
+

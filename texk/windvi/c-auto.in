@@ -1,0 +1,127 @@
+/* c-auto.in.  Generated automatically from configure.in by autoheader.  */
+
+/* Define if you don't have vprintf but do have _doprnt.  */
+#undef HAVE_DOPRNT
+
+/* Define if you have <sys/wait.h> that is POSIX.1 compatible.  */
+#undef HAVE_SYS_WAIT_H
+
+/* Define if you have <vfork.h>.  */
+#undef HAVE_VFORK_H
+
+/* Define if you have the vprintf function.  */
+#undef HAVE_VPRINTF
+
+/* Define to `int' if <sys/types.h> doesn't define.  */
+#undef pid_t
+
+/* Define as the return type of signal handlers (int or void).  */
+#undef RETSIGTYPE
+
+/* Define to `unsigned' if <sys/types.h> doesn't define.  */
+#undef size_t
+
+/* Define if you have the ANSI C header files.  */
+#undef STDC_HEADERS
+
+/* Define vfork as fork if vfork does not work.  */
+#undef vfork
+
+/* Define if your processor stores words with the most significant
+   byte first (like Motorola and SPARC, unlike Intel and VAX).  */
+#undef WORDS_BIGENDIAN
+
+/* Define if the X Window System is missing or not being used.  */
+#undef X_DISPLAY_MISSING
+
+/* Define to use A4 as the default paper size.  */
+#define A4 0
+
+/* Define to the length (in bytes) of the above type.  */
+#define BMBYTES 4
+
+/* Define to determine the integer type to be used in bitmaps.  The type used
+   will be "unsigned BMTYPE".  */
+#define BMTYPE int
+
+/* Define to enable radio buttons on the side of the window for common
+   commands.  */
+#undef BUTTONS
+
+/* Define to enable greyscale anti-aliasing for shrunken bitmaps.  */
+#undef GREY
+
+/* Define to enable gf format files (in addition to pk format).  */
+#undef USE_GF
+
+/* Define if your system has STREAMS (and if X uses it).  */
+#define HAVE_STREAMS 0
+
+/* Define if you have the poll function.  */
+#define HAVE_POLL 0
+
+/* Define if you are using SunOS 4.x.  */
+#define SUNOS4 0
+
+/* xdvik: Define to avoid using any toolkit (and consequently omit lots
+   of features).  */
+#undef NOTOOL
+
+/* all: Define to enable running scripts when missing input files.  */
+#define MAKE_TEX_MF_BY_DEFAULT 0
+#define MAKE_TEX_PK_BY_DEFAULT 0
+#define MAKE_TEX_TEX_BY_DEFAULT 0
+#define MAKE_TEX_TFM_BY_DEFAULT 0
+#define MAKE_OMEGA_OFM_BY_DEFAULT 0
+#define MAKE_OMEGA_OCP_BY_DEFAULT 0
+
+/* Define if you have the isinf function.  */
+#undef HAVE_ISINF
+
+/* Define if you have the memcpy function.  */
+#undef HAVE_MEMCPY
+
+/* Define if you have the setenv function.  */
+#undef HAVE_SETENV
+
+/* Define if you have the sigaction function.  */
+#undef HAVE_SIGACTION
+
+/* Define if you have the strchr function.  */
+#undef HAVE_STRCHR
+
+/* Define if you have the strerror function.  */
+#undef HAVE_STRERROR
+
+/* Define if you have the tempnam function.  */
+#undef HAVE_TEMPNAM
+
+/* Define if you have the waitpid function.  */
+#undef HAVE_WAITPID
+
+/* Define if you have the <X11/Xosdefs.h> header file.  */
+#undef HAVE_X11_XOSDEFS_H
+
+/* Define if you have the <ieeefp.h> header file.  */
+#undef HAVE_IEEEFP_H
+
+/* Define if you have the <netdb.h> header file.  */
+#undef HAVE_NETDB_H
+
+/* Define if you have the <select.h> header file.  */
+#undef HAVE_SELECT_H
+
+/* Define if you have the <sys/bsdtypes.h> header file.  */
+#undef HAVE_SYS_BSDTYPES_H
+
+/* Define if you have the <sys/select.h> header file.  */
+#undef HAVE_SYS_SELECT_H
+
+/* Define if you have the <zlib.h> header file.  */
+#undef HAVE_ZLIB_H
+
+/* Define if you have the www library (-lwww).  */
+#undef HAVE_LIBWWW
+
+/* Define if you have the z library (-lz).  */
+#undef HAVE_LIBZ

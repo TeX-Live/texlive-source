@@ -1,0 +1,14 @@
+dnl Public domain.
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(dv2dt.c)
+sinclude(../kpathsea/common.ac)
+
+
+dnl These tests prevent reliable cross-compilation.  Sigh.
+AC_C_CHAR_UNSIGNED
+AC_CHECK_SIZEOF(long)
+
+KPSE_CONFIG_FILES([Makefile])
+AC_OUTPUT
+dnl Update stamp-auto, since we just remade `c-auto.h'.
+date >stamp-auto

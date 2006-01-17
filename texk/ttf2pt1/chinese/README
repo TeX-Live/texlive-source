@@ -1,0 +1,18 @@
+This is a collection of Chinese encoding maps which can be used with
+ttf2pt1. They are moved to a separate archive due to their size which
+is much bigger than ttf2pt1 itself and because not everyone would
+need them.
+
+Versioning policy:
+These map files have no direct dependency on the ttf2pt1 version (starting
+with ttf2pt1 3.2.2 which is the first version supporting multi-plane maps).
+But some changes may happen in future, as well as the supported map
+formats may change. To avoid unneccessary extra releases on one hand
+and keep the updates in sync with the ttf2pt1 itself on the other hand, a new 
+version of these map files will be released only if there are any changes to 
+them and these releases will be given the same version number as ttf2pt1 
+released at the same time. So not every release of ttf2pt1 would have a 
+corresponding release of the Chinese maps. For example, to get the correct 
+version of the Chinese maps for an imaginary release 8.3.4 of ttf2pt1 you 
+would need to look for Chinese maps of the highest version not higher than 
+(but possibly equal to) 8.3.4.

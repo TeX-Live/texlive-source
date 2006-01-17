@@ -1,0 +1,45 @@
+This is dvipng 1.6 Copyright 2002-2005 Jan-Ake Larsson
+
+Usage: dvipng [OPTION]... FILENAME[.dvi]
+Options are chosen to be similar to dvips' options where possible:
+  -d #         Debug (# is the debug bitmap, 1 if not given)
+  -D #         Output resolution
+  -l #         Last page to be output
+  --mode s     MetaFont mode (default 'cx')
+  -M*          Don't make PK fonts
+  -o f         Output file, '%d' is pagenumber
+  -O c         Image offset
+  -p #         First page to be output
+  -pp #,#..    Page list to be output
+  -q*          Quiet operation
+  -r*          Reverse order of pages
+  -T c         Image size (also accepts '-T bbox' and '-T tight')
+  -v*          Verbose operation
+  -x #         Override dvi magnification
+  -            Interactive query of options
+
+These do not correspond to dvips options:
+  -bd #        Transparent border width in dots
+  -bd s        Transparent border fallback color (TeX-style color)
+  --bdpi #     Set the base (Metafont) resolution
+  -bg s        Background color (TeX-style color or 'Transparent')
+  --depth*     Output the image depth on stdout
+  --dvinum*    Use TeX page numbers in output filenames
+  -fg s        Foreground color (TeX-style color)
+  --follow*    Follow mode
+  --gamma #    Control color interpolation
+  --gif        Output GIF images (dvigif default)
+  --height*    Output the image height on stdout
+  --noghostscript*  Don't use ghostscript for PostScript specials
+  --nogssafer* Don't use -dSAFER in ghostscript calls
+  --picky      When a warning occurs, don't output image
+  --png        Output PNG images (dvipng default)
+  --strict     When a warning occurs, exit
+  --t1lib*     T1lib font rendering (default on)
+  --truecolor* Truecolor output
+  -Q #         Quality (T1lib and PK subsampling)
+  -z #         PNG compression level
+
+   # = number   f = file   s = string  * = suffix, '0' to turn off
+       c = comma-separated dimension pair (e.g., 3.2in,-32.1cm)
+

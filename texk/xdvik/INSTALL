@@ -1,0 +1,132 @@
+
+Compiling and Installing Xdvik
+==============================
+
+Xdvik is the kpathsea-enhanced version of xdvi. The program
+invocation name is still `xdvi' for compatibility reasons.
+
+Please submit bug reports, suggestions etc. to the sourceforge
+xdvik project page:
+
+	http://sourceforge.net/projects/xdvi/
+
+
+Note for users of older versions of teTeX (<= teTeX-1.0):
+=========================================================
+
+   Please consult  the README file in the texk/xdvik/texmf-alt/
+   directory of the source distribution.
+
+
+Note for users of non-teTeX installations:
+==========================================
+
+   Please consult the files texk/xdvik/texmf-alt/README and
+   texk/xdvik/README.t1fonts for information on how to configure
+   xdvik for direct Type1 font rendering.
+
+
+1. Required Software
+
+   - X11R5 or newer and the Xt libraries
+
+   and one of:
+
+   - Xaw (Athena widgets)
+
+   - Motif >= 1.2 or newer
+     LessTif has a few bugs and restrictions that will result in limited
+     functionality (see the file texk/xdvik/LESSTIF-BUGS for details).
+     For best results, use OpenMotif 2.x.
+
+   You need both the headers and the runtime libraries to compile and run
+   xdvik (note that some Linux distributors put the headers into separate
+   `X development' pacakges).
+
+2. Configuring:
+
+   In the top-level directory (the directory in which this INSTALL
+   file is located), invoke:
+
+	./configure
+
+   You can also specify a toolkit via the --with-x-toolkit option
+   (the default is to check if Motif is available and use it if it is):
+
+       ./configure --with-x-toolkit=xaw [other-options]
+
+   will compile with Xaw (Athena widgets) instead. You can set
+   the search paths for Motif header/library files with the
+   --with-motif-include and --with-motif-libdir options.
+
+   If configure gives you errors about the main texmf tree not being
+   found, specify its directory via the `--datadir' option.
+   On a standard teTeX system, use the output of the command:
+
+	kpsewhich --expand-path='$TEXMFMAIN'
+
+   *without* the `texmf' component as value for `--datadir'
+   (/usr/share or /usr/local/teTeX/share are possible values).
+
+   For all configuration options available, see the output of:
+       ./configure --help
+
+
+
+3. Compiling:
+
+   In the top-level directory, invoke:
+
+        make
+
+   This should compile the executable texk/xdvik/xdvi-TOOLKIT.bin,
+   where TOOLKIT is the value of the `--with-x-toolkit' specified
+   in the configure step, e.g. `xaw' or `motif' (the default).
+
+   If you set the environment variable XDVIINPUTS to the path
+   containing the files xdvi.cfg and ps2pk.map, you should be
+   able to test xdvi without actually installing it.
+
+
+
+4. Installation:
+
+   Usually, the binary xdvi-TOOLKIT.bin is invoked by a shell wrapper
+   `xdvi' which sets XDVIINPUTS and some other variables, like the X
+   search path.
+
+   If you only want to upgrade an existing version of xdvik, it should
+   be sufficient to copy xdvi-TOOLKIT.bin into a directory in your PATH
+   and check that the shell wrapper invokes the correct toolkit version.
+   (You may also want to update the man page from xdvi.1). These files
+   are located in the texk/xdvik subdirectory.
+
+   To install a new version from scratch, invoke:
+
+	make install
+
+   in the top-level directory to install all executable and data files.
+   This will not install the files in the texk/kpathsea subdirectory,
+   which is not required if you already have a working TeX installation
+   (and actually could overwrite your existing setup). If you don't have
+   kpathsea installed yet, you'll need to install it manually; basically
+   by doing `cd texk/kpathsea; make install'. Please see the file
+   texk/kpathsea/INSTALL for more information.
+
+
+
+5. Setup:
+
+   Make sure that the XDVIINPUTS variable (set in the system-wide
+   texmf.cnf file or in the environment, e.g. in your .profile)
+   contains the path to the directory DATADIR/texmf/xdvi, and
+   to the file ps2pk.map (usually in DATADIR/texmf/dvips);
+   e.g. by setting:
+
+	export XDVIINPUTS='.;$TEXMF/{xdvi,dvips}//'
+
+   If xdvik is still generating PK versions of fonts that you think
+   you have Type1 versions of, please consult texk/xdvik/README.t1fonts
+   for more information on how to configure xdvik correctly for Type1
+   fonts.
+

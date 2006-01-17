@@ -1,0 +1,3 @@
+#!/bin/sh
+test -f "`kpsewhich texsis.fmt`" || fmtutil --byfmt texsis
+exec tex -fmt=texsis "$@"

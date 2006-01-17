@@ -1,0 +1,156 @@
+.TH PS2PK 1 TeX
+.SH NAME
+ps2pk \- creates a TeX pkfont from a type1 PostScript font
+.SH SYNOPSIS
+ps2pk
+[ -v ]
+[ -e\fIenc\fP ]
+[ -X\fIxres\fP ]
+[ -E\fIexpansion\fP ]
+[ -S\fIslant\fP  ]
+[ -P\fIpointsize\fP ]
+[ -R\fIbaseres\fP ]
+[ -r\fIaspectratio\fP  ]
+[ -Y\fIyres\fP ]
+[ -a\fIAFMfile\fP ]
+[ -m\fImodename\fP ]
+type1 [pkfont]
+.SH DESCRIPTION
+This program renders a given type1 PostScript font at a given pointsize
+(default 10.0 points) and resolution (default 300dpi) into a TeX pkfont. 
+.PP
+To generate the pkfont ps2pk needs a valid type1 font file (for
+example Utopia-Regular, Utopia-Regula.pfb or Utopia-Regula.pfa) and
+its corresponding AFM-file (Utopia-Regular.afm) with the font metrics.
+The program accepts both the binary type1 format (Utopia-Regula.pfb)
+and its ASCII equivalent (Utopia-Regular or Utopia-Regula.pfa).  To
+locate the files, ps2pk uses the kpathsea library (see the info page
+on kpathsea). Additionally, pfb and pfa files are searched for in the
+directory specified in the environment variable T1INPUTS, and afm
+files are searched in AFMFONTS, if they are set (the -v flag will
+report which filenames are looked for).
+.PP
+The program will make a pkfont in which the character codes are derived
+from their AFM (Adobe Font Metrics) defined values.  This can be
+overruled by specifying an explicit encoding file via the -e option.
+The encoding file \fIenc\fP
+should contain a valid PostScript encoding containing PostScript names
+like /hyphen.  Here is an incomplete example (see afm2tfm for complete
+syntax):
+
+.RS
+.nf
+% This is the EC encoding.
+/ECEncoding [          % now 256 chars follow
+% 0x00
+  /grave /acute /circumflex /tilde /dieresis /hungarumlaut
+  /ring /caron /breve /macron /dotaccent /cedilla
+  /ogonek /quotesinglbase /guilsinglleft /guilsinglright
+
+  (Rest of lines omitted.)
+
+% 0xF0
+  /eth /ntilde /ograve /oacute /ocircumflex /otilde
+  /odieresis /oe /oslash /ugrave /uacute /ucircumflex
+  /udieresis /yacute /thorn /germandbls ] def
+.fi
+.RE
+.PP
+Options and arguments:
+.IP -a\fIAFMfile\fP 12
+Overrules the name that is used to locate the AFM file.
+
+.IP -e\fIenc\fP 12
+Name of a file containing an encoding scheme 
+(default \- the encoding named in the AFM-file is used). 
+The actual PostScript name of the encoding scheme is written
+as a "special" at the end of the pkfont.
+
+.IP -E\fIextension\fP 12
+The extension factor (real value, default 1.0).
+
+.IP -m\fImodename\fP 12
+A modename such as would be used by METAFONT (default "Unknown mode").
+
+.IP -P\fIpointsize\fP 12
+The desired pointsize (real value, default 10.0 points). 
+
+.IP -R\fIbaseres\fP 12
+The desired base resolution (integer value, default 300 dpi). 
+If this differs from the value of \fIxres\fP, the appropriate
+magnification will be shown in the "specials" at the end
+of the pkfont. If possible, this will be expressed as a
+magstep, otherwise as a real number. For example, a pkfont with an \fIxres\fP
+of 329, using the default base resolution of 300,
+will include the "special" text "mag=magstep(0.5)" at the
+end of the font.
+
+.IP -r\fIaspectratio\fP 12
+The desired aspect ratio (expression, integerY/integerX, default 300/300). 
+This will be shown in the "specials" at the end
+of the pkfont.  Setting the aspect ratio creates a value for
+\fIyres\fP but an explicit \fIyres\fP value will take precedence.
+Argument must be in "" if spaces are left around `/'.
+
+.IP -S\fIslant\fP 12
+The slant (real value, default 0.0).
+
+.IP -X\fIxres\fP 12
+The resolution in the X direction (integer value, default 300 dpi). 
+
+.IP -Y\fIyres\fP 12
+The resolution in the Y direction (integer value, default the value
+of \fIxres\fP). If \fIyres\fP differs from \fIxres\fP, a "special"
+text giving the aspect ratio will be written at the end of the
+pkfont.
+
+.IP -v 12
+Verbose flag. (Tells what the program is doing.)
+
+.IP type1 12
+The name of the PostScript type1 font.  The name of the AFM-file will be
+constructed from this name by removing the extension (if suplied) and
+adding ".afm".  The PostScript "FontName" is extracted from the
+AFM-file and written into a "special" at the end of the pkfont.
+
+.IP [pkfont] 12
+The name of the resulting pkfont can be overruled with this name.  The
+default name of pkfont is derived from the basename of the type1
+font, the pointsize and \fIxres\fP.  For example
+`ps2pk -P17.28 Utopia-Regular' will result in `Utopia-Regular17.300pk'.
+An explicit value for the name of the pkfont is necessary when
+the type1 font name already shows the point size, otherwise
+the \fIpointsize\fP value is catenated on to the pkfont basename
+which is usually not what is wanted.
+
+.PP
+The following PK "specials" provide an internal check on the
+characteristics of the pkfont, in accordance with the recommendations
+of the TeX Working Group on the TeX Directory Standard (TWG-TDS):
+.br
+"fontid=\fIFontName\fP", "codingscheme=\fIEncoding\fP", "fontfacebyte", "mag",
+"mode=(ps2pk)\fImodename\fP", "pixels-per-inch", and "aspect-ratio" if it
+is other than unity.
+
+.SH ACKNOWLEDGEMENT
+This program uses the type1 hinting and rendering software IBM 
+has donated to the X-consortium.
+
+.SH SEE ALSO
+.nf
+`METAFONT: The Program', Donald Knuth.
+`The GFtoPK processor', belonging to the METAFONTware.
+`Adobe Font Metric Files', Version 3.0, PostScript Developer
+Support Group.
+afm2tfm(1)
+pk2bm(1)
+kpsewhich(1)
+info kpathsea
+
+.SH VERSION
+1.4 (January 1994)
+
+.SH AUTHOR
+Piet Tutelaers <rcpt@urc.tue.nl>.
+Modified for ps2pkm by Pierre A. Mackay <mackay@cs.washington.edu>,
+This manpage was adapted to teTeX by Frank Kuester <frank@kuesterei.ch>.

@@ -1,0 +1,3 @@
+#!/bin/sh
+test -f "`kpsewhich texinfo.fmt`" || fmtutil --byfmt texinfo
+exec tex -fmt=texinfo -progname=tex "$@"

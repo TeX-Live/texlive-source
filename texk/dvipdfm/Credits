@@ -1,0 +1,19 @@
+
+   The kpathsea library is an essential part of dvipdfm (and all Web2c-based
+TeX utilities). Thanks to Karl Berry and Olaf Weber for developing this and
+making it available.
+
+   Thanks to Cesar Crusius for encouraging me to support MetaPost output and
+for providing sample code.
+
+   Thanks to sevearl unnamed people for submitting bug reports.  Thanks
+especially to those who tracked down problems and contributed
+patches---Akiro Kakuto and Tommy Ekola.
+
+   Thanks to those who have worked hard to provide support for dvipdfm in
+other Tex/LaTeX packages---Cesar Crucius, D.P. Story, Donald Knuth, Hans
+Hagan, and especially Sebastian Rahtz. I apologize for anyone who I have
+neglected to mention.
+
+
+

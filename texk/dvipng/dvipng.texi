@@ -1,0 +1,1626 @@
+\input texinfo
+@setfilename dvipng.info
+@settitle A DVI-to-PNG translator
+@ifset man
+@c man begin SYNOPSIS
+dvipng [options] filename
+
+dvipng [options] [filename] -
+@c man end
+@end ifset
+
+@set version 1.6
+@set month-year June 2005
+
+@c Put everything in one index (arbitrarily chosen to be the concept index).
+@syncodeindex fn cp
+@syncodeindex ky cp
+@syncodeindex pg cp
+@syncodeindex vr cp
+
+@include macros.texi
+@iftex
+@tolerance 10000 @emergencystretch 3em
+@end iftex
+
+@dircategory TeX
+@direntry
+* DVI-to-PNG: (dvipng).              Translating TeX DVI files to Portable Network Graphics (PNG).
+* dvipng: (dvipng).                  A DVI-to-PNG translator.
+@end direntry
+
+@finalout
+@titlepage
+@title dvipng
+@subtitle A DVI-to-PNG Translator
+@subtitle Version @value{version}
+
+
+@author by Jan-@AA{}ke Larsson.
+@page
+@vskip 0pt plus 1filll
+Copyright @copyright{} 2002-2005 Jan-@AA{}ke Larsson
+ 
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+@ignore
+Permission is granted to process this file through TeX and print the
+results, provided the printed document carries copying permission
+notice identical to this one except for the removal of this paragraph
+(this paragraph not being relevant to the printed manual).
+@end ignore
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided also that the
+section entitled ``Copying'' is included exactly as in the original, and
+provided that the entire resulting derived work is distributed under the
+terms of a permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that this permission notice may be stated in a translation
+approved by the Free Software Foundation.
+@end titlepage
+@page
+
+@c @summarycontents
+@contents
+
+@ifnottex
+@node Top
+@top dvipng
+
+This manual documents dvipng, a program to translate a DVI (DeVice
+Independent) file into PNG (Portable Network Graphics).
+
+This file documents dvipng version @value{version}
+
+Corrections or perhaps rewrites of sections are @emph{very welcome}.
+
+Jan-@AA{}ke Larsson
+
+@end ifnottex
+
+@menu
+* Introduction::                Introduction
+* Installation::                How to compile and install dvipng
+* Basic usage::                 First things first
+* Command-line options::        Advanced usage
+* Diagnosing problems::         Problems?
+* Color::                       Using color with dvipng
+* Copying::                     GNU General Public License
+* Credits::                     People who have contributed
+* Index::                       General index
+@end menu
+
+
+
+@node Introduction
+@chapter Introduction
+
+@c man begin DESCRIPTION
+@include readme.texi
+@c man end
+
+@node Installation
+@chapter Installation
+
+@cindex configuration, of dvipng
+@cindex compilation
+@cindex installation, of dvipng
+
+@include install.texi
+
+@node Basic usage
+@chapter Basic usage of dvipng
+
+@cindex invoking dvipng
+
+To use dvipng at its simplest, simply type
+
+@example
+dvipng foo
+@end example
+
+@noindent
+where @file{foo.dvi} is the output of @TeX{} that you want to convert to
+PNG format. If there are four pages in @file{foo.dvi}, those pages will
+be output as @file{foo1.png}, @file{foo2.png}, @file{foo3.png}, and
+@file{foo4.png}, respectively.
+
+If you have enabled the PostScript font support (via FreeType or T1lib),
+fonts will be rendered as they are needed. Otherwise, if you use fonts
+that have not been used on your system before, they may be automatically
+generated; this process can take a few minutes, so progress reports
+appear by default. The next time the same font is used, it will have
+been saved on disk, so rendering will go much faster. (If dvipng tries
+to endlessly generate the same fonts over and over again, something is
+wrong. @xref{Unable to generate fonts,,, kpathsea, Kpathsea}.)
+
+Many options are available (see the next section).  For a brief summary
+of available options, just type
+
+@example
+dvipng --help
+@end example
+
+@node Command-line options
+@chapter Command-line options
+
+@cindex command-line options
+@cindex options, dvipng
+
+dvipng has a plethora of command line options.  Reading through this
+section will give a good idea of the capabilities of the driver.
+
+@menu
+* Option summary::              Quick listing, from dvipng --help.
+* Option details::              More information about each option.
+@end menu
+
+
+@node Option summary
+@section Option summary
+
+@cindex options, summary
+Here is a handy summary of the options; it is printed out when you run
+dvipng with no arguments or with the standard @samp{--help} option.
+
+@example
+@include dvipng.help
+@end example
+
+
+@node Option details
+@section Option details
+
+@cindex option, details of
+@c man begin OPTIONS
+
+Many of the parameterless options listed here can be turned off by
+suffixing the option with a zero (@samp{0}); for instance, to turn off
+page reversal, use @samp{-r0}.  Such options are marked with a trailing
+@samp{*}.
+
+@table @samp
+@item -
+@cindex options, reading from standard input
+@cindex standard input, reading options from
+Read additional options from standard input after processing the command
+line.
+
+@item --help
+Print a usage message and exit.
+
+@item --version
+Print the version number and exit.
+
+@item -bd @var{num}
+@item -bd @var{color_spec}
+@item -bd '@var{num} @var{color_spec}'
+@cindex transparent border width
+@cindex transparent border fallback color
+Set the pixel width of the transparent border (default 0). Using this
+option will make the image edges transparent, but it only affects pixels
+with the background color. Giving a @var{color_spec} will set the
+fallback color, to be used in viewers that cannot handle transparency
+(the default is the background color). The color spec should be in
+@TeX{} color \special syntax, e.g., 'rgb 1.0 0.0 0.0'. Setting the
+fallback color makes the default border width 1 px. @xref{Color}.
+
+@item --bdpi @var{num}
+@cindex base resolution, setting
+Set the base (Metafont) resolution, both horizontal and vertical, to
+@var{num} dpi (dots per inch). This option is necessary when manually
+selecting Metafont mode with the --mode option (see below).
+
+@item -bg @var{color_spec}
+@cindex background color (option)
+Choose background color for the images. This option will be ignored if
+there is a background color \special in the DVI. The color spec should
+be in @TeX{} color \special syntax, e.g., 'rgb 1.0 0.0 0.0'. You can
+also specify 'Transparent' or 'transparent' which will give you a
+transparent background with the normal background as a fallback color. A
+capitalized 'Transparent' will give a full-alpha transparency, while an
+all-lowercase 'transparent' will give a simple fully transparent
+background with non-transparent antialiased pixels. The latter would be
+suitable for viewers who cannot cope with a true alpha channel.  GIF
+images do not support full alpha transparency, so in case of GIF output,
+both variants will use the latter behaviour.  @xref{Color}.
+
+@item -d @var{num}
+@cindex debugging
+Set the debug flags, showing what dvipng (thinks it) is doing. This will
+work unless dvipng has been compiled without the @samp{DEBUG} option
+(not recommended). Set the flags as you need them, use @samp{-d -1} as
+the first option for maximum output. @xref{Debug options}. 
+
+@item -D @var{num}
+@cindex output resolution, setting
+Set the output resolution, both horizontal and vertical, to @var{num}
+dpi (dots per inch). 
+
+One may want to adjust this to fit a certain text font size (e.g., on
+a web page), and for a text font height of @var{font_px} pixels (in
+Mozilla) the correct formula is
+@example
+@var{dpi} = @var{font_px} * 72.27 / 10 [px * @TeX{}pt/in / @TeX{}pt]
+@end example
+The last division by ten is due to the standard font height 10pt in
+your document, if you use 12pt, divide by 12. Unfortunately, some
+proprietary browsers have font height in pt (points), not pixels. You
+have to rescale that to pixels, using the screen resolution (default
+is usually 96 dpi) which means the formula is
+@example
+@var{font_px} = @var{font_pt} * 96 / 72 [pt * px/in / (pt/in)] 
+@end example
+On some high-res screens, the value is instead 120 dpi. Good luck!
+
+@item --depth*
+@cindex baseline reporting
+@cindex depth reporting
+Report the depth of the image. This only works reliably when the
+@LaTeX{} style @samp{preview.sty} from @previewlatex{} is used. It
+reports the number of pixels from the bottom of the image to the
+baseline of the image. This can be used for vertical positioning of the
+image in, e.g., web documents, where one would use (Cascading
+StyleSheets 1)
+@example
+<IMG SRC="@var{filename.png}" STYLE="vertical-align: -@var{depth}px">
+@end example
+The depth is a negative offset in this case, so the minus sign is
+necessary, and the unit is pixels (px).
+
+@item --dvinum*
+Set this option to make the output page number be the @TeX{} page
+numbers rather than the physical page number. See the @samp{-o} switch.
+
+@ignore
+@item -e @var{num}
+@cindex maxdrift
+@cindex accuracy in positioning
+@cindex positioning accuracy
+Maximum drift in pixels of each character from its `true'
+resolution-independent position on the page. The default value of this
+parameter is resolution dependent (it is the number of entries in the
+list [100, 200, 300, 400, 500, 600, 800, 1000, 1200, 1600, 2000, 2400,
+2800, 3200, @dots{}] that are less than or equal to the resolution in
+dots per inch). Allowing individual characters to `drift' from their
+correctly rounded positions by a few pixels, while regaining the true
+position at the beginning of each new word, improves the spacing of
+letters in words.
+
+@item -f*
+@cindex filter, running as a
+@cindex standard I/O
+@cindex pipes, not readable
+@vindex PRINTER@r{, avoided with @samp{-f}}
+Run as a filter.  Read the DVI file from standard input and write the
+PostScript to standard output.  The standard input must be seekable, so
+it cannot be a pipe.  If your input must be a pipe, write a shell script
+that copies the pipe output to a temporary file and then points dvipng at
+this file.  This option also disables the automatic reading of the
+@code{PRINTER} environment variable; use @samp{-P$PRINTER} after the
+@samp{-f} to read it anyway.  It also turns off the automatic sending of
+control-D if it was turned on with the @samp{-F} option or in the
+configuration file; use @samp{-F} after the @samp{-f} to send it anyway.
+
+@item -k*
+@cindex cropmarks
+Print crop marks.  This option increases the paper size (which should be
+specified, either with a paper size special or with the @samp{-T}
+option) by a half inch in each dimension.  It translates each page by a
+quarter inch and draws cross-style crop marks.  It is mostly useful with
+typesetters that can set the page size automatically.  This works by
+downloading @file{crop.pro}.
+@end ignore
+
+@item -fg @var{color_spec}
+@cindex foreground color (option)
+Choose foreground color for the images. This option will be ignored if
+there is a foreground color \special in the DVI. The color spec should
+be in @TeX{} color \special syntax, e.g., 'rgb 1.0 0.0 0.0'.
+@xref{Color}.
+
+@item --follow*
+@cindex follow mode
+Enable follow mode. One of the benefits of dvipng is that it does not
+read the postamble, so it can be started before @TeX{} finishes. This
+switch makes dvipng wait at EOF for further output, unless it finds the
+POST marker that indicates the end of the DVI. This is similar to
+@samp{tail -f} but for DVI-to-PNG conversion.
+
+@item --freetype*
+@cindex FreeType font rendering
+Enable/disable FreeType font rendering (default on). This option is
+available if the FreeType2 font library was present at compilation time.
+If this is the case, dvipng will have direct support for PostScript
+Type1 and TrueType fonts internally, rather than using @samp{gsftopk}
+for rendering the fonts. If you have PostScript versions of Computer
+Modern installed, there will be no need to generate bitmapped variants
+on disk of these. Then, you can render images at different (and unusual)
+resolutions without cluttering the disk with lots of bitmapped fonts.
+Note that if you have both FreeType and T1lib on your system, FreeType
+will be preferred by dvipng. If you for some reason would want to use
+T1lib rendering, use this option.
+
+@item --gamma @var{num}
+@cindex gamma
+@cindex dark fonts
+@cindex light fonts
+@cindex fuzzy images
+Control the interpolation of colors in the greyscale anti-aliasing
+color palette.  Default value is 1.0.  For 0 < @var{num} < 1, the
+fonts will be lighter (more like the background), and for @var{num} >
+1, the fonts will be darker (more like the foreground).
+
+@item --gif*
+@cindex GIF image format
+The images are output in the GIF format, if GIF support is
+enabled. This is the default for the @samp{dvigif} binary, which only
+will be available when GIF support is enabled. See also the
+@samp{--png} option.
+
+@item --height*
+@cindex baseline reporting
+@cindex height reporting
+Report the height of the image. This only works reliably when the
+@LaTeX{} style @samp{preview.sty} from @previewlatex{} is used. It
+reports the number of pixels from the top of the image to the
+baseline of the image. The total height of the image is obtained as the
+sum of the values reported from --height and the --depth.
+
+@item -l [=]@var{num}
+@cindex last page printed
+@cindex page, last printed
+@cindex physical page number, and @samp{-l}
+@cindex absolute page number, and @samp{-l}
+The last page printed will be the first one numbered @var{num}. Default
+is the last page in the document.  If @var{num} is prefixed by an equals
+sign, then it (and the argument to the @samp{-p} option, if specified)
+is treated as a physical (absolute) page number, rather than a value to
+compare with the @TeX{} @samp{\count0} values stored in the DVI file.
+Thus, using @samp{-l =9} will end with the ninth page of the document,
+no matter what the pages are actually numbered.
+
+@item --mode @var{mode}
+@cindex mode name, specifying
+@cindex Metafont mode, specifying
+Use @var{mode} as the Metafont device name for the PK fonts (both for
+path searching and font generation). This needs to be augmented with the
+base device resolution, given with the @samp{--bdpi} option. See the
+file @url{ftp://ftp.tug.org/tex/modes.mf} for a list of resolutions and
+mode names for most devices. @xref{Unable to generate fonts,,, kpathsea,
+Kpathsea}.
+
+@item -M*
+@cindex font generation, avoiding
+@pindex mktexpk@r{, avoiding}
+@c this description repeated in kpathsea.texi
+Turns off automatic PK font generation (@file{mktexpk}). This will have
+no effect when using PostScript fonts, since no PK font generation will
+be done anyway.
+@ignore
+@flindex missfont.log
+If @code{mktexpk}, the invocation is appended to a file
+@file{missfont.log} (by default) in the current directory. You can then
+execute the log file to create the missing files after fixing the
+problem.
+@vindex TEXMFOUTPUT
+@vindex MISSFONT_LOG
+If the current directory is not writable and the environment variable or
+configuration file value @samp{TEXMFOUTPUT} is set, its value is used.
+Otherwise, nothing is written.  The name @samp{missfont.log} is
+overridden by the @samp{MISSFONT_LOG} environment variable or
+configuration file value.
+@end ignore
+
+@item --noghostscript*
+@cindex GhostScript, turning off
+This switch prohibits the internal call to GhostScript for displaying
+PostScript specials. @samp{--noghostscript0} turns the call back on.
+
+@item --nogssafer*
+@cindex GhostScript and -dSAFER
+@cindex -dSAFER
+Normally, if GhostScript is used to render PostScript specials, the
+GhostScript interpreter is run with the option @samp{-dSAFER}. The
+@samp{-nogssafer} option runs GhostScript without @samp{-dSAFER}. The
+@samp{-dSAFER} option in Ghostscript disables PostScript operators such
+as deletefile, to prevent possibly malicious PostScript programs from
+having any effect.
+
+@item -o @var{name}
+@cindex output, redirecting
+@cindex standard output, output to
+Send output to the file @var{name}. A single occurrence of @samp{%d} or
+@samp{%01d}, @dots{}, @samp{%09d} will be exchanged for the physical
+page number (this can be changed, see the @samp{--dvinum} switch). The
+default output filename is @samp{@var{file}%d.png} where the input DVI
+file was @samp{@var{file}.dvi}.
+
+@item -O @var{x-offset},@var{y-offset}
+@cindex offset pages
+Move the origin by @var{x-offset},@var{y-offset}, a comma-separated
+pair of dimensions such as @samp{.1in,-.3cm}.
+@c (@pxref{papersize special}).  
+The origin of the page is shifted from the default position
+(of one inch down, one inch to the right from the upper left corner of
+the paper) by this amount.  
+
+@item -p [=]@var{num}
+@cindex first page printed
+@cindex page, first printed
+@cindex physical page number, and @samp{-p}
+@cindex absolute page number, and @samp{-p}
+The first page printed will be the first one numbered @var{num}. Default
+is the first page in the document.  If @var{num} is prefixed by an
+equals sign, then it (and the argument to the @samp{-l} option, if
+specified) is treated as a physical (absolute) page number, rather than
+a value to compare with the @TeX{} @samp{\count0} values stored in the
+DVI file.  Thus, using @samp{-p =3} will start with the third page of
+the document, no matter what the pages are actually numbered.
+
+@item --picky*
+@cindex no erroneous images
+No images are output when a warning occurs. Normally, dvipng will
+output an image in spite of a warning, but there may be something
+missing in this image. One reason to use this option would be if you
+have a more complete but slower fallback converter. Mainly, this is
+useful for failed figure inclusion and unknown \special occurrences,
+but warnings will also occur for missing or unknown color specs and
+missing PK fonts.
+
+@item --png*
+@cindex PNG image format
+The images are output in the PNG format. This is the default for the
+@samp{dvipng} binary. See also the @samp{--gif} option.
+
+@item -pp @var{firstpage}-@var{lastpage}
+@cindex page range
+Print pages @var{firstpage} through @var{lastpage}; but not quite
+equivalent to @samp{-p @var{firstpage} -l @var{lastpage}}. For example,
+when rendering a book, there may be several instances of a page in the
+DVI file (one in @code{\frontmatter}, one in @code{\mainmatter}, and one
+in @code{\backmatter}). In case of several pages matching, @samp{-pp
+@var{firstpage}-@var{lastpage}} will render @emph{all} pages that
+matches the specified range, while @samp{-p @var{firstpage} -l
+@var{lastpage}} will render the pages from the @emph{first} occurrence
+of @var{firstpage} to the @emph{first} occurrence of @var{lastpage}.
+This is the (undocumented) behaviour of dvips. In dvipng you can give
+both kinds of options, in which case you get all pages that matches the
+range in @samp{-pp} between the pages from @samp{-p} to @samp{-l}. Also
+multiple @samp{-pp} options accumulate, unlike @samp{-p} and @samp{-l}.
+The @samp{-} separator can also be @samp{:}. Note that @samp{-pp -1}
+will be interpreted as "all pages up to and including 1", if you want a
+page numbered -1 (only the table of contents, say) put @samp{-pp -1--1},
+or more readable, @samp{-pp -1:-1}.
+
+@item -q*
+@cindex quiet operation
+@cindex silent operation
+@cindex warnings, suppressing
+Run quietly.  Don't chatter about pages converted, etc.@: to standard
+output; report no warnings (only errors) to standard error.
+
+@item -Q @var{num}
+@cindex antialiasing levels@r{, number of}
+@cindex quality
+Set the quality to @var{num}. That is, choose the number of antialiasing
+levels for PK and T1lib rendering to be @var{num}*@var{num}. The default
+value is 4 which gives 16 levels of antialiasing for antialiased fonts
+from these two. If FreeType is available, its rendering is unaffected by
+this option.
+
+@item -r*
+@cindex reverse pagination
+Toggle output of pages in reverse/forward order. By default, the first
+page in the DVI is output first.
+
+@ignore
+@item -R
+@cindex security
+@cindex shell command execution, disabling
+@cindex absolute filenames, disabling
+@cindex pipes, disabling output to
+Run securely.  This disables shell command execution in @code{\special}
+(via @samp{`}, @pxref{Dynamic creation of graphics}) and config files
+(via the @samp{E} option, @pxref{Configuration file commands}), pipes as
+output files, and opening of any absolute filenames.
+
+@item -t @var{papertype}
+@cindex paper type
+@cindex media
+@cindex letter papertype
+@cindex legal papertype
+@cindex ledger papertype
+@cindex a4 papertype
+@cindex a3 papertype
+@cindex landscape papertype
+Set the paper type to @var{papertype}.
+@c usually defined in one of the
+@c configuration files, along with the appropriate PostScript code to
+@c select it (@pxref{Config file paper sizes}).  
+You can also specify a @var{papertype} of @samp{landscape}, which
+rotates a document by 90 degrees. To rotate a document whose paper type
+is not the default, you can use the @samp{-t} option twice, once for the
+paper type, and once for @samp{landscape}.
+@end ignore
+
+@item -T @var{image_size}
+Set the image size to @var{image_size} which can be either of
+@samp{bbox}, @samp{tight}, or a comma-separated pair of dimensions
+@var{hsize},@var{vsize} such as @samp{.1in,.3cm}. The default is
+@samp{bbox} which produces a PNG that includes all ink put on the page
+and in addition the DVI origin, located 1in from the top and 1in from
+the left edge of the paper. This usually gives whitespace above and to
+the left in the produced image. The value @samp{tight} will make dvipng
+only include all ink put on the page, producing neat images.
+@c (@pxref{papersize special}).  
+This option overrides any papersize special in the DVI file.
+
+@item --t1lib*
+@cindex T1lib font rendering
+Enable/disable T1lib font rendering (default on). This option is
+available if the T1lib font library was present at compilation time. If
+this is the case, dvipng will have direct support for PostScript Type1
+fonts internally, rather than using @samp{gsftopk} for rendering the
+fonts. If you have PostScript versions of Computer Modern installed,
+there will be no need to generate bitmapped variants on disk of these.
+Then, you can render images at different (and unusual) resolutions
+without cluttering the disk with lots of bitmapped fonts. Note that if
+you have both FreeType and T1lib on your system FreeType will be
+preferred by dvipng, and if you for some reason rather want to use
+T1lib, give the option @samp{--freetype0} (see above).
+
+@item --truecolor*
+@cindex truecolor output
+On systems with a fairly new @samp{libgd}, one can choose to generate
+truecolor output. This will not be necessary in general unless you
+include truecolor images via a PostScript special (i.e., the
+@samp{graphics} or @samp{graphicx} package). It will lead to longer
+execution time, mostly because more data is written to disk.
+ 
+@item -v* 
+Enable verbose operation. This will currently indicate what fonts is
+used, in addition to the usual output.
+
+@item -x @var{num}
+@cindex magnification, overriding DVI
+Set the @math{x} magnification ratio to @math{@var{num}/1000}. Overrides
+the magnification specified in the DVI file.  Must be between 10 and
+100000.  It is recommended that you use standard magstep values (1095,
+1200, 1440, 1728, 2074, 2488, 2986, and so on) to help reduce the total
+number of PK files generated.  @var{num} may be a real number, not an
+integer, for increased precision.
+
+@item -z @var{num}
+@cindex compression
+Set the PNG compression level to @var{num}. This option is enabled if
+your @samp{libgd} is new enough. The default compression level is 1,
+which selects maximum speed at the price of slightly larger PNGs. For an
+older @samp{libgd}, the hard-soldered value 5 is used. The include file
+@samp{png.h} says
+@ifclear man
+@quotation
+Currently, valid values range from 0 - 9, corresponding directly to the
+zlib compression levels 0 - 9 (0 - no compression, 9 - "maximal"
+compression). Note that tests have shown that zlib compression levels
+3-6 usually perform as well as level 9 for PNG images, and do
+considerably fewer calculations. In the future, these values may not
+correspond directly to the zlib compression levels.
+@end quotation
+@end ifclear
+@ifset man
+``Currently, valid values range from 0 - 9, corresponding directly to
+the zlib compression levels 0 - 9 (0 - no compression, 9 - "maximal"
+compression). Note that tests have shown that zlib compression levels
+3-6 usually perform as well as level 9 for PNG images, and do
+considerably fewer calculations. In the future, these values may not
+correspond directly to the zlib compression levels.''
+@end ifset
+@end table
+@c man end
+
+@ignore
+@c @node Environment variables
+@chapter Environment variables
+
+@cindex environment variables
+
+dvipng looks for many environment variables, to define search paths and
+other things.  The path variables are read as needed, after all
+configuration files are read, so they override values in the
+configuration files.  (Except for @code{TEXCONFIG}, which defines where
+the configuration files themselves are found.)
+
+@xref{Path specifications,,, kpathsea, Kpathsea}, for details of
+interpretation of path and other environment variables common to all
+Kpathsea-using programs.  Only the environment variables specific to
+dvipng are mentioned here.
+
+@vtable @code
+@item DVIPSMAKEPK
+@pindex mktexpk@r{, changing name}
+Overrides @samp{mktexpk} as the name of the program to invoke to
+create missing PK fonts.  You can change the arguments passed to the
+@code{mktexpk} program with the @code{MAKETEXPK} environment
+variable; @pxref{MakeTeX script arguments,,, kpathsea, Kpathsea}.
+
+@item DVIPSRC
+Specifies the name of the startup file (@pxref{Configuration file
+searching}) which is read after @file{config.ps} but before any
+printer-specific configuration files.
+
+@item TEXPICTS
+Path to search for included graphics files.  Overrides the @samp{S}
+config file option (@pxref{Configuration file commands}).  If not set,
+@code{TEXINPUTS} is looked for.  @xref{Supported file formats,,,
+kpathsea, Kpathsea}.
+
+@end vtable
+
+@c @node Paper size and landscape
+@chapter Paper size and landscape orientation
+
+@cindex paper size, general
+
+Most @TeX{} documents at a particular site are designed to use the
+standard paper size (letter size in the United States, A4 in Europe).
+The dvipng program can be customized either sitewide or for a particular
+printer.
+
+@cindex landscape orientation, defined
+But many documents are designed for other paper sizes.  For instance,
+you may want to design a document that has the long edge of the paper
+horizontal.  This can be useful when typesetting booklets, brochures,
+complex tables, or many other documents.  This type of paper orientation
+is called @dfn{landscape} orientation (the default orientation is
+@dfn{portrait}).  Alternatively, a document might be designed for ledger
+or A3 paper.
+
+Since the intended paper size is a document design decision, not a
+printing decision, such information should be given in the @TeX{} file
+and not on the dvipng command line. For this reason, dvipng supports a
+@samp{papersize} special. It is hoped that this special will become
+standard over time for @TeX{} previewers, printer drivers, and other DVI
+drivers.
+
+@menu
+* papersize special::           Specifying the paper size in TeX.
+* Config file paper sizes::     Specifying printer- and site-specific sizes.
+@end menu
+
+
+@c @node papersize special
+@section @samp{papersize} special
+
+@findex papersize @r{special}
+
+The format of the @samp{papersize} special is
+
+@example
+\special@{papersize=@var{width},@var{height}@}
+@end example
+
+@noindent
+@var{width} is the horizontal size of the page, and @var{height} is the
+vertical size.  The dimensions supported are the same as for @TeX{};
+namely, in (inches), cm (centimeters), mm (millimeters), pt (points), sp
+(scaled points), bp (big points, the same as the default PostScript
+unit), pc (picas), dd (didot points), and cc (ciceros).
+
+@findex landscape@r{, as @code{\special}}
+For a US letter size landscape document, the @code{papersize} would be:
+@example
+\special@{papersize=11in,8.5in@}
+@end example
+
+@noindent
+An alternate specification of @code{landscape}:
+@example
+\special@{landscape@}
+@end example
+
+@noindent
+This is supported for backward compatibility, but it is hoped that
+eventually the @code{papersize} comment will dominate.
+
+Of course, such a @code{\special} only informs dvipng of the desired
+paper size; you must also adjust @code{\hsize} and @code{\vsize} in your
+@TeX{} document typeset to those dimensions.
+
+The @code{papersize} special must occur somewhere on the first page of
+the document.
+
+
+@c @node Config file paper sizes
+@section Configuration file paper size command
+
+@cindex paper size configuration file command
+@cindex configuration file paper size command
+
+The @samp{@@} command in a configuration file sets the paper size
+defaults and options.  The first @samp{@@} command defines the default
+paper size.  It has three possible parameters:
+
+@example
+@@ @r{[}@var{name} @r{[}@var{hsize} @var{vsize}@r{]]}
+@end example
+
+If @samp{@@} is specified on a line by itself, with no parameters, it
+instructs dvipng to discard all previous paper size information (possibly
+from another configuration file).
+
+If three parameters are given, with the first parameter being a name and
+the second and third being a dimension (as in @samp{8.5in} or
+@samp{3.2cc}, just like in the @samp{papersize} special), then the
+option is interpreted as starting a new paper size description, where
+@var{name} is the name and @var{hsize} and @var{vsize} define the
+horizontal and vertical size of the sheet of paper, respectively. For
+example:
+
+@example
+@@ letterSize 8.5in 11in
+@end example
+
+If both @var{hsize} and @var{vsize} are zero (you must still specify
+units!) then any page size will match.  If the @samp{@@} character is
+immediately followed by a @samp{+} sign, then the remainder of the line
+(after skipping any leading blanks) is treated as PostScript code to
+send to the printer, presumably to select that particular paper size:
+
+@example
+@@ letter 8.5in 11in
+@@+ %%BeginPaperSize: Letter
+@@+ letter
+@@+ %%EndPaperSize
+@end example
+
+After all that, if the first character of the line is an exclamation
+point, then the line is put in the initial comments section of the final
+output file; else, it is put in the setup section of the output file.
+For example:
+
+@example
+@@ legal 8.5in 14in
+@@+ ! %%DocumentPaperSizes: Legal
+@@+ %%BeginPaperSize: Legal
+@@+ legal
+@@+ %%EndPaperSize
+@end example
+
+When dvipng has a paper format name given on the command line, it looks
+for a match by the @var{name}; when it has a @samp{papersize} special,
+it looks for a match by dimensions.  The first match found (in the order
+the paper size information is found in the configuration file) is used.
+If nothing matches, a warning is printed and the first paper size is
+used.  The dimensions must match within a quarter of an inch.  Landscape
+mode for all paper sizes is automatically supported.
+
+If your printer has a command to set a special paper size, then give
+dimensions of @samp{0in 0in}; the PostScript code that sets the paper
+size can refer to the dimensions the user requested as @samp{hsize} and
+@samp{vsize}; these will be macros defined in the PostScript that return
+the requested size in default PostScript units.  Virtually all of the
+PostScript commands you use here are device-dependent and degrade the
+portability of the file; that is why the default first paper size entry
+should not send any PostScript commands down (although a structured
+comment or two would be okay).  Also, some printers want
+@samp{BeginPaperSize} comments and paper size setting commands; others
+(such as the NeXT) want @samp{PaperSize} comments and they will handle
+setting the paper size.  There is no solution I could find that works
+for both (except maybe specifying both).
+
+@flindex mkdvipngpapers
+The Perl 5 script @file{contrib/mkdvipngpapers} in the distribution
+directory may help in determining appropriate paper size definitions.
+
+@cindex a4 paper size, as default
+If your printers are configured to use A4 paper by default, the
+configuration file (probably the global @file{config.ps} in this case)
+should include this as the first @samp{@@} command:
+
+@example
+@@ A4size 210mm 297mm
+@@+ %%PaperSize: A4
+@end example
+
+@noindent
+so that @code{A4size} is used as the default, and not @code{A4} itself;
+thus, no PostScript @code{a4} command is added to the output file,
+unless the user explicitly says to use paper size @samp{a4}.  That is,
+by default, no paper size PostScript command should be put in the
+output, but dvipng will still know that the paper size is A4 because
+@samp{A4size} is the first (and therefore default) size in the
+configuration file.
+
+Executing the @samp{letter} or @samp{a4} or other PostScript operators
+cause the document to be nonconforming and can cause it not to print on
+certain printers, so the default paper size should not execute such an
+operator if at all possible.
+
+
+
+@c @node Interaction with PostScript
+@chapter Interaction with PostScript
+
+@cindex interaction with PostScript
+@cindex PostScript interaction
+
+dvipng supports inclusion of PostScript figure files (e.g., Encapsulated
+PostScript), downloading other header files (e.g., fonts), including
+literal PostScript code, and hypertext.
+
+@menu
+* PostScript figures::          Including an Encapsulated PostScript figure.
+* Header files::                Downloading extra definitions.
+* Diagnosing problems::         
+@end menu
+
+
+@c @node PostScript figures
+@chapter PostScript figures
+
+Scaling and including PostScript graphics is a breeze---if the PostScript
+file is correctly formed.  Even if it is not, however, the file can usually
+be accommodated with just a little more work.
+
+@menu
+* Bounding box::                The %%BoundingBox EPS comment.
+* EPSF macros::                 Including the file in TeX.
+* psfile special::              The basic special.
+* Dynamic creation of graphics::  Handling compressed or generated figures.
+* Fonts in figures::            The %*Font comment.
+@end menu
+
+
+@c @node Bounding box
+@section The bounding box comment
+
+@cindex bounding box, comment for
+
+The most important feature of a good PostScript file from the standpoint
+of including it in another document is an accurate bounding box comment.
+Every well-formed PostScript file has a comment describing where on the
+page the graphic is located, and how big that graphic is.
+
+@cindex big points
+@cindex PostScript units
+@cindex bounding box, defined
+This information is given as the lower left and upper right corners of
+the box just enclosing the graphic, and is thus referred to as the
+@dfn{bounding box}.  These coordinates are given in the default
+PostScript units (there are precisely 72 PostScript units to the inch,
+like @TeX{} big points) with respect to the lower left corner of the
+sheet of paper.
+
+@findex %%BoundingBox
+To see if a PostScript file has a bounding box comment, just look at the
+first few lines of the file.  PostScript files are standard ASCII, so
+you can use any text editor to do this.  If within the first few dozen
+lines there is a line like
+
+@example
+%%BoundingBox: 25 50 400 300
+@end example
+
+@noindent
+(with any reasonable numbers), chances are very good that the file is
+Encapsulated PostScript and will work easily with dvipng.  If the file
+contains instead a line like
+
+@findex atend@r{, bounding box specification}
+@findex (atend)@r{, bounding box specification}
+@example
+%%BoundingBox: (atend)
+@end example
+
+@noindent
+the file is still probably Encapsulated PostScript, but the bounding box
+is given at the end of the file.  dvipng needs it at the beginning.  You
+can move it with that same text editor, or a simple script.  (The
+bounding box is given in this way when the program that generated the
+PostScript couldn't know the size in advance, or was too lazy to compute
+it.)
+
+@pindex bbfig
+@cindex bounding box, determining
+If the document lacks a @samp{%%BoundingBox:} altogether, you can
+determine one in a couple of ways.  One is to use the @samp{bbfig}
+program distributed with dvipng in the @file{contrib} directory. This can
+usually find the correct bounding box automatically; it works best with
+Ghostscript.
+
+@vindex 612 792 @r{bounding box size}
+If the comment looks like this:
+@example
+%%BoundingBox: 0 0 612 792
+@end example
+
+@noindent
+the graphic claims to take up an entire sheet of paper.  This is
+usually a symptom of a bug in the program that generated it.
+
+The other is to do it yourself: print the file.  Now, take a ruler, and
+make the following measurements (in PostScript units, so measure in
+inches and multiply by 72): From the left edge of the paper to the
+leftmost mark on the paper is @var{llx}, the first number.  From the
+bottom edge of the paper to the bottommost mark on the paper is
+@var{lly}, the second number.  From the left edge of the paper to the
+rightmost mark on the paper is @var{urx}, the third number.  The fourth
+and final number, @var{ury}, is the distance from the bottom of the page
+to the uppermost mark on the paper.
+
+Once you have the numbers, add a comment of the following form as the
+second line of the document.  (The first line should already be a line
+starting with the two characters @samp{%!}; if it is not, the file
+probably isn't PostScript.)
+
+@example
+%%BoundingBox: @var{llx} @var{lly} @var{urx} @var{ury}
+@end example
+
+@noindent
+Or, if you don't want to modify the file, you can simply write these
+numbers down in a convenient place and give them in your @TeX{} document
+when you import the graphic, as described in the next section.
+
+If the document does not have such a bounding box, or if the bounding
+box is given at the end of the document, or the bounding box is wrong,
+please complain to the authors of the software package that generated
+the file.
+
+
+@c @node EPSF macros
+@section Using the EPSF macros
+
+@cindex EPSF macros
+@cindex macros for epsf inclusion
+
+Once the figure file has a bounding box comment (see the previous
+section,) you are ready it the graphic into a @TeX{} document.  Many
+packages for using EPS files exist.  One distributed with dvipng is the
+files @file{epsf.tex} (for plain @TeX{}) and @file{epsf.sty} (for
+La@TeX{}).  For plain @TeX{}, add a line like this near the top of your
+input file:
+
+@flindex epsf.tex
+@example
+\input epsf
+@end example
+
+@noindent
+If you are using La@TeX{} 2e, use the @samp{graphics} or @samp{graphicx}
+package.  
+@flindex epsf.sty
+If you are using La@TeX{} 2.09, add the @samp{epsf} style option, as in:
+
+@example
+\documentstyle[12pt,epsf]@{article@}
+@end example
+
+@noindent
+In any case, the above only needs to be done once, no matter how many
+figures you plan to include.
+
+Now, at the point you want to include a file, enter a line such as:
+
+@example
+\epsffile@{foo.eps@}
+@end example
+
+@findex \leavevmode
+@cindex bounding box, supplying to @TeX{}
+If you are using La@TeX{}, you may need to add @code{\leavevmode}
+immediately before the @code{\epsffile} command to get certain
+environments to work correctly.  If your file does not have a bounding
+box comment, you can supply the numbers as determined in the previous
+section, in the same order they would have been in a normal bounding box
+comment:
+
+@example
+\epsffile[100 100 500 500]@{foo.ps@}
+@end example
+
+@noindent
+Now, save your changes and run @TeX{} and dvipng; the output should have
+your graphic positioned at precisely the point you indicated, occupying
+the proper amount of space.
+
+@findex \epsffile @r{macro}
+@cindex figures, natural size
+The @code{\epsffile} macro typesets the figure as a @TeX{} @code{\vbox}
+at the point of the page that the command is executed.  By default, the
+graphic will have its `natural' width (namely, the width of its bounding
+box).  The @TeX{} box will have depth zero and its natural height.  By
+default, the graphic will be scaled by any DVI magnification in effect,
+just as is everything else in your document.  See the next section for
+more information on scaling.
+
+@vindex \epsfverbosetrue
+@cindex verbose EPSF processing
+If you want @TeX{} to report the size of the figure as a message on your
+terminal when it processes each figure, give the command:
+
+@example
+\epsfverbosetrue
+@end example
+
+@menu
+* EPSF scaling::                
+* EPSF clipping::               
+@end menu
+
+
+@c @node EPSF scaling
+@subsection EPSF scaling
+
+@cindex scaling of figures
+@cindex figures, scaling
+
+Usually, you will want to scale an EPSF figure to some size appropriate
+for your document, since its natural size is determined by the creator
+of the EPS file.
+
+The best way to do this is to assign the desired size to the @TeX{}
+@code{\epsfxsize} or @code{\epsfysize} variables, whichever is more
+convenient for you.  That is, put
+
+@vindex \epsfxsize
+@example
+\epsfxsize=@var{dimen}
+@end example
+
+@noindent
+right before the call to @code{\epsffile}.  Then the width of the @TeX{}
+box will be @var{dimen} and its height will be scaled proportionately.
+Similarly, you can set the vertical size with
+
+@vindex \epsfysize
+@example
+\epsfysize=@var{dimen}
+@end example
+
+@noindent
+in which case the height will be set and the width scaled
+proportionally.
+
+If you set both, both will be honored, but the aspect ratio of the
+included graphic may necessarily be distorted, i.e., its contents
+stretched in one direction or the other.
+
+@findex \epsfsize
+You can resize graphics in a more general way by redefining the
+@code{\epsfsize} macro.  @code{\epsffile} calls this with two
+parameters: the natural horizontal and vertical sizes of the PostScript
+graphic.  @code{\epsfsize} must expand to the desired horizontal size,
+that is, the width of the @code{\vbox}.  Schematically:
+
+@example
+\def\epsfsize#1#2@{@var{body}@}
+@end example
+
+Some useful definitions of @var{body}:
+
+@table @samp
+@item \epsfxsize
+This definition (the default) enables the default features listed above,
+by setting @code{\epsfxsize} to the same value it had before the macro
+was called.
+
+@item #1
+Force the natural size by returning the first parameter (the original
+width).
+
+@item 0pt
+A special case, equivalent to @samp{#1}.
+
+@item 0.5#1
+Scale to half the natural size.
+
+@item \hsize
+Scale to the current @code{\hsize}.  (In La@TeX{}, use @code{\textwidth}
+instead of @code{\hsize}.)
+
+@item \ifnum#1>\hsize\hsize\else#1\fi
+If the natural width is greater than the current @code{\hsize}, scale to
+@code{\hsize}, otherwise use the natural width.
+
+@end table
+
+@cindex DVI magnification
+@cindex magnification, DVI
+@vindex \magnification
+For compatibility with other PostScript drivers, it is possible to turn
+off the default scaling of included figures by the DVI magnification
+with the following @TeX{} command:
+
+@vindex /magscale
+@example
+\special@{! /magscale false def@}
+@end example
+
+@noindent
+Use of this command is not recommended because it will make the
+@code{\epsffile} graphics the ``wrong'' size if global magnification is
+being used, and it will cause any PostScript graphics to appear
+improperly scaled and out of position if a DVI to DVI program is used to
+scale or otherwise modify the document.
+
+@findex bop-hook
+DVI magnification is not applied to any output from code you write in
+@samp{bop-hook} or its ilk (@pxref{PostScript hooks}),
+
+
+@c @node EPSF clipping
+@subsection EPSF clipping
+
+@cindex clipping of EPSF
+@cindex bounding box, inaccurate
+@cindex text in figures, chopped off
+@cindex lines in figures, wrong width
+
+By default, clipping is disabled for included EPSF images.  This is
+because clipping to the bounding box dimensions often cuts off a
+small portion of the figure, due to slightly inaccurate bounding
+box arguments.  The problem might be subtle; lines around the boundary
+of the image might be half their intended width, or the tops or
+bottoms of some text annotations might be sliced off.  If you want to
+turn clipping on, just use the command
+
+@example
+\epsfclipon
+@end example
+
+@noindent
+and to turn clipping back off, use
+
+@example
+\epsfclipoff
+@end example
+
+
+@c @node psfile special
+@section @samp{psfile} special
+
+@findex psfile @r{special}
+
+The basic special for file inclusion is as follows:
+
+@example
+\special@{psfile=@var{filename}.ps @r{[}@var{key}=@var{value}@r{]} @dots{} @}
+@end example
+
+@noindent
+This downloads the PostScript file @file{@var{filename}.ps} such that
+the current point will be the origin of the PostScript coordinate
+system.  The optional @var{key}@t{=}@var{value} assignments allow you to
+specify transformations on the PostScript.
+
+The possible @var{key}s are:
+
+@table @samp
+
+@item hoffset
+The horizontal offset (default 0)
+@item voffset
+The vertical offset (default 0)
+@item hsize     
+The horizontal clipping size (default 612)
+@item vsize     
+The vertical clipping size (default 792)
+@item hscale    
+The horizontal scaling factor (default 100)
+@item vscale    
+The vertical scaling factor (default 100)
+@item angle     
+The rotation (default 0)
+@item clip    
+Enable clipping to the bounding box
+@end table
+
+The dimension parameters are all given in PostScript units.
+The @samp{hscale} and @samp{vscale} are given in non-dimensioned percentage
+units, and the rotation value is specified in degrees.
+Thus
+
+@example
+\special@{psfile=foo.ps hoffset=72 hscale=90 vscale=90@}
+@end example
+
+@noindent
+will shift the graphics produced by file @file{foo.ps} right by one inch
+and will draw it at 0.9 times normal size.  Offsets are given relative
+to the point of the special command, and are unaffected by scaling or
+rotation.  Rotation is counterclockwise about the origin.  The order of
+operations is to rotate the figure, scale it, then offset it.
+
+For compatibility with older PostScript drivers, it is possible to change
+the units that @samp{hscale} and @samp{vscale} are given in.  This can be
+done by redefining @samp{@@scaleunit}
+@vindex scaleunit
+in @samp{SDict}
+@vindex SDict
+by a @TeX{} command such as
+
+@example
+\special@{! /@@scaleunit 1 def@}
+@end example
+
+@noindent
+The @samp{@@scaleunit} variable, which is by default 100, is what
+@samp{hscale} and @samp{vscale} are divided by to yield an absolute
+scale factor.
+
+
+@c @node Dynamic creation of graphics
+@section Dynamic creation of PostScript graphics files
+
+@cindex dynamic creation of graphics
+@cindex compressed PostScript
+@cindex uncompressing PostScript
+
+PostScript is an excellent page description language---but it does tend
+to be rather verbose.  Compressing PostScript graphics files can reduce
+them by factor of five or more.  For this reason, if the name of an
+included PostScript file ends with @file{.Z} or @file{.gz}, dvipng
+automatically runs @samp{gzip -d}.  For example:
+
+@example
+\epsffile[72 72 540 720]@{foo.ps.gz@}
+@end example
+
+@noindent
+Since the results of such a command are not accessible to @TeX{}, if you
+use this facility with the @file{epsf} macros, you need to supply the
+bounding box parameter yourself, as shown.
+
+More generally, if the filename parameter to one of the graphics
+inclusion techniques starts with a left quote (@samp{`}), the parameter
+is instead interpreted as a command to execute that will send the actual
+file to standard output.  For example:
+
+@example
+\special@{psfile="`gnuplot foo"@}
+@end example
+
+@noindent
+@flindex gnuplot
+to include the file @file{foo}.  Of course, the command to be executed
+can be anything, including using a file conversion utility such as
+@file{tek2ps} or whatever is appropriate.  This feature can be disabled
+with the @samp{-R} command-line option or @samp{R} configuration option.
+
+
+@c @node Fonts in figures
+@section Fonts in figures
+
+@cindex figures and fonts
+@cindex fonts, in PostScript figures
+@findex %*Font
+
+You can use any font available to @TeX{} and dvipng within a graphics
+file by putting a @code{%*Font:} line in the leading commentary of the
+file.  Schematically, this looks like:
+
+@example
+%*Font: @var{tfmname} @var{scaledbp} @var{designbp} @var{hex-start}:@var{hex-bitstring}
+@end example
+
+Here is the meaning of each of these elements:
+
+@table @var
+@item tfmname
+The @TeX{} TFM filename, e.g., @file{cmr10}.  You can give the same
+@var{tfmname} on more than one @samp{%*Font} line; this is useful when
+the number of characters from the font used needs a longer
+@var{hex-bitstring} (see item below) than conveniently fits on one line.
+
+@item scaledbp
+The size at which you are using the font, in PostScript points (@TeX{}
+big points).  72@dmn{bp} = 72.27@dmn{pt} = 1@dmn{in}.
+
+@item designbp
+The designsize of the font, again in PostScript points.  This should
+match the value in the TFM file @var{tfmname}.  Thus, for @file{cmr10},
+it should be @samp{9.96265}.
+
+@item hex-start
+The character code of the first character used from the font, specified
+as two ASCII hexadecimal characters, e.g., @samp{4b} or @samp{4B} for
+@samp{K}.
+
+@item hex-bitstring
+An arbitrary number of ASCII hexadecimal digits specifying which
+characters following (and including) @var{hex-start} are used.  This is
+treated as a bitmap.  For example, if your figure used the single letter
+@samp{K}, you would use @samp{4b:8} for @var{hex-start} and
+@var{hex-bitstring}.  If it used @samp{KLMNP}, you would use
+@samp{4b:f4}.
+
+@end table
+
+MetaPost's output figures contain lines like this for bitmap fonts used
+in a MetaPost label (@pxref{MetaPost,,, web2c, Web2c}).
+
+
+@c @node Header files
+@chapter PostScript header files
+
+@cindex header files, defined
+@cindex PostScript header files
+
+@dfn{Header files} are bits of PostScript included in the output file;
+generally they provide support for special features, rather than
+producing any printed output themselves.  You can explicitly request
+downloading header files if necessary for some figure, or to achieve
+some special effect.
+
+@vindex psheaderdir
+@flindex .pro @r{prologue files}
+@flindex .lpro @r{long prologue files}
+dvipng includes some headers on its own initiative, to implement features
+such as PostScript font reencoding, bitmap font downloading, handling of
+@code{\special}'s, and so on.  These standard headers are the
+@file{.pro} files (for ``prologue'') in the installation directory
+@samp{$(psheaderdir)}; they are created from the @file{.lpro} (``long
+prologue'') files in the distribution by stripping
+comments, squeezing blank lines, etc., for maximum efficiency.  If you
+want to peruse one of the standard header files, read the @file{.lpro}
+version.
+
+@vindex userdict@r{, and dictionary files}
+@cindex dictionary, @code{userdict}
+The PostScript dictionary stack will be at the @samp{userdict} level
+when header files are included.
+
+@end ignore
+
+@node Diagnosing problems
+@chapter Diagnosing problems
+
+@cindex problems
+@cindex trouble
+@cindex debugging
+
+You've gone through all the trouble of installing dvipng, carefully read
+all the instructions in this manual, and still can't get something to
+work. The following sections provide some helpful hints if you find
+yourself in such a situation.
+
+Bug reports should be sent to
+@email{dvipng@@nongnu.org}. 
+
+Questions, suggestions for new features, pleas for help, and/or praise
+should go to @email{dvipng@@nongnu.org}. For more information on this
+mailing list, send a message with just the word `help' as subject or
+body to @email{dvipng-request@@nongnu.org} or look at
+@url{http://lists.nongnu.org/mailman/listinfo/dvipng}.
+
+Offers to support further development will be appreciated. For developer
+access, ask on @email{dvipng@@nongnu.org}.
+
+For details on the @TeX{} path-searching library, and @code{mktexpk}
+problems, @pxref{Common problems,,, kpathsea, Kpathsea}.
+
+@menu
+* Debug options::               Getting diagnostics.
+* Included graphics problems::  Figures are wrongly rendered.
+@end menu
+
+
+@node Debug options
+@section Debug options
+
+@cindex debugging options
+@cindex options, debugging
+
+The @samp{-d} flag to dvipng helps in tracking down certain errors.  The
+parameter to this flag is an integer that tells what errors are
+currently being tracked.  To track a certain class of debug messages,
+simply provide the appropriate number given below; if you wish to track
+multiple classes, sum the numbers of the classes you wish to track.  To
+track all classes, you can use @code{-1}.  
+
+Some of these debugging options are actually provided by Kpathsea
+(@pxref{Debugging, , , kpathsea, Kpathsea}).
+
+The classes are:
+@table @asis
+@item 1 
+Normal dvi op-codes
+@item 2
+Virtual fonts
+@item 4
+PK fonts
+@item 8
+TFM files
+@item 16
+Glyph rendering
+@item 32
+FreeType calls
+@item 64
+Encoding loads
+@item 128
+Color specials
+@item 256
+GhostScript specials
+@item 512
+T1lib calls
+@item 1024
+Kpathsea @code{stat} calls
+@item 2048
+Kpathsea hash table lookups
+@item 4096
+Kpathsea path element expansion
+@item 8192
+Kpathsea path searches
+@ignore
+@item 16384
+@end ignore
+
+@end table
+
+@node Included graphics problems
+@section Included graphics problems
+
+@cindex graphics inclusion problems
+
+The most common problem with including graphics is an incorrect bounding
+box.
+@c (@pxref{Bounding box}). 
+Complain to whoever wrote the software that generated the file if the
+bounding box is indeed incorrect.
+
+An additional problem is that the image in dvipng is always clipped to
+the bounding box. This is because the image is rendered by GhostScript
+by an internal call and then copied to the dvipng image. At present no
+workaround is known, but there may be one for a future GhostScript.
+We'll see.
+
+@ignore
+@cindex Illustrator, workaround for
+Another possible problem is that the figure you are trying to include
+does not nest properly; there are certain rules PostScript applications
+must follow when generating files to be included.  The dvipng program
+includes work-arounds for such errors in Adobe Illustrator and other
+programs, but there are certainly applications that haven't been tested.
+
+One possible thing to try is the @samp{-K} flag which strips the comments
+from an included figure.  This might be necessary if the PostScript
+spooling software does not read the structured comments correctly.  Use
+of this flag will break graphics from some applications, though, since
+some applications read the PostScript file from the input stream,
+looking for a particular comment.
+@end ignore
+
+@node Color
+@chapter Color
+
+To support color, dvipng recognizes a certain set of specials. These
+specials start with the keyword @samp{color} or the keyword
+@samp{background}, followed by a color specification.
+
+@menu
+* Color specifications::        
+* Color specials::              
+@end menu
+
+
+@node Color specifications
+@section Color specifications
+
+@cindex color specifications
+
+The color specification supported by dvipng is by-value or by-name. The
+by-value spec starts with the name of a color model (one of @samp{rgb},
+@samp{hsb}, @samp{cmy}, @samp{cmyk}, or @samp{gray}) followed by the
+appropriate number of parameters. Thus, the color specification
+@samp{rgb 0.3 0.4 0.5} would correspond to the color that is @samp{0.3
+0.4 0.5} in its red, blue and green values. The color used internally in
+dvipng is @samp{RGB} (discretized to 256 levels), for details on the
+formulas used in conversion, see the @samp{xcolor} documentation.
+
+By-name color specifications are single (case-dependent) words and are
+compared with color names defined in @samp{dvipsnam.def} (from the
+@samp{graphics} bundle), @samp{svgnam.def} and @samp{xcolor.sty} (from
+the @samp{xcolor} bundle).
+
+On the command-line, the name @samp{Transparent} can also be used in as
+an argument to @samp{--bg} to choose transparent background.
+@xref{Option details}.
+
+@node Color specials
+@section Color specials
+
+We will describe @samp{background} first, since it is the simplest. The
+@samp{background} keyword must be followed by a color specification.
+That color specification is used as a fill color for the background. The
+last @samp{background} special on a page is the one that gets used, and
+is used for the whole of the page image. (This is possible because the
+prescan phase of dvipng notices all of the color specials so that the
+appropriate information can be written out during the second phase.)
+
+The @samp{color} special itself has three forms. The first is just
+@samp{color} followed by a color specification. In this case, the
+current global color is set to that color; the color stack must be empty
+when such a command is executed.
+
+The second form is @samp{color push} followed by a color specification.
+This saves the current color on the color stack and sets the color to be
+that given by the color specification.  This is the most common way to
+set a color.
+
+The final version of the @samp{color} special is just @samp{color pop},
+with no color specification; this says to pop the color last pushed on
+the color stack from the color stack and set the current color to be
+that color.
+
+dvipng correctly handles these color specials across pages, even when
+the pages are rendered repeatedly or in reverse order.
+
+@node Credits
+@chapter Credits
+
+A number of persons have contributed, if I forget to mention someone, I
+apologize. First and foremost we have David Kastrup whose
+@previewlatex{} project provided the incentive to write this program.
+There is also a number of people who have contributed by reporting bugs
+and suggesting improvements as the thing has evolved. These include but
+is perhaps not limited to (in semi-random order): Thomas Esser
+(te@TeX{}), Christian Schenk (MIK@TeX{}), Brian R Furry (debian
+package), Angus Leeming (LyX), Thomas Boutell (libgd), John Jones (first
+user report), Uwe Kern (xcolor), Alan Shutko, Reiner Stieb, Nick Alcock,
+Adam Buchbinder, Svend Tollak Munkejord, James Longstreet, Bernhard
+Simon, Bob McElrath, Georg Schwarz, Jason Farmer, Brian V. Smith, Samuel
+Hathaway, Thomas R. Shemanske, Stephen Gibson, Christian Ridderstr@"om,
+Ezra Peisach, William H Wheeler, Thomas Klausner, Harald Koenig, Adrian
+Bunk, Kevin Smith, and Jason Riedy.
+
+@ifset man
+@c man begin NOTES
+The full manual is accessible in the info format, on most systems by typing
+@example
+info dvipng
+@end example
+@c man end
+@c man begin COPYRIGHT
+This program is released under the GNU General Public License, see the
+COPYING file in the dvipng distribution or
+@url{http://www.gnu.org/licenses/gpl.html}.
+
+Copyright @copyright{} 2002-2005 Jan-@AA{}ke Larsson
+@c man end
+@end ifset
+
+@node Copying
+@chapter Copying
+
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+@sp 2
+@noindent
+Copyright @copyright{} 2002-2005 Jan-@AA{}ke Larsson
+
+@node Index
+@unnumbered Index
+
+@printindex cp
+@bye
+

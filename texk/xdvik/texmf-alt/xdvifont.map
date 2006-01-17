@@ -1,0 +1,56 @@
+% xdvifont.map.  
+%
+% Derived from psfonts.map in teTeX 0.9 in this way:
+%
+% - Remove mappings which are also available in files we can use unmodified
+% - Remove all trivial mappings
+% - Lucida is a mess - put in separate file: lucida.map
+% - Add input file names for the standard fonts left
+%
+% NOTE: xdvi does not care about the font-file extention, but dvips does.
+%
+% Nicolai Langfeldt 21/2/1999.
+
+ppi020 MathematicalPi-Two <mh2.pfb
+ppi025 MathematicalPi-Six <mh6.pfb
+
+% So, non KB names for standard fonts:
+
+cob Courier-Bold "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <pcrb
+cobo Courier-BoldOblique "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <pcrbo
+com Courier "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <pcrr
+coo Courier-Oblique "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <pcrro
+
+pcrr8rn Courier ".85 ExtendFont TeXBase1Encoding ReEncodeFont" <8r.enc <pcrr
+
+hv Helvetica "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <phvr
+hvb Helvetica-Bold "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <phvb
+hvbo Helvetica-BoldOblique "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <phvbo
+hvo Helvetica-Oblique "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <phvro
+
+% This _should've_ been HelveticaNarrow, if you own Helvetica narrow
+% you want to comment these out:
+
+phvb8rn Helvetica-Bold ".82 ExtendFont TeXBase1Encoding ReEncodeFont" <8r.enc <phvb
+phvbo8rn Helvetica-BoldOblique ".82 ExtendFont TeXBase1Encoding ReEncodeFont" <8r.enc <phvbo
+phvr8rn Helvetica ".82 ExtendFont TeXBase1Encoding ReEncodeFont" <8r.enc <phvr
+phvro8rn Helvetica-Oblique ".82 ExtendFont TeXBase1Encoding ReEncodeFont" <8r.enc <phvro
+
+pplr8rn Palatino-Roman ".82 ExtendFont TeXBase1Encoding ReEncodeFont" <8r.enc <pplr
+pplrr8re Palatino-Roman "1.2 ExtendFont TeXBase1Encoding ReEncodeFont" <8r.enc <pplr
+pplru8r Palatino-Italic "-.1763 SlantFont TeXBase1Encoding ReEncodeFont" <8r.enc <pplri
+
+psyro Symbol ".167 SlantFont" <psyr
+
+ptmr8rn Times-Roman ".82 ExtendFont TeXBase1Encoding ReEncodeFont" <8r.enc <ptmr
+ptmrr8re Times-Roman "1.2 ExtendFont TeXBase1Encoding ReEncodeFont" <8r.enc <ptmr
+
+tib Times-Bold "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <ptmb
+tibi Times-BoldItalic "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <ptmbi
+tibo Times-Bold ".167 SlantFont TeXnANSIEncoding ReEncodeFont" <texnansi.enc <ptmb
+tii Times-Italic "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <ptmri
+tio Times-Roman ".167 SlantFont TeXnANSIEncoding ReEncodeFont" <texnansi.enc <ptmr
+tir Times-Roman "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <ptmr
+
+zd ZapfDingbats <pzdr
+

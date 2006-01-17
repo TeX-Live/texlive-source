@@ -1,0 +1,13 @@
+@x
+changed line 4
+@y
+final line 4
+@z
+
+@x
+changed include line 1
+inserted include line
+@y
+final include line 1
+@i ctie.inc2
+@z

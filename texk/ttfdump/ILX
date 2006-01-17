@@ -1,0 +1,45 @@
+Project ILX
+
+1. What is ILX ?
+   ILX is th abber of "Internationalized and Localized X-window system".
+   Its main goal is to provid a internationalized and localized application
+   envoriment for X-window system.
+
+2. Why ILX ?
+   The reason that UNIX like operation systems can't compitete with M$ Windows
+   are that:
+	a) UNIX like systems lack GUI applications which make non-programmers
+	   diffcult to use.
+	b) UNIX like systems are not internationalized nor localized enough
+	   which makes it even harder for non-English speaking users to use
+	   it.
+
+3. What will ILX have ??
+   ILX have three major steps, and for each major step there are some minor
+   stages to be complete.
+	Step 1. In the first step we have to make the more well avaliable 
+		True Type font displayed by the X server. Most of easten fonts
+		are provided by the font vendors in True Type font format. In
+		order to provide a working True Type Font server we have to
+		complete the fellowing stages:
+		a) ttfdump: A true type font dumping program to explore the
+		definition of a true type font.
+		b) ttfshow: A true type font showing program to provide a test
+		bed for true type font rasterization.
+		c) fileview: Viewing a non ASCII file in the specified 
+		encoding scheme. This program further explore the capacity of
+		the ttf rasterizer.
+		d) ttfedit: A true type font editor lets users to make their
+		new true type fonts.(optional)
+		e) ttfs: True Type Font Server, a font server comform to X11R6
+		font server protocols which can provide rasterizing True Type
+		fontsas well as other font format currently prrovided.
+
+	Step 2. In the second step we have to provide a easily extened Input 
+		an Output Server for localized characters to be inputed and 
+		displayed.
+
+	Step 3. In the third and final step we will provide a fully 
+		internationalized and localized working enviroment, which 
+		includes a CDE like desk top manamger, a document editor,
+		or even other things like spreadsheet or database mananger.  

@@ -1,0 +1,298 @@
+				texdoctk v.0.5.3
+
+texdoctk is a Perl/Tk-based frontend for easy access of package documentation
+for the TeX typesetting system on Unix platforms. It includes the following
+files:
+
+	texdoctk 	  - the program source
+	texdoctk.dat 	  - the database containing the information about the
+			    accessible documentation files for teTeX-texmf
+	texdocrc.defaults - the system-wide default specification for viewer
+			    and printer settings
+	texdoctk.1	  - manpage
+	README.texdoctk	  - this file
+The current version is 0.6.0.
+
+REQUIREMENTS
+The program is written in Perl/Tk; it requires Perl 5 and Perl/Tk 8.x. It is
+known to run with Perl 5.004_04 or higher and PerlTk 800.015.
+The database file texdoctk.dat is made for the teTeX distribution.
+Note that the program is *not* a viewer, but an interface to access a document
+with the appropriate viewer. Thus, you need to have appropriate viewers for
+the different formats to actually read the files. Documentations are available
+as .dvi, .ps, .pdf, .html or plain text; some packages are only documented in
+the .sty files. For plain text files (.txt, .sty etc.), texdoctk's own text
+viewer can be used (default). If a document format is not known, texdoctk
+will by default assume that it is plain text and use the text file viewer;
+this behaviour can be switched off in the Settings menu.
+If you want to print the documentations, you will need converters to turn
+non-PS files into PostScript. Here are some suggestions:
+dvi->ps:	dvips (is part of teTeX)
+		http://www.radicaleye.com/dvips.html
+pdf->ps:	pdf2ps
+		http://www.cs.wisc.edu/~ghost
+		Acrobat Reader
+		http://www.adobe.com
+html->ps:	html2ps
+		http://user.it.uu.se/~jan/html2ps.html
+plain text->ps:	a2ps
+		http://www-inf.enst.fr/~demaille/a2ps/
+To increase the font size automatically for high-resolution screen, the program
+xwininfo is used; texdoctk will work without as well, though.
+
+INSTALLATION
+The program texdoctk can be copied into any directory where programs are stored
+on your system, e.g. into /usr/local/bin or, probably more adequate, into
+/usr/local/teTeX/bin. It assumes that you have the env command in /usr/bin/
+available to determine the location of the Perl executable; therefore, you may
+need to change the first line of the code if this is not the case for your
+system or if for some reason your Perl executable is not called "perl"; you
+will also have to change the perl call in the sub viewslc as well.
+The database file texdoctk.dat and the configuration file texdocrc.defaults 
+must then be put into a subdirectory of the main texmf directory called
+texdoctk. If you want to include information for your local system,
+generate a file texdoctk-local.dat. Make sure to run texhash after
+installation. See the manpage for more info.
+Set the defaults in texdocrc.defaults according to your system; you can
+replace the settings which are specified in the shipped file, but do not
+uncomment variables for items which are not available or applicable for you,
+but just leave the value empty by specifying nothing.
+The individual users can define their own preferences by copying the system
+texdocrc.defaults to ~/.texdocrc and assign new values to the items to be
+changed. They can also establish an additional personal database for packages
+they might have installed in their respective $HOME; this database must be
+called texdoctk-pers.dat and reside in $HOMETEXMF/texdoctk/.
+If you meet the requirements concerning the teTeX distribution, I assume that
+the texdoctk.dat file should work without failures; if you have another
+distribution or if your texmf/doc tree is somehow modified, it may happen that
+a file is not found in spite of the program trying to find it elsewhere. You
+will have to edit the file then, but make sure to keep the right format for
+the entries:
+<package-label>;Short description for listbox (opt. <package-name>);path in doc directory;optional keywords
+(without breaking the line!). If the documentation is included in the .sty file
+instead of a proper documentation file, the optional keywords should start with
+-?- directly after the semicolon, where ? is 0, 1, 2 or 3; these are flags
+which indicate in which part of the .sty the instructions are placed. See the
+database file and/or the manpage for more details if necessary.
+The documentation is grouped into 17 categories; the 18th button of the main
+panel is inactive by default. If you have special documents which do not fit
+into any of the categories, you can create a block with a new name in
+texdoctk-local.dat or texdoctk-pers.dat with the respective entries.
+In the settings window you see a checkbox in the html->ps and text->ps
+converter menus for switching on/off output redirect. This is due to the fact
+that some converters do not write their output into a file but to stdout by
+default, so a redirect is needed, e.g.
+a2ps myfile.txt >myfile.ps
+
+DISCLAIMER
+texdoctk v.0.6.0 (Sep 23, 2004) - GUI for TeX documentation access
+Copyright (C) 2000-2004  Thomas Ruedas
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+ACKNOWLEDGEMENTS
+Thomas Esser included the program in the teTeX distribution of TeX and Friends.
+He provided me with informations about changes in the texmf tree and made a
+number of very useful suggestions. He also has coordinated and kept track of
+several additions from other contributors, who fixed bugs and added extensions
+e.g. for use under Win32 systems.
+Reinhard Kotucha and Andreas Werner made very valuable comments and suggestions
+to enhance v.0.3.0, especially about the special treatment of Netscape.
+Reinhard Kotucha also made many useful suggestions and provided patches for
+v.0.4.0; unfortunately, I could not implement all these ideas yet.
+Hans Fredrik Nordhaug made some suggestions, e.g. concerning local and
+personal texmf trees, and reported several bugs in different releases; he also
+contributed fixes/patches.
+Adrian Bunk also has reported a bug and contributed a small manpage for the
+program. He made a Debian GNU/Linux package of texdoctk.
+Michael Sanders reminded me to set the permissions right in the tarball.
+As this is my first application written in PerlTk, it happened that I could
+not solve every problem with my book and the other documentation, but had to
+ask for help on comp.lang.perl.tk. Paul R. Andersen and Stephen O. Lidie have
+given helpful replies and examples for me to try out.
+Fabrice Popineau, and possibly others who I don't know, have provided
+portability to Win32 platforms for use with fpTeX. Staszek Wawrykiewicz helped
+making it ready for use with new TeXLive editions.
+Paul Szabo pointed out a potential security risk related to the way names of
+temporary files are generated.
+
+TO DO LIST
+Unfortunately, I didn't have time to implement all suggestions made by the
+aforementioned people; I hope that I can do that at some later time:
+- widget placement in topic toplevels becomes ugly when the toplevel is
+  stretched or shrunk; should be made more elegant
+- raise existing texdoctk window instead of possibly running texdoctk twice;
+  (this seems to be difficult, because it requires interprocess communication
+  which is kind of unsafe and requires the use of perl -T)
+Possible further long-term enhancements:
+- maybe use Williams Catalogue for automatically building database during
+  installation
+- refined printing facility
+
+BUGS
+Netscape error output will be written to stderr even if the quiet mode was set,
+because I didn't manage to start it with the "inline" perl script.
+Widget placement in topic toplevels becomes ugly when the toplevel is stretched
+or shrunk.
+The font in the frame labels of the Settings menu are not forced to the default
+font; this will become visible e.g. at hi-res screens, where the label font is
+not scaled up.
+Please let me know if you find bugs or have suggestions for improvements.
+
+HISTORY/CHANGES
+v.0.6.0   Sep 23, 2004
+	- Unknown document formats will be opened as plain text with the text
+	  file viewer by default; the Settings menu was given a new button to
+	  toggle this behaviour.
+	- Allow for texmf-dist and texmf-doc trees for compliance with teTeX 3
+	  and TeXLive.
+	- Made an attempt to allow for additional personal user's databases to
+	  be located in $HOMETEXMF, following a long-standing suggestion of
+	  H.F.Nordhaug. Additional local and personal databases do not need
+	  to be copies of the system database; instead their contents will be
+	  appended to the entries of the default list.
+	- Fixed a bug with the handling of the local texmf tree reported by
+	  Sebastian Luque.
+	- Updated this README and the manpage.
+v.0.5.2	  May 20, 2004
+	- Changed the name generation of temporary files to something random
+	  in order to address a potential security risk pointed out by Paul
+	  Szabo.
+	- Replaced -q option for enabling "quiet" behaviour by -v option for
+	  enabling "verbose" behaviour; quiet behaviour is now the default and
+	  was extended to suppress the popup of Warning windows (popmsg level
+	  1).
+        - Added a possibility to have the Settings menu write the user's
+          ~/.texdocrc (older suggestion by R.Kotucha). NB: It is not intended
+          to write the system-wide texdocrc.defaults, because it does not set
+          $TEXDOCPATH and $LOCALDOCPATH.
+        - Button colours are made configurable through the texdocrc files or
+          the Settings menu. This is intended to fix a problem H.F.Nordhaug
+          reported with users of newer versions of the KDE, where some button
+          colours suddenly where messed up. - Validity of entered colours
+          is checked if X11's showrgb program is available.
+        - DVIPS_OPTS, PDFPS_OPTS and PRINT_OPTS in texdocrc.defaults are now
+          obsolete, but still supported. It seemed more reasonable to treat
+          the contents of DVIPS_CONV, PDFPS_CONV and PRINT_CMD as command lines
+          (which actually would have already been possible all the time). The
+          same is true for the viewer variables.
+        - Command line options can now be grouped (i.e. -av instead of -a -v).
+        - Cursor changes from arrow to watch in some tasks, to indicate a
+          process which takes a bit of time.
+        - fixed some glitches in databases: semicolons at the end of the
+          pdfTeX-related entries; corrected description of ltxtable (hint by
+          Rolf Niepraschk) and changed its position; corrected description of
+          AMSguide (AMS TeX instead of AMS LaTeX) (hint by H.F.Nordhaug)
+	- several additions by other contributors, for instance support for
+	  Win32 systems
+v.0.5.1	  April 21, 2001
+	- Enhanced right-button search function so that compressed doc files
+	  are also found.
+	- Fixed a bug in the documentation finding subroutine reported by H.F.
+	  Nordhaug: the compression determination block in sub finddoc was
+	  broken.
+	- Improved treatment of entering an empty string in the search:
+	  this is now explicitly treated as demand for display of the whole
+	  database, instead of search for a null string.
+	- Automatic selection of list item in listbox if it contains only one
+	  element; this will frequently happen in search results. In this
+	  context, the autoview flag (option -a) has been introduced in the
+	  texdocrc.defaults and the Settings menu: if it is chosen, the
+	  appropriate viewer will be started automatically in the case of
+	  one-item listboxes.
+	- Made <Ctrl-q>, <Ctrl-s>, <Ctrl-t> and <Ctrl-h> definitions active in
+	  all widgets; thus, you don't need to type <Ctrl-q> in the main window
+	  to quit, for example. Introduced new global key binding for raising
+	  the main window (<Ctrl-m>).
+	- Fixed a braindead typo in the texdoc-*.dat files (too dumb to tell).
+	- Some small changes/updates in the Help text; the button and window
+	  are now named "Help/About".
+	- Added an emacs perl-mode directive at the end, mostly for my
+	  convenience.
+v.0.5.0a  April 19, 2001
+	- Fixed bug in texdoc-102.dat reported by H.F.Nordhaug: correct path
+	  for multirow is latex/multirow/multirow.sty (instead of
+	  latex/misc/multirow.sty, as in texdoc-100.dat)
+v.0.5.0   April 18, 2001
+	- For some packages, the only documentation is included in the .sty
+	  file itself. This documentation is now made accessible by extracting
+	  the comments/instructions, writing them into a temporary text file
+	  and calling the text file viewer on it. Thus 38 additional
+	  documentation files are made accessible now.
+	- implementation of a suggestion by Hans Fredrik Nordhaug: contents of
+	  the local texmf tree ($TEXMFLOCAL) can be included now. Arbitrary
+	  inclusion of additional private texmf trees is not yet possible,
+	  though.
+	- Two fixes/improvements in the databases by R.Kotucha were made
+	  (concerning epslatex and the MetaPost tutorial)
+	- R.Kotucha suggested the use of the program xwininfo to determine
+	  screen resolution and switch to a larger font size at hi-res screens.
+	  He provided a patch for this, which I added after a slight
+	  adaptation.
+	- auto-determination of Perl's path (stolen from some script by Thomas
+	  Esser, IIRC)
+	- If a beta release of teTeX is used, the teTeX-1.0.2 database will be
+	  used as a default instead of the 1.0.0 database
+	- introduced new message type with transient windows
+	- fatal error messages if essential config/database files are not found
+	- some syntax cosmetics
+v.0.4.0	  June 11, 2000
+	- implementation of several suggestions by Reinhard Kotucha and
+	  Andreas Werner:
+	  * More than 1 document can now be viewed at one time, because the
+	    viewers now run as background processes. They are not killed when
+	    texdoctk itself is quit.
+	    If Netscape is your browser, HTML documents are now loaded into
+	    an existing Netscape window; no new Netscape will be started. This
+	    is to be a bit economic with system resources.
+	  * The Search button resp. <Ctrl-s> now switches on/off the search
+	    entry widget; this is to avoid that multiple entry widgets come up,
+	    because that doesn't make much sense.
+	  * If no TXT_VIEWER is defined, the environment variable $PAGER will
+	    be used, if defined (but see below).
+	- bugs/fixes and suggestions reported by Hans Fredrik Nordhaug:
+	  * $j for loop in sub srchstr was too short:
+		$j<$maxind[$i] --> $j<$maxind[$i]+1
+	  * misplaced last SRCH in keywords branch of sub srchstr: last SRCH
+	    had to be put into inner if block
+	  * added support of zip compression format
+	- bug/fix reported by Adrian Bunk:
+	  * ambiguous use of redirection flag/sign hor html and text->ps
+	    conversion
+	- own text viewer for plain text documentation files; this is now the
+	  default in the original texdocrc.defaults
+	- kpsewhich instead of find is used for rescue file search
+	- temporary files generated when printing or possibly decompressing (as
+	  in Debian) now get different names to prevent overwriting files which
+	  are still in use
+	- main, settings, and help windows made non-resizable
+	- suppressed availability of listbox selection to X selection
+	- document selection toplevel windows will be raised now instead of
+	  being opened twice or more times if they are already open
+	- uniform font for all text-containing widgets explicitly set; I had
+	  some weird font configuration when running texdoctk under a CDE
+	- environment
+v.0.3.0	  March 11, 2000
+	- first full public release
+	- implementation of some suggestions by Thomas Esser:
+	  use of kpsewhich, changes in directory and database configuration
+	  implemented cd to file directory to ensure rendering of graphics
+	  made viewer message output suppression really quiet
+	  better layout of help window
+v.0.2	  March 7, 2000
+	- first public release (preliminary)
+v.0.1	- private trial version, does not exist anymore
+
+AUTHOR
+Thomas Ruedas
+tr@geol.ku.dk
+http://www.geophysik.uni-frankfurt.de/~ruedas/progs.html

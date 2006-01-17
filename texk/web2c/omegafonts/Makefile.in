@@ -1,0 +1,72 @@
+# Makefile for TeX-project WEB sources to C conversion programs.
+
+# These get expanded from the parent directory, not this one.
+kpse_include ../make/common.mk
+kpse_include ../make/programs.mk
+kpse_include ../make/paths.mk
+kpse_include kpathsea.mk
+
+LEX = @LEX@
+#LEXLIB = @LEXLIB@
+LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
+YACC = @YACC@
+
+proglib = ../lib/lib.a
+programs = omfonts
+linked_programs = ofm2opl opl2ofm ovf2ovp ovp2ovf
+scripts = 
+
+omfonts_objects = omfonts.o y_tab.o $(LEX_OUTPUT_ROOT).o \
+                  char_routines.o dimen_routines.o error_routines.o \
+                  header_routines.o ligkern_routines.o list_routines.o \
+                  out_routines.o param_routines.o print_routines.o \
+                  font_routines.o extra_routines.o out_ofm.o \
+                  parse_ofm.o
+h_files = char_routines.h dimen_routines.h error_routines.h \
+          font_routines.h header_routines.h ligkern_routines.h \
+          list_routines.h out_routines.h param_routines.h print_routines.h \
+          extra_routines.h manifests.h parser.h out_ofm.h dvi.h \
+          parse_ofm.h omfonts.h
+
+all: $(programs)
+$(omfonts_objects): Makefile
+omfonts: $(omfonts_objects)
+	$(kpathsea_link) $(omfonts_objects) $(LEXLIB) $(LOADLIBES) 
+
+omfonts.o: omfonts.c y_tab.h
+y_tab.c y_tab.h: pl.y
+	$(YACC) -d -v $(srcdir)/pl.y
+	-test -f y.tab.c && mv -f y.tab.c y_tab.c
+	-test -f y.tab.h && mv -f y.tab.h y_tab.h
+$(LEX_OUTPUT_ROOT).o: parser.h
+$(LEX_OUTPUT_ROOT).c: pl.l
+	$(LEX) $(srcdir)/pl.l
+
+
+
+$(programs): $(proglib) $(kpathsea)
+
+$(omfonts_objects): $(h_files)
+
+install: install-exec 
+install-exec:: install-links
+
+install-programs: $(programs)
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(bindir) 
+	for p in $(programs); do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
+
+install-links: install-programs
+	for f in ""$(linked_programs); do \
+	cd $(bindir) && (rm -f $$f; $(LN) omfonts $$f); done
+
+Makefile: Makefile.in ../config.status
+	cd .. && $(SHELL) config.status
+
+kpse_include ../make/tkpathsea.mk
+kpse_include ../make/clean.mk
+
+clean::
+	rm -f y_tab.c y_tab.h y.out* yacc.* $(LEX_OUTPUT_ROOT).c
+
+kpse_include ../make/rdepend.mk
+kpse_include omegafonts/depend.mk

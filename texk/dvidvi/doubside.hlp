@@ -1,0 +1,19 @@
+! This help file assumes the symbol DOUBSIDE has been created.
+1 DOUBSIDE
+
+USAGE:     DOUBSIDE file[.dvi]
+
+EXAMPLE:   $ latex foo             
+           $ doubside foo         ! creates part1.dvi and part2.dvi
+
+The DOUBSIDE command reads a given DVI file and creates two new DVI files
+that can be used to print the file double sided. 
+
+If the two new DVI files are successfully created then information will be
+displayed showing you how to preview these files and how to PSPRINT them
+to create the double sided document.
+
+NB: The DOUBSIDE command uses a program called DVIDVI to do the required
+pagination tricks.  This program can be used to produce other types of
+documents; see disk$utils:[utilities.tex.dvidvi]read.me.
+

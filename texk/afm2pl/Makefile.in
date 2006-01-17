@@ -1,0 +1,42 @@
+# Makefile for afm2pl. Thomas Esser. public domain.
+
+program = afm2pl
+default all: $(program) $(program).1
+
+kpse_include ../make/paths.mk
+kpse_include ../make/common.mk
+kpse_include ../make/programs.mk
+
+# See INSTALL for compilation options.
+# DEFS = @DEFS@ $(XDEFS) -DKPATHSEA -I$(srcdir)/../dvipsk
+DEFS = @DEFS@ $(XDEFS) -DKPATHSEA
+
+objects = $(program).o
+
+$(program): $(kpathsea) $(objects)
+	$(kpathsea_link) $(objects) $(LOADLIBES)
+
+kpse_include ../make/tkpathsea.mk
+
+install: install-exec install-data
+uninstall: uninstall-exec uninstall-data
+
+install-exec: $(program)
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(bindir)
+	$(INSTALL_LIBTOOL_PROG) $(program) $(bindir)
+uninstall-exec:
+	rm -f $(bindir)/$(program)
+
+install-data: $(program).1
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(man1dir)
+	$(INSTALL_DATA) $(srcdir)/$(program).1 $(man1dir)/$(program).$(manext)
+uninstall-data:
+	rm -f $(man1dir)/$(program).$(manext)
+
+kpse_include ../make/clean.mk
+kpse_include ../make/config.mk
+
+info dvi check:
+
+kpse_include ../make/rdepend.mk
+kpse_include depend.mk

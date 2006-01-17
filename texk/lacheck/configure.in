@@ -1,0 +1,16 @@
+dnl Public domain.
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(lacheck.lex)
+sinclude(../kpathsea/common.ac)
+
+
+dnl These tests prevent reliable cross-compilation.  Sigh.
+AC_C_CHAR_UNSIGNED
+AC_CHECK_SIZEOF(long)
+AC_PROG_YACC
+AC_PROG_LEX
+AC_DECL_YYTEXT
+KPSE_CONFIG_FILES([Makefile])
+AC_OUTPUT
+dnl Update stamp-auto, since we just remade `c-auto.h'.
+date >stamp-auto

@@ -1,0 +1,950 @@
+.\" Copyright (c) 1990-1999  Paul Vojta
+.\"
+.\" Permission is hereby granted, free of charge, to any person obtaining a copy
+.\" of this software and associated documentation files (the "Software"), to
+.\" deal in the Software without restriction, including without limitation the
+.\" rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+.\" sell copies of the Software, and to permit persons to whom the Software is
+.\" furnished to do so, subject to the following conditions:
+.\"
+.\" The above copyright notice and this permission notice shall be included in
+.\" all copies or substantial portions of the Software.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+.\" IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+.\" FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+.\" PAUL VOJTA BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+.\" IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+.\" CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+.\"
+.if t .ds Te T\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X
+.if n .ds Te TeX
+'	# small and boldface (not all -man's provide it)
+.de SB
+\&\fB\s-1\&\\$1 \\$2\s0\fR
+..
+.TH XDVI 1 "15 February 1999" "X Version 11"
+.SH NAME
+xdvi \- DVI Previewer for the X Window System
+.SH SYNOPSIS
+.B xdvi
+.nh
+[\fB+\fP[\fIpage\fP]] [\fB\-s\fP \fIshrink\fP] [\fB\-S\fP \fIdensity\fP]
+[\fB\-p\fP \fIpixels\fP]
+[\fB\-margins\fP \fIdimen\fP]
+[\fB\-sidemargin\fP \fIdimen\fP] [\fB\-topmargin\fP \fIdimen\fP]
+[\fB\-offsets\fP \fIdimen\fP]
+[\fB\-xoffset\fP \fIdimen\fP] [\fB\-yoffset\fP \fIdimen\fP]
+[\fB\-paper\fP \fIpapertype\fP] [\fB\-altfont\fP \fIfont\fP]
+[\fB\-nomakepk\fP]
+.BI \-mfmode " mode-def\fR[\fP\fB:\fPdpi\fR]\fP"
+[\fB\-l\fP]
+[\fB\-rv\fP]
+[\fB\-mgs\fP[\fIn\fP] \fIsize\fP] [\fB\-warnspecials\fP]
+[\fB\-hush\fP]
+[\fB\-hushchars\fP] [\fB\-hushchecksums\fP]
+[\fB\-hushspecials\fP]
+[\fB\-safer\fP]
+[\fB\-fg\fP \fIcolor\fP] [\fB\-bg\fP \fIcolor\fP] [\fB\-hl\fP \fIcolor\fP]
+[\fB\-bd\fP \fIcolor\fP] [\fB\-cr\fP \fIcolor\fP]
+[\fB\-bw\fP \fIwidth\fP]
+[\fB\-grid1\fP \fIcolor\fP] 
+[\fB\-grid2\fP \fIcolor\fP] 
+[\fB\-grid3\fP \fIcolor\fP]
+[\fB\-bw\fP \fIwidth\fP]
+[\fB\-display\fP \fIhost:display\fP] [\fB\-geometry\fP \fIgeometry\fP]
+[\fB\-icongeometry\fP \fIgeometry\fP] [\fB\-iconic\fP]
+[\fB\-keep\fP] [\fB\-copy\fP] [\fB\-thorough\fP]
+[\fB\-underlink\fP]
+[\fB\-browser\fP \fIWWWbrowser\fP]
+[\fB\-base\fP \fIbase URL\fP]
+[\fB\-srcMode\fP]
+[\fB\-srcVisibility\fP]
+[\fB\-srcTickShape\fP \fIn\fP]
+[\fB\-srcTickSize\fP \fIgeometry\fP]
+[\fB\-srcCursor\fP \fIn\fP]
+[\fB\-srcJumpButton\fP \fIbutton\fP]
+[\fB\-srcEditorCommand\fP \fIcommand string\fP]
+[\fB\-srcSpecialFormat\fP \fIn\fP]
+[\fB\-debug\fP \fIbitmask\fP] [\fB\-version\fP]
+[\fIdvi_file\fP]
+.I dvi_file
+.hy
+.SH DESCRIPTION
+.B xdvi
+is a program which runs under the X window system. It is used to preview
+.I dvi
+files, such as are produced by
+.BR tex (1).
+.PP
+This program has the capability of showing the file shrunken by various
+(integer) factors, and also has a ``magnifying glass'' which allows one
+to see a small part of the unshrunk image momentarily.
+.PP
+Before displaying any page or part thereof, it checks to see if the
+.I dvi
+file has changed since the last time it was displayed.  If this is the case,
+then
+.B xdvi
+will reinitialize itself for the new
+.I dvi
+file.  For this reason, exposing parts of the
+.B xdvi
+window while \*(Te\& is running should be avoided.  This feature allows you
+to preview many versions of the same file while running
+.B xdvi
+only once.
+.PP
+If
+.I dvi_file
+is not specified, a file-selection widget is popped up for you to choose the
+.I dvi
+file.
+.SH OPTIONS
+In addition to specifying the
+.I dvi
+file (with or without the
+.B .dvi
+extension),
+.B xdvi
+supports the following command line options.  If the option begins with a
+.RB ` + '
+instead of a
+.RB ` \- ',
+the option is restored to its default value.  By default, these options can
+be set via the resource names given in parentheses in the description of
+each option.
+.TP
+.BI + page
+Specifies the first page to show.  If
+.B +
+is given without a number, the last page is assumed; the first page is
+the default.
+.TP
+.BI \-altfont " font"
+.RB ( .altFont )
+Declares a default font to use when the font in the
+.I dvi
+file cannot be found.  This is useful, for example, with PostScript <tm> fonts.
+.TP
+.BI \-background " color"
+.RB ( .background )
+Determines the color of the background.  Same as
+.BR -bg .
+.TP
+.BI \-base " base URL"
+.RB ( .urlBase )
+Sets the base URL value that external links given in the
+.I dvi
+file are assumed relative to - normally this should be the URL
+of the document itself (?).
+.TP
+.BI \-bd " color"
+.RB ( .borderColor )
+Determines the color of the window border.
+.TP
+.BI \-bg " color"
+.RB ( .background )
+Determines the color of the background.
+.TP
+.BI \-bordercolor " color"
+Same as
+.BR -bd .
+.TP
+.BI \-borderwidth " width"
+.RB ( .borderWidth )
+Specifies the width of the border of the window.  Same as
+.BR -bw .
+.TP
+.BI \-browser " WWWbrowser"
+.RB ( .wwwBrowser )
+Defines the World Wide Web browser to be used to handle external URL's,
+for example mosaic.  If neither the command-line option nor the X
+resource are set, uses the environment variable WWWBROWSER.
+.TP
+.BI \-bw " width"
+.RB ( .borderWidth )
+Specifies the width of the border of the window.
+.TP
+.B \-copy
+.RB ( .copy )
+Always use the
+.I copy
+operation when writing characters to the display.
+This option may be necessary for correct operation on a color display, but
+overstrike characters will be incorrect.
+See also
+.BR \-thorough .
+.TP
+.BI \-cr " color"
+.RB ( .cursorColor )
+Determines the color of the cursor.  The default is the color of the page
+border.
+.TP
+.BI \-debug " bitmask"
+.RB ( .debugLevel )
+If nonzero, prints additional information on standard output.  The
+number is taken as a set of independent bits.  The meaning of each bit
+follows. 1=bitmaps; 2=dvi translation; 4=pk reading; 8=batch
+operation; 16=events; 32=file opening; 64=PostScript communication;
+128=Kpathsea stat(2) calls; 256=Kpathsea hash table lookups; 512=Kpathsea
+path definitions; 1024=Kpathsea path expansion; 2048=Kpathsea searches.
+To trace everything having to do with file searching and opening, use 4000.
+Some of these debugging options are actually provided by Kpathsea.
+See the Debugging section in the Kpathsea manual.
+.TP
+.BI \-density " density"
+.RB ( .densityPercent )
+Determines the density used when shrinking bitmaps for fonts.
+A higher value produces a lighter font.  The default value is 40.
+See also the
+.RB ` S '.
+keystroke.
+Same as
+.BR \-S
+.TP
+.BI \-display " host" : display
+Specifies the host and screen to be used for displaying the
+.I dvi
+file.  By default this is obtained from the environment variable
+.SB DISPLAY.
+.TP
+.BI \-fg " color"
+.RB ( .foreground )
+Determines the color of the text (foreground).
+.TP
+.BI \-foreground " color"
+Same as
+.BR -fg .
+.TP
+.BI \-grid1 " color"
+.RB ( .grid1Color )
+Determines the color of level 1 grid (default as foreground)
+.TP
+.BI \-grid2 " color"
+.RB ( .grid2Color )
+Determines the color of level 2 grid (default as foreground)
+.TP
+.BI \-grid3 " color"
+.RB ( .grid3Color )
+Determines the color of level 3 grid (default as foreground)
+.TP
+.BI \-geometry " geometry"
+.RB ( *geometry )
+Specifies the initial geometry of the window.
+.TP
+.BI \-hl " color"
+.RB ( .highlight )
+Determines the color of the page border.  The default is the foreground color.
+.TP
+.B \-hush
+.RB ( .Hush )
+Causes
+.B xdvi
+to suppress all suppressible warnings.
+.TP
+.B \-hushchars
+.RB ( .hushLostChars )
+Causes
+.B xdvi
+to suppress warnings about references to characters which are not defined
+in the font.
+.TP
+.B \-hushchecksums
+.RB ( .hushChecksums )
+Causes
+.B xdvi
+to suppress warnings about checksum mismatches between the
+.I dvi
+file and the font file.
+.TP
+.B \-hushspecials
+.RB ( .hushSpecials )
+Causes
+.B xdvi
+to suppress warnings about
+.B \especial
+strings that it cannot process.
+.TP
+.BI \-icongeometry " geometry"
+.RB ( .iconGeometry )
+Specifies the initial position for the icon.
+.TP
+.B \-iconic
+.RB ( .iconic )
+Causes the
+.B xdvi
+window to start in the iconic state.  The default is to start with the
+window open.
+.TP
+.B \-keep
+.RB ( .keepPosition )
+Sets a flag to indicate that
+.B xdvi
+should not move to the home position when moving to a new page.  See also the
+.RB ` k '
+keystroke.
+.TP
+.B \-l
+.RB ( .listFonts )
+Causes the names of the fonts used to be listed.
+.TP
+.BI \-margins " dimen"
+.RB ( .Margin )
+Specifies the size of both the top margin and side margin.
+This determines the ``home'' position of the page within the window as
+follows.  If the entire page fits in the window, then the margin settings
+are ignored.  If, even after removing the margins from the left, right,
+top, and bottom, the page still cannot fit in the window, then the page
+is put in the window such that the top and left margins are hidden, and
+presumably the upper left-hand corner of the text on the page will be
+in the upper left-hand corner of the window.
+Otherwise, the text is centered in the window.
+The dimension should be a decimal number optionally followed by
+any of the two-letter abbreviations for units accepted by \*(Te\&
+.RB ( pt ,
+.BR pc ,
+.BR in ,
+.BR bp ,
+.BR cm ,
+.BR mm ,
+.BR dd ,
+.BR cc ,
+or
+.BR sp ).
+By default, the unit will be
+.BR in " (inches)".
+See also
+.BR \-sidemargin ", " \-topmargin ,
+and the keystroke
+.RB ` M .'
+.TP
+.BI \-mfmode " mode-def"
+.RB ( .mfMode )
+Specifies a
+.I mode-def
+string, which can be used in searching for fonts (see ENVIRONMENT, below).
+Generally, when changing the
+.IR mode-def ,
+it is also necessary to change the font size to the appropriate value
+for that mode.  This is done by adding a colon and the value in dots per inch;
+for example,
+.BR "\-mfmode ljfour:600" .
+This method overrides any value given by the
+.B pixelsPerInch
+resource or the
+.B \-p
+command-line argument.
+The metafont mode is also passed to
+.B metafont
+during automatic creation of fonts.
+By default, it is
+.BR "unspecified" .
+.TP
+.BI \-mgs " size"
+Same as
+.BR \-mgs1 .
+.TP
+.BI "\-mgs\fR[\fIn\fR]" " size"
+.RB ( .magnifierSize\fR[\fIn\fR] )
+Specifies the size of the window to be used for the ``magnifying glass''
+for Button
+.IR n .
+The size may be given as an integer (indicating that the magnifying glass
+is to be square), or it may be given in the form
+.IR width x height .
+See the MOUSE ACTIONS section.  Defaults are 200x150, 400x250, 700x500,
+1000x800, and 1200x1200.
+.TP
+.B \-nomakepk
+.RB ( .makePk )
+Turns off automatic generation of font files that cannot be found by other
+means.
+(For this option, the logic of the corresponding resource is reversed:
+.B \-nomakepk
+corresponds to
+.BR makePk:off ;
+.B +nomakepk
+to
+.BR makePK:on .)
+.TP
+.BI \-offsets " dimen"
+.RB ( .Offset )
+Specifies the size of both the horizontal and vertical offsets of the
+output on the page.  By decree of the Stanford \*(Te\& Project,
+the default \*(Te\& page origin is always 1 inch over and down from
+the top-left page corner, even when non-American paper sizes are used.
+Therefore, the default offsets are 1.0 inch.
+The argument
+.I dimen
+should be a decimal number optionally followed by any of the two-letter
+abbreviations for units accepted by \*(Te\&
+.RB ( pt ,
+.BR pc ,
+.BR in ,
+.BR bp ,
+.BR cm ,
+.BR mm ,
+.BR dd ,
+.BR cc ,
+or
+.BR sp ).
+By default, the unit will be
+.BR in " (inches)".
+See also
+.B \-xoffset
+and
+.BR \-yoffset .
+.TP
+.BI \-p " pixels"
+.RB ( .pixelsPerInch )
+Defines the size of the fonts to use, in pixels per inch.  The
+default value is 600.  This option is provided only for backwards
+compatibility; the preferred way of setting the font size is by setting the
+Metafont mode at the same time; see the
+.B \-mfmode
+option.
+.TP
+.BI \-paper " papertype"
+.RB ( .paper )
+Specifies the size of the printed page.  This may be of the form
+\fIwidth\fBx\fIheight\fR optionally followed by a unit, where
+.I width
+and
+.I height
+are decimal numbers giving the width and height of the paper, respectively,
+and the unit is any of the two-letter abbreviations for units accepted
+by \*(Te\&
+.RB ( pt ,
+.BR pc ,
+.BR in ,
+.BR bp ,
+.BR cm ,
+.BR mm ,
+.BR dd ,
+.BR cc ,
+or
+.BR sp ).
+By default, the unit will be
+.BR in " (inches)".
+There are also synonyms which may be used:
+.B us
+(8.5x11in),
+.B usr
+(11x8.5in),
+.B legal
+(8.5x14in),
+.B foolscap
+(13.5x17in),
+as well as the ISO sizes
+.BR a1 - a7 ,
+.BR b1 - b7 ,
+.BR c1 - c7 ,
+.BR a1r - a7r
+.RB ( a1 - a7
+rotated), etc.  The default size is 8.5 x 11 inches.
+.TP
+.B \-rv
+.RB ( .reverseVideo )
+Causes the page to be displayed with white characters on a black background,
+instead of vice versa.
+.TP
+.BI \-s " shrink"
+.RB ( .shrinkFactor )
+Defines the initial shrink factor.  The default value is 8.  If
+.I shrink
+is given as 0, then the initial shrink factor is computed so that the
+page fits within the window (as if the `s' keystroke were given without
+a number).
+.TP
+.BI \-S " density"
+.RB ( .densityPercent )
+Same as
+.BR \-density ,
+.I q.v.
+.TP
+.B \-safer
+.RB ( .safer )
+This option turns on all available security options; it is designed for use when
+.B xdvi
+is called by a browser that obtains a
+.I dvi
+or \*(Te\& file from another site.
+In the present case, this option is accepted but has no effect, since
+.B xdvi
+has been compiled without support for PostScript specials.
+.TP
+.BI \-sidemargin " dimen"
+.RB ( .sideMargin )
+Specifies the side margin (see
+.BR \-margins ).
+.TP
+.BI \-srcMode
+.RB ( .srcMode )
+Starts xdvi in src special mode (see the section SRC
+SPECIAL MODE below for details). The mode can be toggled
+with `Ctrl-s'; when the mode is on, the cursor
+has a different shape (see the \fB-srcCursor\fR option below).
+For security reasons, evaluation of src specials is off by default,
+and it might be a good idea to enable it only for selected .dvi files
+on the command line.
+.TP
+.BI \-srcVisibility
+.RB ( .srcVisibility )
+Makes the source specials visible by drawing small tick marks
+for each special. This can be toggled with the `V' key (see
+the section SRC SPECIAL MODE for more details).
+.TP
+.BI \-srcTickShape " n"
+.RB ( .srcTickShape )
+Specifies the shape of the src tick marks, where \fIn\fR can be
+one of \fB0\fR, \fB1\fR, \fB2\fR or \fB3\fR:
+\fB0\fR is a rectangle,
+\fB1\fR is a triangle,
+\fB2\fR is an upward angle and
+\fB3\fR is a downward angle.
+See the section SRC SPECIAL MODE for more details.
+.TP
+.BI \-srcTickSize " geometry"
+.RB ( .srcTickSize )
+Specifies the size of the src tick marks in pixels
+\fIwidth\fR x \fIheight\fR, with respect to magnification factor 1.
+Default is 40x70, which is a reasonable value for 600dpi
+fonts. For higher resolutions, you might want to increase
+the size. The two attributes \fIwidth\fR and \fIheight\fR only have a
+natural meaning for the \fBrectangle\fR shape; for the \fBtriangle\fR,
+\fIwidth\fR is ignored; for the \fBangle\fR shapes, \fIwidth\fR is half
+the width of the lines, and \fIheight\fR is the length of the lines.
+See the section SRC SPECIAL MODE for more details.
+.TP
+.BI \-srcCursor " n"
+.RB ( .srcCursor )
+The shape of the cursor in SRC SPECIAL MODE. For possible
+values, see e. g. `cursorfont.h'.
+.TP
+.BI \-srcJumpButton " button"
+.RB ( .srcJumpButton )
+The mouse button used in SRC SPECIAL MODE to
+jump to the next special near point. See
+the section SRC SPECIAL MODE for more details.
+.TP
+.BI \-srcEditorCommand " command string"
+.RB ( .srcEditorCommand )
+Specifies the editor command that will be called when
+the user wants to jump to a src special.
+This should be a C format string containing 2 placeholders
+(aka `conversion specifications'):
+%s (for the filename) and %u (for the line number) pointed
+to by that special. You should always enclose both of these
+conversion specifications into a pair of quotes like this: '%u';
+this will ensure that the shell won't interpret the resulting
+format string directly. This way it will do no harm when
+some evil user puts commands like `ls -lR /` into the src
+specials of a .dvi file, instead of the ordinary filename.
+The default for this command string is:
+.sp
+emacsclient --no-wait '+%u' '%s'
+.sp
+which will work together with Emacs. For Xemacs you would
+have to use something like:
+.sp
+gnuclient -q +'%u' '%s'
+.sp
+Note that when the command-line option, you'll have to
+enclose the string into another pair of quotes; don't
+enclose the string in quotes when specifying it as an
+X resource.
+.TP
+.BI \-srcSpecialFormat " n"
+.RB ( .srcSpecialFormat )
+The format of the
+.B \especial
+strings in the dvi file. The formats currently supported are:
+.sp
+\fB0\fR       \especial{src:filename:linenumber}
+.sp
+\fB1\fR       \especial{src:linenumber<space>filename}
+.sp
+\fB2\fR       \especial{src:linenumber<space>*filename}	
+.sp
+In the first format, the colon separating the linenumber from the filename
+is the last colon in the entire string.
+.sp
+The second format requires exactly one space between the line number and
+the file name.
+.sp
+In the third format, there can be any number of spaces (including 0 --
+but then of course the file name shouldn't start with a digit, so using
+no space at all is usually not a good idea).
+.sp
+Xdvi will warn you about specials that don't conform to the
+format currently selected.
+.TP
+.B \-thorough
+.RB ( .thorough )
+.B xdvi
+will usually try to ensure that overstrike characters
+.RI ( e.g. ,
+.BR \enotin )
+are printed correctly.  On monochrome displays, this is always possible
+with one logical operation, either
+.I and
+or
+.IR or .
+On color displays, however, this may take two operations, one to set the
+appropriate bits and one to clear other bits.  If this is the case, then
+by default
+.B xdvi
+will instead use the
+.I copy
+operation, which does not handle overstriking correctly.  The
+.B \-thorough
+option chooses the slower but more correct choice.  See also
+.BR \-copy .
+.TP
+.BI \-topmargin " dimen"
+.RB ( .topMargin )
+Specifies the top and bottom margins (see
+.BR \-margins ).
+.TP
+.BI \-underlink
+.RB ( .underLink )
+Underline links.  Default is true.
+.TP
+.BI \-version
+Print information on the version of
+.BR xdvi .
+.TP
+.B \-warnspecials
+.RB ( .warnSpecials )
+Causes
+.B xdvi
+to issue warnings about
+.B \especial
+strings that it cannot process.
+.TP
+.BI \-xoffset " dimen"
+.RB ( .xOffset )
+Specifies the size of the horizontal offset of the output on the page.  See
+.BR \-offsets .
+.TP
+.BI \-yoffset " dimen"
+.RB ( .yOffset )
+Specifies the size of the vertical offset of the output on the page.  See
+.BR -offsets .
+.SH KEYSTROKES
+.B xdvi
+recognizes the following keystrokes when typed in its window.
+Each may optionally be preceded by a (positive or negative) number, whose
+interpretation will depend on the particular keystroke.
+Also, the ``Help'', ``Home'', ``Prior'', ``Next'', and arrow cursor keys
+are synonyms for
+.RB ` ? ',
+.RB ` ^ ',
+.RB ` b ',
+.RB ` f ',
+.RB ` l ',
+.RB ` r ',
+.RB ` u ',
+and
+.RB ` d '
+keys, respectively.
+.TP
+.B q
+Quits the program.  Control-C and control-D will do this, too.
+.TP
+.B Q
+Quits the program with exit status 2.
+.TP
+.B n
+Moves to the next page (or to the
+.IR n th
+next page if a number is given).  Synonyms are
+.RB ` f ',
+Space, Return, and Line Feed.
+.TP
+.B p
+Moves to the previous page (or back
+.I n
+pages).  Synonyms are
+.RB ` b ',
+control-H, and Delete.
+.TP
+.B g
+Moves to the page with the given number.  Initially, the first page is assumed
+to be page number 1, but this can be changed with the
+.RB ` P '
+keystroke, below.  If no page number is given, then it goes to the last page.
+.TP
+.B P
+``This is page number
+.IR n .''
+This can be used to make the
+.RB ` g '
+keystroke refer to actual page numbers instead of absolute page numbers.
+.TP
+Control-L
+Redisplays the current page.
+.TP
+.B ^
+Move to the ``home'' position of the page.  This is normally the upper
+left-hand corner of the page, depending on the margins as described in the
+.B \-margins
+option, above.
+.TP
+.B u
+Moves up two thirds of a window-full.
+.TP
+.B d
+Moves down two thirds of a window-full.
+.TP
+.B l
+Moves left two thirds of a window-full.
+.TP
+.B r
+Moves right two thirds of a window-full.
+.TP
+.B c
+Moves the page so that the point currently beneath the cursor is moved to
+the middle of the window.  It also (gasp!) warps the cursor to the same place.
+.TP
+.B M
+Sets the margins so that the point currently under the cursor is the upper
+left-hand corner of the text in the page.  Note that this command itself does
+not move the image at all.  For details on how the margins are used, see
+the
+.B \-margins
+option.
+.TP
+.B s
+Changes the shrink factor to the given number.  If no number is given, the
+smallest factor that makes the entire page fit in the window will be used.
+(Margins are ignored in this computation.)
+.TP
+.B S
+Sets the density factor to be used when shrinking bitmaps.  This should
+be a number between 0 and 100; higher numbers produce lighter characters.
+.TP
+.B t
+Toggles to the next unit in a sorted list of \*(Te\& dimension
+units for the popup magnifier ruler.
+.TP
+.B R
+Forces the
+.I dvi
+file to be reread.  This allows you to preview many versions of the same
+file while running
+.B xdvi
+only once.
+.TP
+.B k
+Normally when
+.B xdvi
+switches pages, it moves to the home position as well.  The
+.RB ` k '
+keystroke toggles a `keep-position' flag which, when set, will keep
+the same position when moving between pages.  Also
+.RB ` 0k '
+and
+.RB ` 1k '
+clear and set this flag, respectively.  See also the
+.B \-keep
+option.
+.TP
+.B D
+This key toggles the use of grid over the document.
+If no number is given, the grid mode toggles. 
+By prepending number, 3 grid levels can be set.
+The grid in each level is drawn in the colour specified.
+See also the
+.B \-grid1, \-grid2, 
+and
+.B \-grid3
+options.
+.TP
+.B F
+Read a new 
+.I dvi
+file. A file-selection widget is popped up for you to choose the dvi
+file from.
+.SH MOUSE ACTIONS
+If the shrink factor is set to any number other than one, then clicking
+mouse button 3 
+will pop up a ``magnifying glass'' which shows the unshrunk
+image in the vicinity of the mouse click.  This subwindow disappears when
+the mouse button is released.  Different mouse buttons produce different sized
+windows, as indicated by the
+.B \-mgs
+option.  Moving the cursor while holding the button down will move the
+magnifying glass.
+.PP
+If the cursor is on a hypertext link (underlined by default), then
+that link overrides the magnifying glass for Buttons 1 and 2.
+If Button 1 is clicked over a link, then
+.B xdvi
+jumps to the target in the current window.  If Button 2 is clicked over a link,
+then
+.B xdvi
+opens a new window on the target.
+.PP
+More precisely, for internal links, Button 1 jumps in the same window to
+the link, while Button 2 starts up a new
+.B xdvi
+on the link.  For external links to
+.I dvi
+files, Button 1 changes the current
+.B xdvi
+to be reading that file, while Button 2 starts a new
+.B xdvi
+on that file.  For other file types,
+.B mime.types
+and
+.B mailcap
+are parsed to determine the viewer; finally, if no suitable
+.B mailcap
+entry was found, if the
+.SB WWWBROWSER
+environment variable is set, or
+.B \-browser
+was specified on the command line, it is started up on the file.
+.PP
+The scrollbars (if present) behave in the standard way:  pushing Button 2
+in a scrollbar moves the top or left edge of the scrollbar to that point
+and optionally drags it;
+pushing Button 1 moves the image up or right by an amount equal to the distance
+from the button press to the upper left-hand corner of the window; pushing
+Button 3 moves the image down or left by the same amount.
+.SH SIGNALS
+When
+.B xdvi
+receives a
+.SB SIGUSR1
+signal, it rereads the
+.I dvi
+file.
+.SH ENVIRONMENT
+Please see the
+.B kpathsea
+documentation.
+
+.SH SRC SPECIAL MODE
+ADD SOMETHING HERE, including:
+.sp
+- general description (concept of separate mode; maybe something
+more about security issues)
+.sp
+- description of keys/buttons available in src special mode
+(\fBV\fR toggles visibility of tick marks, \fBX\fR highlights
+next special without jumping to it, \fBT\fR changes the
+shapes of the marks, Mouse button 2 jumps to
+next special unless user has specified another button
+with \fB-srcJumpButton\fR)
+.sp
+- meaning of the tick marks (reference points:
+the reference point is the upper-left corner for
+the rectangle shape, the top of the triangle for the triangular shape,
+the inner angle point for the upangle and the
+outer angle point for the downangle shape).
+.sp
+- searching of `next' special on page (xdvi will search `linewise',
+i.e. it will jump to the next special on the current line (to the
+right of the mouse click) if there is one, and to the first special on
+the next line else).
+.sp
+.SH ENVIRONMENT
+.B xdvik
+uses the same environment variables and algorithms for finding
+font files as \*(Te\& and friends.  See the documentation for the
+.B Kpathsea
+library for details (repeating it here is too cumbersome).  In addition,
+.B xdvik
+accepts the following variables:
+.TP
+.SB DISPLAY
+Specifies which graphics display terminal to use.
+.TP
+.SB KPATHSEA_DEBUG
+Trace
+.B Kpathsea
+lookups; set it to
+.B -1
+for complete tracing.
+.TP
+.SB MIMELIBDIR
+Directory containing the
+.B mime.types
+file, if
+.B ~/.mime-types
+does not exist.
+.TP
+.SB MAILCAPDIR
+Directory containing the
+.B .mailcap
+file, if
+.B ~/.mailcap
+does not exist.
+.TP
+.SB WWWBROWSER
+The browser used to open URL's, if neither the
+.B \-browser
+option nor the
+.B .wwwBrowser
+resource are set.  For more information on hyper-\*(Te\& support,
+see the `Hypertext' node in the
+.B dvipsk
+manual.
+.SH LIMITATIONS
+.B xdvi
+accepts many but not all types of PostScript specials accepted by
+.BR dvips .
+For example, it accepts most specials generated by
+.B epsf
+and
+.BR psfig ,
+It does not, however, support
+.B bop\-hook
+or
+.BR eop\-hook ,
+nor does it allow PostScript commands to affect the rendering of things that
+are not PostScript (for example, the ``NEAT'' and rotated ``A'' examples in the
+.B dvips
+manual).  These restrictions are due to the design of
+.BR xdvi ;
+in all likelihood they will always remain.
+.PP
+La\*(Te\&2e color and rotation specials are not currently supported.
+.SH FILES
+Please see the kpathsea documentation.
+.SH COPYRIGHTS
+.B xdvi
+itself is Copyrighted by Paul Vojta and distributed under the X-Consortium
+license.
+.B xdvi
+uses the 
+.B libwww
+library of the World Wide Web Consortium, which includes computer software
+creaded and made available by CERN.  It also uses the
+.B kpathsea
+library which is distributed under the GNU LIBRARY General Public License.
+.PP
+THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL PAUL VOJTA OR ANY OTHERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
+THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+.SH SEE ALSO
+.BR X (1),
+.BR dvips (1),
+.BR Kpathsea documentation
+.SH AUTHORS
+Eric Cooper, CMU, did a version for direct output to a QVSS. Modified
+for X by Bob Scheifler, MIT Laboratory for Computer Science. Modified
+for X11 by Mark Eichin, MIT SIPB. +Additional enhancements by many
+others.  The current maintainer of the original
+.B xdvi
+is Paul Vojta, U.C. Berkeley; the maintainer of the
+.B xdvik
+variant is Nicolai Langfeldt, Dept. of Math, UiO, Norway, with the help
+of many others.

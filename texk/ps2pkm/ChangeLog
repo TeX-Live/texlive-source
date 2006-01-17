@@ -1,0 +1,55 @@
+Fri Mar 13 13:41:39 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* bstring.c: more fixes from Thomas Esser in this and configure
+	setup 
+
+Mon Mar  9 10:33:30 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* fixes as suggested by Melissa O'Neill <oneill@cs.sfu.ca> (from
+	Thomas Esser), for memset in bstring.c (addition to configure)
+
+Tue Feb 24 11:55:33 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* objects.[ch]: extra #ifdef KPATHSEA inside WIN32
+
+Mon Feb 16 12:36:45 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* more fixes to regions.c (Thomas Esser)
+
+Tue Feb  3 13:40:36 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* regions.c: rationalized non STDC declarations
+
+Wed Jan 28 09:44:45 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* better undef of BITS in curves.c; change in objects.h (ifdef
+	KPATHSEA instead of just WIN32) from Fabrice Popineau
+
+Tue Jan 27 14:32:25 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* configure etc: new configure.in, c-auto.in, Makefile.in from
+	Olaf Weber
+	
+Tue Jan 27 13:48:14 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* patch to regions.h from Peter B 
+
+Tue Jan 20 10:14:10 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* added check of function prototypes to c-auto.in
+
+Mon Jan 19 20:46:08 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* pkin.c: "remainder" clashed with some builtin, so
+	renamed to remainderPK throughout
+
+Thu Jan  1 11:08:37 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	Fixes by Peter Breitenlohner <peb@mppmu.mpg.de>
+	* curves.c: BITS redefined
+        * regions.h: incompatible pointer types
+        * types.h: AA redefined
+        * t1stub.c: struct declared inside parameter list
+
+
+

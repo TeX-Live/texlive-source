@@ -1,0 +1,31 @@
+.TH FDF2TEX "1" "May 2004" "teTeX " "ConTeXt"
+.SH NAME
+fdf2tex \- Convert PDF formular data (FDF) into something (Con)TeX(t) can
+handle
+.PP
+.SH "SYNOPSIS" 
+\fBfdf2tex\fP \fIinfile\fP [ \fIoutfile\fP ]
+.PP
+\fBfdf2tan\fP \fIinfile\fP
+.PP 
+.SH DESCRIPTION
+.PP
+Converts PDF formular data (FDF) into something (Con)TeX(t) can
+handle. These commands are usually called indirectly during ConTeXt
+file processing.
+.HP
+.SH "BUGS"
+.PP
+Probably none - all errors are in this manpage
+.PP
+.SH "SEE ALSO" 
+.PP 
+\fBtexexec\fP(1)\&.
+.PP 
+The TeXExec manual, \fImtexexec\&.pdf\fP\&.
+.PP 
+.SH "AUTHOR" 
+.IP 
+This manual page was written by Frank Küster <frank@kuesterei\&.ch>,
+for the Debian GNU/Linux system\&.  It may be used and modified by
+others without contacting the author\&.

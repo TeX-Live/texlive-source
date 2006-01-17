@@ -1,0 +1,60 @@
+.TH makempy "1" "May 2004" "teTeX " "ConTeXt"
+.SH NAME
+makempy \- Helper script for conversion of (PDF or PostScript) text to
+\fBMetapost\fP graphics
+.PP
+.SH "SYNOPSIS" 
+\fBmakempy\fP \fIfilenam\fP
+.PP 
+.SH DESCRIPTION
+.PP
+\fBmakempy\fP takes \fBMetapost\fP output files (*\&.mpo) and
+translates them to *\&.mpy files. In order to include text as a
+graphic into a file typeset with (Con)TeX(t), you extract the text
+from Postscript of PDF files using \fBpdftops\fP and \fBpstoedit\fP,
+creating a Metapost input file.
+.PP
+This file can then be processed by \fBmakempy\fP. The \fBmakempy\fP
+script does its work without user intervention. When it deduces that
+there are no changes, it will not run at all, otherwise it will report
+its steps and/or encountered error.
+.SH "OPTIONS"
+.IP 
+.IP "\fB--help\fP" 
+returns some basic help information
+.IP 
+.IP "\fB--silent\fP" 
+don t report status messages
+.IP
+.IP "\fB--force\fP"
+always process the file (no checksum test)
+.IP
+.IP "\fB--noclean\fP"
+don t remove temporary files when finished
+.IP
+.IP "\fB--acrobat\fP"
+use ACROBAT for conversion (only unix)
+.IP
+.IP "\fB--pdftops\fP"
+use PDFTOPS for conversion
+.IP
+.IP "\fB--ghostscript\fP"
+use GHOSTSCRIPT for conversion
+.IP
+.SH "VARIABLES"
+.PP
+When set, the environment variables GS and GS_PROG will be used to
+identify GHOSTSCRIPT. If needed, the names of the other programs that
+are used can be set with PDFTOPS, ACROREAD and PSTOEDIT.
+.HP
+.SH "SEE ALSO" 
+.PP 
+\fBtexexec\fP(1)\&.
+.PP 
+The makempy manual, \fImmakempy\&.pdf\fP\&.
+.PP 
+.SH "AUTHOR" 
+.IP 
+This manual page was written by Frank Küster <frank@kuesterei\&.ch>,
+for the Debian GNU/Linux system\&.  It may be used and modified by
+others without contacting the author\&.

@@ -1,0 +1,51 @@
+# Makefile.in for detex. Thomas Esser, 2002. Public domain.
+
+all: detex
+
+kpse_include ../make/paths.mk
+kpse_include ../make/common.mk
+kpse_include ../make/programs.mk
+kpse_include ../make/tkpathsea.mk
+
+program = detex
+prog_cflags = -DKPATHSEA
+
+LEX = @LEX@
+LEXLIB = @LEXLIB@
+LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
+
+$(program): $(LEX_OUTPUT_ROOT).o $(kpathsea)
+	$(kpathsea_link) $(LEX_OUTPUT_ROOT).o $(LEXLIB) $(LOADLIBES)
+
+$(LEX_OUTPUT_ROOT).c: xxx.l
+	$(LEX) xxx.l
+
+$(LEX_OUTPUT_ROOT).o: $(LEX_OUTPUT_ROOT).c detex.h
+
+xxx.l: states.sed detex.l
+	sed -f $(srcdir)/states.sed $(srcdir)/detex.l > xxx.l
+
+detex.c: xxx.l
+	$(LEX) 
+
+
+kpse_include ../make/clean.mk
+clean::
+	rm -f xxx.l $(program) $(LEX_OUTPUT_ROOT).c
+
+distclean::
+	rm -f c-auto.h Makefile config.cache config.log config.status
+
+install: install-exec install-data
+uninstall: uninstall-exec uninstall-data
+install-exec: $(program)
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(bindir)
+	$(INSTALL_LIBTOOL_PROG) $(program) $(bindir)
+uninstall-exec:
+	rm -f $(bindir)/$(program)
+install-data:
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(man1dir)
+	$(INSTALL_DATA) $(srcdir)/detex.man $(man1dir)/detex.$(manext)
+uninstall-data:
+	rm -f $(man1dir)/detex.$(manext)
+depend info dvi check:

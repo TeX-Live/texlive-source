@@ -1,0 +1,62 @@
+
+For an up-to-date list of bugs, please visit:
+
+http://sourceforge.net/tracker/?group_id=23164&atid=377580
+
+This file records only bugs that have been tagged as `Wont fix' or
+`Later', i.e. bugs that couldn't be resolved so far.
+
+Please report new bugs to the above SourceForge URL, including as much
+information as possible (whatever may be relevant: platform, compiler,
+X version, output of xdpyinfo, sample .dvi file to reproduce the
+problem; see also: http://xdvi.sourceforge.net/#bugs).
+
+
+(A) X interface bugs:
+
+(A1) The current code to toggle to/from fullscreen mode via Ctrl-l, and to
+     remove the Xaw scrollbars for expert mode is an atrocious hack that won't
+     work with many window managers (see e.g. #814327). These should be fixed by
+     someone who knows X better than I do.
+
+(A2) The correct handling of XtAppAddTimeOut() and friends, used e.g. internally
+     by many Motif widgets, depends on xdvi redefining the XtAppAddTimeOut() and
+     related functions to use its own non-standard event handling routines.
+   
+     If this is not possible (e.g. because your linker doesn't allow multiple
+     definitions - check for the corresponding warnings by ./configure),
+     some of the widgets (e.g. the print log window, tooltips, statusline
+     messages, hyperlink location markers) will not appear correctly or will
+     only be updated when the mouse is moved.
+
+(A3) Motif: Toggle buttons in print dialog (page range) may fail under
+     certain circumstances when button has been changed via marking pages.
+     (For details, see comment in gui/print-dialog.c, notify_dialog()).
+
+(A4) Motif 1.2: After opening a document at page 1 and changing to page
+     2, an partial area of the highlighting of page 1 is not erased (#997080).
+
+(A5) Ctrl-l and the `fullscreen' option are hacks that may interact badly
+     with certain window managers (e.g. KDE; see #815020). In such cases it's
+     better to use the window manager's functions to enable fullscreen mode.
+
+(A6) Xaw: The page list scroll area (viewport) is not resized when switching to
+     a file with longer page numbers (e.g. from 2-digit ones to 5-digit ones).
+
+
+(B) Known features:
+
+(B1) Controll of font/file generation by X-resource and commandline is overridden
+     by controll by environment variable/texmf.cnf setting.  This is a design
+     decision in kpathsea; if you want it to be resource/commandline controlled,
+     make sure there is no setting in the environment or texmf.cnf.
+  
+(B2) Some of the optional compilation stuff (e.g. display postscript) hasn't been
+     tested for quite some time and may be broken.
+
+
+(C) Autoconfigure issues:
+
+(C1) GS_PATH cannot be set except by CFLAGS=-DGS_PATH=...  Paul has a macro for
+     this.  Must be compatible with kpathsea, but I haven't checked this yet.
+

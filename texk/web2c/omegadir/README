@@ -1,0 +1,12 @@
+This directory contains part of the Omega distribution, other parts
+are found in ../otps, and several files in the parent directory.  You
+will also need odvips, the sources of which might be present in
+../../odvips.
+
+Omega is very much experimental software, and may prove hard or
+impossible to build on your system.  At present, you need to install
+bison (the GNU version of yacc) and lex or flex to build otp2ocp from
+scratch.  If you do not have these programs, you can try to use the
+y_tab.c-dist, y_tab.h-dist, and lex.yy.c-dist files to complete the
+build.
+

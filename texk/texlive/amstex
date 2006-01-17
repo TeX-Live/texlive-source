@@ -1,0 +1,3 @@
+#!/bin/sh
+test -f "`kpsewhich amstex.fmt`" || fmtutil --byfmt amstex
+exec tex -fmt=amstex -progname=tex "$@"

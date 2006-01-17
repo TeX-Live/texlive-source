@@ -1,0 +1,48 @@
+dnl withenable.ac: --with and --enable options.
+
+AC_ARG_WITH([bibtex8],
+	[  --without-bibtex8          do not build the bibtex8 package])
+AC_ARG_WITH([cjkutils],
+	[  --without-cjkutils         do not build the cjkutils package])
+AC_ARG_WITH([detex],
+	[  --without-detex            do not build the detex package])
+AC_ARG_WITH([dtl],
+	[  --without-dtl              do not build the dtl package])
+AC_ARG_WITH([dvi2tty],
+	[  --without-dvi2tty          do not build the dvi2tty package])
+AC_ARG_WITH([dvidvi],
+	[  --without-dvidvi           do not build the dvidvi package])
+AC_ARG_WITH([dviljk],
+	[  --without-dviljk           do not build the dviljk package])
+AC_ARG_WITH([dvipdfm],
+	[  --without-dvipdfm          do not build the dvipdfm package])
+AC_ARG_WITH([dvipdfmx],
+	[  --without-dvipdfmx         do not build the dvipdfmx package])
+AC_ARG_WITH([dvipng],
+	[  --without-dvipng           do not build the dvipng package])
+AC_ARG_WITH([dvipsk],
+	[  --without-dvipsk           do not build the dvipsk package])
+AC_ARG_WITH([gsftopk],
+	[  --without-gsftopk          do not build the gsftopk package])
+AC_ARG_WITH([lacheck],
+	[  --without-lacheck          do not build the lacheck package])
+AC_ARG_WITH([makeindexk],
+	[  --without-makeindexk       do not build the makeindexk package])
+AC_ARG_WITH([musixflx],
+	[  --without-musixflx         do not build the musixflx package])
+AC_ARG_WITH([ps2pkm],
+	[  --without-ps2pkm           do not build the ps2pkm package])
+AC_ARG_WITH([seetexk],
+	[  --without-seetexk          do not build the seetexk package])
+AC_ARG_WITH([tetex],
+	[  --without-tetex            do not build the tetex package])
+AC_ARG_WITH([tex4htk],
+	[  --without-tex4htk          do not build the tex4htk package])
+AC_ARG_WITH([texlive],
+	[  --without-texlive          do not build the texlive package])
+AC_ARG_WITH([ttf2pk],
+	[  --without-ttf2pk           do not build the ttf2pk package])
+AC_ARG_WITH([tth],
+	[  --without-tth              do not build the tth package])
+AC_ARG_WITH([xdvik],
+	[  --without-xdvik            do not build the xdvik package])

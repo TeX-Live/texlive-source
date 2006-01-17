@@ -1,0 +1,11 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(tex4ht.c)
+
+sinclude(../kpathsea/common.ac)
+
+AC_CHECK_SIZEOF(int)
+
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
+dnl Update stamp-auto, since we just remade `c-auto.h'.
+date >stamp-auto

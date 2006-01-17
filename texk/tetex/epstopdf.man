@@ -1,0 +1,54 @@
+.TH EPSTOPDF 1 "October 30, 1999"
+.\" man page by Jim Van Zandt <jrv@vanzandt.mv.com>         -*- nroff -*-
+.SH NAME
+epstopdf \- convert an EPS file to PDF
+.SH SYNOPSIS
+\fBepstopdf\fP [\fIoptions\fP] \fIepsfile\fP
+.SH DESCRIPTION
+\fBepstopdf\fP transforms the Encapsulated PostScript file
+\fIepsfile\fP so that it is guaranteed to start at the 0,0 coordinate,
+and it sets a page size exactly corresponding to the BoundingBox.
+This means that when Ghostscript renders it, the result needs no
+cropping, and the PDF MediaBox is correct.  The result is piped to
+Ghostscript and a PDF version written.
+.P
+If the bounding box is not right, of course, you have problems...
+.SH OPTIONS
+.IP "\fB--outfile\fP=\fIfile\fP"
+write result to \fIfile\fP instead of standard output.
+.IP "\fB--\fP[\fBno\fP]\fBfilter\fP"
+read standard input   (default: --nofilter).
+.IP "\fB--\fP[\fBno\fP]\fBgs\fP"
+run ghostscript       (default: --gs).
+.IP "\fB--\fP[\fBno\fP]\fBcompress\fP"
+use compression       (default: --compress).
+.IP "\fB--\fP[\fBno\fP]\fBhires\fP"
+scan HiresBoundingBox (default: --nohires).
+.IP "\fB--\fP[\fBno\fP]\fBexact\fP"
+scan ExactBoundingBox (default: --noexact).
+.IP "\fB--\fP[\fBno\fP]\fBdebug\fP"
+debug informations    (default: --nodebug).
+.IP "\fB--help\fP
+print usage
+.SH EXAMPLE
+Examples for producing "test.pdf":
+.nf
+
+epstopdf test.eps
+produce postscript | epstopdf --filter >test.pdf
+produce postscript | epstopdf -f -d -o=test.pdf
+
+.fi
+Example: look for HiresBoundingBox and produce corrected PostScript:
+.nf
+
+epstopdf -d --nogs -hires test.ps>testcorr.ps 
+.fi
+.SH BUGS
+The only thing I have not allowed for is the case of
+"%%BoundingBox: (atend)", which is more complicated.
+.SH SEE ALSO
+\fBgs\fP(1).
+.SH AUTHOR
+Sebastian Rahtz, for Elsevier Science.
+Now with extra tricks from Hans Hagen's texutil.

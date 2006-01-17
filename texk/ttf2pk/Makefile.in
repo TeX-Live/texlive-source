@@ -1,0 +1,63 @@
+# Makefile for ttf2pk --te@dbs.uni-hannover.de. Public domain.
+
+kpse_include ../make/paths.mk
+kpse_include ../make/common.mk
+kpse_include ../make/programs.mk
+
+LDFREETYPE=@LDFREETYPE@
+FREETYPECPPFLAGS=@FREETYPECPPFLAGS@
+FREETYPEDEP=@FREETYPEDEP@
+FREETYPEDIR = ../../libs/freetype
+FREETYPESRCDIR = $(srcdir)/$(FREETYPEDIR)
+
+prog_cflags = -DHAVE_LIBKPATHSEA $(FREETYPECPPFLAGS) 
+prog_ldflags = $(LDFREETYPE)
+
+ttf2pkobjs = errormsg.o filesrch.o ligkern.o newobj.o parse.o pklib.o \
+  subfont.o texenc.o ttf2pk.o ttfenc.o ttflib.o
+
+ttf2tfmobjs = case.o errormsg.o filesrch.o ligkern.o newobj.o parse.o \
+  subfont.o texenc.o tfmaux.o ttf2tfm.o ttfaux.o ttfenc.o vplaux.o
+
+programs = ttf2pk ttf2tfm
+
+default all: $(programs)
+
+ttf2pk: $(kpathsea) $(ttf2pkobjs) $(FREETYPEDEP)
+	$(kpathsea_link)  $(ttf2pkobjs) $(prog_ldflags) $(LOADLIBES)
+
+ttf2tfm: $(kpathsea) $(ttf2tfmobjs) $(FREETYPEDEP)
+	$(kpathsea_link) $(ttf2tfmobjs) $(prog_ldflags) $(LOADLIBES)
+
+$(FREETYPEDIR)/lib/.libs/libttf.a:
+	cd $(FREETYPEDIR); $(MAKE) $(makeargs)
+
+kpse_include ../make/tkpathsea.mk
+
+install: install-exec install-data
+uninstall: uninstall-exec uninstall-data
+
+install-exec: $(programs)
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(bindir)
+	for p in $(programs); do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
+uninstall-exec:
+	for p in $(programs); do rm -f $(bindir)/$$p; done
+
+install-data: ttf2pk.1 ttf2tfm.1
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(man1dir)
+	$(INSTALL_DATA) $(srcdir)/ttf2pk.1 $(man1dir)/ttf2pk.$(manext)
+	$(INSTALL_DATA) $(srcdir)/ttf2tfm.1 $(man1dir)/ttf2tfm.$(manext)
+uninstall-data:
+	rm -f $(man1dir)/ttf2pk.$(manext) $(man1dir)/ttf2tfm.$(manext)
+
+pre-dist-$(distname):
+post-dist-$(distname):
+
+kpse_include ../make/dist.mk
+kpse_include ../make/config.mk
+
+info dvi check:
+
+kpse_include ../make/clean.mk
+kpse_include ../make/rdepend.mk
+kpse_include depend.mk

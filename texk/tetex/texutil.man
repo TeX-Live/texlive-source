@@ -1,0 +1,266 @@
+.TH TEXUTIL 1 UMFT
+.de EX
+.sp
+.in +5
+.nf
+.ft CW
+..
+.de EE
+.in -5
+.ft R
+.sp
+.fi
+..
+.TH "texutil" "1" "October 2000" "ConTeXt" "CONTEXT" 
+.PP 
+.SH "NAME" 
+texutil \- ConTeXt auxiliary program
+.PP 
+.SH "SYNOPSIS" 
+\fBtexutil\fP [ \fIOPTION\fP\&.\&.\&. ] \fIFILENAME\fP[\&.\&.\&.]
+.PP 
+.SH "DESCRIPTION" 
+.PP 
+When processing a source file, \fBConTeXt\fP (via \fBtexexec\fP(1))
+saves information (including table of contents, tables of figures and
+tables, index entries, cross-references) in a ``utility file\'\' called
+\fIFILENAME\fP\fI\&.tui\fP\&.  After each successful run, this
+utility file is postprocessed by \fBtexutil\fP to organize the
+information for the next run\&.
+.PP 
+\fBtexutil\fP performs a number of useful functions:
+.PP 
+.IP o 
+Postprocessing references, including sorting index and list
+entries (with \fB--references\fP)
+.IP o 
+Extracting documentation and other types of information from
+\fBConTeXt\fP source files (with
+\fB--documents\fP)
+.IP o 
+Logfile analysis (with \fB--logfile\fP)
+.IP o 
+Collecting information about graphic files to help with
+typesetting (with \fB--figures\fP)
+.IP o 
+Converting EPS files to a PDF format suitable for inclusion in
+PDF files generated with \fBpdftex\fP(1) (with
+--\fB--epspage\fP and
+\fB--epstopdf\fP)
+.PP 
+.SH "OPTIONS" 
+.PP 
+All switches are specified here in full, but can be abbreviated to the
+shortest unique string\&.  Thus, \fB--ver\fP works the same as
+\fB--verbose\fP provided that there is no other flag beginning with
+``\f(CWver\fP\'\'\&.
+.PP 
+.SH "General Options" 
+.PP 
+.IP "\fB--help\fP" 
+Print a usage summary to stdout\&.
+.IP "\fB--interface=\fP\fILANGUAGECODE\fP" 
+Specify the language for
+messages\&.  One of \fBen\fP (English), \fBde\fP (German), or
+\fBnl\fP (Dutch)\&.  The default language is English\&.
+.IP "\fB--outputfile=\fP\fIFILENAME\fP" 
+Specify the name of the
+output file\&.
+.IP "\fB--purge\fP [ \fIBASENAME\fP ]" 
+Delete temporary files\&.
+Specifying an optional \fIBASENAME\fP will only
+affect the temporary files that begin with that
+\fIBASENAME\fP\&.
+.IP "\fB--silent\fP" 
+Redirects stdout to the \fIlog\fP file
+(\fItexutil\&.log\fP, by default)\&.  When used with
+\fB--verbose\fP, a summary is printed to stdout, while
+any other output is written to the \fIlog\fP file\&.
+.IP 
+For example,
+.IP 
+.EX 
+\f(CWtexutil --figures --silent --verbose somefile\&.png\fP
+.EE 
+.IP 
+will output something like
+.IP 
+.EX 
+\f(CWn=somefile\&.png t=png x=0bp y=0bp w=443bp h=591bp\fP
+.EE 
+.IP 
+to stdout, placing other output into
+\fItexutil\&.log\fP\&.  This information can be piped
+into another program for further processing\&.
+.IP "\fB--type=\fP\fISUFFIX\fP" 
+Specify the \fISUFFIX\fP of the
+file you want \fBtexutil\fP to process\&.
+.IP "\fB--verbose\fP" 
+Print diagnostic messages to the screen\&.
+.PP 
+.SH "Postprocessing References" 
+.PP 
+The \fB--references\fP flag instructs \fBtexutil\fP to process
+information about cross-references, index entries, and other data
+requiring more than one pass to process in the \fBConTeXt\fP utility
+file\&.
+.PP 
+Index and sorted list entries are sorted before being written out;
+redundant index entries are removed\&.
+.PP 
+\fBtexutil\fP is called automatically by \fBtexexec\fP(1) during its
+processing runs unless you specify otherwise\&.  \fBtexutil\fP can also
+be run by hand, using the form
+.PP 
+.EX 
+\f(CWtexutil --references\fP \fIFILENAME\fP
+.EE 
+.PP 
+This command would cause \fBtexutil\fP to load the utility file
+\fIFILENAME\fP\fI\&.tui\fP, sort and convert the contents of that
+file, and write the results to \fIFILENAME\fP\fI\&.tuo\fP\&.
+.PP 
+Options specific to this mode are: 
+.IP "\fB--ij\fP" 
+Sort ``\f(CWIJ\fP\'\' as ``\f(CWY\fP\'\'\&.  Often used when
+processing files written in Dutch\&.
+.IP "\fB--high\fP" 
+Convert ``high\'\' ASCII values into equivalent TeX
+commands\&.  This switch is provided for backward
+compatibility\&.
+.IP "\fB--quotes\fP" 
+Take \fBtex\fP(1) accent commands into
+consideration when sorting\&.  (Otherwise, quotes are
+considered to be boundary characters for strings\&.)
+.IP "\fB--tcxpath=\fP\fIPATH\fP" 
+Specify path to \fItcx\fP
+filter files for translating
+between encodings\&. 
+.PP 
+.SH "Extracting Information from ConTeXt Source Files" 
+.PP 
+\fBConTeXt\fP source files often contain documentation (see
+USAGE for more information about the format) or other
+information that can be extracted by \fBtexutil\fP when called with the
+\fB--documents\fP flag:
+.PP 
+.EX 
+\f(CWtexutil --documents\fP \fIFILENAME\fP
+.EE 
+.PP 
+This command produces a file called \fIFILENAME\fP\fI\&.ted\fP
+from a ConTeXt file called \fIFILENAME\fP\fI\&.tex\fP\&.
+.PP 
+The \fB--sources\fP flag does the opposite: Documentation lines are
+stripped out of the output, which is written to a file called
+\fIFILENAME\fP\fI\&.tes\fP\&.
+.PP 
+Historically, \fBConTeXt\fP source files included other forms of
+information -- such as syntax definitions, macro definitions, and
+editor templates -- that can be extracted with the following flags:
+.PP 
+.IP "\fB--infos\fP" 
+Extract TeXEdit macro information
+(\fItex\fP->\fItud\fP -- see
+USAGE)
+.IP "\fB--setups\fP" 
+Extract \fBConTeXt\fP syntax definitions
+(\fItex\fP->\fItexutil\&.tus\fP)
+.IP "\fB--templates\fP" 
+Extract TeXEdit editor templates
+(\fItex\fP->\fItud\fP) 
+.PP 
+.SH "Analyzing Log Files" 
+.PP 
+Calling \fBtexutil\fP with the \fB--logfile\fP option allows you to
+extract information about problems with your \fBConTeXt\fP source file
+from the log file produced during a \fBtexexec\fP(1) run\&.
+.PP 
+You can specify what information \fBtexutil\fP should report with the
+following options:
+.IP "\fB--box\fP" 
+Extract information about overfull boxes\&.  By
+default, this flag will cause \fBtexedit\fP to report both
+horizontal and vertical overfull boxes\&.  If you\'re only
+interested in one kind, you can specify \fB--hbox\fP or
+\fB--vbox\fP instead\&.
+.IP "\fB--criterium=\fP\fISIZE\fP" 
+Exclude reports about boxes that
+are less than \fISIZE\fP points too large\&.
+.IP "\fB--unknown\fP" 
+Extract messages about missing references or
+figures\&.
+.PP 
+.SH "Gathering Information about Figures" 
+.PP 
+The \fB--figures\fP flag tells \fBtexutil\fP to generate information
+about one or more (non-EPS) graphics files for use in typesetting\&.
+Called as, for example,
+.PP 
+.EX
+\f(CWtexutil --figures *\&.png *\&.tif\fP
+.EE 
+.PP 
+\fBtexutil\fP will scan the current directory for PNG and TIFF files
+and extract some useful information about their sizes and types\&.  By
+default, this information is stored in a file called
+\fItexutil\&.tuf\fP, which is consulted by \fBConTeXt\fP when
+typesetting a page with a non-EPS image file -- see the example given
+for the \fB--silent\fP flag for an alternative\&.
+.PP 
+This flag is especially useful when you plan to typeset a file of
+previews of graphic files -- see the discussion of the
+\fB--figures\fP flag in the \fBtexexec\fP(1) manpage\&.
+.PP 
+.SH "Converting EPS Files for PDF Inclusion" 
+.PP 
+\fBtexutil\fP can also convert EPS files to PDF format for inclusion in
+PDF files generated with \fBpdftex\fP(1) or \fBpdfetex\fP(1)\&.
+.PP 
+.IP "\fB--epspage\fP" 
+Adjust the bounding box of an EPS file to the
+dimensions of the output page\&.  This option also removes some
+redundant information and marks files as converted so that they
+will not be affected by subsequent runs\&.
+.IP "\fB--epstopdf\fP" 
+Calls \fBgs\fP(1) to convert the specified
+EPS graphic files into PDF format\&. 
+.PP 
+.SH "USAGE" 
+.PP 
+.SH "Embedded Documentation Format" 
+.PP 
+Documentation lines included in \fBConTeXt\fP source files can be
+specified by beginning lines with the following strings:
+.IP "\f(CW%C\fP" 
+Copyright information
+.IP "\f(CW%D\fP" 
+Documentation lines
+.IP "\f(CW%I\fP" 
+TeXEdit information lines (mostly in Dutch)
+.IP "\f(CW%M\fP" 
+Macro code needed to processs the documentation
+.IP "\f(CW%S\fP" 
+``Suppressed\'\' lines 
+.PP 
+The same forms can be used for Perl scripts, except that the
+``\f(CW%\fP\'\' characters are replaced by ``\f(CW#\fP\'\' characters\&.  See
+the source for \fBtexutil\fP for an example\&.
+.PP 
+.SH "SEE ALSO" 
+.PP 
+\fBgs\fP(1), \fBpdfetex\fP(1), \fBpdftex\fP(1),
+\fBtexexec\fP(1), \fBtexshow\fP(1)\&.
+.PP 
+Web page: <http://www\&.pragma-ade\&.com/>
+.PP 
+.SH "AUTHOR" 
+.PP 
+This manpage was written by C\&.M\&. Connelly
+<c@eskimo\&.com> and Tobias Burnus
+<burnus@gmx\&.de>\&.  It is based on
+the \fBtexutil\fP manual written by Hans Hagen 
+<pragma@wxs\&.nl>\&.
+.PP 
+The PDF manual and \fBtexutil\fP itself can be obtained at
+<http://www\&.pragma-ade\&.com/pragma-ade/texutil\&.htm>\&.

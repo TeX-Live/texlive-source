@@ -1,0 +1,355 @@
+% Copyright (c) 1996-2005 Han Th\^e\llap{\raise 0.5ex\hbox{\'{}}} Th\`anh, <thanh@pdftex.org>
+%
+% Note: This file, pdftexdir/tex.pch, contains the web2c changes for the
+% pdfTeX specific part of pdftex.web (defined in pdftexdir/pdftex.ch)
+% and is used as follows to construct the web2c change file for pdfTeX:
+%
+%	pdftexdir/tex.ch0	)
+%	   +			)
+%	tex.ch			)
+%	   +			)   =>   tie -c ...   =>   pdftex.ch
+%	pdftexdir/tex.ch1	)
+%	   +			)
+%	pdftexdir/tex.pch	)
+%
+% In addition, this file is used to construct the web2c change file
+% for pdfeTeX:
+%
+%	pdfetexdir/tex.ch0	)
+%	   +			)
+%	tex.ch			)
+%	   +			)
+%	etexdir/tex.ch1		)
+%	   +			)   =>   tie -c ...   =>   pdfetex.ch
+%	etexdir/tex.ech		)
+%	   +			)
+%	pdfetexdir/tex.ch1	)
+%	   +			)
+%	pdftexdir/tex.pch	)
+%
+% where the four (small) files pdf{,e}texdir/tex.ch[01] take care
+% of interferences between web2c, e-Tex, pdfTeX changes.
+% Consequently, changes in all these files have to be coordinated.
+
+% This file is part of pdfTeX.
+%
+% pdfTeX is free software; you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation; either version 2 of the License, or
+% (at your option) any later version.
+%
+% pdfTeX is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with pdfTeX; if not, write to the Free Software
+% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%
+% $Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/tex.pch#26 $
+% Change file containing web2c-specific or system-dependent changes to
+% pdftex
+
+@x [1] m.2 l.188 - Web2C: extensions imply we're not pdfTeX
+@d pdfTeX_banner=='This is pdfTeX, Version 3.141592',pdftex_version_string
+@y
+@d pdfTeX_banner_k=='This is pdfTeXk, Version 3.141592',pdftex_version_string
+@d pdfTeX_banner=='This is pdfTeX, Version 3.141592',pdftex_version_string
+@z
+
+@x (MLTeX)
+      begin i := char_tag(char_info(f)(c));
+@y
+      begin i := char_tag(orig_char_info(f)(c));
+@z
+
+@x (MLTeX)
+@d is_valid_char(#)==((font_bc[f] <= #) and (# <= font_ec[f]) and 
+                      char_exists(char_info(f)(#)))
+@y
+@d is_valid_char(#)==((font_bc[f] <= #) and (# <= font_ec[f]) and 
+                      char_exists(orig_char_info(f)(#)))
+@z
+
+@x (MLTeX)
+function get_charwidth(f: internal_font_number; c: eight_bits): scaled;
+begin
+    if is_valid_char(c) then
+        get_charwidth := char_width(f)(char_info(f)(c))
+    else
+        get_charwidth := 0;
+end;
+
+function get_charheight(f: internal_font_number; c: eight_bits): scaled;
+begin
+    if is_valid_char(c) then
+        get_charheight := char_height(f)(height_depth(char_info(f)(c)))
+    else
+        get_charheight := 0;
+end;
+
+function get_chardepth(f: internal_font_number; c: eight_bits): scaled;
+begin
+    if is_valid_char(c) then
+        get_chardepth := char_depth(f)(height_depth(char_info(f)(c)))
+    else
+        get_chardepth := 0;
+end;
+@y
+function get_charwidth(f: internal_font_number; c: eight_bits): scaled;
+begin
+    if is_valid_char(c) then
+        get_charwidth := char_width(f)(orig_char_info(f)(c))
+    else
+        get_charwidth := 0;
+end;
+
+function get_charheight(f: internal_font_number; c: eight_bits): scaled;
+begin
+    if is_valid_char(c) then
+        get_charheight := char_height(f)(height_depth(orig_char_info(f)(c)))
+    else
+        get_charheight := 0;
+end;
+
+function get_chardepth(f: internal_font_number; c: eight_bits): scaled;
+begin
+    if is_valid_char(c) then
+        get_chardepth := char_depth(f)(height_depth(orig_char_info(f)(c)))
+    else
+        get_chardepth := 0;
+end;
+@z
+
+@x (MLTeX)
+label reswitch, move_past, fin_rule, next_p;
+@y
+label reswitch, move_past, fin_rule, next_p, found, continue;
+@z
+
+@x (MLTeX)
+  if is_valid_char(c) then 
+      output_one_char(c)
+  else
+      char_warning(f, c);
+  cur_h:=cur_h+char_width(f)(char_info(f)(c));
+@y
+  if is_valid_char(c) then begin
+      output_one_char(c);
+      cur_h:=cur_h+char_width(f)(char_info(f)(c));
+      goto continue;
+  end;
+  if mltex_enabled_p then
+    @<(\pdfTeX) Output a substitution, |goto continue| if not possible@>;
+continue:
+@z
+
+@x
+@ The |pdf_vlist_out| routine is similar to |pdf_hlist_out|, but a bit simpler.
+@y
+@ @<(\pdfTeX) Output a substitution, |goto continue| if not possible@>=
+  begin
+  @<Get substitution information, check it, goto |found|
+  if all is ok, otherwise goto |continue|@>;
+found: @<Print character substition tracing log@>;
+  @<(\pdfTeX) Rebuild character using substitution information@>;
+  end
+
+@ @<(\pdfTeX) Rebuild character using substitution information@>=
+  base_x_height:=x_height(f);
+  base_slant:=slant(f)/float_constant(65536);
+@^real division@>
+  accent_slant:=base_slant; {slant of accent character font}
+  base_width:=char_width(f)(ib_c);
+  base_height:=char_height(f)(height_depth(ib_c));
+  accent_width:=char_width(f)(ia_c);
+  accent_height:=char_height(f)(height_depth(ia_c));
+  @/{compute necessary horizontal shift (don't forget slant)}@/
+  delta:=round((base_width-accent_width)/float_constant(2)+
+            base_height*base_slant-base_x_height*accent_slant);
+@^real multiplication@>
+@^real addition@>
+  @/{1. For centering/horizontal shifting insert a kern node.}@/
+  cur_h:=cur_h+delta;
+  @/{2. Then insert the accent character possibly shifted up or down.}@/
+  if ((base_height<>base_x_height) and (accent_height>0)) then
+    begin {the accent must be shifted up or down}
+    cur_v:=base_line+(base_x_height-base_height);
+    output_one_char(accent_c);
+    cur_v:=base_line;
+    end
+  else begin
+    output_one_char(accent_c);
+    end;
+  cur_h:=cur_h+accent_width;
+  @/{3. For centering/horizontal shifting insert another kern node.}@/
+  cur_h:=cur_h+(-accent_width-delta);
+  @/{4. Output the base character.}@/
+  output_one_char(base_c);
+  cur_h:=cur_h+base_width;
+
+@ The |pdf_vlist_out| routine is similar to |pdf_hlist_out|, but a bit simpler.
+@z
+
+@x [49.1259] 
+    begin if s>0 then
+      begin if s=font_size[f] then goto common_ending;
+      end
+    else if font_size[f]=xn_over_d(font_dsize[f],-s,1000) then
+      goto common_ending;
+    end
+@y
+    begin
+    if pdf_font_step[f] = 0 then begin
+       if s>0 then
+         begin if s=font_size[f] then goto common_ending;
+         end
+       else if font_size[f]=xn_over_d(font_dsize[f],-s,1000) then
+         goto common_ending;
+       end
+    end
+@z
+
+@x (WEB2C!)
+param_base:=xmalloc_array(integer, font_max);
+
+undump_things(font_check[null_font], font_ptr+1-null_font);
+@y
+param_base:=xmalloc_array(integer, font_max);
+
+pdf_char_used:=xmalloc_array(char_used_array, font_max);
+pdf_char_map:=xmalloc_array(char_map_array, font_max);
+pdf_font_size:=xmalloc_array(scaled, font_max);
+pdf_font_num:=xmalloc_array(integer, font_max);
+pdf_font_map:=xmalloc_array(fm_entry_ptr, font_max);
+pdf_font_type:=xmalloc_array(eight_bits, font_max);
+pdf_font_attr:=xmalloc_array(str_number, font_max);
+pdf_font_blink:=xmalloc_array(internal_font_number, font_max);
+pdf_font_elink:=xmalloc_array(internal_font_number, font_max);
+pdf_font_stretch:=xmalloc_array(integer, font_max);
+pdf_font_shrink:=xmalloc_array(integer, font_max);
+pdf_font_step:=xmalloc_array(integer, font_max);
+pdf_font_expand_ratio:=xmalloc_array(integer, font_max);
+pdf_font_auto_expand:=xmalloc_array(boolean, font_max);
+pdf_font_lp_base:=xmalloc_array(integer, font_max);
+pdf_font_rp_base:=xmalloc_array(integer, font_max);
+pdf_font_ef_base:=xmalloc_array(integer, font_max);
+vf_packet_base:=xmalloc_array(integer, font_max);
+vf_default_font:=xmalloc_array(internal_font_number, font_max);
+vf_local_font_num:=xmalloc_array(internal_font_number, font_max);
+vf_e_fnts:=xmalloc_array(integer, font_max);
+vf_i_fnts:=xmalloc_array(internal_font_number, font_max);
+
+for font_k := font_base to font_max do begin
+    for k := 0 to 31 do begin
+        pdf_char_used[font_k, k] := 0;
+        pdf_char_map[font_k, k] := k;
+    end;
+    pdf_char_map[font_k, 32] := 32;
+    pdf_font_size[font_k] := 0;
+    pdf_font_num[font_k] := 0;
+    pdf_font_map[font_k] := 0;
+    pdf_font_type[font_k] := new_font_type;
+    pdf_font_attr[font_k] := "";
+    pdf_font_blink[font_k] := null_font;
+    pdf_font_elink[font_k] := null_font;
+    pdf_font_stretch[font_k] := null_font;
+    pdf_font_shrink[font_k] := null_font;
+    pdf_font_step[font_k] := 0;
+    pdf_font_expand_ratio[font_k] := 0;
+    pdf_font_auto_expand[font_k] := false;
+    pdf_font_lp_base[font_k] := 0;
+    pdf_font_rp_base[font_k] := 0;
+    pdf_font_ef_base[font_k] := 0;
+end;
+
+make_pdftex_banner;
+undump_things(font_check[null_font], font_ptr+1-null_font);
+@z
+
+@x [51.1]
+  setup_bound_var (0)('hash_extra')(hash_extra);
+
+@y
+  setup_bound_var (0)('hash_extra')(hash_extra);
+  setup_bound_var (65536)('obj_tab_size')(obj_tab_size);
+  setup_bound_var (20000)('dest_names_size')(dest_names_size);
+@z
+
+@x [51.2]
+  const_chk (hash_extra);
+  if error_line > ssup_error_line then error_line := ssup_error_line;
+@y
+  const_chk (hash_extra);
+  const_chk (obj_tab_size);
+  const_chk (pdf_mem_size);
+  const_chk (dest_names_size);
+  if error_line > ssup_error_line then error_line := ssup_error_line;
+@z
+
+@x [51.3]
+  hyph_link :=xmalloc_array (hyph_pointer, hyph_size);
+@y
+  hyph_link :=xmalloc_array (hyph_pointer, hyph_size);
+  obj_tab:=xmalloc_array (obj_entry, obj_tab_size);
+  pdf_mem:=xmalloc_array (integer, inf_pdf_mem_size); {will grow dynamically}
+  dest_names:=xmalloc_array (dest_name_entry, dest_names_size);
+@z
+
+@x (WEB2C!)
+  param_base:=xmalloc_array(integer, font_max);
+
+  font_ptr:=null_font; fmem_ptr:=7;
+@y
+param_base:=xmalloc_array(integer, font_max);
+
+pdf_char_used:=xmalloc_array(char_used_array,font_max);
+pdf_char_map:=xmalloc_array(char_map_array,font_max);
+pdf_font_size:=xmalloc_array(scaled,font_max);
+pdf_font_num:=xmalloc_array(integer,font_max);
+pdf_font_map:=xmalloc_array(fm_entry_ptr,font_max);
+pdf_font_type:=xmalloc_array(eight_bits,font_max);
+pdf_font_attr:=xmalloc_array(str_number,font_max);
+pdf_font_blink:=xmalloc_array(internal_font_number,font_max);
+pdf_font_elink:=xmalloc_array(internal_font_number,font_max);
+pdf_font_stretch:=xmalloc_array(integer,font_max);
+pdf_font_shrink:=xmalloc_array(integer,font_max);
+pdf_font_step:=xmalloc_array(integer,font_max);
+pdf_font_expand_ratio:=xmalloc_array(integer,font_max);
+pdf_font_auto_expand:=xmalloc_array(boolean,font_max);
+pdf_font_lp_base:=xmalloc_array(integer,font_max);
+pdf_font_rp_base:=xmalloc_array(integer,font_max);
+pdf_font_ef_base:=xmalloc_array(integer,font_max);
+vf_packet_base:=xmalloc_array(integer,font_max);
+vf_default_font:=xmalloc_array(internal_font_number,font_max);
+vf_local_font_num:=xmalloc_array(internal_font_number,font_max);
+vf_e_fnts:=xmalloc_array(integer,font_max);
+vf_i_fnts:=xmalloc_array(internal_font_number,font_max);
+
+for font_k := font_base to font_max do begin
+    for k := 0 to 31 do begin
+        pdf_char_used[font_k, k] := 0;
+        pdf_char_map[font_k, k] := k;
+    end;
+    pdf_char_map[font_k, 32] := 32;
+    pdf_font_size[font_k] := 0;
+    pdf_font_num[font_k] := 0;
+    pdf_font_map[font_k] := 0;
+    pdf_font_type[font_k] := new_font_type;
+    pdf_font_attr[font_k] := "";
+    pdf_font_blink[font_k] := null_font;
+    pdf_font_elink[font_k] := null_font;
+    pdf_font_stretch[font_k] := null_font;
+    pdf_font_shrink[font_k] := null_font;
+    pdf_font_step[font_k] := 0;
+    pdf_font_expand_ratio[font_k] := 0;
+    pdf_font_auto_expand[font_k] := false;
+    pdf_font_lp_base[font_k] := 0;
+    pdf_font_rp_base[font_k] := 0;
+    pdf_font_ef_base[font_k] := 0;
+end;
+
+font_ptr:=null_font; fmem_ptr:=7;
+make_pdftex_banner;
+@z

@@ -1,0 +1,82 @@
+%
+% Copyright (c) 1996-2002 Han The Thanh, <thanh@pdftex.org>
+%
+% This file is part of pdfTeX.
+%
+% pdfTeX is free software; you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation; either version 2 of the License, or
+% (at your option) any later version.
+%
+% pdfTeX is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with pdfTeX; if not, write to the Free Software
+% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%
+% $Id: //depot/Build/source.development/TeX/texk/web2c/pdfetexdir/pdfetex.ch1#9 $
+%
+@x [1.2] l.188
+@d TeX_banner=='This is TeX, Version 3.141592' {printed when \TeX\ starts}
+@#
+@d banner==eTeX_banner
+@y
+@d banner=='This is TeX, Version 3.141592' {printed when \TeX\ starts}
+@z
+
+@x [17.230] l.4727 - first pdfTeX, then e-TeX additional token list parameters
+@d tex_toks=local_base+10 {end of \TeX's token list parameters}
+@y
+@d toks_base=local_base+10 {table of 256 token list registers}
+@z
+
+@x [17.236] l.4960 - first pdfTeX, then e-TeX additional integer parameters
+@d tex_int_pars=55 {total number of \TeX's integer parameters}
+@y
+@d int_pars=55 {total number of integer parameters}
+@z
+
+@x [26.416] l.8400- first pdfTeX, then e-TeX additional command codes
+@d badness_code=input_line_no_code+1 {code for \.{\\badness}}
+@#
+@d eTeX_int=badness_code+1 {first of \eTeX\ codes for integers}
+@y
+@d badness_code=glue_val+2 {code for \.{\\badness}}
+@#
+@d eTeX_int=pdftex_last_item_codes+1 {first of \eTeX\ codes for integers}
+@z
+
+@x [26.424] l.8506
+if m>=input_line_no_code then
+@y
+if cur_chr>glue_val then
+@z
+
+@x [26.424] l.8507
+  input_line_no_code: cur_val:=line;
+  badness_code: cur_val:=last_badness;
+@y
+  begin if cur_chr=input_line_no_code then cur_val:=line
+  else cur_val:=last_badness; {|cur_chr=badness_code|}
+@z
+
+@x [27.468] l.9207 - first e-TeX, then pdfTeX additional command codes
+@d job_name_code=etex_convert_codes {command code for \.{\\jobname}}
+@y
+@d job_name_code=5 {command code for \.{\\jobname}}
+@z
+
+@x [649]
+hpack:=r;
+@y
+exit: hpack:=r;
+@z
+
+@x [33.651] l.12936
+  kern_node: x:=x+width(p);
+@y
+  kern_node,math_node: x:=x+width(p);
+@z

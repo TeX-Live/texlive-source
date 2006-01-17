@@ -1,0 +1,57 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(hbf2gf/hbf.h)
+
+AC_CONFIG_HEADERS([hbf2gf/c-auto.h:hbf2gf/c-auto.in])
+
+dnl check host
+AC_CANONICAL_SYSTEM
+AC_PROG_MAKE_SET
+
+
+dnl Checks for programs.
+AC_PROG_CC
+
+
+dnl Checks for header files.
+AC_HEADER_STDC
+
+
+dnl get Compiler flags right.
+if test "x$CC" = xgcc; then
+	XX_CFLAGS="-Wall"
+else
+	case "$host" in
+  		alpha-dec-osf*)
+        	XX_CFLAGS="-std1 -O2 -g3"
+       		;;
+  		*)
+          	XX_CFLAGS=
+       		;;
+	esac
+fi
+AC_SUBST(XX_CFLAGS)
+
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_STRUCT_TM
+
+
+dnl Checks for library functions.
+AC_FUNC_VPRINTF
+AC_CHECK_FUNCS(strdup strstr strtol strtoul)
+
+dnl we need this for hbf.c
+if test "x$ac_cv_func_strdup" = xno; then
+  no_strdup=-DNO_STRDUP
+fi
+AC_SUBST(no_strdup)
+
+AC_CHECK_PROG(RM, rm, rm)
+AC_PROG_INSTALL
+
+sinclude(../kpathsea/withenable.ac)
+
+KPSE_CONFIG_FILES([Makefile conv/Makefile hbf2gf/Makefile scripts/Makefile])
+AC_OUTPUT
+date >stamp-auto

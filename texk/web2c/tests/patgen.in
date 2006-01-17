@@ -1,0 +1,16 @@
+0 4     error: hyph_start not positive
+10 4    error: hyph_start too big
+3 0     error: hyph_finish not positive
+3 10    error: hyph_finish too big
+3 4
+0 3     error: pat_start not positive
+2 16    error: pat_finish too big
+4 3     error: pat_finish less than pat_start
+2 3
+0 1 1   error: good weight not positive
+1 0 1   error: bad weight not positive
+1 1 0   error: threshold not positive
+1 1 1
+2 3
+1 1 1
+y

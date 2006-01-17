@@ -1,0 +1,102 @@
+# Copyright (C) 1992, 1993, 1994 Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+# @configure_input@
+
+SHELL = /bin/sh
+
+#### Start of system configuration section. ####
+
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+# If you use gcc, you should either run the fixincludes script that
+# comes with it or else use gcc with the -traditional option.  Otherwise
+# ioctl calls will be compiled incorrectly on some systems.
+CC = @CC@
+AR = ar
+
+# set make command
+@SET_MAKE@
+
+# Set RANLIB = echo if your system doesn't have or need ranlib.
+RANLIB = @RANLIB@
+
+# Use cp if you don't have install.
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+
+DEFS = @DEFS@
+LIBS = @LIBS@
+
+INCLUDES = -I@top_srcdir@ -I@top_srcdir@/include
+CFLAGS = @CFLAGS@ $(INCLUDES)
+LDFLAGS = @LDFLAGS@
+
+MAKEINFO = makeinfo
+TEXI2DVI = texi2dvi
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+# Where to install the executables.
+bindir = $(exec_prefix)/bin
+
+# Where to put the include header
+includedir = $(prefix)/include
+
+# Where to put the Info files
+infodir = $(prefix)/info
+
+# Where to put the library file
+libdir = $(prefix)/lib
+
+# Where to put the manual pages.
+mandir = $(prefix)/man
+
+#### End of system configuration section. ####
+
+#CFLAGS = -g -pg -Wall -m486 -DMEMCHECK -DTESTCODE -DCOPYDELETE -I/usr/local/include
+#CFLAGS = -O3 -Wall -m486 -DTESTCODE -DCOPYDELETE -I/usr/local/include -I../ -I../include
+#LDFLAGS = -L/usr/local/lib
+#LIBS = -ldmalloc
+#LIBS = -lefence
+#LIBS = -lc_p
+OBJS = 	ttfread.o tabledir.o ttfutil.o font.o cmap.o glyf.o gcache.o \
+	head.o hhea.o hmtx.o loca.o maxp.o name.o os2.o post.o  \
+	cvt.o fpgm.o gasp.o hdmx.o kern.o ltsh.o prep.o pclt.o vdmx.o vhea.o \
+	vmtx.o gstate.o stack.o interp.o disasm.o ttc.o
+
+all: libttf.a
+
+libttf.a: ${OBJS}
+	$(AR) r $@ $?
+	ranlib $@ || $(AR) ts $@ || true
+
+clean:
+	rm -f *.a *.o *~
+.PHONY: clean
+
+distclean: clean
+	rm -f tags TAGS Makefile
+.PHONY: distclean
+
+install:
+	@echo Nothing to install from this directory
+
+check:
+	@echo Nothing to check in this directory

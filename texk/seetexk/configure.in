@@ -1,0 +1,14 @@
+dnl Public domain.
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(dviselect.c)
+
+sinclude(../kpathsea/common.ac)
+
+AC_CHECK_SIZEOF(int)
+AC_CHECK_FUNCS(strerror)
+AC_CHECK_HEADERS(errno.h)
+
+KPSE_CONFIG_FILES([Makefile])
+AC_OUTPUT
+dnl Update stamp-auto, since we just remade `c-auto.h'.
+date >stamp-auto

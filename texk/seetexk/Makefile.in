@@ -1,0 +1,81 @@
+# Makefile for seetexk  -- S Rahtz s.rahtz@elsevier.co.uk.  Public domain.
+version = 1.0
+
+kpse_include ../make/paths.mk
+kpse_include ../make/common.mk
+kpse_include ../make/programs.mk
+kpse_include ../make/texi.mk
+prog_cflags = -DUNIX -DKPATHSEA -DNeedFunctionPrototypes -DHAVE_CONFIG_H \
+	      -I$(kpathsea_dir) -I$(kpathsea_srcdir)
+
+RANLIB=@RANLIB@
+AR=ar
+
+ALLLIBOBJS= bcopy.o bzero.o conv.o dvi_draw.o dviclass.o dvistate.o dvistuff.o \
+	error.o findpost.o fio.o font_subr.o getopt.o gfclass.o gffont.o \
+	gripes0.o gripes1.o magfactor.o pkfont.o pxlfont.o rotate.o rstfont.o \
+	scaletfm.o scanpost.o search.o seek.o skip.o split.o \
+	strsave.o strtol.o tempfile.o tfm.o tfmfont.o
+
+LIBOBJS= error.o fio.o search.o gripes0.o gripes1.o dviclass.o tempfile.o seek.o
+
+library = tex
+
+objects = dviconcat.o dviselect.o dvibook.o dvitodvi.o
+
+program = dviconcat dviselect dvibook dvitodvi
+programs =$(program)
+
+default all: $(programs) 
+
+libtex.a: $(LIBOBJS)
+	$(AR) rc $@  $(LIBOBJS)
+	$(RANLIB) $@
+
+dviconcat: $(kpathsea) dviconcat.o libtex.a
+	$(kpathsea_link) dviconcat.o libtex.a $(LOADLIBES) 
+
+dviselect: $(kpathsea) dviselect.o libtex.a
+	$(kpathsea_link) dviselect.o libtex.a $(LOADLIBES) 
+
+dvibook: $(kpathsea) dvibook.o libtex.a
+	$(kpathsea_link) dvibook.o libtex.a $(LOADLIBES) 
+
+dvitodvi: $(kpathsea) dvitodvi.o libtex.a
+	$(kpathsea_link) dvitodvi.o libtex.a $(LOADLIBES) 
+
+kpse_include ../make/tkpathsea.mk
+
+install: install-exec install-data
+
+uninstall: uninstall-exec uninstall-data
+
+install-exec: all
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(bindir)
+	for p in $(programs); do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
+uninstall-exec:
+	for p in $(programs); do rm -f $(bindir)/$$p; done
+
+install-data: 
+	$(SHELL) $(top_srcdir)/../mkinstalldirs  $(man1dir)
+	$(INSTALL_DATA) $(srcdir)/dviselect.man $(man1dir)/dviselect.1
+	$(INSTALL_DATA) $(srcdir)/dviconcat.man $(man1dir)/dviconcat.1
+	$(INSTALL_DATA) $(srcdir)/dvibook.man $(man1dir)/dvibook.1
+	$(INSTALL_DATA) $(srcdir)/dvitodvi.man $(man1dir)/dvitodvi.1
+
+uninstall-data:
+	rm -f $(man1dir)/dviselect.1
+	rm -f $(man1dir)/dviconcat.1
+	rm -f $(man1dir)/dvibook.1
+	rm -f $(man1dir)/dvitodvi.1
+
+distname = seetexk
+
+kpse_include ../make/dist.mk
+kpse_include ../make/config.mk
+
+info dvi check:
+
+kpse_include ../make/clean.mk
+kpse_include ../make/rdepend.mk
+kpse_include depend.mk

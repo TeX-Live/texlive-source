@@ -1,0 +1,54 @@
+June 24 2005
+  Release 0.7.03
+  * .enc files now searched under <texmf>/fonts/enc
+  * The slant font dimen now makes it to the pl file(!)
+  * No longer dependant on header files from texk/dvipsk
+  * The MinGW-compiled Windows binary should now have correct
+    default search paths, even without explicit configuration.
+July 2004
+  Release 0.7.02
+  * LIGFILES -> LIGFONTS
+  * diffs for tex-file.c, tex-file.h and texmf.in now obsolete
+  * two more configurable global font dimensions;
+    afm2tfm compatibility option for font dimensions
+Mar 13 2004
+  Release 0.7.01
+  * Made function getline mac-compatible and fixed off-b-one error
+Feb 16 2004
+  Release 0.7
+  * Preparation for inclusion in teTeX/TeX Live source tree.
+  * .lig is now separate filetype; this required patches in the
+    kpathsea library. They now reside under $TEXMF/fonts/lig/afm2pl.
+  * Some encoding vectors have been removed because they are already
+    available within teTeX/TeX Live.
+  * The non-kpathsea version is no longer maintained: I no longer test
+    it, and I also removed the afmtotfm script.
+  * Names of switches conform now as much as possible to afm2tfm
+  * Temporarily added fontinst support files. If and when afm2pl gets
+    built-in, virtual-font based smallcaps and letterspacing these files
+    will be removed.
+
+Jan 02 2003
+  Release 0.6
+  * Added reporting on missing characters; option Verbose
+  * Stripped 'TeX-' and '.pl' from familyname
+  * fontinst support files available as separate package
+  * Perl script afmtotfm: optional use of kpmod
+  * documentation updated to reflect fontinst
+  * name of encoding capitalized, for the benefit of fontinst
+  * yet another texnansi.enc, in which the euro is called Euro
+    instead of Uni20AC
+  * patch files added for compilation as part of a teTeX source
+
+Jul 10 2002
+  Release 0.5
+  * space-related font dimensions set relative to width space character;
+    now configurable from the command-line
+  * bug in error routine fixed: value of global variable param now preserved
+  * letterspacing added
+  * documentation in xml, html, man and txt format
+  * various bugs in handling boundarychar fixed
+  * newer texnansi.enc, with euro character
+
+Apr 25 2002
+  First release 0.4

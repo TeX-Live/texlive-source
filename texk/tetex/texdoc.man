@@ -1,0 +1,94 @@
+.\" EX and EE are used for displays that are pure code
+.de EX
+.nf
+.ft CW
+.in +5
+..
+.de EE
+.in -5
+.ft R
+.fi
+..
+.TH "texdoc" "1" "September 2000" "teTeX" "teTeX" 
+.PP 
+.SH "NAME" 
+texdoc \- Utility to look up TeX documentation
+.PP 
+.SH "SYNOPSIS" 
+.PP 
+\fBtexdoc\fP [ \fIOPTION\fP \&.\&.\&. ]  \fINAME\fP [ \&.\&.\&. ]
+.PP 
+.SH "DESCRIPTION" 
+.PP 
+\fBtexdoc\fP seaches for \fINAME\fP in the TeX documentation and
+starts an appropriate viewer\&.
+.PP 
+\fINAME\fP should be the name of a command or package in the teTeX
+distribution\&.
+.PP 
+.SH "OPTIONS" 
+.PP 
+.IP "\fB--help\fP" 
+Display a brief summary of options\&.
+.IP 
+.IP "\fB-l\fP" 
+List matching files\&.  Does not start a viewer\&.
+.IP "\fB-v\fP" 
+Sets verbose mode\&.  Shows the command being used to
+display the documentation\&.
+.PP 
+.SH "ENVIRONMENT" 
+.PP 
+.IP "\fB$TEXDOCVIEW_dvi\fP" 
+DVI viewer\&.  Defaults to \fBxdvi\fP(1)\&.
+.IP "\fB$TEXDOCVIEW_pdf\fP" 
+PDF viewer\&.  Defaults to \fBacroread\fP(1)\&.
+.IP "\fB$TEXDOCVIEW_ps\fP" 
+PostScript viewer\&.  Defaults to
+\fBghostview\fP(1)\&.
+.IP "\fB$TEXDOCVIEW_html\fP" 
+HTML viewer\&.  Defaults to \fBnetscape\fP(1)\&.
+.IP "\fB$TEXDOCVIEW_txt\fP" 
+Text viewer\&.  Defaults to \fB$PAGER-more\fP\&.
+.PP 
+The environment variables should be set with a ``%s\&'\&' as a placeholder
+for the name of the file\&.  For example,
+.PP 
+.EX 
+hostname% setenv TEXDOCVIEW_pdf "gv %s"
+.EE 
+.PP 
+or
+.PP 
+.EX 
+hostname$ TEXDOCVIEW_html="mozilla %s"
+ 
+hostname$ export TEXDOCVIEW_html
+.EE 
+.PP 
+.SH "SEE ALSO" 
+.PP 
+\fBacroread\fP(1), \fBgv\fP(1), \fBkpsewhich\fP(1),
+\fBless\fP(1), \fBmore\fP(1), \fBxdvi\fP(1)
+.PP 
+Web page: <http://tug\&.org/teTeX/>
+.PP 
+.SH "BUGS" 
+.PP 
+None known, but report any bugs found to <tetex@dbs\&.uni-hannover\&.de> (mailing list)\&.
+.PP 
+.SH "AUTHOR" 
+.PP 
+\fBtexdoc\fP was written by Thomas Esser 
+<te@dbs\&.uni-hannover\&.de>, David Aspinall 
+<da@dcs\&.ed\&.ac\&.uk>, and
+Simon Wilkinson
+<sxw@dcs\&.ed\&.ac\&.uk> during 1998 and 1999\&.  \fBtexdoc\fP is in the public
+domain\&.
+.PP 
+This manual page was written by C\&.M\&. Connelly
+<c@eskimo\&.com>, for
+the Debian GNU/Linux system\&.  It may be used by other distributions
+without contacting the author\&.  Any mistakes or omissions in the
+manual page are my fault; inquiries about or corrections to this
+manual page should be directed to me (and not to the primary author)\&.

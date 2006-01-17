@@ -1,0 +1,3 @@
+#!/bin/sh
+test -f "`kpsewhich mltex.fmt`" || fmtutil --byfmt mltex
+exec tex -mltex -fmt=mltex "$@"

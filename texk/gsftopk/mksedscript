@@ -1,0 +1,22 @@
+#!/bin/sh
+KPATHSEA=''
+
+while test $# -gt 0
+do
+	case $1 in
+	-DKPATHSEA)		KPATHSEA=y;;
+	esac
+	shift
+done
+
+if test -z "$KPATHSEA"
+then
+	echo	'/^#ifkpathsea/,/^#/d'
+else
+	echo	'/^#ifnokpathsea/,/^#/d'
+	echo	's/TEXFONTS/TFMFONTS/g'
+fi
+
+echo '/^#/d'
+
+exit 0

@@ -1,0 +1,45 @@
+
+/* Local variables defined by MAW */
+#ifndef _CONFIG_H
+
+#define VERSION 0
+
+#define PACKAGE "package"
+
+/* HAVE_TIMEZONE - Define if <time.h> has timezone as an external variable */
+#undef HAVE_TIMEZONE
+
+/* HAVE_TM_GMTOFF - Define if struct tm has tm_gmtoff as a member */
+#undef HAVE_TM_GMTOFF
+
+/* HAVE_KPATHSEA - Define if you have kpathsea */
+#define HAVE_KPATHSEA
+
+/* HAVE_XBASENAME - Define if you have xbasename() in your libkpathsea instead of basename() */
+#undef HAVE_XBASENAME
+
+/* HAVE_ZLIB - Define if you have zlib and its headers */
+#undef HAVE_ZLIB
+/* HAVE_ZLIB_COMPRESS2 - Define if your zlib has the compress2 function */
+#undef HAVE_ZLIB_COMPRESS2
+
+/* HAVE_KPSE_FORMATS - Define if you have a
+ version of kpathsea with type1 and vf formats */
+#define HAVE_KPSE_FORMATS
+
+/* HAVE_OMEGA_FORMATS - Define if you have a
+ version of kpathsea that understands Omega (OFM/OVF) formats */
+#define HAVE_OMEGA_FORMATS
+
+/* HAVE_TTF_FORMATS - Define if you have a
+ version of kpathsea that understands TrueType (TTF) formats */
+#define HAVE_TTF_FORMATS
+
+/* HAVE_LIBPNG - Define if you have libpng */
+#undef HAVE_LIBPNG
+
+/* HAVE_SYSTEM - Define if you have the system() command */
+#undef HAVE_SYSTEM
+
+
+#endif /* _CONFIG_H */

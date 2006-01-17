@@ -1,0 +1,368 @@
+This is TeX, Version 3.14159 (Web2c 7.3.1) (format=latex 1999.9.14)  19 SEP 1999 14:32
+**\nonstopmode\input{wtest.tex}
+(wtest.tex (d:/Local/TeX/texmf/tex/latex/base/article.cls
+Document Class: article 1999/01/07 v1.4a Standard LaTeX document class
+(d:/Local/TeX/texmf/tex/latex/base/size11.clo
+File: size11.clo 1999/01/07 v1.4a Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(d:/Local/TeX/texmf/tex/latex/graphics/color.sty
+Package: color 1999/02/16 v1.0i Standard LaTeX Color (DPC)
+
+(d:/Local/TeX/texmf/tex/latex/config/color.cfg)
+Package color Info: Driver file: dvips.def on input line 125.
+
+(d:/Local/TeX/texmf/tex/latex/graphics/dvips.def
+File: dvips.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
+)
+(d:/Local/TeX/texmf/tex/latex/graphics/dvipsnam.def
+File: dvipsnam.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
+))
+(d:/Local/TeX/texmf/tex/latex/eepic/epic.sty
+Enhancements to Picture Environment. Version 1.2 - Released June 1, 1986
+\@@multicnt=\count87
+\d@lta=\count88
+\@delta=\dimen103
+\@@delta=\dimen104
+\@gridcnt=\count89
+\@joinkind=\count90
+\@dotgap=\dimen105
+\@ddotgap=\dimen106
+\@x@diff=\count91
+\@y@diff=\count92
+\x@diff=\dimen107
+\y@diff=\dimen108
+\@dotbox=\box26
+\num@segments=\count93
+\num@segmentsi=\count94
+\@datafile=\read1
+) (d:/Local/TeX/texmf/tex/latex/eepic/eepic.sty
+Extension to Epic and LaTeX. Version 1.1b - Released Febrary 7, 1988
+\@gphlinewidth=\count95
+\@eepictcnt=\count96
+\@tempdimc=\dimen109
+\maxovaldiam=\dimen110
+\@filltype=\box27
+) (d:/Local/TeX/texmf/tex/latex/carlisle/pspicture.sty
+Package: pspicture 1999/04/11/ v2.02 Picture mode via PS specials (DPC)
+\@arrowlength=\dimen111
+)
+(d:/Local/TeX/texmf/tex/latex/graphics/pstcol.sty
+Package: pstcol 1999/02/16 v1.0a PSTricks color colompatibility (DPC)
+
+(d:/Local/TeXLive/texmf/tex/latex/pstricks/pstricks.sty
+Package: pstricks 1997/03/25 package wrapper for PSTricks pstricks.tex
+
+(d:/Local/TeX/texmf/tex/generic/pstricks/pstricks.tex
+`PSTricks' v97 patch 10  <1999/03/24> (tvz)
+\pst@dima=\dimen112
+\pst@dimb=\dimen113
+\pst@dimc=\dimen114
+\pst@dimd=\dimen115
+\pst@dimg=\dimen116
+\pst@dimh=\dimen117
+\pst@hbox=\box28
+\pst@boxg=\box29
+\pst@cnta=\count97
+\pst@cntb=\count98
+\pst@cntc=\count99
+\pst@cntd=\count100
+\pst@cntg=\count101
+\pst@cnth=\count102
+\pst@toks=\toks14
+(d:/Local/TeX/texmf/tex/generic/pstricks/pstricks.con)
+\psunit=\dimen118
+\psxunit=\dimen119
+\psyunit=\dimen120
+\pslinewidth=\dimen121
+\pst@customdefs=\toks15
+\pslinearc=\dimen122
+\everypsbox=\toks16
+\psframesep=\dimen123
+\pslabelsep=\dimen124
+\theoverlaybox=\box30
+)))
+(d:/Local/TeXLive/texmf/tex/latex/pstricks/pst-node.sty
+Package: pst-node 1997/03/25 package wrapper for PSTricks pst-node.tex
+
+(d:/Local/TeX/texmf/tex/generic/pstricks/pst-node.tex  v97 patch 9, 1999/04/14
+\psrow=\count103
+\pscol=\count104
+\psmatrixcnt=\count105
+\psrowsep=\skip43
+\pscolsep=\skip44
+)) (d:/Local/TeXLive/texmf/tex/latex/pstricks/pst-tree.sty
+Package: pst-tree 1997/03/25 package wrapper for PSTricks pst-tree.tex
+
+(d:/Local/TeX/texmf/tex/generic/pstricks/pst-tree.tex  v97 patch 3, 1997/09/24
+\pstree@rootbox=\box31
+\pstree@box=\box32
+\psnodecnt=\count106
+\pstreelevel=\count107
+\pstreecnt=\count108
+\pstree@cnt=\count109
+\pstree@stop=\count110
+)) (d:/Local/TeX/texmf/tex/latex/graphics/graphics.sty
+Package: graphics 1999/02/16 v1.0l Standard LaTeX Graphics (DPC,SPQR)
+
+(d:/Local/TeX/texmf/tex/latex/graphics/trig.sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+(d:/Local/TeX/texmf/tex/latex/config/graphics.cfg)
+Package graphics Info: Driver file: dvips.def on input line 80.
+)
+(d:/Local/TeX/texmf/tex/latex/graphics/graphicx.sty
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+(d:/Local/TeX/texmf/tex/latex/graphics/keyval.sty
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks17
+)
+\Gin@req@height=\dimen125
+\Gin@req@width=\dimen126
+)
+(d:/Local/TeX/texmf/tex/latex/hyperref/hyperref.sty
+Package: hyperref 1999/09/01 6.66 Hypertext links for LaTeX
+\@linkdim=\dimen127
+\Hy@linkcounter=\count111
+\Hy@pagecounter=\count112
+
+(d:/Local/TeX/texmf/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 1999/08/16 v0.5 PDFDocEncoding (Heiko Oberdiek)
+)
+Package hyperref Info: option colorlinks set true on input line 1103.
+Package hyperref Info: Bookmarks ON on input line 1133.
+Package hyperref Info: Hyper figures OFF on input line 1151.
+Package hyperref Info: Link nesting OFF on input line 1156.
+Package hyperref Info: Hyper index ON on input line 1159.
+Package hyperref Info: Plain pages ON on input line 1164.
+Package hyperref Info: Backreferencing OFF on input line 1171.
+
+Implicit mode ON; LaTeX internals redefined
+(d:/Local/TeX/texmf/tex/latex/misc/url.sty
+Package: url 1999/03/02  ver 1.4  Verb mode for urls, email addresses, and file
+ names
+)
+\Fld@menulength=\count113
+\Field@Width=\dimen128
+\Fld@charsize=\dimen129
+\Choice@toks=\toks18
+\Field@toks=\toks19
+Package hyperref Info: Hyper figures OFF on input line 1751.
+Package hyperref Info: Link nesting OFF on input line 1756.
+Package hyperref Info: Hyper index ON on input line 1759.
+Package hyperref Info: backreferencing OFF on input line 1766.
+Package hyperref Info: Link coloring ON on input line 1769.
+\c@Item=\count114
+\c@Hfootnote=\count115
+)
+*hyperref using default driver hypertex*
+(d:/Local/TeX/texmf/tex/latex/hyperref/hypertex.def)
+(d:/Local/TeX/texmf/tex/generic/xypic/xy.sty
+(d:/Local/TeX/texmf/tex/generic/xypic/xy.tex Bootstrap'ing: catcodes, docmode,
+(d:/Local/TeX/texmf/tex/generic/xypic/xyrecat.tex)
+(d:/Local/TeX/texmf/tex/generic/xypic/xyidioms.tex)
+
+ Xy-pic version 3.7 <1999/02/16>
+ Copyright (c) 1991-1998 by Kristoffer H. Rose <krisrose@ens-lyon.fr>
+ Xy-pic is free software: see the User's Guide for details.
+
+Loading kernel: messages; fonts; allocations: state,
+\X@c=\dimen130
+\Y@c=\dimen131
+\U@c=\dimen132
+\D@c=\dimen133
+\L@c=\dimen134
+\R@c=\dimen135
+\Edge@c=\toks20
+\X@p=\dimen136
+\Y@p=\dimen137
+\U@p=\dimen138
+\D@p=\dimen139
+\L@p=\dimen140
+\R@p=\dimen141
+\Edge@p=\toks21
+\X@origin=\dimen142
+\Y@origin=\dimen143
+\X@xbase=\dimen144
+\Y@xbase=\dimen145
+\X@ybase=\dimen146
+\Y@ybase=\dimen147
+\X@min=\dimen148
+\Y@min=\dimen149
+\X@max=\dimen150
+\Y@max=\dimen151
+\lastobjectbox@=\box33
+\zerodotbox@=\box34
+\almostz@=\dimen152
+ direction,
+\d@X=\dimen153
+\d@Y=\dimen154
+\K@=\count116
+\KK@=\count117
+\Direction=\count118
+\K@dXdY=\dimen155
+\K@dYdX=\dimen156
+\xyread@=\read2
+\xywrite@=\write3
+\csp@=\count119
+\quotPTK@=\dimen157
+
+utility macros; pictures: \xy, positions,
+\swaptoks@@=\toks22
+\connectobjectbox@@=\box35
+ objects,
+\styletoks@=\toks23
+ decorations;
+kernel objects: directionals, circles, text; options; algorithms: directions,
+edges, connections;  Xy-pic loaded)
+Package: xy 1999/02/16 Xy-pic version 3.7
+
+(d:/Local/TeX/texmf/tex/generic/xypic/xyall.tex
+ Xy-pic option: All features v.3.3
+(d:/Local/TeX/texmf/tex/generic/xypic/xycurve.tex
+ Xy-pic option: Curve and Spline extension v.3.7 curve,
+\crv@cnt@=\count120
+\crvpts@=\toks24
+\splinebox@=\box36
+\splineval@=\dimen158
+\splinedepth@=\dimen159
+\splinetol@=\dimen160
+\splinelength@=\dimen161
+ circles,
+\L@=\dimen162
+ loaded)
+(d:/Local/TeX/texmf/tex/generic/xypic/xyframe.tex
+ Xy-pic option: Frame and Bracket extension v.3.7 loaded)
+(d:/Local/TeX/texmf/tex/generic/xypic/xycmtip.tex
+ Xy-pic option: Computer Modern tip extension v.3.3
+(d:/Local/TeX/texmf/tex/generic/xypic/xytips.tex
+ Xy-pic option: More Tips extension v.3.3 loaded) loaded)
+(d:/Local/TeX/texmf/tex/generic/xypic/xyline.tex
+ Xy-pic option: Line styles extension v.3.6
+\xylinethick@=\dimen163
+ loaded)
+(d:/Local/TeX/texmf/tex/generic/xypic/xyrotate.tex
+ Xy-pic option: Rotate and Scale extension v.3.3 loaded)
+(d:/Local/TeX/texmf/tex/generic/xypic/xycolor.tex
+ Xy-pic option: Colour extension v.3.3 loaded)
+(d:/Local/TeX/texmf/tex/generic/xypic/xymatrix.tex
+ Xy-pic option: Matrix feature v.3.4
+\Row=\count121
+\Col=\count122
+\queue@=\toks25
+\queue@@=\toks26
+\qcount@=\count123
+\qcount@@=\count124
+\matrixsize@=\count125
+ loaded)
+(d:/Local/TeX/texmf/tex/generic/xypic/xyarrow.tex
+ Xy-pic option: Arrow and Path feature v.3.5 path, \ar, loaded)
+(d:/Local/TeX/texmf/tex/generic/xypic/xygraph.tex
+ Xy-pic option: Graph feature v.3.7 loaded) loaded)
+(d:/Local/TeX/texmf/tex/generic/xypic/xypoly.tex
+ Xy-pic option: Polygon feature v.3.7 polygons,
+\xypolynode@=\count126
+ loaded)) (wtest.aux)
+\openout1 = `wtest.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+Package hyperref Info: Link coloring ON on input line 24.
+
+(d:/Local/TeX/texmf/tex/latex/hyperref/nameref.sty
+Package: nameref 1999/06/28 Cross-referencing by name of section
+\c@section@level=\count127
+)
+LaTeX Info: Redefining \ref on input line 24.
+LaTeX Info: Redefining \pageref on input line 24.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 25.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 25.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 25.
+ (wtest.toc)
+\tf@toc=\write4
+\openout4 = `wtest.toc'.
+
+ [1
+
+] [2]
+File: wsample.ps Graphic file (type eps)
+
+<wsample.ps>
+File: wsample.ps Graphic file (type eps)
+ <wsample.ps>
+File: wsample.ps Graphic file (type eps)
+ <wsample.ps>
+File: wsample.ps Graphic file (type eps)
+ <wsample.ps>
+File: ws_gzip.ps.gz Graphic file (type eps)
+ <ws_gzip.ps.gz>
+File: ws_bzip2.ps.bz2 Graphic file (type eps)
+
+<ws_bzip2.ps.bz2> [3]
+Overfull \hbox (13.6647pt too wide) in paragraph at lines 108--108
+[]    \OT1/cmtt/m/n/10.95 \special{" newpath 000 000 moveto 100 100 lineto 394 
+0 lineto[] 
+ []
+
+[4]
+Overfull \hbox (40.9997pt too wide) in paragraph at lines 111--171
+[] 
+ []
+
+[5]
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <10.95> on input line 198.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <14.4> on input line 218.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 218.
+ [6] [7] [8]
+Overfull \hbox (50.03862pt too wide) in paragraph at lines 286--287
+[] 
+ []
+
+[9] [10] [11] [12] [13] [14]
+File: `jpeg2ps -r 0 -h fab.jpg Graphic file (type eps)
+ <`jpeg2ps -r 0 -h fab.jpg>
+File: coffee_bean.bmp Graphic file (type bmp)
+ <coffee_bean.bmp>
+[15]
+File: world.emf Graphic file (type bmp)
+ <world.emf> [16] (wtest.aux) ) 
+Here is how much of TeX's memory you used:
+ 5795 strings out of 10905
+ 69180 string characters out of 72579
+ 181033 words of memory out of 263001
+ 8678 multiletter control sequences out of 10000+0
+ 11380 words of font info for 43 fonts, out of 400000 for 1000
+ 14 hyphenation exceptions out of 1000
+ 26i,7n,24p,209b,299s stack positions out of 300i,100n,500p,50000b,4000s
+
+Output written on wtest.dvi (16 pages, 34940 bytes).

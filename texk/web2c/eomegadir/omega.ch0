@@ -1,0 +1,45 @@
+%
+% Copyright (c) 2002-2003 the Omega Task Force
+%
+% Change file to assist in creating the web2c-specific change file.
+% This one resolves inconsistencies between the etex changes for
+% web2c and Omega changes for web2c.
+% Public domain.
+
+@x
+@d banner=='This is e-Omega, Version 3.141592--1.15--2.1--RC1' {printed when \TeX\ starts}
+@y
+@d banner=='This is Omega, Version 3.141592--1.15' {printed when \TeX\ starts}
+@z
+
+@x
+wterm(eTeX_banner);
+@y
+wterm(banner);
+@z
+
+@x
+begin wlog(eTeX_banner);
+@y
+begin wlog(banner);
+@z
+
+@x [50] m.1308 l.23794 - e-TeX basic
+if x<>@$ then goto bad_fmt; {check that strings are the same}
+@/@<Undump the \eTeX\ state@>@/
+@y
+if x<>@$ then goto bad_fmt; {check that strings are the same}
+@z
+
+@x
+  begin @!init for c:=top_mark_code to split_bot_mark_code do
+    if cur_mark[c]<>null then delete_token_ref(cur_mark[c]);
+  if sa_mark<>null then
+    if do_marks(destroy_marks,0,sa_mark) then sa_mark:=null;
+  for c:=last_box_code to vsplit_code do flush_node_list(disc_ptr[c]);
+  store_fmt_file; return;@+tini@/
+@y
+  begin @!init for c:=top_mark_code to split_bot_mark_code do
+    if cur_mark[c]<>null then delete_token_ref(cur_mark[c]);
+  store_fmt_file; return;@+tini@/
+@z

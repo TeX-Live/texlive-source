@@ -1,0 +1,296 @@
+% @@psencodingfile@{
+%   author = "S. Rahtz, P. MacKay, Alan Jeffrey, B. Horn, K. Berry",
+%   version = "0.6",
+%   date = "22 June 1996",
+%   filename = "8r.enc",
+%   email = "kb@@mail.tug.org",
+%   address = "135 Center Hill Rd. // Plymouth, MA 02360",
+%   codetable = "ISO/ASCII",
+%   checksum = "119     662    4424",
+%   docstring = "Encoding for TrueType or Type 1 fonts to be used with TeX."
+% @}
+% 
+% Idea is to have all the characters normally included in Type 1 fonts
+% available for typesetting. This is effectively the characters in Adobe
+% Standard Encoding + ISO Latin 1 + extra characters from Lucida.
+% 
+% Character code assignments were made as follows:
+% 
+% (1) the Windows ANSI characters are almost all in their Windows ANSI
+% positions, because some Windows users cannot easily reencode the
+% fonts, and it makes no difference on other systems. The only Windows
+% ANSI characters not available are those that make no sense for
+% typesetting -- rubout (127 decimal), nobreakspace (160), softhyphen
+% (173). quotesingle and grave are moved just because it's such an
+% irritation not having them in TeX positions.
+% 
+% (2) Remaining characters are assigned arbitrarily to the lower part
+% of the range, avoiding 0, 10 and 13 in case we meet dumb software.
+% 
+% (3) Y&Y Lucida Bright includes some extra text characters; in the
+% hopes that other PostScript fonts, perhaps created for public
+% consumption, will include them, they are included starting at 0x12.
+% 
+% (4) Remaining positions left undefined are for use in (hopefully)
+% upward-compatible revisions, if someday more characters are generally
+% available.
+% 
+% (5) hyphen appears twice for compatibility with both ASCII and Windows.
+% 
+Encoding=TeXBase1Encoding
+.notdef		% 0x00
+dotaccent
+fi
+fl
+fraction
+hungarumlaut
+Lslash
+lslash
+ogonek
+ring
+.notdef
+breve
+minus
+.notdef 
+Zcaron		% These are the only two remaining unencoded characters, so
+zcaron		% may as well include them.
+/caron		% 0x10
+/dotlessi 
+dotlessj	% (unusual TeX characters available in, e.g., Lucida Bright)
+ff
+ffi
+ffl 
+.notdef
+.notdef
+.notdef
+.notdef
+.notdef
+.notdef
+.notdef
+.notdef
+grave		% very contentious; it's painful not having quoteleft and quoteright
+quotesingle 	% at 96 and 145 that we move the things normally found there down to here.
+space		% 0x20 (ASCII begins)
+exclam
+quotedbl
+numbersign
+dollar
+percent
+ampersand
+quoteright
+parenleft
+parenright
+asterisk
+plus
+comma
+hyphen
+period
+slash
+zero		% 0x30 = 0
+one
+two
+three
+four
+five
+six
+seven
+eight
+nine
+colon
+semicolon
+less
+equal
+greater
+question
+at		% 0x40
+A
+B
+C
+D
+E
+F
+G
+H
+I
+J
+K
+L
+M
+N
+O
+P		% 0x50
+Q
+R
+S
+T
+U
+V
+W
+X
+Y
+Z 
+bracketleft
+backslash
+bracketright
+asciicircum
+underscore
+quoteleft	% 0x60
+a
+b
+c
+d
+e
+f
+g
+h
+i
+j
+k
+l
+m
+n
+o
+p % 0x70
+q
+r
+s
+t
+u
+v
+w
+x
+y
+z
+braceleft
+bar
+braceright
+asciitilde
+.notdef 	% rubout; ASCII ends
+.notdef		% 0x80
+.notdef
+quotesinglbase
+florin
+quotedblbase
+ellipsis
+dagger
+daggerdbl
+circumflex
+perthousand
+Scaron
+guilsinglleft
+OE
+.notdef
+.notdef
+.notdef
+.notdef		% 0x90
+.notdef
+.notdef
+quotedblleft
+quotedblright
+bullet
+endash
+emdash
+tilde
+trademark
+scaron
+guilsinglright
+oe
+.notdef
+.notdef
+Ydieresis
+.notdef 	% 0xA0 - nobreakspace
+exclamdown
+cent
+sterling
+currency
+yen
+brokenbar
+section
+dieresis
+copyright
+ordfeminine
+guillemotleft
+logicalnot
+hyphen		% Y&Y (also at 45); Windows' softhyphen
+registered
+macron
+degree		% 0xD0
+plusminus
+twosuperior
+threesuperior
+acute
+mu
+paragraph
+periodcentered
+cedilla
+onesuperior
+ordmasculine
+guillemotright
+onequarter
+onehalf
+threequarters
+questiondown
+Agrave		% 0xC0
+Aacute
+Acircumflex
+Atilde
+Adieresis
+Aring
+AE
+Ccedilla
+Egrave
+Eacute
+Ecircumflex
+Edieresis
+Igrave
+Iacute
+Icircumflex
+Idieresis
+Eth		% 0xD0
+Ntilde
+Ograve
+Oacute
+Ocircumflex
+Otilde
+Odieresis
+multiply
+Oslash
+Ugrave
+Uacute
+Ucircumflex
+Udieresis
+Yacute
+Thorn
+germandbls
+agrave		% 0xE0
+aacute
+acircumflex
+atilde
+adieresis
+aring
+ae
+ccedilla
+egrave
+eacute
+ecircumflex
+edieresis
+igrave
+iacute
+icircumflex
+idieresis
+eth		% 0xF0
+ntilde
+ograve
+oacute
+ocircumflex
+otilde
+odieresis
+divide
+oslash
+ugrave
+uacute
+ucircumflex
+udieresis
+yacute
+thorn
+ydieresis

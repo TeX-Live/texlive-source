@@ -1,0 +1,69 @@
+.TH "texshow" "1" "Oct 2000" "ConTeXt" "CONTEXT" 
+.PP 
+.SH "NAME" 
+texshow \- ConTeXt command and parameter reference
+.PP 
+.SH "SYNOPSIS" 
+\fBtexshow\fP [ \fIOPTION\fP ] [ \fICOMMAND\fP ] 
+[ \fILANGUAGE\fP ]
+.PP 
+.SH "DESCRIPTION" 
+.PP 
+\fBtexshow\fP uses \fBperl\fP(1) and PerlTk (see \fBTk\fP(3pm)) to
+show a overview of the commands and parameters of those\&.  In the Tk
+window you can search for a command and by switching the interface,
+you can see the equivalent in another interface language\&.
+.PP 
+\fICOMMAND\fP is a \fBConTeXt\fP command to search for in the
+database\&.  Note that Plain TeX commands are not (yet) in this database
+although they can be used in \fBConTeXt\fP source files\&.
+.PP 
+\fILANGUAGE\fP can be one of \fBcz\fP (Czech), \fBde\fP
+(German), \fBen\fP (US-English) or \fBnl\fP (Dutch)\&.  The default
+language is Dutch\&.
+.PP 
+You can also set the interface language with the
+\fB--interface\fP switch\&.
+.PP 
+.SH "OPTIONS" 
+.PP 
+.IP "\fB--help\fP" 
+Print a brief syntax summary 
+.IP "\fB--interface=\fP\fILANGUAGE\fP" 
+Primary interface language\&.
+See DESCRIPTION for \fILANGUAGE\fP options\&. 
+.PP 
+.SH "FILES" 
+.PP 
+.IP "\fITEXMF/context/perltk/cont_mis\&.pm\fP" 
+Perl module for
+formatting data
+.IP "\fITEXMF/context/perltk/cont_set\&.pm\fP" 
+Perl module for
+defining and constructing Tk interface
+.IP "\fITEXMF/context/data/cont-\fIXX\fP\&.tws\fP" 
+The database
+file\&.  At this writing, \fIXX\fP can be one of \fBcz\fP (Czech),
+\fBde\fP (German), \fBen\fP (English), \fBit\fP (Italian), or
+\fBnl\fP (Dutch)\&.  Which file is used is determined by the
+\fILANGUAGE\fP specified on the command line\&.
+.PP 
+.SH "SEE ALSO" 
+.PP 
+\fBtexexec\fP(1), \fBtexutil\fP(1), \fBpdfetex\fP(1),
+\fBpdftex\fP(1)\&.
+.PP 
+Web page: <http://www\&.pragma-ade\&.com/>
+.PP 
+.SH "AUTHOR" 
+.PP 
+\fBtexshow\fP was written by Hans Hagen 
+<pragma@wxs\&.nl>\&.
+.PP 
+This manpage was written by Tobias Burnus
+<burnus@gmx\&.de> and C\&.M\&. Connelly
+<c@eskimo\&.com>\&.
+.PP 
+\fBtexshow\fP is part of \fBTeXWork\fP and \fBConTeXt\fP and is available
+from <http://www\&.pragma-ade\&.com/pragma-ade/>\&.
+.PP 

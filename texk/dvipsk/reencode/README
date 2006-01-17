@@ -1,0 +1,15 @@
+This directory contains files regarding a naming scheme for fonts to be
+used with TeX.  Mail comments and bug reports to tex-fonts@tug.org.
+
+See NEWS for the version number and changes by release.
+
+fontname.texi is a Texinfo document describing the overall scheme.
+fontname.info is the info version.
+You can make fontname.dvi by running TeX on fontname.texi.
+
+The *.map files are the actual tables of abbreviations and font
+lists. They include directory names where appropriate. They are used by
+the MakeTeXPK distributed with the kpathsea drivers, web2c, etc. All
+except special.map are described in fontname.texi.
+
+The *.enc files are encoding files for use with Afm2tfm (comes with dvips(k)).

@@ -1,0 +1,16 @@
+dnl Public domain.
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(bibtex-1.c)
+
+AC_CONFIG_HEADERS([c-auto.h:c-auto.in])
+
+AC_PROG_CC
+AC_PROG_INSTALL
+AC_PROG_MAKE_SET
+AC_PROG_LN_S
+
+sinclude(../kpathsea/withenable.ac)
+
+KPSE_CONFIG_FILES([Makefile])
+AC_OUTPUT
+date >stamp-auto

@@ -1,0 +1,166 @@
+#!/bin/sh
+
+## getnonfreefonts
+## Copyright 2005 Reinhard Kotucha <reinhard.kotucha@web.de>
+#
+# This work may be distributed and/or modified under the
+# conditions of the LaTeX Project Public License, either version 1.3
+# of this license or (at your option) any later version.
+# The latest version of this license is in
+#   http://www.latex-project.org/lppl.txt
+# 
+# The current maintainer is Reinhard Kotucha.
+
+
+# invoke the right shell (code from Thomas Esser):
+test -f /bin/ksh && test -z "$RUNNING_KSH" \
+  && { UNAMES=`uname -s`; test "x$UNAMES" = xULTRIX; } 2>/dev/null \
+  && { RUNNING_KSH=true; export RUNNING_KSH; exec /bin/ksh $0 ${1+"$@"}; }
+unset RUNNING_KSH
+
+test -f /bin/bsh && test -z "$RUNNING_BSH" \
+  && { UNAMES=`uname -s`; test "x$UNAMES" = xAIX; } 2>/dev/null \
+  && { RUNNING_BSH=true; export RUNNING_BSH; exec /bin/bsh $0 ${1+"$@"}; }
+unset RUNNING_BSH
+
+
+URL="${URL-ftp://tug.org/tex/getnonfreefonts/getfont}"
+
+die () { echo "$1." 1>&2; exit 1; }
+
+OLDIFS=$IFS
+IFS=:
+BINDIRS=`echo $PATH`
+IFS=$OLDIFS
+
+for BINDIR in $BINDIRS; do
+  if test "$BINDIR" != "."; then
+    for FTP_CLIENT in wget lftp ncftpget curl snarf gftp; do
+	test -x $BINDIR/$FTP_CLIENT && FTP=$FTP_CLIENT && break
+    done
+  fi
+done
+
+test -n "$FTP" || die "No ftp client found"
+
+export FTP
+
+case $0 in 
+  *-sys) SYS=true; GETFONT=getfont-sys;;
+      *) SYS=false; GETFONT=getfont;;
+esac
+export SYS GETFONT
+
+ALL=true
+RUNSHELL=false
+
+ARGS_FROM_GETNONFREEFONTS="$@"
+export ARGS_FROM_GETNONFREEFONTS
+
+for ARG in "$@"; do
+  case $ARG in
+    -*)
+      case $ARG in
+        -shell|--shell) RUNSHELL=true;;
+        -ftp-client=*|--ftp-client=*)
+          FTP=`echo "$ARG" | sed 's/.*=//'`;;
+        -url=*|--url=*)
+          URL=`echo "$ARG" | sed 's/.*=//'`;;
+	-h|-help|--help) ALL=false;;
+      esac;;
+    *) ALL=false;;
+  esac
+done
+
+export URL
+
+tmpdir=${TMPDIR-${TEMP-${TMP-/tmp}}}/getnonfreefonts.$$
+(umask 077; mkdir "${tmpdir}") || die "Can't mkdir ${tmpdir}"
+trap 'rm -rf ${tmpdir}' 0 1 2 3 7 13 15
+
+download () {
+  echo "Downloading: $1"
+  case ${FTP} in
+        wget) wget "$1"        || die "$1: Download failed";;
+        lftp) lftp -c "get $1" || die "$1: Download failed";;
+    ncftpget) ncftpget "$1"    || die "$1: Download failed";;
+        curl) curl -O "$1"     || die "$1: Download failed";;
+       snarf) snarf "$1"       || die "$1: Download failed";;
+        gftp) gftp -d "$1"     || die "$1: Download failed";;
+           *) die "This can't happen";;
+  esac
+}
+
+cd "${tmpdir}" || die "Can't cd ${tmpdir}"
+
+echo -------------------------------------------------------
+echo "FTP client:    ${FTP}"
+echo "Temporary dir: ${tmpdir}"
+echo "URL:           ${URL}"
+echo -------------------------------------------------------
+
+download ${URL}
+
+chmod 700 getfont
+ln -s getfont getfont-sys
+PATH=${tmpdir}:${PATH}
+export PATH
+
+UPDMAP_NEEDED=false
+
+if ${RUNSHELL}; then
+  if ${SYS}; then
+    PS1='[getfont-sys]\$ '
+  else
+    PS1='[getfont]\$ '
+  fi
+  export PS1
+  echo -------------------------------------------------------
+  echo "FTP client:    ${FTP}"
+  echo "Temporary dir: ${tmpdir}"
+  echo "URL:           ${URL}"
+  echo "SYS:           ${SYS}"
+  echo "ARGS:          ${ARGS_FROM_GETNONFREEFONTS}"
+  echo -------------------------------------------------------
+  echo "Run program \"getfont\" or \"getfont-sys\" for each font you want to install."
+  echo; echo "Supported fonts are:"
+  for f in `getfont --lsfonts`; do
+    echo "     $f"
+  done
+  echo; echo "Type \"getfont --help\" for more information."
+  echo "Type \"exit\" to leave this shell."; echo
+
+# Start the shell.  We start a shell even if someone has
+# SHELL=/sbin/shutdown in his environment.
+
+  test -z ${SHELL} || SHELL="/bin/sh"
+  case ${SHELL} in
+    /bin/bash) /bin/bash;;
+     /bin/ksh) /bin/ksh;;
+     /bin/ksh) /bin/ksh;;
+            *) /bin/sh;;
+  esac
+
+  echo "Please run \"updmap\" or \"updmap-sys\" now if necessary."
+else # no shell
+  if ${ALL} ; then
+    for font in `getfont --lsfonts`; do
+      ${GETFONT} ${ARGS_FROM_GETNONFREEFONTS} ${font} && UPDMAP_NEEDED=true
+    done
+  else
+    ${GETFONT} ${ARGS_FROM_GETNONFREEFONTS} && UPDMAP_NEEDED=true
+  fi
+
+  if ${UPDMAP_NEEDED}; then
+    if ${SYS}; then
+      updmap-sys
+    else 
+      updmap
+    fi
+  fi
+fi
+
+cd /
+rm -rf "${tmpdir}"
+
+exit 0

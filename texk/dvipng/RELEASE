@@ -1,0 +1,13 @@
+Release notes for version 1.6 of the dvipng package:
+
+This program makes PNG graphics from DVI files as obtained from TeX
+and its relatives.
+
+
+The 1.6 release adds proper alpha channel support and xcolor support.
+It also reestablishes identification of preview-latex' tightpage mode
+option.
+
+
+It has been tested to a fair degree. Note the disclaimer in the
+COPYING file. Report any bugs you find, see README for instructions.

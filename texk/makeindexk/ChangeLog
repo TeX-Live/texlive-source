@@ -1,0 +1,36 @@
+Sa Sep 25 22:25:15 CEST 2004
+	* set locale according to LC_CTYPE in genind.c for correct
+	  tolower() behaviour
+
+1998-10-22  Eli Zaretskii  <eliz@is.elta.co.il>
+
+        * mkind.h [DOSISH] (ENV_SEPAR, DIR_DELIM, ALT_DIR_DELIM,
+        IS_DIR_DELIM): Define.
+
+        * mkind.c (main, check_idx): If ALT_DIR_DELIM is defined, use it
+        in addition to DIR_DELIM to find the basename.
+
+Fri Jan 30 13:05:22 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* mkindex: make executable (Thomas Esser)
+
+Tue Jan 27 14:32:25 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* configure etc: new configure.in, c-auto.in, Makefile.in from
+	Olaf Weber
+
+Tue Jan 20 10:13:57 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* added check of function prototypes to c-auto.in
+
+Thu Jan  1 11:10:15 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* A placeholder to note texk7-2 version, changed configure.in at
+	least 
+
+Sat Mar  8 13:44:45 MET 1997:
+  - removed non-UNIX code
+  - added GNU autoconf support
+  - added Kpathsea support based on a patch from
+      Matthias Clasen    (stu30917@mail.uni-kiel.d400.de)
+  - changed version number to 2.13

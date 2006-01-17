@@ -1,0 +1,5260 @@
+\input texinfo    @c -*-texinfo-*-
+
+@c TODO More math symbols
+
+
+@c $Id: latex2e.texi,v 1.216 1996/04/23 10:39:54 torsten Exp $
+
+@tex
+\gdef\LaTeX{{\rm L\kern-.36em\raise.3ex\hbox{\sc a}\kern-.15em%
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX\kern.125em}}
+\gdef\LaTeXe{{\rm L\kern-.36em\raise.3ex\hbox{\sc a}\kern-.15em%
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX\kern.125em
+    2${}_{\textstyle\varepsilon}$}}
+@end tex
+
+@comment %**start of header (This is for running Texinfo on a region.)
+@setfilename latex.info
+@ifinfo
+@settitle LaTeX2e help 1.6
+@end ifinfo
+@iftex
+@settitle @LaTeXe help 1.6
+@end iftex
+@dircategory TeX
+@direntry
+* LaTeX2e: (latex).                  LaTeXe help 1.6.
+@end direntry
+@comment %**end of header (This is for running Texinfo on a region.)
+
+@iftex
+@finalout
+@end iftex
+
+@copying
+This file documents LaTeX2e, a document preparation system. LaTeX2e is a
+macro package for TeX.
+
+This is edition 1.6 of the LaTeX2e documentation, and is for the Texinfo
+that is distributed as part of Version 19 of GNU Emacs. It uses version
+2.134 or later of the texinfo.tex input file.
+
+This is translated from LATEX.HLP v1.0a in the VMS Help Library.  The
+pre-translation version was written by George D. Greenwade of Sam
+Houston State University.
+
+The LaTeX 2.09 version was written by Stephen Gilmore <stg@@dcs.ed.ac.uk>.
+
+The LaTeX2e version was adapted from this by Torsten Martinsen
+<bullestock@@dk-online.dk>.
+
+Copyright 1988,1994 Free Software Foundation, Inc.
+Copyright 1994-1996 Torsten Martinsen.
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+@ignore
+Permission is granted to process this file through TeX and print the
+results, provided the printed document carries copying permission
+notice identical to this one except for the removal of this paragraph
+(this paragraph not being relevant to the printed manual).
+@end ignore
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that the sections entitled ``Distribution'' and ``General Public
+License'' may be included in a translation approved by the author instead
+of in the original English.
+@end copying
+
+@c setchapternewpage odd
+@titlepage
+@sp 11
+
+
+
+@comment A hack to get the LaTeX logo to appear big in the title.
+
+@tex
+\font\tempA = cmr10 scaled \magstep4
+\font\tempB = cmr8  scaled \magstep4
+\centerline{\tempA L\kern-.36em\raise.3ex\hbox{\tempB A}\kern-.15em%
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX\kern.15em
+    2${}_{\textstyle\varepsilon}$}
+@end tex
+@sp 2
+@center The macro package for @TeX
+@sp 2
+@center by 
+@center Leslie Lamport et al.
+@sp 2
+@center Edition 1.6
+@sp 2
+@center December 1994
+
+@comment  Include the Distribution inside the titlepage environment so
+@comment that headings are turned off. 
+
+@page
+@vskip 0pt plus 1filll
+
+This is edition 1.6 of the LaTeX2e documentation, and is for the Texinfo
+that is distributed as part of Version 19 of GNU Emacs. It uses version
+2.134 or later of the @file{texinfo.tex} input file.
+
+This is translated from LATEX.HLP v1.0a in the VMS Help Library.
+This pre-translation version was written by George D. Greenwade of
+Sam Houston State University. It has been edited to this form by Paul
+Nothard of Edinburgh University.
+
+The original (latex.texi and latex2.texi) was distributed by 
+Stephen Gilmore <stg@@dcs.ed.ac.uk>, August 26th 1993.
+
+Version 1.1 was made by Piet van Oostrum <piet@@cs.ruu.nl> on Dec 14,
+1993 by merging and cleaning up latex.texi and latex2.texi.
+
+Versions 1.2 trough 1.6 by Torsten Martinsen <bullestock@@dk-online.dk>.
+
+@sp 2
+
+This Texinfo file may be copied and distributed in accordance with the
+usual copying permissions of the Free Software Foundation.  These
+permissions are given in the General Public License section of the ``GNU
+Emacs Manual''.  This software comes with NO WARRANTY.
+
+@sp 2
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+@end titlepage
+
+@c The name of the `Command Index' node must NOT be altered 
+@c if ltx-help.el is to work 
+
+@node Top, Overview, (dir), (dir)
+
+LaTeX2e is a document preparation system implemented as a macro package
+for Donald E. Knuth's TeX typesetting program.
+
+LaTeX was originally conceived by Leslie Lamport.
+
+This is edition 1.6 of the LaTeX2e documentation.
+
+@menu
+
+* Overview::                    What is LaTeX?
+* Commands::                    Commands within a LaTeX document.
+* Parameters::                  The command line.
+* Command Index::           	An alphabetical list of LaTeX commands.
+* Concept Index::		An alphabetical list of concepts.
+
+@end menu
+
+@comment ****************************************
+@comment ************** OVERVIEW ****************
+@comment ****************************************
+
+@comment LEVEL1
+@node     Overview,  Commands, Top,  Top
+@comment  node-name, next,     previous, up
+
+@chapter Overview of LaTeX and Local Guide
+@cindex Overview of LaTeX
+@cindex LaTeX overview
+
+The LaTeX command typesets a file of text using the TeX program and the
+LaTeX Macro package for TeX.  To be more specific, it processes an input
+file containing the text of a document with interspersed commands that
+describe how the text should be formatted.  It produces at least three
+files as output:
+
+@enumerate
+@item
+A ``Device Independent'', or @file{.dvi} file. This contains commands that
+can be translated into commands for a variety of output devices.  You
+can view the output of LaTeX by using a program such as @code{xdvi},
+which actually uses the @file{.dvi} file.
+@item
+A ``transcript'' or @file{.log} file that contains summary information and
+diagnostic messages for any errors discovered in the input file.
+@item
+An ``auxiliary'' or @file{.aux} file. This is used by LaTeX itself, for
+things such as sectioning.
+@end enumerate
+
+For a description of what goes on inside TeX, you should consult
+@cite{The TeXbook} by Donald E. Knuth, ISBN 0-201-13448-9, published
+jointly by the American Mathematical Society and Addison-Wesley
+Publishing Company.
+
+For a description of LaTeX, you should consult:
+
+@cite{LaTeX: A Document Preparation System}, by Leslie Lamport,
+Addison-Wesley Publishing Company, 2nd edition, 1994.
+
+@cite{The LaTeX Companion}, by Michel Goossens, Frank Mittelbach, and
+Alexander Samarin, Addison-Wesley, 1994.
+
+
+@comment ****************************************
+@comment ************** COMMANDS ****************
+@comment ****************************************
+
+@comment LEVEL1
+@node    Commands,  Parameters, Overview, Top
+@comment node-name, next,     previous, up
+@chapter Commands
+
+A LaTeX command begins with the command name, which consists of a
+@code{\} followed by either (a) a string of letters or (b) a single
+non-letter.  Arguments contained in square brackets, @code{[]}, are
+optional while arguments contained in braces, @code{@{@}}, are required.
+
+NOTE:  LaTeX  is case sensitive.   Enter  all commands  in lower  case
+unless explicitly directed to do otherwise.
+
+@menu
+* Counters::			Internal counters used by LaTeX.
+* Cross References::		Automatic referencing.
+* Definitions::			Define your own commands etc.
+* Document Classes::		Some of the various classes available.
+* Environments::		Such as enumerate & itemize.
+* Footnotes::			How to produce footnotes.
+* Layout::			Controlling the page layout.
+* Lengths::			The length commands.
+* Letters::			The letter class.
+* Line & Page Breaking::	How to insert pagebreaks etc.
+* Making Paragraphs::		Paragraph commands.
+* Margin Notes::                Putting remarks in the margin.
+* Math Formulae::		How to create mathematical formulae.
+* Modes::			Paragraph, Math or LR modes.
+* Page Styles::			Various styles of page layout.
+* Sectioning::			How to section properly.
+* Spaces & Boxes::		All the associated commands.
+* Special Characters::		Special reserved characters.
+* Splitting the Input::		Dealing with big files by splitting.
+* Starting & Ending::		The formal start & end layouts.
+* Table of Contents::		How to create a table of contents.
+* Terminal Input/Output::	User interaction.
+* Typefaces::			Such as bold, italics etc.
+@end menu
+
+
+@comment ***************************************
+@comment **** Command's LEVEL2 Starts Here. ****
+@comment ***************************************
+
+@comment *************************
+@comment ******* Counters ********
+@comment *************************
+
+@comment LEVEL2
+@node    Counters,  Cross References, Commands, Commands
+@comment node-name, next,          previous, up
+@section Counters
+@cindex Counters, a list of
+@cindex Variables, a list of
+
+Everything LaTeX numbers for you has a counter associated with it. The
+name of the counter is the same as the name of the environment or
+command that produces the number, except with no @code{\}.  (enumi -
+enumiv are used for the nested enumerate environment.)  Below is a list
+of the counters used in LaTeX's standard document classes to control
+numbering.
+
+@example
+ part            paragraph       figure          enumi
+ chapter         subparagraph    table           enumii
+ section         page            footnote        enumiii
+ subsection      equation        mpfootnote      enumiv
+ subsubsection
+@end example
+
+@menu
+* \addtocounter::       Add a quantity to a counter.
+* \alph::               Print value of a counter using letters.
+* \arabic::             Print value of a counter using numerals.
+* \fnsymbol::           Print value of a counter using symbols.
+* \newcounter::         Define a new counter.
+* \refstepcounter::     Add to counter, resetting subsidiary counters.
+* \roman::              Print value of a counter using roman numerals.
+* \setcounter::         Set the value of a counter.
+* \stepcounter::        Add to counter, resetting subsidiary counters.
+* \usecounter::         Use a specified counter in a list environment.
+* \value::              Use the value of a counter in an expression.
+@end menu
+
+
+@comment *******************
+@comment ** \addtocounter **
+@comment *******************
+
+@comment LEVEL3
+@node    \addtocounter, \alph, Counters, Counters
+@comment node-name,     next,  previous, up
+@subsection \addtocounter
+@findex \addtocounter
+
+@code{\addtocounter@{counter@}@{value@}}
+
+The @code{\addtocounter} command increments the @code{counter} by the
+amount specified by the @code{value} argument.  The @code{value}
+argument can be negative.
+
+
+@comment ************
+@comment ** \alph ***
+@comment ************
+
+@comment LEVEL3
+@node    \alph,     \arabic, \addtocounter, Counters
+@comment node-name, next,    previous,      up
+@subsection \alph
+@findex \alph
+@findex \Alph
+
+@code{\alph@{counter@}}
+
+This command causes the value of the @code{counter} to be printed in
+alphabetic characters.  The @code{\alph} command uses lower case
+alphabetic alphabetic characters, i.e., @code{a, b, c...} while the
+@code{\Alph} command uses upper case alphabetic characters, i.e.,
+@code{A, B, C...}.
+
+
+@comment **************
+@comment ** \arabic ***
+@comment **************
+
+@comment LEVEL3
+@node    \arabic,   \fnsymbol, \alph,    Counters
+@comment node-name, next,      previous, up
+@subsection \arabic
+@findex \arabic
+
+@code{\arabic@{counter@}}
+
+The @code{\arabic} command causes the value of the @code{counter} to be
+printed in Arabic numbers, i.e., @code{3}.
+
+
+@comment ***************
+@comment ** \fnsymbol **
+@comment ***************
+
+@comment LEVEL3
+@node    \fnsymbol, \newcounter, \arabic,  Counters
+@comment node-name, next,        previous, up
+@subsection \fnsymbol
+@findex \fnsymbol
+
+@code{\fnsymbol@{counter@}}
+
+The @code{\fnsymbol} command causes the value of the @code{counter} to
+be printed in a specific sequence of nine symbols that can be used for
+numbering footnotes.
+
+@iftex
+eg. From 1-9:
+@tex
+$\ast$ $\dagger$ $\ddagger$ $\S$ $\P$ $\parallel$ $\ast \ast$ $\dagger
+\dagger$ $\ddagger \ddagger$
+@end tex
+@end iftex
+
+
+NB. @code{counter} must have a value between 1 and 9 inclusive.
+
+
+@comment *****************
+@comment ** \newcounter **
+@comment *****************
+
+@comment LEVEL3
+@node    \newcounter, \refstepcounter, \fnsymbol, Counters
+@comment node-name,   next,            previous,  up
+@subsection \newcounter
+@findex \newcounter
+@cindex Counters, creating
+
+@code{\newcounter@{foo@}[counter]}
+
+The @code{\newcounter} command defines a new counter named @code{foo}.
+The counter is initialized to zero.
+
+The optional argument @code{[counter]} causes the counter @code{foo} to
+be reset whenever the counter named in the optional argument is
+incremented.
+
+
+@comment *****************
+@comment ** \refstepcounter **
+@comment *****************
+
+@comment LEVEL3
+@node    \refstepcounter, \roman, \newcounter, Counters
+@comment node-name,   next,  previous,  up
+@subsection \refstepcounter
+@findex \refstepcounter
+
+@code{\refstepcounter@{counter@}}
+
+The @code{\refstepcounter} command works like  @code{\stepcounter}
+@xref{\stepcounter}, except it also defines the current @code{\ref}
+value to be the result of @code{\thecounter}.
+
+@comment ************
+@comment ** \roman **
+@comment ************
+
+@comment LEVEL3
+@node    \roman,    \stepcounter, \refstepcounter, Counters
+@comment node-name, next,        previous,    up
+@subsection \roman
+@findex \roman
+@findex \Roman
+
+@code{\roman@{counter@}}
+
+This command causes the value of the @code{counter} to be printed in
+Roman numerals.  The @code{\roman} command uses lower case Roman
+numerals, i.e., @code{i, ii, iii...}, while the @code{\Roman} command
+uses upper case Roman numerals, i.e., @code{I, II, III...}.
+
+
+@comment *****************
+@comment ** \stepcounter **
+@comment *****************
+
+@comment LEVEL3
+@node    \stepcounter, \setcounter, \roman, Counters
+@comment node-name,   next,  previous,  up
+@subsection \stepcounter
+@findex \stepcounter
+
+@code{\stepcounter@{counter@}}
+
+The @code{\stepcounter} command adds one to the @code{counter} and
+resets all subsidiary counters.
+
+
+@comment *****************
+@comment ** \setcounter **
+@comment *****************
+
+@comment LEVEL3
+@node    \setcounter, \usecounter, \stepcounter,   Counters
+@comment node-name,   next,        previous, up
+@subsection \setcounter
+@findex \setcounter
+@cindex Counters, setting
+
+@code{\setcounter@{counter@}@{value@}}
+
+The @code{\setcounter} command sets the value of the @code{counter} to
+that specified by the @code{value} argument.
+
+
+@comment *****************
+@comment ** \usecounter **
+@comment *****************
+
+@comment LEVEL3
+@node    \usecounter, \value, \setcounter, Counters
+@comment node-name,   next,   previous,    up
+@subsection \usecounter
+@findex \usecounter
+
+@code{\usecounter@{counter@}}
+
+The @code{\usecounter} command is used in the second argument of the
+@code{list} environment to allow the counter specified to be used to
+number the list items.
+
+
+@comment ************
+@comment ** \value **
+@comment ************
+
+@comment LEVEL3
+@node    \value,    , \usecounter, Counters
+@comment node-name, next,             previous,    up
+@subsection \value
+@findex \value
+@cindex Counters, getting the value of
+
+@code{\value@{counter@}}
+
+The @code{\value} command produces the value of the @code{counter} named
+in the mandatory argument.  It can be used where LaTeX expects an
+integer or number, such as the second argument of a @code{\setcounter}
+or @code{\addtocounter} command, or in:
+
+@example
+        \hspace@{\value@{foo@}\parindent@}
+@end example
+
+It is useful for doing arithmetic with counters.
+
+@page
+
+@comment *************************
+@comment **** Cross References ***
+@comment *************************
+
+@comment LEVEL2
+@node    Cross References, Definitions, Counters,   Commands
+@comment node-name,        next,   previous, up
+@section Cross References
+@cindex Cross referencing
+
+One reason for numbering things like figures and equations is to refer
+the reader to them, as in ``See Figure 3 for more details.''
+
+@menu
+* \label::      Assign a symbolic name to a piece of text.
+* \pageref::    Refer to a page number.
+* \ref::        Refer to a section, figure or similar.
+@end menu
+
+@comment *************************
+@comment **** \label *************
+@comment *************************
+
+@comment LEVEL3
+@node    \label,    \pageref, Cross References, Cross References 
+@comment node-name, next,     previous,         up
+@subsection \label
+@findex \label
+
+@code{\label@{key@}}
+
+A @code{\label} command appearing in ordinary text assigns to the
+@code{key} the number of the current sectional unit; one appearing
+inside a numbered environment assigns that number to the @code{key}.
+
+A @code{key} can consist of any sequence of letters, digits, or
+punctuation characters.  Upper and lowercase letters are different.
+
+To avoid accidentally creating two labels with the same name, it is
+common to use labels consisting of a prefix and a suffix separated by a
+colon. The prefixes conventionally used are
+
+@itemize @bullet
+@item
+@code{cha}
+for chapters
+@item
+@code{sec}
+for lower-level sectioning commands
+@item
+@code{fig}
+for figures
+@item
+@code{tab}
+for tables
+@item
+@code{eq}
+for equations
+@end itemize
+
+Thus, a label for a figure would look like @code{fig:bandersnatch}.
+
+
+@comment *************************
+@comment **** \pageref ***********
+@comment *************************
+
+@comment LEVEL3
+@node    \pageref,  \ref, \label,   Cross References 
+@comment node-name, next, previous, up
+@subsection \pageref
+@findex \pageref
+@cindex Cross referencing using page number
+
+@code{\pageref@{key@}}
+
+The @code{\pageref} command produces the page number of the place in the
+text where the corresponding @code{\label} command appears. ie. where
+@code{\label@{key@}} appears.
+
+
+@comment *************************
+@comment **** \ref ***************
+@comment *************************
+
+@comment LEVEL3
+@node    \ref,      , \pageref, Cross References 
+@comment node-name, next,        previous, up
+@subsection \ref
+@findex \ref
+@cindex Cross referencing using section number
+
+@code{\ref@{key@}}
+
+The @code{\ref} command produces the number of the sectional unit,
+equation number, ... of the corresponding @code{\label} command.
+
+@page
+
+@comment *************************
+@comment **** Definitions ********
+@comment *************************
+
+@comment LEVEL2
+@node    Definitions, Document Classes, Cross References ,     Commands
+@comment node-name,   next,        previous, up
+@section Definitions
+
+@menu
+* \newcommand::         Define a new command.
+* \newenvironment::     Define a new environment.
+* \newtheorem::         Define a new theorem-like environment.
+* \newfont::            Define a new font name.
+@end menu
+
+
+@comment *************************
+@comment **** \newcommand ********
+@comment *************************
+
+@comment LEVEL3
+@node    \newcommand, \newenvironment, Definitions, Definitions
+@comment node-name,   next,            previous,    up
+@subsection \newcommand
+@findex \newcommand
+@cindex Commands, defining new ones
+@cindex Defining a new command
+
+@example
+ \newcommand@{cmd@}[args]@{definition@}
+ \newcommand@{cmd@}[args][default]@{definition@}
+ \renewcommand@{cmd@}[args]@{definition@}
+ \renewcommand@{cmd@}[args][default]@{definition@}
+@end example
+
+These commands define (or redefine) a command.
+
+@table @code
+@item cmd
+A command name beginning with a @code{\}.  For @code{\newcommand} it
+must not be already defined and must not begin with @code{\end}; for
+@code{\renewcommand} it must already be defined.
+
+@item args
+An integer from 1 to 9 denoting the number of arguments of the command
+being defined.  The default is for the command to have no arguments.
+
+@item def
+If this optional parameter is present, it means that the command's first
+argument is optional. The default value of the optional argument is
+@code{def}.
+
+@item definition
+The text to be substituted for every occurrence of @code{cmd}; a
+parameter of the form @code{#n} in @code{cmd} is replaced by the text of
+the nth argument when this substitution takes place.
+
+@end table
+
+@comment *************************
+@comment **** \newenvironment ****
+@comment *************************
+
+@comment LEVEL3
+@node    \newenvironment, \newtheorem, \newcommand, Definitions
+@comment node-name,       next,        previous,    up
+@subsection \newenvironment
+@findex \newenvironment
+@cindex Environments, defining
+@cindex Defining new environments
+
+@example
+ \newenvironment@{nam@}[args]@{begdef@}@{enddef@}
+ \newenvironment@{nam@}[args][default]@{begdef@}@{enddef@}
+ \renewenvironment@{nam@}[args]@{begdef@}@{enddef@}
+@end example
+
+These commands define or redefine an environment.
+
+@table @code
+@item nam
+The name of the environment.  For @code{\newenvironment} there must be
+no currently defined environment by that name, and the command
+@code{\nam} must be undefined.  For @code{\renewenvironment} the
+environment must already be defined.
+
+@item args
+An integer from 1 to 9 denoting the number of arguments of
+the newly-defined environment.  The default is no arguments.
+
+@item default
+If this is specified, the first argument is optional, and @code{default}
+gives the default value for that argument.
+
+@item begdef
+The text substituted for every occurrence of @code{\begin@{nam@}}; a
+parameter of the form @code{#n} in @code{cmd} is replaced by the text of
+the nth argument when this substitution takes place.
+
+@item enddef
+The text substituted for every occurrence of @code{\end@{nam@}}.  It may
+not contain any argument parameters.
+
+@end table
+
+
+@comment *************************
+@comment **** \newtheorem ********
+@comment *************************
+
+@comment LEVEL3
+@node    \newtheorem, \newfont, \newenvironment, Definitions
+@comment node-name,   next,     previous,        up
+@subsection \newtheorem
+@findex \newtheorem
+@cindex Theorems, defining
+@cindex Defining new theorems
+
+@example
+ \newtheorem@{env_name@}@{caption@}[within]
+ \newtheorem@{env_name@}[numbered_like]@{caption@}
+@end example
+
+This command defines a theorem-like environment.
+
+@table @code
+@item env_name
+The name of the environment to be defined. A string of letters.  It must
+not be the name of an existing environment or counter.
+
+@item caption
+The text printed at the beginning of the environment, right before the
+number. This may simply say ``Theorem'', for example.
+
+@item within
+The name of an already defined counter, usually of a sectional unit.
+Provides a means of resetting the new theorem counter @strong{within}
+the sectional unit.
+
+@item numbered_like
+The name of an already defined theorem-like environment.
+
+@end table
+
+The @code{\newtheorem} command may have at most one optional argument.
+
+
+@comment *************************
+@comment **** \newfont ***********
+@comment *************************
+
+@comment LEVEL3
+@node    \newfont,  , \newtheorem, Definitions
+@comment node-name, next,            previous,    up
+@subsection \newfont
+@findex \newfont
+@cindex Fonts, new commands for
+@cindex Defining new fonts
+
+@code{\newfont@{cmd@}@{font_name@}}
+
+Defines the command name @code{cmd}, which must not be currently
+defined, to be a declaration that selects the font named
+@code{font_name} to be the current font.
+
+@page
+
+@comment *************************
+@comment **** Document Classes ****
+@comment *************************
+
+@comment LEVEL2
+@node    Document Classes, Environments, Definitions, Commands
+@comment node-name,       next,         previous, up
+@section Document Classes
+@cindex Document Classes
+@cindex Classes of document
+@cindex article class
+@cindex report class
+@cindex book class
+@cindex letter class
+@findex \documentclass
+
+Valid LaTeX document classes include:
+
+@itemize @bullet
+@item 
+article
+@item 
+report
+@item 
+letter
+@item  
+book
+@item
+slides
+@end itemize
+
+Other document classes are often available. @xref{Overview}, for details.
+They are selected with the following command:
+
+@code{\documentclass [options] @{class@}}
+
+All the standard classes (except slides) accept the following options
+for selecting the typeface size (10 pt is default):
+
+10pt, 11pt, 12pt
+
+All classes accept these options for selecting the paper size (default
+is letter):
+
+a4paper, a5paper, b5paper, letterpaper, legalpaper, executivepaper
+
+Miscellaneous options:
+
+@itemize @bullet
+@item
+landscape --- selects landscape format. Default is portrait.
+@item
+titlepage, notitlepage --- selects if there should be a separate title
+page. 
+@item
+leqno --- equation number on left side of equations. Default is right side.
+@item
+fleqn --- displayed formulas flush left. Default is centred.
+@item
+openbib --- use ``open'' bibliography format.
+@item
+draft, final --- mark/do not mark overfull boxes with a rule.
+Default is final.
+@end itemize
+
+These options are not available with the slides class:
+
+@itemize @bullet
+@item
+oneside, twoside --- selects one- or twosided layout. Default is
+oneside, except for the book class.
+@item
+openright, openany --- determines if a chapter should start on a
+right-hand page. Default is openright for book.
+@item
+onecolumn, twocolumn --- one or two columns. Defaults to one column.
+@end itemize
+
+The slides class offers the option @code{clock} for printing the time at
+the bottom of each note.
+
+If you specify more than one option, they must be separated by a comma.
+
+Additional packages are loaded by a
+
+@code{\usepackage[options]@{pkg@}}
+@findex \usepackage
+
+command. If you specify more than one package, they must be separated by
+a comma.
+@cindex Packages, loading
+@cindex Loading additional packages
+
+Any options given in the @code{\documentclass} command that are unknown
+by the selected document class are passed on to the packages loaded with
+@code{\usepackage}. 
+@cindex Global options
+@cindex Options, global
+
+@node  Layout, Lengths, Footnotes, Commands
+@comment  node-name,  next,  previous,  up
+@cindex Layout commands
+
+@section Layout
+
+Miscellaneous commands for controlling the general layout of the page.
+
+@menu
+* \flushbottom::        Make all text pages the same height.
+* \onecolumn::          Use one-column layout.
+* \raggedbottom::       Allow text pages of differing height.
+* \twocolumn::          Use two-column layout.
+@end menu
+
+
+@comment *************************
+@comment **** \flushbottom *******
+@comment *************************
+
+@comment LEVEL3
+@node    \flushbottom, \onecolumn, , Layout
+@comment node-name,     next,       previous,        up
+@subsection \flushbottom
+@findex \flushbottom
+
+The @code{\flushbottom} declaration makes all text pages the same
+height, adding extra vertical space when necessary to fill out the page.
+
+This is the standard if twocolumn mode is selected.
+
+
+@comment *************************
+@comment **** \onecolumn *********
+@comment *************************
+
+@comment LEVEL3
+@node    \onecolumn, \raggedbottom, \flushbottom, Layout
+@comment node-name,  next,          previous,     up
+@subsection \onecolumn
+@findex \onecolumn
+
+The @code{\onecolumn} declaration starts a new page and produces
+single-column output.
+
+
+@comment *************************
+@comment **** \raggedbottom ******
+@comment *************************
+
+@comment LEVEL3
+@node    \raggedbottom, \twocolumn, \onecolumn, Layout
+@comment node-name,     next,       previous,   up
+@subsection \raggedbottom
+@findex \raggedbottom
+
+The @code{\raggedbottom} declaration makes all pages the height of the
+text on that page.  No extra vertical space is added.
+
+@comment *************************
+@comment **** \twocolumn *********
+@comment *************************
+
+@comment LEVEL3
+@node    \twocolumn,  , \raggedbottom, Layout
+@comment node-name,   next,         previous,      up
+@subsection \twocolumn
+@findex \twocolumn
+@cindex Multicolumn text
+
+@code{\twocolumn[text]}
+
+The @code{\twocolumn} declaration starts a new page and produces
+two-column output. If the optional @code{text} argument is present, it
+is typeset in one-column mode.
+
+
+@page
+
+@comment *************************
+@comment **** Environments *******
+@comment *************************
+
+@comment LEVEL2
+@node    Environments, Footnotes, Document Classes, Commands
+@comment node-name,    next,  previous,   up
+@section Environments
+@cindex Environments
+@findex \begin
+@findex \end
+
+LaTeX provides a number of different paragraph-making environments.
+Each environment begins and ends in the same manner.
+
+@example
+        \begin@{environment-name@}
+        .
+        .
+        .
+        \end@{environment-name@}
+@end example
+
+@menu
+* array::       Math arrays.
+* center::      Centred lines.
+* description:: Labelled lists.
+* enumerate::   Numbered lists.
+* eqnarray::    Sequences of aligned equations.
+* equation::    Displayed equation.
+* figure::      Floating figures.
+* flushleft::   Flushed left lines.
+* flushright::  Flushed right lines.
+* itemize::     Bulleted lists.
+* letter::      Letters.
+* list::        Generic list environment.
+* minipage::    Miniature page.
+* picture::     Picture with text, arrows, lines and circles.
+* quotation::   Indented environment with paragraph indentation.
+* quote::       Indented environment with no paragraph indentation.
+* tabbing::     Align text arbitrarily.
+* table::       Floating tables.
+* tabular::     Align text in columns.
+* thebibliography::     Bibliography or reference list.
+* theorem::     Theorems, lemmas, etc.
+* titlepage::   For hand crafted title pages.
+* verbatim::    Simulating typed input.
+* verse::       For poetry and other things.
+@end menu
+
+
+@comment *************************
+@comment **** array **************
+@comment *************************
+
+@comment LEVEL3
+@node    array,     center, Environments, Environments
+@comment node-name, next,   previous,     up
+@subsection array
+@cindex Arrays, math
+@findex array
+
+@example
+\begin@{array@}@{col1col2...coln@}
+column 1 entry & column 2 entry ... & column n entry \\
+ .
+ .
+ .
+\end@{array@}
+@end example
+
+Math arrays are produced with the array environment.  It has a single
+mandatory argument describing the number of columns and the alignment
+within them.  Each column, @code{coln}, is specified by a single letter
+that tells how items in that row should be formatted.
+
+@itemize @bullet
+@item 
+@code{c} --- for centred
+@item
+@code{l} --- for flush left
+@item
+@code{r} --- for flush right
+@end itemize
+
+Column entries must be separated by an @code{&}.  Column entries may
+include other LaTeX commands.  Each row of the array must be terminated
+with the string @code{\\}.
+
+Note that the @code{array} environment can only be used in math mode, so
+normally it is used inside an @code{equation} environment.
+
+
+@comment *************************
+@comment **** center *************
+@comment *************************
+
+@comment LEVEL3
+@node    center,    description, array,    Environments
+@comment node-name, next,       previous, up
+@subsection center
+@findex center
+@cindex Centering text, environment for
+
+@example
+ \begin@{center@}
+ Text on line 1 \\
+ Text on line 2 \\
+ .
+ .
+ .
+ \end@{center@}
+@end example
+
+The @code{center} environment allows you to create a paragraph consisting of
+lines that are centred within the left and right margins on the current
+page.  Each line must be terminated with the string @code{\\}.
+
+@menu
+* \centering::          The declaration form of the @code{center} environment.
+@end menu
+
+@comment *****************
+@comment ** \centering ***
+@comment *****************
+
+@comment LEVEL4
+@node    \centering, , ,   center
+@comment node-name,  next,        previous, up
+@subsubsection \centering
+@findex \centering
+@cindex Centering text
+@cindex Formatting Text
+
+This declaration corresponds to the @code{center} environment.  This
+declaration can be used inside an environment such as @code{quote} or in
+a @code{parbox}.  The text of a figure or table can be centred on the
+page by putting a @code{\centering} command at the beginning of the
+figure or table environment.
+
+Unlike the @code{center} environment, the @code{\centering} command does
+not start a new paragraph; it simply changes how LaTeX formats paragraph
+units.  To affect a paragraph unit's format, the scope of the
+declaration must contain the blank line or @code{\end} command (of an
+environment like quote) that ends the paragraph unit.
+
+
+@comment *************************
+@comment **** description ********
+@comment *************************
+
+@comment LEVEL3
+@node    description, enumerate, center, Environments
+@comment node-name,   next,      previous,   up
+@subsection description
+@findex description
+@cindex Labelled lists, creating
+
+@example
+ \begin@{description@}
+ \item [label] First item
+ \item [label] Second item
+ .
+ .
+ .
+ \end@{description@}
+@end example
+
+The @code{description} environment is used to make labelled lists.  The
+@code{label} is bold face and flushed right.
+
+
+@comment *************************
+@comment **** enumerate **********
+@comment *************************
+
+@comment LEVEL3
+@node    enumerate, eqnarray, description, Environments
+@comment node-name, next,     previous,    up
+@subsection enumerate
+@findex enumerate
+@cindex Lists of items, numbered
+
+@example
+ \begin@{enumerate@}
+ \item First item
+ \item Second item
+ .
+ .
+ .
+ \end@{enumerate@}
+@end example
+
+The @code{enumerate} environment produces a numbered list.  Enumerations
+can be nested within one another, up to four levels deep.  They can also
+be nested within other paragraph-making environments.
+
+Each item of an enumerated list begins with an @code{\item} command.
+There must be at least one @code{\item} command within the environment.
+
+The @code{enumerate} environment uses the @code{enumi} through
+@code{enumiv} counters (@pxref{Counters}). The type of numbering can be
+changed by redefining @code{\theenumi} etc.
+
+@comment *************************
+@comment **** eqnarray ***********
+@comment *************************
+
+@comment LEVEL3
+@node    eqnarray,  equation, enumerate, Environments
+@comment node-name, next,     previous,  up
+@subsection eqnarray
+@findex eqnarray
+@cindex Equations, aligning
+@cindex Aligning Equations
+
+@example
+ \begin@{eqnarray@}
+ math formula 1 \\
+ math formula 2 \\
+ .
+ .
+ .
+ \end@{eqnarray@}
+@end example
+
+The @code{eqnarray} environment is used to display a sequence of
+equations or inequalities.  It is very much like a three-column
+@code{array} environment, with consecutive rows separated by @code{\\}
+and consecutive items within a row separated by an @code{&}. 
+
+An equation number is placed on every line unless that line has a
+@code{\nonumber} command.
+
+@findex \lefteqn
+
+The command @code{\lefteqn} is used for splitting long formulas across
+lines. It typesets its argument in display style flush left in a box of
+zero width.
+
+
+@comment *************************
+@comment **** equation ***********
+@comment *************************
+
+@comment LEVEL3
+@node    equation,  figure, eqnarray, Environments
+@comment node-name, next,   previous, up
+@subsection equation
+@findex equation
+@cindex Equations, environment for
+@cindex Formulae, environment for
+
+@example
+ \begin@{equation@}
+  math formula
+ \end@{equation@}
+@end example
+
+The @code{equation} environment centres your equation on the page and places
+the equation number in the right margin.
+
+@comment *************************
+@comment **** figure *************
+@comment *************************
+
+@comment LEVEL3
+@node    figure,    flushleft, equation, Environments
+@comment node-name, next,      previous, up
+@subsection figure
+@findex figure
+@cindex Inserting figures
+
+@example
+ \begin@{figure@}[placement]
+
+  body of the figure
+
+ \caption@{figure title@}
+ \end@{figure@}
+@end example
+
+@findex \caption
+Figures are objects that are not part of the normal text, and are
+usually ``floated'' to a convenient place, like the top of a page.
+Figures will not be split between two pages.
+
+The optional argument @code{[placement]} determines where LaTeX will try
+to place your figure.  There are four places where LaTeX can possibly
+put a float:
+
+@enumerate
+@item 
+@code{h} (Here) - at the position in the text where the figure
+environment appears.
+@item 
+@code{t} (Top) - at the top of a text page.
+@item 
+@code{b} (Bottom) - at the bottom of a text page.
+@item 
+@code{p} (Page of floats) - on a separate float page, which is a page
+containing no text, only floats.
+@end enumerate
+
+The standard report and article classes use the default placement
+@code{tbp}.
+
+The body of the figure is made up of whatever text, LaTeX commands, etc.
+you wish.  The @code{\caption} command allows you to title your figure.
+
+
+@comment *************************
+@comment **** flushleft **********
+@comment *************************
+
+@comment LEVEL3
+@node    flushleft, flushright, figure,   Environments
+@comment node-name, next,         previous, up
+@subsection flushleft
+@findex flushleft
+@cindex Left-justifying text, environment for
+@cindex Ragged right text, environment for
+
+@example
+ \begin@{flushleft@}
+ Text on line 1 \\
+ Text on line 2 \\
+ .
+ .
+ .
+ \end@{flushleft@}
+@end example
+
+The @code{flushleft} environment allows you to create a paragraph
+consisting of lines that are flushed left, to the left-hand margin.
+Each line must be terminated with the string @code{\\}.
+
+@menu
+* \raggedright::        The declaration form of the @code{flushleft} environment.
+@end menu
+
+@comment *****************
+@comment * \raggedright **
+@comment *****************
+
+@comment LEVEL4
+@node    \raggedright, , , flushleft
+@comment node-name,    next,       previous,  up
+@subsubsection \raggedright
+@findex \raggedright
+@cindex Ragged right text
+@cindex Left-justifying text
+@cindex Justification, ragged right
+
+This declaration corresponds to the @code{flushleft} environment.  This
+declaration can be used inside an environment such as @code{quote} or in
+a @code{parbox}.
+
+Unlike the @code{flushleft} environment, the @code{\raggedright} command
+does not start a new paragraph; it simply changes how LaTeX formats
+paragraph units.  To affect a paragraph unit's format, the scope of the
+declaration must contain the blank line or @code{\end} command (of an
+environment like quote) that ends the paragraph unit.
+
+
+@comment *************************
+@comment **** flushright *********
+@comment *************************
+
+@comment LEVEL3
+@node    flushright, itemize, flushleft, Environments
+@comment node-name,  next,        previous,     up
+@subsection flushright
+@findex flushright
+@cindex Ragged left text, environment for
+@cindex Right-justifying text, environment for
+
+@example
+ \begin@{flushright@}
+ Text on line 1 \\
+ Text on line 2 \\
+ .
+ .
+ .
+ \end@{flushright@}
+@end example
+
+The @code{flushright} environment allows you to create a paragraph
+consisting of lines that are flushed right, to the right-hand margin.
+Each line must be terminated with the string @code{\\}.
+
+@menu
+* \raggedleft:: The declaration form of the @code{flushright} environment.
+@end menu
+
+@comment *****************
+@comment * \raggedleft ***
+@comment *****************
+
+@comment LEVEL4
+@node    \raggedleft, , , flushright
+@comment node-name,   next,    previous,   up
+@subsubsection \raggedleft
+@findex \raggedleft
+@cindex Ragged left text
+@cindex Justification, ragged left
+@cindex Right-justifying text
+
+This declaration corresponds to the @code{flushright} environment.  This
+declaration can be used inside an environment such as @code{quote} or in
+a @code{parbox}.
+
+Unlike the @code{flushright} environment, the @code{\raggedleft} command
+does not start a new paragraph; it simply changes how LaTeX formats
+paragraph units.  To affect a paragraph unit's format, the scope of the
+declaration must contain the blank line or @code{\end} command (of an
+environment like quote) that ends the paragraph unit.
+
+@comment *************************
+@comment **** itemize ************
+@comment *************************
+
+@comment LEVEL3
+@node    itemize,   letter, flushright, Environments
+@comment node-name, next, previous,    up
+@subsection itemize
+@findex itemize
+@findex \item
+@cindex Lists of items
+
+@example
+ \begin@{itemize@}
+ \item First item
+ \item Second item
+ .
+ .
+ .
+ \end@{itemize@}
+@end example
+
+The @code{itemize} environment produces a ``bulleted'' list.  Itemizations
+can be nested within one another, up to four levels deep.  They can also
+be nested within other paragraph-making environments.
+
+Each item of an @code{itemized} list begins with an @code{\item} command.
+There must be at least one @code{\item} command within the environment.
+
+The @code{itemize} environment uses the @code{itemi} through
+@code{itemiv} counters (@pxref{Counters}). The type of numbering can be
+changed by redefining @code{\theitemi} etc.
+
+@comment *************************
+@comment **** letter ************
+@comment *************************
+
+@comment LEVEL3
+@node    letter,   list,  itemize, Environments
+@comment node-name, next, previous,    up
+@subsection letter
+@findex letter
+
+This environment is used for creating letters. @xref{Letters}.
+
+@comment *************************
+@comment **** list ***************
+@comment *************************
+
+
+@comment LEVEL3
+@node    list,      minipage, letter,  Environments
+@comment node-name, next,     previous, up
+@subsection list
+@findex list
+@cindex Lists of items, generic
+
+The @code{list} environment is a generic environment which is used for
+defining many of the more specific environments. It is seldom used in
+documents, but often in macros.
+
+@example
+ \begin@{list@}@{label@}@{spacing@}
+ \item First item
+ \item Second item
+ .
+ .
+ .
+ \end@{list@}
+@end example
+
+The @code{@{label@}} argument specifies how items should be labelled.
+This argument is a piece of text that is inserted in a box to form the
+label.  This argument can and usually does contain other LaTeX commands.
+
+The @code{@{spacing@}} argument contains commands to change the spacing
+parameters for the list.  This argument will most often be null, i.e.,
+@code{@{@}}.  This will select all default spacing which should suffice
+for most cases.
+
+
+@comment *************************
+@comment **** minipage ***********
+@comment *************************
+
+@comment LEVEL3
+@node    minipage,  picture, list,     Environments
+@comment node-name, next,    previous, up
+@subsection minipage
+@findex minipage
+@cindex Footnotes in figures
+@cindex Figures, footnotes in
+@cindex Minipage, creating a
+
+@example
+ \begin@{minipage@}[position]@{width@}
+  text
+ \end@{minipage@}
+@end example
+
+The @code{minipage} environment is similar to a @code{\parbox} command.
+It takes the same optional @code{position} argument and mandatory
+@code{width} argument.  You may use other paragraph-making environments
+inside a minipage.
+
+Footnotes in a @code{minipage} environment are handled in a way that is
+particularly useful for putting footnotes in figures or tables.  A
+@code{\footnote} or @code{\footnotetext} command puts the footnote at
+the bottom of the minipage instead of at the bottom of the page, and it
+uses the @code{mpfootnote} counter instead of the ordinary
+@code{footnote} counter @xref{Counters}.
+
+NOTE: Don't put one minipage inside another if you are using footnotes;
+they may wind up at the bottom of the wrong minipage.
+
+
+@comment *************************
+@comment **** picture ************
+@comment *************************
+
+@comment LEVEL3
+@node    picture,   quotation, minipage, Environments
+@comment node-name, next,    previous, up
+@subsection picture
+@findex picture
+@cindex Creating pictures
+@cindex Pictures, creating
+
+@example
+ \begin@{picture@}(width,height)(x offset,y offset)
+  .
+  .
+  picture commands
+  .
+  .
+ \end@{picture@}
+@end example
+
+The @code{picture} environment allows you to create just about any kind
+of picture you want containing text, lines, arrows and circles.  You
+tell LaTeX where to put things in the picture by specifying their
+coordinates.  A coordinate is a number that may have a decimal point and
+a minus sign --- a number like @code{5}, @code{2.3} or @code{-3.1416}.  A
+coordinate specifies a length in multiples of the unit length
+@code{\unitlength}, so if @code{\unitlength} has been set to @code{1cm},
+then the coordinate 2.54 specifies a length of 2.54 centimetres.  You
+can change the value of @code{\unitlength} anywhere you want, using the
+@code{\setlength} command, but strange things will happen if you try
+changing it inside the picture environment.
+
+A position is a pair of coordinates, such as @code{(2.4,-5)}, specifying
+the point with x-coordinate @code{2.4} and y-coordinate @code{-5}.
+Coordinates are specified in the usual way with respect to an origin,
+which is normally at the lower-left corner of the picture.  Note that
+when a position appears as an argument, it is not enclosed in braces;
+the parentheses serve to delimit the argument.
+
+The @code{picture} environment has one mandatory argument, which is a
+@code{position}.  It specifies the size of the picture.  The environment
+produces a rectangular box with width and height determined by this
+argument's x- and y-coordinates.
+
+The @code{picture} environment also has an optional @code{position}
+argument, following the @code{size} argument, that can change the
+origin.  (Unlike ordinary optional arguments, this argument is not
+contained in square brackets.) The optional argument gives the
+coordinates of the point at the lower-left corner of the picture
+(thereby determining the origin).  For example, if @code{\unitlength}
+has been set to @code{1mm}, the command
+@example
+   \begin@{picture@}(100,200)(10,20)
+@end example
+produces a picture of width 100 millimetres and height 200
+millimetres, whose lower-left corner is the point (10,20) and whose
+upper-right corner is therefore the point (110,220).  When you first
+draw a picture, you will omit the optional argument, leaving the origin
+at the lower-left corner.  If you then want to modify your picture by
+shifting everything, you just add the appropriate optional argument.
+
+The environment's mandatory argument determines the nominal size of the
+picture.  This need bear no relation to how large the picture really is;
+LaTeX will happily allow you to put things outside the picture, or even
+off the page.  The picture's nominal size is used by LaTeX in determining
+how much room to leave for it.
+
+Everything that appears in a picture is drawn by the @code{\put}
+command. The command
+@example
+   \put (11.3,-.3)@{...@}
+@end example
+puts the object specified by @code{...} in the picture, with its
+reference point at coordinates (11.3,-.3).  The reference points for
+various objects will be described below.
+
+The @code{\put} command creates an @dfn{LR box}.  You can put anything
+in the text argument of the @code{\put} command that you'd put into the
+argument of an @code{\mbox} and related commands.  When you do this, the
+reference point will be the lower left corner of the box.
+
+Picture commands:
+@menu
+* \circle::             Draw a circle.
+* \dashbox::            Draw a dashed box.
+* \frame::              Draw a frame around an object.
+* \framebox (picture):: Draw a box with a frame around it.
+* \line::               Draw a straight line.
+* \linethickness::      Set the line thickness.
+* \makebox (picture)::  Draw a box of the specified size.
+* \multiput::           Draw multiple instances of an object.
+* \oval::               Draw an ellipse.
+* \put::                Place an object at a specified place.
+* \shortstack::         Make a pile of objects.
+* \vector::             Draw a line with an arrow.
+@end menu
+
+
+@comment *****************
+@comment *** \circle *****
+@comment *****************
+
+@comment LEVEL4
+@node    \circle,   \dashbox,  ,  picture
+@comment node-name, next,      previous, up
+@subsubsection \circle
+@findex \circle
+
+@code{\circle[*]@{diameter@}}
+
+The @code{\circle} command produces a circle with a diameter as close to
+the specified one as possible.  If the @code{*}-form of the command is
+used, LaTeX draws a solid circle.
+
+Note that only circles up to 40 pt can be drawn.
+
+
+@comment *****************
+@comment *** \dashbox ****
+@comment *****************
+
+@comment LEVEL4
+@node    \dashbox,  \frame, \circle,  picture
+@comment node-name, next,   previous, up
+@subsubsection \dashbox
+@findex \dashbox
+
+Draws a box with a dashed line.
+
+@code{\dashbox@{dash_length@}(width,height)@{...@}}
+
+The @code{\dashbox} has an extra argument which specifies the width of
+each dash.  A dashed box looks best when the @code{width} and
+@code{height} are multiples of the @code{dash_length}.
+
+
+@comment *****************
+@comment *** \frame ******
+@comment *****************
+
+@comment LEVEL4
+@node    \frame,    \framebox (picture), \dashbox, picture
+@comment node-name, next,                previous, up
+@subsubsection \frame
+@findex \frame
+
+@code{\frame@{...@}}
+
+The @code{\frame} command puts a rectangular frame around the object
+specified in the argument.  The reference point is the bottom left
+corner of the frame.  No extra space is put between the frame and the
+object.
+
+
+@comment **************************
+@comment *** \framebox (picture) **
+@comment **************************
+
+@comment LEVEL4
+@node    \framebox (picture), \line, \frame,   picture
+@comment node-name,           next,  previous, up
+@subsubsection \framebox
+@findex \framebox
+
+@code{\framebox(width,height)[position]@{...@}}
+
+The @code{\framebox} command is exactly the same as the @code{\makebox}
+command, except that it puts a frame around the outside of the box that
+it creates.
+
+The @code{framebox} command produces a rule of thickness
+@code{\fboxrule}, and leaves a space @code{\fboxsep} between the rule
+and the contents of the box.
+
+@comment *****************
+@comment *** \line *******
+@comment *****************
+
+@comment LEVEL4
+@node    \line,     \linethickness, \framebox (picture), picture
+@comment node-name, next,           previous,            up
+@subsubsection \line
+@findex \line
+
+@code{\line(x slope,y slope)@{length@}}
+
+The @code{\line} command draws a line of the specified @code{length} and
+@code{slope}.
+
+Note that LaTeX can only draw lines with slope = x/y, where x and y
+have integer values from -6 through 6.
+
+@comment ******************
+@comment * \linethickness *
+@comment ******************
+
+@comment LEVEL4
+@node    \linethickness, \makebox (picture), \line,    picture
+@comment node-name,      next,               previous, up
+@subsubsection \linethickness
+@findex \linethickness
+
+@code{\linethickness@{dimension@}}
+
+Declares the thickness of horizontal and vertical lines in a picture
+environment to be @code{dimension}, which must be a positive length. It
+does not affect the thickness of slanted lines and circles, or the
+quarter circles drawn by @code{\oval} to form the corners of an oval.
+
+
+@comment *************************
+@comment *** \makebox (picture) **
+@comment *************************
+
+@comment LEVEL4
+@node    \makebox (picture), \multiput, \linethickness, picture
+@comment node-name,          next,      previous,       up
+@subsubsection \makebox
+@findex \makebox (picture)
+
+@code{\makebox(width,height)[position]@{...@}}
+
+The @code{\makebox} command for the picture environment is similar to
+the normal @code{\makebox} command except that you must specify a
+@code{width} and @code{height} in multiples of @code{\unitlength}.
+
+The optional argument, @code{[position]}, specifies the quadrant that
+your text appears in.  You may select up to two of the following:
+
+@itemize @bullet
+@item
+@code{t} - Moves the item to the top of the rectangle
+@item
+@code{b} - Moves the item to the bottom
+@item
+@code{l} - Moves the item to the left
+@item
+@code{r} - Moves the item to the right
+@end itemize
+
+@xref{\makebox}.
+
+@comment *****************
+@comment *** \multiput ***
+@comment *****************
+
+@comment LEVEL4
+@node    \multiput, \oval, \makebox (picture),  picture
+@comment node-name, next,  previous,            up
+@subsubsection \multiput
+@findex \multiput
+
+@code{\multiput(x coord,y coord)(delta x,delta y)@{number of copies@}@{object@}}
+
+The @code{\multiput} command can be used when you are putting the same
+object in a regular pattern across a picture.
+
+
+@comment *****************
+@comment *** \oval *****
+@comment *****************
+
+@comment LEVEL4
+@node    \oval,     \put,  \multiput, picture
+@comment node-name, next,  previous,  up
+@subsubsection \oval
+@findex \oval
+
+@code{\oval(width,height)[portion]}
+
+The @code{\oval} command produces a rectangle with rounded corners.  The
+optional argument, @code{[portion]}, allows you to select part of the
+oval.
+
+@itemize @bullet
+@item
+@code{t} - Selects the top portion
+@item
+@code{b} - Selects the bottom portion
+@item
+@code{r} - Selects the right portion
+@item
+@code{l} - Selects the left portion
+@end itemize
+
+Note that the ``corners'' of the oval are made with quarter circles with
+a maximum radius of 20 pt, so large ``ovals'' will look more like boxes
+with rounded corners.
+
+
+@comment *****************
+@comment *** \put ********
+@comment *****************
+
+@comment LEVEL4
+@node    \put,      \shortstack, \oval,     picture
+@comment node-name, next,        previous,  up
+@subsubsection \put
+@findex \put
+
+@code{\put(x coord,y coord)@{ ...  @}}
+
+The @code{\put} command places the item specified by the mandatory
+argument at the given coordinates.
+
+
+@comment *****************
+@comment *** \shortstack *
+@comment *****************
+
+@comment LEVEL4
+@node    \shortstack, \vector, \put,     picture
+@comment node-name,   next,    previous, up
+@subsubsection \shortstack
+@findex \shortstack
+
+@code{\shortstack[position]@{...  \\ ...  \\ ...@}}
+
+The @code{\shortstack} command produces a stack of objects.  The valid
+positions are:
+
+@itemize @bullet
+@item
+@code{r} - Moves the objects to the right of the stack
+@item
+@code{l} - Moves the objects to the left of the stack
+@item
+@code{c} - Moves the objects to the centre of the stack (default)
+@end itemize
+
+
+@comment *****************
+@comment *** \vector *****
+@comment *****************
+
+@comment LEVEL4
+@node    \vector,   , \shortstack, picture
+@comment node-name, next,      previous,    up
+@subsubsection \vector
+@findex \vector
+
+@code{\vector(x slope,y slope)@{length@}}
+
+The @code{\vector} command draws a line with an arrow of the specified
+length and slope.  The @code{x} and @code{y} values must lie between -4
+and +4, inclusive.
+
+
+@comment *************************
+@comment **** quotation **********
+@comment *************************
+
+@comment LEVEL3
+@node    quotation, quote, picture,  Environments
+@comment node-name, next,  previous, up
+@subsection quotation
+@findex quotation
+@cindex Quoted text with paragraph indentation, displaying
+@cindex Displaying quoted text with paragraph indentation
+
+@example
+ \begin@{quotation@}
+  text
+ \end@{quotation@}
+@end example
+
+The margins of the @code{quotation} environment are indented on the left
+and the right.  The text is justified at both margins and there is
+paragraph indentation.  Leaving a blank line between text produces a new
+paragraph.
+
+
+@comment *************************
+@comment **** quote **************
+@comment *************************
+
+@comment LEVEL3
+@node    quote,     tabbing, quotation, Environments
+@comment node-name, next,    previous,  up
+@subsection quote
+@findex quote
+@cindex Quoted text, displaying
+@cindex Displaying quoted text
+
+@example
+ \begin@{quote@}
+  text
+ \end@{quote@}
+@end example
+
+The margins of the @code{quote} environment are indented on the left and
+the right.  The text is justified at both margins.  Leaving a blank line
+between text produces a new paragraph.
+
+
+@comment *************************
+@comment **** tabbing ************
+@comment *************************
+
+@comment LEVEL3
+@node    tabbing,   table,   quote,    Environments
+@comment node-name, next,      previous, up
+@subsection tabbing
+@findex tabbing
+@cindex Tab stops, using
+@cindex Lining text up in columns using tab stops
+ 
+@example
+ \begin@{tabbing@}
+ text \= more text \= still more text \= last text \\
+ second row \>  \> more \\
+ .
+ .
+ .
+ \end@{tabbing@}
+@end example
+
+The @code{tabbing} environment provides a way to align text in columns.
+It works by setting tab stops and tabbing to them much the way you do
+with an ordinary typewriter.
+
+It is best suited for cases where the width of each column is constant
+and known in advance.
+
+This environment can be broken across pages, unlike the @code{tabular}
+environment.
+
+The following commands can be used inside a @code{tabbing} enviroment:
+
+@table @code
+@item \=
+@findex \=
+
+Sets a tab stop at the current position.
+
+@item \>
+@findex \>
+
+Advances to the next tab stop.
+
+@item \< 
+@findex \< 
+
+This command allows you to put something to the left of the
+local margin without changing the margin.
+Can only be used at the start of the line.
+
+@item \+
+@findex \+
+
+Moves the left margin of the next and all the
+following commands one tab stop to the right.
+
+@item \- 
+@findex \- (tabbing) 
+
+Moves the left margin of the next and all the
+following commands one tab stop to the left.
+
+@item \'
+@findex \' (tabbing)
+
+Moves everything that you have typed so far in the
+current column, i.e. everything from the most recent @code{\>},
+@code{\<}, @code{\'}, @code{\\}, or @code{\kill} command, to the right
+of the previous column, flush against the current column's tab stop.
+
+@item \`
+@findex \` (tabbing)
+
+Allows you to put text flush right against any tab stop, including tab
+stop 0.  However, it can't move text to the right of the last column
+because there's no tab stop there.  The @code{\`} command moves all the
+text that follows it, up to the @code{\\} or @code{\end@{tabbing@}}
+command that ends the line, to the right margin of the tabbing
+environment.  There must be no @code{\>} or @code{\'} command between
+the @code{\`} and the command that ends the line.
+
+@item \kill
+@findex \kill
+
+Sets tab stops without producing
+text.  Works just like  @code{\\} except that it throws away the
+current line instead of producing output for it.  The effect of any
+@code{\=}, @code{\+} or @code{\-} commands in that line remain in
+effect.
+
+@item \pushtabs
+@findex \pushtabs
+
+Saves all current tab stop positions. Useful for
+temporarily changing tab stop positions in the middle of a
+@code{tabbing} environment.
+
+@item \poptabs
+@findex \poptabs
+
+Restores the tab stop positions saved by the last @code{\pushtabs}.
+
+@item \a
+@findex \a
+
+In a @code{tabbing} environment, the commands @code{\=}, @code{\'} and
+@code{\`} do not produce accents as normal. Instead, the commands
+@code{\a=}, @code{\a'} and @code{\a`} are used.
+@end table
+
+
+This example typesets a Pascal function in a traditional format:
+
+@example
+        \begin@{tabbing@}
+        function \= fact(n : integer) : integer;\\
+                 \> begin \= \+ \\
+                       \> if \= n $>$ 1 then \+ \\
+                                fact := n * fact(n-1) \- \\
+                          else \+ \\
+                                fact := 1; \-\- \\
+                    end;\\
+        \end@{tabbing@}
+@end example
+
+
+
+@comment *************************
+@comment **** table **************
+@comment *************************
+
+@comment LEVEL3
+@node    table,     tabular, tabbing,  Environments
+@comment node-name, next,    previous, up
+@subsection table
+@findex table
+@cindex Tables, creating
+@cindex Creating tables
+
+@example
+ \begin@{table@}[placement]
+
+  body of the table
+
+ \caption@{table title@}
+ \end@{table@}
+@end example
+
+Tables  are objects  that  are not part  of the normal  text,  and are
+usually  ``floated''  to a convenient  place,  like  the top  of a page.
+Tables will not be split between two pages.
+
+The optional argument @code{[placement]} determines where LaTeX will try
+to place your table.  There are four places where LaTeX can possibly put
+a float:
+
+
+@itemize @bullet
+@item
+@code{h} : Here - at the position in the text where the table
+environment appears.
+@item
+@code{t} : Top - at the top of a text page.
+@item
+@code{b} : Bottom - at the bottom of a text page.
+@item
+@code{p} : Page of floats - on a separate float page, which is a page
+containing no text, only floats.
+@end itemize
+
+The standard @code{report} and @code{article} classes use the default
+placement @code{[tbp]}.
+
+The body of the table is made up of whatever text, LaTeX commands, etc.,
+you wish.  The @code{\caption} command allows you to title your table.
+
+
+@comment *************************
+@comment **** tabular ************
+@comment *************************
+
+@comment LEVEL3
+@node    tabular,   thebibliography, table,    Environments
+@comment node-name, next,   previous, up
+@subsection tabular
+@findex tabular
+@cindex Lines in tables
+@cindex Lining text up in tables
+
+@example
+ \begin@{tabular@}[pos]@{cols@}
+ column 1 entry & column 2 entry ... & column n entry \\
+ .
+ .
+ .
+ \end@{tabular@}
+@end example
+
+        or
+
+@example
+ \begin@{tabular*@}@{width@}[pos]@{cols@}
+ column 1 entry & column 2 entry ... & column n entry \\
+ .
+ .
+ .
+ \end@{tabular*@}
+@end example
+
+These environments produce a box consisting of a sequence of rows of
+items, aligned vertically in columns.  The mandatory and optional
+arguments consist of:
+
+@table @code
+@item width
+Specifies the width of the @code{tabular*} environment.  There must be
+rubber space between columns that can stretch to fill out the specified
+width.
+@item pos
+Specifies the vertical position; default is alignment on the centre of
+the environment.
+
+@itemize @bullet
+@item
+@code{t} - align on top row
+@item
+@code{b} - align on bottom row
+@end itemize
+
+@item cols
+Specifies the column formatting.  It consists of a sequence of the
+following specifiers, corresponding to the sequence of columns and
+intercolumn material.
+
+@itemize @bullet
+
+@item
+@code{l} - A column of left-aligned items.
+@item
+@code{r} - A column of right-aligned items.
+@item
+@code{c} - A column of centred items.
+@item
+@code{|} - A vertical line the full height and depth of the environment.
+@item
+@code{@@@{text@}} - This inserts @code{text} in every row.  An @@-expression
+suppresses the intercolumn space normally inserted between columns; any
+desired space between the inserted text and the adjacent items must be
+included in text.  An @code{\extracolsep@{wd@}} command in an
+@@-expression causes an extra space of width @code{wd} to appear to the
+left of all subsequent columns, until countermanded by another
+@code{\extracolsep} command.  Unlike ordinary intercolumn space, this
+extra space is not suppressed by an @@-expression.  An
+@code{\extracolsep} command can be used only in an @@-expression in the
+@code{cols} argument.
+@item
+@code{p@{wd@}} - Produces a column with each item typeset in a parbox of
+width @code{wd}, as if it were the argument of a @code{\parbox[t]@{wd@}}
+command.  However, a @code{\\} may not appear in the item, except in the
+following situations:
+@enumerate
+@item
+inside an environment like @code{minipage}, @code{array}, or @code{tabular}.
+@item
+inside an explicit @code{\parbox}.
+@item
+in the scope of a @code{\centering}, @code{\raggedright}, or @code{\raggedleft}
+declaration.  The latter declarations must appear inside braces or an
+environment when used in a @code{p}-column element.
+@end enumerate
+@item
+@code{*@{num@}@{cols@}} - Equivalent to @code{num} copies of
+@code{cols}, where @code{num} is any positive integer and @code{cols} is
+any list of column-specifiers, which may contain another
+@code{*-expression}.
+
+@end itemize
+
+@end table
+
+These commands can be used inside a @code{tabular} environment:
+
+@menu
+* \cline::              Draw a horizontal line spanning some columns.
+* \hline::              Draw a horizontal line spanning all columns.
+* \multicolumn::        Make an item spanning several columns.
+* \vline::              Draw a vertical line.
+@end menu
+
+
+@comment *****************
+@comment ***  \cline  ****
+@comment *****************
+
+@comment LEVEL4
+@node    \cline,    \hline, ,  tabular
+@comment node-name, next,   previous, up
+@subsubsection \cline
+@findex \cline
+
+@code{\cline@{i-j@}}
+
+The @code{\cline} command draws horizontal lines across the columns
+specified, beginning in column @code{i} and ending in column @code{j},
+which are identified in the mandatory argument.
+
+@comment *****************
+@comment ***  \hline  ****
+@comment *****************
+
+@comment LEVEL4
+@node    \hline,    \multicolumn, \cline,   tabular
+@comment node-name, next,         previous, up
+@subsubsection \hline
+@findex \hline
+
+The @code{\hline} command will draw a horizontal line the width of the
+table.  It's most commonly used to draw a line at the top, bottom, and
+between the rows of the table.
+
+@comment *****************
+@comment ** \multicolumn *
+@comment *****************
+
+@comment LEVEL4
+@node    \multicolumn, \vline, \hline,   tabular
+@comment node-name,    next,   previous, up
+@subsubsection \multicolumn
+@findex \multicolumn
+
+@code{\multicolumn@{cols@}@{pos@}@{text@}}
+
+The @code{\multicolumn} is used to make an entry that spans several
+columns.  The first mandatory argument, @code{cols}, specifies the
+number of columns to span.  The second mandatory argument, @code{pos},
+specifies the formatting of the entry; @code{c} for centred, @code{l}
+for flushleft, @code{r} for flushright.  The third mandatory argument,
+@code{text}, specifies what text is to make up the entry.
+
+@comment *****************
+@comment ***  \vline  ****
+@comment *****************
+@comment LEVEL4
+@node    \vline,    , \multicolumn, tabular
+@comment node-name, next,            previous,     up
+@subsubsection \vline
+@findex \vline
+
+The @code{\vline} command will draw a vertical line extending the full
+height and depth of its row.  An @code{\hfill} command can be used to
+move the line to the edge of the column.  It can also be used in an
+@@-expression.
+
+
+@comment *************************
+@comment **** thebibliography ****
+@comment *************************
+
+@comment LEVEL3
+@node    thebibliography, theorem, tabular,   Environments
+@comment node-name,       next,     previous, up
+@subsection thebibliography
+@findex thebibliography
+@cindex Bibliography, creating (manually)
+
+@example
+ \begin@{thebibliography@}@{widest-label@}
+ \bibitem[label]@{cite_key@}
+ .
+ .
+ .
+ \end@{thebibliography@}
+@end example
+
+The @code{thebibliography} environment produces a bibliography or
+reference list.  In the @code{article} class, this reference list is
+labelled ``References''; in the @code{report} class, it is labelled
+``Bibliography''.
+
+@itemize @bullet
+@item
+@code{widest-label}: Text that, when printed, is approximately as wide
+as the widest item label produces by the @code{\bibitem} commands.
+@end itemize
+
+@menu
+* \bibitem::            Specify a bibliography item.
+* \cite::               Refer to a bibliography item.
+* \nocite::             Include an item in the bibliography.
+* Using BibTeX::        Automatic generation of bibliographies.
+@end menu
+
+
+@comment *****************
+@comment *** \bibitem ****
+@comment *****************
+@comment LEVEL4
+@node    \bibitem,  \cite, , thebibliography
+@comment node-name, next,  previous,      up
+@subsubsection \bibitem
+@findex \bibitem
+
+@code{\bibitem[label]@{cite_key@}}
+
+The @code{\bibitem} command generates an entry labelled by @code{label}.
+If the @code{label} argument is missing, a number is generated as the
+@code{label}, using the @code{enumi} counter.  The @code{cite_key} is
+any sequence of letters, numbers, and punctuation symbols not containing
+a comma.  This command writes an entry on the @file{.aux} file
+containing @code{cite_key} and the item's @code{label}.  When this
+@file{.aux} file is read by the @code{\begin@{document@}} command, the
+item's @code{label} is associated with @code{cite_key}, causing the
+reference to @code{cite_key} by a @code{\cite} command to produce the
+associated @code{label}.
+
+
+@comment *****************
+@comment *** \cite *******
+@comment *****************
+@comment LEVEL4
+@node    \cite,     \nocite, \bibitem, thebibliography
+@comment node-name, next,    previous, up
+@subsubsection \cite
+@findex \cite
+
+@code{\cite[text]@{key_list@}}
+
+The @code{key_list} argument is a list of citation keys.  This command
+generates an in-text citation to the references associated with the keys
+in @code{key_list} by entries on the @file{.aux} file read by the
+@code{\begin@{document@}} command.
+
+The optional @code{text} argument will appear after the citation,
+i.e. @code{\cite[p. 2]@{knuth@}} might produce `[Knuth, p. 2]'. 
+
+
+@comment *****************
+@comment *** \nocite *****
+@comment *****************
+@comment LEVEL4
+@node    \nocite,   Using BibTeX, \cite,    thebibliography
+@comment node-name, next,         previous, up
+@subsubsection \nocite
+@findex \nocite
+
+@code{\nocite@{key_list@}}
+
+The @code{\nocite} command produces no text, but writes @code{key_list},
+which is a list of one or more citation keys, on the @file{.aux} file.
+
+
+@comment **********************
+@comment *** Using BibTeX *****
+@comment **********************
+@comment LEVEL4
+@node    Using BibTeX, , \nocite,  thebibliography
+@comment node-name,    next,    previous, up
+@subsubsection Using BibTeX
+@cindex Using BibTeX
+@cindex BibTeX, using
+@cindex Bibliography, creating (automatically)
+@findex \bibliographystyle
+@findex \bibliography
+
+If you use the BibTeX program by Oren Patashnik (highly recommended if
+you need a bibliography of more than a couple of titles) to maintain
+your bibliography, you don't use the @code{thebibliography}
+environment. Instead, you include the lines
+
+@example
+        \bibliographystyle@{style@}
+        \bibliography@{bibfile@}
+@end example
+
+where @code{style} refers to a file @code{style.bst}, which defines how
+your citations will look. The standard styles distributed with BibTeX
+are:
+
+@table @code
+@item alpha
+Sorted alphabetically. Labels are formed from name of author and year of
+publication. 
+@item plain
+Sorted alphabetically. Labels are numeric.
+@item unsrt
+Like @code{plain}, but entries are in order of citation.
+@item abbrv
+Like @code{plain}, but more compact labels.
+@end table
+
+In addition, numerous other BibTeX style files exist tailored to the
+demands of various publications.
+
+The argument to @code{\bibliography} refers to the file
+@code{bibfile.bib}, which should contain your database in BibTeX
+format. Only the entries referred to via @code{\cite} and @code{\nocite}
+will be listed in the bibliography.
+
+
+@comment *************************
+@comment **** theorem ************
+@comment *************************
+
+@comment LEVEL3
+@node    theorem,   titlepage, thebibliography, Environments
+@comment node-name, next,      previous,        up
+@subsection theorem
+@findex theorem
+@cindex Theorems, typesetting
+
+@example
+ \begin@{theorem@}
+  theorem text
+ \end@{theorem@}
+@end example
+
+The @code{theorem} environment produces ``Theorem x'' in boldface followed
+by your theorem text.
+
+
+@comment *************************
+@comment **** titlepage **********
+@comment *************************
+
+@comment LEVEL3
+@node    titlepage, verbatim, theorem,  Environments
+@comment node-name, next,     previous, up
+@subsection titlepage
+@findex titlepage
+@cindex Making a title page
+@cindex Title pages, creating
+
+@example
+ \begin@{titlepage@}
+  text
+ \end@{titlepage@}
+@end example
+
+The @code{titlepage} environment creates a title page, i.e.  a page with no
+printed page number or heading.  It also causes the following page to be
+numbered page one.  Formatting the title page is left to you.  The
+@code{\today} command comes in handy for title pages.
+@findex \today
+
+Note that you can use the @code{\maketitle} (@pxref{\maketitle}) command to
+produce a standard title page.
+
+
+@comment *************************
+@comment **** verbatim ***********
+@comment *************************
+
+@comment LEVEL3
+@node    verbatim,  verse, titlepage, Environments
+@comment node-name, next,  previous,  up
+@subsection verbatim
+@findex verbatim
+@cindex Simulating typed text
+@cindex Typed text, simulating
+@cindex Programs, typesetting
+@cindex Computer programs, typesetting
+
+@example
+ \begin@{verbatim@}
+  text
+ \end@{verbatim@}
+@end example
+
+The @code{verbatim} environment is a paragraph-making environment that
+gets LaTeX to print exactly what you type in.  It turns LaTeX into a
+typewriter with carriage returns and blanks having the same effect that
+they would on a typewriter.
+
+@menu
+* \verb::       The macro form of the @code{verbatim} environment.
+@end menu
+
+@comment *****************
+@comment *** \verb *******
+@comment *****************
+@comment LEVEL4
+@node    \verb,     , , verbatim
+@comment node-name, next,  previous, up
+@subsubsection \verb
+@findex \verb
+@cindex Verbatim text
+
+
+@code{\verb char literal_text char}
+
+@code{\verb*char literal_text char}
+
+Typesets @code{literal_text} exactly as typed, including special
+characters and spaces, using a typewriter (@code{\tt}) type style.
+There may be no space between @code{\verb} or @code{\verb*} and
+@code{char} (space is shown here only for clarity).  The @code{*-form}
+differs only in that spaces are printed 
+@ifinfo
+as a special character.
+@end ifinfo
+@iftex
+as `\verb*| |'.
+@end iftex
+
+
+@comment *************************
+@comment **** verse **************
+@comment *************************
+
+@comment LEVEL3
+@node    verse,     , verbatim,    Environments
+@comment node-name, next,      previous, up
+@subsection verse
+@findex verse
+@cindex Poetry, an environment for
+
+@example
+ \begin@{verse@}
+  text
+ \end@{verse@}
+@end example
+
+The @code{verse} environment is designed for poetry, though you may find
+other uses for it.
+
+The margins are indented on the left and the right. Separate the lines
+of each stanza with @code{\\}, and use one or more blank lines to
+separate the stanzas.
+
+
+@page
+
+@comment ************************************
+@comment ****  LEVEL2 Starts Here again. ****
+@comment ************************************
+
+
+@comment *************************
+@comment **** Footnotes **********
+@comment *************************
+
+@comment LEVEL2
+@node    Footnotes, Layout, Environments, Commands
+@comment node-name, next,      previous, up
+@section Footnotes
+@cindex Footnotes, creating
+
+Footnotes can be produced in one of two ways.  They can be
+produced with one command, the @code{\footnote} command.  They can also
+be produced with two commands, the @code{\footnotemark} and the
+@code{\footnotetext} commands.  See the specific command for information
+on why you would use one over the other.
+
+@menu
+* \footnote::           Insert a footnote.
+* \footnotemark::       Insert footnote mark only.
+* \footnotetext::       Insert footnote text only.
+@end menu
+
+
+@comment **********************
+@comment **** \footnote *******
+@comment **********************
+
+@comment LEVEL3
+@node    \footnote, \footnotemark, Footnotes, Footnotes
+@comment node-name, next,          previous,  up
+@subsection \footnote
+@findex \footnote
+
+@code{\footnote[number]@{text@}}
+
+The @code{\footnote} command places the numbered footnote @code{text} at
+the bottom of the current page.  The optional argument, @code{number},
+is used to change the default footnote number.  This command can only be
+used in outer paragraph mode; i.e., you cannot use it in sectioning
+commands like @code{\chapter}, in figures, tables or in a @code{tabular}
+environment.
+
+
+
+@comment **********************
+@comment **** \footnotemark ***
+@comment **********************
+
+@comment LEVEL3
+@node    \footnotemark, \footnotetext, \footnote, Footnotes
+@comment node-name,     next,          previous,  up
+@subsection \footnotemark
+@findex \footnotemark
+
+The @code{\footnotemark} command puts the footnote @code{number} in the
+text.  This command can be used in inner paragraph mode.  The text of
+the footnote is supplied by the @code{\footnotetext} command.
+
+This command can be used to produce several consecutive footnote markers
+referring to the same footnote by using
+
+@code{\footnotemark[\value@{footnote@}]}
+
+after the first @code{\footnote} command.
+
+
+@comment **********************
+@comment **** \footnotetext ***
+@comment **********************
+
+@comment LEVEL3
+@node    \footnotetext, , \footnotemark, Footnotes
+@comment node-name,     next,    previous,       up
+@subsection \footnotetext
+@findex \footnotetext
+
+@code{\footnotetext[number]@{text@}}
+
+The @code{\footnotetext} command produces the @code{text} to be placed
+at the bottom of the page.  This command can come anywhere after the
+@code{\footnotemark} command.  The @code{\footnotetext} command must
+appear in outer paragraph mode.
+
+The optional argument, @code{number}, is used to change the default
+footnote number.
+
+@page
+
+@comment *************************
+@comment ******* Lengths *********
+@comment *************************
+
+@comment LEVEL2
+@node    Lengths, Letters, Layout, Commands
+@comment node-name, next,       previous,      up
+@section Lengths
+@cindex Lengths, defining and using
+
+A @code{length} is a measure of distance.  Many LaTeX commands take a
+length as an argument.
+
+@menu
+* \newlength::          Define a new length.
+* \setlength::          Set the value of a length.
+* \addtolength::        Add a quantity to a length.
+* \settodepth::         Set a length to the depth of something.
+* \settoheight::        Set a length to the height of something.
+* \settowidth::         Set a length to the width of something.
+* Predefined lengths::  Lengths that are, like, predefined.
+@end menu
+
+
+@comment **********************
+@comment **** \newlength ******
+@comment **********************
+
+@comment LEVEL3
+@node    \newlength, \setlength, Lengths,  Lengths
+@comment node-name,   next,      previous, up
+@subsection \newlength
+@findex \newlength
+@cindex Lengths, defining a new
+
+@code{\newlength@{\gnat@}}
+
+The @code{\newlength} command defines the mandatory argument,
+@code{\gnat}, as a @code{length} command with a value of @code{0in}.  An
+error occurs if a @code{\gnat} command already exists.
+
+
+@comment **********************
+@comment **** \setlength ******
+@comment **********************
+
+@comment LEVEL3
+@node    \setlength, \addtolength, \newlength, Lengths
+@comment node-name,  next,         previous,   up
+@subsection \setlength
+@findex \setlength
+@cindex Lengths, setting value of
+
+@code{\setlength@{\gnat@}@{length@}}
+
+The @code{\setlength} command is used to set the value of a
+@code{length} command.  The @code{length} argument can be expressed in
+any terms of length LaTeX understands, i.e., inches (@code{in}),
+millimetres (@code{mm}), points (@code{pt}), etc.
+
+
+@comment **********************
+@comment **** \addtolength ****
+@comment **********************
+
+@comment LEVEL3
+@node    \addtolength, \settodepth, \setlength, Lengths
+@comment node-name,    next,        previous,   up
+@subsection \addtolength
+@findex \addtolength
+@cindex Lengths, adding to
+
+@code{\addtolength@{\gnat@}@{length@}}
+
+The @code{\addtolength} command increments a ``length command'' by the
+amount specified in the @code{length} argument.  It can be a negative
+amount.
+
+@comment **********************
+@comment **** \settodepth *****
+@comment **********************
+
+@comment LEVEL3
+@node    \settodepth, \settoheight, \addtolength, Lengths
+@comment node-name,   next,    previous,     up
+@subsection \settodepth
+@findex \settodepth
+
+@code{\settodepth@{\gnat@}@{text@}}
+
+The @code{\settodepth} command sets the value of a @code{length} command
+equal to the depth of the @code{text} argument.
+
+
+@comment **********************
+@comment **** \settoheight *****
+@comment **********************
+
+@comment LEVEL3
+@node    \settoheight, \settowidth, \settodepth, Lengths
+@comment node-name,   next,    previous,     up
+@subsection \settoheight
+@findex \settoheight
+
+@code{\settoheight@{\gnat@}@{text@}}
+
+The @code{\settoheight} command sets the value of a @code{length} command
+equal to the height of the @code{text} argument.
+
+
+@comment **********************
+@comment **** \settowidth *****
+@comment **********************
+
+@comment LEVEL3
+@node    \settowidth, Predefined lengths, \settoheight, Lengths
+@comment node-name,   next,    previous,     up
+@subsection \settowidth
+@findex \settowidth
+
+@code{\settowidth@{\gnat@}@{text@}}
+
+The @code{\settowidth} command sets the value of a @code{length} command
+equal to the width of the @code{text} argument.
+
+
+@comment *****************************
+@comment **** Predefined lengths *****
+@comment *****************************
+
+@comment LEVEL3
+@node    Predefined lengths, , \settowidth, Lengths
+@comment node-name,             next,    previous,     up
+@subsection Predefined lengths
+@cindex Lengths, predefined
+@cindex Predefined lengths
+
+@code{\width}
+@findex \width
+
+@code{\height}
+@findex \height
+
+@code{\depth}
+@findex \depth
+
+@code{\totalheight}
+@findex \totalheight
+
+These length parameters can be used in the arguments of the box-making
+commands @xref{Spaces & Boxes}. They specify the natural width etc. of
+the text in the box. @code{\totalheight} equals @code{\height} +
+@code{\depth}. To make a box with the text stretched to double the
+natural size, e.g., say
+
+@code{\makebox[2\width]@{Get a stretcher@}}
+
+
+@comment *************************
+@comment ******* Letters *********
+@comment *************************
+
+@comment LEVEL2
+@node    Letters,   Line & Page Breaking, Lengths, Commands
+@comment node-name, next,     previous,    up
+@section Letters
+@cindex Letters
+@cindex Creating letters
+
+You can use LaTeX to typeset letters, both personal and business.  The
+@code{letter} document class is designed to make a number of letters at
+once, although you can make just one if you so desire.
+
+Your @file{.tex} source file has the same minimum commands as the other
+document classes, i.e., you must have the following commands as a
+minimum:
+
+@example
+ \documentclass@{letter@}
+ \begin@{document@}
+  ... letters ...
+ \end@{document@}
+@end example
+
+Each letter is a @code{letter} environment, whose argument is the name
+and address of the recipient.  For example, you might have:
+
+@example
+ \begin@{letter@}@{Mr. Joe Smith\\ 2345 Princess St. 
+      \\ Edinburgh, EH1 1AA@}
+   ...
+ \end@{letter@}
+@end example
+
+The letter itself begins with the @code{\opening} command.  The text of
+the letter follows.  It is typed as ordinary LaTeX input.  Commands that
+make no sense in a letter, like @code{\chapter}, do not work.  The letter
+closes with a @code{\closing} command.
+
+After the @code{closing}, you can have additional material.  The
+@code{\cc} command produces the usual ``cc: ...''.  There's also a similar
+@code{\encl} command for a list of enclosures. With both these commands,
+use @code{\\} to separate the items. 
+
+These commands are used with the @code{letter} class:
+
+@menu
+* \address::            Your return address.
+* \cc::                 Cc list.
+* \closing::            Saying goodbye.
+* \encl::               List of enclosed material.
+* \location::           Your organisation's address.
+* \makelabels::         Making address labels.
+* \name::               Your name, for the return address.
+* \opening::            Saying hello.
+* \ps::                 Adding a postscript.
+* \signature::          Your signature.
+* \startbreaks::        Allow page breaks.
+* \stopbreaks::         Disallow page breaks.
+* \telephone::          Your phone number.
+@end menu
+
+
+@comment **************
+@comment ** \address **
+@comment **************
+
+@comment LEVEL4
+@node    \address, \cc, Letters, Letters
+@comment node-name, next,       previous,      up
+@subsection \address
+@findex \address
+
+@code{\address@{Return address@}}
+
+The return address, as it should appear on the letter and the envelope.
+Separate lines of the address should be separated by @code{\\} commands.
+If you do not make an @code{\address} declaration, then the letter will
+be formatted for copying onto your organisation's standard letterhead.
+(@xref{Overview}, for details on your local implementation).  If you
+give an @code{\address} declaration, then the letter will be formatted
+as a personal letter.
+
+
+
+@comment *************
+@comment ** \cc ******
+@comment *************
+
+@comment LEVEL3
+@node    \cc, \closing, \address, Letters
+@comment node-name, next,         previous,   up
+@subsection \cc
+@findex \cc
+@cindex Cc list
+
+@code{\cc@{Kate Schechter\\Rob McKenna@}}
+
+Generate a list of other persons the letter was sent to. Each name is
+printed on a separate line.
+
+@comment ******************
+@comment ** \closing ******
+@comment ******************
+
+@comment LEVEL3
+@node    \closing, \encl, \cc, Letters
+@comment node-name, next,         previous,   up
+@subsection \closing
+@findex \closing
+@cindex Letters, ending
+
+@code{\closing@{text@}}
+
+The letter closes with a @code{\closing} command, i.e.,
+@example
+ \closing@{Best Regards,@}
+@end example
+
+
+@comment ******************
+@comment ** \encl ******
+@comment ******************
+
+@comment LEVEL3
+@node    \encl, \location, \closing, Letters
+@comment node-name, next,         previous,   up
+@subsection \encl
+@findex \encl
+@cindex Enclosed material
+
+@code{\encl@{CV\\Certificates@}}
+
+Generate a list of enclosed material.
+
+
+@comment **************
+@comment * \location **
+@comment **************
+
+@comment LEVEL4
+@node    \location, \makelabels, \encl, Letters
+@comment node-name, next,       previous,   up
+@subsection \location
+@findex \location
+
+@code{\location@{address@}}
+
+This modifies your organisation's standard address.  This only appears
+if the @code{firstpage} pagestyle is selected.
+
+@comment **************
+@comment * \makelabels *
+@comment **************
+
+@comment LEVEL4
+@node    \makelabels, \name, \location, Letters
+@comment node-name,  next,                 previous,  up
+@subsection \makelabels
+@findex \makelabels
+
+@code{\makelabels@{number@}}
+
+If you issue this command in the preamble, LaTeX will create a sheet of
+address labels. This sheet will be output before the letters.
+
+
+@comment ******************
+@comment ** \name ******
+@comment ******************
+
+@comment LEVEL3
+@node    \name, \opening, \makelabels, Letters
+@comment node-name, next,         previous,   up
+@subsection \name
+@findex \name
+
+@code{\name@{June Davenport@}}
+
+Your name, used for printing on the envelope together with the return
+address.
+
+
+@comment ******************
+@comment ** \opening ******
+@comment ******************
+
+@comment LEVEL3
+@node    \opening, \ps, \name, Letters
+@comment node-name, next,     previous, up
+@subsection \opening
+@findex \opening
+@cindex Letters, starting
+
+@code{\opening@{text@}}
+
+The letter begins with the @code{\opening} command.  The mandatory
+argument, @code{text}, is whatever text you wish to start your letter,
+i.e.,
+@example
+ \opening@{Dear Joe,@}
+@end example
+
+
+@comment ******************
+@comment ** \ps ******
+@comment ******************
+
+@comment LEVEL3
+@node    \ps, \signature, \opening, Letters
+@comment node-name, next,         previous,   up
+@subsection \ps
+@findex \ps
+
+@code{\ps}
+
+Use this command before a postscript.
+
+
+@comment **************
+@comment * \signature *
+@comment **************
+
+@comment LEVEL4
+@node    \signature, \startbreaks, \ps, Letters
+@comment node-name,  next,      previous, up
+@subsection \signature
+@findex \signature
+
+@code{\signature@{Harvey Swick@}}
+
+Your name, as it should appear at the end of the letter underneath the
+space for your signature.  Items that should go on separate lines should
+be separated by @code{\\} commands.
+
+
+@comment ******************
+@comment ** \startbreaks ******
+@comment ******************
+
+@comment LEVEL3
+@node    \startbreaks, \stopbreaks, \signature, Letters
+@comment node-name, next,         previous,   up
+@subsection \startbreaks
+@findex \startbreaks
+
+@code{\startbreaks}
+
+Used after a @code{\stopbreaks} command to allow page breaks again.
+
+
+@comment ******************
+@comment ** \stopbreaks ******
+@comment ******************
+
+@comment LEVEL3
+@node    \stopbreaks, \telephone, \startbreaks, Letters
+@comment node-name, next,         previous,   up
+@subsection \stopbreaks
+@findex \stopbreaks
+
+@code{\stopbreaks}
+
+Inhibit page breaks until a @code{\startbreaks} command occurs.
+
+
+@comment **************
+@comment * \telephone *
+@comment **************
+
+@comment LEVEL4
+@node    \telephone, , \stopbreaks, Letters
+@comment node-name,  next,       previous,  up
+@subsection \telephone
+@findex \telephone
+
+@code{\telephone@{number@}}
+
+This is your telephone number.  This only appears if the
+@code{firstpage} pagestyle is selected.
+
+
+@page
+
+@comment *************************
+@comment * Line & Page Breaking **
+@comment *************************
+
+@comment LEVEL2
+@node    Line & Page Breaking, Making Paragraphs,   Letters, Commands
+@comment node-name,            next, previous,   up
+@section Line & Page Breaking
+@cindex Page Breaking
+@cindex Line Breaking
+@cindex Page Formatting
+
+The first thing LaTeX does when processing ordinary text is to
+translate your input file into a string of glyphs and spaces.  To
+produce a printed document, this string must be broken into lines, and
+these lines must be broken into pages.  In some environments, you do the
+line breaking yourself with the @code{\\} command, but LaTeX usually
+does it for you.
+
+@menu
+* \\::                  Start a new line.
+* \- (hyphenation)::    Insert explicit hyphenation.
+* \cleardoublepage::    Start a new right-hand page.
+* \clearpage::          Start a new page.
+* \enlargethispage::    Enlarge the current page a bit.
+* \fussy::              Be fussy about line breaking.
+* \hyphenation::        Tell LaTeX how to hyphenate a word.
+* \linebreak::          Break the line.
+* \newline::            Break the line prematurely.
+* \newpage::            Start a new page.
+* \nolinebreak::        Don't break the current line.
+* \nopagebreak::        Don't make a page break here.
+* \pagebreak::          Please make a page break here.
+* \sloppy::             Be sloppy about line breaking.
+@end menu
+
+
+@comment ******************
+@comment ****** \\ ********
+@comment ******************
+
+@comment LEVEL3
+@node    \\,        \- (hyphenation),  Line & Page Breaking, Line & Page Breaking
+@comment node-name, next,              previous,             up
+@subsection \\
+@findex \\
+@cindex New line, starting
+
+@code{\\[*][extra-space]}
+
+The @code{\\} command tells LaTeX to start a new line.  It has an
+optional argument, @code{extra-space}, that specifies how much extra
+vertical space is to be inserted before the next line.  This can be a
+negative amount.
+
+The @code{\\*} command is the same as the ordinary @code{\\} command
+except that it tells LaTeX not to start a new page after the line.
+
+
+@comment **********************
+@comment ** \- (hyphenation) **
+@comment **********************
+
+@comment LEVEL3
+@node    \- (hyphenation), \cleardoublepage, \\,       Line & Page Breaking
+@comment node-name,        next,             previous, up
+@subsection \-
+@findex \- (hyphenation)
+@cindex Hyphenation, forcing
+
+The @code{\-} command tells LaTeX that it may hyphenate the word at that
+point.  LaTeX is very good at hyphenating, and it will usually find all
+correct hyphenation points.  The @code{\-} command is used for the
+exceptional cases.
+
+Note that when you insert @code{\-} commands in a word, the word will
+only be hyphenated at those points and not at any of the hyphenation
+points that LaTeX might otherwise have chosen.
+
+
+@comment ********************
+@comment * \cleardoublepage *
+@comment ********************
+
+@comment LEVEL3
+@node    \cleardoublepage, \clearpage, \- (hyphenation), Line & Page Breaking
+@comment node-name,        next,       previous,         up
+@subsection \cleardoublepage
+@findex \cleardoublepage
+@cindex Starting on a  right-hand page
+
+The @code{\cleardoublepage} command ends the current page and causes all
+figures and tables that have so far appeared in the input to be printed.
+In a two-sided printing style, it also makes the next page a right-hand
+(odd-numbered) page, producing a blank page if necessary.
+
+
+@comment ******************
+@comment ** \clearpage ****
+@comment ******************
+
+@comment LEVEL3
+@node    \clearpage, \enlargethispage, \cleardoublepage, Line & Page Breaking
+@comment node-name,  next,         previous,         up
+@subsection \clearpage
+@findex \clearpage
+@cindex Flushing a page
+
+The @code{\clearpage} command ends the current page and causes all
+figures and tables that have so far appeared in the input to be printed.
+
+
+@comment ******************
+@comment ** \enlargethispage **
+@comment ******************
+
+@comment LEVEL3
+@node    \enlargethispage, \fussy, \clearpage, Line & Page Breaking
+@comment node-name,    next,       previous,   up
+@subsection \enlargethispage
+@findex \enlargethispage
+@cindex Enlarge current page
+
+@code{\enlargethispage@{size@}}
+
+@code{\enlargethispage*@{size@}}
+
+Enlarge the @code{\textheight} for the current page by the specified
+amount; e.g. @code{\enlargethispage@{\baselineskip@}} will allow one
+additional line.
+
+The starred form tries to squeeze the material together on the page as
+much as possible. This is normally used together with an explicit
+@code{\pagebreak}.
+
+@node  \fussy, \hyphenation, \enlargethispage, Line & Page Breaking
+@comment  node-name,  next,  previous,  up
+@subsection \fussy
+@findex \fussy
+
+@code{\fussy}
+
+This declaration (which is the default) makes TeX more fussy about line
+breaking. This can avoids too much space between words, but may produce
+overfull boxes.
+
+This command cancels the effect of a previous  @code{\sloppy} command. @ref{\sloppy}
+
+
+@comment ******************
+@comment ** \hyphenation **
+@comment ******************
+
+@comment LEVEL3
+@node    \hyphenation, \linebreak, \fussy, Line & Page Breaking
+@comment node-name,    next,       previous,   up
+@subsection \hyphenation
+@findex \hyphenation
+@cindex Hyphenation, defining
+
+@code{\hyphenation@{words@}}
+
+The @code{\hyphenation} command declares allowed hyphenation points,
+where @code{words} is a list of words, separated by spaces, in which
+each hyphenation point is indicated by a @code{-} character.
+
+
+@comment ******************
+@comment ** \linebreak ****
+@comment ******************
+
+@comment LEVEL3
+@node    \linebreak, \newline, \hyphenation, Line & Page Breaking
+@comment node-name,  next,     previous,     up
+@subsection \linebreak
+@findex \linebreak
+@cindex Line breaks
+
+@code{\linebreak[number]}
+
+The @code{\linebreak} command tells LaTeX to break the current line at
+the point of the command.  With the optional argument, @code{number},
+you can convert the @code{\linebreak} command from a demand to a
+request.  The number must be a number from 0 to 4.  The higher the
+number, the more insistent the request is.
+
+The @code{\linebreak} command causes LaTeX to stretch the line so it
+extends to the right margin.
+
+@comment ******************
+@comment ** \newline ******
+@comment ******************
+
+@comment LEVEL3
+@node    \newline,  \newpage, \linebreak, Line & Page Breaking
+@comment node-name, next,     previous,   up
+@subsection \newline
+@findex \newline
+@cindex New line, starting (paragraph mode)
+
+The @code{\newline} command breaks the line right where it is. It can
+only be used in paragraph mode.
+
+
+@comment ******************
+@comment ** \newpage ******
+@comment ******************
+
+@comment LEVEL3
+@node    \newpage,  \nolinebreak, \newline, Line & Page Breaking
+@comment node-name, next,         previous, up
+@subsection \newpage
+@findex \newpage
+@cindex New Page
+
+The @code{\newpage} command ends the current page.
+
+
+@comment ******************
+@comment * \nolinebreak ***
+@comment ******************
+
+@comment LEVEL3
+@node    \nolinebreak, \nopagebreak, \newpage, Line & Page Breaking
+@comment node-name,    next,         previous, up
+@subsection \nolinebreak
+@findex \nolinebreak
+
+@code{\nolinebreak[number]}
+
+The @code{\nolinebreak} command prevents LaTeX from breaking the current
+line at the point of the command.  With the optional argument,
+@code{number}, you can convert the @code{\nolinebreak} command from a
+demand to a request.  The number must be a number from 0 to 4.  The
+higher the number, the more insistent the request is.
+
+@comment ******************
+@comment ** \nopagebreak **
+@comment ******************
+
+@comment LEVEL3
+@node    \nopagebreak, \pagebreak, \nolinebreak, Line & Page Breaking
+@comment node-name,    next,       previous,     up
+@subsection \nopagebreak
+@findex \nopagebreak
+
+@code{\nopagebreak[number]}
+
+The @code{\nopagebreak} command prevents LaTeX from breaking the current
+page at the point of the command.  With the optional argument,
+@code{number}, you can convert the @code{\nopagebreak} command from a
+demand to a request.  The number must be a number from 0 to 4.  The
+higher the number, the more insistent the request is.
+
+@comment ******************
+@comment ** \pagebreak ****
+@comment ******************
+
+@comment LEVEL3
+@node    \pagebreak,  \sloppy, \nopagebreak, Line & Page Breaking
+@comment node-name,  next,              previous,     up
+@subsection \pagebreak
+@findex \pagebreak
+@cindex Page break, forcing
+
+@code{\pagebreak[number]}
+
+The @code{\pagebreak} command tells LaTeX to break the current page at
+the point of the command.  With the optional argument, @code{number},
+you can convert the @code{\pagebreak} command from a demand to a
+request.  The number must be a number from 0 to 4.  The higher the
+number, the more insistent the request is.
+
+@node \sloppy, , \pagebreak, Line & Page Breaking
+@comment  node-name,  next,  previous,  up
+@subsection \sloppy
+@findex \sloppy
+
+@code{\sloppy}
+
+This declaration makes TeX less fussy about line breaking. This can
+prevent overfull boxes, but may leave too much space between words.
+
+Lasts until a @code{\fussy} command is issued. @ref{\fussy}.
+
+@page
+
+@comment *************************
+@comment *** Making Paragraphs ***
+@comment *************************
+
+@comment LEVEL2
+@node    Making Paragraphs, Margin Notes, Line & Page Breaking, Commands
+@comment node-name,         next,    previous,   up
+@section Making Paragraphs
+@cindex Making paragraphs
+@cindex Paragraphs
+
+A paragraph is ended by one or more completely blank lines --- lines not
+containing even a @code{%}.  A blank line should not appear where a new
+paragraph cannot be started, such as in math mode or in the argument of
+a sectioning command.
+
+@menu
+* \indent::     Indent this paragraph.
+* \noindent::   Do not indent this paragraph.
+* \par::        Another way of writing a blank line.
+@end menu
+
+@comment ******************
+@comment ** \indent *******
+@comment ******************
+
+@comment LEVEL3
+@node    \indent,   \noindent, Making Paragraphs, Making Paragraphs
+@comment node-name, next,      previous,          up
+@subsection \indent
+@findex \indent
+@cindex Indent, forcing
+
+@code{\indent}
+
+This produces a horizontal space whose width equals the width of the
+paragraph indentation.  It is used to add paragraph indentation where it
+would otherwise be suppressed.
+
+@comment ******************
+@comment ** \noindent *****
+@comment ******************
+
+@comment LEVEL3
+@node    \noindent, \par, \indent,  Making Paragraphs
+@comment node-name, next, previous, up
+@subsection \noindent
+@findex \noindent
+@cindex Indent, suppressing
+
+@code{\noindent}
+
+When used at the beginning of the paragraph, it suppresses the paragraph
+indentation.  It has no effect when used in the middle of a paragraph.
+
+
+@comment ******************
+@comment ** \par **********
+@comment ******************
+
+@comment LEVEL3
+@node    \par,      , \noindent, Making Paragraphs
+@comment node-name, next,         previous,  up
+@subsection \par
+@findex \par
+@cindex Paragraph, starting a new
+
+Equivalent to a blank line; often used to make command or environment
+definitions easier to read.
+
+
+@page
+
+@comment ********************
+@comment *** Margin Notes ***
+@comment ********************
+
+@comment LEVEL2
+@node    Margin Notes, Math Formulae, Making Paragraphs,     Commands
+@comment node-name,    next,          previous, up
+@section Margin Notes
+@cindex Margin Notes
+@cindex Notes in the margin
+@cindex Remarks in the margin
+
+The command @code{\marginpar[left]@{right@}} creates a note in the margin.
+The first line will be at the same height as the line in the text where
+the @code{\marginpar} occurs.
+
+When you only specify the mandatory argument @code{right}, the text will
+be placed
+
+@itemize @bullet
+@item 
+in the right margin for one-sided layout
+@item 
+in the outside margin for two-sided layout
+@item
+in the nearest margin for two-column layout.
+@end itemize
+
+By issuing the command @code{\reversemarginpar}, you can force the marginal
+notes to go into the opposite (inside) margin.
+
+When you specify both arguments, @code{left} is used for the left
+margin, and @code{right} is used for the right margin.
+
+The first word will normally not be hyphenated; you can enable
+hyphenation by prefixing the first word with a @code{\hspace@{0pt@}}
+command.
+
+
+
+@comment *************************
+@comment **** Math Formulae ******
+@comment *************************
+
+@comment LEVEL2
+@node    Math Formulae, Modes, Margin Notes,     Commands
+@comment node-name,     next,                      previous, up
+@section Math Formulae
+@cindex Math Formulae
+@cindex Formulae, maths
+@cindex Math mode, entering
+@findex \(
+@findex \)
+@findex \[
+@findex \]
+@findex $
+
+There are three environments that put LaTeX in math mode:
+
+@table @code
+@item math
+For Formulae that appear right in the text.
+@item displaymath
+For Formulae that appear on their own line.
+@item equation
+The same as the displaymath environment except that it adds an equation
+number in the right margin.
+@end table
+
+The @code{math} environment can be used in both paragraph and LR mode,
+but the @code{displaymath} and @code{equation} environments can be used
+only in paragraph mode.  The @code{math} and @code{displaymath}
+environments are used so often that they have the following short forms:
+
+@example
+    \(...\)     instead of     \begin@{math@}...\end@{math@}
+
+    \[...\]     instead of     \begin@{displaymath@}...\end@{displaymath@}
+@end example
+
+In fact, the @code{math} environment is so common that it has an even
+shorter form:
+
+@example
+    $ ... $     instead of     \(...\)
+@end example
+
+@cindex exponent
+
+@menu
+* Subscripts & Superscripts::   Also known as exponent or index.
+* Math Symbols::                Various mathematical squiggles.
+* Spacing in Math Mode::        Thick, medium, thin and negative spaces.
+* Math Miscellany::             Stuff that doesn't fit anywhere else.
+@end menu
+
+@comment *****************************
+@comment * Subscripts & Superscripts *
+@comment *****************************
+
+@comment LEVEL3
+@node    Subscripts & Superscripts, Math Symbols, Math Formulae, Math Formulae
+@comment node-name,                 next,         previous,      up
+@subsection Subscripts & Superscripts
+@cindex Superscript
+@cindex Subscript
+@findex _
+@findex ^
+
+To get an expression @i{exp} to appear as a subscript, you just type
+@code{_@{}@i{exp}@code{@}}.  To get @i{exp} to appear as a superscript, you type
+@code{^@{}@i{exp}@code{@}}. LaTeX handles superscripted superscripts and all of
+that stuff in the natural way.  It even does the right thing when
+something has both a subscript and a superscript.
+
+
+@comment ******************
+@comment ** Math Symbols **
+@comment ******************
+
+@comment LEVEL3
+@node    Math Symbols, Spacing in Math Mode, Subscripts & Superscripts, Math Formulae
+@comment node-name,    next,                 previous,                  up
+@subsection Math Symbols
+@cindex Maths symbols
+@cindex Symbols
+@cindex Greek letters
+
+@ifinfo
+LaTeX provides almost any mathematical symbol you're likely to need. The
+commands for generating them can be used only in math mode.  For
+example, if you include @code{$\pi$} in your source, you will get the
+symbol ``pi'' in your output.
+@end ifinfo
+
+@iftex
+LaTeX provides almost any mathematical symbol you're likely to need. The
+commands for generating them can be used only in math mode.  For
+example, if you include @code{$\pi$} in your source, you will get the
+symbol 
+@tex 
+$\pi$ 
+@end tex 
+in your output.
+@end iftex
+
+@comment ************************
+@comment * Spacing in Math Mode *
+@comment ************************
+
+@comment LEVEL3
+@node    Spacing in Math Mode, Math Miscellany, Math Symbols, Math Formulae
+@comment node-name,            next,            previous,     up
+@subsection Spacing in Math Mode
+@cindex Spacing, within Math mode
+@cindex Math mode, spacing
+
+
+In a @code{math} environment, LaTeX ignores the spaces you type and puts
+in the spacing that it thinks is best.  LaTeX formats mathematics the
+way it's done in mathematics texts.  If you want different spacing,
+LaTeX provides the following four commands for use in math mode:
+
+@findex \;
+@findex \COLON
+@findex \,
+@findex \!
+
+@enumerate
+@item
+@code{\;} - a thick space
+@item
+@code{\:} - a medium space
+@item
+@code{\,} - a thin space
+@item
+@code{\!} - a negative thin space
+@end enumerate
+
+
+@comment *******************
+@comment * Math Miscellany *
+@comment *******************
+
+@comment LEVEL3
+@node    Math Miscellany, , Spacing in Math Mode, Math Formulae
+@comment node-name,       next,  previous,             up
+@subsection Math Miscellany
+@cindex Maths Miscellany
+
+@table @code
+
+@item \cdots
+@findex \cdots
+Produces a horizontal ellipsis where the dots are raised to the centre
+of the line.
+
+@iftex
+eg.
+@tex
+$\cdots$
+@end tex
+@end iftex
+ 
+@item \ddots
+@findex \ddots
+Produces a diagonal ellipsis.
+
+@iftex
+eg.
+@tex
+$\ddots$
+@end tex
+@end iftex
+
+@item \frac@{num@}@{den@}
+@findex \frac
+Produces the fraction @code{num} divided by @code{den}.
+
+@iftex
+eg.
+@tex
+${1}\over{4}$
+@end tex
+@end iftex
+
+@item \ldots
+@findex \ldots
+Produces an ellipsis.  This command works in
+any mode, not just math mode.
+
+@iftex
+eg.
+@tex
+$\ldots$
+@end tex
+@end iftex
+
+@item \overbrace@{text@}
+@findex \overbrace
+Generates a brace over text.
+
+@iftex
+eg.
+@tex
+$\overbrace{x+\cdots+x}^{k \rm\;times}$
+@end tex
+@end iftex
+
+@item \overline@{text@}
+@findex \overline
+Causes the argument text to be overlined.
+
+@iftex
+eg.
+@tex
+$\overline{x}$
+@end tex
+@end iftex
+
+@item \sqrt[root]@{arg@}
+@findex \sqrt
+Produces the square root of its argument.  The
+optional argument, @code{root}, determines what root to produce, i.e.,
+the cube root of @code{x+y} would be typed as @code{$\sqrt[3]@{x+y@}$}.
+
+@iftex
+eg.
+@tex
+$\sqrt{x-1}$
+@end tex
+@end iftex
+
+@item \underbrace@{text@}
+@findex \underbrace
+Generates text with a brace underneath.
+
+@iftex
+eg.
+@tex
+$\underbrace{x+y+z}_{>\,0}$
+@end tex
+@end iftex
+
+@item \underline@{text@}
+@findex \underline
+Causes the argument text to be underlined.
+This command can also be used in paragraph and LR modes.
+
+@iftex
+eg.
+@tex
+$\underline{z}$
+@end tex
+@end iftex
+
+@item \vdots
+@findex \vdots
+Produces a vertical ellipsis.
+
+@iftex
+eg.
+@tex
+$\vdots$
+@end tex
+@end iftex
+
+@end table
+
+
+@page
+
+@comment *************************
+@comment ******* Modes ***********
+@comment *************************
+
+@comment LEVEL2
+@node    Modes,     Page Styles, Math Formulae,  Commands
+@comment node-name, next,        previous,         up
+@section Modes
+@cindex Modes
+@cindex Paragraph mode
+@cindex Math mode
+@cindex Left-to-right mode
+@cindex LR mode
+
+
+When LaTeX is processing your input text, it is always in one of three
+modes:
+
+@itemize @bullet
+@item
+Paragraph mode
+@item
+Math mode
+@item
+Left-to-right mode, called LR mode for short
+@end itemize
+
+LaTeX changes mode only when it goes up or down a staircase to a
+different level, though not all level changes produce mode changes.
+Mode changes occur only when entering or leaving an environment, or when
+LaTeX is processing the argument of certain text-producing commands.
+
+``Paragraph mode'' is the most common; it's the one LaTeX is in when
+processing ordinary text.  In that mode, LaTeX breaks your text into
+lines and breaks the lines into pages.  LaTeX is in ``math mode'' when
+it's generating a mathematical formula.  In ``LR mode'', as in paragraph
+mode, LaTeX considers the output that it produces to be a string of
+words with spaces between them.  However, unlike paragraph mode, LaTeX
+keeps going from left to right; it never starts a new line in LR mode.
+Even if you put a hundred words into an @code{\mbox}, LaTeX would keep
+typesetting them from left to right inside a single box, and then
+complain because the resulting box was too wide to fit on the line.
+
+LaTeX is in LR mode when it starts making a box with an @code{\mbox}
+command.  You can get it to enter a different mode inside the box - for
+example, you can make it enter math mode to put a formula in the box.
+There are also several text-producing commands and environments for
+making a box that put LaTeX in paragraph mode.  The box make by one of
+these commands or environments will be called a @code{parbox}.  When
+LaTeX is in paragraph mode while making a box, it is said to be in
+``inner paragraph mode''.  Its normal paragraph mode, which it starts out
+in, is called ``outer paragraph mode''.
+
+@page
+
+@comment *************************
+@comment ***** Page Styles *******
+@comment *************************
+
+@comment LEVEL2
+@node    Page Styles, Sectioning, Modes,    Commands
+@comment node-name,   next,       previous, up
+@section Page Styles
+@cindex Styles, page
+@cindex Page styles
+
+The @code{\documentclass} command determines the size and position of
+the page's head and foot.  The page style determines what goes in them.
+
+@menu
+* \maketitle::          Generate a title page.
+* \pagenumbering::      Set the style used for page numbers.
+* \pagestyle::		Change the headings/footings style.
+* \thispagestyle::      Change the headings/footings style for this page.
+@end menu
+
+
+@comment ******************
+@comment ** \maketitle ****
+@comment ******************
+
+@comment LEVEL3
+@node    \maketitle, \pagenumbering, Page Styles, Page Styles
+@comment node-name,  next,    previous,    up
+@subsection \maketitle
+@cindex Title making
+@findex \maketitle
+
+@code{\maketitle}
+
+The @code{\maketitle} command generates a title on a separate title page
+- except in the @code{article} class, where the title normally goes at
+the top of the first page.  Information used to produce the title is
+obtained from the following declarations:
+
+@xref{Page Styles}, for the commands to give the information.
+
+@menu
+* \author::     Who wrote this stuff?
+* \date::       The date the document was created.
+* \thanks::     A special form of footnote.
+* \title::      How to set the document title.
+@end menu
+
+
+@comment ***********
+@comment * \author *
+@comment ***********
+
+@comment LEVEL4
+@node    \author,   \date, \maketitle, \maketitle
+@comment node-name, next,  previous,    up
+@subsection \author
+@findex \author
+@cindex Author, for titlepage
+
+@code{\author@{names@}}
+
+The @code{\author} command declares the author(s), where @code{names} is
+a list of authors separated by @code{\and} commands.  Use @code{\\} to
+separate lines within a single author's entry -- for example, to give
+the author's institution or address.
+
+
+@comment ***********
+@comment ** \date **
+@comment ***********
+
+@comment LEVEL4
+@node    \date,     \thanks, \author,  \maketitle
+@comment node-name, next,    previous, up
+@subsection \date
+@findex \date
+@cindex Date, for titlepage
+
+@code{\date@{text@}}
+
+The @code{\date} command declares @i{text} to be the document's date.  With
+no @code{\date} command, the current date is used.
+
+
+@comment ***********
+@comment * \thanks *
+@comment ***********
+
+@comment LEVEL4
+@node    \thanks,   \title, \date,    \maketitle
+@comment node-name, next,   previous, up
+@subsection \thanks
+@findex \thanks
+@cindex Thanks, for titlepage
+
+@code{\thanks@{text@}}
+
+The @code{\thanks} command produces a @code{\footnote} to the title.
+
+
+@comment ***********
+@comment * \title **
+@comment ***********
+
+@comment LEVEL4
+@node    \title,    , \thanks,  \maketitle
+@comment node-name, next,           previous, up
+@subsection \title
+@findex \title
+@cindex Title, for titlepage
+
+@code{\title@{text@}}
+
+
+The @code{\title} command declares @code{text} to be the title.  Use
+@code{\\} to tell LaTeX where to start a new line in a long title.
+
+
+@comment ******************
+@comment * \pagenumbering *
+@comment ******************
+
+@comment LEVEL3
+@node    \pagenumbering, \pagestyle, \maketitle,   Page Styles
+@comment node-name,      next,       previous, up
+@subsection \pagenumbering
+@findex \pagenumbering
+@cindex Page numbering
+
+@code{\pagenumbering@{num_style@}}
+
+Specifies the style of page numbers.  Possible values of @code{num_style} are:
+
+@itemize @bullet
+@item
+@code{arabic} - Arabic numerals
+@item
+@code{roman} - Lowercase Roman numerals
+@item
+@code{Roman} - Uppercase Roman numerals
+@item
+@code{alph} - Lowercase letters
+@item
+@code{Alph} - Uppercase letters
+@end itemize
+
+
+@comment ******************
+@comment ** \pagestyle ****
+@comment ******************
+
+@comment LEVEL3
+@node    \pagestyle, \thispagestyle, \pagenumbering, Page Styles
+@comment node-name,  next,  previous,       up
+@subsection \pagestyle
+@findex \pagestyle
+
+@code{\pagestyle@{option@}}
+
+The @code{\pagestyle} command changes the style from the current page on
+throughout the remainder of your document.
+
+The valid options are:
+
+@itemize @bullet
+@item
+@code{plain} - Just a plain page number.
+@item
+@code{empty} - Produces empty heads and feet - no page numbers.
+@item
+@code{headings} - Puts running headings on each page.  The document
+style specifies what goes in the headings.
+@item
+@code{myheadings} - You specify what is to go in the heading with the
+@code{\markboth} or the @code{\markright} commands.
+@end itemize
+
+@menu
+* \markboth::           Set left and right headings.
+* \markright::          Set right heading only.
+@end menu
+
+
+@comment ***************
+@comment ** \markboth **
+@comment ***************
+
+@comment LEVEL4
+@node    \markboth, \markright, \pagestyle, \pagestyle
+@comment node-name, next,           previous,    up
+@subsection \markboth
+@findex \markboth
+
+@example
+\markboth@{left head@}@{right head@} 
+@end example
+
+The @code{\markboth} command is used in
+conjunction with the page style @code{myheadings} for setting 
+both the left and the right heading.  You should note that a ``left-hand
+heading'' is generated by the last @code{\markboth} command before the
+end of the page, while a ``right-hand heading'' is generated by the first
+@code{\markboth} or @code{\markright} that comes on the page if there is
+one, otherwise by the last one before the page.
+
+
+@comment ****************
+@comment ** \markright **
+@comment ****************
+
+@comment LEVEL4
+@node    \markright, , \markboth, \pagestyle
+@comment node-name, next,           previous,    up
+@subsection \markright
+@findex \markright
+
+@example
+\markright@{right head@}
+@end example
+
+
+The @code{\markright} command is used in conjunction with the page style
+@code{myheadings} for setting the right heading, leaving the left
+heading unchanged.  You should note that a ``left-hand heading'' is
+generated by the last @code{\markboth} command before the end of the
+page, while a ``right-hand heading'' is generated by the first
+@code{\markboth} or @code{\markright} that comes on the page if there is
+one, otherwise by the last one before the page.
+
+@comment ******************
+@comment * \thispagestyle *
+@comment ******************
+
+@comment LEVEL3
+@node    \thispagestyle, , \pagestyle,    Page Styles
+@comment node-name,      next,       previous, up
+@subsection \thispagestyle
+@findex \thispagestyle
+
+@code{\thispagestyle@{option@}}
+
+The @code{\thispagestyle} command works in the same manner as the
+@code{\pagestyle} command except that it changes the style for the
+current page only.
+
+
+@page
+
+@comment *************************
+@comment ***** Sectioning ********
+@comment *************************
+
+@comment LEVEL2
+@node    Sectioning, Spaces & Boxes, Page Styles, Commands
+@comment node-name,  next,      previous,       up
+@section Sectioning
+@cindex Sectioning
+@findex \chapter
+@findex \subsubsection
+@findex \subsection
+@findex \paragraph
+@findex \subparagraph
+
+Sectioning commands provide the means to structure your text into units.
+
+@itemize @bullet
+@item
+@code{\part}
+@item
+@code{\chapter} (report and book class only)
+@item
+@code{\section}
+@item
+@code{\subsection}
+@item
+@code{\subsubsection}
+@item
+@code{\paragraph}
+@item
+@code{\subparagraph}
+@end itemize
+
+All sectioning commands take the same general form, i.e.,
+
+@code{\chapter[optional]@{title@}}
+
+In addition to providing the heading in the text, the mandatory argument
+of the sectioning command can appear in two other places:
+
+@enumerate
+@item
+The table of contents
+@item
+The running head at the top of the page
+@end enumerate
+
+You may not want the same thing to appear in these other two places as
+appears in the text heading.  To handle this situation, the sectioning
+commands have an @code{optional} argument that provides the text for
+these other two purposes.
+
+All sectioning commands have @code{*}-forms that print a @i{title},
+but do not include a number and do not make an entry in the table of
+contents.
+
+@findex \appendix
+@cindex Appendix, creating
+
+@code{\appendix}
+
+The @code{\appendix} command changes the way sectional units are
+numbered.  The @code{\appendix} command generates no text and does not
+affect the numbering of parts.
+The normal use of this command is something like
+
+@example
+\chapter@{The First Chapter@}
+@dots{}
+\appendix
+\chapter@{The First Appendix@}
+@end example
+
+
+@page
+
+@comment *************************
+@comment **** Spaces & Boxes *****
+@comment *************************
+
+@comment LEVEL2
+@node    Spaces & Boxes, Special Characters, Sectioning, Commands
+@comment node-name,      next,       previous,  up
+@section Spaces & Boxes
+@cindex Spaces
+@cindex Boxes
+
+All the predefined length parameters (@pxref{Predefined lengths}) can be
+used in the arguments of the box-making commands.
+
+@menu
+Horizontal space
+* \dotfill::            Stretchable horizontal dots. 
+* \hfill::              Stretchable horizontal space. 
+* \hrulefill::          Stretchable horizontal rule. 
+* \hspace::             Fixed horizontal space. 
+Vertical space
+* \addvspace::          Fixed vertical space. 
+* \bigskip::            Fixed vertical space. 
+* \medskip::            Fixed vertical space. 
+* \smallskip::          Fixed vertical space. 
+* \vfill::              Stretchable vertical space. 
+* \vspace::             Fixed vertical space. 
+Boxes
+* \fbox::               Framebox.
+* \framebox::           Framebox, adjustable position.
+* lrbox::               An environment like \sbox.
+* \makebox::            Box, adjustable position.
+* \mbox::               Box.
+* \newsavebox::         Declare a name for saving a box.
+* \parbox::             Box with text in paragraph mode.
+* \raisebox::           Raise or lower text.
+* \rule::               Lines and squares.
+* \savebox::            Like \makebox, but save the text for later use.
+* \sbox::               Like \mbox, but save the text for later use.
+* \usebox::             Print saved text.
+@end menu
+
+
+@comment ***************
+@comment ** \dotfill ***
+@comment ***************
+
+@comment LEVEL3
+@node    \dotfill,  \hfill, , Spaces & Boxes
+@comment node-name, next,  previous, up
+@subsection \dotfill
+@findex \dotfill
+
+The @code{\dotfill} command produces a ``rubber length'' that produces dots
+instead of just spaces.
+
+
+@comment ***************
+@comment ** \hfill *****
+@comment ***************
+
+@comment LEVEL3
+@node    \hfill,    \hrulefill, \dotfill, Spaces & Boxes
+@comment node-name, next,       previous,  up
+@subsection \hfill
+@findex \hfill
+
+The @code{\hfill} fill command produces a ``rubber length'' which can
+stretch or shrink horizontally.  It will be filled with spaces.
+
+
+@comment ****************
+@comment ** \hrulefill **
+@comment ****************
+
+@comment LEVEL3
+@node    \hrulefill, \hspace, \hfill,   Spaces & Boxes
+@comment node-name,  next,    previous, up
+@subsection \hrulefill
+@findex \hrulefill
+
+The @code{\hrulefill} fill command produces a ``rubber length'' which can
+stretch or shrink horizontally.  It will be filled with a horizontal
+rule.
+
+
+@comment ***************
+@comment ** \hspace ****
+@comment ***************
+
+@comment LEVEL3
+@node    \hspace,   \addvspace, \hrulefill, Spaces & Boxes
+@comment node-name, next,     previous,   up
+@subsection \hspace
+@findex \hspace
+
+@code{\hspace[*]@{length@}}
+
+
+The @code{\hspace} command adds horizontal space.  The length of the
+space can be expressed in any terms that LaTeX understands, i.e.,
+points, inches, etc.  You can add negative as well as positive space
+with an @code{\hspace} command.  Adding negative space is like
+backspacing.
+
+LaTeX removes horizontal space that comes at the end of a line.  If you
+don't want LaTeX to remove this space, include the optional @code{*}
+argument.  Then the space is never removed.
+
+
+@comment ****************
+@comment ** \addvspace **
+@comment ****************
+
+@comment LEVEL3
+@node    \addvspace, \bigskip, \hspace, Spaces & Boxes
+@comment node-name,  next,     previous,       up
+@subsection \addvspace
+@findex \addvspace
+@cindex Vertical space, inserting
+@cindex Space, inserting vertical
+
+@code{\addvspace@{length@}}
+
+The @code{\addvspace} command normally adds a vertical space of height
+length.  However, if vertical space has already been added to the same
+point in the output by a previous @code{\addvspace} command, then this
+command will not add more space than needed to make the natural length
+of the total vertical space equal to @code{length}.
+
+
+@comment ***************
+@comment ** \bigskip ***
+@comment ***************
+
+@comment LEVEL3
+@node    \bigskip,  \medskip, \addvspace, Spaces & Boxes
+@comment node-name, next,     previous,   up
+@subsection \bigskip
+@findex \bigskip
+
+The @code{\bigskip} command is equivalent to
+@code{\vspace@{bigskipamount@}} where @code{bigskipamount} is determined
+by the document class.
+
+
+@comment ***************
+@comment ** \medskip ***
+@comment ***************
+
+@comment LEVEL3
+@node    \medskip,  \smallskip, \bigskip,    Spaces & Boxes
+@comment node-name, next,        previous, up
+@subsection \medskip
+@findex \medskip
+
+The @code{\medskip} command is equivalent to
+@code{\vspace@{medskipamount@}} where @code{medskipamount} is determined
+by the document class.
+
+
+@comment ****************
+@comment ** \smallskip **
+@comment ****************
+
+@comment LEVEL3
+@node    \smallskip, \vfill, \medskip, Spaces & Boxes
+@comment node-name,  next,    previous, up
+@subsection \smallskip
+@findex \smallskip
+
+@code{\smallskip}
+
+The @code{\smallskip} command is equivalent to
+@code{\vspace@{smallskipamount@}} where @code{smallskipamount} is
+determined by the document class.
+
+
+@comment ***************
+@comment ** \vfill *****
+@comment ***************
+
+@comment LEVEL3
+@node    \vfill,    \vspace, \smallskip,  Spaces & Boxes
+@comment node-name, next,    previous, up
+@subsection \vfill
+@findex \vfill
+
+The @code{\vfill} fill command produces a rubber length which can
+stretch or shrink vertically.
+
+
+@comment ***************
+@comment ** \vspace ****
+@comment ***************
+
+@comment LEVEL3
+@node    \vspace,   \fbox, \vfill,   Spaces & Boxes
+@comment node-name, next,               previous, up
+@subsection \vspace
+@findex \vspace
+
+@code{\vspace[*]@{length@}}
+
+The @code{\vspace} command adds vertical space.  The length of the space
+can be expressed in any terms that LaTeX understands, i.e., points,
+inches, etc.  You can add negative as well as positive space with an
+@code{\vspace} command.
+
+LaTeX removes vertical space that comes at the end of a page.  If you
+don't want LaTeX to remove this space, include the optional @code{*}
+argument.  Then the space is never removed.
+
+
+@comment ***************
+@comment ** \fbox ******
+@comment ***************
+
+@comment LEVEL3
+@node    \fbox,     \framebox, \vspace, Spaces & Boxes
+@comment node-name, next,      previous, up
+@subsection \fbox
+@findex \fbox
+
+@code{\fbox@{text@}}
+
+The @code{\fbox} command is exactly the same as the @code{\mbox}
+command, except that it puts a frame around the outside of the box that
+it creates.
+
+
+@comment ***************
+@comment ** \framebox **
+@comment ***************
+
+@comment LEVEL3
+@node    \framebox, lrbox, \fbox,    Spaces & Boxes
+@comment node-name, next,   previous, up
+@subsection \framebox
+@findex \framebox
+
+@code{\framebox[width][position]@{text@}}
+
+The @code{\framebox} command is exactly the same as the @code{\makebox}
+command, except that it puts a frame around the outside of the box that
+it creates.
+
+The framebox command produces a rule of thickness @code{\fboxrule}, and
+leaves a space @code{\fboxsep} between the rule and the contents of the
+box.
+
+
+@comment ***************
+@comment ** lrbox ****
+@comment ***************
+
+@comment LEVEL3
+@node    lrbox,     \makebox, \framebox, Spaces & Boxes
+@comment node-name, next,     previous,   up
+@subsection lrbox
+@findex lrbox
+
+@code{\begin@{lrbox@}@{cmd@} text \end@{lrbox@}}
+
+This is the environment form of @code{\sbox}.
+
+The text inside the environment is saved in the box @code{cmd}, which
+must have been declared with @code{\newsavebox}.
+
+
+@comment **************
+@comment ** \makebox **
+@comment **************
+
+@comment LEVEL3
+@node    \makebox,  \mbox, lrbox,  Spaces & Boxes
+@comment node-name, next,  previous, up
+@subsection \makebox
+@findex \makebox
+
+@code{\makebox[width][position]@{text@}}
+
+The @code{\makebox} command creates a box just wide enough to contain
+the @code{text} specified.  The width of the box is specified by the
+optional @code{width} argument.  The position of the text within the box
+is determined by the optional @code{position} argument.
+
+@itemize @bullet
+@item
+@code{c} --- centred (default)
+@item
+@code{l} --- flushleft
+@item
+@code{r} --- flushright
+@item
+@code{s} --- stretch from left to right margin. The text must contain
+stretchable space for this to work.
+@end itemize
+
+@xref{\makebox (picture)}.
+
+
+@comment ***************
+@comment ** \mbox ******
+@comment ***************
+
+@comment LEVEL3
+@node    \mbox,     \newsavebox, \makebox, Spaces & Boxes
+@comment node-name, next,     previous, up
+@subsection \mbox
+@findex \mbox
+
+@code{\mbox@{text@}}
+
+The @code{\mbox} command creates a box just wide enough to hold the text
+created by its argument.
+
+Use this command to prevent text from being split across lines.
+
+
+@comment ****************
+@comment ** \newsavebox *
+@comment ****************
+
+@comment LEVEL3
+@node    \newsavebox, \parbox, \mbox, Spaces & Boxes
+@comment node-name,   next,    previous, up
+@subsection \newsavebox
+@findex \newsavebox
+
+@code{\newsavebox@{cmd@}}
+
+Declares @code{cmd}, which must be a command name that is not already
+defined, to be a bin for saving boxes.
+
+
+@comment ***************
+@comment ** \parbox ****
+@comment ***************
+
+@comment LEVEL3
+@node    \parbox,   \raisebox, \newsavebox, Spaces & Boxes
+@comment node-name, next,      previous,    up
+@subsection \parbox
+@findex \parbox
+
+@code{\parbox[position][height][inner-pos]@{width@}@{text@}}
+
+A @code{parbox} is a box whose contents are created in @code{paragraph}
+mode.  The @code{\parbox} has two mandatory arguments:
+
+@itemize @bullet
+@item
+@code{width} - specifies the width of the parbox, and
+@item
+@code{text} - the text that goes inside the parbox.
+@end itemize
+
+
+LaTeX will position a @code{parbox} so its centre lines up with the centre of
+the text line.  The optional @i{position} argument allows you
+to line up either the top or bottom line in the parbox (default is top).
+
+If the @i{height} argument is not given, the box will have the natural
+height of the text.
+
+The @i{inner-pos} argument controls the placement of the text inside the
+box. If it is not specified, @i{position} is used.
+
+@itemize @bullet
+@item
+@code{t} --- text is placed at the top of the box.
+@item
+@code{c} --- text is centred in the box.
+@item
+@code{b} --- text is placed at the bottom of the box.
+@item
+@code{s} --- stretch vertically. The text must contain
+vertically stretchable space for this to work.
+@end itemize
+
+A @code{\parbox} command is used for a parbox containing a small piece
+of text, with nothing fancy inside.  In particular, you shouldn't use
+any of the paragraph-making environments inside a @code{\parbox}
+argument.  For larger pieces of text, including ones containing a
+paragraph-making environment, you should use a @code{minipage}
+environment @xref{minipage}.
+
+
+@comment ***************
+@comment ** \raisebox **
+@comment ***************
+
+@comment LEVEL3
+@node    \raisebox, \rule, \parbox,  Spaces & Boxes
+@comment node-name, next,  previous, up
+@subsection \raisebox
+@findex \raisebox
+
+@code{\raisebox@{distance@}[extend-above][extend-below]@{text@}}
+
+The @code{\raisebox} command is used to raise or lower text.  The first
+mandatory argument specifies how high the text is to be raised (or
+lowered if it is a negative amount).  The text itself is processed in
+@code{LR mode}.
+
+
+Sometimes it's useful to make LaTeX think something has a different
+size than it really does - or a different size than LaTeX would
+normally think it has.  The @code{\raisebox} command lets you tell
+LaTeX how tall it is.
+
+The first optional argument, @code{extend-above}, makes LaTeX think
+that the text extends above the line by the amount specified.  The
+second optional argument, @code{extend-below}, makes LaTeX think that
+the text extends below the line by the amount specified.
+
+
+@comment ***************
+@comment ** \rule ******
+@comment ***************
+
+@comment LEVEL3
+@node    \rule,     \savebox, \raisebox, Spaces & Boxes
+@comment node-name, next,     previous,  up
+@subsection \rule
+@findex \rule
+
+@code{\rule[raise-height]@{width@}@{thickness@}}
+
+The @code{\rule} command is used to produce horizontal lines.  The
+arguments are defined as follows:
+
+@itemize @bullet
+@item
+@code{raise-height} - specifies how high to raise the rule (optional)
+@item
+@code{width} - specifies the length of the rule (mandatory)
+@item
+@code{thickness} - specifies the thickness of the rule (mandatory)
+@end itemize
+
+
+@comment ***************
+@comment ** \savebox ***
+@comment ***************
+
+@comment LEVEL3
+@node    \savebox,  \sbox, \rule,    Spaces & Boxes
+@comment node-name, next,       previous, up
+@subsection \savebox
+@findex \savebox
+
+@example
+ \savebox@{cmd@}[width][pos]@{text@}
+@end example
+
+This command typeset @code{text} in a box just as for @code{\makebox}.
+However, instead of printing the resulting box, it saves it in bin
+@code{cmd}, which must have been declared with @code{\newsavebox}.
+
+
+@comment ***************
+@comment ** \sbox ******
+@comment ***************
+
+@comment LEVEL3
+@node    \sbox,     \usebox, \savebox, Spaces & Boxes
+@comment node-name, next,     previous, up
+@subsection \sbox
+@findex \sbox
+
+@code{\sbox@{text@}}
+
+This commands typeset @code{text} in a box just as for @code{\mbox}.
+However, instead of printing the resulting box, it saves it in bin
+@code{cmd}, which must have been declared with @code{\newsavebox}.
+
+
+@comment ***************
+@comment ** \usebox ****
+@comment ***************
+
+@comment LEVEL3
+@node    \usebox,   , \sbox, Spaces & Boxes
+@comment node-name, next,   previous,   up
+@subsection \usebox
+@findex \usebox
+
+@code{\usebox@{cmd@}}
+
+Prints the box most recently saved in bin @code{cmd} by a
+@code{\savebox} command.
+
+
+
+@page
+
+@comment *************************
+@comment ** Special Characters ***
+@comment *************************
+
+@comment LEVEL2
+@node    Special Characters, Splitting the Input, Spaces & Boxes,  Commands
+@comment node-name,          next,                previous, up
+@section Special Characters
+@cindex Special Characters
+@cindex Characters, special
+@cindex Reserved Characters
+@cindex Characters, reserved
+
+The following characters play a special role in LaTeX and are called
+``special printing characters'', or simply ``special characters''.
+
+@example
+                       # $ % & ~ _ ^ \ @{ @}
+@end example
+
+Whenever you put one of these special characters into your file, you are
+doing something special.  If you simply want the character to be printed
+just as any other letter, include a @code{\} in front of the character.
+For example, @code{\$} will produce @code{$} in your output.
+
+One exception to this rule is the @code{\} itself because @code{\\} has
+its own special meaning.  A @code{\} is produced by typing
+@code{$\backslash$} in your file.
+
+Also, @code{\~} means `place a tilde accent over the following letter',
+so you will probably want to use @code{\verb} instead.
+
+@findex \backslash
+@findex \symbol
+@cindex Accessing any character of a font
+
+In addition, you can access any character of a font once you know its
+number by using the @code{\symbol} command. For example, the character
+used for displaying spaces in the @code{\verb*} command has the code
+decimal 32, so it can be typed as @code{\symbol@{32@}}.
+
+You can also specify octal numbers with @code{'} or hexadecimal numbers
+with @code{"}, so the previous example could also be written as
+@code{\symbol@{'40@}} or @code{\symbol@{"20@}}.
+
+
+@comment *************************
+@comment ** Splitting the Input **
+@comment *************************
+
+@comment LEVEL2
+@node    Splitting the Input, Starting & Ending, Special Characters, Commands
+@comment node-name,           next,     previous,           up
+@section Splitting the Input
+@cindex Splitting the input file
+@cindex Input file, splitting
+
+
+A large document requires a lot of input.  Rather than putting the whole
+input in a single large file, it's more efficient to split it into
+several smaller ones.  Regardless of how many separate files you use,
+there is one that is the root file; it is the one whose name you type
+when you run LaTeX.
+
+@menu
+* \include::            Conditionally include a file.
+* \includeonly::        Determine which files are included.
+* \input::              Unconditionally include a file.
+@end menu
+
+
+@comment ***************
+@comment ** \include ***
+@comment ***************
+
+@comment LEVEL3
+@node    \include,  \includeonly, Splitting the Input, Splitting the Input
+@comment node-name, next,         previous,            up
+@subsection \include
+@findex \include
+
+@code{\include@{file@}}
+
+The @code{\include} command is used in conjunction with the
+@code{\includeonly} command for selective inclusion of files.  The
+@code{file} argument is the first name of a file, denoting
+@file{file.tex}.  If @code{file} is one the file names in the file list
+of the @code{\includeonly} command or if there is no @code{\includeonly}
+command, the @code{\include} command is equivalent to
+
+@example
+\clearpage \input@{file@} \clearpage
+@end example
+
+except that if the file @file{file.tex} does not exist, then a warning
+message rather than an error is produced.  If the file is not in the
+file list, the @code{\include} command is equivalent to @code{\clearpage}.
+
+The @code{\include} command may not appear in the preamble or in a file
+read by another @code{\include} command.
+
+
+@comment *******************
+@comment ** \includeonly ***
+@comment *******************
+
+@comment LEVEL3
+@node    \includeonly, \input, \include, Splitting the Input
+@comment node-name,    next,   previous, up
+@subsection \includeonly
+@findex \includeonly
+
+@code{\includeonly@{}@i{file_list}@code{@}}
+
+The @code{\includeonly} command controls which files will be read in by
+an @code{\include} command.  @i{file_list} should be a comma-separated
+list of filenames. Each filename must match exactly a filename specified
+in a @code{\include} command. This command can only appear in the
+preamble.
+
+@comment ***************
+@comment ** \input *****
+@comment ***************
+
+@comment LEVEL3
+@node    \input,    , \includeonly, Splitting the Input
+@comment node-name, next,              previous,     up
+@subsection \input
+@findex \input
+
+@code{\input@{file@}}
+
+The @code{\input} command causes the indicated @code{file} to be read and
+processed, exactly as if its contents had been inserted in the current
+file at that point.  The file name may be a complete file name with
+extension or just a first name, in which case the file @file{file.tex}
+is used.
+
+
+@page
+
+@comment *************************
+@comment *** Starting & Ending ***
+@comment *************************
+
+@comment LEVEL2
+@node    Starting & Ending, Table of Contents, Splitting the Input,   Commands
+@comment node-name,         next,              previous, up
+@section Starting & Ending
+@cindex Starting & Ending
+@cindex Ending & Starting
+
+Your input file must contain the following commands as a minimum:
+
+@example
+ \documentclass@{class@}
+ \begin@{document@}
+   ... your text goes here ...
+ \end@{document@}
+@end example
+
+where the @code{class} selected is one of the valid classes for LaTeX.
+@xref{Document Classes}, (and @pxref{Overview}), for details of the
+various document classes available locally.
+
+You may include other LaTeX commands between the @code{\documentclass}
+and the @code{\begin@{document@}} commands (i.e., in the `preamble'). 
+
+@page
+
+@comment *************************
+@comment *** Table of Contents ***
+@comment *************************
+
+@comment LEVEL2
+@node    Table of Contents, Terminal Input/Output, Starting & Ending, Commands
+@comment node-name,         next,             previous,          up
+@section Table of Contents
+@cindex Table of Contents, creating
+
+
+A table of contents is produced with the 
+@code{\tableofcontents}
+@findex \tableofcontents
+command. You put the command right where you want the table of contents
+to go; LaTeX does the rest for you.  It produces a heading, but it does
+not automatically start a new page.  If you want a new page after the
+table of contents, include a @code{\newpage} command after the
+@code{\tableofcontents} command.
+
+There are similar commands 
+@code{\listoffigures} 
+@findex \listoffigures
+and
+@code{\listoftables}
+@findex \listoftables
+ for producing a list of figures and a list of tables, respectively.
+Everything works exactly the same as for the table of contents.
+
+NOTE: If you want any of these items to be generated, you cannot have
+the
+@code{\nofiles}
+@findex \nofiles
+command in your document.
+
+@menu
+* \addcontentsline::    Add an entry to table of contents etc.
+* \addtocontents::      Add text directly to table of contents file etc.
+@end menu
+
+
+@comment ********************
+@comment * \addcontentsline *
+@comment ********************
+
+@comment LEVEL3
+@node    \addcontentsline, \addtocontents, Table of Contents, Table of Contents
+@comment node-name,        next,           previous,          up
+@subsection \addcontentsline
+@findex \addcontentsline
+
+@code{\addcontentsline@{file@}@{sec_unit@}@{entry@}}
+
+The @code{\addcontentsline} command adds an entry to the specified list
+or table where:
+
+@itemize @bullet
+@item
+@code{file} is the extension of the file on which information is to be
+written: @code{toc} (table of contents), @code{lof} (list of figures),
+or @code{lot} (list of tables).
+@item
+@code{sec_unit} controls the formatting of the entry.  It should be one
+of the following, depending upon the value of the file argument:
+@enumerate
+@item
+@code{toc} --- the name of the sectional unit, such as part or subsection.
+@item
+@code{lof} --- figure
+@item
+@code{lot} --- table
+@end enumerate
+@item
+@code{entry} is the text of the entry.
+@end itemize
+
+
+@comment ******************
+@comment * \addtocontents *
+@comment ******************
+
+@comment LEVEL3
+@node  \addtocontents, , \addcontentsline, Table of Contents
+@comment node-name,      next,                  previous,         up
+@subsection \addtocontents
+@findex \addtocontents
+
+@code{\addtocontents@{file@}@{text@}}
+
+The @code{\addtocontents} command adds text (or formatting commands) directly
+to the file that generates the table of contents or list of figures or
+tables.
+
+@itemize @bullet
+@item
+@code{file} is the extension of the file on which information is to be
+written: @code{toc} (table of contents), @code{lof} (list of figures),
+or @code{lot} (list of tables).
+@item
+@code{text} is the information to be written.
+@end itemize
+
+
+@page
+
+@comment *************************
+@comment * Terminal Input/Output *
+@comment *************************
+
+@comment LEVEL2
+@node    Terminal Input/Output, Typefaces, Table of Contents, Commands
+@comment node-name,             next,     previous,       up
+@section Terminal Input/Output
+@cindex Input/Output
+@cindex Terminal Input/Output
+
+@menu
+* \typein::             Read text from the terminal.
+* \typeout::            Write text to the terminal.
+@end menu
+
+
+@comment **************
+@comment * \typein ****
+@comment **************
+
+@comment LEVEL3
+@node    \typein,   \typeout, , Terminal Input/Output
+@comment node-name, next,   previous, up
+@subsection \typein
+@findex \typein
+
+@code{\typein[cmd]@{msg@}}
+
+
+Prints @code{msg} on the terminal and causes LaTeX to stop and wait for
+you to type a line of input, ending with return.  If the @code{cmd}
+argument is missing, the typed input is processed as if it had been
+included in the input file in place of the @code{\typein} command.  If
+the @code{cmd} argument is present, it must be a command name.  This
+command name is then defined or redefined to be the typed input.
+
+
+@comment **************
+@comment * \typeout ***
+@comment **************
+
+@comment LEVEL3
+@node    \typeout,  , \typein, Terminal Input/Output
+@comment node-name, next,    previous,              up
+@subsection \typeout
+@findex \typeout
+
+@code{\typeout@{msg@}}
+
+Prints @code{msg} on the terminal and in the @code{log} file.  Commands
+in @code{msg} that are defined with @code{\newcommand} or
+@code{\renewcommand} are replaced by their definitions before being
+printed.
+
+
+LaTeX's usual rules for treating multiple spaces as
+a single space and ignoring spaces after a command name apply to
+@code{msg}.  A @code{\space} command in @code{msg} causes a single space
+to be printed. A @code{^^J} in @code{msg} prints a newline.
+
+
+@page
+
+@comment *************************
+@comment ***** Typefaces *********
+@comment *************************
+
+@comment LEVEL2
+@node    Typefaces, , Terminal Input/Output,  Commands
+@comment node-name, next,   previous, up
+@section Typefaces
+@cindex Typefaces
+@cindex Fonts
+
+The @code{typeface} is specified by giving the ``size'' and ``style''.  A
+typeface is also called a ``font''.
+
+@menu
+* Styles::                      Select roman, italics etc.
+* Sizes::                       Select point size.
+* Low-level font commands::     Commands for wizards.
+@end menu
+
+
+@comment **************
+@comment ** Styles ****
+@comment **************
+
+@comment LEVEL3
+@node    Styles,    Sizes, Typefaces, Typefaces
+@comment node-name, next,  previous,  up
+@subsection \Styles
+@cindex Font Styles
+@cindex Typeface Styles
+@cindex Styles of text
+
+
+The following type style commands are supported by LaTeX.
+
+These commands are used like @code{\textit@{italics text@}}. The
+corresponding command in parenthesis is the ``declaration form'', which
+takes no arguments. The scope of the declaration form lasts until the
+next type style command or the end of the current group.
+
+The declaration forms are cumulative; i.e., you can say
+@code{\sffamily\bfseries} to get sans serif boldface.
+
+You can also use the environment form of the declaration forms; e.g.
+@code{\begin@{ttfamily@}...\end@{ttfamily@}}.
+
+@table @code
+@item \textrm (\rmfamily)
+@findex \textrm
+@findex \rmfamily
+Roman.
+@item \textit (\itshape)
+@findex \textit
+@findex \itshape
+@item \emph
+@findex \emph
+Emphasis (toggles between \textit and \textrm).
+@item \textmd (\mdseries)
+@findex \textmd
+@findex \mdseries
+Medium weight (default). The opposite of boldface.
+@item \textbf (\bfseries)
+@findex \textbf
+@findex \bfseries
+Boldface.
+@item \textup (\upshape)
+@findex \textup
+@findex \upshape
+Upright (default). The opposite of slanted.
+@item \textsl (\slshape)
+@findex \textsl
+@findex \slshape
+Slanted.
+@item \textsf (\sffamily)
+@findex \textsf
+@findex \sffamily
+Sans serif.
+@item \textsc (\scshape)
+@findex \textsc
+@findex \scshape
+Small caps.
+@item \texttt (\ttfamily)
+@findex \texttt
+@findex \ttfamily
+Typewriter.
+@item \textnormal (\normalfont)
+@findex \textnormal
+@findex \normalfont
+Main document font.
+@item \mathrm
+@findex \mathrm
+Roman, for use in math mode.
+@item \mathbf
+@findex \mathbf
+Boldface, for use in math mode.
+@item \mathsf
+@findex \mathsf
+Sans serif, for use in math mode.
+@item \mathtt
+@findex \mathtt
+Typewriter, for use in math mode.
+@item \mathit
+@findex \mathit
+Italics, for use in math mode, e.g. variable names with several letters.
+@item \mathnormal
+@findex \mathnormal
+For use in math mode, e.g. inside another type style declaration.
+@item \mathcal
+@findex \mathcal
+`Calligraphic' letters, for use in math mode.
+@end table
+
+In addition, the command 
+@code{\mathversion@{bold@}}
+@findex \mathversion
+can be used for switching to bold letters and symbols in
+formulas. @code{\mathversion@{normal@}} restores the default.
+
+
+@comment **************
+@comment ** Sizes *****
+@comment **************
+
+@comment LEVEL3
+@node    Sizes,     Low-level font commands, Styles,   Typefaces
+@comment node-name, next,                    previous, up
+@subsection Sizes
+@cindex Font Sizes
+@cindex Typeface Sizes
+@cindex Sizes of text
+
+
+The following standard type size commands are supported by LaTeX.
+
+The commands as listed here are "declaration forms". The scope of the
+declaration form lasts until the next type style command or the end of
+the current group.
+
+You can also use the environment form of these commands; e.g.
+@code{\begin@{tiny@}...\end@{tiny@}}.
+
+@table @code
+@item \tiny
+@findex \tiny
+
+@item \scriptsize
+@findex \scriptsize
+
+@item \footnotesize
+@findex \footnotesize
+
+@item \small
+@findex \small
+
+@item \normalsize
+@findex \normalsize
+(default)
+
+@item \large
+@findex \large
+
+@item \Large
+@findex \Large
+
+@item \LARGE
+@findex \LARGE
+
+@item \huge
+@findex \huge
+
+@item \Huge
+@findex \Huge
+@end table
+
+
+@comment ********************************
+@comment ** Low-level font commands *****
+@comment ********************************
+
+@comment LEVEL3
+@node    Low-level font commands, , Sizes,    Typefaces
+@comment node-name,               next,       previous, up
+@subsection Low-level font commands
+@cindex Low-level font commands
+@cindex Font commands, low-level
+
+These commands are primarily intended for writers of macros and
+packages.  The commands listed here are only a subset of the available
+ones. For full details, you should consult Chapter 7 of @cite{The LaTeX
+Companion}.
+
+
+@table @code
+@item \fontencoding@{enc@}
+@findex \fontencoding
+Select font encoding. Valid encodings include @code{OT1} and @code{T1}.
+
+@item \fontfamily@{family@}
+@findex \fontfamily
+Select font family. Valid families include:
+
+@itemize @bullet
+@item @code{cmr}  for Computer Modern Roman
+@item @code{cmss} for Computer Modern Sans Serif
+@item @code{cmtt} for Computer Modern Typewriter
+@end itemize
+
+and numerous others.
+
+@item \fontseries@{series@}
+@findex \fontseries
+Select font series. Valid series include:
+
+@itemize @bullet
+@item @code{m}  Medium (normal)
+@item @code{b}  Bold
+@item @code{c}  Condensed
+@item @code{bc} Bold condensed
+@item @code{bx} Bold extended
+@end itemize
+
+and various other combinations.
+
+@item \fontshape@{shape@}
+@findex \fontshape
+Select font shape. Valid shapes are:
+
+@itemize @bullet
+@item @code{n}  Upright (normal)
+@item @code{it} Italic
+@item @code{sl} Slanted (oblique)
+@item @code{sc} Small caps
+@item @code{ui} Upright italics
+@item @code{ol} Outline
+@end itemize
+
+The two last shapes are not available for most font families.
+
+@item \fontsize@{size@}@{skip@}
+@findex \fontsize
+Set font size. The first parameter is the font size to switch to; the
+second is the @code{\baselineskip} to use. The unit of both parameters
+defaults to pt. A rule of thumb is that the baselineskip should be 1.2
+times the font size.
+
+@item \selectfont
+@findex \selectfont
+The changes made by calling the four font commands described above do
+not come into effect until @code{\selectfont} is called.
+
+@item \usefont@{enc@}@{family@}@{series@}@{shape@}
+@findex \usefont
+Equivalent to calling @code{\fontencoding}, @code{\fontfamily},
+@code{\fontseries} and @code{\fontshape} with the given parameters, followed by @code{\selectfont}.
+@end table
+
+
+
+
+@page
+@comment ****************************************
+@comment ************* PARAMETERS ***************
+@comment ****************************************
+
+@comment LEVEL1
+@node    Parameters, Concept Index, Commands, Top
+@comment node-name,  next,          previous,                up
+@chapter Parameters
+
+
+The input file specification indicates the file to be formatted; TeX
+uses @file{.tex} as a default file extension.  If you omit the input file
+entirely, TeX accepts input from the terminal.  You specify command
+options by supplying a string as a parameter to the command; e.g.
+
+@code{latex ``\scrollmode\input foo.tex''}
+
+will process @file{foo.tex} without pausing after every error.
+
+Output files are always created in the current directory. When you fail
+to specify an input file name, TeX bases the output names on the file
+specification associated with the logical name TEX_OUTPUT, typically
+@code{texput.log}.
+
+@page
+
+
+@comment ***************************
+@comment *******  INDICES   ********
+@comment ***************************
+
+@comment LEVEL1
+@node    Concept Index,  Command Index, Parameters, Top
+@comment node-name,      next,             previous,   up
+@unnumbered Concept Index
+
+@printindex cp
+
+@comment LEVEL1
+@node    Command Index, ,     Concept Index,  Top
+@comment node-name,        next, previous,       up
+@unnumbered Command Index
+
+@printindex fn
+
+@contents
+
+@bye

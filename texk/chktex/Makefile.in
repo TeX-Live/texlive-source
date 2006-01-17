@@ -1,0 +1,345 @@
+#
+#  Makefile for ChkTeX project, creates the stuff.
+#  Copyright (C) 1996 Jens T. Berger Thielemann
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+#  Contact the author at:
+#		Jens Berger
+#		Spektrumvn. 4
+#		N-0666 Oslo
+#		Norway
+#		E-mail: <jensthi@ifi.uio.no>
+#
+
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+bindir=@bindir@
+datadir=@datadir@
+srcdir=@srcdir@
+mandir=@mandir@
+INSTALL=@INSTALL@
+INSTALL_PROGRAM=@INSTALL_PROGRAM@
+INSTALL_DATA=@INSTALL_DATA@
+ELISPDIR=@ELISPDIR@
+
+CC=@CC@
+CFLAGS=@CFLAGS@
+CPPFLAGS=@CPPFLAGS@
+DEFS=@DEFS@
+LIBS=@LIBS@
+LDFLAGS=@LDFLAGS@
+LN_S=@LN_S@
+LATEX=@LATEX@
+DVIPS=@DVIPS@
+PERL5=@PERL5@
+LATEX2HTML=@LATEX2HTML@
+LYNX=@LYNX@
+GROFF=@GROFF@
+SHELL=/bin/sh
+
+SCRIPTS=@SCRIPTS@
+
+USRDEFS=-DDATADIR=\"$(datadir)\"
+
+#####################################################################
+
+INSTALLFILES= configure.in Makefile.in config.h.in chktexrc MakeHTML.in
+
+WEBFILES= chkweb deweb.in
+
+DOCFILES= ChkTeX.tex ChkTeX.dvi \
+ChkTeX.readme COPYING WB2Argv.readme deweb.1 deweb.doc
+
+SOURCEFILES= ChkTeX.c ChkTeX.h FindErrs.c FindErrs.h OpSys.c OpSys.h \
+Resource.c Resource.h Utility.c Utility.h WB2Argv.c WB2Argv.h \
+getopt.c getopt.h getopt1.c HashWord.a chktex.el
+
+PORTFILES= config.msd ChkTeX.dsk ChkTeX.prj SCOPTIONS SMakefile config.AMIGA
+
+TESTFILES= Test.tex input.tex Test.out
+
+
+###
+#
+# OS specific files
+#
+###
+
+## AMIGA
+
+REXXFILES= amiga/ChkTeX.ced amiga/ChkTeX.ged amiga/ChkTeX.scm \
+amiga/ChkTeX.vbr amiga/GotoFile.ced
+
+AMIGAFILES= amiga/ChkTeX.install amiga/ChkTeX.install.info \
+amiga/ChkTeX amiga/ChkTeX.info amiga/COPYING.info \
+amiga/ChkTeX.readme.info amiga/lacheck $(REXXFILES)
+
+## MSDOS
+
+MSDOSFILES= msdos/ChkTeX.exe 
+
+## OS/2
+
+OS2FILES= os2/Readme.os2 os2/ChkTeX.exe
+
+## UNIX
+
+UNIXFILES= configure install-sh unix/lacheck
+
+COMMONFILES= $(INSTALLFILES) $(WEBFILES) $(DOCFILES) $(SOURCEFILES) \
+$(TESTFILES) $(PORTFILES)
+
+ARCHIVES= chktex.lha chktex.tar.gz
+
+all: chktex 
+
+dist: configure  ChkTeX.dvi Test.out ChkTeX.readme deweb.doc
+	touch chktex $(ARCHIVES)
+	rm -r chktex $(ARCHIVES)
+	mkdir chktex chktex/generic chktex/generic/exec
+	for file in $(COMMONFILES); do \
+		cp $$file chktex/generic; \
+	done
+	cp exec/types.h chktex/generic/exec
+	srcdir=`pwd`; \
+	for dir in chktex/amiga/ chktex/msdos/ chktex/os2/ chktex/unix; do \
+		cd $$srcdir; \
+		mkdir $$dir; \
+		cd $$dir; \
+		for file in $(COMMONFILES); do \
+			$(LN_S) ../generic/$$file .; \
+		done; \
+		mkdir exec; cd exec; \
+		$(LN_S) ../../generic/exec/types.h .; \
+	done
+	for file in $(AMIGAFILES); do\
+		cp /hom/jensthi/chktex/source/$$file chktex/amiga; \
+	done
+	for file in $(MSDOSFILES); do\
+		cp /hom/jensthi/chktex/source/$$file chktex/msdos; \
+	done
+	for file in $(OS2FILES); do\
+		cp /hom/jensthi/chktex/source/$$file chktex/os2; \
+	done
+	for file in $(UNIXFILES); do\
+		cp /hom/jensthi/chktex/source/$$file chktex/unix; \
+	done
+	cp README chktex/
+	-rm chktex.lha
+	lha a chktex.lha chktex/amiga/ chktex/README
+	-rm chktex_unix.tar.gz
+	tar chf chktex_unix.tar chktex/unix
+	gzip chktex_unix.tar
+	-rm chktex_gen.tar.gz
+	tar chf chktex_gen.tar chktex/generic
+	gzip chktex_gen.tar
+	-rm chktex_msdos.zip chktex_os2.zip
+	zip -r chktex_msdos chktex/msdos
+	tar cf chktex.tar chktex
+	gzip chktex.tar
+	rm -r chktex
+
+########################################################################
+
+
+.c.o:
+	$(CC) $(CFLAGS) -I$(srcdir) -I. $(DEFS) $(USRDEFS) -c $< -o $@
+
+###################### MAIN DEPENDENCIES ################################
+
+OBJS= ChkTeX.o FindErrs.o getopt.o getopt1.o OpSys.o Resource.o Utility.o
+
+MAKETEST= ./chktex -mall -r -g0 -lchktexrc Test.tex 
+
+Test.out: chktex Test.tex ChkTeX.tex
+	touch Test.out
+	rm -f Test.out
+	$(MAKETEST) 1> Test.out 
+
+check: chktex
+	@echo ">>> Testing that checking algorithms work correctly..."
+	@touch chktest
+	@rm -f chktest
+	@$(MAKETEST) 1> chktest  
+	@if cmp -s chktest Test.out; then \
+	echo ">>> OK!"; \
+	rm -f chktest; \
+	else \
+	echo "***WARNING***"; \
+	echo "Problems when checking compilation. This may or may not"; \
+	echo "be a problem; anyway, I'm giving you a diff from what the"; \
+	echo "results were *supposed* to be..."; \
+	diff -c chktest Test.out; \
+	fi
+
+
+chktex: $(OBJS)
+	touch chktex
+	rm -r chktex
+	$(CC) $(LDFLAGS) -o chktex $(OBJS) $(LIBS)
+
+install: chktex ChkTeX.dvi
+	$(INSTALL) -d $(bindir)
+	for program in chktex $(SCRIPTS); do \
+		$(INSTALL_PROGRAM) $$program  $(bindir); \
+	done
+	$(INSTALL) -d $(datadir)
+	$(INSTALL_DATA) chktexrc $(datadir)
+	if (eval echo "$(SCRIPTS)") | egrep deweb >/dev/null 2>&1; then \
+		$(INSTALL) -d $(mandir); \
+		$(INSTALL) -d $(mandir)/man1; \
+                cp deweb.1 $(mandir)/man1; \
+	fi
+	if (eval echo "$(ELISPDIR)") | egrep "/" >/dev/null 2>&1; then \
+		$(INSTALL_DATA) chktex.el $(ELISPDIR); \
+	fi
+
+
+
+uninstall:
+	-rm -f $(bindir)/chktex
+	-rm -f $(bindir)/chkweb
+	-rm -f $(bindir)/deweb
+	-rm -f $(datadir)/chktexrc
+
+test:
+	chktex -v2 -mall Test.tex | less -r
+
+mostlyclean: clean
+
+clean:
+	-rm -r *.o *.aux *.log  MakeHTML chktex deweb HTML rme 2> /dev/null
+
+distclean: clean
+	-rm -r *.cache *.status *.log *.tar.gz *.lha 2> /dev/null
+
+maintainer-clean: clean
+	@echo "This command is intended for maintainers to use;"
+	@echo "it deletes files that may require special tools to rebuild."
+	-rm -r *.rme *.dvi *.ps *.doc Test.out 2> /dev/null
+
+dvi: ChkTeX.dvi
+
+html:
+	touch HTML
+	rm -r HTML
+	mkdir HTML
+	chmod u+x MakeHTML
+	./MakeHTML ChkTeX.tex > HTML/ChkTeX.tex
+	cd HTML; $(LATEX2HTML) ChkTeX.tex
+	$(PERL5) -i -pe 's%</code> %</code>%gi;s%\s+([.,?!])%$$1%g;' HTML/ChkTeX/*.html
+
+ChkTeX.readme: ChkTeX.tex
+	touch rme
+	rm -r rme
+	mkdir rme
+	chmod u+x MakeHTML
+	./MakeHTML ChkTeX.tex > rme/ChkTeX.tex
+	cd rme; $(LATEX2HTML) -split 0 ChkTeX.tex
+	$(PERL5) -i -pe 's%</code> %</code>%gi;s%\s+([.,?!])%$$1%g;' rme/ChkTeX/*.html
+	$(LYNX) -dump rme/ChkTeX/ChkTeX.html > ChkTeX.rme
+	cp Readme.header ChkTeX.readme
+	$(PERL5) -e 'undef $$/;$$_=<>;($$_)=/(.*INTRODUCTION(.|\n)*?)[ \t]+ABOUT THIS DOCUMENT/i;s/[ \t]+\n/\n/g;s/\n\n\n/\n/g;s/\[\d+\]//g;print;' ChkTeX.rme >> ChkTeX.readme
+
+###################### INDIVIDUAL DEPENDENCIES ##########################
+
+deweb.doc: deweb.1
+	touch deweb.doc
+	rm -rf deweb.doc
+	$(GROFF) deweb.1 > deweb.doc
+
+configure: configure.in
+	autoconf
+
+ChkTeX.dvi: ChkTeX.tex
+	$(LATEX) ChkTeX.tex
+
+ChkTeX.ps: ChkTeX.dvi
+	$(DVIPS) -o ChkTeX.ps ChkTeX.dvi
+
+ChkTeX: ChkTeX.c
+	@echo
+
+ChkTeX.o: ChkTeX.c WB2Argv.h getopt.h ChkTeX.h exec/types.h \
+Utility.h OpSys.h FindErrs.h Resource.h config.h
+
+FindErrs.o: FindErrs.c ChkTeX.h exec/types.h FindErrs.h \
+Utility.h OpSys.h Resource.h config.h
+
+getopt.o: getopt.c config.h getopt.h
+
+getopt1.o: getopt1.c config.h getopt.h
+
+OpSys.o: OpSys.c ChkTeX.h exec/types.h Utility.h OpSys.h config.h
+
+Resource.o: Resource.c ChkTeX.h exec/types.h Utility.h OpSys.h Resource.h \
+config.h
+
+Utility.o: Utility.c ChkTeX.h exec/types.h Utility.h OpSys.h Resource.h \
+config.h
+
+RegExps.o: RegExps.c RegExps.h config.h
+
+WB2Argv.o: WB2Argv.c WB2Argv.h
+
+cover:
+	chktex -h
+	chktex Test.tex
+	chktex -v2 -t -o tmptmptmp <Test.tex
+	chktex -v2 -t -o tmptmptmp Test.tex
+	chktex Test.tex -v
+	chktex Test.tex -v0
+	chktex Test.tex -v1
+	chktex Test.tex -v2
+	chktex Test.tex -v3
+	chktex Test.tex -v4
+	chktex -t -v0s::: Test.tex -x
+	chktex -p FOO Test.tex
+	chktex -t Test.tex
+	chktex -o tmptmptmp -o tmptmptmptmp Test.tex
+	chktex -l t:faultrc test.tex
+	chktex -e30w22n1 Test.tex
+	chktex -w33e-n1 Test.tex
+	chktex -i
+	chktex -v2 -t -o tmptmptmp <Test.tex
+	chktex -I Test.tex
+	chktex -rd2 Test.tex
+	chktex -gd2 Test.tex
+	chktex -f "*N\
+Between: %b*N\
+Column: %c*N\
+Lenght: %d*N\
+File: %f*N\
+%iInverse%I*N\
+Kind: %k*N\
+Line: %l*N\
+Msg: %m*N\
+Num: %n*N\
+Und: %u*N\
+Pre:  %r*N\
+Str:  %s*N\
+Post: %t*N\
+*N\
+%k in %f line %l: %m*N\
+%r%i%s%I%t*N\
+%u*N\
+*N" Test.tex
+	chktex -o tmptmptmp -r -d2 Test.tex
+	chktex -qv0 Test.tex
+	chktex -w30 Test.tex
+	chktex -g --localrc=.testrc -d2 Test.tex
+	cover

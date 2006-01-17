@@ -1,0 +1,208 @@
+
+		PS2PK installation summary
+		--------------------------
+			(March 1995)
+
+For the version which works with Karl Berry's path searching, 
+run configure in this directory and use the Makefile which is
+generated.  Otherwise follow the instructions below
+There needs to be a fully configured kpathsea directory
+at the same level as this.
+
+Special versions of MakeTeXPK and texmf.cnf are provided
+These are needed for the proper running of this version
+of ps2pk.
+
+		       (January 1994)
+
+The ./src directory contains the sources to build the following programs:
+  - ps2pk	a program to build PK fonts from PostScript type1 fonts
+  - pk2bm	a program that allows to look at a PK character.
+ 		
+To install and use these programs follow next steps:
+ 1) - Go to the ./src directory.  
+
+      Select a Makefile.xxx
+	 System    xxx
+	 ------------------------------------------------------------
+	 UNIX      unx  A universal UNIX makefile using gcc.
+	                This makefile is tailored to BSD like UNIX-es. On
+	                SYS5 UNIX systems some small changes may be
+	                necessary.
+
+	 MSDOS     bcc  Borland C 3.1. The programs compile but ps2pk.exe
+                        does not run (program does not fit in 640k!).
+
+		   djg  Delorie's port of gcc. The programs compile and run
+			on 386 compatible machines only. Ready compiled
+			versions are available that run on MSDOS or
+			MSWindows (386 with or without a coprocessor needed).
+
+		   emx  Eberhardt Mattes port of GCC with an extender that
+			can be used on MSDOS and OS2. Only 386.
+
+		   wat  For the Watcom/386 compiler.
+
+      Copy the selected Makefile.xxx to Makefile.
+
+      Edit the Makefile to adapt the T1INPUTS path and the bin and man
+      directories.
+      
+    - Do a `make'. This will create the tools above.
+      The master Makefile calls the appropriate Makefile in the ./type1
+      directory to install a type1 library. If your compiler has problems
+      in compiling this library you possibly have to adapt that
+      makefile to your needs.
+
+    - Do a `make install'.
+      This will install the above programs.
+
+    - Do a `make install.man'.
+      This will install manual pages for the above programs.
+
+ 2) Testing ps2pk from ./src directory. 
+    The directory ../Utopia contains the Utopia-Regular font donated by
+    Adobe. To make from this type1 font a PKfile next steps are needed:
+         setenv T1INPUTS ../Utopia		(C-shell)
+         ps2pk -v -X300 Utopia-Regular.pfa      (long)
+     or: ps2pk -v Utopia-Regular.pfa            (short using defaults)
+
+    This will create the Utopia-Regular10.300pk font with the default
+    AdobeStandard characters derived from ../Utopia/Utopia-Regular.afm.
+    (The -v flag will show what the program is doing and which character
+    codes are generated.)
+
+    To see how for example the `Q' is rendered by ps2pk (using the IBM
+    type1 rendering software) you can use:
+         pk2bm -bcQ Utopia-Regular10.300pk
+
+    MSDOS has problems with such long names as Utopia-Regular10.300pk. That
+    is the reason that dvips uses abreviations for the PostScript names. The
+    short name for TeX's virtual font needed to use Utopia-Regular is `putr'.
+    The short name for its raw counterpart is `rputr'. To generate rputr.pk 
+    the equivalent of Utopia-Regular10.300pk in directory 300dpi you have to 
+    use (on MSDOS):
+         ps2pk -v Utopia-Regular 300dpi\rputr.pk
+    
+    Ps2pk has some extra options. All options are explained in the manual page
+    (man/ps2pk.1). Here are the most important:
+       -X<xres>	     the desired X-resolution (ex: 300, 329, 360, 432, etc)
+       -E<expansion> the factor to expand a font
+       -S<slant>     to get a slanted font.
+    
+ 3) Using the ps2pk rendered fonts with xdvi.
+    The main reason why ps2pk is written is to use the PK fonts for
+    previewing a (La)TeX document that uses PostScript fonts. But some
+    people use the PKfonts instead of the original type1 fonts that are
+    available in the printer because they consume less virtual memory
+    or because the printing goes faster.
+
+    To use putr the TeX version of Utopia-Regular in xdvi you will need:
+       - the latest version of xdvi (supporting virtual fonts)
+       - putr.tfm and putr.vf (the virtual TeX-face of Utopia-Regular)
+       - rputr.tfm and rputr.300pk (the raw TeX-face of Utopia-Regular)
+       - testfont.tex (a plain TeX source to test the font).
+    
+    We have explained how to make rputr.300pk from Utopia-Regular. How do
+    we generate rputr.tfm, putr.vf and putr.tfm? The first TFM file can be
+    generated with afm2tfm, coming with dvips, in the following way:
+       - afm2tfm Utopia/Utopia-Regular.afm -v putr.vpl rputr.tfm
+    
+    The TFM/VF files for putr can be generated from the virtual property
+    list file (VPL) with vptovf:  
+       - vptovf putr.vpl putr.vf putr.tfm
+    
+    Now we have to verify that xdvi can find all these VF and PK fonts
+    by adding the current directory to the PATH's used for locating them:
+       - XDVIVFS	(path for VF files)
+       - XDVIFONTS	(path for PK files)
+    
+    Now we are ready to test Utopia-Regular:
+       - tex testfont
+       
+         If TeX asks for a font enter `putr' and when asked for a test
+         enter `\bigtest\bye' and you will get a testfont.dvi file.
+         (Testfont.tex is distributed with every TeX version.)
+
+       - xdvi testfont
+       
+         If everything is OK you should see Utopia!
+    
+    (You can try another testfont with `rputr' instead of `putr'. Explain
+    the differences!)
+
+ 4) Using Utopia-Regular with dvips.
+    Before you can run dvips to generate the PostScript output that can
+    be printed you have to make the font available to dvips by adding a
+    line to psfonts.map (normally located in /usr/local/lib/tex/ps).
+    This line tells dvips if a font is resident (available in the
+    printer) and if not how to download it. For rputr we need to add 
+    next line in psfonts.map (the new version of afm2tfm will show this
+    line on the standard output):
+       rputr Utopia-Regular
+    
+    and to copy or to move Utopia-Regular to /usr/local/lib/tex/ps so
+    that it will be downloaded (added to the PostScript output).
+       dvips testfont
+    
+    If you have GhostScript, and your dvips is installed so that it does
+    not send the output immediately to the printer, you can check 
+    testfont.ps behind your X-display with:
+       gs testfont.ps
+
+ 5) Using rputr.300pk with dvips.
+    You have to remove the line you have added to psfonts.map. Then
+    dvips will try to find a PK-font instead of the type1 font.
+    
+ 6) Automatic font generation with MakeTeXPK.
+
+    If you are interested in automatically generating PK fonts from
+    either METAFONT and/or type1 sources you may want to install the
+    MTPK package. This package provides a perl script that allows
+    DVI drivers to generate missing PK sizes in a platform independant
+    way. See ftp.urc.tue.nl:pub/tex/MTPK??.gtz and the MTPK??.README
+    file for more information (under development).
+
+ 7) Although ps2pk is set up for AdobeStandardEncoding, the default used 
+    by current versions of dvips, it will also accept other PostScript
+    and TeX encodings. An interesting alternative for TeX users is the new
+    TUG 8bits font standard (see: TUGboat #10 vol. 4 1990). This standard
+    is a superset of ISOLatin1 with many accented characters. The PostScript
+    encoding used by this new font is contained in etc/EC.enc. In order to
+    use it you will need afm2tfm version 7.0 (distributed with dvips5485++).
+
+    [Here you should read two danger bends!! Next in small letters . . .
+
+    As an example how an encoding scheme other than Adobe Standard can
+    be used we show how you can use the Utopia-Regular font as an
+    extended Computer Modern font. We use this encoding scheme both on
+    the TeX input side (let us call that internal encoding) and on the
+    TeX output side (we will call that external encoding). It is clear
+    that we can not use the plain macros that are still based on
+    oldstyle 7bits internal encodings.  But we can use NFSS-DC a new
+    font selection scheme based on DC encodings. The DC encoding is a
+    preliminar version of the EC encoding.
+    
+    How do we generate the appropriate TFM, VF and PK files?
+      rputr.300pk:
+         setenv T1INPUTS Utopia			(C-shell)
+         ps2pk -e etc/EC.enc Utopia-Regular rputr.300pk
+      rputr.tfm and putr.vpl:
+         afm2tfm Utopia/Utopia-Regular.afm -p etc/EC.enc -v putr.vpl rputr.tfm
+      putr.vf putr.tfm:
+         vptovf putr.vpl putr.vf putr.tfm
+    
+    How do we use it?
+      psfonts.map (add line):
+         rputr Utopia-Regular " ECEncoding ReEncodeFont " <EC.enc
+      $TEXCONFIG:
+         install here Utopia-Regular and EC.enc
+      testfont.tex (tex-nfss-dc is a special plain TeX version):
+         tex-nfss-dc testfont (choose `putr' and '\bigtest\bye')
+         xdvi testfont
+         dvips testfont.
+    
+    . . .End of dangerous stuff and the small letters]
+
+--Piet      
+

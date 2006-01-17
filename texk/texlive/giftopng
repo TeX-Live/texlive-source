@@ -1,0 +1,4 @@
+#!/bin/sh
+X=`kpsewhich $1`
+Y=`basename $X .gif`.png
+convert $X $Y

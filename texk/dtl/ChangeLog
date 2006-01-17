@@ -1,0 +1,24 @@
+1998-10-22  Eli Zaretskii  <eliz@is.elta.co.il>
+
+	* dv2dt.c (main): Switch stdout to binary, but only if it's not
+	the console device.
+	(top-level): Include config.h and kpathsea/c-fopen.h.
+
+	* dt2dv.c (dvi_stdout): Switch stdout to binary, but only if it's
+	not the console device.
+	(top-level): Include config.h and kpathsea/c-fopen.h.
+
+	* Makefile.in (DEFS): Use -DNO_DEBUG, since DTL doesn't use
+	Kpathsea.
+
+Wed Mar 25 14:13:38 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* Makefile.in: additions from Eli Zaretski for DOS compatibility;
+	bare-bones kpathsea usage
+	
+Tue Jan 27 14:32:25 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* configure etc: new configure.in, c-auto.in, Makefile.in from
+	Olaf Weber
+	
+

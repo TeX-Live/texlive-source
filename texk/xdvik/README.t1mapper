@@ -1,0 +1,187 @@
+
+README for t1mapper
+===================
+
+T1mapper is a utility for mapping/copying PostScript(tm) Type1 fonts
+from various sources (e.g. an existing ghostscript installation) into
+the texmf source tree to make them available for xdvik.
+
+The instructions in this README do not apply to users of recent teTeX
+(teTeX-beta or teTeX >= 1.0) or TeXLive (>= 6b) distributions; these
+already contain the required fonts within the texmf tree.
+
+For general information on the use of t1fonts with xdvik, please
+see the file README.t1fonts.
+
+
+
+T1mapper is written in Perl, and it should make it rather easy to
+install type1 fonts in a way such that xdvik can use them.  The manual
+page of t1mapper(1) gives a short command overview, and the following
+sections describe the font installation in more detail.
+
+1. Installing the "standard" postscript fonts
+
+Have gs (ghostscript) version >= 4.x installed (or downloaded and
+unpacked), including both font packages ('std' and 'other').  If you
+have gs on your machine already you can check what version you have
+with the command 'gs -help'; this also tells you where the installed
+gs stores its fonts.  Find the Fontmap file and the fonts.  If you
+can't find them, pretend you don't have them and follow the
+instructions in the next paragraph.
+
+If you don't have gs installed you need to get it and and the font
+packages.  A likely source of a recent ghostscript is
+
+http://sourceforge.net/projects/ghostscript/
+http://www.gnu.org/software/ghostscript/ghostscript.html
+
+
+You'll need to download the 2 font directories (`std' and `other')
+and the source package. From the latter, t1mapper only needs the file
+'Fontmap' or 'Fontmap.GS'.
+Install the files somewhere, e.g. to /usr/local/share/ghostscript/fonts.
+If you wonder about the contents of the Ghostscript font packages, and
+their relation to the "real" type1 fonts used in printers, please look
+at the GS docs.
+
+Decide where to install the font files for xdvi;
+/usr/local/teTeX/share/texmf/fonts/type1/gs is a likely place.  Now
+run t1mapper (probably as root) to install the fonts:
+
+  t1mapper -lns -gs /usr/local/share/ghostscript/5.50/Fontmap \
+	  /usr/local/share/ghostscript/fonts \
+	  /usr/local/teTeX/share/texmf/fonts/type1/gs
+
+Notes:
+- For the meaning of -lns -gs and other t1mapper options, see below.
+- If you unpacked the gs packages and installed them by hand, please
+  correct the Fontmap path.
+- The directory
+  /usr/local/teTeX/share/texmf/fonts/type1/gs
+  will be created if it does not already exist.
+- With ghostscript >= 6.51, `Fontmap' is only a wrapper for `Fontmap.GS'.
+  Use `Fontmap.GS' instead of `Fontmap' in the invocation of t1mapper.
+
+In some versions of Linux, such as Red Hat Linux 7.x, the files have
+been split into two directories.  Listing the contents of the gs related
+font packages reveals that they have been put in both
+/usr/share/fonts/default/ghostscript and
+/usr/share/fonts/default/Type1.  If you use such a distribution, this
+might be the commands to use:
+
+  t1mapper -lns -gs /usr/share/ghostscript/5.50/Fontmap \
+	  /usr/share/fonts/default/ghostscript \
+	  /usr/share/texmf/fonts/type1/gs 
+  t1mapper -lns -gs /usr/share/ghostscript/5.50/Fontmap \
+	  /usr/share/fonts/default/Type1 \
+	  /usr/share/texmf/fonts/type1/gs
+
+When the command is complete, all the fonts gs knows about will have
+been copied to /usr/local/teTeX/share/texmf/fonts/type1/gs.  This will
+give you the standard PostScript fonts as well as some others. 
+
+2. Installing Other Postscript Fonts
+
+If you already have some type1 fonts (other than the ones from
+ghostscript), you might want to add them as well.  Some sites have
+extensive postscript font collections.  All these fonts can be used.
+
+Additionaly, if you use a machine with a comercial Unix version (such
+as IRIX, Solaris, AIX, HP-UX, ...) it is quite likely that some type1
+fonts are installed on the machine.  These can be used by ghostscript
+and xdvi.  If you don't know where they are search for filenames such
+as '*.pfa', '*.pfb', and 'Times-Roman*' and you should be able to find
+them.
+
+To add the fonts found on a Solaris machine, use this command:
+
+t1mapper -lns /usr/local/teTeX/share/texmf/fonts/type1/gs \
+	/usr/openwin/lib/X11/fonts/Type1/*.pfa
+
+Run the command on all the type1 fonts you want to be able to use in
+xdvi.  
+
+Notes:
+- Do not run t1mapper on the TeX type1 fonts (cm* and so on).
+- Fonts from the `Lucida' family have a rather difficult structure
+  and might be difficult to install. Please see the files xdvi.cfg and
+  lucida.map.
+
+Copying/linking them all to the same directory will ensure that only
+one version of each font is available to xdvi.  t1mapper will remove
+any font version already available in the target directory before
+moving a font there.
+
+The -lns option will cause t1mapper to symlink the fonts instead of
+copying them, saving a good deal of disk space. Here's a quick summary
+of the options that can be used to customize what t1mapper does with
+the files:
+
+ -cp	copy the font files, this is the default and will always work
+	and never break down on you.
+ -ln	make hard links, this requires all the fonts to be on the same disk.
+ -lns	make symbolic links, this requires that you do not remove the fonts
+	linked, or xdvi will not be able to use them anymore.
+ -lnlns attempt hard-link first, if it fails make symbolic link.
+ -lncp  attempt hard-link first, if it fails copy the file.  This is a way
+	to save some diskspace if possible, with no risk of files
+	disapearing.
+
+3. AFM files
+
+AFM files are not needed by xdvik.  TFM files have more accurate width
+data and *must* be used to get correct alignment.
+
+
+4a. Standard TeX fonts in postscript version
+
+If you don't have cmr10.pfb, i.e., the type1 version of the
+traditional TeX fonts you need to get them from CTAN, e.g.,
+ftp.tex.ac.uk:/tex-archive/fonts/cm/ps-type1/bluesky/pfb/.  Just drop
+them in a texmf directory, such as fonts/type1/bluesky/cm/.  No
+further configuration should be needed to use these fonts.
+
+4b. AMS TeX fonts in postscript version
+
+Additionaly, get
+/tex-archive/fonts/amsfonts/ps-type1/amsps-unix.tar.gz and install the
+pfb files in fonts/type1/bluesky/ams.
+
+4c. More TeX fonts in postscript version
+
+There are some more type1 fonts in
+/tex-archive/fonts/cm/ps-type1/bakoma/pfb.  As with the bluesky fonts
+drop them in a directory, such as fonts/type1/bakoma.  There is a
+large overlap between the bakoma and bluesky fonts, you can save some
+confusion and diskspace by removing the bakoma fonts that have bluesky
+equivalents.
+
+(Side note: There are licensing restrictions on the use of the bakoma
+fonts which might prevent you from using them; one of them being the
+inclusion in finished documents.  However, DVI files are not `finished'
+documents in this sense, since they don't contain the font shapes
+themselves; instead, xdvi needs to locate the fonts on disk.)
+
+If you do not want dvips to use the bakoma fonts, make sure that they are
+not referenced in any of the dvips fontmaps.
+
+5. Xdvi config files
+
+If you did not do 'make install' you will want to copy
+texk/xdvik/texmf/* from the source distribution into
+/usr/local/teTeX/share/texmf/xdvi.  This copies some important
+configuration files describing encoding vectors and fonts to xdvi (see
+above).
+
+6. Almost finished
+
+All the font files are now where they should be.  If you use a file
+database it's time to update it.  TeTeX users run 'texhash' to obtain
+this effect.
+
+Xdvi can now find all the nice files and will not need pk versions of
+all those fonts.
+
+If you experience problems, please see the section `Debugging your
+font setup' in the file README.t1fonts.

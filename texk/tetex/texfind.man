@@ -1,0 +1,72 @@
+.TH "texfind" "1" "April 2004" "ConTeXt" "teTeX" 
+.PP 
+.SH "NAME" 
+texfind \- graphical tool to search for text in TeX input files
+.PP 
+.SH "SYNOPSIS" 
+.PP 
+\fBtexfind\fP  [ \fIOPTION\fP \&.\&.\&.  ]
+.PP 
+.SH "DESCRIPTION" 
+.PP 
+\fBtexfind\fP is a graphical, interactive tool that helps you
+searching through TeX input files, including subdirectories, and
+allows you to do search/replace tasks using Perl regular
+expressions. It opens two windows: One displays the directory
+hierarchy and allows to select different search directories. The
+second window is used to enter the query and display the results.
+.PP
+.SH "SEARCHING"
+.PP
+Enter a search string  in the input box at the top, choose the file
+extension (*tex by default) and hit ENTER to start the search. The
+results will be displayed below.
+.PP
+The search string is actually a perl regular expression. This gives
+you lots of flexibility. The search-and-replace function also uses
+Perl regex syntax, but you can also just use simple strings. Currently
+there is no way to save changed files.
+.PP 
+.SH "MENU" 
+.PP 
+Use the right mouse button to open a menu. 
+.HP
+\fBFile\fP : Currently only used to exit the program
+.HP
+\fBEdit\fP : Copy selections, select or unselect all
+.HP
+\fBSearch\fP : Open a \fBFind\fP dialog that allows further searching
+through the displayed results. The \fBReplace\fP option can be used to
+replace single or all occurrences of a string, but currently it is not
+possible to change the file.
+.PP
+\fBView\fP : Select specific lines, and adjust word or character
+wrapping.  
+.PP
+.SH "OPTIONS" 
+.HP
+\fB\-\-font\fR : specify the font used for the menu. Default is
+courier. 
+.HP
+Other options probably exist - I appreciate input by the program
+authors, experienced users or perl geeks.
+.HP
+.SH "SEE ALSO" 
+.IP 
+\fBperlre\fP(1)
+.PP 
+.SH "BUGS" 
+.PP 
+None known\&. Well - the replace function isn't the most useful one.
+.PP 
+.SH "AUTHOR" 
+.PP 
+\fBtexfind\fP was written for the ConTeXt package by Hans Hagen and
+Ton Otten, PRAGMA\&.
+.PP 
+This manual page was written by Frank Küster <frank@kuesterei\&.ch>,
+for the Debian GNU/Linux system\&.  It may be used and modified by
+others without contacting the author\&.  Any mistakes or omissions in
+the manual page are my fault; inquiries about or corrections to this
+manual page should be directed to me (and not to the primary
+author)\&.

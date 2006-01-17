@@ -1,0 +1,124 @@
+.TH TTFDUMP 1 "18 Feb 1997" "ILX Project" 
+.SH NAME
+ttfdump \- Dumping the contents of a TrueType Font file
+.SH SYNOPSIS
+\fBttfdump\fR [-h] [-t \fItablename\fP] [-g \fIglyphnumber\fP] [-c \fIcollection\fP] [-i] \fIttfile\fR [-o \fIdumpfile\fR]
+.SH DESCRIPTION
+\fBttfdump\fP dumps the contents of a TrueType font file in ASCII form. 
+A TrueType font file is consist of various tables. Those table are divided into
+two categories - \fIRequired Tables\fP and \fIOptional Tables\fP. Mulitiple 
+TrueType fonts and be merged to a TrueType Collection.
+.SS Options
+.TP
+\fB-h\fP
+Print a help message on standard output and exit.
+.TP
+\fB-t\fI tablename\fR
+If this option is specified then dump the table \fI"tablename"\fP, otherwise 
+dump every tables in \fIttfile\fP.
+\fITablename\fP can be one of the following:
+.RS
+.TP
+\fBRequired Tables\fR
+.TP
+\fIcmap\fP 
+character to glhph mapping table
+.TP
+\fIglyf\fP
+glyph data
+.TP
+\fIhead\fP
+font header
+.TP
+\fIhhea\fP
+horizontal header
+.TP
+\fIhmtx\fP
+horizontal metrics
+.TP
+\fIloca\fP
+index to location
+.TP
+\fImaxp\fP
+maximum profile
+.TP
+\fIname\fP
+naming table
+.TP
+\fIpost\fP
+PostScript information
+.TP
+\fIOS/2\fP
+OS/2 and windows specific metrics
+.TP
+\fBOptional Tables\fR
+.TP
+\fIcvt\fP
+control value table
+.TP
+\fIfpgm\fP
+font program; \fInot implemented yet.\fP
+.TP
+\fIgasp\fP
+grid-fitting and scan conversion procedure (grayscale)
+.TP
+\fIhdmx\fP
+horizontal device metrics
+.TP
+\fIkern\fP
+kerning table
+.TP
+\fILTSH\fP
+Linear threshold table
+.TP
+\fIprep\fP
+CVT program; \fInot implemented yet\fP
+.TP
+\fIPCLT\fP
+PCL5 table
+.TP
+\fIVDMX\fP
+Vertical Device Metrics table
+.TP
+\fIvhea\fP
+vertical metrics header
+.TP
+\fIvmtx\fP
+vertical metrics
+.RE
+.TP
+\fB-g\fI glyphnumber\fR
+If this option is specified then dump the glyph with index \fIglyphnumber\fP, 
+otherwise dump all glyphs in \fIttfile\fP.
+.TP
+\fB-c\fI collection\fR
+Select a TrueType font in a TrueType Collection.
+.TP
+\fB-i\fI ttfile\fR
+TrueType font file to be dumped.
+.TP
+\fB-o\fI dumpfile\fR
+Output of the dump. If this option is not specified, dump to stdout.
+.RE
+.SH EXAMPLE
+To dump all information in the TrueType font file times.ttf:
+.RS
+ttfdump times.ttf
+.RE
+
+To dump the required table \fIcmap\fP in the file:
+.RS
+ttfdump -t cmap times.ttf
+.RE
+
+To dump a single glyph with index 50:
+.RS
+ttfdump -g 50 times.ttf
+.RE
+
+.SH SEE ALSO
+TrueType 1.0 Font Files, \fI Technical Specification Revision 1.66 November 1995\fR
+.SH NOTE
+Instruction disassembler in not implemented.
+.SH AOTHOR
+Li-Da Lho, ollie@ms1.hinet.net 

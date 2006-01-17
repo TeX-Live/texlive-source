@@ -1,0 +1,240 @@
+% original t1fonts.map -- Constructed by M. Wicks, 8/17/99
+%
+% Format is as follows:
+% TeX-name encoding AFM-name PFB-name
+% The default behavior is to use the font's built-in
+% encoding, to use the TeX-name as the AFM-name, and
+% to use the AFM-name as the PFB-name.
+% The word "default" may be used in any field to
+% specify the default behavior. You can
+% also say "none", in the PFB field, for example
+% to say that no PFB should be loaded
+%
+% The following entries are used to force an encoding to work around several
+% bugs in Acrobat reader.  The ot1 encoding is used to supply an encoding
+% external to that the the type 1 font definition.  The seems to be necessary 
+% to be able to search ligatures, for example.  The "-r" option
+% is used to remap the character positions that Adobe normally does
+% not use to higher positions.  This seems to fix a variety of problems
+%
+cmr10 ot1 -r
+cmr12 ot1 -r
+cmr17 ot1 -r
+cmr6 ot1 -r
+cmr7 ot1 -r
+cmr8 ot1 -r
+cmr9 ot1 -r
+% cmr5 is encoded somewhat differently
+cmr5 -r
+% Bold
+cmbx10 ot1 -r
+cmbx12 ot1 -r
+cmbx6 ot1 -r
+cmbx7 ot1 -r
+cmbx8 ot1 -r
+cmbx9 ot1 -r
+% Symbol fonts are remapped, but not reencoded
+cmex10 -r
+cmbsy10 -r
+cmsy10 -r
+cmsy9 -r
+cmsy8 -r
+cmsy7 -r
+cmsy6 -r
+cmsy5 -r
+lasy10 -r
+lasy9 -r
+lasy8 -r
+lasy7 -r
+lasy6 -r
+lasy5 -r
+cmbsy7 -r
+cmbsy5 -r
+euex10 -r
+eufm10 -r
+eufm7 -r
+eufm5 -r
+eufb10 -r
+eufb7 -r
+eufb5 -r
+eurb10 -r
+eurm10 -r
+eurb7 -r
+eurm7 -r
+eurb5 -r
+eurm5 -r
+msam10 -r
+xycmat10 -r
+xycmbt10 -r
+xtdash10 -r
+xycirc10 -r
+xyatip10 -r
+xybtip10 -r
+% Likewise for math italic
+cmmi12 -r
+cmmi10 -r
+cmmib10 -r
+cmmi9 -r
+cmmi8 -r
+cmmi7 -r
+cmmi6 -r
+cmmi5 -r
+% Misc
+cmb10 ot1 -r
+cmbxsl10 ot1 -r
+cmbxti10 ot1alt -r
+cmdunh10 ot1 -r
+cmff10  ot1alt -r
+cmfi10 ot1alt -r
+cmfib8 ot1alt -r
+cmssbx10 ot1 -r
+cmssdc10 ot1 -r
+cmssq8 ot1 -r
+cmssqi8 ot1 -r
+cmu10 ot1alt -r
+cmvtt10 ot1 -r
+lcmss8 ot1 -r
+lcmssb8 ot1 -r
+lcmssi8 ot1 -r
+% tt fonts
+cmtt10 -r
+cmtt12 -r
+cmtt8 -r
+cmtt9 -r
+% Italic 
+cmti10 ot1alt -r
+cmti12 ot1alt -r
+cmti7 ot1alt -r
+cmti8 ot1alt -r
+cmti9 ot1alt -r
+% Slanted
+cmsl10 ot1 -r
+cmsl12 ot1 -r
+cmsl8 ot1 -r
+cmsl9 ot1 -r
+% Roman sanserif
+cmss10 ot1 -r
+cmss12 ot1 -r
+cmss17 ot1 -r
+cmss8 ot1 -r
+cmss9 ot1 -r
+% Sans Serif
+cmssi10 ot1 -r
+cmssi12 ot1 -r
+cmssi17 ot1 -r
+cmssi8 ot1 -r
+cmssi9 ot1 -r
+% 
+
+% CharterBT-Bold
+bchb8r 8r bchb8a
+% CharterBT-BoldItalic
+bchbi8r 8r bchbi8a
+% CharterBT-Roman
+bchr8r 8r bchr8a
+% CharterBT-Italic
+bchri8r 8r bchri8a
+% AvantGarde-Demi
+pagd8r 8r pagd8a
+% AvantGarde-DemiOblique
+pagdo8r 8r pagdo8a
+% AvantGarde-Book
+pagk8r 8r pagk8a
+% AvantGarde-BookOblique
+pagko8r 8r pagko8a
+% Bookman-Demi
+pbkd8r 8r pbkd8a
+% Bookman-DemiItalic
+pbkdi8r 8r pbkdi8a
+% Bookman-Light
+pbkl8r 8r pbkl8a
+% Bookman-LightItalic
+pbkli8r 8r pbkli8a
+% Courier-Bold
+pcrb8r 8r Courier-Bold
+% Courier-BoldOblique
+pcrbo8r 8r Courier-BoldOblique
+% Courier
+pcrr8r 8r Courier
+% Narrow Courier
+pcrr8rn 8r Courier -e 0.85
+% Courier-Oblique
+pcrro8r 8r Courier-Oblique
+% Helvetica-Bold
+phvb8r 8r Helvetica-Bold
+% Helvetica-Narrow-Bold
+phvb8rn 8r Helvetica-Narrow-Bold
+% Helvetica-BoldOblique
+phvbo8r 8r phvbo8a
+% Helvetica-Narrow-BoldOblique
+phvbo8rn 8r Helvetica-Narrow-BoldOblique
+%
+phvbon8r 8r Helvetica-BoldOblique -e 0.82
+phvbrn8r 8r Helvetica-Bold -e 0.82
+% Helvetica
+phvr8r 8r phvr8a
+% Helvetica-Narrow
+phvr8rn 8r Helvetica-Narrow
+% Helvetica-Oblique
+phvro8r 8r Helvetica-Oblique
+% Helvetica-Narrow-Oblique
+phvro8rn 8r Helvetica-Narrow-Oblique
+phvron8r 8r Helvetica-Oblique -e 0.82
+phvrrn8r Helvetica -e 0.82
+% NewCenturySchlbk-Bold
+pncb8r 8r pncb8a
+% NewCenturySchlbk-BoldItalic
+pncbi8r 8r pncbi8a
+pncbo8r 8r pncb8a -s 0.167
+% NewCenturySchlbk-Roman
+pncr8r 8r pncr8a
+% NewCenturySchlbk-Italic
+pncri8r 8r pncri8a
+pncro8r 8r pncri8a -s 0.167
+% Palatino-Bold
+pplb8r 8r pplb8a
+% Palatino-BoldItalic
+pplbi8r 8r pplbi8a
+pplbo8r 8r pplb8a -s 0.167
+pplbu8r 8r pplbi8a -s -0.1763
+% Palatino-Roman
+pplr8r 8r pplr8a
+% Palatino-Italic
+pplri8r 8r pplri8a
+pplro8r 8r pplr8a -s 0.167
+pplrre8r 8r pplr8a -e 1.2
+pplrrn8r 8r pplr8a -e 0.82
+pplru8r 8r pplri8a -s -0.1763
+% Symbol
+psyr none Symbol
+psyro none Symbol -s 0.167
+% Times-Bold
+ptmb8r 8r Times-Bold
+% Times-BoldItalic
+ptmbi8r 8r Times-Italic
+% Times-Roman
+ptmr8r 8r Times-Roman
+% Times-Italic
+ptmri8r 8r Times-Italic
+ptmbo8r 8r Times-Bold -s 0.167
+ptmro8r 8r Times-Roman -s 0.167
+ptmrre8r 8r Times-Roman -e 1.2
+ptmrrn8r 8r Times-Roman -e 0.82
+% Utopia-Bold
+putb8r 8r putb8a
+% Utopia-BoldItalic
+putbi8r 8r putbi8a
+% Utopia-Regular
+putr8r 8r putr8a
+% Utopia-Italic
+putri8r 8r putri8a
+putbo8r 8r putb8a -s 0.167
+putro8r 8r putr8a -s 0.167
+% ZapfChancery-MediumItalic
+pzcmi8r 8r pzcmi8a
+% ZapfDingbats
+pzdr none ZapfDingbats
+% LaTeX Fonts having short file names
+lcirclew10 none lcirclew -r
+lcircle10 none lcircle1 -r
+line10 -r

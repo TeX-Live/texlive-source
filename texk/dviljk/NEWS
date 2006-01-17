@@ -1,0 +1,53 @@
+This file records noteworthy changes.
+
+2.7 (6 January 1998)
+* Update for dvi2xx 0.51-14.
+2.6 (6 February 1997)
+* Update for kpathsea 3.0.
+* Update for dvi2xx 0.51-13.
+* dvihp script handles options a la dvips, and is installed by default.
+* Raster characters and fonts can be downloaded compressed.
+* - option (operate as pipe) works again.
+* More useful debugging output.
+* Bug in page-skipping fixed.
+* But in printing character 0 fixed.
+* Fonts rearranged per TDS, and `q' changed to `8t'.
+
+2.5 (9 January 1995)
+* Redefining MFMODE[36]00 actually works, and is documented.
+
+2.4 (15 December 1994)
+* Character 32 not downloaded on old printers, to work around an
+  apparent bug in the emulation on a Kyocera.
+
+2.3 (26 October 1994)
+* Just keeping up with the changes.
+
+2.2 (14 October 1994)
+* Use perror for nonexistent input files.
+
+2.1 (12 September 1994)
+* Just keeping up with the library changes.
+
+2.0 (8 September 1994)
+* fonts/ and tex/ subdirectories installed via cp -r.
+* You can build all or any of dvilj, dvilj2p, dvilj4l, dvilj4 (only the
+  last is still the default). Also better Alpha support.
+* Update for dvi2xx051a11.
+* Allow foo and foo.bar.dvi for input filenames.
+* NFSS style files (for either LaTeX 2e or LaTeX 2.09 + NFSS)
+  included. From Andy Piper.
+* A better dvihp wrapper script included, suitable for lpr.
+* The debug option (--) accepts a numeric arg to set kpathsea debugging bits.
+* MakeTeXPK is enabled by default.
+* Use Autoconf to determine character signedness, instead of cc predefs.
+* Fix for line graphics bugs on non-300dpi devices.
+
+1.1 (2 April 1994)
+* MakeTeXPK magstep set properly.
+* Better test for the Alpha.
+* Garamond, Antique Olive, and Marigold base fonts installed properly.
+* Script to run dvicopy then dvilj included (contrib/dvihp).
+
+1.0 (3 March 1994)
+* Use Kpathsea and Autoconf.

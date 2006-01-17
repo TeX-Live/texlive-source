@@ -1,0 +1,1 @@
+dvidvi.o: dvidvi.c 

@@ -1,0 +1,2 @@
+#!/bin/sh
+tex -progname=csplain -default-translate-file=il2-cs "$@"

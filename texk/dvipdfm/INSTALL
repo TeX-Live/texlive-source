@@ -1,0 +1,111 @@
+Prerequisite packages:
+
+   To compile and install this package, you NEED an *installed* version of
+the kpathsea library.  Usually a TeTeX installation will have this.
+Specifically, this means the kpathsea headers must be in your preprocessor
+search path (-I) and the kpathsea library must be in your linker search path
+(-L).  The kpathsea library is included in source form with the "texk"
+bundle or the "web2c" bundle, available on CTAN.
+
+   Similar remarks hold for "libz" and its headers; however, dvipdfm will
+configure and compile without a recent version of libz--you just won't have
+any compression.  It *requires* kpath, however.
+
+   The same comments hold for libpng as for libz.  You *should* have a
+recent version of libpng installed before trying to compile dvipdfm. It
+should compile without libpng, but you will lose the ability to include
+thumbnails and png images.
+
+   You will probably want to have GhostScript installed, although it isn't
+absolutely necessary.
+
+Installation:
+
+   Also, you will probabably want 
+
+   1.  Unbundle the gzip'ed tar file.
+   
+   2.  Before compiling, set the CPPFLAGS, CFLAGS, and LDFLAGS environment
+       variables with any options you want and also any -I or -L options
+       required to locate kpathsea.  CPPFLAGS should probably contain -I
+       pointing at the directory containing tex-file.h LDFLAGS should
+       probably contain -L pointing at the directory containing
+       libkpathsea.a
+
+   3.  Type "./configure" in the dvipdfm directory along with any necessary
+       options, e.g., "--prefix=PATH".  Make sure you specify the path to
+       the directory containing your TeX tree root using --datadir=PATH,
+       e.g., if your TeX tree in contained in /usr/share/texmf, you should
+       supply the option --datadir=/usr/share to the configure script.  Note
+       that the prefix and datadir cannot be set independently. They must
+       belong to the same tree.  For example, you could be in trouble if you
+       say something like --datadir=/usr/local/share/tetex and
+       --prefix=/usr/local. The kpathsea library uses the path containing
+       the executable as a hint to locating the temf texmf.cnf file.
+       The executable MUST be placed in the same directory as your other
+       executables that use kpathsea.
+
+   4.  Type "make" in the dvipdfm directory.
+
+   5.  If all goes well, type "make install" in the dvipdfm directory.
+
+   6.  Replace the dvipdfm.def in your LaTex distribution with the one
+       provided by the latest dvipdfm distribution.  This is necessary for
+       .eps and .png file support.  The install script will not do this
+       for you because I do not believe it is healthy to overwrite a file
+       supplied by a different distribution.
+
+   7.  Run "mktexlsr" or its equivalent depending on your TeX distribution.
+       Even if you installed dvipdfm on a Unix system as an ordinary user,
+       you should run mktexlsr to hash your "local" tex files.
+
+   8.  Edit the config script in the texmf/dvipdfm directory and change to
+       suit your needs.  An important configuration option is to set the
+       helper application for converting PS/EPS files to PDF format.  By
+       default this is setup for GhostScript.  If the idea
+       of executing running a command in a shell scares you,
+       comment out the line with the command string.  Alternatively,
+       if you really want to disable it, comment the #define HAVE_SYSTEM
+       in config.h
+
+   I have installed this cleanly myself on Solaris 2.5 and RedHat Linux 5.1
+(upgraded to tetex-0.9). It has been compiled on various platforms by
+various others as part of the TeX-Live project and as part of several
+Windows distributions.  I have been using it primarily under Linux.
+
+   Please e-mail bug reports to
+
+     Mark A. Wicks
+     Kettering University
+     mwicks@kettering.edu
+      
+Notes/Possible Problems:
+
+   1.  The Makefile installs the "dvipdfm" and the "ebb" binaries.
+       The dvipdfm binary requries kpathsea to do its font searching.
+       You must already have a working TeX installation with its own
+       texmf.cnf, etc.
+
+   2.  In addition to this package, you will need PostScript Type1 fonts for
+       the Computer Modern fonts and any additional fonts you want to use.
+       PostScript Type1 fonts are distributed by the American Math Society.
+       Information about these fonts is available at the URL
+
+       http://www.ams.org/tex/type1-fonts.html
+
+       and the fonts themselves (Computer Modern and AMS fonts) are available at
+
+         ftp://ftp.ams.org/pub/tex/psfonts/
+
+       These fonts need to be installed in a location where the kpathsea
+       library can find them.
+
+   3.  If "dvipdfm" complains that it can't find fonts or its font map file,
+       read the "kpathsea" documentation about debugging path searching.  If
+       you can't get kpathsea to find your texmf tree, it can always locate
+       the fonts using environment variables.  If "kpathsea" can't find your
+       texmf.cnf, try setting the environment variable TEXMFCNF to point to
+       the directory containing texmf.cnf As a last resort, you can set
+       T1FONTS to point to your ".pfb" files, and set TFMFONTS to point to
+       your ".tfm" files. Use two trailing //s on the path name if you want
+       that path recursively searched). 

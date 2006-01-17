@@ -1,0 +1,3 @@
+#!/bin/sh
+test -f "`kpsewhich mex.fmt`" || fmtutil --byfmt mex
+exec tex -fmt=mex "$@"

@@ -1,0 +1,3 @@
+#!/bin/sh
+test -f "`kpsewhich lambda.oft`" || fmtutil --byfmt lambda
+exec omega -oft=lambda "$@"

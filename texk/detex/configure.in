@@ -1,0 +1,19 @@
+dnl configure.in for detex. Thomas Esser, 2002. Public domain.
+
+AC_INIT(detex.l)
+
+AC_CONFIG_HEADERS([c-auto.h:c-auto.in])
+
+AC_PROG_CC
+AC_PROG_INSTALL
+AC_PROG_MAKE_SET
+AC_PROG_LN_S
+
+AC_PROG_LEX
+AC_DECL_YYTEXT
+AC_HEADER_TIME
+
+sinclude(../kpathsea/withenable.ac)
+
+KPSE_CONFIG_FILES([Makefile])
+AC_OUTPUT

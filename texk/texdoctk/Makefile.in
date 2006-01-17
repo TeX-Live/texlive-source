@@ -1,0 +1,32 @@
+# Makefile for texlive's extra scripts 
+# Public domain.
+
+ac_include ../make/paths.mk
+ac_include ../make/common.mk
+ac_include ../make/programs.mk
+
+all:  texdoctk
+default: all
+
+install: install-data install-exec
+
+# Auxiliary files.
+install-data:: 
+
+install-exec:
+	-$(SHELL) $(srcdir)/../mkinstalldirs $(scriptdir)
+	for s in texdoctk; do \
+	  rm -f $(scriptdir)/$$s ; \
+	  $(INSTALL_SCRIPT) $(srcdir)/$$s $(scriptdir)/$$s; \
+	done
+
+ac_include ../make/clean.mk
+
+config.status: $(srcdir)/configure
+	$(SHELL) $(srcdir)/configure --no-create --verbose
+
+Makefile: $(srcdir)/Makefile.in config.status
+	$(SHELL) config.status
+
+check:
+

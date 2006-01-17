@@ -1,0 +1,433 @@
+#!/usr/bin/perl -w
+#
+# This program maps full PS font names to abreviated TeX style names
+# and puts font files or links to font files in a file hierarchy
+# suitable for texk.
+# 
+# Mapping example:  Times-Roman.{gsf,pfa,pfb} becomes ptmr.{pfa,pfb}
+#
+
+use File::Path;
+
+# These are the fontname map files to read
+
+# This is for the fontname distribution in teTeX 0.4:
+# @fonts=qw(adobe apple bitstrea dtc linotype monotype skey1250 skey1555
+# 	  softkey urw);
+
+# This is for fontname 2.2, get it from ftp.tug.org:/tex/fontname-2.2
+# The linotype map in teTeX 1.0 is terebly corrupted.  Removed from the list.
+
+@fonts=qw(adobe apple bitstrea dtc monotype softkey-1250
+	  softkey-1555 urw wolfram yandy);
+
+$logname="t1mapper.log";
+
+# How much to read from font files to figure out the font name
+$fontdatalen=1024*10;
+
+# use $TMPDIR if set by user
+if (defined($ENV{TMPDIR})) {
+    $tempdir=$ENV{TMPDIR};
+}
+else {
+    $tempdir="/tmp";
+}
+
+# HERE BE DRAGONS
+
+usage() if $#ARGV==0;
+
+# By default copy files
+$method=1;
+
+while ($_=shift(@ARGV)) {
+    /^-cp$/ 	&& do { $method=1; next; };
+    /^-ln$/	&& do { $method=2; next; };
+    /^-lns$/	&& do { $method=3; next; };
+    /^-lnlns$/	&& do { $method=4; next; };
+    /^-lncp$/	&& do { $method=5; next; };
+    /^-gs$/	&& do {
+	$gsmap = shift(@ARGV) or usage();
+	$gsdir = shift(@ARGV) or usage();
+	next;
+    };
+    unshift(@ARGV,$_);
+    last;
+}
+
+$texdir = shift(@ARGV) or usage();
+
+if (! -d $texdir) {
+    print "Making directory $texdir\n";
+    mkpath($texdir) or die "Could not make directory: $texdir: $!\n";
+}
+
+if (!open(LOG,">$logname")) {
+    $logname="$tempdir/$logname";
+    open(LOG,">$logname") || 
+	die "Could not open file $logname for writing: $!\n";
+}
+
+# What major mode of operation?
+    
+# Establish fonts based on ghostscript map?
+if ($gsmap) {
+    process_gsfonts();
+    print "Log in $logname\n";
+    exit 0;
+}
+
+# Ok, loop examine fonts to figure out the font name and copy/link to $texdir
+
+process_fontname_maps();
+process_fonts();
+print "Log in $logname\n";
+
+exit 0;
+
+# ############################### MOVE_FONT ################################
+
+sub move_font {
+    # Move font to destination directory, according to specified $method
+    my($from)=shift;
+    my($to)=shift;
+    my($relok)=shift;
+
+    my($other);	# Same font, other format
+    my($type);	# Other type
+
+    die "I need absolute paths please\n"
+	if !$relok && substr($from,0,1) ne '/';
+
+    logmsg("$from -> $to\n");
+
+    # Remove the old font to replace with this
+    unlink($to) if -f $to;
+
+    # Also remove the old font in the other format:
+    $other=$to;
+    $type='.pfb' if substr($to,-4) eq '.pfa';
+    $type='.pfa' if !$type && substr($to,-4) eq '.pfb';
+    substr($other,-4)=$type;
+
+    unlink($other) if -f $other;
+
+    if ($method==1) {
+	# cp
+	system "cp $from $to 2>/dev/null" and # Shell exit value
+	    warn "Copying $from to $to failed\n";
+    } elsif ($method==2) {
+	# ln
+	link($from,$to) or
+	    die "Linking of $to to $from failed: $!\n";
+    } elsif ($method==3) {
+	# lns
+	symlink($from,$to) or
+	    die "Symlinking $to to $from failed: $!\n";
+    } elsif ($method==4) {
+	# lnlns
+	link($from,$to) ||
+	    symlink($from,$to) ||
+		die "Both linking and symlinking $to to $from failed: $!\n";
+    } elsif ($method==5) {
+	# lncp.  Let cp give the error-message
+	link($from,$to) || system "cp $from $to";
+    } else {
+	die "Internal error: Unknown font copy/link method\n";
+    }
+}
+
+# ############################# PROCESS_FONTS ##############################
+
+sub process_fonts {
+    # Loop over ARGV, examine each (font?) file to see if it is a
+    # type1 font, binary or text format, and figure out it's name
+    my($type,$font);
+
+    foreach $filename (@ARGV) {
+	($type,$font)=examine_font($filename);
+
+	next if !defined($font);
+
+	if (!exists($file{$font})) {
+	    logmsg("TeX name of $font ($filename) unknown\n");
+	    next;
+	}
+
+	$file=$file{$font};
+	move_font($filename,"$texdir/$file$type",0);
+    }
+}
+
+# ############################## EXAMINE_FONT ##############################
+
+sub examine_font {
+    # Examine font to determine name and type
+    #
+    # The method for finding the font name is based on an awk script
+    # written years ago by Kjetil T. Homme and me (mostly him).
+    #
+    my($filename)=shift;
+    my($type);
+
+    my($size)=-s $filename;
+    
+    if ($size==0) {
+	logmsg("Zero size file skipped: $filename\n");
+	return (undef,undef);
+    }
+
+    if (!open(FONT,"< $filename")) {
+	logmsg("Unable to open $filename for reading: $!\n");
+	return (undef,undef);
+    }
+
+    sysread FONT, $fontdata, $fontdatalen, 0;
+
+    # Determine type based on magic number
+    $type='.pfa' if substr($fontdata,0,16) eq '%!PS-AdobeFont-1';
+    $type='.pfa' if !$type && substr($fontdata,0,13) eq '%!FontType1-1';
+    $type='.pfb' if !$type && substr($fontdata,6,16) eq '%!PS-AdobeFont-1';
+    
+    if (!$type) {
+	# This is where we end up if the file does not match the magic
+	# numbers.  The file is most probably not a type1 file.
+
+	if ((index($fontdata,'%!PS-AdobeFont-1')==-1) &&
+	    (index($fontdata,'%!FontType1-1')==-1)) {
+	    # If the string '%!PS-AdobeFont-1.0' or '%!FontType1-1.0'
+	    # does not appear at all this is NOT a type1 font of any
+	    # kind.
+	    logmsg("$filename is not a type1 file\n");
+	    return (undef,undef);
+	}
+
+	logmsg("Odd magic in $filename\n");
+
+	# Try to determine type based on filename extention
+	$type='.pfa' if substr($filename,-4) eq '.pfa';
+	$type='.pfb' if !$type && substr($filename,-4) eq '.pfb';
+
+	if (!$type) {
+	    # No extention?  Fall back to perls -T (text) test operator.
+	    $type='.pfb';
+	    $type='.pfa' if -T $filename;
+	}
+    }
+
+    # The font type has now been determined.  I wonder what the font's
+    # name is.
+
+    # What we look for is lines like this:
+    # 
+    #   %!PS-AdobeFont-1.0: URWGothicL-Demi 001.005
+    #
+    # or this:
+    #
+    # 	/FontName /URWGothicL-Demi def
+
+    $fontname='';
+
+    if ($fontdata =~ m~/FontName /([\S]+) def~) {
+	# The /FontName line is the most reliable source
+	$fontname = $1;
+    } elsif ($fontdata =~ m/%\!PS-AdobeFont-1.0: ([\S]+)/) {
+	# The magic line is not always fully formed and can only be
+	# used as fallback --- in case the /FontName entry is not in
+	# the file.  True, this would be a rather dubious font.
+	$fontname = $1;
+    } elsif ($fontdata =~ m/%\!FontType1-1.0: ([\S]+)/) {
+	# The magic line is not always fully (or correctly) formed and
+	# can only be used as fallback --- in case the /FontName entry
+	# is not in the file.  True, this would be a rather dubious
+	# font (actually, a lot of type1 versions of tex fonts fall
+	# into this category).
+	$fontname = $1;
+    }
+
+    return ($type,$fontname);
+}
+
+# ######################### PROCESS_FONTNAME_MAPS ##########################
+
+sub process_fontname_maps {
+    # Read the fontname maps
+
+    while ($foundry=shift(@fonts)) {
+	$map=findfile($foundry.".map");
+	next unless $map;
+	print "Reading (fontname/$foundry) $map\n";
+	open(FILE,"<$map") || die "Could not open $map: $!\n";
+	while (<FILE>) {
+	    chomp;
+	    s/@.*//;
+	    next if $_ eq '';
+	    ($file,$font,undef)=split(/\s+/,$_,3);
+	    # Remove known encoding codes:
+	    $file =~ s/(8a|8r|8t)$//;
+	    # 8a = StandardEncoding 8a.enc
+	    # 8r = TeXBase1Encoding 8r.enc
+	    # 8t = CorkEncoding     cork.enc
+	    # Any filenames with numbers left are 'unknown encodings'
+	    if ($file =~ /\d/) {
+		# print "Unknown encoding: $file - $font\n";
+		next;
+	    }
+	    $file{$font}=$file;
+	}
+	close(FILE);
+    }
+}
+
+# ########################### PROCESS_GSFONTS #############################
+
+sub read_gsmap {
+    # Read gs map file to obtain Font-Name -> filename mappings, and
+    # aliases so we can use GS' Times-Roman replacement as Times-Roman
+    # ourselves.  Not everyone has oodles of type1 fonts on disk.
+
+    my($gsmap)=shift;
+
+    open(FILE,"<$gsmap") or die "Could not open $gsmap: $!\n";
+
+    print "Reading (gsmap) $gsmap\n";
+    
+    %gsalias=();
+    %gsfile=();
+
+    while (<FILE>) {
+	chomp;
+	s/%.*//;
+	s/\s+$//;
+	next if $_ eq '';
+
+	($font,$file,undef)=split(/\s+/,$_,3);
+
+	$font =~ s~^/~~;
+
+	if (!exists($file{$font})) {
+	    logmsg("TeX name of $font unknown\n");
+	    next;
+	}
+
+	if ($file =~ m~\((.*)\)~) {
+	    $file = $1;
+	    $gsfile{$font}=$file;
+	} else {
+	    $file =~ s~^/~~;
+	    # The aliases(sp?) cannot be resolved until the whole file is
+	    # read
+	    $gsalias{$font}=$file;
+	}
+
+    }
+
+    close(FILE);
+}
+
+
+sub process_gsfonts {
+    # Do the Work based on a ghostscript map file.
+
+    process_fontname_maps();
+    read_gsmap($gsmap);
+
+    chdir($gsdir) or die "Could not chdir to $gsdir: $!\n";
+
+    print "Moving fonts\n";
+
+    foreach $font (keys %gsfile) {
+	$gsfile=$gsfile{$font};
+	# GSF files are not propper t1 fonts I understand, so ignore them
+	next if $gsfile =~ /\.gsf$/;
+	$file=$file{$font};
+	$type='';
+
+	if (-f $gsfile) {
+	    
+	    # Crude font type guessing.  First based on existing extention:
+	    $type='pfa' if substr($gsfile,-4) eq '.pfa';
+	    $type='pfb' if !$type && substr($gsfile,-4) eq '.pfb';
+
+	    # If existing extention fails use perls -T (text) test
+	    if (!$type) {
+		# print "Fallback typing: $gsfile\n";
+ 		$type='pfb';
+		$type='pfa' if -T $gsfile;
+	    }
+
+	    # Use for alias resolving
+	    $texname{$font}="$file.$type";
+
+	    if (substr($gsfile,0,1) eq '/') {
+		move_font("$gsfile","$texdir/".$texname{$font},0);
+	    } else {
+		move_font("$gsdir/$gsfile","$texdir/".$texname{$font},0);
+	    }
+
+	} else {
+	    logmsg("$file not found\n");
+	}
+    }
+
+    chdir($texdir) or die "Could not chdir to $texdir\n";
+
+    foreach $font (keys %gsalias) {
+	$alias = $gsalias{$font};
+	$falias = $texname{$alias};
+	next unless $falias;
+
+	$type='pfa' if substr($gsfile,-4) eq '.pfa';
+	$type='pfb' if !$type && substr($gsfile,-4) eq '.pfb';
+
+	$file=$file{$font};
+
+	# Symlink the aliases
+	logmsg("$falias -> $file.$type\n");
+	$method=3;
+	move_font($falias,"$file.$type",1);
+    }
+}
+
+
+# ############################ JUNK PROCEDURES ###########################
+
+sub findfile {
+    # Find file, use kpsewhich to access texmf database and search rules
+
+    my($file)=shift;
+    $fileloc=`kpsewhich $file`;
+	
+    # Check errors
+    return undef if ($? != 0);
+    chomp($fileloc);
+    return undef if $fileloc eq '';
+
+    # It worked
+    return $fileloc;
+}
+
+sub usage {
+    # Abuse the user
+    print 
+"Usage: t1mapper [-cp|-ln|-lns|-lnlns|-lncp] \\
+		 -gs /path/to/gs/Fontmap /path/to/gs/fonts \\
+		 /path/to/target/tex/directory
+
+        t1mapper [-cp|-ln|-lns|-lnlns|-lncp] \\
+		 /path/to/target/tex/directory \\
+		 <font-file-list>
+
+See t1mapper(1) for more documentation
+
+";
+    exit 1;
+}
+
+sub logmsg {
+    my($string)=shift;
+
+    print STDERR "$string";
+    print LOG "$string";
+}

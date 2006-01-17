@@ -1,0 +1,160 @@
+------------------------------------------------------------------------------
+		MakeIndex General Release Information
+
+	Copyright (C) 1989 by Chen & Harrison International Systems, Inc.
+	Copyright (C) 1988 by Olivetti Research Center
+	Copyright (C) 1987 by Regents of the University of California
+
+			Author: Pehong Chen
+
+MakeIndex is a general purpose index processor.  This release contains
+a FILES file, this README file, a CONTRIB file, an ACK file, a COPYING
+notice, a brief PORTING instruction, a doc directory, a paper
+directory, a src directory, a lib directory, and a test directory.
+
+------------------------------------------------------------------------------
+Everyone should read COPYING before installing or distributing MakeIndex.
+
+------------------------------------------------------------------------------
+The CONTRIB file lists the names of people who have contributed to
+to this release.
+
+------------------------------------------------------------------------------
+The ACK file contains the author's acknowledgements.
+
+------------------------------------------------------------------------------
+FILES is a note to people receiving MakeIndex from the automatic mail
+distribution, which is done by the shell script "auto".
+
+------------------------------------------------------------------------------
+PORTING contains some information for people interested in porting
+MakeIndex to systems not supported under the current distribution.
+
+------------------------------------------------------------------------------
+The doc directory contains
+
+deblank.awk		AWK script used in the Makefile steps
+
+makeindex.hlp		ASCII version of makeindex.l
+
+makeindex.info		an Emacs (TOPS-20 and GNU) INFO node produced
+			automatically from makeindex.vms by vmshelp2
+			(available from Utah)
+
+makeindex.l		a UNIX man page
+
+makeindex.ps		PostScript translation of makeindex.l
+
+makeindex.tex		documentation for the use under	LaTeX
+			by Leslie Lamport
+
+makeindex.vms		VAX/VMS equivalent of makeindex.l suitable
+			for inclusion in a local help library
+
+------------------------------------------------------------------------------
+For a detailed discussion on the design of MakeIndex, please read
+
+	Pehong Chen and Michael Harrison, ``Automating Index Preparation'',
+	Tech. Report No. 87/347, Computer Science Division,
+	University of California, Berkeley, March 1987.
+
+A version of this report is included in the paper directory.  A
+somewhat condensed version entitled
+
+	``Index Preparation and Processing''
+
+appears in Software: Practice and Experience, 18(9):897-915, September 1988.
+
+------------------------------------------------------------------------------
+
+The src directory contains the C source of MakeIndex.  This current
+version is known to compile and run on UNIX (BSD and System V, cc and
+gcc), VAX/VMS (VMS cc), TOPS-20 (kcc-20 and pcc-20), and IBM PC DOS
+(Microsoft C Version 5.0, Turbo C Version 2.0), Atari ST, Siemens
+BS2000 (CCD-2000), and IBM MVS/XA (IBM-C370).  Consult the files
+README and LOG in the src directory for further details.
+
+Type make to compile under BSD UNIX.  Makefiles or command scripts for
+the other operating systems are included as well.  Implementations of
+Make for them are available as part of the Utah DVI driver
+distribution (send e-mail to beebe@math.utah.edu).
+
+Early porting work was carried out by Charles Karney
+(karney%ppc.mfenet@nmfecc.arpa) at Princeton University and David J.
+Buerger (dbeurger%scu.bitnet@jade.berkeley.edu) at University of Santa
+Clara.  These efforts were independent of the port to PC DOS, TOPS-20,
+VAX VMS, and the draft-ANSI C environment for version 2.3 carried out
+by Nelson H.F. Beebe (beebe@math.utah.edu).  That port is described
+in the file LOG in the src directory.
+
+------------------------------------------------------------------------------
+The lib directory contains the file idxmac.tex, which is an excerpt of
+LaTeX's macros for indexing.  This file can be included in plain TeX
+documents to generate the .idx file.  Similarly, the file
+idxmac-amstex.tex can be used with AmSTeX.  Some hacking may be
+necessary to incorporate it with other dialects.  Some people have
+complained not having the LaTeX sty file mentioned in
+doc/makeindex.tex in their library, so a copy of makeidx.sty and
+makeidx.doc is also included in the lib directory.
+
+The file showidx.sty provides a LaTeX document style option that
+records index references on each page in marginal notes; this
+facilitates checking that important phrases have been indexed, without
+the need to continually consult the index.
+
+------------------------------------------------------------------------------
+The test directory contains several sets of test files:
+
+b209*.idx		Miscellaneous tests that uncovered bugs at
+			makeindex version 2.09 which were fixed for
+			version 2.10.
+
+book.idx		Raw index generated from ``The Technology War'',
+			David Brandin and Michael Harrison,
+			John Wiley and Sons, New York, 1988.
+
+tort.idx		a host of odd raw index entries
+
+test.tex, test.idx	a version of doc/makeindex.tex (due to Leslie
+			Lamport) that incorporates index entries
+			(prepared by Nelson Beebe).
+			This can be used both to test MakeIndex, as well as to
+			illustrate the production of an index for new users.
+			Read src/README for more info.
+
+ok-*.inx, ok-*.ilg	Correct output for files without the ok- prefix.
+
+Makefile		UNIX makefile to run regression tests on
+			../src/makeindex
+
+vmsdiff.com		VAX VMS command file to run differences; its
+			definition of the symbol MAKEINDEX must be
+			adapted for each site, since VAX VMS foreign
+			command symbols require an absolute file
+			directory name.
+
+------------------------------------------------------------------------------
+The troff directory contains
+
+troff.ist		a sample style file
+ixmac			defines macros to be used for indexing under troff
+sample.txt		a sample troff document with embedded index commands
+sample.idx		raw index file
+sample.ind		the pre-formatted index file
+makeind			a shell script that creates the raw index file (.idx),
+			invokes makeindex which creates the final index file
+			(.ind).  Note that
+				makeind sample.txt
+			will create sample.idx, sample.ilg, and sample.ind.
+
+------------------------------------------------------------------------------
+						Pehong Chen
+						11-Nov-1989
+
+						Nelson H.F. Beebe
+						28-Jan-1988, 05-Jul-1991
+
+						Joachim Schrod
+						21-Jun-1990
+
+------------------------------------------------------------------------------

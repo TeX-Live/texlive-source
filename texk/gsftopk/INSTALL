@@ -1,0 +1,83 @@
+			INSTALLATION INSTRUCTIONS
+
+gsftopk is primarily intended for sites using xdvi and dvips; it allows them
+to use PostScript fonts with xdvi.  While there is nothing to prevent this
+program from being used in other contexts, doing so would be difficult for
+non-expert users.
+
+To install gsftopk, use the following steps.
+
+1.  You _must_ have ghostscript 2.5.2 (or higher) installed on your system.
+
+2.  It is recommended that you also have dvips installed; however, expert
+    users can read the more detailed instructions at the end of this file
+    to find out how to run without dvips.
+
+3.  Make sure that the gsftopk directory is installed in the kpathsea
+    tools hierarchy: we assume that there is a ../kpathsea directory (as is
+    distributed in the xdvi, dvips, or web2c distributions from Karl Berry).
+    (If this is the case, then you can modify the installation in the top-level
+    build directory to automatically build in the gsftopk directory when
+    building the tools.)
+
+4.  Run ./configure in this directory.  This will generate a Makefile.
+    You may want to set some options when calling this script; see the
+    file ../kpathsea/INSTALL for details.  There are no options specific
+    to gsftopk.
+
+5.  Type 'make install' to install the program, its manual page, and the
+    render.ps file.
+
+You should now be able to use PostScript fonts with xdvi.
+
+--Paul Vojta, vojta@math.berkeley.edu
+
+
+			NOTES FOR THE EXPERT
+
+With a little extra work it is possible to install gsftopk without having
+installed dvips.  All that is needed is to explain some of the makefile
+variables and to describe the format of the file psfonts.map.
+
+The CONFIGPATH is the directory where psfonts.map is to be stored.  It may
+actually be a colon-separated list of paths, although only the first one
+containing a file named ``psfonts.map'' is useful.
+
+The HEADERDIR is the directory where the ``render.ps'' driver file is to
+be stored; also it is a component of the HEADERPATH.  The HEADERPATH is a
+colon-separated list of directories which are searched for files referenced
+in the ``psfonts.map'' file.
+
+Finally, the file ``psfonts.map'' should provide a information on how to access
+each and every file gsftopk is to be expected to create.  Each line of that
+file describes one font.  Each line consists of one or more fields, separated
+by one or more tabs or spaces.  The first field is mandatory; it gives the
+name by which TeX refers to the file.  Other fields are optional and are
+order independent.  They are:
+
+  o	The PS-name of the font.  If absent, it is the same as the TeX name.
+
+  o	The file where the font is located.  This field is identified by
+	preceding the file name with the character `<'.  If absent, it is
+	assumed that the font is built-in to ghostscript.
+
+  o	Special instructions for scaling the font.  This field is identified
+	by enclosing it in quotes; it may therefore contains spaces.
+	The field consists of PostScript instructions for modifying the font.
+	Possibilities include "1.2 ExtendFont" to stretch the font horizontally
+	by 20%, and ".3 SlantFont" to cause the letters to be slanted at a
+	slope of .3.
+
+The file may also contain comment lines.  These are blank lines, or lines
+beginning with `;', `#', or `*'.
+
+The following is a very abbreviated sample psfonts.map:
+
+# Comment and blank lines are ignored.
+
+Times-Roman
+rptmr	Times-Roman
+Optima	<Optima.pfb
+Optima-Slanted Optima <Optima.pfb ".1944 SlantFont"
+Optima-Condensed Optima <Optima.pfb ".82 ExtendFont"
+Optima-Extended Optima <Optima.pfb "1.2 ExtendFont"

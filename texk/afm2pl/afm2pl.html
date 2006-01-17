@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>afm2pl</title><meta name="generator" content="DocBook XSL Stylesheets V1.64.1" /></head><body><div class="article" lang="en" xml:lang="en"><div class="titlepage"><div><div><h1 class="title"><a id="id4663055"></a>afm2pl</h1></div><div><div class="author"><h3 class="author"><span class="firstname">Siep</span> <span class="surname">Kroonenberg</span></h3><div class="affiliation"><div class="address"><p><tt class="email">&lt;<a href="mailto:ntg-afm2pl@ntg.nl">ntg-afm2pl@ntg.nl</a>&gt;</tt></p></div></div></div></div><div><p class="copyright">Copyright © 2004 Siep Kroonenberg</p></div></div><div></div><hr /></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><a href="#id4671274">afm2pl</a> - convert AFM font metrics to TeX pl font metrics
+  </dt></dl></div><div class="refentry" lang="en" xml:lang="en"><a id="id4671274"></a><div class="titlepage"><div></div><div></div></div><div class="refnamediv"><h2>Name</h2><p>afm2pl — convert AFM font metrics to TeX pl font metrics
+  </p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="cmdsynopsis"><p><tt class="command">afm2pl</tt>  [<tt class="option">-p</tt>
+      <i class="replaceable"><tt>encoding_file</tt></i>
+    ] [<tt class="option">-o</tt>] [<tt class="option">-e</tt>
+      <i class="replaceable"><tt>extension_factor</tt></i>
+    ] [<tt class="option">-s</tt>
+      <i class="replaceable"><tt>slant_factor</tt></i>
+    ] [<tt class="option">-f</tt>
+      <i class="replaceable"><tt>font_dimensions</tt></i>
+    ] [<tt class="option">-k</tt>] [<tt class="option">-m</tt>
+      <i class="replaceable"><tt>letter_spacing</tt></i>
+    ] [<tt class="option">-l</tt>
+      <i class="replaceable"><tt>ligkern_spec</tt></i>
+    ] [<tt class="option">-L</tt>
+      <i class="replaceable"><tt>ligkern_spec</tt></i>
+    ] {<i class="replaceable"><tt>input_file[.afm]</tt></i>} [<i class="replaceable"><tt>output_file[.pl]</tt></i>]</p></div><div class="cmdsynopsis"><p><tt class="command">afm2pl</tt>  {[--help] |  [--version]}</p></div></div><div class="refsect1" lang="en" xml:lang="en"><a id="id4664175"></a><h2>Description</h2><p>afm2pl converts an afm (Adobe Font Metric) file into a pl
+(Property List) file, which in its turn can be converted to a tfm
+(TeX Font Metric) file. It preserves kerns and ligatures.</p><p>afm2pl is meant to be a replacement for afm2tfm, on which it
+is based. With afm2tfm, preserving kerns and ligatures is possible
+only in a roundabout way.</p><p>For text fonts, Y&amp;Y's texnansi is the recommended encoding
+to be used with afm2pl.  This gives you a good character set with
+all the more important accented characters and many typographic
+symbols available as single characters, without a need for either
+virtual fonts or a separate text companion font.</p><p>Full LaTeX support for this encoding is available in the form
+of the texnansi package, which is already part of TeX Live and
+teTeX. These distributions also contain the encoding file
+texnansi.enc.</p><p>The distribution contains uppercased and lowercased versions
+of texnansi, viz. texnanuc.enc and texnanlc.enc, to allow font-based
+rather than macro-based uppercasing and lowercasing, and the
+familiar old ot1 encoding plus some variations in PostScript .enc
+format (I included these because they seem to be absent from
+teTeX/TeX Live).  </p><p>Return value: 0 if no error; a negative number indicating the
+number of missing glyphs if
+conversion was successfull but glyphs are missing, and 1 in case of
+error.</p></div><div class="refsect1" lang="en" xml:lang="en"><a id="id4664229"></a><h2>Options</h2><div class="variablelist"><dl><dt><span class="term"><tt class="option">-p</tt> <i class="replaceable"><tt>encoding_file</tt></i></span></dt><dd><p>The default is the encoding specified
+     in the afm file, which had better match the encoding in the
+     fontfile (pfa or pfb). The generated mapfile entry (see below)
+     instructs pdftex or the dvi driver to reencode the font on the fly.
+     On-the-fly reencoding does not require virtual fonts.</p></dd><dt><span class="term"><tt class="option">-o</tt></span></dt><dd><p>Use octal for all character codes in the pl file.</p></dd><dt><span class="term"><tt class="option">-e</tt> <i class="replaceable"><tt>extend_factor</tt></i></span></dt><dd><p>Widen or narrow characters by
+      <i class="replaceable"><tt>extend_factor</tt></i>. Default is 1.0
+      (natural width). Not recommended, except that
+      arguably a narrowed Courier is less jarring than a full-width
+      Courier, when used in
+      combination with a normal proportional font.
+      For Courier, choose .833 to match the width of cmtt.</p></dd><dt><span class="term"><tt class="option">-s</tt> <i class="replaceable"><tt>slant_factor</tt></i></span></dt><dd><p>Oblique (slant) characters by
+    <i class="replaceable"><tt>slant_factor</tt></i>.
+    Not recommended.</p></dd><dt><span class="term"><tt class="option">-f</tt>
+  <i class="replaceable"><tt>font_dimensions</tt></i></span></dt><dd><p>The value is either the
+  keyword <tt class="literal">afm2tfm</tt> or a comma-separated list of up
+  to five integers. The parameters are listed below, with their
+  defaults and their value when the afm2tfm keyword is
+  specified. ‘Space’ means the width of a space in the
+  target font, except of course in the last row.
+  Keep in mind that the design size is 1000, and that all numbers
+  must be nonnegative integers.</p><div class="informaltable"><table border="1"><colgroup><col /><col /><col /></colgroup><thead><tr><th>Font dimension</th><th>Default value</th><th>Afm2tfm value</th></tr></thead><tbody><tr><td><i class="replaceable"><tt>stretch</tt></i></td><td>space div 2</td><td>300 × <i class="replaceable"><tt>extend_factor</tt></i></td></tr><tr><td><i class="replaceable"><tt>shrink</tt></i></td><td>space div 3</td><td>100 × <i class="replaceable"><tt>extend_factor</tt></i></td></tr><tr><td><i class="replaceable"><tt>extra space</tt></i></td><td>space div 3</td><td>missing</td></tr><tr><td><i class="replaceable"><tt>quad</tt></i></td><td>2 × width of ‘0’</td><td>1000 × <i class="replaceable"><tt>extend_factor</tt></i></td></tr><tr><td><i class="replaceable"><tt>space</tt></i></td><td>(space source font) × <i class="replaceable"><tt>extend_factor</tt></i></td><td>(space source font) × <i class="replaceable"><tt>extend_factor</tt></i></td></tr></tbody></table></div><p>For fixed-pitch fonts, different values apply:</p><div class="informaltable"><table border="1"><colgroup><col /><col /><col /></colgroup><thead><tr><th>Font dimension</th><th>Default value</th><th>Afm2tfm value</th></tr></thead><tbody><tr><td><i class="replaceable"><tt>stretch</tt></i></td><td>0</td><td>0</td></tr><tr><td><i class="replaceable"><tt>shrink</tt></i></td><td>0</td><td>0</td></tr><tr><td><i class="replaceable"><tt>extra space</tt></i></td><td>space</td><td>missing</td></tr><tr><td><i class="replaceable"><tt>quad</tt></i></td><td>2 × character width</td><td>1000 × <i class="replaceable"><tt>extend_factor</tt></i></td></tr><tr><td><i class="replaceable"><tt>space</tt></i></td><td>character width</td><td>character width</td></tr></tbody></table></div><p>Specify just a non-default stretch and shrink with
+    e.g. <tt class="literal">150,70</tt> and just a non-default extra
+    space with <tt class="literal">,,10</tt>.</p></dd><dt><span class="term"><tt class="option">-k</tt></span></dt><dd><p>Keep original ligatures. This option only has effect in
+    combination with positive letterspacing; see the section on
+    <a href="#lspace" title="Letterspacing and extra ligkern info">letterspacing and extra ligkern info.</a>
+    </p></dd><dt><span class="term"><tt class="option">-m</tt> <i class="replaceable"><tt>letter_spacing</tt></i></span></dt><dd><p>Letterspace by
+    <i class="replaceable"><tt>letter_spacing</tt></i>/1000 em (integer). This is
+    useful for making all-caps typesetting look better. Try a value
+    of e.g. 50 or 100. But see the section
+    on <a href="#lspace" title="Letterspacing and extra ligkern info">letterspacing and extra ligkern info</a>
+    for details.</p></dd><dt><span class="term"><tt class="option">-l</tt> <i class="replaceable"><tt>ligkern_spec</tt></i>, </span><span class="term"><tt class="option">-L</tt> <i class="replaceable"><tt>ligkern_spec</tt></i></span></dt><dd><p> See the section
+    on <a href="#lspecs" title="Extra ligkern info">extra ligkern info</a>
+    for details.</p></dd><dt><span class="term"><tt class="option">-V</tt></span></dt><dd><p>Verbose. If turned on, it reports the number of missing
+    glyphs to stderr and their names to stdout. This is not particularly
+    logical, but this way the glyph names can be captured even under Windows.
+    </p></dd><dt><span class="term"><tt class="option">--help</tt></span></dt><dd><p>Display a short usage message.</p></dd><dt><span class="term"><tt class="option">--version</tt></span></dt><dd><p>Display the version number of afm2pl.</p></dd></dl></div></div><div class="refsect1" lang="en" xml:lang="en"><a id="id4662921"></a><h2>Mapfile entries</h2><p>afm2pl writes a mapfile entry to a file with the same basename
+as the pl output file, but with extension .map. It can be used for
+the dvips mapfile and for the pdftex mapfile, although, in case of a
+geometrically transformed font, it may be better to remove the
+PostScript name for a pdftex mapfile entry.  It is assumed that the
+pfb file has the same basename as the afm file and must be
+downloaded. <span class="emphasis"><em>You may have to hand-edit this
+entry.</em></span></p><p>You can configure dvips and pdftex to read this additional
+mapfile or otherwise add the entry to an existing mapfile. It
+appears that pdftex automatically will consult a mapfile xxx.map for
+a font xxx.</p></div><div class="refsect1" lang="en" xml:lang="en"><a id="lspecs"></a><h2>Extra ligkern info</h2><p><span class="emphasis"><em>Most users are well-advised to leave this mess alone
+and to accept the default behavior.</em></span></p><p>The ligatures and kerns present in the afm file can be
+modified in various ways.  Default, the encoding file is scanned for
+extra ligkern specifications, whose format will be described below.
+If there are no ligkern specifications in the encoding file, then
+extra ligkern specifications will be read from a file default.lig. A
+value of 0 for <i class="replaceable"><tt>ligkern_spec</tt></i> means that
+the ligatures and kerns from the afm file won't be tampered with and
+a value of 1 specifies default behavior. One can also specify a
+comma-separated list of files with extra ligkerns specs.</p><p>If afm2pl is compiled with the kpathsea library, then these
+files will be searched for under $TEXMF/fonts/lig.</p><p><span class="emphasis"><em>Note that ligatures and kerns are hints for the
+typesetting application; there is no need to download this
+information to the printer or to make it available to a dvi
+driver.</em></span></p><p>The parser for ligkern info has been inherited from afm2tfm
+virtually without change.  A ligkern specification can have one of
+the following forms:</p><pre class="screen">
+<i class="replaceable"><tt>glyph_name1</tt></i> <i class="replaceable"><tt>glyph_name2</tt></i> <i class="replaceable"><tt>lig_op</tt></i> <i class="replaceable"><tt>glyph_name3</tt></i> ;
+</pre><p>This specifies a ligature. Possible values for
+<i class="replaceable"><tt>lig_op</tt></i> are <tt class="literal">=:</tt>,
+<tt class="literal">|=:</tt>, <tt class="literal">|=:&gt;</tt>,
+<tt class="literal">=:|</tt>, <tt class="literal">=:|&gt;</tt>,
+<tt class="literal">|=:|</tt>, <tt class="literal">|=:|&gt;</tt> and
+<tt class="literal">|=:|&gt;&gt;</tt>.
+These correspond to <tt class="literal">LIG</tt>,
+<tt class="literal">/LIG</tt>, <tt class="literal">/LIG&gt;</tt>,
+<tt class="literal">LIG/</tt>, <tt class="literal">LIG/&gt;</tt>,
+<tt class="literal">/LIG/</tt>, <tt class="literal">/LIG/&gt;</tt>,
+<tt class="literal">/LIG/&gt;&gt;</tt> in .pl syntax; see the pltotf
+documentation and the .lig files in the distribution.</p><pre class="screen">
+<i class="replaceable"><tt>glyph_name1</tt></i> &lt;&gt; <i class="replaceable"><tt>glyph_name2</tt></i> ;
+</pre><p>Kern <i class="replaceable"><tt>glyph_name1</tt></i> as
+<i class="replaceable"><tt>glyph_name2</tt></i>.</p><pre class="screen">
+<i class="replaceable"><tt>glyph_name1</tt></i> {} <i class="replaceable"><tt>glyph_name2</tt></i> ;
+</pre><p>Remove the kern between <i class="replaceable"><tt>glyph_name1</tt></i>
+and <i class="replaceable"><tt>glyph_name2</tt></i>. A value of
+<tt class="literal">*</tt> for either glyph name is interpreted as a
+wildcard.</p><pre class="screen">
+|| = <i class="replaceable"><tt>glyph</tt></i> ;
+</pre><p>Set the (right) boundary character to
+<i class="replaceable"><tt>glyph</tt></i>.  <i class="replaceable"><tt>glyph</tt></i>
+may be either a glyphname or a slot in the encoding vector. Choosing
+a glyph which doesn't occur in the output encoding is equivalent to
+not specifying a boundarychar at all. It is ok to pick an encoded
+glyphname which does not occur in the afm. In fact, this is what
+default.lig does: <tt class="literal">|| = cwm ;</tt>.</p><p>You can copy the kerns of an unencoded character to the
+boundarychar:</p><pre class="screen">
+|| &lt;&gt; space ;
+</pre><p>This ligkern specification should occur before the one that
+deletes space kerns.</p><p>A ligkern specification should be contained within one line.
+One line may contain several ligkern specifications, separated by
+spaces. Note that <tt class="literal"> ;</tt> (space followed by
+semicolon) is considered part of the ligkern specification. See the
+lig files included in this distribution. Example:</p><pre class="screen">
+one {} * ; * {} one ; two {} * ; * {} two ;
+</pre><p>Lines with ligkern specifications inside an encoding file
+should start with <tt class="literal">% LIGKERN </tt>. Ligkern
+specifications in a lig file may optionally start this way.</p></div><div class="refsect1" lang="en" xml:lang="en"><a id="lspace"></a><h2>Letterspacing and extra ligkern info</h2><p>Letterspacing has various side-effects for ligkern
+info. Instead of simply applying the extra ligkern info (see
+previous section), the following is done:</p><div class="orderedlist"><ol type="1"><li><p>In case of positive letterspacing, native ligatures
+are removed, unless the -k option is specified.</p></li><li><p>Extra ligkern info is applied as usual, except that in
+case of positive letterspacing different defaults apply:
+<tt class="literal">-l 0</tt> is quietly ignored, ligkern comments in
+the encoding file are ignored, and defpre.lig is read instead of
+default.lig.</p></li><li><p>Letterspacing is applied. This adds a lot of kerns,
+and modifies existing kerns.</p></li><li><p>The extra ligkern info specified with -L is applied.
+The only ligkern specs which are allowed here, are removals of
+kerning pairs (with the <tt class="literal">{}</tt> operator).  Values
+0 and 1 have a similar meaning as for the -l parameter.  The tfm
+format has room for only about 180x180 ligatures and kerning pairs.
+This is enough for OT1 encoding, but for texnansi encoding quite a
+few ligkern specifications  have to be removed.  The pltotf program
+will remove <span class="emphasis"><em>all</em></span> ligkern info if too many
+ligatures and kerns remain. The default lig file is defpost.lig.
+This file throws out kerning pairs which are unlikely to be involved
+in letterspacing, such as kerns involving accents or kerns with a
+punctuation character or right bracket at the left. It does not add
+letterspacing kerns involving boundarychars.  Instead, fontspace is
+increased by twice the letterspacing. defpost.lig throws out
+enough kerns in case of texnansi encoding.  With other encodings,
+you may have to throw out additional kerning
+pairs.</p></li></ol></div></div><div class="refsect1" lang="en" xml:lang="en"><a id="id4721019"></a><h2>Font-based upper- and lowercasing</h2><p>The distribution includes encoding vectors texnanuc.enc and
+texnanlc.enc which produce all-uppercase and all-lowercase fonts.
+The distribution contains an example ucshape.tex on how to use such
+fonts with LaTeX font selection.</p><p>The principal uses for an all-uppercase font are page headers
+and section heads. If these contain math, then macro-based
+uppercasing would create unpleasant complications.</p><div class="refsect2" lang="en" xml:lang="en"><a id="id4721038"></a><h3>The sz ligature ß</h3><p>Note that the texnanuc encoding provides no glyph for the sz
+ligature ß; you'll either have to substitute ss or provide a
+macro-based solution. The following code uses either the usual glyph
+or substitutes the letters ss, depending on whether the glyph exists
+in the current font:</p><pre class="programlisting">
+
+\def\ss{%
+  \setbox0\hbox{\char25}%
+  \ifnum\wd0=0 ss\else\box0\fi
+}
+
+</pre><p>In LaTeX, this code appears to work well enough, although on
+occasion you may need to insert <tt class="literal">\protect</tt>.  A
+better solution might involve the sixth parameter of the
+<tt class="literal">\DeclareFontShape</tt> macro, but I failed to get
+that to work.</p></div></div><div class="refsect1" lang="en" xml:lang="en"><a id="id4721081"></a><h2>Afm2pl, fontinst and artificial smallcaps</h2><p>Afm2pl currently doesn't do virtual fonts. That means that for
+things such as artificial smallcaps you have to turn elsewhere,
+e.g. to the fontinst package, which is part of any mainstream TeX
+distribution.</p><p>Look under texmf/tex/fontinst for fontinst support files,
+which allow you to generate a smallcaps font (tfm and vf files) from
+an afm2pl-generated tfm file.  This package only supports texnansi
+encoding.</p><p>There should be no real problem in doing the same for OT1
+encoding. However, there are several variations of the OT1 encoding
+to take care of. Also, there are as far as I know no officially
+sanctioned PostScript names for all the variations of the OT1
+encoding; the fontinst names contain spaces and are therefore not
+useable as PostScript names.</p></div><div class="refsect1" lang="en" xml:lang="en"><a id="id4721115"></a><h2>Future plans</h2><p>I am considering a revision which makes afm2pl a more complete
+replacement for afm2tfm. In that version, afm2pl can optionally
+create a second, virtual font, possibly with a different encoding
+and possibly letterspaced. The current option of non-virtual
+letterspacing via kerns will be dropped. If the encodings differ
+then it is assumed that the virtual font is intended as a small-caps
+version of the main font, and a scaling parameter can be
+specified for non-matching glyphs.</p></div><div class="refsect1" lang="en" xml:lang="en"><a id="id4721133"></a><h2>Copyright</h2><p>The afm2pl distribution is subject to the GNU General Public Licence
+(GPL). Please refer to the file COPYING for details.</p><p>The afm2pl homepage is <a href="http://www.ntg.nl/afm2pl.html" target="_top">http://www.ntg.nl/afm2pl.html</a>.</p></div></div></div></body></html>

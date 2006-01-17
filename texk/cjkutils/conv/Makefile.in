@@ -1,0 +1,42 @@
+kpse_include ../make/paths.mk
+kpse_include ../make/common.mk
+kpse_include ../make/programs.mk
+kpse_include ../make/texi.mk
+
+programs = bg5conv cefconv cef5conv cefsconv sjisconv extconv
+
+default all: $(programs)
+
+bg5conv: bg5conv.o
+	$(link_command) bg5conv.o $(LIBS) $(XLOADLIBES)
+cefconv: cefconv.o
+	$(link_command) cefconv.o $(LIBS) $(XLOADLIBES)
+cef5conv: cef5conv.o
+	$(link_command) cef5conv.o $(LIBS) $(XLOADLIBES)
+extconv: extconv.o
+	$(link_command) extconv.o $(LIBS) $(XLOADLIBES)
+cefsconv: cefsconv.o
+	$(link_command) cefsconv.o $(LIBS) $(XLOADLIBES)
+sjisconv: sjisconv.o
+	$(link_command) sjisconv.o $(LIBS) $(XLOADLIBES)
+
+install: install-exec install-data
+uninstall: uninstall-exec uninstall-data
+install-exec: all
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(bindir)
+	for p in $(programs); do $(INSTALL_PROGRAM) $$p $(bindir); done
+uninstall-exec:
+	for p in $(programs); do $(RM) $(bindir)/$$p; done
+
+install-data:
+uninstall-data:
+
+kpse_include ../make/dist.mk
+kpse_include ../make/clean.mk
+
+distclean::
+
+kpse_include ../make/rdepend.mk
+kpse_include depend.mk
+
+kpathsea_parent = ../..

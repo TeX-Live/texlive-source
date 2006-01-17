@@ -1,0 +1,18 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(dvi2xx.c)
+
+AC_CONFIG_HEADERS([c-auto.h:c-auto.in], [date >stamp-auto])
+
+AC_PROG_CC
+AC_PROG_INSTALL
+AC_PROG_MAKE_SET
+AC_PROG_LN_S
+
+sinclude(../kpathsea/withenable.ac)
+
+dnl These tests prevent reliable cross-compilation.  Sigh.
+AC_C_CHAR_UNSIGNED
+AC_CHECK_SIZEOF(long)
+
+KPSE_CONFIG_FILES([Makefile])
+AC_OUTPUT

@@ -1,0 +1,26 @@
+#! /bin/sh
+
+n=1
+argv=
+
+# get last argument
+while test 1 -lt $#; do
+  eval argv$n=\$1
+  argv="$argv \"\$argv$n\""
+  n=`expr $n + 1`
+  shift
+done
+
+# replace extension with .cjk or append .cjk if there is no extension
+tex=$1
+case $tex in
+""|*.cjk)
+  echo >&2 "Usage: $0 [options] latex-file"
+  exit 1;;
+*)
+  aux=`expr "X$tex" : 'X\(.*\)\.[^/]*$' \| "X$tex" : 'X\(.*\)'`.cjk;;
+esac
+
+bg5conv < "$tex" > "$aux" && eval latex "$argv" "\$aux"
+
+# EOF

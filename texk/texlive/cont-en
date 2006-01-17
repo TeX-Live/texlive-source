@@ -1,0 +1,3 @@
+#!/bin/sh
+test -f "`kpsewhich cont-en.efmt`" || fmtutil --byfmt cont-en
+exec pdfetex -efmt=cont-en -progname=context "$@"

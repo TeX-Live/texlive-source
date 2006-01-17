@@ -1,0 +1,8 @@
+ttf2tfm
+ttf2pk
+.libs
+MakeSub
+config.status
+config.cache
+config.log
+Makefile

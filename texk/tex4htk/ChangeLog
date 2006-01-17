@@ -1,0 +1,78 @@
+2004-09-18  Karl Berry  <karl@tug.org>
+
+	* Update for current tex4ht with all fixes, from:
+http://www.cse.ohio-state.edu/~gurari/fix/tex4ht-1.0.2004_09_01_1516.tar.gz
+	
+	Amounts to new C files, new htcontext and httexexec.  Fingers crossed.
+
+1998-10-22  Eli Zaretskii  <eliz@is.elta.co.il>
+
+	* tex4ht.c [__DJGPP__] (ANSI, DOS_GIF_FILE): Define.
+	(LSTAT): Define to stat for every system that doesn't define
+	S_ISLNK.
+	(WRITE_BIN_FLAGS, READ_BIN_FLAGS): Use binary mode with DJGPP.
+	(dos_file_names): New variable.
+	[WIN32] (sigint_handler): Add missing semi-colon in prototype
+	declaration.
+	(sig_err): If got fatal signal other than SIGINT or SIGQUIT, don't
+	return to caller, since the program will be aborted otherwise.
+	(search_file_ext): Allow use of both forward- and back-slashes on
+	DOS and Windows platforms.
+	(insert_ch) [DOS_GIF_FILE]: Only use butchered file name if long
+	file names aren't supported (dos_file_names is TRUE).
+	(main) [KPATHSEA]: If input is from stdin which is not a console
+	device, switch it to binary mode.  Set dos_file_names to TRUE for
+	all DOS platforms, FALSE on Unix and WIN32, and compute at runtime
+	for DJGPP.  Simplify logic of finding the init file by pushing
+	HOME=C: into environment if $HOME isn't defined on DOSISH systems.
+	Only use butchered file names for GIF files if long file names
+	aren't supported (dos_file_names is TRUE).
+
+Fri Oct 30 21:39:09 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* new version of tex4ht.c from Eitan. New C program t4ht.c,
+	 replaces Perl processor
+
+Fri Mar 13 13:44:43 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* small changes from Eitan. added tex4ht.perl processor.
+
+Tue Feb 17 10:20:25 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* Makefile.in (install-exec): use INSTALL_DATA for shell script
+
+Mon Feb 16 13:16:07 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* Makefile.in: install-data needs to put stuff on $texmf/tex4ht,
+	not $texmf/tex/generic/tex4ht
+	* tex4ht.c: use "other text files" search path instead of TEXINPUTS
+
+Mon Feb  2 11:32:03 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* small fix in make check target of Makefile.in
+
+Fri Jan 30 13:23:22 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* tex4ht.c: changed #define STAT stat to #define STSTAT stat
+        (and use STSTAT) - Peter Breitenlohner found conflict with aix
+
+Tue Jan 27 14:32:25 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* configure etc: new configure.in, c-auto.in, Makefile.in from
+	Olaf Weber
+	
+Tue Jan 27 13:48:41 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* ChangeLog: removed "check" target as people will not
+ 	all have "convert"
+
+Tue Jan 20 10:14:26 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* added check of function prototypes to c-auto.in
+
+Thu Jan  1 11:02:02 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
+
+	* Started ChangeLog for tex4htk. Added #ifdef KPATHSEA sections to
+	C program, and cleaned .env file a little. Search for .env file
+	and .htf file on TEXINPUTS path
+

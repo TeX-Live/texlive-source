@@ -1,0 +1,53 @@
+% test_dvipng.tex
+%
+% Part of the dvipng distribution
+%
+% This program is free software; you can redistribute it and/or
+% modify it under the terms of the GNU General Public License
+% as published by the Free Software Foundation; either version 2
+% of the License, or (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with this program; if not, write to the Free Software
+% Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+%
+% Copyright (C) 2002-2005 Jan-\AA{}ke Larsson
+
+\documentclass{article}
+\usepackage{mathptmx}
+%\usepackage[active,textmath]{preview}
+\usepackage{color}
+\pagestyle{empty}
+
+\begin{document}
+\begin{equation}
+  \int dx 
+\end{equation}
+\newpage
+$\int dx$
+\newpage
+$\sqrt2+1=\frac1{\sqrt2-1}$
+\newpage
+$\frac23$
+\newpage
+\ 
+\newpage
+\( \begin{array}{|r|} \hline a \cr \hline \end{array} \)
+\newpage
+fig, pig, flask, efficiency, effluent
+\newpage
+\special{fail}a failing special
+\newpage
+\Huge A \LARGE A \Large A \large A \normalsize A \small A
+\footnotesize A \scriptsize A \tiny A
+\newpage
+\color{yellow}
+
+\section*{Hello world}
+\pagecolor{blue}
+\end{document}

@@ -1,0 +1,60 @@
+# Makefile for CTANGLE and CWEAVE, pc/big versions, using
+# Borland C++ 3.1 and Borland Make.
+#
+# (This file contributed by Barry Schwartz, trashman@crud.mn.org,
+#  24 Jul 94.)
+
+
+
+CC = bcc
+
+# Redundant Load Suppression (-Z) is turned off, because it seems to
+# break the code.  Likewise for Copy Propagation (-Op).  (These
+# optimizations don't seem to cause any problems in common.w, but
+# better safe than sorry--compile everything with them turned off.)
+OPT = -O2-p -Z-
+
+# Compile with symbols.  That way you'll be able to use the debugger if
+# you run into trouble.  You can always use tdstrip later, to remove the
+# symbols.
+DEBUG = -v
+
+LCFLAGS = -mc -Ff=5000 -d -w-pro $(DEBUG)
+CFLAGS = $(LCFLAGS) $(OPT)
+COMPILE = $(CC) $(CFLAGS)
+
+LINK = $(CC) $(LCFLAGS) -e
+
+
+
+# Where to find an "old" version of ctangle, for bootstrapping.  The first
+# time you make ctangle, you may have to edit the distributed ctangle.c
+# and/or common.c by hand to reduce the size of one or more arrays.
+# This will give you a functional ctangle.exe, which you can use to bootstrap
+# the "real" ctangle.exe.
+CTANGLE = ctangle
+
+
+
+
+all default: ctangle.exe cweave.exe
+
+
+ctangle.exe: ctangle.obj common.obj
+	$(LINK)$* $**
+
+cweave.exe: cweave.obj common.obj
+	$(LINK)$* $**
+
+
+common.obj: common.w comm-bs.ch
+	$(CTANGLE) common.w comm-bs.ch
+	$(COMPILE) -c common.c
+
+ctangle.obj: ctangle.w common.h ctang-bs.ch
+	$(CTANGLE) ctangle.w ctang-bs.ch
+	$(COMPILE) -c ctangle.c
+
+cweave.obj: cweave.w common.h cweav-bs.ch
+	$(CTANGLE) cweave.w cweav-bs.ch
+	$(COMPILE) -c cweave.c

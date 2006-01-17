@@ -1,0 +1,248 @@
+This is an adapted version of Paul Vojta's FAQ for (non-k) xdvi, which is
+available from <URL:http://math.berkeley.edu/~vojta/xdvi_faq.txt>.
+
+This file answers the following questions about installing xdvi:
+
+    1.  Why do I get the message, ``Caution:  overstrike characters may be
+        incorrect'' when running netscape and xdvi simultaneously, and why
+        does the screen output look so grainy?
+    2.  I have font files cmr10.tfm, etc.  Why can't xdvi use them?
+    3.  I can't seem to set the font path correctly.  Can you help me?
+    4.  Whenever I run xdvi, it prints out things like:
+        - mktexpk --mfmode cx --bdpi 300 --mag 'magstep(0)' --dpi 300 cmr7 '>&3'
+        mktexpk: /var/cache/fonts/pk/cx/public/cm/cmr7.300pk already exists.
+        Why is this?
+    5.  Why can't xdvi correctly display metapost files containing text?
+    6.  Why do I get weird vertical color stripes when using xdvi on my S3
+        Virge video card?
+    7.  What does the message "gs: No such file or directory" mean, and why
+        does xdvi need to call ghostscript?
+    8.  I am using gs 5.50 to render PostScript figures, and I find that
+        sometimes characters appear on the wrong page.  Why is that?
+    9.  I am using gs 3.33 to render PostScript figures, but find that it
+        cuts some off below or to the right of a certain point, and others
+        are omitted entirely.
+    10. I am trying to display PostScript specials with -DPS_GS, but
+        instead I get the message `gs: gs: Malformed ghostview color property.'
+    11. What is this "_get_wmShellWidgetClass undefined" error?
+
+Last modified:  2002/08/23
+
+----------
+
+1.  Why do I get the message, ``Caution:  overstrike characters may be
+    incorrect'' when running netscape and xdvi simultaneously, and why
+    does the screen output look so grainy?
+
+This is because your video setup has only a limited number (typically 256)
+of different colors that can be displayed at any given time, and netscape
+is using most of them.  There are several ways around this problem:
+
+    o   Start xdvi before netscape.  This should eliminate the problem for
+        that copy of xdvi (only).
+    o   Invoke netscape via "netscape -ncols 130"  This limits netscape's
+        color usage to 130.  Other numbers may be used as well.
+    o   Invoke netscape via "netscape -install"  This causes netscape to run
+        with its own colormap.  A disadvantage of this approach is that
+        netscape's colors will be bizarre when the cursor is outside netscape's
+        window, and conversely all other colors on the screen will look funny
+        when the cursor is in the netscape window.
+
+The screen output looks so grainy because xdvi is not able to use its
+anti-aliasing features without enough colors.
+
+----------
+
+2.  I have font files cmr10.tfm, etc.  Why can't xdvi use them?
+
+tfm files contain only minimal information about the characters
+in a font:  just the height, width, depth, and kerning and ligature
+information.  To obtain information about the shapes of the
+characters, xdvi needs pk, gf or pfb files.  (pxl files also contain
+this information, but are obsolete.  There are utilities to convert
+them to pk files though.)
+
+----------
+
+3.  I can't seem to set the font path correctly.  Can you help me?
+
+Try
+        xdvi -debug 4000 file.dvi
+to find out where xdvi is looking for the fonts.
+
+----------
+
+4.  Whenever I run xdvi, it prints out things like:
+      - mktexpk --mfmode cx --bdpi 300 --mag 'magstep(0)' --dpi 300 cmr7 '>&3'
+      mktexpk: /var/cache/fonts/pk/cx/public/cm/cmr7.300pk already exists.
+    Why is this?
+
+It means either that:
+
+   (1)  Your ls-R database is not up to date (fix this by running texhash), or
+   (2)  Your font path is not set correctly (see #3, above).
+
+----------
+
+5.  Why can't xdvi correctly display metapost files containing text?
+
+The problem is that the PS files created by MP are (normally) not
+self-contained.  xdvi delegates the display of PS files to
+ghostscript, which fails to handle those files.
+
+A solution is to instruct MP to create true EPS files, by including
+        prologues:=2;
+at the top of the document.  If you have the CM postscript fonts
+installed so that ghostscript can find them, you can continue to use
+the CM fonts, otherwise you'll have to switch to Times or such for the
+illustrations.
+
+Switching the fonts can be done setting 'defaultfont' to something
+like "ptmr8r" (for Times).  For the TeX material in 'btex .. etex'
+blocks, it is best to set up the fonts once in a 'verbatimtex .. etex'
+block.  (And same for LaTeX of course.)
+
+This answer courtesy of Olaf Weber.
+
+----------
+
+6.  Why do I get weird vertical color stripes when using xdvi on my
+    S3 Virge video card?
+
+This is a bug in the XF86_S3V X server.  It has been reported to XFree86.
+The response from them is that the XF86_S3V server is being phased out
+and that users should use the XF86_SVGA server instead (which also, as of
+XFree86 3.3.3, supports the S3 Virge chipset).
+
+----------
+
+7.  What does the message "gs: No such file or directory" mean, and why
+    does xdvi need to call ghostscript?
+
+The message "gs: No such file or directory" means that xdvi needs to call
+ghostscript, but does not find it on your system.  Ghostscript is a program
+used for rendering PostScript.  It is needed by xdvi (1) for displaying
+PostScript specials in documents, and (2) for rendering PostScript fonts
+occurring in documents.  In the latter case, xdvi calls a script (usually
+named mktexpk) which in turn calls the program gsftopk to render the font
+in a form usable by xdvi.
+
+----------
+
+8.  I am using gs 5.50 to render PostScript figures, and I find that
+    sometimes characters appear on the wrong page.  Why is that?
+
+This is a bug in ghostscript 5.50.  The following patch will fix it:
+
+*** gdevx.c.orig	Fri Jul 17 07:31:27 1998
+--- gdevx.c	Sat Oct 17 23:42:50 1998
+***************
+*** 59,65 ****
+    ((gx_device_X *)(dev))->up_area = 0,\
+    ((gx_device_X *)(dev))->up_count = 0
+  #define update_flush(dev)\
+!   if ( ((gx_device_X *)(dev))->up_area != 0 ) update_do_flush(dev)
+  private void update_do_flush(P1(gx_device *));
+  
+  #define flush_text(dev)\
+--- 59,66 ----
+    ((gx_device_X *)(dev))->up_area = 0,\
+    ((gx_device_X *)(dev))->up_count = 0
+  #define update_flush(dev)\
+!   if ( ((gx_device_X *)(dev))->up_area != 0 || IN_TEXT((gx_device_X *)(dev)) )\
+!      update_do_flush(dev)
+  private void update_do_flush(P1(gx_device *));
+  
+  #define flush_text(dev)\
+
+
+----------
+
+9.  I am using gs 3.33 to render PostScript figures, but find that it
+    cuts some off below or to the right of a certain point, and others
+    are omitted entirely.
+
+You should apply the following patch.  This will also fix similar errors
+with ghostview.  This patch supersedes a previous patch I have suggested
+to some people.
+
+*** gdevxini.c.orig	Sun Nov  6 13:46:42 1994
+--- gdevxini.c	Mon Jun  5 15:40:18 1995
+***************
+*** 319,344 ****
+  
+  	    /* The following sets the imageable area according to the */
+  	    /* bounding box and margins sent by ghostview.            */
+! 	    {	float m[4];
+! 		m[0] = (llx - left_margin) / 72.0;	/* left */
+! 		m[1] = (lly - bottom_margin) / 72.0;	/* bottom */
+! 		m[2] = xdev->width / xdev->x_pixels_per_inch -
+! 		  (urx + right_margin) / 72.0;		/* right */
+! 		m[3] = xdev->height / xdev->y_pixels_per_inch -
+! 		  (ury + top_margin) / 72.0;		/* top */
+! 
+! 		/******
+! 		 ****** For reasons I don't understand,
+! 		 ****** we have to set the margins to zero here
+! 		 ****** in order for Ghostview to do landscape display right.
+! 		 ******/
+! #if 0
+! 		m[0] = m[1] = m[2] = m[3] = 0;
+! #endif
+! 
+! 		gx_device_set_margins((gx_device *)xdev, m, false);
+! 	    }
+! 
+  	} else if (xdev->pwin == (Window)None) {
+  	    eprintf("gs: Cannot get ghostview property.\n");
+  	    exit(1);
+--- 319,329 ----
+  
+  	    /* The following sets the imageable area according to the */
+  	    /* bounding box and margins sent by ghostview.            */
+! 	    xdev->ImagingBBox[0] = llx - left_margin;
+! 	    xdev->ImagingBBox[1] = lly - bottom_margin;
+! 	    xdev->ImagingBBox[2] = urx + right_margin;
+! 	    xdev->ImagingBBox[3] = ury + top_margin;
+! 	    xdev->ImagingBBox_set = true;
+  	} else if (xdev->pwin == (Window)None) {
+  	    eprintf("gs: Cannot get ghostview property.\n");
+  	    exit(1);
+
+----------
+
+10.  I am trying to display PostScript specials with -DPS_GS, but
+     instead I get the message `gs: gs: Malformed ghostview color property.'
+
+xdvi needs at least version 2.6.2 of ghostscript.  It will also run with
+ghostscript 2.6.1, provided you have applied fixes 1-4.  This particular
+error message means that you are running gs 2.6.1 without fixes 1-4.
+Probably you should get a newer version of ghostscript.
+
+----------
+
+11.  What is this "_get_wmShellWidgetClass undefined" error?
+
+        In SunOS 4.1.2 Sun fixed a shared-library bug in ld which conflicts
+with the way X builds the shared Xmu library, causing these symbols, notably,
+to be undefined when building some X11 clients on SunOS 4.1.[23]:
+        _get_wmShellWidgetClass
+        _get_applicationShellWidgetClass
+Compiling "-Bstatic -lXmu -Bdynamic" is overkill; be sure to set
+OSTeenyVersion correctly in the config/sun.cf file and rebuild X11R5.
+
+To solve the problem if you are using OpenWindows 3.0 (X11R4-based Xt), please
+contact your local Sun office and request the following patches:
+
+Patch i.d.      Description
+100512-02       4.1.x OpenWindows 3.0 libXt Jumbo patch
+100573-04       OpenWindows 3.0: xstdcmap fails to set XStandardColomap for
+                24-bit machines [this also fixes bug 1087332, "With patched
+                ld and libc, customer is getting undefined symbols"]
+
+[Greg Earle, earle@Sun.COM; 7/92]
+
+A source patch for use with the X11R4 libraries was developed by Conrad
+Kimball (cek@sdc.boeing.com); it retrofits into R4 some fixes made in R5 to
+get around this problem. The patch is on ftp.x.org in [1/93]
+        contrib/X11R4_sunos4.1.2_patch_version3.Z

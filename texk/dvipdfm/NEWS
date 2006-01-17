@@ -1,0 +1,126 @@
+October 19, 2000 - Version 0.13.2
+
+   This release adds preliminary support for TrueType fonts.
+
+   Also this release fixes two problems in the makefile that have been
+causing some people difficulties getting dvipdfm to compile. One of these
+problems was the test for compress2() (which was incorrect). The second
+problem occurs because some make implementations don't honor CPPFLAGS. An
+explicit rule has been added to do so.
+
+
+July 25, 2000 - Version 0.13
+
+   This release adds support for 16 bit character sets via Omega's OFM
+files.  The DVI and VF code was made 16 bit clean.  I am anxious
+to hear from Omega users.
+
+   The release also changes the way encodings are written to the PDF file.
+The prior method was causing compatibility problems with certain software
+that tried to merge PDF files.
+
+   Much of the Type1 font code has been rewritten for this release. The
+rewritten code allows multiple encodings to be used with the same Type 1
+font in the same document so that *all* glyphs (even >256) are available
+from a Type 1 font.  Font subsetting has been improved. In particular, the
+internal encoding is completely removed if it's not needed.
+
+July 8, 2000 - Version 0.12.8
+
+   The primary change in this release involves fixing file inclusion
+so that it works with the older TeXfig style specials used by the
+psfig macros.  Other changes include fixing several bugs in metapost
+file inclusion, bugs in the parsing of colormaps of PDF files to be
+embedded, and a bug that could cause characters to disappear under
+certain conditions.  Work on a problem that affects use of XYPIC
+is in progress.
+
+   WARNING: THE LATEX SUPPORT FILE NAMED DVIPDFM.DEF HAS CHANGED IN VERSION
+	    0.12 TO BE MORE COMPATIBLE WITH DVIPS AND OTHER DVI DRIVERS.  IT
+	    CANNOT BE USED WITH EARLIER VERSIONS OF DVIDFPM. HOWEVER,
+	    EARLIER VERSIONS OF DVIPDFM.DEF CAN BE USED WITH VERSION 0.12.
+
+September 6, 1999 - Version 0.12
+
+   Added native support for including MetaPost output.  Along with this
+   comes the ability to interpret simple PostScript operators natively.
+   This allows dvipdfm to process DVI files intended for dvips as long as
+   they don't do anything too fancy.  The internal mini-PostScript
+   interpreter is good enough to process the "rotate" commands produced by
+   the standard dvips graphics driver.
+
+   Added support for PostScript files using a helper application such as
+   GhostScript.  PostScript files may be included with either the "PSfile"
+   special or the "plotfile" special.
+
+   Added support for the "standard" color specials.  Together with the above
+   list, dvipdfm can now process many DVI files targets for dvips (as long
+   as they use very simple PostScript commands).  PostScript code such as
+   that produced by PSTricks is not supported.
+
+   Added a configuration file for specifying default command line options.
+
+August 21, 1999.
+
+   WARNING:  VERSION 0.11 CHANGES THE FORMAT OF THE t1fonts.map FILE.
+
+   The font code has been reworked in several ways.  Version 0.11 does not
+require AFM files.  This is a significant improvement since AFM files are
+disappearing from major distributions and repositories.  Unfortunately, this
+required a change in the format of the t1fonts.map file.
+
+   A bit of the font code has been rewritten to provide work-alikes for the
+"slantfont" and "extendfont" provided by dvips.  There are several
+workarounds for various bugs in Acrobat Reader involving searching for and
+selecting ligatures and there's also an attempt to address the disappearing
+Gamma problem.
+
+   Version 0.11 also adds PNG and thumbnail support.
+   
+   Version 0.11 add support for the HyperTeX (HTML) specials for improved
+DVI file portability.
+   
+April 8, 1999.
+
+   Version 0.10.5 changes the rule code to use a PDF stroke instead
+of filling a rectangular box.  It also omits some unecessary
+font information from the PDF file for the base 14 PS fonts.
+This is to produce for slightly smaller PDF files when using
+these fonts.
+
+March 30, 1999.
+
+   NOTE: VERSION 0.10.4 CHANGES THE NAME/LOCATION OF ITS CONFIGURATION FILES!
+
+   It also fixes a bug that caused nested virtual fonts to fail and fixes a couple of other
+   fairly insignificant bugs.
+
+   Version 0.10.0 introduced PK fonts support and support
+   for TPIC special commands to allow some native graphics
+   support (don't you hate distilling those .eps files).
+
+December 30, 1998.
+   Version 0.9.0 supports partial font embedding and Flate compression. The
+   page tree and destination tree are shipped out as balanced trees.
+
+December 14, 1998.
+   Version 0.8.3 fixes a memory leak in the vf code found by Akiro Kakuto.
+   Another change hopefully makes running ./configure a bit easier.
+
+   Version 0.8.1 and 0.8.2 fix an overflow in the kerning code
+   which occurs for large horizontal motions.
+
+   Version 0.8 supports virtual fonts.  Much of the code has been
+   reorganized and rewritten.  It is nearly an order of magnitude faster than
+   earlier versions.  Version 0.8 no longer requires the kpath source
+   tree.  Instead it uses an installed version of libkpathsea and its
+   headers.
+
+Nov. 28, 1998
+   Specifying font encoding now supported.  There is a font map file for
+   the more common PostScript fonts.
+
+Nov. 26, 1998
+
+   LaTeX Graphics and hyperref support is now available. See the directory
+   latex-support for information and drivers.

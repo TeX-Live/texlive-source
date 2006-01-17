@@ -1,0 +1,125 @@
+Mon Jul  6 06:07:01 1998  Werner Lemberg  <wl@gnu.org>
+
+	* include/gcache.h,
+	  include/gstate.h,
+	  include/loadtable.h,
+	  include/os2_P.h,
+	  include/tables.h,
+	  include/ttc.h,
+	  include/ttf.h,
+	  include/ttfutil.h,
+	  libttf/os2.c,
+	  src/Attic/action.c,
+	  src/Attic/mkttfdir.c,
+	  src/Attic/rasben.c:
+
+	action.c, mkttfdir.c, rasben.c are empty.
+
+	Correcting spelling errors, formatting.
+
+Sat Jul  4 13:17:52 1998  Werner Lemberg  <wl@gnu.org>
+
+	* src/ttfdump.c,
+	  Makefile.in,
+	  include/ttc.h,
+	  include/ttf.h,
+	  libttf/Makefile.in,
+	  libttf/tabledir.c,
+	  libttf/ttfread.c,
+	  src/Makefile.in:
+
+	Diffs from Nelson Beebe:
+
+	  new target `check' for Makefile, `install' improved
+
+	  #include <unistd.h> in ttf.h
+
+	  ttfread.c: workaround for egcs bug
+
+	  ttfdump.c: `int main' instead of `void main'
+	             use of EXIT_SUCCESS and EXIT_FAILURE
+	             added Strdup() since strdup() doesn't exist everywhere
+
+	formatting of ttfdump.c
+
+Sat Jun  6 12:55:53 1998  Werner Lemberg  <wl@gnu.org>
+
+	* libttf/post.c: Oops! Not 26.6 but 16.16 format. Added comment.
+
+	* libttf/post.c: fixed overflow bugs and a wrong 26.6 number.
+
+Sat Jan  4 19:23:56 1997    <ollie@ms1.hinet.net>
+
+	* libttf/cmap.c (ttfLoadCMAP6): Fixed a fatal bug cause segment fault
+
+	* src/ttfdump.c (main): add TrueType collection support
+
+Fri Nov 29 15:34:29 1996    <ollie@ms1.hinet.net>
+
+	* ttfdump : 
+	Unrecoverable disaster had happened. The old developing version was
+	destoried during Red Hat Linux upgrading (it is my fault :~~(. ).
+	Resume to the public releease version.
+	
+Tue Sep 24 21:47:05 1996  Li-Da Lho  <ollie@ms1.hinet.net>
+
+	* font.c (ttfInitFont): The final layer of abstraction is complete.
+	Application programs only need to do the fellowing things to use 
+	True Type Font:
+	  1. Load the font by calling ttfInitFont(char *font_filename)
+	  2. choose a encoding scheme.
+	  3. load the glyf by ttfLoadGlyphIndex or ttfLoadglyphCode
+	  4. do anythings the application wants about the outline data
+	     (i.e. rendering ,showing).
+	  4. after all this, release the font by ttfFreeFont(TTFontPtr font).
+
+	* gcache.c: The implementation of glyph cache is completed. Start to 
+	add the final layer of TTFont abstraction.
+	* glyf.c: It has been proved that av*.ttf is created by brain damaged
+	programmers. Lots of LOCA entries point to End Of File.
+
+	Benchmark: All Glyf data are loaded but not printed.
+	time ttfdump times.ttf >/dev/null
+	0.080u 0.000s 0:00.19 42.1% 0+0k 0+0io 91pf+0w
+	time ttfdump /mnt/dos/windows/fonts/dftt-fs.ttf  > /dev/null
+	2.410u 0.560s 0:03.53 84.1% 0+0k 0+0io 70pf+0w
+	time ttfdump /mnt/dos/windows/fonts/dftt-sk5.ttf > /dev/null
+	2.850u 0.550s 0:03.95 86.0% 0+0k 0+0io 70pf+0w
+	time ttfdump /mnt/dos/windows/fonts/kai.ttf  > /dev/null
+	1.920u 0.530s 0:02.85 85.9% 0+0k 0+0io 70pf+0w
+	time ttfdump /mnt/dos/windows/fonts/Dflihm.ttf  > /dev/null
+	2.850u 0.460s 0:03.87 85.5% 0+0k 0+0io 70pf+0w
+
+
+Thu Aug  1 21:11:36 1996  Li-Da Lho  <ollie@ms1.hinet.net>
+	* glyf.c: composite glyph added but not completed yet,does not works
+	on av*.ttf any more but fine for others  (is it a bug in av*.ttf or 
+	my fault ??)
+	* glyf.c (ttfLoadGlyphIndex): removed the offset parameter
+	and add the glyphOffset entry in TTFont structure,which contain
+	the address of the start of glyf table, almost the same speed.
+
+Tue Jul 30 08:37:59 1996  Li-Da Lho  <ollie@ms1.hinet.net>
+
+	* post.c : created
+	add postscript information,format 2.0 ,2.5 not implemented yet
+
+	* Release Version 0.4:
+	Almost all required tables in True Type Font Specitication are
+	implemented, except "post", "OS/2" and format 2,4,6 of "cmap".
+	Composite glyph and instruction disassembler are not supported yet.
+	Works fine on times.ttf,dftt-fs.ttf, unexpected EOF on avbbv.ttf,
+	avov.ttf. (possible wrong ttf file)
+
+	There are still some possible memory leak, clean then up when
+	freezing stage.
+
+	Benchmark:
+	time ttfdump times.ttf  > /dev/null
+	0.680u 0.020s 0:00.80 87.5% 0+0k 0+0io 94pf+0w
+	time ttfdump /mnt/dos/ttf/avov.ttf > /dev/null
+	276.210u 1.710s 4:50.43 95.6% 0+0k 0+0io 73pf+0w
+	time ttfdump /mnt/dos/windows/fonts/dftt-fs.ttf  > /dev/null
+	27.440u 0.700s 0:29.49 95.4% 0+0k 0+0io 73pf+0w
+	time ttfdump /mnt/dos/windows/fonts/dflihm.ttf  > /dev/null
+	105.400u 0.830s 1:49.17 97.3% 0+0k 0+0io 73pf+0w

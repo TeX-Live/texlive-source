@@ -1,0 +1,53 @@
+                DVI2TTY
+
+
+dvi2tty is intended for previewing dvi-files on text-only
+devices (terminals and lineprinters).
+The program is basicly an improved C version of the pascal
+program written by Svante Lindahl (see README.ORG).
+I translated it because I could not find a pascal compiler 
+on our machine that could compile it.
+The program runs under UNIX and MSDOS without problems
+It should also run under VMS. 
+(you may need some site dependend redefinitions, see below).
+Undocumented option: the -e option can be used to influence
+the width of spaces. With a negative value the number of spaces 
+between words becomes less, with a positive value it becomes more.
+Just play around if you like, -e-11 worked nice with me.
+
+
+                DISDVI
+
+Disdvi is a simple hack that dumps a dvi file in a more readable form.
+It is not a spectacular program but use it and improve as you wish.
+I'd appreciate any enhancements made, bug reports etc. mailed to me.
+  
+
+    COMPILING THE PROGRAMS
+
+Disdvi is rather simple and does not need any modifications.
+To compile under VMS, you might need to define an extra macro:
+Add a -DVMS on the command line, or add a line
+#define VMS
+in the dvi2tty.h file.
+For dvi2tty you may find the following problems:
+
+ function strchr() can not be found:
+      Your are probably a BSD UNIX or alike.
+      Solution: #define strchr index
+ '/usr/bin/pg' program not found.
+      Solution: change the DEFPAGER macro in dvi2tty.c
+ To compile under VMS, you might need to define an extra macro:
+  Add a -DVMS on the command line, or add a line
+  #define VMS
+
+Thats all, good luck.
+
+
+- Marcel 
+-----------------------------------------
+| Marcel J.E. Mol                       | They hate you if your're clever
+| Delft University of Technology        | And they despise the fool
+| The Netherlands                       | Till you're so fucking crazy
+| UUCP: marcel@duteca.tudelft.nl        | You can't follow the rules.
+-----------------------------------------			 - Lennon
