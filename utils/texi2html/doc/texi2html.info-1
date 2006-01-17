@@ -1,0 +1,1299 @@
+This is texi2html.info, produced by makeinfo version 4.5 from
+texi2html.texi.
+
+Copyright (C) 1999, 2000, 2001, 2002, 2003                        Free
+Software Foundation, Inc.
+
+Portions  
+of        
+`texi2html'
+          Copyright (C) 1999, 2000 Lionel Cons
+          Copyright (C) 1999, 2000 Karl Berry
+          Copyright (C) 1999, 2000 Olaf Bachmann
+          Copyright (C) 2002, 2003 Patrice Dumas
+          Copyright (C) 2001, 2002, 2003 Derek Price
+          Copyright (C) many others.
+
+
+Portions  
+of this   
+manual    
+          Copyright (C) 1999, 2000 Karl Heinz Marbaise (manual)
+          Copyright (C) 2003 Patrice Dumas (manual)
+          Copyright (C) 2003 Derek Price (manual)
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Free Software Foundation.
+INFO-DIR-SECTION Texinfo documentation system
+START-INFO-DIR-ENTRY
+* Texi2HTML: (texi2html).  Texinfo to HTML Converter.
+END-INFO-DIR-ENTRY
+
+   This file, last updated 1 February 2005, documents the `texi2html'
+script which converts Texinfo (http://www.texinfo.org) into HTML
+(http://w3c.org).  This edition is for `texi2html' version 1.76.
+
+Copyright (C) 1999, 2000, 2001, 2002, 2003                        Free
+Software Foundation, Inc.
+
+Portions  
+of        
+`texi2html'
+          Copyright (C) 1999, 2000 Lionel Cons
+          Copyright (C) 1999, 2000 Karl Berry
+          Copyright (C) 1999, 2000 Olaf Bachmann
+          Copyright (C) 2002, 2003 Patrice Dumas
+          Copyright (C) 2001, 2002, 2003 Derek Price
+          Copyright (C) many others.
+
+
+Portions  
+of this   
+manual    
+          Copyright (C) 1999, 2000 Karl Heinz Marbaise (manual)
+          Copyright (C) 2003 Patrice Dumas (manual)
+          Copyright (C) 2003 Derek Price (manual)
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Free Software Foundation.
+
+File: texi2html.info,  Node: Top,  Next: Overview,  Up: (dir)
+
+Texi2HTML
+*********
+
+   This manual, last updated 1 February 2005, describes version 1.76 of
+the `texi2html' Perl script which converts Texinfo (*note Texinfo:
+(Texinfo)Top.) into HTML.
+
+   Please send bug reports concerning this manual to the Texi2HTML user
+discussion list <user@texi2html.cvshome.org>.  Please state the exact
+version of the manual which contains the bug, as given above.
+
+Copyright (C) 1999, 2000, 2001, 2002, 2003                        Free
+Software Foundation, Inc.
+
+Portions  
+of        
+`texi2html'
+          Copyright (C) 1999, 2000 Lionel Cons
+          Copyright (C) 1999, 2000 Karl Berry
+          Copyright (C) 1999, 2000 Olaf Bachmann
+          Copyright (C) 2002, 2003 Patrice Dumas
+          Copyright (C) 2001, 2002, 2003 Derek Price
+          Copyright (C) many others.
+
+
+Portions  
+of this   
+manual    
+          Copyright (C) 1999, 2000 Karl Heinz Marbaise (manual)
+          Copyright (C) 2003 Patrice Dumas (manual)
+          Copyright (C) 2003 Derek Price (manual)
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Free Software Foundation.
+     *This manual is currently under construction and of course incomplete.  ;-)*
+
+* Menu:
+
+* Overview::
+* Obtaining texi2html::
+                              Obtaining a copy of the `texi2html'
+                              source code distribution
+* Installation::              Installing `texi2html'
+* Invoking texi2html::        Description of the command line options
+* Initialization files::      What kind of variables and subroutines appear
+                              in init files and how they are called
+* Changing the page layout::  Fine tuning of the page layout
+* Customizing HTML::          Fine tuning of the HTML elements
+                              associated with the texinfo constructs
+* Internationalization::      Help translating !
+* Indexop::                   Command Line Option Index
+* Indexvr::                   Variable Index
+* Indexcp::                   Concept Index
+
+
+File: texi2html.info,  Node: Overview,  Next: Obtaining texi2html,  Prev: Top,  Up: Top
+
+Overview
+********
+
+   Texinfo (http://www.texinfo.org) is the official documentation
+format of the GNU (http://www.gnu.org) project.  It uses a single
+source file to produce both online information and printed output.
+
+   It is often desirable to have a way to produce HTML from Texinfo
+sources, as GNU-Info files are produced.  It is much simpler to run a
+converter than it is to rewrite all the documentation in HTML,
+especially considering that there is so much Texinfo documentation in
+the world.
+
+   Some time ago `makeinfo' wasn't able to produce HTML output format,
+but people still wanted documentation in HTML.  This was the birthing
+hour for `texi2html'.  The basic purpose of `texi2html' is to convert
+Texinfo documents into HTML.
+
+   Since then, HTML support in `makeinfo' has improved, but `texi2html'
+is still stronger in many areas, including the degree to which it
+allows customization.  With `texi2html', some important aspects of the
+resulting HTML files may be specified via command line options, and
+configuration files provide an even finer degree of control over the
+final output, allowing most every aspect of the final output not
+specified in the Texinfo input file to be specified.  Configuration
+files are written in `perl', like the main program, and anything which
+may be specified on the command line may also be specified within a
+configuration file.
+
+   For an example of the kind of pages `texi2html' is capable of
+producing, have a look at the following sites: the Singular Manual
+(http://www.singular.uni-kl.de/Manual/html/), the Cederqvist (CVS
+Manual) (http://ccvs.cvshome.org/docs/manual).
+
+* Menu:
+
+* whytexi2html::       Why `texi2html' and not `makeinfo'?.
+
+
+File: texi2html.info,  Node: whytexi2html,  Up: Overview
+
+Why `texi2html' and not `makeinfo'?
+===================================
+
+   You would like to produce HTML files from your existing Texinfo
+files?  There are two programs you can use to do this.  The first is
+`makeinfo' (*note Generating HTML: (texinfo)Generating HTML.).  The
+second is `texi2html'.
+
+   The design goal of `makeinfo''s HTML output was to produce readable
+HTML output. It is now possible to use CSS for HTML customization.
+Another possibility is to use intermediate formats, like docbook or
+`mekeinfo' XML and XSL stylesheets to customize the resulting document.
+Still the output produced by `makeinfo' isn't customizable.
+
+   The current development of `texi2html' tries to provide for
+producing the more interesting and sophisticated HTML pages that
+today's Internet users have come to expect.  The goal behind
+`texi2html' is to generate attractive HTML by default but also to allow
+users considerable freedom to affect the final style and design of the
+output HTML pages.  This is achieved via command line options and
+flexible configuration files.
+
+   In contrast to the HTML produced by `makeinfo --html' (the
+`makeinfo' program is part of the Texinfo distribution), the
+`texi2html' program, among other differences, allows for the
+customization of the entire page layout, including headers, footers,
+style sheets, etc., allows for customization of the low level HTML
+formatting, provides for splitting documents at various levels, and
+provides for using the `latex2html' program to convert `@tex' sections
+of the Texinfo source.
+
+   The focus on HTML is still present but with the help of the
+customization files it is now possible to use `texi2html' to produce
+other formats as well. `texi2html' may for example be turned into a
+texinfo to roff translator with the help of a customization file
+provided with the distribution.
+
+   `texi2html' should reasonably convert all Texinfo 4.8 constructs.
+If you find it does not, please send a bug report to the
+<users@texi2html.cvshome.org> email list.
+
+
+File: texi2html.info,  Node: Obtaining texi2html,  Next: Installation,  Prev: Overview,  Up: Top
+
+Obtaining `texi2html'
+*********************
+
+   The latest version of the source code for `texi2html' should be
+available from texi2html.cvshome.org (http://texi2html.cvshome.org).
+
+
+File: texi2html.info,  Node: Installation,  Next: Invoking texi2html,  Prev: Obtaining texi2html,  Up: Top
+
+Installation of `texi2html'
+***************************
+
+   To install `texi2html', you must first obtain a copy of the source
+distribution.  *Note Obtaining texi2html::.
+
+   `texi2html' also requires `perl' version 5.004 or above.  The
+current version has not been tested extensively on versions of `perl'
+below 5.6, however.
+
+   `texi2html' is a standard Automake-based distribution.  If you have
+a source version, you should run `./configure' to regenerate the
+executable `texi2html' file.  `./configure' accepts options to select
+the installation directory for the `texi2html' file, the default
+directories `texi2html' will use to look for configuration files, and
+other details.  Run `./configure --help' for more information.
+
+   Running `./configure' combines four files into the final `texi2html'
+program file:
+   * `texi2html.pl' contains the base program,
+
+   * `MySimple.pm' handles the command line options,
+
+   * `texi2html.init' is the default configuration file, and
+
+   * `T2h_i18n.pm' is used for internationalization.
+
+   * `translations.pl' contains the translations of the strings used in
+     documents.
+
+   Running `./configure' also builds the `make' configuration files
+(`Makefile's).  To make the documentation run `make'.
+
+   `make install' performs the installation to the locations specified
+to the `./configure' script.  This usually involves placing the actual
+`texi2html' file someplace in your path, such as `/usr/local/bin' or
+`/usr/bin'.
+
+   Installing `texi2html' in your path should be sufficient to run it.
+To use default initialization files, or a configuration file for
+LaTeX2HTML when using `latex2html' to convert `@tex' sections (*note
+Expanding TeX regions::), install them in the package data directory
+specified to configure.  This is `/usr/local/share/texi2html/' by
+default, but depends on the value of the `--pkgdatadir=DIR' option
+passed to the `./configure' script. Files used for strings
+customization and internationalization are also searched for in the
+`i18n' directory of this directory. *Note Using init files:: for more.
+
+
+File: texi2html.info,  Node: Invoking texi2html,  Next: Initialization files,  Prev: Installation,  Up: Top
+
+Invoking `texi2html'
+********************
+
+   To produce an HTML manual, run `texi2html' with a Texinfo file as an
+argument.  For example, this manual is created with:
+
+     $ texi2html texi2html.texi
+
+   The behaviour of `texi2html' may be changed with command line
+options.  These command line options are always associated with
+corresponding `perl' variables which may appear in init files, and these
+variables are presented in this chapter each time a switch is described.
+
+   Boolean command line switches always have a corresponding negated
+switch, obtained by prepending `no' or `no-' to the switch name. For
+example `--nomenu' does the reverse of `--menu'.
+
+* Menu:
+
+* Splitting output::          The HTML output may be split at
+                              different levels
+* Output files::
+* Expansion::
+* Texinfo related options::
+* Page layout options::       Customizing page layout
+* Style options::             Customizing the HTML and text style
+* Expanding TeX regions::
+* Using init files::          Specifying initialization files for fine tuning
+
+
+File: texi2html.info,  Node: Splitting output,  Next: Output files,  Up: Invoking texi2html
+
+Specifying where to split the generated document
+================================================
+
+   The HTML manual resulting from the processing of the Texinfo source
+may be split into files at different levels.  This is specified with the
+option `--split' which takes an argument, namely the level of splitting
+(variable: `$SPLIT'). This level may be:
+
+`chapter'
+     The document is split at `@chapter', `@appendix', or `@unnumbered'.
+
+`section'
+     The document is split at the same places as it is using the
+     `chapter' argument, and also at `@section', `@appendixsec' or
+     `@unnumberedsec'.
+
+`node'
+     The document is split at every sectioning command.  It is not
+     necessarily split at each node, if the `@node' structure doesn't
+     correspond with the sectioning command structure (see below).
+
+`none'
+     The document isn't split.  This is the default.
+
+   There are two kinds of commands which may be used to define
+sectioning elements in Texinfo: `@node' and the structuring commands
+(`@top', `@section', `@appendixsubsec',  and so on).  A node just
+preceding a structuring command is considered to be part of the same
+sectioning element as that command.  If the `@node Top' isn't
+associated with a structuring command it also defines a sectioning
+element.
+
+   By default, nodes which aren't associated with a structuring command
+are not considered to be sectioning commands.  They are always
+considered to be part of a sectioning element defined by a structuring
+command.  It is possible to change this behaviour via the `--use-nodes'
+option (variable `$USE_NODES').  In this case, nodes not associated
+with structuring commands are also considered to be sectioning commands
+defining a sectioning element.
+
+   This default behaviour mimics `texi2dvi' behaviour, which ignores
+`@node' commands for the purprose of sectioning, while the second looks
+like `makeinfo' behaviour (*note Two Paths: (texinfo)Two Paths.).
+
+   As an illustration, the following table shows how a sample Texinfo
+document is divided into sectioning elements when `--use-nodes' is used
+and not:
+
+Texinfo code           default case           with
+                                              `--use-nodes'
+     @node node1        first element:         first element:
+     @chapter node 1                               
+     node1 text             @node node1             @node node1
+                            @chapter node 1             @chapter node 1
+     @node node2             node1 text             node1 text
+     node2 text                                  second
+                            @node node2        element:
+     @node node3             node2 text        
+     node3 text           second                   @node node2
+     @chapter node 3        element:                    node2 text
+     chapter text                                  third
+                            @node node3        element:
+                            node3 text        
+                            @chapter node 3             @node node3
+                            chapter text             node3 text
+                                                   @chapter node 3
+                                                   chapter text
+
+
+File: texi2html.info,  Node: Output files,  Next: Expansion,  Prev: Splitting output,  Up: Invoking texi2html
+
+Setting output file and directory names
+=======================================
+
+   The manual name is constructed by stripping the `.texi', `.txi',
+`.texinfo', or `.txinfo' extension from the Texinfo file name.
+
+   By default, `texi2html' generates the manual file in the current
+directory if the manual isn't split. A `.html' file extension is
+appended to the manual name.
+
+   If the manual is split the files are put in a directory named after
+the manual name. The file name is constructed using the manual name as
+basename.  An underscore followed by a number is appended to the
+basename for each files corresponding with sectioning elements, with the
+exception of the top element. For the top element there nothing
+appended.  The files containing special elements pages have an
+underscore and a 3 letter code corresponding to their content (`toc'
+for table of contents, `abt' for about, `ovr' for overview) appended.
+Lastly, an `.html' file extension is appended.
+
+   Thus, if the texinfo file `afile.texi' is processed and split at
+chapters into 3 files, the generated files (in directory `afile') will
+be:
+
+     afile.html         --> `@node Top' or `@top' section
+     afile_1.html       --> Chapter 1
+     afile_2.html       --> Chapter 2
+     afile_toc.html     --> Table of Contents
+     afile_abt.html     --> About Page
+
+   This default behavior may be modified by several command line
+options. If the output isn't split, the prefix file name may be
+overrided by the `--output' command line option (variable `$OUT'). If
+the output is split, and `--output' is set, the files are placed in the
+directory specified by the argument to the option.
+
+   The basename may be overridden with `--prefix' (variable `$PREFIX').
+If `--short-ext' is given, `.htm' is appended instead of `.html' in
+the final step (variable `$SHORTEXTN').  The `--top-file' option
+overrides the top element file name (variable `$TOP_FILE').  This can
+be used to name the top element file `index.html'.  Similarly,
+`--toc-file' changes the name of the table of contents file (variable
+`$TOC_FILE').
+
+   Reusing the example above, but this time calling `texi2html' like so:
+
+     $ texi2html -split chapter -prefix manual -short-ext -top-file index.htm -toc-file contents.htm afile.texi
+
+   we get, in `manual':
+
+     index.htm          --> `@node Top' or `@top' section
+     manual_1.htm       --> Chapter 1
+     manual_2.htm       --> Chapter 2
+     contents.htm       --> Table of Contents
+     manual_abt.htm     --> About Page
+
+   The file names generated by `texi2html' differ from those generated
+by `makeinfo'. `makeinfo' uses the node name to construct the file
+names while splitting at nodes.  It is possible to get the same
+behaviour out of `texi2html' by specifying the `--node-files' option
+(variable `$NODE_FILES').  If the output isn't split at nodes,
+`texi2html' will still output files named after the nodes, without real
+content but redirecting to the right file.  The default is false for
+this option.  This trick enables the generated HTML manual to be a
+target for the cross-references of other manuals generated by
+`makeinfo' or `texi2html'.
+
+
+File: texi2html.info,  Node: Expansion,  Next: Texinfo related options,  Prev: Output files,  Up: Invoking texi2html
+
+Specifying which regions get expanded
+=====================================
+
+   The default for `texi2html' is to expand the `@ifhtml', `@html', and
+`@menu' regions, all the `@ifnot' regions except `@ifnothtml', and no
+other `@if' regions.
+
+   It is possible to expand other regions by setting `--if<region>',
+where `<region>' is replaced by the literal name of the region (for
+example, `--iftex').  Symetrically, if `--no-if<region>' is specified,
+the `<region>' region is ignored.  The configuration file array,
+`@EXPAND', holds the names of regions which should be expanded. The
+only region name present in `@EXPAND' in the default case is `html'.
+
+   If `--nomenu' is set, the `@menu' sections are not expanded
+(variable `$SHOW_MENU'). The default is to expand `@menu' sections.
+
+
+File: texi2html.info,  Node: Texinfo related options,  Next: Page layout options,  Prev: Expansion,  Up: Invoking texi2html
+
+Command line options related to Texinfo language features
+=========================================================
+
+   Miscalleneous Texinfo related things may be specified via command
+line options.
+
+`--lang=LANG'
+     Sets the document language similar to the Texinfo directive,
+     `@documentlanguage LANG' (variable `$LANG').  The default is `en',
+     that is, use the english language strings.
+
+`-DVAR'
+     Sets VAR.  Equivalent to, `@set VAR 1', in Texinfo.
+
+`-UVAR'
+     Clears VAR.  Equivalent to, `@clear VAR', in Texinfo.
+
+`-PDIR'
+     Prepend DIR to the list of directories to search for `@include'
+     files (the associated array is `@PREPEND_DIRS', empty in the
+     default case).
+
+`-IDIR'
+     Append DIR to the list of directories to search for `@include'
+     files (the associated array is `@INCLUDE_DIRS', empty in the
+     default case).
+
+   The include files are always searched for in the current directory.
+
+
+File: texi2html.info,  Node: Page layout options,  Next: Style options,  Prev: Texinfo related options,  Up: Invoking texi2html
+
+Page layout related command line options
+========================================
+
+   If the `--frames' option is specified, HTML frames are used.  A file
+describing the frame layout is generated, and the document page is
+associated with a frame where the short table of content appears
+(variable `$FRAMES'). The default is not to use frames.
+
+   It is also possible to suppress the section navigation panel with
+`--nosec-nav' (variable `$SECTION_NAVIGATION', the default is to output
+all the navigation panels), and to specify whether footnotes should
+appear at the foot of the same page which contains the reference to the
+note or on a separate page with `--separated-footnotes' (variable
+`$SEPARATED_FOOTNOTES').  The default is to have separated footnotes.
+
+
+File: texi2html.info,  Node: Style options,  Next: Expanding TeX regions,  Prev: Page layout options,  Up: Invoking texi2html
+
+Customizing the HTML and text style
+===================================
+
+   Miscalleneous style changes may be achieved with command line
+options.
+
+`--doctype=DTD'
+`--frameset-doctype=DTD'
+     You can specify the document DTD by setting these options.
+     `--frameset-doctype' applies to the file describing the frames when
+     frames are used (corresponding variables are `$DOCTYPE' and
+     `$FRAMESET_DOCTYPE').
+
+     The default for the document doctype is:
+          <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
+     And for the frameset doctype:
+          <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html401/frameset.dtd">
+
+`--iso'
+     If this option is set, ISO8859 entities are used for some special
+     symbols, like Copyright (C) (variable `$USE_ISO'). It is the
+     default.
+
+`--css-include=FILE'
+     This command line switch provides for the inclusion of an external
+     Cascading Style Sheet (CSS) file.  More than one file may be
+     specified, and `-' stands for the standard input (array
+     `@CSS_FILES').
+
+     The option use is the same than for `makeinfo' and is described
+     extensively in *Note HTML CSS: (texinfo)HTML CSS.  Briefly, the
+     CSS `@import' lines from the external file CSS file are pasted
+     before the `texi2html' CSS rules, and the external file CSS rules
+     are pasted after the `texi2html' CSS rules.
+
+`--html-xref-prefix=PATH'
+     This option sets the base directory for external HTML texinfo
+     manuals (variable `$EXTERNAL_DIR').  Defaults to `../'.
+
+`--def-table'
+     If this option is set, HTML tables are used to format definition
+     commands, rather than HTML definition tables (variable
+     `$DEF_TABLE'). Default is false.
+
+`--short-ref'
+     If this option is set, cross-references are given without section
+     numbers (variable `$SHORT_REF'). Default is false.
+
+`--number'
+     If this option is set, sections are numbered (variable
+     `$NUMBER_SECTIONS').  This is the default.
+
+`--toc-links'
+     If this option is set, links from headings to TOC entries are
+     created (variable `$TOC_LINKS'). Default is false.
+
+
+File: texi2html.info,  Node: Expanding TeX regions,  Next: Using init files,  Prev: Style options,  Up: Invoking texi2html
+
+Expanding `@tex' and `@math' regions using LaTeX2HTML
+=====================================================
+
+   It is possible to use LaTeX2HTML (http://www.latex2html.org/) to
+process `@tex' regions and `@math{}' commands.  This is an attractive
+way to display mathematical constructs in the HTML manual.  The `--l2h'
+option activates this feature (variable $L2H).  It is usually desirable
+to expand `@tex' sections when this option is specified (*note
+Expansion::). The default is not to use this feature.
+
+   The `--l2h-l2h=PROGRAM' option enables changing the name/location of
+the LaTeX2HTML program processing TeX regions (variable `$L2H_L2H').
+The default is `latex2html'.
+
+   `--l2h-tmp' sets the directory used for temporary files, this name
+shouldn't contain a dot `.' (variable is `$L2H_TMP'). Defaults to the
+current dir.
+
+   The file specified by `--l2h-file' is used as LaTeX2HTML init file.
+It is searched at the same places than init files (*note Using init
+files::), and the default is `l2h.init'.
+
+
+File: texi2html.info,  Node: Using init files,  Prev: Expanding TeX regions,  Up: Invoking texi2html
+
+Use initialization files for fine tuning
+========================================
+
+   Initialization variables are read first from
+`/usr/local/share/texi2html/Config' (the exact location being
+changeable with the `--pkgdatadir=dir' option of the `configure'
+script, see *Note Installation::), `/usr/local/etc/texi2html/Config'
+(the exact location being changeable with the `--sysconfdir=dir' option
+of the `configure' script, see *Note Installation::), from `./Config'
+then from `$HOME/.texi2html/Config'. Any command-line option can
+override the corresponding option set in init file, and the option
+`--init-file' specifies an init file to be loaded, with later settings
+overriding earlier ones.
+
+   The init files specified with `--init-file' are searched first in
+the current directory, then in the `$HOME/.texi2html/' directory, in
+the `/usr/local/etc/texi2html/' directory and lastly in the
+`/usr/local/share/texi2html/' directory.
+
+   A file is also included based on the language selected, by `$LANG',
+`--lang' or `@documentlanguage'.  If no language was selected `en' is
+considered to be the language. All the files with name the language
+name in `/usr/local/share/texi2html/i18n/',
+`/usr/local/etc/texi2html/i18n/', `$HOME/.texi2html/i18n/' and then
+`./i18n/' are included.
+
+   The default initialization options are defined in the
+`texi2html.init' file contained in the `texi2html' distribution (which
+gets included near the beginning of the `texi2html' script that gets
+installed).
+
+   To customize `texi2html' it is best if you copy the appropriate
+sections from the `texi2html.init' contents into an appropriate local
+initialization file, make the necessary changes there, and then have
+`texi2html' read this initialization file by one of the means described
+above.
+
+
+File: texi2html.info,  Node: Initialization files,  Next: Changing the page layout,  Prev: Invoking texi2html,  Up: Top
+
+Overview of initialization files content and loading
+****************************************************
+
+   The initialization files are `perl' files, read as explained in
+*Note Using init files::. You don't need to know much of `perl' to do
+some simple changes in variable values, however, to be able to really
+take advantage of all the features of the initialization file, a good
+knowledge of `perl' is required.
+
+   In initialization file two kind of variables appear. These are normal
+variables (including arrays and hashes) and references on functions.
+The later permits the dynamic redefinition of functions used to produce
+the HTML manual. You should be able to change the value of some normal
+variables without a deep knowledge of `perl', by looking at the
+existing examples. The possible mistakes in that case could be omitted
+`;', and bad quoting.
+
+   Initialization file are loaded from the main program by the mean of
+a `require', while in the `Texi2HTML::Config' namespace. This means
+that the namespace of the main program and the namespace of
+inititalization files are distinct, which ensures that no name clash
+should happen. The variables are declared with the `our' specifier,
+such that it should be possible to use the `use strict' pragma in the
+initialization file code.
+
+   To avoid messing with the variables in the `main' namespace all the
+global variables which could be of use in the init files are in the
+`Texi2HTML' namespace. Notice that the functions of the main program
+are still in the `main' namespace.
+
+* Menu:
+
+* Redefining functions::      Function redefinition is achieved with
+                              redefinition of references on functions.
+* Function prototypes::       Conventions used in that manual for function
+                              reference prototypes display.
+
+
+File: texi2html.info,  Node: Redefining functions,  Next: Function prototypes,  Up: Initialization files
+
+Redefining functions in initialization files
+============================================
+
+   To redefine a function you must replace the corresponding funtion
+reference with a reference on your function.  Thus you should write
+your function, give it a name you are certain it is unique in the
+`Texi2HTML::Config' namespace, and override the value of the function
+reference with your own function reference. When another function from
+the main program (or from another functions of an initialization file)
+calls the reference, your function will be used.
+
+   For example the function reference corresponding with the function
+called when doing an anchor is called `$anchor'. Thus if you want to
+override the corresponding function you could write:
+
+     # override the function reference
+     $anchor = \&my_own_function;
+     
+     # the function reference now refers to
+     sub my_own_function {
+     # process arguments and return an html anchor
+     }
+
+
+File: texi2html.info,  Node: Function prototypes,  Prev: Redefining functions,  Up: Initialization files
+
+Conventions used for function prototypes
+========================================
+
+   As the functions are defined by a reference name, we will always use
+the reference name in function prototypes. For the function arguments
+we will use `\@array' for a reference on an array and similarly
+`\%hash' for a reference on a hash.
+
+   Thus, the prototype for the function associated with the function
+reference `$formatting_function' will be:
+
+ - Function Reference: $text formatting_function $arg1 \@arg2
+     `formatting_function' takes as first argument $ARG2, as second
+     argument a reference on an array \@ARG2 and returns the formatted
+     text $TEXT.
+
+   To redefined the corresponding function, you should write:
+
+     $formatting_function = \&my_formatting_function
+     
+     sub my_formatting_function($ $)
+     {
+         my $arg1 = shift;
+         my $arg2 = shift;
+         # prepare $formatted_text
+         .....
+         return $formatted_text
+     }
+
+
+File: texi2html.info,  Node: Changing the page layout,  Next: Customizing HTML,  Prev: Initialization files,  Up: Top
+
+Fine tuning of the page layout
+******************************
+
+   Some features of the page layout might be specified with command line
+options, the corresponding variables are described in *Note Page layout
+options::.  Fine tuning of the page layout may be achieved with
+redefinition of other variables and function references in the
+initialization files.
+
+* Menu:
+
+* The different pages::       The different categories of pages.
+* The page layout::           The elements of a page.
+* Navigation panel::          How to change the navigation panel.
+* Program variables::         The available main program variables and some
+                              usefull functions from the main program.
+* Output initialization::     Setting variables before the document
+                              production but after the texinfo parsing.
+* Output finalization::       Cleaning after document generation.
+* css::                       Customizing css lines.
+* Customizing header::
+* Customizing section::
+* Customizing footer::
+* Special pages::             Customizing table of contents, top, about page.
+* File names::                Customizing the file names.
+* External index files::      Putting index entries in external files.
+
+
+File: texi2html.info,  Node: The different pages,  Next: The page layout,  Up: Changing the page layout
+
+The different categories of pages and sectioning elements
+=========================================================
+
+   The following sectioning elements can be associated with pages:
+
+_Normal elements_
+     These are normal sections or nodes. Their association with pages is
+     determined by the splitting of the document. *Note Splitting
+     output::.
+
+_Top element_
+     The top element is the higher element in the document structure.
+     If there is a `@top' section it is the element associated with
+     that section. Otherwise it is the element associated with the
+     `@node Top'. If there is no `@node Top' the first element is the
+     top element.
+
+     The top element is formatted differently than a normal element if
+     there is a `@top' section or the `@node Top' isn't associated with
+     a sectioning command.
+
+_Misc elements_
+     These elements are associated with pages if the document is split.
+     There are four misc elements:
+       1. Table of contents
+
+       2. Short table of contents, also called Overview
+
+       3. Footnotes page
+
+       4. About page
+
+     The _About page_ shouldn't be present for documents consisting in
+     only one sectioning element. The _Footnote page_ should only be
+     present if the footnotes appear on a separated page (*note Page
+     layout options::), however a footnote element is present if the
+     document isn't split. The _Table of contents_ should only be
+     formatted if `@contents' is present in the document.  Similarly
+     the _Overview_ should only appear if `@shortcontents' or
+     `@summarycontents' is present.
+
+
+File: texi2html.info,  Node: The page layout,  Next: Navigation panel,  Prev: The different pages,  Up: Changing the page layout
+
+Page layout and navigation panel overview
+=========================================
+
+   A page is broken up in three parts. A page header, the sections and
+a page footer. A common element in the page layout is a navigation
+panel with icons or text linking to other sections or pages. Another
+common element is a rule, separating sections or footer. The navigation
+panel and the rules may be part of the sections or part of headers or
+footers. You may use the variables `$SMALL_RULE', `$DEFAULT_RULE',
+`$MIDDLE_RULE' and `$BIG_RULE' for rules of different sizes.  The
+defaults are
+     $SMALL_RULE = '<hr size="1">';
+     $DEFAULT_RULE = '<hr>';
+     $MIDDLE_RULE = '<hr size="2">';
+     $BIG_RULE = '<hr size="6">';
+
+   In the header some important meta data may be defined, like the
+title or style information, and textual informations may be present in
+comments. All this doesn't appear directly in the displayed HTML,
+though.
+
+   The page layout is mainly controlled by functions, the precise
+functions called depending on the document splitting. The navigation
+panel, however, can be customized with variables.
+
+Element labels
+--------------
+
+   There are 19 items associated with elements. Each of these is
+associated with a name and a reference to the element they represent,
+when such an element exists.  The element is either a global element or
+an element relative to the current element. The relative elements are
+found with respect with the document structure defined by the section
+structuring commands (`@chapter', `@unnumbered'...) or by the nodes (in
+that case the node directions are specified on node line or in menu
+organization).  These items are called "element labels". They may be
+associated with a button (*note Button specifications::), and used in
+the formatting functions (*note Program variables::).
+
+   Here is the list:
+
+_` '_
+     An empty button
+
+_Top_
+     Top element. The associated name is `$TOP_HEADING' if that
+     variable is defined. This variable is not set by default.
+
+_Contents_
+     Table of contents
+
+_About_
+     About (help) page
+
+_Overview_
+     Overview, short table of contents
+
+_First_
+     First element in reading order
+
+_Last_
+     Last element in reading order
+
+_Index_
+     The first chapter with `@printindex'. The associated name is
+     `$INDEX_CHAPTER', if the variable is set. This variable is not set
+     by default.
+
+_This_
+     The current element
+
+_Back_
+     Preceding element in reading order
+
+_FastBack_
+     Beginning of this chapter or previous chapter if the element is a
+     chapter
+
+_Prev_
+     Previous section on the same level
+
+_NodePrev_
+     Previous node
+
+_Forward_
+     Next element in reading order
+
+_FastForward_
+     Next chapter
+
+_Next_
+     Next section on the same level
+
+_NodeNext_
+     Next node
+
+_Following_
+     Next node in node reading order
+
+_Up_
+     Up section
+
+_NodeUp_
+     Up node
+
+
+File: texi2html.info,  Node: Navigation panel,  Next: Program variables,  Prev: The page layout,  Up: Changing the page layout
+
+Customization of the navigation panels buttons
+==============================================
+
+   A lot of customization of the navigation panel may be achieved
+without redefining functions, with variables redefinition.  In case it
+isn't enough, it is also possible to redefine the function doing the
+navigation panel formatting.
+
+* Menu:
+
+* General purpose variables::      Variables controlling the navigation panel
+                                   at a global level
+* Button specifications::
+* Panel formatting function::
+
+
+File: texi2html.info,  Node: General purpose variables,  Next: Button specifications,  Up: Navigation panel
+
+Controlling the navigation panel panel at a high level
+------------------------------------------------------
+
+   The global formatting of the navigation panels may be changed with
+the following variables:
+
+`$VERTICAL_HEAD_NAVIGATION'
+     A vertical navigation panel will be used for the header navigation
+     panel if this variable is true.
+
+`$ICONS'
+     Icons are used instead of textual buttons if this variable is true.
+
+`$SECTION_NAVIGATION'
+     If this variable is false there is no section navigation, no
+     navigation panels for the elements within the pages, only at the
+     beginning and the end of the page (*note Page layout options::).
+
+
+File: texi2html.info,  Node: Button specifications,  Next: Panel formatting function,  Prev: General purpose variables,  Up: Navigation panel
+
+Specifying the buttons formatting
+---------------------------------
+
+   Several arrays and hashes enable a precise control on the buttons and
+their display.  The following arrays determine the buttons present in
+navigation panels:
+
+`@SECTION_BUTTONS'
+     This array is used for the navigation panel buttons present at the
+     begining of sectioning elements. If split at node or section they
+     are also used at the page footer, and in the case of section
+     navigation at the page header.
+
+`@SECTION_FOOTER_BUTTONS'
+`@NODE_FOOTER_BUTTONS'
+     This array is used for the navigation panel buttons present at the
+     footer of pages when split at node or at section.
+
+     If `$WORDS_IN_PAGE' is set and the output is split at nodes, these
+     buttons are only present if there are more than `$WORDS_IN_PAGE'
+     words in the sectioning element text. This counting is very rough
+     and include punctuation marks, html elements, numbers.  The
+     default is to include the buttons after 300 words.
+
+`@CHAPTER_BUTTONS'
+     This array is used for the buttons appearing at the page footer if
+     split at chapter, and at the page header if split at chapter and
+     there is no section navigation.
+
+`@MISC_BUTTONS'
+     These buttons appear at the beginning of special and sections and
+     at the end of these section pages if the output is split.
+
+   The array specify the buttons displayed in navigation panels, and
+how the button is displayed.  Each element is associated with a button
+of the navigation panel from left to right.  The signification of the
+array element value is the following:
+
+_reference on a function_
+     The function is called with first argument a filehandle reference
+     on the current file and second argument a boolean true if the
+     navigation panel should be vertical.
+
+_reference on a scalar_
+     The scalar value is printed. For some possibly usefull scalars,
+     *Note Elements hashes::.
+
+_reference on an array_
+     In this case the first array element should be a reference on text
+     and the second element an element label. In that case a link to the
+     element associated with the element label with the scalar value
+     text is generated.
+
+     For example if the buttons array element is
+          [ 'Next', \$Texi2HTML::NODE{Next} ]
+
+     The button will be a link to the next section with text
+     `$Texi2HTML::NODE{Next}'.
+
+_element label_
+     If icons are not used, the button is a link to the corresponding
+     element which text is defined by the value associated with the
+     element label in the `%NAVIGATION_TEXT' hash, surrounded by `['
+     and `]'. If the element label is ` ', there is no `[' and `]'.
+     The element of the `%NAVIGATION_TEXT' hash are defined
+     dynamically, in the `init_out' function reference (*note Output
+     initialization::).
+
+     If icons are used, the button is an image with file determined by
+     the value associated with the element label in the `%ACTIVE_ICONS'
+     hash if the the link really leads to an element, or in the
+     `%PASSIVE_ICONS' hash if there is no element to link to. Of course
+     if there is a link to the element the icon links to that element.
+
+
+File: texi2html.info,  Node: Panel formatting function,  Prev: Button specifications,  Up: Navigation panel
+
+Changing the navigation panel formatting
+----------------------------------------
+
+   If you are not satisfied with this scheme, it is possible to control
+exactly the formatting of navigation panels by redefining a function
+reference. The function controlling the display of navigation panel is
+associated with the following function reference:
+
+ - Function Reference: print_navigation $filehandle \@buttons $vertical
+     $FILEHANDLE is the opened filehandle the function should write to.
+     \@BUTTONS is an array reference which should hold the
+     specification of the buttons for that navigation panel. $VERTICAL
+     is true if the navigation panel should be vertical.
+
+
+File: texi2html.info,  Node: Program variables,  Next: Output initialization,  Prev: Navigation panel,  Up: Changing the page layout
+
+Main program variables and usefull functions
+============================================
+
+   In the functions controlling the page layout some global variables
+set by the main program are available, with value corresponding with
+the current layout element.
+
+* Menu:
+
+* Elements hashes::             Accessing information related with the
+                                different elements
+* Global informations::         Accessing global informations, like date,
+                                title...
+* Global functions::            main program usefull functions
+
+
+File: texi2html.info,  Node: Elements hashes,  Next: Global informations,  Up: Program variables
+
+Accessing elements informations
+-------------------------------
+
+   Four hashes are available, with key the elements labels (as described
+in *Note Element labels::) and values:
+
+`%Texi2HTML::NAME'
+     The formatted element name
+
+`%Texi2HTML::HREF'
+     The element hypertext reference
+
+`%Texi2HTML::NODE'
+     The element node name
+
+`%Texi2HTML::NO_TEXI'
+     The element name after removal of texi commands
+
+
+File: texi2html.info,  Node: Global informations,  Next: Global functions,  Prev: Elements hashes,  Up: Program variables
+
+Accessing global informations
+-----------------------------
+
+   Three kinds of global informations are available, miscalleneous
+global strings, flags set by `@set' and special flags and section lines.
+
+Global strings
+..............
+
+   The `%Texi2HTML::THISDOC' hash holds some global informations:
+
+`fulltitle'
+     title set by `@title'. If there is no `@title' other possibilities
+     are tried (`@settitle', `@shorttitlepage'...).
+
+`title'
+     title set by `@settitle', or `fulltitle'.
+
+`title_no_texi'
+     title without texi formatting
+
+`title_texi'
+     title with texi commands
+
+`author'
+     Authors list set by `@author'.
+
+`authors'
+     A reference on an array containing each author set by `@author'.
+
+`copying'
+     Text appearing in `@copying' with all the texinfo commands removed,
+     put in comments.
+
+`program'
+     The name and version of `texi2html'.
+
+`program_homepage'
+     Homepage for `texi2html'.
+
+`program_authors'
+     Authors of `texi2html'.
+
+`file_base_name'
+     base name of the texinfo manual file.
+
+`destination_directory'
+     Destination directory for the resulting files.
+
+`toc_file'
+     The file name of the table of contents.
+
+`today'
+     The date.
+
+   It also holds the arg of the following commands, associated with the
+command name: kbdinputstyle, paragraphindent, setchapternewpage,
+headings, footnotestyle,  exampleindent, firstparagraphindent,
+everyheading, everyfooting,  evenheading, evenfooting, oddheading,
+oddfooting.
+
+Flags
+.....
+
+   Flags defined by `@set' may be accessed through the `%main::value'
+hash. The key is the flag name, the value is the flag value at the end
+of the document.
+
+   Special flags are set by the main program. They correspond with a
+texinfo command, like `@setfilename', or `@settitle', `@author'... The
+corresponding flag is the command name with `_' appended, for example,
+`_titlefont' corresponds with `@titlefont'. Like other flags they are
+available in `%main::value'.
+
+Section lines
+.............
+
+   The following array references or arrays holds formatted lines:
+
+`$Texi2HTML::THIS_SECTION'
+     Lines of the current element.
+
+`$Texi2HTML::THIS_HEADER'
+     Lines of the current element appearing before the element label
+     (anchors).
+
+`$Texi2HTML::OVERVIEW'
+     Lines of short table of contents. *Note Special pages::.
+
+`$Texi2HTML::TOC_LINES'
+     Lines of table of contents. *Note Special pages::.
+
+
+File: texi2html.info,  Node: Global functions,  Prev: Global informations,  Up: Program variables
+
+Function usefull in page formatting
+-----------------------------------
+
+   The usefull function is a function used to print an array of lines,
+which also counts the number of words in the array, if needed.
+
+ - Function: $words_number main::print_lines $filehandle \@lines_array
+     $FILEHANDLE is the opened filehandle the function should write to.
+     \@LINES_ARRAY is the array line the function should write to the
+     file.  If this argument is omitted, the function uses
+     `$Texi2HTML::THIS_SECTION'.  $WORDS_NUMBER is the number of words
+     in the array, only defined if split at nodes and `$WORDS_IN_PAGE'
+     is defined.
+
+
+File: texi2html.info,  Node: Output initialization,  Next: Output finalization,  Prev: Program variables,  Up: Changing the page layout
+
+Preparing the output
+====================
+
+   After the texinfo file has been parsed, some information is available
+which can be used to modify some variables and prepare the outputting.
+For example the document language, the document encoding, values set
+with `@set' or `@setfilename' and other similar @-commands are not
+known before the texinfo parsing.
+
+   The following function reference may be redefined to be called after
+texinfo processing and before document generation:
+
+ - Function Reference: $encoding init_out
+     This function perform the initialization of variables and any other
+     task before document outputting. It returns the encoding used for
+     the output files.
+
+   In the default case the `$BODYTEXT' (*note Customizing header::) and
+the hashes `%NAVIGATION_TEXT' (*note Button specifications::) and
+`%BUTTONS_GOTO' (*note About text::) are initialized.
+
+   To perform the default initializations and also add more code, you
+could do as in the following example (save the default function
+reference and call it in your own function) :
+
+     my $default_init_out = $init_out;
+     $init_out = \&makeinfo_like_init_out;
+     sub makeinfo_like_init_out()
+     {
+        my $encoding = &$default_init_out();
+        $NAVIGATION_TEXT{'Following'} = ' &gt; ';
+        return $encoding;
+     }
+
+
+File: texi2html.info,  Node: Output finalization,  Next: css,  Prev: Output initialization,  Up: Changing the page layout
+
+Finalizing the output
+=====================
+
+   If you want to do some cleaning after the document was generated
+(close files, write at the end of files and so on), the following
+function reference may be redefined:
+
+ - Function Reference: finish_out
+     This function is called after the document generation.
+
+   The default is to do nothing.
+
+
+File: texi2html.info,  Node: css,  Next: Customizing header,  Prev: Output finalization,  Up: Changing the page layout
+
+Customizing the `texi2html' css lines
+=====================================
+
+   It is possible to modify the `texi2html' css lines by modifying the
+entries or adding to the `%css_map' hash. Each key is a css selector,
+the corresponding value is a style string.
+
+   The whole css text is in the variable `$CSS_LINES'. If this variable
+is defined the variable value is used instead of being constructed
+using the `%css_map' entries. For example if you don't want any css
+entries, set
+
+     $CSS_LINES = '';
+
+   It is also possible to change completely the way `$CSS_LINES' are
+generated by redefining the following function reference:
+
+ - Function Reference: css_lines \@import_lines \@rule_lines
+     This function should be used to construct the `$CSS_LINES'.
+     \@IMPORT_LINES are the `@import' lines of the files specified with
+     `--include-css', and \@RULE_LINES are the css commands lines of
+     these files.  *Note Style options::.
+

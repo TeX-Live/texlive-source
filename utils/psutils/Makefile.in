@@ -1,0 +1,229 @@
+#
+#	Makefile for psutils
+#
+
+VPATH = @srcdir@
+srcdir = @srcdir@
+
+CC = @CC@
+CFLAGS = @CFLAGS@
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+defines = -DUNIX -DPAPER=\"$(PAPER)\"
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+scriptdir = $(bindir)
+mandir = @mandir@
+man1dir = $(mandir)/man$(manext)
+manext = 1
+
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL = @INSTALL@
+
+BIN = psbook psselect pstops epsffit psnup psresize
+SHELLSCRIPTS = getafm showchar
+PERLSCRIPTS = fixfmps fixmacps fixpsditps fixpspps fixtpps fixwfwps fixwpps fixscribeps fixwwps fixdlsrps extractres includeres psmerge
+MANPAGES = psbook.$(manext) psselect.$(manext) pstops.$(manext) epsffit.$(manext) psnup.$(manext) psresize.$(manext) psmerge.$(manext) fixscribeps.$(manext) getafm.$(manext) fixdlsrps.$(manext) fixfmps.$(manext) fixmacps.$(manext) fixpsditps.$(manext) fixpspps.$(manext) fixtpps.$(manext) fixwfwps.$(manext) fixwpps.$(manext) fixwwps.$(manext) extractres.$(manext) includeres.$(manext)
+INCLUDES = md68_0.ps md71_0.ps
+OS = UNIX
+PAPER = a4
+
+default all: $(BIN) $(PERLSCRIPTS) $(MANPAGES) $(SHELLSCRIPTS)
+
+.SUFFIXES:
+.SUFFIXES: .o .c .h .ps .dvi .info .texinfo
+
+.c.o:
+	$(CC) $(defines) -c -I. -I$(srcdir) $(CPPFLAGS) $(CFLAGS) $<
+
+PERL = /usr/bin/env perl
+BINMODE = 0755
+MANMODE = 0644
+CHMOD = chmod
+MAKETEXT = $(PERL) $(srcdir)/maketext
+
+epsffit: epsffit.o pserror.o
+	$(CC) $(LDFLAGS) -o epsffit pserror.o epsffit.o
+
+psnup: psnup.o psutil.o psspec.o pserror.o
+	$(CC) $(LDFLAGS) -o psnup psutil.o psspec.o pserror.o psnup.o
+
+psresize: psresize.o psutil.o pserror.o psspec.o
+	$(CC) $(LDFLAGS) -o psresize psutil.o psspec.o pserror.o psresize.o
+
+psbook: psbook.o psutil.o pserror.o
+	$(CC) $(LDFLAGS) -o psbook psutil.o pserror.o psbook.o
+
+psselect: psselect.o psutil.o pserror.o
+	$(CC) $(LDFLAGS) -o psselect psutil.o pserror.o psselect.o
+
+pstops: pstops.o psutil.o psspec.o pserror.o
+	$(CC) $(LDFLAGS) -o pstops psutil.o psspec.o pserror.o pstops.o
+
+getafm: getafm.sh
+	cp $(srcdir)/getafm.sh getafm
+	$(CHMOD) $(BINMODE) getafm
+
+showchar: showchar.sh
+	cp $(srcdir)/showchar.sh showchar
+	$(CHMOD) $(BINMODE) showchar
+
+psmerge: psmerge.pl
+	$(MAKETEXT) OS=$(OS) PERL="$(PERL)" $(srcdir)/psmerge.pl > psmerge
+	$(CHMOD) $(BINMODE) psmerge
+
+fixfmps: fixfmps.pl
+	$(MAKETEXT) OS=$(OS) PERL="$(PERL)" $(srcdir)/fixfmps.pl > fixfmps
+	$(CHMOD) $(BINMODE) fixfmps
+
+fixmacps: fixmacps.pl
+	$(MAKETEXT) OS=$(OS) PERL="$(PERL)" INCLUDE=$(INCLUDEDIR) $(srcdir)/fixmacps.pl > fixmacps
+	$(CHMOD) $(BINMODE) fixmacps
+
+fixpsditps: fixpsditps.pl
+	$(MAKETEXT) OS=$(OS) PERL="$(PERL)" $(srcdir)/fixpsditps.pl > fixpsditps
+	$(CHMOD) $(BINMODE) fixpsditps
+
+fixpspps: fixpspps.pl
+	$(MAKETEXT) OS=$(OS) PERL="$(PERL)" $(srcdir)/fixpspps.pl > fixpspps
+	$(CHMOD) $(BINMODE) fixpspps
+
+fixscribeps: fixscribeps.pl
+	$(MAKETEXT) OS=$(OS) PERL="$(PERL)" $(srcdir)/fixscribeps.pl > fixscribeps
+	$(CHMOD) $(BINMODE) fixscribeps
+
+fixtpps: fixtpps.pl
+	$(MAKETEXT) OS=$(OS) PERL="$(PERL)"  $(srcdir)/fixtpps.pl > fixtpps
+	$(CHMOD) $(BINMODE) fixtpps
+
+fixwfwps: fixwfwps.pl
+	$(MAKETEXT) OS=$(OS) PERL="$(PERL)" $(srcdir)/fixwfwps.pl > fixwfwps
+	$(CHMOD) $(BINMODE) fixwfwps
+
+fixwpps: fixwpps.pl
+	$(MAKETEXT) OS=$(OS) PERL="$(PERL)" $(srcdir)/fixwpps.pl > fixwpps
+	$(CHMOD) $(BINMODE) fixwpps
+
+fixwwps: fixwwps.pl
+	$(MAKETEXT) OS=$(OS) PERL="$(PERL)" $(srcdir)/fixwwps.pl > fixwwps
+	$(CHMOD) $(BINMODE) fixwwps
+
+fixdlsrps: fixdlsrps.pl
+	$(MAKETEXT) OS=$(OS) PERL="$(PERL)" $(srcdir)/fixdlsrps.pl > fixdlsrps
+	$(CHMOD) $(BINMODE) fixdlsrps
+
+extractres: extractres.pl
+	$(MAKETEXT) OS=$(OS) PERL="$(PERL)" $(srcdir)/extractres.pl > extractres
+	$(CHMOD) $(BINMODE) extractres
+
+includeres: includeres.pl
+	$(MAKETEXT) OS=$(OS) PERL="$(PERL)" INCLUDE=$(INCLUDEDIR) $(srcdir)/includeres.pl > includeres
+	$(CHMOD) $(BINMODE) includeres
+
+epsffit.$(manext): epsffit.man
+	$(MAKETEXT) MAN="$(MANPAGES)" $(srcdir)/epsffit.man > epsffit.$(manext)
+
+psnup.$(manext): psnup.man
+	$(MAKETEXT) MAN="$(MANPAGES)" PAPER=$(PAPER) $(srcdir)/psnup.man > psnup.$(manext)
+
+psresize.$(manext): psresize.man
+	$(MAKETEXT) MAN="$(MANPAGES)" PAPER=$(PAPER) $(srcdir)/psresize.man > psresize.$(manext)
+
+psbook.$(manext): psbook.man
+	$(MAKETEXT) "MAN=$(MANPAGES)" $(srcdir)/psbook.man > psbook.$(manext)
+
+psselect.$(manext): psselect.man
+	$(MAKETEXT) "MAN=$(MANPAGES)" $(srcdir)/psselect.man > psselect.$(manext)
+
+pstops.$(manext): pstops.man
+	$(MAKETEXT) "MAN=$(MANPAGES)" PAPER=$(PAPER) $(srcdir)/pstops.man > pstops.$(manext)
+
+psmerge.$(manext): psmerge.man
+	$(MAKETEXT) "MAN=$(MANPAGES)" $(srcdir)/psmerge.man > psmerge.$(manext)
+
+fixfmps.$(manext): fixfmps.man
+	$(MAKETEXT) "MAN=$(MANPAGES)" $(srcdir)/fixfmps.man > fixfmps.$(manext)
+
+fixmacps.$(manext): fixmacps.man
+	$(MAKETEXT) "MAN=$(MANPAGES)" INCLUDE=$(INCLUDEDIR) $(srcdir)/fixmacps.man > fixmacps.$(manext)
+
+fixpsditps.$(manext): fixpsditps.man
+	$(MAKETEXT) "MAN=$(MANPAGES)" $(srcdir)/fixpsditps.man > fixpsditps.$(manext)
+
+fixpspps.$(manext): fixpspps.man
+	$(MAKETEXT) "MAN=$(MANPAGES)" $(srcdir)/fixpspps.man > fixpspps.$(manext)
+
+fixscribeps.$(manext): fixscribeps.man
+	$(MAKETEXT) "MAN=$(MANPAGES)" $(srcdir)/fixscribeps.man > fixscribeps.$(manext)
+
+fixtpps.$(manext): fixtpps.man
+	$(MAKETEXT) "MAN=$(MANPAGES)" $(srcdir)/fixtpps.man > fixtpps.$(manext)
+
+fixwfwps.$(manext): fixwfwps.man
+	$(MAKETEXT) "MAN=$(MANPAGES)" $(srcdir)/fixwfwps.man > fixwfwps.$(manext)
+
+fixwpps.$(manext): fixwpps.man
+	$(MAKETEXT) "MAN=$(MANPAGES)" $(srcdir)/fixwpps.man > fixwpps.$(manext)
+
+fixwwps.$(manext): fixwwps.man
+	$(MAKETEXT) "MAN=$(MANPAGES)" $(srcdir)/fixwwps.man > fixwwps.$(manext)
+
+fixdlsrps.$(manext): fixdlsrps.man
+	$(MAKETEXT) "MAN=$(MANPAGES)" $(srcdir)/fixdlsrps.man > fixdlsrps.$(manext)
+
+extractres.$(manext): extractres.man
+	$(MAKETEXT) "MAN=$(MANPAGES)" $(srcdir)/extractres.man > extractres.$(manext)
+
+includeres.$(manext): includeres.man
+	$(MAKETEXT) "MAN=$(MANPAGES)" INCLUDE=$(INCLUDEDIR) $(srcdir)/includeres.man > includeres.$(manext)
+
+getafm.$(manext): getafm.man
+	$(MAKETEXT) "MAN=$(MANPAGES)" $(srcdir)/getafm.man > getafm.$(manext)
+
+info:
+dvi:
+
+SHELL = /bin/sh
+@SET_MAKE@
+
+.PHONY: install installdirs install-exec install-man clean realclean distclean mostlyclean all check info dvi
+install: install-exec install-man
+
+install-exec: installdirs
+	for p in $(BIN); do $(INSTALL_PROGRAM) $$p $(bindir)/$$p; done
+	for p in $(SHELLSCRIPTS) $(PERLSCRIPTS); do $(INSTALL_PROGRAM) $$p $(scriptdir)/$$p; done
+
+install-man: installdirs
+	for p in $(MANPAGES); do $(INSTALL_DATA) $$p $(man1dir)/$$p; done
+
+installdirs:
+	$(SHELL) ${srcdir}/../../texk/mkinstalldirs $(bindir) $(scriptdir) $(man1dir) 
+
+clean:
+	rm -f *.o $(BIN) $(SHELLSCRIPTS) $(PERLSCRIPTS) $(MANPAGES)
+
+distclean: mostlyclean
+	rm -f Makefile  config.cache  config.log  config.status  patchlev.h
+
+realclean: distclean
+mostlyclean: clean
+
+Makefile: config.status $(srcdir)/Makefile.in
+	$(SHELL) config.status
+
+# This tells versions [3.59,3.63) of GNU make not to export all variables.
+.NOEXPORT:
+
+# Automatically generated dependencies will be put at the end of the file.
+psutil.o: psutil.h patchlev.h pserror.h psutil.c
+psspec.o: psutil.h patchlev.h psspec.h pserror.h psspec.c
+pserror.o: psutil.h patchlev.h pserror.h pserror.c
+epsffit.o: epsffit.c pserror.h patchlev.h
+psnup.o: psutil.h patchlev.h psspec.h pserror.h psnup.c
+psresize.o: psutil.h patchlev.h psspec.h pserror.h psresize.c
+psbook.o: psutil.h patchlev.h pserror.h psbook.c
+psselect.o: psutil.h patchlev.h pserror.h psselect.c
+pstops.o: psutil.h patchlev.h psspec.h pserror.h pstops.c

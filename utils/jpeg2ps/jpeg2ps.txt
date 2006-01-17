@@ -1,0 +1,338 @@
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+jpeg2ps - convert JPEG compressed images to PostScript Level 2
+
+jpeg2ps is available from http://www.ifconnection.de/~tm
+and many other sites, notably CTAN mirrors.
+
+Copyright (C) 1994-99 Thomas Merz (tm@muc.de)
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+Purpose of jpeg2ps
+==================
+jpeg2ps converts JPEG files to PostScript Level 2 or 3 EPS. In fact, jpeg2ps
+is not really a converter but a "wrapper": it reads the image parameters
+(width, height, number of color components) in a JPEG file, writes the
+according EPS header and then copies the compressed JPEG data to the output
+file. Decompression is done by the PostScript interpreter (only PostScript
+Level 2 and 3 interpreters support JPEG compression and decompression).
+If you have a slow communication channel and a fast printer, sending
+compressed image data is a big win.
+
+
+Change History
+==============
+    
+V1.8 (July 28, 1999)
+  - Added -q option for suppressing all non-error messages.
+  - Don't use the supplied getopt on Unix by default, but still
+    include the source module in the distribution (and use it on
+    DOS/Windows)
+  - Added -p option for setting the page size on the command line.
+    If no such option is supplied, A4 or letter is used as default,
+    according to a compile time option. 
+  - Renamed makefile.gcc to the more common Makefile.
+  - Added casts to get rid of some warning messages.
+  - Added Mac support for use with DropUNIX. This required opening
+    the files in binary mode, properly initializing some statics,
+    and replacing the getopt loop with a plain argc loop (for now).
+
+V1.7 (April 9, 1999)
+  - Fixed an omission in the Makefile (makefile.gcc)
+  - Removed the OS2 #ifdefs and made the conditional code identical to the
+    DOS code. Therefore, using -DDOS should also work on OS/2.
+
+V1.6 (March 29, 1999)
+  - Changed all references to my old Web site to the current address
+    http://www.ifconnection.de/~tm
+  - Added support for OS/2, provided by
+    Stefan A. Deutscher (sad@utk.edu / stefand@ibm.net)
+  - Added support for VMS, provided by
+    Rolf Niepraschk (niepraschk@ptb.de)
+  - Changed the get_2bytes() macro in readjpeg.c to a static function
+    in order to avoid portability issues. Since the evaluation order
+    in the formely used macro version isn't guaranteed, the result
+    was garbled on some platforms, notably with the Metrowerks C
+    compilers for BeOS and Macintosh.
+  - Changed the auto rotate feature in order to produce "clean" (unrotated)
+    EPS files. The old feature of automatically rotating images to
+    landscape mode if width > height can be reactivated with the new
+    command line option "-a" (auto rotate)
+  - Changed the ASCII85 output routine in order to avoid two consecutive
+    percent characters at the beginning of a line. Although legal PostScript,
+    this may cause trouble with some post-processing programs, notably
+    when including jpeg2ps output in TeX files. This should fix the
+    problems dvips users sometimes encountered when using jpeg2ps.
+    The comment in this file (jpeg2ps.txt) regarding problems with
+    TeX PostScript drivers has been deleted.
+
+V1.5 (Dec. 12, 1996)
+  - Included ASCIIHex encoding again (the code was already there,
+    only command line option added). This is primarily useful as as
+    workaround for a brain-damaged dvips "feature" (see below).
+  - Added note on dvips and tgif in jpeg2ps.txt.
+  - Removed jpeg2pdf again. Its functionality will be contained in the
+    forthcoming PDFlib C library and some library client programs.
+
+V1.4 (Aug. 19, 1996)
+  - included getopt.c in distribution, changed option handling
+  - prepared readjpeg.c for use with jpeg2pdf program (accept baseline only)
+  - included jpeg2pdf in the distribution
+
+V1.3 (Jan. 31, 1996)
+  - Fixed ASCII85 encoding bug. In rare cases ~ and > could get
+    separated.
+
+V1.2 (Jan. 25, 1996) 
+  - Fixed "unsigned" bug when reading JFIF density marker.
+
+V1.1 (Jan. 22, 1996) Several enhancements:
+  - invert colors of Adobe Photoshop CMYK files
+  - interpret JFIF resolution ("density") markers
+  - implemented -r switch for specifying resolution 
+  - accept compression markers other than SOF0 and SOF1 (this won't
+    be useful for many people, and didn't have any testing).
+
+V1.0 (Jan. 9, 1996) Re-release of formerly released Usenet version.
+
+
+Building JPEG2PS
+================
+jpeg2ps is coded in rather simple-minded ANSI C. It should compile cleanly
+on many systems. For old K&R compilers, include the compiler flag -DKNR in 
+the makefile to disable ANSI prototypes.
+
+The jpeg2ps distribution is available in .zip and .tar.gz format.
+jpeg2ps-x.x.zip is intended for MS-DOS (real or DOS box in Windows)
+and also includes an executable. Source code is identical in both 
+jpeg2ps-x.x.zip and jpeg2ps-x.x.tar.gz, the only exception being different
+line end conventions.
+
+General compilation options
+---------------------------
+-DA4 makes jpeg2ps use A4 as default paper size. If -DA4 is not
+given, letter format will be used instead. Note that the paper
+size can always be specified at the command line.
+
+Unix
+----
+jpeg2ps should compile out of the box on most Unix systems,
+probably after a little Makefile tweaking. The distributed
+Makefile is set up for GCC on Linux.
+
+DOS
+---
+Use -DDOS to compile jpeg2ps on DOSish systems. The distributed
+source builds fine with MS Visual C++ 6.0. A project file for
+this environment is included in the distribution.
+
+OS/2
+----
+OS/2 support was provided by Stefan A. Deutscher (sad@utk.edu / stefand@ibm.net)
+and is included in the distribution "as is", i.e., I'm unable to assist in
+any OS/2-related issues. The following is from Stefan's description for OS/2:
+
+>The executable was made from the unmodified unix sources with gcc / emx09c +
+>emxfix2 applied. To run it you need the emx runtime system, which you
+>find as emxrt.zip, or on ftp-os2.cdrom.com or ftp-os2.nmsu.edu or ftp.leo.org.
+>Newer versions than emx09c+ef2 should be fine. I tested this only on Warp 4,
+>and there it works.
+
+Mac
+---
+jpeg2ps can be built on the Mac using a facility called DropUNIX. This is
+a wrapper for conventional command-line driven Unix programs which gives
+some sort of drag-and-drop support. However, command line options are
+not available. For this reason, jpeg2ps always generates ASCII85 output
+if built on the Mac.
+
+In order to build jpeg2ps on the Mac, you will need DropUNIX from
+http://www.zenspider.com or some mirror, such as
+http://omlc.ogi.edu/software/tex_convert
+
+and set the C preprocessor define -DMAC. Since the MetroWerks compiler
+has a somewhat kludgey way to set preprocessor options, the file
+prefix-mac.pch is supplied which should be added to the project as
+a precompiled header (see MW docs).
+
+The idea for the Mac port and the DropUNIX support were provided by 
+Ujwal Sathyam (setlur@bigfoot.com).
+
+Although I successfully built jpeg2ps with the MetroWerks compiler,
+Mac support is still somewhat experimental. The required build
+files are not included in the distribution. (No, please don't ask me for
+an executable).
+
+Note that for unknown reason the Mac version currently supports only
+conversion of single files. Although it seems to work with multiple
+files too, the output generated for the second and subsequent files
+will be rubbish.
+
+
+VMS
+---
+A VMS build file was provided by Rolf Niepraschk (niepraschk@ptb.de). It isn't
+supported by the author of this software. Use the supplied file "descrip.mms"
+as a starting point for building jpeg2ps with the VMS build tool mms.
+
+
+Usage Details
+=============
+jpeg2ps [options] file.jpg > file.eps
+
+-a       auto rotate feature
+-b       binary mode
+-h       hex mode (ASCIIHex encoding)
+-o name  output file name (as an alternative to output redirection)
+-p size  page size name. Known names are:
+         a0, a1, a2, a3, a4, a5, a6, b5, letter, legal, ledger, p11x17
+-q       quiet mode: suppress all informational messages
+-r dpi   resolution value (0 = read from file if possible)
+
+jpeg2ps reads a JPEG file (*not* stdin) and writes a DSC-compliant EPS
+file containing the compressed JPEG data in PostScript format to stdout.
+The produced EPS files contain the necessary DSC comments including 
+BoundingBox, so they may be imported in page layout applications. However,
+they do not contain preview images, so you will only see a gray box on screen.
+
+If the auto rotate feature is activated with the -a option, images with
+width > height are automatically rotated to landscape mode. Don't use this
+option if you simply want to generate EPS files for inclusion in your
+documents. Note: prior to version 1.6, jpeg2ps always "autorotated" images
+with width > height which was especially bad for TeX users. I hope this
+change helps the TeX community in better using jpeg2ps!
+
+jpeg2ps performs some sanity checks with the JPEG data. It detects several
+kinds of corrupt input data, but it is not absolutely foolproof. One special
+feature is that you can feed Macintosh JPEG files (PICT-JPEG) to jpeg2ps. 
+These normally have several hundred bytes of additional stuff before the JPEG 
+data. This PICT rubbish is simply ignored by jpeg2ps.
+
+
+Output modes
+============
+By default, jpeg2ps sends the image data in ASCII85 encoded form which is
+suitable for any communication channel (serial, parallel or whatever). If
+you are *sure* that your channel is truly 8-bit clean, you can force 8-bit
+data with the -b option. Note that this normally does not apply to 8-bit
+serial or even parallel channels since some control characters are reserved
+for the communications protocol. You can use binary data e.g.:
+
+- with some networked printers
+- with direct-access PostScript interpreters, e.g. Ghostscript
+- serial or parallel channels using Binary Control Protocol (BCP).
+
+Using the -h option, jpeg2ps generates 7-bit clean data by using
+ASCIIHex encoding instead of the more space-efficient ASCII85 encoding.
+This is only useful for specialized applications, e.g. for debugging,
+since jpeg2ps requires PostScript Level 2 anyway, and ASCII85 is
+supported in any Level 2 interpreter.
+
+
+Scaling and resolution
+======================
+Concerning the size of the printed image, you have three options:
+
+Default behaviour:
+By default, doesn't change the image size and rotation.
+With the -a option, jpeg2ps tries to fit the image on the page, rotating
+it if necessary (image width exceeds image height)
+The image is scaled in a way to use at least one full edge of the paper.
+A 20 pt margin is subtracted on each side. "Page" means A4 size if compiled 
+with "-DA4", letter size otherwise. The -p option may be used to select
+other page sizes.
+
+Using resolution value from the file:
+The option "-r 0" instructs jpeg2ps to look for a JFIF density/resolution
+marker and use that value. Automatic scaling and rotation are disabled.
+However, if no resolution information is found in the file, jpeg2ps
+applies the default algorithm described above.
+
+Explicitly setting the resolution:
+Using "-r <dpi>" you can force jpeg2ps to use a certain dpi value. 
+Since automatic actions are also disabled in this case, you are 
+responsible for choosing a reasonable resolution value.  For example, 
+you can print a 300 dpi image half-sized by supplying -r 600.
+
+
+Messages
+========
+jpeg2ps issues three kinds of messages:
+
+Notes:    have informational character
+
+Warnings: a potential problem with the file was recognized, processing
+	  continues.
+
+Errors:   Either a severe problem within the JPEG file was found or the
+          file explores JPEG features not compatible with PostScript Level 2.
+
+Note that there are some JPEG producers which do not exactly conform to the
+specification and that the JPEG spec itself does not cover every aspect of
+the file format. You are on the safe side if you demand JFIF files which are
+happily accepted by jpeg2ps. (For further information see the JPEG FAQ
+by Tom Lane.)
+
+
+Adobe Photoshop CMYK files
+==========================
+This is what the Independent JPEG Group has to say about Photoshop
+CMYK files (quoted from libjpeg.doc, part of the IJG JPEG library):
+
+> CAUTION: it appears that Adobe Photoshop writes inverted data in CMYK JPEG
+> files: 0 represents 100% ink coverage, rather than 0% ink as you'd expect.
+> This is arguably a bug in Photoshop, but if you need to work with Photoshop
+> CMYK files, you will have to deal with it in your application.  We cannot
+> "fix" this in the library by inverting the data during the CMYK<=>YCCK
+> transform, because that would break other applications, notably Ghostscript.
+> Photoshop versions prior to 3.0 write EPS files containing JPEG-encoded CMYK
+> data in the same inverted-YCCK representation used in bare JPEG files, but
+> the surrounding PostScript code performs an inversion using the PS image
+> operator.  I am told that Photoshop 3.0 will write uninverted YCCK in
+> EPS/JPEG files, and will omit the PS-level inversion.  (But the data
+> polarity used in bare JPEG files will not change in 3.0.)  In either case,
+> the JPEG library must not invert the data itself, or else Ghostscript would
+> read these EPS files incorrectly.
+
+Accordingly, jpeg2ps tries to detect such files (by looking for Adobes
+APP marker) and inverts the colors in the case of 4-component images.
+This inversion takes place in the PostScript instructions, not by
+changing the actual image data.
+
+
+Further Information
+===================
+
+If you like to know more about the inner workings of jpeg2ps, the JPEG
+standard and its integration in PostScript Level 2, the JFIF file format,
+JPEG/TIFF *and* if you can read German, you may want to check out 
+my article in a German computer magazine:
+
+"Gut verpackt - Drucken von JPEG-Bildern mit PostScript Level 2"
+c't, Magazin fuer Computertechnik, Heise Verlag Hannover, 6/94, p.236 ff.
+
+This article is also available in PDF format from my WWW page:
+http://www.ifconnection.de/~tm
+
+
+Related Software
+================
+
+Note that there is a related PostScript program called "viewjpeg.ps" which
+is part of the Ghostscript distribution. viewjpeg.ps operates similarly to
+jpeg2ps, but the PostScript interpreter does the "wrapping" of JPEG data
+itself. With viewjpeg.ps you can e.g. view JPEG files directly within 
+GhostScript or another interpreter with access to the file system.
+Ghostscript can be found at http://www.cs.wisc.edu/~ghost
+
+
+Disclaimer 
+==========
+This software is free. You are granted the right to use and copy it. This
+software may not be sold or bundled with any commercial package without
+express written permission of the author. 
+
+The author accepts no responsibility for damages resulting from the use of
+this software and makes no warranty, either express or implied, including but
+not limited to, any implied warranty of merchantability or fitness for a
+particular purpose. This software is provided as is, and you assume all risks
+when using it. 

@@ -1,0 +1,4254 @@
+# -*-perl-*-
+######################################################################
+# File: texi2html.init
+#
+# Default values for command-line arguments and for various customizable
+# procedures are set in this file.
+#
+# A copy of this file is pasted into the beginning of texi2html by
+# running './configure'.
+#
+# Copy this file, rename it and make changes to it, if you like.
+# Afterwards, load the file with command-line 
+# option -init-file <your_init_file>
+#
+# $Id: texi2html.init,v 1.81 2005/02/01 21:20:28 pertusus Exp $
+
+######################################################################
+# The following variables can also be set by command-line options
+#
+#
+# The default values are set in this file, texi2html.init and the content
+# of this file is included at the beginning of the texi2html script file. 
+# Those values may be overrided by values set in $sysconfdir/texi2htmlrc 
+# and then by values set in $HOME/texi2htmlrc.
+#
+# command line switches may override these values, and values set in files
+# specified by -init-file are also taken into account.
+# values set in these files overwrite values set by the command-line
+# options appearing before -init-file and might still be overwritten by
+# command-line arguments following the -init-file option.
+
+# -debug
+# The integer value specifies what kind of debugging output is generated.
+$DEBUG = 0;
+
+# -doctype
+# The value is the 'SystemLiteral' which identifies the canonical DTD 
+# for the document.
+# Definition: The SystemLiteral is called the entity's system
+# identifier. It is a URI, which may be used to retrieve the entity.
+# See http://www.xml.com/axml/target.html#NT-ExternalID
+$DOCTYPE = '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">';
+
+# -frameset-doctype
+# When frames are used, this SystemLiteral identifies the DTD used for
+# the file containing the frame description.
+$FRAMESET_DOCTYPE = '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html401/frameset.dtd">';
+
+# -test
+# If this value is true, some variables which should be dynamically generated 
+# (the date, the user running texi2html, the version of texi2html) are set to 
+# fix and given values. This is usefull in case the resulting manual is 
+# compared with a reference. For example this is used in the tests of test.sh.
+$TEST = 0;
+
+# -dump-texi
+# This value is usefull for debugging purposes. The result of the first pass is
+# put in <document name>.passtexi, the result of the second pass is put in 
+# <document name>.passfirst.
+$DUMP_TEXI = 0;
+
+# -expand
+# the @EXPAND array contains the expanded section names.
+@EXPAND = ('html');
+
+# -invisible
+# This seems obsolete and is not used anywhere.
+# This was a workaround for a known bug of many WWW browsers, including 
+# netscape. This was used to create invisible destination in anchors.
+$INVISIBLE_MARK = '';
+# $INVISIBLE_MARK = '&#160;';
+
+# -iso
+# if this value is true, ISO8859 characters are used for special symbols 
+# (like copyright, etc).
+$USE_ISO = 1;
+
+# -I
+# add a directory to the list of directories where @include files are
+# searched for (besides the directory of the file). additional '-I' 
+# args are appended to this list.
+# (APA: Don't implicitely search ., to conform with the docs!)
+# my @INCLUDE_DIRS = (".");
+@INCLUDE_DIRS = ();
+
+# -P
+# prepend a directory to the list of directories where @include files are
+# searched for before the directory of the file. additional '-P' 
+# args are prepended to this list.
+@PREPEND_DIRS = ();
+
+# -top-file
+# This file name is used for the top-level file.
+# The extension is set appropriately, if necessary.
+# If empty, <basename of document>.html is used.
+# Typically, you would set this to "index.html".
+$TOP_FILE = '';
+
+# -toc-file
+# This file name is used for the table of contents.  The
+# extension is set appropriately, if necessary.
+# If empty, <basename of document>_toc.html is used.
+$TOC_FILE = '';
+
+# -frames
+# if the value is true, HTML 4.0 "frames" are used. 
+# A file describing the frame layout is generated, together with a file 
+# with the short table of contents.
+$FRAMES = 0;
+
+# -menu | -nomenu
+# if the value is true the Texinfo menus are shown.
+$SHOW_MENU = 1;
+
+# -number | -nonumber
+# if this is set the sections are numbered, and section names and numbers 
+# are used in references and menus (instead of node names).
+$NUMBER_SECTIONS = 1;
+
+# -use-nodes
+# if this is set the nodes are used as sectionning elements. 
+# Otherwise the nodes are incorporated in sections.
+$USE_NODES = 0;
+
+# -node-files
+# if this is set one file per node is generated, which can be a target for 
+# cross manual references.
+$NODE_FILES = 0;
+
+# -split section|chapter|node|none
+# if $SPLIT is set to 'section' (resp. 'chapter') one html file per section 
+# (resp. chapter) is generated. If $SPLIT is set to 'node' one html file per 
+# node or sectionning element is generated. In all these cases separate pages 
+# for Top, Table of content (Toc), Overview and About are generated.
+# Otherwise a monolithic html file that contains the whole document is 
+# created.
+#$SPLIT = 'section';
+$SPLIT = '';
+
+# -sec-nav|-nosec-nav
+# if this is set then navigation panels are printed at the beginning of each 
+# section.
+# If the document is split at nodes then navigation panels are 
+# printed at the end if there were more than $WORDS_IN_PAGE words on page.
+#
+# If the document is split at sections this is ignored.
+#
+# This is most useful if you do not want to have section navigation
+# with -split chapter. There will be chapter navigation panel at the 
+# beginning and at the end of chapters anyway.
+$SECTION_NAVIGATION = 1;
+
+# -separated-footnotes
+# if this is set footnotes are on a separated page. Otherwise they are at
+# the end of each file (if the document is split).
+$SEPARATED_FOOTNOTES = 1;
+
+# -toc-links
+# if this is set, links from headings to toc entries are created.
+$TOC_LINKS = 0;
+
+# -subdir
+# If this is set, then put result files into the specified directory.
+# If not set, then result files are put into the current directory.
+#$SUBDIR = 'html';
+$SUBDIR = '';
+
+# -short-extn
+# If this is set, then all HTML files will have extension ".htm" instead of
+# ".html". This is helpful when shipping the document to DOS-based systems.
+$SHORTEXTN = 0;
+
+# -prefix
+# This set the output file prefix, prepended to all .html, .gif and .pl files.
+# By default, this is the basename of the document.
+$PREFIX = '';
+
+# -o filename
+# If this is set a monolithic document is outputted into $filename.
+$OUT = '';
+
+# -no-validate
+# suppress node cross-reference validation
+$NOVALIDATE = 0;
+
+# -short-ref
+# if this is set cross-references are given without section numbers.
+$SHORT_REF = '';
+
+# -idx-sum
+# if value is set, then for each @printindex <index name>
+# <document name>_<index name>.idx is created which contains lines of the form
+# key ref sorted alphabetically (case matters).
+$IDX_SUMMARY = 0;
+
+# -def-table
+# If this is set a table construction for @def.... instead of definition 
+# lists.
+# (New Option: 27.07.2000 Karl Heinz Marbaise)
+$DEF_TABLE = 0;
+
+# -verbose
+# if this is set chatter about what we are doing.
+$VERBOSE = '';
+
+# -lang
+# FIXME this has changed
+# For page titles use $Texi2HTML::I18n::WORDS->{$T2H_LANG}->{...} as title.
+# To add a new language, supply list of titles (see $Texi2HTML::I18n::WORDS).
+# and use ISO 639 language codes (see e.g. perl module Locale-Codes-1.02
+# for  definitions).
+# Default's to 'en' if not set or no @documentlanguage is specified.
+$LANG = 'en';
+
+# -ignore-preamble-text
+# If this is set the text before @node and sectionning commands is ignored.
+$IGNORE_PREAMBLE_TEXT = 0;
+
+# -html-xref-prefix
+# base directory for external manuals.
+#$EXTERNAL_DIR = '../';
+$EXTERNAL_DIR = undef;
+
+# -l2h
+# if this is set, latex2html is used for generation of math content.
+$L2H = '';
+
+# -css-include
+# All the specified css files are used. More precisely the @import sections
+# are added to the beginning of the CSS_LINES the remaining is added at
+# the end of the CSS_LINES (after the css rules generated by texi2html).
+# cf texinfo manual for more info.
+# - means STDIN
+@CSS_FILES = ();
+
+######################
+# The following options are only relevant if $L2H is set
+#
+# -l2h-l2h
+# name/location of latex2html program
+$L2H_L2H = "latex2html";
+
+# -l2h-skip
+# If this is set the actual call to latex2html is skipped. The previously
+# generated content is reused, instead.
+$L2H_SKIP = '';
+
+# -l2h-tmp
+# If this is set l2h uses the specified directory for temporary files. The path
+# leading to this directory may not contain a dot (i.e., a ".");
+# otherwise, l2h will fail.
+$L2H_TMP = '';
+ 
+# -l2h-file
+# If set, l2h uses the file as latex2html init file
+$L2H_FILE = 'l2h.init';
+
+# -l2h-clean
+# if this is set the intermediate files generated by texi2html in relation with
+# latex2html are cleaned (they all have the prefix <document name>_l2h_).
+$L2H_CLEAN = 1;
+
+##############################################################################
+#
+# The following can only be set in the init file
+#
+##############################################################################
+
+# If true do table of contents even if there is no @content
+$DO_CONTENTS = 0;
+# If true do short table of contents even if there is no @shortcontent
+$DO_SCONTENTS = 0;
+
+# if set, then use node names in menu entries, instead of section names
+$NODE_NAME_IN_MENU = 0;
+
+# new style for crossrefs
+$NEW_CROSSREF_STYLE = 1;
+
+# if set and menu entry equals menu description, then do not print 
+# menu description.
+# Likewise, if node name equals entry name, do not print entry name.
+$AVOID_MENU_REDUNDANCY = 1;
+
+# if set, center @image by default
+# otherwise, do not center by default
+$CENTER_IMAGE = 1;
+
+# used as identation for block enclosing command @example, etc
+# If not empty, must be enclosed in <td></td>
+$EXAMPLE_INDENT_CELL = '<td>&nbsp;</td>';
+
+# same as above, only for @small
+$SMALL_EXAMPLE_INDENT_CELL = '<td>&nbsp;</td>';
+
+# font size for @small
+$SMALL_FONT_SIZE = '-1';
+
+# horizontal rules
+$SMALL_RULE = '<hr size="1">';
+$DEFAULT_RULE = '<hr>';
+$MIDDLE_RULE = '<hr size="2">';
+$BIG_RULE = '<hr size="6">';
+
+# if non-empty, and no @..heading appeared in Top node, then
+# use this as header for top node/section, otherwise use value of
+# @settitle or @shorttitle (in that order)
+$TOP_HEADING = '';
+
+# if set, use this chapter for 'Index' button, else
+# use first chapter with @printindex
+$INDEX_CHAPTER = '';
+
+# if set and $SPLIT is set, then split index pages at the next letter
+# after they have more than that many entries
+$SPLIT_INDEX = 100;
+
+# symbol put at the beginning of nodes entry in menu (and optionnaly of 
+# unnumbered in menus, see next variable)
+$MENU_SYMBOL = '&bull;';
+#$MENU_SYMBOL = '*';
+
+$OPEN_QUOTE_SYMBOL = "\`";
+$CLOSE_QUOTE_SYMBOL = "'";
+
+# if true put a $MENU_SYMBOL before unnumbered in menus
+$UNNUMBERED_SYMBOL_IN_MENU = 0;
+
+# extension for nodes files when NODE_FILES is true
+$NODE_FILE_EXTENSION = "html";	    
+
+# extension
+$EXTENSION = "html";
+
+# file name used for Top node when NODE_FILES is true
+$TOP_NODE_FILE = "index";
+
+# this controls the pre style for menus
+$MENU_PRE_STYLE = 'font-family: serif';
+
+# This controls the ul style for toc
+$TOC_LIST_STYLE = 'list-style: none';
+$TOC_LIST_ATTRIBUTE = ' class="toc"';
+
+# These lines are inserted before and after the shortcontents 
+$BEFORE_OVERVIEW = "<div class=\"shortcontents\">\n";
+$AFTER_OVERVIEW = "</div>\n";
+
+# These lines are inserted before and after the contents 
+$BEFORE_TOC_LINES = "<div class=\"contents\">\n";
+$AFTER_TOC_LINES = "</div>\n";
+
+# if set (e.g., to index.html) replace hrefs to this file
+# (i.e., to index.html) by ./
+$HREF_DIR_INSTEAD_FILE = '';
+
+# text inserted after <body ...>
+$AFTER_BODY_OPEN = '';
+
+# text inserted before </body>, this will be automatically inside <p></p>
+$PRE_BODY_CLOSE = '';
+
+# this is added inside <head></head> after <title> and some <meta name>
+# stuff, it can be used for eg. <style>, <script>, <meta> etc. tags.
+$EXTRA_HEAD = '';
+
+# Specifies the minimum page length required before a navigation panel
+# is placed at the bottom of a page 
+# FIXME this is not true:
+# THIS_WORDS_IN_PAGE holds number of words of current page
+$WORDS_IN_PAGE = 300;
+
+# if this is set a vertical navigation panel is used.
+$VERTICAL_HEAD_NAVIGATION = 0;
+
+# html version for latex2html
+$L2H_HTML_VERSION = "4.0";
+
+# specify in this array which "buttons" should appear in which order
+# in the navigation panel for sections; use ' ' for empty buttons (space)
+@SECTION_BUTTONS =
+    (
+     'Back', 'Forward', ' ', 'FastBack', 'Up', 'FastForward',
+     ' ', ' ', ' ', ' ',
+     'Top', 'Contents', 'Index', 'About',
+    );
+
+# buttons for misc stuff
+@MISC_BUTTONS = ('Top', 'Contents', 'Index', 'About');
+
+# buttons for chapter file footers
+# (and headers but only if SECTION_NAVIGATION is false)
+@CHAPTER_BUTTONS =
+    (
+     'FastBack', 'FastForward', ' ',
+     ' ', ' ', ' ', ' ',
+     'Top', 'Contents', 'Index', 'About',
+    );
+
+# buttons for section file footers
+@SECTION_FOOTER_BUTTONS =
+    (
+     'Back', 'Forward', ' ', 'FastBack', 'Up', 'FastForward'
+    );
+
+@NODE_FOOTER_BUTTONS =
+    (
+     'Back', 'Forward', ' ', 'FastBack', 'Up', 'FastForward',
+     ' ', ' ', ' ', ' ',
+     'Top', 'Contents', 'Index', 'About',
+#     'Back', 'Forward', ' ', 'FastBack', 'Up', 'FastForward'
+    );
+
+$ICONS = 0;
+
+# insert here name of icon images for buttons
+# Icons are used, if $ICONS and resp. value are set
+%ACTIVE_ICONS =
+    (
+     'Top',         '',
+     'Contents',    '',
+     'Overview',    '',
+     'Index',       '',
+     'This',        '',
+     'Back',        '',
+     'FastBack',    '',
+     'Prev',        '',
+     'Up',          '',
+     'Next',        '',
+     'NodeUp',      '',
+     'NodeNext',    '',
+     'NodePrev',    '',
+     'Following',   '',
+     'Forward',     '',
+     'FastForward', '',
+     'About' ,      '',
+     'First',       '',
+     'Last',        '',
+     ' ',           ''
+    );
+
+# insert here name of icon images for these, if button is inactive
+%PASSIVE_ICONS =
+    (
+     'Top',         '',
+     'Contents',    '',
+     'Overview',    '',
+     'Index',       '',
+     'This',        '',
+     'Back',        '',
+     'FastBack',    '',
+     'Prev',        '',
+     'Up',          '',
+     'Next',        '',
+     'NodeUp',      '',
+     'NodeNext',    '',
+     'NodePrev',    '',
+     'Following',   '',
+     'Forward',     '',
+     'FastForward', '',
+     'About',       '',
+     'First',       '',
+     'Last',        '',
+    );
+
+
+$init_out    = \&t2h_default_init_out;
+$finish_out    = \&t2h_default_finish_out;
+
+# We have to do this dynamically because of internationalization and because
+# in body $LANG could be used.
+sub t2h_default_init_out()
+{
+# Names of text as alternative for icons
+    %NAVIGATION_TEXT =
+    (
+     'Top',         &$I('Top'),
+     'Contents',    &$I('Contents'),
+     'Overview',    &$I('Overview'),
+     'Index',       &$I('Index'),
+     ' ',           ' &nbsp; ',
+     'This',        &$I('current'),
+     'Back',        ' &lt; ',
+     'FastBack',    ' &lt;&lt; ',
+     'Prev',        &$I('Prev'),
+     'Up',          &$I(' Up '),
+     'Next',        &$I('Next'),
+     'NodeUp',      &$I('node up'),
+     'NodeNext',    &$I('next node'),
+     'NodePrev',    &$I('previous node'),
+     'Following',   &$I('following node'),
+     'Forward',     ' &gt; ',
+     'FastForward', ' &gt;&gt; ',
+     'About',       ' ? ',
+     'First',       ' |&lt; ',
+     'Last',        ' &gt;| '
+    );
+
+    %BUTTONS_GOTO =
+    (
+     'Top',         &$I('cover (top) of document'),
+     'Contents',    &$I('table of contents'),
+     'Overview',    &$I('short table of contents'),
+     'Index',       &$I('index'),
+     'This',        &$I('current section'),
+     'Back',        &$I('previous section in reading order'),
+     'FastBack',    &$I('beginning of this chapter or previous chapter'),
+     'Prev',        &$I('previous section on same level'),
+     'Up',          &$I('up section'),
+     'Next',        &$I('next section on same level'),
+     'NodeUp',      &$I('up node'),
+     'NodeNext',    &$I('next node'),
+     'NodePrev',    &$I('previous node'),
+     'Following',   &$I('node following in node reading order'),
+     'Forward',     &$I('next section in reading order'),
+     'FastForward', &$I('next chapter'),
+     'About' ,      &$I('about (help)'),
+     'First',       &$I('first section in reading order'),
+     'Last',        &$I('last section in reading order'),
+    );
+    # Set the default body text, inserted between <body ... >
+    $BODYTEXT = 'lang="' . $LANG . '" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000"' unless (defined($BODYTEXT));
+    if (!defined($EXTERNAL_CROSSREF_SPLIT))
+    {
+        if ($SPLIT) 
+        {
+            $EXTERNAL_CROSSREF_SPLIT = 1;
+        }
+        else
+        {
+            $EXTERNAL_CROSSREF_SPLIT = 0;
+        }
+    }
+    $ENCODING = $DOCUMENT_ENCODING if (!defined($ENCODING));
+    my $to_encoding;
+    if (defined($ENCODING))
+    {
+        $to_encoding = main::set_encoding ($ENCODING);
+        
+        if (defined($to_encoding) and defined($perl_charset_to_html{$to_encoding}))
+        {# FIXME is this really right ?
+             $ENCODING = $perl_charset_to_html{$to_encoding};
+        }
+        elsif (defined($to_encoding))
+        {# FIXME is this really right ?
+             $ENCODING = $to_encoding;
+        }
+    }
+    else
+    {
+        #$ENCODING = 'iso-8859-1';
+        $ENCODING = 'us-ascii';
+    }
+    # FIXME default might be utf8 ?
+    $DOCUMENT_ENCODING = 'us-ascii' if (!defined($DOCUMENT_ENCODING));
+    
+    return $to_encoding;
+};
+
+sub t2h_default_finish_out()
+{
+}
+
+#######################################################################
+#
+# Values guessed if not set here, set in init_out
+#
+#######################################################################
+
+$BODYTEXT = undef;
+
+# Formatted document encoding. If undef set to @documentencoding. If undef and
+# there is no @documentencoding, set in init_out 
+$ENCODING = undef;
+
+# if undef set to @documentdescription. If there is no @documentdescription,
+# set in page_head
+$DOCUMENT_DESCRIPTION = undef;
+
+# if undef set 1 if SPLIT, to 0 otherwise
+$EXTERNAL_CROSSREF_SPLIT = undef;
+
+########################################################################
+# Control of Page layout:
+# You can make changes of the Page layout at two levels:
+# 1.) For small changes, it is often enough to change the value of
+#     some global string/hash/array variables
+# 2.) For larger changes, reimplement one of the T2H_DEFAULT_<fnc>* routines,
+#     give them another name, and assign them to the respective
+#     $<fnc> variable.
+
+# As a general interface, the hashes Texi2HTML::HREF, Texi2HTML::NAME, Texi2HTML::NODE, Texi2HTML::NO_TEXI, hold
+# href, html-name, node-name, name after removal of texi commands of
+# This     -- current section (resp. html page)
+# Top      -- top page FIXME: ($T2H_TOP_FILE)
+# Contents -- Table of contents
+# Overview -- Short table of contents
+# Index    -- Index page
+# About    -- page which explain "navigation buttons"
+# First    -- first node
+# Last     -- last node
+#
+# Whether or not the following hash values are set, depends on the context
+# (all values are w.r.t. 'This' section)
+# Next        -- next node of texinfo
+# Prev        -- previous node of texinfo
+# NodeUp      -- up node of texinfo
+# Following   -- following node in node reading order, taking menu into account
+# Forward     -- next node in reading order
+# Back        -- previous node in reading order
+# Up          -- parent given by sectionning commands
+# FastForward -- if leave node, up and next, else next node
+# FastBackward-- if leave node, up and prev, else prev node
+#
+# Furthermore, the following global variabels are set:
+# $Texi2HTML::THISDOC{title}          -- title as set by @setttile
+# $Texi2HTML::THISDOC{title_no_texi}  -- title without texi (without html elements)
+# $Texi2HTML::THISDOC{title_texi}     -- title with texinfo @-commands
+# $Texi2HTML::THISDOC{fulltitle}      -- full title as set by @title...
+# $Texi2HTML::THISDOC{subtitle}       -- subtitle as set by @subtitle
+# $Texi2HTML::THISDOC{author}         -- author as set by @author
+# $Texi2HTML::THISDOC{copying}        -- text of @copying and @end copying in comment
+#
+# $Texi2HTML::THISDOC{program}          -- name and version of texi2html
+# $Texi2HTML::THISDOC{program_homepage} -- homepage for texi2html
+# $Texi2HTML::THISDOC{program_authors}  -- authors of texi2html
+# $Texi2HTML::THISDOC{today}            -- date formatted with pretty_date
+# $Texi2HTML::THISDOC{toc_file}         -- table of contents file
+# $Texi2HTML::THISDOC{file_base_name}   -- base name of the texinfo manual file
+# $Texi2HTML::THISDOC{destination_directory}
+                                 #      -- directory for the resulting files
+# $Texi2HTML::THISDOC{user}             -- user running the script
+# other $Texi2HTML::THISDOC keys corresponds with texinfo commands, the value
+# being the command arg, for the following commands:
+# kbdinputstyle, paragraphindent, setchapternewpage, headings, footnotestyle,
+# exampleindent, firstparagraphindent, everyheading, everyfooting,
+# evenheading, evenfooting, oddheading, oddfooting
+#
+# and pointer to arrays of lines which need to be printed by main::print_lines
+# $Texi2HTML::THIS_SECTION  -- lines of 'This' section
+# $Texi2HTML::THIS_HEADER   -- lines preceding navigation panel of 'This' section
+# $Texi2HTML::OVERVIEW      -- lines of short table of contents
+# $Texi2HTML::TOC_LINES     -- lines of table of contents
+# $Texi2HTML::TITLEPAGE     -- lines of title page
+#
+# $Texi2HTML::THIS_ELEMENT  holds the element reference.  
+## FIXME: $T2H_TOP           -- lines of Top texinfo node
+
+#
+# There are the following subs which control the layout:
+#
+$print_section            = \&T2H_DEFAULT_print_section;
+$end_section              = \&T2H_DEFAULT_end_section;
+$one_section              = \&T2H_DEFAULT_one_section;
+$print_Top_header         = \&T2H_DEFAULT_print_Top_header;
+$print_Top_footer	      = \&T2H_DEFAULT_print_Top_footer;
+$print_Top		      = \&T2H_DEFAULT_print_Top;
+$print_Toc		      = \&T2H_DEFAULT_print_Toc;
+$print_Overview	      = \&T2H_DEFAULT_print_Overview;
+$print_Footnotes	      = \&T2H_DEFAULT_print_Footnotes;
+$print_About	      = \&T2H_DEFAULT_print_About;
+$print_misc_header	      = \&T2H_DEFAULT_print_misc_header;
+$print_misc_footer	      = \&T2H_DEFAULT_print_misc_footer;
+$print_misc		      = \&T2H_DEFAULT_print_misc;
+$print_section_footer     = \&T2H_DEFAULT_print_section_footer;
+$print_chapter_header     = \&T2H_DEFAULT_print_chapter_header;
+$print_section_header     = \&T2H_DEFAULT_print_section_header;
+$print_chapter_footer     = \&T2H_DEFAULT_print_chapter_footer;
+$print_page_head	      = \&T2H_DEFAULT_print_page_head;
+$print_page_foot	      = \&T2H_DEFAULT_print_page_foot;
+$print_head_navigation    = \&T2H_DEFAULT_print_head_navigation;
+$print_foot_navigation    = \&T2H_DEFAULT_print_foot_navigation;
+$button_icon_img	      = \&T2H_DEFAULT_button_icon_img;
+$print_navigation	      = \&T2H_DEFAULT_print_navigation;
+$about_body		      = \&T2H_DEFAULT_about_body;
+$print_frame              = \&T2H_DEFAULT_print_frame;
+$print_toc_frame          = \&T2H_DEFAULT_print_toc_frame;
+#$toc_body                 = \&T2H_DEFAULT_toc_body;
+$titlepage                 = \&T2H_DEFAULT_titlepage;
+$css_lines                 = \&T2H_DEFAULT_css_lines;
+$print_redirection_page    = \&T2H_DEFAULT_print_redirection_page;
+$node_file_name            = \&T2H_DEFAULT_node_file_name;
+
+########################################################################
+# Layout for html for every sections
+#
+sub T2H_DEFAULT_print_section
+{
+    my $fh = shift;
+    my $first_in_page = shift;
+    my $previous_is_top = shift;
+    my $buttons = \@SECTION_BUTTONS;
+
+    if ($first_in_page and $SECTION_NAVIGATION)
+    {
+        &$print_head_navigation($fh, $buttons);
+    }
+    else
+    { # got to do this here, as it isn't done in print_head_navigation
+        main::print_lines($fh, $Texi2HTML::THIS_HEADER);
+        &$print_navigation($fh, $buttons) if ($SECTION_NAVIGATION);
+    }
+    my $nw = main::print_lines($fh);
+    if (defined $SPLIT
+        and (($SPLIT eq 'node') && $SECTION_NAVIGATION))
+    {
+        &$print_foot_navigation($fh);
+        print $fh "$SMALL_RULE\n";
+        &$print_navigation($fh, \@NODE_FOOTER_BUTTONS) if (!defined($WORDS_IN_PAGE) or (defined ($nw)
+                                    and $nw >= $WORDS_IN_PAGE));
+    }
+}
+
+sub T2H_DEFAULT_one_section($)
+{
+    my $fh = shift;
+    main::print_lines($fh, $Texi2HTML::THIS_HEADER);
+    main::print_lines($fh);
+    print $fh "$SMALL_RULE\n";
+    &$print_foot_navigation($fh);
+    &$print_page_foot($fh);
+}
+
+###################################################################
+# Layout of top-page I recommend that you use @ifnothtml, @ifhtml,
+# @html within the Top texinfo node to specify content of top-level
+# page.
+#
+# If you enclose everything in @ifnothtml, then title, subtitle,
+# author and overview is printed
+# Texi2HTML::HREF of Next, Prev, Up, Forward, Back are not defined
+# if $T2H_SPLIT then Top page is in its own html file
+sub T2H_DEFAULT_print_Top_header($$)
+{
+    my $fh = shift;
+    my $do_page_head = shift;
+    &$print_page_head($fh) if ($do_page_head);
+}
+sub T2H_DEFAULT_print_Top_footer($$)
+{
+    my $fh = shift;
+    my $end_page = shift;
+    my $buttons = \@MISC_BUTTONS;
+    &$print_foot_navigation($fh);
+    print $fh "$SMALL_RULE\n";
+    if ($end_page)
+    {
+        &$print_navigation($fh, $buttons);
+        &$print_page_foot($fh);
+    }
+}
+sub T2H_DEFAULT_print_Top
+{
+    my $fh = shift;
+    my $has_top_heading = shift;
+
+    # for redefining navigation buttons use:
+    # my $buttons = [...];
+    # as it is, 'Top', 'Contents', 'Index', 'About' are printed
+    my $buttons = \@MISC_BUTTONS;
+    &$print_head_navigation($fh, $buttons);
+    my $nw;
+    if ($Texi2HTML::THIS_SECTION)
+    {
+        # if top-level node has content, then print it with extra header
+        #print $fh "<h1>$Texi2HTML::NAME{Top}</h1>\n"
+        print $fh "<h1 class=\"settitle\">$Texi2HTML::NAME{Top}</h1>\n"
+            unless ($has_top_heading);
+        $nw = main::print_lines($fh, $Texi2HTML::THIS_SECTION);
+    }
+    else
+    {
+        # top-level node is fully enclosed in @ifnothtml
+        # print fulltitle, subtitle, author, Overview
+        print $fh $Texi2HTML::TITLEPAGE;
+        if (@{$Texi2HTML::OVERVIEW})
+        {
+             print $fh '<h2> ' . &$I('Overview:') . "</h2>\n" . "<blockquote>\n";
+             my $nw = main::print_lines($fh, $Texi2HTML::OVERVIEW);
+             print $fh "</blockquote>\n";
+        }
+    }
+}
+
+###################################################################
+# Layout of Toc, Overview, and Footnotes pages
+# By default, we use "normal" layout
+# Texi2HTML::HREF of Next, Prev, Up, Forward, Back, etc are not defined
+# use: my $buttons = [...] to redefine navigation buttons
+sub T2H_DEFAULT_print_Toc
+{
+    return &$print_misc(@_);
+}
+sub T2H_DEFAULT_print_Overview
+{
+    return &$print_misc(@_);
+}
+sub T2H_DEFAULT_print_Footnotes
+{
+    return &$print_misc(@_);
+}
+sub T2H_DEFAULT_print_About
+{
+    return &$print_misc(@_);
+}
+
+sub T2H_DEFAULT_print_misc_header
+{
+    my $fh = shift;
+    my $buttons = shift;
+    &$print_page_head($fh) if $SPLIT;
+    &$print_head_navigation($fh, $buttons);
+}
+
+sub T2H_DEFAULT_print_misc_footer
+{
+    my $fh = shift;
+    my $buttons = shift;
+    my $nwords = shift;
+    &$print_foot_navigation($fh, $buttons);
+    print $fh "$SMALL_RULE\n";
+    if ($SPLIT)
+    {
+        &$print_navigation($fh, $buttons);# if ($SPLIT ne 'node');
+        &$print_page_foot($fh);
+    }
+}
+
+sub T2H_DEFAULT_print_misc
+{
+    my $fh = shift;
+    my $buttons = \@MISC_BUTTONS;
+    &$print_misc_header($fh, $buttons);
+    print $fh "<h1>$Texi2HTML::NAME{This}</h1>\n";
+    main::print_lines($fh);
+    &$print_misc_footer($fh, $buttons);
+}
+##################################################################
+# section_footer is only called if SPLIT eq 'section'
+# section_footer: after print_section of last section, before print_page_foot
+#
+
+sub T2H_DEFAULT_print_section_footer
+{
+    my $fh = shift;
+    my $buttons = \@SECTION_FOOTER_BUTTONS;
+    &$end_section ($fh, 1);
+    &$print_navigation($fh, $buttons);
+}
+
+###################################################################
+# chapter_header and chapter_footer are only called if
+# SPLIT eq 'chapter'
+# chapter_header: after print_page_head, before print_section
+# chapter_footer: after print_section of last section, before print_page_foot
+#
+# If you want to get rid of navigation stuff after each section,
+# redefine print_section such that it does not call print_navigation,
+# and put print_navigation into print_chapter_header
+sub T2H_DEFAULT_print_chapter_header
+{
+    # nothing to do there, by default, the navigation panel 
+    # is the section navigation panel
+    if (! $SECTION_NAVIGATION)
+    { # in this case print_navigation is called here. 
+        my $fh = shift;
+        my $buttons = \@CHAPTER_BUTTONS;
+        &$print_head_navigation($fh, $buttons); #do that instead ?
+        #&$print_head_navigation($fh, $buttons); # FIXME VERTICAL_HEAD_NAVIGATION ?
+        print $fh "\n$MIDDLE_RULE\n";
+    }
+}
+
+sub T2H_DEFAULT_print_chapter_footer
+{
+    my $fh = shift;
+    my $buttons = \@CHAPTER_BUTTONS;
+    &$print_foot_navigation($fh);
+    print $fh "$BIG_RULE\n";
+    &$print_navigation($fh, $buttons);
+}
+
+sub T2H_DEFAULT_print_section_header
+{
+    # nothing to do there, by default
+    if (! $SECTION_NAVIGATION)
+    { # in this case print_navigation is called here. 
+        my $fh = shift;
+        my $buttons = \@SECTION_BUTTONS;
+        &$print_head_navigation($fh, $buttons); 
+    }
+}
+
+###################################################################
+# Layout of standard header and footer
+#
+
+sub T2H_DEFAULT_print_page_head($)
+{
+    my $fh = shift;
+    my $longtitle = "$Texi2HTML::THISDOC{'title_unformatted'}";
+    $longtitle .= ": $Texi2HTML::UNFORMATTED{'This'}" if exists $Texi2HTML::UNFORMATTED{'This'};
+    #my $longtitle = "$Texi2HTML::THISDOC{'title_no_texi'}";
+    #$longtitle .= ": $Texi2HTML::NO_TEXI{'This'}" if exists $Texi2HTML::NO_TEXI{'This'};
+    my $description = $DOCUMENT_DESCRIPTION;
+    $description = $longtitle if (!defined($description));
+    $description = "<meta name=\"description\" content=\"$description\">" if
+         ($description ne '');
+    $description = $Texi2HTML::THISDOC{'documentdescription'} if (defined($Texi2HTML::THISDOC{'documentdescription'}));
+    my $encoding = '';
+    $encoding = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=$ENCODING\">" if (defined($ENCODING) and ($ENCODING ne ''));
+    print $fh <<EOT;
+$DOCTYPE
+<html>
+$Texi2HTML::THISDOC{'copying'}<!-- Created on $Texi2HTML::THISDOC{today} by $Texi2HTML::THISDOC{program} -->
+<!--
+$Texi2HTML::THISDOC{program_authors}
+-->
+<head>
+<title>$longtitle</title>
+
+$description
+<meta name="keywords" content="$longtitle">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="$Texi2HTML::THISDOC{program}">
+$encoding
+$CSS_LINES
+$EXTRA_HEAD
+</head>
+
+<body $BODYTEXT>
+$AFTER_BODY_OPEN
+EOT
+}
+
+sub program_string()
+{
+    my $user = $Texi2HTML::THISDOC{'user'};
+    my $date = $Texi2HTML::THISDOC{'today'};
+    $user = '' if (!defined($user));
+    $date = '' if (!defined($date));
+    if (($user ne '') and ($date ne ''))
+    {
+        return  &$I('This document was generated by @emph{%{user}} on @emph{%{date}} using @uref{%{program_homepage}, @emph{%{program}}}.', {
+           'user' => $user, 'date' => $date, 'program_homepage' => $Texi2HTML::THISDOC{'program_homepage'}, 'program' => $Texi2HTML::THISDOC{'program'} });
+    }
+    elsif ($user ne '')
+    {
+        return  &$I('This document was generated by @emph{%{user}} using @uref{%{program_homepage}, @emph{%{program}}}.', {
+           'user' => $user, 'program_homepage' => $Texi2HTML::THISDOC{'program_homepage'}, 'program' => $Texi2HTML::THISDOC{'program'} });
+    }
+    elsif ($date ne '')
+    {
+        return  &$I('This document was generated on @i{%{date}} using @uref{%{program_homepage}, @i{%{program}}}.', {
+           'date' => $date, 'program_homepage' => $Texi2HTML::THISDOC{'program_homepage'}, 'program' => $Texi2HTML::THISDOC{'program'} });
+    }
+    return &$I('This document was generated using @uref{%{program_homepage}, @emph{%{program}}}.', {
+       'program_homepage' => $Texi2HTML::THISDOC{'program_homepage'}, 'program'
+=> $Texi2HTML::THISDOC{'program'} });
+}
+
+sub T2H_DEFAULT_end_section($$)
+{
+    my $fh = shift;
+    my $end_foot_navigation = shift;
+    &$print_foot_navigation($fh) if ($end_foot_navigation);
+    print $fh "$BIG_RULE\n";
+}
+
+sub T2H_DEFAULT_print_page_foot($)
+{
+    my $fh = shift;
+    my $program_string = program_string();
+    print $fh <<EOT;
+<p>
+ <font size="-1">
+  $program_string
+ </font>
+ <br>
+$PRE_BODY_CLOSE
+</p>
+</body>
+</html>
+EOT
+}
+
+###################################################################
+# Layout of navigation panel
+
+sub T2H_DEFAULT_print_head_navigation($$)
+{
+    my $fh = shift;
+    my $buttons = shift;
+    if ($VERTICAL_HEAD_NAVIGATION)
+    {
+        print $fh <<EOT;
+<table border="0" cellpadding="0" cellspacing="0">
+<tr valign="top">
+<td align="left">
+EOT
+    }
+    main::print_lines($fh, $Texi2HTML::THIS_HEADER);
+    &$print_navigation($fh, $buttons, $VERTICAL_HEAD_NAVIGATION);
+    if ($VERTICAL_HEAD_NAVIGATION)
+    {
+        print $fh <<EOT;
+</td>
+<td align="left">
+EOT
+    }
+    elsif (defined $SPLIT
+           and ($SPLIT eq 'node'))
+    {
+        print $fh "$SMALL_RULE\n";
+    }
+}
+
+sub T2H_DEFAULT_print_foot_navigation
+{
+    my $fh = shift;
+    if ($VERTICAL_HEAD_NAVIGATION)
+    {
+        print $fh <<EOT;
+</td>
+</tr>
+</table>
+EOT
+    }
+}
+
+######################################################################
+# navigation panel
+#
+# how to create IMG tag
+sub T2H_DEFAULT_button_icon_img
+{
+    my $button = shift;
+    my $icon = shift;
+    my $name = shift;
+    return '' if (!defined($icon));
+    if (defined($name) && $name)
+    {
+        $name = ": $name";
+    }
+    else
+    {
+        $name = '';
+    }
+    $button = "" if (!defined ($button));
+    return qq{<img src="$icon" border="0" alt="$button$name" align="middle">};
+}
+
+sub T2H_DEFAULT_print_navigation
+{
+    my $fh = shift;
+    my $buttons = shift;
+    my $vertical = shift;
+    my $spacing = 1;
+    print $fh '<table cellpadding="', $spacing, '" cellspacing="', $spacing,
+      "\" border=\"0\">\n";
+
+    print $fh "<tr>" unless $vertical;
+    for my $button (@$buttons)
+    {
+        print $fh qq{<tr valign="top" align="left">\n} if $vertical;
+        print $fh qq{<td valign="middle" align="left">};
+
+        if (ref($button) eq 'CODE')
+        {
+            &$button($fh, $vertical);
+        }
+        elsif (ref($button) eq 'SCALAR')
+        {
+            print $fh "$$button" if defined($$button);
+        }
+        elsif (ref($button) eq 'ARRAY')
+        {
+            my $text = $button->[1];
+            my $button_href = $button->[0];
+            if (defined($button_href) and !ref($button_href) 
+               and defined($text) and (ref($text) eq 'SCALAR') and defined($$text))
+            {             # use given text
+                if ($Texi2HTML::HREF{$button_href})
+                {
+                  print $fh "" .
+                        &$anchor('',
+                                    $Texi2HTML::HREF{$button_href},
+                                    $$text
+                                   ) 
+                                    ;
+                }
+                else
+                {
+                  print $fh $$text;
+                }
+            }
+        }
+        elsif ($button eq ' ')
+        {                       # handle space button
+            print $fh
+                $ICONS && $ACTIVE_ICONS{' '} ?
+                    &$button_icon_img($button, $ACTIVE_ICONS{' '}) :
+                        $NAVIGATION_TEXT{' '};
+            #next;
+        }
+        elsif ($Texi2HTML::HREF{$button})
+        {                       # button is active
+            my $btitle = $BUTTONS_GOTO{$button} ?
+                'title="' . ucfirst($BUTTONS_GOTO{$button}) . '"' : '';
+            if ($ICONS && $ACTIVE_ICONS{$button})
+            {                   # use icon
+                print $fh '' .
+                    &$anchor('',
+                        $Texi2HTML::HREF{$button},
+                        &$button_icon_img($button,
+                                   $ACTIVE_ICONS{$button},
+                                   #$Texi2HTML::NAME{$button}),
+                                   $Texi2HTML::NO_TEXI{$button}),
+                        $btitle
+                      );
+            }
+            else
+            {                   # use text
+                print $fh
+                    '[' .
+                        &$anchor('',
+                                    $Texi2HTML::HREF{$button},
+                                    $NAVIGATION_TEXT{$button},
+                                    $btitle
+                                   ) .
+                                       ']';
+            }
+        }
+        else
+        {                       # button is passive
+            print $fh
+                $ICONS && $PASSIVE_ICONS{$button} ?
+                    &$button_icon_img($button,
+                                          $PASSIVE_ICONS{$button},
+                                          #$Texi2HTML::NAME{$button}) :
+                                          $Texi2HTML::NO_TEXI{$button}) :
+
+                                              "[" . $NAVIGATION_TEXT{$button} . "]";
+        }
+        print $fh "</td>\n";
+        print $fh "</tr>\n" if $vertical;
+    }
+    print $fh "</tr>" unless $vertical;
+    print $fh "</table>\n";
+}
+
+######################################################################
+# Frames: this is from "Richard Y. Kim" <ryk@coho.net>
+# Should be improved to be more conforming to other _print* functions
+# FIXME pass toc_file and main_file as args or in $Texi2HTML::THISDOC ?
+
+sub T2H_DEFAULT_print_frame
+{
+    my $fh = shift;
+    my $toc_file = shift;
+    my $main_file = shift;
+    print $fh <<EOT;
+$FRAMESET_DOCTYPE
+<html>
+<head><title>$Texi2HTML::THISDOC{title}</title></head>
+<frameset cols="140,*">
+  <frame name="toc" src="$toc_file">
+  <frame name="main" src="$main_file">
+</frameset>
+</html>
+EOT
+}
+
+sub T2H_DEFAULT_print_toc_frame
+{
+    my $fh = shift;
+    my $stoc_lines = shift;
+    &$print_page_head($fh);
+    print $fh <<EOT;
+<h2>Content</h2>
+EOT
+    print $fh map {s/\bhref=/target="main" href=/; $_;} @$stoc_lines;
+    print $fh "</body></html>\n";
+}
+
+# This subroutine is intended to fill @Texi2HTML::TOC_LINES and 
+# @Texi2HTML::OVERVIEW with the table of contents and short table of
+# contents.
+#
+# arguments:
+# ref on an array containing all the elements
+
+# each element is a reference on a hash. The following keys might be of
+# use:
+# 'top': true if this is the top element
+# 'index_page': true if the element is an index page added because of index 
+#               splitting
+# 'toc_level': level of the element in the table of content. Highest level
+#              is 1 for the @top element and for chapters, appendix and so on,
+#              2 for section, unnumberedsec and so on... 
+# 'tocid': label used for reference linking to the element in table of
+#          contents
+# 'file': the file containing the element, usefull to do href to that file
+#         in case the document is split.
+# 'text': text of the element, with section number
+# 'name': text of the element, without section number
+
+# Relevant configuration variables are:
+# $NUMBER_SECTIONS
+# $TOC_LIST_ATTRIBUTE: usefull in case a list is used
+# $FRAMES: @Texi2HTML::OVERVIEW is used in one of the frames. 
+# $BEFORE_OVERVIEW
+# $AFTER_OVERVIEW
+# $BEFORE_TOC_LINES
+# $AFTER_TOC_LINES
+# $DO_CONTENTS
+# $DO_SCONTENTS
+
+sub T2H_DEFAULT_toc_body($)
+{
+}
+
+sub T2H_DEFAULT_css_lines ($$)
+{
+    my $import_lines = shift;
+    my $rule_lines = shift;
+    return if (defined($CSS_LINES) or (!@$rule_lines and !@$import_lines and (! keys(%css_map))));
+    $CSS_LINES = "<style type=\"text/css\">\n<!--\n";
+    $CSS_LINES .= join('',@$import_lines) . "\n" if (@$import_lines);
+    foreach my $css_rule (sort(keys(%css_map)))
+    {
+        next unless ($css_map{$css_rule});
+        $CSS_LINES .= "$css_rule {$css_map{$css_rule}}\n";
+    }
+    $CSS_LINES .= join('',@$rule_lines) . "\n" if (@$rule_lines);
+    $CSS_LINES .= "-->\n</style>\n";
+}
+
+######################################################################
+# About page
+#
+
+# PRE_ABOUT can be a function reference or a scalar.
+# Note that if it is a scalar, T2H_InitGlobals has not been called,
+# and all global variables like $ADDRESS are not available.
+$PRE_ABOUT = sub
+{
+    return '  ' . program_string() .  "\n";
+};
+
+# If customizing $AFTER_ABOUT, be sure to put the content inside <p></p>.
+$AFTER_ABOUT = '';
+
+%BUTTONS_EXAMPLE =
+    (
+     'Top',         ' &nbsp; ',
+     'Contents',    ' &nbsp; ',
+     'Overview',    ' &nbsp; ',
+     'Index',       ' &nbsp; ',
+     'This',        '1.2.3',
+     'Back',        '1.2.2',
+     'FastBack',    '1',
+     'Prev',        '1.2.2',
+     'Up',          '1.2',
+     'Next',        '1.2.4',
+     'NodeUp',      '1.2',
+     'NodeNext',    '1.2.4',
+     'NodePrev',    '1.2.2',
+     'Following',   '1.2.4',
+     'Forward',     '1.2.4',
+     'FastForward', '2',
+     'About',       ' &nbsp; ',
+     'First',       '1.',
+     'Last',        '1.2.4',
+    );
+
+sub T2H_DEFAULT_about_body
+{
+    my $about = "<p>\n";
+    if (ref($PRE_ABOUT) eq 'CODE')
+    {
+        $about .= &$PRE_ABOUT();
+    }
+    else
+    {
+        $about .= $PRE_ABOUT;
+    }
+    $about .= <<EOT;
+</p>
+<p>
+EOT
+    $about .= &$I('  The buttons in the navigation panels have the following meaning:') . "\n";
+    $about .= <<EOT;
+</p>
+<table border="1">
+  <tr>
+EOT
+    $about .= '    <th> ' . &$I('Button') . " </th>\n" .
+'    <th> ' . &$I('Name') . " </th>\n" .
+'    <th> ' . &$I('Go to') . " </th>\n" .
+'    <th> ' . &$I('From 1.2.3 go to') . "</th>\n" . "  </tr>\n";
+
+    for my $button (@SECTION_BUTTONS)
+    {
+        next if $button eq ' ' || ref($button) eq 'CODE' || ref($button) eq 'SCALAR' || ref($button) eq 'ARRAY';
+        $about .= "  <tr>\n    <td align=\"center\">";
+        $about .=
+            ($ICONS && $ACTIVE_ICONS{$button} ?
+             &$button_icon_img($button, $ACTIVE_ICONS{$button}) :
+             ' [' . $NAVIGATION_TEXT{$button} . '] ');
+        $about .= "</td>\n";
+        $about .= <<EOT;
+    <td align="center">$button</td>
+    <td>$BUTTONS_GOTO{$button}</td>
+    <td>$BUTTONS_EXAMPLE{$button}</td>
+  </tr>
+EOT
+    }
+
+    $about .= <<EOT;
+</table>
+
+<p>
+EOT
+    $about .= &$I('  where the @strong{ Example } assumes that the current position is at @strong{ Subsubsection One-Two-Three } of a document of the following structure:') . "\n";
+
+#  where the <strong> Example </strong> assumes that the current position
+#  is at <strong> Subsubsection One-Two-Three </strong> of a document of
+#  the following structure:
+    $about .= <<EOT;
+</p>
+
+<ul>
+EOT
+    $about .= '  <li> 1. ' . &$I('Section One') . "\n" .
+"    <ul>\n" .
+'      <li>1.1 ' . &$I('Subsection One-One') . "\n";
+    $about .= <<EOT;
+        <ul>
+          <li>...</li>
+        </ul>
+      </li>
+EOT
+    $about .= '      <li>1.2 ' . &$I('Subsection One-Two') . "\n" .
+"        <ul>\n" .
+'          <li>1.2.1 ' . &$I('Subsubsection One-Two-One') . "</li>\n" .
+'          <li>1.2.2 ' . &$I('Subsubsection One-Two-Two') . "</li>\n" .
+'          <li>1.2.3 ' . &$I('Subsubsection One-Two-Three') . " &nbsp; &nbsp;\n"
+.
+'            <strong>&lt;== ' . &$I('Current Position') . " </strong></li>\n" .
+'          <li>1.2.4 ' . &$I('Subsubsection One-Two-Four') . "</li>\n" .
+"        </ul>\n" .
+"      </li>\n" .
+'      <li>1.3 ' . &$I('Subsection One-Three') . "\n";
+    $about .= <<EOT;
+        <ul>
+          <li>...</li>
+        </ul>
+      </li>
+EOT
+    $about .= '      <li>1.4 ' . &$I('Subsection One-Four') . "</li>\n";
+    $about .= <<EOT;
+    </ul>
+  </li>
+</ul>
+$AFTER_ABOUT
+EOT
+    return $about;
+}
+
+sub T2H_DEFAULT_titlepage()
+{
+    my $result = '';
+    if (@{$Texi2HTML::THISDOC{'titles'}} 
+        or @{$Texi2HTML::THISDOC{'subtitles'}} 
+        or @{$Texi2HTML::THISDOC{'authors'}})
+    {     
+        $result = "<div align=\"center\">\n";
+        foreach my $title (@{$Texi2HTML::THISDOC{'titles'}})
+        {
+            $result .= '<h1>' . $title . "</h1>\n";
+        }    
+        foreach my $subtitle (@{$Texi2HTML::THISDOC{'subtitles'}})
+        {
+            $result .= '<h2>' . $subtitle . "</h2>\n";
+        }
+        foreach my $author (@{$Texi2HTML::THISDOC{'authors'}})
+        {
+            $result .= '<strong> ' . $author . " </strong><br>\n";
+        }
+        $result .= "</div>\n$DEFAULT_RULE\n";
+    }
+
+    $Texi2HTML::TITLEPAGE = $result . $Texi2HTML::TITLEPAGE;
+}
+
+# i18n
+sub T2H_DEFAULT_print_redirection_page($)
+{
+    my $fh = shift;
+    my $longtitle = "$Texi2HTML::THISDOC{'title_no_texi'}";
+    $longtitle .= ": $Texi2HTML::NO_TEXI{'This'}" if exists $Texi2HTML::NO_TEXI{'This'};
+    my $description = $longtitle;
+    $description = $Texi2HTML::THISDOC{'documentdescription'} if (defined($Texi2HTML::THISDOC{'documentdescription'}));
+    my $href = &$anchor('', $Texi2HTML::HREF{'This'}, $Texi2HTML::NAME{'This'}); 
+    print $fh <<EOT;
+$DOCTYPE
+<html>
+<!-- Created on $Texi2HTML::THISDOC{'today'} by $Texi2HTML::THISDOC{'program'} -->
+<!--
+$Texi2HTML::THISDOC{'program_authors'}
+-->
+<head>
+<title>$longtitle</title>
+
+<meta name="description" content="$description">
+<meta name="keywords" content="$longtitle">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="$Texi2HTML::THISDOC{program}">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Refresh" content="0; url=$Texi2HTML::HREF{'This'}">
+$EXTRA_HEAD
+</head>
+
+<body $BODYTEXT>
+$AFTER_BODY_OPEN
+<p>The node you are looking for is at $href.</p>
+</body>
+EOT
+}
+
+sub T2H_DEFAULT_node_file_name($)
+{
+    my $node = shift;
+    return (undef, undef) if ($node->{'external_node'} or $node->{'index_page'});
+    my $file;
+    my $node_file;
+    
+    if ($NEW_CROSSREF_STYLE)
+    {
+         if (defined($node->{'file'}))
+         {
+              $file = $node->{'file'};
+              $node_file = $node->{'node_file'};
+         }
+         else
+         {
+              $node_file = $node->{'cross_manual_target'} . ".$NODE_FILE_EXTENSION";
+              $file =  $node_file if (($SPLIT eq 'node') and ($USE_NODES or $node->{'with_section'}));
+         }
+    }
+    else
+    {
+         return (undef, undef) if (defined($node->{'file'}));
+         my $name = main::remove_texi($node->{'texi'});
+         $name =~ s/[^\w\.\-]/-/g;
+         $name = "${name}.$NODE_FILE_EXTENSION";
+         $file = $name if (($SPLIT eq 'node') and ($USE_NODES or $node->{'with_section'}));
+         $node_file = $name;
+    }
+    return ($file, $node_file);
+}
+
+########################################################################
+# Control of formatting:
+# 1.) For some changes, it is often enough to change the value of
+#     some global map. It might necessitate building a little
+#     function along with the change in hash, if the change is the use
+#     of another function (in style_map).
+# 2.) For other changes, reimplement one of the t2h_default_<fnc>* routines,
+#     give them another name, and assign them to the respective
+#     $<fnc> variable (below).
+
+
+#
+# This hash should have keys corresponding with the nonletter command accent
+# whose following character is considered to be the argument
+# This hash associates an accent macro to the ISO name for the accent if any.
+# The customary use of this map is to find the ISO name appearing in html
+# entity (like &eacute;) associated with a texinfo accent macro.
+#
+# The keys of the hash are
+# ": umlaut
+# ~: tilda accent
+# ^: circumflex accent
+# `: grave accent
+# ': acute accent
+# =: macron accent
+%accent_map = (
+          '"',  'uml',
+          '~',  'tilde',
+          '^',  'circ',
+          '`',  'grave',
+          "'", 'acute',
+          '=', '',
+         );
+
+#
+# texinfo "simple things" (@foo) to HTML ones
+#
+%simple_map = (
+           "*", "<br>",     # HTML+
+           ' ', '&nbsp;',
+           "\t", '&nbsp;',
+           "\n", '&nbsp;',
+     # "&#173;" or "&shy;" could also be possible for @-, but it seems
+     # that some browser will consider this as an always visible hyphen mark
+     # which is not what we want (see http://www.cs.tut.fi/~jkorpela/shy.html)
+           '-', '',  # hyphenation hint
+           '|', '',  # used in formatting commands @evenfooting and friends
+           '/', '',
+       # spacing commands
+           ':', '',
+           '!', '!',
+           '?', '?',
+           '.', '.',
+           '@', '@',
+           '}', '}',
+           '{', '{',
+          );
+
+# this map is used in preformatted text
+%simple_map_pre = %simple_map;
+$simple_map_pre{'*'} = "\n";
+
+#
+# texinfo "things" (@foo{}) to HTML ones
+#
+%things_map = (
+               'TeX'          => 'TeX',
+               'LaTeX'          => 'LaTeX',
+# pertusus: unknown by makeinfo, not in texinfo manual (@* is the right thing)
+#               'br', '<br>',     # paragraph break
+               'bullet'       => '*',
+#               #'copyright' => '(C)',
+               'copyright'    => '&copy;',
+               'registeredsymbol'   => '&reg;',
+               'dots'         => '<small class="dots">...</small>',
+               'enddots'      => '<small class="enddots">....</small>',
+               'equiv'        => '==',
+# i18n
+               'error'        => 'error--&gt;',
+               'expansion'    => '==&gt;',
+               'minus'        => '-',
+               'point'        => '-!-',
+               'print'        => '-|',
+               'result'       => '=&gt;',
+               # set in code using the language
+               # 'today', &pretty_date,
+               'today'        => '',
+               'aa'           => '&aring;',
+               'AA'           => '&Aring;',
+               'ae'           => '&aelig;',
+               'oe'           => '&oelig;', #pertusus: also &#156;. &oelig; not in html 3.2
+               'AE'           => '&AElig;',
+               'OE'           => '&OElig;', #pertusus: also &#140;. &OElig; not in html 3.2
+               'o'            =>  '&oslash;',
+               'O'            =>  '&Oslash;',
+               'ss'           => '&szlig;',
+               'l'            => '/l',
+               'L'            => '/L',
+               'exclamdown'   => '&iexcl;',
+               'questiondown' => '&iquest;',
+               'pounds'       => '&pound;',
+               'ordf'         => '&ordf;',
+               'ordm'         => '&ordm;',
+               'comma'        => ',',
+               'euro'         => '&euro;',
+             );
+
+# This map is used in preformatted environments
+%pre_map = %things_map;
+$pre_map{'dots'} = '...';
+$pre_map{'enddots'} = '....';
+#$pre_map{'br'} = "\n";
+
+# ascii representation of @-commands
+%ascii_simple_map = (
+           "*", "\n",     # HTML+
+           ' ', ' ',
+           "\t", "\t",
+           "\n", "\n",
+           '-', '',  # hyphenation hint
+           '|', '',  # used in formatting commands @evenfooting and friends
+           '/', '',
+           ':', '',
+           '!', '!',
+           '?', '?',
+           '.', '.',
+           '@', '@',
+           '}', '}',
+           '{', '{',
+);
+
+%ascii_things_map = (
+               'TeX'          => 'TeX',
+               'LaTeX'          => 'LaTeX',
+               'bullet'       => '*',
+               'copyright' => '(C)',
+               'registeredsymbol'   => '(R)',
+               'dots'         => '...',
+               'enddots'      => '....',
+               'equiv'        => '==',
+# i18n
+               'error'        => 'error-->',
+               'expansion'    => '==>',
+               'minus'        => '-',
+               'point'        => '-!-',
+               'print'        => '-|',
+               'result'       => '=>',
+               'today'        => '',
+               'aa'           => 'aa',
+               'AA'           => 'AA',
+               'ae'           => 'ae',
+               'oe'           => 'oe', 
+               'AE'           => 'AE',
+               'OE'           => 'OE',
+               'o'            =>  '/o',
+               'O'            =>  '/O',
+               'ss'           => 'ss',
+               'l'            => '/l',
+               'L'            => '/L',
+               'exclamdown'   => '?',
+               'questiondown' => '!',
+               'pounds'       => '#',
+               'ordf'         => 'a',
+               'ordm'         => 'o',
+               'comma'        => ',',
+               'euro'         => 'Euro',
+);
+
+#
+# This map is used when texi elements are removed and replaced 
+# by simple text
+#
+%simple_map_texi = (
+           "*", "",  
+           " ", " ",
+           "\t", " ",
+           "-", "-",  # soft hyphen
+           "\n", "\n",
+           "|", "",
+        # spacing commands
+           ":", "",
+           "!", "!",
+           "?", "?",
+           ".", ".",
+           "-", "",
+           '@', '@',
+           '}', '}',
+           '{', '{',
+          );
+
+# text replacing macros when texi commands are removed and plain text is 
+# produced 
+%texi_map = (
+               'TeX', 'TeX',
+               'LaTeX', 'LaTeX',
+               'bullet', '*',
+               'copyright', 'C',
+               'registeredsymbol', 'R',
+               'dots', '...',
+               'enddots', '....',
+               'equiv', '==',
+               'error', 'error-->',
+               'expansion', '==>',
+               'minus', '-',
+               'point', '-!-',
+               'print', '-|',
+               'result', '=>',
+               'today'        => '',
+               'aa', 'aa',
+               'AA', 'AA',
+               'ae', 'ae',
+               'oe', 'oe',
+               'AE', 'AE',
+               'OE', 'OE',
+               'o',  'o',
+               'O',  'O',
+               'ss', 'ss',
+               'l', 'l',
+               'L', 'L',
+               'exclamdown', '! upside-down',
+               #'exclamdown', '&iexcl;',
+               'questiondown', '? upside-down',
+               #'questiondown', '&iquest;',
+               'pounds', 'pound sterling',
+               #'pounds', '&pound;'
+               'ordf'         => 'a',
+               'ordm'         => 'o',
+               'comma'        => ',',
+               'euro'         => 'Euro',
+            );
+
+# taken from
+#Latin extended additionnal
+#http://www.alanwood.net/unicode/latin_extended_additional.html
+#C1 Controls and Latin-1 Supplement
+#http://www.alanwood.net/unicode/latin_1_supplement.html
+#Latin Extended-A
+#http://www.alanwood.net/unicode/latin_extended_a.html
+#Latin Extended-B
+#http://www.alanwood.net/unicode/latin_extended_b.html
+#dotless i: 0131
+%unicode_map = (
+               'bullet'       => '2022',
+               'copyright'    => '00A9',
+               'registeredsymbol'   => '00AE',
+               'dots'         => '2026',
+               'enddots'      => '',
+               'equiv'        => '2261',
+               'error'        => '',
+               'expansion'    => '2192',
+               'minus'        => '2212', # in mathematical operators
+#               'minus'        => '002D', # in latin1
+               'point'        => '2217',
+               'print'        => '',
+               'result'       => '21D2',
+               'today'        => '',
+               'aa'           => '00E5',
+               'AA'           => '00C5',
+               'ae'           => '00E6',
+               'oe'           => '0153',
+               'AE'           => '00C6',
+               'OE'           => '0152',
+               'o'            => '00F8',
+               'O'            => '00D8',
+               'ss'           => '00DF',
+               'l'            => '0142',
+               'L'            => '0141',
+               'exclamdown'   => '00A1',
+               'questiondown' => '00BF',
+               'pounds'       => '00A3',
+               'ordf'         => '00AA',
+               'ordm'         => '00BA',
+               'comma'        => '002C',
+               'euro'         => '20AC',
+             );
+
+%ascii_character_map = (
+            ' ' => '0020',
+            '!' => '0021',
+            '"' => '0022',
+            '#' => '0023',
+            '$' => '0024',
+            '%' => '0025',
+            '&' => '0026',
+            "'" => '0027',
+            '(' => '0028',
+            ')' => '0029',
+            '*' => '002A',
+            '+' => '002B',
+            ',' => '002C',
+            '-' => '002D',
+            '.' => '002E',
+            '/' => '002F',
+            ':' => '003A',
+            ';' => '003B',
+            '<' => '003C',
+            '=' => '003D',
+            '>' => '003E',
+            '?' => '003F',
+            '@' => '0040',
+            '[' => '005B',
+            '\\' => '005C',
+            ']' => '005D',
+            '^' => '005E',
+            '_' => '005F',
+            '`' => '0060',
+            '{' => '007B',
+            '|' => '007C',
+            '}' => '007D',
+            '~' => '007E',
+);
+
+%perl_charset_to_html = (
+              'utf8'       => 'utf-8',
+              'ascii'      => 'us-ascii',
+);
+
+# symbols used for the commands if $USE-ISO is true.
+%iso_symbols = (
+         'equiv'     => '&equiv;',
+         'dots'      => '&hellip;',
+         'bullet'    => '&bull;',
+         'result'    => '&rArr;',
+         'expansion' => '&rarr;',
+         'point'     => '&lowast;',
+        );
+
+# When the value begins with & the function with that name is used to do the
+# html. The first argument is the text enclosed within {}, the second is the
+# style name (which is also the key of the hash)
+#
+# Otherwithe the value is the html element used to enclose the text, and if
+# there is a " the resulting text is also enclosed within `'
+my %old_style_map = (
+      'acronym',    '',
+      'asis',       '',
+      'b',          'b',
+      'cite',       'cite',
+      'code',       'code',
+      'command',    'code',
+      'ctrl',       '&default_ctrl', 
+      'dfn',        'em', 
+      'dmn',        '',   
+      'email',      '&default_email', 
+      'emph',       'em',
+      'env',        'code',
+      'file',       '"tt', 
+      'i',          'i',
+      'kbd',        'kbd',
+      'key',        'kbd',
+      'math',       'em',
+      'option',     '"samp', 
+      'r',          '',
+      'samp',       '"samp', 
+      'sc',         '&default_sc',
+      'strong',     'strong',
+      't',          'tt',
+      'uref',       '&default_uref',
+      'url',        '&default_url',
+      'var',        'var',
+      'verb',       'tt',
+      'titlefont',  '&default_titlefont',
+      'w',          '',
+     );
+
+# default is {'args' => ['normal'], 'attribute' => ''},   
+%style_map = (
+      'asis',       {},
+      'b',          {'attribute' => 'b'},
+      'cite',       {'attribute' => 'cite'},
+      'code',       {'args' => ['code'], 'attribute' => 'code'},
+      'command',    {'args' => ['code'], 'attribute' => 'code'},
+      'ctrl',       {'function' => \&t2h_default_ctrl}, 
+      'dfn',        {'attribute' => 'em'}, 
+      'dmn',        {},   
+      'email',      {'args' => ['code', 'normal'], 
+                       'function' => \&t2h_default_email}, 
+      #'email',      {'args' => ['normal', 'normal'], 
+      #                 'function' => \&t2h_default_email}, 
+      'emph',       {'attribute' => 'em'}, 
+      'env',        {'args' => ['code'], 'attribute' => 'code'},
+      'file',       {'args' => ['code'], 'attribute' => 'tt', 'quote' => '"'},
+      'i',          {'attribute' => 'i'},
+      'slanted',    {'attribute' => 'i'},
+      'sansserif',  {'attribute' => 'span class="sansserif"'},
+      'kbd',        {'args' => ['code'], 'attribute' => 'kbd'},
+      'key',        {'attribute' => 'kbd'},
+      'math',       {'attribute' => 'em'},
+      'option',     {'args' => ['code'], 'attribute' => 'samp', 'quote' => '"'},
+      'r',          {},
+      'samp',       {'args' => ['code'], 'attribute' => 'samp', 'quote' => '"'},
+      'sc',         {'function' => \&t2h_default_sc},
+      'strong',     {'attribute' => 'strong'},
+      't',          {'attribute' => 'tt'},
+      'uref',       {'function' => \&t2h_default_uref, 
+                      'args' => ['code', 'normal', 'normal']},
+      #'uref',       {'function' => \&t2h_default_uref, 
+      #                'args' => ['normal', 'normal', 'normal']},
+      'url',        {'function' => \&t2h_default_uref, 
+                      'args' => ['code', 'normal', 'normal']},
+      'indicateurl', {'args' => ['code'], 'begin' => '&lt;<code>', 'end' => '</code>&gt;'},
+      'var',        {'attribute' => 'var'},
+      'verb',       {'args' => ['code'], 'attribute' => 'tt'},
+      'titlefont',  {'function' => \&t2h_default_titlefont},
+      'w',          {},
+     );
+
+%unicode_diacritical = (
+       'H'          => '030B', 
+       'ringaccent' => '030A', 
+       "'"          => '0301',
+       'v'          => '030C', 
+       ','          => '0327', 
+       '^'          => '0302', 
+       'dotaccent'  => '0307',
+       '`'          => '0300',
+       '='          => '0304', 
+       '~'          => '0303',
+       '"'          => '0308', 
+       'udotaccent' => '0323', 
+       'ubaraccent' => '0332', 
+       'u'          => '0306'
+);
+
+%unicode_accents = (
+    'dotaccent' => { # dot above
+        'A' => '0226', #C moz-1.2 
+        'a' => '0227', #c moz-1.2
+        'B' => '1E02',
+        'b' => '1E03',
+        'C' => '010A',
+        'c' => '010B',
+        'D' => '1E0A',
+        'd' => '1E0B',
+        'E' => '0116',
+        'e' => '0117',
+        'F' => '1E1E',
+        'f' => '1E1F',
+        'G' => '0120',
+        'g' => '0121',
+        'H' => '1E22',
+        'h' => '1E23',
+        'i' => '0069',
+        'I' => '0130',
+        'N' => '1E44',
+        'n' => '1E45',
+        'O' => '022E', #Y moz-1.2
+        'o' => '022F', #v moz-1.2
+        'P' => '1E56',
+        'p' => '1E57',
+        'R' => '1E58',
+        'r' => '1E59',
+        'S' => '1E60',
+        's' => '1E61',
+        'T' => '1E6A',
+        't' => '1E6B',
+        'W' => '1E86',
+        'w' => '1E87',
+        'X' => '1E8A',
+        'x' => '1E8B',
+        'Y' => '1E8E',
+        'y' => '1E8F',
+        'Z' => '017B',
+        'z' => '017C',
+    },
+    'udotaccent' => { # dot below
+        'B' => '1E04',
+        'b' => '1E05',
+        'D' => '1E0C',
+        'd' => '1E0D',
+        'E' => '1EB8',
+        'e' => '1EB9',
+        'H' => '1E24',
+        'h' => '1E25',
+        'I' => '1ECA',
+        'i' => '1ECB',
+        'K' => '1E32',
+        'k' => '1E33',
+        'L' => '1E36',
+        'l' => '1E37',
+        'M' => '1E42',
+        'm' => '1E43',
+        'N' => '1E46',
+        'n' => '1E47',
+        'O' => '1ECC',
+        'o' => '1ECD',
+        'R' => '1E5A',
+        'r' => '1E5B',
+        'S' => '1E62',
+        's' => '1E63',
+        'T' => '1E6C',
+        't' => '1E6D',
+        'U' => '1EE4',
+        'u' => '1EE5',
+        'V' => '1E7E',
+        'v' => '1E7F',
+        'W' => '1E88',
+        'w' => '1E89',
+        'Y' => '1EF4',
+        'y' => '1EF5',
+        'Z' => '1E92',
+        'z' => '1E93',
+    },
+    'ubaraccent' => { # line below
+        'B' => '1E06',
+        'b' => '1E07',
+        'D' => '1E0E',
+        'd' => '1E0F',
+        'h' => '1E96',
+        'K' => '1E34',
+        'k' => '1E35',
+        'L' => '1E3A',
+        'l' => '1E3B',
+        'N' => '1E48',
+        'n' => '1E49',
+        'R' => '1E5E',
+        'r' => '1E5F',
+        'T' => '1E6E',
+        't' => '1E6F',
+        'Z' => '1E94',
+        'z' => '1E95',
+    },
+    ',' => { # cedilla
+        'C' => '00C7',
+        'c' => '00E7',
+        'D' => '1E10',
+        'd' => '1E11',
+        'E' => '0228', #C moz-1.2
+        'e' => '0229', #c moz-1.2
+        'G' => '0122',
+        'g' => '0123',
+        'H' => '1E28',
+        'h' => '1E29',
+        'K' => '0136',
+        'k' => '0137',
+        'L' => '013B',
+        'l' => '013C',
+        'N' => '0145',
+        'n' => '0146',
+        'R' => '0156',
+        'r' => '0157',
+        'S' => '015E',
+        's' => '015F',
+        'T' => '0162',
+        't' => '0163',
+    },
+    '=' => { # macron
+        'A' => '0100',
+        'a' => '0101',
+        'E' => '0112',
+        'e' => '0113',
+        'I' => '012A',
+        'i' => '012B',
+        'G' => '1E20',
+        'g' => '1E21',
+        'O' => '014C',
+        'o' => '014D',
+        'U' => '016A',
+        'u' => '016B',
+        'Y' => '0232', #? moz-1.2
+        'y' => '0233', #? moz-1.2
+    },
+    '"' => { # diaeresis
+        'A' => '00C4',
+        'a' => '00E4',
+        'E' => '00CB',
+        'e' => '00EB',
+        'H' => '1E26',
+        'h' => '1E27',
+        'I' => '00CF',
+        'i' => '00EF',
+        'O' => '00D6',
+        'o' => '00F6',
+        't' => '1E97',
+        'U' => '00DC',
+        'u' => '00FC',
+        'W' => '1E84',
+        'w' => '1E85',
+        'X' => '1E8C',
+        'x' => '1E8D',
+        'y' => '00FF',
+        'Y' => '0178',
+    },
+    'u' => { # breve
+        'A' => '0101',
+        'a' => '0102',
+        'E' => '0114',
+        'e' => '0115',
+        'G' => '011E',
+        'g' => '011F',
+        'I' => '012C',
+        'i' => '012D',
+        'O' => '014E',
+        'o' => '014F',
+        'U' => '016C',
+        'u' => '016D',
+    },
+    "'" => { # acute
+        'A' => '00C1',
+        'a' => '00E1',
+        'C' => '0106',
+        'c' => '0107',
+        'E' => '00C9',
+        'e' => '00E9',
+        'G' => '01F4',
+        'g' => '01F5',
+        'I' => '00CD',
+        'i' => '00ED',
+        'K' => '1E30',
+        'k' => '1E31',
+        'L' => '0139',
+        'l' => '013A',
+        'M' => '1E3E',
+        'm' => '1E3F',
+        'N' => '0143',
+        'n' => '0144',
+        'O' => '00D3',
+        'o' => '00F3',
+        'P' => '1E54',
+        'p' => '1E55',
+        'R' => '0154',
+        'r' => '0155',
+        'S' => '015A',
+        's' => '015B',
+        'U' => '00DA',
+        'u' => '00FA',
+        'W' => '1E82',
+        'w' => '1E83',
+        'Y' => '00DD',
+        'y' => '00FD',
+        'Z' => '0179',
+        'z' => '018A',
+    },
+    '~' => { # tilde
+        'A' => '00C3',
+        'a' => '00E3',
+        'E' => '1EBC',
+        'e' => '1EBD',
+        'I' => '0128',
+        'i' => '0129',
+        'N' => '00D1',
+        'n' => '00F1',
+        'O' => '00D5',
+        'o' => '00F5',
+        'U' => '0168',
+        'u' => '0169',
+        'V' => '1E7C',
+        'v' => '1E7D',
+        'Y' => '1EF8',
+        'y' => '1EF9',
+    },
+    '`' => { # grave
+        'A' => '00C0',
+        'a' => '00E0',
+        'E' => '00C8',
+        'e' => '00E8',
+        'I' => '00CC',
+        'i' => '00EC',
+        'N' => '01F8',
+        'n' => '01F9',
+        'O' => '00D2',
+        'o' => '00F2',
+        'U' => '00D9',
+        'u' => '00F9',
+        'W' => '1E80',
+        'w' => '1E81',
+        'Y' => '1EF2',
+        'y' => '1EF3',
+    },
+    '^' => { # circumflex
+        'A' => '00C2',
+        'a' => '00E2',
+        'C' => '0108',
+        'c' => '0109',
+        'E' => '00CA',
+        'e' => '00EA',
+        'G' => '011C',
+        'g' => '011D',
+        'H' => '0124',
+        'h' => '0125',
+        'I' => '00CE',
+        'i' => '00EE',
+        'J' => '0134',
+        'j' => '0135',
+        'O' => '00D4',
+        'o' => '00F4',
+        'S' => '015C',
+        's' => '015D',
+        'U' => '00DB',
+        'u' => '00FB',
+        'W' => '0174',
+        'w' => '0175',
+        'Y' => '0176',
+        'y' => '0177',
+        'Z' => '1E90',
+        'z' => '1E91',
+    },
+    'ringaccent' => { # ring
+        'A' => '00C5',
+        'a' => '00E5',
+        'U' => '016E',
+        'u' => '016F',
+        'w' => '1E98',
+        'y' => '1E99',
+    },
+    'v' => { # caron
+        'A' => '01CD',
+        'a' => '01CE',
+        'C' => '010C',
+        'c' => '010D',
+        'D' => '010E',
+        'd' => '010F',
+        'E' => '011A',
+        'e' => '011B',
+        'G' => '01E6',
+        'g' => '01E7',
+        'H' => '021E', #K with moz-1.2
+        'h' => '021F', #k with moz-1.2
+        'I' => '01CF',
+        'i' => '01D0',
+        'K' => '01E8',
+        'k' => '01E9',
+        'L' => '013D', #L' with moz-1.2
+        'l' => '013E', #l' with moz-1.2
+        'N' => '0147',
+        'n' => '0148',
+        'O' => '01D1',
+        'o' => '01D2',
+        'R' => '0158',
+        'r' => '0159',
+        'S' => '0160',
+        's' => '0161',
+        'T' => '0164',
+        't' => '0165',
+        'U' => '01D3',
+        'u' => '01D4',
+        'Z' => '017D',
+        'z' => '017E',
+    },
+    'H' => { # double acute
+        'O' => '0150',
+        'o' => '0151',
+        'U' => '0170',
+        'u' => '0171',
+    },
+);
+
+%special_accents = (
+      'ringaccent' => 'aA',
+      "'"          => 'aeiouyAEIOUY',
+      ','          => 'cC',
+      '^'          => 'aeiouAEIOU',
+      '`'          => 'aeiouAEIOU',
+      '~'          => 'nNaoAO',
+      '"'          => 'aeiouyAEIOU',
+);
+
+#foreach my $accent_command ('tieaccent', 'dotless', keys(%unicode_accents), keys(%accent_map))
+foreach my $accent_command ('tieaccent', 'dotless', keys(%unicode_accents))
+{
+     $style_map{$accent_command} = { 'function' => \&t2h_default_accent };
+     $old_style_map{$accent_command} = '&default_accent';
+     $style_map_texi{$accent_command} = { 'function' => \&t2h_default_ascii_accent };
+}
+
+sub default_accent($$)
+{
+    my $text = shift;
+    my $accent = shift;
+    return "&${text}$accent_map{$accent};" if (defined($accent_map{$accent}) and defined($special_accents{$accent}) and ($text =~ /^[$special_accents{$accent}]$/));
+    return '&' . $text . 'ring;' if (($accent eq 'ringaccent') and (defined($special_accents{$accent})) and ($text =~ /^[$special_accents{$accent}]$/));
+    return $text . '&lt;' if ($accent eq 'v');
+    return "&${text}cedil;" if (($accent eq ',') and (defined($special_accents{$accent})) and ($text =~ /^[$special_accents{$accent}]$/));
+    return ascii_accents($text, $accent);
+}
+
+sub t2h_default_accent($$)
+{
+    my $accent = shift;
+    my $args = shift;
+
+    my $text = $args->[0];
+
+    return "&${text}$accent_map{$accent};" if (defined($accent_map{$accent}) and defined($special_accents{$accent}) and ($text =~ /^[$special_accents{$accent}]$/));
+    return '&' . $text . 'ring;' if (($accent eq 'ringaccent') and (defined($special_accents{$accent})) and ($text =~ /^[$special_accents{$accent}]$/));
+    return $text . '&lt;' if ($accent eq 'v');
+    return "&${text}cedil;" if (($accent eq ',') and (defined($special_accents{$accent})) and ($text =~ /^[$special_accents{$accent}]$/));
+    return ascii_accents($text, $accent);
+}
+
+sub ascii_accents($$)
+{
+    my $text = shift;
+    my $accent = shift;
+    return $text if ($accent eq 'dotless');
+    return $text . $accent if (defined($accent_map{$accent}));
+    return $text . "''" if ($accent eq 'H');
+    return $text . '.' if ($accent eq 'dotaccent');
+    return $text . '*' if ($accent eq 'ringaccent');
+    return $text . '[' if ($accent eq 'tieaccent');
+    return $text . '(' if ($accent eq 'u');
+    return $text . '_' if ($accent eq 'ubaraccent');
+    return '.' . $text  if ($accent eq 'udotaccent');
+    return $text . '<' if ($accent eq 'v');
+    return $text . ',' if ($accent eq ','); 
+}
+
+sub default_sc($$)
+{
+    return '<small>' . uc($_[0]) . '</small>';
+}
+
+sub t2h_default_sc($$$)
+{
+    shift;
+    my $args = shift;
+    return '<small>' . uc($args->[0]) . '</small>';
+}
+
+sub default_ctrl($$)
+{
+   return "^$_[0]";
+}
+
+sub t2h_default_ctrl($$$)
+{
+    shift;
+    my $args = shift;
+   return "^$args->[0]";
+}
+
+sub default_sc_pre($$)
+{
+    return uc($_[0]);
+}
+
+sub t2h_default_sc_pre($$$)
+{
+    shift;
+    my $args = shift;
+    return uc($args->[0]);
+}
+
+sub default_titlefont($$)
+{
+    return "<h1 class=\"titlefont\">$_[0]</h1>" if ($_[0] =~ /\S/);
+    return '';
+}
+
+sub t2h_default_titlefont($$$)
+{
+    shift;
+    my $args = shift;
+    return "<h1 class=\"titlefont\">$args->[0]</h1>" if ($args->[0] =~ /\S/);
+    return '';
+}
+
+# According to the texinfo manual this shouldn't lead to a link
+# but rather be formatted like text. If we did like makeinfo do
+# it would be
+#sub url($$)
+#{
+#    return '&lt;<code>' . $_[0] . '</code>&gt;';
+#}
+sub t2h_default_url ($$)
+{
+    shift;
+    my $args = shift;
+    my $url = shift @$args;
+    #$url =~ s/\s*$//;
+    #$url =~ s/^\s*//;
+    $url = main::normalise_space($url);
+    return '' unless ($url =~ /\S/);
+    return &$anchor('', $url, $url);
+}
+
+sub default_url ($$)
+{
+    my $url = shift;
+    my $command = shift;
+    $url =~ s/\s*$//;
+    $url =~ s/^\s*//;
+    return '' unless ($url =~ /\S/);
+    return &$anchor('', $url, $url);
+}
+
+sub default_uref($$)
+{
+    my $arg = shift;
+    my $command = shift;
+    my ($url, $text, $replacement);
+    ($url, $text, $replacement) = split /,\s*/, $arg;
+    $url =~ s/\s*$//;
+    $url =~ s/^\s*//;
+    $text = $replacement if (defined($replacement));
+    $text = $url unless ($text);
+    return $text if ($url eq '');
+    return &$anchor('', $url, $text);
+}
+
+sub t2h_default_uref($$)
+{
+    shift;
+    my $args = shift;
+    my $url = shift @$args;
+    my $text = shift @$args;
+    my $replacement = shift @$args;
+    #$url =~ s/\s*$//;
+    #$url =~ s/^\s*//;
+    $url = main::normalise_space($url);
+    $replacement = '' if (!defined($replacement));
+    $replacement = main::normalise_space($replacement);
+    $text = '' if (!defined($text));
+    $text = main::normalise_space($text);
+    $text = $replacement if ($replacement ne '');
+    $text = $url unless ($text ne '');
+    return $text if ($url eq '');
+    return &$anchor('', $url, $text);
+}
+
+sub default_email($$)
+{
+    my $arg = shift;
+    my $command = shift;
+    my ($mail, $text);
+    ($mail, $text) = split /,\s*/, $arg;
+    $mail =~ s/\s*$//;
+    $mail =~ s/^\s*//;
+    $text = $mail unless ($text);
+    return $text if ($mail eq '');
+    return &$anchor('', "mailto:$mail", $text);
+}
+
+sub t2h_default_email($$)
+{
+    my $command = shift;
+    my $args = shift;
+    my $mail = shift @$args;
+    my $text = shift @$args;
+    $mail = main::normalise_space($mail);
+    #$mail =~ s/\s*$//;
+    #$mail =~ s/^\s*//;
+    $text = $mail unless (defined($text) and ($text ne ''));
+    $text = main::normalise_space($text);
+    return $text if ($mail eq '');
+    return &$anchor('', "mailto:$mail", $text);
+}
+
+sub t2h_default_ascii_accent($$$$)
+{
+    my $accent = shift;
+    my $args = shift;
+
+    my $text = $args->[0];
+    return ascii_accents($text, $accent);
+}
+
+sub t2h_default_no_texi_email
+{
+    my $command = shift;
+    my $args = shift;
+    my $mail = shift @$args;
+    my $text = shift @$args;
+    $mail = main::normalise_space($mail);
+    #$mail =~ s/\s*$//;
+    #$mail =~ s/^\s*//;
+    return $text if (defined($text) and ($text ne ''));
+    return $mail;
+}
+
+sub t2h_default_no_texi_image($$$$)
+{
+    my $command = shift;
+    my $args = shift;
+    my $text = $args->[0];
+    $text = main::normalise_space($text); 
+    my @args = split (/\s*,\s*/, $text);
+    return $args[0];
+}
+
+sub t2h_default_no_texi_acronym_like($$)
+{
+    my $command = shift;
+    my $args = shift;
+    my $acronym_texi = $args->[0];
+    return (main::remove_texi($acronym_texi)); 
+}
+
+sub t2h_remove_command($$$$)
+{
+    return '';
+}
+
+# This is used for style in preformatted sections
+my %old_style_map_pre = %old_style_map;
+$old_style_map_pre{'sc'} = '&default_sc_pre';
+$old_style_map_pre{'titlefont'} = '';
+
+foreach my $command (keys(%style_map))
+{
+    $style_map_pre{$command} = {};
+    $style_map_texi{$command} = {} if (!exists($style_map_texi{$command}));
+    $style_map_texi{$command}->{'args'} = $style_map{$command}->{'args'}
+        if (exists($style_map{$command}->{'args'}));
+ #print STDERR "COMMAND $command";
+    
+    foreach my $key (keys(%{$style_map{$command}}))
+    {
+        $style_map_pre{$command}->{$key} = $style_map{$command}->{$key};
+    }
+}
+
+$style_map_pre{'sc'}->{'function'} = \&t2h_default_sc_pre;
+$style_map_pre{'titlefont'} = {};
+
+$style_map_texi{'sc'}->{'function'} = \&t2h_default_sc_pre;
+$style_map_texi{'email'}->{'function'} = \&t2h_default_no_texi_email;
+
+####### special styles. You shouldn't need to change them
+my %special_style = (
+           #'xref'      => ['keep','normal','normal','keep','normal'],
+           'xref'         => { 'args' => ['keep','keep','keep','keep','keep'],
+               'function' => \&main::do_xref },
+           'ref'         => { 'args' => ['keep','keep','keep','keep','keep'],
+               'function' => \&main::do_xref },
+           'pxref'         => { 'args' => ['keep','keep','keep','keep','keep'],
+               'function' => \&main::do_xref },
+           'inforef'      => { 'args' => ['keep','keep','keep'], 
+               'function' => \&main::do_xref },
+           'image'        => { 'args' => ['keep'], 'function' => \&main::do_image },
+           'anchor'       => { 'args' => ['keep'], 'function' => \&main::do_anchor_label },
+           'footnote'     => { 'args' => ['keep'], 'function' => \&main::do_footnote },
+           'shortcaption' => { 'args' => ['keep'], 'function' => \&main::do_caption_shortcaption },
+           'caption' => { 'args' => ['keep'], 'function' => \&main::do_caption_shortcaption },
+           'acronym',    {'args' => ['keep','keep'], 'function' => \&main::do_acronym_like},
+           'abbr',    {'args' => ['keep','keep'], 'function' => \&main::do_acronym_like},
+);
+
+# FIXME the unless defined(.... are now unusefull because the user can
+# overwrite.
+
+# @image is replaced by the first arg in strings
+$style_map_texi{'image'} = { 'args' => ['keep'],
+       'function' => \&t2h_default_no_texi_image }
+    unless (defined($style_map_texi{'image'}));
+
+$style_map_texi{'acronym'} = { 'args' => ['keep','keep'],
+       'function' => \&t2h_default_no_texi_acronym_like };
+$style_map_texi{'abbr'} = { 'args' => ['keep','keep'],
+       'function' => \&t2h_default_no_texi_acronym_like };
+
+foreach my $special (keys(%special_style))
+{
+    $style_map{$special} = $special_style{$special}
+          unless (defined($style_map{$special}));
+    $style_map_pre{$special} = $special_style{$special}
+          unless (defined($style_map_pre{$special}));
+    $style_map_texi{$special} = { 'args' => ['keep'],
+        'function' => \&t2h_remove_command }
+          unless (defined($style_map_texi{$special}));
+}
+####### end special styles.
+
+
+#foreach my $command (keys(%style_map))
+#{
+#    print STDERR "STYLE_MAP_TEXI $command($style_map_texi{$command}) ";
+#    print STDERR "ARGS $style_map_texi{$command}->{'args'} " if (defined($style_map_texi{$command}->{'args'}));
+#    print STDERR "FUN $style_map_texi{$command}->{'function'} " if (defined($style_map_texi{$command}->{'function'}));
+#    print STDERR "\n";
+#}
+
+# uncomment to use the old interface
+#%style_map = %old_style_map;
+#%style_map_pre = %old_style_map_pre;
+
+#FIXME USE_ISO ?
+%unformatted_text_simple_map_texi = %simple_map_pre;
+%unformatted_text_texi_map = %pre_map;
+%unformatted_text_style_map_texi = ();
+
+foreach my $command (keys(%style_map_texi))
+{
+    #$unformatted_text_style_map_texi{$command} = {};
+    foreach my $key (keys (%{$style_map_texi{$command}}))
+    {
+    #print STDERR "$command, $key, $style_map_texi{$command}->{$key}\n";
+        $unformatted_text_style_map_texi{$command}->{$key} = 
+             $style_map_texi{$command}->{$key};
+    }
+    $unformatted_text_style_map_texi{$command} = {} if (!defined($unformatted_text_style_map_texi{$command}));
+}
+
+foreach my $accent_command ('tieaccent', 'dotless', keys(%unicode_accents))
+{
+#    $unformatted_text_style_map_texi{$accent_command}->{'args'} = ['normal'];
+    $unformatted_text_style_map_texi{$accent_command}->{'function'} = \&t2h_default_accent;
+}
+
+%format_map = (
+#       'quotation'   =>  'blockquote',
+       # lists
+#       'itemize'     =>  'ul',
+       'enumerate'   =>  'ol',
+       'multitable'  =>  'table',
+       'table'       =>  'dl compact="compact"',
+       'vtable'      =>  'dl compact="compact"',
+       'ftable'      =>  'dl compact="compact"',
+       'group'       =>  '',
+       );
+
+%special_list_commands = (
+       'table'        =>  {},
+       'vtable'       =>  {},
+       'ftable'       =>  {},
+       'itemize'      =>  { 'bullet'  => '' }
+       );
+#
+# texinfo format to align attribute of paragraphs
+#
+
+%paragraph_style = (
+      'center'     => 'center',
+      'flushleft'  => 'left',
+      'flushright' => 'right',
+      );
+      
+# an eval of these $complex_format_map->{what}->{'begin'} yields beginning
+# an eval of these $complex_format_map->{what}->{'end'} yields end
+# $EXAMPLE_INDENT_CELL and SMALL_EXAMPLE_INDENT_CELL can be usefull here
+# FIXME add \n at the end ?
+$complex_format_map =
+{
+ 'example' =>
+ {
+  'begin' => q{"<table><tr>$EXAMPLE_INDENT_CELL<td>"},
+  'end' => q{'</td></tr></table>'},
+ },
+ 'smallexample' =>
+ {
+  'begin' => q{"<table><tr>$SMALL_EXAMPLE_INDENT_CELL<td>"},
+  'end' => q{'</td></tr></table>'},
+ },
+ 'display' =>
+ {
+  'begin' => q{"<table><tr>$EXAMPLE_INDENT_CELL<td>"},
+  'end' => q{'</td></tr></table>'},
+ },
+ 'smalldisplay' =>
+ {
+  'begin' => q{"<table><tr>$SMALL_EXAMPLE_INDENT_CELL<td>"},
+  'end' => q{'</td></tr></table>'},
+ }
+};
+
+# format shouldn't narrow the margins
+
+$complex_format_map->{'lisp'} =  $complex_format_map->{'example'};
+$complex_format_map->{'smalllisp'} = $complex_format_map->{'smallexample'};
+$complex_format_map->{'format'} = $complex_format_map->{'display'};
+$complex_format_map->{'smallformat'} = $complex_format_map->{'smalldisplay'};
+
+%def_map = (
+    # basic commands
+    'deffn', [ 'f', 'category', 'name', 'arg' ],
+    'defvr', [ 'v', 'category', 'name' ],
+    'deftypefn', [ 'f', 'category', 'type', 'name', 'arg' ],
+    'deftypeop', [ 'f', 'category', 'class' , 'type', 'name', 'arg' ],
+    'deftypevr', [ 'v', 'category', 'type', 'name' ],
+    'defcv', [ 'v', 'category', 'class' , 'name' ],
+    'deftypecv', [ 'v', 'category', 'class' , 'type', 'name' ],
+    'defop', [ 'f', 'category', 'class' , 'name', 'arg' ],
+    'deftp', [ 't', 'category', 'name', 'arg' ],
+    # basic x commands
+    # shortcuts
+    # i18n
+    'defun', 'deffn Function',
+    'defmac', 'deffn Macro',
+    'defspec', 'deffn {Special Form}',
+    'defvar', 'defvr Variable',
+    'defopt', 'defvr {User Option}',
+    'deftypefun', 'deftypefn {Function}',
+    'deftypevar', 'deftypevr Variable',
+    'defivar', 'defcv {Instance Variable}',
+    'deftypeivar', 'deftypecv {Instance Variable}',
+    'defmethod', 'defop Method',
+    'deftypemethod', 'deftypeop Method',
+         );
+
+foreach my $key (keys(%def_map))
+{
+    $def_map{$key . 'x'} = $def_map{$key};
+}
+
+#
+# miscalleneous commands
+#
+# Depending on the value, the command arg or spaces following the command
+#     are handled differently:
+# 
+# the value is a reference on a hash.
+# the hash keys are
+#    'arg'  if the value is 'line' then the remaining of the line is the arg
+#           if it is a number it is the number of args (separated by spaces)
+#    'skip' if the value is 'line' then the remaining of the line is skipped
+#           if the value is 'space' space but no newline is skipped
+#           if the value is 'whitespace' space is skipped
+#           if the value is 'linewhitespace' space is skipped if there are 
+#                 only spaces remaining on the line
+#           if the value is 'linespace' space but no newline is skipped if 
+#                 there are only spaces remaining on the line
+#    'texi' if true it is some texinfo code and @value and @macros are expanded
+#    'keep' if true the args and the macro are kept, otherwise the macro 
+#          args and skipped stuffs are removed
+%misc_command = (
+        # not needed for formatting
+        'raisesections' => {'skip' => 'line'},  # no arg
+        'lowersections' => {'skip' => 'line'}, # no arg
+        'contents' => {}, # no arg
+        'shortcontents' => {}, # no arg
+        'summarycontents'=> {}, # no arg
+        'detailmenu' => {'skip' => 'whitespace'}, # no arg
+        'end detailmenu' => {'skip' => 'space'}, # no arg
+        #'end detailmenu', 1, # no arg
+        'bye' => {'skip' => 'line'}, # no arg
+        # comments
+        'comment' => {'arg' => 'line'},
+        'c' => {'arg' => 'line'},
+        #'c'=> {'arg' => 'line', 'keep' => 1},
+        # in preamble
+        'novalidate' => {}, # no arg
+        'dircategory'=> {'skip' => 'line'}, # line. Position with regard 
+                         # with direntry is significant
+        'pagesizes' => {'skip' => 'line', 'arg' => 2}, # can have 2 args 
+        'finalout' => {}, # no arg
+        'paragraphindent' => {'skip' => 'line', 'arg' => 1}, # arg none asis 
+                             # or a number and forbids anything else on the line
+        'firstparagraphindent' => {'skip' => 'line', 'arg' => 1}, # none insert
+        'exampleindent' => {'skip' => 'line', 'arg' => 1}, # asis or a number
+        'footnotestyle'=> {'skip' => 'line', 'arg' => 1}, # end and separate
+                                 # and nothing else on the line
+        'afourpaper' => {'skip' => 'line'}, # no arg
+        'afourlatex' => {'skip' => 'line'}, # no arg
+        'afourwide' => {'skip' => 'line'}, # no arg
+        'headings'=> {'skip' => 'line', 'arg' => 1}, 
+                    #off on single double singleafter doubleafter
+                    # interacts with setchapternewpage
+        'setchapternewpage' => {'skip' => 'line', 'arg' => 1}, # off on odd
+        'everyheading' => {'arg' => 'line'},
+        'everyfooting' => {'arg' => 'line'},
+        'evenheading' => {'arg' => 'line'},
+        'evenfooting' => {'arg' => 'line'},
+        'oddheading' => {'arg' => 'line'},
+        'oddfooting' => {'arg' => 'line'},
+        'smallbook' => {'skip' => 'line'}, # no arg
+        'setfilename' => {'arg' => 'line'},
+        'shorttitle' => {'arg' => 'line', 'texi' => 1},
+        'shorttitlepage' => {'arg' => 'line', 'texi' => 1},
+        'settitle' => {'arg' => 'line', 'texi' => 1},
+        'author' => {'arg' => 'line', 'texi' => 1},
+        'subtitle' => {'arg' => 'line', 'texi' => 1},
+        'title' => {'arg' => 'line', 'texi' => 1},
+        'syncodeindex' => {'skip' => 'linespace', 'arg' => 2}, 
+                          # args are index identifiers
+        'synindex' => {'skip' => 'linespace', 'arg' => 2},
+        'defindex' => {'skip' => 'line', 'arg' => 1}, # one identifier arg
+        'defcodeindex' => {'skip' => 'line', 'arg' => 1}, # one identifier arg
+        'documentlanguage' => {'skip' => 'whitespace', 'arg' => 1}, 
+                                                       # language code arg
+        'kbdinputstyle' => {'skip' => 'whitespace', 'arg' => 1}, # code 
+                                                        #example distinct
+        'sp' => {'skip' => 'whitespace', 'arg' => 1}, # no arg 
+                                    # at the end of line or a numerical arg
+        # formatting
+        'page' => {}, # no arg (pagebreak)
+        'refill' => {}, # no arg (obsolete, to be ignored)
+        'noindent' => {'skip' => 'space'}, # no arg
+        'need' => {'skip' => 'line', 'arg' => 1}, # one numerical/real arg
+        'exdent' => {'skip' => 'space'},  
+        # not valid for info (should be in @iftex)
+        'vskip' => {'arg' => 'line'}, # arg line in TeX
+        'cropmarks' => {}, # no arg
+        # miscalleneous
+        'verbatiminclude'=> {'skip' => 'line'},
+        'noindent' => {'skip' => 'space'},
+        'documentencoding' => {'arg' => 1},
+        # ???
+        'filbreak' => {},
+     );
+my %misc_command_old = (
+        # not needed for formatting
+        'raisesections', 'line',  # no arg
+        'lowersections', 'line', # no arg
+        'contents', 1, # no arg
+        'shortcontents', 1, # no arg
+        'summarycontents', 1, # no arg
+        'detailmenu', 'whitespace', # no arg
+        'end detailmenu', 'space', # no arg
+        #'end detailmenu', 1, # no arg
+        'novalidate', 1, # no arg
+        'bye', 'line', # no arg
+        # comments
+        'comment', 'line',
+        'c', 'line',
+        # in preamble
+        'dircategory', 'line', # line. Position with regard with direntry is 
+                               # significant
+        'pagesizes', 'line arg2', # can have 2 args 
+        'finalout', 1, # no arg
+        'paragraphindent', 'line arg1', # in fact accepts only none asis 
+                             # or a number and forbids anything else on the line
+        'firstparagraphindent', 'line arg1', # in fact accepts only none insert
+        'exampleindent', 'line arg1', # in fact accepts only asis or a number
+        'footnotestyle', 'line arg1', # in fact accepts only end and separate
+                                 # and nothing else on the line
+        'afourpaper', 'line', # no arg
+        'afourlatex', 'line', # no arg
+        'afourwide', 'line',  # no arg
+        'headings', 'line', # one arg, possibilities are 
+                    #off on single double singleafter doubleafter
+                    # interacts with setchapternewpage
+        'setchapternewpage', 'line', # no arg
+        'everyheading', 'line',
+        'everyfooting', 'line',
+        'evenheading', 'line',
+        'evenfooting', 'line',
+        'oddheading', 'line',
+        'oddfooting', 'line',
+        'smallbook', 'line', # no arg
+        'setfilename', 'line',
+        'shorttitle', 'linetexi',
+        'shorttitlepage', 'linetexi',
+        'settitle', 'linetexi',
+        'author', 'linetexi',
+        'subtitle', 'linetexi',
+        'title','linetexi',
+        'syncodeindex','linespace arg2', # args are 
+        'synindex','linespace arg2',
+        'defindex', 'line arg1', # one identifier arg
+        'defcodeindex', 'line arg1', # one identifier arg
+        'documentlanguage', 'whitespace arg1', # one language code arg
+        'kbdinputstyle', 'whitespace arg1', # one arg within 
+                                 #code example distnct
+        'sp', 'whitespace arg1', # no arg at the en of line or a numerical arg
+        # formatting
+        'page', 1, # no arg (pagebreak)
+        'refill', 1, # no arg (obsolete, to be ignored))
+        'noindent', 'space', # no arg
+        'need', 'line arg1', # one numerical/real arg
+        'exdent', 'space',  
+        # not valid for info (should be in @iftex)
+        'vskip', 'line', # arg line in TeX
+        'cropmarks', 1, # no arg
+        # miscalleneous
+        'verbatiminclude', 'line',
+        'documentencoding', 'arg1',
+        # ???
+        'filbreak', 1,
+     );
+
+%format_in_paragraph = (
+        'group' => 1,
+        'html'  => 1,
+);
+# map mapping css specification to style
+
+%css_map = 
+     (
+         'ul.toc'                 => "$TOC_LIST_STYLE",
+         'pre.menu-comment'       => "$MENU_PRE_STYLE",
+         'pre.menu-preformatted'  => "$MENU_PRE_STYLE",
+         'a.summary-letter'       => 'text-decoration: none',
+         'pre.display'            => 'font-family: serif',
+         'pre.smalldisplay'       => 'font-family: serif; font-size: smaller',
+         'pre.smallexample'       => 'font-size: smaller',
+         'span.sansserif'         => 'font-family:sans-serif; font-weight:normal;'
+     );
+
+$css_map{'pre.format'} = $css_map{'pre.display'};
+$css_map{'pre.smallformat'} = $css_map{'pre.smalldisplay'}; 
+$css_map{'pre.smalllisp'} = $css_map{'pre.smallexample'};
+
+# formatting functions
+
+$anchor            = \&t2h_default_anchor;
+$def_item          = \&t2h_default_def_item;
+$def               = \&t2h_default_def;
+$menu              = \&t2h_default_menu;
+$menu_link         = \&t2h_default_menu_link;
+$menu_comment      = \&t2h_default_menu_comment;
+$menu_description  = \&t2h_default_menu_description;
+$simple_menu_link  = \&t2h_default_simple_menu_link;
+$external_ref      = \&t2h_default_external_ref;
+$external_href     = \&t2h_default_external_href;
+$internal_ref      = \&t2h_default_internal_ref;
+$table_item        = \&t2h_default_table_item;
+$table_line        = \&t2h_default_table_line;
+$table_list        = \&t2h_default_table_list;
+$row               = \&t2h_default_row;
+$cell              = \&t2h_default_cell;
+$list_item         = \&t2h_default_list_item;
+$comment           = \&t2h_default_comment;
+$def_line	       = \&t2h_default_def_line;
+$def_line_no_texi  = \&t2h_default_def_line_no_texi;
+$raw               = \&t2h_default_raw;
+$heading           = \&t2h_default_heading;
+$paragraph         = \&t2h_default_paragraph;
+$preformatted      = \&t2h_default_preformatted;
+$foot_line_and_ref = \&t2h_default_foot_line_and_ref;
+$foot_section      = \&t2h_default_foot_section;
+$image             = \&t2h_default_image;
+$address           = \&t2h_default_address;
+$index_entry_label = \&t2h_default_index_entry_label;
+$index_summary     = \&t2h_default_index_summary;
+$summary_letter    = \&t2h_default_summary_letter;
+$index_entry       = \&t2h_default_index_entry;
+$index_letter      = \&t2h_default_index_letter;
+$print_index       = \&t2h_default_print_index;
+$protect_text      = \&t2h_default_protect_text;
+$complex_format    = \&t2h_default_complex_format;
+$cartouche         = \&t2h_default_cartouche;
+$sp                = \&t2h_default_sp;
+$definition_category      = \&t2h_default_definition_category;
+$copying_comment          = \&t2h_default_copying_comment;
+$index_summary_file_entry = \&t2h_default_index_summary_file_entry;
+$index_summary_file_end   = \&t2h_default_index_summary_file_end;
+$index_summary_file_begin = \&t2h_default_index_summary_file_begin;
+$empty_line               = \&t2h_default_empty_line;
+$unknown                  = \&t2h_default_unknown;
+$unknown_style            = \&t2h_default_unknown_style;
+$caption_shortcaption     = \&t2h_caption_shortcaption;
+$float                     = \&t2h_default_float;
+$listoffloats             = \&t2h_default_listoffloats;
+$listoffloats_entry       = \&t2h_default_listoffloats_entry;
+$listoffloats_caption     = \&t2h_default_listoffloats_caption;
+$listoffloats_float_style = \&t2h_default_listoffloats_float_style;
+$listoffloats_style       = \&t2h_default_listoffloats_style;
+$acronym_like             = \&t2h_default_acronym_like;
+$quotation                = \&t2h_default_quotation;
+$quotation_prepend_text   = \&t2h_default_quotation_prepend_text;
+$paragraph_style_command  = \&t2h_default_paragraph_style_command;
+
+# This function is called whenever a complex format is processed
+#
+# arguments:
+# name of the format
+# text appearing inside the format
+#
+# an eval of $complex_format->{format name}->{'begin'} should lead to the
+# beginning of the complex format, an eval of 
+# $complex_format->{format name}->{'end'}  should lead to the end of the 
+# complex format.
+sub t2h_default_complex_format($$)
+{
+    my $name = shift;
+    my $text = shift;
+    return '' if ($text eq '');
+    my $beginning = eval "$complex_format_map->{$name}->{'begin'}";
+    if ($@ ne '')
+    {
+        print STDERR "$ERROR Evaluation of $complex_format_map->{$name}->{'begin'}: $@";
+        $beginning = '';
+
+    }
+    my $end = eval "$complex_format_map->{$name}->{'end'}";
+    if ($@ ne '')
+    {
+        print STDERR "$ERROR Evaluation of $complex_format_map->{$name}->{'end'}: $@";
+        $end = '';
+
+    }
+    return $beginning . $text . $end;	
+}
+
+sub t2h_default_empty_line($)
+{
+    my $text = shift;
+    return $text;
+}
+
+sub t2h_default_unknown($$)
+{
+    my $macro = shift;
+    my $line = shift;
+    
+    my ($result_line, $result, $result_text, $message);
+    return ($line, 0, undef, undef);
+}
+
+sub t2h_default_unknown_style($$)
+{
+    my $command = shift;
+    my $text = shift;
+    
+    my ($result, $result_text, $message);
+    return (0, undef, undef);
+}
+
+sub t2h_caption_shortcaption($)
+{
+    my $float = shift;
+    my $caption_lines;
+    my $shortcaption_lines;
+    my $style = $float->{'style_texi'};
+    if (defined($float->{'nr'}))
+    {
+         my $nr = $float->{'nr'};
+         if ($style ne '')
+         {
+              $style = &$I('%{style} %{number}', { 'style' => $style, 'number' => $nr});
+         }
+         else 
+         {
+              $style = $nr;
+         }
+    }
+    
+    if (defined($float->{'caption_texi'}))
+    {
+         @$caption_lines = @{$float->{'caption_texi'}};
+         if (defined($style))
+         {
+              $caption_lines->[0] = '@strong{' . &$I('%{style}: %{caption_first_line}', { 'style' => $style, 'caption_first_line' => $caption_lines->[0] });
+         }
+         else
+         {
+              $caption_lines->[0] = '@strong{' .  $caption_lines->[0];
+         }
+         push @$caption_lines, "}\n";
+    }
+    elsif (defined($style))
+    {
+         $caption_lines->[0] = '@strong{' . $style . '}' . "\n";
+    }
+    if (defined($float->{'shortcaption_texi'}))
+    {
+         @$shortcaption_lines = @{$float->{'shortcaption_texi'}};
+         if (defined($style))
+         {
+              $shortcaption_lines->[0] = '@strong{' . &$I('%{style}: %{shortcaption_first_line}', { 'style' => $style, 'shortcaption_first_line' => $shortcaption_lines->[0] });
+         }
+         else
+         {
+              $shortcaption_lines->[0] = '@strong{' .  $shortcaption_lines->[0];
+         }
+         push @$shortcaption_lines, "}\n";
+    }
+    elsif (defined($style))
+    {
+         $shortcaption_lines->[0] = '@strong{' . $style . '}' . "\n";
+    }
+    return ($caption_lines, $shortcaption_lines);
+}
+
+sub t2h_default_float($$$$$)
+{
+    my $text = shift;
+    my $float = shift;
+    my $caption = shift;
+    my $shortcaption = shift;
+    
+    my $label = '';
+    if (exists($float->{'id'}))
+    {
+        $label = &$anchor($float->{'id'});
+    }
+    my $caption_text = '';
+    
+    if (defined($float->{'caption_texi'}))
+    {
+         $caption_text = $caption;
+    }
+    elsif (defined($float->{'shortcaption_texi'}))
+    {
+         $caption_text = $shortcaption;
+    }
+    elsif (defined($caption))
+    {
+         $caption_text = $caption;
+    }
+    
+    return '<div class="float">' . "$label\n" . $text . '</div>' . $caption_text;
+}
+
+sub t2h_default_listoffloats_style($)
+{
+    my $style_texi = shift;
+    return ($style_texi);
+}
+
+sub t2h_default_listoffloats_float_style($$)
+{
+    my $style_texi = shift;
+    my $float = shift;
+    
+    my $style = $float->{'style_texi'};
+    if (defined($float->{'nr'}))
+    {
+         my $nr = $float->{'nr'};
+         if ($style ne '')
+         {
+              $style = &$I('%{style} %{number}', { 'style' => $style, 'number' => $nr});
+         }
+         else 
+         {
+              $style = $nr;
+         }
+    }
+    return $style;
+}
+
+sub t2h_default_listoffloats_caption($)
+{
+    my $float = shift;
+    if (defined($float->{'shortcaption_texi'}))
+    {
+         return [ @{$float->{'shortcaption_texi'}} ];
+    }
+    elsif (defined($float->{'caption_texi'}))
+    {
+         return [ @{$float->{'caption_texi'}} ];
+    }
+    return [ ];
+}
+
+sub t2h_default_listoffloats_entry($$$$)
+{
+    my $style_texi = shift;
+    my $float = shift;
+    my $float_style = shift;
+    my $caption = shift;
+    my $href = shift;
+
+    return '<dt>' . &$anchor('', $href, $float_style) . '</dt><dd>' . $caption
+. '</dd>' . "\n";
+}
+
+sub t2h_default_listoffloats($$$)
+{
+    my $style_texi = shift;
+    my $style = shift;
+    my $float_entries = shift;
+
+    my $result = "<dl class=\"listoffloats\">\n" ;
+    foreach my $float_entry (@$float_entries)
+    {
+         $result .= $float_entry;
+    }
+    return $result . "</dl>\n";
+} 
+
+# This function is used to protect characters which are special in html 
+# in inline text:  &, ", <, and >. 
+#
+# argument:
+# text to be protected
+sub t2h_default_protect_text($)
+{
+   my $text = shift;
+   $text =~ s/&/&amp;/g;
+   $text =~ s/</&lt;/g;
+   $text =~ s/>/&gt;/g;
+   $text =~ s/\"/&quot;/g;
+   return $text;
+}
+
+# This function produces an anchor 
+#
+# arguments:
+# $name           :   anchor name
+# $href           :   anchor href
+# text            :   text displayed
+# extra_attribs   :   added to anchor attributes list
+sub t2h_default_anchor($;$$$)
+{
+    my $name = shift;
+    my $href = shift;
+    my $text = shift;
+    my $attributes = shift;
+#print STDERR "!$name!$href!$text!$attributes!\n";
+    if (!defined($attributes) or ($attributes !~ /\S/))
+    {
+        $attributes = '';
+    }
+    else 
+    {
+        $attributes = ' ' . $attributes;
+    }
+    $name = '' if (!defined($name) or ($name !~ /\S/));
+    $href = '' if (!defined($href) or ($href !~ /\S/));
+    $text = '' if (!defined($text));
+    return $text if (($name eq '') and ($href eq ''));
+    $name = "name=\"$name\"" if ($name ne '');
+    $href = "href=\"$href\"" if ($href ne '');
+    $href = ' ' . $href if (($name ne '') and ($href ne ''));
+#print STDERR "!!!$name!$href!$text!$attributes!\n";
+    return "<a ${name}${href}${attributes}>$text</a>";
+}
+
+# This function is used to format the text associated with a @deff/@end deff
+#
+# argument:
+# text
+#
+# $DEF_TABLE should be used to distinguish between @def formatted as table
+# and as definition lists.
+sub t2h_default_def_item($)
+{
+    my $text = shift;
+    if ($text =~ /\S/)
+    {
+        if (! $DEF_TABLE)
+        {
+            return '<dd>' . $text . '</dd>';
+        }
+        else
+        {
+            return '<tr><td colspan="2">' . $text . '</td></tr>';
+        }
+    }
+    return '';
+}
+
+sub t2h_default_definition_category($$$)
+{
+    my $name = shift;
+    my $class = shift;
+    my $style = shift;
+#    print STDERR "definition_category $name, class $class, style $style\n";
+    return undef if (!defined($name) or $name =~ /^\s*$/);
+    return ($name) if (!defined($class) or $class =~ /^\s*$/);
+    if ($style eq 'f')
+    {
+        return &$I('%{name} on %{class}', { 'name' => $name, 'class' => $class });
+    }
+    elsif ($style eq 'v')
+    {
+        return &$I('%{name} of %{class}', { 'name' => $name, 'class' => $class });
+    }
+    else
+    {
+        return $name;
+    }
+}
+
+# format the container for the @deffn line and text
+# 
+# argument
+# text of the whole @def, line and associated text.
+#
+# $DEF_TABLE should be used.
+sub t2h_default_def($)
+{
+    my $text = shift;
+    if ($text =~ /\S/)
+    {
+        if (! $DEF_TABLE)
+        {
+            return "<dl>\n" . $text . "</dl>\n";
+        }
+        else
+        {
+            return "<table width=\"100%\">\n" . $text . "</table>\n";
+        }
+    }
+    return '';
+
+}
+
+# a whole menu
+#
+# argument:
+# the whole menu text (entries and menu comments)
+#
+# argument:
+# whole menu text.
+sub t2h_default_menu($)
+{
+    my $text = shift;
+    if ($text =~ /\S/)
+    {
+        return "<table class=\"menu\" border=\"0\" cellspacing=\"0\">\n" 
+        . $text . "</table>\n";
+    }
+}
+
+# a simple menu entry ref in case we aren't in a standard menu context
+sub t2h_default_simple_menu_link($$$$$$)
+{
+    my $entry = shift;
+    my $preformatted = shift;
+    my $href = shift;
+    my $node = shift;
+    my $name = shift;
+    my $ending = shift;
+    $ending = '' if (!defined($ending));
+    if (($entry eq '') or $NODE_NAME_IN_MENU or $preformatted)
+    {
+        $name .= ':' if ($name ne '');
+        $entry = "$MENU_SYMBOL$name$node";
+    }
+    $entry = &$anchor('', $href, $entry) if ($href);
+    $entry .= $ending if ($preformatted);
+    return $entry . '&nbsp;';
+}
+
+# formats a menu entry link pointing to a node or section 
+#
+# arguments:
+# the entry text
+# the state, a hash reference holding informations about the context, with a 
+#     usefull entry, 'preformatted', true if we are in a preformatted format
+#     (a format keeping space between words). In that case a function
+#     of the main program, main::do_preformatted($text, $state) might 
+#     be used to format the text with the current format style.
+# href is optionnal. It is the reference to the section or the node anchor
+#     which should be used to make the link (typically it is the argument 
+#     of a href= attribute in a <a> element).
+sub t2h_default_menu_link($$$$$$)
+{
+    my $entry = shift;
+    my $state = shift;
+    my $href = shift;
+    my $node = shift;
+    my $name = shift;
+    my $ending = shift;
+    if (($entry eq '') or $NODE_NAME_IN_MENU or $state->{'preformatted'})
+    {
+        $name .= ':' if ($name ne '');
+        $entry = "$MENU_SYMBOL$name$node";
+    }
+    $entry = &$anchor ('', $href, $entry) if (defined($href));
+    if ($state->{'preformatted'})
+    {
+        return '<tr><td>' . main::do_preformatted($entry . $ending, $state);
+    }
+    return "<tr><td align=\"left\" valign=\"top\">$entry</td><td>&nbsp;&nbsp;</td>";
+}
+
+# formats a menu entry description, ie the text appearing after the node
+# specification in a menu entry an spanning until there is another
+# menu entry, an empty line or some text at the very beginning of the line
+# (we consider that text at the beginning of the line begins a menu comment) 
+#
+# arguments:
+# the description text
+# the state. See menu_entry.
+sub t2h_default_menu_description($$)
+{
+    my $text = shift;
+    my $state = shift;
+    if ($state->{'preformatted'})
+    {
+        return main::do_preformatted($text, $state) . '</td></tr>';
+    }
+    return "<td align=\"left\" valign=\"top\">$text</td></tr>\n";
+}
+
+# a menu comment (between menu lines)
+# formats the container of a menu comment. A menu comment is any text 
+# appearing between menu lines, either separated by an empty line from
+# the preceding menu entry, or a text beginning at the first character
+# of the line (text not at the very beginning of the line is considered to
+# be the continuation of a menu entry description text).
+#
+# The text itself is considered to be in a preformatted environment
+# with name 'menu-commment' and with style $MENU_PRE_STYLE.
+#
+# argument
+# text contained in the menu comment.
+sub t2h_default_menu_comment($)
+{
+   my $text = shift;
+   if ($text =~ /\S/)
+   {
+       return "<tr><th colspan=\"3\" align=\"left\" valign=\"top\">$text</th></tr>";
+   }
+   return '';
+}
+
+# Construct a href to an external source of information.
+# node is the node with texinfo @-commands
+# node_id is the node transformed such that it is unique and can be used to 
+#     make an html cross ref as explained in the texinfo manual
+# file is the file in '(file)node'
+sub t2h_default_external_href($$$)
+{
+    my $node = shift;
+    my $node_id = shift;
+    my $node_xhtml_id = shift;
+    my $file = shift;
+    $file = '' if (!defined($file));
+    my $target_split = $EXTERNAL_CROSSREF_SPLIT;
+    if ($file ne '')
+    {
+         if ($NEW_CROSSREF_STYLE)
+         {
+             $file =~ s/\.[^\.]*$//;
+             $file =~ s/^.*\///;
+             my $href;
+             if (exists($Texi2HTML::THISDOC{'htmlxref'}->{$file}))
+             {
+                  $target_split = $Texi2HTML::THISDOC{'htmlxref'}->{$file}->{'split'};
+                  $href = $Texi2HTML::THISDOC{'htmlxref'}->{$file}->{'href'};
+             }
+             if ($target_split)
+             {
+                  if (defined($href))
+                  {
+                       $file = "$href";
+                  }
+                  elsif (defined($EXTERNAL_DIR))
+                  {
+                       $file = "$EXTERNAL_DIR/$file";
+                  }
+                  elsif ($SPLIT)
+                  {
+                       $file = "../$file";
+                  }
+                  $file .= "/";
+             }
+             else
+             {# target not split
+                  if (defined($href))
+                  {
+                       $file = "$href";
+                  }
+                  else
+                  {
+                       if (defined($EXTERNAL_DIR))
+                       {
+                            $file = "$EXTERNAL_DIR/$file";
+                       }
+                       elsif ($SPLIT)
+                       {
+                           $file = "../$file";
+                       }
+                       $file .= "." . $NODE_FILE_EXTENSION;
+                  }
+             }
+         }
+         else
+         {
+             $file .= "/";
+             if (defined($EXTERNAL_DIR))
+             {
+                 $file = $EXTERNAL_DIR . $file;
+             }
+             else
+             {
+                 $file = '../' . $file;
+             } 
+         }
+    }
+    else
+    { # here we necessarily have a ref to a node in the document, but the
+      # node is invalid
+         if ($NEW_CROSSREF_STYLE)
+         {
+              if (!$SPLIT)
+              {
+                   $file = $TOP_FILE;
+              }
+         }
+    }
+    if ($node eq '')
+    {
+         if ($NEW_CROSSREF_STYLE)
+         {
+             if ($SPLIT)
+             {
+                 return $file . $TOP_NODE_FILE . '.' . $NODE_FILE_EXTENSION . '#Top';
+                 # or ?
+                 #return $file . '#Top';
+             }
+             else
+             {
+                  return $file . '#Top';
+             }
+         }
+         else
+         {
+             return $file;
+         }
+    }
+    my $target;
+    if ($NEW_CROSSREF_STYLE)
+    {
+         $node = $node_id;
+         $target = $node_xhtml_id;
+    }
+    else
+    {
+         $node = main::remove_texi($node);
+         $node =~ s/[^\w\.\-]/-/g;
+    }
+    my $file_basename = $node;
+    $file_basename = $TOP_NODE_FILE if ($node =~ /^top$/i);
+    if ($NEW_CROSSREF_STYLE)
+    {
+        if ($SPLIT)
+        {
+            return $file . $file_basename . ".$NODE_FILE_EXTENSION" . '#' . $target;
+        }
+        else
+        {
+            return $file . '#' . $target;
+        }
+    }
+    else
+    {
+        return $file . $file_basename . ".$NODE_FILE_EXTENSION";
+    }
+}
+# format a reference external to the generated manual. This produces a full 
+# reference with introductive words and the reference itself.
+#
+# arguments:
+# type of the reference: xref (reference at the beginning of a sentence),
+#     pxref (reference in a parenthesis),  
+# section in the book. This might be undef.
+# book name.
+# node and file name formatted according to the convention used in info
+#     '(file)node' and no node means the Top node.
+# href linking to the html page containing the referenced node. A typical
+#     use for this href is a href attribute in an <a> element
+# an optionnal cross reference name
+sub t2h_default_external_ref($$$$$$)
+{
+    my $type = shift;
+    my $section = shift;
+    my $book = shift;
+    my $file_node = shift;
+    my $href = shift;
+    my $cross_ref = shift;
+
+    $file_node = "$cross_ref: $file_node" if (($file_node ne '') and ($cross_ref ne ''));
+    $file_node = &$anchor('', $href, $file_node) if ($file_node ne '');
+
+    # Yes, this is ugly, but this helps internationalization
+    if ($type eq 'pxref')
+    {
+         if (($book ne '') and ($file_node ne ''))
+         {
+              return &$I('see %{node_file_href} section `%{section}\' in @cite{%{book}}', { 'node_file_href' => $file_node, 'book' => $book, 'section' => $section }) if ($section ne '');
+              return &$I('see %{node_file_href} @cite{%{book}}', { 'node_file_href' => $file_node, 'book' => $book });
+         }
+         elsif ($book ne '')
+         {
+              return &$I('see section `%{section}\' in @cite{%{book}}', { 'book' => $book, 'section' => $section }) if ($section ne '');
+              return &$I('see @cite{%{book}}', { 'book' => $book });
+         }
+         elsif ($file_node ne '')
+         {
+              return &$I('see %{node_file_href}', { 'node_file_href' => $file_node });
+         }
+    }
+    if ($type eq 'xref')
+    {
+         if (($book ne '') and ($file_node ne ''))
+         {
+              return &$I('See %{node_file_href} section `%{section}\' in @cite{%{book}}', { 'node_file_href' => $file_node, 'book' => $book, 'section' => $section }) if ($section ne '');
+              return &$I('See %{node_file_href} @cite{%{book}}', { 'node_file_href' => $file_node, 'book' => $book });
+         }
+         elsif ($book ne '')
+         {
+              return &$I('See section `%{section}\' in @cite{%{book}}', { 'book' => $book, 'section' => $section }) if ($section ne '');
+              return &$I('See @cite{%{book}}', { 'book' => $book });
+         }
+         elsif ($file_node ne '')
+         {
+              return &$I('See %{node_file_href}', { 'node_file_href' => $file_node });
+         }
+    }
+    if ($type eq 'ref')
+    {
+         if (($book ne '') and ($file_node ne ''))
+         {
+              return &$I('%{node_file_href} section `%{section}\' in @cite{%{book}}', { 'node_file_href' => $file_node, 'book' => $book, 'section' => $section }) if ($section ne '');
+              return &$I('%{node_file_href} @cite{%{book}}', { 'node_file_href' => $file_node, 'book' => $book });
+         }
+         elsif ($book ne '')
+         {
+              return &$I('section `%{section}\' in @cite{%{book}}', { 'book' => $book, 'section' => $section }) if ($section ne '');
+              return &$I('@cite{%{book}}', { 'book' => $book });
+         }
+         elsif ($file_node ne '')
+         {
+              return &$I('%{node_file_href}', { 'node_file_href' => $file_node });
+         }
+    }
+    return '';
+}
+
+# format a reference to a node or a section in the generated manual. This 
+# produces a full reference with introductive words and the reference itself.
+#
+# arguments:
+# type of the reference: xref (reference at the beginning of a sentence),
+#     pxref (reference in a parenthesis),  
+# href linking to the html page containing the node or the section. A typical
+#     use for this href is a href attribute in an <a> element
+# short name for this reference
+# name for this reference
+# boolean true if the reference is a reference to a section
+# 
+# $SHORT_REF should be used.
+sub t2h_default_internal_ref($$$$$)
+{
+    my $type = shift;
+    my $href = shift;
+    my $short_name = shift;
+    my $name = shift;
+    my $is_section = shift;
+
+    if (! $SHORT_REF)
+    {
+        $name = &$anchor('', $href, $name);
+        if ($type eq 'pxref')
+        {
+            return &$I('see section %{reference_name}', { 'reference_name' => $name }) if ($is_section);
+            return &$I('see %{reference_name}', { 'reference_name' => $name });
+        }
+        elsif ($type eq 'xref')
+        {
+            return &$I('See section %{reference_name}', { 'reference_name' => $name }) if ($is_section);
+            return &$I('See %{reference_name}', { 'reference_name' => $name });
+        }
+        elsif ($type eq 'ref')
+        {
+            return &$I('%{reference_name}', { 'reference_name' => $name });
+        }
+    }
+    else
+    {
+        $name = &$anchor('', $href, $short_name);
+        if ($type eq 'pxref')
+        {
+            return &$I('see %{reference_name}', { 'reference_name' => $name });
+        }
+        elsif ($type eq 'xref')
+        {
+            return &$I('See %{reference_name}', { 'reference_name' => $name });
+        }
+        elsif ($type eq 'ref')
+        {
+            return &$I('%{reference_name}', { 'reference_name' => $name });
+        }
+    }
+    return '';
+}
+
+# text after @item in table, vtable and ftable
+sub t2h_default_table_item($$$$$)
+{
+    my $text = shift;
+    my $index_label = shift;
+    my $format = shift;
+    my $command = shift;
+    my $formatted_command = shift;
+    $formatted_command = '' if (!defined($formatted_command) or 
+          exists($special_list_commands{$format}->{$command}));
+    $text .= "\n" . $index_label  if (defined($index_label));
+    return '<dt>' . $formatted_command . $text . '</dt>' . "\n";
+}
+
+# format text on the line following @item (in table, vtable and ftable)
+sub t2h_default_table_line($)
+{
+    my $text = shift;
+
+    if ($text =~ /\S/)
+    {
+         return '<dd>' . $text . '</dd>' . "\n";
+    }
+    return '';
+}
+
+# row in multitable
+sub t2h_default_row($$)
+{
+    my $text = shift;
+    my $macro = shift;
+
+    if ($text =~ /\S/)
+    {
+         if ($macro eq 'headitem')
+         {
+              return '<thead><tr>' . $text . '</tr></thead>' . "\n";
+         }
+         return '<tr>' . $text . '</tr>' . "\n";
+    }
+    return '';
+}
+
+# cell in multitable
+sub t2h_default_cell($$)
+{
+    my $text = shift;
+    my $row_macro = shift;
+
+    if ($row_macro eq 'headitem')
+    {
+        return '<th>' . $text . '</th>';
+    }
+    return '<td>' . $text . '</td>';
+}
+
+# format an item in a list
+#
+# argument:
+# text of the item
+# format of the list (itemize or enumerate)
+# command passed as argument to the format
+# formatted_command leading command formatted, if it is a thing command
+sub t2h_default_list_item($$$$$$$)
+{
+    my $text = shift;
+    my $format = shift;
+    my $command = shift;
+    my $formatted_command = shift;
+    my $item_nr = shift;
+    my $enumerate_style = shift;
+    my $number = shift;
+
+    $formatted_command = '' if (!defined($formatted_command) or 
+          exists($special_list_commands{$format}->{$command}));
+    if ($text =~ /\S/)
+    {
+        return '<li>' . $formatted_command . $text . '</li>';
+    }
+    return '';
+}
+
+sub t2h_default_table_list($$$$$$)
+{
+    my $format = shift;
+    my $text = shift;
+    my $command = shift;
+    my $formatted_command = shift;
+    my $item_nr = shift;
+    my $enumerate_style = shift;
+    my $number = shift;
+    $formatted_command = '' if (!defined($formatted_command) or 
+          exists($special_list_commands{$format}->{$command}));
+    if ($format eq 'itemize')
+    {
+        return "<ul>\n" . $text . "</ul>\n" if ($command eq 'bullet');
+        return "<ul$TOC_LIST_ATTRIBUTE>\n" . $text . "</ul>\n";
+    }
+}
+
+# an html comment
+sub t2h_default_comment($)
+{
+    my $text = shift;
+    while ($text =~ /-->/) # --> ends an html comment !
+    { 
+        $text =~ s/-->/->/go;
+    }
+    return '<!--' . $text . '-->' . "\n";
+}
+
+# a paragraph
+# arguments:
+# $text of the paragraph
+# $align for the alignement
+# The following is usefull if the paragraph is in an itemize.
+# $paragraph_command is the leading formatting command (like @minus)
+# $paragraph_command_formatted is the leading formatting command formatted
+# $paragraph_number is a reference on the number of paragraphs appearing
+#    in the format. The value should be increased if a paragraph is done
+# $format is the format name (@itemize)
+sub t2h_default_paragraph($$$$$$$$$)
+{
+    my $text = shift;
+    my $align = shift;
+    my $paragraph_command = shift;
+    my $paragraph_command_formatted = shift;
+    my $paragraph_number = shift;
+    my $format = shift;
+    my $item_nr = shift;
+    my $enumerate_style = shift;
+    my $number = shift;
+#print STDERR "format: $format\n" if (defined($format));
+    $paragraph_command_formatted = '' if (!defined($paragraph_command_formatted) or 
+          exists($special_list_commands{$format}->{$paragraph_command}));
+    #my $in_term = shift;
+    return '' if ($text =~ /^\s*$/);
+    if (defined($paragraph_number) and defined($$paragraph_number))
+    {
+         $$paragraph_number++;
+         #return $text . "\n" if (($format eq 'itemize' or $format eq 'enumerate') and
+         return $text  if (($format eq 'itemize' or $format eq 'enumerate') and
+            ($$paragraph_number == 1));
+    }
+    my $open = '<p>';
+    if ($align)
+    {
+        $open = "<p align=\"$paragraph_style{$align}\">";
+    }
+    return $open. "$text</p>";
+}
+
+# a preformatted region
+# arguments:
+# $text of the preformatted region
+# $pre_style css style
+# $class identifier for the preformatted region (example, menu-comment)
+# The following is usefull if the preformatted is in an itemize.
+# $leading_command is the leading formatting command (like @minus)
+# $leading_command_formatted is the leading formatting command formatted
+# $preformatted_number is a reference on the number of preformatteds appearing
+#    in the format. The value should be increased if a preformatted is done
+sub t2h_default_preformatted($$$$$$$$$$)
+{
+    my $text = shift;
+    my $pre_style = shift;
+    my $class = shift;
+    my $leading_command = shift;
+    my $leading_command_formatted = shift;
+    my $preformatted_number = shift;
+    my $format = shift;
+    my $item_nr = shift;
+    my $enumerate_style = shift;
+    my $number = shift;
+
+    return '' if ($text eq '');
+    $leading_command_formatted = '' if (!defined($leading_command_formatted) or 
+          exists($special_list_commands{$format}->{$leading_command}));
+    if (defined($preformatted_number) and defined($$preformatted_number))
+    {
+        $$preformatted_number++;
+    }
+    return "<pre class=\"$class\">$text</pre>";
+}
+
+# This function formats a heading for an element
+#
+# argument:
+# an element. It is a hash reference for a node or a sectionning command.
+# The interesting keys are:
+# 'text': the heading text
+# 'name': the heading text without section number
+# 'node': true if it is a node
+# 'level': level of the element. 0 for @top, 1 for chapter, heading, 
+#      appendix..., 2 for section and so on...
+# 'tag_level': the sectionning element name, raisesections and lowersections
+#      taken into account
+#
+# relevant configuration variable:
+# $NUMBER_SECTIONS
+sub t2h_default_heading($)
+{
+    my $element = shift;
+    my $level = 3;
+    if (!$element->{'node'})
+    {
+        $level = $element->{'level'};
+    }
+    $level = 1 if ($level == 0);
+    my $text = $element->{'text'};
+    if (!$element->{'node'} and (!$NUMBER_SECTIONS))
+    {
+        $text = $element->{'name'};
+    }
+    return '' if ($text !~ /\S/);
+    my $class = $element->{'tag_level'};
+    $class = 'unnumbered' if ($class eq 'top');
+    if (defined($element->{'tocid'}) and $TOC_LINKS)
+    {
+         $text = &$anchor ('', "$Texi2HTML::THISDOC{'toc_file'}#$element->{'tocid'}", $text);
+    }
+    return "<h$level class=\"$class\"> $text </h$level>\n";
+}
+
+# formatting of raw regions
+# ih L2H is true another mechanism is used for tex
+sub t2h_default_raw($$)
+{
+    my $style = shift;
+    my $text = shift;
+    if ($style eq 'verbatim' or $style eq 'tex')
+    {
+        return "<pre class=\"$style\">" . &$protect_text($text) . '</pre>';
+    }
+    elsif ($style eq 'html')
+    {
+        return $text;
+    }
+    else
+    {
+        warn "$WARN (bug) unknown style $style\n";
+        return &$protect_text($text);
+    }
+}
+
+# This function formats a footnote reference and the footnote text associated
+# with a given footnote.
+# The footnote reference is the text appearing in the main document pointing
+# to the footnote text.
+#
+# arguments:
+# absolute number of the footnote (in the document)
+# relative number of the footnote (in the page)
+# identifier for the footnote
+# identifier for the footnote reference in the main document
+# main document file
+# footnote text file
+# array with the footnote text lines 
+# the state. See menu entry.
+#
+# returns:
+# reference on an array containing the footnote text lines which should
+#     have been updated
+# the text for the reference pointing on the footnote text
+sub t2h_default_foot_line_and_ref($$$$$$$)
+{
+    my $number_in_doc = shift;
+    my $number_in_page = shift;
+    my $footnote_id = shift;
+    my $place_id = shift;
+    my $document_file = shift;
+    my $footnote_file = shift;
+    my $lines = shift;
+    my $state = shift;
+    
+    unshift (@$lines, '<h3>' . 
+          &$anchor($footnote_id, $document_file . "#$place_id",
+                   "($number_in_doc)")
+          . "</h3>\n");
+    return ($lines, &$anchor($place_id,  $footnote_file . "#$footnote_id", 
+           "($number_in_doc)"));
+}
+
+# formats a group of footnotes.
+#
+# argument:
+# array reference on the footnotes texts lines 
+#
+# returns an array reference on the group of footnotes lines
+sub t2h_default_foot_section($)
+{
+    my $lines = shift;
+    unshift (@$lines, "<div class=\"footnote\">\n" ,"$DEFAULT_RULE\n", "<h3>" . &$I('Footnotes') . "</h3>\n");
+    push (@$lines, "</div>\n"); 
+    return $lines; 
+}
+
+# format an image
+#
+# arguments:
+# image file name with path
+# image basename or alt text
+# a boolean true if we are in a preformatted format
+# image file name without path
+sub t2h_default_image($$$$)
+{
+   my $file = shift;
+   my $base = shift;
+   my $preformatted = shift;
+   my $file_name = shift;
+   return "[ $base ]" if ($preformatted);
+   return "<img src=\"$file\" alt=\"$base\">";
+}
+
+# address put in footer describing when was generated and who did the manual
+sub t2h_default_address($$)
+{
+    my $user = shift;
+    my $date = shift;
+    $user = '' if (!defined($user));
+    $date = '' if (!defined($date));
+    if (($user ne '') and ($date ne ''))
+    {
+        return &$I('by @emph{%{user}} on @emph{%{date}}', { 'user' => $user,
+            'date' => $date });
+    }
+    elsif ($user ne '')
+    {
+        return &$I('by @emph{%{user}}', { 'user' => $user });
+    }
+    elsif ($date ne '')
+    {
+        return &$I('on @emph{%{date}}', { 'date' => $date });
+    }
+    return '';
+}
+
+# format a target in the main document for an index entry.
+#
+# arguments:
+# target identifier
+# boolean true if in preformatted format
+sub t2h_default_index_entry_label($$)
+{
+    my $identifier = shift;
+    my $preformatted = shift;
+    
+    return '' if (!defined($identifier) or ($identifier !~ /\S/));
+    my $label = &$anchor($identifier);
+    return $label . "\n" if (!$preformatted);
+    return $label;
+}
+
+# process definition commands line @deffn for example
+sub t2h_default_def_line($$$$$)
+{
+   my $category = shift;
+   my $name = shift;
+   my $type = shift;
+   my $arguments = shift;
+   my $index_label = shift;
+   $index_label = '' if (!defined($index_label));
+   $name = '' if (!defined($name) or ($name =~ /^\s*$/));
+   $type = '' if (!defined($type) or $type =~ /^\s*$/);
+   if (!defined($arguments) or $arguments =~ /^\s*$/)
+   {
+       $arguments = '';
+   }
+   else
+   {
+       $arguments = '<i>' . $arguments . '</i>';
+   }
+   my $type_name = '';
+   $type_name = " $type" if ($type ne '');
+   $type_name .= ' <b>' . $name . '</b>' if ($name ne '');
+   $type_name .= $arguments . "\n";
+   if (! $DEF_TABLE)
+   {
+       return '<dt>'. '<u>' . $category . ':</u>' . $type_name . $index_label . "</dt>\n";
+   }
+   else
+   {
+       
+       return "<tr>\n<td align=\"left\">" . $type_name . 
+       "</td>\n<td align=\"right\">" . $category . $index_label . "</td>\n" . "</tr>\n";
+   }
+}
+
+# process definition commands line @deffn for example while removing texi
+# commands
+sub t2h_default_def_line_no_texi($$$$$)
+{
+   my $category = shift;
+   my $name = shift;
+   my $type = shift;
+   my $arguments = shift;
+   $name = '' if (!defined($name) or ($name =~ /^\s*$/));
+   $type = '' if (!defined($type) or $type =~ /^\s*$/);
+   if (!defined($arguments) or $arguments =~ /^\s*$/)
+   {
+       $arguments = '';
+   }
+   my $type_name = '';
+   $type_name = " $type" if ($type ne '');
+   $type_name .= ' ' . $name if ($name ne '');
+   $type_name .= $arguments;
+   if (! $DEF_TABLE)
+   {
+       return $category . ':' . $type_name . "\n";
+   }
+   else
+   {
+       
+       return $type_name . "    " . $category . "\n";
+   }
+}
+
+# a cartouche
+sub t2h_default_cartouche($$)
+{
+    my $text = shift;
+
+    if ($text =~ /\S/)
+    {
+        return "<table class=\"cartouche\" border=\"1\"><tr><td>\n" . $text . "</td></tr></table>\n";
+    }
+    return '';
+} 
+
+# key:          
+# origin_href:  
+# entry:        
+# texi entry: 
+# element_href: 
+# element_text: 
+sub t2h_default_index_summary_file_entry ($$$$$$$$)
+{
+    my $index_name = shift;
+    my $key = shift;
+    my $origin_href = shift;
+    my $entry = shift;
+    my $texi_entry = shift;
+    my $element_href = shift;
+    my $element_text = shift;
+    my $is_printed = shift;
+    print IDXFILE "key: $key\n  origin_href: $origin_href\n  entry: $entry\n"
+      . "  texi_entry: $texi_entry\n"
+      . "  element_href: $element_href\n  element_text: $element_text\n";
+}
+
+sub t2h_default_index_summary_file_begin($$)
+{
+    my $name = shift;
+    my $is_printed = shift;
+    open(IDXFILE, ">$Texi2HTML::THISDOC{'destination_directory'}$Texi2HTML::THISDOC{'file_base_name'}" . "_$name.idx")
+       || die "Can't open >$Texi2HTML::THISDOC{'destination_directory'}$Texi2HTML::THISDOC{'file_base_name'}" . "_$name.idx for writing: $!\n";
+}
+
+sub t2h_default_index_summary_file_end($$)
+{
+    my $name = shift;
+    my $is_printed = shift;
+    close (IDXFILE);
+}
+
+sub t2h_default_sp($$)
+{
+   my $number = shift;
+   my $preformatted = shift;
+   return "<br>\n" x $number if (!$preformatted);
+   return "\n" x $number;
+}
+
+sub t2h_default_acronym_like($$$$$$)
+{
+    my $command = shift;
+    my $acronym_texi = shift;
+    my $acronym_text = shift;
+    my $with_explanation = shift;
+    my $explanation_lines = shift;
+    my $explanation_text = shift;
+    my $explanation_unformatted = shift;
+    
+    my $attribute = $command;
+    my $opening = "<$attribute>";
+    if (defined($explanation_unformatted)) 
+    {
+        $opening = "<$attribute title=\"$explanation_unformatted\">";
+    }
+    if ($with_explanation)
+    {
+        return &$I('%{acronym_like} (%{explanation})', {'acronym_like' => $opening . $acronym_text . "</$attribute>", 'explanation' => $explanation_text})
+    }
+    else
+    {
+        return  $opening . $acronym_text . "</$attribute>";
+    }
+}
+
+sub t2h_default_quotation_prepend_text($$)
+{
+    my $style = shift;
+    my $text = shift;
+    return &$I('@b{%{quotation_arg}:} ', {'quotation_arg' => $text}, {'keep_texi' => 1}) if (defined($text));
+    return undef;
+}
+
+sub t2h_default_quotation($$$$)
+{
+    my $text = shift;
+    my $argument_text = shift;
+    my $argument_style_texi = shift;
+    my $argument_style_id = shift;
+#    if (defined($argument_text))
+#    {
+#         return '<blockquote>' . &$I('%{style}:%{quotation}',
+#          {'style' => $argument_text, 'quotation' => $text}) . '</blockquote>' ;
+#    }
+    return '<blockquote>' . $text . "</blockquote>\n";
+}
+
+# format the text within a paragraph style format,
+#
+# argument:
+# format name
+# text within the format
+sub t2h_default_paragraph_style_command($$)
+{
+    my $format = shift;
+    my $text = shift;
+    return $text;
+}
+
+# format a whole index
+#
+# argument:
+# index text
+# index name
+sub t2h_default_print_index($$)
+{
+    my $text = shift;
+    my $name = shift;
+    return "<table border=\"0\" class=\"index-$name\">\n" .
+    "<tr><td></td><th align=\"left\">" . &$I('Index Entry') . "</th><th align=\"left\"> " . &$I('Section') . "</th></tr>\n"
+    . "<tr><td colspan=\"3\"> $DEFAULT_RULE</td></tr>\n" . $text .
+    "</table>\n";
+}
+
+# format a letter entry in an index page. The letter entry contains
+# the index entries for the words beginning with that letter. It is 
+# a target for links pointing from the summary of the index.
+#
+# arguments:
+# the letter
+# identifier for the letter entry. This should be used to make the target
+#     identifier
+# text of the index entries
+sub t2h_default_index_letter($$$)
+{
+     my $letter = shift;
+     my $id = shift;
+     my $text = shift;
+     return '<tr><th>' . &$anchor($id,'',&$protect_text($letter)) . 
+     "</th><td></td><td></td></tr>\n" . $text . 
+     "<tr><td colspan=\"3\"> $DEFAULT_RULE</td></tr>\n";
+}
+
+# format an index entry (in a letter entry).
+#
+# arguments:
+# href to the main text, linking to the place where the index entry appears
+# entry text
+# href to the main text, linking to the section or node where the index 
+#      entry appears
+# section or node heading
+sub t2h_default_index_entry($$$$)
+{
+    my $text_href = shift;
+    my $entry = shift;
+    my $element_href = shift;
+    my $element_text = shift;
+    
+    return '<tr><td></td><td valign="top">' . &$anchor('', $text_href, $entry)
+    . '</td><td valign="top">' .  &$anchor('', $element_href, $element_text)
+    . "</td></tr>\n";
+}
+
+
+sub t2h_default_copying_comment($)
+{
+    my $copying_lines = shift;
+    my $text = &$comment(main::remove_texi(@$copying_lines));
+    return $text;
+}
+# format a letter appearing in a summary for an index. The letter links to
+# the place where the index elements beginning with this letter are (called
+# a letter entry).
+#
+# arguments:
+# letter
+# file where the target letter entry is 
+# identifier for the target letter entry
+sub t2h_default_summary_letter($$$)
+{
+   my $letter = shift;
+   my $file = shift;
+   my $identifier = shift;
+   return &$anchor('', $file . '#' . $identifier, '<b>' . &$protect_text($letter) . '</b>', 'class="summary-letter"');
+}
+
+# format an index summary. This is a list of letters linking to the letter
+# entries.
+#
+# arguments:
+# array reference containing the formatted alphabetical letters
+# array reference containing the formatted non lphabetical letters
+sub t2h_default_index_summary($$)
+{
+    my $alpha = shift;
+    my $nonalpha = shift;
+    my $join = '';
+    my $nonalpha_text = '';
+    my $alpha_text = '';
+    $join = " &nbsp; \n<br>\n" if (@$nonalpha and @$alpha);
+    if (@$nonalpha)
+    {
+       $nonalpha_text = join("\n &nbsp; \n", @$nonalpha) . "\n";
+    }
+    if (@$alpha)
+    {
+       $alpha_text = join("\n &nbsp; \n", @$alpha) . "\n &nbsp; \n";
+    }
+    return "<table><tr><th valign=\"top\">" . &$I('Jump to') .": &nbsp; </th><td>" .
+    $nonalpha_text . $join . $alpha_text . "</td></tr></table>\n";
+}
+
+1;

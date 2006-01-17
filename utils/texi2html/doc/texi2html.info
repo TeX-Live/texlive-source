@@ -1,0 +1,176 @@
+This is texi2html.info, produced by makeinfo version 4.5 from
+texi2html.texi.
+
+Copyright (C) 1999, 2000, 2001, 2002, 2003                        Free
+Software Foundation, Inc.
+
+Portions  
+of        
+`texi2html'
+          Copyright (C) 1999, 2000 Lionel Cons
+          Copyright (C) 1999, 2000 Karl Berry
+          Copyright (C) 1999, 2000 Olaf Bachmann
+          Copyright (C) 2002, 2003 Patrice Dumas
+          Copyright (C) 2001, 2002, 2003 Derek Price
+          Copyright (C) many others.
+
+
+Portions  
+of this   
+manual    
+          Copyright (C) 1999, 2000 Karl Heinz Marbaise (manual)
+          Copyright (C) 2003 Patrice Dumas (manual)
+          Copyright (C) 2003 Derek Price (manual)
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Free Software Foundation.
+INFO-DIR-SECTION Texinfo documentation system
+START-INFO-DIR-ENTRY
+* Texi2HTML: (texi2html).  Texinfo to HTML Converter.
+END-INFO-DIR-ENTRY
+
+   This file, last updated 1 February 2005, documents the `texi2html'
+script which converts Texinfo (http://www.texinfo.org) into HTML
+(http://w3c.org).  This edition is for `texi2html' version 1.76.
+
+Copyright (C) 1999, 2000, 2001, 2002, 2003                        Free
+Software Foundation, Inc.
+
+Portions  
+of        
+`texi2html'
+          Copyright (C) 1999, 2000 Lionel Cons
+          Copyright (C) 1999, 2000 Karl Berry
+          Copyright (C) 1999, 2000 Olaf Bachmann
+          Copyright (C) 2002, 2003 Patrice Dumas
+          Copyright (C) 2001, 2002, 2003 Derek Price
+          Copyright (C) many others.
+
+
+Portions  
+of this   
+manual    
+          Copyright (C) 1999, 2000 Karl Heinz Marbaise (manual)
+          Copyright (C) 2003 Patrice Dumas (manual)
+          Copyright (C) 2003 Derek Price (manual)
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Free Software Foundation.
+
+Indirect:
+texi2html.info-1: 2995
+texi2html.info-2: 51146
+texi2html.info-3: 101110
+
+Tag Table:
+(Indirect)
+Node: Top2995
+Node: Overview5644
+Node: whytexi2html7433
+Node: Obtaining texi2html9512
+Node: Installation9794
+Node: Invoking texi2html11983
+Node: Splitting output13162
+Node: Output files16491
+Node: Expansion19748
+Node: Texinfo related options20652
+Node: Page layout options21714
+Node: Style options22607
+Node: Expanding TeX regions24932
+Node: Using init files26073
+Node: Initialization files27957
+Node: Redefining functions29903
+Node: Function prototypes30969
+Node: Changing the page layout32044
+Node: The different pages33401
+Node: The page layout35114
+Ref: Element labels36393
+Node: Navigation panel38129
+Node: General purpose variables38787
+Node: Button specifications39555
+Node: Panel formatting function42887
+Node: Program variables43676
+Node: Elements hashes44381
+Node: Global informations44891
+Node: Global functions47411
+Node: Output initialization48152
+Node: Output finalization49609
+Node: css50080
+Node: Customizing header51146
+Node: Customizing section53951
+Node: Customizing footer54948
+Node: Special pages56815
+Node: Special pages content57142
+Node: Top element text57432
+Node: Contents and Overview text58703
+Node: Footnotes text61441
+Node: About text61734
+Node: Special pages layout63238
+Node: File names64428
+Node: External index files66300
+Node: Customizing HTML68420
+Node: Three contexts70141
+Node: Commands without argument70910
+Node: Style and accent commands72327
+Node: Hash reference interface73815
+Ref: Reference hash args74682
+Node: String interface77052
+Node: Define your own interface79028
+Node: Anchors images and spaces80738
+Node: Text83603
+Node: Strings84931
+Node: References86516
+Node: Reference to external manual86715
+Node: Internal reference88708
+Node: Alignement commands89634
+Node: Paragraph and preformatted region90592
+Node: Paragraph and preformatted formatting90920
+Node: Avoiding paragraphs94646
+Node: Complex formats95042
+Node: Lists tables96731
+Node: Table and list items97196
+Node: Whole table list101110
+Node: Definitions102651
+Node: Definition line103126
+Node: Definition formatting104568
+Node: Headings106005
+Node: Special regions106964
+Node: Menus108991
+Node: Menu parts109436
+Node: Menu formatting110869
+Node: Indices113760
+Node: Index entry place114430
+Node: Index list115041
+Node: Floats and lists of floats118130
+Node: Floats119608
+Node: Lists of floats120911
+Node: Footnotes123124
+Node: Other and unknown commands125630
+Node: Internationalization129570
+Node: Translating strings129981
+Node: Adding new strings131634
+Node: Indexop132506
+Node: Indexvr135109
+Node: Indexcp143811
+
+End Tag Table

@@ -1,0 +1,3 @@
+$(objdir)/vlna.obj: \
+	
+

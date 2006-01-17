@@ -1,0 +1,162 @@
+# Copyright (C) 1988,89,91,92,93,94,95,96 Free Software Foundation, Inc.
+# This file is part of dialog.
+#
+# dialog is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+#
+# dialog is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with dialog; see the file COPYING.  If not, write to
+# the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+#
+#	Makefile for dialog
+#
+
+# Ultrix 2.2 make doesn't expand the value of VPATH.
+VPATH = @srcdir@
+# This must repeat the value, because configure will remove `VPATH = .'.
+srcdir = @srcdir@
+
+CC = @CC@
+
+CFLAGS = @CFLAGS@
+CPPFLAGS = @CPPFLAGS@ @CURSESCPPFLAGS@
+LDFLAGS = @LDFLAGS@
+
+NCURSESDIR=../../libs/ncurses
+NCURSESSRCDIR=$(srcdir)/$(NCURSESDIR)
+CURSESDEFS = -DHAVE_NCURSES -DUSE_COLORS
+LDCURSESLIB = @LDCURSESLIB@
+CURSESDEP = @CURSESDEP@
+
+defines = @DEFS@ $(CURSESDEFS) -DLIBDIR=\"$(libdir)\" -DINCLUDEDIR=\"$(includedir)\"
+
+# Common prefix for machine-independent installed files.
+prefix = @prefix@
+# Common prefix for machine-dependent installed files.
+exec_prefix = @exec_prefix@
+
+# Directory to install `make' in.
+bindir = @bindir@
+# Directory to find libraries in for `-lXXX'.
+libdir = $(exec_prefix)/lib
+# Directory to search by default for included makefiles.
+includedir = $(prefix)/include
+# Directory to install the Info files in.
+infodir = $(prefix)/info
+# Directory to install the man page in.
+mandir = @mandir@
+man1dir = $(mandir)/man$(manext)
+# Number to put on the man page filename.
+manext = 1
+
+# Program to install `make'.
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+# Program to install the man page.
+INSTALL_DATA = @INSTALL_DATA@
+# Generic install program.
+INSTALL = @INSTALL@
+
+# Program to format Texinfo source into Info files.
+MAKEINFO = makeinfo
+# Program to format Texinfo source into DVI files.
+TEXI2DVI = texi2dvi
+
+# Programs to make tags files.
+ETAGS = etags -w
+CTAGS = ctags -w
+
+objs = dialog.o checklist.o inputbox.o menubox.o msgbox.o textbox.o yesno.o radiolist.o gauge.o rc.o strcasecmp.o
+srcs = $(srcdir)/dialog.c $(srcdir)/checklist.c $(srcdir)/inputbox.c    \
+       $(srcdir)/menubox.c $(srcdir)/msgbox.c $(srcdir)/textbox.c       \
+       $(srcdir)/yesno.c $(srcdir)/radiolist.c $(srcdir)/gauge.c        \
+       $(srcdir)/rc.c $(srcdir)/strcasecmp.c
+
+default all: dialog
+
+.SUFFIXES:
+.SUFFIXES: .o .c .h .ps .dvi .info .texinfo
+
+info:
+dvi:
+# Some makes apparently use .PHONY as the default goal if it is before `all'.
+.PHONY: all check info dvi
+
+dialog: $(CURSESDEP) $(objs)
+	$(CC) $(LDFLAGS) $(objs) -o dialog $(LDCURSESLIB)
+
+$(NCURSESDIR)/lib/libncurses.a:
+	cd $(NCURSESDIR); $(MAKE)
+
+.c.o:
+	$(CC) $(defines) -c -I. -I$(srcdir) \
+	      $(CPPFLAGS) $(CFLAGS) $< $(OUTPUT_OPTION)
+
+# For some losing Unix makes.
+SHELL = /bin/sh
+@SET_MAKE@
+
+.PHONY: install installdirs install-exec
+install: install-exec $(man1dir)/tcdialog.$(manext)
+
+install-exec: installdirs $(bindir)/tcdialog
+
+installdirs:
+	$(SHELL) ${srcdir}/mkinstalldirs $(bindir) $(man1dir)
+
+$(bindir)/tcdialog: dialog
+	$(INSTALL_PROGRAM) dialog $@
+
+$(man1dir)/tcdialog.$(manext): dialog.man
+	$(INSTALL_DATA) $(srcdir)/dialog.man $@
+
+
+check:
+uninstall:
+	-rm -f $(bindir)/tcdialog $(man1dir)/tcdialog.$(manext)
+
+
+.PHONY: clean realclean distclean mostlyclean
+clean:
+	-rm -f dialog *.o core
+distclean: clean
+	-rm -f Makefile config.status build.sh stamp-config
+	-rm -f config.log config.cache
+	-rm -f TAGS tags dialogconfig.h
+realclean: distclean
+mostlyclean: clean
+
+Makefile: config.status $(srcdir)/Makefile.in
+	$(SHELL) config.status
+config.h: stamp-config ;
+stamp-config: config.status $(srcdir)/config.h.in
+	$(SHELL) config.status
+	touch stamp-config
+
+# This tells versions [3.59,3.63) of GNU make not to export all variables.
+.NOEXPORT:
+
+# The automatically generated dependencies below may omit config.h
+# because it is included with ``#include <config.h>'' rather than
+# ``#include "config.h"''.  So we add the explicit dependency to make sure.
+$(objs):
+
+# Automatically generated dependencies will be put at the end of the file.
+checklist.o: checklist.c dialog.h
+dialog.o: dialog.c dialog.h
+gauge.o: gauge.c dialog.h
+inputbox.o: inputbox.c dialog.h
+menubox.o: menubox.c dialog.h
+msgbox.o: msgbox.c dialog.h
+radiolist.o: radiolist.c dialog.h
+rc.o: rc.c
+strcasecmp.o: strcasecmp.c dialogconfig.h
+textbox.o: textbox.c dialog.h
+yesno.o: yesno.c dialog.h

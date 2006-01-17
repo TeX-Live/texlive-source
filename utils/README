@@ -1,0 +1,33 @@
+Public domain.  Originally created by Karl Berry, 2005.
+
+Extra utilities we compile for TeX Live, at least sometimes.
+
+bzip2 1.0.3 - only compiled for Windows, so skip update
+  http://bzip.org
+
+gzip - only for Windows 
+
+jpeg2ps - only for Windows
+
+dialog - seems to be a v1.0 in debian, asked te 5jun05
+  http://hightek.org/dialog/
+  http://packages.debian.org/cgi-bin/search_packages.pl?searchon=names&version=all&exact=1&keywords=dialog
+
+lcdf-typetools 2.34 - ok 12jun05
+  http://www.lcdf.org/~eddietwo/type/
+
+pdfopen 0.4 - ok 1jul05
+  http://tex.aanhet.net/pdfopen
+
+psutils p17 - ok (Fabrice made small modifications for Windows, it seems)
+  http://www.ctan.org/tex-archive/support/psutils/
+
+t1utils 1.32 - ok (even though README says 1.30)
+  http://www.lcdf.org/~eddietwo/type/
+
+texi2html 1.76 - ok 5jun05
+  https://texi2html.cvshome.org/servlets/ProjectDocumentList
+
+texinfo 4.8 - ok 5jun05
+
+vlna - only for Windows

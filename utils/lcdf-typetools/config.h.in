@@ -1,0 +1,208 @@
+/* config.h.in.  Generated from configure.in by autoheader.  */
+
+#ifndef LCDF_TYPETOOLS_CONFIG_H
+#define LCDF_TYPETOOLS_CONFIG_H
+
+/* Define if strtod is broken. */
+#undef BROKEN_STRTOD
+
+/* Define if the va_list type is addressable. */
+#undef HAVE_ADDRESSABLE_VA_LIST
+
+/* Define to 1 if you have the <arpa/inet.h> header file. */
+#undef HAVE_ARPA_INET_H
+
+/* Define to run cfftot1 automatically from otftotfm. */
+#undef HAVE_AUTO_CFFTOT1
+
+/* Define to run t1dotlessj automatically from otftotfm. */
+#undef HAVE_AUTO_T1DOTLESSJ
+
+/* Define to run system updmap automatically from otftotfm. */
+#undef HAVE_AUTO_UPDMAP
+
+/* Define to 1 if you have the <byteorder.h> header file. */
+#undef HAVE_BYTEORDER_H
+
+/* Define to 1 if you have the `ctime' function. */
+#undef HAVE_CTIME
+
+/* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
+   */
+#undef HAVE_DIRENT_H
+
+/* Define if intXX_t types are not available. */
+#undef HAVE_FAKE_INT_TYPES
+
+/* Define to 1 if you have the <fcntl.h> header file. */
+#undef HAVE_FCNTL_H
+
+/* Define to 1 if you have the `ftruncate' function. */
+#undef HAVE_FTRUNCATE
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
+
+/* Define if you want to use kpathsea. */
+#undef HAVE_KPATHSEA
+
+/* Define to 1 if you have the `m' library (-lm). */
+#undef HAVE_LIBM
+
+/* Define to 1 if you have the <memory.h> header file. */
+#undef HAVE_MEMORY_H
+
+/* Define to 1 if you have the `mkstemp' function. */
+#undef HAVE_MKSTEMP
+
+/* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
+#undef HAVE_NDIR_H
+
+/* Define to 1 if you have the <netinet/in.h> header file. */
+#undef HAVE_NETINET_IN_H
+
+/* Define to 1 if you have the <new.h> header file. */
+#undef HAVE_NEW_H
+
+/* Define if <new> exists and works. */
+#undef HAVE_NEW_HDR
+
+/* Define if PermStrings are available. */
+#undef HAVE_PERMSTRING
+
+/* Define to 1 if you have the `sigaction' function. */
+#undef HAVE_SIGACTION
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if you have the `strerror' function. */
+#undef HAVE_STRERROR
+
+/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define to 1 if you have the `strtoul' function. */
+#undef HAVE_STRTOUL
+
+/* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
+   */
+#undef HAVE_SYS_DIR_H
+
+/* Define to 1 if you have the <sys/ndir.h> header file, and it defines `DIR'.
+   */
+#undef HAVE_SYS_NDIR_H
+
+/* Define to 1 if you have the <sys/param.h> header file. */
+#undef HAVE_SYS_PARAM_H
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/time.h> header file. */
+#undef HAVE_SYS_TIME_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the <sys/wait.h> header file. */
+#undef HAVE_SYS_WAIT_H
+
+/* Define to 1 if the system has the type `uintptr_t'. */
+#undef HAVE_UINTPTR_T
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* Define if you have u_intXX_t types but not uintXX_t types. */
+#undef HAVE_U_INT_TYPES
+
+/* Define to 1 if you have the `waitpid' function. */
+#undef HAVE_WAITPID
+
+/* Define to 0 if you don't want mmafm to run mmpfb when it needs to get an
+   intermediate master conversion program. */
+#undef MMAFM_RUN_MMPFB
+
+/* Define to 1 if you must include <arpa/inet.h> to get `ntohl'. */
+#undef NEED_ARPA_INET_H
+
+/* Name of package */
+#undef PACKAGE
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* kpsewhich's $SELFAUTODIR variable */
+#undef SELFAUTODIR
+
+/* kpsewhich's $SELFAUTOLOC variable */
+#undef SELFAUTOLOC
+
+/* kpsewhich's $SELFAUTOPARENT variable */
+#undef SELFAUTOPARENT
+
+/* Data directory. */
+#undef SHAREDIR
+
+/* The size of a `unsigned int', as computed by sizeof. */
+#undef SIZEOF_UNSIGNED_INT
+
+/* The size of a `unsigned long', as computed by sizeof. */
+#undef SIZEOF_UNSIGNED_LONG
+
+/* The size of a `void *', as computed by sizeof. */
+#undef SIZEOF_VOID_P
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* Version number of package */
+#undef VERSION
+
+/* Allow compilation on Windows (thanks, Fabrice Popineau). */
+#ifdef WIN32
+# include <win32lib.h>
+#else
+# define CDECL /* nothing */
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* Prototype strerror if we don't have it. */
+#if !HAVE_STRERROR
+char *strerror(int errno);
+#endif
+
+/* Prototype good_strtod if we need it. */
+#if BROKEN_STRTOD
+double good_strtod(const char *nptr, char **endptr);
+#endif
+
+#ifdef __cplusplus
+}
+/* Get rid of a possible inline macro under C++. */
+# define inline inline
+#endif
+
+#endif /* LCDF_TYPETOOLS_CONFIG_H */

@@ -1,0 +1,44 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k from gzip.texi on 9 August 2001 -->
+
+<TITLE>Gzip User's Manual - 6. Using gzip on tapes</TITLE>
+</HEAD>
+<BODY>
+Go to the <A HREF="gzip_1.html">first</A>, <A HREF="gzip_6.html">previous</A>, <A HREF="gzip_8.html">next</A>, <A HREF="gzip_9.html">last</A> section, <A HREF="gzip_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC9" HREF="gzip_toc.html#TOC9">6. Using <CODE>gzip</CODE> on tapes</A></H1>
+<P>
+<A NAME="IDX7"></A>
+
+
+<P>
+When writing compressed data to a tape, it is generally necessary to pad
+the output with zeroes up to a block boundary. When the data is read and
+the whole block is passed to <CODE>gunzip</CODE> for decompression,
+<CODE>gunzip</CODE> detects that there is extra trailing garbage after the
+compressed data and emits a warning by default. You have to use the
+<SAMP>`--quiet'</SAMP> option to suppress the warning. This option can be set in the
+<CODE>GZIP</CODE> environment variable, as in:
+
+
+
+<PRE>
+for sh:    GZIP="-q"  tar -xfz --block-compress /dev/rst0
+for csh:   (setenv GZIP "-q"; tar -xfz --block-compress /dev/rst0)
+</PRE>
+
+<P>
+In the above example, <CODE>gzip</CODE> is invoked implicitly by the <SAMP>`-z'</SAMP>
+option of GNU <CODE>tar</CODE>.  Make sure that the same block size (<SAMP>`-b'</SAMP>
+option of <CODE>tar</CODE>) is used for reading and writing compressed data on
+tapes.  (This example assumes you are using the GNU version of
+<CODE>tar</CODE>.)
+
+
+<P><HR><P>
+Go to the <A HREF="gzip_1.html">first</A>, <A HREF="gzip_6.html">previous</A>, <A HREF="gzip_8.html">next</A>, <A HREF="gzip_9.html">last</A> section, <A HREF="gzip_toc.html">table of contents</A>.
+</BODY>
+</HTML>

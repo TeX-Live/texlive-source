@@ -1,0 +1,143 @@
+'\"t
+.ds V 2.34
+.de M
+.BR "\\$1" "(\\$2)\\$3"
+..
+.de Sp
+.if n .sp
+.if t .sp 0.4
+..
+.TH OTFINFO 1 "LCDF Typetools" "Version \*V"
+.SH NAME
+otfinfo \- report information about OpenType fonts
+.SH SYNOPSIS
+.B otfinfo
+\%[\fB-sfzpg\fR]
+\%[\fIFILE...\fR]
+'
+.SH DESCRIPTION
+.BR Otfinfo
+reports information about the named OpenType font
+.IR FILE s
+(or standard input, if no 
+.IR FILE s
+are given). Results are printed to standard output. Each line is prefaced
+with the relevant
+.I FILE
+if more than one
+.I FILE
+was supplied.
+'
+.SH OPTIONS
+With long options, you need type only as many characters as will make the
+option unique.
+.SS Query options
+.PD 0
+.PD 0
+.TP 5
+.BR \-s ", " \-\-scripts
+Print supported scripts and language systems. The scripts are printed one
+per line, with human-readable descriptions; for example:
+.nf
+  cyrl            Cyrillic
+  grek            Greek
+  latn            Latin
+  latn.TUR        Latin/Turkish
+.fi
+'
+.Sp
+.TP 5
+.BR \-f ", " \-\-features
+Print GSUB and GPOS features supported by the selected script (see the
+.B \-\-script
+option below). The scripts are printed one per line, with human-readable
+descriptions; for example:
+.nf
+  aalt    Access All Alternates
+  c2sc    Small Capitals From Capitals
+  case    Case-Sensitive Forms
+  cpsp    Capital Spacing
+  \&...
+  zero    Slashed Zero
+.fi
+'
+.Sp
+.TP 5
+.BR \-z ", " \-\-optical\-size
+Print optical size information. For example:
+.nf
+  design size 11 pt, size range (8.4 pt, 13 pt], subfamily ID 11, subfamily name Semibold Italic
+.fi
+'
+.Sp
+.TP 5
+.BR \-p ", " \-\-postscript\-name
+Print each font's PostScript name. For example:
+.nf
+  MinionPro-SemiboldItCapt
+.fi
+'
+.Sp
+.TP 5
+.BR \-g ", " \-\-glyphs
+Print the name of every glyph in each font, one per line. For example:
+.nf
+  \&.notdef
+  space
+  exclam
+  \&...
+  ncommaaccent.end
+  lje.alt
+.fi
+Works for PostScript-flavored OpenType fonts only.
+'
+.PD
+'
+'
+.SS Miscellaneous options
+'
+.PD 0
+.TP 5
+.BI \-\-script= "script\fR[.\fIlang\fR]"
+Select the script system
+.I script
+and language system
+.IR lang
+used to look up features by
+.BR \-\-features .
+Examples include "latn" (Latin script), "grek" (Greek script), and "yi.YIC"
+(Yi script with classic characters). If
+.I lang
+is not specified, otfinfo will use the default language system for that
+script. Defaults to "latn".
+'
+.Sp
+.TP 5
+.BR \-V ", " \-\-verbose
+Write progress messages to standard error.
+'
+.Sp
+.TP 5
+.BR \-q ", " \-\-quiet
+Do not generate any error messages.
+'
+.Sp
+.TP 5
+.BR \-h ", " \-\-help
+Print usage information and exit.
+'
+.Sp
+.TP 5
+.BR \-\-version
+Print the version number and some short non-warranty information and exit.
+.PD
+'
+.SH "SEE ALSO"
+.LP
+.M otftotfm 1
+.LP
+.IR "OpenType Specification" ,
+Version 1.4
+'
+.SH AUTHOR
+Eddie Kohler (kohler@icir.org)

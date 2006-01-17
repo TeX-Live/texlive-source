@@ -1,0 +1,206 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k from gzip.texi on 9 August 2001 -->
+
+<TITLE>Gzip User's Manual - 3. Invoking gzip</TITLE>
+</HEAD>
+<BODY>
+Go to the <A HREF="gzip_1.html">first</A>, <A HREF="gzip_3.html">previous</A>, <A HREF="gzip_5.html">next</A>, <A HREF="gzip_9.html">last</A> section, <A HREF="gzip_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC6" HREF="gzip_toc.html#TOC6">3. Invoking <CODE>gzip</CODE></A></H1>
+<P>
+<A NAME="IDX3"></A>
+<A NAME="IDX4"></A>
+
+
+<P>
+The format for running the <CODE>gzip</CODE> program is:
+
+
+
+<PRE>
+gzip <VAR>option</VAR> ...
+</PRE>
+
+<P>
+<CODE>gzip</CODE> supports the following options:
+
+
+<DL COMPACT>
+
+<DT><SAMP>`--stdout'</SAMP>
+<DD>
+<DT><SAMP>`--to-stdout'</SAMP>
+<DD>
+<DT><SAMP>`-c'</SAMP>
+<DD>
+Write output on standard output; keep original files unchanged.
+If there are several input files, the output consists of a sequence of
+independently compressed members. To obtain better compression,
+concatenate all input files before compressing them.
+
+<DT><SAMP>`--decompress'</SAMP>
+<DD>
+<DT><SAMP>`--uncompress'</SAMP>
+<DD>
+<DT><SAMP>`-d'</SAMP>
+<DD>
+Decompress.
+
+<DT><SAMP>`--force'</SAMP>
+<DD>
+<DT><SAMP>`-f'</SAMP>
+<DD>
+Force compression or decompression even if the file has multiple links
+or the corresponding file already exists, or if the compressed data
+is read from or written to a terminal. If the input data is not in
+a format recognized by <CODE>gzip</CODE>, and if the option <SAMP>`--stdout'</SAMP> is also
+given, copy the input data without change to the standard output: let
+<CODE>zcat</CODE> behave as <CODE>cat</CODE>. If <SAMP>`-f'</SAMP> is not given, and
+when not running in the background, <CODE>gzip</CODE> prompts to verify
+whether an existing file should be overwritten.
+
+<DT><SAMP>`--help'</SAMP>
+<DD>
+<DT><SAMP>`-h'</SAMP>
+<DD>
+Print an informative help message describing the options then quit.
+
+<DT><SAMP>`--list'</SAMP>
+<DD>
+<DT><SAMP>`-l'</SAMP>
+<DD>
+For each compressed file, list the following fields:
+
+
+<PRE>
+compressed size: size of the compressed file
+uncompressed size: size of the uncompressed file
+ratio: compression ratio (0.0% if unknown)
+uncompressed_name: name of the uncompressed file
+</PRE>
+
+The uncompressed size is given as <SAMP>`-1'</SAMP> for files not in <CODE>gzip</CODE>
+format, such as compressed <SAMP>`.Z'</SAMP> files. To get the uncompressed size for
+such a file, you can use:
+
+
+<PRE>
+zcat file.Z | wc -c
+</PRE>
+
+In combination with the <SAMP>`--verbose'</SAMP> option, the following fields are also
+displayed:
+
+
+<PRE>
+method: compression method (deflate,compress,lzh,pack)
+crc: the 32-bit CRC of the uncompressed data
+date &#38; time: time stamp for the uncompressed file
+</PRE>
+
+The crc is given as ffffffff for a file not in gzip format.
+
+With <SAMP>`--verbose'</SAMP>, the size totals and compression ratio for all files
+is also displayed, unless some sizes are unknown. With <SAMP>`--quiet'</SAMP>,
+the title and totals lines are not displayed.
+
+<DT><SAMP>`--license'</SAMP>
+<DD>
+<DT><SAMP>`-L'</SAMP>
+<DD>
+Display the <CODE>gzip</CODE> license then quit.
+
+<DT><SAMP>`--no-name'</SAMP>
+<DD>
+<DT><SAMP>`-n'</SAMP>
+<DD>
+When compressing, do not save the original file name and time stamp by
+default. (The original name is always saved if the name had to be
+truncated.) When decompressing, do not restore the original file name
+if present (remove only the <CODE>gzip</CODE>
+suffix from the compressed file name) and do not restore the original
+time stamp if present (copy it from the compressed file). This option
+is the default when decompressing.
+
+<DT><SAMP>`--name'</SAMP>
+<DD>
+<DT><SAMP>`-N'</SAMP>
+<DD>
+When compressing, always save the original file name and time stamp; this
+is the default. When decompressing, restore the original file name and
+time stamp if present. This option is useful on systems which have
+a limit on file name length or when the time stamp has been lost after
+a file transfer.
+
+<DT><SAMP>`--quiet'</SAMP>
+<DD>
+<DT><SAMP>`-q'</SAMP>
+<DD>
+Suppress all warning messages.
+
+<DT><SAMP>`--recursive'</SAMP>
+<DD>
+<DT><SAMP>`-r'</SAMP>
+<DD>
+Travel the directory structure recursively. If any of the file names
+specified on the command line are directories, <CODE>gzip</CODE> will descend
+into the directory and compress all the files it finds there (or
+decompress them in the case of <CODE>gunzip</CODE>).
+
+<DT><SAMP>`--suffix <VAR>suf</VAR>'</SAMP>
+<DD>
+<DT><SAMP>`-S <VAR>suf</VAR>'</SAMP>
+<DD>
+Use suffix <SAMP>`<VAR>suf</VAR>'</SAMP> instead of <SAMP>`.gz'</SAMP>. Any suffix can be
+given, but suffixes other than <SAMP>`.z'</SAMP> and <SAMP>`.gz'</SAMP> should be
+avoided to avoid confusion when files are transferred to other systems.
+A null suffix forces gunzip to try decompression on all given files
+regardless of suffix, as in:
+
+
+<PRE>
+gunzip -S "" *        (*.* for MSDOS)
+</PRE>
+
+Previous versions of gzip used the <SAMP>`.z'</SAMP> suffix. This was changed to
+avoid a conflict with <CODE>pack</CODE>.
+
+<DT><SAMP>`--test'</SAMP>
+<DD>
+<DT><SAMP>`-t'</SAMP>
+<DD>
+Test. Check the compressed file integrity.
+
+<DT><SAMP>`--verbose'</SAMP>
+<DD>
+<DT><SAMP>`-v'</SAMP>
+<DD>
+Verbose. Display the name and percentage reduction for each file compressed.
+
+<DT><SAMP>`--version'</SAMP>
+<DD>
+<DT><SAMP>`-V'</SAMP>
+<DD>
+Version. Display the version number and compilation options, then quit.
+
+<DT><SAMP>`--fast'</SAMP>
+<DD>
+<DT><SAMP>`--best'</SAMP>
+<DD>
+<DT><SAMP>`-<VAR>n</VAR>'</SAMP>
+<DD>
+Regulate the speed of compression using the specified digit <VAR>n</VAR>,
+where <SAMP>`-1'</SAMP> or <SAMP>`--fast'</SAMP> indicates the fastest compression
+method (less compression) and <SAMP>`--best'</SAMP> or <SAMP>`-9'</SAMP> indicates the
+slowest compression method (optimal compression).  The default
+compression level is <SAMP>`-6'</SAMP> (that is, biased towards high compression at
+expense of speed).
+</DL>
+
+<P><HR><P>
+Go to the <A HREF="gzip_1.html">first</A>, <A HREF="gzip_3.html">previous</A>, <A HREF="gzip_5.html">next</A>, <A HREF="gzip_9.html">last</A> section, <A HREF="gzip_toc.html">table of contents</A>.
+</BODY>
+</HTML>

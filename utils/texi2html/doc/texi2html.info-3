@@ -1,0 +1,1085 @@
+This is texi2html.info, produced by makeinfo version 4.5 from
+texi2html.texi.
+
+Copyright (C) 1999, 2000, 2001, 2002, 2003                        Free
+Software Foundation, Inc.
+
+Portions  
+of        
+`texi2html'
+          Copyright (C) 1999, 2000 Lionel Cons
+          Copyright (C) 1999, 2000 Karl Berry
+          Copyright (C) 1999, 2000 Olaf Bachmann
+          Copyright (C) 2002, 2003 Patrice Dumas
+          Copyright (C) 2001, 2002, 2003 Derek Price
+          Copyright (C) many others.
+
+
+Portions  
+of this   
+manual    
+          Copyright (C) 1999, 2000 Karl Heinz Marbaise (manual)
+          Copyright (C) 2003 Patrice Dumas (manual)
+          Copyright (C) 2003 Derek Price (manual)
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Free Software Foundation.
+INFO-DIR-SECTION Texinfo documentation system
+START-INFO-DIR-ENTRY
+* Texi2HTML: (texi2html).  Texinfo to HTML Converter.
+END-INFO-DIR-ENTRY
+
+   This file, last updated 1 February 2005, documents the `texi2html'
+script which converts Texinfo (http://www.texinfo.org) into HTML
+(http://w3c.org).  This edition is for `texi2html' version 1.76.
+
+Copyright (C) 1999, 2000, 2001, 2002, 2003                        Free
+Software Foundation, Inc.
+
+Portions  
+of        
+`texi2html'
+          Copyright (C) 1999, 2000 Lionel Cons
+          Copyright (C) 1999, 2000 Karl Berry
+          Copyright (C) 1999, 2000 Olaf Bachmann
+          Copyright (C) 2002, 2003 Patrice Dumas
+          Copyright (C) 2001, 2002, 2003 Derek Price
+          Copyright (C) many others.
+
+
+Portions  
+of this   
+manual    
+          Copyright (C) 1999, 2000 Karl Heinz Marbaise (manual)
+          Copyright (C) 2003 Patrice Dumas (manual)
+          Copyright (C) 2003 Derek Price (manual)
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Free Software Foundation.
+
+File: texi2html.info,  Node: Whole table list,  Prev: Table and list items,  Up: Lists tables
+
+Formatting of a whole table or list
+-----------------------------------
+
+   If the Texinfo command is a key of the `%format_map', the associated
+value is used to specify the formatting of the construct, otherwise a
+function is called.  The value in `%format_map' associated with a
+command is interpreted similarly with values associated with more
+simpler commands:
+
+   * If the text is a word, it is considered to be an HTML element
+     name, and the whole table or list is enclosed between the element
+     opening and the element closing.
+
+   * If the text is a word followed by some text, the word and is
+     interpreted as above, and the text is considered to be the
+     attributes text of the element.
+
+   * If the text is empty nothing is added to the text.
+
+   In case the `%format_map' isn't used, a function reference called
+`$table_list' should be redefined, the associated function will be
+called each time a command isn't found in `%format_map'.
+
+ - Function Reference: $whole_table_list table_list $command $text
+     $COMMAND is the Texinfo command name, $TEXT is the formatted items.
+
+   If you still want to use `%format_map' but differently from the
+default, it is possible to redefine the following function reference:
+
+ - Function Reference: $whole_table_list format $command $format $text
+     $COMMAND is the @-command, $FORMAT is the entry associated with
+     $COMMAND in `%format_map'. $TEXT is the formatted items.
+
+
+File: texi2html.info,  Node: Definitions,  Next: Headings,  Prev: Lists tables,  Up: Customizing HTML
+
+Definition commands formatting
+==============================
+
+   The formatting of definition commands is controlled by a hash and
+four functions. The hash describes how the text on the definition line
+is interpreted, the functions control the formatting of the definition
+line and the definition function text.
+
+* Menu:
+
+* Definition line::
+* Definition formatting::
+
+
+File: texi2html.info,  Node: Definition line,  Next: Definition formatting,  Up: Definitions
+
+Customizing the interpretation of a definition line
+---------------------------------------------------
+
+   The keys of the hash `%def_map' are definition command names.  There
+are two types of entries:
+
+   * If the command is a shortcut for another definition command the
+     value is a text and the definition command is replaced by the text.
+
+     For example if we have:
+          $def_map{'deftruc'} = '@defvr {A truc}';
+
+     and a line like
+          @deftruc var
+
+     the line will be transformed in
+          @defvr {A truc} var
+
+   * If the command isn't a shortcut, it is associated with an array
+     reference. The first element is `f', `v' or `t' corresponding with
+     the index type (`f' for function, `v' for variable, `t' for type).
+
+     The remaining of the array describes how to interpret the text
+     following the definition command on the definition command line.
+     The entry item specify what corresponds with the next bracketed
+     item or word. Currently the possibilities are `category', `name',
+     `type', `class' and `arg'.
+
+     For example if we have
+          def_map{'defvr'} = [ 'v', 'category', 'name' ];
+
+     The first bracketed item following `@defvr' is considered to be
+     the category and the next one is the name. The index associated
+     with the definition line is the variables index.
+
+
+File: texi2html.info,  Node: Definition formatting,  Prev: Definition line,  Up: Definitions
+
+Customization of the definition formatting
+------------------------------------------
+
+   Four functions are used when formatting a definition command:
+
+category name
+      - Function Reference: $category definition_category
+               $category_or_name $class $style
+          This function precise a category or an index entry name
+          associating a class $CLASS (if given) with $CATEGORY_OR_NAME.
+          The $STYLE of the definition may be `f', for function, `v',
+          for variable or `t', for type.
+
+formatting of the definition line
+      - Function Reference: $line def_line $category $name $type
+               $arguments $index_label
+          This function formats the definition line. $CATEGORY is the
+          category formatted with `$definition_category', $NAME, $TYPE
+          and ARGUMENTS are the element of the definition line.
+          $INDEX_LABEL is the text inserted at the place where an index
+          entry appears.  *Note Index entry place::.
+
+definition text
+      - Function Reference: $definition_text def_item $text
+          This function formats the definition text, $TEXT.
+
+the whole definition
+      - Function Reference: $definition def $text
+          This function formats the whole definition. The definition
+          line and text formatted by the above functions are in $TEXT.
+
+
+
+File: texi2html.info,  Node: Headings,  Next: Special regions,  Prev: Definitions,  Up: Customizing HTML
+
+Customizing headings formatting
+===============================
+
+   A function controls the formatting of sectioning element headings,
+with the corresponding function reference:
+
+ - Function Reference: $heading_text heading \%element_reference
+     The \%ELEMENT_REFERENCE is a reference on a hash corresponding
+     with the sectioning element. The following keys are of interest:
+    `text'
+          The heading text
+
+    `name'
+          The heading text without section number
+
+    `node'
+          true if the sectioning element is a node without associated
+          structuring command
+
+    `level'
+          The level of the element in the document tree. `0' is for
+          `@top', `1' for `@chapter' and so on
+
+    `tag_level'
+          the sectioning element name, with `@raisesections' and
+          `@lowersections' taken into account
+
+
+File: texi2html.info,  Node: Special regions,  Next: Menus,  Prev: Headings,  Up: Customizing HTML
+
+Formatting of special regions (`@verbatim', `@cartouche', `@quotation')
+=======================================================================
+
+   Regions corresponding with raw text, like `@verbatim', `@html' or
+`@tex' are formatted according to the following function reference:
+
+ - Function Reference: $raw_region raw $command $text
+     $COMMAND is the command name, $TEXT is the raw text.
+
+   If LaTeX2HTML is used, `@tex' regions are handled differently, from
+within the main program.
+
+   The `@cartouche' command formatting is controlled by the function
+reference:
+
+ - Function Reference: $cartouche cartouche $text
+     $TEXT is the text appearing within the cartouche.
+
+   The formatting of `@quotation' is controlled by two function
+references.  The first one is usefull in case the `@quotation' has an
+argument, as it allows to prepend a string to the quotation text:
+
+ - Function Reference: $prepended_string quotation_prepend_text $style
+          $text
+     $STYLE is the first argument of the `@quotation' if there are two
+     arguments. $TEXT is the second argument or the first if there is
+     one argument. There are still @-commands in these strings. This
+     function can return a string which will be prepended to the
+     quotation text.
+
+   The whole quotation is formatted by:
+
+ - Function Reference: $quotation quotation $quotation_text
+          $argument_text $argument_style_texi $argument_style_id
+     $QUOTATION_TEXT is the quotation text, formatted, with the text
+     prepended by the function above. $ARGUMENT_TEXT is the second
+     argument of the `@quotation' or the first if there is one
+     argument, formatted.  The other arguments are defiend if there are
+     two arguments for the `@quotation', $ARGUMENT_STYLE_TEXI is this
+     argument, with @-commands, and  $ARGUMENT_STYLE_ID is this
+     argument transformed in an identifier which can be used as an XML
+     identifier.
+
+
+File: texi2html.info,  Node: Menus,  Next: Indices,  Prev: Special regions,  Up: Customizing HTML
+
+Menu formatting
+===============
+
+   To understand how the formatting of menus is controlled, the
+different parts of a menu are first described, then how to control the
+formatting of each of these parts.
+
+* Menu:
+
+* Menu parts::                 A menu consists in menu entry and menu
+                               comments
+* Menu formatting::
+
+
+File: texi2html.info,  Node: Menu parts,  Next: Menu formatting,  Up: Menus
+
+The structure of a menu
+-----------------------
+
+   In `texi2html', a menu is considered to be composed of 2 parts, the
+"menu entries" and the "menu comments". Menu entries are further
+divided in an "entry link" and optionnaly an "entry description".  The
+entry link consists in a node name and an optionnal  menu entry name.
+
+   A menu entry begins with `*' at the beginning of the line. It begins
+with the entry link, followed by the description. The description spans
+until the next menu entry, or some text begining at the first character
+of a line or an empty line, not contained within a command block which
+begun in the description. An empty line or a line with text at the
+first character starts a menu comment, which spans until the next menu
+entry.
+
+   Here is an illustration of these rules:
+
+     @menu
+     * node name: entry name.        description begins
+        description continues
+     * another menu entry::
+        description begins
+                         description continues
+     
+        A menu comment, after an empty line
+     
+     * node::                        description begins
+     A menu comment. The line starts at the first character
+     
+     * last entry::         description begins _text
+     of the description, even if the line begins at the first character,
+     because we are in @emph_.
+     @end menu
+
+
+File: texi2html.info,  Node: Menu formatting,  Prev: Menu parts,  Up: Menus
+
+The formatting of the different menu components
+-----------------------------------------------
+
+   In the default case, the name of the section corresponding with the
+node is used instead of the node name. If `$NODE_NAME_IN_MENU' is true,
+however, node names are used. If `$AVOID_MENU_REDUNDANCY' is true and
+menu entry equal menu description the description isn't printed.  This
+is the default. Likewise, if node or section name equal entry name, do
+not print entry name.
+
+   A symbol, `$MENU_SYMBOL' is put at the beginning of menu entries
+when the node name is used. The default is `&bull;'.  If
+`$UNNUMBERED_SYMBOL_IN_MENU' is true it is also put at the beginning of
+unnumbered section names. This is not done by default.
+
+   The menu comments are considered to be preformatted text. The style
+associated with this preformatted text is determined by
+`$MENU_PRE_STYLE'. Default is `font-family: serif'.  The css class
+associated with menu comments is `menu-comments'.
+
+   Three function references are associated with the formatting of the
+different parts of a menu:
+
+ - Function Reference: $link menu_link $section \%state $href $node
+          $name $ending
+     $SECTION is the section name corresponding with the link, $HREF is
+     the link hypertextual reference. $HREF may be absent. \%STATE
+     holds informations about the current context. The only key which
+     could be of interest is `preformatted', true if the context is a
+     preformatted context. *Note Three contexts::.  $NODE is the node
+     name, $NAME is the name of the node, and $ENDING is the text
+     ending the link entry.
+
+ - Function Reference: $description menu_description $description_text
+          \%state
+     $DESCRIPTION_TEXT is the text of the menu description. \%STATE
+     should be used similarly than for the menu link.
+
+ - Function Reference: $menu_comment menu_comment $text
+     $TEXT is the text of the menu comment. It is in a preformatted
+     environment.
+
+   The following function reference controls the formatting of a wole
+menu:
+
+ - Function Reference: $menu menu $menu_components_text
+     $MENU_COMPONENTS_TEXT is the formatted menu components text,
+     obtained as explained above.
+
+   The last function reference corresponds with a special case. It is
+used when a menu entry appears within another block command, to avoid
+the possibilities of invalid HTML production.  In that case the menu
+description and menu comments are not formatted specially, but treated
+like normal text.
+
+ - Function Reference: $link simple_menu_link $link_text $href $node
+          $name $ending
+     $LINK_TEXT is the text corresponding with the link name, $HREF is
+     the link hypertextual reference.  $NODE is the node name, $NAME is
+     the name of the node, and $ENDING is the text ending the link
+     entry.
+
+
+File: texi2html.info,  Node: Indices,  Next: Floats and lists of floats,  Prev: Menus,  Up: Customizing HTML
+
+Indices formatting
+==================
+
+   Two different things needs to be handled for indices formatting, the
+place where the index term appears, the index entry, and the index list
+itself.  The indexing commands like `@cindex' determines where index
+entries appear, and the index list is printed with a `@printindex'
+command.
+
+* Menu:
+
+* Index entry place::             Index entries in the main document are
+                                  targets for hypertext references
+* Index list::                    Customizing the formatting of the index list
+
+
+File: texi2html.info,  Node: Index entry place,  Next: Index list,  Up: Indices
+
+Formatting of index entries
+---------------------------
+
+   Index entry places in the main text may be the target for hypertext
+references. Their formatting is controlled by the function associated
+with the following function reference:
+
+ - Function Reference: $target index_entry_label $identifier
+          $preformatted
+     $IDENTIFIER should be used to create a target for links (typically
+     associated with a name or id attribute in HTML).  $PREFORMATTED is
+     true if the index entry appeared in preformatted text.
+
+
+File: texi2html.info,  Node: Index list,  Prev: Index entry place,  Up: Indices
+
+Customizing the formatting of index lists
+-----------------------------------------
+
+   The index entries are sorted alphabetically. A whole index list is
+considered to be composed of letter entries. A letter entry is composed
+by all the index entries beginning with that letter. A letter may be a
+non alphabetical character, but we call it letter here.
+
+   An index summary appears at the beginning and at the end of an index
+list, and should be used to jump directly to a letter entry. Indices
+lists may be split across pages, thus the different letters may appear
+on different files. The number of index entries appearing on each page
+is determined by a variable `$SPLIT_INDEX' if set. The default is to
+split indices after 100 entries.
+
+   The formatting of all these elements is controlled by the following
+function references:
+
+_formatting of a letter in a summary_
+      - Function Reference: $letter summary_letter $letter $file
+               $identifier
+          This function is used to format a letter appearing in a
+          summary, refering to a letter entry in the index list.
+          $LETTER is the letter. $FILE is the file name where the letter
+          entry appears. More precisely, it is empty when the letter
+          entry is on the same page than the summary, it contains the
+          file name when the index page is split accross page.
+          $IDENTIFIER is an identifier for the target letter entry.
+
+_formatting of a summary_
+      - Function Reference: $summary index_summary
+               \@alphabetical_letters \@nonalphabetical_letters
+          \@ALPHABETICAL_LETTERS and \@NONALPHABETICAL_LETTERS contain
+          the formatted summary letters, formatted with the above
+          function.
+
+_formatting of an index entry_
+      - Function Reference: $entry index_entry $entry_href $entry_text
+               $section_href $section_heading
+          $ENTRY_HREF is a reference to the place where the index entry
+          appeared, $ENTRY_TEXT is the corresponding text. $SECTION_HREF
+          is a reference to the beginning of the sectioning element
+          containing the index entry, $SECTION_HEADING is the heading
+          of the element.
+
+_formatting of letter entry_
+      - Function Reference: $letter_entry index_letter $letter
+               $identifier $index_entries_text
+          This function formats a letter entry, consisting in all the
+          index entries beginning with this letter. $LETTER is the
+          letter, $IDENTIFIER should be used to create a target for
+          links (typically links from summaries), and
+          $INDEX_ENTRIES_TEXT is the text of the index entries
+          formatted as described above.
+
+_formatting of whole index_
+      - Function Reference: $index print_index $index_text $index_name
+          $INDEX_TEXT is the text of all the index entries grouped by
+          letter appearing in that page formatted as above. INDEX_NAME
+          is the name of the index, the argument of `@printindex'.
+
+
+File: texi2html.info,  Node: Floats and lists of floats,  Next: Footnotes,  Prev: Indices,  Up: Customizing HTML
+
+Floats and lists of floats
+==========================
+
+   Floats appear in the `@float' environment, optionaly with a style
+and a label, and with optionnal `@caption' and `@shortcaption'.  Their
+list appear after a `@listoffloats'.
+
+   A hash reference is associated with each float, it is available in
+some formatting functions. The keys are:
+`caption_texi'
+`shortcaption_texi'
+     A reference on an array containing the caption or shortcaption
+     lines, unformatted.
+
+`style_texi'
+     The style with texi @-commands.
+
+`style_id'
+     The unique identifier associated with the style.
+
+`nr'
+     The number with the same conventions than makeinfo (use the
+     chapter number a dot and then the number of the float of that
+     style in the chapter, or an absolute number if in unnumbered).
+
+`chapter_nr'
+     The number of the chapter containing the float.
+
+`nr_in_chapter'
+     The number of the float in the chapter.
+
+`absolut_nr'
+     The number of the float in the document.
+
+`texi'
+     The label with @-commands.
+
+`id'
+     The unique identifier associated with the label. Usefull to make
+     an anchor or a reference.
+
+`element'
+     A reference on a structure representing the element the float
+     appear in.
+
+* Menu:
+
+* Floats::                           Formatting of floats
+* Lists of floats::                  Formatting the lists of floats
+
+
+File: texi2html.info,  Node: Floats,  Next: Lists of floats,  Up: Floats and lists of floats
+
+Formatting a float
+------------------
+
+   First there is an occasion to construct a texinfo text for the
+caption, using the caption texinfo lines and the informations in the
+float structure.  The returned lines will be formatted in the main
+program. A function reference is used here:
+
+ - Function Reference: (\@caption_lines_returned,
+\@shortcaption_lines_returned) caption_shortcaption \%float
+          \@caption_lines \@shortcaption_lines
+     \%FLOAT is the structure defined above. \@CAPTION_LINES and
+     \@SHORTCAPTION_LINES are references on arrays containing the
+     texinfo lines for caption and short caption.
+     \@CAPTION_LINES_RETURNED and \@SHORTCAPTION_LINES_RETURNED are
+     references on an array containing the texinfo lines for the
+     caption and shortcaption.
+
+   Then the float is formatted with the following function reference:
+
+ - Function Reference: $text float $float_text \%float $caption_text
+          $shortcaption_text
+     $FLOAT_TEXT is the text appearing within the `@float', formatted.
+     \%FLOAT is still the structure defined above. $CAPTION_TEXT and
+     $SHORTCAPTION_TEXT are the caption and short caption build with the
+     above function and formatted.
+
+
+File: texi2html.info,  Node: Lists of floats,  Prev: Floats,  Up: Floats and lists of floats
+
+Formatting lists of floats
+--------------------------
+
+   A list of floats is introduced by `@listoffloats'. The argument of
+`@listoffloats' is the "style". First the style texinfo can be modified
+with the following function reference:
+
+ - Function Reference: $style_texi_returned listoffloats_style
+          $style_texi
+     $STYLE_TEXI is the `@listoffloats' argument with texinfo
+     @-commands kept. It is possible to make changes to the $STYLE_TEXI
+     and return a modified string, still with @-commands. The modified
+     string is formatted in the main program.
+
+   After that, for each of the floats with that style, first there is a
+possibility to modify the float style and the float caption before they
+are formatted in the main program, with the following function
+references:
+
+ - Function Reference: $float_style_texi_returned
+listoffloats_float_style $style_texi \%float
+     $STYLE_TEXI is the style, and \%FLOAT is the structure described
+     above. This function reference returns a style to be formatted in
+     the main program.
+
+ - Function Reference: $caption_texi_returned listoffloats_caption
+          \%float
+     \%FLOAT is the structure described above. This function reference
+     returns a caption to be formatted in the main program.
+
+   Each entry is formatted by:
+
+ - Function Reference: $listoffloats_entry listoffloats_entry
+          $style_texi \%float $float_style $caption $href
+     $STYLE_TEXI is the style with @-commands, $FLOAT_STYLE is the
+     style returned by the above function and formatted. $CAPTION is the
+     caption returned by the above function formatted. \%FLOAT is the
+     structure corresponding with the float, and $HREF is an href
+     pointing to the float location.
+
+   Lastly, the whole `@listoffloats' is formatted by:
+
+ - Function Reference: $listoffloats listoffloats $style_texi $style
+          \@listoffloats_entries
+     $STYLE_TEXI is the style with @-commands, $STYLE is the style
+     returned by the above function and formatted. The array reference
+     \@LISTOFFLOATS_ENTRIES holds the entries formatted by the above
+     function.
+
+
+File: texi2html.info,  Node: Footnotes,  Next: Other and unknown commands,  Prev: Floats and lists of floats,  Up: Customizing HTML
+
+Customizing the footnotes formatting
+====================================
+
+   Each footnote is associated with a footnote entry. Several footnote
+entries are grouped in a footnote section. When a footnote appears, two
+things must be formatted: in the main text the place where the footnote
+appear and the footnote text.
+
+   Two functions, with corresponding function references control the
+formatting of the footnotes:
+
+ - Function Reference: (\@lines $text_for_document) foot_line_and_ref
+          $number_in_doc $number_in_page $footnote_id $place_id
+          $document_file $footnote_file \@lines \%state
+     $NUMBER_IN_DOC is the footnote number in the whole document,
+     $NUMBER_IN_PAGE is the footnote number in the current page.
+     $FOOTNOTE_ID is an identifier for the footnote in the footnote text
+     which should be used to make target for references to that
+     footnote, while $PLACE_ID is an identifier for the location of the
+     footnote in the main document. Similarly, $DOCUMENT_FILE is the
+     file name of the file containing the text where the footnote
+     appears in the main document, while $FOOTNOTE_FILE is the file
+     name of the file where the footnote text appears.
+
+     \@LINES is a reference on an array containing the footnote text
+     lines, allready formatted.  And \%STATE holds informations about
+     the context at the footnote place in the main document. As usual
+     the most usefull entry is `preformatted' which is true if the
+     footnote appears in a preformatted context.
+
+     This function returns a reference on an array, \@LINES containing
+     the updated footnote text for the footnote entry, and
+     $TEXT_FOR_DOCUMENT, the text appearing at the footnote place in
+     the main document, linking to the footnote entry.
+
+   The following function is only used when footnotes are at the bottom
+of a page and the document is split.  For customization of the
+footnotes page in case they are on a separated page or section, *Note
+Special pages layout::. For the determination of the footnote
+locations, *Note Page layout options::.
+
+ - Function Reference: foot_section \@footnotes_lines
+     This function formats a group of footnotes. \@FOOTNOTES_LINES is a
+     reference on an array holding the lines of all the footnote entries
+     formatted as explained above. This function modifies the reference.
+
+
+File: texi2html.info,  Node: Other and unknown commands,  Prev: Footnotes,  Up: Customizing HTML
+
+Customizing other commands, and unknown commands
+================================================
+
+   Many commands without braces are available in texinfo, sometimes with
+a specific syntax. For example we have `@sp', `@noindent',
+`@documentlanguage', `@oddheading', `@headings', `@shortcontents',
+`@shorttitlepage' or `@comment'.  `texi2html' interprets some of these
+commands and some functions or variables are used for their formatting
+or to access their information.  In the default case, however, most of
+these constructs are ignored.
+
+   It is possible to change how the things following these commands on
+the line are handled, what is considered to be an arg for those
+commands and it is also possible to keep them instead of discarding
+them such that it is possible to handle them specially, with the same
+function than the one used for unknown commands.
+
+   Those special commands without braces are the key of a hash:
+`%misc_command'. The associated value is a reference on a hash enabling
+to set the properties of these commands. The keys of this hash
+reference is the name of a property, the value is the value of the
+property. For example here we have `line' for the `arg' property for
+the `command' @-command.
+
+     $misc_command{'command'} = {'arg' => 'line', 'skip' => 'space'};
+
+   The properties and possible values are:
+
+`skip'
+     This property enables to set what is skipped after the command
+     arguments.  Here are the possible values:
+    `line'
+          The remaining of the line is skipped.
+
+    `space'
+          Spaces are skipped but not newline.
+
+    `whitespace'
+          Spaces are skipped
+
+    `linewhitespace'
+          Spaces are skipped if there are only spaces remaining on the
+          line.
+
+    `linespace'
+          Spaces are skipped, but not newline if there are only spaces
+          remaining on the line
+
+`arg'
+     If the associated value is `line' the line is considered to be the
+     argument. If it is a number it is the number of args (separated by
+     spaces).
+
+`texi'
+     If true the arguments are considered to real texinfo, therefore
+     `@value' and `@macro' are expanded.
+
+`keep'
+     If true the args and the macro are kept, otherwise they are
+     discarded.  The defaut is to have `keep' undef for all the
+     commands.  If `keep' is true for `@verbatiminclude' the default
+     action for this macro isn't done.
+
+   Commands which don't appear in the hashes `%simple_map',
+`%simple_map_pre', `%simple_map_texi' and `%misc_command', or that
+appear in `%misc_command' but with `keep' true are processed by the
+following function reference:
+
+ - Function Reference: ($result_line, $result, $result_text, $message)
+unknown $command $line
+     $COMMAND is the @-command, $LINE is the line following the
+     $COMMAND. $RESULT is a boolean. If it is true then the other return
+     values are taken into account otherwise the default actions are
+     used. In case $RESULT is true, $RESULT_LINE is the new line to be
+     processed further, $RESULT_TEXT is the resulting formatted text
+     and $MESSAGE, if defined is a message outputted to the output with
+     line number added by `texi2html'.
+
+   Commands with braces not specified above nor in `%style_map',
+`%style_map_pre' and `%style_map_texi' are processed by the following
+function reference
+
+ - Function Reference: ($result, $result_text, $message) unknown_style
+          $command $text
+     $COMMAND is the @-command, $TEXT is the text appearing within the
+     braces (allready formatted). $RESULT is a boolean. If it is true
+     then the other return values are taken into account otherwise the
+     default actions are used. In case $RESULT is true, $RESULT_TEXT is
+     the resulting formatted text and $MESSAGE, if defined is a message
+     outputted to the output with line number added by `texi2html'.
+
+
+File: texi2html.info,  Node: Internationalization,  Next: Indexop,  Prev: Customizing HTML,  Up: Top
+
+Internationalization
+********************
+
+   The strings written in the document are selected based on the
+document language. This can be used to customize the strings, as
+described in *Note Strings::. This also enables translation of the
+strings.
+
+* Menu:
+
+* Translating strings::
+* Adding new strings::
+
+
+File: texi2html.info,  Node: Translating strings,  Next: Adding new strings,  Up: Internationalization
+
+Translating strings
+===================
+
+   If the language is allready supported, then there will be a file in
+the `i18n' directory with name the two-letter ISO-639 language code. In
+that case you can enhance the translations by editing this file. There
+is a `$LANGUAGES->{'LANGUAGE'}' hash in that file. The keys are the
+english strings, in `''', the values (in `''' after `=>') are the
+translations.  When a string contains a `%' followed by `{' NAME `}' it
+means that the string will be expanded by `texi2html'. For an example,
+see *Note Strings::.
+
+   After that you should run the command `./manage_i18n.pl all' in the
+top directory, it should merge your file with the existing files in
+`translations.pl', which is incorporated to the `texi2html' script by
+`./configure'.
+
+   If the language isn't currently supported, copy the `en' file in
+`i18n' to a file with name the two-letter ISO-639 language code of your
+language  and then add your translations to the strings. You could also
+add your two-letter language code in the `manage_i18n.pl' file in the
+`@known_languages' array.
+
+   After that you should similarly run the command `./manage_i18n.pl
+all' in the top directory.
+
+   Obsoleted strings are not removed from the files, they are still
+present in the `$T2H_OBSOLETE_STRINGS->{'LANGUAGE'}' hash in case the
+string is reused later.
+
+   If you made change to strings specified in installed files (*note
+Installation::) you will have to reinstall them otherwise the
+installated files will take precedence (*note Using init files::).
+
+
+File: texi2html.info,  Node: Adding new strings,  Prev: Translating strings,  Up: Internationalization
+
+Adding new strings written to document
+======================================
+
+   If you need to write strings, for example the new string A STRING to
+the resulting document, call `&$I('a string')'. Use simple quotes.  If
+you want to substitute a value in the string put `%{STRING_VALUE}', in
+the string, and give a second argument to `&$I', a hash reference with
+key STRING_VALUE and value the what you want to substitute.  Here is an
+example:
+
+     return &$I('%{name} of %{class}', { 'name' => $name, 'class' => $class });
+
+   In that case `%{name}' is substituted by `$name' in the translated
+string.
+
+   After that you should run the command `./manage_i18n.pl all' in the
+top directory, it should add your new strings to all the files in the
+`i18n' directory.
+
+
+File: texi2html.info,  Node: Indexop,  Next: Indexvr,  Prev: Internationalization,  Up: Top
+
+Command Line Option Index
+*************************
+
+* Menu:
+
+* css-include=FILE:                      Style options.
+* def-table:                             Style options.
+* doctype=DTD:                           Style options.
+* DVAR:                                  Texinfo related options.
+* frames:                                Page layout options.
+* frameset-doctype:                      Style options.
+* frameset-doctype=DTD:                  Style options.
+* html-xref-prefix=PATH:                 Style options.
+* IDIR:                                  Texinfo related options.
+* if<region>:                            Expansion.
+* include-css:                           css.
+* init-file:                             Using init files.
+* iso:                                   Style options.
+* l2h:                                   Expanding TeX regions.
+* l2h-file:                              Expanding TeX regions.
+* l2h-l2h=PROGRAM:                       Expanding TeX regions.
+* l2h-tmp:                               Expanding TeX regions.
+* lang <1>:                              Strings.
+* lang:                                  Using init files.
+* lang=LANG:                             Texinfo related options.
+* menu:                                  Invoking texi2html.
+* no-if<region>:                         Expansion.
+* node-files:                            Output files.
+* nomenu <1>:                            Expansion.
+* nomenu:                                Invoking texi2html.
+* nosec-nav:                             Page layout options.
+* number:                                Style options.
+* output:                                Output files.
+* PDIR:                                  Texinfo related options.
+* pkgdatadir=dir:                        Using init files.
+* pkgdatadir=DIR:                        Installation.
+* prefix:                                Output files.
+* separated-footnotes:                   Page layout options.
+* short-ext:                             Output files.
+* short-ref:                             Style options.
+* split:                                 Splitting output.
+* sysconfdir=dir:                        Using init files.
+* toc-file:                              Output files.
+* toc-links:                             Style options.
+* top-file:                              Output files.
+* use-nodes:                             Splitting output.
+* UVAR:                                  Texinfo related options.
+
+
+File: texi2html.info,  Node: Indexvr,  Next: Indexcp,  Prev: Indexop,  Up: Top
+
+Variable Index
+**************
+
+* Menu:
+
+* $AFTER_BODY_OPEN:                      Customizing header.
+* $AFTER_OVERVIEW:                       Contents and Overview text.
+* $AFTER_TOC_LINES:                      Contents and Overview text.
+* $anchor <1>:                           Anchors images and spaces.
+* $anchor:                               Redefining functions.
+* $AVOID_MENU_REDUNDANCY:                Menu formatting.
+* $BEFORE_OVERVIEW:                      Contents and Overview text.
+* $BEFORE_TOC_LINES:                     Contents and Overview text.
+* $BIG_RULE:                             The page layout.
+* $BODYTEXT <1>:                         Customizing header.
+* $BODYTEXT:                             Output initialization.
+* $cell:                                 Table and list items.
+* $CLOSE_QUOTE_SYMBOL <1>:               String interface.
+* $CLOSE_QUOTE_SYMBOL:                   Hash reference interface.
+* $complex_format_map:                   Complex formats.
+* $CSS_LINES:                            css.
+* $DEF_TABLE:                            Style options.
+* $DEFAULT_RULE:                         The page layout.
+* $definition_category:                  Definition formatting.
+* $DO_CONTENTS:                          Contents and Overview text.
+* $DO_SCONTENTS:                         Contents and Overview text.
+* $DOCTYPE:                              Style options.
+* $DOCUMENT_DESCRIPTION:                 Customizing header.
+* $DOCUMENT_ENCODING:                    Customizing header.
+* $ENCODING:                             Customizing header.
+* $EXTENSION:                            File names.
+* $EXTERNAL_DIR:                         Style options.
+* $EXTRA_HEAD:                           Customizing header.
+* $FRAMES:                               Page layout options.
+* $FRAMESET_DOCTYPE:                     Style options.
+* $ICONS:                                General purpose variables.
+* $IDX_SUMMARY:                          External index files.
+* $INDEX_CHAPTER:                        The page layout.
+* $L2H_L2H:                              Expanding TeX regions.
+* $L2H_TMP:                              Expanding TeX regions.
+* $LANG <1>:                             Strings.
+* $LANG <2>:                             Using init files.
+* $LANG:                                 Texinfo related options.
+* $LANGUAGES <1>:                        Translating strings.
+* $LANGUAGES:                            Strings.
+* $MENU_PRE_STYLE:                       Menu formatting.
+* $MENU_SYMBOL:                          Menu formatting.
+* $MIDDLE_RULE:                          The page layout.
+* $NODE_FILES <1>:                       File names.
+* $NODE_FILES:                           Output files.
+* $NODE_NAME_IN_MENU:                    Menu formatting.
+* $NUMBER_SECTIONS:                      Style options.
+* $OPEN_QUOTE_SYMBOL <1>:                String interface.
+* $OPEN_QUOTE_SYMBOL:                    Hash reference interface.
+* $OUT:                                  Output files.
+* $PRE_BODY_CLOSE:                       Customizing footer.
+* $PREFIX:                               Output files.
+* $print_chapter_footer:                 Customizing footer.
+* $print_chapter_header:                 Customizing header.
+* $print_foot_navigation:                Customizing footer.
+* $print_head_navigation:                Customizing header.
+* $print_misc:                           Special pages layout.
+* $print_misc_footer:                    Special pages layout.
+* $print_misc_header:                    Special pages layout.
+* $print_page_foot:                      Customizing footer.
+* $print_page_head:                      Customizing header.
+* $print_section_footer:                 Customizing footer.
+* $print_section_header:                 Customizing header.
+* $print_Top:                            Special pages layout.
+* $print_Top_footer:                     Special pages layout.
+* $print_Top_header:                     Special pages layout.
+* $SECTION_NAVIGATION <1>:               General purpose variables.
+* $SECTION_NAVIGATION:                   Page layout options.
+* $SEPARATED_FOOTNOTES:                  Page layout options.
+* $SHORT_REF:                            Style options.
+* $SHORTEXTN:                            Output files.
+* $SHOW_MENU:                            Expansion.
+* $SMALL_RULE:                           The page layout.
+* $SPLIT:                                Splitting output.
+* $SPLIT_INDEX:                          Index list.
+* $T2H_OBSOLETE_STRINGS:                 Translating strings.
+* $Texi2HTML::NODE{Next}:                Button specifications.
+* $Texi2HTML::OVERVIEW <1>:              Contents and Overview text.
+* $Texi2HTML::OVERVIEW:                  Global informations.
+* $Texi2HTML::THIS_HEADER:               Global informations.
+* $Texi2HTML::THIS_SECTION <1>:          Global functions.
+* $Texi2HTML::THIS_SECTION:              Global informations.
+* $Texi2HTML::TOC_LINES <1>:             Contents and Overview text.
+* $Texi2HTML::TOC_LINES:                 Global informations.
+* $TOC_FILE:                             Output files.
+* $TOC_LINKS:                            Style options.
+* $TOC_LIST_ATTRIBUTE:                   Contents and Overview text.
+* $TOC_LIST_STYLE:                       Contents and Overview text.
+* $TOP_FILE:                             Output files.
+* $TOP_HEADING:                          The page layout.
+* $UNNUMBERED_SYMBOL_IN_MENU:            Menu formatting.
+* $USE_ISO:                              Style options.
+* $USE_NODES:                            Splitting output.
+* $VERTICAL_HEAD_NAVIGATION:             General purpose variables.
+* $WORDS_IN_PAGE <1>:                    Global functions.
+* $WORDS_IN_PAGE:                        Button specifications.
+* %accent_map:                           Style and accent commands.
+* %ACTIVE_ICONS:                         Button specifications.
+* %BUTTONS_GOTO:                         Output initialization.
+* %css_map:                              css.
+* %def_map:                              Definition line.
+* %format_in_paragraph:                  Avoiding paragraphs.
+* %format_map:                           Whole table list.
+* %main::value:                          Global informations.
+* %misc_command:                         Other and unknown commands.
+* %NAVIGATION_TEXT <1>:                  Output initialization.
+* %NAVIGATION_TEXT:                      Button specifications.
+* %paragraph_style:                      Alignement commands.
+* %PASSIVE_ICONS:                        Button specifications.
+* %pre_map:                              Commands without argument.
+* %simple_map <1>:                       Other and unknown commands.
+* %simple_map:                           Commands without argument.
+* %simple_map_pre <1>:                   Other and unknown commands.
+* %simple_map_pre:                       Commands without argument.
+* %simple_map_texi <1>:                  Other and unknown commands.
+* %simple_map_texi:                      Commands without argument.
+* %special_list_commands:                Table and list items.
+* %style_map <1>:                        Other and unknown commands.
+* %style_map:                            Style and accent commands.
+* %style_map_pre <1>:                    Other and unknown commands.
+* %style_map_pre:                        Style and accent commands.
+* %style_map_texi <1>:                   Other and unknown commands.
+* %style_map_texi:                       Style and accent commands.
+* %Texi2HTML::HREF:                      Elements hashes.
+* %Texi2HTML::NAME:                      Elements hashes.
+* %Texi2HTML::NO_TEXI:                   Elements hashes.
+* %Texi2HTML::NODE:                      Elements hashes.
+* %Texi2HTML::THISDOC:                   Global informations.
+* %texi_map:                             Commands without argument.
+* %things_map:                           Commands without argument.
+* @CHAPTER_BUTTONS:                      Button specifications.
+* @CSS_FILES:                            Style options.
+* @EXPAND:                               Expansion.
+* @INCLUDE_DIRS:                         Texinfo related options.
+* @MISC_BUTTONS:                         Button specifications.
+* @NODE_FOOTER_BUTTONS:                  Button specifications.
+* @PREPEND_DIRS:                         Texinfo related options.
+* @SECTION_BUTTONS:                      Button specifications.
+* @SECTION_FOOTER_BUTTONS:               Button specifications.
+
+
+File: texi2html.info,  Node: Indexcp,  Prev: Indexvr,  Up: Top
+
+Concept Index
+*************
+
+* Menu:
+
+* Avoid paragraph opening:               Avoiding paragraphs.
+* bug report:                            Top.
+* centering:                             Alignement commands.
+* complex format:                        Complex formats.
+* Config:                                Using init files.
+* configure:                             Installation.
+* downloading texi2html source:          Obtaining texi2html.
+* examples of manuals:                   Overview.
+* external manual:                       Reference to external manual.
+* flushing text:                         Alignement commands.
+* i18n <1>:                              Translating strings.
+* i18n:                                  Strings.
+* Installation:                          Installation.
+* internationalization:                  Using init files.
+* internationalized strings:             Adding new strings.
+* makeinfo:                              whytexi2html.
+* manage_i18n.pl:                        Adding new strings.
+* paragraph:                             Paragraph and preformatted formatting.
+* preformatted region:                   Paragraph and preformatted formatting.
+* reference:                             References.
+* skipped command:                       Other and unknown commands.
+* source code for texi2html, downloading: Obtaining texi2html.
+* texi2html source, downloading:         Obtaining texi2html.
+* Texinfo:                               Overview.
+* text alignement:                       Alignement commands.
+* Translation:                           Translating strings.
+* unknown command:                       Other and unknown commands.
+
+

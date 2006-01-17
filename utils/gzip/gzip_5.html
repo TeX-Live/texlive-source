@@ -1,0 +1,104 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k from gzip.texi on 9 August 2001 -->
+
+<TITLE>Gzip User's Manual - 4. Advanced usage</TITLE>
+</HEAD>
+<BODY>
+Go to the <A HREF="gzip_1.html">first</A>, <A HREF="gzip_4.html">previous</A>, <A HREF="gzip_6.html">next</A>, <A HREF="gzip_9.html">last</A> section, <A HREF="gzip_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC7" HREF="gzip_toc.html#TOC7">4. Advanced usage</A></H1>
+<P>
+<A NAME="IDX5"></A>
+
+
+<P>
+Multiple compressed files can be concatenated. In this case,
+<CODE>gunzip</CODE> will extract all members at once. If one member is
+damaged, other members might still be recovered after removal of the
+damaged member. Better compression can be usually obtained if all
+members are decompressed and then recompressed in a single step.
+
+
+<P>
+This is an example of concatenating <CODE>gzip</CODE> files:
+
+
+
+<PRE>
+gzip -c file1  &#62; foo.gz
+gzip -c file2 &#62;&#62; foo.gz
+</PRE>
+
+<P>
+Then
+
+
+
+<PRE>
+gunzip -c foo
+</PRE>
+
+<P>
+is equivalent to
+
+
+
+<PRE>
+cat file1 file2
+</PRE>
+
+<P>
+In case of damage to one member of a <SAMP>`.gz'</SAMP> file, other members can
+still be recovered (if the damaged member is removed). However,
+you can get better compression by compressing all members at once:
+
+
+
+<PRE>
+cat file1 file2 | gzip &#62; foo.gz
+</PRE>
+
+<P>
+compresses better than
+
+
+
+<PRE>
+gzip -c file1 file2 &#62; foo.gz
+</PRE>
+
+<P>
+If you want to recompress concatenated files to get better compression, do:
+
+
+
+<PRE>
+zcat old.gz | gzip &#62; new.gz
+</PRE>
+
+<P>
+If a compressed file consists of several members, the uncompressed
+size and CRC reported by the <SAMP>`--list'</SAMP> option applies to the last member
+only. If you need the uncompressed size for all members, you can use:
+
+
+
+<PRE>
+zcat file.gz | wc -c
+</PRE>
+
+<P>
+If you wish to create a single archive file with multiple members so
+that members can later be extracted independently, use an archiver such
+as <CODE>tar</CODE> or <CODE>zip</CODE>. GNU <CODE>tar</CODE> supports the <SAMP>`-z'</SAMP>
+option to invoke <CODE>gzip</CODE> transparently. <CODE>gzip</CODE> is designed as a
+complement to <CODE>tar</CODE>, not as a replacement.
+
+
+<P><HR><P>
+Go to the <A HREF="gzip_1.html">first</A>, <A HREF="gzip_4.html">previous</A>, <A HREF="gzip_6.html">next</A>, <A HREF="gzip_9.html">last</A> section, <A HREF="gzip_toc.html">table of contents</A>.
+</BODY>
+</HTML>

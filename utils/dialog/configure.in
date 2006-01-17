@@ -1,0 +1,20 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(dialog.c)
+
+AC_CONFIG_AUX_DIR(../../config)
+
+AC_PROG_CC
+AC_PROG_CPP
+AC_PROG_GCC_TRADITIONAL
+AC_ISC_POSIX
+AC_PROG_INSTALL
+AC_SET_MAKE
+AC_CONFIG_HEADER(dialogconfig.h)
+AC_CHECK_FUNCS(strcasecmp)
+
+sinclude(../../libs/ncurses/withenable.ac)
+sinclude(../../libs/ncurses/ncurses.ac)
+
+dnl ac_configure_args=`echo "$ac_configure_args" | sed 's@--prefix=[[^ ]]*@@'`
+
+AC_OUTPUT(Makefile)

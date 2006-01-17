@@ -1,0 +1,187 @@
+=head1 NAME
+
+C<Getopt::MySimple> - Provide a simple wrapper around Getopt::Long.
+=head NOTE
+Based on GetOpt::Simple, with some (here undocumented) modifications
+to fit texi2hml  needs.
+
+=head1 SYNOPSIS
+
+	use Getopt::MySimple;
+
+	# Or ...
+	# use Getopt::MySimple qw($opt);
+
+	my($options) =
+	{
+	'help' =>
+		{
+		'type'		=> '',
+		'default'	=> '',
+#		'verbose'	=> '',	# Not needed on every key.
+		},
+	'username' =>
+		{
+		'type'		=> '=s',			# As per Getopt::Long.
+		'default'	=> $ENV{'USER'} || 'RonSavage',	# In case $USER is undef.
+		'verbose'	=> 'Specify the username on the remote machine',
+		},
+	'password' =>
+		{
+		'type'		=> '=s',
+		'default'	=> 'password',
+		'verbose'	=> 'Specify the password on the remote machine',
+		},
+	};
+
+	my($option) = new Getopt::MySimple;
+
+	if (! $option -> getOptions($options, "Usage: testMySimple.pl [options]") )
+	{
+		exit(-1);	# Failure.
+	}
+
+	print "username: $option->{'opt'}{'username'}. \n";
+	print "password: $option->{'opt'}{'password'}. \n";
+
+	# Or, after 'use Getopt::MySimple qw($opt);' ...
+	# print "username: $opt->{'username'}. \n";
+	# print "password: $opt->{'password'}. \n";
+
+=head1 DESCRIPTION
+
+The C<Getopt::MySimple> module provides a simple way of specifying:
+
+=over 4
+
+=item *
+
+Command line optes
+
+=item *
+
+Type information for opt values
+
+=item *
+
+Default values for the optes
+
+=item *
+
+Help text per opt
+
+=back
+
+=head1 The C<getOptions()> function
+
+The C<getOptions()> function takes 4 parameters:
+
+=over 4
+
+=item *
+
+A hash defining the command line optes
+
+=item *
+
+A string to display as a help text heading
+
+=item *
+
+A Boolean. 0 = (Default) Use case-sensitive opt names. 1 = Ignore case
+
+=item *
+
+A Boolean. 0 = Return after displaying help. 1 = (Default) Terminate with exit(0)
+after displaying help
+
+=back
+
+=head1 The $classRef -> {'opt'} hash reference
+
+Command line option values are accessed in your code by dereferencing
+the hash reference $classRef -> {'opt'}. Two examples are given above,
+under synopsis.
+
+Alternately, you can use the hash reference $opt. See below.
+
+=head1 The $opt hash reference
+
+Command line option values are accessed in your code by dereferencing
+the hash reference $opt. Two examples are given above,
+under synopsis.
+
+Alternately, you can use the hash reference $classRef -> {'opt'}. See above.
+
+=head1 The C<dumpOptions()> function
+
+C<dumpOptions()> prints all your option's keys and their current values.
+
+=head1 The C<helpOptions()> function
+
+C<helpOptions()> prints nicely formatted help text.
+
+=head1 WARNING re Perl bug
+
+As always, be aware that these 2 lines mean the same thing, sometimes:
+
+=over 4
+
+=item *
+
+$self -> {'thing'}
+
+=item *
+
+$self->{'thing'}
+
+=back
+
+The problem is the spaces around the ->. Inside double quotes, "...", the
+first space stops the dereference taking place. Outside double quotes the
+scanner correctly associates the $self token with the {'thing'} token.
+
+I regard this as a bug.
+
+=head1 REQUIRED MODULES
+
+=over 4
+
+=item *
+
+Exporter
+
+=item *
+
+Getopt::Long
+
+=back
+
+=head1 RETURN VALUES
+
+=over 4
+
+=item *
+
+C<dumpOptions()> returns nothing
+
+=item *
+
+C<helpOptions()> returns nothing
+
+=item *
+
+C<getOptions()> returns 0 for failure and 1 for success
+
+=back
+
+=head1 AUTHOR
+
+C<Getopt::MySimple> was written by Ron Savage I<E<lt>rpsavage@ozemail.com.auE<gt>> in 1997.
+
+Modifications for texi2html by Olaf Bachmann
+I<E<lt>obachman@mathtematik.uni-kl.deE<gt>> in 2000.
+=head1 LICENCE
+
+This program is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.
