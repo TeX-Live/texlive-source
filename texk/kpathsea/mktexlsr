@@ -133,11 +133,17 @@ for TEXMFLS_R in "$@"; do
   # The main task. We put ./: in the output, so top-level files can be
   # found via ls-R. Probably irrelevant in practice.
   # The sed command inserts the leading ./ for directory names, and
-  # removes . and .. from the list.  Note that using colons in directory
-  # names results in nothing but grief.
+  # removes ., .., and .svn entries from the list.  Also omit contents
+  # of any .svn directories; sed apparently requires that we do that
+  # operation in a separate invocation.
+  # We do not try to support colons in directory names.
+  # 
   echo "./:" >>"$db_file_tmp"
-  (cd "$TEXMFLS_R" && \ls -LRa 2>/dev/null) |
-    sed '/^$/{n;s%^\./%%;s%^%./%;}; /^\.$/d; /^\.\.$/d; /^[\.\/]*lsR[0-9]*\.tmp:*$/d' >>"$db_file_tmp"
+  (cd "$TEXMFLS_R" && \ls -LRa 2>/dev/null) \
+   | sed -e '/^$/{n;s%^\./%%;s%^%./%;}; /^\.$/d; /^\.\.$/d; /^\.svn$/d;' \
+        -e '/^[\.\/]*lsR[0-9]*\.tmp:*$/d' \
+   | sed -e '/\.svn.*:$/,/^$/d' \
+   >>"$db_file_tmp"
 
   # To be really safe, a loop.
   until PERMS=`kpsestat = "$db_file"`; do sleep 1; done
