@@ -1,3 +1,7 @@
+2006-02-03  Karl Berry  <karl@tug.org>
+
+	* mktexlsr: ignore .svn directories.
+
 2005-08-13  Olaf Weber  <olaf@infovore.xs4all.nl>
 
 	* kpsewhich.c: Update copyright message.
