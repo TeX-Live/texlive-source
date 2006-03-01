@@ -1,4 +1,5 @@
 #!/bin/sh
+# $Id$
 # Originally written many years ago by Sebastian Rahtz.  Public domain.
 # To build (mostly) without optimization, try CFLAGS=-g Build.
 # Any options given are passed along to configure.
@@ -11,16 +12,13 @@ else
 fi
 
 H=`pwd`
-test -d inst || mkdir inst
+test -d inst || mkdir -p inst/texmf  # avoid configure warnings
 
 unset CDPATH
 test -d Work || mkdir Work
 cd Work || exit 1
 
 rm -f tlbuild.log
-
-# just to avoid the configure warning, since we set datadir.
-TEXMFMAIN=`cd ../../../Master/texmf && pwd`; export TEXMFMAIN
 
 # Force building xdvi-xaw; motif is not always free and/or available.
 #
