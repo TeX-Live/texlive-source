@@ -278,7 +278,7 @@
 #define MIN_CROSSREFS               2
 #define WIZ_FN_SPACE                5000
 #define SINGLE_FN_SPACE             100
-#define ENT_STR_SIZE                100
+#define ENT_STR_SIZE                250
 #define GLOB_STR_SIZE               1000
 #define LIT_STK_SIZE                100
 
