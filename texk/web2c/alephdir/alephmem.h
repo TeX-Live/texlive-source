@@ -3,7 +3,8 @@
 This file is part of the Aleph project, which
 is based on the web2c distribution of TeX.
 
-Copyleft (c) 2004 the Aleph team
+Copyright (C) 1994--2000 John Plaice and Yannis Haralambous
+Copyright (C) 2004 the Aleph team
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Library General Public

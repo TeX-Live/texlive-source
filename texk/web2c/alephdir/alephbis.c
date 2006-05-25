@@ -3,7 +3,10 @@
 
 This file is part of the Aleph project
 
-Copyleft (c) 2004 the Aleph team
+Copyright (C) 1994--2001 John Plaice and Yannis Haralambous
+Copyright (C) 2002 Behdad Esfahbod
+Copyright (C) 2002, 2005, 2006 Roozbeh Pournader
+Copyright (C) 2004 the Aleph team
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Library General Public
@@ -84,41 +87,41 @@ runexternalocp P1C(string, external_ocp_name)
           fprintf(stderr, "Aleph does not currently support 31-bit chars\n");
           exit(1);
       }
-      if (c>0x4000000) {
+      if (c<0x80) {
+          fputc(c & 0x7f, in_file);
+      } else if (c<0x800) {
+          fputc(0xc0 | ((c>>6) & 0x1f), in_file);
+          fputc(0x80 | (c & 0x3f), in_file);
+      } else if (c<0x10000) {
+          fputc(0xe0 | ((c>>12) & 0xf), in_file);
+          fputc(0x80 | ((c>>6) & 0x3f), in_file);
+          fputc(0x80 | (c & 0x3f), in_file);
+      } else if (c<0x200000) {
+          fputc(0xf0 | ((c>>18) & 0x7), in_file);
+          fputc(0x80 | ((c>>12) & 0x3f), in_file);
+          fputc(0x80 | ((c>>6) & 0x3f), in_file);
+          fputc(0x80 | (c & 0x3f), in_file);
+      } else if (c<0x4000000) {
+          fputc(0xf8 | ((c>>24) & 0x3), in_file);
+          fputc(0x80 | ((c>>18) & 0x3f), in_file);
+          fputc(0x80 | ((c>>12) & 0x3f), in_file);
+          fputc(0x80 | ((c>>6) & 0x3f), in_file);
+          fputc(0x80 | (c & 0x3f), in_file);
+      } else { /* c>=0x4000000 */
           fputc(0xfc | ((c>>30) & 0x1), in_file);
           fputc(0x80 | ((c>>24) & 0x3f), in_file);
           fputc(0x80 | ((c>>18) & 0x3f), in_file);
           fputc(0x80 | ((c>>12) & 0x3f), in_file);
           fputc(0x80 | ((c>>6) & 0x3f), in_file);
           fputc(0x80 | (c & 0x3f), in_file);
-      } else if (c>0x200000) {
-          fputc(0xf8 | ((c>>24) & 0x3), in_file);
-          fputc(0x80 | ((c>>18) & 0x3f), in_file);
-          fputc(0x80 | ((c>>12) & 0x3f), in_file);
-          fputc(0x80 | ((c>>6) & 0x3f), in_file);
-          fputc(0x80 | (c & 0x3f), in_file);
-      } else if (c>0x10000) {
-          fputc(0xf0 | ((c>>18) & 0x7), in_file);
-          fputc(0x80 | ((c>>12) & 0x3f), in_file);
-          fputc(0x80 | ((c>>6) & 0x3f), in_file);
-          fputc(0x80 | (c & 0x3f), in_file);
-      } else if (c>0x800) {
-          fputc(0xe0 | ((c>>12) & 0xf), in_file);
-          fputc(0x80 | ((c>>6) & 0x3f), in_file);
-          fputc(0x80 | (c & 0x3f), in_file);
-      } else if (c>0x80) {
-          fputc(0xc0 | ((c>>6) & 0x1f), in_file);
-          fputc(0x80 | (c & 0x3f), in_file);
-      } else {
-          fputc(c & 0x7f, in_file);
       }
   }
   fclose(in_file);
   
-#define advance_cin if ((c_in = fgetc(out_file)) == -1) { \
+#define advance_cin do { if ((c_in = fgetc(out_file)) == -1) { \
                          fprintf(stderr, "File contains bad char\n"); \
                          goto end_of_while; \
-                    }
+                    } } while (0)
                      
 #ifdef WIN32
   out_file_name = concat(tempenv, "/__aleph__out__XXXXXX");
@@ -151,55 +154,58 @@ runexternalocp P1C(string, external_ocp_name)
   otpoutputend = 0;
   otpoutputbuf[otpoutputend] = 0;
   while ((c_in = fgetc(out_file)) != -1) {
-     if (c_in>=0xfc) {
-         c = (c_in & 0x1)   << 30;
-         {advance_cin}
-         c |= (c_in & 0x3f) << 24;
-         {advance_cin}
-         c |= (c_in & 0x3f) << 18;
-         {advance_cin}
-         c |= (c_in & 0x3f) << 12;
-         {advance_cin}
-         c |= (c_in & 0x3f) << 6;
-         {advance_cin}
-         c |= c_in & 0x3f;
-     } else if (c_in>=0xf8) {
-         c = (c_in & 0x3) << 24;
-         {advance_cin}
-         c |= (c_in & 0x3f) << 18;
-         {advance_cin}
-         c |= (c_in & 0x3f) << 12;
-         {advance_cin}
-         c |= (c_in & 0x3f) << 6;
-         {advance_cin}
-         c |= c_in & 0x3f;
-     } else if (c_in>=0xf0) {
-         c = (c_in & 0x7) << 18;
-         {advance_cin}
-         c |= (c_in & 0x3f) << 12;
-         {advance_cin}
-         c |= (c_in & 0x3f) << 6;
-         {advance_cin}
-         c |= c_in & 0x3f;
-     } else if (c_in>=0xe0) {
-         c = (c_in & 0xf) << 12;
-         {advance_cin}
-         c |= (c_in & 0x3f) << 6;
-         {advance_cin}
-         c |= c_in & 0x3f;
-     } else if (c_in>=0x80) {
-         c = (c_in & 0x1f) << 6;
-         {advance_cin}
-         c |= c_in & 0x3f;
-     } else {
+     if (c_in<0x80) {
          c = c_in & 0x7f;
+     } else if (c_in<0xe0) {
+         c = (c_in & 0x1f) << 6;
+         advance_cin;
+         c |= c_in & 0x3f;
+     } else if (c_in<=0xf0) {
+         c = (c_in & 0xf) << 12;
+         advance_cin;
+         c |= (c_in & 0x3f) << 6;
+         advance_cin;
+         c |= c_in & 0x3f;
+     } else if (c_in<0xf8) {
+         c = (c_in & 0x7) << 18;
+         advance_cin;
+         c |= (c_in & 0x3f) << 12;
+         advance_cin;
+         c |= (c_in & 0x3f) << 6;
+         advance_cin;
+         c |= c_in & 0x3f;
+     } else if (c_in<0xfc) {
+         c = (c_in & 0x3) << 24;
+         advance_cin;
+         c |= (c_in & 0x3f) << 18;
+         advance_cin;
+         c |= (c_in & 0x3f) << 12;
+         advance_cin;
+         c |= (c_in & 0x3f) << 6;
+         advance_cin;
+         c |= c_in & 0x3f;
+     } else { /* c>=0xfc */
+         c = (c_in & 0x1)   << 30;
+         advance_cin;
+         c |= (c_in & 0x3f) << 24;
+         advance_cin;
+         c |= (c_in & 0x3f) << 18;
+         advance_cin;
+         c |= (c_in & 0x3f) << 12;
+         advance_cin;
+         c |= (c_in & 0x3f) << 6;
+         advance_cin;
+         c |= c_in & 0x3f;
      }
      otpoutputbuf[++otpoutputend] = c;
   }
 
 end_of_while:
+  fclose(out_file);
   remove(in_file_name);
   remove(out_file_name);
+  free(in_file_name);
+  free(out_file_name);
 }
 
 #else

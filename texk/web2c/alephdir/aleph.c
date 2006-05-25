@@ -3,7 +3,8 @@
 
 This file is part of the Aleph project
 
-Copyleft (c) 2004 the Aleph team
+Copyright (C) 1994--2001 John Plaice and Yannis Haralambous
+Copyright (C) 2004 the Aleph team
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Library General Public

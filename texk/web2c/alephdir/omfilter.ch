@@ -26,7 +26,7 @@
 @y
   {string of length |file_name_size|; tells where the string pool appears}
 @.TeXformats@>
-@!active_mem_size=2000; {number of words of |active_info| for active ocps}
+@!active_mem_size=50000; {number of words of |active_info| for active ocps}
 @z
 %---------------------------------------
 @x [5] - Omega Translation
@@ -503,7 +503,7 @@ if (first+otp_output_end)>=buf_size then
     overflow("(OTP invaded) buffer size", buf_size);
     { FIXME do something about it!!! }
   end;
-push_input; { FIXME has no pop_input!!! }
+push_input; { FIXME has no |pop_input|!!! }
 current_ocp_lstack:=active_lstack_no(active_real);
 current_ocp_no:=active_counter(active_real);
 state:=mid_line;
@@ -516,7 +516,7 @@ for otp_counter:=1 to otp_output_end do begin
   end;
 {|if last>=max_buf_stack then max_buf_stack:=last+1;|}
 limit:=last-1;
-{first:=last;}
+first:=last;
 end
 
 @

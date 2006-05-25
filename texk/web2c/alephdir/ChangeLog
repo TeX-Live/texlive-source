@@ -1,0 +1,13 @@
+2006-05-25  Roozbeh Pournader  <roozbeh@farsiweb.info>
+	* omfilter.ch: fixed a bug in OCP processing, increased
+	  active_mem_size from 2000 to 50000.
+
+	* alephbis.c: updated from ../omegadir/omegabis.c: optimized UTF-8
+	  read/write code, fixed a macro, closed files and freed memory to
+	  avoid a leak.
+
+	* omfilter.ch, eover-rc2.ch: made 'weave'-able.
+
+	* alephbis.c, aleph.c, aleph.defines, alephextra.h,
+	  alephextra-rc1.h, alephextra-rc2.h, alephmem.h: fixed copyright
+	  lines.
