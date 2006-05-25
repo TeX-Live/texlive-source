@@ -4,6 +4,7 @@ This file is part of Omega,
 which is based on the web2c distribution of TeX,
 
 Copyright (c) 1994--2001 John Plaice and Yannis Haralambous
+Copyright (C) 2005, 2006 Roozbeh Pournader
 
 Omega is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -119,10 +120,10 @@ ofm_organize(void)
     if (lf==0) { /* This is not a TFM file, it is an OFM-file */
         ofm_on = TRUE;
 
-        /* next line edited by Thomas Esser, based on a patch send
+        /* next line edited by Thomas Esser, based on a patch sent
          * by Hossein Movahhedian. The old code had " + 1"
-         * instead of "+ 2" and caused lots of segfaults */
-        ofm_level = ofm[2]*0x100 + ofm[3] + 2;
+         * instead of "+ OFM_LEVEL0" and caused lots of segfaults */
+        ofm_level = ofm[2]*0x100 + ofm[3] + OFM_LEVEL0;
         if (ofm[4]>127)
             fatal_error_0("File length is negative");
         lf = ofm[4]*0x1000000 + ofm[5]*0x10000 + ofm[6]*0x100 + ofm[7];
@@ -323,7 +324,7 @@ ofm_read_simple(void)
 {
 
     if (ofm_on==TRUE) {
-        print_ofm_level(ofm_level-1);
+        print_ofm_level(ofm_level-OFM_LEVEL0);
         print_font_dir(font_dir);
     }
     header = (char *) ofm+check_sum_pos;

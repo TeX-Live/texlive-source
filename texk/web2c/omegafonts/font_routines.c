@@ -4,6 +4,7 @@ This file is part of Omega,
 which is based on the web2c distribution of TeX,
 
 Copyright (c) 1994--2001 John Plaice and Yannis Haralambous
+Copyright (C) 2005, 2006 Roozbeh Pournader
 
 Omega is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -70,7 +71,7 @@ clear_map_font(int font_number)
     cur_font->font_number = font_number;
     cur_font->font_name = NULL;
     cur_font->font_area = NULL;
-    cur_font->font_at = 0;
+    cur_font->font_at = design_units;
     cur_font->font_checksum = 0;
     cur_font->font_dsize = 10*UNITY;
     cur_font->font_at_defined = FALSE;

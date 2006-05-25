@@ -1,0 +1,6 @@
+2006-05-25  Roozbeh Pournader  <roozbeh@farsiweb.info>
+
+	* font_routines.c (clear_map_font): fixed default value of font_at.
+
+	* parse_ofm.c (ofm_organize): replaced magic number with constant.
+	  (ofm_read_simple): fixed a 1-off offset.
