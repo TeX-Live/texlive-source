@@ -1,0 +1,9 @@
+[20050814-1] (otp2ocp)
+	Choices may include CompleteLefts, but only through aliases.
+	This should be tested. If it's working properly, choices should be
+	extended to allow them without aliases. If it's not working,
+	it should be fixed or removed.
+[20050814-2] (otp2ocp)
+	Implement star (*) regexps, using <0,>. otp2ocp should fail when
+	it's the only thing on left side, since it would match the empty
+	string.

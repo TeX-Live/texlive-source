@@ -1,10 +1,10 @@
-%{
 /* otp.y: Grammar for OTP files.
 
 This file is part of Omega,
-which is based on the web2c distribution of TeX,
+which is based on the web2c distribution of TeX.
 
 Copyright (c) 1994--2001 John Plaice and Yannis Haralambous
+Copyright (C) 2005, 2006 Roozbeh Pournader
 
 Omega is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 
 */
 
+%{
 #include "otp.h"
 #include "routines.h"
 #include "yystype.h"
@@ -141,6 +142,8 @@ OneCompleteLeft :
 	{ $$.yleft = CompleteLeft($1.yleft, $3.yint, $5.yint); }
     |	OneLeft '<' NUMBER ',' '>'
 	{ $$.yleft = PlusLeft($1.yleft, $3.yint); }
+    |   OneLeft '<' NUMBER '>'
+	{ $$.yleft = CompleteLeft($1.yleft, $3.yint, $3.yint); }
     |	OneLeft
 	{ $$.yleft = $1.yleft; }
     ;
@@ -315,6 +318,8 @@ OneRightExpr :
 
 RightState :
 	/* Empty */
+    |   '<' '>'
+	{ out_int(OTP_STATE_CHANGE, 0); }
     |   '<' ID '>'
 	{ out_int(OTP_STATE_CHANGE, lookup_state($2.ystring)); }
     |   '<' PUSH ID '>'

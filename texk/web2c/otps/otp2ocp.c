@@ -5,7 +5,7 @@ which is based on the web2c distribution of TeX,
 
 Copyright (c) 1994--2001 John Plaice and Yannis Haralambous
 Copyright (c) 2002 Behdad Esfahbod
-Copyright (c) 2002 Roozbeh Pournader
+Copyright (C) 2002, 2005, 2006 Roozbeh Pournader
 
 Omega is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -124,49 +124,28 @@ P2C (int, argc, string *, argv)
   string input_name, full_input_name;
   string output_name;
 
-  kpse_set_progname (argv[0]);
+  kpse_set_program_name (argv[0], "otp2ocp");
   switch (argc)
     {
     case 1:
-      fprintf (stderr, "otp2ocp: No file given\n");
-      return EXIT_FAILURE;
+      FATAL ("No command line arguments given");
     case 2:
-      {
-	int len;
-	input_name = argv[1];
-	len = strlen (input_name);
-	output_name = malloc (len + 5);
-	if (!output_name)
-	  {
-	    fprintf (stderr, "otp2ocp: Memory exhausted\n");
-	    return EXIT_FAILURE;
-	  }
-	strcpy (output_name, xbasename (input_name));
-	len = strlen (output_name);
-	if (len > 4 && 0 == strcmp (output_name + len - 4, ".otp"))
-	  {
-	    strcpy (output_name + len - 4, ".ocp");
-	  }
-	else
-	  {
-	    strcat (output_name, ".ocp");
-	  }
-	break;
-      }
+      input_name = argv[1];
+      output_name = make_suffix (xbasename (input_name), "ocp");
+      break;
     case 3:
       input_name = argv[1];
       output_name = argv[2];
       break;
     default:
-      fprintf (stderr, "otp2ocp: Too many arguments\n");
-      return EXIT_FAILURE;
+      FATAL ("Too many command line arguments");
     }
   full_input_name = kpse_find_file (input_name, kpse_otp_format, true);
   if (!full_input_name)
     {
-      fprintf (stderr, "otp2ocp: %s not found\n", input_name);
-      return EXIT_FAILURE;
+      FATAL1 ("File '%s' not found", input_name);
     }
+
   otp_read (full_input_name, output_name);
 
   return EXIT_SUCCESS;

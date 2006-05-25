@@ -1,10 +1,41 @@
-2002-11-18  Roozbeh Pournader  <roozbeh@sharif.edu>
+2006-05-25  Roozbeh Pournader  <roozbeh@farsiweb.info>
+
+
+	* routines.c: fixed a bogus error message, made sure PLUSLEFT's
+	  argument and the first argument of COMPLETELEFT are non-zero,
+	  added comments, optimized DOUBLELEFT a little.
+
+	* routines.h: added comments. increased ARRAY_SIZE.
+
+	* bugs.txt: added.
+
+	* otp.h, otp.l, routines.c, routines.h, outocp.c: Made a few things #defined
+	  constants.
+
+	* otp.l, otp.y: fixed the copyright comment to not appear on the
+	  generated file.
+
+	* otp.y: added syntax for exact number of occurences in
+	  "OneCompleteLeft" and also for changing to the initial state
+	  without using the special "INITIAL" name.
+
+	* otp2ocp.c: removed support for suffixes other than ".otp", since
+	  kpathsea won't find them anyway, small fixes in error messages.
+
+	* otp2ocp.c, outocp.c, routines.c: made better use of kpathsea
+	  features.
+
+	* lex.yy.c-dist, y_tab.c-dist, y_tab.h-dist: regenerated.
+
+	* ChangeLog: updated own email address.
+
+2002-11-18  Roozbeh Pournader  <roozbeh@farsiweb.info>
 	
 	* otp2ocp.c: fixed a bug in detecting the '.otp' suffix (patch by
 	  Behdad Esfahbod).
 	* ChangeLog: some cleanup;
 
-2002-10-23  Roozbeh Pournader  <roozbeh@sharif.edu>
+2002-10-23  Roozbeh Pournader  <roozbeh@farsiweb.info>
 
 	* otp2ocp.c: added two copyright lines.
 	* otp.l: fixed a buffer overflow bug, now accepts all end of line
@@ -13,7 +44,7 @@
 	* otp.h: changed '#define's to 'enum' (patch by Behdad Esfahbod).
 	* lex.yy.c-dist: rebuilt.
 
-2002-10-15  Roozbeh Pournader  <roozbeh@sharif.edu> 
+2002-10-15  Roozbeh Pournader  <roozbeh@farsiweb.info> 
 
 	* otp2ocp.c: fixed some '.ocp' writing bugs; otp2ocp now fails with
 	  a non-zero return value if parsing the input fails (patch by

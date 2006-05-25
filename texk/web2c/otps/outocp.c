@@ -1,9 +1,10 @@
 /* outocp.c: ASCII output for OCP files, mainly for debugging purposes.
 
 This file is part of Omega,
-which is based on the web2c distribution of TeX,
+which is based on the web2c distribution of TeX.
 
 Copyright (c) 1994--2001 John Plaice and Yannis Haralambous
+Copyright (C) 2005  Roozbeh Pournader
 
 Omega is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -70,13 +71,6 @@ char *otp_names[] = {
 };
 
 
-void ctp_abort
-P1C (string, s)
-{
-  fprintf (stderr, s);
-  exit (EXIT_FAILURE);
-}
-
 int no_words_read = 0;
 
 int ctp_get
@@ -86,7 +80,7 @@ P1C (FILE *, input_file)
   ctpchar = getc (input_file);
   if (ctpchar == EOF)
     {
-      ctp_abort ("Unexpected end of file\n");
+      FATAL ("Unexpected end of file");
     }
   return ctpchar;
 }
@@ -99,7 +93,7 @@ P1C (FILE *, input_file)
   ctpword = ctp_get (input_file);
   if (ctpword > 127)
     {
-      ctp_abort ("first octet > 127");
+      FATAL ("First octet > 127");
     }
   ctpword = ctpword * 256 + ctp_get (input_file);
   ctpword = ctpword * 256 + ctp_get (input_file);
@@ -113,7 +107,7 @@ P1C (FILE *, input_file)
   int i, j, arg, entry, instruction;
   int ctp_length, real_ctp_length, ctp_input, ctp_output,
     ctp_no_tables, ctp_room_tables, ctp_no_states, ctp_room_states;
-  int room_tables[100], room_states[100];
+  int room_tables[OTP_MAXTABLES], room_states[OTP_MAXSTATES];
 
   ctp_length = ctp_read (input_file);
   fprintf (stdout, "ctp_length     : %3x(%3d)\n", ctp_length, ctp_length);
@@ -136,13 +130,13 @@ P1C (FILE *, input_file)
   ctp_room_states = ctp_read (input_file);
   fprintf (stdout, "ctp_room_states: %3x(%3d)\n\n",
 	   ctp_room_states, ctp_room_states);
-  if (ctp_no_tables >= 100)
+  if (ctp_no_tables >= OTP_MAXTABLES)
     {
-      ctp_abort ("Too many tables\n");
+      FATAL ("Too many tables");
     }
-  if (ctp_no_states >= 100)
+  if (ctp_no_states >= OTP_MAXSTATES)
     {
-      ctp_abort ("Too many states\n");
+      FATAL ("Too many states");
     }
   if (ctp_no_tables != 0)
     {
@@ -203,26 +197,24 @@ P2C (int, argc, string *, argv)
   string input_name, full_input_name;
   FILE *input_file;
 
-  kpse_set_progname (argv[0]);
+  kpse_set_program_name (argv[0], "outocp");
   switch (argc)
     {
     case 1:
-      fprintf (stderr, "outocp: No file given\n");
-      return EXIT_FAILURE;
+      FATAL ("No file given");
     case 2:
       input_name = argv[1];
       break;
     default:
-      fprintf (stderr, "outocp: Too many arguments\n");
-      return EXIT_FAILURE;
+      FATAL ("Too many arguments");
     }
   full_input_name = kpse_find_file (input_name, kpse_ocp_format, true);
   if (!full_input_name)
     {
-      fprintf (stderr, "outocp: %s not found\n", input_name);
-      return EXIT_FAILURE;
+      FATAL1 ("%s not found", input_name);
     }
   input_file = xfopen (full_input_name, FOPEN_RBIN_MODE);
   ctp_explain (input_file);
+
   return EXIT_SUCCESS;
 }

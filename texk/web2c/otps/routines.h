@@ -4,6 +4,7 @@ This file is part of Omega,
 which is based on the web2c distribution of TeX,
 
 Copyright (c) 1994--2001 John Plaice and Yannis Haralambous
+Copyright (C) 2005  Roozbeh Pournader
 
 Omega is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -55,6 +56,8 @@ extern int yyparse();
 extern int yylex();
 
 extern int line_number;
+
+/* linked list of ints */
 typedef struct cell_struct {struct cell_struct *ptr;
         int val; } cell;
 typedef cell *list;
@@ -68,6 +71,7 @@ typedef struct left_cell {
 } lft_cell;
 typedef lft_cell *left;
 
+/* linked list of lefts */
 typedef struct lcell_struct {struct lcell_struct *ptr;
         left val; } lcell;
 typedef lcell *llist;
@@ -102,7 +106,7 @@ extern int no_lefts;
 extern void store_alias P2H(string, left);
 extern left lookup_alias P1H(string);
 
-#define ARRAY_SIZE 10000
+#define ARRAY_SIZE 50000
 typedef struct {
 	int length;
 	char * str;

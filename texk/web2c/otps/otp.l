@@ -1,4 +1,3 @@
-%{
 /* otp.l: Lexical analysis for OTP files
 
 This file is part of Omega,
@@ -6,7 +5,7 @@ which is based on the web2c distribution of TeX,
 
 Copyright (c) 1994--2001 John Plaice and Yannis Haralambous
 Copyright (c) 2002 Behdad Esfahbod
-Copyright (c) 2002 Roozbeh Pournader
+Copyright (C) 2002, 2005, 2006 Roozbeh Pournader
 
 Omega is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,10 +23,12 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 
 */
 
+%{
 #include "routines.h"
 #include "yystype.h"
 #include "y_tab.h"
 #define YY_NO_UNPUT
+#define OTP_MAXCODE 0xFFFF
 int line_number = 1;
 int i,j,last;
 extern YYSTYPE yylval;
@@ -55,7 +56,7 @@ string		\"([^\"]|\"\")*\"
 			} else { /* ((j>='A') && (j>='F')) */
 				yylval.yint = (yylval.yint*16)+(j-'A'+10);
 			}
-			if (yylval.yint>65535) {
+			if (yylval.yint>OTP_MAXCODE) {
 			   fprintf(stderr, "line %d: value too large (%x)\n",
 			   	line_number, yylval.yint);
 			   exit(1);
@@ -68,7 +69,7 @@ string		\"([^\"]|\"\")*\"
 		for (i=2; i<yyleng; i++) {
 			j = yytext[i];
 			yylval.yint = (yylval.yint*8)+(j-'0');
-			if (yylval.yint>65535) {
+			if (yylval.yint>OTP_MAXCODE) {
 			   fprintf(stderr, "line %d: value too large (%o)\n",
 				   line_number, yylval.yint);
 			   exit(1);
@@ -81,7 +82,7 @@ string		\"([^\"]|\"\")*\"
 		for (i=0; i<yyleng; i++) {
 			j = yytext[i];
 			yylval.yint = (yylval.yint*10)+(j-'0');
-			if (yylval.yint>65535) {
+			if (yylval.yint>OTP_MAXCODE) {
 			    fprintf(stderr, "line %d: value too large (%d)\n",
 				    line_number, yylval.yint);
 			    exit(1);
@@ -92,7 +93,7 @@ string		\"([^\"]|\"\")*\"
 "`"[\x20-\x7e]"'" {
 		yylval.yint=yytext[1]; 
 		return(NUMBER);
-}
+		}
 {id}		{ yylval.ystring=xstrdup(yytext); return(ID); }
 {string}	{
 		char *newtext;

@@ -1,9 +1,10 @@
 /* routines.c: Generating the finite state automaton.
 
 This file is part of Omega,
-which is based on the web2c distribution of TeX,
+which is based on the web2c distribution of TeX.
 
 Copyright (c) 1994--2001 John Plaice and Yannis Haralambous
+Copyright (C) 2005, 2006  Roozbeh Pournader
 
 Omega is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -41,16 +42,17 @@ int output_bytes;
 int no_states = 0;
 int cur_state = 0;
 int room_for_states = 0;
-state_type states[100];
+state_type states[OTP_MAXSTATES];
 
 int no_tables = 0;
 int cur_table = 0;
 int room_for_tables = 0;
-table_type tables[100];
+table_type tables[OTP_MAXTABLES];
 
 int no_aliases = 0;
-alias_pair aliases[1000];
+alias_pair aliases[OTP_MAXALIASES];
 
+/* cons = [x] + L */
 list
 cons P2C(int, x, list, L)
 {
@@ -61,6 +63,7 @@ temp->ptr = L;
 return temp;
 }
 
+/* list1 = [x] */
 list
 list1 P1C(int, x)
 {
@@ -71,6 +74,7 @@ temp->ptr = nil;
 return temp;
 }
 
+/* list2 = [x, y] */
 list
 list2 P2C(int, x, int, y)
 {
@@ -84,6 +88,7 @@ temp1->ptr = nil;
 return temp;
 }
 
+/* append = copy(K) + L */
 list
 append P2C(list, K, list, L)
 {
@@ -91,12 +96,14 @@ if (K==nil) return L;
 return cons(K->val, append(K->ptr, L));
 }
 
+/* append1 = copy(L) + [x] */
 list
 append1 P2C(list, L, int, x)
 {
 return (append(L,list1(x)));
 }
 
+/* lcons = [x] + L */
 llist
 lcons P2C(left, x, llist, L)
 {
@@ -107,6 +114,7 @@ temp->ptr = L;
 return temp;
 }
 
+/* llist1 = [x] */
 llist
 llist1 P1C(left, x)
 {
@@ -117,6 +125,7 @@ temp->ptr = nil;
 return temp;
 }
 
+/* llist2 = [x, y] */
 llist
 llist2 P2C(left, x, left, y)
 {
@@ -130,6 +139,7 @@ temp1->ptr = nil;
 return temp;
 }
 
+/* lappend = copy(K) + L */
 llist
 lappend P2C(llist, K, llist, L)
 {
@@ -137,6 +147,7 @@ if (K==nil) return L;
 return lcons(K->val, lappend(K->ptr, L));
 }
 
+/* lappend1 = copy(L) + [x] */
 llist
 lappend1 P2C(llist, L, left, x)
 {
@@ -207,6 +218,7 @@ left
 PlusLeft P2C(left, l, int, n)
 {
 left temp;
+if (n == 0) { FATAL ("plusleft's argument must be non-zero"); }
 temp = (left) malloc(sizeof(lft_cell));
 temp->kind=PLUSLEFT;
 temp->one_left=l;
@@ -218,6 +230,7 @@ left
 CompleteLeft P3C(left, l, int, n, int, m)
 {
 left temp;
+if (n == 0) { FATAL ("completeleft's first argument must be non-zero"); }
 temp = (left) malloc(sizeof(lft_cell));
 temp->kind=COMPLETELEFT;
 temp->one_left=l;
@@ -274,12 +287,18 @@ case SINGLELEFT:
 	out_int(0, 0);
 	return list1(out_ptr-1);
 case DOUBLELEFT:
-	out_int(OTP_GOTO_LT, arg->val1);
-	out_int(0, 0);
-	save_ptr = out_ptr;
-	out_int(OTP_GOTO_GT, arg->val2);
-	out_int(0, 0);
-	return list2(save_ptr-1, out_ptr-1);
+	holes = nil;
+	if (arg->val1 > 0) {
+		out_int(OTP_GOTO_LT, arg->val1);
+		out_int(0, 0);
+		holes = list1(out_ptr-1);
+	}
+	if (arg->val2 < 0xFFFF) {
+		out_int(OTP_GOTO_GT, arg->val2);
+		out_int(0, 0);
+		holes = cons(out_ptr-1, holes);
+	}
+	return holes;
 case CHOICELEFT:
 	true_holes=nil;
 	false_holes=nil;
@@ -373,8 +392,7 @@ case ENDLEFT:
 	fill_in(true_holes);
 	return false_holes;
 default:
-	fprintf(stderr, "Unrecognized left: %d\n", arg->kind);
-	exit(EXIT_FAILURE);
+	FATAL1 ("unrecognized left: %d", arg->kind);
 }
 }
 
@@ -384,8 +402,7 @@ store_alias P2C(string, str, left, l)
 int i;
 for (i=0; i<no_aliases; i++) {
     if (!strcmp(str,aliases[i].str)) {
-        fprintf(stderr, "alias %s already defined\n", str);
-        exit(1);
+        FATAL1 ("alias %s already defined", str);
     }
 }
 aliases[i].str=xstrdup(str);
@@ -402,8 +419,7 @@ for (i=0; i<no_aliases; i++) {
         return aliases[i].left_val;
     }
 }
-fprintf(stderr, "state %s not defined\n", str);
-exit(EXIT_FAILURE);
+FATAL1 ("alias %s not defined", str);
 }
 
 void
@@ -459,8 +475,7 @@ void
 out_int P2C(int, instr, int, val)
 {
 if (val>=(1<<24)) {
-    fprintf(stderr, "Argument (%d) of instruction too big\n", val);
-    exit(EXIT_FAILURE);
+    FATAL1 ("Argument (%d) of instruction too big", val);
 }
 add_to_state((instr<<24)+val);
 }
@@ -471,8 +486,7 @@ store_state P1C(string, str)
 int i;
 for (i=0; i<no_states; i++) {
    if (!strcmp(str,states[i].str)) {
-      fprintf(stderr, "state %s already defined\n", str);
-       exit(EXIT_FAILURE);
+      FATAL1 ("state %s already defined", str);
    }
 }
 states[i].str=xstrdup(str);
@@ -491,8 +505,7 @@ for (i=0; i<no_states; i++) {
         return i;
     }
 }
-fprintf(stderr, "state %s not defined\n", str);
-exit(EXIT_FAILURE);
+FATAL1 ("state %s not defined", str);
 }
 
 void
@@ -502,8 +515,7 @@ int len;
 len = states[cur_state].length;
 if (len > ARRAY_SIZE) {
 	char * str = states[cur_state].str;
-        fprintf(stderr, "%s state has too many instructions\n", str);
-        exit(EXIT_FAILURE);
+        FATAL2 ("%s state has too many instructions: %d", str, len);
 }
 (states[cur_state].instrs)[len] = x;
 states[cur_state].length = len+1;
@@ -515,8 +527,7 @@ store_table P2C(string, str, int, len)
 int i;
 for (i=0; i<no_tables; i++) {
     if (!strcmp(str,tables[i].str)) {
-        fprintf(stderr, "table %s already defined\n", str);
-        exit(EXIT_FAILURE);
+        FATAL1 ("table %s already defined", str);
     }
 }
 tables[i].str=xstrdup(str);
@@ -543,7 +554,6 @@ for (i=0; i<no_tables; i++) {
         return i;
     }
 }
-fprintf(stderr, "table %s not defined\n", str);
-exit(EXIT_FAILURE);
+FATAL1 ("table %s not defined", str);
 }
 
