@@ -1,3 +1,11 @@
+2006-05-26  Jonathan Kew <jonathan_kew@sil.org>
+
+	* coerce.h: add support for xetex
+
+	* convert: add support for xetex
+
+	* splitup.c: add support for xetex
+
 2005-07-27  Olaf Weber  <olaf@infovore.xs4all.nl>
 
 	* convert.bat: New file, .bat version of convert script.
