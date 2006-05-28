@@ -145,7 +145,7 @@ if test -n "${MT_DESTROOT}"; then
       # Some additional uglyness handles the case where $TEXMFVAR exists
       # but $TEXMFVAR/fonts doesn't (yet).
       if test "x$USE_TEXMFVAR" = x1; then
-        : ${MT_TEXMFVAR=`kpsewhich --expand-path='$TEXMFVAR'`}
+        : ${MT_TEXMFVAR=`kpsewhich --var-value=TEXMFVAR`}
         MT_DESTROOT=$MT_TEXMFVAR/fonts
         if test -z "$MT_TEXMFVAR"; then
           # Path expansion of $TEXMFVAR was empty.
@@ -158,9 +158,12 @@ if test -n "${MT_DESTROOT}"; then
           # De we have write access and permission?
           kpseaccess -w "$MT_TEXMFVAR" || FALLBACK=1
           test -w "$MT_TEXMFVAR" || FALLBACK=1
-        else
+        elif test -e "$MT_TEXMFVAR"; then
           # TEXMFVAR defined and exists, but it is not a directory?
           FALLBACK=1
+        else
+          # TEXMFVAR defined but does not exist, try to create it
+          MT_FEATURES=none "$MT_MKTEXDIR" "$MT_TEXMFVAR" || FALLBACK=1
         fi
       else
         # Do we have write access and permission?
