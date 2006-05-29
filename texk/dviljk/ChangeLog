@@ -1,3 +1,8 @@
+2006-05-29  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (install-exec): cd $(bindir) in case we are doing
+	hard links on Cygwin.
+
 Tue Mar  3 10:17:03 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
 
 	* config.h: Markus Gyger <mgyger@osf1.gmu.edu> fix of config
