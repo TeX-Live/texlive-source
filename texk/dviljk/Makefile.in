@@ -62,7 +62,7 @@ install-exec:
 	test ! -f $(program4l) \
 	  || $(INSTALL_LIBTOOL_PROG) $(program4l) $(bindir)
 	$(INSTALL_SCRIPT) $(srcdir)/dvihp $(scriptdir)/dvihp
-	rm -f $(bindir)/$(program6); $(LN) $(program4) $(bindir)/$(program6)
+	cd $(bindir) && (rm -f $(program6); $(LN) $(program4) $(program6))
 uninstall-exec:
 	cd $(bindir); rm -f $(programs)
 
