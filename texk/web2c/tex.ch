@@ -256,7 +256,7 @@ versions of the program.
 @!sup_param_size = 6000;
 
 @!inf_save_size = 600;
-@!sup_save_size = 40000;
+@!sup_save_size = 80000;
 
 @!inf_stack_size = 200;
 @!sup_stack_size = 30000;
