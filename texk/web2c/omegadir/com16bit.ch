@@ -188,7 +188,7 @@ if ini_version then
 @!engine_name=TEXMF_ENGINE_NAME; {the name of this engine}
 @#
 @!inf_main_memory = 2000000;
-@!sup_main_memory = 16000000;
+@!sup_main_memory = 32000000;
 
 @!inf_trie_size = 80000;
 @!sup_trie_size = ssup_trie_size;
@@ -212,7 +212,7 @@ if ini_version then
 @!sup_param_size = 600;
 
 @!inf_save_size = 600;
-@!sup_save_size = 40000;
+@!sup_save_size = 80000;
 
 @!inf_stack_size = 200;
 @!sup_stack_size = 3000;

@@ -1,0 +1,4 @@
+2006-06-02  Karl Berry  <karl@tug.org>
+
+	* texk/web2c/omegadir/com16bit.ch, alephdir/com16bit-rc2.ch
+	(sup_main_memory, sup_save_size): increase per tex.ch.
