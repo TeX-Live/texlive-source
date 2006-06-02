@@ -183,7 +183,7 @@ printer (output device).  Since these are site-specific, @code{make
 install} does not create them; you must create them yourself.
 
 (These Dvips configuration files are independent of the Kpathsea
-onfiguration file @file{texmf.cnf} (@pxref{Config files,,,kpathsea,
+configuration file @file{texmf.cnf} (@pxref{Config files,,,kpathsea,
 Kpathsea}).
 
 @flindex config.proto
