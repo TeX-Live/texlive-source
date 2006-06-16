@@ -89,6 +89,13 @@ extern int tfmtemp, texinputtype;
 extern boolean openinnameok P1H(const_string);
 extern boolean openoutnameok P1H(const_string);
 
+/* pdfTeX uses these for pipe support */
+#if defined(pdfTeX) || defined(pdfeTeX)
+extern boolean open_in_or_pipe P3H(FILE **, int, const_string fopen_mode);
+extern boolean open_out_or_pipe P2H(FILE **, const_string fopen_mode);
+extern void close_file_or_pipe P1H(FILE *);
+#endif
+
 /* All but the Omega family use this. */
 #if !defined(Omega) && !defined(eOmega) && !defined(Aleph)
 extern void readtcxfile P1H(void);
@@ -170,6 +177,18 @@ extern void topenin P1H(void);
 
 /* Set an array size from texmf.cnf.  */
 extern void setupboundvariable P3H(integer *, const_string, integer);
+
+/* These defines reroute the file i/o calls to the new pipe-enabled 
+   functions in texmfmp.c*/
+
+#if defined(pdfTeX) || defined(pdfeTeX)
+#undef aopenin
+#undef aopenout
+#undef aclose
+#define aopenin(f,p)  open_in_or_pipe(&(f),p,FOPEN_RBIN_MODE)
+#define aopenout(f)   open_out_or_pipe(&(f),FOPEN_W_MODE)
+#define aclose(f)     close_file_or_pipe(f)
+#endif
 
 /* `bopenin' (and out) is used only for reading (and writing) .tfm
    files; `wopenin' (and out) only for dump files.  The filenames are

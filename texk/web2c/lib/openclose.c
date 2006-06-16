@@ -234,7 +234,7 @@ open_output P2C(FILE **, f_ptr,  const_string, fopen_mode)
 /* Close F.  */
 
 void
-aclose P1C(FILE *, f)
+close_file P1C(FILE *, f)
 {
   /* If F is null, just return.  bad_pool might close a file that has
      never been opened.  */

@@ -1192,6 +1192,116 @@ boolean openoutnameok P1C(const_string, fname)
     /* For output, default to paranoid. */
     return opennameok (fname, "openout_any", "p", ok_writing);
 }
+/* 
+  piped I/O
+ */
+
+/* The code that implements popen() needs an array for tracking 
+   possible pipe file pointers, because these need to be
+   closed using pclose().
+*/
+
+#if defined(pdfTeX) || defined(pdfeTeX)
+
+static FILE *pipes [] = {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
+                         NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
+
+boolean
+open_in_or_pipe P3C(FILE **, f_ptr,  int, filefmt,  const_string, fopen_mode)
+{
+    string fname = NULL;
+    int i; /* iterator */
+    
+    /* opening a read pipe is straightforward, only have to
+       skip past the pipe symbol in the file name. filename
+       quoting is assumed to happen elsewhere (it does :-)) */
+
+    if (shellenabledp && *(nameoffile+1) == '|') {
+      /* the user requested a pipe */
+      *f_ptr = NULL;
+      fname = (string)xmalloc(strlen(nameoffile+1));
+      strcpy(fname,nameoffile+1);
+      *f_ptr = popen(fname+1,"r");
+      free(fname);
+      for (i=0; i<=15; i++) {
+        if (pipes[i]==NULL) {
+          pipes[i] = *f_ptr;
+          break;
+        }
+      }
+      if (*f_ptr)
+        setvbuf (*f_ptr,(char *)NULL,_IOLBF,0);
+
+      return *f_ptr != NULL;
+    }
+
+    return open_input(f_ptr,filefmt,fopen_mode) ;
+}
+
+
+boolean
+open_out_or_pipe P2C(FILE **, f_ptr,  const_string, fopen_mode)
+{
+    string fname;
+    int i; /* iterator */
+
+    /* opening a write pipe takes a little bit more work, because TeX
+       will perhaps have appended ".tex".  To avoid user confusion as
+       much as possible, this extension is stripped only when the command
+       is a bare word.  Some small string trickery is needed to make
+       sure the correct number of bytes is free()-d afterwards */
+	
+    if (shellenabledp && *(nameoffile+1) == '|') {
+      /* the user requested a pipe */
+      fname = (string)xmalloc(strlen(nameoffile+1));
+      strcpy(fname,nameoffile+1);
+      if (strchr (fname,' ')==NULL && strchr(fname,'>')==NULL) {
+        /* mp and mf currently do not use this code, but it 
+           is better to be prepared */
+        if (STREQ((fname+strlen(fname)-3),"tex"))
+          *(fname+strlen(fname)-4) = 0;
+        *f_ptr = popen(fname+1,"w");
+        *(fname+strlen(fname)) = '.';
+      } else {
+        *f_ptr = popen(fname+1,"w");
+      }
+      free(fname);
+
+      for (i=0; i<=15; i++) {
+        if (pipes[i]==NULL) {
+          pipes[i] = *f_ptr;
+          break;
+        }
+      }
+
+      if (*f_ptr)
+        setvbuf(*f_ptr,(char *)NULL,_IOLBF,0);
+
+      return *f_ptr != NULL;
+    }
+
+    return open_output(f_ptr,fopen_mode);
+}
+
+
+void
+close_file_or_pipe P1C(FILE *, f)
+{
+  int i; /* iterator */
+
+  if (shellenabledp) {
+    /* if this file was a pipe, pclose() it and return */    
+    for (i=0; i<=15; i++) {
+      if (pipes[i] == f) {
+        pclose (f);
+        pipes[i] = NULL;
+        return;
+      }
+    }
+  }
+  close_file(f);
+}
+#endif
 
 /* All our interrupt handler has to do is set TeX's or Metafont's global
    variable `interrupt'; then they will do everything needed.  */
