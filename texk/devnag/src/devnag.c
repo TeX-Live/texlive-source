@@ -1,4 +1,5 @@
-/*  devnag.c v2.13: 4 June 2005
+/*  $Id: devnag.c,v 1.12 2006/06/08 12:51:59 icebearsoft Exp $
+    Version 2.14
 
  *
  Preprocessor for Devanagari for TeX package
@@ -214,7 +215,59 @@
  Version 2.13: ~m is now a synonym for /, i.e. candrabindu
 */
 
-char *version = "2.13";
+/*
+ Version 2.14 contains the following modifications:
+
+ Accented characters with codes >= 128 are allowed in \dn texts
+ within {\rm ...} and <...>
+ UTF-8 is not yet supported.
+
+ The filename extensions are not fixed but have reasoanble defaults
+ defined by constants DEFAULT_SRC_EXT (= ".dn") and
+ DEFAULT_DEST_EXT (= ".tex"). It is explicitly forbidden for the source
+ file to have the extension defined by DEFAULT_DEST_EXT. The file names
+ are examined as follows:
+
+ 1. If the source filename does not have the default extension, it is
+    appended. If such a file does not exist, the preprocessor tries
+    again with the original file name.
+
+ 2. If the destination filename was given, its extension is checked.
+    It is explicitly forbidden for the destination file to have the
+    extension defined by DEFAULT_SRC_EXT. If the filename is equal
+    to the name of the source file, DEFAULT_DEST_EXT is appended,
+    otherwise the file name is used as is.
+
+ 3. If the destination filename was not given, it is based upon the
+    source filename. If the source filename contains the
+    DEFAULT_SRC_EXT extension, it is stripped of. Afterwards the
+    DEFAULT_DEST_EXT extension is appended.
+
+ The algorithm was designed to prevent typing errors but it is far
+ from foolproof. The filesystem properties are not examined and all
+ filename tests are case insensitive. The file names are not expanded.
+ For instance, if the working directory is "/some/path", then "x.y",
+ "./x.y", "../path/x.y" as well as "/some/path/x.y" refer to the same
+ file but they will be treated as different by the preprocessor.
+ Moreover, the algorithm does not try to follow symlinks neither does it
+ examine inodes in order to discover hard links.
+
+ Notes for compilation:
+ Some C libraries do not contain strcasecmp but contain either stricmp
+ or strcmpi (or both) with the same syntax. If it is the case of your
+ compiler, use -DHAS_STRCMPI or -DHAS_STRICMP. GCC/EMX for OS/2
+ requires -DHAS_STRICMP, gcc 3.3.3 in Linux as well as gcc 2.95.2
+ from mingw (Windows) know strcasecmp.
+
+ The preprocessor can read files with any line endings on all platforms
+ (i.e. DOS CRLF, UNIX LF as well as Macintosh CR). More precisely: each
+ CR followed by LF is ignored and each CR followed by anything else is
+ treated as end of line. The line endings of the output file always
+ conform to conventions used on the operating system where the
+ preprocessor runs.
+*/
+
+char *version = "2.14";
 
 #include <stdio.h>
 #include <ctype.h>
@@ -258,9 +311,24 @@ char *version = "2.13";
 #define RN 265             /* numeral, using cmr or dn as appropriate */
 #define RS 256             /* \thinspace on switching from dn to cmr */
 
+/* Default extensions */
+#define DEFAULT_SRC_EXT ".dn"
+#define DEFAULT_DEST_EXT ".tex"
+
+/*
+Some C libraries do not have strcasecmp but have either strcmpi or stricmp
+with the same syntax. Select the one you have.
+*/
+#ifdef HAS_STRCMPI
+#define strcasecmp(s1,s2) strcmpi(s1,s2)
+#elif HAS_STRICMP
+#define strcasecmp(s1,s2) stricmp(s1,s2)
+#endif
+
 /* Global variable declarations */
 FILE *f_in, *f_out;
 char *p_in;
+int charbuf, wasCR = FALSE, charpresent = FALSE;
 int number;
 char symbol;
 char infil[MEDBUF], outfil[MEDBUF];
@@ -298,6 +366,7 @@ void expand(void);
 char find_dn(void);
 int sindex(int i, short t);
 void fixconj(short *wrong, short *right);
+char *fgetline(char *buf, int n, FILE *f);
 
 /* --------- Addition by Marc Csernel 1998 --------- */
 
@@ -1213,33 +1282,54 @@ int main(int argc, char **argv) {
 	    printf("input file: ");
 	    fgets(infil, MEDBUF, stdin);
 	    infil[strlen(infil)-1] = '\0';
-	 }
-	 while (strlen(infil) == 0);
+	 } while (strlen(infil) == 0);
 	 printf("output file: ");
 	 fgets(outfil, MEDBUF, stdin);
 	 outfil[strlen(outfil)-1] = '\0';
       }
    }
-   if (strlen(outfil) == 0) {
-      strcpy(outfil, infil);
-      s_ptr = outfil+strlen(outfil)-3;
-      if (strcmp(s_ptr, ".dn") == 0) *s_ptr = '\0';
-      strcat(outfil, ".tex");
-   }
-   else {
-      s_ptr = outfil+strlen(outfil)-4;
-      if (strcmp(s_ptr, ".tex") != 0) strcat(outfil, ".tex");
-   }
-   s_ptr = infil+strlen(infil)-3;
-   if (strcmp(s_ptr, ".dn") != 0) strcat(infil, ".dn");
-
-   /* open files */
-
-   if ((f_in = fopen(infil, "r")) == NULL) {
-      printf("cannot open file %s\n", infil);
+   /* Check the source file extension */
+   if (strcasecmp(infil+strlen(infil)-strlen(DEFAULT_DEST_EXT), DEFAULT_DEST_EXT) == 0) {
+      printf("source file extension %s is forbidden\n", DEFAULT_DEST_EXT);
       exit(1);
    }
-   f_out = fopen(outfil, "w");
+   s_ptr = infil+strlen(infil)-strlen(DEFAULT_SRC_EXT);
+   if (strcasecmp(s_ptr, DEFAULT_SRC_EXT) != 0) s_ptr = NULL;
+   if (!s_ptr) strcat(infil, DEFAULT_SRC_EXT);
+
+   /* Try to open the source file */
+   f_in = fopen(infil, "rb");
+   if (!f_in && !s_ptr) {
+      /* strip extension which has not been supplied and try again */
+      infil[strlen(infil)-strlen(DEFAULT_SRC_EXT)] = '\0';
+      f_in = fopen(infil, "rb");
+   }
+   if (!f_in) {
+      if (s_ptr) printf("cannot open file %s\n", infil);
+      else printf("cannot open either %s or %s%s\n", infil, infil, DEFAULT_SRC_EXT);
+      exit(1);
+   }
+
+   /* Destination file name */
+   if (strlen(outfil) == 0) {
+      strcpy(outfil, infil);
+      if (strcasecmp(outfil+strlen(outfil)-strlen(DEFAULT_SRC_EXT), DEFAULT_SRC_EXT) == 0) {
+         outfil[strlen(outfil)-strlen(DEFAULT_SRC_EXT)] = '\0';
+      }
+      strcat(outfil, DEFAULT_DEST_EXT);
+   } else {
+      if (strcasecmp(outfil+strlen(outfil)-strlen(DEFAULT_SRC_EXT), DEFAULT_SRC_EXT) == 0) {
+         fclose(f_in);
+         printf("destination file extension %s is forbidden\n", DEFAULT_SRC_EXT);
+         exit(1);
+      }
+      if (strcasecmp(infil, outfil) == 0) strcat(outfil, DEFAULT_DEST_EXT);
+   }
+   if ((f_out = fopen(outfil, "w")) == NULL) {
+      fclose(f_in);
+      printf("cannot open %s for output\n", outfil);
+      exit(1);
+   }
 
    /* initialization */
 
@@ -1269,7 +1359,7 @@ int main(int argc, char **argv) {
    /* main loop */
 
    do {
-      p_in = fgets(inbuf, MAXBUF, f_in);
+      p_in = fgetline(inbuf, MAXBUF, f_in);
 
       /* read preprocessor commands */
 
@@ -1380,6 +1470,12 @@ int main(int argc, char **argv) {
 	    }
 	    if (strstr(inbuf, "vconjuncts\n") == inbuf+1) {
 	       do_vconjuncts = TRUE;
+	       fprintf(f_out, "%%%s", inbuf);
+	       linenumber++;
+	       break;
+	    }
+	    if (strstr(inbuf, "novconjuncts\n") == inbuf+1) {
+	       do_vconjuncts = FALSE;
 	       fprintf(f_out, "%%%s", inbuf);
 	       linenumber++;
 	       break;
@@ -1683,6 +1779,7 @@ void dnproc(void) {
 	 puts("Error: missing }");
 	 exit(1);
        default:
+    if (symbol < 0) err_ill('\0');  /* accented character inside dn mode */
 	 i = 0;
 	 do { i++; } while ((i != 10) && (chset4[i-1] != symbol));
 	 if (i == 10) put_ch(symbol);
@@ -2297,7 +2394,7 @@ char inp_ch(void) {
    if (ch == '\n') {
       if (p_in == 0) ch_out = end_of_file;
       else {
-	 p_in = fgets(inbuf, MAXBUF, f_in);
+	 p_in = fgetline(inbuf, MAXBUF, f_in);
 	 linenumber++;
 	 buf_idx = 0;
 	 ch_out = end_of_line;
@@ -2306,7 +2403,7 @@ char inp_ch(void) {
    else {
       if (ch == '\t') ch_out = ' ';        /* Change TABs to spaces */
       else {
-	 if (ch < 32) ch_out = ill_char;
+	 if ((unsigned)ch < 32) ch_out = ill_char;  /* Allow accented characters */
 	 else ch_out = ch;
       }
    }
@@ -2416,4 +2513,34 @@ void fixconj(short *wrong, short *right) {
       syll[i] = right[i];
    }
    chr_idx = i;
+}
+
+/*
+ * Read a line with either line ending (UNIX = LF, DOS = CR LF, Mac = CR)
+ * return the pointer to the buffer of NULL at end of file or I/O Error
+ * (replacement of fgets, requires global variables)
+ */
+char *fgetline(char *buf, int n, FILE *f) {
+   int k;
+   buf[0] = '\0';
+   for (k = 0; k < n-1 && (k == 0 || buf[k-1] != '\n'); ) {
+      if (charpresent) charpresent = FALSE;
+      else charbuf = fgetc(f);
+      if (wasCR) {
+         wasCR = FALSE;
+         buf[k++] = '\n';
+         if (charbuf != '\n') charpresent = TRUE;
+      } else {
+         if (charbuf == EOF) {
+            if (k) {
+               charpresent = TRUE;   break;
+            }
+            else return NULL;
+         }
+         if (charbuf == '\r') wasCR = TRUE;
+         else buf[k++] = charbuf;
+      }
+   }
+   buf[k] = '\0';
+   return buf;
 }
