@@ -1221,6 +1221,11 @@ open_in_or_pipe P3C(FILE **, f_ptr,  int, filefmt,  const_string, fopen_mode)
       *f_ptr = NULL;
       fname = (string)xmalloc(strlen(nameoffile+1));
       strcpy(fname,nameoffile+1);
+#if !defined(pdfTeX) && !defined(pdfeTeX)
+      if (fullnameoffile)
+         free (fullnameoffile);
+      fullnameoffile = xstrdup (fname);
+#endif
       *f_ptr = popen(fname+1,"r");
       free(fname);
       for (i=0; i<=15; i++) {
