@@ -450,6 +450,66 @@ const_string PDFETEXHELP[] = {
 };
 #endif /* pdfeTeX */
 
+#ifdef XeTeX
+const_string XETEXHELP[] = {
+    "Usage: xetex [OPTION]... [TEXNAME[.tex]] [COMMANDS]",
+    "   or: xetex [OPTION]... \\FIRST-LINE",
+    "   or: xetex [OPTION]... &FMT ARGS",
+    "  Run XeTeX on TEXNAME, usually creating TEXNAME.pdf.",
+    "  Any remaining COMMANDS are processed as XeTeX input, after TEXNAME is read.",
+    "  If the first line of TEXNAME is %&FMT, and FMT is an existing .fmt file,",
+    "  use it.  Else use `NAME.fmt', where NAME is the program invocation name,",
+    "  most commonly `xetex'.",
+    "",
+    "  Alternatively, if the first non-option argument begins with a backslash,",
+    "  interpret all non-option arguments as a line of XeTeX input.",
+    "",
+    "  Alternatively, if the first non-option argument begins with a &, the",
+    "  next word is taken as the FMT to read, overriding all else.  Any",
+    "  remaining arguments are processed as above.",
+    "",
+    "  If no arguments or options are specified, prompt for input.",
+    "",
+    "[-no]-file-line-error   disable/enable file:line:error style messages",
+    "-fmt=FMTNAME            use FMTNAME instead of program name or a %& line",
+    "-halt-on-error          stop processing at the first error",
+    "-ini                    be xeinitex, for dumping formats; this is implicitly",
+    "                          true if the program name is `xeinitex'",
+    "-interaction=STRING     set interaction mode (STRING=batchmode/nonstopmode/",
+    "                          scrollmode/errorstopmode)",
+    "-jobname=STRING         set the job name to STRING",
+    "-kpathsea-debug=NUMBER  set path searching debugging flags according to",
+    "                          the bits of NUMBER",
+    "[-no]-mktex=FMT         disable/enable mktexFMT generation (FMT=tex/tfm)",
+    "-mltex                  enable MLTeX extensions such as \\charsubdef",
+    "-output-comment=STRING  use STRING for XDV file comment instead of date",
+    "-output-directory=DIR   use DIR as the directory to write files to",
+    "-output-driver=CMD      use CMD as the XDV-to-PDF driver instead of "
+#ifdef XETEX_MAC
+                             "xdv2pdf"
+#else
+                             "xdvipdfmx"
+#endif
+                             ,
+    "-no-pdf                 generate XDV (extended DVI) output rather than PDF",
+    "[-no]-parse-first-line  disable/enable parsing of the first line of the",
+    "                          input file",
+    "-papersize=STRING       set PDF media size to STRING",
+    "-progname=STRING        set program (and fmt) name to STRING",
+    "-recorder               enable filename recorder",
+    "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
+    "-src-specials           insert source specials into the XDV file",
+    "-src-specials=WHERE     insert source specials in certain places of",
+    "                          the XDV file. WHERE is a comma-separated value",
+    "                          list: cr display hbox math par parend vbox",
+    "-translate-file=TCXNAME (ignored)",
+    "-8bit                   make all characters printable, don't use ^^X sequences",
+    "-help                   display this help and exit",
+    "-version                output version information and exit",
+    NULL
+};
+#endif /* XeTeX */
+
 #ifdef TeX
 const_string TEXHELP[] = {
     "Usage: tex [OPTION]... [TEXNAME[.tex]] [COMMANDS]",

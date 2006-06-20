@@ -1,3 +1,8 @@
+2006-06-20  Jonathan Kew  <jonathan_kew@sil.org>
+
+	* texmfmem.h, texmfmp.h, texmfmp-help.h, lib/texmfmp.c: Added
+	conditional fragments needed for building XeTeX.
+
 2005-09-02  Olaf Weber  <olaf@infovore.xs4all.nl>
 
 	* tex.ch [53.1370]: Since we generate a string in all cases, we

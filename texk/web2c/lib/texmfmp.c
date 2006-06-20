@@ -38,7 +38,9 @@
    Unfortunately there's no way to get the banner into this code, so
    just repeat the text.  */
 #ifdef TeX
-#if defined (eTeX)
+#if defined(XeTeX)
+#include <xetexdir/xetexextra.h>
+#elif defined (eTeX)
 #include <etexdir/etexextra.h>
 #elif defined (pdfTeX)
 #include <pdftexdir/pdftexextra.h>
@@ -102,6 +104,11 @@
 #endif /* MP */
 
 /* The main program, etc.  */
+
+#ifdef XeTeX
+#include "xetexdir/XeTeX_ext.h"
+#endif
+
 
 /* What we were invoked as and with.  */
 char **argv;
@@ -260,9 +267,11 @@ maininit P2C(int, ac, string *, av)
     if (mltexp) {
       fprintf(stderr, "-mltex only works with -ini\n");
     }
+#if !defined(XeTeX)
     if (enctexp) {
       fprintf(stderr, "-enc only works with -ini\n");
     }
+#endif
 #endif
 #if defined(eTeX) || defined(pdfeTeX) || defined(Aleph)
     if (etexp) {
@@ -354,17 +363,56 @@ topenin P1H(void)
 {
   int i;
 
+#ifdef XeTeX
+  static UFILE termin_file;
+  if (termin == 0) {
+    termin = &termin_file;
+    termin->f = stdin;
+    termin->savedChar = -1;
+    termin->skipNextLF = 0;
+    termin->encodingMode = UTF8;
+    termin->conversionData = 0;
+    inputfile[0] = termin;
+  }
+#endif
+
   buffer[first] = 0; /* In case there are no arguments.  */
 
   if (optind < argc) { /* We have command line arguments.  */
     int k = first;
     for (i = optind; i < argc; i++) {
+#ifdef XeTeX
+      unsigned char *ptr = (unsigned char *)&(argv[i][0]);
+      /* need to interpret UTF8 from the command line */
+      UInt32 rval;
+      while (rval = *(ptr++)) {
+        UInt16 extraBytes = bytesFromUTF8[rval];
+        switch (extraBytes) { /* note: code falls through cases! */
+          case 5: rval <<= 6; if (*ptr) rval += *(ptr++);
+          case 4: rval <<= 6; if (*ptr) rval += *(ptr++);
+          case 3: rval <<= 6; if (*ptr) rval += *(ptr++);
+          case 2: rval <<= 6; if (*ptr) rval += *(ptr++);
+          case 1: rval <<= 6; if (*ptr) rval += *(ptr++);
+          case 0: ;
+        };
+        rval -= offsetsFromUTF8[extraBytes];
+        /* now rval is a USV; if it's >=64K, we need to put surrogates in the buffer */
+        if (rval > 0xFFFF) {
+          rval -= 0x10000;
+          buffer[k++] = 0xd800 + rval / 0x0400;
+          buffer[k++] = 0xdc00 + rval % 0x0400;
+        }
+        else
+          buffer[k++] = rval;
+      }
+#else
       char *ptr = &(argv[i][0]);
       /* Don't use strcat, since in Omega the buffer elements aren't
          single bytes.  */
       while (*ptr) {
         buffer[k++] = *(ptr++);
       }
+#endif
       buffer[k++] = ' ';
     }
     argc = 0;	/* Don't do this again.  */
@@ -384,11 +432,12 @@ topenin P1H(void)
 
   /* One more time, this time converting to TeX's internal character
      representation.  */
-#if !defined(Omega) && !defined(eOmega) && !defined(Aleph)
+#if !defined(Omega) && !defined(eOmega) && !defined(Aleph) && !defined(XeTeX)
   for (i = first; i < last; i++)
     buffer[i] = xord[buffer[i]];
 #endif
 }
+
 
 /* IPC for TeX.  By Tom Rokicki for the NeXT; it makes TeX ship out the
    DVI file in a pipe to TeXView so that the output can be displayed
@@ -583,7 +632,7 @@ ipcpage P1C(int, is_eof)
 
 #if defined (TeX) || defined (MF) || defined (MP)
   /* TCX and Omega get along like sparks and gunpowder. */
-#if !defined(Omega) && !defined(eOmega) && !defined(Aleph)
+#if !defined(Omega) && !defined(eOmega) && !defined(Aleph) && !defined(XeTeX)
 
 /* Return the next number following START, setting POST to the following
    character, as in strtol.  Issue a warning and return -1 if no number
@@ -684,7 +733,7 @@ readtcxfile P1H(void)
     WARNING1 ("Could not open char translation file `%s'", orig_filename);
   }
 }
-#endif /* !Omega && !eOmega && !Aleph */
+#endif /* !Omega && !eOmega && !Aleph && !XeTeX */
 #endif /* TeX || MF || MP [character translation] */
 
 /* Normalize quoting of filename -- that is, only quote if there is a space,
@@ -772,7 +821,9 @@ static struct option long_options[]
 #endif /* IPC */
 #if !defined(Omega) && !defined(eOmega) && !defined(Aleph)
       { "mltex",                     0, &mltexp, 1 },
+#if !defined(XeTeX)
       { "enc",                       0, &enctexp, 1 },
+#endif /* !XeTeX */
 #endif /* !Omega && !eOmega && !Aleph */
 #if defined (eTeX) || defined(pdfeTeX) || defined(Aleph)
       { "etex",                      0, &etexp, 1 },
@@ -799,6 +850,11 @@ static struct option long_options[]
       { "translate-file",            1, 0, 0 },
       { "default-translate-file",    1, 0, 0 },
       { "8bit",                      0, &eightbitp, 1 },
+#if defined(XeTeX)
+      { "no-pdf",                 0, &nopdfoutput, 1 },
+      { "output-driver",          1, 0, 0 },
+      { "papersize",              1, 0, 0 },
+#endif /* XeTeX */
 #endif /* TeX || MF || MP */
 #if defined (TeX) || defined (MF)
       { "mktex",                     1, 0, 0 },
@@ -833,6 +889,13 @@ parse_options P2C(int, argc,  string *, argv)
 
     if (ARGUMENT_IS ("kpathsea-debug")) {
       kpathsea_debug |= atoi (optarg);
+
+#ifdef XeTeX
+    } else if (ARGUMENT_IS ("papersize")) {
+      papersize = optarg;
+    } else if (ARGUMENT_IS ("output-driver")) {
+      outputdriver = optarg;
+#endif
 
     } else if (ARGUMENT_IS ("progname")) {
       user_progname = optarg;
@@ -1436,6 +1499,7 @@ getrandomseed()
    to eof.  Otherwise, we return `true' and set last = first +
    length(line except trailing whitespace).  */
 
+#ifndef XeTeX /* for XeTeX, we have a replacement function in XeTeX_ext.c */
 boolean
 input_line P1C(FILE *, f)
 {
@@ -1481,6 +1545,7 @@ input_line P1C(FILE *, f)
 
     return true;
 }
+#endif /* !XeTeX */
 
 /* This string specifies what the `e' option does in response to an
    error message.  */ 
@@ -1506,7 +1571,11 @@ calledit P4C(packedASCIIcode *, filename,
 
   /* Close any open input files, since we're going to kill the job.  */
   for (i = 1; i <= inopen; i++)
+#ifdef XeTeX
+    xfclose (inputfile[i]->f, "inputfile");
+#else
     xfclose (inputfile[i], "inputfile");
+#endif
 
   /* Replace the default with the value of the appropriate environment
      variable or config file value, if it's set.  */
@@ -1737,15 +1806,45 @@ checkpoolpointer (poolpointer poolptr, size_t len)
 }
 
 #if !defined(pdfTeX) && !defined(pdfeTeX)
-static int
+#ifndef XeTeX	/* XeTeX uses this from XeTeX_mac.c */
+static
+#endif
+int
 maketexstring(const_string s)
 {
   size_t len;
+#ifdef XeTeX
+  UInt32 rval;
+  unsigned char* cp = (unsigned char*)s;
+#endif
   assert (s != 0);
   len = strlen(s);
-  checkpoolpointer (poolptr, len);
+  checkpoolpointer (poolptr, len); /* in the XeTeX case, this may be more than enough */
+#ifdef XeTeX
+  while (rval = *(cp++)) {
+  UInt16 extraBytes = bytesFromUTF8[rval];
+  switch (extraBytes) { /* note: code falls through cases! */
+    case 5: rval <<= 6; if (*cp) rval += *(cp++);
+    case 4: rval <<= 6; if (*cp) rval += *(cp++);
+    case 3: rval <<= 6; if (*cp) rval += *(cp++);
+    case 2: rval <<= 6; if (*cp) rval += *(cp++);
+    case 1: rval <<= 6; if (*cp) rval += *(cp++);
+    case 0: ;
+  };
+  rval -= offsetsFromUTF8[extraBytes];
+  if (rval > 0xffff) {
+    rval -= 0x10000;
+    strpool[poolptr++] = 0xd800 + rval / 0x0400;
+    strpool[poolptr++] = 0xdc00 + rval % 0x0400;
+  }
+  else
+    strpool[poolptr++] = rval;
+  }
+#else
   while (len-- > 0)
     strpool[poolptr++] = *s++;
+#endif
+
   return (makestring());
 }
 #endif
@@ -1786,18 +1885,22 @@ compare_paths P2C(const_string, p1, const_string, p2)
   return ret;
 }
 
+#ifdef XeTeX
+#define strstartar strstart
+#endif
+
 string
 gettexstring P1C(strnumber, s)
 {
   poolpointer i, len;
   string name;
-#if !defined(Omega) && !defined(eOmega) && !defined(Aleph)
+#if !defined(Omega) && !defined(eOmega) && !defined(Aleph) && !defined(XeTeX)
   len = strstart[s + 1] - strstart[s];
 #else
   len = strstartar[s + 1 - 65536L] - strstartar[s - 65536L];
 #endif
   name = (string)xmalloc (len + 1);
-#if !defined(Omega) && !defined(eOmega) && !defined(Aleph)
+#if !defined(Omega) && !defined(eOmega) && !defined(Aleph) && !defined(XeTeX)
   strncpy (name, (string)&strpool[strstart[s]], len);
 #else
   /* Don't use strncpy.  The strpool is not made up of chars. */
@@ -1806,6 +1909,10 @@ gettexstring P1C(strnumber, s)
   name[len] = 0;
   return name;
 }
+
+#ifdef XeTeX
+#undef strstartar
+#endif
 
 boolean
 isnewsource P2C(strnumber, srcfilename, int, lineno)

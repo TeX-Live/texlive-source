@@ -6,6 +6,21 @@
 #include <kpathsea/c-pathch.h> /* for IS_DIR_SEP, used in the change files */
 #include <kpathsea/tex-make.h> /* for kpse_make_tex_discard_errors */
 
+#ifdef XeTeX
+/* added typedefs for unicodefile and voidpointer */
+#define XETEX_UNICODE_FILE_DEFINED	1
+typedef struct {
+  FILE *f;
+  long  savedChar;
+  short skipNextLF;
+  short encodingMode;
+  void *conversionData;
+} UFILE;
+typedef UFILE* unicodefile;
+
+typedef void* voidpointer;
+#endif
+
 /* If we have these macros, use them, as they provide a better guide to
    the endianess when cross-compiling. */
 #if defined (BYTE_ORDER) && defined (BIG_ENDIAN) && defined (LITTLE_ENDIAN)
@@ -37,6 +52,9 @@
 #elif defined (eTeX)
 #define TEXMFPOOLNAME "etex.pool"
 #define TEXMFENGINENAME "etex"
+#elif defined (XeTeX)
+#define TEXMFPOOLNAME "xetex.pool"
+#define TEXMFENGINENAME "xetex"
 #elif defined (Omega)
 #define TEXMFPOOLNAME "omega.pool"
 #define TEXMFENGINENAME "omega"
@@ -153,7 +171,11 @@ extern void ipcpage P1H(int);
 
 /* Read a line of input as quickly as possible.  */
 #define	inputln(stream, flag) input_line (stream)
+#ifdef XeTeX
+extern boolean input_line P1H(UFILE *);
+#else
 extern boolean input_line P1H(FILE *);
+#endif
 
 /* This routine has to return four values.  */
 #define	dateandtime(i,j,k,l) get_date_and_time (&(i), &(j), &(k), &(l))
@@ -201,6 +223,9 @@ extern void setupboundvariable P3H(integer *, const_string, integer);
 #define wopenin(f)	open_input (&(f), DUMP_FORMAT, FOPEN_RBIN_MODE)
 #define wopenout	bopenout
 #define wclose		aclose
+#ifdef XeTeX
+#define uopenin(f,p,m,d) u_open_in(&(f), p, FOPEN_RBIN_MODE, m, d)
+#endif
 
 /* Used in tex.ch (section 1338) to get a core dump in debugging mode.  */
 #ifdef unix
