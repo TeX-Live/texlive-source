@@ -15,19 +15,23 @@
 #
 # This is a generated file.
 #
-# Copyright (C) 2004 by Scott Pakin <scott+pt@pakin.org>
+# Copyright (C) 2006, Scott Pakin <scott+pt@pakin.org>
 #
 # This file may be distributed and/or modified under the conditions
-# of the LaTeX Project Public License, either version 1.2 of this
+# of the LaTeX Project Public License, either version 1.3c of this
 # license or (at your option) any later version.  The latest
 # version of this license is in:
 #
 #    http://www.latex-project.org/lppl.txt
 #
-# and version 1.2 or later is part of all distributions of LaTeX
-# version 1999/12/01 or later.
+# and version 1.3c or later is part of all distributions of LaTeX
+# version 2006/05/20 or later.
 #-------------------------------------------------------------------
 
+sub top_level_eval ($)
+{
+    return eval $_[0];
+}
 use Safe;
 use Opcode;
 use Getopt::Long;
@@ -49,6 +53,7 @@ my $fromflag;
 my $doneflag;
 my $logfile;
 my $sandbox = new Safe;
+my $sandbox_eval;
 my $latexpid;
 $latexprog = $ENV{"PERLTEX"} || "latex";
 Getopt::Long::Configure("require_order", "pass_through");
@@ -97,9 +102,14 @@ if (!$latexpid) {
     exec {$latexcmdline[0]} @latexcmdline;
     die "exec('@latexcmdline'): $!\n";
 }
-@permittedops=(":browse") if $#permittedops==-1;
-@permittedops=(Opcode::full_opset()) if !$runsafely;
-$sandbox->permit_only (@permittedops);
+if ($runsafely) {
+    @permittedops=(":browse") if $#permittedops==-1;
+    $sandbox->permit_only (@permittedops);
+    $sandbox_eval = sub {$sandbox->reval($_[0])};
+}
+else {
+    $sandbox_eval = \&top_level_eval;
+}
 while (1) {
     my $awaitexists = sub {
       while (!-e $_[0]) {
@@ -136,12 +146,18 @@ while (1) {
     }
     my $perlcode;
     if ($optag eq "DEF") {
-      $perlcode =
-          sprintf "sub %s {%s}\n",
-          $macroname, $otherstuff[0];
+        $perlcode =
+            sprintf "sub %s {%s}\n",
+            $macroname, $otherstuff[0];
+    }
+    elsif ($optag eq "USE") {
+        $perlcode = sprintf "%s (%s);\n", $macroname, join(", ", @otherstuff);
+    }
+    elsif ($optag eq "RUN") {
+        $perlcode = $otherstuff[0];
     }
     else {
-      $perlcode = sprintf "%s (%s);\n", $macroname, join(", ", @otherstuff);
+        die "${progname}: Internal error -- unexpected operation tag \"$optag\"\n";
     }
     print LOGFILE "#" x 31, " PERL CODE ", "#" x 32, "\n";
     print LOGFILE $perlcode, "\n";
@@ -151,13 +167,13 @@ while (1) {
         my $warningmsg;
         local $SIG{__WARN__} =
             sub {chomp ($warningmsg=$_[0]); return 0};
-        $result = $sandbox->reval ($perlcode);
+        $result = $sandbox_eval->($perlcode);
         if (defined $warningmsg) {
             $warningmsg =~ s/at \(eval \d+\) line \d+\W+//;
             print LOGFILE "# ===> $warningmsg\n\n";
         }
     }
-    $result="" if !$result;
+    $result="" if !$result || $optag eq "RUN";
     if ($@) {
         my $msg = $@;
         $msg =~ s/at \(eval \d+\) line \d+\W+//;
