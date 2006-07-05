@@ -1,3 +1,8 @@
+2006-07-06  Karl Berry  <karl@tug.org>
+
+	* dvips.texi: mention -tunknown to avoid floating to predefined
+	paper size. From Vincent Fourmond, tex-k mail, 25apr06.
+
 2006-06-02  Karl Berry  <karl@tug.org>
 
 	* dvips.texi: typo
