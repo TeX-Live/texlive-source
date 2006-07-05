@@ -1073,9 +1073,11 @@ packages, e.g., @samp{hyperref.sty}.
 
 @item -T @var{hsize},@var{vsize}
 @opindex -T @var{hsize},@var{vsize}
-Set the paper size to (@var{hsize},@var{vsize}), a comma-separated pair
-of dimensions such as @samp{.1in,-.3cm} (@pxref{papersize special}).  It
-overrides any paper size special in the DVI file.
+Set the paper size to (@var{hsize},@var{vsize}), a comma-separated
+pair of dimensions such as @samp{.1in,-.3cm} (@pxref{papersize
+special}).  It overrides any paper size special in the DVI file.  Be
+careful, as the paper size will stick to a predefined size if there is
+one close enough. To disable this behavior, use @samp{-tunknown}.}
 
 @item -u @var{psmapfile}
 @opindex -u @var{psmapfile}
