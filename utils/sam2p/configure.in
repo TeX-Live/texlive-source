@@ -1,0 +1,222 @@
+dnl
+dnl configure.in -- for sam2p
+dnl by pts@fazekas.hu at Thu Nov  1 22:46:51 CET 2001
+dnl Mon Mar  4 08:56:35 CET 2002
+dnl
+dnl Dat: autoheader stops reading the file at the 1st error
+dnl Imp: concat (TCL, Ruby)
+dnl Imp: stringify
+dnl Imp: C and C++
+dnl Imp: warnings
+dnl OK : traditional C
+dnl Imp: ctype
+dnl Imp: check for socklen_t
+
+dnl Process this file with autoconf to produce a configure script.
+
+AC_INIT(gensi.cpp)
+AC_CONFIG_HEADER(config.h)
+AC_PTS_ENABLE_DEBUG
+
+AC_MSG_CHECKING([for --enable-lzw])
+AC_ARG_ENABLE(lzw,
+  [  --enable-lzw            enable built-in LZW (de)compression (def: no)],
+  [], [])
+if test x1 = x"`perl -e 'print time>1056165811'`"; then
+  # After 19 June 2003: default: yes
+  if test x"$enable_lzw" = x"no"; then
+    AC_MSG_RESULT(no)
+  else
+    AC_MSG_RESULT(yes)
+    AC_DEFINE(USE_BUILTIN_LZW)
+    dnl AC_MSG_WARN(LZW was patented till 19 June 2003; ask permission from Unisys to use it!)
+  fi
+else
+  if test x"$enable_lzw" = x"yes"; then
+    AC_MSG_RESULT(yes)
+    AC_DEFINE(USE_BUILTIN_LZW)
+    AC_MSG_WARN(LZW is patented till 19 June 2003; ask permission from Unisys to use it!)
+  else
+    AC_MSG_RESULT(no)
+  fi
+fi
+
+dnl Sun Jul  7 23:58:11 CEST 2002
+AC_MSG_CHECKING([for --enable-zip])
+AC_ARG_ENABLE(zip,
+  [  --enable-zip            enable built-in ZIP compression (def: yes)],
+  [], [])
+if test x"$enable_zip" = x"no"; then
+  AC_MSG_RESULT(no)
+else
+  AC_MSG_RESULT(yes)
+  AC_DEFINE(USE_BUILTIN_ZIP)
+fi
+
+dnl Sun Jul  7 23:58:11 CEST 2002
+AC_MSG_CHECKING([for --enable-fax])
+AC_ARG_ENABLE(fax,
+  [  --enable-fax            enable built-in Fax compression (def: yes)],
+  [], [])
+if test x"$enable_fax" = x"no"; then
+  AC_MSG_RESULT(no)
+else
+  AC_MSG_RESULT(yes)
+  AC_DEFINE(USE_BUILTIN_FAXE)
+fi
+
+AC_MSG_CHECKING([for --enable-gif])
+AC_ARG_ENABLE(gif,
+  [  --enable-gif            enable reading and writing GIF images (def: no)],
+  [], [])
+if test x"$enable_gif" = x"yes"; then
+  AC_MSG_RESULT(yes)
+  AC_DEFINE(USE_IN_GIF)
+  AC_DEFINE(USE_OUT_GIF)
+  AC_MSG_WARN(GIF is a resistered trademark of Compuserve; ask permission from them to use it!)
+else
+  AC_MSG_RESULT(no)
+fi
+
+dnl Checks for programs.
+dnl AC_PROG_CC
+AC_LANG_CPLUSPLUS
+CXXFLAGS=" "
+dnl ^^^ set it to non-empty, so AC_PROG_CXX won't include `-g'
+CCC="$CCC g++"
+dnl ^^^ check g++ before c++ (see acspecific.m4, grep AC_PROG_CXX)
+AC_PROG_CXX
+
+AC_SUBST(GFLAG)
+if test x"$ac_cv_prog_cxx_g" = xyes; then GFLAG=-g; else GFLAG=""; fi
+dnl ac_cv_prog_cc_g also
+
+AC_PTS_PROG_CXXFLAGS(fs, -fsigned-char)
+AC_PTS_PROG_CXXFLAGS(nrne, -fno-rtti -fno-exceptions)
+dnl ^^^ `g++ -fno-rtti': disables `typeinfo' (??) and run-time type identification
+dnl ^^^ `g++ -fno-exceptions': disables catch and throw
+AC_PTS_PROG_CXXFLAGSB(apwaw, -ansi -pedantic -Wall -W)
+dnl vvv gcc-3.2 gives too many stupid warnings with -Wtraditional
+dnl AC_PTS_PROG_CXXFLAGSB(-Wtraditional)
+AC_PTS_PROG_CXXFLAGSB(ptscxxopts, -felide-constructors -Wstrict-prototypes dnl
+-Wpointer-arith -Wcast-align -Winline dnl
+-Wcast-qual -Wmissing-prototypes)
+AC_PTS_CHECK_IGNORING(nebfcmd,-W -Wall -Wnested-externs -Wbad-function-cast -Wmissing-declarations)
+if test x"$ac_cv_pts_ignoring_nebfcmd" = xyes
+then ac_cv_prog_cxx_nebfcmd=no
+fi
+AC_PTS_PROG_CXXFLAGSB(nebfcmd,-Wnested-externs -Wbad-function-cast -Wmissing-declarations)
+dnl vvv g++ version egcs-2.91.60 + gcc version 2.7.2.3 requires
+dnl     `g++ -fno-rtti -fno-exceptions' for AC_PTS_GCC_LINKS_CXX to be `yes'
+AC_PTS_GCC_LINKS_CXX
+
+AC_PTS_WARN_PROG(cjpeg, [cjpeg is required for /Compression/IJG])
+AC_PTS_WARN_PROG(djpeg, [djpeg is required for loading JPEG files])
+AC_PTS_WARN_PROG(tif22pnm, [tif22pnm is required for loading TIFF files])
+AC_PTS_WARN_PROG(tifftopnm, [tifftopnm might become useful for loading TIFF files])
+AC_PTS_WARN_PROG(pngtopnm, [pngtopnm might become useful for loading PNG files])
+dnl AC_PTS_WARN_PROG(gs, [gs is required for /Compression/Fax, and might become recommended for /Compression/ZIP])
+AC_PTS_WARN_PROG(gs, [gs is recommended for viewing PS files[,] and might become recommended for /Compression/ZIP])
+AC_PTS_WARN_PROG(lzw_codec, [lzw_codec might become recommended for /Compression/LZW])
+AC_PTS_WARN_PROG(gzip, [gzip might become useful for /Compression/ZIP])
+AC_PTS_WARN_PROG(zip, [zip might become useful for /Compression/ZIP])
+AC_PTS_ERR_PROG(bash, [bash is required for compiling this program])
+AC_PTS_ERR_PROG(make, [make is required for compiling this program])
+AC_PTS_ERR_PROG(perl, [perl is required for compiling this program])
+dnl AC_PTS_ERR_PROG(touch, [touch is required for compiling this program])
+dnl ^^^ as of 0.37, touch is not required
+
+#AC_CHECK_PROG(ac_pts_cjpeg, cjpeg, yes)
+
+dnl Checks for C/C++ language features
+AC_PTS_HAVE_STDC
+AC_PTS_HAVE_SWITCH_ENUM_BUG
+AC_PTS_ENSURE_ASCII_SYSTEM
+AC_C_CONST
+AC_PTS_C_VOLATILE
+AC_PTS_HAVE_STATIC_CONST
+
+dnl Checks for libraries.
+
+dnl Checks for header files.
+dnl AC_CHECK_HEADERS(stdio.h); exit 42
+dnl AC_CHECK_HEADERS(stdio.h stdlib.h unistd.h string.h strings.h)
+
+dnl Dat: getc_in_stdio fails for uClibc-0.9.14 _and_ `i386-uclibc-gcc -ansi'
+CXXFLAGS_save="$CXXFLAGS"
+CXXFLAGS="$CXXFLAGS -ansi"
+AC_PTS_CHECK_HEADER(stdio.h,  getc,    getc_in_stdio,    [return argc>42? getc(stdin)*0+1:0;])
+AC_PTS_CHECK_HEADER(stdio.h,  fgetc,   fgetc_in_stdio,   [return argc>42?fgetc(stdin)*0+1:0;])
+AC_PTS_CHECK_HEADER(stdio.h,  putc,    putc_in_stdio,    [return argc>42? putc(' ',stdout)*0+1:0;])
+AC_PTS_CHECK_HEADER(stdio.h,  fputc,   fputc_in_stdio,   [return argc>42?fputc(' ',stdout)*0+1:0;])
+CXXFLAGS="$CXXFLAGS_save"
+
+AC_PTS_CHECK_HEADER(stdio.h,  sprintf, sprintf_in_stdio, [char s[42]="X"; sprintf(s, "Hello, World!"); return *s!='H';] )
+AC_PTS_CHECK_HEADER(stdlib.h, atoi,    atoi_in_stdlib,   [return atoi("42")!=42;])
+AC_PTS_CHECK_HEADER(unistd.h, write,   write_in_unistd,  [return write(1,"what",0)!=0;])
+AC_PTS_CHECK_HEADER(stdlib.h, system,  system_in_stdlib, [/*>255 OK*/return system("true")!=0;])
+AC_PTS_CHECK_HEADER(sys/stat.h, lstat, lstat_in_sys_stat,[struct stat st; return 0!=lstat("/",&st);])
+AC_PTS_CHECK_STRING
+AC_PTS_CHECK_MALLOC
+AC_FUNC_ALLOCA
+AC_PTS_CFG_PRINTFGLEN
+AC_PTS_CFG_P_TMPDIR
+AC_PTS_HAVE_POPEN_
+if test $ac_cv_pts_have_popen_ = yes; then
+  ac_cv_pts_have_popen_b=no
+fi
+AC_PTS_HAVE_POPEN_B
+AC_PTS_HAVE_VSNPRINTF
+AC_PTS_HAVE_SYSTEMF
+
+dnl Checks for integral/pointer sizes.
+
+dnl AC_C_CHAR_UNSIGNED
+
+AC_PTS_CHECK_POINTERS
+dnl AC_PTS_CHECK_INTEGRALS -- alread in AC_PTS_CHECK_POINTERS
+dnl AC_REQUIRE([AC_PTS_CHECK_POINTERS])
+dnl AC_REQUIRE([AC_PTS_CHECK_INTEGRALS])
+dnl Dat: POINTERS, INTEGRALS order would result in `(cached)' without AC_REQUIRE
+dnl DAT: newer autoconfs disallow AC_REQUIRE(...) outside macros
+
+dnl ac_cv_alma=korte # Dat: automagically inserted into config.cache
+dnl AC_DEFINE(PTS_INT128_T, 42) # Dat: includes to conftest.h, config.h
+
+dnl cat confdefs.h # Dat: contains already AC_DEFINE()d symbols
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+dnl AC_TYPE_SIZE_T
+AC_PTS_CHECK_INTEGRAL_TYPE(size_t, unsigned)
+dnl AC_PTS_CHECK_INTEGRAL_TYPE(time_t, unsigned)
+dnl AC_PTS_CHECK_INTEGRAL_TYPE(mode_t, int)
+dnl AC_PTS_CHECK_INTEGRAL_TYPE(off_t, long)
+dnl AC_PTS_CHECK_INTEGRAL_TYPE(pid_t, int)
+dnl AC_PTS_CHECK_INTEGRAL_TYPE(dev_t, unsigned long)
+dnl dnl ^^^ Dat: unsigned PTS_INT64_T on Linux i386
+dnl AC_PTS_CHECK_INTEGRAL_TYPE(uid_t, unsigned)
+dnl AC_PTS_CHECK_INTEGRAL_TYPE(gid_t, unsigned)
+dnl AC_PTS_CHECK_INTEGRAL_TYPE(size_tt, signed)
+dnl Dat: AC_TYPE_SIGNAL is OK, there should be no AC_PTS_CHECK_* substitute
+dnl AC_PTS_TYPE_GETGROUPS
+dnl ^^^ doesn't work wth CPPFLAGS=-traditional
+AC_PTS_CHECK_SIZEOF(bool, -1)
+dnl ^^^ Dat: 0 #if (PC: 1, Digital Unix: 8, Solaris: 4)
+dnl ^^^ Dat: autoconf-2.54 AC_CHECK_SIZEOF checks sys/types.h sys/stat.h stdlib.h string.h memory.h strings.h inttypes.h stdint.h unistd.h 
+
+dnl Checks for library functions.
+dnl (None!)
+
+dnl Finishing.
+
+dnl AC_OUTPUT(config.h) -- bad!!
+dnl skipping AC_OUTPUT -- bad!!
+AC_OUTPUT(Makehelp)
+
+dnl AC_PTS_RUN_OK([perl -x -S ./ccdep.pl $CXX], [], [AC_MSG_ERROR(cannot compute depends)])
+rm -f Makedep
+AC_PTS_RUN_OK([make Makedep], [], [AC_MSG_ERROR(cannot compute depends)])
+AC_PTS_OK
+echo "configure done. Now you should run: make; make install"
+
+dnl end of configure.in

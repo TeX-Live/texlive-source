@@ -1,0 +1,33 @@
+<<%sam2p job file template (.cpp code is _not_ generated from this)
+  /InputFile pop
+  /OutputFile pop
+  /TmpRemove true  /LoadHints pop  /Templates pop
+  /Profile [<<
+    /FileFormat pop
+    /SampleFormat pop
+    /WarningOK true
+    /TransferEncoding pop
+    /Compression /None
+    /Predictor 1
+    /Transparent null
+    /Hints <<
+      /Effort -1
+      /RecordSize 0
+      /K 0
+      /Quality 75
+      /ColorTransform pop
+      /TransferCPL 78
+      /DCT <<>>
+      /EncoderColumns 0  /EncoderRows 0  /EncoderColors 0
+      /PredictorColumns 0   /PredictorBPC 0  /PredictorColors 0
+      /Comment  pop
+      /Title    pop
+      /Subject  pop
+      /Author   pop
+      /Creator  pop
+      /Producer pop
+      /Created  pop
+      /Produced pop
+    >>
+  >>]
+>>% __EOF__

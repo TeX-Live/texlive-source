@@ -1,0 +1,12 @@
+<<%sam2p-job; by pts@fazekas.hu at Sat Apr 20 19:03:10 CEST 2002
+/InputFile  (examples/ptsbanner.gif)
+/OutputFile (test.pdf)
+/Profile [
+  << /FileFormat/PDF1.0 /SampleFormat/Indexed8 /TransferEncoding/Hex
+     % /Compression/LZW /Predictor 15
+     % /Compression/RLE
+     /Compression/LZW /Predictor 2
+     % /Compression/LZW
+  >>
+ ]
+>>

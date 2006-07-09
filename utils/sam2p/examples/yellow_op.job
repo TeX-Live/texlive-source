@@ -1,0 +1,9 @@
+<<%sam2p-job; by Fri Mar 22 17:36:41 CET 2002
+/InputFile  (examples/yellow.gif)
+/OutputFile (test.eps)
+/Profile [
+  << /FileFormat/PSL1 /SampleFormat/Opaque /TransferEncoding/Binary /Compression/RLE >>
+  % << /FileFormat/PSL1 /SampleFormat/Transparent /TransferEncoding/Binary /Compression/RLE >>
+  % << /FileFormat/PSL2 /SampleFormat/Indexed2 /TransferEncoding/Binary /Compression/RLE >>
+ ]
+>>

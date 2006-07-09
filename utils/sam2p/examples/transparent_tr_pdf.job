@@ -1,0 +1,7 @@
+<<%sam2p-job; by pts@fazekas.hu at Wed Apr 17 13:26:00 CEST 2002
+/InputFile  (examples/transparent.gif)
+/OutputFile (test.pdf)
+/Profile [
+  << /FileFormat/PDFB1.2 /SampleFormat/Transparent /TransferEncoding/Binary /Compression/ZIP >>
+ ]
+>>

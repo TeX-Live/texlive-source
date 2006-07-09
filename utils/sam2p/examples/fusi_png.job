@@ -1,0 +1,9 @@
+<<%sam2p-job; by pts@fazekas.hu at Sat Apr 20 16:49:24 CEST 2002
+/InputFile  (examples/fusi.tiff)
+%/InputFile  (examples/fusiblack.ppm)
+/OutputFile (test.png)
+/Profile [
+  << /FileFormat/PNG /SampleFormat/Transparent4 /TransferEncoding/Binary
+     /Compression/ZIP /Predictor 15 >>
+ ]
+>>

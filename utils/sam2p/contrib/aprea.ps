@@ -1,0 +1,22 @@
+% anti-setpagedevice preamble by pts@inf.bme.hu in 2002.03.15
+userdict begin
+1 dict dup /ImagingBBox null put
+/setpagedevice where{
+  pop setpagedevice
+  /setpagedevice{% -dict:pagedevice- sp -
+    dup length dict copy
+    dup /PageSize undef  dup /ImagingBBox undef
+    dup /HWResolution undef
+    0}% changed to //setpagedevice in next line
+  dup dup length 1 sub 3 index load put bind   1 index
+  where{dup wcheck{3 1 roll put}{pop def}ifelse}{def}ifelse
+  % ^^^ instead of ef' -- redef at the appropriate place
+  }if
+[/11x17/a3/a4/a4small/b5/ledger/legal/letter/lettersmall/note
+/a0/a1/a2/a5/a6/a7/a8/a9/a10/b0/b1/b2/b3/b4/b5/c0/c1/c2/c3/c4
+/c5/c6/archE/archD/archC/archB/archA/flsa/flse/halfletter
+/tabloid/csheet/dsheet/esheet/executivepage/com10envelope
+/monarchenvelope/c5envelope/dlenvelope/folio/quarto]{
+dup where{dup wcheck{exch{}put}{pop{}def}ifelse}{pop}ifelse
+% ^^^ make these ops a no-op ({}) if they exist
+}forall  end% userdict

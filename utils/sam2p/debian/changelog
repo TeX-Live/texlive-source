@@ -1,0 +1,192 @@
+sam2p (0.45-2) unstable; urgency=low
+
+  * cgif.c is indicated to be free software.
+
+ -- Szabó Péter <pts@math.bme.hu>  Sun,  2 Jul 2006 23:04:21 +0200
+
+sam2p (0.45-1) unstable; urgency=low
+
+  * Small docs changes.
+  * Little bugfixes.
+
+ -- Szabó Péter <pts@math.bme.hu>  Sun,  2 Jul 2006 17:19:29 +0200
+
+sam2p (0.44-14) unstable; urgency=low
+
+  * assertion BUGFIX in image.cpp:1480 Image::SampledInfo::setSampleFormat()
+
+ -- Szabo Peter <pts@math.bme.hu>  Thu,  6 Apr 2006 15:13:11 +0200
+
+sam2p (0.44-13) unstable; urgency=low
+
+  * Added -j:quiet
+  * No >/dev/null on png22pnm and tif22pnm
+
+ -- Szabó Péter <pts@math.bme.hu>  Fri, 26 Aug 2005 08:29:56 +0200
+
+sam2p (0.44-12) unstable; urgency=low
+
+  * Fixed non-(0,0)-based EPS loading by putting `translate' after
+    `setpagedevice' in in_ps.cpp
+
+ -- Szabó Péter <pts@math.bme.hu>  Fri, 12 Aug 2005 23:13:38 +0200
+
+sam2p (0.44-11) unstable; urgency=low
+
+  * %%BeginData:; hack for GSView, as reported by Zoltán Petres
+
+ -- Szabó Péter <pts@math.bme.hu>  Tue, 17 May 2005 14:39:20 +0200
+
+sam2p (0.44-10) unstable; urgency=low
+
+  * encoder.cpp slen_t -> int fixes for 64-bit. Thanks to Stefan Fritsch.
+
+ -- Szabó Péter <pts@math.bme.hu>  Thu, 14 Apr 2005 09:23:01 +0200
+
+sam2p (0.44-9) unstable; urgency=low
+
+  * 64-bit fix (slen_t and slendiff_t), in reply to the
+    report by Stefan Fritsch.
+
+ -- Szabó Péter <pts@math.bme.hu>  Tue, 12 Apr 2005 20:51:40 +0200
+
+sam2p (0.44-8) unstable; urgency=low
+
+  * Added /ImageDPI and -m:dpi:, see README.
+  * Fixed a couple of bugs.
+
+ -- Szabó Péter <pts@winter>  Mon, 21 Feb 2005 23:53:51 +0100
+
+sam2p (0.44-7) unstable; urgency=low
+
+  * Updated copyright of pts_fax.c
+  * Updated copyright of cgif.c
+  * BUGFIX of JPEG -> EPS `delete tp' buf in appliers.cpp
+
+ -- Szabó Péter <pts@math.bme.hu>  Thu, 20 Jan 2005 15:11:23 +0100
+
+sam2p (0.44-6) unstable; urgency=low
+
+  * Re-ripped pts_defl.c from linux-2.6.8.1 (ZLIB 1.1.3),
+    formerly it was Info-ZIP 2.2
+  * BUGFIX in image.cpp
+  * Documentation fixes
+
+ -- Szabó Péter <pts@winter>  Tue, 18 Jan 2005 17:04:28 +0100
+
+sam2p (0.44-5) unstable; urgency=low
+
+  * Added -pdf:x (generate PDF with /XObject{}s).
+  * Changed PDF output so elements of /Kids are indirect references
+    (see the PDF Reference 1.5 for details).
+  * Added option: -transparent "#abcdef"
+
+ -- Szabó Péter <pts@winter>  Sat,  8 Jan 2005 12:29:10 +0100
+
+sam2p (0.44-4) unstable; urgency=low
+
+  * Some glitches of g++-3.4 avoided. Now sam2p compiles fine.
+  * -l:gs=-r216 support for PDF.
+
+ -- Szabó Péter <pts@math.bme.hu>  Thu,  6 Jan 2005 10:59:50 +0100
+
+sam2p (0.44-3) unstable; urgency=low
+
+  * minor fixes, documentation addons
+
+ -- Szabó Péter <pts@math.bme.hu>  Tue,  1 Jun 2004 18:50:15 +0200
+
+sam2p (0.44-2) unstable; urgency=low
+
+  * Added answers to FAQ in README.
+
+ -- Szabó Péter <pts@math.bme.hu>  Fri,  5 Mar 2004 19:54:44 +0100
+
+sam2p (0.44-1) unstable; urgency=low
+
+  * bugfixes
+  * PDF, PS and EPS import
+  * compressed bts2.ttt, so target sam2p is smaller (ps_tiny --copy)
+  * printf("%.16g") in configure
+
+ -- Szabó Péter <pts@math.bme.hu>  Wed,  1 Oct 2003 19:49:32 +0200
+
+sam2p (0.43-4) unstable; urgency=low
+
+  * Allow to read stdin from a pipe
+  * Recognize SOF2 (progressive) JPEG and other non-baseline types
+  * Fixed SimBuffer::Flat::copyRange
+
+ -- Szabó Péter <pts@math.bme.hu>  Tue, 11 Mar 2003 14:10:37 +0100
+
+sam2p (0.43-3) unstable; urgency=low
+
+  * Merged with CVS, created Debian source packages.
+
+ -- Szabó Péter <pts@math.bme.hu>  Wed, 12 Feb 2003 20:51:58 +0100
+
+sam2p (0.43-2) unstable; urgency=low
+
+  * Added proper Description:, Depends: and Build-Depends: to
+    debian/changelog, modified the Makefile to respect $(DESTDIR) etc.
+
+ -- Szabó Péter <pts@winter>  Fri,  7 Feb 2003 14:16:56 +0100
+
+sam2p (0.43-1) unstable; urgency=low
+
+  * Initial Debian release.
+  * PDF generation bugfixes
+  * PDF /MediaBox is output into a separate line near the beginning of file
+    (graphicP compatibility)
+
+sam2p (0.41) unstable; urgency=low
+
+  * vcsam2p.exe (graphic .exe with Visual Studio 6.0), merged
+  * added Below feature -m:lower:5
+  * png22pnm support
+  * Debian Slink pdfTeX integration
+
+ -- Szabó Péter <pts@winter>  Wed,  5 Feb 2003 18:40:12 +0100
+
+sam2p (0.41) unstable; urgency=low
+
+  * All earlier versions listed here:
+  * 0.29 Apr 4 2002
+       sam2p_article.tex preliminary version
+  * 0.30 Sat Apr  6 09:19:23 CEST 2002
+  * 0.31 -- Fri Apr 12 23:54:57 CEST 2002
+       not working TCL/TK GUI, sam2p_article corrected
+  * 0.32 Sat Apr 13 12:55:09 CEST 2002 --
+       PCX input, class Encoder, class Decoder
+  * 0.33 JPEG, TIFF, PNG input. JPEG output.
+  * 0.34 PDF output, PNG output.
+  * 0.35 Fri Apr 26 08:28:41 CEST 2002
+       transparency, gui, sam2p_talk, EuroBachoTeX 2002
+  * 0.36 Sat May 26 14:06:09 CEST 2002
+       Blanca bugfixes
+  * 0.37 Sat Jun  1 14:06:43 CEST 2002
+       ccdep.pl, --enable-debug, XPM output, opaque TIFF output,
+       more PS output, BMP output, transparent PNM output, one-liner mode,
+       XWD output, PS output with margins, autoconf consts,
+       built-in CCITTFaxEncode
+  * 0.38 Tue Sep  3 20:16:59 CEST 2002
+       Many portability bugfixes. Now more versions of GNU C++ compilers and
+       more achitectures are tested and supported.
+       gcc-3.1 or gcc-3.2 compliance (AC_C_CONST working const; with autoconf
+       2.53)
+  * 0.39 -j:warn, allow /OutputFile(-) (stdout) in one-liner mode,
+       one-liner mode with src == dst filename `--', EPS margins, PDF margins,
+       -m, scaling PS output command line, PSL1 Gray ZIP&LZW in all
+       TransferEncodings
+  * 0.40 Wed Dec 11 19:24:31 CET 2002
+       builds out-of-the box (./configure ...; make -> sam2p.exe) on Win32 with MinGW32 + Perl
+  * 0.41 GIF and XPM load bugfixes
+       synchronized to GIMP tif22pnm
+       transparent(+?) TIFF output, really
+       better tif22pnm support
+
+ -- Szabó Péter <pts@winter>  Wed,  5 Feb 2003 11:40:12 +0100
+
+Local variables:
+mode: debian-changelog
+End:

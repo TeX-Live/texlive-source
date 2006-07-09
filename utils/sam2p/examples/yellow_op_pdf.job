@@ -1,0 +1,7 @@
+<<%sam2p-job; by pts@fazekas.hu at Wed Apr 17 13:15:22 CEST 2002
+/InputFile  (examples/yellow.gif)
+/OutputFile (test.pdf)
+/Profile [
+  << /FileFormat/PDF1.0 /SampleFormat/Opaque /TransferEncoding/AHx /Compression/RLE >>
+ ]
+>>

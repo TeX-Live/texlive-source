@@ -1,0 +1,12 @@
+<<%sam2p-job; by Fri Mar 22 17:36:41 CET 2002
+/InputFile  (examples/sziget_al.ppm)
+%/InputFile  (examples/sziget.gif)
+/OutputFile (test.eps)
+/Profile [
+  << /FileFormat/PSL2 /SampleFormat/Mask /TransferEncoding/Binary
+%     /Compression/RLE
+     /Compression/LZW
+%     /Compression/None
+  >>
+ ]
+>>

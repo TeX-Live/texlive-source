@@ -1,0 +1,1450 @@
+#!/usr/bin/wish -f
+#
+# sam2p.tk
+# by pts@fazekas.hu at Sat Apr  6 13:14:37 CEST 2002
+#
+# OK:  confirm quit
+# Imp: don't update widgets when error in job file
+# Imp: newline mangling when loading/saving files
+# Imp: /DCT, ability to type literal MiniPS code to an `entry'
+# Imp: Perl parser should signal error on <hex123> etc.
+# Imp: B2Press + Move + B2Release; inserts twice
+# Imp: initial `focus'
+# Imp: default values
+# Imp: tk-start with sh
+# Imp: to center of the resized window
+# Imp: tooltips (mouse button 2, 3)
+# Imp: less vertical padding
+# Imp: really detect what kind of -*-fixed fonts we have
+# Dat: TCL 8.0 doesn't have `string equal'
+# Dat: never do `.text mark set sel.first 1.5', beacuse this will override tag `sel'
+# Dat: `entry' widgets don't accept "insert + 1 chars" as a character index
+# Dat: tag-parser treats comments as legal tokens
+# Dat: <Insert> matches <Shift-Insert>, <Key-Insert> does not.
+# Dat: <Motion> is mouse motion event over the sub-window
+# Dat: <Enter> and <Leave> is an event sent when 
+# SUXX: Tcl: 8.0 doesn't have [string map ...]
+# SUXX: Tk: radio and checkbuttons cannot be made smaller or larger
+# SUXX: Tk: color for -relief cannot be specified
+# SUXX: Tk: on UNIX, Tk converts "Times New Roman" to "times" unless specified as "-*-times new roman-*-*-*-*-*-*-*-*-*-*-iso8859-1"
+# SUXX: Tk: .text cursor width cannot be extended to the right only (not to the left)
+# SUXX: Tk: .text cannot show the last line on the top unless first==last
+# SUXX: Tk bug: echo `bind . <ButtonRelease-2> {put got}' | wish
+#       Test: 1. press button2 2. move mouse 3. release button 4. move mouse
+#       `got' is printed twice. Strange: works fine with button 1 and 3.
+#       Even the following doesn't help:
+#       echo `bind . <B2-ButtonRelease-2> {put got}' | wish
+#       Even event parameters are useless to distinguish normal and duplicate
+#       events. This is a bug even on all other X11 clients. May be a GPM bug
+#       or an xlib bug??
+
+# puts [file type alma]
+
+proc pts_PATH_sep {} {
+  global tcl_platform
+  if {0==[string compare windows $tcl_platform(platform)]} {return ;}
+  return :
+  # Imp: `macintosh'
+}
+
+proc pts_read_ok {filename} {
+  if {0==[string length $filename]} {return 0}
+  if {[catch {set t [file type $filename]}]} {
+    if {[catch {set t [file type [file dirname $filename]]}]} {return !d}
+    return !e
+  }
+  if {0!=[string compare $t file]} {return !f}
+  if {![file readable $filename]} {return !r}
+  return OK
+}
+
+proc pts_write_ok {filename} {
+  if {0==[string length $filename]} {return 0}
+  if {[catch {set t [file type $filename]}]} {
+    if {[catch {set t [file type [set dir [file dirname $filename]]]}]} {return !d}
+    if {0==[string compare $t directory] && [file writable $dir]} {return ++}
+    return !dw
+  }
+  if {0!=[string compare $t file]} {return !f}
+  if {![file writable $filename]} {return !w}
+  return OK
+}
+
+proc pts_direct_bindtags {w} {
+  #** Moves all binds associated with widget $w to directly widget itself.
+  ## Half idea: bindtags $w "$w [bindtags $w]"
+  # Dat: this assumes [lindex [bindtags $w] 0] == $w
+  foreach tag [bindtags $w] {
+    if {0!=[string compare $tag $w]} {
+      foreach evtseq [bind $tag] {
+        bind $w $evtseq [bind $w $evtseq]\n[bind $tag $evtseq]
+      }
+    }
+  }
+  bindtags $w $w
+}
+
+proc pts_readonly {w} {
+  #** @param $w text or entry
+  #** Makes the specified widget read-only. [$w configure -state disabled]
+  #** is not OK, because it makes the insertion cursor invisible.
+  pts_direct_bindtags $w
+  # SUXX: cannot be avoided. Example: we must disable <Key> (typing letters),
+  # but allow <Key-Left>
+  bind $w <Meta-Key-d> break
+  bind $w <Meta-Key-f> break
+  bind $w <Meta-Key-Delete> break
+  bind $w <Meta-Key-BackSpace> break
+  bind $w <Control-Key-d> break
+  bind $w <Control-Key-i> break
+  bind $w <Control-Key-k> break
+  bind $w <Control-Key-h> break
+  bind $w <Control-Key-t> break
+  bind $w <Key-BackSpace> break
+  bind $w <Key-Delete> break
+  bind $w <Key-Return> break
+  bind $w <Key-KP_Enter> break
+  bind $w <Key> break
+  bind $w <<PasteSelection>> break
+  bind $w <<Paste>> break
+  bind $w <<Cut>> break
+  bind $w <<Clear>> break
+}
+
+proc pts_readonly_color {w} {
+  #** Calls [pts_readonly $w], and sets widget colors etc. to make the user
+  #** see that it's a read-only widget.
+  pts_readonly $w
+  $w configure -background [[winfo toplevel $w] cget -background] -relief sunken
+}
+
+proc pts_listrev {list} {
+  # by pts@fazekas.hu at Sun Apr 21 21:08:20 CEST 2002
+  set i [llength $list]
+  set ret {}
+  while {$i>0} {incr i -1; lappend ret [lindex $list $i]}
+  return $ret
+}
+
+proc pts_listrev1 {list} {
+  #** Chops the 1st element of list, and returns the reverse of the rest.
+  # by pts@fazekas.hu at Sun Apr 21 21:08:20 CEST 2002
+  set i [llength $list]
+  set ret {}
+  while {$i>1} {incr i -1; lappend ret [lindex $list $i]}
+  return $ret
+}
+
+## puts [pts_listrev {1 2 {3 4}}]; exit
+
+set pts_unknown_font [font actual ..unknown..]
+proc pts_has_font {f} {
+  # by pts@fazekas.hu at Sat Apr  6 16:26:24 CEST 2002
+  # This is rather dirty, because there is no clean way to test whether a font
+  # exists in Tk.
+  #** return 1 or 0
+  global pts_unknown_font
+  if {0==[string compare fixed $f]} {return 1}
+  if {[string match -*-fixed-* $f]} {return 1} ;# Imp: first `*' shouldn't contain `-'
+  # Dat: pts_unknown_font is `fixed' on UNIX systems...
+  if {0==[string compare $pts_unknown_font [font actual $f]]} {return 0}
+  return 1
+}
+
+proc pts_last_font {first args} {
+  #** @param first,args list of font names (suitable arg for `-font' of widgets)
+  #** @return the last font name that is available
+  for {set i [llength $args]} {$i>0} {} {
+    incr i -1
+    if {[pts_has_font [set f [lindex $args $i]]]} {return $f}
+  }
+  return $first
+}
+
+proc pts_fix_shift_tab {} {
+  # by pts@fazekas.hu at Sat Apr  6 15:22:58 CEST 2002
+  set tmp [bind all <Shift-Key-Tab>]
+  ## puts $tmp
+  if {[string length $tmp]==0} {set tmp {tkTabToWindow [tk_focusPrev %]}}
+  bind all <Shift-Key-Tab> $tmp
+  catch {bind all <Key-ISO_Left_Tab> $tmp}
+  # ^^^ Dat: catch is here because some systems don't have ISO_Left_Tab
+}
+
+proc pts_fix_one_tab {wPath} {
+  # by pts@fazekas.hu at Sat Apr  6 15:38:43 CEST 2002
+  # pts_fix_shift_tab() should be called.
+  bind $wPath <Key-Tab> "[bind all <Key-Tab>]; break"
+  bind $wPath <Shift-Key-Tab> "[bind all <Shift-Key-Tab>]; break"
+  bind $wPath <Key-ISO_Left_Tab> "[bind all <Shift-Key-Tab>]; break"
+}
+
+proc pts_tag_set_first {w tagName index} {
+  if {[$w tag nextrange $tagName 1.0 end] != ""} {
+    if {[$w compare $index < $tagName.last]} {
+      if {[$w compare $index < $tagName.first]} \
+        {$w tag add    $tagName $index $tagName.first} \
+        {$w tag remove $tagName $tagName.first $index}
+    } {
+      set tmp [$w index $tagName.last]
+      $w tag remove $tagName 1.0 end
+      $w tag add $tagName $tmp $index
+    }
+  }
+}
+proc pts_tag_set_last {w tagName index} {
+  if {[$w tag nextrange $tagName 1.0 end] != ""} {
+    if {[$w compare $index > $tagName.first]} {
+      if {[$w compare $index > $tagName.last]} \
+        {$w tag add    $tagName $tagName.last $index} \
+        {$w tag remove $tagName $index $tagName.last}
+    } {
+      set tmp [$w index $tagName.first]
+      $w tag remove $tagName 1.0 end
+      $w tag add $tagName $index $tmp
+    }
+  }
+}
+
+proc pts_paste {w} {catch {
+  set tmp [$w index insert]
+  $w insert insert [selection get -displayof $w -selection CLIPBOARD]
+  $w tag remove sel 0.1 end
+  $w tag add sel $tmp insert
+}}
+
+proc pts_text_insert_newline {w autoindent} {
+  #** Doesn't respect overstrike mode (neither does Turbo Pascal).
+  #** Does auto-indenting of spaces and tabs.
+  if {[$w cget -state] == "disabled"} {return}
+  if $autoindent {
+    if {![string length [set tmp [$w search -regexp "\[^ \t]" {insert linestart} {insert lineend}]]]} {set tmp "insert lineend"}
+    $w insert insert \n[$w get {insert linestart} $tmp]
+  } {$w insert insert \n}
+  $w see insert  
+}
+proc pts_text_autoindent {w bool} {
+  if $bool {} ;# early error message if bool is malformed
+  bind $w <Return> "pts_text_insert_newline %W $bool; break"
+}
+
+# vvv Overriding text.tcl, so we won't clobber the visible selection.
+proc tkTextInsert {w s} {
+  if {($s == "") || ([$w cget -state] == "disabled")} {return}
+  if {[string match "* 1" [bind $w <Insert>]]} {
+    # vvv in overstrike mode, overstrike only in the middle of the line
+    if {[$w compare insert != "insert lineend"]} {$w delete insert}
+  }
+  $w insert insert $s; $w see insert
+}
+
+#proc pts_text_insert {w s overstrike} {
+#  if {($s == "") || ([$w cget -state] == "disabled")} {return}
+#  set tmp [$w index insert]
+#  # vvv in overstrike mode, overstrike only in the middle of the line
+#  if {$overstrike && [$w compare insert != "insert lineend"]} {$w delete insert}
+#  $w insert insert $s; $w see insert
+#}
+proc pts_text_overstrike {w bool} {
+  #puts [$w configure -insertontime]
+  #puts [$w configure -insertofftime]
+  if {$bool} {$w configure -insertofftime 0} \
+             {$w configure -insertofftime [lindex [$w configure -insertofftime] 3]}
+  # Dat: we cannot override the widget's <KeyPress> method here, because then
+  #      we won't be able to receive cursor movement etc. events, see docs in
+  #      bindtags(n) and bind(n). So support must be built into tkTextInsert,
+  #      since `bind Text <KeyPress> {tkTextInsert %W %A}' is the default.
+  # bind Text <KeyPress> "pts_text_insert %W %A $bool; break ;#alma"
+  focus .; focus $w ;# trick to avoid non-reblinking bug in Tk8.0 Linux.
+}
+proc pts_text_toggle_overstrike {w bool} {
+  if {$bool} {set bool 0} {set bool 1}
+  pts_text_overstrike $w $bool
+  bind $w <Insert> "pts_text_toggle_overstrike %W $bool"
+}
+proc pts_text_auto_overstrike {w bool} {
+  #** Sets overstrike mode, and binds Insert to do the switching. A
+  #** non-blinking cursor indicates overstrike mode. (Tk is too stupid to draw
+  #** a block cursor.)
+  #** @param w a text widget
+  pts_text_overstrike $w $bool
+  bind $w <Key-Insert> "pts_text_toggle_overstrike %W $bool"
+}
+
+# redefine tkScrollButtonDown, so it won't `sunken' the slider
+# (se tcl8.2/scrlbar.tcl)
+proc tkScrollButtonDown {w x y} {
+  global tkPriv
+  set tkPriv(relief) [$w cget -activerelief]
+  if {0==[string compare slider [set element [$w identify $x $y]]]} {
+    tkScrollStartDrag $w $x $y
+  } else {
+    $w configure -activerelief sunken
+    tkScrollSelect $w $element initial
+  }
+}
+proc tkScrollButton2Down {w x y} {
+  global tkPriv
+  set element [$w identify $x $y]
+  if {0==[string compare $element arrow1]||0==[string compare $element arrow2]} {
+    tkScrollButtonDown $w $x $y
+    return
+  }
+  tkScrollToPos $w [$w fraction $x $y]
+  set tkPriv(relief) [$w cget -activerelief]
+  update idletasks
+  # $w configure -activerelief sunken
+  $w activate slider
+  tkScrollStartDrag $w $x $y
+}
+
+option add *Dialog.msg.wrapLength 3i widgetDefault
+proc pts_message_box {args} {
+    global sa_normfont
+    #** similar to tkMessageBox; ignores platform's native MessageBox support.
+    global tkPriv tcl_platform
+
+    set w tkPrivMsgBox
+    upvar #0 $w data
+
+    #
+    # The default value of the title is space (" ") not the empty string
+    # because for some window managers, a 
+    #		wm title .foo ""
+    # causes the window title to be "foo" instead of the empty string.
+    #
+    set specs {
+	{-default "" "" ""}
+        {-icon "" "" "info"}
+        {-message "" "" ""}
+        {-parent "" "" .}
+        {-title "" "" " "}
+        {-type "" "" "ok"}
+    }
+
+    tclParseConfigSpec $w $specs "" $args
+
+    if {[lsearch {info warning error question} $data(-icon)] == -1} {
+	error "invalid icon \"$data(-icon)\", must be error, info, question or warning"
+    }
+    if {$tcl_platform(platform) == "macintosh"} {
+	if {$data(-icon) == "error"} {
+	    set data(-icon) "stop"
+	} elseif {$data(-icon) == "warning"} {
+	    set data(-icon) "caution"
+	} elseif {$data(-icon) == "info"} {
+	    set data(-icon) "note"
+	}
+    }
+
+    if {![winfo exists $data(-parent)]} {
+	error "bad window path name \"$data(-parent)\""
+    }
+
+    switch -- $data(-type) {
+	abortretryignore {
+	    set buttons {
+		{abort  -width 6 -text Abort -under 0}
+		{retry  -width 6 -text Retry -under 0}
+		{ignore -width 6 -text Ignore -under 0}
+	    }
+	}
+	ok {
+	    set buttons {
+		{ok -width 6 -text OK -under 0}
+	    }
+	    if {$data(-default) == ""} {
+		set data(-default) "ok"
+	    }
+	}
+	okcancel {
+	    set buttons {
+		{ok     -width 6 -text OK     -under 0}
+		{cancel -width 6 -text Cancel -under 0}
+	    }
+	}
+	retrycancel {
+	    set buttons {
+		{retry  -width 6 -text Retry  -under 0}
+		{cancel -width 6 -text Cancel -under 0}
+	    }
+	}
+	yesno {
+	    set buttons {
+		{yes    -width 6 -text Yes -under 0}
+		{no     -width 6 -text No  -under 0}
+	    }
+	}
+	yesnocancel {
+	    set buttons {
+		{yes    -width 6 -text Yes -under 0}
+		{no     -width 6 -text No  -under 0}
+		{cancel -width 6 -text Cancel -under 0}
+	    }
+	}
+	default {
+	    error "invalid message box type \"$data(-type)\", must be abortretryignore, ok, okcancel, retrycancel, yesno or yesnocancel"
+	}
+    }
+
+    if {[string compare $data(-default) ""]} {
+	set valid 0
+	foreach btn $buttons {
+	    if {![string compare [lindex $btn 0] $data(-default)]} {
+		set valid 1
+		break
+	    }
+	}
+	if {!$valid} {
+	    error "invalid default button \"$data(-default)\""
+	}
+    }
+
+    # 2. Set the dialog to be a child window of $parent
+    #
+    #
+    if {[string compare $data(-parent) .]} {
+	set w $data(-parent).__tk__messagebox
+    } else {
+	set w .__tk__messagebox
+    }
+
+    # 3. Create the top-level window and divide it into top
+    # and bottom parts.
+
+    catch {destroy $w}
+    toplevel $w -class Dialog
+    wm title $w $data(-title)
+    wm iconname $w Dialog
+    wm protocol $w WM_DELETE_WINDOW { }
+    wm transient $w $data(-parent)
+    if {$tcl_platform(platform) == "macintosh"} {
+	unsupported1 style $w dBoxProc
+    }
+
+    frame $w.bot
+    pack $w.bot -side bottom -fill both
+    frame $w.top
+    pack $w.top -side top -fill both -expand 1
+    if {$tcl_platform(platform) != "macintosh"} {
+	$w.bot configure -relief raised -bd 1
+	$w.top configure -relief raised -bd 1
+    }
+
+    # 4. Fill the top part with bitmap and message (use the option
+    # database for -wraplength so that it can be overridden by
+    # the caller).
+
+    label $w.msg -justify left -text $data(-message)
+    #catch {$w.msg configure -font \
+    #		-Adobe-Times-Medium-R-Normal--*-180-*-*-*-*-*-*
+    #}
+    pack $w.msg -in $w.top -side right -expand 1 -fill both -padx 3m -pady 3m
+    if {$data(-icon) != ""} {
+	label $w.bitmap -bitmap $data(-icon)
+	pack $w.bitmap -in $w.top -side left -padx 3m -pady 3m
+    }
+
+    # 5. Create a row of buttons at the bottom of the dialog.
+
+    set i 0
+    foreach but $buttons {
+	set name [lindex $but 0]
+	set opts [lrange $but 1 end]
+	if {![string compare $opts {}]} {
+	    # Capitalize the first letter of $name
+	    set capName \
+		[string toupper \
+		    [string index $name 0]][string range $name 1 end]
+	    set opts [list -text $capName]
+	}
+
+	eval button $w.$name $opts -font $sa_normfont -borderwidth 1 -pady 2 -underline 0  -command [list "set tkPriv(button) $name"]
+
+	if {![string compare $name $data(-default)]} {
+	    $w.$name configure -default active
+	}
+	pack $w.$name -in $w.bot -side left -expand 1 \
+	    -padx 3m -pady 2m
+
+	# create the binding for the key accelerator, based on the underline
+	#
+	set underIdx [$w.$name cget -under]
+	if {$underIdx >= 0} {
+	    set key [string index [$w.$name cget -text] $underIdx]
+	    bind $w <Alt-[string tolower $key]>  "$w.$name invoke"
+	    bind $w <Alt-[string toupper $key]>  "$w.$name invoke"
+	}
+	incr i
+    }
+
+    # 6. Create a binding for <Return> on the dialog if there is a
+    # default button.
+
+    if {[string compare $data(-default) ""]} {
+	bind $w <Return> "tkButtonInvoke $w.$data(-default)"
+    }
+
+    # 7. Withdraw the window, then update all the geometry information
+    # so we know how big it wants to be, then center the window in the
+    # display and de-iconify it.
+
+    wm withdraw $w
+    update idletasks
+    set x [expr {[winfo screenwidth $w]/2 - [winfo reqwidth $w]/2 \
+	    - [winfo vrootx [winfo parent $w]]}]
+    set y [expr {[winfo screenheight $w]/2 - [winfo reqheight $w]/2 \
+	    - [winfo vrooty [winfo parent $w]]}]
+    wm geom $w +$x+$y
+    wm deiconify $w
+
+    # 8. Set a grab and claim the focus too.
+
+    set oldFocus [focus]
+    set oldGrab [grab current $w]
+    if {$oldGrab != ""} {
+	set grabStatus [grab status $oldGrab]
+    }
+    grab $w
+    if {[string compare $data(-default) ""]} {
+	focus $w.$data(-default)
+    } else {
+	focus $w
+    }
+
+    # 9. Wait for the user to respond, then restore the focus and
+    # return the index of the selected button.  Restore the focus
+    # before deleting the window, since otherwise the window manager
+    # may take the focus away so we can't redirect it.  Finally,
+    # restore any grab that was in effect.
+
+    tkwait variable tkPriv(button)
+    catch {focus $oldFocus}
+    destroy $w
+    if {$oldGrab != ""} {
+	if {$grabStatus == "global"} {
+	    grab -global $oldGrab
+	} else {
+	    grab $oldGrab
+	}
+    }
+    return $tkPriv(button)
+}
+
+
+# ---
+
+proc sa_radio {framePath variable value labelCaption args} {
+  global $variable sa_normfont
+  # Imp: use -text
+  set $variable ""
+  frame $framePath
+  lappend args -variable $variable -value $value -indicatoron true -borderwidth 1
+  # lappend args -value $value -indicatoron true -borderwidth 1
+  eval "radiobutton $framePath.r $args"
+
+  $framePath.r configure -activebackground [$framePath.r cget -background]
+  label $framePath.l -text $labelCaption -font $sa_normfont ;# Imp: Why doesn't -anchor work??
+  bind $framePath.l <ButtonRelease-1> "$framePath.r invoke"
+  pack $framePath.r $framePath.l -side left
+  # bind $framePath.r <Key-ISO_Left_Tab> {tkTabToWindow [tk_focusPrev %W]}
+}
+#proc sa_radio_pack {framePath} {}
+proc sa_check {wPath variable labelCaption args} {
+  global sa_boldfont
+  # Imp: clicking to the right from the caption shouldn't have effect
+  lappend args -font $sa_boldfont -text $labelCaption -anchor w -borderwidth 1 -variable $variable
+  eval "checkbutton $wPath $args"
+  $wPath configure -activebackground [$wPath cget -background]
+}
+
+proc sa_check_update {wPath variable labelCaption} {
+  sa_check $wPath $variable $labelCaption -command "update_check $variable $wPath"
+}
+
+proc sa_int {framePath variable labelCaption entryWidth args} {
+  # Imp: clicking to the right from the caption shouldn't have effect
+  # Imp: check for int...
+  global sa_normfont sa_boldfont
+  frame $framePath ;# may already exist??
+  label $framePath.l -text $labelCaption -font $sa_boldfont
+  lappend args -relief sunken -width $entryWidth -font $sa_normfont \
+    -borderwidth 1 -foreground black -background white \
+    -selectbackground yellow -selectforeground black -selectborderwidth 0
+  eval "entry $framePath.i $args"
+  pack $framePath.l $framePath.i -side left
+  # $framePath configure -activebackground [$framePath cget -background]
+}
+
+proc sa_w_text {args} {
+  lappend args -relief solid -highlightcolor gray30 \
+    -borderwidth 1 -foreground black -background white \
+    -selectbackground gray85 -selectforeground black -selectborderwidth 0
+  eval "text $args"
+}
+
+proc sa_w_entry {args} {
+  lappend args -relief sunken -borderwidth 1 -foreground black -background white \
+    -selectbackground yellow -selectforeground black -selectborderwidth 0
+  eval "entry $args"
+}
+
+set sa_frame 0
+proc sa_vframe {parentPath} {
+  #** Creates and packs vertical frame, which is 5 pixel high
+  global sa_frame
+  set w $parentPath.saf[incr sa_frame]
+  frame $w -height 5 -width 1
+  pack $w -fill x
+}
+
+# vvv The mouse must be used to insert visible selection (of other apps)
+bind Text <Insert> {}
+
+bind Text <B2-Motion> {}
+bind Text <Button-2> {}
+# puts T[bind Text]T
+
+
+# vvv allow the well-known (almost indrustry standard) Windows/Borland/GTK
+#     cliboard key bindings on all platforms
+event add <<Cut>> <Control-Key-x> <Shift-Key-Delete>    
+event add <<Copy>> <Control-Key-c> <Control-Key-Insert>
+event add <<Paste>> <Control-Key-v> <Shift-Key-Insert>
+# event add <<PasteSelection>> <ButtonRelease-2>
+# Dat: <<Paste>> is normal, <Control-Key-v> paste, which requires prior
+#      <Control-Key-c>. Works across applications.
+# Dat: <<PasteSelection>> is xterm/netscape-like paste, which does not
+#      require <Control-Key-c>. Also works across applications.
+
+# vvv this <<Paste>> deletes current selection even on UNIX; but we don't like that
+# bind Text <<Paste>> {catch {%W delete sel.first sel.last}; catch {%W insert insert [selection get -displayof %W -selection CLIPBOARD]}}
+# vvv this <<Paste>> leaves visible selection intact
+# bind Text <<Paste>> {catch {%W insert insert [selection get -displayof %W -selection CLIPBOARD]}}
+# vvv this <<Paste>> sets visible selection to the newly pasted data
+bind Text <<Paste>> {pts_paste %W}
+
+# vvv our <<PasteSelection>> doesn't move the cursor (like xterm, unlike Motif)
+bind Text <<PasteSelection>> {pts_text_paste_selection %W %x %y}
+
+bind Text <B2-Motion> {}
+bind Text <Button-2> {}
+
+# bind Text <ButtonRelease-2> {puts evt; pts_text_paste_selection %W %x %y}
+#catch {
+#event delete <<PasteSelection>> <ButtonRelease-2>
+#}
+#catch {
+#event add <<PasteSelection>> <B2-ButtonRelease-2>
+#event add <<PasteSelection>> <Button-2>
+#}
+
+# puts EI[event info <<PasteSelection>>]
+# puts A[event info <<PasteSelection>>]BN
+
+proc pts_text_paste_selection {w x y} {
+  #** If has focus, than pastes visible selection to the unchanged cursor
+  #** position; otherwise claims focus and sets cursor position to mouse.
+  if {0==[string compare $w [focus -displayof $w]]} {
+    catch {$w insert insert [selection get -displayof $w]}
+    if {0==[string compare normal [$w cget -state]]} {focus $w}
+  } {$w mark set insert [tkTextClosestGap $w $x $y]; focus $w}
+}
+
+
+# vvv overrides text.tcl, doesn't clobber the selection.
+bind Text <1> {tkTextButton1 %W %x %y}
+
+proc ptsTextDelLn W {
+  # puts [%W index {insert linestart}]..[%W index {insert lineend + 1 chars}]
+  if {[$W compare {insert lineend + 1 chars} == end]} {
+    # <Control-y> in the last line must not move the cursor
+    $W delete {insert linestart} {insert lineend}
+  } {
+    $W delete {insert linestart} {insert lineend + 1 chars}
+  }
+}
+
+# vvv Overriding text.tcl, so we won't clobber the visible selection when moving
+#     the cursor or just inserting
+proc tkTextSetCursor {w pos} {
+  if {[$w compare $pos == end]} {set pos {end - 1 chars}}
+  $w mark set insert $pos
+  # $w tag remove sel 1.0 end
+  $w see insert
+}
+
+# vvv Overriding text.tcl, so PageUp and PageDown will jump within the page.
+proc tkTextScrollPages {w count} {
+  set tmp [expr {([$w cget -height]-1)*$count}]
+  $w yview scroll $tmp units
+  return "insert + $tmp lines"
+}
+
+# vvv Overrides text.tcl with Turbo Pascal-style Shift+Arrow selection:
+#     Shift+Movement-key, when moved _from_ either end of the selection,
+#     updates that end appropriately. Otherwise, it clobbers the selection,
+#     and creates a new selection from the current `insert' position to the
+#     position the cursor is moved to.
+proc tkTextKeySelect {w newIndex} {
+  # puts "[$w index insert] -> [$w index $newIndex] ([$w index end])"
+  if {[$w compare end == $newIndex]} {set newIndex "end - 1 char"}
+  $w mark set anchor insert
+  if {[$w tag nextrange sel 1.0 end] == ""} {
+    if {[$w compare $newIndex < insert]} {$w tag add sel $newIndex insert} {$w tag add sel insert $newIndex}
+  } { # already have a selection
+    # puts "a=[$w index sel.first]-[$w index sel.last] i=[$w index insert]"
+    if {[$w compare insert == sel.first]} {pts_tag_set_first $w sel $newIndex} \
+    elseif {[$w compare insert == sel.last]} {pts_tag_set_last $w sel $newIndex} \
+    { $w tag remove sel 1.0 end
+      if {[$w compare $newIndex < insert]} {$w tag add sel $newIndex insert} {$w tag add sel insert $newIndex}
+    }
+  }
+  $w mark set insert $newIndex; $w see insert
+  update idletasks
+  # puts "[$w tag ranges sel]"
+  # puts "b=[$w index sel.first]-[$w index sel.last] i=[$w index insert]"
+}
+
+# Imp: ^K B: Control-Space, ^K K: Control-Shift-Space
+
+bind Text <Control-Key-y> {ptsTextDelLn %W}
+bind Text <Control-Key-Y> [bind Text <Control-Key-y>]
+bind Text <Control-Key-d> {if {[%W compare {insert + 1 chars} != end]} {%W delete insert}}
+# ^^^ ensures that pressing `Delete' on the last empty line is a no-op
+bind Text <Key-Delete> [bind Text <Control-Key-d>]
+# ^^^ don't clobber visible selection
+bind Text <Key-BackSpace> {if {[%W compare insert != 1.0]} {%W delete insert-1c; %W see insert}}
+# ^^^ don't clobber visible selection
+
+proc pts_entry_Delete {w} {
+  set i 0
+  set j -1
+  set k -1
+  set i [$w index insert]
+  catch {set j [$w index sel.first]}
+  catch {set k [$w index sel.last]}
+  if {0==[string compare $i $j] || 0==[string compare $i $k]} \
+    {$w delete sel.first sel.last} \
+    {$w delete insert}
+}
+
+bind Entry <B2-Motion> {}
+bind Entry <Button-2> {}
+
+# vvv Overrides entry.tcl, so it won't clobber the selection.
+bind Entry <Key-Delete> {pts_entry_Delete %W}
+# vvv Overrides entry.tcl, so it won't clobber the selection.
+bind Entry <Control-Key-d> {pts_entry_Delete %W}
+bind Entry <Control-Key-i> {%W insert insert \t}
+
+# vvv Overrides entry.tcl, so it won't clobber the selection.
+proc tkEntrySetCursor {w pos} {$w icursor $pos; tkEntrySeeInsert $w}
+# vvv Overrides entry.tcl, so it won't clobber the selection.
+proc tkEntryInsert {w s} {if {[string length $s]} {
+  $w insert insert $s
+  tkEntrySeeInsert $w
+}}
+# vvv Overrides entry.tcl with Turbo Pascal look and feel.
+proc tkEntryKeySelect {w new} {
+  if {[$w selection present]} {
+    set i [$w index insert]
+    if {[$w index sel.first]==$i}    {$w selection from sel.last} \
+    elseif {[$w index sel.last]==$i} {$w selection from sel.first} \
+    {$w selection from insert}
+  } {$w selection from insert}
+  $w selection to $new
+  $w icursor $new
+  # tkEntrySeeInsert will be called by our caller.
+}
+# vvv Overrides entry.tcl, so it won't clobber the selection.
+proc tkEntryBackspace w {
+  set x [expr {[$w index insert] - 1}]
+  if {$x >= 0} {$w delete $x}
+  if {[$w index @0] >= [$w index insert]} {
+    set range [$w xview]
+    set left [lindex $range 0]
+    set right [lindex $range 1]
+    $w xview moveto [expr {$left - ($right - $left)/2.0}]
+  }
+}
+
+proc pts_entry_paste_selection {w x y} {
+  #** If has focus, than pastes visible selection to the unchanged cursor
+  #** position; otherwise claims focus and sets cursor position to mouse.
+  if {0==[string compare $w [focus -displayof $w]]} {
+    catch {$w insert insert [selection get -displayof $w]}
+    if {0==[string compare normal [$w cget -state]]} {focus $w}
+  } {$w icursor [tkEntryClosestGap $w $x]; focus $w}
+}
+bind Entry <<PasteSelection>> {pts_entry_paste_selection %W %x %y}
+bind Entry <Insert> {} ;# <Shift-Insert> already OK.
+
+
+# vvv override tk.tcl, so it won't select the whole Entry when tab is pressed}
+proc tkTabToWindow w {focus $w}
+
+# ---
+
+# vvv Imp: improve this on Windows
+set sa_normfont [pts_last_font \
+  system variable helvetica \
+  arial {arial -12 normal} \
+  -adobe-helvetica-medium-r-normal--11-*-100-100-*-*-iso8859-* \
+  -adobe-helvetica-medium-r-normal--12-*-75-75-*-*-iso8859-* \
+  sansserif dialog}]
+set sa_boldfont [pts_last_font \
+  sansserif system variable helvetica \
+  arial {arial -12 bold} \
+  -adobe-helvetica-bold-r-normal--12-*-75-75-*-*-iso8859-1 \
+  -adobe-helvetica-bold-r-normal--11-80-100-100-p-60-iso8859-1 \
+  dialogb]
+set sa_fixfont [pts_last_font \
+  fixed systemfixed fixsedsys monospaced monospace \
+  -*-fixed-*-*-*--13-*-*-*-*-*-iso8859-1 \
+  -misc-fixed-medium-r-semicondensed--13-*-75-75-*-*-iso8859-1 \
+  6x13]
+# puts sa_normfont=$sa_normfont; puts sa_boldfont=$sa_boldfont
+# Dat: 100 DPI, 14-point Helvetica is too large, 11-point is somewhat small
+
+option add *Dialog.msg.font $sa_normfont ;# respected
+option add *Dialog.Button*font $sa_boldfont ;# respected
+
+wm title . {sam2p Job Editor}
+set tk_StrictMotif 0
+pts_fix_shift_tab
+# . configure -bg red
+
+
+frame .gtop
+
+set g .gtop.g0
+frame $g
+
+label $g.lFileFormat -text FileFormat -anchor w -font $sa_boldfont
+sa_radio $g.fPSL1 FileFormat PSL1 "PS L1" -command {update_radio FileFormat PSL1}
+sa_radio $g.fPSLC FileFormat PSLC "PS LC" -command {update_radio FileFormat PSLC}
+sa_radio $g.fPSL2 FileFormat PSL2 "PS L2" -command {update_radio FileFormat PSL2}
+sa_radio $g.fPSL3 FileFormat PSL3 "PS L3" -command {update_radio FileFormat PSL3}
+sa_radio $g.fPDFB10 FileFormat PDFB1.0 "PDF B 1.0" -command {update_radio FileFormat PDFB1.0}
+sa_radio $g.fPDFB12 FileFormat PDFB1.2 "PDF B 1.2" -command {update_radio FileFormat PDFB1.2}
+sa_radio $g.fPDF10 FileFormat PDF1.0 "PDF 1.0" -command {update_radio FileFormat PDF1.0}
+sa_radio $g.fPDF12 FileFormat PDF1.2 "PDF 1.2" -command {update_radio FileFormat PDF1.2}
+sa_radio $g.fGIF89a FileFormat GIF89a "GIF 89a" -command {update_radio FileFormat GIF89a}
+sa_radio $g.fEmpty FileFormat Empty Empty -command {update_radio FileFormat Empty}
+sa_radio $g.fMeta FileFormat Meta Meta -command {update_radio FileFormat Meta}
+sa_radio $g.fPNM FileFormat PNM PNM -command {update_radio FileFormat PNM}
+sa_radio $g.fPAM FileFormat PAM PAM -command {update_radio FileFormat PAM}
+sa_radio $g.fPIP FileFormat PIP PIP -command {update_radio FileFormat PIP}
+sa_radio $g.fJPEG FileFormat JPEG JPEG -command {update_radio FileFormat JPEG}
+sa_radio $g.fTIFF FileFormat TIFF TIFF -command {update_radio FileFormat TIFF}
+sa_radio $g.fPNG FileFormat PNG PNG -command {update_radio FileFormat PNG}
+
+pack $g.lFileFormat -fill x
+pack $g.fPSL1 $g.fPSLC $g.fPSL2 $g.fPSL3 $g.fPDFB10 $g.fPDFB12 $g.fPDF10 $g.fPDF12 $g.fGIF89a \
+ $g.fEmpty $g.fMeta $g.fPNM $g.fPAM $g.fPIP $g.fJPEG $g.fTIFF $g.fPNG -fill x
+frame $g.pFileFormat -height 5 -width 1
+pack $g.pFileFormat -fill x
+
+
+set g .gtop.g1
+frame $g
+
+label $g.lSampleFormat -text SampleFormat -anchor w -font $sa_boldfont
+sa_radio $g.fOpaque SampleFormat Opaque Opaque -command {update_radio SampleFormat Opaque}
+sa_radio $g.fTransparent SampleFormat Transparent Transparent -command {update_radio SampleFormat Transparent}
+sa_radio $g.fGray1 SampleFormat Gray1 "Gray 1" -command {update_radio SampleFormat Gray1}
+sa_radio $g.fIndexed1 SampleFormat Indexed1 "Indexed 1" -command {update_radio SampleFormat Indexed1}
+sa_radio $g.fMask SampleFormat Mask Mask -command {update_radio SampleFormat Mask}
+sa_radio $g.fTransparent2 SampleFormat Transparent2 "Transparent 2" -command {update_radio SampleFormat Transparent2}
+sa_radio $g.fGray2 SampleFormat Gray2 "Gray 2" -command {update_radio SampleFormat Gray2}
+sa_radio $g.fIndexed2 SampleFormat Indexed2 "Indexed 2" -command {update_radio SampleFormat Indexed2}
+sa_radio $g.fTransparent4 SampleFormat Transparent4 "Transparent 4" -command {update_radio SampleFormat Transparent4}
+sa_radio $g.fRGB1 SampleFormat RGB1 "RGB 1" -command {update_radio SampleFormat Rgb1}
+sa_radio $g.fGray4 SampleFormat Gray4 "Gray 4" -command {update_radio SampleFormat Gray4}
+sa_radio $g.fIndexed4 SampleFormat Indexed4 "Indexed 4" -command {update_radio SampleFormat Indexed4}
+sa_radio $g.fTransparent8 SampleFormat Transparent8 "Transparent 8" -command {update_radio SampleFormat Transparent8}
+sa_radio $g.fRgb2 SampleFormat Rgb2 "RGB 2" -command {update_radio SampleFormat Rgb2}
+sa_radio $g.fGray8 SampleFormat Gray8 "Gray 8" -command {update_radio SampleFormat Gray8}
+sa_radio $g.fIndexed8 SampleFormat Indexed8 "Indexed 8" -command {update_radio SampleFormat Indexed8}
+sa_radio $g.fRgb4 SampleFormat Rgb4 "RGB 4" -command {update_radio SampleFormat Rgb4}
+sa_radio $g.fRgb8 SampleFormat Rgb8 "RGB 8" -command {update_radio SampleFormat Rgb8}
+pack $g.lSampleFormat -fill x
+pack $g.fOpaque $g.fTransparent $g.fGray1 $g.fIndexed1 $g.fMask $g.fTransparent2 $g.fGray2 $g.fIndexed2 $g.fTransparent4 \
+ $g.fRGB1 $g.fGray4 $g.fIndexed4 $g.fTransparent8 $g.fRgb2 $g.fGray8 \
+ $g.fIndexed8 $g.fRgb4 $g.fRgb8 -fill x
+frame $g.pSampleFormat -height 5 -width 1
+pack $g.pSampleFormat -fill x
+
+set g .gtop.g2
+frame $g
+
+proc find_val_range {key} {
+  #** @param key for example "/Compression", "/InputFile", of type tKey
+  #** @return "" or [beg end] abs.index of the value associated with that key
+  #**   (may span multiple tokens)
+  global jtw ;# text widget containing the tagged job file
+  set end 1.0
+  while {[llength [set lst [$jtw tag nextrange tKey $end]]]} {
+    set beg [lindex $lst 0]
+    set end [lindex $lst 1]
+    ##puts "key=<[$jtw get $beg $end]>"
+    set ikey [$jtw get $beg $end]
+    if {0==[string compare $ikey $key]} {
+
+      ## puts prev=[$jtw tag prevrange tAny $end]
+      set lst [$jtw tag prevrange tAny $end]
+      if {0!=[llength $lst] && [$jtw compare [lindex $lst 0] < $end]
+                            && [$jtw compare $end < [lindex $lst 1]]} {
+        set lst [list $end [lindex $lst 1]]
+      } {
+        if {![llength [set lst [$jtw tag nextrange tAny $end]]]} return ""
+        # ^^^ Imp: show error: found, but no value
+      }
+      ##puts "lst=$lst end=$end."
+      ##eval "puts \[$jtw get $lst\]"
+      if {2!=[llength [set tns [$jtw tag names [lindex $lst 0]]]]} return ""
+      # ^^^ Imp: show error: found, but untagged value
+      ##puts LT=[lindex $tns 1]:$tns:
+      if {![llength [set lst [$jtw tag nextrange [lindex $tns 1] $end]]]} return ""
+      # ^^^ This trick is used to find only a single tag. A single tag often
+      #     means a single PostScript token, but -- for example `(a)(b)' and
+      #     `[]' contain a single tag, but two tokens.
+      # Imp: show better error message
+      set white [$jtw get $end [lindex $lst 0]]
+      ##puts aaa($white)
+      if {[regexp "\[^\\000\011-\015 ]" $white]} return ""
+      # ^^^ Imp: show error: key and value separated by non-whitespace
+      ##puts bbb
+      set beg [lindex $lst 0]
+      set end [lindex $lst 1]
+      set val [$jtw get $beg $end]
+      set openc [expr {2*[string match <<* $val]+[string match \\\[* $val]}] ;# ]
+      ## puts "openc=$openc; val=<$val>"
+      if {$openc} {
+        set end "$beg + $openc chars"
+        set openc 1
+        while {1} {
+          if {![llength [set lst [$jtw tag nextrange tBrac $end]]]} return ""
+          # ^^^ Imp: show error: unclosed >>
+          set val [$jtw get [lindex $lst 0] [lindex $lst 1]]
+          if {[string match <<* $val]} {incr openc; set end 2} \
+          elseif {[string match \\\[* $val]} {incr openc; set end 1} \
+          elseif {[string match >>* $val]} {incr openc -1; set end 2} \
+          elseif {[string match \]* $val]} {incr openc -1; set end 1} \
+          {return ""}
+          # ^^^ Imp: show error: invalid tBrac
+          set end "[lindex $lst 0] + $end chars"
+          if {!$openc} {return "$beg [$jtw index $end]"}
+        }
+      }
+      # puts "val=<$val>"
+      # return [$jtw get $beg $end]
+      return $lst
+    }
+  }
+  return ""
+}
+
+proc update_psval {key newval} {
+  #** return oldval or ""
+  global jtw
+  if {![llength [set found [find_val_range $key]]]} {return ""}
+  set oldval [eval "$jtw get $found"]
+  eval "$jtw delete $found"
+  set found [lindex $found 0]
+  if {[string match /* $newval]} {$jtw insert $found $newval {tAny tNameval}} \
+  elseif {[string match (* $newval]} {$jtw insert $found $newval {tAny tString}} \
+  elseif {[string match \[-0-9\]* $newval]} {$jtw insert $found $newval {tAny tInt}} \
+  {$jtw insert $found $newval {tAny tSing}}
+  $jtw mark set insert "$found + 1 chars"; $jtw see insert
+  return $oldval
+}
+
+proc update_radio {key newval} {
+  global jtw
+  # puts "got=([find_val_range /Compression])"
+  #set found [find_val_range /Hints]
+  # set found [find_val_range /Profile]
+  #puts "found=$found."
+  #puts "is=([$jtw get [lindex $found 0] [lindex $found 1]])."
+  if {![string length [update_psval /$key /$newval]]} {
+    bell
+    pts_message_box -title Warning -message "Cannot find key /$key. Please verify that the .job file is correct."
+  }
+}
+
+proc update_check {key wPath} {
+  set varname [$wPath cget -variable]
+  global $varname
+  if {[set $varname]} {update_psval /$key true} {update_psval /$key false}
+}
+
+#set psstr_map ""
+#proc psstr_map_init {} {
+#  for {set i 0} {$i<32} {incr i} {lappend psstr_map [format %c $i] [format \\%02o $i]}
+#  for {set i 127} {$i<256} {incr i} {lappend psstr_map [format %c $i] [format \\%02o $i]}
+#}
+#(\\)'
+#psstr_map_init
+#regexp {^[] -'+-[^]+} str
+
+proc pts_psstr_q {str} {
+  #** This would be <60 chars in Perl. TCL is stupid, lame and sloow.
+  set ret ""
+  while {1} {
+    regexp {^[] -'+-[^-~]*} $str head
+    # ^^^ rejects low-unprintable, >=127, backslash, lparen and rparen
+    set ret $ret$head
+    if {[string length $str]==[set headlen [string length $head]]} break
+    scan [string index $str $headlen] %c charcode
+    set ret $ret[format \\%03o [expr {$charcode&255}]]
+    set str [string range $str [expr {1+$headlen}] end]
+  }
+  return $ret
+}
+
+proc update_str {key newval empty} {
+  # Imp: regsub...
+  # set newval [string map $psstr_map $newval]
+  if {[string length $newval]} {set newval ([pts_psstr_q $newval])} {set newval $empty}
+  if {![string length [update_psval /$key $newval]]} {
+    bell
+    pts_message_box -title Warning -message "Cannot find key /$key. Please verify that the .job file is correct."
+  }
+}
+
+proc update_int {key newval empty} {
+  if {[catch {set intval [expr {0+$newval}]}] || [string compare $intval $newval]} {set intval $empty}
+  if {![string length [update_psval /$key $intval]]} {
+    bell
+    pts_message_box -title Warning -message "Cannot find key /$key. Please verify that the .job file is correct."
+  }
+}
+
+proc but_save {} {
+  global jtw jfn
+  set f [open [$jfn get] w]
+  catch {fconfigure $f -encoding binary} ;# TCL 8.2
+  fconfigure $f -translation binary
+  puts -nonewline $f [$jtw get 1.0 end]
+  close $f
+  # bell
+}
+
+set tmpfnb "sam2p_tmp_[pid]"
+
+proc but_relight {} {
+  # Imp: error checks
+  # Imp: \n transl
+  # set f [open |[list tr a-z A-Z >tmp.tmp] w]
+  global jtw tmpfnb
+  set f [open "|perl -I. -Msam2ptol -e sam2ptol::highlight $jtw >$tmpfnb.tjb" w]
+  catch {fconfigure $f -encoding binary} ;# TCL 8.2
+  fconfigure $f -translation binary
+  puts -nonewline $f [$jtw get 1.0 end]
+  close $f
+  set f [open $tmpfnb.tjb r]
+  catch {fconfigure $f -encoding binary} ;# TCL 8.2
+  fconfigure $f -translation binary
+  # puts [read $f]
+  eval [read $f]
+  close $f
+  file delete -- $tmpfnb.tjb
+}
+
+proc but_load {} {
+  global jtw jfn tmpfnb
+  if {[catch {set f [open [$jfn get] r]} err]} {
+    pts_message_box -message "Load failed: $err"
+  } {
+    catch {fconfigure $f -encoding binary} ;# TCL 8.2
+    fconfigure $f -translation binary
+    $jtw delete 1.0 end
+    $jtw insert end [read $f]
+    close $f
+    but_relight
+    # bell
+
+    global InputFile InputFileOK
+    set InputFile ""
+    if {[llength [set found [find_val_range /InputFile]]]} {
+      set val [eval "$jtw get $found"]
+      if {[string match (*) $val]} {
+        # vvv Imp: real PS backslash interpolation, not TCL
+        set InputFile [subst -nocommands -novariables [string range $val 1 [expr {[string length $val]-2}]]]
+      }
+    }
+    set InputFileOK [pts_read_ok $InputFile]
+
+    global OutputFile OutputFileOK
+    set OutputFile ""
+    if {[llength [set found [find_val_range /OutputFile]]]} {
+      set val [eval "$jtw get $found"]
+      if {[string match (*) $val]} {
+        # vvv Imp: real PS backslash interpolation, not TCL
+        set OutputFile [subst -nocommands -novariables [string range $val 1 [expr {[string length $val]-2}]]]
+      }
+    }
+    set OutputFileOK [pts_write_ok $OutputFile]
+
+    global FileFormat
+    set FileFormat ""
+    if {[llength [set found [find_val_range /FileFormat]]]} {
+      set FileFormat [string range [eval "$jtw get $found"] 1 end]
+    }
+
+    global SampleFormat
+    set SampleFormat ""
+    if {[llength [set found [find_val_range /SampleFormat]]]} {
+      set SampleFormat [string range [eval "$jtw get $found"] 1 end]
+    }
+
+    global Compression
+    set Compression ""
+    if {[llength [set found [find_val_range /Compression]]]} {
+      set Compression [string range [eval "$jtw get $found"] 1 end]
+    }
+
+    global TransferEncoding
+    set TransferEncoding ""
+    if {[llength [set found [find_val_range /TransferEncoding]]]} {
+      set TransferEncoding [string range [eval "$jtw get $found"] 1 end]
+    }
+
+    global Predictor
+    set Predictor ""
+    if {[llength [set found [find_val_range /Predictor]]]} {
+      set Predictor [eval "$jtw get $found"]
+    }
+
+    global TransferCPL
+    set TransferCPL ""
+    if {[llength [set found [find_val_range /TransferCPL]]]} {
+      set TransferCPL [eval "$jtw get $found"]
+    }
+
+    global Effort
+    set Effort ""
+    if {[llength [set found [find_val_range /Effort]]]} {
+      set Effort [eval "$jtw get $found"]
+    }
+
+    global RecordSize
+    set RecordSize ""
+    if {[llength [set found [find_val_range /RecordSize]]]} {
+      set RecordSize [eval "$jtw get $found"]
+    }
+
+    global K
+    set K ""
+    if {[llength [set found [find_val_range /K]]]} {
+      set K [eval "$jtw get $found"]
+    }
+
+    global Quality
+    set Quality ""
+    if {[llength [set found [find_val_range /Quality]]]} {
+      set Quality [eval "$jtw get $found"]
+    }
+
+    global WarningOK
+    set WarningOK ""
+    if {[llength [set found [find_val_range /WarningOK]]]} {
+      if {[string compare true [eval "$jtw get $found"]]} {set WarningOK 1} {set WarningOK 1}
+    }
+
+    global TmpRemove
+    set TmpRemove ""
+    if {[llength [set found [find_val_range /TmpRemove]]]} {
+      if {[string compare true [eval "$jtw get $found"]]} {set TmpRemove 1} {set TmpRemove 1}
+    }
+
+  }
+}
+
+proc but_quit {} {
+  if {0==[string compare yes [pts_message_box -type yesno -title {Confirm quit} -message "Quit now, without saving?"]]} exit
+}
+
+proc but_run {} {
+  # by pts@fazekas.hu at Fri Apr 26 23:43:17 CEST 2002
+  global JobFile
+  sa_debug_append "exec sam2p $JobFile:\n"
+  # if {[catch {set ret [exec sam2p $JobFile 2>@ stdout]} ret]} {}
+  if {[catch {set ret [exec sh -c {exec sam2p $1 2>&1} sam2p. $JobFile]} ret]} {
+    set ret "Error running sam2p:\n$ret"
+  }
+  # puts ($ret)
+  sa_debug_append $ret\n\n
+}
+
+# option add *Dialog*Label*font fixed
+# option add *Label*Font times
+#option add *font times
+#option add *$g*font times
+#option add *Dialog.msg.background red
+
+label $g.lCompression -text Compression -anchor w -font $sa_boldfont
+sa_radio $g.fNone Compression None None -command {update_radio Compression None}
+sa_radio $g.fLZW Compression LZW LZW -command {update_radio Compression LZW}
+sa_radio $g.fZIP Compression ZIP ZIP -command {update_radio Compression ZIP}
+sa_int $g.fZIP.fEffort Effort Effort 2 -textvariable Effort
+bind $g.fZIP.fEffort.i <FocusOut> {update_int Effort [%W get] pop}
+pack $g.fZIP.fEffort -side left
+sa_radio $g.fRLE Compression RLE RLE -command {update_radio Compression RLE}
+sa_int $g.fRLE.fRecordSize RecordSize R.S 3 -textvariable RecordSize
+bind $g.fRLE.fRecordSize.i <FocusOut> {update_int RecordSize [%W get] pop}
+pack $g.fRLE.fRecordSize -side left
+sa_radio $g.fFax Compression Fax Fax -command {update_radio Compression Fax}
+sa_int $g.fFax.fK K K 5 -textvariable K
+bind $g.fFax.fK.i <FocusOut> {update_int K [%W get] pop}
+pack $g.fFax.fK -side left
+sa_radio $g.fDCT Compression DCT DCT -command {update_radio Compression DCT}
+sa_radio $g.fIJG Compression IJG IJG -command {update_radio Compression IJG}
+sa_int $g.fIJG.fQuality Quality Q'lty 3 -textvariable Quality
+bind $g.fIJG.fQuality.i <FocusOut> {update_int Quality [%W get] pop}
+pack $g.fIJG.fQuality -side left
+sa_radio $g.fJAI Compression JAI JAI -command {update_radio Compression JAI}
+#label $g.fJAI.haha -text haha
+#pack $g.fJAI.haha -side left
+pack $g.lCompression -fill x
+pack $g.fNone $g.fLZW $g.fZIP $g.fRLE $g.fFax $g.fDCT $g.fIJG $g.fJAI -fill x
+sa_vframe $g
+
+sa_int $g.lPredictor Predictor Predictor 3 -textvariable Predictor
+bind $g.lPredictor.i <FocusOut> {update_int Predictor [%W get] pop}
+pack $g.lPredictor -fill x
+sa_vframe $g
+
+sa_check_update $g.cWarningOK WarningOK WarningOK
+# -textvariable WarningOK
+pack $g.cWarningOK -fill x
+sa_vframe $g
+
+label $g.lTransferEncoding -text TransferEncoding -anchor w -font $sa_boldfont
+sa_radio $g.fBinary TransferEncoding Binary Binary -command {update_radio TransferEncoding Binary}
+sa_radio $g.fASCII TransferEncoding ASCII ASCII -command {update_radio TransferEncoding ASCII}
+sa_radio $g.fHex TransferEncoding Hex Hex -command {update_radio TransferEncoding Hex}
+sa_radio $g.fA85 TransferEncoding A85 A85 -command {update_radio TransferEncoding A85}
+pack $g.lTransferEncoding -fill x
+pack $g.fBinary $g.fASCII $g.fHex $g.fA85 -fill x
+frame $g.pTransferEncoding -height 5 -width 1
+pack $g.pTransferEncoding -fill x
+
+sa_int $g.fTransferCPL TransferCPL TransferCPL 3 -textvariable TransferCPL
+bind $g.fTransferCPL.i <FocusOut> {update_int TransferCPL [%W get] pop}
+
+pack $g.fTransferCPL -fill x
+sa_vframe $g
+
+sa_check_update $g.cTmpRemove TmpRemove {Tmp Remove}
+pack $g.cTmpRemove -fill x
+sa_vframe $g
+
+
+set g .gtop.g3
+frame $g
+
+sa_w_text $g.t -width 58 -height 18 -wrap none -font $sa_fixfont
+pts_fix_one_tab $g.t
+pts_text_autoindent $g.t 1
+pts_text_auto_overstrike $g.t 0
+# $g.t insert end "<<%sam2p job file\n  /InputFile (alma)\n  /OutputFile (korte)\n  /Profile \[\n    /Compression /LZW/Predictor 13\n    /Hints<</DCT <</a true /b (>>)>> >>\n  ]\n>>\n"
+# $g.t insert end [read [open template.job r]]
+# Imp: close file...
+$g.t mark set insert 1.0; $g.t see insert
+$g.t tag configure tAny; $g.t tag lower tAny sel
+$g.t tag configure tSing -foreground "#003f7f"; $g.t tag raise tSing sel
+$g.t tag configure tString -foreground "#007f7f"; $g.t tag raise tString sel
+$g.t tag configure tKey -foreground "#00007f"; $g.t tag raise tKey sel
+$g.t tag configure tNameval -foreground "#0000ff"; $g.t tag raise tNameval sel
+$g.t tag configure tBrac -foreground "#ff0000"; $g.t tag raise tBrac sel
+$g.t tag configure tComment -foreground "#007f00"; $g.t tag raise tComment sel
+$g.t tag configure tInt -foreground "#3f0000"; $g.t tag raise tInt sel
+$g.t tag configure tError -background "#ffdddd"; $g.t tag lower tError sel
+
+# puts X[bindtags $g.t]X
+# puts X[bind $g.t]X
+# puts XZ[bind all]X
+
+set jtw $g.t
+
+# Imp: delete tmp.tmp
+
+# -font sansserif
+# puts [$g.t tag ranges tSing]
+# reground blue
+
+# update idletasks; puts [winfo geometry $g.t] ;# not ready, has to be packed first
+
+frame $g.f
+sa_w_text $g.f.td -width 1 -height 13 -wrap char -font $sa_fixfont \
+  -yscrollcommand "$g.f.sd set" -spacing3 2
+$g.f.td configure -selectbackground yellow ;# override
+scrollbar $g.f.sd -command "$g.f.td yview" -width 11 -elementborderwidth 2 \
+  -relief flat -borderwidth 1 -takefocus 0 -troughcolor gray65
+$g.f.sd configure -activebackground [$g.f.sd cget -background]
+
+# OK: non-editable, but not disabled (we need the cursor!)
+# $g.f.td configure -background [lindex [$g.f.td configure -background] 3]
+pts_readonly_color $g.f.td
+# puts $g.f.td
+# puts TD:[bind .gtop.g3.f.td <Key-Return>]
+  
+pts_fix_one_tab $g.f.td
+$g.f.td insert end "Debug messages, sam2p output:\n\n"
+# $g.f.td insert end "0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n"
+# $g.f.td insert end "21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\n32\n33\n34\n35\n36\n37\n38\n39\n"
+$g.f.td mark set insert 1.0; $g.f.td see insert
+set debugtext $g.f.td
+
+pack $g.t -expand 0 -fill x
+pack $g.f.td -expand 1 -fill both -side left
+pack $g.f.sd -fill both -side left
+pack $g.f -expand 1 -fill both
+
+pack .gtop.g0 .gtop.g1 .gtop.g2 -side left
+pack .gtop.g3 -expand 1 -fill both -side left
+
+frame .gbot
+frame .gbot.gbl
+
+set g .gbot.gbl.fCurdir
+frame $g
+label $g.l -text "Current dir" -font $sa_boldfont
+sa_w_entry $g.e -font $sa_normfont
+# bind $g.e <FocusOut> {update_str e [%W get] pop}
+pack $g.l -side left
+pack $g.e -expand 1 -fill x -side left
+$g.e insert 0 [pwd]
+
+# puts [bind .gbot.gbl.fCurdir.e]
+
+bind Text <B2-Motion> {}
+bind Text <Button-2> {}
+# puts T[bind Text]T
+# puts [bind Text <Button-2>]
+#puts ([bind Entry <Tab>])
+
+#foreach evtseq [bind Entry] {
+#  if {[string match <Key-*> $evtseq]
+#   || [string match <*-Key-*> $evtseq]
+#   || [string match <*-Key> $evtseq]
+#     } {
+#    bind $g.e $evtseq {break}
+#    puts +:$evtseq
+#  } {
+#    #puts -:$evtseq
+#  }
+#}
+
+# Dat: this assumes [lindex [bindtags $g.e] 0] == $g.e
+#foreach tag [bindtags $g.e] {
+#  foreach evtseq [bind $tag] {
+#    # if {0==[string length [bind $g.e $evtseq]]} {bind $g.e $evtseq [bind $tag $evtseq]}
+#  }
+#}
+
+pts_readonly_color $g.e
+
+
+# event info <<Clear>>
+#bind $g.e <Key-Tab> {# nothing}
+#bind $g.e <Key-ISO_Left_Tab> {# nothing}
+# puts /[bind $g.e]
+# puts :[bind $g.e <Key-Return>]
+
+set g .gbot.gbl.fJobFile
+frame $g
+label $g.l -text JobFile -font $sa_boldfont
+sa_w_entry $g.e -font $sa_normfont -textvariable JobFile
+label $g.r -text OK -font $sa_normfont -textvariable JobFileOK -width 2
+bind $g.e <FocusOut> {set JobFileOK [pts_write_ok $JobFile]}
+set jfn $g.e
+pack $g.l -side left
+pack $g.e -expand 1 -fill x -side left
+pack $g.r -side left
+
+
+set g .gbot.gbl.fInputFile
+frame $g
+label $g.l -text InputFile -font $sa_boldfont
+sa_w_entry $g.e -font $sa_normfont -textvariable InputFile
+label $g.r -text OK -font $sa_normfont -textvariable InputFileOK -width 2
+bind $g.e <FocusOut> {update_str InputFile [%W get] pop; set InputFileOK [pts_read_ok $InputFile]}
+pack $g.l -side left
+pack $g.e -expand 1 -fill x -side left
+pack $g.r -side left
+set InputFileOK [pts_read_ok $InputFile]
+
+set g .gbot.gbl.fOutputFile
+frame $g
+label $g.l -text OutputFile -font $sa_boldfont
+sa_w_entry $g.e -font $sa_normfont -textvariable OutputFile
+label $g.r -text OK -font $sa_normfont -textvariable OutputFileOK -width 2
+bind $g.e <FocusOut> {update_str OutputFile [%W get] pop; set OutputFileOK [pts_write_ok $OutputFile]}
+pack $g.l -side left
+pack $g.e -expand 1 -fill x -side left
+pack $g.r -side left
+
+pack .gbot.gbl.fCurdir .gbot.gbl.fJobFile .gbot.gbl.fInputFile .gbot.gbl.fOutputFile -expand 1 -fill x
+
+frame .gbot.ha
+button .gbot.ha.bLoad -text {Load Job} -font $sa_normfont -borderwidth 1 -pady 2 -underline 0 \
+  -command but_load
+bind . <Alt-Key-l> but_load
+button .gbot.ha.bSave -text {Save Job} -font $sa_normfont -borderwidth 1 -pady 2 -underline 0 \
+  -command but_save
+bind . <Alt-Key-s> but_save
+
+frame .gbot.hb
+button .gbot.hb.bRun -text {Run} -font $sa_normfont -borderwidth 1 -pady 2 -underline 0 \
+  -command but_run
+bind . <Alt-Key-r> but_run
+button .gbot.hb.bQuit -text {Quit} -font $sa_normfont -borderwidth 1 -pady 2 -underline 0 \
+  -command but_quit
+bind . <Alt-Key-q> but_quit
+pack .gbot.gbl -expand 1 -fill x -side left
+pack .gbot.ha.bLoad .gbot.ha.bSave
+pack .gbot.hb.bRun .gbot.hb.bQuit
+pack .gbot.ha .gbot.hb -side left
+
+pack .gtop -expand 1 -fill both
+pack .gbot -expand 0 -fill x
+update idletasks ;# a sima [update] helyett, hogy a "geometry" jó legyen
+scan [wm geometry .] "%dx%d%s" width height tmp
+wm minsize . $width $height
+
+
+set env(PATH) $env(PATH)[pts_PATH_sep].
+#if {[catch {set ret [exec sam2p --help 2>&1]} ret]} {}
+if {[catch {set ret [exec sh -c {exec sam2p --help 2>&1}]} ret]} {
+  set ret "Error:\n$ret"
+}
+
+proc sa_debug_append msg {
+  global debugtext
+  $debugtext insert end $msg
+  $debugtext mark set insert end
+  $debugtext see insert
+}
+
+sa_debug_append $ret\n\n
+# puts ($ret)
+
+
+$jfn delete 0 end
+if {[llength $argv]} {$jfn insert 0 [lindex $argv 0]; but_load} {
+  $jfn insert 0 template.job; but_load; $jfn delete 0 end
+  set InputFileOK 0
+  set OutputFileOK 0
+  set JobFileOK 0
+}
+# set InputFile hello
+# but_load
+# puts $argv
+# puts TD:[bind .gtop.g3.f.td <Key-Return>]
+
+
+#__END__

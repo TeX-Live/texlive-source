@@ -1,0 +1,9 @@
+<<%sam2p-job; by pts@fazekas.hu at Sat Apr 20 20:49:05 CEST 2002
+/InputFile  (examples/sziget_al.ppm)
+/OutputFile (test.pdf)
+/Profile [
+  << /FileFormat/PDF1.0 /SampleFormat/Mask /TransferEncoding/Binary
+     /Compression/RLE
+  >>
+ ]
+>>

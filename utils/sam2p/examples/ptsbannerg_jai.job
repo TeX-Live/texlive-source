@@ -1,0 +1,9 @@
+<<%sam2p-job; by Sun Mar 17 21:59:30 CET 2002
+/InputFile  (examples/ptsbannerg.jpg)
+/OutputFile (test.eps)
+%/LoadHints (asis)
+/Profile [
+  << /FileFormat/PSL3 /SampleFormat/Asis /TransferEncoding/Hex
+     /Compression/JAI >>
+ ]
+>>

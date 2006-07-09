@@ -1,0 +1,18 @@
+<<%sam2p-job; by Fri Mar 22 13:10:53 CET 2002
+/InputFile  (examples/ptsbanner.gif)
+/OutputFile(test.eps)
+/Profile [
+% sasdasdasd /Korte [
+  << /FileFormat /PSL2 /SampleFormat/Transparent8
+     /TransferEncoding/Binary
+     /WarningOK true
+     % /TransferEncoding/Hex
+     % /Compression/LZW
+     /Predictor 1
+     /Compression /RLE
+     /Hints << /K 42 >>
+  >>
+ ]
+>>
+
+

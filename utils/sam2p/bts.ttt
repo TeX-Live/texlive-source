@@ -1,0 +1,1602 @@
+%
+% bts.ttt -- Built-in TemplateS, contains most .tte and .ttm files
+% by pts@math.bme.hu at Wed Apr 17 10:37:42 CEST 2002
+% Sat Jun  1 18:40:04 CEST 2002
+% ADSC fixups at Sun Jun 23 18:16:29 CEST 2002
+% fixed %%EndComments, bts2.ttt at Sun Sep 22 14:25:45 CEST 2002
+% /l148z, /l1thl at ...
+%
+% These OutputFile-generation templates will be built in to the sam2p
+% executable at compile time. The contents of this file can be referenced as
+% `(%bts) run' in .job files.
+%
+
+% _l23_
+/l23 (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: `0
+%%EndComments
+%%Page: 1 1
+save`s 9 dict begin
+{/T currentfile`T def`1setcolorspace
+/F T`F def
+<</ImageType 1/Width `w/Height `h/BitsPerComponent
+`b/ImageMatrix[1 0 0 -1 0 `h]/Decode
+[`D]/DataSource F>> image
+`t}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% _l23_
+/l23mask (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: `0
+%%EndComments
+%%Page: 1 1
+save`s 9 dict begin
+{`r setrgbcolor
+/T currentfile`T def
+/F T`F def
+`w `h false[1 0 0 -1 0 `h]F imagemask
+`t}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% _l23_
+/l23ind1 (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: `0
+%%EndComments
+%%Page: 1 1
+save`s 9 dict begin
+{`R/T currentfile`T def
+/F T`F def
+`w `h true[1 0 0 -1 0 `h]F imagemask
+`t}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% Dat: vvv last color not necessarily transparent
+%   T `P string readstring pop dup length 0 exch 3 sub getinterval
+% Used by /Transparent2, /Transparent4 and /Transparent8.
+% This implemetation does:
+%   rgb-palette imagemask-newcompress-transfer
+% Alternative implementation (not this one!):
+%   ( rgb-transfer imagemask-newcompress-transfer )*
+%   It would be tedious to flush buffers etc.
+% Doesn't work with JPEG compressions, because JPEG requires a bit depth of
+% 8. Works with any other /Compression and any /Predictor.
+% _l23_
+/l23tran2 (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: `0
+%%EndComments
+%%Page: 1 1
+save`s 9 dict begin
+{/T currentfile`T def
+T `P string readstring pop 0 `p getinterval
+/F T`F def
+/m 0 def
+{255 div m 1 add dup 3 eq{pop setrgbcolor
+`w `h false[1 0 0 -1 0 `h]F imagemask
+0}if/m exch def}forall
+`t}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% _l23_
+% With old (pre-Wed Feb  5 17:46:59 CET 2003) PDF code, /Length was one less,
+% because it hasn't counted the last \n newline in the content stream. This
+% made a problem with pdfTeX 0.12 shipped with Debian Slink.
+% Old code (focus on the \n's)
+%[ (3 0 obj\n<</Length ) ] %1
+%-4 %2: length of chunk 4
+%(>>\nstream\n) %3
+%[ (q`s\n`w 0 0 `h 0 0 cm /S Do Q) ] %4.0
+%(\nendstream\nendobj\n) %5
+%   At Fri Feb  7 11:56:14 CET 2003 modified all /MediaBox specifications to
+% precede the image data, and be in a separate line, to ease parsing.
+% vvv tested at Sat Jan  8 12:31:00 CET 2005
+/p02 [%sam2p-ttm; by pts@fazekas.hu at Sat Apr 20 18:33:30 CEST 2002
+(%PDF-1.`0\n`B) %0
+[ (2 0 obj\n<</Type/Pages/Kids[5 0 R]/Count 1>>\nendobj\n) ] %1
+[ (3 0 obj\n<</Length ) ] %2
+-5 %3: length of chunk 5
+(>>\nstream\n) %4
+[ (q`s\n`w 0 0 `h 0 0 cm /S Do Q\n) ] %5.0
+(endstream\nendobj\n) %6
+[ (1 0 obj\n<</Type/Catalog/Pages 2 0 R>>\nendobj\n) ] %7.0
+[ (4 0 obj\n<</Length ) ] %8.0
+-11 %9
+(/Interpolate false/Type/XObject/Name/S/Subtype/Image/ColorSpace`1/Width
+`w/Height `h/BitsPerComponent `b`F>>stream\n) %10
+[ (`S) ] %11
+(\nendstream\nendobj\n) %12
+[ (5 0 obj\n<</Type/Page/MediaBox[`X]
+/CropBox[`X]/Parent 2 0 R/Resources<</XObject<</S
+4 0 R>>/ProcSet[/PDF`C]>>/Contents 3 0 R>>\n endobj\n) ] % 13
+(xref\n0 6\n0000000000 65535 f \n) %14
+7 %15
+( 00000 n \n) %16
+1 %17
+( 00000 n \n) %18
+2 %19
+( 00000 n \n) %20
+8 %21
+( 00000 n \n) %22
+13 %23
+( 00000 n \ntrailer\n<</Size 6/Root 1 0 R>>\nstartxref\n) %24
+14 %25
+(\n%%EOF\n) %26
+]
+
+% _l23_
+% vvv tested at Sat Jan  8 12:31:00 CET 2005
+/p02mask [%sam2p-ttm; by pts@fazekas.hu at Sat Apr 20 20:34:35 CEST 2002
+(%PDF-1.`0\n`B) %0
+[ (2 0 obj\n<</Type/Pages/Kids[5 0 R]/Count 1>>\nendobj\n) ] %1
+[ (3 0 obj\n<</Length ) ] %2
+-5 %3: length of chunk 5
+(>>\nstream\n) %4
+[ (q`s\n`g rg `w 0 0 `h 0 0 cm /S Do Q\n) ] %5.0
+(endstream\nendobj\n) %6
+[ (1 0 obj\n<</Type/Catalog/Pages 2 0 R>>\nendobj\n) ] %7.0
+[ (4 0 obj\n<</Length ) ] %8.0
+-11 %9
+(/Interpolate false/Type/XObject/Name/S/Subtype/Image/ImageMask
+true/BitsPerComponent 1/Width `w/Height `h`F>>stream\n) %10
+[ (`S) ] %11
+(\nendstream\nendobj\n) %12
+[ (5 0 obj\n<</Type/Page
+/MediaBox[`X]
+/CropBox[`X]/Parent 2 0 R/Resources<</XObject<</S
+4 0 R>>/ProcSet[/PDF`C]>>/Contents
+3 0 R>>\nendobj\n) ] %14
+(xref\n0 6\n0000000000 65535 f \n) %15
+7 %16
+( 00000 n \n) %17
+1 %18
+( 00000 n \n) %19
+2 %20
+( 00000 n \n) %21
+8 %22
+( 00000 n \n) %21
+13 %22
+( 00000 n \ntrailer\n<</Size 6/Root 1 0 R>>\nstartxref\n) %23
+14 %24
+(\n%%EOF\n) %25
+]
+
+% _l23_
+% vvv tested at Sat Jan  8 12:31:00 CET 2005
+/p02maskbb [%sam2p-ttm; by pts@fazekas.hu at Sat Apr 20 18:36:35 CEST 2002
+(%PDF-1.`0\n`B) %0
+[ (2 0 obj\n<</Type/Pages/Kids[4 0 R]/Count 1>>\nendobj\n) ] %1
+[ (3 0 obj\n<</Length ) ] %2
+-5 %3: length of chunk 5
+(>>\nstream\n) %4
+[ (q`s\n`g rg `w 0 0 `h 0 0 cm\nBI/W `w/H `h/ImageMask true/BPC 1`F ID
+`S
+EI\nQ\n) ] %5.0
+(endstream\nendobj\n) %6
+[ (1 0 obj\n<</Type/Catalog/Pages 2 0 R>>\nendobj\n) ] %7.0
+[ (4 0 obj\n<</Type/Page/MediaBox[`X]
+/CropBox[`X]/Parent 2 0 R/Resources<</ProcSet[/PDF`C]>>/Contents
+3 0 R>>\nendobj\n) ] %8
+(xref\n0 5\n0000000000 65535 f \n) %9
+7 %10: offset of chunk 7, printf("%010u")
+( 00000 n \n) %11
+1 %12
+( 00000 n \n) %13
+2 %14
+( 00000 n \n) %15
+8 %16
+( 00000 n \ntrailer\n<</Size 5/Root 1 0 R>>\nstartxref\n) %17
+9 %18
+(\n%%EOF\n) %19
+]
+
+% _l23_
+/p02ind1 [%sam2p-ttm; by pts@fazekas.hu at Sat Apr 20 20:34:35 CEST 2002
+% vvv tested at Sat Jan  8 12:31:00 CET 2005
+(%PDF-1.`0\n`B) %0
+[ (2 0 obj\n<</Type/Pages/Kids[5 0 R]/Count 1>>\nendobj\n) ] %1
+[ (3 0 obj\n<</Length ) ] %2
+-5 %3: length of chunk 5
+(>>\nstream\n) %4
+% `G rg 0 0 `w `h re B
+[ (q`s
+`G rg 0 0 m `w 0 l `w `h l 0 `h l F
+`g rg
+`w 0 0 `h 0 0 cm /S Do Q\n) ] %5.0
+(endstream\nendobj\n) %6
+[ (1 0 obj\n<</Type/Catalog/Pages 2 0 R>>\nendobj\n) ] %7.0
+[ (4 0 obj\n<</Length ) ] %8.0
+-11 %9
+(/Interpolate false/Type/XObject/Name/S/Subtype/Image/ImageMask
+true/BitsPerComponent 1/Width `w/Height `h`F>>stream\n) %10
+[ (`S) ] %11
+(\nendstream\nendobj\n) %12
+[ (5 0 obj\n<</Type/Page
+/MediaBox[`X]
+/CropBox[`X]/Parent 2 0 R/Resources<</XObject<</S
+4 0 R>>/ProcSet[/PDF`C]>>/Contents
+3 0 R>>\nendobj\n) ] %13
+(xref\n0 6\n0000000000 65535 f \n) %14
+7 %15
+( 00000 n \n) %16
+1 %16
+( 00000 n \n) %17
+2 %18
+( 00000 n \n) %18
+8 %19
+( 00000 n \n) %20
+13 %21
+( 00000 n \ntrailer\n<</Size 6/Root 1 0 R>>\nstartxref\n) %22
+14 %23
+(\n%%EOF\n) %24
+]
+
+% _l23_
+% vvv tested at Sat Jan  8 12:31:00 CET 2005
+/p02ind1bb [%sam2p-ttm; by pts@fazekas.hu at Sat Apr 20 18:36:35 CEST 2002
+(%PDF-1.`0\n`B) %0
+[ (2 0 obj\n<</Type/Pages/Kids[4 0 R]/Count 1>>\nendobj\n) ] %1
+[ (3 0 obj\n<</Length ) ] %2
+-5 %3: length of chunk 5
+(>>\nstream\n) %4
+% `G rg 0 0 `w `h re B
+[ (q`s
+`G rg 0 0 m `w 0 l `w `h l 0 `h l F
+`g rg `w 0 0 `h 0 0 cm\nBI/W `w/H `h/ImageMask true/BPC 1`F ID
+`S
+EI\nQ\n) ] %5.0
+(endstream\nendobj\n) %6
+[ (1 0 obj\n<</Type/Catalog/Pages 2 0 R>>\nendobj\n) ] %7.0
+[ (4 0 obj\n<</Type/Page
+/MediaBox[`X]
+/CropBox[`X]/Parent 2 0 R/Resources<</ProcSet[/PDF`C]>>/Contents
+3 0 R>>\nendobj\n) ] %8
+(xref\n0 5\n0000000000 65535 f \n) %9
+7 %10: offset of chunk 7, printf("%010u")
+( 00000 n \n) %11
+1 %12
+( 00000 n \n) %13
+2 %14
+( 00000 n \n) %15
+8 %16
+( 00000 n \ntrailer\n<</Size 5/Root 1 0 R>>\nstartxref\n) %17
+9 %18
+(\n%%EOF\n) %19
+]
+
+% _l23_
+% vvv tested at Sat Jan  8 12:31:00 CET 2005
+/p02bb [%sam2p-ttm; by pts@fazekas.hu at Sat Apr 20 18:36:35 CEST 2002
+(%PDF-1.`0\n`B) %0
+[ (2 0 obj\n<</Type/Pages/Kids[4 0 R]/Count 1>>\nendobj\n) ] %1
+[ (3 0 obj\n<</Length ) ] %2
+-5 %3: length of chunk 5
+(>>\nstream\n) %4
+[ (q`s\n`w 0 0 `h 0 0 cm\nBI/Interpolate false/W `w/H `h/CS`1/BPC `b`F ID
+`S
+EI\nQ\n) ] %5.0
+(endstream\nendobj\n) %6
+[ (1 0 obj\n<</Type/Catalog/Pages 2 0 R>>\nendobj\n) ] %7.0
+[ (4 0 obj\n<</Type/Page/MediaBox[`X]
+/CropBox[`X]/Parent 2 0 R/Resources<</ProcSet[/PDF`C]>>/Contents
+3 0 R>>\nendobj\n) ] %8
+(xref\n0 5\n0000000000 65535 f \n) %9
+7 %10: offset of chunk 7, printf("%010u")
+( 00000 n \n) %11
+1 %12
+( 00000 n \n) %13
+2 %14
+( 00000 n \n) %15
+8 %16
+( 00000 n \ntrailer\n<</Size 5/Root 1 0 R>>\nstartxref\n) %17
+9 %18
+(\n%%EOF\n) %19
+]
+
+% Dat: /Kids with direct objects are not valid PDF
+%      (reported by Sid Steward)
+%      The PDF Reference 1.5 (and 1.3) actually describes the page Kids array
+%      as: "An array of indirect references to the immediate children of this
+%      node. The children may be page objects or other page tree nodes."
+%/pd02bb [%sam2p-ttm; by pts@fazekas.hu at Sat Apr 20 18:36:35 CEST 2002
+%(%PDF-1.`0\n`B) %0
+%[ (2 0 obj\n<</Type/Pages/Kids[<</Type/Page
+%/MediaBox[`X]
+%/CropBox[`X]/Parent 2 0 R/Resources<</ProcSet[/PDF`C]>>/Contents
+%3 0 R>>]/Count 1>>\nendobj\n) ] %1
+%[ (3 0 obj\n<</Length ) ] %2
+%-5 %3: length of chunk 5
+%(>>\nstream\n) %4
+%[ (q`s\n`w 0 0 `h 0 0 cm\nBI/Interpolate false/W `w/H `h/CS`1/BPC `b`F ID
+%`S
+%EI\nQ\n) ] %5.0
+%(endstream\nendobj\n) %6
+%[ (1 0 obj\n<</Type/Catalog/Pages 2 0 R>>\nendobj\n) ] %7.0
+%(xref\n0 4\n0000000000 65535 f \n) %8
+%7 %9: offset of chunk 7, printf("%010u")
+%( 00000 n \n) %10
+%1 %11
+%( 00000 n \n) %12
+%2 %13
+%( 00000 n \ntrailer\n<</Size 4/Root 1 0 R>>\nstartxref\n) %14
+%8 %15
+%(\n%%EOF\n) %16
+%]
+
+% ---
+
+% _l2jbin_
+/l2jbin (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 2
+%%EndComments
+%%Page: 1 1
+save`s 2 dict begin
+{/Device`d setcolorspace
+/T currentfile`T def
+/F T/DCTDecode filter def
+<</ImageType 1/Width `w/Height `h/BitsPerComponent
+`b/ImageMatrix[1 0 0 -1 0 `h]/Decode
+[`D]/DataSource F>> image`t}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% _l2jbin_
+/p0jbin [%sam2p-ttm; by pts@fazekas.hu at Mon Apr 15 21:58:26 CEST 2002
+(%PDF-1.`0\n`B) %0
+[ (2 0 obj\n<</Type/Pages/Kids[5 0 R]/Count 1>>\nendobj\n) ] %1
+[ (3 0 obj\n<</Length ) ] %2
+-5 %3: length of chunk 5
+(>>\nstream\n) %4
+[ (q`s\n`w 0 0 `h 0 0 cm /S Do Q\n) ] %5.0
+(endstream\nendobj\n) %6
+[ (1 0 obj\n<</Type/Catalog/Pages 2 0 R>>\nendobj\n) ] %7.0
+[ (4 0 obj\n<</Length ) ] %8.0
+-11 %9
+(/Type/XObject/Name/S/Subtype/Image/ColorSpace/Device`d/Width
+`w/Height `h/BitsPerComponent `b`F>>stream\n) %10
+[ (`S) ] %11
+(\nendstream\nendobj\n) %12
+[ (5 0 obj\n<</Type/Page
+/MediaBox[`X]
+/CropBox[`X]/Parent 2 0 R/Resources<</XObject<</S
+4 0 R>>/ProcSet[/PDF`C]>>/Contents
+3 0 R>>\nendobj\n) ] %13
+(xref\n0 6\n0000000000 65535 f \n) %14
+7 %15
+( 00000 n \n) %16
+1 %17
+( 00000 n \n) %18
+2 %19
+( 00000 n \n) %20
+8 %21
+( 00000 n \n) %22
+13 %23
+( 00000 n \ntrailer\n<</Size 6/Root 1 0 R>>\nstartxref\n) %24
+14 %25
+(\n%%EOF\n) %26
+]
+
+% _l2jbin_
+/p0jbb [%sam2p-ttm; by pts@fazekas.hu at Mon Apr 15 21:58:26 CEST 2002
+% Dat: CropBox is required by buggy gs/gv viewer code
+(%PDF-1.`0\n`B) %0
+[ (2 0 obj\n<</Type/Pages/Kids[4 0 R]/Count 1>>\nendobj\n) ] %1
+[ (3 0 obj\n<</Length ) ] %2
+-5 %3: length of chunk 5
+(>>\nstream\n) %4
+[ (q`s\n`w 0 0 `h 0 0 cm\nBI/W `w/H `h/CS/Device`d/BPC `b`F ID
+`S
+EI\nQ\n) ] %5.0
+(endstream\nendobj\n) %6
+[ (1 0 obj\n<</Type/Catalog/Pages 2 0 R>>\nendobj\n) ] %7.0
+[ (4 0 obj\n<</Type/Page/MediaBox[`X]
+/CropBox[`X]/Parent 2 0 R/Resources<</ProcSet[/PDF`C]>>/Contents
+3 0 R>>\nendobj\n) ] %8
+(xref\n0 5\n0000000000 65535 f \n) %9
+7 %10: offset of chunk 7, printf("%010u")
+( 00000 n \n) %11
+1 %12
+( 00000 n \n) %13
+2 %14
+( 00000 n \n) %15
+8 %16
+( 00000 n \ntrailer\n<</Size 5/Root 1 0 R>>\nstartxref\n) %17
+9 %18
+(\n%%EOF\n) %19
+]
+
+% ---
+
+% _l1tr_
+/l1tr (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+%%EndComments
+%%Page: 1 1
+showpage
+%%Trailer
+%%EOF\n)
+
+% _l1tr_
+/l1op (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+%%EndComments
+%%Page: 1 1
+save`s
+`r setrgbcolor
+0 0 moveto
+`w 0 lineto
+0 `h rlineto
+-`w 0 rlineto
+closepath fill
+restore showpage
+%%Trailer
+%%EOF\n)
+
+% by pts@fazekas.hu at Sat Jun 15 16:09:25 CEST 2002
+% _l1tr_
+/l1bb (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+%%EndComments
+%%Page: 1 1
+save`s
+0 0 moveto
+`w 0 lineto
+0 `h rlineto
+-`w 0 rlineto
+closepath stroke
+restore showpage
+%%Trailer
+%%EOF\n)
+
+% _l1tr_
+/p0op [%sam2p-ttm; by pts@fazekas.hu at Wed Apr 17 10:34:36 CEST 2002
+(%PDF-1.0\n) %0
+[ (2 0 obj\n<</Type/Pages/Kids[4 0 R]/Count 1>>\nendobj\n) ] %1
+[ (3 0 obj\n<</Length ) ] %2
+-5 %3: length of chunk 5
+(>>\nstream\n) %4
+% [ (q `g rg 0 0 `w `h re B Q) ] %4.0
+% ^^^ SUXX `re' draws a rectangle with black border in acroread :-(
+[ (q `g rg 0 0 m `w 0 l `w `h l 0 `h l F Q\n) ] %5.0
+(endstream\nendobj\n) %6
+[ (1 0 obj\n<</Type/Catalog/Pages 2 0 R>>\nendobj\n) ] %7.0
+[ (4 0 obj\n<</Type/Page/MediaBox[`X]
+/CropBox[`X]/Parent 2 0 R/Resources<</ProcSet[/PDF`C]>>/Contents
+3 0 R>>\nendobj\n) ] %8
+(xref\n0 5\n0000000000 65535 f \n) %9
+7 %10: offset of chunk 7, printf("%010u")
+( 00000 n \n) %11
+1 %12
+( 00000 n \n) %13
+2 %14
+( 00000 n \n) %15
+8 %16
+( 00000 n \ntrailer\n<</Size 5/Root 1 0 R>>\nstartxref\n) %17
+9 %18
+(\n%%EOF\n) %19
+]
+
+% /p0bb: draws the bounding box (./sam2p -s:bbox examples/yellow.gif test.pdf),
+% see also /l1bb. Half of the linewidth is cropped by /MediaBox
+/p0bb [%sam2p-ttm; by pts@fazekas.hu at Sat Jun 15 16:08:38 CEST 2002
+(%PDF-1.0\n) %0
+[ (2 0 obj\n<</Type/Pages/Kids[4 0 R]/Count 1>>\nendobj\n) ] %1
+[ (3 0 obj\n<</Length ) ] %2
+-5 %3: length of chunk 5
+(>>\nstream\n) %4
+[ (q`s `g rg 0 0 m `w 0 l `w `h l 0 `h l S Q\n) ] %5.0
+(endstream\nendobj\n) %6
+[ (1 0 obj\n<</Type/Catalog/Pages 2 0 R>>\nendobj\n) ] %7.0
+[ (4 0 obj\n<</Type/Page/MediaBox[`X]
+/CropBox[`X]/Parent 2 0 R/Resources<</ProcSet[/PDF`C]>>/Contents
+3 0 R>>\nendobj\n) ] %8
+(xref\n0 5\n0000000000 65535 f \n) %9
+7 %10: offset of chunk 7, printf("%010u")
+( 00000 n \n) %11
+1 %12
+( 00000 n \n) %13
+2 %14
+( 00000 n \n) %15
+8 %16
+( 00000 n \ntrailer\n<</Size 5/Root 1 0 R>>\nstartxref\n) %17
+9 %18
+(\n%%EOF\n) %19
+]
+
+% _l1tr_
+/p0tr [%sam2p-ttm; by pts@fazekas.hu at Wed Apr 17 10:34:36 CEST 2002
+(%PDF-1.0\n) %0
+[ (2 0 obj\n<</Type/Pages/Kids[4 0 R]/Count 1>>\nendobj\n) ] %1
+[ (3 0 obj\n<</Length ) ] %2
+-5 %3: length of chunk 5
+(>>\nstream\n) %4
+[ ] %5.0
+(endstream\nendobj\n) %6
+[ (1 0 obj\n<</Type/Catalog/Pages 2 0 R>>\nendobj\n) ] %7.0
+[ (4 0 obj\n<</Type/Page
+/MediaBox[`X]
+/CropBox[`X]/Parent 2 0 R/Resources<</ProcSet[/PDF`C]>>/Contents
+3 0 R>>\nendobj\n) ] %8
+(xref\n0 5\n0000000000 65535 f \n) %9
+7 %10: offset of chunk 7, printf("%010u")
+( 00000 n \n) %11
+1 %12
+( 00000 n \n) %13
+2 %14
+( 00000 n \n) %14
+8 %15
+( 00000 n \ntrailer\n<</Size 5/Root 1 0 R>>\nstartxref\n) %17
+9 %18
+(\n%%EOF\n) %19
+]
+
+% ---
+
+% at Sun Jun  2 15:49:39 CEST 2002
+% derived from /l1m8r
+% _l1c_
+/l1t8r (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+%%EndComments
+%%Page: 1 1
+save`s 36 dict begin
+`r setrgbcolor
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/S 32 E/D 0 E/C 0 E
+/;/getinterval x/p/putinterval x/b/bitshift x/+/add x/O/pop x/*/mul x/u/dup x
+/-/sub x/"/string x/?/length x/y/copy x{
+{mark A/ASCII85Decode filter/T exch def}stopped
+/B exch def cleartomark B{{
+/d{{27 S ge{exit}if A read not{511}if u 122 eq{/S 27 E/D 0 E/C 0 E}{u 117 gt{
+A read{O}if/S 54 S - E}{u 33 ge{S 32 eq{u/C c E/D -1670420001 E}{u 117 -{1 85
+7225 614125}S 28 - get * D +/D c E}i/S S 1 - E}if}i}i O}loop S 22 eq{511}{C
+1868977 * D + S 24 and neg b 23 S lt{C 3 * +}if 255 and/S S 3 eq{32}{S 7 mod 3
+eq{22}{S 8 -}i}i E}i}E
+/B `? " E/L 128 " E/Ex()E
+`P " u ? 1 - 0 c 1 c{d 3 y put O O}for 0 `p ;/m
+0 E{255 div m 1 + u 3 eq{O setrgbcolor
+`w `h false[1 0 0 -1 0 `h]{B Ex{2 y ? c ? ge{2 y c ? 0 c ; 2 index y ? 2 y c
+? c - ;/Ex c E O exit}{2 y c y O ? 2 y c ? c - ;}i d u 128 le{L c 0 c 1 + ; u ?
+1 - 0 c 1 c{d 3 y put O O}for}{L c d c 257 c - 3 y 1 - -1 0{3 y c put O}for O O
+c O 0 c ;}i}loop B}imagemask 0}if/m c E}forall d O d O}bind exec}{
+T `P " readstring O 0 `p ;/m 0 E/F T/RunLengthDecode filter E
+{255 div m 1 + u 3 eq{O setrgbcolor
+`w `h false[1 0 0 -1 0 `h]F imagemask 0}if/m c E}forall
+F closefile T closefile}i}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% at Sun Jun  2 15:49:46 CEST 2002
+% derived from /l1mhr
+% _l1c_
+/l1thr (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+%%EndComments
+%%Page: 1 1
+save`s 36 dict begin
+`r setrgbcolor
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/S/readhexstring x
+/;/getinterval x/p/putinterval x/b/bitshift x/+/add x/O/pop x/*/mul x/u/dup x
+/-/sub x/"/string x/?/length x/y/copy x{
+{mark A/ASCIIHexDecode filter/T exch def}stopped
+/B exch def cleartomark B{{
+/C(.)E/d{A C S O 0 get}E
+/B `? " E/L 128 " E/Ex()E
+A `P " S O 0 `p ;/m 0 E{255 div m 1 + u 3 eq{O setrgbcolor
+`w `h false[1 0 0 -1 0 `h]{B Ex{2 y ? c ? ge{2 y c ? 0 c ; 2 index y ? 2 y c
+? c - ;/Ex c E O exit}{2 y c y O ? 2 y c ? c - ;}i d u 128 le{L c 0 c 1 + ;
+A c S O}{L c d c 257 c - 3 y 1 - -1 0{3 y c put O}for O O
+c O 0 c ;}i}loop B}imagemask 0}if/m c E}forall
+d O A read O O}bind exec}{
+T `P " readstring O 0 `p ;/m 0 E/F T/RunLengthDecode filter E
+{255 div m 1 + u 3 eq{O setrgbcolor
+`w `h false[1 0 0 -1 0 `h]F imagemask 0}if/m c E}forall
+F closefile T closefile}i}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% at Sun Jun  2 15:49:59 CEST 2002
+% derived from /l1mbr
+% _l1c_
+/l1tbr (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+%%EndComments
+%%Page: 1 1
+save`s 36 dict begin
+`r setrgbcolor
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/S/readstring x
+/;/getinterval x/p/putinterval x/b/bitshift x/+/add x/O/pop x/*/mul x/u/dup x
+/-/sub x/"/string x/?/length x/y/copy x{
+/filter where not{{
+/B `? " E/L 128 " E/Ex()E
+A `P " S O 0 `p ;/m 0 E{255 div m 1 + u 3 eq{O setrgbcolor
+`w `h false[1 0 0 -1 0 `h]{B Ex{2 y ? c ? ge{2 y c ? 0 c ; 2 index y ? 2 y c ?
+c - ;/Ex c E O exit}{2 y c y O ? 2 y c ? c - ;}i A read O u 128 le{L c 0 c 1 +
+; A c S O}{L c A read O c 257 c - 3 y 1 - -1 0{3 y c put O}for O O c
+O 0 c ;}i}loop B}imagemask 0}if/m c E}forall A read O O}bind exec}{
+O/F A/RunLengthDecode filter E
+A `P " S O 0 `p ;/m 0 E{255 div m 1 + u 3 eq{O setrgbcolor
+`w `h false[1 0 0 -1 0 `h]F imagemask 0}if/m c E}forall F closefile}i}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% PSL1 implementation of /l23tran2 /A85
+% _l1c_
+/l1t8n (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+%%EndComments
+%%Page: 1 1
+save`s 16 dict begin
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/S 32 E/D 0 E/C 0 E
+/d{{27 S ge{exit}if A read not{511}if dup 122 eq{/S 27 E/D 0 E/C 0 E}{dup 117
+gt{A read{pop}if/S 54 S sub E}{dup 33 ge{S 32 eq{dup/C c E/D -1670420001 E}{dup
+117 sub{1 85 7225 614125}S 28 sub get mul D add/D c E}i/S S 1 sub E}if}i}i pop}
+loop S 22 eq{511}{C 1868977 mul D add S 24 and neg bitshift 23 S lt{C 3 mul add
+}if 255 and/S S 3 eq{32}{S 7 mod 3 eq{22}{S 8 sub}i}i E}i}bind E
+/s `? string E
+{`P string dup length 1 sub 0 c 1 c{d 3 copy put pop pop}for
+0 `p getinterval
+/m 0 E
+{255 div m 1 add dup 3 eq{pop setrgbcolor
+`w `h false[1 0 0 -1 0 `h]
+{s dup length 1 sub 0 c 1 c{d 3 copy put pop pop}for}imagemask
+0}if/m exch def}forall
+d pop}bind
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% PSL1 implementation of /l23tran2 /Hex
+% _l1c_
+/l1thn (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+%%EndComments
+%%Page: 1 1
+save`s 2 dict begin
+/s `? string def
+{currentfile `P string readhexstring pop
+0 `p getinterval
+/m 0 def
+{255 div m 1 add dup 3 eq{pop setrgbcolor
+`w `h false[1 0 0 -1 0 `h]
+{currentfile s readhexstring pop}imagemask
+0}if/m exch def}forall
+currentfile read pop pop}bind
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% PSL1 implementation of /l23tran2 /Binary
+% Used by /Transparent2, /Transparent4 and /Transparent8.
+% This implemetation does:
+%   rgb-palette imagemask-newcompress-transfer
+% _l1c_
+/l1tbn (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+%%EndComments
+%%Page: 1 1
+save`s 2 dict begin
+/s `? string def
+{currentfile `P string readstring pop
+0 `p getinterval
+/m 0 def
+{255 div m 1 add dup 3 eq{pop setrgbcolor
+`w `h false[1 0 0 -1 0 `h]
+{currentfile s readstring pop}imagemask
+0}if/m exch def}forall}bind
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+
+% at Sun Jun  2 15:21:53 CEST 2002
+% derived from /l118r
+% l1g8r: /Compression/RLE /TransferEncoding/A85 /SampleFormat/Gray* /FileFormat/PSL1
+% _l1c_
+/l1g8r (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+`I%%EndComments
+%%Page: 1 1
+save`s `R26 dict begin
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/S 32 E/D 0 E/C 0 E
+/;/getinterval x/p/putinterval x/b/bitshift x/+/add x/O/pop x/*/mul x/u/dup x
+/-/sub x/"/string x/?/length x/y/copy x{
+{mark A/ASCII85Decode filter/T exch def}stopped
+/B exch def cleartomark B{{
+/d{{27 S ge{exit}if A read not{511}if u 122 eq{/S 27 E/D 0 E/C 0 E}{u 117 gt{
+A read{O}if/S 54 S - E}{u 33 ge{S 32 eq{u/C c E/D -1670420001 E}{u 117 -{1 85
+7225 614125}S 28 - get * D +/D c E}i/S S 1 - E}if}i}i O}loop S 22 eq{511}{C
+1868977 * D + S 24 and neg b 23 S lt{C 3 * +}if 255 and/S S 3 eq{32}{S 7 mod 3
+eq{22}{S 8 -}i}i E}i}E
+/B `? " E/L 128 " E/Ex()E
+`w `h `b[1 0 0 -1 0 `h]{B Ex{2 y ? c ? ge{2 y c ? 0 c ; 2 index y ? 2 y c
+? c - ;/Ex c E O exit}{2 y c y O ? 2 y c ? c - ;}i d u 128 le{L c 0 c 1 + ; u ?
+1 - 0 c 1 c{d 3 y put O O}for}{L c d c 257 c - 3 y 1 - -1 0{3 y c put O}for O O
+c O 0 c ;}i}loop B}`i
+d O d O}bind exec}{
+/F T/RunLengthDecode filter def
+`w `h `b[1 0 0 -1 0 `h]F `i F closefile T closefile}i}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% at Sun Jun  2 15:22:10 CEST 2002
+% derived from /l1ghr
+% _l1c_
+/l1ghr (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+`I%%EndComments
+%%Page: 1 1
+save`s `R26 dict begin
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/S/readhexstring x
+/;/getinterval x/p/putinterval x/b/bitshift x/+/add x/O/pop x/*/mul x/u/dup x
+/-/sub x/"/string x/?/length x/y/copy x{
+{mark A/ASCIIHexDecode filter/T exch def}stopped
+/B exch def cleartomark B{{
+/C(.)E/d{A C S O 0 get}E
+/B `? " E/L 128 " E/Ex()E
+`w `h `b[1 0 0 -1 0 `h]{B Ex{2 y ? c ? ge{2 y c ? 0 c ; 2 index y ? 2 y c
+? c - ;/Ex c E O exit}{2 y c y O ? 2 y c ? c - ;}i d u 128 le{L c 0 c 1 + ;
+A c S O}{L c d c 257 c - 3 y 1 - -1 0{3 y c put O}for O O
+c O 0 c ;}i}loop B}`i
+d O A read O O}bind exec}{
+/F T/RunLengthDecode filter def
+`w `h `b[1 0 0 -1 0 `h]F `i F closefile T closefile}i}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% at Sun Jun  2 15:22:21 CEST 2002
+% derived from /l11br
+% _l1c_
+/l1gbr (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+`I%%EndComments
+%%Page: 1 1
+save`s `R26 dict begin
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/S/readstring x
+/;/getinterval x/p/putinterval x/b/bitshift x/+/add x/O/pop x/*/mul x/u/dup x
+/-/sub x/"/string x/?/length x/y/copy x{
+{mark A/RunLengthDecode filter/F exch def}stopped
+/B exch def cleartomark B{{
+/B `? " E/L 128 " E/Ex()E
+`w `h `b[1 0 0 -1 0 `h]{B Ex{2 y ? c ? ge{2 y c ? 0 c ; 2 index y ? 2 y c ?
+c - ;/Ex c E O exit}{2 y c y O ? 2 y c ? c - ;}i A read O u 128 le{L c 0 c 1 +
+; A c S O}{L c A read O c 257 c - 3 y 1 - -1 0{3 y c put O}for O O c
+O 0 c ;}i}loop B}`i A read O O}bind exec}{
+`w `h `b[1 0 0 -1 0 `h]F `i F closefile}i}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% l1g8n: /Compression/None /TransferEncoding/A85 /SampleFormat/Gray* /FileFormat/PSL1
+% _l1c_
+/l1g8n (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+`I%%EndComments
+%%Page: 1 1
+save`s `R16 dict begin
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/S 32 E/D 0 E/C 0 E{
+{mark A/ASCII85Decode filter/F exch def}stopped
+/B exch def cleartomark B{{
+/d{{27 S ge{exit}if A read not{511}if dup 122 eq{/S 27 E/D 0 E/C 0 E}{dup 117
+gt{A read{pop}if/S 54 S sub E}{dup 33 ge{S 32 eq{dup/C c E/D -1670420001 E}{dup
+117 sub{1 85 7225 614125}S 28 sub get mul D add/D c E}i/S S 1 sub E}if}i}i pop}
+loop S 22 eq{511}{C 1868977 mul D add S 24 and neg bitshift 23 S lt{C 3 mul add
+}if 255 and/S S 3 eq{32}{S 7 mod 3 eq{22}{S 8 sub}i}i E}i}bind E
+/s `? string E
+`w `h `b[1 0 0 -1 0 `h]
+{s dup length 1 sub 0 c 1 c{d 3 copy put pop pop}for}`i
+d pop}bind exec}{
+`w `h `b[1 0 0 -1 0 `h]F `i F closefile}i}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% _l1c_
+/l1ghn (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+`I%%EndComments
+%%Page: 1 1
+save`s `R1 dict begin
+/s `? string def
+{`w `h `b[1 0 0 -1 0 `h]{currentfile s readhexstring pop}`i
+currentfile read pop pop}bind
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% _l1c_
+/l1gbn (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+`I%%EndComments
+%%Page: 1 1
+save`s `R1 dict begin
+/s `? string def
+{`w `h `b[1 0 0 -1 0 `h]{currentfile s readstring pop}`i}bind
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+
+% at Sat Jun  1 21:19:30 CEST 2002
+% _l1c_
+/l128r (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+`I%%EndComments
+%%Page: 1 1
+save`s 36 dict begin
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/S 32 E/D 0 E/C 0 E
+/;/getinterval x/p/putinterval x/b/bitshift x/+/add x/O/pop x/*/mul x/u/dup x
+/-/sub x/"/string x/?/length x/y/copy x{
+{mark A/ASCII85Decode filter/T exch def}stopped
+/B exch def cleartomark B{{
+/d{{27 S ge{exit}if A read not{511}if u 122 eq{/S 27 E/D 0 E/C 0 E}{u 117 gt{
+A read{O}if/S 54 S - E}{u 33 ge{S 32 eq{u/C c E/D -1670420001 E}{u 117 -{1 85
+7225 614125}S 28 - get * D +/D c E}i/S S 1 - E}if}i}i O}loop S 22 eq{511}{C
+1868977 * D + S 24 and neg b 23 S lt{C 3 * +}if 255 and/S S 3 eq{32}{S 7 mod 3
+eq{22}{S 8 -}i}i E}i}E
+12 " u/B c E 0 `p ; u ? 1 - 0 c 1 c{d 3 y put O O}for O/H 3072 " E/R 0 E
+0 1 255{u -6 b B c 3 * 3 ; H c R c p/R R 3 + E
+u -4 b 3 and B c 3 * 3 ; H c R c p/R R 3 + E
+u -2 b 3 and B c 3 * 3 ; H c R c p/R R 3 + E
+3 and B c 3 * 3 ; H c R c p/R R 3 + E
+}for/B `w 3 + -2 b " E/B3 B ? 2 b 3 * " E/R B3 0 `w 3 * ; E/L 128 " E/Ex()E
+`w `h 8[1 0 0 -1 0 `h]{B3 0 B Ex{2 y ? c ? ge{2 y c ? 0 c ; 2 index y ? 2 y c ?
+c - ;/Ex c E O exit}{2 y c y O ? 2 y c ? c - ;}i d u 128 le{L c 0 c 1 + ; u ? 1
+- 0 c 1 c{d 3 y put O O}for}{L c d c 257 c - 3 y 1 - -1 0{3 y c put O}for O O c
+O 0 c ;}i}loop B{12 * H c 12 ; 3 y p O 12 +}forall O O R}false 3 colorimage
+d O d O}bind exec}{
+[/Indexed/DeviceRGB `# 1 - T `p " readstring O]setcolorspace
+/F T/RunLengthDecode filter def<</ImageType 1/Width `w/Height `h
+/BitsPerComponent `b/ImageMatrix[1 0 0 -1 0 `h]/Decode[`D]/DataSource F>>
+image F closefile T closefile
+}ifelse}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% at Sun Jun  2 14:19:02 CEST 2002
+% derived from /l128r
+% _l1c_
+/l12hr (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+`I%%EndComments
+%%Page: 1 1
+save`s 36 dict begin
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/S/readhexstring x
+/;/getinterval x/p/putinterval x/b/bitshift x/+/add x/O/pop x/*/mul x/u/dup x
+/-/sub x/"/string x/?/length x/y/copy x{
+{mark A/ASCIIHexDecode filter/T exch def}stopped
+/B exch def cleartomark B{{
+/C(.)E/d{A C S O 0 get}E
+A 12 " u/B c E 0 `p ; S O O/H 3072 " E/R 0 E
+0 1 255{u -6 b B c 3 * 3 ; H c R c p/R R 3 + E
+u -4 b 3 and B c 3 * 3 ; H c R c p/R R 3 + E
+u -2 b 3 and B c 3 * 3 ; H c R c p/R R 3 + E
+3 and B c 3 * 3 ; H c R c p/R R 3 + E
+}for/B `w 3 + -2 b " E/B3 B ? 2 b 3 * " E/R B3 0 `w 3 * ; E/L 128 " E/Ex()E
+`w `h 8[1 0 0 -1 0 `h]{B3 0 B Ex{2 y ? c ? ge{2 y c ? 0 c ; 2 index y ? 2 y c ?
+c - ;/Ex c E O exit}{2 y c y O ? 2 y c ? c - ;}i d u 128 le{L c 0 c 1 + ;
+A c S O}{L c d c 257 c - 3 y 1 - -1 0{3 y c put O}for O O c
+O 0 c ;}i}loop B{12 * H c 12 ; 3 y p O 12 +}forall O O R}false 3 colorimage
+d O A read O O}bind exec}{
+[/Indexed/DeviceRGB `# 1 - T `p " readstring O]setcolorspace
+/F T/RunLengthDecode filter def<</ImageType 1/Width `w/Height `h
+/BitsPerComponent `b/ImageMatrix[1 0 0 -1 0 `h]/Decode[`D]/DataSource F>>
+image F closefile T closefile
+}ifelse}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% at Sun Jun  2 14:41:59 CEST 2002
+% derived from /l12hr
+% _l1c_
+/l12br (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+`I%%EndComments
+%%Page: 1 1
+save`s 36 dict begin
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/S/readstring x
+/;/getinterval x/p/putinterval x/b/bitshift x/+/add x/O/pop x/*/mul x/u/dup x
+/-/sub x/"/string x/?/length x/y/copy x{
+{mark A/ASCII85Decode filter}stopped
+/B exch def cleartomark B{{
+A 12 " u/B c E 0 `p ; S O O/H 3072 " E/R 0 E
+0 1 255{u -6 b B c 3 * 3 ; H c R c p/R R 3 + E
+u -4 b 3 and B c 3 * 3 ; H c R c p/R R 3 + E
+u -2 b 3 and B c 3 * 3 ; H c R c p/R R 3 + E
+3 and B c 3 * 3 ; H c R c p/R R 3 + E
+}for/B `w 3 + -2 b " E/B3 B ? 2 b 3 * " E/R B3 0 `w 3 * ; E/L 128 " E/Ex()E
+`w `h 8[1 0 0 -1 0 `h]{B3 0 B Ex{2 y ? c ? ge{2 y c ? 0 c ; 2 index y ? 2 y c ?
+c - ;/Ex c E O exit}{2 y c y O ? 2 y c ? c - ;}i A read O u 128 le{L c 0 c 1 +
+; A c S O}{L c A read O c 257 c - 3 y 1 - -1 0{3 y c put O}for O O c
+O 0 c ;}i}loop B{12 * H c 12 ; 3 y p O 12 +}forall O O R}false 3 colorimage
+A read O O}bind exec}{
+[/Indexed/DeviceRGB `# 1 - A `p " S O]setcolorspace
+/F A/RunLengthDecode filter def<</ImageType 1/Width `w/Height `h
+/BitsPerComponent `b/ImageMatrix[1 0 0 -1 0 `h]/Decode[`D]/DataSource F>>
+image F closefile}ifelse}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% at Sun Jun  2 12:00:13 CEST 2002
+% _l1c_
+/l128n (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+`I%%EndComments
+%%Page: 1 1
+save`s 36 dict begin
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/S 32 E/D 0 E/C 0 E
+/;/getinterval x/p/putinterval x/b/bitshift x/+/add x/O/pop x/*/mul x/u/dup x
+/-/sub x/"/string x/?/length x/y/copy x{
+{mark A/ASCII85Decode filter/T exch def}stopped
+/B exch def cleartomark B{{
+/d{{27 S ge{exit}if A read not{511}if u 122 eq{/S 27 E/D 0 E/C 0 E}{u 117 gt{
+A read{O}if/S 54 S - E}{u 33 ge{S 32 eq{u/C c E/D -1670420001 E}{u 117 -{1 85
+7225 614125}S 28 - get * D +/D c E}i/S S 1 - E}if}i}i O}loop S 22 eq{511}{C
+1868977 * D + S 24 and neg b 23 S lt{C 3 * +}if 255 and/S S 3 eq{32}{S 7 mod 3
+eq{22}{S 8 -}i}i E}i}E
+12 " u/B c E 0 `p ; u ? 1 - 0 c 1 c{d 3 y put O O}for O/H 3072 " E/R 0 E
+0 1 255{u -6 b B c 3 * 3 ; H c R c p/R R 3 + E
+u -4 b 3 and B c 3 * 3 ; H c R c p/R R 3 + E
+u -2 b 3 and B c 3 * 3 ; H c R c p/R R 3 + E
+3 and B c 3 * 3 ; H c R c p/R R 3 + E
+}for/B `w 3 + -2 b " E/B3 B ? 2 b 3 * " E/R B3 0 `w 3 * ; E
+`w `h 8[1 0 0 -1 0 `h]{B3 0 B u ? 1 - 0 c 1 c{d 3 y put O O}for
+{12 * H c 12 ; 3 y p O 12 +}forall O O R}false 3 colorimage
+d O}bind exec}{
+[/Indexed/DeviceRGB `# 1 - T `p " readstring O]setcolorspace
+<</ImageType 1/Width `w/Height `h/BitsPerComponent `b/ImageMatrix[1 0 0 -1 0
+`h]/Decode[`D]/DataSource T>>image T closefile}ifelse}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% at Sun Jun  2 14:31:07 CEST 2002
+% derived from /l128n
+% _l1c_
+/l12hn (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+`I%%EndComments
+%%Page: 1 1
+save`s 36 dict begin
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/S/readhexstring x
+/;/getinterval x/p/putinterval x/b/bitshift x/+/add x/O/pop x/*/mul x/u/dup x
+/-/sub x/"/string x/?/length x/y/copy x{
+{mark A/ASCIIHexDecode filter/T exch def}stopped
+/B exch def cleartomark B{{
+A 12 " u/B c E 0 `p ; S O O/H 3072 " E/R 0 E
+0 1 255{u -6 b B c 3 * 3 ; H c R c p/R R 3 + E
+u -4 b 3 and B c 3 * 3 ; H c R c p/R R 3 + E
+u -2 b 3 and B c 3 * 3 ; H c R c p/R R 3 + E
+3 and B c 3 * 3 ; H c R c p/R R 3 + E
+}for/B `w 3 + -2 b " E/B3 B ? 2 b 3 * " E/R B3 0 `w 3 * ; E
+`w `h 8[1 0 0 -1 0 `h]{B3 0 A B S O
+{12 * H c 12 ; 3 y p O 12 +}forall O O R}false 3 colorimage
+A read O O}bind exec}{
+[/Indexed/DeviceRGB `# 1 - T `p " readstring O]setcolorspace
+<</ImageType 1/Width `w/Height `h/BitsPerComponent `b/ImageMatrix[1 0 0 -1 0
+`h]/Decode[`D]/DataSource T>>image T closefile}ifelse}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+
+% at Sun Jun  2 00:05:36 CEST 2002
+% _l1c_
+/l148r (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+`I%%EndComments
+%%Page: 1 1
+save`s 36 dict begin
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/S 32 E/D 0 E/C 0 E
+/;/getinterval x/p/putinterval x/b/bitshift x/+/add x/O/pop x/*/mul x/u/dup x
+/-/sub x/"/string x/?/length x/y/copy x{
+{mark A/ASCII85Decode filter/T exch def}stopped
+/B exch def cleartomark B{{
+/d{{27 S ge{exit}if A read not{511}if u 122 eq{/S 27 E/D 0 E/C 0 E}{u 117 gt{
+A read{O}if/S 54 S - E}{u 33 ge{S 32 eq{u/C c E/D -1670420001 E}{u 117 -{1 85
+7225 614125}S 28 - get * D +/D c E}i/S S 1 - E}if}i}i O}loop S 22 eq{511}{C
+1868977 * D + S 24 and neg b 23 S lt{C 3 * +}if 255 and/S S 3 eq{32}{S 7 mod 3
+eq{22}{S 8 -}i}i E}i}E
+48 " u/B c E 0 `p ; u ? 1 - 0 c 1 c{d 3 y put O O}for O/H 1536 " E/R 0 E
+0 1 255{u -4 b B c 3 * 3 ; H c R c p/R R 3 + E
+15 and B c 3 * 3 ; H c R c p/R R 3 + E
+}for/B `w 1 + -1 b " E/B3 B ? 1 b 3 * " E/R B3 0 `w 3 * ; E/L 128 " E/Ex()E
+`w `h 8[1 0 0 -1 0 `h]{B3 0 B Ex{2 y ? c ? ge{2 y c ? 0 c ; 2 index y ? 2 y c ?
+c - ;/Ex c E O exit}{2 y c y O ? 2 y c ? c - ;}i d u 128 le{L c 0 c 1 + ; u ? 1
+- 0 c 1 c{d 3 y put O O}for}{L c d c 257 c - 3 y 1 - -1 0{3 y c put O}for O O c
+O 0 c ;}i}loop B{6 * H c 6 ; 3 y p O 6 +}forall O O R}false 3 colorimage
+d O d O}bind exec}{
+[/Indexed/DeviceRGB `# 1 - T `p " readstring O]setcolorspace
+/F T/RunLengthDecode filter def<</ImageType 1/Width `w/Height `h
+/BitsPerComponent `b/ImageMatrix[1 0 0 -1 0 `h]/Decode[`D]/DataSource F>>
+image F closefile T closefile
+}ifelse}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% at Sun Jun  2 14:26:37 CEST 2002
+% derived from /l148r
+% _l1c_
+/l14hr (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+`I%%EndComments
+%%Page: 1 1
+save`s 36 dict begin
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/S/readhexstring x
+/;/getinterval x/p/putinterval x/b/bitshift x/+/add x/O/pop x/*/mul x/u/dup x
+/-/sub x/"/string x/?/length x/y/copy x{
+{mark A/ASCIIHexDecode filter/T exch def}stopped
+/B exch def cleartomark B{{
+/C(.)E/d{A C S O 0 get}E
+A 48 " u/B c E 0 `p ; S O O/H 1536 " E/R 0 E
+0 1 255{u -4 b B c 3 * 3 ; H c R c p/R R 3 + E
+15 and B c 3 * 3 ; H c R c p/R R 3 + E
+}for/B `w 1 + -1 b " E/B3 B ? 1 b 3 * " E/R B3 0 `w 3 * ; E/L 128 " E/Ex()E
+`w `h 8[1 0 0 -1 0 `h]{B3 0 B Ex{2 y ? c ? ge{2 y c ? 0 c ; 2 index y ? 2 y c ?
+c - ;/Ex c E O exit}{2 y c y O ? 2 y c ? c - ;}i d u 128 le{L c 0 c 1 + ;
+A c S O}{L c d c 257 c - 3 y 1 - -1 0{3 y c put O}for O O c
+O 0 c ;}i}loop B{6 * H c 6 ; 3 y p O 6 +}forall O O R}false 3 colorimage
+d O A read O O}bind exec}{
+[/Indexed/DeviceRGB `# 1 - T `p " readstring O]setcolorspace
+/F T/RunLengthDecode filter def<</ImageType 1/Width `w/Height `h
+/BitsPerComponent `b/ImageMatrix[1 0 0 -1 0 `h]/Decode[`D]/DataSource F>>
+image F closefile T closefile
+}ifelse}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% at Sun Jun  2 14:49:40 CEST 2002
+% derived from /l14hr
+% _l1c_
+/l14br (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+`I%%EndComments
+%%Page: 1 1
+save`s 36 dict begin
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/S/readstring x
+/;/getinterval x/p/putinterval x/b/bitshift x/+/add x/O/pop x/*/mul x/u/dup x
+/-/sub x/"/string x/?/length x/y/copy x{
+/filter where not{{
+A 48 " u/B c E 0 `p ; S O O/H 1536 " E/R 0 E
+0 1 255{u -4 b B c 3 * 3 ; H c R c p/R R 3 + E
+15 and B c 3 * 3 ; H c R c p/R R 3 + E
+}for/B `w 1 + -1 b " E/B3 B ? 1 b 3 * " E/R B3 0 `w 3 * ; E/L 128 " E/Ex()E
+`w `h 8[1 0 0 -1 0 `h]{B3 0 B Ex{2 y ? c ? ge{2 y c ? 0 c ; 2 index y ? 2 y c ?
+c - ;/Ex c E O exit}{2 y c y O ? 2 y c ? c - ;}i A read O u 128 le{L c 0 c 1 +
+; A c S O}{L c A read O c 257 c - 3 y 1 - -1 0{3 y c put O}for O O c
+O 0 c ;}i}loop B{6 * H c 6 ; 3 y p O 6 +}forall O O R}false 3 colorimage
+A read O O}bind exec}{
+O[/Indexed/DeviceRGB `# 1 - A `p " S O]setcolorspace
+/F A/RunLengthDecode filter def<</ImageType 1/Width `w/Height `h
+/BitsPerComponent `b/ImageMatrix[1 0 0 -1 0 `h]/Decode[`D]/DataSource F>>
+image F closefile}ifelse}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% at Sun Jun  2 12:13:50 CEST 2002
+% _l1c_
+/l148n (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+`I%%EndComments
+%%Page: 1 1
+save`s 36 dict begin
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/S 32 E/D 0 E/C 0 E
+/;/getinterval x/p/putinterval x/b/bitshift x/+/add x/O/pop x/*/mul x/u/dup x
+/-/sub x/"/string x/?/length x/y/copy x{
+{mark A/ASCII85Decode filter/T exch def}stopped
+/B exch def cleartomark B{{
+/d{{27 S ge{exit}if A read not{511}if u 122 eq{/S 27 E/D 0 E/C 0 E}{u 117 gt{
+A read{O}if/S 54 S - E}{u 33 ge{S 32 eq{u/C c E/D -1670420001 E}{u 117 -{1 85
+7225 614125}S 28 - get * D +/D c E}i/S S 1 - E}if}i}i O}loop S 22 eq{511}{C
+1868977 * D + S 24 and neg b 23 S lt{C 3 * +}if 255 and/S S 3 eq{32}{S 7 mod 3
+eq{22}{S 8 -}i}i E}i}E
+48 " u/B c E 0 `p ; u ? 1 - 0 c 1 c{d 3 y put O O}for O/H 1536 " E/R 0 E
+0 1 255{u -4 b B c 3 * 3 ; H c R c p/R R 3 + E
+15 and B c 3 * 3 ; H c R c p/R R 3 + E
+}for/B `w 1 + -1 b " E/B3 B ? 1 b 3 * " E/R B3 0 `w 3 * ; E
+`w `h 8[1 0 0 -1 0 `h]{B3 0 B u ? 1 - 0 c 1 c{d 3 y put O O}for
+{6 * H c 6 ; 3 y p O 6 +}forall O O R}false 3 colorimage
+d O}bind exec}{
+[/Indexed/DeviceRGB `# 1 - T `p " readstring O]setcolorspace
+<</ImageType 1/Width `w/Height `h/BitsPerComponent `b/ImageMatrix[1 0 0 -1 0
+`h]/Decode[`D]/DataSource T>>image T closefile}ifelse}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% at Sun Jun  2 14:34:26 CEST 2002
+% derived from /l148n
+% _l1c_
+/l14hn (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+`I%%EndComments
+%%Page: 1 1
+save`s 36 dict begin
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/S/readhexstring x
+/;/getinterval x/p/putinterval x/b/bitshift x/+/add x/O/pop x/*/mul x/u/dup x
+/-/sub x/"/string x/?/length x/y/copy x{
+{mark A/ASCIIHexDecode filter/T exch def}stopped
+/B exch def cleartomark B{{
+A 48 " u/B c E 0 `p ; S O O/H 1536 " E/R 0 E
+0 1 255{u -4 b B c 3 * 3 ; H c R c p/R R 3 + E
+15 and B c 3 * 3 ; H c R c p/R R 3 + E
+}for/B `w 1 + -1 b " E/B3 B ? 1 b 3 * " E/R B3 0 `w 3 * ; E
+`w `h 8[1 0 0 -1 0 `h]{B3 0 A B S O
+{6 * H c 6 ; 3 y p O 6 +}forall O O R}false 3 colorimage
+A read O O}bind exec}{
+[/Indexed/DeviceRGB `# 1 - T `p " readstring O]setcolorspace
+<</ImageType 1/Width `w/Height `h/BitsPerComponent `b/ImageMatrix[1 0 0 -1 0
+`h]/Decode[`D]/DataSource T>>image T closefile}ifelse}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+
+
+% at Sun Jun  2 00:05:36 CEST 2002
+% _l1c_
+/l188r (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+`I%%EndComments
+%%Page: 1 1
+save`s 36 dict begin
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/S 32 E/D 0 E/C 0 E
+/;/getinterval x/p/putinterval x/b/bitshift x/+/add x/O/pop x/*/mul x/u/dup x
+/-/sub x/"/string x/?/length x/y/copy x{
+{mark A/ASCII85Decode filter/T exch def}stopped
+/B exch def cleartomark B{{
+/d{{27 S ge{exit}if A read not{511}if u 122 eq{/S 27 E/D 0 E/C 0 E}{u 117 gt{
+A read{O}if/S 54 S - E}{u 33 ge{S 32 eq{u/C c E/D -1670420001 E}{u 117 -{1 85
+7225 614125}S 28 - get * D +/D c E}i/S S 1 - E}if}i}i O}loop S 22 eq{511}{C
+1868977 * D + S 24 and neg b 23 S lt{C 3 * +}if 255 and/S S 3 eq{32}{S 7 mod 3
+eq{22}{S 8 -}i}i E}i}E
+768 " u/H c E 0 `p ; u ? 1 - 0 c 1 c{d 3 y put O O}for O
+/B `w " E/R `w 3 * " E/L 128 " E/Ex()E
+`w `h 8[1 0 0 -1 0 `h]{R 0 B Ex{2 y ? c ? ge{2 y c ? 0 c ; 2 index y ? 2 y c ?
+c - ;/Ex c E O exit}{2 y c y O ? 2 y c ? c - ;}i d u 128 le{L c 0 c 1 + ; u ? 1
+- 0 c 1 c{d 3 y put O O}for}{L c d c 257 c - 3 y 1 - -1 0{3 y c put O}for O O c
+O 0 c ;}i}loop B{3 * H c 3 ; 3 y p O 3 +}forall O O R}false 3 colorimage
+d O d O}bind exec}{
+[/Indexed/DeviceRGB `# 1 - T `p " readstring O]setcolorspace
+/F T/RunLengthDecode filter def<</ImageType 1/Width `w/Height `h
+/BitsPerComponent `b/ImageMatrix[1 0 0 -1 0 `h]/Decode[`D]/DataSource F>>
+image F closefile T closefile
+}ifelse}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% at Sun Jun  2 00:05:36 CEST 2002
+% derived from /l188r
+% _l1c_
+/l18hr (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+`I%%EndComments
+%%Page: 1 1
+save`s 36 dict begin
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/S/readhexstring x
+/;/getinterval x/p/putinterval x/b/bitshift x/+/add x/O/pop x/*/mul x/u/dup x
+/-/sub x/"/string x/?/length x/y/copy x{
+{mark A/ASCIIHexDecode filter/T exch def}stopped
+/B exch def cleartomark B{{
+/C(.)E/d{A C S O 0 get}E
+A 768 " u/H c E 0 `p ; S O O/B `w " E/R `w 3 * " E/L 128 " E/Ex()E
+`w `h 8[1 0 0 -1 0 `h]{R 0 B Ex{2 y ? c ? ge{2 y c ? 0 c ; 2 index y ? 2 y c ?
+c - ;/Ex c E O exit}{2 y c y O ? 2 y c ? c - ;}i d u 128 le{L c 0 c 1 + ;
+A c S O}{L c d c 257 c - 3 y 1 - -1 0{3 y c put O}for O O c
+O 0 c ;}i}loop B{3 * H c 3 ; 3 y p O 3 +}forall O O R}false 3 colorimage
+d O A read O O}bind exec}{
+[/Indexed/DeviceRGB `# 1 - T `p " readstring O]setcolorspace
+/F T/RunLengthDecode filter def<</ImageType 1/Width `w/Height `h
+/BitsPerComponent `b/ImageMatrix[1 0 0 -1 0 `h]/Decode[`D]/DataSource F>>
+image F closefile T closefile
+}ifelse}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% at Sun Jun  2 00:05:36 CEST 2002
+% derived from /l18hr
+% _l1c_
+/l18br (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+`I%%EndComments
+%%Page: 1 1
+save`s 36 dict begin
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/S/readstring x
+/;/getinterval x/p/putinterval x/b/bitshift x/+/add x/O/pop x/*/mul x/u/dup x
+/-/sub x/"/string x/?/length x/y/copy x{
+/filter where not{{
+A 768 " u/H c E 0 `p ; S O O/B `w " E/R `w 3 * " E/L 128 " E/Ex()E
+`w `h 8[1 0 0 -1 0 `h]{R 0 B Ex{2 y ? c ? ge{2 y c ? 0 c ; 2 index y ? 2 y c ?
+c - ;/Ex c E O exit}{2 y c y O ? 2 y c ? c - ;}i A read O u 128 le{L c 0 c 1 +
+; A c S O}{L c A read O c 257 c - 3 y 1 - -1 0{3 y c put O}for O O c
+O 0 c ;}i}loop B{3 * H c 3 ; 3 y p O 3 +}forall O O R}false 3 colorimage
+A read O O}bind exec}{
+O[/Indexed/DeviceRGB `# 1 - A `p " S O]setcolorspace
+/F A/RunLengthDecode filter def<</ImageType 1/Width `w/Height `h
+/BitsPerComponent `b/ImageMatrix[1 0 0 -1 0 `h]/Decode[`D]/DataSource F>>
+image F closefile}ifelse}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% at Sun Jun  2 12:14:04 CEST 2002
+% derived from /l188r
+% _l1c_
+/l188n (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+`I%%EndComments
+%%Page: 1 1
+save`s 36 dict begin
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/S 32 E/D 0 E/C 0 E
+/;/getinterval x/p/putinterval x/b/bitshift x/+/add x/O/pop x/*/mul x/u/dup x
+/-/sub x/"/string x/?/length x/y/copy x{
+{mark A/ASCII85Decode filter/T exch def}stopped
+/B exch def cleartomark B{{
+/d{{27 S ge{exit}if A read not{511}if u 122 eq{/S 27 E/D 0 E/C 0 E}{u 117 gt{
+A read{O}if/S 54 S - E}{u 33 ge{S 32 eq{u/C c E/D -1670420001 E}{u 117 -{1 85
+7225 614125}S 28 - get * D +/D c E}i/S S 1 - E}if}i}i O}loop S 22 eq{511}{C
+1868977 * D + S 24 and neg b 23 S lt{C 3 * +}if 255 and/S S 3 eq{32}{S 7 mod 3
+eq{22}{S 8 -}i}i E}i}E
+768 " u/H c E 0 `p ; u ? 1 - 0 c 1 c{d 3 y put O O}for O/B `w " E/R `w 3 *
+" E `w `h 8[1 0 0 -1 0 `h]{R 0 B u ? 1 - 0 c 1 c{d 3 y put O O}for
+{3 * H c 3 ; 3 y p O 3 +}forall O O R}false 3 colorimage
+d O}bind exec}{
+[/Indexed/DeviceRGB `# 1 - T `p " readstring O]setcolorspace
+<</ImageType 1/Width `w/Height `h/BitsPerComponent `b/ImageMatrix[1 0 0 -1 0
+`h]/Decode[`D]/DataSource T>>image T closefile}ifelse}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% at Sun Jun  2 12:25:13 CEST 2002
+% derived from l188n
+% _l1c_
+/l18hn (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+`I%%EndComments
+%%Page: 1 1
+save`s 36 dict begin
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/d/readhexstring x
+/;/getinterval x/p/putinterval x/b/bitshift x/+/add x/O/pop x/*/mul x/u/dup x
+/-/sub x/"/string x/?/length x/y/copy x{
+{mark A/ASCIIHexDecode filter/T exch def}stopped
+/B exch def cleartomark B{{
+A 768 " u/H c E 0 `p ; d O O/B `w " E/R `w 3 *
+" E `w `h 8[1 0 0 -1 0 `h]{R 0 A B d O
+{3 * H c 3 ; 3 y p O 3 +}forall O O R}false 3 colorimage
+A read O O}bind exec}{
+[/Indexed/DeviceRGB `# 1 - T `p " readstring O]setcolorspace
+<</ImageType 1/Width `w/Height `h/BitsPerComponent `b/ImageMatrix[1 0 0 -1 0
+`h]/Decode[`D]/DataSource T>>image T closefile}ifelse}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% at Sun Jun  2 14:45:14 CEST 2002
+% derived from /l12hn
+% _l1c_
+/l12bn (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+`I%%EndComments
+%%Page: 1 1
+save`s 36 dict begin
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/S/readstring x
+/;/getinterval x/p/putinterval x/b/bitshift x/+/add x/O/pop x/*/mul x/u/dup x
+/-/sub x/"/string x/?/length x/y/copy x{
+/filter where not{{
+A 12 " u/B c E 0 `p ; S O O/H 3072 " E/R 0 E
+0 1 255{u -6 b B c 3 * 3 ; H c R c p/R R 3 + E
+u -4 b 3 and B c 3 * 3 ; H c R c p/R R 3 + E
+u -2 b 3 and B c 3 * 3 ; H c R c p/R R 3 + E
+3 and B c 3 * 3 ; H c R c p/R R 3 + E
+}for/B `w 3 + -2 b " E/B3 B ? 2 b 3 * " E/R B3 0 `w 3 * ; E
+`w `h 8[1 0 0 -1 0 `h]{B3 0 A B S O
+{12 * H c 12 ; 3 y p O 12 +}forall O O R}false 3 colorimage}bind exec}{
+O[/Indexed/DeviceRGB `# 1 - A `p " S O]setcolorspace
+<</ImageType 1/Width `w/Height `h/BitsPerComponent `b/ImageMatrix[1 0 0 -1 0
+`h]/Decode[`D]/DataSource A>>image}ifelse}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% at Sun Jun  2 14:47:31 CEST 2002
+% derived from /l14hn
+% _l1c_
+/l14bn (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+`I%%EndComments
+%%Page: 1 1
+save`s 36 dict begin
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/S/readstring x
+/;/getinterval x/p/putinterval x/b/bitshift x/+/add x/O/pop x/*/mul x/u/dup x
+/-/sub x/"/string x/?/length x/y/copy x{
+/filter where not{{
+A 48 " u/B c E 0 `p ; S O O/H 1536 " E/R 0 E
+0 1 255{u -4 b B c 3 * 3 ; H c R c p/R R 3 + E
+15 and B c 3 * 3 ; H c R c p/R R 3 + E
+}for/B `w 1 + -1 b " E/B3 B ? 1 b 3 * " E/R B3 0 `w 3 * ; E
+`w `h 8[1 0 0 -1 0 `h]{B3 0 A B S O
+{6 * H c 6 ; 3 y p O 6 +}forall O O R}false 3 colorimage}bind exec}{
+O[/Indexed/DeviceRGB `# 1 - A `p " S O]setcolorspace
+<</ImageType 1/Width `w/Height `h/BitsPerComponent `b/ImageMatrix[1 0 0 -1 0
+`h]/Decode[`D]/DataSource A>>image}ifelse}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% at Sun Jun  2 12:25:13 CEST 2002
+% BUGFIX at Sun Sep 22 20:02:47 CEST 2002
+% derived from l18hn
+% _l1c_
+/l18bn (%!PS-Adobe-3.0`E
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+`I%%EndComments
+%%Page: 1 1
+save`s 36 dict begin
+/x{load def}def/E/def x/A/currentfile x/c/exch x/i/ifelse x/d/readstring x
+/;/getinterval x/p/putinterval x/b/bitshift x/+/add x/O/pop x/*/mul x/u/dup x
+/-/sub x/"/string x/?/length x/y/copy x{
+/filter where not{{
+A 768 " u/H c E 0 `p ; d O O/B `w " E/R `w 3 *
+" E `w `h 8[1 0 0 -1 0 `h]{R 0 A B d O
+{3 * H c 3 ; 3 y p O 3 +}forall O O R}false 3 colorimage}bind exec}{
+O[/Indexed/DeviceRGB `# 1 - A `p " d O]setcolorspace
+<</ImageType 1/Width `w/Height `h/BitsPerComponent `b/ImageMatrix[1 0 0 -1 0
+`h]/Decode[`D]/DataSource A>>image}ifelse}
+%%BeginData:;
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF\n)
+
+% long before Sun Sep 22 13:57:08 CEST 2002
+% /lcrb -> l1gbn
+% /lcr8 -> l1g8n
+% /lcrh -> l1ghn
+
+% ---
+
+% Templates missing from this file:
+% l1g8z: /Compression/ZIP /TransferEncoding/A85 /SampleFormat/Gray* /FileFormat/PSL1
+%        (formerly l1fa85g.tte, now: l1zip.psm)
+% l1ghz: /Compression/ZIP /TransferEncoding/Hex /SampleFormat/Gray* /FileFormat/PSL1
+% l1gbz: /Compression/ZIP /TransferEncoding/Binary /SampleFormat/Gray* /FileFormat/PSL1
+% l1g8l: /Compression/LZW /TransferEncoding/A85 /SampleFormat/Gray* /FileFormat/PSL1
+%        (formerly l1fa85g.tte, now: l1lzw.psm)
+% l1ghl: /Compression/LZW /TransferEncoding/Hex /SampleFormat/Gray* /FileFormat/PSL1
+% l1gbl: /Compression/LZW /TransferEncoding/Binary /SampleFormat/Gray* /FileFormat/PSL1
+
+%%EOF

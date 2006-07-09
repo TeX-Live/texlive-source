@@ -1,0 +1,9 @@
+CXX=@CXX@
+LDXX=@LDXX@
+CXXFLAGS=-DHAVE_CONFIG2_H @CXXFLAGS@
+CXXFLAGSB=@CXXFLAGSB@
+ENABLE_DEBUG=@ENABLE_DEBUG@
+GFLAG=@GFLAG@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+bindir=@bindir@

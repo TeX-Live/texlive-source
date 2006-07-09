@@ -1,0 +1,24 @@
+Source: sam2p
+Section: unknown
+Priority: optional
+Maintainer: Szabó Péter <pts@fazekas.hu>
+Standards-Version: 3.2.1
+Build-Depends: g++, perl
+
+Package: sam2p
+Architecture: any
+Depends: ${shlibs:Depends}
+Recommends: tif22pnm | netpbm, png22pnm | netpbm, libjpeg-progs
+Description: convert raster images to EPS and PDF and others
+ sam2p is a UNIX command line utility written in ANSI C++ that converts many
+ raster (bitmap) image formats into Adobe PostScript or PDF files. The images
+ are not vectorized. sam2p gives full control to the user to specify
+ standards-compliance, compression, and bit depths. In some cases sam2p can
+ compress an image 100 times smaller than the PostScript output of many other
+ common image converters. sam2p provides ZIP, RLE and LZW (de)compression
+ filters even on Level1 devices.
+ .
+ Recommendations: package netpbm provides the tifftopnm and pngtopnm utilities.
+ Please use tif22pnm and png22pnm (by the author of sam2p) instead of these,
+ because *22* provides a much richer functionality with less bugs. package
+ libjpeg-prog provides the excellent cjpeg and djpeg utilities.

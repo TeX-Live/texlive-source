@@ -1,0 +1,8 @@
+<<%sam2p-job; by Fri Mar 22 13:10:53 CET 2002
+/InputFile  (examples/ptsbanner.gif)
+/OutputFile (test.png)
+/Profile [
+  << /FileFormat/PNG /SampleFormat/RGB8 /TransferEncoding/Binary
+     /Compression/ZIP /Predictor 12>>
+ ]
+>>

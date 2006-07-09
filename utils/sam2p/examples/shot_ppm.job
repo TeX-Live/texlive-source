@@ -1,0 +1,10 @@
+<<%sam2p-job; by pts@fazekas.hu at Sat Mar 23 14:32:58 CET 2002
+/InputFile  (examples/shot.gif)
+/OutputFile (test.ppm)
+/Profile [
+  << /FileFormat/PNM /SampleFormat/Rgb8
+     /TransferEncoding/ASCII
+     % /TransferEncoding/Binary
+     /Compression/None >>
+ ]
+>>

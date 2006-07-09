@@ -1,0 +1,10 @@
+<<%sam2p-job; by pts@fazekas.hu at Sun Mar 17 16:21:44 CET 2002
+% This is file (named test0.job).
+/InputFile  (examples/pts2.pbm)
+/OutputFile (test.eps)
+/unknown pop
+/Profile [
+  << /FileFormat/PSL1 /SampleFormat/Gray8 /TransferEncoding/A85
+     /Compression/ZIP /Hints<</Effort 6>> /Predictor 1 >>
+]
+>>

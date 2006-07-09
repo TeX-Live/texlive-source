@@ -1,0 +1,8 @@
+<<%sam2p-job; by Fri Mar 22 17:36:41 CET 2002
+/InputFile  (examples/shot_large.gif)
+%/OutputFile (examples/shot.gif)
+/OutputFile (test.gif)
+/Profile [
+  << /FileFormat/GIF89a /SampleFormat/Indexed1 /TransferEncoding/Binary /Compression/None >>
+ ]
+>>

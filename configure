@@ -4374,15 +4374,21 @@ test "$needs_freetype" = yes && test "$using_system_freetype" != yes \
 subdirs="$subdirs libs"
 
 
-PKGS='dialog lcdf-typetools pdfopen psutils t1utils texi2html texinfo'
+PKGS='dialog lcdf-typetools pdfopen psutils sam2p t1utils texi2html texinfo'
 ESUBDIRS=
+test -d utils || mkdir utils
 for pkg in $PKGS; do
   if test -d $srcdir/utils/$pkg; then
     if eval "test \"`echo '$with_'${pkg}`\" != no"; then
       ESUBDIRS="$ESUBDIRS utils/$pkg"
+      if test $pkg = sam2p; then
+        # this is a terrible kludge, but sam2p configure actively
+        # defeats srcdir!=objdir support, and Peter S. doesn't want to
+        # fix it.  So copy the entire sam2p srcdir into objdir.
+        rm -rf utils/sam2p
+        cp -pr $srcdir/utils/sam2p utils
+      fi
       subdirs="$subdirs utils/$pkg"
-
-      test -d utils || mkdir utils
     fi
   fi
 done

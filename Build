@@ -21,8 +21,8 @@ cd Work || exit 1
 rm -f tlbuild.log
 
 # Force building xdvi-xaw; motif is not always free and/or available.
-#
-(time ../configure --prefix=$H/inst --datadir=$H/inst \
-        --with-xdvi-x-toolkit=xaw \
+# --enable-gif is for sam2p; the gif patent has expired worldwide.
+(set -x; time ../configure --prefix=$H/inst --datadir=$H/inst \
+        --with-xdvi-x-toolkit=xaw --enable-gif \
         "$@" \
  && time make world) 2>&1 | tee tlbuild.log

@@ -1,0 +1,201 @@
+/* config.h.in.  Generated automatically from configure.in by autoheader.  */
+
+/* Define if using alloca.c.  */
+#undef C_ALLOCA
+
+/* Define if type char is unsigned and you are not using gcc.  */
+#ifndef __CHAR_UNSIGNED__
+#undef __CHAR_UNSIGNED__
+#endif
+
+/* Define to empty if the keyword does not work.  */
+#undef const
+
+/* Define to one of _getb67, GETB67, getb67 for Cray-2 and Cray-YMP systems.
+   This function is required for alloca.c support on those systems.  */
+#undef CRAY_STACKSEG_END
+
+/* Define if you have alloca, as a function or macro.  */
+#undef HAVE_ALLOCA
+
+/* Define if you have <alloca.h> and it should be used (not on Ultrix).  */
+#undef HAVE_ALLOCA_H
+
+/* Define if you have the ANSI # stringizing operator in cpp. */
+#undef HAVE_STRINGIZE
+
+/* Define to `unsigned' if <sys/types.h> doesn't define.  */
+#undef size_t
+
+/* If using the C implementation of alloca, define if you know the
+   direction of stack growth for your system; otherwise it will be
+   automatically deduced at run-time.
+ STACK_DIRECTION > 0 => grows toward higher addresses
+ STACK_DIRECTION < 0 => grows toward lower addresses
+ STACK_DIRECTION = 0 => direction of growth unknown
+ */
+#undef STACK_DIRECTION
+
+/* Define if you have the ANSI C header files.  */
+#undef STDC_HEADERS
+
+/* A type name of a signed integral type of exactly 16 bits. Always defined.
+ */
+#undef PTS_INT16_T
+
+/* A type name of a signed integral type of exactly 32 bits. Always defined.
+ */
+#undef PTS_INT32_T
+
+/* A type name of a signed integral type of exactly 64 bits. Maybe left
+ * 0-defined.
+ */
+#undef PTS_INT64_T
+
+/* A type name of a signed integral type of exactly 128 bits. Maybe left
+ * 0-defined.
+ */
+#undef PTS_INT128_T
+
+/* A type name of a signed integral type which has space to hold a pointer.
+ * Always defined.
+ */
+#undef PTS_INTP_T
+
+/* Imp: document this
+ */
+#undef PTS_INTP_OK
+
+/* Imp: document this
+ */
+#undef PTS_mode_t
+
+/* Imp: document this
+ */
+#undef PTS_off_t
+
+/* Imp: document this
+ */
+#undef PTS_pid_t
+
+/* Imp: document this
+ */
+#undef PTS_size_t
+
+/* Just a dummy, non-existent type.
+ */
+#undef PTS_size_tt
+
+/* Imp: document this
+ */
+#undef PTS_uid_t
+
+/* Imp: document this
+ */
+#undef PTS_gid_t
+
+/* Imp: document this
+ */
+#undef PTS_dev_t
+
+/* Does the C compiler support prototypes?
+ */
+#undef HAVE_PROTOTYPES
+
+/* Define to empty if the keyword does not work.
+ */
+#undef volatile
+
+/* Imp: document this
+ */
+#undef HAVE_strcpy_in_string
+
+/* Imp: document this
+ */
+#undef HAVE_strcpy_in_strings
+
+/* Imp: document these
+ */
+#undef HAVE_MEMCMPY_BUILTIN
+#undef HAVE_getc_in_stdio
+#undef HAVE_fgetc_in_stdio
+#undef HAVE_putc_in_stdio
+#undef HAVE_fputc_in_stdio
+#undef HAVE_atoi_in_stdlib
+#undef HAVE_malloc_in_malloc
+#undef HAVE_malloc_in_stdlib
+#undef HAVE_memcpy_in_stringxs
+#undef HAVE_sprintf_in_stdio
+#undef HAVE_write_in_unistd
+#undef HAVE_system_in_stdlib
+#undef HAVE_lstat_in_sys_stat
+#undef HAVE_PTS_STDC
+#undef HAVE_SWITCH_ENUM_BUG
+#undef HAVE_ASCII_SYSTEM
+#undef PTS_CFG_P_TMPDIR
+
+/** "" or ".16", so composing "%.16g" for printing doubles with printf(3)
+ * will just print enough digits
+ */
+#define PTS_CFG_PRINTFGLEN ".16"
+
+/* Is the file c_gcc.cpp required for gcc when linking C++ programs? */
+#undef HAVE_PTS_C_LGCC_CPP_REQUIRED
+#undef HAVE_PTS_C_LGCC3_CPP_REQUIRED
+
+/** Does the C library have a working vsnprintf()? */
+#undef HAVE_PTS_VSNPRINTF
+#undef HAVE_PTS_VSNPRINTF_OLD
+#undef HAVE_PTS_VSNPRINTF_C99
+
+/** What shell does the C library system(3) function call? */
+#undef HAVE_PTS_SYSTEMF
+#undef HAVE_PTS_SYSTEMF_WIN32
+#undef HAVE_PTS_SYSTEMF_UNIX
+#undef HAVE_PTS_SYSTEMF_OTHER
+
+/** popen("...","wb") and "rb" works binary */
+#undef HAVE_PTS_POPEN_B
+
+/** popen("...","w") and "r" works binary */
+#undef HAVE_PTS_POPEN_
+
+/* The number of bytes in a __int64.  */
+#undef SIZEOF___INT64
+
+/* The number of bytes in a bool.  */
+#undef SIZEOF_BOOL
+
+/* The number of bytes in a char.  */
+#undef SIZEOF_CHAR
+
+/* The number of bytes in a char *.  */
+#undef SIZEOF_CHAR_P
+
+/* The number of bytes in a int.  */
+#undef SIZEOF_INT
+
+/* The number of bytes in a long.  */
+#undef SIZEOF_LONG
+
+/* The number of bytes in a long long.  */
+#undef SIZEOF_LONG_LONG
+
+/* The number of bytes in a short.  */
+#undef SIZEOF_SHORT
+
+/* The number of bytes in a very long.  */
+#undef SIZEOF_VERY_LONG
+
+/* The number of bytes in a void *.  */
+#undef SIZEOF_VOID_P
+
+/* Can have static const int VARNAME=1; inside a class { ... } ? */
+#undef HAVE_STATIC_CONST
+
+/* sam2p-specific */
+#undef USE_BUILTIN_ZIP
+#undef USE_BUILTIN_FAXE
+#undef USE_BUILTIN_LZW
+#undef USE_IN_GIF
+#undef USE_OUT_GIF

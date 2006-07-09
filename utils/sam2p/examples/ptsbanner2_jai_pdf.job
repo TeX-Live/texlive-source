@@ -1,0 +1,8 @@
+<<%sam2p-job; by pts@fazekas.hu at Wed Apr 17 12:26:49 CEST 2002
+/InputFile  (examples/ptsbanner2.jpg)
+/OutputFile (test.pdf)
+/Profile [
+  << /FileFormat/PDF1.2 /SampleFormat/Asis /TransferEncoding/A85
+     /Compression/JAI >>
+ ]
+>>

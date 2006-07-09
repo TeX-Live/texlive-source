@@ -1,0 +1,656 @@
+/* l1lzw.psm
+ * by pts@fazekas.hu at Sun Sep 22 01:23:57 CEST 2002
+ * formerly lzwdecode.psm -- a real, effective implementation of PostScript
+ *   LanguageLevel2 and PDF /LZWDecode filters (same as the LZW
+ *   compression used in TIFF raster image files), in PostScript Level1
+ * derived from lzwdecode.c by pts@fazekas.hu (at Wed Sep  4 11:11:45 CEST 2002)
+ * by pts@fazekas.hu at Wed Sep  4 11:30:18 CEST 2002
+ * first run at Wed Sep  4 14:18:43 CEST 2002
+ * linux-2.2.8 fine at Wed Sep  4 14:46:05 CEST 2002
+ * rets linux-2.2.8 fine at Wed Sep  4 15:58:24 CEST 2002
+ * works at Wed Sep  4 16:41:29 CEST 2002
+ *   linux-2.2.8 58388480 uncompressed:
+ *     lzwdecode.c:     17s user time (*1)
+ *     lzw_codec.c:      6s user time (*0.353)
+ *     lzwdecode.psm: 1080s user time (*63.53)
+ * stack-reorg works at Thu Sep  5 12:31:23 CEST 2002
+ *     lzwdecode.psm:  980s user time (*57.65)
+ * lzwdecode.eps works at Thu Sep  5 14:31:23 CEST 2002
+ * last non-` at Sat Sep 21 23:40:03 CEST 2002
+ *
+ * Note that the LZW compression (but not uncompression) is patented by
+ * Unisys (patent number #4,558,302), so use this program at your own legal
+ * risk!
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+% OK: test with aaaaaaaaaaaa (stack overflow)
+
+#include "psmlib.psm"
+
+#if USE_A85D
+#else
+  #if USE_HEXD
+  #else
+    #define USE_BINARY 1
+  #endif
+#endif
+
+#if USE_NO_BIND
+  #define BIND_DEF def
+#else
+  #define BIND_DEF bind def
+#endif
+
+#if USE_PIN
+/* --- .pin begins */
+
+%<Head>
+%!PS-Adobe-3.0`E
+%%Inflater: pts@fazekas.hu l1lzw.psm
+%%Pages: 1
+`X%%DocumentData: `B
+%%LanguageLevel: 1
+`I%%EndComments
+%%Page: 1 1
+%</Head>
+
+%<Open>
+save`s `R
+%</Open>
+
+% vvv 50
+%<Abbr acount=26 xcount=30>
+begin
+%</Abbr>
+
+%<A x "load def"/>  % best to make it first
+%<A E def/>         % best to make it second
+% K: .toksubs.
+%<D T .stream./>
+%<D F .stream./>
+
+%<A + add/>
+%<A , and/>
+%<A - sub/>
+%<A . lt/>
+%<A : for/>
+%<A ; getinterval/>
+%<A * gt/>
+%<A = eq/>
+%<A @ loop/>
+%<A A currentfile/>
+%C!
+%D!
+%<A H index/>
+%<A J 4096/>
+%<A L length/>
+%<A O pop/>
+%S!
+%<A X exit/>
+%<A a packedarray/>
+%<A b bitshift/>
+%<A c exch/>
+%d!
+%<A g get/>
+%<A y copy/>
+%<A i ifelse/>
+%<A j if/>
+%<A r read/>
+%<A s string/>
+%<A t put/>
+%<A u dup/>
+% %<A | -1670420001/> -- not needed, long enough
+%<A ~ ne/>
+#if USE_SHORT_NAMES
+%<D e Flzwdecode_init/>
+%<D f Flzwdecode_do/>
+%<D I Fclear/>
+%<D k prefix/>
+%<D l suffix/>
+%<D m stack/>
+%<D n preread/>
+%<D o past/>
+%<D p nentry/>
+%<D q had_eof/>
+%<D v nentrybig/>
+%<D w nentryb/>
+%<D h stackslice/>
+%<D z gcode/>
+%<D B Fmain/>
+#endif
+#if USE_A85D
+%<D d a85_getc/>
+%<D S xS/>
+%<D D xD/>
+%<D C xC/>
+#endif
+#if USE_HEXD
+%<D d .hexd.un/>
+%<A S readhexstring/>
+%<D D .hexd.un/>
+%<D C .hexd./>
+#endif
+#if USE_BINARY
+%<D d .binary.un/>
+#if USE_PALETTE
+%<D S readstring/>
+#endif
+%<D D .binary.un/>
+%<D C .binary.un/>
+#endif
+
+%<TokSubs name=K inlining=0/>
+
+%<Test>
+#if USE_BINARY
+  /F /filter where {pop false}{true} ifelse def
+#else
+  #if USE_A85D
+    {mark currentfile/ASCII85Decode filter/T exch def}stopped
+  #endif
+  #if USE_HEXD
+    {mark currentfile/ASCIIHexDecode filter/T exch def}stopped
+  #endif
+  /F exch def cleartomark
+#endif
+`w `h `b[1 0 0 -1 0 `h]
+#if USE_TRUE
+true
+#else
+F
+#endif
+%</Test>
+
+%<S len=4096>
+4096 string
+%</S>
+
+#if USE_SHORT_NAMES_OLD
+  #define a85_getc d
+  #define Flzwdecode_init e
+  #define Flzwdecode_do   f
+  #define Fclear          I
+#endif
+
+#if USE_CURRENTFILE
+  #define STDIN currentfile
+#endif
+
+%<True>
+  % Fmain
+  % ^^^ must call it here, because _now_ `currentfile fileposition` is at the real image data
+  % vvv avoid Fmain here because of the substituted constant 4717 (and also size increase!)
+  Flzwdecode_init
+  % !! Imp: less code here, init as a macro
+  /Fmain 4096 string def
+  { Fmain Flzwdecode_do } `i
+  Fmain Flzwdecode_do pop % make sure that mEOD has been read
+  TE_read_eod
+%</True>
+
+%<False>
+#if USE_BINARY
+/F currentfile/LZWDecode filter def
+#else
+/F T/LZWDecode filter def
+#endif
+F `i
+F closefile
+#if !USE_BINARY
+T closefile
+#endif
+%</False>
+
+%<Defs>
+#else
+40 dict begin % LZWDict
+#endif
+
+#if 0
+% (a) () 0 1
+% DumpStack
+% TYPE_STACK(-str -int)
+% ZZZZZZZZZ
+% (a) 3
+% ASSERT_STACK(-str -int,(1))
+% pop pop
+#endif
+
+
+% Defaults: /EarlyChange 1  /UnitLength 8  /LowBitFirst false
+#if !USE_EARLYCHANGE_1
+/EarlyChange 1 def
+#endif
+#if !USE_UNITLENGTH_8
+/UnitLength  8 def
+#endif
+#if !USE_LOWBITFIRST_FALSE
+/LowBitFirst false def
+#endif
+
+/* OK: test with aaaaaaaaaaaa (stack overflow) */
+#define STACKSIZE 4096
+#define STACKSIZE_M1 4095
+
+#if USE_SHORT_NAMES_OLD
+#endif
+
+% Uninitialized const-vars
+/prefix 4096 array def % array[0..4095] of 0..4095
+/suffix 4096 string def
+/stack  STACKSIZE string def
+#if USE_CURRENTFILE
+#else
+  /STDIN (%stdin) (r) file def
+  /STDOUT (%stdout) (w) file def % Fmain
+#endif
+#if USE_HEXD
+  /C(.)def
+#endif
+
+% Uninitialized vars
+#if USE_UNITLENGTH_8
+  #define mClear 256
+  #define mEOD 257
+#endif
+#if !USE_NO_NULLDEF
+  /preread null def
+  /past null def
+  /nentry null def
+  /had_eof null def % 0..2
+  #if !USE_UNITLENGTH_8
+    /mEOD null def
+    /mClear null def
+  #endif
+  /nentrybig null def
+  /nentryb null def
+  /gcode null def % Flzwdecode_do
+  /stackslice null def % Flzwdecode_do
+  #if USE_A85D
+    /S null def
+    /D null def
+    /C null def
+  #endif
+#endif
+
+#if USE_PIN
+{
+#endif
+
+#if USE_A85D
+  /a85_getc{ % Simple getchar() of ASCII85Decode filter :-)), formerly /d
+    PSM_A85_GETC
+  }BIND_DEF
+#endif
+
+%** - Fclear -
+/Fclear {
+  #if USE_UNITLENGTH_8
+    /nentry 258 def
+    /nentryb 9 def
+    #if USE_EARLYCHANGE_1
+      /nentrybig 512 def
+    #else
+      /nentrybig 513 EarlyChange sub def
+    #endif
+  #else
+    /nentry 1 UnitLength bitshift 2 add def
+    /nentryb UnitLength 1 add def
+    /nentrybig 1 nentryb bitshift
+    #if !USE_EARLYCHANGE_1
+      1 EarlyChange sub add
+    #endif
+    def
+  #endif
+  0 1 nentry 3 sub {
+    % Stack: code(0..255)
+    dup prefix exch dup
+    % Stack: code prefix code code
+    put
+    suffix exch dup put
+  } for
+} BIND_DEF
+
+%** - Flzwdecode_init -
+%** The caller should have modified /EarlyChange, /UnitLength and /LowBitFirst
+/Flzwdecode_init {
+  TE_init
+  /past 8 def
+  /preread 0 def
+  /had_eof 0 def
+  #if !USE_EARLYCHANGE_1
+    ASSERT_TRUE(EarlyChange 0 INT_EQ EarlyChange 1 INT_EQ BOOL_BIN(or,(ora1)), (lsp->EarlyChange==0 || lsp->EarlyChange==1))
+  #endif
+  #if USE_UNITLENGTH_8
+    Fclear
+  #else
+    ASSERT_TRUE(3 UnitLength INT_LE UnitLength 8 INT_LE and, (3<=lsp->UnitLength && lsp->UnitLength<=8))
+    Fclear
+    /mClear 1 UnitLength bitshift def
+    /mEOD   1 UnitLength bitshift 1 add def
+  #endif
+  /stackslice stack 0 0 getinterval def
+  /gcode {} def
+} BIND_DEF
+
+%** <str> Flzwdecode_do <str.pre>
+%** The caller should have called Flzwdecode_init. Flzwdecode_do fills the
+%** entire str.pre unless EOF on input prevents this. str.pre can have any
+%** length. Doesn`t depend of str.pre passed to it on the previous invocation.
+/Flzwdecode_do {
+  ASSERT_TRUE(10 nentry INT_LE,(lsp->nentry>=10))
+  dup % Silently leave on stack
+  stackslice had_eof
+  % Stack: reto rets==reto stackslice had_eof
+  { % W2:WHILE(1)
+    % Stack: len++ stackslice had_eof*
+    dup 0 INT_NE {
+      /had_eof exch def
+      pop
+      /stackslice stack 0 0 getinterval def
+      exit % exit(W2)
+    }if % return(len)
+    ASSERT_STACK(-str -str -str -int,(W2.in))
+    pop
+    % Stack: len++     stackslice
+    % Stack: reto rets stackslice
+    ASSERT_STACK(-str -str -str,(3))
+    /* Flush stack. */
+    2 copy length exch length ge { % return from the stack (rets.length<=stackslice.length
+      % Stack: reto rets stackslice
+      dup 0 3 index length getinterval
+      % Stack: reto rets stackslice stackslice[0.. rets.length]
+      2 index copy pop
+      % Stack: reto rets stackslice
+      /stackslice exch 2 index length dup
+      % Stack: reto rets /stackslice stackslice rets.length rets.length
+      2 index length exch sub
+      % Stack: reto rets /stackslice stackslice rets.length stackslice.length-rets.length
+      getinterval def
+      0 0 getinterval
+      % Stack: reto rets[0,0]
+      ASSERT_STACK(-str -str,(4))
+      exit % exit(W2)
+    }if
+    % vvv flush the whole stack into rets
+    2 copy exch
+    copy pop % stackslice -> rets
+    length dup
+    % Stack: reto rets stackslice.length stackslice.length
+    2 index length exch sub
+    % Stack: reto rets stackslice.length rets.length-stackslice.length
+    getinterval
+    % Stack: reto rets
+    ASSERT_STACK(-str -str,(5))
+    ASSERT_TRUE(dup length 1 exch INT_LE,(len>=1))
+    % Stack: len++
+
+    /* Read next code (0..4095) from input to `code` */
+    nentry nentrybig INT_EQ {
+      /nentryb nentryb 1 add def
+      /nentrybig 1 nentryb bitshift
+      #if !USE_EARLYCHANGE_1
+        1 EarlyChange sub add
+      #endif
+      def
+    }if
+    ASSERT_TRUE(4 nentryb INT_LE nentryb 12 INT_LE and, (4<=nentryb && nentryb<=12))
+    ASSERT_STACK(-str -str,(6))
+
+    { % W1:WHILE(1)
+      ASSERT_STACK(-str -str,(7))
+      % Stack: len++
+      % assert(had_eof==0); -- cannot check this right here...
+      ASSERT_TRUE(1 past INT_LE past 8 INT_LE and,(1<=past && past<=8))
+      ASSERT_TRUE(1 nentryb INT_LE nentryb 13 INT_LE and,(1<=nentryb && nentryb<=13))
+      #if !USE_LOWBITFIRST_FALSE
+       LowBitFirst {
+        % Dat: this is untested, even the stack
+        /code 0 def
+        0 1 netryb 1 sub {
+          % Stack: len++ i
+          past 8 INT_EQ {
+            /preread TE_read(def /past 0 def)
+            #if !USE_NO_EOF
+             {
+              TE_read_pop pop
+              /had_eof 2 def exit % exit from inner `for`
+             }ifelse
+            #endif
+          }if
+          preread 1 and 0 INT_NE {
+            1 exch bitshift code INT_BIN(add,(ora2)) /code exch def
+          }{pop}ifelse
+          % Stack: len++
+          /preread preread -1 bitshift def
+          /past past 1 add def
+        }for
+        had_eof 0 INT_NE {0 had_eof exit}if % exit(W1)
+        code
+       }{ % else: !LowBitFirst
+      #endif
+        past nentryb add
+        % Stack: len++ past*
+        ASSERT_STACK(-str -str -int,(8))
+        dup 7 INT_GT {
+          dup 16 INT_GT {
+            16 sub
+            preread 8 bitshift
+            % Stack: len++ past* code
+            /preread TE_read(def)
+            #if !USE_NO_EOF
+             {
+              TE_read_pop pop
+              % Stack: len++ past* code
+              pop
+              /past exch def
+              0 2
+              % Stack: len++ garbage had_eof*
+              exit % exit(W1)
+             }ifelse
+            #endif
+          }{
+            8 sub
+            0 % /code
+          }ifelse
+          % Stack: len++ past* code
+          ASSERT_STACK(-str -str -int -int,(9))
+          ASSERT_TRUE(1 index 1 exch INT_LE 2 index 8 INT_LE and,(1<=lsp->past && lsp->past<=8))
+          preread INT_BIN(add,(or1))
+          % Stack: len++ past* code|preread
+          1 index bitshift
+          % Stack: len++ past* code*==(code|preread)<<past*
+          /preread TE_read(def)
+          #if !USE_NO_EOF
+           {
+            TE_read_pop pop
+            % Stack: len++ past* code
+            pop
+            /past exch def
+            0 2
+            % Stack: len++ garbage had_eof*
+            exit % exit(W1)
+           }ifelse
+          #endif
+          ASSERT_STACK(-str -str -int -int,(10))
+        }{
+          0 % /code
+        }ifelse
+        exch
+        % Stack: len++ code past*
+        ASSERT_STACK(-str -str -int -int,(11))
+        preread exch 2 copy
+        % Stack: len++ code preread0 past* preread past*
+        { 255 127 63 31 15 7 3 1 0 } % cAnd
+        exch get and
+        % Stack: len++ code preread0 past* preread&cAnd[past*]
+        /preread exch def % lsp->preread&=(1<<(8-lsp->past))-1; /* do PCLEAR */
+        % Stack: len++ code preread0 past*
+        dup /past exch def
+        8 sub bitshift INT_BIN(add,(or2))
+        % Stack: len++ code*==code|(preread>>(8-past))
+        ASSERT_STACK(-str -str -int,(12))
+      #if !USE_LOWBITFIRST_FALSE
+       }ifelse % if: /LowBitFirst
+      #endif
+      % Stack: len++ code
+      ASSERT_STACK(-str -str -int,(13))
+
+      dup mClear INT_LT{
+        /* Speed-up: process normal literal data code in `code` */
+        % Stack: len++ code
+        ASSERT_STACK(-str -str -int,(15b))
+        ASSERT_TRUE(dup 1 add mClear INT_LE,(code too high2)) /* /ioerror */
+        ASSERT_TRUE(nentry 4095 INT_LE,(table full2))          /* /ioerror */
+        prefix nentry 2 index put
+        suffix nentry 1 sub  2 index put
+        stack exch STACKSIZE_M1 exch put
+        % Stack: len++
+        ASSERT_STACK(-str -str,(15c))
+        /nentry nentry 1 add def
+        stack STACKSIZE_M1 1 getinterval
+        % Stack: len++ stackslice
+        0 % /had_eof
+        ASSERT_STACK(-str -str -str -int,(20b))
+        exit % exit(W1)
+      }if
+      
+      dup mEOD INT_GT{
+        /* Process normal data code (either literal or above-mEOD) in `code` */
+        % Stack: len++ code
+        ASSERT_STACK(-str -str -int,(15))
+        ASSERT_TRUE(dup 1 add nentry INT_LE,(code too high)) /* /ioerror */
+        ASSERT_TRUE(nentry 4095 INT_LE,(table full))          /* /ioerror */
+        prefix nentry 2 index put
+        % ASSERT_TRUE(0 stacklen INT_EQ,(lsp->stacklen==0))
+        % Stack: len++ code
+        stack exch dup STACKSIZE_M1 exch
+        nentry 1 sub
+        % Stack: len++ stack code STACKSIZE_M1 code nentry-1
+        ASSERT_STACK(-str -str -aryb -int -int -int -int,(16))
+        INT_EQ {
+          % the rightmost char of this entry will be equal to the leftmost
+          % side, as soon as we calculate the leftmost side
+          /gcode { stack STACKSIZE_M1 2 index put /gcode {} def } def
+        }if
+        %{
+        %  ASSERT_TRUE(1 index nentry 2 sub INT_LE,(code<lsp->nentry-1))
+        %  % /gcode { } def
+        %}ifelse
+        -1 0
+        % Stack: len++ -{...} stack code STACKSIZE-1|STACKSIZE-2 -1 0
+        {
+          % 1 index (code=) print ===
+          % Stack: len -{...} stack code putidx
+          ASSERT_STACK(-str -str -aryb -int -int,(17))
+          exch dup prefix exch get 2 copy
+          % Stack: len -{...} stack putidx code prefix[code] code prefix[code]
+          INT_EQ{pop exit}if % exit from inner for
+          % Stack: len -{...} stack putidx code prefix[code]
+          4 copy pop  suffix exch get
+          % Stack: len -{...} stack putidx code prefix[code] stack putidx suffix[code]
+          put
+          exch pop
+          exch pop
+          % Stack: len -{...} stack prefix[code]
+        }for
+        % Stack: len stack unused_putidx code
+        ASSERT_STACK(-str -str -aryb -int -int,(18))
+        dup suffix exch get
+        % dup (sufcode=) print ===
+        gcode
+        suffix nentry 1 sub  2 index put pop
+        % Stack: len stack unused_putidx suffix[code]
+        3 copy put pop
+        % Stack: len stack unused_putidx
+        dup STACKSIZE exch sub
+        % Stack: len stack putidx STACKSIZE-putidx
+        ASSERT_STACK(-str -str -aryb -int -int,(19))
+        getinterval
+        ASSERT_TRUE(1 index length 0 INT_NE,(len!=0))
+        /nentry nentry 1 add def
+        % Stack: len++ stackslice
+        0 % /had_eof
+        ASSERT_STACK(-str -str -str -int,(20))
+        exit % exit(W1)
+      }if
+
+      dup mEOD INT_EQ{
+        % Stack: len++ code==mEOD
+        pop 0 1
+        % Stack: len++ garbage had_eof*
+        ASSERT_STACK(-str -str -int -int,(14))
+        exit % exit(W1)
+      }if
+      
+      ASSERT_TRUE(dup mClear INT_EQ,(code==mClear))
+      pop Fclear
+      % Stack: len++
+      ASSERT_STACK(-str -str,(21))
+    }loop % /W1:WHILE(1)
+    % Stack: len++ stackslice|garbage had_eof*
+    ASSERT_TRUE(TYPE_STACK(-str -str -str -int) TYPE_STACK(-str -str -int -int -bool) BOOL_BIN(or,(ora4)),(stack leaving W2))
+  } loop % /W2:WHILE(1)
+  % Stack: len++
+  % Stack: reto rets(buffer-not-read)
+  ASSERT_STACK(-str -str,(22))
+  length 1 index length exch sub
+  % Stack: reto reto.length-rets.length
+  0 exch getinterval
+  % Stack: reto.pre(return-value)
+} BIND_DEF % Flzwdecode_do
+
+#if USE_PIN
+%/Fmain {
+%} BIND_DEF
+} % close the function defs section
+%</Defs>
+
+%<Data>
+%%BeginData:
+exec
+`S
+%%EndData
+end restore showpage
+%%Trailer
+%%EOF
+%</Data>
+#else
+
+#if !USE_CURRENTFILE
+% --- Main
+
+%** - Fmain -
+/Fmain {
+  /mys 8192 string def
+  Flzwdecode_init
+  { mys Flzwdecode_do
+    % Stack: mys.pre
+    dup length 0 INT_EQ{exit}if
+    STDOUT exch writestring
+  } loop
+  had_eof 1 INT_EQ {
+    { STDIN read {pop}{exit}ifelse }loop
+  }if
+} BIND_DEF
+Fmain
+#endif
+
+end % LZWDict
+#endif
+
+%%EOF

@@ -1,0 +1,199 @@
+/* psmlib.psm -- utilites for writing PostScript code with the help of
+ *   cpp, the C preprocessor
+ * compiled by pts@fazekas.hu at Fri Sep 20 23:38:32 CEST 2002
+ */
+
+#if USE_A85D
+#else
+  #if USE_HEXD
+  #else
+    #define USE_BINARY 1
+  #endif
+#endif
+
+#if USE_INDEXED2
+  #define USE_PALETTE 1
+#else
+  #if USE_TRANSPARENT8
+    #define USE_PALETTE 1
+  #endif
+#endif
+
+#if USE_NO_BIND
+  #define BIND_DEF def
+#else
+  #define BIND_DEF bind def
+#endif
+
+
+#if NDEBUG
+  #define DEBUG(msg)
+  #define ASSERT_TRUE_POP(str) pop
+  #define ASSERT_FALSE_POP(str) pop
+  #define ASSERT_TRUE(what,str)
+  #define ASSERT_INT()
+  #define INT_EQ eq
+  #define INT_NE ne
+  #define INT_LE le
+  #define INT_GT gt
+  #define INT_LT lt
+  #define BOOL_BIN(op,message) op
+  #define INT_BIN(op,message) op
+  #define DEBUGFORCE(msg)
+  #define ASSERT_STACK(list,message)
+#else
+  /-str /stringtype def
+  /-aryb /stringtype def % byte array
+  /-ary /arraytype def
+  /-int /integertype def
+  /-bool /booleantype def
+  /-dict /dicttype def
+  /handleerror.orig /handleerror load def
+  /handleerror {
+    (%stderr) (w) file
+    dup (!!!Fatal: GS error: ) writestring
+    dup $error /errorname get write==only
+    dup ( in ) writestring
+    dup $error /command get write==only
+    dup ( at ) writestring
+    dup $error /position get write==only
+    dup (.\n) writestring
+    flushfile flush
+    handleerror.orig
+    quit
+  }bind def
+  #define ASSERT_TRUE_POP(str) not{ str InternalError }if
+  #define ASSERT_FALSE_POP(str) { str InternalError }if
+  #define ASSERT_TRUE(what,str) what not{ str InternalError }if
+  #define ASSERT_INT(str) dup type/integertype ne{str InternalError}if
+  #define ASSERT_BOOL(str) dup type/booleantype ne{str InternalError}if
+  /DumpStack { % - DumpStack -
+    (Stack: ) print % from bottom to top
+    count 1 sub -1 0{
+      index
+      dup type /stringtype eq {pop ()}if
+      ===only
+      ( ) print
+    } for
+    (.\n) print
+  }bind def
+    
+  /TypeStack { % <list> TypeStack <bool>
+    dup length count 2 sub eq {
+      true exch count 2 add 1 index length 1 sub 0 exch 1 exch
+      % Stack: ... true ary count(...)+5 0 1 ary.length-1
+      {
+        % Stack: ... true ary count* i
+        2 index exch get 2 copy exch
+        % Stack: ... true ary count* ary[i] ary[i] count*
+        index type
+        % Stack: ... true ary count* ary[i] ary[i] stackitem.type
+        ne{
+          pop pop pop pop
+          % Stack: ...
+          false 0 0
+          exit
+        }if
+        pop 1 sub
+        % Stack: ... true ary count*-1
+      } for
+      % Stack: ... true|false ary count*
+      pop pop
+    }{
+      pop false
+    }ifelse
+    ASSERT_BOOL((TypeStack-bool))
+  }bind def
+  /InternalError { % <str> FatalError -
+    (%stderr) (w) file dup dup
+      (Internal muZCat Error: ) writestring
+      2 index writestring
+      dup (.\n) writestring
+      flushfile
+      pop
+    quit
+  }bind def
+  /Stderr (%stderr) (w) file def
+  #ifdef DEBUGMSG
+    #define DEBUG(msg) msg Stderr exch writestring Stderr flushfile
+  #else
+    #define DEBUG(msg)
+  #endif
+  #define DEBUGFORCE(msg) msg Stderr exch writestring Stderr flushfile
+  #define INT_EQ ASSERT_INT((eq2int)) exch ASSERT_INT((eq1int)) exch eq
+  #define INT_NE ASSERT_INT((ne2int)) exch ASSERT_INT((ne1int)) exch ne
+  #define INT_LE ASSERT_INT((le2int)) exch ASSERT_INT((le1int)) exch le
+  #define INT_GT ASSERT_INT((gt2int)) exch ASSERT_INT((gt1int)) exch gt
+  #define INT_LT ASSERT_INT((lt2int)) exch ASSERT_INT((lt1int)) exch lt
+  #define BOOL_BIN(op,message) ASSERT_BOOL(message) exch ASSERT_BOOL(message) exch op
+  #define INT_BIN(op,message)   ASSERT_INT(message) exch  ASSERT_INT(message) exch op
+  #define ASSERT_STACK(list,message) TYPE_STACK(list) not{ DumpStack (assert stack: ) message concatstrings InternalError }if
+  #define TYPE_STACK(list) [ list ] TypeStack
+#endif
+
+/* at Sat Sep 21 19:07:59 CEST 2002 */
+#if USE_DEBUG2
+  #define DEBUG2(x) x
+#else
+  #define DEBUG2(x)
+#endif
+
+/* revised, A85D/read_eod at Sun Sep 22 00:27:13 CEST 2002 */
+/* Sample usage:
+ * { TE_read(===)  % action to do with normal char
+ *   #if !USE_NO_EOF
+ *   { TE_read_pop exit } ifelse  % action to do on EOF
+ *   #endif
+ * } loop
+ */
+#if USE_A85D
+  #define TE_read_eod a85_getc ASSERT_TRUE(dup 511 eq,(EOD expected)) pop
+  #define TE_init /xS 32 def  /xD 0 def  /xC 0 def
+  #if USE_NO_EOF
+    #define TE_read(true_action) a85_getc true_action
+    #define PSM_A85_GETC \
+      {27 xS ge{exit}if STDIN read pop \
+      dup 122 eq{/xS 27 def/xD 0 def/xC 0 def}{dup 117 gt{ \
+      STDIN read{pop}if/xS 54 xS sub def}{dup 33 ge{xS 32 eq{dup/xC exch def/xD -1670420001 def}{dup 117 sub{1 85 \
+      7225 614125}xS 28 sub get mul xD add/xD exch def}ifelse/xS xS 1 sub def}if}ifelse}ifelse pop}loop xS 22 eq{511}{xC \
+      1868977 mul xD add xS 24 and neg bitshift 23 xS lt{xC 3 mul add}if 255 and/xS xS 3 eq{32}{xS 7 mod 3 \
+      eq{22}{xS 8 sub}ifelse}ifelse def}ifelse
+    /** TE_readstring(str) <substr> */
+    #define TE_readstring(str) dup length 1 sub 0 exch 1 exch{a85_getc 3 copy put pop pop}for
+  #else
+    #define TE_read(true_action) a85_getc dup 256 INT_LT { true_action }
+    #define TE_read_pop pop
+    /* #define TE_read_eod TE_read() { ASSERT_TRUE(false,(EOD expected)) } ifelse */
+    #define PSM_A85_GETC \
+      {27 xS ge{exit}if STDIN read not{511}if \
+      dup 122 eq{/xS 27 def/xD 0 def/xC 0 def}{dup 117 gt{ \
+      STDIN read{pop}if/xS 54 xS sub def}{dup 33 ge{xS 32 eq{dup/xC exch def/xD -1670420001 def}{dup 117 sub{1 85 \
+      7225 614125}xS 28 sub get mul xD add/xD exch def}ifelse/xS xS 1 sub def}if}ifelse}ifelse pop}loop xS 22 eq{511}{xC \
+      1868977 mul xD add xS 24 and neg bitshift 23 xS lt{xC 3 mul add}if 255 and/xS xS 3 eq{32}{xS 7 mod 3 \
+      eq{22}{xS 8 sub}ifelse}ifelse def}ifelse
+  #endif
+#endif
+#if USE_HEXD
+  #define TE_init
+  #if USE_NO_EOF
+    #define TE_read(true_action) STDIN C readhexstring pop 0 get true_action
+    #define TE_read_eod STDIN read pop pop /* read '>' */
+    #define TE_readstring(str) STDIN str readhexstring pop
+  #else
+    #error PostScript op readhexstring cannot detect EOD!
+    #define TE_read(true_action) STDIN C readhexstring { 0 get true_action }
+    #define TE_read_pop
+    #define TE_read_eod
+  #endif
+#endif
+#if USE_BINARY
+  #define TE_init
+  #define TE_read_eod
+  #if USE_NO_EOF
+    #define TE_read(true_action) STDIN read pop true_action
+    #define TE_readstring(str) STDIN str readstring pop
+  #else
+    #define TE_read(true_action) STDIN read { true_action }
+    #define TE_read_pop
+  #endif
+#endif
