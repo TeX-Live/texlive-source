@@ -1,3 +1,10 @@
+2006-07-10  Karl Berry  <karl@tug.org>
+
+	* tex.ch (sup_font_mem_size): double again, to 4000000.
+	(actually, it seems we could set all the sup_* to the absolute
+	maximums from TeX's architecture, since texmf.cnf determines what
+	is allocated.  A patch for that would be welcome. :)
+
 2006-06-20  Jonathan Kew  <jonathan_kew@sil.org>
 
 	* texmfmem.h, texmfmp.h, texmfmp-help.h, lib/texmfmp.c: Added
