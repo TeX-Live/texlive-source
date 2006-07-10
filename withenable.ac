@@ -14,6 +14,9 @@ AC_ARG_WITH([pdfopen],
 AC_ARG_WITH([psutils],
         [  --without-psutils       do not build the psutils package])
 
+AC_ARG_WITH([sam2p],
+        [  --without-sam2p       do not build the psutils sam2p])
+
 AC_ARG_WITH([t1utils],
         [  --without-t1utils       do not build the t1utils package])
 
