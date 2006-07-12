@@ -1,6 +1,9 @@
 #!/bin/sh
 
 # Copyright (C) 2004, Thomas Esser. Public domain.
+# New option "--crop", Rolf Niepraschk. 2005-03-08
+# dvips call only if the dvi file exist. 
+# ps2pdf call only if the ps file exist. Rolf Niepraschk. 2005-06-27
 
 # First, work around bugs/limitations in some shells on some systems:
 test -f /bin/sh5 && test -z "$RUNNING_SH5" \
@@ -22,7 +25,7 @@ test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 ###############################################################################
 cleanup()
 {
-  rc=$1
+  rc=$?
   $needsCleanup && test -n "$tmpdir" && test -d "$tmpdir" \
     && { rm -f "$tmpdir"/*; cd /; rmdir "$tmpdir"; }
 
@@ -38,7 +41,7 @@ setupTmpDir()
 {
   $needsCleanup && return
 
-  trap 'cleanup 1' 1 2 3 7 13 15
+  trap 'cleanup' 1 2 3 7 13 15
   needsCleanup=true
   (umask 077; mkdir "$tmpdir") \
     || abort "could not create directory \`$tmpdir'"
@@ -61,15 +64,17 @@ myexec()
   if test $rc != 0; then
     echo "$0: command $@ returned with code $rc"
     cat <$log
-    cleanup $rc
+    (exit $rc) # set return value
+    cleanup
   fi
 }
 
 # some initializations
 progname=pdflatexps
 silent=true # default setting; change if you like
+crop=false
 needsCleanup=false
-tmpdir=${TMPDIR-${TEMP-${TMP-/tmp}}}/.$progname$$
+tmpdir=${TMP-/tmp}/.$progname$$
 log=$tmpdir/log
 version="1.0"
 
@@ -80,6 +85,7 @@ while
               echo "Process LaTeX document containing PSforPDF macros."
 		                  exit 0;;
    --version) echo "$progname version $version"; exit 0;;
+   --crop|-c) crop=true;;
    -q) silent=true;;
    -v) silent=false;;
     -*) echo "$progname: unknown option $1 ignored";;
@@ -97,8 +103,14 @@ job=`echo "x$1" | sed 's@x@@; s@.*/@@; s@\.[^.]*$@@'`
 
 setupTmpDir
 myexec latex "$file"
-myexec dvips -Ppdf -o "$job-pics.ps" "$job.dvi"
-myexec ps2pdf -dAutoRotatePages=/None "$job-pics.ps" "$job-pics.pdf"
+test -f "$job.dvi" && myexec dvips -Ppdf -o "$job-pics.ps" "$job.dvi"
+test -f "$job-pics.ps" && myexec ps2pdf \
+  -dAutoRotatePages=/None "$job-pics.ps" "$job-pics.pdf"
+if $crop; then
+  myexec pdfcrop "$job-pics.pdf" "$job-pics-crop.pdf" 
+  mv "$job-pics-crop.pdf" "$job-pics.pdf"
+fi
 myexec pdflatex "$file"
 
-cleanup 0
+true
+cleanup
