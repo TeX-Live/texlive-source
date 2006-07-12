@@ -74,7 +74,7 @@ progname=pdflatexps
 silent=true # default setting; change if you like
 crop=false
 needsCleanup=false
-tmpdir=${TMP-/tmp}/.$progname$$
+tmpdir=${TMPDIR-${TEMP-${TMP-/tmp}}}/.$progname$$
 log=$tmpdir/log
 version="1.0"
 
