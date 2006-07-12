@@ -155,6 +155,6 @@ dist-install: dist-noautoconf
 
 install: sam2p
 	-mkdir -p '$(bindir)'
-	cp -a sam2p '$(bindir)'
+	cp -p sam2p '$(bindir)'
 
 # __END__ of Makefile
