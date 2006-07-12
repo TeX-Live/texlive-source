@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    TrueType name ID definitions (specification only).                   */
 /*                                                                         */
-/*  Copyright 1996-2001 by                                                 */
+/*  Copyright 1996-2002, 2003, 2004, 2006 by                               */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -31,34 +31,138 @@ FT_BEGIN_HEADER
   /* Possible values for the `platform' identifier code in the name        */
   /* records of the TTF `name' table.                                      */
   /*                                                                       */
+  /*************************************************************************/
+
+
+  /***********************************************************************
+   *
+   * @enum:
+   *   TT_PLATFORM_XXX
+   *
+   * @description:
+   *   A list of valid values for the `platform_id' identifier code in
+   *   @FT_CharMapRec and @FT_SfntName structures.
+   *
+   * @values:
+   *   TT_PLATFORM_APPLE_UNICODE ::
+   *     Used by Apple to indicate a Unicode character map and/or name entry.
+   *     See @TT_APPLE_ID_XXX for corresponding `encoding_id' values.  Note
+   *     that name entries in this format are coded as big-endian UCS-2
+   *     character codes _only_.
+   *
+   *   TT_PLATFORM_MACINTOSH ::
+   *     Used by Apple to indicate a MacOS-specific charmap and/or name entry.
+   *     See @TT_MAC_ID_XXX for corresponding `encoding_id' values.  Note that
+   *     most TrueType fonts contain an Apple roman charmap to be usable on
+   *     MacOS systems (even if they contain a Microsoft charmap as well).
+   *
+   *   TT_PLATFORM_ISO ::
+   *     This value was used to specify Unicode charmaps.  It is however
+   *     now deprecated.  See @TT_ISO_ID_XXX for a list of corresponding
+   *     `encoding_id' values.
+   *
+   *   TT_PLATFORM_MICROSOFT ::
+   *     Used by Microsoft to indicate Windows-specific charmaps.  See
+   *     @TT_MS_ID_XXX for a list of corresponding `encoding_id' values.
+   *     Note that most fonts contain a Unicode charmap using
+   *     (TT_PLATFORM_MICROSOFT, @TT_MS_ID_UNICODE_CS).
+   *
+   *   TT_PLATFORM_CUSTOM ::
+   *     Used to indicate application-specific charmaps.
+   *
+   *   TT_PLATFORM_ADOBE ::
+   *     This value isn't part of any font format specification, but is used
+   *     by FreeType to report Adobe-specific charmaps in an @FT_CharMapRec
+   *     structure.  See @TT_ADOBE_ID_XXX.
+   */
+
 #define TT_PLATFORM_APPLE_UNICODE  0
 #define TT_PLATFORM_MACINTOSH      1
 #define TT_PLATFORM_ISO            2 /* deprecated */
 #define TT_PLATFORM_MICROSOFT      3
 #define TT_PLATFORM_CUSTOM         4
-
-  /* artificial values defined ad-hoc by FreeType */
-#define TT_PLATFORM_ADOBE          7
+#define TT_PLATFORM_ADOBE          7 /* artificial */
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* Possible values of the platform specific encoding identifier field in */
-  /* the name records of the TTF `name' table if the `platform' identifier */
-  /* code is TT_PLATFORM_APPLE_UNICODE.                                    */
-  /*                                                                       */
+  /***********************************************************************
+   *
+   * @enum:
+   *   TT_APPLE_ID_XXX
+   *
+   * @description:
+   *   A list of valid values for the `encoding_id' for
+   *   @TT_PLATFORM_APPLE_UNICODE charmaps and name entries.
+   *
+   * @values:
+   *   TT_APPLE_ID_DEFAULT ::
+   *     Unicode version 1.0.
+   *
+   *   TT_APPLE_ID_UNICODE_1_1 ::
+   *     Unicode 1.1; specifies Hangul characters starting at U+34xx.
+   *
+   *   TT_APPLE_ID_ISO_10646 ::
+   *     Deprecated (identical to preceding).
+   *
+   *   TT_APPLE_ID_UNICODE_2_0 ::
+   *     Unicode 2.0 and beyond (UTF-16 BMP only).
+   *
+   *   TT_APPLE_ID_UNICODE_32 ::
+   *     Unicode 3.1 and beyond, using UTF-32.
+   */
+
 #define TT_APPLE_ID_DEFAULT      0 /* Unicode 1.0 */
 #define TT_APPLE_ID_UNICODE_1_1  1 /* specify Hangul at U+34xx */
 #define TT_APPLE_ID_ISO_10646    2 /* deprecated */
 #define TT_APPLE_ID_UNICODE_2_0  3 /* or later */
+#define TT_APPLE_ID_UNICODE_32   4 /* 2.0 or later, full repertoire */
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* Possible values of the platform specific encoding identifier field in */
-  /* the name records of the TTF `name' table if the `platform' identifier */
-  /* code is TT_PLATFORM_MACINTOSH.                                        */
-  /*                                                                       */
+  /***********************************************************************
+   *
+   * @enum:
+   *   TT_MAC_ID_XXX
+   *
+   * @description:
+   *   A list of valid values for the `encoding_id' for
+   *   @TT_PLATFORM_MACINTOSH charmaps and name entries.
+   *
+   * @values:
+   *   TT_MAC_ID_ROMAN ::
+   *   TT_MAC_ID_JAPANESE ::
+   *   TT_MAC_ID_TRADITIONAL_CHINESE ::
+   *   TT_MAC_ID_KOREAN ::
+   *   TT_MAC_ID_ARABIC ::
+   *   TT_MAC_ID_HEBREW ::
+   *   TT_MAC_ID_GREEK ::
+   *   TT_MAC_ID_RUSSIAN ::
+   *   TT_MAC_ID_RSYMBOL ::
+   *   TT_MAC_ID_DEVANAGARI ::
+   *   TT_MAC_ID_GURMUKHI ::
+   *   TT_MAC_ID_GUJARATI ::
+   *   TT_MAC_ID_ORIYA ::
+   *   TT_MAC_ID_BENGALI ::
+   *   TT_MAC_ID_TAMIL ::
+   *   TT_MAC_ID_TELUGU ::
+   *   TT_MAC_ID_KANNADA ::
+   *   TT_MAC_ID_MALAYALAM ::
+   *   TT_MAC_ID_SINHALESE ::
+   *   TT_MAC_ID_BURMESE ::
+   *   TT_MAC_ID_KHMER ::
+   *   TT_MAC_ID_THAI ::
+   *   TT_MAC_ID_LAOTIAN ::
+   *   TT_MAC_ID_GEORGIAN ::
+   *   TT_MAC_ID_ARMENIAN ::
+   *   TT_MAC_ID_MALDIVIAN ::
+   *   TT_MAC_ID_SIMPLIFIED_CHINESE ::
+   *   TT_MAC_ID_TIBETAN ::
+   *   TT_MAC_ID_MONGOLIAN ::
+   *   TT_MAC_ID_GEEZ ::
+   *   TT_MAC_ID_SLAVIC ::
+   *   TT_MAC_ID_VIETNAMESE ::
+   *   TT_MAC_ID_SINDHI ::
+   *   TT_MAC_ID_UNINTERP ::
+   */
+
 #define TT_MAC_ID_ROMAN                 0
 #define TT_MAC_ID_JAPANESE              1
 #define TT_MAC_ID_TRADITIONAL_CHINESE   2
@@ -95,25 +199,71 @@ FT_BEGIN_HEADER
 #define TT_MAC_ID_UNINTERP             32
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* Possible values of the platform specific encoding identifier field in */
-  /* the name records of the TTF `name' table if the `platform' identifier */
-  /* code is TT_PLATFORM_ISO.                                              */
-  /*                                                                       */
-  /* This use is now deprecated.                                           */
-  /*                                                                       */
+  /***********************************************************************
+   *
+   * @enum:
+   *   TT_ISO_ID_XXX
+   *
+   * @description:
+   *   A list of valid values for the `encoding_id' for
+   *   @TT_PLATFORM_ISO charmaps and name entries.
+   *
+   *   Their use is now deprecated.
+   *
+   * @values:
+   *   TT_ISO_ID_7BIT_ASCII ::
+   *     ASCII.
+   *   TT_ISO_ID_10646 ::
+   *     ISO/10646.
+   *   TT_ISO_ID_8859_1 ::
+   *     Also known as Latin-1.
+   */
+
 #define TT_ISO_ID_7BIT_ASCII  0
 #define TT_ISO_ID_10646       1
 #define TT_ISO_ID_8859_1      2
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* possible values of the platform specific encoding identifier field in */
-  /* the name records of the TTF `name' table if the `platform' identifier */
-  /* code is TT_PLATFORM_MICROSOFT.                                        */
-  /*                                                                       */
+  /***********************************************************************
+   *
+   * @enum:
+   *   TT_MS_ID_XXX
+   *
+   * @description:
+   *   A list of valid values for the `encoding_id' for
+   *   @TT_PLATFORM_MICROSOFT charmaps and name entries.
+   *
+   * @values:
+   *   TT_MS_ID_SYMBOL_CS ::
+   *     Corresponds to Microsoft symbol encoding. See
+   *     @FT_ENCODING_MS_SYMBOL.
+   *
+   *   TT_MS_ID_UNICODE_CS ::
+   *     Corresponds to a Microsoft WGL4 charmap, matching Unicode.  See
+   *     @FT_ENCODING_UNICODE.
+   *
+   *   TT_MS_ID_SJIS ::
+   *     Corresponds to SJIS Japanese encoding.  See @FT_ENCODING_SJIS.
+   *
+   *   TT_MS_ID_GB2312 ::
+   *     Corresponds to Simplified Chinese as used in Mainland China.  See
+   *     @FT_ENCODING_GB2312.
+   *
+   *   TT_MS_ID_BIG_5 ::
+   *     Corresponds to Traditional Chinese as used in Taiwan and Hong Kong.
+   *     See @FT_ENCODING_BIG5.
+   *
+   *   TT_MS_ID_WANSUNG ::
+   *     Corresponds to Korean Wansung encoding.  See @FT_ENCODING_WANSUNG.
+   *
+   *   TT_MS_ID_JOHAB ::
+   *     Corresponds to Johab encoding.  See @FT_ENCODING_JOHAB.
+   *
+   *   TT_MS_ID_UCS_4 ::
+   *     Corresponds to UCS-4 or UTF-32 charmaps.  This has been added to
+   *     the OpenType specification version 1.4 (mid-2001.)
+   */
+
 #define TT_MS_ID_SYMBOL_CS    0
 #define TT_MS_ID_UNICODE_CS   1
 #define TT_MS_ID_SJIS         2
@@ -124,17 +274,28 @@ FT_BEGIN_HEADER
 #define TT_MS_ID_UCS_4       10
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* possible values of the platform specific encoding identifier field in */
-  /* the name records of the TTF `name' table if the `platform' identifier */
-  /* code is TT_PLATFORM_ADOBE.                                            */
-  /*                                                                       */
-  /* These are artificial values defined ad-hoc by FreeType.               */
-  /*                                                                       */
+  /***********************************************************************
+   *
+   * @enum:
+   *   TT_ADOBE_ID_XXX
+   *
+   * @description:
+   *   A list of valid values for the `encoding_id' for
+   *   @TT_PLATFORM_ADOBE charmaps.  This is a FreeType-specific extension!
+   *
+   * @values:
+   *   TT_ADOBE_ID_STANDARD ::
+   *     Adobe standard encoding.
+   *   TT_ADOBE_ID_EXPERT ::
+   *     Adobe expert encoding.
+   *   TT_ADOBE_ID_CUSTOM ::
+   *     Adobe custom encoding.
+   */
+
 #define TT_ADOBE_ID_STANDARD  0
 #define TT_ADOBE_ID_EXPERT    1
 #define TT_ADOBE_ID_CUSTOM    2
+#define TT_ADOBE_ID_LATIN_1   3
 
 
   /*************************************************************************/
@@ -286,10 +447,23 @@ FT_BEGIN_HEADER
   /* of the TTF `name' table if the `platform' identifier code is          */
   /* TT_PLATFORM_MICROSOFT.                                                */
   /*                                                                       */
-  /* The canonical source for the MS assigned LCID's is at                 */
+  /* The canonical source for the MS assigned LCID's (seems to) be at      */
+  /*                                                                       */
+  /*   http://www.microsoft.com/globaldev/reference/lcid-all.mspx          */
+  /*                                                                       */
+  /* It used to be at various places, among them                           */
   /*                                                                       */
   /*   http://www.microsoft.com/typography/OTSPEC/lcid-cp.txt              */
+  /*   http://www.microsoft.com/globaldev/reference/loclanghome.asp        */
+  /*   http://support.microsoft.com/support/kb/articles/Q224/8/04.ASP      */
+  /*   http://msdn.microsoft.com/library/en-us/passport25/                 */
+  /*           NET_Passport_VBScript_Documentation/Single_Sign_In/         */
+  /*           Advanced_Single_Sign_In/Localization_and_LCIDs.asp          */
   /*                                                                       */
+  /* Hopefully, it seems now that the Globaldev site prevails...           */
+  /*                                   (updated by Antoine, 2004-02-17)    */
+
+#define TT_MS_LANGID_ARABIC_GENERAL                    0x0001
 #define TT_MS_LANGID_ARABIC_SAUDI_ARABIA               0x0401
 #define TT_MS_LANGID_ARABIC_IRAQ                       0x0801
 #define TT_MS_LANGID_ARABIC_EGYPT                      0x0c01
@@ -308,16 +482,21 @@ FT_BEGIN_HEADER
 #define TT_MS_LANGID_ARABIC_QATAR                      0x4001
 #define TT_MS_LANGID_BULGARIAN_BULGARIA                0x0402
 #define TT_MS_LANGID_CATALAN_SPAIN                     0x0403
+#define TT_MS_LANGID_CHINESE_GENERAL                   0x0004
 #define TT_MS_LANGID_CHINESE_TAIWAN                    0x0404
 #define TT_MS_LANGID_CHINESE_PRC                       0x0804
 #define TT_MS_LANGID_CHINESE_HONG_KONG                 0x0c04
 #define TT_MS_LANGID_CHINESE_SINGAPORE                 0x1004
 
-#if 1  /* this used to be this value (and it still is in many places) */
+#if 1  /* this looks like the correct value */
 #define TT_MS_LANGID_CHINESE_MACAU                     0x1404
 #else  /* but beware, Microsoft may change its mind...
           the most recent Word reference has the following: */
 #define TT_MS_LANGID_CHINESE_MACAU  TT_MS_LANGID_CHINESE_HONG_KONG
+#endif
+
+#if 0  /* used only with .NET `cultures'; commented out */
+#define TT_MS_LANGID_CHINESE_TRADITIONAL               0x7C04
 #endif
 
 #define TT_MS_LANGID_CZECH_CZECH_REPUBLIC              0x0405
@@ -328,6 +507,13 @@ FT_BEGIN_HEADER
 #define TT_MS_LANGID_GERMAN_LUXEMBOURG                 0x1007
 #define TT_MS_LANGID_GERMAN_LIECHTENSTEI               0x1407
 #define TT_MS_LANGID_GREEK_GREECE                      0x0408
+
+  /* don't ask what this one means... It is commented out currently. */
+#if 0
+#define TT_MS_LANGID_GREEK_GREECE2                     0x2008
+#endif
+
+#define TT_MS_LANGID_ENGLISH_GENERAL                   0x0009
 #define TT_MS_LANGID_ENGLISH_UNITED_STATES             0x0409
 #define TT_MS_LANGID_ENGLISH_UNITED_KINGDOM            0x0809
 #define TT_MS_LANGID_ENGLISH_AUSTRALIA                 0x0c09
@@ -341,6 +527,11 @@ FT_BEGIN_HEADER
 #define TT_MS_LANGID_ENGLISH_TRINIDAD                  0x2c09
 #define TT_MS_LANGID_ENGLISH_ZIMBABWE                  0x3009
 #define TT_MS_LANGID_ENGLISH_PHILIPPINES               0x3409
+#define TT_MS_LANGID_ENGLISH_INDONESIA                 0x3809
+#define TT_MS_LANGID_ENGLISH_HONG_KONG                 0x3c09
+#define TT_MS_LANGID_ENGLISH_INDIA                     0x4009
+#define TT_MS_LANGID_ENGLISH_MALAYSIA                  0x4409
+#define TT_MS_LANGID_ENGLISH_SINGAPORE                 0x4809
 #define TT_MS_LANGID_SPANISH_SPAIN_TRADITIONAL_SORT    0x040a
 #define TT_MS_LANGID_SPANISH_MEXICO                    0x080a
 #define TT_MS_LANGID_SPANISH_SPAIN_INTERNATIONAL_SORT  0x0c0a
@@ -361,6 +552,10 @@ FT_BEGIN_HEADER
 #define TT_MS_LANGID_SPANISH_HONDURAS                  0x480a
 #define TT_MS_LANGID_SPANISH_NICARAGUA                 0x4c0a
 #define TT_MS_LANGID_SPANISH_PUERTO_RICO               0x500a
+#define TT_MS_LANGID_SPANISH_UNITED_STATES             0x540a
+  /* The following ID blatantly violate MS specs by using a */
+  /* sublanguage > 0x1F.                                    */
+#define TT_MS_LANGID_SPANISH_LATIN_AMERICA             0xE40aU
 #define TT_MS_LANGID_FINNISH_FINLAND                   0x040b
 #define TT_MS_LANGID_FRENCH_FRANCE                     0x040c
 #define TT_MS_LANGID_FRENCH_BELGIUM                    0x080c
@@ -368,6 +563,19 @@ FT_BEGIN_HEADER
 #define TT_MS_LANGID_FRENCH_SWITZERLAND                0x100c
 #define TT_MS_LANGID_FRENCH_LUXEMBOURG                 0x140c
 #define TT_MS_LANGID_FRENCH_MONACO                     0x180c
+#define TT_MS_LANGID_FRENCH_WEST_INDIES                0x1c0c
+#define TT_MS_LANGID_FRENCH_REUNION                    0x200c
+#define TT_MS_LANGID_FRENCH_CONGO                      0x240c
+  /* which was formerly: */
+#define TT_MS_LANGID_FRENCH_ZAIRE  TT_MS_LANGID_FRENCH_CONGO
+#define TT_MS_LANGID_FRENCH_SENEGAL                    0x280c
+#define TT_MS_LANGID_FRENCH_CAMEROON                   0x2c0c
+#define TT_MS_LANGID_FRENCH_COTE_D_IVOIRE              0x300c
+#define TT_MS_LANGID_FRENCH_MALI                       0x340c
+#define TT_MS_LANGID_FRENCH_MOROCCO                    0x380c
+#define TT_MS_LANGID_FRENCH_HAITI                      0x3c0c
+  /* and another violation of the spec (see 0xE40aU) */
+#define TT_MS_LANGID_FRENCH_NORTH_AFRICA               0xE40cU
 #define TT_MS_LANGID_HEBREW_ISRAEL                     0x040d
 #define TT_MS_LANGID_HUNGARIAN_HUNGARY                 0x040e
 #define TT_MS_LANGID_ICELANDIC_ICELAND                 0x040f
@@ -391,6 +599,18 @@ FT_BEGIN_HEADER
 #define TT_MS_LANGID_CROATIAN_CROATIA                  0x041a
 #define TT_MS_LANGID_SERBIAN_SERBIA_LATIN              0x081a
 #define TT_MS_LANGID_SERBIAN_SERBIA_CYRILLIC           0x0c1a
+
+#if 0  /* this used to be this value, but it looks like we were wrong */
+#define TT_MS_LANGID_BOSNIAN_BOSNIA_HERZEGOVINA        0x101a
+#else  /* current sources say */
+#define TT_MS_LANGID_CROATIAN_BOSNIA_HERZEGOVINA       0x101a
+#define TT_MS_LANGID_BOSNIAN_BOSNIA_HERZEGOVINA        0x141a
+       /* and XPsp2 Platform SDK added (2004-07-26) */
+       /* Names are shortened to be signifiant within 40 chars. */
+#define TT_MS_LANGID_SERBIAN_BOSNIA_HERZ_LATIN         0x181a
+#define TT_MS_LANGID_SERBIAN_BOSNIA_HERZ_CYRILLIC      0x181a
+#endif
+
 #define TT_MS_LANGID_SLOVAK_SLOVAKIA                   0x041b
 #define TT_MS_LANGID_ALBANIAN_ALBANIA                  0x041c
 #define TT_MS_LANGID_SWEDISH_SWEDEN                    0x041d
@@ -398,6 +618,7 @@ FT_BEGIN_HEADER
 #define TT_MS_LANGID_THAI_THAILAND                     0x041e
 #define TT_MS_LANGID_TURKISH_TURKEY                    0x041f
 #define TT_MS_LANGID_URDU_PAKISTAN                     0x0420
+#define TT_MS_LANGID_URDU_INDIA                        0x0820
 #define TT_MS_LANGID_INDONESIAN_INDONESIA              0x0421
 #define TT_MS_LANGID_UKRAINIAN_UKRAINE                 0x0422
 #define TT_MS_LANGID_BELARUSIAN_BELARUS                0x0423
@@ -406,11 +627,7 @@ FT_BEGIN_HEADER
 #define TT_MS_LANGID_LATVIAN_LATVIA                    0x0426
 #define TT_MS_LANGID_LITHUANIAN_LITHUANIA              0x0427
 #define TT_MS_LANGID_CLASSIC_LITHUANIAN_LITHUANIA      0x0827
-
-#if 0  /* this seems to be an error that have been dropped */
-#define TT_MS_LANGID_MAORI_NEW_ZEALAND                 0x0428
-#endif
-
+#define TT_MS_LANGID_TAJIK_TAJIKISTAN                  0x0428
 #define TT_MS_LANGID_FARSI_IRAN                        0x0429
 #define TT_MS_LANGID_VIETNAMESE_VIET_NAM               0x042a
 #define TT_MS_LANGID_ARMENIAN_ARMENIA                  0x042b
@@ -430,6 +647,17 @@ FT_BEGIN_HEADER
 #define TT_MS_LANGID_FAEROESE_FAEROE_ISLANDS           0x0438
 #define TT_MS_LANGID_HINDI_INDIA                       0x0439
 #define TT_MS_LANGID_MALTESE_MALTA                     0x043a
+  /* Added by XPsp2 Platform SDK (2004-07-26) */
+#define TT_MS_LANGID_SAMI_NORTHERN_NORWAY              0x043b
+#define TT_MS_LANGID_SAMI_NORTHERN_SWEDEN              0x083b
+#define TT_MS_LANGID_SAMI_NORTHERN_FINLAND             0x0C3b
+#define TT_MS_LANGID_SAMI_LULE_NORWAY                  0x103b
+#define TT_MS_LANGID_SAMI_LULE_SWEDEN                  0x143b
+#define TT_MS_LANGID_SAMI_SOUTHERN_NORWAY              0x183b
+#define TT_MS_LANGID_SAMI_SOUTHERN_SWEDEN              0x1C3b
+#define TT_MS_LANGID_SAMI_SKOLT_FINLAND                0x203b
+#define TT_MS_LANGID_SAMI_INARI_FINLAND                0x243b
+  /* ... and we also keep our old identifier... */
 #define TT_MS_LANGID_SAAMI_LAPONIA                     0x043b
 
 #if 0 /* this seems to be a previous invertion */
@@ -440,15 +668,24 @@ FT_BEGIN_HEADER
 #define TT_MS_LANGID_IRISH_GAELIC_IRELAND              0x043c
 #endif
 
+#define TT_MS_LANGID_YIDDISH_GERMANY                   0x043d
 #define TT_MS_LANGID_MALAY_MALAYSIA                    0x043e
 #define TT_MS_LANGID_MALAY_BRUNEI_DARUSSALAM           0x083e
 #define TT_MS_LANGID_KAZAK_KAZAKSTAN                   0x043f
+#define TT_MS_LANGID_KIRGHIZ_KIRGHIZSTAN /* Cyrillic*/ 0x0440
+  /* alias declared in Windows 2000 */
+#define TT_MS_LANGID_KIRGHIZ_KIRGHIZ_REPUBLIC \
+          TT_MS_LANGID_KIRGHIZ_KIRGHIZSTAN
+
 #define TT_MS_LANGID_SWAHILI_KENYA                     0x0441
+#define TT_MS_LANGID_TURKMEN_TURKMENISTAN              0x0442
 #define TT_MS_LANGID_UZBEK_UZBEKISTAN_LATIN            0x0443
 #define TT_MS_LANGID_UZBEK_UZBEKISTAN_CYRILLIC         0x0843
 #define TT_MS_LANGID_TATAR_TATARSTAN                   0x0444
 #define TT_MS_LANGID_BENGALI_INDIA                     0x0445
+#define TT_MS_LANGID_BENGALI_BANGLADESH                0x0845
 #define TT_MS_LANGID_PUNJABI_INDIA                     0x0446
+#define TT_MS_LANGID_PUNJABI_ARABIC_PAKISTAN           0x0846
 #define TT_MS_LANGID_GUJARATI_INDIA                    0x0447
 #define TT_MS_LANGID_ORIYA_INDIA                       0x0448
 #define TT_MS_LANGID_TAMIL_INDIA                       0x0449
@@ -458,107 +695,72 @@ FT_BEGIN_HEADER
 #define TT_MS_LANGID_ASSAMESE_INDIA                    0x044d
 #define TT_MS_LANGID_MARATHI_INDIA                     0x044e
 #define TT_MS_LANGID_SANSKRIT_INDIA                    0x044f
-#define TT_MS_LANGID_KONKANI_INDIA                     0x0457
-
-  /* new as of 2001-01-01 */
-#define TT_MS_LANGID_ARABIC_GENERAL                    0x0001
-#define TT_MS_LANGID_CHINESE_GENERAL                   0x0004
-#define TT_MS_LANGID_ENGLISH_GENERAL                   0x0009
-#define TT_MS_LANGID_FRENCH_WEST_INDIES                0x1c0c
-#define TT_MS_LANGID_FRENCH_REUNION                    0x200c
-#define TT_MS_LANGID_FRENCH_CONGO                      0x240c
-  /* which was formerly: */
-#define TT_MS_LANGID_FRENCH_ZAIRE  TT_MS_LANGID_FRENCH_CONGO
-
-#define TT_MS_LANGID_FRENCH_SENEGAL                    0x280c
-#define TT_MS_LANGID_FRENCH_CAMEROON                   0x2c0c
-#define TT_MS_LANGID_FRENCH_COTE_D_IVOIRE              0x300c
-#define TT_MS_LANGID_FRENCH_MALI                       0x340c
-#define TT_MS_LANGID_BOSNIAN_BOSNIA_HERZEGOVINA        0x101a
-#define TT_MS_LANGID_URDU_INDIA                        0x0820
-#define TT_MS_LANGID_TAJIK_TAJIKISTAN                  0x0428
-#define TT_MS_LANGID_YIDDISH_GERMANY                   0x043d
-#define TT_MS_LANGID_KIRGHIZ_KIRGHIZSTAN               0x0440
-  /* alias declared in Windows 2000 */
-#define TT_MS_LANGID_KIRGHIZ_KIRGHIZ_REPUBLIC \
-          TT_MS_LANGID_KIRGHIZ_KIRGHIZSTAN
-
-#define TT_MS_LANGID_TURKMEN_TURKMENISTAN              0x0442
 #define TT_MS_LANGID_MONGOLIAN_MONGOLIA /* Cyrillic */ 0x0450
-
-  /* the following seems to be inconsistent;
-     here is the current "official" way: */
-#define TT_MS_LANGID_TIBETAN_BHUTAN                    0x0451
-  /* and here is what is used by Passport SDK */
+#define TT_MS_LANGID_MONGOLIAN_MONGOLIA_MONGOLIAN      0x0850
 #define TT_MS_LANGID_TIBETAN_CHINA                     0x0451
 #define TT_MS_LANGID_DZONGHKA_BHUTAN                   0x0851
-  /* end of inconsistency */
+
+#if 0
+  /* the following used to be defined */
+#define TT_MS_LANGID_TIBETAN_BHUTAN                    0x0451
+  /* ... but it was changed; */
+#else
+  /* So we will continue to #define it, but with the correct value */
+#define TT_MS_LANGID_TIBETAN_BHUTAN   TT_MS_LANGID_DZONGHKA_BHUTAN
+#endif
 
 #define TT_MS_LANGID_WELSH_WALES                       0x0452
 #define TT_MS_LANGID_KHMER_CAMBODIA                    0x0453
 #define TT_MS_LANGID_LAO_LAOS                          0x0454
 #define TT_MS_LANGID_BURMESE_MYANMAR                   0x0455
 #define TT_MS_LANGID_GALICIAN_SPAIN                    0x0456
-#define TT_MS_LANGID_MANIPURI_INDIA                    0x0458
-#define TT_MS_LANGID_SINDHI_INDIA                      0x0459
-  /* the following one is only encountered in Microsoft RTF specification */
-#define TT_MS_LANGID_KASHMIRI_PAKISTAN                 0x0460
-  /* the following one is not in the Passport list, looks like an omission */
-#define TT_MS_LANGID_KASHMIRI_INDIA                    0x0860
-#define TT_MS_LANGID_NEPALI_NEPAL                      0x0461
-#define TT_MS_LANGID_NEPALI_INDIA                      0x0861
-#define TT_MS_LANGID_FRISIAN_NETHERLANDS               0x0462
-
-  /* new as of 2001-03-01 (from Office Xp) */
-#define TT_MS_LANGID_ENGLISH_HONG_KONG                 0x3c09
-#define TT_MS_LANGID_ENGLISH_INDIA                     0x4009
-#define TT_MS_LANGID_ENGLISH_MALAYSIA                  0x4409
-#define TT_MS_LANGID_ENGLISH_SINGAPORE                 0x4809
+#define TT_MS_LANGID_KONKANI_INDIA                     0x0457
+#define TT_MS_LANGID_MANIPURI_INDIA  /* Bengali */     0x0458
+#define TT_MS_LANGID_SINDHI_INDIA /* Arabic */         0x0459
+#define TT_MS_LANGID_SINDHI_PAKISTAN                   0x0859
+  /* Missing a LCID for Sindhi in Devanagari script */
 #define TT_MS_LANGID_SYRIAC_SYRIA                      0x045a
 #define TT_MS_LANGID_SINHALESE_SRI_LANKA               0x045b
 #define TT_MS_LANGID_CHEROKEE_UNITED_STATES            0x045c
 #define TT_MS_LANGID_INUKTITUT_CANADA                  0x045d
 #define TT_MS_LANGID_AMHARIC_ETHIOPIA                  0x045e
-#define TT_MS_LANGID_TAMAZIGHT_MOROCCO                 0x045f
+#define TT_MS_LANGID_TAMAZIGHT_MOROCCO /* Arabic */    0x045f
 #define TT_MS_LANGID_TAMAZIGHT_MOROCCO_LATIN           0x085f
+  /* Missing a LCID for Tifinagh script */
+#define TT_MS_LANGID_KASHMIRI_PAKISTAN /* Arabic */    0x0460
+  /* Spelled this way by XPsp2 Platform SDK (2004-07-26) */
+  /* script is yet unclear... might be Arabic, Nagari or Sharada */
+#define TT_MS_LANGID_KASHMIRI_SASIA                    0x0860
+  /* ... and aliased (by MS) for compatibility reasons. */
+#define TT_MS_LANGID_KASHMIRI_INDIA TT_MS_LANGID_KASHMIRI_SASIA
+#define TT_MS_LANGID_NEPALI_NEPAL                      0x0461
+#define TT_MS_LANGID_NEPALI_INDIA                      0x0861
+#define TT_MS_LANGID_FRISIAN_NETHERLANDS               0x0462
 #define TT_MS_LANGID_PASHTO_AFGHANISTAN                0x0463
 #define TT_MS_LANGID_FILIPINO_PHILIPPINES              0x0464
 #define TT_MS_LANGID_DHIVEHI_MALDIVES                  0x0465
   /* alias declared in Windows 2000 */
 #define TT_MS_LANGID_DIVEHI_MALDIVES  TT_MS_LANGID_DHIVEHI_MALDIVES
-  /* for language codes from 0x0466 to 0x0471 see below */
-#define TT_MS_LANGID_OROMO_ETHIOPIA                    0x0472
-#define TT_MS_LANGID_TIGRIGNA_ETHIOPIA                 0x0473
-#define TT_MS_LANGID_TIGRIGNA_ERYTHREA                 0x0873
-  /* also spelled in the `Passport SDK' list as: */
-#define TT_MS_LANGID_TIGRIGNA_ERYTREA  TT_MS_LANGID_TIGRIGNA_ERYTHREA
-
-  /* New additions from Windows Xp/Passport SDK 2001-11-10. */
-
-  /* don't ask what this one means... It is commented out currently. */
-#if 0
-#define TT_MS_LANGID_GREEK_GREECE2                     0x2008
-#endif
-
-#define TT_MS_LANGID_SPANISH_UNITED_STATES             0x540a
-  /* The following two IDs blatantly violate MS specs by using a */
-  /* sublanguage > 0x1F.                                         */
-#define TT_MS_LANGID_SPANISH_LATIN_AMERICA             0xE40a
-#define TT_MS_LANGID_FRENCH_NORTH_AFRICA               0xE40c
- 
-#define TT_MS_LANGID_FRENCH_MOROCCO                    0x380c
-#define TT_MS_LANGID_FRENCH_HAITI                      0x3c0c
-#define TT_MS_LANGID_BENGALI_BANGLADESH                0x0845
-#define TT_MS_LANGID_PUNJABI_ARABIC_PAKISTAN           0x0846
-#define TT_MS_LANGID_MONGOLIAN_MONGOLIA_MONGOLIAN      0x0850
 #define TT_MS_LANGID_EDO_NIGERIA                       0x0466
 #define TT_MS_LANGID_FULFULDE_NIGERIA                  0x0467
 #define TT_MS_LANGID_HAUSA_NIGERIA                     0x0468
 #define TT_MS_LANGID_IBIBIO_NIGERIA                    0x0469
 #define TT_MS_LANGID_YORUBA_NIGERIA                    0x046a
-  /* language codes from 0x046b to 0x046f are (still) unknown. */
+#define TT_MS_LANGID_QUECHUA_BOLIVIA                   0x046b
+#define TT_MS_LANGID_QUECHUA_ECUADOR                   0x086b
+#define TT_MS_LANGID_QUECHUA_PERU                      0x0c6b
+#define TT_MS_LANGID_SEPEDI_SOUTH_AFRICA               0x046c
+  /* Also spelled by XPsp2 Platform SDK (2004-07-26) */
+#define TT_MS_LANGID_SOTHO_SOUTHERN_SOUTH_AFRICA \
+          TT_MS_LANGID_SEPEDI_SOUTH_AFRICA
+  /* language codes 0x046d, 0x046e and 0x046f are (still) unknown. */
 #define TT_MS_LANGID_IGBO_NIGERIA                      0x0470
 #define TT_MS_LANGID_KANURI_NIGERIA                    0x0471
+#define TT_MS_LANGID_OROMO_ETHIOPIA                    0x0472
+#define TT_MS_LANGID_TIGRIGNA_ETHIOPIA                 0x0473
+#define TT_MS_LANGID_TIGRIGNA_ERYTHREA                 0x0873
+  /* also spelled in the `Passport SDK' list as: */
+#define TT_MS_LANGID_TIGRIGNA_ERYTREA  TT_MS_LANGID_TIGRIGNA_ERYTHREA
 #define TT_MS_LANGID_GUARANI_PARAGUAY                  0x0474
 #define TT_MS_LANGID_HAWAIIAN_UNITED_STATES            0x0475
 #define TT_MS_LANGID_LATIN                             0x0476
@@ -568,6 +770,13 @@ FT_BEGIN_HEADER
   /*       studying).                                                     */
 #define TT_MS_LANGID_YI_CHINA                          0x0478
 #define TT_MS_LANGID_PAPIAMENTU_NETHERLANDS_ANTILLES   0x0479
+  /* language codes from 0x047a to 0x047f are (still) unknown. */
+#define TT_MS_LANGID_UIGHUR_CHINA                      0x0480
+#define TT_MS_LANGID_MAORI_NEW_ZEALAND                 0x0481
+
+#if 0  /* not deemed useful for fonts */
+#define TT_MS_LANGID_HUMAN_INTERFACE_DEVICE            0x04ff
+#endif
 
 
   /*************************************************************************/
@@ -630,8 +839,10 @@ FT_BEGIN_HEADER
   /* Bit  7   Greek and Coptic */
 #define TT_UCR_GREEK                           (1L <<  7) /* U+0370-U+03FF */
   /* Bit  8 is reserved (was: Greek Symbols and Coptic) */
-  /* Bit  9   Cyrillic */
+  /* Bit  9   Cyrillic               + */
+  /*          Cyrillic Supplementary   */
 #define TT_UCR_CYRILLIC                        (1L <<  9) /* U+0400-U+04FF */
+                                                          /* U+0500-U+052F */
   /* Bit 10   Armenian */
 #define TT_UCR_ARMENIAN                        (1L << 10) /* U+0530-U+058F */
   /* Bit 11   Hebrew */
@@ -686,10 +897,20 @@ FT_BEGIN_HEADER
 #define TT_UCR_LETTERLIKE_SYMBOLS              (1L <<  3) /* U+2100-U+214F */
   /* Bit 36   Number Forms */
 #define TT_UCR_NUMBER_FORMS                    (1L <<  4) /* U+2150-U+218F */
-  /* Bit 37   Arrows */
+  /* Bit 37   Arrows                + */
+  /*          Supplemental Arrows-A + */
+  /*          Supplemental Arrows-B   */
 #define TT_UCR_ARROWS                          (1L <<  5) /* U+2190-U+21FF */
-  /* Bit 38   Mathematical Operators */
+                                                          /* U+27F0-U+27FF */
+                                                          /* U+2900-U+297F */
+  /* Bit 38   Mathematical Operators               + */
+  /*          Supplemental Mathematical Operators  + */
+  /*          Miscellaneous Mathematical Symbols-A + */
+  /*          Miscellaneous Mathematical Symbols-B   */
 #define TT_UCR_MATHEMATICAL_OPERATORS          (1L <<  6) /* U+2200-U+22FF */
+                                                          /* U+2A00-U+2AFF */
+                                                          /* U+27C0-U+27EF */
+                                                          /* U+2980-U+29FF */
   /* Bit 39 Miscellaneous Technical */
 #define TT_UCR_MISCELLANEOUS_TECHNICAL         (1L <<  7) /* U+2300-U+23FF */
   /* Bit 40   Control Pictures */
@@ -715,8 +936,10 @@ FT_BEGIN_HEADER
 #define TT_UCR_CJK_SYMBOLS                     (1L << 16) /* U+3000-U+303F */
   /* Bit 49   Hiragana */
 #define TT_UCR_HIRAGANA                        (1L << 17) /* U+3040-U+309F */
-  /* Bit 50   Katakana */
+  /* Bit 50   Katakana                     + */
+  /*          Katakana Phonetic Extensions   */
 #define TT_UCR_KATAKANA                        (1L << 18) /* U+30A0-U+30FF */
+                                                          /* U+31F0-U+31FF */
   /* Bit 51   Bopomofo          + */
   /*          Bopomofo Extended   */
 #define TT_UCR_BOPOMOFO                        (1L << 19) /* U+3100-U+312F */
@@ -757,11 +980,16 @@ FT_BEGIN_HEADER
   /*          Kangxi Radicals                    + */
   /*          Ideographic Description Characters + */
   /*          CJK Unified Ideographs Extension A   */
+  /*          CJK Unified Ideographs Extension A + */
+  /*          CJK Unified Ideographs Extension B + */
+  /*          Kanbun                               */
 #define TT_UCR_CJK_UNIFIED_IDEOGRAPHS          (1L << 27) /* U+4E00-U+9FFF */
                                                           /* U+2E80-U+2EFF */
                                                           /* U+2F00-U+2FDF */
                                                           /* U+2FF0-U+2FFF */
                                                           /* U+3400-U+4DB5 */
+                                                          /*U+20000-U+2A6DF*/
+                                                          /* U+3190-U+319F */
 
   /* Private Use Area */
 
@@ -770,8 +998,10 @@ FT_BEGIN_HEADER
 
   /* Compatibility Area and Specials */
 
-  /* Bit 61   CJK Compatibility Ideographs */
+  /* Bit 61   CJK Compatibility Ideographs            + */
+  /*          CJK Compatibility Ideographs Supplement   */
 #define TT_UCR_CJK_COMPATIBILITY_IDEOGRAPHS    (1L << 29) /* U+F900-U+FAFF */
+                                                          /*U+2F800-U+2FA1F*/
   /* Bit 62   Alphabetic Presentation Forms */
 #define TT_UCR_ALPHABETIC_PRESENTATION_FORMS   (1L << 30) /* U+FB00-U+FB4F */
   /* Bit 63   Arabic Presentation Forms-A */
@@ -818,6 +1048,34 @@ FT_BEGIN_HEADER
   /*          Yi Radicals    */
 #define TT_UCR_YI                              (1L << 19) /* U+A000-U+A48F */
                                                           /* U+A490-U+A4CF */
+  /* Bit 84   Tagalog  + */
+  /*          Hanunoo  + */
+  /*          Buhid    + */
+  /*          Tagbanwa   */
+#define TT_UCR_PHILIPPINE                      (1L << 20) /* U+1700-U+171F */
+                                                          /* U+1720-U+173F */
+                                                          /* U+1740-U+175F */
+                                                          /* U+1760-U+177F */
+  /* Bit 85   Old Italic */
+#define TT_UCR_OLD_ITALIC                      (1L << 21) /*U+10300-U+1032F*/
+  /* Bit 86   Gothic */
+#define TT_UCR_GOTHIC                          (1L << 22) /*U+10330-U+1034F*/
+  /* Bit 87   Deseret */
+#define TT_UCR_DESERET                         (1L << 23) /*U+10400-U+1044F*/
+  /* Bit 88   Byzantine Musical Symbols + */
+  /*          Musical Symbols             */
+#define TT_UCR_MUSICAL_SYMBOLS                 (1L << 24) /*U+1D000-U+1D0FF*/
+                                                          /*U+1D100-U+1D1FF*/
+  /* Bit 89   Mathematical Alphanumeric Symbols */
+#define TT_UCR_MATH_ALPHANUMERIC_SYMBOLS       (1L << 25) /*U+1D400-U+1D7FF*/
+  /* Bit 90   Private Use (plane 15) + */
+  /*          Private Use (plane 16)   */
+#define TT_UCR_PRIVATE_USE_SUPPLEMENTARY       (1L << 26) /*U+F0000-U+FFFFD*/
+                                                        /*U+100000-U+10FFFD*/
+  /* Bit 91   Variation Selectors */
+#define TT_UCR_VARIATION_SELECTORS             (1L << 27) /* U+FE00-U+FE0F */
+  /* Bit 92   Tags */
+#define TT_UCR_TAGS                            (1L << 28) /*U+E0000-U+E007F*/
 
 
   /*************************************************************************/

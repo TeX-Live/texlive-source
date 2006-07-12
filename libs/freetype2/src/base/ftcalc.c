@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    Arithmetic computations (body).                                      */
 /*                                                                         */
-/*  Copyright 1996-2001 by                                                 */
+/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006 by                   */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -39,7 +39,6 @@
 
 
 /* we need to define a 64-bits data type here */
-#ifndef FT_CONFIG_OPTION_OLD_CALCS
 
 #ifdef FT_LONG64
 
@@ -56,8 +55,6 @@
 
 #endif /* FT_LONG64 */
 
-#endif /* !FT_CONFIG_OPTION_OLD_CALCS */
-
 
   /*************************************************************************/
   /*                                                                       */
@@ -70,15 +67,15 @@
 
 
   /* The following three functions are available regardless of whether */
-  /* FT_LONG64 or FT_CONFIG_OPTION_OLD_CALCS is defined.               */
+  /* FT_LONG64 is defined.                                             */
 
   /* documentation is in freetype.h */
 
   FT_EXPORT_DEF( FT_Fixed )
   FT_RoundFix( FT_Fixed  a )
   {
-    return ( a >= 0 ) ?   ( a + 0x8000L ) & -0x10000L
-                      : -((-a + 0x8000L ) & -0x10000L );
+    return ( a >= 0 ) ?   ( a + 0x8000L ) & ~0xFFFFL
+                      : -((-a + 0x8000L ) & ~0xFFFFL );
   }
 
 
@@ -87,8 +84,8 @@
   FT_EXPORT_DEF( FT_Fixed )
   FT_CeilFix( FT_Fixed  a )
   {
-    return ( a >= 0 ) ?   ( a + 0xFFFFL ) & -0x10000L
-                      : -((-a + 0xFFFFL ) & -0x10000L );
+    return ( a >= 0 ) ?   ( a + 0xFFFFL ) & ~0xFFFFL
+                      : -((-a + 0xFFFFL ) & ~0xFFFFL );
   }
 
 
@@ -97,31 +94,12 @@
   FT_EXPORT_DEF( FT_Fixed )
   FT_FloorFix( FT_Fixed  a )
   {
-    return ( a >= 0 ) ?   a & -0x10000L
-                      : -((-a) & -0x10000L );
+    return ( a >= 0 ) ?   a & ~0xFFFFL
+                      : -((-a) & ~0xFFFFL );
   }
 
 
-#ifdef FT_CONFIG_OPTION_OLD_CALCS
-
-  static const FT_Long  ft_square_roots[63] =
-  {
-       1L,    1L,    2L,     3L,     4L,     5L,     8L,    11L,
-      16L,   22L,   32L,    45L,    64L,    90L,   128L,   181L,
-     256L,  362L,  512L,   724L,  1024L,  1448L,  2048L,  2896L,
-    4096L, 5892L, 8192L, 11585L, 16384L, 23170L, 32768L, 46340L,
-
-      65536L,   92681L,  131072L,   185363L,   262144L,   370727L,
-     524288L,  741455L, 1048576L,  1482910L,  2097152L,  2965820L,
-    4194304L, 5931641L, 8388608L, 11863283L, 16777216L, 23726566L,
-
-      33554432L,   47453132L,   67108864L,   94906265L,
-     134217728L,  189812531L,  268435456L,  379625062L,
-     536870912L,  759250125L, 1073741824L, 1518500250L,
-    2147483647L
-  };
-
-#else
+#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
 
   /* documentation is in ftcalc.h */
 
@@ -152,10 +130,11 @@
     return root;
   }
 
-#endif /* FT_CONFIG_OPTION_OLD_CALCS */
+#endif /* FT_CONFIG_OPTION_OLD_INTERNALS */
 
 
 #ifdef FT_LONG64
+
 
   /* documentation is in freetype.h */
 
@@ -180,6 +159,33 @@
   }
 
 
+#ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
+
+  /* documentation is in ftcalc.h */
+
+  FT_BASE_DEF( FT_Long )
+  FT_MulDiv_No_Round( FT_Long  a,
+                      FT_Long  b,
+                      FT_Long  c )
+  {
+    FT_Int   s;
+    FT_Long  d;
+
+
+    s = 1;
+    if ( a < 0 ) { a = -a; s = -1; }
+    if ( b < 0 ) { b = -b; s = -s; }
+    if ( c < 0 ) { c = -c; s = -s; }
+
+    d = (FT_Long)( c > 0 ? (FT_Int64)a * b / c
+                         : 0x7FFFFFFFL );
+
+    return ( s > 0 ) ? d : -d;
+  }
+
+#endif /* TT_CONFIG_OPTION_BYTECODE_INTERPRETER */
+
+
   /* documentation is in freetype.h */
 
   FT_EXPORT_DEF( FT_Long )
@@ -193,7 +199,7 @@
     if ( a < 0 ) { a = -a; s = -1; }
     if ( b < 0 ) { b = -b; s = -s; }
 
-    c = (FT_Long)( ( (FT_Int64)a * b + 0x8000 ) >> 16 );
+    c = (FT_Long)( ( (FT_Int64)a * b + 0x8000L ) >> 16 );
     return ( s > 0 ) ? c : -c ;
   }
 
@@ -220,51 +226,6 @@
 
     return ( s < 0 ? -(FT_Long)q : (FT_Long)q );
   }
-
-
-#ifdef FT_CONFIG_OPTION_OLD_CALCS
-
-  /* a helper function for FT_Sqrt64() */
-
-  static int
-  ft_order64( FT_Int64  z )
-  {
-    int  j = 0;
-
-
-    while ( z )
-    {
-      z = (unsigned FT_INT64)z >> 1;
-      j++;
-    }
-    return j - 1;
-  }
-
-
-  /* documentation is in ftcalc.h */
-
-  FT_EXPORT_DEF( FT_Int32 )
-  FT_Sqrt64( FT_Int64  l )
-  {
-    FT_Int64  r, s;
-
-
-    if ( l <= 0 ) return 0;
-    if ( l == 1 ) return 1;
-
-    r = ft_square_roots[ft_order64( l )];
-
-    do
-    {
-      s = r;
-      r = ( r + l / r ) >> 1;
-
-    } while ( r > s || r * r > l );
-
-    return (FT_Int32)r;
-  }
-
-#endif /* FT_CONFIG_OPTION_OLD_CALCS */
 
 
 #else /* FT_LONG64 */
@@ -336,9 +297,7 @@
   }
 
 
-  /* documentation is in ftcalc.h */
-
-  FT_EXPORT_DEF( void )
+  static void
   FT_Add64( FT_Int64*  x,
             FT_Int64*  y,
             FT_Int64  *z )
@@ -368,14 +327,13 @@
     if ( a == 0 || b == c )
       return a;
 
-    s  = a; a = ABS( a );
-    s ^= b; b = ABS( b );
-    s ^= c; c = ABS( c );
+    s  = a; a = FT_ABS( a );
+    s ^= b; b = FT_ABS( b );
+    s ^= c; c = FT_ABS( c );
 
     if ( a <= 46340L && b <= 46340L && c <= 176095L && c > 0 )
-    {
       a = ( a * b + ( c >> 1 ) ) / c;
-    }
+
     else if ( c > 0 )
     {
       FT_Int64  temp, temp2;
@@ -395,21 +353,61 @@
   }
 
 
+#ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
+
+  FT_BASE_DEF( FT_Long )
+  FT_MulDiv_No_Round( FT_Long  a,
+                      FT_Long  b,
+                      FT_Long  c )
+  {
+    long  s;
+
+
+    if ( a == 0 || b == c )
+      return a;
+
+    s  = a; a = FT_ABS( a );
+    s ^= b; b = FT_ABS( b );
+    s ^= c; c = FT_ABS( c );
+
+    if ( a <= 46340L && b <= 46340L && c > 0 )
+      a = a * b / c;
+
+    else if ( c > 0 )
+    {
+      FT_Int64  temp;
+
+
+      ft_multo64( a, b, &temp );
+      a = ft_div64by32( temp.hi, temp.lo, c );
+    }
+    else
+      a = 0x7FFFFFFFL;
+
+    return ( s < 0 ? -a : a );
+  }
+
+#endif /* TT_CONFIG_OPTION_BYTECODE_INTERPRETER */
+
+
   /* documentation is in freetype.h */
 
   FT_EXPORT_DEF( FT_Long )
   FT_MulFix( FT_Long  a,
              FT_Long  b )
   {
-    FT_Long   s;
+#if 1
+    FT_Long   sa, sb;
     FT_ULong  ua, ub;
 
 
     if ( a == 0 || b == 0x10000L )
       return a;
 
-    s  = a; a = ABS(a);
-    s ^= b; b = ABS(b);
+    sa = ( a >> ( sizeof ( a ) * 8 - 1 ) );
+     a = ( a ^ sa ) - sa;
+    sb = ( b >> ( sizeof ( b ) * 8 - 1 ) );
+     b = ( b ^ sb ) - sb;
 
     ua = (FT_ULong)a;
     ub = (FT_ULong)b;
@@ -427,7 +425,43 @@
            ( ( al * ( ub & 0xFFFF ) + 0x8000 ) >> 16 );
     }
 
-    return ( s < 0 ? -(FT_Long)ua : ua );
+    sa ^= sb,
+    ua  = (FT_ULong)(( ua ^ sa ) - sa);
+
+    return (FT_Long)ua;
+
+#else /* 0 */
+
+    FT_Long   s;
+    FT_ULong  ua, ub;
+
+
+    if ( a == 0 || b == 0x10000L )
+      return a;
+
+    s  = a; a = FT_ABS(a);
+    s ^= b; b = FT_ABS(b);
+
+    ua = (FT_ULong)a;
+    ub = (FT_ULong)b;
+
+    if ( ua <= 2048 && ub <= 1048576L )
+    {
+      ua = ( ua * ub + 0x8000L ) >> 16;
+    }
+    else
+    {
+      FT_ULong  al = ua & 0xFFFFL;
+
+
+      ua = ( ua >> 16 ) * ub +  al * ( ub >> 16 ) +
+           ( ( al * ( ub & 0xFFFFL ) + 0x8000L ) >> 16 );
+    }
+
+    return ( s < 0 ? -(FT_Long)ua : (FT_Long)ua );
+
+#endif /* 0 */
+
   }
 
 
@@ -441,8 +475,8 @@
     FT_UInt32  q;
 
 
-    s  = a; a = ABS(a);
-    s ^= b; b = ABS(b);
+    s  = a; a = FT_ABS(a);
+    s ^= b; b = FT_ABS(b);
 
     if ( b == 0 )
     {
@@ -471,6 +505,8 @@
   }
 
 
+#if 0
+
   /* documentation is in ftcalc.h */
 
   FT_EXPORT_DEF( void )
@@ -481,8 +517,8 @@
     FT_Int32  s;
 
 
-    s  = x; x = ABS( x );
-    s ^= y; y = ABS( y );
+    s  = x; x = FT_ABS( x );
+    s ^= y; y = FT_ABS( y );
 
     ft_multo64( x, y, z );
 
@@ -494,11 +530,11 @@
   }
 
 
-  /* documentation is in ftcalc.h */
-
   /* apparently, the second version of this code is not compiled correctly */
-  /* on Mac machines with the MPW C compiler..  tsss, tsss, tss...         */
+  /* on Mac machines with the MPW C compiler..  tsk, tsk, tsk...         */
+
 #if 1
+
   FT_EXPORT_DEF( FT_Int32 )
   FT_Div64by32( FT_Int64*  x,
                 FT_Int32   y )
@@ -513,7 +549,7 @@
       x->lo = (FT_UInt32)-(FT_Int32)x->lo;
       x->hi = ~x->hi + !x->lo;
     }
-    s ^= y;  y = ABS( y );
+    s ^= y;  y = FT_ABS( y );
 
     /* Shortcut */
     if ( x->hi == 0 )
@@ -550,7 +586,9 @@
 
     return ( s < 0 ? -(FT_Int32)q : (FT_Int32)q );
   }
-#else
+
+#else /* 0 */
+
   FT_EXPORT_DEF( FT_Int32 )
   FT_Div64by32( FT_Int64*  x,
                 FT_Int32   y )
@@ -565,7 +603,7 @@
       x->lo = (FT_UInt32)-(FT_Int32)x->lo;
       x->hi = ~x->hi + !x->lo;
     }
-    s ^= y;  y = ABS( y );
+    s ^= y;  y = FT_ABS( y );
 
     /* Shortcut */
     if ( x->hi == 0 )
@@ -582,94 +620,18 @@
 
     return ( s < 0 ? -(FT_Int32)q : (FT_Int32)q );
   }
-#endif
 
+#endif /* 0 */
 
-#ifdef FT_CONFIG_OPTION_OLD_CALCS
-
-
-  /* two helper functions for FT_Sqrt64() */
-
-  static void
-  FT_Sub64( FT_Int64*  x,
-            FT_Int64*  y,
-            FT_Int64*  z )
-  {
-    register FT_UInt32  lo, hi;
-
-
-    lo = x->lo - y->lo;
-    hi = x->hi - y->hi - ( (FT_Int32)lo < 0 );
-
-    z->lo = lo;
-    z->hi = hi;
-  }
-
-
-  static int
-  ft_order64( FT_Int64*  z )
-  {
-    FT_UInt32  i;
-    int        j;
-
-
-    i = z->lo;
-    j = 0;
-    if ( z->hi )
-    {
-      i = z->hi;
-      j = 32;
-    }
-
-    while ( i > 0 )
-    {
-      i >>= 1;
-      j++;
-    }
-    return j - 1;
-  }
-
-
-  /* documentation is in ftcalc.h */
-
-  FT_EXPORT_DEF( FT_Int32 )
-  FT_Sqrt64( FT_Int64*  l )
-  {
-    FT_Int64  l2;
-    FT_Int32  r, s;
-
-
-    if ( (FT_Int32)l->hi < 0          ||
-         ( l->hi == 0 && l->lo == 0 ) )
-      return 0;
-
-    s = ft_order64( l );
-    if ( s == 0 )
-      return 1;
-
-    r = ft_square_roots[s];
-    do
-    {
-      s = r;
-      r = ( r + FT_Div64by32( l, r ) ) >> 1;
-      FT_MulTo64( r, r,   &l2 );
-      FT_Sub64  ( l, &l2, &l2 );
-
-    } while ( r > s || (FT_Int32)l2.hi < 0 );
-
-    return r;
-  }
-
-
-#endif /* FT_CONFIG_OPTION_OLD_CALCS */
+#endif /* 0 */
 
 
 #endif /* FT_LONG64 */
 
 
-  /* a not-so-fast but working 16.16 fixed point square root function */
+  /* documentation is in ftcalc.h */
 
-  FT_EXPORT_DEF( FT_Int32 )
+  FT_BASE_DEF( FT_Int32 )
   FT_SqrtFixed( FT_Int32  x )
   {
     FT_UInt32  root, rem_hi, rem_lo, test_div;

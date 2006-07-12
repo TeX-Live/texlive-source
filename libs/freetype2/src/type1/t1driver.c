@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    Type 1 driver interface (body).                                      */
 /*                                                                         */
-/*  Copyright 1996-2001 by                                                 */
+/*  Copyright 1996-2001, 2002, 2003, 2004, 2006 by                         */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -29,9 +29,14 @@
 
 #include FT_INTERNAL_DEBUG_H
 #include FT_INTERNAL_STREAM_H
-#include FT_INTERNAL_POSTSCRIPT_NAMES_H
 
-#include <string.h>     /* for strcmp() */
+#include FT_SERVICE_MULTIPLE_MASTERS_H
+#include FT_SERVICE_GLYPH_DICT_H
+#include FT_SERVICE_XFREE86_NAME_H
+#include FT_SERVICE_POSTSCRIPT_NAME_H
+#include FT_SERVICE_POSTSCRIPT_CMAPS_H
+#include FT_SERVICE_POSTSCRIPT_INFO_H
+#include FT_SERVICE_KERNING_H
 
 
   /*************************************************************************/
@@ -43,6 +48,10 @@
 #undef  FT_COMPONENT
 #define FT_COMPONENT  trace_t1driver
 
+ /*
+  *  GLYPH DICT SERVICE
+  *
+  */
 
   static FT_Error
   t1_get_glyph_name( T1_Face     face,
@@ -57,13 +66,13 @@
 
     if ( buffer_max > 0 )
     {
-      FT_UInt  len = (FT_UInt)( strlen( gname ) );
+      FT_UInt  len = (FT_UInt)( ft_strlen( gname ) );
 
 
       if (len >= buffer_max)
         len = buffer_max - 1;
 
-      MEM_Copy( buffer, gname, len );
+      FT_MEM_COPY( buffer, gname, len );
       ((FT_Byte*)buffer)[len] = 0;
     }
 
@@ -71,23 +80,6 @@
   }
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Function>                                                            */
-  /*    t1_get_name_index                                                  */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    Uses the Type 1 font's `glyph_names' table to find a given glyph   */
-  /*    name's glyph index.                                                */
-  /*                                                                       */
-  /* <Input>                                                               */
-  /*    face       :: A handle to the source face object.                  */
-  /*                                                                       */
-  /*    glyph_name :: The glyph name.                                      */
-  /*                                                                       */
-  /* <Return>                                                              */
-  /*    Glyph index.  0 means `undefined character code'.                  */
-  /*                                                                       */
   static FT_UInt
   t1_get_name_index( T1_Face     face,
                      FT_String*  glyph_name )
@@ -100,75 +92,129 @@
     {
       gname = face->type1.glyph_names[i];
 
-      if ( !strcmp( glyph_name, gname ) )
+      if ( !ft_strcmp( glyph_name, gname ) )
         return (FT_UInt)i;
     }
 
     return 0;
   }
 
+  static const FT_Service_GlyphDictRec  t1_service_glyph_dict =
+  {
+    (FT_GlyphDict_GetNameFunc)  t1_get_glyph_name,
+    (FT_GlyphDict_NameIndexFunc)t1_get_name_index
+  };
+
+
+ /*
+  *  POSTSCRIPT NAME SERVICE
+  *
+  */
 
   static const char*
-  t1_get_ps_name( T1_Face    face )
+  t1_get_ps_name( T1_Face  face )
   {
     return (const char*) face->type1.font_name;
   }
 
-
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Function>                                                            */
-  /*    Get_Interface                                                      */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    Each driver can provide one or more extensions to the base         */
-  /*    FreeType API.  These can be used to access format specific         */
-  /*    features (e.g., all TrueType/OpenType resources share a common     */
-  /*    file structure and common tables which can be accessed through the */
-  /*    `sfnt' interface), or more simply generic ones (e.g., the          */
-  /*    `postscript names' interface which can be used to retrieve the     */
-  /*     PostScript name of a given glyph index).                          */
-  /*                                                                       */
-  /* <InOut>                                                               */
-  /*    driver    :: A handle to a driver object.                          */
-  /*                                                                       */
-  /* <Input>                                                               */
-  /*    interface :: A string designing the interface.  Examples are       */
-  /*                 `sfnt', `post_names', `charmaps', etc.                */
-  /*                                                                       */
-  /* <Return>                                                              */
-  /*    A typeless pointer to the extension's interface (normally a table  */
-  /*    of function pointers).  Returns NULL if the requested extension    */
-  /*    isn't available (i.e., wasn't compiled in the driver at build      */
-  /*    time).                                                             */
-  /*                                                                       */
-  static FT_Module_Interface
-  Get_Interface( FT_Driver         driver,
-                 const FT_String*  interface )
+  static const FT_Service_PsFontNameRec  t1_service_ps_name =
   {
-    FT_UNUSED( driver );
-    FT_UNUSED( interface );
+    (FT_PsName_GetFunc)t1_get_ps_name
+  };
 
-    if ( strcmp( (const char*)interface, "glyph_name" ) == 0 )
-      return (FT_Module_Interface)t1_get_glyph_name;
 
-    if ( strcmp( (const char*)interface, "name_index" ) == 0 )
-      return (FT_Module_Interface)t1_get_name_index;
-
-    if ( strcmp( (const char*)interface, "postscript_name" ) == 0 )
-      return (FT_Module_Interface)t1_get_ps_name;
+ /*
+  *  MULTIPLE MASTERS SERVICE
+  *
+  */
 
 #ifndef T1_CONFIG_OPTION_NO_MM_SUPPORT
-    if ( strcmp( (const char*)interface, "get_mm" ) == 0 )
-      return (FT_Module_Interface)T1_Get_Multi_Master;
-
-    if ( strcmp( (const char*)interface, "set_mm_design") == 0 )
-      return (FT_Module_Interface)T1_Set_MM_Design;
-
-    if ( strcmp( (const char*)interface, "set_mm_blend") == 0 )
-      return (FT_Module_Interface)T1_Set_MM_Blend;
+  static const FT_Service_MultiMastersRec  t1_service_multi_masters =
+  {
+    (FT_Get_MM_Func)        T1_Get_Multi_Master,
+    (FT_Set_MM_Design_Func) T1_Set_MM_Design,
+    (FT_Set_MM_Blend_Func)  T1_Set_MM_Blend,
+    (FT_Get_MM_Var_Func)    T1_Get_MM_Var,
+    (FT_Set_Var_Design_Func)T1_Set_Var_Design
+  };
 #endif
+
+
+ /*
+  *  POSTSCRIPT INFO SERVICE
+  *
+  */
+
+  static FT_Error
+  t1_ps_get_font_info( FT_Face          face,
+                       PS_FontInfoRec*  afont_info )
+  {
+    *afont_info = ((T1_Face)face)->type1.font_info;
     return 0;
+  }
+
+
+  static FT_Int
+  t1_ps_has_glyph_names( FT_Face  face )
+  {
+    FT_UNUSED( face );
+    return 1;
+  }
+
+
+  static FT_Error
+  t1_ps_get_font_private( FT_Face         face,
+                          PS_PrivateRec*  afont_private )
+  {
+    *afont_private = ((T1_Face)face)->type1.private_dict;
+    return 0;
+  }
+
+
+  static const FT_Service_PsInfoRec  t1_service_ps_info =
+  {
+    (PS_GetFontInfoFunc)   t1_ps_get_font_info,
+    (PS_HasGlyphNamesFunc) t1_ps_has_glyph_names,
+    (PS_GetFontPrivateFunc)t1_ps_get_font_private,
+  };
+
+#ifndef T1_CONFIG_OPTION_NO_AFM
+  static const FT_Service_KerningRec  t1_service_kerning =
+  {
+    T1_Get_Track_Kerning,
+  };
+#endif
+
+ /*
+  *  SERVICE LIST
+  *
+  */
+
+  static const FT_ServiceDescRec  t1_services[] =
+  {
+    { FT_SERVICE_ID_POSTSCRIPT_FONT_NAME, &t1_service_ps_name },
+    { FT_SERVICE_ID_GLYPH_DICT,           &t1_service_glyph_dict },
+    { FT_SERVICE_ID_XF86_NAME,            FT_XF86_FORMAT_TYPE_1 },
+    { FT_SERVICE_ID_POSTSCRIPT_INFO,      &t1_service_ps_info },
+
+#ifndef T1_CONFIG_OPTION_NO_AFM
+    { FT_SERVICE_ID_KERNING,              &t1_service_kerning },
+#endif
+
+#ifndef T1_CONFIG_OPTION_NO_MM_SUPPORT
+    { FT_SERVICE_ID_MULTI_MASTERS,        &t1_service_multi_masters },
+#endif
+    { NULL, NULL }
+  };
+
+
+  static FT_Module_Interface
+  Get_Interface( FT_Driver         driver,
+                 const FT_String*  t1_interface )
+  {
+    FT_UNUSED( driver );
+
+    return ft_service_list_lookup( t1_services, t1_interface );
   }
 
 
@@ -212,15 +258,14 @@
                FT_UInt     right_glyph,
                FT_Vector*  kerning )
   {
-    T1_AFM*  afm;
-
-
     kerning->x = 0;
     kerning->y = 0;
 
-    afm = (T1_AFM*)face->afm_data;
-    if ( afm )
-      T1_Get_Kerning( afm, left_glyph, right_glyph, kerning );
+    if ( face->afm_data )
+      T1_Get_Kerning( (AFM_FontInfo)face->afm_data,
+                      left_glyph,
+                      right_glyph,
+                      kerning );
 
     return T1_Err_Ok;
   }
@@ -229,206 +274,14 @@
 #endif /* T1_CONFIG_OPTION_NO_AFM */
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Function>                                                            */
-  /*    Get_Char_Index                                                     */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    Uses a charmap to return a given character code's glyph index.     */
-  /*                                                                       */
-  /* <Input>                                                               */
-  /*    charmap  :: A handle to the source charmap object.                 */
-  /*    charcode :: The character code.                                    */
-  /*                                                                       */
-  /* <Return>                                                              */
-  /*    Glyph index.  0 means `undefined character code'.                  */
-  /*                                                                       */
-  static FT_UInt
-  Get_Char_Index( FT_CharMap  charmap,
-                  FT_Long     charcode )
-  {
-    T1_Face             face;
-    FT_UInt             result = 0;
-    PSNames_Interface*  psnames;
-
-
-    face    = (T1_Face)charmap->face;
-    psnames = (PSNames_Interface*)face->psnames;
-    if ( psnames )
-      switch ( charmap->encoding )
-      {
-        /*******************************************************************/
-        /*                                                                 */
-        /* Unicode encoding support                                        */
-        /*                                                                 */
-      case ft_encoding_unicode:
-        /* use the `PSNames' module to synthetize the Unicode charmap */
-        result = psnames->lookup_unicode( &face->unicode_map,
-                                          (FT_ULong)charcode );
-
-        /* the function returns 0xFFFF if the Unicode charcode has */
-        /* no corresponding glyph                                  */
-        if ( result == 0xFFFF )
-          result = 0;
-        goto Exit;
-
-        /*******************************************************************/
-        /*                                                                 */
-        /* Custom Type 1 encoding                                          */
-        /*                                                                 */
-      case ft_encoding_adobe_custom:
-        {
-          T1_Encoding*  encoding = &face->type1.encoding;
-
-
-          if ( charcode >= encoding->code_first &&
-               charcode <= encoding->code_last  )
-            result = encoding->char_index[charcode];
-          goto Exit;
-        }
-
-        /*******************************************************************/
-        /*                                                                 */
-        /* Adobe Standard & Expert encoding support                        */
-        /*                                                                 */
-      default:
-        if ( charcode < 256 )
-        {
-          FT_UInt      code;
-          FT_Int       n;
-          const char*  glyph_name;
-
-
-          code = psnames->adobe_std_encoding[charcode];
-          if ( charmap->encoding == ft_encoding_adobe_expert )
-            code = psnames->adobe_expert_encoding[charcode];
-
-          glyph_name = psnames->adobe_std_strings( code );
-          if ( !glyph_name )
-            break;
-
-          for ( n = 0; n < face->type1.num_glyphs; n++ )
-          {
-            const char*  gname = face->type1.glyph_names[n];
-
-
-            if ( gname && gname[0] == glyph_name[0] &&
-                 strcmp( gname, glyph_name ) == 0   )
-            {
-              result = n;
-              break;
-            }
-          }
-        }
-      }
-  Exit:
-    return result;
-  }
-
-
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Function>                                                            */
-  /*    Get_Next_Char                                                      */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    Uses a charmap to return the next encoded char.                    */
-  /*                                                                       */
-  /* <Input>                                                               */
-  /*    charmap  :: A handle to the source charmap object.                 */
-  /*    charcode :: The character code.                                    */
-  /*                                                                       */
-  /* <Return>                                                              */
-  /*    Next char code.  0 means `no more char codes'.                     */
-  /*                                                                       */
-  static FT_Long
-  Get_Next_Char( FT_CharMap  charmap,
-                 FT_Long     charcode )
-  {
-    T1_Face             face;
-    PSNames_Interface*  psnames;
-
-
-    face    = (T1_Face)charmap->face;
-    psnames = (PSNames_Interface*)face->psnames;
-
-    if ( psnames )
-      switch ( charmap->encoding )
-      {
-        /*******************************************************************/
-        /*                                                                 */
-        /* Unicode encoding support                                        */
-        /*                                                                 */
-      case ft_encoding_unicode:
-        /* use the `PSNames' module to synthetize the Unicode charmap */
-        return psnames->next_unicode( &face->unicode_map,
-                                      (FT_ULong)charcode );
-
-        /*******************************************************************/
-        /*                                                                 */
-        /* Custom Type 1 encoding                                          */
-        /*                                                                 */
-      case ft_encoding_adobe_custom:
-        {
-          T1_Encoding*  encoding = &face->type1.encoding;
-
-
-          charcode++;
-          if ( charcode < encoding->code_first )
-            charcode = encoding->code_first;
-          while ( charcode <= encoding->code_last  )
-          {
-            if ( encoding->char_index[charcode] )
-              return charcode;
-            charcode++;
-          }
-        }
-
-        /*******************************************************************/
-        /*                                                                 */
-        /* Adobe Standard & Expert encoding support                        */
-        /*                                                                 */
-      default:
-        while ( ++charcode < 256 )
-        {
-          FT_UInt      code;
-          FT_Int       n;
-          const char*  glyph_name;
-
-
-          code = psnames->adobe_std_encoding[charcode];
-          if ( charmap->encoding == ft_encoding_adobe_expert )
-            code = psnames->adobe_expert_encoding[charcode];
-
-          glyph_name = psnames->adobe_std_strings( code );
-          if ( !glyph_name )
-            continue;
-
-          for ( n = 0; n < face->type1.num_glyphs; n++ )
-          {
-            const char*  gname = face->type1.glyph_names[n];
-
-
-            if ( gname && gname[0] == glyph_name[0] &&
-                 strcmp( gname, glyph_name ) == 0   )
-              return charcode;
-          }
-        }
-      }
-
-    return 0;
-  }
-
-
   FT_CALLBACK_TABLE_DEF
-  const FT_Driver_Class  t1_driver_class =
+  const FT_Driver_ClassRec  t1_driver_class =
   {
     {
-      ft_module_font_driver      |
-      ft_module_driver_scalable  | 
-      ft_module_driver_has_hinter,
-      
+      FT_MODULE_FONT_DRIVER       |
+      FT_MODULE_DRIVER_SCALABLE   |
+      FT_MODULE_DRIVER_HAS_HINTER,
+
       sizeof( FT_DriverRec ),
 
       "type1",
@@ -446,61 +299,30 @@
     sizeof( T1_SizeRec ),
     sizeof( T1_GlyphSlotRec ),
 
-    (FTDriver_initFace)     T1_Face_Init,
-    (FTDriver_doneFace)     T1_Face_Done,
-    (FTDriver_initSize)     T1_Size_Init,
-    (FTDriver_doneSize)     T1_Size_Done,
-    (FTDriver_initGlyphSlot)T1_GlyphSlot_Init,
-    (FTDriver_doneGlyphSlot)T1_GlyphSlot_Done,
+    (FT_Face_InitFunc)        T1_Face_Init,
+    (FT_Face_DoneFunc)        T1_Face_Done,
+    (FT_Size_InitFunc)        T1_Size_Init,
+    (FT_Size_DoneFunc)        T1_Size_Done,
+    (FT_Slot_InitFunc)        T1_GlyphSlot_Init,
+    (FT_Slot_DoneFunc)        T1_GlyphSlot_Done,
 
-    (FTDriver_setCharSizes) T1_Size_Reset,
-    (FTDriver_setPixelSizes)T1_Size_Reset,
-    (FTDriver_loadGlyph)    T1_Load_Glyph,
-    (FTDriver_getCharIndex) Get_Char_Index,
+#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
+    ft_stub_set_char_sizes,
+    ft_stub_set_pixel_sizes,
+#endif
+    (FT_Slot_LoadFunc)        T1_Load_Glyph,
 
 #ifdef T1_CONFIG_OPTION_NO_AFM
-    (FTDriver_getKerning)   0,
-    (FTDriver_attachFile)   0,
+    (FT_Face_GetKerningFunc)  0,
+    (FT_Face_AttachFunc)      0,
 #else
-    (FTDriver_getKerning)   Get_Kerning,
-    (FTDriver_attachFile)   T1_Read_AFM,
+    (FT_Face_GetKerningFunc)  Get_Kerning,
+    (FT_Face_AttachFunc)      T1_Read_Metrics,
 #endif
-    (FTDriver_getAdvances)  0,
-    
-    (FTDriver_getNextChar)  Get_Next_Char
+    (FT_Face_GetAdvancesFunc) 0,
+    (FT_Size_RequestFunc)     T1_Size_Request,
+    (FT_Size_SelectFunc)      0
   };
-
-
-#ifdef FT_CONFIG_OPTION_DYNAMIC_DRIVERS
-
-
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Function>                                                            */
-  /*    getDriverClass                                                     */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    This function is used when compiling the TrueType driver as a      */
-  /*    shared library (`.DLL' or `.so').  It will be used by the          */
-  /*    high-level library of FreeType to retrieve the address of the      */
-  /*    driver's generic interface.                                        */
-  /*                                                                       */
-  /*    It shouldn't be implemented in a static build, as each driver must */
-  /*    have the same function as an exported entry point.                 */
-  /*                                                                       */
-  /* <Return>                                                              */
-  /*    The address of the TrueType's driver generic interface.  The       */
-  /*    format-specific interface can then be retrieved through the method */
-  /*    interface->get_format_interface.                                   */
-  /*                                                                       */
-  FT_EXPORT_DEF( const FT_Driver_Class* )
-  getDriverClass( void )
-  {
-    return &t1_driver_class;
-  }
-
-
-#endif /* FT_CONFIG_OPTION_DYNAMIC_DRIVERS */
 
 
 /* END */

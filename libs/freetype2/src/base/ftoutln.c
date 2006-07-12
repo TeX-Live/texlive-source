@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    FreeType outline management (body).                                  */
 /*                                                                         */
-/*  Copyright 1996-2001 by                                                 */
+/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006 by                   */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -26,6 +26,7 @@
 #include <ft2build.h>
 #include FT_OUTLINE_H
 #include FT_INTERNAL_OBJECTS_H
+#include FT_TRIGONOMETRY_H
 
 
   /*************************************************************************/
@@ -46,7 +47,7 @@
 
   FT_EXPORT_DEF( FT_Error )
   FT_Outline_Decompose( FT_Outline*              outline,
-                        const FT_Outline_Funcs*  interface,
+                        const FT_Outline_Funcs*  func_interface,
                         void*                    user )
   {
 #undef SCALED
@@ -70,11 +71,11 @@
     FT_Pos   delta;
 
 
-    if ( !outline || !interface )
+    if ( !outline || !func_interface )
       return FT_Err_Invalid_Argument;
 
-    shift = interface->shift;
-    delta = interface->delta;
+    shift = func_interface->shift;
+    delta = func_interface->delta;
     first = 0;
 
     for ( n = 0; n < outline->n_contours; n++ )
@@ -98,14 +99,14 @@
       tag   = FT_CURVE_TAG( tags[0] );
 
       /* A contour cannot start with a cubic control point! */
-      if ( tag == FT_Curve_Tag_Cubic )
+      if ( tag == FT_CURVE_TAG_CUBIC )
         goto Invalid_Outline;
 
       /* check first point to determine origin */
-      if ( tag == FT_Curve_Tag_Conic )
+      if ( tag == FT_CURVE_TAG_CONIC )
       {
         /* first point is conic control.  Yes, this happens. */
-        if ( FT_CURVE_TAG( outline->tags[last] ) == FT_Curve_Tag_On )
+        if ( FT_CURVE_TAG( outline->tags[last] ) == FT_CURVE_TAG_ON )
         {
           /* start at last point if it is on the curve */
           v_start = v_last;
@@ -125,7 +126,7 @@
         tags--;
       }
 
-      error = interface->move_to( &v_start, user );
+      error = func_interface->move_to( &v_start, user );
       if ( error )
         goto Exit;
 
@@ -137,7 +138,7 @@
         tag = FT_CURVE_TAG( tags[0] );
         switch ( tag )
         {
-        case FT_Curve_Tag_On:  /* emit a single line_to */
+        case FT_CURVE_TAG_ON:  /* emit a single line_to */
           {
             FT_Vector  vec;
 
@@ -145,13 +146,13 @@
             vec.x = SCALED( point->x );
             vec.y = SCALED( point->y );
 
-            error = interface->line_to( &vec, user );
+            error = func_interface->line_to( &vec, user );
             if ( error )
               goto Exit;
             continue;
           }
 
-        case FT_Curve_Tag_Conic:  /* consume conic arcs */
+        case FT_CURVE_TAG_CONIC:  /* consume conic arcs */
           v_control.x = SCALED( point->x );
           v_control.y = SCALED( point->y );
 
@@ -169,21 +170,21 @@
             vec.x = SCALED( point->x );
             vec.y = SCALED( point->y );
 
-            if ( tag == FT_Curve_Tag_On )
+            if ( tag == FT_CURVE_TAG_ON )
             {
-              error = interface->conic_to( &v_control, &vec, user );
+              error = func_interface->conic_to( &v_control, &vec, user );
               if ( error )
                 goto Exit;
               continue;
             }
 
-            if ( tag != FT_Curve_Tag_Conic )
+            if ( tag != FT_CURVE_TAG_CONIC )
               goto Invalid_Outline;
 
             v_middle.x = ( v_control.x + vec.x ) / 2;
             v_middle.y = ( v_control.y + vec.y ) / 2;
 
-            error = interface->conic_to( &v_control, &v_middle, user );
+            error = func_interface->conic_to( &v_control, &v_middle, user );
             if ( error )
               goto Exit;
 
@@ -191,16 +192,16 @@
             goto Do_Conic;
           }
 
-          error = interface->conic_to( &v_control, &v_start, user );
+          error = func_interface->conic_to( &v_control, &v_start, user );
           goto Close;
 
-        default:  /* FT_Curve_Tag_Cubic */
+        default:  /* FT_CURVE_TAG_CUBIC */
           {
             FT_Vector  vec1, vec2;
 
 
             if ( point + 1 > limit                             ||
-                 FT_CURVE_TAG( tags[1] ) != FT_Curve_Tag_Cubic )
+                 FT_CURVE_TAG( tags[1] ) != FT_CURVE_TAG_CUBIC )
               goto Invalid_Outline;
 
             point += 2;
@@ -217,20 +218,20 @@
               vec.x = SCALED( point->x );
               vec.y = SCALED( point->y );
 
-              error = interface->cubic_to( &vec1, &vec2, &vec, user );
+              error = func_interface->cubic_to( &vec1, &vec2, &vec, user );
               if ( error )
                 goto Exit;
               continue;
             }
 
-            error = interface->cubic_to( &vec1, &vec2, &v_start, user );
+            error = func_interface->cubic_to( &vec1, &vec2, &v_start, user );
             goto Close;
           }
         }
       }
 
       /* close the contour with a line segment */
-      error = interface->line_to( &v_start, user );
+      error = func_interface->line_to( &v_start, user );
 
     Close:
       if ( error )
@@ -263,19 +264,19 @@
 
     *anoutline = null_outline;
 
-    if ( ALLOC_ARRAY( anoutline->points,   numPoints * 2L, FT_Pos    ) ||
-         ALLOC_ARRAY( anoutline->tags,     numPoints,      FT_Byte   ) ||
-         ALLOC_ARRAY( anoutline->contours, numContours,    FT_UShort ) )
+    if ( FT_NEW_ARRAY( anoutline->points,   numPoints * 2L ) ||
+         FT_NEW_ARRAY( anoutline->tags,     numPoints      ) ||
+         FT_NEW_ARRAY( anoutline->contours, numContours    ) )
       goto Fail;
 
     anoutline->n_points    = (FT_UShort)numPoints;
     anoutline->n_contours  = (FT_Short)numContours;
-    anoutline->flags      |= ft_outline_owner;
+    anoutline->flags      |= FT_OUTLINE_OWNER;
 
     return FT_Err_Ok;
 
   Fail:
-    anoutline->flags |= ft_outline_owner;
+    anoutline->flags |= FT_OUTLINE_OWNER;
     FT_Outline_Done_Internal( memory, anoutline );
 
     return error;
@@ -334,7 +335,7 @@
       if ( end != n_points - 1 )
         goto Bad;
 
-      /* XXX: check the that array */
+      /* XXX: check the tags array */
       return 0;
     }
 
@@ -346,8 +347,8 @@
   /* documentation is in ftoutln.h */
 
   FT_EXPORT_DEF( FT_Error )
-  FT_Outline_Copy( FT_Outline*  source,
-                   FT_Outline  *target )
+  FT_Outline_Copy( const FT_Outline*  source,
+                   FT_Outline        *target )
   {
     FT_Int  is_owner;
 
@@ -357,20 +358,20 @@
          source->n_contours != target->n_contours )
       return FT_Err_Invalid_Argument;
 
-    MEM_Copy( target->points, source->points,
-              source->n_points * sizeof ( FT_Vector ) );
+    if ( source == target )
+      return FT_Err_Ok;
 
-    MEM_Copy( target->tags, source->tags,
-              source->n_points * sizeof ( FT_Byte ) );
+    FT_ARRAY_COPY( target->points, source->points, source->n_points );
 
-    MEM_Copy( target->contours, source->contours,
-              source->n_contours * sizeof ( FT_Short ) );
+    FT_ARRAY_COPY( target->tags, source->tags, source->n_points );
 
-    /* copy all flags, except the `ft_outline_owner' one */
-    is_owner      = target->flags & ft_outline_owner;
+    FT_ARRAY_COPY( target->contours, source->contours, source->n_contours );
+
+    /* copy all flags, except the `FT_OUTLINE_OWNER' one */
+    is_owner      = target->flags & FT_OUTLINE_OWNER;
     target->flags = source->flags;
 
-    target->flags &= ~ft_outline_owner;
+    target->flags &= ~FT_OUTLINE_OWNER;
     target->flags |= is_owner;
 
     return FT_Err_Ok;
@@ -381,13 +382,13 @@
   FT_Outline_Done_Internal( FT_Memory    memory,
                             FT_Outline*  outline )
   {
-    if ( outline )
+    if ( memory && outline )
     {
-      if ( outline->flags & ft_outline_owner )
+      if ( outline->flags & FT_OUTLINE_OWNER )
       {
-        FREE( outline->points   );
-        FREE( outline->tags     );
-        FREE( outline->contours );
+        FT_FREE( outline->points   );
+        FT_FREE( outline->tags     );
+        FT_FREE( outline->contours );
       }
       *outline = null_outline;
 
@@ -416,8 +417,8 @@
   /* documentation is in ftoutln.h */
 
   FT_EXPORT_DEF( void )
-  FT_Outline_Get_CBox( FT_Outline*  outline,
-                       FT_BBox     *acbox )
+  FT_Outline_Get_CBox( const FT_Outline*  outline,
+                       FT_BBox           *acbox )
   {
     FT_Pos  xMin, yMin, xMax, yMax;
 
@@ -466,13 +467,16 @@
   /* documentation is in ftoutln.h */
 
   FT_EXPORT_DEF( void )
-  FT_Outline_Translate( FT_Outline*  outline,
-                        FT_Pos       xOffset,
-                        FT_Pos       yOffset )
+  FT_Outline_Translate( const FT_Outline*  outline,
+                        FT_Pos             xOffset,
+                        FT_Pos             yOffset )
   {
     FT_UShort   n;
     FT_Vector*  vec = outline->points;
 
+
+    if ( !outline )
+      return;
 
     for ( n = 0; n < outline->n_points; n++ )
     {
@@ -491,6 +495,9 @@
     FT_UShort  n;
     FT_Int     first, last;
 
+
+    if ( !outline )
+      return;
 
     first = 0;
 
@@ -535,7 +542,7 @@
       first = last + 1;
     }
 
-    outline->flags ^= ft_outline_reverse_fill;
+    outline->flags ^= FT_OUTLINE_REVERSE_FILL;
   }
 
 
@@ -555,7 +562,7 @@
     if ( !library )
       return FT_Err_Invalid_Library_Handle;
 
-    if ( !params )
+    if ( !outline || !params )
       return FT_Err_Invalid_Argument;
 
     renderer = library->cur_renderer;
@@ -576,7 +583,7 @@
 
       /* now, look for another renderer that supports the same */
       /* format                                                */
-      renderer = FT_Lookup_Renderer( library, ft_glyph_format_outline,
+      renderer = FT_Lookup_Renderer( library, FT_GLYPH_FORMAT_OUTLINE,
                                      &node );
       update   = 1;
     }
@@ -593,9 +600,9 @@
   /* documentation is in ftoutln.h */
 
   FT_EXPORT_DEF( FT_Error )
-  FT_Outline_Get_Bitmap( FT_Library   library,
-                         FT_Outline*  outline,
-                         FT_Bitmap   *abitmap )
+  FT_Outline_Get_Bitmap( FT_Library        library,
+                         FT_Outline*       outline,
+                         const FT_Bitmap  *abitmap )
   {
     FT_Raster_Params  params;
 
@@ -608,8 +615,10 @@
     params.target = abitmap;
     params.flags  = 0;
 
-    if ( abitmap->pixel_mode == ft_pixel_mode_grays )
-      params.flags |= ft_raster_flag_aa;
+    if ( abitmap->pixel_mode == FT_PIXEL_MODE_GRAY  ||
+         abitmap->pixel_mode == FT_PIXEL_MODE_LCD   ||
+         abitmap->pixel_mode == FT_PIXEL_MODE_LCD_V )
+      params.flags |= FT_RASTER_FLAG_AA;
 
     return FT_Outline_Render( library, outline, &params );
   }
@@ -618,8 +627,8 @@
   /* documentation is in ftoutln.h */
 
   FT_EXPORT_DEF( void )
-  FT_Vector_Transform( FT_Vector*  vector,
-                       FT_Matrix*  matrix )
+  FT_Vector_Transform( FT_Vector*        vector,
+                       const FT_Matrix*  matrix )
   {
     FT_Pos xz, yz;
 
@@ -641,15 +650,373 @@
   /* documentation is in ftoutln.h */
 
   FT_EXPORT_DEF( void )
-  FT_Outline_Transform( FT_Outline*  outline,
-                        FT_Matrix*   matrix )
+  FT_Outline_Transform( const FT_Outline*  outline,
+                        const FT_Matrix*   matrix )
   {
-    FT_Vector*  vec = outline->points;
-    FT_Vector*  limit = vec + outline->n_points;
+    FT_Vector*  vec;
+    FT_Vector*  limit;
 
+
+    if ( !outline || !matrix )
+      return;
+
+    vec   = outline->points;
+    limit = vec + outline->n_points;
 
     for ( ; vec < limit; vec++ )
       FT_Vector_Transform( vec, matrix );
+  }
+
+
+#if 0
+
+#define FT_OUTLINE_GET_CONTOUR( outline, c, first, last )  \
+  do {                                                     \
+    (first) = ( c > 0 ) ? (outline)->points +              \
+                            (outline)->contours[c - 1] + 1 \
+                        : (outline)->points;               \
+    (last) = (outline)->points + (outline)->contours[c];   \
+  } while ( 0 )
+
+
+  /* Is a point in some contour?                     */
+  /*                                                 */
+  /* We treat every point of the contour as if it    */
+  /* it were ON.  That is, we allow false positives, */
+  /* but disallow false negatives.  (XXX really?)    */
+  static FT_Bool
+  ft_contour_has( FT_Outline*  outline,
+                  FT_Short     c,
+                  FT_Vector*   point )
+  {
+    FT_Vector*  first;
+    FT_Vector*  last;
+    FT_Vector*  a;
+    FT_Vector*  b;
+    FT_UInt     n = 0;
+
+
+    FT_OUTLINE_GET_CONTOUR( outline, c, first, last );
+
+    for ( a = first; a <= last; a++ )
+    {
+      FT_Pos  x;
+      FT_Int  intersect;
+
+
+      b = ( a == last ) ? first : a + 1;
+
+      intersect = ( a->y - point->y ) ^ ( b->y - point->y );
+
+      /* a and b are on the same side */
+      if ( intersect >= 0 )
+      {
+        if ( intersect == 0 && a->y == point->y )
+        {
+          if ( ( a->x <= point->x && b->x >= point->x ) ||
+               ( a->x >= point->x && b->x <= point->x ) )
+            return 1;
+        }
+
+        continue;
+      }
+
+      x = a->x + ( b->x - a->x ) * (point->y - a->y ) / ( b->y - a->y );
+
+      if ( x < point->x )
+        n++;
+      else if ( x == point->x )
+        return 1;
+    }
+
+    return ( n % 2 );
+  }
+
+  
+  static FT_Bool
+  ft_contour_enclosed( FT_Outline*  outline,
+                       FT_UShort    c )
+  {
+    FT_Vector*  first;
+    FT_Vector*  last;
+    FT_Short    i;
+
+
+    FT_OUTLINE_GET_CONTOUR( outline, c, first, last );
+
+    for ( i = 0; i < outline->n_contours; i++ )
+    {
+      if ( i != c && ft_contour_has( outline, i, first ) )
+      {
+        FT_Vector*  pt;
+
+
+        for ( pt = first + 1; pt <= last; pt++ )
+          if ( !ft_contour_has( outline, i, pt ) )
+            return 0;
+
+        return 1;
+      }
+    }
+
+    return 0;
+  }
+
+
+  /* This version differs from the public one in that each */
+  /* part (contour not enclosed in another contour) of the */
+  /* outline is checked for orientation.  This is          */
+  /* necessary for some buggy CJK fonts.                   */
+  static FT_Orientation
+  ft_outline_get_orientation( FT_Outline*  outline )
+  {
+    FT_Short        i;
+    FT_Vector*      first;
+    FT_Vector*      last;
+    FT_Orientation  orient = FT_ORIENTATION_NONE;
+
+
+    first = outline->points;
+    for ( i = 0; i < outline->n_contours; i++, first = last + 1 )
+    {
+      FT_Vector*  point;
+      FT_Vector*  xmin_point;
+      FT_Pos      xmin;
+
+
+      last = outline->points + outline->contours[i];
+
+      /* skip degenerate contours */
+      if ( last < first + 2 )
+        continue;
+
+      if ( ft_contour_enclosed( outline, i ) )
+        continue;
+
+      xmin       = first->x;
+      xmin_point = first;
+
+      for ( point = first + 1; point <= last; point++ )
+      {
+        if ( point->x < xmin )
+        {
+          xmin       = point->x;
+          xmin_point = point;
+        }
+      }
+
+      /* check the orientation of the contour */
+      {
+        FT_Vector*      prev;
+        FT_Vector*      next;
+        FT_Orientation  o;
+
+
+        prev = ( xmin_point == first ) ? last : xmin_point - 1;
+        next = ( xmin_point == last ) ? first : xmin_point + 1;
+
+        if ( FT_Atan2( prev->x - xmin_point->x, prev->y - xmin_point->y ) >
+             FT_Atan2( next->x - xmin_point->x, next->y - xmin_point->y ) )
+          o = FT_ORIENTATION_POSTSCRIPT;
+        else
+          o = FT_ORIENTATION_TRUETYPE;
+
+        if ( orient == FT_ORIENTATION_NONE )
+          orient = o;
+        else if ( orient != o )
+          return FT_ORIENTATION_NONE;
+      }
+    }
+
+    return orient;
+  }
+
+#endif /* 0 */
+
+
+  /* documentation is in ftoutln.h */
+
+  FT_EXPORT_DEF( FT_Error )
+  FT_Outline_Embolden( FT_Outline*  outline,
+                       FT_Pos       strength )
+  {
+    FT_Vector*  points;
+    FT_Vector   v_prev, v_first, v_next, v_cur;
+    FT_Angle    rotate, angle_in, angle_out;
+    FT_Int      c, n, first;
+    FT_Int      orientation;
+
+
+    if ( !outline )
+      return FT_Err_Invalid_Argument;
+
+    strength /= 2;
+    if ( strength == 0 )
+      return FT_Err_Ok;
+
+    orientation = FT_Outline_Get_Orientation( outline );
+    if ( orientation == FT_ORIENTATION_NONE )
+    {
+      if ( outline->n_contours )
+        return FT_Err_Invalid_Argument;
+      else
+        return FT_Err_Ok;
+    }
+
+    if ( orientation == FT_ORIENTATION_TRUETYPE )
+      rotate = -FT_ANGLE_PI2;
+    else
+      rotate = FT_ANGLE_PI2;
+
+    points = outline->points;
+
+    first = 0;
+    for ( c = 0; c < outline->n_contours; c++ )
+    {
+      int  last = outline->contours[c];
+
+
+      v_first = points[first];
+      v_prev  = points[last];
+      v_cur   = v_first;
+
+      for ( n = first; n <= last; n++ )
+      {
+        FT_Vector  in, out;
+        FT_Angle   angle_diff;
+        FT_Pos     d;
+        FT_Fixed   scale;
+
+
+        if ( n < last )
+          v_next = points[n + 1];
+        else
+          v_next = v_first;
+
+        /* compute the in and out vectors */
+        in.x = v_cur.x - v_prev.x;
+        in.y = v_cur.y - v_prev.y;
+
+        out.x = v_next.x - v_cur.x;
+        out.y = v_next.y - v_cur.y;
+
+        angle_in   = FT_Atan2( in.x, in.y );
+        angle_out  = FT_Atan2( out.x, out.y );
+        angle_diff = FT_Angle_Diff( angle_in, angle_out );
+        scale      = FT_Cos( angle_diff / 2 );
+
+        if ( scale < 0x4000L && scale > -0x4000L )
+          in.x = in.y = 0;
+        else
+        {
+          d = FT_DivFix( strength, scale );
+
+          FT_Vector_From_Polar( &in, d, angle_in + angle_diff / 2 - rotate );
+        }
+
+        outline->points[n].x = v_cur.x + strength + in.x;
+        outline->points[n].y = v_cur.y + strength + in.y;
+
+        v_prev = v_cur;
+        v_cur  = v_next;
+      }
+
+      first = last + 1;
+    }
+
+    return FT_Err_Ok;
+  }
+
+
+  /* documentation is in ftoutln.h */
+
+  FT_EXPORT_DEF( FT_Orientation )
+  FT_Outline_Get_Orientation( FT_Outline*  outline )
+  {
+    FT_Pos      xmin       = 32768L;
+    FT_Vector*  xmin_point = NULL;
+    FT_Vector*  xmin_first = NULL;
+    FT_Vector*  xmin_last  = NULL;
+
+    short*      contour;
+
+    FT_Vector*  first;
+    FT_Vector*  last;
+    FT_Vector*  prev;
+    FT_Vector*  next;
+
+
+    if ( !outline || outline->n_points <= 0 )
+      return FT_ORIENTATION_TRUETYPE;
+
+    first = outline->points;
+    for ( contour = outline->contours;
+          contour < outline->contours + outline->n_contours;
+          contour++, first = last + 1 )
+    {
+      FT_Vector*  point;
+      FT_Int      on_curve;
+      FT_Int      on_curve_count = 0;
+      FT_Pos      tmp_xmin       = 32768L;
+      FT_Vector*  tmp_xmin_point = NULL;
+
+      last = outline->points + *contour;
+
+      /* skip degenerate contours */
+      if ( last < first + 2 )
+        continue;
+
+      for ( point = first; point <= last; ++point )
+      {
+        /* Count on-curve points.  If there are less than 3 on-curve */
+        /* points, just bypass this contour.                         */
+        on_curve        = outline->tags[point - outline->points] & 1;
+        on_curve_count += on_curve;
+
+        if ( point->x < tmp_xmin && on_curve )
+        {
+          tmp_xmin       = point->x;
+          tmp_xmin_point = point;
+        }
+      }
+
+      if ( on_curve_count > 2 && tmp_xmin < xmin )
+      {
+        xmin       = tmp_xmin;
+        xmin_point = tmp_xmin_point;
+        xmin_first = first;
+        xmin_last  = last;
+      }
+    }
+
+    if ( !xmin_point )
+      return FT_ORIENTATION_TRUETYPE;
+
+    prev = ( xmin_point == xmin_first ) ? xmin_last : xmin_point - 1;
+    next = ( xmin_point == xmin_last ) ? xmin_first : xmin_point + 1;
+
+    /* Skip off-curve points */
+    while ( ( outline->tags[prev - outline->points] & 1 ) == 0 )
+    {
+      if ( prev == xmin_first )
+        prev = xmin_last;
+      else
+        --prev;
+    }
+
+    while ( ( outline->tags[next - outline->points] & 1 ) == 0 )
+    {
+      if ( next == xmin_last )
+        next = xmin_first;
+      else
+        ++next;
+    }
+
+    if ( FT_Atan2( prev->x - xmin_point->x, prev->y - xmin_point->y ) >
+         FT_Atan2( next->x - xmin_point->x, next->y - xmin_point->y ) )
+      return FT_ORIENTATION_POSTSCRIPT;
+    else
+      return FT_ORIENTATION_TRUETYPE;
   }
 
 

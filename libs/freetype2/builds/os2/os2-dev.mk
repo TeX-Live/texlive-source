@@ -5,7 +5,7 @@
 #
 
 
-# Copyright 1996-2000 by
+# Copyright 1996-2000, 2003, 2006 by
 # David Turner, Robert Wilhelm, and Werner Lemberg.
 #
 # This file is part of the FreeType project, and may only be used, modified,
@@ -15,19 +15,16 @@
 # fully.
 
 
-ifndef TOP
-  TOP := .
-endif
+DEVEL_DIR := $(TOP_DIR)/devel
 
-SEP   := /
+# include OS/2-specific definitions
+include $(TOP_DIR)/builds/os2/os2-def.mk
 
-include $(TOP)/builds/os2/os2-def.mk
-BUILD := $(TOP)/builds/devel
-
-include $(TOP)/builds/compiler/gcc-dev.mk
+# include gcc-specific definitions
+include $(TOP_DIR)/builds/compiler/gcc-dev.mk
 
 # include linking instructions
-include $(TOP)/builds/link_dos.mk
+include $(TOP_DIR)/builds/link_dos.mk
 
 
 # EOF

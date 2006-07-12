@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    Objects manager (specification).                                     */
 /*                                                                         */
-/*  Copyright 1996-2001 by                                                 */
+/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006 by                   */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -83,6 +83,10 @@ FT_BEGIN_HEADER
     FT_UnitVector  projVector;
     FT_UnitVector  freeVector;
 
+#ifdef TT_CONFIG_OPTION_UNPATENTED_HINTING
+    FT_Bool        both_x_axis;
+#endif
+
     FT_Long        loop;
     FT_F26Dot6     minimum_distance;
     FT_Int         round_state;
@@ -107,14 +111,14 @@ FT_BEGIN_HEADER
 
 #ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
 
-  FT_LOCAL void
-  TT_Done_GlyphZone( TT_GlyphZone*  zone );
+  FT_LOCAL( void )
+  tt_glyphzone_done( TT_GlyphZone  zone );
 
-  FT_LOCAL FT_Error
-  TT_New_GlyphZone( FT_Memory      memory,
-                    FT_UShort      maxPoints,
-                    FT_Short       maxContours,
-                    TT_GlyphZone*  zone );
+  FT_LOCAL( FT_Error )
+  tt_glyphzone_new( FT_Memory     memory,
+                    FT_UShort     maxPoints,
+                    FT_Short      maxContours,
+                    TT_GlyphZone  zone );
 
 #endif /* TT_CONFIG_OPTION_BYTECODE_INTERPRETER */
 
@@ -192,27 +196,28 @@ FT_BEGIN_HEADER
   /*                                                                       */
   typedef struct  TT_SubglyphRec_
   {
-    FT_Long       index;        /* subglyph index; initialized with -1 */
-    FT_Bool       is_scaled;    /* is the subglyph scaled?             */
-    FT_Bool       is_hinted;    /* should it be hinted?                */
-    FT_Bool       preserve_pps; /* preserve phantom points?            */
+    FT_Long          index;        /* subglyph index; initialized with -1 */
+    FT_Bool          is_scaled;    /* is the subglyph scaled?             */
+    FT_Bool          is_hinted;    /* should it be hinted?                */
+    FT_Bool          preserve_pps; /* preserve phantom points?            */
 
-    FT_Long       file_offset;
+    FT_Long          file_offset;
 
-    FT_BBox       bbox;
-    FT_Pos        left_bearing;
-    FT_Pos        advance;
+    FT_BBox          bbox;
+    FT_Pos           left_bearing;
+    FT_Pos           advance;
 
-    TT_GlyphZone  zone;
+    TT_GlyphZoneRec  zone;
 
-    FT_Long       arg1;         /* first argument                      */
-    FT_Long       arg2;         /* second argument                     */
+    FT_Long          arg1;         /* first argument                      */
+    FT_Long          arg2;         /* second argument                     */
 
-    FT_UShort     element_flag; /* current load element flag           */
+    FT_UShort        element_flag; /* current load element flag           */
 
-    TT_Transform  transform;    /* transformation matrix               */
+    TT_Transform     transform;    /* transformation matrix               */
 
-    FT_Vector     pp1, pp2;     /* phantom points                      */
+    FT_Vector        pp1, pp2;     /* phantom points (horizontal)         */
+    FT_Vector        pp3, pp4;     /* phantom points (vertical)           */
 
   } TT_SubGlyphRec, *TT_SubGlyph_Stack;
 
@@ -311,14 +316,13 @@ FT_BEGIN_HEADER
   {
     FT_SizeRec         root;
 
+    /* we have our own copy of metrics so that we can modify */
+    /* it without affecting auto-hinting (when used)         */
+    FT_Size_Metrics    metrics;
+
     TT_Size_Metrics    ttmetrics;
 
-#ifdef TT_CONFIG_OPTION_EMBEDDED_BITMAPS
-
-    FT_UInt            strike_index;    /* 0xFFFF to indicate invalid */
-    FT_Size_Metrics    strike_metrics;  /* current strike's metrics   */
-
-#endif
+    FT_ULong           strike_index;      /* 0xFFFFFFFF to indicate invalid */
 
 #ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
 
@@ -343,7 +347,7 @@ FT_BEGIN_HEADER
     FT_UShort          storage_size; /* The storage area is now part of */
     FT_Long*           storage;      /* the instance                    */
 
-    TT_GlyphZone       twilight;     /* The instance's twilight zone    */
+    TT_GlyphZoneRec    twilight;     /* The instance's twilight zone    */
 
     /* debugging variables */
 
@@ -365,53 +369,80 @@ FT_BEGIN_HEADER
   /*                                                                       */
   typedef struct  TT_DriverRec_
   {
-    FT_DriverRec    root;
-    TT_ExecContext  context;  /* execution context        */
-    TT_GlyphZone    zone;     /* glyph loader points zone */
+    FT_DriverRec     root;
+    TT_ExecContext   context;  /* execution context        */
+    TT_GlyphZoneRec  zone;     /* glyph loader points zone */
 
-    void*           extension_component;
+    void*            extension_component;
 
   } TT_DriverRec;
+
+
+  /* Note: All of the functions below (except tt_size_reset()) are used    */
+  /* as function pointers in a FT_Driver_ClassRec.  Therefore their        */
+  /* parameters are of types FT_Face, FT_Size, etc., rather than TT_Face,  */
+  /* TT_Size, etc., so that the compiler can confirm that the types and    */
+  /* number of parameters are correct.  In all cases the FT_xxx types are  */
+  /* cast to their TT_xxx counterparts inside the functions since FreeType */
+  /* will always use the TT driver to create them.                         */
 
 
   /*************************************************************************/
   /*                                                                       */
   /* Face functions                                                        */
   /*                                                                       */
-  FT_LOCAL FT_Error
-  TT_Init_Face( FT_Stream      stream,
-                TT_Face        face,
+  FT_LOCAL( FT_Error )
+  tt_face_init( FT_Stream      stream,
+                FT_Face        ttface,      /* TT_Face */
                 FT_Int         face_index,
                 FT_Int         num_params,
                 FT_Parameter*  params );
 
-  FT_LOCAL void
-  TT_Done_Face( TT_Face  face );
+  FT_LOCAL( void )
+  tt_face_done( FT_Face  ttface );          /* TT_Face */
 
 
   /*************************************************************************/
   /*                                                                       */
   /* Size functions                                                        */
   /*                                                                       */
-  FT_LOCAL FT_Error
-  TT_Init_Size( TT_Size  size );
+  FT_LOCAL( FT_Error )
+  tt_size_init( FT_Size  ttsize );          /* TT_Size */
 
-  FT_LOCAL void
-  TT_Done_Size( TT_Size  size );
+  FT_LOCAL( void )
+  tt_size_done( FT_Size  ttsize );          /* TT_Size */
 
-  FT_LOCAL FT_Error
-  TT_Reset_Size( TT_Size  size );
+#ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
+
+  FT_LOCAL( FT_Error )
+  tt_size_run_fpgm( TT_Size  size );
+
+  FT_LOCAL( FT_Error )
+  tt_size_run_prep( TT_Size  size );
+
+#endif /* TT_CONFIG_OPTION_BYTECODE_INTERPRETER */
+
+  FT_LOCAL( FT_Error )
+  tt_size_reset( TT_Size  size );
 
 
   /*************************************************************************/
   /*                                                                       */
   /* Driver functions                                                      */
   /*                                                                       */
-  FT_LOCAL FT_Error
-  TT_Init_Driver( TT_Driver  driver );
+  FT_LOCAL( FT_Error )
+  tt_driver_init( FT_Module  ttdriver );    /* TT_Driver */
 
-  FT_LOCAL void
-  TT_Done_Driver( TT_Driver  driver );
+  FT_LOCAL( void )
+  tt_driver_done( FT_Module  ttdriver );    /* TT_Driver */
+
+
+  /*************************************************************************/
+  /*                                                                       */
+  /* Slot functions                                                        */
+  /*                                                                       */
+  FT_LOCAL( FT_Error )
+  tt_slot_init( FT_GlyphSlot  slot );
 
 
 FT_END_HEADER

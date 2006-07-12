@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    The FreeType glyph rasterizer (body).                                */
 /*                                                                         */
-/*  Copyright 1996-2001 by                                                 */
+/*  Copyright 1996-2001, 2002, 2003, 2005 by                               */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -17,14 +17,48 @@
 
   /*************************************************************************/
   /*                                                                       */
-  /* This is a rewrite of the FreeType 1.x scan-line converter             */
+  /* This file can be compiled without the rest of the FreeType engine, by */
+  /* defining the _STANDALONE_ macro when compiling it.  You also need to  */
+  /* put the files `ftimage.h' and `ftmisc.h' into the $(incdir)           */
+  /* directory.  Typically, you should do something like                   */
+  /*                                                                       */
+  /* - copy `src/raster/ftraster.c' (this file) to your current directory  */
+  /*                                                                       */
+  /* - copy `include/freetype/ftimage.h' and `src/raster/ftmisc.h'         */
+  /*   to your current directory                                           */
+  /*                                                                       */
+  /* - compile `ftraster' with the _STANDALONE_ macro defined, as in       */
+  /*                                                                       */
+  /*     cc -c -D_STANDALONE_ ftraster.c                                   */
+  /*                                                                       */
+  /* The renderer can be initialized with a call to                        */
+  /* `ft_standard_raster.raster_new'; a bitmap can be generated            */
+  /* with a call to `ft_standard_raster.raster_render'.                    */
+  /*                                                                       */
+  /* See the comments and documentation in the file `ftimage.h' for more   */
+  /* details on how the raster works.                                      */
   /*                                                                       */
   /*************************************************************************/
 
 
+  /*************************************************************************/
+  /*                                                                       */
+  /* This is a rewrite of the FreeType 1.x scan-line converter             */
+  /*                                                                       */
+  /*************************************************************************/
+
+#ifdef _STANDALONE_
+
+#include "ftmisc.h"
+#include "ftimage.h"
+
+#else /* !_STANDALONE_ */
+
 #include <ft2build.h>
 #include "ftraster.h"
 #include FT_INTERNAL_CALC_H   /* for FT_MulDiv only */
+
+#endif /* !_STANDALONE_ */
 
 
   /*************************************************************************/
@@ -108,9 +142,6 @@
   /* define DEBUG_RASTER if you want to compile a debugging version */
 #define xxxDEBUG_RASTER
 
-  /* The default render pool size in bytes */
-#define RASTER_RENDER_POOL  8192
-
   /* undefine FT_RASTER_OPTION_ANTI_ALIASING if you do not want to support */
   /* 5-levels anti-aliasing                                                */
 #ifdef FT_CONFIG_OPTION_5_GRAY_LEVELS
@@ -156,7 +187,9 @@
 #endif
 
 #ifndef FT_TRACE
-#define FT_TRACE( x )  do ; while ( 0 )     /* nothing */
+#define FT_TRACE( x )   do ; while ( 0 )    /* nothing */
+#define FT_TRACE1( x )  do ; while ( 0 )    /* nothing */
+#define FT_TRACE6( x )  do ; while ( 0 )    /* nothing */
 #endif
 
 #define Raster_Err_None          0
@@ -166,6 +199,7 @@
 #define Raster_Err_Invalid      -4
 #define Raster_Err_Unsupported  -5
 
+#define ft_memset   memset
 
 #else /* _STANDALONE_ */
 
@@ -186,10 +220,13 @@
 #endif /* _STANDALONE_ */
 
 
-#ifndef MEM_Set
-#define MEM_Set( d, s, c )  memset( d, s, c )
+#ifndef FT_MEM_SET
+#define FT_MEM_SET( d, s, c )  ft_memset( d, s, c )
 #endif
 
+#ifndef FT_MEM_ZERO
+#define FT_MEM_ZERO( dest, count )  FT_MEM_SET( dest, 0, count )
+#endif
 
   /* FMulDiv means `Fast MulDiv'; it is used in case where `b' is       */
   /* typically a small value and the result of a*b is known to fit into */
@@ -251,6 +288,16 @@
   typedef unsigned char   Byte, *PByte;
   typedef char            Bool;
 
+
+  typedef union  Alignment_
+  {
+    long    l;
+    void*   p;
+    void  (*f)(void);
+
+  } Alignment, *PAlignment;
+
+
   typedef struct  TPoint_
   {
     Long  x;
@@ -271,10 +318,10 @@
   /* States of each line, arc, and profile */
   typedef enum  TStates_
   {
-    Unknown,
-    Ascending,
-    Descending,
-    Flat
+    Unknown_State,
+    Ascending_State,
+    Descending_State,
+    Flat_State
 
   } TStates;
 
@@ -313,10 +360,10 @@
 
 
 #define AlignProfileSize \
-          ( ( sizeof ( TProfile ) + sizeof ( long ) - 1 ) / sizeof ( long ) )
+  ( ( sizeof ( TProfile ) + sizeof ( Alignment ) - 1 ) / sizeof ( long ) )
 
 
-#ifdef TT_STATIC_RASTER
+#ifdef FT_STATIC_RASTER
 
 
 #define RAS_ARGS       /* void */
@@ -328,7 +375,7 @@
 #define FT_UNUSED_RASTER  do ; while ( 0 )
 
 
-#else /* TT_STATIC_RASTER */
+#else /* FT_STATIC_RASTER */
 
 
 #define RAS_ARGS       TRaster_Instance*  raster,
@@ -340,7 +387,7 @@
 #define FT_UNUSED_RASTER  FT_UNUSED( raster )
 
 
-#endif /* TT_STATIC_RASTER */
+#endif /* FT_STATIC_RASTER */
 
 
   typedef struct TRaster_Instance_  TRaster_Instance;
@@ -488,7 +535,7 @@
   };
 
 
-#ifdef FT_CONFIG_OPTION_STATIC_RASTER
+#ifdef FT_STATIC_RASTER
 
   static TRaster_Instance  cur_ras;
 #define ras  cur_ras
@@ -497,7 +544,7 @@
 
 #define ras  (*raster)
 
-#endif /* FT_CONFIG_OPTION_STATIC_RASTER */
+#endif /* FT_STATIC_RASTER */
 
 
   /*************************************************************************/
@@ -539,7 +586,7 @@
 
     FT_TRACE6(( "Set_High_Precision(%s)\n", High ? "true" : "false" ));
 
-    ras.precision       = 1L << ras.precision_bits;
+    ras.precision       = 1 << ras.precision_bits;
     ras.precision_half  = ras.precision / 2;
     ras.precision_shift = ras.precision_bits - Pixel_Bits;
     ras.precision_mask  = -ras.precision;
@@ -579,12 +626,12 @@
 
     switch ( aState )
     {
-    case Ascending:
+    case Ascending_State:
       ras.cProfile->flow = Flow_Up;
       FT_TRACE6(( "New ascending profile = %lx\n", (long)ras.cProfile ));
       break;
 
-    case Descending:
+    case Descending_State:
       ras.cProfile->flow = Flow_Down;
       FT_TRACE6(( "New descending profile = %lx\n", (long)ras.cProfile ));
       break;
@@ -687,8 +734,8 @@
   static Bool
   Insert_Y_Turn( RAS_ARGS Int  y )
   {
-    PLong     y_turns;
-    Int       y2, n;
+    PLong  y_turns;
+    Int    y2, n;
 
 
     n       = ras.numTurns - 1;
@@ -702,7 +749,7 @@
     if ( n >= 0 && y > y_turns[n] )
       while ( n >= 0 )
       {
-        y2 = y_turns[n];
+        y2 = (Int)y_turns[n];
         y_turns[n] = y;
         y = y2;
         n--;
@@ -710,12 +757,12 @@
 
     if ( n < 0 )
     {
+      ras.maxBuff--;
       if ( ras.maxBuff <= ras.top )
       {
         ras.error = Raster_Err_Overflow;
         return FAILURE;
       }
-      ras.maxBuff--;
       ras.numTurns++;
       ras.sizeBuff[-ras.numTurns] = y;
     }
@@ -758,16 +805,16 @@
         switch ( p->flow )
         {
         case Flow_Down:
-          bottom     = p->start - p->height+1;
-          top        = p->start;
+          bottom     = (Int)( p->start - p->height + 1 );
+          top        = (Int)p->start;
           p->start   = bottom;
           p->offset += p->height - 1;
           break;
 
         case Flow_Up:
         default:
-          bottom = p->start;
-          top    = p->start + p->height - 1;
+          bottom = (Int)p->start;
+          top    = (Int)( p->start + p->height - 1 );
         }
 
         if ( Insert_Y_Turn( RAS_VARS bottom )   ||
@@ -917,25 +964,25 @@
       /* Take care: miny-y1 can be a very large value; we use     */
       /*            a slow MulDiv function to avoid clipping bugs */
       x1 += SMulDiv( Dx, miny - y1, Dy );
-      e1  = TRUNC( miny );
+      e1  = (Int)TRUNC( miny );
       f1  = 0;
     }
     else
     {
-      e1 = TRUNC( y1 );
-      f1 = FRAC( y1 );
+      e1 = (Int)TRUNC( y1 );
+      f1 = (Int)FRAC( y1 );
     }
 
     if ( y2 > maxy )
     {
       /* x2 += FMulDiv( Dx, maxy - y2, Dy );  UNNECESSARY */
-      e2  = TRUNC( maxy );
+      e2  = (Int)TRUNC( maxy );
       f2  = 0;
     }
     else
     {
-      e2 = TRUNC( y2 );
-      f2 = FRAC( y2 );
+      e2 = (Int)TRUNC( y2 );
+      f2 = (Int)FRAC( y2 );
     }
 
     if ( f1 > 0 )
@@ -1248,10 +1295,10 @@
   /*                                                                       */
   /* <Input>                                                               */
   /*   x :: The x-coordinate of the segment's end point (its start point   */
-  /*        is stored in `LastX').                                         */
+  /*        is stored in `lastX').                                         */
   /*                                                                       */
   /*   y :: The y-coordinate of the segment's end point (its start point   */
-  /*        is stored in `LastY').                                         */
+  /*        is stored in `lastY').                                         */
   /*                                                                       */
   /* <Return>                                                              */
   /*   SUCCESS on success, FAILURE on render pool overflow or incorrect    */
@@ -1265,34 +1312,34 @@
 
     switch ( ras.state )
     {
-    case Unknown:
+    case Unknown_State:
       if ( y > ras.lastY )
       {
-        if ( New_Profile( RAS_VARS Ascending ) )
+        if ( New_Profile( RAS_VARS Ascending_State ) )
           return FAILURE;
       }
       else
       {
         if ( y < ras.lastY )
-          if ( New_Profile( RAS_VARS Descending ) )
+          if ( New_Profile( RAS_VARS Descending_State ) )
             return FAILURE;
       }
       break;
 
-    case Ascending:
+    case Ascending_State:
       if ( y < ras.lastY )
       {
-        if ( End_Profile( RAS_VAR )             ||
-             New_Profile( RAS_VARS Descending ) )
+        if ( End_Profile( RAS_VAR )                   ||
+             New_Profile( RAS_VARS Descending_State ) )
           return FAILURE;
       }
       break;
 
-    case Descending:
+    case Descending_State:
       if ( y > ras.lastY )
       {
-        if ( End_Profile( RAS_VAR )            ||
-             New_Profile( RAS_VARS Ascending ) )
+        if ( End_Profile( RAS_VAR )                  ||
+             New_Profile( RAS_VARS Ascending_State ) )
           return FAILURE;
       }
       break;
@@ -1305,13 +1352,13 @@
 
     switch ( ras.state )
     {
-    case Ascending:
+    case Ascending_State:
       if ( Line_Up( RAS_VARS ras.lastX, ras.lastY,
                     x, y, ras.minY, ras.maxY ) )
         return FAILURE;
       break;
 
-    case Descending:
+    case Descending_State:
       if ( Line_Down( RAS_VARS ras.lastX, ras.lastY,
                       x, y, ras.minY, ras.maxY ) )
         return FAILURE;
@@ -1342,10 +1389,10 @@
   /*   cy :: The y-coordinate of the arc's new control point.              */
   /*                                                                       */
   /*   x  :: The x-coordinate of the arc's end point (its start point is   */
-  /*         stored in `LastX').                                           */
+  /*         stored in `lastX').                                           */
   /*                                                                       */
   /*   y  :: The y-coordinate of the arc's end point (its start point is   */
-  /*         stored in `LastY').                                           */
+  /*         stored in `lastY').                                           */
   /*                                                                       */
   /* <Return>                                                              */
   /*   SUCCESS on success, FAILURE on render pool overflow or incorrect    */
@@ -1402,11 +1449,11 @@
       {
         /* the arc is y-monotonous, either ascending or descending */
         /* detect a change of direction                            */
-        state_bez = y1 < y3 ? Ascending : Descending;
+        state_bez = y1 < y3 ? Ascending_State : Descending_State;
         if ( ras.state != state_bez )
         {
           /* finalize current profile if any */
-          if ( ras.state != Unknown   &&
+          if ( ras.state != Unknown_State   &&
                End_Profile( RAS_VAR ) )
             goto Fail;
 
@@ -1416,7 +1463,7 @@
         }
 
         /* now call the appropriate routine */
-        if ( state_bez == Ascending )
+        if ( state_bez == Ascending_State )
         {
           if ( Bezier_Up( RAS_VARS 2, Split_Conic, ras.minY, ras.maxY ) )
             goto Fail;
@@ -1456,10 +1503,10 @@
   /*   cy2 :: The y-coordinate of the arc's second new control point.      */
   /*                                                                       */
   /*   x   :: The x-coordinate of the arc's end point (its start point is  */
-  /*          stored in `LastX').                                          */
+  /*          stored in `lastX').                                          */
   /*                                                                       */
   /*   y   :: The y-coordinate of the arc's end point (its start point is  */
-  /*          stored in `LastY').                                          */
+  /*          stored in `lastY').                                          */
   /*                                                                       */
   /* <Return>                                                              */
   /*   SUCCESS on success, FAILURE on render pool overflow or incorrect    */
@@ -1529,12 +1576,12 @@
       }
       else
       {
-        state_bez = ( y1 <= y4 ) ? Ascending : Descending;
+        state_bez = ( y1 <= y4 ) ? Ascending_State : Descending_State;
 
         /* detect a change of direction */
         if ( ras.state != state_bez )
         {
-          if ( ras.state != Unknown   &&
+          if ( ras.state != Unknown_State   &&
                End_Profile( RAS_VAR ) )
             goto Fail;
 
@@ -1543,7 +1590,7 @@
         }
 
         /* compute intersections */
-        if ( state_bez == Ascending )
+        if ( state_bez == Ascending_State )
         {
           if ( Bezier_Up( RAS_VARS 3, Split_Cubic, ras.minY, ras.maxY ) )
             goto Fail;
@@ -1635,14 +1682,14 @@
     tag   = FT_CURVE_TAG( tags[0] );
 
     /* A contour cannot start with a cubic control point! */
-    if ( tag == FT_Curve_Tag_Cubic )
+    if ( tag == FT_CURVE_TAG_CUBIC )
       goto Invalid_Outline;
 
     /* check first point to determine origin */
-    if ( tag == FT_Curve_Tag_Conic )
+    if ( tag == FT_CURVE_TAG_CONIC )
     {
       /* first point is conic control.  Yes, this happens. */
-      if ( FT_CURVE_TAG( ras.outline.tags[last] ) == FT_Curve_Tag_On )
+      if ( FT_CURVE_TAG( ras.outline.tags[last] ) == FT_CURVE_TAG_ON )
       {
         /* start at last point if it is on the curve */
         v_start = v_last;
@@ -1674,7 +1721,7 @@
 
       switch ( tag )
       {
-      case FT_Curve_Tag_On:  /* emit a single line_to */
+      case FT_CURVE_TAG_ON:  /* emit a single line_to */
         {
           Long  x, y;
 
@@ -1689,7 +1736,7 @@
           continue;
         }
 
-      case FT_Curve_Tag_Conic:  /* consume conic arcs */
+      case FT_CURVE_TAG_CONIC:  /* consume conic arcs */
         v_control.x = SCALED( point[0].x );
         v_control.y = SCALED( point[0].y );
 
@@ -1713,14 +1760,14 @@
           if ( flipped )
             SWAP_( x, y );
 
-          if ( tag == FT_Curve_Tag_On )
+          if ( tag == FT_CURVE_TAG_ON )
           {
             if ( Conic_To( RAS_VARS v_control.x, v_control.y, x, y ) )
               goto Fail;
             continue;
           }
 
-          if ( tag != FT_Curve_Tag_Conic )
+          if ( tag != FT_CURVE_TAG_CONIC )
             goto Invalid_Outline;
 
           v_middle.x = ( v_control.x + x ) / 2;
@@ -1742,13 +1789,13 @@
 
         goto Close;
 
-      default:  /* FT_Curve_Tag_Cubic */
+      default:  /* FT_CURVE_TAG_CUBIC */
         {
           Long  x1, y1, x2, y2, x3, y3;
 
 
           if ( point + 1 > limit                             ||
-               FT_CURVE_TAG( tags[1] ) != FT_Curve_Tag_Cubic )
+               FT_CURVE_TAG( tags[1] ) != FT_CURVE_TAG_CUBIC )
             goto Invalid_Outline;
 
           point += 2;
@@ -1838,7 +1885,7 @@
 
     for ( i = 0; i < ras.outline.n_contours; i++ )
     {
-      ras.state    = Unknown;
+      ras.state    = Unknown_State;
       ras.gProfile = NULL;
 
       if ( Decompose_Curve( RAS_VARS (unsigned short)start,
@@ -2243,7 +2290,7 @@
                                   Short*  max )
   {
     /* nothing, really */
-    FT_UNUSED( raster );
+    FT_UNUSED_RASTER;
     FT_UNUSED( min );
     FT_UNUSED( max );
   }
@@ -2392,7 +2439,7 @@
   Horizontal_Sweep_Step( RAS_ARG )
   {
     /* Nothing, really */
-    FT_UNUSED( raster );
+    FT_UNUSED_RASTER;
   }
 
 
@@ -2539,7 +2586,7 @@
                                        PProfile    right )
   {
     /* nothing, really */
-    FT_UNUSED( raster );
+    FT_UNUSED_RASTER;
     FT_UNUSED( y );
     FT_UNUSED( x1 );
     FT_UNUSED( x2 );
@@ -2652,13 +2699,13 @@
 
     Long          x1, x2, xs, e1, e2;
 
-    TProfileList  wait;
+    TProfileList  waiting;
     TProfileList  draw_left, draw_right;
 
 
     /* Init empty linked lists */
 
-    Init_Linked( &wait );
+    Init_Linked( &waiting );
 
     Init_Linked( &draw_left  );
     Init_Linked( &draw_right );
@@ -2680,7 +2727,7 @@
       if ( max_Y < top    ) max_Y = top;
 
       P->X = 0;
-      InsNew( &wait, P );
+      InsNew( &waiting, P );
 
       P = Q;
     }
@@ -2698,7 +2745,7 @@
 
     /* Then compute the distance of each profile from min_Y */
 
-    P = wait;
+    P = waiting;
 
     while ( P )
     {
@@ -2717,9 +2764,9 @@
 
     while ( ras.numTurns > 0 )
     {
-      /* look in the wait list for new activations */
+      /* look in the waiting list for new activations */
 
-      P = wait;
+      P = waiting;
 
       while ( P )
       {
@@ -2727,7 +2774,7 @@
         P->countL -= y_height;
         if ( P->countL == 0 )
         {
-          DelOld( &wait, P );
+          DelOld( &waiting, P );
 
           switch ( P->flow )
           {
@@ -2965,18 +3012,21 @@
   /* <Return>                                                              */
   /*    FreeType error code.  0 means success.                             */
   /*                                                                       */
-  FT_LOCAL_DEF FT_Error
+  FT_LOCAL_DEF( FT_Error )
   Render_Glyph( RAS_ARG )
   {
     FT_Error  error;
 
 
     Set_High_Precision( RAS_VARS ras.outline.flags &
-                        ft_outline_high_precision );
+                        FT_OUTLINE_HIGH_PRECISION );
     ras.scale_shift    = ras.precision_shift;
+    /* Drop-out mode 2 is hard-coded since this is the only mode used */
+    /* on Windows platforms.  Using other modes, as specified by the  */
+    /* font, results in misplaced pixels.                             */
     ras.dropOutControl = 2;
     ras.second_pass    = (FT_Byte)( !( ras.outline.flags &
-                                       ft_outline_single_pass ) );
+                                       FT_OUTLINE_SINGLE_PASS ) );
 
     /* Vertical Sweep */
     ras.Proc_Sweep_Init = Vertical_Sweep_Init;
@@ -3010,7 +3060,7 @@
         return error;
     }
 
-    return Raster_Err_Ok;
+    return Raster_Err_None;
   }
 
 
@@ -3028,7 +3078,7 @@
   /* <Return>                                                              */
   /*    FreeType error code.  0 means success.                             */
   /*                                                                       */
-  FT_LOCAL_DEF FT_Error
+  FT_LOCAL_DEF( FT_Error )
   Render_Gray_Glyph( RAS_ARG )
   {
     Long      pixel_width;
@@ -3036,10 +3086,13 @@
 
 
     Set_High_Precision( RAS_VARS ras.outline.flags &
-                        ft_outline_high_precision );
+                        FT_OUTLINE_HIGH_PRECISION );
     ras.scale_shift    = ras.precision_shift + 1;
+    /* Drop-out mode 2 is hard-coded since this is the only mode used */
+    /* on Windows platforms.  Using other modes, as specified by the  */
+    /* font, results in misplaced pixels.                             */
     ras.dropOutControl = 2;
-    ras.second_pass    = !( ras.outline.flags & ft_outline_single_pass );
+    ras.second_pass    = !( ras.outline.flags & FT_OUTLINE_SINGLE_PASS );
 
     /* Vertical Sweep */
 
@@ -3083,20 +3136,20 @@
         return error;
     }
 
-    return Raster_Err_Ok;
+    return Raster_Err_None;
   }
 
-#else /* FT_RASTER_OPTION_ANTI_ALIASING */
+#else /* !FT_RASTER_OPTION_ANTI_ALIASING */
 
-  FT_LOCAL_DEF
-  FT_Error  Render_Gray_Glyph( RAS_ARG )
+  FT_LOCAL_DEF( FT_Error )
+  Render_Gray_Glyph( RAS_ARG )
   {
     FT_UNUSED_RASTER;
 
-    return Raster_Err_Cannot_Render_Glyph;
+    return Raster_Err_Unsupported;
   }
 
-#endif /* FT_RASTER_OPTION_ANTI_ALIASING */
+#endif /* !FT_RASTER_OPTION_ANTI_ALIASING */
 
 
   static void
@@ -3116,7 +3169,7 @@
           ( ( c << 2 ) & 0x0030 ) |
                    (c  & 0x0003 );
 
-      raster->count_table[n] = c;
+      ras.count_table[n] = (UInt)c;
     }
 
 #ifdef FT_RASTER_OPTION_ANTI_ALIASING
@@ -3125,7 +3178,7 @@
     for ( n = 0; n < 5; n++ )
       raster->grays[n] = n * 255 / 4;
 
-    raster->gray_width = RASTER_GRAY_LINES / 2;
+    ras.gray_width = RASTER_GRAY_LINES / 2;
 
 #endif
   }
@@ -3142,11 +3195,11 @@
   ft_black_new( void*      memory,
                 FT_Raster  *araster )
   {
-     static FT_RasterRec_  the_raster;
+     static TRaster_Instance  the_raster;
 
 
-     *araster = &the_raster;
-     MEM_Set( &the_raster, sizeof ( the_raster ), 0 );
+     *araster = (FT_Raster)&the_raster;
+     FT_MEM_ZERO( &the_raster, sizeof ( the_raster ) );
      ft_black_init( &the_raster );
 
      return 0;
@@ -3157,7 +3210,7 @@
   ft_black_done( FT_Raster  raster )
   {
     /* nothing */
-    raster->init = 0;
+    FT_UNUSED( raster );
   }
 
 
@@ -3173,7 +3226,7 @@
 
 
     *araster = 0;
-    if ( !ALLOC( raster, sizeof ( *raster ) ) )
+    if ( !FT_NEW( raster ) )
     {
       raster->memory = memory;
       ft_black_init( raster );
@@ -3189,7 +3242,7 @@
   ft_black_done( TRaster_Instance*  raster )
   {
     FT_Memory  memory = (FT_Memory)raster->memory;
-    FREE( raster );
+    FT_FREE( raster );
   }
 
 
@@ -3198,33 +3251,33 @@
 
   static void
   ft_black_reset( TRaster_Instance*  raster,
-                  const char*        pool_base,
+                  char*              pool_base,
                   long               pool_size )
   {
-    if ( raster && pool_base && pool_size >= 4096 )
+    if ( (&ras) && pool_base && pool_size >= 4096 )
     {
       /* save the pool */
-      raster->buff     = (PLong)pool_base;
-      raster->sizeBuff = raster->buff + pool_size / sizeof ( Long );
+      ras.buff     = (PLong)pool_base;
+      ras.sizeBuff = ras.buff + pool_size / sizeof ( Long );
     }
   }
 
 
   static void
-  ft_black_set_mode( TRaster_Instance* raster,
-                     unsigned long     mode,
-                     const char*       palette )
+  ft_black_set_mode( TRaster_Instance*  raster,
+                     unsigned long      mode,
+                     const char*        palette )
   {
 #ifdef FT_RASTER_OPTION_ANTI_ALIASING
 
     if ( mode == FT_MAKE_TAG( 'p', 'a', 'l', '5' ) )
     {
       /* set 5-levels gray palette */
-      raster->grays[0] = palette[0];
-      raster->grays[1] = palette[1];
-      raster->grays[2] = palette[2];
-      raster->grays[3] = palette[3];
-      raster->grays[4] = palette[4];
+      ras.grays[0] = palette[0];
+      ras.grays[1] = palette[1];
+      ras.grays[2] = palette[2];
+      ras.grays[3] = palette[3];
+      ras.grays[4] = palette[4];
     }
 
 #else
@@ -3238,14 +3291,14 @@
 
 
   static int
-  ft_black_render( TRaster_Instance*  raster,
-                   FT_Raster_Params*  params )
+  ft_black_render( TRaster_Instance*        raster,
+                   const FT_Raster_Params*  params )
   {
-    FT_Outline*  outline    = (FT_Outline*)params->source;
-    FT_Bitmap*   target_map = params->target;
+    const FT_Outline*  outline    = (const FT_Outline*)params->source;
+    const FT_Bitmap*   target_map = params->target;
 
 
-    if ( !raster || !raster->buff || !raster->sizeBuff )
+    if ( !(&ras) || !ras.buff || !ras.sizeBuff )
       return Raster_Err_Not_Ini;
 
     /* return immediately if the outline is empty */
@@ -3259,7 +3312,7 @@
       return Raster_Err_Invalid;
 
     /* this version of the raster does not support direct rendering, sorry */
-    if ( params->flags & ft_raster_flag_direct )
+    if ( params->flags & FT_RASTER_FLAG_DIRECT )
       return Raster_Err_Unsupported;
 
     if ( !target_map || !target_map->buffer )
@@ -3268,15 +3321,15 @@
     ras.outline  = *outline;
     ras.target   = *target_map;
 
-    return ( ( params->flags & ft_raster_flag_aa )
-               ? Render_Gray_Glyph( raster )
-               : Render_Glyph( raster ) );
+    return ( ( params->flags & FT_RASTER_FLAG_AA )
+               ? Render_Gray_Glyph( RAS_VAR )
+               : Render_Glyph( RAS_VAR ) );
   }
 
 
   const FT_Raster_Funcs  ft_standard_raster =
   {
-    ft_glyph_format_outline,
+    FT_GLYPH_FORMAT_OUTLINE,
     (FT_Raster_New_Func)     ft_black_new,
     (FT_Raster_Reset_Func)   ft_black_reset,
     (FT_Raster_Set_Mode_Func)ft_black_set_mode,

@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    FreeType simple types definitions (specification only).              */
 /*                                                                         */
-/*  Copyright 1996-2001 by                                                 */
+/*  Copyright 1996-2001, 2002, 2004, 2006 by                               */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -21,6 +21,7 @@
 
 
 #include <ft2build.h>
+#include FT_CONFIG_CONFIG_H
 #include FT_SYSTEM_H
 #include FT_IMAGE_H
 
@@ -36,17 +37,19 @@ FT_BEGIN_HEADER
   /*    basic_types                                                        */
   /*                                                                       */
   /* <Title>                                                               */
-  /*    Basic Types                                                        */
+  /*    Basic Data Types                                                   */
   /*                                                                       */
   /* <Abstract>                                                            */
   /*    The basic data types defined by the library.                       */
   /*                                                                       */
   /* <Description>                                                         */
   /*    This section contains the basic data types defined by FreeType 2,  */
-  /*    ranging from simple scalar types to font specific ones.            */
+  /*    ranging from simple scalar types to bitmap descriptors.  More      */
+  /*    font-specific structures are defined in a different section.       */
   /*                                                                       */
   /* <Order>                                                               */
   /*    FT_Byte                                                            */
+  /*    FT_Bytes                                                           */
   /*    FT_Char                                                            */
   /*    FT_Int                                                             */
   /*    FT_UInt                                                            */
@@ -57,6 +60,8 @@ FT_BEGIN_HEADER
   /*    FT_Bool                                                            */
   /*    FT_Offset                                                          */
   /*    FT_PtrDist                                                         */
+  /*    FT_String                                                          */
+  /*    FT_Tag                                                             */
   /*    FT_Error                                                           */
   /*    FT_Fixed                                                           */
   /*    FT_Pointer                                                         */
@@ -64,6 +69,12 @@ FT_BEGIN_HEADER
   /*    FT_Vector                                                          */
   /*    FT_BBox                                                            */
   /*    FT_Matrix                                                          */
+  /*    FT_FWord                                                           */
+  /*    FT_UFWord                                                          */
+  /*    FT_F2Dot14                                                         */
+  /*    FT_UnitVector                                                      */
+  /*    FT_F26Dot6                                                         */
+  /*                                                                       */
   /*                                                                       */
   /*    FT_Generic                                                         */
   /*    FT_Generic_Finalizer                                               */
@@ -73,7 +84,6 @@ FT_BEGIN_HEADER
   /*    FT_Palette_Mode                                                    */
   /*    FT_Glyph_Format                                                    */
   /*    FT_IMAGE_TAG                                                       */
-  /*    FT_Glyph_Format                                                    */
   /*                                                                       */
   /*************************************************************************/
 
@@ -138,6 +148,28 @@ FT_BEGIN_HEADER
   /*************************************************************************/
   /*                                                                       */
   /* <Type>                                                                */
+  /*    FT_Bytes                                                           */
+  /*                                                                       */
+  /* <Description>                                                         */
+  /*    A typedef for constant memory areas.                               */
+  /*                                                                       */
+  typedef const FT_Byte*  FT_Bytes;
+
+
+  /*************************************************************************/
+  /*                                                                       */
+  /* <Type>                                                                */
+  /*    FT_Tag                                                             */
+  /*                                                                       */
+  /* <Description>                                                         */
+  /*    A typedef for 32bit tags (as used in the SFNT format).             */
+  /*                                                                       */
+  typedef FT_UInt32  FT_Tag;
+
+
+  /*************************************************************************/
+  /*                                                                       */
+  /* <Type>                                                                */
   /*    FT_String                                                          */
   /*                                                                       */
   /* <Description>                                                         */
@@ -176,7 +208,7 @@ FT_BEGIN_HEADER
   /* <Description>                                                         */
   /*    A typedef for the int type.                                        */
   /*                                                                       */
-  typedef int  FT_Int;
+  typedef signed int  FT_Int;
 
 
   /*************************************************************************/
@@ -241,8 +273,8 @@ FT_BEGIN_HEADER
   /*    FT_Fixed                                                           */
   /*                                                                       */
   /* <Description>                                                         */
-  /*    This type is used to store 16.16 fixed float values, like scales   */
-  /*    or matrix coefficients.                                            */
+  /*    This type is used to store 16.16 fixed float values, like scaling  */
+  /*    values or matrix coefficients.                                     */
   /*                                                                       */
   typedef signed long  FT_Fixed;
 
@@ -276,7 +308,7 @@ FT_BEGIN_HEADER
   /*    FT_Offset                                                          */
   /*                                                                       */
   /* <Description>                                                         */
-  /*    This is equivalent to the ANSI C `size_t' type, i.e. the largest   */
+  /*    This is equivalent to the ANSI C `size_t' type, i.e., the largest  */
   /*    _unsigned_ integer type used to express a file size or position,   */
   /*    or a memory block size.                                            */
   /*                                                                       */
@@ -289,11 +321,11 @@ FT_BEGIN_HEADER
   /*    FT_PtrDist                                                         */
   /*                                                                       */
   /* <Description>                                                         */
-  /*    This is equivalent to the ANSI C `ptrdiff_t' type, i.e. the        */
+  /*    This is equivalent to the ANSI C `ptrdiff_t' type, i.e., the       */
   /*    largest _signed_ integer type used to express the distance         */
   /*    between two pointers.                                              */
   /*                                                                       */
-  typedef size_t  FT_PtrDist;
+  typedef ft_ptrdiff_t  FT_PtrDist;
 
 
   /*************************************************************************/
@@ -351,12 +383,33 @@ FT_BEGIN_HEADER
 
   /*************************************************************************/
   /*                                                                       */
+  /* <Struct>                                                              */
+  /*    FT_Data	                                                           */
+  /*                                                                       */
+  /* <Description>                                                         */
+  /*    Read-only binary data represented as a pointer and a length.       */
+  /*                                                                       */
+  /* <Fields>                                                              */
+  /*    pointer :: The data.                                               */
+  /*                                                                       */
+  /*    length  :: The length of the data in bytes.                        */
+  /*                                                                       */
+  typedef struct  FT_Data_
+  {
+    const FT_Byte*  pointer;
+    FT_Int          length;
+
+  } FT_Data;
+
+
+  /*************************************************************************/
+  /*                                                                       */
   /* <FuncType>                                                            */
   /*    FT_Generic_Finalizer                                               */
   /*                                                                       */
   /* <Description>                                                         */
   /*    Describes a function used to destroy the `client' data of any      */
-  /*    FreeType object.  See the description of the FT_Generic type for   */
+  /*    FreeType object.  See the description of the @FT_Generic type for  */
   /*    details of usage.                                                  */
   /*                                                                       */
   /* <Input>                                                               */
@@ -408,8 +461,12 @@ FT_BEGIN_HEADER
   /*    FT_MAKE_TAG                                                        */
   /*                                                                       */
   /* <Description>                                                         */
-  /*    This macro converts four letter tags which are used to label       */
+  /*    This macro converts four-letter tags which are used to label       */
   /*    TrueType tables into an unsigned long to be used within FreeType.  */
+  /*                                                                       */
+  /* <Note>                                                                */
+  /*    The produced values *must* be 32bit integers.  Don't redefine this */
+  /*    macro.                                                             */
   /*                                                                       */
 #define FT_MAKE_TAG( _x1, _x2, _x3, _x4 ) \
           ( ( (FT_ULong)_x1 << 24 ) |     \
@@ -441,8 +498,8 @@ FT_BEGIN_HEADER
   /*    FT_ListNode                                                        */
   /*                                                                       */
   /* <Description>                                                         */
-  /*     Many elements and objects in FreeType are listed through a        */
-  /*     FT_List record (see FT_ListRec).  As its name suggests, a         */
+  /*     Many elements and objects in FreeType are listed through an       */
+  /*     @FT_List record (see @FT_ListRec).  As its name suggests, an      */
   /*     FT_ListNode is a handle to a single list element.                 */
   /*                                                                       */
   typedef struct FT_ListNodeRec_*  FT_ListNode;
@@ -454,7 +511,7 @@ FT_BEGIN_HEADER
   /*    FT_List                                                            */
   /*                                                                       */
   /* <Description>                                                         */
-  /*    A handle to a list record (see FT_ListRec).                        */
+  /*    A handle to a list record (see @FT_ListRec).                       */
   /*                                                                       */
   typedef struct FT_ListRec_*  FT_List;
 

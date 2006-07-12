@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    FreeType font driver for Windows FNT/FON files                       */
 /*                                                                         */
-/*  Copyright 1996-2001 by                                                 */
+/*  Copyright 1996-2001, 2002, 2003, 2004, 2006 by                         */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -17,15 +17,15 @@
 
 
 #include <ft2build.h>
+#include FT_WINFONTS_H
 #include FT_INTERNAL_DEBUG_H
 #include FT_INTERNAL_STREAM_H
 #include FT_INTERNAL_OBJECTS_H
-#include FT_INTERNAL_FNT_TYPES_H
 
 #include "winfnt.h"
-
 #include "fnterrs.h"
-
+#include FT_SERVICE_WINFNT_H
+#include FT_SERVICE_XFREE86_NAME_H
 
   /*************************************************************************/
   /*                                                                       */
@@ -37,11 +37,10 @@
 #define FT_COMPONENT  trace_winfnt
 
 
-  static
-  const FT_Frame_Field  winmz_header_fields[] =
+  static const FT_Frame_Field  winmz_header_fields[] =
   {
 #undef  FT_STRUCTURE
-#define FT_STRUCTURE  WinMZ_Header
+#define FT_STRUCTURE  WinMZ_HeaderRec
 
     FT_FRAME_START( 64 ),
       FT_FRAME_USHORT_LE ( magic ),
@@ -50,11 +49,10 @@
     FT_FRAME_END
   };
 
-  static
-  const FT_Frame_Field  winne_header_fields[] =
+  static const FT_Frame_Field  winne_header_fields[] =
   {
 #undef  FT_STRUCTURE
-#define FT_STRUCTURE  WinNE_Header
+#define FT_STRUCTURE  WinNE_HeaderRec
 
     FT_FRAME_START( 40 ),
       FT_FRAME_USHORT_LE ( magic ),
@@ -64,13 +62,12 @@
     FT_FRAME_END
   };
 
-  static
-  const FT_Frame_Field  winfnt_header_fields[] =
+  static const FT_Frame_Field  winfnt_header_fields[] =
   {
 #undef  FT_STRUCTURE
-#define FT_STRUCTURE  WinFNT_Header
+#define FT_STRUCTURE  FT_WinFNT_HeaderRec
 
-    FT_FRAME_START( 134 ),
+    FT_FRAME_START( 148 ),
       FT_FRAME_USHORT_LE( version ),
       FT_FRAME_ULONG_LE ( file_size ),
       FT_FRAME_BYTES    ( copyright, 60 ),
@@ -105,35 +102,45 @@
       FT_FRAME_USHORT_LE( A_space ),
       FT_FRAME_USHORT_LE( B_space ),
       FT_FRAME_USHORT_LE( C_space ),
-      FT_FRAME_USHORT_LE( color_table_offset ),
-      FT_FRAME_BYTES    ( reserved, 4 ),
+      FT_FRAME_ULONG_LE ( color_table_offset ),
+      FT_FRAME_BYTES    ( reserved1, 16 ),
     FT_FRAME_END
   };
 
 
   static void
-  fnt_font_done( FNT_Font*  font,
-                 FT_Stream  stream )
+  fnt_font_done( FNT_Face face )
   {
-    if ( font->fnt_frame )
-      RELEASE_Frame( font->fnt_frame );
+    FT_Memory  memory = FT_FACE( face )->memory;
+    FT_Stream  stream = FT_FACE( face )->stream;
+    FNT_Font   font   = face->font;
 
-    font->fnt_size  = 0;
-    font->fnt_frame = 0;
+
+    if ( !font )
+      return;
+
+    if ( font->fnt_frame )
+      FT_FRAME_RELEASE( font->fnt_frame );
+    FT_FREE( font->family_name );
+
+    FT_FREE( font );
+    face->font = 0;
   }
 
 
   static FT_Error
-  fnt_font_load( FNT_Font*  font,
+  fnt_font_load( FNT_Font   font,
                  FT_Stream  stream )
   {
-    FT_Error        error;
-    WinFNT_Header*  header = &font->header;
+    FT_Error          error;
+    FT_WinFNT_Header  header = &font->header;
+    FT_Bool           new_format;
+    FT_UInt           size;
 
 
     /* first of all, read the FNT header */
-    if ( FILE_Seek( font->offset )                   ||
-         READ_Fields( winfnt_header_fields, header ) )
+    if ( FT_STREAM_SEEK( font->offset )                        ||
+         FT_STREAM_READ_FIELDS( winfnt_header_fields, header ) )
       goto Exit;
 
     /* check header */
@@ -145,6 +152,27 @@
       goto Exit;
     }
 
+    new_format = FT_BOOL( font->header.version == 0x300 );
+    size       = new_format ? 148 : 118;
+
+    if ( header->file_size < size )
+    {
+      FT_TRACE2(( "[not a valid FNT file]\n" ));
+      error = FNT_Err_Unknown_File_Format;
+      goto Exit;
+    }
+
+    /* Version 2 doesn't have these fields */
+    if ( header->version == 0x200 )
+    {
+      header->flags   = 0;
+      header->A_space = 0;
+      header->B_space = 0;
+      header->C_space = 0;
+
+      header->color_table_offset = 0;
+    }
+
     if ( header->file_type & 1 )
     {
       FT_TRACE2(( "[can't handle vector FNT fonts]\n" ));
@@ -152,13 +180,9 @@
       goto Exit;
     }
 
-    /* small fixup -- some fonts have the `pixel_width' field set to 0 */
-    if ( header->pixel_width == 0 )
-      header->pixel_width = header->pixel_height;
-
-    /* this is a FNT file/table, we now extract its frame */
-    if ( FILE_Seek( font->offset )                           ||
-         EXTRACT_Frame( header->file_size, font->fnt_frame ) )
+    /* this is a FNT file/table; extract its frame */
+    if ( FT_STREAM_SEEK( font->offset )                         ||
+         FT_FRAME_EXTRACT( header->file_size, font->fnt_frame ) )
       goto Exit;
 
   Exit:
@@ -166,92 +190,75 @@
   }
 
 
-  static void
-  fnt_face_done_fonts( FNT_Face  face )
-  {
-    FT_Memory  memory = FT_FACE(face)->memory;
-    FT_Stream  stream = FT_FACE(face)->stream;
-    FNT_Font*  cur    = face->fonts;
-    FNT_Font*  limit  = cur + face->num_fonts;
-
-
-    for ( ; cur < limit; cur++ )
-      fnt_font_done( cur, stream );
-
-    FREE( face->fonts );
-    face->num_fonts = 0;
-  }
-
-
   static FT_Error
-  fnt_face_get_dll_fonts( FNT_Face  face )
+  fnt_face_get_dll_font( FNT_Face  face,
+                         FT_Int    face_index )
   {
-    FT_Error      error;
-    FT_Stream     stream = FT_FACE(face)->stream;
-    FT_Memory     memory = FT_FACE(face)->memory;
-    WinMZ_Header  mz_header;
+    FT_Error         error;
+    FT_Stream        stream = FT_FACE( face )->stream;
+    FT_Memory        memory = FT_FACE( face )->memory;
+    WinMZ_HeaderRec  mz_header;
 
 
-    face->fonts     = 0;
-    face->num_fonts = 0;
+    face->font = 0;
 
-    /* does it begin with a MZ header? */
-    if ( FILE_Seek( 0 )                                 ||
-         READ_Fields( winmz_header_fields, &mz_header ) )
+    /* does it begin with an MZ header? */
+    if ( FT_STREAM_SEEK( 0 )                                      ||
+         FT_STREAM_READ_FIELDS( winmz_header_fields, &mz_header ) )
       goto Exit;
 
     error = FNT_Err_Unknown_File_Format;
     if ( mz_header.magic == WINFNT_MZ_MAGIC )
     {
-      /* yes, now look for a NE header in the file */
-      WinNE_Header  ne_header;
+      /* yes, now look for an NE header in the file */
+      WinNE_HeaderRec  ne_header;
 
 
-      if ( FILE_Seek( mz_header.lfanew )                  ||
-           READ_Fields( winne_header_fields, &ne_header ) )
+      if ( FT_STREAM_SEEK( mz_header.lfanew )                       ||
+           FT_STREAM_READ_FIELDS( winne_header_fields, &ne_header ) )
         goto Exit;
 
       error = FNT_Err_Unknown_File_Format;
       if ( ne_header.magic == WINFNT_NE_MAGIC )
       {
-        /* good, now look in the resource table for each FNT resource */
-        FT_ULong   res_offset = mz_header.lfanew +
-                                ne_header.resource_tab_offset;
-
+        /* good, now look into the resource table for each FNT resource */
+        FT_ULong   res_offset  = mz_header.lfanew +
+                                   ne_header.resource_tab_offset;
         FT_UShort  size_shift;
         FT_UShort  font_count  = 0;
         FT_ULong   font_offset = 0;
 
 
-        if ( FILE_Seek( res_offset ) ||
-             ACCESS_Frame( ne_header.rname_tab_offset -
-                           ne_header.resource_tab_offset ) )
+        if ( FT_STREAM_SEEK( res_offset )                    ||
+             FT_FRAME_ENTER( ne_header.rname_tab_offset -
+                             ne_header.resource_tab_offset ) )
           goto Exit;
 
-        size_shift = GET_UShortLE();
+        size_shift = FT_GET_USHORT_LE();
 
         for (;;)
         {
           FT_UShort  type_id, count;
 
 
-          type_id = GET_UShortLE();
+          type_id = FT_GET_USHORT_LE();
           if ( !type_id )
             break;
 
-          count = GET_UShortLE();
+          count = FT_GET_USHORT_LE();
 
-          if ( type_id == 0x8008 )
+          if ( type_id == 0x8008U )
           {
             font_count  = count;
-            font_offset = (FT_ULong)( FILE_Pos() + 4 +
+            font_offset = (FT_ULong)( FT_STREAM_POS() + 4 +
                                       ( stream->cursor - stream->limit ) );
             break;
           }
 
           stream->cursor += 4 + count * 12;
         }
-        FORGET_Frame();
+
+        FT_FRAME_EXIT();
 
         if ( !font_count || !font_offset )
         {
@@ -260,54 +267,120 @@
           goto Exit;
         }
 
-        if ( FILE_Seek( font_offset )                         ||
-             ALLOC_ARRAY( face->fonts, font_count, FNT_Font ) )
+        face->root.num_faces = font_count;
+
+        if ( face_index >= font_count )
+        {
+          error = FNT_Err_Bad_Argument;
+          goto Exit;
+        }
+
+        if ( FT_NEW( face->font ) )
           goto Exit;
 
-        face->num_fonts = font_count;
+        if ( FT_STREAM_SEEK( font_offset + face_index * 12 ) ||
+             FT_FRAME_ENTER( 12 )                            )
+          goto Fail;
 
-        if ( ACCESS_Frame( (FT_Long)font_count * 12 ) )
-          goto Exit;
+        face->font->offset     = (FT_ULong)FT_GET_USHORT_LE() << size_shift;
+        face->font->fnt_size   = (FT_ULong)FT_GET_USHORT_LE() << size_shift;
+        face->font->size_shift = size_shift;
 
-        /* now read the offset and position of each FNT font */
-        {
-          FNT_Font*  cur   = face->fonts;
-          FNT_Font*  limit = cur + font_count;
+        stream->cursor += 8;
 
+        FT_FRAME_EXIT();
 
-          for ( ; cur < limit; cur++ )
-          {
-            cur->offset     = (FT_ULong)GET_UShortLE() << size_shift;
-            cur->fnt_size   = (FT_ULong)GET_UShortLE() << size_shift;
-            cur->size_shift = size_shift;
-            stream->cursor += 8;
-          }
-        }
-        FORGET_Frame();
-
-        /* finally, try to load each font there */
-        {
-          FNT_Font*  cur   = face->fonts;
-          FNT_Font*  limit = cur + font_count;
-
-
-          for ( ; cur < limit; cur++ )
-          {
-            error = fnt_font_load( cur, stream );
-            if ( error )
-              goto Fail;
-          }
-        }
+        error = fnt_font_load( face->font, stream );
       }
     }
 
   Fail:
     if ( error )
-      fnt_face_done_fonts( face );
+      fnt_font_done( face );
 
   Exit:
     return error;
   }
+
+
+  typedef struct  FNT_CMapRec_
+  {
+    FT_CMapRec  cmap;
+    FT_UInt32   first;
+    FT_UInt32   count;
+
+  } FNT_CMapRec, *FNT_CMap;
+
+
+  static FT_Error
+  fnt_cmap_init( FNT_CMap  cmap )
+  {
+    FNT_Face  face = (FNT_Face)FT_CMAP_FACE( cmap );
+    FNT_Font  font = face->font;
+
+
+    cmap->first = (FT_UInt32)  font->header.first_char;
+    cmap->count = (FT_UInt32)( font->header.last_char - cmap->first + 1 );
+
+    return 0;
+  }
+
+
+  static FT_UInt
+  fnt_cmap_char_index( FNT_CMap   cmap,
+                       FT_UInt32  char_code )
+  {
+    FT_UInt  gindex = 0;
+
+
+    char_code -= cmap->first;
+    if ( char_code < cmap->count )
+      gindex = char_code + 1; /* we artificially increase the glyph index; */
+                              /* FNT_Load_Glyph reverts to the right one   */
+    return gindex;
+  }
+
+
+  static FT_UInt
+  fnt_cmap_char_next( FNT_CMap    cmap,
+                      FT_UInt32  *pchar_code )
+  {
+    FT_UInt    gindex = 0;
+    FT_UInt32  result = 0;
+    FT_UInt32  char_code = *pchar_code + 1;
+
+
+    if ( char_code <= cmap->first )
+    {
+      result = cmap->first;
+      gindex = 1;
+    }
+    else
+    {
+      char_code -= cmap->first;
+      if ( char_code < cmap->count )
+      {
+        result = cmap->first + char_code;
+        gindex = char_code + 1;
+      }
+    }
+
+    *pchar_code = result;
+    return gindex;
+  }
+
+
+  static const FT_CMap_ClassRec  fnt_cmap_class_rec =
+  {
+    sizeof ( FNT_CMapRec ),
+
+    (FT_CMap_InitFunc)     fnt_cmap_init,
+    (FT_CMap_DoneFunc)     NULL,
+    (FT_CMap_CharIndexFunc)fnt_cmap_char_index,
+    (FT_CMap_CharNextFunc) fnt_cmap_char_next
+  };
+
+  static FT_CMap_Class const  fnt_cmap_class = &fnt_cmap_class_rec;
 
 
   static void
@@ -316,9 +389,9 @@
     FT_Memory  memory = FT_FACE_MEMORY( face );
 
 
-    fnt_face_done_fonts( face );
+    fnt_font_done( face );
 
-    FREE( face->root.available_sizes );
+    FT_FREE( face->root.available_sizes );
     face->root.num_fixed_sizes = 0;
   }
 
@@ -335,22 +408,22 @@
 
     FT_UNUSED( num_params );
     FT_UNUSED( params );
-    FT_UNUSED( face_index );
 
 
-    /* try to load several fonts from a DLL */
-    error = fnt_face_get_dll_fonts( face );
+    /* try to load font from a DLL */
+    error = fnt_face_get_dll_font( face, face_index );
     if ( error )
     {
-      /* this didn't work, now try to load a single FNT font */
-      FNT_Font*  font;
+      /* this didn't work; try to load a single FNT font */
+      FNT_Font  font;
 
-      if ( ALLOC( face->fonts, sizeof ( *face->fonts ) ) )
+
+      if ( FT_NEW( face->font ) )
         goto Exit;
 
-      face->num_fonts = 1;
-      font            = face->fonts;
+      face->root.num_faces = 1;
 
+      font           = face->font;
       font->offset   = 0;
       font->fnt_size = stream->size;
 
@@ -359,65 +432,127 @@
         goto Fail;
     }
 
-    /* all right, one or more fonts were loaded; we now need to */
-    /* fill the root FT_Face fields with relevant information   */
+    /* we now need to fill the root FT_Face fields */
+    /* with relevant information                   */
     {
-      FT_Face    root  = FT_FACE( face );
-      FNT_Font*  fonts = face->fonts;
-      FNT_Font*  limit = fonts + face->num_fonts;
-      FNT_Font*  cur;
+      FT_Face     root = FT_FACE( face );
+      FNT_Font    font = face->font;
+      FT_PtrDist  family_size;
 
 
-      root->num_faces  = 1;
       root->face_flags = FT_FACE_FLAG_FIXED_SIZES |
                          FT_FACE_FLAG_HORIZONTAL;
 
-      if ( fonts->header.avg_width == fonts->header.max_width )
+      if ( font->header.avg_width == font->header.max_width )
         root->face_flags |= FT_FACE_FLAG_FIXED_WIDTH;
 
-      if ( fonts->header.italic )
+      if ( font->header.italic )
         root->style_flags |= FT_STYLE_FLAG_ITALIC;
 
-      if ( fonts->header.weight >= 800 )
+      if ( font->header.weight >= 800 )
         root->style_flags |= FT_STYLE_FLAG_BOLD;
 
-      /* Setup the `fixed_sizes' array */
-      if ( ALLOC_ARRAY( root->available_sizes, face->num_fonts,
-                        FT_Bitmap_Size ) )
+      /* set up the `fixed_sizes' array */
+      if ( FT_NEW_ARRAY( root->available_sizes, 1 ) )
         goto Fail;
 
-      root->num_fixed_sizes = face->num_fonts;
+      root->num_fixed_sizes = 1;
 
       {
-        FT_Bitmap_Size*  size = root->available_sizes;
+        FT_Bitmap_Size*  bsize = root->available_sizes;
+        FT_UShort        x_res, y_res;
 
 
-        for ( cur = fonts; cur < limit; cur++, size++ )
+        bsize->width  = font->header.avg_width;
+        bsize->height = (FT_Short)(
+          font->header.pixel_height + font->header.external_leading );
+        bsize->size   = font->header.nominal_point_size << 6;
+
+        x_res = font->header.horizontal_resolution;
+        if ( !x_res )
+          x_res = 72;
+
+        y_res = font->header.vertical_resolution;
+        if ( !y_res )
+          y_res = 72;
+
+        bsize->y_ppem = FT_MulDiv( bsize->size, y_res, 72 );
+        bsize->y_ppem = FT_PIX_ROUND( bsize->y_ppem );
+
+        /*
+         * this reads:
+         *
+         * the nominal height is larger than the bbox's height
+         *
+         * => nominal_point_size contains incorrect value;
+         *    use pixel_height as the nominal height
+         */
+        if ( bsize->y_ppem > font->header.pixel_height << 6 )
         {
-          size->width  = cur->header.pixel_width;
-          size->height = cur->header.pixel_height;
+          FT_TRACE2(( "use pixel_height as the nominal height\n" ));
+
+          bsize->y_ppem = font->header.pixel_height << 6;
+          bsize->size   = FT_MulDiv( bsize->y_ppem, 72, y_res );
         }
+
+        bsize->x_ppem = FT_MulDiv( bsize->size, x_res, 72 );
+        bsize->x_ppem = FT_PIX_ROUND( bsize->x_ppem );
       }
 
-      /* Setup the `charmaps' array */
-      root->charmaps     = &face->charmap_handle;
-      root->num_charmaps = 1;
+      {
+        FT_CharMapRec  charmap;
 
-      face->charmap.encoding    = ft_encoding_unicode;
-      face->charmap.platform_id = 3;
-      face->charmap.encoding_id = 1;
-      face->charmap.face        = root;
 
-      face->charmap_handle = &face->charmap;
+        charmap.encoding    = FT_ENCODING_NONE;
+        charmap.platform_id = 0;
+        charmap.encoding_id = 0;
+        charmap.face        = root;
 
-      root->charmap = face->charmap_handle;
+        if ( font->header.charset == FT_WinFNT_ID_MAC )
+        {
+          charmap.encoding    = FT_ENCODING_APPLE_ROMAN;
+          charmap.platform_id = 1;
+/*        charmap.encoding_id = 0; */
+        }
+
+        error = FT_CMap_New( fnt_cmap_class,
+                             NULL,
+                             &charmap,
+                             NULL );
+        if ( error )
+          goto Fail;
+
+        /* Select default charmap */
+        if ( root->num_charmaps )
+          root->charmap = root->charmaps[0];
+      }
 
       /* setup remaining flags */
-      root->num_glyphs = fonts->header.last_char -
-                         fonts->header.first_char + 1;
 
-      root->family_name = (FT_String*)fonts->fnt_frame +
-                          fonts->header.face_name_offset;
+      /* reserve one slot for the .notdef glyph at index 0 */
+      root->num_glyphs = font->header.last_char -
+                         font->header.first_char + 1 + 1;
+
+      /* Some broken fonts don't delimit the face name with a final */
+      /* NULL byte -- the frame is erroneously one byte too small.  */
+      /* We thus allocate one more byte, setting it explicitly to   */
+      /* zero.                                                      */
+      family_size = font->header.file_size - font->header.face_name_offset;
+      if ( FT_ALLOC( font->family_name, family_size + 1 ) )
+        goto Fail;
+
+      FT_MEM_COPY( font->family_name,
+                   font->fnt_frame + font->header.face_name_offset,
+                   family_size );
+
+      font->family_name[family_size] = '\0';
+
+      if ( FT_REALLOC( font->family_name,
+                       family_size,
+                       ft_strlen( font->family_name ) + 1 ) )
+        goto Fail;
+
+      root->family_name = font->family_name;
       root->style_name  = (char *)"Regular";
 
       if ( root->style_flags & FT_STYLE_FLAG_BOLD )
@@ -430,10 +565,10 @@
       else if ( root->style_flags & FT_STYLE_FLAG_ITALIC )
         root->style_name = (char *)"Italic";
     }
+    goto Exit;
 
   Fail:
-    if ( error )
-      FNT_Face_Done( face );
+    FNT_Face_Done( face );
 
   Exit:
     return error;
@@ -441,122 +576,109 @@
 
 
   static FT_Error
-  FNT_Size_Set_Pixels( FNT_Size  size )
+  FNT_Size_Select( FT_Size  size )
   {
-    /* look up a font corresponding to the current pixel size */
-    FNT_Face   face  = (FNT_Face)FT_SIZE_FACE( size );
-    FNT_Font*  cur   = face->fonts;
-    FNT_Font*  limit = cur + face->num_fonts;
+    FNT_Face          face   = (FNT_Face)size->face;
+    FT_WinFNT_Header  header = &face->font->header;
 
 
-    size->font = 0;
-    for ( ; cur < limit; cur++ )
-    {
-      /* we only compare the character height, as fonts used some strange */
-      /* values                                                           */
-      if ( cur->header.pixel_height == size->root.metrics.y_ppem )
-      {
-        size->font = cur;
+    FT_Select_Metrics( size->face, 0 );
 
-        size->root.metrics.ascender  = cur->header.ascent * 64;
-        size->root.metrics.descender = ( cur->header.pixel_height -
-                                           cur->header.ascent ) * 64;
-        size->root.metrics.height    = cur->header.pixel_height * 64;
-        break;
-      }
-    }
+    size->metrics.ascender    = header->ascent * 64;
+    size->metrics.descender   = -( header->pixel_height -
+                                   header->ascent ) * 64;
+    size->metrics.max_advance = header->max_width * 64;
 
-    return ( size->font ? FNT_Err_Ok : FNT_Err_Invalid_Pixel_Size );
+    return FNT_Err_Ok;
   }
 
 
-  static FT_UInt
-  FNT_Get_Char_Index( FT_CharMap  charmap,
-                      FT_Long     char_code )
+  static FT_Error
+  FNT_Size_Request( FT_Size          size,
+                    FT_Size_Request  req )
   {
-    FT_Long  result = char_code;
+    FNT_Face          face    = (FNT_Face)size->face;
+    FT_WinFNT_Header  header  = &face->font->header;
+    FT_Bitmap_Size*   bsize   = size->face->available_sizes;
+    FT_Error          error   = FNT_Err_Invalid_Pixel_Size;
+    FT_Long           height;
 
 
-    if ( charmap )
+    height = FT_REQUEST_HEIGHT( req );
+    height = ( height + 32 ) >> 6;
+
+    switch ( req->type )
     {
-      FNT_Font*  font  = ((FNT_Face)charmap->face)->fonts;
-      FT_Long    first = font->header.first_char;
-      FT_Long    count = font->header.last_char - first + 1;
+    case FT_SIZE_REQUEST_TYPE_NOMINAL:
+      if ( height == ( bsize->y_ppem + 32 ) >> 6 )
+        error = FNT_Err_Ok;
+      break;
 
+    case FT_SIZE_REQUEST_TYPE_REAL_DIM:
+      if ( height == header->pixel_height )
+        error = FNT_Err_Ok;
+      break;
 
-      char_code -= first;
-      if ( char_code < count )
-        result = char_code + 1;
-      else
-        result = 0;
+    default:
+      error = FNT_Err_Unimplemented_Feature;
+      break;
     }
 
-    return result;
-  }
-
-  static FT_Long
-  FNT_Get_Next_Char( FT_CharMap  charmap,
-                     FT_Long     char_code )
-  {
-    char_code++;
-    if ( charmap )
-    {
-      FNT_Font*  font  = ((FNT_Face)charmap->face)->fonts;
-      FT_Long    first = font->header.first_char;
-
-
-      if ( char_code < first )
-        char_code = first;
-      if ( char_code <= font->header.last_char )
-        return char_code;
-    }
+    if ( error )
+      return error;
     else
-      return char_code;
-    return 0;
+      return FNT_Size_Select( size );
   }
 
 
   static FT_Error
   FNT_Load_Glyph( FT_GlyphSlot  slot,
-                  FNT_Size      size,
+                  FT_Size       size,
                   FT_UInt       glyph_index,
-                  FT_Int        load_flags )
+                  FT_Int32      load_flags )
   {
-    FNT_Font*   font  = size->font;
-    FT_Error    error = 0;
+    FNT_Face    face   = (FNT_Face)FT_SIZE_FACE( size );
+    FNT_Font    font   = face->font;
+    FT_Error    error  = FNT_Err_Ok;
     FT_Byte*    p;
     FT_Int      len;
     FT_Bitmap*  bitmap = &slot->bitmap;
     FT_ULong    offset;
     FT_Bool     new_format;
 
-    FT_UNUSED( slot );
     FT_UNUSED( load_flags );
 
 
-    if ( !font )
+    if ( !face || !font )
     {
       error = FNT_Err_Invalid_Argument;
       goto Exit;
     }
 
     if ( glyph_index > 0 )
-      glyph_index--;
+      glyph_index--;                           /* revert to real index */
     else
-      glyph_index = font->header.default_char - font->header.first_char;
+      glyph_index = font->header.default_char; /* the .notdef glyph */
 
     new_format = FT_BOOL( font->header.version == 0x300 );
     len        = new_format ? 6 : 4;
 
     /* jump to glyph entry */
-    p = font->fnt_frame + 118 + len * glyph_index;
+    p = font->fnt_frame + ( new_format ? 148 : 118 ) + len * glyph_index;
 
-    bitmap->width = NEXT_ShortLE(p);
+    bitmap->width = FT_NEXT_SHORT_LE( p );
 
     if ( new_format )
-      offset = NEXT_ULongLE(p);
+      offset = FT_NEXT_ULONG_LE( p );
     else
-      offset = NEXT_UShortLE(p);
+      offset = FT_NEXT_USHORT_LE( p );
+
+    if ( offset >= font->header.file_size )
+    {
+      FT_TRACE2(( "invalid FNT offset!\n" ));
+      error = FNT_Err_Invalid_File_Format;
+      goto Exit;
+    }
 
     /* jump to glyph data */
     p = font->fnt_frame + /* font->header.bits_offset */ + offset;
@@ -571,9 +693,11 @@
 
       bitmap->pitch      = pitch;
       bitmap->rows       = font->header.pixel_height;
-      bitmap->pixel_mode = ft_pixel_mode_mono;
+      bitmap->pixel_mode = FT_PIXEL_MODE_MONO;
 
-      if ( ALLOC( bitmap->buffer, pitch * bitmap->rows ) )
+      /* note: since glyphs are stored in columns and not in rows we */
+      /*       can't use ft_glyphslot_set_bitmap                     */
+      if ( FT_ALLOC_MULT( bitmap->buffer, pitch, bitmap->rows ) )
         goto Exit;
 
       column = (FT_Byte*)bitmap->buffer;
@@ -584,33 +708,79 @@
 
 
         for ( write = column; p < limit; p++, write += bitmap->pitch )
-          write[0] = p[0];
+          *write = *p;
       }
     }
 
-    slot->flags       = ft_glyph_own_bitmap;
-    slot->bitmap_left = 0;
-    slot->bitmap_top  = font->header.ascent;
-    slot->format      = ft_glyph_format_bitmap;
+    slot->internal->flags = FT_GLYPH_OWN_BITMAP;
+    slot->bitmap_left     = 0;
+    slot->bitmap_top      = font->header.ascent;
+    slot->format          = FT_GLYPH_FORMAT_BITMAP;
 
     /* now set up metrics */
+    slot->metrics.width        = bitmap->width << 6;
+    slot->metrics.height       = bitmap->rows << 6;
     slot->metrics.horiAdvance  = bitmap->width << 6;
     slot->metrics.horiBearingX = 0;
     slot->metrics.horiBearingY = slot->bitmap_top << 6;
 
-    slot->linearHoriAdvance    = (FT_Fixed)bitmap->width << 16;
-    slot->format               = ft_glyph_format_bitmap;
+    ft_synthesize_vertical_metrics( &slot->metrics,
+                                    bitmap->rows << 6 );
 
   Exit:
     return error;
   }
 
 
+  static FT_Error
+  winfnt_get_header( FT_Face               face,
+                     FT_WinFNT_HeaderRec  *aheader )
+  {
+    FNT_Font  font = ((FNT_Face)face)->font;
+
+
+    *aheader = font->header;
+
+    return 0;
+  }
+
+
+  static const FT_Service_WinFntRec  winfnt_service_rec =
+  {
+    winfnt_get_header
+  };
+
+ /*
+  *  SERVICE LIST
+  *
+  */
+
+  static const FT_ServiceDescRec  winfnt_services[] =
+  {
+    { FT_SERVICE_ID_XF86_NAME, FT_XF86_FORMAT_WINFNT },
+    { FT_SERVICE_ID_WINFNT,    &winfnt_service_rec },
+    { NULL, NULL }
+  };
+
+
+  static FT_Module_Interface
+  winfnt_get_service( FT_Driver         driver,
+                      const FT_String*  service_id )
+  {
+    FT_UNUSED( driver );
+
+    return ft_service_list_lookup( winfnt_services, service_id );
+  }
+
+
+
+
   FT_CALLBACK_TABLE_DEF
-  const FT_Driver_Class  winfnt_driver_class =
+  const FT_Driver_ClassRec  winfnt_driver_class =
   {
     {
-      ft_module_font_driver,
+      FT_MODULE_FONT_DRIVER        |
+      FT_MODULE_DRIVER_NO_OUTLINES,
       sizeof ( FT_DriverRec ),
 
       "winfonts",
@@ -621,64 +791,33 @@
 
       (FT_Module_Constructor)0,
       (FT_Module_Destructor) 0,
-      (FT_Module_Requester)  0
+      (FT_Module_Requester)  winfnt_get_service
     },
 
     sizeof( FNT_FaceRec ),
-    sizeof( FNT_SizeRec ),
+    sizeof( FT_SizeRec ),
     sizeof( FT_GlyphSlotRec ),
 
-    (FTDriver_initFace)     FNT_Face_Init,
-    (FTDriver_doneFace)     FNT_Face_Done,
-    (FTDriver_initSize)     0,
-    (FTDriver_doneSize)     0,
-    (FTDriver_initGlyphSlot)0,
-    (FTDriver_doneGlyphSlot)0,
+    (FT_Face_InitFunc)        FNT_Face_Init,
+    (FT_Face_DoneFunc)        FNT_Face_Done,
+    (FT_Size_InitFunc)        0,
+    (FT_Size_DoneFunc)        0,
+    (FT_Slot_InitFunc)        0,
+    (FT_Slot_DoneFunc)        0,
 
-    (FTDriver_setCharSizes) FNT_Size_Set_Pixels,
-    (FTDriver_setPixelSizes)FNT_Size_Set_Pixels,
+#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
+    ft_stub_set_char_sizes,
+    ft_stub_set_pixel_sizes,
+#endif
+    (FT_Slot_LoadFunc)        FNT_Load_Glyph,
 
-    (FTDriver_loadGlyph)    FNT_Load_Glyph,
-    (FTDriver_getCharIndex) FNT_Get_Char_Index,
+    (FT_Face_GetKerningFunc)  0,
+    (FT_Face_AttachFunc)      0,
+    (FT_Face_GetAdvancesFunc) 0,
 
-    (FTDriver_getKerning)   0,
-    (FTDriver_attachFile)   0,
-    (FTDriver_getAdvances)  0,
-
-    (FTDriver_getNextChar)  FNT_Get_Next_Char
+    (FT_Size_RequestFunc)     FNT_Size_Request,
+    (FT_Size_SelectFunc)      FNT_Size_Select
   };
-
-
-#ifdef FT_CONFIG_OPTION_DYNAMIC_DRIVERS
-
-
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Function>                                                            */
-  /*    getDriverClass                                                     */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    This function is used when compiling the TrueType driver as a      */
-  /*    shared library (`.DLL' or `.so').  It will be used by the          */
-  /*    high-level library of FreeType to retrieve the address of the      */
-  /*    driver's generic interface.                                        */
-  /*                                                                       */
-  /*    It shouldn't be implemented in a static build, as each driver must */
-  /*    have the same function as an exported entry point.                 */
-  /*                                                                       */
-  /* <Return>                                                              */
-  /*    The address of the TrueType's driver generic interface.  The       */
-  /*    format-specific interface can then be retrieved through the method */
-  /*    interface->get_format_interface.                                   */
-  /*                                                                       */
-  FT_EXPORT_DEF( const FT_Driver_Class* )
-  getDriverClass( void )
-  {
-    return &winfnt_driver_class;
-  }
-
-
-#endif /* FT_CONFIG_OPTION_DYNAMIC_DRIVERS */
 
 
 /* END */

@@ -1,0 +1,15 @@
+The freetype2 directory contains Freetype 2.2.1 sources from:
+
+  http://download.savannah.gnu.org/releases/freetype/freetype-2.2.1.tar.bz2
+
+The following files have been added:
+
+  freetype2.ac
+  withenable.ac
+
+Modifications:
+
+  freetype2/builds/unix/configure
+    - edited to ignore the --srcdir argument, as this doesn't work properly
+      in the tex-live build
+

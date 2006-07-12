@@ -5,7 +5,7 @@
 /*    Postcript name table processing for TrueType and OpenType fonts      */
 /*    (specification).                                                     */
 /*                                                                         */
-/*  Copyright 1996-2001 by                                                 */
+/*  Copyright 1996-2001, 2002 by                                           */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -29,13 +29,13 @@
 FT_BEGIN_HEADER
 
 
-  FT_LOCAL FT_Error
-  TT_Get_PS_Name( TT_Face      face,
-                  FT_UInt      index,
-                  FT_String**  PSname );
+  FT_LOCAL( FT_Error )
+  tt_face_get_ps_name( TT_Face      face,
+                       FT_UInt      idx,
+                       FT_String**  PSname );
 
-  FT_LOCAL void
-  TT_Free_Post_Names( TT_Face  face );
+  FT_LOCAL( void )
+  tt_face_free_ps_names( TT_Face  face );
 
 
 FT_END_HEADER

@@ -1,5 +1,27 @@
 /***************************************************************************/
 /*                                                                         */
+/* This file defines the structure of the FreeType reference.              */
+/* It is used by the python script which generates the HTML files.         */
+/*                                                                         */
+/***************************************************************************/
+
+
+/***************************************************************************/
+/*                                                                         */
+/* <Chapter>                                                               */
+/*    general_remarks                                                      */
+/*                                                                         */
+/* <Title>                                                                 */
+/*    General Remarks                                                      */
+/*                                                                         */
+/* <Sections>                                                              */
+/*    user_allocation                                                      */
+/*                                                                         */
+/***************************************************************************/
+
+
+/***************************************************************************/
+/*                                                                         */
 /* <Chapter>                                                               */
 /*    core_api                                                             */
 /*                                                                         */
@@ -7,18 +29,33 @@
 /*    Core API                                                             */
 /*                                                                         */
 /* <Sections>                                                              */
+/*    version                                                              */
 /*    basic_types                                                          */
 /*    base_interface                                                       */
 /*    glyph_management                                                     */
 /*    mac_specific                                                         */
+/*    sizes_management                                                     */
+/*    header_file_macros                                                   */
+/*                                                                         */
+/***************************************************************************/
+
+
+/***************************************************************************/
+/*                                                                         */
+/* <Chapter>                                                               */
+/*    format_specific                                                      */
+/*                                                                         */
+/* <Title>                                                                 */
+/*    Format-Specific API                                                  */
+/*                                                                         */
+/* <Sections>                                                              */
 /*    multiple_masters                                                     */
 /*    truetype_tables                                                      */
 /*    type1_tables                                                         */
 /*    sfnt_names                                                           */
-/*    sizes_management                                                     */
-/*    module_management                                                    */
-/*    system_interface                                                     */
-/*    header_file_macros                                                   */
+/*    bdf_fonts                                                            */
+/*    pfr_fonts                                                            */
+/*    winfnt_fonts                                                         */
 /*                                                                         */
 /***************************************************************************/
 
@@ -49,7 +86,12 @@
 /*    computations                                                         */
 /*    list_processing                                                      */
 /*    outline_processing                                                   */
+/*    bitmap_handling                                                      */
 /*    raster                                                               */
+/*    glyph_stroker                                                        */
+/*    system_interface                                                     */
+/*    module_management                                                    */
+/*    gzip                                                                 */
+/*    lzw                                                                  */
 /*                                                                         */
 /***************************************************************************/
-

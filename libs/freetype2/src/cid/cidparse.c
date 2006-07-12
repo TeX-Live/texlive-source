@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    CID-keyed Type1 parser (body).                                       */
 /*                                                                         */
-/*  Copyright 1996-2001 by                                                 */
+/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006 by                   */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -25,8 +25,6 @@
 #include "cidparse.h"
 
 #include "ciderrs.h"
-
-#include <string.h>     /* for strncmp() */
 
 
   /*************************************************************************/
@@ -50,81 +48,89 @@
   /*************************************************************************/
 
 
-  FT_LOCAL_DEF FT_Error
-  CID_New_Parser( CID_Parser*       parser,
-                  FT_Stream         stream,
-                  FT_Memory         memory,
-                  PSAux_Interface*  psaux )
+  FT_LOCAL_DEF( FT_Error )
+  cid_parser_new( CID_Parser*    parser,
+                  FT_Stream      stream,
+                  FT_Memory      memory,
+                  PSAux_Service  psaux )
   {
     FT_Error  error;
     FT_ULong  base_offset, offset, ps_len;
-    FT_Byte   buffer[256 + 10];
-    FT_Int    buff_len;
+    FT_Byte   *cur, *limit;
+    FT_Byte   *arg1, *arg2;
 
 
-    MEM_Set( parser, 0, sizeof ( *parser ) );
-    psaux->t1_parser_funcs->init( &parser->root, 0, 0, memory );
+    FT_MEM_ZERO( parser, sizeof ( *parser ) );
+    psaux->ps_parser_funcs->init( &parser->root, 0, 0, memory );
 
     parser->stream = stream;
 
-    base_offset = FILE_Pos();
+    base_offset = FT_STREAM_POS();
 
-    /* first of all, check the font format in the  header */
-    if ( ACCESS_Frame( 31 ) )
+    /* first of all, check the font format in the header */
+    if ( FT_FRAME_ENTER( 31 ) )
       goto Exit;
 
-    if ( strncmp( (char *)stream->cursor,
-                  "%!PS-Adobe-3.0 Resource-CIDFont", 31 ) )
+    if ( ft_strncmp( (char *)stream->cursor,
+                     "%!PS-Adobe-3.0 Resource-CIDFont", 31 ) )
     {
       FT_TRACE2(( "[not a valid CID-keyed font]\n" ));
       error = CID_Err_Unknown_File_Format;
     }
 
-    FORGET_Frame();
+    FT_FRAME_EXIT();
     if ( error )
       goto Exit;
 
-    /* now, read the rest of the file, until we find a `StartData' */
-    buff_len = 256;
-    for (;;)
+  Again:
+    /* now, read the rest of the file until we find a `StartData' */
     {
-      FT_Byte   *p, *limit = buffer + 256;
-      FT_ULong  top_position;
+      FT_Byte   buffer[256 + 10];
+      FT_Int    read_len = 256 + 10;
+      FT_Byte*  p        = buffer;
 
 
-      /* fill input buffer */
-      buff_len -= 256;
-      if ( buff_len > 0 )
-        MEM_Move( buffer, limit, buff_len );
-
-      p = buffer + buff_len;
-
-      if ( FILE_Read( p, 256 + 10 - buff_len ) )
-        goto Exit;
-
-      top_position = FILE_Pos() - buff_len;
-      buff_len = 256 + 10;
-
-      /* look for `StartData' */
-      for ( p = buffer; p < limit; p++ )
+      for ( offset = (FT_ULong)FT_STREAM_POS(); ; offset += 256 )
       {
-        if ( p[0] == 'S' && strncmp( (char*)p, "StartData", 9 ) == 0 )
+        FT_Int    stream_len;
+
+
+        stream_len = stream->size - FT_STREAM_POS();
+        if ( stream_len == 0 )
+          goto Exit;
+
+        read_len = FT_MIN( read_len, stream_len );
+        if ( FT_STREAM_READ( p, read_len ) )
+          goto Exit;
+
+        if ( read_len < 256 )
+          p[read_len]  = '\0';
+
+        limit = p + read_len - 10;
+
+        for ( p = buffer; p < limit; p++ )
         {
-          /* save offset of binary data after `StartData' */
-          offset = (FT_ULong)( top_position - ( limit - p ) + 10 );
-          goto Found;
+          if ( p[0] == 'S' && ft_strncmp( (char*)p, "StartData", 9 ) == 0 )
+          {
+            /* save offset of binary data after `StartData' */
+            offset += p - buffer + 10;
+            goto Found;
+          }
         }
+
+        FT_MEM_MOVE( buffer, p, 10 );
+        read_len = 256;
+        p = buffer + 10;
       }
     }
 
   Found:
-    /* we have found the start of the binary data.  We will now        */
-    /* rewind and extract the frame of corresponding to the Postscript */
-    /* section                                                         */
+    /* We have found the start of the binary data.  Now rewind and */
+    /* extract the frame corresponding to the PostScript section.  */
 
     ps_len = offset - base_offset;
-    if ( FILE_Seek( base_offset )                    ||
-         EXTRACT_Frame( ps_len, parser->postscript ) )
+    if ( FT_STREAM_SEEK( base_offset )                  ||
+         FT_FRAME_EXTRACT( ps_len, parser->postscript ) )
       goto Exit;
 
     parser->data_offset    = offset;
@@ -134,13 +140,55 @@
     parser->root.limit     = parser->root.cursor + ps_len;
     parser->num_dict       = -1;
 
+    /* Finally, we check whether `StartData' was real -- it could be  */
+    /* in a comment or string.  We also get its arguments to find out */
+    /* whether the data is represented in binary or hex format.       */
+
+    arg1 = parser->root.cursor;
+    cid_parser_skip_PS_token( parser );
+    cid_parser_skip_spaces  ( parser );
+    arg2 = parser->root.cursor;
+    cid_parser_skip_PS_token( parser );
+    cid_parser_skip_spaces  ( parser );
+
+    limit = parser->root.limit;
+    cur   = parser->root.cursor;
+
+    while ( cur < limit )
+    {
+      if ( parser->root.error )
+        break;
+
+      if ( *cur == 'S' && ft_strncmp( (char*)cur, "StartData", 9 ) == 0 )
+      {
+        if ( ft_strncmp( (char*)arg1, "(Hex)", 5 ) == 0 )
+          parser->binary_length = ft_atol( (const char *)arg2 );
+
+        limit = parser->root.limit;
+        cur   = parser->root.cursor;
+        goto Exit;
+      }
+
+      cid_parser_skip_PS_token( parser );
+      cid_parser_skip_spaces  ( parser );
+      arg1 = arg2;
+      arg2 = cur;
+      cur  = parser->root.cursor;
+    }
+
+    /* we haven't found the correct `StartData'; go back and continue */
+    /* searching                                                      */
+    FT_FRAME_RELEASE( parser->postscript );
+    if ( !FT_STREAM_SEEK( offset ) )
+      goto Again;
+
   Exit:
     return error;
   }
 
 
-  FT_LOCAL_DEF void
-  CID_Done_Parser( CID_Parser*  parser )
+  FT_LOCAL_DEF( void )
+  cid_parser_done( CID_Parser*  parser )
   {
     /* always free the private dictionary */
     if ( parser->postscript )
@@ -148,7 +196,7 @@
       FT_Stream  stream = parser->stream;
 
 
-      RELEASE_Frame( parser->postscript );
+      FT_FRAME_RELEASE( parser->postscript );
     }
     parser->root.funcs.done( &parser->root );
   }

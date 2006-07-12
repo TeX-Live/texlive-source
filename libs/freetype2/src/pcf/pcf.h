@@ -2,7 +2,7 @@
 
   FreeType font driver for pcf fonts
 
-  Copyright (C) 2000-2001 by
+  Copyright (C) 2000, 2001, 2002, 2003, 2006 by
   Francesco Zappa Nardelli
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -31,6 +31,7 @@ THE SOFTWARE.
 
 #include <ft2build.h>
 #include FT_INTERNAL_DRIVER_H
+#include FT_INTERNAL_STREAM_H
 
 
 FT_BEGIN_HEADER
@@ -54,7 +55,7 @@ FT_BEGIN_HEADER
   } PCF_TocRec, *PCF_Toc;
 
 
-  typedef struct  PCF_ParseProperty_
+  typedef struct  PCF_ParsePropertyRec_
   {
     FT_Long  name;
     FT_Byte  isString;
@@ -63,7 +64,7 @@ FT_BEGIN_HEADER
   } PCF_ParsePropertyRec, *PCF_ParseProperty;
 
 
-  typedef struct  PCF_Property_
+  typedef struct  PCF_PropertyRec_
   {
     FT_String*  name;
     FT_Byte     isString;
@@ -79,7 +80,7 @@ FT_BEGIN_HEADER
   } PCF_PropertyRec, *PCF_Property;
 
 
-  typedef struct  PCF_Compressed_Metric_
+  typedef struct  PCF_Compressed_MetricRec_
   {
     FT_Byte  leftSideBearing;
     FT_Byte  rightSideBearing;
@@ -90,7 +91,7 @@ FT_BEGIN_HEADER
   } PCF_Compressed_MetricRec, *PCF_Compressed_Metric;
 
 
-  typedef struct  PCF_Metric_
+  typedef struct  PCF_MetricRec_
   {
     FT_Short  leftSideBearing;
     FT_Short  rightSideBearing;
@@ -123,10 +124,10 @@ FT_BEGIN_HEADER
   } PCF_AccelRec, *PCF_Accel;
 
 
-  typedef struct  PCD_Encoding_
+  typedef struct  PCF_EncodingRec_
   {
-    FT_Long   enc;
-    FT_Short  glyph;
+    FT_Long    enc;
+    FT_UShort  glyph;
 
   } PCF_EncodingRec, *PCF_Encoding;
 
@@ -134,6 +135,9 @@ FT_BEGIN_HEADER
   typedef struct  PCF_FaceRec_
   {
     FT_FaceRec     root;
+
+    FT_StreamRec   gzip_stream;
+    FT_Stream      gzip_source;
 
     char*          charset_encoding;
     char*          charset_registry;
@@ -167,12 +171,12 @@ FT_BEGIN_HEADER
 #define PCF_FILE_VERSION        ( ( 'p' << 24 ) | \
                                   ( 'c' << 16 ) | \
                                   ( 'f' <<  8 ) | 1 )
-#define PCF_FORMAT_MASK         0xFFFFFF00L
+#define PCF_FORMAT_MASK         0xFFFFFF00UL
 
-#define PCF_DEFAULT_FORMAT      0x00000000L
-#define PCF_INKBOUNDS           0x00000200L
-#define PCF_ACCEL_W_INKBOUNDS   0x00000100L
-#define PCF_COMPRESSED_METRICS  0x00000100L
+#define PCF_DEFAULT_FORMAT      0x00000000UL
+#define PCF_INKBOUNDS           0x00000200UL
+#define PCF_ACCEL_W_INKBOUNDS   0x00000100UL
+#define PCF_COMPRESSED_METRICS  0x00000100UL
 
 #define PCF_FORMAT_MATCH( a, b ) \
           ( ( (a) & PCF_FORMAT_MASK ) == ( (b) & PCF_FORMAT_MASK ) )
@@ -221,10 +225,9 @@ FT_BEGIN_HEADER
 
 #define GLYPHPADOPTIONS  4 /* I'm not sure about this */
 
-  FT_LOCAL FT_Error
+  FT_LOCAL( FT_Error )
   pcf_load_font( FT_Stream,
                  PCF_Face );
-
 
 FT_END_HEADER
 

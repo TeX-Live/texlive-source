@@ -3,7 +3,7 @@
 #
 
 
-# Copyright 1996-2000 by
+# Copyright 1996-2000, 2003, 2005, 2006 by
 # David Turner, Robert Wilhelm, and Werner Lemberg.
 #
 # This file is part of the FreeType project, and may only be used, modified,
@@ -13,30 +13,15 @@
 # fully.
 
 
-DELETE   := del
-HOSTSEP  := $(strip \ )
-BUILD    := $(TOP)$(SEP)builds$(SEP)dos
-PLATFORM := dos
-
-# except for DJGPP/GCC on Dos
-ifndef SEP
-SEP      := $(HOSTSEP)
-endif
+DELETE    := del
+SEP       := $(strip \ )
+BUILD_DIR := $(TOP_DIR)/builds/dos
+PLATFORM  := dos
 
 
-# The directory where all object files are placed.
+# The executable file extension (for tools), *with* leading dot.
 #
-# This lets you build the library in your own directory with something like
-#
-#   set TOP=.../path/to/freetype2/top/dir...
-#   set OBJ_DIR=.../path/to/obj/dir
-#   make -f %TOP%/Makefile setup [options]
-#   make -f %TOP%/Makefile
-#
-ifndef OBJ_DIR
-  OBJ_DIR := $(TOP)$(SEP)objs
-endif
-
+E := .exe
 
 # The directory where all library files are placed.
 #

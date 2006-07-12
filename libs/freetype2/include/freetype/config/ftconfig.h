@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    ANSI-specific configuration file (specification only).               */
 /*                                                                         */
-/*  Copyright 1996-2001 by                                                 */
+/*  Copyright 1996-2001, 2002, 2003, 2004, 2006 by                         */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -41,12 +41,7 @@
 
 #include <ft2build.h>
 #include FT_CONFIG_OPTIONS_H
-
-#ifdef _WIN32
-#define CDECL __cdecl
-#else
-#define CDECL
-#endif
+#include FT_CONFIG_STANDARD_LIBRARY_H
 
 FT_BEGIN_HEADER
 
@@ -63,27 +58,40 @@ FT_BEGIN_HEADER
   /*************************************************************************/
 
 
-  /* We use <limits.h> values to know the sizes of the types.  */
-#include <limits.h>
+  /* There are systems (like the Texas Instruments 'C54x) where a `char' */
+  /* has 16 bits.  ANSI C says that sizeof(char) is always 1.  Since an  */
+  /* `int' has 16 bits also for this system, sizeof(int) gives 1 which   */
+  /* is probably unexpected.                                             */
+  /*                                                                     */
+  /* `CHAR_BIT' (defined in limits.h) gives the number of bits in a      */
+  /* `char' type.                                                        */
 
-  /* The number of bytes in an `int' type.  */
-#if   UINT_MAX == 0xFFFFFFFFUL
-#define FT_SIZEOF_INT  4
-#elif UINT_MAX == 0xFFFFU
-#define FT_SIZEOF_INT  2
-#elif UINT_MAX > 0xFFFFFFFFU && UINT_MAX == 0xFFFFFFFFFFFFFFFFU
-#define FT_SIZEOF_INT  8
-#else
-#error "Unsupported number of bytes in `int' type!"
+#ifndef FT_CHAR_BIT
+#define FT_CHAR_BIT  CHAR_BIT
 #endif
 
-  /* The number of bytes in a `long' type.  */
-#if   ULONG_MAX == 0xFFFFFFFFUL
-#define FT_SIZEOF_LONG  4
-#elif ULONG_MAX > 0xFFFFFFFFU && ULONG_MAX == 0xFFFFFFFFFFFFFFFFU
-#define FT_SIZEOF_LONG  8
+
+  /* The size of an `int' type.  */
+#if                                 FT_UINT_MAX == 0xFFFFUL
+#define FT_SIZEOF_INT  (16 / FT_CHAR_BIT)
+#elif                               FT_UINT_MAX == 0xFFFFFFFFUL
+#define FT_SIZEOF_INT  (32 / FT_CHAR_BIT)
+#elif FT_UINT_MAX > 0xFFFFFFFFUL && FT_UINT_MAX == 0xFFFFFFFFFFFFFFFFUL
+#define FT_SIZEOF_INT  (64 / FT_CHAR_BIT)
 #else
-#error "Unsupported number of bytes in `long' type!"
+#error "Unsupported size of `int' type!"
+#endif
+
+  /* The size of a `long' type.  A five-byte `long' (as used e.g. on the */
+  /* DM642) is recognized but avoided.                                   */
+#if                                  FT_ULONG_MAX == 0xFFFFFFFFUL
+#define FT_SIZEOF_LONG  (32 / FT_CHAR_BIT)
+#elif FT_ULONG_MAX > 0xFFFFFFFFUL && FT_ULONG_MAX == 0xFFFFFFFFFFUL
+#define FT_SIZEOF_LONG  (32 / FT_CHAR_BIT)
+#elif FT_ULONG_MAX > 0xFFFFFFFFUL && FT_ULONG_MAX == 0xFFFFFFFFFFFFFFFFUL
+#define FT_SIZEOF_LONG  (64 / FT_CHAR_BIT)
+#else
+#error "Unsupported size of `long' type!"
 #endif
 
 
@@ -91,8 +99,8 @@ FT_BEGIN_HEADER
 #define FT_ALIGNMENT  8
 
 
-  /* UNUSED is a macro used to indicate that a given parameter is not used */
-  /* -- this is only used to get rid of unpleasant compiler warnings       */
+  /* FT_UNUSED is a macro used to indicate that a given parameter is not  */
+  /* used -- this is only used to get rid of unpleasant compiler warnings */
 #ifndef FT_UNUSED
 #define FT_UNUSED( arg )  ( (arg) = (arg) )
 #endif
@@ -111,6 +119,19 @@ FT_BEGIN_HEADER
 
   /*************************************************************************/
   /*                                                                       */
+  /* Mac support                                                           */
+  /*                                                                       */
+  /*   This is the only necessary change, so it is defined here instead    */
+  /*   providing a new configuration file.                                 */
+  /*                                                                       */
+#if ( defined( __APPLE__ ) && !defined( DARWIN_NO_CARBON ) ) || \
+    ( defined( __MWERKS__ ) && defined( macintosh )        )
+#define FT_MACINTOSH 1
+#endif
+
+
+  /*************************************************************************/
+  /*                                                                       */
   /* IntN types                                                            */
   /*                                                                       */
   /*   Used to guarantee the size of some specific integers.               */
@@ -118,12 +139,12 @@ FT_BEGIN_HEADER
   typedef signed short    FT_Int16;
   typedef unsigned short  FT_UInt16;
 
-#if FT_SIZEOF_INT == 4
+#if FT_SIZEOF_INT == (32 / FT_CHAR_BIT)
 
   typedef signed int      FT_Int32;
   typedef unsigned int    FT_UInt32;
 
-#elif FT_SIZEOF_LONG == 4
+#elif FT_SIZEOF_LONG == (32 / FT_CHAR_BIT)
 
   typedef signed long     FT_Int32;
   typedef unsigned long   FT_UInt32;
@@ -132,30 +153,29 @@ FT_BEGIN_HEADER
 #error "no 32bit type found -- please check your configuration files"
 #endif
 
-  /* now, lookup for an integer type that is at least 32 bits */
-#if FT_SIZEOF_INT >= 4
+  /* look up an integer type that is at least 32 bits */
+#if FT_SIZEOF_INT >= (32 / FT_CHAR_BIT)
 
-  typedef int           FT_Fast;
-  typedef unsigned int  FT_UFast;
+  typedef int            FT_Fast;
+  typedef unsigned int   FT_UFast;
 
-#elif FT_SIZEOF_LONG >= 4
+#elif FT_SIZEOF_LONG >= (32 / FT_CHAR_BIT)
 
-  typedef long          FT_Fast;
-  typedef unsigned long FT_UFast;
+  typedef long           FT_Fast;
+  typedef unsigned long  FT_UFast;
 
 #endif
 
 
-
   /* determine whether we have a 64-bit int type for platforms without */
   /* Autoconf                                                          */
-#if FT_SIZEOF_LONG == 8
+#if FT_SIZEOF_LONG == (64 / FT_CHAR_BIT)
 
   /* FT_LONG64 must be defined if a 64-bit type is available */
 #define FT_LONG64
 #define FT_INT64  long
 
-#elif defined( _MSC_VER )      /* Visual C++ (and Intel C++) */
+#elif defined( _MSC_VER ) && _MSC_VER >= 900  /* Visual C++ (and Intel C++) */
 
   /* this compiler provides the __int64 type */
 #define FT_LONG64
@@ -174,18 +194,23 @@ FT_BEGIN_HEADER
 
   /* Watcom doesn't provide 64-bit data types */
 
-#elif defined( __MWKS__ )      /* Metrowerks CodeWarrior */
+#elif defined( __MWERKS__ )    /* Metrowerks CodeWarrior */
 
-  /* I don't know if it provides 64-bit data types, any suggestion */
-  /* is welcome.                                                   */
-
-#elif defined( __GNUC__ )
-
-  /* GCC provides the "long long" type */
 #define FT_LONG64
 #define FT_INT64  long long int
 
-#endif /* !FT_LONG64 */
+#elif defined( __GNUC__ )
+
+  /* GCC provides the `long long' type */
+#define FT_LONG64
+#define FT_INT64  long long int
+
+#endif /* FT_SIZEOF_LONG == (64 / FT_CHAR_BIT) */
+
+
+#define FT_BEGIN_STMNT  do {
+#define FT_END_STMNT    } while ( 0 )
+#define FT_DUMMY_STMNT  FT_BEGIN_STMNT FT_END_STMNT
 
 
   /*************************************************************************/
@@ -210,17 +235,17 @@ FT_BEGIN_HEADER
 
 #ifdef FT_MAKE_OPTION_SINGLE_OBJECT
 
-#define FT_LOCAL      static
-#define FT_LOCAL_DEF  static
+#define FT_LOCAL( x )      static  x
+#define FT_LOCAL_DEF( x )  static  x
 
 #else
 
 #ifdef __cplusplus
-#define FT_LOCAL      extern "C"
-#define FT_LOCAL_DEF  extern "C"
+#define FT_LOCAL( x )      extern "C"  x
+#define FT_LOCAL_DEF( x )  extern "C"  x
 #else
-#define FT_LOCAL      extern
-#define FT_LOCAL_DEF  extern
+#define FT_LOCAL( x )      extern  x
+#define FT_LOCAL_DEF( x )  x
 #endif
 
 #endif /* FT_MAKE_OPTION_SINGLE_OBJECT */
@@ -240,29 +265,20 @@ FT_BEGIN_HEADER
 #ifndef FT_BASE_DEF
 
 #ifdef __cplusplus
-#define FT_BASE_DEF( x )  extern "C"  x
+#define FT_BASE_DEF( x )  x
 #else
-#define FT_BASE_DEF( x )  extern  x
+#define FT_BASE_DEF( x )  x
 #endif
 
 #endif /* !FT_BASE_DEF */
 
-#if defined(FREETYPE_DLL) || defined(FREETYPE2_DLL)
-# if defined(MAKE_FREETYPE_DLL) || defined(MAKE_FREETYPE2_DLL)
-# define DLLEXPORT __declspec(dllexport)
-# else
-#  define DLLEXPORT __declspec(dllimport)
-# endif
-#else
-#define DLLEXPORT
-#endif
 
 #ifndef FT_EXPORT
 
 #ifdef __cplusplus
-#define FT_EXPORT( x )  extern "C"  DLLEXPORT x CDECL
+#define FT_EXPORT( x )  extern "C"  x
 #else
-#define FT_EXPORT( x )  extern DLLEXPORT x CDECL
+#define FT_EXPORT( x )  extern  x
 #endif
 
 #endif /* !FT_EXPORT */
@@ -271,9 +287,9 @@ FT_BEGIN_HEADER
 #ifndef FT_EXPORT_DEF
 
 #ifdef __cplusplus
-#define FT_EXPORT_DEF( x )  extern "C" DLLEXPORT x CDECL
+#define FT_EXPORT_DEF( x )  extern "C"  x
 #else
-#define FT_EXPORT_DEF( x )  extern DLLEXPORT x CDECL
+#define FT_EXPORT_DEF( x )  extern  x
 #endif
 
 #endif /* !FT_EXPORT_DEF */
@@ -314,9 +330,9 @@ FT_BEGIN_HEADER
   /*                                                                 */
 #ifndef FT_CALLBACK_DEF
 #ifdef __cplusplus
-#define FT_CALLBACK_DEF( x )  extern "C" x
+#define FT_CALLBACK_DEF( x )  extern "C"  x
 #else
-#define FT_CALLBACK_DEF( x )  static x
+#define FT_CALLBACK_DEF( x )  static  x
 #endif
 #endif /* FT_CALLBACK_DEF */
 

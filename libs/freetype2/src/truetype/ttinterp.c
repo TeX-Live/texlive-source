@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    TrueType bytecode interpreter (body).                                */
 /*                                                                         */
-/*  Copyright 1996-2001 by                                                 */
+/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006 by                   */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -30,9 +30,10 @@
 #ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
 
 
-#define TT_MULFIX  FT_MulFix
-#define TT_MULDIV  FT_MulDiv
-#define TT_INT64   FT_Int64
+#define TT_MULFIX           FT_MulFix
+#define TT_MULDIV           FT_MulDiv
+#define TT_MULDIV_NO_ROUND  FT_MulDiv_No_Round
+
 
   /*************************************************************************/
   /*                                                                       */
@@ -42,9 +43,6 @@
   /*                                                                       */
 #undef  FT_COMPONENT
 #define FT_COMPONENT  trace_ttinterp
-
-#undef  NO_APPLE_PATENT
-#define APPLE_THRESHOLD  0x4000000L
 
   /*************************************************************************/
   /*                                                                       */
@@ -96,9 +94,18 @@
 
 #define CUR  (*exc)                             /* see ttobjs.h */
 
+  /*************************************************************************/
+  /*                                                                       */
+  /* This macro is used whenever `exec' is unused in a function, to avoid  */
+  /* stupid warnings from pedantic compilers.                              */
+  /*                                                                       */
+#define FT_UNUSED_EXEC  FT_UNUSED( exc )
+
 #else                                           /* static implementation */
 
 #define CUR  cur
+
+#define FT_UNUSED_EXEC  int  __dummy = __dummy
 
   static
   TT_ExecContextRec  cur;   /* static exec. context variable */
@@ -115,14 +122,6 @@
   /* The instruction argument stack.                                       */
   /*                                                                       */
 #define INS_ARG  EXEC_OP_ FT_Long*  args    /* see ttobjs.h for EXEC_OP_ */
-
-
-  /*************************************************************************/
-  /*                                                                       */
-  /* This macro is used whenever `exec' is unused in a function, to avoid  */
-  /* stupid warnings from pedantic compilers.                              */
-  /*                                                                       */
-#define FT_UNUSED_EXEC  FT_UNUSED( CUR )
 
 
   /*************************************************************************/
@@ -165,11 +164,11 @@
 #define CUR_Func_move( z, p, d ) \
           CUR.func_move( EXEC_ARG_ z, p, d )
 
+#define CUR_Func_move_orig( z, p, d ) \
+          CUR.func_move_orig( EXEC_ARG_ z, p, d )
+
 #define CUR_Func_dualproj( x, y ) \
           CUR.func_dualproj( EXEC_ARG_ x, y )
-
-#define CUR_Func_freeProj( x, y ) \
-          CUR.func_freeProj( EXEC_ARG_ x, y )
 
 #define CUR_Func_round( d, c ) \
           CUR.func_round( EXEC_ARG_ d, c )
@@ -221,13 +220,22 @@
   /*                                                                       */
 #define BOUNDS( x, n )  ( (FT_UInt)(x) >= (FT_UInt)(n) )
 
-
 #undef  SUCCESS
 #define SUCCESS  0
 
 #undef  FAILURE
 #define FAILURE  1
 
+#ifdef TT_CONFIG_OPTION_UNPATENTED_HINTING
+#define GUESS_VECTOR( V )                                         \
+  if ( CUR.face->unpatented_hinting )                             \
+  {                                                               \
+    CUR.GS.V.x = (FT_F2Dot14)( CUR.GS.both_x_axis ? 0x4000 : 0 ); \
+    CUR.GS.V.y = (FT_F2Dot14)( CUR.GS.both_x_axis ? 0 : 0x4000 ); \
+  }
+#else
+#define GUESS_VECTOR( V )
+#endif
 
   /*************************************************************************/
   /*                                                                       */
@@ -256,7 +264,7 @@
   /* <Return>                                                              */
   /*    FreeType error code.  0 means success.                             */
   /*                                                                       */
-  FT_LOCAL_DEF FT_Error
+  FT_LOCAL_DEF( FT_Error )
   TT_Goto_CodeRange( TT_ExecContext  exec,
                      FT_Int          range,
                      FT_Long         IP )
@@ -264,17 +272,17 @@
     TT_CodeRange*  coderange;
 
 
-    FT_Assert( range >= 1 && range <= 3 );
+    FT_ASSERT( range >= 1 && range <= 3 );
 
     coderange = &exec->codeRangeTable[range - 1];
 
-    FT_Assert( coderange->base != NULL );
+    FT_ASSERT( coderange->base != NULL );
 
     /* NOTE: Because the last instruction of a program may be a CALL */
     /*       which will return to the first byte *after* the code    */
     /*       range, we test for IP <= Size instead of IP < Size.     */
     /*                                                               */
-    FT_Assert( (FT_ULong)IP <= coderange->size );
+    FT_ASSERT( (FT_ULong)IP <= coderange->size );
 
     exec->code     = coderange->base;
     exec->codeSize = coderange->size;
@@ -306,13 +314,13 @@
   /* <Return>                                                              */
   /*    FreeType error code.  0 means success.                             */
   /*                                                                       */
-  FT_LOCAL_DEF FT_Error
+  FT_LOCAL_DEF( FT_Error )
   TT_Set_CodeRange( TT_ExecContext  exec,
                     FT_Int          range,
                     void*           base,
                     FT_Long         length )
   {
-    FT_Assert( range >= 1 && range <= 3 );
+    FT_ASSERT( range >= 1 && range <= 3 );
 
     exec->codeRangeTable[range - 1].base = (FT_Byte*)base;
     exec->codeRangeTable[range - 1].size = length;
@@ -341,11 +349,11 @@
   /* <Note>                                                                */
   /*    Does not set the Error variable.                                   */
   /*                                                                       */
-  FT_LOCAL_DEF FT_Error
+  FT_LOCAL_DEF( FT_Error )
   TT_Clear_CodeRange( TT_ExecContext  exec,
                       FT_Int          range )
   {
-    FT_Assert( range >= 1 && range <= 3 );
+    FT_ASSERT( range >= 1 && range <= 3 );
 
     exec->codeRangeTable[range - 1].base = NULL;
     exec->codeRangeTable[range - 1].size = 0;
@@ -364,7 +372,7 @@
   /*************************************************************************/
   /*                                                                       */
   /* <Function>                                                            */
-  /*    TT_Destroy_Context                                                 */
+  /*    TT_Done_Context                                                    */
   /*                                                                       */
   /* <Description>                                                         */
   /*    Destroys a given context.                                          */
@@ -380,35 +388,34 @@
   /* <Note>                                                                */
   /*    Only the glyph loader and debugger should call this function.      */
   /*                                                                       */
-  FT_LOCAL_DEF FT_Error
-  TT_Destroy_Context( TT_ExecContext  exec,
-                      FT_Memory       memory )
+  FT_LOCAL_DEF( FT_Error )
+  TT_Done_Context( TT_ExecContext  exec )
   {
-    /* free composite load stack */
-    FREE( exec->loadStack );
-    exec->loadSize = 0;
+    FT_Memory  memory = exec->memory;
+
 
     /* points zone */
     exec->maxPoints   = 0;
     exec->maxContours = 0;
 
     /* free stack */
-    FREE( exec->stack );
+    FT_FREE( exec->stack );
     exec->stackSize = 0;
 
     /* free call stack */
-    FREE( exec->callStack );
+    FT_FREE( exec->callStack );
     exec->callSize = 0;
     exec->callTop  = 0;
 
     /* free glyph code range */
-    FREE( exec->glyphIns );
+    FT_FREE( exec->glyphIns );
     exec->glyphSize = 0;
 
     exec->size = NULL;
     exec->face = NULL;
 
-    FREE( exec );
+    FT_FREE( exec );
+
     return TT_Err_Ok;
   }
 
@@ -424,8 +431,6 @@
   /* <Input>                                                               */
   /*    memory :: A handle to the parent memory object.                    */
   /*                                                                       */
-  /*    face   :: A handle to the source TrueType face object.             */
-  /*                                                                       */
   /* <InOut>                                                               */
   /*    exec   :: A handle to the target execution context.                */
   /*                                                                       */
@@ -434,19 +439,17 @@
   /*                                                                       */
   static FT_Error
   Init_Context( TT_ExecContext  exec,
-                TT_Face         face,
                 FT_Memory       memory )
   {
     FT_Error  error;
 
 
-    FT_TRACE1(( "Init_Context: new object at 0x%08p, parent = 0x%08p\n",
-                exec, face ));
+    FT_TRACE1(( "Init_Context: new object at 0x%08p\n", exec ));
 
     exec->memory   = memory;
     exec->callSize = 32;
 
-    if ( ALLOC_ARRAY( exec->callStack, exec->callSize, TT_CallRec ) )
+    if ( FT_NEW_ARRAY( exec->callStack, exec->callSize ) )
       goto Fail_Memory;
 
     /* all values in the context are set to 0 already, but this is */
@@ -455,14 +458,12 @@
     exec->maxContours = 0;
 
     exec->stackSize = 0;
-    exec->loadSize  = 0;
     exec->glyphSize = 0;
 
     exec->stack     = NULL;
-    exec->loadStack = NULL;
     exec->glyphIns  = NULL;
 
-    exec->face = face;
+    exec->face = NULL;
     exec->size = NULL;
 
     return TT_Err_Ok;
@@ -470,7 +471,7 @@
   Fail_Memory:
     FT_ERROR(( "Init_Context: not enough memory for 0x%08lx\n",
                (FT_Long)exec ));
-    TT_Destroy_Context( exec, memory );
+    TT_Done_Context( exec );
 
     return error;
  }
@@ -512,8 +513,7 @@
 
     if ( *size < new_max )
     {
-      FREE( *buff );
-      if ( ALLOC( *buff, new_max * multiplier ) )
+      if ( FT_REALLOC( *buff, *size * multiplier, new_max * multiplier ) )
         return error;
       *size = new_max;
     }
@@ -544,7 +544,7 @@
   /* <Note>                                                                */
   /*    Only the glyph loader and debugger should call this function.      */
   /*                                                                       */
-  FT_LOCAL_DEF FT_Error
+  FT_LOCAL_DEF( FT_Error )
   TT_Load_Context( TT_ExecContext  exec,
                    TT_Face         face,
                    TT_Size         size )
@@ -568,7 +568,7 @@
       exec->FDefs      = size->function_defs;
       exec->IDefs      = size->instruction_defs;
       exec->tt_metrics = size->ttmetrics;
-      exec->metrics    = size->root.metrics;
+      exec->metrics    = size->metrics;
 
       exec->maxFunc    = size->max_func;
       exec->maxIns     = size->max_ins;
@@ -587,14 +587,6 @@
 
       exec->twilight  = size->twilight;
     }
-
-    error = Update_Max( exec->memory,
-                        &exec->loadSize,
-                        sizeof ( TT_SubGlyphRec ),
-                        (void**)&exec->loadStack,
-                        exec->face->max_components + 1 );
-    if ( error )
-      return error;
 
     /* XXX: We reserve a little more elements on the stack to deal safely */
     /*      with broken fonts like arialbs, courbs, timesbs, etc.         */
@@ -647,7 +639,7 @@
   /* <Note>                                                                */
   /*    Only the glyph loader and debugger should call this function.      */
   /*                                                                       */
-  FT_LOCAL_DEF FT_Error
+  FT_LOCAL_DEF( FT_Error )
   TT_Save_Context( TT_ExecContext  exec,
                    TT_Size         size )
   {
@@ -694,7 +686,7 @@
   /* <Note>                                                                */
   /*    Only the glyph loader and debugger should call this function.      */
   /*                                                                       */
-  FT_LOCAL_DEF FT_Error
+  FT_LOCAL_DEF( FT_Error )
   TT_Run_Context( TT_ExecContext  exec,
                   FT_Bool         debug )
   {
@@ -718,6 +710,10 @@
 
     exec->GS.freeVector = exec->GS.projVector;
     exec->GS.dualVector = exec->GS.projVector;
+
+#ifdef TT_CONFIG_OPTION_UNPATENTED_HINTING
+    exec->GS.both_x_axis = TRUE;
+#endif
 
     exec->GS.round_state = 1;
     exec->GS.loop        = 1;
@@ -746,6 +742,11 @@
     { 0x4000, 0 },
     { 0x4000, 0 },
     { 0x4000, 0 },
+
+#ifdef TT_CONFIG_OPTION_UNPATENTED_HINTING
+    TRUE,
+#endif
+
     1, 64, 1,
     TRUE, 68, 0, 0, 9, 3,
     0, FALSE, 2, 1, 1, 1
@@ -755,17 +756,11 @@
   /* documentation is in ttinterp.h */
 
   FT_EXPORT_DEF( TT_ExecContext )
-  TT_New_Context( TT_Face  face )
+  TT_New_Context( TT_Driver  driver )
   {
-    TT_Driver       driver;
     TT_ExecContext  exec;
     FT_Memory       memory;
 
-
-    if ( !face )
-      return 0;
-
-    driver = (TT_Driver)face->root.driver;
 
     memory = driver->root.root.memory;
     exec   = driver->context;
@@ -776,11 +771,11 @@
 
 
       /* allocate object */
-      if ( ALLOC( exec, sizeof ( *exec ) ) )
+      if ( FT_NEW( exec ) )
         goto Exit;
 
       /* initialize it */
-      error = Init_Context( exec, face, memory );
+      error = Init_Context( exec, memory );
       if ( error )
         goto Fail;
 
@@ -792,7 +787,7 @@
     return driver->context;
 
   Fail:
-    FREE( exec );
+    FT_FREE( exec );
 
     return 0;
   }
@@ -800,84 +795,18 @@
 
   /*************************************************************************/
   /*                                                                       */
-  /* <Function>                                                            */
-  /*    TT_Done_Context                                                    */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    Discards an execution context.                                     */
-  /*                                                                       */
-  /* <Input>                                                               */
-  /*    exec :: A handle to the target execution context.                  */
-  /*                                                                       */
-  /* <Return>                                                              */
-  /*    FreeType error code.  0 means success.                             */
-  /*                                                                       */
-  /* <Note>                                                                */
-  /*    Only the glyph loader and debugger should call this function.      */
-  /*                                                                       */
-  FT_LOCAL_DEF FT_Error
-  TT_Done_Context( TT_ExecContext  exec )
-  {
-    /* Nothing at all for now */
-    FT_UNUSED( exec );
-
-    return TT_Err_Ok;
-  }
-
-
- /* return length of given vector */
-#ifdef FT_CONFIG_OPTION_OLD_CALCS
-
-  static FT_F26Dot6
-  Norm( FT_F26Dot6  X,
-        FT_F26Dot6  Y )
-  {
-    TT_INT64  T1, T2;
-
-
-    MUL_64( X, X, T1 );
-    MUL_64( Y, Y, T2 );
-
-    ADD_64( T1, T2, T1 );
-
-    return (FT_F26Dot6)SQRT_64( T1 );
-  }
-
-#else  /* !FT_CONFIG_OPTION_OLD_CALCS */
-
-  static FT_F26Dot6
-  Norm( FT_F26Dot6  X,
-        FT_F26Dot6  Y )
-  {
-    FT_Vector  v;
-
-    v.x = X;
-    v.y = Y;
-    return FT_Vector_Length( &v );
-  }
-
-#endif /* FT_CONFIG_OPTION_OLD_CALCS */
-
-
-  /*************************************************************************/
-  /*                                                                       */
   /* Before an opcode is executed, the interpreter verifies that there are */
-  /* enough arguments on the stack, with the help of the Pop_Push_Count    */
+  /* enough arguments on the stack, with the help of the `Pop_Push_Count'  */
   /* table.                                                                */
   /*                                                                       */
   /* For each opcode, the first column gives the number of arguments that  */
   /* are popped from the stack; the second one gives the number of those   */
   /* that are pushed in result.                                            */
   /*                                                                       */
-  /* Note that for opcodes with a varying number of parameters, either 0   */
-  /* or 1 arg is verified before execution, depending on the nature of the */
-  /* instruction:                                                          */
-  /*                                                                       */
-  /* - if the number of arguments is given by the bytecode stream or the   */
-  /*   loop variable, 0 is chosen.                                         */
-  /*                                                                       */
-  /* - if the first argument is a count n that is followed by arguments    */
-  /*   a1 .. an, then 1 is chosen.                                         */
+  /* Opcodes which have a varying number of parameters in the data stream  */
+  /* (NPUSHB, NPUSHW) are handled specially; they have a negative value in */
+  /* the `opcode_length' table, and the value in `Pop_Push_Count' is set   */
+  /* to zero.                                                              */
   /*                                                                       */
   /*************************************************************************/
 
@@ -1174,7 +1103,7 @@
     1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,
     1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,
 
-   -1,-1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,
+   -1,-2, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,
     1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,
     1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,
     1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,
@@ -1201,6 +1130,167 @@
 #define NULL_Vector  (FT_Vector*)&Null_Vector
 
 
+  /* compute (a*b)/2^14 with maximal accuracy and rounding */
+  static FT_Int32
+  TT_MulFix14( FT_Int32  a,
+               FT_Int    b )
+  {
+    FT_Int32   m, s, hi;
+    FT_UInt32  l, lo;
+
+
+    /* compute ax*bx as 64-bit value */
+    l  = (FT_UInt32)( ( a & 0xFFFFU ) * b );
+    m  = ( a >> 16 ) * b;
+
+    lo = l + (FT_UInt32)( m << 16 );
+    hi = ( m >> 16 ) + ( (FT_Int32)l >> 31 ) + ( lo < l );
+
+    /* divide the result by 2^14 with rounding */
+    s   = hi >> 31;
+    l   = lo + (FT_UInt32)s;
+    hi += s + ( l < lo );
+    lo  = l;
+
+    l   = lo + 0x2000U;
+    hi += (l < lo);
+
+    return ( hi << 18 ) | ( l >> 14 );
+  }
+
+
+  /* compute (ax*bx+ay*by)/2^14 with maximal accuracy and rounding */
+  static FT_Int32
+  TT_DotFix14( FT_Int32  ax,
+               FT_Int32  ay,
+               FT_Int    bx,
+               FT_Int    by )
+  {
+    FT_Int32   m, s, hi1, hi2, hi;
+    FT_UInt32  l, lo1, lo2, lo;
+
+
+    /* compute ax*bx as 64-bit value */
+    l = (FT_UInt32)( ( ax & 0xFFFFU ) * bx );
+    m = ( ax >> 16 ) * bx;
+
+    lo1 = l + (FT_UInt32)( m << 16 );
+    hi1 = ( m >> 16 ) + ( (FT_Int32)l >> 31 ) + ( lo1 < l );
+
+    /* compute ay*by as 64-bit value */
+    l = (FT_UInt32)( ( ay & 0xFFFFU ) * by );
+    m = ( ay >> 16 ) * by;
+
+    lo2 = l + (FT_UInt32)( m << 16 );
+    hi2 = ( m >> 16 ) + ( (FT_Int32)l >> 31 ) + ( lo2 < l );
+
+    /* add them */
+    lo = lo1 + lo2;
+    hi = hi1 + hi2 + ( lo < lo1 );
+
+    /* divide the result by 2^14 with rounding */
+    s   = hi >> 31;
+    l   = lo + (FT_UInt32)s;
+    hi += s + ( l < lo );
+    lo  = l;
+
+    l   = lo + 0x2000U;
+    hi += ( l < lo );
+
+    return ( hi << 18 ) | ( l >> 14 );
+  }
+
+
+  /* return length of given vector */
+
+#if 0
+
+  static FT_Int32
+  TT_VecLen( FT_Int32  x,
+             FT_Int32  y )
+  {
+    FT_Int32   m, hi1, hi2, hi;
+    FT_UInt32  l, lo1, lo2, lo;
+
+
+    /* compute x*x as 64-bit value */
+    lo = (FT_UInt32)( x & 0xFFFFU );
+    hi = x >> 16;
+
+    l  = lo * lo;
+    m  = hi * lo;
+    hi = hi * hi;
+
+    lo1 = l + (FT_UInt32)( m << 17 );
+    hi1 = hi + ( m >> 15 ) + ( lo1 < l );
+
+    /* compute y*y as 64-bit value */
+    lo = (FT_UInt32)( y & 0xFFFFU );
+    hi = y >> 16;
+
+    l  = lo * lo;
+    m  = hi * lo;
+    hi = hi * hi;
+
+    lo2 = l + (FT_UInt32)( m << 17 );
+    hi2 = hi + ( m >> 15 ) + ( lo2 < l );
+
+    /* add them to get 'x*x+y*y' as 64-bit value */
+    lo = lo1 + lo2;
+    hi = hi1 + hi2 + ( lo < lo1 );
+
+    /* compute the square root of this value */
+    {
+      FT_UInt32  root, rem, test_div;
+      FT_Int     count;
+
+
+      root = 0;
+
+      {
+        rem   = 0;
+        count = 32;
+        do
+        {
+          rem      = ( rem << 2 ) | ( (FT_UInt32)hi >> 30 );
+          hi       = (  hi << 2 ) | (            lo >> 30 );
+          lo     <<= 2;
+          root   <<= 1;
+          test_div = ( root << 1 ) + 1;
+
+          if ( rem >= test_div )
+          {
+            rem  -= test_div;
+            root += 1;
+          }
+        } while ( --count );
+      }
+
+      return (FT_Int32)root;
+    }
+  }
+
+#else
+
+  /* this version uses FT_Vector_Length which computes the same value */
+  /* much, much faster..                                              */
+  /*                                                                  */
+  static FT_F26Dot6
+  TT_VecLen( FT_F26Dot6  X,
+             FT_F26Dot6  Y )
+  {
+    FT_Vector  v;
+
+
+    v.x = X;
+    v.y = Y;
+
+    return FT_Vector_Length( &v );
+  }
+
+#endif
+
+
   /*************************************************************************/
   /*                                                                       */
   /* <Function>                                                            */
@@ -1216,24 +1306,38 @@
   static FT_Long
   Current_Ratio( EXEC_OP )
   {
-    if ( CUR.tt_metrics.ratio )
-      return CUR.tt_metrics.ratio;
-
-    if ( CUR.GS.projVector.y == 0 )
-      CUR.tt_metrics.ratio = CUR.tt_metrics.x_ratio;
-
-    else if ( CUR.GS.projVector.x == 0 )
-      CUR.tt_metrics.ratio = CUR.tt_metrics.y_ratio;
-
-    else
+    if ( !CUR.tt_metrics.ratio )
     {
-      FT_Long  x, y;
+#ifdef TT_CONFIG_OPTION_UNPATENTED_HINTING
+      if ( CUR.face->unpatented_hinting )
+      {
+        if ( CUR.GS.both_x_axis )
+          CUR.tt_metrics.ratio = CUR.tt_metrics.x_ratio;
+        else
+          CUR.tt_metrics.ratio = CUR.tt_metrics.y_ratio;
+      }
+      else
+#endif
+      {
+        if ( CUR.GS.projVector.y == 0 )
+          CUR.tt_metrics.ratio = CUR.tt_metrics.x_ratio;
 
-      x = TT_MULDIV( CUR.GS.projVector.x, CUR.tt_metrics.x_ratio, 0x4000 );
-      y = TT_MULDIV( CUR.GS.projVector.y, CUR.tt_metrics.y_ratio, 0x4000 );
-      CUR.tt_metrics.ratio = Norm( x, y );
+        else if ( CUR.GS.projVector.x == 0 )
+          CUR.tt_metrics.ratio = CUR.tt_metrics.y_ratio;
+
+        else
+        {
+          FT_Long  x, y;
+
+
+          x = TT_MULDIV( CUR.GS.projVector.x,
+                         CUR.tt_metrics.x_ratio, 0x4000 );
+          y = TT_MULDIV( CUR.GS.projVector.y,
+                         CUR.tt_metrics.y_ratio, 0x4000 );
+          CUR.tt_metrics.ratio = TT_VecLen( x, y );
+        }
+      }
     }
-
     return CUR.tt_metrics.ratio;
   }
 
@@ -1253,48 +1357,48 @@
 
 
   FT_CALLBACK_DEF( FT_F26Dot6 )
-  Read_CVT( EXEC_OP_ FT_ULong  index )
+  Read_CVT( EXEC_OP_ FT_ULong  idx )
   {
-    return CUR.cvt[index];
+    return CUR.cvt[idx];
   }
 
 
   FT_CALLBACK_DEF( FT_F26Dot6 )
-  Read_CVT_Stretched( EXEC_OP_ FT_ULong  index )
+  Read_CVT_Stretched( EXEC_OP_ FT_ULong  idx )
   {
-    return TT_MULFIX( CUR.cvt[index], CURRENT_Ratio() );
+    return TT_MULFIX( CUR.cvt[idx], CURRENT_Ratio() );
   }
 
 
   FT_CALLBACK_DEF( void )
-  Write_CVT( EXEC_OP_ FT_ULong    index,
+  Write_CVT( EXEC_OP_ FT_ULong    idx,
                       FT_F26Dot6  value )
   {
-    CUR.cvt[index] = value;
+    CUR.cvt[idx] = value;
   }
 
 
   FT_CALLBACK_DEF( void )
-  Write_CVT_Stretched( EXEC_OP_ FT_ULong    index,
+  Write_CVT_Stretched( EXEC_OP_ FT_ULong    idx,
                                 FT_F26Dot6  value )
   {
-    CUR.cvt[index] = FT_DivFix( value, CURRENT_Ratio() );
+    CUR.cvt[idx] = FT_DivFix( value, CURRENT_Ratio() );
   }
 
 
   FT_CALLBACK_DEF( void )
-  Move_CVT( EXEC_OP_ FT_ULong    index,
+  Move_CVT( EXEC_OP_ FT_ULong    idx,
                      FT_F26Dot6  value )
   {
-    CUR.cvt[index] += value;
+    CUR.cvt[idx] += value;
   }
 
 
   FT_CALLBACK_DEF( void )
-  Move_CVT_Stretched( EXEC_OP_ FT_ULong    index,
+  Move_CVT_Stretched( EXEC_OP_ FT_ULong    idx,
                                FT_F26Dot6  value )
   {
-    CUR.cvt[index] += FT_DivFix( value, CURRENT_Ratio() );
+    CUR.cvt[idx] += FT_DivFix( value, CURRENT_Ratio() );
   }
 
 
@@ -1397,54 +1501,83 @@
   /*    zone     :: The affected glyph zone.                               */
   /*                                                                       */
   static void
-  Direct_Move( EXEC_OP_ TT_GlyphZone*  zone,
-                        FT_UShort      point,
-                        FT_F26Dot6     distance )
+  Direct_Move( EXEC_OP_ TT_GlyphZone  zone,
+                        FT_UShort     point,
+                        FT_F26Dot6    distance )
   {
-    FT_F26Dot6 v;
+    FT_F26Dot6  v;
 
+
+#ifdef TT_CONFIG_OPTION_UNPATENTED_HINTING
+    FT_ASSERT( !CUR.face->unpatented_hinting );
+#endif
 
     v = CUR.GS.freeVector.x;
 
     if ( v != 0 )
     {
-
-#ifdef NO_APPLE_PATENT
-
-      if ( ABS( CUR.F_dot_P ) > APPLE_THRESHOLD )
-        zone->cur[point].x += distance;
-
-#else
-
       zone->cur[point].x += TT_MULDIV( distance,
                                        v * 0x10000L,
                                        CUR.F_dot_P );
 
-#endif
-
-      zone->tags[point] |= FT_Curve_Tag_Touch_X;
+      zone->tags[point] |= FT_CURVE_TAG_TOUCH_X;
     }
 
     v = CUR.GS.freeVector.y;
 
     if ( v != 0 )
     {
-
-#ifdef NO_APPLE_PATENT
-
-      if ( ABS( CUR.F_dot_P ) > APPLE_THRESHOLD )
-        zone->cur[point].y += distance;
-
-#else
-
       zone->cur[point].y += TT_MULDIV( distance,
                                        v * 0x10000L,
                                        CUR.F_dot_P );
 
+      zone->tags[point] |= FT_CURVE_TAG_TOUCH_Y;
+    }
+  }
+
+
+  /*************************************************************************/
+  /*                                                                       */
+  /* <Function>                                                            */
+  /*    Direct_Move_Orig                                                   */
+  /*                                                                       */
+  /* <Description>                                                         */
+  /*    Moves the *original* position of a point by a given distance along */
+  /*    the freedom vector.  Obviously, the point will not be `touched'.   */
+  /*                                                                       */
+  /* <Input>                                                               */
+  /*    point    :: The index of the point to move.                        */
+  /*                                                                       */
+  /*    distance :: The distance to apply.                                 */
+  /*                                                                       */
+  /* <InOut>                                                               */
+  /*    zone     :: The affected glyph zone.                               */
+  /*                                                                       */
+  static void
+  Direct_Move_Orig( EXEC_OP_ TT_GlyphZone  zone,
+                             FT_UShort     point,
+                             FT_F26Dot6    distance )
+  {
+    FT_F26Dot6  v;
+
+
+#ifdef TT_CONFIG_OPTION_UNPATENTED_HINTING
+    FT_ASSERT( !CUR.face->unpatented_hinting );
 #endif
 
-      zone->tags[point] |= FT_Curve_Tag_Touch_Y;
-    }
+    v = CUR.GS.freeVector.x;
+
+    if ( v != 0 )
+      zone->org[point].x += TT_MULDIV( distance,
+                                       v * 0x10000L,
+                                       CUR.F_dot_P );
+
+    v = CUR.GS.freeVector.y;
+
+    if ( v != 0 )
+      zone->org[point].y += TT_MULDIV( distance,
+                                       v * 0x10000L,
+                                       CUR.F_dot_P );
   }
 
 
@@ -1459,26 +1592,58 @@
 
 
   static void
-  Direct_Move_X( EXEC_OP_ TT_GlyphZone*  zone,
-                          FT_UShort      point,
-                          FT_F26Dot6     distance )
+  Direct_Move_X( EXEC_OP_ TT_GlyphZone  zone,
+                          FT_UShort     point,
+                          FT_F26Dot6    distance )
   {
     FT_UNUSED_EXEC;
 
     zone->cur[point].x += distance;
-    zone->tags[point]  |= FT_Curve_Tag_Touch_X;
+    zone->tags[point]  |= FT_CURVE_TAG_TOUCH_X;
   }
 
 
   static void
-  Direct_Move_Y( EXEC_OP_ TT_GlyphZone*  zone,
-                          FT_UShort      point,
-                          FT_F26Dot6     distance )
+  Direct_Move_Y( EXEC_OP_ TT_GlyphZone  zone,
+                          FT_UShort     point,
+                          FT_F26Dot6    distance )
   {
     FT_UNUSED_EXEC;
 
     zone->cur[point].y += distance;
-    zone->tags[point]  |= FT_Curve_Tag_Touch_Y;
+    zone->tags[point]  |= FT_CURVE_TAG_TOUCH_Y;
+  }
+
+
+  /*************************************************************************/
+  /*                                                                       */
+  /* Special versions of Direct_Move_Orig()                                */
+  /*                                                                       */
+  /*   The following versions are used whenever both vectors are both      */
+  /*   along one of the coordinate unit vectors, i.e. in 90% of the cases. */
+  /*                                                                       */
+  /*************************************************************************/
+
+
+  static void
+  Direct_Move_Orig_X( EXEC_OP_ TT_GlyphZone  zone,
+                               FT_UShort     point,
+                               FT_F26Dot6    distance )
+  {
+    FT_UNUSED_EXEC;
+
+    zone->org[point].x += distance;
+  }
+
+
+  static void
+  Direct_Move_Orig_Y( EXEC_OP_ TT_GlyphZone  zone,
+                               FT_UShort     point,
+                               FT_F26Dot6    distance )
+  {
+    FT_UNUSED_EXEC;
+
+    zone->org[point].y += distance;
   }
 
 
@@ -1516,7 +1681,7 @@
     if ( distance >= 0 )
     {
       val = distance + compensation;
-      if ( val < 0 )
+      if ( distance && val < 0 )
         val = 0;
     }
     else {
@@ -1556,14 +1721,14 @@
     if ( distance >= 0 )
     {
       val = distance + compensation + 32;
-      if ( val > 0 )
+      if ( distance && val > 0 )
         val &= ~63;
       else
         val = 0;
     }
     else
     {
-      val = -( ( compensation - distance + 32 ) & -64 );
+      val = -FT_PIX_ROUND( compensation - distance );
       if ( val > 0 )
         val = 0;
     }
@@ -1599,13 +1764,13 @@
 
     if ( distance >= 0 )
     {
-      val = ( ( distance + compensation ) & -64 ) + 32;
-      if ( val < 0 )
+      val = FT_PIX_FLOOR( distance + compensation ) + 32;
+      if ( distance && val < 0 )
         val = 0;
     }
     else
     {
-      val = -( ( (compensation - distance) & -64 ) + 32 );
+      val = -( FT_PIX_FLOOR( compensation - distance ) + 32 );
       if ( val > 0 )
         val = 0;
     }
@@ -1642,7 +1807,7 @@
     if ( distance >= 0 )
     {
       val = distance + compensation;
-      if ( val > 0 )
+      if ( distance && val > 0 )
         val &= ~63;
       else
         val = 0;
@@ -1686,14 +1851,14 @@
     if ( distance >= 0 )
     {
       val = distance + compensation + 63;
-      if ( val > 0 )
+      if ( distance && val > 0 )
         val &= ~63;
       else
         val = 0;
     }
     else
     {
-      val = -( ( compensation - distance + 63 ) & -64 );
+      val = - FT_PIX_CEIL( compensation - distance );
       if ( val > 0 )
         val = 0;
     }
@@ -1730,14 +1895,14 @@
     if ( distance >= 0 )
     {
       val = distance + compensation + 16;
-      if ( val > 0 )
+      if ( distance && val > 0 )
         val &= ~31;
       else
         val = 0;
     }
     else
     {
-      val = -( ( compensation - distance + 16 ) & -32 );
+      val = -FT_PAD_ROUND( compensation - distance, 32 );
       if ( val > 0 )
         val = 0;
     }
@@ -1779,7 +1944,7 @@
     {
       val = ( distance - CUR.phase + CUR.threshold + compensation ) &
               -CUR.period;
-      if ( val < 0 )
+      if ( distance && val < 0 )
         val = 0;
       val += CUR.phase;
     }
@@ -1827,7 +1992,7 @@
     {
       val = ( ( distance - CUR.phase + CUR.threshold + compensation ) /
                 CUR.period ) * CUR.period;
-      if ( val < 0 )
+      if ( distance && val < 0 )
         val = 0;
       val += CUR.phase;
     }
@@ -1947,7 +2112,7 @@
       break;
 
     case 0x30:
-      CUR.phase = GridPeriod * 3 / 4;
+      CUR.phase = CUR.period * 3 / 4;
       break;
     }
 
@@ -1982,10 +2147,15 @@
   Project( EXEC_OP_ FT_Vector*  v1,
                     FT_Vector*  v2 )
   {
-    return TT_MULDIV( v1->x - v2->x, CUR.GS.projVector.x, 0x4000 ) +
-           TT_MULDIV( v1->y - v2->y, CUR.GS.projVector.y, 0x4000 );
-  }
+#ifdef TT_CONFIG_OPTION_UNPATENTED_HINTING
+    FT_ASSERT( !CUR.face->unpatented_hinting );
+#endif
 
+    return TT_DotFix14( v1->x - v2->x,
+                        v1->y - v2->y,
+                        CUR.GS.projVector.x,
+                        CUR.GS.projVector.y );
+  }
 
   /*************************************************************************/
   /*                                                                       */
@@ -2007,33 +2177,10 @@
   Dual_Project( EXEC_OP_ FT_Vector*  v1,
                          FT_Vector*  v2 )
   {
-    return TT_MULDIV( v1->x - v2->x, CUR.GS.dualVector.x, 0x4000 ) +
-           TT_MULDIV( v1->y - v2->y, CUR.GS.dualVector.y, 0x4000 );
-  }
-
-
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Function>                                                            */
-  /*    Free_Project                                                       */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    Computes the projection of the vector given by (v2-v1) along the   */
-  /*    current freedom vector.                                            */
-  /*                                                                       */
-  /* <Input>                                                               */
-  /*    v1 :: First input vector.                                          */
-  /*    v2 :: Second input vector.                                         */
-  /*                                                                       */
-  /* <Return>                                                              */
-  /*    The distance in F26dot6 format.                                    */
-  /*                                                                       */
-  static FT_F26Dot6
-  Free_Project( EXEC_OP_ FT_Vector*  v1,
-                         FT_Vector*  v2 )
-  {
-    return TT_MULDIV( v1->x - v2->x, CUR.GS.freeVector.x, 0x4000 ) +
-           TT_MULDIV( v1->y - v2->y, CUR.GS.freeVector.y, 0x4000 );
+    return TT_DotFix14( v1->x - v2->x,
+                        v1->y - v2->y,
+                        CUR.GS.dualVector.x,
+                        CUR.GS.dualVector.y );
   }
 
 
@@ -2101,24 +2248,63 @@
   static void
   Compute_Funcs( EXEC_OP )
   {
-    if ( CUR.GS.freeVector.x == 0x4000 )
+#ifdef TT_CONFIG_OPTION_UNPATENTED_HINTING
+    if ( CUR.face->unpatented_hinting )
     {
-      CUR.func_freeProj = (TT_Project_Func)Project_x;
-      CUR.F_dot_P       = CUR.GS.projVector.x * 0x10000L;
-    }
-    else
-    {
-      if ( CUR.GS.freeVector.y == 0x4000 )
+      /* If both vectors point rightwards along the x axis, set             */
+      /* `both-x-axis' true, otherwise set it false.  The x values only     */
+      /* need be tested because the vector has been normalised to a unit    */
+      /* vector of length 0x4000 = unity.                                   */
+      CUR.GS.both_x_axis = (FT_Bool)( CUR.GS.projVector.x == 0x4000 &&
+                                      CUR.GS.freeVector.x == 0x4000 );
+
+      /* Throw away projection and freedom vector information */
+      /* because the patents don't allow them to be stored.   */
+      /* The relevant US Patents are 5155805 and 5325479.     */
+      CUR.GS.projVector.x = 0;
+      CUR.GS.projVector.y = 0;
+      CUR.GS.freeVector.x = 0;
+      CUR.GS.freeVector.y = 0;
+
+      if ( CUR.GS.both_x_axis )
       {
-        CUR.func_freeProj = (TT_Project_Func)Project_y;
-        CUR.F_dot_P       = CUR.GS.projVector.y * 0x10000L;
+        CUR.func_project   = Project_x;
+        CUR.func_move      = Direct_Move_X;
+        CUR.func_move_orig = Direct_Move_Orig_X;
       }
       else
       {
-        CUR.func_freeProj = (TT_Project_Func)Free_Project;
+        CUR.func_project   = Project_y;
+        CUR.func_move      = Direct_Move_Y;
+        CUR.func_move_orig = Direct_Move_Orig_Y;
+      }
+
+      if ( CUR.GS.dualVector.x == 0x4000 )
+        CUR.func_dualproj = Project_x;
+      else
+      {
+        if ( CUR.GS.dualVector.y == 0x4000 )
+          CUR.func_dualproj = Project_y;
+        else
+          CUR.func_dualproj = Dual_Project;
+      }
+
+      /* Force recalculation of cached aspect ratio */
+      CUR.tt_metrics.ratio = 0;
+
+      return;
+    }
+#endif /* TT_CONFIG_OPTION_UNPATENTED_HINTING */
+
+    if ( CUR.GS.freeVector.x == 0x4000 )
+      CUR.F_dot_P       = CUR.GS.projVector.x * 0x10000L;
+    else
+    {
+      if ( CUR.GS.freeVector.y == 0x4000 )
+        CUR.F_dot_P       = CUR.GS.projVector.y * 0x10000L;
+      else
         CUR.F_dot_P = (FT_Long)CUR.GS.projVector.x * CUR.GS.freeVector.x * 4 +
                       (FT_Long)CUR.GS.projVector.y * CUR.GS.freeVector.y * 4;
-      }
     }
 
     if ( CUR.GS.projVector.x == 0x4000 )
@@ -2141,23 +2327,30 @@
         CUR.func_dualproj = (TT_Project_Func)Dual_Project;
     }
 
-    CUR.func_move = (TT_Move_Func)Direct_Move;
+    CUR.func_move      = (TT_Move_Func)Direct_Move;
+    CUR.func_move_orig = (TT_Move_Func)Direct_Move_Orig;
 
     if ( CUR.F_dot_P == 0x40000000L )
     {
       if ( CUR.GS.freeVector.x == 0x4000 )
-        CUR.func_move = (TT_Move_Func)Direct_Move_X;
+      {
+        CUR.func_move      = (TT_Move_Func)Direct_Move_X;
+        CUR.func_move_orig = (TT_Move_Func)Direct_Move_Orig_X;
+      }
       else
       {
         if ( CUR.GS.freeVector.y == 0x4000 )
-          CUR.func_move = (TT_Move_Func)Direct_Move_Y;
+        {
+          CUR.func_move      = (TT_Move_Func)Direct_Move_Y;
+          CUR.func_move_orig = (TT_Move_Func)Direct_Move_Orig_Y;
+        }
       }
     }
 
     /* at small sizes, F_dot_P can become too small, resulting   */
     /* in overflows and `spikes' in a number of glyphs like `w'. */
 
-    if ( ABS( CUR.F_dot_P ) < 0x4000000L )
+    if ( FT_ABS( CUR.F_dot_P ) < 0x4000000L )
       CUR.F_dot_P = 0x40000000L;
 
     /* Disable cached aspect ratio */
@@ -2188,7 +2381,6 @@
   /*    R is undefined.                                                    */
   /*                                                                       */
 
-#ifdef FT_CONFIG_OPTION_OLD_CALCS
 
   static FT_Bool
   Normalize( EXEC_OP_ FT_F26Dot6      Vx,
@@ -2201,12 +2393,12 @@
     FT_UNUSED_EXEC;
 
 
-    if ( ABS( Vx ) < 0x10000L && ABS( Vy ) < 0x10000L )
+    if ( FT_ABS( Vx ) < 0x10000L && FT_ABS( Vy ) < 0x10000L )
     {
       Vx *= 0x100;
       Vy *= 0x100;
 
-      W = Norm( Vx, Vy );
+      W = TT_VecLen( Vx, Vy );
 
       if ( W == 0 )
       {
@@ -2221,7 +2413,7 @@
       return SUCCESS;
     }
 
-    W = Norm( Vx, Vy );
+    W = TT_VecLen( Vx, Vy );
 
     Vx = FT_MulDiv( Vx, 0x4000L, W );
     Vy = FT_MulDiv( Vy, 0x4000L, W );
@@ -2229,7 +2421,7 @@
     W = Vx * Vx + Vy * Vy;
 
     /* Now, we want that Sqrt( W ) = 0x4000 */
-    /* Or 0x1000000 <= W < 0x1004000        */
+    /* Or 0x10000000 <= W < 0x10004000        */
 
     if ( Vx < 0 )
     {
@@ -2247,7 +2439,7 @@
     else
       S2 = FALSE;
 
-    while ( W < 0x1000000L )
+    while ( W < 0x10000000L )
     {
       /* We need to increase W by a minimal amount */
       if ( Vx < Vy )
@@ -2258,7 +2450,7 @@
       W = Vx * Vx + Vy * Vy;
     }
 
-    while ( W >= 0x1004000L )
+    while ( W >= 0x10004000L )
     {
       /* We need to decrease W by a minimal amount */
       if ( Vx < Vy )
@@ -2283,30 +2475,6 @@
 
     return SUCCESS;
   }
-
-#else
-
-  static FT_Bool
-  Normalize( EXEC_OP_ FT_F26Dot6      Vx,
-                      FT_F26Dot6      Vy,
-                      FT_UnitVector*  R )
-  {
-    FT_Vector  v;
-    FT_Angle   angle;
-
-    FT_UNUSED_EXEC;
-
-    angle = FT_Atan2( Vx, Vy );
-
-    FT_Vector_Unit( &v, angle );
-
-    R->x = (short)(v.x >> 2);
-    R->y = (short)(v.y >> 2);
-
-    return SUCCESS;
-  }
-
-#endif /* FT_CONFIG_OPTION_OLD_CALCS */
 
 
   /*************************************************************************/
@@ -2394,6 +2562,8 @@
     CUR.GS.projVector.y = B;                \
     CUR.GS.dualVector.y = B;                \
                                             \
+    GUESS_VECTOR( freeVector );             \
+                                            \
     COMPUTE_Funcs();                        \
   }
 
@@ -2409,6 +2579,8 @@
     CUR.GS.freeVector.x = A;                \
     CUR.GS.freeVector.y = B;                \
                                             \
+    GUESS_VECTOR( projVector );             \
+                                            \
     COMPUTE_Funcs();                        \
   }
 
@@ -2420,6 +2592,7 @@
                     &CUR.GS.projVector ) == SUCCESS ) \
     {                                                 \
       CUR.GS.dualVector = CUR.GS.projVector;          \
+      GUESS_VECTOR( freeVector );                     \
       COMPUTE_Funcs();                                \
     }
 
@@ -2429,10 +2602,14 @@
                     (FT_UShort)args[0],               \
                     CUR.opcode,                       \
                     &CUR.GS.freeVector ) == SUCCESS ) \
-      COMPUTE_Funcs();
+    {                                                 \
+      GUESS_VECTOR( projVector );                     \
+      COMPUTE_Funcs();                                \
+    }
 
 
 #define DO_SFVTPV                          \
+    GUESS_VECTOR( projVector );            \
     CUR.GS.freeVector = CUR.GS.projVector; \
     COMPUTE_Funcs();
 
@@ -2452,6 +2629,7 @@
     NORMalize( X, Y, &CUR.GS.projVector );      \
                                                 \
     CUR.GS.dualVector = CUR.GS.projVector;      \
+    GUESS_VECTOR( freeVector );                 \
     COMPUTE_Funcs();                            \
   }
 
@@ -2469,18 +2647,47 @@
     X = S;                                      \
                                                 \
     NORMalize( X, Y, &CUR.GS.freeVector );      \
+    GUESS_VECTOR( projVector );                 \
     COMPUTE_Funcs();                            \
   }
 
 
-#define DO_GPV                     \
-    args[0] = CUR.GS.projVector.x; \
+#ifdef TT_CONFIG_OPTION_UNPATENTED_HINTING
+#define DO_GPV                                   \
+    if ( CUR.face->unpatented_hinting )          \
+    {                                            \
+      args[0] = CUR.GS.both_x_axis ? 0x4000 : 0; \
+      args[1] = CUR.GS.both_x_axis ? 0 : 0x4000; \
+    }                                            \
+    else                                         \
+    {                                            \
+      args[0] = CUR.GS.projVector.x;             \
+      args[1] = CUR.GS.projVector.y;             \
+    }
+#else
+#define DO_GPV                                   \
+    args[0] = CUR.GS.projVector.x;               \
     args[1] = CUR.GS.projVector.y;
+#endif
 
 
-#define DO_GFV                     \
-    args[0] = CUR.GS.freeVector.x; \
+#ifdef TT_CONFIG_OPTION_UNPATENTED_HINTING
+#define DO_GFV                                   \
+    if ( CUR.face->unpatented_hinting )          \
+    {                                            \
+      args[0] = CUR.GS.both_x_axis ? 0x4000 : 0; \
+      args[1] = CUR.GS.both_x_axis ? 0 : 0x4000; \
+    }                                            \
+    else                                         \
+    {                                            \
+      args[0] = CUR.GS.freeVector.x;             \
+      args[1] = CUR.GS.freeVector.y;             \
+    }
+#else
+#define DO_GFV                                   \
+    args[0] = CUR.GS.freeVector.x;               \
     args[1] = CUR.GS.freeVector.y;
+#endif
 
 
 #define DO_SRP0                      \
@@ -2714,19 +2921,19 @@
     args[0] -= args[1];
 
 
-#define DO_DIV                                      \
-    if ( args[1] == 0 )                             \
-      CUR.error = TT_Err_Divide_By_Zero;            \
-    else                                            \
-      args[0] = TT_MULDIV( args[0], 64L, args[1] );
+#define DO_DIV                                               \
+    if ( args[1] == 0 )                                      \
+      CUR.error = TT_Err_Divide_By_Zero;                     \
+    else                                                     \
+      args[0] = TT_MULDIV_NO_ROUND( args[0], 64L, args[1] );
 
 
 #define DO_MUL                                    \
     args[0] = TT_MULDIV( args[0], args[1], 64L );
 
 
-#define DO_ABS                \
-    args[0] = ABS( args[0] );
+#define DO_ABS                   \
+    args[0] = FT_ABS( args[0] );
 
 
 #define DO_NEG          \
@@ -2734,11 +2941,11 @@
 
 
 #define DO_FLOOR    \
-    args[0] &= -64;
+    args[0] = FT_PIX_FLOOR( args[0] );
 
 
 #define DO_CEILING                    \
-    args[0] = ( args[0] + 63 ) & -64;
+    args[0] = FT_PIX_CEIL( args[0] );
 
 
 #define DO_RS                          \
@@ -3846,9 +4053,9 @@
 
     K = CUR.stack[CUR.args - L];
 
-    MEM_Move( &CUR.stack[CUR.args - L    ],
-              &CUR.stack[CUR.args - L + 1],
-              ( L - 1 ) * sizeof ( FT_Long ) );
+    FT_ARRAY_MOVE( &CUR.stack[CUR.args - L    ],
+                   &CUR.stack[CUR.args - L + 1],
+                   ( L - 1 ) );
 
     CUR.stack[CUR.args - 1] = K;
   }
@@ -3901,7 +4108,7 @@
       {
         if ( CUR.IP + 1 > CUR.codeSize )
           goto Fail_Overflow;
-        CUR.length = CUR.code[CUR.IP + 1] + 2;
+        CUR.length = 2 - CUR.length * CUR.code[CUR.IP + 1];
       }
 
       if ( CUR.IP + CUR.length <= CUR.codeSize )
@@ -4641,6 +4848,8 @@
 
     NORMalize( A, B, &CUR.GS.projVector );
 
+    GUESS_VECTOR( freeVector );
+
     COMPUTE_Funcs();
   }
 
@@ -4914,7 +5123,7 @@
         }
       }
       else
-        CUR.pts.tags[point] ^= FT_Curve_Tag_On;
+        CUR.pts.tags[point] ^= FT_CURVE_TAG_ON;
 
       CUR.GS.loop--;
     }
@@ -4948,7 +5157,7 @@
     }
 
     for ( I = L; I <= K; I++ )
-      CUR.pts.tags[I] |= FT_Curve_Tag_On;
+      CUR.pts.tags[I] |= FT_CURVE_TAG_ON;
   }
 
 
@@ -4976,19 +5185,19 @@
     }
 
     for ( I = L; I <= K; I++ )
-      CUR.pts.tags[I] &= ~FT_Curve_Tag_On;
+      CUR.pts.tags[I] &= ~FT_CURVE_TAG_ON;
   }
 
 
   static FT_Bool
-  Compute_Point_Displacement( EXEC_OP_ FT_F26Dot6*    x,
-                                       FT_F26Dot6*    y,
-                                       TT_GlyphZone*  zone,
-                                       FT_UShort*     refp )
+  Compute_Point_Displacement( EXEC_OP_ FT_F26Dot6*   x,
+                                       FT_F26Dot6*   y,
+                                       TT_GlyphZone  zone,
+                                       FT_UShort*    refp )
   {
-    TT_GlyphZone  zp;
-    FT_UShort     p;
-    FT_F26Dot6    d;
+    TT_GlyphZoneRec  zp;
+    FT_UShort        p;
+    FT_F26Dot6       d;
 
 
     if ( CUR.opcode & 1 )
@@ -5014,21 +5223,30 @@
 
     d = CUR_Func_project( zp.cur + p, zp.org + p );
 
-#ifdef NO_APPLE_PATENT
-
-    *x = TT_MULDIV( d, CUR.GS.freeVector.x, 0x4000 );
-    *y = TT_MULDIV( d, CUR.GS.freeVector.y, 0x4000 );
-
-#else
-
-    *x = TT_MULDIV( d,
-                    (FT_Long)CUR.GS.freeVector.x * 0x10000L,
-                    CUR.F_dot_P );
-    *y = TT_MULDIV( d,
-                    (FT_Long)CUR.GS.freeVector.y * 0x10000L,
-                    CUR.F_dot_P );
-
-#endif /* NO_APPLE_PATENT */
+#ifdef TT_CONFIG_OPTION_UNPATENTED_HINTING
+    if ( CUR.face->unpatented_hinting )
+    {
+      if ( CUR.GS.both_x_axis )
+      {
+        *x = d;
+        *y = 0;
+      }
+      else
+      {
+        *x = 0;
+        *y = d;
+      }
+    }
+    else
+#endif
+    {
+      *x = TT_MULDIV( d,
+                      (FT_Long)CUR.GS.freeVector.x * 0x10000L,
+                      CUR.F_dot_P );
+      *y = TT_MULDIV( d,
+                      (FT_Long)CUR.GS.freeVector.y * 0x10000L,
+                      CUR.F_dot_P );
+    }
 
     return SUCCESS;
   }
@@ -5040,18 +5258,37 @@
                            FT_F26Dot6  dy,
                            FT_Bool     touch )
   {
+#ifdef TT_CONFIG_OPTION_UNPATENTED_HINTING
+    if ( CUR.face->unpatented_hinting )
+    {
+      if ( CUR.GS.both_x_axis )
+      {
+        CUR.zp2.cur[point].x += dx;
+        if ( touch )
+          CUR.zp2.tags[point] |= FT_CURVE_TAG_TOUCH_X;
+      }
+      else
+      {
+        CUR.zp2.cur[point].y += dy;
+        if ( touch )
+          CUR.zp2.tags[point] |= FT_CURVE_TAG_TOUCH_Y;
+      }
+      return;
+    }
+#endif
+
     if ( CUR.GS.freeVector.x != 0 )
     {
       CUR.zp2.cur[point].x += dx;
       if ( touch )
-        CUR.zp2.tags[point] |= FT_Curve_Tag_Touch_X;
+        CUR.zp2.tags[point] |= FT_CURVE_TAG_TOUCH_X;
     }
 
     if ( CUR.GS.freeVector.y != 0 )
     {
       CUR.zp2.cur[point].y += dy;
       if ( touch )
-        CUR.zp2.tags[point] |= FT_Curve_Tag_Touch_Y;
+        CUR.zp2.tags[point] |= FT_CURVE_TAG_TOUCH_Y;
     }
   }
 
@@ -5065,12 +5302,12 @@
   static void
   Ins_SHP( INS_ARG )
   {
-    TT_GlyphZone  zp;
-    FT_UShort     refp;
+    TT_GlyphZoneRec  zp;
+    FT_UShort        refp;
 
-    FT_F26Dot6    dx,
-                  dy;
-    FT_UShort     point;
+    FT_F26Dot6       dx,
+                     dy;
+    FT_UShort        point;
 
     FT_UNUSED_ARG;
 
@@ -5118,13 +5355,13 @@
   static void
   Ins_SHC( INS_ARG )
   {
-    TT_GlyphZone zp;
-    FT_UShort    refp;
-    FT_F26Dot6   dx,
-                 dy;
+    TT_GlyphZoneRec zp;
+    FT_UShort       refp;
+    FT_F26Dot6      dx,
+                    dy;
 
-    FT_Short     contour;
-    FT_UShort    first_point, last_point, i;
+    FT_Short        contour;
+    FT_UShort       first_point, last_point, i;
 
 
     contour = (FT_UShort)args[0];
@@ -5156,11 +5393,11 @@
         last_point = 0;
     }
 
-    /* XXX: UNDOCUMENTED! SHC doesn't touch the points */
+    /* XXX: UNDOCUMENTED! SHC does touch the points */
     for ( i = first_point; i <= last_point; i++ )
     {
       if ( zp.cur != CUR.zp2.cur || refp != i )
-        MOVE_Zp2_Point( i, dx, dy, FALSE );
+        MOVE_Zp2_Point( i, dx, dy, TRUE );
     }
   }
 
@@ -5174,12 +5411,12 @@
   static void
   Ins_SHZ( INS_ARG )
   {
-    TT_GlyphZone zp;
-    FT_UShort    refp;
-    FT_F26Dot6   dx,
-                 dy;
+    TT_GlyphZoneRec zp;
+    FT_UShort       refp;
+    FT_F26Dot6      dx,
+                    dy;
 
-    FT_UShort    last_point, i;
+    FT_UShort       last_point, i;
 
 
     if ( BOUNDS( args[0], 2 ) )
@@ -5225,12 +5462,26 @@
       return;
     }
 
-    dx = TT_MULDIV( args[0],
-                    (FT_Long)CUR.GS.freeVector.x,
-                    0x4000 );
-    dy = TT_MULDIV( args[0],
-                    (FT_Long)CUR.GS.freeVector.y,
-                    0x4000 );
+#ifdef TT_CONFIG_OPTION_UNPATENTED_HINTING
+    if ( CUR.face->unpatented_hinting )
+    {
+      if ( CUR.GS.both_x_axis )
+      {
+        dx = TT_MulFix14( args[0], 0x4000 );
+        dy = 0;
+      }
+      else
+      {
+        dx = 0;
+        dy = TT_MulFix14( args[0], 0x4000 );
+      }
+    }
+    else
+#endif
+    {
+      dx = TT_MulFix14( args[0], CUR.GS.freeVector.x );
+      dy = TT_MulFix14( args[0], CUR.GS.freeVector.y );
+    }
 
     while ( CUR.GS.loop > 0 )
     {
@@ -5281,9 +5532,11 @@
     }
 
     /* XXX: UNDOCUMENTED! behaviour */
-    if ( CUR.GS.gep0 == 0 )   /* if in twilight zone */
+    if ( CUR.GS.gep1 == 0 )   /* if the point that is to be moved */
+                              /* is in twilight zone              */
     {
       CUR.zp1.org[point] = CUR.zp0.org[CUR.GS.rp0];
+      CUR_Func_move_orig( &CUR.zp1, point, args[1] );
       CUR.zp1.cur[point] = CUR.zp1.org[point];
     }
 
@@ -5393,18 +5646,16 @@
 
     if ( CUR.GS.gep0 == 0 )   /* If in twilight zone */
     {
-      CUR.zp0.org[point].x = TT_MULDIV( CUR.GS.freeVector.x,
-                                        distance, 0x4000 );
-      CUR.zp0.org[point].y = TT_MULDIV( CUR.GS.freeVector.y,
-                                        distance, 0x4000 );
-      CUR.zp0.cur[point] = CUR.zp0.org[point];
+      CUR.zp0.org[point].x = TT_MulFix14( distance, CUR.GS.freeVector.x );
+      CUR.zp0.org[point].y = TT_MulFix14( distance, CUR.GS.freeVector.y ),
+      CUR.zp0.cur[point]   = CUR.zp0.org[point];
     }
 
     org_dist = CUR_Func_project( CUR.zp0.cur + point, NULL_Vector );
 
     if ( ( CUR.opcode & 1 ) != 0 )   /* rounding and control cutin flag */
     {
-      if ( ABS( distance - org_dist ) > CUR.GS.control_value_cutin )
+      if ( FT_ABS( distance - org_dist ) > CUR.GS.control_value_cutin )
         distance = org_dist;
 
       distance = CUR_Func_round( distance, CUR.tt_metrics.compensations[0] );
@@ -5448,7 +5699,8 @@
 
     /* single width cutin test */
 
-    if ( ABS( org_dist ) < CUR.GS.single_width_cutin )
+    if ( FT_ABS( org_dist - CUR.GS.single_width_value ) <
+         CUR.GS.single_width_cutin )
     {
       if ( org_dist >= 0 )
         org_dist = CUR.GS.single_width_value;
@@ -5537,7 +5789,8 @@
 
     /* single width test */
 
-    if ( ABS( cvt_dist ) < CUR.GS.single_width_cutin )
+    if ( FT_ABS( cvt_dist - CUR.GS.single_width_value ) <
+         CUR.GS.single_width_cutin )
     {
       if ( cvt_dist >= 0 )
         cvt_dist =  CUR.GS.single_width_value;
@@ -5550,14 +5803,10 @@
     if ( CUR.GS.gep1 == 0 )
     {
       CUR.zp1.org[point].x = CUR.zp0.org[CUR.GS.rp0].x +
-                             TT_MULDIV( cvt_dist,
-                                        CUR.GS.freeVector.x,
-                                        0x4000 );
+                             TT_MulFix14( cvt_dist, CUR.GS.freeVector.x );
 
       CUR.zp1.org[point].y = CUR.zp0.org[CUR.GS.rp0].y +
-                             TT_MULDIV( cvt_dist,
-                                        CUR.GS.freeVector.y,
-                                        0x4000 );
+                             TT_MulFix14( cvt_dist, CUR.GS.freeVector.y );
 
       CUR.zp1.cur[point] = CUR.zp1.org[point];
     }
@@ -5584,7 +5833,7 @@
       /*      refer to the same zone.                                  */
 
       if ( CUR.GS.gep0 == CUR.GS.gep1 )
-        if ( ABS( cvt_dist - org_dist ) >= CUR.GS.control_value_cutin )
+        if ( FT_ABS( cvt_dist - org_dist ) >= CUR.GS.control_value_cutin )
           cvt_dist = org_dist;
 
       distance = CUR_Func_round(
@@ -5729,12 +5978,12 @@
     dx = CUR.zp0.cur[b0].x - CUR.zp1.cur[a0].x;
     dy = CUR.zp0.cur[b0].y - CUR.zp1.cur[a0].y;
 
-    CUR.zp2.tags[point] |= FT_Curve_Tag_Touch_Both;
+    CUR.zp2.tags[point] |= FT_CURVE_TAG_TOUCH_BOTH;
 
     discriminant = TT_MULDIV( dax, -dby, 0x40 ) +
                    TT_MULDIV( day, dbx, 0x40 );
 
-    if ( ABS( discriminant ) >= 0x40 )
+    if ( FT_ABS( discriminant ) >= 0x40 )
     {
       val = TT_MULDIV( dx, -dby, 0x40 ) + TT_MULDIV( dy, dbx, 0x40 );
 
@@ -5907,10 +6156,10 @@
     mask = 0xFF;
 
     if ( CUR.GS.freeVector.x != 0 )
-      mask &= ~FT_Curve_Tag_Touch_X;
+      mask &= ~FT_CURVE_TAG_TOUCH_X;
 
     if ( CUR.GS.freeVector.y != 0 )
-      mask &= ~FT_Curve_Tag_Touch_Y;
+      mask &= ~FT_CURVE_TAG_TOUCH_Y;
 
     CUR.zp0.tags[point] &= mask;
   }
@@ -6050,13 +6299,13 @@
 
     if ( CUR.opcode & 1 )
     {
-      mask   = FT_Curve_Tag_Touch_X;
+      mask   = FT_CURVE_TAG_TOUCH_X;
       V.orgs = CUR.pts.org;
       V.curs = CUR.pts.cur;
     }
     else
     {
-      mask   = FT_Curve_Tag_Touch_Y;
+      mask   = FT_CURVE_TAG_TOUCH_Y;
       V.orgs = (FT_Vector*)( (FT_Pos*)CUR.pts.org + 1 );
       V.curs = (FT_Vector*)( (FT_Pos*)CUR.pts.cur + 1 );
     }
@@ -6132,6 +6381,22 @@
     FT_ULong   C;
     FT_Long    B;
 
+#ifdef TT_CONFIG_OPTION_UNPATENTED_HINTING
+    /* Delta hinting is covered by US Patent 5159668. */
+    if ( CUR.face->unpatented_hinting )
+      {
+      FT_Long n = args[0] * 2;
+      if ( CUR.args < n )
+      {
+        CUR.error = TT_Err_Too_Few_Arguments;
+        return;
+      }
+
+      CUR.args -= n;
+      CUR.new_top = CUR.args;
+      return;
+    }
+#endif
 
     nump = (FT_ULong)args[0];   /* some points theoretically may occur more
                                    than once, thus UShort isn't enough */
@@ -6208,6 +6473,25 @@
     FT_Long   B;
 
 
+#ifdef TT_CONFIG_OPTION_UNPATENTED_HINTING
+    /* Delta hinting is covered by US Patent 5159668. */
+    if ( CUR.face->unpatented_hinting )
+    {
+      FT_Long  n = args[0] * 2;
+
+
+      if ( CUR.args < n )
+      {
+        CUR.error = TT_Err_Too_Few_Arguments;
+        return;
+      }
+
+      CUR.args -= n;
+      CUR.new_top = CUR.args;
+      return;
+    }
+#endif
+
     nump = (FT_ULong)args[0];
 
     for ( k = 1; k <= nump; k++ )
@@ -6280,8 +6564,6 @@
   /* Opcode range: 0x88                                                    */
   /* Stack:        uint32 --> uint32                                       */
   /*                                                                       */
-  /* XXX: According to Apple specs, bits 1 & 2 of the argument ought to be */
-  /*      consulted before rotated/stretched info is returned.             */
   static void
   Ins_GETINFO( INS_ARG )
   {
@@ -6290,18 +6572,21 @@
 
     K = 0;
 
-    /* We return then Windows 3.1 version number */
-    /* for the font scaler                       */
+    /* We return MS rasterizer version 1.7 for the font scaler. */
     if ( ( args[0] & 1 ) != 0 )
-      K = 3;
+      K = 35;
 
-    /* Has the glyph been rotated ? */
-    if ( CUR.tt_metrics.rotated )
+    /* Has the glyph been rotated? */
+    if ( ( args[0] & 2 ) != 0 && CUR.tt_metrics.rotated )
       K |= 0x80;
 
-    /* Has the glyph been stretched ? */
-    if ( CUR.tt_metrics.stretched )
-      K |= 0x100;
+    /* Has the glyph been stretched? */
+    if ( ( args[0] & 4 ) != 0 && CUR.tt_metrics.stretched )
+      K |= 1 << 8;
+
+    /* Are we hinting for grayscale? */
+    if ( ( args[0] & 32 ) != 0 && CUR.grayscale )
+      K |= (1 << 12);
 
     args[0] = K;
   }
@@ -6706,7 +6991,7 @@
         if ( CUR.IP + 1 > CUR.codeSize )
           goto LErrorCodeOverflow_;
 
-        CUR.length = CUR.code[CUR.IP + 1] + 2;
+        CUR.length = 2 - CUR.length * CUR.code[CUR.IP + 1];
       }
 
       if ( CUR.IP + CUR.length > CUR.codeSize )
@@ -6771,11 +7056,19 @@
               CUR.GS.dualVector.x = AA;
               CUR.GS.dualVector.y = BB;
             }
+            else
+            {
+              GUESS_VECTOR( projVector );
+            }
 
             if ( ( opcode & 2 ) == 0 )
             {
               CUR.GS.freeVector.x = AA;
               CUR.GS.freeVector.y = BB;
+            }
+            else
+            {
+              GUESS_VECTOR( freeVector );
             }
 
             COMPUTE_Funcs();
