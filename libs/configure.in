@@ -24,6 +24,8 @@ sinclude(gd/withenable.ac)
 sinclude(gd/gd.ac)
 sinclude(freetype/withenable.ac)
 sinclude(freetype/freetype.ac)
+sinclude(freetype2/withenable.ac)
+sinclude(freetype2/freetype2.ac)
 
 # The following line helps, e.g. for ncurses which properly detects the
 # system's terminfo definitions if configured without explicit --prefix.
@@ -40,6 +42,9 @@ if test "x$needs_libxpdf" != xno; then
 fi
 if test "x$needs_freetype" != xno && test "$using_system_freetype" != yes; then
   AC_CONFIG_SUBDIRS([freetype])
+fi
+if test "x$needs_freetype2" != xno && test "$using_system_freetype2" != yes; then
+  AC_CONFIG_SUBDIRS([freetype2])
 fi
 if test "x$needs_gd" != xno && test "$using_system_gd" != yes; then
   AC_CONFIG_SUBDIRS([gd])

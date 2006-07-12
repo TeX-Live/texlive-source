@@ -99,6 +99,7 @@ sinclude(libs/t1lib/withenable.ac)
 sinclude(libs/zlib/withenable.ac)
 sinclude(libs/gd/withenable.ac)
 sinclude(libs/freetype/withenable.ac)
+sinclude(libs/freetype2/withenable.ac)
 
 NCURSESDIR=libs/ncurses
 LIBT1DIR=libs/t1lib
@@ -107,6 +108,7 @@ LIBPNGDIR=libs/libpng
 ZLIBDIR=libs/zlib
 LIBXPDFDIR=libs/xpdf
 FREETYPEDIR=libs/freetype
+FREETYPE2DIR=libs/freetype2
 GDDIR=libs/gd
 
 test "$no_x" = yes && { with_xdvik=no; with_oxdvik=no; }
@@ -126,27 +128,30 @@ test "$with_dialog"  != no    && : ${needs_ncurses=yes}
 : ${needs_ncurses=no}
 export needs_ncurses
 
-# we need pnglib for dvipng, pdf[ex]tex
+# we need pnglib for dvipng, pdf[ex]tex, xetex
 test ! -d $srcdir/$LIBPNGDIR  && : ${needs_pnglib=no}
 test "$with_dvipng"  != no    && : ${needs_pnglib=yes}
 test "$with_pdftex"  != no    && : ${needs_pnglib=yes}
 test "$with_pdfetex" != no    && : ${needs_pnglib=yes}
+test "$with_xetex"   != no    && : ${needs_pnglib=yes}
 : ${needs_pnglib=no}
 export needs_pnglib
 
-# we need zlib for dvipng, texinfo, pdf[ex]tex
+# we need zlib for dvipng, texinfo, pdf[ex]tex, xetex
 test ! -d $srcdir/$ZLIBDIR    && : ${needs_zlib=no}
 test "$with_dvipng"  != no    && : ${needs_zlib=yes}
 test "$with_pdftex"  != no    && : ${needs_zlib=yes}
 test "$with_pdfetex" != no    && : ${needs_zlib=yes}
+test "$with_xetex"   != no    && : ${needs_zlib=yes}
 test "$with_texinfo" != no    && : ${needs_zlib=yes}
 : ${needs_zlib=no}
 export needs_zlib
 
-# we need libxpdf for pdf[ex]tex
+# we need libxpdf for pdf[ex]tex, xetex
 test ! -d $srcdir/$LIBXPDFDIR && : ${needs_libxpdf=no}
 test "$with_pdftex"  != no    && : ${needs_libxpdf=yes}
-test "$with_pdfetex"  != no    && : ${needs_libxpdf=yes}
+test "$with_pdfetex" != no    && : ${needs_libxpdf=yes}
+test "$with_xetex"   != no    && : ${needs_libxpdf=yes}
 : ${needs_libxpdf=no}
 export needs_libxpdf
 
@@ -163,6 +168,12 @@ test "$with_ttf2pk" = no        && : ${needs_freetype=no}
 : ${needs_freetype=yes}
 export needs_freetype
 
+# we need freetype2 for xetex
+test ! -d $srcdir/$FREETYPE2DIR && : ${needs_freetype2=no}
+test "$with_xetex"   != no      && : ${needs_freetype2=yes}
+: ${needs_freetype2=no}
+export needs_freetype2
+
 dnl We cannot use variables (e.g. $LIBPNGDIR) for sinclude, so...
 sinclude(libs/libpng/libpng.ac)
 sinclude(libs/zlib/zlib.ac)
@@ -171,8 +182,9 @@ sinclude(libs/xpdf/libxpdf.ac)
 sinclude(libs/t1lib/t1lib.ac)
 sinclude(libs/gd/gd.ac)
 sinclude(libs/freetype/freetype.ac)
+sinclude(libs/freetype2/freetype2.ac)
 
-LIBSDEP="$CURSESDEP $ZLIBDEP $LIBPNGDEP $LIBXPDFDEP $LIBT1DEP $GDDEP $FREETYPEDEP"
+LIBSDEP="$CURSESDEP $ZLIBDEP $LIBPNGDEP $LIBXPDFDEP $LIBT1DEP $GDDEP $FREETYPEDEP $FREETYPE2DEP"
 
 LIBSDIRS=
 test "$needs_ncurses" = yes && test "$using_system_ncurses" != yes \
@@ -189,6 +201,8 @@ test "$needs_gd" = yes && test "$using_system_gd" != yes \
   && LIBSDIRS="$GDDIR $LIBSDIRS"
 test "$needs_freetype" = yes && test "$using_system_freetype" != yes \
   && LIBSDIRS="$FREETYPEDIR $LIBSDIRS"
+test "$needs_freetype2" = yes && test "$using_system_freetype2" != yes \
+  && LIBSDIRS="$FREETYPE2DIR $LIBSDIRS"
 
 AC_CONFIG_SUBDIRS([libs])
 
