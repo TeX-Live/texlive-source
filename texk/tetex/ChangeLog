@@ -1,3 +1,8 @@
+2006-07-13  Karl Berry  <karl@tug.org>
+
+	* ps4pdf (tmpdir): don't lose check for TMPDIR and TEMP which te
+	had.
+
 Sat Dec 18 14:19:43 CET 1999 te
 	* added manpages for epstopdf and dvi2fax (contributed by "James
 	R. Van Zandt" <jrv@vanzandt.mv.com>)

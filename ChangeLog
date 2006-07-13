@@ -1,3 +1,7 @@
+2006-07-12  Karl Berry  <karl@tug.org>
+
+	* utils/sam2p/Makefile (install): use cp -p, not -a.
+
 2006-06-02  Karl Berry  <karl@tug.org>
 
 	* texk/web2c/omegadir/com16bit.ch, alephdir/com16bit-rc2.ch
