@@ -84,6 +84,7 @@ kpse_expand_kpse_dot P1C(string, path)
 
   for (elt = kpse_path_element (path); elt; elt = kpse_path_element (NULL)) {
     string save_ret = ret;
+    boolean ret_copied = true;
     /* We assume that the !! magic is only used on absolute components.
        Single "." gets special treatment, as does "./" or its equivalent. */
     if (kpse_absolute_p (elt, false) || (elt[0] == '!' && elt[1] == '!')) {
@@ -93,11 +94,16 @@ kpse_expand_kpse_dot P1C(string, path)
 #ifndef VMS
     } else if (elt[0] == '.' && IS_DIR_SEP(elt[1])) {
       ret = concatn (ret, kpse_dot, elt + 1, ENV_SEP_STRING, NULL);
-    } else {
+    } else if (*elt) {
       ret = concatn (ret, kpse_dot, DIR_SEP_STRING, elt, ENV_SEP_STRING, NULL);
 #endif
+    } else {
+      /* omit empty path elements from TEXMFCNF.
+         See http://bugs.debian.org/358330.  */
+      ret_copied = false;
     }
-    free (save_ret);
+    if (ret_copied)
+      free (save_ret);
   }
 
 #ifdef MSDOS
