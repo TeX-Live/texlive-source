@@ -1,3 +1,9 @@
+2006-07-15  Karl Berry  <karl@tug.org>
+
+	* expand.c (kpse_expand_kpse_dot): omit empty path elements from
+	TEXMFCNF, per http://bugs.debian.org/358330.  Patch from Julian
+	Gilbey, tex-k/tex-live mail 27 Mar 2006 19:32:43 +0100.
+
 2006-02-03  Karl Berry  <karl@tug.org>
 
 	* mktexlsr: ignore .svn directories.
