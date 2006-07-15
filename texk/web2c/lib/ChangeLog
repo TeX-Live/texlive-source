@@ -1,3 +1,9 @@
+2006-07-15  Karl Berry  <karl@tug.org>
+
+	* mfmpi386.asm (asm): prepend with .text to avoid seg fault with
+	-g3 or -ggdb3 due to the symbols ending up in the data section.
+	tex-k report by Edward Catmur, 29 Mar 2006 00:09:15 +0100.
+
 2006-06-19  Karl Berry  <karl@tug.org>
 
 	* texmfmp.c (open_in_or_pipe) [!pdfTeX && !pdfeTeX]: track
