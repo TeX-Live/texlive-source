@@ -2,8 +2,8 @@
    and MetaPost. Public domain. Included in texmfmp.c. 
    By Wayne Sullivan <wgs@maths.ucd.ie>. */
 
-asm(".text\n
-        .align 4\n"
+asm(".text\n"
+"        .align 4\n"
 #ifdef ASM_NEEDS_UNDERSCORE
 ".globl _ztakefraction\n"
 "_ztakefraction:\n"
