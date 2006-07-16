@@ -2960,6 +2960,9 @@ fi
 
 echo $ac_n "checking where the main texmf tree is located""... $ac_c" 1>&6
 echo "configure:2963: checking where the main texmf tree is located" >&5
+case $prefix in
+  */) prefix=`echo "$prefix" | sed 's@/*$@@'`;;
+esac
 texmfmain=
 if test "x$datadir" != 'x${prefix}/share'; then
   # First case, datadir is defined...
@@ -3024,7 +3027,7 @@ EOF
 
 
 echo $ac_n "checking for main in -lm""... $ac_c" 1>&6
-echo "configure:3028: checking for main in -lm" >&5
+echo "configure:3031: checking for main in -lm" >&5
 ac_lib_var=`echo m'_'main | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -3032,14 +3035,14 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lm  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3036 "configure"
+#line 3039 "configure"
 #include "confdefs.h"
 
 int main() {
 main()
 ; return 0; }
 EOF
-if { (eval echo configure:3043: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:3046: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_lib_$ac_lib_var=yes"
 else
@@ -3067,7 +3070,7 @@ else
 fi
 
 echo $ac_n "checking for basename in -lgen""... $ac_c" 1>&6
-echo "configure:3071: checking for basename in -lgen" >&5
+echo "configure:3074: checking for basename in -lgen" >&5
 ac_lib_var=`echo gen'_'basename | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -3075,7 +3078,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lgen  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3079 "configure"
+#line 3082 "configure"
 #include "confdefs.h"
 /* Override any gcc2 internal prototype to avoid an error.  */
 /* We use char because int might match the return type of a gcc2
@@ -3086,7 +3089,7 @@ int main() {
 basename()
 ; return 0; }
 EOF
-if { (eval echo configure:3090: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:3093: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_lib_$ac_lib_var=yes"
 else

@@ -69,7 +69,7 @@ acnew () {	# $dir=current, $dir/$rdir->./texk/m4 with the KPSE macros.
 	#echo "Running aclocal-1.9 (patched) in \`$dir'"
 	#$topdir/config/aclocal-1.9peb --force $arg || return
 	echo "    Running autoconf-2.59 in \`$dir'"
-	/usr/bin/autoconf2.50 --force || return
+	/usr/bin/autoconf --force || return
 	#rm -rf autom4te.cache
 }
 
@@ -84,6 +84,8 @@ for dir in `find utils libs texk -name configure.in | sed 's,/configure.in$,,'`;
 		;;
 		*/ncurses)	# ncurses has it's own special configure
 		;;
+		*/libgnuw32)	# only for windows
+		;;
 		utils/*)	# Skip everything in utils for now.
 		;;
 		*/curl)		# Is automade.
@@ -93,7 +95,7 @@ for dir in `find utils libs texk -name configure.in | sed 's,/configure.in$,,'`;
 		;;
 		texk/*)	rdir=`echo $dir | sed -e 's,^texk/,,' -e 's,[^/]*,..,g'`/m4
 			case $dir in
-				*/dvipng|*/devnag|*/dvipdfmx)
+				*/devnag|*/dvipdfmx)
 					(cd $dir; acnew);;
 				*)	(cd $dir; acold);;
 			esac

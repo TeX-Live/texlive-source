@@ -1,3 +1,7 @@
+2006-07-16  Karl Berry  <karl@tug.org>
+
+	* mfmpi386.asm: missing " chars.
+
 2006-07-15  Karl Berry  <karl@tug.org>
 
 	* mfmpi386.asm (asm): prepend with .text to avoid seg fault with

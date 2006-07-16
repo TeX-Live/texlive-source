@@ -1321,6 +1321,9 @@ fi
 
 echo $ac_n "checking where the main texmf tree is located""... $ac_c" 1>&6
 echo "configure:1324: checking where the main texmf tree is located" >&5
+case $prefix in
+  */) prefix=`echo "$prefix" | sed 's@/*$@@'`;;
+esac
 texmfmain=
 if test "x$datadir" != 'x${prefix}/share'; then
   # First case, datadir is defined...
@@ -1425,7 +1428,7 @@ else
 
   if test "$with_system_zlib" = yes; then
     echo $ac_n "checking for inflate in -lz""... $ac_c" 1>&6
-echo "configure:1429: checking for inflate in -lz" >&5
+echo "configure:1432: checking for inflate in -lz" >&5
 ac_lib_var=`echo z'_'inflate | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -1433,7 +1436,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lz  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 1437 "configure"
+#line 1440 "configure"
 #include "confdefs.h"
 /* Override any gcc2 internal prototype to avoid an error.  */
 /* We use char because int might match the return type of a gcc2
@@ -1444,7 +1447,7 @@ int main() {
 inflate()
 ; return 0; }
 EOF
-if { (eval echo configure:1448: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:1451: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_lib_$ac_lib_var=yes"
 else
@@ -1480,17 +1483,17 @@ fi
 do
 ac_safe=`echo "$ac_hdr" | sed 'y%./+-%__p_%'`
 echo $ac_n "checking for $ac_hdr""... $ac_c" 1>&6
-echo "configure:1484: checking for $ac_hdr" >&5
+echo "configure:1487: checking for $ac_hdr" >&5
 if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1489 "configure"
+#line 1492 "configure"
 #include "confdefs.h"
 #include <$ac_hdr>
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:1494: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:1497: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.${ac_ext}\$"`
 if test -z "$ac_err"; then
   rm -rf conftest*
@@ -1590,7 +1593,7 @@ else
 
   if test "$with_system_pnglib" = yes; then
       echo $ac_n "checking for png_set_read_fn in -lpng""... $ac_c" 1>&6
-echo "configure:1594: checking for png_set_read_fn in -lpng" >&5
+echo "configure:1597: checking for png_set_read_fn in -lpng" >&5
 ac_lib_var=`echo png'_'png_set_read_fn | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -1598,7 +1601,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lpng -lz -lm $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 1602 "configure"
+#line 1605 "configure"
 #include "confdefs.h"
 /* Override any gcc2 internal prototype to avoid an error.  */
 /* We use char because int might match the return type of a gcc2
@@ -1609,7 +1612,7 @@ int main() {
 png_set_read_fn()
 ; return 0; }
 EOF
-if { (eval echo configure:1613: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:1616: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_lib_$ac_lib_var=yes"
 else

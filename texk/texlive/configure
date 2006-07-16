@@ -1853,7 +1853,7 @@ darwin* | rhapsody*)
   esac
   ;;
 
-freebsd*)
+freebsd* | kfreebsd*-gnu)
   if echo __ELF__ | $CC -E - | grep __ELF__ > /dev/null; then
     case $host_cpu in
     i*86 )
@@ -3630,7 +3630,7 @@ else
     ;;
 
   # FreeBSD 3 and greater uses gcc -shared to do shared libraries.
-  freebsd*)
+  freebsd* | kfreebsd*-gnu)
     archive_cmds='$CC -shared -o $lib $libobjs $deplibs $compiler_flags'
     hardcode_libdir_flag_spec='-R$libdir'
     hardcode_direct=yes
@@ -4100,7 +4100,7 @@ freebsd1*)
   dynamic_linker=no
   ;;
 
-freebsd*-gnu*)
+kfreebsd*-gnu)
   version_type=linux
   need_lib_prefix=no
   need_version=no
@@ -6334,98 +6334,10 @@ EOF
 
 fi
 
-# Some BSD putenv's, e.g., FreeBSD, do malloc/free's on the environment.
-# This test program is due to Mike Hibler <mike@cs.utah.edu>.
-# We don't actually need to run this if we don't have putenv, but it
-# doesn't hurt.
-echo $ac_n "checking whether putenv uses malloc""... $ac_c" 1>&6
-echo "configure:6343: checking whether putenv uses malloc" >&5
-if eval "test \"`echo '$''{'kb_cv_func_putenv_malloc'+set}'`\" = set"; then
-  echo $ac_n "(cached) $ac_c" 1>&6
-else
-  if test "$cross_compiling" = yes; then
-  kb_cv_func_putenv_malloc=no
-else
-  cat > conftest.$ac_ext <<EOF
-#line 6351 "configure"
-#include "confdefs.h"
-
-#define VAR	"YOW_VAR"
-#define STRING1 "GabbaGabbaHey"
-#define STRING2 "Yow!!"		/* should be shorter than STRING1 */
-extern char *getenv (); /* in case char* and int don't mix gracefully */
-extern char *malloc (); /* ditto */
-main ()
-{
-  char *str1, *rstr1, *str2, *rstr2;
-  str1 = getenv (VAR);
-  if (str1)
-    exit (1);
-  str1 = malloc (strlen (VAR) + 1 + strlen (STRING1) + 1);
-  if (str1 == 0)
-    exit (2);
-  strcpy (str1, VAR);
-  strcat (str1, "=");
-  strcat (str1, STRING1);
-  if (putenv (str1) < 0)
-    exit (3);
-  rstr1 = getenv (VAR);
-  if (rstr1 == 0)
-    exit (4);
-  rstr1 -= strlen (VAR) + 1;
-  if (strncmp (rstr1, VAR, strlen (VAR)))
-    exit (5);
-  str2 = malloc (strlen (VAR) + 1 + strlen (STRING2) + 1);
-  if (str2 == 0 || str1 == str2)
-    exit (6);
-  strcpy (str2, VAR);
-  strcat (str2, "=");
-  strcat (str2, STRING2);
-  if (putenv (str2) < 0)
-    exit (7);
-  rstr2 = getenv (VAR);
-  if (rstr2 == 0)
-    exit (8);
-  rstr2 -= strlen (VAR) + 1;
-#if 0
-  printf ("rstr1=0x%x, rstr2=0x%x\n", rstr1, rstr2);
-  /*
-   * If string from first call was reused for the second call,
-   * you had better not do a free on the first string!
-   */
-  if (rstr1 == rstr2)
-          printf ("#define SMART_PUTENV\n");
-  else
-          printf ("#undef SMART_PUTENV\n");
-#endif
-  exit (rstr1 == rstr2 ? 0 : 1);
-}
-EOF
-if { (eval echo configure:6405: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
-then
-  kb_cv_func_putenv_malloc=yes
-else
-  echo "configure: failed program was:" >&5
-  cat conftest.$ac_ext >&5
-  rm -fr conftest*
-  kb_cv_func_putenv_malloc=no
-fi
-rm -fr conftest*
-fi
-
-fi
-echo "$ac_t""$kb_cv_func_putenv_malloc" 1>&6
-if test $kb_cv_func_putenv_malloc = yes; then
-  cat >> confdefs.h <<\EOF
-#define SMART_PUTENV 1
-EOF
-
-fi
-
 if test $ac_cv_func_getcwd = yes; then
 # We only need to run this if we have getcwd.
 echo $ac_n "checking whether getcwd uses fork or vfork""... $ac_c" 1>&6
-echo "configure:6429: checking whether getcwd uses fork or vfork" >&5
+echo "configure:6341: checking whether getcwd uses fork or vfork" >&5
 if eval "test \"`echo '$''{'kb_cv_func_getcwd_forks'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -6433,7 +6345,7 @@ else
   kb_cv_func_getcwd_forks=no
 else
   cat > conftest.$ac_ext <<EOF
-#line 6437 "configure"
+#line 6349 "configure"
 #include "confdefs.h"
 
 int fork() { exit(1); }
@@ -6445,7 +6357,7 @@ getcwd(path,100);
 return 0;
 }
 EOF
-if { (eval echo configure:6449: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
+if { (eval echo configure:6361: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
 then
   kb_cv_func_getcwd_forks=no
 else
@@ -6470,7 +6382,7 @@ fi
 # Common --with and --enable options.
 
 echo $ac_n "checking whether to enable maintainer-specific portions of Makefiles""... $ac_c" 1>&6
-echo "configure:6474: checking whether to enable maintainer-specific portions of Makefiles" >&5
+echo "configure:6386: checking whether to enable maintainer-specific portions of Makefiles" >&5
     # Check whether --enable-maintainer-mode or --disable-maintainer-mode was given.
 if test "${enable_maintainer_mode+set}" = set; then
   enableval="$enable_maintainer_mode"
@@ -6489,7 +6401,7 @@ fi
 
 
 echo $ac_n "checking for loader (symbol LD)""... $ac_c" 1>&6
-echo "configure:6493: checking for loader (symbol LD)" >&5
+echo "configure:6405: checking for loader (symbol LD)" >&5
 if eval "test \"`echo '$''{'cf_cv_subst_LD'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -6503,7 +6415,7 @@ echo "$ac_t""$LD" 1>&6
 
 
 echo $ac_n "checking for archiver (symbol AR)""... $ac_c" 1>&6
-echo "configure:6507: checking for archiver (symbol AR)" >&5
+echo "configure:6419: checking for archiver (symbol AR)" >&5
 if eval "test \"`echo '$''{'cf_cv_subst_AR'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -6517,7 +6429,7 @@ echo "$ac_t""$AR" 1>&6
 
 
 echo $ac_n "checking for archiver options (symbol ARFLAGS)""... $ac_c" 1>&6
-echo "configure:6521: checking for archiver options (symbol ARFLAGS)" >&5
+echo "configure:6433: checking for archiver options (symbol ARFLAGS)" >&5
 if eval "test \"`echo '$''{'cf_cv_subst_ARFLAGS'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -6587,14 +6499,13 @@ fi
 
 
 echo $ac_n "checking where the main texmf tree is located""... $ac_c" 1>&6
-echo "configure:6591: checking where the main texmf tree is located" >&5
+echo "configure:6503: checking where the main texmf tree is located" >&5
+case $prefix in
+  */) prefix=`echo "$prefix" | sed 's@/*$@@'`;;
+esac
 texmfmain=
-if test -n "$TEXMFMAIN"; then
-  texmfmain="$TEXMFMAIN"
-  echo "$ac_t""$texmfmain (from TEXMFMAIN)" 1>&6
-
-elif test "x$datadir" != 'x${prefix}/share'; then
-  # datadir is explicitly defined, assume datadir/texmf.
+if test "x$datadir" != 'x${prefix}/share'; then
+  # First case, datadir is defined...
   eval p=\"$datadir\"
   # Unconditionally set the directory, but...
   texmfmain=`echo "$p/texmf" | sed 's,//*,/,g'`
@@ -6603,17 +6514,15 @@ elif test "x$datadir" != 'x${prefix}/share'; then
     echo "$ac_t"""$texmfmain"" 1>&6
   else
     echo "$ac_t""not found" 1>&6
-    echo "configure: warning: No texmf tree found at datadir/texmf ($texmfmain)" 1>&2
-    echo "configure: warning: proceeding anyway.
+    echo "configure: warning: No texmf tree found at $texmfmain.
   *****************************************************************
-  * Warning: The main texmf tree was not found.                   *
-  * If you do not have the files, you should be able to find them *
-  * at the same place you got these sources, or from one of the   *
-  * CTAN hosts. Good luck.                                        *
+  * Error: The main texmf tree was not found.                     *
+  * If you do not have the files, you should be able to them from *
+  * the same place you got these sources from, or from one of the *
+  * CTAN hosts.                                                   *
   *****************************************************************
-" 1>&2
+  Winging it." 1>&2
   fi
-
 else
   # Second case, datadir is default...
   if test "x$prefix" = "xNONE"; then
@@ -6640,7 +6549,7 @@ else
     echo "$ac_t""not found" 1>&6
     echo "configure: warning: The main texmf tree was not found at $texmfmain.
   *****************************************************************
-  * Warning: The main texmf tree was not found.                   *
+  * Error: The main texmf tree was not found.                     *
   * Use the --datadir option to specify its parent directory.     *
   * If you do not have the files, you should be able to them from *
   * the same place you got these sources from, or from one of the *
@@ -6698,7 +6607,7 @@ fi
 
 # Is libm present.  FIXME: do we need it at all?
 echo $ac_n "checking for main in -lm""... $ac_c" 1>&6
-echo "configure:6702: checking for main in -lm" >&5
+echo "configure:6611: checking for main in -lm" >&5
 ac_lib_var=`echo m'_'main | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -6706,14 +6615,14 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lm  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 6710 "configure"
+#line 6619 "configure"
 #include "confdefs.h"
 
 int main() {
 main()
 ; return 0; }
 EOF
-if { (eval echo configure:6717: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:6626: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_lib_$ac_lib_var=yes"
 else

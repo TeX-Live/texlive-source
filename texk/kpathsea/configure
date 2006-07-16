@@ -6479,6 +6479,9 @@ fi
 
 echo $ac_n "checking where the main texmf tree is located""... $ac_c" 1>&6
 echo "configure:6482: checking where the main texmf tree is located" >&5
+case $prefix in
+  */) prefix=`echo "$prefix" | sed 's@/*$@@'`;;
+esac
 texmfmain=
 if test "x$datadir" != 'x${prefix}/share'; then
   # First case, datadir is defined...
@@ -6583,7 +6586,7 @@ fi
 
 # Is libm present.  FIXME: do we need it at all?
 echo $ac_n "checking for main in -lm""... $ac_c" 1>&6
-echo "configure:6587: checking for main in -lm" >&5
+echo "configure:6590: checking for main in -lm" >&5
 ac_lib_var=`echo m'_'main | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -6591,14 +6594,14 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lm  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 6595 "configure"
+#line 6598 "configure"
 #include "confdefs.h"
 
 int main() {
 main()
 ; return 0; }
 EOF
-if { (eval echo configure:6602: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:6605: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_lib_$ac_lib_var=yes"
 else

@@ -550,13 +550,12 @@ fi
 
 
 
- 
 
 
 # Extract the first word of "gcc", so it can be a program name with args.
 set dummy gcc; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:560: checking for $ac_word" >&5
+echo "configure:559: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_CC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -587,7 +586,7 @@ if test -z "$CC"; then
   # Extract the first word of "cc", so it can be a program name with args.
 set dummy cc; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:591: checking for $ac_word" >&5
+echo "configure:590: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_CC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -639,7 +638,7 @@ fi
       # Extract the first word of "cl", so it can be a program name with args.
 set dummy cl; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:643: checking for $ac_word" >&5
+echo "configure:642: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_CC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -672,7 +671,7 @@ fi
 fi
 
 echo $ac_n "checking whether the C compiler ($CC $CFLAGS $LDFLAGS) works""... $ac_c" 1>&6
-echo "configure:676: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) works" >&5
+echo "configure:675: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) works" >&5
 
 ac_ext=c
 # CFLAGS is not in ac_cpp because -g, -O, etc. are not valid cpp options.
@@ -683,12 +682,12 @@ cross_compiling=$ac_cv_prog_cc_cross
 
 cat > conftest.$ac_ext << EOF
 
-#line 687 "configure"
+#line 686 "configure"
 #include "confdefs.h"
 
 main(){return(0);}
 EOF
-if { (eval echo configure:692: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:691: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   ac_cv_prog_cc_works=yes
   # If we can't run a trivial program, we are probably using a cross compiler.
   if (./conftest; exit) 2>/dev/null; then
@@ -714,12 +713,12 @@ if test $ac_cv_prog_cc_works = no; then
   { echo "configure: error: installation or configuration problem: C compiler cannot create executables." 1>&2; exit 1; }
 fi
 echo $ac_n "checking whether the C compiler ($CC $CFLAGS $LDFLAGS) is a cross-compiler""... $ac_c" 1>&6
-echo "configure:718: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) is a cross-compiler" >&5
+echo "configure:717: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) is a cross-compiler" >&5
 echo "$ac_t""$ac_cv_prog_cc_cross" 1>&6
 cross_compiling=$ac_cv_prog_cc_cross
 
 echo $ac_n "checking whether we are using GNU C""... $ac_c" 1>&6
-echo "configure:723: checking whether we are using GNU C" >&5
+echo "configure:722: checking whether we are using GNU C" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_gcc'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -728,7 +727,7 @@ else
   yes;
 #endif
 EOF
-if { ac_try='${CC-cc} -E conftest.c'; { (eval echo configure:732: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; } | egrep yes >/dev/null 2>&1; then
+if { ac_try='${CC-cc} -E conftest.c'; { (eval echo configure:731: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; } | egrep yes >/dev/null 2>&1; then
   ac_cv_prog_gcc=yes
 else
   ac_cv_prog_gcc=no
@@ -747,7 +746,7 @@ ac_test_CFLAGS="${CFLAGS+set}"
 ac_save_CFLAGS="$CFLAGS"
 CFLAGS=
 echo $ac_n "checking whether ${CC-cc} accepts -g""... $ac_c" 1>&6
-echo "configure:751: checking whether ${CC-cc} accepts -g" >&5
+echo "configure:750: checking whether ${CC-cc} accepts -g" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_cc_g'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -815,7 +814,7 @@ ac_configure=$ac_aux_dir/configure # This should be Cygnus configure.
 # SVR4 /usr/ucb/install, which tries to use the nonexistent group "staff"
 # ./install, which can be erroneously created by make from ./install.sh.
 echo $ac_n "checking for a BSD compatible install""... $ac_c" 1>&6
-echo "configure:819: checking for a BSD compatible install" >&5
+echo "configure:818: checking for a BSD compatible install" >&5
 if test -z "$INSTALL"; then
 if eval "test \"`echo '$''{'ac_cv_path_install'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -870,7 +869,7 @@ test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL}'
 test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
 
 echo $ac_n "checking whether ${MAKE-make} sets \${MAKE}""... $ac_c" 1>&6
-echo "configure:874: checking whether ${MAKE-make} sets \${MAKE}" >&5
+echo "configure:873: checking whether ${MAKE-make} sets \${MAKE}" >&5
 set dummy ${MAKE-make}; ac_make=`echo "$2" | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_prog_make_${ac_make}_set'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -897,7 +896,7 @@ else
 fi
 
 echo $ac_n "checking whether ln -s works""... $ac_c" 1>&6
-echo "configure:901: checking whether ln -s works" >&5
+echo "configure:900: checking whether ln -s works" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_LN_S'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -923,7 +922,7 @@ fi
 # Extract the first word of "flex", so it can be a program name with args.
 set dummy flex; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:927: checking for $ac_word" >&5
+echo "configure:926: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_LEX'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -958,7 +957,7 @@ then
   *) ac_lib=l ;;
   esac
   echo $ac_n "checking for yywrap in -l$ac_lib""... $ac_c" 1>&6
-echo "configure:962: checking for yywrap in -l$ac_lib" >&5
+echo "configure:961: checking for yywrap in -l$ac_lib" >&5
 ac_lib_var=`echo $ac_lib'_'yywrap | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -966,7 +965,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-l$ac_lib  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 970 "configure"
+#line 969 "configure"
 #include "confdefs.h"
 /* Override any gcc2 internal prototype to avoid an error.  */
 /* We use char because int might match the return type of a gcc2
@@ -977,7 +976,7 @@ int main() {
 yywrap()
 ; return 0; }
 EOF
-if { (eval echo configure:981: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:980: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_lib_$ac_lib_var=yes"
 else
@@ -1000,7 +999,7 @@ fi
 fi
 
 echo $ac_n "checking how to run the C preprocessor""... $ac_c" 1>&6
-echo "configure:1004: checking how to run the C preprocessor" >&5
+echo "configure:1003: checking how to run the C preprocessor" >&5
 # On Suns, sometimes $CPP names a directory.
 if test -n "$CPP" && test -d "$CPP"; then
   CPP=
@@ -1015,13 +1014,13 @@ else
   # On the NeXT, cc -E runs the code through the compiler's parser,
   # not just through cpp.
   cat > conftest.$ac_ext <<EOF
-#line 1019 "configure"
+#line 1018 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:1025: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:1024: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.${ac_ext}\$"`
 if test -z "$ac_err"; then
   :
@@ -1032,13 +1031,13 @@ else
   rm -rf conftest*
   CPP="${CC-cc} -E -traditional-cpp"
   cat > conftest.$ac_ext <<EOF
-#line 1036 "configure"
+#line 1035 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:1042: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:1041: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.${ac_ext}\$"`
 if test -z "$ac_err"; then
   :
@@ -1049,13 +1048,13 @@ else
   rm -rf conftest*
   CPP="${CC-cc} -nologo -E"
   cat > conftest.$ac_ext <<EOF
-#line 1053 "configure"
+#line 1052 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:1059: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:1058: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.${ac_ext}\$"`
 if test -z "$ac_err"; then
   :
@@ -1080,7 +1079,7 @@ fi
 echo "$ac_t""$CPP" 1>&6
 
 echo $ac_n "checking lex output file root""... $ac_c" 1>&6
-echo "configure:1084: checking lex output file root" >&5
+echo "configure:1083: checking lex output file root" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_lex_root'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1102,7 +1101,7 @@ LEX_OUTPUT_ROOT=$ac_cv_prog_lex_root
 rm -f "${LEX_OUTPUT_ROOT}.c"
 
 echo $ac_n "checking whether yytext is a pointer""... $ac_c" 1>&6
-echo "configure:1106: checking whether yytext is a pointer" >&5
+echo "configure:1105: checking whether yytext is a pointer" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_lex_yytext_pointer'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1123,14 +1122,14 @@ int yywrap () { return 1; }
 ac_save_LIBS="$LIBS"
 LIBS="$LIBS $LEXLIB"
 cat > conftest.$ac_ext <<EOF
-#line 1127 "configure"
+#line 1126 "configure"
 #include "confdefs.h"
 `cat $LEX_OUTPUT_ROOT.c`
 int main() {
 
 ; return 0; }
 EOF
-if { (eval echo configure:1134: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:1133: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   ac_cv_prog_lex_yytext_pointer=yes
 else
@@ -1151,7 +1150,7 @@ EOF
 
 else
 echo $ac_n "checking whether yytext is an array of char""... $ac_c" 1>&6
-echo "configure:1155: checking whether yytext is an array of char" >&5
+echo "configure:1154: checking whether yytext is an array of char" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_lex_yytext_char'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1174,14 +1173,14 @@ int yywrap () { return 1; }
 ac_save_LIBS="$LIBS"
 LIBS="$LIBS $LEXLIB"
 cat > conftest.$ac_ext <<EOF
-#line 1178 "configure"
+#line 1177 "configure"
 #include "confdefs.h"
 `cat $LEX_OUTPUT_ROOT.c`
 int main() {
 
 ; return 0; }
 EOF
-if { (eval echo configure:1185: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:1184: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   ac_cv_prog_lex_yytext_char=yes
 else
@@ -1202,7 +1201,7 @@ EOF
 
 else
 echo $ac_n "checking whether yytext is an array of unsigned char""... $ac_c" 1>&6
-echo "configure:1206: checking whether yytext is an array of unsigned char" >&5
+echo "configure:1205: checking whether yytext is an array of unsigned char" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_lex_yytext_uchar'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1224,14 +1223,14 @@ int yywrap () { return 1; }
 ac_save_LIBS="$LIBS"
 LIBS="$LIBS $LEXLIB"
 cat > conftest.$ac_ext <<EOF
-#line 1228 "configure"
+#line 1227 "configure"
 #include "confdefs.h"
 `cat $LEX_OUTPUT_ROOT.c`
 int main() {
 
 ; return 0; }
 EOF
-if { (eval echo configure:1235: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:1234: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   ac_cv_prog_lex_yytext_uchar=yes
 else
@@ -1255,12 +1254,12 @@ fi
 fi
 
 echo $ac_n "checking whether time.h and sys/time.h may both be included""... $ac_c" 1>&6
-echo "configure:1259: checking whether time.h and sys/time.h may both be included" >&5
+echo "configure:1258: checking whether time.h and sys/time.h may both be included" >&5
 if eval "test \"`echo '$''{'ac_cv_header_time'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1264 "configure"
+#line 1263 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #include <sys/time.h>
@@ -1269,7 +1268,7 @@ int main() {
 struct tm *tp;
 ; return 0; }
 EOF
-if { (eval echo configure:1273: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:1272: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   ac_cv_header_time=yes
 else
@@ -1292,7 +1291,7 @@ fi
 
 
 echo $ac_n "checking whether to enable maintainer-specific portions of Makefiles""... $ac_c" 1>&6
-echo "configure:1296: checking whether to enable maintainer-specific portions of Makefiles" >&5
+echo "configure:1295: checking whether to enable maintainer-specific portions of Makefiles" >&5
     # Check whether --enable-maintainer-mode or --disable-maintainer-mode was given.
 if test "${enable_maintainer_mode+set}" = set; then
   enableval="$enable_maintainer_mode"
@@ -1311,7 +1310,7 @@ fi
 
 
 echo $ac_n "checking for loader (symbol LD)""... $ac_c" 1>&6
-echo "configure:1315: checking for loader (symbol LD)" >&5
+echo "configure:1314: checking for loader (symbol LD)" >&5
 if eval "test \"`echo '$''{'cf_cv_subst_LD'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1325,7 +1324,7 @@ echo "$ac_t""$LD" 1>&6
 
 
 echo $ac_n "checking for archiver (symbol AR)""... $ac_c" 1>&6
-echo "configure:1329: checking for archiver (symbol AR)" >&5
+echo "configure:1328: checking for archiver (symbol AR)" >&5
 if eval "test \"`echo '$''{'cf_cv_subst_AR'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1339,7 +1338,7 @@ echo "$ac_t""$AR" 1>&6
 
 
 echo $ac_n "checking for archiver options (symbol ARFLAGS)""... $ac_c" 1>&6
-echo "configure:1343: checking for archiver options (symbol ARFLAGS)" >&5
+echo "configure:1342: checking for archiver options (symbol ARFLAGS)" >&5
 if eval "test \"`echo '$''{'cf_cv_subst_ARFLAGS'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1409,14 +1408,13 @@ fi
 
 
 echo $ac_n "checking where the main texmf tree is located""... $ac_c" 1>&6
-echo "configure:1413: checking where the main texmf tree is located" >&5
+echo "configure:1412: checking where the main texmf tree is located" >&5
+case $prefix in
+  */) prefix=`echo "$prefix" | sed 's@/*$@@'`;;
+esac
 texmfmain=
-if test -n "$TEXMFMAIN"; then
-  texmfmain="$TEXMFMAIN"
-  echo "$ac_t""$texmfmain (from TEXMFMAIN)" 1>&6
-
-elif test "x$datadir" != 'x${prefix}/share'; then
-  # datadir is explicitly defined, assume datadir/texmf.
+if test "x$datadir" != 'x${prefix}/share'; then
+  # First case, datadir is defined...
   eval p=\"$datadir\"
   # Unconditionally set the directory, but...
   texmfmain=`echo "$p/texmf" | sed 's,//*,/,g'`
@@ -1425,17 +1423,15 @@ elif test "x$datadir" != 'x${prefix}/share'; then
     echo "$ac_t"""$texmfmain"" 1>&6
   else
     echo "$ac_t""not found" 1>&6
-    echo "configure: warning: No texmf tree found at datadir/texmf ($texmfmain)" 1>&2
-    echo "configure: warning: proceeding anyway.
+    echo "configure: warning: No texmf tree found at $texmfmain.
   *****************************************************************
-  * Warning: The main texmf tree was not found.                   *
-  * If you do not have the files, you should be able to find them *
-  * at the same place you got these sources, or from one of the   *
-  * CTAN hosts. Good luck.                                        *
+  * Error: The main texmf tree was not found.                     *
+  * If you do not have the files, you should be able to them from *
+  * the same place you got these sources from, or from one of the *
+  * CTAN hosts.                                                   *
   *****************************************************************
-" 1>&2
+  Winging it." 1>&2
   fi
-
 else
   # Second case, datadir is default...
   if test "x$prefix" = "xNONE"; then
@@ -1462,7 +1458,7 @@ else
     echo "$ac_t""not found" 1>&6
     echo "configure: warning: The main texmf tree was not found at $texmfmain.
   *****************************************************************
-  * Warning: The main texmf tree was not found.                   *
+  * Error: The main texmf tree was not found.                     *
   * Use the --datadir option to specify its parent directory.     *
   * If you do not have the files, you should be able to them from *
   * the same place you got these sources from, or from one of the *

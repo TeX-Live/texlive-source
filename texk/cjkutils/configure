@@ -1617,13 +1617,12 @@ fi
 
 echo $ac_n "checking where the main texmf tree is located""... $ac_c" 1>&6
 echo "configure:1620: checking where the main texmf tree is located" >&5
+case $prefix in
+  */) prefix=`echo "$prefix" | sed 's@/*$@@'`;;
+esac
 texmfmain=
-if test -n "$TEXMFMAIN"; then
-  texmfmain="$TEXMFMAIN"
-  echo "$ac_t""$texmfmain (from TEXMFMAIN)" 1>&6
-
-elif test "x$datadir" != 'x${prefix}/share'; then
-  # datadir is explicitly defined, assume datadir/texmf.
+if test "x$datadir" != 'x${prefix}/share'; then
+  # First case, datadir is defined...
   eval p=\"$datadir\"
   # Unconditionally set the directory, but...
   texmfmain=`echo "$p/texmf" | sed 's,//*,/,g'`
@@ -1632,17 +1631,15 @@ elif test "x$datadir" != 'x${prefix}/share'; then
     echo "$ac_t"""$texmfmain"" 1>&6
   else
     echo "$ac_t""not found" 1>&6
-    echo "configure: warning: No texmf tree found at datadir/texmf ($texmfmain)" 1>&2
-    echo "configure: warning: proceeding anyway.
+    echo "configure: warning: No texmf tree found at $texmfmain.
   *****************************************************************
-  * Warning: The main texmf tree was not found.                   *
-  * If you do not have the files, you should be able to find them *
-  * at the same place you got these sources, or from one of the   *
-  * CTAN hosts. Good luck.                                        *
+  * Error: The main texmf tree was not found.                     *
+  * If you do not have the files, you should be able to them from *
+  * the same place you got these sources from, or from one of the *
+  * CTAN hosts.                                                   *
   *****************************************************************
-" 1>&2
+  Winging it." 1>&2
   fi
-
 else
   # Second case, datadir is default...
   if test "x$prefix" = "xNONE"; then
@@ -1669,7 +1666,7 @@ else
     echo "$ac_t""not found" 1>&6
     echo "configure: warning: The main texmf tree was not found at $texmfmain.
   *****************************************************************
-  * Warning: The main texmf tree was not found.                   *
+  * Error: The main texmf tree was not found.                     *
   * Use the --datadir option to specify its parent directory.     *
   * If you do not have the files, you should be able to them from *
   * the same place you got these sources from, or from one of the *
@@ -1681,8 +1678,7 @@ fi
 
 
 
-ac_config_files="$ac_config_files Makefile conv/Makefile
-                   hbf2gf/Makefile scripts/Makefile"
+ac_config_files="$ac_config_files Makefile conv/Makefile hbf2gf/Makefile scripts/Makefile"
 
 trap '' 1 2 15
 cat > confcache <<\EOF

@@ -1,4 +1,5 @@
 Public domain.  Originally written by Karl Berry, 6jun05.
+$Id$
 
 To build the source tree, run ./Build.
 To build (mostly) without optimization, try CFLAGS=-g Build.
@@ -6,6 +7,9 @@ To build (mostly) without optimization, try CFLAGS=-g Build.
 The binaries will be left in ./inst/bin/<stdplatform>.
 Then copy the binaries to texmf/bin/<tlplatform> and p4 add/edit/delete them.
 (Don't worry about the other files and directories in inst.)
+
+Running ./reautoconf here reruns autoconf, both old (the hacked 2.13
+we have here) and new (assumed to be in /usr/bin/autoconf).
 
 Automadness:
 should be oldest > newest in this order (often used alternate names
