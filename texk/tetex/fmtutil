@@ -29,6 +29,7 @@
 ###############################################################################
 # program history:
 #   Fr Apr  8 19:15:05 CEST 2005 cleanup now has an argument for the return code
+#   Do Mar 02 10:42:31 CET 2006 add tmpdir to TEXFORMATS
 #   So Mär 27 18:52:06 CEST 2005 honor $TMPDIR, $TEMP and $TMP, not just $TMP
 #   Sa Jan 15 18:13:46 CET 2005 avoid multiple variable assignments in one statement
 #   Di Jan 11 11:42:36 CET 2005 fix --byhyphen with relative hyphenfile
@@ -517,6 +518,10 @@ main()
   # due to KPSE_DOT, we don't search the current directory, so include
   # it explicitly for formats that \write and later on \read
   TEXINPUTS="$tmpdir:$TEXINPUTS"; export TEXINPUTS
+  # for formats that load other formats (e.g., jadetex loads latex.fmt), 
+  # add the current directory to TEXFORMATS, too.  Currently unnecessary
+  # for MFBASES and MPMEMS.
+  TEXFORMATS="$tmpdir:$TEXFORMATS"; export TEXFORMATS
 
   setupTmpDir
   cd "$tmpdir" || cleanup 1
