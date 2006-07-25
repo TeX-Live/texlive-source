@@ -1,0 +1,9 @@
+The icu-xetex directory contains a *MODIFIED* copy of ICU release 3.4,
+used in building xetex.
+
+The following files have been added:
+
+  icu-xetex.ac
+  withenable.ac
+
+See libs/icu-xetex/README for more information.
