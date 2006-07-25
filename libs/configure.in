@@ -26,6 +26,8 @@ sinclude(freetype/withenable.ac)
 sinclude(freetype/freetype.ac)
 sinclude(freetype2/withenable.ac)
 sinclude(freetype2/freetype2.ac)
+sinclude(icu-xetex/withenable.ac)
+sinclude(icu-xetex/icu-xetex.ac)
 
 # The following line helps, e.g. for ncurses which properly detects the
 # system's terminfo definitions if configured without explicit --prefix.
@@ -48,6 +50,10 @@ if test "x$needs_freetype2" != xno && test "$using_system_freetype2" != yes; the
 fi
 if test "x$needs_gd" != xno && test "$using_system_gd" != yes; then
   AC_CONFIG_SUBDIRS([gd])
+fi
+if test "x$needs_icu" != xno && test "$using_system_icu" != yes; then
+  ac_configure_args="$ac_configure_args --enable-static"
+  AC_CONFIG_SUBDIRS([icu-xetex])
 fi
 
 if test "x$needs_pnglib" != xno && test "$using_system_pnglib"  != yes; then

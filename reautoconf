@@ -84,6 +84,9 @@ for dir in `find utils libs texk -name configure.in | sed 's,/configure.in$,,'`;
 		;;
 		*/ncurses)	# ncurses has it's own special configure
 		;;
+		*/icu*)		# ICU needs new autoconf
+			(cd $dir; acnew)
+		;;
 		*/libgnuw32)	# only for windows
 		;;
 		utils/*)	# Skip everything in utils for now.
