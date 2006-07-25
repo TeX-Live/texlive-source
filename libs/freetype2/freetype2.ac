@@ -41,7 +41,7 @@ else
   LIBS=$OLD_LIBS
 
   if test "$with_system_freetype2" != yes; then
-    FREETYPE2CPPFLAGS='-I$(FREETYPE2DIR)/lib -I$(FREETYPE2SRCDIR)/lib'
+    FREETYPE2CPPFLAGS='-I$(FREETYPE2SRCDIR)/include'
     LDFREETYPE2='$(FREETYPE2DIR)/.libs/libfreetype.a'
     FREETYPE2DEP='$(FREETYPE2DIR)/.libs/libfreetype.a'
     using_system_freetype2=no
