@@ -558,6 +558,7 @@ kpse_include omegadir/omega.mk
 kpse_include alephdir/aleph.mk
 kpse_include pdftexdir/pdftex.mk
 kpse_include pdfetexdir/pdfetex.mk
+kpse_include xetexdir/xetex.mk
 # 
 # Common
 programs = bibtex ctangle ctie cweave dvicopy dvitomp dvitype gftodvi gftopk \
@@ -565,7 +566,8 @@ programs = bibtex ctangle ctie cweave dvicopy dvitomp dvitype gftodvi gftopk \
  pooltype tangle tftopl tie $(ttf2afm) vftovp vptovf weave
 engines = $(tex) $(etex) $(mf) $(mfn) $(mpost) \
           $(omega) $(aleph) \
-          $(pdftex) $(pdfetex)
+          $(pdftex) $(pdfetex) \
+          $(xetex)
 
 programs: $(programs) $(engines) $(mpware_programs) \
           $(omegafonts_programs) $(otps_programs) $(pdftosrc)

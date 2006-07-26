@@ -95,6 +95,9 @@ sinclude(../../libs/libpng/withenable.ac)
 sinclude(../../libs/zlib/zlib.ac)
 sinclude(../../libs/libpng/libpng.ac)
 sinclude(../../libs/xpdf/libxpdf.ac)
+sinclude(../../libs/freetype2/freetype2.ac)
+sinclude(../../libs/teckit/teckit.ac)
+sinclude(../../libs/icu-xetex/icu-xetex.ac)
 
 # Whether to build mf-nowin.
 : ${with_mf_nowin=no} # Default.
@@ -161,9 +164,34 @@ else
   with_pdfetex=no
 fi
 
+# For XeTeX
+if test -d $srcdir/xetexdir \
+    && test -d $srcdir/etexdir; then
+  test "${with_xetex+set}" = set || with_xetex=yes
+else
+  if test "x$with_xetex" = xyes; then
+    AC_MSG_WARN(Not all sources of XeTeX are available.)
+  fi
+  with_xetex=no
+fi
+
+sinclude(xetexdir/tests.ac)
+AC_HAS_CARBON
+
+if test "x$has_carbon" = "xyes"; then
+  XETEX_MACOSX=
+  XETEX_GENERIC='#! '
+else
+  XETEX_MACOSX='#! '
+  XETEX_GENERIC=
+fi
+AC_SUBST(XETEX_MACOSX)
+AC_SUBST(XETEX_GENERIC)
+
 # Check whether C++ compiler works.  Prevent exit if it doesn't.
 if test "x$with_pdftex"  = xyes ||
-   test "x$with_pdfetex" = xyes
+   test "x$with_pdfetex" = xyes ||
+   test "x$with_xetex"   = xyes
 then
   # First test whether the compiler works in a subshell, and if so,
   # do it again in the main shell so we see the result.
@@ -176,8 +204,11 @@ then
     && AC_MSG_WARN(No C++ compiler: pdfTeX will not be compiled.)
   test "x$with_pdfetex" = xyes \
     && AC_MSG_WARN(No C++ compiler: pdfeTeX will not be compiled.)
+  test "x$with_xetex" = xyes \
+    && AC_MSG_WARN(No C++ compiler: XeTeX will not be compiled.)
   with_pdftex=no
   with_pdfetex=no
+  with_xetex=no
   true
 }
 fi
@@ -257,6 +288,13 @@ else
   PETEX='#! '
 fi
 AC_SUBST(PETEX)
+
+if test "x$with_xetex" = xyes; then
+  XETEX=
+else
+  XETEX='#! '
+fi
+AC_SUBST(XETEX)
 
 # For e-TeX, three choices: no, yes, and tex.  In the latter case, we
 # have to comment out the normal TeX build (TEX), as well as enable the
