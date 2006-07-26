@@ -1,9 +1,13 @@
 #!/bin/sh
 
 # Copyright (C) 2004, Thomas Esser. Public domain.
-# New option "--crop", Rolf Niepraschk. 2005-03-08
-# dvips call only if the dvi file exist. 
-# ps2pdf call only if the ps file exist. Rolf Niepraschk. 2005-06-27
+# 2005-03-08: New option "--crop", Rolf Niepraschk. 
+# dvips call only if the dvi file exist (RN). 
+# 2005-06-27: ps2pdf call only if the ps file exist (RN). 
+# 2006-04-05: "\RequirePackage{pst-pdf}" added to the (pdf)LaTeX calls 
+#             as suggested by Niall Murphy.
+# 2006-07-14: Better temp dir handling (suggested by Karl Berry) (RN).
+# 2006-07-23: New option --Xps2pdf and code cleanup (thanks to Karl Berry) (RN).
 
 # First, work around bugs/limitations in some shells on some systems:
 test -f /bin/sh5 && test -z "$RUNNING_SH5" \
@@ -74,6 +78,7 @@ progname=pdflatexps
 silent=true # default setting; change if you like
 crop=false
 needsCleanup=false
+ps2pdf_opts="-dAutoRotatePages=/None"
 tmpdir=${TMPDIR-${TEMP-${TMP-/tmp}}}/.$progname$$
 log=$tmpdir/log
 version="1.0"
@@ -81,11 +86,16 @@ version="1.0"
 # look for optional things first
 while
   case $1 in
-   --help|-h) echo "$0 [-v|-q] file"
-              echo "Process LaTeX document containing PSforPDF macros."
-		                  exit 0;;
+   --help|-h) echo "$0 [-v|-q|--crop|--version|--Xps2pdf OPT] FILE"
+              echo "Process LaTeX document FILE using the pst-pdf package,"
+              echo "including running latex, dvips, and ps2pdf as necessary."
+              echo "--Xps2pdf OPT passes OPT to ps2pdf."
+              echo " (-dAutoRotatePages=/None is always passed.)"
+              echo "--crop runs pdfcrop on ps2pdf output."
+  		                   exit 0;;
    --version) echo "$progname version $version"; exit 0;;
    --crop|-c) crop=true;;
+   --Xps2pdf|-Xps2pdf) shift; ps2pdf_opts="$ps2pdf_opts $1";;
    -q) silent=true;;
    -v) silent=false;;
     -*) echo "$progname: unknown option $1 ignored";;
@@ -94,23 +104,30 @@ while
 do
   shift
 done
+
 # remaining option: filename
 file=$1
+if test -z "$file"; then
+  echo "$0: no file to process, try --help for more information." >&2
+  exit 1
+fi
 
 # jobname von TeX: Verzeichnisse entfernen, evtl. vorhandene Extension
 # entfernen.
 job=`echo "x$1" | sed 's@x@@; s@.*/@@; s@\.[^.]*$@@'`
 
 setupTmpDir
-myexec latex "$file"
+myexec latex \
+    "\AtBeginDocument{\RequirePackage{pst-pdf}} \input{$file}"
 test -f "$job.dvi" && myexec dvips -Ppdf -o "$job-pics.ps" "$job.dvi"
 test -f "$job-pics.ps" && myexec ps2pdf \
-  -dAutoRotatePages=/None "$job-pics.ps" "$job-pics.pdf"
+  "$ps2pdf_opts" "$job-pics.ps" "$job-pics.pdf"
 if $crop; then
   myexec pdfcrop "$job-pics.pdf" "$job-pics-crop.pdf" 
   mv "$job-pics-crop.pdf" "$job-pics.pdf"
 fi
-myexec pdflatex "$file"
-
+myexec pdflatex \
+    "\AtBeginDocument{\RequirePackage{pst-pdf}} \input{$file}"
 true
 cleanup
+
