@@ -3100,6 +3100,20 @@ fi
 
 
 
+if test "$needs_teckit" = no; then
+  TECKITCPPFLAGS=
+  LDTECKIT=
+  TECKITDEP=
+else
+  TECKITCPPFLAGS='-I$(TECKITSRCDIR)/source/Public-headers'
+  LDTECKIT='$(TECKITDIR)/lib/.libs/libTECkit.a'
+  TECKITDEP='$(TECKITDIR)/lib/.libs/libTECkit.a'
+fi
+
+
+
+
+
 
 # The following line helps, e.g. for ncurses which properly detects the
 # system's terminfo definitions if configured without explicit --prefix.
@@ -3132,6 +3146,10 @@ fi
 if test "x$needs_icu" != xno && test "$using_system_icu" != yes; then
   ac_configure_args="$ac_configure_args --enable-static"
   subdirs="$subdirs icu-xetex"
+
+fi
+if test "x$needs_teckit" != xno; then
+  subdirs="$subdirs teckit"
 
 fi
 
@@ -3336,6 +3354,9 @@ s%@FREETYPE2DEP@%$FREETYPE2DEP%g
 s%@ICUCPPFLAGS@%$ICUCPPFLAGS%g
 s%@LDICU@%$LDICU%g
 s%@ICUDEP@%$ICUDEP%g
+s%@TECKITCPPFLAGS@%$TECKITCPPFLAGS%g
+s%@LDTECKIT@%$LDTECKIT%g
+s%@TECKITDEP@%$TECKITDEP%g
 s%@subdirs@%$subdirs%g
 
 CEOF
