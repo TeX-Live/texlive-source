@@ -1,0 +1,4 @@
+2006-03-16
+	updated Unicode character names and normalization data to 5.0
+	added license files and docs to subversion repository
+	released new Windows binary package, supporting -x option in teckit_compile

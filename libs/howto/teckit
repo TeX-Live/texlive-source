@@ -1,0 +1,13 @@
+The teckit directory contains the source of the TECkit (Text Encoding Conversion
+toolkit) library and tools. See http://scripts.sil.org/teckit.
+
+The TECkit library is needed to build xetex.
+
+The subtrees teckit/source/teckitjni and teckit/perl_binaries have been removed
+as these are not relevant to building xetex or using the basic TECkit library.
+The copy of zlib source code found in the teckit tree has also been removed.
+
+The following files have been added:
+
+  teckit.ac
+  withenable.ac (currently empty)

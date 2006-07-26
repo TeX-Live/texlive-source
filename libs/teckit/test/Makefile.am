@@ -1,0 +1,12 @@
+EXTRA_DIST = dotests.pl
+EXTRA_DIST += GNT-map.xml
+EXTRA_DIST += ISO-8859-1.map
+EXTRA_DIST += Mrk-GNT.sf
+EXTRA_DIST += mrk.sf.legacy.txt.orig
+EXTRA_DIST += mrk.txt
+EXTRA_DIST += NormalizationTest.txt
+EXTRA_DIST += SILGreek2004-04-27.map
+EXTRA_DIST += SILGreek2004-04-27.tec.orig
+EXTRA_DIST += SILGreek2004-04-27.uncompressed.tec.orig
+EXTRA_DIST += academy.tec
+EXTRA_DIST += silipa93.tec

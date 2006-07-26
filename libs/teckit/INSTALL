@@ -1,0 +1,22 @@
+INSTALL
+
+For typical Unix-like systems:
+
+	./configure
+	make
+	[sudo] make install
+
+Installs tools into /usr/local/lib, with libraries and header files in
+/usr/local/lib and /usr/local/include respectively.
+
+Typical configure options such as --prefix should work, though little testing
+has been done.
+
+The tools installed are:
+	teckit_compile
+		compiler to create binary mapping tables (.tec) from text files (.map)
+	txtconv
+		simple tool to apply a mapping to a plain-text file
+	sfconv
+		tool to apply mappings to a Standard Format file, as specified by
+		a control file

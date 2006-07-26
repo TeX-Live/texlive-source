@@ -1,0 +1,697 @@
+;SILGreek.map
+;Copyright (c) 2002-2004 SIL International.
+
+; SIL Greek
+
+EncodingName			"SIL-GREEK_GALATIA-2001"
+DescriptiveName			"SIL Greek Encoding (Galatia)"
+
+Version					"1.0b5"
+Contact					"mailto:Jonathan_Kew@sil.org"
+RegistrationAuthority	"SIL International"
+RegistrationName		"Greek (Galatia)"
+
+LHSFlags				()
+RHSFlags				(ExpectsNFD)
+
+; 1.0b4	2004-04-26	JK	added pass to map between Galatia and Unicode order for marks
+; 1.0b5	2004-04-27	JK	added mappings for 150,151,160,164,172,182 in Display encoding
+
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+Pass(Byte)
+
+; First we map precomposed "display" forms to their equivalent "basic" sequences
+; while still in the Byte (SIL Greek legacy encoding) world, except that we
+; maintain the final/non-final sigma distinction
+
+Class	[LTR] = ( 'a'..'u' 'w'..'z' 'A'..'U' 'W'..'Z' '`^_@"' "'" \
+					128..149 152..159 161..163 165..171 173..181 184..255)
+
+; make sigma into final form if not followed by a letter
+'s' / _ ^[LTR]	 >	'v'
+
+;This is copied directly from GRCO-BA.CCT - Greek Composite to Basic conversion
+;and then the unidirectional '>' operators changed to bidirectional '<>'
+;'v'         >  's'	; leave final sigma alone, as Unicode has separate codes
+
+0xCF            <>  'Hr'
+0xBF            <>  'hr'
+
+0xAD 'A'        <>  'HA' "'"
+0xAE 'A'        <>  'HA`'
+0xAF 'A'        <>  'HA^'
+0xA9 'A'        <>  'hA' "'"
+0xAA 'A'        <>  'hA`'
+0xAB 'A'        <>  'hA^'
+
+0xAD 'E'        <>  'HE' "'"
+0xA9 'E'        <>  'hE' "'"
+0xAA 'E'        <>  'hE`'
+
+0xAD 'J'        <>  'HJ' "'"
+0xAE 'J'        <>  'HJ`'
+0xAF 'J'        <>  'HJ^'
+0xA9 'J'        <>  'hJ' "'"
+0xAA 'J'        <>  'hJ`'
+0xAB 'J'        <>  'hJ^'
+
+0xAD 'I'        <>  'HI' "'"
+0xAF 'I'        <>  'HI^'
+0xA9 'I'        <>  'hI' "'"
+0xAA 'I'        <>  'hI`'
+0xAB 'I'        <>  'hI^'
+
+0xAD 'O'        <>  'HO' "'"
+0xAE 'O'        <>  'HO`'
+0xA9 'O'        <>  'hO' "'"
+0xAA 'O'        <>  'hO`'
+
+0xAD 'U'        <>  'HU' "'"
+0xAE 'U'        <>  'HU`'
+0xAF 'U'        <>  'HU^'
+0xA9 'U'        <>  'hU' "'"
+0xAA 'U'        <>  'hU`'
+0xAB 'U'        <>  'hU^'
+
+0xAD 'W'        <>  'HW' "'"
+0xAE 'W'        <>  'HW`'
+0xAF 'W'        <>  'HW^'
+0xA9 'W'        <>  'hW' "'"
+0xAA 'W'        <>  'hW`'
+0xAB 'W'        <>  'hW^'
+
+0x87            <>  'Ha'
+0x80            <>  'a' "'"
+0x88            <>  'Ha' "'"
+0x81            <>  'a`'
+0x89            <>  'Ha`'
+0x82            <>  'a^'
+0x8A            <>  'Ha^'
+0x83            <>  'ha'
+0x84            <>  'ha' "'"
+0x85            <>  'ha`'
+0x86            <>  'ha^'
+
+0x9D            <>  'He'
+0x99            <>  'e' "'"
+0x9E            <>  'He' "'"
+0x9A            <>  'e`'
+0x9B            <>  'he'
+0x9C            <>  'he' "'"
+0x9F            <>  'he`'
+
+0xD7            <>  'Hj'
+0xD0            <>  'j' "'"
+0xD8            <>  'Hj' "'"
+0xD1            <>  'j`'
+0xD9            <>  'Hj`'
+0xD2            <>  'j^'
+0xDA            <>  'Hj^'
+0xD3            <>  'hj'
+0xD4            <>  'hj' "'"
+0xD5            <>  'hj`'
+0xD6            <>  'hj^'
+
+0xB8            <>  'Hi'
+0xB0            <>  'i' "'"
+0xB9            <>  'Hi' "'"
+0xB1            <>  'i`'
+0xB2            <>  'i^'
+0xBA            <>  'Hi^'
+0xB3            <>  'hi'
+0xB4            <>  'hi' "'"
+0xBE            <>  'hi`'
+0xB5            <>  'hi^'
+
+0xEC            <>  'Ho'
+0xE7            <>  'o' "'"
+0xED            <>  'Ho' "'"
+0xE8            <>  'o`'
+0xCE            <>  'Ho`'
+0xE9            <>  'ho'
+0xEA            <>  'ho' "'"
+0xEB            <>  'ho`'
+
+0xC7            <>  'Hu'
+0xC0            <>  'u' "'"
+0xC8            <>  'Hu' "'"
+0xC1            <>  'u`'
+0xC9            <>  'Hu`'
+0xC2            <>  'u^'
+0xCA            <>  'Hu^'
+0xC3            <>  'hu'
+0xC4            <>  'hu' "'"
+0xC5            <>  'hu`'
+0xC6            <>  'hu^'
+
+0xF7            <>  'Hw'
+0xF0            <>  'w' "'"
+0xF8            <>  'Hw' "'"
+0xF1            <>  'w`'
+0xF9            <>  'Hw`'
+0xF2            <>  'w^'
+0xFA            <>  'Hw^'
+0xF3            <>  'hw'
+0xF4            <>  'hw' "'"
+0xF5            <>  'hw`'
+0xF6            <>  'hw^'
+
+0x8B            <>  'a_'
+0x93            <>  'Ha_'
+0x8C            <>  'a_' "'"
+0x94            <>  'Ha_' "'"
+0x8D            <>  'a_`'
+0x95            <>  'Ha_`'
+0x8E            <>  'a_^'
+0x98            <>  'Ha_^'
+0x8F            <>  'ha_'
+0x90            <>  'ha_' "'"
+0x91            <>  'ha_`'
+0x92            <>  'ha_^'
+
+0xDB            <>  'j_'
+0xE3            <>  'Hj_'
+0xDC            <>  'j_' "'"
+0xE4            <>  'Hj_' "'"
+0xDD            <>  'j_`'
+0xE5            <>  'Hj_`'
+0xDE            <>  'j_^'
+0xE6            <>  'Hj_^'
+0xDF            <>  'hj_'
+0xE0            <>  'hj_' "'"
+0xE1            <>  'hj_`'
+0xE2            <>  'hj_^'
+
+0xFB            <>  'w_'
+0xA5            <>  'Hw_'
+0xFC            <>  'w_' "'"
+0xA6            <>  'Hw_' "'"
+0xFD            <>  'w_`'
+0xA7            <>  'Hw_`'
+0xFE            <>  'w_^'
+0xA8            <>  'Hw_^'
+0xFF            <>  'hw_'
+0xA1            <>  'hw_' "'"
+0xA2            <>  'hw_`'
+0xA3            <>  'hw_^'
+
+0xBB            <>  'i"'
+0xBC            <>  'i"' "'"
+0xBD            <>  'i"`'
+
+0xCB            <>  'u"'
+0xCC            <>  'u"' "'"
+0xCD            <>  'u"`'
+
+'A' 0xB8        <>  'HAi'
+'A' 0xB9        <>  'HAi' "'"
+'A' 0xBA        <>  'HAi^'
+'A' 0xB3        <>  'hAi'
+'A' 0xB4        <>  'hAi' "'"
+'A' 0xBE        <>  'hAi`'
+'A' 0xB5        <>  'hAi^'
+
+'a' 0xB8        <>  'Hai'
+'a' 0xB0        <>  'ai' "'"
+'a' 0xB9        <>  'Hai' "'"
+'a' 0xB1        <>  'ai`'
+'a' 0xB2        <>  'ai^'
+'a' 0xBA        <>  'Hai^'
+'a' 0xB3        <>  'hai'
+'a' 0xB4        <>  'hai' "'"
+'a' 0xBE        <>  'hai`'
+'a' 0xB5        <>  'hai^'
+
+'E' 0xB8        <>  'HEi'
+'E' 0xB9        <>  'HEi' "'"
+'E' 0xBA        <>  'HEi^'
+'E' 0xB3        <>  'hEi'
+'E' 0xB4        <>  'hEi' "'"
+'E' 0xBE        <>  'hEi`'
+'E' 0xB5        <>  'hEi^'
+
+'e' 0xB8        <>  'Hei'
+'e' 0xB0        <>  'ei' "'"
+'e' 0xB9        <>  'Hei' "'"
+'e' 0xB1        <>  'ei`'
+'e' 0xB2        <>  'ei^'
+'e' 0xBA        <>  'Hei^'
+'e' 0xB3        <>  'hei'
+'e' 0xB4        <>  'hei' "'"
+'e' 0xBE        <>  'hei`'
+'e' 0xB5        <>  'hei^'
+
+'O' 0xB8        <>  'HOi'
+'O' 0xB9        <>  'HOi' "'"
+'O' 0xBA        <>  'HOi^'
+'O' 0xB3        <>  'hOi'
+'O' 0xB4        <>  'hOi' "'"
+'O' 0xBE        <>  'hOi`'
+'O' 0xB5        <>  'hOi^'
+
+'o' 0xB8        <>  'Hoi'
+'o' 0xB0        <>  'oi' "'"
+'o' 0xB9        <>  'Hoi' "'"
+'o' 0xB1        <>  'oi`'
+'o' 0xB2        <>  'oi^'
+'o' 0xBA        <>  'Hoi^'
+'o' 0xB3        <>  'hoi'
+'o' 0xB4        <>  'hoi' "'"
+'o' 0xBE        <>  'hoi`'
+'o' 0xB5        <>  'hoi^'
+
+'U' 0xB8        <>  'HUi'
+'U' 0xB9        <>  'HUi' "'"
+'U' 0xBA        <>  'HUi^'
+'U' 0xB3        <>  'hUi'
+'U' 0xB4        <>  'hUi' "'"
+'U' 0xBE        <>  'hUi`'
+'U' 0xB5        <>  'hUi^'
+
+'u' 0xB8        <>  'Hui'
+'u' 0xB0        <>  'ui' "'"
+'u' 0xB9        <>  'Hui' "'"
+'u' 0xB1        <>  'ui`'
+'u' 0xB2        <>  'ui^'
+'u' 0xBA        <>  'Hui^'
+'u' 0xB3        <>  'hui'
+'u' 0xB4        <>  'hui' "'"
+'u' 0xBE        <>  'hui`'
+'u' 0xB5        <>  'hui^'
+
+'A' 0xC7        <>  'HAu'
+'A' 0xC8        <>  'HAu' "'"
+'A' 0xC9        <>  'HAu`'
+'A' 0xCA        <>  'HAu^'
+'A' 0xC3        <>  'hAu'
+'A' 0xC4        <>  'hAu' "'"
+'A' 0xC5        <>  'hAu`'
+'A' 0xC6        <>  'hAu^'
+
+'a' 0xC7        <>  'Hau'
+'a' 0xC0        <>  'au' "'"
+'a' 0xC8        <>  'Hau' "'"
+'a' 0xC1        <>  'au`'
+'a' 0xC9        <>  'Hau`'
+'a' 0xC2        <>  'au^'
+'a' 0xCA        <>  'Hau^'
+'a' 0xC3        <>  'hau'
+'a' 0xC4        <>  'hau' "'"
+'a' 0xC5        <>  'hau`'
+'a' 0xC6        <>  'hau^'
+
+'E' 0xC7        <>  'HEu'
+'E' 0xC8        <>  'HEu' "'"
+'E' 0xC9        <>  'HEu`'
+'E' 0xCA        <>  'HEu^'
+'E' 0xC3        <>  'hEu'
+'E' 0xC4        <>  'hEu' "'"
+'E' 0xC5        <>  'hEu`'
+'E' 0xC6        <>  'hEu^'
+
+'e' 0xC7        <>  'Heu'
+'e' 0xC0        <>  'eu' "'"
+'e' 0xC8        <>  'Heu' "'"
+'e' 0xC1        <>  'eu`'
+'e' 0xC9        <>  'Heu`'
+'e' 0xC2        <>  'eu^'
+'e' 0xCA        <>  'Heu^'
+'e' 0xC3        <>  'heu'
+'e' 0xC4        <>  'heu' "'"
+'e' 0xC5        <>  'heu`'
+'e' 0xC6        <>  'heu^'
+
+'J' 0xC7        <>  'HJu'
+'J' 0xC8        <>  'HJu' "'"
+'J' 0xC9        <>  'HJu`'
+'J' 0xCA        <>  'HJu^'
+'J' 0xC3        <>  'hJu'
+'J' 0xC4        <>  'hJu' "'"
+'J' 0xC5        <>  'hJu`'
+'J' 0xC6        <>  'hJu^'
+
+'j' 0xC7        <>  'Hju'
+'j' 0xC0        <>  'ju' "'"
+'j' 0xC8        <>  'Hju' "'"
+'j' 0xC1        <>  'ju`'
+'j' 0xC9        <>  'Hju`'
+'j' 0xC2        <>  'ju^'
+'j' 0xCA        <>  'Hju^'
+'j' 0xC3        <>  'hju'
+'j' 0xC4        <>  'hju' "'"
+'j' 0xC5        <>  'hju`'
+'j' 0xC6        <>  'hju^'
+
+'O' 0xC7        <>  'HOu'
+'O' 0xC8        <>  'HOu' "'"
+'O' 0xC9        <>  'HOu`'
+'O' 0xCA        <>  'HOu^'
+'O' 0xC3        <>  'hOu'
+'O' 0xC4        <>  'hOu' "'"
+'O' 0xC5        <>  'hOu`'
+'O' 0xC6        <>  'hOu^'
+
+'o' 0xC7        <>  'Hou'
+'o' 0xC0        <>  'ou' "'"
+'o' 0xC8        <>  'Hou' "'"
+'o' 0xC1        <>  'ou`'
+'o' 0xC9        <>  'Hou`'
+'o' 0xC2        <>  'ou^'
+'o' 0xCA        <>  'Hou^'
+'o' 0xC3        <>  'hou'
+'o' 0xC4        <>  'hou' "'"
+'o' 0xC5        <>  'hou`'
+'o' 0xC6        <>  'hou^'
+
+'HA' 0xBB       <>  'HAi"'
+'HA' 0xBC       <>  'HAi"' "'"
+'HA' 0xBD       <>  'HAi"`'
+'hA' 0xBB       <>  'hAi"'
+'hA' 0xBC       <>  'hAi"' "'"
+'hA' 0xBD       <>  'hAi"`'
+'a' 0xBB        <>  'ai"'
+0x87 0xBB       <>  'Hai"'
+'a' 0xBC        <>  'ai"' "'"
+0x87 0xBC       <>  'Hai"' "'"
+'a' 0xBD        <>  'ai"`'
+0x87 0xBD       <>  'Hai"`'
+0x83 0xBB       <>  'hai"'
+0x83 0xBC       <>  'hai"' "'"
+0x83 0xBD       <>  'hai"`'
+
+'HE' 0xBB       <>  'HEi"'
+'HE' 0xBC       <>  'HEi"' "'"
+'HE' 0xBD       <>  'HEi"`'
+'hE' 0xBB       <>  'hEi"'
+'hE' 0xBC       <>  'hEi"' "'"
+'hE' 0xBD       <>  'hEi"`'
+'e' 0xBB        <>  'ei"'
+0x9D 0xBB       <>  'Hei"'
+'e' 0xBC        <>  'ei"' "'"
+0x9D 0xBC       <>  'Hei"' "'"
+'e' 0xBD        <>  'ei"`'
+0x9D 0xBD       <>  'Hei"`'
+0x9B 0xBB       <>  'hei"'
+0x9B 0xBC       <>  'hei"' "'"
+0x9B 0xBD       <>  'hei"`'
+
+'HO' 0xBB       <>  'HOi"'
+'HO' 0xBC       <>  'HOi"' "'"
+'HO' 0xBD       <>  'HOi"`'
+'hO' 0xBB       <>  'hOi"'
+'hO' 0xBC       <>  'hOi"' "'"
+'hO' 0xBD       <>  'hOi"`'
+'o' 0xBB        <>  'oi"'
+0xEC 0xBB       <>  'Hoi"'
+'o' 0xBC        <>  'oi"' "'"
+0xEC 0xBC       <>  'Hoi"' "'"
+'o' 0xBD        <>  'oi"`'
+0xEC 0xBD       <>  'Hoi"`'
+0xE9 0xBB       <>  'hoi"'
+0xE9 0xBC       <>  'hoi"' "'"
+0xE9 0xBD       <>  'hoi"`'
+
+'HU' 0xBB       <>  'HUi"'
+'HU' 0xBC       <>  'HUi"' "'"
+'HU' 0xBD       <>  'HUi"`'
+'hU' 0xBB       <>  'hUi"'
+'hU' 0xBC       <>  'hUi"' "'"
+'hU' 0xBD       <>  'hUi"`'
+'u' 0xBB        <>  'ui"'
+0xC7 0xBB       <>  'Hui"'
+'u' 0xBC        <>  'ui"' "'"
+0xC7 0xBC       <>  'Hui"' "'"
+'u' 0xBD        <>  'ui"`'
+0xC7 0xBD       <>  'Hui"`'
+0xC3 0xBB       <>  'hui"'
+0xC3 0xBC       <>  'hui"' "'"
+0xC3 0xBD       <>  'hui"`'
+
+'HA' 0xCB       <>  'HAu"'
+'HA' 0xCC       <>  'HAu"' "'"
+'HA' 0xCD       <>  'HAu"`'
+'hA' 0xCB       <>  'hAu"'
+'hA' 0xCC       <>  'hAu"' "'"
+'hA' 0xCD       <>  'hAu"`'
+'a' 0xCB        <>  'au"'
+0x87 0xCB       <>  'Hau"'
+'a' 0xCC        <>  'au"' "'"
+0x87 0xCC       <>  'Hau"' "'"
+'a' 0xCD        <>  'au"`'
+0x87 0xCD       <>  'Hau"`'
+0x83 0xCB       <>  'hau"'
+0x83 0xCC       <>  'hau"' "'"
+0x83 0xCD       <>  'hau"`'
+
+'HE' 0xCB       <>  'HEu"'
+'HE' 0xCC       <>  'HEu"' "'"
+'HE' 0xCD       <>  'HEu"`'
+'hE' 0xCB       <>  'hEu"'
+'hE' 0xCC       <>  'hEu"' "'"
+'hE' 0xCD       <>  'hEu"`'
+'e' 0xCB        <>  'eu"'
+0x9D 0xCB       <>  'Heu"'
+'e' 0xCC        <>  'eu"' "'"
+0x9D 0xCC       <>  'Heu"' "'"
+'e' 0xCD        <>  'eu"`'
+0x9D 0xCD       <>  'Heu"`'
+0x9B 0xCB       <>  'heu"'
+0x9B 0xCC       <>  'heu"' "'"
+0x9B 0xCD       <>  'heu"`'
+
+'HJ' 0xCB       <>  'HJu"'
+'HJ' 0xCC       <>  'HJu"' "'"
+'HJ' 0xCD       <>  'HJu"`'
+'hJ' 0xCB       <>  'hJu"'
+'hJ' 0xCC       <>  'hJu"' "'"
+'hJ' 0xCD       <>  'hJu"`'
+'j' 0xCB        <>  'ju"'
+0xD7 0xCB       <>  'Hju"'
+'j' 0xCC        <>  'ju"' "'"
+0xD7 0xCC       <>  'Hju"' "'"
+'j' 0xCD        <>  'ju"`'
+0xD7 0xCD       <>  'Hju"`'
+0xD3 0xCB       <>  'hju"'
+0xD3 0xCC       <>  'hju"' "'"
+0xD3 0xCD       <>  'hju"`'
+
+'HO' 0xCB       <>  'HOu"'
+'HO' 0xCC       <>  'HOu"' "'"
+'HO' 0xCD       <>  'HOu"`'
+'hO' 0xCB       <>  'hOu"'
+'hO' 0xCC       <>  'hOu"' "'"
+'hO' 0xCD       <>  'hOu"`'
+'o' 0xCB        <>  'ou"'
+0xEC 0xCB       <>  'Hou"'
+'o' 0xCC        <>  'ou"' "'"
+0xEC 0xCC       <>  'Hou"' "'"
+'o' 0xCD        <>  'ou"`'
+0xEC 0xCD       <>  'Hou"`'
+0xE9 0xCB       <>  'hou"'
+0xE9 0xCC       <>  'hou"' "'"
+0xE9 0xCD       <>  'hou"`'
+
+0xAD            <>  'H' "'"
+0xAE            <>  'H`'
+0xAF            <>  'H^'
+0xA9            <>  'h' "'"
+0xAA            <>  'h`'
+0xAB            <>  'h^'
+
+0xEE            <>  '"' "'"
+0xEF            <>  '"`'
+
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+Pass(Byte)
+; shuffle marks, as Unicode canonical order does not correspond to Galatia order
+
+Class[dia] = ('`' "'" '^' '"')
+
+'_' ([dia]+)=dias	<>	@dias '_'
+
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+Pass(Byte_Unicode)
+
+; Now make the jump from byte to Unicode space.
+; Here, we deal only with the decomposed forms, not precomposed.
+
+ByteDefault			183			; 183 is "bullet" in the SIL Greek Display encoding
+								; (note that this is actually a valid character code,
+								; though probably not often used in legacy Greek text)
+UniDefault			replacement_character
+
+; there are separate namespaces for Byte and Unicode classes,
+; allowing us to use the same name for classes with corresponding content
+
+ByteClass	[CTL] = (   0x00 .. 0x1f     0x7f )
+UniClass	[CTL] =	( U+0000 .. U+001f U+007f )
+
+[CTL]	<>	[CTL]
+
+' '		<>	space
+'!'		<>	exclamation_mark
+'"'		<>	combining_diaeresis
+'#'		<>	no_break_space
+'$'		<>	left_pointing_double_angle_quotation_mark
+'%'		<>	right_pointing_double_angle_quotation_mark
+'&'		<>	ampersand
+"'"		<>	combining_acute_accent
+'('		<>	left_parenthesis
+')'		<>	right_parenthesis
+'*'		<>	asterisk
+'+'		<>	plus_sign
+','		<>	comma
+'-'		<>	hyphen_minus
+'.'		<>	full_stop
+'/'		<>	solidus
+
+'0'		<>	digit_zero
+'1'		<>	digit_one
+'2'		<>	digit_two
+'3'		<>	digit_three
+'4'		<>	digit_four
+'5'		<>	digit_five
+'6'		<>	digit_six
+'7'		<>	digit_seven
+'8'		<>	digit_eight
+'9'		<>	digit_nine
+':'		<>	colon
+';'		< 	greek_ano_teleia				; greek semicolon
+';'		<>	middle_dot						; canonical decomposition of greek semicolon
+'<'		<>	less_than_sign
+'='		<>	equals_sign
+'>'		<>	greater_than_sign
+'?'		<	greek_question_mark
+'?'		<>	semicolon						; canonical decomposition of greek question mark
+
+'@'		<>	right_single_quotation_mark
+'@'		<	modifier_letter_apostrophe		; mapping of '@' in earlier draft of this file
+'A'		<>	greek_capital_letter_alpha
+'B'		<>	greek_capital_letter_beta
+'C'		<>	greek_capital_letter_chi
+'D'		<>	greek_capital_letter_delta
+'E'		<>	greek_capital_letter_epsilon
+'F'		<>	greek_capital_letter_phi
+'G'		<>	greek_capital_letter_gamma
+'H'		<>	combining_comma_above
+'I'		<>	greek_capital_letter_iota
+'J'		<>	greek_capital_letter_eta
+'K'		<>	greek_capital_letter_kappa
+'L'		<>	greek_capital_letter_lamda
+'M'		<>	greek_capital_letter_mu
+'N'		<>	greek_capital_letter_nu
+'O'		<>	greek_capital_letter_omicron
+
+'P'		<>	greek_capital_letter_pi
+'Q'		<>	greek_capital_letter_theta
+'R'		<>	greek_capital_letter_rho
+'S'		<>	greek_capital_letter_sigma
+'T'		<>	greek_capital_letter_tau
+'U'		<>	greek_capital_letter_upsilon
+; 'V'			; <unused>
+'W'		<>	greek_capital_letter_omega
+'X'		<>	greek_capital_letter_xi
+'Y'		<>	greek_capital_letter_psi
+'Z'		<>	greek_capital_letter_zeta
+'['		<>	left_square_bracket
+'\'		<>	reverse_solidus
+']'		<>	right_square_bracket
+'^'		<>	combining_greek_perispomeni		; circumflex
+'_'		<>	combining_greek_ypogegrammeni	; iota subscript
+
+'`'		<>	combining_grave_accent
+'a'		<>	greek_small_letter_alpha
+'b'		<>	greek_small_letter_beta
+'c'		<>	greek_small_letter_chi
+'d'		<>	greek_small_letter_delta
+'e'		<>	greek_small_letter_epsilon
+'f'		<>	greek_small_letter_phi
+'g'		<>	greek_small_letter_gamma
+'h'		<>	combining_reversed_comma_above
+'i'		<>	greek_small_letter_iota
+'j'		<>	greek_small_letter_eta
+'k'		<>	greek_small_letter_kappa
+'l'		<>	greek_small_letter_lamda
+'m'		<>	greek_small_letter_mu
+'n'		<>	greek_small_letter_nu
+'o'		<>	greek_small_letter_omicron
+
+'p'		<>	greek_small_letter_pi
+'q'		<>	greek_small_letter_theta
+'r'		<>	greek_small_letter_rho
+'s'		<>	greek_small_letter_sigma
+'t'		<>	greek_small_letter_tau
+'u'		<>	greek_small_letter_upsilon
+'v'		<>	greek_small_letter_final_sigma
+'w'		<>	greek_small_letter_omega
+'x'		<>	greek_small_letter_xi
+'y'		<>	greek_small_letter_psi
+'z'		<>	greek_small_letter_zeta
+'{'		<>	left_curly_bracket
+
+'|'		<>	vertical_line
+'|b'	<>	greek_beta_symbol				; curly beta
+'|f'	<>	greek_small_letter_digamma		; digamma
+'|G'	<>	greek_letter_digamma			; Digamma
+'|g'	 >	greek_small_letter_digamma		; digamma (which SIL forms should have priority?)
+'|w'	<>	greek_pi_symbol					; omega pi
+'|q'	<>	greek_small_letter_koppa		; qoppa
+'|Q'	<>	greek_letter_koppa				; Qoppa
+'|R'	 >	greek_letter_koppa				; Qoppa
+'|k'	 >	greek_small_letter_koppa		; qoppa
+'|K'	 >	greek_letter_koppa				; Qoppa
+'|p'	<>	greek_small_letter_sampi		; sampi
+'|P'	<>	greek_letter_sampi				; Sampi
+'|m'	 >	greek_small_letter_sampi		; sampi
+'|M'	 >	greek_letter_sampi				; Sampi
+'|s'	<>	greek_lunate_sigma_symbol		; lunate sigma
+'|S'	 >	greek_lunate_sigma_symbol		; lunate sigma uppercase not available in Unicode
+'|t'	<>	greek_small_letter_stigma		; stigma
+'|T'	<>	greek_letter_stigma				; Stigma
+'|i'	<>	turned_greek_small_letter_iota combining_tilde_below	; turned iota tilde below
+'|U'	<>	greek_upsilon_with_hook_symbol	; Upsilon hook
+'|h'	<>	greek_numeral_sign				; upper numeral sign
+'|H'	<>	greek_lower_numeral_sign		; lower numeral sign
+'|n'	<>	zero_width_joiner
+'|#'	<>	zero_width_non_joiner
+
+'}'		<>	right_curly_bracket
+'~'		<>	em_dash
+
+150		<>	en_dash
+151		 >	em_dash
+160		<>	no_break_space
+164		<>	currency_sign
+172		<>	not_sign
+182		<>	pilcrow_sign
+183		<>	bullet
+
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+Pass(Unicode)
+
+; In Unicode space, reorder breathing/vowel sequences from SIL Basic to Unicode order
+
+Class	[BR]		=	( combining_comma_above combining_reversed_comma_above )
+Class	[aeo]		=	( U+0391 U+0395 U+039f U+03b1 U+03b5 U+03bf ) ; Unicode names are so verbose!
+Class	[iu]		=	( U+0399 U+03a5 U+03b9 U+03c5 )
+Class	[j]			=	( U+0397 U+03b7 )
+Class	[u]			=	( U+03a5 U+03c5 )
+Class	[i]			=	( U+0399 U+03b9 )
+Class	[vowelrho]	=	( U+0391 U+0395 U+0399 U+039f U+03a5 U+0397 U+03a9 U+03a1 \
+						  U+03b1 U+03b5 U+03b9 U+03bf U+03c5 U+03b7 U+03c9 U+03c1 )
+
+[BR]=b [aeo]=v1 [iu]=v2 / _ combining_diaeresis	<>	@v1 @b @v2 / _ combining_diaeresis
+[BR]=b [aeo]=v1 [iu]=v2							<>	@v1 @v2 @b
+[BR]=b [j]=v1 [u]=v2 / _ combining_diaeresis	<>	@v1 @b @v2 / _ combining_diaeresis
+[BR]=b [j]=v1 [u]=v2							<>	@v1 @v2 @b
+[BR]=b [u]=v1 [i]=v2 / _ combining_diaeresis	<>	@v1 @b @v2 / _ combining_diaeresis
+[BR]=b [u]=v1 [i]=v2							<>	@v1 @v2 @b
+[BR]=b [vowelrho]=v								<>	@v @b
+
+
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+; (end of file)

@@ -1,0 +1,745 @@
+\id Mrk.GNT.sf -- Mark: Greek NT: Standard Format
+\iid Here is a test line
+\iiid And here's another
+\idid and the last one
+\bk KATA MARKON
+\c 1 
+\v 1 HArcj` tou^ Heuaggeli'ou HIjsou^ Cristou^ [huiou^ qeou^].
+\v 2 Kaqw`s ge'graptai Hen tw_^ HJsai"'a_ tw_^ profj'tj_, 		
+		HIdou` Haposte'llw to`n Ha'ggelo'n mou pro` prosw'pou sou, |rm{this is a |gk{short} test}
+			ho`s kataskeua'sei tj`n hodo'n sou;
+\v 3 fwnj` bow^ntos Hen tj_^ Herj'mw_, 
+			hEtoima'sate tj`n hodo`n kuri'ou, 
+			Heuqei'as poiei^te ta`s tri'bous Hautou^,
+\v 4 Hege'neto HIwa'nnjs [ho] bapti'zwn Hen tj_^ Herj'mw_ kai` kjru'sswn ba'ptisma metanoi'as Heis Ha'fesin hamartiw^n.
+\v 5 kai` Hexeporeu'eto pro`s Hauto`n pa^sa hj HIoudai'a cw'ra kai` hoi hIerosolumi^tai pa'ntes, kai` Hebapti'zonto hup@ Hautou^ Hen tw_^ HIorda'nj_ potamw_^ Hexomologou'menoi ta`s hamarti'as Hautw^n.
+\v 6 kai` Hj^n ho HIwa'nnjs Hendedume'nos tri'cas kamj'lou kai` zw'njn dermati'njn peri` tj`n Hosfu`n Hautou^, kai` Hesqi'wn Hakri'das kai` me'li Ha'grion.
+\v 7 kai` Hekj'russen le'gwn, HEr'cetai ho Hiscuro'tero's mou Hopi'sw mou, hou^ Houk Heimi` hikano`s ku'yas lu^sai to`n hima'nta tw^n hupodjma'twn Hautou^.
+\v 8 Hegw` Heba'ptisa huma^s hu'dati, Hauto`s de` bapti'sei huma^s Hen pneu'mati hagi'w_.
+\v 9 Kai` Hege'neto Hen Hekei'nais tai^s hjme'rais Hj^lqen HIjsou^s Hapo` Nazare`t tj^s Galilai'as kai` Hebapti'sqj Heis to`n HIorda'njn hupo` HIwa'nnou.
+\v 10 kai` Heuqu`s Hanabai'nwn Hek tou^ hu'datos Hei^den scizome'nous tou`s Houranou`s kai` to` pneu^ma hws peristera`n katabai^non Heis Hauto'n;
+\v 11 kai` fwnj` Hege'neto Hek tw^n Houranw^n, Su` Hei^ ho huio's mou ho Hagapjto's, Hen soi` Heudo'kjsa.
+\v 12 Kai` Heuqu`s to` pneu^ma Hauto`n Hekba'llei Heis tj`n He'rjmon.
+\v 13 kai` Hj^n Hen tj_^ Herj'mw_ tessera'konta hjme'ras peirazo'menos hupo` tou^ Satana^, kai` Hj^n meta` tw^n qjri'wn, kai` hoi Ha'ggeloi dijko'noun Hautw_^.
+\v 14 Meta` de` to` paradoqj^nai to`n HIwa'nnjn Hj^lqen ho HIjsou^s Heis tj`n Galilai'an kjru'sswn to` Heuagge'lion tou^ qeou^
+\v 15 kai` le'gwn ho'ti Peplj'rwtai ho kairo`s kai` Hj'ggiken hj basilei'a tou^ qeou^;  metanoei^te kai` pisteu'ete Hen tw_^ Heuaggeli'w_.
+\v 16 Kai` para'gwn para` tj`n qa'lassan tj^s Galilai'as Hei^den Si'mwna kai` HAndre'an to`n Hadelfo`n Si'mwnos Hamfiba'llontas Hen tj_^ qala'ssj_;  Hj^san ga`r haliei^s.
+\v 17 kai` Hei^pen Hautoi^s ho HIjsou^s, Deu^te Hopi'sw mou, kai` poij'sw huma^s gene'sqai haliei^s Hanqrw'pwn.
+\v 18 kai` Heuqu`s Hafe'ntes ta` di'ktua Hjkolou'qjsan Hautw_^.
+\v 19 Kai` proba`s Holi'gon Hei^den HIa'kwbon to`n tou^ Zebedai'ou kai` HIwa'nnjn to`n Hadelfo`n Hautou^ kai` Hautou`s Hen tw_^ ploi'w_ katarti'zontas ta` di'ktua,
+\v 20 kai` Heuqu`s Heka'lesen Hautou's.  kai` Hafe'ntes to`n pate'ra Hautw^n Zebedai^on Hen tw_^ ploi'w_ meta` tw^n misqwtw^n Hapj^lqon Hopi'sw Hautou^.
+\v 21 Kai` Heisporeu'ontai Heis Kafarnaou'm;  kai` Heuqu`s toi^s sa'bbasin Heiselqw`n Heis tj`n sunagwgj`n Hedi'dasken.
+\v 22 kai` Hexeplj'ssonto Hepi` tj_^ didacj_^ Hautou^;  Hj^n ga`r dida'skwn Hautou`s hws Hexousi'an He'cwn kai` Houc hws hoi grammatei^s.
+\v 23 kai` Heuqu`s Hj^n Hen tj_^ sunagwgj_^ Hautw^n Ha'nqrwpos Hen pneu'mati Hakaqa'rtw_ kai` Hane'kraxen
+\v 24 le'gwn, Ti' hjmi^n kai` soi', HIjsou^ Nazarjne'?  Hj^lqes Hapole'sai hjma^s?  Hoi^da' se ti's Hei^, ho ha'gios tou^ qeou^.
+\v 25 kai` Hepeti'mjsen Hautw_^ ho HIjsou^s le'gwn, Fimw'qjti kai` He'xelqe Hex Hautou^.
+\v 26 kai` spara'xan Hauto`n to` pneu^ma to` Haka'qarton kai` fwnj^san fwnj_^ mega'lj_ Hexj^lqen Hex Hautou^.
+\v 27 kai` Heqambj'qjsan ha'pantes hw'ste suzjtei^n pro`s heautou`s le'gontas, Ti' Hestin tou^to?  didacj` kainj` kat@ Hexousi'an;  kai` toi^s pneu'masi toi^s Hakaqa'rtois Hepita'ssei, kai` hupakou'ousin Hautw_^.
+\v 28 kai` Hexj^lqen hj Hakoj` Hautou^ Heuqu`s pantacou^ Heis ho'ljn tj`n peri'cwron tj^s Galilai'as.
+\v 29 Kai` Heuqu`s Hek tj^s sunagwgj^s Hexelqo'ntes Hj^lqon Heis tj`n Hoiki'an Si'mwnos kai` HAndre'ou meta` HIakw'bou kai` HIwa'nnou.
+\v 30 hj de` penqera` Si'mwnos kate'keito pure'ssousa, kai` Heuqu`s le'gousin Hautw_^ peri` Hautj^s.
+\v 31 kai` proselqw`n Hj'geiren Hautj`n kratj'sas tj^s ceiro's;  kai` Hafj^ken Hautj`n ho pureto's, kai` dijko'nei Hautoi^s.
+\v 32 HOyi'as de` genome'njs, ho'te He'du ho hj'lios, He'feron pro`s Hauto`n pa'ntas tou`s kakw^s He'contas kai` tou`s daimonizome'nous;
+\v 33 kai` Hj^n ho'lj hj po'lis Hepisunjgme'nj pro`s tj`n qu'ran.
+\v 34 kai` Heqera'peusen pollou`s kakw^s He'contas poiki'lais no'sois kai` daimo'nia polla` Hexe'balen kai` Houk Hj'fien lalei^n ta` daimo'nia, ho'ti Hj_'deisan Hauto'n.
+\v 35 Kai` prwi"` He'nnuca li'an Hanasta`s Hexj^lqen kai` Hapj^lqen Heis He'rjmon to'pon kHakei^ prosju'ceto.
+\v 36 kai` katedi'wxen Hauto`n Si'mwn kai` hoi met@ Hautou^,
+\v 37 kai` heu^ron Hauto`n kai` le'gousin Hautw_^ ho'ti Pa'ntes zjtou^si'n se.
+\v 38 kai` le'gei Hautoi^s, HA'gwmen Hallacou^ Heis ta`s Hecome'nas kwmopo'leis, hi'na kai` Hekei^ kjru'xw;  Heis tou^to ga`r Hexj^lqon.
+\v 39 kai` Hj^lqen kjru'sswn Heis ta`s sunagwga`s Hautw^n Heis ho'ljn tj`n Galilai'an kai` ta` daimo'nia Hekba'llwn.
+\v 40 Kai` He'rcetai pro`s Hauto`n lepro`s parakalw^n Hauto`n [kai` gonupetw^n] kai` le'gwn Hautw_^ ho'ti HEa`n qe'lj_s du'nasai' me kaqari'sai.
+\v 41 kai` splagcnisqei`s Hektei'nas tj`n cei^ra Hautou^ hj'yato kai` le'gei Hautw_^, Qe'lw, kaqari'sqjti;
+\v 42 kai` Heuqu`s Hapj^lqen Hap@ Hautou^ hj le'pra, kai` Hekaqari'sqj.
+\v 43 kai` Hembrimjsa'menos Hautw_^ Heuqu`s Hexe'balen Hauto'n
+\v 44 kai` le'gei Hautw_^, hOra' mjdeni` mjde`n Hei'pj_s, Halla` hu'page seauto`n dei^xon tw_^ hierei^ kai` prose'negke peri` tou^ kaqarismou^ sou ha` prose'taxen Mwu"sj^s, Heis martu'rion Hautoi^s.
+\v 45 ho de` Hexelqw`n Hj'rxato kjru'ssein polla` kai` diafjmi'zein to`n lo'gon, hw'ste mjke'ti Hauto`n du'nasqai fanerw^s Heis po'lin Heiselqei^n, Hall@ He'xw Hep@ Herj'mois to'pois Hj^n;  kai` Hj'rconto pro`s Hauto`n pa'ntoqen.
+
+\c 2 
+\v 1 Kai` Heiselqw`n pa'lin Heis Kafarnaou`m di@ hjmerw^n Hjkou'sqj ho'ti Hen Hoi'kw_ Hesti'n.
+\v 2 kai` sunj'cqjsan polloi` hw'ste mjke'ti cwrei^n mjde` ta` pro`s tj`n qu'ran, kai` Hela'lei Hautoi^s to`n lo'gon.
+\v 3 kai` He'rcontai fe'rontes pro`s Hauto`n paralutiko`n Hairo'menon hupo` tessa'rwn.
+\v 4 kai` mj` duna'menoi prosene'gkai Hautw_^ dia` to`n Ho'clon Hapeste'gasan tj`n ste'gjn ho'pou Hj^n, kai` Hexoru'xantes calw^si to`n kra'batton ho'pou ho paralutiko`s kate'keito.
+\v 5 kai` Hidw`n ho HIjsou^s tj`n pi'stin Hautw^n le'gei tw_^ paralutikw_^, Te'knon, Hafi'entai' sou hai hamarti'ai.
+\v 6 Hj^san de' tines tw^n grammate'wn Hekei^ kaqj'menoi kai` dialogizo'menoi Hen tai^s kardi'ais Hautw^n,
+\v 7 Ti' hou^tos hou'tws lalei^?  blasfjmei^;  ti's du'natai Hafie'nai hamarti'as Hei mj` hei^s ho qeo's?
+\v 8 kai` Heuqu`s Hepignou`s ho HIjsou^s tw_^ pneu'mati Hautou^ ho'ti hou'tws dialogi'zontai Hen heautoi^s le'gei Hautoi^s, Ti' tau^ta dialogi'zesqe Hen tai^s kardi'ais humw^n?
+\v 9 ti' Hestin Heukopw'teron, Heipei^n tw_^ paralutikw_^, HAfi'entai' sou hai hamarti'ai, Hj` Heipei^n, HE'geire kai` Ha^ron to`n kra'batto'n sou kai` peripa'tei?
+\v 10 hi'na de` Heidj^te ho'ti Hexousi'an He'cei ho huio`s tou^ Hanqrw'pou Hafie'nai hamarti'as Hepi` tj^s gj^s - le'gei tw_^ paralutikw_^,
+\v 11 Soi` le'gw, He'geire Ha^ron to`n kra'batto'n sou kai` hu'page Heis to`n Hoi^ko'n sou.
+\v 12 kai` Hjge'rqj kai` Heuqu`s Ha'ras to`n kra'batton Hexj^lqen He'mprosqen pa'ntwn, hw'ste Hexi'stasqai pa'ntas kai` doxa'zein to`n qeo`n le'gontas ho'ti hOu'tws Houde'pote Hei'domen.
+\v 13 Kai` Hexj^lqen pa'lin para` tj`n qa'lassan;  kai` pa^s ho Ho'clos Hj'rceto pro`s Hauto'n, kai` Hedi'dasken Hautou's.
+\v 14 kai` para'gwn Hei^den Leui`n to`n tou^ hAlfai'ou kaqj'menon Hepi` to` telw'nion, kai` le'gei Hautw_^, HAkolou'qei moi.  kai` Hanasta`s Hjkolou'qjsen Hautw_^.
+\v 15 Kai` gi'netai katakei^sqai Hauto`n Hen tj_^ Hoiki'a_ Hautou^, kai` polloi` telw^nai kai` hamartwloi` sunane'keinto tw_^ HIjsou^ kai` toi^s maqjtai^s Hautou^;  Hj^san ga`r polloi` kai` Hjkolou'qoun Hautw_^.
+\v 16 kai` hoi grammatei^s tw^n Farisai'wn Hido'ntes ho'ti Hesqi'ei meta` tw^n hamartwlw^n kai` telwnw^n He'legon toi^s maqjtai^s Hautou^, hO'ti meta` tw^n telwnw^n kai` hamartwlw^n Hesqi'ei?
+\v 17 kai` Hakou'sas ho HIjsou^s le'gei Hautoi^s [ho'ti] HOu crei'an He'cousin hoi Hiscu'ontes Hiatrou^ Hall@ hoi kakw^s He'contes;  Houk Hj^lqon kale'sai dikai'ous Halla` hamartwlou's.
+\v 18 Kai` Hj^san hoi maqjtai` HIwa'nnou kai` hoi Farisai^oi njsteu'ontes.  kai` He'rcontai kai` le'gousin Hautw_^, Dia` ti' hoi maqjtai` HIwa'nnou kai` hoi maqjtai` tw^n Farisai'wn njsteu'ousin, hoi de` soi` maqjtai` Hou njsteu'ousin?
+\v 19 kai` Hei^pen Hautoi^s ho HIjsou^s, Mj` du'nantai hoi huioi` tou^ numfw^nos Hen hw_^ ho numfi'os met@ Hautw^n Hestin njsteu'ein?  ho'son cro'non He'cousin to`n numfi'on met@ Hautw^n Hou du'nantai njsteu'ein.
+\v 20 Heleu'sontai de` hjme'rai ho'tan Haparqj_^ Hap@ Hautw^n ho numfi'os, kai` to'te njsteu'sousin Hen Hekei'nj_ tj_^ hjme'ra_.
+\v 21 Houdei`s Hepi'bljma hra'kous Hagna'fou Hepira'ptei Hepi` hima'tion palaio'n;  Hei de` mj', Hai'rei to` plj'rwma Hap@ Hautou^ to` kaino`n tou^ palaiou^ kai` cei^ron sci'sma gi'netai.
+\v 22 kai` Houdei`s ba'llei Hoi^non ne'on Heis Haskou`s palaiou's;  Hei de` mj', hrj'xei ho Hoi^nos tou`s Haskou's kai` ho Hoi^nos Hapo'llutai kai` hoi Haskoi';  Halla` Hoi^non ne'on Heis Haskou`s kainou's.
+\v 23 Kai` Hege'neto Hauto`n Hen toi^s sa'bbasin paraporeu'esqai dia` tw^n spori'mwn, kai` hoi maqjtai` Hautou^ Hj'rxanto hodo`n poiei^n ti'llontes tou`s sta'cuas.
+\v 24 kai` hoi Farisai^oi He'legon Hautw_^, HI'de ti' poiou^sin toi^s sa'bbasin ho` Houk He'xestin?
+\v 25 kai` le'gei Hautoi^s, HOude'pote Hane'gnwte ti' Hepoi'jsen Daui'd ho'te crei'an He'scen kai` Hepei'nasen Hauto`s kai` hoi met@ Hautou^,
+\v 26 pw^s Heisj^lqen Heis to`n Hoi^kon tou^ qeou^ Hepi` HAbiaqa`r Harciere'ws kai` tou`s Ha'rtous tj^s proqe'sews He'fagen, hou`s Houk He'xestin fagei^n Hei mj` tou`s hierei^s, kai` He'dwken kai` toi^s su`n Hautw_^ Hou^sin?
+\v 27 kai` He'legen Hautoi^s, To` sa'bbaton dia` to`n Ha'nqrwpon Hege'neto kai` Houc ho Ha'nqrwpos dia` to` sa'bbaton;
+\v 28 hw'ste ku'rio's Hestin ho huio`s tou^ Hanqrw'pou kai` tou^ sabba'tou.
+
+\c 3 
+\v 1 Kai` Heisj^lqen pa'lin Heis tj`n sunagwgj'n.  kai` Hj^n Hekei^ Ha'nqrwpos Hexjramme'njn He'cwn tj`n cei^ra;
+\v 2 kai` paretj'roun Hauto`n Hei toi^s sa'bbasin qerapeu'sei Hauto'n, hi'na katjgorj'swsin Hautou^.
+\v 3 kai` le'gei tw_^ Hanqrw'pw_ tw_^ tj`n xjra`n cei^ra He'conti, HE'geire Heis to` me'son.
+\v 4 kai` le'gei Hautoi^s, HE'xestin toi^s sa'bbasin Hagaqo`n poij^sai Hj` kakopoij^sai, yucj`n sw^sai Hj` Hapoktei^nai?  hoi de` Hesiw'pwn.
+\v 5 kai` peribleya'menos Hautou`s met@ Horgj^s, sullupou'menos Hepi` tj_^ pwrw'sei tj^s kardi'as Hautw^n le'gei tw_^ Hanqrw'pw_, HE'kteinon tj`n cei^ra.  kai` Hexe'teinen kai` Hapekatesta'qj hj cei`r Hautou^.
+\v 6 kai` Hexelqo'ntes hoi Farisai^oi Heuqu`s meta` tw^n hJrw_dianw^n sumbou'lion Hedi'doun kat@ Hautou^ ho'pws Hauto`n Hapole'swsin.
+\v 7 Kai` ho HIjsou^s meta` tw^n maqjtw^n Hautou^ Hanecw'rjsen pro`s tj`n qa'lassan, kai` polu` plj^qos Hapo` tj^s Galilai'as [Hjkolou'qjsen];  kai` Hapo` tj^s HIoudai'as
+\v 8 kai` Hapo` hIerosolu'mwn kai` Hapo` tj^s HIdoumai'as kai` pe'ran tou^ HIorda'nou kai` peri` Tu'ron kai` Sidw^na, plj^qos polu' Hakou'ontes ho'sa Hepoi'ei Hj^lqon pro`s Hauto'n.
+\v 9 kai` Hei^pen toi^s maqjtai^s Hautou^ hi'na ploia'rion proskarterj_^ Hautw_^ dia` to`n Ho'clon hi'na mj` qli'bwsin Hauto'n;
+\v 10 pollou`s ga`r Heqera'peusen, hw'ste Hepipi'ptein Hautw_^ hi'na Hautou^ ha'ywntai ho'soi Hei^con ma'stigas.
+\v 11 kai` ta` pneu'mata ta` Haka'qarta, ho'tan Hauto`n Heqew'roun, prose'pipton Hautw_^ kai` He'krazon le'gontes ho'ti Su` Hei^ ho huio`s tou^ qeou^.
+\v 12 kai` polla` Hepeti'ma Hautoi^s hi'na mj` Hauto`n fanero`n poij'swsin.
+\v 13 Kai` Hanabai'nei Heis to` Ho'ros kai` proskalei^tai hou`s Hj'qelen Hauto's, kai` Hapj^lqon pro`s Hauto'n.
+\v 14 kai` Hepoi'jsen dw'deka [hou`s kai` Haposto'lous Hwno'masen] hi'na Hw^sin met@ Hautou^ kai` hi'na Haposte'llj_ Hautou`s kjru'ssein
+\v 15 kai` He'cein Hexousi'an Hekba'llein ta` daimo'nia;
+\v 16 [kai` Hepoi'jsen tou`s dw'deka,] kai` Hepe'qjken Ho'noma tw_^ Si'mwni Pe'tron,
+\v 17 kai` HIa'kwbon to`n tou^ Zebedai'ou kai` HIwa'nnjn to`n Hadelfo`n tou^ HIakw'bou kai` Hepe'qjken Hautoi^s Hono'ma[ta] Boanjrge's ho' Hestin hUioi` Brontj^s;
+\v 18 kai` HAndre'an kai` Fi'lippon kai` Barqolomai^on kai` Maqqai^on kai` Qwma^n kai` HIa'kwbon to`n tou^ hAlfai'ou kai` Qaddai^on kai` Si'mwna to`n Kananai^on
+\v 19 kai` HIou'dan HIskariw'q, ho`s kai` pare'dwken Hauto'n.
+\v 20 Kai` He'rcetai Heis Hoi^kon;  kai` sune'rcetai pa'lin [ho] Ho'clos, hw'ste mj` du'nasqai Hautou`s mjde` Ha'rton fagei^n.
+\v 21 kai` Hakou'santes hoi par@ Hautou^ Hexj^lqon kratj^sai Hauto'n;  He'legon ga`r ho'ti Hexe'stj.
+\v 22 kai` hoi grammatei^s hoi Hapo` hIerosolu'mwn kataba'ntes He'legon ho'ti Beelzebou`l He'cei kai` ho'ti Hen tw_^ Ha'rconti tw^n daimoni'wn Hekba'llei ta` daimo'nia.
+\v 23 kai` proskalesa'menos Hautou`s Hen parabolai^s He'legen Hautoi^s, Pw^s du'natai Satana^s Satana^n Hekba'llein?
+\v 24 kai` Hea`n basilei'a Hef@ heautj`n merisqj_^, Hou du'natai staqj^nai hj basilei'a Hekei'nj;
+\v 25 kai` Hea`n Hoiki'a Hef@ heautj`n merisqj_^, Hou dunj'setai hj Hoiki'a Hekei'nj staqj^nai.
+\v 26 kai` Hei ho Satana^s Hane'stj Hef@ heauto`n kai` Hemeri'sqj, Hou du'natai stj^nai Halla` te'los He'cei.
+\v 27 Hall@ Hou du'natai Houdei`s Heis tj`n Hoiki'an tou^ Hiscurou^ Heiselqw`n ta` skeu'j Hautou^ diarpa'sai, Hea`n mj` prw^ton to`n Hiscuro`n dj'sj_, kai` to'te tj`n Hoiki'an Hautou^ diarpa'sei.
+\v 28 HAmj`n le'gw humi^n ho'ti pa'nta Hafeqj'setai toi^s huioi^s tw^n Hanqrw'pwn ta` hamartj'mata kai` hai blasfjmi'ai ho'sa Hea`n blasfjmj'swsin;
+\v 29 ho`s d@ Ha`n blasfjmj'sj_ Heis to` pneu^ma to` ha'gion, Houk He'cei Ha'fesin Heis to`n Haiw^na, Halla` He'noco's Hestin Haiwni'ou hamartj'matos;
+\v 30 ho'ti He'legon, Pneu^ma Haka'qarton He'cei.
+\v 31 Kai` He'rcetai hj mj'tjr Hautou^ kai` hoi Hadelfoi` Hautou^ kai` He'xw stj'kontes Hape'steilan pro`s Hauto`n kalou^ntes Hauto'n.
+\v 32 kai` Heka'qjto peri` Hauto`n Ho'clos, kai` le'gousin Hautw_^, HIdou` hj mj'tjr sou kai` hoi Hadelfoi' sou [kai` hai Hadelfai sou] He'xw zjtou^si'n se.
+\v 33 kai` Hapokriqei`s Hautoi^s le'gei, Ti's Hestin hj mj'tjr mou kai` hoi Hadelfoi' [mou]?
+\v 34 kai` peribleya'menos tou`s peri` Hauto`n ku'klw_ kaqjme'nous le'gei, HI'de hj mj'tjr mou kai` hoi Hadelfoi' mou.
+\v 35 ho`s [ga`r] Ha`n poij'sj_ to` qe'ljma tou^ qeou^, hou^tos Hadelfo's mou kai` Hadelfj` kai` mj'tjr Hesti'n.
+
+\c 4 
+\v 1 Kai` pa'lin Hj'rxato dida'skein para` tj`n qa'lassan;  kai` suna'getai pro`s Hauto`n Ho'clos plei^stos, hw'ste Hauto`n Heis ploi^on Hemba'nta kaqj^sqai Hen tj_^ qala'ssj_, kai` pa^s ho Ho'clos pro`s tj`n qa'lassan Hepi` tj^s gj^s Hj^san.
+\v 2 kai` Hedi'dasken Hautou`s Hen parabolai^s polla' kai` He'legen Hautoi^s Hen tj_^ didacj_^ Hautou^,
+\v 3 HAkou'ete.  Hidou` Hexj^lqen ho spei'rwn spei^rai.
+\v 4 kai` Hege'neto Hen tw_^ spei'rein ho` me`n He'pesen para` tj`n hodo'n, kai` Hj^lqen ta` peteina` kai` kate'fagen Hauto'.
+\v 5 kai` Ha'llo He'pesen Hepi` to` petrw^des ho'pou Houk Hei^cen gj^n pollj'n, kai` Heuqu`s Hexane'teilen dia` to` mj` He'cein ba'qos gj^s;
+\v 6 kai` ho'te Hane'teilen ho hj'lios Hekaumati'sqj kai` dia` to` mj` He'cein hri'zan Hexjra'nqj.
+\v 7 kai` Ha'llo He'pesen Heis ta`s Haka'nqas, kai` Hane'bjsan hai Ha'kanqai kai` sune'pnixan Hauto', kai` karpo`n Houk He'dwken.
+\v 8 kai` Ha'lla He'pesen Heis tj`n gj^n tj`n kalj'n kai` Hedi'dou karpo`n Hanabai'nonta kai` Hauxano'mena kai` He'feren he`n tria'konta kai` he`n hexj'konta kai` he`n hekato'n.
+\v 9 kai` He'legen, hO`s He'cei Hw^ta Hakou'ein Hakoue'tw.
+\v 10 Kai` ho'te Hege'neto kata` mo'nas, Hjrw'twn Hauto`n hoi peri` Hauto`n su`n toi^s dw'deka ta`s parabola's.
+\v 11 kai` He'legen Hautoi^s, hUmi^n to` mustj'rion de'dotai tj^s basilei'as tou^ qeou^;  Hekei'nois de` toi^s He'xw Hen parabolai^s ta` pa'nta gi'netai,
+\v 12 hi'na 	
+	ble'pontes ble'pwsin kai` mj` Hi'dwsin, 
+			kai` Hakou'ontes Hakou'wsin kai` mj` suniw^sin, 	
+	mj'pote Hepistre'ywsin kai` Hafeqj_^ Hautoi^s.
+\v 13 Kai` le'gei Hautoi^s, HOuk Hoi'date tj`n parabolj`n tau'tjn, kai` pw^s pa'sas ta`s parabola`s gnw'sesqe?
+\v 14 ho spei'rwn to`n lo'gon spei'rei.
+\v 15 hou^toi de' Heisin hoi para` tj`n hodo`n;  ho'pou spei'retai ho lo'gos, kai` ho'tan Hakou'swsin, Heuqu`s He'rcetai ho Satana^s kai` Hai'rei to`n lo'gon to`n Hesparme'non Heis Hautou's.
+\v 16 kai` hou^toi' Heisin hoi Hepi` ta` petrw'dj speiro'menoi, hoi` ho'tan Hakou'swsin to`n lo'gon Heuqu`s meta` cara^s lamba'nousin Hauto'n,
+\v 17 kai` Houk He'cousin hri'zan Hen heautoi^s Halla` pro'skairoi' Heisin, Hei^ta genome'njs qli'yews Hj` diwgmou^ dia` to`n lo'gon Heuqu`s skandali'zontai
+\v 18 kai` Ha'lloi Heisi`n hoi Heis ta`s Haka'nqas speiro'menoi;  hou^toi' Heisin hoi to`n lo'gon Hakou'santes,
+\v 19 kai` hai me'rimnai tou^ Haiw^nos kai` hj Hapa'tj tou^ plou'tou kai` hai peri` ta` loipa` Hepiqumi'ai Heisporeuo'menai sumpni'gousin to`n lo'gon kai` Ha'karpos gi'netai.
+\v 20 kai` Hekei^noi' Heisin hoi Hepi` tj`n gj^n tj`n kalj`n spare'ntes, hoi'tines Hakou'ousin to`n lo'gon kai` parade'contai kai` karpoforou^sin he`n tria'konta kai` he`n hexj'konta kai` he`n hekato'n.
+\v 21 Kai` He'legen Hautoi^s, Mj'ti He'rcetai ho lu'cnos hi'na hupo` to`n mo'dion teqj_^ Hj` hupo` tj`n kli'njn?  Houc hi'na Hepi` tj`n lucni'an teqj_^?
+\v 22 Hou ga'r Hestin krupto`n Hea`n mj` hi'na fanerwqj_^, Houde` Hege'neto Hapo'krufon Hall@ hi'na He'lqj_ Heis fanero'n.
+\v 23 Hei' tis He'cei Hw^ta Hakou'ein Hakoue'tw.
+\v 24 Kai` He'legen Hautoi^s, Ble'pete ti' Hakou'ete.  Hen hw_^ me'trw_ metrei^te metrjqj'setai humi^n kai` prosteqj'setai humi^n.
+\v 25 ho`s ga`r He'cei, doqj'setai Hautw_^;  kai` ho`s Houk He'cei, kai` ho` He'cei Harqj'setai Hap@ Hautou^.
+\v 26 Kai` He'legen, hOu'tws Hesti`n hj basilei'a tou^ qeou^ hws Ha'nqrwpos ba'lj_ to`n spo'ron Hepi` tj^s gj^s
+\v 27 kai` kaqeu'dj_ kai` Hegei'rjtai nu'kta kai` hjme'ran, kai` ho spo'ros blasta_^ kai` mjku'njtai hws Houk Hoi^den Hauto's.
+\v 28 Hautoma'tj hj gj^ karpoforei^, prw^ton co'rton Hei^ta sta'cun Hei^ta plj'rj[s] si^ton Hen tw_^ sta'cui".
+\v 29 ho'tan de` paradoi^ ho karpo's, Heuqu`s Haposte'llei to` dre'panon, ho'ti pare'stjken ho qerismo's.
+\v 30 Kai` He'legen, Pw^s homoiw'swmen tj`n basilei'an tou^ qeou^ Hj` Hen ti'ni Hautj`n parabolj_^ qw^men?
+\v 31 hws ko'kkw_ sina'pews, ho`s ho'tan sparj_^ Hepi` tj^s gj^s, mikro'teron Ho`n pa'ntwn tw^n sperma'twn tw^n Hepi` tj^s gj^s,
+\v 32 kai` ho'tan sparj_^, Hanabai'nei kai` gi'netai mei^zon pa'ntwn tw^n laca'nwn kai` poiei^ kla'dous mega'lous, hw'ste du'nasqai hupo` tj`n skia`n Hautou^ ta` peteina` tou^ Houranou^ kataskjnou^n.
+\v 33 Kai` toiau'tais parabolai^s pollai^s Hela'lei Hautoi^s to`n lo'gon kaqw`s Hjdu'nanto Hakou'ein;
+\v 34 cwri`s de` parabolj^s Houk Hela'lei Hautoi^s, kat@ Hidi'an de` toi^s Hidi'ois maqjtai^s Hepe'luen pa'nta.
+\v 35 Kai` le'gei Hautoi^s Hen Hekei'nj_ tj_^ hjme'ra_ Hoyi'as genome'njs, Die'lqwmen Heis to` pe'ran.
+\v 36 kai` Hafe'ntes to`n Ho'clon paralamba'nousin Hauto`n hws Hj^n Hen tw_^ ploi'w_, kai` Ha'lla ploi^a Hj^n met@ Hautou^.
+\v 37 kai` gi'netai lai^lay mega'lj Hane'mou kai` ta` ku'mata Hepe'ballen Heis to` ploi^on, hw'ste Hj'dj gemi'zesqai to` ploi^on.
+\v 38 kai` Hauto`s Hj^n Hen tj_^ pru'mnj_ Hepi` to` proskefa'laion kaqeu'dwn.  kai` Hegei'rousin Hauto`n kai` le'gousin Hautw_^, Dida'skale, Hou me'lei soi ho'ti Hapollu'meqa?
+\v 39 kai` diegerqei`s Hepeti'mjsen tw_^ Hane'mw_ kai` Hei^pen tj_^ qala'ssj_, Siw'pa, pefi'mwso.  kai` Heko'pasen ho Ha'nemos kai` Hege'neto galj'nj mega'lj.
+\v 40 kai` Hei^pen Hautoi^s, Ti' deiloi' Heste?  Hou'pw He'cete pi'stin?
+\v 41 kai` Hefobj'qjsan fo'bon me'gan kai` He'legon pro`s Hallj'lous, Ti's Ha'ra hou^to's Hestin ho'ti kai` ho Ha'nemos kai` hj qa'lassa hupakou'ei Hautw_^?
+
+\c 5 
+\v 1 Kai` Hj^lqon Heis to` pe'ran tj^s qala'ssjs Heis tj`n cw'ran tw^n Gerasjnw^n.
+\v 2 kai` Hexelqo'ntos Hautou^ Hek tou^ ploi'ou Heuqu`s hupj'ntjsen Hautw_^ Hek tw^n mnjmei'wn Ha'nqrwpos Hen pneu'mati Hakaqa'rtw_,
+\v 3 ho`s tj`n katoi'kjsin Hei^cen Hen toi^s mnj'masin, kai` Houde` halu'sei Houke'ti Houdei`s Hedu'nato Hauto`n dj^sai
+\v 4 dia` to` Hauto`n polla'kis pe'dais kai` halu'sesin dede'sqai kai` diespa'sqai hup@ Hautou^ ta`s halu'seis kai` ta`s pe'das suntetri^fqai, kai` Houdei`s Hi'scuen Hauto`n dama'sai;
+\v 5 kai` dia` panto`s nukto`s kai` hjme'ras Hen toi^s mnj'masin kai` Hen toi^s Ho'resin Hj^n kra'zwn kai` katako'ptwn heauto`n li'qois.
+\v 6 kai` Hidw`n to`n HIjsou^n Hapo` makro'qen He'dramen kai` proseku'njsen Hautw_^
+\v 7 kai` kra'xas fwnj_^ mega'lj_ le'gei, Ti' Hemoi` kai` soi', HIjsou^ huie` tou^ qeou^ tou^ huyi'stou?  horki'zw se to`n qeo'n, mj' me basani'sj_s.
+\v 8 He'legen ga`r Hautw_^, HE'xelqe to` pneu^ma to` Haka'qarton Hek tou^ Hanqrw'pou.
+\v 9 kai` Hepjrw'ta Hauto'n, Ti' Ho'noma' soi?  kai` le'gei Hautw_^, Legiw`n Ho'noma' moi, ho'ti polloi' Hesmen.
+\v 10 kai` pareka'lei Hauto`n polla` hi'na mj` Hauta` Hapostei'lj_ He'xw tj^s cw'ras.
+\v 11 HJ^n de` Hekei^ pro`s tw_^ Ho'rei Hage'lj coi'rwn mega'lj boskome'nj;
+\v 12 kai` pareka'lesan Hauto`n le'gontes, Pe'myon hjma^s Heis tou`s coi'rous, hi'na Heis Hautou`s Heise'lqwmen.
+\v 13 kai` Hepe'treyen Hautoi^s.  kai` Hexelqo'nta ta` pneu'mata ta` Haka'qarta Heisj^lqon Heis tou`s coi'rous, kai` hw'rmjsen hj Hage'lj kata` tou^ krjmnou^ Heis tj`n qa'lassan, hws disci'lioi, kai` Hepni'gonto Hen tj_^ qala'ssj_.
+\v 14 kai` hoi bo'skontes Hautou`s He'fugon kai` Hapj'ggeilan Heis tj`n po'lin kai` Heis tou`s Hagrou's;  kai` Hj^lqon Hidei^n ti' Hestin to` gegono's
+\v 15 kai` He'rcontai pro`s to`n HIjsou^n kai` qewrou^sin to`n daimonizo'menon kaqj'menon himatisme'non kai` swfronou^nta, to`n Hescjko'ta to`n legiw^na, kai` Hefobj'qjsan.
+\v 16 kai` dijgj'santo Hautoi^s hoi Hido'ntes pw^s Hege'neto tw_^ daimonizome'nw_ kai` peri` tw^n coi'rwn.
+\v 17 kai` Hj'rxanto parakalei^n Hauto`n Hapelqei^n Hapo` tw^n hori'wn Hautw^n.
+\v 18 kai` Hembai'nontos Hautou^ Heis to` ploi^on pareka'lei Hauto`n ho daimonisqei`s hi'na met@ Hautou^ Hj_^.
+\v 19 kai` Houk Hafj^ken Hauto'n, Halla` le'gei Hautw_^, hU'page Heis to`n Hoi^ko'n sou pro`s tou`s sou's kai` Hapa'ggeilon Hautoi^s ho'sa ho ku'rio's soi pepoi'jken kai` Hjle'jse'n se.
+\v 20 kai` Hapj^lqen kai` Hj'rxato kjru'ssein Hen tj_^ Dekapo'lei ho'sa Hepoi'jsen Hautw_^ ho HIjsou^s, kai` pa'ntes Heqau'mazon.
+\v 21 Kai` diapera'santos tou^ HIjsou^ [Hen tw_^ ploi'w_] pa'lin Heis to` pe'ran sunj'cqj Ho'clos polu`s Hep@ Hauto'n, kai` Hj^n para` tj`n qa'lassan.
+\v 22 kai` He'rcetai hei^s tw^n Harcisunagw'gwn, Hono'mati HIa'i"ros, kai` Hidw`n Hauto`n pi'ptei pro`s tou`s po'das Hautou^
+\v 23 kai` parakalei^ Hauto`n polla` le'gwn ho'ti To` quga'trio'n mou Hesca'tws He'cei, hi'na Helqw`n Hepiqj_^s ta`s cei^ras Hautj_^ hi'na swqj_^ kai` zj'sj_.
+\v 24 kai` Hapj^lqen met@ Hautou^.  	
+	Kai` Hjkolou'qei Hautw_^ Ho'clos polu's kai` sune'qlibon Hauto'n.
+\v 25 kai` gunj` Hou^sa Hen hru'sei hai'matos dw'deka He'tj
+\v 26 kai` polla` paqou^sa hupo` pollw^n Hiatrw^n kai` dapanj'sasa ta` par@ Hautj^s pa'nta kai` mjde`n Hwfeljqei^sa Halla` ma^llon Heis to` cei^ron Helqou^sa,
+\v 27 Hakou'sasa peri` tou^ HIjsou^, Helqou^sa Hen tw_^ Ho'clw_ Ho'pisqen hj'yato tou^ himati'ou Hautou^;
+\v 28 He'legen ga`r ho'ti HEa`n ha'ywmai kHa`n tw^n himati'wn Hautou^ swqj'somai.
+\v 29 kai` Heuqu`s Hexjra'nqj hj pjgj` tou^ hai'matos Hautj^s kai` He'gnw tw_^ sw'mati ho'ti Hi'atai Hapo` tj^s ma'stigos.
+\v 30 kai` Heuqu`s ho HIjsou^s Hepignou`s Hen heautw_^ tj`n Hex Hautou^ du'namin Hexelqou^san Hepistrafei`s Hen tw_^ Ho'clw_ He'legen, Ti's mou hj'yato tw^n himati'wn?
+\v 31 kai` He'legon Hautw_^ hoi maqjtai` Hautou^, Ble'peis to`n Ho'clon sunqli'bonta' se, kai` le'geis, Ti's mou hj'yato?
+\v 32 kai` perieble'peto Hidei^n tj`n tou^to poij'sasan.
+\v 33 hj de` gunj` fobjqei^sa kai` tre'mousa, Heidui^a ho` ge'gonen Hautj_^, Hj^lqen kai` prose'pesen Hautw_^ kai` Hei^pen Hautw_^ pa^san tj`n Halj'qeian.
+\v 34 ho de` Hei^pen Hautj_^, Quga'tjr, hj pi'stis sou se'swke'n se;  hu'page Heis Heirj'njn kai` Hi'sqi hugij`s Hapo` tj^s ma'stigo's sou.
+\v 35 HE'ti Hautou^ lalou^ntos He'rcontai Hapo` tou^ Harcisunagw'gou le'gontes ho'ti hJ quga'tjr sou Hape'qanen;  ti' He'ti sku'lleis to`n dida'skalon?
+\v 36 ho de` HIjsou^s parakou'sas to`n lo'gon lalou'menon le'gei tw_^ Harcisunagw'gw_, Mj` fobou^, mo'non pi'steue.
+\v 37 kai` Houk Hafj^ken Houde'na met@ Hautou^ sunakolouqj^sai Hei mj` to`n Pe'tron kai` HIa'kwbon kai` HIwa'nnjn to`n Hadelfo`n HIakw'bou.
+\v 38 kai` He'rcontai Heis to`n Hoi^kon tou^ Harcisunagw'gou, kai` qewrei^ qo'rubon kai` klai'ontas kai` Halala'zontas polla',
+\v 39 kai` Heiselqw`n le'gei Hautoi^s, Ti' qorubei^sqe kai` klai'ete?  to` paidi'on Houk Hape'qanen Halla` kaqeu'dei.
+\v 40 kai` katege'lwn Hautou^.  Hauto`s de` Hekbalw`n pa'ntas paralamba'nei to`n pate'ra tou^ paidi'ou kai` tj`n mjte'ra kai` tou`s met@ Hautou^, kai` Heisporeu'etai ho'pou Hj^n to` paidi'on.
+\v 41 kai` kratj'sas tj^s ceiro`s tou^ paidi'ou le'gei Hautj_^, Taliqa koum, ho' Hestin meqermjneuo'menon To` kora'sion, soi` le'gw, He'geire.
+\v 42 kai` Heuqu`s Hane'stj to` kora'sion kai` periepa'tei;  Hj^n ga`r Hetw^n dw'deka.  kai` Hexe'stjsan [Heuqu`s] Heksta'sei mega'lj_.
+\v 43 kai` diestei'lato Hautoi^s polla` hi'na mjdei`s gnoi^ tou^to, kai` Hei^pen doqj^nai Hautj_^ fagei^n.
+
+\c 6 
+\v 1 Kai` Hexj^lqen Hekei^qen kai` He'rcetai Heis tj`n patri'da Hautou^, kai` Hakolouqou^sin Hautw_^ hoi maqjtai` Hautou^.
+\v 2 kai` genome'nou sabba'tou Hj'rxato dida'skein Hen tj_^ sunagwgj_^, kai` polloi` Hakou'ontes Hexeplj'ssonto le'gontes, Po'qen tou'tw_ tau^ta, kai` ti's hj sofi'a hj doqei^sa tou'tw_, kai` hai duna'meis toiau^tai dia` tw^n ceirw^n Hautou^ gino'menai?
+\v 3 Houc hou^to's Hestin ho te'ktwn, ho huio`s tj^s Mari'as kai` Hadelfo`s HIakw'bou kai` HIwsj^tos kai` HIou'da kai` Si'mwnos?  kai` Houk Heisi`n hai Hadelfai` Hautou^ hw^de pro`s hjma^s?  kai` Heskandali'zonto Hen Hautw_^.
+\v 4 kai` He'legen Hautoi^s ho HIjsou^s ho'ti HOuk He'stin profj'tjs Ha'timos Hei mj` Hen tj_^ patri'di Hautou^ kai` Hen toi^s suggeneu^sin Hautou^ kai` Hen tj_^ Hoiki'a_ Hautou^.
+\v 5 kai` Houk Hedu'nato Hekei^ poij^sai Houdemi'an du'namin, Hei mj` Holi'gois Harrw'stois Hepiqei`s ta`s cei^ras Heqera'peusen.
+\v 6 kai` Heqau'mazen dia` tj`n Hapisti'an Hautw^n.  	
+	Kai` perij^gen ta`s kw'mas ku'klw_ dida'skwn.
+\v 7 kai` proskalei^tai tou`s dw'deka kai` Hj'rxato Hautou`s Haposte'llein du'o du'o kai` Hedi'dou Hautoi^s Hexousi'an tw^n pneuma'twn tw^n Hakaqa'rtwn,
+\v 8 kai` parj'ggeilen Hautoi^s hi'na mjde`n Hai'rwsin Heis hodo`n Hei mj` hra'bdon mo'non, mj` Ha'rton, mj` pj'ran, mj` Heis tj`n zw'njn calko'n,
+\v 9 Halla` hupodedeme'nous sanda'lia, kai` mj` Hendu'sjsqe du'o citw^nas.
+\v 10 kai` He'legen Hautoi^s, hO'pou Hea`n Heise'lqjte Heis Hoiki'an, Hekei^ me'nete he'ws Ha`n Hexe'lqjte Hekei^qen.
+\v 11 kai` ho`s Ha`n to'pos mj` de'xjtai huma^s mjde` Hakou'swsin humw^n, Hekporeuo'menoi Hekei^qen Hektina'xate to`n cou^n to`n hupoka'tw tw^n podw^n humw^n Heis martu'rion Hautoi^s.
+\v 12 Kai` Hexelqo'ntes Hekj'ruxan hi'na metanow^sin,
+\v 13 kai` daimo'nia polla` Hexe'ballon, kai` Hj'leifon Helai'w_ pollou`s Harrw'stous kai` Heqera'peuon.
+\v 14 Kai` Hj'kousen ho basileu`s hJrw_'djs, fanero`n ga`r Hege'neto to` Ho'noma Hautou^, kai` He'legon ho'ti HIwa'nnjs ho bapti'zwn Hegj'gertai Hek nekrw^n kai` dia` tou^to Henergou^sin hai duna'meis Hen Hautw_^.
+\v 15 Ha'lloi de` He'legon ho'ti HJli'as Hesti'n;  Ha'lloi de` He'legon ho'ti profj'tjs hws hei^s tw^n profjtw^n.
+\v 16 Hakou'sas de` ho hJrw_'djs He'legen, hO`n Hegw` Hapekefa'lisa HIwa'nnjn, hou^tos Hjge'rqj.
+\v 17 HAuto`s ga`r ho hJrw_'djs Hapostei'las Hekra'tjsen to`n HIwa'nnjn kai` He'djsen Hauto`n Hen fulakj_^ dia` hJrw_dia'da tj`n gunai^ka Fili'ppou tou^ Hadelfou^ Hautou^, ho'ti Hautj`n Hega'mjsen;
+\v 18 He'legen ga`r ho HIwa'nnjs tw_^ hJrw_'dj_ ho'ti HOuk He'xesti'n soi He'cein tj`n gunai^ka tou^ Hadelfou^ sou.
+\v 19 hj de` hJrw_dia`s Henei^cen Hautw_^ kai` Hj'qelen Hauto`n Hapoktei^nai, kai` Houk Hjdu'nato;
+\v 20 ho ga`r hJrw_'djs Hefobei^to to`n HIwa'nnjn, Heidw`s Hauto`n Ha'ndra di'kaion kai` ha'gion, kai` sunetj'rei Hauto'n, kai` Hakou'sas Hautou^ polla` Hjpo'rei, kai` hjde'ws Hautou^ Hj'kouen.
+\v 21 Kai` genome'njs hjme'ras Heukai'rou ho'te hJrw_'djs toi^s genesi'ois Hautou^ dei^pnon Hepoi'jsen toi^s megista^sin Hautou^ kai` toi^s cilia'rcois kai` toi^s prw'tois tj^s Galilai'as,
+\v 22 kai` Heiselqou'sjs tj^s qugatro`s Hautou^ hJrw_dia'dos kai` Horcjsame'njs Hj'resen tw_^ hJrw_'dj_ kai` toi^s sunanakeime'nois. Hei^pen ho basileu`s tw_^ korasi'w_, HAi'tjso'n me ho` Hea`n qe'lj_s, kai` dw'sw soi;
+\v 23 kai` Hw'mosen Hautj_^ [polla'], hO' ti Hea'n me Haitj'sj_s dw'sw soi he'ws hjmi'sous tj^s basilei'as mou.
+\v 24 kai` Hexelqou^sa Hei^pen tj_^ mjtri` Hautj^s, Ti' Haitj'swmai?  hj de` Hei^pen, Tj`n kefalj`n HIwa'nnou tou^ bapti'zontos.
+\v 25 kai` Heiselqou^sa Heuqu`s meta` spoudj^s pro`s to`n basile'a Hj_tj'sato le'gousa, Qe'lw hi'na Hexautj^s dw_^s moi Hepi` pi'naki tj`n kefalj`n HIwa'nnou tou^ baptistou^.
+\v 26 kai` peri'lupos geno'menos ho basileu`s dia` tou`s ho'rkous kai` tou`s Hanakeime'nous Houk Hjqe'ljsen Haqetj^sai Hautj'n;
+\v 27 kai` Heuqu`s Hapostei'las ho basileu`s spekoula'tora Hepe'taxen Hene'gkai tj`n kefalj`n Hautou^.  kai` Hapelqw`n Hapekefa'lisen Hauto`n Hen tj_^ fulakj_^
+\v 28 kai` Hj'negken tj`n kefalj`n Hautou^ Hepi` pi'naki kai` He'dwken Hautj`n tw_^ korasi'w_, kai` to` kora'sion He'dwken Hautj`n tj_^ mjtri` Hautj^s.
+\v 29 kai` Hakou'santes hoi maqjtai` Hautou^ Hj^lqon kai` Hj^ran to` ptw^ma Hautou^ kai` He'qjkan Hauto` Hen mnjmei'w_.
+\v 30 Kai` suna'gontai hoi Hapo'stoloi pro`s to`n HIjsou^n kai` Hapj'ggeilan Hautw_^ pa'nta ho'sa Hepoi'jsan kai` ho'sa Hedi'daxan.
+\v 31 kai` le'gei Hautoi^s, Deu^te humei^s Hautoi` kat@ Hidi'an Heis He'rjmon to'pon kai` Hanapau'sasqe Holi'gon.  Hj^san ga`r hoi Herco'menoi kai` hoi hupa'gontes polloi', kai` Houde` fagei^n Heukai'roun.
+\v 32 kai` Hapj^lqon Hen tw_^ ploi'w_ Heis He'rjmon to'pon kat@ Hidi'an.
+\v 33 kai` Hei^don Hautou`s hupa'gontas kai` Hepe'gnwsan polloi' kai` pezj_^ Hapo` pasw^n tw^n po'lewn sune'dramon Hekei^ kai` proj^lqon Hautou's.
+\v 34 kai` Hexelqw`n Hei^den polu`n Ho'clon kai` Hesplagcni'sqj Hep@ Hautou`s, ho'ti Hj^san hws pro'bata mj` He'conta poime'na, kai` Hj'rxato dida'skein Hautou`s polla'.
+\v 35 Kai` Hj'dj hw'ras pollj^s genome'njs proselqo'ntes Hautw_^ hoi maqjtai` Hautou^ He'legon ho'ti HErj'mo's Hestin ho to'pos kai` Hj'dj hw'ra pollj';
+\v 36 Hapo'luson Hautou's, hi'na Hapelqo'ntes Heis tou`s ku'klw_ Hagrou`s kai` kw'mas Hagora'swsin heautoi^s ti' fa'gwsin.
+\v 37 ho de` Hapokriqei`s Hei^pen Hautoi^s, Do'te Hautoi^s humei^s fagei^n.  kai` le'gousin Hautw_^, HApelqo'ntes Hagora'swmen djnari'wn diakosi'wn Ha'rtous kai` dw'somen Hautoi^s fagei^n?
+\v 38 ho de` le'gei Hautoi^s, Po'sous Ha'rtous He'cete?  hupa'gete Hi'dete.  kai` gno'ntes le'gousin, Pe'nte, kai` du'o Hicqu'as.
+\v 39 kai` Hepe'taxen Hautoi^s Hanakli^nai pa'ntas sumpo'sia sumpo'sia Hepi` tw_^ clwrw_^ co'rtw_.
+\v 40 kai` Hane'pesan prasiai` prasiai` kata` hekato`n kai` kata` pentj'konta.
+\v 41 kai` labw`n tou`s pe'nte Ha'rtous kai` tou`s du'o Hicqu'as Hanable'yas Heis to`n Hourano`n Heulo'gjsen kai` kate'klasen tou`s Ha'rtous kai` Hedi'dou toi^s maqjtai^s [Hautou^] hi'na paratiqw^sin Hautoi^s, kai` tou`s du'o Hicqu'as Heme'risen pa^sin.
+\v 42 kai` He'fagon pa'ntes kai` Hecorta'sqjsan,
+\v 43 kai` Hj^ran kla'smata dw'deka kofi'nwn pljrw'mata kai` Hapo` tw^n Hicqu'wn.
+\v 44 kai` Hj^san hoi fago'ntes [tou`s Ha'rtous] pentakisci'lioi Ha'ndres.
+\v 45 Kai` Heuqu`s Hjna'gkasen tou`s maqjta`s Hautou^ Hembj^nai Heis to` ploi^on kai` proa'gein Heis to` pe'ran pro`s Bjqsai"da'n, he'ws Hauto`s Hapolu'ei to`n Ho'clon.
+\v 46 kai` Hapotaxa'menos Hautoi^s Hapj^lqen Heis to` Ho'ros proseu'xasqai.
+\v 47 kai` Hoyi'as genome'njs Hj^n to` ploi^on Hen me'sw_ tj^s qala'ssjs, kai` Hauto`s mo'nos Hepi` tj^s gj^s.
+\v 48 kai` Hidw`n Hautou`s basanizome'nous Hen tw_^ Helau'nein, Hj^n ga`r ho Ha'nemos Henanti'os Hautoi^s, peri` teta'rtjn fulakj`n tj^s nukto`s He'rcetai pro`s Hautou`s peripatw^n Hepi` tj^s qala'ssjs;  kai` Hj'qelen parelqei^n Hautou's.
+\v 49 hoi de` Hido'ntes Hauto`n Hepi` tj^s qala'ssjs peripatou^nta He'doxan ho'ti fa'ntasma' Hestin, kai` Hane'kraxan
+\v 50 pa'ntes ga`r Hauto`n Hei^don kai` Hetara'cqjsan.  ho de` Heuqu`s Hela'ljsen met@ Hautw^n, kai` le'gei Hautoi^s, Qarsei^te, Hegw' Heimi;  mj` fobei^sqe.
+\v 51 kai` Hane'bj pro`s Hautou`s Heis to` ploi^on kai` Heko'pasen ho Ha'nemos, kai` li'an [Hek perissou^] Hen heautoi^s Hexi'stanto;
+\v 52 Hou ga`r sunj^kan Hepi` toi^s Ha'rtois, Hall@ Hj^n Hautw^n hj kardi'a pepwrwme'nj.
+\v 53 Kai` diapera'santes Hepi` tj`n gj^n Hj^lqon Heis Gennjsare`t kai` proswrmi'sqjsan.
+\v 54 kai` Hexelqo'ntwn Hautw^n Hek tou^ ploi'ou Heuqu`s Hepigno'ntes Hauto`n
+\v 55 perie'dramon ho'ljn tj`n cw'ran Hekei'njn kai` Hj'rxanto Hepi` toi^s kraba'ttois tou`s kakw^s He'contas perife'rein ho'pou Hj'kouon ho'ti Hesti'n.
+\v 56 kai` ho'pou Ha`n Heiseporeu'eto Heis kw'mas Hj` Heis po'leis Hj` Heis Hagrou`s, Hen tai^s Hagorai^s Heti'qesan tou`s Hasqenou^ntas kai` pareka'loun Hauto`n hi'na kHa`n tou^ kraspe'dou tou^ himati'ou Hautou^ ha'ywntai;  kai` ho'soi Ha`n hj'yanto Hautou^ Hesw_'zonto.
+
+\c 7 
+\v 1 Kai` suna'gontai pro`s Hauto`n hoi Farisai^oi kai' tines tw^n grammate'wn Helqo'ntes Hapo` hIerosolu'mwn.
+\v 2 kai` Hido'ntes tina`s tw^n maqjtw^n Hautou^ ho'ti koinai^s cersi'n, tou^t@ He'stin Hani'ptois, Hesqi'ousin tou`s Ha'rtous
+\v 3 - hoi ga`r Farisai^oi kai` pa'ntes hoi HIoudai^oi Hea`n mj` pugmj_^ ni'ywntai ta`s cei^ras Houk Hesqi'ousin, kratou^ntes tj`n para'dosin tw^n presbute'rwn,
+\v 4 kai` Hap@ Hagora^s Hea`n mj` bapti'swntai Houk Hesqi'ousin, kai` Ha'lla polla' Hestin ha` pare'labon kratei^n, baptismou`s potjri'wn kai` xestw^n kai` calki'wn [kai` klinw^n] -
+\v 5 kai` Heperwtw^sin Hauto`n hoi Farisai^oi kai` hoi grammatei^s, Dia` ti' Hou peripatou^sin hoi maqjtai' sou kata` tj`n para'dosin tw^n presbute'rwn, Halla` koinai^s cersi`n Hesqi'ousin to`n Ha'rton?
+\v 6 ho de` Hei^pen Hautoi^s, Kalw^s Heprofj'teusen HJsai"'as peri` humw^n tw^n hupokritw^n, hws ge'graptai [ho'ti] 	
+		hOu^tos ho lao`s toi^s cei'lesi'n me tima_^, 
+			hj de` kardi'a Hautw^n po'rrw Hape'cei Hap@ Hemou^;
+\v 7 ma'tjn de` se'bontai' me 
+			dida'skontes didaskali'as Henta'lmata Hanqrw'pwn.
+\v 8 Hafe'ntes tj`n Hentolj`n tou^ qeou^ kratei^te tj`n para'dosin tw^n Hanqrw'pwn.
+\v 9 Kai` He'legen Hautoi^s, Kalw^s Haqetei^te tj`n Hentolj`n tou^ qeou^, hi'na tj`n para'dosin humw^n stj'sjte.
+\v 10 Mwu"sj^s ga`r Hei^pen, Ti'ma to`n pate'ra sou kai` tj`n mjte'ra sou, kai', hO kakologw^n pate'ra Hj` mjte'ra qana'tw_ teleuta'tw.
+\v 11 humei^s de` le'gete, HEa`n Hei'pj_ Ha'nqrwpos tw_^ patri` Hj` tj_^ mjtri', Korba^n, ho' Hestin, Dw^ron, ho` Hea`n Hex Hemou^ Hwfeljqj_^s,
+\v 12 Houke'ti Hafi'ete Hauto`n Houde`n poij^sai tw_^ patri` Hj` tj_^ mjtri',
+\v 13 Hakurou^ntes to`n lo'gon tou^ qeou^ tj_^ parado'sei humw^n hj_^ paredw'kate;  kai` paro'moia toiau^ta polla` poiei^te.
+\v 14 Kai` proskalesa'menos pa'lin to`n Ho'clon He'legen Hautoi^s, HAkou'sate' mou pa'ntes kai` su'nete.
+\v 15 Houde'n Hestin He'xwqen tou^ Hanqrw'pou Heisporeuo'menon Heis Hauto`n ho` du'natai koinw^sai Hauto'n, Halla` ta` Hek tou^ Hanqrw'pou Hekporeuo'mena' Hestin ta` koinou^nta to`n Ha'nqrwpon.
+\v 16 \v 17 Kai` ho'te Heisj^lqen Heis Hoi^kon Hapo` tou^ Ho'clou, Hepjrw'twn Hauto`n hoi maqjtai` Hautou^ tj`n parabolj'n.
+\v 18 kai` le'gei Hautoi^s, hOu'tws kai` humei^s Hasu'netoi' Heste?  Hou noei^te ho'ti pa^n to` He'xwqen Heisporeuo'menon Heis to`n Ha'nqrwpon Hou du'natai Hauto`n koinw^sai
+\v 19 ho'ti Houk Heisporeu'etai Hautou^ Heis tj`n kardi'an Hall@ Heis tj`n koili'an, kai` Heis to`n Hafedrw^na Hekporeu'etai, kaqari'zwn pa'nta ta` brw'mata?
+\v 20 He'legen de` ho'ti To` Hek tou^ Hanqrw'pou Hekporeuo'menon, Hekei^no koinoi^ to`n Ha'nqrwpon.
+\v 21 He'swqen ga`r Hek tj^s kardi'as tw^n Hanqrw'pwn hoi dialogismoi` hoi kakoi` Hekporeu'ontai, pornei^ai, klopai', fo'noi,
+\v 22 moicei^ai, pleonexi'ai, ponjri'ai, do'los, Hase'lgeia, Hofqalmo`s ponjro's, blasfjmi'a, huperjfani'a, Hafrosu'nj;
+\v 23 pa'nta tau^ta ta` ponjra` He'swqen Hekporeu'etai kai` koinoi^ to`n Ha'nqrwpon.
+\v 24 HEkei^qen de` Hanasta`s Hapj^lqen Heis ta` ho'ria Tu'rou.  kai` Heiselqw`n Heis Hoiki'an Houde'na Hj'qelen gnw^nai, kai` Houk Hjdunj'qj laqei^n;
+\v 25 Hall@ Heuqu`s Hakou'sasa gunj` peri` Hautou^, hj^s Hei^cen to` quga'trion Hautj^s pneu^ma Haka'qarton, Helqou^sa prose'pesen pro`s tou`s po'das Hautou^;
+\v 26 hj de` gunj` Hj^n hElljni's, Surofoini'kissa tw_^ ge'nei;  kai` Hjrw'ta Hauto`n hi'na to` daimo'nion Hekba'lj_ Hek tj^s qugatro`s Hautj^s.
+\v 27 kai` He'legen Hautj_^, HA'fes prw^ton cortasqj^nai ta` te'kna, Hou ga'r Hestin kalo`n labei^n to`n Ha'rton tw^n te'knwn kai` toi^s kunari'ois balei^n.
+\v 28 hj de` Hapekri'qj kai` le'gei Hautw_^, Ku'rie, kai` ta` kuna'ria hupoka'tw tj^s trape'zjs Hesqi'ousin Hapo` tw^n yici'wn tw^n paidi'wn.
+\v 29 kai` Hei^pen Hautj_^, Dia` tou^ton to`n lo'gon hu'page, Hexelj'luqen Hek tj^s qugatro's sou to` daimo'nion.
+\v 30 kai` Hapelqou^sa Heis to`n Hoi^kon Hautj^s heu^ren to` paidi'on bebljme'non Hepi` tj`n kli'njn kai` to` daimo'nion Hexeljluqo's.
+\v 31 Kai` pa'lin Hexelqw`n Hek tw^n hori'wn Tu'rou Hj^lqen dia` Sidw^nos Heis tj`n qa'lassan tj^s Galilai'as Hana` me'son tw^n hori'wn Dekapo'lews.
+\v 32 kai` fe'rousin Hautw_^ kwfo`n kai` mogila'lon kai` parakalou^sin Hauto`n hi'na Hepiqj_^ Hautw_^ tj`n cei^ra.
+\v 33 kai` Hapolabo'menos Hauto`n Hapo` tou^ Ho'clou kat@ Hidi'an He'balen tou`s daktu'lous Hautou^ Heis ta` Hw^ta Hautou^ kai` ptu'sas hj'yato tj^s glw'ssjs Hautou^,
+\v 34 kai` Hanable'yas Heis to`n Hourano`n Heste'naxen kai` le'gei Hautw_^, Effaqa, ho' Hestin, Dianoi'cqjti.
+\v 35 kai` [Heuqe'ws] Hjnoi'gjsan Hautou^ hai Hakoai', kai` Helu'qj ho desmo`s tj^s glw'ssjs Hautou^ kai` Hela'lei Horqw^s.
+\v 36 kai` diestei'lato Hautoi^s hi'na mjdeni` le'gwsin;  ho'son de` Hautoi^s dieste'lleto, Hautoi` ma^llon perisso'teron Hekj'russon.
+\v 37 kai` huperperissw^s Hexeplj'ssonto le'gontes, Kalw^s pa'nta pepoi'jken, kai` tou`s kwfou`s poiei^ Hakou'ein kai` [tou`s] Hala'lous lalei^n.
+
+\c 8 
+\v 1 HEn Hekei'nais tai^s hjme'rais pa'lin pollou^ Ho'clou Ho'ntos kai` mj` Heco'ntwn ti' fa'gwsin, proskalesa'menos tou`s maqjta`s le'gei Hautoi^s,
+\v 2 Splagcni'zomai Hepi` to`n Ho'clon, ho'ti Hj'dj hjme'rai trei^s prosme'nousi'n moi kai` Houk He'cousin ti' fa'gwsin;
+\v 3 kai` Hea`n Hapolu'sw Hautou`s nj'steis Heis Hoi^kon Hautw^n, Hekluqj'sontai Hen tj_^ hodw_^;  kai' tines Hautw^n Hapo` makro'qen hj'kasin.
+\v 4 kai` Hapekri'qjsan Hautw_^ hoi maqjtai` Hautou^ ho'ti Po'qen tou'tous dunj'setai' tis hw^de corta'sai Ha'rtwn Hep@ Herjmi'as?
+\v 5 kai` Hjrw'ta Hautou's, Po'sous He'cete Ha'rtous?  hoi de` Hei^pan, hEpta'.
+\v 6 kai` paragge'llei tw_^ Ho'clw_ Hanapesei^n Hepi` tj^s gj^s;  kai` labw`n tou`s hepta` Ha'rtous Heucaristj'sas He'klasen kai` Hedi'dou toi^s maqjtai^s Hautou^ hi'na paratiqw^sin, kai` pare'qjkan tw_^ Ho'clw_.
+\v 7 kai` Hei^con Hicqu'dia Holi'ga;  kai` Heulogj'sas Hauta` Hei^pen kai` tau^ta paratiqe'nai.
+\v 8 kai` He'fagon kai` Hecorta'sqjsan, kai` Hj^ran perisseu'mata klasma'twn hepta` spuri'das.
+\v 9 Hj^san de` hws tetrakisci'lioi.  kai` Hape'lusen Hautou's.
+\v 10 Kai` Heuqu`s Hemba`s Heis to` ploi^on meta` tw^n maqjtw^n Hautou^ Hj^lqen Heis ta` me'rj Dalmanouqa'.
+\v 11 Kai` Hexj^lqon hoi Farisai^oi kai` Hj'rxanto suzjtei^n Hautw_^, zjtou^ntes par@ Hautou^ sjmei^on Hapo` tou^ Houranou^, peira'zontes Hauto'n.
+\v 12 kai` Hanastena'xas tw_^ pneu'mati Hautou^ le'gei, Ti' hj genea` hau'tj zjtei^ sjmei^on?  Hamj`n le'gw humi^n, Hei doqj'setai tj_^ genea_^ tau'tj_ sjmei^on.
+\v 13 kai` Hafei`s Hautou`s pa'lin Hemba`s Hapj^lqen Heis to` pe'ran.
+\v 14 Kai` Hepela'qonto labei^n Ha'rtous kai` Hei mj` he'na Ha'rton Houk Hei^con meq@ heautw^n Hen tw_^ ploi'w_.
+\v 15 kai` dieste'lleto Hautoi^s le'gwn, hOra^te, ble'pete Hapo` tj^s zu'mjs tw^n Farisai'wn kai` tj^s zu'mjs hJrw_'dou.
+\v 16 kai` dielogi'zonto pro`s Hallj'lous ho'ti HAr'tous Houk He'cousin.
+\v 17 kai` gnou`s le'gei Hautoi^s, Ti' dialogi'zesqe ho'ti Ha'rtous Houk He'cete?  Hou'pw noei^te Houde` suni'ete?  pepwrwme'njn He'cete tj`n kardi'an humw^n?
+\v 18 Hofqalmou`s He'contes Hou ble'pete kai` Hw^ta He'contes Houk Hakou'ete?  kai` Hou mnjmoneu'ete,
+\v 19 ho'te tou`s pe'nte Ha'rtous He'klasa Heis tou`s pentakiscili'ous, po'sous kofi'nous klasma'twn plj'reis Hj'rate?  le'gousin Hautw_^, Dw'deka.
+\v 20 hO'te tou`s hepta` Heis tou`s tetrakiscili'ous, po'swn spuri'dwn pljrw'mata klasma'twn Hj'rate?  kai` le'gousin [Hautw_^], hEpta'.
+\v 21 kai` He'legen Hautoi^s, HOu'pw suni'ete?
+\v 22 Kai` He'rcontai Heis Bjqsai"da'n.  kai` fe'rousin Hautw_^ tuflo`n kai` parakalou^sin Hauto`n hi'na Hautou^ ha'yjtai.
+\v 23 kai` Hepilabo'menos tj^s ceiro`s tou^ tuflou^ Hexj'negken Hauto`n He'xw tj^s kw'mjs kai` ptu'sas Heis ta` Ho'mmata Hautou^, Hepiqei`s ta`s cei^ras Hautw_^ Hepjrw'ta Hauto'n, HEi' ti ble'peis?
+\v 24 kai` Hanable'yas He'legen, Ble'pw tou`s Hanqrw'pous ho'ti hws de'ndra horw^ peripatou^ntas.
+\v 25 Hei^ta pa'lin Hepe'qjken ta`s cei^ras Hepi` tou`s Hofqalmou`s Hautou^, kai` die'bleyen kai` Hapekate'stj kai` Hene'blepen tjlaugw^s ha'panta.
+\v 26 kai` Hape'steilen Hauto`n Heis Hoi^kon Hautou^ le'gwn, Mjde` Heis tj`n kw'mjn Heise'lqj_s.
+\v 27 Kai` Hexj^lqen ho HIjsou^s kai` hoi maqjtai` Hautou^ Heis ta`s kw'mas Kaisarei'as tj^s Fili'ppou;  kai` Hen tj_^ hodw_^ Hepjrw'ta tou`s maqjta`s Hautou^ le'gwn Hautoi^s, Ti'na me le'gousin hoi Ha'nqrwpoi Hei^nai?
+\v 28 hoi de` Hei^pan Hautw_^ le'gontes [ho'ti] HIwa'nnjn to`n baptistj'n, kai` Ha'lloi, HJli'an, Ha'lloi de` ho'ti hei^s tw^n profjtw^n.
+\v 29 kai` Hauto`s Hepjrw'ta Hautou's, hUmei^s de` ti'na me le'gete Hei^nai?  Hapokriqei`s ho Pe'tros le'gei Hautw_^, Su` Hei^ ho Cristo's.
+\v 30 kai` Hepeti'mjsen Hautoi^s hi'na mjdeni` le'gwsin peri` Hautou^.
+\v 31 Kai` Hj'rxato dida'skein Hautou`s ho'ti dei^ to`n huio`n tou^ Hanqrw'pou polla` paqei^n kai` Hapodokimasqj^nai hupo` tw^n presbute'rwn kai` tw^n Harciere'wn kai` tw^n grammate'wn kai` Hapoktanqj^nai kai` meta` trei^s hjme'ras Hanastj^nai;
+\v 32 kai` parrjsi'a_ to`n lo'gon Hela'lei.  kai` proslabo'menos ho Pe'tros Hauto`n Hj'rxato Hepitima^n Hautw_^.
+\v 33 ho de` Hepistrafei`s kai` Hidw`n tou`s maqjta`s Hautou^ Hepeti'mjsen Pe'trw_ kai` le'gei, hU'page Hopi'sw mou, Satana^, ho'ti Hou fronei^s ta` tou^ qeou^ Halla` ta` tw^n Hanqrw'pwn.
+\v 34 Kai` proskalesa'menos to`n Ho'clon su`n toi^s maqjtai^s Hautou^ Hei^pen Hautoi^s, HEi' tis qe'lei Hopi'sw mou Hakolouqei^n, Haparnjsa'sqw heauto`n kai` Hara'tw to`n stauro`n Hautou^ kai` Hakolouqei'tw moi.
+\v 35 ho`s ga`r Hea`n qe'lj_ tj`n yucj`n Hautou^ sw^sai Hapole'sei Hautj'n;  ho`s d@ Ha`n Hapole'sei tj`n yucj`n Hautou^ he'neken Hemou^ kai` tou^ Heuaggeli'ou sw'sei Hautj'n.
+\v 36 ti' ga`r Hwfelei^ Ha'nqrwpon kerdj^sai to`n ko'smon ho'lon kai` zjmiwqj^nai tj`n yucj`n Hautou^?
+\v 37 ti' ga`r doi^ Ha'nqrwpos Hanta'llagma tj^s yucj^s Hautou^?
+\v 38 ho`s ga`r Hea`n Hepaiscunqj_^ me kai` tou`s Hemou`s lo'gous Hen tj_^ genea_^ tau'tj_ tj_^ moicali'di kai` hamartwlw_^, kai` ho huio`s tou^ Hanqrw'pou Hepaiscunqj'setai Hauto`n, ho'tan He'lqj_ Hen tj_^ do'xj_ tou^ patro`s Hautou^ meta` tw^n Hagge'lwn tw^n hagi'wn.
+
+\c 9 
+\v 1 Kai` He'legen Hautoi^s, HAmj`n le'gw humi^n ho'ti Heisi'n tines hw^de tw^n hestjko'twn hoi'tines Hou mj` geu'swntai qana'tou he'ws Ha`n Hi'dwsin tj`n basilei'an tou^ qeou^ Heljluqui^an Hen duna'mei.
+\v 2 Kai` meta` hjme'ras he`x paralamba'nei ho HIjsou^s to`n Pe'tron kai` to`n HIa'kwbon kai` to`n HIwa'nnjn kai` Hanafe'rei Hautou`s Heis Ho'ros huyjlo`n kat@ Hidi'an mo'nous.  kai` metemorfw'qj He'mprosqen Hautw^n,
+\v 3 kai` ta` hima'tia Hautou^ Hege'neto sti'lbonta leuka` li'an hoi^a gnafeu`s Hepi` tj^s gj^s Hou du'natai hou'tws leuka^nai.
+\v 4 kai` Hw'fqj Hautoi^s HJli'as su`n Mwu"sei^, kai` Hj^san sullalou^ntes tw_^ HIjsou^.
+\v 5 kai` Hapokriqei`s ho Pe'tros le'gei tw_^ HIjsou^, hRabbi', kalo'n Hestin hjma^s hw^de Hei^nai, kai` poij'swmen trei^s skjna's, soi` mi'an kai` Mwu"sei^ mi'an kai` HJli'a_ mi'an.
+\v 6 Hou ga`r Hj_'dei ti' Hapokriqj_^ He'kfoboi ga`r Hege'nonto.
+\v 7 kai` Hege'neto nefe'lj Hepiskia'zousa Hautoi^s, kai` Hege'neto fwnj` Hek tj^s nefe'ljs, hOu^to's Hestin ho huio's mou ho Hagapjto's, Hakou'ete Hautou^.
+\v 8 kai` Hexa'pina peribleya'menoi Houke'ti Houde'na Hei^don Halla` to`n HIjsou^n mo'non meq@ heautw^n.
+\v 9 Kai` katabaino'ntwn Hautw^n Hek tou^ Ho'rous diestei'lato Hautoi^s hi'na mjdeni` ha` Hei^don dijgj'swntai, Hei mj` ho'tan ho huio`s tou^ Hanqrw'pou Hek nekrw^n Hanastj_^.
+\v 10 kai` to`n lo'gon Hekra'tjsan pro`s heautou`s suzjtou^ntes ti' Hestin to` Hek nekrw^n Hanastj^nai.
+\v 11 kai` Hepjrw'twn Hauto`n le'gontes, hO'ti le'gousin hoi grammatei^s ho'ti HJli'an dei^ Helqei^n prw^ton?
+\v 12 ho de` He'fj Hautoi^s, HJli'as me`n Helqw`n prw^ton Hapokaqista'nei pa'nta;  kai` pw^s ge'graptai Hepi` to`n huio`n tou^ Hanqrw'pou hi'na polla` pa'qj_ kai` Hexoudenjqj_^?
+\v 13 Halla` le'gw humi^n ho'ti kai` HJli'as Helj'luqen, kai` Hepoi'jsan Hautw_^ ho'sa Hj'qelon, kaqw`s ge'graptai Hep@ Hauto'n.
+\v 14 Kai` Helqo'ntes pro`s tou`s maqjta`s Hei^don Ho'clon polu`n peri` Hautou`s kai` grammatei^s suzjtou^ntas pro`s Hautou's.
+\v 15 kai` Heuqu`s pa^s ho Ho'clos Hido'ntes Hauto`n Hexeqambj'qjsan kai` prostre'contes Hjspa'zonto Hauto'n.
+\v 16 kai` Hepjrw'tjsen Hautou's, Ti' suzjtei^te pro`s Hautou's?
+\v 17 kai` Hapekri'qj Hautw_^ hei^s Hek tou^ Ho'clou, Dida'skale, Hj'negka to`n huio'n mou pro`s se', He'conta pneu^ma Ha'lalon;
+\v 18 kai` ho'pou Hea`n Hauto`n katala'bj_ hrj'ssei Hauto'n, kai` Hafri'zei kai` tri'zei tou`s Hodo'ntas kai` xjrai'netai;  kai` Hei^pa toi^s maqjtai^s sou hi'na Hauto` Hekba'lwsin, kai` Houk Hi'scusan.
+\v 19 ho de` Hapokriqei`s Hautoi^s le'gei, HW^ genea` Ha'pistos, he'ws po'te pro`s huma^s He'somai?  he'ws po'te Hane'xomai humw^n?  fe'rete Hauto`n pro's me.
+\v 20 kai` Hj'negkan Hauto`n pro`s Hauto'n.  kai` Hidw`n Hauto`n to` pneu^ma Heuqu`s sunespa'raxen Hauto'n, kai` pesw`n Hepi` tj^s gj^s Hekuli'eto Hafri'zwn.
+\v 21 kai` Hepjrw'tjsen to`n pate'ra Hautou^, Po'sos cro'nos Hesti`n hws tou^to ge'gonen Hautw_^?  ho de` Hei^pen, HEk paidio'qen;
+\v 22 kai` polla'kis kai` Heis pu^r Hauto`n He'balen kai` Heis hu'data hi'na Hapole'sj_ Hauto'n;  Hall@ Hei' ti du'nj_, boj'qjson hjmi^n splagcnisqei`s Hef@ hjma^s.
+\v 23 ho de` HIjsou^s Hei^pen Hautw_^, To` HEi du'nj_, pa'nta dunata` tw_^ pisteu'onti.
+\v 24 Heuqu`s kra'xas ho patj`r tou^ paidi'ou He'legen, Pisteu'w;  boj'qei mou tj_^ Hapisti'a_.
+\v 25 Hidw`n de` ho HIjsou^s ho'ti Hepisuntre'cei Ho'clos, Hepeti'mjsen tw_^ pneu'mati tw_^ Hakaqa'rtw_ le'gwn Hautw_^, To` Ha'lalon kai` kwfo`n pneu^ma, Hegw` Hepita'ssw soi, He'xelqe Hex Hautou^ kai` mjke'ti Heise'lqj_s Heis Hauto'n.
+\v 26 kai` kra'xas kai` polla` spara'xas Hexj^lqen;  kai` Hege'neto hwsei` nekro's, hw'ste tou`s pollou`s le'gein ho'ti Hape'qanen.
+\v 27 ho de` HIjsou^s kratj'sas tj^s ceiro`s Hautou^ Hj'geiren Hauto'n, kai` Hane'stj.
+\v 28 kai` Heiselqo'ntos Hautou^ Heis Hoi^kon hoi maqjtai` Hautou^ kat@ Hidi'an Hepjrw'twn Hauto'n, hO'ti hjmei^s Houk Hjdunj'qjmen Hekbalei^n Hauto'?
+\v 29 kai` Hei^pen Hautoi^s, Tou^to to` ge'nos Hen Houdeni` du'natai Hexelqei^n Hei mj` Hen proseucj_^.
+\v 30 KHakei^qen Hexelqo'ntes pareporeu'onto dia` tj^s Galilai'as, kai` Houk Hj'qelen hi'na tis gnoi^;
+\v 31 Hedi'dasken ga`r tou`s maqjta`s Hautou^ kai` He'legen Hautoi^s ho'ti hO huio`s tou^ Hanqrw'pou paradi'dotai Heis cei^ras Hanqrw'pwn, kai` Hapoktenou^sin Hauto'n, kai` Hapoktanqei`s meta` trei^s hjme'ras Hanastj'setai.
+\v 32 hoi de` Hjgno'oun to` hrj^ma, kai` Hefobou^nto Hauto`n Heperwtj^sai.
+\v 33 Kai` Hj^lqon Heis Kafarnaou'm.  kai` Hen tj_^ Hoiki'a_ geno'menos Hepjrw'ta Hautou's, Ti' Hen tj_^ hodw_^ dielogi'zesqe?
+\v 34 hoi de` Hesiw'pwn, pro`s Hallj'lous ga`r diele'cqjsan Hen tj_^ hodw_^ ti's mei'zwn.
+\v 35 kai` kaqi'sas Hefw'njsen tou`s dw'deka kai` le'gei Hautoi^s, HEi' tis qe'lei prw^tos Hei^nai, He'stai pa'ntwn He'scatos kai` pa'ntwn dia'konos.
+\v 36 kai` labw`n paidi'on He'stjsen Hauto` Hen me'sw_ Hautw^n kai` Henagkalisa'menos Hauto` Hei^pen Hautoi^s,
+\v 37 hO`s Ha`n he`n tw^n toiou'twn paidi'wn de'xjtai Hepi` tw_^ Hono'mati' mou, Heme` de'cetai;  kai` ho`s Ha`n Heme` de'cjtai, Houk Heme` de'cetai Halla` to`n Hapostei'lanta' me.
+\v 38 HE'fj Hautw_^ ho HIwa'nnjs, Dida'skale, Hei'dome'n tina Hen tw_^ Hono'mati' sou Hekba'llonta daimo'nia, kai` Hekwlu'omen Hauto'n, ho'ti Houk Hjkolou'qei hjmi^n.
+\v 39 ho de` HIjsou^s Hei^pen, Mj` kwlu'ete Hauto'n.  Houdei`s ga'r Hestin ho`s poij'sei du'namin Hepi` tw_^ Hono'mati' mou kai` dunj'setai tacu` kakologj^sai' me;
+\v 40 ho`s ga`r Houk He'stin kaq@ hjmw^n, hupe`r hjmw^n Hestin.
+\v 41 hO`s ga`r Ha`n poti'sj_ huma^s potj'rion hu'datos Hen Hono'mati ho'ti Cristou^ Heste, Hamj`n le'gw humi^n ho'ti Hou mj` Hapole'sj_ to`n misqo`n Hautou^.
+\v 42 Kai` ho`s Ha`n skandali'sj_ he'na tw^n mikrw^n tou'twn tw^n pisteuo'ntwn [Heis Heme'], kalo'n Hestin Hautw_^ ma^llon Hei peri'keitai mu'los Honiko`s peri` to`n tra'cjlon Hautou^ kai` be'bljtai Heis tj`n qa'lassan.
+\v 43 Kai` Hea`n skandali'zj_ se hj cei'r sou, Hapo'koyon Hautj'n;  kalo'n Hesti'n se kullo`n Heiselqei^n Heis tj`n zwj`n Hj` ta`s du'o cei^ras He'conta Hapelqei^n Heis tj`n ge'ennan, Heis to` pu^r to` Ha'sbeston.
+\v 44 \v 45 kai` Hea`n ho pou's sou skandali'zj_ se, Hapo'koyon Hauto'n;  kalo'n Hesti'n se Heiselqei^n Heis tj`n zwj`n cwlo`n Hj` tou`s du'o po'das He'conta bljqj^nai Heis tj`n ge'ennan.
+\v 46 \v 47 kai` Hea`n ho Hofqalmo's sou skandali'zj_ se, He'kbale Hauto'n;  kalo'n se' Hestin mono'fqalmon Heiselqei^n Heis tj`n basilei'an tou^ qeou^ Hj` du'o Hofqalmou`s He'conta bljqj^nai Heis tj`n ge'ennan,
+\v 48 ho'pou ho skw'ljx Hautw^n Hou teleuta_^ kai` to` pu^r Hou sbe'nnutai.
+\v 49 pa^s ga`r puri` halisqj'setai.
+\v 50 Kalo`n to` ha'las;  Hea`n de` to` ha'las Ha'nalon ge'njtai, Hen ti'ni Hauto` Hartu'sete?  He'cete Hen heautoi^s ha'la kai` Heirjneu'ete Hen Hallj'lois.
+
+\c 10 
+\v 1 Kai` Hekei^qen Hanasta`s He'rcetai Heis ta` ho'ria tj^s HIoudai'as [kai`] pe'ran tou^ HIorda'nou, kai` sumporeu'ontai pa'lin Ho'cloi pro`s Hauto'n, kai` hws Heiw'qei pa'lin Hedi'dasken Hautou's.
+\v 2 kai` proselqo'ntes Farisai^oi Hepjrw'twn Hauto`n Hei He'xestin Handri` gunai^ka Hapolu^sai, peira'zontes Hauto'n.
+\v 3 ho de` Hapokriqei`s Hei^pen Hautoi^s, Ti' humi^n Henetei'lato Mwu"sj^s?
+\v 4 hoi de` Hei^pan, HEpe'treyen Mwu"sj^s bibli'on Hapostasi'ou gra'yai kai` Hapolu^sai.
+\v 5 ho de` HIjsou^s Hei^pen Hautoi^s, Pro`s tj`n skljrokardi'an humw^n He'grayen humi^n tj`n Hentolj`n tau'tjn.
+\v 6 Hapo` de` Harcj^s kti'sews Ha'rsen kai` qj^lu Hepoi'jsen Hautou's;
+\v 7 he'neken tou'tou katalei'yei Ha'nqrwpos to`n pate'ra Hautou^ kai` tj`n mjte'ra [kai` proskolljqj'setai pro`s tj`n gunai^ka Hautou^],
+\v 8 kai` He'sontai hoi du'o Heis sa'rka mi'an;  hw'ste Houke'ti Heisi`n du'o Halla` mi'a sa'rx.
+\v 9 ho` Hou^n ho qeo`s sune'zeuxen Ha'nqrwpos mj` cwrize'tw.
+\v 10 Kai` Heis tj`n Hoiki'an pa'lin hoi maqjtai` peri` tou'tou Hepjrw'twn Hauto'n.
+\v 11 kai` le'gei Hautoi^s, hO`s Ha`n Hapolu'sj_ tj`n gunai^ka Hautou^ kai` gamj'sj_ Ha'lljn moica^tai Hep@ Hautj'n;
+\v 12 kai` Hea`n Hautj` Hapolu'sasa to`n Ha'ndra Hautj^s gamj'sj_ Ha'llon moica^tai.
+\v 13 Kai` prose'feron Hautw_^ paidi'a hi'na Hautw^n ha'yjtai;  hoi de` maqjtai` Hepeti'mjsan Hautoi^s.
+\v 14 Hidw`n de` ho HIjsou^s Hjgana'ktjsen kai` Hei^pen Hautoi^s, HA'fete ta` paidi'a He'rcesqai pro's me, mj` kwlu'ete Hauta', tw^n ga`r toiou'twn Hesti`n hj basilei'a tou^ qeou^.
+\v 15 Hamj`n le'gw humi^n, ho`s Ha`n mj` de'xjtai tj`n basilei'an tou^ qeou^ hws paidi'on, Hou mj` Heise'lqj_ Heis Hautj'n.
+\v 16 kai` Henagkalisa'menos Hauta` kateulo'gei tiqei`s ta`s cei^ras Hep@ Hauta'.
+\v 17 Kai` Hekporeuome'nou Hautou^ Heis hodo`n prosdramw`n hei^s kai` gonupetj'sas Hauto`n Hepjrw'ta Hauto'n, Dida'skale Hagaqe', ti' poij'sw hi'na zwj`n Haiw'nion kljronomj'sw?
+\v 18 ho de` HIjsou^s Hei^pen Hautw_^, Ti' me le'geis Hagaqo'n?  Houdei`s Hagaqo`s Hei mj` hei^s ho qeo's.
+\v 19 ta`s Hentola`s Hoi^das;  Mj` foneu'sj_s, Mj` moiceu'sj_s, Mj` kle'yj_s Mj` yeudomarturj'sj_s, Mj` Haposterj'sj_s, Ti'ma to`n pate'ra sou kai` tj`n mjte'ra.
+\v 20 ho de` He'fj Hautw_^, Dida'skale, tau^ta pa'nta Hefulaxa'mjn Hek neo'tjto's mou.
+\v 21 ho de` HIjsou^s Hemble'yas Hautw_^ Hjga'pjsen Hauto`n kai` Hei^pen Hautw_^, hE'n se husterei^;  hu'page, ho'sa He'ceis pw'ljson kai` do`s [toi^s] ptwcoi^s, kai` he'xeis qjsauro`n Hen Houranw_^, kai` deu^ro Hakolou'qei moi.
+\v 22 ho de` stugna'sas Hepi` tw_^ lo'gw_ Hapj^lqen lupou'menos;  Hj^n ga`r He'cwn ktj'mata polla'.
+\v 23 Kai` peribleya'menos ho HIjsou^s le'gei toi^s maqjtai^s Hautou^, Pw^s dusko'lws hoi ta` crj'mata He'contes Heis tj`n basilei'an tou^ qeou^ Heiseleu'sontai.
+\v 24 hoi de` maqjtai` Heqambou^nto Hepi` toi^s lo'gois Hautou^.  ho de` HIjsou^s pa'lin Hapokriqei`s le'gei Hautoi^s, Te'kna, pw^s du'skolo'n Hestin Heis tj`n basilei'an tou^ qeou^ Heiselqei^n;
+\v 25 Heukopw'tero'n Hestin ka'mjlon dia` [tj^s] trumalia^s [tj^s] hrafi'dos dielqei^n Hj` plou'sion Heis tj`n basilei'an tou^ qeou^ Heiselqei^n.
+\v 26 hoi de` perissw^s Hexeplj'ssonto le'gontes pro`s heautou's, Kai` ti's du'natai swqj^nai?
+\v 27 Hemble'yas Hautoi^s ho HIjsou^s le'gei, Para` Hanqrw'pois Hadu'naton, Hall@ Hou para` qew_^;  pa'nta ga`r dunata` para` tw_^ qew_^.
+\v 28 HJr'xato le'gein ho Pe'tros Hautw_^, HIdou` hjmei^s Hafj'kamen pa'nta kai` Hjkolouqj'kame'n soi.
+\v 29 He'fj ho HIjsou^s, HAmj`n le'gw humi^n, Houdei's Hestin ho`s Hafj^ken Hoiki'an Hj` Hadelfou`s Hj` Hadelfa`s Hj` mjte'ra Hj` pate'ra Hj` te'kna Hj` Hagrou`s he'neken Hemou^ kai` he'neken tou^ Heuaggeli'ou,
+\v 30 Hea`n mj` la'bj_ hekatontaplasi'ona nu^n Hen tw_^ kairw_^ tou'tw_ Hoiki'as kai` Hadelfou`s kai` Hadelfa`s kai` mjte'ras kai` te'kna kai` Hagrou`s meta` diwgmw^n, kai` Hen tw_^ Haiw^ni tw_^ Hercome'nw_ zwj`n Haiw'nion.
+\v 31 polloi` de` He'sontai prw^toi He'scatoi kai` [hoi] He'scatoi prw^toi.
+\v 32 HJ^san de` Hen tj_^ hodw_^ Hanabai'nontes Heis hIeroso'luma, kai` Hj^n proa'gwn Hautou`s ho HIjsou^s, kai` Heqambou^nto hoi de` Hakolouqou^ntes Hefobou^nto.  kai` paralabw`n pa'lin tou`s dw'deka Hj'rxato Hautoi^s le'gein ta` me'llonta Hautw_^ sumbai'nein,
+\v 33 ho'ti HIdou` Hanabai'nomen Heis hIeroso'luma, kai` ho huio`s tou^ Hanqrw'pou paradoqj'setai toi^s Harciereu^sin kai` toi^s grammateu^sin kai` katakrinou^sin Hauto`n qana'tw_ kai` paradw'sousin Hauto`n toi^s He'qnesin
+\v 34 kai` Hempai'xousin Hautw_^ kai` Hemptu'sousin Hautw_^ kai` mastigw'sousin Hauto`n kai` Hapoktenou^sin, kai` meta` trei^s hjme'ras Hanastj'setai.
+\v 35 Kai` prosporeu'ontai Hautw_^ HIa'kwbos kai` HIwa'nnjs hoi huioi` Zebedai'ou le'gontes Hautw_^, Dida'skale, qe'lomen hi'na ho` Hea`n Haitj'swme'n se poij'sj_s hjmi^n.
+\v 36 ho de` Hei^pen Hautoi^s, Ti' qe'lete' [me] poij'sw humi^n?
+\v 37 hoi de` Hei^pan Hautw_^, Do`s hjmi^n hi'na hei^s sou Hek dexiw^n kai` hei^s Hex Haristerw^n kaqi'swmen Hen tj_^ do'xj_ sou.
+\v 38 ho de` HIjsou^s Hei^pen Hautoi^s, HOuk Hoi'date ti' Haitei^sqe.  du'nasqe piei^n to` potj'rion ho` Hegw` pi'nw Hj` to` ba'ptisma ho` Hegw` bapti'zomai baptisqj^nai?
+\v 39 hoi de` Hei^pan Hautw_^, Duna'meqa.  ho de` HIjsou^s Hei^pen Hautoi^s, To` potj'rion ho` Hegw` pi'nw pi'esqe kai` to` ba'ptisma ho` Hegw` bapti'zomai baptisqj'sesqe,
+\v 40 to` de` kaqi'sai Hek dexiw^n mou Hj` Hex Heuwnu'mwn Houk He'stin Hemo`n dou^nai, Hall@ hoi^s hjtoi'mastai.
+\v 41 Kai` Hakou'santes hoi de'ka Hj'rxanto Haganaktei^n peri` HIakw'bou kai` HIwa'nnou.
+\v 42 kai` proskalesa'menos Hautou`s ho HIjsou^s le'gei Hautoi^s, HOi'date ho'ti hoi dokou^ntes Ha'rcein tw^n Heqnw^n katakurieu'ousin Hautw^n kai` hoi mega'loi Hautw^n katexousia'zousin Hautw^n.
+\v 43 Houc hou'tws de' Hestin Hen humi^n, Hall@ ho`s Ha`n qe'lj_ me'gas gene'sqai Hen humi^n, He'stai humw^n dia'konos,
+\v 44 kai` ho`s Ha`n qe'lj_ Hen humi^n Hei^nai prw^tos He'stai pa'ntwn dou^los;
+\v 45 kai` ga`r ho huio`s tou^ Hanqrw'pou Houk Hj^lqen diakonjqj^nai Halla` diakonj^sai kai` dou^nai tj`n yucj`n Hautou^ lu'tron Hanti` pollw^n.
+\v 46 Kai` He'rcontai Heis HIericw'.  kai` Hekporeuome'nou Hautou^ Hapo` HIericw` kai` tw^n maqjtw^n Hautou^ kai` Ho'clou hikanou^ ho huio`s Timai'ou Bartimai^os, tuflo`s prosai'tjs, Heka'qjto para` tj`n hodo'n.
+\v 47 kai` Hakou'sas ho'ti HIjsou^s ho Nazarjno's Hestin Hj'rxato kra'zein kai` le'gein, hUie` Daui`d HIjsou^, Hele'jso'n me.
+\v 48 kai` Hepeti'mwn Hautw_^ polloi` hi'na siwpj'sj_;  ho de` pollw_^ ma^llon He'krazen, hUie` Daui'd, Hele'jso'n me.
+\v 49 kai` sta`s ho HIjsou^s Hei^pen, Fwnj'sate Hauto'n.  kai` fwnou^sin to`n tuflo`n le'gontes Hautw_^, Qa'rsei, He'geire, fwnei^ se.
+\v 50 ho de` Hapobalw`n to` hima'tion Hautou^ Hanapjdj'sas Hj^lqen pro`s to`n HIjsou^n.
+\v 51 kai` Hapokriqei`s Hautw_^ ho HIjsou^s Hei^pen, Ti' soi qe'leis poij'sw?  ho de` tuflo`s Hei^pen Hautw_^, Rabbouni, hi'na Hanable'yw.
+\v 52 kai` ho HIjsou^s Hei^pen Hautw_^, hU'page, hj pi'stis sou se'swke'n se.  kai` Heuqu`s Hane'bleyen kai` Hjkolou'qei Hautw_^ Hen tj_^ hodw_^.
+
+\c 11 
+\v 1 Kai` ho'te Heggi'zousin Heis hIeroso'luma Heis Bjqfagj` kai` Bjqani'an pro`s to` HOro's tw^n HElaiw^n, Haposte'llei du'o tw^n maqjtw^n Hautou^
+\v 2 kai` le'gei Hautoi^s, hUpa'gete Heis tj`n kw'mjn tj`n kate'nanti humw^n, kai` Heuqu`s Heisporeuo'menoi Heis Hautj`n heurj'sete pw^lon dedeme'non Hef@ ho`n Houdei`s Hou'pw Hanqrw'pwn Heka'qisen;  lu'sate Hauto`n kai` fe'rete.
+\v 3 kai` Hea'n tis humi^n Hei'pj_, Ti' poiei^te tou^to?  Hei'pate, hO ku'rios Hautou^ crei'an He'cei, kai` Heuqu`s Hauto`n Haposte'llei pa'lin hw^de.
+\v 4 kai` Hapj^lqon kai` heu^ron pw^lon dedeme'non pro`s qu'ran He'xw Hepi` tou^ Hamfo'dou kai` lu'ousin Hauto'n.
+\v 5 kai' tines tw^n Hekei^ hestjko'twn He'legon Hautoi^s, Ti' poiei^te lu'ontes to`n pw^lon?
+\v 6 hoi de` Hei^pan Hautoi^s kaqw`s Hei^pen ho HIjsou^s, kai` Hafj^kan Hautou's.
+\v 7 kai` fe'rousin to`n pw^lon pro`s to`n HIjsou^n kai` Hepiba'llousin Hautw_^ ta` hima'tia Hautw^n, kai` Heka'qisen Hep@ Hauto'n.
+\v 8 kai` polloi` ta` hima'tia Hautw^n He'strwsan Heis tj`n hodo'n, Ha'lloi de` stiba'das ko'yantes Hek tw^n Hagrw^n.
+\v 9 kai` hoi proa'gontes kai` hoi Hakolouqou^ntes He'krazon, 		
+		hWsanna'; 
+			HEulogjme'nos ho Herco'menos Hen Hono'mati kuri'ou;
+\v 10 HEulogjme'nj hj Hercome'nj basilei'a tou^ patro`s hjmw^n Daui'd;  		
+		hWsanna` Hen toi^s huyi'stois.
+\v 11 Kai` Heisj^lqen Heis hIeroso'luma Heis to` hiero'n kai` peribleya'menos pa'nta, Hoyi'as Hj'dj Hou'sjs tj^s hw'ras, Hexj^lqen Heis Bjqani'an meta` tw^n dw'deka.
+\v 12 Kai` tj_^ Hepau'rion Hexelqo'ntwn Hautw^n Hapo` Bjqani'as Hepei'nasen.
+\v 13 kai` Hidw`n sukj^n Hapo` makro'qen He'cousan fu'lla Hj^lqen, Hei Ha'ra ti heurj'sei Hen Hautj_^, kai` Helqw`n Hep@ Hautj`n Houde`n heu^ren Hei mj` fu'lla;  ho ga`r kairo`s Houk Hj^n su'kwn.
+\v 14 kai` Hapokriqei`s Hei^pen Hautj_^, Mjke'ti Heis to`n Haiw^na Hek sou^ mjdei`s karpo`n fa'goi.  kai` Hj'kouon hoi maqjtai` Hautou^.
+\v 15 Kai` He'rcontai Heis hIeroso'luma.  kai` Heiselqw`n Heis to` hiero`n Hj'rxato Hekba'llein tou`s pwlou^ntas kai` tou`s Hagora'zontas Hen tw_^ hierw_^, kai` ta`s trape'zas tw^n kollubistw^n kai` ta`s kaqe'dras tw^n pwlou'ntwn ta`s peristera`s kate'streyen,
+\v 16 kai` Houk Hj'fien hi'na tis diene'gkj_ skeu^os dia` tou^ hierou^.
+\v 17 kai` Hedi'dasken kai` He'legen Hautoi^s, HOu ge'graptai ho'ti	
+		hO Hoi^ko's mou Hoi^kos proseucj^s kljqj'setai pa^sin toi^s He'qnesin?  
+			humei^s de` pepoij'kate Hauto`n spj'laion lj_stw^n.
+\v 18 kai` Hj'kousan hoi Harcierei^s kai` hoi grammatei^s kai` Hezj'toun pw^s Hauto`n Hapole'swsin Hefobou^nto ga`r Hauto'n, pa^s ga`r ho Ho'clos Hexeplj'sseto Hepi` tj_^ didacj_^ Hautou^.
+\v 19 Kai` ho'tan Hoye` Hege'neto, Hexeporeu'onto He'xw tj^s po'lews.
+\v 20 Kai` paraporeuo'menoi prwi"` Hei^don tj`n sukj^n Hexjramme'njn Hek hrizw^n.
+\v 21 kai` Hanamnjsqei`s ho Pe'tros le'gei Hautw_^, hRabbi', Hi'de hj sukj^ hj`n katjra'sw Hexj'rantai.
+\v 22 kai` Hapokriqei`s ho HIjsou^s le'gei Hautoi^s, HE'cete pi'stin qeou^.
+\v 23 Hamj`n le'gw humi^n ho'ti ho`s Ha`n Hei'pj_ tw_^ Ho'rei tou'tw_, HAr'qjti kai` blj'qjti Heis tj`n qa'lassan, kai` mj` diakriqj_^ Hen tj_^ kardi'a_ Hautou^ Halla` pisteu'j_ ho'ti ho` lalei^ gi'netai, He'stai Hautw_^.
+\v 24 dia` tou^to le'gw humi^n, pa'nta ho'sa proseu'cesqe kai` Haitei^sqe, pisteu'ete ho'ti Hela'bete, kai` He'stai humi^n.
+\v 25 kai` ho'tan stj'kete proseuco'menoi, Hafi'ete Hei' ti He'cete kata' tinos, hi'na kai` ho patj`r humw^n ho Hen toi^s Houranoi^s Hafj_^ humi^n ta` paraptw'mata humw^n.
+\v 26 \v 27 Kai` He'rcontai pa'lin Heis hIeroso'luma.  kai` Hen tw_^ hierw_^ peripatou^ntos Hautou^ He'rcontai pro`s Hauto`n hoi Harcierei^s kai` hoi grammatei^s kai` hoi presbu'teroi
+\v 28 kai` He'legon Hautw_^, HEn poi'a_ Hexousi'a_ tau^ta poiei^s?  Hj` ti's soi He'dwken tj`n Hexousi'an tau'tjn hi'na tau^ta poij_^s?
+\v 29 ho de` HIjsou^s Hei^pen Hautoi^s, HEperwtj'sw huma^s he'na lo'gon, kai` Hapokri'qjte' moi kai` Herw^ humi^n Hen poi'a_ Hexousi'a_ tau^ta poiw^;
+\v 30 to` ba'ptisma to` HIwa'nnou Hex Houranou^ Hj^n Hj` Hex Hanqrw'pwn?  Hapokri'qjte' moi.
+\v 31 kai` dielogi'zonto pro`s heautou`s le'gontes, HEa`n Hei'pwmen, HEx Houranou^, Herei^, Dia` ti' [Hou^n] Houk Hepisteu'sate Hautw_^?
+\v 32 Halla` Hei'pwmen, HEx Hanqrw'pwn?  - Hefobou^nto to`n Ho'clon;  ha'pantes ga`r Hei^con to`n HIwa'nnjn Ho'ntws ho'ti profj'tjs Hj^n.
+\v 33 kai` Hapokriqe'ntes tw_^ HIjsou^ le'gousin, HOuk Hoi'damen.  kai` ho HIjsou^s le'gei Hautoi^s, HOude` Hegw` le'gw humi^n Hen poi'a_ Hexousi'a_ tau^ta poiw^.
+
+\c 12 
+\v 1 Kai` Hj'rxato Hautoi^s Hen parabolai^s lalei^n, HAmpelw^na Ha'nqrwpos Hefu'teusen kai` perie'qjken fragmo`n kai` Hw'ruxen hupolj'nion kai` Hw_kodo'mjsen pu'rgon kai` Hexe'deto Hauto`n gewrgoi^s kai` Hapedj'mjsen.
+\v 2 kai` Hape'steilen pro`s tou`s gewrgou`s tw_^ kairw_^ dou^lon hi'na para` tw^n gewrgw^n la'bj_ Hapo` tw^n karpw^n tou^ Hampelw^nos;
+\v 3 kai` labo'ntes Hauto`n He'deiran kai` Hape'steilan keno'n.
+\v 4 kai` pa'lin Hape'steilen pro`s Hautou`s Ha'llon dou^lon;  kHakei^non Hekefali'wsan kai` Hjti'masan.
+\v 5 kai` Ha'llon Hape'steilen;  kHakei^non Hape'kteinan, kai` pollou`s Ha'llous, hou`s me`n de'rontes, hou`s de` Hapokte'nnontes.
+\v 6 He'ti he'na Hei^cen huio`n Hagapjto'n;  Hape'steilen Hauto`n He'scaton pro`s Hautou`s le'gwn ho'ti HEntrapj'sontai to`n huio'n mou.
+\v 7 Hekei^noi de` hoi gewrgoi` pro`s heautou`s Hei^pan ho'ti hOu^to's Hestin ho kljrono'mos;  deu^te Hapoktei'nwmen Hauto'n, kai` hjmw^n He'stai hj kljronomi'a.
+\v 8 kai` labo'ntes Hape'kteinan Hauto'n kai` Hexe'balon Hauto`n He'xw tou^ Hampelw^nos.
+\v 9 ti' [Hou^n] poij'sei ho ku'rios tou^ Hampelw^nos?  Heleu'setai kai` Hapole'sei tou`s gewrgou's kai` dw'sei to`n Hampelw^na Ha'llois.
+\v 10 Houde` tj`n grafj`n tau'tjn Hane'gnwte, 		
+		Li'qon ho`n Hapedoki'masan hoi Hoikodomou^ntes, 
+			hou^tos Hegenj'qj Heis kefalj`n gwni'as;
+\v 11 para` kuri'ou Hege'neto hau'tj 
+			kai` He'stin qaumastj` Hen Hofqalmoi^s hjmw^n?
+\v 12 Kai` Hezj'toun Hauto`n kratj^sai, kai` Hefobj'qjsan to`n Ho'clon, He'gnwsan ga`r ho'ti pro`s Hautou`s tj`n parabolj`n Hei^pen.  kai` Hafe'ntes Hauto`n Hapj^lqon.
+\v 13 Kai` Haposte'llousin pro`s Hauto'n tinas tw^n Farisai'wn kai` tw^n hJrw_dianw^n hi'na Hauto`n Hagreu'swsin lo'gw_.
+\v 14 kai` Helqo'ntes le'gousin Hautw_^, Dida'skale, Hoi'damen ho'ti Haljqj`s Hei^ kai` Hou me'lei soi peri` Houdeno's;  Hou ga`r ble'peis Heis pro'swpon Hanqrw'pwn, Hall@ Hep@ Haljqei'as tj`n hodo`n tou^ qeou^ dida'skeis;  He'xestin dou^nai kj^nson Kai'sari Hj` Hou'?  dw^men Hj` mj` dw^men?
+\v 15 ho de` Heidw`s Hautw^n tj`n hupo'krisin Hei^pen Hautoi^s, Ti' me peira'zete?  fe'rete' moi djna'rion hi'na Hi'dw.
+\v 16 hoi de` Hj'negkan.  kai` le'gei Hautoi^s, Ti'nos hj Heikw`n hau'tj kai` hj Hepigrafj'?  hoi de` Hei^pan Hautw_^, Kai'saros.
+\v 17 ho de` HIjsou^s Hei^pen Hautoi^s, Ta` Kai'saros Hapo'dote Kai'sari kai` ta` tou^ qeou^ tw_^ qew_^.  kai` Hexeqau'mazon Hep@ Hautw_^.
+\v 18 Kai` He'rcontai Saddoukai^oi pro`s Hauto'n, hoi'tines le'gousin Hana'stasin mj` Hei^nai, kai` Hepjrw'twn Hauto`n le'gontes,
+\v 19 Dida'skale, Mwu"sj^s He'grayen hjmi^n ho'ti Hea'n tinos Hadelfo`s Hapoqa'nj_ kai` katali'pj_ gunai^ka kai` mj` Hafj_^te'knon, hi'na la'bj_ ho Hadelfo`s Hautou^ tj`n gunai^ka kai` Hexanastj'sj_ spe'rma tw_^ Hadelfw_^ Hautou^.
+\v 20 hepta` Hadelfoi` Hj^san;  kai` ho prw^tos He'laben gunai^ka kai` Hapoqnj_'skwn Houk Hafj^ken spe'rma;
+\v 21 kai` ho deu'teros He'laben Hautj'n kai` Hape'qanen mj` katalipw`n spe'rma;  kai` ho tri'tos hwsau'tws;
+\v 22 kai` hoi hepta` Houk Hafj^kan spe'rma.  He'scaton pa'ntwn kai` hj gunj` Hape'qanen.
+\v 23 Hen tj_^ Hanasta'sei [ ho'tan Hanastw^sin] ti'nos Hautw^n He'stai gunj'?  hoi ga`r hepta` He'scon Hautj`n gunai^ka.
+\v 24 He'fj Hautoi^s ho HIjsou^s, HOu dia` tou^to plana^sqe mj` Heido'tes ta`s grafa`s mjde` tj`n du'namin tou^ qeou^?
+\v 25 ho'tan ga`r Hek nekrw^n Hanastw^sin Hou'te gamou^sin Hou'te gami'zontai, Hall@ Heisi`n hws Ha'ggeloi Hen toi^s Houranoi^s.
+\v 26 peri` de` tw^n nekrw^n ho'ti Hegei'rontai Houk Hane'gnwte Hen tj_^ bi'blw_ Mwu"se'ws Hepi` tou^ ba'tou pw^s Hei^pen Hautw_^ ho qeo`s le'gwn, HEgw` ho qeo`s HAbraa`m kai` [ho] qeo`s HIsaa`k kai` [ho] qeo`s HIakw'b?
+\v 27 Houk He'stin qeo`s nekrw^n Halla` zw'ntwn;  polu` plana^sqe.
+\v 28 Kai` proselqw`n hei^s tw^n grammate'wn Hakou'sas Hautw^n suzjtou'ntwn, Hidw`n ho'ti kalw^s Hapekri'qj Hautoi^s Hepjrw'tjsen Hauto'n, Poi'a Hesti`n Hentolj` prw'tj pa'ntwn?
+\v 29 Hapekri'qj ho HIjsou^s ho'ti Prw'tj Hesti'n, HA'koue, HIsraj'l, ku'rios ho qeo`s hjmw^n ku'rios hei^s Hestin,
+\v 30 kai` Hagapj'seis ku'rion to`n qeo'n sou Hex ho'ljs tj^s kardi'as sou kai` Hex ho'ljs tj^s yucj^s sou kai` Hex ho'ljs tj^s dianoi'as sou kai` Hex ho'ljs tj^s Hiscu'os sou.
+\v 31 deute'ra hau'tj, HAgapj'seis to`n pljsi'on sou hws seauto'n.  mei'zwn tou'twn Ha'llj Hentolj` Houk He'stin.
+\v 32 kai` Hei^pen Hautw_^ ho grammateu's, Kalw^s, dida'skale, Hep@ Haljqei'as Hei^pes ho'ti hei^s Hestin kai` Houk He'stin Ha'llos plj`n Hautou^;
+\v 33 kai` to` Hagapa^n Hauto`n Hex ho'ljs tj^s kardi'as kai` Hex ho'ljs tj^s sune'sews kai` Hex ho'ljs tj^s Hiscu'os kai` to` Hagapa^n to`n pljsi'on hws heauto`n perisso'tero'n Hestin pa'ntwn tw^n holokautwma'twn kai` qusiw^n.
+\v 34 kai` ho HIjsou^s Hidw`n [Hauto`n] ho'ti nounecw^s Hapekri'qj Hei^pen Hautw_^, HOu makra`n Hei^ Hapo` tj^s basilei'as tou^ qeou^.  kai` Houdei`s Houke'ti Heto'lma Hauto`n Heperwtj^sai.
+\v 35 Kai` Hapokriqei`s ho HIjsou^s He'legen dida'skwn Hen tw_^ hierw_^, Pw^s le'gousin hoi grammatei^s ho'ti ho Cristo`s huio`s Daui'd Hestin?
+\v 36 Hauto`s Daui`d Hei^pen Hen tw_^ pneu'mati tw_^ hagi'w_, 	
+		HEi^pen ku'rios tw_^ kuri'w_ mou, 	
+		Ka'qou Hek dexiw^n mou,
+			he'ws Ha`n qw^ tou`s Hecqrou's sou hupoka'tw tw^n podw^n sou.
+\v 37 Hauto`s Daui`d le'gei Hauto`n ku'rion, kai` po'qen Hautou^ Hestin huio's?  kai` [ho] polu`s Ho'clos Hj'kouen Hautou^ hjde'ws.
+\v 38 Kai` Hen tj_^ didacj_^ Hautou^ He'legen, Ble'pete Hapo` tw^n grammate'wn tw^n qelo'ntwn Hen stolai^s peripatei^n kai` Haspasmou`s Hen tai^s Hagorai^s
+\v 39 kai` prwtokaqedri'as Hen tai^s sunagwgai^s kai` prwtoklisi'as Hen toi^s dei'pnois,
+\v 40 hoi katesqi'ontes ta`s Hoiki'as tw^n cjrw^n kai` profa'sei makra` proseuco'menoi;  hou^toi lj'myontai perisso'teron kri'ma.
+\v 41 Kai` kaqi'sas kate'nanti tou^ gazofulaki'ou Heqew'rei pw^s ho Ho'clos ba'llei calko`n Heis to` gazofula'kion.  kai` polloi` plou'sioi He'ballon polla';
+\v 42 kai` Helqou^sa mi'a cj'ra ptwcj` He'balen lepta` du'o, ho' Hestin kodra'ntjs.
+\v 43 kai` proskalesa'menos tou`s maqjta`s Hautou^ Hei^pen Hautoi^s, HAmj`n le'gw humi^n ho'ti hj cj'ra hau'tj hj ptwcj` plei^on pa'ntwn He'balen tw^n ballo'ntwn Heis to` gazofula'kion;
+\v 44 pa'ntes ga`r Hek tou^ perisseu'ontos Hautoi^s He'balon, hau'tj de` Hek tj^s husterj'sews Hautj^s pa'nta ho'sa Hei^cen He'balen ho'lon to`n bi'on Hautj^s.
+
+\c 13 
+\v 1 Kai` Hekporeuome'nou Hautou^ Hek tou^ hierou^ le'gei Hautw_^ hei^s tw^n maqjtw^n Hautou^, Dida'skale, Hi'de potapoi` li'qoi kai` potapai` Hoikodomai'.
+\v 2 kai` ho HIjsou^s Hei^pen Hautw_^, Ble'peis tau'tas ta`s mega'las Hoikodoma's?  Hou mj` Hafeqj_^ hw^de li'qos Hepi` li'qon ho`s Hou mj` kataluqj_^.
+\v 3 Kai` kaqjme'nou Hautou^ Heis to` HOro's tw^n HElaiw^n kate'nanti tou^ hierou^ Hepjrw'ta Hauto`n kat@ Hidi'an Pe'tros kai` HIa'kwbos kai` HIwa'nnjs kai` HAndre'as,
+\v 4 HEipo`n hjmi^n po'te tau^ta He'stai kai` ti' to` sjmei^on ho'tan me'llj_ tau^ta suntelei^sqai pa'nta?
+\v 5 ho de` HIjsou^s Hj'rxato le'gein Hautoi^s, Ble'pete mj' tis huma^s planj'sj_;
+\v 6 polloi` Heleu'sontai Hepi` tw_^ Hono'mati' mou le'gontes ho'ti HEgw' Heimi, kai` pollou`s planj'sousin.
+\v 7 ho'tan de` Hakou'sjte pole'mous kai` Hakoa`s pole'mwn, mj` qroei^sqe;  dei^ gene'sqai, Hall@ Hou'pw to` te'los.
+\v 8 Hegerqj'setai ga`r He'qnos Hep@ He'qnos kai` basilei'a Hepi` basilei'an, He'sontai seismoi` kata` to'pous, He'sontai limoi';  Harcj` Hwdi'nwn tau^ta.
+\v 9 ble'pete de` humei^s heautou's;  paradw'sousin huma^s Heis sune'dria kai` Heis sunagwga`s darj'sesqe kai` Hepi` hjgemo'nwn kai` basile'wn staqj'sesqe he'neken Hemou^ Heis martu'rion Hautoi^s.
+\v 10 kai` Heis pa'nta ta` He'qnj prw^ton dei^ kjrucqj^nai to` Heuagge'lion.
+\v 11 kai` ho'tan Ha'gwsin huma^s paradido'ntes, mj` promerimna^te ti' lalj'sjte, Hall@ ho` Hea`n doqj_^ humi^n Hen Hekei'nj_ tj_^ hw'ra_ tou^to lalei^te;  Hou ga'r Heste humei^s hoi lalou^ntes Halla` to` pneu^ma to` ha'gion.
+\v 12 kai` paradw'sei Hadelfo`s Hadelfo`n Heis qa'naton kai` patj`r te'knon, kai` Hepanastj'sontai te'kna Hepi` gonei^s kai` qanatw'sousin Hautou's;
+\v 13 kai` He'sesqe misou'menoi hupo` pa'ntwn dia` to` Ho'noma' mou.  ho de` hupomei'nas Heis te'los hou^tos swqj'setai.
+\v 14 hO'tan de` Hi'djte to` bde'lugma tj^s Herjmw'sews hestjko'ta ho'pou Hou dei^, ho Hanaginw'skwn noei'tw, to'te hoi Hen tj_^ HIoudai'a_ feuge'twsan Heis ta` Ho'rj,
+\v 15 ho [de`] Hepi` tou^ dw'matos mj` kataba'tw mjde` Heiselqa'tw Ha^rai' ti Hek tj^s Hoiki'as Hautou^,
+\v 16 kai` ho Heis to`n Hagro`n mj` Hepistreya'tw Heis ta` Hopi'sw Ha^rai to` hima'tion Hautou^.
+\v 17 Houai` de` tai^s Hen gastri` Hecou'sais kai` tai^s qjlazou'sais Hen Hekei'nais tai^s hjme'rais.
+\v 18 proseu'cesqe de` hi'na mj` ge'njtai ceimw^nos;
+\v 19 He'sontai ga`r hai hjme'rai Hekei^nai qli^yis hoi'a Hou ge'gonen toiau'tj Hap@ Harcj^s kti'sews hj`n He'ktisen ho qeo`s he'ws tou^ nu^n kai` Hou mj` ge'njtai.
+\v 20 kai` Hei mj` Hekolo'bwsen ku'rios ta`s hjme'ras, Houk Ha`n Hesw'qj pa^sa sa'rx;  Halla` dia` tou`s Heklektou`s hou`s Hexele'xato Hekolo'bwsen ta`s hjme'ras.
+\v 21 kai` to'te Hea'n tis humi^n Hei'pj_, HI'de hw^de ho Cristo's, HI'de Hekei^, mj` pisteu'ete;
+\v 22 Hegerqj'sontai ga`r yeudo'cristoi kai` yeudoprofj^tai kai` dw'sousin sjmei^a kai` te'rata pro`s to` Hapoplana^n, Hei dunato'n, tou`s Heklektou's.
+\v 23 humei^s de` ble'pete;  proei'rjka humi^n pa'nta.
+\v 24 HAlla` Hen Hekei'nais tai^s hjme'rais meta` tj`n qli^yin Hekei'njn 		
+		ho hj'lios skotisqj'setai, 
+			kai` hj selj'nj Hou dw'sei to` fe'ggos Hautj^s,
+\v 25 kai` hoi Haste'res He'sontai Hek tou^ Houranou^ pi'ptontes, 
+			kai` hai duna'meis hai Hen toi^s Houranoi^s saleuqj'sontai.
+\v 26 kai` to'te Ho'yontai to`n huio`n tou^ Hanqrw'pou Herco'menon Hen nefe'lais meta` duna'mews pollj^s kai` do'xjs.
+\v 27 kai` to'te Hapostelei^ tou`s Hagge'lous kai` Hepisuna'xei tou`s Heklektou`s [Hautou^] Hek tw^n tessa'rwn Hane'mwn Hap@ Ha'krou gj^s he'ws Ha'krou Houranou^.
+\v 28 HApo` de` tj^s sukj^s ma'qete tj`n parabolj'n;  ho'tan Hj'dj ho kla'dos Hautj^s hapalo`s ge'njtai kai` Hekfu'j_ ta` fu'lla, ginw'skete ho'ti Heggu`s to` qe'ros Hesti'n;
+\v 29 hou'tws kai` humei^s, ho'tan Hi'djte tau^ta gino'mena, ginw'skete ho'ti Heggu's Hestin Hepi` qu'rais.
+\v 30 Hamj`n le'gw humi^n ho'ti Hou mj` pare'lqj_ hj genea` hau'tj me'cris hou^ tau^ta pa'nta ge'njtai.
+\v 31 ho Hourano`s kai` hj gj^ pareleu'sontai, hoi de` lo'goi mou Hou mj` pareleu'sontai.
+\v 32 Peri` de` tj^s hjme'ras Hekei'njs Hj` tj^s hw'ras Houdei`s Hoi^den, Houde` hoi Ha'ggeloi Hen Houranw_^ Houde` ho huio's, Hei mj` ho patj'r.
+\v 33 ble'pete, Hagrupnei^te;  Houk Hoi'date ga`r po'te ho kairo's Hestin.
+\v 34 hws Ha'nqrwpos Hapo'djmos Hafei`s tj`n Hoiki'an Hautou^ kai` dou`s toi^s dou'lois Hautou^ tj`n Hexousi'an heka'stw_ to` He'rgon Hautou^ kai` tw_^ qurwrw_^ Henetei'lato hi'na grjgorj_^.
+\v 35 grjgorei^te Hou^n;  Houk Hoi'date ga`r po'te ho ku'rios tj^s Hoiki'as He'rcetai, Hj` Hoye` Hj` mesonu'ktion Hj` Halektorofwni'as Hj` prwi"',
+\v 36 mj` Helqw`n Hexai'fnjs heu'rj_ huma^s kaqeu'dontas.
+\v 37 ho` de` humi^n le'gw pa^sin le'gw, grjgorei^te.
+
+\c 14 
+\v 1 HJ^n de` to` pa'sca kai` ta` Ha'zuma meta` du'o hjme'ras.  kai` Hezj'toun hoi Harcierei^s kai` hoi grammatei^s pw^s Hauto`n Hen do'lw_ kratj'santes Hapoktei'nwsin;
+\v 2 He'legon ga'r, Mj` Hen tj_^ heortj_^, mj'pote He'stai qo'rubos tou^ laou^.
+\v 3 Kai` Ho'ntos Hautou^ Hen Bjqani'a_ Hen tj_^ Hoiki'a_ Si'mwnos tou^ leprou^, katakeime'nou Hautou^ Hj^lqen gunj` He'cousa Hala'bastron mu'rou na'rdou pistikj^s polutelou^s, suntri'yasa tj`n Hala'bastron kate'ceen Hautou^ tj^s kefalj^s.
+\v 4 Hj^san de' tines Haganaktou^ntes pro`s heautou's, HEis ti' hj Hapw'leia hau'tj tou^ mu'rou ge'gonen?
+\v 5 Hjdu'nato ga`r tou^to to` mu'ron praqj^nai Hepa'nw djnari'wn triakosi'wn kai` doqj^nai toi^s ptwcoi^s;  kai` Henebrimw^nto Hautj_^.
+\v 6 ho de` HIjsou^s Hei^pen, HA'fete Hautj'n;  ti' Hautj_^ ko'pous pare'cete?  kalo`n He'rgon Hjrga'sato Hen Hemoi'.
+\v 7 pa'ntote ga`r tou`s ptwcou`s He'cete meq@ heautw^n kai` ho'tan qe'ljte du'nasqe Hautoi^s Heu^ poij^sai, Heme` de` Hou pa'ntote He'cete.
+\v 8 ho` He'scen Hepoi'jsen;  proe'laben muri'sai to` sw^ma' mou Heis to`n Hentafiasmo'n.
+\v 9 Hamj`n de` le'gw humi^n, ho'pou Hea`n kjrucqj_^ to` Heuagge'lion Heis ho'lon to`n ko'smon, kai` ho` Hepoi'jsen hau'tj laljqj'setai Heis mnjmo'sunon Hautj^s.
+\v 10 Kai` HIou'das HIskariw`q ho hei^s tw^n dw'deka Hapj^lqen pro`s tou`s Harcierei^s hi'na Hauto`n paradoi^ Hautoi^s.
+\v 11 hoi de` Hakou'santes Heca'rjsan kai` Hepjggei'lanto Hautw_^ Hargu'rion dou^nai.  kai` Hezj'tei pw^s Hauto`n Heukai'rws paradoi^.
+\v 12 Kai` tj_^ prw'tj_ hjme'ra_ tw^n Hazu'mwn, ho'te to` pa'sca He'quon, le'gousin Hautw_^ hoi maqjtai` Hautou^, Pou^ qe'leis Hapelqo'ntes hetoima'swmen hi'na fa'gj_s to` pa'sca?
+\v 13 kai` Haposte'llei du'o tw^n maqjtw^n Hautou^ kai` le'gei Hautoi^s, hUpa'gete Heis tj`n po'lin, kai` Hapantj'sei humi^n Ha'nqrwpos kera'mion hu'datos basta'zwn;  Hakolouqj'sate Hautw_^
+\v 14 kai` ho'pou Hea`n Heise'lqj_ Hei'pate tw_^ Hoikodespo'tj_ ho'ti hO dida'skalos le'gei, Pou^ Hestin to` kata'luma' mou ho'pou to` pa'sca meta` tw^n maqjtw^n mou fa'gw?
+\v 15 kai` Hauto`s humi^n dei'xei Hana'gaion me'ga Hestrwme'non he'toimon;  kai` Hekei^ hetoima'sate hjmi^n.
+\v 16 kai` Hexj^lqon hoi maqjtai` kai` Hj^lqon Heis tj`n po'lin kai` heu^ron kaqw`s Hei^pen Hautoi^s kai` hjtoi'masan to` pa'sca.
+\v 17 Kai` Hoyi'as genome'njs He'rcetai meta` tw^n dw'deka.
+\v 18 kai` Hanakeime'nwn Hautw^n kai` Hesqio'ntwn ho HIjsou^s Hei^pen, HAmj`n le'gw humi^n ho'ti hei^s Hex humw^n paradw'sei me ho Hesqi'wn met@ Hemou^.
+\v 19 Hj'rxanto lupei^sqai kai` le'gein Hautw_^ hei^s kata` hei^s, Mj'ti Hegw'?
+\v 20 ho de` Hei^pen Hautoi^s, hEi^s tw^n dw'deka, ho Hembapto'menos met@ Hemou^ Heis to` tru'blion.
+\v 21 ho'ti ho me`n huio`s tou^ Hanqrw'pou hupa'gei kaqw`s ge'graptai peri` Hautou^, Houai` de` tw_^ Hanqrw'pw_ Hekei'nw_ di@ hou^ ho huio`s tou^ Hanqrw'pou paradi'dotai kalo`n Hautw_^ Hei Houk Hegennj'qj ho Ha'nqrwpos Hekei^nos.
+\v 22 Kai` Hesqio'ntwn Hautw^n labw`n Ha'rton Heulogj'sas He'klasen kai` He'dwken Hautoi^s kai` Hei^pen, La'bete, tou^to' Hestin to` sw^ma' mou.
+\v 23 kai` labw`n potj'rion Heucaristj'sas He'dwken Hautoi^s, kai` He'pion Hex Hautou^ pa'ntes.
+\v 24 kai` Hei^pen Hautoi^s, Tou^to' Hestin to` hai^ma' mou tj^s diaqj'kjs to` Hekcunno'menon hupe`r pollw^n.
+\v 25 Hamj`n le'gw humi^n ho'ti Houke'ti Hou mj` pi'w Hek tou^ genj'matos tj^s Hampe'lou he'ws tj^s hjme'ras Hekei'njs ho'tan Hauto` pi'nw kaino`n Hen tj_^ basilei'a_ tou^ qeou^.
+\v 26 Kai` humnj'santes Hexj^lqon Heis to` HOro's tw^n HElaiw^n.
+\v 27 Kai` le'gei Hautoi^s ho HIjsou^s ho'ti Pa'ntes skandalisqj'sesqe, ho'ti ge'graptai, 	
+		Pata'xw to`n poime'na, 
+			kai` ta` pro'bata diaskorpisqj'sontai.
+\v 28 Halla` meta` to` Hegerqj^nai' me proa'xw huma^s Heis tj`n Galilai'an.
+\v 29 ho de` Pe'tros He'fj Hautw_^, HEi kai` pa'ntes skandalisqj'sontai, Hall@ Houk Hegw'.
+\v 30 kai` le'gei Hautw_^ ho HIjsou^s, HAmj`n le'gw soi ho'ti su` sj'meron tau'tj_ tj_^ nukti` pri`n Hj` di`s Hale'ktora fwnj^sai tri's me Haparnj'sj_.
+\v 31 ho de` Hekperissw^s Hela'lei, HEa`n de'j_ me sunapoqanei^n soi, Hou mj' se Haparnj'somai.  hwsau'tws de` kai` pa'ntes He'legon.
+\v 32 Kai` He'rcontai Heis cwri'on hou^ to` Ho'noma Geqsjmani' kai` le'gei toi^s maqjtai^s Hautou^, Kaqi'sate hw^de he'ws proseu'xwmai.
+\v 33 kai` paralamba'nei to`n Pe'tron kai` [to`n] HIa'kwbon kai` [to`n] HIwa'nnjn met@ Hautou^ kai` Hj'rxato Hekqambei^sqai kai` Hadjmonei^n
+\v 34 kai` le'gei Hautoi^s, Peri'lupo's Hestin hj yucj' mou he'ws qana'tou;  mei'nate hw^de kai` grjgorei^te.
+\v 35 kai` proelqw`n mikro`n He'pipten Hepi` tj^s gj^s kai` prosju'ceto hi'na Hei dunato'n Hestin pare'lqj_ Hap@ Hautou^ hj hw'ra,
+\v 36 kai` He'legen, Abba ho patj'r, pa'nta dunata' soi;  pare'negke to` potj'rion tou^to Hap@ Hemou^;  Hall@ Hou ti' Hegw` qe'lw Halla` ti' su'.
+\v 37 kai` He'rcetai kai` heuri'skei Hautou`s kaqeu'dontas, kai` le'gei tw_^ Pe'trw_, Si'mwn, kaqeu'deis?  Houk Hi'scusas mi'an hw'ran grjgorj^sai?
+\v 38 grjgorei^te kai` proseu'cesqe, hi'na mj` He'lqjte Heis peirasmo'n;  to` me`n pneu^ma pro'qumon hj de` sa`rx Hasqenj's.
+\v 39 kai` pa'lin Hapelqw`n prosju'xato to`n Hauto`n lo'gon Heipw'n.
+\v 40 kai` pa'lin Helqw`n heu^ren Hautou`s kaqeu'dontas, Hj^san ga`r Hautw^n hoi Hofqalmoi` katabaruno'menoi kai` Houk Hj_'deisan ti' Hapokriqw^sin Hautw_^.
+\v 41 kai` He'rcetai to` tri'ton kai` le'gei Hautoi^s, Kaqeu'dete to` loipo`n kai` Hanapau'esqe;  Hape'cei;  Hj^lqen hj hw'ra, Hidou` paradi'dotai ho huio`s tou^ Hanqrw'pou Heis ta`s cei^ras tw^n hamartwlw^n.
+\v 42 Hegei'resqe Ha'gwmen;  Hidou` ho paradidou's me Hj'ggiken.
+\v 43 Kai` Heuqu`s He'ti Hautou^ lalou^ntos paragi'netai HIou'das hei^s tw^n dw'deka kai` met@ Hautou^ Ho'clos meta` macairw^n kai` xu'lwn para` tw^n Harciere'wn kai` tw^n grammate'wn kai` tw^n presbute'rwn.
+\v 44 dedw'kei de` ho paradidou`s Hauto`n su'ssjmon Hautoi^s le'gwn, hO`n Ha`n filj'sw Hauto's Hestin, kratj'sate Hauto`n kai` Hapa'gete Hasfalw^s.
+\v 45 kai` Helqw`n Heuqu`s proselqw`n Hautw_^ le'gei, hRabbi', kai` katefi'ljsen Hauto'n;
+\v 46 hoi de` Hepe'balon ta`s cei^ras Hautw_^ kai` Hekra'tjsan Hauto'n.
+\v 47 hei^s de' [tis] tw^n parestjko'twn spasa'menos tj`n ma'cairan He'paisen to`n dou^lon tou^ Harciere'ws kai` Hafei^len Hautou^ to` Hwta'rion.
+\v 48 kai` Hapokriqei`s ho HIjsou^s Hei^pen Hautoi^s, hWs Hepi` lj_stj`n Hexj'lqate meta` macairw^n kai` xu'lwn sullabei^n me?
+\v 49 kaq@ hjme'ran Hj'mjn pro`s huma^s Hen tw_^ hierw_^ dida'skwn kai` Houk Hekratj'sate' me;  Hall@ hi'na pljrwqw^sin hai grafai'.
+\v 50 kai` Hafe'ntes Hauto`n He'fugon pa'ntes.
+\v 51 Kai` neani'skos tis sunjkolou'qei Hautw_^ peribebljme'nos sindo'na Hepi` gumnou^, kai` kratou^sin Hauto'n;
+\v 52 ho de` katalipw`n tj`n sindo'na gumno`s He'fugen.
+\v 53 Kai` Hapj'gagon to`n HIjsou^n pro`s to`n Harciere'a, kai` sune'rcontai pa'ntes hoi Harcierei^s kai` hoi presbu'teroi kai` hoi grammatei^s.
+\v 54 kai` ho Pe'tros Hapo` makro'qen Hjkolou'qjsen Hautw_^ he'ws He'sw Heis tj`n Haulj`n tou^ Harciere'ws kai` Hj^n sugkaqj'menos meta` tw^n hupjretw^n kai` qermaino'menos pro`s to` fw^s.
+\v 55 hoi de` Harcierei^s kai` ho'lon to` sune'drion Hezj'toun kata` tou^ HIjsou^ marturi'an Heis to` qanatw^sai Hauto'n, kai` Houc hju'riskon;
+\v 56 polloi` ga`r Heyeudomartu'roun kat@ Hautou^, kai` Hi'sai hai marturi'ai Houk Hj^san.
+\v 57 kai' tines Hanasta'ntes Heyeudomartu'roun kat@ Hautou^ le'gontes
+\v 58 ho'ti hJmei^s Hjkou'samen Hautou^ le'gontos ho'ti HEgw` katalu'sw to`n nao`n tou^ton to`n ceiropoi'jton kai` dia` triw^n hjmerw^n Ha'llon Haceiropoi'jton Hoikodomj'sw
+\v 59 kai` Houde` hou'tws Hi'sj Hj^n hj marturi'a Hautw^n.
+\v 60 kai` Hanasta`s ho Harciereu`s Heis me'son Hepjrw'tjsen to`n HIjsou^n le'gwn, HOuk Hapokri'nj_ Houde'n ti' hou^toi' sou katamarturou^sin?
+\v 61 ho de` Hesiw'pa kai` Houk Hapekri'nato Houde'n.  pa'lin ho Harciereu`s Hepjrw'ta Hauto`n kai` le'gei Hautw_^, Su` Hei^ ho Cristo`s ho huio`s tou^ Heulogjtou^?
+\v 62 ho de` HIjsou^s Hei^pen, HEgw' Heimi, 	
+		kai` Ho'yesqe to`n huio`n tou^ Hanqrw'pou
+			Hek dexiw^n kaqj'menon tj^s duna'mews
+			kai` Herco'menon meta` tw^n nefelw^n tou^ Houranou^.
+\v 63 ho de` Harciereu`s diarrj'xas tou`s citw^nas Hautou^ le'gei, Ti' He'ti crei'an He'comen martu'rwn?
+\v 64 Hjkou'sate tj^s blasfjmi'as;  ti' humi^n fai'netai?  hoi de` pa'ntes kate'krinan Hauto`n He'nocon Hei^nai qana'tou.
+\v 65 Kai` Hj'rxanto' tines Hemptu'ein Hautw_^ kai` perikalu'ptein Hautou^ to` pro'swpon kai` kolafi'zein Hauto`n kai` le'gein Hautw_^, Profj'teuson, kai` hoi hupjre'tai hrapi'smasin Hauto`n He'labon.
+\v 66 Kai` Ho'ntos tou^ Pe'trou ka'tw Hen tj_^ Haulj_^ He'rcetai mi'a tw^n paidiskw^n tou^ Harciere'ws
+\v 67 kai` Hidou^sa to`n Pe'tron qermaino'menon Hemble'yasa Hautw_^ le'gei, Kai` su` meta` tou^ Nazarjnou^ Hj^sqa tou^ HIjsou^.
+\v 68 ho de` Hjrnj'sato le'gwn, HOu'te Hoi^da Hou'te Hepi'stamai su` ti' le'geis.  kai` Hexj^lqen He'xw Heis to` proau'lion [ kai` Hale'ktwr Hefw'njsen].
+\v 69 kai` hj paidi'skj Hidou^sa Hauto`n Hj'rxato pa'lin le'gein toi^s parestw^sin ho'ti hOu^tos Hex Hautw^n Hestin.
+\v 70 ho de` pa'lin Hjrnei^to.  kai` meta` mikro`n pa'lin hoi parestw^tes He'legon tw_^ Pe'trw_, HAljqw^s Hex Hautw^n Hei^, kai` ga`r Galilai^os Hei^.
+\v 71 ho de` Hj'rxato Hanaqemati'zein kai` Homnu'nai ho'ti HOuk Hoi^da to`n Ha'nqrwpon tou^ton ho`n le'gete.
+\v 72 kai` Heuqu`s Hek deute'rou Hale'ktwr Hefw'njsen.  kai` Hanemnj'sqj ho Pe'tros to` hrj^ma hws Hei^pen Hautw_^ ho HIjsou^s ho'ti Pri`n Hale'ktora fwnj^sai di`s tri's me Haparnj'sj_;  kai` Hepibalw`n He'klaien.
+
+\c 15 
+\v 1 Kai` Heuqu`s prwi"` sumbou'lion poij'santes hoi Harcierei^s meta` tw^n presbute'rwn kai` grammate'wn kai` ho'lon to` sune'drion, dj'santes to`n HIjsou^n Hapj'negkan kai` pare'dwkan Pila'tw_.
+\v 2 kai` Hepjrw'tjsen Hauto`n ho Pila^tos, Su` Hei^ ho basileu`s tw^n HIoudai'wn?  ho de` Hapokriqei`s Hautw_^ le'gei, Su` le'geis.
+\v 3 kai` katjgo'roun Hautou^ hoi Harcierei^s polla'.
+\v 4 ho de` Pila^tos pa'lin Hepjrw'ta Hauto`n le'gwn, HOuk Hapokri'nj_ Houde'n?  Hi'de po'sa sou katjgorou^sin
+\v 5 ho de` HIjsou^s Houke'ti Houde`n Hapekri'qj, hw'ste qauma'zein to`n Pila^ton.
+\v 6 Kata` de` heortj`n Hape'luen Hautoi^s he'na de'smion ho`n parj_tou^nto.
+\v 7 Hj^n de` ho lego'menos Barabba^s meta` tw^n stasiastw^n dedeme'nos hoi'tines Hen tj_^ sta'sei fo'non pepoij'keisan.
+\v 8 kai` Hanaba`s ho Ho'clos Hj'rxato Haitei^sqai kaqw`s Hepoi'ei Hautoi^s.
+\v 9 ho de` Pila^tos Hapekri'qj Hautoi^s le'gwn, Qe'lete Hapolu'sw humi^n to`n basile'a tw^n HIoudai'wn?
+\v 10 Hegi'nwsken ga`r ho'ti dia` fqo'non paradedw'keisan Hauto`n hoi Harcierei^s.
+\v 11 hoi de` Harcierei^s Hane'seisan to`n Ho'clon hi'na ma^llon to`n Barabba^n Hapolu'sj_ Hautoi^s.
+\v 12 ho de` Pila^tos pa'lin Hapokriqei`s He'legen Hautoi^s, Ti' Hou^n [qe'lete] poij'sw [ho`n le'gete] to`n basile'a tw^n HIoudai'wn?
+\v 13 hoi de` pa'lin He'kraxan, Stau'rwson Hauto'n.
+\v 14 ho de` Pila^tos He'legen Hautoi^s, Ti' ga`r Hepoi'jsen kako'n?  hoi de` perissw^s He'kraxan, Stau'rwson Hauto'n.
+\v 15 ho de` Pila^tos boulo'menos tw_^ Ho'clw_ to` hikano`n poij^sai Hape'lusen Hautoi^s to`n Barabba^n, kai` pare'dwken to`n HIjsou^n fragellw'sas hi'na staurwqj_^.
+\v 16 hOi de` stratiw^tai Hapj'gagon Hauto`n He'sw tj^s Haulj^s, ho' Hestin praitw'rion, kai` sugkalou^sin ho'ljn tj`n spei^ran.
+\v 17 kai` Hendidu'skousin Hauto`n porfu'ran kai` peritiqe'asin Hautw_^ ple'xantes Haka'nqinon ste'fanon;
+\v 18 kai` Hj'rxanto Haspa'zesqai Hauto'n, Cai^re, basileu^ tw^n HIoudai'wn;
+\v 19 kai` He'tupton Hautou^ tj`n kefalj`n kala'mw_ kai` Hene'ptuon Hautw_^ kai` tiqe'ntes ta` go'nata proseku'noun Hautw_^.
+\v 20 kai` ho'te Hene'paixan Hautw_^, Hexe'dusan Hauto`n tj`n porfu'ran kai` Hene'dusan Hauto`n ta` hima'tia Hautou^.  kai` Hexa'gousin Hauto`n hi'na staurw'swsin Hauto'n.
+\v 21 Kai` Haggareu'ousin para'gonta' tina Si'mwna Kurjnai^on Herco'menon Hap@ Hagrou^, to`n pate'ra HAlexa'ndrou kai` hRou'fou, hi'na Ha'rj_ to`n stauro`n Hautou^.
+\v 22 kai` fe'rousin Hauto`n Hepi` to`n Golgoqa^n to'pon, ho' Hestin meqermjneuo'menon Krani'ou To'pos.
+\v 23 kai` Hedi'doun Hautw_^ Hesmurnisme'non Hoi^non;  ho`s de` Houk He'laben.
+\v 24 kai` staurou^sin Hauto`n 		
+		kai` diameri'zontai ta` hima'tia Hautou^, 
+			ba'llontes klj^ron Hep@ Hauta` ti's ti' Ha'rj_.
+\v 25 Hj^n de` hw'ra tri'tj kai` Hestau'rwsan Hauto'n.
+\v 26 kai` Hj^n hj Hepigrafj` tj^s Haiti'as Hautou^ Hepigegramme'nj, hO basileu`s tw^n HIoudai'wn.
+\v 27 Kai` su`n Hautw_^ staurou^sin du'o lj_sta's, he'na Hek dexiw^n kai` he'na Hex Heuwnu'mwn Hautou^.
+\v 28 \v 29 Kai` hoi paraporeuo'menoi Heblasfj'moun Hauto`n kinou^ntes ta`s kefala`s Hautw^n kai` le'gontes, HOua` ho katalu'wn to`n nao`n kai` Hoikodomw^n Hen trisi`n hjme'rais,
+\v 30 sw^son seauto`n kataba`s Hapo` tou^ staurou^.
+\v 31 homoi'ws kai` hoi Harcierei^s Hempai'zontes pro`s Hallj'lous meta` tw^n grammate'wn He'legon, HA'llous He'swsen, heauto`n Hou du'natai sw^sai;
+\v 32 ho Cristo`s ho basileu`s HIsraj`l kataba'tw nu^n Hapo` tou^ staurou^, hi'na Hi'dwmen kai` pisteu'swmen.  kai` hoi sunestaurwme'noi su`n Hautw_^ Hwnei'dizon Hauto'n.
+\v 33 Kai` genome'njs hw'ras he'ktjs sko'tos Hege'neto Hef@ ho'ljn tj`n gj^n he'ws hw'ras Hena'tjs.
+\v 34 kai` tj_^ Hena'tj_ hw'ra_ Hebo'jsen ho HIjsou^s fwnj_^ mega'lj_, Elwi elwi lema sabacqani?  ho' Hestin meqermjneuo'menon hO qeo's mou ho qeo's mou, Heis ti' Hegkate'lipe's me?
+\v 35 kai' tines tw^n parestjko'twn Hakou'santes He'legon, HI'de HJli'an fwnei^.
+\v 36 dramw`n de' tis [kai`] gemi'sas spo'ggon Ho'xous periqei`s kala'mw_ Hepo'tizen Hauto'n le'gwn, HA'fete Hi'dwmen Hei He'rcetai HJli'as kaqelei^n Hauto'n.
+\v 37 ho de` HIjsou^s Hafei`s fwnj`n mega'ljn Hexe'pneusen.
+\v 38 Kai` to` katape'tasma tou^ naou^ Hesci'sqj Heis du'o Hap@ Ha'nwqen he'ws ka'tw.
+\v 39 HIdw`n de` ho kenturi'wn ho parestjkw`s Hex Henanti'as Hautou^ ho'ti hou'tws Hexe'pneusen Hei^pen, HAljqw^s hou^tos ho Ha'nqrwpos huio`s qeou^ Hj^n.
+\v 40 HJ^san de` kai` gunai^kes Hapo` makro'qen qewrou^sai, Hen hai^s kai` Mari'a hj Magdaljnj` kai` Mari'a hj HIakw'bou tou^ mikrou^ kai` HIwsj^tos mj'tjr kai` Salw'mj,
+\v 41 hai` ho'te Hj^n Hen tj_^ Galilai'a_ Hjkolou'qoun Hautw_^ kai` dijko'noun Hautw_^, kai` Ha'llai pollai` hai sunanaba^sai Hautw_^ Heis hIeroso'luma.
+\v 42 Kai` Hj'dj Hoyi'as genome'njs, Hepei` Hj^n paraskeuj' ho' Hestin prosa'bbaton,
+\v 43 Helqw`n HIwsj`f [ho] Hapo` hArimaqai'as Heuscj'mwn bouleutj's, ho`s kai` Hauto`s Hj^n prosdeco'menos tj`n basilei'an tou^ qeou^, tolmj'sas Heisj^lqen pro`s to`n Pila^ton kai` Hj_tj'sato to` sw^ma tou^ HIjsou^.
+\v 44 ho de` Pila^tos Heqau'masen Hei Hj'dj te'qnjken kai` proskalesa'menos to`n kenturi'wna Hepjrw'tjsen Hauto`n Hei pa'lai Hape'qanen;
+\v 45 kai` gnou`s Hapo` tou^ kenturi'wnos Hedwrj'sato to` ptw^ma tw_^ HIwsj'f.
+\v 46 kai` Hagora'sas sindo'na kaqelw`n Hauto`n Henei'ljsen tj_^ sindo'ni kai` He'qjken Hauto`n Hen mnjmei'w_ ho` Hj^n lelatomjme'non Hek pe'tras kai` proseku'lisen li'qon Hepi` tj`n qu'ran tou^ mnjmei'ou.
+\v 47 hj de` Mari'a hj Magdaljnj` kai` Mari'a hj HIwsj^tos Heqew'roun pou^ te'qeitai.
+
+\c 16 
+\v 1 Kai` diagenome'nou tou^ sabba'tou Mari'a hj Magdaljnj` kai` Mari'a hj [tou^] HIakw'bou kai` Salw'mj Hjgo'rasan Harw'mata hi'na Helqou^sai Halei'ywsin Hauto'n.
+\v 2 kai` li'an prwi"` tj_^ mia_^ tw^n sabba'twn He'rcontai Hepi` to` mnjmei^on Hanatei'lantos tou^ hjli'ou.
+\v 3 kai` He'legon pro`s heauta's, Ti's Hapokuli'sei hjmi^n to`n li'qon Hek tj^s qu'ras tou^ mnjmei'ou?
+\v 4 kai` Hanable'yasai qewrou^sin ho'ti Hapokeku'listai ho li'qos;  Hj^n ga`r me'gas sfo'dra.
+\v 5 kai` Heiselqou^sai Heis to` mnjmei^on Hei^don neani'skon kaqj'menon Hen toi^s dexioi^s peribebljme'non stolj`n leukj'n, kai` Hexeqambj'qjsan.
+\v 6 ho de` le'gei Hautai^s, Mj` Hekqambei^sqe;  HIjsou^n zjtei^te to`n Nazarjno`n to`n Hestaurwme'non;  Hjge'rqj, Houk He'stin hw^de;  Hi'de ho to'pos ho'pou He'qjkan Hauto'n.
+\v 7 Halla` hupa'gete Hei'pate toi^s maqjtai^s Hautou^ kai` tw_^ Pe'trw_ ho'ti Proa'gei huma^s Heis tj`n Galilai'an;  Hekei^ Hauto`n Ho'yesqe, kaqw`s Hei^pen humi^n.
+\v 8 kai` Hexelqou^sai He'fugon Hapo` tou^ mnjmei'ou, Hei^cen ga`r Hauta`s tro'mos kai` He'kstasis;  kai` Houdeni` Houde`n Hei^pan;  Hefobou^nto ga'r.
+\v 9 [HAnasta`s de` prwi"` prw'tj_ sabba'tou Hefa'nj prw^ton Mari'a_ tj_^ Magdaljnj_^, par@ hj^s Hekbeblj'kei hepta` daimo'nia.
+\v 10 Hekei'nj poreuqei^sa Hapj'ggeilen toi^s met@ Hautou^ genome'nois penqou^si kai` klai'ousin;
+\v 11 kHakei^noi Hakou'santes ho'ti zj_^ kai` Heqea'qj hup@ Hautj^s Hjpi'stjsan.
+\v 12 Meta` de` tau^ta dusi`n Hex Hautw^n peripatou^sin Hefanerw'qj Hen hete'ra_ morfj_^ poreuome'nois Heis Hagro'n;
+\v 13 kHakei^noi Hapelqo'ntes Hapj'ggeilan toi^s loipoi^s;  Houde` Hekei'nois Hepi'steusan.
+\v 14 hU'steron [de`] Hanakeime'nois Hautoi^s toi^s he'ndeka Hefanerw'qj kai` Hwnei'disen tj`n Hapisti'an Hautw^n kai` skljrokardi'an ho'ti toi^s qeasame'nois Hauto`n Hegjgerme'non Houk Hepi'steusan.
+\v 15 kai` Hei^pen Hautoi^s, Poreuqe'ntes Heis to`n ko'smon ha'panta kjru'xate to` Heuagge'lion pa'sj_ tj_^ kti'sei.
+\v 16 ho pisteu'sas kai` baptisqei`s swqj'setai, ho de` Hapistj'sas katakriqj'setai.
+\v 17 sjmei^a de` toi^s pisteu'sasin tau^ta parakolouqj'sei;  Hen tw_^ Hono'mati' mou daimo'nia Hekbalou^sin, glw'ssais lalj'sousin kainai^s,
+\v 18 [kai` Hen tai^s cersi`n] Ho'feis Harou^sin kHa`n qana'simo'n ti pi'wsin Hou mj` Hautou`s bla'yj_, Hepi` Harrw'stous cei^ras Hepiqj'sousin kai` kalw^s he'xousin.
+\v 19 hO me`n Hou^n ku'rios HIjsou^s meta` to` lalj^sai Hautoi^s Hanelj'mfqj Heis to`n Hourano`n kai` Heka'qisen Hek dexiw^n tou^ qeou^.
+\v 20 Hekei^noi de` Hexelqo'ntes Hekj'ruxan pantacou^, tou^ kuri'ou sunergou^ntos kai` to`n lo'gon bebaiou^ntos dia` tw^n Hepakolouqou'ntwn sjmei'wn.]
+
+\fe
+This is junk that follows the "end of file" marker...

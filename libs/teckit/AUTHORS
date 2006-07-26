@@ -1,0 +1,8 @@
+AUTHORS
+
+TECkit is written by Jonathan Kew, SIL International.
+
+The Perl interface is by Martin Hosken, and the JNI interface is by Keith Stribley.
+Thanks to Ulrik Petersen for patches to improve portability, especially for MS VC++
+and for 64-bit systems. Authors of other library code included with TECkit are as
+noted in the relevant source files.
