@@ -1,0 +1,49 @@
+# Extra configure tests to support XeTeX
+
+AC_DEFUN([AC_HAS_CARBON], [
+#
+#   Check for Carbon framework on Mac OS X
+#
+  _cppflags=$CPPFLAGS _ldflags=$LDFLAGS
+  AC_MSG_CHECKING([for Apple Carbon framework])
+  AC_TRY_COMPILE(
+    [
+#include <Carbon/Carbon.h>
+      ], [
+ATSUStyle style;
+    ],
+    [ AC_MSG_RESULT(yes)
+      AC_DEFINE(HAVE_CARBON, 1, [Define if you have Carbon])
+      LDCARBON="-framework Carbon"
+      has_carbon=yes
+    ],
+    [ AC_MSG_RESULT(no)
+      LDCARBON=
+      has_carbon=no
+    ]
+  )
+])
+
+AC_DEFUN([AC_HAS_QUICKTIME], [
+#
+#   Check for QuickTime framework on Mac OS X
+#
+  _cppflags=$CPPFLAGS _ldflags=$LDFLAGS
+  AC_MSG_CHECKING([for Apple QuickTime framework])
+  AC_TRY_COMPILE(
+    [
+#include <QuickTime/QuickTime.h>
+      ], [
+ImageDescriptionHandle h;
+    ],
+    [ AC_MSG_RESULT(yes)
+      AC_DEFINE(HAVE_QUICKTIME, 1, [Define if you have QuickTime])
+      LDQUICKTIME="-framework QuickTime"
+      has_quicktime=yes
+    ],
+    [ AC_MSG_RESULT(no)
+      LDQUICKTIME=
+      has_quicktime=no
+    ]
+  )
+])
