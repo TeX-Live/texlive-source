@@ -4765,7 +4765,7 @@ ESUBDIRS=
 test -d utils || mkdir utils
 for pkg in $PKGS; do
   if test -d $srcdir/utils/$pkg; then
-    if eval "test \"`echo '$with_'${pkg}`\" != no"; then
+    if eval "test \"`echo '$with_'${pkg}|sed 's/-/_/g'`\" != no"; then
       ESUBDIRS="$ESUBDIRS utils/$pkg"
       if test $pkg = sam2p; then
         # this is a terrible kludge, but sam2p configure actively
