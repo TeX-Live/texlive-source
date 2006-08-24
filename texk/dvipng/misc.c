@@ -19,7 +19,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
   02111-1307, USA.
 
-  Copyright (C) 2002-2005 Jan-Åke Larsson
+  Copyright (C) 2002-2006 Jan-Åke Larsson
 
 ************************************************************************/
 
@@ -44,7 +44,8 @@ static char *programname;
 bool DecodeArgs(int argc, char ** argv)
 {
   int     i;                 /* argument index for options     */
-  bool ppused=false;        /* Flag when -pp is used          */
+  bool ppused=false;         /* Flag when -pp is used          */
+  int32_t number;            /* Temporary storage for numeric parameter */
   char *dviname=NULL;        /* Name of dvi file               */
   char *outname=NULL;        /* Name of output file            */
 
@@ -62,7 +63,7 @@ bool DecodeArgs(int argc, char ** argv)
     Message(BE_NONQUIET,"This is %s",programname);
     if (strcmp(basename(programname),PACKAGE_NAME)!=0)
       Message(BE_NONQUIET," (%s)", PACKAGE_NAME);
-    Message(BE_NONQUIET," %s Copyright 2002-2005 Jan-Ake Larsson\n",
+    Message(BE_NONQUIET," %s Copyright 2002-2006 Jan-Ake Larsson\n",
 	    PACKAGE_VERSION);
   }
 
@@ -136,6 +137,7 @@ bool DecodeArgs(int argc, char ** argv)
 	else
 	  Message(PARSE_STDIN,"MakeTeXPK disabled\n");
         break;
+#endif /* MAKETEXPK */
       case 'm':
 	if (strcmp(p,"ode") == 0 ) {
 	  if (argv[i+1])
@@ -158,7 +160,6 @@ bool DecodeArgs(int argc, char ** argv)
 	  break;
 	}
 	goto DEFAULT;
-#endif /* MAKETEXPK */
       case 'O' : /* Offset */
 	if (*p == 0 && argv[i+1])
 	  p = argv[++i] ;
@@ -199,10 +200,10 @@ bool DecodeArgs(int argc, char ** argv)
 	/* Truecolor */
 	if (strncmp(p,"ruecolor",8)==0) { 
 	  if (p[8] != '0') {
-	    flags |= RENDER_TRUECOLOR; 
+	    flags |= FORCE_TRUECOLOR; 
 	    Message(PARSE_STDIN,"Truecolor mode on\n",p);
 	  } else { 
-	    flags &= ~RENDER_TRUECOLOR; 
+	    flags &= ~FORCE_TRUECOLOR; 
 	    Message(PARSE_STDIN,"Truecolor mode off\n");
 	  }
 	} else 
@@ -268,11 +269,14 @@ bool DecodeArgs(int argc, char ** argv)
 	} else if (strcmp(p, "dpi")==0) {
 	  p+=3;
 	  if (*p == 0 && argv[i+1])
-	    p = argv[++i] ;
-	  user_bdpi = atoi(p);
-	  if (user_bdpi < 10 || user_bdpi > 10000)
-	    Fatal("bad --bdpi parameter") ;
-	  Message(PARSE_STDIN,"Bdpi: %d\n",user_bdpi);
+	    p = argv[++i];
+	  number = atoi(p);
+	  if (number < 10 || number > 10000)
+	    Warning("Bad --bdpi parameter, ignored");
+	  else {
+	    user_bdpi=number;
+	    Message(PARSE_STDIN,"Bdpi: %d\n",user_bdpi);
+	  }
 	  break;
 	} else if ( *p == 'd' ) { /* -bd border width */
 	  int tmpi;
@@ -329,11 +333,14 @@ bool DecodeArgs(int argc, char ** argv)
       case 'x' : case 'y' :
 	if (*p == 0 && argv[i+1])
 	  p = argv[++i] ;
-	usermag = atoi(p);
-	if (usermag < 1 || usermag > 1000000)
-	  Fatal("bad magnification parameter (-x or -y)") ;
-	Message(PARSE_STDIN,"Magstep: %d\n",usermag);
+	number = atoi(p);
+	if (number < 1 || number > 1000000) 
+	  Warning("Bad magnification parameter (-x or -y), ignored");
+	else {
+	  usermag=number;
+	  Message(PARSE_STDIN,"Magstep: %d\n",usermag);
 	/*overridemag = (c == 'x' ? 1 : -1) ;*/
+	}
 	break ;
       case 'g' :
 	if (strncmp(p,"amma",4)==0) { /* --gamma correction */ 
@@ -379,6 +386,14 @@ bool DecodeArgs(int argc, char ** argv)
 	    flags &= ~MODE_PICKY;
 	    Message(PARSE_STDIN,"Images output even for pages with warnings\n");
 	  }
+	} else if (strncmp(p,"alette",6)==0) { 
+	  if (p[6] != '0') {
+	    flags |= FORCE_PALETTE;
+	    Message(PARSE_STDIN,"Forcing 256-color PNG output\n",p);
+	  } else {
+	    flags &= ~FORCE_PALETTE;
+	    Message(PARSE_STDIN,"Allows truecolor PNG output\n");
+	  }
 	} else {   /* a -p specifier for first page */
 	  int32_t firstpage;
 	  bool abspage=false;
@@ -389,9 +404,12 @@ bool DecodeArgs(int argc, char ** argv)
 	    abspage=true;
 	    p++ ;
 	  }
-	  firstpage = atoi(p);
-	  FirstPage(firstpage,abspage);
-	  Message(PARSE_STDIN,"First page: %d\n",firstpage);
+	  if ((*p>='0'&&*p<='9') || (*p=='-' && *(p+1)>='0' && *(p+1)<='9')) {
+	    firstpage = atoi(p);
+	    FirstPage(firstpage,abspage);
+	    Message(PARSE_STDIN,"First page: %d\n",firstpage);
+	  } else
+	    Warning("Bad firstpage (-p) parameter, ignored");
 	}
 	break ;
       case 's' :
@@ -437,9 +455,12 @@ bool DecodeArgs(int argc, char ** argv)
 	    abspage=true;
 	    p++ ;
 	  } 
-	  lastpage = atoi(p);
-	  LastPage(lastpage,abspage);
-	  Message(PARSE_STDIN,"Last page: %d\n",lastpage);
+	  if ((*p>='0'&&*p<='9') || (*p=='-' && *(p+1)>='0' && *(p+1)<='9')) {
+	    lastpage = atoi(p);
+	    LastPage(lastpage,abspage);
+	    Message(PARSE_STDIN,"Last page: %d\n",lastpage);
+	  } else
+	    Warning("Bad lastpage (-l) parameter, ignored");
 	}
 	break ;
       case 'q':       /* quiet operation */
@@ -482,22 +503,35 @@ named COPYING and dvipng.c.");
       case 'D' :
 	if (*p == 0 && argv[i+1])
 	  p = argv[++i] ;
-	dpi = atoi(p);
-	if (dpi < 10 || dpi > 10000)
-	  Fatal("bad -D parameter") ;
-	Message(PARSE_STDIN,"Dpi: %d\n",dpi);
+	number = atoi(p);
+	if (number < 10 || number > 10000)
+	  Warning("Bad resolution (-D) parameter, ignored") ;
+	else {
+	  dpi=number;
+	  Message(PARSE_STDIN,"Dpi: %d\n",dpi);
+	}
 	break;
       case 'Q':       /* quality (= shrinkfactor) */
 	if (*p == 0 && argv[i+1])
-	  p = argv[++i] ;
-        shrinkfactor = atoi(p);
-	Message(PARSE_STDIN,"Quality: %d\n",shrinkfactor);
+	  p = argv[++i];
+	if (*p>='0'&&*p<='9') {
+	  shrinkfactor = atoi(p);
+	  Message(PARSE_STDIN,"Quality: %d\n",shrinkfactor);
+	} else {
+	  Warning("Non-numeric quality (-Q) value, ignored");
+	}
 	break;
 #ifdef HAVE_GDIMAGEPNGEX
       case 'z':
 	if (*p == 0 && argv[i+1])
 	  p = argv[++i];
-	compression = atoi(p);
+	number = atoi(p);
+	if (number<1 || number>9)
+	  Warning("Bad compression (-z) value, ignored");
+	else {
+	  compression=number;
+	  Message(PARSE_STDIN,"Compression: %d\n",shrinkfactor);
+	}
 	break;
 #endif
       case '\0':
@@ -524,28 +558,22 @@ named COPYING and dvipng.c.");
 #endif
     fprintf(stdout,"  -D #         Output resolution\n");
     fprintf(stdout,"  -l #         Last page to be output\n");
-    fprintf(stdout,"  --mode s     MetaFont mode (default 'cx')\n");
-    fprintf(stdout,"  -M*          Don't make PK fonts\n");
     fprintf(stdout,"  -o f         Output file, '%%d' is pagenumber\n");
     fprintf(stdout,"  -O c         Image offset\n");
     fprintf(stdout,"  -p #         First page to be output\n");
     fprintf(stdout,"  -pp #,#..    Page list to be output\n");
     fprintf(stdout,"  -q*          Quiet operation\n");
-    fprintf(stdout,"  -r*          Reverse order of pages\n");
-    /*    fprintf(stdout,"  -t c         Paper format (also accepts e.g., '-t a4')\n");*/
     fprintf(stdout,"  -T c         Image size (also accepts '-T bbox' and '-T tight')\n");
     fprintf(stdout,"  -v*          Verbose operation\n");
-    fprintf(stdout,"  -x #         Override dvi magnification\n");
     fprintf(stdout,"  -            Interactive query of options\n");
     fprintf(stdout,"\nThese do not correspond to dvips options:\n");
     fprintf(stdout,"  -bd #        Transparent border width in dots\n");
     fprintf(stdout,"  -bd s        Transparent border fallback color (TeX-style color)\n");
-    fprintf(stdout,"  --bdpi #     Set the base (Metafont) resolution\n");
     fprintf(stdout,"  -bg s        Background color (TeX-style color or 'Transparent')\n");
     fprintf(stdout,"  --depth*     Output the image depth on stdout\n");
     fprintf(stdout,"  --dvinum*    Use TeX page numbers in output filenames\n");
     fprintf(stdout,"  -fg s        Foreground color (TeX-style color)\n");
-    fprintf(stdout,"  --follow*    Follow mode\n");
+    fprintf(stdout,"  --follow*    Wait for data at end-of-file\n");
 #ifdef HAVE_FT2
     fprintf(stdout,"  --freetype*  FreeType font rendering (default on)\n");
 #endif
@@ -556,6 +584,9 @@ named COPYING and dvipng.c.");
     fprintf(stdout,"  --height*    Output the image height on stdout\n");
     fprintf(stdout,"  --noghostscript*  Don't use ghostscript for PostScript specials\n");
     fprintf(stdout,"  --nogssafer* Don't use -dSAFER in ghostscript calls\n");
+#ifdef HAVE_GDIMAGECREATETRUECOLOR
+    fprintf(stdout,"  --palette*   Force palette output\n");
+#endif
     fprintf(stdout,"  --picky      When a warning occurs, don't output image\n");
 #ifdef HAVE_GDIMAGEGIF
     fprintf(stdout,"  --png        Output PNG images (dvipng default)\n");

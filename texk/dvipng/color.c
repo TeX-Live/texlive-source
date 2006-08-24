@@ -19,7 +19,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
   02111-1307, USA.
 
-  Copyright (C) 2002-2005 Jan-Åke Larsson
+  Copyright (C) 2002-2006 Jan-Åke Larsson
 
 ************************************************************************/
 
@@ -136,7 +136,7 @@ struct colorname* LoadColornameFile(char* filename, bool should_exist)
 	pos++;
 	values=pos;
 	FINDVALEND(pos,nvalues);
-	NewColor(name,nname,model,nmodel,values,nvalues);
+	tmp=NewColor(name,nname,model,nmodel,values,nvalues);
 	tmp->next=list;
 	list=tmp;
 	FINDWORD(pos);

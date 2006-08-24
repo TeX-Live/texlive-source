@@ -27,16 +27,14 @@ Benefits of dvipng
 
    The benefits of `dvipng'/`dvigif' include
 
-   * Speed. It is a very fast bitmap-rendering code for DVI files. On a
-     fairly low-end laptop, it takes less than a second to generate 150
-     one-formula images. This makes dvipng suitable for generating large
-     amounts of images on-the-fly, as needed in preview-latex, WeBWorK
-     and others.
+   * Speed. It is a very fast bitmap-rendering code for DVI files, which
+     makes it suitable for generating large amounts of images
+     on-the-fly, as needed in preview-latex, WeBWorK and others.
 
    * It does not read the postamble, so it can be started before TeX
-     finishes. There is a -follow switch that makes dvipng wait at EOF
-     for further output, unless it finds the POST marker that indicates
-     the end of the DVI.
+     finishes. There is a -follow switch that makes dvipng wait at
+     end-of-file for further output, unless it finds the POST marker
+     that indicates the end of the DVI.
 
    * Interactive query of options. dvipng can read options interactively
      through stdin, and all options are usable. It is even possible to
@@ -47,15 +45,16 @@ Benefits of dvipng
 
    * and more...
 
+
 Installation
 ============
 
-   Read `INSTALL', included in the distribution.
+Read `INSTALL', included in the distribution.
 
 Usage
 =====
 
-   To use dvipng at its simplest, simply type
+To use dvipng at its simplest, simply type
 
      dvipng foo
 
@@ -72,15 +71,16 @@ summary of available options, just type
 Availability
 ============
 
-   The dvipng package is available at Savannah, from the project page of
-dvipng `http://savannah.nongnu.org/projects/dvipng'. Instructions for
-anonymous CVS access can be found at
+The dvipng package is available at Savannah, the GNU project site. Since
+dvipng is not part of the GNU project, although released under the GNU
+GPL, the web address is `http://savannah.nongnu.org/projects/dvipng'.
+Instructions for anonymous CVS access can be found at
 `http://savannah.nongnu.org/cvs/?group=dvipng'.
 
 Contacts
 ========
 
-   Bug reports should be sent to <dvipng@nongnu.org>.
+Bug reports should be sent to <dvipng@nongnu.org>.
 
    Questions, suggestions for new features, pleas for help, and/or
 praise should go to <dvipng@nongnu.org>. For more information on this
@@ -94,16 +94,19 @@ developer access, ask on <dvipng@nongnu.org>.
 Copying
 =======
 
-   This program is released under the GNU General Public License, see
-the COPYING file in the dvipng distribution or
+This program is released under the GNU General Public License, see the
+COPYING file in the dvipng distribution or
 `http://www.gnu.org/licenses/gpl.html'.
 
-   Copyright (C) 2002-2005 Jan-AAke Larsson
+   Copyright (C) 2002-2006 Jan-AAke Larsson
 
 Todo
 ====
 
-   * Test the FreeType interface so that TrueType fonts work properly.
+   * Support for CJK-LaTeX (Chinese, Japanese, Korean), that is:
+     subfonts.
+
+   * Fix T1 and PK rendering so it is on par with Freetype.
 
    * Further speed improvements.
 

@@ -141,6 +141,7 @@ Once @file{configure} has been run, simply enter
 @example
 make
 @end example
+
 @noindent 
 at the prompt to compile the C code, and build the documentation files.
 To install the files into the locations chosen earlier, type
@@ -179,8 +180,9 @@ reasonably easy to maintain a bunch of additional packages, since the
 prefix argument is supported by most @file{configure} scripts.
 
 You'll have to add something like @file{/home/myself/bin} to your
-@code{PATH} shell variable, if it isn't there already, and similarly set
-the @code{INFOPATH} variable to be able to access the documentation.
+@code{PATH} shell variable, if it isn't there already, and similarly
+set the @code{INFOPATH} and @code{MANPATH} variables to be able to
+access the documentation.
 
 @ifset rawfile
 @section Copying
@@ -189,5 +191,5 @@ This program is released under the GNU General Public License, see the
 COPYING file in the dvipng distribution or
 @url{http://www.gnu.org/licenses/gpl.html}.
 
-Copyright @copyright{} 2002-2005 Jan-@AA{}ke Larsson
+Copyright @copyright{} 2002-2006 Jan-@AA{}ke Larsson
 @end ifset

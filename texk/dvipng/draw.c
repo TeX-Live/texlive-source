@@ -19,7 +19,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
   02111-1307, USA.
 
-  Copyright (C) 2002-2005 Jan-Åke Larsson
+  Copyright (C) 2002-2006 Jan-Åke Larsson
 
 ************************************************************************/
 
@@ -106,10 +106,11 @@ dviunits SetChar(int32_t c)
   case FONT_TYPE_PK: DEBUG_PRINT(DEBUG_DVI,("\n  PK CHAR:\t")); break;
   case FONT_TYPE_T1: DEBUG_PRINT(DEBUG_DVI,("\n  T1 CHAR:\t")); break;
   case FONT_TYPE_FT: DEBUG_PRINT(DEBUG_DVI,("\n  FT CHAR:\t")); break;
+  default: DEBUG_PRINT(DEBUG_DVI,("\n  NO CHAR:\t"))
   }
   if (isprint(c))
     DEBUG_PRINT(DEBUG_DVI,("'%c' ",c));
-  DEBUG_PRINT(DEBUG_DVI,("%d at (%d,%d) tfmw %d", c,hh,vv,ptr->tfmw));
+  DEBUG_PRINT(DEBUG_DVI,("%d at (%d,%d) tfmw %d", c,hh,vv,ptr?ptr->tfmw:0));
 #endif
   if (currentfont->type==FONT_TYPE_VF) {
     return(SetVF(c));
@@ -425,7 +426,7 @@ void DrawPages(void)
       }
       Message(BE_NONQUIET,"] ");
       fflush(stdout);
-      flags &= ~PAGE_GAVE_WARN;
+      flags &= ~(PAGE_GAVE_WARN | PAGE_TRUECOLOR);
       dvi_pos=NextPPage(dvi,dvi_pos);
     }
     Message(BE_NONQUIET,"\n");

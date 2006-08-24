@@ -38,24 +38,20 @@ and WYSIWYG editors like LyX.
 @section Benefits of dvipng
 @end ifset
 @end ifclear
-@ifclear rawfile
-@end ifclear
 
 The benefits of @samp{dvipng}/@samp{dvigif} include
 
 @itemize @bullet
 @item 
-Speed. It is a very fast bitmap-rendering code for DVI files. On a
-fairly low-end laptop, it takes less than a second to generate 150
-one-formula images. This makes dvipng suitable for generating large
-amounts of images on-the-fly, as needed in @previewlatex{}, WeBWorK and
-others.
+Speed. It is a very fast bitmap-rendering code for DVI files, which
+makes it suitable for generating large amounts of images on-the-fly,
+as needed in @previewlatex{}, WeBWorK and others.
 
 @item 
 It does not read the postamble, so it can be started before @TeX{}
-finishes. There is a --follow switch that makes dvipng wait at EOF for
-further output, unless it finds the POST marker that indicates the end
-of the DVI.
+finishes. There is a --follow switch that makes dvipng wait at
+end-of-file for further output, unless it finds the POST marker that
+indicates the end of the DVI.
 
 @item 
 Interactive query of options. dvipng can read options interactively
@@ -126,13 +122,16 @@ This program is released under the GNU General Public License, see the
 COPYING file in the dvipng distribution or
 @url{http://www.gnu.org/licenses/gpl.html}.
 
-Copyright @copyright{} 2002-2005 Jan-@AA{}ke Larsson
+Copyright @copyright{} 2002-2006 Jan-@AA{}ke Larsson
 
 @section Todo
 
 @itemize @bullet
 @item 
-Test the FreeType interface so that TrueType fonts work properly.
+Support for CJK-@LaTeX{} (Chinese, Japanese, Korean), that is: subfonts.
+
+@item
+Fix T1 and PK rendering so it is on par with Freetype.
 
 @item 
 Further speed improvements.

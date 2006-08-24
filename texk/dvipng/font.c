@@ -118,6 +118,7 @@ void FontDef(unsigned char* command, void* parent)
   if (tfontnump!=NULL 
       && tfontnump->fontp->s == s 
       && tfontnump->fontp->d == d 
+      && strlen(tfontnump->fontp->n) == a+l 
       && strncmp(tfontnump->fontp->n,(char*)current+14,a+l) == 0) {
     DEBUG_PRINT((DEBUG_DVI|DEBUG_VF),("\n  FONT %d:\tMatch found",k));
     return;
@@ -143,6 +144,7 @@ void FontDef(unsigned char* command, void* parent)
   while (tfontptr != NULL 
 	 && (tfontptr->s != s 
 	     || tfontptr->d != d 
+	     || strlen(tfontptr->n) != a+l 
 	     || strncmp(tfontptr->n,(char*)current+14,a+l) != 0 ) ) {
     tfontptr = tfontptr->next;
   }

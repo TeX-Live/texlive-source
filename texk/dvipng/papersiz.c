@@ -51,7 +51,7 @@ int32_t myatodim(char ** p)
     Warning("unrecognized length unit \"%.2s\", assuming inches",*p);
   while (**p != ',' && **p !='\0')
     (*p)++;
-  tmp *= lengthsp[i]*dpi/4736286L; /* convert sp to pixels */
+  tmp = tmp*lengthsp[i]*dpi/4736286L; /*   sp * dots/in / (sp/in), convert sp to pixels   */
   return((int32_t) tmp);
 }
 

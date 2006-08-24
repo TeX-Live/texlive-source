@@ -19,7 +19,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
   02111-1307, USA.
 
-  Copyright (C) 2002-2005 Jan-Åke Larsson
+  Copyright (C) 2002-2006 Jan-Åke Larsson
 
 ************************************************************************/
 
@@ -83,23 +83,17 @@ typedef unsigned long long      uint64_t;
 #include <t1lib.h>
 #endif
 
-#ifdef HAVE_KPATHSEA_KPATHSEA_H
+#ifdef HAVE_STDBOOL_H
+# include <stdbool.h>
+#else
+# ifdef HAVE_KPATHSEA_KPATHSEA_H
 /* boolean is an enum type from kpathsea/types.h loaded in
    kpathsea/kpathsea.h, use it as fallback */
 #  define bool boolean
-#else
-# ifdef HAVE_STDBOOL_H
-#  include <stdbool.h>
 # else
 typedef int bool;
-#  ifndef true
-#   define true ((bool) 1)
-#   define false ((bool) 0)
-#  endif
-#  ifndef TRUE
-#   define TRUE true
-#   define FALSE false
-#  endif
+#  define true (bool) 1
+#  define false (bool) 0
 # endif
 #endif
 
@@ -422,7 +416,7 @@ EXTERN struct internal_state {
 #define EXPAND_BBOX                  (1<<3)
 #define TIGHT_BBOX                   (1<<4)
 #define CACHE_IMAGES                 (1<<5)
-#define RENDER_TRUECOLOR             (1<<6)
+#define FORCE_TRUECOLOR              (1<<6)
 #define USE_FREETYPE                 (1<<7)
 #define USE_LIBT1                    (1<<8)
 #define REPORT_HEIGHT                (1<<9)
@@ -437,6 +431,8 @@ EXTERN struct internal_state {
 #define NO_GSSAFER                   (1<<18)
 #define BG_TRANSPARENT               (1<<19)
 #define BG_TRANSPARENT_ALPHA         (1<<20)
+#define PAGE_TRUECOLOR               (1<<21)
+#define FORCE_PALETTE                (1<<22)
 EXTERN uint32_t flags INIT(BE_NONQUIET | USE_FREETYPE | USE_LIBT1);
 
 #ifdef DEBUG
@@ -450,9 +446,9 @@ EXTERN unsigned int debug INIT(0);
 #define DEBUG_FT                     (1<<5)
 #define DEBUG_ENC                    (1<<6)
 #define DEBUG_COLOR                  (1<<7)
-#define DEBUG_T1                     (1<<8)
-#define DEBUG_GS                     (1<<9)
-#define LASTDEBUG                    DEBUG_GS
+#define DEBUG_GS                     (1<<8)
+#define DEBUG_T1                     (1<<9)
+#define LASTDEBUG                    DEBUG_T1
 #define DEBUG_DEFAULT                DEBUG_DVI
 #else
 #define DEBUG_PRINT(a,b)
@@ -476,16 +472,16 @@ EXTERN int      ndone INIT(0);          /* number of pages converted       */
 # ifdef HAVE_GETTIMEOFDAY
 EXTERN struct timeval Tp;
 #  define TIC { gettimeofday(&Tp, NULL); \
-    my_tic= (float)Tp.tv_sec + ((float)(Tp.tv_usec))/ 1000000.0;}
+    my_tic= Tp.tv_sec + Tp.tv_usec/1000000.0;}
 #  define TOC { gettimeofday(&Tp, NULL); \
-    my_toc += ((float)Tp.tv_sec + ((float)(Tp.tv_usec))/ 1000000.0) - my_tic;}
+    my_toc += Tp.tv_sec + Tp.tv_usec/1000000.0 - my_tic;}
 # else
 #  ifdef HAVE_FTIME
 EXTERN struct timeb timebuffer;
 #   define TIC() { ftime(&timebuffer); \
- my_tic= timebuffer.time + (float)(timebuffer.millitm) / 1000.0;
-#   define TOC() { gettimeofday(&Tp, NULL); \
- my_toc += (timebuffer.time + (float)(timebuffer.millitm) / 1000.0) - my_tic;}
+ my_tic= timebuffer.time + timebuffer.millitm/1000.0;
+#   define TOC() { ftime(&timebuffer); \
+ my_toc += timebuffer.time + timebuffer.millitm/1000.0 - my_tic;}
 #  else
 #   define TIC()
 #   define TOC()

@@ -71,6 +71,15 @@
 /* Define to 1 if you have the `ftime' function. */
 #undef HAVE_FTIME
 
+/* Define to 1 if you have the `FT_Library_Version' function. */
+#undef HAVE_FT_LIBRARY_VERSION
+
+/* Define to 1 if you have the `gdImageAlphaBlending' function. */
+#undef HAVE_GDIMAGEALPHABLENDING
+
+/* Define to 1 if you have the `gdImageColorResolveAlpha' function. */
+#undef HAVE_GDIMAGECOLORRESOLVEALPHA
+
 /* Define to 1 if you have the `gdImageCreateTrueColor' function. */
 #define HAVE_GDIMAGECREATETRUECOLOR 1
 
@@ -119,12 +128,12 @@
 /* Define to 1 if you have the `t1' library (-lt1). */
 #undef HAVE_LIBT1
 
+/* Define to 1 if you have the `z' library (-lz). */
+#undef HAVE_LIBZ
+
 /* Define to 1 if your system has a GNU libc compatible `malloc' function, and
    to 0 otherwise. */
 #undef HAVE_MALLOC
-
-/* Define to 1 if you have the `memchr' function. */
-#undef HAVE_MEMCHR
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
@@ -140,6 +149,9 @@
 
 /* Define to 1 if you have the <png.h> header file. */
 #define HAVE_PNG_H 1
+
+/* Define to 1 if you have the `pow' function. */
+#undef HAVE_POW
 
 /* Define to 1 if you have the `putenv' function. */
 #undef HAVE_PUTENV
@@ -164,6 +176,12 @@
 
 /* Define to 1 if you have the `strrchr' function. */
 #undef HAVE_STRRCHR
+
+/* Define to 1 if you have the `strstr' function. */
+#undef HAVE_STRSTR
+
+/* Define to 1 if you have the `strtol' function. */
+#undef HAVE_STRTOL
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #define HAVE_SYS_STAT_H 1
@@ -208,13 +226,13 @@
 #define PACKAGE_NAME "dvipng"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "dvipng 1.6"
+#define PACKAGE_STRING "dvipng 1.7"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "dvipng"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.6"
+#define PACKAGE_VERSION "1.7"
 
 /* If using the C implementation of alloca, define if you know the
    direction of stack growth for your system; otherwise it will be
@@ -236,17 +254,20 @@
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const
 
-/* Define as `__inline' if that's what the C compiler calls it, or to nothing
-   if it is not supported. */
-#ifndef __cplusplus
-#undef inline
-#endif
+/* Define to `long long' if <inttypes.h> does not define it. */
+#undef int64_t
 
 /* Define to rpl_malloc if the replacement function should be used. */
 #undef malloc
 
 /* Define to `int' if <sys/types.h> does not define. */
 #undef pid_t
+
+/* Define to `unsigned' if <sys/types.h> does not define. */
+#undef size_t
+
+/* Define to `unsigned long long' if <inttypes.h> does not define it. */
+#undef uint64_t
 
 /* Define as `fork' if `vfork' does not work. */
 #undef vfork

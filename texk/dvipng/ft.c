@@ -19,7 +19,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
   02111-1307, USA.
 
-  Copyright (C) 2002-2005 Jan-Åke Larsson
+  Copyright (C) 2002-2006 Jan-Åke Larsson
 
 ************************************************************************/
 
@@ -44,7 +44,7 @@ void LoadFT(int32_t c, struct char_entry * ptr)
     glyph_i = FT_Get_Char_Index( currentfont->face, c );
   if (FT_Load_Glyph( currentfont->face,    /* handle to face object */
 		     glyph_i,              /* glyph index           */
-		     FT_LOAD_RENDER | FT_LOAD_NO_HINTING ))
+		     FT_LOAD_RENDER | FT_LOAD_TARGET_LIGHT ))
                                            /* load flags            */
     Fatal("cannot load FT char %d",c);
   ptr->xOffset = -currentfont->face->glyph->bitmap_left*shrinkfactor;
@@ -84,11 +84,15 @@ bool InitFT(struct font_entry * tfontp)
     } 
 # ifdef DEBUG
     else {
+#  ifdef HAVE_FT_LIBRARY_VERSION
       FT_Int      amajor, aminor, apatch;
-      
+
       FT_Library_Version( libfreetype, &amajor, &aminor, &apatch );
-      DEBUG_PRINT(DEBUG_FT,("\n  FREETYPE VERSION: FreeType %d.%d.%d", 
+      DEBUG_PRINT(DEBUG_FT,("\n  LIBFT VERSION: %d.%d.%d", 
 			    amajor, aminor, apatch));
+#  endif
+      DEBUG_PRINT(DEBUG_FT,("\n  FREETYPE VERSION: %d.%d.%d",
+			    FREETYPE_MAJOR, FREETYPE_MINOR, FREETYPE_PATCH));
     }
 # endif
   }

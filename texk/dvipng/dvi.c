@@ -19,7 +19,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
   02111-1307, USA.
 
-  Copyright (C) 2002-2005 Jan-Åke Larsson
+  Copyright (C) 2002-2006 Jan-Åke Larsson
 
 ************************************************************************/
 
@@ -124,7 +124,7 @@ struct dvi_data* DVIOpen(char* dviname,char* outname)
     }
     strcpy(dvi->outname,basename(dviname));
     tmpstring = strrchr(dvi->outname, '.');
-    if (tmpstring != NULL) 
+    if (tmpstring != NULL && strcmp(tmpstring,".dvi") == 0) 
       *tmpstring = '\0';
     strcat(dvi->outname, "%d.png");
   } else {

@@ -50,7 +50,7 @@ Prerequisites
 Configure
 =========
 
-   The first step is to configure the source code, telling it where
+The first step is to configure the source code, telling it where
 various files will be.  To do so, run
 
      ./configure OPTIONS
@@ -101,7 +101,7 @@ where the backslash denotes a continuation of the line.
 Build/install
 =============
 
-   Once `configure' has been run, simply enter
+Once `configure' has been run, simply enter
 
      make
 
@@ -116,19 +116,19 @@ into system directories.
 Installation outside the texmf tree
 ===================================
 
-   In some cases, a dvipng binary installed outside the texmf tree will
+In some cases, a dvipng binary installed outside the texmf tree will
 not be able to find virtual fonts, or the PostScript font maps
-(normally used by dvips). This may be because *only* $SELFAUTOLOC,
+(normally used by dvips). This may be because _only_ $SELFAUTOLOC,
 $SELFAUTODIR, and $SELFAUTOPARENT are used in the texmf tree
 configuration file `texmf.cnf'. If so, give the switch
 `--enable-selfauto-set' to `./configure'. This will make dvipng adjust
-these three internally so that kpathsea thinks that dvipng *is*
+these three internally so that kpathsea thinks that dvipng _is_
 installed in the texmf tree.
 
 Installation for non-privileged users
 =====================================
 
-   Often people without system administration privileges want to install
+Often people without system administration privileges want to install
 software for their private use. In that case you need to specify more
 options to the `configure' script, usually this is done by using the
 `--prefix' option to the `configure' script, and let it point to the
@@ -140,14 +140,15 @@ supported by most `configure' scripts.
 
    You'll have to add something like `/home/myself/bin' to your `PATH'
 shell variable, if it isn't there already, and similarly set the
-`INFOPATH' variable to be able to access the documentation.
+`INFOPATH' and `MANPATH' variables to be able to access the
+documentation.
 
 Copying
 =======
 
-   This program is released under the GNU General Public License, see
-the COPYING file in the dvipng distribution or
+This program is released under the GNU General Public License, see the
+COPYING file in the dvipng distribution or
 `http://www.gnu.org/licenses/gpl.html'.
 
-   Copyright (C) 2002-2005 Jan-AAke Larsson
+   Copyright (C) 2002-2006 Jan-AAke Larsson
 

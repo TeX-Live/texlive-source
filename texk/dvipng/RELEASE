@@ -1,13 +1,27 @@
-Release notes for version 1.6 of the dvipng package:
+Release notes for version 1.8 of the dvipng package:
 
 This program makes PNG graphics from DVI files as obtained from TeX
 and its relatives.
 
 
-The 1.6 release adds proper alpha channel support and xcolor support.
-It also reestablishes identification of preview-latex' tightpage mode
-option.
+The 1.8 release adds the possibility to include bitmapped images (PNG,
+JPEG, and GIF), and changes PostScript inclusion so that the image is
+not cropped to the boundingbox (unless requested) and has a
+transparent background. From now on, for performance reasons, the
+output image will be truecolor if an image is included.
+
+The output quality is substantially improved when using the Freetype
+font library. Freetype hinting has previously been disabled in dvipng
+(because of substandard output from the Computer Modern font), but
+from the 1.8 release onwards, hinting will be enabled in a mode that
+prefers shape over contrast (which works well with the Computer Modern
+font).
+
+In short, the output quality is visibly better when Freetype is
+available than when it isn't.
+
+The release also fixes a few bugs and enhances the internal color
+cache for better performance.
 
 
-It has been tested to a fair degree. Note the disclaimer in the
-COPYING file. Report any bugs you find, see README for instructions.
+Report any bugs you find, see README for instructions.
