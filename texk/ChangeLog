@@ -1,3 +1,9 @@
+2006-08-24  Karl Berry  <karl@tug.org>
+
+	* configure: don't descend into dvipng for now, update needs to be
+	finished, accidentally checked in partial update in revision 2009
+	... sigh.
+
 2005-08-03  Olaf Weber  <olaf@infovore.xs4all.nl>
 
 	* config.sub: Update to 2005-07-08.
