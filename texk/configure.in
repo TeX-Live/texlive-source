@@ -56,7 +56,6 @@ PKGS='
  dviljk
  dvipdfm
  dvipdfmx
- dvipng
  dvipsk
  gsftopk
  lacheck
@@ -71,6 +70,9 @@ PKGS='
  tth
  xdvik
 '
+
+# must finish update, accidentally checked in partial
+# in revision 2009: dvipng
 
 ESUBDIRS=
 for pkg in $PKGS; do
