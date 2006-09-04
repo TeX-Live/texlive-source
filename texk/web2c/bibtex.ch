@@ -163,7 +163,7 @@ end.
 @x [still 14]
 @!buf_size=1000; {maximum number of characters in an input line (or string)}
 @y
-@!BUF_SIZE=5000; {initial maximum number of characters in an input line
+@!BUF_SIZE=20000; {initial maximum number of characters in an input line
                                                                 (or string)}
 @z
 
