@@ -301,9 +301,25 @@ void LayoutEngine::adjustGlyphPositions(const LEUnicode chars[], le_int32 offset
 
     if (fTypoFlags & 0x1) { /* kerning enabled */
       static const le_uint32 kernTableTag = LE_KERN_TABLE_TAG;
-
-      KernTable kt(fFontInstance, getFontTable(kernTableTag));
-      kt.process(glyphStorage);
+      const void* kernTableData = getFontTable(kernTableTag);
+      if (kernTableData != NULL) {
+        KernTable kt(fFontInstance, getFontTable(kernTableTag));
+        kt.process(glyphStorage);
+      }
+      else { /* no 'kern' table, but the font might know kern pairs from an AFM file, for instance */
+        float xAdjust = 0.0, yAdjust = 0.0;
+        LEGlyphID leftGlyph = glyphStorage.getGlyphID(0, success);
+        for (le_int32 i = 1; i < glyphStorage.getGlyphCount(); ++i) {
+          LEGlyphID rightGlyph = glyphStorage.getGlyphID(i, success);
+          LEPoint   kern;
+          fFontInstance->getKernPair(leftGlyph, rightGlyph, kern);
+          xAdjust += fFontInstance->xUnitsToPoints(kern.fX);
+          yAdjust += fFontInstance->yUnitsToPoints(kern.fY);
+          glyphStorage.adjustPosition(i, xAdjust, yAdjust, success);
+          leftGlyph = rightGlyph;
+        }
+        glyphStorage.adjustPosition(glyphStorage.getGlyphCount(), xAdjust, yAdjust, success);
+      }
     }
 
     // default is no adjustments

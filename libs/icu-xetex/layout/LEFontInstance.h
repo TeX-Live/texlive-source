@@ -495,6 +495,11 @@ public:
      * Returns true if writing direction is vertical.
      */
     virtual inline bool getLayoutDirVertical() const;
+
+    /**
+     * Returns kern value for a glyph pair, if the font has a kern pair list.
+     */
+    virtual void getKernPair(LEGlyphID leftGlyph, LEGlyphID rightGlyph, LEPoint &kern) const;
 };
 
 inline le_bool LEFontInstance::canDisplay(LEUnicode32 ch) const

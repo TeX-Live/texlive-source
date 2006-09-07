@@ -81,5 +81,11 @@ LEGlyphID LEFontInstance::mapCharToGlyph(LEUnicode32 ch, const LECharMapper *map
 
     return mapCharToGlyph(mappedChar);
 }
+
+void LEFontInstance::getKernPair(LEGlyphID leftGlyph, LEGlyphID rightGlyph, LEPoint &kern) const
+{
+    kern.fX = kern.fY = 0;
+}
+
 U_NAMESPACE_END
 

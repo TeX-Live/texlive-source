@@ -29,6 +29,7 @@ UOBJECT_DEFINE_RTTI_IMPLEMENTATION(OpenTypeLayoutEngine)
 static const LETag emptyTag = 0x00000000;
 
 static const LETag ccmpFeatureTag = LE_CCMP_FEATURE_TAG;
+static const LETag loclFeatureTag = LE_LOCL_FEATURE_TAG;
 static const LETag ligaFeatureTag = LE_LIGA_FEATURE_TAG;
 static const LETag cligFeatureTag = LE_CLIG_FEATURE_TAG;
 static const LETag kernFeatureTag = LE_KERN_FEATURE_TAG;
@@ -39,18 +40,18 @@ static const LETag dligFeatureTag = 0x646C6967; // 'dlig' not used at the moment
 static const LETag paltFeatureTag = 0x70616C74; // 'palt'
 
 // default has no ligatures, that's what java does.  this is the minimal set.
-static const LETag minimalFeatures[] = {ccmpFeatureTag, markFeatureTag, mkmkFeatureTag, emptyTag};
+static const LETag minimalFeatures[] = {ccmpFeatureTag, loclFeatureTag, markFeatureTag, mkmkFeatureTag, emptyTag};
 
 // kerning (kern, palt following adobe recommendation for cjk 'kerning') but no ligatures.
-static const LETag kernFeatures[] = {ccmpFeatureTag, kernFeatureTag, paltFeatureTag, 
+static const LETag kernFeatures[] = {ccmpFeatureTag, loclFeatureTag, kernFeatureTag, paltFeatureTag, 
 				     markFeatureTag, mkmkFeatureTag, emptyTag};
 
 // ligatures (liga, clig) but no kerning.  omit dlig for now.
-static const LETag ligaFeatures[] = {ccmpFeatureTag, ligaFeatureTag, cligFeatureTag, markFeatureTag, 
+static const LETag ligaFeatures[] = {ccmpFeatureTag, loclFeatureTag, ligaFeatureTag, cligFeatureTag, markFeatureTag, 
 				     mkmkFeatureTag, emptyTag};
 
 // kerning and ligatures.
-static const LETag kernAndLigaFeatures[] = {ccmpFeatureTag, ligaFeatureTag, cligFeatureTag, 
+static const LETag kernAndLigaFeatures[] = {ccmpFeatureTag, loclFeatureTag, ligaFeatureTag, cligFeatureTag, 
 					    kernFeatureTag, paltFeatureTag, markFeatureTag, mkmkFeatureTag, emptyTag};
 
 
@@ -241,8 +242,10 @@ void OpenTypeLayoutEngine::adjustGlyphPositions(const LEUnicode chars[], le_int3
     }
 
     le_int32 glyphCount = glyphStorage.getGlyphCount();
+    if (glyphCount == 0)
+        return;
 
-    if (glyphCount > 0 && fGPOSTable != NULL) {
+    if (fGPOSTable != NULL) {
         GlyphPositionAdjustments *adjustments = new GlyphPositionAdjustments(glyphCount);
         le_int32 i;
 
@@ -299,6 +302,10 @@ void OpenTypeLayoutEngine::adjustGlyphPositions(const LEUnicode chars[], le_int3
         glyphStorage.adjustPosition(glyphCount, xAdjust, -yAdjust, success);
 
         delete adjustments;
+    }
+    else {
+        // if there was no GPOS table, maybe there's non-OpenType kerning we can use
+        LayoutEngine::adjustGlyphPositions(chars, offset, count, reverse, glyphStorage, success);
     }
 
 #if 0
