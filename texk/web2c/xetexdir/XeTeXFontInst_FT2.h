@@ -29,36 +29,45 @@ authorization from SIL International.
 \****************************************************************************/
 
 /*
- *   file name:  XeTeXFontInst_Mac.h
+ *   file name:  XeTeXFontInst_FT2.h
  *
- *   created on: 2005-10-22
+ *   created on: 2005-10-25
  *   created by: Jonathan Kew
  */
 
 
-#ifndef __XeTeXFontInst_Mac_H
-#define __XeTeXFontInst_Mac_H
+#ifndef __XeTeXFontInst_FT2_H
+#define __XeTeXFontInst_FT2_H
 
 #include "XeTeXFontInst.h"
 
-#include <ApplicationServices/ApplicationServices.h>
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
-class XeTeXFontInst_Mac : public XeTeXFontInst
+class XeTeXFontInst_FT2 : public XeTeXFontInst
 {
 protected:
-    const void *readTable(LETag tag, le_uint32 *length) const;
 
-	ATSFontRef	fFontRef;
-	ATSUStyle	fStyle;
+    const void *	readTable(LETag tag, le_uint32 *length) const;
 
-public:
-    			XeTeXFontInst_Mac(ATSFontRef atsFont, float pointSize, LEErrorCode &status);
-
-    virtual 	~XeTeXFontInst_Mac();
-
-	virtual void initialize(LEErrorCode &status);
+	FT_Face			face;
+	bool			fFreeTypeOnly;
 	
+public:
+    				XeTeXFontInst_FT2(const char* filename, int index, float pointSize, LEErrorCode &status);
+
+    virtual 		~XeTeXFontInst_FT2();
+
+	virtual void	initialize(LEErrorCode &status);
+
 	virtual void	getGlyphBounds(LEGlyphID gid, GlyphBBox* bbox);
+
+	// overrides of XeTeXFontInst methods, in case it's not an sfnt
+	virtual le_uint16 getNumGlyphs() const;
+    virtual void getGlyphAdvance(LEGlyphID glyph, LEPoint &advance) const;
+    virtual LEGlyphID mapCharToGlyph(LEUnicode32 ch) const;
+    virtual LEGlyphID mapGlyphToIndex(const char* glyphName) const;
+    virtual void getKernPair(LEGlyphID leftGlyph, LEGlyphID rightGlyph, LEPoint &kern) const;
 };
 
 #endif

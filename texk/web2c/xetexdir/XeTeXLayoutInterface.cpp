@@ -34,9 +34,8 @@ authorization from SIL International.
 #include "XeTeXFontInst.h"
 #ifdef XETEX_MAC
 #include "XeTeXFontInst_Mac.h"
-#else
-#include "XeTeXFontInst_FC.h"
 #endif
+#include "XeTeXFontInst_FT2.h"
 
 #include "XeTeXFontMgr.h"
 
@@ -53,6 +52,7 @@ struct XeTeXLayoutEngine_rec
 {
 	LayoutEngine*	layoutEngine;
 	XeTeXFontInst*	font;
+	PlatformFontRef	fontRef;
 	UInt32			scriptTag;
 	UInt32			languageTag;
 	UInt32*			addedFeatures;
@@ -100,8 +100,23 @@ XeTeXFont createFont(PlatformFontRef fontRef, Fixed pointSize)
 #ifdef XETEX_MAC
 	XeTeXFontInst* font = new XeTeXFontInst_Mac((ATSFontRef)fontRef, Fix2X(pointSize), status);
 #else
-	XeTeXFontInst* font = new XeTeXFontInst_FC((FcPattern*)fontRef, Fix2X(pointSize), status);
+	FcChar8*	pathname = 0;
+	FcPatternGetString(fontRef, FC_FILE, 0, &pathname);
+	int			index;
+	FcPatternGetInteger(fontRef, FC_INDEX, 0, &index);
+	XeTeXFontInst* font = new XeTeXFontInst_FT2((const char*)pathname, index, Fix2X(pointSize), status);
 #endif
+	if (LE_FAILURE(status)) {
+		delete font;
+		return NULL;
+	}
+	return (XeTeXFont)font;
+}
+
+XeTeXFont createFontFromFile(const char* filename, int index, Fixed pointSize)
+{
+	LEErrorCode status = LE_NO_ERROR;
+	XeTeXFontInst* font = new XeTeXFontInst_FT2(filename, index, Fix2X(pointSize), status);
 	if (LE_FAILURE(status)) {
 		delete font;
 		return NULL;
@@ -112,11 +127,6 @@ XeTeXFont createFont(PlatformFontRef fontRef, Fixed pointSize)
 void setFontLayoutDir(XeTeXFont font, int vertical)
 {
 	((XeTeXFontInst*)font)->setLayoutDirVertical(vertical != 0);
-}
-
-PlatformFontRef getFontRef(XeTeXLayoutEngine engine)
-{
-	return engine->font->getFontRef();
 }
 
 PlatformFontRef findFontByName(const char* name, char* var, double size)
@@ -134,14 +144,19 @@ const char* getFullName(PlatformFontRef fontRef)
 	return XeTeXFontMgr::GetFontManager()->getFullName(fontRef);
 }
 
-const char* getPSName(PlatformFontRef fontRef)
+const char* getFontFilename(XeTeXLayoutEngine engine)
 {
-	return XeTeXFontMgr::GetFontManager()->getPSName(fontRef);
+	return engine->font->getFilename();
 }
 
 void getNames(PlatformFontRef fontRef, const char** psName, const char** famName, const char** styName)
 {
 	XeTeXFontMgr::GetFontManager()->getNames(fontRef, psName, famName, styName);
+}
+
+PlatformFontRef getFontRef(XeTeXLayoutEngine engine)
+{
+	return engine->fontRef;
 }
 
 void deleteFont(XeTeXFont font)
@@ -317,11 +332,12 @@ XeTeXFont getFont(XeTeXLayoutEngine engine)
 	return (XeTeXFont)(engine->font);
 }
 
-XeTeXLayoutEngine createLayoutEngine(XeTeXFont font, UInt32 scriptTag, UInt32 languageTag,
+XeTeXLayoutEngine createLayoutEngine(PlatformFontRef fontRef, XeTeXFont font, UInt32 scriptTag, UInt32 languageTag,
 										UInt32* addFeatures, UInt32* removeFeatures, UInt32 rgbValue)
 {
 	LEErrorCode status = LE_NO_ERROR;
 	XeTeXLayoutEngine result = new XeTeXLayoutEngine_rec;
+	result->fontRef = fontRef;
 	result->font = (XeTeXFontInst*)font;
 	result->scriptTag = scriptTag;
 	result->languageTag = languageTag;

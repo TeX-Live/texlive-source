@@ -199,15 +199,6 @@ system libraries.
 @z
 
 @x
-@!eight_bit_p:c_int_type; {make all characters printable by default}
-@!halt_on_error_p:c_int_type; {stop at first error}
-@!quoted_filename:boolean; {current filename is quoted}
-@y
-@!eight_bit_p:c_int_type; {make all characters printable by default}
-@!halt_on_error_p:c_int_type; {stop at first error}
-@z
-
-@x
 @* \[4] String handling.
 @y
 @* \[4] String handling.
@@ -1304,6 +1295,13 @@ else  begin k:=str_start_macro(s); l:=str_start_macro(s+1)-k;
 @z
 
 @x
+primitive("mathaccent",math_accent,0);@/
+@y
+primitive("mathaccent",math_accent,0);@/
+primitive("XeTeXmathaccent",math_accent,1);@/
+@z
+
+@x
 primitive("mathchar",math_char_num,0);@/
 @!@:math_char_}{\.{\\mathchar} primitive@>
 @y
@@ -1324,6 +1322,13 @@ end_cs_name: if chr_code = 10 then print_esc("endmubyte")
              else print_esc("endcsname");
 @y
 end_cs_name: print_esc("endcsname");
+@z
+
+@x
+math_accent: print_esc("mathaccent");
+@y
+math_accent: if chr_code=1 then print_esc("XeTeXmathaccent")
+  else print_esc("mathaccent");
 @z
 
 @x
@@ -1742,7 +1747,9 @@ else if m=math_code_base then scanned_result(ho(math_code(cur_val)))(int_val)
 @y
 if m=math_code_base then begin
   cur_val1:=ho(math_code(cur_val));
-  if (math_class_field(cur_val1)>8) or
+  if is_active_math_char(cur_val1) then
+    cur_val1:=@"8000
+  else if (math_class_field(cur_val1)>8) or
      (math_fam_field(cur_val1)>15) or
      (math_char_field(cur_val1)>255) then
     begin print_err("Extended mathchar used as mathchar");
@@ -1796,15 +1803,19 @@ end
 @z
 
 @x
+procedure scan_eight_bit_int;
+begin scan_int;
 if (cur_val<0)or(cur_val>255) then
-@y
-if (cur_val<0)or(cur_val>biggest_reg) then
-@z
-
-@x
+  begin print_err("Bad register code");
+@.Bad register code@>
   help2("A register number must be between 0 and 255.")@/
 @y
-  help2("A register number must be between 0 and 65535.")@/
+procedure scan_eight_bit_int; {only used for insertion numbers now}
+begin scan_int;
+if (cur_val<0)or(cur_val>255) then
+  begin print_err("Bad register code");
+@.Bad register code@>
+  help2("An insertion number must be between 0 and 255.")@/
 @z
 
 @x
@@ -2069,6 +2080,12 @@ eTeX_revision_code: print(eTeX_revision);
 @z
 
 @x
+job_name_code: print(job_name);
+@y
+job_name_code: print_file_name(job_name, 0, 0);
+@z
+
+@x
 @!read_file:array[0..15] of alpha_file; {used for \.{\\read}}
 @y
 @!read_file:array[0..15] of unicode_file; {used for \.{\\read}}
@@ -2128,7 +2145,7 @@ includes spaces is ``quoted'' somehow.
 @x
 begin area_delimiter:=0; ext_delimiter:=0; quoted_filename:=false;
 @y
-begin area_delimiter:=0; ext_delimiter:=0;
+begin area_delimiter:=0; ext_delimiter:=0; quoted_filename:=false;
 file_name_quote_char:=0;
 @z
 
@@ -2140,36 +2157,20 @@ else  if c="""" then begin
   quoted_filename:=not quoted_filename;
   more_name:=true;
   end
-else  begin str_room(1); append_char(c); {contribute |c| to the current string}
-  if IS_DIR_SEP(c) then
-    begin area_delimiter:=cur_length; ext_delimiter:=0;
-    end
-  else if c="." then ext_delimiter:=cur_length;
-  more_name:=true;
-  end;
-end;
 @y
 @p function more_name(@!c:ASCII_code):boolean;
-begin if stop_at_space and (c=" ") then more_name:=false
-else  begin
-  if (cur_length=0) and stop_at_space
-  and ((c="'") or (c="""") or (c="(")) then begin
-    if c="(" then file_name_quote_char:=")" else file_name_quote_char:=c;
-    stop_at_space:=false; more_name:=true;
+begin if stop_at_space and (c=" ") and (file_name_quote_char=0) then
+  more_name:=false
+else if stop_at_space and (file_name_quote_char<>0) and (c=file_name_quote_char) then begin
+  file_name_quote_char:=0;
+  more_name:=true;
   end
-  else if (file_name_quote_char<>0) and (c=file_name_quote_char) then begin
-    stop_at_space:=true; more_name:=false;
+else if stop_at_space and (file_name_quote_char=0) and ((c="""") or (c="'") or (c="(")) then begin
+  if c="(" then file_name_quote_char:=")"
+  else file_name_quote_char:=c;
+  quoted_filename:=true;
+  more_name:=true;
   end
-  else begin
-    str_room(1); append_char(c); {contribute |c| to the current string}
-    if IS_DIR_SEP(c) then
-      begin area_delimiter:=cur_length; ext_delimiter:=0;
-      end
-    else if c="." then ext_delimiter:=cur_length;
-    more_name:=true;
-  end;
-end;
-end;
 @z
 
 @x
@@ -2313,7 +2314,77 @@ if must_quote then print_char("""");
 end;
 @y
 procedure print_file_name(@!n,@!a,@!e:integer);
-begin slow_print(a); slow_print(n); slow_print(e);
+var @!must_quote: boolean; {whether to quote the filename}
+@!quote_char: integer; {current quote char (single or double)}
+@!j:pool_pointer; {index into |str_pool|}
+begin
+must_quote:=false;
+quote_char:=0;
+if a<>0 then begin
+  j:=str_start_macro(a);
+  while ((not must_quote) or (quote_char=0)) and (j<>str_start_macro(a+1)) do begin
+    if (str_pool[j]=" ") then must_quote:=true
+    else if (str_pool[j]="""") or (str_pool[j]="'") then begin
+      must_quote:=true;
+      quote_char:="""" + "'" - str_pool[j];
+    end;
+    incr(j);
+  end;
+end;
+if n<>0 then begin
+  j:=str_start_macro(n);
+  while ((not must_quote) or (quote_char=0)) and (j<>str_start_macro(n+1)) do begin
+    if (str_pool[j]=" ") then must_quote:=true
+    else if (str_pool[j]="""") or (str_pool[j]="'") then begin
+      must_quote:=true;
+      quote_char:="""" + "'" - str_pool[j];
+    end;
+    incr(j);
+  end;
+end;
+if e<>0 then begin
+  j:=str_start_macro(e);
+  while ((not must_quote) or (quote_char=0)) and (j<>str_start_macro(e+1)) do begin
+    if (str_pool[j]=" ") then must_quote:=true
+    else if (str_pool[j]="""") or (str_pool[j]="'") then begin
+      must_quote:=true;
+      quote_char:="""" + "'" - str_pool[j];
+    end;
+    incr(j);
+  end;
+end;
+if must_quote then begin
+  if quote_char=0 then quote_char:="""";
+  print_char(quote_char);
+end;
+if a<>0 then
+  for j:=str_start_macro(a) to str_start_macro(a+1)-1 do begin
+    if str_pool[j]=quote_char then begin
+      print(quote_char);
+      quote_char:="""" + "'" - quote_char;
+      print(quote_char);
+    end;
+    print(str_pool[j]);
+  end;
+if n<>0 then
+  for j:=str_start_macro(n) to str_start_macro(n+1)-1 do begin
+    if str_pool[j]=quote_char then begin
+      print(quote_char);
+      quote_char:="""" + "'" - quote_char;
+      print(quote_char);
+    end;
+    print(str_pool[j]);
+  end;
+if e<>0 then
+  for j:=str_start_macro(e) to str_start_macro(e+1)-1 do begin
+    if str_pool[j]=quote_char then begin
+      print(quote_char);
+      quote_char:="""" + "'" - quote_char;
+      print(quote_char);
+    end;
+    print(str_pool[j]);
+  end;
+if quote_char<>0 then print_char(quote_char);
 end;
 @z
 
@@ -2524,7 +2595,7 @@ loop@+begin if (cur_cmd>other_char)or(cur_chr>biggest_char) then
 @y
 file_opened:=false;
 pack_file_name(nom,aire,cur_ext);
-if file_name_quote_char<>0 then begin
+if quoted_filename then begin
   { quoted name, so try for a native font }
   g:=load_native_font(u,nom,aire,s);
   if g=null_font then goto bad_tfm else goto done;
@@ -2952,7 +3023,7 @@ if not no_pdf_output then fflush(dvi_file);
 @x
   print_nl("Output written on "); print_file_name(0, output_file_name, 0);
 @y
-  print_nl("Output written on "); print_file_name(output_file_name, "", "");
+  print_nl("Output written on "); print(output_file_name);
 @z
 
 @x
@@ -3091,7 +3162,8 @@ if is_native_font(f) then begin
   b:=new_null_box;
   p:=new_native_character(f, c);
   list_ptr(b):=p;
-  height(b):=height(p); depth(b):=depth(p); width(b):=width(p);
+  height(b):=height(p); width(b):=width(p);
+  if depth(p)<0 then depth(b):=0 else depth(b):=depth(p);
   end
 else begin
   q:=char_info(f)(c); hd:=height_depth(q);
@@ -3138,6 +3210,52 @@ end else begin if (qo(cur_c)>=font_bc[cur_f])and(qo(cur_c)<=font_ec[cur_f]) then
 @!cur_c:quarterword; {the |character| field of a |math_char|}
 @y
 @!cur_c:integer; {the |character| field of a |math_char|}
+@z
+
+@x
+procedure make_math_accent(@!q:pointer);
+label done,done1;
+var p,@!x,@!y:pointer; {temporary registers for box construction}
+@!a:integer; {address of lig/kern instruction}
+@!c:quarterword; {accent character}
+@!f:internal_font_number; {its font}
+@!i:four_quarters; {its |char_info|}
+@!s:scaled; {amount to skew the accent to the right}
+@!h:scaled; {height of character being accented}
+@!delta:scaled; {space to remove between accent and accentee}
+@!w:scaled; {width of the accentee, not including sub/superscripts}
+begin fetch(accent_chr(q));
+if char_exists(cur_i) then
+  begin i:=cur_i; c:=cur_c; f:=cur_f;@/
+  @<Compute the amount of skew@>;
+  x:=clean_box(nucleus(q),cramped_style(cur_style)); w:=width(x); h:=height(x);
+  @<Switch to a larger accent if available and appropriate@>;
+@y
+procedure make_math_accent(@!q:pointer);
+label done,done1;
+var p,@!x,@!y:pointer; {temporary registers for box construction}
+@!a:integer; {address of lig/kern instruction}
+@!c:integer; {accent character}
+@!f:internal_font_number; {its font}
+@!i:four_quarters; {its |char_info|}
+@!s:scaled; {amount to skew the accent to the right}
+@!h:scaled; {height of character being accented}
+@!delta:scaled; {space to remove between accent and accentee}
+@!w:scaled; {width of the accentee, not including sub/superscripts}
+begin fetch(accent_chr(q));
+x:=null;
+if is_native_font(cur_f) then
+  begin c:=cur_c; f:=cur_f;
+  s:=0; {@<Compute the amount of skew@>;}
+  x:=clean_box(nucleus(q),cramped_style(cur_style)); w:=width(x); h:=height(x);
+  end
+else if char_exists(cur_i) then
+  begin i:=cur_i; c:=cur_c; f:=cur_f;@/
+  @<Compute the amount of skew@>;
+  x:=clean_box(nucleus(q),cramped_style(cur_style)); w:=width(x); h:=height(x);
+  @<Switch to a larger accent if available and appropriate@>;
+  end;
+if x<>null then begin
 @z
 
 @x
@@ -3402,14 +3520,18 @@ first letter.
 @y
     begin
       if subtype(s) = native_word_node then begin
-        c := get_native_char(s, 0);
-        hf := native_font(s);
-        prev_s := s;
-        goto done2;
-      end else begin
-        @<Advance \(p)past a whatsit node in the \(p)pre-hyphenation loop@>;
-        goto continue;
-      end
+        { we only consider the node if it contains at least one letter, otherwise we'll skip it }
+        for l:=0 to native_length(s) - 1 do begin
+          c := get_native_char(s, l);
+          if lc_code(c) <> 0 then begin
+            hf := native_font(s);
+            prev_s := s;
+            goto done2;
+          end
+        end
+      end;
+      @<Advance \(p)past a whatsit node in the \(p)pre-hyphenation loop@>;
+      goto continue
 @z
 
 @x
@@ -4138,10 +4260,29 @@ large_char_field(p) := cur_val1 mod @"10000;
 @z
 
 @x
+procedure math_ac;
+@y
+procedure math_ac;
+var c: integer;
+@z
+
+@x
+scan_fifteen_bit_int;
 character(accent_chr(tail)):=qi(cur_val mod 256);
 if (cur_val>=var_code)and fam_in_range then fam(accent_chr(tail)):=cur_fam
 else fam(accent_chr(tail)):=(cur_val div 256) mod 16;
 @y
+if cur_chr=1 then begin
+  scan_math_class_int; c := set_class_field(cur_val);
+  scan_math_fam_int;   c := c + set_family_field(cur_val);
+  scan_usv_num;        cur_val := cur_val + c;
+end
+else begin
+  scan_fifteen_bit_int;
+  cur_val := set_class_field(cur_val div @"1000) +
+             set_family_field((cur_val mod @"1000) div @"100) +
+             (cur_val mod @"100);
+end;
 character(accent_chr(tail)):=qi(cur_val mod @"10000);
 if (is_var_family(cur_val))and fam_in_range then plane_and_fam_field(accent_chr(tail)):=cur_fam
 else plane_and_fam_field(accent_chr(tail)):=math_fam_field(cur_val);
@@ -4380,11 +4521,13 @@ set_font:begin print("select font ");
     read_open[n]:=just_open;
 @y
      and u_open_in(read_file[n], kpse_tex_format, XeTeX_default_input_mode, XeTeX_default_input_encoding) then
-    begin k:=1;
+    begin
+    make_utf16_name;
     name_in_progress:=true;
     begin_name;
     stop_at_space:=false;
-    while (k<=name_length)and(more_name(name_of_file[k])) do
+    k:=0;
+    while (k<name_length16)and(more_name(name_of_file16[k])) do
       incr(k);
     stop_at_space:=true;
     end_name;
@@ -4522,7 +4665,7 @@ k:=biggest_lang+1;
 @x
     print_file_name(0, log_name, 0); print_char(".");
 @y
-    print_file_name(log_name, "", ""); print_char(".");
+    print(log_name); print_char(".");
 @z
 
 @x

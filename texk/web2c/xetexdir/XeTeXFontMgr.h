@@ -75,9 +75,6 @@ public:
 
 		// SIDE EFFECT: edits /variant/ string in-place removing /B or /I
 		
-	const char*						getPSName(PlatformFontRef font) const;
-		// return PostScript name of a font, suitable for use in the .xdv file
-
 	const char*						getFullName(PlatformFontRef font) const;
 		// return the full name of the font, suitable for use in XeTeX source
 		// without requiring style qualifiers

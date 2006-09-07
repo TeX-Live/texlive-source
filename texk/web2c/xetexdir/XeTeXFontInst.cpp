@@ -56,9 +56,8 @@ authorization from SIL International.
 #include <string.h>
 
 
-XeTeXFontInst::XeTeXFontInst(PlatformFontRef fontRef, float pointSize, LEErrorCode &status)
-    : fFontRef(fontRef)
-    , fPointSize(pointSize)
+XeTeXFontInst::XeTeXFontInst(float pointSize, LEErrorCode &status)
+    : fPointSize(pointSize)
     , fUnitsPerEM(0)
     , fAscent(0)
     , fDescent(0)
@@ -71,6 +70,7 @@ XeTeXFontInst::XeTeXFontInst(PlatformFontRef fontRef, float pointSize, LEErrorCo
     , fNumGlyphs(0)
     , fNumGlyphsInited(false)
     , fVertical(false)
+    , fFilename(NULL)
 {
 	// the concrete subclass is responsible to call initialize()
 }
@@ -291,5 +291,8 @@ XeTeXFontInst::mapGlyphToIndex(const char* glyphName) const
 {
     le_uint32	len;
     const char *p = (const char*)readFontTable(LE_POST_TABLE_TAG, len);
-	return findGlyphInPostTable(p, len, glyphName);
+    if (p != NULL)
+		return findGlyphInPostTable(p, len, glyphName);
+	else
+		return 0;
 }

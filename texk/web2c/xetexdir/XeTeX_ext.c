@@ -443,7 +443,7 @@ read_tag(const char* cp)
 }
 
 static void*
-loadOTfont(XeTeXFont font, Fixed scaled_size, const char* cp1)
+loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const char* cp1)
 {
 	XeTeXLayoutEngine   engine;
 	UInt32	scriptTag = kLatin;
@@ -637,7 +637,7 @@ loadOTfont(XeTeXFont font, Fixed scaled_size, const char* cp1)
 	if ((loadedfontflags & FONT_FLAGS_VERTICAL) != 0)
 		setFontLayoutDir(font, 1);
 
-	engine = createLayoutEngine(font, scriptTag, languageTag, addFeatures, removeFeatures, rgbValue);
+	engine = createLayoutEngine(fontRef, font, scriptTag, languageTag, addFeatures, removeFeatures, rgbValue);
 	if (engine == 0) {
 		deleteFont(font);
 		if (addFeatures)
@@ -656,14 +656,35 @@ splitFontName(char* name, char** var, char** feat, char** end)
 {
 	*var = NULL;
 	*feat = NULL;
-	while (*name) {
-		if (*name == '/' && *var == NULL && *feat == NULL)
-			*var = name;
-		else if (*name == ':' && *feat == NULL)
-			*feat = name;
+	if (*name == '[') {
 		++name;
+		int	withinFileName = 1;
+		while (*name) {
+			if (withinFileName && *name == ']') {
+				withinFileName = 0;
+				if (*var == NULL)
+					*var = name;
+			}
+			else if (*name == ':') {
+				if (withinFileName && *var == NULL)
+					*var = name;
+				else if (!withinFileName && *feat == NULL)
+					*feat = name;
+			}
+			++name;
+		}
+		*end = name;
 	}
-	*end = name;
+	else {
+		while (*name) {
+			if (*name == '/' && *var == NULL && *feat == NULL)
+				*var = name;
+			else if (*name == ':' && *feat == NULL)
+				*feat = name;
+			++name;
+		}
+		*end = name;
+	}
 	if (*feat == NULL)
 		*feat = name;
 	if (*var == NULL)
@@ -707,54 +728,77 @@ findnativefont(unsigned char* uname, long scaled_size)
 		featString[end - feat - 1] = 0;
 	}
 	
-	fontRef = findFontByName(nameString, varString, Fix2X(scaled_size));
-
-	if (fontRef != 0) {
-		/* update nameoffile to the full name of the font, for error messages during font loading */
-		const char*	fullName = getFullName(fontRef);
-		namelength = strlen(fullName);
-		if (featString != NULL)
-			namelength += strlen(featString) + 1;
-		if (varString != NULL)
-			namelength += strlen(varString) + 1;
-		free(nameoffile);
-		nameoffile = xmalloc(namelength + 4); /* +2 would be correct: initial space, final NUL */
-		nameoffile[0] = ' ';
-		strcpy((char*)nameoffile + 1, fullName);
-
+	// check for "[filename]" form, don't search maps in this case
+	if (nameString[0] == '[') {
+		char* path = kpse_find_file(nameString + 1, kpse_opentype_format, 0);
+		if (path == NULL)
+			path = kpse_find_file(nameString + 1, kpse_truetype_format, 0);
+		if (path == NULL)
+			path = kpse_find_file(nameString + 1, kpse_type1_format, 0);
+		if (path != NULL) {
+			int index = 0;
+			if (varString != NULL) {
+				char* cp;
+				for (cp = varString; *cp && isdigit(*cp); ++cp)
+					index = index * 10 + *cp - '0';
+			}
+			font = createFontFromFile(path, index, scaled_size);
+			if (font != NULL) {
+				rval = loadOTfont(0, font, scaled_size, featString);
+				if (rval == 0)
+					deleteFont(font);
+			}
+		}
+	}
+	else {
+		fontRef = findFontByName(nameString, varString, Fix2X(scaled_size));
+	
+		if (fontRef != 0) {
+			/* update nameoffile to the full name of the font, for error messages during font loading */
+			const char*	fullName = getFullName(fontRef);
+			namelength = strlen(fullName);
+			if (featString != NULL)
+				namelength += strlen(featString) + 1;
+			if (varString != NULL)
+				namelength += strlen(varString) + 1;
+			free(nameoffile);
+			nameoffile = xmalloc(namelength + 4); /* +2 would be correct: initial space, final NUL */
+			nameoffile[0] = ' ';
+			strcpy((char*)nameoffile + 1, fullName);
+	
 #ifdef XETEX_MAC
-		/* decide whether to use AAT or OpenType rendering with this font */
-		if (getReqEngine() == 'A')
-			goto load_aat;
+			/* decide whether to use AAT or OpenType rendering with this font */
+			if (getReqEngine() == 'A')
+				goto load_aat;
 #endif
-
-		font = createFont(fontRef, scaled_size);
-		if (font != 0) {
+	
+			font = createFont(fontRef, scaled_size);
+			if (font != 0) {
 #ifdef XETEX_MAC
-			if (getReqEngine() == 'I' || getFontTablePtr(font, kGSUB) != 0 || getFontTablePtr(font, kGPOS) != 0)
+				if (getReqEngine() == 'I' || getFontTablePtr(font, kGSUB) != 0 || getFontTablePtr(font, kGPOS) != 0)
 #endif
-				rval = loadOTfont(font, scaled_size, featString);
-			if (rval == 0)
-				deleteFont(font);
-		}
-
+					rval = loadOTfont(fontRef, font, scaled_size, featString);
+				if (rval == 0)
+					deleteFont(font);
+			}
+	
 #ifdef XETEX_MAC
-		if (rval == 0) {
-		load_aat:
-			rval = loadAATfont(fontRef, scaled_size, featString);
-		}
+			if (rval == 0) {
+			load_aat:
+				rval = loadAATfont(fontRef, scaled_size, featString);
+			}
 #endif
-
-		/* append the style and feature strings, so that \show\fontID will give a full result */
-		if (varString != NULL && *varString != 0) {
-			strcat((char*)nameoffile + 1, "/");
-			strcat((char*)nameoffile + 1, varString);
+			/* append the style and feature strings, so that \show\fontID will give a full result */
+			if (varString != NULL && *varString != 0) {
+				strcat((char*)nameoffile + 1, "/");
+				strcat((char*)nameoffile + 1, varString);
+			}
+			if (featString != NULL && *featString != 0) {
+				strcat((char*)nameoffile + 1, ":");
+				strcat((char*)nameoffile + 1, featString);
+			}
+			namelength = strlen((char*)nameoffile + 1);
 		}
-		if (featString != NULL && *featString != 0) {
-			strcat((char*)nameoffile + 1, ":");
-			strcat((char*)nameoffile + 1, featString);
-		}
-		namelength = strlen((char*)nameoffile + 1);
 	}
 	
 	if (varString != NULL)
@@ -978,8 +1022,6 @@ makeXDVGlyphArrayData(void* pNode)
 long
 makefontdef(long f)
 {
-	PlatformFontRef	fontRef;
-
 	UInt16	flags = 0;
 	UInt32	variationCount = 0;
 	UInt32	rgba;
@@ -992,6 +1034,7 @@ makefontdef(long f)
 	UInt8	styLen;
 	int		fontDefLength;
 	char*	cp;
+	PlatformFontRef	fontRef = 0;
 
 #ifdef XETEX_MAC
 	ATSUStyle	style = NULL;
@@ -1005,6 +1048,8 @@ makefontdef(long f)
 		ATSUGetAttribute(style, kATSUFontTag, sizeof(ATSUFontID), &fontID, 0);
 
 		fontRef = FMGetATSFontRefFromFont(fontID);
+		getNames(fontRef, &psName, &famName, &styName);
+			/* returns ptrs to strings that belong to the font - do not free! */
 
 		ATSUVerticalCharacterType	vert;
 		ATSUGetAttribute(style, kATSUVerticalCharacterTag, sizeof(ATSUVerticalCharacterType), &vert, 0);
@@ -1025,6 +1070,13 @@ makefontdef(long f)
 
 		engine = (XeTeXLayoutEngine)fontlayoutengine[f];
 		fontRef = getFontRef(engine);
+		if (fontRef != 0)
+			getNames(fontRef, &psName, &famName, &styName);
+		else {
+			psName = getFontFilename(engine);
+			famName = "";
+			styName = "";
+		}
 
 		rgba = getRgbValue(engine);
 		if ((fontflags[f] & FONT_FLAGS_VERTICAL) != 0)
@@ -1037,9 +1089,6 @@ makefontdef(long f)
 		exit(3);
 	}
 
-	getNames(fontRef, &psName, &famName, &styName);
-		/* returns ptrs to strings that belong to the font - do not free! */
-	
 	psLen = strlen(psName);
 	famLen = strlen(famName);
 	styLen = strlen(styName);
@@ -2133,11 +2182,27 @@ open_dvi_output(FILE** fptr)
 		return open_output(fptr, FOPEN_WBIN_MODE);
 	}
 	else {
-		char*	cmd2 = concat(outputdriver, " -o \"");
-		char*	cmd = concat3(cmd2, (char*)nameoffile+1, "\"");
-		free(cmd2);
+		const char *p = (const char*)nameoffile+1;
+		char	*cmd, *q;
+		int len = strlen(p);
+		while (*p)
+			if (*p++ == '\"')
+				++len;
+		len += strlen(outputdriver);
+		len += 8; /* space for -o flag, quotes, NUL */
+		cmd = xmalloc(len);
+		strcpy(cmd, outputdriver);
+		strcat(cmd, " -o \"");
+		q = cmd + strlen(cmd);
+		for (p = (const char*)nameoffile+1; *p; p++) {
+			if (*p == '\"')
+				*q++ = '\\';
+			*q++ = *p;
+		}
+		*q++ = '\"';
+		*q = '\0';
 		if (papersize != 0) {
-			cmd2 = concat3(cmd, " -p ", papersize);
+			char* cmd2 = concat3(cmd, " -p ", papersize);
 			free(cmd);
 			cmd = cmd2;
 		}

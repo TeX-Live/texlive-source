@@ -64,8 +64,6 @@ extern "C" {
 class XeTeXFontInst : public LEFontInstance, protected FontTableCache
 {
 protected:
-	PlatformFontRef fFontRef;
-
     float    fPointSize;
 
     le_int32 fUnitsPerEM;
@@ -88,6 +86,8 @@ protected:
 	
 	bool fVertical; // false = horizontal, true = vertical
 
+	char *fFilename; // actually holds [filename:index], as used in xetex
+
     virtual const void *readTable(LETag tag, le_uint32 *length) const = 0;
     void deleteTable(const void *table) const;
     void getMetrics();
@@ -98,16 +98,18 @@ protected:
     const void *readFontTable(LETag tableTag, le_uint32& len) const;
 
 public:
-    XeTeXFontInst(PlatformFontRef fontRef, float pointSize, LEErrorCode &status);
+    XeTeXFontInst(float pointSize, LEErrorCode &status);
 
     virtual ~XeTeXFontInst();
-
-	virtual PlatformFontRef getFontRef() const
-		{ return fFontRef; }
 
 	virtual void initialize(LEErrorCode &status);
 
     virtual const void *getFontTable(LETag tableTag) const;
+
+	virtual const char *getFilename() const
+	{
+		return fFilename;
+	}
 
 	virtual void setLayoutDirVertical(bool vertical);
 

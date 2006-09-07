@@ -55,15 +55,17 @@ XeTeXFont createFont(ATSFontRef atsFont, Fixed pointSize);
 // appropriate functions for other platforms
 XeTeXFont createFont(PlatformFontRef fontRef, Fixed pointSize);
 #endif
+XeTeXFont createFontFromFile(const char* filename, int index, Fixed pointSize);
 
 void setFontLayoutDir(XeTeXFont font, int vertical);
 
-PlatformFontRef getFontRef(XeTeXLayoutEngine engine);
 PlatformFontRef findFontByName(const char* name, char* var, double size);
 
 char getReqEngine();
 const char* getFullName(PlatformFontRef fontRef);
-const char* getPSName(PlatformFontRef fontRef);
+
+const char* getFontFilename(XeTeXLayoutEngine engine);
+
 void getNames(PlatformFontRef fontRef, const char** psName, const char** famName, const char** styName);
 
 void deleteFont(XeTeXFont font);
@@ -81,12 +83,13 @@ UInt32 getIndFeature(XeTeXFont font, UInt32 script, UInt32 language, UInt32 inde
 float getGlyphWidth(XeTeXFont font, UInt32 gid);
 UInt32 countGlyphs(XeTeXFont font);
 
-XeTeXLayoutEngine createLayoutEngine(XeTeXFont font, UInt32 scriptTag, UInt32 languageTag,
+XeTeXLayoutEngine createLayoutEngine(PlatformFontRef fontRef, XeTeXFont font, UInt32 scriptTag, UInt32 languageTag,
 						UInt32* addFeatures, UInt32* removeFeatures, UInt32 rgbValue);
 
 void deleteLayoutEngine(XeTeXLayoutEngine engine);
 
 XeTeXFont getFont(XeTeXLayoutEngine engine);
+PlatformFontRef getFontRef(XeTeXLayoutEngine engine);
 
 SInt32 layoutChars(XeTeXLayoutEngine engine, UInt16* chars, SInt32 offset, SInt32 count, SInt32 max,
 						char rightToLeft, float x, float y, SInt32* status);

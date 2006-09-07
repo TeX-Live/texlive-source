@@ -40,7 +40,8 @@ authorization from SIL International.
 #include "XeTeX_ext.h"
 
 XeTeXFontInst_Mac::XeTeXFontInst_Mac(ATSFontRef atsFont, float pointSize, LEErrorCode &status)
-    : XeTeXFontInst(atsFont, pointSize, status)
+    : XeTeXFontInst(pointSize, status)
+    , fFontRef(atsFont)
     , fStyle(0)
 {
     if (LE_FAILURE(status)) {

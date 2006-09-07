@@ -28,18 +28,18 @@ use or other dealings in this Software without prior written
 authorization from SIL International.
 \****************************************************************************/
 
-#ifndef __XETEX_FONT_MGR_LINUX_H
-#define __XETEX_FONT_MGR_LINUX_H
+#ifndef __XETEX_FONT_MGR_FC_H
+#define __XETEX_FONT_MGR_FC_H
 
 #include "XeTeXFontMgr.h"
 
-class XeTeXFontMgr_Linux
+class XeTeXFontMgr_FC
 	: public XeTeXFontMgr
 {
 public:
-									XeTeXFontMgr_Linux()
+									XeTeXFontMgr_FC()
 										{ }
-	virtual							~XeTeXFontMgr_Linux()
+	virtual							~XeTeXFontMgr_FC()
 										{ }
 
 protected:
@@ -51,9 +51,6 @@ protected:
 	virtual void					searchForHostPlatformFonts(const std::string& name);
 	
 	virtual NameCollection*			readNames(FcPattern* pat);
-
-private:
-	FT_Library	ftLib;
 };
 
-#endif	/* __XETEX_FONT_MGR_LINUX_H */
+#endif	/* __XETEX_FONT_MGR_FC_H */

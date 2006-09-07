@@ -40,7 +40,7 @@ pdf_get_rect(char* filename, int page_num, int pdf_box, realrect* box)
 	if (page_num > pages)
 		page_num = pages;
 	if (page_num < 0)
-		page_num = pages + 1 - page_num;
+		page_num = pages + 1 + page_num;
 	if (page_num < 1)
 		page_num = 1;
 

@@ -11,28 +11,28 @@ xetex = @XETEX@ xetex
 
 # On Mac OS X:
 @XETEX_MACOSX@ xetex_platform_o = XeTeX_mac.o XeTeXFontMgr_Mac.o
-@XETEX_MACOSX@ xetex_platform_layout_o = XeTeXFontInst_Mac.o
-@XETEX_MACOSX@ xetex_platform_layout_cxx = XeTeXFontInst_Mac.cpp
+@XETEX_MACOSX@ xetex_platform_layout_o = XeTeXFontInst_Mac.o XeTeXFontInst_FT2.o
+@XETEX_MACOSX@ xetex_platform_layout_cxx = XeTeXFontInst_Mac.cpp XeTeXFontInst_FT2.cpp
 @XETEX_MACOSX@ xetex_images_o =
 
 @XETEX_MACOSX@ XETEX_DEFINES = -DXETEX_MAC
 
 @XETEX_MACOSX@ EXTRALIBS = -framework Carbon -framework Cocoa -framework QuickTime
 
-@XETEX_MACOSX@ EXTRADEPS =
+@XETEX_MACOSX@ EXTRADEPS = 
 
 # On non-Mac platforms:
-@XETEX_GENERIC@ xetex_platform_o = XeTeXFontMgr_Linux.o
-@XETEX_GENERIC@ xetex_platform_layout_o = XeTeXFontInst_FC.o
-@XETEX_GENERIC@ xetex_platform_layout_cxx = XeTeXFontInst_FC.cpp
+@XETEX_GENERIC@ xetex_platform_o = XeTeXFontMgr_FC.o
+@XETEX_GENERIC@ xetex_platform_layout_o = XeTeXFontInst_FT2.o
+@XETEX_GENERIC@ xetex_platform_layout_cxx = XeTeXFontInst_FT2.cpp
 @XETEX_GENERIC@ xetex_images_o = mfileio.o numbers.o pdfimage.o bmpimage.o jpegimage.o pngimage.o XeTeX_pic.o
 
 @XETEX_GENERIC@ XETEX_DEFINES = -DXETEX_OTHER
 
 @XETEX_GENERIC@ # FIXME: FontConfig not yet handled by configure
-@XETEX_GENERIC@ EXTRALIBS = @LDFREETYPE2@ @LDLIBXPDF@ @LDLIBPNG@ -lfontconfig
+@XETEX_GENERIC@ EXTRALIBS = @LDLIBXPDF@ @LDLIBPNG@ -lfontconfig
 
-@XETEX_GENERIC@ EXTRADEPS = @FREETYPE2DEP@ @LIBXPDFDEP@ @LIBPNGDEP@
+@XETEX_GENERIC@ EXTRADEPS = @LIBXPDFDEP@ @LIBPNGDEP@
 
 ### end of platform-specific setup
 
@@ -50,7 +50,9 @@ LIBPNGDEP=@LIBPNGDEP@
 LIBPNGDIR=../../libs/libpng
 LIBPNGSRCDIR=$(srcdir)/$(LIBPNGDIR)
 
+LDFREETYPE2 = @LDFREETYPE2@
 FTFLAGS =  @FREETYPE2CPPFLAGS@
+FREETYPE2DEP = @FREETYPE2DEP@
 
 FREETYPE2DIR = ../../libs/freetype2
 FREETYPE2SRCDIR = $(srcdir)/$(FREETYPE2DIR)
@@ -71,15 +73,22 @@ ICUSRCDIR=$(srcdir)/$(ICUDIR)
 
 ICUCFLAGS = @ICUCPPFLAGS@ -DLE_USE_CMEMORY
 
+ZLIBCPPFLAGS = @ZLIBCPPFLAGS@
+LDZLIB = @LDZLIB@
+
+ZLIBDIR = ../../libs/zlib
+ZLIBSRCDIR = $(srcdir)/$(ZLIBDIR)
+
+xetexlibs = $(LDICU) $(LDTECKIT) $(LDFREETYPE2) $(LDZLIB)
 
 # Font-related headers
 XeTeXFontHdrs = \
 	$(srcdir)/xetexdir/FontTableCache.h \
 	$(srcdir)/xetexdir/XeTeXFontInst.h \
-	$(srcdir)/xetexdir/XeTeXFontInst_FC.h \
+	$(srcdir)/xetexdir/XeTeXFontInst_FT2.h \
 	$(srcdir)/xetexdir/XeTeXFontInst_Mac.h \
 	$(srcdir)/xetexdir/XeTeXFontMgr.h \
-	$(srcdir)/xetexdir/XeTeXFontMgr_Linux.h \
+	$(srcdir)/xetexdir/XeTeXFontMgr_FC.h \
 	$(srcdir)/xetexdir/XeTeXFontMgr_Mac.h \
 	$(srcdir)/xetexdir/XeTeXLayoutInterface.h \
 	$(srcdir)/xetexdir/XeTeXOTLayoutEngine.h
@@ -152,7 +161,7 @@ XeTeXOTLayoutEngine.o: $(srcdir)/xetexdir/XeTeXOTLayoutEngine.cpp $(XeTeXFontHdr
 
 XeTeXFontMgr.o: $(srcdir)/xetexdir/XeTeXFontMgr.cpp  $(XeTeXFontHdrs)
 	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
-XeTeXFontMgr_Linux.o: $(srcdir)/xetexdir/XeTeXFontMgr_Linux.cpp  $(XeTeXFontHdrs)
+XeTeXFontMgr_FC.o: $(srcdir)/xetexdir/XeTeXFontMgr_FC.cpp  $(XeTeXFontHdrs)
 	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
 
 XeTeXFontMgr_Mac.o: $(srcdir)/xetexdir/XeTeXFontMgr_Mac.mm  $(XeTeXFontHdrs)
@@ -167,11 +176,8 @@ XeTeXFontInst.o: $(srcdir)/xetexdir/XeTeXFontInst.cpp $(XeTeXFontHdrs)
 	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
 XeTeXFontInst_Mac.o: $(srcdir)/xetexdir/XeTeXFontInst_Mac.cpp $(XeTeXFontHdrs)
 	$(CXX) $(ICUCFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
-XeTeXFontInst_FC.o: $(srcdir)/xetexdir/XeTeXFontInst_FC.cpp $(XeTeXFontHdrs)
+XeTeXFontInst_FT2.o: $(srcdir)/xetexdir/XeTeXFontInst_FT2.cpp $(XeTeXFontHdrs)
 	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
-
-
-xetexlibs = $(LDICU) $(LDTECKIT)
 
 # special rules for files that need the TECkit headers as well
 XeTeX_ext.o: $(srcdir)/xetexdir/XeTeX_ext.c xetexd.h
@@ -186,7 +192,7 @@ trans.o: $(srcdir)/xetexdir/trans.c
 xetex: $(xetex_o) $(xetex_add_o) $(xetex_images_o) $(xetex_ot_layout_o) $(xetexlibs) $(EXTRADEPS)
 	$(kpathsea_cxx_link) $(xetex_o) $(xetex_add_o) $(xetex_images_o) $(xetex_ot_layout_o) \
 	$(socketlibs) $(LOADLIBES) \
-	$(xetexlibs) $(EXTRALIBS) -lz
+	$(xetexlibs) $(EXTRALIBS)
 
 # C file dependencies
 $(xetex_c) xetexcoerce.h xetexd.h: xetex.p $(web2c_texmf)

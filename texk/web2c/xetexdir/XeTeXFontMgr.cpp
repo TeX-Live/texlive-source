@@ -31,7 +31,7 @@ authorization from SIL International.
 #ifdef XETEX_MAC
 #include "XeTeXFontMgr_Mac.h"
 #else
-#include "XeTeXFontMgr_Linux.h"
+#include "XeTeXFontMgr_FC.h"
 #endif
 
 #include "XeTeXLayoutInterface.h"
@@ -62,7 +62,7 @@ XeTeXFontMgr::GetFontManager()
 #ifdef XETEX_MAC
 		sFontManager = new XeTeXFontMgr_Mac;
 #else
-		sFontManager = new XeTeXFontMgr_Linux;
+		sFontManager = new XeTeXFontMgr_FC;
 #endif
 		sFontManager->initialize();
 	}
@@ -368,15 +368,6 @@ XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
 	}
 
 	return font->fontRef;
-}
-
-const char*
-XeTeXFontMgr::getPSName(PlatformFontRef font) const
-{
-	std::map<PlatformFontRef,Font*>::const_iterator	i = platformRefToFont.find(font);
-	if (i == platformRefToFont.end())
-		die("internal error %d in XeTeXFontMgr", 1);
-	return i->second->psName->c_str();
 }
 
 const char*
