@@ -470,6 +470,7 @@ const_string XETEXHELP[] = {
     "",
     "  If no arguments or options are specified, prompt for input.",
     "",
+    "-etex                   enable e-TeX extensions",
     "[-no]-file-line-error   disable/enable file:line:error style messages",
     "-fmt=FMTNAME            use FMTNAME instead of program name or a %& line",
     "-halt-on-error          stop processing at the first error",

@@ -273,7 +273,7 @@ maininit P2C(int, ac, string *, av)
     }
 #endif
 #endif
-#if defined(eTeX) || defined(pdfeTeX) || defined(Aleph)
+#if defined(eTeX) || defined(pdfeTeX) || defined(Aleph) || defined(XeTeX)
     if (etexp) {
       fprintf(stderr, "-etex only works with -ini\n");
     }
@@ -736,6 +736,52 @@ readtcxfile P1H(void)
 #endif /* !Omega && !eOmega && !Aleph && !XeTeX */
 #endif /* TeX || MF || MP [character translation] */
 
+#ifdef XeTeX /* XeTeX handles this differently, and allows odd quotes within names */
+string
+normalize_quotes P2C(const_string, name, const_string, mesg)
+{
+    int quote_char = 0;
+    boolean must_quote = (strchr(name, ' ') != NULL);
+    int len = strlen(name);
+    /* Leave room for quotes and NUL. */
+    string ret;
+    string p;
+    const_string q;
+    for (q = name; *q; q++) {
+        if (*q == ' ') {
+            if (!must_quote) {
+                len += 2;
+                must_quote = true;
+            }
+        }
+        else if (*q == '\"' || *q == '\'') {
+            must_quote = true;
+            if (quote_char == 0)
+                quote_char = '\"' + '\'' - *q;
+            len += 2; /* this could sometimes add length we don't need */
+        }
+    }
+    ret = (string)xmalloc(len + 1);
+    p = ret;
+    if (must_quote) {
+        if (quote_char == 0)
+            quote_char = '\"';
+        *p++ = quote_char;
+    }
+    for (q = name; *q; q++) {
+        if (*q == quote_char) {
+            *p++ = quote_char;
+            quote_char = '\"' + '\'' - quote_char;
+            *p++ = quote_char;
+        }
+        *p++ = *q;
+    }
+    if (quote_char != 0)
+        *p++ = quote_char;
+    *p = '\0';
+    return ret;
+}
+#else
 /* Normalize quoting of filename -- that is, only quote if there is a space,
    and always use the quote-name-quote style. */
 string
@@ -765,6 +811,7 @@ normalize_quotes P2C(const_string, name, const_string, mesg)
     }
     return ret;
 }
+#endif
 
 /* Getting the input filename. */
 string
@@ -774,6 +821,11 @@ get_input_file_name P1H(void)
 
   if (argv[optind] && argv[optind][0] != '&' && argv[optind][0] != '\\') {
     /* Not &format, not \input, so assume simple filename. */    
+#ifdef XeTeX
+    string name = normalize_quotes(argv[optind], "argument");
+    input_file_name = kpse_find_file(argv[optind], INPUT_FORMAT, false);
+    argv[optind] = name;
+#else
     string name = normalize_quotes(argv[optind], "argument");
     boolean quoted = (name[0] == '"');
     if (quoted) {
@@ -788,6 +840,7 @@ get_input_file_name P1H(void)
         name--;
     }
     argv[optind] = name;
+#endif
   }
   return input_file_name;
 }
@@ -825,7 +878,7 @@ static struct option long_options[]
       { "enc",                       0, &enctexp, 1 },
 #endif /* !XeTeX */
 #endif /* !Omega && !eOmega && !Aleph */
-#if defined (eTeX) || defined(pdfeTeX) || defined(Aleph)
+#if defined (eTeX) || defined(pdfeTeX) || defined(Aleph) || defined(XeTeX)
       { "etex",                      0, &etexp, 1 },
 #endif /* eTeX || pdfeTeX || Aleph */
       { "output-comment",            1, 0, 0 },
@@ -901,7 +954,11 @@ parse_options P2C(int, argc,  string *, argv)
       user_progname = optarg;
 
     } else if (ARGUMENT_IS ("jobname")) {
+#ifdef XeTeX
+      job_name = optarg;
+#else
       job_name = normalize_quotes(optarg, "jobname");
+#endif
       
     } else if (ARGUMENT_IS (DUMP_OPTION)) {
       dump_name = optarg;
