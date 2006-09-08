@@ -28,6 +28,11 @@ dnl We default to yes if the sources are available.
 AC_ARG_WITH([pdfetex],
 [  --without-pdfetex          don't compile and install pdfeTeX])
 
+dnl Do we compile XeTeX?
+dnl We default to yes if the sources are available.
+AC_ARG_WITH([xetex],
+[  --without-xetex            don't compile and install XeTeX])
+
 dnl Try to link C++ runtime statically?
 dnl Only important, if you want to create binaries which are slightly
 dnl more portable.
