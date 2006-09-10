@@ -1,3 +1,8 @@
+2006-09-05  Karl Berry  <karl@tug.org>
+
+	* bibtex.ch (BUF_SIZE): increase to 20000 per Lee Samuel Finn, via
+	3 Sep 2006 10:32:53 +0200 mail from Gerben.
+
 2006-07-10  Karl Berry  <karl@tug.org>
 
 	* tex.ch (sup_font_mem_size): double again, to 4000000.
