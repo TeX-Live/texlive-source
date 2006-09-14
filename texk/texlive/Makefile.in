@@ -5,8 +5,9 @@ kpse_include ../make/paths.mk
 kpse_include ../make/common.mk
 kpse_include ../make/programs.mk
 
-LIVESCRIPTS = getnonfreefonts perltex pkfix simpdftex altpdftex giftopng \
-              pdfthumb ppower4 vpe
+LIVESCRIPTS = altpdftex simpdftex \
+              ebong getnonfreefonts giftopng \
+              pdfthumb perltex pkfix ppower4 vpe
 ALTPDFTEXCOPIES = altpdfaleph altpdfamstex altpdfcont-en altpdfcont-nl \
                   altpdfetex altpdflambda altpdflatex altpdfomega 
 
