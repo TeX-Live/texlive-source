@@ -55,6 +55,8 @@ pdfetex		pdfetex		language.def	-translate-file=cp227.tcx *pdfetex.ini
 @OMEGA@lambda		omega		language.dat	lambda.ini
 @ALEPH@aleph		aleph		-		*aleph.ini
 @ALEPH@lamed		aleph		language.dat	*lambda.ini
+@XETEX@xetex	xetex	-	-etex xetex.ini
+@XETEX@xelatex	xetex	language.dat	-etex xelatex.ini
 
 # The amstex format:
 
@@ -114,9 +116,9 @@ mllatex		pdfetex	language.dat	-translate-file=cp227.tcx -mltex mllatex.ini
 
 # Other formats:
 
-# Change "eplain.ini -> ebplain.ini" and "- -> language.dat"
-# if you want babel support in eplain:
-eplain	pdfetex		-		-translate-file=cp227.tcx *eplain.ini
+# The TeX Live version of eplain.ini includes Babel support:
+eplain	pdfetex		language.dat	-translate-file=cp227.tcx *eplain.ini
+@XETEX@xeplain	xetex		language.dat	-etex xeplain.ini
 
 # mptopdf utility
 mptopdf		pdfetex	-		-translate-file=cp227.tcx mptopdf.tex
