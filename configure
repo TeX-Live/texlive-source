@@ -4790,7 +4790,7 @@ for pkg in $PKGS; do
       if test $pkg = sam2p; then
         # attempt to discover if srcdir = builddir.
         dir1=`cd $srcdir/utils/sam2p && /bin/pwd`
-        dir2=`cd utils/sam2p && /bin/pwd`
+        dir2=`cd utils/sam2p 2>/dev/null && /bin/pwd`
         if test "$dir1" != "$dir2"; then
           # this is a terrible kludge, but sam2p configure actively
           # defeats srcdir!=objdir support, and Peter S. doesn't want to
