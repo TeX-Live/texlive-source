@@ -69,6 +69,7 @@ PKGS='
  ttf2pk
  tth
  xdvik
+ xdvipdfmx
 '
 
 # must finish update, accidentally checked in partial

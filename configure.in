@@ -132,21 +132,23 @@ test "$with_dialog"  != no    && : ${needs_ncurses=yes}
 : ${needs_ncurses=no}
 export needs_ncurses
 
-# we need pnglib for dvipng, pdf[ex]tex, xetex
+# we need pnglib for dvipng, pdf[ex]tex, xetex, xdvipdfmx
 test ! -d $srcdir/$LIBPNGDIR  && : ${needs_pnglib=no}
 test "$with_dvipng"  != no    && : ${needs_pnglib=yes}
 test "$with_pdftex"  != no    && : ${needs_pnglib=yes}
 test "$with_pdfetex" != no    && : ${needs_pnglib=yes}
 test "$with_xetex"   != no    && : ${needs_pnglib=yes}
+test "$with_xdvipdfmx" != no  && : ${needs_pnglib=yes}
 : ${needs_pnglib=no}
 export needs_pnglib
 
-# we need zlib for dvipng, texinfo, pdf[ex]tex, xetex
+# we need zlib for dvipng, texinfo, pdf[ex]tex, xetex, xdvipdfmx
 test ! -d $srcdir/$ZLIBDIR    && : ${needs_zlib=no}
 test "$with_dvipng"  != no    && : ${needs_zlib=yes}
 test "$with_pdftex"  != no    && : ${needs_zlib=yes}
 test "$with_pdfetex" != no    && : ${needs_zlib=yes}
 test "$with_xetex"   != no    && : ${needs_zlib=yes}
+test "$with_xdvipdfmx" != no  && : ${needs_zlib=yes}
 test "$with_texinfo" != no    && : ${needs_zlib=yes}
 : ${needs_zlib=no}
 export needs_zlib
@@ -172,9 +174,10 @@ test "$with_ttf2pk" = no        && : ${needs_freetype=no}
 : ${needs_freetype=yes}
 export needs_freetype
 
-# we need freetype2 for xetex
+# we need freetype2 for xetex, xdvipdfmx
 test ! -d $srcdir/$FREETYPE2DIR && : ${needs_freetype2=no}
 test "$with_xetex"   != no      && : ${needs_freetype2=yes}
+test "$with_xdvipdfmx" != no    && : ${needs_freetype2=yes}
 : ${needs_freetype2=no}
 export needs_freetype2
 

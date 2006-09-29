@@ -46,3 +46,5 @@ AC_ARG_WITH([tth],
 	[  --without-tth              do not build the tth package])
 AC_ARG_WITH([xdvik],
 	[  --without-xdvik            do not build the xdvik package])
+AC_ARG_WITH([xdvipdfmx],
+	[  --without-xdvipdfmx        do not build the xdvipdfmx package])
