@@ -923,8 +923,9 @@ Kpathsea}).
 @cindex output, redirecting
 @cindex standard output, output to
 Send output to the file @var{name}.  If @samp{-o} is specified without
-@var{name}, the default is @samp{@var{file}.ps} where the input DVI file
-was @samp{@var{file}.dvi}.  If @samp{-o} isn't given at all, the
+@var{name} (i.e., it is the last thing on the command line), the
+default is @samp{@var{file}.ps} where the input DVI file was
+@samp{@var{file}.dvi}.  If @samp{-o} isn't given at all, the
 configuration file default is used.
 
 @findex popen @r{for output}
