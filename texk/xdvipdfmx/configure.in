@@ -96,6 +96,10 @@ AC_CHECK_SIZEOF(int)
 AC_CHECK_SIZEOF(long)
 
 dnl Check for additonal libraries.
+
+AC_HAS_LIBFONTCONFIG
+AC_HAS_APP_SERVICES
+
 if test "x$enable_tetex_build" = xyes; then
   # Get these common libraries from the sources, too.
   # Seems like it would be simpler to treat kpathsea this way too, but
@@ -143,9 +147,5 @@ dnl just let them be empty.
   AC_SUBST(FT2DEP)
   AC_SUBST(dvipdfmx_LDFLAGS)
 fi
-
-dnl Check for additonal libraries.
-AC_HAS_LIBFONTCONFIG
-AC_HAS_APP_SERVICES
 
 AC_OUTPUT(Makefile data/Makefile src/Makefile)

@@ -858,6 +858,7 @@ Optional Packages:
   --with-ft2lib=LIB       use freetype2 library LIB
   --with-ft2include=DIR   use freetype2 include files from DIR
   --with-freetype2=DIR    use installed freetype2 include & lib files from DIR
+  --with-fontconfig=DIR   use fontconfig include/library files from DIR
   --with-system-pnglib       use installed pnglib library
   --with-pnglib-libdir=DIR
                           Specify directory where the png library (libpng.a) resides.
@@ -876,7 +877,6 @@ Optional Packages:
   --with-paper=DIR        use paper include/library files from DIR
   --with-zlib=DIR         use zlib include/library files from DIR
   --with-png=DIR          use png include/library files from DIR
-  --with-fontconfig=DIR   use fontconfig include/library files from DIR
 
 Some influential environment variables:
   CC          C compiler command
@@ -6982,6 +6982,217 @@ _ACEOF
 
 
 
+
+
+  _cppflags=$CPPFLAGS _ldflags=$LDFLAGS
+
+# Check whether --with-fontconfig or --without-fontconfig was given.
+if test "${with_fontconfig+set}" = set; then
+  withval="$with_fontconfig"
+
+if test -d "$withval"; then
+  CPPFLAGS="$CPPFLAGS -I$withval/include"
+  LDFLAGS="$LDFLAGS -L$withval/lib"
+fi
+
+
+fi;
+  echo "$as_me:$LINENO: checking for fontconfig header files" >&5
+echo $ECHO_N "checking for fontconfig header files... $ECHO_C" >&6
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+#include <fontconfig/fontconfig.h>
+
+int
+main ()
+{
+
+FcObjectSet *os;
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+   echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+      echo "$as_me:$LINENO: checking for FcInit in -lfontconfig" >&5
+echo $ECHO_N "checking for FcInit in -lfontconfig... $ECHO_C" >&6
+if test "${ac_cv_lib_fontconfig_FcInit+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lfontconfig  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any gcc2 internal prototype to avoid an error.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+/* We use char because int might match the return type of a gcc2
+   builtin and then its argument prototype would still apply.  */
+char FcInit ();
+int
+main ()
+{
+FcInit ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_lib_fontconfig_FcInit=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_lib_fontconfig_FcInit=no
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+echo "$as_me:$LINENO: result: $ac_cv_lib_fontconfig_FcInit" >&5
+echo "${ECHO_T}$ac_cv_lib_fontconfig_FcInit" >&6
+if test $ac_cv_lib_fontconfig_FcInit = yes; then
+
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_LIBFONTCONFIG 1
+_ACEOF
+
+        LIBS="$LIBS -lfontconfig"
+
+fi
+
+
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+
+fi
+rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+
+
+  _cppflags=$CPPFLAGS _ldflags=$LDFLAGS
+  echo "$as_me:$LINENO: checking for Mac OS X ApplicationServices framework" >&5
+echo $ECHO_N "checking for Mac OS X ApplicationServices framework... $ECHO_C" >&6
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+#include <ApplicationServices/ApplicationServices.h>
+
+int
+main ()
+{
+
+ATSFontRef fontRef;
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+   echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_APP_SERVICES 1
+_ACEOF
+
+      LIBS="$LIBS -framework ApplicationServices"
+
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+
+fi
+rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+
+
 if test "x$enable_tetex_build" = xyes; then
   # Get these common libraries from the sources, too.
   # Seems like it would be simpler to treat kpathsea this way too, but
@@ -8454,216 +8665,6 @@ rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
 
 
 fi
-
-
-  _cppflags=$CPPFLAGS _ldflags=$LDFLAGS
-
-# Check whether --with-fontconfig or --without-fontconfig was given.
-if test "${with_fontconfig+set}" = set; then
-  withval="$with_fontconfig"
-
-if test -d "$withval"; then
-  CPPFLAGS="$CPPFLAGS -I$withval/include"
-  LDFLAGS="$LDFLAGS -L$withval/lib"
-fi
-
-
-fi;
-  echo "$as_me:$LINENO: checking for fontconfig header files" >&5
-echo $ECHO_N "checking for fontconfig header files... $ECHO_C" >&6
-  cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-#include <fontconfig/fontconfig.h>
-
-int
-main ()
-{
-
-FcObjectSet *os;
-
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext
-if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
-  (eval $ac_compile) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_c_werror_flag"
-			 || test ! -s conftest.err'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; } &&
-	 { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-   echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6
-      echo "$as_me:$LINENO: checking for FcInit in -lfontconfig" >&5
-echo $ECHO_N "checking for FcInit in -lfontconfig... $ECHO_C" >&6
-if test "${ac_cv_lib_fontconfig_FcInit+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lfontconfig  $LIBS"
-cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-/* Override any gcc2 internal prototype to avoid an error.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-/* We use char because int might match the return type of a gcc2
-   builtin and then its argument prototype would still apply.  */
-char FcInit ();
-int
-main ()
-{
-FcInit ();
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_c_werror_flag"
-			 || test ! -s conftest.err'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; } &&
-	 { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_lib_fontconfig_FcInit=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-ac_cv_lib_fontconfig_FcInit=no
-fi
-rm -f conftest.err conftest.$ac_objext \
-      conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-echo "$as_me:$LINENO: result: $ac_cv_lib_fontconfig_FcInit" >&5
-echo "${ECHO_T}$ac_cv_lib_fontconfig_FcInit" >&6
-if test $ac_cv_lib_fontconfig_FcInit = yes; then
-
-
-cat >>confdefs.h <<\_ACEOF
-#define HAVE_LIBFONTCONFIG 1
-_ACEOF
-
-        LIBS="$LIBS -lfontconfig"
-
-fi
-
-
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
- echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-
-fi
-rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
-
-
-  _cppflags=$CPPFLAGS _ldflags=$LDFLAGS
-  echo "$as_me:$LINENO: checking for Mac OS X ApplicationServices framework" >&5
-echo $ECHO_N "checking for Mac OS X ApplicationServices framework... $ECHO_C" >&6
-  cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-#include <ApplicationServices/ApplicationServices.h>
-
-int
-main ()
-{
-
-ATSFontRef fontRef;
-
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext
-if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
-  (eval $ac_compile) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_c_werror_flag"
-			 || test ! -s conftest.err'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; } &&
-	 { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-   echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6
-
-cat >>confdefs.h <<\_ACEOF
-#define HAVE_APP_SERVICES 1
-_ACEOF
-
-      LIBS="$LIBS -framework ApplicationServices"
-
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
- echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-
-fi
-rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
-
 
                               ac_config_files="$ac_config_files Makefile data/Makefile src/Makefile"
 cat >confcache <<\_ACEOF
