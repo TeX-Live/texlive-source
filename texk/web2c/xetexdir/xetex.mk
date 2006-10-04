@@ -190,9 +190,9 @@ trans.o: $(srcdir)/xetexdir/trans.c
 
 # Making xetex.
 xetex: $(xetex_o) $(xetex_add_o) $(xetex_images_o) $(xetex_ot_layout_o) $(xetexlibs) $(EXTRADEPS)
-	$(kpathsea_cxx_link) $(xetex_o) $(xetex_add_o) $(xetex_images_o) $(xetex_ot_layout_o) \
-	$(socketlibs) $(LOADLIBES) \
-	$(xetexlibs) $(EXTRALIBS)
+	@CXXHACKLINK@ $(xetex_o) $(xetex_add_o) $(xetex_images_o) $(xetex_ot_layout_o) \
+	$(socketlibs) $(xetexlibs) $(EXTRALIBS) \
+	@CXXHACKLDLIBS@ @CXXLDEXTRA@
 
 # C file dependencies
 $(xetex_c) xetexcoerce.h xetexd.h: xetex.p $(web2c_texmf)
