@@ -68,6 +68,7 @@ PKGS='
  texlive
  ttf2pk
  tth
+ xdv2pdf
  xdvik
  xdvipdfmx
 '
