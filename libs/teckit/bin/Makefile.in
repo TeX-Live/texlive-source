@@ -80,6 +80,7 @@ F77 = @F77@
 GCJ = @GCJ@
 GCJFLAGS = @GCJFLAGS@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+LDZLIB = @LDZLIB@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 MAINT = @MAINT@
@@ -89,52 +90,52 @@ RANLIB = @RANLIB@
 RC = @RC@
 STRIP = @STRIP@
 VERSION = @VERSION@
+ZLIBCPPFLAGS = @ZLIBCPPFLAGS@
+ZLIBDEP = @ZLIBDEP@
 am__include = @am__include@
 am__quote = @am__quote@
 install_sh = @install_sh@
 AUTOMAKE_OPTIONS = 1.6
 
-LINK = $(CXXLINK)
+bin_PROGRAMS = teckit_compile txtconv # sfconv
 
-bin_PROGRAMS = teckit_compile txtconv sfconv
 
+#if SYSTEM_EXPAT
+#EXPAT_CFLAGS = -DXML_DTD
+#EXPAT_SOURCES =
+#else
+#EXPAT_CFLAGS = -I$(expatdir)/xmlparse -I$(expatdir)/xmltok -DXML_DTD
+#EXPAT_SOURCES  = $(expatdir)/xmlparse/xmlparse.c
+#EXPAT_SOURCES += $(expatdir)/xmlparse/hashtable.c
+#EXPAT_SOURCES += $(expatdir)/xmltok/xmlrole.c
+#EXPAT_SOURCES += $(expatdir)/xmltok/xmltok.c
+#endif
 AM_CPPFLAGS = -I$(top_srcdir)/source/Public-headers $(EXPAT_CFLAGS)
 
 expatdir = $(top_srcdir)/SFconv/expat
 
-@SYSTEM_EXPAT_TRUE@EXPAT_CFLAGS = -DXML_DTD
-@SYSTEM_EXPAT_FALSE@EXPAT_CFLAGS = -I$(expatdir)/xmlparse -I$(expatdir)/xmltok -DXML_DTD
-@SYSTEM_EXPAT_TRUE@EXPAT_SOURCES = 
-@SYSTEM_EXPAT_FALSE@EXPAT_SOURCES = $(expatdir)/xmlparse/xmlparse.c $(expatdir)/xmlparse/hashtable.c $(expatdir)/xmltok/xmlrole.c $(expatdir)/xmltok/xmltok.c
+ZLIBSRCDIR = $(top_srcdir)/../zlib
+ZLIBDIR = $(top_builddir)/../zlib
 AM_CFLAGS = $(AM_CPPFLAGS)
 
-teckit_compile_SOURCES = $(top_srcdir)/source/Sample-tools/TECkit_Compile.c
+teckit_compile_SOURCES = $(top_srcdir)/source/Sample-tools/TECkit_Compile.cpp
 
-txtconv_SOURCES = $(top_srcdir)/source/Sample-tools/TxtConv.c
+txtconv_SOURCES = $(top_srcdir)/source/Sample-tools/TxtConv.cpp
 
-sfconv_SOURCES = $(top_srcdir)/SFconv/SFconv.cpp $(top_srcdir)/SFconv/ConvertUTF.c $(EXPAT_SOURCES)
 
-teckit_compile_LDADD = $(top_builddir)/lib/libTECkit_Compiler.la
+# sfconv_SOURCES  = $(top_srcdir)/SFconv/SFconv.cpp
+# sfconv_SOURCES += $(top_srcdir)/SFconv/ConvertUTF.c
+# sfconv_SOURCES += $(EXPAT_SOURCES)
+teckit_compile_LDADD = $(top_builddir)/lib/libTECkit_Compiler.la @LDZLIB@
 
-txtconv_LDADD = $(top_builddir)/lib/libTECkit.la
-
-sfconv_LDADD = $(top_builddir)/lib/libTECkit.la
+txtconv_LDADD = $(top_builddir)/lib/libTECkit.la @LDZLIB@
 subdir = bin
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-bin_PROGRAMS = teckit_compile$(EXEEXT) txtconv$(EXEEXT) sfconv$(EXEEXT)
+bin_PROGRAMS = teckit_compile$(EXEEXT) txtconv$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
 
-@SYSTEM_EXPAT_TRUE@am__objects_1 =
-@SYSTEM_EXPAT_FALSE@am__objects_1 = xmlparse.$(OBJEXT) \
-@SYSTEM_EXPAT_FALSE@	hashtable.$(OBJEXT) xmlrole.$(OBJEXT) \
-@SYSTEM_EXPAT_FALSE@	xmltok.$(OBJEXT)
-am_sfconv_OBJECTS = SFconv.$(OBJEXT) ConvertUTF.$(OBJEXT) \
-	$(am__objects_1)
-sfconv_OBJECTS = $(am_sfconv_OBJECTS)
-sfconv_DEPENDENCIES = $(top_builddir)/lib/libTECkit.la
-sfconv_LDFLAGS =
 am_teckit_compile_OBJECTS = TECkit_Compile.$(OBJEXT)
 teckit_compile_OBJECTS = $(am_teckit_compile_OBJECTS)
 teckit_compile_DEPENDENCIES = $(top_builddir)/lib/libTECkit_Compiler.la
@@ -151,17 +152,8 @@ LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/ConvertUTF.Po ./$(DEPDIR)/SFconv.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/TECkit_Compile.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/TxtConv.Po ./$(DEPDIR)/hashtable.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/xmlparse.Po ./$(DEPDIR)/xmlrole.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/xmltok.Po
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
-	$(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CCLD = $(CC)
-CFLAGS = @CFLAGS@
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/TECkit_Compile.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/TxtConv.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) \
@@ -171,18 +163,17 @@ CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 CXXFLAGS = @CXXFLAGS@
-DIST_SOURCES = $(sfconv_SOURCES) $(teckit_compile_SOURCES) \
-	$(txtconv_SOURCES)
+DIST_SOURCES = $(teckit_compile_SOURCES) $(txtconv_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(sfconv_SOURCES) $(teckit_compile_SOURCES) $(txtconv_SOURCES)
+SOURCES = $(teckit_compile_SOURCES) $(txtconv_SOURCES)
 
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .cpp .lo .o .obj
+.SUFFIXES: .cpp .lo .o .obj
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.ac $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  bin/Makefile
+	  $(AUTOMAKE) --gnu  bin/Makefile
 Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
@@ -214,24 +205,15 @@ clean-binPROGRAMS:
 	  echo " rm -f $$p $$f"; \
 	  rm -f $$p $$f ; \
 	done
-SFconv.$(OBJEXT): $(top_srcdir)/SFconv/SFconv.cpp
-ConvertUTF.$(OBJEXT): $(top_srcdir)/SFconv/ConvertUTF.c
-xmlparse.$(OBJEXT): $(expatdir)/xmlparse/xmlparse.c
-hashtable.$(OBJEXT): $(expatdir)/xmlparse/hashtable.c
-xmlrole.$(OBJEXT): $(expatdir)/xmltok/xmlrole.c
-xmltok.$(OBJEXT): $(expatdir)/xmltok/xmltok.c
-sfconv$(EXEEXT): $(sfconv_OBJECTS) $(sfconv_DEPENDENCIES) 
-	@rm -f sfconv$(EXEEXT)
-	$(CXXLINK) $(sfconv_LDFLAGS) $(sfconv_OBJECTS) $(sfconv_LDADD) $(LIBS)
 TECkit_Compile.$(OBJEXT): \
-	$(top_srcdir)/source/Sample-tools/TECkit_Compile.c
+	$(top_srcdir)/source/Sample-tools/TECkit_Compile.cpp
 teckit_compile$(EXEEXT): $(teckit_compile_OBJECTS) $(teckit_compile_DEPENDENCIES) 
 	@rm -f teckit_compile$(EXEEXT)
-	$(LINK) $(teckit_compile_LDFLAGS) $(teckit_compile_OBJECTS) $(teckit_compile_LDADD) $(LIBS)
-TxtConv.$(OBJEXT): $(top_srcdir)/source/Sample-tools/TxtConv.c
+	$(CXXLINK) $(teckit_compile_LDFLAGS) $(teckit_compile_OBJECTS) $(teckit_compile_LDADD) $(LIBS)
+TxtConv.$(OBJEXT): $(top_srcdir)/source/Sample-tools/TxtConv.cpp
 txtconv$(EXEEXT): $(txtconv_OBJECTS) $(txtconv_DEPENDENCIES) 
 	@rm -f txtconv$(EXEEXT)
-	$(LINK) $(txtconv_LDFLAGS) $(txtconv_OBJECTS) $(txtconv_LDADD) $(LIBS)
+	$(CXXLINK) $(txtconv_LDFLAGS) $(txtconv_OBJECTS) $(txtconv_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
@@ -239,162 +221,11 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ConvertUTF.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SFconv.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TECkit_Compile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TxtConv.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hashtable.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xmlparse.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xmlrole.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xmltok.Po@am__quote@
 
 distclean-depend:
 	-rm -rf ./$(DEPDIR)
-
-.c.o:
-@AMDEP_TRUE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(COMPILE) -c `test -f '$<' || echo '$(srcdir)/'`$<
-
-.c.obj:
-@AMDEP_TRUE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(COMPILE) -c `cygpath -w $<`
-
-.c.lo:
-@AMDEP_TRUE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/$*.Plo' tmpdepfile='$(DEPDIR)/$*.TPlo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(LTCOMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
-
-ConvertUTF.o: $(top_srcdir)/SFconv/ConvertUTF.c
-@AMDEP_TRUE@	source='$(top_srcdir)/SFconv/ConvertUTF.c' object='ConvertUTF.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/ConvertUTF.Po' tmpdepfile='$(DEPDIR)/ConvertUTF.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ConvertUTF.o `test -f '$(top_srcdir)/SFconv/ConvertUTF.c' || echo '$(srcdir)/'`$(top_srcdir)/SFconv/ConvertUTF.c
-
-ConvertUTF.obj: $(top_srcdir)/SFconv/ConvertUTF.c
-@AMDEP_TRUE@	source='$(top_srcdir)/SFconv/ConvertUTF.c' object='ConvertUTF.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/ConvertUTF.Po' tmpdepfile='$(DEPDIR)/ConvertUTF.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ConvertUTF.obj `cygpath -w $(top_srcdir)/SFconv/ConvertUTF.c`
-
-ConvertUTF.lo: $(top_srcdir)/SFconv/ConvertUTF.c
-@AMDEP_TRUE@	source='$(top_srcdir)/SFconv/ConvertUTF.c' object='ConvertUTF.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/ConvertUTF.Plo' tmpdepfile='$(DEPDIR)/ConvertUTF.TPlo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ConvertUTF.lo `test -f '$(top_srcdir)/SFconv/ConvertUTF.c' || echo '$(srcdir)/'`$(top_srcdir)/SFconv/ConvertUTF.c
-
-xmlparse.o: $(expatdir)/xmlparse/xmlparse.c
-@AMDEP_TRUE@	source='$(expatdir)/xmlparse/xmlparse.c' object='xmlparse.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/xmlparse.Po' tmpdepfile='$(DEPDIR)/xmlparse.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xmlparse.o `test -f '$(expatdir)/xmlparse/xmlparse.c' || echo '$(srcdir)/'`$(expatdir)/xmlparse/xmlparse.c
-
-xmlparse.obj: $(expatdir)/xmlparse/xmlparse.c
-@AMDEP_TRUE@	source='$(expatdir)/xmlparse/xmlparse.c' object='xmlparse.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/xmlparse.Po' tmpdepfile='$(DEPDIR)/xmlparse.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xmlparse.obj `cygpath -w $(expatdir)/xmlparse/xmlparse.c`
-
-xmlparse.lo: $(expatdir)/xmlparse/xmlparse.c
-@AMDEP_TRUE@	source='$(expatdir)/xmlparse/xmlparse.c' object='xmlparse.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/xmlparse.Plo' tmpdepfile='$(DEPDIR)/xmlparse.TPlo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xmlparse.lo `test -f '$(expatdir)/xmlparse/xmlparse.c' || echo '$(srcdir)/'`$(expatdir)/xmlparse/xmlparse.c
-
-hashtable.o: $(expatdir)/xmlparse/hashtable.c
-@AMDEP_TRUE@	source='$(expatdir)/xmlparse/hashtable.c' object='hashtable.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/hashtable.Po' tmpdepfile='$(DEPDIR)/hashtable.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hashtable.o `test -f '$(expatdir)/xmlparse/hashtable.c' || echo '$(srcdir)/'`$(expatdir)/xmlparse/hashtable.c
-
-hashtable.obj: $(expatdir)/xmlparse/hashtable.c
-@AMDEP_TRUE@	source='$(expatdir)/xmlparse/hashtable.c' object='hashtable.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/hashtable.Po' tmpdepfile='$(DEPDIR)/hashtable.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hashtable.obj `cygpath -w $(expatdir)/xmlparse/hashtable.c`
-
-hashtable.lo: $(expatdir)/xmlparse/hashtable.c
-@AMDEP_TRUE@	source='$(expatdir)/xmlparse/hashtable.c' object='hashtable.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/hashtable.Plo' tmpdepfile='$(DEPDIR)/hashtable.TPlo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hashtable.lo `test -f '$(expatdir)/xmlparse/hashtable.c' || echo '$(srcdir)/'`$(expatdir)/xmlparse/hashtable.c
-
-xmlrole.o: $(expatdir)/xmltok/xmlrole.c
-@AMDEP_TRUE@	source='$(expatdir)/xmltok/xmlrole.c' object='xmlrole.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/xmlrole.Po' tmpdepfile='$(DEPDIR)/xmlrole.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xmlrole.o `test -f '$(expatdir)/xmltok/xmlrole.c' || echo '$(srcdir)/'`$(expatdir)/xmltok/xmlrole.c
-
-xmlrole.obj: $(expatdir)/xmltok/xmlrole.c
-@AMDEP_TRUE@	source='$(expatdir)/xmltok/xmlrole.c' object='xmlrole.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/xmlrole.Po' tmpdepfile='$(DEPDIR)/xmlrole.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xmlrole.obj `cygpath -w $(expatdir)/xmltok/xmlrole.c`
-
-xmlrole.lo: $(expatdir)/xmltok/xmlrole.c
-@AMDEP_TRUE@	source='$(expatdir)/xmltok/xmlrole.c' object='xmlrole.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/xmlrole.Plo' tmpdepfile='$(DEPDIR)/xmlrole.TPlo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xmlrole.lo `test -f '$(expatdir)/xmltok/xmlrole.c' || echo '$(srcdir)/'`$(expatdir)/xmltok/xmlrole.c
-
-xmltok.o: $(expatdir)/xmltok/xmltok.c
-@AMDEP_TRUE@	source='$(expatdir)/xmltok/xmltok.c' object='xmltok.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/xmltok.Po' tmpdepfile='$(DEPDIR)/xmltok.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xmltok.o `test -f '$(expatdir)/xmltok/xmltok.c' || echo '$(srcdir)/'`$(expatdir)/xmltok/xmltok.c
-
-xmltok.obj: $(expatdir)/xmltok/xmltok.c
-@AMDEP_TRUE@	source='$(expatdir)/xmltok/xmltok.c' object='xmltok.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/xmltok.Po' tmpdepfile='$(DEPDIR)/xmltok.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xmltok.obj `cygpath -w $(expatdir)/xmltok/xmltok.c`
-
-xmltok.lo: $(expatdir)/xmltok/xmltok.c
-@AMDEP_TRUE@	source='$(expatdir)/xmltok/xmltok.c' object='xmltok.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/xmltok.Plo' tmpdepfile='$(DEPDIR)/xmltok.TPlo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xmltok.lo `test -f '$(expatdir)/xmltok/xmltok.c' || echo '$(srcdir)/'`$(expatdir)/xmltok/xmltok.c
-
-TECkit_Compile.o: $(top_srcdir)/source/Sample-tools/TECkit_Compile.c
-@AMDEP_TRUE@	source='$(top_srcdir)/source/Sample-tools/TECkit_Compile.c' object='TECkit_Compile.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/TECkit_Compile.Po' tmpdepfile='$(DEPDIR)/TECkit_Compile.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o TECkit_Compile.o `test -f '$(top_srcdir)/source/Sample-tools/TECkit_Compile.c' || echo '$(srcdir)/'`$(top_srcdir)/source/Sample-tools/TECkit_Compile.c
-
-TECkit_Compile.obj: $(top_srcdir)/source/Sample-tools/TECkit_Compile.c
-@AMDEP_TRUE@	source='$(top_srcdir)/source/Sample-tools/TECkit_Compile.c' object='TECkit_Compile.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/TECkit_Compile.Po' tmpdepfile='$(DEPDIR)/TECkit_Compile.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o TECkit_Compile.obj `cygpath -w $(top_srcdir)/source/Sample-tools/TECkit_Compile.c`
-
-TECkit_Compile.lo: $(top_srcdir)/source/Sample-tools/TECkit_Compile.c
-@AMDEP_TRUE@	source='$(top_srcdir)/source/Sample-tools/TECkit_Compile.c' object='TECkit_Compile.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/TECkit_Compile.Plo' tmpdepfile='$(DEPDIR)/TECkit_Compile.TPlo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o TECkit_Compile.lo `test -f '$(top_srcdir)/source/Sample-tools/TECkit_Compile.c' || echo '$(srcdir)/'`$(top_srcdir)/source/Sample-tools/TECkit_Compile.c
-
-TxtConv.o: $(top_srcdir)/source/Sample-tools/TxtConv.c
-@AMDEP_TRUE@	source='$(top_srcdir)/source/Sample-tools/TxtConv.c' object='TxtConv.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/TxtConv.Po' tmpdepfile='$(DEPDIR)/TxtConv.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o TxtConv.o `test -f '$(top_srcdir)/source/Sample-tools/TxtConv.c' || echo '$(srcdir)/'`$(top_srcdir)/source/Sample-tools/TxtConv.c
-
-TxtConv.obj: $(top_srcdir)/source/Sample-tools/TxtConv.c
-@AMDEP_TRUE@	source='$(top_srcdir)/source/Sample-tools/TxtConv.c' object='TxtConv.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/TxtConv.Po' tmpdepfile='$(DEPDIR)/TxtConv.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o TxtConv.obj `cygpath -w $(top_srcdir)/source/Sample-tools/TxtConv.c`
-
-TxtConv.lo: $(top_srcdir)/source/Sample-tools/TxtConv.c
-@AMDEP_TRUE@	source='$(top_srcdir)/source/Sample-tools/TxtConv.c' object='TxtConv.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/TxtConv.Plo' tmpdepfile='$(DEPDIR)/TxtConv.TPlo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o TxtConv.lo `test -f '$(top_srcdir)/source/Sample-tools/TxtConv.c' || echo '$(srcdir)/'`$(top_srcdir)/source/Sample-tools/TxtConv.c
-CCDEPMODE = @CCDEPMODE@
 
 .cpp.o:
 @AMDEP_TRUE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
@@ -414,23 +245,41 @@ CCDEPMODE = @CCDEPMODE@
 @AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(LTCXXCOMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
 
-SFconv.o: $(top_srcdir)/SFconv/SFconv.cpp
-@AMDEP_TRUE@	source='$(top_srcdir)/SFconv/SFconv.cpp' object='SFconv.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/SFconv.Po' tmpdepfile='$(DEPDIR)/SFconv.TPo' @AMDEPBACKSLASH@
+TECkit_Compile.o: $(top_srcdir)/source/Sample-tools/TECkit_Compile.cpp
+@AMDEP_TRUE@	source='$(top_srcdir)/source/Sample-tools/TECkit_Compile.cpp' object='TECkit_Compile.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/TECkit_Compile.Po' tmpdepfile='$(DEPDIR)/TECkit_Compile.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SFconv.o `test -f '$(top_srcdir)/SFconv/SFconv.cpp' || echo '$(srcdir)/'`$(top_srcdir)/SFconv/SFconv.cpp
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TECkit_Compile.o `test -f '$(top_srcdir)/source/Sample-tools/TECkit_Compile.cpp' || echo '$(srcdir)/'`$(top_srcdir)/source/Sample-tools/TECkit_Compile.cpp
 
-SFconv.obj: $(top_srcdir)/SFconv/SFconv.cpp
-@AMDEP_TRUE@	source='$(top_srcdir)/SFconv/SFconv.cpp' object='SFconv.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/SFconv.Po' tmpdepfile='$(DEPDIR)/SFconv.TPo' @AMDEPBACKSLASH@
+TECkit_Compile.obj: $(top_srcdir)/source/Sample-tools/TECkit_Compile.cpp
+@AMDEP_TRUE@	source='$(top_srcdir)/source/Sample-tools/TECkit_Compile.cpp' object='TECkit_Compile.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/TECkit_Compile.Po' tmpdepfile='$(DEPDIR)/TECkit_Compile.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SFconv.obj `cygpath -w $(top_srcdir)/SFconv/SFconv.cpp`
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TECkit_Compile.obj `cygpath -w $(top_srcdir)/source/Sample-tools/TECkit_Compile.cpp`
 
-SFconv.lo: $(top_srcdir)/SFconv/SFconv.cpp
-@AMDEP_TRUE@	source='$(top_srcdir)/SFconv/SFconv.cpp' object='SFconv.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/SFconv.Plo' tmpdepfile='$(DEPDIR)/SFconv.TPlo' @AMDEPBACKSLASH@
+TECkit_Compile.lo: $(top_srcdir)/source/Sample-tools/TECkit_Compile.cpp
+@AMDEP_TRUE@	source='$(top_srcdir)/source/Sample-tools/TECkit_Compile.cpp' object='TECkit_Compile.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/TECkit_Compile.Plo' tmpdepfile='$(DEPDIR)/TECkit_Compile.TPlo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SFconv.lo `test -f '$(top_srcdir)/SFconv/SFconv.cpp' || echo '$(srcdir)/'`$(top_srcdir)/SFconv/SFconv.cpp
+	$(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TECkit_Compile.lo `test -f '$(top_srcdir)/source/Sample-tools/TECkit_Compile.cpp' || echo '$(srcdir)/'`$(top_srcdir)/source/Sample-tools/TECkit_Compile.cpp
+
+TxtConv.o: $(top_srcdir)/source/Sample-tools/TxtConv.cpp
+@AMDEP_TRUE@	source='$(top_srcdir)/source/Sample-tools/TxtConv.cpp' object='TxtConv.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/TxtConv.Po' tmpdepfile='$(DEPDIR)/TxtConv.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TxtConv.o `test -f '$(top_srcdir)/source/Sample-tools/TxtConv.cpp' || echo '$(srcdir)/'`$(top_srcdir)/source/Sample-tools/TxtConv.cpp
+
+TxtConv.obj: $(top_srcdir)/source/Sample-tools/TxtConv.cpp
+@AMDEP_TRUE@	source='$(top_srcdir)/source/Sample-tools/TxtConv.cpp' object='TxtConv.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/TxtConv.Po' tmpdepfile='$(DEPDIR)/TxtConv.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TxtConv.obj `cygpath -w $(top_srcdir)/source/Sample-tools/TxtConv.cpp`
+
+TxtConv.lo: $(top_srcdir)/source/Sample-tools/TxtConv.cpp
+@AMDEP_TRUE@	source='$(top_srcdir)/source/Sample-tools/TxtConv.cpp' object='TxtConv.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/TxtConv.Plo' tmpdepfile='$(DEPDIR)/TxtConv.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TxtConv.lo `test -f '$(top_srcdir)/source/Sample-tools/TxtConv.cpp' || echo '$(srcdir)/'`$(top_srcdir)/source/Sample-tools/TxtConv.cpp
 CXXDEPMODE = @CXXDEPMODE@
 
 mostlyclean-libtool:
@@ -585,6 +434,8 @@ uninstall-am: uninstall-binPROGRAMS uninstall-info-am
 	mostlyclean-libtool tags uninstall uninstall-am \
 	uninstall-binPROGRAMS uninstall-info-am
 
+
+# sfconv_LDADD = $(top_builddir)/lib/libTECkit.la
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

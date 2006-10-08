@@ -80,6 +80,7 @@ F77 = @F77@
 GCJ = @GCJ@
 GCJFLAGS = @GCJFLAGS@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+LDZLIB = @LDZLIB@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 MAINT = @MAINT@
@@ -89,12 +90,18 @@ RANLIB = @RANLIB@
 RC = @RC@
 STRIP = @STRIP@
 VERSION = @VERSION@
+
+ZLIBCPPFLAGS = @ZLIBCPPFLAGS@
+ZLIBDEP = @ZLIBDEP@
 am__include = @am__include@
 am__quote = @am__quote@
 install_sh = @install_sh@
 AUTOMAKE_OPTIONS = 1.6
 
-AM_CPPFLAGS = -I$(top_srcdir)/source/Public-headers
+ZLIBDIR = $(top_builddir)/../zlib
+ZLIBSRCDIR = $(top_srcdir)/../zlib
+
+AM_CPPFLAGS = -I$(top_srcdir)/source/Public-headers $(ZLIBCPPFLAGS)
 AM_CFLAGS = $(AM_CPPFLAGS)
 
 lib_LTLIBRARIES = libTECkit_Compiler.la libTECkit.la
@@ -156,7 +163,7 @@ all: all-am
 .SUFFIXES: .cpp .lo .o .obj
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(srcdir)/../source/Makefile.am $(top_srcdir)/source/Public-headers/Makefile.am $(top_srcdir)/configure.ac $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  lib/Makefile
+	  $(AUTOMAKE) --gnu  lib/Makefile
 Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
 libLTLIBRARIES_INSTALL = $(INSTALL)
