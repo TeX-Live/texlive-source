@@ -1,5 +1,7 @@
-Public domain.  Originally written by Karl Berry, 6jun05.
 $Id$
+Copyright (C) 2004, 2006 TeX Users Group.
+You may freely use, modify and/or distribute this file.
+(Originally written in 2004 by Karl Berry.)
 
 To build the source tree, run ./Build.
 To build (mostly) without optimization, try CFLAGS=-g Build.
