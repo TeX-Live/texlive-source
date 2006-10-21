@@ -1,8 +1,8 @@
 #define banner  \
-"cefsconv (CJK ver. 4.6.0)" \
+"cefsconv (CJK ver. 4.7.0)" \
 
 /*2:*/
-#line 91 "cefsconv.w"
+#line 108 "/home/wl/cvs/cjk/cjk-4.7.0/utils/CEFconv/cefsconv.w"
 
 #include <ctype.h> 
 #include <stdio.h> 

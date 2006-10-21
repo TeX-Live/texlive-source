@@ -1,6 +1,24 @@
 .\" man page for hbf2gf
+.\"
+.\" Copyright (C) 1994-2006  Werner Lemberg <wl@gnu.org>
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program in doc/COPYING; if not, write to the Free
+.\" Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
+.\" MA 02110-1301 USA
+.\"
 .
-.TH HBF2GF 1 11-Aug-2005 "CJK Version 4.6.0"
+.TH HBF2GF 1 17-Oct-2006 "CJK Version 4.7.0"
 .SH NAME
 hbf2gf \- convert a CJK bitmap font into subfonts usable by TeX and Omega.
 .
@@ -157,7 +175,7 @@ file (which are all identical).
 .in +5m
 If
 .B ofm_file
-is set to `yes' in the configuration file,
+is set to \(oqyes\(cq in the configuration file,
 .C OFM
 and
 .C OVF
@@ -200,8 +218,8 @@ the
 parameter of the configuration file.
 The last two characters (which are interpreted as the subfont number) are
 stripped to get the name for the configuration file (which must end with
-`\c
-.C \&.cfg ').
+\(oq\c
+.C \&.cfg \(cq).
 No job file will be created.
 If option
 .B -p
@@ -215,12 +233,12 @@ is set, no
 file is created.
 The extension can be controlled with
 .BR -n ;
-if set, the extension is `\c
-.C \&.gf ',
-otherwise `\c
+if set, the extension is \(oq\c
+.C \&.gf \(cq,
+otherwise \(oq\c
 .C \&. <\c
 .IR resolution >\c
-.C gf '.
+.C gf \(cq.
 .B -q
 makes
 .B hbf2gf
@@ -317,7 +335,7 @@ A keyword must start a line, otherwise the whole line will be ignored.
 If the word starting a line is not a keyword, the line will be ignored too.
 Empty lines will also be skipped.
 The search for keywords is case insensitive; in contrast, the arguments will
-be taken exactly as given (except `yes' and `no' which can be written with
+be taken exactly as given (except \(oqyes\(cq and \(oqno\(cq which can be written with
 uppercase or lowercase letters).
 Each keyword has one argument which must be separated by whitespace (blanks
 or tabs) from the keyword and must be on the same line.
@@ -325,8 +343,8 @@ Each line must not be longer than 256 characters.
 .PP
 You can use environment variables in the configuration file.
 The escape character starting an environment variable in the configuration
-file is always `\c
-.C $ ',
+file is always \(oq\c
+.C $ \(cq,
 even for operating systems like DOS which has other conventions.
 .B hbf2gf
 recognizes only environment variable names which start with a letter or an
@@ -334,14 +352,14 @@ underscore, followed by alphanumeric characters or underscores.
 You can surround the variable with braces to indicate where the variable
 name ends, for example
 .C ${FOO} .
-To get a dollar sign you must write `\c
-.C $$ '.
+To get a dollar sign you must write \(oq\c
+.C $$ \(cq.
 The expansion of environment variables in hbf2gf itself (without the help of
 either kpathsea, emtexdir, or MiKTeX searching routines) is very limited;
 this feature has been carried over from previous versions.
 It can't expand variables set in texmf.cnf; it also can't handle more than
 one directory as the variable's value.
-.B Don't use it except for the `pk_directory' and `tfm_directory'
+.B Don't use it except for the \(oqpk_directory\(cq and \(oqtfm_directory\(cq
 .B parameters!
 .PP
 This is the list of all necessary keywords:
@@ -354,8 +372,8 @@ this file.
 .TP
 .B output_name
 The name stem of the output files.
-A running two digit decimal number starting with `\c
-.C 01 '
+A running two digit decimal number starting with \(oq\c
+.C 01 \(cq
 will be appended.
 For Unicode fonts see the keyword
 .B unicode
@@ -396,10 +414,10 @@ Only values in the range 0\ \(<=\ \fBslant\fP\ \(<=\ 1 are allowed.
 Default is\ 0.0.
 .TP
 .B rotation
-If set to `yes', all glyphs will be rotated 90\ degrees counter-clockwise.
+If set to \(oqyes\(cq, all glyphs will be rotated 90\ degrees counter-clockwise.
 The default offsets as given in the HBF header will be ignored (and set
 to\ 0).
-Default is `no'.
+Default is \(oqno\(cq.
 .TP
 .B mag_x
 .TQ
@@ -424,9 +442,9 @@ The number of subfonts to create.
 Default value is -1 for creating all fonts.
 .TP
 .B unicode
-If `yes', a two digit hexadecimal number will be used as a running number,
+If \(oqyes\(cq, a two digit hexadecimal number will be used as a running number,
 starting with the value of the first byte of the first code range.
-Default is `no'.
+Default is \(oqno\(cq.
 .TP
 .B min_char
 The minimum value of the encoding.
@@ -470,17 +488,17 @@ The batch file will not check whether this directory exists.
 .B pk_files
 Whether to create
 .C PK
-files or not; default is `yes'.
+files or not; default is \(oqyes\(cq.
 .TP
 .B tfm_files
 Whether to create
 .C TFM
-files or not; default is `yes'.
+files or not; default is \(oqyes\(cq.
 .TP
 .B ofm_file
 Whether to create an
 .C OPL
-file or not; default is `no'.
+file or not; default is \(oqno\(cq.
 The batch file will then use
 .B ovp2ovf
 of the Omega distribution to convert it into an
@@ -493,17 +511,17 @@ The
 file simply maps all subfonts back to a single Omega font.
 .TP
 .B long_extension
-If `yes',
+If \(oqyes\(cq,
 .C PK
 files will include the resolution in the extension (e.g.
 .C gsso1201.300pk ).
-This affects the batch file only (default is `yes').
+This affects the batch file only (default is \(oqyes\(cq).
 .TP
 .B rm_command
-The shell command to remove files; default: `rm'.
+The shell command to remove files; default: \(oqrm\(cq.
 .TP
 .B cp_command
-The shell command to copy files; default: `cp'.
+The shell command to copy files; default: \(oqcp\(cq.
 .TP
 .B job_extension
 The extension of the batch file which calls
@@ -624,8 +642,8 @@ A similar but not identical method is to say
 .in +2m
 .C "kpsewhich -progname=hbf2gf -show-path='misc fonts'"
 .PP
-[A full list of format types can be obtained by saying `\c
-.C "kpsewhich --help" '
+[A full list of format types can be obtained by saying \(oq\c
+.C "kpsewhich --help" \(cq
 on the command line prompt.]
 This is exactly the how
 .B hbf2gf
@@ -657,8 +675,8 @@ Example:
 .in +2m
 .C HBFONTS=c:\\\\fonts\\\\hbf!!;d:\\\\myfonts\\\\hbf!
 .PP
-Constructions like `\c
-.C c:\\\\fonts!!\\\\hbf '
+Constructions like \(oq\c
+.C c:\\\\fonts!!\\\\hbf \(cq
 aren't possible.
 .
 .SS MikTeX

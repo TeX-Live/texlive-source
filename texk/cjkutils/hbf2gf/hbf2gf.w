@@ -1,5 +1,22 @@
-% This is the cweb file hbf2gf.w of the CJK package ver. 4.6.0  11-Aug-2005
+% This is the cweb file hbf2gf.w of the CJK package ver. 4.7.0  17-Oct-2006
+
+% Copyright (C) 1994-2006  Werner Lemberg <wl@@gnu.org>
 %
+% This program is free software; you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation; either version 2 of the License, or
+% (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with this program in doc/COPYING; if not, write to the Free
+% Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
+% MA 02110-1301 USA
+
 % To print this CWEB file you should (but not must) use the CWEAVE of the
 % c2cweb-package (found at the CTAN archives, e.g. ftp.dante.de) and then say
 %
@@ -13,13 +30,13 @@
 \def\mf{{\meta META}\-{\meta FONT}}
 \def\Om{\char "0A}                      % Omega symbol
 
-\def\title{hbf2gf (CJK Version 4.6.0)}
+\def\title{hbf2gf (CJK Version 4.7.0)}
 
 \def\topofcontents{
   \null\vfill
   \centerline{\titlefont The {\ttitlefont hbf2gf} program}
   \vskip 20pt
-  \centerline{(CJK Version 4.6.0)}
+  \centerline{(CJK Version 4.7.0)}
   \vfill}
 
 \def\botofcontents{
@@ -66,7 +83,7 @@ The ``banner line'' defined here should be changed whenever \.{hbf2gf} is
 modified.
 
 @d banner
-"hbf2gf (CJK ver. 4.6.0)"
+"hbf2gf (CJK ver. 4.7.0)"
 
 
 @

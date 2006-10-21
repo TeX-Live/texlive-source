@@ -1,6 +1,6 @@
 /* hbf2gf.rc: hbf2gf resources				-*- C++ -*-
 
-   Copyright (C) 1996-2003 Fabrice Popineau <fabrice.popineau@supelec.fr>
+   Copyright (C) 1996-2006 Fabrice Popineau <fabrice.popineau@supelec.fr>
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -20,15 +20,15 @@
 #include <texlive-version.h>
 
 #define VER_FILEVERSION TEXLIVE_MAJOR_VERSION,TEXLIVE_MINOR_VERSION,TEXLIVE_BETA_NUMBER,TEXLIVE_ALPHA_NUMBER
-#define VER_FILEVERSION_STR TEXLIVE_PRODUCTVERSION_STR " hbf2gf CJK 4.3.0"
+#define VER_FILEVERSION_STR TEXLIVE_PRODUCTVERSION_STR " hbf2gf CJK 4.7.0"
 
 #define VER_INTERNALNAME_STR "hbf2gf"
 #define VER_ORIGINALFILENAME_STR "hbf2gf.exe"
 
-#define VER_LEGALCOPYRIGHT_STR "Copyright 1996--1999 Werner Lemberg"
+#define VER_LEGALCOPYRIGHT_STR "Copyright 1996--2006 Werner Lemberg"
 
 #define VER_FILEDESCRIPTION_STR "HBF-to-GF Converter"
 
 #include <texlive.version>
 
-/* afm2tfm.rc ends here */
+/* hbf2gf.rc ends here */

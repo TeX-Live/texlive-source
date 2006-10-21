@@ -1,8 +1,8 @@
 #define banner  \
-"bg5conv (CJK ver. 4.6.0)" \
+"bg5conv (CJK ver. 4.7.0)" \
 
 /*2:*/
-#line 77 "bg5conv.w"
+#line 94 "/home/wl/cvs/cjk/cjk-4.7.0/utils/Bg5conv/bg5conv.w"
 
 #include <stdio.h> 
 #include <stdlib.h> 

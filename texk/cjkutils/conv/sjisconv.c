@@ -1,8 +1,8 @@
 #define banner  \
-"sjisconv (CJK ver. 4.6.0)" \
+"sjisconv (CJK ver. 4.7.0)" \
 
 /*2:*/
-#line 76 "sjisconv.w"
+#line 93 "/home/wl/cvs/cjk/cjk-4.7.0/utils/SJISconv/sjisconv.w"
 
 #include <stdio.h> 
 #include <stdlib.h> 
