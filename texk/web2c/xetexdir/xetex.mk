@@ -189,7 +189,7 @@ trans.o: $(srcdir)/xetexdir/trans.c
 	$(compile) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
 
 # Making xetex.
-xetex: $(xetex_o) $(xetex_add_o) $(xetex_images_o) $(xetex_ot_layout_o) $(xetexlibs) $(EXTRADEPS)
+xetex: $(xetex_o) $(xetex_add_o) $(xetex_images_o) $(xetex_ot_layout_o) $(EXTRADEPS)
 	@CXXHACKLINK@ $(xetex_o) $(xetex_add_o) $(xetex_images_o) $(xetex_ot_layout_o) \
 	$(socketlibs) $(xetexlibs) $(EXTRALIBS) \
 	@CXXHACKLDLIBS@ @CXXLDEXTRA@
