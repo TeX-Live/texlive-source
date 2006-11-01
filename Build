@@ -11,8 +11,12 @@ else
   shift
 fi
 
-H=`pwd`
-test -d inst || mkdir -p inst/texmf  # avoid configure warnings
+# allow override of install destination, just in case.
+if test -z "$TL_INSTALL_DEST"; then
+  H=`pwd`
+  test -d inst || mkdir -p inst/texmf  # avoid configure warnings
+  TL_INSTALL_DEST=$H/inst
+fi
 
 unset CDPATH
 test -d Work || mkdir Work
@@ -20,9 +24,15 @@ cd Work || exit 1
 
 rm -f tlbuild.log
 
+# allow override of configure location, just in case.
+: ${TL_CONFIGURE=../configure}
+
 # Force building xdvi-xaw; motif is not always free and/or available.
 # --enable-gif is for sam2p; the gif patent has expired worldwide.
-(set -x; time ../configure --prefix=$H/inst --datadir=$H/inst \
-        --with-xdvi-x-toolkit=xaw --enable-gif \
-        "$@" \
+(set -x; \
+  time $TL_CONFIGURE \
+         --prefix=$TL_INSTALL_DEST \
+         --datadir=$TL_INSTALL_DEST \
+         --with-xdvi-x-toolkit=xaw --enable-gif \
+         "$@" \
  && time make world) 2>&1 | tee tlbuild.log
