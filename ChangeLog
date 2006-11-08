@@ -1,3 +1,7 @@
+2006-11-08  Karl Berry  <karl@tug.org>
+
+	* configure.in (PKGS): remove sam2p after all.
+
 2006-07-12  Karl Berry  <karl@tug.org>
 
 	* utils/sam2p/Makefile (install): use cp -p, not -a.
