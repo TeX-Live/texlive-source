@@ -1052,7 +1052,8 @@ syncWithTrees()
 ###############################################################################
 # normalizeLines()
 #   remove comments, whitespace is exactly one space, no empty lines,
-#   no whitespace at end of line, one space before and after "
+#   no whitespace at end of line, one space before and after ",
+#   no CR's (as in skaknew).
 ###############################################################################
 normalizeLines()
 {
@@ -1062,7 +1063,9 @@ normalizeLines()
       -e '/^ *$/d' \
       -e 's@ $@@' \
       -e 's@ *" *@ " @g' \
-      -e 's@" \([^"]*\) "@"\1"@g' | sort | uniq
+      -e 's@" \([^"]*\) "@"\1"@g' \
+   | tr -d '\r' \
+   | sort | uniq
 }
 
 ###############################################################################
