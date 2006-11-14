@@ -1,3 +1,8 @@
+2006-11-14  Karl Berry  <karl@tug.org>
+
+	* updmap (normalizeLines): remove CR characters (for skaknew), so
+	that the generted map files have consistent line endings for svn.
+
 2006-07-13  Karl Berry  <karl@tug.org>
 
 	* ps4pdf (tmpdir): don't lose check for TMPDIR and TEMP which te
