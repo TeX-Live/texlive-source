@@ -1,0 +1,32 @@
+.de EX
+.sp
+.in +5
+.nf
+.ft CW
+..
+.de EE
+.in -5
+.ft R
+.sp
+.fi
+..
+.TH "texmfstart" "1" "November 2006" "ConTeXt" "ConTeXt" 
+.PP 
+.SH "NAME" 
+texmfstart \- ConTeXt and PDF auxiliary program and batch processor
+.PP 
+.SH "SYNOPSIS" 
+\fBtexmfstart\fP [ \fIOPTION\fP \&.\&.\&.  ] \fIFILE\fP [ \&.\&.\&.  ]
+.PP 
+.SH "DESCRIPTION" 
+.PP
+\fBtexmfstart\fP is a new script to launch ConTeXt-related jobs,
+replacing \fBtexexec\fP.
+.SH "SEE ALSO" 
+.IP 
+\fBtexexec\fP(1)\&.
+.SH "AUTHOR" 
+.IP 
+ConTeXt is written and maintained by Hans Hagen
+<http://www\&.pragma-ade\&.com>.  This man page was written by Karl
+Berry, and may be freely used, modified, and/or distributed by anyone.

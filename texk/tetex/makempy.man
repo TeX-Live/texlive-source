@@ -1,7 +1,7 @@
 .TH makempy "1" "May 2004" "teTeX " "ConTeXt"
 .SH NAME
 makempy \- Helper script for conversion of (PDF or PostScript) text to
-\fBMetapost\fP graphics
+\fBMetaPost\fP graphics
 .PP
 .SH "SYNOPSIS" 
 \fBmakempy\fP \fIfilenam\fP
