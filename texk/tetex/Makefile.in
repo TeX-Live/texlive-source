@@ -93,7 +93,6 @@ install-exec:
 	  for s in $(PDFSCRIPTS); do \
 	    $(INSTALL_SCRIPT) $(srcdir)/$$s $(scriptdir)/$$s; \
 	  done; \
-	  cd $(scriptdir); rm -f mptopdf; ln -s texexec mptopdf; \
 	else \
 	  true; \
 	fi
