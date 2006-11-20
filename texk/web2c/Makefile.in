@@ -481,8 +481,8 @@ trap-clean:
 	rm -f mftrap.pl trap.72270gf trap.typ
 # 
 # MetaPost
-kpse_include metapost.mk
 kpse_include mpdir/mpostlib.mk
+kpse_include metapost.mk
 # 
 # TeX
 tex_c = texini.c tex0.c tex1.c tex2.c
