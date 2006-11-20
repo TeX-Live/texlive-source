@@ -1962,7 +1962,7 @@ history:=spotless; {ready to go!}
 @y
 history:=spotless; {ready to go!}
 if troff_mode then begin 
-  internal[troffmode]:=unity; 
+  internal[gtroffmode]:=unity; 
   internal[prologues]:=unity; 
 end;
 @z
