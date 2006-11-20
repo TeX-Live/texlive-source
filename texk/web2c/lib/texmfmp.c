@@ -88,7 +88,7 @@
 #define edit_var "MFEDIT"
 #endif /* MF */
 #ifdef MP
-#define BANNER "This is MetaPost, Version 0.901"
+#define BANNER "This is MetaPost, Version 0.99"
 #define COPYRIGHT_HOLDER "AT&T Bell Laboratories"
 #define AUTHOR "John Hobby"
 #define PROGRAM_HELP MPHELP
@@ -686,7 +686,7 @@ readtcxfile P1H(void)
     string line;
     unsigned line_count = 0;
     FILE *translate_file = xfopen (translate_filename, FOPEN_R_MODE);
-    while (line = read_line (translate_file)) {
+    while ((line = read_line (translate_file))) {
       int first;
       string start2;
       string comment_loc = strchr (line, '%');

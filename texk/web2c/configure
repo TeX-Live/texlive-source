@@ -4943,7 +4943,7 @@ fi
 fi
 
 ac_config_files="$ac_config_files Makefile doc/Makefile lib/Makefile man/Makefile mpware/Makefile 
-          web2c/Makefile window/Makefile"
+          mpdir/Makefile web2c/Makefile window/Makefile"
 
 ac_config_files="$ac_config_files fmtutil.cnf:fmtutil.in"
 

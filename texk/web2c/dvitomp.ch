@@ -1,18 +1,7 @@
-% dvitomp.ch for C compilation with web2c.
+% $Id: dvitomp.ch,v 1.7 2005/04/28 06:45:21 taco Exp $
+% dvitomp.ch for C compilation with web2c.  Public domain.
 %
-% Copyright 1990 - 1995 by AT&T Bell Laboratories.
-%
-% Permission to use, copy, modify, and distribute this software
-% and its documentation for any purpose and without fee is hereby
-% granted, provided that the above copyright notice appear in all
-% copies and that both that the copyright notice and this
-% permission notice and warranty disclaimer appear in supporting
-% documentation, and that the names of AT&T Bell Laboratories or
-% any of its entities not be used in advertising or publicity
-% pertaining to distribution of the software without specific,
-% written prior permission.
-%
-%   Change file for the DVItype processor, for use with WEB to C
+%   Change file for the DVItoMP processor, for use with WEB to C
 %   This file was created by John Hobby.  It is loosely based on the
 %   change file for the WEB to C version of dvitype (due to Howard
 %   Trickey and Pavel Curtis).
@@ -37,12 +26,12 @@
 @z
 
 @x [1] Duplicate banner line for use in |print_version_and_exit|.
-@d banner=='% Written by DVItoMP, Version 0.64'
+@d banner=='% Written by DVItoMP, Version 0.99'
   {the first line of the output file}
 @y
-@d banner=='% Written by DVItoMP, Version 0.64/color'
+@d banner=='% Written by DVItoMP, Version 0.99/color'
   {the first line of the output file}
-@d term_banner=='This is DVItoMP, Version 0.64/color'
+@d term_banner=='This is DVItoMP, Version 0.99/color'
   {the same in the usual format, as it would be shown on a terminal}
 @z
 
@@ -255,12 +244,6 @@ floor(dvi_scale*font_scaled_size[f]*char_width(f)(c))
 round(dvi_scale*font_scaled_size[cur_font]*char_width(cur_font)(p)-0.5)
 @y
 floor(dvi_scale*font_scaled_size[cur_font]*char_width(cur_font)(p))
-@z
-
-@x [57] Off-by-one error in virtual font handling.
-info_ptr:=info_base[f]+font_ec[f]
-@y
-info_ptr:=info_base[f]+font_ec[f]+1
 @z
 
 % [61] Don't set default_directory_name.

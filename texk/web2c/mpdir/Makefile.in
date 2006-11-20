@@ -1,0 +1,40 @@
+# Makefile for libmpost - taco@elvenkind.com, but
+# mostly ripped off from Makefile.in from pdftex
+# $Id $
+
+kpse_include ../make/common.mk
+kpse_include ../make/programs.mk
+kpse_include ../make/library.mk
+
+kpathsea_srcdir_parent = $(srcdir)/../..
+kpathsea_dir_parent = ../..
+
+ALL_CXXFLAGS = @CXXFLAGS@ @DEFS@ $(XXCFLAGS) -I. -I$(srcdir) -I$(kpathsea_dir_parent) -I$(kpathsea_srcdir_parent) 
+CXX = @CXX@
+
+XCPPFLAGS=-I.. -I$(srcdir)/.. -I../.. -I$(srcdir)/../..
+
+OBJS = mapfile.o avl.o avlstuff.o utils.o writeenc.o writet1.o writefont.o
+
+all: libmpost.a makecpool
+
+libmpost.a: $(OBJS)
+	rm -f $@
+	$(AR) $(ARFLAGS) $@  $(OBJS)
+	$(RANLIB) $@
+
+makecpool: makecpool.o
+	$(link_command) makecpool.o
+
+kpse_include ../make/clean.mk
+
+clean::
+	rm -f libmpost.a makecpool
+
+depend:
+	rm -f $(OBJS)
+	XXCFLAGS=-MM XCFLAGS=-MM $(MAKE) -k $(OBJS) | \
+	    grep -v "^$(CC)\|$(CXX)\|$(AR)\|make\|klibtool" | \
+	    sed 's: [^ ]*/\.\./libs/[^ ]*::g' > $(srcdir)/depend.mk
+
+kpse_include mpdir/depend.mk

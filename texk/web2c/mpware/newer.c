@@ -1,4 +1,5 @@
-/* newer - true if any source file is newer than the target file.
+/* $Id: newer.c,v 1.10 2005/11/30 08:49:55 taco Exp $
+ * newer - true if any source file is newer than the target file.
  *
  * Public domain.
  *
@@ -13,7 +14,7 @@
 #endif
 #include <stdio.h>
 #include <stdlib.h>
-#ifndef WIN32
+#if !defined(WIN32) || defined(__MINGW32__)
 #include <sys/types.h>
 #include <sys/stat.h>
 #endif
@@ -32,7 +33,8 @@
 #endif
 
 int i;
-int verbose = 1;
+int verbose = 0;
+int quiet = 0;
 int missing_source = 0;
 int missing_target = 0;
 int result = exit_false;
@@ -63,7 +65,7 @@ main(int argc, char **argv)
                    strcmp(argv[1], "-quiet") == 0 ||
                    strcmp(argv[1], "--quiet") == 0) {
 
-            verbose = 0;
+            quiet = 1;
             argv++;
             argc--;
 
@@ -75,17 +77,17 @@ main(int argc, char **argv)
   one of them is not older than `target'.\n\
   Also exit successfully if `target' doesn't exist.\n\
 \n\
---help      display this help and exit\n\
---quiet     do not print anything\n\
---verbose   list missing input files (default)\n\
---version   output version information and exit\n\n", stdout);
+--help      Display this help and exit\n\
+--quiet     Do not print anything\n\
+--verbose   List missing files, including missing target files\n\
+--version   Output version information and exit\n\n", stdout);
             fputs ("Email bug reports to metapost@tug.org.\n", stdout);
             exit(0);
 
         } else if (strcmp(argv[1], "-version") == 0 ||
                    strcmp(argv[1], "--version") == 0) {
 
-            fputs("newer 0.901\n\
+            fputs("newer 0.99\n\
 This program is in the public domain.\n\
 Primary author of newer: John Hobby.\n", stdout);
             exit(0);
@@ -108,7 +110,7 @@ Try `newer --help' for more information.\n", stderr);
     
     /* check the target file */
     if (stat(argv[argc-1], &target_stat) < 0) {
-        if (verbose) {
+        if (verbose && !quiet) {
             fprintf(stderr, "newer: target file `%s' doesn't exist.\n",
                     argv[argc-1]);
         }
@@ -118,7 +120,7 @@ Try `newer --help' for more information.\n", stderr);
     /* check the source files */
     for (i = 1; i < (argc-1); i++) {
         if (stat(argv[i], &source_stat) < 0) {
-	    if (verbose) {
+	    if (!quiet) {
                 fprintf (stderr, "newer: source file `%s' doesn't exist.\n", 
                          argv[i]);
             }

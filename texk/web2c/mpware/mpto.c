@@ -1,4 +1,4 @@
-/* $Id: mpto.c,v 1.21 2005/08/28 09:17:25 olaf Exp $
+/* $Id: mpto.c,v 1.15 2005/08/28 11:42:55 taco Exp $
  * Public domain.
  *
  * Previous versions of mpto were copyright 1990 - 1995 by AT&T Bell
@@ -280,7 +280,7 @@ main(int argc, char **argv)
         exit (0);
     } else if (argc > 1 && (strcmp (argv[1], "--version") == 0
                             || strcmp (argv[1], "-version") == 0)) {
-        printf ("mpto 0.902\n\
+        printf ("mpto 0.99\n\
 This program is in the public domain.\n\
 Primary author of mpto: John Hobby.\n");
         exit (0);

@@ -1,4 +1,4 @@
-% $Id: mp.web,v 1.5 2005/06/22 17:06:28 olaf Exp $
+% $Id: mp.web,v 1.8 2005/08/24 10:54:02 taco Exp $
 % MetaPost, by John Hobby.  Public domain.
 
 % Much of this program was copied with permission from MF.web Version 1.9
@@ -97,8 +97,8 @@ undergoes any modifications, so that it will be clear which version of
 @^extensions to \MP@>
 @^system dependencies@>
 
-@d banner=='This is MetaPost, Version 0.901' {printed when \MP\ starts}
-@d metapost_version=="0.901"
+@d banner=='This is MetaPost, Version 0.980' {printed when \MP\ starts}
+@d metapost_version=="0.980"
 
 @ Different \PASCAL s have slightly different conventions, and the present
 @!@:PASCAL H}{\ph@>
@@ -401,6 +401,7 @@ because some fussy \PASCAL\ compilers will complain about redundant labels.
 @d found=40 {go here when you've found it}
 @d found1=41 {like |found|, when there's more than one per routine}
 @d found2=42 {like |found|, when there's more than two per routine}
+@d found3=43 {like |found|, when there's more than three per routine}
 @d not_found=45 {go here when you've found nothing}
 @d common_ending=50 {go here when you want to merge with another branch}
 
@@ -1423,63 +1424,21 @@ length followed by the string itself, and the information is recorded in
 @!init @!pool_file:alpha_file; {the string-pool file output by \.{TANGLE}}
 tini
 
-@ @d bad_pool(#)==begin wake_up_terminal; write_ln(term_out,#);
-  a_close(pool_file); get_strings_started:=false; return;
-  end
-@<Read the other strings...@>=
-name_of_file:=pool_name; {we needn't set |name_length|}
-if a_open_in(pool_file) then
-  begin c:=false;
-  repeat @<Read one string, but return |false| if the
-    string memory space is getting too tight for comfort@>;
-  until c;
-  a_close(pool_file); get_strings_started:=true;
-  end
-else  bad_pool('! I can''t read MP.POOL.')
-@.I can't read MP.POOL@>
-
-@ @<Read one string...@>=
-begin if eof(pool_file) then bad_pool('! MP.POOL has no check sum.');
-@.MP.POOL has no check sum@>
-read(pool_file,m,n); {read two digits of string length}
-if m='*' then @<Check the pool check sum@>
-else  begin if (xord[m]<"0")or(xord[m]>"9")or@|
-      (xord[n]<"0")or(xord[n]>"9") then
-    bad_pool('! MP.POOL line doesn''t begin with two digits.');
-@.MP.POOL line doesn't...@>
-  l:=xord[m]*10+xord[n]-"0"*11; {compute the length}
-  if pool_ptr+l+string_vacancies>pool_size then
-    bad_pool('! You have to increase POOLSIZE.');
-@.You have to increase POOLSIZE@>
-  if str_ptr+strings_vacant>=max_strings then
-    bad_pool('! You have to increase MAXSTRINGS.');
-@.You have to increase MAXSTRINGS@>
-  for k:=1 to l do
-    begin if eoln(pool_file) then m:=' '@+else read(pool_file,m);
-    append_char(xord[m]);
-    end;
-  read_ln(pool_file); g:=make_string; str_ref[g]:=max_str_ref;
+@ @<Read the other strings...@>=
+  g := loadpoolstrings((pool_size-string_vacancies));
+  if g=0 then begin
+     wake_up_terminal; write_ln(term_out,'! You have to increase POOLSIZE.');
+     get_strings_started:=false;
+     return;
   end;
-end
+  get_strings_started:=true;
+
 
 @ The \.{WEB} operation \.{@@\$} denotes the value that should be at the
 end of this \.{MP.POOL} file; any other value means that the wrong pool
 file has been loaded.
 @^check sum@>
 
-@<Check the pool check sum@>=
-begin a:=0; k:=1;
-loop@+  begin if (xord[n]<"0")or(xord[n]>"9") then
-  bad_pool('! MP.POOL check sum doesn''t have nine digits.');
-@.MP.POOL check sum...@>
-  a:=10*a+xord[n]-"0";
-  if k=9 then goto done;
-  incr(k); read(pool_file,n);
-  end;
-done: if a<>@$ then bad_pool('! MP.POOL doesn''t match; TANGLE me again.');
-@.MP.POOL doesn't match@>
-c:=true;
-end
 
 @* \[5] On-line and off-line printing.
 Messages that are sent to a user's terminal and to the transcript-log file
@@ -1626,8 +1585,13 @@ log_only: begin wlog(xchr[s]); incr(file_offset);
 term_only: begin wterm(xchr[s]); incr(term_offset);
   if term_offset=max_print_line then print_ln;
   end;
-ps_file_only: begin wps(xchr[s]); incr(ps_offset);
-  end;
+ps_file_only: if s=13 then begin
+   wps_cr; ps_offset:=0;
+   end
+  else
+    begin
+    wps(xchr[s]); incr(ps_offset);
+    end;
 no_print: do_nothing;
 pseudo: if tally<trick_count then trick_buf[tally mod error_line]:=s;
 new_string: begin if pool_ptr>=max_pool_ptr then
@@ -1907,9 +1871,10 @@ in reverse order, i.e., with |help_line[0]| appearing last.
 @!help_ptr:0..6; {the number of help lines present}
 @!use_err_help:boolean; {should the |err_help| string be shown?}
 @!err_help:str_number; {a string set up by \&{errhelp}}
+@!filename_template:str_number; {a string set up by \&{filenametemplate}}
 
 @ @<Set init...@>=
-help_ptr:=0; use_err_help:=false; err_help:=0;
+help_ptr:=0; use_err_help:=false; err_help:=0; filename_template:=0;
 
 @ The |jump_out| procedure just cuts across all active procedure levels and
 goes to |end_of_MP|. This is the only nonlocal |@!goto| statement in the
@@ -3982,7 +3947,8 @@ At any rate, here is the list, for future reference.
 @d message_command=27 {communicate to user (\&{message}, \&{errmessage})}
 @d every_job_command=28 {designate a starting token (\&{everyjob})}
 @d delimiters=29 {define a pair of delimiters (\&{delimiters})}
-@d special_command=30 {output special info (\&{special})}
+@d special_command=30 {output special info (\&{special})
+                       or font map info (\&{fontmapfile}, \&{fontmapline})}
 @d write_command=31 {write text to a file (\&{write})}
 @d type_name=32 {declare a type (\&{numeric}, \&{pair}, etc.}
 @d max_statement_command=type_name
@@ -4083,16 +4049,17 @@ and |string_type| in that order.
 @d unknown_picture=picture_type+unknown_tag
 @d transform_type=12 {\&{transform} variable or capsule}
 @d color_type=13 {\&{color} variable or capsule}
-@d pair_type=14 {\&{pair} variable or capsule}
-@d numeric_type=15 {variable that has been declared \&{numeric} but not used}
-@d known=16 {\&{numeric} with a known value}
-@d dependent=17 {a linear combination with |fraction| coefficients}
-@d proto_dependent=18 {a linear combination with |scaled| coefficients}
-@d independent=19 {\&{numeric} with unknown value}
-@d token_list=20 {variable name or suffix argument or text argument}
-@d structured=21 {variable with subscripts and attributes}
-@d unsuffixed_macro=22 {variable defined with \&{vardef} but no \.{\AT!\#}}
-@d suffixed_macro=23 {variable defined with \&{vardef} and \.{\AT!\#}}
+@d cmykcolor_type=14 {\&{cmykcolor} variable or capsule}
+@d pair_type=15 {\&{pair} variable or capsule}
+@d numeric_type=16 {variable that has been declared \&{numeric} but not used}
+@d known=17 {\&{numeric} with a known value}
+@d dependent=18 {a linear combination with |fraction| coefficients}
+@d proto_dependent=19 {a linear combination with |scaled| coefficients}
+@d independent=20 {\&{numeric} with unknown value}
+@d token_list=21 {variable name or suffix argument or text argument}
+@d structured=22 {variable with subscripts and attributes}
+@d unsuffixed_macro=23 {variable defined with \&{vardef} but no \.{\AT!\#}}
+@d suffixed_macro=24 {variable defined with \&{vardef} and \.{\AT!\#}}
 @#
 @d unknown_types==unknown_boolean,unknown_string,
   unknown_pen,unknown_picture,unknown_path
@@ -4113,6 +4080,7 @@ picture_type:print("picture");
 unknown_picture:print("unknown picture");
 transform_type:print("transform");
 color_type:print("color");
+cmykcolor_type:print("cmykcolor");
 pair_type:print("pair");
 known:print("known numeric");
 dependent:print("dependent");
@@ -4145,8 +4113,13 @@ here; they will be explained in more detail later.
 @d red_part_sector=11 {|name_type| in the \&{redpart} of a node}
 @d green_part_sector=12 {|name_type| in the \&{greenpart} of a node}
 @d blue_part_sector=13 {|name_type| in the \&{bluepart} of a node}
-@d capsule=14 {|name_type| in stashed-away subexpressions}
-@d token=15 {|name_type| in a numeric token or string token}
+@d cyan_part_sector=14 {|name_type| in the \&{redpart} of a node}
+@d magenta_part_sector=15 {|name_type| in the \&{greenpart} of a node}
+@d yellow_part_sector=16 {|name_type| in the \&{bluepart} of a node}
+@d black_part_sector=17 {|name_type| in the \&{greenpart} of a node}
+@d grey_part_sector=18 {|name_type| in the \&{bluepart} of a node}
+@d capsule=19 {|name_type| in stashed-away subexpressions}
+@d token=20 {|name_type| in a numeric token or string token}
 
 @ Primitive operations that produce values have a secondary identification
 code in addition to their command code; it's something like genera and species.
@@ -4185,77 +4158,83 @@ values they test for.
 @d char_op=51 {operation code for \.{char}}
 @d length_op=52 {operation code for \.{length}}
 @d turning_op=53 {operation code for \.{turningnumber}}
-@d x_part=54 {operation code for \.{xpart}}
-@d y_part=55 {operation code for \.{ypart}}
-@d xx_part=56 {operation code for \.{xxpart}}
-@d xy_part=57 {operation code for \.{xypart}}
-@d yx_part=58 {operation code for \.{yxpart}}
-@d yy_part=59 {operation code for \.{yypart}}
-@d red_part=60 {operation code for \.{redpart}}
-@d green_part=61 {operation code for \.{greenpart}}
-@d blue_part=62 {operation code for \.{bluepart}}
-@d font_part=63 {operation code for \.{fontpart}}
-@d text_part=64 {operation code for \.{textpart}}
-@d path_part=65 {operation code for \.{pathpart}}
-@d pen_part=66 {operation code for \.{penpart}}
-@d dash_part=67 {operation code for \.{dashpart}}
-@d sqrt_op=68 {operation code for \.{sqrt}}
-@d m_exp_op=69 {operation code for \.{mexp}}
-@d m_log_op=70 {operation code for \.{mlog}}
-@d sin_d_op=71 {operation code for \.{sind}}
-@d cos_d_op=72 {operation code for \.{cosd}}
-@d floor_op=73 {operation code for \.{floor}}
-@d uniform_deviate=74 {operation code for \.{uniformdeviate}}
-@d char_exists_op=75 {operation code for \.{charexists}}
-@d font_size=76 {operation code for \.{fontsize}}
-@d ll_corner_op=77 {operation code for \.{llcorner}}
-@d lr_corner_op=78 {operation code for \.{lrcorner}}
-@d ul_corner_op=79 {operation code for \.{ulcorner}}
-@d ur_corner_op=80 {operation code for \.{urcorner}}
-@d arc_length=81 {operation code for \.{arclength}}
-@d angle_op=82 {operation code for \.{angle}}
-@d cycle_op=83 {operation code for \.{cycle}}
-@d filled_op=84 {operation code for \.{filled}}
-@d stroked_op=85 {operation code for \.{stroked}}
-@d textual_op=86 {operation code for \.{textual}}
-@d clipped_op=87 {operation code for \.{clipped}}
-@d bounded_op=88 {operation code for \.{bounded}}
-@d plus=89 {operation code for \.+}
-@d minus=90 {operation code for \.-}
-@d times=91 {operation code for \.*}
-@d over=92 {operation code for \./}
-@d pythag_add=93 {operation code for \.{++}}
-@d pythag_sub=94 {operation code for \.{+-+}}
-@d or_op=95 {operation code for \.{or}}
-@d and_op=96 {operation code for \.{and}}
-@d less_than=97 {operation code for \.<}
-@d less_or_equal=98 {operation code for \.{<=}}
-@d greater_than=99 {operation code for \.>}
-@d greater_or_equal=100 {operation code for \.{>=}}
-@d equal_to=101 {operation code for \.=}
-@d unequal_to=102 {operation code for \.{<>}}
-@d concatenate=103 {operation code for \.\&}
-@d rotated_by=104 {operation code for \.{rotated}}
-@d slanted_by=105 {operation code for \.{slanted}}
-@d scaled_by=106 {operation code for \.{scaled}}
-@d shifted_by=107 {operation code for \.{shifted}}
-@d transformed_by=108 {operation code for \.{transformed}}
-@d x_scaled=109 {operation code for \.{xscaled}}
-@d y_scaled=110 {operation code for \.{yscaled}}
-@d z_scaled=111 {operation code for \.{zscaled}}
-@d in_font=112 {operation code for \.{infont}}
-@d intersect=113 {operation code for \.{intersectiontimes}}
-@d double_dot=114 {operation code for improper \.{..}}
-@d substring_of=115 {operation code for \.{substring}}
+@d color_model_part=54 {operation code for \.{colormodel}}
+@d x_part=55 {operation code for \.{xpart}}
+@d y_part=56 {operation code for \.{ypart}}
+@d xx_part=57 {operation code for \.{xxpart}}
+@d xy_part=58 {operation code for \.{xypart}}
+@d yx_part=59 {operation code for \.{yxpart}}
+@d yy_part=60 {operation code for \.{yypart}}
+@d red_part=61 {operation code for \.{redpart}}
+@d green_part=62 {operation code for \.{greenpart}}
+@d blue_part=63 {operation code for \.{bluepart}}
+@d cyan_part=64 {operation code for \.{cyanpart}}
+@d magenta_part=65 {operation code for \.{magentapart}}
+@d yellow_part=66 {operation code for \.{yellowpart}}
+@d black_part=67 {operation code for \.{blackpart}}
+@d grey_part=68 {operation code for \.{greypart}}
+@d font_part=69 {operation code for \.{fontpart}}
+@d text_part=70 {operation code for \.{textpart}}
+@d path_part=71 {operation code for \.{pathpart}}
+@d pen_part=72 {operation code for \.{penpart}}
+@d dash_part=73 {operation code for \.{dashpart}}
+@d sqrt_op=74 {operation code for \.{sqrt}}
+@d m_exp_op=75 {operation code for \.{mexp}}
+@d m_log_op=76 {operation code for \.{mlog}}
+@d sin_d_op=77 {operation code for \.{sind}}
+@d cos_d_op=78 {operation code for \.{cosd}}
+@d floor_op=79 {operation code for \.{floor}}
+@d uniform_deviate=80 {operation code for \.{uniformdeviate}}
+@d char_exists_op=81 {operation code for \.{charexists}}
+@d font_size=82 {operation code for \.{fontsize}}
+@d ll_corner_op=83 {operation code for \.{llcorner}}
+@d lr_corner_op=84 {operation code for \.{lrcorner}}
+@d ul_corner_op=85 {operation code for \.{ulcorner}}
+@d ur_corner_op=86 {operation code for \.{urcorner}}
+@d arc_length=87 {operation code for \.{arclength}}
+@d angle_op=88 {operation code for \.{angle}}
+@d cycle_op=89 {operation code for \.{cycle}}
+@d filled_op=90 {operation code for \.{filled}}
+@d stroked_op=91 {operation code for \.{stroked}}
+@d textual_op=92 {operation code for \.{textual}}
+@d clipped_op=93 {operation code for \.{clipped}}
+@d bounded_op=94 {operation code for \.{bounded}}
+@d plus=95 {operation code for \.+}
+@d minus=96 {operation code for \.-}
+@d times=97 {operation code for \.*}
+@d over=98 {operation code for \./}
+@d pythag_add=99 {operation code for \.{++}}
+@d pythag_sub=100 {operation code for \.{+-+}}
+@d or_op=101 {operation code for \.{or}}
+@d and_op=102 {operation code for \.{and}}
+@d less_than=103 {operation code for \.<}
+@d less_or_equal=104 {operation code for \.{<=}}
+@d greater_than=105 {operation code for \.>}
+@d greater_or_equal=106 {operation code for \.{>=}}
+@d equal_to=107 {operation code for \.=}
+@d unequal_to=108 {operation code for \.{<>}}
+@d concatenate=109 {operation code for \.\&}
+@d rotated_by=110 {operation code for \.{rotated}}
+@d slanted_by=111 {operation code for \.{slanted}}
+@d scaled_by=112 {operation code for \.{scaled}}
+@d shifted_by=113 {operation code for \.{shifted}}
+@d transformed_by=114 {operation code for \.{transformed}}
+@d x_scaled=115 {operation code for \.{xscaled}}
+@d y_scaled=116 {operation code for \.{yscaled}}
+@d z_scaled=117 {operation code for \.{zscaled}}
+@d in_font=118 {operation code for \.{infont}}
+@d intersect=119 {operation code for \.{intersectiontimes}}
+@d double_dot=120 {operation code for improper \.{..}}
+@d substring_of=121 {operation code for \.{substring}}
 @d min_of=substring_of
-@d subpath_of=116 {operation code for \.{subpath}}
-@d direction_time_of=117 {operation code for \.{directiontime}}
-@d point_of=118 {operation code for \.{point}}
-@d precontrol_of=119 {operation code for \.{precontrol}}
-@d postcontrol_of=120 {operation code for \.{postcontrol}}
-@d pen_offset_of=121 {operation code for \.{penoffset}}
-@d arc_time_of=122 {operation code for \.{arctime}}
-@d mp_version=123 {operation code for \.{mpversion}}
+@d subpath_of=122 {operation code for \.{subpath}}
+@d direction_time_of=123 {operation code for \.{directiontime}}
+@d point_of=124 {operation code for \.{point}}
+@d precontrol_of=125 {operation code for \.{precontrol}}
+@d postcontrol_of=126 {operation code for \.{postcontrol}}
+@d pen_offset_of=127 {operation code for \.{penoffset}}
+@d arc_time_of=128 {operation code for \.{arctime}}
+@d mp_version=129 {operation code for \.{mpversion}}
 
 @p procedure print_op(@!c:quarterword);
 begin if c<=numeric_type then print_type(c)
@@ -4293,6 +4272,12 @@ yy_part:print("yypart");
 red_part:print("redpart");
 green_part:print("greenpart");
 blue_part:print("bluepart");
+cyan_part:print("cyanpart");
+magenta_part:print("magentapart");
+yellow_part:print("yellowpart");
+black_part:print("blackpart");
+grey_part:print("greypart");
+color_model_part:print("colormodel");
 font_part:print("fontpart");
 text_part:print("textpart");
 path_part:print("pathpart");
@@ -4393,7 +4378,10 @@ fuss with. Every such parameter has an identifying code number, defined here.
 @d boundary_char=31 {the right boundary character for ligatures}
 @d prologues=32 {positive to output conforming PostScript using built-in fonts}
 @d true_corners=33 {positive to make \&{llcorner} etc. ignore \&{setbounds}}
-@d max_given_internal=33
+@d default_color_model=34 {the default color model for unspecified items}
+@d restore_clip_color=35
+@d mpprocset=36 {wether or not create PostScript command shortcuts}
+@d max_given_internal=36
 
 @<Glob...@>=
 @!internal:array[1..max_internal] of scaled;
@@ -4479,6 +4467,34 @@ primitive("prologues",internal_quantity,prologues);@/
 @!@:prologues_}{\&{prologues} primitive@>
 primitive("truecorners",internal_quantity,true_corners);@/
 @!@:true_corners_}{\&{truecorners} primitive@>
+primitive("mpprocset",internal_quantity,mpprocset);@/
+@!@:mpprocset_}{\&{mpprocset} primitive@>
+primitive("defaultcolormodel",internal_quantity,default_color_model);@/
+@!@:default_color_model_}{\&{defaultcolormodel} primitive@>
+primitive("restoreclipcolor",internal_quantity,restore_clip_color);@/
+@!@:restore_clip_color_}{\&{restoreclipcolor} primitive@>
+
+@ Colors can be specified in four color models. In the special
+case of |no_model|, MetaPost does not output any color operator to
+the postscript output.
+
+Note: these values are passed directly on to |with_option|. This only
+works because the other possible values passed to |with_option| are
+8 and 10 respectively (from |with_pen| and |with_picture|).
+
+There is a first state, that is only used for |gs_colormodel|. It flags
+the fact that there has not been any kind of color specification by
+the user so far in the game.
+
+@d no_model=1
+@d grey_model=3
+@d rgb_model=5
+@d cmyk_model=7
+@d uninitialized_model=9
+
+@<Initialize table entries (done by \.{INIMP} only)@>=
+internal[default_color_model]:=(rgb_model*unity);
+internal[restore_clip_color]:=unity;
 
 @ Well, we do have to list the names one more time, for use in symbolic
 printouts.
@@ -4517,6 +4533,9 @@ int_name[warning_check]:="warningcheck";
 int_name[boundary_char]:="boundarychar";
 int_name[prologues]:="prologues";
 int_name[true_corners]:="truecorners";
+int_name[default_color_model]:="defaultcolormodel";
+int_name[mpprocset]:="mpprocset";
+int_name[restore_clip_color]:="restoreclipcolor";
 
 @ The following procedure, which is called just before \MP\ initializes its
 input and output, establishes the initial values of the date and time.
@@ -4891,6 +4910,10 @@ primitive("skipto",skip_to,0);@/
 @!@:skip_to_}{\&{skipto} primitive@>
 primitive("special",special_command,0);
 @!@:special}{\&{special} primitive@>
+primitive("fontmapfile",special_command,1);
+@!@:fontmapfile}{\&{fontmapfile} primitive@>
+primitive("fontmapline",special_command,2);
+@!@:fontmapline}{\&{fontmapline} primitive@>
 primitive("step",step_token,0);@/
 @!@:step_}{\&{step} primitive@>
 primitive("str",str_op,0);@/
@@ -4944,7 +4967,9 @@ scan_tokens:print("scantokens");
 semicolon:print(";");
 ship_out_command:print("shipout");
 skip_to:print("skipto");
-special_command: print("special");
+special_command: if m=2 then print("fontmapline") else
+                 if m=1 then print("fontmapfile") else
+                 print("special");
 step_token:print("step");
 str_op:print("str");
 tension:print("tension");
@@ -5031,7 +5056,7 @@ begin while p<>null do
     vacuous,boolean_type,known:do_nothing;
     string_type:delete_str_ref(value(q));
     unknown_types,pen_type,path_type,picture_type,pair_type,color_type,
-    transform_type,dependent,proto_dependent,independent:
+    cmykcolor_type,transform_type,dependent,proto_dependent,independent:
       begin g_pointer:=q; token_recycle;
       end;
     othercases confusion("token")
@@ -5411,15 +5436,21 @@ while expressions are being evaluated. We call them {\sl capsules}.
 @d red_part_loc(#)==# {where the \&{redpart} is found in a color node}
 @d green_part_loc(#)==#+2 {where the \&{greenpart} is found in a color node}
 @d blue_part_loc(#)==#+4 {where the \&{bluepart} is found in a color node}
+@d cyan_part_loc(#)==# {where the \&{cyanpart} is found in a color node}
+@d magenta_part_loc(#)==#+2 {where the \&{magentapart} is found in a color node}
+@d yellow_part_loc(#)==#+4 {where the \&{yellowpart} is found in a color node}
+@d black_part_loc(#)==#+6 {where the \&{blackpart} is found in a color node}
+@d grey_part_loc(#)==# {where the \&{greypart} is found in a color node}
 @#
 @d pair_node_size=4 {the number of words in a pair node}
 @d transform_node_size=12 {the number of words in a transform node}
 @d color_node_size=6 {the number of words in a color node}
+@d cmykcolor_node_size=8 {the number of words in a color node}
 
 @<Glob...@>=
 @!big_node_size:array[transform_type..pair_type] of small_number;
 @!sector0:array[transform_type..pair_type] of small_number;
-@!sector_offset:array[x_part_sector..blue_part_sector] of small_number;
+@!sector_offset:array[x_part_sector..black_part_sector] of small_number;
 
 @ The |sector0| array gives for each big node type, |name_type| values
 for its first subfield; the |sector_offset| array gives for each
@@ -5431,13 +5462,17 @@ big node.
 big_node_size[transform_type]:=transform_node_size;
 big_node_size[pair_type]:=pair_node_size;
 big_node_size[color_type]:=color_node_size;
+big_node_size[cmykcolor_type]:=cmykcolor_node_size;
 sector0[transform_type]:=x_part_sector;
 sector0[pair_type]:=x_part_sector;
 sector0[color_type]:=red_part_sector;
+sector0[cmykcolor_type]:=cyan_part_sector;
 for k:=x_part_sector to yy_part_sector do
   sector_offset[k]:=2*(k-x_part_sector);
 for k:=red_part_sector to blue_part_sector do
   sector_offset[k]:=2*(k-red_part_sector);
+for k:=cyan_part_sector to black_part_sector do
+  sector_offset[k]:=2*(k-cyan_part_sector);
 
 @ If |type(p)=pair_type| or |transform_type| and if |value(p)=null|, the
 procedure call |init_big_node(p)| will allocate a pair or transform node
@@ -5528,6 +5563,11 @@ yy_part_sector: print("yy");
 red_part_sector: print("red");
 green_part_sector: print("green");
 blue_part_sector: print("blue");
+cyan_part_sector: print("cyan");
+magenta_part_sector: print("magenta");
+yellow_part_sector: print("yellow");
+black_part_sector: print("black");
+grey_part_sector: print("grey");
 capsule: begin print("%CAPSULE"); print_int(p-null); return;
 @.CAPSULE@>
   end;
@@ -5796,7 +5836,8 @@ string_type,unknown_string:und_type:=unknown_string;
 pen_type,unknown_pen:und_type:=unknown_pen;
 path_type,unknown_path:und_type:=unknown_path;
 picture_type,unknown_picture:und_type:=unknown_picture;
-transform_type,color_type,pair_type,numeric_type:und_type:=type(p);
+transform_type,color_type,cmykcolor_type,
+pair_type,numeric_type:und_type:=type(p);
 known,dependent,proto_dependent,independent:und_type:=numeric_type;
 end; {there are no other cases}
 end;
@@ -8001,8 +8042,8 @@ two such objects overlap, but it suffices to draw the first one first and
 let the second one overwrite it if necessary.
 
 @ Let's consider the types of graphical objects one at a time.
-First of all, a filled contour is represented by a six-word node.  The first
-word contains |type| and |link| fields, and the next four words contain a
+First of all, a filled contour is represented by a eight-word node.  The first
+word contains |type| and |link| fields, and the next six words contain a
 pointer to a cyclic path and the value to use for \ps' \&{currentrgbcolor}
 parameter.  If a pen is used for filling |pen_p|, |ljoin_val| and |miterlim_val|
 give the relevant information.
@@ -8011,20 +8052,31 @@ give the relevant information.
   {a pointer to the path that needs filling}
 @d pen_p(#)==info(#+1)
   {a pointer to the pen to fill or stroke with}
-@d obj_red_loc(#)==#+2  {the first of three locations for the color}
-@d red_val(#)==mem[#+2].sc
+@d color_model(#)==type(#+2) { the color model }
+@d obj_red_loc(#)==#+3  {the first of three locations for the color}
+@d obj_cyan_loc==obj_red_loc  {the first of four locations for the color}
+@d obj_grey_loc==obj_red_loc  {the location for the color}
+@d red_val(#)==mem[#+3].sc
   {the red component of the color in the range $0\ldots1$}
-@d green_val(#)==mem[#+3].sc
+@d cyan_val==red_val
+@d grey_val==red_val
+@d green_val(#)==mem[#+4].sc
   {the green component of the color in the range $0\ldots1$}
-@d blue_val(#)==mem[#+4].sc
+@d magenta_val==green_val
+@d blue_val(#)==mem[#+5].sc
+  {the blue component of the color in the range $0\ldots1$}
+@d yellow_val==blue_val
+@d black_val(#)==mem[#+6].sc
   {the blue component of the color in the range $0\ldots1$}
 @d ljoin_val(#)==name_type(#)  {the value of \&{linejoin}}
 @:linejoin_}{\&{linejoin} primitive@>
-@d miterlim_val(#)==mem[#+5].sc  {the value of \&{miterlimit}}
+@d miterlim_val(#)==mem[#+7].sc  {the value of \&{miterlimit}}
 @:miterlimit_}{\&{miterlimit} primitive@>
-@d obj_color_part(#)==mem[#+2-red_part].sc
+@d obj_color_part(#)==mem[#+3-red_part].sc
   {interpret an object pointer that has been offset by |red_part..blue_part|}
-@d fill_node_size=6
+@d pre_script(#)==mem[#+8].hh.lh
+@d post_script(#)==mem[#+8].hh.rh
+@d fill_node_size=9
 @d fill_code=1
 
 @p function new_fill_node(@!p: pointer): pointer;
@@ -8037,6 +8089,10 @@ begin t:=get_node(fill_node_size);
   red_val(t):=0;
   green_val(t):=0;
   blue_val(t):=0;
+  black_val(t):=0;
+  color_model(t):=uninitialized_model;
+  pre_script(t):=null;
+  post_script(t):=null;
   @<Set the |ljoin_val| and |miterlim_val| fields in object |t|@>;
   new_fill_node:=t;
 end;
@@ -8055,13 +8111,13 @@ factor for the dash pattern, and a pointer that is non-null if the stroke
 is to be dashed.  The purpose of the scale factor is to allow a picture to
 be transformed without touching the picture that |dash_p| points to.
 
-@d dash_p(#)==link(#+6)
+@d dash_p(#)==link(#+9)
   {a pointer to the edge structure that gives the dash pattern}
-@d lcap_val(#)==type(#+6)
+@d lcap_val(#)==type(#+9)
   {the value of \&{linecap}}
 @:linecap_}{\&{linecap} primitive@>
-@d dash_scale(#)==mem[#+7].sc {dash lengths are scaled by this factor}
-@d stroked_node_size=8
+@d dash_scale(#)==mem[#+10].sc {dash lengths are scaled by this factor}
+@d stroked_node_size=11
 @d stroked_code=2
 
 @p function new_stroked_node(@!p:pointer): pointer;
@@ -8075,6 +8131,10 @@ begin t:=get_node(stroked_node_size);
   red_val(t):=0;
   green_val(t):=0;
   blue_val(t):=0;
+  black_val(t):=0;
+  color_model(t):=uninitialized_model;
+  pre_script(t):=null;
+  post_script(t):=null;
   @<Set the |ljoin_val| and |miterlim_val| fields in object |t|@>;
   if internal[linecap]>unity then lcap_val(t):=2
   else if internal[linecap]>0 then lcap_val(t):=1
@@ -8129,20 +8189,20 @@ black with its reference point at the origin.
 
 @d text_p(#)==link(#+1)  {a string pointer for the text to display}
 @d font_n(#)==info(#+1)  {the font number}
-@d width_val(#)==mem[#+5].sc  {unscaled width of the text}
-@d height_val(#)==mem[#+6].sc  {unscaled height of the text}
-@d depth_val(#)==mem[#+7].sc  {unscaled depth of the text}
-@d text_tx_loc(#)==#+8
+@d width_val(#)==mem[#+7].sc  {unscaled width of the text}
+@d height_val(#)==mem[#+9].sc  {unscaled height of the text}
+@d depth_val(#)==mem[#+10].sc  {unscaled depth of the text}
+@d text_tx_loc(#)==#+11
   {the first of six locations for transformation parameters}
-@d tx_val(#)==mem[#+8].sc  {$x$ shift amount}
-@d ty_val(#)==mem[#+9].sc  {$y$ shift amount}
-@d txx_val(#)==mem[#+10].sc  {|txx| transformation parameter}
-@d txy_val(#)==mem[#+11].sc  {|txy| transformation parameter}
-@d tyx_val(#)==mem[#+12].sc  {|tyx| transformation parameter}
-@d tyy_val(#)==mem[#+13].sc  {|tyy| transformation parameter}
-@d text_trans_part(#)==mem[#+8-x_part].sc
+@d tx_val(#)==mem[#+11].sc  {$x$ shift amount}
+@d ty_val(#)==mem[#+12].sc  {$y$ shift amount}
+@d txx_val(#)==mem[#+13].sc  {|txx| transformation parameter}
+@d txy_val(#)==mem[#+14].sc  {|txy| transformation parameter}
+@d tyx_val(#)==mem[#+15].sc  {|tyx| transformation parameter}
+@d tyy_val(#)==mem[#+16].sc  {|tyy| transformation parameter}
+@d text_trans_part(#)==mem[#+11-x_part].sc
     {interpret a text node ponter that has been offset by |x_part..yy_part|}
-@d text_node_size=14
+@d text_node_size=17
 @d text_code=3
 
 @p @<Declare text measuring subroutines@>@;
@@ -8156,6 +8216,10 @@ begin t:=get_node(text_node_size);
   red_val(t):=0;
   green_val(t):=0;
   blue_val(t):=0;
+  black_val(t):=0;
+  color_model(t):=uninitialized_model;
+  pre_script(t):=null;
+  post_script(t):=null;
   tx_val(t):=0; ty_val(t):=0;
   txx_val(t):=unity; txy_val(t):=0;
   tyx_val(t):=0; tyy_val(t):=unity;
@@ -8348,12 +8412,20 @@ end;
 case type(p) of
 fill_code: begin toss_knot_list(path_p(p));
   if pen_p(p)<>null then toss_knot_list(pen_p(p));
+  if pre_script(p)<>null then delete_str_ref(pre_script(p));
+  if post_script(p)<>null then delete_str_ref(post_script(p));
   end;
 stroked_code: begin toss_knot_list(path_p(p));
   if pen_p(p)<>null then toss_knot_list(pen_p(p));
+  if pre_script(p)<>null then delete_str_ref(pre_script(p));
+  if post_script(p)<>null then delete_str_ref(post_script(p));
   e:=dash_p(p);
   end;
-text_code: delete_str_ref(text_p(p));
+text_code: begin
+  delete_str_ref(text_p(p));
+  if pre_script(p)<>null then delete_str_ref(pre_script(p));
+  if post_script(p)<>null then delete_str_ref(post_script(p));
+  end;
 start_clip_code,start_bounds_code: toss_knot_list(path_p(p));
 stop_clip_code,stop_bounds_code: do_nothing;
 end;  {there are no other cases}
@@ -8545,10 +8617,21 @@ black (the default color).
 @<Declare subroutines needed by |print_edges|@>=
 @<Declare a procedure called |print_compact_node|@>@;
 procedure print_obj_color(@!p:pointer);
-begin if (red_val(p)>0) or (green_val(p)>0) or (blue_val(p)>0) then
-  begin print("colored ");
-  print_compact_node(obj_red_loc(p),3);
-  end;
+begin if color_model(p)=grey_model then
+    if grey_val(p)>0 then
+      begin print("greyed ");
+      print_compact_node(obj_grey_loc(p),1);
+    end
+  else if color_model(p)=cmyk_model then
+    if (cyan_val(p)>0) or (magenta_val(p)>0) or (yellow_val(p)>0) or (black_val(p)>0) then
+      begin print("colored ");
+      print_compact_node(obj_cyan_loc(p),4);
+    end
+  else  if color_model(p)=rgb_model then
+    if (red_val(p)>0) or (green_val(p)>0) or (blue_val(p)>0) then
+      begin print("processcolored ");
+      print_compact_node(obj_red_loc(p),3);
+    end;
 end;
 
 @ We also need a procedure for printing consecutive scaled values as if they
@@ -8751,7 +8834,7 @@ if (x_coord(pp)>x0) or (x0>x3) then
 @!x0,@!x1,@!x2,@!x3:scaled;  {$x$ coordinates of the segment from |qq| to |rr|}
 
 @ @<Make sure |p| and |p0| are the same color and |goto not_found|...@>=
-if (red_val(p)<>red_val(p0)) or@|
+if (red_val(p)<>red_val(p0)) or (black_val(p)<>black_val(p0)) or@|
   (green_val(p)<>green_val(p0)) or (blue_val(p)<>blue_val(p0)) then
   begin print_err("Picture is too complicated to use as a dash pattern");
   help3("When you say `dashed p', everything in picture p should")@/
@@ -9895,9 +9978,9 @@ link(spec_p2):=link(spec_p1);
 link(spec_p1):=c;@/
 remove_cubic(spec_p1);
 c:=spec_p1;
-if c<>link(c) then begin 
-originator(spec_p2):=program_code; 
-remove_cubic(spec_p2); 
+if c<>link(c) then begin
+originator(spec_p2):=program_code;
+remove_cubic(spec_p2);
 end
 else @<Make |c| look like a cycle of length one@>;
 end
@@ -14687,6 +14770,12 @@ points to a color node that contains three numeric values,
 each of which is |independent|, |dependent|, |proto_dependent|, or |known|.
 
 \smallskip\hang
+|cur_type=cmykcolor_type| means that |cur_exp| points to a |cmykcolor_type|
+capsule node. The |value| part of this capsule
+points to a color node that contains four numeric values,
+each of which is |independent|, |dependent|, |proto_dependent|, or |known|.
+
+\smallskip\hang
 |cur_type=pair_type| means that |cur_exp| points to a capsule
 node whose type is |pair_type|. The |value| part of this capsule
 points to a pair node that contains two numeric values,
@@ -14763,7 +14852,7 @@ function stash_cur_exp:pointer;
 var @!p:pointer; {the capsule that will be returned}
 begin case cur_type of
 unknown_types,transform_type,color_type,pair_type,dependent,proto_dependent,
-  independent:p:=cur_exp;
+  independent,cmykcolor_type:p:=cur_exp;
 othercases begin  p:=get_node(value_node_size); name_type(p):=capsule;
   type(p):=cur_type; value(p):=cur_exp;
   end
@@ -14796,7 +14885,7 @@ procedure unstash_cur_exp(@!p:pointer);
 begin cur_type:=type(p);
 case cur_type of
 unknown_types,transform_type,color_type,pair_type,dependent,proto_dependent,
-  independent: cur_exp:=p;
+  independent,cmykcolor_type: cur_exp:=p;
 othercases begin cur_exp:=value(p);
   free_node(p,value_node_size);
   end
@@ -14838,7 +14927,7 @@ unknown_types,numeric_type:@<Display a variable
 string_type:begin print_char(""""); print(v); print_char("""");
   end;
 pen_type,path_type,picture_type:@<Display a complex type@>;
-transform_type,color_type,pair_type:if v=null then print_type(t)
+transform_type,color_type,pair_type,cmykcolor_type:if v=null then print_type(t)
   else @<Display a big node@>;
 known:print_scaled(v);
 dependent,proto_dependent:print_dp(t,v,verbosity);
@@ -14925,7 +15014,7 @@ because |cur_exp| will not contain a pointer value.
 procedure flush_cur_exp(@!v:scaled);
 begin case cur_type of
 unknown_types,transform_type,color_type,pair_type,@|
-    dependent,proto_dependent,independent:
+    dependent,proto_dependent,independent,cmykcolor_type:
   begin recycle_value(cur_exp); free_node(cur_exp,value_node_size);
   end;
 string_type:delete_str_ref(cur_exp);
@@ -14954,7 +15043,7 @@ unknown_types:ring_delete(p);
 string_type:delete_str_ref(v);
 path_type,pen_type:toss_knot_list(v);
 picture_type:delete_edge_ref(v);
-pair_type,color_type,transform_type:@<Recycle a big node@>;
+cmykcolor_type,pair_type,color_type,transform_type:@<Recycle a big node@>;
 dependent,proto_dependent:@<Recycle a dependency list@>;
 independent:@<Recycle an independent variable@>;
 token_list,structured:confusion("recycle");
@@ -15255,7 +15344,7 @@ if interrupt<>0 then if OK_to_interrupt then
 @ @<Scan a delimited primary@>=
 begin l_delim:=cur_sym; r_delim:=cur_mod; get_x_next; scan_expression;
 if (cur_cmd=comma) and (cur_type>=known) then
-  @<Scan the rest of a pair or triplet of numerics@>
+  @<Scan the rest of a delimited set of numerics@>
 else check_delimiter(l_delim,r_delim);
 end
 
@@ -15295,7 +15384,7 @@ end
 @ This code uses the fact that |red_part_loc| and |green_part_loc|
 are synonymous with |x_part_loc| and |y_part_loc|.
 
-@<Scan the rest of a pair or triplet of numerics@>=
+@<Scan the rest of a delimited set of numerics@>=
 begin p:=stash_cur_exp;
 get_x_next; scan_expression;
 @<Make sure the second part of a pair or color has a numeric type@>;
@@ -15307,6 +15396,19 @@ stash_in(y_part_loc(r));
 unstash_cur_exp(p);
 stash_in(x_part_loc(r));
 if cur_cmd=comma then @<Scan the last of a triplet of numerics@>;
+if cur_cmd=comma then begin
+  type(q):=cmykcolor_type;
+  init_big_node(q); t:=value(q);
+  mem[cyan_part_loc(t)]:=mem[red_part_loc(r)];
+  value(cyan_part_loc(t)):=value(red_part_loc(r));
+  mem[magenta_part_loc(t)]:=mem[green_part_loc(r)];
+  value(magenta_part_loc(t)):=value(green_part_loc(r));
+  mem[yellow_part_loc(t)]:=mem[blue_part_loc(r)];
+  value(yellow_part_loc(t)):=value(blue_part_loc(r));
+  recycle_value(r);
+  r:=t;
+  @<Scan the last of a quartet of numerics@>;
+  end;
 check_delimiter(l_delim,r_delim);
 cur_type:=type(q);
 cur_exp:=q;
@@ -15326,14 +15428,27 @@ if cur_type<known then
 @ @<Scan the last of a triplet of numerics@>=
 begin get_x_next; scan_expression;
 if cur_type<known then
-  begin exp_err("Nonnumeric bluepart has been replaced by 0");
+  begin exp_err("Nonnumeric third part has been replaced by 0");
 @.Nonnumeric...replaced by 0@>
-  help3("I've just scanned a color `(r,g,b)'; but the `b' isn't")@/
+  help3("I've just scanned a color `(a,b,c)' or cmykcolor(a,b,c,d); but the `c' isn't")@/
     ("of numeric type. So I've changed that part to zero.")@/
-    ("(The b that I didn't like appears above the error message.)");@/
+    ("(The c that I didn't like appears above the error message.)");@/
   put_get_flush_error(0);
   end;
 stash_in(blue_part_loc(r));
+end
+
+@ @<Scan the last of a quartet of numerics@>=
+begin get_x_next; scan_expression;
+if cur_type<known then
+  begin exp_err("Nonnumeric blackpart has been replaced by 0");
+@.Nonnumeric...replaced by 0@>
+  help3("I've just scanned a cmykcolor `(c,m,y,k)'; but the `k' isn't")@/
+    ("of numeric type. So I've changed that part to zero.")@/
+    ("(The k that I didn't like appears above the error message.)");@/
+  put_get_flush_error(0);
+  end;
+stash_in(black_part_loc(r));
 end
 
 @ The local variable |group_line| keeps track of the line
@@ -15674,7 +15789,7 @@ picture_type:begin cur_exp:=value(p);add_edge_ref(cur_exp);
   end;
 pen_type:cur_exp:=copy_pen(value(p));
 path_type:cur_exp:=copy_path(value(p));
-transform_type,color_type,pair_type:@<Copy the big node |p|@>;
+transform_type,color_type,cmykcolor_type,pair_type:@<Copy the big node |p|@>;
 dependent,proto_dependent:encapsulate(copy_dep_list(dep_list(p)));
 numeric_type:begin new_indep(p); goto restart;
   end;
@@ -16369,6 +16484,18 @@ primitive("greenpart",unary,green_part);@/
 @!@:green_part_}{\&{greenpart} primitive@>
 primitive("bluepart",unary,blue_part);@/
 @!@:blue_part_}{\&{bluepart} primitive@>
+primitive("cyanpart",unary,cyan_part);@/
+@!@:cyan_part_}{\&{cyanpart} primitive@>
+primitive("magentapart",unary,magenta_part);@/
+@!@:magenta_part_}{\&{magentapart} primitive@>
+primitive("yellowpart",unary,yellow_part);@/
+@!@:yellow_part_}{\&{yellowpart} primitive@>
+primitive("blackpart",unary,black_part);@/
+@!@:black_part_}{\&{blackpart} primitive@>
+primitive("greypart",unary,grey_part);@/
+@!@:grey_part_}{\&{greypart} primitive@>
+primitive("colormodel",unary,color_model_part);@/
+@!@:color_model_part_}{\&{colormodel} primitive@>
 primitive("fontpart",unary,font_part);@/
 @!@:font_part_}{\&{fontpart} primitive@>
 primitive("textpart",unary,text_part);@/
@@ -16580,7 +16707,7 @@ fully known colors.
 function nice_color_or_pair(@!p:integer;@!t:quarterword):boolean;
 label exit;
 var @!q,@!r:pointer; {for scanning the big node}
-begin if (t<>pair_type)and(t<>color_type) then
+begin if (t<>pair_type)and(t<>color_type)and(t<>cmykcolor_type) then
   nice_color_or_pair:=false
 else begin q:=value(p);
   r:=q+big_node_size[type(p)];
@@ -16597,7 +16724,7 @@ exit:end;
 procedure print_known_or_unknown_type(@!t:small_number;@!v:integer);
 begin print_char("(");
 if t>known then print("unknown numeric")
-else begin if (t=pair_type)or(t=color_type) then
+else begin if (t=pair_type)or(t=color_type)or(t=cmykcolor_type) then
     if not nice_color_or_pair(v,t) then print("unknown ");
   print_type(t);
   end;
@@ -16636,7 +16763,8 @@ and recycling it afterwards (cf.~the |stash_in| routine).
 
 @<Negate the current expression@>=
 case cur_type of
-color_type,pair_type,independent: begin q:=cur_exp; make_exp_copy(q);
+color_type,cmykcolor_type,pair_type,independent: begin
+  q:=cur_exp; make_exp_copy(q);
   if cur_type=dependent then negate_dep_list(dep_list(cur_exp))
   else if cur_type<=pair_type then {|color_type| or |pair_type|}
     begin p:=value(cur_exp);
@@ -16717,6 +16845,14 @@ xx_part,xy_part,yx_part,yy_part: if cur_type=transform_type then take_part(c)
 red_part,green_part,blue_part: if cur_type=color_type then take_part(c)
   else if cur_type=picture_type then take_pict_part(c)
   else bad_unary(c);
+cyan_part,magenta_part,yellow_part,black_part: if cur_type=cmykcolor_type
+  then take_part(c) else if cur_type=picture_type then take_pict_part(c)
+  else bad_unary(c);
+grey_part: if cur_type=known then cur_exp:=value(c)
+  else if cur_type=picture_type then take_pict_part(c)
+  else bad_unary(c);
+color_model_part: if cur_type=picture_type then take_pict_part(c)
+  else bad_unary(c);
 
 @ In the following procedure, |cur_exp| points to a capsule, which points to
 a big node. We want to delete all but one part of the big node.
@@ -16751,6 +16887,24 @@ if p<>null then
       else goto not_found;
     red_part,green_part,blue_part:
       if has_color(p) then flush_cur_exp(obj_color_part(p+c))
+      else goto not_found;
+    cyan_part,magenta_part,yellow_part,black_part:
+      if has_color(p) then
+        if color_model(p)=uninitialized_model then
+          flush_cur_exp(unity)
+        else
+          flush_cur_exp(obj_color_part(p+c+(red_part-cyan_part)))
+      else goto not_found;
+    grey_part:
+      if has_color(p) then
+          flush_cur_exp(obj_color_part(p+c+(red_part-grey_part)))
+      else goto not_found;
+    color_model_part:
+      if has_color(p) then
+        if color_model(p)=uninitialized_model then
+          flush_cur_exp(internal[default_color_model])
+        else
+          flush_cur_exp(color_model(p)*unity)
       else goto not_found;
     @<Handle other cases in |take_pict_part| or |goto not_found|@>@;
     end; {all cases have been enumerated}
@@ -16930,10 +17084,7 @@ if p<>null then
 found:pict_length:=n;
 end;
 
-@ The turning number is computed only with respect to a triangular pen whose
-@:turning_number_}{\&{turningnumber} primitive@>
-vertices are $(0,1)$ and $(\pm{1\over2},0)$.  The choice of pen isn't supposed
-to matter but rounding error could make a difference if the path has a cusp.
+@ Implement |turningnumber|
 
 @<Additional cases of unary...@>=
 turning_op:if cur_type=pair_type then flush_cur_exp(0)
@@ -16944,36 +17095,8 @@ turning_op:if cur_type=pair_type then flush_cur_exp(0)
     flush_cur_exp(turn_cycles(cur_exp));
     end;
 
-
-@ This code is based on Bogus\l{}av Jackowski's
-|emergency_turningnumber| macro, with some minor changes by Taco
-Hoekwater. The macro code looked more like this:
-{\obeylines
-vardef turning\_number primary p =
-~~save res, ang, turns;
-~~res := 0;
-~~if length p <= 2:
-~~~~if Angle ((point 0 of p) - (postcontrol 0 of p)) >= 0:  1  else: -1 fi
-~~else:
-~~~~for t = 0 upto length p-1 :
-~~~~~~angc := Angle ((point t+1 of p)  - (point t of p))
-~~~~~~~~- Angle ((point t of p) - (point t-1 of p));
-~~~~~~if angc > 180: angc := angc - 360; fi;
-~~~~~~if angc < -180: angc := angc + 360; fi;
-~~~~~~res  := res + angc;
-~~~~endfor;
-~~res/360
-~~fi
-enddef;}
-The general idea is to calculate only the sum of the angles of straight lines between
-the points, of a path, not worrying about cusps or self-intersections in the segments
-at all. If the segment is not well-behaved, the result is not necesarily correct. But
-the old code was not always correct either, and worse, it sometimes failed for well-behaved
-paths as well. All known bugs that were triggered by the original code no longer occur
-with this code, and it runs roughly 3 times as fast because the algorithm is much simpler.
-
-@ The macro |Angle()| returns the value of the |angle| primitive, or $0$ if the argument is
-|origin|. Converting that calling convention to web code gives the |an_angle| function.
+@ The function |an_angle| returns the value of the |angle| primitive, or $0$ if the
+argument is |origin|.
 
 @<Declare unary action...@>=
 function an_angle (@!xpar,@!ypar:scaled):angle;
@@ -16985,42 +17108,63 @@ begin
 end;
 
 
-@ It is possible to overflow the return value of the |turn_cycles|
-function when the path is sufficiently long and winding, but I am not
-going to bother testing for that. In any case, it would only return
-the looped result value, which is not a big problem.
+@ The actual turning number is (for the moment) computed in a C function
+that receives eight integers corresponding to the four controlling points,
+and returns a single angle.  Besides those, we have to account for discrete
+moves at the actual points.
 
-The macro code for the repeat loop was a bit nicer to look
-at than the pascal code, because it could use |point -1 of p|. In
-pascal, the fastest way to loop around the path is not to look
-backward once, but forward twice. These defines help hide the trick.
+@d p_nextnext==link(link(p))
+@d p_next==link(p)
 
-@d p_to==link(link(p))
-@d p_here==link(p)
-@d p_from==p
+@d seven_twenty_deg==@'5500000000 {$720\cdot2^{20}$, represents $720^\circ$}
 
 @<Declare unary action...@>=
 function turn_cycles (@!c:pointer):scaled;
+label exit;
 var @!res,ang:angle; { the angles of intermediate results }
 @!turns:scaled;  { the turn counter }
 @!p:pointer;     { for running around the path }
-begin  res:=0;  turns:= 0; p:=c;
-if ((link(p) = p) or (link(link(p)) = p)) then
+@!xp,yp:integer;   { coordinates of next point }
+@!x,y:integer;   { helper coordinates }
+@!in_angle,out_angle:angle;     { helper angles}
+begin
+res:=0;
+turns:= 0;
+p:=c;
+if (p_next=p)or(p_nextnext=p) then
   if an_angle (x_coord(p) - right_x(p),  y_coord(p) - right_y(p)) >= 0 then
      turn_cycles := unity
   else
      turn_cycles := -unity
 else begin
   repeat
-    ang  := an_angle (x_coord(p_to) - x_coord(p_here), y_coord(p_to) - y_coord(p_here))
-      	- an_angle (x_coord(p_here) - x_coord(p_from), y_coord(p_here) - y_coord(p_from));
-    reduce_angle(ang);
+	xp := x_coord(p_next); yp := y_coord(p_next);
+    ang  := bezier_slope(x_coord(p), y_coord(p), right_x(p), right_y(p),
+                        left_x(p_next), left_y(p_next), xp, yp);
+    if ang>seven_twenty_deg then begin
+	    print_err("Strange path");
+        error;
+	    turn_cycles := 0;
+	    return;
+      end;
     res  := res + ang;
-    if res >= three_sixty_deg then  begin
+	{ incoming angle at next point }
+	x := left_x(p_next);  y := left_y(p_next);
+	if (xp=x)and(yp=y) then begin x := right_x(p);  y := right_y(p);  end;
+	if (xp=x)and(yp=y) then begin x := x_coord(p);  y := y_coord(p);  end;
+    in_angle := an_angle(xp - x, yp - y);
+	{ outgoing angle at next point }
+	x := right_x(p_next);  y := right_y(p_next);
+	if (xp=x)and(yp=y) then begin x := left_x(p_nextnext);  y := left_y(p_nextnext);  end;
+	if (xp=x)and(yp=y) then begin x := x_coord(p_nextnext); y := y_coord(p_nextnext); end;
+    out_angle := an_angle(x - xp, y- yp);
+    ang  := (out_angle - in_angle);
+    res  := res + ang;
+    while res >= three_sixty_deg do begin
       res := res - three_sixty_deg;
       turns := turns + unity;
     end;
-    if res <= -three_sixty_deg then begin
+    while res <= -three_sixty_deg do begin
       res := res + three_sixty_deg;
       turns := turns - unity;
     end;
@@ -17028,17 +17172,7 @@ else begin
   until p=c;
   turn_cycles := turns;
 end;
-end;
-
-@ @<Declare unary action...@>=
-function count_turns(@!c:pointer):scaled;
-var @!p:pointer; {a knot in envelope spec |c|}
-@!t:integer; {total pen offset changes counted}
-begin t:=0; p:=c;
-repeat t:=t+info(p)-zero_off;
-p:=link(p);
-until p=c;
-count_turns:=(t div 3)*unity;
+exit:
 end;
 
 @ @d type_test_end== flush_cur_exp(true_code)
@@ -17055,7 +17189,7 @@ string_type: type_range(string_type)(unknown_string);
 pen_type: type_range(pen_type)(unknown_pen);
 path_type: type_range(path_type)(unknown_path);
 picture_type: type_range(picture_type)(unknown_picture);
-transform_type,color_type,pair_type: type_test(c);
+transform_type,color_type,cmykcolor_type,pair_type: type_test(c);
 numeric_type: type_range(known)(independent);
 known_op,unknown_op: test_known(c);
 
@@ -17068,7 +17202,7 @@ begin b:=false_code;
 case cur_type of
 vacuous,boolean_type,string_type,pen_type,path_type,picture_type,
  known: b:=true_code;
-transform_type,color_type,pair_type:begin p:=value(cur_exp);
+transform_type,color_type,cmykcolor_type,pair_type:begin p:=value(cur_exp);
   q:=p+big_node_size[cur_type];
   repeat q:=q-2;
   if type(q)<>known then goto done;
@@ -17322,7 +17456,7 @@ that returns |null| if and only if its argument is not tarnished.
 
 @<Sidestep |independent| cases in capsule |p|@>=
 case type(p) of
-transform_type,color_type,pair_type: old_p:=tarnished(p);
+transform_type,color_type,cmykcolor_type,pair_type: old_p:=tarnished(p);
 independent: old_p:=void;
 othercases old_p:=null
 endcases;
@@ -17333,7 +17467,8 @@ if old_p<>null then
 
 @ @<Sidestep |independent| cases in the current expression@>=
 case cur_type of
-transform_type,color_type,pair_type:old_exp:=tarnished(cur_exp);
+transform_type,color_type,cmykcolor_type,
+pair_type:old_exp:=tarnished(cur_exp);
 independent:old_exp:=void;
 othercases old_exp:=null
 endcases;
@@ -17561,7 +17696,8 @@ begin if type(p)=known then
 else  begin v:=cur_exp; unstash_cur_exp(p);
   end;
 if cur_type=known then cur_exp:=take_scaled(cur_exp,v)
-else if (cur_type=pair_type)or(cur_type=color_type) then
+else if (cur_type=pair_type)or(cur_type=color_type)or
+          (cur_type=cmykcolor_type) then
   begin p:=value(cur_exp)+big_node_size[cur_type];
   repeat p:=p-2;
   dep_mult(p,v,true);
@@ -17599,7 +17735,7 @@ var @!p:pointer; {a pair node}
 begin if internal[tracing_commands]>two then
   @<Trace the fraction multiplication@>;
 case cur_type of
-transform_type,color_type,pair_type:old_exp:=tarnished(cur_exp);
+transform_type,color_type,cmykcolor_type,pair_type:old_exp:=tarnished(cur_exp);
 independent:old_exp:=void;
 othercases old_exp:=null
 endcases;
@@ -18646,7 +18782,8 @@ unknown_types:if cur_type=t-unknown_tag then
   else if cur_type=pair_type then if t=unknown_path then
     begin pair_to_path; goto restart;
     end;
-transform_type,color_type,pair_type:if cur_type=t then
+transform_type,color_type,cmykcolor_type,
+pair_type:if cur_type=t then
     @<Do multiple equations and |goto done|@>;
 known,dependent,proto_dependent,independent:if cur_type>=known then
     begin try_eq(lhs,null); goto done;
@@ -18833,6 +18970,10 @@ primitive("transform",type_name,transform_type);@/
 @!@:transform_}{\&{transform} primitive@>
 primitive("color",type_name,color_type);@/
 @!@:color_}{\&{color} primitive@>
+primitive("rgbcolor",type_name,color_type);@/
+@!@:color_}{\&{rgbcolor} primitive@>
+primitive("cmykcolor",type_name,cmykcolor_type);@/
+@!@:color_}{\&{cmykcolor} primitive@>
 primitive("pair",type_name,pair_type);@/
 @!@:pair_}{\&{pair} primitive@>
 
@@ -19323,6 +19464,11 @@ end;
 @d contour_code=1 {command modifier for `\&{contour}'}
 @d also_code=2 {command modifier for `\&{also}'}
 
+@ Pre and postscripts need two new identifiers:
+
+@d with_pre_script=11
+@d with_post_script=13
+
 @<Put each...@>=
 primitive("doublepath",thing_to_add,double_path_code);@/
 @!@:double_path_}{\&{doublepath} primitive@>
@@ -19334,15 +19480,34 @@ primitive("withpen",with_option,pen_type);@/
 @!@:with_pen_}{\&{withpen} primitive@>
 primitive("dashed",with_option,picture_type);@/
 @!@:dashed_}{\&{dashed} primitive@>
-primitive("withcolor",with_option,color_type);@/
+primitive("withprescript",with_option,with_pre_script);@/
+@!@:with_pre_script_}{\&{withprescript} primitive@>
+primitive("withpostscript",with_option,with_post_script);@/
+@!@:with_post_script_}{\&{withpostscript} primitive@>
+primitive("withoutcolor",with_option,no_model);@/
+@!@:with_color_}{\&{withoutcolor} primitive@>
+primitive("withgreyscale",with_option,grey_model);@/
+@!@:with_color_}{\&{withgreyscale} primitive@>
+primitive("withcolor",with_option,uninitialized_model);@/
 @!@:with_color_}{\&{withcolor} primitive@>
+{ \&{withrgbcolor} is an alias for \&{withcolor}}
+primitive("withrgbcolor",with_option,rgb_model);@/
+@!@:with_color_}{\&{withrgbcolor} primitive@>
+primitive("withcmykcolor",with_option,cmyk_model);@/
+@!@:with_color_}{\&{withcmykcolor} primitive@>
 
 @ @<Cases of |print_cmd...@>=
 thing_to_add:if m=contour_code then print("contour")
   else if m=double_path_code then print("doublepath")
   else print("also");
 with_option:if m=pen_type then print("withpen")
-  else if m=color_type then print("withcolor")
+  else if m=with_pre_script then print("withprescript")
+  else if m=with_post_script then print("withpostscript")
+  else if m=no_model then print("withoutcolor")
+  else if m=rgb_model then print("withrgbcolor")
+  else if m=uninitialized_model then print("withcolor")
+  else if m=cmyk_model then print("withcmykcolor")
+  else if m=grey_model then print("withgreyscale")
   else print("dashed");
 
 @ The |scan_with_list| procedure parses a $\langle$with list$\rangle$ and
@@ -19355,17 +19520,54 @@ procedure scan_with_list(@!p:pointer);
 label done, done1, done2;
 var @!t:small_number; {|cur_mod| of the |with_option| (should match |cur_type|)}
 @!q:pointer; {for list manipulation}
-@!cp,@!pp,@!dp:pointer;
+@!old_setting:0..max_selector; {saved |selector| setting}
+@!k:pointer; {for finding the near-last item in a list }
+@!s:str_number; {for string cleanup after combining }
+@!cp,@!pp,@!dp,@!ap,@!bp:pointer;
   {objects being updated; |void| initially; |null| to suppress update}
-begin cp:=void; pp:=void; dp:=void;
+begin cp:=void; pp:=void; dp:=void; ap:=void; bp:=void;
 while cur_cmd=with_option do
-  begin t:=cur_mod; get_x_next; scan_expression;
-  if cur_type<>t then @<Complain about improper type@>
-  else if t=color_type then
+  begin t:=cur_mod;
+  get_x_next;
+  if t<>no_model then scan_expression;
+  if ((t=with_pre_script)and(cur_type<>string_type))or
+     ((t=with_post_script)and(cur_type<>string_type))or
+     ((t=uninitialized_model)and
+        ((cur_type<>cmykcolor_type)and(cur_type<>color_type)
+          and(cur_type<>known)and(cur_type<>boolean_type)))or
+     ((t=cmyk_model)and(cur_type<>cmykcolor_type))or
+     ((t=rgb_model)and(cur_type<>color_type))or
+     ((t=grey_model)and(cur_type<>known))or
+     ((t=pen_type)and(cur_type<>t))or
+     ((t=picture_type)and(cur_type<>t)) then @<Complain about improper type@>
+  else if t=uninitialized_model then
       begin if cp=void then @<Make |cp| a colored object in object list~|p|@>;
       if cp<>null then
         @<Transfer a color from the current expression to object~|cp|@>;
       flush_cur_exp(0);
+      end
+  else if t=rgb_model then
+      begin if cp=void then @<Make |cp| a rgb colored object in object list~|p|@>;
+      if cp<>null then
+        @<Transfer a rgbcolor from the current expression to object~|cp|@>;
+      flush_cur_exp(0);
+      end
+  else if t=cmyk_model then
+      begin if cp=void then @<Make |cp| a cmyk colored object in object list~|p|@>;
+      if cp<>null then
+        @<Transfer a cmykcolor from the current expression to object~|cp|@>;
+      flush_cur_exp(0);
+      end
+  else if t=grey_model then
+      begin if cp=void then @<Make |cp| a grey colored object in object list~|p|@>;
+      if cp<>null then
+        @<Transfer a greyscale from the current expression to object~|cp|@>;
+      flush_cur_exp(0);
+      end
+  else if t=no_model then
+      begin if cp=void then @<Make |cp| a no colored object in object list~|p|@>;
+      if cp<>null then
+        @<Transfer a noncolor from the current expression to object~|cp|@>;
       end
     else if t=pen_type then
       begin if pp=void then @<Make |pp| an object in list~|p| that needs
@@ -19375,6 +19577,54 @@ while cur_cmd=with_option do
         pen_p(pp):=cur_exp; cur_type:=vacuous;
         end;
       end
+    else if t=with_pre_script then
+       begin if ap=void then
+         ap:=p;
+         while (ap<>null)and(not has_color(ap)) do
+            ap:=link(ap);
+         if ap<>null then
+           begin if pre_script(ap)<>null then begin { build a new,combined string }
+             s:=pre_script(ap);
+             old_setting:=selector;
+	     selector:=new_string;
+             str_room(length(pre_script(ap))+length(cur_exp)+2);
+	     print(cur_exp);
+             append_char(13);  {a forced \ps\ newline }
+             print(pre_script(ap));
+             pre_script(ap):=make_string;
+             delete_str_ref(s);
+             selector:=old_setting;
+             end
+           else
+             pre_script(ap):=cur_exp;
+           cur_type:=vacuous;
+           end;
+         end
+    else if t=with_post_script then
+       begin if bp=void then
+         k:=p; bp:=k;
+         while link(k)<>null do begin
+            k:=link(k);
+            if has_color(k) then bp:=k;
+            end;
+         if bp<>null then
+           begin if post_script(bp)<>null then begin
+             s:=post_script(bp);
+             old_setting:=selector;
+	     selector:=new_string;
+             str_room(length(post_script(bp))+length(cur_exp)+2);
+             print(post_script(bp));
+             append_char(13); {a forced \ps\ newline }
+	     print(cur_exp);
+             post_script(bp):=make_string;
+             delete_str_ref(s);
+             selector:=old_setting;
+             end
+           else
+             post_script(bp):=cur_exp;
+           cur_type:=vacuous;
+           end;
+         end
     else begin if dp=void then @<Make |dp| a stroked node in list~|p|@>;
       if dp<>null then
         begin if dash_p(dp)<>null then delete_edge_ref(dash_p(dp));
@@ -19393,10 +19643,20 @@ begin exp_err("Improper type");
 @.Improper type@>
 help2("Next time say `withpen <known pen expression>';")@/
   ("I'll ignore the bad `with' clause and look for another.");
-if t=picture_type then
+if t=with_pre_script then
+  help_line[1]:="Next time say `withprescript <known string expression>';"
+else if t=with_post_script then
+  help_line[1]:="Next time say `withpostscript <known string expression>';"
+else if t=picture_type then
   help_line[1]:="Next time say `dashed <known picture expression>';"
-else if t=color_type then
-  help_line[1]:="Next time say `withcolor <known color expression>';";
+else if t=uninitialized_model then
+  help_line[1]:="Next time say `withcolor <known color expression>';"
+else if t=rgb_model then
+  help_line[1]:="Next time say `withrgbcolor <known color expression>';"
+else if t=cmyk_model then
+  help_line[1]:="Next time say `withcmykcolor <known cmykcolor expression>';"
+else if t=grey_model then
+  help_line[1]:="Next time say `withgreyscale <known numeric expression>';";
 put_get_flush_error(0);
 end
 
@@ -19404,10 +19664,26 @@ end
 picture will ever contain a color outside the legal range for \ps\ graphics.
 
 @<Transfer a color from the current expression to object~|cp|@>=
+begin if cur_type=color_type then
+   @<Transfer a rgbcolor from the current expression to object~|cp|@>
+else if cur_type=cmykcolor_type then
+   @<Transfer a cmykcolor from the current expression to object~|cp|@>
+else if cur_type=known then
+   @<Transfer a greyscale from the current expression to object~|cp|@>
+else if cur_exp=false_code then
+   @<Transfer a noncolor from the current expression to object~|cp|@>;
+end
+
+@ @<Transfer a rgbcolor from the current expression to object~|cp|@>=
 begin q:=value(cur_exp);
+cyan_val(cp):=0;
+magenta_val(cp):=0;
+yellow_val(cp):=0;
+black_val(cp):=0;
 red_val(cp):=value(red_part_loc(q));
 green_val(cp):=value(green_part_loc(q));
 blue_val(cp):=value(blue_part_loc(q));@/
+color_model(cp):=rgb_model;
 if red_val(cp)<0 then red_val(cp):=0;
 if green_val(cp)<0 then green_val(cp):=0;
 if blue_val(cp)<0 then blue_val(cp):=0;
@@ -19416,13 +19692,91 @@ if green_val(cp)>unity then green_val(cp):=unity;
 if blue_val(cp)>unity then blue_val(cp):=unity;
 end
 
-@ @<Make |cp| a colored object in object list~|p|@>=
+@ @<Transfer a cmykcolor from the current expression to object~|cp|@>=
+begin q:=value(cur_exp);
+cyan_val(cp):=value(cyan_part_loc(q));
+magenta_val(cp):=value(magenta_part_loc(q));
+yellow_val(cp):=value(yellow_part_loc(q));@/
+black_val(cp):=value(black_part_loc(q));@/
+color_model(cp):=cmyk_model;
+if cyan_val(cp)<0 then cyan_val(cp):=0;
+if magenta_val(cp)<0 then magenta_val(cp):=0;
+if yellow_val(cp)<0 then yellow_val(cp):=0;
+if black_val(cp)<0 then black_val(cp):=0;
+if cyan_val(cp)>unity then cyan_val(cp):=unity;
+if magenta_val(cp)>unity then magenta_val(cp):=unity;
+if yellow_val(cp)>unity then yellow_val(cp):=unity;
+if black_val(cp)>unity then black_val(cp):=unity;
+end
+
+@ @<Transfer a greyscale from the current expression to object~|cp|@>=
+begin q:=cur_exp;
+cyan_val(cp):=0;
+magenta_val(cp):=0;
+yellow_val(cp):=0;
+black_val(cp):=0;
+grey_val(cp):=q;
+color_model(cp):=grey_model;
+if grey_val(cp)<0 then grey_val(cp):=0;
+if grey_val(cp)>unity then grey_val(cp):=unity;
+end
+
+@ @<Transfer a noncolor from the current expression to object~|cp|@>=
+begin
+cyan_val(cp):=0;
+magenta_val(cp):=0;
+yellow_val(cp):=0;
+black_val(cp):=0;
+grey_val(cp):=0;
+color_model(cp):=no_model;
+end
+
+@ It is a bit silly to repeat this action in five different
+forms with the only difference being the label. Ah well.
+
+@<Make |cp| a colored object in object list~|p|@>=
 begin cp:=p;
 while cp<>null do
   begin if has_color(cp) then goto done;
   cp:=link(cp);
   end;
 done:do_nothing;
+end
+
+@ @<Make |cp| a rgb colored object in object list~|p|@>=
+begin cp:=p;
+while cp<>null do
+  begin if has_color(cp) then goto done6;
+  cp:=link(cp);
+  end;
+done6:do_nothing;
+end
+
+@ @<Make |cp| a cmyk colored object in object list~|p|@>=
+begin cp:=p;
+while cp<>null do
+  begin if has_color(cp) then goto done5;
+  cp:=link(cp);
+  end;
+done5:do_nothing;
+end
+
+@ @<Make |cp| a grey colored object in object list~|p|@>=
+begin cp:=p;
+while cp<>null do
+  begin if has_color(cp) then goto done4;
+  cp:=link(cp);
+  end;
+done4:do_nothing;
+end
+
+@ @<Make |cp| a no colored object in object list~|p|@>=
+begin cp:=p;
+while cp<>null do
+  begin if has_color(cp) then goto done3;
+  cp:=link(cp);
+  end;
+done3:do_nothing;
 end
 
 @ @<Make |pp| an object in list~|p| that needs a pen@>=
@@ -19444,7 +19798,7 @@ done2:do_nothing;
 end
 
 @ @<Copy the information from objects |cp|, |pp|, and |dp| into...@>=
-if cp>void then @<Copy |cp|'s color into the colored objects linked to~|cp|@>;
+@<Copy |cp|'s color into the colored objects linked to~|cp|@>;
 if pp>void then
   @<Copy |pen_p(pp)| into stroked and filled nodes linked to |pp|@>;
 if dp>void then @<Make stroked nodes linked to |dp| refer to |dash_p(dp)|@>
@@ -19456,6 +19810,8 @@ while q<>null do
     begin red_val(q):=red_val(cp);
     green_val(q):=green_val(cp);
     blue_val(q):=blue_val(cp);@/
+    black_val(q):=black_val(cp);@/
+    color_model(q):=color_model(cp);@/
     end;
   q:=link(q);
   end;
@@ -19735,6 +20091,18 @@ start_sym:=0;
 @d message_code=0
 @d err_message_code=1
 @d err_help_code=2
+@d filename_template_code=3
+@d print_with_leading_zeroes(#)== g := pool_ptr;
+              print_int(#); g := pool_ptr-g;
+              if f>g then begin
+                pool_ptr := pool_ptr - g;
+                while f>g do begin
+                  print_char("0");
+                  decr(f);
+                  end;
+                print_int(#);
+              end;
+              f := 0
 
 @<Put each...@>=
 primitive("message",message_command,message_code);@/
@@ -19743,10 +20111,13 @@ primitive("errmessage",message_command,err_message_code);@/
 @!@:err_message_}{\&{errmessage} primitive@>
 primitive("errhelp",message_command,err_help_code);@/
 @!@:err_help_}{\&{errhelp} primitive@>
+primitive("filenametemplate",message_command,filename_template_code);@/
+@!@:filename_template_}{\&{filenametemplate} primitive@>
 
 @ @<Cases of |print_cmd...@>=
 message_command: if m<err_message_code then print("message")
   else if m=err_message_code then print("errmessage")
+  else if m=filename_template_code then print("filenametemplate")
   else print("errhelp");
 
 @ @<Cases of |do_statement|...@>=
@@ -19764,6 +20135,7 @@ else case m of
     end;
   err_message_code:@<Print string |cur_exp| as an error message@>;
   err_help_code:@<Save string |cur_exp| as the |err_help|@>;
+  filename_template_code:@<Save the filename template@>;
   end; {there are no other cases}
 flush_cur_exp(0);
 end;
@@ -20980,6 +21352,11 @@ font_number=0..font_max;
 @ @<Glob...@>=
 font_info:array[0..font_mem_size] of memory_word;
   {height, width, and depth data}
+@!font_enc_name:array[font_number] of str_number;
+  {encoding names, if any}
+@!font_ps_name_fixed:array[font_number] of boolean;
+  {are the postscript names fixed already? }
+@!mp_font_map: ^fm_entry_ptr; {pointer into AVL tree of font mappings}
 next_fmem:0..font_mem_size; {next unused entry in |font_info|}
 last_fnum:font_number; {last font number used so far}
 font_dsize:array[font_number] of scaled;
@@ -21302,6 +21679,203 @@ if height_val(p)<-depth_val(p) then
   depth_val(p):=0;
   end
 
+@ The new primitives fontmapfile and fontmapline.
+
+@<Declare action procedures for use by |do_statement|@>=
+procedure do_mapfile;
+begin get_x_next; scan_expression;
+if cur_type<>string_type then @<Complain about improper map operation@>
+else mpmapfile(cur_exp);
+end;
+procedure do_mapline;
+begin get_x_next; scan_expression;
+if cur_type<>string_type then @<Complain about improper map operation@>
+else begin mpmapline(cur_exp);
+  end;
+end;
+
+@ @<Complain about improper map operation@>=
+begin exp_err("Unsuitable expression");
+help1("Only known strings can be map files or map lines.");
+put_get_error;
+end
+
+@ the C code needs to know how to get at the null font, how remove
+a string from memory, etc.
+
+@d is_valid_char(#)==((font_bc[f] <= #) and (# <= font_ec[f]) and
+                      ichar_exists(char_info(f)(#)))
+
+@p function get_nullfont: font_number;
+begin
+    get_nullfont := null_font;
+end;
+@#
+procedure flush_str(s: str_number); {flush a string if possible}
+begin
+    flush_string(s);
+end;
+@#
+function get_nullstr: str_number;
+begin
+    get_nullstr := "";
+end;
+@#
+function get_termandlogid: integer;
+begin
+  get_termandlogid:=term_and_log;
+end;
+@#
+function get_charwidth(f: font_number; c: eight_bits): scaled;
+begin
+    if is_valid_char(c) then
+        get_charwidth := char_width(f)(char_info(f)(c))
+    else
+        get_charwidth := 0;
+end;
+@#
+function tfm_lookup(s: str_number; fs: scaled): font_number;
+{looks up for a TFM with name |s| loaded at |fs| size; if found then flushes |s|}
+var k: font_number;
+begin
+    if fs <> 0 then begin { should not be used! }
+        for k := null_font + 1 to last_fnum do
+            if str_vs_str(font_name[k], s) and (font_sizes[k] = fs) then begin
+                flush_str(s);
+                tfm_lookup := k;
+                return;
+            end;
+    end
+    else begin
+        for k := null_font + 1 to last_fnum do
+            if str_vs_str(font_name[k], s) then begin
+                flush_str(s);
+                tfm_lookup := k;
+                return;
+            end;
+    end;
+    tfm_lookup := null_font;
+  exit:
+end;
+@#
+function new_dummy_font: font_number;
+begin
+    new_dummy_font := read_font_info("dummy");
+end;
+
+@x
+function round_xn_over_d(@!x:scaled; @!n,@!d:integer):scaled;
+var positive:boolean; {was |x>=0|?}
+@!t,@!u,@!v:nonnegative_integer; {intermediate quantities}
+begin if x>=0 then positive:=true
+else  begin negate(x); positive:=false;
+  end;
+t:=(x mod @'100000)*n;
+u:=(x div @'100000)*n+(t div @'100000);
+v:=(u mod d)*@'100000 + (t mod @'100000);
+if u div d>=@'100000 then arith_error:=true
+else u:=@'100000*(u div d) + (v div d);
+v := v mod d;
+if 2*v >= d then
+    incr(u);
+if positive then
+    round_xn_over_d := u
+else
+    round_xn_over_d := -u;
+end;
+
+
+@
+@<Declare the \ps\ output procedures@>=
+procedure ps_print_cmd(@!l:str_number;@!s:str_number);
+begin
+if internal[mpprocset]>0 then begin ps_room(length(s)); print(s); end
+else begin ps_room(length(l)); print(l); end;
+end;
+@#
+procedure print_cmd(@!l:str_number;@!s:str_number);
+begin
+if internal[mpprocset]>0 then print(s) else print(l);
+end;
+@#
+function mp_char_marked(@!f:font_number;@!c: eight_bits): boolean;
+var @!b:integer; {|char_base[f]|}
+begin b:=char_base[f];
+  if (c>=font_bc[f])and(c<=font_ec[f])and(font_info[b+c].qqqq.b3<>0) then
+    mp_char_marked:=true
+  else
+    mp_char_marked:=false;
+end;
+
+@ The fontmap entries need a typedef
+
+@<Types...@>=
+fm_entry_ptr = ^integer;
+@!nonnegative_integer=0..@'17777777777; {$0\L x<2^{31}$}
+
+@ To print |scaled| value to PDF output we need some subroutines to ensure
+accurary.
+
+@d max_integer == @"7FFFFFFF {$2^{31}-1$}
+@d call_func(#) == begin if # <> 0 then do_nothing end
+
+@<Glob...@>=
+@!one_bp: scaled; {scaled value corresponds to 1bp}
+@!one_hundred_bp: scaled; {scaled value corresponds to 100bp}
+@!one_hundred_inch: scaled; {scaled value corresponds to 100in}
+@!ten_pow: array[0..9] of integer; {$10^0..10^9$}
+@!scaled_out: integer; {amount of |scaled| that was taken out in
+|divide_scaled|}
+
+@ @<Set init...@>=
+one_bp := 65782; {65781.76}
+one_hundred_bp := 6578176;
+one_hundred_inch := 473628672;
+ten_pow[0] := 1;
+for i := 1 to 9 do
+    ten_pow[i] := 10*ten_pow[i - 1];
+mp_font_map:=xmalloc_array(fm_entry_ptr,font_max);
+for i := null_font to font_max do begin
+  font_enc_name[i] := 0;
+  font_ps_name_fixed[i] := false;
+  mp_font_map[i] := 0;
+  end;
+
+
+
+@ The following function divides |s| by |m|. |dd| is number of decimal digits.
+
+@p function divide_scaled(s, m: scaled; dd: integer): scaled;
+var q, r: scaled;
+    sign, i: integer;
+begin
+    sign := 1;
+    if s < 0 then begin
+        sign := -sign;
+        s := -s;
+    end;
+    if m < 0 then begin
+        sign := -sign;
+        m := -m;
+    end;
+    if m = 0 then
+       confusion("arithmetic: divided by zero")
+    else if m >= (max_integer div 10) then
+        confusion("arithmetic: number too big");
+    q := s div m;
+    r := s mod m;
+    for i := 1 to dd do begin
+        q := 10*q + (10*r) div m;
+        r := (10*r) mod m;
+    end;
+    if 2*r >= m then begin
+        incr(q);
+        r := r - m;
+    end;
+    scaled_out := sign*(s - (r div ten_pow[dd]));
+    divide_scaled := sign*q;
+end;
+
 @ The file |ps_tab_file| gives a table of \TeX\ font names and corresponding
 PostScript names for fonts that do not have to be downloaded, i.e., fonts that
 can be used when |internal[prologues]>0|.  Each line consists of a \TeX\ name,
@@ -21392,16 +21966,91 @@ file named according to the current \&{charcode}.
 
 @<Declare the \ps\ output procedures@>=
 procedure open_output_file;
+label @!continue; { after a digit is seen}
 var @!c:integer; {\&{charcode} rounded to the nearest integer}
 @!old_setting:0..max_selector; {previous |selector| setting}
-@!s:str_number; {a file extension derived from |c|}
+@!s,n:str_number; {a file extension derived from |c|}
+@!i:pool_pointer; { indexes into |filename_template| }
+@!cc:integer; {a temporary integer for template building }
+@!f,g:integer; {field widths}
 begin if job_name=0 then open_log_file;
 c:=round_unscaled(internal[char_code]);
-if c<0 then s:=".ps"
-else @<Use |c| to compute the file extension |s|@>;
-pack_job_name(s);
-while not a_open_out(ps_file) do
-  prompt_file_name("file name for output",s);
+if filename_template=0 then begin
+  if c<0 then s:=".ps"
+  else @<Use |c| to compute the file extension |s|@>;
+  pack_job_name(s);
+  while not a_open_out(ps_file) do
+    prompt_file_name("file name for output",s);
+  end
+else begin
+  {initializations}
+  s := "";
+  n := "";
+  old_setting:=selector; selector:=new_string;
+  f := 0;
+  i := str_start[filename_template];
+  while i<str_stop(filename_template) do begin
+    if so(str_pool[i])="%" then begin
+    continue:
+      incr(i);
+      if i<str_stop(filename_template) then
+        begin
+          if so(str_pool[i])="j" then
+            print(job_name)
+          else if so(str_pool[i])="d" then begin
+             cc:= round_unscaled(internal[day]);
+             print_with_leading_zeroes(cc);
+             end
+          else if so(str_pool[i])="m" then begin
+             cc:= round_unscaled(internal[month]);
+             print_with_leading_zeroes(cc);
+             end
+          else if so(str_pool[i])="y" then begin
+             cc:= round_unscaled(internal[year]);
+             print_with_leading_zeroes(cc);
+             end
+          else if so(str_pool[i])="H" then begin
+             cc:= round_unscaled(internal[time]) div 60;
+             print_with_leading_zeroes(cc);
+             end
+          else if so(str_pool[i])="M" then begin
+             cc:= round_unscaled(internal[time]) mod 60;
+             print_with_leading_zeroes(cc);
+             end
+          else if so(str_pool[i])="c" then begin
+            if c<0 then print("ps")
+            else begin
+              print_with_leading_zeroes(c);
+              end;
+            end
+          else if (so(str_pool[i])>="0") and (so(str_pool[i])<="9") then begin
+            if (f<10)  then
+              f := (f*10) + so(str_pool[i])-"0";
+            goto continue;
+            end
+          else
+            print(str_pool[i])
+        end
+      end
+    else begin
+      if so(str_pool[i])="." then
+        if n="" then
+          n := make_string;
+      print(str_pool[i]);
+      end;
+    incr(i);
+    end;
+  s := make_string;
+  selector:= old_setting;
+  if n="" then begin
+     n:=s;
+     s:="";
+  end;
+  pack_file_name(n,"",s);
+  while not a_open_out(ps_file) do
+    prompt_file_name("file name for output",s);
+  delete_str_ref(n);
+  end;
 delete_str_ref(s);
 @<Store the true output file name if appropriate@>;
 @<Begin the progress report for the ouput of picture~|c|@>;
@@ -21504,13 +22153,13 @@ var @!p,@!q:pointer; {for scanning the path}
 @!d:scaled; {a temporary value}
 @!curved:boolean; {|true| unless the cubic is almost straight}
 begin ps_room(40);
-if need_newpath then print("newpath ");
+if need_newpath then print_cmd("newpath ","n ");
 need_newpath:=true;
 ps_pair_out(x_coord(h),y_coord(h));
-print("moveto");@/
+print_cmd("moveto","m");@/
 p:=h;
 repeat if right_type(p)=endpoint then
-  begin if p=h then ps_print(" 0 0 rlineto");
+  begin if p=h then ps_print_cmd(" 0 0 rlineto"," 0 0 r");
   return;
   end;
 q:=link(p);
@@ -21518,7 +22167,7 @@ q:=link(p);
   |p| to~|q|@>;
 p:=q;
 until p=h;
-ps_print(" closepath");
+ps_print_cmd(" closepath"," p");
 exit:end;
 
 @ @<Glob...@>=
@@ -21534,11 +22183,11 @@ if curved then
   begin ps_pair_out(right_x(p),right_y(p));
   ps_pair_out(left_x(q),left_y(q));
   ps_pair_out(x_coord(q),y_coord(q));
-  ps_print("curveto");
+  ps_print_cmd("curveto","c");
   end
 else if q<>h then
   begin ps_pair_out(x_coord(q),y_coord(q));
-  ps_print("lineto");
+  ps_print_cmd("lineto","l");
   end
 
 @ Two types of straight lines come up often in \MP\ paths:
@@ -21566,23 +22215,35 @@ if abs(right_x(p)-x_coord(p)-d)<=bend_tolerance then
 This allows us to be sure that \ps\ has the correct values when they are
 needed without wasting time and space setting them unnecessarily.
 
+@d gs_node_size=10
+@d gs_red       ==mem[gs_state+1].sc
+@d gs_green     ==mem[gs_state+2].sc
+@d gs_blue      ==mem[gs_state+3].sc
+@d gs_black     ==mem[gs_state+4].sc
+   {color from the last \&{setcmykcolor} or \&{setrgbcolor} or \&{setgray} command}
+@d gs_colormodel==mem[gs_state+5].qqqq.b0
+   {the current colormodel}
+@d gs_ljoin     ==mem[gs_state+5].qqqq.b1
+@d gs_lcap      ==mem[gs_state+5].qqqq.b2
+   {values from the last \&{setlinejoin} and \&{setlinecap} commands}
+@d gs_adj_wx    ==mem[gs_state+5].qqqq.b3
+   {what resolution-dependent adjustment applies to the width}
+@d gs_miterlim  ==mem[gs_state+6].sc
+   {the value from the last \&{setmiterlimit} command}
+@d gs_dash_p    ==mem[gs_state+7].hh.lh
+   {edge structure for last \&{setdash} command}
+@d gs_previous  ==mem[gs_state+7].hh.rh
+   {backlink to the previous |gs_state| structure}
+@d gs_dash_sc   ==mem[gs_state+8].sc
+   {scale factor used with |gs_dash_p|}
+@d gs_width     ==mem[gs_state+9].sc
+   {width setting or $-1$ if no \&{setlinewidth} command so far}
+
 @<Glob...@>=
-@!gs_red,@!gs_green,@!gs_blue:scaled;
- {color from the last \&{setrgbcolor} or \&{setgray} command}
-@:setrgbcolor}{\&{setrgbcolor} command@>
-@:setgray}{\&{setgray} command@>
-@!gs_ljoin,@!gs_lcap:quarterword;
-  {values from the last \&{setlinejoin} and \&{setlinecap} commands}
-@:setlinejoin}{\&{setlinejoin} command@>
-@:setlinecap}{\&{setlinecap} command@>
-@!gs_miterlim:scaled; {the value from the last \&{setmiterlimit} command}
-@:setmiterlimit}{\&{setmiterlimit} command@>
-@!gs_dash_p:pointer; {edge structure for last \&{setdash} command}
-@:setdash}{\&{setdash} command@>
-@!gs_dash_sc:scaled; {scale factor used with |gs_dash_p|}
-@!gs_width:scaled; {width setting or $-1$ if no \&{setlinewidth} command so far}
-@!gs_adj_wx:boolean; {what resolution-dependent adjustment applies to the width}
-@:setlinewidth}{\&{setlinewidth} command@>
+gs_state:pointer;
+
+@ @<Set init...@>=
+gs_state:=null;
 
 @ To avoid making undue assumptions about the initial graphics state, these
 parameters are given special values that are guaranteed not to match anything
@@ -21594,13 +22255,41 @@ to recover from a situation where we have lost track of the graphics state.
 
 @<Declare the \ps\ output procedures@>=
 procedure unknown_graphics_state(c:scaled);
-begin gs_red:=c; gs_green:=c; gs_blue:=c;@/
-gs_ljoin:=3;
-gs_lcap:=3;
-gs_miterlim:=0;@/
-gs_dash_p:=void;
-gs_dash_sc:=0;
-gs_width:=-1;
+var @!p:pointer; {to shift graphic states around}
+  @!k:quarterword; {a loop index for copying the |gs_state|}
+begin if (c=0)or(c=-1) then begin
+  if gs_state=null then begin
+    gs_state := get_node(gs_node_size);
+    gs_previous:=null;
+    end
+  else begin
+    while gs_previous<>null do begin
+      p := gs_previous;
+      free_node(gs_state,gs_node_size);
+      gs_state:=p;
+      end;
+    end;
+  gs_red:=c; gs_green:=c; gs_blue:=c; gs_black:=c;@/
+  gs_colormodel:=uninitialized_model;
+  gs_ljoin:=3;
+  gs_lcap:=3;
+  gs_miterlim:=0;@/
+  gs_dash_p:=void;
+  gs_dash_sc:=0;
+  gs_width:=-1;
+  end
+else if c=1 then begin
+  p:= gs_state;
+  gs_state := get_node(gs_node_size);
+  for k:=1 to gs_node_size-1 do
+    mem[gs_state+k]:=mem[p+k];
+  gs_previous := p;
+  end
+else if c=2 then begin
+  p := gs_previous;
+  free_node(gs_state,gs_node_size);
+  gs_state:=p;
+  end;
 end;
 
 @ When it is time to output a graphical object, |fix_graphics_state| ensures
@@ -21635,7 +22324,7 @@ if type(p)=stroked_code then
     if gs_lcap<>lcap_val(p) then
       begin ps_room(13);
       print_char(" ");
-      print_char("0"+lcap_val(p)); print(" setlinecap");
+      print_char("0"+lcap_val(p)); print_cmd(" setlinecap"," lc");
       gs_lcap:=lcap_val(p);
       end
 
@@ -21643,36 +22332,86 @@ if type(p)=stroked_code then
 if gs_ljoin<>ljoin_val(p) then
   begin ps_room(14);
   print_char(" ");
-  print_char("0"+ljoin_val(p)); print(" setlinejoin");
+  print_char("0"+ljoin_val(p)); print_cmd(" setlinejoin"," lj");
   gs_ljoin:=ljoin_val(p);
   end;
 if gs_miterlim<>miterlim_val(p) then
   begin ps_room(27);
   print_char(" ");
-  print_scaled(miterlim_val(p)); print(" setmiterlimit");
+  print_scaled(miterlim_val(p)); print_cmd(" setmiterlimit"," ml");
   gs_miterlim:=miterlim_val(p);
   end
 
 @ @<Make sure \ps\ will use the right color for object~|p|@>=
-if (gs_red<>red_val(p))or(gs_green<>green_val(p))or@|
-    (gs_blue<>blue_val(p)) then
-  begin gs_red:=red_val(p);
-  gs_green:=green_val(p);
-  gs_blue:=blue_val(p);@/
-  if (gs_red=gs_green)and(gs_green=gs_blue) then
-    begin ps_room(16);
-    print_char(" ");
-    print_scaled(gs_red);
-    print(" setgray");
+begin
+  if (color_model(p)=rgb_model)or@|
+     ((color_model(p)=uninitialized_model)and
+     ((internal[default_color_model] div unity)=rgb_model)) then
+  begin if (gs_colormodel<>rgb_model)or(gs_red<>red_val(p))or@|
+      (gs_green<>green_val(p))or(gs_blue<>blue_val(p)) then
+    begin gs_red:=red_val(p);
+      gs_green:=green_val(p);
+      gs_blue:=blue_val(p);
+      gs_black:= -1;@/
+      gs_colormodel:=rgb_model;
+      begin ps_room(36);
+        print_char(" ");
+        print_scaled(gs_red); print_char(" ");
+        print_scaled(gs_green); print_char(" ");
+        print_scaled(gs_blue);
+        print_cmd(" setrgbcolor", " R");
+        end;
+      end;
     end
-  else begin ps_room(36);
-    print_char(" ");
-    print_scaled(gs_red); print_char(" ");
-    print_scaled(gs_green); print_char(" ");
-    print_scaled(gs_blue);
-    print(" setrgbcolor");
+  else if (color_model(p)=cmyk_model)or@|
+     ((color_model(p)=uninitialized_model)and
+     ((internal[default_color_model] div unity)=cmyk_model)) then
+  begin if (gs_red<>cyan_val(p))or(gs_green<>magenta_val(p))or@|
+      (gs_blue<>yellow_val(p))or(gs_black<>black_val(p))or@|
+      (gs_colormodel<>cmyk_model) then
+      begin
+      if color_model(p)=uninitialized_model then begin
+        gs_red:=unity;
+        gs_green:=unity;
+        gs_blue:=unity;
+        gs_black:=unity;@/
+        end
+      else begin
+        gs_red:=cyan_val(p);
+        gs_green:=magenta_val(p);
+        gs_blue:=yellow_val(p);
+        gs_black:=black_val(p);@/
+        end;
+      gs_colormodel:=cmyk_model;
+      begin ps_room(45);
+        print_char(" ");
+        print_scaled(gs_red); print_char(" ");
+        print_scaled(gs_green); print_char(" ");
+        print_scaled(gs_blue); print_char(" ");
+        print_scaled(gs_black);
+        print_cmd(" setcmykcolor"," C");
+        end;
+      end;
+    end
+  else if (color_model(p)=grey_model)or@|
+    ((color_model(p)=uninitialized_model)and
+     ((internal[default_color_model] div unity)=grey_model)) then
+  begin if (gs_red<>grey_val(p))or(gs_colormodel<>grey_model) then
+    begin gs_red := grey_val(p);
+      gs_green:= -1;
+      gs_blue:= -1;
+      gs_black:= -1;@/
+      gs_colormodel:=grey_model;
+      begin ps_room(16);
+        print_char(" ");
+        print_scaled(gs_red);
+        print_cmd(" setgray"," G");
+        end;
+      end;
     end;
-  end;
+  if color_model(p)=no_model then
+    gs_colormodel:=no_model;
+end
 
 @ In order to get consistent widths for horizontal and vertical pen strokes, we
 want \ps\ to use an integer number of pixels for the \&{setwidth} parameter.
@@ -21700,11 +22439,19 @@ if (ww<>gs_width) or (adj_wx<>gs_adj_wx) then
   begin if adj_wx then
     begin ps_room(13);
     print_char(" "); print_scaled(ww);
-    ps_print(" 0 dtransform exch truncate exch idtransform pop setlinewidth");
+    ps_print_cmd(" 0 dtransform exch truncate exch idtransform pop setlinewidth"," hlw");
     end
-  else begin ps_room(15);
-    print(" 0 "); print_scaled(ww);
-    ps_print(" dtransform truncate idtransform setlinewidth pop");
+  else begin
+    if internal[mpprocset]>0 then begin
+       ps_room(13);
+       print_char(" ");
+       print_scaled(ww);
+       ps_print(" vlw");
+      end
+    else begin ps_room(15);
+      print(" 0 "); print_scaled(ww);
+      ps_print(" dtransform truncate idtransform setlinewidth pop");
+      end;
     end;
   gs_width := ww;
   gs_adj_wx := adj_wx;
@@ -21792,7 +22539,7 @@ else begin hh:=dash_p(p);
   end;
 if hh=null then
   begin if gs_dash_p<>null then
-    begin ps_print(" [] 0 setdash");
+    begin ps_print_cmd(" [] 0 setdash"," rd");
     gs_dash_p:=null;
     end;
   end
@@ -21808,7 +22555,7 @@ cannot be printed without overflow.
 begin gs_dash_p:=hh;
 gs_dash_sc:=scf;
 if (dash_y(hh)=0) or (abs(dash_y(hh)) div unity >= el_gordo div scf) then
-  ps_print(" [] 0 setdash")
+  ps_print_cmd(" [] 0 setdash"," rd")
 else begin pp:=dash_list(hh);
   start_x(null_dash):=start_x(pp)+dash_y(hh);@/
   ps_room(28);
@@ -21821,7 +22568,7 @@ else begin pp:=dash_list(hh);
   ps_room(22);
   print("] ");
   print_scaled(take_scaled(dash_offset(hh),scf));
-  print(" setdash");
+  print_cmd(" setdash"," sd");
   end;
 end
 
@@ -21869,10 +22616,29 @@ begin transformed:=false;@/
   translation@>;
 @<Tweak the transformation parameters so the transformation is nonsingular@>;
 ps_path_out(path_p(h));@/
-if fill_also then print_nl("gsave fill grestore");
-@<Issue \ps\ commands to transform the coordinate system@>;
-ps_print(" stroke");
-if transformed then ps_print(" grestore");
+if internal[mpprocset]=0 then begin
+  if fill_also then print_nl("gsave fill grestore");
+  @<Issue \ps\ commands to transform the coordinate system@>;
+  ps_print(" stroke");
+  if transformed then ps_print(" grestore");
+  end
+else begin
+  if fill_also then print_nl("B") else print_ln;
+  if (txy<>0)or(tyx<>0) then
+    begin {print_ln;}
+    print(" [");
+    ps_pair_out(txx,tyx);
+    ps_pair_out(txy,tyy);@/
+    ps_print("0 0] t");
+    end
+  else if (txx<>unity)or(tyy<>unity) then
+    begin {print_ln;}
+    ps_pair_out(txx,tyy);
+    print(" s");
+    end;
+  ps_print(" S");
+  if transformed then ps_print(" Q");
+end;
 print_ln;
 end;
 
@@ -21883,7 +22649,7 @@ tyx:=left_y(p);@/
 txy:=right_x(p);
 tyy:=right_y(p);
 if (x_coord(p)<>0)or(y_coord(p)<>0) then
-  begin print_nl("gsave ");
+  begin print_ln; print_cmd("gsave ","q ");
   ps_pair_out(x_coord(p),y_coord(p));
   ps_print("translate ");@/
   txx:=txx-x_coord(p);
@@ -21908,7 +22674,7 @@ if gs_width<>unity then
     end;
 if (txy<>0)or(tyx<>0)or(txx<>unity)or(tyy<>unity) then
   if (not transformed) then
-    begin ps_print("gsave ");
+    begin ps_print_cmd("gsave ","q ");
     transformed:=true;
     end
 
@@ -21956,7 +22722,7 @@ if abs(det)<d1 then
 @<Declare the \ps\ output procedures@>=
 procedure ps_fill_out(@!p:pointer); {fill cyclic path~|p|}
 begin ps_path_out(p);
-ps_print(" fill");
+ps_print_cmd(" fill"," F");
 print_ln;
 end;
 
@@ -22235,7 +23001,7 @@ end;
 last_pending:=spec_head;
 
 @ @<Cases of |do_statement|...@>=
-special_command:do_special;
+special_command: if cur_mod=0 then do_special else if cur_mod=1 then do_mapfile else do_mapline;
 
 @ @<Declare action procedures for use by |do_statement|@>=
 procedure do_special;
@@ -22271,7 +23037,7 @@ setting is saved in a global variable so that |begin_diagnostic| can access it.
 
 @<Declare the \ps\ output procedures@>=
 procedure ship_out(@!h:pointer); {output edge structure |h|}
-label done,found;
+label done,done2,found,found2,found3;
 var @!p:pointer; {the current graphical object}
 @!q:pointer; {something that |p| points to}
 @!t:integer; {a temporary value}
@@ -22283,12 +23049,42 @@ var @!p:pointer; {the current graphical object}
 @!ds,@!scf:scaled; {design size and scale factor for a text node}
 @!transformed:boolean; {is the coordinate system being transformed?}
 begin open_output_file;
+non_ps_setting:=selector; selector:=ps_file_only;@/
+if (internal[prologues]=two)or(internal[prologues]=three) then begin
+  @<Print improved initial comment and bounding box for edge structure~|h|@>;
+  @<Scan all the text nodes and mark the used characters@>;
+  mploadencodings(last_fnum);
+  @<Update encoding names@>;
+  @<Print the improved prologue and setup@>;
+  @<Print any pending specials@>;
+  unknown_graphics_state(0);
+  need_newpath:=true;
+  p:=link(dummy_loc(h));
+  while p<>null do
+    begin if has_color(p) then
+    if (pre_script(p))<>null then begin
+      print_nl (pre_script(p)); print_ln;
+      end;
+    fix_graphics_state(p);
+    case type(p) of
+    @<Cases for translating graphical object~|p| into \ps@>@;
+    start_bounds_code,stop_bounds_code: do_nothing;
+    end; {all cases are enumerated}
+    p:=link(p);
+    end;
+  print_cmd("showpage","P"); print_ln;
+  print("%%EOF"); print_ln;
+  a_close(ps_file);
+  selector:=non_ps_setting;
+  if internal[prologues]<=0 then clear_sizes;
+  @<End progress report@>;
+  end
+else begin
+@<Print the initial comment and give the bounding box for edge structure~|h|@>;
 if (internal[prologues]>0) and (last_ps_fnum<last_fnum) then
   read_psname_table;
-non_ps_setting:=selector; selector:=ps_file_only;@/
-@<Print the initial comment and give the bounding box for edge structure~|h|@>;
 print("%%BeginProlog"); print_ln;
-if internal[prologues]>0 then @<Print the prologue@>;
+if (internal[prologues]>0)or(internal[mpprocset]>0) then @<Print the prologue@>;
 print("%%EndProlog");
 print_nl("%%Page: 1 1"); print_ln;
 @<Print any pending specials@>;
@@ -22296,21 +23092,396 @@ unknown_graphics_state(0);
 need_newpath:=true;
 p:=link(dummy_loc(h));
 while p<>null do
-  begin fix_graphics_state(p);
+  begin if has_color(p) then
+    if (pre_script(p))<>null then begin
+      print_nl (pre_script(p)); print_ln;
+      end;
+  fix_graphics_state(p);
   case type(p) of
   @<Cases for translating graphical object~|p| into \ps@>@;
   start_bounds_code,stop_bounds_code: do_nothing;
   end; {all cases are enumerated}
   p:=link(p);
   end;
-print("showpage"); print_ln;
+print_cmd("showpage","P"); print_ln;
 print("%%EOF"); print_ln;
 a_close(ps_file);
 selector:=non_ps_setting;
 if internal[prologues]<=0 then clear_sizes;
 @<End progress report@>;
+end;
 if internal[tracing_output]>0 then print_edges(h," (just shipped out)",true);
 end;
+
+@ @<Print the procset@>=
+    begin
+    print_nl("/hlw{0 dtransform exch truncate exch idtransform pop setlinewidth}bd");
+    print_nl("/vlw{0 exch dtransform truncate idtransform setlinewidth pop}bd");
+    print_nl("/l{lineto}bd/r{rlineto}bd/c{curveto}bd/m{moveto}bd/p{closepath}bd/n{newpath}bd");
+    print_nl("/C{setcmykcolor}bd/G{setgray}bd/R{setrgbcolor}bd/lj{setlinejoin}bd/ml{setmiterlimit}bd");
+    print_nl("/lc{setlinecap}bd/S{stroke}bd/F{fill}bd/q{gsave}bd/Q{grestore}bd/s{scale}bd/t{concat}bd");
+    print_nl("/sd{setdash}bd/rd{[] 0 setdash}bd/P{showpage}bd/B{q F Q}bd/W{clip}bd");
+    end
+
+
+@
+@d applied_reencoding(#)==((font_is_reencoded(#))and
+    ((not font_is_subsetted(#))or(internal[prologues]=two)))
+
+@d ps_print_defined_name(#)==ps_print(" /");
+      if (font_is_subsetted(#))and(font_is_included(#))and(internal[prologues]=three)
+      then print(fm_font_subset_name(#))
+      else print(font_ps_name[#]);
+      if applied_reencoding(#) then begin ps_print("-");
+        ps_print(font_enc_name[#]); end;
+      if fm_font_slant(#)<>0 then begin
+        ps_print("-Slant_"); print_int(fm_font_slant(#)) end;
+      if fm_font_extend(#)<>0 then begin
+        ps_print("-Extend_"); print_int(fm_font_extend(#)) end
+
+@<Print the improved prologue and setup@>=
+begin
+  list_used_resources;
+  list_supplied_resources;
+  list_needed_resources;
+  print_nl("%%EndComments");
+  print_nl("%%BeginProlog");
+  if internal[mpprocset]>0 then
+    print_nl("%%BeginResource: procset mpost")
+  else
+    print_nl("%%BeginResource: procset mpost-minimal");
+  print_nl("/bd{bind def}bind def/fshow {exch findfont exch scalefont setfont show}bd");
+  if internal[mpprocset]>0 then @<Print the procset@>;
+  print_nl("/fcp{findfont dup length dict begin{1 index/FID ne{def}{pop pop}ifelse}forall}bd");
+  print_nl("/fmc{FontMatrix dup length array copy dup dup}bd/fmd{/FontMatrix exch def}bd");
+  print_nl("/Amul{4 -1 roll exch mul 1000 div}bd/ExtendFont{fmc 0 get Amul 0 exch put fmd}bd");
+  print_nl("/SlantFont{fmc 2 get dup 0 eq{pop 1}if Amul FontMatrix 0 get mul 2 exch put fmd}bd");
+  print_nl("%%EndResource");
+  @<Include encodings and fonts  for edge structure~|h|@>;
+  print_nl("%%EndProlog");
+  print_nl("%%BeginSetup");
+  print_ln;
+  for f:=null_font+1 to last_fnum do begin
+    if font_sizes[f]<>null then begin
+      if hasfmentry(f) then begin
+        @<Write font definition@>;
+        ps_name_out(font_name[f],true);
+        ps_print_defined_name(f);
+        ps_print(" def");
+        end
+      else begin
+	begin_diagnostic;
+        {selector:=term_and_log;}
+	print_err("Warning: font ");
+	print(font_name[f]);
+	print(" cannot be found in any fontmapfile!");
+	end_diagnostic(true);
+        ps_name_out(font_name[f],true);
+        ps_name_out(font_name[f],true);
+        ps_print(" def");
+        end;
+      print_ln;
+      end;
+    end;
+  print_nl("%%EndSetup");
+  print_nl("%%Page: 1 1");
+  print_ln;
+end
+
+@ @<Write font definition@>=
+if (applied_reencoding(f))or(fm_font_slant(f)<>0)or(fm_font_extend(f)<>0) then begin
+  if (font_is_subsetted(f))and(font_is_included(f))and(internal[prologues]=three)
+  then ps_name_out(fm_font_subset_name(f),true)
+  else ps_name_out(font_ps_name[f],true);
+  ps_print(" fcp");
+  print_ln;
+  if applied_reencoding(f) then begin
+    ps_print("/Encoding ");
+    ps_print(font_enc_name[f]);
+    ps_print(" def ");
+    end;
+  if fm_font_slant(f)<>0 then begin
+    print_int(fm_font_slant(f));
+    ps_print(" SlantFont ");
+    end;
+  if fm_font_extend(f)<>0 then begin
+    print_int(fm_font_extend(f));
+    ps_print(" ExtendFont ");
+    end;
+  ps_print("currentdict end");
+  print_ln;
+  ps_print_defined_name(f);
+  ps_print(" exch definefont pop");
+  print_ln;
+end
+
+@ Included subset fonts do not need and encoding vector, make
+sure we skip that case.
+
+@p procedure list_used_resources;
+label found,found2;
+var @!f,ff:font_number; {fonts used in a text node or as loop counters}
+@!ldf:font_number; {the last \.{DocumentFont} listed (otherwise |null_font|)}
+firstitem:boolean;
+begin
+if internal[mpprocset]>0 then
+  print_nl("%%DocumentResources: procset mpost")
+else
+  print_nl("%%DocumentResources: procset mpost-minimal");
+ldf:=null_font;
+firstitem:=true;
+for f:=null_font+1 to last_fnum do
+  if (font_sizes[f]<>null)and(font_is_reencoded(f)) then
+    begin
+    for ff:=ldf downto null_font do
+      if font_sizes[ff]<>null then
+        if str_vs_str(font_enc_name[f],font_enc_name[ff])=0 then
+          goto found;
+    if font_is_subsetted(f) then
+      goto found;
+    if ps_offset+1+length(font_enc_name[f])>max_print_line then
+      print_nl("%%+ encoding");
+    if firstitem then begin
+      firstitem:=false;
+      print_nl("%%+ encoding");
+      end;
+    print_char(" ");
+    print(font_enc_name[f]);
+    ldf:=f;
+    found:
+    end;
+ldf:=null_font;
+firstitem:=true;
+for f:=null_font+1 to last_fnum do
+  if font_sizes[f]<>null then
+    begin
+    for ff:=ldf downto null_font do
+      if font_sizes[ff]<>null then
+        if str_vs_str(font_name[f],font_name[ff])=0 then
+          goto found2;
+    if ps_offset+1+length(font_ps_name[f])>max_print_line then
+      print_nl("%%+ font");
+    if firstitem then begin
+      firstitem:=false;
+      print_nl("%%+ font");
+      end;
+    print_char(" ");
+	if (internal[prologues]=three)and(font_is_subsetted(f)) then
+       print(fm_font_subset_name(f))
+    else
+       print(font_ps_name[f]);
+    ldf:=f;
+    found2:
+    end;
+print_ln;
+end;
+
+@
+@p procedure list_supplied_resources;
+label found,found2;
+var @!f,ff:font_number; {fonts used in a text node or as loop counters}
+@!ldf:font_number; {the last \.{DocumentFont} listed (otherwise |null_font|)}
+firstitem:boolean;
+begin
+if internal[mpprocset]>0 then
+  print_nl("%%DocumentSuppliedResources: procset mpost")
+else
+  print_nl("%%DocumentSuppliedResources: procset mpost-minimal");
+ldf:=null_font;
+firstitem:=true;
+for f:=null_font+1 to last_fnum do
+  if (font_sizes[f]<>null)and(font_is_reencoded(f)) then
+    begin
+    for ff:=ldf downto null_font do
+      if font_sizes[ff]<>null then
+        if str_vs_str(font_enc_name[f],font_enc_name[ff])=0 then
+          goto found;
+    if (internal[prologues]=three)and(font_is_subsetted(f))then
+      goto found;
+    if ps_offset+1+length(font_enc_name[f])>max_print_line then
+      print_nl("%%+ encoding");
+    if firstitem then begin
+      firstitem:=false;
+      print_nl("%%+ encoding");
+      end;
+    print_char(" ");
+    print(font_enc_name[f]);
+    ldf:=f;
+    found:
+    end;
+ldf:=null_font;
+firstitem:=true;
+if internal[prologues]=three then begin
+  for f:=null_font+1 to last_fnum do
+  if font_sizes[f]<>null then
+    begin
+    for ff:=ldf downto null_font do
+      if font_sizes[ff]<>null then
+        if str_vs_str(font_name[f],font_name[ff])=0 then
+          goto found2;
+    if not font_is_included(f) then
+      goto found2;
+    if ps_offset+1+length(font_ps_name[f])>max_print_line then
+      print_nl("%%+ font");
+    if firstitem then begin
+      firstitem:=false;
+      print_nl("%%+ font");
+      end;
+    print_char(" ");
+	if font_is_subsetted(f) then
+       print(fm_font_subset_name(f))
+    else
+       print(font_ps_name[f]);
+    ldf:=f;
+    found2:
+    end;
+  print_ln;
+end;
+end;
+
+
+@
+@p procedure list_needed_resources;
+label found,found2;
+var @!f,ff:font_number; {fonts used in a text node or as loop counters}
+@!ldf:font_number; {the last \.{DocumentFont} listed (otherwise |null_font|)}
+firstitem:boolean;
+begin
+ldf:=null_font;
+firstitem:=true;
+for f:=null_font+1 to last_fnum do
+  if font_sizes[f]<>null then
+    begin
+    for ff:=ldf downto null_font do
+      if font_sizes[ff]<>null then
+        if str_vs_str(font_name[f],font_name[ff])=0 then
+          goto found;
+    if(internal[prologues]=three)and(font_is_included(f)) then
+      goto found;
+    if ps_offset+1+length(font_ps_name[f])>max_print_line then
+      print_nl("%%+ font");
+    if firstitem then begin
+      firstitem:=false;
+      print_nl("%%DocumentNeededResources: font");
+      end;
+    print_char(" ");
+    print(font_ps_name[f]);
+    ldf:=f;
+    found:
+    end;
+if not firstitem then begin
+  print_ln;
+  ldf:=null_font;
+  firstitem:=true;
+  for f:=null_font+1 to last_fnum do
+    if font_sizes[f]<>null then
+      begin
+      for ff:=ldf downto null_font do
+        if font_sizes[ff]<>null then
+          if str_vs_str(font_name[f],font_name[ff])=0 then
+            goto found2;
+      if(internal[prologues]=three)and(font_is_included(f)) then
+        goto found2;
+      print("%%IncludeResource: font ");
+      print(font_ps_name[f]);
+      print_ln;
+      ldf:=f;
+      found2:
+      end;
+end;
+end;
+
+@
+@<Print improved initial comment and bounding box for edge...@>=
+print("%!PS-Adobe-3.0 EPSF-3.0");
+print_nl("%%BoundingBox: ");
+set_bbox(h,true);
+if minx_val(h)>maxx_val(h) then print("0 0 0 0")
+else begin ps_pair_out(floor_scaled(minx_val(h)),floor_scaled(miny_val(h)));
+  ps_pair_out(-floor_scaled(-maxx_val(h)),-floor_scaled(-maxy_val(h)));
+  end;
+print_nl("%%HiResBoundingBox: ");
+if minx_val(h)>maxx_val(h) then print("0 0 0 0")
+else begin
+  ps_pair_out(minx_val(h),miny_val(h));
+  ps_pair_out(maxx_val(h),maxy_val(h));
+  end;
+print_nl("%%Creator: MetaPost ");
+print(metapost_version);
+print_nl("%%CreationDate: ");
+print_int(round_unscaled(internal[year])); print_char(".");
+print_dd(round_unscaled(internal[month])); print_char(".");
+print_dd(round_unscaled(internal[day])); print_char(":");@/
+t:=round_unscaled(internal[time]);
+print_dd(t div 60); print_dd(t mod 60);@/
+print_nl("%%Pages: 1");@/
+
+@
+
+@ @<Include encodings and fonts for edge structure~|h|@>=
+mpfontencodings(last_fnum,(internal[prologues]=two));
+@<Embed fonts that are available@>
+
+@ @<Scan all the text nodes and mark the used ...@>=
+for f:=null_font+1 to last_fnum do begin
+  if font_sizes[f]<>null then begin
+    unmark_font(f);
+    font_sizes[f]:=null;
+    end;
+  if font_enc_name[f]<>0 then
+    delete_str_ref(font_enc_name[f]);
+  font_enc_name[f] := 0;
+end;
+for f:=null_font+1 to last_fnum do begin
+  p:=link(dummy_loc(h));
+  while p<>null do
+    begin if type(p)=text_code then
+      if font_n(p)<>null_font then begin
+        font_sizes[font_n(p)] := void;
+        mark_string_chars(font_n(p),text_p(p));
+	if hasfmentry(font_n(p)) then
+          font_ps_name[font_n(p)] := fm_font_name(font_n(p));
+        end;
+    p:=link(p);
+    end;
+end
+
+@ @<Update encoding names@>=
+for f:=null_font+1 to last_fnum do begin
+  p:=link(dummy_loc(h));
+  while p<>null do
+    begin if type(p)=text_code then
+      if font_n(p)<>null_font then
+	if hasfmentry(font_n(p)) then
+          if font_enc_name[font_n(p)]=0 then
+            font_enc_name[font_n(p)] := fm_encoding_name(font_n(p));
+    p:=link(p);
+    end;
+end
+
+@ @<Embed fonts that are available@>=
+begin next_size:=0;
+@<Make |cur_fsize| a copy of the |font_sizes| array@>;
+repeat done_fonts:=true;
+for f:=null_font+1 to last_fnum do
+  begin if cur_fsize[f]<>null then begin
+    if internal[prologues]=three then
+       if not dopsfont(f) then
+	  if hasfmentry(f) then begin
+            print_err("Font embedding failed");
+	    error;
+            end;
+    cur_fsize[f]:=link(cur_fsize[f]);
+    if cur_fsize[f]<>null then
+      begin unmark_font(f); done_fonts:=false; @+end
+    end;
+  end;
+  if not done_fonts then
+    @<Increment |next_size| and apply |mark_string_chars| to all text nodes with
+      that size index@>;
+  until done_fonts;
+end
+
 
 @ These special comments described in the {\sl PostScript Language Reference
 Manual}, 2nd.~edition are understood by some \ps-reading programs.
@@ -22466,41 +23637,61 @@ trouble.
 @:prologues_}{\&{prologues} primitive@>
 
 @<Print the prologue@>=
-begin if ldf<>null_font then
-  begin for f:=null_font+1 to last_fnum do
+begin
+if ldf<>null_font then begin
+  if internal[prologues]>0 then begin
+    for f:=null_font+1 to last_fnum do
     if font_sizes[f]<>null then
       begin ps_name_out(font_name[f],true);
       ps_name_out(font_ps_name[f],true);
       ps_print(" def");
       print_ln;
       end;
-  print("/fshow {exch findfont exch scalefont setfont show}bind def");
+    if internal[mpprocset]=0 then begin
+      print("/fshow {exch findfont exch scalefont setfont show}bind def");
+      print_ln;
+      end;
+    end;
+  end;
+if internal[mpprocset]>0 then begin
+  if (internal[prologues]>0)and(ldf<>null_font) then
+    print("/bd{bind def}bind def/fshow {exch findfont exch scalefont setfont show}bd")
+  else
+    print_nl("/bd{bind def}bind def");
+  @<Print the procset@>;
   print_ln;
   end;
 end
 
-@ Since we do not have a stack for the graphics state, it is considered
-completely unknown after the \.{grestore} from a stop clip object.  Procedure
-|unknown_graphics_state| needs a negative argument in this case.
-
-@<Cases for translating graphical object~|p| into \ps@>=
-start_clip_code:begin print_nl("gsave ");
+@ @<Cases for translating graphical object~|p| into \ps@>=
+start_clip_code:begin print_nl(""); print_cmd("gsave ","q ");
   ps_path_out(path_p(p));
-  ps_print(" clip");
+  ps_print_cmd(" clip"," W");
   print_ln;
+  if internal[restore_clip_color]>0 then
+    unknown_graphics_state(1);
   end;
-stop_clip_code:begin print_nl("grestore");
+stop_clip_code:begin print_nl(""); print_cmd("grestore","Q");
   print_ln;
-  unknown_graphics_state(-1);
+  if internal[restore_clip_color]>0 then
+    unknown_graphics_state(2)
+  else
+    unknown_graphics_state(-1);
   end;
 
 @ @<Cases for translating graphical object~|p| into \ps@>=
-fill_code: if pen_p(p)=null then ps_fill_out(path_p(p))
+fill_code: begin
+  if pen_p(p)=null then ps_fill_out(path_p(p))
   else if pen_is_elliptical(pen_p(p)) then stroke_ellipse(p,true)
   else begin do_outer_envelope(copy_path(path_p(p)), p);
     do_outer_envelope(htap_ypoc(path_p(p)), p);
     end;
-stroked_code: if pen_is_elliptical(pen_p(p)) then stroke_ellipse(p,false)
+  if (post_script(p))<>null then begin
+    print_nl (post_script(p)); print_ln;
+    end;
+  end;
+stroked_code: begin
+  if pen_is_elliptical(pen_p(p)) then stroke_ellipse(p,false)
   else begin q:=copy_path(path_p(p));
     t:=lcap_val(p);
     @<Break the cycle and set |t:=1| if path |q| is cyclic@>;
@@ -22508,6 +23699,10 @@ stroked_code: if pen_is_elliptical(pen_p(p)) then stroke_ellipse(p,false)
     ps_fill_out(q);
     toss_knot_list(q);
     end;
+  if (post_script(p))<>null then begin
+    print_nl (post_script(p)); print_ln;
+    end;
+  end;
 
 @ The envelope of a cyclic path~|q| could be computed by calling
 |make_envelope| once for |q| and once for its reversal.  We don't do this
@@ -22523,7 +23718,8 @@ if left_type(q)<>endpoint then
   end
 
 @ @<Cases for translating graphical object~|p| into \ps@>=
-text_code: if (font_n(p)<>null_font) and (length(text_p(p))>0) then
+text_code: begin
+  if (font_n(p)<>null_font) and (length(text_p(p))>0) then
   begin if internal[prologues]>0 then
     scf:=choose_scale(p)
   else scf:=indexed_size(font_n(p), name_type(p));
@@ -22534,6 +23730,10 @@ text_code: if (font_n(p)<>null_font) and (length(text_p(p))>0) then
   ps_name_out(font_name[font_n(p)],false);
   @<Print the size information and \ps\ commands for text node~|p|@>;
   print_ln;
+  end;
+  if (post_script(p))<>null then begin
+    print_nl (post_script(p)); print_ln;
+    end;
   end;
 
 @ @<Print the size information and \ps\ commands for text node~|p|@>=
@@ -22548,15 +23748,15 @@ if transformed then ps_print(" grestore")
 transformed:=(txx_val(p)<>scf)or(tyy_val(p)<>scf)or@|
   (txy_val(p)<>0)or(tyx_val(p)<>0);
 if transformed then
-  begin print("gsave [");
+  begin print_cmd("gsave [", "q [");
   ps_pair_out(make_scaled(txx_val(p),scf),@|make_scaled(tyx_val(p),scf));
   ps_pair_out(make_scaled(txy_val(p),scf),@|make_scaled(tyy_val(p),scf));
   ps_pair_out(tx_val(p),ty_val(p));@/
-  ps_print("] concat 0 0 moveto");
+  ps_print_cmd("] concat 0 0 ","] t 0 0");
   end
 else begin ps_pair_out(tx_val(p),ty_val(p));
-  ps_print("moveto");
   end;
+ps_print_cmd("moveto","m");
 print_ln
 
 @ Now that we've finished |ship_out|, let's look at the other commands
@@ -22961,6 +24161,8 @@ tini@/
 ready_already:=314159;
 start_of_MP: @<Initialize the output routines@>;
 @<Get the first line of input and prepare to start@>;
+mp_init_map_file;
+setjobid(internal[year],internal[month],internal[day],internal[time]);
 history:=spotless; {ready to go!}
 if start_sym>0 then {insert the `\&{everyjob}' symbol}
   begin cur_sym:=start_sym; back_input;
@@ -23219,6 +24421,14 @@ for postprocessing.
 @<Character |k| is not allowed in PostScript output@>=
   (k<=" ")or(k>"~")
 
+@ Saving the filename template
+
+@<Save the filename template@>=
+begin if filename_template<>0 then delete_str_ref(filename_template);
+if length(cur_exp)=0 then filename_template:=0
+else  begin filename_template:=cur_exp; add_str_ref(filename_template);
+  end;
+end
 @* \[48] System-dependent changes.
 This section should be replaced, if necessary, by any special
 modification of the program

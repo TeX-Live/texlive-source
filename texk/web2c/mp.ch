@@ -1,4 +1,4 @@
-% $Id: mp.ch,v 1.50 2005/06/22 17:06:13 olaf Exp $
+% $Id: mp.ch,v 1.8 2005/03/18 19:49:05 taco Exp $
 % mp.ch for C compilation with web2c.  Public domain.
 %
 % Derived from mf.ch and John Hobby's mp.ch (the change file for the C
@@ -549,51 +549,6 @@ end;
   (k<" ")or(k>"~")
 @y
   not xprn[k]
-@z
-
-% [4.66] Open the pool file using a path, and can't do string
-% assignments directly.  (`strcpy' and `strlen' work here because
-% `pool_name' is a constant string, and thus ends in a null and doesn't
-% start with a space.)
-@x
-name_of_file:=pool_name; {we needn't set |name_length|}
-if a_open_in(pool_file) then
-@y
-name_length := strlen (pool_name);
-name_of_file := xmalloc_array (ASCII_code, 1 + name_length);
-strcpy (stringcast(name_of_file+1), pool_name); {copy the string}
-if a_open_in (pool_file, kpse_mppool_format) then
-@z
-
-@x [4.66,67,68] Make `MP.POOL' lowercase in messages.
-else  bad_pool('! I can''t read MP.POOL.')
-@y
-else  bad_pool('! I can''t read ', pool_name, '; bad path?')
-@z
-@x
-begin if eof(pool_file) then bad_pool('! MP.POOL has no check sum.');
-@.MP.POOL has no check sum@>
-read(pool_file,m,n); {read two digits of string length}
-@y
-begin if eof(pool_file) then bad_pool('! ', pool_name, ' has no check sum.');
-@.MP.POOL has no check sum@>
-read(pool_file,m); read(pool_file,n); {read two digits of string length}
-@z
-@x
-    bad_pool('! MP.POOL line doesn''t begin with two digits.');
-@y
-    bad_pool('! ', pool_name, ' line doesn''t begin with two digits.');
-@z
-@x
-  bad_pool('! MP.POOL check sum doesn''t have nine digits.');
-@y
-  bad_pool('! ', pool_name, ' check sum doesn''t have nine digits.');
-@z
-@x
-done: if a<>@$ then bad_pool('! MP.POOL doesn''t match; TANGLE me again.');
-@y
-done: if a<>@$ then
-  bad_pool('! ', pool_name, ' doesn''t match; tangle me again (or fix the path).');
 @z
 
 @x [5.69] error_line is a variable, so can't be a subrange array bound
@@ -1819,12 +1774,13 @@ dump_int(@"57324D50);  {Web2C \MP's magic constant: "W2MP"}
 {Align engine to 4 bytes with one or more trailing NUL}
 x:=strlen(engine_name);
 base_engine:=xmalloc_array(text_char,x+4);
-strcpy(base_engine, engine_name);
+strcpy(stringcast(base_engine), engine_name);
 for k:=x to x+3 do base_engine[k]:=0;
 x:=x+4-(x mod 4);
 dump_int(x);dump_things(base_engine[0], x);
 libc_free(base_engine);@/
 dump_int(@$);@/
+dump_int(main_memory);@/
 @<Dump |xord|, |xchr|, and |xprn|@>;
 @z
 
@@ -1843,7 +1799,7 @@ if (x<0) or (x>256) then goto off_base; {corrupted base file}
 base_engine:=xmalloc_array(text_char, x);
 undump_things(base_engine[0], x);
 base_engine[x-1]:=0; {force string termination, just in case}
-if strcmp(engine_name, base_engine) then
+if strcmp(engine_name, stringcast(base_engine)) then
   begin wake_up_terminal;
   wterm_ln('---! ', stringcast(name_of_file+1), ' was written by ', base_engine);
   libc_free(base_engine);
@@ -1853,9 +1809,11 @@ libc_free(base_engine);
 undump_int(x);
 if x<>@$ then begin {check that strings are the same}
   wake_up_terminal;
-  wterm_ln('---! ', stringcast(name_of_file+1), ' doesn''t match ', pool_name);
+  wterm_ln('---! ', stringcast(name_of_file+1), ' doesn''t match pool strings');
   goto off_base;
 end;
+undump_int(x);
+if x<>main_memory then goto off_base;
 @<Undump |xord|, |xchr|, and |xprn|@>;
 undump_int(x);
 if x<>mem_min then goto off_base;
@@ -2003,7 +1961,10 @@ end;
 history:=spotless; {ready to go!}
 @y
 history:=spotless; {ready to go!}
-if troff_mode then @+internal[prologues]:=unity;
+if troff_mode then begin 
+  internal[troffmode]:=unity; 
+  internal[prologues]:=unity; 
+end;
 @z
 
 @x [46.1298] Call do_final_end.

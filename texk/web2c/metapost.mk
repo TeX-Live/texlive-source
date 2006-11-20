@@ -7,7 +7,8 @@
 
 Makefile: metapost.mk
 
-mpost = mpost
+metapost = mpost dvitomp
+mpostdir = mpdir
 
 # mpware is the subdirectory.
 mpware = mpware
@@ -17,10 +18,16 @@ mpware_sources = mpware/dmp.c mpware/makempx.in mpware/mpto.c mpware/newer.c
 # mpost
 
 mp_c = mpini.c mp0.c mp1.c mp2.c
-mp_o = mpini.o mp0.o mp1.o mp2.o mpextra.o
-mpost: $(mp_o)
-	$(kpathsea_link) $(mp_o) $(LOADLIBES)
-$(mp_c) mpcoerce.h mpd.h: mp.p $(web2c_texmf) web2c/cvtmf1.sed web2c/cvtmf2.sed
+mp_o = mpini.o mp0.o mp1.o mp2.o mpextra.o loadpool.o
+
+# this will break cross-compiles, but i dont know how to fix.
+# -- Taco 
+loadpool.c: mp.pool $(mpostdir)/makecpool
+	./$(mpostdir)/makecpool mp.pool mpdir/mplib.h > loadpool.c
+
+mpost: $(mp_o) $(mpostlibsdep)
+	$(kpathsea_link) $(mp_o) $(mpostlibs) $(LOADLIBES)
+$(mp_c) mpcoerce.h mpd.h: mp.p $(web2c_texmf) $(srcdir)/$(mpostdir)/mp.defines web2c/cvtmf1.sed web2c/cvtmf2.sed
 	$(web2c) mp
 mpextra.c: lib/texmfmp.c
 	sed s/TEX-OR-MF-OR-MP/mp/ $(srcdir)/lib/texmfmp.c >$@

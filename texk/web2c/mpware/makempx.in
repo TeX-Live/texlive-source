@@ -1,12 +1,12 @@
 #!/bin/sh
-# $Id: makempx.in,v 1.18 2005/06/22 17:33:26 olaf Exp $
+# $Id: makempx.in,v 1.7 2005/04/28 06:45:21 taco Exp $
 # Make an MPX file from the labels in a MetaPost source file,
 # using mpto and either dvitomp (TeX) or dmp (troff).
 # From John Hobby's original (though there's not much of it left by now).
 # Public domain.
 #
-#
-version=0.9
+# 
+version=0.99
 
 : ${DMP=dmp}
 : ${DVITOMP=dvitomp}
@@ -17,7 +17,7 @@ version=0.9
 : ${NEWER=newer}
 # This is oriented towards GNU roff: old value was
 # 'eqn -Tpost -d\$\$ | troff -Tpost'
-: ${TROFF='eqn -Tps -d\$\$ | troff -Tps'}
+: ${TROFF='soelim -k | eqn -Tps -d\$\$ | troff -Tps'}
 
 # convert relative path to absolute in $MAKEMPX_BINDIR:
 case "$MAKEMPX_BINDIR" in

@@ -482,6 +482,7 @@ trap-clean:
 # 
 # MetaPost
 kpse_include metapost.mk
+kpse_include mpdir/mpostlib.mk
 # 
 # TeX
 tex_c = texini.c tex0.c tex1.c tex2.c
@@ -1116,7 +1117,7 @@ installcheck:
 
 # 
 # Cleaning.
-all_subdirs = doc lib man $(mpware) web2c window $(omegafonts) $(otps) $(pdftexdir) $(pdfetexdir)
+all_subdirs = doc lib man $(mpware) web2c window $(omegafonts) $(otps) $(pdftexdir) $(pdfetexdir) $(mpostdir)
 
 # Having a multiple-target rule with the subdir loop fails because of
 # the dependencies introduced by clean.mk.  Yet, we want the

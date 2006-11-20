@@ -1,23 +1,5 @@
-% Copyright 1990 - 1995 by AT&T Bell Laboratories.
-
-% Permission to use, copy, modify, and distribute this software
-% and its documentation for any purpose and without fee is hereby
-% granted, provided that the above copyright notice appear in all
-% copies and that both that the copyright notice and this
-% permission notice and warranty disclaimer appear in supporting
-% documentation, and that the names of AT&T Bell Laboratories or
-% any of its entities not be used in advertising or publicity
-% pertaining to distribution of the software without specific,
-% written prior permission.
-
-% AT&T disclaims all warranties with regard to this software,
-% including all implied warranties of merchantability and fitness.
-% In no event shall AT&T be liable for any special, indirect or
-% consequential damages or any damages whatsoever resulting from
-% loss of use, data or profits, whether in an action of contract,
-% negligence or other tortious action, arising out of or in
-% connection with the use or performance of this software.
-
+% $Id: dvitomp.web,v 1.3 2005/04/28 06:45:21 taco Exp $
+% DVItoMP, by John Hobby.  Public domain.
 
 % Version 0 was prepared (March 1990).
 % Version 0.1 implemented virtual fonts. (May 1990)
@@ -83,7 +65,7 @@ an ``\.{MPX}'' file.
 The |banner| string defined here should be changed whenever \.{DVItoMP}
 gets modified.
 
-@d banner=='% Written by DVItoMP, Version 0.64'
+@d banner=='% Written by DVItoMP, Version 0.99'
   {the first line of the output file}
 
 @ This program is written in standard \PASCAL, except where it is necessary
@@ -733,7 +715,7 @@ begin for k:=font_name[f] to font_name[f+1]-1 do
 end;
 
 @ When we encounter a font definition, we save the name, checksum, and size
-information, but we don't actaully read the \.{TFM} or \.{VF} file until we
+information, but we don't actually read the \.{TFM} or \.{VF} file until we
 are about to use the font.  If a matching font is not already defined, we then
 allocate a new internal font number.
 
@@ -780,7 +762,7 @@ if font_name[nf]+n>name_size then
 font_name[nf+1]:=font_name[nf]+n;
 for k:=font_name[nf] to font_name[nf+1]-1 do names[k]:=get_byte
 
-@ The scaled size and design size are stored in \.{DVI} units divided by $2^20$.
+@ The scaled size and design size are stored in \.{DVI} units divided by $2^{20}$.
 The units for scaled size are a little different if we are reading a virtual
 font, but this will be corrected when the scaled size is used.  The scaled size
 also needs to be truncated to at most 23 significant bits in order to make
@@ -819,7 +801,7 @@ while f<nf do
     begin @<Compare the names of fonts |f| and |ff|; |goto 99| if they differ@>;
     if exact then
       begin if abs(font_scaled_size[f]-font_scaled_size[ff])
-          <= font_tolerance then 
+          <= font_tolerance then
         begin if not vf_reading then
           if local_only[f] then
             begin font_num[f]:=font_num[ff]; local_only[f]:=false;
@@ -1044,7 +1026,7 @@ worthwhile to slide everything down just to save a little space.
 
 @<Finish setting up the data structures for the new virtual font@>=
 fbase[f]:=vf_ptr+1;
-info_ptr:=info_base[f]+font_ec[f]
+info_ptr:=info_base[f]+font_ec[f]+1
 
 
 @* Loading fonts.
