@@ -8,15 +8,12 @@ kpse_include ../make/programs.mk
 man5dir = $(mandir)/man5
 
 SCRIPTS = \
-  allcm allneeded dvi2fax dvired fmtutil fontinst \
-  kpsetool kpsewhere pdfcrop ps2frag pslatex rubibtex rumakeindex \
-  texconfig texconfig-dialog texdoc texdoctk texexec texlinks updmap \
-  ps4pdf fmtutil-sys texconfig-sys updmap-sys
+  allcm allneeded dvi2fax dvired fmtutil fmtutil-sys fontinst \
+  kpsetool kpsewhere pdfcrop ps2frag ps4pdf pslatex rubibtex rumakeindex \
+  texconfig texconfig-dialog texconfig-sys texdoc texdoctk texexec \
+  texlinks thumbpdf updmap updmap-sys
 
 PDFSCRIPTS = a2ping e2pall epstopdf
-
-PERLWRAPPED = fdf2tan fdf2tex makempy texfind texfont texshow texutil \
-  thumbpdf
 
 manpgs = \
   allcm allec allneeded dvi2fax dvired e2pall epstopdf fdf2tex fontinst \
@@ -101,10 +98,6 @@ install-exec:
 	  ln -s kpsetool kpsepath; \
 	  ln -s kpsetool kpsexpand; \
 	  ln -s mktexlsr texhash
-	cd $(scriptdir); rm -f $(PERLWRAPPED); \
-	  for f in $(PERLWRAPPED); do \
-	    ln -s texexec $$f; \
-	  done
 	cd $(scriptdir); rm -f mktexfmt; ln -s fmtutil mktexfmt
 
 kpse_include ../make/clean.mk
