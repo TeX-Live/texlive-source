@@ -15,6 +15,11 @@ SCRIPTS = \
 
 PDFSCRIPTS = a2ping e2pall epstopdf
 
+CONTEXTSCRIPTS = \
+  ctxtools exatools luatools makempy mpstools mptopdf mtxtools \
+  pdftools pstopdf rlxtools runtools texexec texfont texmfstart \
+  textools texutil tmftools xmltools
+
 manpgs = \
   allcm allec allneeded dvi2fax dvired e2pall epstopdf fdf2tex fontinst \
   kpsetool kpsewhere makempy mkocp mkofm ofm2opl opl2ofm otp2ocp outocp \
@@ -85,6 +90,9 @@ install-exec:
 	-$(SHELL) $(srcdir)/../mkinstalldirs $(scriptdir)
 	for s in $(SCRIPTS); do \
 	  $(INSTALL_SCRIPT) $(srcdir)/$$s $(scriptdir)/$$s; \
+	done
+	for s in $(CONTEXTSCRIPTS); do \
+	  $(INSTALL_SCRIPT) $(srcdir)/context/$$s $(scriptdir)/$$s; \
 	done
 	if test -f $(bindir)/pdfetex; then \
 	  for s in $(PDFSCRIPTS); do \
