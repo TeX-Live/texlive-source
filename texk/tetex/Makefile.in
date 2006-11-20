@@ -9,14 +9,14 @@ man5dir = $(mandir)/man5
 
 SCRIPTS = \
   allcm allneeded dvi2fax dvired fmtutil fontinst \
-  kpsetool kpsewhere ps2frag pslatex rubibtex rumakeindex \
+  kpsetool kpsewhere pdfcrop ps2frag pslatex rubibtex rumakeindex \
   texconfig texconfig-dialog texdoc texdoctk texexec texlinks updmap \
   ps4pdf fmtutil-sys texconfig-sys updmap-sys
 
 PDFSCRIPTS = a2ping e2pall epstopdf
 
 PERLWRAPPED = fdf2tan fdf2tex makempy texfind texfont texshow texutil \
-  thumbpdf pdfcrop uniqleaf
+  thumbpdf uniqleaf
 
 manpgs = \
   allcm allec allneeded dvi2fax dvired e2pall epstopdf fdf2tex fontinst \
