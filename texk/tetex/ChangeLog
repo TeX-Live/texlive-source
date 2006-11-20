@@ -1,3 +1,8 @@
+2006-11-20  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (CONTEXTSCRIPTS): new variable.
+	(context): new subdir of stubs, updated from Hans' releases.
+
 2006-11-14  Karl Berry  <karl@tug.org>
 
 	* updmap (normalizeLines): remove CR characters (for skaknew), so
