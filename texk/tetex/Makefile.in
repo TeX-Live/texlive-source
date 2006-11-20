@@ -16,7 +16,7 @@ SCRIPTS = \
 PDFSCRIPTS = a2ping e2pall epstopdf
 
 PERLWRAPPED = fdf2tan fdf2tex makempy texfind texfont texshow texutil \
-  thumbpdf uniqleaf
+  thumbpdf
 
 manpgs = \
   allcm allec allneeded dvi2fax dvired e2pall epstopdf fdf2tex fontinst \
