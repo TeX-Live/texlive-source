@@ -23,11 +23,12 @@
  *  gets modified.
  */
 
-char *banner="% Written by DMP, Version 0.99";	/* first line of output */
-char *term_banner="This is DMP, Version 0.99";
+char *banner="% Written by DMP, Version 0.991";	/* first line of output */
+char *term_banner="This is DMP, Version 0.991";
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include <ctype.h>
 
@@ -802,13 +803,34 @@ void stop_picture(void)
 char specintro[] = "vardef ";		/* MetaPost name follows this */
 #define speci 7				/* length of the above string */
 
+/* TH: A bit of trickery is added here for case-insensitive 
+   file systems. This aliasing allows the CHARLIB directory
+   to exist on DVDs, for example.
+   It is a hack, I know. I've stuck to  names on TeXLive.
+*/
+
+#define test_redo_search  	  if ((c=getc(deff))==EOF)  \
+		deff = fsearch(cname, "", CHARLIB_TYPE);        \
+	    else ungetc(c,deff)
+
+
 int copy_spec_char(char *cname)
 {
     int k = 0;				/* how much of specintro so far */
     FILE *deff;
     int c, s;
-
-    deff = fsearch(cname, "", CHARLIB_TYPE);
+	if (strcmp(cname,"ao") == 0) {
+	  deff = fsearch("ao.x", "", CHARLIB_TYPE);
+	  test_redo_search;
+	} else if (strcmp(cname,"lh") == 0) {
+	  deff = fsearch("lh.x", "", CHARLIB_TYPE);
+	  test_redo_search;
+	} else if (strcmp(cname,"~=") == 0) {
+	  deff = fsearch("twiddle", "", CHARLIB_TYPE);
+	  test_redo_search;
+	} else {
+	  deff = fsearch(cname, "", CHARLIB_TYPE);
+	}
     while (k<speci) {
 	if ((c=getc(deff))==EOF)
 	    quit("No vardef in charlib/",cname,"");
