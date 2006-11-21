@@ -1,44 +1,41 @@
-/* $Id: dmp.c,v 1.17 2005/06/22 17:31:43 olaf Exp $
+/* $Id: dmp.c,v 1.14 2005/08/24 10:54:02 taco Exp $
+   Public domain.  */
+
+/* dmp x
  *
- * Public domain.
+ * This program reads device-independent troff output files,
+ * and converts them into a symbolic form understood by MetaPost.  Some
+ * of the code was borrowed from DVItoMP.  It understands all the D? graphics
+ * functions that dpost does but it ignores `x X' device control functions
+ * such as `x X SetColor:...', `x X BeginPath:', and `x X DrawPath:...'.
  *
- * Previous versions of this file were copyright 1990 - 1995 by AT&T
- * Bell Laboratories.  It has since been put into the public domain.
- *
- * John Hobby wrote the original version, which has since been
- * modified by several other people.
+ * The output file is a sequence of MetaPost picture expressions, one for every
+ * page in the input file.  It makes no difference where the input file comes
+ * from, but it is intended to process the result of running eqn and troff on
+ * the output of MPtoTR.  Such a file contains one page for every btex...etex
+ * block in the original input.  This program then creates a corresponding
+ * sequence of MetaPost picture expressions for use as an auxiliary input file.
+ * Since MetPost expects such files to have the extension .mpx, the output
+ * is sometimes called an `mpx' file.
  */
 
-/* This program reads device-independent troff output files,
-   and converts them into a symbolic form understood by MetaPost.  Some
-   of the code was borrowed from DVItoMP.  It understands all the D? graphics
-   functions that dpost does but it ignores `x X' device control functions
-   such as `x X SetColor:...', `x X BeginPath:', and `x X DrawPath:...'.
+/*  The |banner| string defined here should be changed whenever this program
+ *  gets modified.
+ */
 
-   The output file is a sequence of MetaPost picture expressions, one for every
-   page in the input file.  It makes no difference where the input file comes
-   from, but it is intended to process the result of running eqn and troff on
-   the output of MPtoTR.  Such a file contains one page for every btex...etex
-   block in the original input.  This program then creates a corresponding
-   sequence of MetaPost picture expressions for use as an auxiliary input file.
-   Since MetPost expects such files to have the extension .mpx, the output
-   is sometimes called an `mpx' file.
+char *banner="% Written by DMP, Version 0.99";	/* first line of output */
+char *term_banner="This is DMP, Version 0.99";
 
-   The |banner| string defined here should be changed whenever this program
-   gets modified.
-*/
-char *banner="% Written by DMP, Version 0.64";	/* first line of output */
-char *term_banner="This is DMP, Version 0.64";
-
-#include "config.h"
-#include <kpathsea/c-proto.h>
-#include <kpathsea/tex-file.h>
-#include <kpathsea/c-ctype.h>
-#include <kpathsea/c-pathch.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
+#include <ctype.h>
 
-/* From ../cpascal.h */
-extern void printversionandexit P3H(const_string, const_string, const_string);
+#include "dmp.h"
+
+#ifndef NULL
+#define NULL ((char*) 0)
+#endif
 
 #ifndef PI
 #define PI  3.14159265358979323846
@@ -48,11 +45,11 @@ extern void printversionandexit P3H(const_string, const_string, const_string);
 #define FCOUNT	100	/* maximum number of fonts */
 #define SHIFTS	100	/* maximum number of characters with special shifts */
 #define line_length 79	/* maximum output line length (must be at least 60) */
-#define Hprime	2459	/* much bigger than max(chars/font,fonts/job) */
-#define MAXCHARS 2048	/* character codes fall in the range 0..MAXCHARS-1 */
+#define Hprime	307	/* much bigger than max(chars/font,fonts/job) */
+#define MAXCHARS 256	/* character codes fall in the range 0..MAXCHARS-1 */
 #define LLENGTH 1024	/* one more than maximum line length for troff output */
 
-#define is_specchar(c)	(c<=2)	/* does charcode c identify a special char? */
+#define is_specchar(c)	(!gflag && (c)<=2)	/* does charcode c identify a special char? */
 #define LWscale	0.03	/* line width for graphics as a fraction of pointsize */
 #define YCORR 12.0	/* V coordinate of reference point in (big) points */
 
@@ -83,26 +80,24 @@ float Xslant;			/* degrees additional slant for all fonts */
 float Xheight;			/* yscale fonts to this height if nonzero */
 char *dbname = "trfonts.map";	/* file for table of troff & TFM font names */
 char *adjname = "trchars.adj";	/* file for character shift amounts */
-#define tfmpath kpse_tfm_format
-#define dbpath kpse_mpsupport_format
-#define trpath kpse_troff_font_format
 int lnno = 0;			/* line num. in troff output file (our input) */
+float sizescale;		/* groff font size scaling factor */
+int gflag = 0;			/* non-zero if using groff fonts */
 
-
-void quit P3C(char*,msg1,char*,msg2,char*,msg3)
+void quit(char *msg1, char *msg2, char *msg3) 
 {
     fprintf(stderr,"DMP abort at troff output line %d:\n%s%s%s\n",
 	lnno, msg1, msg2, msg3);
     exit(1);
 }
 
-void warn P3C(char*,msg1,char*,msg2,char*,msg3)
+void warn(char *msg1, char *msg2, char *msg3) 
 {
     fprintf(stderr,"DMP warning at troff output line %d:\n%s%s%s\n",
 	lnno, msg1, msg2, msg3);
 }
 
-void add_to_pool P1C(char,c)
+void add_to_pool(char c)
 {
     if (poolsize==POOLMAX) quit("Need to increase POOLMAX","","");
     else strpool[poolsize++] = c;
@@ -123,7 +118,7 @@ typedef struct hcell {
 #define new_htab   (Hcell*) calloc((unsigned)Hprime, (unsigned)sizeof(Hcell))
 
 
-int hash P1C(char*,s)
+int hash(char *s)
 {
     register int r;
     for(r=0; *s!=0; s++) {
@@ -145,7 +140,7 @@ int hash P1C(char*,s)
 */
 Hcell *failure;			/* null unless last hfind failed (used below) */
 
-int *hfind P2C(char*,s,Hcell*,htab)
+int *hfind(char *s, Hcell* htab)
 {
     register Hcell *p;
     register int cnt = Hprime;
@@ -171,32 +166,11 @@ int *hfind P2C(char*,s,Hcell*,htab)
 
 /* If the last hfind() failed, undo the insertion and return zero (FALSE).
 */
-int hfound()
+int hfound(void)
 {
     if (failure==(Hcell *)0) return 1;
     failure->lab = NULL;
     return 0;
-}
-
-
-
-/**************************************************************
-			Search Paths
-***************************************************************/
-
-FILE *fsearch P3C(char*,nam, char*,ext, kpse_file_format_type,format)
-{
-    FILE *f = NULL;
-    
-    string fname = kpse_find_file (nam, format, true);
-    const_string mode = kpse_format_info[format].binmode
-                        ? FOPEN_RBIN_MODE
-                        : FOPEN_R_MODE;
-    if (fname) {
-      f = xfopen (fname, mode);
-    }
-    if (f==NULL) quit("Cannot find ",nam,ext);
-    return f;
 }
 
 
@@ -212,7 +186,7 @@ FILE *fsearch P3C(char*,nam, char*,ext, kpse_file_format_type,format)
 char *arg_tail;	  /* char after the number just gotten; NULL on failure */
 
 
-int get_int P1C(char *,s)
+int get_int(char *s)
 {
     register int i, d, neg;
     if (s==NULL) goto bad;
@@ -233,7 +207,7 @@ bad:arg_tail = NULL;
        a 0 it will be interpreted as octal; if it starts with  0x
        or 0X it will be intepreted as hexadecimal.
 */
-int get_int_map P1C(char *,s)
+int get_int_map (char *s)
 {
     register int i;
     if (s==NULL) goto bad;
@@ -249,7 +223,7 @@ bad:arg_tail = NULL;
    number is not being used for character positioning.  (For non-PostScript
    applications h and v are usually in pixels and should be integers.)
 */
-float get_float P1C(char *,s)
+float get_float(char *s)
 {
     register int d, neg, digits;
     register float x, y;
@@ -287,7 +261,7 @@ float get_float P1C(char *,s)
    used anyway - thus just skip the value,
    eat all non-space chars.
 */
-float get_float_map P1C(char *,s)
+float get_float_map (char *s)
 {
     if (s!=NULL) {
         while (isspace(*s))
@@ -310,14 +284,14 @@ float get_float_map P1C(char *,s)
    PostScript name. ("\t" means one or more tabs.)
 */
 
-void read_fmap P1C(char*,dbase)
+void read_fmap( char *dbase)
 {
     FILE *fin;
     int c;			/* last character read */
     char *nam;			/* a font name being read */
 
     nfonts = 0;
-    fin = fsearch(dbase,"",dbpath);
+    fin = fsearch(dbase,"",DB_TYPE);
     trfonts = new_htab;
     while ((c=getc(fin))!=EOF) {
 	if (nfonts==FCOUNT) quit("Need to increase FCOUNT","","");
@@ -354,13 +328,13 @@ void read_fmap P1C(char*,dbase)
    becomes redundant.  Simply keeping an empty "trchars.adj" file
    around will do fine without requiring any changes to this program.
 */
-void read_char_adj P1C(char*,adjfile)
+void read_char_adj(char *adjfile)
 {
     FILE* fin;
     char buf[200];
     int i;
 
-    fin = fsearch(adjfile, "", dbpath);
+    fin = fsearch(adjfile, "", DB_TYPE);
     for (i=0; i<nfonts; i++)
 	shiftbase[i] = 0;
     while (fgets(buf,200,fin)!=NULL) {
@@ -383,6 +357,73 @@ void read_char_adj P1C(char*,adjfile)
     fclose(fin);
 }
 
+/* Read the DESC file of the troff device to gather information
+   about sizescale and whether running under groff.
+*/
+void read_desc(void)
+{
+    /* Ignore all commands not specially handled. This relieves
+       of collecting commands without arguments here and also
+       makes the program more robust in case of future DESC
+       extensions.
+    */
+    const char* const k1[] = {
+	"res", "hor", "vert", "unitwidth", "paperwidth",
+	"paperlength", "biggestfont", "spare2", "encoding",
+	NULL
+    };
+    const char* const g1[] = {
+	"family", "paperheight", "postpro", "prepro",
+	"print", "image_generator", "broken",
+	NULL
+    };
+    char cmd[200];
+    FILE* fp;
+    int i, n;
+
+    fp = fsearch("DESC", "", TRFONTS_TYPE);
+    while (fscanf(fp, "%199s", cmd)!=EOF) {
+	if (*cmd=='#') {
+	    while ((i = getc(fp))!=EOF && i!='\n');
+	    continue;
+	}
+	if (strcmp(cmd, "fonts")==0) {
+	    if (fscanf(fp, "%d", &n)!=1)
+		return;
+	    for (i = 0; i < n; i++)
+		if (fscanf(fp, "%*s")==EOF)
+		    return;
+	} else if (strcmp(cmd, "sizes")==0) {
+	    while (fscanf(fp, "%d", &n)==1 && n!=0);
+	} else if (strcmp(cmd, "styles")==0 ||
+		strcmp(cmd, "papersize")==0) {
+	    gflag++;
+	    while ((i = getc(fp))!=EOF && i!='\n');
+	} else if (strcmp(cmd, "sizescale")==0) {
+	    if (fscanf(fp, "%d", &n)==1)
+		sizescale = n;
+	    gflag++;
+	} else if (strcmp(cmd, "charset")==0) {
+	    return;
+	} else {
+	    for (i = 0; k1[i]; i++)
+		if (strcmp(cmd, k1[i])==0) {
+		    if (fscanf(fp, "%*s")==EOF)
+			return;
+		    break;
+		}
+	    if (k1[i]==0)
+		for (i = 0; g1[i]; i++)
+		    if (strcmp(cmd, g1[i])==0) {
+			if (fscanf(fp, "%*s")==EOF)
+			    return;
+			gflag = 1;
+			break;
+		    }
+	}
+    }
+}
+
 
 /**************************************************************
 			Reading Font Files
@@ -395,7 +436,7 @@ void read_char_adj P1C(char*,adjfile)
    because the latter source reflects alterations made only by dpost (the
    troff output driver that is bypassed when using MetaPost).
 */
-void read_tfm P1C(int, f)
+void read_tfm(int f)
 {
     FILE* tf;
     long a = 0;
@@ -404,7 +445,7 @@ void read_tfm P1C(int, f)
     int i, j;
     long wtmp;		/* needed to a floating exception on certain machines */
 
-    tf = fsearch(texname[f], ".tfm", tfmpath);
+    tf = fsearch(texname[f], ".tfm", TEXFONTS_TYPE);
     for (i=0; i<5; i++) {
 	sizes[i] = getc(tf);
 	sizes[i] = (sizes[i]<<8) | (getc(tf) & 0377);
@@ -449,7 +490,7 @@ void read_tfm P1C(int, f)
    2. The `charcode' field parsed by "lastcode = get_int(arg_tail);"
       may be given either in decimal, octal, or hexadecimal format.
 */
-int scan_desc_line P2C(int,f, char*,lin)
+int scan_desc_line(int f, char *lin)
 {
     static int lastcode;
     char *s;
@@ -459,23 +500,24 @@ int scan_desc_line P2C(int,f, char*,lin)
 	add_to_pool(*lin++);
     add_to_pool('\0');
     while (*lin==' ' || *lin=='\t') lin++;
-    if (*lin=='"')
-	*hfind(s,charcodes[f]) = lastcode;
-    else {
-	(void) get_float_map(lin);
-	(void) get_int(arg_tail);
-	lastcode = get_int_map(arg_tail);
-	if (arg_tail==NULL) return 0;
-	*hfind(s,charcodes[f]) = lastcode;
-	if (lastcode<0 || lastcode>=MAXCHARS) return 0;
-    }
+    if (*lin=='"') {
+        if (lastcode<MAXCHARS)
+        *hfind(s,charcodes[f]) = lastcode;
+    } else {
+        (void) get_float_map(lin);
+        (void) get_int(arg_tail);
+        lastcode = get_int_map(arg_tail);
+        if (arg_tail==NULL) return 0;
+        if (lastcode<MAXCHARS)
+           *hfind(s,charcodes[f]) = lastcode;
+    } 
     return 1;
 }
 
 /* Read the font description file for the font with the given troff name
    and update the data structures.  The result is the internal font number.
 */
-int read_fontdesc P1C(char*,nam)
+int read_fontdesc(char *nam) /* troff name */
 {
     char buf[200];
     FILE* fin;			/* input file */
@@ -485,7 +527,7 @@ int read_fontdesc P1C(char*,nam)
     f = *hfind(nam, trfonts);
     if (!hfound())
 	quit("Font was not in map file","","");
-    fin = fsearch(nam, "", trpath);
+    fin = fsearch(nam, "", TRFONTS_TYPE);
     for (;;) {
 	if (fgets(buf,200,fin)==NULL)
 	    quit("Description file for ",nam," ends unexpectedly");
@@ -537,7 +579,7 @@ int print_col = 0;	/* there are at most this many characters on the current line
 /* To print a string on the MPX file, initialize print_col, ensure that
    state=initial, and pass the characters one-at-a-time to print_char.
 */
-void print_char P1C(char,cc)
+void print_char(char cc)
 {
     int printable;	/* nonzero if it is safe to print c */
     int l;		/* number of chars in c or the `char' expression */
@@ -582,7 +624,7 @@ void print_char P1C(char,cc)
 /* The end_char_string procedure gets the string ended properly and ensures
    that there is room for |l| more characters on the output line.
 */
-void end_char_string P1C(int, l)
+void end_char_string(int l)
 {
     while (state>special) {
 	putc('"',mpxf);
@@ -614,7 +656,7 @@ float str_size;			/* point size for this text string */
 /* Before using any fonts we need to define a MetaPost macro for typesetting
    character strings.
 */
-void prepare_font_use()
+void prepare_font_use(void)
 {
     int k;
 
@@ -629,7 +671,7 @@ void prepare_font_use()
 /* Do what is necessary when the font with internal number f is used for the
    first time on a page.
 */
-void first_use P1C(int,f)
+void first_use(int f)
 {
     font_used[f] = 1;
     fprintf(mpxf, "n%d=\"%s\";\n", font_num[f], texname[f]);
@@ -639,7 +681,7 @@ void first_use P1C(int,f)
 /* Print any transformations required by the current Xslant and Xheight
    settings.
 */
-void slant_and_ht()
+void slant_and_ht(void)
 {
     int i = 0;
 
@@ -658,7 +700,7 @@ void slant_and_ht()
 /* We maintain the invariant that str_f is -1 when there is no output string
    under construction.
 */
-void finish_last_char()
+void finish_last_char(void)
 {
     float m,x,y;	/* font scale, MetaPost coords of reference point */
 
@@ -681,7 +723,7 @@ void finish_last_char()
 
 /* Output character number c in the font with internal number f.
 */
-void set_num_char P2C(int,f,int,c)
+void set_num_char(int f,int c)
 {
     float hh, vv;		/* corrected versions of h, v */
     int i;
@@ -694,7 +736,7 @@ void set_num_char P2C(int,f,int,c)
 	    vv += (cursize/unit)*shiftv[i];
 	    break;
 	}
-    if (c==0) quit("attempt to typeset an invalid character","","");
+    /* if (c==0) quit("attempt to typeset an invalid character","",""); */
     if (hh-str_h2>=1.0 || str_h2-hh>=1.0 || vv-str_v>=1.0 || str_v-vv>=1.0
 	    || f!=str_f || cursize!=str_size) {
 	if (str_f>=0) finish_last_char();
@@ -712,7 +754,7 @@ void set_num_char P2C(int,f,int,c)
 }
 
 /* Output a string. */
-void set_string P1C(char*,cname)
+void set_string (char *cname)
 {
     float hh;  /* corrected version of h, current horisontal position */
 
@@ -730,7 +772,7 @@ void set_string P1C(char*,cname)
 
 /* The following initialization and clean-up is required.
 */
-void start_picture()
+void start_picture(void)
 {
     fonts_used = graphics_used = 0;
     str_f = -1;
@@ -740,7 +782,7 @@ void start_picture()
     fprintf(mpxf,"begingroup save C,D,p,s,n; picture p; p=nullpicture;\n");
 }
 
-void stop_picture()
+void stop_picture(void)
 {
     if (str_f>=0) finish_last_char();
     fprintf(mpxf,"p endgroup\n");
@@ -760,23 +802,22 @@ void stop_picture()
 char specintro[] = "vardef ";		/* MetaPost name follows this */
 #define speci 7				/* length of the above string */
 
-int copy_spec_char P1C(char*,cname)
+int copy_spec_char(char *cname)
 {
     int k = 0;				/* how much of specintro so far */
     FILE *deff;
     int c, s;
 
-    deff = fsearch(concat3("charlib",DIR_SEP_STRING,cname), "", dbpath);
+    deff = fsearch(cname, "", CHARLIB_TYPE);
     while (k<speci) {
 	if ((c=getc(deff))==EOF)
-	    quit("No vardef in ",concat3("charlib",DIR_SEP_STRING,cname),"");
+	    quit("No vardef in charlib/",cname,"");
 	putc(c, mpxf);
 	if (c==specintro[k]) k++; else k=0;
     }
     s = poolsize;
     while ((c=getc(deff))!='(') {
-	if (c==EOF) quit("vardef in ",concat3("charlib",DIR_SEP_STRING,cname),
-			 " has no arguments");
+	if (c==EOF) quit("vardef in charlib/",cname," has no arguments");
 	putc(c, mpxf);
 	add_to_pool(c);
     }
@@ -795,7 +836,7 @@ int copy_spec_char P1C(char*,cname)
 */
 Hcell *spec_tab = (Hcell*)0;
 
-void set_char P1C(char*,cname)
+void set_char(char *cname)
 {
     int f, c, *flagp;
 
@@ -835,7 +876,7 @@ out:if (!is_specchar(c)) set_num_char(f,c);
 /* Mount the font with troff name nam at external font number n and read any
    necessary font files.
 */
-void do_font_def P2C(int,n, char*,nam)
+void do_font_def(int n, char *nam)
 {
     int f, k;
 
@@ -862,7 +903,7 @@ void do_font_def P2C(int,n, char*,nam)
 /* Given the control points of a cubic Bernstein polynomial, evaluate
    it at t.
 */
-float Beval P2C(float*,xx, float, t)
+float Beval(float *xx, float t)
 {
     float zz[4];
     register int i, j;
@@ -881,7 +922,7 @@ float Beval P2C(float*,xx, float, t)
 float xx[4] = {1.0, 1.0, 0.8946431597, 0.7071067812};
 float yy[4] = {0.0, 0.2652164899, 0.5195704026, 0.7071067812};
 
-float circangle P1C(float,t)
+float circangle(float t)
 {
     float ti;
 
@@ -894,7 +935,7 @@ float circangle P1C(float,t)
 /* Find the spline parameter where `makepath pencircle' comes closest to
    (cos(a)/2,sin(a)/2).
 */
-float circtime P1C(float,a)
+float circtime(float a)
 {
     int i;
     float t;
@@ -912,7 +953,7 @@ float circtime P1C(float,a)
 
 float gx, gy;		/* current point for graphics (init. (h,YCORR/unit-v) */
 
-void prepare_graphics()
+void prepare_graphics(void)
 {
     fprintf(mpxf,"vardef D(expr d)expr q =\n");
     fprintf(mpxf," addto p doublepath q withpen pencircle scaled d; enddef;\n");
@@ -925,7 +966,7 @@ void prepare_graphics()
    of the string s or NULL if nothing could be read from s, it provides the
    argument for the next iteration.
 */
-char *do_line P1C(char*,s)
+char *do_line(char *s)
 {
     float dh, dv;
 
@@ -947,7 +988,7 @@ char *do_line P1C(char*,s)
    terminate the iteration by printing last time's ending point and returning
    NULL.
 */
-char * spline_seg P1C(char*,s)
+char * spline_seg(char *s)
 {
     float dh1, dv1, dh2, dv2;
 
@@ -970,7 +1011,7 @@ char * spline_seg P1C(char*,s)
 
 /* Draw an ellipse with the given major and minor axes.
 */
-void do_ellipse P2C(float,a, float,b)
+void do_ellipse(float a, float b)
 {
     fprintf(mpxf, "makepath(pencircle xscaled %.3f\n yscaled %.3f",
 	a*unit, b*unit);
@@ -982,7 +1023,7 @@ void do_ellipse P2C(float,a, float,b)
 /* Draw a counter-clockwise arc centered at (cx,cy) with initial and final radii
    (ax,ay) and (bx,by) respectively.
 */
-void do_arc P6C(float,cx, float,cy, float,ax, float,ay, float,bx, float,by)
+void do_arc(float cx, float cy, float ax, float ay, float bx, float by)
 {
     float t1, t2;
 
@@ -1000,7 +1041,7 @@ void do_arc P6C(float,cx, float,cy, float,ax, float,ay, float,bx, float,by)
 
 /* string s is everything following the initial `D' in a troff graphics command.
 */
-void do_graphic P1C(char*,s)
+void do_graphic(char *s)
 {
     float h1, v1, h2, v2;
     finish_last_char();
@@ -1062,7 +1103,7 @@ void do_graphic P1C(char*,s)
 		Interpreting Troff Output
 ***************************************************************/
 
-void change_font P1C(int,f)
+void change_font(int f)
 {
     for (curfont=0; curfont<nfonts; curfont++)
 	if (font_num[curfont]==f) return;
@@ -1073,7 +1114,7 @@ void change_font P1C(int,f)
 /* String s0 is everything following the initial `x' in a troff device control
    command.  A zero result indicates a stop command.
 */
-int do_x_cmd P1C(char *,s0)
+int do_x_cmd(char *s0)
 {
     float x;
     int n;
@@ -1109,8 +1150,10 @@ int do_x_cmd P1C(char *,s0)
                argument to the x Height command is also in scaled points.
                sizescale for groff devps is 1000
         */
-	if(unit != 0.0) Xheight *= unit;
-	else Xheight /= 1000.0;
+	if (sizescale) {
+	    if(unit != 0.0) Xheight *= unit;	/* ??? */
+	    else Xheight /= sizescale;
+	}
 	if (Xheight==cursize) Xheight=0.0;
 	break;
     case 'S':
@@ -1140,7 +1183,7 @@ int do_x_cmd P1C(char *,s0)
    must be disabled by removing the line "tcommand" from the DESC file
    in the $(prefix)/lib/groff/devps directory.
 */
-int do_page()
+int do_page(void)
 {
     char buf[LLENGTH];
     char a, *c, *cc;
@@ -1167,8 +1210,10 @@ int do_page()
                        points.
                    sizescale for groff devps is 1000
 		*/
-		if (unit != 0.0) cursize *= unit;
-		else cursize /= 1000.0;
+		if (sizescale) {
+		    if (unit != 0.0) cursize *= unit;	/* ??? */
+		    else cursize /= sizescale;
+		}
 		goto iarg;
 	    case 'f':
 		change_font(get_int(c+1));
@@ -1259,9 +1304,8 @@ int do_page()
 			Main Program
 ***************************************************************/
 
-void dmp_usage P2C(char*,name, int,status)
+void usage (char *name, int status)
 {
-    extern KPSEDLL char *kpse_bug_address;
     FILE *f = status == 0 ? stdout : stderr;
     fputs ("Usage: dmp [OPTION]... DITROFFFILE [MPXFILE]\n\
   Translate DITROFFFILE to the MetaPost MPXFILE or standard output.\n\
@@ -1269,30 +1313,33 @@ void dmp_usage P2C(char*,name, int,status)
 --help      display this help and exit\n\
 --version   output version information and exit\n", f);
     putc ('\n', f);
-    fputs ("Email bug reports to metapost@tug.org.\n", f);
+	fputs ("Email bug reports to metapost@tug.org.\n", f);
     exit(status);
 }
 
-int main P2C(int, argc, char**, argv)
+
+int main(int argc, char **argv)
 {
     int more;
 
+    fsearch_init();
     trf = stdin;
     mpxf = stdout;
-
-    kpse_set_progname (argv[0]);
-
     if (argc == 1) {
       fputs ("dmp: Need one or two file arguments.\n", stderr);
       fputs ("Try `dmp --help' for more information.\n", stderr);
       exit(1);
-    } else if (argc > 1 && strcmp (argv[1], "--help") == 0) {
-      dmp_usage (argv[0], 0);
-    } else if (argc > 1 && strcmp (argv[1], "--version") == 0) {
-      printversionandexit (term_banner,
-                           "AT&T Bell Laboratories", "John Hobby");
+    } else if (argc > 1 && (strcmp (argv[1], "--help") == 0
+                            || strcmp (argv[1], "-help") == 0)) {
+      usage (argv[0], 0);
+    } else if (argc > 1 && (strcmp (argv[1], "--version") == 0
+                            || strcmp (argv[1], "-version") == 0)) {
+	  fputs (term_banner,stdout);
+	  fputs ("\nThis program is in the public domain.\n\
+Primary author of dmp: John Hobby.\n", stdout);
+	  exit (0);
     }
-    if (argc>3) dmp_usage(argv[0], 1);
+    if (argc>3) usage(argv[0], 1);
     if (argc>1) {
 	trf = fopen(argv[1], "r");
 	if (trf==(FILE*)0) {
@@ -1310,8 +1357,10 @@ int main P2C(int, argc, char**, argv)
 	}
     }
     fprintf(mpxf, "%s\n", banner);
+    read_desc();
     read_fmap(dbname);
-    read_char_adj(adjname);
+    if (!gflag)
+      read_char_adj(adjname);
     if (do_page()) {
 	do {
 	    h=0; v=0;
@@ -1322,5 +1371,6 @@ int main P2C(int, argc, char**, argv)
 	    fprintf(mpxf,"mpxbreak\n");
 	} while (more);
     }
-    return 0;
+    exit(0);
 }
+
