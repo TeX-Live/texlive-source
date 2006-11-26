@@ -1,4 +1,4 @@
-/* -*- mode: c; c-basic-offset: 8 -*- */
+/* -*- mode: c; c-basic-offset: 8; related-file-name: "../include/lcdf/md5.h" -*- */
 /* md5.c - MD5 Message-Digest Algorithm
  *	Copyright (C) 1995, 1996, 1998, 1999 Free Software Foundation, Inc.
  *
@@ -38,8 +38,7 @@
 #include <string.h>
 #include <assert.h>
 #include <lcdf/inttypes.h>
-
-#include "md5.h"
+#include <lcdf/md5.h>
 
 #ifdef __cplusplus
 extern "C" {

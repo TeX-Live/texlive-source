@@ -1,6 +1,6 @@
 /* t1lint.cc -- driver for checking Type 1 fonts for validity
  *
- * Copyright (c) 1999-2005 Eddie Kohler
+ * Copyright (c) 1999-2006 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -391,15 +391,15 @@ main(int argc, char *argv[])
     switch (opt) {
       
      case QUIET_OPT:
-      if (clp->negated)
-	errh = ErrorHandler::default_handler();
-      else
-	errh = ErrorHandler::silent_handler();
-      break;
+       if (clp->negated)
+	   errh = ErrorHandler::default_handler();
+       else
+	   errh = new SilentErrorHandler;
+       break;
       
      case VERSION_OPT:
       printf("t1lint (LCDF typetools) %s\n", VERSION);
-      printf("Copyright (C) 1999-2005 Eddie Kohler\n\
+      printf("Copyright (C) 1999-2006 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");

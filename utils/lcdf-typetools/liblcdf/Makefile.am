@@ -9,6 +9,7 @@ liblcdf_a_SOURCES = bezier.cc \
 	filename.cc \
 	globmatch.cc \
 	landmark.cc \
+	md5.c \
 	permstr.cc \
 	point.cc \
 	slurper.cc \
@@ -32,7 +33,7 @@ srclinks:
 	cd $(top_srcdir); for i in bezier error filename globmatch landmark permstr point slurper straccum string transform; do \
 	ln -sf ../../liblcdf/liblcdf/$$i.cc liblcdf/$$i.cc ; \
 	ln -sf ../../../liblcdf/include/lcdf/$$i.hh include/lcdf/$$i.hh ; done
-	cd $(top_srcdir); for i in clp strtonum; do \
+	cd $(top_srcdir); for i in clp strtonum md5; do \
 	ln -sf ../../liblcdf/liblcdf/$$i.c liblcdf/$$i.c ; \
 	ln -sf ../../../liblcdf/include/lcdf/$$i.h include/lcdf/$$i.h ; done
 	cd $(top_srcdir); for i in fixlibc.c vectorv.cc; do \

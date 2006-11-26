@@ -1,4 +1,4 @@
-LCDF-TYPETOOLS 2.34
+LCDF-TYPETOOLS 2.46
 ===================
 
 USAGE
@@ -45,6 +45,10 @@ information.
    T1reencode reencodes a Type 1 font, replacing its internal encoding with
 one you specify.  See the manual page 't1reencode/t1reencode.1' for more
 information.
+
+   Ttftotype42 creates a Type 42 wrapper for a TrueType or
+TrueType-flavored OpenType font.  See the manual page
+'ttftotype42/ttftotype42.1' for more information.
 
    The final program is preliminary: t1testpage creates a PostScript test
 page for a given font file.  See the manual page 't1testpage/t1testpage.1'
@@ -121,12 +125,12 @@ for a particular font.
 
 COPYRIGHT/LICENSE
 -----------------
-   All source code is Copyright (c) 1997-2005 Eddie Kohler.
+   All source code is Copyright (c) 1997-2006 Eddie Kohler.
 
-   This code is distributed under the GNU General Public License, Version
-2, or, at your discretion, any later version. The GNU General Public
-License is available via the Web at <http://www.gnu.org/licenses/gpl.html>,
-or in the COPYING file in this directory.
+   This code is distributed under the GNU General Public License, Version 2
+(and only Version 2). The GNU General Public License is available via the
+Web at <http://www.gnu.org/licenses/gpl.html>, or in the COPYING file in
+this directory.
 
 
 AUTHOR

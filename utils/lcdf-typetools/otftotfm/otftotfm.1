@@ -1,5 +1,5 @@
 '\"t
-.ds V 2.34
+.ds V 2.46
 .de M
 .BR "\\$1" "(\\$2)\\$3"
 ..
@@ -12,23 +12,25 @@
 ..
 .TH OTFTOTFM 1 "LCDF Typetools" "Version \*V"
 .SH NAME
-otftotfm \- create TeX font metrics from PostScript OpenType fonts
+otftotfm \- create TeX font metrics from OpenType fonts
 .SH SYNOPSIS
 .B otftotfm
 \%[\fB\-a\fR]
 \%[\fBoptions\fR]
-\%\fIfontfile\fR.otf [\fItexname\fR]
+\%\fIfontfile\fR [\fItexname\fR]
 '
 .SH DESCRIPTION
 .BR Otftotfm
 creates the font metric and encoding files required to use an OpenType font
-with TeX.  You supply an OpenType ".otf" font file, a base ".enc" encoding,
+with TeX.  You supply an OpenType ".otf" or ".ttf" font file, 
+a base ".enc" encoding,
 and a TeX name "\fItexname\fR" for the resulting font, and say which
 OpenType features should be turned on.  Then
 .B otftotfm
-generates and installs the corresponding TeX-related metric files
-(".tfm" TeX font metrics, ".vf" virtual fonts, and ".enc"
-encoding files).  It only works on PostScript-flavored OpenType fonts.
+generates and installs the corresponding TeX-related metric files (".tfm"
+TeX font metrics, ".vf" virtual fonts, and ".enc" encoding files).  It
+works on both PostScript-flavored and TrueType-flavored OpenType fonts,
+although TrueType-flavor support will only work easily with pdftex.
 .LP
 The easiest way to use
 .B otftotfm
@@ -39,7 +41,7 @@ option; see Automatic Mode below.  Without
 .B otftotfm
 writes all its output files to the current directory.
 .LP
-After running "\fBotftotfm\fR \fIfontfile\fR.otf \fItexname\fR" and
+After running "\fBotftotfm\fR \fIfontfile\fR \fItexname\fR" and
 installing the results (manually or with
 .BR \-a ),
 you can use the OpenType font in plain TeX with a command like this:
@@ -74,7 +76,7 @@ capitals; "\fB\-f\fRswsh", for swash variants; and "\fB\-f\fRcswh", for
 contextual swash.  See the FEATURE DIRECTORY section below for more.  The
 .M otfinfo 1
 program will report which features a font supports; run "\fBotfinfo\fR
-\fB\-f\fR \fIfontfile\fR.otf".
+\fB\-f\fR \fIfontfile\fR".
 '
 .PP
 Feature options can also apply a feature to a subset of characters in the
@@ -110,7 +112,7 @@ and run
 .M mktexlsr 1 .)
 You can then run "\fBotftotfm\fR
 .B \-a
-.IR file .otf
+.IR fontfile
 .IR texname \&"
 and immediately refer to the font in TeX using the
 .I texname
@@ -127,13 +129,12 @@ installs files under that directory tree as follows:
 .TS
 l	l	l	.
 \fBFile type\fR	\fBDirectory\fR	\fBFilename\fR
-TFM	TEXMF/fonts/tfm/\fIvendor\fR/\fItypeface\fR/	\fItexname\fR[--base].tfm
+TFM	TEXMF/fonts/tfm/\fIvendor\fR/\fItypeface\fR/	\fItexname\fR[\-\-base].tfm
 VF	TEXMF/fonts/vf/\fIvendor\fR/\fItypeface\fR/	\fItexname\fR.vf
-PL	TEXMF/fonts/pl/\fIvendor\fR/\fItypeface\fR/	\fItexname\fR[--base].pl
+PL	TEXMF/fonts/pl/\fIvendor\fR/\fItypeface\fR/	\fItexname\fR[\-\-base].pl
 VPL	TEXMF/fonts/vpl/\fIvendor\fR/\fItypeface\fR/	\fItexname\fR.vpl
 encoding	TEXMF/fonts/enc/dvips/\fIvendor\fR/	a_\fIsignature\fR.enc
 	or TEXMF/dvips/\fIvendor\fR/
-PFB font	TEXMF/fonts/type1/\fIvendor\fR/\fItypeface\fR/	\fIPStexname\fR.pfb
 font map	TEXMF/fonts/map/dvips/\fIvendor\fR/	\fIvendor\fR.map
 	or TEXMF/dvips/\fIvendor\fR/
 .TE
@@ -141,14 +142,25 @@ font map	TEXMF/fonts/map/dvips/\fIvendor\fR/	\fIvendor\fR.map
 "TEXMF" stands for the writable TEXMF directory.  \fITexname\fR is the
 font name supplied as 
 .BR otftotfm 's
-second argument, and \fIPStexname\fR is the PostScript name of the input
-font.  The \fIvendor\fR and \fItypeface\fR strings are required by TDS;
-they default to "lcdftools" and the font's family name, respectively, but
-see the
+second argument.  The \fIvendor\fR and \fItypeface\fR strings are required
+by TDS; they default to "lcdftools" and the font's family name,
+respectively, but see the
 .B \-\-vendor
 and
 .B \-\-typeface
 options.  \fISignature\fR is an opaque 6-character encoding signature.
+.PP
+.B Otftotfm
+also installs a version of the font suitable for printing.
+PostScript-flavored OpenType fonts are translated to Type 1 format and
+installed as PFB fonts; TrueType-flavored fonts are installed as is (pdftex
+and pdflatex can read TrueType directly).  The installation paths are as
+follows; \fIPSname\fR is the font's PostScript name.
+.TS
+l	l	l	.
+PFB	TEXMF/fonts/type1/\fIvendor\fR/\fItypeface\fR/	\fIPSname\fR.pfb
+TrueType	TEXMF/fonts/truetype/\fIvendor\fR/\fItypeface\fR/	\fIfontfile\fR
+.TE
 .PP
 You can override these directories with environment variables and options
 as follows.  Options take precedence over environment variables.
@@ -161,7 +173,8 @@ VF	VFDESTDIR	\-\-vf\-directory
 PL	PLDESTDIR	\-\-pl\-directory
 VPL	VPLDESTDIR	\-\-vpl\-directory
 encoding	ENCODINGDESTDIR	\-\-encoding\-directory
-PFB font	T1DESTDIR	\-\-type1\-directory
+PFB	T1DESTDIR	\-\-type1\-directory
+TrueType	TRUETYPEDESTDIR	\-\-truetype\-directory
 font map	\-	\-\-map\-file
 .TE
 .PP
@@ -207,37 +220,37 @@ for the first set of fonts.  Note the "\fB\-f\fRkern \fB\-f\fRliga"
 options, which access pair kerns and the default "f" ligatures.
 .Sp
 .nf
-    \fBotftotfm\fR \fB\-a\fR \fB\-e\fR texnansx MinionPro-Regular.otf \e
-            \fB\-f\fRkern \fB\-f\fRliga LY1--MinionPro-Regular
-    \fBotftotfm\fR \fB\-a\fR \fB\-e\fR texnansx MinionPro-It.otf \e
-            \fB\-f\fRkern \fB\-f\fRliga LY1--MinionPro-It
-    \fBotftotfm\fR \fB\-a\fR \fB\-e\fR texnansx MinionPro-Semibold.otf \e
-            \fB\-f\fRkern \fB\-f\fRliga LY1--MinionPro-Semibold
-    \fBotftotfm\fR \fB\-a\fR \fB\-e\fR texnansx MinionPro-SemiboldIt.otf \e
-            \fB\-f\fRkern \fB\-f\fRliga LY1--MinionPro-SemiboldIt
-    \fBotftotfm\fR \fB\-a\fR \fB\-e\fR texnansx MinionPro-Bold.otf \e
-            \fB\-f\fRkern \fB\-f\fRliga LY1--MinionPro-Bold
-    \fBotftotfm\fR \fB\-a\fR \fB\-e\fR texnansx MinionPro-BoldIt.otf \e
-            \fB\-f\fRkern \fB\-f\fRliga LY1--MinionPro-BoldIt
+    \fBotftotfm\fR \fB\-a\fR \fB\-e\fR texnansx MinionPro\-Regular.otf \e
+            \fB\-f\fRkern \fB\-f\fRliga LY1\-\-MinionPro\-Regular
+    \fBotftotfm\fR \fB\-a\fR \fB\-e\fR texnansx MinionPro\-It.otf \e
+            \fB\-f\fRkern \fB\-f\fRliga LY1\-\-MinionPro\-It
+    \fBotftotfm\fR \fB\-a\fR \fB\-e\fR texnansx MinionPro\-Semibold.otf \e
+            \fB\-f\fRkern \fB\-f\fRliga LY1\-\-MinionPro\-Semibold
+    \fBotftotfm\fR \fB\-a\fR \fB\-e\fR texnansx MinionPro\-SemiboldIt.otf \e
+            \fB\-f\fRkern \fB\-f\fRliga LY1\-\-MinionPro\-SemiboldIt
+    \fBotftotfm\fR \fB\-a\fR \fB\-e\fR texnansx MinionPro\-Bold.otf \e
+            \fB\-f\fRkern \fB\-f\fRliga LY1\-\-MinionPro\-Bold
+    \fBotftotfm\fR \fB\-a\fR \fB\-e\fR texnansx MinionPro\-BoldIt.otf \e
+            \fB\-f\fRkern \fB\-f\fRliga LY1\-\-MinionPro\-BoldIt
 .fi
 .Sp
 The small-caps fonts are generated with an additional "\fB\-f\fRsmcp"
-option.  We append "--fsmcp" to the font metric names as well,
+option.  We append "\-\-fsmcp" to the font metric names as well,
 differentiating them from the regular fonts.  Although MinionPro's italic
 fonts support small-caps, the LaTeX font selection scheme can't access them
 easily, so we've left them off.
 .Sp
 .nf
-    \fBotftotfm\fR \fB\-a\fR \fB\-e\fR texnansx MinionPro-Regular.otf \e
-            \fB\-f\fRkern \fB\-f\fRliga \fB\-f\fRsmcp LY1--MinionPro-Regular--fsmcp
-    \fBotftotfm\fR \fB\-a\fR \fB\-e\fR texnansx MinionPro-Semibold.otf \e
-            \fB\-f\fRkern \fB\-f\fRliga \fB\-f\fRsmcp LY1--MinionPro-Semibold--fsmcp
-    \fBotftotfm\fR \fB\-a\fR \fB\-e\fR texnansx MinionPro-Bold.otf \e
-            \fB\-f\fRkern \fB\-f\fRliga \fB\-f\fRsmcp LY1--MinionPro-Bold--fsmcp
+    \fBotftotfm\fR \fB\-a\fR \fB\-e\fR texnansx MinionPro\-Regular.otf \e
+            \fB\-f\fRkern \fB\-f\fRliga \fB\-f\fRsmcp LY1\-\-MinionPro-Regular\-\-fsmcp
+    \fBotftotfm\fR \fB\-a\fR \fB\-e\fR texnansx MinionPro\-Semibold.otf \e
+            \fB\-f\fRkern \fB\-f\fRliga \fB\-f\fRsmcp LY1\-\-MinionPro\-Semibold\-\-fsmcp
+    \fBotftotfm\fR \fB\-a\fR \fB\-e\fR texnansx MinionPro\-Bold.otf \e
+            \fB\-f\fRkern \fB\-f\fRliga \fB\-f\fRsmcp LY1\-\-MinionPro\-Bold\-\-fsmcp
 .fi
 .Sp
 To get old-style numerals, just add the "\fB\-f\fRonum" option to each
-invocation -- and, to reduce confusion, append "--fonum" to the font metric
+invocation -- and, to reduce confusion, append "\-\-fonum" to the font metric
 names.
 .PP
 At this point, all our font metric files are installed, and it's finally
@@ -249,21 +262,21 @@ Let's call the LaTeX font family "MinionPro".  Then the ".fd" file is
 .nf
     \eDeclareFontFamily{LY1}{MinionPro}{}
     \eDeclareFontShape{LY1}{MinionPro}{m}{n}%
-            { <\-> LY1--MinionPro-Regular }{}
-    \eDeclareFontShape{LY1}{MinionPro}{m}{it}{ <\-> LY1--MinionPro-It }{}
+            { <\-> LY1\-\-MinionPro\-Regular }{}
+    \eDeclareFontShape{LY1}{MinionPro}{m}{it}{ <\-> LY1\-\-MinionPro\-It }{}
     \eDeclareFontShape{LY1}{MinionPro}{m}{sc}%
-            { <\-> LY1--MinionPro-Regular--fsmcp }{}
+            { <\-> LY1\-\-MinionPro\-Regular\-\-fsmcp }{}
     \eDeclareFontShape{LY1}{MinionPro}{sb}{n}%
-            { <\-> LY1--MinionPro-Semibold }{}
+            { <\-> LY1\-\-MinionPro\-Semibold }{}
     \eDeclareFontShape{LY1}{MinionPro}{sb}{it}%
-            { <\-> LY1--MinionPro-SemiboldIt }{}
+            { <\-> LY1\-\-MinionPro\-SemiboldIt }{}
     \eDeclareFontShape{LY1}{MinionPro}{sb}{sc}%
-            { <\-> LY1--MinionPro-Semibold--fsmcp }{}
-    \eDeclareFontShape{LY1}{MinionPro}{b}{n}{ <\-> LY1--MinionPro-Bold }{}
+            { <\-> LY1\-\-MinionPro\-Semibold\-\-fsmcp }{}
+    \eDeclareFontShape{LY1}{MinionPro}{b}{n}{ <\-> LY1\-\-MinionPro-Bold }{}
     \eDeclareFontShape{LY1}{MinionPro}{b}{it}%
-            { <\-> LY1--MinionPro-BoldIt }{}
+            { <\-> LY1\-\-MinionPro\-BoldIt }{}
     \eDeclareFontShape{LY1}{MinionPro}{b}{sc}%
-            { <\-> LY1--MinionPro-Bold--fsmcp }{}
+            { <\-> LY1\-\-MinionPro\-Bold\-\-fsmcp }{}
     \eDeclareFontShape{LY1}{MinionPro}{bx}{n}%
             { <\-> ssub * MinionPro/b/n }{}
     \eDeclareFontShape{LY1}{MinionPro}{bx}{it}%
@@ -357,13 +370,13 @@ option acts like
 .B \-\-clear\-subs
 followed by
 .BI \-\-include\-subs " pattern\fR. "
-For pattern syntax, see CHARACTER PATTERNS, below.
+For pattern syntax, see GLYPH PATTERNS, below.
 .Sp
-In the command line below, the '<Number>' pattern will force the "onum"
+In the command line below, the \&'<Number>' pattern will force the "onum"
 feature to substitute only numbers (and not, for example, punctuation).
 The "salt" feature can still substitute any character.
 .nf
-    \fBotftotfm\fR \fB\-f\fRsalt \fB\-\-include\-subs\fR='<Number>' \fB\-f\fRonum \.\.\.
+    \fBotftotfm\fR \fB\-f\fRsalt \fB\-\-include\-subs\fR="<Number>" \fB\-f\fRonum \.\.\.
 .fi
 '
 .Sp
@@ -464,71 +477,6 @@ for more information.
 '
 .Sp
 .TP 5
-.BI \-\-literal\-encoding= encoding
-Select the
-.M dvips 1
-encoding used for the font.  No glyph substitutions will be permitted, so
-the output encoding will equal the input encoding (and 
-.B otftotfm
-will not generate an output encoding).
-'
-.Sp
-.TP 5
-.BI \-\-ligkern= command
-Execute the specified LIGKERN
-.IR command
-in addition to any in the encoding.  For example, "\fB\-\-ligkern\fR 'T {L}
-h'" suppresses any T_h ligature in the font.  You can supply multiple
-.B \-\-ligkern
-options.  See ENCODINGS, below.
-'
-.Sp
-.TP 5
-.BI \-\-position= command
-Execute the specified POSITION
-.IR command
-in addition to any in the encoding.  For example, "\fB\-\-position\fR 'T 10
-0 20'" adds ten units of space to either side of the "T" character.  You
-can supply multiple
-.B \-\-position
-options.  See ENCODINGS, below.
-'
-.Sp
-.TP 5
-.BI \-\-unicoding= command
-Execute the specified UNICODING
-.IR command
-in addition to any in the encoding.  For example, "\fB\-\-unicoding\fR 'pi1
-=: uni03D6'" tells
-.B otftotfm 
-to encode "/pi1" as U+03D6 GREEK PI SYMBOL.  You can supply multiple
-.B \-\-unicoding
-options.  See ENCODINGS, below.
-'
-.Sp
-.TP 5
-.BI \-\-no\-encoding\-commands
-Ignore any LIGKERN and/or UNICODING commands in the encoding file.
-'
-.Sp
-.TP 5
-.BI \-\-no\-default\-ligkern
-Don't include
-.BR otftotfm 's
-default LIGKERN commands.
-'
-.Sp
-.TP 5
-.BI \-\-coding\-scheme= scheme
-Set the font's TFM coding scheme to
-.IR scheme ,
-which must be a string less than 40 characters long containing no
-parentheses.  The default is the encoding's PostScript name.  Most tools
-ignore the coding scheme, so you probably don't need to worry about this
-command unless you are using fontinst.
-'
-.Sp
-.TP 5
 .BI \-\-boundary\-char= char
 Set the font's boundary character to
 .IR char ,
@@ -546,12 +494,10 @@ versions of a character from within a TeX file.  For instance, say that your
 font provides three versions of "A".  If you want to access them all, pick a
 character to be your alternate selector -- say "*".  Then give 
 .B otftotfm
-the
-.BR \-\-altselector\-char= '*'
+the \&'\-\-altselector\-char="*"'
 option.  In TeX, "A" will produce the normal version, "A*" will produce the
 first alternate, and "A**" will produce the second alternate.  Furthermore,
-"s*t" will activate any discretionary "s_t" ligature in the font.  The
-default alternate-selector character is taken from the encoding.
+"s*t" will activate any discretionary "s_t" ligature in the font.
 .Sp
 The
 .B \-\-altselector\-char
@@ -560,8 +506,9 @@ mechanism uses the features specified by
 options.  You don't need to turn on those features if you use
 .BR \-\-altselector .
 .Sp
-See Sivan Toledo's article cited in the SEE ALSO section for more
-information.
+The alternate-selector character may also be specified in the encoding; see
+ENCODINGS, below.  See Sivan Toledo's article cited in the SEE ALSO section
+for more information.
 '
 .Sp
 .TP 5
@@ -604,7 +551,7 @@ option acts like
 .B \-\-clear\-alternates
 followed by
 .BI \-\-include\-alternates " pattern\fR. "
-For pattern syntax, see CHARACTER PATTERNS, below.
+For pattern syntax, see GLYPH PATTERNS, below.
 .Sp
 OpenType fonts can have many alternates per character, most of which aren't
 interesting.  For example, the character "a" in WarnockPro-Regular has five
@@ -614,14 +561,79 @@ alternates, "ordfeminine", "Asmall", "asuperior", "a.end", and
 option lets you cycle through these alternates, but it's better to leave
 out the ones you don't want, to avoid overfull encodings.  Thus, if you were
 only interested in ".end" variants, you might supply an
-.BR \-\-include\-alternates= "'*.end'"
+\&'\-\-include\-alternates="*.end"'
 option.
 .Sp
-In the command line below, the '*.end' pattern will apply to "aalt"
+In the command line below, the \&'*.end' pattern will apply to "aalt"
 alternates, but not to "salt" alternates.
 .nf
-    \fBotftotfm\fR \fB\-f\fRsalt \fB\-\-include\-alternates\fR='*.end' \fB\-f\fRaalt \.\.\.
+    \fBotftotfm\fR \fB\-f\fRsalt \fB\-\-include\-alternates\fR="*.end" \fB\-f\fRaalt \.\.\.
 .fi
+'
+.Sp
+.TP 5
+.BI \-\-ligkern= command
+Add a LIGKERN
+.IR command
+to the encoding.  For example, \&'\fB\-\-ligkern\fR "T {L} h"' suppresses any
+T_h ligature in the font.  You can supply multiple
+.B \-\-ligkern
+options.  See ENCODINGS, below.
+'
+.Sp
+.TP 5
+.BI \-\-position= command
+Add a POSITION
+.IR command
+to the encoding.  For example, \&'\fB\-\-position\fR "T 10 0 20"' adds ten
+units of space to either side of the "T" character.  You can supply
+multiple
+.B \-\-position
+options.  See ENCODINGS, below.
+'
+.Sp
+.TP 5
+.BI \-\-unicoding= command
+Add a UNICODING
+.IR command
+to the encoding.  For example, \&'\fB\-\-unicoding\fR "pi1 =: uni03D6"' tells
+.B otftotfm 
+to encode "/pi1" as U+03D6 GREEK PI SYMBOL.  You can supply multiple
+.B \-\-unicoding
+options.  See ENCODINGS, below.
+'
+.Sp
+.TP 5
+.BI \-\-no\-encoding\-commands
+Ignore any LIGKERN and/or UNICODING commands in the encoding file.
+'
+.Sp
+.TP 5
+.BI \-\-no\-default\-ligkern
+Don't include
+.BR otftotfm 's
+default LIGKERN commands.
+'
+.Sp
+.TP 5
+.BI \-\-coding\-scheme= scheme
+Add a CODINGSCHEME to the encoding.  See ENCODINGS, below.
+'
+.Sp
+.TP 5
+.BI \-\-warn\-missing
+Warn about encoded characters not supported by the font.  See the
+WARNMISSING command in ENCODINGS, below.
+'
+.Sp
+.TP 5
+.BI \-\-literal\-encoding= encoding
+Select the
+.M dvips 1
+encoding used for the font.  No glyph substitutions will be permitted, so
+the output encoding will equal the input encoding (and 
+.B otftotfm
+will not generate an output encoding).
 '
 .PD
 '
@@ -673,6 +685,11 @@ program.  This can be useful if you're installing a bunch of fonts; it is
 much faster to run
 .B updmap
 once, at the end, than to run it once per font.
+'
+.Sp
+.TP 5
+.BI \-\-no\-truetype
+Do not install TrueType-flavored OpenType fonts.
 .PD
 '
 '
@@ -724,6 +741,20 @@ argument is supplied.
 .TP 5
 .BI \-\-no\-map
 Do not generate a font map line for the font.
+'
+.\" .Sp
+.\" .TP 5
+.\" .BI \-\-base\-name name
+.\" Experts only: Set the TeX name of the "base" output font.  When
+.\" .B otftotfm
+.\" needs to make a virtual font (because of font features and/or
+.\" letterspacing), it must generate at least two TFM metrics files, one for
+.\" the base font and one for the virtual font.  In some cases, multiple
+.\" virtual fonts can share the same base metrics, reducing the number of
+.\" installed metrics files.  This option lets you explicitly set the name of
+.\" the base output font independently from the main output font, and thus
+.\" force fonts to share base metrics.  The default base name is derived from
+.\" the TeX name, with "\f(CW\-\-base\fR" appended.
 .PD
 '
 '
@@ -809,28 +840,33 @@ Print the version number and some short non-warranty information and exit.
 '
 .SH ENCODINGS
 .B Otftotfm
-interprets encoding files as Unicode.  For example, if an input encoding
-has "/dotlessi" at position 10, then
-.B otftotfm
-detects that the user wants to encode Unicode character U+0131 LATIN SMALL
-LETTER DOTLESS I at position 10.  The output encoding will use whatever
-glyph the font suggests for that Unicode character, given the collection of
-features you chose.
+interprets encoding files as Unicode.  For example, say an input encoding
+has "/dotlessi" at position 10.
+.B Otftotfm
+detects that position 10 should contain Unicode character U+0131 LATIN
+SMALL LETTER DOTLESS I, and uses the font's glyph for that character
+(possibly modified by any active features).  The selected glyph might not
+be named "dotlessi"; only the Unicode value matters.
 .PP
-You can control this process with "UNICODING" comments in the input
-encoding file.  UNICODING comments have the following format:
+.B Otftotfm
+assigns Unicode values to glyph names using a table published by Adobe (SEE
+ALSO has a reference), with extensions for TeX.  For more fine-grained
+control, add UNICODING commands to the input encoding file.  These commands
+have the following format:
 .nf
     % UNICODING \fIglyph\fR =: \fIchoice1\fR [\fIchoice2\fR ...] ;
 .fi
-\fIGlyph\fR and the
-.IR choice s
-are PostScript glyph names.  This comment tells
+This tells
 .B otftotfm
 that the glyph named
 .I glyph 
 translates into the first Unicode value in the
 .I choice
-list that has a character in the font.  For example,
+list that has a character in the font.  \fIGlyph\fR and the
+.IR choice s
+are PostScript glyph names; the initial "%" sign is required; and each
+UNICODING line can contain multiple commands, separated by spaced
+semicolons.  For example,
 .nf
     % UNICODING pi1 =: uni03D6 ;
 .fi
@@ -845,34 +881,22 @@ glyph names:
 .nf
     % UNICODING Delta =: Deltagreek Delta ;
 .fi
-.B Otftotfm
-uses Adobe's
-.I glyphlist.txt
-file to translate glyph names to Unicode; see
-.IR http://partners.adobe.com/asn/developer/type/unicodegn.html .
-.LP
-You can map a glyph to nothing to remove that glyph from the input
-encoding.  This is useful to remove optional characters; for instance:
+Supply zero choices to remove a glyph from the input encoding.  For
+instance:
 .nf
     % UNICODING ff =: ; fi =: ; fl =: ; ffi =: ; ffl =: ;
 .fi
 The f-ligatures will be added back to the encoding, preferably at their
-original locations, if some font feature requires them.
-.LP
-Map a glyph to 'emptyslot' if you don't want 
+original locations, if some font feature requires them.  Finally, map a
+glyph to \&'emptyslot' if you don't want
 .B otftotfm
-to use the slot for a ligature character.  For example, given this
-UNICODING,
+to use the slot for a ligature character.  For example, this will leave the
+\&'ff' slot unused if the font has no \&'ff' glyph:
 .nf
-   % UNICODING ff =: ff emptyslot ;
+    % UNICODING ff =: ff emptyslot ;
 .fi
-.B otftotfm
-will leave the 'ff' encoding slot unused if the font has no 'ff' glyph.
 (Note that most OpenType fonts provide a visible representation for unused
 encoding slots, namely a box with an X inside.)
-.LP
-Each UNICODING line can contain multiple commands, separated by spaced
-semicolons.
 .PP
 LIGKERN comments in the encoding can add ligatures and inhibit kerns, as in
 .M afm2tfm 1 .
@@ -885,8 +909,8 @@ are removed and replaced by
 .IR result .
 To preserve the left-hand glyph, for an effect like "\fIglyph1\fR
 \fIglyph2\fR =: \fIglyph1\fR \fIresult\fR", use "|=:" instead; to preserve
-the right-hand glyph, use "=:|".  The other five ligature operators are not
-yet supported.
+the right-hand glyph, use "=:|".
+.\" The other five ligature operators are not yet supported.
 To remove all kerns between two characters, say:
 .nf
     % LIGKERN \fIglyph1\fR {} \fIglyph2\fR ;
@@ -929,6 +953,21 @@ from an encoding file with commands like this:
 As with UNICODING, each LIGKERN or LIGKERNX line can contain multiple
 commands, separated by spaced semicolons.
 .PP
+.B Otftotfm
+has a default set of eight ligatures, namely:
+.nf
+    space l =: lslash ; space L =: Lslash ;
+    question quoteleft =: questiondown ; exclam quoteleft =: exclamdown ;
+    hyphen hyphen =: endash ; endash hyphen =: emdash ;
+    quoteleft quoteleft =: quotedblleft ; 
+    quoteright quoteright =: quotedblright
+.fi
+LIGKERN commands in the encoding file and
+.B \-\-ligkern
+options can override these defaults, or supply the
+.B \-\-no\-default\-ligkern
+option to turn them off.
+.PP
 The POSITION command shifts a glyph within its bounding box.  The syntax is
 .nf
     % POSITION \fIglyph\fR \fIpdx\fR \fIpdy\fR \fIadx\fR ;
@@ -951,45 +990,44 @@ To move the "degree" symbol up by 20 units, supply
     % POSITION degree 0 20 0
 .fi
 .PP
-Finally, the CODINGSCHEME command specifies a default
-.B \-\-coding\-scheme
-for the encoding; for example:
+The CODINGSCHEME command specifies the coding scheme for fonts using this
+encoding.  This is a string, less than 40 characters long and containing no
+parentheses, that classifies the encoding for TeX's purposes.  Sample
+coding schemes include "TEX TEXT", "TEX MATH ITALIC", and "EXTENDED TEX
+FONT ENCODING - LATIN".  For example:
 .nf
-    % CODINGSCHEME EXTENDED TEX FONT ENCODING
+    % CODINGSCHEME EXTENDED TEX FONT ENCODING - LATIN
+.fi
+Most tools ignore the coding scheme; fontinst is an exception.
+.B Otftotfm
+uses the encoding's PostScript name for the default coding scheme.
+.PP
+Finally, the WARNMISSING command makes any glyphs not supported by the
+input font appear as black boxes.  The
+.M dvips 1
+processor will also print a warning when encountering these glyphs.  For
+example:
+.nf
+    % WARNMISSING yes
 .fi
 .PP
 The
 .BR \-\-unicoding ,
 .BR \-\-ligkern ,
+.BR \-\-position ,
+.BR \-\-coding\-scheme ,
 and
-.B \-\-position
-options let you add virtual UNICODING, LIGKERN/LIGKERNX, and POSITION
-comments to an encoding.
-.PP
-.B Otftotfm
-has a default set of eight ligatures, namely:
-.nf
-    space l =: lslash ; space L =: Lslash ;
-    question quoteleft =: questiondown ; exclam quoteleft =: exclamdown ;
-    hyphen hyphen =: endash ; endash hyphen =: emdash ;
-    quoteleft quoteleft =: quotedblleft ; 
-    quoteright quoteright =: quotedblright
-.fi
-LIGKERN commands in the encoding file and
-.B \-\-ligkern
-options can override these defaults, or supply the
-.B \-\-no\-default\-ligkern
-option to turn them off.
-.PP
-Some common encoding files have commands that are inappropriate for
-OpenType fonts.  For example, "t1.enc" hard-codes f-ligatures, which can
-cause problems with small-cap fonts.  Supply the
+.B \-\-warn\-missing
+options add UNICODING, LIGKERN/LIGKERNX, POSITION, CODINGSCHEME, and
+WARNMISSING commands to an encoding, and can override commands in the
+encoding itself.  Some common encoding files have commands that are
+inappropriate for OpenType fonts; for example, "t1.enc" hard-codes
+f-ligatures, which can cause problems with small-cap fonts.  Supply the
 .B \-\-no\-encoding\-commands
-option to ignore all commands from the encoding file.  Explicit
+option to ignore all commands from the encoding file.  Commands from
+options like
 .B \-\-ligkern
-and
-.B \-\-unicoding
-options are processed in any case.
+are processed in any case.
 '
 .SS New Glyphs
 .PP
@@ -1033,6 +1071,9 @@ The parallel symbol "||"
 .TP
 asteriskmath
 Vertically-centered "*"
+.TP
+ringfitted
+Ring accent centered on the width of "A"
 .TP
 twelveudash
 2/3-em-wide dash
@@ -1089,9 +1130,11 @@ and
 .BR \-\-include\-alternates
 options, and their
 .B \-\-exclude
+and
+.B \-\-*\-filter
 variants, accept the following types of pattern.
 .BUP
-Glyph names.  Example: "Aacute".  Use
+Glyph names.  Example: "Aacute".  For PostScript-flavored fonts, use
 .M otfinfo 1 's
 .B \-g
 option to see a font's glyph names, and "\fBcfftot1\fR \fIfont\fR.otf |
@@ -1184,13 +1227,12 @@ Lets the user choose between context-appropriate swash forms for each
 character.  For example, in the words "Ab AC", the first "A" might be
 translated to a swash form, while the second might not.  There may be more
 than one choice for a given letter, in which case the user should be able
-to select among them.  TeX can't support complex contextual swashes, or
-alternate selection, but 
-.B otftotfm
+to select among them.
+.B Otftotfm
 supports some fonts quite well.  The input encoding should have lots of
 empty space for swash variants, and it should specify a boundary
 character.  See also
-.IR calt .
+.IR calt " and " swsh .
 .TP 5
 .IR dlig ", Discretionary Ligatures"
 Activates uncommon ligatures, such as "c_t", "s_p", and "s_t".  Supported.
@@ -1289,7 +1331,8 @@ for TeX, since it refers exclusively to stylistic alternates.
 .TP 5
 .IR sinf ", Scientific Inferiors"
 Replaces digits and some punctuation marks with smaller, lowered forms
-intended for subscripts.  Supported.
+intended for subscripts.  Supported.  Compare
+.IR subs .
 .TP 5
 .IR size ", Optical Size"
 This feature stores information about the range of optical sizes for which
@@ -1310,6 +1353,15 @@ in that a Stylistic Set is uniform: an
 feature should never involve selection from a set of possible alternate
 characters.  Supported.
 .TP 5
+.IR subs ", Subscript"
+Replaces characters with smaller, lowered forms intended for subscripts.
+Supported.  Compare
+.IR sinf ;
+some fonts support
+.I sinf
+but not
+.IR subs .
+.TP 5
 .IR sups ", Superscript"
 Replaces digits, some punctuation marks, and some lower-case letters with
 smaller, raised forms intended for superscripts.  Supported.
@@ -1319,7 +1371,10 @@ Activates all swash forms for each character. There may be more than one
 swash form, in which case 
 .B otftotfm
 will pick the first one listed.  Supported, except that swash variants
-other than the first are inaccessible.
+other than the first are inaccessible.  Note that some fonts with swash
+variants support the
+.I cswh
+feature exclusively.
 .TP 5
 .IR tnum ", Tabular Figures"
 All digits will have the same width, so that tables and the like will align
@@ -1347,7 +1402,7 @@ or
 .I $HOME/texmf
 directory?  If so, run the command "kpsewhich \-\-expand\-path='$TEXMF'" to
 verify that directory is not being found.  You may need to set your TEXMF
-environment variable, to '{!!'"$HOME"'/texmf,!!$TEXMFMAIN}', for instance
+environment variable, to \&'{!!'"$HOME"'/texmf,!!$TEXMFMAIN}', for instance
 (note the different kinds of quotes; on my machine, this expands to
 \&'{!!/home/kohler/texmf,!!$TEXMFMAIN}').
 '
@@ -1365,7 +1420,7 @@ file, or it might be an oversight.  Either fix the encoding file or ignore
 the warning.
 '
 .TP 5
-can't map '\fIchar\fR' to Unicode
+can't map \&'\fIchar\fR' to Unicode
 '
 Another encoding file problem: One of the glyph names in an UNICODING block
 could not be converted to Unicode.  This is problematic since UNICODING
@@ -1386,7 +1441,7 @@ encoding distributed with
 .TP 5
 How can I get a small-caps "SS" in place of the German sharp-S?
 '
-Supply the option "\fB\-\-unicoding\fR 'germandbls =: SSsmall'".
+Supply the option \&'\fB\-\-unicoding\fR "germandbls =: SSsmall"'.
 '
 .TP 5
 How can I prevent f-ligatures from forming in a small-caps font?  
@@ -1409,6 +1464,26 @@ multiple times, give it the
 option and run
 .B updmap
 manually when you're done.
+'
+.TP 5
+How can I refer to the different forms of phi?
+'
+\fBOtftotfm\fR follows TeX practice and widely-distributed TeX encoding
+vectors, so "/phi" in an input encoding vector should map to a "straight"
+phi and "/phi1" should map to a "loopy" phi.  Note that TeX practice
+differs from the PostScript standard naming conventions, in which "/phi" is
+"loopy" and "/phi1" is "straight"; this means that \fBotftotfm\fR may map
+"/phi" in an input encoding vector to a font's "/phi1" glyph, and vice
+versa.  Perhaps most unambiguously, you can use "/uni03D5" for the
+"straight" form and "/uni03C6" for the "loopy" form.
+'
+.TP 5
+How can I get lining figures (that is, normal line-height digits) with small caps ('\fB\-f\fRsmcp')?
+'
+Many fonts use old-style figures by default with small caps. Since the
+default is not specified, it's wise to explicitly supply \&'\fB\-f\fRlnum' or
+\&'\fB-f\fRonum'.
+
 '
 .SH "BUGS"
 .\" .LP
@@ -1461,7 +1536,11 @@ http://www.tug.org/TUGboat/Articles/tb21-2/tb67tole.pdf
 .LP
 Michel Goossens, Frank Mittelbach, and Alexander Samarin,
 .IR "The LaTeX Companion"
-(for information on the .fd file format).
+(for information on the .fd file format)
+.LP
+Adobe Systems, "Unicode and Glyph Names".  Refers to the glyphlist.txt file
+used to translate glyph names to Unicode code points.
+http://partners.adobe.com/public/developer/opentype/index_glyph.html
 '
 .SH AUTHOR
 Eddie Kohler (kohler@cs.ucla.edu)
@@ -1470,4 +1549,3 @@ Thanks to Karl Berry, Marco Kuhlmann, Adam Lindsay, Bruce D'Arcus, Thomas
 Esser, Claire Connelly, Nelson H.F. Beebe, and Ryuji Suzuki for
 suggestions, bug reports, and help.  Particular thanks to Achim Blumensath
 and Michael Zedler for suggestions and patches, some of them extensive.
-

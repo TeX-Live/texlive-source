@@ -16,7 +16,7 @@ class Type1CharstringGen { public:
     char *data() const			{ return _ncs.data(); }
     int length() const			{ return _ncs.length(); }
 
-    void gen_number(double, int = 0);
+    void gen_number(double, int kind = 0);
     void gen_command(int);
     void gen_stack(CharstringInterp &, int for_cmd);
 

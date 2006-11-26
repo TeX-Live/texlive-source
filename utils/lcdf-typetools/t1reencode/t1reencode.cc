@@ -1,6 +1,6 @@
 /* t1reencode.cc -- driver for reencoding Type 1 fonts
  *
- * Copyright (c) 2005 Eddie Kohler
+ * Copyright (c) 2005-2006 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -101,6 +101,426 @@ static const char ISOLatin1Encoding[] = "/ISOLatin1Encoding [\n\
   /egrave /eacute /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis\n\
   /eth /ntilde /.notdef /oacute /ocircumflex /otilde /odieresis /.notdef\n\
   /oslash /ugrave /uacute /ucircumflex /udieresis /yacute /thorn\n\
+] def\n";
+
+static const char ISOLatin2Encoding[] = "/ISOLatin2Encoding [\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quotesingle\n\
+  /parenleft /parenright /asterisk /plus /comma /hyphen /period /slash\n\
+  /zero /one /two /three /four /five /six /seven\n\
+  /eight /nine /colon /semicolon /less /equal /greater /question\n\
+  /at /A /B /C /D /E /F /G\n\
+  /H /I /J /K /L /M /N /O\n\
+  /P /Q /R /S /T /U /V /W\n\
+  /X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore\n\
+  /grave /a /b /c /d /e /f /g\n\
+  /h /i /j /k /l /m /n /o\n\
+  /p /q /r /s /t /u /v /w\n\
+  /x /y /z /braceleft /bar /braceright /asciitilde /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /uni00A0 /Aogonek /breve /Lslash /currency /Lcaron /Sacute /section\n\
+  /dieresis /Scaron /Scedilla /Tcaron /Zacute /uni00AD /Zcaron /Zdotaccent\n\
+  /degree /aogonek /ogonek /lslash /acute /lcaron /sacute /caron\n\
+  /cedilla /scaron /scedilla /tcaron /zacute /hungarumlaut /zcaron /zdotaccent\n\
+  /Racute /Aacute /Acircumflex /Abreve /Adieresis /Lacute /Cacute /Ccedilla\n\
+  /Ccaron /Eacute /Eogonek /Edieresis /Ecaron /Iacute /Icircumflex /Dcaron\n\
+  /Dcroat /Nacute /Ncaron /Oacute /Ocircumflex /Ohungarumlaut /Odieresis /multiply\n\
+  /Rcaron /Uring /Uacute /Uhungarumlaut /Udieresis /Yacute /uni0162 /germandbls\n\
+  /racute /aacute /acircumflex /abreve /adieresis /lacute /cacute /ccedilla\n\
+  /ccaron /eacute /eogonek /edieresis /ecaron /iacute /icircumflex /dcaron\n\
+  /dcroat /nacute /ncaron /oacute /ocircumflex /ohungarumlaut /odieresis /divide\n\
+  /rcaron /uring /uacute /uhungarumlaut /udieresis /yacute /uni0163 /dotaccent\n\
+] def\n";
+
+static const char ISOLatin3Encoding[] = "/ISOLatin3Encoding [\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quotesingle\n\
+  /parenleft /parenright /asterisk /plus /comma /hyphen /period /slash\n\
+  /zero /one /two /three /four /five /six /seven\n\
+  /eight /nine /colon /semicolon /less /equal /greater /question\n\
+  /at /A /B /C /D /E /F /G\n\
+  /H /I /J /K /L /M /N /O\n\
+  /P /Q /R /S /T /U /V /W\n\
+  /X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore\n\
+  /grave /a /b /c /d /e /f /g\n\
+  /h /i /j /k /l /m /n /o\n\
+  /p /q /r /s /t /u /v /w\n\
+  /x /y /z /braceleft /bar /braceright /asciitilde /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /uni00A0 /Hbar /breve /sterling /currency /yen /Hcircumflex /section\n\
+  /dieresis /Idotaccent /Scedilla /Gbreve /Jcircumflex /uni00AD /registered /Zdotaccent\n\
+  /degree /hbar /twosuperior /threesuperior /acute /mu /hcircumflex /periodcentered\n\
+  /cedilla /dotlessi /scedilla /gbreve /jcircumflex /onehalf /threequarters /zdotaccent\n\
+  /Agrave /Aacute /Acircumflex /Atilde /Adieresis /Cdotaccent /Ccircumflex /Ccedilla\n\
+  /Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis\n\
+  /Eth /Ntilde /Ograve /Oacute /Ocircumflex /Gdotaccent /Odieresis /multiply\n\
+  /Gcircumflex /Ugrave /Uacute /Ucircumflex /Udieresis /Ubreve /Scircumflex /germandbls\n\
+  /agrave /aacute /acircumflex /atilde /adieresis /cdotaccent /ccircumflex /ccedilla\n\
+  /egrave /eacute /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis\n\
+  /eth /ntilde /ograve /oacute /ocircumflex /gdotaccent /odieresis /divide\n\
+  /gcircumflex /ugrave /uacute /ucircumflex /udieresis /ubreve /scircumflex /dotaccent\n\
+] def\n";
+
+static const char ISOLatin4Encoding[] = "/ISOLatin4Encoding [\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quotesingle\n\
+  /parenleft /parenright /asterisk /plus /comma /hyphen /period /slash\n\
+  /zero /one /two /three /four /five /six /seven\n\
+  /eight /nine /colon /semicolon /less /equal /greater /question\n\
+  /at /A /B /C /D /E /F /G\n\
+  /H /I /J /K /L /M /N /O\n\
+  /P /Q /R /S /T /U /V /W\n\
+  /X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore\n\
+  /grave /a /b /c /d /e /f /g\n\
+  /h /i /j /k /l /m /n /o\n\
+  /p /q /r /s /t /u /v /w\n\
+  /x /y /z /braceleft /bar /braceright /asciitilde /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /uni00A0 /Aogonek /kgreenlandic /Rcommaaccent /currency /Itilde /Lcommaaccent /section\n\
+  /dieresis /Scaron /Emacron /Gcommaaccent /Tbar /uni00AD /Zcaron /macron\n\
+  /degree /aogonek /ogonek /rcommaaccent /acute /itilde /lcommaaccent /caron\n\
+  /cedilla /scaron /emacron /gcommaaccent /tbar /Eng /zcaron /eng\n\
+  /Amacron /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Iogonek\n\
+  /Ccaron /Eacute /Eogonek /Edieresis /Edotaccent /Iacute /Icircumflex /Imacron\n\
+  /Dcroat /Ncommaaccent /Omacron /Kcommaaccent /Ocircumflex /Otilde /Odieresis /multiply\n\
+  /Oslash /Uogonek /Uacute /Ucircumflex /Udieresis /Utilde /Umacron /germandbls\n\
+  /amacron /aacute /acircumflex /atilde /adieresis /aring /ae /iogonek\n\
+  /ccaron /eacute /eogonek /edieresis /edotaccent /iacute /icircumflex /imacron\n\
+  /dcroat /ncommaaccent /omacron /kcommaaccent /ocircumflex /otilde /odieresis /divide\n\
+  /oslash /uogonek /uacute /ucircumflex /udieresis /utilde /umacron /dotaccent\n\
+] def\n";
+
+static const char ISOCyrillicEncoding[] = "/ISOCyrillicEncoding [\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quotesingle\n\
+  /parenleft /parenright /asterisk /plus /comma /hyphen /period /slash\n\
+  /zero /one /two /three /four /five /six /seven\n\
+  /eight /nine /colon /semicolon /less /equal /greater /question\n\
+  /at /A /B /C /D /E /F /G\n\
+  /H /I /J /K /L /M /N /O\n\
+  /P /Q /R /S /T /U /V /W\n\
+  /X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore\n\
+  /grave /a /b /c /d /e /f /g\n\
+  /h /i /j /k /l /m /n /o\n\
+  /p /q /r /s /t /u /v /w\n\
+  /x /y /z /braceleft /bar /braceright /asciitilde /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /uni00A0 /afii10023 /afii10051 /afii10052 /afii10053 /afii10054 /afii10055 /afii10056\n\
+  /afii10057 /afii10058 /afii10059 /afii10060 /afii10061 /uni00AD /afii10062 /afii10145\n\
+  /afii10017 /afii10018 /afii10019 /afii10020 /afii10021 /afii10022 /afii10024 /afii10025\n\
+  /afii10026 /afii10027 /afii10028 /afii10029 /afii10030 /afii10031 /afii10032 /afii10033\n\
+  /afii10034 /afii10035 /afii10036 /afii10037 /afii10038 /afii10039 /afii10040 /afii10041\n\
+  /afii10042 /afii10043 /afii10044 /afii10045 /afii10046 /afii10047 /afii10048 /afii10049\n\
+  /afii10065 /afii10066 /afii10067 /afii10068 /afii10069 /afii10070 /afii10072 /afii10073\n\
+  /afii10074 /afii10075 /afii10076 /afii10077 /afii10078 /afii10079 /afii10080 /afii10081\n\
+  /afii10082 /afii10083 /afii10084 /afii10085 /afii10086 /afii10087 /afii10088 /afii10089\n\
+  /afii10090 /afii10091 /afii10092 /afii10093 /afii10094 /afii10095 /afii10096 /afii10097\n\
+  /afii61352 /afii10071 /afii10099 /afii10100 /afii10101 /afii10102 /afii10103 /afii10104\n\
+  /afii10105 /afii10106 /afii10107 /afii10108 /afii10109 /section /afii10110 /afii10193\n\
+] def\n";
+
+static const char ISOGreekEncoding[] = "/ISOGreekEncoding [\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quotesingle\n\
+  /parenleft /parenright /asterisk /plus /comma /hyphen /period /slash\n\
+  /zero /one /two /three /four /five /six /seven\n\
+  /eight /nine /colon /semicolon /less /equal /greater /question\n\
+  /at /A /B /C /D /E /F /G\n\
+  /H /I /J /K /L /M /N /O\n\
+  /P /Q /R /S /T /U /V /W\n\
+  /X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore\n\
+  /grave /a /b /c /d /e /f /g\n\
+  /h /i /j /k /l /m /n /o\n\
+  /p /q /r /s /t /u /v /w\n\
+  /x /y /z /braceleft /bar /braceright /asciitilde /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /uni00A0 /afii64937 /afii57929 /sterling /currency /yen /brokenbar /section\n\
+  /dieresis /copyright /ordfeminine /guillemotleft /logicalnot /uni00AD /registered /afii00208\n\
+  /degree /plusminus /twosuperior /threesuperior /tonos /dieresistonos /Alphatonos /periodcentered\n\
+  /Epsilontonos /Etatonos /Iotatonos /guillemotright /Omicrontonos /onehalf /Upsilontonos /Omegatonos\n\
+  /iotadieresistonos /Alpha /Beta /Gamma /uni0394 /Epsilon /Zeta /Eta\n\
+  /Theta /Iota /Kappa /Lambda /Mu /Nu /Xi /Omicron\n\
+  /Pi /Rho /Ograve /Sigma /Tau /Upsilon /Phi /Chi\n\
+  /Psi /uni03A9 /Iotadieresis /Upsilondieresis /alphatonos /epsilontonos /etatonos /iotatonos\n\
+  /upsilondieresistonos /alpha /beta /gamma /delta /epsilon /zeta /eta\n\
+  /theta /iota /kappa /lambda /uni03BC /nu /xi /omicron\n\
+  /pi /rho /sigma1 /sigma /tau /upsilon /phi /chi\n\
+  /psi /omega /iotadieresis /upsilondieresis /omicrontonos /upsilontonos /omegatonos /ydieresis\n\
+] def\n";
+
+static const char ISOLatin5Encoding[] = "/ISOLatin5Encoding [\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quotesingle\n\
+  /parenleft /parenright /asterisk /plus /comma /hyphen /period /slash\n\
+  /zero /one /two /three /four /five /six /seven\n\
+  /eight /nine /colon /semicolon /less /equal /greater /question\n\
+  /at /A /B /C /D /E /F /G\n\
+  /H /I /J /K /L /M /N /O\n\
+  /P /Q /R /S /T /U /V /W\n\
+  /X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore\n\
+  /grave /a /b /c /d /e /f /g\n\
+  /h /i /j /k /l /m /n /o\n\
+  /p /q /r /s /t /u /v /w\n\
+  /x /y /z /braceleft /bar /braceright /asciitilde /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /uni00A0 /exclamdown /cent /sterling /currency /yen /brokenbar /section\n\
+  /dieresis /copyright /ordfeminine /guillemotleft /logicalnot /uni00AD /registered /macron\n\
+  /degree /plusminus /twosuperior /threesuperior /acute /mu /paragraph /periodcentered\n\
+  /cedilla /onesuperior /ordmasculine /guillemotright /onequarter /onehalf /threequarters /questiondown\n\
+  /Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla\n\
+  /Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis\n\
+  /Gbreve /Ntilde /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply\n\
+  /Oslash /Ugrave /Uacute /Ucircumflex /Udieresis /Idotaccent /Scedilla /germandbls\n\
+  /agrave /aacute /acircumflex /atilde /adieresis /aring /ae /ccedilla\n\
+  /egrave /eacute /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis\n\
+  /gbreve /ntilde /ograve /oacute /ocircumflex /otilde /odieresis /divide\n\
+  /oslash /ugrave /uacute /ucircumflex /udieresis /dotlessi /scedilla /ydieresis\n\
+] def\n";
+
+static const char ISOLatin6Encoding[] = "/ISOLatin6Encoding [\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quotesingle\n\
+  /parenleft /parenright /asterisk /plus /comma /hyphen /period /slash\n\
+  /zero /one /two /three /four /five /six /seven\n\
+  /eight /nine /colon /semicolon /less /equal /greater /question\n\
+  /at /A /B /C /D /E /F /G\n\
+  /H /I /J /K /L /M /N /O\n\
+  /P /Q /R /S /T /U /V /W\n\
+  /X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore\n\
+  /grave /a /b /c /d /e /f /g\n\
+  /h /i /j /k /l /m /n /o\n\
+  /p /q /r /s /t /u /v /w\n\
+  /x /y /z /braceleft /bar /braceright /asciitilde /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /uni00A0 /Aogonek /Emacron /Gcommaaccent /Imacron /Itilde /Kcommaaccent /section\n\
+  /Lcommaaccent /Dcroat /Scaron /Tbar /Zcaron /uni00AD /Umacron /Eng\n\
+  /degree /aogonek /emacron /gcommaaccent /imacron /itilde /kcommaaccent /periodcentered\n\
+  /lcommaaccent /dcroat /scaron /tbar /zcaron /macron /umacron /eng\n\
+  /Amacron /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Iogonek\n\
+  /Ccaron /Eacute /Eogonek /Edieresis /Emacron /Iacute /Icircumflex /Idieresis\n\
+  /Eth /Ncommaaccent /Omacron /Oacute /Ocircumflex /Otilde /Odieresis /Utilde\n\
+  /Oslash /Uogonek /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /germandbls\n\
+  /amacron /aacute /acircumflex /atilde /adieresis /aring /ae /iogonek\n\
+  /ccaron /eacute /eogonek /edieresis /emacron /iacute /icircumflex /idieresis\n\
+  /eth /ncommaaccent /omacron /oacute /ocircumflex /otilde /odieresis /utilde\n\
+  /oslash /uogonek /uacute /ucircumflex /udieresis /yacute /thorn /kgreenlandic\n\
+] def\n";
+
+static const char ISOThaiEncoding[] = "/ISOThaiEncoding [\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quotesingle\n\
+  /parenleft /parenright /asterisk /plus /comma /hyphen /period /slash\n\
+  /zero /one /two /three /four /five /six /seven\n\
+  /eight /nine /colon /semicolon /less /equal /greater /question\n\
+  /at /A /B /C /D /E /F /G\n\
+  /H /I /J /K /L /M /N /O\n\
+  /P /Q /R /S /T /U /V /W\n\
+  /X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore\n\
+  /grave /a /b /c /d /e /f /g\n\
+  /h /i /j /k /l /m /n /o\n\
+  /p /q /r /s /t /u /v /w\n\
+  /x /y /z /braceleft /bar /braceright /asciitilde /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /uni00A0 /uni0E01 /uni0E02 /uni0E03 /uni0E04 /uni0E05 /uni0E06 /uni0E07\n\
+  /uni0E08 /uni0E09 /uni0E0A /uni0E0B /uni0E0C /uni0E0D /uni0E0E /uni0E0F\n\
+  /uni0E10 /uni0E11 /uni0E12 /uni0E13 /uni0E14 /uni0E15 /uni0E16 /uni0E17\n\
+  /uni0E18 /uni0E19 /uni0E1A /uni0E1B /uni0E1C /uni0E1D /uni0E1E /uni0E1F\n\
+  /uni0E20 /uni0E21 /uni0E22 /uni0E23 /uni0E24 /uni0E25 /uni0E26 /uni0E27\n\
+  /uni0E28 /uni0E29 /uni0E2A /uni0E2B /uni0E2C /uni0E2D /uni0E2E /uni0E2F\n\
+  /uni0E30 /uni0E31 /uni0E32 /uni0E33 /uni0E34 /uni0E35 /uni0E36 /uni0E37\n\
+  /uni0E38 /uni0E39 /uni0E3A /.notdef /space /.notdef /.notdef /uni0E3F\n\
+  /uni0E40 /uni0E41 /uni0E42 /uni0E43 /uni0E44 /uni0E45 /uni0E46 /uni0E47\n\
+  /uni0E48 /uni0E49 /uni0E4A /uni0E4B /uni0E4C /uni0E4D /uni0E4E /uni0E4F\n\
+  /uni0E50 /uni0E51 /uni0E52 /uni0E53 /uni0E54 /uni0E55 /uni0E56 /uni0E57\n\
+  /uni0E58 /uni0E59 /uni0E5A /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+] def\n";
+
+static const char ISOLatin7Encoding[] = "/ISOLatin7Encoding [\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quotesingle\n\
+  /parenleft /parenright /asterisk /plus /comma /hyphen /period /slash\n\
+  /zero /one /two /three /four /five /six /seven\n\
+  /eight /nine /colon /semicolon /less /equal /greater /question\n\
+  /at /A /B /C /D /E /F /G\n\
+  /H /I /J /K /L /M /N /O\n\
+  /P /Q /R /S /T /U /V /W\n\
+  /X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore\n\
+  /grave /a /b /c /d /e /f /g\n\
+  /h /i /j /k /l /m /n /o\n\
+  /p /q /r /s /t /u /v /w\n\
+  /x /y /z /braceleft /bar /braceright /asciitilde /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /uni00A0 /quotedblright /cent /sterling /currency /quotedblbase /brokenbar /section\n\
+  /Oslash /copyright /rcommaaccent /guillemotleft /logicalnot /uni00AD /registered /AE\n\
+  /degree /plusminus /twosuperior /threesuperior /quotedblleft /mu /paragraph /periodcentered\n\
+  /oslash /onesuperior /.notdef /guillemotright /onequarter /onehalf /threequarters /ae\n\
+  /Aogonek /Iogonek /Amacron /Cacute /Adieresis /Aring /Eogonek /Emacron\n\
+  /Ccaron /Eacute /Zacute /Edotaccent /Gcommaaccent /Kcommaaccent /Imacron /Lcommaaccent\n\
+  /Scaron /Nacute /Ncommaaccent /Oacute /Omacron /Otilde /Odieresis /multiply\n\
+  /Uogonek /Lslash /Uacute /Ucircumflex /Udieresis /Zdotaccent /Zcaron /germandbls\n\
+  /aogonek /Iogonek /amacron /cacute /adieresis /aring /eogonek /emacron\n\
+  /ccaron /eacute /zacute /edotaccent /gcommaaccent /kcommaaccent /imacron /lcommaaccent\n\
+  /scaron /nacute /ncommaaccent /oacute /omacron /otilde /odieresis /divide\n\
+  /uogonek /lslash /uacute /ucircumflex /udieresis /zdotaccent /zcaron /quoteright\n\
+] def\n";
+
+static const char ISOLatin8Encoding[] = "/ISOLatin8Encoding [\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quotesingle\n\
+  /parenleft /parenright /asterisk /plus /comma /hyphen /period /slash\n\
+  /zero /one /two /three /four /five /six /seven\n\
+  /eight /nine /colon /semicolon /less /equal /greater /question\n\
+  /at /A /B /C /D /E /F /G\n\
+  /H /I /J /K /L /M /N /O\n\
+  /P /Q /R /S /T /U /V /W\n\
+  /X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore\n\
+  /grave /a /b /c /d /e /f /g\n\
+  /h /i /j /k /l /m /n /o\n\
+  /p /q /r /s /t /u /v /w\n\
+  /x /y /z /braceleft /bar /braceright /asciitilde /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /uni00A0 /uni1E02 /uni1E03 /sterling /Cdotaccent /cdotaccent /uni1E0A /section\n\
+  /Wgrave /copyright /Wacute /uni1E0B /Ygrave /uni00AD /registered /Ydieresis\n\
+  /uni1E1E /uni1E1F /Gdotaccent /gdotaccent /uni1E40 /uni1E41 /paragraph /uni1E56\n\
+  /wgrave /uni1E57 /wacute /uni1E60 /ygrave /Wdieresis /wdieresis /uni1E61\n\
+  /Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla\n\
+  /Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis\n\
+  /Wcircumflex /Ntilde /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /uni1E6A\n\
+  /Oslash /Ugrave /Uacute /Ucircumflex /Udieresis /Yacute /Ycircumflex /germandbls\n\
+  /agrave /aacute /acircumflex /atilde /adieresis /aring /ae /ccedilla\n\
+  /egrave /eacute /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis\n\
+  /wcircumflex /ntilde /ograve /oacute /ocircumflex /otilde /odieresis /uni1E6B\n\
+  /oslash /ugrave /uacute /ucircumflex /udieresis /yacute /ycircumflex /ydieresis\n\
+] def\n";
+
+static const char ISOLatin9Encoding[] = "/ISOLatin9Encoding [\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quotesingle\n\
+  /parenleft /parenright /asterisk /plus /comma /hyphen /period /slash\n\
+  /zero /one /two /three /four /five /six /seven\n\
+  /eight /nine /colon /semicolon /less /equal /greater /question\n\
+  /at /A /B /C /D /E /F /G\n\
+  /H /I /J /K /L /M /N /O\n\
+  /P /Q /R /S /T /U /V /W\n\
+  /X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore\n\
+  /grave /a /b /c /d /e /f /g\n\
+  /h /i /j /k /l /m /n /o\n\
+  /p /q /r /s /t /u /v /w\n\
+  /x /y /z /braceleft /bar /braceright /asciitilde /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /uni00A0 /exclamdown /cent /sterling /Euro /yen /Scaron /section\n\
+  /scaron /copyright /ordfeminine /guillemotleft /logicalnot /uni00AD /registered /macron\n\
+  /degree /plusminus /twosuperior /threesuperior /Zcaron /mu /paragraph /periodcentered\n\
+  /zcaron /onesuperior /ordmasculine /guillemotright /OE /oe /Ydieresis /questiondown\n\
+  /Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla\n\
+  /Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis\n\
+  /Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply\n\
+  /Oslash /Ugrave /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /germandbls\n\
+  /agrave /aacute /acircumflex /atilde /adieresis /aring /ae /ccedilla\n\
+  /egrave /eacute /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis\n\
+  /eth /ntilde /ograve /oacute /ocircumflex /otilde /odieresis /divide\n\
+  /oslash /ugrave /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis\n\
+] def\n";
+
+static const char KOI8REncoding[] = "/KOI8REncoding [\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n\
+  /space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quotesingle\n\
+  /parenleft /parenright /asterisk /plus /comma /hyphen /period /slash\n\
+  /zero /one /two /three /four /five /six /seven\n\
+  /eight /nine /colon /semicolon /less /equal /greater /question\n\
+  /at /A /B /C /D /E /F /G\n\
+  /H /I /J /K /L /M /N /O\n\
+  /P /Q /R /S /T /U /V /W\n\
+  /X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore\n\
+  /grave /a /b /c /d /e /f /g\n\
+  /h /i /j /k /l /m /n /o\n\
+  /p /q /r /s /t /u /v /w\n\
+  /x /y /z /braceleft /bar /braceright /asciitilde /.notdef\n\
+  /SF100000 /SF110000 /SF010000 /SF030000 /SF020000 /SF040000 /SF080000 /SF090000\n\
+  /SF060000 /SF070000 /SF050000 /upblock /dnblock /block /lfblock /rtblock\n\
+  /ltshade /shade /dkshade /integraltp /filledbox /uni2219 /radical /approxequal\n\
+  /lessequal /greaterequal /uni00A0 /integralbt /degree /twosuperior /periodcentered /divide\n\
+  /SF430000 /SF240000 /SF510000 /afii10071 /SF520000 /SF390000 /SF220000 /SF210000\n\
+  /SF250000 /SF500000 /SF490000 /SF380000 /SF280000 /SF270000 /SF260000 /SF360000\n\
+  /SF370000 /SF420000 /SF190000 /afii10023 /SF200000 /SF230000 /SF470000 /SF480000\n\
+  /SF410000 /SF450000 /SF460000 /SF400000 /SF540000 /SF530000 /SF440000 /copyright\n\
+  /afii10096 /afii10065 /afii10066 /afii10088 /afii10069 /afii10070 /afii10086 /afii10068\n\
+  /afii10087 /afii10074 /afii10075 /afii10076 /afii10077 /afii10078 /afii10079 /afii10080\n\
+  /afii10081 /afii10097 /afii10082 /afii10083 /afii10084 /afii10085 /afii10072 /afii10067\n\
+  /afii10094 /afii10093 /afii10073 /afii10090 /afii10095 /afii10091 /afii10089 /afii10092\n\
+  /afii10048 /afii10017 /afii10018 /afii10040 /afii10021 /afii10022 /afii10038 /afii10020\n\
+  /afii10039 /afii10026 /afii10027 /afii10028 /afii10029 /afii10030 /afii10031 /afii10032\n\
+  /afii10033 /afii10049 /afii10034 /afii10035 /afii10036 /afii10037 /afii10024 /afii10019\n\
+  /afii10046 /afii10045 /afii10025 /afii10042 /afii10047 /afii10043 /afii10041 /afii10044\n\
 ] def\n";
 
 static const char ExpertEncoding[] = "/ExpertEncoding [\n\
@@ -562,7 +982,7 @@ main(int argc, char *argv[])
       
 	  case VERSION_OPT:
 	    printf("t1reencode (LCDF typetools) %s\n", VERSION);
-	    printf("Copyright (C) 1999-2005 Eddie Kohler\n\
+	    printf("Copyright (C) 1999-2006 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");
@@ -611,13 +1031,49 @@ particular purpose.\n");
 	encoding_name = encoding_file;
     } else {
 	String text;
-	if (encoding_file == "ISOLatin1Encoding")
+	if (strcmp(encoding_file, "ISOLatin1Encoding") == 0
+	    || strcmp(encoding_file, "ISO_8859_1_Encoding") == 0)
 	    text = String::stable_string(ISOLatin1Encoding);
-	else if (encoding_file == "ExpertEncoding")
+	else if (strcmp(encoding_file, "ISOLatin2Encoding") == 0
+		 || strcmp(encoding_file, "ISO_8859_2_Encoding") == 0)
+	    text = String::stable_string(ISOLatin2Encoding);
+	else if (strcmp(encoding_file, "ISOLatin3Encoding") == 0
+		 || strcmp(encoding_file, "ISO_8859_3_Encoding") == 0)
+	    text = String::stable_string(ISOLatin3Encoding);
+	else if (strcmp(encoding_file, "ISOLatin4Encoding") == 0
+		 || strcmp(encoding_file, "ISO_8859_4_Encoding") == 0)
+	    text = String::stable_string(ISOLatin4Encoding);
+	else if (strcmp(encoding_file, "ISOCyrillicEncoding") == 0
+		 || strcmp(encoding_file, "ISO_8859_5_Encoding") == 0)
+	    text = String::stable_string(ISOCyrillicEncoding);
+	else if (strcmp(encoding_file, "ISOGreekEncoding") == 0
+		 || strcmp(encoding_file, "ISO_8859_7_Encoding") == 0)
+	    text = String::stable_string(ISOGreekEncoding);
+	else if (strcmp(encoding_file, "ISO_8859_9_Encoding") == 0
+		 || strcmp(encoding_file, "ISOLatin5Encoding") == 0)
+	    text = String::stable_string(ISOLatin5Encoding);
+	else if (strcmp(encoding_file, "ISOLatin6Encoding") == 0
+		 || strcmp(encoding_file, "ISO_8859_10_Encoding") == 0)
+	    text = String::stable_string(ISOLatin6Encoding);
+	else if (strcmp(encoding_file, "ISOThaiEncoding") == 0
+		 || strcmp(encoding_file, "ISO_8859_11_Encoding") == 0)
+	    text = String::stable_string(ISOThaiEncoding);
+	else if (strcmp(encoding_file, "ISOLatin7Encoding") == 0
+		 || strcmp(encoding_file, "ISO_8859_13_Encoding") == 0)
+	    text = String::stable_string(ISOLatin7Encoding);
+	else if (strcmp(encoding_file, "ISOLatin8Encoding") == 0
+		 || strcmp(encoding_file, "ISO_8859_14_Encoding") == 0)
+	    text = String::stable_string(ISOLatin8Encoding);
+	else if (strcmp(encoding_file, "ISOLatin9Encoding") == 0
+		 || strcmp(encoding_file, "ISO_8859_15_Encoding") == 0)
+	    text = String::stable_string(ISOLatin9Encoding);
+	else if (strcmp(encoding_file, "KOI8REncoding") == 0)
+	    text = String::stable_string(KOI8REncoding);
+	else if (strcmp(encoding_file, "ExpertEncoding") == 0)
 	    text = String::stable_string(ExpertEncoding);
-	else if (encoding_file == "ExpertSubsetEncoding")
+	else if (strcmp(encoding_file, "ExpertSubsetEncoding") == 0)
 	    text = String::stable_string(ExpertSubsetEncoding);
-	else if (encoding_file == "SymbolEncoding")
+	else if (strcmp(encoding_file, "SymbolEncoding") == 0)
 	    text = String::stable_string(SymbolEncoding);
 	else if (encoding_text)
 	    text = String::stable_string(encoding_text), encoding_file = "<argument>";

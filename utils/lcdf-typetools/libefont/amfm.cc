@@ -2,7 +2,7 @@
 
 /* amfm.{cc,hh} -- Adobe Multiple-Master Font Metrics
  *
- * Copyright (c) 1998-2004 Eddie Kohler
+ * Copyright (c) 1998-2006 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -246,7 +246,7 @@ AmfmReader::AmfmReader(AfmParser &afmp, AmfmMetrics *amfm, ErrorHandler *errh)
     : _amfm(amfm), _finder(amfm->_finder), _l(afmp),
       _mmspace(amfm->_mmspace)
 {
-    _errh = errh ? errh : ErrorHandler::silent_handler();
+    _errh = errh ? errh : ErrorHandler::ignore_handler();
 }
 
 AmfmMetrics *

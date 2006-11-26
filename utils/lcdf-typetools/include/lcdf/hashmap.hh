@@ -19,6 +19,30 @@
 template <class K, class V> class _HashMap_const_iterator;
 template <class K, class V> class _HashMap_iterator;
 
+inline unsigned
+hashcode(int i)
+{
+    return static_cast<unsigned>(i);
+}
+
+inline unsigned
+hashcode(unsigned u)
+{
+    return u;
+}
+
+inline unsigned
+hashcode(long l)
+{
+    return static_cast<unsigned>(l);
+}
+
+inline unsigned
+hashcode(unsigned long ul)
+{
+    return static_cast<unsigned long>(ul);
+}
+
 template <class K, class V>
 class HashMap { public:
     
@@ -43,7 +67,8 @@ class HashMap { public:
     inline const V &find(const K &) const;
     inline V *findp(const K &) const;
     inline const V &operator[](const K &k) const;
-    V &find_force(const K &);
+    V &find_force(const K &, const V &);
+    inline V &find_force(const K &);
 
     bool insert(const K &, const V &);
     void clear();
@@ -154,6 +179,13 @@ HashMap<K, V>::findp(const K &key) const
 }
 
 template <class K, class V>
+inline V &
+HashMap<K, V>::find_force(const K &key)
+{
+    return find_force(key, _default_value);
+}
+
+template <class K, class V>
 inline _HashMap_const_iterator<K, V>
 HashMap<K, V>::begin() const
 {
@@ -193,30 +225,6 @@ inline bool
 _HashMap_const_iterator<K, V>::operator!=(const const_iterator &i) const
 {
     return _hm != i._hm || _pos != i._pos;
-}
-
-inline unsigned
-hashcode(int i)
-{
-    return static_cast<unsigned>(i);
-}
-
-inline unsigned
-hashcode(unsigned u)
-{
-    return u;
-}
-
-inline unsigned
-hashcode(long l)
-{
-    return static_cast<unsigned>(l);
-}
-
-inline unsigned
-hashcode(unsigned long ul)
-{
-    return static_cast<unsigned long>(ul);
 }
 
 #include <lcdf/hashmap.cc>	// necessary to support GCC 3.3

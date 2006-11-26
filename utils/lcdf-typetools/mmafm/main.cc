@@ -1,6 +1,6 @@
 /* main.cc -- driver for mmafm program
  *
- * Copyright (c) 1997-2004 Eddie Kohler
+ * Copyright (c) 1997-2006 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -321,7 +321,7 @@ main(int argc, char *argv[])
       
      case VERSION_OPT:
       printf("mmafm (LCDF typetools) %s\n", VERSION);
-      printf("Copyright (C) 1997-2004 Eddie Kohler\n\
+      printf("Copyright (C) 1997-2006 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");

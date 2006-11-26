@@ -50,7 +50,7 @@ class ErrorHandler { public:
   static void static_cleanup();
 
   static ErrorHandler *default_handler();
-  static ErrorHandler *silent_handler();
+  static ErrorHandler *ignore_handler();
  
   static bool has_default_handler(); 
   static void set_default_handler(ErrorHandler *);
@@ -123,6 +123,11 @@ class FileErrorHandler : public BaseErrorHandler { public:
   String _context;
 };
 #endif
+
+class SilentErrorHandler : public BaseErrorHandler { public:
+  SilentErrorHandler()			{ }
+  void handle_text(Seriousness, const String &);  
+};
 
 class ErrorVeneer : public ErrorHandler { public:
 

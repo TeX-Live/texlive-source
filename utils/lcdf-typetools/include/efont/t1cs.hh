@@ -252,7 +252,7 @@ enum Type1Defs {
 
 
 inline Type1Charstring::Type1Charstring(const String &s)
-    : _s(s), _key(-1)
+    : Charstring(), _s(s), _key(-1)
 {
 }
 

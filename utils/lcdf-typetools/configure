@@ -870,6 +870,7 @@ Optional Features:
   --disable-t1lint        do not build the t1lint program
   --disable-t1reencode    do not build the t1reencode program
   --disable-t1testpage    do not build the t1testpage program
+  --disable-ttftotype42   do not build the ttftotype42 program
   --enable-tetex-build    build as part of a teTeX installation
   --disable-selfauto-set  disable setting SELFAUTO variables from kpsewhich
   --disable-auto-cfftot1  disable running cfftot1 from otftotfm
@@ -1638,7 +1639,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE=lcdf-typetools
- VERSION=2.34
+ VERSION=2.46
 
 
 cat >>confdefs.h <<_ACEOF
@@ -4413,9 +4414,16 @@ if test "${enable_t1testpage+set}" = set; then
 else
   enable_t1testpage=yes
 fi;
+# Check whether --enable-ttftotype42 or --disable-ttftotype42 was given.
+if test "${enable_ttftotype42+set}" = set; then
+  enableval="$enable_ttftotype42"
+  :
+else
+  enable_ttftotype42=yes
+fi;
 
 SELECTED_SUBDIRS=''
-for i in cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1reencode t1testpage; do
+for i in cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1reencode t1testpage ttftotype42; do
     y=`eval 'echo $enable_'"$i"`
     if test "x$y" != xno; then SELECTED_SUBDIRS="$SELECTED_SUBDIRS $i"; fi
 done
@@ -4463,6 +4471,8 @@ directory.  I expected it to be in $srcdir/../../texk/kpathsea.
 	fi
 	CPPFLAGS="$CPPFLAGS -I\$(top_builddir)/../../texk -I\$(top_srcdir)/../../texk"
 	LDFLAGS="$LDFLAGS -L\$(top_builddir)/../../texk/kpathsea/.libs"
+        { echo "$as_me:$LINENO: tetex build of lcdf-typetools, CPPFLAGS now: $CPPFLAGS" >&5
+echo "$as_me: tetex build of lcdf-typetools, CPPFLAGS now: $CPPFLAGS" >&6;}
     elif test "x$kpathsea" != x -a "x$kpathsea" != xyes; then
 	CPPFLAGS="$CPPFLAGS -I$kpathsea/include"
 	LDFLAGS="$LDFLAGS -L$kpathsea/lib"
@@ -5131,6 +5141,87 @@ _ACEOF
     else
 	LIBKPATHSEA='-lkpathsea'
 	LIBKPATHSEA_DEP=''
+    fi
+
+        if test "x$enable_tetex_build" = xyes; then
+      cat >>confdefs.h <<\_ACEOF
+#define HAVE_DECL_KPSE_OPENTYPE_FORMAT 1
+_ACEOF
+
+    else
+      echo "$as_me:$LINENO: checking whether kpse_opentype_format is declared" >&5
+echo $ECHO_N "checking whether kpse_opentype_format is declared... $ECHO_C" >&6
+if test "${ac_cv_have_decl_kpse_opentype_format+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <kpathsea/kpathsea.h>
+
+int
+main ()
+{
+#ifndef kpse_opentype_format
+  char *p = (char *) kpse_opentype_format;
+#endif
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_have_decl_kpse_opentype_format=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_have_decl_kpse_opentype_format=no
+fi
+rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+echo "$as_me:$LINENO: result: $ac_cv_have_decl_kpse_opentype_format" >&5
+echo "${ECHO_T}$ac_cv_have_decl_kpse_opentype_format" >&6
+if test $ac_cv_have_decl_kpse_opentype_format = yes; then
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_DECL_KPSE_OPENTYPE_FORMAT 1
+_ACEOF
+
+:
+else
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_DECL_KPSE_OPENTYPE_FORMAT 0
+_ACEOF
+
+:
+fi
+
+
     fi
 fi
 
@@ -8513,7 +8604,7 @@ _ACEOF
 
 
 
-                                                                                                                        ac_config_files="$ac_config_files Makefile liblcdf/Makefile libefont/Makefile cfftot1/Makefile mmafm/Makefile mmpfb/Makefile otfinfo/Makefile otftotfm/Makefile t1dotlessj/Makefile t1lint/Makefile t1reencode/Makefile t1testpage/Makefile"
+                                                                                                                                  ac_config_files="$ac_config_files Makefile liblcdf/Makefile libefont/Makefile cfftot1/Makefile mmafm/Makefile mmpfb/Makefile otfinfo/Makefile otftotfm/Makefile t1dotlessj/Makefile t1lint/Makefile t1reencode/Makefile t1testpage/Makefile ttftotype42/Makefile"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -9089,6 +9180,7 @@ do
   "t1lint/Makefile" ) CONFIG_FILES="$CONFIG_FILES t1lint/Makefile" ;;
   "t1reencode/Makefile" ) CONFIG_FILES="$CONFIG_FILES t1reencode/Makefile" ;;
   "t1testpage/Makefile" ) CONFIG_FILES="$CONFIG_FILES t1testpage/Makefile" ;;
+  "ttftotype42/Makefile" ) CONFIG_FILES="$CONFIG_FILES ttftotype42/Makefile" ;;
   "depfiles" ) CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
   "config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5

@@ -94,7 +94,7 @@ class PairProgram { public:
 
 
 inline PairOp::PairOp(GlyphIndex l, GlyphIndex r, int v, PairOpIndex nl)
-    : _left(l), _right(r), _val(v), _next_left(nl)
+    : _left(l), _right(r), _result(), _val(v), _next_left(nl)
 {
 }
 

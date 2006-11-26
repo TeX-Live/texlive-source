@@ -2,7 +2,7 @@
 
 /* t1csgen.{cc,hh} -- Type 1 charstring generation
  *
- * Copyright (c) 1998-2005 Eddie Kohler
+ * Copyright (c) 1998-2006 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -52,6 +52,7 @@ Type1CharstringGen::Type1CharstringGen(int precision)
     else
 	_precision = 5;
     _f_precision = _precision;
+    clear();
 }
 
 void

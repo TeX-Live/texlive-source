@@ -2,7 +2,7 @@
 
 /* afmparse.{cc,hh} -- Adobe Font Metrics parsing
  *
- * Copyright (c) 1998-2004 Eddie Kohler
+ * Copyright (c) 1998-2006 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -218,22 +218,22 @@ AfmParser::vis(const char *formatsigned, va_list valist)
 	 
 	      case 'd':
 	      case 'i': {
-		  unsigned char *new_str;
-		  int v = strtol((char *)str, (char **)&new_str, 10);
-		  if (new_str == str) FAIL("should be an integer");
+		  union { unsigned char *uc; char *c; } new_str;
+		  int v = strtol((char *)str, &new_str.c, 10);
+		  if (new_str.uc == str) FAIL("should be an integer");
 	   
-		  str = new_str;
+		  str = new_str.uc;
 		  int *istore = va_arg(valist, int *);
 		  if (istore) *istore = v;
 		  break;
 	      }
        
 	      case 'x': {
-		  unsigned char *new_str;
-		  int v = strtol((char *)str, (char **)&new_str, 16);
-		  if (new_str == str) FAIL("should be a hex integer");
+		  union { unsigned char *uc; char *c; } new_str;
+		  int v = strtol((char *)str, &new_str.c, 16);
+		  if (new_str.uc == str) FAIL("should be a hex integer");
 	   
-		  str = new_str;
+		  str = new_str.uc;
 		  int *istore = va_arg(valist, int *);
 		  if (istore) *istore = v;
 		  break;
@@ -242,12 +242,12 @@ AfmParser::vis(const char *formatsigned, va_list valist)
 	      case 'e':
 	      case 'f':
 	      case 'g': {
-		  unsigned char *new_str;
-		  double v = strtonumber((char *)str, (char **)&new_str);
+		  union { unsigned char *uc; char *c; } new_str;
+		  double v = strtonumber((char *)str, &new_str.c);
 		  if (v < MIN_KNOWN_DOUBLE) v = MIN_KNOWN_DOUBLE;
-		  if (new_str == str) FAIL("should be a real number");
+		  if (new_str.uc == str) FAIL("should be a real number");
 	   
-		  str = new_str;
+		  str = new_str.uc;
 		  double *dstore = va_arg(valist, double *);
 		  if (dstore) *dstore = v;
 		  break;

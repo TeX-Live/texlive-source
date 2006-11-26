@@ -2,7 +2,7 @@
 
 /* otfos2.{cc,hh} -- OpenType OS/2 table
  *
- * Copyright (c) 2005 Eddie Kohler
+ * Copyright (c) 2005-2006 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -27,7 +27,7 @@ namespace Efont { namespace OpenType {
 Os2::Os2(const Data &data, ErrorHandler *errh)
     : _data(data)
 {
-    _error = parse_header(errh ? errh : ErrorHandler::silent_handler());
+    _error = parse_header(errh ? errh : ErrorHandler::ignore_handler());
     if (_error < 0)
 	_data = Data();
 }

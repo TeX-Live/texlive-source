@@ -1,6 +1,6 @@
 /* util.{cc,hh} -- various bits
  *
- * Copyright (c) 2003-2004 Eddie Kohler
+ * Copyright (c) 2003-2006 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -165,16 +165,16 @@ temporary_file(String &filename, ErrorHandler *errh)
 bool
 parse_unicode_number(const char* begin, const char* end, int require_prefix, uint32_t& result)
 {
-    bool allow_lower = false;
+    bool allow_lower = (require_prefix == 1);
     if (require_prefix < 0)
 	/* do not look for prefix */;
     else if (begin + 7 == end && begin[0] == 'u' && begin[1] == 'n' && begin[2] == 'i')
 	begin += 3;
     else if (begin + 5 <= end && begin + 7 >= end && begin[0] == 'u')
 	begin++;
-    else if (begin + 6 <= end && begin + 8 >= end && begin[0] == 'U' && begin[1] == '+')
+    else if (begin + 3 <= end && begin + 8 >= end && begin[0] == 'U' && begin[1] == '+')
 	begin += 2, allow_lower = true;
-    else if (require_prefix > 0)
+    else if (require_prefix > 1)
 	/* some prefix was required */
 	return false;
 

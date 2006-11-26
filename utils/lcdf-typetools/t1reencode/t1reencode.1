@@ -1,4 +1,4 @@
-.ds V 2.34
+.ds V 2.46
 .de M
 .BR "\\$1" "(\\$2)\\$3"
 ..
@@ -34,9 +34,65 @@ which must contain an encoding in
 .M dvips 1
 format.  Alternatively,
 .I file
-can be one of "StandardEncoding", "ISOLatin1Encoding", "ExpertEncoding",
-"ExpertSubsetEncoding", or "SymbolEncoding", in which case the
-corresponding standard encoding is used.
+can be one of the following special names, in which case the corresponding
+standard encoding is used.
+.Sp
+.RS
+.TP 23
+.B Name
+.B Source
+.TP
+StandardEncoding
+Adobe
+.TP
+ISOLatin1Encoding
+Adobe/ISO (synonym: ISO_8859_1_Encoding)
+.TP
+ExpertEncoding
+Adobe
+.TP
+ExpertSubsetEncoding
+Adobe
+.TP
+SymbolEncoding
+Adobe
+.TP
+ISOLatin2Encoding
+ISO (synonym: ISO_8859_2_Encoding)
+.TP
+ISOLatin3Encoding
+ISO (synonym: ISO_8859_3_Encoding)
+.TP
+ISOLatin4Encoding
+ISO (synonym: ISO_8859_4_Encoding)
+.TP
+ISOCyrillicEncoding
+ISO (synonym: ISO_8859_5_Encoding)
+.TP
+ISOGreekEncoding
+ISO (synonym: ISO_8859_7_Encoding)
+.TP
+ISOLatin5Encoding
+ISO (synonym: ISO_8859_9_Encoding)
+.TP
+ISOLatin6Encoding
+ISO (synonym: ISO_8859_10_Encoding)
+.TP
+ISOThaiEncoding
+ISO (synonym: ISO_8859_11_Encoding)
+.TP
+ISOLatin7Encoding
+ISO (synonym: ISO_8859_13_Encoding)
+.TP
+ISOLatin8Encoding
+ISO (synonym: ISO_8859_14_Encoding)
+.TP
+ISOLatin9Encoding
+ISO (synonym: ISO_8859_15_Encoding)
+.TP
+KOI8REncoding
+-
+.RE
 '
 .Sp
 .TP 5

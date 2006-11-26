@@ -1,6 +1,6 @@
 Summary: Programs to manipulate OpenType and multiple-master fonts
 Name: lcdf-typetools
-Version: 2.16
+Version: 2.40
 Release: hmcmath.1
 Copyright: GPL
 Vendor: Little Cambridgeport Design Factory <http://www.lcdf.org/>
@@ -21,12 +21,15 @@ This package contains four tools for working with OpenType fonts:
             optical size option
 
  otftotfm   allows you to create TeX font metrics and encodings for
-            using PostScript-flavored OpenType fonts
+            using OpenType fonts
 
  t1dotlessj creates a Type 1 font with a single character --
             the dotless j corresponding to the specified design
 
  t1lint     checks a Type 1 font for correctness (preliminary)
+
+ t1reencode reencodes a Type 1 font, replacing its internal encoding with
+            one you specify
 
  t1testpage creates a PostScript test page for a specified
             font file (preliminary)
@@ -79,6 +82,7 @@ make DESTDIR=$RPM_BUILD_ROOT install
 %{_bindir}/otftotfm
 %{_bindir}/t1dotlessj
 %{_bindir}/t1lint
+%{_bindir}/t1reencode
 %{_bindir}/t1testpage
 %{_mandir}/man*/*
 %{_datadir}/lcdf-typetools/*

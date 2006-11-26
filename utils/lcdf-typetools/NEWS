@@ -1,5 +1,98 @@
 LCDF Typetools NEWS
 
+Version 2.46   29.Oct.2006
+
+* otftotfm: Base metrics files now reflect the actual base font metrics
+  more accurately (rather than containing virtual-font-only metrics
+  information, such as letterspacing).  This should make it easier to tell,
+  using "diff", whether two base metrics files contain the same data.
+
+* otftotfm: '--no-type1' does not affect dotless-j font generation; use
+  '--no-dotlessj' for that (Michael Zedler).
+
+* otftotfm: Don't generate virtual fonts unless you have to (Michael
+  Zedler).
+
+
+Version 2.45   17.Sep.2006
+
+* Include new ttftotype42 program.
+
+
+Version 2.44   16.Sep.2006
+
+* otfinfo/otftotfm: Support new fonts whose 'size' features are defined
+  correctly.  Thanks to Read Roberts for defining the compatibility check.
+
+
+Version 2.43   22.Aug.2006
+
+* otftotfm: Check for availability of kpse_opentype_format.  Bug reported
+  by Carsten Luckmann.
+
+
+Version 2.42   22.Aug.2006
+
+* otftotfm: Any --altselector-char is actually encoded, so you can use it
+  as a regular character as well as an altselector.  Suggested by Carsten
+  Luckmann.
+
+
+Version 2.41   12.Aug.2006
+
+* otftotfm: Some TrueType fixes.  Problems reported by Michael Zedler.
+
+
+Version 2.40   1.Aug.2006
+
+* otftotfm: Initial support for TrueType-flavored OpenType fonts.  Inspired
+  because John Owens is working with Microsoft's Calibri et al.
+
+
+Version 2.39   11.Jul.2006
+
+* cfftot1: Unify some subroutines previously missed, for slightly smaller
+  output.  Reported by Michael Zedler.
+
+
+Version 2.38   8.May.2006
+
+* otfinfo: Add '--info' option.  Requested by John Owens.
+
+
+Version 2.37   25.Jan.2006
+
+* otftotfm: Add 'ringfitted'.  Requested by Michael Zedler.  Required bug
+  fix.
+
+
+Version 2.36   9.Nov.2005
+
+* otfinfo: Add '-a/--family' option.  Based on patch from Ottavio G. Rizzo.
+
+* otftotfm: Fix bug where '-q' would inhibit map line output, reported by
+  Achim Blumensath.
+
+
+Version 2.35   3.Oct.2005
+
+* otftotfm: Allow '--ligkern "T h=:T_h"' (note lack of spaces around '=:').
+  Inspired by Michael Saunders.
+
+* otftotfm: Split TeX extensions out from 'glyphlist.txt' into
+  'texglyphlist.txt', leaving 'glyphlist.txt' exactly as distributed by
+  Adobe.  Otftotfm reads both files.  Requested by Werner Lemberg.
+
+* otftotfm: Add '% WARNMISSING' and '--warn-missing', so that missing
+  characters result in blots and cause warnings when processed by dvips.
+  Requested by Michael Zedler.
+
+* otfinfo: Add '-v/--font-version' option and document '-t/--tables' option.
+
+* t1reencode: Add many more standard encodings to t1reencode, and fix
+  existing ones.  Patch from Peter Betzler.
+
+
 Version 2.34   11.Jun.2005
 
 * otftotfm: Search for 'glyphlist.txt' using kpathsea, and set kpathsea

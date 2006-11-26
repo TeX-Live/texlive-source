@@ -1,6 +1,6 @@
 /* maket1font.{cc,hh} -- translate CFF fonts to Type 1 fonts
  *
- * Copyright (c) 2002-2005 Eddie Kohler
+ * Copyright (c) 2002-2006 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -75,6 +75,7 @@ class MakeType1CharstringInterp::Subr { public:
     void update()			{ _stamp = max_stamp; }
     static void bump_date()		{ max_stamp++; }
 
+    //String name(const MakeType1CharstringInterp *) const;
     Type1Charstring *charstring(const MakeType1CharstringInterp *) const;
     
     int ncalls() const			{ return _calls.size(); }
@@ -192,6 +193,24 @@ MakeType1CharstringInterp::csr_subr(CsRef csr, bool force) const
     return what;
 }
 
+#if 0
+String
+MakeType1CharstringInterp::Subr::name(const MakeType1CharstringInterp *mcsi) const
+{
+    int n = (_csr & CSR_NUM);
+    switch (_csr & CSR_TYPE) {
+    case CSR_SUBR:
+	return "subr" + String(n);
+    case CSR_GSUBR:
+	return "gsubr" + String(n);
+    case CSR_GLYPH:
+	return mcsi->output()->glyph_name(n);
+    default:
+	return "";
+    }
+}
+#endif
+
 Type1Charstring *
 MakeType1CharstringInterp::Subr::charstring(const MakeType1CharstringInterp *mcsi) const
 {
@@ -215,14 +234,17 @@ MakeType1CharstringInterp::Subr::transfer_nested_calls(int pos, int length, Subr
     int right = pos + length;
     for (int i = 0; i < _calls.size(); i++) {
 	Subr *cs = _calls[i];
-	for (int j = 0; j < cs->_callers.size(); j++) {
-	    Caller &c = cs->_callers[j];
-	    if (c.subr == this && pos <= c.pos && c.pos + c.len <= right) {
-		c.subr = new_caller;
-		c.pos -= pos;
-		new_caller->add_call(cs);
+	// 11.Jul.2006 - remember not to shift the new caller's records!  (Michael Zedler)
+	if (cs != new_caller)
+	    for (int j = 0; j < cs->_callers.size(); j++) {
+		Caller &c = cs->_callers[j];
+		if (c.subr == this && pos <= c.pos && c.pos + c.len <= right) {
+		    // shift caller to point at the subroutine
+		    c.subr = new_caller;
+		    c.pos -= pos;
+		    new_caller->add_call(cs);
+		}
 	    }
-	}
     }
 }
 
@@ -284,7 +306,7 @@ MakeType1CharstringInterp::Subr::unify(MakeType1CharstringInterp *mcsi)
     
     if (!_callers.size())
 	return false;
-    assert(!_calls.size());
+    assert(!_calls.size());	// because this hasn't been unified yet
 
     // Find the smallest shared substring.
     String substr = _callers[0].charstring(mcsi);
@@ -312,18 +334,20 @@ MakeType1CharstringInterp::Subr::unify(MakeType1CharstringInterp *mcsi)
     _output_subrno = mcsi->output()->nsubrs();
     mcsi->output()->set_subr(_output_subrno, Type1Charstring(substr + "\013"));
 
-    // note calls
+    // This subr has become real, so it is suitable for later unifications.
+    // Mark it as having called any subroutines contained completely within itself.
+    // How to do this?  Look at one caller, and go over all its calls.
     _callers[0].subr->transfer_nested_calls(_callers[0].pos, _callers[0].len, this);
     
     // adapt callers
     String callsubr_string = Type1CharstringGen::callsubr_string(_output_subrno);
+    
     for (int i = 0; i < _callers.size(); i++)
 	// 13.Jun.2003 - must check whether _callers[i].subr exists: if we
 	// called a subroutine more than once, change_callers() might have
 	// zeroed it out.
 	if (_callers[i].subr && _callers[i].subr != this) {
 	    Subr::Caller c = _callers[i];
-	    //fprintf(stderr, " SUBSTRING %08x:%d+%d\n", c.subr->_csr, c.pos, c.len);
 	    c.subr->charstring(mcsi)->assign_substring(c.pos, c.len, callsubr_string);
 	    Subr::bump_date();
 	    for (int j = 0; j < c.subr->ncalls(); j++)
@@ -409,7 +433,7 @@ MakeType1CharstringInterp::run(const CharstringProgram *program, Type1Font *outp
 	run(program->glyph_context(i), receptacle, errh);
 #if 0
 	PermString n = program->glyph_name(i);
-	if (1 || n == "one") {
+	if (n == "integral.disp") {
 	    fprintf(stderr, "%s was %s\n", n.c_str(), CharstringUnparser::unparse(*program->glyph(i)).c_str());
 	    fprintf(stderr, "%s == %s\n", n.c_str(), CharstringUnparser::unparse(receptacle).c_str());
 	}

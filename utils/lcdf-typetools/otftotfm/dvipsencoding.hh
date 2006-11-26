@@ -5,12 +5,13 @@
 #include <lcdf/hashmap.hh>
 class Metrics;
 class Secondary;
+class FontInfo;
 
 class DvipsEncoding { public:
 
     DvipsEncoding();
 
-    static int parse_glyphlist(String);
+    static int add_glyphlist(String);
     static int glyphname_unicode(const String &, bool *more = 0);
     static void glyphname_unicode(String, Vector<int> &, bool *more = 0);
 
@@ -20,6 +21,7 @@ class DvipsEncoding { public:
     int boundary_char() const			{ return _boundary_char; }
     const String &coding_scheme() const		{ return _coding_scheme; }
     void set_coding_scheme(const String &s)	{ _coding_scheme = s; }
+    void set_warn_missing(bool wm)		{ _warn_missing = wm; }
 
     void encode(int, PermString);
     inline int encoding_of(PermString) const;
@@ -35,7 +37,7 @@ class DvipsEncoding { public:
     bool file_had_ligkern() const		{ return _file_had_ligkern; }
     
     // also modifies 'this':
-    void make_metrics(Metrics &, const Efont::OpenType::Cmap &, Efont::Cff::Font *, Secondary *, bool literal, ErrorHandler *);
+    void make_metrics(Metrics &, const FontInfo &, Secondary *, bool literal, ErrorHandler *);
     
     void apply_ligkern_lig(Metrics &, ErrorHandler *) const;
     void apply_ligkern_kern(Metrics &, ErrorHandler *) const;
@@ -73,13 +75,23 @@ class DvipsEncoding { public:
     String _initial_comment;
     String _final_text;
     bool _file_had_ligkern;
+    bool _warn_missing;
+
+    struct WordType {
+	const char *name;
+	int (DvipsEncoding::*parsefunc)(Vector<String>&, int, ErrorHandler*);
+    };
+    static const WordType word_types[];
+    enum { WT_LIGKERN = 0, WT_POSITION, WT_UNICODING };
 
     void add_ligkern(const Ligature &, int override);
+    enum { EPARSE = 90000 };
     int parse_ligkern_words(Vector<String> &, int override, ErrorHandler *);
     int parse_position_words(Vector<String> &, int override, ErrorHandler *);
     int parse_unicoding_words(Vector<String> &, int override, ErrorHandler *);
-    int parse_words(const String &, int override, int (DvipsEncoding::*)(Vector<String> &, int, ErrorHandler *), ErrorHandler *);
-    void bad_codepoint(int);
+    void parse_word_group(Vector<String> &, int override, int wt, ErrorHandler *);
+    int parse_words(const String &, int override, int wt, ErrorHandler *);
+    void bad_codepoint(int, Metrics &, Vector<String> &);
     bool x_unicodes(PermString chname, Vector<uint32_t> &unicodes) const;
     
     static PermString dot_notdef;

@@ -4,6 +4,8 @@
 #include <efont/otfdata.hh>
 class ErrorHandler;
 namespace Efont { namespace OpenType {
+class Post;
+class Name;
 
 typedef int Glyph;			// 16-bit integer
 
@@ -42,22 +44,28 @@ class Font { public:
     // default destructor
 
     bool ok() const			{ return _error >= 0; }
+    bool check_checksums(ErrorHandler * = 0) const;
     int error() const			{ return _error; }
 
     const String& data_string() const	{ return _str; }
     const uint8_t* data() const		{ return _str.udata(); }
     int length() const			{ return _str.length(); }
 
-    String table(Tag) const;
     int ntables() const;
+    String table(Tag) const;
+    uint32_t table_checksum(Tag) const;
     Tag table_tag(int) const;
+
+    static uint32_t checksum(const uint8_t *, const uint8_t *);
+    static uint32_t checksum(const String &);
+    static Font make(bool truetype, const Vector<Tag>& tags, const Vector<String>& data);
+    
+    enum { HEADER_SIZE = 12, TABLE_DIR_ENTRY_SIZE = 16 };
 
   private:
 
     String _str;
     int _error;
-
-    enum { HEADER_SIZE = 12, TABLE_DIR_ENTRY_SIZE = 16 };
 
     int parse_header(ErrorHandler*);
     
@@ -101,6 +109,7 @@ class FeatureList { public:
 
     Tag tag(int fid) const;
     String params(int fid, int length, ErrorHandler* = 0, bool old_style_offset = false) const;
+    String size_params(int fid, const Name& name, ErrorHandler* = 0) const;
     int lookups(int fid, Vector<int>& results, ErrorHandler* = 0, bool clear_results = true) const;
 
     int find(Tag, const Vector<int>& fids) const;
@@ -111,7 +120,7 @@ class FeatureList { public:
     int lookups(const Vector<int>& required_fids, const Vector<int>& fids, const Vector<Tag>& sorted_ftags, Vector<int>& results, ErrorHandler* = 0) const;
     int lookups(int required_fid, const Vector<int>& fids, const Vector<Tag>& sorted_ftags, Vector<int>& results, ErrorHandler* = 0) const;
     int lookups(const ScriptList&, Tag script, Tag langsys, const Vector<Tag>& sorted_ftags, Vector<int>& results, ErrorHandler* = 0) const;
-    
+
   private:
 
     enum { FEATURELIST_HEADERSIZE = 2, FEATURE_RECSIZE = 6,

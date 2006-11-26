@@ -1,6 +1,6 @@
 /* secondary.{cc,hh} -- code for generating fake glyphs
  *
- * Copyright (c) 2003-2004 Eddie Kohler
+ * Copyright (c) 2003-2006 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -20,7 +20,12 @@
 #include <efont/t1bounds.hh>
 #include <efont/t1font.hh>
 #include <efont/t1rw.hh>
+#include <efont/otfname.hh>
 #include <efont/otfos2.hh>
+#include <efont/otfpost.hh>
+#include <efont/t1csgen.hh>
+#include <efont/t1unparser.hh>
+#include <efont/ttfcs.hh>
 #include <lcdf/straccum.hh>
 #include <stdarg.h>
 #include <errno.h>
@@ -33,6 +38,8 @@ enum { U_EXCLAMDOWN = 0x00A1,	// U+00A1 INVERTED EXCLAMATION MARK
        U_IJ = 0x0132,		// U+0132 LATIN CAPITAL LIGATURE IJ
        U_ij = 0x0133,		// U+0133 LATIN SMALL LIGATURE IJ
        U_DOTLESSJ = 0x0237,	// U+0237 LATIN SMALL LETTER DOTLESS J
+       U_RINGABOVE = 0x02DA,	// U+02DA RING ABOVE
+       U_COMBININGRINGABOVE = 0x030A,	// U+030A COMBINING RING ABOVE
        U_CWM = 0x200C,		// U+200C ZERO WIDTH NON-JOINER
        U_ENDASH = 0x2013,	// U+2013 EN DASH
        U_PERTENTHOUSAND = 0x2031, // U+2031 PER TEN THOUSAND SIGN
@@ -57,6 +64,7 @@ enum { U_EXCLAMDOWN = 0x00A1,	// U+00A1 INVERTED EXCLAMATION MARK
        U_ASCENDERCWM = 0xD80A,	// invalid Unicode
        U_INTERROBANGDOWN = 0xD80B, // invalid Unicode
        U_TWELVEUDASH = 0xD80C,	// invalid Unicode
+       U_RINGFITTED = 0xD80D,	// invalid Unicode
        U_VS1 = 0xFE00,
        U_VS16 = 0xFE0F,
        U_VS17 = 0xE0100,
@@ -66,7 +74,141 @@ enum { U_EXCLAMDOWN = 0x00A1,	// U+00A1 INVERTED EXCLAMATION MARK
        U_FSMALL = 0xF766,
        U_ISMALL = 0xF769,
        U_LSMALL = 0xF76C,
-       U_SSMALL = 0xF773 };
+       U_SSMALL = 0xF773,
+       U_MATHDOTLESSJ = 0x1D6A5
+};
+
+
+FontInfo::FontInfo(const Efont::OpenType::Font *otf_, ErrorHandler *errh)
+    : otf(otf_), cmap(0), cff_file(0), cff(0), post(0), name(0), _nglyphs(-1),
+      _got_glyph_names(false), _ttb_program(0)
+{
+    cmap = new Efont::OpenType::Cmap(otf->table("cmap"), errh);
+    assert(cmap->ok());
+
+    if (String cff_string = otf->table("CFF")) {
+	cff_file = new Efont::Cff(cff_string, errh);
+	if (!cff_file->ok())
+	    return;
+	Efont::Cff::FontParent *fp = cff_file->font(PermString(), errh);
+	if (!fp || !fp->ok())
+	    return;
+	if (!(cff = dynamic_cast<Efont::Cff::Font *>(fp))) {
+	    errh->error("CID-keyed fonts not supported");
+	    return;
+	}
+	_nglyphs = cff->nglyphs();
+    }
+
+    if (!cff) {
+	post = new Efont::OpenType::Post(otf->table("post"), errh);
+	// read number of glyphs from 'maxp' -- should probably be elsewhere
+	if (Efont::OpenType::Data maxp = otf->table("maxp"))
+	    if (maxp.length() >= 6)
+		_nglyphs = maxp.u16(4);
+	if (_nglyphs < 0 && post->ok())
+	    _nglyphs = post->nglyphs();
+    }
+    
+    name = new Efont::OpenType::Name(otf->table("name"), errh);
+}
+
+FontInfo::~FontInfo()
+{
+    delete cmap;
+    delete cff_file;
+    delete cff;
+    delete post;
+    delete name;
+    delete _ttb_program;
+}
+
+bool
+FontInfo::ok() const
+{
+    if (cff)
+	return cmap->ok() && cff->ok();
+    else
+	return post && post->ok() && name && name->ok();
+}
+
+bool
+FontInfo::glyph_names(Vector<PermString> &glyph_names) const
+{
+    program()->glyph_names(glyph_names);
+    return true;
+}
+
+int
+FontInfo::glyphid(PermString name) const
+{
+    if (cff)
+	return cff->glyphid(name);
+    else {
+	if (!_got_glyph_names) {
+	    glyph_names(_glyph_names);
+	    _got_glyph_names = true;
+	}
+	PermString *found = std::find(_glyph_names.begin(), _glyph_names.end(), name);
+	if (found == _glyph_names.end())
+	    return 0;
+	return found - _glyph_names.begin();
+    }
+}
+
+String
+FontInfo::family_name() const
+{
+    if (cff)
+	return cff->dict_string(Efont::Cff::oFamilyName);
+    else
+	return name->english_name(Efont::OpenType::Name::N_FAMILY);
+}
+
+String
+FontInfo::postscript_name() const
+{
+    if (cff)
+	return cff->font_name();
+    else
+	return name->english_name(Efont::OpenType::Name::N_POSTSCRIPT);
+}
+
+const Efont::CharstringProgram *
+FontInfo::program() const
+{
+    if (cff)
+	return cff;
+    else {
+	if (!_ttb_program)
+	    _ttb_program = new Efont::TrueTypeBoundsCharstringProgram(otf);
+	return _ttb_program;
+    }
+}
+
+bool
+FontInfo::is_fixed_pitch() const
+{
+    if (cff) {
+	double d;
+	return (cff->dict_value(Efont::Cff::oIsFixedPitch, &d) && d);
+    } else
+	return post->is_fixed_pitch();
+}
+
+double
+FontInfo::italic_angle() const
+{
+    if (cff) {
+	double d;
+	(void) cff->dict_value(Efont::Cff::oItalicAngle, &d);
+	return d;
+    } else
+	return post->italic_angle();
+}
+
+
+/* */
 
 Secondary::~Secondary()
 {
@@ -149,16 +291,16 @@ T1Secondary::encode_uni(int code, PermString name, uint32_t uni, Metrics &metric
 
 static String dotlessj_file_name;
 
-static void
-dotlessj_dvips_include(const String &, StringAccum &sa, ErrorHandler *)
+static String
+dotlessj_dvips_include(const String &, const FontInfo &, ErrorHandler *)
 {
-    sa << '<' << pathname_filename(dotlessj_file_name);
+    return "<" + pathname_filename(dotlessj_file_name);
 }
 
 int
 T1Secondary::dotlessj_font(Metrics &metrics, ErrorHandler *errh, Glyph &dj_glyph)
 {
-    if (!_font_name || !_finfo.otf)
+    if (!_font_name || !_finfo.otf || !_finfo.cff)
 	return -1;
     
     String dj_name = suffix_font_name(_font_name, "--lcdfj");
@@ -166,7 +308,7 @@ T1Secondary::dotlessj_font(Metrics &metrics, ErrorHandler *errh, Glyph &dj_glyph
 	if (metrics.mapped_font_name(i) == dj_name)
 	    return i;
     
-    if (String filename = installed_type1_dotlessj(_otf_file_name, _finfo.cff->font_name(), (output_flags & G_DOTLESSJ) && (output_flags & G_TYPE1), errh)) {
+    if (String filename = installed_type1_dotlessj(_otf_file_name, _finfo.cff->font_name(), (output_flags & G_DOTLESSJ), errh)) {
 
 	// check for special case: "\0" means the font's "j" is already
 	// dotless
@@ -307,7 +449,8 @@ T1Secondary::setting(uint32_t uni, Vector<Setting> &v, Metrics &metrics, ErrorHa
 	break;
 
       case U_DOTLESSJ:
-      case U_DOTLESSJ_2: {
+      case U_DOTLESSJ_2:
+      case U_MATHDOTLESSJ: {
 	  Glyph dj_glyph;
 	  int which = dotlessj_font(metrics, errh, dj_glyph);
 	  if (which >= 0) {
@@ -321,9 +464,8 @@ T1Secondary::setting(uint32_t uni, Vector<Setting> &v, Metrics &metrics, ErrorHa
 
       case U_DBLBRACKETLEFT:
 	if (char_setting(v, metrics, '[', 0)) {
-	    double d;
-	    if (!_finfo.cff->dict_value(Efont::Cff::oIsFixedPitch, &d) || !d) {
-		d = char_one_bound(_finfo, xform, 4, true, 0, '[', 0);
+	    if (!_finfo.is_fixed_pitch()) {
+		double d = char_one_bound(_finfo, xform, 4, true, 0, '[', 0);
 		v.push_back(Setting(Setting::MOVE, (int) (-0.666 * d), 0));
 	    }
 	    char_setting(v, metrics, '[', 0);
@@ -333,9 +475,8 @@ T1Secondary::setting(uint32_t uni, Vector<Setting> &v, Metrics &metrics, ErrorHa
 
       case U_DBLBRACKETRIGHT:
 	if (char_setting(v, metrics, ']', 0)) {
-	    double d;
-	    if (!_finfo.cff->dict_value(Efont::Cff::oIsFixedPitch, &d) || !d) {
-		d = char_one_bound(_finfo, xform, 4, true, 0, ']', 0);
+	    if (!_finfo.is_fixed_pitch()) {
+		double d = char_one_bound(_finfo, xform, 4, true, 0, ']', 0);
 		v.push_back(Setting(Setting::MOVE, (int) (-0.666 * d), 0));
 	    }
 	    char_setting(v, metrics, ']', 0);
@@ -345,9 +486,8 @@ T1Secondary::setting(uint32_t uni, Vector<Setting> &v, Metrics &metrics, ErrorHa
 	
       case U_BARDBL:
 	if (char_setting(v, metrics, '|', 0)) {
-	    double d;
-	    if (!_finfo.cff->dict_value(Efont::Cff::oIsFixedPitch, &d) || !d) {
-		d = char_one_bound(_finfo, Transform(), 4, true, 0, '|', 0);
+	    if (!_finfo.is_fixed_pitch()) {
+		double d = char_one_bound(_finfo, Transform(), 4, true, 0, '|', 0);
 		v.push_back(Setting(Setting::MOVE, (int) (-0.333 * d), 0));
 	    }
 	    char_setting(v, metrics, '|', 0);
@@ -370,9 +510,8 @@ T1Secondary::setting(uint32_t uni, Vector<Setting> &v, Metrics &metrics, ErrorHa
 
       case U_TWELVEUDASH:
 	if (char_setting(v, metrics, U_ENDASH, 0)) {
-	    double d;
-	    if (!_finfo.cff->dict_value(Efont::Cff::oIsFixedPitch, &d) || !d) {
-		d = char_one_bound(_finfo, xform, 4, true, 0, U_ENDASH, 0);
+	    if (!_finfo.is_fixed_pitch()) {
+		double d = char_one_bound(_finfo, xform, 4, true, 0, U_ENDASH, 0);
 		v.push_back(Setting(Setting::MOVE, (int) (667 - 2 * d), 0));
 	    }
 	    char_setting(v, metrics, U_ENDASH, 0);
@@ -382,9 +521,8 @@ T1Secondary::setting(uint32_t uni, Vector<Setting> &v, Metrics &metrics, ErrorHa
 	
       case U_THREEQUARTERSEMDASH:
 	if (char_setting(v, metrics, U_ENDASH, 0)) {
-	    double d;
-	    if (!_finfo.cff->dict_value(Efont::Cff::oIsFixedPitch, &d) || !d) {
-		d = char_one_bound(_finfo, xform, 4, true, 0, U_ENDASH, 0);
+	    if (!_finfo.is_fixed_pitch()) {
+		double d = char_one_bound(_finfo, xform, 4, true, 0, U_ENDASH, 0);
 		v.push_back(Setting(Setting::MOVE, (int) (750 - 2 * d), 0));
 	    }
 	    char_setting(v, metrics, U_ENDASH, 0);
@@ -431,6 +569,25 @@ T1Secondary::setting(uint32_t uni, Vector<Setting> &v, Metrics &metrics, ErrorHa
 	    return true;
 	break;
 
+      case U_RINGFITTED: {
+	  int A_width = char_one_bound(_finfo, xform, 4, true, -1000, 'A', 0);
+	  uint32_t ring_char = U_RINGABOVE;
+	  int ring_width = char_one_bound(_finfo, xform, 4, true, -1000, ring_char, 0);
+	  if (ring_width <= -1000) {
+	      ring_char = U_COMBININGRINGABOVE;
+	      ring_width = char_one_bound(_finfo, xform, 4, true, -1000, ring_char, 0);
+	  }
+	  if (A_width > -1000 && ring_width > -1000) {
+	      int offset = (A_width - ring_width) / 2;
+	      v.push_back(Setting(Setting::MOVE, offset, 0));
+	      if (char_setting(v, metrics, ring_char, 0)) {
+		  v.push_back(Setting(Setting::MOVE, A_width - ring_width - offset, 0));
+		  return true;
+	      }
+	  }
+	  break;
+      }
+	
     }
 
     // didn't find a good setting, restore v to pristine state
@@ -451,7 +608,7 @@ char_bounds(int bounds[4], int &width, const FontInfo &finfo,
 	    const Transform &transform, uint32_t uni)
 {
     if (Efont::OpenType::Glyph g = finfo.cmap->map_uni(uni))
-	return Efont::CharstringBounds::bounds(transform, finfo.cff->glyph_context(g), bounds, width);
+	return Efont::CharstringBounds::bounds(transform, finfo.program()->glyph_context(g), bounds, width);
     else
 	return false;
 }
@@ -493,7 +650,7 @@ font_cap_height(const FontInfo &finfo, const Transform &font_xform)
 	Efont::OpenType::Os2 os2(finfo.otf->table("OS/2"));
 	return os2.cap_height();
     } catch (Efont::OpenType::Bounds) {
-	// XXX what if 'x', 'm', 'z' were subject to substitution?
+	// XXX what if 'H', 'O', 'B' were subject to substitution?
 	return char_one_bound(finfo, font_xform, 3, false, 1000,
 			      'H', 'O', 'B', 0);
     }
@@ -506,7 +663,7 @@ font_ascender(const FontInfo &finfo, const Transform &font_xform)
 	Efont::OpenType::Os2 os2(finfo.otf->table("OS/2"));
 	return os2.typo_ascender();
     } catch (Efont::OpenType::Bounds) {
-	// XXX what if 'x', 'm', 'z' were subject to substitution?
+	// XXX what if 'd', 'l' were subject to substitution?
 	return char_one_bound(finfo, font_xform, 3, true,
 			      font_x_height(finfo, font_xform),
 			      'd', 'l', 0);

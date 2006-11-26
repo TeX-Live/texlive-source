@@ -1,0 +1,132 @@
+# lcdf-typetools texglyphlist.txt, Version 2.33
+# Contents: Extensions to the Adobe Glyph List for TeX fonts and
+# encodings. We also extend the second field so that it can contain
+# multiple Unicode scalar values, separated by commas, analogous to
+# otftotfm's "% UNICODING" comments.
+###############################################################################
+Delta;2206,0394
+Ifractur;2111
+# FFsmall, FFIsmall, FFLsmall, FIsmall, FLsmall: invalid Unicode
+FFsmall;D804
+FFIsmall;D807
+FFLsmall;D808
+FIsmall;D805
+FLsmall;D806
+# Germandbls: invalid Unicode, used for secondary replacement from EC.enc
+Germandbls;D800
+# Germandblssmall: invalid Unicode
+Germandblssmall;D803
+Ng;014A
+Omega;2126,03A9
+Rfractur;211C
+# SS: invalid Unicode, used for secondary replacement from EC.enc
+SS;D800
+# SSsmall: invalid Unicode
+SSsmall;D803
+# altselector: invalid Unicode
+altselector;D802
+angbracketleft;27E8,2329
+angbracketright;27E9,232A
+arrowbothv;2195
+arrowdblbothv;21D5
+arrowleftbothalf;21BD
+arrowlefttophalf;21BC
+arrownortheast;2197
+arrownorthwest;2196
+arrowrightbothalf;21C1
+arrowrighttophalf;21C0
+arrowsoutheast;2198
+arrowsouthwest;2199
+# ascendercompwordmark: taller cwm, invalid Unicode
+ascendercompwordmark;D80A
+asteriskcentered;2217
+bardbl;2225
+# capitalcompwordmark: taller cwm, invalid Unicode
+capitalcompwordmark;D809
+ceilingleft;2308
+ceilingright;2309
+circlecopyrt;20DD,25CB
+circledivide;2298
+circledot;2299
+circleminus;2296
+coproduct;2A3F
+# cwm: Unicode for ZWNJ, used for secondary replacement from EC.enc
+cwm;200C
+dblbracketleft;27E6
+dblbracketright;27E7
+diamond;2662,2666
+diamondmath;22C4
+# U+0237 is the proposed allocation for dotless j as of Unicode 4.0
+# U+1D6A5 is the mathematical italic version approved in Unicode 5.0
+dotlessj;0237,F6BE,1D6A5
+emptyset;2205,F638
+# emptyslot: invalid Unicode; the user explicitly wants this slot empty
+emptyslot;D801
+epsilon1;03F5
+equivasymptotic;224D
+flat;266D
+floorleft;230A
+floorright;230B
+follows;227B
+followsequal;227D
+greatermuch;226B
+heart;2661,2665
+interrobang;203D
+# interrobangdown: inverted interrobang, invalid Unicode
+interrobangdown;D80B
+intersectionsq;2293
+latticetop;22A4
+lessmuch;226A
+lscript;2113
+natural;266E
+negationslash;0338
+ng;014B
+owner;220B
+pertenthousand;2031
+# TeX encodings such as 'texmital.enc' disagree with Unicode and the Adobe
+# glyph list; in TeX, the "straight" form of phi takes the name "phi",
+# whereas the more-common "loopy" form of phi, \varphi, takes the name "phi1".
+phi;03D5,03C6
+phi1;03C6
+pi1;03D6
+precedesequal;227C
+prime;2032,02B9
+rho1;03F1
+# ringfitted: a ring character centered on the x-width of A, invalid Unicode
+ringfitted;D80D
+sharp;266F
+similarequal;2243
+slurabove;2322
+slurbelow;2323
+star;22C6
+subsetsqequal;2291
+supersetsqequal;2292
+triangle;25B3
+triangleinv;25BD
+triangleleft;25B9
+triangleright;25C3
+turnstileleft;22A2
+turnstileright;22A3
+# twelveudash: 2/3-em dash; invalid Unicode
+twelveudash;D80C
+unionmulti;228E
+unionsq;2294
+vector;20D7
+# visualspace: Unicode for OPEN BOX, used for secondary replacement from EC.enc
+visualspace;2423
+wreathproduct;2240
+# -- Marco Kuhlmann reported annoying glyph neologisms in fontinst encodings
+# Dbar = Dcroat
+Dbar;0110
+# compwordmark = cwm
+compwordmark;200C
+# dbar = dcroat
+dbar;0111
+# rangedash = endash
+rangedash;2013
+# hyphenchar = hyphen
+hyphenchar;002D
+# punctdash = emdash
+punctdash;2014
+# visiblespace = visualspace
+visiblespace;2423

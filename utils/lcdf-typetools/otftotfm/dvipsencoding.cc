@@ -1,6 +1,6 @@
 /* dvipsencoding.{cc,hh} -- store a DVIPS encoding
  *
- * Copyright (c) 2003-2005 Eddie Kohler
+ * Copyright (c) 2003-2006 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -18,6 +18,7 @@
 #include "metrics.hh"
 #include "secondary.hh"
 #include <lcdf/error.hh>
+#include <lcdf/straccum.hh>
 #include <string.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -26,7 +27,8 @@
 #include "util.hh"
 
 static String::Initializer initializer;
-enum { GLYPHLIST_MORE = 0x40000000, U_EMPTYSLOT = 0xD801 };
+enum { GLYPHLIST_MORE = 0x40000000,
+       U_EMPTYSLOT = 0xD801, U_ALTSELECTOR = 0xD802 };
 static HashMap<String, int> glyphlist(-1);
 static PermString::Initializer perm_initializer;
 PermString DvipsEncoding::dot_notdef(".notdef");
@@ -34,10 +36,9 @@ PermString DvipsEncoding::dot_notdef(".notdef");
 #define NEXT_GLYPH_NAME(gn)	("/" + (gn))
 
 int
-DvipsEncoding::parse_glyphlist(String text)
+DvipsEncoding::add_glyphlist(String text)
 {
     // XXX ignores glyph names that map to multiple characters
-    glyphlist.clear();
     const char *data = text.c_str();
     int pos = 0, len = text.length();
     while (1) {
@@ -57,24 +58,24 @@ DvipsEncoding::parse_glyphlist(String text)
 	  read_uni:
 	    if (first == pos
 		|| pos + 1 >= len
-		|| data[pos] != ';'
+		|| (data[pos] != ';' && data[pos] != ',')
 		|| !isxdigit(data[pos+1])
 		|| ((value = strtol(data + pos + 1, &next, 16)),
-		    (!isspace(*next) && *next && *next != ';')))
+		    (!isspace(*next) && *next && *next != ';' && *next != ',')))
 		return -1;
 	    while (*next == ' ' || *next == '\t')
 		next++;
 	    if (*next == '\r' || *next == '\n')
 		glyphlist.insert(glyph_name, value);
-	    else if (*next == ';')
+	    else if (*next == ';' || *next == ',')
 		glyphlist.insert(glyph_name, value | GLYPHLIST_MORE);
 	    else
-		while (*next != '\r' && *next != '\n' && *next != ';')
+		while (*next != '\r' && *next != '\n' && *next != ';' && *next != ',')
 		    next++;
 	    pos = next - data;
-	    if (*next == ';') {	// read another possibility
+	    if (*next == ';' || *next == ',') {	// read another possibility
 		glyph_name = NEXT_GLYPH_NAME(glyph_name);
-		// XXX given "DDDD;EEEE EEEE;FFFF", will not store "FFFF"
+		// XXX given "DDDD,EEEE EEEE,FFFF", will not store "FFFF"
 		goto read_uni;
 	    }
 	} else
@@ -136,7 +137,8 @@ DvipsEncoding::glyphname_unicode(const String &gn, bool *more)
 
 
 DvipsEncoding::DvipsEncoding()
-    : _boundary_char(-1), _altselector_char(-1), _unicoding_map(-1)
+    : _boundary_char(-1), _altselector_char(-1), _unicoding_map(-1),
+      _warn_missing(false)
 {
 }
 
@@ -275,6 +277,13 @@ comment_tokenize(const String &s, int &pos_in, int &line)
     }
 }
 
+static bool
+retokenize_isword(char c)
+{
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+	|| (c >= '0' && c <= '9') || c == '.' || c == '_';
+}
+
 
 static struct { const char *s; int v; } ligkern_ops[] = {
     { "=:", DvipsEncoding::JL_LIG }, { "|=:", DvipsEncoding::JL_CLIG },
@@ -406,14 +415,14 @@ DvipsEncoding::parse_ligkern_words(Vector<String> &v, int override, ErrorHandler
 	return 0;
 	
     } else
-	return errh->error("parse error in LIGKERN");
+	return -EPARSE;
 }
 
 int
 DvipsEncoding::parse_position_words(Vector<String> &v, int override, ErrorHandler *errh)
 {
     if (v.size() != 4)
-	return errh->error("parse error in POSITION");
+	return -EPARSE;
 
     int c = encoding_of(v[0], override > 0);
     if (c < 0)
@@ -441,7 +450,7 @@ DvipsEncoding::parse_unicoding_words(Vector<String> &v, int override, ErrorHandl
 {
     int av;
     if (v.size() < 2 || (v[1] != "=" && v[1] != "=:" && v[1] != ":="))
-	return errh->error("parse error in UNICODING");
+	return -EPARSE;
     else if (v[0] == "||" || (av = encoding_of(v[0])) < 0)
 	return errh->error("target '%s' has no encoding, ignoring UNICODING", v[0].c_str());
 
@@ -474,8 +483,46 @@ DvipsEncoding::parse_unicoding_words(Vector<String> &v, int override, ErrorHandl
     return 0;
 }
 
+const DvipsEncoding::WordType DvipsEncoding::word_types[] = {
+    { "LIGKERN", &DvipsEncoding::parse_ligkern_words },
+    { "POSITION", &DvipsEncoding::parse_position_words },
+    { "UNICODING", &DvipsEncoding::parse_unicoding_words }
+};
+
+void
+DvipsEncoding::parse_word_group(Vector<String> &words, int override, int wt, ErrorHandler *errh)
+{
+    if (words.size() > 0) {
+	int (DvipsEncoding::*method)(Vector<String> &, int, ErrorHandler *) = word_types[wt].parsefunc;
+	if ((this->*method)(words, override, errh) == -EPARSE) {
+	    Vector<String> rewords;
+	    for (String *sp = words.begin(); sp != words.end(); sp++) {
+		const char *s = sp->begin(), *ends = sp->end();
+		while (s != ends) {
+		    const char *word = s;
+		    if (*s == '{') {
+			for (s++; s != ends && *s != '}'; s++)
+			    /* nada */;
+			if (s != ends)
+			    s++;
+		    } else {
+			bool x = retokenize_isword(*s);
+			for (s++; s != ends && x == retokenize_isword(*s); s++)
+			    /* nada */;
+		    }
+		    rewords.push_back(sp->substring(word, s));
+		}
+	    }
+	    if ((this->*method)(rewords, override, errh) == -EPARSE)
+		errh->error("parse error in %s", word_types[wt].name);
+		
+	}
+	words.clear();
+    }
+}
+
 int
-DvipsEncoding::parse_words(const String &s, int override, int (DvipsEncoding::*method)(Vector<String> &, int, ErrorHandler *), ErrorHandler *errh)
+DvipsEncoding::parse_words(const String &s, int override, int wt, ErrorHandler *errh)
 {
     Vector<String> words;
     const char *data = s.data();
@@ -488,15 +535,11 @@ DvipsEncoding::parse_words(const String &s, int override, int (DvipsEncoding::*m
 	    data++;
 	if (data == first) {
 	    data++;		// step past semicolon (or harmlessly past EOS)
-	    if (words.size() > 0) {
-		(this->*method)(words, override, errh);
-		words.clear();
-	    }
+	    parse_word_group(words, override, wt, errh);
 	} else
 	    words.push_back(s.substring(first, data));
     }
-    if (words.size() > 0)
-	(this->*method)(words, override, errh);
+    parse_word_group(words, override, wt, errh);
     return 0;
 }
 
@@ -504,6 +547,22 @@ static String
 landmark(const String &filename, int line)
 {
     return filename + String::stable_string(":", 1) + String(line);
+}
+
+static String
+trim_space(const String &s, int pos)
+{
+    while (pos < s.length() && isspace(s[pos]))
+	pos++;
+    int epos = s.length();
+    for (int x = 0; x < 2; x++) {
+	while (epos > pos && isspace(s[epos - 1]))
+	    epos--;
+	if (epos == pos || s[epos - 1] != ';')
+	    break;
+	epos--;
+    }
+    return s.substring(pos, epos - pos);
 }
 
 int
@@ -543,40 +602,34 @@ DvipsEncoding::parse(String filename, bool ignore_ligkern, bool ignore_other, Er
 	    && isspace(token[7])
 	    && !ignore_ligkern) {
 	    lerrh.set_landmark(landmark(filename, line));
-	    parse_words(token.substring(8), 1, &DvipsEncoding::parse_ligkern_words, &lerrh);
+	    parse_words(token.substring(8), 1, WT_LIGKERN, &lerrh);
 	    
 	} else if (token.length() >= 9
 		   && memcmp(token.data(), "LIGKERNX", 8) == 0
 		   && isspace(token[8])
 		   && !ignore_ligkern) {
 	    lerrh.set_landmark(landmark(filename, line));
-	    parse_words(token.substring(9), 1, &DvipsEncoding::parse_ligkern_words, &lerrh);
+	    parse_words(token.substring(9), 1, WT_LIGKERN, &lerrh);
 	    
 	} else if (token.length() >= 10
 		   && memcmp(token.data(), "UNICODING", 9) == 0
 		   && isspace(token[9])
 		   && !ignore_other) {
 	    lerrh.set_landmark(landmark(filename, line));
-	    parse_words(token.substring(10), 1, &DvipsEncoding::parse_unicoding_words, &lerrh);
+	    parse_words(token.substring(10), 1, WT_UNICODING, &lerrh);
 	    
 	} else if (token.length() >= 9
 		   && memcmp(token.data(), "POSITION", 8) == 0
 		   && isspace(token[8])
 		   && !ignore_other) {
 	    lerrh.set_landmark(landmark(filename, line));
-	    parse_words(token.substring(9), 1, &DvipsEncoding::parse_position_words, &lerrh);
+	    parse_words(token.substring(9), 1, WT_POSITION, &lerrh);
 	    
 	} else if (token.length() >= 13
 		   && memcmp(token.data(), "CODINGSCHEME", 12) == 0
 		   && isspace(token[12])
 		   && !ignore_other) {
-	    int p = 13;
-	    while (p < token.length() && isspace(token[p]))
-		p++;
-	    int pp = token.length() - 1;
-	    while (pp > p && isspace(token[pp]))
-		pp--;
-	    _coding_scheme = token.substring(p, pp - p);
+	    _coding_scheme = trim_space(token, 13);
 	    if (_coding_scheme.length() > 39)
 		lerrh.lwarning(landmark(filename, line), "only first 39 chars of CODINGSCHEME are significant");
 	    if (std::find(_coding_scheme.begin(), _coding_scheme.end(), '(') < _coding_scheme.end()
@@ -584,6 +637,18 @@ DvipsEncoding::parse(String filename, bool ignore_ligkern, bool ignore_other, Er
 		lerrh.lerror(landmark(filename, line), "CODINGSCHEME cannot contain parentheses");
 		_coding_scheme = String();
 	    }
+
+	} else if (token.length() >= 11
+		   && memcmp(token.data(), "WARNMISSING", 11) == 0
+		   && (token.length() == 11 || isspace(token[11]))
+		   && !ignore_other) {
+	    String value = trim_space(token, 11);
+	    if (value == "1" || value == "yes" || value == "true" || !value)
+		_warn_missing = true;
+	    else if (value == "0" || value == "no" || value == "false")
+		_warn_missing = false;
+	    else
+		lerrh.lerror(landmark(filename, line), "WARNMISSING command not understood");
 	}
 
     return 0;
@@ -592,23 +657,23 @@ DvipsEncoding::parse(String filename, bool ignore_ligkern, bool ignore_other, Er
 int
 DvipsEncoding::parse_ligkern(const String &ligkern_text, int override, ErrorHandler *errh)
 {
-    return parse_words(ligkern_text, override, &DvipsEncoding::parse_ligkern_words, errh);
+    return parse_words(ligkern_text, override, WT_LIGKERN, errh);
 }
 
 int
 DvipsEncoding::parse_position(const String &position_text, int override, ErrorHandler *errh)
 {
-    return parse_words(position_text, override, &DvipsEncoding::parse_position_words, errh);
+    return parse_words(position_text, override, WT_POSITION, errh);
 }
 
 int
 DvipsEncoding::parse_unicoding(const String &unicoding_text, int override, ErrorHandler *errh)
 {
-    return parse_words(unicoding_text, override, &DvipsEncoding::parse_unicoding_words, errh);
+    return parse_words(unicoding_text, override, WT_UNICODING, errh);
 }
 
 void
-DvipsEncoding::bad_codepoint(int code)
+DvipsEncoding::bad_codepoint(int code, Metrics &metrics, Vector<String> &unencoded)
 {
     for (int i = 0; i < _lig.size(); i++) {
 	Ligature &l = _lig[i];
@@ -616,6 +681,18 @@ DvipsEncoding::bad_codepoint(int code)
 	    l.join = 0;
 	else if ((l.join & JT_ADDLIG) && l.d == code)
 	    l.join &= ~JT_LIGALL;
+    }
+
+    if (_warn_missing) {
+	Vector<uint32_t> unicodes;
+	bool unicodes_explicit = x_unicodes(_e[code], unicodes);
+	if (!unicodes_explicit || unicodes.size() > 0) {
+	    Vector<Setting> v;
+	    v.push_back(Setting(Setting::RULE, 500, 500));
+	    v.push_back(Setting(Setting::SPECIAL, String("Warning: missing glyph '") + _e[code] + "'"));
+	    metrics.encode_virtual(code, _e[code], 0, v);
+	    unencoded.push_back(_e[code]);
+	}
     }
 }
 
@@ -654,15 +731,11 @@ DvipsEncoding::x_unicodes(PermString chname, Vector<uint32_t> &unicodes) const
 
 
 void
-DvipsEncoding::make_metrics(Metrics &metrics, const Efont::OpenType::Cmap &cmap, Efont::Cff::Font *font, Secondary *secondary, bool literal, ErrorHandler *errh)
+DvipsEncoding::make_metrics(Metrics &metrics, const FontInfo &finfo, Secondary *secondary, bool literal, ErrorHandler *errh)
 {
     // first pass: without secondaries
     for (int code = 0; code < _e.size(); code++) {
 	PermString chname = _e[code];
-
-	// the altselector character has its own glyph name
-	if (code == _altselector_char && !literal)
-	    chname = "altselector";
 
 	// common case: skip .notdef
 	if (chname == dot_notdef)
@@ -676,13 +749,11 @@ DvipsEncoding::make_metrics(Metrics &metrics, const Efont::OpenType::Cmap &cmap,
 	Efont::OpenType::Glyph glyph = 0;
 	uint32_t glyph_uni = (unicodes.size() ? unicodes[0] : 0);
 	for (uint32_t *u = unicodes.begin(); u < unicodes.end() && !glyph; u++)
-	    if ((glyph = map_uni(*u, cmap, metrics)) > 0)
+	    if ((glyph = map_uni(*u, *finfo.cmap, metrics)) > 0)
 		glyph_uni = *u;
 
 	// find named glyph, if any
-	Efont::OpenType::Glyph named_glyph = 0;
-	if (font)
-	    named_glyph = font->glyphid(chname);
+	Efont::OpenType::Glyph named_glyph = finfo.glyphid(chname);
 
 	// do not use a Unicode-mapped glyph if literal
 	if (literal)
@@ -706,23 +777,17 @@ DvipsEncoding::make_metrics(Metrics &metrics, const Efont::OpenType::Cmap &cmap,
 	
 	PermString chname = _e[code];
 
-	// the altselector character has its own glyph name
-	if (code == _altselector_char && !literal)
-	    chname = "altselector";
-
 	// find all Unicodes
 	Vector<uint32_t> unicodes;
 	bool unicodes_explicit = x_unicodes(chname, unicodes);
 
 	// find named glyph, if any
-	Efont::OpenType::Glyph named_glyph = 0;
-	if (font)
-	    named_glyph = font->glyphid(chname);
+	Efont::OpenType::Glyph named_glyph = finfo.glyphid(chname);
 
 	// 1. We were not able to find the glyph using Unicode.
 	// 2. There might be a named_glyph.
 	// May need to try secondaries later.  Store this slot.
-	// Try secondaries, if there is no named_glyph, or explicit unicoding.
+	// Try secondaries, if there's explicit unicoding or no named_glyph.
 	if (unicodes_explicit || named_glyph <= 0)
 	    for (uint32_t *u = unicodes.begin(); u < unicodes.end(); u++)
 		if (secondary->encode_uni(code, chname, *u, metrics, errh))
@@ -742,10 +807,33 @@ DvipsEncoding::make_metrics(Metrics &metrics, const Efont::OpenType::Cmap &cmap,
 	/* all set */;
     }
 
+    // add altselector
+    if (_altselector_char >= 0 && _altselector_char < _e.size()) {
+	metrics.add_altselector_code(_altselector_char, 0);
+	if (metrics.glyph(_altselector_char) <= 0 && !literal)
+	    (void) secondary->encode_uni(_altselector_char, "altselector", U_ALTSELECTOR, metrics, errh);
+    }
+
     // final pass: complain
+    Vector<String> unencoded;
     for (int code = 0; code < _e.size(); code++)
 	if (_e[code] != dot_notdef && metrics.glyph(code) <= 0)
-	    bad_codepoint(code);
+	    bad_codepoint(code, metrics, unencoded);
+
+    if (unencoded.size() == 1) {
+	errh->warning("'%s' glyph not found in font", unencoded[0].c_str());
+	errh->message("(This glyph will appear as a blot and cause warnings if used.)");
+    } else if (unencoded.size() > 1) {
+	std::sort(unencoded.begin(), unencoded.end());
+	StringAccum sa;
+	for (const String* a = unencoded.begin(); a < unencoded.end(); a++)
+	    sa << *a << ' ';
+	sa.pop_back();
+	sa.append_break_lines(sa.take_string(), 68, "  ");
+	sa.pop_back();
+	errh->warning("%d glyphs not found in font:", unencoded.size());
+	errh->message("%s\n(These glyphs will appear as blots and cause warnings if used.)", sa.c_str());
+    }
 
     metrics.set_coding_scheme(_coding_scheme);
 }

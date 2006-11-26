@@ -2,7 +2,7 @@
 
 /* otfgpos.{cc,hh} -- OpenType GPOS table
  *
- * Copyright (c) 2003-2004 Eddie Kohler
+ * Copyright (c) 2003-2006 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -87,18 +87,32 @@ GposLookup::GposLookup(const Data &d) throw (Error)
 }
 
 bool
-GposLookup::unparse_automatics(Vector<Positioning> &v) const
+GposLookup::unparse_automatics(Vector<Positioning> &v, ErrorHandler *errh) const
 {
-    int n = _d.u16(4);
+    int n = _d.u16(4), success = 0;
     switch (_d.u16(0)) {
       case L_SINGLE:
 	for (int i = 0; i < n; i++)
-	    GposSingle(_d.offset_subtable(HEADERSIZE + i*RECSIZE)).unparse(v);
-	return true;
+	    try {
+		GposSingle s(_d.offset_subtable(HEADERSIZE + i*RECSIZE));
+		s.unparse(v);
+		success++;
+	    } catch (Error e) {
+		if (errh)
+		    errh->warning("%s, continuing", e.description.c_str());
+	    }
+	return success > 0;
       case L_PAIR:
 	for (int i = 0; i < n; i++)
-	    GposPair(_d.offset_subtable(HEADERSIZE + i*RECSIZE)).unparse(v);
-	return true;
+	    try {
+		GposPair p(_d.offset_subtable(HEADERSIZE + i*RECSIZE));
+		p.unparse(v);
+		success++;
+	    } catch (Error e) {
+		if (errh)
+		    errh->warning("%s, continuing", e.description.c_str());
+	    }
+	return success > 0;
       default:
 	return false;
     }

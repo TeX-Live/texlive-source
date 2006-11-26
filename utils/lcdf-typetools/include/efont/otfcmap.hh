@@ -15,6 +15,7 @@ class Cmap { public:
 
     inline Glyph map_uni(uint32_t c) const;
     int map_uni(const Vector<uint32_t> &in, Vector<Glyph> &out) const;
+    inline void unmap_all(Vector<uint32_t> &g2c) const;
 
   private:
 
@@ -34,7 +35,7 @@ class Cmap { public:
     int first_table(int platform, int encoding) const;
     int check_table(int t, ErrorHandler * = 0) const;
     Glyph map_table(int t, uint32_t, ErrorHandler * = 0) const;
-    void dump_table(int t, Vector<uint32_t> &cs, Vector<uint32_t> &gs, ErrorHandler * = 0) const;
+    void dump_table(int t, Vector<uint32_t> &g2c, ErrorHandler * = 0) const;
     
 };
 
@@ -42,6 +43,11 @@ class Cmap { public:
 inline Glyph Cmap::map_uni(uint32_t c) const
 {
     return map_table(first_unicode_table(), c, ErrorHandler::default_handler());
+}
+
+inline void Cmap::unmap_all(Vector<uint32_t> &g2c) const
+{
+    dump_table(first_unicode_table(), g2c, ErrorHandler::default_handler());
 }
 
 }}

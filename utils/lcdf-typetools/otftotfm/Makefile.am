@@ -8,7 +8,6 @@ otftotfm_SOURCES = \
 	automatic.cc automatic.hh \
 	dvipsencoding.cc dvipsencoding.hh \
 	glyphfilter.cc glyphfilter.hh \
-	md5.c md5.h \
 	metrics.cc metrics.hh \
 	otftotfm.cc otftotfm.hh \
 	secondary.cc secondary.hh \

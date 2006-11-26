@@ -32,7 +32,7 @@ class GposLookup { public:
     GposLookup(const Data &) throw (Error);
     int type() const			{ return _d.u16(0); }
     uint16_t flags() const		{ return _d.u16(2); }
-    bool unparse_automatics(Vector<Positioning> &) const;
+    bool unparse_automatics(Vector<Positioning> &, ErrorHandler * = 0) const;
     enum {
 	HEADERSIZE = 6, RECSIZE = 2,
 	L_SINGLE = 1, L_PAIR = 2, L_CURSIVE = 3, L_MARKTOBASE = 4,

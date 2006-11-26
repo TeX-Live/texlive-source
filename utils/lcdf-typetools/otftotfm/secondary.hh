@@ -5,11 +5,43 @@
 class Metrics;
 class Transform;
 struct Setting;
+namespace Efont { class TrueTypeBoundsCharstringProgram; }
 
 struct FontInfo {
+    
     const Efont::OpenType::Font *otf;
-    const Efont::Cff::Font *cff;
     const Efont::OpenType::Cmap *cmap;
+    
+    Efont::Cff *cff_file;
+    const Efont::Cff::Font *cff;
+    
+    const Efont::OpenType::Post *post;
+    const Efont::OpenType::Name *name;
+    
+    FontInfo(const Efont::OpenType::Font *otf, ErrorHandler *);
+    ~FontInfo();
+
+    bool ok() const;
+    
+    int nglyphs() const			{ return _nglyphs; }
+    bool glyph_names(Vector<PermString> &) const;
+    int glyphid(PermString) const;
+    const Efont::CharstringProgram *program() const;
+    
+    bool is_fixed_pitch() const;
+    double italic_angle() const;
+    
+    String family_name() const;
+    String postscript_name() const;
+
+  private:
+
+    int _nglyphs;
+    mutable Vector<PermString> _glyph_names;
+    mutable bool _got_glyph_names;
+    mutable Vector<uint32_t> _unicodes;
+    mutable Efont::TrueTypeBoundsCharstringProgram *_ttb_program;
+
 };
 
 class Secondary { public:

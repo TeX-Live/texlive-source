@@ -2,7 +2,7 @@
 
 /* otfcmap.{cc,hh} -- OpenType cmap table
  *
- * Copyright (c) 2002-2004 Eddie Kohler
+ * Copyright (c) 2002-2006 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -33,7 +33,7 @@ Cmap::Cmap(const String &s, ErrorHandler *errh)
     : _str(s)
 {
     _str.align(4);
-    _error = parse_header(errh ? errh : ErrorHandler::silent_handler());
+    _error = parse_header(errh ? errh : ErrorHandler::ignore_handler());
 }
 
 int
@@ -60,26 +60,26 @@ Cmap::parse_header(ErrorHandler *errh)
     // ULONG	offset
     int last_platform = -1;
     int last_encoding = -1;
-    int last_version = -1;
+    int last_language = -1;
     _first_unicode_table = -1;
-     for (int i = 0; i < _ntables; i++) {
+    for (int i = 0; i < _ntables; i++) {
 	int loc = HEADER_SIZE + ENCODING_SIZE * i;
 	int platform = USHORT_AT(data + loc);
 	int encoding = USHORT_AT(data + loc + 2);
 	uint32_t offset = ULONG_AT(data + loc + 4);
-	if (offset + 2 > (uint32_t) len)
+	if (offset + 6 > (uint32_t) len || USHORT_AT(data + offset + 2) < 6)
 	    return errh->error("encoding data for entry %d out of range", i);
-	int version = USHORT_AT(data + offset);
+	int language = USHORT_AT(data + offset + 4);
 	if (!(platform > last_platform
 	      || (platform == last_platform
 		  && (encoding > last_encoding
 		      || (encoding == last_encoding
-			  && version > last_version)))))
+			  && language > last_language)))))
 	    return errh->error("subtables out of order at entry %d", i);
 	if ((platform == 0 || (platform == 3 && encoding == 1))
 	    && _first_unicode_table < 0)
 	    _first_unicode_table = i;
-	last_platform = platform, last_encoding = encoding, last_version = version;
+	last_platform = platform, last_encoding = encoding, last_language = language;
     }
 
     _table_error.assign(_ntables, -2);
@@ -105,7 +105,7 @@ int
 Cmap::check_table(int t, ErrorHandler *errh) const
 {
     if (!errh)
-	errh = ErrorHandler::silent_handler();
+	errh = ErrorHandler::ignore_handler();
     if (_error < 0 || t < 0 || t >= _ntables)
 	return errh->error("no such table");
     if (_table_error[t] > -2)
@@ -244,97 +244,97 @@ Cmap::map_table(int t, uint32_t uni, ErrorHandler *errh) const
     
     switch (USHORT_AT(data)) {
 	
-      case F_BYTE:
+    case F_BYTE:
 	if (uni < 256)
 	    return data[6 + uni];
 	else
 	    return 0;
 	
-      case F_HIBYTE: {
-	  if (uni >= 65536)
-	      return 0;
-	  int hi_byte = (uni >> 8) & 255;
-	  int subh = USHORT_AT(data + 6 + hi_byte * 2);
-	  if (subh == 0 && hi_byte) // XXX?
-	      return 0;
-	  data += 524 + subh;
-	  int firstCode = USHORT_AT(data);
-	  int entryCount = USHORT_AT(data + 2);
-	  int idDelta = SHORT_AT(data + 4);
-	  int idRangeOffset = USHORT_AT(data + 6);
-	  int lo_byte = uni & 255;
-	  if (lo_byte < firstCode || lo_byte >= firstCode + entryCount)
-	      return 0;
-	  int answer = USHORT_AT(data + 6 + idRangeOffset + (lo_byte - firstCode) * 2);
-	  if (answer == 0)
-	      return 0;
-	  return (answer + idDelta) & 65535;
-      }
+    case F_HIBYTE: {
+	if (uni >= 65536)
+	    return 0;
+	int hi_byte = (uni >> 8) & 255;
+	int subh = USHORT_AT(data + 6 + hi_byte * 2);
+	if (subh == 0 && hi_byte) // XXX?
+	    return 0;
+	data += 524 + subh;
+	int firstCode = USHORT_AT(data);
+	int entryCount = USHORT_AT(data + 2);
+	int idDelta = SHORT_AT(data + 4);
+	int idRangeOffset = USHORT_AT(data + 6);
+	int lo_byte = uni & 255;
+	if (lo_byte < firstCode || lo_byte >= firstCode + entryCount)
+	    return 0;
+	int answer = USHORT_AT(data + 6 + idRangeOffset + (lo_byte - firstCode) * 2);
+	if (answer == 0)
+	    return 0;
+	return (answer + idDelta) & 65535;
+    }
 	
-      case F_SEGMENTED: {
-	  if (uni >= 65536)
-	      return 0;
-	  int segCount = USHORT_AT(data + 6) >> 1;
-	  const uint8_t *endCounts = data + 14;
-	  const uint8_t *startCounts = endCounts + (segCount << 1) + 2;
-	  const uint8_t *idDeltas = startCounts + (segCount << 1);
-	  const uint8_t *idRangeOffsets = idDeltas + (segCount << 1);
-	  int l = 0, r = segCount - 1;
-	  while (l <= r) {
-	      int m = (l + r) / 2;
-	      uint32_t endCount = USHORT_AT(endCounts + (m << 1));
-	      uint32_t startCount = USHORT_AT(startCounts + (m << 1));
-	      if (uni < startCount)
-		  r = m - 1;
-	      else if (uni <= endCount) {
-		  int idDelta = SHORT_AT(idDeltas + (m << 1));
-		  int idRangeOffset = USHORT_AT(idRangeOffsets + (m << 1));
-		  if (idRangeOffset == 0)
-		      return (idDelta + uni) & 65535;
-		  int g = USHORT_AT(idRangeOffsets + (m << 1) + idRangeOffset + ((uni - startCount) << 1));
-		  if (g == 0)
-		      return 0;
-		  return (idDelta + g) & 65535;
-	      } else
-		  l = m + 1;
-	  }
-	  return 0;
-      }
+    case F_SEGMENTED: {
+	if (uni >= 65536)
+	    return 0;
+	int segCount = USHORT_AT(data + 6) >> 1;
+	const uint8_t *endCounts = data + 14;
+	const uint8_t *startCounts = endCounts + (segCount << 1) + 2;
+	const uint8_t *idDeltas = startCounts + (segCount << 1);
+	const uint8_t *idRangeOffsets = idDeltas + (segCount << 1);
+	int l = 0, r = segCount - 1;
+	while (l <= r) {
+	    int m = (l + r) / 2;
+	    uint32_t endCount = USHORT_AT(endCounts + (m << 1));
+	    uint32_t startCount = USHORT_AT(startCounts + (m << 1));
+	    if (uni < startCount)
+		r = m - 1;
+	    else if (uni <= endCount) {
+		int idDelta = SHORT_AT(idDeltas + (m << 1));
+		int idRangeOffset = USHORT_AT(idRangeOffsets + (m << 1));
+		if (idRangeOffset == 0)
+		    return (idDelta + uni) & 65535;
+		int g = USHORT_AT(idRangeOffsets + (m << 1) + idRangeOffset + ((uni - startCount) << 1));
+		if (g == 0)
+		    return 0;
+		return (idDelta + g) & 65535;
+	    } else
+		l = m + 1;
+	}
+	return 0;
+    }
 
-      case F_TRIMMED: {
-	  uint32_t firstCode = USHORT_AT(data + 6);
-	  uint32_t entryCount = USHORT_AT(data + 8);
-	  if (uni < firstCode || uni >= firstCode + entryCount)
-	      return 0;
-	  return USHORT_AT(data + 10 + ((uni - firstCode) << 1));
-      }
+    case F_TRIMMED: {
+	uint32_t firstCode = USHORT_AT(data + 6);
+	uint32_t entryCount = USHORT_AT(data + 8);
+	if (uni < firstCode || uni >= firstCode + entryCount)
+	    return 0;
+	return USHORT_AT(data + 10 + ((uni - firstCode) << 1));
+    }
 	
-      case F_SEGMENTED32: {
-	  uint32_t nGroups = ULONG_AT(data + 12);
-	  uint32_t l = 0, r = nGroups - 1;
-	  const uint8_t *groups = data + 16;
-	  while (l <= r) {
-	      uint32_t m = (l + r) / 2;
-	      uint32_t startCharCode = ULONG_AT(groups + m * 12);
-	      uint32_t endCharCode = ULONG_AT(groups + m * 12 + 4);
-	      if (uni < startCharCode)
-		  r = m - 1;
-	      else if (uni <= endCharCode)
-		  return ULONG_AT(groups + m * 12 + 8) + uni - startCharCode;
-	      else
-		  l = m + 1;
-	  }
-	  return 0;
-      }
+    case F_SEGMENTED32: {
+	uint32_t nGroups = ULONG_AT(data + 12);
+	uint32_t l = 0, r = nGroups - 1;
+	const uint8_t *groups = data + 16;
+	while (l <= r) {
+	    uint32_t m = (l + r) / 2;
+	    uint32_t startCharCode = ULONG_AT(groups + m * 12);
+	    uint32_t endCharCode = ULONG_AT(groups + m * 12 + 4);
+	    if (uni < startCharCode)
+		r = m - 1;
+	    else if (uni <= endCharCode)
+		return ULONG_AT(groups + m * 12 + 8) + uni - startCharCode;
+	    else
+		l = m + 1;
+	}
+	return 0;
+    }
 	
-      default:
+    default:
 	return 0;
 
     }
 }
 
 void
-Cmap::dump_table(int t, Vector<uint32_t> &cs, Vector<uint32_t> &gs, ErrorHandler *errh) const
+Cmap::dump_table(int t, Vector<uint32_t> &g2c, ErrorHandler *errh) const
 {
     if (check_table(t, errh) < 0)
 	return;
@@ -344,15 +344,15 @@ Cmap::dump_table(int t, Vector<uint32_t> &cs, Vector<uint32_t> &gs, ErrorHandler
     
     switch (USHORT_AT(data)) {
 	
-      case F_BYTE:
+    case F_BYTE:
+	g2c.resize(256, 0);
 	for (int c = 0; c < 256; c++)
-	    if (int g = data[6 + c]) {
-		cs.push_back(c);
-		gs.push_back(g);
-	    }
+	    if (int g = data[6 + c])
+		if (!g2c[g])
+		    g2c[g] = c;
 	break;
 	
-      case F_HIBYTE:
+    case F_HIBYTE:
 	assert(USHORT_AT(data + 6) == 0);
 	for (int hi_byte = 0; hi_byte < 256; hi_byte++) {
 	    int subh = USHORT_AT(data + 6 + hi_byte * 4);
@@ -366,67 +366,79 @@ Cmap::dump_table(int t, Vector<uint32_t> &cs, Vector<uint32_t> &gs, ErrorHandler
 	    const uint8_t *gdata = tdata + 6 + idRangeOffset;
 	    for (int i = 0; i < entryCount; i++)
 		if (int g = USHORT_AT(gdata + (i << 1))) {
-		    cs.push_back(hi_byte << 8 + firstCode + i);
-		    gs.push_back((idDelta + g) & 65535);
+		    g = (idDelta + g) & 65535;
+		    if (g >= g2c.size())
+			g2c.resize(g + 1, 0);
+		    if (!g2c[g])
+			g2c[g] = (hi_byte << 8 + firstCode + i);
 		}
 	}
 	break;
 	
-      case F_SEGMENTED: {
-	  int segCountX2 = USHORT_AT(data + 6);
-	  const uint8_t *endCounts = data + 14;
-	  const uint8_t *startCounts = endCounts + segCountX2 + 2;
-	  const uint8_t *idDeltas = startCounts + segCountX2;
-	  const uint8_t *idRangeOffsets = idDeltas + segCountX2;
-	  for (int i = 0; i < segCountX2; i += 2) {
-	      int endCount = USHORT_AT(endCounts + i);
-	      int startCount = USHORT_AT(startCounts + i);
-	      int idDelta = SHORT_AT(idDeltas + i);
-	      int idRangeOffset = USHORT_AT(idRangeOffsets + i);
-	      if (idRangeOffset == 0) {
-		  for (int c = startCount; c <= endCount; c++) {
-		      cs.push_back(c);
-		      gs.push_back((c + idDelta) & 65535);
-		  }
-	      } else {
-		  const uint8_t *gdata = idRangeOffsets + i + idRangeOffset;
-		  for (int c = startCount; c <= endCount; c++, gdata += 2)
-		      if (int g = USHORT_AT(gdata)) {
-			  cs.push_back(c);
-			  gs.push_back((g + idDelta) & 65535);
-		      }
-	      }
-	  }
-	  break;
-      }
+    case F_SEGMENTED: {
+	int segCountX2 = USHORT_AT(data + 6);
+	const uint8_t *endCounts = data + 14;
+	const uint8_t *startCounts = endCounts + segCountX2 + 2;
+	const uint8_t *idDeltas = startCounts + segCountX2;
+	const uint8_t *idRangeOffsets = idDeltas + segCountX2;
+	for (int i = 0; i < segCountX2; i += 2) {
+	    int endCount = USHORT_AT(endCounts + i);
+	    int startCount = USHORT_AT(startCounts + i);
+	    int idDelta = SHORT_AT(idDeltas + i);
+	    int idRangeOffset = USHORT_AT(idRangeOffsets + i);
+	    if (idRangeOffset == 0) {
+		for (int c = startCount; c <= endCount; c++) {
+		    Glyph g = (c + idDelta) & 65535;
+		    if (g >= g2c.size())
+			g2c.resize(g + 1, 0);
+		    if (!g2c[g])
+			g2c[g] = c;
+		}
+	    } else {
+		const uint8_t *gdata = idRangeOffsets + i + idRangeOffset;
+		for (int c = startCount; c <= endCount; c++, gdata += 2)
+		    if (int g = USHORT_AT(gdata)) {
+			g = (g + idDelta) & 65535;
+			if (g >= g2c.size())
+			    g2c.resize(g + 1, 0);
+			if (!g2c[g])
+			    g2c[g] = c;
+		    }
+	    }
+	}
+	break;
+    }
 
-      case F_TRIMMED: {
-	  int firstCode = USHORT_AT(data + 6);
-	  int entryCount = USHORT_AT(data + 8);
-	  for (int i = 0; i < entryCount; i++)
-	      if (int g = USHORT_AT(data + 10 + (i << 1))) {
-		  cs.push_back(firstCode + i);
-		  gs.push_back(g);
-	      }
-	  break;
-      }
+    case F_TRIMMED: {
+	int firstCode = USHORT_AT(data + 6);
+	int entryCount = USHORT_AT(data + 8);
+	for (int i = 0; i < entryCount; i++)
+	    if (int g = USHORT_AT(data + 10 + (i << 1))) {
+		if (g >= g2c.size())
+		    g2c.resize(g + 1, 0);
+		if (!g2c[g])
+		    g2c[g] = firstCode + i;
+	    }
+	break;
+    }
 	
-      case F_SEGMENTED32: {
-	  uint32_t nGroups = ULONG_AT(data + 12);
-	  const uint8_t *groups = data + 16;
-	  for (uint32_t i = 0; i < nGroups; i++, groups += 12) {
-	      uint32_t startCharCode = ULONG_AT(groups);
-	      uint32_t nCharCodes = ULONG_AT(groups + 4) - startCharCode;
-	      uint32_t startGlyphID = ULONG_AT(groups + 8);
-	      for (uint32_t i = 0; i <= nCharCodes; i++) {
-		  cs.push_back(startCharCode + i);
-		  gs.push_back(startGlyphID + i);
-	      }
-	  }
-	  break;
-      }
+    case F_SEGMENTED32: {
+	uint32_t nGroups = ULONG_AT(data + 12);
+	const uint8_t *groups = data + 16;
+	for (uint32_t i = 0; i < nGroups; i++, groups += 12) {
+	    uint32_t startCharCode = ULONG_AT(groups);
+	    uint32_t nCharCodes = ULONG_AT(groups + 4) - startCharCode;
+	    uint32_t startGlyphID = ULONG_AT(groups + 8);
+	    if (startGlyphID + nCharCodes >= (uint32_t) g2c.size())
+		g2c.resize(startGlyphID + nCharCodes + 1, 0);
+	    for (uint32_t i = 0; i <= nCharCodes; i++)
+		if (!g2c[startGlyphID + i])
+		    g2c[startGlyphID + i] = startCharCode + i;
+	}
+	break;
+    }
 	
-      default:
+    default:
 	break;
 
     }

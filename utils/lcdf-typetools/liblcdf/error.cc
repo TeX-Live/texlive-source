@@ -4,7 +4,7 @@
  * Eddie Kohler
  *
  * Copyright (c) 1999-2000 Massachusetts Institute of Technology
- * Copyright (c) 2001-2005 Eddie Kohler
+ * Copyright (c) 2001-2006 Eddie Kohler
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -629,11 +629,6 @@ FileErrorHandler::handle_text(Seriousness seriousness, const String &message)
 // SILENT ERROR HANDLER
 //
 
-class SilentErrorHandler : public BaseErrorHandler { public:
-  SilentErrorHandler()			{ }
-  void handle_text(Seriousness, const String &);  
-};
-
 void
 SilentErrorHandler::handle_text(Seriousness, const String &)
 {
@@ -645,7 +640,7 @@ SilentErrorHandler::handle_text(Seriousness, const String &)
 //
 
 static ErrorHandler *the_default_handler = 0;
-static ErrorHandler *the_silent_handler = 0;
+static ErrorHandler *the_ignore_handler = 0;
 
 ErrorHandler::Conversion *
 ErrorHandler::add_conversion(const String &name, ConversionHook hook)
@@ -684,8 +679,8 @@ void
 ErrorHandler::static_cleanup()
 {
   delete the_default_handler;
-  delete the_silent_handler;
-  the_default_handler = the_silent_handler = 0;
+  delete the_ignore_handler;
+  the_default_handler = the_ignore_handler = 0;
   while (error_items) {
     Conversion *next = error_items->next;
     delete error_items;
@@ -707,11 +702,11 @@ ErrorHandler::default_handler()
 }
 
 ErrorHandler *
-ErrorHandler::silent_handler()
+ErrorHandler::ignore_handler()
 {
-  if (!the_silent_handler)
-    the_silent_handler = new SilentErrorHandler;
-  return the_silent_handler;
+  if (!the_ignore_handler)
+    the_ignore_handler = new SilentErrorHandler;
+  return the_ignore_handler;
 }
 
 void

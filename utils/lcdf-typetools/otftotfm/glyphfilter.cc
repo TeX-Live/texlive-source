@@ -1,6 +1,6 @@
 /* glyphfilter.{cc,hh} -- define subsets of characters
  *
- * Copyright (c) 2004-2005 Eddie Kohler
+ * Copyright (c) 2004-2006 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -66,7 +66,7 @@ GlyphFilter::allow(Efont::OpenType::Glyph glyph, const Vector<PermString>& glyph
 		return false;
 	}
     }
-    
+
     return !any_includes || included;
 }
 
@@ -129,15 +129,15 @@ GlyphFilter::add_pattern(const String& pattern, int ptype, ErrorHandler* errh)
 	// unicode values
 	{
 	    const char* dash = std::find(begin, word, '-');
-	    if (parse_unicode_number(begin, dash, 1, p.u.unirange.low)) {
+	    if (parse_unicode_number(begin, dash, 2, p.u.unirange.low)) {
 		if (dash == word)
 		    p.u.unirange.high = p.u.unirange.low;
 		else if (dash == word - 1)
 		    p.u.unirange.high = 0xFFFFFFFFU;
-		else if (parse_unicode_number(dash + 1, word, 0, p.u.unirange.high))
+		else if (parse_unicode_number(dash + 1, word, (begin[0] == 'U' ? 1 : 0), p.u.unirange.high))
 		    /* do nothing */;
 		else
-		    goto next_clause; // without adding pattern
+		    goto name_pattern; // assume it's a name
 		p.data = D_UNIRANGE;
 		_patterns.push_back(p);
 		goto next_clause;
@@ -145,6 +145,7 @@ GlyphFilter::add_pattern(const String& pattern, int ptype, ErrorHandler* errh)
 	}
 
 	// otherwise must be name pattern
+    name_pattern:
 	p.data = D_NAME;
 	p.pattern = pattern.substring(begin, word);
 	_patterns.push_back(p);

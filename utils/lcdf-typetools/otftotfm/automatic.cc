@@ -1,6 +1,6 @@
 /* automatic.{cc,hh} -- code for automatic mode and interfacing with kpathsea
  *
- * Copyright (c) 2003-2005 Eddie Kohler
+ * Copyright (c) 2003-2006 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -66,7 +66,10 @@ static const struct {
     { "VPL", "VPLDESTDIR", "fonts/vpl/%" },
     { "Type 1", "T1DESTDIR", "fonts/type1/%" },
     { "DVIPS map", "DVIPS directory", "#fonts/map/dvips/@#dvips/@" },
-    { "DVIPS updmap", "DVIPS directory", "dvips" }
+    { "DVIPS updmap", "DVIPS directory", "dvips" },
+    { "TrueType", "TTFDESTDIR", "fonts/truetype/%" },
+    { "OpenType", "OPENTYPEDESTDIR", "fonts/opentype/%" },
+    { "Type 42", "T42DESTDIR", "fonts/type42/%" }
 };
 
 #if HAVE_KPATHSEA
@@ -428,6 +431,43 @@ installed_type1_dotlessj(const String &otf_filename, const String &ps_fontname, 
     }
 #endif
 
+    return String();
+}
+
+String
+installed_truetype(const String &otf_filename, bool allow_generate, ErrorHandler *errh)
+{
+    String file = pathname_filename(otf_filename);
+    
+#if HAVE_KPATHSEA
+    if (String path = kpsei_string(kpsei_find_file(file.c_str(), KPSEI_FMT_TRUETYPE))) {
+	if (verbose)
+	    errh->message("TrueType file %s found with kpathsea at %s", file.c_str(), path.c_str());
+	return path;
+    }
+#endif
+
+#if HAVE_AUTO_CFFTOT1
+    // if not found, and can generate on the fly, run cfftot1
+    if (allow_generate && otf_filename && otf_filename != "-" && getodir(O_TRUETYPE, errh)) {
+	String ttf_filename = odir[O_TRUETYPE] + "/" + file;
+	if (ttf_filename.find_left('\'') >= 0 || ttf_filename.find_left('\'') >= 0)
+	    return String();
+	String command = "cp " + shell_quote(otf_filename) + " " + shell_quote(ttf_filename);
+	int retval = mysystem(command.c_str(), errh);
+	if (retval == 127)
+	    errh->error("could not run '%s'", command.c_str());
+	else if (retval < 0)
+	    errh->error("could not run '%s': %s", command.c_str(), strerror(errno));
+	else if (retval != 0)
+	    errh->error("'%s' failed", command.c_str());
+	if (retval == 0) {
+	    update_odir(O_TRUETYPE, ttf_filename, errh);
+	    return ttf_filename;
+	}
+    }
+#endif
+    
     return String();
 }
 

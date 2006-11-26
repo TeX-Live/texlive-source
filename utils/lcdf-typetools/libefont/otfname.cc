@@ -2,7 +2,7 @@
 
 /* otfname.{cc,hh} -- OpenType name table
  *
- * Copyright (c) 2003-2004 Eddie Kohler
+ * Copyright (c) 2003-2006 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -21,6 +21,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
+#include <algorithm>
 
 #define USHORT_AT(d)		(ntohs(*(const uint16_t *)(d)))
 
@@ -30,7 +31,7 @@ Name::Name(const String &s, ErrorHandler *errh)
     : _str(s)
 {
     _str.align(2);
-    _error = parse_header(errh ? errh : ErrorHandler::silent_handler());
+    _error = parse_header(errh ? errh : ErrorHandler::ignore_handler());
 }
 
 int
@@ -41,13 +42,15 @@ Name::parse_header(ErrorHandler *errh)
     // USHORT	numTables
     int len = _str.length();
     const uint8_t *data = _str.udata();
+    if (len == 0)
+	return errh->error("font has no 'name' table"), -EFAULT;
     if (HEADER_SIZE > len)
-	return errh->error("OTF name too small for header"), -EFAULT;
+	return errh->error("'name' table too small"), -EFAULT;
     if (!(data[0] == '\000' && data[1] == '\000'))
-	return errh->error("bad name version number"), -ERANGE;
+	return errh->error("bad 'name' version number"), -ERANGE;
     int count = USHORT_AT(data + 2);
     if (HEADER_SIZE + count*NAMEREC_SIZE > len)
-	return errh->error("OTF name too small for header"), -EFAULT;
+	return errh->error("'name' table too small"), -EFAULT;
     return 0;
 }
 
@@ -62,6 +65,44 @@ Name::name(const_iterator i) const
 	    return _str.substring(stringOffset + offset, length);
     }
     return String();
+}
+
+String
+Name::english_name(int nameid) const
+{
+    return name(std::find_if(begin(), end(), EnglishPlatformPred(nameid)));
+}
+
+bool
+Name::version_chaincontext_reverse_backtrack() const
+{
+    String vstr = name(std::find_if(begin(), end(), PlatformPred(N_VERSION, 1, 0, 0)));
+    const char *v = vstr.begin(), *endv = vstr.end();
+    if (v + 20 <= endv) {
+	if (v[0] != 'O' || v[1] != 'T' || v[2] != 'F' || v[3] == ';')
+	    goto try_core;
+	for (v += 4; v < endv && *v != ';'; v++)
+	    /* do nothing */;
+	if (v + 3 >= endv || v[1] != 'P' || v[2] != 'S' || v[3] == ';')
+	    goto try_core;
+	for (v += 4; v < endv && *v != ';'; v++)
+	    /* do nothing */;
+	if (v + 11 >= endv || memcmp(v + 1, "Core 1.0.", 9) != 0
+	    || (v[10] != '2' && v[10] != '3')
+	    || (v[11] < '0' || v[11] > '9'))
+	    goto try_core;
+	return true;
+    }
+ try_core:
+    v = vstr.begin();
+    if (v + 16 > endv
+	|| v[0] != 'C' || v[1] != 'o' || v[2] != 'r' || v[3] != 'e')
+	return false;
+    for (v += 4; v < endv && *v != ';'; v++)
+	/* do nothing */;
+    if (v + 12 > endv || memcmp(v, ";makeotf.lib", 12) != 0)
+	return false;
+    return true;
 }
 
 }}

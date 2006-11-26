@@ -121,13 +121,13 @@ HashMap<K, V>::insert(const K &key, const V &val)
 
 template <class K, class V>
 V &
-HashMap<K, V>::find_force(const K &key)
+HashMap<K, V>::find_force(const K &key, const V &value)
 {
     check_capacity();
     int i = bucket(key);
     if (!(bool)_e[i].key) {
 	_e[i].key = key;
-	_e[i].value = _default_value;
+	_e[i].value = value;
 	_n++;
     }
     return _e[i].value;

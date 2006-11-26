@@ -2,7 +2,7 @@
 
 /* afm.{cc,hh} -- Adobe Font Metrics files
  *
- * Copyright (c) 1998-2004 Eddie Kohler
+ * Copyright (c) 1998-2006 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -29,7 +29,7 @@ AfmReader::AfmReader(AfmParser &parser, Metrics *afm, AfmMetricsXt *afm_xt,
     : _afm(afm), _afm_xt(afm_xt), _l(parser),
       _composite_warned(false), _metrics_sets_warned(false), _y_width_warned(0)
 {
-    _errh = errh ? errh : ErrorHandler::silent_handler();
+    _errh = errh ? errh : ErrorHandler::ignore_handler();
 }
 
 Metrics *

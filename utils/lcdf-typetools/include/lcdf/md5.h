@@ -1,4 +1,5 @@
-/* md5.h - MD5 Message-Digest Algorithm
+/* -*- related-file-name: "../../liblcdf/md5.c" -*-
+ * md5.h - MD5 Message-Digest Algorithm
  *	Copyright (C) 1995, 1996, 1998, 1999 Free Software Foundation, Inc.
  *
  * according to the definition of MD5 in RFC 1321 from April 1992.
@@ -19,8 +20,8 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef _MD5_HDR_
-#define _MD5_HDR_
+#ifndef LCDF_MD5_H
+#define LCDF_MD5_H
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -44,5 +45,4 @@ void md5_final_text(char *text_digest, MD5_CONTEXT *ctx);
 #ifdef __cplusplus
 }
 #endif
-#endif /* _MD5_HDR_ */
-
+#endif /* LCDF_MD5_H */

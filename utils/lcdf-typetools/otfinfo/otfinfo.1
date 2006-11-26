@@ -1,5 +1,5 @@
 '\"t
-.ds V 2.34
+.ds V 2.46
 .de M
 .BR "\\$1" "(\\$2)\\$3"
 ..
@@ -12,7 +12,7 @@
 otfinfo \- report information about OpenType fonts
 .SH SYNOPSIS
 .B otfinfo
-\%[\fB-sfzpg\fR]
+\%[\fB-sfzpvag\fR]
 \%[\fIFILE...\fR]
 '
 .SH DESCRIPTION
@@ -79,6 +79,41 @@ Print each font's PostScript name. For example:
 '
 .Sp
 .TP 5
+.BR \-a ", " \-\-family
+Print each font's family name. For example:
+.nf
+  Minion Pro
+.fi
+'
+.Sp
+.TP 5
+.BR \-v ", " \-\-font\-version
+Print font version information, if available. For example:
+.nf
+  OTF 1.013;PS 001.000;Core 1.0.27;makeotf.lib(1.11)
+.fi
+'
+.Sp
+.TP 5
+.BR \-i ", " \-\-info
+Print each font's name, version, designer, vendor, copyright, and license
+information. For example:
+.nf
+  Family:              Minion Pro
+  Subfamily:           Regular
+  Full name:           Minion Pro
+  PostScript name:     MinionPro-Regular
+  Version:             OTF 1.011;PS 001.000;Core 1.0.27;makeotf.lib1.3.1
+  Unique ID:           1.011;ADBE;MinionPro-Regular
+  Designer:            Robert Slimbach
+  Vendor URL:          http://www.adobe.com/type/
+  Trademark:           Minion is either a registered trademark or a trademark of Adobe Systems Incorporated in the United States and/or other countries.
+  Copyright:           \(co 2000 Adobe Systems Incorporated. All Rights Reserved. U.S. Patent Des. 337,604. Other patents pending.
+  License URL:         http://www.adobe.com/type/legal.html
+.fi
+'
+.Sp
+.TP 5
 .BR \-g ", " \-\-glyphs
 Print the name of every glyph in each font, one per line. For example:
 .nf
@@ -90,6 +125,18 @@ Print the name of every glyph in each font, one per line. For example:
   lje.alt
 .fi
 Works for PostScript-flavored OpenType fonts only.
+'
+.Sp
+.TP 5
+.BR \-t ", " \-\-tables
+Print the size and name of every OpenType table in the font. For example:
+.nf
+       52 BASE
+    87723 CFF
+     4940 DSIG
+    21366 GPOS
+  \&...
+.fi
 '
 .PD
 '
@@ -140,4 +187,4 @@ Print the version number and some short non-warranty information and exit.
 Version 1.4
 '
 .SH AUTHOR
-Eddie Kohler (kohler@icir.org)
+Eddie Kohler (kohler@cs.ucla.edu)

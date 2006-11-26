@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(NEWS)
-AM_INIT_AUTOMAKE(lcdf-typetools, 2.34)
+AM_INIT_AUTOMAKE(lcdf-typetools, 2.46)
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
 
@@ -110,9 +110,10 @@ AC_ARG_ENABLE(t1lint, [  --disable-t1dotlessj    do not build the t1dotlessj pro
 AC_ARG_ENABLE(t1lint, [  --disable-t1lint        do not build the t1lint program], :, enable_t1lint=yes)
 AC_ARG_ENABLE(t1reencode, [  --disable-t1reencode    do not build the t1reencode program], :, enable_t1reencode=yes)
 AC_ARG_ENABLE(t1testpage, [  --disable-t1testpage    do not build the t1testpage program], :, enable_t1testpage=yes)
+AC_ARG_ENABLE(ttftotype42, [  --disable-ttftotype42   do not build the ttftotype42 program], :, enable_ttftotype42=yes)
 
 SELECTED_SUBDIRS=''
-for i in cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1reencode t1testpage; do
+for i in cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1reencode t1testpage ttftotype42; do
     y=`eval 'echo $enable_'"$i"`
     if test "x$y" != xno; then SELECTED_SUBDIRS="$SELECTED_SUBDIRS $i"; fi
 done
@@ -143,6 +144,7 @@ directory.  I expected it to be in $srcdir/../../texk/kpathsea.
 	fi
 	CPPFLAGS="$CPPFLAGS -I\$(top_builddir)/../../texk -I\$(top_srcdir)/../../texk"
 	LDFLAGS="$LDFLAGS -L\$(top_builddir)/../../texk/kpathsea/.libs"
+        AC_MSG_NOTICE([tetex build of lcdf-typetools, CPPFLAGS now: $CPPFLAGS])
     elif test "x$kpathsea" != x -a "x$kpathsea" != xyes; then
 	CPPFLAGS="$CPPFLAGS -I$kpathsea/include"
 	LDFLAGS="$LDFLAGS -L$kpathsea/lib"
@@ -193,6 +195,13 @@ using --without-kpathsea.
     else
 	LIBKPATHSEA='-lkpathsea'
 	LIBKPATHSEA_DEP=''
+    fi
+
+    dnl does it have opentype support?
+    if test "x$enable_tetex_build" = xyes; then
+      AC_DEFINE(HAVE_DECL_KPSE_OPENTYPE_FORMAT)
+    else
+      AC_CHECK_DECLS(kpse_opentype_format, :, :, [#include <kpathsea/kpathsea.h>])
     fi
 fi
 AC_SUBST([KPSEINTERFACE_O])
@@ -472,4 +481,4 @@ dnl
 dnl Output
 dnl
 
-AC_OUTPUT(Makefile liblcdf/Makefile libefont/Makefile cfftot1/Makefile mmafm/Makefile mmpfb/Makefile otfinfo/Makefile otftotfm/Makefile t1dotlessj/Makefile t1lint/Makefile t1reencode/Makefile t1testpage/Makefile)
+AC_OUTPUT(Makefile liblcdf/Makefile libefont/Makefile cfftot1/Makefile mmafm/Makefile mmpfb/Makefile otfinfo/Makefile otftotfm/Makefile t1dotlessj/Makefile t1lint/Makefile t1reencode/Makefile t1testpage/Makefile ttftotype42/Makefile)
