@@ -17,7 +17,8 @@ dialog - seems to be a v1.0 in debian, asked te 5jun05; he said keep as -is
 lcdf-typetools 2.46 - ok 25nov06
   http://www.lcdf.org/~eddietwo/type/
 
-pdfopen 0.4 - ok 1jul05
+pdfopen 0.5 - ok 26nov06
+  (really xpdfopen)
   http://tex.aanhet.net/pdfopen
 
 psutils p17 - ok 25nov06
