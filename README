@@ -70,3 +70,71 @@ bison (GNU Bison) 1.34
 flex version 2.5.4
 GNU m4 1.4
 GNU Make 3.79.1
+
+
+- TeX Live
+  include many programs, which depend on many libraries, notably
+  the TeX file-searching library kpathsea.
+ 
+- TL has thousands of users, and they almost all install binaries,
+  rather than compile from source.
+
+- Of course kpathsea is itself part of TeX Live, and we need to use the
+  version that is included here, not whatever is randomly installed on
+  the build system or the end-user's system.
+
+- So a program that TL includes, such as lcdf-typetools
+  (http://www.lcdf.org/type/), has a configure option
+  --enable-tetex-build, which sets up CPPFLAGS and LDFLAGS to use the
+  local kpathsea in the build tree, like this:
+
+if test "x$enable_tetex_build" = xyes; then
+...
+ CPPFLAGS="$CPPFLAGS -I\$(top_builddir)/../../texk -I\$(top_srcdir)/../../texk"
+ LDFLAGS="$LDFLAGS -L\$(top_builddir)/../../texk/kpathsea/.libs"
+
+
+- The exact paths there aren't important reflect the structure
+  of our source hierarchy, relative to top_builddir/srcddir.
+
+- The quoting there makes the values in the Makefile use Make variables:
+CPPFLAGS =  -I$(top_builddir)/../../texk -I$(top_srcdir)/../../texk
+
+- However, since "$(top_builddir)" is used as a literal string, of
+  course that's not going to be found in the -I list, so any further
+  configure tests that need those values are going to fail.  For example:
+AC_CHECK_DECLS(kpse_opentype_format, :, :, [#include <kpathsea/kpathsea.h>])
+
+- To get around this, we've simply been hardwiring the test results of
+  when --enable-tetex-build is given.  So the test above becomes:
+    if test "x$enable_tetex_build" = xyes; then
+      AC_DEFINE(HAVE_DECL_KPSE_OPENTYPE_FORMAT)
+    else
+      AC_CHECK_DECLS(kpse_opentype_format, :, :, [#include <kpathsea/kpathsea.h>])
+    fi
+
+- None of this is actually specific to kpathsea, there are tons of other
+  libraries involved.  It's just easier to discuss a specific example.
+
+So I asked autoconf@gnu.org:
+I am wondering if there's a reasonable way to use the top_builddir and
+top_srcdir values at configure time.  As in:
+CPPFLAGS="$CPPFLAGS -I$top_builddir/whatever"
+
+When simply used as above, the value is not defined.  It seems that the
+value for these variables only gets defined at the end, for output (or
+for recursive --help's).
+
+I guess I could simply duplicate the code which computes them, but of
+course that is not very appealing.  Is there a better way?
+
+
+Andreas Schwab replied:
+At configure time $top_builddir == "." and $top_srcdir == $srcdir.  They
+are only different in sub-makefiles.
+
+So maybe it would not be so hard.  Bob Frisenhahn mentioned:
+# Get full paths to source and build directories
+srcdirfull=`cd $srcdir && pwd`
+builddir=`pwd`
+
