@@ -239,9 +239,6 @@ for pkg in $PKGS; do
     if eval "test \"`echo '$with_'${pkg}|sed 's/-/_/g'`\" != no"; then
       ESUBDIRS="$ESUBDIRS utils/$pkg"
       if test $pkg = sam2p; then
-        # we no longer build sam2p by default, but leaving this bit in
-        # case we reinstate it.  --karl, 8nov06.
-        # 
         # attempt to discover if srcdir = builddir.
         dir1=`cd $srcdir/utils/sam2p && /bin/pwd`
         dir2=`cd utils/sam2p 2>/dev/null && /bin/pwd`
