@@ -27,12 +27,18 @@ rm -f tlbuild.log
 # allow override of configure location, just in case.
 : ${TL_CONFIGURE=../configure}
 
+# allow override of xdvi toolkit.
+: ${TL_XDVI_TOOLKIT=--with-xdvi-x-toolkit=xaw}
+
+# allow override of make program.
+: ${TL_MAKE=make}
+
 # Force building xdvi-xaw; motif is not always free and/or available.
 # --enable-gif is for sam2p; the gif patent has expired worldwide.
 (set -x; \
   time $TL_CONFIGURE \
          --prefix=$TL_INSTALL_DEST \
          --datadir=$TL_INSTALL_DEST \
-         --with-xdvi-x-toolkit=xaw --enable-gif \
+         $TL_XDVI_TOOLKIT \
          "$@" \
- && time make world) 2>&1 | tee tlbuild.log
+ && time $TL_MAKE world) 2>&1 | tee tlbuild.log
