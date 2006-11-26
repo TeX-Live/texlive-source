@@ -1,3 +1,5 @@
+# tetex.ac -- public domain.  Created by Thomas Esser.
+
 # for texinfo
 : ${enable_install_warnings=no}
 export enable_install_warnings
@@ -5,6 +7,14 @@ export enable_install_warnings
 # e.g. for lcdf-typetools
 : ${enable_tetex_build=yes}
 export enable_tetex_build
+
+# for lcdf-typetools
+: ${with_kpathsea=yes}
+export with_kpathsea
+
+# for sam2p
+: ${enable_gif=yes}
+export enable gif
 
 # we just build pdfetex, not pdftex and not etex:
 : ${with_etex=no} ${with_pdftex=no}
