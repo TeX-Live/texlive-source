@@ -196,9 +196,6 @@ sendx_channel (KeySym ks, int km)
 	case 0x14:
 	  ks = XK_Scroll_Lock;
 	  break;
-	case 0x15:
-	  ks = XK_Sys_Req;
-	  break;
 	case 0x1B:
 	  ks = XK_Escape;
 	  break;

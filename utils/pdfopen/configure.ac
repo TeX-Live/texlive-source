@@ -1,11 +1,11 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl this is for autoconf 2.5x
 
-AC_INIT(pdfopen, 0.4, taco@metatex.org)
+AC_INIT(pdfopen, 0.5, taco@metatex.org)
 
 AC_CONFIG_AUX_DIR(config)
 
-AM_INIT_AUTOMAKE(pdfopen, 0.4)
+AM_INIT_AUTOMAKE(pdfopen, 0.5)
 
 AC_CONFIG_FILES(Makefile)
 

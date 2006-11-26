@@ -11,7 +11,7 @@ extern int sendx_control_token(char *,char *);
 #define SUCCESS(a) (!a)
 
 void usage (void) {
-  puts ("pdfclose 0.4: you are mistaking me for an actual program.\n");
+  puts ("pdfclose 0.5: you are mistaking me for an actual program.\n");
   puts ("  pdfclose --file filename.pdf");
   puts ("\n");
 }

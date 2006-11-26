@@ -1,6 +1,6 @@
 
 --------------------------------------------------------
-Pdfopen 0.4 - Send open/close commands to Acrobat Reader
+Pdfopen 0.5 - Send open/close commands to Acrobat Reader
 --------------------------------------------------------
 
 This is a Linux (X11) implementation of Fabrice Popineau's pdfclose/
@@ -13,6 +13,11 @@ Version 0.3 adds support for Adobe Reader 7.0 for Linux.
 (different window titles and key shortcuts)
 
 Version 0.4 uses autoconf
+
+Version 0.5 fixes an incorrect autoconf variable, supports
+building under X11R5, handles pathnames on the command-line, 
+and  fixes a bug where pdfopen did not exit correctly after 
+(automatically) starting acroread.
 
 The command lines do not behave precisely the same as under Windows, 
 because the Linux Reader behaves somewhat different: it is not 
