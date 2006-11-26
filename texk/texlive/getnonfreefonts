@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/usr/bin/env perl
 
 ## getnonfreefonts
-## Copyright 2005 Reinhard Kotucha <reinhard.kotucha@web.de>
+## Copyright 2006 Reinhard Kotucha <reinhard.kotucha@web.de>
 #
 # This work may be distributed and/or modified under the
 # conditions of the LaTeX Project Public License, either version 1.3
@@ -11,156 +11,193 @@
 # 
 # The current maintainer is Reinhard Kotucha.
 
+my $TL_version='2006';
 
-# invoke the right shell (code from Thomas Esser):
-test -f /bin/ksh && test -z "$RUNNING_KSH" \
-  && { UNAMES=`uname -s`; test "x$UNAMES" = xULTRIX; } 2>/dev/null \
-  && { RUNNING_KSH=true; export RUNNING_KSH; exec /bin/ksh $0 ${1+"$@"}; }
-unset RUNNING_KSH
+my $getfont_url="ftp://tug.org/tex/getnonfreefonts/getfont2006";
 
-test -f /bin/bsh && test -z "$RUNNING_BSH" \
-  && { UNAMES=`uname -s`; test "x$UNAMES" = xAIX; } 2>/dev/null \
-  && { RUNNING_BSH=true; export RUNNING_BSH; exec /bin/bsh $0 ${1+"$@"}; }
-unset RUNNING_BSH
+use File::Copy;
+use Getopt::Long;
+$Getopt::Long::autoabbrev=0;
 
+$opt_lsfonts=0;
+$opt_force=0;
 
-URL="${URL-ftp://tug.org/tex/getnonfreefonts/getfont}"
+sub usage {
+    print <<'EOF';
+Usage:
+    getnonfreefonts[-sys] [-a|--all] [-f|--force] [-l|--lsfonts] 
+        [-v|--verbose] [font1] [font2] ...
 
-die () { echo "$1." 1>&2; exit 1; }
+    getnonfreefonts installs fonts in $TEXMFHOME.
+    getnonfreefonts-sys installs fonts in $TEXMFLOCAL.
 
-OLDIFS=$IFS
-IFS=:
-BINDIRS=`echo $PATH`
-IFS=$OLDIFS
+    Options:
+        -a|--all      Install all fonts.
 
-for BINDIR in $BINDIRS; do
-  if test "$BINDIR" != "."; then
-    for FTP_CLIENT in wget lftp ncftpget curl snarf gftp; do
-	test -x $BINDIR/$FTP_CLIENT && FTP=$FTP_CLIENT && break
-    done
-  fi
-done
+        -f|--force    Install fonts even if they are installed already.
+	
+	-h|--help     Print this message.
 
-test -n "$FTP" || die "No ftp client found"
+        -l|--lsfonts  List all fonts available.
 
-export FTP
+        -v|--verbose  Be more verbose.
 
-case $0 in 
-  *-sys) SYS=true; GETFONT=getfont-sys;;
-      *) SYS=false; GETFONT=getfont;;
-esac
-export SYS GETFONT
-
-ALL=true
-RUNSHELL=false
-
-ARGS_FROM_GETNONFREEFONTS="$@"
-export ARGS_FROM_GETNONFREEFONTS
-
-for ARG in "$@"; do
-  case $ARG in
-    -*)
-      case $ARG in
-        -shell|--shell) RUNSHELL=true;;
-        -ftp-client=*|--ftp-client=*)
-          FTP=`echo "$ARG" | sed 's/.*=//'`;;
-        -url=*|--url=*)
-          URL=`echo "$ARG" | sed 's/.*=//'`;;
-	-h|-help|--help) ALL=false;;
-      esac;;
-    *) ALL=false;;
-  esac
-done
-
-export URL
-
-tmpdir=${TMPDIR-${TEMP-${TMP-/tmp}}}/getnonfreefonts.$$
-(umask 077; mkdir "${tmpdir}") || die "Can't mkdir ${tmpdir}"
-trap 'rm -rf ${tmpdir}' 0 1 2 3 7 13 15
-
-download () {
-  echo "Downloading: $1"
-  case ${FTP} in
-        wget) wget "$1"        || die "$1: Download failed";;
-        lftp) lftp -c "get $1" || die "$1: Download failed";;
-    ncftpget) ncftpget "$1"    || die "$1: Download failed";;
-        curl) curl -O "$1"     || die "$1: Download failed";;
-       snarf) snarf "$1"       || die "$1: Download failed";;
-        gftp) gftp -d "$1"     || die "$1: Download failed";;
-           *) die "This can't happen";;
-  esac
+EOF
+;
 }
 
-cd "${tmpdir}" || die "Can't cd ${tmpdir}"
+unless (@ARGV) {
+    usage;
+    exit 1;
+}
 
-echo -------------------------------------------------------
-echo "FTP client:    ${FTP}"
-echo "Temporary dir: ${tmpdir}"
-echo "URL:           ${URL}"
-echo -------------------------------------------------------
+GetOptions 
+    "all|a",
+    "debug|d",
+    "force|f",
+    "help|h",
+    "lsfonts|l",
+    "verbose|v",
+    "sys";
 
-download ${URL}
+$^W=1 if $opt_debug;
 
-chmod 700 getfont
-ln -s getfont getfont-sys
-PATH=${tmpdir}:${PATH}
-export PATH
+my $sys=($0=~/-sys$/)? 1:0;
+$sys=1 if $opt_sys;
 
-UPDMAP_NEEDED=false
+@allpackages=@ARGV;
 
-if ${RUNSHELL}; then
-  if ${SYS}; then
-    PS1='[getfont-sys]\$ '
-  else
-    PS1='[getfont]\$ '
-  fi
-  export PS1
-  echo -------------------------------------------------------
-  echo "FTP client:    ${FTP}"
-  echo "Temporary dir: ${tmpdir}"
-  echo "URL:           ${URL}"
-  echo "SYS:           ${SYS}"
-  echo "ARGS:          ${ARGS_FROM_GETNONFREEFONTS}"
-  echo -------------------------------------------------------
-  echo "Run program \"getfont\" or \"getfont-sys\" for each font you want to install."
-  echo; echo "Supported fonts are:"
-  for f in `getfont --lsfonts`; do
-    echo "     $f"
-  done
-  echo; echo "Type \"getfont --help\" for more information."
-  echo "Type \"exit\" to leave this shell."; echo
+sub message {
+    my $message=shift;
+    if ($message=~/^\[/) {
+	print "$message\n";
+    } else {
+	printf "%-60s", $message;
+    }
+}
 
-# Start the shell.  We start a shell even if someone has
-# SHELL=/sbin/shutdown in his environment.
+sub expand_var {
+    my $var=shift;
 
-  test -z ${SHELL} || SHELL="/bin/sh"
-  case ${SHELL} in
-    /bin/bash) /bin/bash;;
-     /bin/ksh) /bin/ksh;;
-     /bin/ksh) /bin/ksh;;
-            *) /bin/sh;;
-  esac
+    if (-d "/usr/bin") {
+	open KPSEWHICH, 'kpsewhich --expand-var=\$' . "$var |";
+    } else {
+	open KPSEWHICH, 'kpsewhich --expand-var=$'  . "$var |";
+    }
+    while (<KPSEWHICH>) {
+	chop;
+	return $_;
+    }
+    close KPSEWHICH;
+}
 
-  echo "Please run \"updmap\" or \"updmap-sys\" now if necessary."
-else # no shell
-  if ${ALL} ; then
-    for font in `getfont --lsfonts`; do
-      ${GETFONT} ${ARGS_FROM_GETNONFREEFONTS} ${font} && UPDMAP_NEEDED=true
-    done
-  else
-    ${GETFONT} ${ARGS_FROM_GETNONFREEFONTS} && UPDMAP_NEEDED=true
-  fi
+if ($sys) {
+    $INSTALLROOT=expand_var 'TEXMFLOCAL';
+} else {
+    $INSTALLROOT=expand_var 'TEXMFHOME';
+}
 
-  if ${UPDMAP_NEEDED}; then
-    if ${SYS}; then
-      updmap-sys
-    else 
-      updmap
-    fi
-  fi
-fi
+# get TMP|TEMP|TMPDIR environment variable
 
-cd /
-rm -rf "${tmpdir}"
+if (defined $ENV{'TMP'}) {
+    $systmp="$ENV{'TMP'}";
+} elsif (defined $ENV{'TEMP'}) {
+    $systmp="$ENV{'TEMP'}";
+} elsif (defined $ENV{'TMPDIR'}) {
+    $systmp="$ENV{'SYSTMP'}";
+} else {
+    $systmp="/tmp";
+}
 
-exit 0
+# Windows usually uses backslashes though forward slashes are probably
+# allowed.  Perl always needs forward slashes.
+
+# We convert backslashes to forward slashes if it looks like a Windows
+# directory.
+$systmp=~s/\\/\//g if ($systmp=~/^.:\\/); # c:\abc\def
+$systmp=~s/\\/\//g if ($systmp=~/^\\\\/); # \\abc\def
+
+die "! ERROR: The directory '$systmp' doesn't exist.\n"
+    unless (-d "$systmp");
+
+die "! ERROR: The directory '$systmp' is not writable.\n"
+    unless (-w "$systmp");
+
+$INSTALLROOT=~s/\\/\//g if ($INSTALLROOT=~/^.:\\/); # c:\abc\def
+$INSTALLROOT=~s/\\/\//g if ($INSTALLROOT=~/^\\\\/); # \\abc\def
+
+die "! ERROR: The directory '$INSTALLROOT' is not writable.\n"
+    unless (-w "$INSTALLROOT");
+
+if ($opt_help) {
+  usage; 
+  print <<"ENDUSAGE";
+     Directories:
+       temporary: '$systmp/getfont-<PID>'
+       install:   '$INSTALLROOT'
+
+ENDUSAGE
+exit 0;
+}
+
+
+my $tmpdir="$systmp/getfont-$$";
+mkdir "$tmpdir" or die "! ERROR: Can't mkdir '$tmpdir'.";
+chdir "$tmpdir" or die "! ERROR: Can't cd '$tmpdir'.";
+
+sub remove_tmpdir {
+    chdir "$systmp" or die "! ERROR: Can't cd '$systmp'.\n";
+    opendir TMPDIR, "$tmpdir" 
+	or print "! ERROR: Can't read directory '$tmpdir'.\n";
+
+    @alltmps=readdir TMPDIR;
+    closedir TMPDIR;
+
+    foreach $file (@alltmps) {
+	next if $file=~/^\./;
+	unlink "$tmpdir/$file";
+    }
+    rmdir "$tmpdir" or die "! ERROR: Can't remove directory '$tmpdir'.\n";
+}
+
+# Signal handlers for UNIX, maybe ignored by Windows.
+
+$SIG{INT} =\&remove_tmpdir;
+$SIG{QUIT}=\&remove_tmpdir;
+$SIG{BUS} =\&remove_tmpdir;
+$SIG{PIPE}=\&remove_tmpdir;
+$SIG{TERM}=\&remove_tmpdir;
+$SIG{ABRT}=\&remove_tmpdir;
+$SIG{SEGV}=\&remove_tmpdir;
+
+system ('wget', "$getfont_url");
+
+my @getfont=('perl', "./getfont$TL_version", '--getnonfreefonts');
+push @getfont, "--installroot=$INSTALLROOT";
+push @getfont, '--lsfonts' if $opt_lsfonts;
+push @getfont, '--force' if $opt_force;
+push @getfont, '--verbose' if $opt_verbose;
+push @getfont, '--sys' if $sys;
+push @getfont, '--all' if $opt_all;
+push @getfont, @allpackages;
+
+system @getfont;
+my $exit_code=$?;
+my $exit_status=int($exit_code/256);
+		     
+
+if ($exit_status==2) {
+    print "\n";
+    system 'texhash', "$INSTALLROOT";
+    $updmap_command=($sys)? 'updmap-sys':'updmap';
+    @updmap=("$updmap_command");
+    push @updmap, '--quiet' unless $opt_verbose;
+    message "\nUpdating map files ($updmap_command)...";
+    system @updmap;
+    
+    message $?? '[failed]':'[done]';
+}
+
+remove_tmpdir;
+
+__END__

@@ -11,7 +11,7 @@ LIVESCRIPTS = altpdftex simpdftex \
 ALTPDFTEXCOPIES = altpdfaleph altpdfamstex altpdfcont-en altpdfcont-nl \
                   altpdfetex altpdflambda altpdflatex altpdfomega 
 
-manpgs = getnonfreefonts
+manpgs = getnonfreefonts getnonfreefonts-sys
 
 all:  $(LIVESCRIPTS)
 default: all
