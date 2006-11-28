@@ -6,7 +6,7 @@
 # Public domain.
 #
 # 
-version=0.99
+version=0.992
 
 : ${DMP=dmp}
 : ${DVITOMP=dvitomp}
@@ -61,7 +61,8 @@ while test $# -gt 0; do
     -version|--version)
       echo "`basename $0` $version"
       echo "There is NO warranty.  This script is public domain.
-Primary author: John Hobby."
+Primary author: John Hobby.
+Current maintainer: Taco Hoekwater."
       exit 0;;
     -troff|--troff) mode=troff;;
     -tex|--tex) mode=tex;;

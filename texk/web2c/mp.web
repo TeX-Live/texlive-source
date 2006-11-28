@@ -97,8 +97,8 @@ undergoes any modifications, so that it will be clear which version of
 @^extensions to \MP@>
 @^system dependencies@>
 
-@d banner=='This is MetaPost, Version 0.99' {printed when \MP\ starts}
-@d metapost_version=="0.99"
+@d banner=='This is MetaPost, Version 0.992' {printed when \MP\ starts}
+@d metapost_version=="0.992"
 
 @ Different \PASCAL s have slightly different conventions, and the present
 @!@:PASCAL H}{\ph@>
@@ -23156,6 +23156,10 @@ end;
       if (font_is_subsetted(#))and(font_is_included(#))and(internal[prologues]=three)
       then print(fm_font_subset_name(#))
       else print(font_ps_name[#]);
+      if str_vs_str(font_name[#],"psyrgo")=0 then begin
+        ps_print("-Slanted"); end;
+      if str_vs_str(font_name[#],"zpzdr-reversed")=0 then begin
+        ps_print("-Reverse"); end;
       if applied_reencoding(#) then begin ps_print("-");
         ps_print(font_enc_name[#]); end;
       if fm_font_slant(#)<>0 then begin
@@ -23179,6 +23183,9 @@ begin
   print_nl("/fcp{findfont dup length dict begin{1 index/FID ne{def}{pop pop}ifelse}forall}bd");
   print_nl("/fmc{FontMatrix dup length array copy dup dup}bd/fmd{/FontMatrix exch def}bd");
   print_nl("/Amul{4 -1 roll exch mul 1000 div}bd/ExtendFont{fmc 0 get Amul 0 exch put fmd}bd");
+  if internal[gtroffmode]>0 then begin
+    print_nl("/ScaleFont{dup fmc 0 get Amul 0 exch put dup dup 3 get Amul 3 exch put fmd}bd");
+    end;
   print_nl("/SlantFont{fmc 2 get dup 0 eq{pop 1}if Amul FontMatrix 0 get mul 2 exch put fmd}bd");
   print_nl("%%EndResource");
   @<Include encodings and fonts  for edge structure~|h|@>;
@@ -23213,7 +23220,8 @@ begin
 end
 
 @ @<Write font definition@>=
-if (applied_reencoding(f))or(fm_font_slant(f)<>0)or(fm_font_extend(f)<>0) then begin
+if (applied_reencoding(f))or(fm_font_slant(f)<>0)or(fm_font_extend(f)<>0)or@|
+    (str_vs_str(font_name[f],"psyrgo")=0)or(str_vs_str(font_name[f],"zpzdr-reversed")=0) then begin
   if (font_is_subsetted(f))and(font_is_included(f))and(internal[prologues]=three)
   then ps_name_out(fm_font_subset_name(f),true)
   else ps_name_out(font_ps_name[f],true);
@@ -23232,7 +23240,17 @@ if (applied_reencoding(f))or(fm_font_slant(f)<>0)or(fm_font_extend(f)<>0) then b
     print_int(fm_font_extend(f));
     ps_print(" ExtendFont ");
     end;
-  ps_print("currentdict end");
+  if str_vs_str(font_name[f],"psyrgo")=0 then begin
+    ps_print(" 890 ScaleFont ");
+    ps_print(" 277 SlantFont ");
+    end;
+  if str_vs_str(font_name[f],"zpzdr-reversed")=0 then begin
+    ps_print(" FontMatrix [-1 0 0 1 0 0] matrix concatmatrix /FontMatrix exch def ");
+    ps_print("/Metrics 2 dict dup begin ");
+    ps_print("/space[0 -278]def ");
+    ps_print("/a12[-904 -939]def ");
+    ps_print("end def ");
+    end;  ps_print("currentdict end");
   print_ln;
   ps_print_defined_name(f);
   ps_print(" exch definefont pop");

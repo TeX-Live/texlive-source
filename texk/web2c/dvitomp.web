@@ -65,7 +65,7 @@ an ``\.{MPX}'' file.
 The |banner| string defined here should be changed whenever \.{DVItoMP}
 gets modified.
 
-@d banner=='% Written by DVItoMP, Version 0.99'
+@d banner=='% Written by DVItoMP, Version 0.992'
   {the first line of the output file}
 
 @ This program is written in standard \PASCAL, except where it is necessary
