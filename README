@@ -72,8 +72,11 @@ GNU m4 1.4
 GNU Make 3.79.1
 
 
-- TeX Live
-  include many programs, which depend on many libraries, notably
+xdvi 22.84.10 - ok 28nov06
+  http://xdvi.sourceforge.net/
+
+
+- TeX Live includes many programs, which depend on many libraries, notably
   the TeX file-searching library kpathsea.
  
 - TL has thousands of users, and they almost all install binaries,
