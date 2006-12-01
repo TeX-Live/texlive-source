@@ -1506,11 +1506,6 @@ $makelist = [
     # no, 'texmfstart'
 ]
 
-# if ENV['TEXMFSTART_MODE'] = 'experimental' then
-    # $predefined['texexec'] = 'newtexexec.rb'
-    # $predefined['pstopdf'] = 'newpstopdf.rb'
-# end
-
 $scriptlist   = 'rb|pl|py|lua|jar'
 $documentlist = 'pdf|ps|eps|htm|html'
 
