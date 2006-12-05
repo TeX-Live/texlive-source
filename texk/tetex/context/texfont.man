@@ -1,19 +1,36 @@
-.TH TEXFONT "1" "May 2004" "teTeX " "texfont.pdf"
+.TH TEXFONT "1" "December 2006" "texfont 2.2" "ConTeXt"
+.de URL
+\\$2 \(laURL: \\$1 \(ra\\$3
+..
+.if \n[.g] .mso www.tmac
+.de EX
+.in +3
+.nf
+.ft CW
+..
+.de EE
+.in -3
+.ft R
+.fi
+..
+
 .SH NAME
 texfont \- font installation tool for ConTeXt
-.PP
+
 .SH "SYNOPSIS" 
-\fBtexfont\fP [ \fIOPTION\fP \&.\&.\&.  ]
-.PP 
+\fBtexfont\fP [ \fIOPTION\fP ...  ]
+
 .SH DESCRIPTION
-.PP
-TeXFont is a perl script that helps to set up and install TeX fonts.
+
+TeXFont is a 
+.BR perl (1)
+script that helps to set up and install TeX fonts.
 It was designed for use with ConTeXt, but may also be helpful for
 users of other formats, like plain TeX or LaTeX. Its use is described
-in detail in the files mtexfont.pdf and mfont.pdf.
-.PP 
+in detail in the files \fImtexfont.pdf\fP and \fImfont.pdf\fP.
+
 .SH "OPTIONS" 
-.PP 
+
 .HP
 \fB\-\-fontroot\fR=\fIpath\fR : texmf font root (automatically determined)
 .HP
@@ -59,26 +76,24 @@ directory)
 \fB\-\-help\fR : show some more info
 .HP
 .SH "SEE ALSO" 
-.PP 
-\fBtexexec\fP(1), \fBfontinst\fP(1), \fBtexshow\fP(1),
-\fBtexutil\fP(1)\&.
-.PP 
-The TeXFont manual, \fImtexfont\&.pdf\fP\&
-.PP 
-The ConTeXt Font manual, \fImfonts\&.pdf\fP\&
-.PP
-The TeXExec manual, \fImtexexec\&.pdf\fP\&.
-.PP 
-Donald E\&. Knuth\'s \fIThe TeXbook\fP\&.
-.PP 
+.IP \(bu
+\fBtexexec\fP(1), \fBfontinst\fP(1), \fBperl\fP(1), \fBtexshow\fP(1).
+.IP \(bu
+The ConTeXt Font manual, \fImfonts.pdf\fP
+available from
+.URL "http://www.pragma-ade.com/dir/general/manuals/" "PRAGMA ADE" .
+.IP \(bu
+The TeXFont manual, \fImtexfont.pdf\fP
+.IP \(bu
+The TeXExec manual, \fImtexexec.pdf\fP.
+.IP \(bu
+.URL "http://www.contextgarden.net" "ConTeXt wiki" .
+.IP \(bu
+Donald E. Knuth\'s \fIThe TeXbook\fP.
+
 .SH "AUTHOR" 
-.IP 
-This manual page was written by Frank Küster <frank@kuesterei\&.ch>,
-for the Debian GNU/Linux system\&.  It may be used and modified by
-others without contacting the author\&.  Any mistakes or omissions in
-the manual page are my fault; inquiries about or corrections to this
-manual page should be directed to me (and not to the primary
-author)\&.
-.IP 
-The PDF manual and \fBtexfont\fP itself can be obtained from
-<http://www\&.pragma-ade\&.com>
+
+This manual page was written by Frank Küster <frank@kuesterei.ch>,
+for the Debian GNU/Linux system, and  modified by Sanjoy Mahajan
+<sanjoy@mit.edu>.  It may be used and modified by others without
+contacting the authors.

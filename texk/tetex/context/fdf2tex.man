@@ -1,0 +1,52 @@
+.TH FDF2TEX "1" "December 2006" "fdf2tex 1.02" "ConTeXt"
+.de URL
+\\$2 \(laURL: \\$1 \(ra\\$3
+..
+.if \n[.g] .mso www.tmac
+.de EX
+.in +3
+.nf
+.ft CW
+..
+.de EE
+.in -3
+.ft R
+.fi
+..
+
+.SH NAME
+fdf2tex \- Convert PDF formular data (FDF) into something (Con)TeX(t) can
+handle
+.PP
+.SH "SYNOPSIS" 
+\fBfdf2tex\fP \fIinfile\fP [ \fIoutfile\fP ]
+.PP
+\fBfdf2tan\fP \fIinfile\fP
+.PP 
+.SH DESCRIPTION
+.PP
+Converts PDF formular data (FDF) into something (Con)TeX(t) can
+handle. This command is usually called indirectly during ConTeXt
+file processing, so most users do not need to worry about it.
+.HP
+.SH "BUGS"
+.PP
+Probably none -- all errors are in this manpage
+.PP
+.SH "SEE ALSO" 
+.IP \(bu
+\fBtexexec\fP(1).
+.IP \(bu
+The TeXExec manual, \fImtexexec.pdf\fP.
+available from
+.URL "http://www.pragma-ade.com/dir/general/manuals/" "PRAGMA ADE" .
+.IP \(bu
+.URL "http://www.contextgarden.net" "ConTeXt wiki" .
+
+.SH "AUTHOR" 
+
+This manual page was written by Frank Küster <frank@kuesterei.ch>,
+for the Debian GNU/Linux system, and modified by Sanjoy Mahajan
+<sanjoy@mit.edu>.  It may be used and modified by others without
+contacting the authors.
+
