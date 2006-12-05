@@ -1,3 +1,7 @@
+2006-12-05  Karl Berry  <karl@tug.org>
+
+	* dvips.h (BANNER): bump version to 5.96 for 2006, why not.
+
 2006-07-06  Karl Berry  <karl@tug.org>
 
 	* dvips.texi: mention -tunknown to avoid floating to predefined
