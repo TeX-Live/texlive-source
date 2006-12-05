@@ -1,3 +1,7 @@
+2006-12-05  Karl Berry  <karl@tug.org>
+
+	* configure: trying dvipng again.
+
 2006-08-24  Karl Berry  <karl@tug.org>
 
 	* configure: don't descend into dvipng for now, update needs to be
