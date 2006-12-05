@@ -16,8 +16,8 @@
 
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-  02111-1307, USA.
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+  02110-1301 USA.
 
   Copyright (C) 2002-2006 Jan-Åke Larsson
 
@@ -37,15 +37,23 @@ void LoadFT(int32_t c, struct char_entry * ptr)
 
   DEBUG_PRINT(DEBUG_FT,("\n  LOAD FT CHAR\t%d (%d)",c,ptr->tfmw));
   if (currentfont->psfontmap!=NULL
-      && currentfont->psfontmap->encoding != NULL)
+      && currentfont->psfontmap->encoding != NULL) {
+    DEBUG_PRINT(DEBUG_FT,(" %s",currentfont->psfontmap->encoding->charname[c]));
     glyph_i = FT_Get_Name_Index(currentfont->face,
 				currentfont->psfontmap->encoding->charname[c]);
-  else 
+  } else if (currentfont->psfontmap!=NULL
+	     && currentfont->psfontmap->subfont != NULL) {
+    glyph_i = FT_Get_Char_Index( currentfont->face, 
+				 currentfont->psfontmap->subfont->charindex[c] );
+    DEBUG_PRINT(DEBUG_FT,(" 0x%X",currentfont->psfontmap->subfont->charindex[c]));
+  } else
     glyph_i = FT_Get_Char_Index( currentfont->face, c );
-  if (FT_Load_Glyph( currentfont->face,    /* handle to face object */
-		     glyph_i,              /* glyph index           */
-		     FT_LOAD_RENDER | FT_LOAD_TARGET_LIGHT ))
-                                           /* load flags            */
+  if (FT_Load_Glyph( currentfont->face, glyph_i,
+		     FT_LOAD_RENDER | FT_LOAD_TARGET_LIGHT )
+      /* On some configurations (with FreeType <= 2.1.7) the above
+	 fails, while the below works */
+      && FT_Load_Glyph( currentfont->face, glyph_i,
+			FT_LOAD_RENDER | FT_LOAD_NO_HINTING ))
     Fatal("cannot load FT char %d",c);
   ptr->xOffset = -currentfont->face->glyph->bitmap_left*shrinkfactor;
   ptr->yOffset = (currentfont->face->glyph->bitmap_top-1)*shrinkfactor;
@@ -96,7 +104,6 @@ bool InitFT(struct font_entry * tfontp)
     }
 # endif
   }
-
   DEBUG_PRINT((DEBUG_DVI|DEBUG_FT),("\n  OPEN FT FONT:\t'%s'", tfontp->name));
   error = FT_New_Face( libfreetype, tfontp->name, 0, &tfontp->face );
   if (error == FT_Err_Unknown_File_Format) {
@@ -107,20 +114,21 @@ bool InitFT(struct font_entry * tfontp)
     return(false);
   } 
   Message(BE_VERBOSE,"<%s>", tfontp->name);
-  if (tfontp->psfontmap == NULL || tfontp->psfontmap->encoding == NULL) {
+  if (tfontp->psfontmap != NULL && tfontp->psfontmap->subfont != NULL)
+    error=FT_Select_Charmap(tfontp->face, tfontp->psfontmap->subfont->encoding);
+  else if (tfontp->psfontmap == NULL || tfontp->psfontmap->encoding == NULL)
 #ifndef FT_ENCODING_ADOBE_CUSTOM
 # define FT_ENCODING_ADOBE_CUSTOM ft_encoding_adobe_custom
 # define FT_ENCODING_ADOBE_STANDARD ft_encoding_adobe_standard
 #endif
-    if (FT_Select_Charmap( tfontp->face, FT_ENCODING_ADOBE_CUSTOM )) {
-      Warning("unable to set font encoding FT_ENCODING_ADOBE_CUSTOM for %s", 
-	      tfontp->name);
-      if(FT_Select_Charmap( tfontp->face, FT_ENCODING_ADOBE_STANDARD )) {
-	Warning("unable to set font encoding for %s", tfontp->name);
-	return(false);
-      }
+    error=FT_Select_Charmap(tfontp->face, FT_ENCODING_ADOBE_CUSTOM);
+  if (error) {
+    Warning("unable to set font encoding for %s", tfontp->name);
+    if(FT_Select_Charmap( tfontp->face, FT_ENCODING_ADOBE_STANDARD )) {
+      Warning("unable to set fallback font encoding for %s", tfontp->name);
+      return(false);
     }
-  } 
+  }
   if (FT_Set_Char_Size( tfontp->face, /* handle to face object           */
 			0,            /* char_width in 1/64th of points  */
 			((int64_t)tfontp->d*64*7200)/7227/65536,

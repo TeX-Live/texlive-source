@@ -24,7 +24,7 @@ as is possible. The target audience is people who need to generate and
 regenerate many images again and again. The primary target is the
 @previewlatex{} (X)Emacs package, a package to preview formulas from
 within (X)Emacs. Yes, you get to see your formulas in the (X)Emacs
-buffer, see @url{http://preview-latex.sf.net}. 
+buffer, see @url{http://www.gnu.org/software/auctex/preview-latex.html}. 
 
 Another example is WeBWorK, an internet-based method for delivering
 homework problems to students over the internet, giving students
@@ -49,7 +49,7 @@ as needed in @previewlatex{}, WeBWorK and others.
 
 @item 
 It does not read the postamble, so it can be started before @TeX{}
-finishes. There is a --follow switch that makes dvipng wait at
+finishes. There is a @samp{--follow} switch that makes dvipng wait at
 end-of-file for further output, unless it finds the POST marker that
 indicates the end of the DVI.
 
@@ -59,8 +59,9 @@ through stdin, and all options are usable. It is even possible to change
 the input file through this interface.
 
 @item 
-Supports PK, VF, PostScript Type1, and TrueType fonts, color specials
-and simple PostScript inclusion specials.
+Supports PK, VF, PostScript Type1, and TrueType fonts, subfonts (i.e.,
+as used in CJK-@LaTeX{}), color specials, and inclusion of PostScript,
+PNG, JPEG or GIF images.
 
 @item 
 and more...
@@ -127,11 +128,8 @@ Copyright @copyright{} 2002-2006 Jan-@AA{}ke Larsson
 @section Todo
 
 @itemize @bullet
-@item 
-Support for CJK-@LaTeX{} (Chinese, Japanese, Korean), that is: subfonts.
-
 @item
-Fix T1 and PK rendering so it is on par with Freetype.
+Fix T1lib and PK rendering so it is on par with Freetype.
 
 @item 
 Further speed improvements.
@@ -139,9 +137,8 @@ Further speed improvements.
 @item 
 Other output specials and source specials.
 
-@item
-Remove kpathsea dependence, use dvips' environment variables (this is
-maybe less of an issue now with working MiKTeX support).
+@item 
+Clean internal structures. Overhaul file handling.
 @end itemize
 
 

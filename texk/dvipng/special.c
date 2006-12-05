@@ -16,8 +16,8 @@
 
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-  02111-1307, USA.
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+  02110-1301 USA.
 
   Copyright (C) 2002-2006 Jan-Åke Larsson
 
@@ -32,8 +32,8 @@
 #define SKIPSPACES(s) while(s && *s==' ' && *s!='\0') s++
 
 gdImagePtr
-ps2png(const char *psfile, char *device, int hresolution, int vresolution, 
-       int llx, int lly, int urx, int ury)
+ps2png(FILE *psfilestream, char *device, int hresolution, int vresolution, 
+       int llx, int lly, int urx, int ury, int bgred, int bggreen, int bgblue)
 {
 #ifndef MIKTEX
   int downpipe[2], uppipe[2];
@@ -52,8 +52,9 @@ ps2png(const char *psfile, char *device, int hresolution, int vresolution,
   char resolution[STRSIZE]; 
   /*   char devicesize[STRSIZE];  */
   gdImagePtr psimage=NULL;
-  static char* showpage="";
+  static bool showpage=false;
 
+  fseek(psfilestream,0,SEEK_SET);
   sprintf(resolution, "-r%dx%d",hresolution,vresolution);
   /* Future extension for \rotatebox
   status=sprintf(devicesize, "-g%dx%d",
@@ -129,18 +130,27 @@ ps2png(const char *psfile, char *device, int hresolution, int vresolution,
   }
 #endif 
   if (psstream) {
+    int pschar;
     DEBUG_PRINT(DEBUG_GS,("\n  PS CODE:\t<</PageSize[%d %d]/PageOffset[%d %d[1 1 dtransform exch]{0 ge{neg}if exch}forall]>>setpagedevice",
 			  urx - llx, ury - lly,llx,lly));
     fprintf(psstream, "<</PageSize[%d %d]/PageOffset[%d %d[1 1 dtransform exch]{0 ge{neg}if exch}forall]>>setpagedevice\n",
 	    urx - llx, ury - lly,llx,lly);
-    if ( cstack[0].red < 255 || cstack[0].green < 255 || cstack[0].blue < 255 ) {
+    if ( bgred < 255 || bggreen < 255 || bgblue < 255 ) {
       DEBUG_PRINT(DEBUG_GS,("\n  PS CODE:\tgsave %f %f %f setrgbcolor clippath fill grestore",
-			    cstack[0].red/255.0, cstack[0].green/255.0, cstack[0].blue/255.0));
+			    bgred/255.0, bggreen/255.0, bgblue/255.0));
       fprintf(psstream, "gsave %f %f %f setrgbcolor clippath fill grestore",
-	      cstack[0].red/255.0, cstack[0].green/255.0, cstack[0].blue/255.0);
+	      bgred/255.0, bggreen/255.0, bgblue/255.0);
     }
-    DEBUG_PRINT(DEBUG_GS,("\n  PS CODE:\t(%s) run %s quit ", psfile, showpage));
-    fprintf(psstream, "(%s) run %s quit ", psfile, showpage);
+    DEBUG_PRINT(DEBUG_GS,("\n  PS DATA:\t..."));
+    pschar=getc(psfilestream);
+    while(pschar!=EOF) {
+      putc(pschar,psstream);
+      pschar=getc(psfilestream);
+    }
+    if (showpage) {
+      DEBUG_PRINT(DEBUG_GS,("\n  PS CODE:\tshowpage"));
+      fprintf(psstream, " showpage ");
+    }
     fclose(psstream);
   }
   if (pngstream) {
@@ -152,11 +162,12 @@ ps2png(const char *psfile, char *device, int hresolution, int vresolution,
 #endif
   if (psimage == NULL) {
     DEBUG_PRINT(DEBUG_GS,("\n  GS OUTPUT:\tNO IMAGE "));
-    if (!(*showpage)) {
-      showpage="showpage";
-      DEBUG_PRINT(DEBUG_GS,("(will try adding \"%s\") ",showpage));
-      psimage=ps2png(psfile, device, hresolution, vresolution, llx, lly, urx, ury);
-      showpage="";
+    if (!showpage) {
+      showpage=true;
+      DEBUG_PRINT(DEBUG_GS,("(will try adding \"showpage\") "));
+      psimage=ps2png(psfilestream, device, hresolution, vresolution, llx, lly, urx, ury,
+		     bgred,bggreen,bgblue);
+      showpage=false;
     }
 #ifdef DEBUG
   } else {
@@ -339,7 +350,6 @@ void SetSpecial(char * special, int32_t length, int32_t hh, int32_t vv)
 	DEBUG_PRINT(DEBUG_DVI,("\n  INCLUDE PNG \t%s",psfile));
 	fseek(psstream,0,SEEK_SET);
 	psimage=gdImageCreateFromPng(psstream);
-	fclose(psstream);
 	break;
       case 'G': /* GIF magic: "GIF87" or "GIF89" */
 	DEBUG_PRINT(DEBUG_DVI,("\n  INCLUDE GIF \t%s",psfile));
@@ -349,7 +359,6 @@ void SetSpecial(char * special, int32_t length, int32_t hh, int32_t vv)
 #else
 	DEBUG_PRINT(DEBUG_DVI,(" (NO GIF DECODER)"));
 #endif
-	fclose(psstream);
 	break;
       case 0xff: /* JPEG magic: 0xffd8 */
 	DEBUG_PRINT(DEBUG_DVI,("\n  INCLUDE JPEG \t%s",psfile));
@@ -359,10 +368,8 @@ void SetSpecial(char * special, int32_t length, int32_t hh, int32_t vv)
 #else
 	DEBUG_PRINT(DEBUG_DVI,(" (NO JPEG DECODER)"));
 #endif
-	fclose(psstream);
 	break;
       default:  /* Default, PostScript magic: "%!PS-Adobe" */
-	fclose(psstream);
 	if (flags & NO_GHOSTSCRIPT) { 
 	  Warning("GhostScript calls disallowed by --noghostscript", psfile );
 	  flags |= PAGE_GAVE_WARN;
@@ -378,28 +385,30 @@ void SetSpecial(char * special, int32_t length, int32_t hh, int32_t vv)
 	    Warning("Palette output, opaque image inclusion");
 #ifdef HAVE_GDIMAGEPNGEX
 	  else if (psimage==NULL) {
-	    DEBUG_PRINT(DEBUG_DVI,("\n  RENDER PNGALPHA POSTSCRIPT \t%s",
-				   psfile));
+	    DEBUG_PRINT((DEBUG_DVI | DEBUG_GS),
+			("\n  GS RENDER \t%s -> pngalpha ",psfile));
 	    if (clip) {
-	      DEBUG_PRINT(DEBUG_DVI,(", CLIPPED TO BBOX"));
-	      psimage = ps2png(psfile, "-sDEVICE=pngalpha", 
+	      DEBUG_PRINT((DEBUG_DVI | DEBUG_GS),(", CLIPPED TO BBOX"));
+	      psimage = ps2png(psstream, "-sDEVICE=pngalpha", 
 			       hresolution, vresolution, 
-			       llx, lly, urx, ury);
+			       llx, lly, urx, ury,
+			       255,255,255);
 	    } else {
 	      /* Render across the whole image */ 
-	      DEBUG_PRINT(DEBUG_DVI,
+	      DEBUG_PRINT((DEBUG_DVI | DEBUG_GS),
 			  ("\n  EXPAND BBOX \t%d %d %d %d -> %d %d %d %d",
 			   llx,lly,urx,ury,
 			   llx-(hh+1)*72/hresolution,
 			   lly-(gdImageSY(page_imagep)-vv-1)*72/vresolution,
 			   llx+(gdImageSX(page_imagep)-hh)*72/hresolution,
 			   lly+(vv+1)*72/vresolution));
-	      psimage = ps2png(psfile, "-sDEVICE=pngalpha", 
+	      psimage = ps2png(psstream, "-sDEVICE=pngalpha", 
 			       hresolution, vresolution,
 			       llx-(hh+1)*72/hresolution,
 			       lly-(gdImageSY(page_imagep)-vv-1)*72/vresolution,
 			       llx+(gdImageSX(page_imagep)-hh)*72/hresolution,
-			       lly+(vv+1)*72/vresolution);
+			       lly+(vv+1)*72/vresolution,
+			       255,255,255);
 	      if (psimage!=NULL) {
 		hh=0;
 		vv=gdImageSY(page_imagep)-1;
@@ -414,16 +423,19 @@ void SetSpecial(char * special, int32_t length, int32_t hh, int32_t vv)
 #endif
 	  if (psimage==NULL) {
 	    /* png256 gives inferior result */
-	    DEBUG_PRINT(DEBUG_DVI,("\n  RENDER POSTSCRIPT \t%s", psfile));
-	    psimage = ps2png(psfile, "-sDEVICE=png16m",
+	    DEBUG_PRINT((DEBUG_DVI | DEBUG_GS),
+			("\n  GS RENDER \t%s -> png16m", psfile));
+	    psimage = ps2png(psstream, "-sDEVICE=png16m",
 			     hresolution, vresolution, 
-			     llx, lly, urx, ury);
+			     llx, lly, urx, ury,
+			     cstack[0].red,cstack[0].green,cstack[0].blue);
 	    flags |= PAGE_GAVE_WARN;
 	  }
 	  if (flags & CACHE_IMAGES && cacheimage==NULL) 
 	    storecache(psname,psimage); 
 	}
       }
+      fclose(psstream);
       if (psimage!=NULL) {
 	/* Rescale, but ignore (one-pixel) rounding errors */
 	if (gdImageSX(psimage)!=pngwidth 

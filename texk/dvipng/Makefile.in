@@ -16,8 +16,8 @@
 #
 #  You should have received a copy of the GNU General Public License
 #  along with this program; if not, write to the Free Software
-#  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-#  02111-1307, USA.
+#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+#  02110-1301 USA.
 #
 #  Copyright (C) 2002-2005 Jan-Åke Larsson
 #
@@ -25,12 +25,47 @@
 
 PACKAGE_STRING="@PACKAGE_STRING@"
 
+FREETYPE2DIR = ../../libs/freetype2
+FREETYPE2SRCDIR = $(srcdir)/$(FREETYPE2DIR)
+FREETYPE2CPPFLAGS = @FREETYPE2CPPFLAGS@
+FREETYPE2DEP = @FREETYPE2DEP@
+LDFREETYPE2 = @LDFREETYPE2@
+
+GDDIR=../../libs/gd
+GDSRCDIR=$(srcdir)/$(GDDIR)
+GDCPPFLAGS = @GDCPPFLAGS@
+GDDEP = @GDDEP@
+LDGD = @LDGD@
+
+LIBT1DIR=../../libs/t1lib
+LIBT1SRCDIR=$(srcdir)/$(LIBT1DIR)
+LIBT1CPPFLAGS = @LIBT1CPPFLAGS@
+LIBT1DEP = @LIBT1DEP@
+LDLIBT1 = @LDLIBT1@
+
+LIBPNGDIR=../../libs/libpng
+LIBPNGSRCDIR=$(srcdir)/$(LIBPNGDIR)
+LIBPNGCPPFLAGS = @LIBPNGCPPFLAGS@
+LIBPNGDEP = @LIBPNGDEP@
+LDLIBPNG = @LDLIBPNG@
+
+ZLIBDIR=../../libs/zlib
+ZLIBSRCDIR=$(srcdir)/$(ZLIBDIR)
+ZLIBCPPFLAGS = @ZLIBCPPFLAGS@
+ZLIBDEP = @ZLIBDEP@
+LDZLIB = @LDZLIB@
+
+lib_cppflags = $(GDCPPFLAGS) $(FREETYPE2CPPFLAGS) $(LIBT1CPPFLAGS) \
+               $(LIBPNGCPPFLAGS) $(ZLIBCPPFLAGS) -I.. -I$(srcdir)/..
+lib_libs = $(LDGD) $(LDFREETYPE2) $(LDLIBT1) $(LDLIBPNG) $(LDZLIB)
+
 CC = @CC@
 CFLAGS = @CFLAGS@ -Wall
-CPPFLAGS = @CPPFLAGS@ -I.
+CPPFLAGS = @CPPFLAGS@ -I. $(lib_cppflags)
+# -I. must come first, or get gd/config.h.
 LN_S = @LN_S@
 
-LIBS = @LIBS@
+LIBS = @LIBS@ $(lib_libs)
 LDFLAGS = @LDFLAGS@
 
 srcdir = @srcdir@
@@ -95,8 +130,14 @@ dvipng.help: dvipng
 		|| cp dvipng.tmp dvipng.help
 	rm -f dvipng.tmp
 
-dvipng.html: $(TEXIFILES) dvipng.help
-	texi2html -I $(srcdir) $(srcdir)/dvipng.texi
+www: $(TEXIFILES) dvipng.help
+	texi2html -split chapter -nosec-nav -subdir html \
+	   -I $(srcdir) $(srcdir)/dvipng.texi
+	(cd html; for i in *; do \
+	   sed -e "s/Jan-A/Jan-\&Aring\;/g" $$i > ../www/$$i; \
+	done) 
+	cp www/dvipng.html www/index.html
+	rm -rf html
 
 dvipng_mono.html: $(TEXIFILES) dvipng.help
 	texi2html --monolithic -nomenu -nosec_nav -o dvipng_mono.html \
@@ -113,7 +154,8 @@ README: readme.texi
 		-I$(srcdir) $(srcdir)/readme.texi --output README
 
 dvipng.1: dvipng.texi readme.texi
-	texi2pod.pl -D man $(srcdir)/dvipng.texi > dvipng.pod
+	texi2pod.pl -D man $(srcdir)/dvipng.texi | \
+	sed -es/@//g -es/previewlatex/preview-latex/g -es/{}//g > dvipng.pod
 	pod2man --center="User commands" --release=$(PACKAGE_STRING)\
 		dvipng.pod > dvipng.1
 	rm dvipng.pod
@@ -135,11 +177,7 @@ install-dvigif-docs: install-docs
 ####################################### The test
 
 test: test_dvipng.dvi dvipng
-	./dvipng -v test_dvipng
-	echo View the result e.g. with xv test_dvipng\*.png
-
-tighttest: test_dvipng.dvi dvipng
-	./dvipng -T tight test_dvipng
+	./dvipng -T tight -strict test_dvipng
 	echo View the result e.g. with xv test_dvipng\*.png
 
 test_dvipng.dvi: test_dvipng.tex
@@ -153,10 +191,11 @@ clean:
 		*.tp *.vr *.pg *.toc *.tp *.bak *.cps *.kys *.tps \
 		*.fns *.vrs *.pgs *.html *.tmp
 
-distclean: clean INSTALL README dvipng.1
+distclean: clean
 	rm -f Makefile
 	rm -f config.status config.log config.cache c-auto.h
 
+dist: INSTALL README dvipng.1 distclean
 
 # SunOS make suffix rule wierdness
 .cps.h:

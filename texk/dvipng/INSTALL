@@ -23,18 +23,27 @@ Prerequisites
      not have it, download it from `http://www.ctan.org' and compile it.
      I have no experience with this, so I cannot help much here.
 
-   * FreeType 2 and/or T1lib
+   * The font-rendering library FreeType 2
 
-     While not strictly necessary, you may want to have FreeType 2 or
-     T1lib available. Their presence will enable direct support for
-     PostScript fonts in dvipng, rather than using `gsftopk' for
-     rendering the fonts. If you have PostScript versons of Computer
-     Modern installed, there will be no need to generate bitmapped
-     variants on disk of these. Then, you can render images at
-     different (and unusual) resolutions without cluttering the disk
-     with lots of bitmapped fonts.  If both FreeType 2 and T1lib are
-     present, FreeType will be internally preferred by dvipng, but
-     T1lib can be chosen at runtime.
+     While not strictly necessary, FreeType 2 is recommended since
+     dvipng currently will produce better-quality images with this
+     library available. It will also enable direct support for
+     PostScript and TrueType fonts, and subfont support in dvipng. That
+     is, if you want to render CJK-LaTeX characters, you must have
+     FreeType 2 installed.  With FreeType 2, dvipng will not need to
+     generate bitmapped variants on disk of the TeX fonts since modern
+     TeX distributions include PostScript versions of them. Then, you
+     can render images at different (and unusual) resolutions without
+     cluttering the disk with lots of bitmapped fonts.
+
+   * The font-rendering library T1lib
+
+     An alternative to FreeType 2 is T1lib, but this will enable only
+     PostScript fonts in dvipng, and will not include subfont support.
+     Also here, you can render images at different (and unusual)
+     resolutions without cluttering the disk with lots of bitmapped
+     fonts. If both FreeType 2 and T1lib are present, FreeType will be
+     internally preferred by dvipng, but T1lib can be chosen at runtime.
 
    * libpng and libz
 
@@ -57,7 +66,7 @@ various files will be.  To do so, run
 
    (Note: if you have fetched dvipng from CVS rather than a regular
 release, you will have to first generate `./configure' by running
-`autoconf' 2.53 or later in the `preview' directory.)
+`autoconf' 2.53 or later.)
 
    On many machines, you will not need to specify any options, but if
 `configure' cannot determine something on its own, you'll need to help

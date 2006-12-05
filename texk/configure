@@ -6587,6 +6587,7 @@ PKGS='
  cjkutils
  detex
  devnag
+ dvipng
  dtl 
  dvi2tty
  dvidvi
@@ -6609,9 +6610,6 @@ PKGS='
  xdvik
  xdvipdfmx
 '
-
-# must finish update, accidentally checked in partial
-# in revision 2009: dvipng
 
 ESUBDIRS=
 for pkg in $PKGS; do

@@ -16,8 +16,8 @@
 
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-  02111-1307, USA.
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+  02110-1301 USA.
 
   Copyright (C) 2002-2005 Jan-Åke Larsson
 
@@ -25,8 +25,10 @@
 
 #include "dvipng.h"
 
-static char* psfont_name=NULL;
 static struct filemmap psfont_mmap;
+#if HAVE_FT2
+static struct filemmap ttfont_mmap;
+#endif
 static struct psfontmap *psfontmap=NULL;
 
 char* newword(char** buffer, char* end) 
@@ -38,8 +40,19 @@ char* newword(char** buffer, char* end)
     Fatal("cannot malloc space for string");
   strncpy(word,*buffer,pos-*buffer);
   word[pos-*buffer]='\0';
-  if (*pos=='"') pos++;
   *buffer=pos;
+  return(word);
+}
+
+char* copyword(char* orig) 
+{
+  char *word;
+
+  if (orig==NULL)
+    return(NULL);
+  if ((word=malloc(strlen(orig)+1))==NULL)
+    Fatal("cannot malloc space for string");
+  strcpy(word,orig);
   return(word);
 }
 
@@ -56,33 +69,93 @@ char* find_format(char* name)
 
 void InitPSFontMap(void)
 {
-  char *pos,*end;
-  struct psfontmap *entry;
-
+  char* psfont_name=NULL;
+  /* Prefer ps2pk.map, fonts are present more often */
   psfont_name=find_format("ps2pk.map");
   if (psfont_name==NULL)
     psfont_name=find_format("psfonts.map");
-
   if (psfont_name==NULL) {
     Warning("cannot find ps2pk.map, nor psfonts.map");
-    return;
+  } else {
+    DEBUG_PRINT((DEBUG_FT|DEBUG_T1),
+		("\n  OPEN PSFONT MAP:\t'%s'", psfont_name));  
+    if (MmapFile(psfont_name,&psfont_mmap)) {
+      Warning("psfonts map %s could not be opened", psfont_name);
+    }
+    free(psfont_name);
   }
-  DEBUG_PRINT(DEBUG_FT,("\n  OPEN PSFONT MAP:\t'%s'", psfont_name));  
-  if (MmapFile(psfont_name,&psfont_mmap)) {
-    Warning("psfonts map %s could not be opened", psfont_name);
-    return;
+#ifdef HAVE_FT2
+  psfont_name=find_format("ttfonts.map");
+  if (psfont_name!=NULL) {
+    DEBUG_PRINT(DEBUG_FT,("\n  OPEN TTFONT MAP:\t'%s'", psfont_name));  
+    if (MmapFile(psfont_name,&ttfont_mmap)) {
+      Warning("ttfonts map %s could not be opened", psfont_name);
+    }
+    free(psfont_name);
   }
-  pos = psfont_mmap.mmap;
-  end = psfont_mmap.mmap+psfont_mmap.size;
-  while(pos<end) {
-    while(pos < end && (*pos=='\n' || *pos==' ' || *pos=='\t' 
-			|| *pos=='%' || *pos=='*' || *pos==';' || *pos=='#')) {
+#endif
+}
+
+struct psfontmap *NewPSFont(struct psfontmap* copyfrom)
+{
+  struct psfontmap *newentry=NULL;
+  if ((newentry=malloc(sizeof(struct psfontmap)))==NULL)
+    Fatal("cannot malloc psfontmap space");
+  if (copyfrom!=NULL) {
+    newentry->line = copyfrom->line;
+    newentry->tfmname = copyword(copyfrom->tfmname);
+    newentry->psfile = copyword(copyfrom->psfile);
+    newentry->encname = copyword(copyfrom->encname);
+    newentry->encoding = copyfrom->encoding;
+#if HAVE_LIBT1
+    newentry->t1_transformp = copyfrom->t1_transformp;
+#endif
+#if HAVE_FT2
+    newentry->ft_transformp = copyfrom->ft_transformp;
+    newentry->subfont = copyfrom->subfont;
+#endif
+    newentry->end = copyfrom->end;
+  } else {
+    newentry->line = NULL;
+    newentry->tfmname = NULL;
+    newentry->psfile = NULL;
+    newentry->encname = NULL;
+    newentry->encoding = NULL;
+#if HAVE_LIBT1
+    newentry->t1_transformp = NULL;
+#endif
+#if HAVE_FT2
+    newentry->ft_transformp = NULL;
+    newentry->subfont = NULL;
+#endif
+    newentry->end = NULL;
+  }
+  newentry->next=psfontmap;
+  psfontmap=newentry;
+  return(newentry);
+}
+
+struct psfontmap *SearchPSFontMap(char* fontname,
+				  struct filemmap* search_mmap)
+{
+  static char *pos=NULL,*end=NULL;
+  static struct filemmap* searching_mmap=NULL;
+  struct psfontmap *entry=NULL;
+
+  if (pos==end && search_mmap!=searching_mmap) {
+    searching_mmap=search_mmap;
+    pos=searching_mmap->mmap;
+    end=searching_mmap->mmap+searching_mmap->size;
+  }
+  while(pos<end && (entry==NULL || strcmp(entry->tfmname,fontname)!=0)) {
+    while(pos < end 
+	  && (*pos=='\n' || *pos==' ' || *pos=='\t' 
+	      || *pos=='%' || *pos=='*' || *pos==';' || *pos=='#')) {
       while(pos < end && *pos!='\n') pos++; /* skip comments/empty rows */
       pos++;
     }
     if (pos < end) {
-      if ((entry=malloc(sizeof(struct psfontmap)))==NULL)
-	Fatal("cannot malloc psfontmap space");
+      entry=NewPSFont(NULL);
       entry->line = pos;
       /* skip <something and quoted entries */
       while(pos < end && (*pos=='<' || *pos=='"')) {
@@ -94,16 +167,14 @@ void InitPSFontMap(void)
       }
       /* first word is font name */
       entry->tfmname = newword(&pos,end);
-      entry->psfile = NULL;
-      entry->encname = NULL;
-      entry->encoding = NULL;
       while(pos < end && *pos!='\n') pos++;
       entry->end = pos;
-      entry->next=psfontmap;
-      psfontmap=entry;
     }
     pos++;
   }
+  if (entry!=NULL && strcmp(entry->tfmname,fontname)!=0)
+    entry=NULL;
+  return(entry);
 }
 
 void ClearPSFontMap(void)
@@ -121,130 +192,150 @@ void ClearPSFontMap(void)
     free(entry);
   }
   UnMmapFile(&psfont_mmap);
-  if (psfont_name != NULL)
-    free(psfont_name);
-  psfont_name=NULL;
+#ifdef HAVE_FT2
+  UnMmapFile(&ttfont_mmap);
+#endif
 }
+
+void ReadPSFontMap(struct psfontmap *entry)
+{
+  char *pos,*end,*psname;
+  int nameno = 0;
+    
+  DEBUG_PRINT((DEBUG_FT|DEBUG_T1),("\n  PSFONTMAP: %s ",entry->tfmname));
+  pos=entry->line;
+  end=entry->end;
+  while(pos < end) { 
+    if (*pos=='<') {                               /* filename follows */
+      pos++;
+      if (pos<end && *pos=='<') {           /* <<download.font */
+	pos++;
+	entry->psfile = newword((char**)&pos,end);
+	DEBUG_PRINT((DEBUG_FT|DEBUG_T1),("<%s ",entry->psfile));
+      } else if (pos<end && *pos=='[') {    /* <[encoding.file */
+	pos++;
+	entry->encname = newword((char**)&pos,end);
+	DEBUG_PRINT((DEBUG_FT|DEBUG_T1),("<[%s ",entry->encname));
+      } else {                                     /* <some.file      */
+	char* word =newword((char**)&pos,end); 
+	if (strncmp(word+strlen(word)-4,".enc",4)==0) {/* <some.enc */
+	  entry->encname=word;
+	  DEBUG_PRINT((DEBUG_FT|DEBUG_T1),("<[%s ",entry->encname));
+	} else {                                   /* <font    */  
+	  entry->psfile=word;
+	  DEBUG_PRINT((DEBUG_FT|DEBUG_T1),("<%s ",entry->psfile));
+	}
+      }
+    } else if (*pos=='"') { /* PS code: reencoding/tranformation exists */
+      char *word;
+      double cxx=1.0,cxy=0.0;
+      pos++;
+      DEBUG_PRINT((DEBUG_FT|DEBUG_T1),("\""));
+      while(pos < end && *pos!='"') {
+	word=newword((char**)&pos,end);
+	while(pos < end && (*pos==' ' || *pos=='\t')) pos++;
+	if (pos+10<end && strncmp(pos,"ExtendFont",10)==0) {
+	  cxx=strtod(word,NULL);
+	  pos+=10;
+	  DEBUG_PRINT((DEBUG_FT|DEBUG_T1),("%f ExtendFont ",cxx));
+	} else if (pos+9<end && strncmp(pos,"SlantFont",9)==0) {
+	  pos+=9;
+	  cxy=strtod(word,NULL);
+	  DEBUG_PRINT((DEBUG_FT|DEBUG_T1),("%f SlantFont ",cxy));
+	} else if (pos+12<end && strncmp(pos,"ReEncodeFont",12)==0) {
+	    pos+=12;
+	    DEBUG_PRINT((DEBUG_FT|DEBUG_T1),("%s ReEncodeFont ",word));
+	} else {
+	    DEBUG_PRINT((DEBUG_FT|DEBUG_T1),("(?:%s) ",word));
+	}
+	free(word);
+      }
+#if HAVE_FT2
+      entry->ft_transformp=&(entry->ft_transform);
+      entry->ft_transform.xx=(FT_Fixed)(cxx*0x10000);
+      entry->ft_transform.xy=(FT_Fixed)(cxy*0x10000);
+      entry->ft_transform.yx=0;
+      entry->ft_transform.yy=0x10000;
+#endif
+#if HAVE_LIBT1
+      entry->t1_transformp=&(entry->t1_transform);
+      entry->t1_transform.cxx=cxx;
+      entry->t1_transform.cxy=cxy;
+      entry->t1_transform.cyx=0.0;
+      entry->t1_transform.cyy=1.0;
+#endif
+      DEBUG_PRINT((DEBUG_FT|DEBUG_T1),("\" "));
+      pos++;
+    } else {                                      /* bare word */
+      switch (++nameno) {
+      case 1: /* first word is tfmname and perhaps psname, NOT psfile */
+	while(pos<end && *pos!=' ' && *pos!='\t') pos++;
+	psname=entry->tfmname;
+	break;
+      case 2:                    /* second word is psname, NOT psfile */
+	psname = newword((char**)&pos,end);
+	DEBUG_PRINT((DEBUG_FT|DEBUG_T1),("(%s) ",psname));
+	free(psname);
+	break;
+      case 3:                             /* third word is encoding */
+	entry->encname = newword((char**)&pos,end);
+	DEBUG_PRINT((DEBUG_FT|DEBUG_T1),("<[%s ",entry->encname));
+	break;
+      default:
+	while(pos<end && *pos!=' ' && *pos!='\t') pos++;
+	Warning("more than three bare words in font map entry");
+      }
+    }
+    while(pos < end && (*pos==' ' || *pos=='\t')) pos++;
+  }
+  if (entry->psfile==NULL) { 
+    /* No psfile-name given, use tfmname */
+    entry->psfile=copyword(entry->tfmname);
+    DEBUG_PRINT((DEBUG_FT|DEBUG_T1),(" <%s ",entry->psfile));
+  }
+  if (entry->encname!=NULL 
+      && (entry->encoding=FindEncoding(entry->encname))==NULL) 
+    Warning("unable to load font encoding '%s' for %s",
+	    entry->encname,entry->tfmname);
+}
+
 
 struct psfontmap* FindPSFontMap(char* fontname)
 {
-  char *pos,*tfmname,*psname;
   struct psfontmap *entry;
-  double cxx=0.0,cxy=0.0;
+  static struct filemmap* search_mmap_p=&psfont_mmap;
 	
   entry=psfontmap;
   while(entry!=NULL && strcmp(entry->tfmname,fontname)!=0)
     entry=entry->next;
-  if (entry!=NULL && entry->psfile==NULL) {
-    int nameno = 0;
-    
-    DEBUG_PRINT((DEBUG_FT|DEBUG_T1),("\n  PSFONTMAP: %s ",fontname));
-    pos=entry->line;
-#if HAVE_LIBT1
-    entry->t1_transformp=NULL;
-#endif
-#if HAVE_FT2
-    entry->ft_transformp=NULL;
-#endif
-    while(pos < entry->end) { 
-      if (*pos=='<') {                               /* filename follows */
-	pos++;
-	if (pos<entry->end && *pos=='<') {           /* <<download.font */
-	  pos++;
-	  entry->psfile = newword((char**)&pos,entry->end);
-	  DEBUG_PRINT((DEBUG_FT|DEBUG_T1),("<%s ",entry->psfile));
-	} else if (pos<entry->end && *pos=='[') {    /* <[encoding.file */
-	  pos++;
-	  entry->encname = newword((char**)&pos,entry->end);
-	  DEBUG_PRINT((DEBUG_FT|DEBUG_T1),("<[%s ",entry->encname));
-	} else {                                     /* <some.file      */
-	  char* word =newword((char**)&pos,entry->end); 
-	  if (strncmp(word+strlen(word)-4,".enc",4)==0) {/* <some.enc */
-	    entry->encname=word;
-	    DEBUG_PRINT((DEBUG_FT|DEBUG_T1),("<[%s ",entry->encname));
-	  } else {                                   /* <font    */  
-	    entry->psfile=word;
-	    DEBUG_PRINT((DEBUG_FT|DEBUG_T1),("<%s ",entry->psfile));
-	  }
-	}
-      } else if (*pos=='"') { /* PS code: reencoding/tranformation exists */
-	double val=0.0;
-	pos++;
-	DEBUG_PRINT((DEBUG_FT|DEBUG_T1),("\""));
-	while(pos < entry->end && *pos!='"') {
-	  val=strtod(pos,(char**)&pos); 
-	  /* Small buffer overrun risk, but we're inside double quotes */
-	  while(pos < entry->end && (*pos==' ' || *pos=='\t')) pos++;
-	  if (pos<entry->end-10 && strncmp(pos,"ExtendFont",10)==0) {
-	    cxx=val;
-	    DEBUG_PRINT((DEBUG_FT|DEBUG_T1),
-			("%f ExtendFont ",cxx));
-	  }
-	  if (pos<entry->end-9 && strncmp(pos,"SlantFont",9)==0) {
-	    cxy=val;
-	    DEBUG_PRINT((DEBUG_FT|DEBUG_T1),
-			("%f SlantFont ",cxy));
-	  }
-	  while(pos<entry->end && *pos!=' ' && *pos!='\t' && *pos!='"') 
-	    pos++;
-	}
-#if HAVE_FT2
-	entry->ft_transformp=&(entry->ft_transform);
-	if (cxx!=0.0)
-	  entry->ft_transform.xx=(FT_Fixed)(cxx*0x10000);
-	else
-	  entry->ft_transform.xx=0x10000;
-	entry->ft_transform.xy=(FT_Fixed)(cxy*0x10000);
-	entry->ft_transform.yx=0;
-	entry->ft_transform.yy=0x10000;
-#endif
-#if HAVE_LIBT1
-	entry->t1_transformp=&(entry->t1_transform);
-	if (cxx!=0)
-	  entry->t1_transform.cxx=cxx;
-	else
-	  entry->t1_transform.cxx=1.0;
-	entry->t1_transform.cxy=cxy;
-	entry->t1_transform.cyx=0.0;
-	entry->t1_transform.cyy=1.0;
-#endif
-	DEBUG_PRINT((DEBUG_FT|DEBUG_T1),("\" "));
-	pos++;
-      } else {                                      /* bare word */
-	switch (++nameno) {
-	case 1:            /* first word is tfmname and perhaps psname */
-	  while(pos<entry->end && *pos!=' ' && *pos!='\t') pos++;
-	  psname=entry->tfmname;
-	  break;
-	case 2:                              /* second word is psname */
-	  psname = newword((char**)&pos,entry->end);
-	  DEBUG_PRINT((DEBUG_FT|DEBUG_T1),("(%s) ",psname));
-	  free(psname);
-	  break;
-	case 3:                             /* third word is encoding */
-	  entry->encname = newword((char**)&pos,entry->end);
-	  DEBUG_PRINT((DEBUG_FT|DEBUG_T1),("<[%s ",entry->encname));
-	  break;
-	default:
-	  Warning("more than three bare words in font map entry");
-	}
-      }
-      while(pos < entry->end && (*pos==' ' || *pos=='\t')) pos++;
+  if(entry==NULL) {
+    entry=SearchPSFontMap(fontname,search_mmap_p);
+#ifdef HAVE_FT2
+    if(entry==NULL && search_mmap_p!=&ttfont_mmap) {
+      search_mmap_p=&ttfont_mmap;
+      entry=SearchPSFontMap(fontname,search_mmap_p);
     }
-    if (entry->psfile==NULL) { 
-      /* No psfile-name given, use (free-able copy of) tfmname */
-      entry->psfile=newword(&tfmname,tfmname+strlen(tfmname));
-      DEBUG_PRINT((DEBUG_FT|DEBUG_T1),(" <%s ",entry->psfile));
-    }
-    if (entry->encname!=NULL 
-	&& (entry->encoding=FindEncoding(entry->encname))==NULL) 
-      Warning("unable to load font encoding '%s' for %s",
-	      entry->encname,entry->tfmname);
+#endif
   }
-  if (entry != NULL && entry->encname!=NULL && entry->encoding==NULL) 
+  if(entry==NULL) {
+    struct psfontmap* entry_subfont=NULL;
+    entry=psfontmap;
+    while(entry!=NULL && strcmp(entry->tfmname,fontname)!=0) {
+      while(entry!=NULL && strchr(entry->tfmname,'@')==NULL)
+	entry=entry->next;
+      if (entry!=NULL) {
+	entry_subfont=FindSubFont(entry,fontname);
+	if (entry_subfont!=NULL)
+	  entry=entry_subfont;
+	else
+	  entry=entry->next;
+      }
+    }
+  }
+  if (entry!=NULL && entry->psfile==NULL) 
+    ReadPSFontMap(entry);
+  if (entry!=NULL && entry->encname!=NULL && entry->encoding==NULL) 
     /* Encoding given but it cannot be found. Unusable font */
     return(NULL);
-  
   return(entry);
 }
-

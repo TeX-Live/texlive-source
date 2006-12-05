@@ -9,8 +9,8 @@ dvipng [options] [filename] -
 @c man end
 @end ifset
 
-@set version 1.8
-@set month-year March 2006
+@set version 1.9
+@set month-year November 2006
 
 @c Put everything in one index (arbitrarily chosen to be the concept index).
 @syncodeindex fn cp
@@ -562,6 +562,14 @@ rotates a document by 90 degrees. To rotate a document whose paper type
 is not the default, you can use the @samp{-t} option twice, once for the
 paper type, and once for @samp{landscape}.
 @end ignore
+
+@item --strict*
+@cindex exit on erroneous images
+The program exits when a warning occurs. Normally, dvipng will output
+an image in spite of a warning, but there may be something missing in
+this image. One reason to use this option would be if you have a more
+complete but slower fallback converter. See the @samp{--picky} option
+above for a list of when warnings occur.
 
 @item -T @var{image_size}
 Set the image size to @var{image_size} which can be either of
@@ -1453,10 +1461,10 @@ inclusion would read
 @end example
 
 The default size is the image size in bp (``big points'' in TeX
-nomenclature or PostScript points as other people have it, 72 per
-inch). That is, default resolution will be 72 dpi for included
-bitmaps, which is the default size in the other drivers (dvipdfm and
-PDFLaTeX).
+nomenclature or PostScript points as other people have it, 72 per inch).
+That is, default resolution will be 72 dpi for included bitmaps, which
+is the default size in the few other bitmap-capable drivers that are
+known to me (dvipdfm and PDFLaTeX).
 
 If you want 100 dpi you need to specify the width accordingly. You
 just divide your image width by 100: a 135 pixel wide image at 100 dpi
@@ -1631,13 +1639,14 @@ bugs and suggesting improvements as the thing has evolved. These
 include but is perhaps not limited to (in semi-random order): Thomas
 Esser (te@TeX{}), Christian Schenk (MIK@TeX{}), Brian R Furry (debian
 package), Angus Leeming (LyX), Thomas Boutell (libgd), John Jones
-(first user report), Uwe Kern (xcolor), Karl Berry (@TeX{} Live), Neal
-Harmon, Alan Shutko, Reiner Stieb, Nick Alcock, Adam Buchbinder, Svend
-Tollak Munkejord, James Longstreet, Bernhard Simon, Bob McElrath,
-Georg Schwarz, Jason Farmer, Brian V. Smith, Samuel Hathaway, Thomas
-R. Shemanske, Stephen Gibson, Christian Ridderstr@"om, Ezra Peisach,
-William H Wheeler, Thomas Klausner, Harald Koenig, Adrian Bunk, Kevin
-Smith, Jason Riedy, Wolfram Krause, and Reinhard Kotucha.
+(first user report), Uwe Kern (xcolor), Karl Berry (@TeX{} Live),
+David Harvey (hinting in Freetype), Neal Harmon, Alan Shutko, Reiner
+Stieb, Nick Alcock, Adam Buchbinder, Svend Tollak Munkejord, James
+Longstreet, Bernhard Simon, Bob McElrath, Georg Schwarz, Jason Farmer,
+Brian V. Smith, Samuel Hathaway, Thomas R. Shemanske, Stephen Gibson,
+Christian Ridderstr@"om, Ezra Peisach, William H Wheeler, Thomas
+Klausner, Harald Koenig, Adrian Bunk, Kevin Smith, Jason Riedy,
+Wolfram Krause, and Reinhard Kotucha.
 
 @ifset man
 @c man begin NOTES
@@ -1671,7 +1680,8 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+02110-1301 USA.
 
 @sp 2
 @noindent

@@ -16,8 +16,8 @@
 
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-  02111-1307, USA.
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+  02110-1301 USA.
 
   Copyright (C) 2002-2006 Jan-Åke Larsson
 
@@ -95,6 +95,10 @@ typedef int bool;
 #  define true (bool) 1
 #  define false (bool) 0
 # endif
+#endif
+
+#ifndef _TRUE
+#define _TRUE 1
 #endif
 
 #ifndef HAVE_VPRINTF
@@ -237,6 +241,14 @@ struct encoding {
   char*            charname[257];
 };
 
+struct subfont {
+  struct subfont* next;
+  char*           name;
+  char*           infix;
+  int             encoding;
+  int32_t         charindex[256];
+};
+
 #ifdef HAVE_FT2_OR_LIBT1
 struct psfontmap {
   struct psfontmap *next;
@@ -245,6 +257,7 @@ struct psfontmap {
 #ifdef HAVE_FT2
   FT_Matrix* ft_transformp;
   FT_Matrix ft_transform;
+  struct subfont* subfont;
 #endif
 #ifdef HAVE_LIBT1
   T1_TMATRIX* t1_transformp;
@@ -314,6 +327,8 @@ void    SetFntNum(int32_t, void* /* dvi/vf */);
 void    FreeFontNumP(struct font_num *hfontnump);
 
 #ifdef HAVE_FT2_OR_LIBT1
+char*   copyword(char* orig);
+struct psfontmap *NewPSFont(struct psfontmap* copyfrom);
 void    InitPSFontMap(void);
 void    ClearPSFontMap(void);
 struct psfontmap* FindPSFontMap(char*);
@@ -326,6 +341,8 @@ bool    ReadTFM(struct font_entry *, char*);
 bool    InitFT(struct font_entry *);
 void    DoneFT(struct font_entry *tfontp);
 void    LoadFT(int32_t, struct char_entry *);
+struct psfontmap* FindSubFont(struct psfontmap* entry, char* fontname);
+void    ClearSubfont(void);
 #endif
 
 #ifdef HAVE_LIBT1

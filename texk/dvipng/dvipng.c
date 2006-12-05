@@ -16,8 +16,8 @@
 
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-  02111-1307, USA.
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+  02110-1301 USA.
 
   Copyright (C) 2002-2005 Jan-Åke Larsson
 
@@ -54,11 +54,11 @@ int main(int argc, char ** argv)
 #ifdef TIMING
 # ifdef HAVE_GETTIMEOFDAY
   gettimeofday(&Tp, NULL);
-  timer = Tp.tv_sec + ((float)(Tp.tv_usec))/ 1000000.0;
+  timer = Tp.tv_sec + Tp.tv_usec / 1000000.0;
 # else
 #  ifdef HAVE_FTIME
   ftime(&timebuffer);
-  timer = timebuffer.time + (float)(timebuffer.millitm) / 1000.0;
+  timer = timebuffer.time + timebuffer.millitm / 1000.0;
 #  endif
 # endif
 #endif
@@ -128,11 +128,11 @@ int main(int argc, char ** argv)
 #ifdef TIMING
 # ifdef HAVE_GETTIMEOFDAY
   gettimeofday(&Tp, NULL);
-  timer = (Tp.tv_sec + (float)(Tp.tv_usec)/1000000.0) - timer;
+  timer = Tp.tv_sec + Tp.tv_usec/1000000.0 - timer;
 # else
 #  ifdef HAVE_FTIME
   ftime(&timebuffer);
-  timer = (timebuffer.time + (float)(timebuffer.millitm)/1000.0) - timer;
+  timer = timebuffer.time + timebuffer.millitm/1000.0 - timer;
 #  endif
 # endif
   
@@ -153,6 +153,7 @@ int main(int argc, char ** argv)
   ClearEncoding();
 #endif
 #ifdef HAVE_FT2
+  ClearSubfont();
   if (libfreetype!=NULL && FT_Done_FreeType(libfreetype)) 
     Fatal("an error occured during freetype destruction"); 
   libfreetype = NULL;

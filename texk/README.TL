@@ -11,5 +11,5 @@ dvipdfmx 20050831
   http://project.ktug.or.kr/dvipdfmx/snapshot/current/
   -> http://www.ctan.org/tex-archive/dviware/dvipdfmx/
 
-dvipng 1.6
+dvipng 1.9
   http://www.ctan.org/tex-archive/dviware/dvipng/

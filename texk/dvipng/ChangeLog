@@ -1,3 +1,137 @@
+2006-11-11  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* Release 1.9
+
+	* INSTALL: 
+	* README: Update for 1.9 
+
+	* Makefile.in: Make the test fail if fonts not found
+
+	* configure.ac: Don't use "which". Add info about the selfauto
+	stuff. Report if CJK support present
+
+	* test_dvipng.tex: Remove the (intentional) failing special
+
+2006-11-07  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* fontmap.c: Don't warn if ttfonts.map is missing, fix pointer
+
+	* Makefile.in: Adjust manpage target so manual intervention isn't
+	needed anymore
+
+	* dvipng.1: Update manpage
+
+	* dvipng.texi: Update for 1.9
+
+	* COPYING, Makefile.in, color.c, commands.h, configure.ac, draw.c,
+	dvi.c, dvipng.c, dvipng.h, dvipng.texi, enc.c, font.c, fontmap.c,
+	ft.c, macros.texi, miktex.h, miktex.mak, misc.c, papersiz.c, pk.c,
+	ppagelist.c, set.c, sfd.c, special.c, t1.c, test_dvipng.tex,
+	tfm.c, vf.c: Update FSF address
+
+	* fontmap.c: Add ttfonts.map to the searched font maps
+
+	* RELEASE: Prepare for 1.9
+
+2006-11-02  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* dvipng.texi: Nitpicking on bitmapped graphics
+
+2006-10-13  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* readme.texi: Add note about subfont (CJK) support
+
+	* install.texi: Add that FreeType2 is needed for subfont (CJK) support
+
+2006-10-12  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* readme.texi: Fix todo
+
+2006-10-11  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* sfd.c: Change && to || so that multiple subfonts work
+
+	* ft.c: Adjust debug output
+
+	* configure.ac: Add sfd.o 
+
+2006-10-04  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* configure.ac: Prepare for 1.9
+
+	* sfd.c: Only look for subfont file on recent kpathsea
+
+	* dvipng.c, ft.c, fontmap.c, dvipng.h: Prepare for subfonts (CJK)
+
+	* sfd.c: Added. Used for subfonts (CJK)
+
+	* configure.ac: Change wording of gs helptext
+
+	* ft.c: Adjust debug message, and encoding selection
+
+	* special.c: Adjust debug messages
+
+	* dvipng.texi: Document the --strict option
+
+	* dvipng.c: Fix timer
+
+	* Makefile.in: Add dist target, simplify distclean
+
+	* fontmap.c: Remove segfault occuring for non-existent font
+
+2006-08-08  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* special.c: Make showpage flag static
+
+	* special.c:
+	Fix bug with -dSAFER and non-. paths, and bug with pngalpha and
+	background color
+
+2006-05-17  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* fontmap.c: Rearrange, simplify, speed up
+
+2006-05-16  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* ft.c: FT_LOAD_TARGET_LIGHT does not work in some cases, fall
+	back to FT_LOAD_NO_HINTING
+
+2006-05-08  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* dvipng.texi: Add credit
+
+	* Makefile.in: add www target
+
+	* README: 
+	* readme.texi: Update capabilities info and preview-latex link
+
+2006-03-30  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* Release 1.8
+
+	* RELEASE: Update for 1.8
+
+	* set.c: 
+	* readme.texi: 
+	* install.texi: 
+	* ft.c: 
+	* dvi.c: 
+	* draw.c: 
+	* README: 
+	* INSTALL: Update copyright
+
+2006-03-29  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* dvipng.1: 
+	* dvipng.texi: Document new switch, new PostScript inclusion,
+	rearrange and adjust
+
+	* misc.c: 
+	* INSTALL: 
+	* README: 
+	* install.texi: 
+	* readme.texi: Minimal documentation adjustments
+
 2006-03-27  Jan-Ake Larsson  <jalar@mai.liu.se>
 
 	* ft.c: Change to FT_LOAD_TARGET_LIGHT
@@ -46,8 +180,8 @@
 
 2006-01-31  Jan-Ake Larsson  <jalar@mai.liu.se>
 
-	* special.c:
-	Temporary version, just try the different image decoders and see
+	* special.c: Temporary version, just try the different image
+	decoders and see
 
 	* special.c: Use correct variables
 
