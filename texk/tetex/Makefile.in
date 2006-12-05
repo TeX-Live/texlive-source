@@ -10,7 +10,7 @@ man5dir = $(mandir)/man5
 SCRIPTS = \
   allcm allneeded dvi2fax dvired fmtutil fmtutil-sys fontinst \
   kpsetool kpsewhere pdfcrop ps2frag ps4pdf pslatex rubibtex rumakeindex \
-  texconfig texconfig-dialog texconfig-sys texdoc texdoctk texexec \
+  texconfig texconfig-dialog texconfig-sys texdoc texdoctk  \
   texlinks thumbpdf updmap updmap-sys
 
 PDFSCRIPTS = a2ping e2pall epstopdf
@@ -20,12 +20,15 @@ CONTEXTSCRIPTS = \
   pdftools pstopdf rlxtools runtools texexec texfont texmfstart \
   textools texutil tmftools xmltools
 
+contextmanpgs = \
+  ctxtools makempy pstopdf texfind texmfstart \
+  fdf2tex pdftools texexec texfont texutil
+
 manpgs = \
-  allcm allec allneeded dvi2fax dvired e2pall epstopdf fdf2tex fontinst \
-  kpsetool kpsewhere makempy mkocp mkofm ofm2opl opl2ofm otp2ocp outocp \
+  allcm allec allneeded dvi2fax dvired e2pall epstopdf fontinst \
+  kpsetool kpsewhere mkocp mkofm ofm2opl opl2ofm otp2ocp outocp \
   ovf2ovp ovp2ovf ps2frag pslatex rubibtex rumakeindex texconfig texdoc \
-  texdoctk texexec texfind texfont texshow texutil thumbpdf \
-  ttf2afm updmap
+  texdoctk thumbpdf ttf2afm updmap
 
 INFOFILES= latex.info
 POOLFILES = pdfetex-pl.pool
@@ -40,6 +43,9 @@ install-data:: $(INFOFILES)
 	$(SHELL) $(top_srcdir)/../mkinstalldirs $(man1dir) $(man5dir) $(texpooldir) $(texmf)/doc/tetex
 	for p in $(manpgs); do \
 	  $(INSTALL_DATA) $(srcdir)/$$p.man $(man1dir)/$$p.$(manext); \
+	done
+	for p in $(contextmanpgs); do \
+	  $(INSTALL_DATA) $(srcdir)/context/$$p.man $(man1dir)/$$p.$(manext); \
 	done
 	$(INSTALL_DATA) $(srcdir)/fmtutil.man $(man1dir)/fmtutil.1
 	$(INSTALL_DATA) $(srcdir)/texlinks.man $(man1dir)/texlinks.1
