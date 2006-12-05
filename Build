@@ -22,8 +22,6 @@ unset CDPATH
 test -d Work || mkdir Work
 cd Work || exit 1
 
-rm -f tlbuild.log
-
 # allow override of configure location, just in case.
 : ${TL_CONFIGURE=../configure}
 
@@ -41,4 +39,4 @@ rm -f tlbuild.log
          --datadir=$TL_INSTALL_DEST \
          $TL_XDVI_TOOLKIT \
          "$@" \
- && time $TL_MAKE world) 2>&1 | tee tlbuild.log
+ && time $TL_MAKE world)
