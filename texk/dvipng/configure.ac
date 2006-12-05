@@ -107,10 +107,15 @@ AC_TYPE_SIZE_T
 AC_FUNC_ALLOCA
 AC_FUNC_MMAP
 AC_FUNC_VPRINTF
-AC_CHECK_FUNCS([dup2 strchr strrchr memchr memset putenv munmap strtol])
+AC_CHECK_FUNCS([dup2 memset munmap pow putenv strchr strrchr strtol strstr])
 if test "$enable_timing" = "yes"; then
   AC_CHECK_FUNCS([ftime gettimeofday])
 fi
+
+# let's skip dvigif for the moment.
+INSTALL_BIN_TARGET="install-dvipng"
+AC_SUBST(INSTALL_BIN_TARGET)
+
 
 dnl
 dnl MAKEINFO_CHECK_MACRO( MACRO, [ACTION-IF-FOUND 
