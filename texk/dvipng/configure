@@ -311,7 +311,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS SET_MAKE CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA GS PSFONTS_O CPP EGREP ALLOCA MAKEINFO MAKEINFO_MACROS INSTALL_INFO ZLIBCPPFLAGS LDZLIB ZLIBDEP LIBPNGCPPFLAGS LDLIBPNG LIBPNGDEP LIBT1CPPFLAGS LDLIBT1 LIBT1DEP GDCPPFLAGS LDGD GDDEP FREETYPE2CPPFLAGS LDFREETYPE2 FREETYPE2DEP MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT LD AR ARFLAGS texmfmain LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS SET_MAKE CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA GS PSFONTS_O CPP EGREP ALLOCA INSTALL_BIN_TARGET MAKEINFO MAKEINFO_MACROS INSTALL_INFO ZLIBCPPFLAGS LDZLIB ZLIBDEP LIBPNGCPPFLAGS LDLIBPNG LIBPNGDEP LIBT1CPPFLAGS LDLIBT1 LIBT1DEP GDCPPFLAGS LDGD GDDEP FREETYPE2CPPFLAGS LDFREETYPE2 FREETYPE2DEP MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT LD AR ARFLAGS texmfmain LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -4624,7 +4624,8 @@ done
 
 
 
-for ac_func in dup2 strchr strrchr memchr memset putenv munmap strtol
+
+for ac_func in dup2 memset munmap pow putenv strchr strrchr strtol strstr
 do
 as_ac_var=`echo "ac_cv_func_$ac_func" | $as_tr_sh`
 echo "$as_me:$LINENO: checking for $ac_func" >&5
@@ -4830,6 +4831,11 @@ fi
 done
 
 fi
+
+# let's skip dvigif for the moment.
+INSTALL_BIN_TARGET="install-dvipng"
+
+
 
 
 
@@ -7335,6 +7341,7 @@ s,@PSFONTS_O@,$PSFONTS_O,;t t
 s,@CPP@,$CPP,;t t
 s,@EGREP@,$EGREP,;t t
 s,@ALLOCA@,$ALLOCA,;t t
+s,@INSTALL_BIN_TARGET@,$INSTALL_BIN_TARGET,;t t
 s,@MAKEINFO@,$MAKEINFO,;t t
 s,@MAKEINFO_MACROS@,$MAKEINFO_MACROS,;t t
 s,@INSTALL_INFO@,$INSTALL_INFO,;t t
