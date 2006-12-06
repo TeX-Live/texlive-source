@@ -1,3 +1,9 @@
+2006-12-06  Karl Berry  <karl@tug.org>
+
+	* output.c (copyfile_general): add removingBytes=0, to avoid
+	omitting the line after %%EndData or %%EndBinary with -K1.
+	tex-k mail from t s, 29 Nov 2006 21:11:14.
+
 2006-12-05  Karl Berry  <karl@tug.org>
 
 	* dvips.h (BANNER): bump version to 5.96 for 2006, why not.

@@ -516,6 +516,7 @@ msdosdone:
                               break ;
 			   }
                            c = getc(f) ;
+                           removingBytes = 0;
                            dosepsend-- ;
                            if (c == EOF)
                               error(
