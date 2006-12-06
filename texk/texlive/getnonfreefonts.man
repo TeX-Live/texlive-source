@@ -57,6 +57,12 @@ to get a list of supported fonts.
 Install all fonts.
 
 .TP
+.BR "-d" , " --debug"
+.rg
+Provide additional messages for debugging.  These messages are sent to
+STDERR.
+
+.TP
 .BR "-f" , " --force"
 .rg
 Install fonts even if they are installed already.
@@ -89,6 +95,11 @@ option it behaves exactly like
 .BR "-v" , " --verbose"
 .rg
 Be more verbose.  This option is only needed for debugging.
+
+.TP
+.BR "--version"
+.rg
+Print version number.
 
 .SH ENVIRONMENT
 One of the environment variables

@@ -34,7 +34,7 @@ Usage:
     Options:
         -a|--all      Install all fonts.
 
-        -d|--debug    Provide additional messages for debugging..
+        -d|--debug    Provide additional messages for debugging.
 
         -f|--force    Install fonts even if they are installed already.
 	
@@ -60,6 +60,7 @@ GetOptions
     "help|h",
     "lsfonts|l",
     "verbose|v",
+    "version",
     "sys";
 
 $^W=1 if $opt_debug;
@@ -116,13 +117,15 @@ if ($opt_debug) {
     }
 }
 
+print "$TL_version\n" and exit 0 if $opt_version; 
+
 
 if (defined $ENV{'TMP'}) {
     $SYSTMP="$ENV{'TMP'}";
 } elsif (defined $ENV{'TEMP'}) {
     $SYSTMP="$ENV{'TEMP'}";
 } elsif (defined $ENV{'TMPDIR'}) {
-    $SYSTMP="$ENV{'SYSTMP'}";
+    $SYSTMP="$ENV{'TMPDIR'}";
 } else {
     $SYSTMP="/tmp";
 }
@@ -159,8 +162,8 @@ if ($opt_debug) {
 	    debug_msg "Found $dir/$_" if /^kpsewhich/;
 	}
     }
-
 }
+
 
 if ($sys) {
     $INSTALLROOT=expand_var 'TEXMFLOCAL';
@@ -185,9 +188,13 @@ die "! ERROR: The install directory '$INSTALLROOT' is not writable.\n"
 
 
 if ($opt_help) {
-  usage; 
-  print <<"ENDUSAGE";
-     Directories:
+    print "\nThis is getnonfreefonts";
+    print '-sys' if ($sys);
+    print ", version $TL_version.\n\n";
+    
+    usage; 
+    print <<"ENDUSAGE";
+  Directories:
        temporary: '$SYSTMP/getfont-<PID>'
        install:   '$INSTALLROOT'
 
