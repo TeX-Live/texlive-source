@@ -43,7 +43,7 @@ authorization from SIL International.
 
 #undef input /* this is defined in texmfmp.h, but we don't need it and it confuses the carbon headers */
 #include <Carbon/Carbon.h>
-#include <Quicktime/Quicktime.h>
+#include <QuickTime/QuickTime.h>
 
 #include "TECkit_Engine.h"
 #include "XeTeX_ext.h"
@@ -467,6 +467,61 @@ int MapGlyphToIndex_AAT(ATSUStyle style, const char* glyphName)
 
 	return rval;
 }
+
+char*
+GetGlyphName_AAT(ATSUStyle style, UInt16 gid, int* len)
+{
+	static char buffer[256];
+	const char* namePtr;
+	
+	ATSUFontID	fontID;
+	ATSUGetAttribute(style, kATSUFontTag, sizeof(ATSUFontID), &fontID, 0);
+
+	ATSFontRef	fontRef = FMGetATSFontRefFromFont(fontID);
+
+	ByteCount	length;
+	OSStatus status = ATSFontGetTable(fontRef, kPost, 0, 0, 0, &length);
+	if (status != noErr)
+		return 0;
+
+	void*	table = xmalloc(length);
+	status = ATSFontGetTable(fontRef, kPost, 0, length, table, &length);
+	if (status != noErr) {
+		free(table);
+		return 0;
+	}
+	
+	namePtr = getGlyphNamePtr(table, length, gid, len);
+	if (*len > 255)
+		*len = 255;
+	if (namePtr) {
+		memcpy(buffer, namePtr, *len);
+		buffer[*len] = 0;
+	}
+	
+	free(table);
+
+	return &buffer[0];
+}
+
+/*
+int
+GetFontCharRange_AAT(ATSUStyle style, int reqFirst)
+{
+	if (reqFirst) {
+		int	ch = 0;
+		while (MapCharToGlyph_AAT(style, ch) == 0 && ch < 0x10ffff)
+			++ch;
+		return ch;
+	}
+	else {
+		int ch = 0x10ffff;
+		while (MapCharToGlyph_AAT(style, ch) == 0 && ch > 0)
+			--ch;
+		return ch;
+	}
+}
+*/
 
 ATSUFontVariationAxis
 find_axis_by_name(ATSUFontID fontID, const char* name, int nameLength)

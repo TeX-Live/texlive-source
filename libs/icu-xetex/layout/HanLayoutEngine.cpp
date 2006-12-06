@@ -62,7 +62,7 @@ le_int32 HanOpenTypeLayoutEngine::characterProcessing(const LEUnicode chars[], l
     // flag from the language tag lookups, so we can use these features
     // with the default LangSys...
     for (le_int32 i = 0; i < count; i += 1) {
-        glyphStorage.setAuxData(i, (void *) features, success);
+        glyphStorage.setAuxData(i, (void *) features, NULL, success);
     }
 
     return count;

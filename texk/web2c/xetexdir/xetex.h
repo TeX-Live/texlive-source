@@ -46,8 +46,12 @@ authorization from SIL International.
 #define getnativeitaliccorrection(p)			get_native_ital_corr(&(mem[p]))
 #define getnativeglyphitaliccorrection(p)		get_native_glyph_ital_corr(&(mem[p]))
 
+#define getnativeglyph(p,i)						get_native_glyph_id(&(mem[p]), i)
+
 #define makexdvglypharraydata(p)				makeXDVGlyphArrayData(&(mem[p]))
 #define xdvbufferbyte(i)						xdvbuffer[i]
+
+void* getotassemblyptr(int f, int g); /* function in XeTeXOTMath.cpp */
 
 #define pic_node_size		8
 
@@ -58,12 +62,6 @@ authorization from SIL International.
 #define picpathbyte(p,i)		((unsigned char*)&(mem[p+pic_node_size]))[i]
 
 #define dviopenout(f)			open_dvi_output(&(f))
-
-#define readcint1(x)		(x).cint1
-#define setcint1(x,y)		(x).cint1 = (y)
-
-#define delcode1(x)			readcint1(eqtb[xetexdelcodebase+(x)])
-#define setdelcode1(x,y)	setcint1(eqtb[xetexdelcodebase+(x)],(y))
 
 #define casttoptr(x)		(void*)(x)
 #define casttointeger(x)	(long)(x)

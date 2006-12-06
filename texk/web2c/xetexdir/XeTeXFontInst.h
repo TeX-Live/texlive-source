@@ -88,6 +88,9 @@ protected:
 
 	char *fFilename; // actually holds [filename:index], as used in xetex
 
+	int fFirstCharCode;
+	int fLastCharCode;
+
     virtual const void *readTable(LETag tag, le_uint32 *length) const = 0;
     void deleteTable(const void *table) const;
     void getMetrics();
@@ -172,6 +175,11 @@ public:
 	void getGlyphHeightDepth(LEGlyphID glyph, float *ht, float* dp);	
 	void getGlyphSidebearings(LEGlyphID glyph, float* lsb, float* rsb);
 	float getGlyphItalCorr(LEGlyphID glyph);
+
+	virtual const char* getGlyphName(LEGlyphID gid, int& nameLen);
+	
+	virtual LEUnicode32 getFirstCharCode();
+	virtual LEUnicode32 getLastCharCode();
 
     float getXPixelsPerEm() const
     {

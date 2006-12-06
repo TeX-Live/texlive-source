@@ -333,7 +333,7 @@ XeTeXFont getFont(XeTeXLayoutEngine engine)
 }
 
 XeTeXLayoutEngine createLayoutEngine(PlatformFontRef fontRef, XeTeXFont font, UInt32 scriptTag, UInt32 languageTag,
-										UInt32* addFeatures, UInt32* removeFeatures, UInt32 rgbValue)
+										UInt32* addFeatures, SInt32* addParams, UInt32* removeFeatures, UInt32 rgbValue)
 {
 	LEErrorCode status = LE_NO_ERROR;
 	XeTeXLayoutEngine result = new XeTeXLayoutEngine_rec;
@@ -344,8 +344,8 @@ XeTeXLayoutEngine createLayoutEngine(PlatformFontRef fontRef, XeTeXFont font, UI
 	result->addedFeatures = addFeatures;
 	result->removedFeatures = removeFeatures;
 	result->rgbValue = rgbValue;
-	result->layoutEngine = XeTeXOTLayoutEngine::LayoutEngineFactory((XeTeXFontInst*)font,
-						scriptTag, languageTag, (LETag*)addFeatures, (LETag*)removeFeatures, status);
+	result->layoutEngine = XeTeXOTLayoutEngine::LayoutEngineFactory((XeTeXFontInst*)font, scriptTag, languageTag,
+						(LETag*)addFeatures, (le_int32*)addParams, (LETag*)removeFeatures, status);
 	if (LE_FAILURE(status) || result->layoutEngine == NULL) {
 		delete result;
 		return NULL;
@@ -528,8 +528,138 @@ findGlyphInPostTable(const char* buffer, int tableSize, const char* glyphName)
 	return 0;
 }
 
+const char*
+getGlyphNamePtr(const char* buffer, int tableSize, UInt16 gid, int* len)
+{
+	const postTable* p = (const postTable*)buffer;
+	switch (SWAP(p->format)) {
+		case 0x00010000:
+			{
+				if (gid < 258) {
+					*len = strlen(appleGlyphNames[gid]);
+					return appleGlyphNames[gid];
+				}
+			}
+			break;
+		
+		case 0x00020000:
+			{
+				const UInt16*	n = (UInt16*)(p + 1);
+				UInt16	numGlyphs = SWAP(*n++);
+				const UInt8*	ps = (const UInt8*)(n + numGlyphs);
+				std::vector<const UInt8*>	namePtrs;
+				while (ps < (const UInt8*)buffer + tableSize) {
+					namePtrs.push_back(ps);
+					ps += *ps + 1;
+				}
+				if (gid < numGlyphs) {
+					gid = SWAP(n[gid]);
+					if (gid < 258) {
+						*len = strlen(appleGlyphNames[gid]);
+						return appleGlyphNames[gid];
+					}
+					else {
+						ps = namePtrs[gid - 258];
+						*len = *ps;
+						return (char*)(ps + 1);
+					}
+				}
+			}
+			break;
+		
+		case 0x00028000:
+			break;
+		
+		case 0x00030000:
+			// TODO: see if it's a CFF OpenType font, and if so, get the glyph names from the CFF data
+			break;
+		
+		case 0x00040000:
+			break;
+		
+		default:
+			break;
+	}
+
+	/* no name found */
+	*len = 0;
+	return NULL;
+}
+
+int
+getFontCharRange(XeTeXLayoutEngine engine, int reqFirst)
+{
+	if (reqFirst)
+		return engine->font->getFirstCharCode();
+	else
+		return engine->font->getLastCharCode();
+}
+
+const char*
+getGlyphName(XeTeXFont font, UInt16 gid, int* len)
+{
+	return ((XeTeXFontInst*)font)->getGlyphName(gid, *len);
+}
+
 int
 mapGlyphToIndex(XeTeXLayoutEngine engine, const char* glyphName)
 {
 	return engine->font->mapGlyphToIndex(glyphName);
 }
+
+#ifdef XETEX_MAC
+/* this is here rather than XeTeX_mac.c because I want it in a .cpp file */
+int
+GetFontCharRange_AAT(ATSUStyle style, int reqFirst)
+{
+	ATSUFontID	fontID;
+	ATSUGetAttribute(style, kATSUFontTag, sizeof(ATSUFontID), &fontID, 0);
+
+	ATSFontRef	fontRef = FMGetATSFontRefFromFont(fontID);
+
+	ByteCount	length;
+	OSStatus status = ATSFontGetTable(fontRef, kCmap, 0, 0, 0, &length);
+	if (status != noErr)
+		return 0;
+
+	void*	table = LE_NEW_ARRAY(char, length);
+	status = ATSFontGetTable(fontRef, kCmap, 0, length, table, &length);
+	if (status != noErr) {
+		free(table);
+		return 0;
+	}
+
+	CMAPMapper*	mapper = CMAPMapper::createUnicodeMapper((const CMAPTable *)table);
+
+	int	ch = 0;
+	if (mapper) {
+		if (reqFirst)
+			while (mapper->unicodeToGlyph(ch) == 0 && ch < 0x10ffff)
+				++ch;
+		else {
+			ch = 0x10ffff;
+			while (mapper->unicodeToGlyph(ch) == 0 && ch > 0)
+				--ch;
+		}
+		delete mapper;
+	}
+	else {
+		LE_DELETE_ARRAY(table);
+	}
+	
+	return ch;
+
+	if (reqFirst) {
+		int	ch = 0;
+		while (MapCharToGlyph_AAT(style, ch) == 0 && ch < 0x10ffff)
+			++ch;
+		return ch;
+	}
+	else {
+		int ch = 0x10ffff;
+		while (MapCharToGlyph_AAT(style, ch) == 0 && ch > 0)
+			--ch;
+		return ch;
+	}
+}
+#endif

@@ -35,6 +35,7 @@ authorization from SIL International.
 @define type voidpointer;
 @define function getnativechar();
 @define procedure setnativechar();
+@define function getnativeglyph();
 @define procedure setnativemetrics();
 @define procedure setjustifiednativeglyphs();
 @define procedure setnativeglyphmetrics();
@@ -81,11 +82,28 @@ authorization from SIL International.
 @define procedure getnativecharsidebearings();
 @define function getnativeitaliccorrection();
 @define function getnativeglyphitaliccorrection();
+@define procedure printglyphname();
+@define function getfontcharrange();
 
 @define function getnativecharwd();
 @define function getnativecharht();
 @define function getnativechardp();
 @define function getnativecharic();
+
+@define function getnativemathsyparam();
+@define function getnativemathexparam();
+@define function getotmathconstant();
+@define function getotmathvariant();
+@define function getotassemblyptr();
+@define function getotmathitalcorr();
+
+@define function otpartcount();
+@define function otpartglyph();
+@define function otpartstartconnector();
+@define function otpartendconnector();
+@define function otpartfulladvance();
+@define function otpartisextender();
+@define function otminconnectoroverlap();
 
 @define function setfamilyfield();
 @define function setclassfield();
@@ -131,6 +149,8 @@ authorization from SIL International.
 @define function dField();
 @define function xField();
 @define function yField();
+@define function txField();
+@define function tyField();
 @define function wdField();
 @define function htField();
 @define function applymapping();

@@ -152,6 +152,7 @@ xetex_ot_layout_o = \
 		XeTeXFontMgr.o \
 		XeTeXLayoutInterface.o XeTeXOTLayoutEngine.o \
 		XeTeXFontInst.o cmaps.o FontTableCache.o \
+		XeTeXOTMath.o \
 		$(xetex_platform_layout_o) 
 
 XeTeXLayoutInterface.o: $(srcdir)/xetexdir/XeTeXLayoutInterface.cpp $(XeTeXFontHdrs)
@@ -179,6 +180,9 @@ XeTeXFontInst_Mac.o: $(srcdir)/xetexdir/XeTeXFontInst_Mac.cpp $(XeTeXFontHdrs)
 XeTeXFontInst_FT2.o: $(srcdir)/xetexdir/XeTeXFontInst_FT2.cpp $(XeTeXFontHdrs)
 	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
 
+XeTeXOTMath.o: $(srcdir)/xetexdir/XeTeXOTMath.cpp $(XeTeXFontHdrs)
+	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
+
 # special rules for files that need the TECkit headers as well
 XeTeX_ext.o: $(srcdir)/xetexdir/XeTeX_ext.c xetexd.h
 	$(compile) $(ICUCFLAGS) $(FTFLAGS) $(TECKITFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
@@ -189,7 +193,7 @@ trans.o: $(srcdir)/xetexdir/trans.c
 	$(compile) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
 
 # Making xetex.
-xetex: $(xetex_o) $(xetex_add_o) $(xetex_images_o) $(xetex_ot_layout_o) $(EXTRADEPS)
+xetex: $(xetex_o) $(xetex_add_o) $(xetex_images_o) $(xetex_ot_layout_o) $(xetexlibs) $(EXTRADEPS)
 	@CXXHACKLINK@ $(xetex_o) $(xetex_add_o) $(xetex_images_o) $(xetex_ot_layout_o) \
 	$(socketlibs) $(xetexlibs) $(EXTRALIBS) \
 	@CXXHACKLDLIBS@ @CXXLDEXTRA@
@@ -218,7 +222,8 @@ xetex_web_srcs = $(srcdir)/tex.web \
   $(srcdir)/etexdir/tex.ech \
   $(srcdir)/xetexdir/xetex-new.ch \
   $(srcdir)/xetexdir/xetex-noenc.ch \
-  $(srcdir)/xetexdir/xetex-upwards.ch
+  $(srcdir)/xetexdir/xetex-upwards.ch \
+  $(srcdir)/xetexdir/xetex-otmath.ch
 xetex.web: tie xetexdir/xetex.mk $(xetex_web_srcs)
 	$(TIE) -m xetex.web $(xetex_web_srcs)
 

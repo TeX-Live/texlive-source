@@ -320,7 +320,10 @@ XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
 			// try for more boldness, with the same width and slant
 			Font*	bestMatch = font;
 			if (font->weight < parent->maxWeight) {
-				bestMatch = bestMatchFromFamily(parent, parent->maxWeight, font->width, font->slant);
+				// try to increase weight by 1/2 x (max - min), rounding up
+				bestMatch = bestMatchFromFamily(parent,
+					font->weight + (parent->maxWeight - parent->minWeight) / 2 + 1,
+					font->width, font->slant);
 				if (parent->minSlant == parent->maxSlant) {
 					// double-check the italic flag, as we can't trust slant values
 					Font*	newBest = NULL;
@@ -445,12 +448,21 @@ XeTeXFontMgr::getOpSizeRecAndStyleFlags(Font* theFont)
 	if (font != 0) {
 		const GlyphPositioningTableHeader* gposTable = (const GlyphPositioningTableHeader*)getFontTablePtr(font, LE_GPOS_TABLE_TAG);
 		if (gposTable != NULL) {
-			FeatureListTable*	featureListTable = (FeatureListTable*)((char*)gposTable + SWAP(gposTable->featureListOffset));
+			const FeatureListTable*	featureListTable = (const FeatureListTable*)((const char*)gposTable + SWAP(gposTable->featureListOffset));
 			for (int i = 0; i < SWAP(featureListTable->featureCount); ++i) {
 				UInt32  tag = SWAPT(featureListTable->featureRecordArray[i].featureTag);
 				if (tag == LE_SIZE_FEATURE_TAG) {
-					FeatureTable*	feature = (FeatureTable*)((char*)featureListTable + SWAP(featureListTable->featureRecordArray[i].featureTableOffset));
-					OpSizeRec*	pSizeRec = (OpSizeRec*)((char*)featureListTable + SWAP(feature->featureParamsOffset));
+					const FeatureTable*	feature = (const FeatureTable*)((const char*)featureListTable
+													+ SWAP(featureListTable->featureRecordArray[i].featureTableOffset));
+					UInt16	offset = SWAP(feature->featureParamsOffset);
+					const OpSizeRec*	pSizeRec;
+					/* if featureParamsOffset < (offset of feature from featureListTable),
+					   then we have a correct size table;
+					   otherwise we (presumably) have a "broken" one from the old FDK */
+					if (offset < (const char*)feature - (const char*)featureListTable)
+						pSizeRec = (const OpSizeRec*)((char*)feature + offset);
+					else
+						pSizeRec = (const OpSizeRec*)((char*)featureListTable + offset);
 					theFont->opSizeInfo.designSize = SWAP(pSizeRec->designSize);
 					theFont->opSizeInfo.subFamilyID = SWAP(pSizeRec->subFamilyID);
 					theFont->opSizeInfo.nameCode = SWAP(pSizeRec->nameCode);

@@ -177,7 +177,7 @@ struct postTable {
 };
 
 #define kPost	0x706f7374
-
+#define kCmap	0x636d6170
 
 typedef struct
 {
@@ -249,6 +249,8 @@ extern "C" {
 	int mapchartoglyph(int font, unsigned int ch);
 	int mapglyphtoindex(int font);
 
+	const char* getGlyphNamePtr(const char* buffer, int tableSize, UInt16 gid, int* len);
+
 	int find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page);
 
 #ifdef XETEX_MAC
@@ -262,6 +264,8 @@ extern "C" {
 	int MapCharToGlyph_AAT(ATSUStyle style, UInt32 ch);
 	int MapGlyphToIndex_AAT(ATSUStyle style, const char* glyphName);
 	float GetGlyphItalCorr_AAT(ATSUStyle style, UInt16 gid);
+	char* GetGlyphName_AAT(ATSUStyle style, UInt16 gid, int* len);
+	int GetFontCharRange_AAT(ATSUStyle style, int reqFirst);
 #endif
 #ifdef __cplusplus
 };

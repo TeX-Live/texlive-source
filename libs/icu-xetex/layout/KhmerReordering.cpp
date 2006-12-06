@@ -150,7 +150,7 @@ public:
         fOutChars[fOutIndex] = ch;
 
         fGlyphStorage.setCharIndex(fOutIndex, charIndex, success);
-        fGlyphStorage.setAuxData(fOutIndex, (void *) charTags, success);
+        fGlyphStorage.setAuxData(fOutIndex, (void *) charTags, NULL, success);
 
         fOutIndex += 1;
     }

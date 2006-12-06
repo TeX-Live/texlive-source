@@ -80,7 +80,7 @@ print << '__EOT__';
 \catcode`\{=1 \catcode`\}=2 \catcode`\#=6
 \def\C #1 #2 #3 {\global\uccode"#1="#2 \global\lccode"#1="#3 } % case mappings (non-letter)
 \def\L #1 #2 #3 {\global\catcode"#1=11 \C #1 #2 #3 % letter with case mappings
-  \global\XeTeXextmathcode"#1="7"01"#1 } % letters default to class 7 (var), fam 1
+  \global\XeTeXmathcode"#1="7"01"#1 } % letters default to class 7 (var), fam 1
 \def\l #1 {\L #1 #1 #1 } % letter without case mappings
 \let\m=\l % combining mark - treated as uncased letter
 __EOT__

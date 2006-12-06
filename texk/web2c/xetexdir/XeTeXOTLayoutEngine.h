@@ -43,11 +43,12 @@ class XeTeXOTLayoutEngine : public OpenTypeLayoutEngine
 public:
     XeTeXOTLayoutEngine(const LEFontInstance* fontInstance, LETag scriptTag, LETag languageTag,
                             const GlyphSubstitutionTableHeader* gsubTable,
-							const LETag* addFeatures, const LETag* removeFeatures);
+							const LETag* addFeatures, const le_int32* addParams,
+							const LETag* removeFeatures);
 
     virtual ~XeTeXOTLayoutEngine();
 
-	virtual void adjustFeatures(const LETag* addTags, const LETag* removeTags);
+	virtual void adjustFeatures(const LETag* addTags, const le_int32* addParams, const LETag* removeTags);
 
     virtual inline UClassID getDynamicClassID() const { return getStaticClassID(); }
     static inline UClassID getStaticClassID() { return (UClassID)&fgClassID; }
@@ -55,7 +56,8 @@ public:
     static LayoutEngine* LayoutEngineFactory
 				(const XeTeXFontInst* fontInstance,
 					LETag scriptTag, LETag languageTag,
-					const LETag* addFeatures, const LETag* removeFeatures,
+					const LETag* addFeatures, const le_int32* addParams,
+					const LETag* removeFeatures,
 					LEErrorCode &success);
 
 protected:
@@ -66,56 +68,15 @@ private:
 	
 };
 
-class XeTeXArabicLayoutEngine : public ArabicOpenTypeLayoutEngine
-{
-public:
-    XeTeXArabicLayoutEngine(const LEFontInstance *fontInstance, LETag scriptTag, LETag languageTag,
-                            const GlyphSubstitutionTableHeader *gsubTable,
-							const LETag *addFeatures, const LETag *removeFeatures);
-
-    virtual ~XeTeXArabicLayoutEngine();
-
-	virtual void adjustFeatures(const LETag* addTags, const LETag* removeTags);
-
-    virtual inline UClassID getDynamicClassID() const { return getStaticClassID(); }
-    static inline UClassID getStaticClassID() { return (UClassID)&fgClassID; }
-
-private:
-    static const char fgClassID;
-
-	const LETag*	fDefaultFeatures;
-};
-
-class XeTeXIndicLayoutEngine : public IndicOpenTypeLayoutEngine
-{
-public:
-    XeTeXIndicLayoutEngine(const LEFontInstance *fontInstance, LETag scriptTag, LETag languageTag,
-                            const GlyphSubstitutionTableHeader *gsubTable,
-							const LETag *addFeatures, const LETag *removeFeatures);
-
-    virtual ~XeTeXIndicLayoutEngine();
-
-	virtual void adjustFeatures(const LETag* addTags, const LETag* removeTags);
-
-    virtual inline UClassID getDynamicClassID() const { return getStaticClassID(); }
-    static inline UClassID getStaticClassID() { return (UClassID)&fgClassID; }
-
-private:
-    static const char fgClassID;
-
-	const LETag*	fDefaultFeatures;
-};
-
 class XeTeXHanLayoutEngine : public XeTeXOTLayoutEngine
 {
 public:
     XeTeXHanLayoutEngine(const XeTeXFontInst *fontInstance, LETag scriptTag, LETag languageTag,
                             const GlyphSubstitutionTableHeader *gsubTable,
-							const LETag *addFeatures, const LETag *removeFeatures);
+							const LETag* addFeatures, const le_int32* addParams,
+							const LETag* removeFeatures);
 
     virtual ~XeTeXHanLayoutEngine();
-
-//	virtual void adjustFeatures(const LETag* addTags, const LETag* removeTags);
 
     virtual inline UClassID getDynamicClassID() const { return getStaticClassID(); }
     static inline UClassID getStaticClassID() { return (UClassID)&fgClassID; }

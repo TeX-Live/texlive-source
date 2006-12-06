@@ -211,7 +211,7 @@ le_int32 LayoutEngine::characterProcessing(const LEUnicode chars[], le_int32 off
 
         for (i = 0; i < count; i += 1, out += dir) {
             glyphStorage[out] = (LEGlyphID) inChars[i];
-            glyphStorage.setAuxData(out, (void *) canonFeatures, success);
+            glyphStorage.setAuxData(out, (void *) canonFeatures, NULL, success);
         }
 
 		if (reordered != NULL) {

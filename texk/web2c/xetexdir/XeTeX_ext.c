@@ -442,6 +442,37 @@ read_tag(const char* cp)
 	return tag;
 }
 
+static UInt32
+read_tag_with_param(const char* cp, SInt32* param)
+{
+	UInt32	tag = 0;
+	int i;
+	for (i = 0; i < 4; ++i) {
+		tag <<= 8;
+		if (*cp && /* *cp < 128 && */ *cp != ',' && *cp != ';' && *cp != ':') {
+			tag += *(unsigned char*)cp;
+			++cp;
+		}
+		else
+			tag += ' ';
+	}
+	if (*cp == '=') {
+		int	neg = 0;
+		++cp;
+		if (*cp == '-') {
+			++neg;
+			++cp;
+		}
+		while (*cp >= '0' && *cp <= '9') {
+			*param = *param * 10 + *cp - '0';
+			++cp;
+		}
+		if (neg)
+			*param = -(*param);
+	}
+	return tag;
+}
+
 static void*
 loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const char* cp1)
 {
@@ -451,6 +482,7 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 	
 	UInt32*	addFeatures = 0;
 	UInt32*	removeFeatures = 0;
+	SInt32* addParams = 0;
 	
 	int	nAdded = 0;
 	int nRemoved = 0;
@@ -579,13 +611,19 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 			}
 			
 			if (*cp1 == '+') {
-				tag = read_tag(cp1 + 1);
+				SInt32	param = 0;
+				tag = read_tag_with_param(cp1 + 1, &param);
 				++nAdded;
-				if (nAdded == 1)
+				if (nAdded == 1) {
 					addFeatures = xmalloc(sizeof(UInt32));
-				else
+					addParams = xmalloc(sizeof(SInt32));
+				}
+				else {
 					addFeatures = xrealloc(addFeatures, nAdded * sizeof(UInt32));
+					addParams = xrealloc(addParams, nAdded * sizeof(SInt32));
+				}
 				addFeatures[nAdded-1] = tag;
+				addParams[nAdded-1] = param;
 				goto next_option;
 			}
 			
@@ -637,11 +675,14 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 	if ((loadedfontflags & FONT_FLAGS_VERTICAL) != 0)
 		setFontLayoutDir(font, 1);
 
-	engine = createLayoutEngine(fontRef, font, scriptTag, languageTag, addFeatures, removeFeatures, rgbValue);
+	engine = createLayoutEngine(fontRef, font, scriptTag, languageTag,
+					addFeatures, addParams, removeFeatures, rgbValue);
 	if (engine == 0) {
 		deleteFont(font);
 		if (addFeatures)
 			free(addFeatures);
+		if (addParams)
+			free(addParams);
 		if (removeFeatures)
 			free(removeFeatures);
 	}
@@ -657,8 +698,11 @@ splitFontName(char* name, char** var, char** feat, char** end)
 	*var = NULL;
 	*feat = NULL;
 	if (*name == '[') {
-		++name;
 		int	withinFileName = 1;
+#ifdef WIN32
+		char* start = name + 1;
+#endif
+		++name;
 		while (*name) {
 			if (withinFileName && *name == ']') {
 				withinFileName = 0;
@@ -666,7 +710,11 @@ splitFontName(char* name, char** var, char** feat, char** end)
 					*var = name;
 			}
 			else if (*name == ':') {
-				if (withinFileName && *var == NULL)
+				if (withinFileName && *var == NULL
+#ifdef WIN32
+					&& !((name - start == 1) && isalpha(*start))
+#endif
+					)
 					*var = name;
 				else if (!withinFileName && *feat == NULL)
 					*feat = name;
@@ -1347,6 +1395,18 @@ getnativecharwd(int f, int c)
 	return wd;
 }
 
+UInt16
+get_native_glyph_id(void* pNode, unsigned index)
+{
+	memoryword*	node = (memoryword*)pNode;
+	FixedPoint*	locations = (FixedPoint*)native_glyph_info_ptr(node);
+	UInt16*		glyphIDs = (UInt16*)(locations + native_glyph_count(node));
+	if (index >= native_glyph_count(node))
+		return 0;
+	else
+		return glyphIDs[index];
+}
+
 void
 store_justified_native_glyphs(void* node)
 {
@@ -1685,6 +1745,22 @@ mapglyphtoindex(int font)
 #endif
 	if (fontarea[font] == OT_FONT_FLAG)
 		return mapGlyphToIndex((XeTeXLayoutEngine)(fontlayoutengine[font]), (const char*)nameoffile + 1);
+	else {
+		fprintf(stderr, "\n! Internal error: bad native font flag\n");
+		exit(3);
+	}
+}
+
+int
+getfontcharrange(int font, int first)
+{
+#ifdef XETEX_MAC
+	if (fontarea[font] == AAT_FONT_FLAG)
+		return GetFontCharRange_AAT((ATSUStyle)(fontlayoutengine[font]), first);
+	else
+#endif
+	if (fontarea[font] == OT_FONT_FLAG)
+		return getFontCharRange((XeTeXLayoutEngine)(fontlayoutengine[font]), first);
 	else {
 		fprintf(stderr, "\n! Internal error: bad native font flag\n");
 		exit(3);
@@ -2072,64 +2148,29 @@ atsuprintfontname(int what, ATSUStyle style, int param1, int param2)
 #endif
 }
 
-#ifdef XETEX_OTHER
-#if 0
-#include <wand/magick-wand.h>
-int
-find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page)
-		/* FIXME: not yet handling /page/ parameter or PDFs properly */
+void
+printglyphname(int font, int gid)
 {
-	int					err = -1;
-    MagickBooleanType	status;
-    MagickWand			*wand;
-    ResolutionType		units;
-    double				xRes, yRes;
-    char*				pic_path = kpse_find_file((char*)nameoffile + 1, kpse_pict_format, 1);
-
-	*path = NULL;
-
-    wand = NewMagickWand();
-    status = MagickPingImage(wand, pic_path);
-    if (status == MagickTrue) {
-        status = MagickGetImageResolution(wand, &xRes, &yRes);
-		if (status == MagickTrue) {
-			bounds->x = bounds->y = 0;
-			units = MagickGetImageUnits(wand);
-			switch (units) {
-				default:
-					/* treat unknown as 72 pixels per inch horiz, and proportionately vertical */
-					bounds->wd = MagickGetImageWidth(wand);
-					if (xRes != 0.0 && yRes != 0.0)
-						bounds->ht = MagickGetImageHeight(wand) * xRes / yRes;
-					else
-						bounds->ht = MagickGetImageHeight(wand);
-					break;
-				case PixelsPerInchResolution:
-					bounds->wd = MagickGetImageWidth(wand) * 72.0 / xRes;
-					bounds->ht = MagickGetImageHeight(wand) * 72.0 / yRes;
-					break;
-				case PixelsPerCentimeterResolution:
-					bounds->wd = MagickGetImageWidth(wand) * 72.0 / (xRes * 2.54);
-					bounds->ht = MagickGetImageHeight(wand) * 72.0 / (yRes * 2.54);
-					break;
-			}
-			err = 0;
-		}
-    }
-
-    /* current API returns wand, but formerly returned void;
-       we don't need the result, and this allows XeTeX to build with older libraries */
-    (void)DestroyMagickWand(wand);
-
-	if (err != 0)
-		free(pic_path);
+	char* s;
+	int   len = 0;
+#ifdef XETEX_MAC
+	if (fontarea[font] == AAT_FONT_FLAG) {
+		ATSUStyle	style = (ATSUStyle)(fontlayoutengine[font]);
+		s = GetGlyphName_AAT(style, gid, &len);
+	}
 	else
-		*path = pic_path;
-
-	return err;
+#endif
+	if (fontarea[font] == OT_FONT_FLAG) {
+		XeTeXLayoutEngine	engine = (XeTeXLayoutEngine)fontlayoutengine[font];
+		s = (char*)getGlyphName(getFont(engine), gid, &len);
+	}
+	else {
+		fprintf(stderr, "\n! Internal error: bad native font flag\n");
+		exit(3);
+	}
+	while (len-- > 0)
+		printchar(*s++);
 }
-#endif
-#endif
 
 boolean
 u_open_in(unicodefile* f, int filefmt, const_string fopen_mode, int mode, int encodingData)
@@ -2343,8 +2384,9 @@ makeutf16name()
 	}
 	t = nameoffile16;
 	while (s <= nameoffile + namelength) {
+		UInt16 extraBytes;
 		rval = *(s++);
-		UInt16 extraBytes = bytesFromUTF8[rval];
+		extraBytes = bytesFromUTF8[rval];
 		switch (extraBytes) {	/* note: code falls through cases! */
 			case 5: rval <<= 6;	if (*s) rval += *(s++);
 			case 4: rval <<= 6;	if (*s) rval += *(s++);

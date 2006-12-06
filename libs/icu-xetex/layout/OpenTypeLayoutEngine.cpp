@@ -57,7 +57,8 @@ static const LETag kernAndLigaFeatures[] = {ccmpFeatureTag, loclFeatureTag, liga
 
 OpenTypeLayoutEngine::OpenTypeLayoutEngine(const LEFontInstance *fontInstance, le_int32 scriptCode, le_int32 languageCode,
                         le_int32 typoFlags, const GlyphSubstitutionTableHeader *gsubTable)
-    : LayoutEngine(fontInstance, scriptCode, languageCode, typoFlags), fFeatureList(minimalFeatures), fFeatureOrder(NULL),
+    : LayoutEngine(fontInstance, scriptCode, languageCode, typoFlags),
+      fFeatureList(minimalFeatures), fFeatureParamList(NULL), fFeatureOrder(NULL),
       fGSUBTable(gsubTable), fGDEFTable(NULL), fGPOSTable(NULL), fSubstitutionFilter(NULL)
 {
     static const le_uint32 gdefTableTag = LE_GDEF_TABLE_TAG;
@@ -148,9 +149,8 @@ le_int32 OpenTypeLayoutEngine::characterProcessing(const LEUnicode chars[], le_i
 
     glyphStorage.allocateGlyphArray(outCharCount, rightToLeft, success);
     glyphStorage.allocateAuxData(success);
-
     for (le_int32 i = 0; i < outCharCount; i += 1) {
-        glyphStorage.setAuxData(i, (void *) fFeatureList, success);
+        glyphStorage.setAuxData(i, (void *) fFeatureList, (void *) fFeatureParamList, success);
     }
 
     return outCharCount;
@@ -191,7 +191,7 @@ le_int32 OpenTypeLayoutEngine::glyphPostProcessing(LEGlyphStorage &tempGlyphStor
 
     glyphStorage.adoptGlyphArray(tempGlyphStorage);
     glyphStorage.adoptCharIndicesArray(tempGlyphStorage);
-    glyphStorage.adoptAuxDataArray(tempGlyphStorage);
+    glyphStorage.adoptAuxDataArrays(tempGlyphStorage);
     glyphStorage.adoptGlyphCount(tempGlyphStorage);
 
     return glyphStorage.getGlyphCount();

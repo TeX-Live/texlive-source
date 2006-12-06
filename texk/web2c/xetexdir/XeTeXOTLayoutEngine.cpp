@@ -57,7 +57,8 @@ static le_int32 getLanguageCode(LETag languageTag)
 LayoutEngine* XeTeXOTLayoutEngine::LayoutEngineFactory
 				(const XeTeXFontInst* fontInstance,
 					LETag scriptTag, LETag languageTag,
-					const LETag* addFeatures, const LETag* removeFeatures,
+					const LETag* addFeatures, const le_int32* addParams,
+					const LETag* removeFeatures,
 					LEErrorCode &success)
 {
     static le_uint32 gsubTableTag = LE_GSUB_TABLE_TAG;
@@ -101,7 +102,7 @@ LayoutEngine* XeTeXOTLayoutEngine::LayoutEngineFactory
         case hiraScriptCode:
         case kanaScriptCode:
         case hrktScriptCode:
-            result = new XeTeXHanLayoutEngine(fontInstance, scriptTag, languageTag, gsubTable, addFeatures, removeFeatures);
+            result = new XeTeXHanLayoutEngine(fontInstance, scriptTag, languageTag, gsubTable, addFeatures, addParams, removeFeatures);
             break;
 
         case khmrScriptCode:
@@ -109,7 +110,7 @@ LayoutEngine* XeTeXOTLayoutEngine::LayoutEngineFactory
             break;
 
         default:
-            result = new XeTeXOTLayoutEngine(fontInstance, scriptTag, languageTag, gsubTable, addFeatures, removeFeatures);
+            result = new XeTeXOTLayoutEngine(fontInstance, scriptTag, languageTag, gsubTable, addFeatures, addParams, removeFeatures);
             break;
         }
     }
@@ -157,7 +158,7 @@ const char XeTeXOTLayoutEngine::fgClassID=0;
 XeTeXOTLayoutEngine::XeTeXOTLayoutEngine(
 	const LEFontInstance* fontInstance, LETag scriptTag, LETag languageTag,
 	const GlyphSubstitutionTableHeader* gsubTable,
-	const LETag* addFeatures, const LETag* removeFeatures)
+	const LETag* addFeatures, const le_int32* addParams, const LETag* removeFeatures)
 		: OpenTypeLayoutEngine(fontInstance, getScriptCode(scriptTag), getLanguageCode(languageTag), 3, gsubTable)
 {
     static le_uint32 gposTableTag = LE_GPOS_TABLE_TAG;
@@ -177,16 +178,18 @@ XeTeXOTLayoutEngine::XeTeXOTLayoutEngine(
 		}
 	}
 
-	adjustFeatures(addFeatures, removeFeatures);
+	adjustFeatures(addFeatures, addParams, removeFeatures);
 }
 
 XeTeXOTLayoutEngine::~XeTeXOTLayoutEngine()
 {
 	if (fFeatureList != NULL && fFeatureList != fDefaultFeatures)
 		LE_DELETE_ARRAY(fFeatureList);
+	if (fFeatureParamList != NULL)
+		LE_DELETE_ARRAY(fFeatureParamList);
 }
 
-void XeTeXOTLayoutEngine::adjustFeatures(const LETag* addTags, const LETag* removeTags)
+void XeTeXOTLayoutEngine::adjustFeatures(const LETag* addTags, const le_int32* addParams, const LETag* removeTags)
 {
 	// bail out if nothing was requested!
 	if ((addTags == NULL || *addTags == emptyTag) && (removeTags == NULL || *removeTags == emptyTag))
@@ -208,6 +211,8 @@ void XeTeXOTLayoutEngine::adjustFeatures(const LETag* addTags, const LETag* remo
 	
 	// copy the existing tags, skipping any in the remove list
 	LETag*  dest = newList;
+	le_int32* newParams = LE_NEW_ARRAY(le_int32, count);
+	le_int32*	dest2 = newParams;
 	pTag = fFeatureList;
 	while (*pTag != emptyTag) {
 		const LETag*	t = removeTags;
@@ -217,13 +222,16 @@ void XeTeXOTLayoutEngine::adjustFeatures(const LETag* addTags, const LETag* remo
 					break;
 				else
 					t++;
-		if (t == NULL || *t == emptyTag)
+		if (t == NULL || *t == emptyTag) {
 			*dest++ = *pTag;
+			*dest2++ = 0;
+		}
 		pTag++;
 	}
 	
-	// copy the added tags, skipping any already present
+	// copy the added tags and parameters, skipping any already present
 	pTag = addTags;
+	const le_int32* pParam = addParams;
 	if (pTag != NULL)
 		while (*pTag != emptyTag) {
 			const LETag*	t = newList;
@@ -232,9 +240,12 @@ void XeTeXOTLayoutEngine::adjustFeatures(const LETag* addTags, const LETag* remo
 					break;
 				else
 					t++;
-			if (t == dest)
-				*dest++ = *pTag;
+			if (t == dest) {
+				*dest++ =  *pTag;
+				*dest2++ = *pParam;
+			}
 			pTag++;
+			pParam++;
 		}
 	
 	// terminate the new list
@@ -245,6 +256,7 @@ void XeTeXOTLayoutEngine::adjustFeatures(const LETag* addTags, const LETag* remo
 		LE_DELETE_ARRAY(fFeatureList);
 	
 	fFeatureList = newList;
+	fFeatureParamList = newParams;
 }
 
 
@@ -265,15 +277,16 @@ static const LETag verticalFeatures[] = {loclFeatureTag, vrt2FeatureTag, vertFea
 
 XeTeXHanLayoutEngine::XeTeXHanLayoutEngine(const XeTeXFontInst *fontInstance, LETag scriptTag, LETag languageTag,
                             const GlyphSubstitutionTableHeader *gsubTable,
-							const LETag *addFeatures, const LETag *removeFeatures)
-	: XeTeXOTLayoutEngine(fontInstance, scriptTag, languageTag, gsubTable, NULL, NULL)
+							const LETag *addFeatures, const le_int32* addParams,
+							const LETag *removeFeatures)
+	: XeTeXOTLayoutEngine(fontInstance, scriptTag, languageTag, gsubTable, NULL, NULL, NULL)
 {
 	// reset the default feature list
 	fFeatureList = fontInstance->getLayoutDirVertical() ? verticalFeatures : horizontalFeatures;
 	fDefaultFeatures = fFeatureList;
 	
 	// then apply any adjustments
-	adjustFeatures(addFeatures, removeFeatures);
+	adjustFeatures(addFeatures, addParams, removeFeatures);
 }
 
 XeTeXHanLayoutEngine::~XeTeXHanLayoutEngine()

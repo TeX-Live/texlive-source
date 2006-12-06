@@ -151,6 +151,7 @@ protected:
      * @internal
      */
     const LETag *fFeatureList;
+    const le_int32 *fFeatureParamList;
 
     /**
      * A list of tags in the order in which the features in

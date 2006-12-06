@@ -84,7 +84,7 @@ float getGlyphWidth(XeTeXFont font, UInt32 gid);
 UInt32 countGlyphs(XeTeXFont font);
 
 XeTeXLayoutEngine createLayoutEngine(PlatformFontRef fontRef, XeTeXFont font, UInt32 scriptTag, UInt32 languageTag,
-						UInt32* addFeatures, UInt32* removeFeatures, UInt32 rgbValue);
+						UInt32* addFeatures, SInt32* addParams, UInt32* removeFeatures, UInt32 rgbValue);
 
 void deleteLayoutEngine(XeTeXLayoutEngine engine);
 
@@ -131,6 +131,10 @@ UInt32 mapCharToGlyph(XeTeXLayoutEngine engine, UInt32 charCode);
 int	mapGlyphToIndex(XeTeXLayoutEngine engine, const char* glyphName);
 
 int	findGlyphInPostTable(const char* p, int tableSize, const char* glyphName);
+
+const char* getGlyphName(XeTeXFont font, UInt16 gid, int* len);
+
+int getFontCharRange(XeTeXLayoutEngine engine, int reqFirst);
 
 #ifdef __cplusplus
 };

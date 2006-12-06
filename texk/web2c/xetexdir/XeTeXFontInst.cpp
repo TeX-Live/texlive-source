@@ -71,6 +71,8 @@ XeTeXFontInst::XeTeXFontInst(float pointSize, LEErrorCode &status)
     , fNumGlyphsInited(false)
     , fVertical(false)
     , fFilename(NULL)
+    , fFirstCharCode(-1)
+    , fLastCharCode(-1)
 {
 	// the concrete subclass is responsible to call initialize()
 }
@@ -295,4 +297,38 @@ XeTeXFontInst::mapGlyphToIndex(const char* glyphName) const
 		return findGlyphInPostTable(p, len, glyphName);
 	else
 		return 0;
+}
+
+const char*
+XeTeXFontInst::getGlyphName(LEGlyphID gid, int& nameLen)
+{
+    le_uint32	len;
+    const char *p = (const char*)readFontTable(LE_POST_TABLE_TAG, len);
+    if (p != NULL) {
+		return getGlyphNamePtr(p, len, gid, &nameLen);
+	}
+}
+
+LEUnicode32
+XeTeXFontInst::getFirstCharCode()
+{
+	if (fFirstCharCode == -1) {
+		int ch = 0;
+		while (mapCharToGlyph(ch) == 0 && ch < 0x10ffff)
+			++ch;
+		fFirstCharCode = ch;
+	}
+	return fFirstCharCode;
+}
+
+LEUnicode32
+XeTeXFontInst::getLastCharCode()
+{
+	if (fLastCharCode == -1) {
+		int ch = 0x10ffff;
+		while (mapCharToGlyph(ch) == 0 && ch > 0)
+			--ch;
+		fLastCharCode = ch;
+	}
+	return fLastCharCode;
 }

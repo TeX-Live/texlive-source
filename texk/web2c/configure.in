@@ -95,8 +95,11 @@ sinclude(../../libs/libpng/withenable.ac)
 sinclude(../../libs/zlib/zlib.ac)
 sinclude(../../libs/libpng/libpng.ac)
 sinclude(../../libs/xpdf/libxpdf.ac)
+sinclude(../../libs/freetype2/withenable.ac)
 sinclude(../../libs/freetype2/freetype2.ac)
+sinclude(../../libs/teckit/withenable.ac)
 sinclude(../../libs/teckit/teckit.ac)
+sinclude(../../libs/icu-xetex/withenable.ac)
 sinclude(../../libs/icu-xetex/icu-xetex.ac)
 
 # Whether to build mf-nowin.
@@ -175,19 +178,6 @@ else
   with_xetex=no
 fi
 
-sinclude(xetexdir/tests.ac)
-AC_HAS_CARBON
-
-if test "x$has_carbon" = "xyes"; then
-  XETEX_MACOSX=
-  XETEX_GENERIC='#! '
-else
-  XETEX_MACOSX='#! '
-  XETEX_GENERIC=
-fi
-AC_SUBST(XETEX_MACOSX)
-AC_SUBST(XETEX_GENERIC)
-
 # Check whether C++ compiler works.  Prevent exit if it doesn't.
 if test "x$with_pdftex"  = xyes ||
    test "x$with_pdfetex" = xyes ||
@@ -225,7 +215,8 @@ CXXHACKLINK='$(kpathsea_cxx_link)'
 CXXHACKLDLIBS='$(LOADLIBES)'
 if test "x$with_cxx_runtime_hack" = xyes &&
    { test "x$with_pdftex"  = xyes ||
-     test "x$with_pdfetex" = xyes; }
+     test "x$with_pdfetex" = xyes ||
+     test "x$with_xetex"   = xyes; }
 then
   AC_MSG_CHECKING(for statically linking C++ runtime library)
 
@@ -295,6 +286,19 @@ else
   XETEX='#! '
 fi
 AC_SUBST(XETEX)
+
+sinclude(xetexdir/tests.ac)
+AC_HAS_CARBON
+
+if test "x$has_carbon" = "xyes"; then
+  XETEX_MACOSX=
+  XETEX_GENERIC='#! '
+else
+  XETEX_MACOSX='#! '
+  XETEX_GENERIC=
+fi
+AC_SUBST(XETEX_MACOSX)
+AC_SUBST(XETEX_GENERIC)
 
 # For e-TeX, three choices: no, yes, and tex.  In the latter case, we
 # have to comment out the normal TeX build (TEX), as well as enable the
@@ -395,7 +399,7 @@ KPSE_CROSS_PATH_PROG(TANGLE, tangle, ./tangle)
 KPSE_CROSS_PATH_PROG(CTANGLEBOOT, ctangle, ./ctangleboot)
 KPSE_CROSS_PATH_PROG(CTANGLE, ctangle, ./ctangle)
 KPSE_CROSS_PATH_PROG(TIE, tie, ./tie)
-if test "x$with_omega" = xyes || test "x$with_aleph" = xyes; then
+if test "x$with_omega" = xyes || test "x$with_aleph" = xyes || test "x$with_xetex" = xyes; then
 KPSE_CROSS_PATH_PROG(OTANGLE, otangle, ./otangle)
 fi
 

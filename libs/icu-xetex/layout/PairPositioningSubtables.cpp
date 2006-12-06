@@ -48,14 +48,14 @@ le_uint32 PairPositioningFormat1Subtable::process(GlyphIterator *glyphIterator, 
     le_int32 coverageIndex = getGlyphCoverage(firstGlyph);
     GlyphIterator tempIterator(*glyphIterator);
 
-    if (coverageIndex >= 0 && glyphIterator->next()) {
+    if (coverageIndex >= 0 && tempIterator.next()) {
         Offset pairSetTableOffset = SWAPW(pairSetTableOffsetArray[coverageIndex]);
         PairSetTable *pairSetTable = (PairSetTable *) ((char *) this + pairSetTableOffset);
         le_uint16 pairValueCount = SWAPW(pairSetTable->pairValueCount);
         le_int16 valueRecord1Size = ValueRecord::getSize(SWAPW(valueFormat1));
         le_int16 valueRecord2Size = ValueRecord::getSize(SWAPW(valueFormat2));
         le_int16 recordSize = sizeof(PairValueRecord) - sizeof(ValueRecord) + valueRecord1Size + valueRecord2Size;
-        LEGlyphID secondGlyph = glyphIterator->getCurrGlyphID();
+        LEGlyphID secondGlyph = tempIterator.getCurrGlyphID();
         const PairValueRecord *pairValueRecord = NULL;
 
         if (pairValueCount != 0) {
@@ -67,16 +67,16 @@ le_uint32 PairPositioningFormat1Subtable::process(GlyphIterator *glyphIterator, 
         }
 
         if (valueFormat1 != 0) {
-            pairValueRecord->valueRecord1.adjustPosition(SWAPW(valueFormat1), (char *) this, tempIterator, fontInstance);
+            pairValueRecord->valueRecord1.adjustPosition(SWAPW(valueFormat1), (char *) this, *glyphIterator, fontInstance);
         }
 
         if (valueFormat2 != 0) {
             const ValueRecord *valueRecord2 = (const ValueRecord *) ((char *) &pairValueRecord->valueRecord1 + valueRecord1Size);
 
-            valueRecord2->adjustPosition(SWAPW(valueFormat2), (char *) this, *glyphIterator, fontInstance);
+            valueRecord2->adjustPosition(SWAPW(valueFormat2), (char *) this, tempIterator, fontInstance);
         }
 
-        return 0;
+        return 1;
     }
 
     return 0;
@@ -88,8 +88,8 @@ le_uint32 PairPositioningFormat2Subtable::process(GlyphIterator *glyphIterator, 
     le_int32 coverageIndex = getGlyphCoverage(firstGlyph);
     GlyphIterator tempIterator(*glyphIterator);
 
-    if (coverageIndex >= 0 && glyphIterator->next()) {
-        LEGlyphID secondGlyph = glyphIterator->getCurrGlyphID();
+    if (coverageIndex >= 0 && tempIterator.next()) {
+        LEGlyphID secondGlyph = tempIterator.getCurrGlyphID();
         const ClassDefinitionTable *classDef1 = (const ClassDefinitionTable *) ((char *) this + SWAPW(classDef1Offset));
         const ClassDefinitionTable *classDef2 = (const ClassDefinitionTable *) ((char *) this + SWAPW(classDef2Offset));
         le_int32 class1 = classDef1->getGlyphClass(firstGlyph);
@@ -103,16 +103,16 @@ le_uint32 PairPositioningFormat2Subtable::process(GlyphIterator *glyphIterator, 
 
 
         if (valueFormat1 != 0) {
-            class2Record->valueRecord1.adjustPosition(SWAPW(valueFormat1), (char *) this, tempIterator, fontInstance);
+            class2Record->valueRecord1.adjustPosition(SWAPW(valueFormat1), (char *) this, *glyphIterator, fontInstance);
         }
 
         if (valueFormat2 != 0) {
             const ValueRecord *valueRecord2 = (const ValueRecord *) ((char *) &class2Record->valueRecord1 + valueRecord1Size);
 
-            valueRecord2->adjustPosition(SWAPW(valueFormat2), (const char *) this, *glyphIterator, fontInstance);
+            valueRecord2->adjustPosition(SWAPW(valueFormat2), (const char *) this, tempIterator, fontInstance);
         }
 
-        return 0;
+        return 1;
     }
 
     return 0;

@@ -74,13 +74,15 @@ typedef struct {
 #define bField(t)				t.b
 #define cField(t)				t.c
 #define dField(t)				t.d
-#ifdef XETEX_MAC
-#define xField(t)				t.tx
-#define yField(t)				t.ty
+#ifdef XETEX_MAC /* transform fields have different names */
+#define txField(t)				t.tx
+#define tyField(t)				t.ty
 #else
+#define txField(t)				t.x
+#define tyField(t)				t.y
+#endif
 #define xField(t)				t.x
 #define yField(t)				t.y
-#endif
 
 #define setPoint(P,X,Y)			do { P.x = X; P.y = Y; } while (0)
 

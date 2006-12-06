@@ -232,3 +232,48 @@ XeTeXFontInst_FT2::getKernPair(LEGlyphID leftGlyph, LEGlyphID rightGlyph, LEPoin
 	else
 		kern.fX = kern.fY = 0;
 }
+
+const char*
+XeTeXFontInst_FT2::getGlyphName(LEGlyphID gid, int& nameLen)
+{
+	if (!fFreeTypeOnly)
+		return XeTeXFontInst::getGlyphName(gid, nameLen);
+	else if (FT_HAS_GLYPH_NAMES(face)) {
+		static char	buffer[256];
+		FT_Get_Glyph_Name(face, gid, buffer, 256);
+		nameLen = strlen(buffer);
+		return &buffer[0];
+	}
+	else {
+		nameLen = 0;
+		return NULL;
+	}
+}
+
+LEUnicode32
+XeTeXFontInst_FT2::getFirstCharCode()
+{
+	if (!fFreeTypeOnly)
+		return XeTeXFontInst::getFirstCharCode();
+	else {
+		FT_UInt  gindex;
+		return FT_Get_First_Char(face, &gindex);
+	}
+}
+
+LEUnicode32
+XeTeXFontInst_FT2::getLastCharCode()
+{
+	if (!fFreeTypeOnly)
+		return XeTeXFontInst::getLastCharCode();
+	else {
+		FT_UInt  gindex;
+		LEUnicode32	ch = FT_Get_First_Char(face, &gindex);
+		LEUnicode32	prev = ch;
+		while (gindex != 0) {
+			prev = ch;
+			ch = FT_Get_Next_Char(face, ch, &gindex);
+		}
+		return prev;
+	}
+}
