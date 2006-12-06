@@ -1,3 +1,8 @@
+2006-12-06  Karl Berry  <karl@tug.org>
+
+	* tex.man: typos, TEXMFOUTPUT ref (tex-live mail from frank, 06
+	Dec 2006 19:33:03).
+
 2005-08-03  Olaf Weber  <olaf@infovore.xs4all.nl>
 
 	* etex.man: Document -etex switch.
