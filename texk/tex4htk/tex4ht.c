@@ -1,7 +1,7 @@
 
 /**********************************************************/
-/* tex4ht.c                              2005-05-29-09:42 */
-/* Copyright (C) 1996--2005    Eitan M. Gurari            */
+/* tex4ht.c                              2006-09-13-14:27 */
+/* Copyright (C) 1996--2006    Eitan M. Gurari            */
 /*                                                        */
 /* This work may be distributed and/or modified under the */
 /* conditions of the LaTeX Project Public License, either */
@@ -523,8 +523,9 @@ struct ch_map_rec{
 struct stack_entry{
   long  int x_val, y_val;
   INTEGER dx_1, dx_2, dy_1, dy_2;
-  BOOL text_on
-, accented
+  BOOL text_on;
+  BOOL 
+accented
 
 ;
   
@@ -640,6 +641,14 @@ struct gif_file_rec{
 
 
 
+struct css_ext_rec{  char* name;
+                     struct css_ext_rec *next;     };
+
+
+struct visited_file_rec{  char *name;
+       struct visited_file_rec *next;     };
+
+
 struct env_var_rec{  char* base;
                      struct env_var_rec *next;     };
 
@@ -722,9 +731,6 @@ static long int x_val = 0, max_x_val = -10000,
      max_y_val = 0, prev_y_val = 0;
 
 
-static BOOL text_on = FALSE;
-
-
 static INTEGER dx_1 = 0, dx_2 = 0;
 
 
@@ -739,6 +745,9 @@ static U_CHAR *space_str = (char *)0;
 
 
 static int ignore_chs=0, ignore_spaces=0, recover_spaces=0;
+
+
+static BOOL text_on = FALSE;
 
 
 static U_CHAR rule_ch = '_';
@@ -1008,15 +1017,18 @@ static BOOL special_on = FALSE;
 
 static U_CHAR *warn_err_mssg[]={ 
 
-"improper command line\ntex4ht [-f<dir char>]in-file[.dvi]\n"
+"improper command line\ntex4ht [-f<path-ch>]in-file[.dvi]\n"
 "   [-c<tag name>]       choose named segment in env file\n"
 "   [-e<env-file>]\n"
+"   [-f<path-ch>]        remove path from the file name\n"
 "   [-g<bitmap-file-ext>]\n"
 "   [-h(e|f|F|g|s|v|V)]  trace: e-errors/warnings, f-htf, F-htf search\n"
 "                            g-groups, s-specials, v-env, V-env search\n"
 "   [-i<htf-font-dir>]\n"
 "   [-l<bookkeeping-file>]\n"
 "   [-P(*|<filter>)]     permission for system calls: *-always, filter\n"
+"   [-S<image-script>]\n"
+"   [-s<css-file-ext>]   default: -s4cs; multiple entries allowed\n"
 "   [-t<tfm-font-dir>]\n"
 "   [-u10]               base 10 for unicode characters\n"
 "   [-utf8]              utf-8 encoding for unicode characters\n"
@@ -1084,9 +1096,6 @@ static U_CHAR *warn_err_mssg[]={
 "\\special{t4ht%s}?\n",                               
 
  "" };
-
-
-static U_CHAR warning[] = "--- warning --- ";
 
 
 static BOOL err_context = FALSE;
@@ -1672,8 +1681,16 @@ static INTEGER move_x
 i =  (INTEGER) (  (double) (dx = x_val - max_x_val)
             /         (text_on? word_sp : margin_sp)
             +         0.5 );
+
+if( i==0 ){
+   i =  (INTEGER) (  (double) dx
+            /         word_sp
+            +         0.5 );
+}
+
+
 if( i<0 ) i=0;
-if( !i ){ 
+if( i==0 ){ 
          long  curr_pos;
          BOOL  done;
          int ch, cr_fnt;
@@ -1728,6 +1745,14 @@ word_sp = design_size_to_pt( font_tbl[cr_fnt].word_sp )
 i =  (INTEGER) (  (double) dx
             /         (text_on? word_sp : margin_sp)
             +         0.5 );
+
+if( i==0 ){
+   i =  (INTEGER) (  (double) dx
+            /         word_sp
+            +         0.5 );
+}
+
+
 if( i>0 ){ i =1; }
 
 
@@ -1776,10 +1801,12 @@ max_x_val = x_val;
 
    } else    if( d && text_on  && (x_val != max_x_val) ){
       
-i =  (INTEGER) ( (double) (dx = d) / word_sp + 0.5 );
-if( i<0 ) i=0;
-if( !i ) i = dx>99999L;
-if( i ){ put_char(' '); }
+if( !ignore_spaces ){
+   i =  (INTEGER) ( (double) (dx = d) / word_sp + 0.5 );
+   if( i<0 ) i=0;
+   if( !i ) i = dx>99999L;
+   if( i ){ put_char(' '); }
+}
 
 
    }
@@ -1916,6 +1943,14 @@ if( (x_val + right)  &&
    i =  (INTEGER) (  (double) (x_val + right - max_x_val)
                    /         (text_on? word_sp : margin_sp)
                    +         0.5 );
+   
+if( i==0 ){
+   i =  (INTEGER) (  (double) (x_val + right - max_x_val)
+                   /         word_sp
+                   +         0.5 );
+}
+
+
    if( i && !text_on )  try_new_line();
    
 if( trace_dvi_R && !ch_map_flag ){
@@ -2766,7 +2801,7 @@ static void dump_htf
 ;
 #undef SEP
 #endif
-{       int i, j, ch, chr;
+{       int i, j, ch, chr=0;
   (IGNORED) fseek(file, 0L, 0);
   i=-1; j=0;
   while( (ch = getc(file)) != EOF  ){
@@ -2886,7 +2921,7 @@ if( ( name == new_font_name ) && (n == 19) && (ch=='.') ){
          i = i * 10 + ch - '0';  ch = get_html_ch(file);  }
       if( i != bound ){
          
-(IGNORED) fprintf(stderr,warning);
+(IGNORED) fprintf(stderr,"--- warning --- ");
 (IGNORED) fprintf(stderr,warn_err_mssg[22]
 
 , new_font_name, i, bound); show_err_context();
@@ -3063,9 +3098,11 @@ if( gif_file ){
 }  }
 
 
-(IGNORED) printf("\nRenaming `%s____.png' to `%c%c%c%c____.png'\n",
-            str, xeh[(int)(ch[0])], xeh[(int)(ch[1])],
-                 xeh[(int)(ch[2])], xeh[(int)(ch[3])]);
+(IGNORED) printf("\nRenaming `%s____%s' to `%c%c%c%c____%s'\n",
+            str, gif,
+                 xeh[(int)(ch[0])], xeh[(int)(ch[1])],
+                 xeh[(int)(ch[2])], xeh[(int)(ch[3])]
+               , gif);
 p->name = m_alloc(char,m+1);
 (IGNORED) strcpy( p->name, str );
 if( gif_file ){  p->next = gif_file->next;   gif_file->next = p;  }
@@ -3335,7 +3372,7 @@ char *get_env_dir
       U_CHAR *p;
   if(! progname || ! *progname)  return NULL;               
   i = (int) strlen(progname);
-  while( (progname[--i] != dir_path_slash(progname) )
+  while( (progname[--i] != (int) dir_path_slash(progname) )
           && (i > 0) ) ;                              
   if(i == 0)  return NULL;                        
   p = (char *) malloc(i+12);
@@ -5564,7 +5601,7 @@ static  void warn_i
 ;
 #undef SEP
 #endif
-{  (IGNORED) fprintf(stderr,warning);
+{  (IGNORED) fprintf(stderr,"--- warning --- ");
    (IGNORED) fprintf(stderr,warn_err_mssg[n]);
    show_err_context();
 }
@@ -5585,7 +5622,7 @@ static void warn_i_int
 ;
 #undef SEP
 #endif
-{  (IGNORED) fprintf(stderr,warning);
+{  (IGNORED) fprintf(stderr,"--- warning --- ");
    (IGNORED) fprintf(stderr, warn_err_mssg[n], i);
    show_err_context();
 }
@@ -5606,7 +5643,7 @@ static void warn_i_int_2
 ;
 #undef SEP
 #endif
-{  (IGNORED) fprintf(stderr,warning);
+{  (IGNORED) fprintf(stderr,"--- warning --- ");
    (IGNORED) fprintf(stderr, warn_err_mssg[n], i, j);
    show_err_context();
 }
@@ -5631,7 +5668,8 @@ static void warn_i_str
 ;
 #undef SEP
 #endif
-{  (IGNORED) fprintf(stderr,warning);
+{
+   (IGNORED) fprintf(stderr,"--- warning --- ");
    (IGNORED) fprintf(stderr,warn_err_mssg[n], str);
    show_err_context();
 }
@@ -5658,7 +5696,7 @@ static void warn_i_str2
 ;
 #undef SEP
 #endif
-{  (IGNORED) fprintf(stderr,warning);
+{  (IGNORED) fprintf(stderr,"--- warning --- ");
    (IGNORED) fprintf(stderr,warn_err_mssg[n], str1,str2);
    show_err_context();
 }
@@ -5789,7 +5827,11 @@ long int eof_op_n, begin_postamble;
 int dis_pages;
 
 
-int stack_id;
+int stack_id=0;
+
+
+static struct css_ext_rec * css_ext = (struct css_ext_rec *) 0;
+static char css_default[] = "4cs";
 
 
 BOOL in_accenting;
@@ -5834,15 +5876,15 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 (IGNORED) printf("----------------------------\n");
 #ifndef KPATHSEA
 #ifdef PLATFORM
-   (IGNORED) printf("tex4ht.c (2005-05-29-09:42 %s)\n",PLATFORM);
+   (IGNORED) printf("tex4ht.c (2006-09-13-14:27 %s)\n",PLATFORM);
 #else
-   (IGNORED) printf("tex4ht.c (2005-05-29-09:42)\n");
+   (IGNORED) printf("tex4ht.c (2006-09-13-14:27)\n");
 #endif
 #else
 #ifdef PLATFORM
-   (IGNORED) printf("tex4ht.c (2005-05-29-09:42 %s kpathsea)\n",PLATFORM);
+   (IGNORED) printf("tex4ht.c (2006-09-13-14:27 %s kpathsea)\n",PLATFORM);
 #else
-   (IGNORED) printf("tex4ht.c (2005-05-29-09:42 kpathsea)\n");
+   (IGNORED) printf("tex4ht.c (2006-09-13-14:27 kpathsea)\n");
 #endif
 #endif
 for(i=0; i<argc; i++){
@@ -6065,8 +6107,15 @@ tex4ht_fls_name = p+2;
 }
 
   break; }
-  case 's':{ 
+  case 'S':{ 
 font_gif = p+2;
+
+    break; }
+  case 's':{ 
+struct css_ext_rec * css =  m_alloc(struct css_ext_rec, 1);;
+css->name = p + 2;
+css->next = css_ext;
+css_ext = css;
 
     break; }
   case 't':{ 
@@ -6095,6 +6144,15 @@ switch( *(p+2) ){
  }
     else in_name = argv[i];
   }
+  
+if( css_ext == (struct css_ext_rec *) 0 ){
+  struct css_ext_rec * css =  m_alloc(struct css_ext_rec, 1);;
+  css->name = css_default;
+  css->next = css_ext;
+  css_ext = css;
+}
+
+
   
 if( *in_name != '\0' ){ 
       BOOL tag;
@@ -6138,7 +6196,7 @@ if( (idv_file = fopen(job_name, WRITE_BIN_FLAGS)) == NULL )
 
 
   { 
-   U_CHAR *name;
+   U_CHAR *name=0;
 if( *out_name == '\0' )
   { if( *in_name == '\0' ){ 
 bad_arg;
@@ -6266,7 +6324,7 @@ if( !dot_file && dos_env_file){
    
 
 #ifdef KPATHSEA
-if( !dot_file ) {                    U_CHAR * envname;
+if( !dot_file ) {                    U_CHAR * envfile;
                              char *arch, *p, str[256];
   
 p = arch = (char *) kpse_var_value( "SELFAUTOLOC" );
@@ -6278,28 +6336,53 @@ while( *p != '\0' ){
 }
 
 
-  envname = (char *) 0;
+  envfile = (char *) 0;
   
 if( arch ){
   (IGNORED) sprintf(str,"%s%ctex4ht.env", arch+1, *arch);
   if( dump_env_search ){
     (IGNORED) printf("kpse_open_file (\"%s\", ...)?\n", str );
   }
-  envname= kpse_find_file (str, kpse_program_text_format, 0);
+  envfile= kpse_find_file (str, kpse_program_text_format, 0);
 }
 
 
-  if ( !envname ){ 
+  if ( !envfile ){ 
 if( dump_env_search ){
   (IGNORED) printf("kpse_open_file (\"tex4ht.env\", ...)?\n");
 }
-envname= kpse_find_file ("tex4ht.env", kpse_program_text_format, 0);
+envfile= kpse_find_file ("tex4ht.env", kpse_program_text_format, 0);
 
  }
-  if ( envname ){
-    dot_file = kpse_open_file (envname,
+  if ( !envfile ){ 
+if( dump_env_search ){
+  (IGNORED) printf("system(\"kpsewhich --progname=tex4ht tex4ht.env\")?\n");
+}
+if( system("kpsewhich --progname=tex4ht tex4ht.env > tex4ht.tmp") == 0 ){
+   
+char fileaddr [256];
+int loc = 0;
+FILE* file =  f_open("tex4ht.tmp", READ_TEXT_FLAGS);
+if( file ){
+  while( (fileaddr[loc] = getc(file)) >=0  ){
+    if( fileaddr[loc] == '\n' ){ fileaddr[loc] = '\0'; break; }
+    loc++;
+  }
+  (IGNORED) fclose(file);
+}
+
+
+   envfile= kpse_find_file (fileaddr, kpse_program_text_format, 0);
+   if( envfile ){
+      warn_i_str( 50,
+          "search support for kpse_find_file--unsing system kpsewhich calls instead");
+}  }
+
+ }
+  if ( envfile ){
+    dot_file = kpse_open_file (envfile,
                               kpse_program_text_format);
-    (IGNORED) printf("(%s)\n",  envname);
+    (IGNORED) printf("(%s)\n",  envfile);
   } else if( dump_env_search ){
     p = (char *) kpse_var_value( "TEX4HTINPUTS" );
     if( p ){
@@ -6586,7 +6669,10 @@ stack = m_alloc(struct stack_entry,
 );
 
 {                   int i;
-  for( i=stack_len; i>=0; i--){
+  for( i=
+((int) stack_len + 2)
+
+-1; i>=0; i--){
     stack[i].begin = (struct group_info *) 0;
     stack[i].end   = (struct stack_end_entry *) 0;
     stack[i].stack_id = -1;
@@ -6618,7 +6704,11 @@ unread_pages = (int) get_unt(2);
 
 {      
 int fonts_n;
-struct html_font_rec *html_font;
+struct html_font_rec *html_font=0;
+
+
+struct visited_file_rec * visited_file =
+                       (struct visited_file_rec *) 0;
 
 
 struct env_var_rec *tfm_dirs, *htf_dirs;
@@ -6627,8 +6717,8 @@ struct env_var_rec *tfm_dirs, *htf_dirs;
 
 #ifdef KPATHSEA
 
-int cardinality;
-char ** fontset;
+int cardinality=0;
+char ** fontset=0;
 
 
 #endif
@@ -7013,7 +7103,8 @@ if( (font_tbl_size + 1) < MAXFONTS )
               int font_name_n;
    font_tbl = font_tbl_size?
               (struct font_entry *) r_alloc((void *) font_tbl,
-                 (size_t) ((font_tbl_size+1)*sizeof(struct font_entry)))
+                 (size_t) ((font_tbl_size+1)
+                           * sizeof(struct font_entry)))
             : m_alloc(struct font_entry, 1);
    
 switch( ch ){
@@ -7069,11 +7160,34 @@ switch( ch ){
    
 #ifdef KPATHSEA
 {
-     U_CHAR * tfmname;
-  tfmname = kpse_find_file (file_name, kpse_tfm_format, 0);
-  if ( tfmname ){
-       (IGNORED) printf("(%s)\n",  tfmname);
-       font_file = kpse_open_file (tfmname, kpse_tfm_format);
+     U_CHAR * tfmfile;
+  tfmfile = kpse_find_file (file_name, kpse_tfm_format, 0);
+  if( !tfmfile ){ 
+char s [256];
+(IGNORED) strcpy(s, "kpsewhich ");
+(IGNORED) strcat(s,file_name);
+(IGNORED) strcat(s, " > tex4ht.tmp ");
+if( system(s) == 0 ){
+   
+char fileaddr [256];
+int loc = 0;
+FILE* file =  f_open("tex4ht.tmp", READ_TEXT_FLAGS);
+if( file ){
+  while( (fileaddr[loc] = getc(file)) >=0  ){
+    if( fileaddr[loc] == '\n' ){ fileaddr[loc] = '\0'; break; }
+    loc++;
+  }
+  (IGNORED) fclose(file);
+}
+
+
+   tfmfile = kpse_find_file (fileaddr, kpse_program_text_format, 0);
+}
+
+ }
+  if ( tfmfile ){
+       (IGNORED) printf("(%s)\n",  tfmfile);
+       font_file = kpse_open_file (tfmfile, kpse_tfm_format);
   }
 }
 #else
@@ -7400,8 +7514,10 @@ for( i = new_font.char_f; i <= new_font.char_l ; i++ ){
    new_font.str[0] = &null_str;
    design_n = 0;
       
-while( 1 ){                         BOOL flag;
-   
+{  char search_font_name [256];
+  (IGNORED) strcpy(search_font_name,new_font.name);
+  while( 1 ){                         BOOL flag;
+     
 if( eq_str( new_font_name, loopName) ){
      U_CHAR name[256];
    (IGNORED) sprintf(name, "%s.htf", new_font_name);
@@ -7417,11 +7533,11 @@ if( loopBound > 10 ){
 }
 
 
-   flag = TRUE;
-   for( ; font_name_n; font_name_n-- ){  FILE* file;
-                                         int   char_f, char_l;
-     new_font_name[font_name_n] = '\0';
-     
+     flag = TRUE;
+     for( ; font_name_n; font_name_n-- ){  FILE* file;
+                                           int   char_f, char_l;
+       new_font_name[font_name_n] = '\0';
+       
 {                              U_CHAR name[256];
    (IGNORED) sprintf(name, "%s.htf", new_font_name);
    
@@ -7527,9 +7643,9 @@ if( (strlen (new_font.family_name) +
 }
 
 
-     if( file != NULL){
-                                         INTEGER x_char_l;
-       
+       if( file != NULL){
+                                           INTEGER x_char_l;
+         
 x_char_l =
       get_html_file_id(file, new_font.char_f, new_font.char_l, 19);
 if( x_char_l != HTF_ALIAS) {
@@ -7539,29 +7655,28 @@ if( x_char_l != HTF_ALIAS) {
 }
 
 
-       if( x_char_l == HTF_ALIAS) {
-         
+         if( x_char_l == HTF_ALIAS) {
+           
 {                                 int chr;
-                                  char str[256];
   font_name_n=0;
   while( (chr = get_html_ch(file)) != '\n' ){
-    if( chr != ' ' ) str[font_name_n++] = chr;
+    if( chr != ' ' ) search_font_name[font_name_n++] = chr;
   }
-  str[font_name_n]  = '\0';
-  if( eq_str( str, new_font_name) ){ err_i_str(20, new_font_name); }
+  search_font_name[font_name_n]  = '\0';
+  if( eq_str( search_font_name, new_font_name) ){ err_i_str(20, new_font_name); }
   (IGNORED) printf("Searching `%s.htf' for `%s.htf'\n",
-                                        str, new_font.name);
+                                        search_font_name, new_font.name);
   htf_to_lg(html_font, new_font_name, fonts_n, file);
   new_font_name = (char *)  r_alloc((void *) new_font_name,
                                   (size_t) (font_name_n+1));
-  (IGNORED) strcpy(new_font_name,str);
+  (IGNORED) strcpy(new_font_name,search_font_name);
   font_name_n = strlen (new_font_name);
 }
 
 
-         (IGNORED) fclose(file);  flag = FALSE; break;
-       }
-       
+           (IGNORED) fclose(file);  flag = FALSE; break;
+         }
+         
 if( char_f <= new_font.char_l ){      U_CHAR  del;
                                       int  j, n;
    
@@ -7574,7 +7689,7 @@ while( char_f < new_font.char_f ){
         - char_f + 1;
    for( i = char_f - new_font.char_f; i < n; i++ ){
       
-{      int indirect_ch, base, value, digit, ch1;
+{      int indirect_ch, base=0, value=0, digit, ch1;
   indirect_ch = 0;
   del = get_html_ch(file);   j=0;
   while( (str[j++] = get_html_ch(file)) != del )
@@ -7732,30 +7847,31 @@ while( char_l > new_font.char_l ){
 }
 
 
-       
+         
 (void) get_html_file_id(file, new_font.char_f, new_font.char_l, 18);
 
 
-       htf_to_lg(html_font,  new_font_name, fonts_n, file);
-       
+         htf_to_lg(html_font,  new_font_name, fonts_n, file);
+         
 if( dump_htf_files ){
    dump_htf_files++;  dump_htf( file );  dump_htf_files--;
 }
 
 
-       (IGNORED) fclose(file);  break;
-   } }
-   if( flag ){ break; }
-}
-if( font_name_n == 0 ){
-   warn_i_str(21,new_font.name);
-   (IGNORED) fprintf(stderr,
-             "%d--%d)\n", new_font.char_f, new_font.char_l);
-   dump_env();
-} else { 
+         (IGNORED) fclose(file);  break;
+     } }
+     if( flag ){ break; }
+  }
+  if( font_name_n == 0 ){
+     warn_i_str(21,search_font_name);
+     (IGNORED) fprintf(stderr,
+               "%d--%d)\n", new_font.char_f, new_font.char_l);
+     dump_env();
+  } else { 
 if( dump_env_files ){ dump_env(); }
 
  }
+}
 
 
    new_font.str = (unsigned U_CHAR **) r_alloc((void *)   new_font.str,
@@ -7792,6 +7908,158 @@ fonts_n++;
 }
 
 
+   
+{    static struct css_ext_rec * search_css_ext;
+  for( search_css_ext = css_ext;
+       search_css_ext != (struct css_ext_rec *) 0;
+       search_css_ext = search_css_ext->next       ){
+     int css_name_n = (int) strlen( new_font.name );
+     char * css_file_name = m_alloc(char, css_name_n + 1);
+     (IGNORED) strcpy(css_file_name, new_font.name);
+     for( ; css_name_n; css_name_n-- ){
+                                               FILE* file;
+       css_file_name[css_name_n] = '\0';
+       
+{                              U_CHAR name[256];
+   (IGNORED) sprintf(name, "%s.%s", css_file_name,
+                                    search_css_ext->name);
+   
+   file = NULL;
+   
+{
+                               struct htf_com_rec *p;
+   p = htf_font_dir;
+   while( p ){
+      file =  search_file_base(name, p->name, READ_TEXT_FLAGS, htf_dirs);
+      if( file ){
+#ifndef KPATHSEA
+         tex4ht_fls = TRUE;
+#endif
+         break;
+      }
+      p = p->next;
+   }
+}
+
+
+   if( !file ){
+      if( ((file = f_open(name, READ_TEXT_FLAGS)) == NULL) && dot_file )
+         file = search_in_dot_file( 'i', name, READ_TEXT_FLAGS, htf_dirs);
+#ifdef HTFDIR
+      if( !file )  file = search_file_base(name, HTFDIR,
+                                               READ_TEXT_FLAGS, htf_dirs);
+#endif
+      
+
+#ifdef KPATHSEA
+  if( !file ){ U_CHAR * htfname;
+     htfname= kpse_find_file (name, kpse_program_text_format, 0);
+     if ( htfname ){
+         
+{                    U_CHAR  * head, * tail, *p;
+                     int n;
+   
+n = (int) strlen(htfname);
+tail = head = m_alloc(char, n+1);
+(IGNORED) strcpy(head, htfname);
+while( n>11 ){
+  if( (*tail=='\\') || (*tail=='/') ){
+     if( (*tail == *(tail+9)) && (*(tail+1) == 'h')
+         && (*(tail+2) == 't') && (*(tail+3) == '-')
+         && (*(tail+4) == 'f') && (*(tail+5) == 'o')
+         && (*(tail+6) == 'n') && (*(tail+7) == 't')
+         && (*(tail+8) == 's') ){
+        p = tail + 9;  *(tail + 10) = '\0';  tail += 11;
+        while( (*tail != *p) && (*tail != '\0') ){  tail++; }
+        break;
+  }  }
+  tail++; n--;
+}
+
+
+   htfname =  (U_CHAR *) 0;
+   
+for( n = 0 ; (n < cardinality) && !htfname ; n++){
+  p = tail;
+  while( *p != '\0' ){
+                               char * s, *nm;
+     s = m_alloc(char, (int) strlen( head )       +
+                       (int) strlen( fontset[n] ) +
+                       (int) strlen( p )          + 1);
+     (IGNORED) strcpy(s,head);
+     (IGNORED) strcat(s,fontset[n]);
+     (IGNORED) strcat(s,p);
+     nm = kpse_find_file (s, kpse_program_text_format, 0);
+     free((void *) s);
+     if ( nm ){
+        htfname = nm; break;
+     }
+     p++;
+     while( (*p != '\\') && (*p != '/')  && (*p != '\0') ){ p++; }
+} }
+
+
+}
+
+
+         if ( htfname ){
+            (IGNORED) printf("(%s)\n",  htfname);
+            file= fopen(htfname,READ_TEXT_FLAGS);
+     }   }
+  }
+#endif
+
+
+   }
+
+
+    if( file != NULL ){
+      
+
+BOOL is_visited = FALSE;
+struct visited_file_rec * v = visited_file;
+while( v != (struct visited_file_rec *) 0 ){
+  if(  eq_str(v->name, name) ){
+    is_visited = TRUE;  break;
+  }
+  v = v->next;
+}
+
+
+if( !is_visited ){
+  
+struct visited_file_rec * v =  m_alloc(struct visited_file_rec, 1);
+v->name = m_alloc(char,  (int) strlen( name ) + 1 );
+(IGNORED) strcpy(v->name, name);
+v->next = visited_file;
+visited_file = v;
+
+
+   while( 1 ){
+                int ch;
+       do{
+          ch = (int) getc(file);
+       } while ( (ch == ' ') || (ch == '\n') || (ch == '\t') );
+       if( ch == EOF ){ break; }
+       do{
+          (void)  putc( ch, log_file );
+          ch = (int) getc(file);
+       } while ( (ch != '\n') && (ch != EOF) );
+       (void)  putc( '\n', log_file );
+       if( ch == EOF ){ break; }
+}  }
+
+
+      (IGNORED) fclose(file);  break;
+    }
+}
+
+
+     }
+     free((void *) css_file_name);
+} }
+
+
    free((void *)  new_font_name);   font_tbl_size++;
 }
 #ifdef MAXFONTS
@@ -7801,6 +8069,14 @@ fonts_n++;
 
    }
    
+while( visited_file != (struct visited_file_rec *) 0 ){
+  struct visited_file_rec * v = visited_file;
+  visited_file = visited_file->next;
+  free((void *) v->name);
+  free((void *) v);
+}
+
+
 
 #ifdef KPATHSEA
 if( export_str_chars ){
@@ -8788,7 +9064,7 @@ if( special_n>1 ) {
    special_n--;
    if (  get_char() == '%' ) {
       if( special_n>2 ) { 
-     U_CHAR  type, ch, *p, *q, *pp, *qq, pre[256], post[256];
+     U_CHAR  type, ch, *p, *q, *pp=0, *qq=0, pre[256], post[256];
 special_n -= 2;   type = get_char();  ch = get_char();
 p = pre;
 while( special_n-- > 0 ) {
@@ -9619,7 +9895,7 @@ if( special_n ){
     = end_pos_body = pos_body
     = (char *)  r_alloc((void *) pos_body,(size_t) special_n + 1);
   i = 0;  
-{                               BOOL after_star;
+{                               BOOL after_star=0;
    while(  special_n-- > 0 ){
       if( (*p = get_char()) == ch ){
          *p = '\0'; i++;
@@ -9637,7 +9913,7 @@ if( special_n ){
 
 
   
-{                     long int v;
+{                     long int v=0;
                       double w[5];
                       int j;
                       U_CHAR ch, sign;
@@ -9684,7 +9960,7 @@ if( rect_pos ){  special_n -= 2;  rect_pos = get_char() - '0';}
    min_pos_x = max_pos_x = base_pos_x = x_val;
    min_pos_y = max_pos_y = base_pos_y = y_val ;
 } else {                     U_CHAR   *p;
-                             double dim;
+                             double dim=0.0;
                              BOOL   dim_on;
   
 if( no_root_file ){  open_o_file(); }
@@ -10109,7 +10385,7 @@ if( i==0 ){
         if( i-- ){         U_CHAR ch;
            if( (ch = get_char()) == '*' )
              { 
-              struct send_back_entry *p, *q, *t;
+              struct send_back_entry *p, *q, *t=0;
 if( back_id_off ){
    while( i-- ){ (IGNORED) get_char();  }
 } else {
@@ -10576,7 +10852,7 @@ struct group_path *start_head, *start_tail,
                   *end_head, *end_tail,
                   *parent_end_head, *parent_end_tail,
                   *p, *q;
-int place;
+int place=0;
 start_head = start_tail = parent_start_head = parent_start_tail
            = end_head   = end_tail          = parent_end_head
            = parent_end_tail = (struct group_path *) 0;
@@ -10993,11 +11269,11 @@ while( opened_files != (struct files_rec*) 0 )
 INTEGER bop_addr;
 
 
-int stack_depth;
+int stack_depth=0;
 
 
 char cur_font[6];
-BOOL visible_cnt;
+BOOL visible_cnt=FALSE;
 
 
   

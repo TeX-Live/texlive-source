@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# mk4ht                                 2005-09-23-22:09 %
-# Copyright (C) 2003--2005               Eitan M. Gurari %
+# mk4ht                                 2006-08-28-20:45 %
+# Copyright (C) 2003--2006               Eitan M. Gurari %
 #                                                        %
 #                                                        %
 # This work may be distributed and/or modified under the %
@@ -29,56 +29,72 @@ my @options = (
  "ht",   "htlatex",   "latex",    "", "", "-cvalidatehtml",
  "ht",   "httex",     "tex",      "", "", "-cvalidatehtml",
  "ht",   "httexi",    "texi",     "", "", "-cvalidatehtml",
- "ht",   "htcontext", "texexec",  "", "", "-cvalidatehtml",
+ "ht",   "htcontext", "context",  "", "", "-cvalidatehtml",
+ "xh", "xhlatex",  "latex",   "xhtml", "", "-cvalidate",
+ "xh", "xhtex",    "tex",     "xhtml", "", "-cvalidate",
+ "xh", "xhtexi",   "texi",    "xhtml", "", "-cvalidate",
+ "xh", "xhcontext","context",  "xhtml", "", "-cvalidat",
  "uxh", "uxhlatex",  "latex",   "xhtml,uni-html4", " -cunihtf", "-cvalidate",
  "uxh", "uxhtex",    "tex",     "xhtml,uni-html4", " -cunihtf", "-cvalidate",
  "uxh", "uxhtexi",   "texi",    "xhtml,uni-html4", " -cunihtf", "-cvalidate",
- "uxh", "uxhcontext","texexec",  "xhtml,uni-html4", " -cunihtf", "-cvalidate",
+ "uxh", "uxhcontext","context",  "xhtml,uni-html4", " -cunihtf", "-cvalidate",
  "xhm", "xhmlatex", "latex",  "xhtml,mathml", " -cunihtf", "-cvalidate",
  "xhm", "xhmtex",   "tex",    "xhtml,mathml", " -cunihtf", "-cvalidate",
  "xhm", "xhmtexi",  "texi",   "xhtml,mathml", " -cunihtf", "-cvalidate",
- "xhm", "xhmcontext","texexec", "xhtml,mathml", " -cunihtf", "-cvalidate",
+ "xhm", "xhmcontext","context", "xhtml,mathml", " -cunihtf", "-cvalidate",
  "mz", "mzlatex",   "latex",   "xhtml,mozilla", " -cmozhtf",  "-cvalidate",
  "mz", "mztex",     "tex",     "xhtml,mozilla", " -cmozhtf",  "-cvalidate",
  "mz", "mztexi",    "texi",    "xhtml,mozilla", " -cmozhtf",  "-cvalidate",
- "mz", "mzcontext", "texexec", "xhtml,mozilla", " -cmozhtf",  "-cvalidate",
- "oo", "oolatex",   "latex",   "xhtml,ooffice", "ooffice/\! -cmozhtf",  "-coo -cvalidate",
- "oo", "ootex",     "tex",     "xhtml,ooffice", "ooffice/\! -cmozhtf",  "-coo -cvalidate",
- "oo", "ootexi",    "texi",    "xhtml,ooffice", "ooffice/\! -cmozhtf",  "-coo -cvalidate",
- "oo", "oocontext", "texexec", "xhtml,ooffice", "ooffice/\! -cmozhtf",  "-coo -cvalidate",
+ "mz", "mzcontext", "context", "xhtml,mozilla", " -cmozhtf",  "-cvalidate",
+ "oo", "oolatex",   "latex",   "xhtml,ooffice", "ooffice/\! -cmozhtf",  "-cooxtpipes -coo",
+ "oo", "ootex",     "tex",     "xhtml,ooffice", "ooffice/\! -cmozhtf",  "-cooxtpipes -coo",
+ "oo", "ootexi",    "texi",    "xhtml,ooffice", "ooffice/\! -cmozhtf",  "-cooxtpipes -coo",
+ "oo", "oocontext", "context", "xhtml,ooffice", "ooffice/\! -cmozhtf",  "-cooxtpipes -coo",
+ "es", "eslatex",   "latex",   "xhtml,emspk", " -cemspkhtf -s4es",  "-cemspk",
+ "es", "estex",     "tex",     "xhtml,emspk", " -cemspkhtf -s4es",  "-cemspk",
+ "es", "estexi",    "texi",    "xhtml,emspk", " -cemspkhtf -s4es",  "-cemspk",
+ "es", "escontext", "context", "xhtml,emspk", " -cemspkhtf -s4es",  "-cemspk",
+ "js", "jslatex",   "latex",   "xhtml,jsml", " -cjsmlhtf",  "-cjsml",
+ "js", "jstex",     "tex",     "xhtml,jsml", " -cjsmlhtf",  "-cjsml",
+ "js", "jstexi",    "texi",    "xhtml,jsml", " -cjsmlhtf",  "-cjsml",
+ "js", "jscontext", "context", "xhtml,jsml", " -cjsmlhtf",  "-cjsml",
  "tei",  "teilatex",  "latex",   "xhtml,tei",    " -cunihtf",  "-cvalidate",
  "tei",  "teitex",    "tex",     "xhtml,tei",    " -cunihtf",  "-cvalidate",
  "tei",  "teitexi",   "texi",    "xhtml,tei",    " -cunihtf",  "-cvalidate",
- "tei",  "teicontext","texexec", "xhtml,tei",    " -cunihtf",  "-cvalidate",
+ "tei",  "teicontext","context", "xhtml,tei",    " -cunihtf",  "-cvalidate",
  "teim", "teimlatex", "latex",   "xhtml,tei-mml"," -cunihtf",  "-cvalidate",
  "teim", "teimtex",   "tex",     "xhtml,tei-mml"," -cunihtf",  "-cvalidate",
  "teim", "teimtexi",  "texi",    "xhtml,tei-mml"," -cunihtf",  "-cvalidate",
- "teim", "teimcontext","texexec","xhtml,tei-mml"," -cunihtf",  "-cvalidate",
- "db",  "dblatex",   "latex",   "xhtml,docbook",     " -cunihtf",  "-cvalidate",
- "db",  "dbtex",     "tex",     "xhtml,docbook",     " -cunihtf",  "-cvalidate",
- "db",  "dbtexi",    "texi",    "xhtml,docbook",     " -cunihtf",  "-cvalidate",
- "db",  "dbcontext", "texexec", "xhtml,docbook",     " -cunihtf",  "-cvalidate",
- "dbm", "dbmlatex",  "latex",   "xhtml,docbook-mml", " -cunihtf",  "-cvalidate",
- "dbm", "dbmtex",    "tex",     "xhtml,docbook-mml", " -cunihtf",  "-cvalidate",
- "dbm", "dbmtexi",   "texi",    "xhtml,docbook-mml", " -cunihtf",  "-cvalidate",
- "dbm", "dbmcontext","texexec", "xhtml,docbook-mml", " -cunihtf",  "-cvalidate",
+ "teim", "teimcontext","context","xhtml,tei-mml"," -cunihtf",  "-cvalidate",
+ "db",  "dblatex",   "latex",   "xhtml,docbook",     " -cunihtf",  "-cvalidate -cdocbk",
+ "db",  "dbtex",     "tex",     "xhtml,docbook",     " -cunihtf",  "-cvalidate -cdocbk",
+ "db",  "dbtexi",    "texi",    "xhtml,docbook",     " -cunihtf",  "-cvalidate -cdocbk",
+ "db",  "dbcontext", "context", "xhtml,docbook",     " -cunihtf",  "-cvalidate -cdocbk",
+ "dbm", "dbmlatex",  "latex",   "xhtml,docbook-mml", " -cunihtf",  "-cdocbk",
+ "dbm", "dbmtex",    "tex",     "xhtml,docbook-mml", " -cunihtf",  "-cdocbk",
+ "dbm", "dbmtexi",   "texi",    "xhtml,docbook-mml", " -cunihtf",  "-cdocbk",
+ "dbm", "dbmcontext","context", "xhtml,docbook-mml", " -cunihtf",  "-cdocbk",
  "w", "wlatex",   "latex",   "xhtml,word", " -csymhtf", "",
  "w", "wtex",     "tex",     "xhtml,word", " -csymhtf", "",
  "w", "wtexi",    "texi",    "xhtml,word", " -csymhtf", "",
- "w", "wcontext", "texexec", "xhtml,word", " -csymhtf", "",
- "jh", "jhlatex",  "latex",  "html,javahelp,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp -cvalidate",
- "jh", "jhtex",    "tex",    "html,javahelp,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp -cvalidate",
- "jh", "jhtexi",   "texi",   "html,javahelp,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp -cvalidate",
- "jh", "jhcontext","texexec", "html,javahelp,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp -cvalidate",
+ "w", "wcontext", "context", "xhtml,word", " -csymhtf", "",
+ "jh", "jhlatex",  "latex",  "html,javahelp,3.2,unicode", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp -cvalidatehtml",
+ "jh", "jhtex",    "tex",    "html,javahelp,3.2,unicode", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp -cvalidatehtml",
+ "jh", "jhtexi",   "texi",   "html,javahelp,3.2,unicode", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp -cvalidatehtml",
+ "jh", "jhcontext","context", "html,javahelp,3.2,unicode", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp -cvalidatehtml",
+ "jh1", "jh1latex",  "latex",  "html,javahelp,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp",
+ "jh1", "jh1tex",    "tex",    "html,javahelp,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp",
+ "jh1", "jh1texi",   "texi",   "html,javahelp,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp",
+ "jh1", "jh1context","context", "html,javahelp,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp",
 
 );
 
 sub showInstrucions(){
   print " option1:  mk4ht #1 \"#2\" \"#3\" \"#4\" \"#5\"\n";
   print " \n";
-  print "    #1: htlatex, mzlatex, oolatex, dblatex, dbmlatex,\n";
-  print "        teilatex, teimlatex, uxhlatex, wlatex, xhlatex,\n";
-  print "        xhmlatex\n";
+  print "    #1: htlatex, xhlatex, mzlatex, oolatex, dblatex, dbmlatex,\n";
+  print "        jhlatex, eslatex, teilatex, teimlatex, uxhlatex,  \n";
+  print "        wlatex, xhmlatex\n";
   print " \n";
   print "        also 'tex', 'texi', and 'context' instead of 'latex'\n";
   print " \n";
@@ -99,9 +115,70 @@ sub showInstrucions(){
   print " variable, the  requests for the commands \"latex\",\n";
   print " \"tex\", etc. can be replaced with other equivalent\n";
   print " commands (e.g., \"tex -fmt=latex\").\n";
+
+  print "--------------------------------------------------------------------------\n";
+print "           Private configuration file: mk4ht.cfg\n";
+print "--------------------------------------------------------------------------\n";
+print "\n";
+print "A private configuration file mk4ht.cfg or .mk4ht may be placed at the\n";
+print "work or home directory, to update existing commands and introduce new\n";
+print "ones. The configuration file may contain records of the following\n";
+print "kinds.\n";
+print "\n";
+print "   #  Comment\n";
+print "    \n";
+print "   name = type\n";
+print "          Defines a ht*tex like command, and assocites to it the \n";
+print "          TeX compiler of the specified type. Examples of TeX \n";
+print "          types: latex, tex, texi, and context.\n";
+print "    \n";
+print "   name.tex = options\n";
+print "          Command line options for the compilation under\n";
+print "          the (la)tex compiler\n";
+print "      \n";
+print "   name.tex4ht = options\n";
+print "          Command line options for tex4ht.c \n";
+print "    \n";
+print "   name.t4ht = options\n";
+print "          Command line options for t4ht.c\n";
+print "    \n";
+print "Each record should appear in a different line.  Variants\n";
+print "`name.tex += options', `name.tex4ht += options',\n";
+print "`name.t4ht += options' of the above records are also allowed.\n";
+print "They append the listed options to the base values.\n";
+print "\n";
+print "Example:\n";
+print "\n";
+print "   foohlatex         = latex\n";
+print "   foohlatex.tex     = xhtml,uni-html4\n";
+print "   foohlatex.tex4ht += -cunihtf\n";
+print "   foohlatex.t4ht    = -cvalidate\n";
+print "   htlatex.t4ht     += -d./\n";
+
+
+  print "--------------------------------------------------------------------------\n";
+print "           Deleting files\n";
+print "--------------------------------------------------------------------------\n";
+print "\n";
+print "The configuration file mk4ht.cfg may also contain requests for\n";
+print "removing files created in the work directory during the compilation.\n";
+print "The requests are to be made through records of the following forms.\n";
+print "\n";
+print "   clean ext1 ext2 ...\n";
+print "     The extensions of the file name to be removed.\n";
+print "   \n";
+print "   clean.name ext1 ext2 ...\n";
+print "     Conditional request. The `name' refers to the ht*tex \n";
+print "     like command in use.\n";
+print "\n";
+print "Example:\n";
+print "  clean             dvi idv\n";
+print "  clean.foohlatex   lg \n";
+print "  clean.htlatex     lg tmp\n";
+
 }
 
-print "mk4ht (2005-09-23-22:09)\n";
+print "mk4ht (2006-08-28-20:45)\n";
 if(  !@ARGV  ){
   print "improper command\n";
   showInstrucions(); exit(1);
@@ -110,22 +187,118 @@ my @command=("","","","","");
 my $i=0;
 my $j=0;
 my $param;
+my $name;
+my $compiler;
+my $tex;
+my $tex4ht;
+my $t4ht;
+my $texp;
+my $tex4htp = "";
+my $t4htp = "";
+my @ext;
+
 foreach $param (@ARGV) {
   if( $i == 0 ){
+    my $inf;
+open $inf, "<mk4ht.cfg"
+or
+(  open $inf, "<.mk4ht"
+   or
+  (
+     open $inf, "<" . $ENV{HOME} . "/mk4ht.cfg"
+     or
+     (
+        open $inf, "<" . $ENV{HOME} . "/.mk4ht"
+        or $inf = ""
+) )  )
+;
+
+if( $inf ){
+   print "(mk4ht cfg)\n";
+   while(<$inf>) {
+     my($line) = $_;
+     chomp($line);      # remove eoln char
+     if ($line =~ m|\s*#.*|) {}
+     elsif($line =~ m|^\s*(\S*)\.(\S*)\s*\+=\s*(.*\S)\s*$|) {
+         if( ($param."tex4ht") eq ($1.$2) ){
+              $tex4htp = $tex4htp . " " . $3;
+         }
+         elsif( ($param."t4ht") eq ($1.$2) ){
+              $t4htp = $t4htp . " " . $3;
+         }
+         elsif( ($param."tex") eq ($1.$2) ){
+              $texp = $texp . "," . $3;
+         }
+     }
+     elsif($line =~ m|^\s*(\S*)\.(\S*)\s*=\s*(.*\S)\s*$|) {
+         if( ($param."tex4ht") eq ($1.$2) ){
+              $tex4ht = $3 . " ";
+              $tex4htp = "";
+         }
+         elsif( ($param."t4ht") eq ($1.$2) ){
+              $t4ht = $3 . " ";
+              $t4htp = "";
+         }
+         elsif( ($param."tex") eq ($1.$2) ){
+              $tex = $3 . ",";
+              $texp = "";
+         }
+     }
+     elsif($line =~ m|^\s*(\S*)\s*=\s*(.*\S)\s*$|) {
+         if( $param eq $1 ){
+              $name = $1;
+              $compiler = $2;
+         }
+     }
+     elsif($line =~ m|^\s*clean\s+(.+)|){
+   my(@array) = split(' ',$1);
+   push(@ext,@array);
+} elsif($line =~ m|^\s*clean\.(\S+)\s+(.+)|){
+   if( $1 eq @ARGV[0] ){
+      my(@array) = split(' ',$2);
+      push(@ext,@array);
+}  }
+
+     elsif ($line) { print "--- Error --- " . $line . "\n"; }
+   }
+   close $inf;
+}
+
     for( $j=1; $j<$#options; $j+=6 ){
       if( $param eq $options[$j] ){
-         if( $options[$j-1] eq "" ){
-           $command[0] = $options[$j];
+         if( $name ){
+            $command[0] = "ht".$compiler;
+if( $tex    ){ $command[2] = $tex;    } else { $command[2] = ""; }
+if( $tex4ht ){ $command[3] = $tex4ht; } else { $command[3] = ""; }
+if( $t4ht   ){ $command[4] = $t4ht;   } else { $command[4] = ""; }
+
          } else {
-           $command[0] = "ht".$options[$j+1];
+            if( $options[$j-1] eq "" ){
+  $command[0] = $options[$j];
+} else {
+  $command[0] = "ht".$options[$j+1];
+}
+if( $tex    ){ $command[2] = $tex;    } else { $command[2] = $options[$j+2]; }
+if( $tex4ht ){ $command[3] = $tex4ht; } else { $command[3] = $options[$j+3]; }
+if( $t4ht   ){ $command[4] = $t4ht;   } else { $command[4] = $options[$j+4]; }
+
          }
-         $command[2] = $options[$j+2];
-         $command[3] = $options[$j+3];
-         $command[4] = $options[$j+4];
+         if( $texp   ){ $command[2] = $command[2] . "," . $texp; }
+if( $tex4htp){ $command[3] = $command[3] . " " . $tex4htp; }
+if( $t4htp  ){ $command[4] = $command[4] . " " . $t4htp; }
+
          last;
     } }
-    if( $j>$#options ){ print "improper command: $param \n";
-                        showInstrucions(); exit(1); }
+    if( $j>$#options ){
+      if( $name ){ $command[0] = "ht".$compiler;
+if( $tex    ){ $command[2] = $tex;    } else { $command[2] = ""; }
+if( $tex4ht ){ $command[3] = $tex4ht; } else { $command[3] = ""; }
+if( $t4ht   ){ $command[4] = $t4ht;   } else { $command[4] = ""; }
+ }
+      else {
+          print "improper command: $param \n";
+          showInstrucions(); exit(1);
+    } }
   } elsif ( $i== 1 ) {
     $command[1] = $param;
   } elsif ( $i== 2 ) {
@@ -148,6 +321,22 @@ print "$commando\n";
 my $rtrn;
 if( $rtrn = system($commando) ){
    print "--- error --- failed to execute command\n";
-} else { exit( !$rtrn ); }
+} else {
+   my $file;
+my $ext;
+my(@array) = split('\.',@ARGV[1]);
+my $texFile = @array[0];
+opendir(DIR,".") ;
+while ($file = readdir(DIR) ){
+  if(index($file,$texFile) == 0 ){
+    foreach $ext(@ext){
+    if (index($file,$ext,length($file)-length($ext)) != -1){
+      if( stat($file)){
+         unlink($file);
+         print  "Deleted: ". $file . "\n";
+} } } } }
+closedir(DIR);
 
+   exit( !$rtrn );
+}
 

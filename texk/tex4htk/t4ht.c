@@ -1,7 +1,7 @@
 
 /**********************************************************/
-/* t4ht.c                                2005-08-04-07:03 */
-/* Copyright (C) 1998--2005    Eitan M. Gurari            */
+/* t4ht.c                                2006-09-13-14:28 */
+/* Copyright (C) 1998--2006    Eitan M. Gurari            */
 /*                                                        */
 /* This work may be distributed and/or modified under the */
 /* conditions of the LaTeX Project Public License, either */
@@ -296,12 +296,6 @@
 #endif
 
 
-struct htf_struct{
-  Q_CHAR *key,  *body;
-  struct htf_struct *next;
-};
-
-
 struct empty_pic_struct{
   long int n;
   struct empty_pic_struct *next;
@@ -338,6 +332,12 @@ struct env_c_rec{
 struct sys_call_rec{
   Q_CHAR * filter;
   struct sys_call_rec *next;
+};
+
+
+struct htf_struct{
+  Q_CHAR *key,  *body, *media;
+  struct htf_struct *next;
 };
 
 
@@ -395,15 +395,15 @@ static Q_CHAR *noreuse = Q_NULL;
 U_CHAR *HOME_DIR;
 
 
-static struct htf_struct *htf_rec = (struct htf_struct *) 0;
-
-
 static struct env_c_rec *envChoice
        = (struct env_c_rec*) 0;
 
 
 static BOOL system_yes;
 static struct sys_call_rec *system_calls = (struct sys_call_rec *) 0;
+
+
+static struct htf_struct *htf_rec = (struct htf_struct *) 0;
 
 
 static BOOL status;
@@ -433,9 +433,6 @@ ext_script
 
 static FILE* lg_file;
 static long  begin_lg_file;
-
-
-static C_CHAR warning[] = "--- warning --- ";
 
 
 static C_CHAR *warn_err_mssg[]={ 
@@ -1065,7 +1062,7 @@ static void warn_i_str
 ;
 #undef SEP
 #endif
-{  (IGNORED) fprintf(stderr,warning);
+{  (IGNORED) fprintf(stderr,"--- warning --- ");
    (IGNORED) fprintf(stderr,warn_err_mssg[n], str);
 }
 
@@ -1428,15 +1425,15 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 (IGNORED) printf("----------------------------\n");
 #ifndef KPATHSEA
 #ifdef PLATFORM
-   (IGNORED) printf("t4ht.c (2005-08-04-07:03 %s)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2006-09-13-14:28 %s)\n",PLATFORM);
 #else
-   (IGNORED) printf("t4ht.c (2005-08-04-07:03)\n");
+   (IGNORED) printf("t4ht.c (2006-09-13-14:28)\n");
 #endif
 #else
 #ifdef PLATFORM
-   (IGNORED) printf("t4ht.c (2005-08-04-07:03 %s kpathsea)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2006-09-13-14:28 %s kpathsea)\n",PLATFORM);
 #else
-   (IGNORED) printf("t4ht.c (2005-08-04-07:03 kpathsea)\n");
+   (IGNORED) printf("t4ht.c (2006-09-13-14:28 kpathsea)\n");
 #endif
 #endif
 
@@ -1703,7 +1700,7 @@ if( dos_env_file ){
    
 
 #ifdef KPATHSEA
-if( !file )  {               U_CHAR * envname;
+if( !file )  {               U_CHAR * envfile;
                              char *arch, *p, str[256];
    
 p = arch = (char *) kpse_var_value( "SELFAUTOLOC" );
@@ -1715,7 +1712,7 @@ while( *p != '\0' ){
 }
 
 
-   envname = (char *) 0;
+   envfile = (char *) 0;
    
 if( arch ){
   (IGNORED) sprintf(str,"%s%ctex4ht.env", arch+1, *arch);
@@ -1723,24 +1720,43 @@ if( arch ){
     (IGNORED) printf(
       "kpse_open_file (\"%s\", kpse_program_text_format)?\n", str );
   }
-  envname= kpse_find_file (str, kpse_program_text_format, 0);
+  envfile= kpse_find_file (str, kpse_program_text_format, 0);
 }
 
 
-   if ( !envname ){ 
+   if ( !envfile ){ 
 if( debug ){
   (IGNORED) printf(
     "kpse_open_file (\"tex4ht.env\", kpse_program_text_format)?\n");
 }
-envname= kpse_find_file ("tex4ht.env", kpse_program_text_format, 0);
+envfile= kpse_find_file ("tex4ht.env", kpse_program_text_format, 0);
 
  }
-   if ( envname ){
-      file = kpse_open_file (envname, kpse_program_text_format);
-      (IGNORED) printf("(%s)\n",  envname);
+   if ( !envfile ){ 
+if( system("kpsewhich --progname=tex4ht tex4ht.env > tex4ht.tmp") == 0 ){
+   
+char fileaddr [256];
+int loc = 0;
+FILE* file =  f_open("tex4ht.tmp", READ_TEXT_FLAGS);
+if( file ){
+  while( (fileaddr[loc] = getc(file)) >=0  ){
+    if( fileaddr[loc] == '\n' ){ fileaddr[loc] = '\0'; break; }
+    loc++;
+  }
+  (IGNORED) fclose(file);
+}
+
+
+   envfile= kpse_find_file (fileaddr, kpse_program_text_format, 0);
+}
+
+ }
+   if ( envfile ){
+      file = kpse_open_file (envfile, kpse_program_text_format);
+      (IGNORED) printf("(%s)\n",  envfile);
    }
    if( debug && file ){
-      (IGNORED) printf(".......Open kpathsea %s\n", envname);
+      (IGNORED) printf(".......Open kpathsea %s\n", envfile);
    }
 }
 if( debug ){
@@ -1967,7 +1983,7 @@ if( rec_op != No_op ){
 
  }
          if( rec_op == No_op ){
-            (IGNORED) fprintf(stderr,warning);
+            (IGNORED) fprintf(stderr,"--- warning --- ");
             (IGNORED) fprintf(stderr,"CopyTo: %s%s%s%s%s?\n",
                       match[1], match[2], match[3], match[4], match[5]);
          } else {
@@ -2098,7 +2114,7 @@ if( rec_op == Until_op ){
   }
   if( p == (struct files_rec*) 0 ){
     
-(IGNORED) fprintf(stderr,"%sMissing `CopyTo From':\n", warning);
+(IGNORED) fprintf(stderr,"%sMissing `CopyTo From':\n", "--- warning --- ");
 for( p = to_rec->down; p != (struct files_rec*) 0;  p = p->down ){
   (IGNORED) fprintf(stderr,"   %s %s%d %s\n", to_rec->name,
           p->op == From_op ?  "From  " :
@@ -2250,17 +2266,37 @@ if( status ){
 }  }
 
 
-      if( status ){                          Q_CHAR *key, *body;
+      if( status ){            Q_CHAR *key, *body, *media;
          body = key = match[1];
          
 while( *body && (*body != ' ') ){ body++; }
-if( *body == ' ' ){ *(body++) = '\0'; }
+if( *body == ' ' ){ media = body; *(body++) = '\0'; }
+
+if( (int) strlen(body) > 6 ){
+   if(     (*(body) == '@')
+       &&  (*(body+1) == 'm')
+       &&  (*(body+2) == 'e')
+       &&  (*(body+3) == 'd')
+       &&  (*(body+4) == 'i')
+       &&  (*(body+5) == 'a') )
+     {
+    body += 6;
+    while( *body == ' ' ){ body++; }
+    media = body;
+    while( (*body != ' ') && (*body != '\0') ){ body++; }
+    if( *body == ' ' ){ *(body++) = '\0'; }
+    while( *body == ' ' ){ body++; }
+}  }
+
+
 if( *body ){
   if( *key ){ 
 p = m_alloc(struct htf_struct, 1);
 p->next =  (struct htf_struct *) 0;
 p->key =   m_alloc(char, (int) strlen(key) + 1);
 (IGNORED) strcpy( p->key, key );
+p->media =   m_alloc(char, (int) strlen(media) + 1);
+(IGNORED) strcpy( p->media, media );
 p->body =   m_alloc(char, (int) strlen(body) + 1);
 (IGNORED) strcpy( p->body, body );
 if( last_rec ){
@@ -2269,7 +2305,7 @@ if( last_rec ){
    htf_rec = last_rec = p;
 }
 if( debug ){
-   (IGNORED) printf(".......%s...%s\n", key, body);
+   (IGNORED) printf(".......%s...%s...%s\n", key, media, body);
 }
 
  }
@@ -2628,14 +2664,6 @@ while( eoln_ch != EOF ) {
       p = match[4];
       *(p + (int) strlen(p) - 2) = '\0';
       
-font_sty = htf_rec;
-while ( font_sty  ) {
-  if( eq_str(font_sty->key,match[1]) ){ break; }
-  font_sty = font_sty->next;
-}
-
-
-      
 {                                                  Q_CHAR *p;
    second =   (int)
               (  (int) get_long_int(match[3])
@@ -2651,7 +2679,11 @@ while ( font_sty  ) {
 }
 
 
-      if( font_sty || (second != 100) ){
+      
+font_sty = htf_rec;
+while ( font_sty  ) {
+  if( eq_str(font_sty->key,match[1]) ){
+      if( *(font_sty->media) == '\0'  ){
          
 (IGNORED) fprintf(css_file,
    (Font_css_base == NULL)? ".%s-%s" : Font_css_base,
@@ -2671,7 +2703,51 @@ if( font_sty  ) {
 (IGNORED) fprintf(css_file, "}\n");
 
 
-}  }  }
+         second = 100;
+      } else {
+         
+(IGNORED) fprintf(css_file, "@media %s{", font_sty->media);
+(IGNORED) fprintf(css_file,
+   (Font_css_base == NULL)? ".%s-%s" : Font_css_base,
+   match[1], match[2]);
+if( !eq_str(match[4],"100") ){
+   (IGNORED) fprintf(css_file,
+   (Font_css_mag == NULL)? "x-x-%s" : Font_css_mag,
+   match[4]);
+}
+(IGNORED) fprintf(css_file, "{");
+if( font_sty  ) {
+   (IGNORED) fprintf(css_file, font_sty->body);
+}
+(IGNORED) fprintf(css_file, "}}\n");
+
+
+      }
+  }
+  font_sty = font_sty->next;
+}
+if( second != 100 ){ 
+(IGNORED) fprintf(css_file,
+   (Font_css_base == NULL)? ".%s-%s" : Font_css_base,
+   match[1], match[2]);
+if( !eq_str(match[4],"100") ){
+   (IGNORED) fprintf(css_file,
+   (Font_css_mag == NULL)? "x-x-%s" : Font_css_mag,
+   match[4]);
+}
+(IGNORED) fprintf(css_file, "{");
+if( (second < 98) || (second > 102) ){
+   (IGNORED) fprintf(css_file, "font-size:%d%c;", second, '%');
+}
+if( font_sty  ) {
+   (IGNORED) fprintf(css_file, font_sty->body);
+}
+(IGNORED) fprintf(css_file, "}\n");
+
+ }
+
+
+}  }
 
 
 
