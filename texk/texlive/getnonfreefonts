@@ -25,8 +25,8 @@ $opt_force=0;
 sub usage {
     print <<'EOF';
 Usage:
-    getnonfreefonts[-sys] [-a|--all] [-f|--force] [-l|--lsfonts] 
-        [-v|--verbose] [font1] [font2] ...
+    getnonfreefonts[-sys] [-a|--all] [-d|--debug] [-f|--force]
+        [-l|--lsfonts] [-v|--verbose] [--version] [font1] [font2] ...
 
     getnonfreefonts installs fonts in $TEXMFHOME.
     getnonfreefonts-sys installs fonts in $TEXMFLOCAL.
@@ -37,12 +37,14 @@ Usage:
         -d|--debug    Provide additional messages for debugging.
 
         -f|--force    Install fonts even if they are installed already.
-	
-	-h|--help     Print this message.
+
+        -h|--help     Print this message.
 
         -l|--lsfonts  List all fonts available.
 
         -v|--verbose  Be more verbose.
+
+        --version     Print version number.
 
 EOF
 ;
