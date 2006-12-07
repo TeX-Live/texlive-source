@@ -2330,8 +2330,9 @@ xdv2pdf(int argc, char** argv)
 		fprintf(stderr, "*** failed to run xdv2pdf_mergemarks: status = %d\n", status);
 #else
 		if (gotPath) {
-			char*	mergeMarks = "xdv2pdf_mergemarks";
-			char	cmd[_POSIX_PATH_MAX*2 + 100];
+			char*	mergeMarks = "`kpsewhich -progname=xetex -format=texmfscripts xdv2pdf_mergemarks"
+								 " || echo echo '# ERROR: need xdv2pdf_mergemarks script to process:'`";
+			char	cmd[_POSIX_PATH_MAX*2 + 150]; // enough for the mergeMarks command above, plus some
 			sprintf(cmd, "%s \"%s\" \"%s\"", mergeMarks, pdfPath, gPdfMarkPath);
 			status = system(cmd);
 		}
