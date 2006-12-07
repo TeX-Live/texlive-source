@@ -1,5 +1,5 @@
 # Makefile for dvipsk -- kb@mail.tug.org. Public domain.
-version = 5.95b
+version = 5.96
 
 # Add -DDEFRES=dpi to DEFS to change the default resolution from 600.
 # Add -DSECURE if you will install dvips with special privileges.
