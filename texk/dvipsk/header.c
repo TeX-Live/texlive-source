@@ -80,7 +80,7 @@ void checkhmem P3C(char *, s, char *, pre, char *, post)
 	 f = search(figpath, s, READBIN) ;
    }
    if (f==0) {
-      (void)sprintf(errbuf, "! Couldn't find header file %s", s) ;
+      (void)sprintf(errbuf, "! Couldn't find header file %s.\nNote that an absolute path or a relative path with .. are denied in -R2 mode.", s) ;
       error(errbuf) ;
    } else {
       int len, i, j ;

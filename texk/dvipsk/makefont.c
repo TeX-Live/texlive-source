@@ -7,7 +7,7 @@
 extern int quiet ;
 extern int filter ;
 extern int dontmakefont ;
-extern Boolean secure ;
+extern int secure ;
 extern char *mfmode ;
 #ifdef OS2
 #include <stdlib.h>

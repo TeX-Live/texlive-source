@@ -39,7 +39,7 @@ extern real alpha ;
 #ifndef KPATHSEA
 extern char *pkpath ;
 #endif
-char errbuf[200] ;
+char errbuf[512] ;
 int lastresortsizes[40] ;
 extern integer fsizetol ;
 extern Boolean nosmallchars ;

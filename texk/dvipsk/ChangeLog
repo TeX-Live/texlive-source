@@ -1,3 +1,25 @@
+2006-12-07  Karl Berry  <karl@tug.org>
+
+	* Changes made and accumulated by Akira:
+
+(1) security problem
+    -R0  : shell escape and absolute path are allowed
+    -R1  : shell escape is forbidden and absolute path is allowed
+           (default)
+    -R2  : shell escape and absolute path are forbidden
+
+(2) line breaking problem in ps: special (Scott Pakin).
+
+(3) Heiko's change of hps.lpro.
+
+(4) paper size problem:
+  *   Is the dimension close enough for a match?  We use a quarter inch
+  *   as a match; this is 65536*72.27/4 or 1,184,072 scaled points.
+--->
+  *   Is the dimension close enough for a match?  We use 5bp
+  *   as a match; this is 65536*72.27*5/72 or 328909 scaled points.
+and dvips now finds the best match rather than the first match.
+
 2006-12-06  Karl Berry  <karl@tug.org>
 
 	* output.c (copyfile_general): add removingBytes=0, to avoid

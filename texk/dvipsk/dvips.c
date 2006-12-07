@@ -64,7 +64,7 @@ Boolean nosmallchars ;        /* disable small char optimization for X4045? */
 Boolean cropmarks ;           /* add cropmarks? */
 Boolean abspage = 0 ;         /* are page numbers absolute? */
 Boolean tryepsf = 0 ;         /* should we try to make it espf? */
-Boolean secure = 0 ;          /* make safe for suid */
+int secure = 1 ;              /* make safe for suid */
 int secure_option = 0;        /* set by -R */
 int collatedcopies = 1 ;      /* how many collated copies? */
 int sectioncopies = 1 ;       /* how many times to repeat each section? */
@@ -607,7 +607,7 @@ main P2C(int, argc, char **, argv)
         exit (0);
       } else if (strcmp (argv[1], "--version") == 0) {
         extern KPSEDLL char *kpathsea_version_string;
-        puts ("dvips(k) 5.95b");
+        puts ("dvips(k) 5.96");
         puts (kpathsea_version_string);
         puts ("Copyright (C) 2005 Radical Eye Software.\n\
 There is NO warranty.  You may redistribute this software\n\
@@ -745,8 +745,15 @@ case 'k':
                cropmarks = (*p != '0') ;
                break ;
 case 'R':
-               secure = (*p != '0') ;
-               secure_option = 1 ;
+               if (*p == '0') {
+                  secure = 0 ;
+               } else if (*p == '2') {
+                  secure = 2 ;
+               } else {
+                  secure = 1 ;
+               }
+               if (secure)
+                  secure_option = 1 ; /* Never used */
                break ;
 case 'S':
                if (*p == 0 && argv[i+1])

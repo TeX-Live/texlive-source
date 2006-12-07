@@ -11,6 +11,7 @@
 
 /*   This file is the header for dvips's global data structures. */
 
+#define CREATIONDATE
 #define BANNER \
 "This is dvips(k) 5.96 Copyright 2005 Radical Eye Software"
 #define BANNER2 "(www.radicaleye.com)"

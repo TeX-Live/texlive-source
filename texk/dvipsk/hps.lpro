@@ -69,16 +69,19 @@ bind def
 }
 bind def
 
-/tempstring 256 string def
+% PDF implementation limit for names is 127, see PDF specification,
+% version 1.6, appendix C "Implementation Limits,
+% table C.1 "Architectural limits", page 920.
+/tempstring 128 string def
 
 /targetvalidate
- {1 index dup length 255 gt exch
+ {1 index dup length 127 gt exch
+  tempstring cvs
   dup (/) search 
     {pop pop pop exch pop true exch}
     {pop}
   ifelse
-  cvn tempstring cvs
-  token pop pop length 0 ne or 
+  token {pop length 0 ne} {true} ifelse or 
   not} bind def
 
 /targetdump-hook where 

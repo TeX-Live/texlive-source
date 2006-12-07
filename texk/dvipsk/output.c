@@ -33,7 +33,7 @@ extern integer hh, vv ;
 extern fontdesctype *curfnt ;
 extern FILE *bitfile ;
 extern char *oname ;
-extern Boolean secure ;
+extern int secure ;
 extern Boolean reverse ;
 extern Boolean removecomments ;
 extern Boolean sendcontrolD, disablecomments, multiplesects ;
@@ -147,15 +147,15 @@ copyfile_general P2C(char *, s, struct header_list *, cur_header)
       lastdirsep = strrchr(s, '/') ;
       if ( NULL != lastdirsep ) trunc_s = lastdirsep + 1 ;
       (void)sprintf(errbuf,
-   "Couldn't find figure file %s with CMS name %s; continuing", s, trunc_s) ;
+   "Couldn't find figure file %s with CMS name %s; continuing.\nNote that an absolute path or a relative path with .. are denied in -R2 mode.", s, trunc_s) ;
 #else
 #ifdef MVSXA
       lastdirsep = strrchr(s, '/') ;
       if ( NULL != lastdirsep ) trunc_s = lastdirsep + 1 ;
       (void)sprintf(errbuf,
-    "Couldn't find figure file %s with MVS name %s; continuing", s, trunc_s) ;
+    "Couldn't find figure file %s with MVS name %s; continuing.\nNote that an absolute path or a relative path with .. are denied in -R2 mode.", s, trunc_s) ;
 #else
-      (void)sprintf(errbuf, "Could not find figure file %s; continuing", s) ;
+      (void)sprintf(errbuf, "Could not find figure file %s; continuing.\nNote that an absolute path or a relative path with .. are denied in -R2 mode.", s) ;
 #endif
 #endif
       break ;
@@ -198,7 +198,7 @@ copyfile_general P2C(char *, s, struct header_list *, cur_header)
 	 if(f==NULL)
 	    f = search(figpath, s, READBIN) ;
       }
-      (void)sprintf(errbuf, "! Could not find header file %s", s) ;
+      (void)sprintf(errbuf, "! Could not find header file %s.\nNote that an absolute path or a relative path with .. are denied in -R2 mode.", s) ;
       break ;
    }
    if (f==NULL)
@@ -510,8 +510,10 @@ msdosdone:
 			         c = getc(f);
 			         if (c != '\n')
 				    ungetc(c, f);
-                                 else
+                                 else {
+                                    (void)putc(c, bitfile) ;
                                     dosepsend-- ;
+                                 }
 			      }
                               break ;
 			   }
@@ -938,14 +940,14 @@ nlcmdout P1C(char *, s)
    newline() ;
 }
 /*
- *   Is the dimension close enough for a match?  We use a quarter inch
- *   as a match; this is 65536*72.27/4 or 1,184,072 scaled points.
+ *   Is the dimension close enough for a match?  We use 5bp
+ *   as a match; this is 65536*72.27*5/72 or 328909 scaled points.
  */
 static int indelta P1C(integer, i)
 {
    if (i < 0)
       i = -i ;
-   return (i <= 1184072) ;
+   return (i <= 328909) ;
 }
 /*
  *   A case-irrelevant string compare.
@@ -973,6 +975,9 @@ int ncstrcmp P2C(char *, a, char *, b)
 void findpapersize P1H(void) {
    if (finpapsiz == 0) {
       struct papsiz *ps ;
+      struct papsiz *fps = 0 ;
+      int    ih, iv, it ;
+      int    mindiff = 0x7fffffff ;
 
       if (tryepsf && !landscape) {
          finpapsiz = &defpapsiz ;
@@ -1009,33 +1014,54 @@ void findpapersize P1H(void) {
       }
       if (finpapsiz == 0 && hpapersize > 0 && vpapersize > 0) {
          for (ps=papsizes; ps; ps = ps->next) {
-            if (indelta(ps->xsize-hpapersize) &&
-                indelta(ps->ysize-vpapersize)) {
-               landscape = 0 ;
-               break ;
+            ih = ps->xsize-hpapersize ;
+            iv = ps->ysize-vpapersize ;
+            if (ih < 0) ih = -ih ;
+            if (iv < 0) iv = -iv ;
+            it = ih ;
+            if (it < iv) it = iv ;
+            if (it < mindiff) {
+               mindiff = it ;
+               fps = ps ;
             }
          }
-         if (ps == 0) {
+         if (indelta(mindiff))
+            landscape = 0 ;
+         else
+            fps = 0 ;
+         mindiff = 0x7fffffff ;
+         if (fps == 0) {
             for (ps=papsizes; ps; ps = ps->next) {
-               if (indelta(ps->ysize-hpapersize) &&
-                   indelta(ps->xsize-vpapersize)) {
-                  landscape = 1 ;
-                  break ;
+               iv = ps->ysize-hpapersize ;
+               ih = ps->xsize-vpapersize ;
+               if (ih < 0) ih = -ih ;
+               if (iv < 0) iv = -iv ;
+               it = ih ;
+               if (it < iv) it = iv ;
+               if (it < mindiff) {
+                  mindiff = it ;
+                  fps = ps ;
                }
             }
-            if (ps == 0) {
+            if (indelta(mindiff))
+               landscape = 1 ;
+            else
+               fps = 0 ;
+            if (fps == 0) {
                for (ps=papsizes; ps; ps = ps->next) {
-                  if (ps->ysize == 0 && ps->xsize == 0)
+                  if (ps->ysize == 0 && ps->xsize == 0) {
+                     fps = ps ;
                      break ;
+                  }
                }
-               if (ps == 0) {
+               if (fps == 0) {
                   landscape = (hpapersize > vpapersize) ;
                   error(
                     "no match for special paper size found; using default") ;
                }
             }
          }
-         finpapsiz = ps ;
+         finpapsiz = fps ;
       }
       if (finpapsiz == 0) {
          if (papsizes)

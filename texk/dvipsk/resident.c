@@ -92,7 +92,7 @@ extern Boolean shiftlowchars ;
 extern unsigned lastresortsizes[] ;
 extern integer hoff, voff ;
 extern struct papsiz *papsizes ;
-extern Boolean secure ;
+extern int secure ;
 extern integer hpapersize, vpapersize ;
 extern int landscape ;
 /*
@@ -713,7 +713,7 @@ case 'E' :
          error("dvips was compiled with SECURE, which disables E in config") ;
 #else
          if (secure) {
-            error("dvips -R option used, which disables E in config") ;
+            error("E in config is disabled. To enable E, set z0 before E") ;
             break ;
          }
          (void)system(was_inline+1) ;
@@ -759,10 +759,16 @@ case 'z' :
 	 if (secure_option && secure && was_inline[1] == '0') {
 	   fprintf (stderr,
 	            "warning: %s: z0 directive ignored since -R1 given\n",
-	            realnameoffile);
-	 } else {
-           secure = (was_inline[1] != '0') ;
-	 }
+	            realnameoffile); /* Never happen */
+         } else {
+            if (was_inline[1] == '0') {
+               secure = 0 ;
+            } else if (was_inline[1] == '2') {
+               secure = 2 ;
+            } else {
+               secure = 1 ;
+            }
+         }
          break ;
 case 'q' : case 'Q' :
          quiet = (was_inline[1] != '0') ;

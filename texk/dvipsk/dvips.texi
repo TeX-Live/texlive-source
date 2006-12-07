@@ -1032,10 +1032,12 @@ Output pages in reverse order.  By default, page 1 is output first.
 @cindex security
 @cindex shell command execution, disabling
 @cindex absolute filenames, disabling
-Run securely.  This disables shell command execution in
+Run securely.  @samp{-R2} disables both shell command execution in
 @code{\special} (via @samp{`}, @pxref{Dynamic creation of graphics})
 and config files (via the @samp{E} option, @pxref{Configuration file
-commands}), and opening of any absolute filenames.
+commands}) and opening of any absolute filenames.  @samp{-R1}, the
+default, forbids shell escapes but allows absolute filenames.
+@samp{-R0} allows both.
 
 @item -s*
 @opindex -s
@@ -1588,8 +1590,8 @@ Compress bitmap fonts.  Same as @samp{-Z} (@pxref{Option details}).
 @item z*
 @opindex z @r{config command (secure mode)}
 Disables execution of system commands, like @samp{-R}
-(@pxref{Option details}).  If @samp{-R1} is given to disable system
-commands, however, this will not re-enable them.
+(@pxref{Option details}).  If @samp{-R} is specified
+on the command line, that takes precedence.
 
 @end table
 

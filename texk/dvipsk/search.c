@@ -51,7 +51,7 @@ extern char *newstring P1H(char *) ;
  */
 
 #ifndef SECURE
-extern Boolean secure;
+extern int secure ;
 #endif
 #ifdef DEBUG
 extern integer debug_flag;
@@ -87,7 +87,7 @@ search P3C(kpse_file_format_type, format, char *, file, char *, mode)
   /* This change suggested by maj@cl.cam.ac.uk to disallow reading of
      arbitrary files.  Further modified by Y. Oiwa. */
 #ifndef SECURE
-  if (secure) {
+  if (secure == 2) {
 #endif
     /* an absolute path is denied */
     if (kpse_absolute_p (file, false)) return NULL;
