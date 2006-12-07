@@ -37,9 +37,12 @@ authorization from SIL International.
 #define kMATHTableTag	0x4D415448
 
 typedef void*	voidptr;
-extern voidptr*	fontlayoutengine;
-extern integer*	fontarea;
-extern integer*	fontsize;
+
+extern "C" {
+	extern voidptr*	fontlayoutengine;
+	extern integer*	fontarea;
+	extern integer*	fontsize;
+}
 
 #include "LESwaps.h"
 
