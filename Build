@@ -31,6 +31,9 @@ cd Work || exit 1
 # allow override of make program.
 : ${TL_MAKE=make}
 
+# and then set GNUMAKE to that, for the sake of freetype2/configure.
+: ${GNUMAKE=${TL_MAKE}}
+
 # Force building xdvi-xaw; motif is not always free and/or available.
 # --enable-gif is for sam2p; the gif patent has expired worldwide.
 (set -x; \
