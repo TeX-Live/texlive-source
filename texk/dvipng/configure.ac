@@ -167,11 +167,6 @@ sinclude(../../libs/freetype2/withenable.ac)
 sinclude(../../libs/freetype2/freetype2.ac)
 sinclude(../kpathsea/withenable.ac)
 
-LIBS="../kpathsea/.libs/libkpathsea.a $LIBS"
-AC_DEFINE(HAVE_KPATHSEA_KPATHSEA_H)
-AC_DEFINE(HAVE_KPSE_ENC_FORMATS)
-AC_DEFINE(HAVE_LIBKPATHSEA)
-
 dnl -- gd jpeg fn not defined? AC_DEFINE(HAVE_GDIMAGECREATETRUECOLOR)
 dnl then we get a warning about gdImageAlpha, but so what.
 AC_DEFINE(HAVE_GDIMAGEPNGEX)
@@ -188,6 +183,33 @@ AC_DEFINE(HAVE_LIBZ)
 
 AC_CHECK_LIB(m, main)
 AC_CHECK_LIB(gen, basename)
+
+LIBS="../kpathsea/.libs/libkpathsea.a $LIBS"
+AC_DEFINE(HAVE_KPATHSEA_KPATHSEA_H)
+AC_DEFINE(HAVE_KPSE_ENC_FORMATS)
+AC_DEFINE(HAVE_LIBKPATHSEA)
+
+#
+# Check for ApplicationServices framework (Mac OS X)
+#
+AC_DEFUN([AC_HAS_APP_SERVICES], [
+ _cppflags=$CPPFLAGS _ldflags=$LDFLAGS
+ AC_MSG_CHECKING([for Mac OS X ApplicationServices framework])
+ AC_TRY_COMPILE(
+ [
+#include <ApplicationServices/ApplicationServices.h>
+ ], [
+ATSFontRef fontRef;
+ ],
+ [ AC_MSG_RESULT(yes)
+   AC_DEFINE(HAVE_APP_SERVICES, 1, [Define if you have ApplicationServices (Mac OS X)])
+   LIBS="$LIBS -framework ApplicationServices"
+ ],
+ [ AC_MSG_RESULT(no) ]
+ )
+])
+
+AC_HAS_APP_SERVICES
 
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES(Makefile)
