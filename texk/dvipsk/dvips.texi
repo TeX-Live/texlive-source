@@ -1732,11 +1732,11 @@ For example:
 
 When Dvips has a paper format name given on the command line, it looks
 for a match by the @var{name}; when it has a @samp{papersize} special,
-it looks for a match by dimensions.  The first match found (in the order
-the paper size information is found in the configuration file) is used.
-If nothing matches, a warning is printed and the first paper size is
-used.  The dimensions must match within a quarter of an inch.  Landscape
-mode for all paper sizes is automatically supported.
+it looks for a match by dimensions.  The best match found (from the
+paper size information in the configuration file) is used.  If nothing
+matches, a warning is printed and the first paper size is used.  The
+dimensions must match within 5bp.  Landscape mode for all paper sizes
+is automatically supported.
 
 If your printer has a command to set a special paper size, then give
 dimensions of @samp{0in 0in}; the PostScript code that sets the paper
