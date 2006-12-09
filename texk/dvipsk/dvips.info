@@ -1440,11 +1440,11 @@ For example:
 
    When Dvips has a paper format name given on the command line, it
 looks for a match by the NAME; when it has a `papersize' special, it
-looks for a match by dimensions.  The first match found (in the order
-the paper size information is found in the configuration file) is used.
-If nothing matches, a warning is printed and the first paper size is
-used.  The dimensions must match within a quarter of an inch.  Landscape
-mode for all paper sizes is automatically supported.
+looks for a match by dimensions.  The best match found (from the paper
+size information in the configuration file) is used.  If nothing
+matches, a warning is printed and the first paper size is used.  The
+dimensions must match within 5bp.  Landscape mode for all paper sizes
+is automatically supported.
 
    If your printer has a command to set a special paper size, then give
 dimensions of `0in 0in'; the PostScript code that sets the paper size
@@ -4626,57 +4626,57 @@ Node: Configuration file commands48330
 Node: Paper size and landscape55347
 Node: papersize special56924
 Node: Config file paper sizes58038
-Node: Paper trays62171
-Node: Interaction with PostScript63505
-Node: PostScript figures64158
-Node: Bounding box64884
-Node: \includegraphics68255
-Node: EPSF macros70546
-Node: EPSF scaling72516
-Node: EPSF clipping75086
-Node: psfile special75728
-Node: Dynamic creation of graphics77648
-Node: Fonts in figures78966
-Node: Header files80626
-Node: Including headers from TeX81832
-Node: Including headers from the command line83866
-Node: Headers and memory usage84966
-Node: Literal PS85676
-Node: " special86258
-Node: ps special86999
-Node: Literal headers88307
-Node: PostScript hooks89022
-Node: Literal examples91112
-Node: Hypertext92564
-Node: Hypertext caveats94122
-Node: Hypertext specials98519
-Node: PostScript fonts101153
-Node: Font concepts102269
-Node: Metric files103436
-Node: Glyph files106262
-Node: Virtual fonts108618
-Node: Encodings110508
-Node: PostScript typesetting112890
-Node: Making a font available115972
-Node: Invoking afm2tfm121002
-Node: Changing font encodings121972
-Node: Changing TeX encodings122763
-Node: Changing PostScript encodings123863
-Node: Changing both encodings125207
-Node: Reencoding with Afm2tfm125880
-Node: Encoding file format128984
-Node: Special font effects133187
-Node: Afm2tfm options135450
-Node: psfonts.map138435
-Node: Color143159
-Node: Color macro files144203
-Node: User-definable colors147401
-Node: Color subtleties148676
-Node: Ted Turner150327
-Node: Color device configuration151552
-Node: Color support details153994
-Node: Color specifications154372
-Node: Color specials155775
-Node: Index157904
+Node: Paper trays62137
+Node: Interaction with PostScript63471
+Node: PostScript figures64124
+Node: Bounding box64850
+Node: \includegraphics68221
+Node: EPSF macros70512
+Node: EPSF scaling72482
+Node: EPSF clipping75052
+Node: psfile special75694
+Node: Dynamic creation of graphics77614
+Node: Fonts in figures78932
+Node: Header files80592
+Node: Including headers from TeX81798
+Node: Including headers from the command line83832
+Node: Headers and memory usage84932
+Node: Literal PS85642
+Node: " special86224
+Node: ps special86965
+Node: Literal headers88273
+Node: PostScript hooks88988
+Node: Literal examples91078
+Node: Hypertext92530
+Node: Hypertext caveats94088
+Node: Hypertext specials98485
+Node: PostScript fonts101119
+Node: Font concepts102235
+Node: Metric files103402
+Node: Glyph files106228
+Node: Virtual fonts108584
+Node: Encodings110474
+Node: PostScript typesetting112856
+Node: Making a font available115938
+Node: Invoking afm2tfm120968
+Node: Changing font encodings121938
+Node: Changing TeX encodings122729
+Node: Changing PostScript encodings123829
+Node: Changing both encodings125173
+Node: Reencoding with Afm2tfm125846
+Node: Encoding file format128950
+Node: Special font effects133153
+Node: Afm2tfm options135416
+Node: psfonts.map138401
+Node: Color143125
+Node: Color macro files144169
+Node: User-definable colors147367
+Node: Color subtleties148642
+Node: Ted Turner150293
+Node: Color device configuration151518
+Node: Color support details153960
+Node: Color specifications154338
+Node: Color specials155741
+Node: Index157870
 
 End Tag Table
