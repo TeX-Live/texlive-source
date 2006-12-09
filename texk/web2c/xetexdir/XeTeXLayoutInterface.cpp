@@ -364,7 +364,8 @@ SInt32 layoutChars(XeTeXLayoutEngine engine, UInt16 chars[], SInt32 offset, SInt
 						char rightToLeft, float x, float y, SInt32* status)
 {
 	LEErrorCode success = (LEErrorCode)*status;
-	le_int32	glyphCount = engine->layoutEngine->layoutChars(chars, offset, count, max, rightToLeft, x, y, success);
+	le_int32	glyphCount = engine->layoutEngine->layoutChars((const LEUnicode*)chars,
+										offset, count, max, rightToLeft, x, y, success);
 	*status = success;
 	return glyphCount;
 }
