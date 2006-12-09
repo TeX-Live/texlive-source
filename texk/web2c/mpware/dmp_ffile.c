@@ -41,8 +41,7 @@ fsearch(char *nam, char *ext, int path_type)
 {
     {
 	FILE *f = NULL;
-	int format;
-	format = kpse_types[path_type];
+	int format = kpse_types[path_type];
 	string fname = kpse_find_file(nam, format, true);
 	const_string mode = kpse_format_info[format].binmode
 	    ? FOPEN_RBIN_MODE : FOPEN_R_MODE;
