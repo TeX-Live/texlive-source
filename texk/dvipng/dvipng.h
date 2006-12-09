@@ -137,8 +137,10 @@ typedef int32_t dviunits;
 /* integer round to the nearest number, not towards zero */
 #define PIXROUND(num,den) ((num)>0 ? ((num)+(den)/2)/(den) : -(((den)/2-(num))/(den)))
 
-#if HAVE_ALLOCA_H
+#ifdef HAVE_ALLOCA_H
 # include <alloca.h>
+#elif defined _AIX
+# define alloca _alloca
 #endif
 #define TEMPSTR(s,a) { char* tmp=a; \
                if (tmp!=NULL) {\
