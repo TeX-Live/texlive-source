@@ -140,7 +140,7 @@ typedef int32_t dviunits;
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
 #elif defined _AIX
-# define alloca _alloca
+# define alloca __alloca
 #endif
 #define TEMPSTR(s,a) { char* tmp=a; \
                if (tmp!=NULL) {\
