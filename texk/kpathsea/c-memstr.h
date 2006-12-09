@@ -1,7 +1,7 @@
 /* c-memstr.h: memcpy, strchr, etc.
 
-   Copyright 1998, 1999, 2000, 2004, 2005 Olaf Weber.
-   Copyright 1992, 93, 94, 95, 97 Karl Berry.
+   Copyright 1992, 1993, 1994, 1995, 1997 1998, 1999, 2000, 2004, 2005,
+   2006 Karl Berry and Olaf Weber.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -27,9 +27,11 @@
 
 #ifdef HAVE_STRING_H
 #include <string.h>
-#endif
+#else
+/* don't ever want both string.h and strings.h; fails on AIX.  */
 #ifdef HAVE_STRINGS_H
 #include <strings.h>
+#endif
 #endif
 
 /* An ANSI string.h and pre-ANSI memory.h might conflict.  */
