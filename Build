@@ -33,6 +33,7 @@ cd Work || exit 1
 
 # and then set GNUMAKE to that, for the sake of freetype2/configure.
 : ${GNUMAKE=${TL_MAKE}}
+export GNUMAKE
 
 # Force building xdvi-xaw; motif is not always free and/or available.
 # --enable-gif is for sam2p; the gif patent has expired worldwide.
