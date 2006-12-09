@@ -18,6 +18,13 @@
 
 #include "XeTeX_ext.h"
 
+/* use our own fmin function because it seems to be missing on certain platforms */
+inline double
+my_fmin(double x, double y)
+{
+	return (x < y) ? x : y;
+}
+
 int
 pdf_get_rect(char* filename, int page_num, int pdf_box, realrect* box)
 {
@@ -66,8 +73,8 @@ pdf_get_rect(char* filename, int page_num, int pdf_box, realrect* box)
 			break;
 	}
 
-	box->x  = 72 / 72.27 * fmin(r->x1, r->x2);
-	box->y  = 72 / 72.27 * fmin(r->y1, r->y2);
+	box->x  = 72 / 72.27 * my_fmin(r->x1, r->x2);
+	box->y  = 72 / 72.27 * my_fmin(r->y1, r->y2);
 	box->wd = 72 / 72.27 * fabs(r->x2 - r->x1);
 	box->ht = 72 / 72.27 * fabs(r->y2 - r->y1);
 

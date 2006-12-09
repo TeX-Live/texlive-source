@@ -1602,7 +1602,7 @@ input_line P1C(FILE *, f)
 
     return true;
 }
-#endif /* !XeTeX */
+#endif /* !XeTeX */
 
 /* This string specifies what the `e' option does in response to an
    error message.  */ 
