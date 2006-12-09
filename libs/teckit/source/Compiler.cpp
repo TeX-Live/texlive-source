@@ -13,6 +13,7 @@ Description:
 -------------------------------------------------------------------------*/
 
 /*
+	2006-12-09	jk	patch from Vladimir Volovich to build on AIX
 	2006-01-12	jk			removed multi-char constants, use FOUR_CHAR_CODE to define UInt32 values instead
 							(no functional change, just to avoid compiler warnings)
     2005-07-07  jk  2.1.5   changed to use WORDS_BIGENDIAN rather than TARGET_RT_BIG_ENDIAN
@@ -188,13 +189,13 @@ TECkit_DisposeCompiled(Byte* table)
 }
 
 
-static inline UInt8
+inline UInt8
 READ(const UInt8 p)
 {
 	return p;
 }
 
-static inline UInt16
+inline UInt16
 READ(const UInt16 p)
 {
 #ifdef WORDS_BIGENDIAN
@@ -204,7 +205,7 @@ READ(const UInt16 p)
 #endif
 }
 
-static inline UInt32
+inline UInt32
 READ(const UInt32 p)
 {
 #ifdef WORDS_BIGENDIAN

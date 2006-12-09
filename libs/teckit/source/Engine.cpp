@@ -13,6 +13,7 @@ Description:
 -------------------------------------------------------------------------*/
 
 /*
+	2006-12-09	jk	patch from Vladimir Volovich to build on AIX
 	2006-06-02	jk	added support for extended string rules (>255 per initial char)
 	2006-06-02	jk	fixed bug handling passes with no mapping rules
 	2006-01-12	jk	remove multi-char constants, use kTableType_XXX from TECkit_Format.h
@@ -71,13 +72,13 @@ int	traceLevel = 1;
 using namespace std;
 
 /* we apply READ to values read from the compiled table, to provide byte-swapping where needed */
-static inline UInt8
+inline UInt8
 READ(const UInt8 p)
 {
 	return p;
 }
 
-static inline UInt16
+inline UInt16
 READ(const UInt16 p)
 {
 #ifdef WORDS_BIGENDIAN
@@ -87,7 +88,7 @@ READ(const UInt16 p)
 #endif
 }
 
-static inline UInt32
+inline UInt32
 READ(const UInt32 p)
 {
 #ifdef WORDS_BIGENDIAN
