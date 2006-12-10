@@ -6,8 +6,11 @@ You may freely use, modify and/or distribute this file.
 To build the source tree, run ./Build.
 To build (mostly) without optimization, try CFLAGS=-g Build.
 
-The fontconfig (development) library must be present for XeTeX to build.
-Some terminal (development) library must be present for Texinfo to build.
+- Bison and Flex are needed for web2c.
+- libfontconfig (development) must be present for XeTeX to build, except
+  on MacOSX.
+- A terminal (development) library such as libncurses must be present for
+  Texinfo to build.
 
 The binaries will be left in ./inst/bin/<stdplatform>.
 Don't worry about the other files and directories in inst.
