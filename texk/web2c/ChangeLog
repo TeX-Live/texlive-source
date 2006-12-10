@@ -1,3 +1,9 @@
+2006-12-10  Karl Berry  <karl@tug.org>
+
+	* omegaware/odvicopy.ch (int_8): rename the type to int_8_odvicopy,
+	and @d int_8 itself to that, so that we don't end up with int8 in
+	the C file.  AIX inttypes.h declares that.  (Reported by vvv.)
+
 2006-09-05  Karl Berry  <karl@tug.org>
 
 	* bibtex.ch (BUF_SIZE): increase to 20000 per Lee Samuel Finn, via

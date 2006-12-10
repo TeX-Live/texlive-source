@@ -3,6 +3,7 @@
 % This file is part of the Omega project, which
 % is based in the web2c distribution of TeX.
 %
+% Copyright 2006 Karl Berry (to fix int_8 for AIX).
 % Copyright (c) 1994--1998 John Plaice and Yannis Haralambous
 % applies only to the changes to the original dvicopy.ch.
 %
@@ -62,6 +63,21 @@ procedure initialize; {this procedure gets things started properly}
 @!stack_size=100; {\.{DVI} files shouldn't |push| beyond this depth}
 @!terminal_line_length=256; {maximum number of characters input in a single
   line of input from the terminal}
+@z
+
+% int_8 conflicts with <sys/inttypes.h> on AIX.
+% It just gets turned into schar anyway, so use that.
+@x
+@d int_32 == integer {signed 32~bit integers}
+@y
+@d int_32 == integer {signed 32~bit integers}
+@d int_8 == int_8_odvicopy {avoid C declaration collision on AIX}
+@z
+%
+@x
+@!int_8 = -@"80..@"7F; {signed 8~bit integer}
+@y
+@!int_8_odvicopy = -@"80..@"7F; {signed 8~bit integer}
 @z
 
 % [14] Redirect output, so it can go to either stdout or stderr,
