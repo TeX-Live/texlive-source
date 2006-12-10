@@ -6,9 +6,15 @@ You may freely use, modify and/or distribute this file.
 To build the source tree, run ./Build.
 To build (mostly) without optimization, try CFLAGS=-g Build.
 
+The fontconfig (development) library must be present for XeTeX to build.
+Some terminal (development) library must be present for Texinfo to build.
+
 The binaries will be left in ./inst/bin/<stdplatform>.
-Then copy the binaries to texmf/bin/<tlplatform> and p4 add/edit/delete them.
-(Don't worry about the other files and directories in inst.)
+Don't worry about the other files and directories in inst.
+
+If you are going to check them in yourself, copy the binaries to
+texmf/bin/<tlplatform> and svn add/remove/commit them.
+
 
 Running ./reautoconf here reruns autoconf, both old (the hacked 2.13
 we have here) and new (assumed to be in /usr/bin/autoconf).
