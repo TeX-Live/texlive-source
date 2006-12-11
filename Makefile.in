@@ -61,7 +61,6 @@ install: all
 	if test -d $(texmf) && test -f $(srcdir)/release-tetex-src.txt; then \
 	  $(INSTALL_DATA) $(srcdir)/release-tetex-src.txt $(texmf); \
 	fi
-	$(MAKE) strip
 @FMU@
 @FMU@install-extra:
 # temporary fix for missing links
@@ -106,7 +105,7 @@ install-exec:
 	    $(scriptdir)/texlinks; \
 	else :; fi
 
-strip: 
+strip: install 
 	cd $(bindir) && strip * >/dev/null 2>&1 || true
 
 check:
@@ -145,7 +144,7 @@ tags TAGS:
 
 
 realclean: distclean
-world: install
+world: install strip
 pdftex pdfetex:
 	cd texk/web2c; $(MAKE) $@
 	test -f texk/web2c/pdftex && ls -l texk/web2c/pdftex
