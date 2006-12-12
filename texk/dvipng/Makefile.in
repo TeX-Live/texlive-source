@@ -162,10 +162,10 @@ dvipng.1: dvipng.texi readme.texi
 
 install-docs: docs
 	-$(MKINSTALLDIRS) $(DESTDIR)$(infodir)
-	for x in dvipng.info* ; do \
+	for x in $(srcdir)/dvipng.info* ; do \
 		$(INSTALL_DATA) $$x $(DESTDIR)$(infodir) ; \
 	done
-	-$(INSTALL_INFO) --info-dir=$(DESTDIR)$(infodir) dvipng.info
+	-$(INSTALL_INFO) --info-dir=$(DESTDIR)$(infodir) $(srcdir)/dvipng.info
 	-$(MKINSTALLDIRS) $(DESTDIR)$(mandir)/man1
 	$(INSTALL_DATA) $(srcdir)/dvipng.1 $(DESTDIR)$(mandir)/man1
 
