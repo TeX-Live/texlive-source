@@ -1,3 +1,11 @@
+2006-12-11  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (world, install): hmm, maybe better as a dependency
+	than a submake.
+
+	* Makefile.in (install): reinstate strip.
+	(strip): actually strip.
+
 2006-12-08  Karl Berry  <karl@tug.org>
 
 	* Build: set GNUMAKE to TL_MAKE for freetype2/configure, and
