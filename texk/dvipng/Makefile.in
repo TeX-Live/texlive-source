@@ -124,7 +124,7 @@ dvipng.ps: dvipng.dvi
 dvipng.info: $(TEXIFILES) dvipng.help
 	-$(MAKEINFO) -I$(srcdir) $(srcdir)/dvipng.texi
 
-dvipng.help: dvipng
+dvipng.help: misc.c
 	-./dvipng > dvipng.tmp
 	( test -r dvipng.help && diff dvipng.tmp dvipng.help ) \
 		|| cp dvipng.tmp dvipng.help
