@@ -43,12 +43,11 @@ This is translated from LATEX.HLP v1.0a in the VMS Help Library.  The
 pre-translation version was written by George D. Greenwade of Sam
 Houston State University.
 
-The LaTeX 2.09 version was written by Stephen Gilmore <stg@@dcs.ed.ac.uk>.
+The LaTeX 2.09 version was written by Stephen Gilmore,
 
-The LaTeX2e version was adapted from this by Torsten Martinsen
-<bullestock@@dk-online.dk>.
+The LaTeX2e version was adapted from this by Torsten Martinsen.
 
-Copyright 1988,1994 Free Software Foundation, Inc.
+Copyright 1988,1994 Stephen Gilmore.
 Copyright 1994-1996 Torsten Martinsen.
 
 Permission is granted to make and distribute verbatim copies of
@@ -115,12 +114,12 @@ Sam Houston State University. It has been edited to this form by Paul
 Nothard of Edinburgh University.
 
 The original (latex.texi and latex2.texi) was distributed by 
-Stephen Gilmore <stg@@dcs.ed.ac.uk>, August 26th 1993.
+Stephen Gilmore, August 26th 1993.
 
-Version 1.1 was made by Piet van Oostrum <piet@@cs.ruu.nl> on Dec 14,
+Version 1.1 was made by Piet van Oostrum on Dec 14,
 1993 by merging and cleaning up latex.texi and latex2.texi.
 
-Versions 1.2 trough 1.6 by Torsten Martinsen <bullestock@@dk-online.dk>.
+Versions 1.2 trough 1.6 by Torsten Martinsen.
 
 @sp 2
 
