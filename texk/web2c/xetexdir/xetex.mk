@@ -29,8 +29,7 @@ xetex = @XETEX@ xetex
 
 @XETEX_GENERIC@ XETEX_DEFINES = -DXETEX_OTHER
 
-@XETEX_GENERIC@ # FIXME: FontConfig not yet handled by configure
-@XETEX_GENERIC@ EXTRALIBS = @LDLIBXPDF@ @LDLIBPNG@ -lfontconfig
+@XETEX_GENERIC@ EXTRALIBS = @LDLIBXPDF@ @LDLIBPNG@ @LDFONTCONFIG@
 
 @XETEX_GENERIC@ EXTRADEPS = @LIBXPDFDEP@ @LIBPNGDEP@
 
@@ -78,6 +77,8 @@ LDZLIB = @LDZLIB@
 
 ZLIBDIR = ../../libs/zlib
 ZLIBSRCDIR = $(srcdir)/$(ZLIBDIR)
+
+FONTCONFIGCPPFLAGS = @FONTCONFIGCPPFLAGS@
 
 xetexlibs = $(LDICU) $(LDTECKIT) $(LDFREETYPE2) $(LDZLIB)
 
@@ -156,14 +157,14 @@ xetex_ot_layout_o = \
 		$(xetex_platform_layout_o) 
 
 XeTeXLayoutInterface.o: $(srcdir)/xetexdir/XeTeXLayoutInterface.cpp $(XeTeXFontHdrs)
-	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
+	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(FONTCONFIGCPPFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
 XeTeXOTLayoutEngine.o: $(srcdir)/xetexdir/XeTeXOTLayoutEngine.cpp $(XeTeXFontHdrs)
-	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
+	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(FONTCONFIGCPPFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
 
 XeTeXFontMgr.o: $(srcdir)/xetexdir/XeTeXFontMgr.cpp  $(XeTeXFontHdrs)
-	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
+	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(FONTCONFIGCPPFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
 XeTeXFontMgr_FC.o: $(srcdir)/xetexdir/XeTeXFontMgr_FC.cpp  $(XeTeXFontHdrs)
-	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
+	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(FONTCONFIGCPPFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
 
 XeTeXFontMgr_Mac.o: $(srcdir)/xetexdir/XeTeXFontMgr_Mac.mm  $(XeTeXFontHdrs)
 	gcc -ObjC++ $(ICUCFLAGS) $(FTFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
@@ -174,14 +175,14 @@ FontTableCache.o: $(srcdir)/xetexdir/FontTableCache.cpp
 	$(CXX) $(ICUCFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
 
 XeTeXFontInst.o: $(srcdir)/xetexdir/XeTeXFontInst.cpp $(XeTeXFontHdrs)
-	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
+	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(FONTCONFIGCPPFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
 XeTeXFontInst_Mac.o: $(srcdir)/xetexdir/XeTeXFontInst_Mac.cpp $(XeTeXFontHdrs)
 	$(CXX) $(ICUCFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
 XeTeXFontInst_FT2.o: $(srcdir)/xetexdir/XeTeXFontInst_FT2.cpp $(XeTeXFontHdrs)
-	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
+	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(FONTCONFIGCPPFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
 
 XeTeXOTMath.o: $(srcdir)/xetexdir/XeTeXOTMath.cpp $(XeTeXFontHdrs)
-	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
+	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(FONTCONFIGCPPFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
 
 # special rules for files that need the TECkit headers as well
 XeTeX_ext.o: $(srcdir)/xetexdir/XeTeX_ext.c xetexd.h

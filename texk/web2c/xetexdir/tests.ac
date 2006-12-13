@@ -47,3 +47,39 @@ ImageDescriptionHandle h;
     ]
   )
 ])
+
+AC_DEFUN([AC_HAS_LIBFONTCONFIG], [
+#
+#   Check for libfontconfig
+#
+  _cppflags=$CPPFLAGS _ldflags=$LDFLAGS
+  AC_ARG_WITH(fontconfig,
+    [  --with-fontconfig=DIR   use fontconfig include/library files from DIR],
+    [
+if test -d "$withval"; then
+  FONTCONFIGCPPFLAGS="-I$withval/include"
+  LDFONTCONFIG="-L$withval/lib"
+  CPPFLAGS="$CPPFLAGS $FONTCONFIGCPPFLAGS"
+  LDFLAGS="$LDFLAGS $LDFONTCONFIG"
+fi
+    ]
+  )
+  AC_MSG_CHECKING([for fontconfig header files])
+  AC_TRY_COMPILE(
+    [
+#include <fontconfig/fontconfig.h>
+      ], [
+FcObjectSet *os;
+    ],
+    [ AC_MSG_RESULT(yes)
+      AC_CHECK_LIB(fontconfig, FcInit, [
+        AC_DEFINE(HAVE_LIBFONTCONFIG, 1, [Define if you have libfontconfig])
+        LDFONTCONFIG="$LDFONTCONFIG -lfontconfig"
+      ])
+    ],
+    [ AC_MSG_RESULT(no)
+      FONTCONFIGCPPFLAGS=
+      LDFONTCONFIG=
+    ]
+  )
+])

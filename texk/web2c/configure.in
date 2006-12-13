@@ -287,18 +287,32 @@ else
 fi
 AC_SUBST(XETEX)
 
+sinclude(xetexdir/withenable.ac)
 sinclude(xetexdir/tests.ac)
-AC_HAS_CARBON
+if test "x$with_xetex" = xyes; then
+  AC_HAS_CARBON
 
-if test "x$has_carbon" = "xyes"; then
-  XETEX_MACOSX=
-  XETEX_GENERIC='#! '
-else
-  XETEX_MACOSX='#! '
-  XETEX_GENERIC=
+  if test "x$has_carbon" = "xyes"; then
+    XETEX_MACOSX=
+    XETEX_GENERIC='#! '
+  else
+    XETEX_MACOSX='#! '
+    XETEX_GENERIC=
+
+    AC_HAS_LIBFONTCONFIG
+    if test "x$LDFONTCONFIG" = "x"; then
+      AC_MSG_ERROR([
+Cannot build XeTeX without libfontconfig.
+Use the --with-fontconfig=DIR option to specify the prefix where
+fontconfig is installed.
+      ])
+    fi
+    AC_SUBST(FONTCONFIGCPPFLAGS)
+    AC_SUBST(LDFONTCONFIG)
+  fi
+  AC_SUBST(XETEX_MACOSX)
+  AC_SUBST(XETEX_GENERIC)
 fi
-AC_SUBST(XETEX_MACOSX)
-AC_SUBST(XETEX_GENERIC)
 
 # For e-TeX, three choices: no, yes, and tex.  In the latter case, we
 # have to comment out the normal TeX build (TEX), as well as enable the
