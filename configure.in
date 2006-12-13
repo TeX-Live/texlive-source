@@ -175,10 +175,11 @@ test "$with_ttf2pk" = no        && : ${needs_freetype=no}
 : ${needs_freetype=yes}
 export needs_freetype
 
-# we need freetype2 for xetex, xdvipdfmx
+# we need freetype2 for xetex, xdvipdfmx, dvipng
 test ! -d $srcdir/$FREETYPE2DIR && : ${needs_freetype2=no}
 test "$with_xetex"   != no      && : ${needs_freetype2=yes}
 test "$with_xdvipdfmx" != no    && : ${needs_freetype2=yes}
+test "$with_dvipng" != no       && : ${needs_freetype2=yes}
 : ${needs_freetype2=no}
 export needs_freetype2
 
