@@ -1,5 +1,16 @@
 LCDF Typetools NEWS
 
+Version 2.48   11.Dec.2006
+
+* Translate font names into UTF-8 encoding.  Reported by John Owens.
+
+
+Version 2.47   10.Dec.2006
+
+* otfinfo: Add new names, such as "Preferred Family", to 'otfinfo -i' output.
+  Requested by John Owens.
+
+
 Version 2.46   29.Oct.2006
 
 * otftotfm: Base metrics files now reflect the actual base font metrics

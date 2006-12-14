@@ -1,5 +1,5 @@
 '\"t
-.ds V 2.46
+.ds V 2.48
 .de M
 .BR "\\$1" "(\\$2)\\$3"
 ..
@@ -151,11 +151,13 @@ and
 options.  \fISignature\fR is an opaque 6-character encoding signature.
 .PP
 .B Otftotfm
-also installs a version of the font suitable for printing.
+also installs a font file suitable for printing.
 PostScript-flavored OpenType fonts are translated to Type 1 format and
 installed as PFB fonts; TrueType-flavored fonts are installed as is (pdftex
-and pdflatex can read TrueType directly).  The installation paths are as
-follows; \fIPSname\fR is the font's PostScript name.
+and pdflatex can read TrueType directly).  However,
+.B otftotfm
+will not install a font file if one already exists.  The installation paths
+are as follows, where \fIPSname\fR is the font's PostScript name.
 .TS
 l	l	l	.
 PFB	TEXMF/fonts/type1/\fIvendor\fR/\fItypeface\fR/	\fIPSname\fR.pfb

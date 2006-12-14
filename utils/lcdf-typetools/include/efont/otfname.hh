@@ -19,8 +19,12 @@ class Name { public:
 		  N_POSTSCRIPT = 6, N_TRADEMARK = 7, N_MANUFACTURER = 8,
 		  N_DESIGNER = 9, N_DESCRIPTION = 10, N_VENDOR_URL = 11,
 		  N_DESIGNER_URL = 12, N_LICENSE_DESCRIPTION = 13,
-		  N_LICENSE_URL = 14 };
-    enum Platform { P_UNICODE = 0, P_MACINTOSH = 1, P_MICROSOFT = 3 };
+		  N_LICENSE_URL = 14, N_PREF_FAMILY = 16,
+		  N_PREF_SUBFAMILY = 17, N_MAC_COMPAT_FULLNAME = 18,
+		  N_SAMPLE_TEXT = 19, N_POSTSCRIPT_CID = 20 };
+    enum Platform { P_UNICODE = 0, P_MACINTOSH = 1, P_MICROSOFT = 3,
+		    E_MS_UNICODE_BMP = 1, E_MAC_ROMAN = 0,
+		    L_MS_ENGLISH_AMERICAN = 0x409 };
     enum { HEADER_SIZE = 6, NAMEREC_SIZE = 12 };
     
     typedef uint8_t namerecord_t[NAMEREC_SIZE];
@@ -34,6 +38,7 @@ class Name { public:
     inline const_iterator begin() const;
     inline const_iterator end() const;
     String name(const_iterator) const;
+    String utf8_name(const_iterator) const;
     String english_name(int nameid) const;
 
     // check version string for backwards compatibility
@@ -119,8 +124,8 @@ inline bool Name::EnglishPlatformPred::operator()(const namerecord_t &i) const
 {
     if (_nameid == nameid(i)) {
 	int p = platform(i), e = encoding(i), l = language(i);
-	return (p == P_MACINTOSH && e == 0 && l == 0)
-	    || (p == P_MICROSOFT && e == 1 && l == 0x409);
+	return (p == P_MACINTOSH && e == E_MAC_ROMAN && l == 0)
+	    || (p == P_MICROSOFT && e == E_MS_UNICODE_BMP && l == L_MS_ENGLISH_AMERICAN);
     } else
 	return false;
 }

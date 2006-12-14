@@ -81,6 +81,27 @@ StringAccum::grow(int want)
   return true;
 }
 
+void
+StringAccum::append_utf8_hard(uint32_t ch)
+{
+    if (ch < 0x80)
+	append((unsigned char) ch);
+    else if (ch < 0x800) {
+	append((unsigned char) (0xC0 + ((ch >> 6) & 0x1F)));
+	append((unsigned char) (0x80 + (ch & 0x3F)));
+    } else if (ch < 0x10000) {
+	append((unsigned char) (0xE0 + ((ch >> 12) & 0x0F)));
+	append((unsigned char) (0x80 + ((ch >> 6) & 0x3F)));
+	append((unsigned char) (0x80 + (ch & 0x3F)));
+    } else if (ch < 0x110000) {
+	append((unsigned char) (0xF0 + ((ch >> 18) & 0x07)));
+	append((unsigned char) (0x80 + ((ch >> 12) & 0x3F)));
+	append((unsigned char) (0x80 + ((ch >> 6) & 0x3F)));
+	append((unsigned char) (0x80 + (ch & 0x3F)));
+    } else
+	append((unsigned char) '?');
+}
+
 const char *
 StringAccum::c_str()
 {

@@ -358,6 +358,14 @@ do_info(const OpenType::Font &otf, ErrorHandler *errh, ErrorHandler *result_errh
 		sa << "Full name:           " << s << "\n";
 	    if (String s = name.english_name(OpenType::Name::N_POSTSCRIPT))
 		sa << "PostScript name:     " << s << "\n";
+	    if (String s = name.english_name(OpenType::Name::N_POSTSCRIPT_CID))
+		sa << "PostScript CID name: " << s << "\n";
+	    if (String s = name.english_name(OpenType::Name::N_PREF_FAMILY))
+		sa << "Preferred family:    " << s << "\n";
+	    if (String s = name.english_name(OpenType::Name::N_PREF_SUBFAMILY))
+		sa << "Preferred subfamily: " << s << "\n";
+	    if (String s = name.english_name(OpenType::Name::N_MAC_COMPAT_FULLNAME))
+		sa << "Mac font menu name:  " << s << "\n";
 	    if (String s = name.english_name(OpenType::Name::N_VERSION))
 		sa << "Version:             " << s << "\n";
 	    if (String s = name.english_name(OpenType::Name::N_UNIQUEID))
@@ -380,11 +388,13 @@ do_info(const OpenType::Font &otf, ErrorHandler *errh, ErrorHandler *result_errh
 		sa << "License URL:         " << s << "\n";
 	    if (String s = name.english_name(OpenType::Name::N_LICENSE_DESCRIPTION))
 		sa << "License Description: " << s << "\n";
+	    if (String s = name.english_name(OpenType::Name::N_SAMPLE_TEXT))
+		sa << "Sample text:         " << s << "\n";
 	}
     }
 
-    if (errh->nerrors() == before_nerrors)
-	result_errh->message("%s", (sa ? sa.c_str() : "no designer information"));
+    if (errh->nerrors() == before_nerrors) 
+	result_errh->message("%s", (sa ? sa.c_str() : "no name information"));
 }
 
 static void

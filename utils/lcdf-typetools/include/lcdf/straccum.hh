@@ -41,6 +41,7 @@ class StringAccum { public:
   
     inline void append(char);
     inline void append(unsigned char);
+    inline void append_utf8(uint32_t);
     inline void append(const char *, int);
     inline void append(const char *begin, const char *end);
     inline void append(const unsigned char *, int);
@@ -69,7 +70,8 @@ class StringAccum { public:
     void make_out_of_memory();
     inline void safe_append(const char *, int);
     bool grow(int);
-    void erase()		{ _s = 0; _len = 0; _cap = 0; }
+    inline void erase();
+    void append_utf8_hard(uint32_t);
 
     StringAccum(const StringAccum &);
     StringAccum &operator=(const StringAccum &);
@@ -122,6 +124,15 @@ StringAccum::append(char c)
     append(static_cast<unsigned char>(c));
 }
 
+inline void
+StringAccum::append_utf8(uint32_t ch)
+{
+    if (ch < 0x80)
+	append((unsigned char) ch);
+    else
+	append_utf8_hard(ch);
+}
+
 inline char *
 StringAccum::reserve(int hm)
 {
@@ -172,6 +183,14 @@ StringAccum::append(const char *begin, const char *end)
 	safe_append(begin, end - begin);
     else if (begin == String::out_of_memory_data())
 	make_out_of_memory();
+}
+
+inline void
+StringAccum::erase()
+{
+    _s = 0;
+    _len = 0;
+    _cap = 0;
 }
 
 inline unsigned char *
