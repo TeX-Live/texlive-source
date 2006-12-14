@@ -886,8 +886,9 @@ install-tex-pool: tex.pool $(texpooldir)
 	$(INSTALL_DATA) tex.pool $(texpooldir)/tex.pool
 install-mf-pool: mf.pool $(mfpooldir)
 	$(INSTALL_DATA) mf.pool $(mfpooldir)/mf.pool
-install-mpost-pool: mp.pool $(mppooldir)
-	$(INSTALL_DATA) mp.pool $(mppooldir)/mp.pool
+install-mpost-pool: # no longer used, the strings are in the binary
+# install-mpost-pool: mp.pool $(mppooldir)
+# 	$(INSTALL_DATA) mp.pool $(mppooldir)/mp.pool
 
 # Auxiliary files.
 install-data:: $(web2cdir)
