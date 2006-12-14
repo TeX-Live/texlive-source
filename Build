@@ -4,6 +4,10 @@
 # To build (mostly) without optimization, try CFLAGS=-g Build.
 # Any options given are passed along to configure.
 
+# cd to our source directory.
+mydir=`dirname $0`
+cd $mydir || exit 1
+
 if test "x$1" != "x--no-clean"; then
   test -f Makefile && make clean 
   rm -rf Work inst
@@ -28,8 +32,14 @@ cd Work || exit 1
 # allow override of xdvi toolkit.
 : ${TL_XDVI_TOOLKIT=--with-xdvi-x-toolkit=xaw}
 
+# allow adding other configure args.
+: ${TL_CONFIGURE_ARGS=}
+
 # allow override of make program.
 : ${TL_MAKE=make}
+
+# allow override of make target.
+: ${TL_TARGET=world}
 
 # and then set GNUMAKE to that, for the sake of freetype2/configure.
 : ${GNUMAKE=${TL_MAKE}}
@@ -42,5 +52,6 @@ export GNUMAKE
          --prefix=$TL_INSTALL_DEST \
          --datadir=$TL_INSTALL_DEST \
          $TL_XDVI_TOOLKIT \
+         $TL_CONFIGURE_ARGS \
          "$@" \
- && time $TL_MAKE world)
+ && time $TL_MAKE $TL_TARGET)
