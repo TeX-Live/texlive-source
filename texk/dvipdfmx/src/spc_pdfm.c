@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_pdfm.c,v 1.23 2005/08/24 01:25:51 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_pdfm.c,v 1.24 2006/12/11 12:46:03 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -754,7 +754,8 @@ spc_handler_pdfm_etrans (struct spc_env *spe, struct spc_arg *args)
    * we make no assumptions about what fonts. We act like we are
    * starting a new page.
    */
-  pdf_dev_reset();
+  pdf_dev_reset_fonts();
+  pdf_dev_reset_color();
 
   return  0;
 }

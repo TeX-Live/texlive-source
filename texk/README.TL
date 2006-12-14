@@ -6,7 +6,7 @@ afm2pl 0.7.03 - ok 5dec06
 
 devnag - from devnag package installed in texmf-dist.
 
-dvipdfmx 20050831 - ok 5dec06
+dvipdfmx 20061211 - ok 14dec06
   http://project.ktug.or.kr/dvipdfmx/snapshot/current/
   -> http://www.ctan.org/tex-archive/dviware/dvipdfmx/
 

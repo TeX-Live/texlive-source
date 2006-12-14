@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.45 2005/07/30 11:44:18 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.47 2006/12/11 13:23:26 chofchof Exp $
     
     This is DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
 
@@ -123,7 +123,7 @@ usage (void)
 {
   fprintf (stdout, "\nThis is %s-%s by the DVIPDFMx project team,\n", PACKAGE, VERSION);
   fprintf (stdout, "an extended version of dvipdfm-0.13.2c developed by Mark A. Wicks.\n");
-  fprintf (stdout, "\nCopyright (C) 2002-2005 by the DVIPDFMx project team\n");
+  fprintf (stdout, "\nCopyright (C) 2002-2006 by the DVIPDFMx project team\n");
   fprintf (stdout, "\nThis is free software; you can redistribute it and/or modify\n");
   fprintf (stdout, "it under the terms of the GNU General Public License as published by\n");
   fprintf (stdout, "the Free Software Foundation; either version 2 of the License, or\n");
@@ -665,13 +665,14 @@ do_dvi_pages (void)
     page_no = page_ranges[i].first;
     for (;;) {
       if (page_no < dvi_npages()) {
-        double w, h;
+        double w, h, xo, yo;
         char   lm;
 
         MESG("[%d", page_no+1);
         /* Users want to change page size even after page is started! */
         w = page_width; h = page_height; lm = landscape_mode;
-        dvi_scan_paper_size(page_no, &w, &h, &lm);
+        xo = x_offset; yo = y_offset;
+        dvi_scan_paper_size(page_no, &w, &h, &xo, &yo, &lm);
         if (lm != landscape_mode) {
           SWAP(w, h);
           landscape_mode = lm;
@@ -679,6 +680,10 @@ do_dvi_pages (void)
         if (page_width  != w || page_height != h) {
           page_width  = w;
           page_height = h;
+        }
+        if (x_offset != xo || y_offset != yo) {
+          x_offset = xo;
+          y_offset = yo;
         }
         if (page_width  != paper_width ||
             page_height != paper_height) {
@@ -832,7 +837,7 @@ main (int argc, char *argv[])
     if (dvi2pts == 0.0)
       ERROR("dvi_init() failed!");
 
-    dvi_scan_paper_size(0, &paper_width, &paper_height, &landscape_mode);
+    dvi_scan_paper_size(0, &paper_width, &paper_height, &x_offset, &y_offset, &landscape_mode);
     if (landscape_mode) {
       SWAP(paper_width, paper_height);
     }

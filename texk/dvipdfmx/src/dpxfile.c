@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dpxfile.c,v 1.13 2005/07/20 10:41:54 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dpxfile.c,v 1.14 2005/12/18 14:56:47 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -669,7 +669,7 @@ dpx_create_temp_file (void)
     char *_tmpa = NEW(L_tmpnam + 1, char);
     tmp = tmpnam(_tmpa);
     if (!tmp)
-      RELEASE(tmpa);
+      RELEASE(_tmpa);
   }
 #endif /* MIKTEX */
 

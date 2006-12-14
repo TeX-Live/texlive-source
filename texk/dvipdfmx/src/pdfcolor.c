@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfcolor.c,v 1.11 2005/08/18 04:36:20 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfcolor.c,v 1.13 2006/12/11 12:46:03 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -350,6 +350,20 @@ static struct {
   0,
 };
 
+/* BUG (20060330): color change does not effect on the next page.
+ *   The problem is due to the part of grestore because it restores
+ *   the color values in the state of gsave which are not correct
+ *   if the color values are changed inside of a page.
+ */
+void
+pdf_dev_preserve_color (void)
+{
+  if (color_stack.next > 0) {
+    current_stroke = color_stack.stroke[color_stack.next];
+    current_fill   = color_stack.fill[color_stack.next];
+  }
+}
+
 void
 pdf_dev_reset_color (void)
 {
@@ -369,10 +383,6 @@ pdf_dev_reset_color (void)
     strokecolor = default_color;
     fillcolor   = default_color;
   }
-#if  0
-  pdf_color_graycolor(&current_stroke, 0.0);
-  pdf_color_graycolor(&current_fill, 0.0);
-#endif
 
   pdf_dev_setcolor(&strokecolor, 0);
   pdf_dev_setcolor(&fillcolor, 1);
@@ -403,7 +413,7 @@ pdf_color_push (void)
   memcpy(&color_stack.fill[current],
 	 &current_fill  , sizeof(pdf_color));
 
-  color_stack.next += 1;
+  color_stack.next++;
 
   return;
 }

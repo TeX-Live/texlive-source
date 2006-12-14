@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dvi.h,v 1.12 2004/09/02 12:23:06 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dvi.h,v 1.13 2006/12/06 12:50:40 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -70,6 +70,7 @@ extern void  dvi_do_page  (unsigned page_no,
 			   double x_offset,    double y_offset);
 extern void  dvi_scan_paper_size (unsigned page_no,
 				  double *width, double *height,
+				  double *x_offset, double *y_offset,
 				  char *landscape);
 extern int   dvi_locate_font   (const char *name, spt_t ptsize);
 

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/t1_load.c,v 1.9 2005/07/17 09:53:38 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/t1_load.c,v 1.10 2006/12/06 12:52:43 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -641,19 +641,34 @@ parse_charstrings (cff_font *font,
     char *glyph_name;
     long  len, gid, j;
 
-    glyph_name = get_next_key(start, end);
-    if (!glyph_name) {
-      return -1;
-    } else if (!strcmp(glyph_name, ".notdef")) {
-      gid = 0;
-      have_notdef = 1;
-    } else if (have_notdef) {
-      gid = i;
-    } else if (i == count - 1) {
-      WARN("No .notdef glyph???");
-      return -1;
+    /* BUG-20061126 (by ChoF):
+     * Some fonts (e.g., belleek/blsy.pfb) does not have the correct number
+     * of glyphs. Modify the codes even to work with these broken fonts.
+     */
+    tok = pst_get_token(start, end);
+    glyph_name = (char *)pst_getSV(tok);
+
+    if (PST_NAMETYPE(tok)) {
+      RELEASE_TOK(tok);
+      if (!glyph_name) {
+        return -1;
+      } else if (!strcmp(glyph_name, ".notdef")) {
+        gid = 0;
+        have_notdef = 1;
+      } else if (have_notdef) {
+        gid = i;
+      } else if (i == count - 1) {
+        WARN("No .notdef glyph???");
+        return -1;
+      } else {
+        gid = i+1;
+      }
+    } else if (PST_UNKNOWNTYPE(tok) && !strcmp(glyph_name, "end")) {
+      RELEASE_TOK(tok);
+      break;
     } else {
-      gid = i+1;
+      RELEASE_TOK(tok);
+      return -1;
     }
 
     if (gid > 0)
@@ -731,6 +746,13 @@ parse_charstrings (cff_font *font,
       }
     }
     *start += len;
+
+    tok = pst_get_token(start, end);
+    if (!MATCH_OP(tok, "ND") && !MATCH_OP(tok, "|-")) {
+      RELEASE_TOK(tok);
+      return -1;
+    }
+    RELEASE_TOK(tok);
   }
   if (mode != 1)
     charstrings->offset[count] = offset + 1;

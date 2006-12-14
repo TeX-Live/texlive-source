@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdev.c,v 1.60 2005/08/12 18:22:24 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdev.c,v 1.61 2006/12/11 12:46:03 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -1186,22 +1186,6 @@ pdf_close_device (void)
  * BOP and EOP manipulate some of the same data structures
  * as the font stuff.
  */
-
-
-/*
- * The following routine is here for forms.  Since a form is
- * self-contained, it will need its own Tf command at the
- * beginningg even if it is continuing to set type in the
- * current font.  This routine simply forces reinstantiation
- * of the current font.
- */
-void
-pdf_dev_reset (void)
-{
-  pdf_dev_reset_fonts();
-  pdf_dev_reset_color();
-}
-
 void
 pdf_dev_reset_fonts (void)
 {
@@ -1247,7 +1231,9 @@ pdf_dev_bop (const pdf_tmatrix *M)
   pdf_dev_gsave();
   pdf_dev_concat(M);
 
-  pdf_dev_reset();
+  pdf_dev_reset_fonts();
+  pdf_dev_preserve_color(); /* preserve the last color in the previous page */
+  pdf_dev_reset_color();
 }
 
 void

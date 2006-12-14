@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/truetype.c,v 1.4 2005/08/30 07:52:33 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/truetype.c,v 1.5 2005/12/29 04:07:04 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -58,9 +58,6 @@
 #  undef ENABLE_NOEMBED
 #endif
 
-#define dpx_open_file(n,d,f) DPXFOPEN((n), DPX_RES_TYPE_TTFONT)
-#define dpx_fclose(fp)  MFCLOSE(fp)
-
 int
 pdf_font_open_truetype (pdf_font *font)
 {
@@ -78,14 +75,14 @@ pdf_font_open_truetype (pdf_font *font)
 
   ASSERT( ident );
 
-  fp = dpx_open_file(ident, "fonts", "truetype");
+  fp = DPXFOPEN(ident, DPX_RES_TYPE_TTFONT);
   if (!fp)
     return  -1;
 
   sfont = sfnt_open(fp);
   if (!sfont) {
     WARN("Could not open TrueType font: %s", ident);
-    dpx_fclose(fp);
+    DPXFCLOSE(fp);
     return  -1;
   }
 
@@ -95,7 +92,7 @@ pdf_font_open_truetype (pdf_font *font)
     error = sfnt_read_table_directory(sfont, 0);
   if (error) {
     sfnt_close(sfont);
-    dpx_fclose(fp);
+    DPXFCLOSE(fp);
     return  -1; /* Silently */
   }
 
@@ -117,7 +114,7 @@ pdf_font_open_truetype (pdf_font *font)
     if (!tmp) {
       ERROR("Could not obtain neccesary font info.");
       sfnt_close(sfont);
-      dpx_fclose(fp);
+      DPXFCLOSE(fp);
       return  -1;
     }
     ASSERT(pdf_obj_typeof(tmp) == PDF_DICT);
@@ -180,7 +177,7 @@ pdf_font_open_truetype (pdf_font *font)
   }
 
   sfnt_close(sfont);
-  dpx_fclose(fp);
+  DPXFCLOSE(fp);
 
   pdf_add_dict(fontdict,
                pdf_new_name("Type"),    pdf_new_name("Font"));
@@ -891,20 +888,20 @@ pdf_font_load_truetype (pdf_font *font)
      /* encoding_id < 0 means MacRoman here (but not really) */
   }
 
-  fp = dpx_open_file(ident, "fonts", "truetype");
+  fp = DPXFOPEN(ident, DPX_RES_TYPE_TTFONT);
   if (!fp)
     ERROR("Unable to open TrueType font file: %s", ident); /* Should find *truetype* here */
 
   sfont = sfnt_open(fp);
   if (!sfont) {
     ERROR("Unable to open TrueType file: %s", ident);
-    dpx_fclose(fp);
+    DPXFCLOSE(fp);
     return  -1;
   } else if (sfont->type != SFNT_TYPE_TRUETYPE &&
              sfont->type != SFNT_TYPE_TTC) { 
     ERROR("Font \"%s\" not a TrueType font?", ident);
     sfnt_close(sfont);
-    dpx_fclose(fp);
+    DPXFCLOSE(fp);
     return  -1;
   }
 
@@ -916,7 +913,7 @@ pdf_font_load_truetype (pdf_font *font)
   if (error) {
     ERROR("Reading SFND table dir failed for font-file=\"%s\"... Not a TrueType font?", ident);
     sfnt_close(sfont);
-    dpx_fclose(fp);
+    DPXFCLOSE(fp);
     return  -1;
   }
 
@@ -932,14 +929,14 @@ pdf_font_load_truetype (pdf_font *font)
   if (error) {
     ERROR("Error occured while creating font subfont for \"%s\"", ident);
     sfnt_close(sfont);
-    dpx_fclose(fp);
+    DPXFCLOSE(fp);
     return  -1;
   }
 
 #if  ENABLE_NOEMBED
   if (!embedding) {
     sfnt_close(sfont);
-    dpx_fclose(fp);
+    DPXFCLOSE(fp);
     return  0;
   }
 #endif /* ENABLE_NOEMBED */
@@ -955,7 +952,7 @@ pdf_font_load_truetype (pdf_font *font)
       ERROR("Required TrueType table \"%s\" does not exist in font: %s",
             required_table[i].name, ident);
       sfnt_close(sfont);
-      dpx_fclose(fp);
+      DPXFCLOSE(fp);
       return  -1;
     }
   }
@@ -968,7 +965,7 @@ pdf_font_load_truetype (pdf_font *font)
     ERROR("Could not created FontFile stream for \"%s\".", ident);
 
   sfnt_close(sfont);
-  dpx_fclose(fp);
+  DPXFCLOSE(fp);
 
   if (verbose > 1)
     MESG("[%ld bytes]", pdf_stream_length(fontfile));

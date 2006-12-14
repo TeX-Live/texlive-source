@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.41 2005/08/31 08:01:05 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.43 2005/09/06 04:17:15 chofchof Exp $
  
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -492,20 +492,13 @@ asn_date (char *date_string)
 {
   time_t      current_time;
   struct tm  *bd_time;
-#ifndef HAVE_TIMEZONE
-  #ifdef TM_GM_TOFF
-     #define timezone (bdtime->gm_toff)
-  #else
-     #define timezone 0l
-  #endif /* TM_GM_TOFF */
-#endif /* HAVE_TIMEZONE */
 
   time(&current_time);
   bd_time = localtime(&current_time);
   sprintf(date_string, "D:%04d%02d%02d%02d%02d%02d%+03ld'%02ld'",
 	  bd_time->tm_year + 1900, bd_time->tm_mon + 1, bd_time->tm_mday,
 	  bd_time->tm_hour, bd_time->tm_min, bd_time->tm_sec,
-	  -timezone/3600, timezone % 3600);
+	  -(bd_time->tm_gmtoff / 3600), (bd_time->tm_gmtoff % 3600) / 60);
 
   return strlen(date_string);
 }
@@ -1991,19 +1984,13 @@ pdf_doc_add_page_content (const char *buffer, unsigned length)
 {
   pdf_doc  *p = &pdoc;
   pdf_page *currentpage;
-  pdf_obj  *contents;
-  char     *pending_tbuf;
-  int       tbuf_len;
 
-  currentpage = LASTPAGE(p);
-  contents = (p->pending_forms ?
-	      p->pending_forms->form.contents : currentpage->contents);
-
-  tbuf_len = pdf_dev_flushtmatrix(&pending_tbuf);
-  if (tbuf_len > 0) {
-    pdf_add_stream(contents, pending_tbuf, tbuf_len);
+  if (p->pending_forms) {
+    pdf_add_stream(p->pending_forms->form.contents, buffer, length);
+  } else {
+    currentpage = LASTPAGE(p);
+    pdf_add_stream(currentpage->contents, buffer, length);
   }
-  pdf_add_stream(contents, buffer, length);
 
   return;
 }
@@ -2215,9 +2202,6 @@ pdf_doc_begin_grabbing (const char *ident,
                                       PDF_XOBJECT_TYPE_FORM,
                                       &info, pdf_ref_obj(form->contents));
 
-  /* Must call pdf_dev_flushtmatrix(). */
-  pdf_doc_add_page_content(NULL, 0);
-
   p->pending_forms = fnode;
 
   /*
@@ -2245,9 +2229,6 @@ pdf_doc_end_grabbing (void)
   
   fnode = p->pending_forms;
   form  = &fnode->form;
-
-  /* Must call pdf_dev_flushtmatrix(). */
-  pdf_doc_add_page_content(NULL, 0);
 
   pdf_dev_grestore_to(fnode->q_depth);
 

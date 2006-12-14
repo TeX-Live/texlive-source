@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdraw.h,v 1.9 2005/08/30 07:56:08 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdraw.h,v 1.11 2006/12/11 12:46:03 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -153,9 +153,7 @@ extern int    pdf_dev_current_depth (void);
 extern void   pdf_dev_grestore_to   (int depth);
 #define pdf_dev_grestoreall() pdf_dev_grestore_to(0);
 
-extern void   pdf_dev_reset_color   (void);
 extern int    pdf_dev_currentcolor  (pdf_color *color, int is_fill);
 extern int    pdf_dev_setcolor      (const pdf_color *color, int is_fill);
 
-extern int    pdf_dev_flushtmatrix  (char **pending_tbuf);
 #endif /* _PDF_DRAW_H_ */
