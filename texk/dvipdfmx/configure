@@ -1623,7 +1623,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE=dvipdfmx
- VERSION=20050823
+ VERSION=20061211
 
 
 cat >>confdefs.h <<_ACEOF
