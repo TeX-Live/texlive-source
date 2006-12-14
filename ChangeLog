@@ -1,3 +1,7 @@
+2006-12-14  Karl Berry  <karl@tug.org>
+
+	* Build: allow invoking from anywhere, and more overrides.
+
 2006-12-11  Karl Berry  <karl@tug.org>
 
 	* Makefile.in (world, install): hmm, maybe better as a dependency
