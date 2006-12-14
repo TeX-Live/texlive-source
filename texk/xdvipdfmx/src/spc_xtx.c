@@ -147,7 +147,8 @@ spc_handler_xtx_grestore (struct spc_env *spe, struct spc_arg *args)
    * we make no assumptions about what fonts. We act like we are
    * starting a new page.
    */
-  pdf_dev_reset();
+  pdf_dev_reset_fonts();
+  pdf_dev_reset_color();
 
   return  0;
 }

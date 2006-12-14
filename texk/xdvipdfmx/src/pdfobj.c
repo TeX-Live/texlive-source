@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.c,v 1.39 2005/08/30 07:53:37 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.c,v 1.40 2006/12/06 13:14:54 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -2203,6 +2203,7 @@ extend_xref (long new_size)
     xref_table[i].direct   = NULL;
     xref_table[i].indirect = NULL;
     xref_table[i].used     = 0;
+    xref_table[i].generation = 0;
     xref_table[i].file_position = 0L;
   }
   num_input_objects = new_size;

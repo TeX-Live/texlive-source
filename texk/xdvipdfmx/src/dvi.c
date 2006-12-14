@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dvi.c,v 1.37 2005/08/18 08:46:21 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dvi.c,v 1.38 2006/12/06 12:50:40 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -2421,7 +2421,7 @@ read_length (double *vp, double mag, char **pp, char *endptr)
 
 
 static int
-scan_special (double *wd, double *ht, char *lm, const char *buf, UNSIGNED_QUAD size)
+scan_special (double *wd, double *ht, double *xo, double *yo, char *lm, const char *buf, UNSIGNED_QUAD size)
 {
   char  *q, *p = (char *) buf;
   char  *endptr;
@@ -2461,6 +2461,14 @@ scan_special (double *wd, double *ht, char *lm, const char *buf, UNSIGNED_QUAD s
             error = read_length(ht, dvi_tell_mag(), &p, endptr);
             if (!error)
               *ht *= dvi_tell_mag();
+          } else if (!strcmp(kp, "xoffset")) {
+            error = read_length(xo, dvi_tell_mag(), &p, endptr);
+            if (!error)
+              *xo *= dvi_tell_mag();
+          } else if (!strcmp(kp, "yoffset")) {
+            error = read_length(yo, dvi_tell_mag(), &p, endptr);
+            if (!error)
+              *yo *= dvi_tell_mag();
           }
           RELEASE(kp);
         }
@@ -2497,7 +2505,8 @@ scan_special (double *wd, double *ht, char *lm, const char *buf, UNSIGNED_QUAD s
 
 void
 dvi_scan_paper_size (long page_no,
-                     double *page_width, double *page_height, char *landscape)
+                     double *page_width, double *page_height,
+                     double *x_offset, double *y_offset, char *landscape)
 {
   FILE          *fp = dvi_file;
   long           offset;
@@ -2537,7 +2546,7 @@ dvi_scan_paper_size (long page_no,
       }
       if (fread(dvi_page_buffer + dvi_page_buf_index, sizeof(char), size, fp) != size)
         ERROR("Reading DVI file failed!");
-      scan_special(page_width, page_height, landscape,
+      scan_special(page_width, page_height, x_offset, y_offset, landscape,
                    (char*)dvi_page_buffer + dvi_page_buf_index, size);
       dvi_page_buf_index += size;
       continue;

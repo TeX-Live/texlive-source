@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfcolor.h,v 1.6 2005/07/30 11:44:18 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfcolor.h,v 1.7 2006/12/11 12:46:03 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -93,6 +93,7 @@ extern void     pdf_color_pop   (void);
 extern void     pdf_color_clear (void);
 
 /* Reinstall color */
+extern void     pdf_dev_preserve_color(void);
 extern void     pdf_dev_reset_color   (void);
 
 #endif /* _PDF_COLOR_H_ */

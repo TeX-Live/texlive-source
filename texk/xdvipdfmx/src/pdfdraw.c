@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdraw.c,v 1.12 2005/08/31 08:22:42 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdraw.c,v 1.13 2006/12/11 12:46:03 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -1274,11 +1274,8 @@ pdf_dev_grestore_to (int depth)
     pdf_dev__clean_gstate(gs);
     RELEASE(gs);
   }
-#if  0
   pdf_dev_reset_fonts();
-#else
-  pdf_dev_reset();
-#endif
+  pdf_dev_reset_color();
 
   return;
 }
@@ -1305,73 +1302,14 @@ pdf_dev_grestore (void)
 
   pdf_doc_add_page_content(" Q", 2);
 
-#if  0
   pdf_dev_reset_fonts();
-#else
-  pdf_dev_reset();
-#endif
+  pdf_dev_reset_color();
 
   pdf_dev_setcolor(&sc, 0);
   pdf_dev_setcolor(&fc, 1);
 
   return  0;
 }
-
-#if  0
-void
-pdf_dev_reset_color (void)
-{
-  m_stack    *gss = &_gsstck;
-  pdf_gstate *gs  = m_stack_top(gss);
-  pdf_color   fill, stroke;
-
-  pdf_color_copycolor(&fill,   &gs->fillcolor);
-  pdf_color_copycolor(&stroke, &gs->strokecolor);
-
-  /* Clear current color: */
-  pdf_color_graycolor(&gs->fillcolor,   0.0);
-  pdf_color_graycolor(&gs->strokecolor, 0.0);
-
-  pdf_dev_setcolor(&stroke, 0);
-  pdf_dev_setcolor(&fill,   1);
-
-  return;  
-}
-
-int
-pdf_dev_setcolor (const pdf_color *color, int is_fill)
-{
-  m_stack    *gss = &_gsstck;
-  pdf_gstate *gs  = m_stack_top(gss);
-  pdf_color  *fcl = &gs->fillcolor;
-  pdf_color  *scl = &gs->strokecolor;
-  int         colormode;
-  pdf_color  *curcol;
-
-  if (!color) {
-    WARN("No color specified.");
-    return -1;
-  }
-
-  colormode = pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE);
-  if (!colormode) {
-    WARN("setcolor ignored. (Ignore color option set)");
-    return  0;
-  }
-
-  curcol = is_fill ? fcl : scl;
-  if (!pdf_color_compare_color(color, curcol)) {
-    return 0;
-  }
-
-  graphics_mode();
-  pdf_color_print_color(color, is_fill);
-
-  pdf_color_copycolor(curcol, color);
-
-  return 0;
-}
-#endif
 
 /*
  * num w        LW  linewidth (g.t. 0)
