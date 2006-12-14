@@ -1639,7 +1639,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE=lcdf-typetools
- VERSION=2.46
+ VERSION=2.48
 
 
 cat >>confdefs.h <<_ACEOF
@@ -5144,12 +5144,12 @@ _ACEOF
     fi
 
         if test "x$enable_tetex_build" = xyes; then
-      cat >>confdefs.h <<\_ACEOF
+	cat >>confdefs.h <<\_ACEOF
 #define HAVE_DECL_KPSE_OPENTYPE_FORMAT 1
 _ACEOF
 
     else
-      echo "$as_me:$LINENO: checking whether kpse_opentype_format is declared" >&5
+	echo "$as_me:$LINENO: checking whether kpse_opentype_format is declared" >&5
 echo $ECHO_N "checking whether kpse_opentype_format is declared... $ECHO_C" >&6
 if test "${ac_cv_have_decl_kpse_opentype_format+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6

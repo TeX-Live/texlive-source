@@ -14,8 +14,8 @@ dialog - seems to be a v1.0 in debian, asked te 5jun05; he said keep as -is
   http://hightek.org/dialog/
   http://packages.debian.org/cgi-bin/search_packages.pl?searchon=names&version=all&exact=1&keywords=dialog
 
-lcdf-typetools 2.46 - ok 25nov06
-  http://www.lcdf.org/~eddietwo/type/
+lcdf-typetools 2.48 - ok 13dec06
+  http://www.lcdf.org/type/
 
 pdfopen 0.5 - ok 26nov06
   (really xpdfopen)
