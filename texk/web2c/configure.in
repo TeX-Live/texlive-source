@@ -308,6 +308,7 @@ fontconfig is installed.
       ])
     fi
     AC_SUBST(FONTCONFIGCPPFLAGS)
+    AC_SUBST(FONTCONFIGLDFLAGS)
     AC_SUBST(LDFONTCONFIG)
   fi
   AC_SUBST(XETEX_MACOSX)

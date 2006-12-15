@@ -79,6 +79,7 @@ ZLIBDIR = ../../libs/zlib
 ZLIBSRCDIR = $(srcdir)/$(ZLIBDIR)
 
 FONTCONFIGCPPFLAGS = @FONTCONFIGCPPFLAGS@
+FONTCONFIGLDFLAGS  = @FONTCONFIGLDFLAGS@
 
 xetexlibs = $(LDICU) $(LDTECKIT) $(LDFREETYPE2) $(LDZLIB)
 
@@ -196,7 +197,7 @@ trans.o: $(srcdir)/xetexdir/trans.c
 # Making xetex.
 xetex: $(xetex_o) $(xetex_add_o) $(xetex_images_o) $(xetex_ot_layout_o) $(EXTRADEPS)
 	@CXXHACKLINK@ $(xetex_o) $(xetex_add_o) $(xetex_images_o) $(xetex_ot_layout_o) \
-	$(socketlibs) $(xetexlibs) $(EXTRALIBS) \
+	$(FONTCONFIGLDFLAGS) $(socketlibs) $(xetexlibs) $(EXTRALIBS) \
 	@CXXHACKLDLIBS@ @CXXLDEXTRA@
 
 # C file dependencies

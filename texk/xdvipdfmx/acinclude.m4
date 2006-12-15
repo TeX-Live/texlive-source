@@ -126,7 +126,7 @@ png_infop p;
           LIBS="$LIBS -lpng" ], , -lz
       )
     ],
-    [ AC_MSG_RESULT(no) ]
+    [CPPFLAGS=$_cppflags LDDFLAGS=$_ldflags AC_MSG_RESULT(no)]
   )
 ])
 
@@ -157,7 +157,7 @@ struct paper *p;
         LIBS="$LIBS -lpaper"
       ])
     ],
-    [ AC_MSG_RESULT(no) ]
+    [CPPFLAGS=$_cppflags LDDFLAGS=$_ldflags AC_MSG_RESULT(no)]
   )
 ])
 
@@ -172,6 +172,7 @@ AC_DEFUN([AC_HAS_LIBFONTCONFIG], [
 if test -d "$withval"; then
   CPPFLAGS="$CPPFLAGS -I$withval/include"
   LDFLAGS="$LDFLAGS -L$withval/lib"
+  FONTCONFIGLDFLAGS="-L$withval/lib"
 fi
     ]
   )
@@ -188,7 +189,7 @@ FcObjectSet *os;
         LIBS="$LIBS -lfontconfig"
       ])
     ],
-    [ AC_MSG_RESULT(no) ]
+    [CPPFLAGS=$_cppflags LDDFLAGS=$_ldflags AC_MSG_RESULT(no)]
   )
 ])
 
@@ -257,7 +258,6 @@ library and the FreeType2 include files.])
 #   Check for ApplicationServices
 #
 AC_DEFUN([AC_HAS_APP_SERVICES], [
-  _cppflags=$CPPFLAGS _ldflags=$LDFLAGS
   AC_MSG_CHECKING([for Mac OS X ApplicationServices framework])
   AC_TRY_COMPILE(
     [

@@ -128,6 +128,8 @@ if test "x$enable_tetex_build" = xyes; then
   # other configure tests don't try to link with kpathsea (which doesn't
   # exist at configure time).
   LIBS="-lkpathsea -lm $LIBS"
+  xdvipdfmx_LDFLAGS="$xdvipdfmx_LDFLAGS $FONTCONFIGLDFLAGS"
+  AC_SUBST(xdvipdfmx_LDFLAGS)
   AC_MSG_NOTICE([tetex build enabled, LIBS now: $LIBS])
 else
   AC_HAS_LIBPAPER
@@ -146,6 +148,7 @@ dnl just let them be empty.
   AC_SUBST(LDFT2)
   AC_SUBST(FT2DEP)
   AC_SUBST(dvipdfmx_LDFLAGS)
+  AC_SUBST(xdvipdfmx_LDFLAGS)
 fi
 
 AC_OUTPUT(Makefile data/Makefile src/Makefile)
