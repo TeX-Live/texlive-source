@@ -29,9 +29,16 @@
  * The troff infile for error diagnostics is renamed "mpxerr.i", 
    not plain "mpxerr".
 
- * The script deleted mpx*.* in the cleanup process. That is a bit
-   too hard (requires reading the directory contents). Instead,
-   the 'to be expected' filenames are deleted.
+ * The original script deleted mpx*.* in the cleanup process. 
+
+   That is a bit harder in C, because it requires reading the contents 
+   of the current directory.  The current program assumes that 
+   opendir(), readdir() and closedir() are known everywhere where 
+   the function getcwd() exists (except on WIN32, where it uses
+   _findfirst & co).
+
+   If this assumption is false, you can define NO_GETCWD, and makempx
+   will revert to trying to delete only a few known extensions
 
  * There is a -debug switch, preventing the removal of tmp files
 */
@@ -41,10 +48,12 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #ifdef WIN32
+#include <direct.h>
 #include <io.h>
 #include <process.h>
 #else
 #include <sys/types.h>
+#include <dirent.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #endif
@@ -76,15 +85,17 @@
 #define DUP _dup
 #define DUPP _dup2
 #define uexit exit
+#define GETCWD _getcwd
 #else
 #define nuldev "/dev/null"
 #define ACCESS_MODE R_OK
 #define DUP dup
 #define DUPP dup2
 #define uexit _exit
+#define GETCWD getcwd
 #endif
 
-#define version "0.992"
+#define version "0.993"
 
 #define ERRLOG "mpxerr.log"
 #define TEXERR "mpxerr.tex"
@@ -115,6 +126,13 @@
 
 #define split_pipes(a,b) do_split_command(a,b,'|')
 
+/* Define 'getcwd' for systems that do not implement it */
+
+#ifdef NO_GETCWD
+#define GETCWD(p,s)	NULL
+#endif
+
+
 /* Temporary files */
 char mp_i[SNAM], mp_t[SNAM], mp_tmp[SNAM], mp_log[SNAM];
 
@@ -132,11 +150,37 @@ mess(char *progname)
     uexit(1);
 }
 
+void 
+default_erasetmp(void) 
+{
+    char wrk[SNAM];
+    char *p;
+    strcpy(wrk, mp_tex);
+    p = strrchr(wrk, '.');
+    *p = '\0';  strcat(wrk, ".aux");   remove(wrk);
+    *p = '\0';  strcat(wrk, ".pdf");   remove(wrk);
+    *p = '\0';  strcat(wrk, ".toc");   remove(wrk);
+    *p = '\0';  strcat(wrk, ".idx");   remove(wrk);
+    *p = '\0';  strcat(wrk, ".ent");   remove(wrk);
+    *p = '\0';  strcat(wrk, ".out");   remove(wrk);
+    *p = '\0';  strcat(wrk, ".nav");   remove(wrk);
+    *p = '\0';  strcat(wrk, ".snm");   remove(wrk);
+    *p = '\0';  strcat(wrk, ".tui");   remove(wrk);
+}
+
 void
 erasetmp(void)
 {
     char wrk[SNAM];
     char *p;
+    char cur_path[1024];
+#ifdef _WIN32
+    struct _finddata_t c_file;
+    long hFile;
+#else
+    struct dirent *entry;
+    DIR *d;
+#endif
     if (debug)
 	return;
 
@@ -145,11 +189,36 @@ erasetmp(void)
 	strcpy(wrk, mp_tex);
 	if ((p = strrchr(wrk, '.'))) {
 	    *p = '\0';
-	    strcat(wrk, ".aux");
-	    remove(wrk);
-	    *p = '\0';
-	    strcat(wrk, ".pdf");
-	    remove(wrk);
+	    /* now wrk is identical to tmpname */
+	    if(GETCWD(cur_path,1020) == NULL) {
+	      /* don't know where we are, back to old behaviour */
+	      default_erasetmp();
+	    } else {
+#ifdef _WIN32
+	      strcat(cur_path,"/*");
+	      if ((hFile = _findfirst (cur_path, &c_file)) == -1L) {
+		default_erasetmp();
+	      } else {
+		if (strstr(c_file.name,wrk)==c_file.name) 
+		  remove(c_file.name);
+		while (_findnext (hFile, &c_file) != -1L) {
+		  if (strstr(c_file.name,wrk)==c_file.name) 
+		    remove(c_file.name);
+		}
+		_findclose (hFile); /* no more entries => close directory */
+	      }
+#else
+	      if ((d = opendir(cur_path)) == NULL) {
+		default_erasetmp();
+	      } else {
+		while ((entry = readdir (d)) != NULL) {
+		  if (strstr(entry->d_name,wrk)==entry->d_name) 
+		    remove(entry->d_name);
+		}
+		closedir(d);
+	      }
+#endif	    
+	    }
 	}
     }
     if (mp_i[0]) {
@@ -189,8 +258,10 @@ run_command(int count, char **cmdl)
     int i;
     char *cmd;
     int retcode;
+#ifndef WIN32
+    pid_t child;
+#endif
     char **options = NULL;
-
     /* return non-zero by default, signalling an error */
     retcode = -1;
 
@@ -211,7 +282,7 @@ run_command(int count, char **cmdl)
     }
 #ifndef WIN32
     {
-	pid_t child = fork();
+	child = fork();
 	if (child >= 0) {
 	    if (child == 0) {
 		execvp(cmd, options);
@@ -235,8 +306,8 @@ do_split_command(char *maincmd, char **cmdline, char target)
 {
     char *piece;
     char *cmd;
+    unsigned int i;
     int ret = 0;
-    int i;
     int in_string = 0;
     if (strlen(maincmd) == 0)
 	return 0;
@@ -315,12 +386,12 @@ do_newer(char *source, char *target)
 void
 prepare_tex(char *texname, char *tmpname)
 {
+    int i;
+    FILE *fr, *fw;
     char buffer[MBUF];
     char *tmpfile = NULL;
     char *texkeep = NULL;	/* for debugging */
     char *mptexpre = NULL;
-    int i;
-    FILE *fr, *fw;
 
     mptexpre = kpse_var_value("MPTEXPRE");
 
@@ -353,28 +424,25 @@ prepare_tex(char *texname, char *tmpname)
 int
 main(int ac, char **av)
 {
-    int mpmode = 0;
-    char tmpname[] = "mpXXXXXX";
-
-    char *mpfile = NULL, *mpxfile = NULL;
+    char **cmdline, **cmdbits;
     char whatever_to_mpx[SNAM], infile[SNAM], inerror[SNAM];
-
-    char *tmpstring = NULL;
-
-    char **cmdline;
-    char **cmdbits;
-
-    int cmdlength = 1;
-    int cmdbitlength = 1;
-
     int retcode, i, sav_o, sav_e, sav_i;
-
     FILE *fr, *fw, *few, *fnulr, *fnulw;
-    int curarg = 0;
 
     /* TeX command name */
     char maincmd[(LNAM + 1)];
 
+    int mpmode = 0;
+    char tmpname[] = "mpXXXXXX";
+
+    char *mpfile = NULL;
+    char *mpxfile = NULL;
+    char *tmpstring = NULL;
+
+    int cmdlength = 1;
+    int cmdbitlength = 1;
+
+    int curarg = 0;
 
     cmdline = xmalloc(sizeof(char *) * COMMAND_PARTS);
     cmdbits = xmalloc(sizeof(char *) * COMMAND_PARTS);
