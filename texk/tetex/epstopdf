@@ -58,13 +58,17 @@ use strict;
 #    * Quote OutFilename
 #  2005/10/01 v2.9.3draft (Gerben Wierda)
 #    * Quote OutFilename
+#  2005/10/06 v2.9.4gw (Gerben Wierda)
+#    * This has become the official version for now
+#  2005/10/06 v2.9.5gw (Gerben Wierda)
+#    * Fixed a horrendous bug in the (atend) handling code
 #
 
 ### program identification
 my $program = "epstopdf";
-my $filedate="2003/04/20";
-my $fileversion="2.9.3draft";
-my $copyright = "Copyright 1998-2002 by Sebastian Rahtz et al.";
+my $filedate="2006/01/29";
+my $fileversion="2.9.5gw";
+my $copyright = "Copyright 1998-2006 by Sebastian Rahtz et al.";
 my $title = "\U$program\E $fileversion, $filedate - $copyright\n";
 
 ### ghostscript command name
@@ -249,13 +253,14 @@ if ($buflen > 0) {
   # that array until it is empty, then move again back to <IN>
   $buf .= <IN> unless eof( IN);
   $buflen = length( $buf);
+  $bufarraypos = 0;
 
   # Some extra magic is needed here: if we set $/ to \r, Perl's re engine
   # still thinks eol is \n in regular expressions (not very nice) so we
   # cannot split on ^, but have to split on \r and reappend those.
   if ($/ eq "\r") {
-    @bufarray = split( /\r/ms, $buf);
-    grep( $_ .= "\r", @bufarray);
+    @bufarray = split( /\r/ms, $buf); # split on \r
+    grep( $_ .= "\r", @bufarray); # re-append \r to each array item
   }
   else {
     @bufarray = split( /^/ms, $buf);
@@ -268,6 +273,8 @@ sub getline {
     $_ = shift( @bufarray);
     unshift( @parsedbufarray, $_); # for myseek and mytell
     $bufarraypos += length( $_);
+    # debug "getline from array. bufarraypos = $bufarraypos";
+    # debug "*** READ: $_";
   }
   else {
     $_ = <IN>;
@@ -278,31 +285,40 @@ sub getline {
 ### mytell and myseek, work on <IN> only
 sub mytell {
   if ($#bufarray) {
+    # debug "Telling ARRAY position $bufarraypos";
     return $bufarraypos;
   }
   else {
-    return tell( IN);
+    my $pos = tell( IN);
+    # debug "Telling FILE position $pos";
+    return $pos;
   }
 }
 
 sub myseek {
   my $pos = shift;
+  # debug "Seeking to position $pos in input";
   if ($pos < $buflen) {
+    # debug "myseek position $pos < buffer size $buflen";
     # We were still parsing the array, reset to the end of buf and
     # move to the right line in the array.
-    # Now, move stuff from the @parsedbufarray until we are back at $pos
+    # Now, move stuff from the @parsedbufarray back until we are back at $pos
     my $tmpline;
-    while ($pos > 0) {
+    while ($bufarraypos > $pos) {
+      # debug "myseek bufarray position $bufarraypos > position $pos";
       # we test on parsedbufarray to prevent an infinite loop on
       # a programming error (DEVELOP only)
       die "Programming error 1\n" unless $#parsedbufarray;
-      $tmpline = pop( @parsedbufarray);
-      $pos -= length( $tmpline);
-      push( @bufarray, $tmpline);
+      $tmpline = shift( @parsedbufarray);
+      $bufarraypos -= length( $tmpline);
+      unshift( @bufarray, $tmpline);
+      debug "*** UNREAD: $tmpline";
     }
+    # debug "Returning to ARRAY size position $buflen (bufarraypos = $bufarraypos)";
     return seek( IN, $buflen, 0);
   }
   else {
+    # debug "Seeking to FILE position $pos";
     return seek( IN, $pos, 0);
   }
 }
