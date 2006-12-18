@@ -161,7 +161,7 @@ string papersize;
 #ifdef XETEX_MAC
 string outputdriver = "xdv2pdf"; /* default for backward compatibility on Mac OS X */
 #else
-string outputdriver = "xdvipdfmx"; /* for linux version with preliminary dvipdfmx-based driver */
+string outputdriver = "xdvipdfmx -q -E"; /* else default to portable xdvipdfmx driver */
 #endif
 
 
