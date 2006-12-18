@@ -4,6 +4,17 @@ AM_INIT_AUTOMAKE(dvipdfmx, 20061211)
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
 
+# Timezone tests written by MAW for pdfdoc.c.
+#
+AC_DEFUN([AC_EXT_TIMEZONE],
+[AC_MSG_CHECKING([whether time.h defines timezone as an external variable])
+AC_TRY_LINK([#include <time.h>], [ -timezone; ],
+	[AC_MSG_RESULT(yes); AC_DEFINE(HAVE_TIMEZONE)], [AC_MSG_RESULT(no)])])
+AC_DEFUN([AC_TZ_HAS_TM_GMTOFF],
+[AC_MSG_CHECKING([whether struct tz has tm_gmtoff as a member])
+AC_TRY_COMPILE([#include <time.h>], [struct tm *tp; tp->tm_gmtoff],
+	[AC_MSG_RESULT(yes); AC_DEFINE(HAVE_TM_GMTOFF)], [AC_MSG_RESULT(no)])])
+
 dnl Checks for programs.
 AC_PROG_CC
 AC_PROG_INSTALL
@@ -81,6 +92,9 @@ AC_FUNC_MEMCMP
 AC_CHECK_FUNCS(open close system getenv mkstemp basename)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
+AC_EXT_TIMEZONE
+AC_TZ_HAS_TM_GMTOFF
+
 AC_C_CONST
 AC_C_INLINE
 AC_TYPE_SIZE_T
