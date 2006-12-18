@@ -97,8 +97,8 @@ undergoes any modifications, so that it will be clear which version of
 @^extensions to \MP@>
 @^system dependencies@>
 
-@d banner=='This is MetaPost, Version 0.992' {printed when \MP\ starts}
-@d metapost_version=="0.992"
+@d banner=='This is MetaPost, Version 0.993' {printed when \MP\ starts}
+@d metapost_version=="0.993"
 
 @ Different \PASCAL s have slightly different conventions, and the present
 @!@:PASCAL H}{\ph@>
@@ -24203,7 +24203,7 @@ tini@/
 ready_already:=314159;
 start_of_MP: @<Initialize the output routines@>;
 @<Get the first line of input and prepare to start@>;
-mp_init_map_file;
+mp_init_map_file(troff_mode);
 setjobid(internal[year],internal[month],internal[day],internal[time]);
 history:=spotless; {ready to go!}
 if start_sym>0 then {insert the `\&{everyjob}' symbol}

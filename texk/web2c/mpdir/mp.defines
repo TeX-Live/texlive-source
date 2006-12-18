@@ -30,7 +30,7 @@ $Id$
 @define function tfmoffm();
 @define procedure mpmapfile();
 @define procedure mpmapline();
-@define procedure mpinitmapfile;
+@define procedure mpinitmapfile();
 
 { functions from writefont.c }
 
@@ -52,3 +52,6 @@ $Id$
 
 @define procedure setjobid();
 
+{ function from turningnumber.c }
+
+@define function bezierslope();

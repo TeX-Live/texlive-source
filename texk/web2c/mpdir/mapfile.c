@@ -941,7 +941,7 @@ void mpmapline (strnumber t)
     xfree (s);
 }
 
-void mpinitmapfile (void)
+void mpinitmapfile (int is_troff)
 {
     assert (mitem == NULL);
     mitem = xtalloc (1, mapitem);
@@ -949,8 +949,13 @@ void mpinitmapfile (void)
     mitem->type = MAPFILE;
     if (kpse_find_file("mpost.map", kpse_fontmap_format,0))
       mitem->line = xstrdup ("mpost.map");
-    else
-      mitem->line = xstrdup ("pdftex.map");
+    else {
+      if (is_troff) {
+	mitem->line = xstrdup ("troff.map");
+      } else {
+	mitem->line = xstrdup ("pdftex.map");
+      }
+    }
 }
 
 /**********************************************************************/
