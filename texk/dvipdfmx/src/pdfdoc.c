@@ -491,12 +491,14 @@ static long
 asn_date (char *date_string)
 {
 #ifndef HAVE_TIMEZONE
-#ifdef TM_GM_TOFF
-     #define timezone (bdtime->gm_toff)
-#else
-     #define timezone 0l
-#endif /* TM_GM_TOFF */
-#endif /* HAVE_TIMEZONE */
+# ifdef HAVE_TM_GMTOFF
+#  define timezone (-bdtime->tm_gmtoff)
+# elif defined (TM_GM_TOFF)
+#  define timezone (-bdtime->gm_toff)
+# else
+#  define timezone 0l 
+# endif /* not HAVE_TM_GMTOFF and not TM_GM_TOFF */
+#endif  /* not HAVE_TIMEZONE */
   time_t      current_time;
   struct tm  *bd_time;
 
