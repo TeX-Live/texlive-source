@@ -23,7 +23,7 @@
 % Version 2.71 fixed bug in draw, allowed unprintable filenames (March 1992).
 % Version 2.718 fixed bug in <Choose a dependent...> (March 1995).
 % Version 2.7182 fixed bugs related to "<unprintable char>" (August 1996).
-% Version 2.71828 suppressed autorounding in dangerous cases (December 2002).
+% Version 2.71828 suppressed autorounding in dangerous cases (June 2003).
 
 % A reward of $327.68 will be paid to the first finder of any remaining bug.
 
@@ -8662,7 +8662,7 @@ except when |t| is too large to be stored in a quarterword.
   else if chopped=0 then chopped:=-1
 
 @<Truncate the values of all coordinates that exceed...@>=
-p:=cur_spec; k:=1; chopped:=0; dmax:=max_allowed/2;
+p:=cur_spec; k:=1; chopped:=0; dmax:=half(max_allowed);
 repeat procrustes(left_x(p)); procrustes(left_y(p));
 procrustes(x_coord(p)); procrustes(y_coord(p));
 procrustes(right_x(p)); procrustes(right_y(p));@/

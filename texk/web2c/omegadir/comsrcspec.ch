@@ -327,7 +327,7 @@ begin
 end;
 
 procedure append_src_special;
-var p, q : pointer;
+var q : pointer;
 begin
   if (source_filename_stack[in_open] > 0 and is_new_source (source_filename_stack[in_open], line)) then begin
     new_whatsit (special_node, write_node_size);

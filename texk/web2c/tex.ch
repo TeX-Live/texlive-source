@@ -2336,7 +2336,7 @@ loop@+  begin begin_file_reading; {set up |cur_file| and new level of input}
     if a_open_in(cur_file) then goto done;
     end;
 @y
-var temp_str: str_number; k: integer;
+var temp_str: str_number;
 begin scan_file_name; {set |cur_name| to desired file name}
 pack_cur_name;
 loop@+begin
@@ -3086,6 +3086,13 @@ done:
 @z
 
 %%%%%%%% dynamic hyph_size
+@x 18245 m.934 
+@!s,@!t:str_number; {strings being compared or stored}
+@y
+@!s:str_number; {strings being compared or stored}
+@z
+
+%%%%%%%% dynamic hyph_size
 @x 18274 m.939
   begin h:=(h+h+hc[j]) mod hyph_size;
 @y  18274
@@ -3760,12 +3767,16 @@ def_code: if chr_code=xord_code_base then print_esc("xordcode")
 %   a) the string is already replaced in |scan_file_name| and therefore
 %   b) the wrong string will get flushed!!!
 %
+@x [49.1257] l.23318 unused variable
+@!flushable_string:str_number; {string not yet referenced}
+@y
+@z
 @x [49.1260] l.23331 new_font: string recycling -- already done
 flushable_string:=str_ptr-1;
 @y
 @z
 
-% If you don't want to remove code with the following change,
+% If you don't want to remove code with the following two changes,
 % please replace the former change by
 %
 % @x
@@ -3795,13 +3806,6 @@ interaction:=cur_chr;
 if interaction = batch_mode
 then kpse_make_tex_discard_errors := 1
 else kpse_make_tex_discard_errors := 0;
-@z
-
-@x [49.1275] l.23434 - Index variable for next fragment of code.
-@!n:0..15; {stream number}
-@y
-@!n:0..15; {stream number}
-@!k:integer;
 @z
 
 @x [49.1275] l.23441 - Same stuff as for \input, this time for \openin.
@@ -5046,7 +5050,7 @@ that's a convenient module in which to put it.)
 
 @<Basic printing procedures@> =
 procedure print_csnames (hstart:integer; hfinish:integer);
-var c,h,where:integer;
+var c,h:integer;
 begin
   write_ln(stderr, 'fmtdebug:csnames from ', hstart, ' to ', hfinish, ':');
   for h := hstart to hfinish do begin
@@ -5782,7 +5786,7 @@ begin
 end;
 
 procedure append_src_special;
-var p, q : pointer;
+var q : pointer;
 begin
   if (source_filename_stack[in_open] > 0 and is_new_source (source_filename_stack[in_open]
 , line)) then begin

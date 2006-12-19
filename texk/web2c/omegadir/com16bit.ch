@@ -1422,7 +1422,7 @@ loop@+  begin begin_file_reading; {set up |cur_file| and new level of input}
     if a_open_in(cur_file) then goto done;
     end;
 @y
-var temp_str: str_number; k: integer;
+var temp_str: str_number;
 begin scan_file_name; {set |cur_name| to desired file name}
 pack_cur_name;
 loop@+begin
@@ -1910,7 +1910,7 @@ flushable_string:=str_ptr-1;
 @y
 @z
 
-% If you don't want to remove code with the following change,
+% If you don't want to remove code with the following two changes,
 % please replace the former change by
 %
 % @x
