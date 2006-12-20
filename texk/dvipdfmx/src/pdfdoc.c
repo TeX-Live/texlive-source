@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.43 2005/09/06 04:17:15 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.44 2006/12/20 08:10:13 chofchof Exp $
  
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -505,7 +505,7 @@ asn_date (char *date_string)
   sprintf(date_string, "D:%04d%02d%02d%02d%02d%02d%+03ld'%02ld'",
 	  bd_time->tm_year + 1900, bd_time->tm_mon + 1, bd_time->tm_mday,
 	  bd_time->tm_hour, bd_time->tm_min, bd_time->tm_sec,
-	  (timezone / 3600), (timezone % 3600) / 60);
+	  (-timezone / 3600), (timezone % 3600) / 60);
 
   return strlen(date_string);
 }
