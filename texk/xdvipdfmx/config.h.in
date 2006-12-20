@@ -71,6 +71,12 @@
    `tzname'. */
 #undef HAVE_TZNAME
 
+/* Define to 1 if you have the global `timezone` variable. */
+#undef HAVE_TIMEZONE
+
+/* Define to 1 if your `struct tm' has `tm_gmtoff'. */
+#undef HAVE_TM_GMTOFF
+
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 

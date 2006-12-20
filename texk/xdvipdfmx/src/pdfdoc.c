@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.43 2005/09/06 04:17:15 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.44 2006/12/20 08:10:13 chofchof Exp $
  
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -490,7 +490,13 @@ pdf_doc_set_eop_content (const char *content, unsigned length)
 static long
 asn_date (char *date_string)
 {
-#if 0 /* this is non-portable, as not all systems have the tm_gmtoff field */
+#ifndef HAVE_TIMEZONE
+# ifdef HAVE_TM_GMTOFF
+#  define timezone (-bd_time->tm_gmtoff)
+# else
+#  define timezone 0l 
+# endif /* not HAVE_TM_GMTOFF */
+#endif  /* not HAVE_TIMEZONE */
   time_t      current_time;
   struct tm  *bd_time;
 
@@ -499,21 +505,9 @@ asn_date (char *date_string)
   sprintf(date_string, "D:%04d%02d%02d%02d%02d%02d%+03ld'%02ld'",
 	  bd_time->tm_year + 1900, bd_time->tm_mon + 1, bd_time->tm_mday,
 	  bd_time->tm_hour, bd_time->tm_min, bd_time->tm_sec,
-	  -(bd_time->tm_gmtoff / 3600), (bd_time->tm_gmtoff % 3600) / 60);
+	  (-timezone / 3600), (timezone % 3600) / 60);
 
   return strlen(date_string);
-#else /* simplified version that should work everywhere */
-  time_t  current_time;
-  char   *time_str;
-  int     len;
-  time(&current_time);
-  time_str = ctime(&current_time);
-  strcpy(date_string, time_str);
-  len = strlen(date_string);
-  if (len > 0 && date_string[len-1] == '\n')
-    date_string[--len] = '\0';
-  return len;
-#endif  
 }
 
 static void
