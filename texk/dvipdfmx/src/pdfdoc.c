@@ -484,6 +484,23 @@ pdf_doc_set_eop_content (const char *content, unsigned length)
   return;
 }
 
+/* auxiliary function to compute timezone offset on
+   systems that do not support the tm_gmtoff in struct tm,
+   or have a timezone variable.  Such as i386-solaris.  */
+
+static long
+compute_timezone_offset()
+{
+  const time_t now = time(NULL);
+  struct tm tm;
+  struct tm local;
+  time_t gmtoff;
+
+  localtime_r(&now, &local);
+  gmtime_r(&now, &tm);
+  return (mktime(&local) - mktime(&tm));
+}
+
 /*
  * Docinfo
  */
@@ -494,7 +511,7 @@ asn_date (char *date_string)
 # ifdef HAVE_TM_GMTOFF
 #  define timezone (-bd_time->tm_gmtoff)
 # else
-#  define timezone 0l 
+#  define timezone  (-compute_timezone_offset())
 # endif /* not HAVE_TM_GMTOFF */
 #endif  /* not HAVE_TIMEZONE */
   time_t      current_time;
