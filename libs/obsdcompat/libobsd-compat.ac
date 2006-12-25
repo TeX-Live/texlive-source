@@ -1,0 +1,13 @@
+if test "$needs_obsdcompat" = no; then
+  LIBOBSDCFLAGS=
+  LDLIBOBSD=
+  LIBOBSDDEP=
+else
+  LIBOBSDCPPFLAGS='-I$(LIBOBSDDIR)'
+  LDLIBOBSD='$(LIBOBSDDIR)/libopenbsd-compat.a'
+  LIBOBSDDEP='$(LIBOBSDDIR)/libopenbsd-compat.a'
+fi
+
+AC_SUBST(LIBOBSDCFLAGS)
+AC_SUBST(LDLIBOBSD)
+AC_SUBST(LIBOBSDDEP)

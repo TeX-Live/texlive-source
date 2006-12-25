@@ -1,0 +1,33 @@
+# $Id: Makefile.in,v 1.37 2005/12/31 05:33:37 djm Exp $
+
+VPATH=@srcdir@
+CC=@CC@
+LD=@LD@
+CFLAGS=@CFLAGS@
+CPPFLAGS=-I. -I.. -I@srcdir@ -I@srcdir@/.. @CPPFLAGS@ @DEFS@
+AR=@AR@
+RANLIB=@RANLIB@
+
+OPENBSD=strlcat.o strlcpy.o strsep.o strtonum.o strtoll.o strtoul.o
+
+COMPAT=bsd-asprintf.o bsd-snprintf.o 
+
+.c.o:
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
+
+all: libopenbsd-compat.a
+
+$(COMPAT): config.h
+$(OPENBSD):config.h
+
+libopenbsd-compat.a:  $(COMPAT) $(OPENBSD)
+	$(AR) rv $@ $(COMPAT) $(OPENBSD)
+	$(RANLIB) $@
+
+clean:
+	rm -f *.o *.a core 
+
+distclean: clean
+	rm -f Makefile *~ config.h
+
+# vim:noexpandtab
