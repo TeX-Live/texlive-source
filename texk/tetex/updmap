@@ -122,7 +122,7 @@ export PATH
 test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 
 # the version string
-version=1122009795 # seconds since `00:00:00 1970-01-01 UTC'
+version=1167072206 # seconds since `00:00:00 1970-01-01 UTC'
                    # date '+%s' (with GNU date)
 
 ###############################################################################
