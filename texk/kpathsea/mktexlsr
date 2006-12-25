@@ -15,7 +15,10 @@
 
 version='$Id: mktexlsr,v 1.46 2005/06/21 14:32:26 olaf Exp $'
 progname=`echo $0 | sed 's%.*/%%'`
-usage="Usage: $progname [DIRS ...]
+usage="Usage: $progname [DIR]...
+
+Only options are --help, --version, and --verbose.  If standard input is
+a terminal, --verbose is on by default.
 
 Rebuild all necessary ls-R filename databases completely. If one or
 more arguments DIRS are given, these are used as texmf directories to
@@ -33,7 +36,6 @@ case `uname -s` in
 esac
 if test "$DOSISH" = "no"; then SEP=':'; else SEP=';';fi
 
-
 # Add the location of the script to the PATH if necessary.  This must
 # be done before kpsewhich can be called, and thus cannot be put into
 # mktex.opt.
@@ -49,6 +51,8 @@ case $dirname in
       export PATH ;;
 esac
 
+if tty -s; then verbose=true; else verbose=false; fi
+
 # A copy of some stuff from mktex.opt, so we can run in the presence of
 # terminally damaged ls-R files.
 if test "x$1" = x--help || test "x$1" = x-help; then
@@ -58,6 +62,9 @@ elif test "x$1" = x--version || test "x$1" = x-version; then
   echo "`basename $0` $version"
   kpsewhich --version
   exit 0
+elif test "x$1" = x--verbose || test "x$1" = x-verbose; then
+  verbose=true
+  shift
 fi
 
 # mktexupd and mktexlsr make sure they're coordinated via this.  A copy
@@ -127,7 +134,7 @@ for TEXMFLS_R in "$@"; do
   db_file_tmp="$db_dir_tmp/lsR$$.tmp"
   rm -f "$db_file_tmp"
 
-  tty -s && echo "$progname: Updating $db_file... " >&2
+  $verbose && echo "$progname: Updating $db_file... " >&2
   echo "$ls_R_magic" >"$db_file_tmp"
 
   # The main task. We put ./: in the output, so top-level files can be
@@ -152,5 +159,5 @@ for TEXMFLS_R in "$@"; do
   mv "$db_file_tmp" "$db_file"
   rm -rf "$db_dir_tmp"
 done
-tty -s && echo "$progname: Done." >&2
+$verbose && echo "$progname: Done." >&2
 exit 0
