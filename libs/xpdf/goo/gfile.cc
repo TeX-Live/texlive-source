@@ -437,6 +437,7 @@ time_t getModTime(char *fileName) {
 #endif
 }
 
+#ifndef PDF_PARSER_ONLY
 GBool openTempFile(GString **name, FILE **f, char *mode, char *ext) {
 #if defined(WIN32)
   //---------- Win32 ----------
@@ -521,6 +522,7 @@ GBool openTempFile(GString **name, FILE **f, char *mode, char *ext) {
   return gTrue;
 #endif
 }
+#endif
 
 GBool executeCommand(char *cmd) {
 #ifdef VMS

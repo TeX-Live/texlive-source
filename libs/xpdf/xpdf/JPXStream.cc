@@ -12,6 +12,7 @@
 #pragma implementation
 #endif
 
+#include <limits.h>
 #include "gmem.h"
 #include "Error.h"
 #include "JArithmeticDecoder.h"
@@ -235,7 +236,7 @@ JPXStream::~JPXStream() {
 		for (pre = 0; pre < 1; ++pre) {
 		  precinct = &resLevel->precincts[pre];
 		  if (precinct->subbands) {
-		    for (sb = 0; sb < (r == 0 ? 1 : 3); ++sb) {
+		    for (sb = 0; sb < (Guint)(r == 0 ? 1 : 3); ++sb) {
 		      subband = &precinct->subbands[sb];
 		      gfree(subband->inclusion);
 		      gfree(subband->zeroBitPlane);
@@ -783,7 +784,7 @@ GBool JPXStream::readCodestream(Guint len) {
   int segType;
   GBool haveSIZ, haveCOD, haveQCD, haveSOT;
   Guint precinctSize, style;
-  Guint segLen, capabilities, comp, i, j, r;
+  Guint segLen, capabilities, nTiles, comp, i, j, r;
 
   //----- main header
   haveSIZ = haveCOD = haveQCD = haveSOT = gFalse;
@@ -818,8 +819,14 @@ GBool JPXStream::readCodestream(Guint len) {
 	            / img.xTileSize;
       img.nYTiles = (img.ySize - img.yTileOffset + img.yTileSize - 1)
 	            / img.yTileSize;
-      img.tiles = (JPXTile *)gmallocn(img.nXTiles * img.nYTiles,
-				      sizeof(JPXTile));
+      nTiles = img.nXTiles * img.nYTiles;
+      // check for overflow before allocating memory
+      if (img.nXTiles <= 0 || img.nYTiles <= 0 ||
+	  img.nXTiles >= INT_MAX / img.nYTiles) {
+	error(getPos(), "Bad tile count in JPX SIZ marker segment");
+	return gFalse;
+      }
+      img.tiles = (JPXTile *)gmallocn(nTiles, sizeof(JPXTile));
       for (i = 0; i < img.nXTiles * img.nYTiles; ++i) {
 	img.tiles[i].tileComps = (JPXTileComp *)gmallocn(img.nComps,
 							 sizeof(JPXTileComp));
@@ -1827,7 +1834,7 @@ GBool JPXStream::readTilePartData(Guint tileIdx,
     }
     if (!bits) {
       // packet is empty -- clear all code-block inclusion flags
-      for (sb = 0; sb < (tile->res == 0 ? 1 : 3); ++sb) {
+      for (sb = 0; sb < (Guint)(tile->res == 0 ? 1 : 3); ++sb) {
 	subband = &precinct->subbands[sb];
 	for (cbY = 0; cbY < subband->nYCBs; ++cbY) {
 	  for (cbX = 0; cbX < subband->nXCBs; ++cbX) {
@@ -1838,7 +1845,7 @@ GBool JPXStream::readTilePartData(Guint tileIdx,
       }
     } else {
 
-      for (sb = 0; sb < (tile->res == 0 ? 1 : 3); ++sb) {
+      for (sb = 0; sb < (Guint)(tile->res == 0 ? 1 : 3); ++sb) {
 	subband = &precinct->subbands[sb];
 	for (cbY = 0; cbY < subband->nYCBs; ++cbY) {
 	  for (cbX = 0; cbX < subband->nXCBs; ++cbX) {
@@ -1983,7 +1990,7 @@ GBool JPXStream::readTilePartData(Guint tileIdx,
 
     //----- packet data
 
-    for (sb = 0; sb < (tile->res == 0 ? 1 : 3); ++sb) {
+    for (sb = 0; sb < (Guint)(tile->res == 0 ? 1 : 3); ++sb) {
       subband = &precinct->subbands[sb];
       for (cbY = 0; cbY < subband->nYCBs; ++cbY) {
 	for (cbX = 0; cbX < subband->nXCBs; ++cbX) {

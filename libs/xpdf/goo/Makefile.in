@@ -4,6 +4,8 @@
 #
 # Copyright 1996 Derek B. Noonburg
 #
+# Modified for pdftex by Martin Schröder 2005
+#
 #========================================================================
 
 srcdir = @srcdir@
@@ -13,7 +15,9 @@ srcdirparent = $(srcdir)/..
 
 kpathsea_include_dir = -I../../../texk -I$(srcdir)/../../../texk
 ALLCFLAGS = $(CFLAGS) @DEFS@ -I.. -I$(srcdir)/.. -I. -I$(srcdir) $(kpathsea_include_dir)
-ALLCXXFLAGS = $(CXXFLAGS) @DEFS@ -I.. -I$(srcdir)/.. -I. -I$(srcdir) $(kpathsea_include_dir)
+ALLCXXFLAGS = $(CXXFLAGS) @DEFS@ \
+  -I.. -I$(srcdir)/.. -I. -I$(srcdir) $(kpathsea_include_dir) \
+  -DPDF_PARSER_ONLY
 CXXFLAGS = @CXXFLAGS@
 CC = @CC@
 CXX = @CXX@

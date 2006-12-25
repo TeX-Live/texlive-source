@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
+#include <limits.h>
 #ifndef WIN32
 #include <unistd.h>
 #endif
@@ -401,18 +402,34 @@ void ImageStream::skipLine() {
 
 StreamPredictor::StreamPredictor(Stream *strA, int predictorA,
 				 int widthA, int nCompsA, int nBitsA) {
+  int totalBits;
+
   str = strA;
   predictor = predictorA;
   width = widthA;
   nComps = nCompsA;
   nBits = nBitsA;
+  predLine = NULL;
+  ok = gFalse;
 
   nVals = width * nComps;
+  totalBits = nVals * nBits;
+  if (width <= 0 || nComps <= 0 || nBits <= 0 ||
+      nComps >= INT_MAX / nBits ||
+      width >= INT_MAX / nComps / nBits ||
+      nVals * nBits + 7 < 0) {
+    return;
+  }
   pixBytes = (nComps * nBits + 7) >> 3;
-  rowBytes = ((nVals * nBits + 7) >> 3) + pixBytes;
+  rowBytes = ((totalBits + 7) >> 3) + pixBytes;
+  if (rowBytes < 0) {
+    return;
+  }
   predLine = (Guchar *)gmalloc(rowBytes);
   memset(predLine, 0, rowBytes);
   predIdx = rowBytes;
+
+  ok = gTrue;
 }
 
 StreamPredictor::~StreamPredictor() {
@@ -1004,6 +1021,10 @@ LZWStream::LZWStream(Stream *strA, int predictor, int columns, int colors,
     FilterStream(strA) {
   if (predictor != 1) {
     pred = new StreamPredictor(this, predictor, columns, colors, bits);
+    if (!pred->isOk()) {
+      delete pred;
+      pred = NULL;
+    }
   } else {
     pred = NULL;
   }
@@ -1258,6 +1279,9 @@ CCITTFaxStream::CCITTFaxStream(Stream *strA, int encodingA, GBool endOfLineA,
   columns = columnsA;
   if (columns < 1) {
     columns = 1;
+  }
+  if (columns + 4 <= 0) {
+    columns = INT_MAX - 4;
   }
   rows = rowsA;
   endOfBlock = endOfBlockA;
@@ -2899,6 +2923,14 @@ GBool DCTStream::readBaselineSOF() {
   height = read16();
   width = read16();
   numComps = str->getChar();
+  if (numComps <= 0 || numComps > 4) {
+    error(getPos(), "Bad number of components in DCT stream", prec);
+    return gFalse;
+  }
+  if (numComps <= 0 || numComps > 4) {
+    error(getPos(), "Bad number of components in DCT stream", prec);
+    return gFalse;
+  }
   if (prec != 8) {
     error(getPos(), "Bad DCT precision %d", prec);
     return gFalse;
@@ -2925,6 +2957,16 @@ GBool DCTStream::readProgressiveSOF() {
   height = read16();
   width = read16();
   numComps = str->getChar();
+  if (numComps <= 0 || numComps > 4) {
+    error(getPos(), "Bad number of components in DCT stream");
+    numComps = 0;
+    return gFalse;
+  }
+  if (numComps <= 0 || numComps > 4) {
+    error(getPos(), "Bad number of components in DCT stream");
+    numComps = 0;
+    return gFalse;
+  }
   if (prec != 8) {
     error(getPos(), "Bad DCT precision %d", prec);
     return gFalse;
@@ -2947,6 +2989,11 @@ GBool DCTStream::readScanInfo() {
 
   length = read16() - 2;
   scanInfo.numComps = str->getChar();
+  if (scanInfo.numComps <= 0 || scanInfo.numComps > 4) {
+    error(getPos(), "Bad number of components in DCT stream");
+    scanInfo.numComps = 0;
+    return gFalse;
+  }
   --length;
   if (length != 2 * scanInfo.numComps + 3) {
     error(getPos(), "Bad DCT scan info block");
@@ -3041,6 +3088,7 @@ GBool DCTStream::readHuffmanTables() {
 	numACHuffTables = index+1;
       tbl = &acHuffTables[index];
     } else {
+      index &= 0x0f;
       if (index >= numDCHuffTables)
 	numDCHuffTables = index+1;
       tbl = &dcHuffTables[index];
@@ -3827,6 +3875,10 @@ FlateStream::FlateStream(Stream *strA, int predictor, int columns,
     FilterStream(strA) {
   if (predictor != 1) {
     pred = new StreamPredictor(this, predictor, columns, colors, bits);
+    if (!pred->isOk()) {
+      delete pred;
+      pred = NULL;
+    }
   } else {
     pred = NULL;
   }

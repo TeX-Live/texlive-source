@@ -45,34 +45,9 @@
 // ObjectStream
 //------------------------------------------------------------------------
 
-class ObjectStream {
-public:
-
-  // Create an object stream, using object number <objStrNum>,
-  // generation 0.
-  ObjectStream(XRef *xref, int objStrNumA);
-
-  ~ObjectStream();
-
-  // Return the object number of this object stream.
-  int getObjStrNum() { return objStrNum; }
-
-  // Get the <objIdx>th object from this stream, which should be
-  // object number <objNum>, generation 0.
-  Object *getObject(int objIdx, int objNum, Object *obj);
-
-private:
-
-  int objStrNum;		// object number of the object stream
-  int nObjects;			// number of objects in the stream
-  Object *objs;			// the objects (length = nObjects)
-  int *objNums;			// the object numbers (length = nObjects)
-};
-
 ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
   Stream *str;
   Parser *parser;
-  int *offsets;
   Object objStr, obj1, obj2;
   int first, i;
 
@@ -80,6 +55,7 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
   nObjects = 0;
   objs = NULL;
   objNums = NULL;
+  offsets = NULL;
 
   if (!xref->fetch(objStrNum, 0, &objStr)->isStream()) {
     goto err1;
@@ -100,6 +76,7 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
     goto err1;
   }
   first = obj1.getInt();
+  firstOffset = objStr.getStream()->getBaseStream()->getStart() + first;
   obj1.free();
   if (first < 0) {
     goto err1;
@@ -121,7 +98,7 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
       obj1.free();
       obj2.free();
       delete parser;
-      gfree(offsets);
+//       gfree(offsets);
       goto err1;
     }
     objNums[i] = obj1.getInt();
@@ -131,7 +108,7 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
     if (objNums[i] < 0 || offsets[i] < 0 ||
 	(i > 0 && offsets[i] < offsets[i-1])) {
       delete parser;
-      gfree(offsets);
+//       gfree(offsets);
       goto err1;
     }
   }
@@ -160,7 +137,7 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
     delete parser;
   }
 
-  gfree(offsets);
+//   gfree(offsets);
 
  err1:
   objStr.free();
@@ -177,6 +154,7 @@ ObjectStream::~ObjectStream() {
     delete[] objs;
   }
   gfree(objNums);
+  gfree(offsets);
 }
 
 Object *ObjectStream::getObject(int objIdx, int objNum, Object *obj) {
