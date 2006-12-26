@@ -115,6 +115,7 @@ FREETYPE2DIR=libs/freetype2
 ICUDIR=libs/icu-xetex
 TECKITDIR=libs/teckit
 GDDIR=libs/gd
+LIBOBSDCOMPATDIR=libs/obsdcompat
 
 test "$no_x" = yes && { with_xdvik=no; with_oxdvik=no; }
 export with_xdvik with_oxdvik
@@ -162,6 +163,13 @@ test "$with_xetex"   != no    && : ${needs_libxpdf=yes}
 : ${needs_libxpdf=no}
 export needs_libxpdf
 
+# we need libobsdcompat for pdftex
+test ! -d $srcdir/$LIBOBSDCOMPATDIR && : ${needs_obsdcompat=no}
+test "$with_pdftex"  != no    && : ${needs_obsdcompat=yes}
+test "$with_pdfetex" != no    && : ${needs_obsdcompat=yes}
+: ${needs_obsdcompat=no}
+export needs_obsdcompat
+
 # we need gd for dvipng
 test ! -d $srcdir/$GDDIR && : ${needs_gd=no}
 test "$with_dvipng"  != no    && : ${needs_gd=yes}
@@ -206,8 +214,9 @@ sinclude(libs/freetype/freetype.ac)
 sinclude(libs/freetype2/freetype2.ac)
 sinclude(libs/icu-xetex/icu-xetex.ac)
 sinclude(libs/teckit/teckit.ac)
+sinclude($LIBOBSDCOMPATDIR/libobsdcompat.ac)
 
-LIBSDEP="$CURSESDEP $ZLIBDEP $LIBPNGDEP $LIBXPDFDEP $LIBT1DEP $GDDEP $FREETYPEDEP $FREETYPE2DEP $ICUDEP $TECKITDEP"
+LIBSDEP="$CURSESDEP $ZLIBDEP $LIBPNGDEP $LIBXPDFDEP $LIBT1DEP $GDDEP $FREETYPEDEP $FREETYPE2DEP $ICUDEP $TECKITDEP $LIBOBSDDEP"
 
 LIBSDIRS=
 test "$needs_ncurses" = yes && test "$using_system_ncurses" != yes \
@@ -230,6 +239,8 @@ test "$needs_icu" = yes && test "$using_system_icu" != yes \
   && LIBSDIRS="$ICUDIR $LIBSDIRS"
 test "$needs_teckit" = yes \
   && LIBSDIRS="$TECKITDIR $LIBSDIRS"
+test "$needs_obsdcompat" = yes \
+  && LIBSDIRS="$LIBOBSDCOMPATDIR $LIBSDIRS"
 
 AC_CONFIG_SUBDIRS([libs])
 

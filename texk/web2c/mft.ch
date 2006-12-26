@@ -1096,7 +1096,9 @@ begin
       usage_help (MFT_HELP, nil);
 
     end else if argument_is ('version') then begin
-      print_version_and_exit (banner, nil, 'D.E. Knuth  (MP changes by W. Bzyl)');
+      print_version_and_exit (banner, nil, 
+      			      'D.E. Knuth  (MP changes by W. Bzyl)', 
+			      nil);
 
     end else if argument_is ('change') then begin
       change_name := extend_filename (optarg, 'ch');

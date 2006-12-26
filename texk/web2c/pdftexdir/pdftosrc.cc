@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996-2002 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 1996-2006 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -26,6 +26,7 @@ $Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/pdftosrc.cc#10 $
 #include <string.h>
 #include <ctype.h>
 #include <aconf.h>
+#include <assert.h>
 #include <GString.h>
 #include <gmem.h>
 #include <gfile.h>
@@ -53,10 +54,12 @@ int main(int argc, char *argv[])
     FILE *outfile;
     char *outname;
     int objnum = 0, objgen = 0;
+    bool extract_xref_table = false;
     int c;
     fprintf(stderr, "pdftosrc version %s\n", xpdfVersion);
     if (argc < 2) {
-        fprintf(stderr, "Usage: pdftosrc <PDF-file> [<stream-object-number>]\n");
+        fprintf(stderr,
+                "Usage: pdftosrc <PDF-file> [<stream-object-number>]\n");
         exit(1);
     }
     fileName = new GString(argv[1]);
@@ -94,8 +97,7 @@ int main(int argc, char *argv[])
         outname = srcName.getString()->getCString();
         // We cannot free srcName, as objname shares its string.
         // srcName.free();
-    }
-    else {
+    } else if (objnum > 0) {
         xref->fetch(objnum, objgen, &srcStream);
         if (!srcStream.isStream()) {
             fprintf(stderr, "Not a Stream object\n");
@@ -109,22 +111,68 @@ int main(int argc, char *argv[])
         else
             sprintf(p, ".%i+%i", objnum, objgen);
         outname = buf;
+    } else {                    // objnum < 0 means we are extracting the XRef table
+        extract_xref_table = true;
+        sprintf(buf, "%s", fileName->getCString());
+        if ((p = strrchr(buf, '.')) == 0)
+            p = strchr(buf, 0);
+        sprintf(p, ".xref");
+        outname = buf;
     }
     if (!(outfile = fopen(outname, "wb"))) {
         fprintf(stderr, "Cannot open file \"%s\" for writing\n", outname);
         exit(1);
     }
-    s = srcStream.getStream();
-    s->reset();
-    while ((c = s->getChar()) != EOF)
-        fputc(c, outfile);
+    if (extract_xref_table) {
+        int size = xref->getSize();
+        int i;
+        for (i = 0; i < size; i++) {
+            if (xref->getEntry(i)->offset == 0xffffffff)
+                break;
+        }
+        size = i;
+        fprintf(outfile, "xref\n");
+        fprintf(outfile, "0 %i\n", size);
+        for (i = 0; i < size; i++) {
+            XRefEntry *e = xref->getEntry(i);
+            if (e->type != xrefEntryCompressed)
+                fprintf(outfile, "%.10lu %.5i %s\n",
+                        (long unsigned) e->offset, e->gen,
+                        (e->type == xrefEntryFree ? "f" : "n"));
+            else {              // e->offset is the object number of the object stream
+                // e->gen is the local index inside that object stream
+                //int objStrOffset = xref->getEntry(e->offset)->offset;
+                Object tmpObj;
+
+                xref->fetch(i, e->gen, &tmpObj);        // to ensure xref->objStr is set
+                ObjectStream *objStr = xref->getObjStr();
+                assert(objStr != NULL);
+                int *localOffsets = objStr->getOffsets();
+                assert(localOffsets != NULL);
+//                 fprintf(outfile, "%0.10lu %i n\n",
+//                         (long unsigned) (objStrOffset), e->gen);
+                fprintf(outfile, "%.10lu 00000 n\n",
+                        (long unsigned) (objStr->getFirstOffset() +
+                                         localOffsets[e->gen]));
+//                         (long unsigned) (objStrOffset + objStr->getStart() + localOffsets[e->gen]));
+                tmpObj.free();
+            }
+        }
+    } else {
+        s = srcStream.getStream();
+        s->reset();
+        while ((c = s->getChar()) != EOF)
+            fputc(c, outfile);
+        srcStream.free();
+    }
     if (objnum == 0)
         fprintf(stderr, "Source file extracted to %s\n", outname);
-    else
+    else if (objnum > 0)
         fprintf(stderr, "Stream object extracted to %s\n", outname);
+    else
+        fprintf(stderr, "Cross-reference table extracted to %s\n", outname);
     fclose(outfile);
     catalogDict.free();
-    srcStream.free();
     delete doc;
     delete globalParams;
 }

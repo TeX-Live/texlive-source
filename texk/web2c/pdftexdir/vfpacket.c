@@ -25,27 +25,26 @@ $Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/vfpacket.c#7 $
 typedef struct {
     internalfontnumber font;
     char *dataptr;
-    int  len;
+    int len;
 } packet_entry;
 
 /* define packet_ptr, packet_array & packet_limit */
-define_array(packet);   
+define_array(packet);
 
 typedef struct {
     char **data;
     int *len;
     internalfontnumber font;
-}  vf_entry;
+} vf_entry;
 
 /* define vf_ptr, vf_array & vf_limit */
-define_array(vf);   
+define_array(vf);
 
 static char *packet_data_ptr;
 
 integer newvfpacket(internalfontnumber f)
 {
-    int i,
-        n = fontec[f] - fontbc[f] + 1;
+    int i, n = fontec[f] - fontbc[f] + 1;
     alloc_array(vf, 1, SMALL_ARRAY_SIZE);
     vf_ptr->len = xtalloc(n, int);
     vf_ptr->data = xtalloc(n, char *);
@@ -62,8 +61,8 @@ void storepacket(integer f, integer c, integer s)
     int l = strstart[s + 1] - strstart[s];
     vf_array[vfpacketbase[f]].len[c - fontbc[f]] = l;
     vf_array[vfpacketbase[f]].data[c - fontbc[f]] = xtalloc(l, char);
-    memcpy((void *)vf_array[vfpacketbase[f]].data[c - fontbc[f]], 
-           (void *)(strpool + strstart[s]), (unsigned)l);
+    memcpy((void *) vf_array[vfpacketbase[f]].data[c - fontbc[f]],
+           (void *) (strpool + strstart[s]), (unsigned) l);
 }
 
 void pushpacketstate()
@@ -105,8 +104,8 @@ void vf_free(void)
     if (vf_array != NULL) {
         for (v = vf_array; v < vf_ptr; v++) {
             xfree(v->len);
-            n = fontec[v->font] - fontec[v->font] + 1;
-            for (p = v->data; p - v->data < n ; p++)
+            n = fontec[v->font] - fontbc[v->font] + 1;
+            for (p = v->data; p - v->data < n; p++)
                 xfree(*p);
             xfree(v->data);
         }

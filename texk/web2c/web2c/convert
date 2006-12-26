@@ -40,7 +40,9 @@ web2c_options=-c$basefile
 precmd=
 midcmd=
 fixwrites_options=
-splitup_options="-i -l 10000"
+splitup_options="-i -l 11500"
+# was 10000, but that caused pdfetex4.c to appear. With 11500, the number of
+# files for pdf{e}tex is unchanged.
 postcmd=
 output="> $cfile"
 output_files="$cfile $basefile.h"

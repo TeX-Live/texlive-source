@@ -1205,7 +1205,7 @@ begin
       usage_help (BIBTEX_HELP, nil);
 
     end else if argument_is ('version') then begin
-      print_version_and_exit (banner, 'Oren Patashnik', nil);
+      print_version_and_exit (banner, 'Oren Patashnik', nil, nil);
 
     end; {Else it was a flag; |getopt| has already done the assignment.}
   until getopt_return_val = -1;

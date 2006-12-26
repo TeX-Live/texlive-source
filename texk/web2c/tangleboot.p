@@ -102,7 +102,7 @@ end else if getoptreturnval=63 then begin usage('tangle');
 end else if(strcmp(longoptions[optionindex].name,'help')=0)then begin
 usagehelp(TANGLEHELP,nil);
 end else if(strcmp(longoptions[optionindex].name,'version')=0)then begin
-printversionandexit('This is TANGLE, Version 4.5',nil,'D.E. Knuth');
+printversionandexit('This is TANGLE, Version 4.5',nil,'D.E. Knuth',nil);
 end else if(strcmp(longoptions[optionindex].name,'mixedcase')=0)then
 begin forceuppercase:=false;forcelowercase:=false;
 end else if(strcmp(longoptions[optionindex].name,'uppercase')=0)then

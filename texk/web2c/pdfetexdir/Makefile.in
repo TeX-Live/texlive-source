@@ -1,3 +1,0 @@
-mostlyclean clean:
-distclean maintainer-clean extraclean: clean
-	rm -f Makefile

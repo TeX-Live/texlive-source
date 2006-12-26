@@ -301,12 +301,12 @@ const char *mac_glyph_names[] = {
 };
 
 const char *ambiguous_names[] = {
-    "Delta",            /*   increment   */
-    "Omega",            /*   Ohm         */
-    "Pi",               /*   product     */
-    "Sigma",            /*   summation   */
-    "dmacron",          /*   dslash      */
-    "macron",           /*   overscore   */
-    "periodcentered",   /*   middot      */
+    "Delta",                    /*   increment   */
+    "Omega",                    /*   Ohm         */
+    "Pi",                       /*   product     */
+    "Sigma",                    /*   summation   */
+    "dmacron",                  /*   dslash      */
+    "macron",                   /*   overscore   */
+    "periodcentered",           /*   middot      */
     NULL
 };

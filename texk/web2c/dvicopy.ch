@@ -517,7 +517,7 @@ begin
       usage_help (DVICOPY_HELP, nil);
 
     end else if argument_is ('version') then begin
-      print_version_and_exit (banner, 'Peter Breitenlohner', nil);
+      print_version_and_exit (banner, 'Peter Breitenlohner', nil, nil);
 
     end else if argument_is ('magnification') then begin
       out_mag := atou (optarg);

@@ -41,6 +41,7 @@ FREETYPEDIR=libs/freetype
 FREETYPE2DIR=libs/freetype2
 ICUDIR=libs/icu-xetex
 TECKITDIR=libs/teckit
+LIBOBSDCOMPATDIR=libs/obsdcompat
 
 # Subdirectories that have makefiles
 ESUBDIRS = @ESUBDIRS@ texk
@@ -176,6 +177,8 @@ $(ICUDIR)/lib/libsicuuc.a $(ICUDIR)/lib/libsicule.a $(ICUDIR)/lib/libsicudata.a:
 	cd $(ICUDIR); $(MAKE)
 $(TECKITDIR)/lib/.libs/libTECkit.a:
 	cd $(TECKITDIR); $(MAKE)
+$(LIBOBSDCOMPATDIR)/libopenbsd-compat.a:
+	cd $(LIBOBSDCOMPATDIR); $(MAKE) libopenbsd-compat.a
 
 # Prevent GNU make v3 from overflowing arg limit on SysV.
 .NOEXPORT:

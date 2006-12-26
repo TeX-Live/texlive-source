@@ -442,7 +442,7 @@ begin
       usage_help (DVITOMP_HELP, nil);
 
     end else if argument_is ('version') then begin
-      print_version_and_exit (term_banner, 'AT&T Bell Laboraties', 'John Hobby.');
+      print_version_and_exit (term_banner, 'AT&T Bell Laboraties', 'John Hobby.', nil);
 
     end; {Else it was a flag; |getopt| has already done the assignment.}
   until getopt_return_val = -1;

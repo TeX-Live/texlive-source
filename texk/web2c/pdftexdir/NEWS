@@ -1,3 +1,301 @@
+-----------------------------------------------------
+pdfTeX 3.141592-1.40.0-rc4 was released on 2006-12-22
+-----------------------------------------------------
+- pdfetex (as a separate binary/program) is gone; all extensions are now in
+  pdftex. The make files still know about the target pdfetex, but it's just a
+  copy of pdftex
+- The sources of TeX, eTeX and pdfTeX have been merged into one file pdftex.web
+  and one change file pdftex.ch. The sources of TeX and eTeX distributed are
+  just there for reference
+- New features:
+  - pdfTeX can now generate PDF 1.5 object streams, which leads to smaller
+    PDFs. This is controlled by setting \pdfobjcompresslevel to a value >0 (3
+    compress everything, 2 don't compress /Info, 1 also don't compress embedded
+    PDFs) and works only with PDF >=1.5
+  - pdfTeX now supports another image file format: JBIG2 files (.jbig2)
+  - the memory allocated for objects and destination names now grows
+    dynamically
+  - pdfTeX now generates smaller PDFs since for char positioning the width of
+    chars (/Widths) is stored with more precision and so the chars must rarely
+    be positioned separately
+  - the PK resolution is now taken from the "pk_dpi" parameter in texmf.cnf if
+    it has not been set in the format file or by the user
+  - pdfTeX now removes the generated pdf in case of a fatal error
+  - pdfTeX now sets /ModDate and /Trapped in the InfoDict by default (the
+    values can be overridden with \pdfinfo)
+  - the format of warnings and errors issued by pdfTeX has been changed and
+    unified
+  - the output of -version has been extended and now includes information about
+    the libraries actually used, which can be handy when using shared libraries
+  - rules and their positioning on the page are now inside a qQ group
+- New primitives:
+  - TODO: pdfTeX can now handle Colorstacks
+  - \pdfprimitive\TeX-primitive executes the original \TeX-primitive even if
+    the command has been redefined since. E.g.
+      \let\relax\undefined\pdfprimitive\relax
+    expands to \relax.
+    \ifpdfprimitive\TeX-primitive is true if \TeX-primitive has its original
+    meaning
+  - \ifpdfabsnum and \ifpdfabsdim are like \ifnum and \ifdim, but don't care
+    about negative numbers
+  - shell escape: if the first character of a filename for \openin, \openout
+    \input is a pipe symbol (|), the filename is assumed to be a request for a
+    pipe to a command line that is given in the rest of the filename
+  - draftmode: With \pdfdraftmode=1 or the commandline switch -draftmode pdfTeX
+    doesn't write the output pdf and doesn't actually read any images, thus
+    speeding up compilations when you know you need an extra run but don't care
+    about the output, e.g. just to get the BibTeX references right
+  - \pdfpxdimen (introduced in 1.30) is now a real dimension parameter. It
+    allows one base dimensions on pixels. 1px defaults to 1bp (or 72dpi), but
+    can be changed with the \pdfpxdimen primitive:
+      \pdfpxdimen=1in % 1 dpi
+      \divide\pdfpxdimen by 96 % 96 dpi
+      \hsize=1200px
+    Now \hsize is (1in/96)*1200
+  - \pdflastlink returns the object number of the last \pdfstartlink
+  - \pdfsavepos now works in DVI mode
+- Fonts:
+  - support for subfonts: This creates all needed map entries for subfonts
+    automatically and handles Unicode mappings
+  - ToUnicode entries for Type1 fonts (patch 580)
+- HZ:
+  - added patch 462: HZ font expansion in autoexpand mode now produces smaller
+    pdf files, as it works by modififying the text matrix for single fonts
+    instead of embedding many expanded font versions. Therefore HZ now can be
+    used also for TrueType fonts and even for non-embedded fonts (e.g.
+    Times-Roman)
+- Bugfixes:
+  - the PDF statistics in the log are now correct
+  - added JFIF detection patch to writejpg.c (bug 548)
+  - bugfix: invalid pdf created if font name contains space (509)
+  - bugfix: truetype OS/2 v3 fonts (594)
+  - bugfix: Type1C (CFF) fonts of embedded pdfs didn't get replaced
+- pdfTeX uses libpng 1.2.14
+- changes from rc3:
+ various small fixes
+
+-----------------------------------------------------
+pdfTeX 3.141592-1.40.0-rc3 was released on 2006-12-20
+-----------------------------------------------------
+- changes from rc2:
+  - map file handling:
+   - in usual cases the behaviour is the same like in previous version. So if a
+     font file is given with '<' or '<<', things should work without problems.
+   - changes in odd cases:
+     - no font file --> no font descriptor
+     - font file given but not included --> will be treated like font file
+       missing + a warning
+   - minimize the distinction between standard fonts and other type1 fonts: the
+     *only* place this makes a difference is that if a font file is missing
+     (and the font is used), a warning will be generated for normal fonts but
+     not for standard fonts
+
+-----------------------------------------------------
+pdfTeX 3.141592-1.40.0-rc2 was released on 2006-12-13
+-----------------------------------------------------
+- changes from rc1:
+  - fix \letterspacefont (bug 712)
+  - fix problems with unused objects
+
+-----------------------------------------------------
+pdfTeX 3.141592-1.40.0-rc1 was released on 2006-12-11
+-----------------------------------------------------
+- changes from last beta:
+  - ToUnicode was broken in the latest beta (bug 711)
+  - pdftosrc now handles compressed xref tables (PDF 1.5)
+  - new primitive \letterspacefont to implement letter-spacing on-the-fly
+
+---------------------------------------------------------------
+pdfTeX 3.141592-1.40.0-beta-20061206 was released on 2006-12-06
+---------------------------------------------------------------
+- bugfix: crash with autokern (663)
+- memory for virtual fonts can now grow dynamically (patch 705)
+- rework the font mechanism (patches 597 and 709)
+- updated libpng to 1.2.14
+
+---------------------------------------------------------------
+pdfTeX 3.141592-1.40.0-beta-20061108 was released on 2006-11-08
+---------------------------------------------------------------
+- bugfix: extra kerning+expansion+ligatures (481)
+- bugfix: extra kerning does not work with ligatures (482)
+- bugfix: extra kerning inhibits extra spacing (483)
+- bugfix: extra kerning inhibits hyphenation (484)
+- bugfix: ttf2afm fails to include characters specified with uniXXXX (565)
+
+---------------------------------------------------------------
+pdfTeX 3.141592-1.40.0-beta-20061017 was released on 2006-10-17
+---------------------------------------------------------------
+- updated patch 580 (ToUnicode entries for Type1 fonts)
+- bugfix: nested links (479)
+- bugfix: conv_toks had some problems (609)
+- bugfix: problems with TrueType fonts (611)
+
+---------------------------------------------------------------
+pdfTeX 3.141592-1.40.0-beta-20060928 was released on 2006-09-28
+---------------------------------------------------------------
+- added patch 603 (Colorstack)
+- added patch 462 (HZ font expansion by text matrix manipulation)
+- updated obsdcompat from openssh 4.4pl1
+- bugfix: \pdfescapestring + \pdfescapename had been broken (605)
+
+---------------------------------------------------------------
+pdfTeX 3.141592-1.40.0-beta-20060906 was released on 2006-09-06
+---------------------------------------------------------------
+- bugfix: \pdfdraftmode could be tricked (600)
+- bugfix: Type1C (CFF) fonts of embedded pdfs didn't get replaced
+
+---------------------------------------------------------------
+pdfTeX 3.141592-1.40.0-beta-20060822 was released on 2006-08-22
+---------------------------------------------------------------
+- new feature: with \pdfdraftmode=1 (or -draftmode) pdfTeX doesn't write an
+  output pdf file and doesn't read the content of any image file, thus speeding
+  up the run. This is usefull when you know you need another run of pdfTeX e.g.
+  just to get all the references right, but don't care for the output of this
+  run
+- changed the format of pdfTeX warnings and unified the four(!) functions
+  pdfTeX uses for writing out errors and warnings
+- expanded the output of -version to include information about the libraries
+  used
+- fixed a bug where -20060811 would loop forever
+- fixed some compilation problems with obsdcompat
+
+---------------------------------------------------------------
+pdfTeX 3.141592-1.40.0-beta-20060811 was released on 2006-08-11
+---------------------------------------------------------------
+- renamed primitives:
+    \primitive -> \pdfprimitive
+    \ifprimitive -> \ifpdfprimitive
+    \ifabsdim -> \ifpdfabsdim
+    \ifabsnum -> \ifpdfabsnum
+- new version of \primitive/\ifprimitive (but see above)
+- new dimen: \pdfpxdimen
+- support for jbig2 files
+- new library: obsdcompat, which has improved string functions and allows the
+  use of __attribute__
+- update libpng to 1.2.12
+- added JFIF detection patch to writejpg.c (was bug 548)
+- bugfix: truetype OS/2 v3 fonts (594)
+- bugfix: file with only \immediate\pdfobj stream results in garbage (505)
+- bugfix: invalid pdf created if font name contains space (509)
+
+---------------------------------------------------------------
+pdfTeX 3.141592-1.40.0-beta-20060725 was released on 2006-07-25
+---------------------------------------------------------------
+- added patches by Christian Schenk forwarded by Hartmut
+- added patch 421 (popen) from Taco
+- added lots of (void) to writettf* and ttf2afm to silence the compiler
+- removed some unused variables from tounicode.c
+- add new code by Thanh (patch 580)
+- added security patch for xpdf :-(
+- added JFIF detection patch to writejpg.c (bug 548)
+
+---------------------------------------------------------------
+pdfTeX 3.141592-1.40.0-beta-20060213 was released on 2006-02-13
+---------------------------------------------------------------
+- pdftex.web has been improved a bit
+- new patch:
+  - 473 \ifabsnum and \ifabsdim
+- the manual has been updated a bit and is again included
+
+---------------------------------------------------------------
+pdfTeX 3.141592-1.40.0-beta-20060125 was released on 2006-01-25
+---------------------------------------------------------------
+- pdfTeX now includes pdfeTeX, i.e. there is no way to make a binary without
+  eTeX support. Also the sources of TeX, eTeX and pdfTeX have been merged into
+  one file pdftex.web
+- most pdfTeX change files are gone; only one file (pdftex.ch) remains.
+- improved patches:
+  - 393 Ensure newline before endstream
+
+---------------------------------------------------------------
+pdfTeX 3.141592-1.40.0-beta-20060117 was released on 2006-01-17
+---------------------------------------------------------------
+- pdfTeX is now pdfeTeX, i.e. there is no way to make a binary without eTeX
+  support. Also the sources of TeX, eTeX and pdfTeX have been merged into one
+  file pdfetex.web
+- strip trailing zeros in fractions of reals written
+- removed patch 467 \ifindef
+- improved logging of objstreams
+
+----------------------------------------------------------------
+pdfTeX 3.141592-1.40.0-alpha-20060111 was released on 2006-01-11
+----------------------------------------------------------------
+- new patches:
+  - 466 \primitive and \ifprimitive
+  - 467 \ifinedef
+- improved patches:
+  - 393 Ensure newline before endstream
+- pdfTeX now sets /ModDate and /Trapped by default (the values can be
+  overridden with \pdfinfo)
+- more fixes to remove warnings from -Wall
+
+----------------------------------------------------------------
+pdfTeX 3.141592-1.40.0-alpha-20060106 was released on 2006-01-06
+----------------------------------------------------------------
+- many small fixes to remove warnings from -Wall
+- removed some unused variables
+- really fix bug 444
+- add some GCC extensions and use *nprintf instead of *printf where possible
+- fixed a unicode bug in ttf2afm
+
+----------------------------------------------------------------
+pdfTeX 3.141592-1.40.0-alpha-20051226 was released on 2005-12-26
+----------------------------------------------------------------
+- improved patches:
+  - 453	Object Streams for PDF-1.5
+  - take PK resolution from "pk_dpi" parameter in  texmf.cnf, if it has not
+    been set by the format file or by the user
+  - 432	Rules in a PDF qQ group
+- some fixes for Thanhs patch
+- some improvements from -Wall
+- .indent.pro for indent
+
+----------------------------------------------------------------
+pdfTeX 3.141592-1.40.0-alpha-20051221 was released on 2005-12-21
+----------------------------------------------------------------
+- has a large patch from Thanh
+- pdflastlink has been fixed
+- remove generated pdf in case of fatal error
+
+----------------------------------------------------------------
+pdfTeX 3.141592-1.40.0-alpha-20051208 was released on 2005-12-08
+----------------------------------------------------------------
+- improved patches:
+  - 386	grow obj_tab and dest_names arrays dynamically
+  - 453	Object Streams for PDF-1.5
+  - take PK resolution from "pk_dpi" parameter in  texmf.cnf, if it has not
+    been set by the format file or by the user
+- write out PDF statistics later to make them correct
+- makefile target pdfetex-all.pdf for a huge file
+
+----------------------------------------------------------------
+pdfTeX 3.141592-1.40.0-alpha-20051205 was released on 2005-12-05
+----------------------------------------------------------------
+- has these patches:
+  - 386	grow obj_tab and dest_names arrays dynamically
+  - 416	new primitive pdflastlink
+  - 427	Character positioning patch
+  - 432	Rules in a PDF qQ group
+  - 434	Remove queued map item handling
+  - 438	\pdfsavepos in DVI mode
+  - 443	512 zeros in Type1 fonts not copied anymore
+  - 447	Don't write /Encoding for non-reencoded fonts
+  - 453	Object Streams for PDF-1.5
+  - take PK resolution from "pk_dpi" parameter in  texmf.cnf, if it has not
+    been set by the format file or by the user
+
+-------------------------------------------------
+pdfTeX 3.141592-1.30.6 was released on 2006-02-16
+-------------------------------------------------
+- bugfix: updated xpdf to 3.01pl2
+
+-------------------------------------------------
+pdfTeX 3.141592-1.30.5 was released on 2005-12-04
+-------------------------------------------------
+- bugfix: \pdfximage prints the file name twice (bug 441)
+- bugfix: buffer overflow with \pdfmatch (bug 444)
+- bugfix: updated xpdf to 3.01pl1
+
 -------------------------------------------------
 pdfTeX 3.141592-1.30.4 was released on 2005-10-17
 -------------------------------------------------
@@ -33,7 +331,7 @@ pdfTeX 3.141592-1.30.0 was released on 2005-08-01
 - pdftex knows two new units:
   - new Didot (1nd=0.375mm)
   - new Cicero (1nc=12nd)
-- New primitives: 
+- New primitives:
   - Inclusion of pngs has been greatly improved: It now does
     - alpha channel and transparency (only if %!PDF >=1.4)
     - 16-bit colour (only if %!PDF >=1.5); this must be enabled by setting
@@ -44,7 +342,7 @@ pdfTeX 3.141592-1.30.0 was released on 2005-08-01
     - fast direct embedding of png streams, if their structure allows this; the
       automatic fall-back is to decompress and re-compress as before.
   - pdfTeX now has an interface to the precise system time (if available) as an
-    aid in benchmarking TeX macro code. 
+    aid in benchmarking TeX macro code.
     - \pdfelapsedtime is a read-only integer that (initially) returns the
       amount of time passed since the start of this run. This amount is given
       in `scaled seconds': the value 65536 counts as one second. If more time
@@ -55,7 +353,7 @@ pdfTeX 3.141592-1.30.0 was released on 2005-08-01
     - \pdfuniformdeviate <count> generates a uniformly distributed random
       integer value between 0 (inclusive) and <count> (exclusive).
     - \pdfnormaldeviate expands to a random integer value with a mean of 0 and
-      a unit of 65536. 
+      a unit of 65536.
     - \pdfrandomseed allows access to the current seed value.
     - \pdfsetrandomseed <count> sets the random seed to a specific value.
   - \pdfnoligatures\f disables ligatures for the loaded font \f.
@@ -102,7 +400,7 @@ pdfTeX 3.141592-1.30.0 was released on 2005-08-01
 - New experimental primitives:
   - \pdfmatch [icase] [subcount <number>}] {<pattern>}{<string>}
     Implements pattern matching using the POSIX regex.
-    It returns the same values as \pdfstrcmp, but with the following semantics: 
+    It returns the same values as \pdfstrcmp, but with the following semantics:
       -1: error case (invalid pattern, ...)
        0: no match
        1: match found
@@ -236,7 +534,7 @@ pdfTeX 3.141592-1.20a was released on 2004-09-06
 - The PTEX.FullBanner key is now inserted in the document info dict instead of
   the catalog. Newer versions of Acrobat display it.
 - Now includes support for encTeX.
-- Extended \pdfannot to use reserveobjnum/useobjnum 
+- Extended \pdfannot to use reserveobjnum/useobjnum
   See http://www.ntg.nl/pipermail/ntg-pdftex/2004-March/000424.html
 - Bugfix: pdfTeX would read an .xpdfrc when including pdfs.
   See http://tug.org/pipermail/pdftex/2004-March/004835.html
@@ -250,7 +548,7 @@ pdfTeX 3.141592-1.20a was released on 2004-09-06
 - pdfTeX uses zlib 1.2.1
 - pdfTeX uses xpdf 3.00
 - pdfTeX uses libpng 1.2.7
-  
+
 ------------------------------------------------
 pdfTeX 3.141592-1.11b was released on 2003-10-06
 ------------------------------------------------
@@ -265,7 +563,7 @@ pdfTeX 3.141592-1.11a was released on 2003-08-02
 - The behaviour when an included pdf has a newer version than the one specified
   with \pdfoptionpdfminorversion can be controlled by the new internal integer
   \pdfoptionpdfinclusionerrorlevel: If it's 0, pdfTeX gives only a warning; if
-  it's 1, it raises an error. 
+  it's 1, it raises an error.
     This can also be set in pdftex.cfg with pdf_inclusion_errorlevel
 - The syntax for outlines has been extended to allow attributes:
   <outline spec> --> <attr spec> <action spec> [count <number>] <general text>
@@ -277,7 +575,7 @@ pdfTeX 3.141592-1.11a was released on 2003-08-02
   <object contents> --> <file spec>
                       | <general text>
   When the optional keyword `reserveobjnum' and `useobjnum' is not given, the
-  behaviour is unchanged. 
+  behaviour is unchanged.
   See also http://tug.org/mailman/htdig/pdftex/2003-March/003814.html
 - Bugfix: /CreationDate didn't care for the timezone and could be fooled.
   See http://www.ntg.nl/pipermail/ntg-pdftex/2003-July/000223.html
@@ -289,7 +587,7 @@ pdfTeX 3.141592-1.11a was released on 2003-08-02
   See http://tug.org/pipermail/pdftex/2003-July/004262.html
 - Bugfix: \pdfstartlink would produce spurious /NewWindow entries. Also the
   syntax of <action spec> and <goto-action spec> has been cleaned up.
-  See http://www.ntg.nl/pipermail/ntg-pdftex/2003-June/000167.html 
+  See http://www.ntg.nl/pipermail/ntg-pdftex/2003-June/000167.html
 - Bugfix: \pdffontattr was not used for T3 fonts.
   See http://tug.org/pipermail/pdftex/2003-June/004127.html
 - Bugfix: The cropbox of an included pdf would sometimes not be used.
@@ -305,7 +603,7 @@ pdfTeX 3.141592-1.10b was released on 2003-02-26
 - Bugfix: Numbers in pdfs would sometimes be just a wee bit of (changed
   implementation of pdftoepdf.convertNumToPDF).
 - Bugfix: When setting the /Producer, /Creator or /CreationDate keys with
-  /pdfinfo pdfTeX would also insert default values which caused duplicate keys
+  \pdfinfo pdfTeX would also insert default values which caused duplicate keys
   in the info dict (see
   http://tug.org/pipermail/pdftex/2003-February/003524.html).
 - The reading of mapfiles is much faster (see
@@ -316,7 +614,7 @@ pdfTeX 3.141592-1.10b was released on 2003-02-26
   http://tug.org/pipermail/pdftex/2002-March/002367.html).
 - Bugfix: decimal_digits defaulted to 0, which caused problems with included
   images when including pdfs (see
-  http://tug.org/pipermail/pdftex/2003-February/003518.html). 
+  http://tug.org/pipermail/pdftex/2003-February/003518.html).
   It now defaults to 4.
 - Bugfix: the type of included images was decided based only on the extensions;
   now pdfTeX looks for magic bytes at the start of files (see
@@ -330,16 +628,16 @@ pdfTeX 3.14159-1.10a was released on 2003-01-16
   - Additional attributes like MetaData are copied from included pdfs.
   - Currently the Page Group attribute (see sections 7.3.6 and 7.5.5 of the pdf
     1.4 reference) of included pdfs is NOT copied (as we don't know how to
-    handle this when imposing pdfs). 
+    handle this when imposing pdfs).
       This means including pdfs with transparency features will work as long as
     the included pdf doesn't use Page Groups; if it does, the result might not
     be what is expected (One application known to use Page Groups is Adobe
     Illustrator v9++). The distributed pdfTeX binaries will give a warning
     about any occurance of a Page Group in an included pdf and ignore the Page
     Group (thus producing syntactically correct pdfs but probably not the
-    intended output).  
+    intended output).
       Acrobat 5++ and newer versions of Jaws display files without Page Groups
-    correctly, so this might not really be a problem.  
+    correctly, so this might not really be a problem.
       See pdftoepdf.cc for preprocessor flags which allow this behaviour to be
     changed (copying the Page Group (most likely producing incorrect pdf) or
     treating Page Groups as errors).
@@ -347,7 +645,7 @@ pdfTeX 3.14159-1.10a was released on 2003-01-16
   generated file and the latest allowed pdf version of included pdfs:
         \pdfoptionpdfminorversion=3
   tells pdfTeX to set the pdf version to 1.3 and allows only included pdfs with
-  versions <= 1.3 . 
+  versions <= 1.3 .
     The default for \pdfoptionpdfminorversion is 4 for pdf 1.4
     This must appear before any data is written to the generated pdf file, so
   you should put it at the very start of your files.
@@ -371,7 +669,7 @@ pdfTeX 3.14159-1.10a was released on 2003-01-16
   (thanks to Hartmut Henkel).
 - The support for the inclusion of tif images has been removed as it was of
   limited use (it worked only for gray-scale and rgb images) and produced wrong
-  results (all other images types where treated as rgb images). 
+  results (all other images types where treated as rgb images).
   Tif images can be converted on *nix on-the-fly to pngs with the help of
   ImageMagick, epstopdf.sty or pdftex.def v0.4 or newer, and this rule:
     \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `basename #1 .tif`.png}
@@ -396,5 +694,5 @@ pdfTeX 3.14159-1.00a-pretest-20010806 was released on 2001-08-06
 pdfTeX 3.14159-1.00a-pretest-20010804 was released on 2001-08-04
 ----------------------------------------------------------------
 
-$Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/NEWS#88 $
+$Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/NEWS#86 $
 // vim: tw=79:ts=2:expandtab:autoindent

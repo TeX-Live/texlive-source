@@ -8,14 +8,14 @@ kpse_include ../make/library.mk
 kpathsea_srcdir_parent = $(srcdir)/../..
 kpathsea_dir_parent = ../..
 
-ALL_CXXFLAGS = @CXXFLAGS@ @DEFS@ $(XXCFLAGS) -I. -I$(srcdir) -I$(kpathsea_dir_parent) -I$(kpathsea_srcdir_parent) @LIBXPDFCPPFLAGS@
+ALL_CXXFLAGS = @CXXFLAGS@ @DEFS@ $(XXCFLAGS) -I. -I$(srcdir) -I$(kpathsea_dir_parent) -I$(kpathsea_srcdir_parent) @LIBXPDFCPPFLAGS@ -I$(LIBOBSDCOMPATDIR) -I$(LIBOBSDCOMPATDIR)/.. -I$(LIBOBSDCOMPATFSRCDIR) -I$(LIBOBSDCOMPATFSRCDIR)/..
 CXX = @CXX@
 
 .SUFFIXES: .cc .o
 .cc.o:
 	$(CXX) $(ALL_CXXFLAGS) -c $<
 
-# XCFLAGS=-Wstrict-prototypes -Wmissing-prototypes 
+# XCFLAGS=-Wstrict-prototypes -Wmissing-prototypes
 
 LIBPNGDIR=../../../libs/libpng
 LIBPNGSRCDIR=$(srcdir)/$(LIBPNGDIR)
@@ -29,13 +29,18 @@ LIBXPDFSRCDIR=$(srcdir)/$(LIBXPDFDIR)
 LIBMD5DIR=../../../libs/md5
 LIBMD5SRCDIR=$(srcdir)/$(LIBMD5DIR)
 
-XCPPFLAGS=-I.. -I$(srcdir)/.. -I../.. -I$(srcdir)/../.. -I$(LIBMD5DIR) -I$(LIBMD5SRCDIR)\
-@LIBPNGCPPFLAGS@ @ZLIBCPPFLAGS@ -DpdfTeX
+LIBOBSDCOMPATDIR=../../../libs/obsdcompat
+LIBOBSDCOMPATFSRCDIR=$(srcdir)/$(LIBOBSDCOMPATDIR)
 
+XCPPFLAGS=-I.. -I$(srcdir)/.. -I../.. -I$(srcdir)/../.. -I$(LIBMD5DIR) \
+  -I$(LIBMD5SRCDIR) @LIBPNGCPPFLAGS@ @ZLIBCPPFLAGS@ \
+  -I$(LIBXPDFDIR) -I$(LIBXPDFDIR)/.. -I$(LIBXPDFSRCDIR) -I$(LIBXPDFSRCDIR)/.. \
+  -I$(LIBOBSDCOMPATDIR) -I$(LIBOBSDCOMPATDIR)/.. -I$(LIBOBSDCOMPATFSRCDIR) \
+  -I$(LIBOBSDCOMPATFSRCDIR)/.. -DpdfTeX
 
 OBJS = epdf.o mapfile.o utils.o vfpacket.o pkin.o \
 writefont.o writet1.o writet3.o writezip.o writeenc.o writettf.o \
-writejpg.o writepng.o writeimg.o pdftoepdf.o avl.o avlstuff.o
+writejpg.o writejbig2.o writepng.o writeimg.o pdftoepdf.o avl.o avlstuff.o subfont.o tounicode.o
 
 all: libpdf.a
 

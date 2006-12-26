@@ -17,56 +17,86 @@ You should have received a copy of the GNU General Public License
 along with pdfTeX; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/epdf.c#10 $
+$Id: epdf.c,v 1.45 2006/08/20 10:56:04 hahe Exp hahe $
 */
 
 #include "ptexlib.h"
 #include <kpathsea/c-vararg.h>
 #include <kpathsea/c-proto.h>
-
-integer pdfbufmax = pdfbufsize;
+#include <string.h>
 
 extern void epdf_check_mem(void);
+extern void register_fd_entry(fd_entry *);
 
-int is_subsetable(fm_entry *fm)
+
+int is_subsetable(fm_entry * fm)
 {
-    return is_included(fm) && is_subsetted(fm);
+    assert(is_included(fm));
+    return is_subsetted(fm);
 }
 
-int is_type1(fm_entry *fm)
+fd_entry *epdf_create_fontdescriptor(fm_entry * fm)
 {
-    return is_t1fontfile(fm);
+    fd_entry *fd;
+    if ((fd = lookup_fd_entry(fm->ff_name, fm->slant, fm->extend)) == NULL) {
+        fm->in_use = true;
+        fd = new_fd_entry();
+        fd->fm = fm;
+        register_fd_entry(fd);
+        fd->fd_objnum = pdfnewobjnum();
+        assert(fm->ps_name != NULL);
+        fd->fontname = xstrdup(fm->ps_name);    /* just fallback */
+        /* preset_fontmetrics (fo->fd, f); */
+        fd->gl_tree = avl_create(comp_string_entry, NULL, &avl_xallocator);
+        assert(fd->gl_tree != NULL);
+    }
+    return fd;
 }
 
-void mark_glyphs(fm_entry *fm, char *charset)
+integer get_fd_objnum(fd_entry * fd)
 {
-    char *new_charset = fm->charset;
+    assert(fd->fd_objnum != 0);
+    return fd->fd_objnum;
+}
+
+integer get_fn_objnum(fd_entry * fd)
+{
+    if (fd->fn_objnum == 0)
+        fd->fn_objnum = pdfnewobjnum();
+    return fd->fn_objnum;
+}
+
+/***********************************************************************
+ * Mark glyphs used by embedded PDF file:
+ * 1. build fontdescriptor, if not yet existing
+ * 2. mark glyphs directly there
+ *
+ * Input charset from xpdf is a string of glyph names including
+ * leading slashes, but without blanks between them, like: /a/b/c
+***********************************************************************/
+
+void epdf_mark_glyphs(fd_entry * fd, char *charset)
+{
+    char *p, *q, *s;
+    char *glyph;
+    void **aa;
     if (charset == NULL)
         return;
-    if (new_charset == NULL)
-        new_charset = xstrdup(charset);
-    else {
-        xretalloc(new_charset, strlen(new_charset)+strlen(charset)+1, char);
-        strcat(new_charset, charset);
+    assert(fd != NULL);
+    for (s = charset + 1, q = charset + strlen(charset); s < q; s = p + 1) {
+        for (p = s; *p != '\0' && *p != '/'; p++);
+        *p = '\0';
+        if ((char *) avl_find(fd->gl_tree, s) == NULL) {
+            glyph = xstrdup(s);
+            aa = avl_probe(fd->gl_tree, glyph);
+            assert(aa != NULL);
+        }
     }
-    fm->charset = new_charset;
 }
 
-void embed_whole_font(fm_entry *fm)
+void embed_whole_font(fd_entry * fd)
 {
-    fm->all_glyphs = true;
-}
-
-integer get_fontfile(fm_entry *fm)
-{
-    return fm->ff_objnum;
-}
-
-integer get_fontname(fm_entry *fm)
-{
-    if (fm->fn_objnum == 0)
-        fm->fn_objnum = pdfnewobjnum();
-    return fm->fn_objnum;
+    fd->all_glyphs = true;
 }
 
 void epdf_free(void)

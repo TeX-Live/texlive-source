@@ -3161,6 +3161,9 @@ if test "x$needs_zlib" != xno && test "$using_system_zlib"  != yes; then
   ac_config_files="$ac_config_files zlib/Makefile"
 
 fi
+if test "x$needs_obsdcompat" != xno; then
+  subdirs="$subdirs obsdcompat"
+fi
 
 # create md5 directory  when building outside the srcdir:
 if test -d $srcdir/md5; then

@@ -58,6 +58,16 @@ clean:: md5lib-clean
 md5lib-clean:
 	rm -f $(LIBMD5DEP)
 
+# obsdcompat
+LIBOBSDDIR=../../libs/obsdcompat
+LIBOBSDSRCDIR=$(srcdir)/$(LIBOBSDCOMPATDIR)
+LIBOBSDDEP=@LIBOBSDDEP@
+LDLIBOBSD=@LDLIBOBSD@
+
+$(LIBOBSDDIR)/libopenbsd-compat.a: $(LIBOBSDSRCDIR)/*.c $(LIBOBSDSRCDIR)/*.h
+# common_makeargs = $(MFLAGS) CC='$(CC)' CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS)' $(XMAKEARGS)
+# CFLAGS setzt libopenbsd-compat selbst, nicht durchreichen!
+	cd $(LIBOBSDDIR); $(MAKE) $(MFLAGS) $(XMAKEARGS) libopenbsd-compat.a
 
 # libpdf itself
 pdflib = pdftexdir/libpdf.a
@@ -70,7 +80,7 @@ pdftexdir/libpdf.a: $(pdflib_sources) pdftexdir/pdftexextra.h
 
 # Convenience variables.
 
-pdftexlibs = $(pdflib) $(LDLIBPNG) $(LDZLIB) $(LDLIBXPDF) $(LIBMD5DEP)
-pdftexlibsdep = $(pdflib) $(LIBPNGDEP) $(ZLIBDEP) $(LIBXPDFDEP) $(LIBMD5DEP)
+pdftexlibs = $(pdflib) $(LDLIBPNG) $(LDZLIB) $(LDLIBXPDF) $(LIBMD5DEP) $(LDLIBOBSD)
+pdftexlibsdep = $(pdflib) $(LIBPNGDEP) $(ZLIBDEP) $(LIBXPDFDEP) $(LIBMD5DEP) $(LIBOBSDDEP)
 
 ## end of pdftexlib.mk - Makefile fragment for libraries used by pdf[ex]tex.

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996-2005 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 1996-2006 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -17,41 +17,58 @@ You should have received a copy of the GNU General Public License
 along with pdfTeX; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/utils.c#25 $
+$Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/utils.c#24 $
 */
 
-#include "sys/types.h"
-#include "regex.h"
-#include "ptexlib.h"
-#include "zlib.h"
-#include "md5.h"
-#include <kpathsea/c-vararg.h>
+#include "openbsd-compat.h"
+#ifdef HAVE_ASPRINTF            /* asprintf is not defined in openbsd-compat.h, but in stdio.h */
+#  include <stdio.h>
+#endif
+#include <sys/types.h>
+#include <sysexits.h>
+#include <regex.h>
 #include <kpathsea/c-proto.h>
 #include <kpathsea/c-stat.h>
 #include <kpathsea/c-fopen.h>
+#include <string.h>
 #include <time.h>
+#include <float.h>              /* for DBL_EPSILON */
+#include "md5.h"
+#include "zlib.h"
+#include "ptexlib.h"
+#include "png.h"
+#include "xpdf/config.h"        /* just to get the xpdf version */
 
-static const char perforce_id[] = 
-    "$Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/utils.c#25 $";
+#define check_nprintf(size_get, size_want) \
+    if ((unsigned)(size_get) >= (unsigned)(size_want)) \
+        pdftex_fail ("snprintf failed: file %s, line %d", __FILE__, __LINE__);
 
 char *cur_file_name = NULL;
 strnumber last_tex_string;
 static char print_buf[PRINTF_BUF_SIZE];
 static char *jobname_cstr = NULL;
 static char *job_id_string = NULL;
-extern string ptexbanner; /* from web2c/lib/texmfmp.c */
-extern string versionstring; /* from web2c/lib/version.c */         
-extern KPSEDLL string kpathsea_version_string; /* from kpathsea/version.c */
+extern string ptexbanner;       /* from web2c/lib/texmfmp.c */
+extern string versionstring;    /* from web2c/lib/version.c */
+extern KPSEDLL string kpathsea_version_string;  /* from kpathsea/version.c */
 
-size_t last_ptr_index; /* for use with alloc_array */
+size_t last_ptr_index;          /* for use with alloc_array */
 
 /* define fb_ptr, fb_array & fb_limit */
 typedef char fb_entry;
-define_array(fb);   
+define_array(fb);
 
 /* define char_ptr, char_array & char_limit */
 typedef char char_entry;
-define_array(char);   
+define_array(char);
+
+/* define vf_e_fnts_ptr, vf_e_fnts_array & vf_e_fnts_limit */
+typedef integer vf_e_fnts_entry;
+define_array(vf_e_fnts);
+
+/* define vf_i_fnts_ptr, vf_i_fnts_array & vf_i_fnts_limit */
+typedef internalfontnumber vf_i_fnts_entry;
+define_array(vf_i_fnts);
 
 integer fb_offset(void)
 {
@@ -60,7 +77,7 @@ integer fb_offset(void)
 
 void fb_seek(integer offset)
 {
-     fb_ptr = fb_array + offset;
+    fb_ptr = fb_array + offset;
 }
 
 void fb_putchar(eightbits b)
@@ -77,7 +94,7 @@ void fb_flush(void)
         n = pdfbufsize - pdfptr;
         if (fb_ptr - p < n)
             n = fb_ptr - p;
-        memcpy(pdfbuf + pdfptr, p, (unsigned)n);
+        memcpy(pdfbuf + pdfptr, p, (unsigned) n);
         pdfptr += n;
         if (pdfptr == pdfbufsize)
             pdfflush();
@@ -86,61 +103,52 @@ void fb_flush(void)
     fb_ptr = fb_array;
 }
 
-static void fnstr_append(const char *s)
-{
-    int l = strlen(s) + 1;
-    alloc_array(char, l, SMALL_ARRAY_SIZE);
-    strcat(char_ptr, s);
-    char_ptr = strend(char_ptr);
-}
+#define SUBSET_TAG_LENGTH 6
 
-void make_subset_tag(fm_entry *fm_cur, char **glyph_names)
+void make_subset_tag(fd_entry * fd)
 {
-    char tag[7];
-    unsigned long crc;
-    int i, l = strlen(job_id_string) + 1;
-    alloc_array(char, l, SMALL_ARRAY_SIZE);
-    strcpy(char_array, job_id_string);
-    char_ptr = strend(char_array);
-    if (fm_cur->tfm_name != NULL) {
-        fnstr_append(" TFM name: ");
-        fnstr_append(fm_cur->tfm_name);
-    }
-    fnstr_append(" PS name: ");
-    if (font_keys[FONTNAME_CODE].valid)
-        fnstr_append(fontname_buf);
-    else if (fm_cur->ps_name != NULL)
-        fnstr_append(fm_cur->ps_name);
-    fnstr_append(" Encoding: ");
-    if (fm_cur->encoding != NULL && (fm_cur->encoding)->name != NULL)
-        fnstr_append((fm_cur->encoding)->name);
-    else
-        fnstr_append("built-in");
-    fnstr_append(" CharSet: ");
-    assert(glyph_names != NULL);
-    for (i = 0; i <= MAX_CHAR_CODE; i++)
-        if (pdfcharmarked(tex_font, i) && glyph_names[i] != notdef) {
-            fnstr_append(" /");
-            fnstr_append(glyph_names[i]);
+    int i, j = 0, a[SUBSET_TAG_LENGTH];
+    md5_state_t pms;
+    char *glyph;
+    struct avl_traverser t;
+    md5_byte_t digest[16];
+    void **aa;
+    static struct avl_table *st_tree = NULL;
+    if (st_tree == NULL)
+        st_tree = avl_create(comp_string_entry, NULL, &avl_xallocator);
+    assert(fd != NULL);
+    assert(fd->gl_tree != NULL);
+    assert(fd->fontname != NULL);
+    assert(fd->subset_tag == NULL);
+    fd->subset_tag = xtalloc(SUBSET_TAG_LENGTH + 1, char);
+    do {
+        md5_init(&pms);
+        avl_t_init(&t, fd->gl_tree);
+        for (glyph = (char *) avl_t_first(&t, fd->gl_tree); glyph != NULL;
+             glyph = (char *) avl_t_next(&t)) {
+            md5_append(&pms, (md5_byte_t *) glyph, strlen(glyph));
+            md5_append(&pms, (md5_byte_t *) " ", 1);
         }
-    if (fm_cur->charset != NULL) {
-        fnstr_append(" Extra CharSet: ");
-        fnstr_append(fm_cur->charset);
+        md5_append(&pms, (md5_byte_t *) fd->fontname, strlen(fd->fontname));
+        md5_append(&pms, (md5_byte_t *) & j, sizeof(int));      /* to resolve collision */
+        md5_finish(&pms, digest);
+        for (a[0] = 0, i = 0; i < 13; i++)
+            a[0] += digest[i];
+        for (i = 1; i < SUBSET_TAG_LENGTH; i++)
+            a[i] = a[i - 1] - digest[i - 1] + digest[(i + 12) % 16];
+        for (i = 0; i < SUBSET_TAG_LENGTH; i++)
+            fd->subset_tag[i] = a[i] % 26 + 'A';
+        fd->subset_tag[SUBSET_TAG_LENGTH] = '\0';
+        j++;
+        assert(j < 100);
     }
-    crc = crc32(0L, Z_NULL, 0);
-    crc = crc32(crc, (Bytef*)char_array, strlen(char_array));
-    /* we need to fit a 32-bit number into a string of 6 uppercase chars long;
-     * there are 26 uppercase chars ==> each char represents a number in range
-     * 0..25. The maximal number that can be represented by the tag is
-     * 26^6 - 1, which is a number between 2^28 and 2^29. Thus the bits 29..31
-     * of the CRC must be dropped out.
-     */
-    for (i = 0; i < 6; i++) {
-        tag[i] = 'A' + crc % 26;
-        crc /= 26;
-    }
-    tag[6] = 0;
-    fm_cur->subset_tag = xstrdup(tag);
+    while ((char *) avl_find(st_tree, fd->subset_tag) != NULL);
+    aa = avl_probe(st_tree, fd->subset_tag);
+    assert(aa != NULL);
+    if (j > 2)
+        pdftex_warn
+            ("\nmake_subset_tag(): subset-tag collision, resolved in round %d.\n",
+             j);
 }
 
 void pdf_puts(const char *s)
@@ -150,18 +158,19 @@ void pdf_puts(const char *s)
         pdfbuf[pdfptr++] = *s++;
 }
 
-void pdf_printf(const char *fmt,...)
+__attribute__ ((format(printf, 1, 2)))
+void pdf_printf(const char *fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
-    vsprintf(print_buf, fmt, args);
-    pdf_puts(print_buf);                                    
+    vsnprintf(print_buf, PRINTF_BUF_SIZE, fmt, args);
+    pdf_puts(print_buf);
     va_end(args);
 }
 
 strnumber maketexstring(const char *s)
 {
-    int l;
+    size_t l;
     if (s == NULL || *s == 0)
         return getnullstr();
     l = strlen(s);
@@ -172,11 +181,12 @@ strnumber maketexstring(const char *s)
     return last_tex_string;
 }
 
+__attribute__ ((format(printf, 1, 2)))
 void tex_printf(const char *fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
-    vsprintf(print_buf, fmt, args);
+    vsnprintf(print_buf, PRINTF_BUF_SIZE, fmt, args);
     print(maketexstring(print_buf));
     flushstr(last_tex_string);
     xfflush(stdout);
@@ -191,16 +201,28 @@ static void safe_print(const char *str)
         print(*c);
 }
 
+void removepdffile(void)
+{
+    if (!kpathsea_debug && outputfilename && !fixedpdfdraftmode) {
+        xfclose(pdffile, makecstring(outputfilename));
+        remove(makecstring(outputfilename));
+    }
+}
+
 /* pdftex_fail may be called when a buffer overflow has happened/is
    happening, therefore may not call mktexstring.  However, with the
    current implementation it appears that error messages are misleading,
-   possibly because pool overflows are detected too late. */
-void pdftex_fail(const char *fmt,...)
+   possibly because pool overflows are detected too late.
+
+   The output format of this fuction must be the same as pdf_error in
+   pdftex.web! */
+__attribute__ ((noreturn, format(printf, 1, 2)))
+void pdftex_fail(const char *fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
     println();
-    safe_print("Error: ");
+    safe_print("!pdfTeX error: ");
     safe_print(program_invocation_name);
     if (cur_file_name) {
         safe_print(" (file ");
@@ -208,76 +230,97 @@ void pdftex_fail(const char *fmt,...)
         safe_print(")");
     }
     safe_print(": ");
-    vsprintf(print_buf, fmt, args);
+    vsnprintf(print_buf, PRINTF_BUF_SIZE, fmt, args);
     safe_print(print_buf);
     va_end(args);
     println();
-    safe_print(" ==> Fatal error occurred, the output PDF file is not finished!");
+    removepdffile();
+    safe_print(" ==> Fatal error occurred, no output PDF file produced!");
     println();
-    exit(-1);
+    if (kpathsea_debug) {
+        abort();
+    } else {
+        exit(EX_SOFTWARE);
+    }
 }
 
-void pdftex_warn(const char *fmt,...)
+/* The output format of this fuction must be the same as pdf_warn in
+   pdftex.web! */
+__attribute__ ((format(printf, 1, 2)))
+void pdftex_warn(const char *fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
     println();
-    tex_printf("Warning: %s", program_invocation_name);
+    println();
+    tex_printf("pdfTeX warning: %s", program_invocation_name);
     if (cur_file_name)
         tex_printf(" (file %s)", cur_file_name);
     tex_printf(": ");
-    vsprintf(print_buf, fmt, args);
+    vsnprintf(print_buf, PRINTF_BUF_SIZE, fmt, args);
     print(maketexstring(print_buf));
     flushstr(last_tex_string);
     va_end(args);
     println();
 }
 
+void garbagewarning(void)
+{
+    pdftex_warn("dangling objects discarded, no output file produced.");
+    removepdffile();
+}
+
 char *makecstring(integer s)
 {
-    static char cstrbuf[MAX_CSTRING_LEN];
-    char *p = cstrbuf;
-    int i, l = strstart[s + 1] - strstart[s];
+    static char *cstrbuf = NULL;
+    char *p;
+    static int allocsize;
+    int allocgrow, i, l = strstart[s + 1] - strstart[s];
     check_buf(l + 1, MAX_CSTRING_LEN);
+    if (cstrbuf == NULL) {
+        allocsize = l + 1;
+        cstrbuf = xmallocarray(char, allocsize);
+    } else if (l + 1 > allocsize) {
+        allocgrow = allocsize * 0.2;
+        if (l + 1 - allocgrow > allocsize)
+            allocsize = l + 1;
+        else if (allocsize < MAX_CSTRING_LEN - allocgrow)
+            allocsize += allocgrow;
+        else
+            allocsize = MAX_CSTRING_LEN;
+        cstrbuf = xreallocarray(cstrbuf, char, allocsize);
+    }
+    p = cstrbuf;
     for (i = 0; i < l; i++)
         *p++ = strpool[i + strstart[s]];
     *p = 0;
     return cstrbuf;
 }
 
-/*
-boolean str_eq_cstr(strnumber n, char *s)
-{
-    int l;
-    if (s == NULL || n == 0)
-        return false;
-    l = strstart[n];
-    while (*s && l < strstart[n + 1] && *s == strpool[l])
-        l++, s++;
-    return !*s && l == strstart[n + 1];
-}
-*/
-
-void setjobid(int year, int month, int day, int time, int pdftexversion, int pdftexrevision)
+void setjobid(int year, int month, int day, int time)
 {
     char *name_string, *format_string, *s;
+    size_t slen;
+    int i;
 
     if (job_id_string != NULL)
         return;
 
     name_string = xstrdup(makecstring(jobname));
     format_string = xstrdup(makecstring(formatident));
-    s = xtalloc(SMALL_BUF_SIZE + 
-                strlen(name_string) + 
-                strlen(format_string) + 
-                strlen(ptexbanner) + 
-                strlen(versionstring) + 
-                strlen(kpathsea_version_string), char);
+    slen = SMALL_BUF_SIZE +
+        strlen(name_string) +
+        strlen(format_string) +
+        strlen(ptexbanner) +
+        strlen(versionstring) + strlen(kpathsea_version_string);
+    s = xtalloc(slen, char);
     /* The Web2c version string starts with a space.  */
-    sprintf(s, "%.4d/%.2d/%.2d %.2d:%.2d %s %s %s%s %s",
-            year, month, day, time/60, time%60, 
-            name_string, format_string, ptexbanner, 
-            versionstring, kpathsea_version_string);
+    i = snprintf(s, slen,
+                 "%.4d/%.2d/%.2d %.2d:%.2d %s %s %s%s %s",
+                 year, month, day, time / 60, time % 60,
+                 name_string, format_string, ptexbanner,
+                 versionstring, kpathsea_version_string);
+    check_nprintf(i, slen);
     job_id_string = xstrdup(s);
     xfree(s);
     xfree(name_string);
@@ -288,16 +331,20 @@ void makepdftexbanner(void)
 {
     static boolean pdftexbanner_init = false;
     char *s;
+    size_t slen;
+    int i;
 
     if (pdftexbanner_init)
         return;
 
-    s = xtalloc(SMALL_BUF_SIZE + 
-                strlen(ptexbanner) + 
-                strlen(versionstring) + 
-                strlen(kpathsea_version_string), char);
+    slen = SMALL_BUF_SIZE +
+        strlen(ptexbanner) +
+        strlen(versionstring) + strlen(kpathsea_version_string);
+    s = xtalloc(slen, char);
     /* The Web2c version string starts with a space.  */
-    sprintf(s, "%s%s %s", ptexbanner, versionstring, kpathsea_version_string);
+    i = snprintf(s, slen,
+                 "%s%s %s", ptexbanner, versionstring, kpathsea_version_string);
+    check_nprintf(i, slen);
     pdftexbanner = maketexstring(s);
     xfree(s);
     pdftexbanner_init = true;
@@ -309,12 +356,13 @@ strnumber getresnameprefix(void)
 /* "!\"$&'*+,-.0123456789:;=?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\\" */
 /* "^_`abcdefghijklmnopqrstuvwxyz|~"; */
     static char name_str[] =
-"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    char prefix[7]; /* make a tag of 6 chars long */
+        "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    char prefix[7];             /* make a tag of 6 chars long */
     unsigned long crc;
-    int i, base = strlen(name_str);
+    int i;
+    size_t base = strlen(name_str);
     crc = crc32(0L, Z_NULL, 0);
-    crc = crc32(crc, (Bytef*)job_id_string, strlen(job_id_string));
+    crc = crc32(crc, (Bytef *) job_id_string, strlen(job_id_string));
     for (i = 0; i < 6; i++) {
         prefix[i] = name_str[crc % base];
         crc /= base;
@@ -323,21 +371,21 @@ strnumber getresnameprefix(void)
     return maketexstring(prefix);
 }
 
-size_t xfwrite(void *ptr, size_t size, size_t nmemb, FILE *stream)
+size_t xfwrite(void *ptr, size_t size, size_t nmemb, FILE * stream)
 {
     if (fwrite(ptr, size, nmemb, stream) != nmemb)
         pdftex_fail("fwrite() failed");
     return nmemb;
 }
 
-int xfflush(FILE *stream)
+int xfflush(FILE * stream)
 {
     if (fflush(stream) != 0)
         pdftex_fail("fflush() failed");
     return 0;
 }
 
-int xgetc(FILE *stream)
+int xgetc(FILE * stream)
 {
     int c = getc(stream);
     if (c < 0 && c != EOF)
@@ -345,7 +393,7 @@ int xgetc(FILE *stream)
     return c;
 }
 
-int xputc(int c, FILE *stream)
+int xputc(int c, FILE * stream)
 {
     int i = putc(c, stream);
     if (i < 0)
@@ -355,25 +403,25 @@ int xputc(int c, FILE *stream)
 
 void writestreamlength(integer length, integer offset)
 {
-    integer save_offset;
     if (jobname_cstr == NULL)
         jobname_cstr = xstrdup(makecstring(jobname));
-    save_offset = xftell(pdffile, jobname_cstr);
-    xfseek(pdffile, offset, SEEK_SET, jobname_cstr);
-    fprintf(pdffile, "%li", (long int)length);
-    xfseek(pdffile, pdfoffset(), SEEK_SET, jobname_cstr);
+    if (fixedpdfdraftmode == 0) {
+        xfseek(pdffile, offset, SEEK_SET, jobname_cstr);
+        fprintf(pdffile, "%li", (long int) length);
+        xfseek(pdffile, pdfoffset(), SEEK_SET, jobname_cstr);
+    }
 }
 
 scaled extxnoverd(scaled x, scaled n, scaled d)
 {
-    double r = (((double)x)*((double)n))/((double)d);
-    if (r > 0)
+    double r = (((double) x) * ((double) n)) / ((double) d);
+    if (r > DBL_EPSILON)
         r += 0.5;
     else
         r -= 0.5;
-    if (r >= (double)maxinteger || r <= -(double)maxinteger)
+    if (r >= (double) maxinteger || r <= -(double) maxinteger)
         pdftex_warn("arithmetic: number too big");
-    return r;
+    return (scaled) r;
 }
 
 void libpdffinish()
@@ -387,6 +435,9 @@ void libpdffinish()
     img_free();
     vf_free();
     epdf_free();
+    ttf_free();
+    sfd_free();
+    glyph_unicode_free();
 }
 
 /* Converts any string given in in in an allowed PDF string which can be
@@ -395,38 +446,36 @@ void libpdffinish()
  * This assumes that the string does not contain any already escaped
  * characters!
  */
-char *convertStringToPDFString (char *in, int len)
+char *convertStringToPDFString(const char *in, int len)
 {
     static char pstrbuf[MAX_PSTRING_LEN];
     char *out = pstrbuf;
-    int i, j;
+    int i, j = 0, k;
     char buf[5];
-    j = 0;
     for (i = 0; i < len; i++) {
         check_buf(j + sizeof(buf), MAX_PSTRING_LEN);
-        if (((unsigned char)in[i] < '!') || ((unsigned char)in[i] > '~')){
+        if (((unsigned char) in[i] < '!') || ((unsigned char) in[i] > '~')) {
             /* convert control characters into oct */
-            sprintf (buf, "\\%03o", (unsigned int)(unsigned char)in[i]);
+            k = snprintf(buf, sizeof(buf),
+                         "\\%03o", (unsigned int) (unsigned char) in[i]);
+            check_nprintf(k, sizeof(buf));
             out[j++] = buf[0];
             out[j++] = buf[1];
             out[j++] = buf[2];
             out[j++] = buf[3];
-            }
-        else if ((in[i] == '(') || (in[i] == ')')) {
+        } else if ((in[i] == '(') || (in[i] == ')')) {
             /* escape paranthesis */
             out[j++] = '\\';
             out[j++] = in[i];
-            }
-        else if (in[i] == '\\') {
+        } else if (in[i] == '\\') {
             /* escape backslash */
             out[j++] = '\\';
             out[j++] = '\\';
-            }
-        else {
+        } else {
             /* copy char :-) */
             out[j++] = in[i];
-            }
         }
+    }
     out[j] = '\0';
     return pstrbuf;
 }
@@ -442,7 +491,7 @@ char *convertStringToPDFString (char *in, int len)
  */
 void escapestring(poolpointer in)
 {
-    poolpointer out = poolptr;
+    const poolpointer out = poolptr;
     unsigned char ch;
     while (in < out) {
         if (poolptr + 4 >= poolsize) {
@@ -450,13 +499,15 @@ void escapestring(poolpointer in)
             /* error by str_toks that calls str_room(1) */
             return;
         }
-        
-        ch = (unsigned char)strpool[in++];
-        
+
+        ch = (unsigned char) strpool[in++];
+
         if ((ch < '!') || (ch > '~')) {
             /* convert control characters into oct */
-            sprintf (&strpool[poolptr], "\\%.3o", (unsigned int)ch);
-            poolptr += 4;
+            int i = snprintf((char *) &strpool[poolptr], 5,
+                             "\\%.3o", (unsigned int) ch);
+            check_nprintf(i, 5);
+            poolptr += i;
             continue;
         }
         if ((ch == '(') || (ch == ')') || (ch == '\\')) {
@@ -468,10 +519,9 @@ void escapestring(poolpointer in)
     }
 }
 
-
 /* Convert any given string in a PDF name using escaping mechanism
    of PDF 1.2. The result does not include the leading slash.
-   
+
    PDF specification 1.6, section 3.2.6 "Name Objects" explains:
    <blockquote>
     Beginning with PDF 1.2, any character except null (character code 0) may
@@ -502,7 +552,7 @@ void escapestring(poolpointer in)
      125       escaped  delimiter "}"
      127..255  escaped  recommended
      else      copy     regular characters
-     
+
    Parameter "in" is a pointer into the string pool where
    the input string is located. The output string is written
    as temporary string right after the input string.
@@ -512,22 +562,25 @@ void escapestring(poolpointer in)
 */
 void escapename(poolpointer in)
 {
-    poolpointer out = poolptr;
+    const poolpointer out = poolptr;
     unsigned char ch;
-    
+    int i;
+
     while (in < out) {
         if (poolptr + 3 >= poolsize) {
             poolptr = poolsize;
             /* error by str_toks that calls str_room(1) */
             return;
         }
-        
-        ch = (unsigned char)strpool[in++];
-        
+
+        ch = (unsigned char) strpool[in++];
+
         if ((ch >= 1 && ch <= 32) || ch >= 127) {
             /* escape */
-            sprintf(&strpool[poolptr], "#%.2X", (unsigned int)ch);
-            poolptr += 3;
+            i = snprintf((char *) &strpool[poolptr], 4,
+                         "#%.2X", (unsigned int) ch);
+            check_nprintf(i, 4);
+            poolptr += i;
             continue;
         }
         switch (ch) {
@@ -546,8 +599,10 @@ void escapename(poolpointer in)
         case 123:
         case 125:
             /* escape */
-            sprintf(&strpool[poolptr], "#%.2X", (unsigned int)ch);
-            poolptr += 3;
+            i = snprintf((char *) &strpool[poolptr], 4,
+                         "#%.2X", (unsigned int) ch);
+            check_nprintf(i, 4);
+            poolptr += i;
             break;
         default:
             /* copy */
@@ -558,16 +613,17 @@ void escapename(poolpointer in)
 
 /* Convert any given string in a PDF hexadecimal string. The
    result does not include the angle brackets.
-   
+
    This procedure uses uppercase hexadecimal letters.
-   
+
    See escapename for description of parameters.
 */
 void escapehex(poolpointer in)
 {
-    poolpointer out = poolptr;
+    const poolpointer out = poolptr;
     unsigned char ch;
-    
+    int i;
+
     while (in < out) {
         if (poolptr + 2 >= poolsize) {
             poolptr = poolsize;
@@ -575,9 +631,10 @@ void escapehex(poolpointer in)
             return;
         }
 
-        ch = (unsigned char)strpool[in++];
-    
-        sprintf(&strpool[poolptr], "%.2X", (unsigned int)ch);
+        ch = (unsigned char) strpool[in++];
+
+        i = snprintf((char *) &strpool[poolptr], 3, "%.2X", (unsigned int) ch);
+        check_nprintf(i, 3);
         poolptr += 2;
     }
 }
@@ -586,17 +643,18 @@ void escapehex(poolpointer in)
 
    Last hex digit can be omitted, it is replaced by zero, see
    PDF specification.
-   
+
    Invalid digits are silently ignored.
 
    See escapename for description of parameters.
 */
 void unescapehex(poolpointer in)
 {
-    poolpointer out = poolptr;
-    unsigned char ch, a;
+    const poolpointer out = poolptr;
+    unsigned char ch;
+    unsigned char a = 0;        /* to avoid warning about uninitialized use of a */
     boolean first = true;
-    
+
     while (in < out) {
         if (poolptr + 1 >= poolsize) {
             poolptr = poolsize;
@@ -604,50 +662,49 @@ void unescapehex(poolpointer in)
             return;
         }
 
-        ch = (unsigned char)strpool[in++];
+        ch = (unsigned char) strpool[in++];
 
         if ((ch >= '0') && (ch <= '9')) {
             ch -= '0';
-        }
-        else if ((ch >= 'A') && (ch <= 'F')) {
+        } else if ((ch >= 'A') && (ch <= 'F')) {
             ch -= 'A' - 10;
-        }
-        else if ((ch >= 'a') && (ch <= 'f')) {
+        } else if ((ch >= 'a') && (ch <= 'f')) {
             ch -= 'a' - 10;
+        } else {
+            continue;           /* ignore wrong character */
         }
-        else {
-            continue; /* ignore wrong character */
-        }
-        
+
         if (first) {
             a = ch << 4;
             first = false;
             continue;
         }
-        
+
         strpool[poolptr++] = a + ch;
         first = true;
     }
-    if (!first) { /* last hex digit is omitted */
+    if (!first) {               /* last hex digit is omitted */
         strpool[poolptr++] = ch << 4;
     }
 }
 
 
-/* Converts any string given in in in an allowed PDF string which is 
+/* Converts any string given in in in an allowed PDF string which is
  * hexadecimal encoded;
  * sizeof(out) should be at least lin*2+1.
  */
-void convertStringToHexString (char *in, char *out, int lin)
+static void convertStringToHexString(const char *in, char *out, int lin)
 {
-    int i, j;
+    int i, j, k;
     char buf[3];
     j = 0;
     for (i = 0; i < lin; i++) {
-        sprintf (buf, "%02X", (unsigned int)(unsigned char)in[i]);
+        k = snprintf(buf, sizeof(buf),
+                     "%02X", (unsigned int) (unsigned char) in[i]);
+        check_nprintf(k, sizeof(buf));
         out[j++] = buf[0];
         out[j++] = buf[1];
-        }
+    }
     out[j] = '\0';
 }
 
@@ -664,15 +721,15 @@ void convertStringToHexString (char *in, char *out, int lin)
     identifiers are set to the same value. If both identifiers match when a
     file reference is resolved, it is very likely that the correct file has
     been found; if only the first identifier matches, then a different
-    version of the correct file has been found. 
+    version of the correct file has been found.
         To help ensure the uniqueness of file identifiers, it is recommend
     that they be computed using a message digest algorithm such as MD5
     (described in Internet RFC 1321, The MD5 Message-Digest Algorithm; see
     the Bibliography), using the following information (see implementation
-    note 106 in Appendix H): 
-    - The current time 
-    - A string representation of the file's location, usually a pathname 
-    - The size of the file in bytes 
+    note 106 in Appendix H):
+    - The current time
+    - A string representation of the file's location, usually a pathname
+    - The size of the file in bytes
     - The values of all entries in the file's document information
       dictionary (see Section 9.2.1,  Document Information Dictionary )
   </blockquote>
@@ -682,7 +739,7 @@ void convertStringToHexString (char *in, char *out, int lin)
   scanning the info dict is also difficult, we start with a simpler
   implementation using just the first two items.
  */
-void printID (strnumber filename)
+void printID(strnumber filename)
 {
     time_t t;
     size_t size;
@@ -696,19 +753,19 @@ void printID (strnumber filename)
     md5_init(&state);
     /* get the time */
     t = time(NULL);
-    size = strftime (time_str, sizeof(time_str), "%Y%m%dT%H%M%SZ", gmtime(&t));
-    md5_append(&state, (const md5_byte_t *)time_str, size);
+    size = strftime(time_str, sizeof(time_str), "%Y%m%dT%H%M%SZ", gmtime(&t));
+    md5_append(&state, (const md5_byte_t *) time_str, size);
     /* get the file name */
     if (getcwd(pwd, sizeof(pwd)) == NULL)
         pdftex_fail("getcwd() failed (path too long?)");
     file_name = makecstring(filename);
-    md5_append(&state, (const md5_byte_t *)pwd, strlen(pwd));
-    md5_append(&state, (const md5_byte_t *)"/", 1);
-    md5_append(&state, (const md5_byte_t *)file_name, strlen(file_name));
+    md5_append(&state, (const md5_byte_t *) pwd, strlen(pwd));
+    md5_append(&state, (const md5_byte_t *) "/", 1);
+    md5_append(&state, (const md5_byte_t *) file_name, strlen(file_name));
     /* finish md5 */
     md5_finish(&state, digest);
     /* write the IDs */
-    convertStringToHexString ((char*)digest, id, 16);
+    convertStringToHexString((char *) digest, id, 16);
     pdf_printf("/ID [<%s> <%s>]", id, id);
 }
 
@@ -759,22 +816,22 @@ void printID (strnumber filename)
 
   The main difficulty is get the time zone offset. strftime() does this in ISO
   C99 (e.g. newer glibc) with %z, but we have to work with other systems (e.g.
-  Solaris 2.5). 
+  Solaris 2.5).
 */
 
-time_t start_time = 0;
+static time_t start_time = 0;
 #define TIME_STR_SIZE 30
-char start_time_str[TIME_STR_SIZE];
-char time_str[TIME_STR_SIZE];
+static char start_time_str[TIME_STR_SIZE];
+static char time_str[TIME_STR_SIZE];
     /* minimum size for time_str is 24: "D:YYYYmmddHHMMSS+HH'MM'" */
-    
-void makepdftime(time_t t, char *time_str)
+
+static void makepdftime(time_t t, char *time_str)
 {
-            
+
     struct tm lt, gmt;
     size_t size;
-    int off, off_hours, off_mins;
- 
+    int i, off, off_hours, off_mins;
+
     /* get the time */
     lt = *localtime(&t);
     size = strftime(time_str, TIME_STR_SIZE, "D:%Y%m%d%H%M%S", &lt);
@@ -786,59 +843,64 @@ void makepdftime(time_t t, char *time_str)
     }
 
     /* correction for seconds: %S can be in range 00..61,
-       the PDF reference expects 00..59,   
+       the PDF reference expects 00..59,
        therefore we map "60" and "61" to "59" */
     if (time_str[14] == '6') {
         time_str[14] = '5';
         time_str[15] = '9';
-        time_str[16] = '\0'; /* for safety */
+        time_str[16] = '\0';    /* for safety */
     }
 
     /* get the time zone offset */
     gmt = *gmtime(&t);
 
     /* this calculation method was found in exim's tod.c */
-    off = 60*(lt.tm_hour - gmt.tm_hour) + lt.tm_min - gmt.tm_min;
+    off = 60 * (lt.tm_hour - gmt.tm_hour) + lt.tm_min - gmt.tm_min;
     if (lt.tm_year != gmt.tm_year) {
         off += (lt.tm_year > gmt.tm_year) ? 1440 : -1440;
-    }
-    else if (lt.tm_yday != gmt.tm_yday) {
+    } else if (lt.tm_yday != gmt.tm_yday) {
         off += (lt.tm_yday > gmt.tm_yday) ? 1440 : -1440;
     }
 
     if (off == 0) {
         time_str[size++] = 'Z';
         time_str[size] = 0;
-    }
-    else {
-        off_hours = off/60;
-        off_mins = abs(off - off_hours*60);
-        sprintf(&time_str[size], "%+03i'%02d'", off_hours, off_mins);
+    } else {
+        off_hours = off / 60;
+        off_mins = abs(off - off_hours * 60);
+        i = snprintf(&time_str[size], 9, "%+03d'%02d'", off_hours, off_mins);
+        check_nprintf(i, 9);
     }
 }
 
-void initstarttime() {
+void initstarttime()
+{
     if (start_time == 0) {
         start_time = time((time_t *) NULL);
         makepdftime(start_time, start_time_str);
     }
 }
 
-void printcreationdate() {
+void printcreationdate()
+{
     initstarttime();
     pdf_printf("/CreationDate (%s)\n", start_time_str);
+}
+
+void printmoddate()
+{
+    initstarttime();
+    pdf_printf("/ModDate (%s)\n", start_time_str);
 }
 
 void getcreationdate()
 {
     /* put creation date on top of string pool and update poolptr */
-    poolpointer out = poolptr;
-    unsigned char ch;
-    int len = strlen(start_time_str);
-    
+    size_t len = strlen(start_time_str);
+
     initstarttime();
-    
-    if (poolptr + len >= poolsize) {
+
+    if ((unsigned) (poolptr + len) >= (unsigned) (poolsize)) {
         poolptr = poolsize;
         /* error by str_toks that calls str_room(1) */
         return;
@@ -848,121 +910,124 @@ void getcreationdate()
     poolptr += len;
 }
 
-void getfilemoddate(strnumber s) {
+void getfilemoddate(strnumber s)
+{
     struct stat file_data;
-    
+
     char *file_name = kpse_find_tex(makecfilename(s));
     if (file_name == NULL) {
-        return; /* empty string */
+        return;                 /* empty string */
     }
-    
+
     /* get file status */
     if (stat(file_name, &file_data) == 0) {
-        int len;
-        
+        size_t len;
+
         makepdftime(file_data.st_mtime, time_str);
         len = strlen(time_str);
-        if (poolptr + len >= poolsize) {
+        if ((unsigned) (poolptr + len) >= (unsigned) (poolsize)) {
             poolptr = poolsize;
             /* error by str_toks that calls str_room(1) */
-        }
-        else {
+        } else {
             memcpy(&strpool[poolptr], time_str, len);
             poolptr += len;
         }
     }
     /* else { errno contains error code } */
-    
+
     xfree(file_name);
 }
 
-void getfilesize(strnumber s) {
+void getfilesize(strnumber s)
+{
     struct stat file_data;
-    
+    int i;
+
     char *file_name = kpse_find_tex(makecfilename(s));
     if (file_name == NULL) {
-        return; /* empty string */
+        return;                 /* empty string */
     }
-    
+
     /* get file status */
     if (stat(file_name, &file_data) == 0) {
-        int len;
+        size_t len;
         char buf[20];
-        
+
         /* st_size has type off_t */
-        sprintf(buf, "%lu", (long unsigned int)file_data.st_size);
+        i = snprintf(buf, sizeof(buf),
+                     "%lu", (long unsigned int) file_data.st_size);
+        check_nprintf(i, sizeof(buf));
         len = strlen(buf);
-        if (poolptr + len >= poolsize) {
+        if ((unsigned) (poolptr + len) >= (unsigned) (poolsize)) {
             poolptr = poolsize;
             /* error by str_toks that calls str_room(1) */
-        }
-        else {
+        } else {
             memcpy(&strpool[poolptr], buf, len);
             poolptr += len;
         }
     }
     /* else { errno contains error code } */
-    
+
     xfree(file_name);
 }
 
 #define DIGEST_SIZE 16
 #define FILE_BUF_SIZE 1024
 
-void getmd5sum(strnumber s, boolean file) {
+void getmd5sum(strnumber s, boolean file)
+{
     md5_state_t state;
     md5_byte_t digest[DIGEST_SIZE];
     char outbuf[2 * DIGEST_SIZE + 1];
     int len = 2 * DIGEST_SIZE;
-    
+
     if (file) {
         char file_buf[FILE_BUF_SIZE];
         int read = 0;
         FILE *f;
-        
+
         char *file_name = kpse_find_tex(makecfilename(s));
         if (file_name == NULL) {
-            return; /* empty string */
+            return;             /* empty string */
         }
         /* in case of error the empty string is returned,
            no need for xfopen that aborts on error.
-        */
+         */
         f = fopen(file_name, FOPEN_RBIN_MODE);
         if (f == NULL) {
             xfree(file_name);
             return;
         }
         md5_init(&state);
-        while ((read = fread(&file_buf, sizeof(char),
-                             FILE_BUF_SIZE, f)) > 0) {
-            md5_append(&state, (const md5_byte_t *)file_buf, read);
+        while ((read = fread(&file_buf, sizeof(char), FILE_BUF_SIZE, f)) > 0) {
+            md5_append(&state, (const md5_byte_t *) file_buf, read);
         }
         md5_finish(&state, digest);
         fclose(f);
-        
+
         xfree(file_name);
+    } else {
+        /* s contains the data */
+        md5_init(&state);
+        md5_append(&state,
+                   (const md5_byte_t *) &strpool[strstart[s]],
+                   strstart[s + 1] - strstart[s]);
+        md5_finish(&state, digest);
     }
-    else {
-      /* s contains the data */
-      md5_init(&state);
-      md5_append(&state,
-          (const md5_byte_t *)&strpool[strstart[s]],
-          strstart[s + 1] - strstart[s]);
-      md5_finish(&state, digest);
-    }
-    
+
     if (poolptr + len >= poolsize) {
         /* error by str_toks that calls str_room(1) */
         return;
     }
-    convertStringToHexString((char*)digest, outbuf, DIGEST_SIZE);
+    convertStringToHexString((char *) digest, outbuf, DIGEST_SIZE);
     memcpy(&strpool[poolptr], outbuf, len);
     poolptr += len;
 }
 
-void getfiledump(strnumber s, int offset, int length) {
+void getfiledump(strnumber s, int offset, int length)
+{
     FILE *f;
-    int read;
+    int read, i;
     poolpointer data_ptr;
     poolpointer data_end;
     char *file_name;
@@ -971,136 +1036,128 @@ void getfiledump(strnumber s, int offset, int length) {
         /* empty result string */
         return;
     }
-    
+
     if (poolptr + 2 * length + 1 >= poolsize) {
         /* no place for result */
         poolptr = poolsize;
         /* error by str_toks that calls str_room(1) */
         return;
     }
-    
+
     file_name = kpse_find_tex(makecfilename(s));
     if (file_name == NULL) {
-        return; /* empty string */
+        return;                 /* empty string */
     }
-    
+
     /* read file data */
     f = fopen(file_name, FOPEN_RBIN_MODE);
     if (f == NULL) {
         xfree(file_name);
         return;
     }
-    if (fseek(f, (long)offset, SEEK_SET) != 0) {
+    if (fseek(f, (long) offset, SEEK_SET) != 0) {
         xfree(file_name);
         return;
     }
     /* there is enough space in the string pool, the read
        data are put in the upper half of the result, thus
        the conversion to hex can be done without overwriting
-       unconverted bytes. Be aware that sprintf also appends
-       a nul byte at the end. */
+       unconverted bytes. */
     data_ptr = poolptr + length;
-    read = fread(&strpool[data_ptr],
-                 sizeof(char), length, f);
+    read = fread(&strpool[data_ptr], sizeof(char), length, f);
     fclose(f);
 
     /* convert to hex */
     data_end = data_ptr + read;
     for (; data_ptr < data_end; data_ptr++) {
-        sprintf(&strpool[poolptr], "%.2X",
-                (unsigned int)strpool[data_ptr]);
-        poolptr += 2;
+        i = snprintf((char *) &strpool[poolptr], 3,
+                     "%.2X", (unsigned int) strpool[data_ptr]);
+        check_nprintf(i, 3);
+        poolptr += i;
     }
     xfree(file_name);
 }
 
 #define DEFAULT_SUB_MATCH_COUNT 10
-int sub_match_count = DEFAULT_SUB_MATCH_COUNT;
-regmatch_t *pmatch = NULL;
-char *match_string = NULL;
+static int sub_match_count = DEFAULT_SUB_MATCH_COUNT;
+static regmatch_t *pmatch = NULL;
+static char *match_string = NULL;
 
-void matchstrings(strnumber s, strnumber t, int subcount, boolean icase) {
+void matchstrings(strnumber s, strnumber t, int subcount, boolean icase)
+{
     regex_t preg;
     int cflags = REG_EXTENDED;
     int eflags = 0;
     int ret;
     char *str;
-    
+
     if (icase) {
         cflags |= REG_ICASE;
     }
-    
+
     if (poolptr + 10 >= poolsize) {
         poolptr = poolsize;
         return;
     }
-    
+
     str = makecstring(s);
     ret = regcomp(&preg, str, cflags);
     if (ret != 0) {
-        int size = regerror(ret, &preg, NULL, 0);
+        size_t size = regerror(ret, &preg, NULL, 0);
         str = xtalloc(size, char);
         regerror(ret, &preg, str, size);
         pdftex_warn("%s%s", "\\pdfmatch: ", str);
         xfree(str);
         strpool[poolptr++] = '-';
         strpool[poolptr++] = '1';
-    }
-    else {
+    } else {
         str = makecstring(t);
-        sub_match_count = ((subcount < 0) ?
-                           DEFAULT_SUB_MATCH_COUNT : subcount);
+        sub_match_count = ((subcount < 0) ? DEFAULT_SUB_MATCH_COUNT : subcount);
         xfree(pmatch);
         if (sub_match_count > 0) {
-           pmatch = xtalloc(sub_match_count, regmatch_t);
+            pmatch = xtalloc(sub_match_count, regmatch_t);
         }
         ret = regexec(&preg, str, sub_match_count, pmatch, eflags);
         xfree(match_string);
         match_string = xstrdup(str);
-        if (ret == 0) {
-            strpool[poolptr++] = '1';
-        }
-        else { /* REG_NOMATCH */
-            strpool[poolptr++] = '0';
-        }
+        strpool[poolptr++] = ((ret == 0) ? '1' : '0');
     }
-    
+
     regfree(&preg);
 }
 
-void getmatch(int i) {
-    int size = 0;
-    int len = 0;
-    
+void getmatch(int i)
+{
+    int size, len = 0;          /* to avoid warning about uninitialized use of len */
+
     boolean found = i < sub_match_count
-                    && match_string != NULL
-                    && pmatch[i].rm_so >= 0
-                    && i >= 0;
-    
+        && match_string != NULL && pmatch[i].rm_so >= 0 && i >= 0;
+
     if (found) {
         len = pmatch[i].rm_eo - pmatch[i].rm_so;
         size = 20 + len;
         /* 20: place for integer number and '->' */
-    }
-    else {
+    } else {
         size = 4;
     }
-    
+
     if (poolptr + size >= poolsize) {
         poolptr = poolsize;
         return;
     }
-    
+
     if (found) {
-        sprintf(&strpool[poolptr], "%d", pmatch[i].rm_so);
-        poolptr += strlen(&strpool[poolptr]);
+        int j = snprintf((char *) &strpool[poolptr], 20, "%d",
+                         (int) pmatch[i].rm_so);
+        check_nprintf(j, 20);
+        poolptr += j;
         strpool[poolptr++] = '-';
         strpool[poolptr++] = '>';
         memcpy(&strpool[poolptr], &match_string[pmatch[i].rm_so], len);
         poolptr += len;
         return;
     }
-    
+
     strpool[poolptr++] = '-';
     strpool[poolptr++] = '1';
     strpool[poolptr++] = '-';
@@ -1112,8 +1169,11 @@ void getmatch(int i) {
   input/ouput same as makecstring:
     input: string number
     output: C string with quotes removed.
+    That means, file names that are legal on some operation systems
+    cannot any more be used since pdfTeX version 1.30.4.
 */
-char *makecfilename(strnumber s) {
+char *makecfilename(strnumber s)
+{
     char *name = makecstring(s);
     char *p = name;
     char *q = name;
@@ -1124,6 +1184,641 @@ char *makecfilename(strnumber s) {
         p++;
     }
     *q = '\0';
-    fprintf(stderr, " %s\n", name);
     return name;
+}
+
+/* function strips trailing zeros in string with numbers; */
+/* leading zeros are not stripped (as in real life) */
+char *stripzeros(char *a)
+{
+    enum { NONUM, DOTNONUM, INT, DOT, LEADDOT, FRAC } s = NONUM, t = NONUM;
+    char *p, *q, *r;
+    for (p = q = r = a; *p != '\0';) {
+        switch (s) {
+        case NONUM:
+            if (*p >= '0' && *p <= '9')
+                s = INT;
+            else if (*p == '.')
+                s = LEADDOT;
+            break;
+        case DOTNONUM:
+            if (*p != '.' && (*p < '0' || *p > '9'))
+                s = NONUM;
+            break;
+        case INT:
+            if (*p == '.')
+                s = DOT;
+            else if (*p < '0' || *p > '9')
+                s = NONUM;
+            break;
+        case DOT:
+        case LEADDOT:
+            if (*p >= '0' && *p <= '9')
+                s = FRAC;
+            else if (*p == '.')
+                s = DOTNONUM;
+            else
+                s = NONUM;
+            break;
+        case FRAC:
+            if (*p == '.')
+                s = DOTNONUM;
+            else if (*p < '0' || *p > '9')
+                s = NONUM;
+            break;
+        default:;
+        }
+        switch (s) {
+        case DOT:
+            r = q;
+            break;
+        case LEADDOT:
+            r = q + 1;
+            break;
+        case FRAC:
+            if (*p > '0')
+                r = q + 1;
+            break;
+        case NONUM:
+            if ((t == FRAC || t == DOT) && r != a) {
+                q = r--;
+                if (*r == '.')  /* was a LEADDOT */
+                    *r = '0';
+                r = a;
+            }
+            break;
+        default:;
+        }
+        *q++ = *p++;
+        t = s;
+    }
+    *q = '\0';
+    return a;
+}
+
+void initversionstring(char **versions)
+{
+    (void) asprintf(versions,
+                    "Compiled with libpng %s; using libpng %s\n"
+                    "Compiled with zlib %s; using zlib %s\n"
+                    "Compiled with xpdf version %s\n",
+                    PNG_LIBPNG_VER_STRING, png_libpng_ver,
+                    ZLIB_VERSION, zlib_version, xpdfVersion);
+}
+
+
+/*************************************************/
+/* Color Stack and Matrix Transformation Support */
+/*************************************************/
+
+/*
+    In the following array and especially stack data structures are used.
+    They have the following properties:
+    - They automatically grow dynamically.
+    - The size never decreases.
+    - The variable with name ending in "size" contains the number how many
+      entries the data structure can hold.
+    - The variable with name ending in "used" contains the number of
+      actually used entries.
+    - Memory of strings in stack entries must be allocated and
+      freed if the stack is cleared.
+*/
+
+/* Color Stack */
+
+#define STACK_INCREMENT 8
+#define MAX_COLORSTACKS 32768
+/* The colorstack number is stored in two bytes (info field of the node) */
+/* Condition (newcolorstack): MAX_COLORSTACKS mod STACK_INCREMENT = 0 */
+
+#define COLOR_DEFAULT "0 g 0 G"
+/* literal_modes, see pdftex.web */
+#define SET_ORIGIN 0
+#define DIRECT_PAGE 1
+#define DIRECT_ALWAYS 2
+
+/* remember shipout mode: page/form */
+static boolean page_mode;
+
+typedef struct {
+    char **page_stack;
+    char **form_stack;
+    char *page_current;
+    char *form_current;
+    char *form_init;
+    int page_size;
+    int form_size;
+    int page_used;
+    int form_used;
+    int literal_mode;
+    boolean page_start;
+} colstack_type;
+
+static colstack_type *colstacks = NULL;
+static int colstacks_size = 0;
+static int colstacks_used = 0;
+
+/*
+    Initialization is done, if the color stacks are used,
+    init_colorstacks() is defined as macro to avoid unnecessary
+    procedure calls.
+*/
+#define init_colorstacks() if (colstacks_size == 0) colstacks_first_init();
+void colstacks_first_init()
+{
+    colstacks_size = STACK_INCREMENT;
+    colstacks = xtalloc(colstacks_size, colstack_type);
+    colstacks_used = 1;
+    colstacks[0].page_stack = NULL;
+    colstacks[0].form_stack = NULL;
+    colstacks[0].page_size = 0;
+    colstacks[0].form_size = 0;
+    colstacks[0].page_used = 0;
+    colstacks[0].form_used = 0;
+    colstacks[0].page_current = xstrdup(COLOR_DEFAULT);
+    colstacks[0].form_current = xstrdup(COLOR_DEFAULT);
+    colstacks[0].form_init = xstrdup(COLOR_DEFAULT);
+    colstacks[0].literal_mode = DIRECT_ALWAYS;
+    colstacks[0].page_start = true;
+}
+
+int colorstackused()
+{
+    init_colorstacks();
+    return colstacks_used;
+}
+
+/*
+    newcolorstack()
+    A new color stack is setup with the given parameters.
+    The stack number is returned or -1 in case of error (no room).
+*/
+int newcolorstack(integer s, integer literal_mode, boolean page_start)
+{
+    colstack_type *colstack;
+    int colstack_num;
+    char *str;
+
+    init_colorstacks();
+
+    /* make room */
+    if (colstacks_used == MAX_COLORSTACKS) {
+        return -1;
+    }
+    if (colstacks_used == colstacks_size) {
+        colstacks_size += STACK_INCREMENT;
+        /* If (MAX_COLORSTACKS mod STACK_INCREMENT = 0) then we don't
+           need to check the case that size overruns MAX_COLORSTACKS. */
+        colstacks = xretalloc(colstacks, colstacks_size, colstack_type);
+    }
+    /* claim new color stack */
+    colstack_num = colstacks_used++;
+    colstack = &colstacks[colstack_num];
+    /* configure the new color stack */
+    colstack->literal_mode = literal_mode;
+    colstack->page_start = page_start;
+    str = makecstring(s);
+    if (*str == 0) {
+        colstack->page_current = NULL;
+        colstack->form_current = NULL;
+        colstack->form_init = NULL;
+    } else {
+        colstack->page_current = xstrdup(str);
+        colstack->form_current = xstrdup(str);
+        colstack->form_init = xstrdup(str);
+    }
+    return colstack_num;
+}
+
+#define get_colstack(n) (&colstacks[n])
+
+/*
+    Puts a string on top of the string pool and updates poolptr.
+*/
+void put_cstring_on_strpool(poolpointer start, char *str)
+{
+    size_t len;
+
+    if (str == NULL || *str == 0) {
+        return;
+    }
+
+    len = strlen(str);
+    poolptr = start + len;
+    if (poolptr >= poolsize) {
+        poolptr = poolsize;
+        /* error by str_toks that calls str_room(1) */
+        return;
+    }
+    memcpy(&strpool[start], str, len);
+}
+
+integer colorstackset(int colstack_no, integer s)
+{
+    colstack_type *colstack = get_colstack(colstack_no);
+
+    if (page_mode) {
+        xfree(colstack->page_current);
+        colstack->page_current = xstrdup(makecstring(s));
+    } else {
+        xfree(colstack->form_current);
+        colstack->form_current = xstrdup(makecstring(s));
+    }
+    return colstack->literal_mode;
+}
+
+integer colorstackcurrent(int colstack_no)
+{
+    colstack_type *colstack = get_colstack(colstack_no);
+
+    if (page_mode) {
+        put_cstring_on_strpool(poolptr, colstack->page_current);
+    } else {
+        put_cstring_on_strpool(poolptr, colstack->form_current);
+    }
+    return colstack->literal_mode;
+}
+
+integer colorstackpush(int colstack_no, integer s)
+{
+    colstack_type *colstack = get_colstack(colstack_no);
+    char *str;
+
+    if (page_mode) {
+        if (colstack->page_used == colstack->page_size) {
+            colstack->page_size += STACK_INCREMENT;
+            colstack->page_stack = xretalloc(colstack->page_stack,
+                                             colstack->page_size, char *);
+        }
+        colstack->page_stack[colstack->page_used++] = colstack->page_current;
+        str = makecstring(s);
+        if (*str == 0) {
+            colstack->page_current = NULL;
+        } else {
+            colstack->page_current = xstrdup(str);
+        }
+    } else {
+        if (colstack->form_used == colstack->form_size) {
+            colstack->form_size += STACK_INCREMENT;
+            colstack->form_stack = xretalloc(colstack->form_stack,
+                                             colstack->form_size, char *);
+        }
+        colstack->form_stack[colstack->form_used++] = colstack->form_current;
+        str = makecstring(s);
+        if (*str == 0) {
+            colstack->form_current = NULL;
+        } else {
+            colstack->form_current = xstrdup(str);
+        }
+    }
+    return colstack->literal_mode;
+}
+
+integer colorstackpop(int colstack_no)
+{
+    colstack_type *colstack = get_colstack(colstack_no);
+
+    if (page_mode) {
+        if (colstack->page_used == 0) {
+            pdftex_warn("pop empty color page stack %u",
+                        (unsigned int) colstack_no);
+            return colstack->literal_mode;
+        }
+        xfree(colstack->page_current);
+        colstack->page_current = colstack->page_stack[--colstack->page_used];
+        put_cstring_on_strpool(poolptr, colstack->page_current);
+    } else {
+        if (colstack->form_used == 0) {
+            pdftex_warn("pop empty color form stack %u",
+                        (unsigned int) colstack_no);
+            return colstack->literal_mode;
+        }
+        xfree(colstack->form_current);
+        colstack->form_current = colstack->form_stack[--colstack->form_used];
+        put_cstring_on_strpool(poolptr, colstack->form_current);
+    }
+    return colstack->literal_mode;
+}
+
+void colorstackpagestart()
+{
+    int i, j;
+    colstack_type *colstack;
+
+    if (page_mode) {
+        /* see procedure pdf_out_colorstack_startpage */
+        return;
+    }
+
+    for (i = 0; i < colstacks_used; i++) {
+        colstack = &colstacks[i];
+        for (j = 0; j < colstack->form_used; j++) {
+            xfree(colstack->form_stack[j]);
+        }
+        colstack->form_used = 0;
+        xfree(colstack->form_current);
+        if (colstack->form_init == NULL) {
+            colstack->form_current = NULL;
+        } else {
+            colstack->form_current = xstrdup(colstack->form_init);
+        }
+    }
+}
+
+integer colorstackskippagestart(int colstack_no)
+{
+    colstack_type *colstack = get_colstack(colstack_no);
+
+    if (!colstack->page_start) {
+        return 1;
+    }
+    if (strcmp(COLOR_DEFAULT, colstack->page_current) == 0) {
+        return 2;
+    }
+    return 0;
+}
+
+
+/* stack for \pdfsetmatrix */
+
+typedef struct {
+    double a;
+    double b;
+    double c;
+    double d;
+    double e;
+    double f;
+} matrix_entry;
+static matrix_entry *matrix_stack = 0;
+static int matrix_stack_size = 0;
+static int matrix_stack_used = 0;
+
+boolean matrixused()
+{
+    return matrix_stack_used > 0;
+}
+
+/* stack for positions of \pdfsave */
+typedef struct {
+    int pos_h;
+    int pos_v;
+    int matrix_stack;
+} pos_entry;
+static pos_entry *pos_stack = 0;        /* the stack */
+static int pos_stack_size = 0;  /* initially empty */
+static int pos_stack_used = 0;  /* used entries */
+
+void matrix_stack_room()
+{
+    matrix_entry *new_stack;
+
+    if (matrix_stack_used >= matrix_stack_size) {
+        matrix_stack_size += STACK_INCREMENT;
+        new_stack = xtalloc(matrix_stack_size, matrix_entry);
+        memcpy((void *) new_stack, (void *) matrix_stack,
+               matrix_stack_used * sizeof(matrix_entry));
+        xfree(matrix_stack);
+        matrix_stack = new_stack;
+    }
+}
+
+void checkpdfsave(int cur_h, int cur_v)
+{
+    pos_entry *new_stack;
+
+    if (pos_stack_used >= pos_stack_size) {
+        pos_stack_size += STACK_INCREMENT;
+        new_stack = xtalloc(pos_stack_size, pos_entry);
+        memcpy((void *) new_stack, (void *) pos_stack,
+               pos_stack_used * sizeof(pos_entry));
+        xfree(pos_stack);
+        pos_stack = new_stack;
+    }
+    pos_stack[pos_stack_used].pos_h = cur_h;
+    pos_stack[pos_stack_used].pos_v = cur_v;
+    if (page_mode) {
+        pos_stack[pos_stack_used].matrix_stack = matrix_stack_used;
+    }
+    pos_stack_used++;
+}
+
+void checkpdfrestore(int cur_h, int cur_v)
+{
+    int diff_h, diff_v;
+    if (pos_stack_used == 0) {
+        pdftex_warn("%s", "\\pdfrestore: missing \\pdfsave");
+        return;
+    }
+    pos_stack_used--;
+    diff_h = cur_h - pos_stack[pos_stack_used].pos_h;
+    diff_v = cur_v - pos_stack[pos_stack_used].pos_v;
+    if (diff_h != 0 || diff_v != 0) {
+        pdftex_warn("Misplaced \\pdfrestore by (%usp, %usp)", diff_h, diff_v);
+    }
+    if (page_mode) {
+        matrix_stack_used = pos_stack[pos_stack_used].matrix_stack;
+    }
+}
+
+void pdfshipoutbegin(boolean shipping_page)
+{
+    pos_stack_used = 0;         /* start with empty stack */
+
+    page_mode = shipping_page;
+    if (shipping_page) {
+        colorstackpagestart();
+    }
+}
+
+void pdfshipoutend(boolean shipping_page)
+{
+    if (pos_stack_used > 0) {
+        pdftex_warn("%u unmatched \\pdfsave after %s shipout",
+                    (unsigned int) pos_stack_used,
+                    ((shipping_page) ? "page" : "form"));
+    }
+}
+
+/*
+    \pdfsetmatrix{a b c d}
+    e := cur_h
+    f := cur_v
+    M_top: current active matrix at the top of
+           the matrix stack
+
+    The origin of \pdfsetmatrix is the current point.
+    The annotation coordinate system is the original
+    page coordinate system. When pdfTeX calculates
+    annotation rectangles it does not take into
+    account this transformations, it uses the original
+    coordinate system. To get the corrected values,
+    first we go back to the origin, perform the
+    transformation and go back:
+
+    (  1   0  0 )   ( a b 0 )   ( 1 0 0 )
+    (  0   1  0 ) x ( c d 0 ) x ( 0 1 0 ) x M_top
+    ( -e  -f  1 )   ( 0 0 1 )   ( e f 1 )
+
+    ( 1  0  0 )   (  a  b 0 )
+  = ( 0  1  0 ) x (  c  d 0 ) x M_top
+    ( e  f  1 )   ( -e -f 1 )
+
+    ( a         b         0 )
+  = ( c         d         0 ) x M_top
+    ( e(1-a)-fc f(1-d)-eb 1 )
+
+*/
+
+void pdfsetmatrix(poolpointer in, scaled cur_h, scaled cur_v)
+{
+    /* Argument of \pdfsetmatrix starts with strpool[in] and ends
+       before strpool[poolptr]. */
+
+    matrix_entry x, *y, *z;
+
+    if (page_mode) {
+        if (sscanf((const char *) &strpool[in], " %lf %lf %lf %lf ",
+                   &x.a, &x.b, &x.c, &x.d) != 4) {
+            pdftex_warn("Unrecognized format of \\pdfsetmatrix{%s}",
+                        &strpool[poolptr]);
+            return;
+        }
+        /* calculate this transformation matrix */
+        x.e = (double) cur_h *(1.0 - x.a) - (double) cur_v *x.c;
+        x.f = (double) cur_v *(1.0 - x.d) - (double) cur_h *x.b;
+        matrix_stack_room();
+        z = &matrix_stack[matrix_stack_used];
+        if (matrix_stack_used > 0) {
+            y = &matrix_stack[matrix_stack_used - 1];
+            z->a = x.a * y->a + x.b * y->c;
+            z->b = x.a * y->b + x.b * y->d;
+            z->c = x.c * y->a + x.d * y->c;
+            z->d = x.c * y->b + x.d * y->d;
+            z->e = x.e * y->a + x.f * y->c + y->e;
+            z->f = x.e * y->b + x.f * y->d + y->f;
+        } else {
+            z->a = x.a;
+            z->b = x.b;
+            z->c = x.c;
+            z->d = x.d;
+            z->e = x.e;
+            z->f = x.f;
+        }
+        matrix_stack_used++;
+    }
+}
+
+/* Apply matrix to point (x,y)
+
+               ( a b 0 )
+   ( x y 1 ) x ( c d 0 ) = ( xa+yc+e xb+yd+f 1 )
+               ( e f 1 )
+
+   If \pdfsetmatrix wasn't used, then return the value unchanged.
+*/
+
+/* Return valeus for matrix tranform functions */
+static scaled ret_llx;
+static scaled ret_lly;
+static scaled ret_urx;
+static scaled ret_ury;
+
+scaled getllx()
+{
+    return ret_llx;
+}
+
+scaled getlly()
+{
+    return ret_lly;
+}
+
+scaled geturx()
+{
+    return ret_urx;
+}
+
+scaled getury()
+{
+    return ret_ury;
+}
+
+static int last_llx;
+static int last_lly;
+static int last_urx;
+static int last_ury;
+
+#define DO_ROUND(x)  ((x > 0) ? (x + .5) : (x - .5))
+#define DO_MIN(a, b) ((a < b) ? a : b)
+#define DO_MAX(a, b) ((a > b) ? a : b)
+
+void do_matrixtransform(scaled x, scaled y, scaled * retx, scaled * rety)
+{
+    matrix_entry *m = &matrix_stack[matrix_stack_used - 1];
+    double x_old = x;
+    double y_old = y;
+    double x_new = x_old * m->a + y_old * m->c + m->e;
+    double y_new = x_old * m->b + y_old * m->d + m->f;
+    *retx = (scaled) DO_ROUND(x_new);
+    *rety = (scaled) DO_ROUND(y_new);
+}
+
+void matrixtransformrect(scaled llx, scaled lly, scaled urx, scaled ury)
+{
+    scaled x1, x2, x3, x4, y1, y2, y3, y4;
+
+    if (page_mode && matrix_stack_used > 0) {
+        last_llx = llx;
+        last_lly = lly;
+        last_urx = urx;
+        last_ury = ury;
+        do_matrixtransform(llx, lly, &x1, &y1);
+        do_matrixtransform(llx, ury, &x2, &y2);
+        do_matrixtransform(urx, lly, &x3, &y3);
+        do_matrixtransform(urx, ury, &x4, &y4);
+        ret_llx = DO_MIN(DO_MIN(x1, x2), DO_MIN(x3, x4));
+        ret_lly = DO_MIN(DO_MIN(y1, y2), DO_MIN(y3, y4));
+        ret_urx = DO_MAX(DO_MAX(x1, x2), DO_MAX(x3, x4));
+        ret_ury = DO_MAX(DO_MAX(y1, y2), DO_MAX(y3, y4));
+    } else {
+        ret_llx = llx;
+        ret_lly = lly;
+        ret_urx = urx;
+        ret_ury = ury;
+    }
+}
+
+void matrixtransformpoint(scaled x, scaled y)
+{
+    if (page_mode && matrix_stack_used > 0) {
+        do_matrixtransform(x, y, &ret_llx, &ret_lly);
+    } else {
+        ret_llx = x;
+        ret_lly = y;
+    }
+}
+
+void matrixrecalculate(scaled urx)
+{
+    matrixtransformrect(last_llx, last_lly, urx, last_ury);
+}
+
+void allocvffnts(void)
+{
+    if (vf_e_fnts_array == NULL) {
+        vf_e_fnts_array = vfefnts;
+        vf_e_fnts_limit = fontmax;
+        vf_e_fnts_ptr = vf_e_fnts_array;
+        vf_i_fnts_array = vfifnts;
+        vf_i_fnts_limit = fontmax;
+        vf_i_fnts_ptr = vf_i_fnts_array;
+    }
+    alloc_array(vf_e_fnts, 1, fontmax);
+    vf_e_fnts_ptr++;
+    alloc_array(vf_i_fnts, 1, fontmax);
+    vf_i_fnts_ptr++;
+    if (vf_e_fnts_array != vfefnts) {
+        vfefnts = vf_e_fnts_array;
+        vfifnts = vf_i_fnts_array;
+    }
 }

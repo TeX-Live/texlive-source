@@ -355,7 +355,7 @@ begin
 
     end else if argument_is ('version') then begin
       print_version_and_exit
-        (banner, nil, 'J. Plaice, Y. Haralambous, D.E. Knuth');
+        (banner, nil, 'J. Plaice, Y. Haralambous, D.E. Knuth', nil);
 
     end else if argument_is ('charcode-format') then begin
       if strcmp (optarg, 'ascii') = 0 then

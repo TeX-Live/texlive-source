@@ -1,112 +1,106 @@
-# Makefile fragment for pdfTeX and web2c. --infovore@xs4all.nl. Public domain.
+# Makefile fragment for pdfeTeX and web2c. --infovore@xs4all.nl. Public domain.
 # This fragment contains the parts of the makefile that are most likely to
-# differ between releases of pdfTeX.
-
-# The libraries are not mentioned.  As the matter stands, a change in their
-# number or how they are configured requires changes to the main distribution
-# anyway.
-
-# $Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/pdftex.mk#38 $
-
-Makefile: pdftexdir/pdftex.mk
-
-pdftex_bin = pdftex pdfetex ttf2afm pdftosrc
-linux_build_dir = $(HOME)/pdftex/build/linux/texk/web2c
+# differ between releases of pdfeTeX.
 
 # We build pdftex
-pdftex = @PTEX@ pdftex
+pdftex = @PETEX@ pdftex
 pdftexdir = pdftexdir
 
+LIBOBSDCOMPATDIR=../../libs/obsdcompat
+LIBOBSDCOMPATFSRCDIR=$(srcdir)/$(LIBOBSDCOMPATDIR)
+XCPPFLAGS=-I$(LIBOBSDCOMPATDIR) -I$(LIBOBSDCOMPATDIR)/.. -I$(LIBOBSDCOMPATFSRCDIR) -I$(LIBOBSDCOMPATFSRCDIR)/..
+
+Makefile: $(srcdir)/$(pdftexdir)/pdftex.mk
+
+# pdftex_bin = pdftex ttf2afm pdftosrc
+pdftex_bin = pdftex
+linux_build_dir = $(HOME)/pdftex/build/linux/texk/web2c
+
 # Extract pdftex version
-pdftexdir/pdftex.version: pdftexdir/pdftex.ch
-	grep '^@d pdftex_version_string==' $(srcdir)/pdftexdir/pdftex.ch \
+$(pdftexdir)/pdftex.version: $(srcdir)/$(pdftexdir)/pdftex.web
+	test -d $(pdftexdir) || mkdir $(pdftexdir)
+	grep '^@d pdftex_version_string==' $(srcdir)/$(pdftexdir)/pdftex.web \
 	  | sed "s/^.*'-//;s/'.*$$//" \
-	  >pdftexdir/pdftex.version
+	  >$(pdftexdir)/pdftex.version
 
 # The C sources.
 pdftex_c = pdftexini.c pdftex0.c pdftex1.c pdftex2.c pdftex3.c
 pdftex_o = pdftexini.o pdftex0.o pdftex1.o pdftex2.o pdftex3.o pdftexextra.o
 
 # Making pdftex
-pdftex: $(pdftex_o) $(pdftexextra_o) $(pdftexlibsdep)
+pdftex: pdftexd.h $(pdftex_o) $(pdftexextra_o) $(pdftexlibsdep)
 	@CXXHACKLINK@ $(pdftex_o) $(pdftexextra_o) $(pdftexlibs) $(socketlibs) @CXXHACKLDLIBS@ @CXXLDEXTRA@
 
 # C file dependencies.
-$(pdftex_c) pdftexcoerce.h pdftexd.h: pdftex.p $(web2c_texmf)
+$(pdftex_c) pdftexcoerce.h pdftexd.h: pdftex.p $(web2c_texmf) $(srcdir)/$(pdftexdir)/pdftex.defines $(srcdir)/$(pdftexdir)/pdftex.h
 	$(web2c) pdftex
-pdftexextra.c: pdftexdir/pdftexextra.h lib/texmfmp.c
+pdftexextra.c: $(pdftexdir)/pdftexextra.h lib/texmfmp.c
+	test -d $(pdftexdir) || mkdir $(pdftexdir)
 	sed s/TEX-OR-MF-OR-MP/pdftex/ $(srcdir)/lib/texmfmp.c >$@
-pdftexdir/pdftexextra.h: pdftexdir/pdftexextra.in pdftexdir/pdftex.version
-	sed s/PDFTEX-VERSION/`cat pdftexdir/pdftex.version`/ \
-	  $(srcdir)/pdftexdir/pdftexextra.in >$@
+$(pdftexdir)/pdftexextra.h: $(pdftexdir)/pdftexextra.in $(pdftexdir)/pdftex.version etexdir/etex.version
+	test -d $(pdftexdir) || mkdir $(pdftexdir)
+	sed -e s/PDFTEX-VERSION/`cat $(pdftexdir)/pdftex.version`/ \
+	    -e s/ETEX-VERSION/`cat etexdir/etex.version`/ \
+	  $(srcdir)/$(pdftexdir)/pdftexextra.in >$@
 
-# Tangling.
-pdftex.p pdftex.pool: tangle pdftex.web pdftex.ch
-	$(TANGLE) pdftex.web pdftex.ch
+# Tangling
+pdftex.p pdftex.pool: tangle $(srcdir)/$(pdftexdir)/pdftex.web pdftex.ch
+	$(TANGLE) $(srcdir)/$(pdftexdir)/pdftex.web pdftex.ch
 
-# Generation of the web and ch files.
-#   Sources for pdftex.web:
-pdftex_web_srcs = $(srcdir)/tex.web \
-  $(srcdir)/pdftexdir/pdftex.ch \
-  $(srcdir)/pdftexdir/hz.ch  \
-  $(srcdir)/pdftexdir/misc.ch \
-  $(srcdir)/pdftexdir/vadjust.ch \
-  $(srcdir)/pdftexdir/pdftex2.ch
-#   Sources for etex.ch:
-pdftex_ch_srcs = pdftex.web \
-  $(srcdir)/pdftexdir/tex.ch0 \
+#   Sources for pdftex.ch:
+pdftex_ch_srcs = $(srcdir)/$(pdftexdir)/pdftex.web \
+  $(srcdir)/$(pdftexdir)/tex.ch0 \
   $(srcdir)/tex.ch \
-  $(srcdir)/pdftexdir/tex.ch1 \
-  $(srcdir)/pdftexdir/tex.pch \
-  $(srcdir)/pdftexdir/noligatures.ch \
-  $(srcdir)/pdftexdir/pdfstrcmp.ch \
-  $(srcdir)/pdftexdir/randoms.ch
+  $(srcdir)/$(pdftexdir)/pdftex.ch
 #   Rules:
-pdftex.web: tie pdftexdir/pdftex.mk $(pdftex_web_srcs)
-	$(TIE) -m pdftex.web $(pdftex_web_srcs)
-pdftex.ch: $(pdftex_ch_srcs)
+pdftex.ch: $(TIE) $(pdftex_ch_srcs)
 	$(TIE) -c pdftex.ch $(pdftex_ch_srcs)
 
-# for developing only
-pdftex-org.web: $(pdftex_ch_srcs_org)
-	$(TIE) -m $@ $(pdftex_ch_srcs_org)
-pdftex-all.web: pdftex.web pdftex.ch
-	$(TIE) -m $@ pdftex.web pdftex.ch
+# pdfetex: (it's just a copy of pdftex)
+pdfetex: pdftex
+	cp -p pdftex pdfetex
+pdfetex.pool: pdftex.pool
+	cp -p pdftex.pool pdfetex.pool
 
-# Tests...
-check: @PTEX@ pdftex-check
+# for developing only
+pdftex-org.web: $(TIE) $(pdftex_ch_srcs_org)
+	$(TIE) -m $@ $(pdftex_ch_srcs_org)
+pdftex-all.web: $(TIE) $(srcdir)/$(pdftexdir)/pdftex.web pdftex.ch
+	$(TIE) -m $@ $(srcdir)/$(pdftexdir)/pdftex.web pdftex.ch
+pdftex-all.tex: pdftex-all.web
+	$(WEAVE) pdftex-all.web
+	echo -e '1s/ webmac/ pdfwebmac/\nw\nq' | ed $@ >/dev/null 2>&1
+pdftex-all.pdf: pdftex-all.tex
+	$(pdftex) pdftex-all.tex
+
+check: @PETEX@ pdftex-check
 pdftex-check: pdftex pdftex.fmt
 
-# Cleaning up.
 clean:: pdftex-clean
 pdftex-clean:
 	$(LIBTOOL) --mode=clean $(RM) pdftex
 	rm -f $(pdftex_o) $(pdftex_c) pdftexextra.c pdftexcoerce.h
-	rm -f pdftexdir/pdftexextra.h pdftexdir/pdftex.version
-	rm -f pdftexd.h pdftex.p pdftex.pool pdftex.web pdftex.ch
+	rm -f $(pdftexdir)/pdftexextra.h
+	rm -f pdftexd.h pdftex.p pdftex.pool pdftex.ch
 	rm -f pdftex.fmt pdftex.log
 
-# Dumps.
-all_pdffmts = @FMU@ pdftex.fmt $(pdffmts)
+# Dumps
+all_pdfefmts = @FMU@ pdfetex.fmt $(pdfefmts)
 
-dumps: @PTEX@ pdffmts
-pdffmts: $(all_pdffmts)
+dumps: @PETEX@ pdfefmts
+pdfefmts: $(all_pdfefmts)
 
-pdffmtdir = $(web2cdir)/pdftex
-$(pdffmtdir)::
-	$(SHELL) $(top_srcdir)/../mkinstalldirs $(pdffmtdir)
+pdfefmtdir = $(web2cdir)/pdfetex
+$(pdfefmtdir)::
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(pdfefmtdir)
 
-pdftex.fmt: pdftex
-	$(dumpenv) $(MAKE) progname=pdftex files="plain.tex cmr10.tfm" prereq-check
-	$(dumpenv) ./pdftex --progname=pdftex --jobname=pdftex --ini \\pdfoutput=1 \\input plain \\dump </dev/null
+pdfetex.fmt: pdfetex
+	$(dumpenv) $(MAKE) progname=pdfetex files="etex.src plain.tex cmr10.tfm" prereq-check
+	$(dumpenv) ./pdfetex --progname=pdfetex --jobname=pdfetex --ini \*\\pdfoutput=1\\input etex.src \\dump </dev/null
 
-pdfolatex.fmt: pdftex
-	$(dumpenv) $(MAKE) progname=pdfolatex files="latex.ltx" prereq-check
-	$(dumpenv) ./pdftex --progname=pdfolatex --jobname=pdfolatex --ini \\pdfoutput=1 \\input latex.ltx </dev/null
-
-#pdflatex.fmt: pdftex
-#	$(dumpenv) $(MAKE) progname=pdflatex files="latex.ltx" prereq-check
-#	$(dumpenv) ./pdftex --progname=pdflatex --jobname=pdflatex --ini \\pdfoutput=1 \\input latex.ltx </dev/null
+pdflatex.fmt: pdftex
+	$(dumpenv) $(MAKE) progname=pdflatex files="latex.ltx" prereq-check
+	$(dumpenv) ./pdftex --progname=pdflatex --jobname=pdflatex --ini \*\\pdfoutput=1\\input latex.ltx </dev/null
 
 # 
 # Installation.
@@ -116,28 +110,27 @@ install-pdftex-data: install-pdftex-pool @FMU@ install-pdftex-dumps
 install-pdftex-dumps: install-pdftex-fmts
 
 # The actual binary executables and pool files.
-install-programs: @PTEX@ install-pdftex-programs
-install-pdftex-programs: pdftex $(bindir)
+install-programs: @PETEX@ install-pdftex-programs
+install-pdftex-programs: $(pdftex) $(bindir)
 	for p in pdftex; do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
 
-install-links: @PTEX@ install-pdftex-links
+install-links: @PETEX@ install-pdftex-links
 install-pdftex-links: install-pdftex-programs
-	#cd $(bindir) && (rm -f pdfinitex pdfinitex; \
-	#  $(LN) pdftex pdfinitex; $(LN) pdftex pdfvirtex)
+	#cd $(bindir) && (rm -f pdfeinitex pdfevirtex; \
+	#  $(LN) pdftex pdfeinitex; $(LN) pdftex pdfevirtex)
 
-install-fmts: @PTEX@ install-pdftex-fmts
-install-pdftex-fmts: pdffmts $(pdffmtdir)
-	pdffmts="$(all_pdffmts)"; \
-	  for f in $$pdffmts; do $(INSTALL_DATA) $$f $(pdffmtdir)/$$f; done
-	pdffmts="$(pdffmts)"; \
-	  for f in $$pdffmts; do base=`basename $$f .fmt`; \
+install-fmts: @PETEX@ install-pdftex-fmts
+install-pdftex-fmts: pdfefmts $(pdfefmtdir)
+	pdfefmts="$(all_pdfefmts)"; \
+	  for f in $$pdfefmts; do $(INSTALL_DATA) $$f $(pdfefmtdir)/$$f; done
+	pdfefmts="$(pdfefmts)"; \
+	  for f in $$pdfefmts; do base=`basename $$f .fmt`; \
 	    (cd $(bindir) && (rm -f $$base; $(LN) pdftex $$base)); done
 
 # Auxiliary files.
-install-data:: @PTEX@ install-pdftex-data
+install-data:: @PETEX@ install-pdftex-data
 install-pdftex-pool: pdftex.pool $(texpooldir)
 	$(INSTALL_DATA) pdftex.pool $(texpooldir)/pdftex.pool
-
 
 # 
 # ttf2afm
@@ -147,10 +140,10 @@ ttf2afm: ttf2afm.o
 	$(kpathsea_link) ttf2afm.o $(kpathsea)
 ttf2afm.o: ttf2afm.c macnames.c
 	$(compile) -c $< -o $@
-ttf2afm.c:
-	cp $(srcdir)/pdftexdir/ttf2afm.c .
-macnames.c:
-	cp $(srcdir)/pdftexdir/macnames.c .
+ttf2afm.c: $(srcdir)/$(pdftexdir)/ttf2afm.c
+	cp $(srcdir)/$(pdftexdir)/ttf2afm.c .
+macnames.c: $(srcdir)/$(pdftexdir)/macnames.c
+	cp $(srcdir)/$(pdftexdir)/macnames.c .
 check: ttf2afm-check
 ttf2afm-check: ttf2afm
 clean:: ttf2afm-clean
@@ -162,10 +155,10 @@ ttf2afm-clean:
 # pdftosrc
 pdftosrc = pdftosrc
 
-pdftosrc: pdftexdir/pdftosrc.o $(LIBXPDFDEP)
-	@CXXHACKLINK@ pdftexdir/pdftosrc.o $(LDLIBXPDF) -lm @CXXLDEXTRA@
-pdftexdir/pdftosrc.o:$(srcdir)/pdftexdir/pdftosrc.cc
-	cd pdftexdir && $(MAKE) pdftosrc.o
+pdftosrc: $(pdftexdir)/pdftosrc.o $(LIBXPDFDEP)
+	@CXXHACKLINK@ $(pdftexdir)/pdftosrc.o $(LDLIBXPDF) -lm @CXXLDEXTRA@
+$(pdftexdir)/pdftosrc.o:$(srcdir)/$(pdftexdir)/pdftosrc.cc
+	cd $(pdftexdir) && $(MAKE) pdftosrc.o
 check: pdftosrc-check
 pdftosrc-check: pdftosrc
 clean:: pdftosrc-clean
@@ -198,4 +191,5 @@ web2c-cross: $(web2c_programs)
 	$(MAKE) tangle && rm -f tangle && \
 	cp -f $(linux_build_dir)/tangle .  && touch tangle
 
+# vim: set noexpandtab
 # end of pdftex.mk

@@ -1164,7 +1164,7 @@ if(strcmp("-version",*argv)==0||strcmp("--version",*argv)==0)
 #line 614 "./cwebdir/comm-w2c.ch"
 
 printversionandexit((program==ctangle?ctangle_banner:cweave_banner),
-"Silvio Levy and Donald E. Knuth",NULL);
+"Silvio Levy and Donald E. Knuth",NULL, NULL);
 
 
 /*:85*/

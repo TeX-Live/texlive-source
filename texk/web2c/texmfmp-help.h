@@ -351,7 +351,9 @@ const_string PDFTEXHELP[] = {
     "",
     "  If no arguments or options are specified, prompt for input.",
     "",
+    "-draftmode              switch on draft mode (generates no output PDF)",
     "-enc                    enable encTeX extensions such as \\mubyte",
+    "-etex                   enable e-TeX extensions",
     "[-no]-file-line-error   disable/enable file:line:error style messages",
     "-fmt=FMTNAME            use FMTNAME instead of program name or a %& line",
     "-halt-on-error          stop processing at the first error",
@@ -389,66 +391,6 @@ const_string PDFTEXHELP[] = {
     NULL
 };
 #endif /* pdfTeX */
-
-#ifdef pdfeTeX
-const_string PDFETEXHELP[] = {
-    "Usage: pdfetex [OPTION]... [TEXNAME[.tex]] [COMMANDS]",
-    "   or: pdfetex [OPTION]... \\FIRST-LINE",
-    "   or: pdfetex [OPTION]... &FMT ARGS",
-    "  Run pdfeTeX on TEXNAME, usually creating TEXNAME.pdf.",
-    "  Any remaining COMMANDS are processed as pdfeTeX input, after TEXNAME is read.",
-    "  If the first line of TEXNAME is %&FMT, and FMT is an existing .fmt file,",
-    "  use it.  Else use `NAME.fmt', where NAME is the program invocation name,",
-    "  most commonly `pdfetex'.",
-    "",
-    "  Alternatively, if the first non-option argument begins with a backslash,",
-    "  interpret all non-option arguments as a line of pdfeTeX input.",
-    "",
-    "  Alternatively, if the first non-option argument begins with a &, the",
-    "  next word is taken as the FMT to read, overriding all else.  Any",
-    "  remaining arguments are processed as above.",
-    "",
-    "  If no arguments or options are specified, prompt for input.",
-    "",
-    "-enc                    enable encTeX extensions such as \\mubyte",
-    "-etex                   enable e-TeX extensions",
-    "[-no]-file-line-error   disable/enable file:line:error style messages",
-    "-fmt=FMTNAME            use FMTNAME instead of program name or a %& line",
-    "-halt-on-error          stop processing at the first error",
-    "-ini                    be pdfeinitex, for dumping formats; this is implicitly",
-    "                          true if the program name is `pdfeinitex'",
-    "-interaction=STRING     set interaction mode (STRING=batchmode/nonstopmode/",
-    "                          scrollmode/errorstopmode)",
-#ifdef IPC
-    "-ipc                    send DVI output to a socket as well as the usual",
-    "                          output file",
-    "-ipc-start              as -ipc, and also start the server at the other end",
-#endif /* IPC */
-    "-jobname=STRING         set the job name to STRING",
-    "-kpathsea-debug=NUMBER  set path searching debugging flags according to",
-    "                          the bits of NUMBER",
-    "[-no]-mktex=FMT         disable/enable mktexFMT generation (FMT=tex/tfm)",
-    "-mltex                  enable MLTeX extensions such as \\charsubdef",
-    "-output-comment=STRING  use STRING for DVI file comment instead of date",
-    "                          (no effect for PDF)",
-    "-output-directory=DIR   use DIR as the directory to write files to",
-    "-output-format=FORMAT   use FORMAT for job output; FORMAT is `dvi' or `pdf'",
-    "[-no]-parse-first-line  disable/enable parsing of the first line of the",
-    "                          input file",
-    "-progname=STRING        set program (and fmt) name to STRING",
-    "-recorder               enable filename recorder",
-    "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
-    "-src-specials           insert source specials into the DVI file",
-    "-src-specials=WHERE     insert source specials in certain places of",
-    "                          the DVI file. WHERE is a comma-separated value",
-    "                          list: cr display hbox math par parend vbox",
-    "-translate-file=TCXNAME use the TCX file TCXNAME",
-    "-8bit                   make all characters printable by default",
-    "-help                   display this help and exit",
-    "-version                output version information and exit",
-    NULL
-};
-#endif /* pdfeTeX */
 
 #ifdef XeTeX
 const_string XETEXHELP[] = {

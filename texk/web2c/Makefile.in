@@ -37,6 +37,8 @@ DIFFFLAGS =
 kpse_include ../make/common.mk
 kpse_include ../make/programs.mk
 
+XCPPFLAGS = $(PDFXCPPFLAGS)
+
 CXX = @CXX@
 CXXLD = $(CXX)
 cxx_link_command = $(CXXLD) -o $@ $(LDFLAGS)
@@ -558,7 +560,6 @@ kpse_include etexdir/etex.mk
 kpse_include omegadir/omega.mk
 kpse_include alephdir/aleph.mk
 kpse_include pdftexdir/pdftex.mk
-kpse_include pdfetexdir/pdfetex.mk
 kpse_include xetexdir/xetex.mk
 # 
 # Common
@@ -1001,14 +1002,14 @@ manpages:
 @MAINT@	cd $(distdir); rm -f $(addsuffix .c, $(programs) tangleboot)
 @MAINT@	cd $(distdir); rm -f $(addsuffix .h, $(programs) tangleboot)
 @MAINT@	cd $(distdir); rm -f etex.ch omega.ch aleph.ch
-@MAINT@	cd $(distdir); rm -f pdftex.ch pdfetex.ch
+@MAINT@	cd $(distdir); rm -f pdftex.ch
 @MAINT@	cd $(distdir); bash -c "rm -f tests/x* tests/allbib.{bbl,blg,dvi,log}"
 @MAINT@	cd $(distdir)/tests && ln -s ../../../../tests/xampl.bib .
 @MAINT@	cd $(distdir); bash -c "rm -f $(omega_files) alephmem.h"
 @MAINT@	cd $(distdir); bash -c "rm -f cweb.c *{coerce,d}.h"
 @MAINT@	cd $(distdir); bash -c "rm -f omega*.c aleph*.c"
 @MAINT@	cd $(distdir); bash -c "rm -f tex*.c etex*.c"
-@MAINT@	cd $(distdir); bash -c "rm -f pdftex*.c pdfetex*.c"
+@MAINT@	cd $(distdir); bash -c "rm -f pdftex*.c"
 @MAINT@	cd $(distdir); bash -c "rm -f mf*.c mp*.c"
 @MAINT@	cd $(distdir); bash -c "rm -f macnames.c *extra.c"
 @MAINT@	touch $(distdir)/doc/*.info*
@@ -1018,7 +1019,7 @@ manpages:
 @MAINT@	mkdir -p $(distdir)
 @MAINT@	for f in *.web; do ln $$f $(distdir); done
 @MAINT@	rm -f $(distdir)/etex.web $(distdir)/omega.web $(distdir)/aleph.web
-@MAINT@	rm -f $(distdir)/pdftex.web $(distdir)/pdfetex.web
+@MAINT@	rm -f $(distdir)/pdfetex.web
 @MAINT@	cd $(distdir); bash -c "rm -f $(omega_files)"
 @MAINT@	chmod -w $(distdir)/*
 @MAINT@	GZIP=-9 tar czf web-$(version).tar.gz $(top_distdir)
@@ -1059,10 +1060,9 @@ manpages:
 @MAINT@	GZIP=-9 tar czf web2c-$(version)-aleph-`cat alephdir/aleph.version`.tar.gz $(top_distdir)
 @MAINT@	rm -rf $(top_distdir)
 @MAINT@
-@MAINT@pdftex-dist: pdftexdir/pdftex.version
+@MAINT@pdfetex-dist: pdfetexdir/pdfetex.version
 @MAINT@	rm -rf $(top_distdir)
-@MAINT@	mkdir -p $(distdir)/pdftexdir $(distdir)/pdfetexdir
-@MAINT@	cp -rp pdftexdir/* $(distdir)/pdftexdir
+@MAINT@	mkdir -p $(distdir)/pdfetexdir
 @MAINT@	cp -rp pdfetexdir/* $(distdir)/pdfetexdir
 @MAINT@	rm -rf $(distdir)/pdf*texdir/CVS $(distdir)/pdf*texdir/*/CVS
 @MAINT@	rm -f $(distdir)/pdf*texdir/Makefile
@@ -1085,7 +1085,7 @@ manpages:
 @MAINT@	rm -f $(top_distdir)/libs/xpdf/*/Makefile
 @MAINT@	rm -f $(top_distdir)/libs/xpdf/*/*.[oa]
 @MAINT@	rm -f $(top_distdir)/libs/xpdf/*/c-auto.h
-@MAINT@	GZIP=-9 tar czf web2c-$(version)-pdftex-`cat pdftexdir/pdftex.version`.tar.gz $(top_distdir)
+@MAINT@	GZIP=-9 tar czf web2c-$(version)-pdftex-`cat pdfetexdir/pdfetex.version`.tar.gz $(top_distdir)
 @MAINT@	rm -rf $(top_distdir)
 @MAINT@
 @MAINT@libs-dist:
@@ -1100,7 +1100,7 @@ manpages:
 @MAINT@	rm -f $(libs_distdir)/*/config.*
 @MAINT@	rm -f $(libs_distdir)/*/c-auto.h
 @MAINT@	rm -f $(libs_distdir)/*/*.[oa]
-@MAINT@	GZIP=-9 tar czf web2c-$(version)-pdftexlibs.tar.gz $(top_distdir)
+@MAINT@	GZIP=-9 tar czf web2c-$(version)-pdfetexlibs.tar.gz $(top_distdir)
 @MAINT@	rm -rf $(top_distdir)
 
 kpse_include ../make/dist.mk
@@ -1118,7 +1118,7 @@ installcheck:
 
 # 
 # Cleaning.
-all_subdirs = doc lib man $(mpware) web2c window $(omegafonts) $(otps) $(pdftexdir) $(pdfetexdir) $(mpostdir)
+all_subdirs = doc lib man $(mpware) web2c window $(omegafonts) $(otps) $(pdftexdir) $(mpostdir)
 
 # Having a multiple-target rule with the subdir loop fails because of
 # the dependencies introduced by clean.mk.  Yet, we want the

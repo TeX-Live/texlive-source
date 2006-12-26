@@ -320,7 +320,7 @@ begin
       usage_help (GFTYPE_HELP, nil);
 
     end else if argument_is ('version') then begin
-      print_version_and_exit (banner, nil, 'D.R. Fuchs');
+      print_version_and_exit (banner, nil, 'D.R. Fuchs', nil);
 
     end; {Else it was a flag.}
   until getopt_return_val = -1;

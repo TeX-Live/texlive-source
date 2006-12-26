@@ -43,10 +43,7 @@ typedef void* voidpointer;
 
 /* Some things are the same except for the name.  */
 #ifdef TeX
-#if defined (pdfeTeX)
-#define TEXMFPOOLNAME "pdfetex.pool"
-#define TEXMFENGINENAME "pdfetex"
-#elif defined (pdfTeX)
+#if defined (pdfTeX)
 #define TEXMFPOOLNAME "pdftex.pool"
 #define TEXMFENGINENAME "pdftex"
 #elif defined (eTeX)
@@ -266,8 +263,8 @@ extern void paintrow (/*screenrow, pixelcolor, transspec, screencol*/);
     for (i = 0; i < (len); i++) {                                       \
       if ((&(base))[i] < (low) || (&(base))[i] > (high)) {              \
         FATAL5 ("Item %u (=%ld) of .fmt array at %lx <%ld or >%ld",     \
-                i, (integer) (&(base))[i], (unsigned long) &(base),     \
-                (integer) low, (integer) high);                         \
+                i, (unsigned long) (&(base))[i], (unsigned long) &(base),\
+                (unsigned long) low, (unsigned long) high);             \
       }                                                                 \
     }									\
   } while (0)
@@ -282,8 +279,8 @@ extern void paintrow (/*screenrow, pixelcolor, transspec, screencol*/);
     for (i = 0; i < (len); i++) {                                       \
       if ((&(base))[i] > (high)) {              			\
         FATAL4 ("Item %u (=%ld) of .fmt array at %lx >%ld",     	\
-                i, (integer) (&(base))[i], (unsigned long) &(base),     \
-                (integer) high);                         		\
+                i, (unsigned long) (&(base))[i], (unsigned long) &(base),\
+                (unsigned long) high);                         		\
       }                                                                 \
     }									\
   } while (0)

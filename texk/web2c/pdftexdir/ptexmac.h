@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996-2004 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 1996-2006 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -17,64 +17,73 @@ You should have received a copy of the GNU General Public License
 along with pdfTeX; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/ptexmac.h#18 $
+$Id: ptexmac.h,v 1.14 2005/11/29 22:05:23 hahe Exp $
 */
 
 #ifndef PDFTEXMAC
-#define PDFTEXMAC
+#  define PDFTEXMAC
 
 /* Not all systems define it. */
-#ifndef M_PI
-#define M_PI           3.14159265358979323846   /* pi */
-#define M_PI_2         1.5707963267948966192E0  /*Hex  2^ 0 * 1.921FB54442D18 */
-#define M_PI_4         7.8539816339744830962E-1 /*Hex  2^-1 * 1.921FB54442D18 */
-#endif
+#  ifndef M_PI
+#    define M_PI           3.14159265358979323846
+                                                /* pi */
+#    define M_PI_2         1.5707963267948966192E0
+                                                /*Hex  2^ 0 * 1.921FB54442D18 */
+#    define M_PI_4         7.8539816339744830962E-1
+                                                /*Hex  2^-1 * 1.921FB54442D18 */
+#  endif
 
-#ifdef WIN32
+#  ifdef WIN32
 // Why relying on gmalloc() ???
-#define gmalloc(n) xmalloc(n)
-#define gfree(p) free(p)
-#define inline __inline
-#define srandom(n) srand(n)
-#define random() rand()
-#endif
+#    define gmalloc(n) xmalloc(n)
+#    define gfree(p) free(p)
+#    define inline __inline
+#    define srandom(n) srand(n)
+#    define random() rand()
+#  endif
 
 /* Pascal WEB macros */
-#define maxinteger 0x7FFFFFFF
-#define maxdimen   0x3FFFFFFF
+#  define maxinteger 0x7FFFFFFF
+#  define maxdimen   0x3FFFFFFF
 
-#define objinfo(n) objtab[n].int0
+#  define objinfo(n) objtab[n].int0
 
-#define pdfroom(n) do {                                 \
-    if (pdfbufsize < n)                                 \
-        pdftex_fail("PDF output buffer overflowed");    \
-    if (pdfptr + n > pdfbufsize)                        \
-        pdfflush();                                     \
+#  define pdfroom(n) do {                                      \
+    if ((unsigned)(n + pdfptr) > (unsigned)pdfbufsize) {     \
+        if (pdfosmode)                                       \
+            zpdfosgetosbuf(n);                               \
+        else {                                               \
+            if ((unsigned)(n) > (unsigned)pdfbufsize)        \
+                pdftex_fail("PDF output buffer overflowed"); \
+            else                                             \
+                pdfflush();                                  \
+        }                                                    \
+    }                                                        \
 } while (0)
 
-#define pdfout(c)  do {             \
-    if (pdfptr > pdfbufsize)        \
-        pdfflush();                 \
-    pdfbuf[pdfptr++] = c;           \
+#  define pdfout(c)  do {   \
+    pdfroom(1);           \
+    pdfbuf[pdfptr++] = c; \
 } while (0)
 
-#define pdfoffset()     (pdfgone + pdfptr)
-#define pdfinitfont(f)  {tmpf = f; pdfcreatefontobj();}
+#  define pdfoffset()     (pdfgone + pdfptr)
 
-#define MAX_CHAR_CODE       255
+#  define MAX_CHAR_CODE       255
+#  define PRINTF_BUF_SIZE     1024
+#  define MAX_CSTRING_LEN     1024 * 1024
+#  define MAX_PSTRING_LEN     1024
+#  define SMALL_BUF_SIZE      256
+#  define SMALL_ARRAY_SIZE    256
+#  define FONTNAME_BUF_SIZE   128
+                                /* a PDF name can be maximum 127 chars long */
 
-#define PRINTF_BUF_SIZE     1024
-#define MAX_CSTRING_LEN     1024
-#define MAX_PSTRING_LEN     1024
-#define SMALL_BUF_SIZE      256
-#define SMALL_ARRAY_SIZE    256
-#define FONTNAME_BUF_SIZE   128 /* a PDF name can be maximum 127 chars long */
+#  define pdftex_debug    tex_printf
 
-#define check_buf(size, buf_size)                          \
-    if ((size) > (buf_size))                               \
-        pdftex_fail("buffer overflow", (buf_size))
+#  define check_buf(size, buf_size)                          \
+    if ((unsigned)(size) > (unsigned)(buf_size))                               \
+        pdftex_fail("buffer overflow at file %s, line %d", __FILE__,  __LINE__ )
 
-#define append_char_to_buf(c, p, buf, buf_size) do {       \
+#  define append_char_to_buf(c, p, buf, buf_size) do {       \
     if (c == 9)                                            \
         c = 32;                                            \
     if (c == 13 || c == EOF)                               \
@@ -85,7 +94,7 @@ $Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/ptexmac.h#18 $
     }                                                      \
 } while (0)
 
-#define append_eol(p, buf, buf_size) do {                  \
+#  define append_eol(p, buf, buf_size) do {                  \
     check_buf(p - buf + 2, (buf_size));                    \
     if (p - buf > 1 && p[-1] != 10)                        \
         *p++ = 10;                                         \
@@ -96,101 +105,124 @@ $Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/ptexmac.h#18 $
     *p = 0;                                                \
 } while (0)
 
-#define remove_eol(p, buf) do {                            \
+#  define remove_eol(p, buf) do {                            \
     p = strend(buf) - 1;                                   \
     if (*p == 10)                                          \
         *p = 0;                                            \
 } while (0)
 
-#define skip(p, c)   if (*p == c)  p++
+#  define skip(p, c)   if (*p == c)  p++
 
-#define alloc_array(T, n, s) do {                           \
+#  define alloc_array(T, n, s) do {                           \
     if (T##_array == NULL) {                                \
         T##_limit = (s);                                    \
-        if ((n) > T##_limit)                                \
+        if ((unsigned)(n) > T##_limit)                      \
             T##_limit = (n);                                \
         T##_array = xtalloc(T##_limit, T##_entry);          \
         T##_ptr = T##_array;                                \
     }                                                       \
-    else if (T##_ptr - T##_array + (n) > T##_limit) {       \
+    else if ((unsigned)(T##_ptr - T##_array + (n)) > T##_limit) {       \
         last_ptr_index = T##_ptr - T##_array;               \
         T##_limit *= 2;                                     \
-        if (T##_ptr - T##_array + (n) > T##_limit)          \
+        if ((unsigned)(T##_ptr - T##_array + (n)) > T##_limit)          \
             T##_limit = T##_ptr - T##_array + (n);          \
         xretalloc(T##_array, T##_limit, T##_entry);         \
         T##_ptr = T##_array + last_ptr_index;               \
     }                                                       \
 } while (0)
 
-#define is_cfg_comment(c) \
+#  define is_cfg_comment(c) \
     (c == 10 || c == '*' || c == '#' || c == ';' || c == '%')
 
-#define define_array(T)                     \
+#  define define_array(T)                     \
 T##_entry      *T##_ptr, *T##_array = NULL;    \
 size_t          T##_limit
 
-#define xfree(p)            do { if (p != NULL) free(p); p = NULL; } while (0)
-#define strend(s)           strchr(s, 0)
-#define xtalloc             XTALLOC
-#define xretalloc           XRETALLOC
+#  define xfree(p)            do { if (p != NULL) free(p); p = NULL; } while (0)
+#  define strend(s)           strchr(s, 0)
+#  define xtalloc             XTALLOC
+#  define xretalloc           XRETALLOC
 
-#define ASCENT_CODE         0
-#define CAPHEIGHT_CODE      1
-#define DESCENT_CODE        2
-#define FONTNAME_CODE       3
-#define ITALIC_ANGLE_CODE   4
-#define STEMV_CODE          5
-#define XHEIGHT_CODE        6
-#define FONTBBOX1_CODE      7
-#define FONTBBOX2_CODE      8
-#define FONTBBOX3_CODE      9
-#define FONTBBOX4_CODE      10
-#define MAX_KEY_CODE        (FONTBBOX1_CODE + 1)
-#define FONT_KEYS_NUM       (FONTBBOX4_CODE + 1)
+#  define ASCENT_CODE         0
+#  define CAPHEIGHT_CODE      1
+#  define DESCENT_CODE        2
+#  define ITALIC_ANGLE_CODE   3
+#  define STEMV_CODE          4
+#  define XHEIGHT_CODE        5
+#  define FONTBBOX1_CODE      6
+#  define FONTBBOX2_CODE      7
+#  define FONTBBOX3_CODE      8
+#  define FONTBBOX4_CODE      9
+#  define FONTNAME_CODE       10
+#  define GEN_KEY_NUM         (XHEIGHT_CODE + 1)
+#  define MAX_KEY_CODE        (FONTBBOX1_CODE + 1)
+#  define INT_KEYS_NUM        (FONTBBOX4_CODE + 1)
+#  define FONT_KEYS_NUM       (FONTNAME_CODE + 1)
 
-#define F_INCLUDED          0x01
-#define F_SUBSETTED         0x02
-#define F_TRUETYPE          0x04
-#define F_BASEFONT          0x08
+#  define F_INCLUDED          0x01
+#  define F_SUBSETTED         0x02
+#  define F_STDT1FONT         0x04
+#  define F_SUBFONT           0x08
+#  define F_TYPE1             0x10
+#  define F_TRUETYPE          0x20
+#  define F_OTF               0x40
 
-#define set_included(fm)    ((fm)->type |= F_INCLUDED)
-#define set_subsetted(fm)   ((fm)->type |= F_SUBSETTED)
-#define set_truetype(fm)    ((fm)->type |= F_TRUETYPE)
-#define set_basefont(fm)    ((fm)->type |= F_BASEFONT)
+#  define set_included(fm)    ((fm)->type |= F_INCLUDED)
+#  define set_subsetted(fm)   ((fm)->type |= F_SUBSETTED)
+#  define set_std_t1font(fm)  ((fm)->type |= F_STDT1FONT)
+#  define set_subfont(fm)     ((fm)->type |= F_SUBFONT)
+#  define set_type1(fm)       ((fm)->type |= F_TYPE1)
+#  define set_truetype(fm)    ((fm)->type |= F_TRUETYPE)
+#  define set_opentype(fm)    ((fm)->type |= F_OTF)
+#  define set_subfont(fm)     ((fm)->type |= F_SUBFONT)
 
-#define unset_included(fm)  ((fm)->type &= ~F_INCLUDED)
-#define unset_subsetted(fm) ((fm)->type &= ~F_SUBSETTED)
-#define unset_truetype(fm)  ((fm)->type &= ~F_TRUETYPE)
-#define unset_basefont(fm)  ((fm)->type &= ~F_BASEFONT)
+#  define unset_included(fm)  ((fm)->type &= ~F_INCLUDED)
+#  define unset_subsetted(fm) ((fm)->type &= ~F_SUBSETTED)
+#  define unset_std_t1font(fm)((fm)->type &= ~F_STDT1FONT)
+#  define unset_subfont(fm)   ((fm)->type &= ~F_SUBFONT)
+#  define unset_type1(fm)     ((fm)->type &= ~F_TYPE1)
+#  define unset_truetype(fm)  ((fm)->type &= ~F_TRUETYPE)
+#  define unset_opentype(fm)  ((fm)->type &= ~F_OTF)
+#  define unset_subfont(fm)   ((fm)->type &= ~F_SUBFONT)
 
-#define unset_fontfile(fm)  xfree((fm)->ff_name)
+#  define is_included(fm)     (((fm)->type & F_INCLUDED) != 0)
+#  define is_subsetted(fm)    (((fm)->type & F_SUBSETTED) != 0)
+#  define is_std_t1font(fm)   (((fm)->type & F_STDT1FONT) != 0)
+#  define is_subfont(fm)      (((fm)->type & F_SUBFONT) != 0)
+#  define is_type1(fm)        (((fm)->type & F_TYPE1) != 0)
+#  define is_truetype(fm)     (((fm)->type & F_TRUETYPE) != 0)
+#  define is_opentype(fm)     (((fm)->type & F_OTF) != 0)
+#  define is_subfont(fm)      (((fm)->type & F_SUBFONT) != 0)
 
-#define is_included(fm)     ((fm)->type & F_INCLUDED)
-#define is_subsetted(fm)    ((fm)->type & F_SUBSETTED)
-#define is_truetype(fm)     ((fm)->type & F_TRUETYPE)
-#define is_basefont(fm)     ((fm)->type & F_BASEFONT)
-#define no_font_desc(fm)    (is_basefont(fm) && !is_included(fm))
+#  define fm_slant(fm)        (fm)->slant
+#  define fm_extend(fm)       (fm)->extend
+#  define fm_fontfile(fm)     (fm)->ff_name
 
-#define fm_slant(fm)        (fm)->slant
-#define fm_extend(fm)       (fm)->extend
-#define fm_fontfile(fm)     (fm)->ff_name
+#  define is_reencoded(fm)    ((fm)->encname != NULL)
+#  define is_fontfile(fm)     (fm_fontfile(fm) != NULL)
+#  define is_t1fontfile(fm)   (is_fontfile(fm) && is_type1(fm))
+#  define is_builtin(fm)      (!is_fontfile(fm))
 
-#define is_reencoded(fm)    ((fm)->encoding != NULL)
-#define is_fontfile(fm)     (fm_fontfile(fm) != NULL)
-#define is_t1fontfile(fm)   (is_fontfile(fm) && !is_truetype(fm))
-
-#define LINK_TFM            0x01
-#define LINK_PS             0x02
-#define set_tfmlink(fm)     ((fm)->links |= LINK_TFM)
-#define set_pslink(fm)      ((fm)->links |= LINK_PS)
-#define unset_tfmlink(fm)   ((fm)->links &= ~LINK_TFM)
-#define unset_pslink(fm)    ((fm)->links &= ~LINK_PS)
-#define has_tfmlink(fm)     ((fm)->links & LINK_TFM)
-#define has_pslink(fm)      ((fm)->links & LINK_PS)
+#  define LINK_TFM            0x01
+#  define LINK_PS             0x02
+#  define set_tfmlink(fm)     ((fm)->links |= LINK_TFM)
+#  define set_pslink(fm)      ((fm)->links |= LINK_PS)
+#  define unset_tfmlink(fm)   ((fm)->links &= ~LINK_TFM)
+#  define unset_pslink(fm)    ((fm)->links &= ~LINK_PS)
+#  define has_tfmlink(fm)     ((fm)->links & LINK_TFM)
+#  define has_pslink(fm)      ((fm)->links & LINK_PS)
 
 
-#define set_cur_file_name(s)      \
+#  define set_cur_file_name(s)      \
     cur_file_name = s;      \
     packfilename(maketexstring(cur_file_name), getnullstr(), getnullstr())
 
-#endif  /* PDFTEXMAC */
+#  define cmp_return(a, b) \
+    if ((a) > (b))         \
+        return 1;        \
+    if ((a) < (b))         \
+        return -1
+
+#  define str_prefix(s1, s2)  (strncmp((s1), (s2), strlen(s2)) == 0)
+
+#endif                          /* PDFTEXMAC */

@@ -44,8 +44,7 @@
 #include <etexdir/etexextra.h>
 #elif defined (pdfTeX)
 #include <pdftexdir/pdftexextra.h>
-#elif defined (pdfeTeX)
-#include <pdfetexdir/pdfetexextra.h>
+#include <pdftexdir/ptexlib.h>
 #elif defined (Omega)
 #include <omegadir/omegaextra.h>
 #elif defined (eOmega)
@@ -187,7 +186,7 @@ maininit P2C(int, ac, string *, av)
   /* Must be initialized before options are parsed.  */
   interactionoption = 4;
 
-#if defined(pdfTeX) || defined(pdfeTeX)
+#if defined(pdfTeX)
   ptexbanner = BANNER;
 #endif
 
@@ -273,7 +272,7 @@ maininit P2C(int, ac, string *, av)
     }
 #endif
 #endif
-#if defined(eTeX) || defined(pdfeTeX) || defined(Aleph) || defined(XeTeX)
+#if defined(eTeX) || defined(Aleph) || defined(XeTeX)
     if (etexp) {
       fprintf(stderr, "-etex only works with -ini\n");
     }
@@ -591,7 +590,6 @@ ipcpage P1C(int, is_eof)
 {
   static boolean begun = false;
   unsigned len = 0;
-  unsigned i;
   string p = "";
 
   if (!begun) {
@@ -607,8 +605,9 @@ ipcpage P1C(int, is_eof)
 #endif
     name = (string)xmalloc (len + 1);
 #if !defined(Omega) && !defined(eOmega) && !defined(Aleph)
-    strncpy (name, &strpool[strstart[outputfilename]], len);
+    strncpy (name, (string)&strpool[strstart[outputfilename]], len);
 #else
+    unsigned i;
     for (i=0; i<len; i++)
       name[i] =  strpool[i+strstartar[outputfilename - 65536L]];
 #endif
@@ -878,14 +877,15 @@ static struct option long_options[]
       { "enc",                       0, &enctexp, 1 },
 #endif /* !XeTeX */
 #endif /* !Omega && !eOmega && !Aleph */
-#if defined (eTeX) || defined(pdfeTeX) || defined(Aleph) || defined(XeTeX)
+#if defined (eTeX) || defined(pdfTeX) || defined(Aleph) || defined(XeTeX)
       { "etex",                      0, &etexp, 1 },
-#endif /* eTeX || pdfeTeX || Aleph */
+#endif /* eTeX || pdfTeX || Aleph */
       { "output-comment",            1, 0, 0 },
       { "output-directory",          1, 0, 0 },
-#if defined(pdfTeX) || defined(pdfeTeX)
+#if defined(pdfTeX)
+      { "draftmode",                 0, 0, 0 },
       { "output-format",             1, 0, 0 },
-#endif /* pdfTeX or pdfeTeX */
+#endif /* pdfTeX */
       { "shell-escape",              0, &shellenabledp, 1 },
       { "no-shell-escape",           0, &shellenabledp, -1 },
       { "debug-format",              0, &debugformatfile, 1 },
@@ -1015,7 +1015,7 @@ parse_options P2C(int, argc,  string *, argv)
           parse_src_specials_option(optarg);
        }
 #endif /* TeX */
-#if defined(pdfTeX) || defined(pdfeTeX)
+#if defined(pdfTeX)
     } else if (ARGUMENT_IS ("output-format")) {
        pdfoutputoption = 1;
        if (strcmp(optarg, "dvi") == 0) {
@@ -1026,7 +1026,10 @@ parse_options P2C(int, argc,  string *, argv)
          WARNING1 ("Ignoring unknown value `%s' for --output-format", optarg);
          pdfoutputoption = 0;
        }
-#endif /* pdfTeX || pdfeTeX */
+    } else if (ARGUMENT_IS ("draftmode")) {
+      pdfdraftmodeoption = 1;
+      pdfdraftmodevalue = 1;
+#endif /* pdfTeX */
 #if defined (TeX) || defined (MF) || defined (MP)
     } else if (ARGUMENT_IS ("translate-file")) {
       translate_filename = optarg;
@@ -1067,7 +1070,13 @@ parse_options P2C(int, argc,  string *, argv)
         usagehelp (PROGRAM_HELP, BUG_ADDRESS);
 
     } else if (ARGUMENT_IS ("version")) {
-      printversionandexit (BANNER, COPYRIGHT_HOLDER, AUTHOR);
+        char *versions;
+#if defined (pdfTeX)
+        initversionstring(&versions); 
+#else
+        versions = NULL;
+#endif
+        printversionandexit (BANNER, COPYRIGHT_HOLDER, AUTHOR, versions);
 
     } /* Else it was a flag; getopt has already done the assignment.  */
   }
@@ -1656,7 +1665,7 @@ calledit P4C(packedASCIIcode *, filename,
 	    case 'd':
 	      if (ddone)
                 FATAL ("call_edit: `%%d' appears twice in editor command");
-              sprintf (temp, "%ld", linenumber);
+              sprintf (temp, "%ld", (long int)linenumber);
               while (*temp != '\0')
                 temp++;
               ddone = 1;
@@ -1862,7 +1871,7 @@ checkpoolpointer (poolpointer poolptr, size_t len)
   }
 }
 
-#if !defined(pdfTeX) && !defined(pdfeTeX)
+#if !defined(pdfTeX)
 #ifndef XeTeX	/* XeTeX uses this from XeTeX_mac.c */
 static
 #endif

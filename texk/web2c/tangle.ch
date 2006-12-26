@@ -70,7 +70,7 @@ procedure initialize;
   must be less than 10240}
 @!max_texts=2000; {number of replacement texts, must be less than 10240}
 @y
-@!max_toks=60000; {|1/zz| times the number of bytes in compressed \PASCAL\ code;
+@!max_toks=65535; {|1/zz| times the number of bytes in compressed \PASCAL\ code;
   must be less than 65536}
 @!max_names=10000; {number of identifiers, strings, module names;
   must be less than 10240}
@@ -661,7 +661,7 @@ begin
       usage_help (TANGLE_HELP, nil);
 
     end else if argument_is ('version') then begin
-      print_version_and_exit (banner, nil, 'D.E. Knuth');
+      print_version_and_exit (banner, nil, 'D.E. Knuth', nil);
 
     end else if argument_is ('mixedcase') then begin
       force_uppercase := false;

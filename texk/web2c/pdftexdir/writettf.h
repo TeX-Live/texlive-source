@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996-2002 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 1996-2006 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -20,17 +20,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 $Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/writettf.h#1 $
 */
 
-typedef signed char     TTF_CHAR;
-typedef unsigned char   TTF_BYTE;
-typedef signed short    TTF_SHORT;
-typedef unsigned short  TTF_USHORT;
-typedef signed long     TTF_LONG;
-typedef unsigned long   TTF_ULONG;
-typedef unsigned long   TTF_FIXED;
-typedef unsigned short  TTF_FUNIT;
-typedef signed short    TTF_FWORD;
-typedef unsigned short  TTF_UFWORD;
-typedef unsigned short  TTF_F2DOT14;
+typedef signed char TTF_CHAR;
+typedef unsigned char TTF_BYTE;
+typedef signed short TTF_SHORT;
+typedef unsigned short TTF_USHORT;
+typedef signed long TTF_LONG;
+typedef unsigned long TTF_ULONG;
+typedef unsigned long TTF_FIXED;
+typedef unsigned short TTF_FUNIT;
+typedef signed short TTF_FWORD;
+typedef unsigned short TTF_UFWORD;
+typedef unsigned short TTF_F2DOT14;
 
 #define TTF_CHAR_SIZE    1
 #define TTF_BYTE_SIZE    1
@@ -71,16 +71,16 @@ typedef unsigned short  TTF_F2DOT14;
 
 #define put_num(t,n)    ((t)ttf_putnum(t##_SIZE, n))
 
-#define put_char(n)     put_num(TTF_CHAR, n)
-#define put_byte(n)     put_num(TTF_BYTE, n)
+#define put_char(n)     (void)put_num(TTF_CHAR, n)
+#define put_byte(n)     (void)put_num(TTF_BYTE, n)
 #define put_short(n)    put_num(TTF_SHORT, n)
 #define put_ushort(n)   put_num(TTF_USHORT, n)
 #define put_long(n)     put_num(TTF_LONG, n)
-#define put_ulong(n)    put_num(TTF_ULONG, n)
-#define put_fixed(n)    put_num(TTF_FIXED, n)
+#define put_ulong(n)    (void)put_num(TTF_ULONG, n)
+#define put_fixed(n)    (void)put_num(TTF_FIXED, n)
 #define put_funit(n)    put_num(TTF_FUNIT, n)
 #define put_fword(n)    put_num(TTF_FWORD, n)
-#define put_ufword(n)   put_num(TTF_UFWORD, n)
+#define put_ufword(n)   (void)put_num(TTF_UFWORD, n)
 #define put_f2dot14(n)  put_num(TTF_F2DOT14, n)
 
 #define copy_byte()     put_byte(get_byte())
@@ -106,8 +106,6 @@ typedef unsigned short  TTF_F2DOT14;
 #define GLYPH_PREFIX_INDEX    "index"
 #define GLYPH_PREFIX_UNICODE  "uni"
 
-#define NOGLYPH_ASSIGNED_YET 0xFFFF /* indicating that no glyph is assigned to
-                                       an unicode */
 typedef struct {
     char tag[4];
     TTF_ULONG checksum;
@@ -118,7 +116,7 @@ typedef struct {
 typedef struct {
     TTF_USHORT platform_id;
     TTF_USHORT encoding_id;
-    TTF_ULONG  offset;
+    TTF_ULONG offset;
     TTF_USHORT format;
 } cmap_entry;
 

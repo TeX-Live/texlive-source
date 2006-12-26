@@ -374,7 +374,7 @@ begin
       usage_help (GFTOPK_HELP, nil);
 
     end else if argument_is ('version') then begin
-      print_version_and_exit (banner, nil, 'Tomas Rokicki');
+      print_version_and_exit (banner, nil, 'Tomas Rokicki', nil);
 
     end; {Else it was a flag; |getopt| has already done the assignment.}
   until getopt_return_val = -1;

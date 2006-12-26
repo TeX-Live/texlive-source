@@ -626,7 +626,7 @@ begin
       usage_help (GFTODVI_HELP, nil);
 
     end else if argument_is ('version') then begin
-      print_version_and_exit (banner, nil, 'D.E. Knuth');
+      print_version_and_exit (banner, nil, 'D.E. Knuth', nil);
 
     end else if argument_is ('overflow-label-offset') then begin
       offset_in_points := atof (optarg);

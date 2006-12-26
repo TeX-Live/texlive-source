@@ -122,7 +122,8 @@ begin
 
     end else if argument_is ('version') then begin
       print_version_and_exit ('This is POOLtype, Version 3.0', nil,
-                              'D.E. Knuth');
+                              'D.E. Knuth',
+			      nil);
 
     end; {Else it was just a flag; |getopt| has already done the assignment.}
   until getopt_return_val = -1;

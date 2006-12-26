@@ -2779,6 +2779,16 @@ else
   LIBXPDFDEP='$(LIBXPDFDIR)/xpdf/libxpdf.a $(LIBXPDFDIR)/goo/libGoo.a $(LIBXPDFDIR)/fofi/libfofi.a'
 fi
 
+if test "$needs_obsdcompat" = no; then
+  LIBOBSDCFLAGS=
+  LDLIBOBSD=
+  LIBOBSDDEP=
+else
+  LIBOBSDCFLAGS='-I$(LIBOBSDDIR)'
+  LDLIBOBSD='$(LIBOBSDDIR)/libopenbsd-compat.a'
+  LIBOBSDDEP='$(LIBOBSDDIR)/libopenbsd-compat.a'
+fi
+
 
 
 
@@ -3186,8 +3196,7 @@ else
 fi
 
 # For pdfeTeX
-if test -d $srcdir/pdfetexdir && test -d $srcdir/pdftexdir \
-    && test -d $srcdir/etexdir; then
+if test -d $srcdir/pdftexdir; then
   test "${with_pdfetex+set}" = set || with_pdfetex=yes
 else
   if test "x$with_pdfetex" = xyes; then
@@ -5291,6 +5300,9 @@ s%@LIBPNGDEP@%$LIBPNGDEP%g
 s%@LIBXPDFCPPFLAGS@%$LIBXPDFCPPFLAGS%g
 s%@LDLIBXPDF@%$LDLIBXPDF%g
 s%@LIBXPDFDEP@%$LIBXPDFDEP%g
+s%@LIBOBSDCFLAGS@%$LIBOBSDCFLAGS%g
+s%@LDLIBOBSD@%$LDLIBOBSD%g
+s%@LIBOBSDDEP@%$LIBOBSDDEP%g
 s%@FREETYPE2CPPFLAGS@%$FREETYPE2CPPFLAGS%g
 s%@LDFREETYPE2@%$LDFREETYPE2%g
 s%@FREETYPE2DEP@%$FREETYPE2DEP%g

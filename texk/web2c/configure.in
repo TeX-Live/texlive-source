@@ -157,8 +157,7 @@ else
 fi
 
 # For pdfeTeX
-if test -d $srcdir/pdfetexdir && test -d $srcdir/pdftexdir \
-    && test -d $srcdir/etexdir; then
+if test -d $srcdir/pdftexdir; then
   test "${with_pdfetex+set}" = set || with_pdfetex=yes
 else
   if test "x$with_pdfetex" = xyes; then

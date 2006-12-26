@@ -17,17 +17,17 @@ You should have received a copy of the GNU General Public License
 along with pdfTeX; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: pdftexextra.in,v 1.4 2004/08/26 18:14:18 olaf Exp $
+$Id: pdftexextra.in,v 1.4 2004/08/26 18:19:57 olaf Exp $
 */
 
 /* pdftexextra.in: banner etc. for pdfTeX.
 
-   This is included by pdfTeX, from ../etexextra.c
+   This is included by pdfTeX, from ../pdftexextra.c
    (generated from ../lib/texmfmp.c).
 */
 
-#define BANNER "This is pdfTeX, Version 3.141592-PDFTEX-VERSION"
-#define COPYRIGHT_HOLDER "Han The Thanh"
+#define BANNER "This is pdfTeX, Version 3.141592-PDFTEX-VERSION-ETEX-VERSION"
+#define COPYRIGHT_HOLDER "Peter Breitenlohner (eTeX)/Han The Thanh (pdfTeX)"
 #define AUTHOR NULL
 #define PROGRAM_HELP PDFTEXHELP
 #define BUG_ADDRESS "pdftex@tug.org"
@@ -38,3 +38,4 @@ $Id: pdftexextra.in,v 1.4 2004/08/26 18:14:18 olaf Exp $
 #define INPUT_FORMAT kpse_tex_format
 #define INI_PROGRAM "pdfinitex"
 #define VIR_PROGRAM "pdfvirtex"
+

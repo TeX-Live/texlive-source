@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996-2002 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 1996-2006 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -42,9 +42,26 @@ $Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/pdftex.h#4 $
 #define getefcode(f, c) \
     (pdffontefbase[f] == 0 ? 1000 : pdfmem[pdffontefbase[f] + c])
 
+#define getknbscode(f, c) \
+    (pdffontknbsbase[f] == 0 ? 0 : pdfmem[pdffontknbsbase[f] + c])
+
+#define getstbscode(f, c) \
+    (pdffontstbsbase[f] == 0 ? 0 : pdfmem[pdffontstbsbase[f] + c])
+
+#define getshbscode(f, c) \
+    (pdffontshbsbase[f] == 0 ? 0 : pdfmem[pdffontshbsbase[f] + c])
+
+#define getknbccode(f, c) \
+    (pdffontknbcbase[f] == 0 ? 0 : pdfmem[pdffontknbcbase[f] + c])
+
+#define getknaccode(f, c) \
+    (pdffontknacbase[f] == 0 ? 0 : pdfmem[pdffontknacbase[f] + c])
+
 #define texbopenin(f) \
     open_input (&(f), kpse_tex_format, FOPEN_RBIN_MODE)
 #define vfbopenin(f) \
     open_input (&(f), kpse_vf_format, FOPEN_RBIN_MODE)
+
+#define pdfassert   assert
 
 #include <pdftexdir/ptexlib.h>

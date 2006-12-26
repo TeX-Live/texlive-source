@@ -1,5 +1,5 @@
 {
-Copyright (c) 1996-2005 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 1996-2006 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -27,14 +27,19 @@ $Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/pdftex.defines#15
 @define function getlpcode();
 @define function getrpcode();
 @define function getefcode();
+@define function getknbscode();
+@define function getstbscode();
+@define function getshbscode();
+@define function getknbccode();
+@define function getknaccode();
 @define function texbopenin();
 @define function vfbopenin ();
 @define procedure pdfmarkchar();
 @define procedure writepdf();
+@define procedure pdfassert();
 
 { functions from mapfile.c }
 @define function hasfmentry();
-@define function tfmoffm();
 @define procedure checkextfm();
 @define procedure pdfmapfile();
 @define procedure pdfmapline();
@@ -59,11 +64,34 @@ $Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/pdftex.defines#15
 @define procedure libpdffinish;
 @define procedure makepdftexbanner;
 @define procedure printcreationdate;
+@define procedure printmoddate;
 @define procedure printID();
 @define procedure setjobid();
 @define procedure unescapehex();
 @define procedure writestreamlength();
-
+@define procedure removepdffile;
+@define procedure garbagewarning;
+@define function newcolorstack();
+@define function colorstackset();
+@define function colorstackpush();
+@define function colorstackpop();
+@define function colorstackcurrent();
+@define function colorstackused;
+@define function colorstackskippagestart();
+@define procedure checkpdfsave();
+@define procedure checkpdfrestore();
+@define procedure pdfshipoutbegin();
+@define procedure pdfshipoutend();
+@define procedure pdfsetmatrix();
+@define procedure matrixtransformpoint();
+@define procedure matrixtransformrect();
+@define function matrixused;
+@define procedure matrixrecalculate();
+@define function getllx;
+@define function getlly;
+@define function geturx;
+@define function getury;
+@define procedure allocvffnts;
 
 { functions from vfpacket.c }
 @define function newvfpacket();
@@ -73,6 +101,7 @@ $Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/pdftex.defines#15
 
 { functions from writefont.c }
 @define procedure dopdffont();
+@define procedure writefontstuff;
 
 { functions from writeimg.c }
 @define function checkimageb();
@@ -102,4 +131,8 @@ $Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/pdftex.defines#15
 @define procedure avlputobj();
 @define function avlfindobj();
 
+{ functions from tounicode.c }
+@define procedure deftounicode();
+
 { end of pdftex.defines }
+{ vim: set syntax=web : }

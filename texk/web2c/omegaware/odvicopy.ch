@@ -594,7 +594,7 @@ begin
 
     end else if argument_is ('version') then begin
       print_version_and_exit
-        (banner, 'J. Plaice, Y. Haralambous, P. Breitenlohner', nil);
+        (banner, 'J. Plaice, Y. Haralambous, P. Breitenlohner', nil, nil);
 
     end else if argument_is ('magnification') then begin
       out_mag := atou (optarg);
