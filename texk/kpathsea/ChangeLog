@@ -1,3 +1,7 @@
+2006-12-25  Karl Berry  <karl@tug.org>
+
+	* mktexlsr: support --verbose.
+
 2006-12-14  Karl Berry  <karl@tug.org>
 
 	* texmf.in: unify with TL texmf.cnf to make only real differences

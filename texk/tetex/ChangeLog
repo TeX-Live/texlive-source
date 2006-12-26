@@ -1,3 +1,7 @@
+2006-12-25  Karl Berry  <karl@tug.org>
+
+	* updmap: update version.
+
 2006-12-13  Karl Berry  <karl@tug.org>
 
 	* latex2e.texi: FSF never held copyright (checked with authors).
