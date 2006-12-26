@@ -1,4 +1,4 @@
-/* xputenv.c: set an environment variable without return.
+// xputenv.c: set an environment variable without return.
 
 /*
  *  Copyright 2003-05 Olaf Weber.

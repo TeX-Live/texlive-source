@@ -288,13 +288,14 @@ path_search P4C(const_string, path,  string, name,
     }
     
     /* Did we find anything anywhere?  */
-    if (found && STR_LIST (*found))
+    if (found && STR_LIST (*found)) {
       if (all)
         str_list_concat (&ret_list, *found);
       else {
         str_list_add (&ret_list, STR_LIST_ELT (*found, 0));
         done = true;
       }
+    }
 
     /* Free the list space, if any (but not the elements).  */
     if (found) {
