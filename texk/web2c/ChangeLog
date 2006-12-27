@@ -1,3 +1,7 @@
+2006-12-27  Karl Berry  <karl@tug.org>
+
+	* fmtutil.in: the binary name is pdftex now.
+
 2006-12-10  Karl Berry  <karl@tug.org>
 
 	* omegaware/odvicopy.ch (int_8): rename the type to int_8_odvicopy,
