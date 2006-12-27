@@ -1,3 +1,7 @@
+2006-12-27  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (install-exec): now the binary is named pdftex again.
+
 2006-12-25  Karl Berry  <karl@tug.org>
 
 	* updmap: update version.

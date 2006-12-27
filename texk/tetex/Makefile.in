@@ -100,7 +100,7 @@ install-exec:
 	for s in $(CONTEXTSCRIPTS); do \
 	  $(INSTALL_SCRIPT) $(srcdir)/context/$$s $(scriptdir)/$$s; \
 	done
-	if test -f $(bindir)/pdfetex; then \
+	if test -f $(bindir)/pdftex; then \
 	  for s in $(PDFSCRIPTS); do \
 	    $(INSTALL_SCRIPT) $(srcdir)/$$s $(scriptdir)/$$s; \
 	  done; \
