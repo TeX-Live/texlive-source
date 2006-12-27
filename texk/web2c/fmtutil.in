@@ -46,11 +46,11 @@ metafun		mpost		-		-translate-file=cp227.tcx metafun.mp
 # if you want to make all characters directly "printable" for
 # any \write (instead of ^^xy).
 tex		tex		-		tex.ini
-latex		pdfetex		language.dat	-translate-file=cp227.tcx *latex.ini
-etex		pdfetex		language.def	-translate-file=cp227.tcx *etex.ini
-pdftex		pdfetex		-	-translate-file=cp227.tcx *pdftex.ini
-pdflatex	pdfetex		language.dat	-translate-file=cp227.tcx *pdflatex.ini
-pdfetex		pdfetex		language.def	-translate-file=cp227.tcx *pdfetex.ini
+pdftex		pdftex		language.def	-translate-file=cp227.tcx *pdftex.ini
+latex		pdftex		language.dat	-translate-file=cp227.tcx *latex.ini
+etex		pdftex		language.def	-translate-file=cp227.tcx *etex.ini
+pdfetex		pdftex		-		-translate-file=cp227.tcx *pdftex.ini
+pdflatex	pdftex		language.dat	-translate-file=cp227.tcx *pdflatex.ini
 @OMEGA@omega		omega		-	omega.ini
 @OMEGA@lambda		omega		language.dat	lambda.ini
 @ALEPH@aleph		aleph		-		*aleph.ini
@@ -62,74 +62,74 @@ pdfetex		pdfetex		language.def	-translate-file=cp227.tcx *pdfetex.ini
 
 # Change "amstex.ini -> bamstex.ini" and "- -> language.dat"
 # if you want babel support in amstex:
-amstex	pdfetex		-		-translate-file=cp227.tcx *amstex.ini
+amstex	pdftex		-		-translate-file=cp227.tcx *amstex.ini
 
 # Change "pdfamstex.ini -> pdfbamstex.ini" and "- -> language.dat"
 # if you want babel support in pdfamstex:
-#! pdfamstex	pdfetex			-	-translate-file=cp227.tcx *pdfamstex.ini
+#! pdfamstex	pdftex			-	-translate-file=cp227.tcx *pdfamstex.ini
 
 # Context formats:
-#! cont-cz	pdfetex		cont-usr.tex	-8bit *cont-cz.ini
-#! cont-de	pdfetex		cont-usr.tex	-8bit *cont-de.ini
-cont-en	pdfetex		cont-usr.tex	-8bit *cont-en.ini
-#! cont-nl	pdfetex		cont-usr.tex	-8bit *cont-nl.ini
-#! cont-uk	pdfetex		cont-usr.tex	-8bit *cont-uk.ini
+#! cont-cz	pdftex		cont-usr.tex	-8bit *cont-cz.ini
+#! cont-de	pdftex		cont-usr.tex	-8bit *cont-de.ini
+cont-en	pdftex		cont-usr.tex	-8bit *cont-en.ini
+#! cont-nl	pdftex		cont-usr.tex	-8bit *cont-nl.ini
+#! cont-uk	pdftex		cont-usr.tex	-8bit *cont-uk.ini
 
 # language-specific things:
 
 # - Cyrillic:
-#! cyrtex	pdfetex		language.dat	-translate-file=cp227.tcx *cyrtex.ini
-#! cyrtexinfo	pdfetex		language.dat	-translate-file=cp227.tcx *cyrtxinf.ini
-#! cyramstex	pdfetex		language.dat	-translate-file=cp227.tcx *cyramstx.ini
+#! cyrtex	pdftex		language.dat	-translate-file=cp227.tcx *cyrtex.ini
+#! cyrtexinfo	pdftex		language.dat	-translate-file=cp227.tcx *cyrtxinf.ini
+#! cyramstex	pdftex		language.dat	-translate-file=cp227.tcx *cyramstx.ini
 
 # - Polish:
-platex		pdfetex		language.dat	-translate-file=cp227.tcx *platex.ini
-pdfplatex	pdfetex		language.dat	-translate-file=cp227.tcx *pdfplatex.ini
-mex		pdfetex		mexconf.tex	-translate-file=cp227.tcx *mex.ini
-pdfmex		pdfetex		mexconf.tex	-translate-file=cp227.tcx *pdfmex.ini
-utf8mex		pdfetex		mexconf.tex	-enc *utf8mex.ini
+platex		pdftex		language.dat	-translate-file=cp227.tcx *platex.ini
+pdfplatex	pdftex		language.dat	-translate-file=cp227.tcx *pdfplatex.ini
+mex		pdftex		mexconf.tex	-translate-file=cp227.tcx *mex.ini
+pdfmex		pdftex		mexconf.tex	-translate-file=cp227.tcx *pdfmex.ini
+utf8mex		pdftex		mexconf.tex	-enc *utf8mex.ini
 
 # - Polish with translated messages (experimental):
-#! platex-pl	pdfetex		-		nls=pdfetex-pl,il2-pl *platex.ini
-#! mex-pl	pdfetex		mexconf.tex	nls=pdfetex-pl,il2-pl *mex.ini
-#! pdfmex-pl	pdfetex		mexconf.tex	nls=pdfetex-pl,il2-pl *pdfmex.ini
+#! platex-pl	pdftex		-		nls=pdftex-pl,il2-pl *platex.ini
+#! mex-pl	pdftex		mexconf.tex	nls=pdftex-pl,il2-pl *mex.ini
+#! pdfmex-pl	pdftex		mexconf.tex	nls=pdftex-pl,il2-pl *pdfmex.ini
 
 # - Czech / Slovak for ISO-8859-2 locale (see below for UTF8). Enable
 # "by hand", not by "fmtutil --enablefmt", because definitions for
 # ISO-8859-2 / UTF8 share the same name.
-csplain      pdfetex     -     -etex -translate-file=cp227.tcx csplain.ini
-cslatex      pdfetex     -     -etex -translate-file=cp227.tcx cslatex.ini
-pdfcsplain   pdfetex     -     -etex -translate-file=cp227.tcx csplain.ini
-pdfcslatex   pdfetex     -     -etex -translate-file=cp227.tcx cslatex.ini
+csplain      pdftex     -     -etex -translate-file=cp227.tcx csplain.ini
+cslatex      pdftex     -     -etex -translate-file=cp227.tcx cslatex.ini
+pdfcsplain   pdftex     -     -etex -translate-file=cp227.tcx csplain.ini
+pdfcslatex   pdftex     -     -etex -translate-file=cp227.tcx cslatex.ini
 
 # - Czech / Slovak for UTF8 locale (see above for ISO-8859-2). Enable
 # "by hand", not by "fmtutil --enablefmt", because definitions for
 # ISO-8859-2 / UTF8 share the same name.
-#! csplain      pdfetex     -     -etex -enc csplain-utf8.ini
-#! cslatex      pdfetex     -     -etex -enc cslatex-utf8.ini
-#! pdfcsplain   pdfetex     -     -etex -enc csplain-utf8.ini
-#! pdfcslatex   pdfetex     -     -etex -enc cslatex-utf8.ini
+#! csplain      pdftex     -     -etex -enc csplain-utf8.ini
+#! cslatex      pdftex     -     -etex -enc cslatex-utf8.ini
+#! pdfcsplain   pdftex     -     -etex -enc csplain-utf8.ini
+#! pdfcslatex   pdftex     -     -etex -enc cslatex-utf8.ini
 
 # formats for mltex extension:
-mltex		pdfetex	-		-translate-file=cp227.tcx -mltex mltex.ini
-mllatex		pdfetex	language.dat	-translate-file=cp227.tcx -mltex mllatex.ini
+mltex		pdftex	-		-translate-file=cp227.tcx -mltex mltex.ini
+mllatex		pdftex	language.dat	-translate-file=cp227.tcx -mltex mllatex.ini
 
 # Other formats:
 
 # The TeX Live version of eplain.ini includes Babel support:
-eplain	pdfetex		language.dat	-translate-file=cp227.tcx *eplain.ini
+eplain	pdftex		language.dat	-translate-file=cp227.tcx *eplain.ini
 @XETEX@xeplain	xetex		language.dat	-etex xeplain.ini
 
 # mptopdf utility
-mptopdf		pdfetex	-		-translate-file=cp227.tcx mptopdf.tex
+mptopdf		pdftex	-		-translate-file=cp227.tcx mptopdf.tex
 
 # --- strange things
-texsis		pdfetex	-		-translate-file=cp227.tcx texsis.ini
-physe		pdfetex	-		physe.ini
-phyzzx		pdfetex	-		physe.ini
+texsis		pdftex	-		-translate-file=cp227.tcx texsis.ini
+physe		pdftex	-		physe.ini
+phyzzx		pdftex	-		physe.ini
 
 # formats with dependencies on earlier formats
-xmltex		pdfetex	language.dat	&latex xmltex.ini
-pdfxmltex	pdfetex	language.dat	&pdflatex pdfxmltex.ini
-jadetex		pdfetex	language.dat	&latex jadetex.ini
-pdfjadetex	pdfetex	language.dat	&pdflatex pdfjadetex.ini
+xmltex		pdftex	language.dat	&latex xmltex.ini
+pdfxmltex	pdftex	language.dat	&pdflatex pdfxmltex.ini
+jadetex		pdftex	language.dat	&latex jadetex.ini
+pdfjadetex	pdftex	language.dat	&pdflatex pdfjadetex.ini
