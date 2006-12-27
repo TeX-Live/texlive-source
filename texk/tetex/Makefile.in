@@ -31,7 +31,7 @@ manpgs = \
   texdoctk thumbpdf ttf2afm updmap
 
 INFOFILES= latex.info
-POOLFILES = pdfetex-pl.pool
+POOLFILES = pdftex-pl.pool
 all: $(SCRIPTS) $(PDFSCRIPTS)
 default: all
 
@@ -60,7 +60,7 @@ install-data:: $(INFOFILES)
 	ln -s allcm.$(manext) $(man1dir)/allec.$(manext)
 	ln -s mktexlsr.$(manext) $(man1dir)/texhash.$(manext)
 	ln -s omega.$(manext) $(man1dir)/lambda.$(manext)
-	ln -s pdfetex.$(manext) $(man1dir)/pdflatex.$(manext)
+	ln -s pdftex.$(manext) $(man1dir)/pdflatex.$(manext)
 	ln -s kpsetool.$(manext) $(man1dir)/kpsepath.$(manext)
 	ln -s kpsetool.$(manext) $(man1dir)/kpsexpand.$(manext)
 	ln -s mf.$(manext) $(man1dir)/mf-nowin.$(manext)
