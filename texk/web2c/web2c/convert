@@ -57,7 +57,7 @@ case $basefile in
     hfile=texmfmp.h
     midcmd="| sed -f $srcdir/web2c/cvtmf2.sed"
     postcmd="| ./web2c/splitup $splitup_options $basefile"
-    cfile=${basefile}2.c # last output file, or thereabouts
+    cfile=${basefile}1.c # last output file, or thereabouts
     output=
     output_files="$basefile[0-9].c ${basefile}ini.c ${basefile}d.h \
 ${basefile}coerce.h"

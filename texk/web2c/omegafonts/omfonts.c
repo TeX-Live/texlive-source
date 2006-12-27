@@ -178,7 +178,8 @@ main (int argc, string *argv)
             usagehelp (name_help, NULL);
         } else if (!strcmp(long_options[option_index ].name, "version")) {
             printversionandexit(name_msg, nil,
-                "J. Plaice, Y. Haralambous, D.E. Knuth");
+                "J. Plaice, Y. Haralambous, D.E. Knuth",
+                nil);
         } else if (!strcmp(long_options[option_index ].name, "char-format")) {
             if (!strcmp(optarg, "ascii")) char_format = CHAR_CODE_ASCII;
             else if (!strcmp(optarg, "num")) char_format = CHAR_CODE_NUM;

@@ -352,19 +352,6 @@ mf1.o: mf1.c mfd.h texmfmp.h cpascal.h config.h $(kpathsea_srcdir)/config.h \
   $(kpathsea_srcdir)/proginit.h $(kpathsea_srcdir)/tex-file.h help.h \
   $(kpathsea_srcdir)/c-pathch.h $(kpathsea_srcdir)/c-ctype.h \
   $(kpathsea_srcdir)/tex-make.h texmfmem.h mfcoerce.h
-mf2.o: mf2.c mfd.h texmfmp.h cpascal.h config.h $(kpathsea_srcdir)/config.h \
-  $(kpathsea_dir)/c-auto.h $(kpathsea_srcdir)/c-std.h \
-  $(kpathsea_srcdir)/c-unistd.h $(kpathsea_srcdir)/systypes.h \
-  $(kpathsea_srcdir)/c-memstr.h \
-  $(kpathsea_srcdir)/c-errno.h \
-  $(kpathsea_srcdir)/c-minmax.h $(kpathsea_srcdir)/c-limits.h \
-  $(kpathsea_srcdir)/c-proto.h $(kpathsea_srcdir)/debug.h \
-  $(kpathsea_srcdir)/types.h $(kpathsea_srcdir)/lib.h $(kpathsea_srcdir)/progname.h \
-  ../web2c/c-auto.h $(kpathsea_srcdir)/c-vararg.h $(kpathsea_srcdir)/c-fopen.h \
-  $(kpathsea_srcdir)/getopt.h \
-  $(kpathsea_srcdir)/proginit.h $(kpathsea_srcdir)/tex-file.h help.h \
-  $(kpathsea_srcdir)/c-pathch.h $(kpathsea_srcdir)/c-ctype.h \
-  $(kpathsea_srcdir)/tex-make.h texmfmem.h mfcoerce.h
 mfextra.o: mfextra.c mfd.h texmfmp.h cpascal.h config.h \
   $(kpathsea_srcdir)/config.h $(kpathsea_dir)/c-auto.h $(kpathsea_srcdir)/c-std.h \
   $(kpathsea_srcdir)/c-unistd.h $(kpathsea_srcdir)/systypes.h \

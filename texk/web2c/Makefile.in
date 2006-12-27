@@ -426,9 +426,9 @@ dvitype_args = -output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*'
 
 # 
 # Metafont
-mf_c = mfini.c mf0.c mf1.c mf2.c
-mf_o = mfini.o mf0.o mf1.o mf2.o mfextra.o
-mfn_o = mfini.o mf0.o mf1.o mf2.o mfnowin.o
+mf_c = mfini.c mf0.c mf1.c 
+mf_o = mfini.o mf0.o mf1.o mfextra.o
+mfn_o = mfini.o mf0.o mf1.o mfnowin.o
 mf: $(mf_o) $(windowlib)
 	$(kpathsea_link) $(mf_o) $(windowlink) $(LOADLIBES)
 mf-nowin: $(mfn_o) window/trap.o
