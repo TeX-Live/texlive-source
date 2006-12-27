@@ -1,3 +1,9 @@
+2006-12-26  Karl Berry  <karl@tug.org>
+
+	* tex-make.c: (set_maketex_mag): remove spurious extra argument
+	  `r' to sprintf.
+	(maketex): remove unused variable status.
+
 2006-12-25  Karl Berry  <karl@tug.org>
 
 	* mktexlsr: support --verbose.
