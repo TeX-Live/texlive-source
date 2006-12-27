@@ -31,7 +31,6 @@ manpgs = \
   texdoctk thumbpdf ttf2afm updmap
 
 INFOFILES= latex.info
-POOLFILES = pdftex-pl.pool
 all: $(SCRIPTS) $(PDFSCRIPTS)
 default: all
 
@@ -77,9 +76,6 @@ install-data:: $(INFOFILES)
 	if $(SHELL) -c 'install-info --version' >/dev/null 2>&1; then \
 	  install-info --info-dir=$(infodir) $(infodir)/latex.info; \
 	else true; fi
-	for p in $(POOLFILES); do \
-	  $(INSTALL_DATA) $(srcdir)/$$p $(texpooldir)/$$p; \
-	done
 	for p in TETEXDOC.pdf TETEXDOC.ps TETEXDOC.dvi teTeX-FAQ; do \
 	  $(INSTALL_DATA) $(srcdir)/doc/$$p $(texmf)/doc/tetex; \
 	done
