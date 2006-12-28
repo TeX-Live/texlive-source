@@ -1348,8 +1348,8 @@ open_in_or_pipe P3C(FILE **, f_ptr,  int, filefmt,  const_string, fopen_mode)
     if (shellenabledp && *(nameoffile+1) == '|') {
       /* the user requested a pipe */
       *f_ptr = NULL;
-      fname = (string)xmalloc(strlen(nameoffile+1));
-      strcpy(fname,nameoffile+1);
+      fname = (string)xmalloc(strlen((const_string)(nameoffile+1)));
+      strcpy(fname,(const_string)(nameoffile+1));
 #if !defined(pdfTeX) && !defined(pdfeTeX)
       if (fullnameoffile)
          free (fullnameoffile);
@@ -1387,8 +1387,8 @@ open_out_or_pipe P2C(FILE **, f_ptr,  const_string, fopen_mode)
 	
     if (shellenabledp && *(nameoffile+1) == '|') {
       /* the user requested a pipe */
-      fname = (string)xmalloc(strlen(nameoffile+1));
-      strcpy(fname,nameoffile+1);
+      fname = (string)xmalloc(strlen((const_string)(nameoffile+1)));
+      strcpy(fname,(const_string)(nameoffile+1));
       if (strchr (fname,' ')==NULL && strchr(fname,'>')==NULL) {
         /* mp and mf currently do not use this code, but it 
            is better to be prepared */
@@ -1861,6 +1861,7 @@ setupboundvariable P3C(integer *, var,  const_string, var_name,  integer, dflt)
 
 /* FIXME -- some (most?) of this can/should be moved to the Pascal/WEB side. */
 #if defined(TeX) || defined(MP) || defined(MF)
+#if !defined(pdfTeX)
 static void
 checkpoolpointer (poolpointer poolptr, size_t len)
 {
@@ -1871,7 +1872,6 @@ checkpoolpointer (poolpointer poolptr, size_t len)
   }
 }
 
-#if !defined(pdfTeX)
 #ifndef XeTeX	/* XeTeX uses this from XeTeX_mac.c */
 static
 #endif
@@ -1958,7 +1958,7 @@ compare_paths P2C(const_string, p1, const_string, p2)
 string
 gettexstring P1C(strnumber, s)
 {
-  poolpointer i, len;
+  poolpointer len;
   string name;
 #if !defined(Omega) && !defined(eOmega) && !defined(Aleph) && !defined(XeTeX)
   len = strstart[s + 1] - strstart[s];
@@ -1969,6 +1969,7 @@ gettexstring P1C(strnumber, s)
 #if !defined(Omega) && !defined(eOmega) && !defined(Aleph) && !defined(XeTeX)
   strncpy (name, (string)&strpool[strstart[s]], len);
 #else
+  poolpointer i;
   /* Don't use strncpy.  The strpool is not made up of chars. */
   for (i=0; i<len; i++) name[i] =  strpool[i+strstartar[s - 65536L]];
 #endif
@@ -2005,7 +2006,6 @@ makesrcspecial P2C(strnumber, srcfilename,
   char *filename = gettexstring(srcfilename);
   /* FIXME: Magic number. */
   char buf[40];
-  size_t len = strlen(filename);
   char * s = buf;
 
   /* Always put a space after the number, which makes things easier
