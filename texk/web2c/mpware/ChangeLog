@@ -1,44 +1,135 @@
-2005-08-28  Olaf Weber  <olaf@infovore.xs4all.nl>
+2006-12-15 [r125]  taco <taco@elvenkind.com>
 
-	* mpto.c: For for the tex_pretex1 text from Taco Hoekwater
-	<taco@elvenkind.com>.
+	* makempx.c: file globbing for temporary file deletion
+	added, to prevent stray files from LaTeX packages. 
+	Version bumped to 0.993
 
-2005-08-23  Olaf Weber  <olaf@infovore.xs4all.nl>
+2006-12-09 [r122]  taco <taco@elvenkind.com>
 
-	* mpto.c: Update to 0.902.
+	* dmp_ffile.c: fix a compile problem on AIX reported by
+	Vladimir Volowich <vvv@vsu.ru>
 
-2005-06-26  Olaf Weber  <olaf@infovore.xs4all.nl>
+2006-11-28 [r118]  taco <taco@elvenkind.com>
 
-	* Makefile.in: Replace ac_include with kpse_include.  From Peter
-	Breitenlohner.
+	* dmp.c, newer.c, makempx.c, makempx.in, mpto.c: Bump
+	the version numbers to 0.992
 
-2005-06-22  Olaf Weber  <olaf@infovore.xs4all.nl>
+2006-11-28 [r117]  taco <taco@elvenkind.com>
 
-	* mpto.c: Merge code from version 0.9.
+	* makempx.c: adds a guard against malfunctioning mktemp()
 
-	* Makefile.in (mpto): mpto doesn't need to link with libraries any
-	more.
+2006-11-27 [r114-115]  taco <taco@elvenkind.com>
 
-	* makempx.in: Update to version 0.9.
+	* dmp.c, newer.c, makempx.exe (removed), makempx.c, dmp.h,
+	  dmp_ffile.c, mpto.c: indent -kr -psl
 
-	* dmp.c: Update copyright notice to indicate dmp is in the public
-	domain.  Change bug report address.
+	* dmp_ffile.c: fix fsearch_init() in standalone mode
 
-	* README: Update to version from metapost 0.901.
+2006-11-27 [r113]  taco <taco@elvenkind.com>
 
-	* newer.c: Use HAVE_CONFIG_H to check whether we can use web2c's
-	c-auto.h and config.h headers.  Use HAVE_ST_MTIM to check whether
-	we have the high-res timers in struct stat.
+	* makempx.c: GNU troff commandline adjusted again: use 'troff', 
+	  not 'groff' as executable name
 
-2005-06-21  Olaf Weber  <olaf@infovore.xs4all.nl>
+2006-11-26 [r108]  taco <taco@elvenkind.com>
 
-	* newer.c (main): Include web2c version in version output.
+	* makempx.c: GNU troff commandline adjusted
 
-	* Makefile.in (newer): Don't link in any libraries (we shouldn't
-	be needing any).
+2006-11-26 [r105]  taco <taco@elvenkind.com>
 
-	* newer.c: Extensive rewrite to make it handle multiple arguments.
-	Suggested by Reinhard Kotucha <reinhard.kotucha@web.de>.
+	* dmp.c, Makefile.in, dmp.h, dmp_ffile.c: dmp with kpathsea
+	  searching
+
+2006-11-26 [r103-104]  taco <taco@elvenkind.com>
+
+	* makempx.c: small fixes from Akira Kakuto
+
+2006-11-26 [r102]  taco <taco@elvenkind.com>
+
+	* makempx.c: Akira Kakuto says we can have stat() on windows as well
+
+2006-11-26 [r101]  taco <taco@elvenkind.com>
+
+	* makempx.c: mpx%6d changed to mp%06d
+
+2006-11-26 [r100]  taco <taco@elvenkind.com>
+
+	* Makefile.in: new compiled makempx build commands
+
+2006-11-24 [r99]  taco <taco@elvenkind.com>
+
+	* makempx.c: much improved version, but not finished yet
+
+2006-11-23 [r94]  taco <taco@elvenkind.com>
+
+	* makempx.c (added): test version of C makempx. Based on a
+	source file sent by Akira Kakuto <kakuto@fsci.fuk.kindai.ac.jp>
+
+2006-11-22 [r92]  taco <taco@elvenkind.com>
+
+	* dmp.c, newer.c, makempx.exe (added), makempx.in, mpto.c: insert
+	maintainer info
+
+2006-11-20 [r88]  taco <taco@elvenkind.com>
+
+	* dmp.c, newer.c, Makefile.in: changes from TeXLive backported,
+	especially a fix for aliased CHARLIB filenames ().
+
+2006-11-19 [r78]  taco <taco@elvenkind.com>
+
+	* makempx.in, mpto.c: Version numbers changed for commit of 
+	0.99 to TeXLive
+
+2006-11-02 [r64]  taco <taco@elvenkind.com>
+
+	* dmp.c: Ignore large groff character indices because these can
+	not be used within MetaPost
+
+2006-11-02 [r59]  taco <taco@elvenkind.com>
+
+	* Makefile.in: Cross-compilation support added
+
+2006-11-01 [r55]  taco <taco@elvenkind.com>
+
+	* dmp.c, dmp.h, dmp_ffile.c: restore CHARLIB type
+
+2006-11-01 [r54]  taco <taco@elvenkind.com>
+
+	* dmp.c: allow characters with index 0
+
+2006-11-01 [r53]  taco <taco@elvenkind.com>
+
+	* dmp.c: dont call read_char_adj() if gflag is on, this removes
+	the need to have a dummy trchars.adj for troff
+
+2006-10-31 [r51]  taco <taco@elvenkind.com>
+
+	* dmp.c: new patch from fixes use of 'sizescale'. From Gunnar 
+	Ritter <gunnarr@acm.org>
+
+2006-09-23 [r31]  taco <taco@elvenkind.com>
+
+	* dmp.c, dmp.h, dmp_ffile.c: groff patches from Michail Vidiassov 
+	<master@iaas.msu.ru> and Werner Lemberg <wl@gnu.org>
+
+2005-08-24 Taco Hoekwater <taco@elvenkind.com>
+
+	* mpto.c: Fix a bug in mpto resulting in correctly placed labels,
+	with thanks to Dan Luecking
+	
+	* dmp.c: Fix a bug blocking compilation of dmp on MacOSX
+	
+	* mpost.c,dmp.c,mpto.c: The executables are now version 0.902
+
+2005-08-24 Taco Hoekwater <taco@elvenkind.com>
+
+	* newer.c: The 'newer' command now accepts more than 2 arguments, 
+	testing each of the files in turn.
+
+	* mpto.c: mpto uses a new TeX macro for the generation of labels,
+	making it more robust wrt. strange user code within the actual
+	label text.
+
+	* Check-in of version 0.900. 
 
 2004-12-19  Olaf Weber  <olaf@infovore.xs4all.nl>
 
