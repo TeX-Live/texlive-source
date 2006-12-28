@@ -632,7 +632,7 @@ Get more help with
       echoLocateBinary kpsewhich updmap fmtutil texconfig tex pdfetex mktexpk dvips dvipdfm
       echo
       echo '=========================== active config files =========================='
-      echoLocateCfgfile texmf.cnf updmap.cfg fmtutil.cnf config.ps mktex.cnf XDvi pdftexconfig.tex config | sort +1
+      echoLocateCfgfile texmf.cnf updmap.cfg fmtutil.cnf config.ps mktex.cnf XDvi pdftexconfig.tex config | sort -k 2
       echo
       echo '============================= font map files ============================='
       for m in psfonts.map pdftex.map ps2pk.map dvipdfm.map; do
