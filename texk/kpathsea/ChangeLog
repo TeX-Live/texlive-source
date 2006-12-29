@@ -1,3 +1,8 @@
+2006-12-29  Karl Berry  <karl@tug.org>
+
+	* tex-make.c (set_maketex_mag): deleted wrong extra arg;
+	do not generate args with spaces for mf.  From Akira.
+
 2006-12-26  Karl Berry  <karl@tug.org>
 
 	* tex-make.c: (set_maketex_mag): remove spurious extra argument

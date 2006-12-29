@@ -66,13 +66,13 @@ set_maketex_mag P1H(void)
 
           if (f > 1) {
               if (r > 0) {
-                  sprintf(q, "%u+%u/(%u*%u + %u)",
+                  sprintf(q, "%u+%u/(%u*%u+%u)",
                           dpi/bdpi, dpi%bdpi, f, (bdpi - r)/f, r);
               } else {
                   sprintf(q, "%u+%u/(%u*%u)", dpi/bdpi, dpi%bdpi, f, bdpi/f);
               }
           } else {
-              sprintf(q, "%u+%u/(4000 + %u)", dpi/bdpi, dpi%bdpi, bdpi);
+              sprintf(q, "%u+%u/(4000+%u)", dpi/bdpi, dpi%bdpi, r);
           }
       }
   } else {
