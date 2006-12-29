@@ -32,6 +32,11 @@ authorization from SIL International.
  * additional plain C extensions for XeTeX - mostly platform-neutral
  */
 
+#ifdef XETEX_OTHER
+#include "xpdf/config.h"
+#include "png.h"
+#endif
+
 #define EXTERN extern
 #include "xetexd.h"
 
@@ -41,6 +46,11 @@ authorization from SIL International.
 #endif
 
 #include "XeTeX_ext.h"
+
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
+#include "zlib.h"
 
 #include "TECkit_Engine.h"
 
@@ -163,6 +173,46 @@ string outputdriver = "xdv2pdf"; /* default for backward compatibility on Mac OS
 #else
 string outputdriver = "xdvipdfmx -q -E"; /* else default to portable xdvipdfmx driver */
 #endif
+
+
+void initversionstring(char **versions)
+{
+#ifdef XETEX_OTHER
+	int	fc_version = FcGetVersion();
+#endif
+	extern FT_Library	gFreeTypeLibrary; /* in XeTeXFontInst_FT2 */
+	FT_Int	ftMajor, ftMinor, ftPatch;
+	if (gFreeTypeLibrary == 0 && FT_Init_FreeType(&gFreeTypeLibrary) != 0) {
+		fprintf(stderr, "FreeType initialization failed!\n");
+		exit(9);
+	}
+	FT_Library_Version(gFreeTypeLibrary, &ftMajor, &ftMinor, &ftPatch);
+
+    (void) asprintf(versions,
+		"Compiled with ICU version %s [with modifications for XeTeX]\n"
+		"Compiled with zlib version %s; using %s\n"
+		"Compiled with FreeType2 version %d.%d.%d; using %d.%d.%d\n"
+#ifdef XETEX_MAC
+		"Using Mac OS X Carbon, Cocoa & QuickTime frameworks\n"
+#else
+		"Compiled with fontconfig version %d.%d.%d; using %d.%d.%d\n"
+		"Compiled with libpng version %s; using %s\n"
+		"Compiled with xpdf version %s\n"
+#endif
+		,
+		U_ICU_VERSION,
+		ZLIB_VERSION, zlib_version,
+		FREETYPE_MAJOR, FREETYPE_MINOR, FREETYPE_PATCH,
+		ftMajor, ftMinor, ftPatch
+#ifdef XETEX_OTHER
+		,
+		FC_VERSION / 10000, (FC_VERSION % 10000) / 100, FC_VERSION % 100,
+		fc_version / 10000, (fc_version % 10000) / 100, fc_version % 100,
+		PNG_LIBPNG_VER_STRING, png_libpng_ver,
+		xpdfVersion
+#endif
+		);
+}
 
 
 extern char*	gettexstring(int strNumber);

@@ -211,6 +211,8 @@ extern const UInt32 byteMark;
 #ifdef __cplusplus
 extern "C" {
 #endif
+	void initversionstring(char **versions);
+
 	void setinputfileencoding(unicodefile f, int mode, int encodingData);
 	void uclose(unicodefile f);
 	int input_line_icu(unicodefile f);

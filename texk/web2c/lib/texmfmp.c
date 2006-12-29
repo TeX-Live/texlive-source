@@ -1071,7 +1071,7 @@ parse_options P2C(int, argc,  string *, argv)
 
     } else if (ARGUMENT_IS ("version")) {
         char *versions;
-#if defined (pdfTeX)
+#if defined (pdfTeX) || defined(XeTeX)
         initversionstring(&versions); 
 #else
         versions = NULL;
