@@ -721,7 +721,7 @@ fi
 
 
 
-KPSEVERSION=3.5.5
+KPSEVERSION=3.5.6
 
 cat >> confdefs.h <<EOF
 #define KPSEVERSION "kpathsea version $KPSEVERSION"
