@@ -1969,9 +1969,11 @@ gettexstring P1C(strnumber, s)
 #if !defined(Omega) && !defined(eOmega) && !defined(Aleph) && !defined(XeTeX)
   strncpy (name, (string)&strpool[strstart[s]], len);
 #else
+  {
   poolpointer i;
   /* Don't use strncpy.  The strpool is not made up of chars. */
   for (i=0; i<len; i++) name[i] =  strpool[i+strstartar[s - 65536L]];
+  }
 #endif
   name[len] = 0;
   return name;
