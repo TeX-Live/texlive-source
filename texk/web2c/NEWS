@@ -1,4 +1,9 @@
 This file records noteworthy changes.
+
+7.5.6 (for TeX Collection 2006-07)
+* Include XeTeX.
+* pdfTeX and MetaPost updates.
+
 7.5.5
 * BibTeX: dynamically resize the buffer (and related arrays).
 * MP: Version 0.9
