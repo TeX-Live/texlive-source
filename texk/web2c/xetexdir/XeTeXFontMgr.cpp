@@ -124,14 +124,18 @@ XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
 		
 		if (f != nameToFamily.end()) {
 			// look for a family member with the "regular" bit set in OS/2
+			int	regFonts = 0;
 			for (i = f->second->styles->begin(); i != f->second->styles->end(); ++i)
 				if (i->second->isReg) {
-					font = i->second;
-					break;
+					if (regFonts == 0)
+						font = i->second;
+					++regFonts;
 				}
-			
-			if (font == NULL) {
-				// try for style "Regular", "Plain", or "Normal"
+
+			// families with Ornament or similar fonts may flag those as Regular,
+			// which confuses the search above... so try some known names
+			if (font == NULL || regFonts > 1) {
+				// try for style "Regular", "Plain", "Normal", "Roman"
 				i = f->second->styles->find("Regular");
 				if (i != f->second->styles->end())
 					font = i->second;
@@ -143,6 +147,11 @@ XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
 						i = f->second->styles->find("Normal");
 						if (i != f->second->styles->end())
 							font = i->second;
+						else {
+							i = f->second->styles->find("Roman");
+							if (i != f->second->styles->end())
+								font = i->second;
+						}
 					}
 				}
 			}
