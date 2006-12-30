@@ -1,4 +1,7 @@
 This file records noteworthy changes.
+3.5.6 (for TeX Collection 2006-07)
+* longstanding minor portability/warnings problems.
+
 3.5.5
 * Copyrights of some source files were erroneously attributed to FSF.
 * On UNIX, accept the semicolon as well as the colon in environment
