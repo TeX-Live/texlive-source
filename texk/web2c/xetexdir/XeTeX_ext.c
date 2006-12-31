@@ -181,14 +181,8 @@ void initversionstring(char **versions)
 	int	fc_version = FcGetVersion();
 #endif
 	extern FT_Library	gFreeTypeLibrary; /* in XeTeXFontInst_FT2 */
-	FT_Int	ftMajor, ftMinor, ftPatch;
-	if (gFreeTypeLibrary == 0 && FT_Init_FreeType(&gFreeTypeLibrary) != 0) {
-		fprintf(stderr, "FreeType initialization failed!\n");
-		exit(9);
-	}
-	FT_Library_Version(gFreeTypeLibrary, &ftMajor, &ftMinor, &ftPatch);
 
-    (void) asprintf(versions,
+	char* fmt =
 		"Compiled with ICU version %s [with modifications for XeTeX]\n"
 		"Compiled with zlib version %s; using %s\n"
 		"Compiled with FreeType2 version %d.%d.%d; using %d.%d.%d\n"
@@ -199,7 +193,32 @@ void initversionstring(char **versions)
 		"Compiled with libpng version %s; using %s\n"
 		"Compiled with xpdf version %s\n"
 #endif
-		,
+		;
+
+	int	len = strlen(fmt)
+			+ strlen(U_ICU_VERSION)
+			+ strlen(ZLIB_VERSION)
+			+ strlen(zlib_version)
+#ifdef XETEX_OTHER
+			+ strlen(PNG_LIBPNG_VER_STRING)
+			+ strlen(png_libpng_ver)
+			+ strlen(xpdfVersion)
+			+ 6 * 3 /* for fontconfig version #s (won't really need 3 digits per field!) */
+#endif
+			+ 6 * 3; /* for freetype version #s (ditto) */
+
+	*versions = xmalloc(len + 1);
+		/* len will be more than enough, because of the placeholder chars in fmt
+			that get replaced by the arguments */
+
+	FT_Int	ftMajor, ftMinor, ftPatch;
+	if (gFreeTypeLibrary == 0 && FT_Init_FreeType(&gFreeTypeLibrary) != 0) {
+		fprintf(stderr, "FreeType initialization failed!\n");
+		exit(9);
+	}
+	FT_Library_Version(gFreeTypeLibrary, &ftMajor, &ftMinor, &ftPatch);
+
+    (void)sprintf(*versions, fmt,
 		U_ICU_VERSION,
 		ZLIB_VERSION, zlib_version,
 		FREETYPE_MAJOR, FREETYPE_MINOR, FREETYPE_PATCH,
