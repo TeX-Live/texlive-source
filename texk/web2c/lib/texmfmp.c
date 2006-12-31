@@ -607,9 +607,11 @@ ipcpage P1C(int, is_eof)
 #if !defined(Omega) && !defined(eOmega) && !defined(Aleph)
     strncpy (name, (string)&strpool[strstart[outputfilename]], len);
 #else
+    {
     unsigned i;
     for (i=0; i<len; i++)
       name[i] =  strpool[i+strstartar[outputfilename - 65536L]];
+    }
 #endif
     name[len] = 0;
     
