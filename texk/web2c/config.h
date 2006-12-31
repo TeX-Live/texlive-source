@@ -1,6 +1,6 @@
 /* config.h: All .c files include this first.
 
-Copyright (C) 1995, 96 Karl Berry.
+Copyright (C) 1995, 1996, 2006 Karl Berry.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -32,6 +32,13 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
 /* The stuff from the path searching library.  */
 #include <kpathsea/config.h>
 #include <web2c/c-auto.h>
+
+/* However, inline is a keyword in C++, and should never be #define'd.
+   Apparently Autoconf does not know this, at least the ancient version
+   we are stuck with.  (Even though the Autoconf *test* is #ifdef'd.)  */
+#ifdef __cplusplus
+#undef inline
+#endif
 
 #include <kpathsea/c-vararg.h>
 

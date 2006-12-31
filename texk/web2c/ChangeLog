@@ -1,3 +1,9 @@
+2007-01-01  Karl Berry  <karl@tug.org>
+
+	* config.h (inline) [__cplusplus]: #undef inline under C++, since
+	inline is a keyword.  It should never be #define'd, but
+	c-auto.in->h can do so.  Found by vvv on AIX.
+
 2006-12-30  Karl Berry  <karl@tug.org>
 
 	* configure.in: bump version to 7.5.6.
