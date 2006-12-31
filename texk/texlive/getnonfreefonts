@@ -50,10 +50,7 @@ EOF
 ;
 }
 
-unless (@ARGV) {
-    usage;
-    exit 1;
-}
+@ARGS=@ARGV;
 
 GetOptions 
     "all|a",
@@ -71,6 +68,16 @@ my $sys=($0=~/-sys$/)? 1:0;
 $sys=1 if $opt_sys;
 
 @allpackages=@ARGV;
+
+print "$TL_version\n" and exit 0 if $opt_version; 
+
+if ($opt_help or !@ARGS) {
+    print "\nThis is getnonfreefonts";
+    print '-sys' if ($sys);
+    print ", version $TL_version.\n\n";
+    usage; 
+}
+
 
 sub message {
     my $message=shift;
@@ -106,7 +113,6 @@ sub expand_var {
 }
 
 
-
 # get TMP|TEMP|TMPDIR environment variable
 
 if ($opt_debug) {
@@ -118,8 +124,6 @@ if ($opt_debug) {
 	}
     }
 }
-
-print "$TL_version\n" and exit 0 if $opt_version; 
 
 
 if (defined $ENV{'TMP'}) {
@@ -144,12 +148,13 @@ $SYSTMP=~s/\\/\//g if ($SYSTMP=~/^\\\\/); # \\abc\def
 
 debug_msg "Internal variable SYSTMP converted to '$SYSTMP'";
 
+sub check_tmpdir{
 die "! ERROR: The temporary directory '$SYSTMP' doesn't exist.\n"
     unless (-d "$SYSTMP");
 
 die "! ERROR: The temporary directory '$SYSTMP' is not writable.\n"
     unless (-w "$SYSTMP");
-
+}
 
 # Determine INSTALLROOT.
 
@@ -182,28 +187,28 @@ $INSTALLROOT=~s/\\/\//g if ($INSTALLROOT=~/^\\\\/); # \\abc\def
 
 debug_msg "Internal variable INSTALLROOT converted to '$INSTALLROOT'";
 
-die "! ERROR: The install directory '$INSTALLROOT' doesn't exist.\n"
-    unless (-d "$INSTALLROOT");
-
-die "! ERROR: The install directory '$INSTALLROOT' is not writable.\n"
-    unless (-w "$INSTALLROOT");
-
-
-if ($opt_help) {
-    print "\nThis is getnonfreefonts";
-    print '-sys' if ($sys);
-    print ", version $TL_version.\n\n";
+sub check_installroot {
+    die "! ERROR: The install directory '$INSTALLROOT' doesn't exist.\n"
+	unless (-d "$INSTALLROOT");
     
-    usage; 
+    die "! ERROR: The install directory '$INSTALLROOT' is not writable.\n"
+	unless (-w "$INSTALLROOT");
+}
+
+if ($opt_help or !@ARGS) {
     print <<"ENDUSAGE";
   Directories:
        temporary: '$SYSTMP/getfont-<PID>'
        install:   '$INSTALLROOT'
 
 ENDUSAGE
+check_tmpdir;
+check_installroot;
 exit 0;
 }
 
+check_tmpdir;
+check_installroot;
 
 my $tmpdir="$SYSTMP/getfont-$$";
 debug_msg "Internal variable tmpdir set to '$tmpdir'";
