@@ -1375,6 +1375,12 @@ int newcolorstack(integer s, integer literal_mode, boolean page_start)
     colstack_num = colstacks_used++;
     colstack = &colstacks[colstack_num];
     /* configure the new color stack */
+    colstack->page_stack = NULL;
+    colstack->form_stack = NULL;
+    colstack->page_size = 0;
+    colstack->page_used = 0;
+    colstack->form_size = 0;
+    colstack->form_used = 0;
     colstack->literal_mode = literal_mode;
     colstack->page_start = page_start;
     str = makecstring(s);

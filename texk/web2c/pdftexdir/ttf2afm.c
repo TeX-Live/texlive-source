@@ -1029,7 +1029,7 @@ int main(int argc, char **argv)
     cur_file_name = argv[optind];
     if (print_cmap) {
         bname = xstrdup(xbasename(cur_file_name));
-        if ((s = rindex(bname, '.')) != NULL)
+        if ((s = strrchr(bname, '.')) != NULL)
             *s = 0;
     }
     if ((fontfile =

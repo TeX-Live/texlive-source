@@ -287,7 +287,7 @@ known as `\eTeX'.
 @#
 @d pdftex_version==140 { \.{\\pdftexversion} }
 @d pdftex_revision=="0" { \.{\\pdftexrevision} }
-@d pdftex_version_string=='-1.40.0-rc4' {current \pdfTeX\ version}
+@d pdftex_version_string=='-1.40.0' {current \pdfTeX\ version}
 @#
 @d pdfeTeX_banner=='This is pdfeTeX, Version 3.141592',pdftex_version_string,eTeX_version_string
    {printed when \pdfeTeX\ starts}
@@ -32516,21 +32516,23 @@ if fixed_pdfoutput > 0 then begin
         end
     else begin
         @<Finish the PDF file@>;
-        wlog_cr;
-        wlog_ln('PDF statistics:');
-        wlog_ln(' ',obj_ptr:1,' PDF objects out of ',obj_tab_size:1,
-            ' (max. ',sup_obj_tab_size:1,')');
-        if pdf_os_cntr > 0 then begin
-            wlog(' ',((pdf_os_cntr - 1) * pdf_os_max_objs + pdf_os_objidx + 1):1,
-                ' compressed objects within ',pdf_os_cntr:1,' object stream');
-            if pdf_os_cntr > 1 then
-                wlog('s');
-            wlog_cr;
+        if log_opened then
+            begin wlog_cr;
+            wlog_ln('PDF statistics:');
+            wlog_ln(' ',obj_ptr:1,' PDF objects out of ',obj_tab_size:1,
+                ' (max. ',sup_obj_tab_size:1,')');
+            if pdf_os_cntr > 0 then begin
+                wlog(' ',((pdf_os_cntr - 1) * pdf_os_max_objs + pdf_os_objidx + 1):1,
+                    ' compressed objects within ',pdf_os_cntr:1,' object stream');
+                if pdf_os_cntr > 1 then
+                    wlog('s');
+                wlog_cr;
+            end;
+            wlog_ln(' ',pdf_dest_names_ptr:1,' named destinations out of ',dest_names_size:1,
+                ' (max. ',sup_dest_names_size:1,')');
+            wlog_ln(' ',pdf_mem_ptr:1,' words of extra memory for PDF output out of ',pdf_mem_size:1,
+                ' (max. ',sup_pdf_mem_size:1,')');
         end;
-        wlog_ln(' ',pdf_dest_names_ptr:1,' named destinations out of ',dest_names_size:1,
-            ' (max. ',sup_dest_names_size:1,')');
-        wlog_ln(' ',pdf_mem_ptr:1,' words of extra memory for PDF output out of ',pdf_mem_size:1,
-            ' (max. ',sup_pdf_mem_size:1,')');
     end;
 end
 else begin

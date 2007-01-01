@@ -1,16 +1,16 @@
 pdfTeX
 ======
 
-README for version 3.14159-1.40.0-rc4
-=====================================
+README for version 3.14159-1.40.0
+=================================
 
-This directory contains the version 1.40.0-rc4 of pdfTeX, an extended
-version of eTeX that can create PDF directly from TeX source files and
-enhance the result of TeX typesetting with the help of PDF. When PDF output
-is not selected, pdfTeX produces normal DVI output, otherwise it produces
-PDF output that looks identical to the DVI output. An important aspect of
-this project is to investigate alternative justification algorithms,
-optionally making use of multiple master fonts.
+This directory contains the version 1.40.0 of pdfTeX, an extended version
+of eTeX that can create PDF directly from TeX source files and enhance the
+result of TeX typesetting with the help of PDF. When PDF output is not
+selected, pdfTeX produces normal DVI output, otherwise it produces PDF
+output that looks identical to the DVI output. An important aspect of this
+project is to investigate alternative justification algorithms, optionally
+making use of multiple master fonts.
 
 pdfTeX is based on the original eTeX sources and Web2c, and has been
 successfully compiled on Unix, Win32 and DOS systems. It is still under
@@ -33,7 +33,7 @@ http://www.ntg.nl/mailman/listinfo/ntg-pdftex
 LEGAL ISSUES
 ============
 
-pdfTeX is copyright (c) 1996-2006 Han The Thanh, <thanh@pdftex.org>
+pdfTeX is copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
 
 pdfTeX is free software; you can redistribute it and/or modify it under the
 terms of the GNU General Public License as published by the Free Software

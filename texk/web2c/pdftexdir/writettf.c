@@ -325,9 +325,10 @@ do {\
 static char *strip_spaces_and_delims(char *s, int l)
 {
     static char buf[SMALL_BUF_SIZE];
-    assert(l >= 0 && l < (int) sizeof(buf));
     char *p = buf;
     int i;
+
+    assert(l >= 0 && l < (int) sizeof(buf));
 
     for (i = 0; i < l; s++, i++) {
         if (*s == '(' || *s == ')' || *s == '<' || *s == '>' ||

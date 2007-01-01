@@ -1,6 +1,6 @@
------------------------------------------------------
-pdfTeX 3.141592-1.40.0-rc4 was released on 2006-12-22
------------------------------------------------------
+-------------------------------------------------
+pdfTeX 3.141592-1.40.0 was released on 2007-01-01
+-------------------------------------------------
 - pdfetex (as a separate binary/program) is gone; all extensions are now in
   pdftex. The make files still know about the target pdfetex, but it's just a
   copy of pdftex
@@ -29,7 +29,34 @@ pdfTeX 3.141592-1.40.0-rc4 was released on 2006-12-22
     the libraries actually used, which can be handy when using shared libraries
   - rules and their positioning on the page are now inside a qQ group
 - New primitives:
-  - TODO: pdfTeX can now handle Colorstacks
+  - pdfTeX can now handle colourstacks. 
+    - \pdfcolorstackinit
+      A stack is initialized by \pdfcolorstackinit. It expands to the number of
+      the new stack. The common case, the traditinal color stack is already
+      initialized as first stack: \pdfcolorstackinit page direct {0 g 0 G} 
+      The keyword "page" means that this stack is page based. At the start of
+      the new page, the current stack value is automatically set.
+    - \pdfcolorstack
+      \pdfcolorstack <stack number> push {<new color>}
+      pushes the current value on the stack and sets the <new color>.
+      \pdfcolorstack <stack number> pop 
+      pops and sets the current stack value.
+      \pdfcolorstack <stack number> current
+      sets the current stack value without changing the stack. This is useful
+      for stacks that are initialized without keyword "page".  Thus the page
+      start setting can be set manually.
+      \pdfcolorstack <stack number> set {<new color>}
+      The current value is set to <new color>.
+  - Transformation matrices can now be manipulated more cleanly:
+    Currently matrix changes are done and hidden inside \pdfliteral nodes;
+    pdfTeX doesn't parse its contents and does not know the new settings of the
+    transform matrix. Thus the new primitives to save pdfTeX from parsing
+    \pdfliteral contents and to notify pdfTeX about matrix changes to use them
+    in calculating link and anchor positions.
+    - \pdfsetmatrix{<a> <b> <c> <d>}
+      is the equivalent to \pdfliteral{<a> <b> <c> <d> 0 0 cm}
+    - \pdfsave is the equivalent to \pdfliteral{q}
+    - \pdfrestore is the equivalent to \pdfliteral{Q}
   - \pdfprimitive\TeX-primitive executes the original \TeX-primitive even if
     the command has been redefined since. E.g.
       \let\relax\undefined\pdfprimitive\relax
@@ -71,218 +98,6 @@ pdfTeX 3.141592-1.40.0-rc4 was released on 2006-12-22
   - bugfix: truetype OS/2 v3 fonts (594)
   - bugfix: Type1C (CFF) fonts of embedded pdfs didn't get replaced
 - pdfTeX uses libpng 1.2.14
-- changes from rc3:
- various small fixes
-
------------------------------------------------------
-pdfTeX 3.141592-1.40.0-rc3 was released on 2006-12-20
------------------------------------------------------
-- changes from rc2:
-  - map file handling:
-   - in usual cases the behaviour is the same like in previous version. So if a
-     font file is given with '<' or '<<', things should work without problems.
-   - changes in odd cases:
-     - no font file --> no font descriptor
-     - font file given but not included --> will be treated like font file
-       missing + a warning
-   - minimize the distinction between standard fonts and other type1 fonts: the
-     *only* place this makes a difference is that if a font file is missing
-     (and the font is used), a warning will be generated for normal fonts but
-     not for standard fonts
-
------------------------------------------------------
-pdfTeX 3.141592-1.40.0-rc2 was released on 2006-12-13
------------------------------------------------------
-- changes from rc1:
-  - fix \letterspacefont (bug 712)
-  - fix problems with unused objects
-
------------------------------------------------------
-pdfTeX 3.141592-1.40.0-rc1 was released on 2006-12-11
------------------------------------------------------
-- changes from last beta:
-  - ToUnicode was broken in the latest beta (bug 711)
-  - pdftosrc now handles compressed xref tables (PDF 1.5)
-  - new primitive \letterspacefont to implement letter-spacing on-the-fly
-
----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-beta-20061206 was released on 2006-12-06
----------------------------------------------------------------
-- bugfix: crash with autokern (663)
-- memory for virtual fonts can now grow dynamically (patch 705)
-- rework the font mechanism (patches 597 and 709)
-- updated libpng to 1.2.14
-
----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-beta-20061108 was released on 2006-11-08
----------------------------------------------------------------
-- bugfix: extra kerning+expansion+ligatures (481)
-- bugfix: extra kerning does not work with ligatures (482)
-- bugfix: extra kerning inhibits extra spacing (483)
-- bugfix: extra kerning inhibits hyphenation (484)
-- bugfix: ttf2afm fails to include characters specified with uniXXXX (565)
-
----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-beta-20061017 was released on 2006-10-17
----------------------------------------------------------------
-- updated patch 580 (ToUnicode entries for Type1 fonts)
-- bugfix: nested links (479)
-- bugfix: conv_toks had some problems (609)
-- bugfix: problems with TrueType fonts (611)
-
----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-beta-20060928 was released on 2006-09-28
----------------------------------------------------------------
-- added patch 603 (Colorstack)
-- added patch 462 (HZ font expansion by text matrix manipulation)
-- updated obsdcompat from openssh 4.4pl1
-- bugfix: \pdfescapestring + \pdfescapename had been broken (605)
-
----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-beta-20060906 was released on 2006-09-06
----------------------------------------------------------------
-- bugfix: \pdfdraftmode could be tricked (600)
-- bugfix: Type1C (CFF) fonts of embedded pdfs didn't get replaced
-
----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-beta-20060822 was released on 2006-08-22
----------------------------------------------------------------
-- new feature: with \pdfdraftmode=1 (or -draftmode) pdfTeX doesn't write an
-  output pdf file and doesn't read the content of any image file, thus speeding
-  up the run. This is usefull when you know you need another run of pdfTeX e.g.
-  just to get all the references right, but don't care for the output of this
-  run
-- changed the format of pdfTeX warnings and unified the four(!) functions
-  pdfTeX uses for writing out errors and warnings
-- expanded the output of -version to include information about the libraries
-  used
-- fixed a bug where -20060811 would loop forever
-- fixed some compilation problems with obsdcompat
-
----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-beta-20060811 was released on 2006-08-11
----------------------------------------------------------------
-- renamed primitives:
-    \primitive -> \pdfprimitive
-    \ifprimitive -> \ifpdfprimitive
-    \ifabsdim -> \ifpdfabsdim
-    \ifabsnum -> \ifpdfabsnum
-- new version of \primitive/\ifprimitive (but see above)
-- new dimen: \pdfpxdimen
-- support for jbig2 files
-- new library: obsdcompat, which has improved string functions and allows the
-  use of __attribute__
-- update libpng to 1.2.12
-- added JFIF detection patch to writejpg.c (was bug 548)
-- bugfix: truetype OS/2 v3 fonts (594)
-- bugfix: file with only \immediate\pdfobj stream results in garbage (505)
-- bugfix: invalid pdf created if font name contains space (509)
-
----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-beta-20060725 was released on 2006-07-25
----------------------------------------------------------------
-- added patches by Christian Schenk forwarded by Hartmut
-- added patch 421 (popen) from Taco
-- added lots of (void) to writettf* and ttf2afm to silence the compiler
-- removed some unused variables from tounicode.c
-- add new code by Thanh (patch 580)
-- added security patch for xpdf :-(
-- added JFIF detection patch to writejpg.c (bug 548)
-
----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-beta-20060213 was released on 2006-02-13
----------------------------------------------------------------
-- pdftex.web has been improved a bit
-- new patch:
-  - 473 \ifabsnum and \ifabsdim
-- the manual has been updated a bit and is again included
-
----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-beta-20060125 was released on 2006-01-25
----------------------------------------------------------------
-- pdfTeX now includes pdfeTeX, i.e. there is no way to make a binary without
-  eTeX support. Also the sources of TeX, eTeX and pdfTeX have been merged into
-  one file pdftex.web
-- most pdfTeX change files are gone; only one file (pdftex.ch) remains.
-- improved patches:
-  - 393 Ensure newline before endstream
-
----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-beta-20060117 was released on 2006-01-17
----------------------------------------------------------------
-- pdfTeX is now pdfeTeX, i.e. there is no way to make a binary without eTeX
-  support. Also the sources of TeX, eTeX and pdfTeX have been merged into one
-  file pdfetex.web
-- strip trailing zeros in fractions of reals written
-- removed patch 467 \ifindef
-- improved logging of objstreams
-
-----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-alpha-20060111 was released on 2006-01-11
-----------------------------------------------------------------
-- new patches:
-  - 466 \primitive and \ifprimitive
-  - 467 \ifinedef
-- improved patches:
-  - 393 Ensure newline before endstream
-- pdfTeX now sets /ModDate and /Trapped by default (the values can be
-  overridden with \pdfinfo)
-- more fixes to remove warnings from -Wall
-
-----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-alpha-20060106 was released on 2006-01-06
-----------------------------------------------------------------
-- many small fixes to remove warnings from -Wall
-- removed some unused variables
-- really fix bug 444
-- add some GCC extensions and use *nprintf instead of *printf where possible
-- fixed a unicode bug in ttf2afm
-
-----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-alpha-20051226 was released on 2005-12-26
-----------------------------------------------------------------
-- improved patches:
-  - 453	Object Streams for PDF-1.5
-  - take PK resolution from "pk_dpi" parameter in  texmf.cnf, if it has not
-    been set by the format file or by the user
-  - 432	Rules in a PDF qQ group
-- some fixes for Thanhs patch
-- some improvements from -Wall
-- .indent.pro for indent
-
-----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-alpha-20051221 was released on 2005-12-21
-----------------------------------------------------------------
-- has a large patch from Thanh
-- pdflastlink has been fixed
-- remove generated pdf in case of fatal error
-
-----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-alpha-20051208 was released on 2005-12-08
-----------------------------------------------------------------
-- improved patches:
-  - 386	grow obj_tab and dest_names arrays dynamically
-  - 453	Object Streams for PDF-1.5
-  - take PK resolution from "pk_dpi" parameter in  texmf.cnf, if it has not
-    been set by the format file or by the user
-- write out PDF statistics later to make them correct
-- makefile target pdfetex-all.pdf for a huge file
-
-----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-alpha-20051205 was released on 2005-12-05
-----------------------------------------------------------------
-- has these patches:
-  - 386	grow obj_tab and dest_names arrays dynamically
-  - 416	new primitive pdflastlink
-  - 427	Character positioning patch
-  - 432	Rules in a PDF qQ group
-  - 434	Remove queued map item handling
-  - 438	\pdfsavepos in DVI mode
-  - 443	512 zeros in Type1 fonts not copied anymore
-  - 447	Don't write /Encoding for non-reencoded fonts
-  - 453	Object Streams for PDF-1.5
-  - take PK resolution from "pk_dpi" parameter in  texmf.cnf, if it has not
-    been set by the format file or by the user
 
 -------------------------------------------------
 pdfTeX 3.141592-1.30.6 was released on 2006-02-16

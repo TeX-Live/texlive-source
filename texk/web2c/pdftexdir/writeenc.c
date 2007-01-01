@@ -18,7 +18,6 @@ along with pdfTeX; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 $Id: writeenc.c,v 1.3 2005/12/26 14:20:13 hahe Exp hahe $
-
 */
 
 #include "ptexlib.h"
@@ -75,10 +74,11 @@ void register_fe_entry(fe_entry * fe)
 fe_entry *get_fe_entry(char *s)
 {
     fe_entry *fe;
-    if ((fe = lookup_fe_entry(s)) == NULL) {
+    char **gl;
+    if ((fe = lookup_fe_entry(s)) == NULL && (gl = load_enc_file(s)) != NULL) {
         fe = new_fe_entry();
         fe->name = s;
-        fe->glyph_names = load_enc_file(s);
+        fe->glyph_names = gl;
         register_fe_entry(fe);
     }
     return fe;

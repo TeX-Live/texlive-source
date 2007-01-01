@@ -476,8 +476,7 @@ void write_fontdictionary(fo_entry * fo)
 
     /* write ToUnicode entry if needed */
     if (fixedgentounicode > 0 && fo->fd != NULL) {
-        if (is_reencoded(fo->fm)) {
-            assert(fo->fe != NULL);
+        if (fo->fe != NULL) {
             fo->tounicode_objnum =
                 write_tounicode(fo->fe->glyph_names, fo->fe->name);
         } else if (is_type1(fo->fm)) {
@@ -552,9 +551,9 @@ void create_fontdictionary(fm_entry * fm, integer font_objnum,
     fo->fm = fm;
     fo->fo_objnum = font_objnum;
     fo->tex_font = f;
-    if (is_reencoded(fo->fm)) {
-        fo->fe = get_fe_entry(fo->fm->encname);
-        if (is_type1(fo->fm) || is_opentype(fo->fm)) {
+    if (is_reencoded(fo->fm)) { /* at least the map entry tells so */
+        fo->fe = get_fe_entry(fo->fm->encname); /* returns NULL if .enc file couldn't be opened */
+        if (fo->fe != NULL && (is_type1(fo->fm) || is_opentype(fo->fm))) {
             if (fo->fe->fe_objnum == 0)
                 fo->fe->fe_objnum = pdfnewobjnum();     /* then it will be written out */
             /* mark encoding pairs used by TeX to optimize encoding vector */
@@ -571,7 +570,7 @@ void create_fontdictionary(fm_entry * fm, integer font_objnum,
             create_fontdescriptor(fo, f);
         create_charwidth_array(fo, f);
         write_charwidth_array(fo);
-        if (is_reencoded(fo->fm)) {
+        if (fo->fe != NULL) {
             mark_reenc_glyphs(fo, f);
             if (!is_type1(fo->fm)) {
                 /* mark reencoded characters as chars on TeX level */

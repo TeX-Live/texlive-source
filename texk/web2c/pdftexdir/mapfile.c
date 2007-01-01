@@ -18,7 +18,6 @@ along with pdfTeX; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 $Id: mapfile.c,v 1.1 2006/12/14 01:21:33 hahe Exp hahe $
-
 */
 
 #include <math.h>
@@ -52,7 +51,7 @@ static const char nontfm[] = "<nontfm>";
 
 #define read_field(r, q, buf) do {  \
     q = buf;                        \
-    while (*r != ' ' && *r != '\0') \
+    while (*r != ' ' && *r != '<' && *r != '"' && *r != '\0') \
         *q++ = *r++;                \
     *q = '\0';                      \
     skip (r, ' ');                  \
@@ -116,7 +115,6 @@ static fm_entry *dummy_fm_entry()
     static const fm_entry const_fm_entry;
     return (fm_entry *) & const_fm_entry;
 }
-
 
 /**********************************************************************/
 
@@ -430,16 +428,17 @@ static void fm_scan_line()
     fm = new_fm_entry();
     read_field(r, q, buf);
     set_field(tfm_name);
-    p = r;
-    read_field(r, q, buf);
-    if (*buf != '<' && *buf != '"')
+    if (!isdigit(*r)) {         /* 2nd field ps_name may not start with a digit */
+        read_field(r, q, buf);
         set_field(ps_name);
-    else
-        r = p;                  /* unget the field */
-    if (isdigit(*r)) {          /* font descriptor /Flags given */
-        fm->fd_flags = atoi(r);
-        while (isdigit(*r))
-            r++;
+    }
+    if (isdigit(*r)) {          /* font descriptor /Flags given? */
+        for (s = r; isdigit(*s); s++);
+        if (*s == ' ' || *s == '"' || *s == '<' || *s == '\0') {        /* not e. g. 8r.enc */
+            fm->fd_flags = atoi(r);
+            while (isdigit(*r))
+                r++;
+        }
     }
     while (1) {                 /* loop through "specials", encoding, font file */
         skip(r, ' ');
@@ -621,8 +620,8 @@ boolean hasfmentry(internalfontnumber f)
     return pdffontmap[f] != (fmentryptr) dummy_fm_entry();
 }
 
-
 /* check whether a map entry is valid for font replacement */
+
 static boolean fm_valid_for_font_replacement(fm_entry * fm)
 {
     ff_entry *ff;
