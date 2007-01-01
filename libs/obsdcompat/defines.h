@@ -45,10 +45,6 @@
 # define STDERR_FILENO   2
 #endif
 
-#ifndef __unused
-#define __unused
-#endif
-
 /* Types */
 
 /* If sys/types.h does not supply intXX_t, supply them ourselves */
