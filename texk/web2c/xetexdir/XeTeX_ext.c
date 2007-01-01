@@ -181,6 +181,7 @@ void initversionstring(char **versions)
 	int	fc_version = FcGetVersion();
 #endif
 	extern FT_Library	gFreeTypeLibrary; /* in XeTeXFontInst_FT2 */
+	FT_Int	ftMajor, ftMinor, ftPatch;
 
 	char* fmt =
 		"Compiled with ICU version %s [with modifications for XeTeX]\n"
@@ -211,7 +212,6 @@ void initversionstring(char **versions)
 		/* len will be more than enough, because of the placeholder chars in fmt
 			that get replaced by the arguments */
 
-	FT_Int	ftMajor, ftMinor, ftPatch;
 	if (gFreeTypeLibrary == 0 && FT_Init_FreeType(&gFreeTypeLibrary) != 0) {
 		fprintf(stderr, "FreeType initialization failed!\n");
 		exit(9);
