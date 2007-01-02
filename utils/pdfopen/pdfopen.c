@@ -11,7 +11,7 @@ extern int sendx_control_token(char *,char *);
 extern int sendx_alt_token(char *,char *);
 
 void usage (void) {
-  puts ("pdfopen 0.5: you are mistaking me for an actual program.\n");
+  puts ("pdfopen 0.51: you are mistaking me for an actual program.\n");
   puts("  pdfopen [--file filename.pdf]");
   puts ("\nusing no arguments tells the Reader to 'go back'.\n");
 }
@@ -41,8 +41,8 @@ int main (int argc, char **argv){
     }
     strcpy(filename,argv[2]);
 	strcpy(basefile,filename);
-	if (rindex(basefile,'/'))
-	  basefile = rindex(basefile,'/')+1;
+	if (strrchr(basefile,'/'))
+	  basefile = strrchr(basefile,'/')+1;
 
     winname = malloc(strlen(argv[2])+1+strlen(READERWINPREFIX));
     if (winname == NULL ) {
