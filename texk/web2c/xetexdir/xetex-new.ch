@@ -307,7 +307,7 @@ else begin
 @x
 begin pool_ptr:=0; str_ptr:=0; str_start[0]:=0;
 @y
-begin pool_ptr:=0; str_ptr:=0; {str_start_macro(0):=0;}
+begin pool_ptr:=0; str_ptr:=0;
 @z
 
 @x
@@ -333,6 +333,7 @@ for k:=0 to 255 do
 @y
 begin
 str_ptr:=too_big_char;
+str_start_macro(str_ptr):=pool_ptr;
 end
 @z
 
