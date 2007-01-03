@@ -49,12 +49,19 @@ class CMAPMapper
 public:
     virtual LEGlyphID unicodeToGlyph(LEUnicode32 unicode32) const = 0;
 
-    virtual ~CMAPMapper();
+    virtual ~CMAPMapper()
+		{
+			LE_DELETE_ARRAY(fcmap);
+		}
 
     static CMAPMapper *createUnicodeMapper(const CMAPTable *cmap);
 
 protected:
-    CMAPMapper(const CMAPTable *cmap);
+    CMAPMapper(const CMAPTable *cmap)
+		: fcmap(cmap)
+		{
+			// nothing else to do
+		}
 
     CMAPMapper() {};
 
@@ -100,17 +107,6 @@ private:
     le_int32 fRangeOffset;
     const CMAPGroup *fGroups;
 };
-
-inline CMAPMapper::CMAPMapper(const CMAPTable *cmap)
-    : fcmap(cmap)
-{
-    // nothing else to do
-}
-
-inline CMAPMapper::~CMAPMapper()
-{
-    LE_DELETE_ARRAY(fcmap);
-}
 
 #endif
 
