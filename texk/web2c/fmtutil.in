@@ -40,22 +40,22 @@ mpost		mpost		-		-translate-file=cp227.tcx mpost.mp
 metafun		mpost		-		-translate-file=cp227.tcx metafun.mp
 
 # Standard formats (plain, latex) with all engines:
-
+#
 # Change "tex.ini -> bplain.ini" and "- -> language.dat"
-# if you want babel support in tex. Add -translate-file=cp227.tcx before tex.ini
-# if you want to make all characters directly "printable" for
+# if you want babel support in tex. Add -translate-file=cp227.tcx before
+# tex.ini if you want to make all characters directly "printable" for
 # any \write (instead of ^^xy).
-tex		tex		-		tex.ini
-pdftex		pdftex		language.def	-translate-file=cp227.tcx *pdftex.ini
-latex		pdftex		language.dat	-translate-file=cp227.tcx *latex.ini
-etex		pdftex		language.def	-translate-file=cp227.tcx *etex.ini
-pdfetex		pdftex		-		-translate-file=cp227.tcx *pdftex.ini
-pdflatex	pdftex		language.dat	-translate-file=cp227.tcx *pdflatex.ini
-@OMEGA@omega		omega		-	omega.ini
-@OMEGA@lambda		omega		language.dat	lambda.ini
-@ALEPH@aleph		aleph		-		*aleph.ini
-@ALEPH@lamed		aleph		language.dat	*lambda.ini
-@XETEX@xetex	xetex	-	-etex xetex.ini
+tex		tex	-		tex.ini
+pdftex		pdftex	language.def	-translate-file=cp227.tcx *pdftex.ini
+latex		pdftex	language.dat	-translate-file=cp227.tcx *latex.ini
+etex		pdftex	language.def	-translate-file=cp227.tcx *etex.ini
+pdfetex		pdftex	language.def	-translate-file=cp227.tcx *pdfetex.ini
+pdflatex	pdftex	language.dat	-translate-file=cp227.tcx *pdflatex.ini
+@OMEGA@omega	omega	-		omega.ini
+@OMEGA@lambda	omega	language.dat	lambda.ini
+@ALEPH@aleph	aleph	-		*aleph.ini
+@ALEPH@lamed	aleph	language.dat	*lambda.ini
+@XETEX@xetex	xetex	-		-etex xetex.ini
 @XETEX@xelatex	xetex	language.dat	-etex xelatex.ini
 
 # The amstex format:
