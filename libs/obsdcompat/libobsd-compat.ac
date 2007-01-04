@@ -3,9 +3,9 @@ if test "$needs_obsdcompat" = no; then
   LDLIBOBSD=
   LIBOBSDDEP=
 else
-  LIBOBSDCPPFLAGS='-I$(LIBOBSDDIR)'
-  LDLIBOBSD='$(LIBOBSDDIR)/libopenbsd-compat.a'
-  LIBOBSDDEP='$(LIBOBSDDIR)/libopenbsd-compat.a'
+  LIBOBSDCFLAGS='-I$(LIBOBSDCOMPATDIR)'
+  LDLIBOBSD='$(LIBOBSDCOMPATDIR)/libopenbsd-compat.a'
+  LIBOBSDDEP='$(LIBOBSDCOMPATDIR)/libopenbsd-compat.a'
 fi
 
 AC_SUBST(LIBOBSDCFLAGS)

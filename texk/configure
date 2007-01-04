@@ -6587,13 +6587,13 @@ PKGS='
  cjkutils
  detex
  devnag
- dvipng
  dtl 
  dvi2tty
  dvidvi
  dviljk
  dvipdfm
  dvipdfmx
+ dvipng
  dvipsk
  gsftopk
  lacheck

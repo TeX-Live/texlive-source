@@ -214,7 +214,7 @@ sinclude(libs/freetype/freetype.ac)
 sinclude(libs/freetype2/freetype2.ac)
 sinclude(libs/icu-xetex/icu-xetex.ac)
 sinclude(libs/teckit/teckit.ac)
-sinclude($LIBOBSDCOMPATDIR/libobsdcompat.ac)
+sinclude(libs/obsdcompat/libobsd-compat.ac)
 
 LIBSDEP="$CURSESDEP $ZLIBDEP $LIBPNGDEP $LIBXPDFDEP $LIBT1DEP $GDDEP $FREETYPEDEP $FREETYPE2DEP $ICUDEP $TECKITDEP $LIBOBSDDEP"
 

@@ -11,16 +11,16 @@ else
       EXTRA_FREETYPE2_LIBDIR="-L$with_freetype2_libdir"
     fi
     if test "x$with_freetype2_include" != x; then
-      EXTRA_FREETYPE2_INCLUDE="-I$with_freetype2_include"
+      EXTRA_FREETYPE2_INCLUDE="-I$with_freetype2_include -I$with_freetype2_include/freetype2"
     fi
   fi
 
   OLD_LDFLAGS=$LDFLAGS
-  OLD_CPP=$CPP
+  OLD_CPPFLAGS=$CPPFLAGS
   OLD_LIBS=$LIBS
 
   LDFLAGS="$LDFLAGS $EXTRA_FREETYPE2_LIBDIR"
-  CPP="$CPP $EXTRA_FREETYPE2_INCLUDE"
+  CPPFLAGS="$CPPFLAGS $EXTRA_FREETYPE2_INCLUDE"
 
   if test "$with_system_freetype2" = yes; then
     AC_CHECK_LIB(freetype, FT_Init_FreeType,,
@@ -37,7 +37,7 @@ else
   fi
 
   LDFLAGS=$OLD_LDFLAGS
-  CPP=$OLD_CPP
+  CPPFLAGS=$OLD_CPPFLAGS
   LIBS=$OLD_LIBS
 
   if test "$with_system_freetype2" != yes; then

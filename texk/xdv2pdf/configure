@@ -569,14 +569,15 @@ fi
 
 
 
+
+
 #
 #   Check for Carbon framework on Mac OS X
 #
-  _cppflags=$CPPFLAGS _ldflags=$LDFLAGS
   echo $ac_n "checking for Apple Carbon framework""... $ac_c" 1>&6
-echo "configure:578: checking for Apple Carbon framework" >&5
+echo "configure:579: checking for Apple Carbon framework" >&5
   cat > conftest.$ac_ext <<EOF
-#line 580 "configure"
+#line 581 "configure"
 #include "confdefs.h"
 
 #include <Carbon/Carbon.h>
@@ -587,7 +588,7 @@ ATSUStyle style;
     
 ; return 0; }
 EOF
-if { (eval echo configure:591: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:592: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
    echo "$ac_t""yes" 1>&6
       cat >> confdefs.h <<\EOF
@@ -618,7 +619,6 @@ fi
 #
 #   Check for QuickTime framework on Mac OS X
 #
-  _cppflags=$CPPFLAGS _ldflags=$LDFLAGS
   echo $ac_n "checking for Apple QuickTime framework""... $ac_c" 1>&6
 echo "configure:624: checking for Apple QuickTime framework" >&5
   cat > conftest.$ac_ext <<EOF

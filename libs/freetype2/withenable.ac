@@ -7,4 +7,5 @@ AC_ARG_WITH(freetype2_libdir,
 
 AC_ARG_WITH(freetype2_include,
 [  --with-freetype2-include=DIR
-                          Specify the freetype2 header files location.])
+                          Specify the freetype2 header files location.
+                            (both DIR and DIR/freetype2 will be added to the include paths)])
