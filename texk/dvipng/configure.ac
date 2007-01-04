@@ -112,6 +112,9 @@ if test "$enable_timing" = "yes"; then
   AC_CHECK_FUNCS([ftime gettimeofday])
 fi
 
+AC_CHECK_LIB(m, main)
+AC_CHECK_LIB(gen, basename)
+
 # let's skip dvigif for the moment.
 INSTALL_BIN_TARGET="install-dvipng"
 AC_SUBST(INSTALL_BIN_TARGET)
@@ -180,9 +183,6 @@ AC_DEFINE(HAVE_PNG_H)
 AC_DEFINE(HAVE_LIBPNG)
 
 AC_DEFINE(HAVE_LIBZ)
-
-AC_CHECK_LIB(m, main)
-AC_CHECK_LIB(gen, basename)
 
 LIBS="../kpathsea/.libs/libkpathsea.a $LIBS"
 AC_DEFINE(HAVE_KPATHSEA_KPATHSEA_H)
