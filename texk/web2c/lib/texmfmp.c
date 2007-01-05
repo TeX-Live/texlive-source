@@ -1350,7 +1350,7 @@ open_in_or_pipe P3C(FILE **, f_ptr,  int, filefmt,  const_string, fopen_mode)
     if (shellenabledp && *(nameoffile+1) == '|') {
       /* the user requested a pipe */
       *f_ptr = NULL;
-      fname = (string)xmalloc(strlen((const_string)(nameoffile+1)));
+      fname = (string)xmalloc(strlen((const_string)(nameoffile+1))+1);
       strcpy(fname,(const_string)(nameoffile+1));
 #if !defined(pdfTeX) && !defined(pdfeTeX)
       if (fullnameoffile)
@@ -1389,7 +1389,7 @@ open_out_or_pipe P2C(FILE **, f_ptr,  const_string, fopen_mode)
 	
     if (shellenabledp && *(nameoffile+1) == '|') {
       /* the user requested a pipe */
-      fname = (string)xmalloc(strlen((const_string)(nameoffile+1)));
+      fname = (string)xmalloc(strlen((const_string)(nameoffile+1))+1);
       strcpy(fname,(const_string)(nameoffile+1));
       if (strchr (fname,' ')==NULL && strchr(fname,'>')==NULL) {
         /* mp and mf currently do not use this code, but it 
