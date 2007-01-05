@@ -144,7 +144,7 @@ pngimage.o: $(srcdir)/xetexdir/pngimage.c $(srcdir)/xetexdir/pngimage.h
 	$(compile) $(ALL_CFLAGS) $(LIBPNGCPPFLAGS) -c $< -o $@
 
 pdfimage.o: $(srcdir)/xetexdir/pdfimage.cpp $(srcdir)/xetexdir/pdfimage.h
-	$(compile) $(ALL_CFLAGS) $(LIBXPDFCPPFLAGS) -c $< -o $@
+	$(CXX) $(ALL_CFLAGS) $(LIBXPDFCPPFLAGS) -c $< -o $@
 
 XeTeX_pic.o: $(srcdir)/xetexdir/XeTeX_pic.c $(srcdir)/xetexdir/XeTeX_ext.h $(XeTeXImageHdrs)
 	$(compile) $(TECKITFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
