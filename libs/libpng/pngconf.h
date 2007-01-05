@@ -1,9 +1,9 @@
 
 /* pngconf.h - machine configurable file for libpng
  *
- * libpng version 1.2.14 - November 27, 2006
+ * libpng version 1.2.15 - January 5, 2007
  * For conditions of distribution and use, see copyright notice in png.h
- * Copyright (c) 1998-2005 Glenn Randers-Pehrson
+ * Copyright (c) 1998-2007 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
  * (Version 0.88 Copyright (c) 1995, 1996 Guy Eric Schalnat, Group 42, Inc.)
  */
@@ -721,7 +721,14 @@
 #endif
 
 /* PNG_ASSEMBLER_CODE was enabled by default in version 1.2.0 
-   even when PNG_USE_PNGVCRD or PNG_USE_PNGGCCRD is not defined */
+ * even when PNG_USE_PNGVCRD or PNG_USE_PNGGCCRD is not defined.
+ *
+ * PNG_NO_ASSEMBLER_CODE disables use of all assembler code and optimized C,
+ * and removes or includes several functions in the API.
+ *
+ * PNG_NO_MMX_CODE disables the use of MMX code without changing the API.
+ * When MMX code is off, then optimized C replacement functions are used.
+*/
 #if defined(PNG_READ_SUPPORTED) && !defined(PNG_NO_ASSEMBLER_CODE)
 #  ifndef PNG_ASSEMBLER_CODE_SUPPORTED
 #    define PNG_ASSEMBLER_CODE_SUPPORTED

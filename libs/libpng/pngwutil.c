@@ -1,9 +1,9 @@
 
 /* pngwutil.c - utilities to write a PNG file
  *
- * Last changed in libpng 1.2.13 November 13, 2006
+ * Last changed in libpng 1.2.15 January 5, 2007
  * For conditions of distribution and use, see copyright notice in png.h
- * Copyright (c) 1998-2006 Glenn Randers-Pehrson
+ * Copyright (c) 1998-2007 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
  * (Version 0.88 Copyright (c) 1995, 1996 Guy Eric Schalnat, Group 42, Inc.)
  */
@@ -757,8 +757,11 @@ png_write_iCCP(png_structp png_ptr, png_charp name, int compression_type,
       profile_len = 0;
 
    if (profile_len > 3)
-      embedded_profile_len = ((*(profile  ))<<24) | ((*(profile+1))<<16) |
-          ((*(profile+2))<< 8) | ((*(profile+3))    );
+      embedded_profile_len =
+          ((*( (png_bytep)profile  ))<<24) |
+          ((*( (png_bytep)profile+1))<<16) |
+          ((*( (png_bytep)profile+2))<< 8) |
+          ((*( (png_bytep)profile+3))    );
 
    if (profile_len < embedded_profile_len)
      {
