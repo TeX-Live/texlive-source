@@ -408,19 +408,19 @@ var x,@!y:pointer; {temporary registers for box construction}
 f:internal_font_number;
 rule_thickness:scaled; {rule thickness}
 @!delta,@!clr:scaled; {dimensions involved in the calculation}
-begin f:=fam_fnt(3 + cur_size);
+begin f:=fam_fnt(small_fam(left_delimiter(q)) + cur_size);
 if is_ot_font(f) then rule_thickness:=get_ot_math_constant(f,radicalRuleThickness)
 else rule_thickness:=default_rule_thickness;
 x:=clean_box(nucleus(q),cramped_style(cur_style));
 if is_ot_font(f) then begin
-if cur_style<text_style then {display style}
-  clr:=rule_thickness+(abs(math_x_height(cur_size)) div 4)
-else  begin clr:=rule_thickness; clr:=clr + (abs(clr) div 4);
-  end;
+  if cur_style<text_style then {display style}
+    clr:=get_ot_math_constant(f,radicalDisplayStyleVerticalGap)
+  else clr:=get_ot_math_constant(f,radicalVerticalGap);
 end else begin
-if cur_style<text_style then {display style}
-  clr:=get_ot_math_constant(f,radicalDisplayStyleVerticalGap)
-else clr:=get_ot_math_constant(f,radicalVerticalGap);
+  if cur_style<text_style then {display style}
+    clr:=rule_thickness+(abs(math_x_height(cur_size)) div 4)
+  else  begin clr:=rule_thickness; clr:=clr + (abs(clr) div 4);
+    end;
 end;
 y:=var_delimiter(left_delimiter(q),cur_size,height(x)+depth(x)+clr+rule_thickness);
 if is_ot_font(f) then begin
