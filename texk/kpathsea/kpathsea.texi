@@ -2,8 +2,8 @@
 @setfilename kpathsea.info
 @settitle Kpathsea: A library for path searching
 
-@set version 3.5.5
-@set month-year June 2005
+@set version 3.5.6
+@set month-year January 2007
 
 @c Define new indices for commands, filenames, and options.
 @defcodeindex cm
@@ -34,7 +34,8 @@
 @copying
 This file documents the Kpathsea library for path searching.
 
-Copyright (C) 1993-2005 Karl Berry & Olaf Weber.
+Copyright @copyright{} 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
+2004, 2005, 2007 Karl Berry & Olaf Weber.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
