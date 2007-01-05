@@ -468,15 +468,36 @@ XeTeXFontMgr::getOpSizeRecAndStyleFlags(Font* theFont)
 					/* if featureParamsOffset < (offset of feature from featureListTable),
 					   then we have a correct size table;
 					   otherwise we (presumably) have a "broken" one from the old FDK */
-					if (offset < (const char*)feature - (const char*)featureListTable)
-						pSizeRec = (const OpSizeRec*)((char*)feature + offset);
-					else
-						pSizeRec = (const OpSizeRec*)((char*)featureListTable + offset);
-					theFont->opSizeInfo.designSize = SWAP(pSizeRec->designSize);
-					theFont->opSizeInfo.subFamilyID = SWAP(pSizeRec->subFamilyID);
-					theFont->opSizeInfo.nameCode = SWAP(pSizeRec->nameCode);
-					theFont->opSizeInfo.minSize = SWAP(pSizeRec->minSize);
-					theFont->opSizeInfo.maxSize = SWAP(pSizeRec->maxSize);
+					for (int i = 0; i < 2; ++i) {
+						if (i == 0)
+							pSizeRec = (const OpSizeRec*)((char*)feature + offset);
+						else
+							pSizeRec = (const OpSizeRec*)((char*)featureListTable + offset);
+						if (SWAP(pSizeRec->designSize) == 0)
+							continue;	// incorrect 'size' feature format
+						if (SWAP(pSizeRec->subFamilyID) == 0
+							&& SWAP(pSizeRec->nameCode) == 0
+							&& SWAP(pSizeRec->minSize) == 0
+							&& SWAP(pSizeRec->maxSize) == 0)
+							break;	// feature is valid, but no 'size' range
+						if (SWAP(pSizeRec->designSize) < SWAP(pSizeRec->minSize))
+							continue;
+						if (SWAP(pSizeRec->designSize) > SWAP(pSizeRec->maxSize))
+							continue;
+						if (SWAP(pSizeRec->maxSize) <= SWAP(pSizeRec->minSize))
+							continue;
+						if (SWAP(pSizeRec->nameCode) < 256)
+							continue;
+						if (SWAP(pSizeRec->nameCode) > 32767)
+							continue;
+						// looks like we've found a usable feature!
+						theFont->opSizeInfo.designSize = SWAP(pSizeRec->designSize);
+						theFont->opSizeInfo.subFamilyID = SWAP(pSizeRec->subFamilyID);
+						theFont->opSizeInfo.nameCode = SWAP(pSizeRec->nameCode);
+						theFont->opSizeInfo.minSize = SWAP(pSizeRec->minSize);
+						theFont->opSizeInfo.maxSize = SWAP(pSizeRec->maxSize);
+						break;
+					}
 					break;
 				}
 			}
