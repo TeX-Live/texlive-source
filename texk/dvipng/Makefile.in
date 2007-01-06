@@ -65,7 +65,7 @@ CPPFLAGS = @CPPFLAGS@ -I. $(lib_cppflags)
 # -I. must come first, or get gd/config.h.
 LN_S = @LN_S@
 
-LIBS = $(lib_libs) @LIBS@ -lm
+LIBS = $(lib_libs) @LIBS@
 LDFLAGS = @LDFLAGS@
 
 srcdir = @srcdir@
