@@ -221,7 +221,6 @@ TEXINPUTS.pdfxtex       = .;$TEXMF/tex/{plain,generic,}//
 
 % XeTeX
 TEXINPUTS.xelatex       = .;$TEXMF/tex/{xelatex,latex,generic,}//
-TEXINPUTS.xeplain       = .;$TEXMF/tex/{xeplain,eplain,plain,generic,}//
 TEXINPUTS.xetex         = .;$TEXMF/tex/{xetex,plain,generic,}//
 
 % Omega / Aleph

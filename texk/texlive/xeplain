@@ -1,3 +1,0 @@
-#!/bin/sh
-test -f "`kpsewhich xeplain.fmt`" || fmtutil --byfmt xeplain
-exec xetex -fmt=xeplain -progname=xetex "$@"

@@ -110,7 +110,6 @@ mllatex		pdftex	language.dat	-translate-file=cp227.tcx -mltex mllatex.ini
 
 # The TeX Live version of eplain.ini includes Babel support:
 eplain	pdftex		language.dat	-translate-file=cp227.tcx *eplain.ini
-@XETEX@xeplain	xetex		language.dat	-etex xeplain.ini
 
 # --- strange things
 texsis		pdftex	-		-translate-file=cp227.tcx texsis.ini
