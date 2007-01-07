@@ -24,7 +24,7 @@ test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 progname=texconfig
 
 # the version string
-version=1167506445 # seconds since `00:00:00 1970-01-01 UTC'
+version=1168206389 # seconds since `00:00:00 1970-01-01 UTC'
                    # date '+%s' (with GNU date)
 
 envVars="
@@ -593,7 +593,7 @@ tcBatch()
        $progname font rw
        $progname formats
        $progname hyphen FORMAT
-       $progname init [format]
+       $progname init [formats]
        $progname mode MODE
        $progname paper PAPER
        $progname pdftex [options]
@@ -1149,7 +1149,10 @@ $formatsForHyphenFmt"
           updmap || rc=1
           ;;
         *)
-          fmtutil --byfmt "$2" || rc=1
+          shift 1
+          for i in "$@"; do
+            fmtutil --byfmt "$i" || rc=1
+          done
           ;;
       esac
       ;;
