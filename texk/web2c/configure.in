@@ -293,6 +293,15 @@ sinclude(xetexdir/tests.ac)
 sinclude(xetexdir/acx_pthread.m4)
 ACX_PTHREAD
 
+# the following is for OpenBSD, where the PTHREAD_CFLAGS setting is defeated by -nodefaultlibs in the xetex link;
+# similar hackery might be needed on other systems (groan) -- JK 2007-01-07
+case "${host}" in
+*-*-*bsd*)
+  if test "x$PTHREAD_LIBS" = "x"; then
+    PTHREAD_LIBS="-lpthread"
+  fi ;;
+esac
+
 if test "x$with_xetex" = xyes; then
   AC_HAS_CARBON
 

@@ -202,7 +202,7 @@ trans.o: $(srcdir)/xetexdir/trans.c
 xetex: $(xetex_o) $(xetex_add_o) $(xetex_images_o) $(xetex_ot_layout_o) $(EXTRADEPS)
 	@CXXHACKLINK@ $(xetex_o) $(xetex_add_o) $(xetex_images_o) $(xetex_ot_layout_o) \
 	$(FONTCONFIGLDFLAGS) $(socketlibs) $(xetexlibs) $(EXTRALIBS) \
-	@CXXHACKLDLIBS@ @CXXLDEXTRA@ @PTHREAD_LIBS@
+	@CXXHACKLDLIBS@ @CXXLDEXTRA@ @PTHREAD_CFLAGS@ @PTHREAD_LIBS@
 
 # C file dependencies
 $(xetex_c) xetexcoerce.h xetexd.h: xetex.p $(web2c_texmf)
