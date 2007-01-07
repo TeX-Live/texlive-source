@@ -21,7 +21,7 @@ CONTEXTSCRIPTS = \
   textools texutil tmftools xmltools
 
 contextmanpgs = \
-  ctxtools makempy pstopdf texfind texmfstart \
+  ctxtools makempy mptopdf pstopdf texfind texmfstart \
   fdf2tex pdftools texexec texfont texutil
 
 manpgs = \
