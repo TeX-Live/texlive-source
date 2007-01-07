@@ -4,6 +4,10 @@
 
 Makefile: $(srcdir)/xetexdir/xetex.mk
 
+# this should probably move to common.mk some day,
+# but need to check possible effect on other programs
+ALL_CXXFLAGS = @CXXFLAGS@
+
 # We build xetex unless configure decides to skip it
 xetex = @XETEX@ xetex
 
@@ -198,7 +202,7 @@ trans.o: $(srcdir)/xetexdir/trans.c
 xetex: $(xetex_o) $(xetex_add_o) $(xetex_images_o) $(xetex_ot_layout_o) $(EXTRADEPS)
 	@CXXHACKLINK@ $(xetex_o) $(xetex_add_o) $(xetex_images_o) $(xetex_ot_layout_o) \
 	$(FONTCONFIGLDFLAGS) $(socketlibs) $(xetexlibs) $(EXTRALIBS) \
-	@CXXHACKLDLIBS@ @CXXLDEXTRA@
+	@CXXHACKLDLIBS@ @CXXLDEXTRA@ @PTHREAD_LIBS@
 
 # C file dependencies
 $(xetex_c) xetexcoerce.h xetexd.h: xetex.p $(web2c_texmf)

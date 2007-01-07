@@ -289,6 +289,10 @@ AC_SUBST(XETEX)
 
 sinclude(xetexdir/withenable.ac)
 sinclude(xetexdir/tests.ac)
+
+sinclude(xetexdir/acx_pthread.m4)
+ACX_PTHREAD
+
 if test "x$with_xetex" = xyes; then
   AC_HAS_CARBON
 
