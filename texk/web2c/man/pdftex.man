@@ -442,10 +442,6 @@ Information on how to get pdfe\*(TX and related information
 is available at the
 .BI "http://tug.org" \ TUG
 website.
-The most recent version of pdf\*(TX is available for anonymous
-ftp at the
-.B http://www.pdftex.de/tex/pdftex/
-.IR "pdf\*(TX development site" .
 .P
 The following pdfe\*(TX related mailing list is available:
 .BR pdftex@tug.org .
