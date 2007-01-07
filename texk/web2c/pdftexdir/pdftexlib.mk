@@ -59,15 +59,15 @@ md5lib-clean:
 	rm -f $(LIBMD5DEP)
 
 # obsdcompat
-LIBOBSDCOMPATDIR=../../libs/obsdcompat
+LIBOBSDDIR=../../libs/obsdcompat
 LIBOBSDSRCDIR=$(srcdir)/$(LIBOBSDCOMPATDIR)
 LIBOBSDDEP=@LIBOBSDDEP@
 LDLIBOBSD=@LDLIBOBSD@
 
-$(LIBOBSDCOMPATDIR)/libopenbsd-compat.a: $(LIBOBSDSRCDIR)/*.c $(LIBOBSDSRCDIR)/*.h
+$(LIBOBSDDIR)/libopenbsd-compat.a: $(LIBOBSDSRCDIR)/*.c $(LIBOBSDSRCDIR)/*.h
 # common_makeargs = $(MFLAGS) CC='$(CC)' CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS)' $(XMAKEARGS)
 # CFLAGS setzt libopenbsd-compat selbst, nicht durchreichen!
-	cd $(LIBOBSDCOMPATDIR); $(MAKE) $(MFLAGS) $(XMAKEARGS) libopenbsd-compat.a
+	cd $(LIBOBSDDIR); $(MAKE) $(MFLAGS) $(XMAKEARGS) libopenbsd-compat.a
 
 # libpdf itself
 pdflib = pdftexdir/libpdf.a

@@ -1,4 +1,13 @@
 -------------------------------------------------
+pdfTeX 3.141592-1.40.1 was released on 2007-01-08
+-------------------------------------------------
+- bugfix: the shell escape function was a bit broken
+- bugfix: \pdffontattr gave confusing warnings
+- allow JBIG2 images only with PDF >= 1.4
+- allow \pdfglyphtounicode in dvi mode for format generation
+- pdfTeX uses libpng 1.2.15
+
+-------------------------------------------------
 pdfTeX 3.141592-1.40.0 was released on 2007-01-01
 -------------------------------------------------
 - pdfetex (as a separate binary/program) is gone; all extensions are now in

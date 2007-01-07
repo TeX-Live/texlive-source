@@ -311,6 +311,11 @@ integer readimage(strnumber s, integer page_num, strnumber page_name,
         read_jpg_info(img);
         break;
     case IMAGE_TYPE_JBIG2:
+        if (pdfversion < 4) {
+            pdftex_fail
+                ("JBIG2 images only possible with at least PDF 1.4; you are generating PDF 1.%i",
+                 pdfversion);
+        }
         jbig2_ptr(img) = xtalloc(1, JBIG2_IMAGE_INFO);
         img_type(img) = IMAGE_TYPE_JBIG2;
         jbig2_ptr(img)->selected_page = page_num;

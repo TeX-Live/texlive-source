@@ -286,8 +286,8 @@ known as `\eTeX'.
   {printed when \eTeX\ starts}
 @#
 @d pdftex_version==140 { \.{\\pdftexversion} }
-@d pdftex_revision=="0" { \.{\\pdftexrevision} }
-@d pdftex_version_string=='-1.40.0' {current \pdfTeX\ version}
+@d pdftex_revision=="1" { \.{\\pdftexrevision} }
+@d pdftex_version_string=='-1.40.1' {current \pdfTeX\ version}
 @#
 @d pdfeTeX_banner=='This is pdfeTeX, Version 3.141592',pdftex_version_string,eTeX_version_string
    {printed when \pdfeTeX\ starts}
@@ -4062,7 +4062,33 @@ font will be printed.
 @ Boxes, rules, inserts, whatsits, marks, and things in general that are
 sort of ``complicated'' are indicated only by printing `\.{[]}'.
 
-@p procedure short_display(@!p:integer); {prints highlights of list |p|}
+@p
+procedure print_font_identifier(f: internal_font_number);
+begin
+    if pdf_font_blink[f] = null_font then
+        print_esc(font_id_text(f))
+    else
+        print_esc(font_id_text(pdf_font_blink[f]));
+    if pdf_tracing_fonts > 0 then begin
+        print(" (");
+        print(font_name[f]);
+        if font_size[f] <> font_dsize[f] then begin
+            print("@@");
+            print_scaled(font_size[f]);
+            print("pt");
+        end;
+        print(")");
+    end else
+        if pdf_font_expand_ratio[f] <> 0 then begin
+            print(" (");
+            if pdf_font_expand_ratio[f] > 0 then
+                print("+");
+            print_int(pdf_font_expand_ratio[f]);
+            print(")");
+        end;
+end;
+
+procedure short_display(@!p:integer); {prints highlights of list |p|}
 var n:integer; {for replacement counts}
 begin while p>mem_min do
   begin if is_char_node(p) then
@@ -4071,7 +4097,7 @@ begin while p>mem_min do
         begin if (font(p)<font_base)or(font(p)>font_max) then
           print_char("*")
 @.*\relax@>
-        else @<Print the font identifier for |font(p)|@>;
+        else print_font_identifier(font(p));
         print_char(" "); font_in_short_display:=font(p);
         end;
       print_ASCII(qo(character(p)));
@@ -4110,7 +4136,7 @@ its reference count, and one to print a rule dimension.
 begin if p>mem_end then print_esc("CLOBBERED.")
 else  begin if (font(p)<font_base)or(font(p)>font_max) then print_char("*")
 @.*\relax@>
-  else @<Print the font identifier for |font(p)|@>;
+  else print_font_identifier(font(p));
   print_char(" "); print_ASCII(qo(character(p)));
   end;
 end;
@@ -6770,31 +6796,6 @@ primitive'. (Primitives consisting of a single nonalphabetic character,
 
 Meanwhile, this is a convenient place to catch up on something we were unable
 to do before the hash table was defined:
-
-@<Print the font identifier for |font(p)|@>=
-begin
-    if pdf_font_blink[font(p)] = null_font then
-        print_esc(font_id_text(font(p)))
-    else
-        print_esc(font_id_text(pdf_font_blink[font(p)]));
-    if pdf_tracing_fonts > 0 then begin
-        print(" (");
-        print(font_name[font(p)]);
-        if font_size[font(p)] <> font_dsize[font(p)] then begin
-            print("@@");
-            print_scaled(font_size[font(p)]);
-            print("pt");
-        end;
-        print(")");
-    end else
-        if pdf_font_expand_ratio[font(p)] <> 0 then begin
-            print(" (");
-            if pdf_font_expand_ratio[font(p)] > 0 then
-                print("+");
-            print_int(pdf_font_expand_ratio[font(p)]);
-            print(")");
-        end;
-end
 
 @* \[19] Saving and restoring equivalents.
 The nested structure provided by `$\.{\char'173}\ldots\.{\char'175}$' groups
@@ -14943,7 +14944,7 @@ while p>mem_min do
         begin if (font(p)<font_base)or(font(p)>font_max) then
           print_char("*")
 @.*\relax@>
-        else @<Print the font identifier for |font(p)|@>;
+        else print_font_identifier(font(p));
         print_char(" "); font_in_short_display:=font(p);
         end;
       print_ASCII(qo(character(p)));
@@ -19340,11 +19341,15 @@ for k := font_base + 1 to font_ptr do
             if pdf_char_marked(k, j) then
                 pdf_mark_char(i, j);
         if (length(pdf_font_attr[i]) = 0) and (length(pdf_font_attr[k]) <> 0) then
-            pdf_font_attr[i] := pdf_font_attr[k];
-        if not ((pdf_font_attr[i] = pdf_font_attr[k]) or
-           str_eq_str(pdf_font_attr[i], pdf_font_attr[k])) then begin
-           pdf_warning("\pdffontattr", "font ", false, false);
-           print_esc(font_id_text(k));
+            pdf_font_attr[i] := pdf_font_attr[k]
+        else if (length(pdf_font_attr[k]) = 0) and (length(pdf_font_attr[i]) <> 0) then
+            pdf_font_attr[k] := pdf_font_attr[i]
+        else if (length(pdf_font_attr[i]) <> 0) and (length(pdf_font_attr[k]) <> 0) and
+           not str_eq_str(pdf_font_attr[i], pdf_font_attr[k]) then begin
+           pdf_warning("\pdffontattr", "fonts ", false, false);
+           print_font_identifier(i);
+           print(" and ");
+           print_font_identifier(k);
            print(" has conflicting attributes"); print_ln; print_ln;
         end;
     end;
@@ -34334,7 +34339,6 @@ end
 
 @ @<Implement \.{\\pdfglyphtounicode}@>=
 begin
-    check_pdfoutput("\pdfglyphtounicode", true);
     glyph_to_unicode;
 end
 
