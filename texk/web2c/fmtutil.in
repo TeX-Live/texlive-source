@@ -68,13 +68,6 @@ amstex	pdftex		-		-translate-file=cp227.tcx *amstex.ini
 # if you want babel support in pdfamstex:
 #! pdfamstex	pdftex			-	-translate-file=cp227.tcx *pdfamstex.ini
 
-# Context formats:
-#! cont-cz	pdftex		cont-usr.tex	-8bit *cont-cz.ini
-#! cont-de	pdftex		cont-usr.tex	-8bit *cont-de.ini
-cont-en	pdftex		cont-usr.tex	-8bit *cont-en.ini
-#! cont-nl	pdftex		cont-usr.tex	-8bit *cont-nl.ini
-#! cont-uk	pdftex		cont-usr.tex	-8bit *cont-uk.ini
-
 # language-specific things:
 
 # - Cyrillic:
