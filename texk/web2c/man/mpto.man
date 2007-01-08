@@ -1,4 +1,4 @@
-.TH MPTO 1 "4 January 1998" "Web2C @VERSION@"
+.TH MPTO 1 "7 January 2007" "MetaPost 0.993" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MP MetaPost
 .if t .ds MP MetaPost

@@ -1,4 +1,4 @@
-.TH LATEX 1 "29 March 1999" "Web2C @VERSION@"
+.TH LATEX 1 "7 January 2007" "Web2C @VERSION@"
 .\"=====================================================================
 .if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
 .if n .ds TX TeX
@@ -68,3 +68,8 @@ should not be used for new texts.
 Leslie Lamport,
 .IR "\*(LX \- A Document Preparation System" ,
 Addison-Wesley, 1985, ISBN 0-201-15790-X.
+
+LaTeX Companion
+
+LaTeX Graphics Companion
+

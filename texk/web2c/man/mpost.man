@@ -1,4 +1,4 @@
-.TH MPOST 1 "10 November 2001" "Web2C @VERSION@"
+.TH MPOST 1 "7 January 2007" "MetaPost 0.993" "Web2C 7.5.6"
 .\"=====================================================================
 .if n .ds MP MetaPost
 .if t .ds MP MetaPost
@@ -432,6 +432,15 @@ in a little more detail.
 This manual page is not meant to be exhaustive.  The complete
 documentation for this version of \*(MP can be found in the info manual
 .IR "Web2C: A TeX implementation" .
+See also 
+.IR mpman.pdf ,
+the manual written by John Hobby (it lives in the documentation
+directory).
+.PP
+.B MetaPost
+is the native graphics language for ConTeXt, a typesetting system
+built on top of the \*(TX family.  See 
+.BR texexec (1).
 .\"=====================================================================
 .SH "SUGGESTED READING"
 Donald E. Knuth,
@@ -453,6 +462,7 @@ CSTR 164, AT&T Bell Labs,
 .\"=====================================================================
 .SH "SEE ALSO"
 .BR tex (1),
+.BR texexec (1),
 .BR mf (1),
 .BR dvips (1).
 .\"=====================================================================
@@ -468,6 +478,8 @@ searching features in more recent versions of
 .B web2c
 and worked towards fully integrating \*(MP into the canonical Unix 
 \*(TX distribution.  He also updated and extended this manual page.
+.PP
+The current maintainer of MetaPost is Taco Hoekwater.
 .\"=====================================================================
 .SH TRIVIA
 Unlike \*(TX and \*(MF, \*(MP originally didn't use any fancy logo.

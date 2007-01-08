@@ -1,4 +1,4 @@
-.TH PDFTEX 1 "25 March 2004" "Web2C @VERSION@"
+.TH PDFTEX 1 "7 Jan 2007" "pdftex 1.40" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF M\s-2ETAFONT\s0
@@ -46,7 +46,7 @@ it is usually better to use the
 .I format
 option instead.
 .PP
-pdf\*(TX is a version of \*(TX that can create
+pdf\*(TX is a version of \*(TX, with the e-\*(TX extensions, that can create
 .I PDF
 files as well as
 .I DVI
@@ -54,7 +54,7 @@ files.
 .PP
 In
 .I DVI
-mode, pdf\*(TX can be used as a complete replacement of the \*(TX
+mode, pdf\*(TX can be used as a complete replacement for the \*(TX
 engine.
 .PP
 The typical use of pdf\*(TX is with a pregenerated formats for which
@@ -75,15 +75,17 @@ commands are pdf\*(TX's analogues to the
 .B initex
 and
 .B virtex
-commands.  In this installation, they are symbolic links to the
+commands.  In this installation, if the links exist, they are symbolic
+links to the
 .B pdftex
-executable.  These symbolic links may not exist at all.
+executable.
 .PP
 In
 .I PDF
 mode, pdf\*(TX can natively handle the
 .IR PDF ,
 .IR JPG ,
+.IR JBIG2 ,
 and
 .I PNG
 graphics formats.
@@ -411,6 +413,11 @@ Predigested pdf\*(TX format (.\|fmt) files.
 .br
 .\"=====================================================================
 .SH NOTES
+Starting with version 1.40, pdf\*(TX incorporates the e-\*(TX
+extensions, and pdfe\*(TX is just a copy of pdf\*(TX.  See 
+.BR etex (1)
+and
+.BR pdfetex (1).
 This manual page is not meant to be exhaustive.  The complete
 documentation for this version of pdf\*(TX can be found in the info
 manual
@@ -442,6 +449,10 @@ Information on how to get pdfe\*(TX and related information
 is available at the
 .BI "http://tug.org" \ TUG
 website.
+The most recent version of pdf\*(TX is available for anonymous
+ftp at the
+.B http://www.pdftex.org/
+.IR "pdf\*(TX development site" .
 .P
 The following pdfe\*(TX related mailing list is available:
 .BR pdftex@tug.org .
@@ -457,11 +468,13 @@ website.
 .\"=====================================================================
 .SH "SEE ALSO"
 .BR tex (1),
+.BR etex (1),
+.BR pdfetex (1),
 .BR mf (1).
 .\"=====================================================================
 .SH AUTHORS
-The primary authors of pdf\*(TX are Han The Thanh, Petr Sojka, and
-Jiri Zlatuska.
+The primary authors of pdf\*(TX are Han The Thanh, Petr Sojka,
+Jiri Zlatuska, and Peter Breitenlohner (e\*TX).
 .PP
 \*(TX was designed by Donald E. Knuth,
 who implemented it using his \*(WB system for Pascal programs.

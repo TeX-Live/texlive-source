@@ -1,4 +1,4 @@
-.TH PDFETEX 1 "21 August 2004" "Web2C @VERSION@"
+.TH PDFETEX 1 "7 January 2007" "pdftex 1.40" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF M\s-2ETAFONT\s0
@@ -417,6 +417,9 @@ Predigested pdfe\*(TX format (.\|fmt) files.
 .br
 .\"=====================================================================
 .SH NOTES
+Starting with version 1.40, pdf\*(TX incorporates the e-\*(TX
+extensions, and pdfe\*(TX is just a copy of pdf\*(TX.  See 
+.BR pdftex (1).
 This manual page is not meant to be exhaustive.  The complete
 documentation for this version of pdfe\*(TX can be found in the info
 manual
@@ -448,6 +451,10 @@ Information on how to get pdfe\*(TX and related information
 is available at the
 .BI "http://tug.org" \ TUG
 website.
+The most recent version of pdfe\*(TX is available for anonymous
+ftp at the
+.B http://www.pdftex.org/
+.IR "pdfe\*(TX development site" .
 .P
 The following pdfe\*(TX related mailing list is available:
 .BR pdftex@tug.org .
@@ -468,8 +475,8 @@ website.
 .BR pdftex (1).
 .\"=====================================================================
 .SH AUTHORS
-The primary authors of pdf\*(TX are Han The Thanh, Petr Sojka, and
-Jiri Zlatuska.
+The primary authors of pdfe\*(TX are Han The Thanh, Petr Sojka,
+Jiri Zlatuska, and Peter Breitenlohner (e\*TX).
 .PP
 \*(TX was designed by Donald E. Knuth,
 who implemented it using his \*(WB system for Pascal programs.

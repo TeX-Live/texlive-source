@@ -1,4 +1,4 @@
-.TH ETEX 1 "21 August 2004" "Web2C @VERSION@"
+.TH ETEX 1 "7 January 2007" "pdftex 1.40" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF M\s-2ETAFONT\s0
@@ -390,6 +390,10 @@ Predigested e-\*(TX format (.\|fmt) files.
 .br
 .\"=====================================================================
 .SH NOTES
+Starting with version 1.40, pdf\*(TX incorporates the e-\*(TX
+extensions, so in this installation e\*(TX is just a symbolic link to
+pdf\*(TX.  See 
+.BR pdftex (1).
 This manual page is not meant to be exhaustive.  The complete
 documentation for this version of e-\*(TX can be found in the info
 manual
@@ -411,6 +415,7 @@ but when it does the generated
 file will be invalid.
 .\"=====================================================================
 .SH "SEE ALSO"
+.BR pdftex (1),
 .BR tex (1),
 .BR mf (1).
 .\"=====================================================================

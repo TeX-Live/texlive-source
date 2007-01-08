@@ -1,4 +1,4 @@
-.TH BIBTEX 1 "24 November 1994" "Web2C @VERSION@"
+.TH BIBTEX 1 "8 January 2007" "bibtex 0.99c" "Web2C @VERSION@"
 .\"=====================================================================
 .if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
 .if n .ds TX TeX
