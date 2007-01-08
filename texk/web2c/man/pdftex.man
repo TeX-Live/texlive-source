@@ -1,4 +1,4 @@
-.TH PDFTEX 1 "7 Jan 2007" "pdftex 1.40" "Web2C @VERSION@"
+.TH PDFTEX 1 "8 Jan 2007" "pdftex 1.40" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF M\s-2ETAFONT\s0
@@ -97,6 +97,11 @@ implementation.
 .SH OPTIONS
 This version of pdf\*(TX understands the following command line options.
 .TP
+.B -draftmode
+.rb
+Sets \epdfdraftmode so pdf\*(TX doesn't write a PDF and doesn't read any
+included images, thus speeding up execution.
+.TP
 .B -enc
 .rb
 Enable the enc\*(TX extensions.  This option is only effective in
@@ -104,6 +109,11 @@ combination with
 .BR -ini .
 For documentation of the enc\*(TX extensions see
 .BR http://www.olsak.net/enctex.html .
+.TP
+.B -etex
+.rb
+Enable the e\*(TX extensions. See
+.BR etex (1).
 .TP
 .B -file-line-error
 .rb
@@ -415,12 +425,11 @@ Predigested pdf\*(TX format (.\|fmt) files.
 .SH NOTES
 Starting with version 1.40, pdf\*(TX incorporates the e-\*(TX
 extensions, and pdfe\*(TX is just a copy of pdf\*(TX.  See 
-.BR etex (1)
-and
-.BR pdfetex (1).
+.BR etex (1).
 This manual page is not meant to be exhaustive.  The complete
-documentation for this version of pdf\*(TX can be found in the info
-manual
+documentation for this version of pdf\*(TX can be found in the 
+.IR "pdf\*(TX manual"
+and the info manual
 .IR "Web2C: A TeX implementation" .
 .\"=====================================================================
 .SH BUGS
@@ -445,14 +454,11 @@ pdf\*(TX is available for a large variety of machine architectures
 and operation systems.
 pdf\*(TX is part of all major \*(TX distributions.
 .P
-Information on how to get pdfe\*(TX and related information
+Information on how to get pdf\*(TX and related information
 is available at the
-.BI "http://tug.org" \ TUG
+.B http://www.pdftex.org
+.IR "pdf\*(TX"
 website.
-The most recent version of pdf\*(TX is available for anonymous
-ftp at the
-.B http://www.pdftex.org/
-.IR "pdf\*(TX development site" .
 .P
 The following pdfe\*(TX related mailing list is available:
 .BR pdftex@tug.org .
@@ -469,7 +475,6 @@ website.
 .SH "SEE ALSO"
 .BR tex (1),
 .BR etex (1),
-.BR pdfetex (1),
 .BR mf (1).
 .\"=====================================================================
 .SH AUTHORS
