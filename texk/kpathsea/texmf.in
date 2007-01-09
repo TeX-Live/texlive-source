@@ -533,10 +533,6 @@ ocp_list_size = 1000    % control for multiple ocps.
 % Set to 2000 by default.
 % path_size.mpost = 10000
 
-% These are pdftex-specific.
-obj_tab_size = 300000    % PDF objects
-dest_names_size = 300000 % destinations
-
 % These work best if they are the same as the I/O buffer size, but it
 % doesn't matter much.  Must be a multiple of 8.
 dvi_buf_size = 16384 % TeX
