@@ -1,7 +1,7 @@
 
 /**********************************************************/
-/* t4ht.c                                2006-09-13-14:28 */
-/* Copyright (C) 1998--2006    Eitan M. Gurari            */
+/* t4ht.c                                2007-01-05-03:17 */
+/* Copyright (C) 1998--2007    Eitan M. Gurari            */
 /*                                                        */
 /* This work may be distributed and/or modified under the */
 /* conditions of the LaTeX Project Public License, either */
@@ -388,6 +388,7 @@ static Q_CHAR *Dotfield = Q_NULL;
 static Q_CHAR *dir = Q_NULL;
 static Q_CHAR *lg_name  = Q_NULL, tmp_name[255], job_name[255];
 static Q_CHAR *nopict = Q_NULL;
+static Q_CHAR *bitmaps_no_dm = Q_NULL;
 static BOOL newchmod = FALSE;
 static Q_CHAR *noreuse = Q_NULL;
 
@@ -439,6 +440,7 @@ static C_CHAR *warn_err_mssg[]={
 
 "\n--------------------------------------------------------------------\n"
 "t4ht [-f<dir char>]filename ...\n"
+"  -b     ignore -d -m -M for bitmaps\n"
 "  -c...  choose named segment in env file\n"
 "  -d...  directory for output files       (default:  current)\n"
 "  -e...  location of tex4ht.env\n"
@@ -653,6 +655,12 @@ static void execute_script
 #endif
 {                               struct script_struct* temp;
                                  Q_CHAR *p, *q, *t;
+  
+#ifdef KPATHSEA
+char * texmf = (char  *) kpse_var_value( "SELFAUTOPARENT" );
+#endif
+
+
    temp = script;  system_return = 0;
    while( temp ){
       
@@ -661,7 +669,9 @@ q = command;
 while( *p != '\0' ){
   *q = *(p++);
   if( (*q == '%') && (*p == '%')
-     && ((*(p+1) == '%')  || ( (*(p+1) >= '0') && (*(p+1) < '5') ) )
+     && (    (*(p+1) == '%')
+          || (*(p+1) == '~')
+          || ( (*(p+1) >= '0') && (*(p+1) < '5') ) )
   ){  p++;
     switch( *(p++) ){
       case '%':{  q++; break; }
@@ -675,6 +685,19 @@ while( *p != '\0' ){
             while( *t != '\0' ){ *(q++) = *(t++); }  break; }
       case '4':{  t = match_4;
             while( *t != '\0' ){ *(q++) = *(t++); }  break; }
+      case '~':{ 
+#ifdef KPATHSEA
+   if( texmf ){
+      t = texmf;
+      while( *t != '\0' ){ *(q++) = *(t++); }
+   } else {
+      *(q++) = '~';
+   }
+#else
+   *(q++) = '~';
+#endif
+
+          break; }
       default: {  }
   }} else { q++; }
 }
@@ -893,7 +916,7 @@ char *get_env_dir
       Q_CHAR *p;
   if(! progname || ! *progname)  return NULL;  
   i = (int) strlen(progname);
-  while( (progname[--i] != dir_path_slash(progname) )
+  while( (progname[--i] != (int) dir_path_slash(progname) )
         && i > 0) ;                               
   if(i == 0)  return NULL;                        
   p = (Q_CHAR *) malloc(i+12);
@@ -1425,17 +1448,48 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 (IGNORED) printf("----------------------------\n");
 #ifndef KPATHSEA
 #ifdef PLATFORM
-   (IGNORED) printf("t4ht.c (2006-09-13-14:28 %s)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2007-01-05-03:17 %s)\n",PLATFORM);
 #else
-   (IGNORED) printf("t4ht.c (2006-09-13-14:28)\n");
+   (IGNORED) printf("t4ht.c (2007-01-05-03:17)\n");
 #endif
 #else
 #ifdef PLATFORM
-   (IGNORED) printf("t4ht.c (2006-09-13-14:28 %s kpathsea)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2007-01-05-03:17 %s kpathsea)\n",PLATFORM);
 #else
-   (IGNORED) printf("t4ht.c (2006-09-13-14:28 kpathsea)\n");
+   (IGNORED) printf("t4ht.c (2007-01-05-03:17 kpathsea)\n");
 #endif
 #endif
+
+
+{ int i, count = 0;
+ for(i=0; i<argc; i++){
+   Q_CHAR *p = argv[i];
+   count++;
+   if( (*p == '\'') || (*p == '\"') ){
+     int cnt;
+     int len = 0;
+     for( cnt=i; cnt < argc; cnt++ ){
+       len += (int) strlen(argv[cnt]);
+       if( *(argv[cnt] + (int) strlen(argv[cnt]) -1) == *p ){
+           Q_CHAR * arg = m_alloc(char, len + cnt - i + 1);
+           Q_CHAR * toArg = arg;
+           Q_CHAR *pp;
+           i--;
+           do {
+             pp = argv[++i];
+             while( *pp != '\0' ){
+                if( *pp != *p ){ *(toArg++) = *pp; }
+                pp++;
+             }
+             *(toArg++) = ' ';
+           } while ( i != cnt );
+           *(toArg-1) = '\0';
+           argv[count-1] = arg;
+           break;
+ } } } }
+ argc = count;
+}
+
 
 { int i;
   for(i=0; i<argc; i++){
@@ -1483,7 +1537,7 @@ system( yes ) != 0
   for(i=1; i<argc; i++){
     if( *( p=argv[i] ) == '-' ){ 
 if( (int) strlen( argv[i] ) == 2 ){
-   if( (*(p+1)!='i')  && (*(p+1) != 'p') && (*(p+1) != 'r') )
+   if( (*(p+1)!='i')  && (*(p+1) != 'p') && (*(p+1) != 'r') && (*(p+1) != 'b') )
      { if( ++i == argc ) bad_arg; }
    q = argv[i];
 } else q = p+2;
@@ -1499,6 +1553,7 @@ switch( *(p+1) ){
 
  break; }
   case 'X':{ Xfield = q;  break;}
+  case 'b':{ bitmaps_no_dm = q-1;  break;}
   case 'c':{ 
 struct env_c_rec *temp = (struct env_c_rec*)
                    m_alloc(struct env_c_rec, (int) 1);
@@ -2441,7 +2496,7 @@ struct script_struct
                   Q_CHAR filename[255];
                   FILE* file;
 (IGNORED) strcpy(filename, "");
-if( dir ){ (IGNORED) strct(filename, dir); }
+if( dir && !bitmaps_no_dm ){ (IGNORED) strct(filename, dir); }
 (IGNORED) strct(filename, match[3]);
 file  = fopen(filename, READ_TEXT_FLAGS);
 if( !file || noreuse ){
@@ -2452,10 +2507,10 @@ filtered_dvigif_script = dvigif_glyp_script?
 (void) execute_script(
     filtered_dvigif_script,match[1],match[2],match[3],job_name);
 (void) free_script( filtered_dvigif_script );
-if( dir && !system_return ){
+if( dir && !bitmaps_no_dm && !system_return ){
   (void) execute_script(move_script,match[3],dir,".","");
 
-if( ch_mod && !system_return ){
+if( ch_mod && !bitmaps_no_dm && !system_return ){
   (void) execute_script(chmod_script, ch_mod, dir?dir:"",match[3], "");
 }
 
@@ -2467,7 +2522,7 @@ if( ch_mod && !system_return ){
    (IGNORED) fclose(file);
    if( newchmod )
    { 
-if( ch_mod && !system_return ){
+if( ch_mod && !bitmaps_no_dm && !system_return ){
   (void) execute_script(chmod_script, ch_mod, dir?dir:"",match[3], "");
 }
 
@@ -2485,8 +2540,8 @@ empty_pic->n
   
 if( !skip ){
    (void) execute_script(empty_fig_script,
-                           dir? dir :"", match[3],"","");
-   if( ch_mod && !system_return ){
+                           (dir && !bitmaps_no_dm )? dir :"", match[3],"","");
+   if( ch_mod && !bitmaps_no_dm && !system_return ){
      (void) execute_script(chmod_script, ch_mod,
                            dir?dir:"",match[3], "");
    }
@@ -2501,10 +2556,10 @@ filtered_dvigif_script = filterGifScript(dvigif_script, match[3]);
 (void) execute_script(
   filtered_dvigif_script,match[1],match[2],match[3],job_name);
 (void) free_script( filtered_dvigif_script );
-if( dir && !system_return ){
+if( dir && !bitmaps_no_dm && !system_return ){
   (void) execute_script(move_script,match[3],dir,".","");
 }
-if( ch_mod && !system_return ){
+if( ch_mod && !bitmaps_no_dm && !system_return ){
   (void) execute_script(chmod_script, ch_mod, dir?dir:"",match[3], "");
 }
 

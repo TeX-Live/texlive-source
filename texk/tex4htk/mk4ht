@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# mk4ht                                 2006-08-28-20:45 %
-# Copyright (C) 2003--2006               Eitan M. Gurari %
+# mk4ht                                 2007-01-04-01:34 %
+# Copyright (C) 2003--2007               Eitan M. Gurari %
 #                                                        %
 #                                                        %
 # This work may be distributed and/or modified under the %
@@ -58,6 +58,10 @@ my @options = (
  "js", "jstex",     "tex",     "xhtml,jsml", " -cjsmlhtf",  "-cjsml",
  "js", "jstexi",    "texi",    "xhtml,jsml", " -cjsmlhtf",  "-cjsml",
  "js", "jscontext", "context", "xhtml,jsml", " -cjsmlhtf",  "-cjsml",
+ "jm", "jmlatex",   "latex",   "xhtml,jsmath", " -cmozhtf", "",
+ "jm", "jmtex",     "tex",     "xhtml,jsmath", " -cmozhtf", "",
+ "jm", "jmtexi",    "texi",    "xhtml,jsmath", " -cmozhtf", "",
+ "jm", "jmcontext", "context", "xhtml,jsmath", " -cmozhtf", "",
  "tei",  "teilatex",  "latex",   "xhtml,tei",    " -cunihtf",  "-cvalidate",
  "tei",  "teitex",    "tex",     "xhtml,tei",    " -cunihtf",  "-cvalidate",
  "tei",  "teitexi",   "texi",    "xhtml,tei",    " -cunihtf",  "-cvalidate",
@@ -178,7 +182,7 @@ print "  clean.htlatex     lg tmp\n";
 
 }
 
-print "mk4ht (2006-08-28-20:45)\n";
+print "mk4ht (2007-01-04-01:34)\n";
 if(  !@ARGV  ){
   print "improper command\n";
   showInstrucions(); exit(1);
