@@ -244,7 +244,7 @@ test "$needs_obsdcompat" = yes \
 
 AC_CONFIG_SUBDIRS([libs])
 
-PKGS='dialog lcdf-typetools pdfopen psutils t1utils texi2html texinfo'
+PKGS='dialog lcdf-typetools pdfopen ps2eps psutils t1utils texi2html texinfo'
 ESUBDIRS=
 test -d utils || mkdir utils
 for pkg in $PKGS; do

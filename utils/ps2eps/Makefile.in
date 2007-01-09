@@ -1,0 +1,48 @@
+VPATH = @srcdir@
+srcdir = @srcdir@
+
+CC = @CC@
+CFLAGS = @CFLAGS@
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+
+prefix = @prefix@
+datarootdir = @datarootdir@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+mandir = @mandir@
+
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL = @INSTALL@
+
+default all: bbox
+
+bbox: bbox.o
+	$(CC) $(LDFLAGS) bbox.o -o bbox
+
+.c.o:
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $<
+
+install: bbox
+	$(INSTALL) -d $(bindir) $(mandir)/man1
+	$(INSTALL_SCRIPT) $(srcdir)/ps2eps $(bindir)/ps2eps
+	$(INSTALL_PROGRAM) bbox $(bindir)/bbox
+	$(INSTALL_DATA) $(srcdir)/ps2eps.1 $(mandir)/man1/ps2eps.1
+	$(INSTALL_DATA) $(srcdir)/bbox.1 $(mandir)/man1/bbox.1
+
+check:
+
+uninstall:
+	-rm -f $(bindir)/ps2eps $(bindir)/bbox $(mandir)/man1/ps2eps.1 $(mandir)/man1/bbox.1
+
+clean:
+	-rm -f bbox bbox.o
+
+distclean: clean
+	-rm -f Makefile config.status config.log config.cache
+
+realclean: distclean
+
+mostlyclean: clean

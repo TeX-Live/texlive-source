@@ -12,11 +12,14 @@ AC_ARG_WITH([lcdf-typetools],
 AC_ARG_WITH([pdfopen],
         [  --without-pdfopen       do not build the pdfopen package])
 
+AC_ARG_WITH([ps2eps],
+        [  --without-ps2eps        do not build the ps2eps package])
+
 AC_ARG_WITH([psutils],
         [  --without-psutils       do not build the psutils package])
 
 AC_ARG_WITH([sam2p],
-        [  --without-sam2p       do not build the sam2p package])
+        [  --without-sam2p         do not build the sam2p package])
 
 AC_ARG_WITH([t1utils],
         [  --without-t1utils       do not build the t1utils package])
