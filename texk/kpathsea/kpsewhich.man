@@ -1,4 +1,4 @@
-.TH KPSEWHICH 1 "4 January 1998" "Kpathsea @VERSION@"
+.TH KPSEWHICH 1 "7 January 2007" "Kpathsea @VERSION@"
 .\"=====================================================================
 .if n .ds MP MetaPost
 .if t .ds MP MetaPost
@@ -149,6 +149,7 @@ option to print the list.
 .rb
 Print the expansion of
 .IR variable .
+.TP
 .B -version
 .rb
 Print version information and exit.
