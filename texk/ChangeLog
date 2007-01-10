@@ -1,3 +1,8 @@
+2007-01-10  Karl Berry  <karl@tug.org>
+
+	* dvipos/Makefile (DEFS): add -I../../../texk for
+	kpathsea/kpathsea.h
+
 2006-12-05  Karl Berry  <karl@tug.org>
 
 	* configure: trying dvipng again.
