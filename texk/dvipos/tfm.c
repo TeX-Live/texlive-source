@@ -1,4 +1,4 @@
-/*  $Header
+/*  $Header: /home/cvsroot/dvipos/tfm.c,v 1.2 2003/04/24 00:56:00 chofchof Exp $
     
     dvipos-20030225
 
@@ -26,46 +26,20 @@
 
 #include <stdio.h>
 
+#include "utils.h"
 #include "dvicore.h"
+
+#define tfm_unsigned_byte()   get_unsigned_byte(tfm_file)
+#define tfm_signed_byte()     get_signed_byte(tfm_file)
+#define tfm_unsigned_pair()   get_unsigned_pair(tfm_file)
+#define tfm_signed_pair()     get_signed_pair(tfm_file)
+#define tfm_unsigned_triple() get_unsigned_triple(tfm_file)
+#define tfm_signed_triple()   get_signed_triple(tfm_file)
+#define tfm_unsigned_quad()   get_unsigned_quad(tfm_file)
+#define tfm_signed_quad()     get_signed_quad(tfm_file)
 
 static FILE *tfm_file;
 static UNSIGNED_QUAD tfm_filesize;
-
-static UNSIGNED_BYTE get_unsigned_byte (void)
-{
-  return (UNSIGNED_BYTE)(fgetc(tfm_file) & 0xFF);
-}
-
-static UNSIGNED_PAIR get_unsigned_pair (void)
-{
-  register UNSIGNED_PAIR pair = get_unsigned_byte();
-  /* Read the second byte */
-  pair = pair << 8; pair += get_unsigned_byte();
-  return pair;
-}
-
-static UNSIGNED_QUAD get_unsigned_quad (void)
-{
-  register UNSIGNED_QUAD quad = get_unsigned_byte();
-  /* Read the second, the third, and the fourth byte */
-  quad = quad << 8; quad += get_unsigned_byte();
-  quad = quad << 8; quad += get_unsigned_byte();
-  quad = quad << 8; quad += get_unsigned_byte();
-  return quad;
-}
-
-static SIGNED_QUAD get_signed_quad (void)
-{
-  register UNSIGNED_QUAD quad;
-  /* Read the first byte and check the sign */
-  register UNSIGNED_BYTE byte = get_unsigned_byte();
-  quad = (byte & 0x80 ? byte - 0x100 : byte);
-  /* Read the second, the third, and the fourth byte */
-  quad = quad << 8; quad += get_unsigned_byte();
-  quad = quad << 8; quad += get_unsigned_byte();
-  quad = quad << 8; quad += get_unsigned_byte();
-  return (SIGNED_QUAD)quad;
-}
 
 #define FWBASE ((double) (1<<20))
 #define JFM_ID 11
@@ -160,32 +134,32 @@ static void get_sizes (struct a_tfm *a_tfm)
 {
   UNSIGNED_PAIR tfm_id;
 
-  tfm_id = get_unsigned_pair();
+  tfm_id = tfm_unsigned_pair();
   if (tfm_id == JFM_ID || tfm_id == JFMV_ID) { /* is jfm */
     a_tfm -> id = tfm_id;
-    a_tfm -> nt = get_unsigned_pair();
-    a_tfm -> wlenfile = get_unsigned_pair();
+    a_tfm -> nt = tfm_unsigned_pair();
+    a_tfm -> wlenfile = tfm_unsigned_pair();
 #ifdef DEBUG
     fprintf (stderr, "size: %ld\n", a_tfm->wlenfile);
 #endif
   } else {
     a_tfm->wlenfile = tfm_id;
   }
-  a_tfm->wlenheader = get_unsigned_pair();
-  a_tfm->bc = get_unsigned_pair();
-  a_tfm->ec = get_unsigned_pair();
+  a_tfm->wlenheader = tfm_unsigned_pair();
+  a_tfm->bc = tfm_unsigned_pair();
+  a_tfm->ec = tfm_unsigned_pair();
   if (a_tfm -> ec < a_tfm -> bc) {
     fprintf(stderr, "TFM file error (ec < bc)\n");
     exit(1);
   }
-  a_tfm->nwidths = get_unsigned_pair();
-  a_tfm->nheights = get_unsigned_pair();
-  a_tfm->ndepths = get_unsigned_pair();
-  a_tfm->nitcor = get_unsigned_pair();
-  a_tfm->nlig = get_unsigned_pair();
-  a_tfm->nkern = get_unsigned_pair();
-  a_tfm->nextens = get_unsigned_pair();
-  a_tfm->nfonparm = get_unsigned_pair();
+  a_tfm->nwidths = tfm_unsigned_pair();
+  a_tfm->nheights = tfm_unsigned_pair();
+  a_tfm->ndepths = tfm_unsigned_pair();
+  a_tfm->nitcor = tfm_unsigned_pair();
+  a_tfm->nlig = tfm_unsigned_pair();
+  a_tfm->nkern = tfm_unsigned_pair();
+  a_tfm->nextens = tfm_unsigned_pair();
+  a_tfm->nfonparm = tfm_unsigned_pair();
 #ifdef DEBUG
   fprintf(stderr, "\nComputed size (words)%d\n", sum_of_tfm_sizes(a_tfm));
   fprintf(stderr, "Stated size (words)%ld\n", a_tfm->wlenfile);
@@ -206,24 +180,24 @@ static void get_sizes (struct a_tfm *a_tfm)
 static int ofm_get_sizes (struct a_tfm *a_tfm)
 {
   SIGNED_QUAD level;
-  level = get_signed_quad();
-  a_tfm -> wlenfile = get_signed_quad();
-  a_tfm -> wlenheader = get_signed_quad();
-  a_tfm -> bc = get_signed_quad();
-  a_tfm -> ec = get_signed_quad();
+  level = tfm_signed_quad();
+  a_tfm -> wlenfile = tfm_signed_quad();
+  a_tfm -> wlenheader = tfm_signed_quad();
+  a_tfm -> bc = tfm_signed_quad();
+  a_tfm -> ec = tfm_signed_quad();
   if (a_tfm -> ec < a_tfm -> bc) {
     fprintf(stderr, "OFM file error (ec < bc)\n");
     exit(1);
   }
-  a_tfm -> nwidths = get_signed_quad();
-  a_tfm -> nheights = get_signed_quad();
-  a_tfm -> ndepths = get_signed_quad();
-  a_tfm -> nitcor = get_signed_quad();
-  a_tfm -> nlig = get_signed_quad();
-  a_tfm -> nkern = get_signed_quad();
-  a_tfm -> nextens = get_signed_quad();
-  a_tfm -> nfonparm = get_signed_quad();
-  a_tfm -> font_direction = get_signed_quad();
+  a_tfm -> nwidths = tfm_signed_quad();
+  a_tfm -> nheights = tfm_signed_quad();
+  a_tfm -> ndepths = tfm_signed_quad();
+  a_tfm -> nitcor = tfm_signed_quad();
+  a_tfm -> nlig = tfm_signed_quad();
+  a_tfm -> nkern = tfm_signed_quad();
+  a_tfm -> nextens = tfm_signed_quad();
+  a_tfm -> nfonparm = tfm_signed_quad();
+  a_tfm -> font_direction = tfm_signed_quad();
   if (a_tfm->font_direction) {
     fprintf (stderr, "Warning:  I may be interpreting a font direction incorrectly.\n");
   }
@@ -239,9 +213,9 @@ static int ofm_get_sizes (struct a_tfm *a_tfm)
     fprintf (stderr, "Actual size (bytes)%ld\n", tfm_filesize);
 #endif
   } else if (level == 1) {
-    a_tfm -> nco = get_signed_quad();
-    a_tfm -> ncw = get_signed_quad();
-    a_tfm -> npc = get_signed_quad();
+    a_tfm -> nco = tfm_signed_quad();
+    a_tfm -> ncw = tfm_signed_quad();
+    a_tfm -> npc = tfm_signed_quad();
     fseek(tfm_file, 4*(a_tfm -> nco), SEEK_SET);
   } else {
     fprintf(stderr, "Can't handle OFM files with level > 1");
@@ -272,14 +246,14 @@ static void get_fix_word_array (SIGNED_QUAD *a_word, SIGNED_QUAD length)
 {
   register SIGNED_QUAD i;
   for (i = 0; i < length; i++)
-    a_word[i] = get_signed_quad();
+    a_word[i] = tfm_signed_quad();
 }
 
 static void get_unsigned_quad_array (UNSIGNED_QUAD *a_word, SIGNED_QUAD length)
 {
   register SIGNED_QUAD i;
   for (i = 0; i < length; i++)
-    a_word[i] = get_unsigned_quad();
+    a_word[i] = tfm_unsigned_quad();
 }
 
 static void do_fix_word_array (SIGNED_QUAD **a, SIGNED_QUAD len)
@@ -309,8 +283,8 @@ static void do_char_type_array(struct a_tfm *a_tfm)
   a_tfm -> chartypes = (UNSIGNED_PAIR *)calloc(65536, sizeof(UNSIGNED_PAIR));
   for (i = 0; i < 65536; i++) (a_tfm->chartypes)[i] = 0;
   for (i = 0; i < a_tfm->nt; i++) {
-    charcode = get_unsigned_pair();
-    chartype = get_unsigned_pair();
+    charcode = tfm_unsigned_pair();
+    chartype = tfm_unsigned_pair();
     (a_tfm->chartypes)[charcode] = chartype;
   }
 }
@@ -404,10 +378,10 @@ static void do_ofm_zero_char_info (struct a_tfm *a_tfm)
     a_tfm->unpacked_depths = (fixword *)calloc(a_tfm->bc+num_chars, sizeof(fixword));
   }
   for (i = 0; i < num_chars; i++) {
-    (a_tfm->width_index)[i] = get_unsigned_pair();
-    (a_tfm->height_index)[i] = get_unsigned_byte();
-    (a_tfm->depth_index)[i] = get_unsigned_byte();
-    get_signed_quad(); /* Ignore remaining quad */
+    (a_tfm->width_index)[i] = tfm_unsigned_pair();
+    (a_tfm->height_index)[i] = tfm_unsigned_byte();
+    (a_tfm->depth_index)[i] = tfm_unsigned_byte();
+    tfm_signed_quad(); /* Ignore remaining quad */
   }
 }
 
@@ -434,15 +408,15 @@ static void do_ofm_one_char_info (struct a_tfm *a_tfm)
   }
   for (i = 0, char_infos_read = 0; i < num_chars && char_infos_read < num_char_infos; i++) {
     register int repeats, j;
-    (a_tfm->width_index)[i] = get_unsigned_pair();
-    (a_tfm->height_index)[i] = get_unsigned_byte();
-    (a_tfm->depth_index)[i] = get_unsigned_byte();
-    get_signed_quad(); /* Ignore next quad */
-    repeats = get_unsigned_pair();
+    (a_tfm->width_index)[i] = tfm_unsigned_pair();
+    (a_tfm->height_index)[i] = tfm_unsigned_byte();
+    (a_tfm->depth_index)[i] = tfm_unsigned_byte();
+    tfm_signed_quad(); /* Ignore next quad */
+    repeats = tfm_unsigned_pair();
     /* Skip params */
-    for (j = 0; j < a_tfm->npc; j++) get_unsigned_pair();
+    for (j = 0; j < a_tfm->npc; j++) tfm_unsigned_pair();
     /* Remove word padding if necessary */
-    if ((a_tfm->npc / 2) * 2 == a_tfm->npc) get_unsigned_pair();
+    if ((a_tfm->npc / 2) * 2 == a_tfm->npc) tfm_unsigned_pair();
     char_infos_read += 1;
     if (i+repeats > num_chars) {
       fprintf(stderr, "repeats causes number of characters to be exceeded");
@@ -782,4 +756,3 @@ char is_vertical (int font_id) /* Vertical version of JFM */
 {
   return (tfm[font_id].id == JFMV_ID) ? 1 : 0;
 }
-

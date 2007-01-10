@@ -1,54 +1,52 @@
 ################################################################################
 #
-# Makefile  : Dvipos
-# Author    : Fabrice Popineau <Fabrice.Popineau@supelec.fr>
-# Platform  : Win32, Microsoft VC++ 6.0, depends upon fpTeX 0.7 sources
-# Time-stamp: <03/02/26 15:51:47 popineau>
+# Makefile  : DVIpos
+# Author    : Jin-Hwan Cho <chofchof@ktug.or.kr>
+# Platform  : Win32, Microsoft VC++ 7.0, depends upon fpTeX 0.6 sources
+# Time-stamp: <03/06/27 00:00:00 ChoF>
 #
 ################################################################################
 root_srcdir = ..\..
-!ifdef DEVELOPMENT
-INCLUDE=$(INCLUDE);$(root_srcdir)\texk.development
-!else
-INCLUDE=$(INCLUDE);$(root_srcdir)\texk
-!endif
+INCLUDE=$(INCLUDE);$(root_srcdir)\..\win32
 
-# Makefile for ttfdump
+version = 20030628
 
 USE_GNUW32 = 1
 USE_KPATHSEA = 1
 
-!include <msvc/common.mak>
+!include <make/common.mak>
 
-DEFS = -I.. $(DEFS) -DHAVE_CONFIG_H \
-	-I..\crypto
-#	-DWITHOUT_OPENSSL
-#	-DWITHOUT_TOUNICODE
+DEFS = $(DEFS)
 
-manfiles =
-objects = \
-	$(objdir)\dvicore.obj \
-	$(objdir)\dvipos.obj \
-	$(objdir)\tfm.obj
+programs=$(objdir)\dvipos.exe
 
-program = $(objdir)\dvipos.exe
-programs = $(program)
+headers = dvicore.h tfm.h utils.h
+
+src = dvicore.c dvipos.c tfm.c utils.c
+
+objects = $(objdir)\dvicore.obj $(objdir)\dvipos.obj $(objdir)\tfm.obj $(objdir)\utils.obj
 
 default: all
 
 all: $(objdir) $(programs)
 
-$(program): $(objects) $(kpathsealib)
+$(objdir)\dvipos.exe: $(objects) $(kpathsealib)
 	$(link) $(**) $(conlibs)
 
-!include <msvc/config.mak>
-!include <msvc/install.mak>
+!include <make/install.mak>
 
-install:: install-exec install-man
+install:: install-exec install-data install-doc
 
-!include <msvc/clean.mak>
+distclean::
+	@$(copy) config.dvipos config-dvipos $(redir_stdout)
 
-!include <msvc/rdepend.mak>
+!include <make/clean.mak>
+
+distclean::
+	@$(copy) config-dvipos config.dvipos $(redir_stdout)
+	-@$(del) config-dvipos $(redir_stderr)
+
+!include <make/rdepend.mak>
 !include "./depend.mak"
 
 #  

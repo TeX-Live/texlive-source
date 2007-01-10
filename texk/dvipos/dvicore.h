@@ -1,6 +1,6 @@
 /*  $Header
     
-    dvipos-20030225
+    dvipos-20030422
 
     Copyright (C) 2003 by Jin-Hwan <chofchof@ktug.or.kr>
     
@@ -22,16 +22,7 @@
 #ifndef _DVICORE_H_
 #define _DVICORE_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-
-#ifdef MIKTEX
-#include "miktex.h"
-#include "web2c-miktex.h"
-#else /* KPATHSEA */
-#include <kpathsea/c-auto.h>
-#include <kpathsea/kpathsea.h>
-#endif
+#include "utils.h"
 
 /* DVI opcodes */
 #define SET_CHAR_0   0
@@ -144,10 +135,10 @@
 
 #define MAX_FONTS_STEP 10
 
-typedef int           UNSIGNED_BYTE, SIGNED_BYTE, SIGNED_PAIR;
-typedef unsigned      UNSIGNED_PAIR;
-typedef long          UNSIGNED_TRIPLE, SIGNED_TRIPLE, SIGNED_QUAD;
-typedef unsigned long UNSIGNED_QUAD;
+extern int dvi_pages;
+
+extern void dvi_init    (int m, int r);
+extern void dvi_close   (void);
+extern void dvi_do_page (int n);
 
 #endif /* _DVICORE_H_ */
-

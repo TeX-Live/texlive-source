@@ -60,4 +60,3 @@ extern char is_jfm (int font_id);
 extern char is_vertical (int font_id);
 
 #endif /* _TFM_H_ */
-
