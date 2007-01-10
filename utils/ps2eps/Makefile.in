@@ -1,3 +1,5 @@
+# Public domain, written by Vladimir Volovich.
+
 VPATH = @srcdir@
 srcdir = @srcdir@
 
@@ -12,10 +14,10 @@ exec_prefix = @exec_prefix@
 bindir = @bindir@
 mandir = @mandir@
 
+INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_DATA = @INSTALL_DATA@
-INSTALL = @INSTALL@
 
 default all: bbox
 
