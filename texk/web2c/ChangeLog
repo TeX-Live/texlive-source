@@ -1,3 +1,8 @@
+2007-01-10  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (programs): include $(pdftosrc), which has always
+	been built, but missing from the install.
+
 2007-01-01  Karl Berry  <karl@tug.org>
 
 	* config.h (inline) [__cplusplus]: #undef inline under C++, since
