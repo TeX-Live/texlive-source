@@ -45,7 +45,7 @@ mpost		mpost		-		-translate-file=cp227.tcx mpost.mp
 # tex.ini if you want to make all characters directly "printable" for
 # any \write (instead of ^^xy).
 tex		tex	-		tex.ini
-pdftex		pdftex	-		-translate-file=cp227.tcx *pdftex.ini
+pdftex		pdftex	language.dat	-translate-file=cp227.tcx *pdftex.ini
 latex		pdftex	language.dat	-translate-file=cp227.tcx *latex.ini
 etex		pdftex	language.def	-translate-file=cp227.tcx *etex.ini
 pdfetex		pdftex	language.def	-translate-file=cp227.tcx *pdfetex.ini
