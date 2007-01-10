@@ -564,8 +564,9 @@ kpse_include xetexdir/xetex.mk
 # 
 # Common
 programs = bibtex ctangle ctie cweave dvicopy dvitomp dvitype gftodvi gftopk \
- gftype mft $(odvicopy) $(odvitype) $(otangle) patgen pktogf pktype pltotf \
- pooltype tangle tftopl tie $(ttf2afm) vftovp vptovf weave
+ gftype mft $(odvicopy) $(odvitype) $(otangle) patgen $(pdftosrc) \
+ pktogf pktype pltotf pooltype tangle tftopl tie $(ttf2afm) \
+ vftovp vptovf weave
 engines = $(tex) $(etex) $(mf) $(mfn) $(mpost) \
           $(omega) $(aleph) \
           $(pdftex) $(pdfetex) \
