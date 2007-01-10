@@ -42,7 +42,7 @@ SOURCES = dvicore.c dvipos.c tfm.c utils.c dvicore.h tfm.h utils.h
 
 #mkinstalldirs = $(SHELL) ./mkinstalldirs
 
-DEFS = -DKPATHSEA -I.
+DEFS = -DKPATHSEA -I. -I../../../texk
 CPPFLAGS = -I${includedir}
 LDFLAGS = -L${libdir}
 kpathsea = ../kpathsea/.libs/libkpathsea.a
