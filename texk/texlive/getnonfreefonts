@@ -11,7 +11,7 @@
 # 
 # The current maintainer is Reinhard Kotucha.
 
-my $TL_version='2006';
+my $TL_version='2007';
 
 my $getfont_url="ftp://tug.org/tex/getnonfreefonts/getfont$TL_version";
 

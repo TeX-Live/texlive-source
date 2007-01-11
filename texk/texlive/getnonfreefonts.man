@@ -1,4 +1,4 @@
-.TH getnonfreefonts 1 "November 2006" "TeXLive" "TeXLive"
+.TH getnonfreefonts 1 "January 2007" "TeXLive" "TeXLive"
 .SH NAME
 getnonfreefonts \- download and install fonts which cannot be
 distributed on a CD
