@@ -24,10 +24,12 @@
 # Options:
 #  --cnffile file             set configfile for fmtutil
 #  --fmtdir directory         set destination directory for format files
+#  --no-engine-subdir         don't use $engine subdirectory of the fmtdir
 ###############################################################################
 
 ###############################################################################
 # program history:
+#   2007-01-04  patch by JK to support $engine subdir (enabled by default)
 #   Fr Apr  8 19:15:05 CEST 2005 cleanup now has an argument for the return code
 #   Do Mar 02 10:42:31 CET 2006 add tmpdir to TEXFORMATS
 #   So Mär 27 18:52:06 CEST 2005 honor $TMPDIR, $TEMP and $TMP, not just $TMP
@@ -198,6 +200,7 @@ Usage: fmtutil [option] ... cmd [argument]
 Valid options:
   --cnffile file
   --fmtdir directory
+  --no-engine-subdir         don't use engine-specific subdir of the fmtdir
   --quiet                    (not implemented, just for compatibility)
   --test                     (not implemented, just for compatibility)
   --dolinks                  (not implemented, just for compatibility)
@@ -383,6 +386,7 @@ main()
       ;;
   esac
 
+  use_engine_dir=true # whether to use web2c/$engine subdirs
   while
     case $1 in
       --cnffile)
@@ -393,6 +397,8 @@ main()
           shift; destdir=$1;;
       --fmtdir=*)
           destdir=`echo "$1" | sed 's/--fmtdir=//'`; shift ;;
+      --no-engine-subdir)
+          use_engine_dir=false;;
       --all|-a)
           cmd=all;;
       --edit|-e)
@@ -547,30 +553,10 @@ main()
     refresh)
       recreate_existing;;
     byfmt)
-      create_one_format "$arg";;
+      recreate_by_fmt "$arg";;
     byhyphen)
       recreate_by_hyphenfile "$arg";;
   esac
-
-  # install the log files and format files:
-  for i in *.log; do
-    test -f "$i" || continue
-    rm -f "$destdir/$i"
-
-    # We don't want user-interaction for the following "mv" command:
-    mv "$i" "$destdir/$i" </dev/null
-  done
-  for i in *.fmt *.mem *.base; do
-    test -f "$i" || continue
-    rm -f "$destdir/$i"
-
-    # We don't want user-interaction for the following "mv" command:
-    if mv "$i" "$destdir/$i" </dev/null; then
-      verboseMsg "$progname: $destdir/$i installed."
-      $mktexfmtMode && echo "$destdir/$i"
-    fi
-    mktexupd "$destdir" "$i"
-  done
 
   byebye
 }
@@ -622,9 +608,9 @@ parse_line()
   inifile=`echo $lastarg | sed 's%^\*%%'`
 
   case "$engine" in
-    mpost)  fmtfile="$format.mem";  kpsefmt=mpost;;
-    mf|mfw|mf-nowin) fmtfile="$format.base"; kpsefmt=mf;;
-    *)      fmtfile="$format.fmt";  kpsefmt=tex;;
+    mpost)  fmtfile="$format.mem";  kpsefmt=mpost; texengine=metapost;;
+    mf|mfw|mf-nowin) fmtfile="$format.base"; kpsefmt=mf; texengine=metafont;;
+    *)      fmtfile="$format.fmt";  kpsefmt=tex; texengine=$engine;;
   esac
 
   # See if we can find $inifile for return code:
@@ -699,16 +685,30 @@ run_initex()
     verbose $engine -ini $tcxflag $jobswitch $prgswitch $texargs
   ) </dev/null
 
+  if test $use_engine_dir; then
+    fulldestdir="$destdir/$texengine"
+  else
+    fulldestdir="$destdir"
+  fi
+  mkdir -p $fulldestdir
   if test -f $fmtfile; then
     grep '^! ' $format.log >/dev/null 2>&1 &&
       log_failure "\`$engine -ini $tcxflag $jobswitch $prgswitch $texargs' possibly failed."
+    rm -f "$fulldestdir/$format.log"
+    # We don't want user-interaction for the following "mv" commands:
+    mv "$format.log" "$fulldestdir/$format.log" </dev/null
+    if mv "$fmtfile" "$fulldestdir/$fmtfile" </dev/null; then
+      verboseMsg "$progname: $fulldestdir/$fmtfile installed."
+      $mktexfmtMode && echo "$fulldestdir/$fmtfile"
+      mktexupd "$fulldestdir" "$fmtfile"
+    fi
   else
     log_failure "\`$engine -ini $tcxflag $jobswitch $prgswitch $texargs' failed"
   fi
 }
 
 ###############################################################################
-# recreate_loop(hyphenfile)
+# recreate_loop()
 #   for each line in config file: check match-condition and recreate format
 #   if there is a match
 ###############################################################################
@@ -723,7 +723,6 @@ recreate_loop()
   do
     parse_line $line || continue
     check_match || continue
-    echo; echo
     run_initex
   done
 }
@@ -759,15 +758,14 @@ check_match()
 }
 
 ###############################################################################
-# create_one_format(fmtname)
-#   (re)create the format file for the format `fmtname'
+# recreate_by_fmt(fmtname)
+#   recreate all versions of fmtname
 ###############################################################################
-create_one_format()
+recreate_by_fmt()
 {
   fmtname=$1
-
-  find_info_for_name $fmtname || abort "format \`$fmtname' not available"
-  run_initex
+  match_cmd="test x\$format = x$fmtname"
+  recreate_loop
 }
 
 ###############################################################################
@@ -777,7 +775,7 @@ create_one_format()
 create_missing()
 {
   # match_cmd='test ! -f $destdir/$fmtfile'
-  match_cmd='test ! -f "`kpsewhich -progname=$format $fmtfile`"'
+  match_cmd='test ! -f "`kpsewhich -engine=$texengine -progname=$format $fmtfile`"'
   recreate_loop
 }
 
@@ -787,7 +785,7 @@ create_missing()
 ###############################################################################
 recreate_existing()
 {
-  match_cmd='test -f "`kpsewhich -progname=$format $fmtfile`"'
+  match_cmd='test -f "`kpsewhich -engine=$texengine -progname=$format $fmtfile`"'
   recreate_loop
 }
 
@@ -862,7 +860,7 @@ disablefmt()
   grep "^$1[ 	]" $cnf_file >/dev/null || { (exit 0); return 0; }
 
   ed $cnf_file >/dev/null 2>&1 <<-eof
-	/^$1[ 	]/s/^/#! /
+	g/^$1[ 	]/s/^/#! /
 	w
 	q
 eof
@@ -877,7 +875,7 @@ enablefmt()
 {
   grep "^#![ 	]*$1[ 	]" $cnf_file >/dev/null || { (exit 0); return 0; }
   ed $cnf_file >/dev/null 2>&1 <<-eof
-	/^#![ 	]*$1[ 	]/s/..[ 	]*//
+	g/^#![ 	]*$1[ 	]/s/..[ 	]*//
 	w
 	q
 eof
