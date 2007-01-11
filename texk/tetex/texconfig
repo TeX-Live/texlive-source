@@ -1257,7 +1257,7 @@ Valid PAPER settings:
                 set x `getRes "$tcBatchPdftexMode"`; shift
                 fmgrConfigReplace pdftexconfig.tex 'pdfpkresolution' "\\pdfpkresolution=$1"
                 if $fmgrConfigReplaceChanged; then
-                  fmtutil --all
+                  fmtutil --refresh
                 fi
               else
                 echo "$progname: unknown MODE \`$tcBatchPdftexMode' given as argument for \`$progname pdftex mode'" >&2
@@ -1276,7 +1276,7 @@ Valid PAPER settings:
               wChanged=$fmgrConfigReplaceChanged
               fmgrConfigReplace pdftexconfig.tex pdfpageheight '\pdfpageheight='"$h"
               if $wChanged || $fmgrConfigReplaceChanged; then
-                fmtutil --all
+                fmtutil --refresh
               fi
               ;;
             a4)
@@ -1285,7 +1285,7 @@ Valid PAPER settings:
               wChanged=$fmgrConfigReplaceChanged
               fmgrConfigReplace pdftexconfig.tex pdfpageheight '\pdfpageheight='"$h"
               if $wChanged || $fmgrConfigReplaceChanged; then
-                fmtutil --all
+                fmtutil --refresh
               fi
               ;;
             "") echo "$help" >&2; rc=1;;
