@@ -145,7 +145,7 @@ jpegimage.o: $(srcdir)/xetexdir/jpegimage.c $(srcdir)/xetexdir/jpegimage.h
 	$(compile) $(ALL_CFLAGS) -c $< -o $@
 
 pngimage.o: $(srcdir)/xetexdir/pngimage.c $(srcdir)/xetexdir/pngimage.h
-	$(compile) $(ALL_CFLAGS) $(LIBPNGCPPFLAGS) -c $< -o $@
+	$(compile) $(ALL_CFLAGS) $(LIBPNGCPPFLAGS) $(ZLIBCPPFLAGS) -c $< -o $@
 
 pdfimage.o: $(srcdir)/xetexdir/pdfimage.cpp $(srcdir)/xetexdir/pdfimage.h
 	$(CXX) $(ALL_CFLAGS) $(LIBXPDFCPPFLAGS) -c $< -o $@
@@ -191,7 +191,7 @@ XeTeXOTMath.o: $(srcdir)/xetexdir/XeTeXOTMath.cpp $(XeTeXFontHdrs)
 
 # special rules for files that need the TECkit headers as well
 XeTeX_ext.o: $(srcdir)/xetexdir/XeTeX_ext.c xetexd.h
-	$(compile) $(ICUCFLAGS) $(FTFLAGS) $(TECKITFLAGS) $(LIBPNGCPPFLAGS) $(LIBXPDFCPPFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
+	$(compile) $(ICUCFLAGS) $(FTFLAGS) $(TECKITFLAGS) $(LIBPNGCPPFLAGS) $(LIBXPDFCPPFLAGS) $(ZLIBCPPFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
 XeTeX_mac.o: $(srcdir)/xetexdir/XeTeX_mac.c xetexd.h
 	$(compile) $(ICUCFLAGS) $(TECKITFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
 
