@@ -162,7 +162,7 @@ read_all_cnf P1H(void)
   cnf_hash = hash_create (CNF_HASH_SIZE);
 
   cnf_files = kpse_all_path_search (cnf_path, CNF_NAME);
-  if (cnf_files) {
+  if (cnf_files && *cnf_files) {
     for (cnf = cnf_files; *cnf; cnf++) {
       string line;
       FILE *cnf_file = xfopen (*cnf, FOPEN_R_MODE);
@@ -197,7 +197,8 @@ read_all_cnf P1H(void)
       free (*cnf);
     }
     free (cnf_files);
-  }
+  } else
+    WARNING1 ("Couldn't find file texmf.cnf in any of these directories:\n%s\nTrying to proceed...", cnf_path);
 }
 
 /* Read the cnf files on the first call.  Return the first value in the
