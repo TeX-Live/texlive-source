@@ -1,0 +1,46 @@
+# Public domain
+
+kpse_include ../make/paths.mk
+kpse_include ../make/common.mk
+kpse_include ../make/programs.mk
+
+prog_cflags =
+DEFS = -DKPATHSEA
+LIBS = -lm
+
+programs = dvipos
+
+default all: $(programs)
+
+dvipos_obj = dvicore.o dvipos.o tfm.o utils.o
+
+dvipos: $(dvipos_obj)
+	$(kpathsea_link) $(dvipos_obj) $(LOADLIBES)
+
+install: install-exec install-data
+
+uninstall: uninstall-exec uninstall-data
+
+install-exec: all
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(bindir)
+	for p in $(programs); do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
+
+uninstall-exec:
+	for p in $(programs); do rm -f $(bindir)/$$p; done
+
+install-data: 
+	$(SHELL) $(top_srcdir)/../mkinstalldirs  $(man1dir)
+	$(INSTALL_DATA) $(srcdir)/dvipos.1 $(man1dir)/dvipos.1
+
+uninstall-data: 
+	rm -f $(man1dir)/dvipos.1
+
+kpse_include ../make/dist.mk
+kpse_include ../make/config.mk
+
+info dvi check:
+
+kpse_include ../make/clean.mk
+
+kpse_include ../make/rdepend.mk
+kpse_include depend.mk
