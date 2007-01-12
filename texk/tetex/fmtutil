@@ -724,7 +724,7 @@ recreate_loop()
     parse_line $line || continue
     check_match || continue
     run_initex
-  done
+  done | sed 1q
 }
 
 ###############################################################################
