@@ -83,7 +83,7 @@ test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 
 progname=fmtutil
 argv0=$0
-version=1112981053 # seconds since `00:00:00 1970-01-01 UTC'
+version=1168729197 # seconds since `00:00:00 1970-01-01 UTC'
                    # date '+%s' (with GNU date)
 
 cnf=fmtutil.cnf   # name of the config file
@@ -362,8 +362,9 @@ main()
   tmpdir=${TMPDIR-${TEMP-${TMP-/tmp}}}/$progname.$$
   verboseFlag=true
 
-  # mktexfmtMode: if called as mktexfmt, set to true. Will echo the generated
-  # filename after successful generation to stdout then (and nothing else).
+  # mktexfmtMode: if called as mktexfmt, set to true. Will echo the
+  # first generated filename after successful generation to stdout then
+  # (and nothing else), since kpathsea can only deal with one.
   mktexfmtMode=false
   case $argv0 in
     mktexfmt|*/mktexfmt)
@@ -699,7 +700,10 @@ run_initex()
     mv "$format.log" "$fulldestdir/$format.log" </dev/null
     if mv "$fmtfile" "$fulldestdir/$fmtfile" </dev/null; then
       verboseMsg "$progname: $fulldestdir/$fmtfile installed."
-      $mktexfmtMode && echo "$fulldestdir/$fmtfile"
+      #
+      $mktexfmtMode && $mktexfmtFirst \
+      && echo "$fulldestdir/$fmtfile" && mktexfmtFirst=false
+      #
       mktexupd "$fulldestdir" "$fmtfile"
     fi
   else
