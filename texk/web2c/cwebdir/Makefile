@@ -18,7 +18,7 @@
 #
 
 # directory for TeX inputs (cwebmac.tex goes here)
-MACROSDIR= /usr/local/texmf/tex/generic
+MACROSDIR= /usr/share/texmf/tex/generic
 
 # directory for CWEB inputs in @i files
 CWEBINPUTS= /usr/local/lib/cweb
@@ -28,13 +28,13 @@ MANEXT= l
 #MANEXT= 1
 
 # directory for manual pages (cweb.1 goes here)
-MANDIR= /usr/man/man$(MANEXT)
+MANDIR= /usr/share/man/man$(MANEXT)
 
 # destination directory for executables; must end in /
 DESTDIR= /usr/local/bin/
 
 # directory for GNU EMACS Lisp code (cweb.el goes here)
-EMACSDIR= /usr/local/emacs/lisp
+EMACSDIR= /usr/share/emacs/site-lisp
 
 # Set DESTPREF to null if you want to call the executables "tangle" and "weave"
 # (probably NOT a good idea; we recommend leaving DESTPREF=c)

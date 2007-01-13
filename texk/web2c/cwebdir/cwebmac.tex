@@ -1,8 +1,8 @@
 % standard macros for CWEB listings (in addition to plain.tex)
-% Version 3.64 --- February 2002
-\ifx\documentstyle\undefined\else\endinput\fi % LaTeX will use other macros
-\xdef\fmtversion{\fmtversion+CWEB3.64}
-\chardef\cwebversion=3 \chardef\cwebrevision=64
+% Version 3.67 --- July 2006
+\ifx\renewenvironment\undefined\else\endinput\fi % LaTeX will use other macros
+\xdef\fmtversion{\fmtversion+CWEB3.67}
+\chardef\cwebversion=3 \chardef\cwebrevision=67
 \newif\ifpdf
 \ifx\pdf+\pdftrue\fi
 % Uncomment the following line if you want PDF goodies to be the default
@@ -339,7 +339,8 @@
 % \S is section sign
 \def\T#1{\leavevmode % octal, hex or decimal constant
   \hbox{$\def\?{\kern.2em}%
-    \def\$##1{\egroup_{\,\rm##1}\bgroup}% suffix to constant
+%    \def\$##1{\egroup_{\,\rm##1}\bgroup}% suffix to constant % versions < 3.67
+    \def\$##1{\egroup_{\rm##1}\bgroup}% suffix to constant
     \def\_{\cdot 10^{\aftergroup}}% power of ten (via dirty trick)
     \let\~=\oct \let\^=\hex {#1}$}}
 \def\U{\note{This code is used in section}} % xref for use of a section
@@ -534,6 +535,11 @@
 \def\datethis{\def\startsection{\leftline{\sc\today\ at \hours}\bigskip
   \let\startsection=\stsec\stsec}}
   % say `\datethis' in limbo, to get your listing timestamped before section 1
-\def\datecontentspage{%
-  \def\topofcontents{\leftline{\sc\today\ at \hours}\bigskip
-   \centerline{\titlefont\title}\vfill}} % timestamps the contents page
+%\def\datecontentspage{% versions up to 3.65
+%  \def\topofcontents{\leftline{\sc\today\ at \hours}\bigskip
+%   \centerline{\titlefont\title}\vfill}} % timestamps the contents page
+\def\datecontentspage{% changed in version 3.66
+  \def\botofcontents{\vfill
+   \centerline{\covernote}
+   \bigskip
+   \leftline{\sc\today\ at \hours}}} % timestamps the contents page

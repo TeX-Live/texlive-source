@@ -699,7 +699,7 @@ be passed verbatim to the \CEE/ program.
 be totally ignored---it's a comment for readers of the \.{CWEB} file only.
 A file intended to be included in
 limbo, with \.{@i}, can identify itself with \.{@q} comments.
-Another use is to balance unbalanced parentheses in C strings,
+Another use is to balance unbalanced parentheses in \CEE/ strings,
 so that your text editor's parenthesis matcher doesn't go into a tailspin.
 
 \@! [TMCc] $*$
@@ -910,7 +910,7 @@ occurs between \.{@y} and \.{@z} in a change file, individual lines
 of file \.{foo} and files it includes are not changeable; but changes
 can be made to lines from files that were included by unchanged input.
 
-\more On UNIX systems (and others that support environment variables),
+\more On \UNIX/ systems (and others that support environment variables),
 if the environment variable \.{CWEBINPUTS} is set, or if the compiler flag
 of the same name was defined at compile time,
 \.{CWEB} will look for include files in the directory thus named, if
@@ -1158,7 +1158,7 @@ to work a bit harder in cases where an identifier is multiply defined.
 \.{CTWILL} is intended primarily for hardcopy output, but its principles
 could be used for hypertext as well.
 See Chapter 11 of {\sl Digital Typography\/} by D.~E. Knuth (1999), and
-the program sources at \.{ftp://labrea.stanford.edu/pub/ctwill}.
+the program sources at \.{ftp://ftp.cs.stanford.edu/pub/ctwill}.
 
 \section Appendices.
 
@@ -1514,7 +1514,7 @@ is to explain some of the possibilities.
 
 \point 1. Four fonts have been declared in addition to the standard fonts of
 \.{PLAIN} format: You can say `\.{\{\\mc UNIX\}}' to get {\mc UNIX} in
-medium-size caps; you can say `\.{\{\\sc STUFF\}}' to get {\sc STUFF}
+xmedium-size caps; you can say `\.{\{\\sc STUFF\}}' to get {\sc STUFF}
 in small caps; and you can select the largish fonts \.{\\titlefont}
 and \.{\\ttitlefont} in the title of your document, where \.{\\ttitlefont}
 is a typewriter style of type. There are macros \.{\\UNIX/} and \.{\\CEE/}
@@ -1678,7 +1678,8 @@ $$\postdisplaypenalty=10000
 if you prefer the shorter notation \.{\\+}.
 
 \point 14. To get output in languages other than English, redefine the
-macros \.{\\A}, \.{\\As}, \.{\\ET}, \.{\\ETs}, \.{\\Q}, \.{\\Qs}, \.{\\U},
+macros \.{\\A}, \.{\\As}, \.{\\ATH},
+\.{\\ET}, \.{\\ETs}, \.{\\Q}, \.{\\Qs}, \.{\\U},
 \.{\\Us}, \.{\\ch}, \.{\\fin}, \.{\\con}, \.{\\today}, \.{\\datethis}, and
 \.{\\datecontentspage}. \.{CWEAVE} itself need not be changed.
 

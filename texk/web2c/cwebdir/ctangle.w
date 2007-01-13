@@ -831,7 +831,7 @@ speed in order to pass over comments, which \.{CTANGLE} does not transmit
 to the output. If the comment is introduced by \.{/*}, |skip_comment|
 proceeds until finding the end-comment token \.{*/} or a newline; in the
 latter case |skip_comment| will be called again by |get_next|, since the
-comment is not finished.  This is done so that the each newline in the
+comment is not finished.  This is done so that each newline in the
 \CEE/ part of a section is copied to the output; otherwise the \&{\#line}
 commands inserted into the \CEE/ file by the output routines become useless.
 On the other hand, if the comment is introduced by \.{//} (i.e., if it
