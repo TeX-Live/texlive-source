@@ -1,9 +1,9 @@
 \input texinfo
 @setfilename dvips.info
-@settitle Dvips: A DVI driver
+@settitle Dvips: A DVI-to-PostScript translator
 
 @set version 5.96
-@set month-year December 2006
+@set month-year January 2007
 
 @copying
 This manual documents Dvips version @value{version}
@@ -42,6 +42,9 @@ PostScript.  You may freely use, modify and/or distribute this file.
 @insertcopying
 @vskip 0pt plus 1filll
 @end titlepage
+
+@summarycontents
+@contents
 
 @ifnottex
 @node Top
@@ -4589,9 +4592,6 @@ categories of color-like state.
 
 @printindex cp
 
-
-@summarycontents
-@contents
 
 @end ifclear
 @c INSTALLONLY
