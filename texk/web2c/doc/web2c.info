@@ -34,8 +34,8 @@ END-INFO-DIR-ENTRY
    This file documents the installation and use of the programs in
 Web2c, an implementation of Donald Knuth's TeX system.
 
-   Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004
-Karl Berry & Olaf Weber.
+   Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004,
+2005, 2007 Karl Berry & Olaf Weber.
 
    Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -59,7 +59,7 @@ Web2c
 
 This document describes how to install and use the programs in the Web2c
 implementation of the TeX system, especially for Unix systems.  It
-corresponds to Web2c version 7.5.5, released in June 2005.
+corresponds to Web2c version 7.5.6, released in January 2007.
 
 * Menu:
 
@@ -83,8 +83,8 @@ File: web2c.info,  Node: Introduction,  Next: Installation,  Prev: Top,  Up: Top
 1 Introduction
 **************
 
-This manual corresponds to version 7.5.5 of Web2c, released in
-June 2005.
+This manual corresponds to version 7.5.6 of Web2c, released in
+January 2007.
 
    "Web2c" is the name of a TeX implementation, originally for Unix,
 but now also running under DOS, Amiga, and other operating systems. By
@@ -2216,9 +2216,11 @@ environment variables.  Here is a list:
      Likewise, for Troff; default is `dmp'.
 
 `TEX'
-     The command run to typeset the labels in TeX; default is `tex'.
-     If you use LaTeX, set this to `latex', and supply an appropriate
-     `verbatimtex' header in the MP source (*note mpost invocation::).
+     The command run to typeset the labels in TeX; the default is
+     `etex', set in `texmf.cnf'.  If you use LaTeX, set this to
+     `latex', and supply an appropriate `verbatimtex' header in the MP
+     source (*note mpost invocation::).  Or put `%&latex' as the first
+     line of your LaTeX source.
 
 `TROFF'
      Likewise, for Troff; default is `'eqn -d\$\$ | troff -Tpost''.  You
@@ -2229,6 +2231,13 @@ environment variables.  Here is a list:
      If you change this, you will also need to set the `TRFONTS'
      environment variable or configuration value to point to the
      appropriate font directory, traditionally `/usr/lib/font/devTERM'.
+
+     One more complication is whether the troff programs have a `g'
+     prefix.  On Windows, TeX Live supports both ways: `makempx.exe' is
+     built to use `gsoelim.exe', `geqn.exe', and `gtroff.exe', while
+     `makempx-without-g-prefix.exe' is built to use `soelim.exe',
+     `eqn.exe', and `troff.exe'.  MetaPost users on Windows using troff
+     for their labels should arrange to run the proper binary.
 
 
 
@@ -4569,7 +4578,7 @@ Index
 * trip test:                             Triptrap.            (line   6)
 * tripman.tex:                           Triptrap.            (line   6)
 * triptrap Make target:                  Additional targets.  (line  41)
-* TROFF:                                 makempx invocation.  (line  79)
+* TROFF:                                 makempx invocation.  (line  81)
 * Troff, and MetaPost:                   mpost invocation.    (line  73)
 * Troff, WEB for:                        WEB.                 (line  14)
 * Trojan horses and TeX programs:        tex invocation.      (line  51)
@@ -4662,78 +4671,78 @@ Index
 
 
 Tag Table:
-Node: Top2967
-Node: Introduction3962
-Node: Installation7139
-Node: configure options9303
-Node: Compile-time options11385
-Node: Additional targets12511
-Node: Triptrap13792
-Node: Runtime options15321
-Node: Commonalities17093
-Node: Option conventions17698
-Node: Common options18922
-Node: Path searching23434
-Node: Output file location24456
-Node: Three programs25496
-Node: Initial and virgin26255
-Node: Memory dumps27355
-Node: Creating memory dumps27822
-Node: Determining the memory dump to use29083
-Node: Hardware and memory dumps30707
-Node: Editor invocation33176
-Node: \input filenames33906
-Node: TeX36899
-Node: tex invocation37989
-Node: Initial TeX45921
-Node: Formats47410
-Node: Languages and hyphenation50349
-Node: MLTeX50777
-Node: \charsubdef52272
-Node: \tracingcharsubdef54598
-Node: TCX files55173
-Node: patgen invocation60597
-Node: IPC and TeX61314
-Node: TeX extensions61915
-Node: Metafont63216
-Node: mf invocation64504
-Node: Initial Metafont68387
-Node: Modes70140
-Node: Online Metafont graphics72395
-Node: gftodvi invocation75668
-Node: mft invocation77927
-Node: MetaPost81982
-Node: mpost invocation83003
-Node: Initial MetaPost88188
-Node: makempx invocation90000
-Node: dvitomp invocation93500
-Node: dmp invocation94129
-Node: mpto invocation98150
-Node: newer invocation99132
-Node: BibTeX100069
-Node: bibtex invocation100430
-Node: Basic BibTeX style files102755
-Node: WEB104097
-Node: tangle invocation105380
-Node: weave invocation107503
-Node: pooltype invocation108911
-Node: DVI utilities110041
-Node: dvicopy invocation110985
-Node: dvitype invocation112283
-Node: dvitype output example114638
-Node: Font utilities117689
-Node: Font file formats118869
-Node: gftopk invocation122168
-Node: pktogf invocation123372
-Node: pktype invocation124551
-Node: gftype invocation127386
-Node: tftopl invocation131902
-Node: pltotf invocation136536
-Node: vftovp invocation137601
-Node: vptovf invocation139885
-Node: Font utilities available elsewhere140939
-Node: Legalisms143359
-Node: References145530
-Node: Index149915
+Node: Top2979
+Node: Introduction3977
+Node: Installation7157
+Node: configure options9321
+Node: Compile-time options11403
+Node: Additional targets12529
+Node: Triptrap13810
+Node: Runtime options15339
+Node: Commonalities17111
+Node: Option conventions17716
+Node: Common options18940
+Node: Path searching23452
+Node: Output file location24474
+Node: Three programs25514
+Node: Initial and virgin26273
+Node: Memory dumps27373
+Node: Creating memory dumps27840
+Node: Determining the memory dump to use29101
+Node: Hardware and memory dumps30725
+Node: Editor invocation33194
+Node: \input filenames33924
+Node: TeX36917
+Node: tex invocation38007
+Node: Initial TeX45939
+Node: Formats47428
+Node: Languages and hyphenation50367
+Node: MLTeX50795
+Node: \charsubdef52290
+Node: \tracingcharsubdef54616
+Node: TCX files55191
+Node: patgen invocation60615
+Node: IPC and TeX61332
+Node: TeX extensions61933
+Node: Metafont63234
+Node: mf invocation64522
+Node: Initial Metafont68405
+Node: Modes70158
+Node: Online Metafont graphics72413
+Node: gftodvi invocation75686
+Node: mft invocation77945
+Node: MetaPost82000
+Node: mpost invocation83021
+Node: Initial MetaPost88206
+Node: makempx invocation90018
+Node: dvitomp invocation94023
+Node: dmp invocation94652
+Node: mpto invocation98673
+Node: newer invocation99655
+Node: BibTeX100592
+Node: bibtex invocation100953
+Node: Basic BibTeX style files103278
+Node: WEB104620
+Node: tangle invocation105903
+Node: weave invocation108026
+Node: pooltype invocation109434
+Node: DVI utilities110564
+Node: dvicopy invocation111508
+Node: dvitype invocation112806
+Node: dvitype output example115161
+Node: Font utilities118212
+Node: Font file formats119392
+Node: gftopk invocation122691
+Node: pktogf invocation123895
+Node: pktype invocation125074
+Node: gftype invocation127909
+Node: tftopl invocation132425
+Node: pltotf invocation137059
+Node: vftovp invocation138124
+Node: vptovf invocation140408
+Node: Font utilities available elsewhere141462
+Node: Legalisms143882
+Node: References146053
+Node: Index150438
 
 End Tag Table
