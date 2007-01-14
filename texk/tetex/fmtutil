@@ -96,6 +96,7 @@ export PATH
 cleanup()
 {
   rc=$1
+  # for debugging, exit $rc here so $tmpdir with its logs sticks around.
   $needsCleanup && test -n "$tmpdir" && test -d "$tmpdir" \
     && { cd / && rm -rf "$tmpdir"; }
   (exit $rc); exit $rc
