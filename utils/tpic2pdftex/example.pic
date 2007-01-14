@@ -1,0 +1,127 @@
+%$Id: example.pic,v 1.19 2007/01/14 14:03:51 hahe Exp hahe $
+%***********************************************************************
+\pdfcompresslevel=0
+\def\gpicbox#1{\vbox{\unvbox\csname #1\endcsname\kern0pt}}
+\newcount\piccount\piccount=0
+\def\sep{\advance\piccount by 1%
+  \kern5pt\hrule\kern5pt\rlap{\smash{\lower10pt\hbox{\the\piccount}}}}
+\sep
+%***********************************************************************
+% 1
+.PS
+box dotted thickness 1; arrow;
+circle dotted 0.02 fill 0.1 "Hello"; arrowhead = 7; arrow; circle fill 0.1;
+arrowhead = 2; arrow; circle fill 0.9; arrow; box dashed 0.1
+.PE
+\centerline{A\gpicbox{graph}B}
+\sep
+%***********************************************************************
+% 2
+.PS
+ellipse; arrow;
+\pdfliteral {q 1 0 0 RG}
+ellipse dotted thickness 2;
+\pdfliteral {Q}
+arrow;
+ellipse dashed "$\sqrt{3/7\cdot{2\over5}}$" "No.~2"; arrow;
+\pdfliteral {q 0 0 1 RG}
+\pdfliteral {  0.5 0.5 0.0 rg}
+box rad 0.25 fill 0.05 "Hello"; arrow;
+\pdfliteral {Q}
+box dotted fill 0.2
+.PE
+\centerline{A\gpicbox{graph}B}
+\sep
+%***********************************************************************
+% 3
+.PS
+line; arc; arc cw; line
+.PE
+\centerline{A\gpicbox{graph}B}
+\sep
+%***********************************************************************
+% 4
+.PS
+spline right 1 then down .5 left 1 then right 1 ->;
+line dashed right 1 then down .5 left 1 then right 1 -> at last spline
+.PE
+\centerline{A\gpicbox{graph}B}
+\sep
+%***********************************************************************
+% 5
+.PS
+\pdfliteral {q 0 1 0 RG}
+spline dashed right 1 then down .5 left 1 then down ->
+\pdfliteral {Q}
+line dotted 0.02 right 1 then down .5 left 1 then down -> at last spline
+.PE
+\centerline{A\gpicbox{graph}B}
+\sep
+%***********************************************************************
+% 6
+.PS
+spline left then up right then down right ->
+.PE
+\centerline{A\vrule\gpicbox{graph}\vrule B}
+\sep
+%***********************************************************************
+% 7
+.PS
+spline right then up then left then down ->
+line dotted right then up then left then down -> at last spline
+.PE
+\centerline{A\gpicbox{graph}B}
+\sep
+%***********************************************************************
+% 8
+.PS
+circle "x"
+circle "y" at 1st circle - (0.4, 0.6)
+circle "z" at 1st circle + (0.4, -0.6)
+arrow from 1st circle to 2nd circle chop
+arrow from 2st circle to 3rd circle chop
+arrow from 3rd circle to 1st circle chop
+.PE
+\centerline{A\gpicbox{graph}B}
+\sep
+%***********************************************************************
+% 9
+% example borrowed from file cstr116.pdf or cstr116.ps:
+% PIC --- A Graphics Language for Typesetting, User Manual,
+% Brian W. Kernighan, Revised, May, 1991
+.PS
+define ndblock{
+	box wid boxwid/2 ht boxht/2
+	down; box same with .t at bottom of last box; box same
+}
+boxht = .2; boxwid = .3; circlerad = .3; dx = 0.05
+down; box; box; box; box ht 3*boxht "." "." "."
+L: box; box; box invis wid 2*boxwid "hashtab:" with .e at 1st box .w
+right
+Start: box wid .5 with .sw at 1st box.ne + (.4,.2) "..."
+N1: box wid .2 "n1"; D1: box wid .3 "d1"
+N3: box wid .4 "n3"; D3: box wid .3 "d3"
+box wid .4 "..."
+N2: box wid .5 "n2"; D2: box wid .2 "d2"
+arrow right from 2nd box
+ndblock
+spline -> right .2 from 3rd last box then to N1.sw + (dx,0)
+spline -> right .3 from 2nd last box then to D1.sw + (dx,0)
+arrow right from last box
+ndblock
+spline -> right .2 from 3rd last box to N2.sw - (dx,.2) to N2.sw + (dx,0)
+spline -> right .3 from 2nd last box to D2.sw - (dx,.2) to D2.sw + (dx,0)
+arrow right 2* linewid from L
+ndblock
+spline -> right .2 from 3rd last box to N3.sw + (dx,0)
+spline -> right .3 from 2nd last box to D3.sw + (dx,0)
+circlerad=.3
+circle invis "ndblock" at last box.e + (1.2,.2)
+arrow dashed from last circle.w to last box chop 0 chop .3
+box invis wid 2*boxwid "ndtable:" with .e at Start.w
+.PE
+\centerline{A\gpicbox{graph}B}
+\sep
+%***********************************************************************
+\end
+

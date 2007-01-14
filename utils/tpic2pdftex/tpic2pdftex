@@ -1,6 +1,6 @@
 #!/bin/sh -
 #
-# $Id: tpic2pdftex,v 1.92 2007/01/14 13:32:50 hahe Exp hahe $
+# $Id: tpic2pdftex,v 1.93 2007/01/14 13:55:43 hahe Exp hahe $
 #
 # Experimental awk-script for conversion of tpic \specials as produced
 # by (groff-)pic into pdfTeX \pdfliteral sections for further processing
@@ -67,6 +67,7 @@
 ########################################################################
 
 AWK=${AWK:-gawk}
+export LANG="C"
 
 AWKPROG='
 # begin of awk input file
