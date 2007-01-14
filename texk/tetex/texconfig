@@ -24,7 +24,7 @@ test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 progname=texconfig
 
 # the version string
-version=1168796291 # seconds since `00:00:00 1970-01-01 UTC'
+version=1168796427 # seconds since `00:00:00 1970-01-01 UTC'
                    # date '+%s' (with GNU date)
 
 envVars="
@@ -629,7 +629,7 @@ Get more help with
       echo
       echo '==================== binaries found by searching $PATH ==================='
       echo "PATH=$PATH"
-      echoLocateBinary kpsewhich updmap fmtutil texconfig tex pdfetex mktexpk dvips dvipdfm
+      echoLocateBinary kpsewhich updmap fmtutil texconfig tex pdftex mktexpk dvips dvipdfm
       echo
       echo '=========================== active config files =========================='
       echoLocateCfgfile texmf.cnf updmap.cfg fmtutil.cnf config.ps mktex.cnf XDvi pdftexconfig.tex config | sort -k 2
@@ -1187,7 +1187,7 @@ Valid MODE settings:"
             if checkForBinary dvips >/dev/null && tcfmgr --cmd find --file config.ps >/dev/null 2>&1; then
               tcBatch dvips mode "$tcBatchMode"
             fi
-            if checkForBinary pdfetex >/dev/null && tcfmgr --cmd find --file pdftexconfig.tex >/dev/null 2>&1; then
+            if checkForBinary pdftex >/dev/null && tcfmgr --cmd find --file pdftexconfig.tex >/dev/null 2>&1; then
               tcBatch pdftex mode "$tcBatchMode"
             fi
           else
@@ -1231,7 +1231,7 @@ Valid PAPER settings:
       if checkForBinary xdvi >/dev/null && tcfmgr --cmd find --file XDvi >/dev/null 2>&1; then
         tcBatch xdvi paper $pXdvi
       fi
-      if checkForBinary pdfetex >/dev/null && tcfmgr --cmd find --file pdftexconfig.tex >/dev/null 2>&1; then
+      if checkForBinary pdftex >/dev/null && tcfmgr --cmd find --file pdftexconfig.tex >/dev/null 2>&1; then
         tcBatch pdftex paper $p
       fi
       ;;
