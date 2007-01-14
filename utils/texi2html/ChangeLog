@@ -1,3 +1,7 @@
+2007-01-14  Karl Berry  <karl@tug.org>
+
+	* texi2html.pl: use /usr/bin/env perl for TL.
+
 2005-02-03  Patrice Dumas  <dumas@centre-cired.fr>
 
 	* texi2html.pl: don't use exists for reference in an array, for
