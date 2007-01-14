@@ -1,13 +1,12 @@
 #!/bin/sh -
 #
-# $Id: tpic2pdftex,v 1.93 2007/01/14 13:55:43 hahe Exp hahe $
+# $Id: tpic2pdftex,v 1.94 2007/01/14 19:05:32 hahe Exp $
 #
 # Experimental awk-script for conversion of tpic \specials as produced
 # by (groff-)pic into pdfTeX \pdfliteral sections for further processing
 # by pdftex.
 #
 # Usage:
-#   $ export LANG="C"
 #   $ pic -t somefile.pic | tpic2pdftex > somefile.tex
 #
 #   Process somefile.tex by pdftex/pdflatex.
