@@ -37,6 +37,8 @@ authorization from SIL International.
 #include "png.h"
 #endif
 
+#include "zlib.h"
+
 #define EXTERN extern
 #define Byte my_Byte /* hack to work around typedef conflict with zlib */
 #include "xetexd.h"
@@ -51,8 +53,6 @@ authorization from SIL International.
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
-
-#include "zlib.h"
 
 #include "TECkit_Engine.h"
 
