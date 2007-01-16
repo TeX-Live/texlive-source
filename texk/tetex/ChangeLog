@@ -1,3 +1,7 @@
+2007-01-16  Karl Berry  <karl@tug.org>
+
+	* texconfig (init): only run texlinks and updmap if fmtutil succeeds.
+
 2007-01-14  Karl Berry  <karl@tug.org>
 
 	* texconfig: check for pdftex rather than pdfetex.

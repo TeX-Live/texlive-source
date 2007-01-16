@@ -24,7 +24,7 @@ test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 progname=texconfig
 
 # the version string
-version=1168796427 # seconds since `00:00:00 1970-01-01 UTC'
+version=1168907450 # seconds since `00:00:00 1970-01-01 UTC'
                    # date '+%s' (with GNU date)
 
 envVars="
@@ -1144,9 +1144,13 @@ $formatsForHyphenFmt"
     init)
       case $2 in
         "")
-          fmtutil --all || rc=1
-          texlinks --multiplatform || rc=1
-          updmap || rc=1
+          if fmtutil --all \
+             && texlinks --multiplatform \
+             && updmap --quiet; then
+            :
+          else
+            rc=1
+          fi
           ;;
         *)
           shift 1
