@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright Thomas Esser, 1999, 2002, 2003. public domain.
+# Thomas Esser, 1999, 2002, 2003. public domain.
 
 # texlinks: script to maintain symlinks from format to engine. Interprets
 # the lines given in fmtutil.cnf.
@@ -35,7 +35,7 @@ export PATH
 test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 
 cnf=fmtutil.cnf   # name of the config file
-version=1125258113 # seconds since `00:00:00 1970-01-01 UTC'
+version=1169050907 # seconds since `00:00:00 1970-01-01 UTC'
                    # date '+%s' (with GNU date)
 progname=texlinks
 
@@ -133,16 +133,23 @@ install_link()
 
   case $src in
     */mf)
-      if test $dest = "mf-nowin" && test -f $selfautoloc/mfw; then
-        dest="mfw"
-        verbose_echo "both mfw and mf-nowin exists, $src linked to $dest"
+      if test "$dest" = mf-nowin; then
+        if test -f $selfautoloc/mfw; then
+          dest=mfw  # name for windows-enabled mf, once upon a time
+          verbose_echo "both mfw and mf-nowin exists, $src linked to $dest"
+        fi
+        if test -f $selfautoloc/mf && test -f $selfautoloc/mf-nowin; then
+          # have both mf and mf-nowin binaries.  no link.
+          verbose_echo "metafont symlink $src -> $dest skipped (special case)"
+          return
+        fi
       fi
       ;;
   esac
 
   case $src in
     */cont-??|*/metafun|*/mptopdf)
-      verbose_echo "symlink $2 -> $dest skipped (special case)"
+      verbose_echo "symlink $src -> $dest skipped (special case)"
       ;;
     *)
       test "x$src" != "x`(ls -ld $src | awk '{print $NF}') 2>/dev/null`" &&
@@ -153,7 +160,7 @@ install_link()
           true)
             ;;
           *)
-            errmsg "install_link failed for $src. File already exists."
+            errmsg "install_link $src -> $dest failed: file already exists."
             ;;
         esac
       else
