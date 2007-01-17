@@ -1,6 +1,4 @@
-/*  $Header: /home/cvsroot/dvipos/tfm.c,v 1.2 2003/04/24 00:56:00 chofchof Exp $
-    
-    dvipos-20030225
+/*  dvipos-20070107
 
     Copyright (C) 2003 by Jin-Hwan Cho <chofchof@ktug.or.kr>
 

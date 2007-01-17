@@ -1,4 +1,4 @@
-.TH "DVIPOS" "1" "January 2007" "dvipos 20030628 (KPATHSEA)" "ConTeXt"
+.TH "DVIPOS" "1" "January 2007" "dvipos 20070107 (KPATHSEA)" "ConTeXt"
 .de URL
 \\$2 \(laURL: \\$1 \(ra\\$3
 ..
@@ -35,7 +35,10 @@ and is suitable for including in a
 .BR tex (1)
 or
 .BR pdftex (1)
-auxilliary file, such as \fIdocument.tuo\fP, to be read in on the next run.
+auxilliary file, such as \fIdocument.tuo\fP, to be read in by the next
+run of the
+.BR tex (1)
+or similar typesetting engine.
 
 .SH OPTIONS
 
@@ -81,22 +84,32 @@ set page ranges from X to Y.
 
 .SH USAGE
 .B dvipos
-is run mostly by ConTeXt's
+is run mostly behind the scenes by ConTeXt's
 .BR texexec (1)
 between runs of 
 .BR tex (1)
 or
 .BR pdftex (1),
-in order to compute positions for the metafun interface to
+in order to provide information to and get information about
+positional graphics.  These graphics are provided by the MetaFun
+interface to
 .BR mpost (1).
-A typical use:
+\fBdvipos\fP is not used (or needed) in PDF-output mode but is
+needed for DVI-output mode.  
+.BR pdftex (1)
+starting with version 1.40 can produce position information even in
+DVI mode, so once the ConTeXt macros take advantage of this feature,
+the need for \fBdvipos\fP will fade.
+
+Until then, here is a typical use of \fBdvipos\fP:
 .EX
 dvipos notes.dvi
 .EE
 The position information that is output is collected by
 .BR texexec (1)
-to include in the \fInotes.tuo\fP auxilliary file for the next run
-to use.
+to include in the \fInotes.tuo\fP auxilliary file to use in the next
+run.
+
 
 .SH EXAMPLES
 .TP
@@ -116,6 +129,10 @@ Instead send bbox information to \fI/tmp/debug.pos\fP:
 .BR pdftex (1),
 .BR tex (1),
 .BR texexec (1).
+
+For more about positional graphics, see the MetaFun documentation on
+the
+.URL "http://wiki.contextgarden.net/MetaFun" "ConTeXt wiki" .
 
 .SH BUGS
 If you specify a file for the \fB-b\fP option, you must join the

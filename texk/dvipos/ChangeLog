@@ -1,0 +1,28 @@
+2007-01-07  Vladimir Volovich <vvv@vsu.ru>
+	* build scripts: provide configure(.in) and Makefile.in so that
+	dvipos builds cleanly with kpathsea and for the TeXLive
+	architectures.
+	
+2007-01-06  Sanjoy Mahajan <sanjoy@mit.edu>
+	* dvicore.c: do_pos_special() needed two fixes in its interaction
+	with ConTeXt.  [As far as I know, ConTeXt in dvi mode is the only
+	user of dvipos.]
+
+	First, it was writing out coordinates for the pos \specials using
+	scaled points but not appending the sp to the magnitudes.  So when
+	the ConTeXt macros read in the .tuo file, they complained about
+	missing dimensions and assumed the coordinates were given in pt, a
+	factor of 65536 different from sp.  The simplest fix was to still
+	write scaled points but to append 'sp' to the magnitudes.
+
+	Second, the 'list' variable needed to become a struct containing
+	hsize, leftskip, rightskip, hangindent, hangafter, parindent.
+	This struct is sscanf'ed into when do_pos_special() is parsing a a
+	pos:pxywhd special in the dvi file, and do_pos_special() uses the
+	information to write the corresponding \\pospxyplus command for
+	the .tuo file.
+
+2003-06-28  Jin-Hwan <chofchof@ktug.or.kr>
+	* Wrote dvipos!  [In the distant past, its functions were done in
+	a Perl script written by Taco Hoekwater.]
+

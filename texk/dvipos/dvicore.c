@@ -1,9 +1,10 @@
-/*  $Header: /home/cvsroot/dvipos/dvicore.c,v 1.8 2003/06/28 05:43:40 chofchof Exp $
-    
-    dvipos-20030628
+/*  dvipos-20070107
 
     Copyright (C) 2003 by Jin-Hwan <chofchof@ktug.or.kr>
     
+    Includes two small fixes by Sanjoy Mahajan <sanjoy@mit.edu>.  See
+    the ChangeLog.
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or

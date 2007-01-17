@@ -1,6 +1,4 @@
-/*  $Header: /home/cvsroot/dvipos/utils.h,v 1.5 2003/06/28 05:43:40 chofchof Exp $
-    
-    dvipos-20030628
+/*  dvipos-20070107
 
     Copyright (C) 2003 by Jin-Hwan <chofchof@ktug.or.kr>
     

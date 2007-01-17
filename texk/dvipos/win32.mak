@@ -9,7 +9,7 @@
 root_srcdir = ..\..
 INCLUDE=$(INCLUDE);$(root_srcdir)\..\win32
 
-version = 20030628
+version = 20070107
 
 USE_GNUW32 = 1
 USE_KPATHSEA = 1

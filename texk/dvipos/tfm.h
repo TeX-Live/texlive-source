@@ -1,6 +1,4 @@
-/*  $Header
-    
-    dvipos-20030225
+/*  dvipos-20070107
 
     Copyright (C) 2003 by Jin-Hwan Cho <chofchof@ktug.or.kr>
 
