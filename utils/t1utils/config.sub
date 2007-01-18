@@ -4,7 +4,7 @@
 #   2000, 2001, 2002, 2003, 2004, 2005, 2006 Free Software Foundation,
 #   Inc.
 
-timestamp='2007-01-04'
+timestamp='2007-01-18'
 
 # This file is (in principle) common to ALL GNU software.
 # The presence of a machine in this file suggests that SOME GNU software
@@ -250,7 +250,7 @@ case $basic_machine in
 	| i370 | i860 | i960 | ia64 \
 	| ip2k | iq2000 \
 	| m32c | m32r | m32rle | m68000 | m68k | m88k \
-	| maxq | mb | microblaze | mcore \
+	| maxq | mb | microblaze | mcore | mep \
 	| mips | mipsbe | mipseb | mipsel | mipsle \
 	| mips16 \
 	| mips64 | mips64el \
@@ -1416,6 +1416,9 @@ case $basic_machine in
 		;;
 	m68*-cisco)
 		os=-aout
+		;;
+        mep-*)
+		os=-elf
 		;;
 	mips*-cisco)
 		os=-elf
