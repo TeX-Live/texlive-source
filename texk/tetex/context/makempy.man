@@ -56,17 +56,17 @@ are used can be set with PDFTOPS and PSTOEDIT.
 
 .SH "SEE ALSO" 
 
-.IP \(bu
-\fBmpost\fP(1), \fBpstoedit\fP(1), \fBtexexec\fP(1).
-.IP \(bu
+.PP
+\fBmpost\fP(1), \fBmptopdf\fP(1), \fBpstoedit\fP(1), \fBtexexec\fP(1).
+.PP
 The makempy manual, \fImmakempy.pdf\fP,
 available from
 .URL "http://www.pragma-ade.com/dir/general/manuals/" "PRAGMA ADE" .
-.IP \(bu
+.PP
 .URL "http://www.contextgarden.net" "ConTeXt wiki" .
 
 .SH "AUTHOR" 
 
-This manual page was written by Frank Küster <frank@kuesterei.ch>,
+This manual page was written by Frank K\[:u]ster <frank@kuesterei.ch>,
 for the Debian GNU/Linux system.  It may be used and modified by
 others without contacting the author.

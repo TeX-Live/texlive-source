@@ -32,12 +32,12 @@ Print usage and version information.
 .B --convert
 Convert EPS to PDF.  This option is assumed if none is given.
 .TP
-.BI --method= string
+.BI --method=\fIstring\fP
 What method to use for bounding boxes when converting to PDF.
 Specify one of \fBcrop\fP, \fBbounded\fP (the default), or \fBraw\fP.
 Older versions of ConTeXt used numerical methods (1, 2, or 3).
 .TP 
-.BI --resolution= string
+.BI --resolution=\fIstring\fP
 The resolution to use when when converting to pdf.
 Specify one of \fBlow\fP, \fBnormal\fP, \fBmedium\fP, \fBhigh\fP,
 \fBprinter\fP, \fBprint\fP, \fBscreen\fP, \fBebook\fP, or
@@ -55,18 +55,19 @@ To make \fIcow.pdf\fP:
 .EX
 pstopdf cow.eps
 .EE
-or (one of several equivalences):
+or (one of several equivalents):
 .EX
 pstopdf --convert cow.eps cow.pdf
 .EE
 
 
 .SH "SEE ALSO" 
-.IP \(bu
+.PP
 .BR epstopdf (1),
 .BR mptopdf (1),
+.BR ps2pdf (1),
 .BR texexec (1).
-.IP \(bu
+.PP
 .URL "http://www.contextgarden.net" "ConTeXt wiki" .
 
 .SH "AUTHOR" 

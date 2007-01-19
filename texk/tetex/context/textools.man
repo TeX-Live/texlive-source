@@ -1,0 +1,104 @@
+.TH TEXTOOLS "1" "January 2007" "textools 1.3.1" "ConTeXt"
+.de URL
+\\$2 \(laURL: \\$1 \(ra\\$3
+..
+.if \n[.g] .mso www.tmac
+.de EX
+.in +3
+.nf
+.ft CW
+..
+.de EE
+.in -3
+.ft R
+.fi
+..
+
+.SH NAME
+textools \- generate TeX map files, afm files, fix texmf trees
+
+.SH "SYNOPSIS" 
+\fBtextools\fP [ \fIOPTIONS\fP ...  ] [ \fIpattern\fR or \fIname\fR
+\fRor \fIfromroot toroot\fR  ] [ \fIMODIFIER OPTIONS\fP ...  ]
+
+.SH DESCRIPTION
+\fBtextools\fP processes map files, converts Mac files to DOS format,
+generates map files, fixes texmf trees, and performs a
+utility-belt worth of other tasks also useful in installing and
+maintaining the zillion auxilliary files that
+.BR tex (1)
+and its friends require.
+
+.SH OPTIONS
+The modifier options are listed after the options that
+they modify.
+.TP
+\fB--downcasefilenames\fP [\fB--recurse\fP] [\fB--force\fP]
+.TP
+\fB--encmake\fP \fIafmfile\fP \fIencodingname\fP
+.TP
+\fB--findfile\fP \fIfilename\fP [\fB--recurse\fP]
+.TP
+\fB--fixafmfiles\fP [\fIpattern\fP] [\fB--recurse\fP]
+.TP
+\fB--fixtexmftrees\fP [\fItexmfroot\fP] [\fB--force\fP]
+.TP
+\fB--hidemapnames\fP [\fIpattern\fP] [\fB--recurse\fP]
+.TP
+\fB--mactodos\fP [\fIpattern\fP] [\fB--recurse\fP]
+Fixes newlines from Macintosh files so that the file is readable in DOS.
+.TP
+\fB--removemapnames\fP [\fIpattern\fP] [\fB--recurse\fP]
+.TP
+\fB--replacefile\fP \fIfilename\fP [\fB--force\fP]
+.TP
+\fB--restoremapnames\fP [\fIpattern\fP] [\fB--recurse\fP]
+.TP
+\fB--showfont\fP \fIfilename\fP
+.TP
+\fB--stripformfeeds\fP [\fB--recurse\fP] [\fB--force\fP]
+.TP
+\fB--tpmmake\fP \fItpmfile\fP
+Package files into a \fIt-modulename.tpm\fP file.  Imagine this file
+structure:
+.EX
+tex/context/third/modulename/t-modulename.vim
+doc/context/third/modulename/modulename-doc.pdf
+doc/context/third/modulename/modulename-demo.pdf
+tpm/t-modulename.tpm
+.EE
+where \fIt-modulename.tpm\fP is a valid tpm file.  When you run
+.EX
+textools --tpmmake t-modulename
+.EE
+the \fBtextools\fP command will replace file sizes declared in the tpm
+file with proper values and create a ZIP archive \fIt-modulename.zip\fP
+with the files specified by the tpm file.  This command needs to be
+run in the root of the TEXMF tree.
+.TP
+\fB--unzipfiles\fP [\fIpattern\fP] [\fB--recurse\fP]
+.TP
+\fB--updatetree\fP \fIfromroot\fP \fItoroot\fP [\fB--force\fP \fB--nocheck\fP \fB--merge\fP \fB--delete\fP]
+.TP
+\fB--videmapnames\fP [\fIpattern\fP] [\fB--recurse\fP]
+
+.SH "SEE ALSO" 
+.PP
+.BR texexec (1),
+.BR texmfstart (1).
+.PP
+.URL "http://www.contextgarden.net" "ConTeXt wiki" .
+
+.SH BUGS
+This manual page is incomplete because I have no clue what this
+program does.
+
+.SH "AUTHOR" 
+.BR textools (1)
+is part of the 
+.URL "http://www.contextgarden.net" "ConTeXt" " "
+suite of typesetting programs based on the
+.BR tex (1)
+family of typesetting programs.  This manual page was written by
+Sanjoy Mahajan <sanjoy@mit.edu> based on running \fBtextools --help\fP
+and with help from Mojca Miklavec.  It is in the public domain.

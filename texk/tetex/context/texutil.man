@@ -19,4 +19,5 @@ deprecated and many of its features are available in
 
 .SH "AUTHOR" 
 
-This skeleton man page was written by Sanjoy Mahajan <sanjoy@mit.edu>.
+This incomplete man page was written by Sanjoy Mahajan
+<sanjoy@mit.edu> and is in the public domain.

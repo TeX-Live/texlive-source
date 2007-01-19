@@ -41,17 +41,16 @@ bounding boxes, ...  See also \fBpdfinfo\fP(1).
 Print the number of pages in each PDF file.
 
 .SH "SEE ALSO" 
-
-.IP \(bu
+.PP
 \fBtexexec\fP(1), \fBpdfinfo\fP(1), \fBpdftk\fP(1)
-.IP \(bu
+.PP
 The pdftools manual \f(CWmpdftools.pdf\fP
 available from
 .URL "http://www.pragma-ade.com/dir/general/manuals/" "PRAGMA ADE" .
-.IP \(bu
+.PP
 .URL "http://www.contextgarden.net" "ConTeXt wiki" .
-.IP \(bu
-The PDF specification <http://www.adobe.com/devnet/pdf/pdf_reference.html>
+.PP
+.URL "http://www.adobe.com/devnet/pdf/pdf_reference.html" "The PDF specification" .
 
 .SH "AUTHOR" 
 

@@ -76,24 +76,24 @@ directory)
 \fB\-\-help\fR : show some more info
 .HP
 .SH "SEE ALSO" 
-.IP \(bu
+.PP
 \fBtexexec\fP(1), \fBfontinst\fP(1), \fBperl\fP(1), \fBtexshow\fP(1).
-.IP \(bu
+.PP
 The ConTeXt Font manual, \fImfonts.pdf\fP
 available from
 .URL "http://www.pragma-ade.com/dir/general/manuals/" "PRAGMA ADE" .
-.IP \(bu
+.PP
 The TeXFont manual, \fImtexfont.pdf\fP
-.IP \(bu
+.PP
 The TeXExec manual, \fImtexexec.pdf\fP.
-.IP \(bu
+.PP
 .URL "http://www.contextgarden.net" "ConTeXt wiki" .
-.IP \(bu
+.PP
 Donald E. Knuth\'s \fIThe TeXbook\fP.
 
 .SH "AUTHOR" 
 
-This manual page was written by Frank Küster <frank@kuesterei.ch>,
+This manual page was written by Frank K\[:u]ster <frank@kuesterei.ch>,
 for the Debian GNU/Linux system, and  modified by Sanjoy Mahajan
 <sanjoy@mit.edu>.  It may be used and modified by others without
 contacting the authors.

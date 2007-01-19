@@ -575,60 +575,22 @@ Generate format (.fmt) files used by ConTeXt (used during installation):
 steps have to be taken to get \fBtexexec\fP to work beyond installing
 ruby and having the \fBruby\fP(1) binary in your path.
 
-.SH "ENCODINGS" 
-.IP 
-Some languages require specific character encodings to represent their
-alphabets (beyond the basic ASCII encoding).  Although you can use TeX
-commands to represent these characters, such as ``\f(CW\e.z\fP'', it's
-easier to use a text editor that includes direct support for these
-characters and let ConTeXt translate them to the necessary TeX
-commands.  For some languages, this approach can also improve the
-performance of TeX's hyphenation algorithms.
-.IP 
-ConTeXt supports several of the most commonly used encodings.
-Check the files beginning with \fIenco-\fP, \fIlang-\fP, and
-\fIfont-\fP in the ConTeXt distribution for more information.
-.IP 
-\fBweb2c\fP distributions (such as \fBteTeX\fP) support a mechanism to
-map document encodings to ConTeXt's internal encoding, font
-encodings, and hyphenation patterns.  \fBtexexec\fP provides a document
-option and a command-line flag to pass the necessary information to
-\fBtex\fP(1) or \fBpdftex\fP(1).  You can add lines such as
-.EX 
-\f(CW%& --translate-file=cp1250pl\fP
-.EE 
-
-or
-
-.EX 
-\f(CW% --translate=cp1250pl\fP
-.EE 
-
-to the beginning of your document, or you can specify the \fB--translate\fP
-flag on the command line, as 
-.EX 
-\f(CWtexexec --translate=il2pl somefile\fP
-.EE 
-
-Using language-specific encodings will make your file less
-portable than using ASCII.  It may then not be possible for other people to
-typeset your documents on their systems. 
-
 .SH "SEE ALSO" 
-.IP \(bu
-\fBbibtex\fP(1), \fBdvipdfmx\fP(1), \fBdvips\fP(1), \fBfmtutil\fP(1),
-\fBmakeindex\fP(1), \fBmpost\fP(1),
-\fBpdftex\fP(1), \fBpdftk\fP(1), \fBxetex\fP(1),
-\fBruby\fP(1), \fBpsnup\fP(1), \fBtex\fP(1), \fBtexshow\fP(1),
-\fBtexutil\fP(1).
-.IP \(bu
+.PP
+\fBbibtex\fP(1), \fBctxtools\fP(1), \fBdvipdfmx\fP(1), \fBdvips\fP(1),
+\fBfmtutil\fP(1), \fBmakeindex\fP(1), \fBmpost\fP(1),
+\fBmptopdf\fP(1), \fBpdftex\fP(1), \fBpdftk\fP(1), \fBruby\fP(1),
+\fBpsnup\fP(1), \fBtex\fP(1), \fBtexfont\fP(1), \fBtexmfstart\fP(1),
+\fBtexshow\fP(1),
+\fBtexutil\fP(1), \fBxetex\fP(1).
+.PP
 The texexec manual 
 .IR mtexexec.pdf ,
 available from
 .URL "http://www.pragma-ade.com/dir/general/manuals/" "PRAGMA ADE" .
-.IP \(bu
+.PP
 Donald E. Knuth's \fIThe TeXbook\fP.
-.IP \(bu
+.PP
 .URL "http://www.contextgarden.net" "ConTeXt wiki" .
 
 .SH "AUTHOR" 

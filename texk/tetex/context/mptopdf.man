@@ -87,17 +87,18 @@ mptopdf --latex figs.mp
 .EE 
 
 .SH "SEE ALSO" 
-.IP \(bu
+.PP
 .BR tex (1),
 .BR latex (1),
 .BR mpost (1),
+.BR pdftex (1),
 .BR texexec (1).
-.IP \(bu
+.PP
 .URL "http://www.contextgarden.net" "ConTeXt wiki" .
 
 .SH "AUTHOR" 
 .BR mptopdf (1)
-is part of the ConTeXt package available from
-.URL "http://www.pragma-ade.com/dir/general/manuals/" "PRAGMA ADE" .
+is part of the ConTeXt system by Hans Hagen et al, which is available from
+.URL "http://www.pragma-ade.com/" "PRAGMA ADE" .
 This manpage was written by Sanjoy Mahajan <sanjoy@mit.edu> and is in
 the public domain.
