@@ -248,9 +248,9 @@ MPINPUTS = .;$TEXMF/metapost//
 % Dump files (fmt/base/mem) for vir{tex,mf,mp} to read (see web2c/INSTALL),
 % and string pools (.pool) for ini{tex,mf,mp}.  It is silly that we have
 % separate variables for the different programs here, but historically ...
-TEXFORMATS = .;$TEXMF/web2c/{$engine,}
-MFBASES = .;$TEXMF/web2c/{$engine,}
-MPMEMS = .;$TEXMF/web2c/{$engine,}
+TEXFORMATS = .;$TEXMF/web2c/{$engine,}//
+MFBASES = .;$TEXMF/web2c/{$engine,}//
+MPMEMS = .;$TEXMF/web2c/{$engine,}//
 TEXPOOL = .;$TEXMF/web2c
 MFPOOL = .;$TEXMF/web2c
 MPPOOL = .;$TEXMF/web2c
