@@ -1,4 +1,4 @@
-.TH PDFTEX 1 "8 Jan 2007" "pdftex 1.40" "Web2C @VERSION@"
+.TH PDFTEX 1 "8 January 2007" "pdftex 1.40" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF M\s-2ETAFONT\s0
@@ -88,7 +88,9 @@ mode, pdf\*(TX can natively handle the
 .IR JBIG2 ,
 and
 .I PNG
-graphics formats.
+graphics formats.  pdf\*(TX cannot include PostScript or Encapsulated
+PostScript (EPS) graphics files; first convert them to PDF using 
+.BR epstopdf (1).
 pdf\*(TX's handling of its command-line arguments is similar to that of
 of the other \*(TX programs in the
 .I web2c
@@ -476,13 +478,17 @@ More about the list can be found at the
 website.
 .\"=====================================================================
 .SH "SEE ALSO"
-.BR tex (1),
+.BR epstopdf (1),
 .BR etex (1),
+.BR latex (1),
+.BR mptopdf (1),
+.BR tex (1),
+.BR texexec (1),
 .BR mf (1).
 .\"=====================================================================
 .SH AUTHORS
 The primary authors of pdf\*(TX are Han The Thanh, Petr Sojka,
-Jiri Zlatuska, and Peter Breitenlohner (e\*TX).
+Jiri Zlatuska, and Peter Breitenlohner (e\*(TX).
 .PP
 \*(TX was designed by Donald E. Knuth,
 who implemented it using his \*(WB system for Pascal programs.

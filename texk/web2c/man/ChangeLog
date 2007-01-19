@@ -1,3 +1,17 @@
+2007-01-18  Sanjoy Mahajan  <sanjoy@mit.edu>
+
+	* latex.man: More details for book references, reference more
+	programs for 'see also' section.
+
+	* mpost.man, dvitomp.man: Use "Web2C @VERSION@".
+
+	* mpost.man: Pointer to sarovar site, more refs to other programs
+	in 'see also' section.
+
+	* pdftex.man, pdfetex.man: Mention that ps and eps files need to
+	be converted before being included.  Credit Peter Breitenlohner in
+	AUTHORS for eTeX contributions.
+
 2007-01-08  Martin Schröder <martin@pdftex.org>
         * pdfetex.man, pdftex.man: Document -etex and -draftmode switches.
 

@@ -1,4 +1,4 @@
-.TH MPOST 1 "7 January 2007" "MetaPost 0.993" "Web2C 7.5.6"
+.TH MPOST 1 "7 January 2007" "MetaPost 0.993" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MP MetaPost
 .if t .ds MP MetaPost
@@ -461,10 +461,19 @@ CSTR 164, AT&T Bell Labs,
 (the journal of the \*(TX Users Group).
 .\"=====================================================================
 .SH "SEE ALSO"
-.BR tex (1),
-.BR texexec (1),
+.PP
+.BR dvips (1),
+.BR dvitomp (1),
+.BR epstopdf (1),
 .BR mf (1),
-.BR dvips (1).
+.BR mpto (1),
+.BR mptopdf (1),
+.BR pdftex (1),
+.BR tex (1),
+.BR texexec (1).
+.PP
+.URL "http://sarovar.org/projects/metapost/" "MetaPost source code" .
+
 .\"=====================================================================
 .SH AUTHORS
 \*(MP was designed by John D. Hobby, incorporating algorithms from 

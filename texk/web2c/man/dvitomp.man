@@ -1,4 +1,4 @@
-.TH DVITOMP 1 "October 30, 1999"
+.TH DVITOMP 1 "30 October 1999" "Web2C @VERSION@"
 .\" man page by Jim Van Zandt <jrv@vanzandt.mv.com>         -*- nroff -*-
 .SH NAME
 dvitomp \- convert a TeX DVI file to a MetaPost MPXFILE

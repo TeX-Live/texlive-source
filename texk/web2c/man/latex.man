@@ -19,6 +19,7 @@ latex, elatex, lambda, pdflatex \- structured text formatting and typesetting
 [ first line ]
 .\"=====================================================================
 .SH DESCRIPTION
+.PP
 This manual page is not meant to be exhaustive.  The complete
 documentation for this version of \*(TX can be found in the info file
 or manual
@@ -60,16 +61,26 @@ and
 are available for compatibility with older versions of \*(LX.  These
 should not be used for new texts.
 .\"=====================================================================
+.PP
 .SH "SEE ALSO"
 .BR amslatex (1),
 .BR amstex (1),
-.BR tex (1),
-.br
+.BR pdflatex (1),
+.BR pdftex (1),
+.BR tex (1).
+.PP
 Leslie Lamport,
 .IR "\*(LX \- A Document Preparation System" ,
-Addison-Wesley, 1985, ISBN 0-201-15790-X.
-
-LaTeX Companion
-
-LaTeX Graphics Companion
-
+Addison-Wesley, 1985, ISBN 020115790X.
+.PP
+Frank Mittelbach, Michel Goossens, Johannes Braams, David Carlisle,
+and Chris Rowley, 
+.IR "LaTeX Companion" ,
+Addison-Wesley, 2004, ISBN 0201362996 (2nd edition).
+.PP
+\fILaTeX Graphics Companion\fP, available as part of a boxed set:
+\fIThe LaTeX Companions, Revised Boxed Set : A Complete Guide and
+Reference for Preparing, Illustrating, and Publishing Technical
+Documents\fP (2nd Edition), by Frank Mittelbach, Michel Goossens,
+Sebastian Rahtz, Helmut Kopka, Patrick W. Daly (Addison-Wesley, 2004,
+ISBN 0321269446).

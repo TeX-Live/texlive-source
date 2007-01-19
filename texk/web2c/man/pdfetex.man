@@ -84,9 +84,12 @@ In
 mode, pdfe\*(TX can natively handle the
 .IR PDF ,
 .IR JPG ,
+.IR JBIG2 ,
 and
 .I PNG
-graphics formats.
+graphics formats.  pdfe\*(TX cannot include PostScript or Encapsulated
+PostScript (EPS) graphics files; first convert them to PDF using 
+.BR epstopdf (1).
 pdfe\*(TX's handling of its command-line arguments is similar to that of
 of the other \*(TX programs in the
 .I web2c
@@ -474,14 +477,14 @@ More about the list can be found at the
 website.
 .\"=====================================================================
 .SH "SEE ALSO"
-.BR tex (1),
-.BR mf (1),
 .BR etex (1),
-.BR pdftex (1).
+.BR mf (1),
+.BR pdftex (1),
+.BR tex (1).
 .\"=====================================================================
 .SH AUTHORS
 The primary authors of pdfe\*(TX are Han The Thanh, Petr Sojka,
-Jiri Zlatuska, and Peter Breitenlohner (e\*TX).
+Jiri Zlatuska, and Peter Breitenlohner (e\*(TX).
 .PP
 \*(TX was designed by Donald E. Knuth,
 who implemented it using his \*(WB system for Pascal programs.
