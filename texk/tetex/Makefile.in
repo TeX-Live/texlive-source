@@ -22,7 +22,7 @@ CONTEXTSCRIPTS = \
 
 contextmanpgs = \
   ctxtools makempy mptopdf pstopdf texfind texmfstart \
-  fdf2tex pdftools texexec texfont texutil
+  fdf2tex pdftools texexec texfont textools texutil
 
 manpgs = \
   allcm allec allneeded dvi2fax dvired e2pall epstopdf fontinst \
