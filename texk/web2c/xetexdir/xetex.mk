@@ -4,10 +4,6 @@
 
 Makefile: $(srcdir)/xetexdir/xetex.mk
 
-# this should probably move to common.mk some day,
-# but need to check possible effect on other programs
-ALL_CXXFLAGS = @CXXFLAGS@
-
 # We build xetex unless configure decides to skip it
 xetex = @XETEX@ xetex
 
