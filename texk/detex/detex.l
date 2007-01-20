@@ -293,7 +293,7 @@ char	*rgsbArgs[];
 #ifdef KPATHSEA
 	kpse_set_program_name (rgsbArgs[0], NULL);
 #endif
-	if ((sbProgName = rindex(rgsbArgs[0], '/')) != NULL)
+	if ((sbProgName = strrchr(rgsbArgs[0], '/')) != NULL)
 	    sbProgName++;
 	else
 	    sbProgName = rgsbArgs[0];
@@ -532,7 +532,7 @@ char	*sbFile;
 	if (csbIncList == 0)	/* no list */
 	    return(1);
 	(void)strcpy(sbBase, sbFile);
-	if ((pch = rindex(sbBase, '.')) != NULL)
+	if ((pch = strrchr(sbBase, '.')) != NULL)
 	    *pch = '\0';
 	i = 0;
 	while ((i < csbIncList) && rgsbIncList[i])
@@ -602,7 +602,7 @@ int	csbMax;
 
 	while (sbList && *sbList && csbList < csbMax) {
 	    rgsbList[csbList++] = sbList;
-	    if (sbList = index(sbList, chSep))
+	    if (sbList = strchr(sbList, chSep))
 		*sbList++ = '\0';
 	}
 	return(sbList && *sbList ? ERROR : csbList);
@@ -648,7 +648,7 @@ char	*sbFile;
 #endif
 
 	    /* If sbFile ends in .tex then it must be there */
-	    if ((pch = rindex(sbFullPath, '.')) != NULL
+	    if ((pch = strrchr(sbFullPath, '.')) != NULL
 			&& (strcmp(pch, ".tex") == 0))
 		if ((fp = fopen(sbFullPath, "r")) != NULL)
 		    return(fp);
