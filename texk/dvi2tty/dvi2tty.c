@@ -315,7 +315,7 @@ char *optarg;
         if ((optch = optarg[j]) == '\0')
             break;
         j++;
-        if ((strchr(OPTWARG, optch) != NULL) && (optarg[j]='\0')) {
+        if ((strchr(OPTWARG, optch) != NULL) && (optarg[j]=='\0')) {
                 if (--Argc <= 0)
                     usage(noarg);
                 optarg = *++Argv;
