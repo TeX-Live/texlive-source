@@ -255,6 +255,12 @@ TEXPOOL = .;$TEXMF/web2c
 MFPOOL = .;$TEXMF/web2c
 MPPOOL = .;$TEXMF/web2c
 
+% support the original xdvi.  Must come before the generic settings.
+PKFONTS.XDvi   = .;$TEXMF/%s;$VARTEXFONTS/pk/{%m,modeless}//
+VFFONTS.XDvi   = .;$TEXMF/%s
+PSHEADERS.XDvi = .;$TEXMF/%q{dvips,fonts/type1}//
+TEXPICTS.XDvi  = .;$TEXMF/%q{dvips,tex}//
+
 % Device-independent font metric files.
 VFFONTS = .;$TEXMF/fonts/vf//
 TFMFONTS = .;{$TEXMF/fonts,$VARTEXFONTS}/tfm//
@@ -277,12 +283,6 @@ MISCFONTS = .;$TEXMF/fonts/misc//
 
 % font name map files.
 TEXFONTMAPS = .;$TEXMF/fonts/map//
-
-% support non"k"-xdvi:
-PKFONTS.XDvi    = .;$TEXMF/%s;$VARTEXFONTS/pk/{%m,modeless}//
-VFFONTS.XDvi    = .;$TEXMF/%s
-PSHEADERS.XDvi  = .;$TEXMF/%q{dvips,fonts/type1}//
-TEXPICTS.XDvi   = .;$TEXMF/%q{dvips,tex}//
 
 % BibTeX bibliographies and style files.
 BIBINPUTS = .;$TEXMF/bibtex/bib//
