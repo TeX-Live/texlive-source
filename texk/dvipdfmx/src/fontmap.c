@@ -422,7 +422,7 @@ fontmap_parse_mapdef (fontmap_rec *mrec,
       if (v < 0 || v > 16)
         WARN("Invalid valur for option 'p': %s", q);
       else {
-        mrec->opt.mapc |= v << 16;
+        mrec->opt.mapc = v << 16;
       }
       RELEASE(q);
       break;
