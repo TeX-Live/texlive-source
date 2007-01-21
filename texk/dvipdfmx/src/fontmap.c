@@ -420,7 +420,7 @@ fontmap_parse_mapdef (fontmap_rec *mrec,
       }
       v = strtol(q, NULL, 0);
       if (v < 0 || v > 16)
-        WARN("Invalid valur for option 'p': %s", q);
+        WARN("Invalid value for option 'p': %s", q);
       else {
         mrec->opt.mapc = v << 16;
       }
@@ -912,7 +912,7 @@ pdf_load_fontmap_file (const char *filename, int mode)
       continue;
 
     if (!is_pdfm_mapline(p)) {
-      WARN("This .map file looks like a dvips format fotmap file.");
+      WARN("This .map file looks like a dvips format fontmap file.");
       WARN("-- Current input buffer is: %s", p);
       WARN("-- Reading fontmap file stopped at: file=\"%s\", line=%d.",
            filename, lpos);
