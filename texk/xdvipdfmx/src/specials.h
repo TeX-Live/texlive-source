@@ -44,7 +44,7 @@ typedef int  (*spc_handler_fn_ptr) (struct spc_env *, struct spc_arg *);
 struct spc_handler {
   const char         *key;
   spc_handler_fn_ptr  exec;
-} spc_handler;
+};
 
 /* This should not use pdf_. */
 extern void    spc_set_verbose (void);
