@@ -58,11 +58,11 @@ gcc version 3.3.3 20040412 (Red Hat Linux 3.3.3-7)
   These three built and checked in by Vladimir Volovich:
 1) sparc-solaris
 OS: Sun Solaris 8
-compiler: gcc (GCC) 3.4.2
-bison (GNU Bison) 1.875d
+compiler: Sun Studio 11
+bison (GNU Bison) 2.3
 flex version 2.5.4
-GNU m4 1.4.2
-GNU Make 3.80
+GNU m4 1.4.5
+GNU Make 3.81
 
 2) sparc-linux
 OS: Debian GNU/Linux 3.1 (Sarge), kernel 2.4.27-2-sparc64
