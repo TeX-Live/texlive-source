@@ -288,6 +288,7 @@ fqurl (const char *baseurl, const char *name)
     len += strlen(baseurl) + 1; /* we may want to add '/' */
 
   q = NEW(len + 1, char);
+  *q = '\0';
   if (baseurl && baseurl[0]) {
     char  *p;
     strcpy(q, baseurl);
