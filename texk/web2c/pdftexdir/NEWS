@@ -1,4 +1,10 @@
 -------------------------------------------------
+pdfTeX 3.141592-1.40.2 was released on 2007-01-31
+-------------------------------------------------
+- bugfix: maplines starting with = would not work as advertised
+- bugfix: xpdf would complain that PDF 1.7 is too new
+
+-------------------------------------------------
 pdfTeX 3.141592-1.40.1 was released on 2007-01-08
 -------------------------------------------------
 - bugfix: the shell escape function was a bit broken

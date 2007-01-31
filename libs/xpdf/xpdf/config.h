@@ -24,8 +24,9 @@
 #define xpdfUpdateVersionStr "0"
 
 // supported PDF version
-#define supportedPDFVersionStr "1.5"
-#define supportedPDFVersionNum 1.5
+// xpdf says only 1.5, but 1.7 is the same for pdfTeX's purpose
+#define supportedPDFVersionStr "1.7"
+#define supportedPDFVersionNum 1.7
 
 // copyright notice
 #define xpdfCopyright "Copyright 1996-2005 Glyph & Cog, LLC"

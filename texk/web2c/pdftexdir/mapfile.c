@@ -197,7 +197,7 @@ int avl_do_entry(fm_entry * fm, int mode)
                 break;
             case FM_REPLACE:
             case FM_DELETE:
-                if (fm->in_use) {
+                if (p->in_use) {
                     pdftex_warn
                         ("fontmap entry for `%s' has been used, replace/delete not allowed",
                          fm->tfm_name);
@@ -231,7 +231,7 @@ int avl_do_entry(fm_entry * fm, int mode)
                 break;
             case FM_REPLACE:
             case FM_DELETE:
-                if (fm->in_use)
+                if (p->in_use)
                     goto exit;
                 a = avl_delete(ps_tree, p);
                 assert(a != NULL);
