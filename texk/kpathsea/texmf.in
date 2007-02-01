@@ -282,7 +282,7 @@ GLYPHFONTS = .;$TEXMF/fonts
 MISCFONTS = .;$TEXMF/fonts/misc//
 
 % font name map files.
-TEXFONTMAPS = .;$TEXMF/fonts/map//
+TEXFONTMAPS = .;$TEXMF/fonts/map/{$progname,pdftex,dvips,}//
 
 % BibTeX bibliographies and style files.
 BIBINPUTS = .;$TEXMF/bibtex/bib//
