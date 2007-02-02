@@ -350,13 +350,10 @@ TEXSOURCES = .;$TEXMF/source//
 WEBINPUTS = .;$TEXMF/web//
 CWEBINPUTS = .;$TEXMF/cweb//
 
-% Omega-related fonts and other files.  The odd construction for OFMFONTS
-% makes it behave in the face of a definition of TFMFONTS.  Unfortunately
-% no default substitution would take place for TFMFONTS, so an explicit
-% path is retained.
-OFMFONTS = .;{$TEXMF/fonts,$VARTEXFONTS}/{ofm,tfm}//;$TFMFONTS
+% Omega-related fonts and other files.
+OFMFONTS = .;{$TEXMF/fonts,$VARTEXFONTS}/{ofm,tfm}//
 OPLFONTS = .;{$TEXMF/fonts,$VARTEXFONTS}/opl//
-OVFFONTS = .;{$TEXMF/fonts,$VARTEXFONTS}/ovf//
+OVFFONTS = .;{$TEXMF/fonts,$VARTEXFONTS}/{ovf,vf}//
 OVPFONTS = .;{$TEXMF/fonts,$VARTEXFONTS}/ovp//
 OTPINPUTS = .;$TEXMF/omega/otp//
 OCPINPUTS = .;$TEXMF/omega/ocp//
