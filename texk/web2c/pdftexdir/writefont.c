@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996-2006 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -504,7 +504,8 @@ void write_fontdictionary(fo_entry * fo)
     pdf_printf("/FirstChar %i\n/LastChar %i\n/Widths %i 0 R\n",
                (int) fo->first_char, (int) fo->last_char,
                (int) fo->cw->cw_objnum);
-    if (fo->fe != NULL && fo->fe->fe_objnum != 0)
+    if ((is_type1(fo->fm) || is_opentype(fo->fm)) && fo->fe != NULL
+        && fo->fe->fe_objnum != 0)
         pdf_printf("/Encoding %i 0 R\n", (int) fo->fe->fe_objnum);
     if (fo->tounicode_objnum != 0)
         pdf_printf("/ToUnicode %i 0 R\n", (int) fo->tounicode_objnum);

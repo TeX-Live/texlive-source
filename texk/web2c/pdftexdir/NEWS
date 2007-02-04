@@ -1,4 +1,10 @@
 -------------------------------------------------
+pdfTeX 3.141592-1.40.3 was released on 2007-02-04
+-------------------------------------------------
+- bugfix: document which used type 1 and truetype or opentype fonts resulted in
+  broken pdfs (729)
+
+-------------------------------------------------
 pdfTeX 3.141592-1.40.2 was released on 2007-01-31
 -------------------------------------------------
 - bugfix: maplines starting with = would not work as advertised
