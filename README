@@ -1,5 +1,5 @@
 $Id$
-Copyright (C) 2004, 2006 TeX Users Group.
+Copyright 2004, 2006, 2007 TeX Users Group.
 You may freely use, modify and/or distribute this file.
 (Originally written in 2004 by Karl Berry.)
 
@@ -18,6 +18,9 @@ Don't worry about the other files and directories in inst.
 If you are going to check them in yourself, copy the binaries to
 texmf/bin/<tlplatform> and svn add/remove/commit them.
 
+If your C++ needs to find the standard library in a special place (i.e., 
+configure fails saying the compiler doesn't work), try:
+env LD_OPTIONS=-R/usr/local/lib Build
 
 Running ./reautoconf here reruns autoconf, both old (the hacked 2.13
 we have here) and new (assumed to be in /usr/bin/autoconf).
