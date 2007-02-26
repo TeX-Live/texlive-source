@@ -41,8 +41,7 @@ Before reporting a bug, please check below to be sure it isn't already
 known (@pxref{Common problems}).
 
 Bug reports should be sent via electronic mail to
-@email{tex-k@@mail.tug.org}, or by postal mail to 135 Center Hill Road /
-Plymouth, MA 02360 / USA.
+@email{tex-k@@mail.tug.org}.
 
 The general principle is that a good bug report includes all the
 information necessary for reproduction.  Therefore, to enable
@@ -99,13 +98,6 @@ bugs in DVI-reading programs, for example, this generally means a DVI
 file (and any EPS or other files it uses)---@TeX{} source files are
 helpful, but the DVI file is necessary, because that's the actual
 program input.
-
-@cindex shar@r{, recommended}
-GNU @code{shar}, available from @url{ftp://prep.ai.mit.edu/pub/gnu} is
-a convenient way of packaging multiple (possibly binary) files for
-electronic mail.  If you feel your input files are too big to send by
-email, you can ftp them to @url{ftp://ftp.tug.org/incoming} (that
-directory is writable, but not readable).
 
 @item
 @cindex context diff
@@ -359,6 +351,15 @@ For example, after @code{setenv TEXMFLOG /tmp/log}, running Dvips on
 @cindex privacy, semblance of
 @noindent Only filenames that are absolute are recorded, to preserve
 some semblance of privacy.
+
+In addition to this Kpathsea-specific logging, @command{pdftex}
+provides an option @option{-recorder} to write the names of all files
+accessed during a run to the file @file{@var{basefile}.fls}.
+
+Finally, most systems provide a general tool to output each system
+call, thus including opening and closing files.  It might be named
+@command{strace}, @command{truss}, @command{struss}, or something
+else.
 
 
 @node Common problems
