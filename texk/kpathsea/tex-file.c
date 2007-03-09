@@ -177,6 +177,8 @@ kpse_maketex_option P2C(const_string, fmtname,  boolean, value)
     fmt = kpse_tex_format;
   } else if (FILESTRCASEEQ (fmtname, "tfm")) {
     fmt = kpse_tfm_format;
+  } else if (FILESTRCASEEQ (fmtname, "fmt")) {
+    fmt = kpse_fmt_format;
   } else if (FILESTRCASEEQ (fmtname, "ofm")) {
     fmt = kpse_ofm_format;
   } else if (FILESTRCASEEQ (fmtname, "ocp")) {
@@ -471,8 +473,6 @@ kpse_init_format P1C(kpse_file_format_type, format)
       init_maketex (format, "mktexfmt", NULL);
       INIT_FORMAT ("fmt", DEFAULT_TEXFORMATS, FMT_ENVS);
       SUFFIXES (".fmt");
-#define FMT_SUFFIXES ".efmt",".efm",".ofmt",".ofm",".oft",".eofmt",".eoft",".eof",".pfmt",".pfm",".epfmt",".epf",".xpfmt",".xpf",".afmt",".afm"
-      ALT_SUFFIXES (FMT_SUFFIXES);
       FMT_INFO.binmode = true;
       break;
     case kpse_fontmap_format:
@@ -608,6 +608,8 @@ kpse_init_format P1C(kpse_file_format_type, format)
       break;
     case kpse_type42_format:
       INIT_FORMAT ("type42 fonts", DEFAULT_T42FONTS, TYPE42_ENVS);
+#define TYPE42_SUFFIXES ".t42", ".T42"
+      SUFFIXES (TYPE42_SUFFIXES);
       FMT_INFO.binmode = true;
       break;
     case kpse_web2c_format:
