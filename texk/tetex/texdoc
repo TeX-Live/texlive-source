@@ -140,7 +140,7 @@ for name
 do
   case $mode in
     search)
-      find `kpsewhich --expand-path='$TEXMF/doc' | tr : ' '` -type f -print |
+      find `kpsewhich --expand-path='$TEXDOCS' | tr : ' '` -type f -print |
         egrep $name
       continue
       ;;
