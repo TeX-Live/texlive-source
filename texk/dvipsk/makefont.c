@@ -1,7 +1,5 @@
-/*
- *   This software is Copyright 1988 by Radical Eye Software.
- */
-#include "dvips.h"
+/* makefont.c */
+#include "dvips.h" /* The copyright notice in that file is included too! */
 #include <math.h>
 #include "protos.h"
 extern int quiet ;

@@ -1,8 +1,8 @@
 /* This is the main file for hacking dvips to do HyperPostScript
  * Written by Mark D. Doyle 11/94. It is (C) Copyright 1994 by Mark D. Doyle
  * and the University of California. You may modify and use this program to
- * your heart's content, so long as you send modifications to Mark Doyle and
- * abide by the rest of the dvips copyrights. 
+ * your heart's content.  Mark Doyle requests that you send him
+ * any modifications.
  */
 #include "dvips.h"
 #ifdef HPS

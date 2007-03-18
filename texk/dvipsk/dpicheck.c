@@ -1,12 +1,10 @@
 /*
- *   This software is Copyright 1988 by Radical Eye Software.
- */
-/*
  *   dpicheck of dvips.c.  Checks the dots per inch to make sure
  *   it exists.  The fonts which exist are DPI at the appropriate
  *   magnifications.
  */
-#include "dvips.h"
+#include "dvips.h" /* The copyright notice in that file is included too! */
+
 extern int actualdpi ;
 static integer existsizes[30] = { 0 , 99999999 } ;
 static int checkdpi ;

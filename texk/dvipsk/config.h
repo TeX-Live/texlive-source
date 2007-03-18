@@ -1,5 +1,5 @@
 /* config.h: master configuration file, included first by all compilable
-   source files (not headers).  */
+   source files (not headers).  This file is public domain.  */
 
 #ifndef CONFIG_H
 #define CONFIG_H

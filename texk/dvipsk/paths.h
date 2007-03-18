@@ -1,4 +1,4 @@
-/*
+/*   paths.h - public domain.
  *   OUTPATH is where to send the output.  If you want a .ps file to
  *   be created by default, set this to "".  If you want to automatically
  *   invoke a pipe (as in lpr), make the first character an exclamation

@@ -1497,7 +1497,7 @@ under the terms of the GNU General Public License\n\
 and the Dvips copyright.\n\
 For more information about these matters, see the files\n\
 named COPYING and afm2tfm.c.\n\
-Primary author of afm2tfm: T. Rokicki; -k maintainer: K. Berry.\n", f);
+Original author of afm2tfm: T. Rokicki.\n", f);
 }
 
 #define USAGE "\

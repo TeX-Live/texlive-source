@@ -1,7 +1,4 @@
 /*
- *   This software is Copyright 1988 by Radical Eye Software.
- */
-/*
  *   This routine squeezes a PostScript file down to its
  *   minimum.  We parse and then output it.
  */
@@ -14,7 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "dvips.h"
+#include "dvips.h" /* The copyright notice in that file is included too! */
 #endif
 #ifdef fopen
 #undef fopen

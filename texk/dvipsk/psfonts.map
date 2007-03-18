@@ -1,4 +1,5 @@
 % original psfonts.map -- match TFM filenames to PostScript FontNames.
+% This file is public domain.
 % (If you change or delete `original' on the previous line, dvips won't
 % install its psfonts.map over this file.)
 % 

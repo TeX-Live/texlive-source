@@ -1,5 +1,5 @@
 % Thanks for some changes to:
-%+ This is TEXPS.LPRO as modified by Rob Hutchings 1992Apr02
+%+ This is TEXPS.LPRO as modified by Rob Hutchings 1992Apr02.  Public domain.
 %+ My comments are marked as %+ 
 % PostScript prolog for using resident fonts.
 %+ Provision is made to change the encoding scheme in special instructions. 

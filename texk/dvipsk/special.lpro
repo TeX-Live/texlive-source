@@ -1,6 +1,5 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%     header for the \special command
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% special.lpro - public domain.
+%     header for the \special command
 %   The structure of the PostScript produced by dvips for \special is:
 %         @beginspecial
 %           - any number of @hsize, @hoffset, @hscale, etc., commands

@@ -1,4 +1,5 @@
 %!
+% finclude.lpro - public domain.
 % Define tfm-name to be a dictionary of included fonts indexed by size:
 % /tfm-name  scaled-size1 /font-select1 ... scsize_k /fselect_k  k  fstore  -
 /fstore

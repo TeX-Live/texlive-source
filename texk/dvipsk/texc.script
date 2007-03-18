@@ -1,5 +1,5 @@
 #! /bin/sh
-# A shell script to convert tex.lpro to texc.lpro
+# A shell script to convert tex.lpro to texc.lpro.  Public domain.
 #
 # To use it, say
 #       texc.script tex.lpro texc.lpro

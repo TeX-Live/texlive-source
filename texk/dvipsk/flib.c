@@ -4,7 +4,7 @@
  *   Tomas Rokicki or Radical Eye Software; use at your own risk.
  */
 #ifdef FONTLIB
-#include "dvips.h"
+#include "dvips.h" /* The copyright notice in that file is included too! */
 #include "paths.h"
 #include "protos.h"
 extern int debug_flag ;

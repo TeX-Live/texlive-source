@@ -1,5 +1,5 @@
 /* 
- * Here's some stuff for debugging dvips.
+ * Here's some stuff for debugging dvips.  See dvips.h for copyright.
  */
 
 #ifdef DEBUG

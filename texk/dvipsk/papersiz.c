@@ -11,7 +11,7 @@
  *      0 <= num < den <= 20000
  *      0 <= whole
  */
-#include "dvips.h"
+#include "dvips.h" /* The copyright notice in that file is included too! */
 #include "protos.h"
 static long scale P4C(long, whole, long, num, long, den, long, sf)
 {

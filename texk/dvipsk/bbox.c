@@ -6,7 +6,7 @@
  *   If you request an EPSF file and specify -a, you may end up
  *   processing a single page four times!
  */
-#include "dvips.h"
+#include "dvips.h" /* The copyright notice in that file is included too! */
 #include <math.h>
 #include "protos.h"
 
