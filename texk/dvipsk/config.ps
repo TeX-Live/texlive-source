@@ -1,7 +1,7 @@
 * Configuration file for dvips.  This file is public domain.
 *
 *  Default resolution.  This needs to be correct.
-D 300
+D 600
 *
 *  Metafont mode to use to generate bitmap fonts.  This needs to be a
 *  mode with the specified resolution.  Various hardwired defaults are
@@ -10,7 +10,7 @@ D 300
 *M modename
 *
 *  Amount of memory.  Not crucial to be exact, if you have a lot.
-m 470000
+m 1000000
 *
 *  If unspecified, output goes to a file.
 *  To send output via a pipe to a printing program, use something like:
@@ -21,7 +21,7 @@ m 470000
 *
 *  z1 is "secure", i.e., inhibits execution of `shell commands` in \specials.
 *  Dvips allows this by default.
-*z1
+z1
 *
 *  Additional default .map files.
 * p +cmfonts.map
@@ -30,7 +30,7 @@ m 470000
 * p +eufonts.map
 *
 *   Last resort bitmap sizes.
-R  240 270 300 329 360 432 518 622 746 896
+R 300 600
 *
 *
 *   Paper size information.  First definition is the default.
@@ -48,6 +48,13 @@ R  240 270 300 329 360 432 518 622 746 896
 @+ ! %%DocumentPaperSizes: Letter
 @+ %%BeginPaperSize: Letter
 @+ %letter
+@+ %%EndPaperSize
+
+% for powerdot
+@ screen 8.25in 11in
+@+ ! %%DocumentPaperSizes: Screen
+@+ %%BeginPaperSize: Screen
+@+ << /PageSize [594 792] >> setpagedevice]
 @+ %%EndPaperSize
 
 @ legal 8.5in 14in

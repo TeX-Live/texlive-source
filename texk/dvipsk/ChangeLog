@@ -1,3 +1,7 @@
+2007-03-19  Karl Berry  <karl@tug.org>
+
+	* config.ps (screen): add this, 8.25x11, for powerdot.  (From Akira.)
+
 2006-12-09  Karl Berry  <karl@tug.org>
 
 	* dvips.texi (Config file paper sizes): best match now.  (From Akira.)
