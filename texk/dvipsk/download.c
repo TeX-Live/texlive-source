@@ -444,6 +444,7 @@ void downpsfont P2C(charusetype *, p, charusetype *, all)
     register chardesctype *c ;
     struct resfont *rf ;
     int cc;
+    extern char *realnameoffile ;
 
     curfnt = p->fd ;
     rf = curfnt->resfont ;
@@ -514,14 +515,6 @@ void downpsfont P2C(charusetype *, p, charusetype *, all)
         }
     }
     if(GridCount!=0 || extraGlyphs) {
-        if (!quiet) {
-           if (strlen(rf->Fontfile) + prettycolumn > STDOUTSIZE) {
-              fprintf(stderr, "\n") ;
-              prettycolumn = 0 ;
-           }
-           (void)fprintf(stderr, "<%s>", rf->Fontfile);
-	   prettycolumn += strlen(rf->Fontfile) + 2 ;
-	}
         newline() ;
         if (! disablecomments)
            (void)fprintf(bitfile, "%%%%BeginFont: %s\n",  rf->PSname);
@@ -531,6 +524,14 @@ void downpsfont P2C(charusetype *, p, charusetype *, all)
         if(FontPart(bitfile, rf->Fontfile, rf->Vectfile) < 0)
 #endif
             exit(1);
+        if (!quiet) {
+           if (strlen(realnameoffile) + prettycolumn > STDOUTSIZE) {
+              fprintf(stderr, "\n") ;
+              prettycolumn = 0 ;
+           }
+           (void)fprintf(stderr, "<%s>", realnameoffile);
+	   prettycolumn += strlen(realnameoffile) + 2 ;
+	}
         if (! disablecomments)
            (void)fprintf(bitfile, "%%%%EndFont \n");
    }

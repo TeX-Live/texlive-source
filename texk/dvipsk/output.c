@@ -113,6 +113,7 @@ static char possibleDSCLine[81],
 void
 copyfile_general P2C(char *, s, struct header_list *, cur_header)
 {
+   extern char *realnameoffile ;
    FILE *f = NULL ;
    int c, prevc = '\n' ;
    long len ;
@@ -205,7 +206,11 @@ copyfile_general P2C(char *, s, struct header_list *, cur_header)
       error(errbuf) ;
    else {
       if (! quiet) {
+#if defined(VMCMS) || defined (MVSXA)
          if (strlen(s) + prettycolumn > STDOUTSIZE) {
+#else
+         if (strlen(realnameoffile) + prettycolumn > STDOUTSIZE) {
+#endif
             fprintf(stderr, "\n") ;
             prettycolumn = 0 ;
          }
@@ -215,11 +220,15 @@ copyfile_general P2C(char *, s, struct header_list *, cur_header)
 #ifdef MVSXA
          (void)fprintf(stderr, "<%s>", trunc_s) ;
 #else
-         (void)fprintf(stderr, "<%s>", s) ;
+         (void)fprintf(stderr, "<%s>", realnameoffile) ;
 #endif
 #endif
          (void)fflush(stderr) ;
+#if defined(VMCMS) || defined (MVSXA)
          prettycolumn += 2 + strlen(s) ;
+#else
+         prettycolumn += 2 + strlen(realnameoffile) ;
+#endif
       }
       if (linepos != 0)
          (void)putc('\n', bitfile) ;

@@ -659,14 +659,23 @@ void PCXshowpicture P9C(FILE *, pcxf, int, wide, int, high, int, bytes,
 void imagehead P5C(char *, filename, int, wide, int, high, 
 		   float, emwidth, float, emheight)
 {
+	char *fullname = NULL, *name ;
 	if (!quiet) {
-	    if (strlen(filename) + prettycolumn > STDOUTSIZE) {
+#ifdef KPATHSEA
+	    fullname = (char *)kpse_find_file (filename, pictpath, 0) ;
+#endif
+	    if (!fullname)
+		name = filename ;
+	    else
+		name = fullname ;
+	    if (strlen(name) + prettycolumn > STDOUTSIZE) {
 		fprintf(stderr,"\n");
 		prettycolumn = 0;
 	    }
-	    (void)fprintf(stderr,"<%s",filename);
+	    (void)fprintf(stderr,"<%s",name);
 	    (void)fflush(stderr);
-	    prettycolumn += 2+strlen(filename);
+	    prettycolumn += 2+strlen(name);
+	    if (fullname) free (fullname);
 	}
 	hvpos();
 	nlcmdout("@beginspecial @setspecial") ;

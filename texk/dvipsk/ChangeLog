@@ -1,3 +1,8 @@
+2007-03-20  Karl Berry  <karl@tug.org>
+
+	* download.c, output.c, emspecial.c: report full pathnames,
+	to help debugging and for consistency with TeX.
+
 2007-03-19  Karl Berry  <karl@tug.org>
 
 	* config.ps (screen): add this, 8.25x11, for powerdot.  (From Akira.)
