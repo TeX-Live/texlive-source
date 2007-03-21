@@ -136,7 +136,7 @@ distclean: clean
 	    (if test -f $$dir/Makefile; then cd $$dir && $(MAKE) $@; else true; fi) || exit 1; \
 	  done
 	rm -f Makefile *.status *.cache *.log dialogconfig.h TAGS
-	rm -f libs/klibtool.config libs/config.log libs/config.status libs/config.cache libs/kpse_empty
+	rm -f libs/config.log libs/config.status libs/config.cache libs/kpse_empty
 	rm -f utils/texinfo/info/funs.h utils/texinfo/info/doc.c utils/texinfo/info/key.c
 
 tags TAGS:
