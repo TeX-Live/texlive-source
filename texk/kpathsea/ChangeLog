@@ -1,3 +1,7 @@
+2007-03-21  Karl Berry  <karl@tug.org>
+
+	* install.texi (Shared library): remove mention of klibtool.
+
 2007-03-09  Akira Kakuto  <kakuto@fsci.fuk.kindai.ac.jp>
 
 	* tex-file.c (kpse_init_format): reduce to just .fmt;

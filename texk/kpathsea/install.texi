@@ -657,12 +657,6 @@ yourself; for example, on Solaris, include something like
 default is very difficult, because of interactions with an existing
 installed shared library.)
 
-Currently, shared library support is implemented only on Linux, SunOS 4
-(Solaris 1), SunOS 5 (Solaris 2), IRIX 5, and IRIX 6.  If you're
-interested and willing in adding support for other systems, please see
-the @samp{configure} mode in the @file{klibtool} script, especially the
-host-specific case statement around line 250.
-
 
 @node Running make
 @subsection Running @code{make}
