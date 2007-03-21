@@ -31,11 +31,8 @@
 /* kpathsea: the version string. */
 #define KPSEVERSION "REPLACE-WITH-KPSEVERSION"
 
-/* kpathsea/configure.in tests for these functions with
-   kb_AC_KLIBTOOL_REPLACE_FUNCS, and naturally Autoheader doesn't know
-   about that macro.  Since the shared library stuff is all preliminary
-   anyway, I decided not to change Autoheader, but rather to hack them
-   in here.  */
+/* These came from klibtool's kb_AC_KLIBTOOL_REPLACE_FUNCS, probably no
+   longer needed, doesn't hurt to leave them in, though.  */
 #undef HAVE_PUTENV
 #undef HAVE_STRCASECMP
 #undef HAVE_STRTOL
