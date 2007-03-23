@@ -3,7 +3,7 @@
 @settitle Dvips: A DVI-to-PostScript translator
 
 @set version 5.96
-@set month-year January 2007
+@set month-year March 2007
 
 @copying
 This manual documents Dvips version @value{version}
@@ -354,6 +354,11 @@ yourself in such a situation.
 For details on effective bug reporting, common installation problems,
 and @code{mktexpk} problems, @pxref{Bugs,,, kpathsea, Kpathsea}.
 
+A good first debugging operation is to set the environment variable
+@env{DVIPSDEBUG}, which will display any configuration and map files
+read by Dvips.  This way you can be sure it's finding the files and
+settings you expect.
+
 @menu
 * Debug options::               Getting diagnostics.
 * No output::                   No output at all.
@@ -378,6 +383,9 @@ multiple classes, sum the numbers of the classes you wish to track.  To
 track all classes, you can use @code{-1}.  Another useful value is
 @code{3650}, which tracks everything having to do with file searching
 and opening.
+
+You can also set the environment variable @env{KPATHSEA_DEBUG} to any
+of these values.
 
 Some of these debugging options are actually provided by Kpathsea
 (@pxref{Debugging, , , kpathsea, Kpathsea}).
@@ -1190,6 +1198,16 @@ Kpathsea-using programs.  Only the environment variables specific to
 Dvips are mentioned here.
 
 @vtable @code
+@item DVIPSDEBUG
+@vindex KPATHSEA_DEBUG
+Write the absolute path names of any configuration or map files to
+standard output, for debugging.  This isn't done by default because
+these files are read even before the banner is printed.  For
+voluminous additional debugging, set the environment variable
+@env{KPATHSEA_DEBUG} to @samp{-1}
+(@pxref{Debugging,,,kpathsea,Kpathsea}).  (If @env{KPATHSEA_DEBUG} is
+set to any value, it automatically turns on @env{DVIPSDEBUG}.)
+
 @item DVIPSFONTS
 Default path to search for all fonts.  Overrides all the font path
 config file options and other environment variables (@pxref{Supported

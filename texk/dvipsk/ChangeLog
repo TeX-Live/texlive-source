@@ -1,7 +1,8 @@
 2007-03-23  Karl Berry  <karl@tug.org>
 
+	* dvips.texi: document it.
 	* dvips.c, loadfont.c, resident.c: also report map files
-	and config files, if the envvar DVIPS_DEBUG is set.  From Akira.
+	and config files, if the envvar DVIPSDEBUG is set.  From Akira.
 
 2007-03-20  Karl Berry  <karl@tug.org>
 

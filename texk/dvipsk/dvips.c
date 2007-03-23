@@ -633,10 +633,16 @@ Primary author of Dvips: T. Rokicki; -k maintainer: T. Kacvinsky/ S. Rahtz.");
 #endif
    dvips_debug_flag = 0 ;
    { /* for compilers incompatible with c99 */
-      char *s = (char *)getenv ("DVIPS_DEBUG") ;
+      char *s = (char *)getenv ("DVIPSDEBUG") ;
       if (s) {
          dvips_debug_flag = 1 ;
          free (s) ;
+      } else {
+         s = (char *) getenv ("KPATHSEA_DEBUG") ;
+         if (s) {
+           dvips_debug_flag = 1 ;
+           free (s) ;
+         }
       }
    }
    initialize() ;
