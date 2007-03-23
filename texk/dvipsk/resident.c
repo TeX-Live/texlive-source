@@ -32,6 +32,8 @@ struct resfont *reshash[RESHASHPRIME] ;
  *   These are the external variables we use.
  */
 extern char *realnameoffile ;
+extern int prettycolumn ;
+extern int dvips_debug_flag ;
 #ifdef DEBUG
 extern integer debug_flag;
 #endif  /* DEBUG */
@@ -441,6 +443,14 @@ getdefaults P1C(char *, s)
 #else
    if ((deffile=search(d,PSname,READ))!=NULL) {
 #endif
+   if (dvips_debug_flag && !quiet) {
+      if (strlen(realnameoffile) + prettycolumn > STDOUTSIZE) {
+         fprintf(stderr, "\n") ;
+         prettycolumn = 0 ;
+      }
+      (void)fprintf(stderr, "{%s}", realnameoffile);
+      prettycolumn += strlen(realnameoffile) + 2 ;
+   }
 #ifdef DEBUG
      if (dd (D_CONFIG)) {
        fprintf (stderr, "Reading dvips config file `%s':\n", realnameoffile);
@@ -845,9 +855,9 @@ default:
 */
 void getpsinfo P1C(char *, name)
 {
-    FILE *deffile ;
-    register char *p ;
-    char *specinfo, *downloadinfo ;
+   FILE *deffile ;
+   register char *p ;
+   char *specinfo, *downloadinfo ;
    char downbuf[500] ;
    char specbuf[500] ;
    int slen ;
@@ -855,6 +865,14 @@ void getpsinfo P1C(char *, name)
    if (name == 0)
       name = psmapfile ;
    if ((deffile=search(mappath, name, READ))!=NULL) {
+      if (dvips_debug_flag && !quiet) {
+         if (strlen(realnameoffile) + prettycolumn > STDOUTSIZE) {
+            fprintf(stderr, "\n") ;
+            prettycolumn = 0 ;
+         }
+         (void)fprintf(stderr, "{%s}", realnameoffile);
+         prettycolumn += strlen(realnameoffile) + 2 ;
+      }
       while (fgets(was_inline, INLINE_SIZE, deffile)!=NULL) {
          p = was_inline ;
          if (*p > ' ' && *p != '*' && *p != '#' && *p != ';' && *p != '%') {

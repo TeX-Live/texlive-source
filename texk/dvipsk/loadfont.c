@@ -333,6 +333,9 @@ loadfont P1C(register fontdesctype *, curfnt)
    register chardesctype *cd = 0 ;
    int maxcc = 0 ;
    int munged = 0 ;
+   extern int prettycolumn ;
+   extern int quiet ;
+   extern char *realnameoffile ;
 /*
  *   We clear out some pointers:
  */
@@ -357,6 +360,14 @@ loadfont P1C(register fontdesctype *, curfnt)
    if (!pkopen(curfnt)) {
       tfmload(curfnt) ;
       return ;
+   }
+   if (!quiet) {
+      if (strlen(realnameoffile) + prettycolumn > STDOUTSIZE) {
+         fprintf(stderr, "\n") ;
+         prettycolumn = 0 ;
+      }
+      (void)fprintf(stderr, "<%s>", realnameoffile);
+      prettycolumn += strlen(realnameoffile) + 2 ;
    }
 #ifdef DEBUG
    if (dd(D_FONTS))

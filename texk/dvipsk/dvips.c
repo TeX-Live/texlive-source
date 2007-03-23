@@ -159,6 +159,7 @@ integer swmem ;               /* font memory in the PostScript printer */
 int quiet ;                   /* should we only print errors to stderr? */
 int filter ;                  /* act as filter default output to stdout,
                                                default input to stdin? */
+int dvips_debug_flag ;        /* output config and map files to stderr if 1 */
 int prettycolumn ;            /* the column we are at when running pretty */
 int gargc ;                   /* global argument count */
 char **gargv ;                /* global argument vector */
@@ -630,6 +631,14 @@ Primary author of Dvips: T. Rokicki; -k maintainer: T. Kacvinsky/ S. Rahtz.");
    }
 #endif
 #endif
+   dvips_debug_flag = 0 ;
+   { /* for compilers incompatible with c99 */
+      char *s = (char *)getenv ("DVIPS_DEBUG") ;
+      if (s) {
+         dvips_debug_flag = 1 ;
+         free (s) ;
+      }
+   }
    initialize() ;
    checkenv(0) ;
    getdefaults(CONFIGFILE) ;
@@ -1116,8 +1125,14 @@ default:
    revpslists() ;
    getpsinfo((char *)NULL) ;
    revpslists() ;
-   if (!quiet)
-      (void)fprintf(stderr, "%s %s\n", banner, banner2) ;
+   if (dvips_debug_flag) {
+      if (!quiet)
+         (void)fprintf(stderr, "\n%s %s\n", banner, banner2) ;
+      prettycolumn = 0 ;
+   } else {
+      if (!quiet)
+         (void)fprintf(stderr, "%s %s\n", banner, banner2) ;
+   }
    if (*iname) {
       dvifile = fopen(iname, READBIN) ;
 /*
