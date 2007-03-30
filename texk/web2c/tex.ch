@@ -244,7 +244,7 @@ versions of the program.
 @!sup_strings_free = sup_max_strings;
 
 @!inf_buf_size = 500;
-@!sup_buf_size = 300000;
+@!sup_buf_size = 30000000;
 
 @!inf_nest_size = 40;
 @!sup_nest_size = 4000;
