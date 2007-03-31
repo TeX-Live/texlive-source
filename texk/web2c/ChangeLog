@@ -1,3 +1,8 @@
+2007-03-30  Karl Berry  <karl@tug.org>
+
+	* tex.ch (sup_buf_size): increase to 30,000,000 per Hans mail to
+	tex-live, 30 Mar 2007 16:52:09.
+
 2007-01-10  Karl Berry  <karl@tug.org>
 
 	* Makefile.in (programs): include $(pdftosrc), which has always
