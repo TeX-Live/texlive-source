@@ -56,31 +56,31 @@
 
 % The tree containing the runtime files closely related to the specific
 % program version used:
-TEXMFMAIN = @texmf@
+TEXMFMAIN = $SELFAUTOPARENT/texmf
 
 % The main distribution tree:
-TEXMFDIST = @texmf@-dist
+TEXMFDIST = $SELFAUTOPARENT/texmf-dist
 
 % A place for local additions to a "standard" texmf tree.
 % This tree is not used for local configuration maintained by
 % texconfig, it uses TEXMFCONFIG below.
-TEXMFLOCAL = @texmf@-local
+TEXMFLOCAL = $SELFAUTOPARENT/../texmf-local
 
 % TEXMFSYSVAR, where texconfig-sys stores variable runtime data.
 % With teTeX-3.0 or later, this must be set.
 % For sharing this tree with $TEXMFMAIN:
 %   TEXMFSYSVAR = $TEXMFMAIN
 % For using a separate tree:
-%   TEXMFSYSVAR = @texmf@-var
-TEXMFSYSVAR = @texmf@-var
+%   TEXMFSYSVAR = $SELFAUTOPARENT/texmf-var
+TEXMFSYSVAR = $SELFAUTOPARENT/texmf-var
 
 % TEXMFSYSCONFIG, where texconfig-sys stores configuration data.
 % With teTeX-3.0 or later, this must be set.
 % For sharing this tree with $TEXMFMAIN:
 %   TEXMFSYSCONFIG = $TEXMFMAIN
 % For using a separate tree:
-%   TEXMFSYSCONFIG = @texmf@-config
-TEXMFSYSCONFIG = @texmf@-config
+%   TEXMFSYSCONFIG = $SELFAUTOPARENT/texmf-config
+TEXMFSYSCONFIG = $SELFAUTOPARENT/texmf-config
 
 % User texmf trees are allowed as follows.
 % This used to be HOMETEXMF.
@@ -92,7 +92,7 @@ TEXMFHOME = $HOME/texmf
 %   TEXMFVAR = $TEXMFMAIN
 % For using a separate tree:
 %   TEXMFVAR = $HOME/.texmf-var  # teTeX 3.0 default
-TEXMFVAR = $HOME/.texmf-var
+TEXMFVAR = $HOME/.texlive2007/texmf-var
 
 % TEXMFCONFIG, where texconfig stores configuration data.
 % With teTeX-3.0 or later, this must be set.
@@ -101,8 +101,8 @@ TEXMFVAR = $HOME/.texmf-var
 % For using a separate tree:
 %   TEXMFCONFIG = $HOME/.texmf-config  # teTeX 3.0 default
 % For using a separate tree:
-%   TEXMFCONFIG = @texmf@-config
-TEXMFCONFIG = $HOME/.texmf-config
+%   TEXMFCONFIG = $SELFAUTOPARENT/texmf-config
+TEXMFCONFIG = $HOME/.texlive2007/texmf-config
 
 % Now, list all the texmf trees. If you have multiple trees you can
 % use shell brace notation, like this:
@@ -122,14 +122,17 @@ SYSTEXMF = $TEXMFLOCAL;$TEXMFMAIN;$TEXMFDIST
 % Where generated fonts may be written.  This tree is used when the sources
 % were found in a system tree and either that tree wasn't writable, or the
 % varfonts feature was enabled in MT_FEATURES in mktex.cnf.
-VARTEXFONTS = @vartexfonts@
+VARTEXFONTS = $TEXMFVAR/fonts
 
 % Where to look for ls-R files.  There need not be an ls-R in the
 % directories in this path, but if there is one, Kpathsea will use it.
 %
-% Remove $VARTEXFONTS from TEXMFDBS if the VARTEXFONTS directory is below
-% one of the TEXMF directories (avoids overlapping ls-R files).
-TEXMFDBS = $TEXMF;$VARTEXFONTS
+% By default, this is only the !! elements of TEXMF, so that mktexlsr
+% does not create ls-R files in the non-!! elements -- because if an
+% ls-R is present, it will be used, and the disk will not be searched.
+% This is arguably a bug in kpathsea, but we will not think about it now.
+% 
+TEXMFDBS = {!!$TEXMFSYSCONFIG,!!$TEXMFSYSVAR,!!$TEXMFMAIN,!!$TEXMFLOCAL,!!$TEXMFDIST}
 
 % It may be convenient to define TEXMF like this:
 %   TEXMF = {$TEXMFHOME,!!$TEXMFLOCAL,!!$TEXMFMAIN,$HOME}
@@ -149,6 +152,9 @@ TEXMFDBS = $TEXMF;$VARTEXFONTS
 % is used on many Linux systems.  In this case, set VARTEXFONTS like this
 % VARTEXFONTS = $TEXMFVAR/fonts
 % and do not mention it in TEXMFDBS (but _do_ mention TEXMFVAR).
+%
+% Remove $VARTEXFONTS from TEXMFDBS if the VARTEXFONTS directory is below
+% one of the TEXMF directories (avoids overlapping ls-R files).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -221,6 +227,7 @@ TEXINPUTS.pdfxtex       = .;$TEXMF/tex/{plain,generic,}//
 
 % XeTeX
 TEXINPUTS.xelatex       = .;$TEXMF/tex/{xelatex,latex,generic,}//
+TEXINPUTS.xeplain       = .;$TEXMF/tex/{xeplain,eplain,plain,generic,}//
 TEXINPUTS.xetex         = .;$TEXMF/tex/{xetex,plain,generic,}//
 
 % Omega / Aleph
@@ -241,13 +248,31 @@ TEXINPUTS.pdfplatex     = .;$TEXMF/tex/{platex,latex,generic,}//
 % Earlier entries override later ones, so put this last.
 TEXINPUTS               = .;$TEXMF/tex/{$progname,generic,}//
 
+% extra format definitions for TeX Live
+
+TEXINPUTS.elambda       = .;$TEXMF/tex/{lambda,latex,generic,}//
+TEXINPUTS.eomega        = .;$TEXMF/tex/{plain,generic,}//
+TEXINPUTS.pdfxmex       = .;$TEXMF/tex/{mex,plain,generic,}//
+TEXINPUTS.frpdflatex    = .;$TEXMF/tex/{french,latex,generic,}//
+TEXINPUTS.frpdftex      = .;$TEXMF/tex/{french,plain,generic,}//
+TEXINPUTS.xmltex        = .;$TEXMF/tex/{xmltex,latex,generic,}//
+TEXINPUTS.pdfxmltex     = .;$TEXMF/tex/{xmltex,latex,generic,}//
+
+TTF2TFMINPUTS =                 .;$TEXMF/ttf2pk//
+
 % Metafont, MetaPost inputs.
 MFINPUTS = .;$TEXMF/metafont//;{$TEXMF/fonts,$VARTEXFONTS}/source//
 MPINPUTS = .;$TEXMF/metapost//
 
+% allow for compressed files, and various extenions
+TEXDOCSSUFFIX   = ;.pdf;.ps;.dvi;.html;.txt;.tex
+TEXDOCSCOMPRESS = ;.gz;.bz2;.zip;.Z
+TEXDOCEXT       = {$TEXDOCSSUFFIX}{$TEXDOCSCOMPRESS}
+
 % Dump files (fmt/base/mem) for vir{tex,mf,mp} to read (see web2c/INSTALL),
-% and string pools (.pool) for ini{tex,mf,mp}.  It is silly that we have
-% separate variables for the different programs here, but historically ...
+% and string pools (.pool) for ini{tex,mf,mp}.  It is silly that we have six
+% paths and directories here (they all resolve to a single place by default),
+% but historically ...
 TEXFORMATS = .;$TEXMF/web2c/{$engine,}//
 MFBASES = .;$TEXMF/web2c/{$engine,}//
 MPMEMS = .;$TEXMF/web2c/{$engine,}//
@@ -281,12 +306,18 @@ GLYPHFONTS = .;$TEXMF/fonts
 % A place to puth everything that doesn't fit the other font categories.
 MISCFONTS = .;$TEXMF/fonts/misc//
 
-% font name map files.
+% font name map files.  This isn't just fonts/map// because ConTeXt
+% wants support for having files with the same name in the different
+% subdirs.  Maybe if the programs ever get unified to accepting the same
+% map file syntax the definition can be simplified again.
 TEXFONTMAPS = .;$TEXMF/fonts/map/{$progname,pdftex,dvips,}//
 
 % BibTeX bibliographies and style files.
 BIBINPUTS = .;$TEXMF/bibtex/bib//
-BSTINPUTS = .;$TEXMF/bibtex/bst//
+BSTINPUTS = .;$TEXMF/bibtex/{bst,csf}//
+% For bibtex8. Do we really need to repeat the BIBINPUTS setting?
+BIBINPUTS.bibtex8 =             .;$TEXMF/bibtex/{bib,}//
+BSTINPUTS.bibtex8 =             .;$TEXMF/bibtex/{bst,csf,}//
 
 % MFT style files.
 MFTINPUTS = .;$TEXMF/mft//
@@ -296,14 +327,22 @@ MFTINPUTS = .;$TEXMF/mft//
 TEXPSHEADERS = .;$TEXMF/{dvips,fonts/{enc,type1,type42,type3}}//
 TEXPSHEADERS.gsftopk = .;$TEXMF/{dvips,fonts/{enc,type1,type42,type3,truetype}}//
 
+% OSFONTDIR is to provide a convenient hook for allowing TeX to find
+% fonts installed on the system (outside of TeX).  An empty default
+% value would add "//" to the search paths, so we give it a dummy value.
+OSFONTDIR = /please/set/osfontdir/in/the/environment
+
 % PostScript Type 1 outline fonts.
-T1FONTS = .;$TEXMF/fonts/type1//
+T1FONTS = .;$TEXMF/fonts/type1//;$OSFONTDIR//
 
 % PostScript AFM metric files.
-AFMFONTS = .;$TEXMF/fonts/afm//
+AFMFONTS = .;$TEXMF/fonts/afm//;$OSFONTDIR//
 
 % TrueType outline fonts.
-TTFONTS = .;$TEXMF/fonts/truetype//
+TTFONTS = .;$TEXMF/fonts/truetype//;$OSFONTDIR//
+
+% Opentype outline fonts.
+OPENTYPEFONTS = .;$TEXMF/fonts/opentype//;$OSFONTDIR//
 
 % Type 42 outline fonts.
 T42FONTS = .;$TEXMF/fonts/type42//
@@ -339,11 +378,21 @@ MPSUPPORT = .;$TEXMF/metapost/support
 % For xdvi to find mime.types and .mailcap, if they do not exist in
 % $HOME.  These are single directories, not paths.
 % (But the default mime.types, at least, may well suffice.)
-MIMELIBDIR = @prefix@/etc
-MAILCAPLIBDIR = @prefix@/etc
+MIMELIBDIR = $SELFAUTOPARENT/etc
+MAILCAPLIBDIR = $SELFAUTOPARENT/etc
+
+% Default settings for fontconfig library, used by Win32 versions of  
+% xetex/xdvipdfmx (note that fontconfig on Linux/Unix-like systems 
+% will ignore settings in this file)
+FONTCONFIG_FILE=fonts.conf
+FONTCONFIG_PATH=$SELFAUTOLOC/conf
+FC_CACHEDIR=$SELFAUTOLOC/cache
 
 % TeX documentation and source files, for use with kpsewhich.
-TEXDOCS = .;$TEXMF/doc//
+% TeX Live has a separate hierarchy with just documentation, texmf-doc,
+% in addition to the doc files in the other hierarchies.
+TEXMFDOCDIR = $SELFAUTOPARENT/texmf-doc/doc
+TEXDOCS = .;$TEXMF/doc//;$TEXMFDOCDIR//
 TEXSOURCES = .;$TEXMF/source//
 
 % Web and CWeb input paths.
@@ -363,8 +412,22 @@ OCPINPUTS = .;$TEXMF/omega/ocp//
 % search formats, you'll want to add their variables here as well.
 T4HTINPUTS   = .;$TEXMF/tex4ht//
 
+%% t4ht utility, sharing files with TeX4ht
+TEX4HTFONTSET=alias,iso8859,unicode
+TEX4HTINPUTS = .;$TEXMF/tex4ht/base//;$TEXMF/tex4ht/ht-fonts/{$TEX4HTFONTSET}//
+
+% Part for scripts that are distributed/installed in the texmf tree.
+
 % Architecture independent executables.
-TEXMFSCRIPTS = $TEXMF/scripts//
+TEXMFSCRIPTS = $TEXMF/scripts/{$engine,$progname,}//
+
+% Perl, Python, Ruby, Java scripts
+JAVAINPUTS   = .;$TEXMF/scripts/{$progname,$engine,}/java//
+LUAINPUTS    = .;$TEXMF/scripts/{$progname,$engine,}/lua//
+PERLINPUTS   = .;$TEXMF/scripts/{$progname,$engine,}/perl//
+PYTHONINPUTS = .;$TEXMF/scripts/{$progname,$engine,}/python//
+RUBYINPUTS   = .;$TEXMF/scripts/{$progname,$engine,}/ruby//
+
 
 %% The mktex* scripts rely on KPSE_DOT. Do not set it in the environment.
 % KPSE_DOT = .
@@ -373,13 +436,13 @@ TEXMFSCRIPTS = $TEXMF/scripts//
 % paradoxical), but the compile-time default in paths.h is built from it.
 % The SELFAUTO* variables are set automatically from the location of
 % argv[0], in kpse_set_progname.
-%
-% The TETEXDIR stuff isn't likely to relevant unless you're using teTeX,
-% but it doesn't hurt.
+% 
+% The TETEXDIR stuff isn't likely to be relevant unless you're using
+% teTeX, but it doesn't hurt.
 %
 % For security reasons, it is better not to have . part of the path.
 %
-TEXMFCNF = {$SELFAUTOLOC,$SELFAUTODIR,$SELFAUTOPARENT}{,{/share,}/texmf{-local,}/web2c};/.$TETEXDIR;$TEXMF/web2c;@web2c@
+TEXMFCNF = {$SELFAUTOLOC,$SELFAUTODIR,$SELFAUTOPARENT}{,{/share,}/texmf{-local,}/web2c};/.$TETEXDIR
 
 # $progname: kpathsea v. 3.5.3 or later overwrites this at runtime. To
 # avoid empty expansions from binaries linked against an earlier
@@ -417,9 +480,21 @@ shell_escape = f
 openout_any = p
 openin_any = a
 
+% Disable search on multiple suffixes filenames. In many case, when `foo.bar'
+% is looked for, you do not want to look for `foo.bar.tex' before. This flag
+% disables searching for standard suffixes if the file name has already an
+% extension of 3 characters. Default value is true (old behaviour).
+allow_multiple_suffixes =                       f
+
 % Allow TeX, MF, and MP to parse the first line of an input file for
 % the %&format construct.
-parse_first_line = f
+parse_first_line = t
+
+% But don't parse the first line if invoked as "tex", since we want that
+% to remain Knuth-compatible.  The src_specials and
+% file_line_error_style settings, as well as the options -enctex,
+% -mltex, -8bit, etc., also affect this, but they are all off by default.
+parse_first_line.tex = f
 
 % Control file:line:error style messages.
 file_line_error_style = f
@@ -444,6 +519,10 @@ file_line_error_style = f
 % What MetaPost runs to make MPX files.  This is passed an option -troff
 % if MP is in troff mode.  Set to `0' to disable this feature.
 MPXCOMMAND = makempx
+
+% Used by makempx to run TeX.  We use "etex" because MetaPost is
+% expecting DVI, and not "tex" because we want first line parsing.
+TEX = etex
 
 
 %  Part 3: Array and other sizes for TeX (and Metafont and MetaPost).
@@ -498,18 +577,18 @@ max_strings = 100000
 % min pool space left after loading .fmt
 pool_free = 47500
 
-% Hyphenation trie.  The maximum possible is 4194303 (ssup_trie_size in
-% the sources), but we don't need that much.  The value here suffices
-% for all known free hyphenation patterns to be loaded simultaneously.
-%
-trie_size = 300000
-
 % Buffer size.  TeX uses the buffer to contain input lines, but macro
 % expansion works by writing material into the buffer and reparsing the
 % line.  As a consequence, certain constructs require the buffer to be
-% very large.  As distributed, the size is 50000; most documents can be
-% handled within a tenth of this size.
+% very large, even though most documents can be handled with a small value.
 buf_size = 200000
+
+% Hyphenation trie.  The maximum possible is 4194303 (ssup_trie_size in
+% the sources), but we don't need that much.  The value here suffices
+% for all known free hyphenation patterns to be loaded simultaneously
+% (as TeX Live does).
+%
+trie_size = 300000
 
 hyph_size = 8191        % prime number of hyphenation exceptions, >610, <32767.
                         % http://primes.utm.edu/curios/page.php/8191.html
