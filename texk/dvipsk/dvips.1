@@ -360,16 +360,21 @@ nothing but errors to standard error.
 .B -r
 Stack pages in reverse order.  Normally, page 1 will be printed first.
 .TP
-.B -R
-Run in secure mode. This means that ``backtick'' commands from a
-.I \especial{}
-or
-.I \epsffile{}
-macro in the (La)TeX source like
-.I \especial{psfile="`zcat foo.ps.Z"}
-or
-.I \epsffile[72 72 540 720]{"`zcat screendump.ps.gz"}
-are not executed.
+.B -R[0|1|2]
+Run securely.
+.BR -R2
+disables both shell command execution in
+.I \especial'{}
+(via backticks
+.BR `
+) and config files (via the
+.I E
+option), and opening of any absolute filenames.
+.BR -R1
+, the default, forbids shell escapes but allows absolute filenames.
+.BR -R0
+allows both.  The config file option is
+.I z
 .TP
 .B -s
 Causes the entire global output to be enclosed in a save/restore pair.
