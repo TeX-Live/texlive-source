@@ -1,6 +1,6 @@
 /*
  *   This is dvips, a freely redistributable PostScript driver
- *   for dvi files.  It is (C) Copyright 1986-2004 by Tomas Rokicki.
+ *   for dvi files.  It is (C) Copyright 1986-2007 by Tomas Rokicki.
  *   You may modify and use this program to your heart's content.
  */
 
@@ -8,7 +8,7 @@
 
 #define CREATIONDATE
 #define BANNER \
-"This is dvips(k) 5.96 Copyright 2007 Radical Eye Software"
+"This is dvips(k) 5.96dev Copyright 2007 Radical Eye Software"
 #define BANNER2 "(www.radicaleye.com)"
 #ifdef KPATHSEA
 #include "config.h"

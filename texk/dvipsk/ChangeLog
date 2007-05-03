@@ -1,5 +1,7 @@
 2007-05-04  Karl Berry  <karl@tug.org>
 
+	* dvips.h (BANNER): change to 5.96dev to distinguish from the release.
+
 	* header.c (add_name, add_header): cast result of
 	add_header_general to int and return it.  From Akira.
 
