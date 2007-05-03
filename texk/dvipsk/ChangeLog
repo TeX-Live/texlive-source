@@ -1,3 +1,8 @@
+2007-05-04  Karl Berry  <karl@tug.org>
+
+	* header.c (add_name, add_header): cast result of
+	add_header_general to int and return it.  From Akira.
+
 2007-03-23  Karl Berry  <karl@tug.org>
 
 	* dvips.texi: document it.
