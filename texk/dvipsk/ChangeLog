@@ -1,3 +1,11 @@
+2007-05-05  Karl Berry  <karl@tug.org>
+
+	* dvips.h (DOWNLOADEDPSSIZE): new constant.
+	* dvips.c (downloadedpsname): new global array.
+	* finclude.c: set it up as we download.
+	* download.c: use it to avoid downloading fonts as both header
+	and font.  (From Akira.)
+
 2007-05-04  Karl Berry  <karl@tug.org>
 
 	* dvips.h (BANNER): change to 5.96dev to distinguish from the release.

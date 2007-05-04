@@ -433,6 +433,8 @@ static void addGlyph(char *glyphName) {
  *   Download a PostScript font, using partial font downloading if
  *   necessary.
  */
+extern char *downloadedpsname[];
+
 void downpsfont P2C(charusetype *, p, charusetype *, all)
 {
 #ifdef DOWNLOAD_USING_PDFTEX
@@ -445,6 +447,7 @@ void downpsfont P2C(charusetype *, p, charusetype *, all)
     struct resfont *rf ;
     int cc;
     extern char *realnameoffile ;
+    int j;
 
     curfnt = p->fd ;
     rf = curfnt->resfont ;
@@ -458,6 +461,10 @@ void downpsfont P2C(charusetype *, p, charusetype *, all)
        return ;
     if (rf->sent == 2) /* sent as header, from a PS file */
        return ;
+    for (j=0; downloadedpsname[j] && j < DOWNLOADEDPSSIZE; j++) {
+       if (strcmp (downloadedpsname[j], rf->PSname) == 0)
+          return;
+    }
     if (all->fd == 0)
        error("! internal error in downpsfont") ;
     if (!partialdownload) {

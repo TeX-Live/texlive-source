@@ -53,13 +53,14 @@ extern char *sprintf() ;
  *   of a string that can be handled in specials, so it should not be
  *   set too small.
  */
-#define STRINGSIZE (200000)  /* maximum total chars in strings in program */
+#define STRINGSIZE (200000) /* maximum total chars in strings in program */
 #define RASTERCHUNK (8192)  /* size of chunk of raster */
 #define MINCHUNK (240)      /* minimum size char to get own raster */
 #define STACKSIZE (350)     /* maximum stack size for dvi files */
 #define MAXFRAME (10)       /* maximum depth of virtual font recursion */
 #define MAXFONTHD (100)     /* number of unique names of included fonts */
 #define STDOUTSIZE (75)     /* width of a standard output line */
+#define DOWNLOADEDPSSIZE (1000)  /* max number of downloaded fonts to check */
 /*
  *   Other constants, which define printer-dependent stuff.
  */

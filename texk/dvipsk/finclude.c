@@ -57,6 +57,8 @@ extern int to_close ;
 extern integer debug_flag;
 #endif  /* DEBUG */
 
+extern char *downloadedpsname[];
+
 /*
  * Create a font descriptor for a font included in a psfile.  There will be
  * no fontmaptype node for the resulting font descriptor until this font is
@@ -252,6 +254,10 @@ scan_fontnames P2C(char *, str, char *, psfile)
   char *p,*pe;
   struct resfont *re;
   int i;
+  int j = 0;
+
+  while (downloadedpsname[j] != NULL && j < DOWNLOADEDPSSIZE)
+    j++;
 
   /* Turn all newlines, CRs, and tabs into spaces. */
   p = str;
@@ -312,6 +318,11 @@ scan_fontnames P2C(char *, str, char *, psfile)
 	    infont = 0 ;
           }
           re->sent = 2 ;
+          if (j < DOWNLOADEDPSSIZE) {
+             downloadedpsname[j] = (char *)xmalloc(strlen(re->PSname) + 1);
+             strcpy (downloadedpsname[j], re->PSname);
+             j++;
+          }
         } else {
           char eb[1000];
           sprintf(eb,"Font %s used in file %s is not in the mapping file.",

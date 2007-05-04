@@ -50,6 +50,7 @@ extern char *strtok() ; /* some systems don't have this in strings.h */
 #ifdef VMS
     static char ofnme[252],infnme[252],pap[40],thh[20];
 #endif
+char *downloadedpsname[DOWNLOADEDPSSIZE];  /* PS names fully downloaded as headers */ 
 fontdesctype *fonthead ;      /* list of all fonts mentioned so far */
 fontdesctype *curfnt ;        /* the currently selected font */
 sectiontype *sections ;       /* sections to process document in */
@@ -555,6 +556,8 @@ main P2C(int, argc, char **, argv)
 #endif
    register sectiontype *sects ;
 
+   for(i=0 ; i < DOWNLOADEDPSSIZE; i++)
+      downloadedpsname[i] = NULL;
 #ifdef KPATHSEA
    kpse_set_program_name (argv[0], "dvips");
    kpse_set_program_enabled (kpse_pk_format, MAKE_TEX_PK_BY_DEFAULT, kpse_src_compile);
