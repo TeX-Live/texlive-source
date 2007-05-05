@@ -1,7 +1,7 @@
 /* kpsewhich -- standalone path lookup and variable expansion for Kpathsea.
-   Ideas from Thomas Esser and Pierre MacKay.
+   Ideas from Thomas Esser, Pierre MacKay, and many others.
 
-   Copyright (C) 1995 - 2005 Karl Berry & Olaf Weber.
+   Copyright (C) 1995-2007 Karl Berry & Olaf Weber.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -16,7 +16,6 @@
    You should have received a copy of the GNU Lesser General Public
    License along with this library; if not, write to the Free Software
    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
 */
 
 #include <kpathsea/config.h>
@@ -99,6 +98,8 @@ find_format P2C(string, name, boolean, is_filename)
     ret = user_format;
   } else if (FILESTRCASEEQ (name, "pdftex.cfg")) {
     ret = kpse_pdftex_config_format;
+  } else if (FILESTRCASEEQ (name, "config.ps")) {
+    ret = kpse_dvips_config_format;
   } else {
     int f;  /* kpse_file_format_type */
     unsigned name_len = strlen (name);

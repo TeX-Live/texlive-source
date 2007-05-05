@@ -1,5 +1,8 @@
 2007-05-05  Karl Berry  <karl@tug.org>
 
+	* kpsewhich.c (find_format): hardware kpse_dvips_config_format for
+	config.ps.
+
 	* texmf.in (TEXMFMAIN, TEXMFDIST, TEXMFLOCAL, TEXMFSYSVAR,
 	TEXMFSYSCONFIG, VARTEXFONTS, MIMELIBDIR, MAILCAPLIBDIR, TEXMFNCF):
 	use @texmf@ etc. expansions so that (hopefully)

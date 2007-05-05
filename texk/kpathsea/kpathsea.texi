@@ -1090,6 +1090,15 @@ with no associated suffix.  For example, for Dvips configuration files
 you can use @samp{--format="dvips config"}.  (The quotes are for the
 sake of the shell.)
 
+@flindex config.ps
+@flindex pdftex.cfg
+@flindex pdftexconfig.tex
+When the filename being searched for is @file{config.ps}, the format
+is automatically switched to @samp{dvips config}.  Similarly, when the
+filename is @file{pdftex.cfg}, the format is switched to @samp{pdftex
+config} (although @file{pdftex.cfg} is not used any more; look for
+@file{pdftexconfig.tex} instead.)
+
 Here's the current list of recognized names and the associated suffixes.
 @xref{Supported file formats}, for more information on each of these.
 @example
