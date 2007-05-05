@@ -1,3 +1,11 @@
+2007-05-05  Karl Berry  <karl@tug.org>
+
+	* texmf.in (TEXMFMAIN, TEXMFDIST, TEXMFLOCAL, TEXMFSYSVAR,
+	TEXMFSYSCONFIG, VARTEXFONTS, MIMELIBDIR, MAILCAPLIBDIR, TEXMFNCF):
+	use @texmf@ etc. expansions so that (hopefully)
+	--disable-multiplatform works again.  For TEXMFCNF, restore
+	inclusion of $TEXMF/web2c, too.  Reported by Peter Munster.
+
 2007-03-21  Karl Berry  <karl@tug.org>
 
 	* install.texi (Shared library): remove mention of klibtool.

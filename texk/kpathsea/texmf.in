@@ -56,15 +56,15 @@
 
 % The tree containing the runtime files closely related to the specific
 % program version used:
-TEXMFMAIN = $SELFAUTOPARENT/texmf
+TEXMFMAIN = @texmf@
 
 % The main distribution tree:
-TEXMFDIST = $SELFAUTOPARENT/texmf-dist
+TEXMFDIST = @texmf@-dist
 
 % A place for local additions to a "standard" texmf tree.
 % This tree is not used for local configuration maintained by
 % texconfig, it uses TEXMFCONFIG below.
-TEXMFLOCAL = $SELFAUTOPARENT/../texmf-local
+TEXMFLOCAL = @texmf@-local
 
 % TEXMFSYSVAR, where texconfig-sys stores variable runtime data.
 % With teTeX-3.0 or later, this must be set.
@@ -72,7 +72,7 @@ TEXMFLOCAL = $SELFAUTOPARENT/../texmf-local
 %   TEXMFSYSVAR = $TEXMFMAIN
 % For using a separate tree:
 %   TEXMFSYSVAR = $SELFAUTOPARENT/texmf-var
-TEXMFSYSVAR = $SELFAUTOPARENT/texmf-var
+TEXMFSYSVAR = @texmf@-var
 
 % TEXMFSYSCONFIG, where texconfig-sys stores configuration data.
 % With teTeX-3.0 or later, this must be set.
@@ -80,7 +80,7 @@ TEXMFSYSVAR = $SELFAUTOPARENT/texmf-var
 %   TEXMFSYSCONFIG = $TEXMFMAIN
 % For using a separate tree:
 %   TEXMFSYSCONFIG = $SELFAUTOPARENT/texmf-config
-TEXMFSYSCONFIG = $SELFAUTOPARENT/texmf-config
+TEXMFSYSCONFIG = @texmf@-config
 
 % User texmf trees are allowed as follows.
 % This used to be HOMETEXMF.
@@ -122,7 +122,7 @@ SYSTEXMF = $TEXMFLOCAL;$TEXMFMAIN;$TEXMFDIST
 % Where generated fonts may be written.  This tree is used when the sources
 % were found in a system tree and either that tree wasn't writable, or the
 % varfonts feature was enabled in MT_FEATURES in mktex.cnf.
-VARTEXFONTS = $TEXMFVAR/fonts
+VARTEXFONTS = @vartexfonts@
 
 % Where to look for ls-R files.  There need not be an ls-R in the
 % directories in this path, but if there is one, Kpathsea will use it.
@@ -378,8 +378,8 @@ MPSUPPORT = .;$TEXMF/metapost/support
 % For xdvi to find mime.types and .mailcap, if they do not exist in
 % $HOME.  These are single directories, not paths.
 % (But the default mime.types, at least, may well suffice.)
-MIMELIBDIR = $SELFAUTOPARENT/etc
-MAILCAPLIBDIR = $SELFAUTOPARENT/etc
+MIMELIBDIR = @prefix@/etc
+MAILCAPLIBDIR = @prefix@/etc
 
 % Default settings for fontconfig library, used by Win32 versions of  
 % xetex/xdvipdfmx (note that fontconfig on Linux/Unix-like systems 
@@ -442,7 +442,7 @@ RUBYINPUTS   = .;$TEXMF/scripts/{$progname,$engine,}/ruby//
 %
 % For security reasons, it is better not to have . part of the path.
 %
-TEXMFCNF = {$SELFAUTOLOC,$SELFAUTODIR,$SELFAUTOPARENT}{,{/share,}/texmf{-local,}/web2c};/.$TETEXDIR
+TEXMFCNF = {$SELFAUTOLOC,$SELFAUTODIR,$SELFAUTOPARENT}{,{/share,}/texmf{-local,}/web2c};/.$TETEXDIR;$TEXMF/web2c;@web2c@
 
 # $progname: kpathsea v. 3.5.3 or later overwrites this at runtime. To
 # avoid empty expansions from binaries linked against an earlier
