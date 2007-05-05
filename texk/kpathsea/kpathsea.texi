@@ -2,8 +2,8 @@
 @setfilename kpathsea.info
 @settitle Kpathsea: A library for path searching
 
-@set version 3.5.6
-@set month-year January 2007
+@set version 3.5.6dev
+@set month-year May 2007
 
 @c Define new indices for commands, filenames, and options.
 @defcodeindex cm
