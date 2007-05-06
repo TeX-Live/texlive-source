@@ -1,90 +1,396 @@
-* Configuration file for dvips.  This file is public domain.
-*
-*  Default resolution.  This needs to be correct.
-D 600
-*
-*  Metafont mode to use to generate bitmap fonts.  This needs to be a
-*  mode with the specified resolution.  Various hardwired defaults are
-*  used for a few resolutions, but it is best to specify it explicitly.
-*  http://www.ctan.org/tex-archive/fonts/modes/modes.mf has a list of modes.
-*M modename
-*
-*  Amount of memory.  Not crucial to be exact, if you have a lot.
-m 1000000
-*
-*  If unspecified, output goes to a file.
-*  To send output via a pipe to a printing program, use something like:
-*o |lpr
-*o |lpr -Pmyprinter
-*  To send output to standard output by default, use:
-*o -
-*
-*  z1 is "secure", i.e., inhibits execution of `shell commands` in \specials.
-*  Dvips allows this by default.
+% config.ps - configuration file for dvips.
+% Tomas Rokicki, Thomas Esser, Karl Berry, et al., 1998, public domain.
+
+% Memory available. Download the three-line PostScript file:
+%   %! Hey, we're PostScript
+%   /Times-Roman findfont 30 scalefont setfont 144 432 moveto
+%   vmstatus exch sub 40 string cvs show pop showpage
+% to determine this number. (It will be the only thing printed.)
+m 3500000
+
+% Run securely.  z2 disables both shell command execution in
+% `\special' and config files (via the `E' option) and opening of any
+% absolute filenames.  z1, the default, forbids shell escapes but
+% allows absolute filenames.  z0 allows both.  The corresponding
+% command line options are -R0|-R1|-R2
 z1
-*
-*  Additional default .map files.
-* p +cmfonts.map
-* p +lafonts.map
-* p +cyrfonts.map
-* p +eufonts.map
-*
-*   Last resort bitmap sizes.
+
+% How to print, maybe with lp instead lpr, etc. If commented-out, output
+% will go into a file by default.
+%o |lpr
+
+% Default resolution of this device, in dots per inch.
+D 600
+X 600
+Y 600
+
+% Metafont mode.  (This is completely different from the -M
+% command-line option, which controls whether mktexpk is invoked.)
+% See ../../metafont/misc/modes.mf for a list of mode names.  This mode
+% and the D number above must agree, or mktexpk will get confused.
+M ljfour
+
+% Last resort bitmap sizes.
 R 300 600
-*
-*
-*   Paper size information.  First definition is the default.
-*
-*   If your default is a4 uncomment the following definition
-*   and comment out the letterSize definition.
-@ a4size 210mm 297mm
+
+% Correct printer offset. You can use testpage.tex from the LaTeX
+% distribution to find these numbers.
+O 0pt,0pt
+
+% Bitmap font compression. Results in more compact output files, but
+% sometimes causes trouble. So the default is disabled. Set Z1 to enable
+% this feature.
+Z0
+
+% Partially download Type 1 fonts by default.  Only reason not to do
+% this is if you encounter bugs.  (Please report them to
+% @email{tex-k@@mail.tug.org} if you do.)
+j
+
+% This shows how to add your own map file.
+% Remove the comment and adjust the name:
+% p +myfonts.map
+
+% 0 0 595 842 is the right bounding box that most applications expect
+% for A4.  Since dvips always rounds up, choose something slightly smaller.
+
+@ a4size 209.9mm 297.04mm
 @+ ! %%DocumentPaperSizes: a4
 @+ %%PaperSize: a4
 
-*@ letterSize 8.5in 11in
+@ letterSize 8.5in 11in
 @+ ! %%DocumentPaperSizes: Letter
+@+ %%PaperSize: Letter
 
-@ letter 8.5in 11in
-@+ ! %%DocumentPaperSizes: Letter
-@+ %%BeginPaperSize: Letter
-@+ %letter
+@ halfexecutive 133.35mm 184.15mm
+@+ ! %%DocumentPaperSizes: halfexecutive
+@+ %%BeginPaperSize: halfexecutive
+@+ << /PageSize [378 522] >> setpagedevice
+@+ %%EndPaperSize
+
+@ halfletter 139.7mm 215.9mm
+@+ ! %%DocumentPaperSizes: halfletter
+@+ %%BeginPaperSize: halfletter
+@+ << /PageSize [396 612] >> setpagedevice
+@+ %%EndPaperSize
+
+@ statement 139.7mm 215.9mm
+@+ ! %%DocumentPaperSizes: statement
+@+ %%BeginPaperSize: statement
+@+ << /PageSize [396 612] >> setpagedevice
+@+ %%EndPaperSize
+
+@ executive 184.15mm 266.7mm
+@+ ! %%DocumentPaperSizes: executive
+@+ %%BeginPaperSize: executive
+@+ << /PageSize [522 756] >> setpagedevice
 @+ %%EndPaperSize
 
 % for powerdot
 @ screen 8.25in 11in
 @+ ! %%DocumentPaperSizes: Screen
 @+ %%BeginPaperSize: Screen
-@+ << /PageSize [594 792] >> setpagedevice]
+@+ << /PageSize [594 792] >> setpagedevice
+@+ %%EndPaperSize
+
+@ letter 8.5in 11in
+@+ ! %%DocumentPaperSizes: Letter
+@+ %%BeginPaperSize: Letter
+@+ << /PageSize [612 792] >> setpagedevice
+@+ %%EndPaperSize
+
+@ quarto 215.19mm 275.17mm
+@+ ! %%DocumentPaperSizes: quarto
+@+ %%BeginPaperSize: quarto
+@+ << /PageSize [610 780] >> setpagedevice
+@+ %%EndPaperSize
+
+@ note 215.9mm 279.4mm
+@+ ! %%DocumentPaperSizes: note
+@+ %%BeginPaperSize: note
+@+ << /PageSize [612 792] >> setpagedevice
+@+ %%EndPaperSize
+
+@ folio 215.9mm 330.2mm
+@+ ! %%DocumentPaperSizes: folio
+@+ %%BeginPaperSize: folio
+@+ << /PageSize [612 936] >> setpagedevice
 @+ %%EndPaperSize
 
 @ legal 8.5in 14in
 @+ ! %%DocumentPaperSizes: Legal
 @+ %%BeginPaperSize: Legal
-@+ %legal
+@+ << /PageSize [612 1008] >> setpagedevice
+@+ %%EndPaperSize
+
+@ 10x14 254mm 355.6mm
+@+ ! %%DocumentPaperSizes: 10x14
+@+ %%BeginPaperSize: 10x14
+@+ << /PageSize [720 1008] >> setpagedevice
 @+ %%EndPaperSize
 
 @ ledger 17in 11in
 @+ ! %%DocumentPaperSizes: Ledger
 @+ %%BeginPaperSize: Ledger
-@+ %ledger
+@+ << /PageSize [1224 792] >> setpagedevice
 @+ %%EndPaperSize
 
 @ tabloid 11in 17in
 @+ ! %%DocumentPaperSizes: Tabloid
 @+ %%BeginPaperSize: Tabloid
-@+ %11x17
+@+ << /PageSize [792 1224] >> setpagedevice
 @+ %%EndPaperSize
 
-@ a4 210mm 297mm
-@+ ! %%DocumentPaperSizes: a4
-@+ %%BeginPaperSize: a4
-@+ %a4
+@ 11x17 11in 17in
+@+ ! %%DocumentPaperSizes: 11x17
+@+ %%BeginPaperSize: 11x17
+@+ << /PageSize [792 1224] >> setpagedevice
 @+ %%EndPaperSize
 
-@ a3 297mm 420mm
+@ a0 839.61mm 1188.16mm
+@+ ! %%DocumentPaperSizes: a0
+@+ %%BeginPaperSize: a0
+@+ << /PageSize [2380 3368] >> setpagedevice
+@+ %%EndPaperSize
+
+@ a1 594.08mm 839.61mm
+@+ ! %%DocumentPaperSizes: a1
+@+ %%BeginPaperSize: a1
+@+ << /PageSize [1684 2380] >> setpagedevice
+@+ %%EndPaperSize
+
+@ a2 419.81mm 594.08mm
+@+ ! %%DocumentPaperSizes: a2
+@+ %%BeginPaperSize: a2
+@+ << /PageSize [1190 1684] >> setpagedevice
+@+ %%EndPaperSize
+
+@ a3 297.04mm 419.81mm
 @+ ! %%DocumentPaperSizes: a3
 @+ %%BeginPaperSize: a3
-@+ %a3
+@+ << /PageSize [842 1190] >> setpagedevice
+@+ %%EndPaperSize
+
+@ a4 209.9mm 297.04mm
+@+ ! %%DocumentPaperSizes: a4
+@+ %%BeginPaperSize: a4
+@+ << /PageSize [595 842] >> setpagedevice
+@+ %%EndPaperSize
+
+@ a5 148.52mm 209.9mm
+@+ ! %%DocumentPaperSizes: a5
+@+ %%BeginPaperSize: a5
+@+ << /PageSize [421 595] >> setpagedevice
+@+ %%EndPaperSize
+
+@ a6 104.77mm 148.52mm
+@+ ! %%DocumentPaperSizes: a6
+@+ %%BeginPaperSize: a6
+@+ << /PageSize [297 421] >> setpagedevice
+@+ %%EndPaperSize
+
+@ a7 74.08mm 104.77mm
+@+ ! %%DocumentPaperSizes: a7
+@+ %%BeginPaperSize: a7
+@+ << /PageSize [210 297] >> setpagedevice
+@+ %%EndPaperSize
+
+@ a8 52.21mm 74.08mm
+@+ ! %%DocumentPaperSizes: a8
+@+ %%BeginPaperSize: a8
+@+ << /PageSize [148 210] >> setpagedevice
+@+ %%EndPaperSize
+
+@ a9 37.04mm 52.21mm
+@+ ! %%DocumentPaperSizes: a9
+@+ %%BeginPaperSize: a9
+@+ << /PageSize [105 148] >> setpagedevice
+@+ %%EndPaperSize
+
+@ a10 26.11mm 37.04mm
+@+ ! %%DocumentPaperSizes: a10
+@+ %%BeginPaperSize: a10
+@+ << /PageSize [74 105] >> setpagedevice
+@+ %%EndPaperSize
+
+@ jisb0 1027.99mm 1455.91mm
+@+ ! %%DocumentPaperSizes: jisb0
+@+ %%BeginPaperSize: jisb0
+@+ << /PageSize [2914 4127] >> setpagedevice
+@+ %%EndPaperSize
+
+@ jisb1 728.13mm 1027.99mm
+@+ ! %%DocumentPaperSizes: jisb1
+@+ %%BeginPaperSize: jisb1
+@+ << /PageSize [2064 2914] >> setpagedevice
+@+ %%EndPaperSize
+
+@ jisb2 514mm 728.13mm
+@+ ! %%DocumentPaperSizes: jisb2
+@+ %%BeginPaperSize: jisb2
+@+ << /PageSize [1457 2064] >> setpagedevice
+@+ %%EndPaperSize
+
+@ jisb3 364.07mm 514mm
+@+ ! %%DocumentPaperSizes: jisb3
+@+ %%BeginPaperSize: jisb3
+@+ << /PageSize [1032 1457] >> setpagedevice
+@+ %%EndPaperSize
+
+@ jisb4 257.17mm 364.07mm
+@+ ! %%DocumentPaperSizes: jisb4
+@+ %%BeginPaperSize: jisb4
+@+ << /PageSize [729 1032] >> setpagedevice
+@+ %%EndPaperSize
+
+@ jisb5 182.03mm 257.17mm
+@+ ! %%DocumentPaperSizes: jisb5
+@+ %%BeginPaperSize: jisb5
+@+ << /PageSize [516 729] >> setpagedevice
+@+ %%EndPaperSize
+
+@ jisb6 128.41mm 182.03mm
+@+ ! %%DocumentPaperSizes: jisb6
+@+ %%BeginPaperSize: jisb6
+@+ << /PageSize [364 516] >> setpagedevice
+@+ %%EndPaperSize
+
+@ jisb7 90.67mm 128.41mm
+@+ ! %%DocumentPaperSizes: jisb7
+@+ %%BeginPaperSize: jisb7
+@+ << /PageSize [257 364] >> setpagedevice
+@+ %%EndPaperSize
+
+@ jisb8 64mm 90.67mm
+@+ ! %%DocumentPaperSizes: jisb8
+@+ %%BeginPaperSize: jisb8
+@+ << /PageSize [181 257] >> setpagedevice
+@+ %%EndPaperSize
+
+@ b0 1000.48mm 1413.93mm
+@+ ! %%DocumentPaperSizes: b0
+@+ %%BeginPaperSize: b0
+@+ << /PageSize [2836 4008] >> setpagedevice
+@+ %%EndPaperSize
+
+@ b1 706.97mm 1000.48mm
+@+ ! %%DocumentPaperSizes: b1
+@+ %%BeginPaperSize: b1
+@+ << /PageSize [2004 2836] >> setpagedevice
+@+ %%EndPaperSize
+
+@ b2 500.24mm 706.97mm
+@+ ! %%DocumentPaperSizes: b2
+@+ %%BeginPaperSize: b2
+@+ << /PageSize [1418 2004] >> setpagedevice
+@+ %%EndPaperSize
+
+@ b3 353.48mm 500.24mm
+@+ ! %%DocumentPaperSizes: b3
+@+ %%BeginPaperSize: b3
+@+ << /PageSize [1002 1418] >> setpagedevice
+@+ %%EndPaperSize
+
+@ b4 250.12mm 353.48mm
+@+ ! %%DocumentPaperSizes: b4
+@+ %%BeginPaperSize: b4
+@+ << /PageSize [709 1002] >> setpagedevice
+@+ %%EndPaperSize
+
+@ b5 176.74mm 250.12mm
+@+ ! %%DocumentPaperSizes: b5
+@+ %%BeginPaperSize: b5
+@+ << /PageSize [501 709] >> setpagedevice
+@+ %%EndPaperSize
+
+@ b6 125.06mm 176.74mm
+@+ ! %%DocumentPaperSizes: b6
+@+ %%BeginPaperSize: b6
+@+ << /PageSize [355 501] >> setpagedevice
+@+ %%EndPaperSize
+
+@ c5 161.92mm 232.48mm
+@+ ! %%DocumentPaperSizes: c5
+@+ %%BeginPaperSize: c5
+@+ << /PageSize [459 659] >> setpagedevice
+@+ %%EndPaperSize
+
+@ DL 110.07mm 220.13mm
+@+ ! %%DocumentPaperSizes: DL
+@+ %%BeginPaperSize: DL
+@+ << /PageSize [312 624] >> setpagedevice
+@+ %%EndPaperSize
+
+@ Comm10 104.77mm 241.3mm
+@+ ! %%DocumentPaperSizes: Comm10
+@+ %%BeginPaperSize: Comm10
+@+ << /PageSize [297 684] >> setpagedevice
+@+ %%EndPaperSize
+
+@ Monarch 98.42mm 190.5mm
+@+ ! %%DocumentPaperSizes: Monarch
+@+ %%BeginPaperSize: Monarch
+@+ << /PageSize [279 540] >> setpagedevice
+@+ %%EndPaperSize
+
+@ archE 914.4mm 1219.2mm
+@+ ! %%DocumentPaperSizes: archE
+@+ %%BeginPaperSize: archE
+@+ << /PageSize [2592 3456] >> setpagedevice
+@+ %%EndPaperSize
+
+@ archD 609.1mm 914.4mm
+@+ ! %%DocumentPaperSizes: archD
+@+ %%BeginPaperSize: archD
+@+ << /PageSize [1728 2592] >> setpagedevice
+@+ %%EndPaperSize
+
+@ archC 457.2mm 609.6mm
+@+ ! %%DocumentPaperSizes: archC
+@+ %%BeginPaperSize: archC
+@+ << /PageSize [1296 1728] >> setpagedevice
+@+ %%EndPaperSize
+
+@ archB 304.8mm 457.2mm
+@+ ! %%DocumentPaperSizes: archB
+@+ %%BeginPaperSize: archB
+@+ << /PageSize [864 1296] >> setpagedevice
+@+ %%EndPaperSize
+
+@ archA 228.6mm 304.8mm
+@+ ! %%DocumentPaperSizes: archA
+@+ %%BeginPaperSize: archA
+@+ << /PageSize [648 864] >> setpagedevice
+@+ %%EndPaperSize
+
+@ flsa 215.9mm 330.2mm
+@+ ! %%DocumentPaperSizes: flsa
+@+ %%BeginPaperSize: flsa
+@+ << /PageSize [612 936] >> setpagedevice
+@+ %%EndPaperSize
+
+@ flse 215.9mm 330.2mm
+@+ ! %%DocumentPaperSizes: flse
+@+ %%BeginPaperSize: flse
+@+ << /PageSize [612 936] >> setpagedevice
+@+ %%EndPaperSize
+
+@ csheet 431.8mm 558.8mm
+@+ ! %%DocumentPaperSizes: csheet
+@+ %%BeginPaperSize: csheet
+@+ << /PageSize [1224 1584] >> setpagedevice
+@+ %%EndPaperSize
+
+@ dsheet 558.8mm 863.6mm
+@+ ! %%DocumentPaperSizes: dsheet
+@+ %%BeginPaperSize: dsheet
+@+ << /PageSize [1584 2448] >> setpagedevice
+@+ %%EndPaperSize
+
+@ esheet 863.6mm 1117.6mm
+@+ ! %%DocumentPaperSizes: esheet
+@+ %%BeginPaperSize: esheet
+@+ << /PageSize [2448 3168] >> setpagedevice
 @+ %%EndPaperSize
 
 @ unknown 0in 0in
