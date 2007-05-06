@@ -627,7 +627,7 @@ main P2C(int, argc, char **, argv)
         exit (0);
       } else if (strcmp (argv[1], "--version") == 0) {
         extern KPSEDLL char *kpathsea_version_string;
-        puts ("dvips(k) 5.96");
+        puts ("dvips(k) 5.96dev");
         puts (kpathsea_version_string);
         puts ("Copyright (C) 2007 Radical Eye Software.\n\
 There is NO warranty.  You may redistribute this software\n\
