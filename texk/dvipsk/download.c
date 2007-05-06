@@ -433,7 +433,8 @@ static void addGlyph(char *glyphName) {
  *   Download a PostScript font, using partial font downloading if
  *   necessary.
  */
-extern char *downloadedpsname[];
+extern char *downloadedpsnames[];
+extern int unused_top_of_psnames;
 
 void downpsfont P2C(charusetype *, p, charusetype *, all)
 {
@@ -461,8 +462,8 @@ void downpsfont P2C(charusetype *, p, charusetype *, all)
        return ;
     if (rf->sent == 2) /* sent as header, from a PS file */
        return ;
-    for (j=0; downloadedpsname[j] && j < DOWNLOADEDPSSIZE; j++) {
-       if (strcmp (downloadedpsname[j], rf->PSname) == 0)
+    for (j=0; downloadedpsnames[j] && j < unused_top_of_psnames; j++) {
+       if (strcmp (downloadedpsnames[j], rf->PSname) == 0)
           return;
     }
     if (all->fd == 0)

@@ -57,7 +57,8 @@ extern int to_close ;
 extern integer debug_flag;
 #endif  /* DEBUG */
 
-extern char *downloadedpsname[];
+extern char *downloadedpsnames[];
+extern int unused_top_of_psnames;
 
 /*
  * Create a font descriptor for a font included in a psfile.  There will be
@@ -256,7 +257,7 @@ scan_fontnames P2C(char *, str, char *, psfile)
   int i;
   int j = 0;
 
-  while (downloadedpsname[j] != NULL && j < DOWNLOADEDPSSIZE)
+  while (downloadedpsnames[j] != NULL && j < DOWNLOADEDPSSIZE)
     j++;
 
   /* Turn all newlines, CRs, and tabs into spaces. */
@@ -318,10 +319,9 @@ scan_fontnames P2C(char *, str, char *, psfile)
 	    infont = 0 ;
           }
           re->sent = 2 ;
-          if (j < DOWNLOADEDPSSIZE) {
-             downloadedpsname[j] = (char *)xmalloc(strlen(re->PSname) + 1);
-             strcpy (downloadedpsname[j], re->PSname);
-             j++;
+          if (unused_top_of_psnames < DOWNLOADEDPSSIZE) {
+             downloadedpsnames[unused_top_of_psnames] = xstrdup (re->PSname);
+             unused_top_of_psnames++;
           }
         } else {
           char eb[1000];
