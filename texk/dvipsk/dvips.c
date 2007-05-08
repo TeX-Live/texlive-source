@@ -460,6 +460,7 @@ initialize P1H(void)
       xdig[(int)*s] = i++;
    for(i=0 ; i < DOWNLOADEDPSSIZE; i++)
       downloadedpsnames[i] = NULL;
+   unused_top_of_psnames = 0;
    morestrings() ;
    maxpages = 100000 ;
    numcopies = 1 ;

@@ -255,10 +255,6 @@ scan_fontnames P2C(char *, str, char *, psfile)
   char *p,*pe;
   struct resfont *re;
   int i;
-  int j = 0;
-
-  while (downloadedpsnames[j] != NULL && j < DOWNLOADEDPSSIZE)
-    j++;
 
   /* Turn all newlines, CRs, and tabs into spaces. */
   p = str;
