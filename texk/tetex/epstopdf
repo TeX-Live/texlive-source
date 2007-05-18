@@ -62,13 +62,18 @@ use strict;
 #    * This has become the official version for now
 #  2005/10/06 v2.9.5gw (Gerben Wierda)
 #    * Fixed a horrendous bug in the (atend) handling code
-#
+#  2007/01/24 v2.9.6sw (Staszek Wawrykiewicz)
+#    * patched to work also on Windows
+#  2007/05/15 v2.9.6tp (Theo Papadopoulo)
+#    * Simplified the (atend) support
+#  2007/05/18 v.2.9.7gw (Gerben Wierda)
+#    * Merged both supplied 2.9.6 versions
 
 ### program identification
 my $program = "epstopdf";
-my $filedate="2006/01/29";
-my $fileversion="2.9.5gw";
-my $copyright = "Copyright 1998-2006 by Sebastian Rahtz et al.";
+my $filedate="2007/05/18";
+my $fileversion="2.9.7gw";
+my $copyright = "Copyright 1998-2007 by Sebastian Rahtz et al.";
 my $title = "\U$program\E $fileversion, $filedate - $copyright\n";
 
 ### ghostscript command name
@@ -149,7 +154,7 @@ else {
   @ARGV > 0 or die errorUsage "Input filename missing";
   @ARGV < 2 or die errorUsage "Unknown option or too many input files";
   $InputFilename = $ARGV[0];
-  -f $InputFilename or error "'$InputFilename' does not exist";
+  -f $InputFilename or error "\"$InputFilename\" does not exist";
   debug "Input filename:", $InputFilename;
 }
 
@@ -194,18 +199,18 @@ if ($::opt_gs) {
 
 ### open input file
 open(IN,"<$InputFilename") or error "Cannot open",
-  ($::opt_filter) ? "standard input" : "'$InputFilename'";
+  ($::opt_filter) ? "standard input" : "\"$InputFilename\"";
 binmode IN;
 
 ### open output file
 if ($::opt_gs) {
   my $pipe = "$GS -q -sDEVICE=pdfwrite $GSOPTS -dAutoRotatePages=/None" .
-          " -sOutputFile='$OutputFilename' - -c quit";
+          " -sOutputFile=\"$OutputFilename\" - -c quit";
   debug "Ghostscript pipe:", $pipe;
   open(OUT,"|$pipe") or error "Cannot open Ghostscript for piped input";
 }
 else {
-  open(OUT,">$OutputFilename") or error "Cannot write '$OutputFilename";
+  open(OUT,">$OutputFilename") or error "Cannot write \"$OutputFilename\"";
 }
 
 # reading a cr-eol file on a lf-eol system makes it impossible to parse
@@ -217,7 +222,6 @@ else {
 my $buf;
 my $buflen;
 my @bufarray;
-my @parsedbufarray; # for mytell/myseek
 my $bufarraypos;
 
 # We assume 2048 is big enough.
@@ -271,7 +275,6 @@ if ($buflen > 0) {
 sub getline {
   if ($#bufarray >= 0) {
     $_ = shift( @bufarray);
-    unshift( @parsedbufarray, $_); # for myseek and mytell
     $bufarraypos += length( $_);
     # debug "getline from array. bufarraypos = $bufarraypos";
     # debug "*** READ: $_";
@@ -280,47 +283,6 @@ sub getline {
     $_ = <IN>;
   }
   return( defined( $_));
-}
-
-### mytell and myseek, work on <IN> only
-sub mytell {
-  if ($#bufarray) {
-    # debug "Telling ARRAY position $bufarraypos";
-    return $bufarraypos;
-  }
-  else {
-    my $pos = tell( IN);
-    # debug "Telling FILE position $pos";
-    return $pos;
-  }
-}
-
-sub myseek {
-  my $pos = shift;
-  # debug "Seeking to position $pos in input";
-  if ($pos < $buflen) {
-    # debug "myseek position $pos < buffer size $buflen";
-    # We were still parsing the array, reset to the end of buf and
-    # move to the right line in the array.
-    # Now, move stuff from the @parsedbufarray back until we are back at $pos
-    my $tmpline;
-    while ($bufarraypos > $pos) {
-      # debug "myseek bufarray position $bufarraypos > position $pos";
-      # we test on parsedbufarray to prevent an infinite loop on
-      # a programming error (DEVELOP only)
-      die "Programming error 1\n" unless $#parsedbufarray;
-      $tmpline = shift( @parsedbufarray);
-      $bufarraypos -= length( $tmpline);
-      unshift( @bufarray, $tmpline);
-      debug "*** UNREAD: $tmpline";
-    }
-    # debug "Returning to ARRAY size position $buflen (bufarraypos = $bufarraypos)";
-    return seek( IN, $buflen, 0);
-  }
-  else {
-    # debug "Seeking to FILE position $pos";
-    return seek( IN, $pos, 0);
-  }
 }
 
 ### scan first line
@@ -380,7 +342,7 @@ if ($header) {
                 "with option --filter";
         last;
       }
-      my $pos = mytell();
+      my $pos = tell(OUT)+length($_);
       debug "Current file position:", $pos;
 
       # looking for %%BoundingBox
@@ -399,7 +361,7 @@ if ($header) {
       }
 
       # go back
-      myseek( $pos) or error "Cannot go back to line '$BBName (atend)'";
+      seek( IN, $pos, 0) or error "Cannot go back to line \"$BBName (atend)\"";
       last;
     }
 
