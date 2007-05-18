@@ -1,4 +1,4 @@
-Copyright 2006 Karl Berry.
+Copyright 2006, 2007 Karl Berry.
 You may freely use, modify and/or distribute this file.
 
 afm2pl 0.7.03 - ok 5dec06
@@ -12,6 +12,9 @@ dvipdfmx 20061211 - ok 14dec06
 
 dvipng 1.9 - ok 5dec06
   http://www.ctan.org/tex-archive/dviware/dvipng/
+
+dvi2tty 5.3.1 - needs update 18may07
+  http://www.mesa.nl/pub/dvi2tty/
 
 xdvik 22.84.10 - ok 4dec06
   http://xdvi.sourceforge.net/
