@@ -2,6 +2,17 @@ eval '(exit $?0)' && eval 'exec perl -S $0 ${1+"$@"}' && eval 'exec perl -S $0 $
   if 0;
 use strict;
 
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+# EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+# EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 # Change by Thomas Esser, Sept. 1998: The above lines allows us to find
 # perl along $PATH rather than guessing a fixed location. The above
 # construction should work with most shells.
@@ -68,12 +79,13 @@ use strict;
 #    * Simplified the (atend) support
 #  2007/05/18 v.2.9.7gw (Gerben Wierda)
 #    * Merged both supplied 2.9.6 versions
+#  2007/07/18 v.2.9.8gw
 
 ### program identification
 my $program = "epstopdf";
 my $filedate="2007/05/18";
-my $fileversion="2.9.7gw";
-my $copyright = "Copyright 1998-2007 by Sebastian Rahtz et al.";
+my $fileversion="2.9.8gw";
+my $copyright = "Copyright 1998-2001 by Sebastian Rahtz et al., 2002-2007 by Gerben Wierda et al. Free software under a BSD-style license.";
 my $title = "\U$program\E $fileversion, $filedate - $copyright\n";
 
 ### ghostscript command name
