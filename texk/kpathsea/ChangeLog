@@ -1,3 +1,7 @@
+2007-05-19  Karl Berry  <karl@tug.org>
+
+	* texmf.in (SYSTEXMF): add TEXMFSYSVAR (thread around 7mar07).
+
 2007-05-05  Karl Berry  <karl@tug.org>
 
 	* kpsewhich.c (find_format): hardware kpse_dvips_config_format for

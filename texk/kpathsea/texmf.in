@@ -117,7 +117,7 @@ TEXMF = {$TEXMFCONFIG,$TEXMFVAR,$TEXMFHOME,!!$TEXMFSYSCONFIG,!!$TEXMFSYSVAR,!!$T
 % If a tree appears in this list, the mktex* scripts will use
 % VARTEXFONTS for generated files, if the original tree isn't writable;
 % otherwise the current working directory is used.
-SYSTEXMF = $TEXMFLOCAL;$TEXMFMAIN;$TEXMFDIST
+SYSTEXMF = $TEXMFSYSVAR;$TEXMFLOCAL;$TEXMFMAIN;$TEXMFDIST
 
 % Where generated fonts may be written.  This tree is used when the sources
 % were found in a system tree and either that tree wasn't writable, or the
