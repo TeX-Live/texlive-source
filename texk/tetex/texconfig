@@ -1209,11 +1209,7 @@ Valid PAPER settings:
 
       p=$2; pXdvi=$2; pDvips=$2
       case $2 in
-        a4)
-          pDvips=A4size
-          ;;
         letter)
-          pDvips=letterSize
           pXdvi=us
           ;;
         "") echo "$help" >&2; rc=1; return;;

@@ -1,5 +1,5 @@
 % config.ps - configuration file for dvips.
-% Tomas Rokicki, Thomas Esser, Karl Berry, et al., 1998, public domain.
+% Tomas Rokicki, Thomas Esser, Karl Berry, et al., 1986ff, public domain.
 
 % Memory available. Download the three-line PostScript file:
 %   %! Hey, we're PostScript
@@ -54,13 +54,33 @@ j
 % 0 0 595 842 is the right bounding box that most applications expect
 % for A4.  Since dvips always rounds up, choose something slightly smaller.
 
-@ a4size 209.9mm 297.04mm
+@ a4 209.9mm 297.04mm
 @+ ! %%DocumentPaperSizes: a4
-@+ %%PaperSize: a4
+@+ %%BeginPaperSize: a4
+@+ << /PageSize [595 842] >> setpagedevice
+@+ %%EndPaperSize
+
+@ letter 8.5in 11in
+@+ ! %%DocumentPaperSizes: Letter
+@+ %%BeginPaperSize: Letter
+@+ << /PageSize [612 792] >> setpagedevice
+@+ %%EndPaperSize
+
+% these used to be the default paper sizes used, and they did not
+% execute any page size operator, but now it seems there is no reason
+% not to use setpagedevice.
+% 
+@ a4size 209.9mm 297.04mm
+@+ %%BeginPaperSize: a4
+@+ ! %%DocumentPaperSizes: a4
+@+ << /PageSize [595 842] >> setpagedevice
+@+ %%EndPaperSize
 
 @ letterSize 8.5in 11in
 @+ ! %%DocumentPaperSizes: Letter
-@+ %%PaperSize: Letter
+@+ %%BeginPaperSize: Letter
+@+ << /PageSize [612 792] >> setpagedevice
+@+ %%EndPaperSize: Letter
 
 @ halfexecutive 133.35mm 184.15mm
 @+ ! %%DocumentPaperSizes: halfexecutive
@@ -98,12 +118,6 @@ j
 @+ ! %%DocumentPaperSizes: SixByNine
 @+ %%BeginPaperSize: SixByNine
 @+ << /PageSize [432 648] >> setpagedevice
-@+ %%EndPaperSize
-
-@ letter 8.5in 11in
-@+ ! %%DocumentPaperSizes: Letter
-@+ %%BeginPaperSize: Letter
-@+ << /PageSize [612 792] >> setpagedevice
 @+ %%EndPaperSize
 
 @ quarto 215.19mm 275.17mm
@@ -176,12 +190,6 @@ j
 @+ ! %%DocumentPaperSizes: a3
 @+ %%BeginPaperSize: a3
 @+ << /PageSize [842 1190] >> setpagedevice
-@+ %%EndPaperSize
-
-@ a4 209.9mm 297.04mm
-@+ ! %%DocumentPaperSizes: a4
-@+ %%BeginPaperSize: a4
-@+ << /PageSize [595 842] >> setpagedevice
 @+ %%EndPaperSize
 
 @ a5 148.52mm 209.9mm

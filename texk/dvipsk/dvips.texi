@@ -1777,29 +1777,21 @@ for both (except maybe specifying both).
 The Perl 5 script @file{contrib/mkdvipspapers} in the distribution
 directory may help in determining appropriate paper size definitions.
 
-@cindex a4 paper size, as default
-If your printers are configured to use A4 paper by default, the
-configuration file (probably the global @file{config.ps} in this case)
-should include this as the first @samp{@@} command:
+@flindex config.ps @r{paper sizes}
+@findex letter @r{paper size}
+@findex a4 @r{paper size}
+The default @code{letter} and @code{a4} paper size definitions in
+@file{config.ps} execute the @code{setpagedevice} operator, which
+always exists.  Executing the @samp{letter} or @samp{a4} or other
+PostScript operators cause the document to be nonconforming and thus
+perhaps not to print on certain (unknown) printers, while not
+executing any page size definition at all confuses PostScript
+conversion programs such as @command{ps2pdf}.
 
-@example
-@@ A4size 210mm 297mm
-@@+ %%PaperSize: A4
-@end example
-
-@noindent
-so that @code{A4size} is used as the default, and not @code{A4} itself;
-thus, no PostScript @code{a4} command is added to the output file,
-unless the user explicitly says to use paper size @samp{a4}.  That is,
-by default, no paper size PostScript command should be put in the
-output, but Dvips will still know that the paper size is A4 because
-@samp{A4size} is the first (and therefore default) size in the
-configuration file.
-
-Executing the @samp{letter} or @samp{a4} or other PostScript operators
-cause the document to be nonconforming and can cause it not to print on
-certain printers, so the default paper size should not execute such an
-operator if at all possible.
+@findex letterSize @r{paper size}
+@findex A4size @r{paper size}
+The @code{letterSize} and @code{A4Size} paper size definitions are now
+synonyms for @code{letter} and @code{a4}.
 
 
 @node Paper trays
@@ -1810,6 +1802,7 @@ operator if at all possible.
 @cindex multiple paper trays
 @cindex HP4Si printer and paper trays
 
+@findex bop-hook
 Some printers, such as the Hewlett-Packard HP4si, have multiple paper
 trays.  You can set up Dvips to take advantage of this using the
 @code{bop-hook} PostScript variable (@pxref{PostScript hooks}).
