@@ -477,6 +477,9 @@ void stamp_external P2C(char *, s, Hps_link *, pl)
 }
 
 void finish_hps P1H(void) {
+  extern int dvips_debug_flag;
+  extern int debug_flag;
+
   fclose(bitfile) ;
   set_bitfile("head.tmp",1);
   do_targets() ;
@@ -489,6 +492,10 @@ void finish_hps P1H(void) {
   removecomments = 0;
   copyfile("head.tmp") ;
   copyfile("body.tmp") ;
+  if (dvips_debug_flag == 0 && debug_flag == 0) {
+     unlink("head.tmp");
+     unlink("body.tmp");
+  }
 }
 
 void set_bitfile P2C(char *, s, int, mode)

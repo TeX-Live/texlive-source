@@ -1,3 +1,9 @@
+2007-05-31  Karl Berry  <karl@tug.org>
+
+	* hps.c (finish_hps): remove head.tmp and body.tmp unless
+	we are debugging.  Report from Dan Luecking, 25 May 2007 13:00:17,
+	fix from Akira.
+
 2007-05-09  Karl Berry  <karl@tug.org>
 
 	* dvips.c, finclude.c: cleanups of my patching from Akira.
