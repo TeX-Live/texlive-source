@@ -696,7 +696,7 @@ run_initex()
   if test -f $fmtfile; then
     grep '^! ' $format.log >/dev/null 2>&1 &&
       log_failure "\`$engine -ini $tcxflag $jobswitch $prgswitch $texargs' possibly failed."
-    rm -f "$fulldestdir/$format.log"
+
     # We don't want user-interaction for the following "mv" commands:
     mv "$format.log" "$fulldestdir/$format.log" </dev/null
     if mv "$fmtfile" "$fulldestdir/$fmtfile" </dev/null; then
