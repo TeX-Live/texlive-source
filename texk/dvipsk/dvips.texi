@@ -1726,7 +1726,7 @@ example:
 @end example
 
 If both @var{hsize} and @var{vsize} are zero (you must still specify
-units!) then any page size will match.  If the @samp{@@} character is
+units!)@: then any page size will match.  If the @samp{@@} character is
 immediately followed by a @samp{+} sign, then the remainder of the line
 (after skipping any leading blanks) is treated as PostScript code to
 send to the printer, presumably to select that particular paper size:
@@ -1781,12 +1781,13 @@ directory may help in determining appropriate paper size definitions.
 @findex letter @r{paper size}
 @findex a4 @r{paper size}
 The default @code{letter} and @code{a4} paper size definitions in
-@file{config.ps} execute the @code{setpagedevice} operator, which
-always exists.  Executing the @samp{letter} or @samp{a4} or other
-PostScript operators cause the document to be nonconforming and thus
-perhaps not to print on certain (unknown) printers, while not
+@file{config.ps} execute the @code{setpagedevice} operator if it
+exists (it was defined in PostScript Level 2), or the @samp{letter} or
+@samp{a4} operator if they exist (they are nonstandard and thus
+perhaps cause failures on certain (unknown) printers).  Not
 executing any page size definition at all confuses PostScript
-conversion programs such as @command{ps2pdf}.
+conversion programs such as @command{ps2pdf}, so we want to execute
+one if we can.
 
 @findex letterSize @r{paper size}
 @findex A4size @r{paper size}

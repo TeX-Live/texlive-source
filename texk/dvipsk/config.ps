@@ -44,42 +44,60 @@ Z0
 
 % Partially download Type 1 fonts by default.  Only reason not to do
 % this is if you encounter bugs.  (Please report them to
-% @email{tex-k@@mail.tug.org} if you do.)
+% @email{tex-k@tug.org} if you do.)
 j
 
 % This shows how to add your own map file.
 % Remove the comment and adjust the name:
 % p +myfonts.map
 
-% 0 0 595 842 is the right bounding box that most applications expect
-% for A4.  Since dvips always rounds up, choose something slightly smaller.
+% If we have setpagedevice, use that.
+% else if we have the a4 resp. letter operator, use that.
+% else do nothing to set the page size.
+% 
+% In the past, the a4size and letterSize definitions did not set the
+% page size, but we want to set it if we can so that ps2pdf can work
+% properly.  Here, a4 and a4size, and letter and letterSize, are
+% identical, and we prefer the a4/letter names -- texconfig uses them.
+ 
+% 0 0 595 842 is the right bounding box that applications expect
+% for A4.  Since dvips always rounds up, choose something slightly
+% smaller for our paper size.
 
 @ a4 209.9mm 297.04mm
 @+ ! %%DocumentPaperSizes: a4
 @+ %%BeginPaperSize: a4
-@+ << /PageSize [595 842] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [595 842] >> setpagedevice }
+@+  { /a4 where { pop a4 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
 @ letter 8.5in 11in
 @+ ! %%DocumentPaperSizes: Letter
 @+ %%BeginPaperSize: Letter
-@+ << /PageSize [612 792] >> setpagedevice
+@+ /setpagedevice where
+@+   { pop << /PageSize [612 792] >> setpagedevice }
+@+   { /letter where { pop letter } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-% these used to be the default paper sizes used, and they did not
-% execute any page size operator, but now it seems there is no reason
-% not to use setpagedevice.
-% 
 @ a4size 209.9mm 297.04mm
-@+ %%BeginPaperSize: a4
 @+ ! %%DocumentPaperSizes: a4
-@+ << /PageSize [595 842] >> setpagedevice
+@+ %%BeginPaperSize: a4
+@+ /setpagedevice where
+@+  { pop << /PageSize [595 842] >> setpagedevice }
+@+  { /a4 where { pop a4 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
 @ letterSize 8.5in 11in
 @+ ! %%DocumentPaperSizes: Letter
 @+ %%BeginPaperSize: Letter
-@+ << /PageSize [612 792] >> setpagedevice
+@+ /setpagedevice where
+@+   { pop << /PageSize [612 792] >> setpagedevice }
+@+   { /letter where { pop letter } if }
+@+ ifelse
 @+ %%EndPaperSize
 
 @ halfexecutive 133.35mm 184.15mm
