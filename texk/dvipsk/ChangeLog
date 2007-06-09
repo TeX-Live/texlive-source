@@ -1,3 +1,9 @@
+2007-06-10  Karl Berry  <karl@tug.org>
+
+	* dospecial.c: implement ps::nobreak for Scott (Pakin); we need
+	to break by default because pstricks is written to assume that,
+	and we can't ask Herbert to rewrite thousands of lines of code.
+
 2007-05-31  Karl Berry  <karl@tug.org>
 
 	* hps.c (finish_hps): remove head.tmp and body.tmp unless

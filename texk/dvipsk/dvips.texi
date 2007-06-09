@@ -3,7 +3,7 @@
 @settitle Dvips: A DVI-to-PostScript translator
 
 @set version 5.96dev
-@set month-year May 2007
+@set month-year June 2007
 
 @copying
 This manual documents Dvips version @value{version}
@@ -2636,6 +2636,7 @@ of the following will work:
 \special@{ps::@var{text}@}
 \special@{ps::[begin]@var{text}@}
 \special@{ps::[end]@var{text}@}
+\special@{ps::[nobreak]@var{text}@}
 @end example
 
 @noindent
@@ -2643,6 +2644,10 @@ of the following will work:
 present).  @samp{ps::} and @samp{ps::[end]} do no positioning, so they
 can be used to continue PostScript literals started with @samp{ps:} or
 @samp{ps::[begin]}.
+
+Literal PostScript instructions after @samp{ps::[nobreak]} are
+@emph{not} broken into lines. This feature may be used to include
+PostScript comments, for example.
 
 @findex plotfile@r{, @samp{ps} subspecial}
 In addition, the variant

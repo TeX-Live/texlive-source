@@ -602,12 +602,15 @@ case 'p':
    if (strncmp(p, "ps:", 3)==0) {
         psflush() ; /* now anything can happen. */
         if (p[3]==':') {
-           if (strncmp(p+4, "[begin]", 7) == 0) {
+           if (strncmp(p+4, "[nobreak]", 9) == 0) {
               hvpos() ;
-              outputstring(&p[11]) ;
+              outputstring(&p[13]) ;
+           } else if (strncmp(p+4, "[begin]", 7) == 0) {
+              hvpos() ;
+              trytobreakout(&p[11]) ;
            } else if (strncmp(p+4, "[end]", 5) == 0)
-              outputstring(&p[9]);
-           else outputstring(&p[4]);
+              trytobreakout(&p[9]);
+           else trytobreakout(&p[4]);
         } else if (strncmp(p+3, " plotfile ", 10) == 0) {
              char *sfp ;
              hvpos() ;
@@ -631,7 +634,7 @@ case 'p':
            /* End TJD changes */
         } else {
            hvpos() ;
-           outputstring(&p[3]);
+           trytobreakout(&p[3]);
            psflush() ;
            hvpos() ;
         }
@@ -767,8 +770,8 @@ case '"':
    hvpos() ;
    cmdout("@beginspecial") ;
    cmdout("@setspecial") ;
-   outputstring(p+1) ;
-   cmdout("@endspecial") ;
+   trytobreakout(p+1) ;
+   cmdout("\n@endspecial") ;
    return ;
    break ;
 default:
