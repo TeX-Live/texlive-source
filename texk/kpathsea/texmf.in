@@ -33,17 +33,14 @@
 %
 % // means to search subdirectories (recursively).
 % A leading !! means to look only in the ls-R db, never on the disk.
-% A leading/trailing/doubled ; in the paths will be expanded into the
-%   compile-time default. Probably not what you want.
+% In this file, either ; or : can be used to separate path components.
+% A leading/trailing/doubled path separator in the paths will be
+%   expanded into the compile-time default. Probably not what you want.
 %
-% You can use brace notation, for example: /usr/local/{mytex:othertex}
-% expands to /usr/local/mytex:/usr/local/othertex.  Instead of the path
-% separator you can use a comma: /usr/local/{mytex,othertex} also expands
-% to /usr/local/mytex:/usr/local/othertex.  However, the use of the comma
-% instead of the path separator is deprecated.
-%
-% The text above assumes thet path separator is a colon (:).  Non-UNIX
-% systems use different path separators, like the semicolon (;).
+% You can use brace notation, for example: /usr/local/{mytex,othertex}
+% expands to /usr/local/mytex:/usr/local/othertex.  Instead of the comma
+% you can use the path separator: /usr/local/{mytex:othertex} also expands
+% to /usr/local/mytex:/usr/local/othertex.
 
 %  Part 1: Search paths and directories.
 
