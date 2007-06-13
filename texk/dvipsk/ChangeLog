@@ -1,3 +1,7 @@
+2007-06-13  Karl Berry  <karl@tug.org>
+
+	* config.ps: use integral mm values (from Akira).
+
 2007-06-10  Karl Berry  <karl@tug.org>
 
 	* dospecial.c: implement ps::nobreak for Scott (Pakin); we need

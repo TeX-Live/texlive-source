@@ -64,7 +64,7 @@ j
 % for A4.  Since dvips always rounds up, choose something slightly
 % smaller for our paper size.
 
-@ a4 209.9mm 297.04mm
+@ a4 210mm 297mm
 @+ ! %%DocumentPaperSizes: a4
 @+ %%BeginPaperSize: a4
 @+ /setpagedevice where
@@ -77,12 +77,12 @@ j
 @+ ! %%DocumentPaperSizes: Letter
 @+ %%BeginPaperSize: Letter
 @+ /setpagedevice where
-@+   { pop << /PageSize [612 792] >> setpagedevice }
-@+   { /letter where { pop letter } if }
+@+  { pop << /PageSize [612 792] >> setpagedevice }
+@+  { /letter where { pop letter } if }
 @+ ifelse
 @+ %%EndPaperSize
 
-@ a4size 209.9mm 297.04mm
+@ a4size 210mm 297mm
 @+ ! %%DocumentPaperSizes: a4
 @+ %%BeginPaperSize: a4
 @+ /setpagedevice where
@@ -95,336 +95,476 @@ j
 @+ ! %%DocumentPaperSizes: Letter
 @+ %%BeginPaperSize: Letter
 @+ /setpagedevice where
-@+   { pop << /PageSize [612 792] >> setpagedevice }
-@+   { /letter where { pop letter } if }
+@+  { pop << /PageSize [612 792] >> setpagedevice }
+@+  { /letter where { pop letter } if }
 @+ ifelse
 @+ %%EndPaperSize
 
-@ halfexecutive 133.35mm 184.15mm
+@ halfexecutive 133mm 184mm
 @+ ! %%DocumentPaperSizes: halfexecutive
 @+ %%BeginPaperSize: halfexecutive
-@+ << /PageSize [378 522] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [378 522] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
-@ halfletter 139.7mm 215.9mm
+@ halfletter 140mm 216mm
 @+ ! %%DocumentPaperSizes: halfletter
 @+ %%BeginPaperSize: halfletter
-@+ << /PageSize [396 612] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [396 612] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
-@ statement 139.7mm 215.9mm
+@ statement 140mm 216mm
 @+ ! %%DocumentPaperSizes: statement
 @+ %%BeginPaperSize: statement
-@+ << /PageSize [396 612] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [396 612] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
-@ executive 184.15mm 266.7mm
+@ executive 184mm 267mm
 @+ ! %%DocumentPaperSizes: executive
 @+ %%BeginPaperSize: executive
-@+ << /PageSize [522 756] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [522 756] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
 % for powerdot
 @ screen 8.25in 11in
 @+ ! %%DocumentPaperSizes: Screen
 @+ %%BeginPaperSize: Screen
-@+ << /PageSize [594 792] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [594 792] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
 % a common size for printers (in north america).
 @ sixbynine 6in 9in
 @+ ! %%DocumentPaperSizes: SixByNine
 @+ %%BeginPaperSize: SixByNine
-@+ << /PageSize [432 648] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [432 648] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
-@ quarto 215.19mm 275.17mm
+@ quarto 215mm 275mm
 @+ ! %%DocumentPaperSizes: quarto
 @+ %%BeginPaperSize: quarto
-@+ << /PageSize [610 780] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [610 780] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
-@ note 215.9mm 279.4mm
+@ note 216mm 279mm
 @+ ! %%DocumentPaperSizes: note
 @+ %%BeginPaperSize: note
-@+ << /PageSize [612 792] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [612 792] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
-@ folio 215.9mm 330.2mm
+@ folio 216mm 330mm
 @+ ! %%DocumentPaperSizes: folio
 @+ %%BeginPaperSize: folio
-@+ << /PageSize [612 936] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [612 936] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
 @ legal 8.5in 14in
 @+ ! %%DocumentPaperSizes: Legal
 @+ %%BeginPaperSize: Legal
-@+ << /PageSize [612 1008] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [612 1008] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
-@ 10x14 254mm 355.6mm
+@ 10x14 10in 14in
 @+ ! %%DocumentPaperSizes: 10x14
 @+ %%BeginPaperSize: 10x14
-@+ << /PageSize [720 1008] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [720 1008] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
 @ ledger 17in 11in
 @+ ! %%DocumentPaperSizes: Ledger
 @+ %%BeginPaperSize: Ledger
-@+ << /PageSize [1224 792] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [1224 792] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
 @ tabloid 11in 17in
 @+ ! %%DocumentPaperSizes: Tabloid
 @+ %%BeginPaperSize: Tabloid
-@+ << /PageSize [792 1224] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [792 1224] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
 @ 11x17 11in 17in
 @+ ! %%DocumentPaperSizes: 11x17
 @+ %%BeginPaperSize: 11x17
-@+ << /PageSize [792 1224] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [792 1224] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
-@ a0 839.61mm 1188.16mm
+@ a0 841mm 1189mm
 @+ ! %%DocumentPaperSizes: a0
 @+ %%BeginPaperSize: a0
-@+ << /PageSize [2380 3368] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [2384 3370] >> setpagedevice }
+@+  { /a0 where { pop a0 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ a1 594.08mm 839.61mm
+@ a1 594mm 841mm
 @+ ! %%DocumentPaperSizes: a1
 @+ %%BeginPaperSize: a1
-@+ << /PageSize [1684 2380] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [1684 2384] >> setpagedevice }
+@+  { /a1 where { pop a1 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ a2 419.81mm 594.08mm
+@ a2 420mm 594mm
 @+ ! %%DocumentPaperSizes: a2
 @+ %%BeginPaperSize: a2
-@+ << /PageSize [1190 1684] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [1191 1684] >> setpagedevice }
+@+  { /a2 where { pop a2 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ a3 297.04mm 419.81mm
+@ a3 297mm 420mm
 @+ ! %%DocumentPaperSizes: a3
 @+ %%BeginPaperSize: a3
-@+ << /PageSize [842 1190] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [842 1191] >> setpagedevice }
+@+  { /a3 where { pop a3 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ a5 148.52mm 209.9mm
+@ a5 148mm 210mm
 @+ ! %%DocumentPaperSizes: a5
 @+ %%BeginPaperSize: a5
-@+ << /PageSize [421 595] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [420 595] >> setpagedevice }
+@+  { /a5 where { pop a5 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ a6 104.77mm 148.52mm
+@ a6 105mm 148mm
 @+ ! %%DocumentPaperSizes: a6
 @+ %%BeginPaperSize: a6
-@+ << /PageSize [297 421] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [298 420] >> setpagedevice }
+@+  { /a6 where { pop a6 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ a7 74.08mm 104.77mm
+@ a7 74mm 105mm
 @+ ! %%DocumentPaperSizes: a7
 @+ %%BeginPaperSize: a7
-@+ << /PageSize [210 297] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [210 298] >> setpagedevice }
+@+  { /a7 where { pop a7 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ a8 52.21mm 74.08mm
+@ a8 52mm 74mm
 @+ ! %%DocumentPaperSizes: a8
 @+ %%BeginPaperSize: a8
-@+ << /PageSize [148 210] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [147 210] >> setpagedevice }
+@+  { /a8 where { pop a8 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ a9 37.04mm 52.21mm
+@ a9 37mm 52mm
 @+ ! %%DocumentPaperSizes: a9
 @+ %%BeginPaperSize: a9
-@+ << /PageSize [105 148] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [105 147] >> setpagedevice }
+@+  { /a9 where { pop a9 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ a10 26.11mm 37.04mm
+@ a10 26mm 37mm
 @+ ! %%DocumentPaperSizes: a10
 @+ %%BeginPaperSize: a10
-@+ << /PageSize [74 105] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [74 105] >> setpagedevice }
+@+  { /a10 where { pop a10 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ jisb0 1027.99mm 1455.91mm
+@ jisb0 1030mm 1456mm
 @+ ! %%DocumentPaperSizes: jisb0
 @+ %%BeginPaperSize: jisb0
-@+ << /PageSize [2914 4127] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [2920 4127] >> setpagedevice }
+@+  { /jisb0 where { pop jisb0 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ jisb1 728.13mm 1027.99mm
+@ jisb1 728mm 1030mm
 @+ ! %%DocumentPaperSizes: jisb1
 @+ %%BeginPaperSize: jisb1
-@+ << /PageSize [2064 2914] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [2064 2920] >> setpagedevice }
+@+  { /jisb1 where { pop jisb1 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ jisb2 514mm 728.13mm
+@ jisb2 515mm 728mm
 @+ ! %%DocumentPaperSizes: jisb2
 @+ %%BeginPaperSize: jisb2
-@+ << /PageSize [1457 2064] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [1460 2064] >> setpagedevice }
+@+  { /jisb2 where { pop jisb2 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ jisb3 364.07mm 514mm
+@ jisb3 364mm 515mm
 @+ ! %%DocumentPaperSizes: jisb3
 @+ %%BeginPaperSize: jisb3
-@+ << /PageSize [1032 1457] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [1032 1460] >> setpagedevice }
+@+  { /jisb3 where { pop jisb3 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ jisb4 257.17mm 364.07mm
+@ jisb4 257mm 364mm
 @+ ! %%DocumentPaperSizes: jisb4
 @+ %%BeginPaperSize: jisb4
-@+ << /PageSize [729 1032] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [729 1032] >> setpagedevice }
+@+  { /jisb4 where { pop jisb4 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ jisb5 182.03mm 257.17mm
+@ jisb5 182mm 257mm
 @+ ! %%DocumentPaperSizes: jisb5
 @+ %%BeginPaperSize: jisb5
-@+ << /PageSize [516 729] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [516 729] >> setpagedevice }
+@+  { /jisb5 where { pop jisb5 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ jisb6 128.41mm 182.03mm
+@ jisb6 128mm 182mm
 @+ ! %%DocumentPaperSizes: jisb6
 @+ %%BeginPaperSize: jisb6
-@+ << /PageSize [364 516] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [363 516] >> setpagedevice }
+@+  { /jisb6 where { pop jisb6 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ jisb7 90.67mm 128.41mm
+@ jisb7 91mm 128mm
 @+ ! %%DocumentPaperSizes: jisb7
 @+ %%BeginPaperSize: jisb7
-@+ << /PageSize [257 364] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [258 363] >> setpagedevice }
+@+  { /jisb7 where { pop jisb7 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ jisb8 64mm 90.67mm
+@ jisb8 64mm 91mm
 @+ ! %%DocumentPaperSizes: jisb8
 @+ %%BeginPaperSize: jisb8
-@+ << /PageSize [181 257] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [181 258] >> setpagedevice }
+@+  { /jisb8 where { pop jisb8 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ b0 1000.48mm 1413.93mm
+@ b0 1000mm 1414mm
 @+ ! %%DocumentPaperSizes: b0
 @+ %%BeginPaperSize: b0
-@+ << /PageSize [2836 4008] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [2835 4008] >> setpagedevice }
+@+  { /b0 where { pop b0 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ b1 706.97mm 1000.48mm
+@ b1 707mm 1000mm
 @+ ! %%DocumentPaperSizes: b1
 @+ %%BeginPaperSize: b1
-@+ << /PageSize [2004 2836] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [2004 2835] >> setpagedevice }
+@+  { /b1 where { pop b1 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ b2 500.24mm 706.97mm
+@ b2 500mm 707mm
 @+ ! %%DocumentPaperSizes: b2
 @+ %%BeginPaperSize: b2
-@+ << /PageSize [1418 2004] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [1417 2004] >> setpagedevice }
+@+  { /b2 where { pop b2 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ b3 353.48mm 500.24mm
+@ b3 353mm 500mm
 @+ ! %%DocumentPaperSizes: b3
 @+ %%BeginPaperSize: b3
-@+ << /PageSize [1002 1418] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [1001 1417] >> setpagedevice }
+@+  { /b3 where { pop b3 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ b4 250.12mm 353.48mm
+@ b4 250mm 353mm
 @+ ! %%DocumentPaperSizes: b4
 @+ %%BeginPaperSize: b4
-@+ << /PageSize [709 1002] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [709 1001] >> setpagedevice }
+@+  { /b4 where { pop b4 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ b5 176.74mm 250.12mm
+@ b5 176mm 250mm
 @+ ! %%DocumentPaperSizes: b5
 @+ %%BeginPaperSize: b5
-@+ << /PageSize [501 709] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [499 709] >> setpagedevice }
+@+  { /b5 where { pop b5 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ b6 125.06mm 176.74mm
+@ b6 125mm 176mm
 @+ ! %%DocumentPaperSizes: b6
 @+ %%BeginPaperSize: b6
-@+ << /PageSize [355 501] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [354 499] >> setpagedevice }
+@+  { /b6 where { pop b6 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ c5 161.92mm 232.48mm
+@ c5 162mm 229mm
 @+ ! %%DocumentPaperSizes: c5
 @+ %%BeginPaperSize: c5
-@+ << /PageSize [459 659] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [459 649] >> setpagedevice }
+@+  { /c5 where { pop c5 } if }
+@+ ifelse
 @+ %%EndPaperSize
 
-@ DL 110.07mm 220.13mm
+@ DL 110mm 220mm
 @+ ! %%DocumentPaperSizes: DL
 @+ %%BeginPaperSize: DL
-@+ << /PageSize [312 624] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [312 624] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
-@ Comm10 104.77mm 241.3mm
+@ Comm10 105mm 241mm
 @+ ! %%DocumentPaperSizes: Comm10
 @+ %%BeginPaperSize: Comm10
-@+ << /PageSize [297 684] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [297 684] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
-@ Monarch 98.42mm 190.5mm
+@ Monarch 98.4mm 190.5mm
 @+ ! %%DocumentPaperSizes: Monarch
 @+ %%BeginPaperSize: Monarch
-@+ << /PageSize [279 540] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [279 540] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
-@ archE 914.4mm 1219.2mm
+@ archE 36in 48in
 @+ ! %%DocumentPaperSizes: archE
 @+ %%BeginPaperSize: archE
-@+ << /PageSize [2592 3456] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [2592 3456] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
-@ archD 609.1mm 914.4mm
+@ archD 24in 36in
 @+ ! %%DocumentPaperSizes: archD
 @+ %%BeginPaperSize: archD
-@+ << /PageSize [1728 2592] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [1728 2592] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
-@ archC 457.2mm 609.6mm
+@ archC 18in 24in
 @+ ! %%DocumentPaperSizes: archC
 @+ %%BeginPaperSize: archC
-@+ << /PageSize [1296 1728] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [1296 1728] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
-@ archB 304.8mm 457.2mm
+@ archB 12in 18in
 @+ ! %%DocumentPaperSizes: archB
 @+ %%BeginPaperSize: archB
-@+ << /PageSize [864 1296] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [864 1296] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
-@ archA 228.6mm 304.8mm
+@ archA 9in 12in
 @+ ! %%DocumentPaperSizes: archA
 @+ %%BeginPaperSize: archA
-@+ << /PageSize [648 864] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [648 864] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
-@ flsa 215.9mm 330.2mm
+@ flsa 216mm 330.2mm
 @+ ! %%DocumentPaperSizes: flsa
 @+ %%BeginPaperSize: flsa
-@+ << /PageSize [612 936] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [612 936] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
-@ flse 215.9mm 330.2mm
+@ flse 216mm 330.2mm
 @+ ! %%DocumentPaperSizes: flse
 @+ %%BeginPaperSize: flse
-@+ << /PageSize [612 936] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [612 936] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
 @ csheet 431.8mm 558.8mm
 @+ ! %%DocumentPaperSizes: csheet
 @+ %%BeginPaperSize: csheet
-@+ << /PageSize [1224 1584] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [1224 1584] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
 @ dsheet 558.8mm 863.6mm
 @+ ! %%DocumentPaperSizes: dsheet
 @+ %%BeginPaperSize: dsheet
-@+ << /PageSize [1584 2448] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [1584 2448] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
 
 @ esheet 863.6mm 1117.6mm
 @+ ! %%DocumentPaperSizes: esheet
 @+ %%BeginPaperSize: esheet
-@+ << /PageSize [2448 3168] >> setpagedevice
+@+ /setpagedevice where
+@+  { pop << /PageSize [2448 3168] >> setpagedevice }
+@+ if
 @+ %%EndPaperSize
+
+@ unknown 0in 0in
+@+ statusdict /setpageparams known { hsize vsize 0 1 statusdict begin {
+@+ setpageparams } stopped end } { true } ifelse { statusdict /setpage known
+@+ { hsize vsize 1 statusdict begin { setpage } stopped pop end } if } if
 
 @ unknown 0in 0in
 @+ statusdict /setpageparams known { hsize vsize 0 1 statusdict begin {
