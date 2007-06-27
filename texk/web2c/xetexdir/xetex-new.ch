@@ -56,7 +56,7 @@
 
 @d XeTeX_version=0
 @d XeTeX_revision==".996"
-@d XeTeX_version_string=='-0.996' {current \XeTeX\ version}
+@d XeTeX_version_string=='-0.996-patch1' {current \XeTeX\ version}
 @z
 
 @x
