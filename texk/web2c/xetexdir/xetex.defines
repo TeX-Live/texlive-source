@@ -32,6 +32,8 @@ authorization from SIL International.
 
 { xetex.defines: additions for xetex }
 
+@define @field ptr;
+@define const nullptr;
 @define type voidpointer;
 @define function getnativechar();
 @define procedure setnativechar();

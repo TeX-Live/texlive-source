@@ -81,6 +81,8 @@
 
 #include <memory.h>
 
+#include "kpathsea/lib.h" /* for xmalloc/xrealloc prototypes */
+
 #define JPEG_DEBUG_STR "JPEG"
 #define JPEG_DEBUG     3
 
