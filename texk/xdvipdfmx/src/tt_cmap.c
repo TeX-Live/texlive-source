@@ -303,6 +303,9 @@ lookup_cmap4 (struct cmap4 *map, USHORT cc)
     if (cc >= map->startCount[i]) {
       if (map->idRangeOffset[i] == 0) {
 	gid = (cc + map->idDelta[i]) & 0xffff;
+      } else if (cc == 0xffff && map->idRangeOffset[i] == 0xffff) {
+	/* this is for protection against some old broken fonts... */
+	gid = 0;
       } else {
 	j  = map->idRangeOffset[i] - (segCount - i) * 2;
 	j  = (cc - map->startCount[i]) + (j / 2);
@@ -630,6 +633,9 @@ load_cmap4 (struct cmap4 *map,
       ch = c0 + j;
       if (map->idRangeOffset[i] == 0) {
 	gid = (ch + map->idDelta[i]) & 0xffff;
+      } else if (c0 == 0xffff && c1 == 0xffff && map->idRangeOffset[i] == 0xffff) {
+	/* this is for protection against some old broken fonts... */
+	gid = 0;
       } else {
 	gid = (map->glyphIndexArray[j+d] +
 	       map->idDelta[i]) & 0xffff;
@@ -952,6 +958,9 @@ create_ToUnicode_cmap4 (struct cmap4 *map,
       ch = c0 + j;
       if (map->idRangeOffset[i] == 0) {
 	gid = (ch + map->idDelta[i]) & 0xffff;
+      } else if (c0 == 0xffff && c1 == 0xffff && map->idRangeOffset[i] == 0xffff) {
+	/* this is for protection against some old broken fonts... */
+	gid = 0;
       } else {
 	gid = (map->glyphIndexArray[j+d] +
 	       map->idDelta[i]) & 0xffff;
