@@ -6012,6 +6012,11 @@ whatsit_node:
     goto next_p;
 
 @ Here we compute the effective width of a glue node as in |hlist_out|.
+
+@<Cases of |reverse|...@>=
+glue_node: begin round_glue;
+  @<Handle a glue node for mixed...@>;
+  end;
 @z
 
 @x
