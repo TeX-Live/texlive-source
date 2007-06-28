@@ -218,7 +218,7 @@ typedef SCHAR_TYPE signed_char;
 #ifndef KPATHSEA
 extern bool findfile(
 #if NeedFunctionPrototypes
-char path[], char n[], long4 fontmag, char name[], 
+char path[], char n[], long4 fontmag, char name[],
 	      bool tfm, int level
 #endif
     );

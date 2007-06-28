@@ -487,8 +487,8 @@ void    LoadAChar DVIPROTO((long4, register struct char_entry *));
 long4   NoSignExtend DVIPROTO((FILEPTR, int));
 void    OpenFontFile DVIPROTO((void));
 long4   PixRound DVIPROTO((long4, long4));
-void    PkRaster DVIPROTO((struct char_entry *, int)); 
-void    RasterLine DVIPROTO((struct char_entry *, unsigned int, 
+void    PkRaster DVIPROTO((struct char_entry *, int));
+void    RasterLine DVIPROTO((struct char_entry *, unsigned int,
 			     unsigned int, unsigned char *));
 void    RasterChar DVIPROTO((struct char_entry *));
 void    ReadFontDef DVIPROTO((long4));
