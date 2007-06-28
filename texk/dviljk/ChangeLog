@@ -7,11 +7,17 @@
 	operations. Fixed also manual string copy operations on special
 	strings. Fixed array buffer overflow in defpoint and fill special
 	operations.
+	(DoSpecial): Call of ghostscript for psfile special had also a
+	potential buffer overflow caused by unchecked usage of sprintf.
 
 	Bumped version number up to 2.6p3.
 
 	* dvi2xx.h: Some fixed sized string arrays are pointers now, they
 	get dynamically allocated.
+	(GetBytes): Another buffer overflow: Check that the buffer size is
+	sufficient to store the read bytes. That relies on the invariant
+	that the GetBytes macro is always called with an array as argument
+	and not with a pointer.
 
 	* config.h: Throw an error if kpathsea is not used. dvi2xx.c
 	had previously already kpathsea dependencies without protecting

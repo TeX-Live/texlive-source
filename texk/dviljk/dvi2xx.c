@@ -3911,9 +3911,6 @@ int  n;
   static  bool  GrayFill = _TRUE;
   static  long4 p_x[MAX_SPECIAL_DEFPOINTS], p_y[MAX_SPECIAL_DEFPOINTS];
   int llx=0, lly=0, urx=0, ury=0, rwi=0, rhi=0;
-#ifdef WIN32
-  char    *gs_path;
-#endif
 
   str[n] = '\0';
   for ( i=0 ; i<MAX_SPECIAL_DEFPOINTS ; i++ )
@@ -4138,6 +4135,8 @@ int  n;
         int width  = urx - llx;
         int height = ury - lly;
         char cmd[255];
+	char *cmd_format = "%s -q -dSIMPLE -dSAFER -dNOPAUSE -sDEVICE=%s -sOutputFile=%s %s %s showpage.ps -c quit";
+	char *gs_cmd;
         int scale_factor    = 3000 * width / rwi;
         int adjusted_height = height * 300/scale_factor;
         int adjusted_llx    = llx    * 300/scale_factor;
@@ -4159,15 +4158,18 @@ int  n;
         BCLOSE( scalef );
 
 #ifdef WIN32
-	gs_path = getenv("GS_PATH");
-	if (!gs_path)
-	  gs_path = "gswin32c.exe";
-        sprintf(cmd,"%s -q -dSIMPLE -dSAFER -dNOPAUSE -sDEVICE=%s -sOutputFile=%s %s %s showpage.ps -c quit",
-		gs_path, printer, pcl_file, scale_file, psfile);
+	gs_cmd = ( getenv("GS_PATH") || "gswin32c.exe" );
 #else
-        sprintf(cmd,"gs -q -dSIMPLE -dSAFER -dNOPAUSE -sDEVICE=%s -sOutputFile=%s %s %s showpage.ps -c quit",
-                printer, pcl_file, scale_file, psfile);
+	gs_cmd = "gs";
 #endif
+	if ( strlen(cmd_format)-10 + strlen(gs_cmd) + strlen(printer) +
+	         strlen(pcl_file) + strlen(scale_file) + strlen(psfile) +1 >
+	     sizeof(cmd) ) {
+	  Warning ("Ghostscript command for %s would be too long, skipping special", psfile);
+	  return;
+	}
+        sprintf(cmd, cmd_format,
+		gs_cmd, printer, pcl_file, scale_file, psfile);
 #ifdef DEBUGGS
         fprintf(stderr,
           "PS-file '%s' w=%d, h=%d, urx=%d, ury=%d, llx=%d, lly=%d, rwi=%d\n",

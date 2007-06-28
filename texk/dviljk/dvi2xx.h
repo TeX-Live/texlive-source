@@ -282,7 +282,14 @@ char *MFMODE     = MFMODE600;
 #define VisChar(c) (unsigned char)(c)
 #endif
 
-#define GetBytes(fp,buf,n) read_multi(buf,1,n,fp) /* used to be a function */
+/* Used to be a function. buf is always an array, never a pointer.
+   Without that invariant, we would have to introduce full dynamic
+   memory management in this driver -- probably it would be easier to
+   write a new one. [27 Jun 07 -js] */
+#define GetBytes(fp,buf,n) \
+    ( sizeof(buf) != sizeof(void *) && sizeof(buf) > n ? \
+        read_multi(buf, 1, n, fp) \
+      : Fatal("Try to read %d bytes in an array of size %d", n, sizeof(buf)) )
 
 
 /**********************************************************************/
