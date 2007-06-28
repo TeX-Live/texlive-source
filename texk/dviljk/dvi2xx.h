@@ -116,6 +116,7 @@
 #define  HUGE_SIZE  (unsigned char) 2
 #define  HUGE_CHAR_PATTERN 32767l
 #define  BYTES_PER_PIXEL_LINE 500    /* max number of bytes per pixel line */
+#define  MAX_SPECIAL_DEFPOINTS 80    /* max number of defpoint specials */
 
 
 #define PK_POST 245
@@ -307,6 +308,7 @@ int     printf();
 int     sscanf();
 int     strcmp();
 char   *strcpy();
+char   *strncpy();
 #   ifdef MSC5
 unsigned int strlen();
 #   endif
@@ -393,7 +395,7 @@ struct font_entry {    /* font entry */
     char n[STRSIZE];          /* FNT_DEF command parameters                */
     long4    font_mag;         /* computed from FNT_DEF s and d parameters  */
     /*char psname[STRSIZE];*/ /* PostScript name of the font               */
-    char    name[STRSIZE];    /* full name of PXL file                     */
+    char    *name;	       /* full name of PXL file                     */
     FILEPTR font_file_id;      /* file identifier (NO_FILE if none)         */
 #ifdef USEPXL
     long4    magnification;    /* magnification read from PXL file          */
@@ -534,9 +536,9 @@ bool    LastPageSpecified = _FALSE;
 #ifndef KPATHSEA
 char   *PXLpath = FONTAREA;
 #endif
-char    G_progname[STRSIZE];     /* program name                        */
-char    filename[STRSIZE];       /* DVI file name                       */
-char    rootname[STRSIZE];       /* DVI filename without extension      */
+char   *G_progname;		 /* program name                        */
+char   *filename;	         /* DVI file name                       */
+char   *rootname;		 /* DVI filename without extension      */
 char   *HeaderFileName = "";     /* file name & path of Headerfile      */
 char   *EmitFileName = "";       /* file name & path for output         */
 #ifdef IBM3812

@@ -1,3 +1,23 @@
+2007-06-28  Joachim Schrod  <jschrod@acm.org>
+
+	* dvi2xx.c: Fixed a whole bunch of buffer overflows: The program
+	did not check memory bounds for any string operation. All places
+	where strings are copied with strcpy are replaced by dynamically
+	allocated strings (with xstrdup from kpathsea) or bounded string
+	operations. Fixed also manual string copy operations on special
+	strings. Fixed array buffer overflow in defpoint and fill special
+	operations.
+
+	Bumped version number up to 2.6p3.
+
+	* dvi2xx.h: Some fixed sized string arrays are pointers now, they
+	get dynamically allocated.
+
+	* config.h: Throw an error if kpathsea is not used. dvi2xx.c
+	had previously already kpathsea dependencies without protecting
+	them with #if KPATHSEA. We go that road further since upstream
+	does not exist any more.
+
 2006-05-29  Karl Berry  <karl@tug.org>
 
 	* Makefile.in (install-exec): cd $(bindir) in case we are doing
@@ -17,7 +37,7 @@ Tue Jan 27 14:32:25 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
 	Olaf Weber
 Sat Jan 17 15:09:59 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
 
-	* assorted patches from Peter Breitenlohner, Olaf Weber, 
+	* assorted patches from Peter Breitenlohner, Olaf Weber,
  	Eli Zaretskii, Fabrice Popineau etc. Hope it all still works.
 
 
@@ -54,7 +74,7 @@ Sun Jan  5 16:12:06 1997  Karl Berry  <karl@cs.umb.edu>
 Mon Dec  9 00:53:30 1996  Ulrik Vieth  <vieth@thphy.uni-duesseldorf.de>
 
 	* dvihp: Use `basename $0` in usage and version messages for
- 	consistency with other programs and scripts.  
+ 	consistency with other programs and scripts.
 	Also accept -help, -version in addition to --help, --version.
 
 Sat Dec  7 17:15:54 1996  Karl Berry  <karl@cs.umb.edu>
@@ -218,7 +238,7 @@ Sat Dec 31 17:30:58 1994  Karl Berry  <karl@cs.umb.edu>
 Fri Dec 30 15:25:54 1994  Karl Berry  <karl@cs.umb.edu>
 
         * Makefile.in (install-exec): Don't depend on default, so dvilj4
-        doesn't get made if the user didn't want it. 
+        doesn't get made if the user didn't want it.
         (install-data): mkdirchain on texinputdir and fontdir.
         From Joachim.
 
@@ -325,7 +345,7 @@ Fri Jul 29 13:26:49 1994  Karl Berry  (karl@cs.umb.edu)
         * config.h (RESOLUTION, MFMODE) [LJ4L]: Set to 300/cx for this new
         symbol.
 
-        * dvi2xx.c (DecodeArgs): Always scale pgsiz_dots. 
+        * dvi2xx.c (DecodeArgs): Always scale pgsiz_dots.
         (main) [LJ4]: Don't hardwire 600dpi.
         These fixes from ajp@eng.cam.ac.uk.
 

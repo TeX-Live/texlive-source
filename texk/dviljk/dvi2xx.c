@@ -1,5 +1,5 @@
 /* $Id: dvi2xx.c,v 2.5 1997/12/08 20:52:20 neumann Exp $ */
-#define VERSION "2.6p2 (dviljk)"
+#define VERSION "dviljk (version 2.6p3)"
 /*
 #define DEBUGGS 1
 */
@@ -173,7 +173,7 @@ char    *argv[];
   y_origin = YDEFAULTOFF; /* y-origin in dots                    */
 
   setbuf(ERR_STREAM, NULL);
-  (void) strcpy(G_progname, argv[0]);
+  G_progname = argv[0];
 #ifdef KPATHSEA
   kpse_set_progname(argv[0]);
   kpse_set_program_enabled (kpse_pk_format, MAKE_TEX_PK_BY_DEFAULT, kpse_src_compile);
@@ -2968,8 +2968,8 @@ char    *argv[];
 #endif
 {
   int     argind;            /* argument index for flags      */
-  char    curarea[STRSIZE];  /* current file area             */
-  char    curname[STRSIZE];  /* current file name             */
+  char    *curarea;	     /* current file area             */
+  char    *curname;   	     /* current file name             */
   char    *tcp, *tcp1;       /* temporary character pointers  */
   char    *this_arg;
   double  x_offset = 0.0, y_offset = 0.0;
@@ -2988,9 +2988,9 @@ char    *argv[];
 #endif
 #endif
 
-  if (argc == 2 && (strcmp (argv[1], "--version") == 0)) {
+  if (argc == 2 && EQ(argv[1], "--version")) {
     extern KPSEDLL char *kpathsea_version_string;
-    puts ("dvilj(k) 2.6");
+    puts (VERSION);
     puts (kpathsea_version_string);
     puts ("Copyright (C) 1997 Gustaf Neumann.\n\
 There is NO warranty.  You may redistribute this software\n\
@@ -3328,8 +3328,8 @@ Primary author of Dvi2xx: Gustaf Neumann; -k maintainer: K. Berry.");
       }
     } else {
 
-      (void) strcpy(filename, tcp);
-      if (!strcmp(filename, "-")) {
+      filename = tcp;
+      if (EQ(filename, "-")) {
         EmitFileName = "-";
 #ifdef RISC_USE_OSL
         dvifp = BINOPEN("Kbd:");
@@ -3339,57 +3339,68 @@ Primary author of Dvi2xx: Gustaf Neumann; -k maintainer: K. Berry.");
 	  AssureBinary(fileno(dvifp));
 #endif
       } else {
+	/* Since this code is used only once during startup, we don't care
+	   about free()ing the allocated strings that represent filenames.
+	   It will be more work to realize proper deallocation handling than
+	   it's worth in terms of saving a few bytes. We consider these
+	   bytes actually static memory where we don't know the size in
+	   advance and don't add them to the allocated_storage count.
+	   [27 Jun 07 -js] */
 #ifdef KPATHSEA
         /* split into directory + file name */
 	int tcplen, argvlen;
 	tcp = (char *)xbasename(argv[argind]);/* this knows about any kind of slashes */
 	tcplen = strlen(tcp);
+	if ( tcplen == 0 ) {
+	  /* This happens when the DVI file name has a trailing slash; this
+	     is not a valid name. Then we terminate the argument parsing
+	     loop, a usage message will be output below. */
+	  break;
+	}
 	argvlen = strlen(argv[argind]);
 	if (tcplen == argvlen)
-	  curarea[0] = '\0';
+	  curarea = "";
 	else {
-	  (void) strcpy(curarea, argv[argind]);
+	  curarea = xstrdup(argv[argind]);
 	  curarea[argvlen-tcplen] = '\0';
 	}
 #else
         tcp = strrchr(argv[argind], '/');
         /* split into directory + file name */
         if (tcp == NULL) {
-          curarea[0] = '\0';
+          curarea[0] = "";
           tcp = argv[argind];
         } else {
-          (void) strcpy(curarea, argv[argind]);
+	  curarea = xstrdup(argv[argind]);
           curarea[tcp-argv[argind]+1] = '\0';
           tcp += 1;
         }
 #endif
 
-        (void) strcpy(curname, tcp);
+        curname = (char *) xmalloc(strlen(tcp)+5);  /* + space for ".dvi" */
+	(void) strcpy(curname, tcp);
         /* split into file name + extension */
-        tcp1 = strrchr(tcp, '.');
+        tcp1 = strrchr(curname, '.');
         if (tcp1 == NULL) {
-          (void) strcpy(rootname, curname);
+          rootname = xstrdup(curname);
           strcat(curname, ".dvi");
         } else {
           *tcp1 = '\0';
-          (void) strcpy(rootname, curname);
+          rootname = xstrdup(curname);
           *tcp1 = '.';
         }
 
+	filename = (char *) xmalloc(strlen(curarea)+strlen(curname)+1);
         (void) strcpy(filename, curarea);
         (void) strcat(filename, curname);
 
         if ((dvifp = BINOPEN(filename)) == FPNULL) {
           /* do not insist on .dvi */
           if (tcp1 == NULL) {
-            int l = strlen(curname);
-            if (l > 4)
-              curname[l - 4] = '\0';
-            l = strlen(filename);
-            if (l > 4)
-              filename[l - 4] = '\0';
+	    filename[strlen(filename) - 4] = '\0';
+	    dvifp = BINOPEN(filename);
           }
-          if (tcp1 != NULL || (dvifp = BINOPEN(filename)) == FPNULL) {
+          if (dvifp == FPNULL) {
 #ifdef MSC5
             Fatal("%s: can't find DVI file \"%s\"\n\n",
                   G_progname, filename);
@@ -3411,7 +3422,7 @@ Primary author of Dvi2xx: Gustaf Neumann; -k maintainer: K. Berry.");
   y_goffset = (short) MM_TO_PXL(y_offset) + y_origin;
 
   if (dvifp == FPNULL) {
-    fprintf(ERR_STREAM,"\nThis is the DVI to %s converter version %s",
+    fprintf(ERR_STREAM,"\nThis is the DVI to %s converter %s",
             PRINTER, VERSION);
 #ifdef SEVENBIT
     fprintf(ERR_STREAM,", 7bit");
@@ -3507,13 +3518,8 @@ Primary author of Dvi2xx: Gustaf Neumann; -k maintainer: K. Berry.");
     exit(1);
   }
   if (EQ(EmitFileName, "")) {
-    if ((EmitFileName = (char *)malloc( STRSIZE )) != NULL)
-      allocated_storage += STRSIZE;
-    else
-      Fatal("Can't allocate storage of %d bytes\n",STRSIZE);
-    (void) strcpy(EmitFileName, curname);
-    if ((tcp1 = strrchr(EmitFileName, '.')))
-      *tcp1 = '\0';
+    EmitFileName = (char *) xmalloc(strlen(rootname)+sizeof(EMITFILE_EXTENSION));
+    (void) strcpy(EmitFileName, rootname);
     strcat(EmitFileName, EMITFILE_EXTENSION);
   }
   if (G_quiet)
@@ -3895,7 +3901,7 @@ char *str;
 int  n;
 #endif
 {
-  char    spbuf[STRSIZE], xs[STRSIZE], ys[STRSIZE];
+  char    xs[STRSIZE], ys[STRSIZE];
   char    *sf = NULL, *psfile = NULL;
   float   x,y;
   long4   x_pos, y_pos;
@@ -3903,14 +3909,15 @@ int  n;
   int     i, j, j1;
   static  int   GrayScale = 10, Pattern = 1;
   static  bool  GrayFill = _TRUE;
-  static  long4 p_x[80], p_y[80];
+  static  long4 p_x[MAX_SPECIAL_DEFPOINTS], p_y[MAX_SPECIAL_DEFPOINTS];
   int llx=0, lly=0, urx=0, ury=0, rwi=0, rhi=0;
 #ifdef WIN32
   char    *gs_path;
 #endif
 
   str[n] = '\0';
-  spbuf[0] = '\0';
+  for ( i=0 ; i<MAX_SPECIAL_DEFPOINTS ; i++ )
+    p_x[i] = p_y[i] = -1;
 
   SetPosn(h, v);
 #ifdef __riscos
@@ -3928,10 +3935,11 @@ int  n;
 #ifdef KPATHSEA
            && !kpse_tex_hush ("special")
 #endif
-         )
+	   ) {
         Warning("More than one \\special file name given. %s ignored", sf);
-      (void) strcpy(spbuf, k.Key);
-      sf = spbuf;
+	free (sf);
+      }
+      sf = xstrdup(k.Key);
       /*
         for (j = 1; ((sf[j]=='/' ? sf[j]='\\':sf[j]) != '\0'); j++);
         */
@@ -3942,20 +3950,23 @@ int  n;
 #ifdef KPATHSEA
             && !kpse_tex_hush ("special")
 #endif
-            )
-            Warning("More than one \\special file name given. %s ignored", sf);
-        (void) strcpy(spbuf, k.Val);
-        psfile = spbuf;
+            ) {
+	  Warning("More than one \\special file name given. %s ignored", sf);
+	  free(sf);
+	  sf = NULL;
+	}
+        psfile = xstrdup(k.Val);
         /*
           for (j=1; ((sf[j]=='/' ? sf[j]='\\':sf[j]) != '\0'); j++);
           */
         break;
 
       case HPFILE:
-        if (sf)
-            Warning("More than one \\special file name given. %s ignored", sf);
-        (void) strcpy(spbuf, k.Val);
-        sf = spbuf;
+        if ( sf ) {
+	  Warning("More than one \\special file name given. %s ignored", sf);
+	  free(sf);
+	}
+        sf = xstrdup(k.Val);
         /*
           for (j=1; ((sf[j]=='/' ? sf[j]='\\':sf[j]) != '\0'); j++);
           */
@@ -3985,15 +3996,19 @@ int  n;
         break;
 
       case RESETPOINTS:
-        (void) strcpy(spbuf, k.Val);
-
-        sf = NULL;
+	for ( i=0 ; i<MAX_SPECIAL_DEFPOINTS ; i++ )
+	  p_x[i] = p_y[i] = -1;
         break;
 
       case DEFPOINT:
-        (void) strcpy(spbuf, k.Val);
-        i = sscanf(spbuf,"%d(%[^,],%s)",&j,xs,ys);
+	/* 254 is STRSIZE-1. cpp should be used to construct that number. */
+        i = sscanf(k.Val,"%d(%254[^,],%254s)",&j,xs,ys);
         if (i>0) {
+	  if ( j < 0  ||  j >= MAX_SPECIAL_DEFPOINTS ) {
+	    Warning ("defpoint %d ignored, must be between 0 and %d\n",
+		     j, MAX_SPECIAL_DEFPOINTS);
+	    break;
+	  }
           x_pos = h;
           y_pos = v;
           if (i>1) {
@@ -4015,15 +4030,31 @@ int  n;
               if (!kpse_tex_hush ("special"))
 #endif
           Warning("invalid point definition\n");
-
-        sf = NULL;
         break;
 
       case FILL:
-        (void) strcpy(spbuf, k.Val);
-        i = sscanf(spbuf,"%d/%d %s",&j,&j1,xs);
+	/* 254 is STRSIZE-1. cpp should be used to construct that number. */
+        i = sscanf(k.Val,"%d/%d %254s",&j,&j1,xs);
         if (i>1) {
 #ifdef LJ
+	  if ( j < 0 || j >= MAX_SPECIAL_DEFPOINTS ) {
+	    Warning ("fill ignored, point %d must be between 0 and %d\n",
+		     j, MAX_SPECIAL_DEFPOINTS);
+	    break;
+	  }
+	  if ( p_x[j] == -1 ) {
+	    Warning ("fill ignored, point %d is undefined\n", j);
+	    break;
+	  }
+	  if ( j1 < 0 || j1 >= MAX_SPECIAL_DEFPOINTS ) {
+	    Warning ("fill ignored, point %d must be between 0 and %d\n",
+		     j1, MAX_SPECIAL_DEFPOINTS);
+	    break;
+	  }
+	  if ( p_x[j1] == -1 ) {
+	    Warning ("fill ignored, point %d is undefined\n", j1);
+	    break;
+	  }
           SetPosn(p_x[j], p_y[j]);
           x_pos = (long4)PIXROUND(p_x[j1]-p_x[j], hconv);
           y_pos = (long4)PIXROUND(p_y[j1]-p_y[j], vconv);
@@ -4081,6 +4112,9 @@ int  n;
            if (!kpse_tex_hush ("special"))
 #endif
       Warning("Invalid keyword or value in \\special - <%s> ignored", k.Key);
+
+    free (k.Key);
+    if ( k.Val != NULL )  free(k.Val);
   }
 
   if ( sf || psfile ) {
@@ -4089,6 +4123,9 @@ int  n;
     PMPflush;
 #endif
     if (sf) {
+      /* -js FIXME: i may not be HPFILE any more if there were any other
+	 keywords in this special! Need to rework the whole file
+	 inclusion code. */
       if (i == HPFILE)
         CopyHPFile( sf );
       else
@@ -4163,6 +4200,8 @@ int  n;
         }
       }
 #endif /* LJ */
+    if ( sf != NULL )  free(sf);
+    if ( psfile != NULL )  free(psfile);
   }
 }
 
@@ -4173,12 +4212,11 @@ int  n;
 /**********************************************************************/
 /*****************************  GetKeyStr  ****************************/
 /**********************************************************************/
-/* extract first keyword-value pair from string (value part may be null)
- * return pointer to remainder of string
- * return NULL if none found
+/* Extract first keyword-value pair from string (value part may be null),
+ * keyword and value are allocated and must be free by caller.
+ * Return pointer to remainder of string,
+ * return NULL if none found.
  */
-char    KeyStr[STRSIZE];
-char    ValStr[STRSIZE];
 #if NeedFunctionPrototypes
 char *GetKeyStr(char *str, KeyWord *kw )
 #else
@@ -4187,39 +4225,46 @@ char    *str;
 KeyWord *kw;
 #endif
 {
-  char    *s, *k, *v, t;
+  char *s, *start;
+  char save_char, quote_char;
   if ( !str )
     return( NULL );
   for (s = str; *s == ' '; s++)
     ;          /* skip over blanks */
   if (*s == '\0')
     return( NULL );
-  for (k = KeyStr; /* extract keyword portion */
-       *s != ' ' && *s != '\0' && *s != '=';
-       *k++ = *s++)
-    ;
-  *k = '\0';
-  kw->Key = KeyStr;
-  kw->Val = v = NULL;
-  kw->vt = None;
-  for ( ; *s == ' '; s++)
-    ;            /* skip over blanks */
-  if ( *s != '=' )         /* look for "=" */
-    return( s );
-  for (s++; *s == ' '; s++);      /* skip over blanks */
-  if ( *s == '\'' || *s == '\"' )  /* get string delimiter */
-    t = *s++;
-  else
-    t = ' ';
-  for (v = ValStr; /* copy value portion up to delim */
-       *s != t && *s != '\0';
-       *v++ = *s++)
-    ;
-  if ( t != ' ' && *s == t )
+  start = s++;				/* start of keyword */
+  while ( *s != ' ' && *s != '\0' && *s != '=' )  /* locate end */
     s++;
-  *v = '\0';
-  kw->Val = ValStr;
+  save_char = *s;
+  *s = '\0';
+  kw->Key = xstrdup(start);
+  kw->Val = NULL;
+  kw->vt = None;
+  if ( save_char == '\0' )		/* shortcut when we're at the end */
+    return (s);
+  *s = save_char;			/* restore keyword end char */
+  while ( *s == ' ' ) s++ ;		/* skip over blanks */
+  if ( *s != '=' )			/* no "=" means no value */
+    return( s );
+  for (s++; *s == ' '; s++)
+    ;					/* skip over blanks */
+  if ( *s == '\'' || *s == '\"' )	/* get string delimiter */
+    quote_char = *s++;
+  else
+    quote_char = ' ';
+  start = s;				/* no increment, might be "" as value */
+  while ( *s != quote_char && *s != '\0' )
+    s++;			  /* locate end of value portion */
+  save_char = *s;
+  *s = '\0';
+  kw->Val = xstrdup(start);
   kw->vt = String;
+  if ( save_char != '\0' ) {		/* save_char is now quote_char */
+    *s = save_char;
+    if ( quote_char != ' ' )		/* we had real quote chars */
+      s++;
+  }
   return( s );
 }
 
@@ -4819,13 +4864,14 @@ struct font_entry *fontptr;
      the resident fonts.  */
   if (tfm_read_info(fontptr->n, &tfm_info)
       && tfm_info.family[0]
-      && strcmp((char *)tfm_info.family, "HPAUTOTFM") == 0) {
+      && EQ((char *)tfm_info.family, "HPAUTOTFM")) {
     unsigned i;
     double factor = fontptr->s / (double)0x100000;
 
     resident_count++;
     fontptr->resident_p = _TRUE;
-    strcpy(fontptr->symbol_set, (char *)tfm_info.coding_scheme);
+    strncpy(fontptr->symbol_set, (char *)tfm_info.coding_scheme, 39);
+    fontptr->symbol_set[39] = '\0';
     fontptr->resid = tfm_info.typeface_id;
     fontptr->spacing = tfm_info.spacing;
     fontptr->style = tfm_info.style;
@@ -4878,7 +4924,7 @@ struct font_entry *fontptr;
     fontptr->resident_p = _FALSE;
 
     if (tfm_info.family[0]
-        && strcmp((char *)tfm_info.family, "UNSPECIFIED") == 0) {
+        && EQ((char *)tfm_info.family, "UNSPECIFIED")) {
       Warning("font family for %s is UNSPECIFIED; need to run dvicopy?",
               fontptr->n);
       fontptr->font_file_id = NO_FILE;
@@ -5031,10 +5077,9 @@ printf("[%ld]=%lf * %lf * %lf + 0.5 = %ld\n",
   if (tfontptr->resident_p)
     return;
 
-  if (!(resident_font_located)) {
+  if (!(resident_font_located))
 #endif
 
-#ifdef KPATHSEA
     {
       kpse_glyph_file_type font_ret;
       char *name;
@@ -5047,8 +5092,8 @@ printf("[%ld]=%lf * %lf * %lf + 0.5 = %ld\n",
       if (name)
         {
           font_found = _TRUE;
-          strcpy (tfontptr->name, name);
-          free (name);
+          tfontptr->name = name;
+          allocated_storage += strlen(name)+1;
 
           if (!FILESTRCASEEQ (tfontptr->n, font_ret.name)) {
               fprintf (stderr,
@@ -5071,29 +5116,6 @@ printf("[%ld]=%lf * %lf * %lf + 0.5 = %ld\n",
             tfontptr->n, dpi);
         }
     }
-#else /* not KPATHSEA */
-    if (!(findfile(PXLpath,
-                   tfontptr->n,
-                   tfontptr->font_mag,
-                   tfontptr->name,
-                   _FALSE,
-                   0))) {
-      Warning(tfontptr->name); /* contains error messsage */
-      tfontptr->font_file_id = NO_FILE;
-#ifdef __riscos
-      MakeMetafontFile(PXLpath, tfontptr->n, tfontptr->font_mag);
-#endif
-    }
-    else {
-      font_found = _TRUE;
-      if (G_verbose)
-        fprintf(ERR_STREAM,"%d: using font <%s>\n", plusid, tfontptr->name);
-    }
-#endif /* not KPATHSEA */
-
-#ifdef LJ_RESIDENT_FONTS
-  }
-#endif
 
   tfontptr->plusid = plusid;
   plusid++;
