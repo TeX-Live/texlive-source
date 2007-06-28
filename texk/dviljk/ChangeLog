@@ -9,6 +9,8 @@
 	operations.
 	(DoSpecial): Call of ghostscript for psfile special had also a
 	potential buffer overflow caused by unchecked usage of sprintf.
+	Fix core dump: Check if all required parameters of psfile special
+	are passed.
 
 	Bumped version number up to 2.6p3.
 

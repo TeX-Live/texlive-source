@@ -3910,7 +3910,7 @@ int  n;
   static  int   GrayScale = 10, Pattern = 1;
   static  bool  GrayFill = _TRUE;
   static  long4 p_x[MAX_SPECIAL_DEFPOINTS], p_y[MAX_SPECIAL_DEFPOINTS];
-  int llx=0, lly=0, urx=0, ury=0, rwi=0, rhi=0;
+  int llx=0, lly=0, urx=0, ury=0, rwi=0;
 
   str[n] = '\0';
   for ( i=0 ; i<MAX_SPECIAL_DEFPOINTS ; i++ )
@@ -4094,7 +4094,10 @@ int  n;
       case URX: urx = k.v.i; break;
       case URY: ury = k.v.i; break;
       case RWI: rwi = k.v.i; break;
-      case RHI: rhi = k.v.i; break;
+      case RHI:
+	if (!kpse_tex_hush ("special"))
+	  Warning("Whatever rhi was good for once, it is ignored now.");
+	break;
 
       default:
 #ifdef KPATHSEA
@@ -4137,9 +4140,7 @@ int  n;
         char cmd[255];
 	char *cmd_format = "%s -q -dSIMPLE -dSAFER -dNOPAUSE -sDEVICE=%s -sOutputFile=%s %s %s showpage.ps -c quit";
 	char *gs_cmd;
-        int scale_factor    = 3000 * width / rwi;
-        int adjusted_height = height * 300/scale_factor;
-        int adjusted_llx    = llx    * 300/scale_factor;
+        int scale_factor, adjusted_height, adjusted_llx;
         char *printer = "ljetplus"; /* use the most stupid one */
 
 
@@ -4147,6 +4148,14 @@ int  n;
         char *scale_file = tmpnam(scale_file_name);
         char *pcl_file = tmpnam(NULL);
         FILEPTR scalef;
+
+        if ( urx == 0 || ury == 0 || rwi == 0 ) {
+	  Warning ("Ignoring psfile special without urx, ury and rwi attributes");
+	  return;
+	}
+	scale_factor    = 3000 * width / rwi;
+	adjusted_height = height * 300/scale_factor;
+	adjusted_llx    = llx    * 300/scale_factor;
 
         if ( (scalef = BOUTOPEN(scale_file)) == FPNULL ) {
           Warning("Unable to open file %s for writing", scale_file );
