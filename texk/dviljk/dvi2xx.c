@@ -3928,11 +3928,7 @@ int  n;
     /* get all keyword-value pairs */
     /* for compatibility, single words are taken as file names */
     if ( k.vt == None && access(k.Key, 0) == 0) {
-      if ( sf
-#ifdef KPATHSEA
-           && !kpse_tex_hush ("special")
-#endif
-	   ) {
+      if ( sf && !kpse_tex_hush ("special") ) {
         Warning("More than one \\special file name given. %s ignored", sf);
 	free (sf);
       }
@@ -3940,14 +3936,10 @@ int  n;
       /*
         for (j = 1; ((sf[j]=='/' ? sf[j]='\\':sf[j]) != '\0'); j++);
         */
-    } else if ( GetKeyVal( &k, KeyTab, NKEYS, &i ) && i != -1 )
+    } else if ( GetKeyVal( &k, KeyTab, NKEYS, &i ) && i != -1 ) {
       switch (i) {
       case PSFILE:
-        if (sf
-#ifdef KPATHSEA
-            && !kpse_tex_hush ("special")
-#endif
-            ) {
+        if ( sf && !kpse_tex_hush ("special") ) {
 	  Warning("More than one \\special file name given. %s ignored", sf);
 	  free(sf);
 	  sf = NULL;
@@ -3959,7 +3951,7 @@ int  n;
         break;
 
       case HPFILE:
-        if ( sf ) {
+        if ( sf && !kpse_tex_hush ("special") ) {
 	  Warning("More than one \\special file name given. %s ignored", sf);
 	  free(sf);
 	}
@@ -3985,11 +3977,9 @@ int  n;
           EMIT2("\033&l%dO\033*rF", (unsigned char)k.v.i);
         }
 #endif
-        else
-#ifdef KPATHSEA
-           if (!kpse_tex_hush ("special"))
-#endif
-          Warning( "Invalid orientation (%d)given; ignored.", k.v.i);
+        else {
+	  Warning( "Invalid orientation (%d) given; ignored.", k.v.i);
+	}
         break;
 
       case RESETPOINTS:
@@ -4002,7 +3992,7 @@ int  n;
         i = sscanf(k.Val,"%d(%254[^,],%254s)",&j,xs,ys);
         if (i>0) {
 	  if ( j < 0  ||  j >= MAX_SPECIAL_DEFPOINTS ) {
-	    Warning ("defpoint %d ignored, must be between 0 and %d\n",
+	    Warning ("defpoint %d ignored, must be between 0 and %d",
 		     j, MAX_SPECIAL_DEFPOINTS);
 	    break;
 	  }
@@ -4022,11 +4012,9 @@ int  n;
           }
           p_x[j]=x_pos;
           p_y[j]=y_pos;
-        } else
-#ifdef KPATHSEA
-              if (!kpse_tex_hush ("special"))
-#endif
-          Warning("invalid point definition\n");
+        } else {
+	  Warning("invalid point definition");
+	}
         break;
 
       case FILL:
@@ -4035,7 +4023,7 @@ int  n;
         if (i>1) {
 #ifdef LJ
 	  if ( j < 0 || j >= MAX_SPECIAL_DEFPOINTS ) {
-	    Warning ("fill ignored, point %d must be between 0 and %d\n",
+	    Warning ("fill ignored, point %d must be between 0 and %d",
 		     j, MAX_SPECIAL_DEFPOINTS);
 	    break;
 	  }
@@ -4044,7 +4032,7 @@ int  n;
 	    break;
 	  }
 	  if ( j1 < 0 || j1 >= MAX_SPECIAL_DEFPOINTS ) {
-	    Warning ("fill ignored, point %d must be between 0 and %d\n",
+	    Warning ("fill ignored, point %d must be between 0 and %d",
 		     j1, MAX_SPECIAL_DEFPOINTS);
 	    break;
 	  }
@@ -4071,22 +4059,18 @@ int  n;
         if ((k.v.i >= 0) && (k.v.i < 101)) {
           GrayScale = k.v.i;
           GrayFill = _TRUE;
-        } else
-#ifdef KPATHSEA
-           if (!kpse_tex_hush ("special"))
-#endif
+        } else {
           Warning( "Invalid gray scale (%d) given; ignored.", k.v.i);
+	}
         break;
 
       case PATTERN:
         if ((k.v.i >= 0) && (k.v.i < 7)) {
           Pattern = k.v.i;
           GrayFill = _FALSE;
-        } else
-#ifdef KPATHSEA
-           if (!kpse_tex_hush ("special"))
-#endif
+        } else {
           Warning( "Invalid pattern (%d) given; ignored.", k.v.i);
+	}
         break;
 
       case LLX: llx = k.v.i; break;
@@ -4100,18 +4084,14 @@ int  n;
 	break;
 
       default:
-#ifdef KPATHSEA
-           if (!kpse_tex_hush ("special"))
-#endif
-        Warning("Can't handle %s=%s command; ignored.", k.Key, k.Val);
+	if ( !kpse_tex_hush ("special") )
+	  Warning("Can't handle %s=%s command; ignored.", k.Key, k.Val);
         break;
       }
 
-    else
-#ifdef KPATHSEA
-           if (!kpse_tex_hush ("special"))
-#endif
+    } else if (!kpse_tex_hush ("special")) {
       Warning("Invalid keyword or value in \\special - <%s> ignored", k.Key);
+    }
 
     free (k.Key);
     if ( k.Val != NULL )  free(k.Val);
@@ -4150,7 +4130,11 @@ int  n;
         FILEPTR scalef;
 
         if ( urx == 0 || ury == 0 || rwi == 0 ) {
-	  Warning ("Ignoring psfile special without urx, ury and rwi attributes");
+	  /* Since dvips' psfile special has a different syntax, this might
+	     well be one of those specials, i.e., a non-dviljk special. Then
+	     the Warning should be suppressable. */
+	  if ( !kpse_tex_hush ("special") )
+	    Warning ("Ignoring psfile special without urx, ury and rwi attributes");
 	  return;
 	}
 	scale_factor    = 3000 * width / rwi;
