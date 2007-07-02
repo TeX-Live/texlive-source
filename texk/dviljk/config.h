@@ -440,6 +440,21 @@ typedef  FILE *FILEPTR;
 #endif
 #endif
 
+/* If unlink and rmdir are not there, we don't delete the temporary files. */
+#ifndef HAVE_RMDIR
+#define rmdir(dir)
+#endif
+#ifndef HAVE_UNLINK
+#define unlink(file)
+#endif
+
+/* If mkdtemp() does not exist, we have to use tmpnam(). */
+#ifndef HAVE_MKDTEMP
+#define mkdtemp(dir) (tmpnam(dir) ? \
+		      ( mkdir(dir, 0700) == -1 ? NULL : dir ) :	\
+		      ( errno = EINVAL, NULL ) )
+#endif
+
 #ifndef KPATHSEA
 /* FIXME: Should provide a strdup function. But currently this tree is
    only used in connection with kpathsea anyhow. */

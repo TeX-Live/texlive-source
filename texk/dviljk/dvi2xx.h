@@ -10,8 +10,8 @@
 
 #ifdef KPATHSEA
 #include <kpathsea/config.h>
+#include <kpathsea/c-std.h>
 #include <kpathsea/c-limits.h>
-#include <kpathsea/c-memstr.h>
 #include <kpathsea/magstep.h>
 #include <kpathsea/proginit.h>
 #include <kpathsea/progname.h>
@@ -24,6 +24,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #ifdef  unix
 #include <limits.h>
 #endif
@@ -40,9 +41,6 @@
 #endif
 #ifdef MSC5
 #include <dos.h>     /* only for binaryopen on device  */
-#endif
-#if defined (unix) && !defined (KPATHSEA)
-#include <limits.h>
 #endif
 
 
@@ -548,6 +546,7 @@ char   *filename;	         /* DVI file name                       */
 char   *rootname;		 /* DVI filename without extension      */
 char   *HeaderFileName = "";     /* file name & path of Headerfile      */
 char   *EmitFileName = "";       /* file name & path for output         */
+char    tmp_dir[STRSIZE] = "";	 /* temporary directory for auxilliary files */
 #ifdef IBM3812
 bool    FirstAlternate = _FALSE; /* first page from alternate casette ?   */
 #endif

@@ -3704,6 +3704,8 @@ bool PFlag;
 #endif
   }
   CloseFiles();
+  if ( tmp_dir[0] != '\0' )
+    rmdir (tmp_dir);			/* ignore errors */
   exit(G_errenc);
 }
 
@@ -3902,7 +3904,8 @@ int  n;
 #endif
 {
   char    xs[STRSIZE], ys[STRSIZE];
-  char    *sf = NULL, *psfile = NULL;
+  char    *include_file = NULL;
+  enum    { VerbFile, HPFile, PSFile } file_type;
   float   x,y;
   long4   x_pos, y_pos;
   KeyWord k;
@@ -3928,37 +3931,30 @@ int  n;
     /* get all keyword-value pairs */
     /* for compatibility, single words are taken as file names */
     if ( k.vt == None && access(k.Key, 0) == 0) {
-      if ( sf && !kpse_tex_hush ("special") ) {
-        Warning("More than one \\special file name given. %s ignored", sf);
-	free (sf);
+      if ( include_file && !kpse_tex_hush ("special") ) {
+        Warning("More than one \\special file name given. %s ignored", include_file);
+	free (include_file);
       }
-      sf = xstrdup(k.Key);
-      /*
-        for (j = 1; ((sf[j]=='/' ? sf[j]='\\':sf[j]) != '\0'); j++);
-        */
+      include_file = xstrdup(k.Key);
+      file_type = VerbFile;
     } else if ( GetKeyVal( &k, KeyTab, NKEYS, &i ) && i != -1 ) {
       switch (i) {
       case PSFILE:
-        if ( sf && !kpse_tex_hush ("special") ) {
-	  Warning("More than one \\special file name given. %s ignored", sf);
-	  free(sf);
-	  sf = NULL;
+        if ( include_file ) {
+	  Warning("More than one \\special file name given. %s ignored", include_file);
+	  free(include_file);
 	}
-        psfile = xstrdup(k.Val);
-        /*
-          for (j=1; ((sf[j]=='/' ? sf[j]='\\':sf[j]) != '\0'); j++);
-          */
+        include_file = xstrdup(k.Val);
+	file_type = PSFile;
         break;
 
       case HPFILE:
-        if ( sf && !kpse_tex_hush ("special") ) {
-	  Warning("More than one \\special file name given. %s ignored", sf);
-	  free(sf);
+        if ( include_file && !kpse_tex_hush ("special") ) {
+	  Warning("More than one \\special file name given. %s ignored", include_file);
+	  free(include_file);
 	}
-        sf = xstrdup(k.Val);
-        /*
-          for (j=1; ((sf[j]=='/' ? sf[j]='\\':sf[j]) != '\0'); j++);
-          */
+        include_file = xstrdup(k.Val);
+	file_type = HPFile;
         break;
 
       case ORIENTATION:
@@ -4097,106 +4093,142 @@ int  n;
     if ( k.Val != NULL )  free(k.Val);
   }
 
-  if ( sf || psfile ) {
+  if ( include_file ) {
     last_rx = last_ry = UNKNOWN;
 #ifdef IBM3812
     PMPflush;
 #endif
-    if (sf) {
-      /* -js FIXME: i may not be HPFILE any more if there were any other
-	 keywords in this special! Need to rework the whole file
-	 inclusion code. */
-      if (i == HPFILE)
-        CopyHPFile( sf );
-      else
-        CopyFile( sf );
-    }
-    else
+
 #ifdef LJ
-      if (psfile) {
-        /* int height = rwi * (urx - llx) / (ury - lly);*/
-        int width  = urx - llx;
-        int height = ury - lly;
-        char cmd[255];
-	char *cmd_format = "%s -q -dSIMPLE -dSAFER -dNOPAUSE -sDEVICE=%s -sOutputFile=%s %s %s showpage.ps -c quit";
-	char *gs_cmd;
-        int scale_factor, adjusted_height, adjusted_llx;
-        char *printer = "ljetplus"; /* use the most stupid one */
+    if ( file_type == PSFile) {
+      /* int height = rwi * (urx - llx) / (ury - lly);*/
+      int width  = urx - llx;
+      int height = ury - lly;
+      char cmd[255];
+      char *cmd_format = "%s -q -dSIMPLE -dSAFER -dNOPAUSE -sDEVICE=%s -sOutputFile=%s %s %s showpage.ps -c quit";
+      char *gs_cmd;
+      int scale_factor, adjusted_height, adjusted_llx;
+      char *printer = "ljetplus"; /* use the most stupid one */
 
+      char pcl_file[STRSIZE];
+      char scale_file[STRSIZE];
+      FILEPTR scalef;
 
-        char scale_file_name[255];
-        char *scale_file = tmpnam(scale_file_name);
-        char *pcl_file = tmpnam(NULL);
-        FILEPTR scalef;
+      if ( urx == 0 || ury == 0 || rwi == 0 ) {
+	/* Since dvips' psfile special has a different syntax, this might
+	   well be one of those specials, i.e., a non-dviljk special. Then
+	   the Warning should be suppressable. */
+	if ( !kpse_tex_hush ("special") )
+	  Warning ("Ignoring psfile special without urx, ury and rwi attributes");
+	free (include_file);
+	return;
+      }
+      scale_factor    = 3000 * width / rwi;
+      adjusted_height = height * 300/scale_factor;
+      adjusted_llx    = llx    * 300/scale_factor;
 
-        if ( urx == 0 || ury == 0 || rwi == 0 ) {
-	  /* Since dvips' psfile special has a different syntax, this might
-	     well be one of those specials, i.e., a non-dviljk special. Then
-	     the Warning should be suppressable. */
-	  if ( !kpse_tex_hush ("special") )
-	    Warning ("Ignoring psfile special without urx, ury and rwi attributes");
+      /* We cannot use mkstemp, as we cannot pass two open file descriptors
+	 portably to Ghostscript. We don't want to use tmpnam() or tempnam()
+	 either, as they have tempfile creation race conditions. Instead we
+	 create a temporary directory with mkdtemp() -- if that's available.
+	 If not, we are thrown back to tempnam(), to get our functionality
+	 at all. We need to create the temporary directory only once per
+	 run; it will be deleted in AllDone(). */
+      if ( tmp_dir[0] == '\0' ) {
+	char * base_dir;
+	if ( (base_dir = getenv("TMPDIR")) == NULL ) {
+	  base_dir = "/tmp";
+	} else if ( strlen(base_dir) > STRSIZE - sizeof("/dviljkXXXXXX/include.pcl") ) {
+	  Warning ("TMPDIR %s is too long, using /tmp instead", base_dir);
+	  base_dir = "/tmp";
+	}
+	if ( base_dir[0] == '/'  && base_dir[1] == '\0' ) {
+	  Warning ("Feeling naughty, do we? / is no temporary directory, dude");
+	  base_dir = "/tmp";
+	}
+	strcpy (tmp_dir, base_dir);
+	strcat (tmp_dir, "/dviljkXXXXXX");
+	if ( mkdtemp(tmp_dir) == NULL ) {
+	  Warning ("Could not create temporary directory %s, errno = %d; ignoring include file special",
+		   tmp_dir, errno);
 	  return;
 	}
-	scale_factor    = 3000 * width / rwi;
-	adjusted_height = height * 300/scale_factor;
-	adjusted_llx    = llx    * 300/scale_factor;
+      }
+      strcpy(pcl_file, tmp_dir);
+      strcat(pcl_file, "/include.pcl");
+      strcpy(scale_file, tmp_dir);
+      strcat(scale_file, "/scale.ps");
 
-        if ( (scalef = BOUTOPEN(scale_file)) == FPNULL ) {
-          Warning("Unable to open file %s for writing", scale_file );
-          return;
-        }
-        fprintf(scalef, "%.2f %.2f scale\n%d %d translate\n",
-                300.0/scale_factor, 300.0/scale_factor,
-                0, adjusted_height == height ? 0 : ury);
-        BCLOSE( scalef );
+      if ( (scalef = BOUTOPEN(scale_file)) == FPNULL ) {
+	Warning("Unable to open file %s for writing", scale_file );
+	free (include_file);
+	unlink(scale_file);		/* ignore error */
+	return;
+      }
+      fprintf(scalef, "%.2f %.2f scale\n%d %d translate\n",
+	      300.0/scale_factor, 300.0/scale_factor,
+	      0, adjusted_height == height ? 0 : ury);
+      BCLOSE( scalef );
 
 #ifdef WIN32
-	gs_cmd = ( getenv("GS_PATH") || "gswin32c.exe" );
+      if ( (gs_cmd = getenv("GS_PATH")) == NULL )
+	gs_cmd = "gswin32c.exe";
 #else
-	gs_cmd = "gs";
+      gs_cmd = "gs";
 #endif
-	if ( strlen(cmd_format)-10 + strlen(gs_cmd) + strlen(printer) +
-	         strlen(pcl_file) + strlen(scale_file) + strlen(psfile) +1 >
-	     sizeof(cmd) ) {
-	  Warning ("Ghostscript command for %s would be too long, skipping special", psfile);
-	  return;
-	}
-        sprintf(cmd, cmd_format,
-		gs_cmd, printer, pcl_file, scale_file, psfile);
-#ifdef DEBUGGS
-        fprintf(stderr,
-          "PS-file '%s' w=%d, h=%d, urx=%d, ury=%d, llx=%d, lly=%d, rwi=%d\n",
-                psfile, urx - llx, height, urx,ury,llx,lly, rwi);
-        fprintf(stderr,"%s\n",cmd);
-#endif
-        if (system(cmd)) {
-          Warning("execution of '%s' returned an error", cmd);
-        } else {
-#ifdef DEBUGGS
-          fprintf(stderr, "o=%d, h=%d, so=%d, sh=%d\n",
-                  llx, height, adjusted_llx, adjusted_height);
-
-          fprintf(stderr, "OLD x=%d, y=%d\n",
-                  (int)PIXROUND(h, hconv) + x_goffset,
-                  (int)PIXROUND(v, vconv) + y_goffset);
-#endif
-          v -= 65536l*adjusted_height; /**300/scale_factor;*/
-          h -= 65536l*adjusted_llx; /* *300/scale_factor;*/
-          SetPosn(h, v);
-#ifdef DEBUGGS
-          fprintf(stderr, "NEW x=%d, y=%d\n",
-                  (int)PIXROUND(h, hconv) + x_goffset,
-                  (int)PIXROUND(v, vconv) + y_goffset);
-#endif
-
-          CopyHPFile( pcl_file );
-          /* unlink(pcl_file); */
-          /* unlink(scale_file); */
-        }
+      if ( strlen(cmd_format)-10 + strlen(gs_cmd) + strlen(printer) +
+	       strlen(pcl_file) + strlen(scale_file) + strlen(include_file) +1 >
+	   sizeof(cmd) ) {
+	Warning ("Ghostscript command for %s would be too long, skipping special", include_file);
+	free (include_file);
+	unlink(scale_file);		/* ignore errors */
+	unlink(pcl_file);
+	return;
       }
+      sprintf(cmd, cmd_format,
+	      gs_cmd, printer, pcl_file, scale_file, include_file);
+#ifdef DEBUGGS
+      fprintf(stderr,
+	"PS-file '%s' w=%d, h=%d, urx=%d, ury=%d, llx=%d, lly=%d, rwi=%d\n",
+	      include_file, urx - llx, height, urx,ury,llx,lly, rwi);
+      fprintf(stderr,"%s\n",cmd);
+#endif
+      if (system(cmd)) {
+	Warning("execution of '%s' returned an error", cmd);
+      } else {
+#ifdef DEBUGGS
+	fprintf(stderr, "o=%d, h=%d, so=%d, sh=%d\n",
+		llx, height, adjusted_llx, adjusted_height);
+
+	fprintf(stderr, "OLD x=%d, y=%d\n",
+		(int)PIXROUND(h, hconv) + x_goffset,
+		(int)PIXROUND(v, vconv) + y_goffset);
+#endif
+	v -= 65536l*adjusted_height; /**300/scale_factor;*/
+	h -= 65536l*adjusted_llx; /* *300/scale_factor;*/
+	SetPosn(h, v);
+#ifdef DEBUGGS
+	fprintf(stderr, "NEW x=%d, y=%d\n",
+		(int)PIXROUND(h, hconv) + x_goffset,
+		(int)PIXROUND(v, vconv) + y_goffset);
+#endif
+
+	CopyHPFile( pcl_file );
+      }
+      unlink(scale_file);		/* ignore errors */
+      unlink(pcl_file);
+    }
+    else
 #endif /* LJ */
-    if ( sf != NULL )  free(sf);
-    if ( psfile != NULL )  free(psfile);
+
+    if ( file_type == HPFile )
+      CopyHPFile( include_file );
+    else if ( file_type == VerbFile )
+      CopyFile( include_file );
+    else
+      Warning ("This can't happen: unknown file_type value %d", file_type);
+
+    if ( include_file != NULL )  free(include_file);
   }
 }
 

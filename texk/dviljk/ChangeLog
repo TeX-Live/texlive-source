@@ -1,3 +1,14 @@
+2007-07-02  Joachim Schrod  <jschrod@acm.org>
+
+	* dvi2xx.c (DoSpecial): Security issue: usage of tmpnam() caused
+	tempfile race condition. I use mkdtemp() if it's available and
+	fall back to tmpnam.
+
+	Special parsing of include files was inconsistent, unify it. The
+	current parsing code still allows lots of non-sensical special
+	commands, but at least it doesn't access unrelated variables any
+	more.
+
 2007-06-28  Joachim Schrod  <jschrod@acm.org>
 
 	* dvi2xx.c: Fixed a whole bunch of buffer overflows: The program
