@@ -746,7 +746,10 @@ char    *str;
   int     todo;
 
   if ( (spfp = BINOPEN(str)) == FPNULL ) {
-    Warning("Unable to open file %s", str );
+    if ( errno != EACCES || ! kpse_tex_hush("readable") ) {
+      Warning("Unable to open file %s (errno=%d), skipping inclusion",
+	      str, errno);
+    }
     return;
   }
   qfprintf(ERR_STREAM," [%s", str);
@@ -827,7 +830,10 @@ char    *str;
   int     count,miny,minx,num;
 
   if ( (spfp = BINOPEN(str)) == FPNULL ) {
-    Warning("Unable to open file %s", str);
+    if ( errno != EACCES || ! kpse_tex_hush("readable") ) {
+      Warning("Unable to open file %s (errno=%d), skipping inclusion",
+	      str, errno);
+    }
     return;
   }
   minx = 32767;                 /* Set to a high value initially */
@@ -4162,6 +4168,8 @@ int  n;
 	  Warning ("TMPDIR %s is too long, using /tmp instead", base_dir);
 	  base_dir = "/tmp";
 	}
+	/* FIXME: Actually, we would need a function to sanitize base_dir here.
+	   There may still be constructs like /.. or similar. [03 Jul 07 -js] */
 	if ( base_dir[0] == '/'  && base_dir[1] == '\0' ) {
 	  Warning ("Feeling naughty, do we? / is no temporary directory, dude");
 	  base_dir = "/tmp";

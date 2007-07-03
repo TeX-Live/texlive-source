@@ -8,6 +8,8 @@
 	(DoSpecial): Search for include files with kpathsea, both via
 	DVILJINPUTS and TEXINPUTS.
 
+	(CopyFile, CopyHPFile): Implement TEX_HUSH option `readable.'
+
 2007-07-02  Joachim Schrod  <jschrod@acm.org>
 
 	* dvi2xx.c (DoSpecial): Security issue: usage of tmpnam() caused
