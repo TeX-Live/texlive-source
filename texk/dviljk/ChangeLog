@@ -9,6 +9,9 @@
 	DVILJINPUTS and TEXINPUTS.
 	Add special hpfile-verbatim, to include PCL files verbatim,
 	without changing positioning commands.
+	Add special comment, to include meta-information in a DVI file.
+	For compatibility with other drivers, allow "comment" without
+	equal sign and value.
 
 	(CopyFile, CopyHPFile): Implement TEX_HUSH option `readable.'
 

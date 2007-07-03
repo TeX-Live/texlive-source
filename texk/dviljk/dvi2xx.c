@@ -3731,6 +3731,7 @@ typedef enum {
   FILL,
   GRAY,
   PATTERN,
+  COMMENT,
   HPFILE,
   HPFILE_VERBATIM,
   PSFILE,
@@ -3750,6 +3751,7 @@ KeyDesc KeyTab[] = {
   { FILL, "fill", String},
   { GRAY, "gray", Integer},
   { PATTERN, "pattern", Integer},
+  { COMMENT, "comment", String},
   { HPFILE, "hpfile", String},
   { HPFILE_VERBATIM, "hpfile-verbatim", String},
   { PSFILE, "psfile", String },
@@ -3941,42 +3943,23 @@ int  n;
 
   while ( (str = GetKeyStr(str, &k)) != NULL ) {
     /* get all keyword-value pairs */
-    /* for compatibility, single words are taken as file names */
-    if ( k.vt == None && access(k.Key, 0) == 0) {
-      if ( include_file && !kpse_tex_hush ("special") ) {
-        Warning("More than one \\special file name given. %s ignored", include_file);
-	free (include_file);
+    if ( k.vt == None ) {		/* no value */
+      /* Single word might also be "comment", then ignore the rest */
+      if ( EQ(k.Key, "comment") )
+	return;
+      /* For compatibility, single words are taken as file names. But then
+	 the include file must be accessible without being searched with
+	 kpathsea. */
+      if ( access(k.Key, 0) == 0 ) {
+	if ( include_file && !kpse_tex_hush ("special") ) {
+	  Warning("More than one \\special file name given, %s ignored", include_file);
+	  free (include_file);
+	}
+	include_file = xstrdup(k.Key);
+	file_type = VerbFile;
       }
-      include_file = xstrdup(k.Key);
-      file_type = VerbFile;
     } else if ( GetKeyVal( &k, KeyTab, NKEYS, &i ) && i != -1 ) {
       switch (i) {
-      case PSFILE:
-        if ( include_file ) {
-	  Warning("More than one \\special file name given. %s ignored", include_file);
-	  free(include_file);
-	}
-        include_file = xstrdup(k.Val);
-	file_type = PSFile;
-        break;
-
-      case HPFILE:
-        if ( include_file && !kpse_tex_hush ("special") ) {
-	  Warning("More than one \\special file name given. %s ignored", include_file);
-	  free(include_file);
-	}
-        include_file = xstrdup(k.Val);
-	file_type = HPFile;
-        break;
-
-      case HPFILE_VERBATIM:
-        if ( include_file && !kpse_tex_hush ("special") ) {
-	  Warning("More than one \\special file name given. %s ignored", include_file);
-	  free(include_file);
-	}
-        include_file = xstrdup(k.Val);
-	file_type = VerbFile;
-        break;
 
       case ORIENTATION:
 #ifdef IBM3812
@@ -4088,6 +4071,38 @@ int  n;
         } else {
           Warning( "Invalid pattern (%d) given; ignored.", k.v.i);
 	}
+        break;
+
+      case COMMENT:
+	return;
+	/*NOTREACHED*/
+	break;
+
+      case HPFILE:
+        if ( include_file && !kpse_tex_hush ("special") ) {
+	  Warning("More than one \\special file name given. %s ignored", include_file);
+	  free(include_file);
+	}
+        include_file = xstrdup(k.Val);
+	file_type = HPFile;
+        break;
+
+      case HPFILE_VERBATIM:
+        if ( include_file && !kpse_tex_hush ("special") ) {
+	  Warning("More than one \\special file name given. %s ignored", include_file);
+	  free(include_file);
+	}
+        include_file = xstrdup(k.Val);
+	file_type = VerbFile;
+        break;
+
+      case PSFILE:
+        if ( include_file ) {
+	  Warning("More than one \\special file name given. %s ignored", include_file);
+	  free(include_file);
+	}
+        include_file = xstrdup(k.Val);
+	file_type = PSFile;
         break;
 
       case LLX: llx = k.v.i; break;
