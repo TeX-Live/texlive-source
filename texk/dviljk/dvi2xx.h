@@ -356,10 +356,7 @@ extern int seekchar();
 /********************** Special Data Structures ***********************/
 /**********************************************************************/
 
-typedef enum  { None, String, Integer /*, Number, Dimension*/ }
-
-
-ValTyp;
+typedef enum  { None, String, Integer /*, Number, Dimension*/ } ValTyp;
 typedef struct {
   char    *Key;       /* the keyword string */
   char    *Val;       /* the value string */
@@ -370,6 +367,7 @@ typedef struct {
   } v;
 } KeyWord;
 typedef struct {
+  int     KeyId;     /* the keyword ID */
   char    *Entry;
   ValTyp  Typ;
 } KeyDesc;

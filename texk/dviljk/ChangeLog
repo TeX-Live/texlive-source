@@ -7,6 +7,8 @@
 	want different search paths for the dviljk variations.
 	(DoSpecial): Search for include files with kpathsea, both via
 	DVILJINPUTS and TEXINPUTS.
+	Add special hpfile-verbatim, to include PCL files verbatim,
+	without changing positioning commands.
 
 	(CopyFile, CopyHPFile): Implement TEX_HUSH option `readable.'
 

@@ -3724,37 +3724,41 @@ bool PFlag;
 /*****************************  DoSpecial  ***************************/
 /*********************************************************************/
 
-#define PSFILE 0
-#define ORIENTATION 1
-#define RESETPOINTS 2
-#define DEFPOINT 3
-#define FILL 4
-#define GRAY 5
-#define PATTERN 6
-#define HPFILE 7
-#define LLX 8
-#define LLY 9
-#define URX 10
-#define URY 11
-#define RWI 12
-#define RHI 13
-
+typedef enum {
+  ORIENTATION,
+  RESETPOINTS,
+  DEFPOINT,
+  FILL,
+  GRAY,
+  PATTERN,
+  HPFILE,
+  HPFILE_VERBATIM,
+  PSFILE,
+  LLX,
+  LLY,
+  URX,
+  URY,
+  RWI,
+  RHI,
+  NKEYS
+} SpecialKeywords;
 
 KeyDesc KeyTab[] = {
-  { "psfile", String },
-  { "orientation", Integer},
-  { "resetpoints", String},
-  { "defpoint", String},
-  { "fill", String},
-  { "gray", Integer},
-  { "pattern", Integer},
-  { "hpfile", String},
-  { "llx", Integer},
-  { "lly", Integer},
-  { "urx", Integer},
-  { "ury", Integer},
-  { "rwi", Integer},
-  { "rhi", Integer}
+  { ORIENTATION, "orientation", Integer},
+  { RESETPOINTS, "resetpoints", String},
+  { DEFPOINT, "defpoint", String},
+  { FILL, "fill", String},
+  { GRAY, "gray", Integer},
+  { PATTERN, "pattern", Integer},
+  { HPFILE, "hpfile", String},
+  { HPFILE_VERBATIM, "hpfile-verbatim", String},
+  { PSFILE, "psfile", String },
+  { LLX, "llx", Integer},
+  { LLY, "lly", Integer},
+  { URX, "urx", Integer},
+  { URY, "ury", Integer},
+  { RWI, "rwi", Integer},
+  { RHI, "rhi", Integer}
   /*,
     {"hsize", Dimension},
     {"vsize", Dimension},
@@ -3763,8 +3767,6 @@ KeyDesc KeyTab[] = {
     {"hscale", Number},
     {"vscale", Number}*/
 };
-
-#define NKEYS (sizeof(KeyTab)/sizeof(KeyTab[0]))
 
 #ifdef __riscos
 # ifdef LJ
@@ -3965,6 +3967,15 @@ int  n;
 	}
         include_file = xstrdup(k.Val);
 	file_type = HPFile;
+        break;
+
+      case HPFILE_VERBATIM:
+        if ( include_file && !kpse_tex_hush ("special") ) {
+	  Warning("More than one \\special file name given. %s ignored", include_file);
+	  free(include_file);
+	}
+        include_file = xstrdup(k.Val);
+	file_type = VerbFile;
         break;
 
       case ORIENTATION:
@@ -4346,7 +4357,7 @@ int     *tno;
   *tno = -1;
   for (i = 0; i < nt; i++)
     if ( IsSame(kw->Key, tab[i].Entry) ) {
-      *tno = i;
+      *tno = tab[i].KeyId;
       switch ( tab[i].Typ ) {
       case None:
         if ( kw->vt != None )
