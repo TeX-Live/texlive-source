@@ -175,7 +175,14 @@ char    *argv[];
   setbuf(ERR_STREAM, NULL);
   G_progname = argv[0];
 #ifdef KPATHSEA
-  kpse_set_progname(argv[0]);
+  kpse_set_program_name("dvilj", NULL);
+#ifdef HAVE_PROGRAM_INVOCATION_NAME
+  /* ARGH. kpse_set_program_name() does not set the program name if we're on
+     a system where the feature HAVE_PROGRAM_INVOCATION_NAME is defined. Then
+     we have to call kpse_reset_program_name() to enforce our wish for our
+     program name. Brain-damaged interface, if you ask me. [03 Jul 07 -js] */
+  kpse_reset_program_name("dvilj");
+#endif
   kpse_set_program_enabled (kpse_pk_format, MAKE_TEX_PK_BY_DEFAULT, kpse_src_compile);
 #endif
   DecodeArgs(argc, argv);
@@ -3902,7 +3909,7 @@ int  n;
 {
   char    xs[STRSIZE], ys[STRSIZE];
   char    *include_file = NULL;
-  enum    { VerbFile, HPFile, PSFile } file_type;
+  enum    { None, VerbFile, HPFile, PSFile } file_type;
   float   x,y;
   long4   x_pos, y_pos;
   KeyWord k;
@@ -4091,10 +4098,26 @@ int  n;
   }
 
   if ( include_file ) {
+    char * include_path;
     last_rx = last_ry = UNKNOWN;
 #ifdef IBM3812
     PMPflush;
 #endif
+
+    /* Search the include file with kpathsea, but don't open it immediately.
+       If it's a psfile special, it will get passed to Ghostscript. An
+       include file is often placed at the same place as documents: We use
+       both a program specific search path and the tex search path. We can
+       not use kpse_find_tex() as it would call mktex, which we don't want
+       to do for included PCL files. */
+    if ( (include_path = kpse_find_file(include_file, kpse_program_binary_format, false)) == NULL &&
+	 (include_path = kpse_find_file(include_file, kpse_tex_format, false)) == NULL ) {
+      Warning ("Could not locate %s, ignoring inclusion special", include_file);
+      file_type = None;
+    } else {
+      free (include_file);
+      include_file = include_path;
+    }
 
 #ifdef LJ
     if ( file_type == PSFile) {
@@ -4222,6 +4245,8 @@ int  n;
       CopyHPFile( include_file );
     else if ( file_type == VerbFile )
       CopyFile( include_file );
+    else if ( file_type == None )
+      /* do nothing */ ;
     else
       Warning ("This can't happen: unknown file_type value %d", file_type);
 
@@ -5652,8 +5677,9 @@ Warning(va_alist)
 }
 
 
-/*
+/* ------------------------------------------------------------
  * Local Variables:
  * c-file-style: "gnu"
+ * fill-column: 76
  * End:
  */

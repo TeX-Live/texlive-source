@@ -15,6 +15,7 @@
 #include <kpathsea/magstep.h>
 #include <kpathsea/proginit.h>
 #include <kpathsea/progname.h>
+#include <kpathsea/tex-file.h>
 #include <kpathsea/tex-glyph.h>
 #include <kpathsea/tex-hush.h>
 #include <kpathsea/tex-make.h>
