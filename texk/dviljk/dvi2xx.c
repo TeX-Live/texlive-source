@@ -911,15 +911,12 @@ char    *str;
   }
   while ((binumber == BUFFSIZE) || (biact < binumber));
 
-  BCLOSE(spfp);
-  qfprintf(ERR_STREAM,"]");
-
-  if ( (spfp = BINOPEN(str)) == FPNULL ) {
-    Warning("Unable to open file %s", str );
+  /* reset input buffer, to read it anew */
+  if ( FSEEK(spfp, 0L, SEEK_SET) == -1 ) {
+    Warning(" could not seek to start of file (errno=%d), abandon %s inclusion",
+	    errno, str);
     return;
   }
-  qfprintf(ERR_STREAM," [%s", str);
-  /* reset input buffer again */
   binumber = 0;
   biact = 0;
 
@@ -5653,3 +5650,10 @@ Warning(va_alist)
   fprintf(ERR_STREAM, "\n");
   va_end(args);
 }
+
+
+/*
+ * Local Variables:
+ * c-file-style: "gnu"
+ * End:
+ */

@@ -1,3 +1,8 @@
+2007-07-03  Joachim Schrod  <jschrod@acm.org>
+
+	* dvi2xx.c (CopyHPFile): Open include file only once, rewind
+	instead of reopen.
+
 2007-07-02  Joachim Schrod  <jschrod@acm.org>
 
 	* dvi2xx.c (DoSpecial): Security issue: usage of tmpnam() caused
