@@ -12,6 +12,10 @@
 	Add special comment, to include meta-information in a DVI file.
 	For compatibility with other drivers, allow "comment" without
 	equal sign and value.
+	Add special dvips-syntax, to specify what shall be done with
+	psfile specials, since they are incompatible to dvips. Supported
+	values: "ignore" and "dvilj". Later, support for "dvips" should be
+	added.
 
 	(CopyFile, CopyHPFile): Implement TEX_HUSH option `readable.'
 

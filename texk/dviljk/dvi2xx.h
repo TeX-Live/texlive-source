@@ -356,7 +356,7 @@ extern int seekchar();
 /********************** Special Data Structures ***********************/
 /**********************************************************************/
 
-typedef enum  { None, String, Integer /*, Number, Dimension*/ } ValTyp;
+typedef enum { None, String, Integer /*, Number, Dimension*/ } ValTyp;
 typedef struct {
   char    *Key;       /* the keyword string */
   char    *Val;       /* the value string */
@@ -545,7 +545,8 @@ char   *filename;	         /* DVI file name                       */
 char   *rootname;		 /* DVI filename without extension      */
 char   *HeaderFileName = "";     /* file name & path of Headerfile      */
 char   *EmitFileName = "";       /* file name & path for output         */
-char    tmp_dir[STRSIZE] = "";	 /* temporary directory for auxilliary files */
+char    tmp_dir[STRSIZE] = "";	 /* temporary directory for auxiliary files */
+enum   { Ignore, PSFile_dvilj /*, PSFile_dvips */ } PSFileSyntaxTyp = PSFile_dvilj;
 #ifdef IBM3812
 bool    FirstAlternate = _FALSE; /* first page from alternate casette ?   */
 #endif

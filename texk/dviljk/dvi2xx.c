@@ -3734,6 +3734,7 @@ typedef enum {
   COMMENT,
   HPFILE,
   HPFILE_VERBATIM,
+  PSFILE_SYNTAX,
   PSFILE,
   LLX,
   LLY,
@@ -3754,6 +3755,7 @@ KeyDesc KeyTab[] = {
   { COMMENT, "comment", String},
   { HPFILE, "hpfile", String},
   { HPFILE_VERBATIM, "hpfile-verbatim", String},
+  { PSFILE_SYNTAX, "psfile-syntax", String },
   { PSFILE, "psfile", String },
   { LLX, "llx", Integer},
   { LLY, "lly", Integer},
@@ -4096,13 +4098,26 @@ int  n;
 	file_type = VerbFile;
         break;
 
+      case PSFILE_SYNTAX:
+	if ( EQ(k.Val, "ignore") )
+	  PSFileSyntaxTyp = Ignore;
+	else if ( EQ(k.Val, "dvilj") )
+	  PSFileSyntaxTyp = PSFile_dvilj;
+	else
+	  Warning("Ignored invalid value '%s' for psfile-syntax", k.Val);
+	break;
+
       case PSFILE:
         if ( include_file ) {
 	  Warning("More than one \\special file name given. %s ignored", include_file);
 	  free(include_file);
 	}
-        include_file = xstrdup(k.Val);
-	file_type = PSFile;
+	if ( PSFileSyntaxTyp != Ignore ) {
+	  include_file = xstrdup(k.Val);
+	  file_type = PSFile;
+	} else {
+	  include_file = NULL;
+	}
         break;
 
       case LLX: llx = k.v.i; break;
