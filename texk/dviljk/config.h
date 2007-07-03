@@ -216,12 +216,7 @@ typedef SCHAR_TYPE signed_char;
 #endif
 
 #ifndef KPATHSEA
-extern bool findfile(
-#if NeedFunctionPrototypes
-char path[], char n[], long4 fontmag, char name[], 
-	      bool tfm, int level
-#endif
-    );
+#error "Would need changed findfile, dviljk has changed allocation semantic of name member in tfontptr"
 #endif
 
 
@@ -443,4 +438,25 @@ typedef  FILE *FILEPTR;
 #define	vfprintf(stream, message, args)	_doprnt(message, args, stream)
 /* If we have neither, should fall back to fprintf with fixed args.  */
 #endif
+#endif
+
+/* If unlink and rmdir are not there, we don't delete the temporary files. */
+#ifndef HAVE_RMDIR
+#define rmdir(dir)
+#endif
+#ifndef HAVE_UNLINK
+#define unlink(file)
+#endif
+
+/* If mkdtemp() does not exist, we have to use tmpnam(). */
+#ifndef HAVE_MKDTEMP
+#define mkdtemp(dir) (tmpnam(dir) ? \
+		      ( mkdir(dir, 0700) == -1 ? NULL : dir ) :	\
+		      ( errno = EINVAL, NULL ) )
+#endif
+
+#ifndef KPATHSEA
+/* FIXME: Should provide a strdup function. But currently this tree is
+   only used in connection with kpathsea anyhow. */
+#error "Need xstrdup and xmalloc function, e.g. from kpathsea"
 #endif
