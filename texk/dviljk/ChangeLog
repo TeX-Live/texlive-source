@@ -5,6 +5,9 @@
 
 	(main): Enforce the kpathsea program name to be "dvilj", we don't
 	want different search paths for the dviljk variations.
+	Output reset sequence as specified in the HP PCL/PJL reference
+	manuals.
+
 	(DoSpecial): Search for include files with kpathsea, both via
 	DVILJINPUTS and TEXINPUTS.
 	Add special hpfile-verbatim, to include PCL files verbatim,

@@ -275,17 +275,29 @@ char    *argv[];
 #endif
 
 #ifdef LJ
-  if (ResetPrinter)
-    EMIT1("\033E");
 # ifdef LJ4
-  EMIT2("\033%%-12345X@PJL SET RESOLUTION=%d\012",RESOLUTION);
-  EMIT1("@PJL SET PAGEPROTECT=OFF\012");
-  EMIT1("@PJL ENTER LANGUAGE=PCL\012");
-  if (econoMode && LJ6)
+  /* According to the PCL (p. 4-2) and PJL (p. 4-3) reference manuals, it is
+     critical that the UEL escape sequence (\e%-12345X) comes before the
+     reset sequence (\eE). According to PJL Reference Manual (p. 4-3) the
+     correct order is (1) UEL, (2) PJL commands, (3) Reset and PCL job, (4)
+     Reset, (5) UEL. */
+  if (ResetPrinter) {
+    EMIT1("\033%%-12345X"); /* UEL: Universal Exit Language */
+    EMIT2("@PJL SET RESOLUTION=%d\012",RESOLUTION);
+    EMIT1("@PJL SET PAGEPROTECT=OFF\012");
+    if (econoMode && LJ6)
       EMIT1("@PJL SET ECONOMODE=ON\012");
+    /* The PJL ENTER LANGUAGE command must be the last PJL command before
+       PCL output starts. */
+    EMIT1("@PJL ENTER LANGUAGE=PCL\012");
+    EMIT1("\033E");
+  }
   EMIT3("\033&u%dD\033*t%dR",RESOLUTION,RESOLUTION);
   if (econoMode && !LJ6)
     EMIT1("\033*v1T");
+# else
+  if (ResetPrinter)
+    EMIT1("\033E");
 # endif
 # ifdef LJ2P
   if (DuplexMode)
