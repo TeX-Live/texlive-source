@@ -175,14 +175,7 @@ char    *argv[];
   setbuf(ERR_STREAM, NULL);
   G_progname = argv[0];
 #ifdef KPATHSEA
-  kpse_set_program_name("dvilj", NULL);
-#ifdef HAVE_PROGRAM_INVOCATION_NAME
-  /* ARGH. kpse_set_program_name() does not set the program name if we're on
-     a system where the feature HAVE_PROGRAM_INVOCATION_NAME is defined. Then
-     we have to call kpse_reset_program_name() to enforce our wish for our
-     program name. Brain-damaged interface, if you ask me. [03 Jul 07 -js] */
-  kpse_reset_program_name("dvilj");
-#endif
+  kpse_set_program_name(argv[0], "dvilj");
   kpse_set_program_enabled (kpse_pk_format, MAKE_TEX_PK_BY_DEFAULT, kpse_src_compile);
 #endif
   DecodeArgs(argc, argv);
