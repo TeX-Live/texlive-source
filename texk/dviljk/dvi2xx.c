@@ -3760,7 +3760,7 @@ KeyDesc KeyTab[] = {
   { COMMENT, "comment", String},
   { HPFILE, "hpfile", String},
   { HPFILE_VERBATIM, "hpfile-verbatim", String},
-  { PSFILE_SYNTAX, "psfile-syntax", String },
+  { PSFILE_SYNTAX, "dvilj-psfile-syntax", String },
   { PSFILE, "psfile", String },
   { LLX, "llx", Integer},
   { LLY, "lly", Integer},
@@ -3924,6 +3924,7 @@ char *str;
 int  n;
 #endif
 {
+  bool	  first_keyword = _TRUE;
   char    xs[STRSIZE], ys[STRSIZE];
   char    *include_file = NULL;
   enum    { None, VerbFile, HPFile, PSFile } file_type;
@@ -3948,6 +3949,9 @@ int  n;
 #endif
 #endif
 
+  /* When the first keyword is already unknown, we skip the whole special.
+     This is probably one for another driver and the user got notified
+     already about the problem. */
   while ( (str = GetKeyStr(str, &k)) != NULL ) {
     /* get all keyword-value pairs */
     if ( k.vt == None ) {		/* no value */
@@ -3964,6 +3968,11 @@ int  n;
 	}
 	include_file = xstrdup(k.Key);
 	file_type = VerbFile;
+      } else {
+	if ( !kpse_tex_hush ("special") )
+	  Warning("Invalid keyword or value in \\special - <%s> ignored", k.Key);
+	if ( first_keyword )
+	  return;
       }
     } else if ( GetKeyVal( &k, KeyTab, NKEYS, &i ) && i != -1 ) {
       switch (i) {
@@ -4109,7 +4118,7 @@ int  n;
 	else if ( EQ(k.Val, "dvilj") )
 	  PSFileSyntaxTyp = PSFile_dvilj;
 	else
-	  Warning("Ignored invalid value '%s' for psfile-syntax", k.Val);
+	  Warning("Ignored invalid value '%s' for dvilj-psfile-syntax", k.Val);
 	break;
 
       case PSFILE:
@@ -4138,15 +4147,21 @@ int  n;
       default:
 	if ( !kpse_tex_hush ("special") )
 	  Warning("Can't handle %s=%s command; ignored.", k.Key, k.Val);
+	if ( first_keyword )
+	  return;
         break;
       }
 
-    } else if (!kpse_tex_hush ("special")) {
-      Warning("Invalid keyword or value in \\special - <%s> ignored", k.Key);
+    } else {
+      if ( !kpse_tex_hush ("special") )
+	Warning("Invalid keyword or value in \\special - <%s> ignored", k.Key);
+      if ( first_keyword )
+	return;
     }
 
     free (k.Key);
     if ( k.Val != NULL )  free(k.Val);
+    first_keyword = _FALSE;
   }
 
   if ( include_file ) {

@@ -1,3 +1,13 @@
+2007-07-04  Joachim Schrod  <jschrod@acm.org>
+
+	* dvi2xx.c (DoSpecial): Add special dvilj-psfile-syntax, to
+	specify what shall be done with psfile specials, since they are
+	incompatible to dvips. Supported values: "ignore" and "dvilj".
+	Later, support for "dvips" should be added.
+	If the first keyword in a special is unknown, ignore the whole
+	special. This makes it easier to ignore specials from other
+	drivers.
+
 2007-07-03  Joachim Schrod  <jschrod@acm.org>
 
 	* dvi2xx.c (CopyHPFile): Open include file only once, rewind
@@ -15,10 +25,6 @@
 	Add special comment, to include meta-information in a DVI file.
 	For compatibility with other drivers, allow "comment" without
 	equal sign and value.
-	Add special dvips-syntax, to specify what shall be done with
-	psfile specials, since they are incompatible to dvips. Supported
-	values: "ignore" and "dvilj". Later, support for "dvips" should be
-	added.
 
 	(CopyFile, CopyHPFile): Implement TEX_HUSH option `readable.'
 
