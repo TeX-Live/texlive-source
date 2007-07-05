@@ -1,5 +1,9 @@
 2007-07-05  Karl Berry  <karl@tug.org>
 
+	* tex-file.h (kpse_file_format_type): define kpse_lua_format.
+	* tex-file.c (LUA_ENVS, LUA_SUFFIXES): new macros
+	(init_path): initialize kpse_lua_format.
+
 	* texmf.in (LUAINPUTS): add $TEXINPUTS per Hans and Taco.
 
 2007-06-14  Karl Berry  <karl@tug.org>

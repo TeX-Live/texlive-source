@@ -1,7 +1,7 @@
 /* tex-file.h: find files in a particular format.
 
+   Copyright 1993, 1994, 1995, 1996, 2007 Karl Berry.
    Copyright 1998-2005 Olaf Weber.
-   Copyright 1993, 94, 95, 96 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -101,6 +101,7 @@ typedef enum
   kpse_pdftex_config_format,
   kpse_lig_format,
   kpse_texmfscripts_format,
+  kpse_lua_format,
   kpse_last_format /* one past last index */
 } kpse_file_format_type;
 
