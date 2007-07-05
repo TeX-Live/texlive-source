@@ -1,3 +1,7 @@
+2007-07-05  Karl Berry  <karl@tug.org>
+
+	* texmf.in (LUAINPUTS): add $TEXINPUTS per Hans and Taco.
+
 2007-06-14  Karl Berry  <karl@tug.org>
 
 	* texmf.in: doc fix ({a,b} is not deprecated).
