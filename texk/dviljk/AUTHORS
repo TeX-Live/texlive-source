@@ -1,2 +1,9 @@
-This program was modified by kb@mail.tug.org from Gustaf Neumann's dvi2xx
-distribution.  Send bug reports to tex-k@mail.tug.org, not to Gustaf.
+dviljk is a fork from dvi2xx, authored by Gustaf Neumann
+<neumann@wu-wien.ac.at>, Wirtschaftsuniversitaet Wien. Gustaf is not
+active in TeX development any more.
+
+The fork was created by kb@mail.tug.org.
+Send bug reports to tex-k@mail.tug.org, not to Gustaf.
+
+Joachim Schrod <jschrod@acm.org> supplied security fixes, fixed and
+enhanced the special handling, and updated the man page.

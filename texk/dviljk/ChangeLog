@@ -1,3 +1,17 @@
+2007-07-05  Joachim Schrod  <jschrod@acm.org>
+
+	Bump up version number to 2.6p4.
+
+	* dvilj.pod, Makefile.in, dvilj.man: Generate dvilj man page from
+	POD document. Update man page content; in particular, all specials
+	are described now. Also add links to PCL reference documentation.
+
+	* dvi2xx.c (DecodeArgs): Update set of pagesize values.
+	(DoSpecial): Special grey is an alias for gray.
+	Value for orientation special may also be 3.
+	defpoints did not survive one special. No debug output for point
+	definitions with absolute coordinates.
+
 2007-07-04  Joachim Schrod  <jschrod@acm.org>
 
 	* dvi2xx.c (DoSpecial): Add special dvilj-psfile-syntax, to

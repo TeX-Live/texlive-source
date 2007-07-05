@@ -46,6 +46,12 @@ dvilj4l.o:
 
 dvilj.o dvilj2p.o dvilj4.o dvilj4l.o: dvi2xx.c
 
+VERSION = `grep 'define VERSION' dvi2xx.c | sed -e 's/^.*version //' -e 's/).*//'`
+dvilj.man: dvilj.pod dvi2xx.c
+	pod2man --center="TeX-Live" --release="Version $(VERSION)" $< >$@
+dvilj.ps: dvilj.man
+	man -t -l $< >$@
+
 kpse_include ../make/tkpathsea.mk
 
 install: install-exec install-data
