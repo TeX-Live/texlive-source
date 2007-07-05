@@ -3237,18 +3237,26 @@ Primary author of Dvi2xx: Gustaf Neumann; -k maintainer: K. Berry.");
         if (!this_arg || sscanf(this_arg,"%hd", &pagesize) != 1)
           Fatal("Argument of -s is not a valid integer\n");
         /*
-         * The original pgsiz_dots assumed  a resolution of 300dpi. This loses
-         * at 600dpi so we must scale all.
+         * The pgsiz_dots value assumes a resolution of 300dpi. This loses
+         * at 600dpi so we will scale them below for the LJ4.
          */
         switch (pagesize) {
-        case 1: pgsiz_dots = 3150; break;         /* executive */
-        case 2: pgsiz_dots = 3300; break;         /* letter */
-        case 3: pgsiz_dots = 4200; break;         /* legal */
-        case 26: pgsiz_dots = 3507; break;        /* a4 */
-        case 80: pgsiz_dots = 2250; break;        /* monarc */
-        case 81: pgsiz_dots = 2850; break;        /* com10 */
-        case 90: pgsiz_dots = 2598; break;        /* int dl */
-        case 91: pgsiz_dots = 2704; break;        /* int c5 */
+        case  1: pgsiz_dots = 10.5 * 300; break;       /* executive */
+        case  2: pgsiz_dots = 11 * 300; break;	       /* letter */
+        case  3: pgsiz_dots = 14 * 300; break;	       /* legal */
+        case  6: pgsiz_dots = 17 * 300; break;	       /* ledger */
+        case 25: pgsiz_dots = 210 * 300 / 25.4; break; /* a5 */
+        case 26: pgsiz_dots = 297 * 300 / 25.4; break; /* a4 */
+        case 27: pgsiz_dots = 420 * 300 / 25.4; break; /* a3 */
+        case 45: pgsiz_dots = 257 * 300 / 25.4; break; /* jis b5 */
+        case 46: pgsiz_dots = 354 * 300 / 25.4; break; /* jis b4 */
+        case 71: pgsiz_dots = 148 * 300 / 25.4; break; /* hagaki postcard */
+        case 72: pgsiz_dots = 148 * 300 / 25.4; break; /* oufuku-hagaki */
+        case 80: pgsiz_dots = 7.5 * 300; break;        /* monarch envelope */
+        case 81: pgsiz_dots = 9.5 * 300; break;        /* com10 envelope */
+        case 90: pgsiz_dots = 220 * 300 / 25.4; break; /* int dl */
+        case 91: pgsiz_dots = 229 * 300 / 25.4; break; /* int c5 */
+        case 100: pgsiz_dots = 250 * 300 / 25.4; break; /* int b5 */
         default: Fatal(
 #ifndef vms
                        "%hd is a bad value for pagesize (1,2,3,26,80,81,90,91)",
@@ -3746,8 +3754,7 @@ typedef enum {
   URX,
   URY,
   RWI,
-  RHI,
-  NKEYS
+  RHI
 } SpecialKeywords;
 
 KeyDesc KeyTab[] = {
@@ -3756,6 +3763,7 @@ KeyDesc KeyTab[] = {
   { DEFPOINT, "defpoint", String},
   { FILL, "fill", String},
   { GRAY, "gray", Integer},
+  { GRAY, "grey", Integer},
   { PATTERN, "pattern", Integer},
   { COMMENT, "comment", String},
   { HPFILE, "hpfile", String},
@@ -3776,6 +3784,8 @@ KeyDesc KeyTab[] = {
     {"hscale", Number},
     {"vscale", Number}*/
 };
+
+#define NKEYS (sizeof(KeyTab)/sizeof(KeyTab[0]))
 
 #ifdef __riscos
 # ifdef LJ
@@ -3935,11 +3945,15 @@ int  n;
   static  int   GrayScale = 10, Pattern = 1;
   static  bool  GrayFill = _TRUE;
   static  long4 p_x[MAX_SPECIAL_DEFPOINTS], p_y[MAX_SPECIAL_DEFPOINTS];
+  static  bool  need_init_pxy = _TRUE;
   int llx=0, lly=0, urx=0, ury=0, rwi=0;
 
   str[n] = '\0';
-  for ( i=0 ; i<MAX_SPECIAL_DEFPOINTS ; i++ )
-    p_x[i] = p_y[i] = -1;
+  if ( need_init_pxy ) {
+    for ( i=0 ; i<MAX_SPECIAL_DEFPOINTS ; i++ )
+      p_x[i] = p_y[i] = -1;
+    need_init_pxy = _FALSE;
+  }
 
   SetPosn(h, v);
 #ifdef __riscos
@@ -3988,7 +4002,7 @@ int  n;
         }
 #endif
 #ifdef LJ
-        if ((k.v.i >= 0) && (k.v.i < 2)) {
+        if ( k.v.i >= 0 && k.v.i <= 3 ) {
           last_rx = last_ry = UNKNOWN;
           EMIT2("\033&l%dO\033*rF", (unsigned char)k.v.i);
         }
@@ -4009,23 +4023,15 @@ int  n;
         if (i>0) {
 	  if ( j < 0  ||  j >= MAX_SPECIAL_DEFPOINTS ) {
 	    Warning ("defpoint %d ignored, must be between 0 and %d",
-		     j, MAX_SPECIAL_DEFPOINTS);
+		     j, MAX_SPECIAL_DEFPOINTS-1);
 	    break;
 	  }
           x_pos = h;
           y_pos = v;
-          if (i>1) {
-            if (sscanf(xs,"%fpt",&x)>0) {
-              fprintf(ERR_STREAM,"x = %f\n",x);
+          if ( i > 1  &&  sscanf(xs,"%fpt",&x) > 0 )
               x_pos = PT_TO_DVI(x);
-            }
-          }
-          if (i>2) {
-            if (sscanf(ys,"%fpt",&y)>0) {
-              fprintf(ERR_STREAM,"y = %f\n",y);
+          if ( i > 2  &&  sscanf(ys,"%fpt",&y) > 0 )
               y_pos = PT_TO_DVI(y);
-            }
-          }
           p_x[j]=x_pos;
           p_y[j]=y_pos;
         } else {
@@ -4035,7 +4041,7 @@ int  n;
 
       case FILL:
 	/* 254 is STRSIZE-1. cpp should be used to construct that number. */
-        i = sscanf(k.Val,"%d/%d %254s",&j,&j1,xs);
+        i = sscanf(k.Val,"%d/%d",&j,&j1);
         if (i>1) {
 #ifdef LJ
 	  if ( j < 0 || j >= MAX_SPECIAL_DEFPOINTS ) {
