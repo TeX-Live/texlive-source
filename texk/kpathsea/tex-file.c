@@ -675,7 +675,7 @@ kpse_init_format P1C(kpse_file_format_type, format)
       INIT_FORMAT ("lua", DEFAULT_LUAINPUTS, LUA_ENVS);
 #define LUA_SUFFIXES ".luc", ".luctex", ".texluc", ".lua", ".luatex", ".texlua"
       SUFFIXES (LUA_SUFFIXES);
-      FMT_INFO.suffix_search_only = false;
+      FMT_INFO.suffix_search_only = true;
       break;
     default:
       FATAL1 ("kpse_init_format: Unknown format %d", format);

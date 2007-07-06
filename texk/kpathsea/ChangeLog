@@ -4,6 +4,7 @@
 	name be lua rather than luatex; otherwise kpsewhich -format=luatex
 	finds kpse_tex_format sometimes, and it seems unnecessary to debug
 	that just now.
+	Also, set suffix_search_only=true.
 	(LUA_SUFFIXES): put compiled suffixes first.
 
 2007-07-05  Karl Berry  <karl@tug.org>
