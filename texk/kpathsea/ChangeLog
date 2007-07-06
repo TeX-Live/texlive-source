@@ -1,3 +1,11 @@
+2007-07-06  Karl Berry  <karl@tug.org>
+
+	* tex-file.c (init_path) <kpse_lua_format>: let's make the format
+	name be lua rather than luatex; otherwise kpsewhich -format=luatex
+	finds kpse_tex_format sometimes, and it seems unnecessary to debug
+	that just now.
+	(LUA_SUFFIXES): put compiled suffixes first.
+
 2007-07-05  Karl Berry  <karl@tug.org>
 
 	* tex-file.h (kpse_file_format_type): define kpse_lua_format.
