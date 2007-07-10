@@ -5046,16 +5046,7 @@ struct font_entry *fontptr;
     return _TRUE;
   } else {
     fontptr->resident_p = _FALSE;
-
-    if (tfm_info.family[0]
-        && EQ((char *)tfm_info.family, "UNSPECIFIED")) {
-      Warning("font family for %s is UNSPECIFIED; need to run dvicopy?",
-              fontptr->n);
-      fontptr->font_file_id = NO_FILE;
-      return _TRUE;
-    } else {
-      return _FALSE;
-    }
+    return _FALSE;
   }
 }
 #endif
