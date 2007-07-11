@@ -23,7 +23,7 @@ GString.o: $(srcdir)/GString.cc ../aconf.h \
   $(srcdirparent)/aconf2.h \
   $(srcdir)/gtypes.h \
   $(srcdir)/GString.h
-gmem.o: $(srcdir)/gmem.c ../aconf.h \
+gmem.o: $(srcdir)/gmem.cc ../aconf.h \
   $(srcdirparent)/aconf2.h \
   $(srcdir)/gmem.h
 parseargs.o: $(srcdir)/parseargs.c \

@@ -1,5 +1,5 @@
 %
-% Copyright (c) 1996-2006 Han The Thanh, <thanh@pdftex.org>
+% Copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
 %
 % This file is part of pdfTeX.
 %
@@ -13,11 +13,11 @@
 % MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 % GNU General Public License for more details.
 %
-% You should have received a copy of the GNU General Public License
-% along with pdfTeX; if not, write to the Free Software
-% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+% You should have received a copy of the GNU General Public License along with
+% pdfTeX; if not, write to the Free Software Foundation, Inc., 51 Franklin
+% Street, Fifth Floor, Boston, MA 02110-1301 USA.
 %
-% $Id: //depot/Build/source.development/TeX/texk/web2c/pdfetexdir/pdfetex.ch2#20 $
+% $Id: pdftex.ch 200 2007-07-11 13:11:12Z oneiros $
 %
 @x [0.0] l.83 - WEAVE: we want the whole file
   \def\?##1]{\hbox{Changes to \hbox to 1em{\hfil##1}.\ }}

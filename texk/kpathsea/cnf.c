@@ -30,6 +30,7 @@
 #include <kpathsea/paths.h>
 #include <kpathsea/pathsearch.h>
 #include <kpathsea/progname.h>
+#include <kpathsea/recorder.h>
 #include <kpathsea/tex-file.h>
 #include <kpathsea/variable.h>
 
@@ -166,6 +167,8 @@ read_all_cnf P1H(void)
     for (cnf = cnf_files; *cnf; cnf++) {
       string line;
       FILE *cnf_file = xfopen (*cnf, FOPEN_R_MODE);
+      if (kpse_record_input)
+        kpse_record_input (*cnf);
 
       while ((line = read_line (cnf_file)) != NULL) {
         unsigned len = strlen (line);

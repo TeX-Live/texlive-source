@@ -1349,12 +1349,20 @@ var k:0..buf_size; {index into |buffer|}
 @y
 var k:0..buf_size; {index into |buffer|}
 @!saved_cur_name:str_number; {to catch empty terminal input}
+@!saved_cur_ext:str_number; {to catch empty terminal input}
+@!saved_cur_area:str_number; {to catch empty terminal input}
 @z
 
 @x [29.530] l.10252 - prompt_file_name: No default extension is TeX input file.
 if e=".tex" then show_context;
 @y
 if (e=".tex") or (e="") then show_context;
+print_ln; print("(Enter the null string to re-try, or <eof> to exit");
+if (e<>"") then
+  begin
+    print(" Default file extension is `"); print(e); print("'");
+  end;
+print(")"); print_ln;
 @z
 
 @x [29.530] l.10258 - prompt_file_name: prevent empty filenames.
@@ -1362,9 +1370,17 @@ clear_terminal; prompt_input(": "); @<Scan file name in the buffer@>;
 if cur_ext="" then cur_ext:=e;
 @y
 saved_cur_name:=cur_name;
+saved_cur_ext:=cur_ext;
+saved_cur_area:=cur_area;
 clear_terminal; prompt_input(": "); @<Scan file name in the buffer@>;
-if cur_ext="" then cur_ext:=e;
-if length(cur_name)=0 then cur_name:=saved_cur_name;
+if (length(cur_name)=0) and (cur_ext="") and (cur_area="") then
+  begin
+    cur_name:=saved_cur_name;
+    cur_ext:=saved_cur_ext;
+    cur_area:=saved_cur_area;
+  end
+else
+  if cur_ext="" then cur_ext:=e;
 @z
 
 @x [29.532] l.10263 - avoid conflict, `logname' in <unistd.h> on some systems.

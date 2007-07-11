@@ -1099,7 +1099,7 @@ JBIG2CodeTable::~JBIG2CodeTable() {
 // JBIG2Stream
 //------------------------------------------------------------------------
 
-JBIG2Stream::JBIG2Stream(Stream *strA, Object *globalsStream):
+JBIG2Stream::JBIG2Stream(Stream *strA, Object *globalsStreamA):
   FilterStream(strA)
 {
   pageBitmap = NULL;
@@ -1124,22 +1124,15 @@ JBIG2Stream::JBIG2Stream(Stream *strA, Object *globalsStream):
   huffDecoder = new JBIG2HuffmanDecoder();
   mmrDecoder = new JBIG2MMRDecoder();
 
-  segments = globalSegments = new GList();
-  if (globalsStream->isStream()) {
-    curStr = globalsStream->getStream();
-    curStr->reset();
-    arithDecoder->setStream(curStr);
-    huffDecoder->setStream(curStr);
-    mmrDecoder->setStream(curStr);
-    readSegments();
-  }
-
-  segments = NULL;
+  globalsStreamA->copy(&globalsStream);
+  segments = globalSegments = NULL;
   curStr = NULL;
   dataPtr = dataEnd = NULL;
 }
 
 JBIG2Stream::~JBIG2Stream() {
+  close();
+  globalsStream.free();
   delete arithDecoder;
   delete genericRegionStats;
   delete refinementRegionStats;
@@ -1159,28 +1152,25 @@ JBIG2Stream::~JBIG2Stream() {
   delete iaidStats;
   delete huffDecoder;
   delete mmrDecoder;
-  if (pageBitmap) {
-    delete pageBitmap;
-  }
-  if (segments) {
-    deleteGList(segments, JBIG2Segment);
-  }
-  if (globalSegments) {
-    deleteGList(globalSegments, JBIG2Segment);
-  }
   delete str;
 }
 
 void JBIG2Stream::reset() {
-  if (pageBitmap) {
-    delete pageBitmap;
-    pageBitmap = NULL;
+  // read the globals stream
+  globalSegments = new GList();
+  if (globalsStream.isStream()) {
+    segments = globalSegments;
+    curStr = globalsStream.getStream();
+    curStr->reset();
+    arithDecoder->setStream(curStr);
+    huffDecoder->setStream(curStr);
+    mmrDecoder->setStream(curStr);
+    readSegments();
+    curStr->close();
   }
-  if (segments) {
-    deleteGList(segments, JBIG2Segment);
-  }
-  segments = new GList();
 
+  // read the main stream
+  segments = new GList();
   curStr = str;
   curStr->reset();
   arithDecoder->setStream(curStr);
@@ -1192,8 +1182,25 @@ void JBIG2Stream::reset() {
     dataPtr = pageBitmap->getDataPtr();
     dataEnd = dataPtr + pageBitmap->getDataSize();
   } else {
-    dataPtr = NULL;
+    dataPtr = dataEnd = NULL;
   }
+}
+
+void JBIG2Stream::close() {
+  if (pageBitmap) {
+    delete pageBitmap;
+    pageBitmap = NULL;
+  }
+  if (segments) {
+    deleteGList(segments, JBIG2Segment);
+    segments = NULL;
+  }
+  if (globalSegments) {
+    deleteGList(globalSegments, JBIG2Segment);
+    globalSegments = NULL;
+  }
+  dataPtr = dataEnd = NULL;
+  FilterStream::close();
 }
 
 int JBIG2Stream::getChar() {
@@ -2352,9 +2359,9 @@ void JBIG2Stream::readHalftoneRegionSeg(Guint segNum, GBool imm,
     skipBitmap = new JBIG2Bitmap(0, gridW, gridH);
     skipBitmap->clearToZero();
     for (m = 0; m < gridH; ++m) {
-      xx = gridX + m * stepY;
-      yy = gridY + m * stepX;
       for (n = 0; n < gridW; ++n) {
+	xx = gridX + m * stepY + n * stepX;
+	yy = gridY + m * stepX - n * stepY;
 	if (((xx + (int)patW) >> 8) <= 0 || (xx >> 8) >= (int)w ||
 	    ((yy + (int)patH) >> 8) <= 0 || (yy >> 8) >= (int)h) {
 	  skipBitmap->setPixel(n, m);
@@ -2401,6 +2408,9 @@ void JBIG2Stream::readHalftoneRegionSeg(Guint segNum, GBool imm,
   }
 
   gfree(grayImg);
+  if (skipBitmap) {
+    delete skipBitmap;
+  }
 
   // combine the region bitmap into the page bitmap
   if (imm) {
@@ -3331,7 +3341,7 @@ void JBIG2Stream::resetIntStats(int symCodeLen) {
   iardwStats->reset();
   iardhStats->reset();
   iariStats->reset();
-  if (iaidStats->getContextSize() == symCodeLen + 1) {
+  if (iaidStats->getContextSize() == 1 << (symCodeLen + 1)) {
     iaidStats->reset();
   } else {
     delete iaidStats;

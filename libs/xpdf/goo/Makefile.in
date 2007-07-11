@@ -5,6 +5,7 @@
 # Copyright 1996 Derek B. Noonburg
 #
 # Modified for pdftex by Martin Schröder 2005
+# $Id$
 #
 #========================================================================
 
@@ -43,17 +44,17 @@ CXX_SRC = \
 	$(srcdir)/GHash.cc \
 	$(srcdir)/GList.cc \
 	$(srcdir)/GString.cc \
+	$(srcdir)/gmem.cc \
 	$(srcdir)/gmempp.cc \
 	$(srcdir)/gfile.cc
 
 C_SRC = \
-	$(srcdir)/gmem.c \
 	$(srcdir)/parseargs.c
 
 #------------------------------------------------------------------------
 
-GOO_CXX_OBJS = FixedPoint.o GHash.o GList.o GString.o gmempp.o gfile.o
-GOO_C_OBJS = gmem.o parseargs.o
+GOO_CXX_OBJS = FixedPoint.o GHash.o GList.o GString.o gmem.o gmempp.o gfile.o
+GOO_C_OBJS = parseargs.o
 GOO_OBJS = $(GOO_CXX_OBJS) $(GOO_C_OBJS)
 
 libGoo.a: $(GOO_OBJS)

@@ -2,7 +2,7 @@
 //
 // Catalog.h
 //
-// Copyright 1996-2003 Glyph & Cog, LLC
+// Copyright 1996-2007 Glyph & Cog, LLC
 //
 //========================================================================
 
@@ -65,6 +65,10 @@ public:
   // NULL if <name> is not a destination.
   LinkDest *findDest(GString *name);
 
+  Object *getDests() { return &dests; }
+
+  Object *getNameTree() { return &nameTree; }
+
   Object *getOutline() { return &outline; }
 
   Object *getAcroForm() { return &acroForm; }
@@ -85,7 +89,8 @@ private:
   Object acroForm;		// AcroForm dictionary
   GBool ok;			// true if catalog is valid
 
-  int readPageTree(Dict *pages, PageAttrs *attrs, int start);
+  int readPageTree(Dict *pages, PageAttrs *attrs, int start,
+		   char *alreadyRead);
   Object *findDestInTree(Object *tree, GString *name, Object *obj);
 };
 

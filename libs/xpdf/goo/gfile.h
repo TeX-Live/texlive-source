@@ -46,9 +46,6 @@
 #    endif
 #  endif
 #endif
-#if defined(__DJGPP__)
-typedef unsigned int time_t;
-#endif
 #include "gtypes.h"
 
 class GString;
@@ -86,9 +83,7 @@ extern time_t getModTime(char *fileName);
 // should be done to the returned file pointer; the file may be
 // reopened later for reading, but not for writing.  The <mode> string
 // should be "w" or "wb".  Returns true on success.
-#ifndef PDF_PARSER_ONLY
 extern GBool openTempFile(GString **name, FILE **f, char *mode, char *ext);
-#endif
 
 // Execute <command>.  Returns true on success.
 extern GBool executeCommand(char *cmd);

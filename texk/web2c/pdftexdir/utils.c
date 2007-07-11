@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996-2006 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -13,11 +13,11 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with pdfTeX; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+You should have received a copy of the GNU General Public License along
+with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
+Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/utils.c#24 $
+$Id: utils.c 200 2007-07-11 13:11:12Z oneiros $
 */
 
 #include "openbsd-compat.h"
@@ -438,6 +438,7 @@ void libpdffinish()
     ttf_free();
     sfd_free();
     glyph_unicode_free();
+    zip_free();
 }
 
 /* Converts any string given in in in an allowed PDF string which can be
@@ -684,7 +685,7 @@ void unescapehex(poolpointer in)
         first = true;
     }
     if (!first) {               /* last hex digit is omitted */
-        strpool[poolptr++] = ch << 4;
+        strpool[poolptr++] = a;
     }
 }
 
@@ -919,6 +920,7 @@ void getfilemoddate(strnumber s)
         return;                 /* empty string */
     }
 
+    recorder_record_input(file_name);
     /* get file status */
     if (stat(file_name, &file_data) == 0) {
         size_t len;
@@ -948,6 +950,7 @@ void getfilesize(strnumber s)
         return;                 /* empty string */
     }
 
+    recorder_record_input(file_name);
     /* get file status */
     if (stat(file_name, &file_data) == 0) {
         size_t len;
@@ -998,6 +1001,7 @@ void getmd5sum(strnumber s, boolean file)
             xfree(file_name);
             return;
         }
+        recorder_record_input(file_name);
         md5_init(&state);
         while ((read = fread(&file_buf, sizeof(char), FILE_BUF_SIZE, f)) > 0) {
             md5_append(&state, (const md5_byte_t *) file_buf, read);
@@ -1055,6 +1059,7 @@ void getfiledump(strnumber s, int offset, int length)
         xfree(file_name);
         return;
     }
+    recorder_record_input(file_name);
     if (fseek(f, (long) offset, SEEK_SET) != 0) {
         xfree(file_name);
         return;
@@ -1639,7 +1644,7 @@ void pdfshipoutbegin(boolean shipping_page)
 void pdfshipoutend(boolean shipping_page)
 {
     if (pos_stack_used > 0) {
-        pdftex_warn("%u unmatched \\pdfsave after %s shipout",
+        pdftex_fail("%u unmatched \\pdfsave after %s shipout",
                     (unsigned int) pos_stack_used,
                     ((shipping_page) ? "page" : "form"));
     }

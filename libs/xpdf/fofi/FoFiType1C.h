@@ -157,8 +157,9 @@ public:
   // file.  This is only useful with 8-bit fonts.  If <newEncoding> is
   // not NULL, it will be used in place of the encoding in the Type 1C
   // font.  If <ascii> is true the eexec section will be hex-encoded,
-  // otherwise it will be left as binary data.
-  void convertToType1(char **newEncoding, GBool ascii,
+  // otherwise it will be left as binary data.  If <psName> is non-NULL,
+  // it will be used as the PostScript font name.
+  void convertToType1(char *psName, char **newEncoding, GBool ascii,
 		      FoFiOutputFunc outputFunc, void *outputStream);
 
   // Convert to a Type 0 CIDFont, suitable for embedding in a

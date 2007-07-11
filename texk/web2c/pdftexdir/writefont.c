@@ -13,11 +13,11 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with pdfTeX; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+You should have received a copy of the GNU General Public License along
+with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
+Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: writefont.c,v 1.3 2005/12/27 19:04:42 hahe Exp $
+$Id: writefont.c 200 2007-07-11 13:11:12Z oneiros $
 */
 
 #include "ptexlib.h"
@@ -137,9 +137,32 @@ static void preset_fontmetrics(fd_entry * fd, internalfontnumber f)
         fd->font_dim[i].set = true;
 }
 
+static void fix_fontmetrics(fd_entry * fd)
+{
+    intparm *p = (intparm *) fd->font_dim;
+    if (!p[FONTBBOX1_CODE].set || !p[FONTBBOX2_CODE].set ||
+        !p[FONTBBOX3_CODE].set || !p[FONTBBOX4_CODE].set) {
+        pdftex_warn("font `%s' doesn't have a BoundingBox", fd->fm->ff_name);
+        return;
+    }
+    if (!p[ASCENT_CODE].set) {
+        p[ASCENT_CODE].val = p[FONTBBOX4_CODE].val;
+        p[ASCENT_CODE].set = true;
+    }
+    if (!p[DESCENT_CODE].set) {
+        p[DESCENT_CODE].val = p[FONTBBOX2_CODE].val;
+        p[DESCENT_CODE].set = true;
+    }
+    if (!p[CAPHEIGHT_CODE].set) {
+        p[CAPHEIGHT_CODE].val = p[FONTBBOX4_CODE].val;
+        p[CAPHEIGHT_CODE].set = true;
+    }
+}
+
 static void write_fontmetrics(fd_entry * fd)
 {
     int i;
+    fix_fontmetrics(fd);
     if (fd->font_dim[FONTBBOX1_CODE].set && fd->font_dim[FONTBBOX2_CODE].set
         && fd->font_dim[FONTBBOX3_CODE].set && fd->font_dim[FONTBBOX4_CODE].set)
         pdf_printf("/%s [%i %i %i %i]\n", font_key[FONTBBOX1_CODE].pdfname,
@@ -413,8 +436,29 @@ static void write_fontfile(fd_entry * fd)
 
 static void write_fontdescriptor(fd_entry * fd)
 {
+    static const int std_flags[] = {
+        /* indices for << start with 0, but bits start with 1, so the numbers 
+         * for << are 1 lower than the bits in table 5.20 */
+        /* *INDENT-OFF* */
+        1 + 2 + (1 << 5),                       /* Courier */
+        1 + 2 + (1 << 5)            + (1 << 18),/* Courier-Bold */
+        1 + 2 + (1 << 5) + (1 << 6),            /* Courier-Oblique */
+        1 + 2 + (1 << 5) + (1 << 6) + (1 << 18),/* Courier-BoldOblique */
+                (1 << 5),                       /* Helvetica */
+                (1 << 5)            + (1 << 18),/* Helvetica-Bold */
+                (1 << 5) + (1 << 6),            /* Helvetica-Oblique */
+                (1 << 5) + (1 << 6) + (1 << 18),/* Helvetica-BoldOblique */
+              4,                                /* Symbol */
+            2 + (1 << 5),                       /* Times-Roman */
+            2 + (1 << 5)            + (1 << 18),/* Times-Bold */
+            2 + (1 << 5) + (1 << 6),            /* Times-Italic */
+            2 + (1 << 5) + (1 << 6) + (1 << 18),/* Times-BoldItalic */
+              4                                 /* ZapfDingbats */
+        /* *INDENT-ON* */
+    };
     char *glyph;
     struct avl_traverser t;
+    int fd_flags;
     assert(fd != NULL && fd->fm != NULL);
 
     if (is_fontfile(fd->fm))
@@ -426,10 +470,21 @@ static void write_fontdescriptor(fd_entry * fd)
     pdfbegindict(fd->fd_objnum, 1);
     pdf_puts("/Type /FontDescriptor\n");
     write_fontname(fd, "FontName");
-    if (!fd->ff_found && fd->fm->fd_flags == 4)
-        pdf_puts("/Flags 34\n");        /* assumes a roman sans serif font */
-    else
-        pdf_printf("/Flags %i\n", (int) fd->fm->fd_flags);
+    if (fd->fm->fd_flags != FD_FLAGS_NOT_SET_IN_MAPLINE)
+        fd_flags = (int) fd->fm->fd_flags;
+    else if (fd->ff_found)
+        fd_flags = FD_FLAGS_DEFAULT_EMBED;
+    else {
+        fd_flags = is_std_t1font(fd->fm)
+            ? std_flags[check_std_t1font(fd->fm->ps_name)]
+            : FD_FLAGS_DEFAULT_NON_EMBED;
+        pdftex_warn
+            ("No flags specified for non-embedded font `%s' (%s) (I'm using %i): "
+             "fix your map entry.",
+             fd->fm->ps_name != NULL ? fd->fm->ps_name : "No name given",
+             fd->fm->tfm_name, fd_flags);
+    }
+    pdf_printf("/Flags %i\n", fd_flags);
     write_fontmetrics(fd);
     if (fd->ff_found) {
         if (is_subsetted(fd->fm) && is_type1(fd->fm)) {
@@ -617,3 +672,4 @@ void dopdffont(integer font_objnum, internalfontnumber f)
 }
 
 /**********************************************************************/
+// vim: ts=4

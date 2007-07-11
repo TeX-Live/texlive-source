@@ -2,7 +2,7 @@
 //
 // Catalog.cc
 //
-// Copyright 1996-2003 Glyph & Cog, LLC
+// Copyright 1996-2007 Glyph & Cog, LLC
 //
 //========================================================================
 
@@ -28,8 +28,9 @@
 //------------------------------------------------------------------------
 
 Catalog::Catalog(XRef *xrefA) {
-  Object catDict, pagesDict;
+  Object catDict, pagesDict, pagesDictRef;
   Object obj, obj2;
+  char *alreadyRead;
   int numPages0;
   int i;
 
@@ -71,7 +72,16 @@ Catalog::Catalog(XRef *xrefA) {
     pageRefs[i].num = -1;
     pageRefs[i].gen = -1;
   }
-  numPages = readPageTree(pagesDict.getDict(), NULL, 0);
+  alreadyRead = (char *)gmalloc(xref->getNumObjects());
+  memset(alreadyRead, 0, xref->getNumObjects());
+  if (catDict.dictLookupNF("Pages", &pagesDictRef)->isRef() &&
+      pagesDictRef.getRefNum() >= 0 &&
+      pagesDictRef.getRefNum() < xref->getNumObjects()) {
+    alreadyRead[pagesDictRef.getRefNum()] = 1;
+  }
+  pagesDictRef.free();
+  numPages = readPageTree(pagesDict.getDict(), NULL, 0, alreadyRead);
+  gfree(alreadyRead);
   if (numPages != numPages0) {
     error(-1, "Page count in top-level pages object is incorrect");
   }
@@ -169,7 +179,8 @@ GString *Catalog::readMetadata() {
   return s;
 }
 
-int Catalog::readPageTree(Dict *pagesDict, PageAttrs *attrs, int start) {
+int Catalog::readPageTree(Dict *pagesDict, PageAttrs *attrs, int start,
+			  char *alreadyRead) {
   Object kids;
   Object kid;
   Object kidRef;
@@ -185,6 +196,17 @@ int Catalog::readPageTree(Dict *pagesDict, PageAttrs *attrs, int start) {
     goto err1;
   }
   for (i = 0; i < kids.arrayGetLength(); ++i) {
+    kids.arrayGetNF(i, &kidRef);
+    if (kidRef.isRef() &&
+	kidRef.getRefNum() >= 0 &&
+	kidRef.getRefNum() < xref->getNumObjects()) {
+      if (alreadyRead[kidRef.getRefNum()]) {
+	error(-1, "Loop in Pages tree");
+	kidRef.free();
+	continue;
+      }
+      alreadyRead[kidRef.getRefNum()] = 1;
+    }
     kids.arrayGet(i, &kid);
     if (kid.isDict("Page")) {
       attrs2 = new PageAttrs(attrs1, kid.getDict());
@@ -204,17 +226,15 @@ int Catalog::readPageTree(Dict *pagesDict, PageAttrs *attrs, int start) {
 	}
       }
       pages[start] = page;
-      kids.arrayGetNF(i, &kidRef);
       if (kidRef.isRef()) {
 	pageRefs[start].num = kidRef.getRefNum();
 	pageRefs[start].gen = kidRef.getRefGen();
       }
-      kidRef.free();
       ++start;
     // This should really be isDict("Pages"), but I've seen at least one
     // PDF file where the /Type entry is missing.
     } else if (kid.isDict()) {
-      if ((start = readPageTree(kid.getDict(), attrs1, start))
+      if ((start = readPageTree(kid.getDict(), attrs1, start, alreadyRead))
 	  < 0)
 	goto err2;
     } else {
@@ -222,6 +242,7 @@ int Catalog::readPageTree(Dict *pagesDict, PageAttrs *attrs, int start) {
 	    start+1, kid.getTypeName());
     }
     kid.free();
+    kidRef.free();
   }
   delete attrs1;
   kids.free();

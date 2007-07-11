@@ -1,5 +1,5 @@
 /*
-Copyright 1996-2006 Han The Thanh, <thanh@pdftex.org>
+Copyright 1996-2007 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -13,11 +13,11 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with pdfTeX; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+You should have received a copy of the GNU General Public License along
+with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
+Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: pdftoepdf.cc,v 1.9 2006/09/01 18:06:52 hahe Exp hahe $
+$Id: pdftoepdf.cc 200 2007-07-11 13:11:12Z oneiros $
 */
 
 #include <stdlib.h>
@@ -281,7 +281,7 @@ static void copyName(char *s)
     pdf_puts("/");
     for (; *s != 0; s++) {
         if (isdigit(*s) || isupper(*s) || islower(*s) || *s == '_' ||
-            *s == '.' || *s == '-')
+            *s == '.' || *s == '-' || *s == '+')
             pdfout(*s);
         else
             pdf_printf("#%.2X", *s & 0xFF);
@@ -381,7 +381,7 @@ static void copyFont(char *tag, Object * fontRef)
     }
     // Only handle included Type1 (and Type1C) fonts; anything else will be copied.
     // Type1C fonts are replaced by Type1 fonts, if REPLACE_TYPE1C is true.
-    if (fontRef->fetch(xref, &fontdict)->isDict()
+    if (!fixedinclusioncopyfont && fontRef->fetch(xref, &fontdict)->isDict()
         && fontdict->dictLookup("Subtype", &subtype)->isName()
         && !strcmp(subtype->getName(), "Type1")
         && fontdict->dictLookup("BaseFont", &basefont)->isName()
@@ -575,9 +575,9 @@ static void copyObject(Object * obj)
     } else if (obj->isRef()) {
         ref = obj->getRef();
         if (ref.num == 0) {
-            pdftex_warn
-                ("PDF inclusion: reference to invalid object was replaced by <null>");
-            pdf_puts("null");
+            pdftex_fail
+                ("PDF inclusion: reference to invalid object"
+                 " (is the included pdf broken?)");
         } else
             pdf_printf("%d 0 R", addOther(ref));
     } else {
@@ -622,8 +622,9 @@ static void writeEncodings()
     for (r = encodingList; r != 0; r = r->next) {
         for (i = 0; i < 256; i++) {
             if (r->font->isCIDFont()) {
-                pdftex_warn
-                    ("PDF inclusion: CID font included, encoding maybe wrong");
+                pdftex_fail
+                    ("PDF inclusion: CID fonts are not supported"
+                     " (try to disable font replacement to fix this)");
             }
             if ((s = ((Gfx8BitFont *) r->font)->getCharName(i)) != 0)
                 glyphNames[i] = s;
@@ -849,14 +850,14 @@ void write_epdf(void)
                 sprintf(s, "/Matrix [%.8f %.8f %.8f %.8f %.8f %.8f]\n",
                         scale[0],
                         scale[1], scale[2], scale[3], scale[4], scale[5]);
-                pdf_printf(stripzeros(s));
+                pdf_puts(stripzeros(s));
             }
         }
     }
 
     sprintf(s, "/BBox [%.8f %.8f %.8f %.8f]\n",
             pagebox->x1, pagebox->y1, pagebox->x2, pagebox->y2);
-    pdf_printf(stripzeros(s));
+    pdf_puts(stripzeros(s));
 
     // write the page Group if it's there
     if (page->getGroup() != NULL) {

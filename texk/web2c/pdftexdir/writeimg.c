@@ -13,11 +13,11 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with pdfTeX; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+You should have received a copy of the GNU General Public License along
+with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
+Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/writeimg.c#17 $
+$Id: writeimg.c 200 2007-07-11 13:11:12Z oneiros $
 */
 
 #include "ptexlib.h"
@@ -283,6 +283,7 @@ integer readimage(strnumber s, integer page_num, strnumber page_name,
         pdftex_fail("cannot find image file");
     /* kpse_find_file perhaps changed the file name */
     cur_file_name = img_name(img);
+    recorder_record_input(cur_file_name);
     /* type checks */
     checktypebyheader(img);
     checktypebyextension(img);
@@ -314,7 +315,7 @@ integer readimage(strnumber s, integer page_num, strnumber page_name,
         if (pdfversion < 4) {
             pdftex_fail
                 ("JBIG2 images only possible with at least PDF 1.4; you are generating PDF 1.%i",
-                 (int)pdfversion);
+                 (int) pdfversion);
         }
         jbig2_ptr(img) = xtalloc(1, JBIG2_IMAGE_INFO);
         img_type(img) = IMAGE_TYPE_JBIG2;
@@ -358,6 +359,8 @@ void writeimage(integer img)
 
 void deleteimage(integer img)
 {
+    if (iniversion)
+        return;                 // The image may be \dump{}ed to a format
     switch (img_type(img)) {
     case IMAGE_TYPE_PDF:
         epdf_doc = pdf_ptr(img)->doc;
@@ -382,4 +385,163 @@ void deleteimage(integer img)
 void img_free()
 {
     xfree(image_array);
+}
+
+
+/* To allow the use of \pdfrefximage inside saved boxes in -ini mode,
+ * the information in the array has to be (un)dumped with the format.
+ * The next two routines take care of that.
+ *
+ * Most of the work involved in setting up the images is simply
+ * executed again. This solves the many possible errors resulting from
+ * the split in two separate runs.
+
+ * There was only one problem remaining: The pdfversion and
+ * pdfinclusionerrorlevel can have changed inbetween the call to
+ * readimage() and dump time. That is why they are passed as arguments
+ * to undumpimagemeta once more.
+ */
+
+/* some of the dumped values are really type int, not integer,
+ * but since the macro falls back to generic_dump anyway, that
+ * does not matter. 
+ */
+
+#define dumpsizet   generic_dump
+#define dumpinteger generic_dump
+
+#define undumpsizet   generic_undump
+#define undumpinteger generic_undump
+
+/* (un)dumping a string means dumping the allocation size, followed
+ * by the bytes. The trailing \0 is dumped as well, because that 
+ * makes the code simpler.
+ */
+
+#define dumpcharptr(a)				\
+  do {						\
+    integer x;					\
+    if (a!=NULL) {				\
+      x = strlen(a)+1;				\
+      dumpinteger(x);  dumpthings(*a, x);	\
+    } else {					\
+      x = 0; dumpinteger(x);			\
+    }						\
+  } while (0)
+
+#define undumpcharptr(s)			\
+  do {						\
+    integer x;					\
+    char *a;					\
+    undumpinteger (x);				\
+    if (x>0) {					\
+      a = malloc(x);				\
+      undumpthings(*a,x);			\
+      s = a ;					\
+    } else { s = NULL; }			\
+  } while (0)
+
+
+
+void dumpimagemeta()
+{
+    int cur_image, img;
+
+    dumpsizet(image_limit);
+    cur_image = (image_ptr - image_array);
+    dumpinteger(cur_image);
+
+    for (img = 0; img < cur_image; img++) {
+
+        dumpcharptr(img_name(img));
+        dumpinteger(img_type(img));
+        dumpinteger(img_color(img));
+        dumpinteger(img_width(img));
+        dumpinteger(img_height(img));
+        dumpinteger(img_xres(img));
+        dumpinteger(img_yres(img));
+        dumpinteger(img_pages(img));
+        dumpinteger(img_colorspace_ref(img));
+
+        /* the image_struct is not dumped at all, except for a few
+           variables that are needed to restore the contents */
+
+        if (img_type(img) == IMAGE_TYPE_PDF) {
+            dumpinteger(pdf_ptr(img)->page_box);
+            dumpinteger(pdf_ptr(img)->selected_page);
+        } else if (img_type(img) == IMAGE_TYPE_JBIG2) {
+            dumpinteger(jbig2_ptr(img)->selected_page);
+        }
+
+    }
+}
+
+void undumpimagemeta(integer pdfversion, integer pdfinclusionerrorlevel)
+{
+    int cur_image, img;
+
+    undumpsizet(image_limit);
+
+    image_array = xtalloc(image_limit, image_entry);
+    undumpinteger(cur_image);
+    image_ptr = image_array + cur_image;
+
+    for (img = 0; img < cur_image; img++) {
+        undumpcharptr(img_name(img));
+        undumpinteger(img_type(img));
+        undumpinteger(img_color(img));
+        undumpinteger(img_width(img));
+        undumpinteger(img_height(img));
+        undumpinteger(img_xres(img));
+        undumpinteger(img_yres(img));
+        undumpinteger(img_pages(img));
+        undumpinteger(img_colorspace_ref(img));
+
+        /* if img_name(img)==NULL -- which it shouldn't be -- the next line
+           will trigger an assertion failure. */
+        if (kpse_find_file(img_name(img), kpse_tex_format, true) == NULL)
+            pdftex_fail("cannot find image file %s", img_name(img));
+
+        switch (img_type(img)) {
+        case IMAGE_TYPE_PDF:
+            pdf_ptr(img) = xtalloc(1, pdf_image_struct);
+
+            undumpinteger(pdf_ptr(img)->page_box);
+            undumpinteger(pdf_ptr(img)->selected_page);
+
+            read_pdf_info(img_name(img), NULL, pdf_ptr(img)->selected_page,
+                          pdf_ptr(img)->page_box, pdfversion,
+                          pdfinclusionerrorlevel);
+
+            img_width(img) = bp2int(epdf_width);
+            img_height(img) = bp2int(epdf_height);
+            img_pages(img) = epdf_num_pages;
+            pdf_ptr(img)->orig_x = bp2int(epdf_orig_x);
+            pdf_ptr(img)->orig_y = bp2int(epdf_orig_y);
+            pdf_ptr(img)->doc = epdf_doc;
+            break;
+        case IMAGE_TYPE_PNG:
+            img_pages(img) = 1;
+            read_png_info(img);
+            break;
+        case IMAGE_TYPE_JPG:
+            jpg_ptr(img) = xtalloc(1, JPG_IMAGE_INFO);
+            img_pages(img) = 1;
+            read_jpg_info(img);
+            break;
+        case IMAGE_TYPE_JBIG2:
+            if (pdfversion < 4) {
+                pdftex_fail
+                    ("JBIG2 images only possible with at least PDF 1.4; you are generating PDF 1.%i",
+                     (int) pdfversion);
+            }
+            jbig2_ptr(img) = xtalloc(1, JBIG2_IMAGE_INFO);
+            img_type(img) = IMAGE_TYPE_JBIG2;
+            undumpinteger(jbig2_ptr(img)->selected_page);
+            read_jbig2_info(img);
+            break;
+        default:
+            pdftex_fail("unknown type of image");
+        }
+    }
 }

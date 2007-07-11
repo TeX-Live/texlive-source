@@ -1,5 +1,5 @@
 set CC=gcc
-set CFLAGS=-g -O2 -I.. -I..\goo
+set CFLAGS=-g -O2 -I.. -I..\fofi -I..\goo
 set CXX=gpp
 set CXXFLAGS=%CFLAGS%
 set LIBPROG=ar
@@ -10,9 +10,9 @@ cd goo
 %CXX% %CXXFLAGS% -c GHash.cc
 %CXX% %CXXFLAGS% -c GList.cc
 %CXX% %CXXFLAGS% -c GString.cc
+%CXX% %CXXFLAGS% -c gmem.cc
 %CXX% %CXXFLAGS% -c gmempp.cc
 %CXX% %CXXFLAGS% -c gfile.cc
-%CC% %CFLAGS% -c gmem.c
 %CC% %CFLAGS% -c parseargs.c
 del libGoo.a
 %LIBPROG% -rc libGoo.a GHash.o GList.o GString.o gmempp.o gfile.o gmem.o parseargs.o
@@ -59,6 +59,7 @@ del *.o
 %CXX% %CXXFLAGS% -c PSTokenizer.cc
 %CXX% %CXXFLAGS% -c Page.cc
 %CXX% %CXXFLAGS% -c Parser.cc
+%CXX% %CXXFLAGS% -c SecurityHandler.cc
 %CXX% %CXXFLAGS% -c Stream.cc
 %CXX% %CXXFLAGS% -c TextOutputDev.cc
 %CXX% %CXXFLAGS% -c UnicodeMap.cc
@@ -67,16 +68,14 @@ del *.o
 del libxpdf.a
 %LIBPROG% -rc libxpdf.a *.o
 
-%CXX% %CXXFLAGS% -o pdftops.exe pdftops.cc libxpdf.a ..\goo\libGoo.a
+%CXX% %CXXFLAGS% -o pdftops.exe pdftops.cc libxpdf.a ..\fofi\libfofi.a ..\goo\libGoo.a
 
-%CXX% %CXXFLAGS% -o pdftotext.exe pdftotext.cc libxpdf.a ..\goo\libGoo.a
+%CXX% %CXXFLAGS% -o pdftotext.exe pdftotext.cc libxpdf.a ..\fofi\libfofi.a ..\goo\libGoo.a
 
-%CXX% %CXXFLAGS% -o pdfinfo.exe pdfinfo.cc libxpdf.a ..\goo\libGoo.a
+%CXX% %CXXFLAGS% -o pdfinfo.exe pdfinfo.cc libxpdf.a ..\fofi\libfofi.a ..\goo\libGoo.a
 
-%CXX% %CXXFLAGS% -o pdffonts.exe pdffonts.cc libxpdf.a ..\goo\libGoo.a
+%CXX% %CXXFLAGS% -o pdffonts.exe pdffonts.cc libxpdf.a ..\fofi\libfofi.a ..\goo\libGoo.a
 
-%CXX% %CXXFLAGS% -o pdfimages.exe pdfimages.cc libxpdf.a ..\goo\libGoo.a
-
-%CXX% %CXXFLAGS% -o pdftoppm.exe pdftoppm.cc libxpdf.a ..\goo\libGoo.a
+%CXX% %CXXFLAGS% -o pdfimages.exe pdfimages.cc libxpdf.a ..\fofi\libfofi.a ..\goo\libGoo.a
 
 cd ..

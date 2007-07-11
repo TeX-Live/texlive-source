@@ -1,10 +1,10 @@
 pdfTeX
 ======
 
-README for version 3.14159-1.40.3
+README for version 3.14159-1.40.4
 =================================
 
-This directory contains the version 1.40.3 of pdfTeX, an extended version
+This directory contains the version 1.40.4 of pdfTeX, an extended version
 of eTeX that can create PDF directly from TeX source files and enhance the
 result of TeX typesetting with the help of PDF. When PDF output is not
 selected, pdfTeX produces normal DVI output, otherwise it produces PDF
@@ -37,8 +37,8 @@ pdfTeX is copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
 
 pdfTeX is free software; you can redistribute it and/or modify it under the
 terms of the GNU General Public License as published by the Free Software
-Foundation; either version 2 of the License, or (at your option) any later
-version.
+Foundation; either version 2.1 of the License, or (at your option) any
+later version.
 
 pdfTeX is distributed in the hope that it will be useful, but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
@@ -46,8 +46,8 @@ FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
 details.
 
 You should have received a copy of the GNU General Public License along
-with pdfTeX; if not, write to the Free Software Foundation, Inc., 59 Temple
-Place, Suite 330, Boston, MA  02111-1307  USA
+with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
+Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 pdfTeX uses code from TeX; for these parts the original copyright by Don
 Knuth applies. See the source files for details.
@@ -69,10 +69,11 @@ CONTRIBUTORS
 ============
 
 Peter Breitenlohner, Ricardo Sanchez Carmenes, Otfried Cheong, Thomas
-Esser, Hans Hagen, Hartmut Henkel, Taco Hoekwater, Pawel Jackowski, Tom
-Kacvinsky, Akira Kakuto, Reinhard Kotucha, Derek B. Noonburg, Heiko
-Oberdiek, Jiri Osoba, Fabrice Popineau, Sebastian Rahtz, Tomas Rokicki,
-Martin Schröder, Petr Sojka, Ralf Utermann, Olaf Weber, Jiri Zlatuska.
+Esser, Hans Hagen, Hartmut Henkel, Taco Hoekwater, Pawel Jackowski, Pavel
+Janik, Tom Kacvinsky, Akira Kakuto, Reinhard Kotucha, Derek B. Noonburg,
+Heiko Oberdiek, Jiri Osoba, Fabrice Popineau, Sebastian Rahtz, Bernd
+Raichle, Tomas Rokicki, Martin Schröder, Petr Sojka, Ralf Utermann, Olaf
+Weber, Jiri Zlatuska.
 
 pdfTeX is built on top of TeX, written by Donald Knuth cum suis (Liang and
 so), and eTeX, written by Peter Breitenlohner cum suis; part of the
@@ -83,5 +84,5 @@ paragraph optimization is inspired by the work of Hermann Zapf.
 
 Please send bug reports, offers of help, etc. to martin@pdftex.org
 
-$Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/README#30 $
+$Id: README 200 2007-07-11 13:11:12Z oneiros $
 // vim: tw=75

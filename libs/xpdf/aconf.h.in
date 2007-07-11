@@ -30,9 +30,19 @@
 #undef MULTITHREADED
 
 /*
+ * Enable C++ exceptions.
+ */
+#undef USE_EXCEPTIONS
+
+/*
  * Enable word list support.
  */
 #undef TEXTOUT_WORD_LIST
+
+/*
+ * Use fixed point (instead of floating point) arithmetic.
+ */
+#undef USE_FIXEDPOINT
 
 /*
  * Directory with the Xpdf app-defaults file.
@@ -86,5 +96,20 @@
  * This is defined if using libpaper.
  */
 #undef HAVE_PAPER_H
+
+/*
+ * Enable support for loading plugins.
+ */
+#undef ENABLE_PLUGINS
+
+/*
+ * Defined if the Splash library is avaiable.
+ */
+#undef HAVE_SPLASH
+
+/*
+ * Enable support for CMYK output.
+ */
+#undef SPLASH_CMYK
 
 #endif

@@ -85,7 +85,8 @@ public:
 
   // Set the encryption parameters.
   void setEncryption(int permFlagsA, GBool ownerPasswordOkA,
-		     Guchar *fileKeyA, int keyLengthA, int encVersionA);
+		     Guchar *fileKeyA, int keyLengthA, int encVersionA,
+		     CryptAlgorithm encAlgorithmA);
 
   // Is the file encrypted?
   GBool isEncrypted() { return encrypted; }
@@ -147,7 +148,8 @@ private:
   GBool ownerPasswordOk;	// true if owner password is correct
   Guchar fileKey[16];		// file decryption key
   int keyLength;		// length of key, in bytes
-  int encVersion;		// encryption algorithm
+  int encVersion;		// encryption version
+  CryptAlgorithm encAlgorithm;	// encryption algorithm
 
   Guint getStartXref();
   GBool readXRef(Guint *pos);

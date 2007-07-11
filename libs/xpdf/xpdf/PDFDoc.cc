@@ -61,7 +61,6 @@ PDFDoc::PDFDoc(GString *fileNameA, GString *ownerPassword,
   str = NULL;
   xref = NULL;
   catalog = NULL;
-  links = NULL;
 #ifndef DISABLE_OUTLINE
   outline = NULL;
 #endif
@@ -119,7 +118,6 @@ PDFDoc::PDFDoc(wchar_t *fileNameA, int fileNameLen, GString *ownerPassword,
   str = NULL;
   xref = NULL;
   catalog = NULL;
-  links = NULL;
 #ifndef DISABLE_OUTLINE
   outline = NULL;
 #endif
@@ -164,12 +162,15 @@ PDFDoc::PDFDoc(BaseStream *strA, GString *ownerPassword,
   ok = gFalse;
   errCode = errNone;
   guiData = guiDataA;
-  fileName = NULL;
+  if (strA->getFileName()) {
+    fileName = strA->getFileName()->copy();
+  } else {
+    fileName = NULL;
+  }
   file = NULL;
   str = strA;
   xref = NULL;
   catalog = NULL;
-  links = NULL;
 #ifndef DISABLE_OUTLINE
   outline = NULL;
 #endif
@@ -234,9 +235,6 @@ PDFDoc::~PDFDoc() {
   if (fileName) {
     delete fileName;
   }
-  if (links) {
-    delete links;
-  }
 }
 
 // Check for a PDF header on this stream.  Skip past some garbage
@@ -288,7 +286,8 @@ GBool PDFDoc::checkEncryption(GString *ownerPassword, GString *userPassword) {
 			    secHdlr->getOwnerPasswordOk(),
 			    secHdlr->getFileKey(),
 			    secHdlr->getFileKeyLength(),
-			    secHdlr->getEncVersion());
+			    secHdlr->getEncVersion(),
+			    secHdlr->getEncAlgorithm());
 	ret = gTrue;
       } else {
 	// authorization failed
@@ -307,73 +306,51 @@ GBool PDFDoc::checkEncryption(GString *ownerPassword, GString *userPassword) {
   return ret;
 }
 
-void PDFDoc::displayPage(OutputDev *out, int page, double hDPI, double vDPI,
-			 int rotate, GBool useMediaBox, GBool crop,
-			 GBool doLinks,
+void PDFDoc::displayPage(OutputDev *out, int page,
+			 double hDPI, double vDPI, int rotate,
+			 GBool useMediaBox, GBool crop, GBool printing,
 			 GBool (*abortCheckCbk)(void *data),
 			 void *abortCheckCbkData) {
-  Page *p;
-
   if (globalParams->getPrintCommands()) {
     printf("***** page %d *****\n", page);
   }
-  p = catalog->getPage(page);
-  if (doLinks) {
-    if (links) {
-      delete links;
-    }
-    getLinks(p);
-    p->display(out, hDPI, vDPI, rotate, useMediaBox, crop, links, catalog,
-	       abortCheckCbk, abortCheckCbkData);
-  } else {
-    p->display(out, hDPI, vDPI, rotate, useMediaBox, crop, NULL, catalog,
-	       abortCheckCbk, abortCheckCbkData);
-  }
+  catalog->getPage(page)->display(out, hDPI, vDPI,
+				  rotate, useMediaBox, crop, printing, catalog,
+				  abortCheckCbk, abortCheckCbkData);
 }
 
 void PDFDoc::displayPages(OutputDev *out, int firstPage, int lastPage,
 			  double hDPI, double vDPI, int rotate,
-			  GBool useMediaBox, GBool crop, GBool doLinks,
+			  GBool useMediaBox, GBool crop, GBool printing,
 			  GBool (*abortCheckCbk)(void *data),
 			  void *abortCheckCbkData) {
   int page;
 
   for (page = firstPage; page <= lastPage; ++page) {
-    displayPage(out, page, hDPI, vDPI, rotate, useMediaBox, crop, doLinks,
+    displayPage(out, page, hDPI, vDPI, rotate, useMediaBox, crop, printing,
 		abortCheckCbk, abortCheckCbkData);
   }
 }
 
 void PDFDoc::displayPageSlice(OutputDev *out, int page,
 			      double hDPI, double vDPI, int rotate,
-			      GBool useMediaBox, GBool crop, GBool doLinks,
+			      GBool useMediaBox, GBool crop, GBool printing,
 			      int sliceX, int sliceY, int sliceW, int sliceH,
 			      GBool (*abortCheckCbk)(void *data),
 			      void *abortCheckCbkData) {
-  Page *p;
-
-  p = catalog->getPage(page);
-  if (doLinks) {
-    if (links) {
-      delete links;
-    }
-    getLinks(p);
-    p->displaySlice(out, hDPI, vDPI, rotate, useMediaBox, crop,
-		    sliceX, sliceY, sliceW, sliceH,
-		    links, catalog, abortCheckCbk, abortCheckCbkData);
-  } else {
-    p->displaySlice(out, hDPI, vDPI, rotate, useMediaBox, crop,
-		    sliceX, sliceY, sliceW, sliceH,
-		    NULL, catalog, abortCheckCbk, abortCheckCbkData);
-  }
+  catalog->getPage(page)->displaySlice(out, hDPI, vDPI,
+				       rotate, useMediaBox, crop,
+				       sliceX, sliceY, sliceW, sliceH,
+				       printing, catalog,
+				       abortCheckCbk, abortCheckCbkData);
 }
 
-Links *PDFDoc::takeLinks() {
-  Links *ret;
+Links *PDFDoc::getLinks(int page) {
+  return catalog->getPage(page)->getLinks(catalog);
+}
 
-  ret = links;
-  links = NULL;
-  return ret;
+void PDFDoc::processLinks(OutputDev *out, int page) {
+  catalog->getPage(page)->processLinks(out, catalog);
 }
 
 GBool PDFDoc::isLinearized() {
@@ -385,7 +362,8 @@ GBool PDFDoc::isLinearized() {
   obj1.initNull();
   parser = new Parser(xref,
 	     new Lexer(xref,
-	       str->makeSubStream(str->getStart(), gFalse, 0, &obj1)));
+	       str->makeSubStream(str->getStart(), gFalse, 0, &obj1)),
+	     gTrue);
   parser->getObj(&obj1);
   parser->getObj(&obj2);
   parser->getObj(&obj3);
@@ -421,11 +399,4 @@ GBool PDFDoc::saveAs(GString *name) {
   str->close();
   fclose(f);
   return gTrue;
-}
-
-void PDFDoc::getLinks(Page *page) {
-  Object obj;
-
-  links = new Links(page->getAnnots(&obj), catalog->getBaseURI());
-  obj.free();
 }

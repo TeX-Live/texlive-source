@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2004 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 2004-2007 Han The Thanh, <thanh@pdftex.org>
 
 This file is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by Free
@@ -12,12 +12,10 @@ FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
 for more details.
 
 You should have received a copy of the GNU General Public License along
-with this file; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
+Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/avlstuff.h#5 $
-
-formatted by indent -kr
+$Id: avlstuff.h 200 2007-07-11 13:11:12Z oneiros $
 */
 
 #include "avl.h"

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996-2006 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -13,11 +13,11 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with pdfTeX; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+You should have received a copy of the GNU General Public License along
+with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
+Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: mapfile.c,v 1.1 2006/12/14 01:21:33 hahe Exp hahe $
+$Id: mapfile.c 200 2007-07-11 13:11:12Z oneiros $
 */
 
 #include <math.h>
@@ -71,7 +71,7 @@ fm_entry *new_fm_entry(void)
     fm->tfm_name = NULL;
     fm->sfd_name = NULL;
     fm->ps_name = NULL;
-    fm->fd_flags = 4;
+    fm->fd_flags = FD_FLAGS_NOT_SET_IN_MAPLINE;
     fm->ff_name = NULL;
     fm->encname = NULL;
     fm->type = 0;
@@ -347,9 +347,9 @@ int check_fm_entry(fm_entry * fm, boolean warn)
 }
 
 /**********************************************************************/
-/* returns true if s is one of the 14 std. font names; speed-trimmed. */
+/* returns the font number if s is one of the 14 std. font names, -1 otherwise; speed-trimmed. */
 
-boolean check_std_t1font(char *s)
+int check_std_t1font(char *s)
 {
     static const char *std_t1font_names[] = {
         "Courier",              /* 0:7 */
@@ -371,6 +371,7 @@ boolean check_std_t1font(char *s)
         { -1, -1, -1, -1, -1, -1, 8, 0, -1, 4, 10, 9, -1, -1, 5, 2, 12, 6, -1,
         3, -1, 7
     };
+    assert(s != NULL);
     const size_t n = strlen(s);
     int k = -1;
     if (n > 21)
@@ -392,10 +393,9 @@ boolean check_std_t1font(char *s)
     } else
         k = index[n];
     if (k > -1 && strcmp(std_t1font_names[k], s) == 0)
-        return true;
-    return false;
+        return k;
+    return -1;
 };
-
 
 /**********************************************************************/
 
@@ -526,7 +526,7 @@ static void fm_scan_line()
         }
     }
   done:
-    if (fm->ps_name != NULL && check_std_t1font(fm->ps_name))
+    if (fm->ps_name != NULL && (check_std_t1font(fm->ps_name) >= 0))
         set_std_t1font(fm);
     if (is_fontfile(fm)) {
         if (strcasecmp(strend(fm_fontfile(fm)) - 4, ".ttf") == 0)
@@ -891,3 +891,4 @@ void fm_free(void)
 
 /**********************************************************************/
 /* end of mapfile.c */
+// vim: ts=4

@@ -272,6 +272,8 @@ extern void close_file P1H(FILE *);
 extern void recorder_change_filename P1H(string);
 extern boolean recorder_enabled;
 extern string output_directory;
+extern void recorder_record_input P1H(string);
+extern void recorder_record_output P1H(string);
 
 /* version.c */
 extern string versionstring;

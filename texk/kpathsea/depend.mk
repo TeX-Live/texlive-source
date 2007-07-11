@@ -39,6 +39,7 @@ cnf.lo: cnf.c $(kpathsea_srcdir)/config.h $(kpathsea_dir)/c-auto.h \
   $(kpathsea_srcdir)/cnf.h $(kpathsea_srcdir)/db.h $(kpathsea_srcdir)/str-list.h \
   $(kpathsea_srcdir)/hash.h $(kpathsea_srcdir)/line.h $(kpathsea_dir)/paths.h \
   $(kpathsea_srcdir)/pathsearch.h $(kpathsea_srcdir)/str-llist.h $(kpathsea_srcdir)/tex-file.h \
+  $(kpathsea_srcdir)/recorder.h \
   $(kpathsea_srcdir)/c-vararg.h $(kpathsea_srcdir)/variable.h
 concat3.lo: concat3.c $(kpathsea_srcdir)/config.h $(kpathsea_dir)/c-auto.h \
   $(kpathsea_srcdir)/c-std.h \

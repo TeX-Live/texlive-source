@@ -58,6 +58,31 @@ recorder_change_filename P1C(string, new_name)
    free(recorder_name);
    recorder_name = xstrdup(new_name);
 }
+
+/* helper for recorder_record_* */
+void
+recorder_record_name P2C(string, prefix, string, nameoffile)
+{
+    if (recorder_enabled) {
+        if (!recorder_file)
+            recorder_start();
+        fprintf(recorder_file, "%s %s\n", prefix, nameoffile);
+    }
+}
+
+/* record an input file */
+void
+recorder_record_input P1C(string, nameoffile)
+{
+    recorder_record_name ("INPUT", nameoffile);
+}
+
+/* record an output file */
+void
+recorder_record_output P1C(string, nameoffile)
+{
+    recorder_record_name ("OUTPUT", nameoffile);
+}
 
 /* Open an input file F, using the kpathsea format FILEFMT and passing
    FOPEN_MODE to fopen.  The filename is in `nameoffile+1'.  We return
@@ -155,11 +180,7 @@ open_input P3C(FILE **, f_ptr,  int, filefmt,  const_string, fopen_mode)
     }
 
     if (*f_ptr) {
-        if (recorder_enabled) {
-            if (!recorder_file)
-                recorder_start();
-            fprintf(recorder_file, "INPUT %s\n", nameoffile + 1);
-        }
+        recorder_record_input (nameoffile + 1);
 
         /* If we just opened a TFM file, we have to read the first
            byte, to pretend we're Pascal.  See tex.ch and mp.ch.
@@ -220,11 +241,7 @@ open_output P2C(FILE **, f_ptr,  const_string, fopen_mode)
             nameoffile = (string)xmalloc (namelength + 2);
             strcpy (nameoffile + 1, fname);
         }
-        if (recorder_enabled) {
-            if (!recorder_file)
-                recorder_start();
-            fprintf(recorder_file, "OUTPUT %s\n", fname);
-        }
+        recorder_record_output (fname);
     }
     if (fname != nameoffile +1)
         free(fname);

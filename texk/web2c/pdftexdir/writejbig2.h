@@ -1,5 +1,5 @@
 /***********************************************************************
-Copyright (c) 2002-2006 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 2002-2007 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -14,13 +14,13 @@ FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
 for more details.
 
 You should have received a copy of the GNU General Public License along
-with pdfTeX; if not, write to the Free Software Foundation, Inc., 59
-Temple Place, Suite 330, Boston, MA 02111-1307 USA
+with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
+Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 This is experimental JBIG2 image support to pdfTeX. JBIG2 image decoding
 is part of Adobe PDF-1.4, and requires Acroread 5.0 or later.
 
-$Id: writejbig2.h,v 1.40 2006/05/31 19:18:51 hahe Exp hahe $
+$Id: writejbig2.h 200 2007-07-11 13:11:12Z oneiros $
 ***********************************************************************/
 
 #include <stdlib.h>

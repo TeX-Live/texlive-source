@@ -21,6 +21,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "gtypes.h"
 
 #define fixptShift 16
 #define fixptMaskL ((1 << fixptShift) - 1)
@@ -134,6 +135,10 @@ public:
   static FixedPoint sqrt(FixedPoint x);
 
   static FixedPoint pow(FixedPoint x, FixedPoint y);
+
+  // Compute *result = x/y; return false if there is an underflow or
+  // overflow.
+  static GBool divCheck(FixedPoint x, FixedPoint y, FixedPoint *result);
 
 private:
 

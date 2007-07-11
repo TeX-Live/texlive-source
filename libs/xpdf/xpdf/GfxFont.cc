@@ -235,6 +235,19 @@ void GfxFont::readFontDescriptor(XRef *xref, Dict *fontDict) {
 	    error(-1, "Mismatch between font type and embedded font file");
 	  }
 	  type = fontCIDType0C;
+	} else if (obj4.isName("OpenType")) {
+	  embFontID = obj2.getRef();
+	  if (type == fontTrueType) {
+	    type = fontTrueTypeOT;
+	  } else if (type == fontType1) {
+	    type = fontType1COT;
+	  } else if (type == fontCIDType0) {
+	    type = fontCIDType0COT;
+	  } else if (type == fontCIDType2) {
+	    type = fontCIDType2OT;
+	  } else {
+	    error(-1, "Mismatch between font type and embedded font file");
+	  }
 	} else {
 	  error(-1, "Unknown embedded font type '%s'",
 		obj4.isName() ? obj4.getName() : "???");
@@ -751,6 +764,15 @@ Gfx8BitFont::Gfx8BitFont(XRef *xref, char *tagA, Ref idA, GString *nameA,
 	}
       }
     }
+
+  // if the 'mapUnknownCharNames' flag is set, do a simple pass-through
+  // mapping for unknown character names
+  } else if (missing && globalParams->getMapUnknownCharNames()) {
+    for (code = 0; code < 256; ++code) {
+      if (!toUnicode[code]) {
+	toUnicode[code] = code;
+      }
+    }
   }
 
   // construct the char code -> Unicode mapping object
@@ -973,10 +995,10 @@ Gushort *Gfx8BitFont::getCodeToGIDMap(FoFiTrueType *ff) {
       useMacRoman = gTrue;
     }
   } else {
-    if (macRomanCmap >= 0) {
-      cmap = macRomanCmap;
-    } else if (msSymbolCmap >= 0) {
+    if (msSymbolCmap >= 0) {
       cmap = msSymbolCmap;
+    } else if (macRomanCmap >= 0) {
+      cmap = macRomanCmap;
     }
   }
 

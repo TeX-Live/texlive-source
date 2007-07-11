@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996-2006 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -13,11 +13,11 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with pdfTeX; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+You should have received a copy of the GNU General Public License along
+with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
+Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/writettf.c#16 $
+$Id: writettf.c 200 2007-07-11 13:11:12Z oneiros $
 */
 
 #include "ptexlib.h"
@@ -302,7 +302,9 @@ static void ttf_copy_encoding(void)
             e = ttfenc_tab + *q;
             e->code = charcodes[*q];
             if (e->code == -1)
-                pdftex_warn("character %i is not mapped to any charcode", *q);
+                pdftex_warn
+                    ("character %i in subfont %s is not mapped to any charcode",
+                     *q, fd_cur->fm->tfm_name);
             else {
                 assert(e->code < 0x10000);
                 sprintf(buf, "/c%4.4X", (int) e->code);
@@ -1335,9 +1337,7 @@ void writettf(fd_entry * fd)
     set_cur_file_name(fd_cur->fm->ff_name);
     if (is_subsetted(fd_cur->fm) && (fd_cur->fe == NULL)
         && !is_subfont(fd_cur->fm)) {
-        pdftex_warn("Subset TrueType must be a reencoded or a subfont");
-        cur_file_name = NULL;
-        return;
+        pdftex_fail("Subset TrueType must be a reencoded or a subfont");
     }
     if (!ttf_open()) {
         pdftex_fail("cannot open TrueType font file for reading");

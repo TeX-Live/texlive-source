@@ -1,5 +1,5 @@
 # Makefile for libpdf - te@dbs.uni-hannover.de
-# $Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/Makefile.in#23 $
+# $Id: Makefile.in 200 2007-07-11 13:11:12Z oneiros $
 
 kpse_include ../make/common.mk
 kpse_include ../make/programs.mk
@@ -59,7 +59,7 @@ clean::
 depend:
 	rm -f $(OBJS) ttf2afm.o pdftosrc.o
 	XXCFLAGS=-MM XCFLAGS=-MM $(MAKE) -k $(OBJS) ttf2afm.o pdftosrc.o | \
-	    grep -v "^$(CC)\|$(CXX)\|$(AR)\|make\|klibtool" | \
+	    grep -v "^$(CC)\|$(CXX)\|$(AR)\|make\" | \
 	    sed 's: [^ ]*/\.\./libs/[^ ]*::g' > $(srcdir)/depend.mk
 
 kpse_include pdftexdir/depend.mk

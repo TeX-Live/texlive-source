@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996-2006 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -13,11 +13,11 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with pdfTeX; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+You should have received a copy of the GNU General Public License along
+with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
+Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/ptexlib.h#26 $
+$Id: ptexlib.h 200 2007-07-11 13:11:12Z oneiros $
 */
 
 #ifndef PDFTEXLIB
@@ -75,6 +75,11 @@ typedef struct {
                                    as string in unicode_seq; otherwise unicode value */
     char *unicode_seq;          /* multiple unicode sequence */
 } glyph_unicode_entry;
+
+#  define FD_FLAGS_NOT_SET_IN_MAPLINE -1
+#  define FD_FLAGS_DEFAULT_EMBED  4     /* a symbol font */
+#  define FD_FLAGS_DEFAULT_NON_EMBED 0x22
+                                        /* a nonsymbolic serif font */
 
 typedef struct {
     /* parameters scanned from the map file: */
@@ -178,6 +183,7 @@ extern void pdfinitmapfile(string map_name);
 extern fm_entry *new_fm_entry(void);
 extern void delete_fm_entry(fm_entry *);
 extern int avl_do_entry(fm_entry *, int);
+extern int check_std_t1font(char *s);
 
 /* papersiz.c */
 extern integer myatodim(char **);
@@ -266,13 +272,17 @@ extern scaled getury();
 extern void allocvffnts();
 
 /* vfpacket.c */
-extern eightbits packetbyte(void);
 extern integer newvfpacket(internalfontnumber);
+extern void storepacket(internalfontnumber, eightbits, strnumber);
+extern void startpacket(internalfontnumber, eightbits);
+extern eightbits packetbyte(void);
 extern void poppacketstate(void);
 extern void pushpacketstate(void);
-extern void startpacket(internalfontnumber, integer);
-extern void storepacket(integer, integer, integer);
 extern void vf_free(void);
+#  define SIGNED_QUAD scaled
+#  define fixword integer
+extern SIGNED_QUAD sqxfw(SIGNED_QUAD sq, fixword fw);
+
 
 /* writeenc.c */
 extern fe_entry *get_fe_entry(char *);
@@ -304,6 +314,8 @@ extern void img_free(void);
 extern void updateimageprocset(integer);
 extern void writeimage(integer);
 extern integer imagecolordepth(integer img);
+extern void dumpimagemeta();
+extern void undumpimagemeta(integer, integer);
 
 /* writejbig2.c */
 extern void flushjbig2page0objects();
@@ -325,6 +337,7 @@ extern void ttf_free(void);
 
 /* writezip.c */
 extern void writezip(boolean);
+extern void zip_free(void);
 
 /* avlstuff.c */
 extern int comp_int_entry(const void *, const void *, void *);
@@ -349,3 +362,4 @@ static const key_entry font_key[FONT_KEYS_NUM] = {
 
 /**********************************************************************/
 #endif                          /* PDFTEXLIB */
+// vim: ts=4

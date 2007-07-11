@@ -302,42 +302,6 @@ private:
 };
 
 //------------------------------------------------------------------------
-// LinkBorderStyle
-//------------------------------------------------------------------------
-
-enum LinkBorderType {
-  linkBorderSolid,
-  linkBorderDashed,
-  linkBorderEmbossed,
-  linkBorderEngraved,
-  linkBorderUnderlined
-};
-
-class LinkBorderStyle {
-public:
-
-  LinkBorderStyle(LinkBorderType typeA, double widthA,
-		  double *dashA, int dashLengthA,
-		  double rA, double gA, double bA);
-  ~LinkBorderStyle();
-
-  LinkBorderType getType() { return type; }
-  double getWidth() { return width; }
-  void getDash(double **dashA, int *dashLengthA)
-    { *dashA = dash; *dashLengthA = dashLength; }
-  void getColor(double *rA, double *gA, double *bA)
-    { *rA = r; *gA = g; *bA = b; }
-
-private:
-
-  LinkBorderType type;
-  double width;
-  double *dash;
-  int dashLength;
-  double r, g, b;
-};
-
-//------------------------------------------------------------------------
 // Link
 //------------------------------------------------------------------------
 
@@ -364,14 +328,10 @@ public:
   void getRect(double *xa1, double *ya1, double *xa2, double *ya2)
     { *xa1 = x1; *ya1 = y1; *xa2 = x2; *ya2 = y2; }
 
-  // Get the border style info.
-  LinkBorderStyle *getBorderStyle() { return borderStyle; }
-
 private:
 
   double x1, y1;		// lower left corner
   double x2, y2;		// upper right corner
-  LinkBorderStyle *borderStyle;	// border style
   LinkAction *action;		// action
   GBool ok;			// is link valid?
 };

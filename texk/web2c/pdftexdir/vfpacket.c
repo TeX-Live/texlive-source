@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996-2002 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -13,19 +13,18 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with pdfTeX; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+You should have received a copy of the GNU General Public License along
+with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
+Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/vfpacket.c#7 $
+$Id: vfpacket.c 200 2007-07-11 13:11:12Z oneiros $
 */
 
 #include "ptexlib.h"
 
 typedef struct {
-    internalfontnumber font;
     char *dataptr;
-    int len;
+    integer len;
 } packet_entry;
 
 /* define packet_ptr, packet_array & packet_limit */
@@ -34,7 +33,7 @@ define_array(packet);
 typedef struct {
     char **data;
     int *len;
-    internalfontnumber font;
+    int char_count;
 } vf_entry;
 
 /* define vf_ptr, vf_array & vf_limit */
@@ -48,15 +47,15 @@ integer newvfpacket(internalfontnumber f)
     alloc_array(vf, 1, SMALL_ARRAY_SIZE);
     vf_ptr->len = xtalloc(n, int);
     vf_ptr->data = xtalloc(n, char *);
+    vf_ptr->char_count = n;
     for (i = 0; i < n; i++) {
         vf_ptr->data[i] = NULL;
         vf_ptr->len[i] = 0;
     }
-    vf_ptr->font = f;
     return vf_ptr++ - vf_array;
 }
 
-void storepacket(integer f, integer c, integer s)
+void storepacket(internalfontnumber f, eightbits c, strnumber s)
 {
     int l = strstart[s + 1] - strstart[s];
     vf_array[vfpacketbase[f]].len[c - fontbc[f]] = l;
@@ -65,26 +64,7 @@ void storepacket(integer f, integer c, integer s)
            (void *) (strpool + strstart[s]), (unsigned) l);
 }
 
-void pushpacketstate()
-{
-    alloc_array(packet, 1, SMALL_ARRAY_SIZE);
-    packet_ptr->font = f;
-    packet_ptr->dataptr = packet_data_ptr;
-    packet_ptr->len = vfpacketlength;
-    packet_ptr++;
-}
-
-void poppacketstate()
-{
-    if (packet_ptr == packet_array)
-        pdftex_fail("packet stack empty, impossible to pop");
-    packet_ptr--;
-    f = packet_ptr->font;
-    packet_data_ptr = packet_ptr->dataptr;
-    vfpacketlength = packet_ptr->len;
-}
-
-void startpacket(internalfontnumber f, integer c)
+void startpacket(internalfontnumber f, eightbits c)
 {
     packet_data_ptr = vf_array[vfpacketbase[f]].data[c - fontbc[f]];
     vfpacketlength = vf_array[vfpacketbase[f]].len[c - fontbc[f]];
@@ -96,20 +76,74 @@ eightbits packetbyte()
     return *packet_data_ptr++;
 }
 
+void pushpacketstate()
+{
+    alloc_array(packet, 1, SMALL_ARRAY_SIZE);
+    packet_ptr->dataptr = packet_data_ptr;
+    packet_ptr->len = vfpacketlength;
+    packet_ptr++;
+}
+
+void poppacketstate()
+{
+    if (packet_ptr == packet_array)
+        pdftex_fail("packet stack empty, impossible to pop");
+    packet_ptr--;
+    packet_data_ptr = packet_ptr->dataptr;
+    vfpacketlength = packet_ptr->len;
+}
+
 void vf_free(void)
 {
     vf_entry *v;
-    int n;
     char **p;
     if (vf_array != NULL) {
         for (v = vf_array; v < vf_ptr; v++) {
             xfree(v->len);
-            n = fontec[v->font] - fontbc[v->font] + 1;
-            for (p = v->data; p - v->data < n; p++)
+            for (p = v->data; p - v->data < v->char_count; p++)
                 xfree(*p);
             xfree(v->data);
         }
         xfree(vf_array);
     }
     xfree(packet_array);
+}
+
+/* this function was copied/borrowed/stolen from dvipdfm code */
+#define SIGNED_QUAD scaled
+#define fixword integer
+SIGNED_QUAD sqxfw(SIGNED_QUAD sq, fixword fw)
+{
+    int sign = 1;
+    unsigned long a, b, c, d, ad, bd, bc, ac;
+    unsigned long e, f, g, h, i, j, k;
+    unsigned long result;
+    /* Make positive. */
+    if (sq < 0) {
+        sign = -sign;
+        sq = -sq;
+    }
+    if (fw < 0) {
+        sign = -sign;
+        fw = -fw;
+    }
+    a = ((unsigned long) sq) >> 16u;
+    b = ((unsigned long) sq) & 0xffffu;
+    c = ((unsigned long) fw) >> 16u;
+    d = ((unsigned long) fw) & 0xffffu;
+    ad = a * d;
+    bd = b * d;
+    bc = b * c;
+    ac = a * c;
+    e = bd >> 16u;
+    f = ad >> 16u;
+    g = ad & 0xffffu;
+    h = bc >> 16u;
+    i = bc & 0xffffu;
+    j = ac >> 16u;
+    k = ac & 0xffffu;
+    result = (e + g + i + (1 << 3)) >> 4u;      /* 1<<3 is for rounding */
+    result += (f + h + k) << 12u;
+    result += j << 28u;
+    return (sign > 0) ? result : -result;
 }

@@ -36,6 +36,7 @@
 #include <kpathsea/proginit.h>
 #include <kpathsea/progname.h>
 #include <kpathsea/readable.h>
+#include <kpathsea/recorder.h>
 #include <kpathsea/str-list.h>
 #include <kpathsea/str-llist.h>
 #include <kpathsea/systypes.h>

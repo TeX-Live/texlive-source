@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996-2006 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -13,11 +13,11 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with pdfTeX; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+You should have received a copy of the GNU General Public License along
+with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
+Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: writet1.c,v 1.6 2006/12/12 20:38:11 hahe Exp hahe $
+$Id: writet1.c 200 2007-07-11 13:11:12Z oneiros $
 */
 
 #include "ptexlib.h"
@@ -25,7 +25,7 @@ $Id: writet1.c,v 1.6 2006/12/12 20:38:11 hahe Exp hahe $
 #include <kpathsea/c-proto.h>
 #include <string.h>
 
-#define t1_log(s)        tex_printf(s)
+#define t1_log(s)        tex_printf("%s",s)
 #define get_length1()    t1_length1 = t1_offset() - t1_save_offset
 #define get_length2()    t1_length2 = t1_offset() - t1_save_offset
 #define get_length3()    t1_length3 = fixedcontent? t1_offset() - t1_save_offset : 0
@@ -245,7 +245,7 @@ char **load_enc_file(char *enc_name)
     char **glyph_names;
     set_cur_file_name(enc_name);
     if (!enc_open()) {
-        pdftex_warn("cannot open encoding file for reading");
+        pdftex_fail("cannot open encoding file for reading");
         cur_file_name = NULL;
         return NULL;
     }
@@ -539,9 +539,7 @@ static void t1_check_block_len(boolean decrypt)
         c = edecrypt(c);
     l = t1_block_length;
     if (!(l == 0 && (c == 10 || c == 13))) {
-        pdftex_warn("%i bytes more than expected were ignored", l + 1);
-        while (l-- > 0)
-            t1_getbyte();
+        pdftex_fail("%i bytes more than expected", l + 1);
     }
 }
 
@@ -576,7 +574,7 @@ static void t1_stop_eexec(void)
             if (last_hexbyte == 0)
                 t1_puts("00");
             else
-                pdftex_warn("unexpected data after eexec");
+                pdftex_fail("unexpected data after eexec");
         }
     }
     t1_cs = false;
@@ -922,11 +920,12 @@ static boolean t1_open_fontfile(const char *open_name_prefix)
 {
     ff_entry *ff;
     ff = check_ff_exist(fd_cur->fm->ff_name, is_truetype(fd_cur->fm));
-    if (ff->ff_path != NULL)
+    if (ff->ff_path != NULL) {
         t1_file = xfopen(cur_file_name = ff->ff_path, FOPEN_RBIN_MODE);
-    else {
+        recorder_record_input(ff->ff_path);
+    } else {
         set_cur_file_name(fd_cur->fm->ff_name);
-        pdftex_warn("cannot open Type 1 font file for reading");
+        pdftex_fail("cannot open Type 1 font file for reading");
         return false;
     }
     t1_init_params(open_name_prefix);
@@ -1032,8 +1031,8 @@ static boolean is_cc_init = false;
     stack_ptr -= N
 
 #define stack_error(N) {            \
-    pdftex_warn("CharString: invalid access (%i) to stack (%i entries)", \
-                 (int) N, (int)(stack_ptr - cc_stack));                  \
+    pdftex_fail("CharString: invalid access (%i) to stack (%i entries)", \
+                (int) N, (int)(stack_ptr - cc_stack));                  \
     goto cs_error;                  \
 }
 
@@ -1106,7 +1105,7 @@ static void cc_init(void)
 #define mark_cs(s)       cs_mark(s, 0)
 
 __attribute__ ((format(printf, 3, 4)))
-static void cs_warn(const char *cs_name, int subr, const char *fmt, ...)
+static void cs_fail(const char *cs_name, int subr, const char *fmt, ...)
 {
     char buf[SMALL_BUF_SIZE];
     va_list args;
@@ -1114,9 +1113,9 @@ static void cs_warn(const char *cs_name, int subr, const char *fmt, ...)
     vsprintf(buf, fmt, args);
     va_end(args);
     if (cs_name == NULL)
-        pdftex_warn("Subr (%i): %s", (int) subr, buf);
+        pdftex_fail("Subr (%i): %s", (int) subr, buf);
     else
-        pdftex_warn("CharString (/%s): %s", cs_name, buf);
+        pdftex_fail("CharString (/%s): %s", cs_name, buf);
 }
 
 static void cs_mark(const char *cs_name, int subr)
@@ -1188,22 +1187,22 @@ static void cs_mark(const char *cs_name, int subr)
                 cs_len--;
             }
             if (b >= CS_MAX) {
-                cs_warn(cs_name, subr, "command value out of range: %i",
+                cs_fail(cs_name, subr, "command value out of range: %i",
                         (int) b);
                 goto cs_error;
             }
             cc = cc_tab + b;
             if (!cc->valid) {
-                cs_warn(cs_name, subr, "command not valid: %i", (int) b);
+                cs_fail(cs_name, subr, "command not valid: %i", (int) b);
                 goto cs_error;
             }
             if (cc->bottom) {
                 if (stack_ptr - cc_stack < cc->nargs)
-                    cs_warn(cs_name, subr,
+                    cs_fail(cs_name, subr,
                             "less arguments on stack (%i) than required (%i)",
                             (int) (stack_ptr - cc_stack), (int) cc->nargs);
                 else if (stack_ptr - cc_stack > cc->nargs)
-                    cs_warn(cs_name, subr,
+                    cs_fail(cs_name, subr,
                             "more arguments on stack (%i) than required (%i)",
                             (int) (stack_ptr - cc_stack), (int) cc->nargs);
             }
@@ -1213,7 +1212,7 @@ static void cs_mark(const char *cs_name, int subr)
                 cc_pop(1);
                 mark_subr(a1);
                 if (!subr_tab[a1].valid) {
-                    cs_warn(cs_name, subr, "cannot call subr (%i)", (int) a1);
+                    cs_fail(cs_name, subr, "cannot call subr (%i)", (int) a1);
                     goto cs_error;
                 }
                 break;
@@ -1384,7 +1383,8 @@ static void t1_read_subrs()
     t1_getline();
     while (!(t1_charstrings() || t1_subrs())) {
         t1_scan_param();
-        t1_putline();
+        if (!t1_prefix("/UniqueID"))    /* ignore UniqueID for subsetted fonts */
+            t1_putline();
         t1_getline();
     }
   found:

@@ -1199,6 +1199,7 @@ $(objdir)/cnf.obj: \
 	$(kpathseadir)/line.h \
 	$(kpathseadir)/paths.h \
 	$(kpathseadir)/pathsearch.h \
+	$(kpathseadir)/recoder.h \
 	$(kpathseadir)/str-llist.h \
 	$(kpathseadir)/tex-file.h \
 	$(kpathseadir)/c-vararg.h \

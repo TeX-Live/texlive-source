@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996-2005 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -13,11 +13,11 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with pdfTeX; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+You should have received a copy of the GNU General Public License along
+with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
+Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: writeenc.c,v 1.3 2005/12/26 14:20:13 hahe Exp hahe $
+$Id: writeenc.c 200 2007-07-11 13:11:12Z oneiros $
 */
 
 #include "ptexlib.h"
@@ -93,7 +93,7 @@ void epdf_write_enc(char **glyph_names, integer fe_objnum)
     assert(fe_objnum != 0);
     pdfbegindict(fe_objnum, 1);
     pdf_puts("/Type /Encoding\n");
-    pdf_printf("/Differences [");
+    pdf_puts("/Differences [");
     for (i = 0, i_old = -2; i < 256; i++)
         if (glyph_names[i] != notdef) {
             if (i == i_old + 1) /* no gap */
@@ -119,7 +119,7 @@ void write_enc(char **glyph_names, struct avl_table *tx_tree, integer fe_objnum)
     assert(fe_objnum != 0);
     pdfbegindict(fe_objnum, 1);
     pdf_puts("/Type /Encoding\n");
-    pdf_printf("/Differences [");
+    pdf_puts("/Differences [");
     avl_t_init(&t, tx_tree);
     for (i_old = -2, p = (int *) avl_t_first(&t, tx_tree); p != NULL;
          p = (int *) avl_t_next(&t)) {

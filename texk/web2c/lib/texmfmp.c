@@ -18,6 +18,7 @@
 #include <kpathsea/readable.h>
 #include <kpathsea/variable.h>
 #include <kpathsea/absolute.h>
+#include <kpathsea/recorder.h>
 
 #include <time.h> /* For `struct tm'.  */
 #if defined (HAVE_SYS_TIME_H)
@@ -185,6 +186,9 @@ maininit P2C(int, ac, string *, av)
 
   /* Must be initialized before options are parsed.  */
   interactionoption = 4;
+
+  kpse_record_input = recorder_record_input;
+  kpse_record_output = recorder_record_output;
 
 #if defined(pdfTeX)
   ptexbanner = BANNER;
@@ -1357,6 +1361,7 @@ open_in_or_pipe P3C(FILE **, f_ptr,  int, filefmt,  const_string, fopen_mode)
          free (fullnameoffile);
       fullnameoffile = xstrdup (fname);
 #endif
+      recorder_record_input (fname + 1);
       *f_ptr = popen(fname+1,"r");
       free(fname);
       for (i=0; i<=15; i++) {
@@ -1401,6 +1406,7 @@ open_out_or_pipe P2C(FILE **, f_ptr,  const_string, fopen_mode)
       } else {
         *f_ptr = popen(fname+1,"w");
       }
+      recorder_record_output (fname + 1);
       free(fname);
 
       for (i=0; i<=15; i++) {

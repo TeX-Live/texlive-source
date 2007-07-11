@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996-2006 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -13,11 +13,11 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with pdfTeX; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+You should have received a copy of the GNU General Public License along
+with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
+Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: epdf.h,v 1.6 2005/11/28 23:29:32 hahe Exp $
+$Id: epdf.h 200 2007-07-11 13:11:12Z oneiros $
 */
 
 extern "C" {
@@ -72,6 +72,7 @@ extern "C" {
     extern integer pdfbufsize;
     extern integer pdfosmode;
     extern eightbits pdflastbyte;
+    extern integer fixedinclusioncopyfont;
 
     extern char notdef[];
 

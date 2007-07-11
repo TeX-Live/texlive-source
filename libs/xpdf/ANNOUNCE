@@ -1,4 +1,4 @@
-Subject: ANNOUNCE: Xpdf 3.01 - a PDF viewer for X
+Subject: ANNOUNCE: Xpdf 3.02 - a PDF viewer for X
 
 
 Glyph & Cog, LLC is pleased to announce a new version of Xpdf, the
@@ -11,12 +11,11 @@ components (pdftops, pdftotext, etc.) also run on Win32 systems and
 should run on pretty much any system with a decent C++ compiler.
 
 Major changes:
-* Added the continuous view mode, including the '-cont' switch and the
-  'continuousView' config file option.
-* At high zoom levels, don't rasterize the entire page - this avoids
-  problems running out of memory.
-* Added "search backward" and "match case" options to the find dialog.
-* Support explicitly masked images and soft masked images.
+* Anti-aliased vector graphics, including stroke adjustment.
+* Support for PDF 1.6 and PDF 1.7, including AES decryption and
+  OpenType fonts.
+* User-configurable key/mouse bindings.
+* Improved full-screen mode, with the ability to toggle on the fly.
 
 See the `CHANGES' file for a complete list of changes.
 

@@ -18,13 +18,15 @@
 
 #include "FixedPoint.h"
 
+#define ln2 ((FixedPoint)0.69314718)
+
 FixedPoint FixedPoint::sqrt(FixedPoint x) {
   FixedPoint y0, y1, z;
 
   if (x.val <= 0) {
     y1.val = 0;
   } else {
-    y1.val = x.val >> 1;
+    y1.val = x.val == 1 ? 2 : x.val >> 1;
     do {
       y0.val = y1.val;
       z = x / y0;
@@ -34,10 +36,9 @@ FixedPoint FixedPoint::sqrt(FixedPoint x) {
   return y1;
 }
 
-//~ this is not very accurate
 FixedPoint FixedPoint::pow(FixedPoint x, FixedPoint y) {
   FixedPoint t, t2, lnx0, lnx, z0, z;
-  int d, i;
+  int d, n, i;
 
   if (y.val <= 0) {
     z.val = 0;
@@ -56,6 +57,8 @@ FixedPoint FixedPoint::pow(FixedPoint x, FixedPoint y) {
     lnx.val <<= 1;
     t = y * lnx;
     // exp(y * ln(x))
+    n = floor(t / ln2);
+    t -= ln2 * n;
     t2 = t;
     d = 1;
     i = 1;
@@ -67,6 +70,11 @@ FixedPoint FixedPoint::pow(FixedPoint x, FixedPoint y) {
       ++i;
       d *= i;
     } while (::abs(z.val - z0.val) > 2 && d < (1 << fixptShift));
+    if (n >= 0) {
+      z.val <<= n;
+    } else if (n < 0) {
+      z.val >>= -n;
+    }
   }
   return z;
 }
@@ -88,6 +96,21 @@ int FixedPoint::mul(int x, int y) {
 int FixedPoint::div(int x, int y) {
 #if 1 //~tmp
   return ((FixPtInt64)x << fixptShift) / y;
+#else
+#endif
+}
+
+GBool FixedPoint::divCheck(FixedPoint x, FixedPoint y, FixedPoint *result) {
+#if 1 //~tmp
+  FixPtInt64 z;
+
+  z = ((FixPtInt64)x.val << fixptShift) / y.val;
+  if ((z == 0 && x != 0) ||
+      z >= ((FixPtInt64)1 << 31) || z < -((FixPtInt64)1 << 31)) {
+    return gFalse;
+  }
+  result->val = z;
+  return gTrue;
 #else
 #endif
 }

@@ -55,6 +55,7 @@ void OutputDev::updateAll(GfxState *state) {
   updateLineCap(state);
   updateMiterLimit(state);
   updateLineWidth(state);
+  updateStrokeAdjust(state);
   updateFillColorSpace(state);
   updateFillColor(state);
   updateStrokeColorSpace(state);
@@ -64,6 +65,7 @@ void OutputDev::updateAll(GfxState *state) {
   updateStrokeOpacity(state);
   updateFillOverprint(state);
   updateStrokeOverprint(state);
+  updateTransfer(state);
   updateFont(state);
 }
 
