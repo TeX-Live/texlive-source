@@ -1,3 +1,7 @@
+2007-07-15  Karl Berry  <karl@tug.org>
+
+	* depend.mak: update.
+
 2007-07-06  Karl Berry  <karl@tug.org>
 
 	* tex-file.c (init_path) <kpse_lua_format>: let's make the format

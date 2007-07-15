@@ -1,3 +1,7 @@
+2007-07-15  Karl Berry  <karl@tug.org>
+
+	* rdepend.mk: update for builddir != srcdir.
+
 2005-06-26  Olaf Weber  <olaf@infovore.xs4all.nl>
 
 	* config.mk [MAINT]: Call the bundled autoconf2.13 script instead
