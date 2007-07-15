@@ -1,21 +1,25 @@
-# rdepend.mk -- rules for remaking the dependencies.
+# rdepend.mk -- rules for remaking the dependencies.  Public domain.
+# $Id$
 @MAINT@# 
 @MAINT@# Have to use -M, not -MM, since we use <kpathsea/...> instead of
 @MAINT@# "kpathsea/..." in the sources.  But that means we have to remove the
 @MAINT@# directory prefixes and all the system include files.
 @MAINT@# And <kpathsea/paths.h> is generated, not part of the distribution.
+@MAINT@# We also remove any ../texk/kpathsea path component, since that comes
+@MAINT@# VPATH when srcdir != builddir.
 @MAINT@# 
-@MAINT@# And, there's no need for any installer/user to ever run this, it can
-@MAINT@# only cause trouble. So comment it out in the distribution.
-@MAINT@# (It doesn't work when the source and build directories are different.)
+@MAINT@# There's no need for any installer/user to ever run this, it can
+@MAINT@# only cause trouble. So comment it out by default.
+@MAINT@# 
 @MAINT@ifndef c_auto_h_dir
 @MAINT@c_auto_h_dir = .
 @MAINT@endif
 @MAINT@
 @MAINT@depend depend.mk:: $(c_auto_h_dir)/c-auto.h \
 @MAINT@  $(top_srcdir)/../make/rdepend.mk 
-@MAINT@	$(CC) -M $(ALL_CPPFLAGS) -I$(c_auto_h_dir) *.c \
-@MAINT@	  | sed -e 's,\(\.\./\)\+kpathsea/,$$(kpathsea_srcdir)/,g' \
+@MAINT@	$(CC) -M $(ALL_CPPFLAGS) -I$(c_auto_h_dir) $(srcdir)/*.c \
+@MAINT@	  | sed -e 's,\(\.\./\)\+texk/kpathsea/,,' \
+@MAINT@         -e 's,\(\.\./\)\+kpathsea/,$$(kpathsea_srcdir)/,g' \
 @MAINT@	        -e 's,$$(kpathsea_srcdir)/c-auto.h,$$(kpathsea_dir)/c-auto.h,g' \
 @MAINT@	        -e 's,$$(kpathsea_srcdir)/paths.h,$$(kpathsea_dir)/paths.h,g' \
 @MAINT@	        -e 's, /[^ ]*,,g' \
