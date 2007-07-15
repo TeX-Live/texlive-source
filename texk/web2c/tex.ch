@@ -1934,7 +1934,7 @@ if area_delimiter<>0 then begin
   s:=str_start[str_ptr];
   t:=str_start[str_ptr]+area_delimiter;
   j:=s;
-  while (not must_quote) and (j<>t) do begin
+  while (not must_quote) and (j<t) do begin
     must_quote:=str_pool[j]=" "; incr(j);
     end;
   if must_quote then begin
@@ -1952,7 +1952,7 @@ s:=str_start[str_ptr]+area_delimiter;
 if ext_delimiter=0 then t:=pool_ptr else t:=str_start[str_ptr]+ext_delimiter-1;
 must_quote:=false;
 j:=s;
-while (not must_quote) and (j<>t) do begin
+while (not must_quote) and (j<t) do begin
   must_quote:=str_pool[j]=" "; incr(j);
   end;
 if must_quote then begin
@@ -1969,7 +1969,7 @@ if ext_delimiter<>0 then begin
   t:=pool_ptr;
   must_quote:=false;
   j:=s;
-  while (not must_quote) and (j<>t) do begin
+  while (not must_quote) and (j<t) do begin
     must_quote:=str_pool[j]=" "; incr(j);
     end;
   if must_quote then begin
@@ -2032,19 +2032,19 @@ begin
 must_quote:=false;
 if a<>0 then begin
   j:=str_start[a];
-  while (not must_quote) and (j<>str_start[a+1]) do begin
+  while (not must_quote) and (j<str_start[a+1]) do begin
     must_quote:=str_pool[j]=" "; incr(j);
   end;
 end;
 if n<>0 then begin
   j:=str_start[n];
-  while (not must_quote) and (j<>str_start[n+1]) do begin
+  while (not must_quote) and (j<str_start[n+1]) do begin
     must_quote:=str_pool[j]=" "; incr(j);
   end;
 end;
 if e<>0 then begin
   j:=str_start[e];
-  while (not must_quote) and (j<>str_start[e+1]) do begin
+  while (not must_quote) and (j<str_start[e+1]) do begin
     must_quote:=str_pool[j]=" "; incr(j);
   end;
 end;

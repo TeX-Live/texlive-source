@@ -1,3 +1,11 @@
+2007-07-15  Karl Berry  <karl@tug.org>
+
+	* tex.ch,
+	* alephdir/com16bit-rc2.ch,
+	* omegadir/com16bit.ch: fixes from Akira so "tex %" followed
+	by RET is stable.  Also sync aleph/omega constants with tex.
+	Mail of 14 Jul 2007 09:35:02.
+
 2007-03-30  Karl Berry  <karl@tug.org>
 
 	* tex.ch (sup_buf_size): increase to 30,000,000 per Hans mail to

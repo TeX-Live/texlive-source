@@ -200,28 +200,28 @@ if ini_version then
 @!sup_strings_free = sup_max_strings;
 
 @!inf_buf_size = 500;
-@!sup_buf_size = 200000;
+@!sup_buf_size = 30000000;
 
 @!inf_nest_size = 40;
-@!sup_nest_size = 400;
+@!sup_nest_size = 4000;
 
 @!inf_max_in_open = 6;
 @!sup_max_in_open = 127;
 
 @!inf_param_size = 60;
-@!sup_param_size = 600;
+@!sup_param_size = 6000;
 
 @!inf_save_size = 600;
 @!sup_save_size = 80000;
 
 @!inf_stack_size = 200;
-@!sup_stack_size = 3000;
+@!sup_stack_size = 30000;
 
 @!inf_dvi_buf_size = 800;
 @!sup_dvi_buf_size = 65536;
 
 @!inf_pool_size = 32000;
-@!sup_pool_size = 10000000;
+@!sup_pool_size = 40000000;
 @!inf_pool_free = 1000;
 @!sup_pool_free = sup_pool_size;
 @!inf_string_vacancies = 8000;
@@ -1078,7 +1078,7 @@ if area_delimiter<>0 then begin
   s:=str_start(str_ptr);
   t:=str_start(str_ptr)+area_delimiter;
   j:=s;
-  while (not must_quote) and (j<>t) do begin
+  while (not must_quote) and (j<t) do begin
     must_quote:=str_pool[j]=" "; incr(j);
     end;
   if must_quote then begin
@@ -1096,7 +1096,7 @@ s:=str_start(str_ptr)+area_delimiter;
 if ext_delimiter=0 then t:=pool_ptr else t:=str_start(str_ptr)+ext_delimiter-1;
 must_quote:=false;
 j:=s;
-while (not must_quote) and (j<>t) do begin
+while (not must_quote) and (j<t) do begin
   must_quote:=str_pool[j]=" "; incr(j);
   end;
 if must_quote then begin
@@ -1113,7 +1113,7 @@ if ext_delimiter<>0 then begin
   t:=pool_ptr;
   must_quote:=false;
   j:=s;
-  while (not must_quote) and (j<>t) do begin
+  while (not must_quote) and (j<t) do begin
     must_quote:=str_pool[j]=" "; incr(j);
     end;
   if must_quote then begin
@@ -1176,19 +1176,19 @@ begin
 must_quote:=false;
 if a<>0 then begin
   j:=str_start(a);
-  while (not must_quote) and (j<>str_start(a+1)) do begin
+  while (not must_quote) and (j<str_start(a+1)) do begin
     must_quote:=str_pool[j]=" "; incr(j);
   end;
 end;
 if n<>0 then begin
   j:=str_start(n);
-  while (not must_quote) and (j<>str_start(n+1)) do begin
+  while (not must_quote) and (j<str_start(n+1)) do begin
     must_quote:=str_pool[j]=" "; incr(j);
   end;
 end;
 if e<>0 then begin
   j:=str_start(e);
-  while (not must_quote) and (j<>str_start(e+1)) do begin
+  while (not must_quote) and (j<str_start(e+1)) do begin
     must_quote:=str_pool[j]=" "; incr(j);
   end;
 end;
