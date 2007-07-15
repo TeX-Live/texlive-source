@@ -42,17 +42,21 @@
 
 int check_for_mp (FILE *image_file) 
 {
+  int i;
+  int n = 0;
   rewind (image_file);
   /* For now, this is an exact test that must be passed, character for
      character */
   mfgets (work_buffer, WORK_BUFFER_SIZE, image_file);
   if (strncmp (work_buffer, "%!PS", 4))
     return 0;
-  mfgets (work_buffer, WORK_BUFFER_SIZE, image_file);
-  if (strncmp (work_buffer, "%%BoundingBox", strlen("%%BoundingBox")))
-    return 0;
-  mfgets (work_buffer, WORK_BUFFER_SIZE, image_file);
-  if (strncmp (work_buffer, "%%Creator: MetaPost", strlen("%%Creator: MetaPost")))
+  for(i=0; i < 10; i++) {
+    mfgets (work_buffer, WORK_BUFFER_SIZE, image_file);
+    if(strncmp(work_buffer, "%%Creator: MetaPost", strlen("%%Creator: MetaPost"))
+               == 0)
+      n++;
+  }
+  if(n == 0)
     return 0;
   return 1;
 }
