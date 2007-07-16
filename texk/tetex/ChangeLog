@@ -1,3 +1,11 @@
+2007-07-16  Karl Berry  <karl@tug.org>
+
+	* texconfig (findDialogProg, runDialog): these fns not used here,
+	remove.
+	(findprog): new mode of operation, like which(1).
+	* texconfig-dialog (findDialog): check for whiptail/dialog on any
+		system, not just FreeBSD, Linux, cygwin.
+
 2007-05-31  Karl Berry  <karl@tug.org>
 
 	* fmtutil (run_initex): do not remove the log file.

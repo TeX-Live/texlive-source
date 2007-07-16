@@ -24,7 +24,7 @@ test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 progname=texconfig
 
 # the version string
-version=1168907609 # seconds since `00:00:00 1970-01-01 UTC'
+version=1184605103 # seconds since `00:00:00 1970-01-01 UTC'
                    # date '+%s' (with GNU date)
 
 envVars="
@@ -106,10 +106,14 @@ echoLocateBinary()
   for elb
   do
     elbLoc=`checkForBinary "$elb"`
-    case $elbLoc in
-      "") echo "$elb: not found";;
-      *)  echo "$elb: $elbLoc";;
-    esac
+    if test -n "$ELB_PATH_ONLY"; then
+      test -n "$elbLoc" && echo "$elbLoc"
+    else
+      case $elbLoc in
+        "") echo "$elb: not found";;
+        *) echo "$elb: $elbLoc";;
+      esac
+    fi
   done
 }
 
@@ -157,40 +161,6 @@ checkForBinary()
     false) (exit 1); return 1;;
   esac
 }
-
-###############################################################################
-# findDialogProg(void)
-#   Some systems have their own dialog. Use it then and do not use
-#   faked TERM and TERMINFO variables when calling that dialog.
-###############################################################################
-findDialogProg()
-{
-  { u=`uname -s`; } 2>/dev/null
-  case "$u" in
-    FreeBSD|Linux|cygwin*|CYGWIN*)
-      test -f /usr/bin/whiptail && DIALOG_PROG=/usr/bin/whiptail
-      test -f /usr/bin/dialog && DIALOG_PROG=/usr/bin/dialog
-      test -f /bin/dialog && DIALOG_PROG=/bin/dialog
-      ;;
-  esac
-}
-
-###############################################################################
-# runDialog(args)
-#   call either tcdialog or $DIALOG_PROG
-###############################################################################
-runDialog()
-{
-  test -z "$NO_CLEAR" && tty -s && clear
-  case "$DIALOG_PROG" in
-    "")
-      TERM=$DIALOG_TERM TERMINFO=$DIALOG_TERMINFO \
-        tcdialog --title "$progname setup utility" ${1+"$@"};;
-    *)
-      $DIALOG_PROG --title "$progname setup utility" ${1+"$@"};;
-  esac
-}
-
 
 ###############################################################################
 # cleanup()
@@ -588,6 +558,7 @@ tcBatch()
        $progname dvipdfm paper PAPER
        $progname dvips [options]
        $progname faq
+       $progname findprog
        $progname font vardir DIR
        $progname font ro
        $progname font rw
@@ -925,6 +896,11 @@ Valid MODE settings:"
         echo "$progname: faq not found (usually in \$TEXMFMAIN/doc/tetex/teTeX-FAQ)" >&2
         rc=1
       fi
+      ;;
+
+    findprog)
+      shift
+      ELB_PATH_ONLY=1 echoLocateBinary "$@"
       ;;
 
     # handle "texconfig font"
