@@ -267,12 +267,12 @@
 #define AUX_STACK_SIZE              20
 #define MAX_BIB_FILES               20
 
-#define BUF_SIZE                   3000
-#define MAX_CITES                  750
-#define MAX_ENT_INTS               3000
-#define MAX_ENT_STRS               3000
+#define BUF_SIZE                   10000
+#define MAX_CITES                  2000
+#define MAX_ENT_INTS               10000
+#define MAX_ENT_STRS               10000
 #define MAX_FIELDS                 17250L
-#define MAX_STRINGS                4000
+#define MAX_STRINGS                12000
 #define POOL_SIZE                  65000L
 
 #define MIN_CROSSREFS               2
