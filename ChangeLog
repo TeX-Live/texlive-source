@@ -1,3 +1,10 @@
+2007-07-16  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (lib): new target, depends on @LIBSDEP@.
+	(all): do not depend on @LIBSDEP@, redundant since we already
+		descend and build.
+	From Joachim, 28 Jun 2007 11:47:10.
+
 2007-03-21  Karl Berry  <karl@tug.org>
 
 	* Makefile.in (distclean): remove mention of klibtool.
