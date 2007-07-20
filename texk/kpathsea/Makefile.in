@@ -52,7 +52,7 @@ kpseaccess: access.o
 kpsereadlink: readlink.o
 	$(link_command) readlink.o
 
-$(kpathsea): $(objects)
+$(kpathsea): $(kpathsea_dir)/paths.h $(objects)
 	$(kpathsea_link) -rpath $(libdir) -version-info 4:0:0 $(objects)
 
 # Make variable substitutions for paths.h.
