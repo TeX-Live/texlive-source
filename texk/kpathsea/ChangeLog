@@ -1,3 +1,12 @@
+2007-07-24  Karl Berry  <karl@tug.org>
+
+	* recorder.h (kpse_input, kpse_output): use const_string as
+	argument, not just char *, to avoid warning.
+
+	* fontmap.c (map_file_parse): kpse_record_input if requested.
+	From Akira, 23 Jul 2007 10:20:58 (original report from George
+	White).
+
 2007-07-15  Karl Berry  <karl@tug.org>
 
 	* depend.mak: update.

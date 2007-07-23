@@ -15,16 +15,15 @@
    You should have received a copy of the GNU Lesser General Public
    License along with this library; if not, write to the Free Software
    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
 */
 
 #ifndef KPATHSEA_RECORDER_H
 #define KPATHSEA_RECORDER_H
 
-/* Thess variables get set by web2c and are used to record filenames for its
- * filename recorder. This way they can also be used in kpathsea, e.g. for
- * texmf.cnf */
-void (*kpse_record_input)(char*);
-void (*kpse_record_output)(char*);
+/* These variables are set by web2c and are used to record filenames for its
+   filename -recorder option.  This way they can also be used for files
+   opened by kpathsea, e.g., texmf.cnf */
+void (*kpse_record_input) (const_string);
+void (*kpse_record_output) (const_string);
 
 #endif /* not KPATHSEA_RECORDER_H */
