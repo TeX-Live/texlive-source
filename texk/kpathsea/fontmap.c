@@ -28,6 +28,7 @@
 #include <kpathsea/line.h>
 #include <kpathsea/pathsearch.h>
 #include <kpathsea/str-list.h>
+#include <kpathsea/recorder.h>
 #include <kpathsea/tex-file.h>
 
 /* We have one and only one fontmap, so may as well make it static
@@ -81,7 +82,10 @@ map_file_parse P1C(const_string, map_filename)
   char *orig_l;
   unsigned map_lineno = 0;
   FILE *f = xfopen (map_filename, FOPEN_R_MODE);
-  
+
+  if (kpse_record_input)
+    kpse_record_input (map_filename);
+
   while ((orig_l = read_line (f)) != NULL) {
     string filename;
     string l = orig_l;
