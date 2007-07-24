@@ -1,3 +1,0 @@
-$(objdir)/musixflx.obj: \
-	
-

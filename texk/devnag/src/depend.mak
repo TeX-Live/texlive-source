@@ -1,3 +1,0 @@
-$(objdir)/devnag.obj: \
-	
-
