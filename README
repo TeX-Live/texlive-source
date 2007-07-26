@@ -15,12 +15,16 @@ To build (mostly) without optimization, try CFLAGS=-g Build.
 The binaries will be left in ./inst/bin/<stdplatform>.
 Don't worry about the other files and directories in inst.
 
-If you are going to check them in yourself, copy the binaries to
-texmf/bin/<tlplatform> and svn add/remove/commit them.
+The new binaries are not directly usable from that location.  Instead,
+you have to copy them to texmf/bin/<tlplatform> (in the repository,
+that's under the Master tree).
 
-If your C++ needs to find the standard library in a special place (i.e., 
-configure fails saying the compiler doesn't work), try:
+If your C++ needs to find the standard library in, say, /usr/local/lib,
+(i.e., configure fails saying the compiler doesn't work), try:
 env LD_OPTIONS=-R/usr/local/lib Build
+
+That should be it for normal builds.  Email tex-live@tug.org if problems.
+
 
 Running ./reautoconf here reruns autoconf, both old (the hacked 2.13
 we have here) and new (assumed to be in /usr/bin/autoconf).
@@ -34,7 +38,6 @@ in parentheses):
 To rerun dvipdfmx:
   until integration, insert our configure.in, data/Makefile.am,
     src/Makefile.am changes, copy compile script.
-  p4 edit config.h.in aclocal.m4 configure Makefile.in */Makefile.in
   aclocal; autoheader; automake; autoconf
   touch config.h.in; sleep 1; touch Makefile.in  # shouldn't be needed, but ...
 
