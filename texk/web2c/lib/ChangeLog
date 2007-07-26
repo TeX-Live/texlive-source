@@ -1,4 +1,10 @@
+2007-07-26  Karl Berry  <karl@tug.org>
+
+	* openclose.c (recorder_record_name): fflush the recorder file,
+	since this is for debugging.  Suggested by George White.
+
 2006-12-28  Martin Schröder <martin@oneiros.de>
+
 	* texmfmp.c: fixed some warnings raised by gcc for unused variables
 	and different signedness of arguments
 

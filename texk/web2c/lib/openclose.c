@@ -67,6 +67,7 @@ recorder_record_name P2C(string, prefix, string, nameoffile)
         if (!recorder_file)
             recorder_start();
         fprintf(recorder_file, "%s %s\n", prefix, nameoffile);
+        fflush(recorder_file);
     }
 }
 
