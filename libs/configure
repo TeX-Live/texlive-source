@@ -3149,11 +3149,6 @@ if test "x$needs_icu" != xno && test "$using_system_icu" != yes; then
   subdirs="$subdirs icu-xetex"
 
 fi
-if test "x$needs_teckit" != xno; then
-  subdirs="$subdirs teckit"
-
-fi
-
 if test "x$needs_pnglib" != xno && test "$using_system_pnglib"  != yes; then
   ac_config_files="$ac_config_files libpng/Makefile"
 
@@ -3164,6 +3159,10 @@ if test "x$needs_zlib" != xno && test "$using_system_zlib"  != yes; then
 fi
 if test "x$needs_obsdcompat" != xno; then
   subdirs="$subdirs obsdcompat"
+
+fi
+if test "x$needs_teckit" != xno; then
+  subdirs="$subdirs teckit"
 
 fi
 

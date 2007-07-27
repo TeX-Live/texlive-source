@@ -219,6 +219,8 @@ sinclude(libs/obsdcompat/libobsd-compat.ac)
 LIBSDEP="$CURSESDEP $ZLIBDEP $LIBPNGDEP $LIBXPDFDEP $LIBT1DEP $GDDEP $FREETYPEDEP $FREETYPE2DEP $ICUDEP $TECKITDEP $LIBOBSDDEP"
 
 LIBSDIRS=
+test "$needs_teckit" = yes \
+  && LIBSDIRS="$TECKITDIR $LIBSDIRS"
 test "$needs_ncurses" = yes && test "$using_system_ncurses" != yes \
   && LIBSDIRS="$NCURSESDIR $LIBSDIRS"
 test "$needs_pnglib" = yes && test "$using_system_pnglib" != yes \
@@ -237,8 +239,6 @@ test "$needs_freetype2" = yes && test "$using_system_freetype2" != yes \
   && LIBSDIRS="$FREETYPE2DIR $LIBSDIRS"
 test "$needs_icu" = yes && test "$using_system_icu" != yes \
   && LIBSDIRS="$ICUDIR $LIBSDIRS"
-test "$needs_teckit" = yes \
-  && LIBSDIRS="$TECKITDIR $LIBSDIRS"
 test "$needs_obsdcompat" = yes \
   && LIBSDIRS="$LIBOBSDCOMPATDIR $LIBSDIRS"
 
