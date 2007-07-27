@@ -162,7 +162,7 @@ DoAtsuiLayout(void* p, int justify)
 		lsDelta -= lsUnit;
 
 	native_glyph_count(node) = realGlyphCount;
-	native_glyph_info_ptr(node) = (long)glyph_info;
+	native_glyph_info_ptr(node) = glyph_info;
 	
 	if (!justify)
 		node_width(node) = FixedPStoTeXPoints(layoutRec[count-1].realPos) + lsDelta;
