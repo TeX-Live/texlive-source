@@ -6,7 +6,7 @@
 @MAINT@# directory prefixes and all the system include files.
 @MAINT@# And <kpathsea/paths.h> is generated, not part of the distribution.
 @MAINT@# We also remove any ../texk/kpathsea path component, since that comes
-@MAINT@# VPATH when srcdir != builddir.
+@MAINT@# from VPATH when srcdir != builddir.
 @MAINT@# 
 @MAINT@# There's no need for any installer/user to ever run this, it can
 @MAINT@# only cause trouble. So comment it out by default.
@@ -17,7 +17,10 @@
 @MAINT@
 @MAINT@depend depend.mk:: $(c_auto_h_dir)/c-auto.h \
 @MAINT@  $(top_srcdir)/../make/rdepend.mk 
-@MAINT@	$(CC) -M $(ALL_CPPFLAGS) -I$(c_auto_h_dir) $(srcdir)/*.c \
+@MAINT@	$(CC) -M $(ALL_CPPFLAGS) \
+@MAINT@		-I$(c_auto_h_dir) \
+@MAINT@		-I$(top_srcdir)/../../libs/libgsw32 \
+@MAINT@		$(srcdir)/*.c \
 @MAINT@	  | sed -e 's,\(\.\./\)\+texk/kpathsea/,,' \
 @MAINT@         -e 's,\(\.\./\)\+kpathsea/,$$(kpathsea_srcdir)/,g' \
 @MAINT@	        -e 's,$$(kpathsea_srcdir)/c-auto.h,$$(kpathsea_dir)/c-auto.h,g' \

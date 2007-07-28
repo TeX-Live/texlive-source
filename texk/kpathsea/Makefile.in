@@ -1,4 +1,5 @@
-# Makefile for kpathsea --kb@mail.tug.org.  Public domain.
+# $Id$
+# Makefile for kpathsea.  Public domain.
 version = @KPSEVERSION@
 
 # Add -DNO_DEBUG to disable debugging, for vanishingly better performance.
@@ -52,7 +53,7 @@ kpseaccess: access.o
 kpsereadlink: readlink.o
 	$(link_command) readlink.o
 
-$(kpathsea): $(kpathsea_dir)/paths.h $(objects)
+$(kpathsea): $(objects)
 	$(kpathsea_link) -rpath $(libdir) -version-info 4:0:0 $(objects)
 
 # Make variable substitutions for paths.h.
