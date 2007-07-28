@@ -1,3 +1,7 @@
+2007-07-29  Karl Berry  <karl@tug.org>
+
+	* depend.mk: regenerate again.
+
 2007-07-24  Karl Berry  <karl@tug.org>
 
 	* recorder.h (kpse_input, kpse_output): use const_string as

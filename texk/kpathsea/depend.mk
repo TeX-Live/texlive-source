@@ -31,7 +31,7 @@ access.o: access.c \
   $(kpathsea_srcdir)/types.h \
   $(kpathsea_srcdir)/lib.h \
   $(kpathsea_srcdir)/progname.h
-atou.lo: atou.c ../../../texk/kpathsea/config.h \
+atou.lo: atou.c config.h \
   $(kpathsea_dir)/c-auto.h $(kpathsea_srcdir)/c-std.h \
   $(kpathsea_srcdir)/c-unistd.h \
   $(kpathsea_srcdir)/systypes.h \
@@ -326,7 +326,7 @@ fontmap.lo: fontmap.c \
   $(kpathsea_srcdir)/recorder.h \
   $(kpathsea_srcdir)/tex-file.h \
   $(kpathsea_srcdir)/c-vararg.h
-getopt.lo: getopt.c ../../../texk/kpathsea/config.h \
+getopt.lo: getopt.c config.h \
   $(kpathsea_dir)/c-auto.h $(kpathsea_srcdir)/c-std.h \
   $(kpathsea_srcdir)/c-unistd.h \
   $(kpathsea_srcdir)/systypes.h \
@@ -696,7 +696,7 @@ strcasecmp.lo: strcasecmp.c \
   $(kpathsea_srcdir)/lib.h \
   $(kpathsea_srcdir)/progname.h
 strstr.lo: strstr.c
-strtol.lo: strtol.c ../../../texk/kpathsea/config.h \
+strtol.lo: strtol.c config.h \
   $(kpathsea_dir)/c-auto.h $(kpathsea_srcdir)/c-std.h \
   $(kpathsea_srcdir)/c-unistd.h \
   $(kpathsea_srcdir)/systypes.h \

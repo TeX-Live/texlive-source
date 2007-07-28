@@ -1,3 +1,7 @@
+2007-07-29  Karl Berry  <karl@tug.org>
+
+	* rdepend.mk: replace all texk/kpathsea, not just first.
+
 2007-07-15  Karl Berry  <karl@tug.org>
 
 	* rdepend.mk: update for builddir != srcdir.
