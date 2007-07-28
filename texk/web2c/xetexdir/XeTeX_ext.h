@@ -238,10 +238,10 @@ extern "C" {
 	integer getnativechardp(integer font, integer ch);
 	integer getnativecharic(integer font, integer ch);
 
-	long otfontget(integer what, void* engine);
-	long otfontget1(integer what, void* engine, integer param);
-	long otfontget2(integer what, void* engine, integer param1, integer param2);
-	long otfontget3(integer what, void* engine, integer param1, integer param2, integer param3);
+	integer otfontget(integer what, void* engine);
+	integer otfontget1(integer what, void* engine, integer param);
+	integer otfontget2(integer what, void* engine, integer param1, integer param2);
+	integer otfontget3(integer what, void* engine, integer param1, integer param2, integer param3);
 	int makeXDVGlyphArrayData(void* p);
 	int makefontdef(integer f);
 	int applymapping(void* cnv, const UniChar* txtPtr, int txtLen);
