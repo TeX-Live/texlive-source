@@ -1,4 +1,12 @@
 -------------------------------------------------
+pdfTeX 3.141592-1.40.5 was released on 2007-07-31
+-------------------------------------------------
+- Bugfixes: 
+  - calling 'pdftex %' would crash (830)
+  - fflush the recorder file
+- pdfTeX uses xpdf 3.02pl1
+
+-------------------------------------------------
 pdfTeX 3.141592-1.40.4 was released on 2007-07-11
 -------------------------------------------------
 - Bugfixes: 
@@ -563,5 +571,5 @@ pdfTeX 3.14159-1.00a-pretest-20010806 was released on 2001-08-06
 pdfTeX 3.14159-1.00a-pretest-20010804 was released on 2001-08-04
 ----------------------------------------------------------------
 
-$Id: NEWS 200 2007-07-11 13:11:12Z oneiros $
+$Id: NEWS 216 2007-07-31 16:49:57Z oneiros $
 // vim: tw=79:ts=2:expandtab:autoindent

@@ -1,10 +1,10 @@
 pdfTeX
 ======
 
-README for version 3.14159-1.40.4
+README for version 3.14159-1.40.5
 =================================
 
-This directory contains the version 1.40.4 of pdfTeX, an extended version
+This directory contains the version 1.40.5 of pdfTeX, an extended version
 of eTeX that can create PDF directly from TeX source files and enhance the
 result of TeX typesetting with the help of PDF. When PDF output is not
 selected, pdfTeX produces normal DVI output, otherwise it produces PDF
@@ -37,8 +37,8 @@ pdfTeX is copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
 
 pdfTeX is free software; you can redistribute it and/or modify it under the
 terms of the GNU General Public License as published by the Free Software
-Foundation; either version 2.1 of the License, or (at your option) any
-later version.
+Foundation; either version 2 of the License, or (at your option) any later
+version.
 
 pdfTeX is distributed in the hope that it will be useful, but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
@@ -84,5 +84,5 @@ paragraph optimization is inspired by the work of Hermann Zapf.
 
 Please send bug reports, offers of help, etc. to martin@pdftex.org
 
-$Id: README 200 2007-07-11 13:11:12Z oneiros $
+$Id: README 216 2007-07-31 16:49:57Z oneiros $
 // vim: tw=75

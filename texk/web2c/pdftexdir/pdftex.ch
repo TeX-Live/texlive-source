@@ -17,7 +17,7 @@
 % pdfTeX; if not, write to the Free Software Foundation, Inc., 51 Franklin
 % Street, Fifth Floor, Boston, MA 02110-1301 USA.
 %
-% $Id: pdftex.ch 200 2007-07-11 13:11:12Z oneiros $
+% $Id: pdftex.ch 114 2007-05-23 18:23:49Z ms $
 %
 @x [0.0] l.83 - WEAVE: we want the whole file
   \def\?##1]{\hbox{Changes to \hbox to 1em{\hfil##1}.\ }}

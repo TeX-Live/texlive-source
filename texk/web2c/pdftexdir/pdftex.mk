@@ -1,6 +1,7 @@
 # Makefile fragment for pdfeTeX and web2c. --infovore@xs4all.nl. Public domain.
 # This fragment contains the parts of the makefile that are most likely to
 # differ between releases of pdfeTeX.
+# $Id: pdftex.mk 215 2007-07-31 16:32:04Z oneiros $
 
 # We build pdftex
 pdftex = @PETEX@ pdftex
@@ -12,8 +13,7 @@ XCPPFLAGS=-I$(LIBOBSDCOMPATDIR) -I$(LIBOBSDCOMPATDIR)/.. -I$(LIBOBSDCOMPATFSRCDI
 
 Makefile: $(srcdir)/$(pdftexdir)/pdftex.mk
 
-# pdftex_bin = pdftex ttf2afm pdftosrc
-pdftex_bin = pdftex
+pdftex_bin = pdftex ttf2afm pdftosrc
 linux_build_dir = $(HOME)/pdftex/build/linux/texk/web2c
 
 # Extract pdftex version

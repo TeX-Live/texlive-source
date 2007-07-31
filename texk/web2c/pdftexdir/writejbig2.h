@@ -20,7 +20,7 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 This is experimental JBIG2 image support to pdfTeX. JBIG2 image decoding
 is part of Adobe PDF-1.4, and requires Acroread 5.0 or later.
 
-$Id: writejbig2.h 200 2007-07-11 13:11:12Z oneiros $
+$Id: writejbig2.h 114 2007-05-23 18:23:49Z ms $
 ***********************************************************************/
 
 #include <stdlib.h>

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License along
 with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: writettf.h 200 2007-07-11 13:11:12Z oneiros $
+$Id: writettf.h 114 2007-05-23 18:23:49Z ms $
 */
 
 typedef signed char TTF_CHAR;

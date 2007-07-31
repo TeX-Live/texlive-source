@@ -1,5 +1,5 @@
 # Makefile for libpdf - te@dbs.uni-hannover.de
-# $Id: Makefile.in 200 2007-07-11 13:11:12Z oneiros $
+# $Id: Makefile.in 152 2007-06-25 22:19:35Z ms $
 
 kpse_include ../make/common.mk
 kpse_include ../make/programs.mk
