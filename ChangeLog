@@ -1,3 +1,7 @@
+2007-08-14  Joachim Schrod  <jschrod@acm.org>
+
+	* configure.in: dvipdfm and dvipdfmx need pnglib and zlib, too.
+
 2007-07-16  Karl Berry  <karl@tug.org>
 
 	* Makefile.in (lib): new target, depends on @LIBSDEP@.
