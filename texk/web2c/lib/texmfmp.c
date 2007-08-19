@@ -335,7 +335,6 @@ maininit P2C(int, ac, string *, av)
 #endif /* TeX */
 }
 
-#ifndef WIN32
 /* The entry point: set up for reading the command line, which will
    happen in `topenin', then call the main body.  */
 
@@ -347,13 +346,16 @@ main P2C(int, ac,  string *, av)
   _response (&ac, &av);
 #endif
 
+#ifdef WIN32
+  _setmaxstdio(2048);
+#endif
+
   maininit(ac, av);
 
   /* Call the real main program.  */
   mainbody ();
   return EXIT_SUCCESS;
 } 
-#endif /* ! WIN32 */
 
 /* This is supposed to ``open the terminal for input'', but what we
    really do is copy command line arguments into TeX's or Metafont's
