@@ -2526,8 +2526,8 @@ similar to those produced with Metafont in proof mode and GFtoDVI
 @cindex Pragma ADE
 Another MetaPost mem file, named MetaFun, provides many advanced
 features.  It was developed and maintained by Pragma ADE.  The home
-page for MetaFun, and other MetaPost-related things from Pragma:
-@url{http://www.pragma-ade.com/metapost.htm}.  
+page for MetaFun, other MetaPost-related things, and lots more from
+Pragma: @url{http://www.pragma-ade.com/}.
 
 
 @node makempx invocation
