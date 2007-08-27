@@ -1,7 +1,8 @@
 /*
  *   This is dvips, a freely redistributable PostScript driver
  *   for dvi files.  It is (C) Copyright 1986-2007 by Tomas Rokicki.
- *   You may modify and use this program to your heart's content.
+ *   You may freely use, modify and/or distribute this program or any
+ *   portion thereof.
  */
 
 /*   This file is the header for dvips's global data structures. */
