@@ -1,3 +1,9 @@
+2007-08-27  Karl Berry  <karl@tug.org>
+
+	* fontmap.c (map_file_parse): free the original pointer, not the
+	potentially moved one (after whitespace skipping). 
+	From: "George N. White III", 25 Jul 2007 11:27:12.
+
 2007-07-29  Karl Berry  <karl@tug.org>
 
 	* depend.mk: regenerate again.

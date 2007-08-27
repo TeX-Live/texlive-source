@@ -88,7 +88,7 @@ map_file_parse P1C(const_string, map_filename)
 
   while ((orig_l = read_line (f)) != NULL) {
     string filename;
-    string l = orig_l;
+    string l = orig_l; /* save for free() */
     string comment_loc = strrchr (l, '%');
     if (!comment_loc) {
       comment_loc = strstr (l, "@c");
@@ -136,12 +136,13 @@ map_file_parse P1C(const_string, map_filename)
 
       } else {
         /* We've got everything.  Insert the new entry.  They were
-           already dynamically allocated, so don't bother with xstrdup.  */
+           already dynamically allocated by token(), so don't bother
+           with xstrdup.  */
         hash_insert_normalized (&map, alias, filename);
       }
     }
 
-    free (l);
+    free (orig_l);
   }
   
   xfclose (f, map_filename);
