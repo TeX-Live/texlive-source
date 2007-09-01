@@ -93,7 +93,6 @@ pdfmex		pdftex		mexconf.tex	-translate-file=cp227.tcx *pdfmex.ini
 utf8mex		pdftex		mexconf.tex	-enc *utf8mex.ini
 
 # - Polish with translated messages (experimental):
-#! platex-pl	pdftex		-		nls=pdftex-pl,il2-pl *platex.ini
 #! mex-pl	pdftex		mexconf.tex	nls=pdftex-pl,il2-pl *mex.ini
 #! pdfmex-pl	pdftex		mexconf.tex	nls=pdftex-pl,il2-pl *pdfmex.ini
 
