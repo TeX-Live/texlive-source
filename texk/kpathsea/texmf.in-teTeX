@@ -177,7 +177,6 @@ TEXINPUTS.texinfo = .;$TEXMF/tex/{texinfo,plain,generic,}//
 % latex209, useful for macros that were written for 2.09 and do not
 % mention 2e at all, but can be used with 2e.
 TEXINPUTS.cslatex = .;$TEXMF/tex/{cslatex,csplain,latex,generic,}//
-TEXINPUTS.platex  = .;$TEXMF/tex/{platex,latex,generic,}//
 TEXINPUTS.latex = .;$TEXMF/tex/{latex,generic,}//
 TEXINPUTS.olatex = .;$TEXMF/tex/{latex,generic,}//
 TEXINPUTS.latex209 = .;$TEXMF/tex/{latex209,generic,latex,}//
@@ -232,8 +231,6 @@ TEXINPUTS.context = .;$TEXMF/tex/{context,plain,generic,}//
 % odd formats  needing their own paths
 TEXINPUTS.lamstex  = .;$TEXMF/tex/{lamstex,plain,generic,}//
 TEXINPUTS.lollipop = .;$TEXMF/tex/{lollipop,plain,generic,}//
-TEXINPUTS.platex-pl  = .;$TEXMF/tex/{platex,latex,generic,}//
-TEXINPUTS.pdfplatex = .;$TEXMF/tex/{platex,latex,generic,}//
 
 % Earlier entries override later ones, so put this last.
 TEXINPUTS = .;$TEXMF/tex/{$progname,generic,}//
