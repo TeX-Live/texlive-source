@@ -914,16 +914,16 @@ sub mkMaps {
   $mode = "URWkb" if ($mode = undef);
   
   $dvipsPreferOutline = &cfgval("dvipsPreferOutline");
-  $dvipsPreferOutline = 1 if ($dvipsPreferOutline eq undef);
+  $dvipsPreferOutline = 1 if !defined($dvipsPreferOutline);
   
   $dvipsDownloadBase35 = &cfgval("dvipsDownloadBase35");
-  $dvipsDownloadBase35 = 0 if ($dvipsDownloadBase35 eq undef);
+  $dvipsDownloadBase35 = 0 if !defined($dvipsDownloadBase35);
   
   $pdftexDownloadBase14 = &cfgval("pdftexDownloadBase14");
-  $pdftexDownloadBase14 = 0 if ($pdftexDownloadBase14 eq undef);
+  $pdftexDownloadBase14 = 0 if !defined($pdftexDownloadBase14);
   
   $dvipdfmDownloadBase14 = &cfgval("dvipdfmDownloadBase14");
-  $dvipdfmDownloadBase14 = 0 if ($dvipdfmDownloadBase14 eq undef);
+  $dvipdfmDownloadBase14 = 0 if !defined($dvipdfmDownloadBase14);
   
   if (! $quiet) {
     print "\
