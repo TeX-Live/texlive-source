@@ -911,19 +911,19 @@ sub dvips2dvipdfm {
 sub mkMaps {
 
   $mode = &cfgval("LW35");
-  $mode = "URWkb" if !defined($mode);
+  $mode = "URWkb" if ! $mode;
   
   $dvipsPreferOutline = &cfgval("dvipsPreferOutline");
-  $dvipsPreferOutline = 1 if !defined($dvipsPreferOutline);
+  $dvipsPreferOutline = 1 if ! $dvipsPreferOutline;
   
   $dvipsDownloadBase35 = &cfgval("dvipsDownloadBase35");
-  $dvipsDownloadBase35 = 0 if !defined($dvipsDownloadBase35);
+  $dvipsDownloadBase35 = 0 if ! $dvipsDownloadBase35;
   
   $pdftexDownloadBase14 = &cfgval("pdftexDownloadBase14");
-  $pdftexDownloadBase14 = 0 if !defined($pdftexDownloadBase14);
+  $pdftexDownloadBase14 = 0 if ! $pdftexDownloadBase14;
   
   $dvipdfmDownloadBase14 = &cfgval("dvipdfmDownloadBase14");
-  $dvipdfmDownloadBase14 = 0 if !defined($dvipdfmDownloadBase14);
+  $dvipdfmDownloadBase14 = 0 if ! $dvipdfmDownloadBase14;
   
   if (! $quiet) {
     print "\
