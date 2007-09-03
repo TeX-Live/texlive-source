@@ -5,7 +5,7 @@
 %%
 %% This was written by J. Hafner (hafner@almaden.ibm.com) and was last
 %% modified on 2/14/92.  It was then rewritten by Tomas Rokicki to be
-%% smaller.
+%% smaller.  Same license as dvips.
 %%
 %% The color names used here mostly come from the Crayola Crayon box of
 %% 64 colors, with some small additions and deletions.  The names match 
