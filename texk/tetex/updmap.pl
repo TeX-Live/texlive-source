@@ -911,7 +911,7 @@ sub dvips2dvipdfm {
 sub mkMaps {
 
   $mode = &cfgval("LW35");
-  $mode = "URWkb" if ($mode = undef);
+  $mode = "URWkb" if !defined($mode);
   
   $dvipsPreferOutline = &cfgval("dvipsPreferOutline");
   $dvipsPreferOutline = 1 if !defined($dvipsPreferOutline);
