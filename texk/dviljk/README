@@ -18,13 +18,9 @@ dviljk does work on MS-DOS/MS-Windows when compiled with either DJGPP
 port of GNU C or with Microsoft Visual C compilers.  At least in the
 DJGPP port, the LJ and LJ2P devices were reported to work.
 
-dviljk is free software; Gustaf's original files are (I believe) public
-domain.  The files I wrote are covered by the GNU General Public License
--- see the files COPYING*.
+dviljk is free software; Gustaf's original files are "open source",
+according to http://nm.wu-wien.ac.at/nm/en/neumann.  The files I wrote
+are covered by the GNU General Public License -- see the files COPYING*.
 
 You can get the original dvi2xx from
 ftp://ftp.wu-wien.ac.at/pub/src/Typeset/dvi2xx.
-
-
-kb@mail.tug.org
-Member of the League for Programming Freedom -- write lpf@uunet.uu.net.
