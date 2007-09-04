@@ -1,3 +1,8 @@
+2007-09-04  Karl Berry  <karl@tug.org>
+
+	* updmap.pl: ! to clearly check against both empty string and
+	undef, rather than eq undef (Jjgod 3 Sep 2007 16:16:50).
+
 2007-07-16  Karl Berry  <karl@tug.org>
 
 	* texconfig (findDialogProg, runDialog): these fns not used here,
