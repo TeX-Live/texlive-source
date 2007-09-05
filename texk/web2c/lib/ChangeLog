@@ -1,3 +1,8 @@
+2007-09-05  Karl Berry  <karl@tug.org>
+
+	* texmfmp.c (long_options): move output-directory output to be
+	enabled for MF and MP too.  From Akira.
+
 2007-08-20  Karl Berry  <karl@tug.org>
 
 	* texmfmp.c (main) [WIN32]: _setmaxstdio(2048), to increase

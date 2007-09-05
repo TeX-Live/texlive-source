@@ -889,7 +889,6 @@ static struct option long_options[]
       { "etex",                      0, &etexp, 1 },
 #endif /* eTeX || pdfTeX || Aleph */
       { "output-comment",            1, 0, 0 },
-      { "output-directory",          1, 0, 0 },
 #if defined(pdfTeX)
       { "draftmode",                 0, 0, 0 },
       { "output-format",             1, 0, 0 },
@@ -906,6 +905,7 @@ static struct option long_options[]
       { "file-line-error",           0, &filelineerrorstylep, 1 },
       { "no-file-line-error",        0, &filelineerrorstylep, -1 },
       { "jobname",                   1, 0, 0 },
+      { "output-directory",          1, 0, 0 },
       { "parse-first-line",          0, &parsefirstlinep, 1 },
       { "no-parse-first-line",       0, &parsefirstlinep, -1 },
       { "translate-file",            1, 0, 0 },
