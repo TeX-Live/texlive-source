@@ -1,0 +1,8 @@
+AC_INIT(mkjobtexmf, 0.4, tex-live@tug.org)
+
+AC_CONFIG_AUX_DIR(../../config)
+AC_CONFIG_FILES(Makefile)
+
+AC_PROG_INSTALL
+
+AC_OUTPUT
