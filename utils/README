@@ -1,4 +1,4 @@
-Copyright 2005, 2006 Karl Berry.
+Copyright 2005, 2006, 2007 Karl Berry.
 You may freely use, modify and/or distribute this file.
 
 Extra utilities we compile for TeX Live, at least sometimes.
@@ -16,6 +16,9 @@ dialog - seems to be a v1.0 in debian, asked te 5jun05; he said keep as -is
 
 lcdf-typetools 2.48 - ok 13dec06
   http://www.lcdf.org/type/
+
+mkjobtexmf 0.4 - ok 6sep07
+  http://www.ctan.org/tex-archive/support/mkjobtexmf
 
 pdfopen 0.5 - ok 26nov06
   (really xpdfopen)

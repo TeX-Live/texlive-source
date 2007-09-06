@@ -1,3 +1,5 @@
+dnl Public domain, written by Norbert Preining.
+
 AC_INIT(mkjobtexmf, 0.4, tex-live@tug.org)
 
 AC_CONFIG_AUX_DIR(../../config)

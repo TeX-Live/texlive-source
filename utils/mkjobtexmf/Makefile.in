@@ -8,6 +8,8 @@ datarootdir = @datarootdir@
 exec_prefix = @exec_prefix@
 bindir = @bindir@
 mandir = @mandir@
+manext = 1
+man1dir = $(mandir)/man$(manext)
 
 INSTALL = @INSTALL@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
@@ -16,9 +18,9 @@ INSTALL_DATA = @INSTALL_DATA@
 default all:
 
 install:
-	$(INSTALL) -d $(bindir) $(mandir)/man1
+	$(INSTALL) -d $(bindir) $(man1dir)
 	$(INSTALL_SCRIPT) $(srcdir)/mkjobtexmf.pl $(bindir)/mkjobtexmf
-	$(INSTALL_DATA) $(srcdir)/mkjobtexmf.man $(mandir)/man1/mkjobtexmf.1
+	$(INSTALL_DATA) $(srcdir)/mkjobtexmf.man $(man1dir)/mkjobtexmf.1
 
 check:
 
