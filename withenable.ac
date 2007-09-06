@@ -1,5 +1,7 @@
 # withenable.ac - Written long ago by Thomas Esser and Sebastian Rahtz.
 # Public domain.
+# Options to avoid/include the packages in utils/.
+# 
 AC_ARG_ENABLE([multiplatform],
 	[  --enable-multiplatform  put executables in bin/PLATFORM])
 
@@ -7,7 +9,10 @@ AC_ARG_WITH([dialog],
         [  --without-dialog        do not build the dialog package])
 
 AC_ARG_WITH([lcdf-typetools],
-        [  --without-lcdf-typetools    do not build the lcdf-typetools package])
+        [  --without-lcdf-typetools do not build the lcdf-typetools package])
+
+AC_ARG_WITH([mkjobtexmf],
+        [  --without-mkjobtexmf    do not build the mkjobtexmf package])
 
 AC_ARG_WITH([pdfopen],
         [  --without-pdfopen       do not build the pdfopen package])
