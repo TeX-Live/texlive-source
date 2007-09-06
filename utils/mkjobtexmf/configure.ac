@@ -1,6 +1,9 @@
 dnl Public domain, written by Norbert Preining.
-
-AC_INIT(mkjobtexmf, 0.4, tex-live@tug.org)
+dnl
+dnl Do not specify the actual version number here, since we don't use
+dnl the PACKAGE_VERSION or PACKAGE_STRING macros, and it seems pointless
+dnl to have to update this file with every release.
+AC_INIT(mkjobtexmf, rel, tex-live@tug.org)
 
 AC_CONFIG_AUX_DIR(../../config)
 AC_CONFIG_FILES(Makefile)
