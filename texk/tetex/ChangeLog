@@ -1,3 +1,7 @@
+2007-09-10  Karl Berry  <karl@tug.org>
+
+	* updmap.pl: TEXMFVAR rather than VARTEXMF.
+
 2007-09-04  Karl Berry  <karl@tug.org>
 
 	* updmap.pl: ! to clearly check against both empty string and
