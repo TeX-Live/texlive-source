@@ -215,7 +215,7 @@ FILES
 
     <jobname>.mjt/
         Directory where the resulting texmf tree and symbol links are
-        stored.
+        stored. It can be changed by option --destdir.
 
     <jobname>.fls
         Name of TeX's recorder file.
@@ -248,4 +248,8 @@ HISTORY
 
     2007/09/04 v0.4
         * Bug fix in map_files_texmf.
+
+    2007/09/06 v0.5
+        * Support for `configure' added. (Thanks to Norbert Preining for
+        writing a first version of the configure stuff.)
 

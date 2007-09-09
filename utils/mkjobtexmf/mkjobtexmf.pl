@@ -10,8 +10,8 @@ use strict;
 $^W=1;
 
 my $prj = 'mkjobtexmf';
-my $version = '0.4';
-my $date = '2007/09/04';
+my $version = '0.5';
+my $date = '2007/09/06';
 my $author = 'Heiko Oberdiek';
 my $copyright = "Copyright 2007 $author";
 
@@ -744,7 +744,7 @@ file recording (e.g. pdfTeX 1.40.3 does not record .pfb and
 =item F<E<lt>jobnameE<gt>.mjt/>
 
 Directory where the resulting texmf tree and symbol links
-are stored.
+are stored. It can be changed by option --destdir.
 
 =item F<E<lt>jobnameE<gt>.fls>
 
@@ -787,6 +787,12 @@ modify it under the same terms as Perl itself
 =item 2007/09/04 v0.4
 
 * Bug fix in map_files_texmf.
+
+=item 2007/09/06 v0.5
+
+* Support for `configure' added.
+  (Thanks to Norbert Preining for writing a first version of
+  the configure stuff.)
 
 =back
 

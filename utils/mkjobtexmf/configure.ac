@@ -1,11 +1,14 @@
-dnl Public domain, written by Norbert Preining.
+dnl configure.ac
 dnl
-dnl Do not specify the actual version number here, since we don't use
-dnl the PACKAGE_VERSION or PACKAGE_STRING macros, and it seems pointless
-dnl to have to update this file with every release.
-AC_INIT(mkjobtexmf, rel, tex-live@tug.org)
+dnl Copyright 2007 by Heiko Oberdiek.
+dnl
+dnl The file is part of project mkjobtexmf.
+dnl It's free software; you may redistribute it and/or
+dnl modify it under the same terms as Perl itself
+dnl (Perl Artistic License/GNU General Public License, version 2).
+dnl
+AC_INIT(mkjobtexmf, 0.5, oberdiek@uni-freiburg.de)
 
-AC_CONFIG_AUX_DIR(../../config)
 AC_CONFIG_FILES(Makefile)
 
 AC_PROG_INSTALL

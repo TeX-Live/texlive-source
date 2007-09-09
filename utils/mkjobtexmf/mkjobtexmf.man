@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "MKJOBTEXMF 1"
-.TH MKJOBTEXMF 1 "2007-09-04" "perl v5.8.1" "User Contributed Perl Documentation"
+.TH MKJOBTEXMF 1 "2007-09-06" "perl v5.8.1" "User Contributed Perl Documentation"
 .SH "NAME"
 mkjobtexmf \-\- Generate a texmf tree for a particular job
 .SH "SYNOPSIS"
@@ -369,7 +369,7 @@ file recording (e.g. pdfTeX 1.40.3 does not record .pfb and
 .IX Item "<jobname>.mjt/"
 .PD
 Directory where the resulting texmf tree and symbol links
-are stored.
+are stored. It can be changed by option \-\-destdir.
 .IP "\fI<jobname>.fls\fR" 4
 .IX Item "<jobname>.fls"
 Name of TeX's recorder file.
@@ -400,3 +400,8 @@ modify it under the same terms as Perl itself
 .IP "2007/09/04 v0.4" 4
 .IX Item "2007/09/04 v0.4"
 * Bug fix in map_files_texmf.
+.IP "2007/09/06 v0.5" 4
+.IX Item "2007/09/06 v0.5"
+* Support for `configure' added.
+  (Thanks to Norbert Preining for writing a first version of
+  the configure stuff.)
