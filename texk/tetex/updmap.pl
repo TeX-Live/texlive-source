@@ -55,7 +55,7 @@ my $opt_edit;
 my $opt_help;
 
 my $TEXMFMAIN;
-my $VARTEXMF;
+my $TEXMFVAR;
 
 my $mode;
 my $dvipsPreferOutline;
@@ -695,7 +695,7 @@ sub showOptions {
 ###############################################################################
 # setupDestDir()
 #   find an output directory if none specified on cmd line. First choice is
-#   $VARTEXMF/fonts/map/updmap (if VARTEXMF is set), next is relative to
+#   $TEXMFVAR/fonts/map/updmap (if TEXMFVAR is set), next is relative to
 #   config file location. Fallback is $TEXMFMAIN/fonts/map/updmap.
 ###############################################################################
 sub setupOutputDir {
@@ -704,15 +704,15 @@ sub setupOutputDir {
   if (!$od) {
     my $rel = "fonts/map/$driver/updmap";
     
-    # Try VARTEXMF tree. Use it if variable is set and $rel can
+    # Try TEXMFVAR tree. Use it if variable is set and $rel can
     # be written. Copy config file if it does not exist there.
-    my $tf = `kpsewhich -expand-var="\$VARTEXMF"`;
+    my $tf = `kpsewhich -expand-var="\$TEXMFVAR"`;
     chomp($tf);
     if ($tf) {
       mkpath("$tf/$rel");
       # system("$TEXMFMAIN/web2c/mktexdir \"$tf/$rel\"");
       if (! -d "$tf/$rel" || ! -w "$tf/$rel") {
-        # forget about VARTEXMF tree...
+        # forget about TEXMFVAR tree...
 	$tf = "";
       }
     }
@@ -757,7 +757,7 @@ sub setupDestDir {
 sub setupCfgFile {
 
   if (! $cnfFile) {
-    my $tf = `kpsewhich -expand-var="\$VARTEXMF"`;
+    my $tf = `kpsewhich -expand-var="\$TEXMFVAR"`;
     chomp($tf);
     if ($tf && ! -f "$tf/web2c/$cnfFileShort") {
       mkpath("$tf/web2c") if (! -d "$tf/web2c");
