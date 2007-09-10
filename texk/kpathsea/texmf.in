@@ -366,7 +366,7 @@ OPENTYPEFONTS = .;$TEXMF/fonts/opentype//
 PDFTEXCONFIG = .;$TEXMF/pdftex/{$progname,}//
 
 % Used by DMP (ditroff-to-mpx), called by makempx -troff.
-TRFONTS = /usr/{local,}/share/groff/{current/font,site-font}/devps
+TRFONTS = /usr{/local,}/share/groff/{current/font,site-font}/devps
 MPSUPPORT = .;$TEXMF/metapost/support
 
 % For xdvi to find mime.types and .mailcap, if they do not exist in

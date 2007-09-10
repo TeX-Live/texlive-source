@@ -1,3 +1,8 @@
+2007-09-11  Karl Berry  <karl@tug.org>
+
+	* texmf.in (TRFONTS): don't recurse through /usr.
+	Report from Michail Vidiassov, mp-i 10 Sep 2007 12:55:10.
+
 2007-08-27  Karl Berry  <karl@tug.org>
 
 	* fontmap.c (map_file_parse): free the original pointer, not the
