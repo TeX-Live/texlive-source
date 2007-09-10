@@ -1,3 +1,8 @@
+2007-09-09  Karl Berry  <karl@tug.org>
+
+	* c-auto.in (EDITOR): 'quote' the filename.
+	Reported by Frank K, 17 Jul 2007 17:00:41, debian bug 433455.
+
 2007-08-24  Karl Berry  <karl@tug.org>
 
 	* doc/web2c.texi (Initial MetaPost): change pragma link.
