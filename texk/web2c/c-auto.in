@@ -54,7 +54,11 @@
 #undef NO_DUMP_SHARE
 
 /* web2c: Default editor for interactive `e' option. */
+#ifdef WIN32
+#define EDITOR "emacs +%d \"%s\""
+#else
 #define EDITOR "vi +%d '%s'"
+#endif
 
 /* web2c: Window system support for Metafont. */
 #undef EPSFWIN
