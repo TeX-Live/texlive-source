@@ -32,17 +32,11 @@ texinfo.tex is there in case you want to produce DVI files from the
 Texinfo manuals.
 
 If you know enough about TeX to be reading this, then you (or your
-institution) should consider joining the TeX Users Group.  (If you're
-already a member, thanks!)  TUG produces the periodical TUGboat, sponsors
-an annual meeting and publishes the proceedings, and arranges TeX
-courses for all levels of TeX users, throughout the world.  Contact:
-    TeX Users Group
-    P.O. Box 2311
-    Portland OR 97208-2311
-    USA
-    phone: +1 503 223-9994
-    fax:   +1 503 223-3960
-    url:   http://www.tug.org
+institution) should consider joining the TeX Users Group
+(http://tug.org)) -- if you're already a member, thanks for your
+support!  TUG produces the periodicals TUGboat (http://tug.org/TUGboat),
+The PracTeX Journal (http://tug.org/pracjourn), sponsors an annual
+meeting and publishes the proceedings, and more.
 
 This is free software.  See the files COPYING* for copying permissions.
 
