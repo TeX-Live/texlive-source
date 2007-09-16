@@ -53,7 +53,11 @@
    Faster on LittleEndian architectures.  */
 #undef NO_DUMP_SHARE
 
-/* web2c: Default editor for interactive `e' option. */
+/* web2c: Default editor for interactive `e' option.  Although we'd like
+   to use ${VISUAL-${EDITOR-foo}} here, chances are a user's editor
+   won't understand +lineno, so they'll just have to override
+   TEXEDIT/MFEDIT/MPEDIT to get what they want.  No particular reason
+   for emacs vs. vi, just historical.  */
 #ifdef WIN32
 #define EDITOR "emacs +%d \"%s\""
 #else
