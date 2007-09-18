@@ -100,6 +100,18 @@ j
 @+ ifelse
 @+ %%EndPaperSize
 
+% The jacow paper size is the smaller of letter and a4 in both
+% dimensions, and can therefore hopefully be printed on either paper
+% size.  As far as we know, Volker Schaa first used it for the JACOW
+% conference proceedings that he produced.
+@ jacow 210mm 11in
+@+ ! %%DocumentPaperSizes: jacow
+@+ %%BeginPaperSize: jacow
+@+ /setpagedevice where
+@+  { pop << /PageSize [595 792] >> setpagedevice }
+@+ if
+@+ %%EndPaperSize
+
 @ halfexecutive 133mm 184mm
 @+ ! %%DocumentPaperSizes: halfexecutive
 @+ %%BeginPaperSize: halfexecutive
