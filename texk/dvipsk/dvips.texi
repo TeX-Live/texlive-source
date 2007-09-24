@@ -3,7 +3,7 @@
 @settitle Dvips: A DVI-to-PostScript translator
 
 @set version 5.96dev
-@set month-year June 2007
+@set month-year September 2007
 
 @copying
 This manual documents Dvips version @value{version}
@@ -2266,29 +2266,60 @@ specify transformations on the PostScript.
 The possible @var{key}s are:
 
 @table @samp
-
 @item hoffset
-The horizontal offset (default 0)
+@opindex hoffset @r{(@samp{psfile} special option)}
+The horizontal offset (default 0).
+
 @item voffset
-The vertical offset (default 0)
+@opindex voffset @r{(@samp{psfile} special option)}
+The vertical offset (default 0).
+
 @item hsize     
-The horizontal clipping size (default 612)
+@opindex hsize @r{(@samp{psfile} special option)}
+The horizontal clipping size (default 612).
+
 @item vsize     
-The vertical clipping size (default 792)
+@opindex vsize @r{(@samp{psfile} special option)}
+The vertical clipping size (default 792).
+
 @item hscale    
-The horizontal scaling factor (default 100)
+@opindex hscale @r{(@samp{psfile} special option)}
+The horizontal scaling factor, as a percentage (default 100).
+
 @item vscale    
-The vertical scaling factor (default 100)
+@opindex vscale @r{(@samp{psfile} special option)}
+The vertical scaling factor, as a percentage (default 100).
+
 @item angle     
-The rotation (default 0)
+@opindex angle @r{(@samp{psfile} special option)}
+The rotation, in degrees (default 0).
+
 @item clip    
-Enable clipping to the bounding box
+@opindex clip @r{(@samp{psfile} special option)}
+Enable clipping to the bounding box (default disabled).
+
+@item llx, lly, urx, ury
+@opindex llx @r{(@samp{psfile} special option)}
+@opindex lly @r{(@samp{psfile} special option)}
+@opindex urx @r{(@samp{psfile} special option)}
+@opindex ury @r{(@samp{psfile} special option)}
+Bounding box of the included image, just as in a @code{%%BoundingBox}
+comment.  Values are in big points, and may be fractional.
+
+@item rhi, rwi
+@opindex rhi @r{(@samp{psfile} special option)}
+@opindex rwi @r{(@samp{psfile} special option)}
+Desired width and height of the resulting figure in the output, in
+tenths of big points (720 to the inch); may be fractional.  
+
+If both @code{rwi} and @code{rhi} are nonzero, the picture is scaled,
+possibly losing aspect ratio.  If only one of @code{rwi} and
+@code{rhi} is nonzero, the picture is scaled, preserving aspect ratio.
+
 @end table
 
-The dimension parameters are all given in PostScript units.
-The @samp{hscale} and @samp{vscale} are given in non-dimensioned percentage
-units, and the rotation value is specified in degrees.
-Thus
+The offsets and sizes are given in PostScript units (big points).
+Thus, for example:
 
 @example
 \special@{psfile=foo.ps hoffset=72 hscale=90 vscale=90@}
