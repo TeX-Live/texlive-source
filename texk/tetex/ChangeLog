@@ -1,3 +1,9 @@
+2007-09-30  Karl Berry  <karl@tug.org>
+
+	* texconfig-sys: export texconfig_sys.
+	* texconfig <init>: use it to figure out which fmtutil/updmap.
+	Report from Frank K, 11 Jun 2007 17:05:43.
+
 2007-09-10  Karl Berry  <karl@tug.org>
 
 	* updmap.pl: TEXMFVAR rather than VARTEXMF.

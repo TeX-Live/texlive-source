@@ -1,4 +1,5 @@
 #!/bin/sh
+# $Id$
 
 # texconfig-sys: Thomas Esser, public domain.
 
@@ -25,6 +26,7 @@ c=`kpsewhich -var-value TEXMFSYSCONFIG`
 
 TEXMFVAR="$v"
 TEXMFCONFIG="$c"
+texconfig_sys=1
 export TEXMFVAR TEXMFCONFIG
 
 exec texconfig ${1+"$@"}

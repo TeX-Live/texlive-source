@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# TeX-Config version 3.0
+# TeXConfig version 3.0
 # Thomas Esser, te@dbs.uni-hannover.de. Public domain.
 
 # invoke the right shell:
@@ -24,7 +24,7 @@ test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 progname=texconfig
 
 # the version string
-version=1184605103 # seconds since `00:00:00 1970-01-01 UTC'
+version=1191175376 # seconds since `00:00:00 1970-01-01 UTC'
                    # date '+%s' (with GNU date)
 
 envVars="
@@ -1118,11 +1118,19 @@ $formatsForHyphenFmt"
       ;;
 
     init)
+      if test -n "$texconfig_sys"; then  # set by texconfig-sys
+        fmtutil=fmtutil-sys
+        updmap=updmap-sys
+      else
+        fmtutil=fmtutil
+        updmap=updmap
+      fi
+      
       case $2 in
         "")
-          if fmtutil --all \
+          if $fmtutil --all \
              && texlinks --multiplatform \
-             && updmap; then
+             && $updmap; then
             :
           else
             rc=1
@@ -1131,7 +1139,7 @@ $formatsForHyphenFmt"
         *)
           shift 1
           for i in "$@"; do
-            fmtutil --byfmt "$i" || rc=1
+            $fmtutil --byfmt "$i" || rc=1
           done
           ;;
       esac
