@@ -1,0 +1,15 @@
+
+LZMA utils
+
+    LZMA utils consist of a few relatively separate submodules:
+      * LZMA encoder/decoder command line tool similar to gzip/bzip2
+      * Scripts to ease grepping, diffing and viewing (lz*grep,
+        lzdiff/lzcmp, lzmore/lzless)
+      
+      * liblzmadec - LZMA decoder library written in C
+      * lzmadec - Small LZMA decoder command line tool using liblzmadec
+      * lzmainfo - Simple tool to view header information from LZMA
+        encoded files; uses liblzmadec
+
+      * Patch for GNU tar 1.15.1 adding --lzma and -Y command line options.
+

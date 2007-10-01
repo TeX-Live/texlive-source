@@ -1,0 +1,206 @@
+# It was decided to use raw LZMA stream as the file format of LZMA
+# compressed files. This was an unfortunate decision since the files do
+# not have any magic first bytes.
+
+# LZMA files have no magic bytes. Add this to the very end of
+# /etc/file/magic to prevent mismatches.
+#
+# Some assumptions are made that limit the matching:
+#   - The LZMA header has 64-bit value field for uncompressed size;
+#     these checks assume that the uncompressed size is less than
+#     2^48 bytes (256 TiB). Fix this when files this big are common. ;-)
+#   - Only dictionary sizes 2^n where 0 <= n <= 28 are recognized.
+#   - File size should be checked, the minimum is 18 bytes.
+#
+# LZMA header structure (first 13 bytes):
+#   0     LZMA properties, 0x00 - 0xE1
+#   1-4   Dictionary size (little endian)
+#   5-12  Uncompressed size, filled with 0xFF if unknown (streamed data)
+#
+# This file is in the public domain. You can do whatever you want with it.
+
+# First byte is matched only here:
+0	ubyte	<0xE2
+# Dictionary size:
+>1	lelong	0x00		LZMA encoded data, no dictionary
+# Streamed or non-streamed and uncompressed size:
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+# The rest is mostly copypasting, only dictionary size varies. :-/
+>1	lelong	0x01		LZMA encoded data, 1-byte dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x02		LZMA encoded data, 2-byte dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x04		LZMA encoded data, 4-byte dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x08		LZMA encoded data, 8-byte dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x10		LZMA encoded data, 16-byte dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x20		LZMA encoded data, 32-byte dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x40		LZMA encoded data, 64-byte dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x80		LZMA encoded data, 128-byte dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x0100		LZMA encoded data, 256-byte dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x0200		LZMA encoded data, 512-byte dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x0400		LZMA encoded data, 1 KiB dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x0800		LZMA encoded data, 2 KiB dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x1000		LZMA encoded data, 4 KiB dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x2000		LZMA encoded data, 8 KiB dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x4000		LZMA encoded data, 16 KiB dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x8000		LZMA encoded data, 32 KiB dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x010000	LZMA encoded data, 64 KiB dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x020000	LZMA encoded data, 128 KiB dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x040000	LZMA encoded data, 256 KiB dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x080000	LZMA encoded data, 512 KiB dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x100000	LZMA encoded data, 1 MiB dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x200000	LZMA encoded data, 2 MiB dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x400000	LZMA encoded data, 4 MiB dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x800000	LZMA encoded data, 8 MiB dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x01000000	LZMA encoded data, 16 MiB dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x02000000	LZMA encoded data, 32 MiB dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x04000000	LZMA encoded data, 64 MiB dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x08000000	LZMA encoded data, 128 MiB dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB
+>1	lelong	0x10000000	LZMA encoded data, 256 MiB dictionary
+>>5	string	\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, streamed, uncompressed size unknown
+>>5	string	!\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF	\b, non-streamed, uncompressed size
+>>>9	string	\0\0\0\0
+>>>>5	lelong	x		%lu bytes
+>>>9	string  !\0\0\0\0	over 4 GiB

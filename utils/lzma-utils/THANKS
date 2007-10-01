@@ -1,0 +1,16 @@
+
+Over 90% of code in the LZMA utils is
+taken as is from the LZMA SDK. Without
+LZMA SDK there couldn't be LZMA utils:
+- Igor Pavlov
+
+Man pages and messages of LZMA.sh have
+many similarities to gzip and bzip2:
+- gzip's author Jean-loup Gailly
+- gzip's co-author Mark Adler
+- bzip2's author Julian Seward
+
+Also thanks to all the people
+participating the Tukaani project
+and others who have helped.
+
