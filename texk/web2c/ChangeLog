@@ -1,3 +1,8 @@
+2007-10-01  Karl Berry  <karl@tug.org>
+
+	* cpascal.h (floor): #undef, since MaxOSX #defines it.
+	From Peter Dyballa, metapost list, 27 Sep 2007 15:25:03.
+
 2007-09-18  Karl Berry  <karl@tug.org>
 
 	* tex.ch (29.530): Wording of "Type <return>" msg.
