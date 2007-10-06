@@ -8,9 +8,11 @@
 mydir=`dirname $0`
 cd $mydir || exit 1
 
+: ${TL_WORKDIR=Work}
+
 if test "x$1" != "x--no-clean"; then
   test -f Makefile && make clean 
-  rm -rf Work inst
+  rm -rf $TL_WORKDIR inst
 else
   shift
 fi
@@ -23,8 +25,8 @@ if test -z "$TL_INSTALL_DEST"; then
 fi
 
 unset CDPATH
-test -d Work || mkdir Work
-cd Work || exit 1
+test -d $TL_WORKDIR || mkdir $TL_WORKDIR
+cd $TL_WORKDIR || exit 1
 
 # allow override of configure location, just in case.
 : ${TL_CONFIGURE=../configure}
