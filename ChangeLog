@@ -1,3 +1,7 @@
+2007-10-06  Karl Berry  <karl@tug.org>
+
+	* Build (TL_WORKDIR): allow override of "Work".
+
 2007-10-02  Karl Berry  <karl@tug.org>
 
 	* configure.in: remove sam2p special case, since we omitted the
