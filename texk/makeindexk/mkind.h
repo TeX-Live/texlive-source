@@ -337,7 +337,7 @@ ensuing.
 #define ROMAN_MAX     16	/* maximum length of Roman page number */
 				/* field */
 
-#define STRING_MAX    256	/* maximum length of host filename */
+#define STRING_MAX    512	/* maximum length of host filename */
 
 /*====================================================================*/
 

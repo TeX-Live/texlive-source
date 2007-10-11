@@ -1,4 +1,12 @@
+2007-10-12  Karl Berry  <karl@tug.org>
+
+	* mkind.h (STRING_MAX): bump to 512, why not?
+
+	* avoid seg fault on long filenames.
+	From Jindrich Novy, https://bugzilla.redhat.com/show_bug.cgi?id=225491.
+
 Sa Sep 25 22:25:15 CEST 2004
+
 	* set locale according to LC_CTYPE in genind.c for correct
 	  tolower() behaviour
 

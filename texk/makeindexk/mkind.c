@@ -179,7 +179,9 @@ char   *argv[];
 		    argc--;
 		    if (argc <= 0)
 			FATAL("Expected -p <num>\n","");
-		    strcpy(pageno, *++argv);
+		    if (strlen(*++argv) >= sizeof(pageno))
+			FATAL("Page number too high\n","");
+		    strcpy(pageno, *argv);
 		    init_page = TRUE;
 		    if (STREQ(pageno, EVEN)) {
 			log_given = TRUE;
@@ -230,7 +232,7 @@ char   *argv[];
 		char tmp[STRING_MAX + 5];
 		
 		/* base set by last call to check_idx */
-		sprintf (tmp, "%s%s", base, INDEX_STY);
+		snprintf (tmp, sizeof(tmp), "%s%s", base, INDEX_STY);
 		if (0 == access(tmp, R_OK)) {
 			open_sty (tmp);
 			sty_given = TRUE;
@@ -405,9 +407,9 @@ int     open_fn;
 		    STRING_MAX,totmem);
 #endif /* DEBUG */
 
-	    if ((idx_fn = (char *) malloc(STRING_MAX)) == NULL)
+	    if ((idx_fn = (char *) malloc(STRING_MAX+5)) == NULL)
 		FATAL("Not enough core...abort.\n", "");
-	    sprintf(idx_fn, "%s%s", base, INDEX_IDX);
+	    snprintf(idx_fn, STRING_MAX+5, "%s%s", base, INDEX_IDX);
 	    if ((open_fn && 
 	 ((idx_fp = OPEN_IN(idx_fn)) == NULL)
 	) ||
@@ -434,7 +436,7 @@ int     log_given;
 
     /* index output file */
     if (!ind_given) {
-	sprintf(ind, "%s%s", base, INDEX_IND);
+	snprintf(ind, sizeof(ind), "%s%s", base, INDEX_IND);
 	ind_fn = ind;
     }
     if ((ind_fp = OPEN_OUT(ind_fn)) == NULL)
@@ -442,14 +444,14 @@ int     log_given;
 
     /* index transcript file */
     if (!ilg_given) {
-	sprintf(ilg, "%s%s", base, INDEX_ILG);
+	snprintf(ilg, sizeof(ilg), "%s%s", base, INDEX_ILG);
 	ilg_fn = ilg;
     }
     if ((ilg_fp = OPEN_OUT(ilg_fn)) == NULL)
 	FATAL("Can't create transcript file %s.\n", ilg_fn);
 
     if (log_given) {
-	sprintf(log_fn, "%s%s", base, INDEX_LOG);
+	snprintf(log_fn, sizeof(log_fn), "%s%s", base, INDEX_LOG);
 	if ((log_fp = OPEN_IN(log_fn)) == NULL) {
 	    FATAL("Source log file %s not found.\n", log_fn);
 	} else {
@@ -505,6 +507,9 @@ char   *fn;
   if ((found = kpse_find_file (fn, kpse_ist_format, 1)) == NULL) {
      FATAL("Index style file %s not found.\n", fn);
   } else {
+    if (strlen(found) >= sizeof(sty_fn)) {
+      FATAL("Style file %s too long.\n", found);
+    }
     strcpy(sty_fn,found);
     if ((sty_fp = OPEN_IN(sty_fn)) == NULL) {
       FATAL("Could not open style file %s.\n", sty_fn);
@@ -512,6 +517,9 @@ char   *fn;
   }
 #else
     if ((path = getenv(STYLE_PATH)) == NULL) {
+        if (strlen(fn) >= sizeof(sty_fn)) {
+          FATAL("Style file %s too long.\n", fn);
+        }
 	/* style input path not defined */
 	strcpy(sty_fn, fn);
 	sty_fp = OPEN_IN(sty_fn);
