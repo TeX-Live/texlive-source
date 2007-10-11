@@ -508,7 +508,7 @@ char   *fn;
      FATAL("Index style file %s not found.\n", fn);
   } else {
     if (strlen(found) >= sizeof(sty_fn)) {
-      FATAL("Style file %s too long.\n", found);
+      FATAL("Style file name %s too long.\n", found);
     }
     strcpy(sty_fn,found);
     if ((sty_fp = OPEN_IN(sty_fn)) == NULL) {
@@ -518,7 +518,7 @@ char   *fn;
 #else
     if ((path = getenv(STYLE_PATH)) == NULL) {
         if (strlen(fn) >= sizeof(sty_fn)) {
-          FATAL("Style file %s too long.\n", fn);
+          FATAL("Style file name %s too long.\n", fn);
         }
 	/* style input path not defined */
 	strcpy(sty_fn, fn);
