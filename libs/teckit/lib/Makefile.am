@@ -10,5 +10,8 @@ AM_CFLAGS    = $(AM_CPPFLAGS)
 
 lib_LTLIBRARIES = libTECkit_Compiler.la libTECkit.la
 
+libTECkit_Compiler_la_LIBADD = @LDZLIB@
+libTECkit_la_LIBADD = @LDZLIB@
+
 include ../source/Makefile.am
 
