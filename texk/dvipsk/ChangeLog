@@ -1,3 +1,9 @@
+2007-10-12  Karl Berry  <karl@tug.org>
+
+	* resident.c (i): declare as int, in case tfmload() returns 65536
+	for an ofm font.
+	From Akira, 11 Oct 2007 11:39:52.
+
 2007-09-24  Karl Berry  <karl@tug.org>
 
 	* dvips.texi (psfile special): document llx/lly/urx/ury, based on

@@ -199,7 +199,7 @@ extern char *infont ;
 int
 residentfont P1C(register fontdesctype *, curfnt)
 {
-   register shalfword i ;
+   int i ;
    struct resfont *p ;
 
 /*
