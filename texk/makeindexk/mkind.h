@@ -342,9 +342,9 @@ ensuing.
 /*====================================================================*/
 
 #if USE_KPATHSEA
-#define VERSION       "version 2.14 [02-Oct-2002] (kpathsea + Thai support)"
+#define VERSION       "version 2.15 [12-Oct-2007] (kpathsea + Thai support)"
 #else
-#define VERSION       "version 2.14 [02-Oct-2002] (with Thai support)"
+#define VERSION       "version 2.15 [12-Oct-2007] (with Thai support)"
 #endif
 
 #define PUT_VERSION { \
