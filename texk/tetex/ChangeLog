@@ -1,3 +1,8 @@
+2007-10-12  Karl Berry  <karl@tug.org>
+
+	* texlinks: new option -u[nlink] for uninstall.
+	From Edd Barrett, 10 Oct 2007 11:05:55.
+
 2007-09-30  Karl Berry  <karl@tug.org>
 
 	* texconfig-sys: export texconfig_sys.
