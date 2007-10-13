@@ -1,55 +1,813 @@
-epdf.o: epdf.c ptexlib.h ../pdftexd.h ../texmfmp.h ../cpascal.h \
- ../config.h ../help.h ../texmfmem.h ../pdftexcoerce.h ptexmac.h
-mapfile.o: mapfile.c ptexlib.h ../pdftexd.h ../texmfmp.h ../cpascal.h \
- ../config.h ../help.h ../texmfmem.h ../pdftexcoerce.h ptexmac.h
-papersiz.o: papersiz.c ptexlib.h ../pdftexd.h ../texmfmp.h \
- ../cpascal.h ../config.h ../help.h ../texmfmem.h ../pdftexcoerce.h \
- ptexmac.h
-utils.o: utils.c ptexlib.h ../pdftexd.h ../texmfmp.h ../cpascal.h \
- ../config.h ../help.h ../texmfmem.h ../pdftexcoerce.h ptexmac.h \
- ../../../libs/zlib/zlib.h ../../../libs/zlib/zconf.h \
- ../../../libs/md5/md5.h pdftexextra.h \
- ../../../libs/obsdcompat/openbsd-compat.h
-vfpacket.o: vfpacket.c ptexlib.h ../pdftexd.h ../texmfmp.h \
- ../cpascal.h ../config.h ../help.h ../texmfmem.h ../pdftexcoerce.h \
- ptexmac.h
-pkin.o: pkin.c ptexlib.h ../pdftexd.h ../texmfmp.h ../cpascal.h \
- ../config.h ../help.h ../texmfmem.h ../pdftexcoerce.h ptexmac.h
-writefont.o: writefont.c ../../../libs/xpdf/goo/gmem.h ptexlib.h \
- ../pdftexd.h ../texmfmp.h ../cpascal.h ../config.h ../help.h \
- ../texmfmem.h ../pdftexcoerce.h ptexmac.h
-writet1.o: writet1.c ptexlib.h ../pdftexd.h ../texmfmp.h ../cpascal.h \
- ../config.h ../help.h ../texmfmem.h ../pdftexcoerce.h ptexmac.h
-writet3.o: writet3.c ptexlib.h ../pdftexd.h ../texmfmp.h ../cpascal.h \
- ../config.h ../help.h ../texmfmem.h ../pdftexcoerce.h ptexmac.h
-writezip.o: writezip.c ptexlib.h ../pdftexd.h ../texmfmp.h \
- ../cpascal.h ../config.h ../help.h ../texmfmem.h ../pdftexcoerce.h \
- ptexmac.h ../../../libs/zlib/zlib.h ../../../libs/zlib/zconf.h
-writeenc.o: writeenc.c ptexlib.h ../pdftexd.h ../texmfmp.h \
- ../cpascal.h ../config.h ../help.h ../texmfmem.h ../pdftexcoerce.h \
- ptexmac.h
-writettf.o: writettf.c ptexlib.h writettf.h ../pdftexd.h ../texmfmp.h \
- ../cpascal.h ../config.h ../help.h ../texmfmem.h ../pdftexcoerce.h \
- ptexmac.h macnames.c
-writejpg.o: writejpg.c ptexlib.h ../pdftexd.h ../texmfmp.h \
- ../cpascal.h ../config.h ../help.h ../texmfmem.h ../pdftexcoerce.h \
- ptexmac.h image.h
-writepng.o: writepng.c ptexlib.h ../pdftexd.h ../texmfmp.h \
- ../cpascal.h ../config.h ../help.h ../texmfmem.h ../pdftexcoerce.h \
- ptexmac.h image.h
-writeimg.o: writeimg.c ptexlib.h ../pdftexd.h ../texmfmp.h \
- ../cpascal.h ../config.h ../help.h ../texmfmem.h ../pdftexcoerce.h \
- ptexmac.h image.h
-pdftoepdf.o: pdftoepdf.cc ../../../libs/xpdf/xpdf/Object.h \
- ../../../libs/xpdf/goo/gmem.h ../../../libs/xpdf/xpdf/Array.h \
- ../../../libs/xpdf/xpdf/Dict.h ../../../libs/xpdf/xpdf/Stream.h \
- ../../../libs/xpdf/xpdf/XRef.h ../../../libs/xpdf/xpdf/Catalog.h \
- ../../../libs/xpdf/xpdf/Page.h ../../../libs/xpdf/xpdf/GfxFont.h \
- ../../../libs/xpdf/xpdf/Error.h epdf.h
-ttf2afm.o: ttf2afm.c writettf.h macnames.c
-pdftosrc.o: pdftosrc.cc ../../../libs/xpdf/xpdf/Object.h \
- ../../../libs/xpdf/xpdf/Array.h ../../../libs/xpdf/xpdf/Dict.h \
- ../../../libs/xpdf/xpdf/Stream.h ../../../libs/xpdf/xpdf/XRef.h \
- ../../../libs/xpdf/xpdf/Catalog.h ../../../libs/xpdf/xpdf/Page.h \
- ../../../libs/xpdf/xpdf/PDFDoc.h ../../../libs/xpdf/xpdf/Link.h \
- ../../../libs/xpdf/xpdf/Error.h ../../../libs/xpdf/xpdf/config.h
+avl.o: ../../../../texk/web2c/pdftexdir/avl.c \
+  ../../../../texk/web2c/pdftexdir/avl.h
+avlstuff.o: ../../../../texk/web2c/pdftexdir/avlstuff.c \
+  ../../../../texk/web2c/pdftexdir/ptexlib.h ../pdftexd.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmp.h \
+  ../../../../texk/web2c/pdftexdir/../cpascal.h \
+  ../../../../texk/web2c/pdftexdir/../config.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/config.h \
+  ../../kpathsea/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-std.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-unistd.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/systypes.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-memstr.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-errno.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-minmax.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-limits.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-proto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/debug.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/types.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/lib.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/progname.h \
+  ../../web2c/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-vararg.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-fopen.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/getopt.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/proginit.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-file.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/variable.h \
+  ../../../../texk/web2c/pdftexdir/../help.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-pathch.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-ctype.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-make.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmem.h ../pdftexcoerce.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/pdftex.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/ptexlib.h \
+  ../../../../texk/web2c/pdftexdir/ptexmac.h \
+  ../../../../texk/web2c/pdftexdir/avlstuff.h \
+  ../../../../texk/web2c/pdftexdir/avl.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/openbsd-compat.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/includes.h \
+  ../../../libs/xpdf/../obsdcompat/config.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/defines.h
+epdf.o: ../../../../texk/web2c/pdftexdir/epdf.c \
+  ../../../../texk/web2c/pdftexdir/ptexlib.h ../pdftexd.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmp.h \
+  ../../../../texk/web2c/pdftexdir/../cpascal.h \
+  ../../../../texk/web2c/pdftexdir/../config.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/config.h \
+  ../../kpathsea/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-std.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-unistd.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/systypes.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-memstr.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-errno.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-minmax.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-limits.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-proto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/debug.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/types.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/lib.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/progname.h \
+  ../../web2c/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-vararg.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-fopen.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/getopt.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/proginit.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-file.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/variable.h \
+  ../../../../texk/web2c/pdftexdir/../help.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-pathch.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-ctype.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-make.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmem.h ../pdftexcoerce.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/pdftex.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/ptexlib.h \
+  ../../../../texk/web2c/pdftexdir/ptexmac.h \
+  ../../../../texk/web2c/pdftexdir/avlstuff.h \
+  ../../../../texk/web2c/pdftexdir/avl.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/openbsd-compat.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/includes.h \
+  ../../../libs/xpdf/../obsdcompat/config.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/defines.h
+macnames.o: ../../../../texk/web2c/pdftexdir/macnames.c
+mapfile.o: ../../../../texk/web2c/pdftexdir/mapfile.c \
+  ../../../../texk/web2c/pdftexdir/ptexlib.h ../pdftexd.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmp.h \
+  ../../../../texk/web2c/pdftexdir/../cpascal.h \
+  ../../../../texk/web2c/pdftexdir/../config.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/config.h \
+  ../../kpathsea/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-std.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-unistd.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/systypes.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-memstr.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-errno.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-minmax.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-limits.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-proto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/debug.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/types.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/lib.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/progname.h \
+  ../../web2c/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-vararg.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-fopen.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/getopt.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/proginit.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-file.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/variable.h \
+  ../../../../texk/web2c/pdftexdir/../help.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-pathch.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-ctype.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-make.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmem.h ../pdftexcoerce.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/pdftex.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/ptexlib.h \
+  ../../../../texk/web2c/pdftexdir/ptexmac.h \
+  ../../../../texk/web2c/pdftexdir/avlstuff.h \
+  ../../../../texk/web2c/pdftexdir/avl.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/openbsd-compat.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/includes.h \
+  ../../../libs/xpdf/../obsdcompat/config.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/defines.h
+pkin.o: ../../../../texk/web2c/pdftexdir/pkin.c \
+  ../../../../texk/web2c/pdftexdir/ptexlib.h ../pdftexd.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmp.h \
+  ../../../../texk/web2c/pdftexdir/../cpascal.h \
+  ../../../../texk/web2c/pdftexdir/../config.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/config.h \
+  ../../kpathsea/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-std.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-unistd.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/systypes.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-memstr.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-errno.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-minmax.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-limits.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-proto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/debug.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/types.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/lib.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/progname.h \
+  ../../web2c/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-vararg.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-fopen.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/getopt.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/proginit.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-file.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/variable.h \
+  ../../../../texk/web2c/pdftexdir/../help.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-pathch.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-ctype.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-make.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmem.h ../pdftexcoerce.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/pdftex.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/ptexlib.h \
+  ../../../../texk/web2c/pdftexdir/ptexmac.h \
+  ../../../../texk/web2c/pdftexdir/avlstuff.h \
+  ../../../../texk/web2c/pdftexdir/avl.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/openbsd-compat.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/includes.h \
+  ../../../libs/xpdf/../obsdcompat/config.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/defines.h
+subfont.o: ../../../../texk/web2c/pdftexdir/subfont.c \
+  ../../../../texk/web2c/pdftexdir/ptexlib.h ../pdftexd.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmp.h \
+  ../../../../texk/web2c/pdftexdir/../cpascal.h \
+  ../../../../texk/web2c/pdftexdir/../config.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/config.h \
+  ../../kpathsea/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-std.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-unistd.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/systypes.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-memstr.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-errno.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-minmax.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-limits.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-proto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/debug.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/types.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/lib.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/progname.h \
+  ../../web2c/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-vararg.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-fopen.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/getopt.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/proginit.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-file.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/variable.h \
+  ../../../../texk/web2c/pdftexdir/../help.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-pathch.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-ctype.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-make.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmem.h ../pdftexcoerce.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/pdftex.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/ptexlib.h \
+  ../../../../texk/web2c/pdftexdir/ptexmac.h \
+  ../../../../texk/web2c/pdftexdir/avlstuff.h \
+  ../../../../texk/web2c/pdftexdir/avl.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/openbsd-compat.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/includes.h \
+  ../../../libs/xpdf/../obsdcompat/config.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/defines.h
+tounicode.o: ../../../../texk/web2c/pdftexdir/tounicode.c \
+  ../../../../texk/web2c/pdftexdir/ptexlib.h ../pdftexd.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmp.h \
+  ../../../../texk/web2c/pdftexdir/../cpascal.h \
+  ../../../../texk/web2c/pdftexdir/../config.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/config.h \
+  ../../kpathsea/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-std.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-unistd.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/systypes.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-memstr.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-errno.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-minmax.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-limits.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-proto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/debug.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/types.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/lib.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/progname.h \
+  ../../web2c/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-vararg.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-fopen.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/getopt.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/proginit.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-file.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/variable.h \
+  ../../../../texk/web2c/pdftexdir/../help.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-pathch.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-ctype.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-make.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmem.h ../pdftexcoerce.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/pdftex.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/ptexlib.h \
+  ../../../../texk/web2c/pdftexdir/ptexmac.h \
+  ../../../../texk/web2c/pdftexdir/avlstuff.h \
+  ../../../../texk/web2c/pdftexdir/avl.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/openbsd-compat.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/includes.h \
+  ../../../libs/xpdf/../obsdcompat/config.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/defines.h
+ttf2afm.o: ../../../../texk/web2c/pdftexdir/ttf2afm.c \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/kpathsea.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/config.h \
+  ../../kpathsea/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-std.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-unistd.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/systypes.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-memstr.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-errno.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-minmax.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-limits.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-proto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/debug.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/types.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/lib.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/progname.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/absolute.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-ctype.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-dir.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-fopen.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-namemx.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-pathch.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-pathmx.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-stat.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-vararg.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/cnf.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/concatn.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/db.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/str-list.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/default.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/expand.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/fn.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/fontmap.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/hash.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/getopt.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/line.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/magstep.h \
+  ../../kpathsea/paths.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/pathsearch.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/str-llist.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/proginit.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/readable.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/recorder.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-file.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-glyph.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-hush.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-make.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tilde.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/truncate.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/variable.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/xopendir.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/xstat.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/ptexmac.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/writettf.h \
+  ../../../../texk/web2c/pdftexdir/macnames.c
+utils.o: ../../../../texk/web2c/pdftexdir/utils.c \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/openbsd-compat.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/includes.h \
+  ../../../libs/xpdf/../obsdcompat/config.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/defines.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-proto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-stat.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/systypes.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-fopen.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/md5/md5.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/zlib/zlib.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/zlib/zconf.h \
+  ../../../../texk/web2c/pdftexdir/ptexlib.h ../pdftexd.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmp.h \
+  ../../../../texk/web2c/pdftexdir/../cpascal.h \
+  ../../../../texk/web2c/pdftexdir/../config.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/config.h \
+  ../../kpathsea/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-std.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-unistd.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-memstr.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-errno.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-minmax.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-limits.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/debug.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/types.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/lib.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/progname.h \
+  ../../web2c/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-vararg.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/getopt.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/proginit.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-file.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/variable.h \
+  ../../../../texk/web2c/pdftexdir/../help.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-pathch.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-ctype.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-make.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmem.h ../pdftexcoerce.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/pdftex.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/ptexlib.h \
+  ../../../../texk/web2c/pdftexdir/ptexmac.h \
+  ../../../../texk/web2c/pdftexdir/avlstuff.h \
+  ../../../../texk/web2c/pdftexdir/avl.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/libpng/png.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/zlib/zlib.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/libpng/pngconf.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/xpdf/xpdf/config.h
+vfpacket.o: ../../../../texk/web2c/pdftexdir/vfpacket.c \
+  ../../../../texk/web2c/pdftexdir/ptexlib.h ../pdftexd.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmp.h \
+  ../../../../texk/web2c/pdftexdir/../cpascal.h \
+  ../../../../texk/web2c/pdftexdir/../config.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/config.h \
+  ../../kpathsea/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-std.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-unistd.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/systypes.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-memstr.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-errno.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-minmax.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-limits.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-proto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/debug.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/types.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/lib.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/progname.h \
+  ../../web2c/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-vararg.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-fopen.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/getopt.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/proginit.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-file.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/variable.h \
+  ../../../../texk/web2c/pdftexdir/../help.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-pathch.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-ctype.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-make.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmem.h ../pdftexcoerce.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/pdftex.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/ptexlib.h \
+  ../../../../texk/web2c/pdftexdir/ptexmac.h \
+  ../../../../texk/web2c/pdftexdir/avlstuff.h \
+  ../../../../texk/web2c/pdftexdir/avl.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/openbsd-compat.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/includes.h \
+  ../../../libs/xpdf/../obsdcompat/config.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/defines.h
+writeenc.o: ../../../../texk/web2c/pdftexdir/writeenc.c \
+  ../../../../texk/web2c/pdftexdir/ptexlib.h ../pdftexd.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmp.h \
+  ../../../../texk/web2c/pdftexdir/../cpascal.h \
+  ../../../../texk/web2c/pdftexdir/../config.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/config.h \
+  ../../kpathsea/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-std.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-unistd.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/systypes.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-memstr.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-errno.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-minmax.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-limits.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-proto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/debug.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/types.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/lib.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/progname.h \
+  ../../web2c/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-vararg.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-fopen.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/getopt.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/proginit.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-file.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/variable.h \
+  ../../../../texk/web2c/pdftexdir/../help.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-pathch.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-ctype.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-make.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmem.h ../pdftexcoerce.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/pdftex.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/ptexlib.h \
+  ../../../../texk/web2c/pdftexdir/ptexmac.h \
+  ../../../../texk/web2c/pdftexdir/avlstuff.h \
+  ../../../../texk/web2c/pdftexdir/avl.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/openbsd-compat.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/includes.h \
+  ../../../libs/xpdf/../obsdcompat/config.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/defines.h
+writefont.o: ../../../../texk/web2c/pdftexdir/writefont.c \
+  ../../../../texk/web2c/pdftexdir/ptexlib.h ../pdftexd.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmp.h \
+  ../../../../texk/web2c/pdftexdir/../cpascal.h \
+  ../../../../texk/web2c/pdftexdir/../config.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/config.h \
+  ../../kpathsea/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-std.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-unistd.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/systypes.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-memstr.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-errno.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-minmax.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-limits.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-proto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/debug.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/types.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/lib.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/progname.h \
+  ../../web2c/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-vararg.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-fopen.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/getopt.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/proginit.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-file.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/variable.h \
+  ../../../../texk/web2c/pdftexdir/../help.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-pathch.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-ctype.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-make.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmem.h ../pdftexcoerce.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/pdftex.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/ptexlib.h \
+  ../../../../texk/web2c/pdftexdir/ptexmac.h \
+  ../../../../texk/web2c/pdftexdir/avlstuff.h \
+  ../../../../texk/web2c/pdftexdir/avl.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/openbsd-compat.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/includes.h \
+  ../../../libs/xpdf/../obsdcompat/config.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/defines.h
+writeimg.o: ../../../../texk/web2c/pdftexdir/writeimg.c \
+  ../../../../texk/web2c/pdftexdir/ptexlib.h ../pdftexd.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmp.h \
+  ../../../../texk/web2c/pdftexdir/../cpascal.h \
+  ../../../../texk/web2c/pdftexdir/../config.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/config.h \
+  ../../kpathsea/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-std.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-unistd.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/systypes.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-memstr.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-errno.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-minmax.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-limits.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-proto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/debug.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/types.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/lib.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/progname.h \
+  ../../web2c/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-vararg.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-fopen.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/getopt.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/proginit.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-file.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/variable.h \
+  ../../../../texk/web2c/pdftexdir/../help.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-pathch.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-ctype.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-make.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmem.h ../pdftexcoerce.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/pdftex.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/ptexlib.h \
+  ../../../../texk/web2c/pdftexdir/ptexmac.h \
+  ../../../../texk/web2c/pdftexdir/avlstuff.h \
+  ../../../../texk/web2c/pdftexdir/avl.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/openbsd-compat.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/includes.h \
+  ../../../libs/xpdf/../obsdcompat/config.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/defines.h \
+  ../../../../texk/web2c/pdftexdir/image.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/libpng/png.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/zlib/zlib.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/zlib/zconf.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/libpng/pngconf.h
+writejbig2.o: ../../../../texk/web2c/pdftexdir/writejbig2.c \
+  ../../../../texk/web2c/pdftexdir/writejbig2.h \
+  ../../../../texk/web2c/pdftexdir/ptexlib.h ../pdftexd.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmp.h \
+  ../../../../texk/web2c/pdftexdir/../cpascal.h \
+  ../../../../texk/web2c/pdftexdir/../config.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/config.h \
+  ../../kpathsea/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-std.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-unistd.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/systypes.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-memstr.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-errno.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-minmax.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-limits.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-proto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/debug.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/types.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/lib.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/progname.h \
+  ../../web2c/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-vararg.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-fopen.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/getopt.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/proginit.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-file.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/variable.h \
+  ../../../../texk/web2c/pdftexdir/../help.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-pathch.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-ctype.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-make.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmem.h ../pdftexcoerce.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/pdftex.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/ptexlib.h \
+  ../../../../texk/web2c/pdftexdir/ptexmac.h \
+  ../../../../texk/web2c/pdftexdir/avlstuff.h \
+  ../../../../texk/web2c/pdftexdir/avl.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/openbsd-compat.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/includes.h \
+  ../../../libs/xpdf/../obsdcompat/config.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/defines.h \
+  ../../../../texk/web2c/pdftexdir/image.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/libpng/png.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/zlib/zlib.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/zlib/zconf.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/libpng/pngconf.h
+writejpg.o: ../../../../texk/web2c/pdftexdir/writejpg.c \
+  ../../../../texk/web2c/pdftexdir/ptexlib.h ../pdftexd.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmp.h \
+  ../../../../texk/web2c/pdftexdir/../cpascal.h \
+  ../../../../texk/web2c/pdftexdir/../config.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/config.h \
+  ../../kpathsea/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-std.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-unistd.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/systypes.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-memstr.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-errno.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-minmax.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-limits.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-proto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/debug.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/types.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/lib.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/progname.h \
+  ../../web2c/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-vararg.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-fopen.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/getopt.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/proginit.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-file.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/variable.h \
+  ../../../../texk/web2c/pdftexdir/../help.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-pathch.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-ctype.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-make.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmem.h ../pdftexcoerce.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/pdftex.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/ptexlib.h \
+  ../../../../texk/web2c/pdftexdir/ptexmac.h \
+  ../../../../texk/web2c/pdftexdir/avlstuff.h \
+  ../../../../texk/web2c/pdftexdir/avl.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/openbsd-compat.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/includes.h \
+  ../../../libs/xpdf/../obsdcompat/config.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/defines.h \
+  ../../../../texk/web2c/pdftexdir/image.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/libpng/png.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/zlib/zlib.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/zlib/zconf.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/libpng/pngconf.h
+writepng.o: ../../../../texk/web2c/pdftexdir/writepng.c \
+  ../../../../texk/web2c/pdftexdir/ptexlib.h ../pdftexd.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmp.h \
+  ../../../../texk/web2c/pdftexdir/../cpascal.h \
+  ../../../../texk/web2c/pdftexdir/../config.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/config.h \
+  ../../kpathsea/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-std.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-unistd.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/systypes.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-memstr.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-errno.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-minmax.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-limits.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-proto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/debug.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/types.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/lib.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/progname.h \
+  ../../web2c/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-vararg.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-fopen.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/getopt.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/proginit.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-file.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/variable.h \
+  ../../../../texk/web2c/pdftexdir/../help.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-pathch.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-ctype.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-make.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmem.h ../pdftexcoerce.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/pdftex.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/ptexlib.h \
+  ../../../../texk/web2c/pdftexdir/ptexmac.h \
+  ../../../../texk/web2c/pdftexdir/avlstuff.h \
+  ../../../../texk/web2c/pdftexdir/avl.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/openbsd-compat.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/includes.h \
+  ../../../libs/xpdf/../obsdcompat/config.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/defines.h \
+  ../../../../texk/web2c/pdftexdir/image.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/libpng/png.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/zlib/zlib.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/zlib/zconf.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/libpng/pngconf.h
+writet1.o: ../../../../texk/web2c/pdftexdir/writet1.c \
+  ../../../../texk/web2c/pdftexdir/ptexlib.h ../pdftexd.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmp.h \
+  ../../../../texk/web2c/pdftexdir/../cpascal.h \
+  ../../../../texk/web2c/pdftexdir/../config.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/config.h \
+  ../../kpathsea/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-std.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-unistd.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/systypes.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-memstr.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-errno.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-minmax.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-limits.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-proto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/debug.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/types.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/lib.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/progname.h \
+  ../../web2c/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-vararg.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-fopen.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/getopt.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/proginit.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-file.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/variable.h \
+  ../../../../texk/web2c/pdftexdir/../help.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-pathch.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-ctype.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-make.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmem.h ../pdftexcoerce.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/pdftex.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/ptexlib.h \
+  ../../../../texk/web2c/pdftexdir/ptexmac.h \
+  ../../../../texk/web2c/pdftexdir/avlstuff.h \
+  ../../../../texk/web2c/pdftexdir/avl.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/openbsd-compat.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/includes.h \
+  ../../../libs/xpdf/../obsdcompat/config.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/defines.h
+writet3.o: ../../../../texk/web2c/pdftexdir/writet3.c \
+  ../../../../texk/web2c/pdftexdir/ptexlib.h ../pdftexd.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmp.h \
+  ../../../../texk/web2c/pdftexdir/../cpascal.h \
+  ../../../../texk/web2c/pdftexdir/../config.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/config.h \
+  ../../kpathsea/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-std.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-unistd.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/systypes.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-memstr.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-errno.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-minmax.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-limits.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-proto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/debug.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/types.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/lib.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/progname.h \
+  ../../web2c/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-vararg.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-fopen.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/getopt.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/proginit.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-file.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/variable.h \
+  ../../../../texk/web2c/pdftexdir/../help.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-pathch.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-ctype.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-make.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmem.h ../pdftexcoerce.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/pdftex.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/ptexlib.h \
+  ../../../../texk/web2c/pdftexdir/ptexmac.h \
+  ../../../../texk/web2c/pdftexdir/avlstuff.h \
+  ../../../../texk/web2c/pdftexdir/avl.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/openbsd-compat.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/includes.h \
+  ../../../libs/xpdf/../obsdcompat/config.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/defines.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-glyph.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/magstep.h
+writettf.o: ../../../../texk/web2c/pdftexdir/writettf.c \
+  ../../../../texk/web2c/pdftexdir/ptexlib.h ../pdftexd.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmp.h \
+  ../../../../texk/web2c/pdftexdir/../cpascal.h \
+  ../../../../texk/web2c/pdftexdir/../config.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/config.h \
+  ../../kpathsea/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-std.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-unistd.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/systypes.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-memstr.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-errno.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-minmax.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-limits.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-proto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/debug.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/types.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/lib.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/progname.h \
+  ../../web2c/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-vararg.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-fopen.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/getopt.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/proginit.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-file.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/variable.h \
+  ../../../../texk/web2c/pdftexdir/../help.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-pathch.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-ctype.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-make.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmem.h ../pdftexcoerce.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/pdftex.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/ptexlib.h \
+  ../../../../texk/web2c/pdftexdir/ptexmac.h \
+  ../../../../texk/web2c/pdftexdir/avlstuff.h \
+  ../../../../texk/web2c/pdftexdir/avl.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/openbsd-compat.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/includes.h \
+  ../../../libs/xpdf/../obsdcompat/config.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/defines.h \
+  ../../../../texk/web2c/pdftexdir/writettf.h \
+  ../../../../texk/web2c/pdftexdir/macnames.c
+writezip.o: ../../../../texk/web2c/pdftexdir/writezip.c \
+  ../../../../texk/web2c/pdftexdir/ptexlib.h ../pdftexd.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmp.h \
+  ../../../../texk/web2c/pdftexdir/../cpascal.h \
+  ../../../../texk/web2c/pdftexdir/../config.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/config.h \
+  ../../kpathsea/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-std.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-unistd.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/systypes.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-memstr.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-errno.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-minmax.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-limits.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-proto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/debug.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/types.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/lib.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/progname.h \
+  ../../web2c/c-auto.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-vararg.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-fopen.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/getopt.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/proginit.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-file.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/variable.h \
+  ../../../../texk/web2c/pdftexdir/../help.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-pathch.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/c-ctype.h \
+  ../../../../texk/web2c/pdftexdir/../../kpathsea/tex-make.h \
+  ../../../../texk/web2c/pdftexdir/../texmfmem.h ../pdftexcoerce.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/pdftex.h \
+  ../../../../texk/web2c/pdftexdir/../pdftexdir/ptexlib.h \
+  ../../../../texk/web2c/pdftexdir/ptexmac.h \
+  ../../../../texk/web2c/pdftexdir/avlstuff.h \
+  ../../../../texk/web2c/pdftexdir/avl.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/openbsd-compat.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/includes.h \
+  ../../../libs/xpdf/../obsdcompat/config.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/obsdcompat/defines.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/zlib/zlib.h \
+  ../../../../texk/web2c/pdftexdir/../../../libs/zlib/zconf.h

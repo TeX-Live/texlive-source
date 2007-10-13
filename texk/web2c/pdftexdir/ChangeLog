@@ -1,3 +1,8 @@
+2007-10-14  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (depend): Run $(CXX) -MM directly, not through make.
+	* depend.mk: update.
+
 2004-08-21  Peter Breitenlohner <peb@mppmu.mpg.de>
 
 	* pdfetex.ch2: Adapted to e-TeX version 2.2.
