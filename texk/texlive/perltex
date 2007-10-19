@@ -15,7 +15,7 @@
 #
 # This is a generated file.
 #
-# Copyright (C) 2007, Scott Pakin <scott+pt@pakin.org>
+# Copyright (C) 2007 Scott Pakin <scott+pt@pakin.org>
 #
 # This file may be distributed and/or modified under the conditions
 # of the LaTeX Project Public License, either version 1.3c of this
@@ -37,6 +37,7 @@ use Opcode;
 use Getopt::Long;
 use Pod::Usage;
 use File::Basename;
+use Fcntl;
 use POSIX;
 use warnings;
 use strict;
@@ -52,6 +53,7 @@ my $toflag;
 my $fromflag;
 my $doneflag;
 my $logfile;
+my $pipe;
 my $styfile;
 my @macroexpansions;
 my $sandbox = new Safe;
@@ -86,21 +88,28 @@ $toflag = $jobname . ".tfpl";
 $fromflag = $jobname . ".ffpl";
 $doneflag = $jobname . ".dfpl";
 $logfile = $jobname . ".lgpl";
+$pipe = $jobname . ".pipe";
 $latexcmdline[$firstcmd] =
-    sprintf '\makeatletter' . '\def%s{%s}' x 6 . '\makeatother%s',
+    sprintf '\makeatletter' . '\def%s{%s}' x 7 . '\makeatother%s',
     '\plmac@tag', $separator,
     '\plmac@tofile', $toperl,
     '\plmac@fromfile', $fromperl,
     '\plmac@toflag', $toflag,
     '\plmac@fromflag', $fromflag,
     '\plmac@doneflag', $doneflag,
+    '\plmac@pipe', $pipe,
     $latexcmdline[$firstcmd];
-foreach my $file ($toperl, $fromperl, $toflag, $fromflag, $doneflag) {
+foreach my $file ($toperl, $fromperl, $toflag, $fromflag, $doneflag, $pipe) {
     unlink $file while -e $file;
 }
 open (LOGFILE, ">$logfile") || die "open(\"$logfile\"): $!\n";
 if (defined $styfile) {
     open (STYFILE, ">$styfile") || die "open(\"$styfile\"): $!\n";
+}
+if (!eval {mkfifo($pipe, 0600)}) {
+    sysopen PIPE, $pipe, O_WRONLY|O_CREAT, 0755;
+    print PIPE "\\endinput\n";
+    close PIPE;
 }
 defined ($latexpid = fork) || die "fork: $!\n";
 unshift @latexcmdline, $latexprog;
@@ -122,7 +131,7 @@ while (1) {
           sleep 0;
           if (waitpid($latexpid, &WNOHANG)==-1) {
               foreach my $file ($toperl, $fromperl, $toflag,
-                                $fromflag, $doneflag) {
+                                $fromflag, $doneflag, $pipe) {
                   unlink $file while -e $file;
               }
               undef $latexpid;
@@ -220,10 +229,18 @@ while (1) {
     unlink $doneflag while -e $doneflag;
     open (FROMFLAG, ">$fromflag") || die "open($fromflag): $!\n";
     close FROMFLAG;
+    if (open (PIPE, ">$pipe")) {
+print PIPE "\\endinput\n";
+close PIPE;
+    }
     $awaitexists->($toperl);
     unlink $fromflag while -e $fromflag;
     open (DONEFLAG, ">$doneflag") || die "open($doneflag): $!\n";
     close DONEFLAG;
+    if (open (PIPE, ">$pipe")) {
+print PIPE "\\endinput\n";
+close PIPE;
+    }
 }
 END {
     close LOGFILE;
@@ -287,7 +304,7 @@ perltex
 [B<--latex>=I<program>]
 [B<-->[B<no>]B<safe>]
 [B<--permit>=I<feature>]
-[B<--makesty]
+[B<--makesty>]
 [I<latex options>]
 
 =head1 DESCRIPTION
@@ -328,17 +345,17 @@ B<pdflatex> instead of ordinary B<latex>.
 
 =item B<-->[B<no>]B<safe>
 
-Enable or disable sandboxing.  With the default of C<--safe>,
+Enable or disable sandboxing.  With the default of B<--safe>,
 B<perltex> executes the code from a C<\perlnewcommand> or
 C<\perlrenewcommand> macro within a protected environment that
 prohibits ``unsafe'' operations such as accessing files or executing
-external programs.  Specifying C<--nosafe> gives the LaTeX document
+external programs.  Specifying B<--nosafe> gives the LaTeX document
 I<carte blanche> to execute any arbitrary Perl code, including that
 which can harm the user's files.  See L<Safe> for more information.
 
 =item B<--permit>=I<feature>
 
-Permit particular Perl operations to be performed.  The C<--permit>
+Permit particular Perl operations to be performed.  The B<--permit>
 option, which can be specified more than once on the command line,
 enables finer-grained control over the B<perltex> sandbox.  See
 L<Opcode> for more information.
@@ -367,7 +384,7 @@ In its simplest form, B<perltex> is run just like B<latex>:
 
     perltex myfile.tex
 
-To use B<pdflatex> instead of regular B<latex>, use the C<--latex>
+To use B<pdflatex> instead of regular B<latex>, use the B<--latex>
 option:
 
     perltex --latex=pdflatex myfile.tex
@@ -375,7 +392,7 @@ option:
 If LaTeX gives a ``C<trapped by operation mask>'' error and you trust
 the F<.tex> file you're trying to compile not to execute malicious
 Perl code (e.g., because you wrote it yourself), you can disable
-B<perltex>'s safety mechansisms with C<--nosafe>:
+B<perltex>'s safety mechansisms with B<--nosafe>:
 
     perltex --nosafe myfile.tex
 
@@ -396,7 +413,7 @@ B<perltex> honors the following environment variables:
 
 Specify the filename of the LaTeX compiler.  The LaTeX compiler
 defaults to ``C<latex>''.  The C<PERLTEX> environment variable
-overrides this default, and the C<--latex> command-line option (see
+overrides this default, and the B<--latex> command-line option (see
 L</OPTIONS>) overrides that.
 
 =back
