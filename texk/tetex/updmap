@@ -1,42 +1,12 @@
 #!/bin/sh
-
-###############################################################################
 # updmap: utility to maintain map files for outline fonts.
-#
 # Thomas Esser. Public domain.
-# Usage: updmap [option] ... [command]
-#
-# Valid options:
-#   --cnffile file             specify configuration file
-#   --dvipsoutputdir directory   specify output directory (dvips syntax)
-#   --pdftexoutputdir directory  specify output directory (pdftex syntax)
-#   --dvipdfmoutputdir directory specify output directory (dvipdfm syntax)
-#   --outputdir directory      specify output directory (for all files)
-#   --nohash                   do not run texhash
-#   --nomkmap                  do not recreate map files
-#   --quiet                    reduce verbosity
-#
-# Valid commands:
-#   --edit                     edit $cnfFileShort file
-#   --help                     show this message
-#   --showoptions item         show alternatives for options
-#   --setoption option value   set option where option is one
-#                              of dvipsPreferOutline, LW35, dvipsDownloadBase35,
-#                              pdftexDownloadBase14 or dvipdfmDownloadBase14
-#   --setoption option=value   see above, just different syntax
-#   --enable maptype mapfile   add or enable a Map or MixedMap
-#   --enable Map=mapfile       add or enable a Map
-#   --enable MixedMap=mapfile  add or enable a MixedMap
-#   --disable mapfile          disable Map or MixedMap for mapfile
-#   --syncwithtrees            entries with unavailable map files will be
-#                              disabled in the config file
-#   --listmaps                 list all active and inactive maps
-#   --listavailablemaps        same as --listmaps, but filter out
-#                              unavailable map files
-###############################################################################
+# Run with --help for usage.
 
 ###############################################################################
 # program history:
+#   Post-te retirement, now maintained in TeX Live; see
+#     Build/texk/tetex/ChangeLog for further changes.
 #   Fr Jul 22 07:22:38 CEST 2005
 #      write hint about log file into output files
 #   Fr Apr  8 19:15:05 CEST 2005
@@ -122,9 +92,10 @@ export PATH
 test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 
 # the version string
-version=1167072206 # seconds since `00:00:00 1970-01-01 UTC'
+version=1192751840 # seconds since `00:00:00 1970-01-01 UTC'
                    # date '+%s' (with GNU date)
 
+# 
 ###############################################################################
 # help()
 #   display help message and exit
@@ -132,35 +103,55 @@ version=1167072206 # seconds since `00:00:00 1970-01-01 UTC'
 help()
 {
   cat <<eof
-Usage: updmap [option] ... [command]
+Usage: updmap [OPTION]...  [COMMAND]...
+
+Update the default font map files used by pdftex, dvips, and dvipdfm, as
+determined by updmap.cfg.  Among other things, these font map files are
+used to determine which fonts should be found as bitmaps and which as
+outlines, and to determine which fonts are included in the output.
+
+By default, the filename database is also rebuilt (with mktexlsr).
 
 Valid options:
-  --cnffile file             specify configuration file
-  --dvipsoutputdir directory   specify output directory (dvips syntax)
-  --pdftexoutputdir directory  specify output directory (pdftex syntax)
-  --dvipdfmoutputdir directory specify output directory (dvipdfm syntax)
-  --outputdir directory      specify output directory (for all files)
-  --nohash                   do not run texhash
-  --nomkmap                  do not recreate map files
-  --quiet                    reduce verbosity
+  --cnffile FILE            read FILE for the updmap configuration
+  --pdftexoutputdir DIR     specify output directory (pdftex syntax)
+  --dvipsoutputdir DIR      specify output directory (dvips syntax)
+  --dvipdfmoutputdir DIR    specify output directory (dvipdfm syntax)
+  --outputdir DIR           specify output directory (for all files)
+  --copy                    cp generic files rather than using symlinks
+  --nomkmap                 do not recreate map files
+  --nohash                  do not run texhash
+  -n, --dry-run             only show the configuration, no output
+  --quiet                   reduce verbosity
 
 Valid commands:
-  --edit                     edit $cnfFileShort file
-  --help                     show this message
-  --showoptions item         show alternatives for options
-  --setoption option value   set option where option is one
-                             of dvipsPreferOutline, LW35, dvipsDownloadBase35,
-                             pdftexDownloadBase14 or dvipdfmDownloadBase14
-  --setoption option=value   see above, just different syntax
-  --enable maptype mapfile   add or enable a Map or MixedMap
-  --enable Map=mapfile       add or enable a Map
-  --enable MixedMap=mapfile  add or enable a MixedMap
-  --disable mapfile          disable Map or MixedMap for mapfile
-  --syncwithtrees            entries with unavailable map files will be
+  --help                    show this message
+  --edit                    edit $cnfFileShort file
+  --showoptions ITEM        show alternatives for options
+  --setoption OPTION VALUE  set option, where OPTION is one of:
+                             dvipsPreferOutline LW35 dvipsDownloadBase35
+                             pdftexDownloadBase14 dvipdfmDownloadBase14
+  --setoption OPTION=VALUE  see above, just different syntax
+  --enable MAPTYPE MAPFILE  add MAPFILE as a MAPTYPE, one of: Map MixedMap
+  --enable Map=MAPFILE      add MAPFILE as a Map
+  --enable MixedMap=MAPFILE add or enable MAPFILE as a MixedMap
+  --disable MAPFILE         disable MAPFILE, whether Map or MixedMap
+  --syncwithtrees           entries with unavailable map files will be
                              disabled in the config file
-  --listmaps                 list all active and inactive maps
-  --listavailablemaps        same as --listmaps, but filter out
+  --listmaps                list all active and inactive maps
+  --listavailablemaps       same as --listmaps, but without
                              unavailable map files
+
+Explanation of the map types: the (only) difference between Map and
+MixedMap is that MixedMap entries are not added to psfonts_pk.map.  The
+purpose is to help users with printers that render Type 1 outline fonts
+worse than mode-tuned Type 1 bitmap fonts.  So MixedMap is used for
+fonts that are available as both Type 1 and Metafont.
+
+To see the precise locations of the various files that will be read and
+written, run updmap -n.
+
+Report bugs to <tex-k@tug.org>.
 eof
   (exit 0); exit
 }
@@ -221,29 +212,37 @@ cfgval()
 
 ###############################################################################
 # setupSymlinks()
-#   set symlink for psfonts.map according to dvipsPreferOutline variable
+#   set symlink (or copy)
+#    for psfonts.map according to dvipsPreferOutline variable,
+#    and for pdftex.map and dvipdfm.map according to pdftexDownloadBase14.
 ###############################################################################
 setupSymlinks()
 {
-  rm -f "$dvipsoutputdir/psfonts.map"
+  (
+  cd "$dvipsoutputdir" || exit 1
+  rm -f psfonts.map
   if test "x$dvipsPreferOutline" = xtrue; then
-    ln -s psfonts_t1.map "$dvipsoutputdir/psfonts.map"
+    $link_cmd psfonts_t1.map psfonts.map
   else
-    ln -s psfonts_pk.map "$dvipsoutputdir/psfonts.map"
+    $link_cmd psfonts_pk.map psfonts.map
   fi
 
-  rm -f "$pdftexoutputdir/pdftex.map"
+  cd "$pdftexoutputdir" || exit 1
+  rm -f pdftex.map
   if test "x$pdftexDownloadBase14" = xtrue; then
-    ln -s pdftex_dl14.map "$pdftexoutputdir/pdftex.map"
+    $link_cmd pdftex_dl14.map pdftex.map
   else
-    ln -s pdftex_ndl14.map "$pdftexoutputdir/pdftex.map"
+    $link_cmd pdftex_ndl14.map pdftex.map
   fi
-  rm -f "$dvipdfmoutputdir/dvipdfm.map"
+
+  cd "$dvipdfmoutputdir" || exit 1
+  rm -f dvipdfm.map
   if test "x$dvipdfmDownloadBase14" = xtrue; then
-    ln -s dvipdfm_dl14.map "$dvipdfmoutputdir/dvipdfm.map"
+    $link_cmd dvipdfm_dl14.map dvipdfm.map
   else
-    ln -s dvipdfm_ndl14.map "$dvipdfmoutputdir/dvipdfm.map"
+    $link_cmd dvipdfm_ndl14.map dvipdfm.map
   fi
+  )
 }
 
 ###############################################################################
@@ -851,9 +850,13 @@ setupLog()
     > "$log"
   fi
   if test -w "$log"; then
-    date > "$log"
-    verboseMsg "$progname: This is $progname, version $version"
-    verboseMsg "$progname: using transcript file \`$log'"
+    if $chicken_mode; then
+      log=
+    else
+      date > "$log"
+      verboseMsg "$progname: This is $progname, version $version"
+      verboseMsg "$progname: using transcript file \`$log'"
+    fi
   else
     log=
     verboseMsg "$progname: This is $progname, version $version"
@@ -890,6 +893,10 @@ processOptions()
           cfgparam=1; cnfFile=$2; shift;;
       --cnffile=*)
           cfgparam=1; cnfFile=`echo "$1" | sed 's/--cnffile=//'`;;
+      --copy)
+          link_cmd="cp";;
+      --dry-run|-n)
+          chicken_mode=true;;
       --dvipsoutputdir)
           dvipsoutputdirparam=1; dvipsoutputdir=$2; shift;;
       --dvipsoutputdir=*)
@@ -967,6 +974,7 @@ processOptions()
           cmd=showoptions; showoptionsItem=$2; shift;;
       --showoptions=*)
           cmd=showoptions; showoptionsItem=`echo "$1" | sed 's/--showoptions=//'`;;
+     
       --nohash)
           texhashEnabled=false;;
       --nomkmap)
@@ -1139,7 +1147,6 @@ $outputLinks"
   $notfound || texhashEnabled=false
 
   verboseCat <<-eof
-
 	updmap is creating new map files using the following configuration:
 
 	  config file: \`$cnfFile'
@@ -1155,12 +1162,18 @@ $outputLinks"
 eof
 
   verboseMsg
-  verboseMsg "$progname: Scanning for LW35 support files"
+  verboseMsg "$progname: scanning for LW35 support files"
   dvips35=`locateMap dvips35.map` || cleanup 1
   pdftex35=`locateMap pdftex35.map` || cleanup 1
   dvipdfm35=`locateMap dvipdfm35.map` || cleanup 1
   ps2pk35=`locateMap ps2pk35.map` || cleanup 1
 
+  if $chicken_mode; then
+    echo
+    echo "$progname: chicken mode, skipping all output generation, goodbye."
+    exit 0
+  fi
+  
   verboseMsg
   verboseMsg "$progname: Scanning for MixedMap entries:"
   catMaps '^MixedMap' > $tmp1 || cleanup 1
@@ -1285,7 +1298,9 @@ main()
   progname=updmap
   cmd=
   log=
-
+  chicken_mode=false
+  link_cmd="ln -s"
+  
   cfgparam=
   outputdirparam=
   cfgmaint=

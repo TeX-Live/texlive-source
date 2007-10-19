@@ -1,3 +1,12 @@
+2007-10-19  Karl Berry  <karl@tug.org>
+
+	* updmap (processOptions): add --copy and -n options.
+	(setupSymlinks): with --copy, cp instead of ln -s.
+	We want this for TL.
+	(mkMaps): with -n, exit before actually doing anything.
+	(setupLog): with -n, do not log.
+	(help): update and augment.
+
 2007-10-12  Karl Berry  <karl@tug.org>
 
 	* texlinks: new option -u[nlink] for uninstall.
