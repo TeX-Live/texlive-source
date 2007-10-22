@@ -1,3 +1,9 @@
+2007-10-22  Karl Berry  <karl@tug.org>
+
+	* hps.c (stamp_external, stamp_hps): protext against long strings.
+	From Bastien Roucaries via Norbert, 21 Oct 2007 13:22:19,
+	Debian bug 447081.
+
 2007-10-12  Karl Berry  <karl@tug.org>
 
 	* resident.c (i): declare as int, in case tfmload() returns 65536
