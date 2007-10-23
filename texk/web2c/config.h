@@ -1,6 +1,6 @@
 /* config.h: All .c files include this first.
 
-Copyright (C) 1995, 1996, 2006 Karl Berry.
+Copyright (C) 1995, 1996, 2006, 2007 Karl Berry.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -13,8 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
+along with this program; if not, see <http://www.gnu.org/licenses/.  */
 
 #ifndef WEB2C_CONFIG_H
 #define WEB2C_CONFIG_H
@@ -90,6 +89,22 @@ typedef SCHAR_TYPE schar;
 #endif /* not INTEGER_TYPE */
 
 typedef INTEGER_TYPE integer;
+
+/* We need a type that's at least 64 bits wide.  */
+#if defined(__STDC_VERSION__) && __STDC_VERSION__>=199901L
+  /* C99; this is easy */
+  #include <stdint.h>
+  #define LONGINTEGER_TYPE int_least64_t
+  #define LONGINTEGER_MAX INT_LEAST64_MAX
+  #define LONGINTEGER_MIN INT_LEAST64_MIN
+#else
+  /* C++ or <C99; let's hope long is 64bit */
+  #define LONGINTEGER_TYPE long
+  #define LONGINTEGER_MAX LONG_MAX
+  #define LONGINTEGER_MIN LONG_MIN
+#endif
+typedef LONGINTEGER_TYPE longinteger;
+
 
 /* I don't want to write a configure test for remove when all Unix
    machines have unlink.  But, for the sake of non-Unix machines that

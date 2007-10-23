@@ -1,4 +1,6 @@
-{This file is concatenated by ./convert to the beginning of the Pascal
+{common.defines.  Public domain.
+
+ This file is concatenated by ./convert to the beginning of the Pascal
  code that tangle outputs.  The idea is to put all these symbols, which
  can be defined as macros or functions, or as part of standard C, into
  web2c's symbol table, so that we can access them from a change file.
@@ -191,6 +193,7 @@
 @define type char = 0..255;
 @define type getoptstruct;
 @define type integer;
+@define type longinteger;
 @define type memoryword; {for gftodvi, TeX, and Metafont}
 @define type pointertobyte;
 @define type real;
