@@ -24,7 +24,7 @@ test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 progname=texconfig
 
 # the version string
-version=1191175376 # seconds since `00:00:00 1970-01-01 UTC'
+version=1193182750 # seconds since `00:00:00 1970-01-01 UTC'
                    # date '+%s' (with GNU date)
 
 envVars="
@@ -41,6 +41,7 @@ tmpdir=${TMPDIR-${TEMP-${TMP-/tmp}}}/tctmp.$$
 needsCleanup=false
 lastUpdatedFile=
 
+# 
 ###############################################################################
 # setupFMT(void)
 #   find a suitable version of fmt / adjust
@@ -204,7 +205,7 @@ setupTexmfmain()
 
 ###############################################################################
 # setupTexmfmain()
-#   get value for MT_TEXMFMAIN (with caching)
+#   get value for MT_TEXMFDIST (with caching)
 ###############################################################################
 setupTexmfdist()
 {
@@ -547,39 +548,63 @@ checkElemInList()
 }
 
 
+# show version information from the distribution, if we have any.
+showDistVersionInfo()
+{
+  # TeX Live file.
+  test -f $MT_TEXMFMAIN/../release-texlive.txt \
+  && sed 1q $MT_TEXMFMAIN/../release-texlive.txt
+
+  # no harm in continuing to look for the teTeX files.
+  test -f $MT_TEXMFMAIN/release-tetex-src.txt \
+  && "teTeX-src release:   `cat $MT_TEXMFMAIN/release-tetex-src.txt`"
+  test -f $MT_TEXMFDIST/release-tetex-texmf.txt \
+  && "teTeX-texmf release: `cat $MT_TEXMFDIST/release-tetex-texmf.txt`"
+}
+
+# 
 ###############################################################################
 # tcBatch(args)
 #   handle batch mode
 ###############################################################################
 tcBatch()
 {
-  help="Usage: $progname conf
+  help="texconfig allows adjusting and updating many aspects of the TeX
+system to the local system.  
+
+Usage: $progname conf                  (show basic configuration)
        $progname dvipdfmx paper PAPER
        $progname dvipdfm paper PAPER
-       $progname dvips [options]
-       $progname faq
-       $progname findprog
+       $progname dvips OPTION...
+       $progname faq                   (show teTeX faq)
+       $progname findprog PROG...      (show locations of PROGs, a la which)
        $progname font vardir DIR
        $progname font ro
        $progname font rw
-       $progname formats
-       $progname hyphen FORMAT
-       $progname init [formats]
+       $progname formats               (edit fmtutil.cnf)
+       $progname help                  (or --help; show this help)
+       $progname hyphen FORMAT         (edit hyphenation config for FORMAT)
+       $progname init [FORMAT]...      (rebuild FORMATs, or all formats
+                                        plus run texlinks and updmap)
        $progname mode MODE
        $progname paper PAPER
-       $progname pdftex [options]
-       $progname rehash
+       $progname pdftex [OPTION]...
+       $progname rehash                (rebuild ls-R files with mktexlsr)
+       $progname version               (or --version; show version info)
        $progname xdvi paper PAPER
 
-Get more help with
-       $progname dvipdfmx paper
-       $progname dvipdfm paper
+Get more help with:
+       $progname dvipdfmx
+       $progname dvipdfm
        $progname dvips
        $progname font
+       $progname hyphen
        $progname mode
        $progname paper
        $progname pdftex
-       $progname xdvi paper"
+       $progname xdvi
+
+Report bugs to <tex-k@tug.org>."
 
   case $1 in
     # texconfig conf
@@ -587,16 +612,7 @@ Get more help with
       setupTexmfmain
       setupTexmfdist
       echo '=========================== version information =========================='
-      if test -f $MT_TEXMFMAIN/release-tetex-src.txt; then
-        echo "teTeX-src release:   `cat $MT_TEXMFMAIN/release-tetex-src.txt`"
-      else
-        echo "teTeX-src release:   (info not available)"
-      fi
-      if test -f $MT_TEXMFDIST/release-tetex-texmf.txt; then
-        echo "teTeX-texmf release: `cat $MT_TEXMFDIST/release-tetex-texmf.txt`"
-      else
-        echo "teTeX-texmf release: (info not available)"
-      fi
+      showDistVersionInfo
       echo
       echo '==================== binaries found by searching $PATH ==================='
       echo "PATH=$PATH"
@@ -614,7 +630,7 @@ Get more help with
       echoShowKpseVariable TEXMFMAIN TEXMFDIST TEXMFLOCAL TEXMFSYSVAR TEXMFSYSCONFIG TEXMFVAR TEXMFCONFIG TEXMFHOME VARTEXFONTS TEXMF SYSTEXMF TEXMFDBS WEB2C TEXPSHEADERS TEXCONFIG ENCFONTS TEXFONTMAPS
 
       echo
-      echo '==== kpathsea variables (from environment only; ok if no output here) ===='
+      echo '==== kpathsea variables from environment only (ok if no output here) ===='
       echoShowVariable $envVars
       ;;
 
@@ -1025,7 +1041,7 @@ For more information about these \`features', consult the teTeX manual
         texlinks --multiplatform || rc=1
       fi
       ;;
-    help)
+    help|--help|-h)
       echo "$help"
       ;;
 
@@ -1291,6 +1307,14 @@ Valid PAPER settings:
     rehash)
       mktexlsr
       ;;
+    
+    # 
+    version|--version)
+      echo "$progname version $version"
+      setupTexmfmain
+      setupTexmfdist
+      showDistVersionInfo
+      (exit 0); exit 0;;
 
     # handle "xdvi paper PAPER"
     xdvi)

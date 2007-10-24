@@ -1,3 +1,9 @@
+2007-10-24  Karl Berry  <karl@tug.org>
+
+	* texconfig: update and augment help message;
+	accept version and --version;
+	show TeX Live version info from release-texlive.txt.
+
 2007-10-19  Karl Berry  <karl@tug.org>
 
 	* updmap (processOptions): add --copy and -n options.
