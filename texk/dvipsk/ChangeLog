@@ -1,3 +1,7 @@
+2007-10-24  Karl Berry  <karl@tug.org>
+
+	* config.ps (unknown): duplicated entry, remove one.
+
 2007-10-22  Karl Berry  <karl@tug.org>
 
 	* hps.c (stamp_external, stamp_hps): protext against long strings.
