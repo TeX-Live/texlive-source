@@ -1,3 +1,9 @@
+2007-10-24  Karl Berry  <karl@tug.org>
+
+	* mktexpk (MODE) <720>: epscszz.  From Akira.
+	(PKDESTDIR): Quote.  From Paul Vojta,
+	tex-k 22 Oct 2007 17:38:56.
+
 2007-09-11  Karl Berry  <karl@tug.org>
 
 	* texmf.in (TRFONTS): don't recurse through /usr.

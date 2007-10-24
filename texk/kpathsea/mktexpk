@@ -119,7 +119,7 @@ if kpsewhich $NAME.mf >/dev/null 2>&1 || mktexmf $NAME >/dev/null 2>&1; then
      360) MODE=epstylus;;
      400) MODE=nexthi;;
      600) MODE=ljfour;;
-     720) MODE=epsczz;;
+     720) MODE=epscszz;;
     1200) MODE=ultre;;
     1270) MODE=linoone;;
     8000) MODE=dpdfezzz;;
@@ -250,7 +250,7 @@ fi
 # Use cp when mv fails, since DOS will fail mv for deeply-nested directories.
 mv $PKNAME "$PKDESTDIR/pk$$.tmp" 2>/dev/null \
   || cp $PKNAME "$PKDESTDIR/pk$$.tmp" || exit 1
-cd $PKDESTDIR || exit 1
+cd "$PKDESTDIR" || exit 1
 chmod `kpsestat -xst,go-w .` pk$$.tmp
 test -r $PKNAME || mv pk$$.tmp $PKNAME || exit 1
 
