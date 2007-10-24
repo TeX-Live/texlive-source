@@ -1238,7 +1238,7 @@ eof
   verboseMsg "$progname: Generating output for dvipdfm..."
   <$tmp7 normalizeLines | dvips2dvipdfm | normalizeLines >> "$dvipdfmoutputdir/dvipdfm_dl14.map"
   <$tmp6 normalizeLines | dvips2dvipdfm | normalizeLines >> "$dvipdfmoutputdir/dvipdfm_ndl14.map"
-  verboseMsg "$progname: All output generated!"
+  verboseMsg "$progname: All output generated."
   verboseMsg
 
   setupSymlinks
@@ -1251,12 +1251,10 @@ eof
   IFS=$OLDIFS
   verboseMsg
 
-  verboseMsg "$progname: Map file links:"
-  { cd "$dvipsoutputdir"; ls -l psfonts.map;
-    cd "$pdftexoutputdir"; ls -l pdftex.map;
-    cd "$dvipdfmoutputdir"; ls -l dvipdfm.map; } \
-      | awk '{print $(NF-2), $(NF-1), $NF}' | verboseCat
-  verboseMsg
+  verboseMsg "$progname: Map file links or copies:"
+  ls -l "$dvipsoutputdir"/psfonts.map \
+         "$pdftexoutputdir"/pdftex.map \
+         "$dvipdfmoutputdir"/dvipdfm.map | verboseCat
 
   if test -f $mapWarnCalled; then
     m="
@@ -1285,6 +1283,9 @@ eof
 "
     warn "$m"
   fi
+
+  verboseMsg
+  verboseMsg "$progname: Done."
   return 0
 }
 

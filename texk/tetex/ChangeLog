@@ -1,3 +1,8 @@
+2007-10-25  Karl Berry  <karl@tug.org>
+
+	* updmap: make last bit of log nicer, since we may have copies
+	instead of symlinks now.
+
 2007-10-24  Karl Berry  <karl@tug.org>
 
 	* texconfig: update and augment help message;
