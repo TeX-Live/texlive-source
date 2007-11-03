@@ -1,4 +1,4 @@
-.TH "texlinks" "8" "September 2000" "teTeX" "teTeX" 
+.TH "texlinks" "8" "November 2007" "teTeX" "teTeX" 
 .PP 
 .SH "NAME" 
 texlinks \- maintain symbolic links from format to engine
@@ -19,14 +19,11 @@ depends on the \fB--multiplatform\fP option\&.
 .PP 
 .SH "OPTIONS" 
 .PP 
+.IP "\fB--cnffile\fP \fIFILE\fP or \fB-f\fP \fIFILE\fP" 
+use file as configuration file (default:
+\fIfmtutil\&.cnf\fP)
 .IP "\fB--help\fP or \fB-h\fP" 
 show some help text
-.IP "\fB--cnffile\fP \fIFILE\fP or \fB-f\fP \fIFILE\fP" 
-use
-file as configuration file (default:
-\fIfmtutil\&.cnf\fP)
-.IP "\fB--verbose\fP or \fB-v\fP" 
-set verbose mode on (default: off)
 .IP "\fB--multiplatform\fP or \fB-m\fP" 
 operate in all
 platform-specific directories (default:
@@ -35,6 +32,10 @@ platform)
 .IP "\fB--silent\fP or \fB-s\fP" 
 silently skip over existing
 scripts/binaries instead of printing a warning
+.IP "\fB--unlink\fP or \fB-u\fP"
+Unlink previously created symlinks
+.IP "\fB--verbose\fP or \fB-v\fP"
++set verbose mode on (default: off)
 .PP 
 .SH "FILES" 
 .PP 
@@ -49,12 +50,12 @@ Web page: <http://tug\&.org/teTeX/>
 .PP 
 .SH "BUGS" 
 .PP 
-None known, but report any bugs found to <tetex@dbs\&.uni-hannover\&.de> (mailing list)\&.
+None known, but report any bugs found to <tex-k@tug\&.org> (mailing list)\&.
 .PP 
 .SH "AUTHOR" 
 .PP 
 \fBtexlinks\fP was written by Thomas Esser 
-<te@dbs\&.uni-hannover\&.de> and is Copyright © 1999\&.
+<te@dbs\&.uni-hannover\&.de> in 1999\&.
 \fBtexlinks\fP has been released into the public domain\&.
 .PP 
 This manual page was written by C\&.M\&. Connelly

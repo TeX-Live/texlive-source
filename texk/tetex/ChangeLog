@@ -1,3 +1,7 @@
+2007-11-03  Karl Berry  <karl@tug.org>
+
+	* texlinks.man: --unlink, sort.  From Edd.
+
 2007-10-25  Karl Berry  <karl@tug.org>
 
 	* updmap: make last bit of log nicer, since we may have copies
