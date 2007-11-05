@@ -476,12 +476,6 @@ shell_escape = f
 openout_any = p
 openin_any = a
 
-% Disable search on multiple suffixes filenames. In many case, when `foo.bar'
-% is looked for, you do not want to look for `foo.bar.tex' before. This flag
-% disables searching for standard suffixes if the file name has already an
-% extension of 3 characters. Default value is true (old behaviour).
-allow_multiple_suffixes =                       f
-
 % Allow TeX, MF, and MP to parse the first line of an input file for
 % the %&format construct.
 parse_first_line = t

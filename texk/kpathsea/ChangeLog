@@ -1,3 +1,8 @@
+2007-11-05  Karl Berry  <karl@tug.org>
+
+	* texmf.in (allow_multiple_suffixes): unimplemented.
+	Reported by Akira, 17 Feb 2007 15:44:39.
+
 2007-10-24  Karl Berry  <karl@tug.org>
 
 	* mktexpk (MODE) <720>: epscszz.  From Akira.
