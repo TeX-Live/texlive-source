@@ -20,7 +20,7 @@ texdoc \- Utility to look up TeX documentation
 .PP 
 .SH "DESCRIPTION" 
 .PP 
-\fBtexdoc\fP seaches for \fINAME\fP in the TeX documentation and
+\fBtexdoc\fP searches for \fINAME\fP in the TeX documentation and
 starts an appropriate viewer\&.
 .PP 
 \fINAME\fP should be the name of a command or package in the teTeX

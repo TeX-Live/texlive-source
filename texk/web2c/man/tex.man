@@ -145,7 +145,7 @@ to see if it begins with the magic sequence
 If the first line begins with
 .BI %& format
 .BI -translate-file \ tcxname
-then \*(TX will use the named format and transation table
+then \*(TX will use the named format and translation table
 .I tcxname
 to process the source file.  Either the format name or the
 .B -translate-file
@@ -437,7 +437,7 @@ that user files are found before system files.  An empty path
 component will be replaced with the paths defined in the
 .I texmf.cnf
 file.  For example, set TEXINPUTS to ".:/home/usr/tex:" to prepend the
-current direcory and ``/home/user/tex'' to the standard search path.
+current directory and ``/home/user/tex'' to the standard search path.
 .TP
 TEXFORMATS
 Search path for format files.

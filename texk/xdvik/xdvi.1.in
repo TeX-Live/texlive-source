@@ -528,7 +528,7 @@ occurs in the string, the missing format strings are appended automatically.
 variables).
 .sp
 A new instance of the editor is started each time this command is used;
-therefore it is preferrable to use an editor that can be invoked in
+therefore it is preferable to use an editor that can be invoked in
 `client' mode to load new files into the same instance. Example
 settings are:
 .RS 7
@@ -1264,7 +1264,7 @@ to
 .TP
 .B \-notempfile
 .RB ( .tempFile )
-As mentined in the section
+As mentioned in the section
 .B DESCRIPTION
 above, xdvi will create a temporary copy of the DVI file so that it
 can be accessed without interruptions even while the file is being
@@ -1333,7 +1333,7 @@ best to specify the paper size in the TeX input file via the line
 .B \eusepackage[dvips]{geometry}
 .sp
 which will be recognized by both dvips and xdvi; in that case the
-use of a `-paper' option should be unneccessary.
+use of a `-paper' option should be unnecessary.
 .br
 The paper size may be specified in the form
 \fIwidth\fBx\fIheight\fR optionally followed by a unit, where
@@ -1555,7 +1555,7 @@ The space before
 .I filename
 is only needed if the filename starts
 with a digit.  When the space is used, the argument
-needs to be encosed in quotes to prevent the shell from
+needs to be enclosed in quotes to prevent the shell from
 misinterpreting the space as argument separator.
 .sp
 This option requires that
@@ -1580,7 +1580,7 @@ Otherwise, if one of the filenames does contain a path component (e.g.:
 .IR ../test.tex ,
 .IR /my/homedir/tex/test.tex
 or any combination of these), both filenames are expanded to a full path,
-with any occurences of
+with any occurrences of
 .I ../
 and
 .I ./
@@ -1667,7 +1667,7 @@ currently ignored.
 .BI \-useTeXpages
 Use logical \*(Te\& pages (the values of the
 .I \ecount0
-register) instead of physical pages for the pagelist lables and
+register) instead of physical pages for the pagelist tables and
 when jumping to a page in a document with the `g' keystroke (or the
 .B goto-page()
 action).
@@ -1793,7 +1793,7 @@ the bottom of the page.
 .br
 When the option
 .BI \-pause " special-string"
-is used and the display is currenlty paused, this key will instead
+is used and the display is currently paused, this key will instead
 display the next portion of the page until the next
 .I special-string
 or the end of the page is encountered.  See the description of the
@@ -2993,7 +2993,7 @@ The keystroke
 jumps to the next match (like pressing the `Find' button in the search window).
 .PP
 By default, the matches are highlighted in inverted color.
-If the display isn't running in TrueColor, or if the X resouce
+If the display isn't running in TrueColor, or if the X resource
 .B matchHighlightInverted
 is set to false or the command-line option
 .B \-nomatchinverted
@@ -3202,7 +3202,7 @@ via the
 mechanism, as a single argument after the `!'. Any arguments
 listed in the
 .B Dvips options
-field are segmeted at whitespaces and passed as separate arguments to dvips.
+field are segmented at whitespaces and passed as separate arguments to dvips.
 If you e.g. want to print the file 2-up, you should enter
 the following string into the
 .B Printer
@@ -3400,7 +3400,7 @@ When this mode is activated, the mouse cursor changes into a
 thin cross, and a larger, cross-shaped ruler is drawn in the
 highlight color at the mouse location. The ruler doesn't have
 units attached to it; instead, the current distance between the
-ruler and the mouse cursor is continously printed to the
+ruler and the mouse cursor is continuously printed to the
 statusline.
 .br
 When activating Ruler Mode, the ruler is at first attached to

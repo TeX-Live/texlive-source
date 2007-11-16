@@ -209,7 +209,7 @@ forces all fonts to be downloaded, so this map file can be used with
 teTeX configuration files for \fBdvips\fP(1) tuned for use with \fBupdmap\fP:
 .IP
 .IP "\fIconfig\&.builtin35\fP"
-Loads \fIbuildin35\&.map\fP instead
+Loads \fIbuiltin35\&.map\fP instead
 of \fIpsfonts\&.map\fP\&.
 .IP
 .IP "\fIconfig\&.download35\fP"

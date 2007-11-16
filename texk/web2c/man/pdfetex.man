@@ -387,7 +387,7 @@ that user files are found before system files.  An empty path
 component will be replaced with the paths defined in the
 .I texmf.cnf
 file.  For example, set TEXINPUTS to ".:/home/usr/tex:" to prepend the
-current direcory and ``/home/user/tex'' to the standard search path.
+current directory and ``/home/user/tex'' to the standard search path.
 .TP
 TEXFORMATS
 Search path for format files.

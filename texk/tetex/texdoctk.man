@@ -8,7 +8,7 @@ texdoctk \- GUI for easier access of TeX package and program documentations
 .B texdoctk
 is a GUI for easier access to a large part of the vast amount
 of package and program documentations and tutorials for TeX and its
-different derivates (mainly LaTeX). It is optimized and included in
+different derivatives (mainly LaTeX). It is optimized and included in
 the teTeX and fpTeX distributions and also available with TeXLive.
 .PP
 The documentation is grouped into 17 categories; the 18th button of the main
@@ -36,14 +36,14 @@ frequently happen in search results). This can also be set in a configuration
 file.
 .SH "CONFIGURATION"
 .PP
-The configuration is controlled by the system default concfiguration file
+The configuration is controlled by the system default configuration file
 ($TEXMFMAIN)/texdoctk/texdocrc.defaults, most of whose entries can though be
 overridden by the users' own optional ~/.texdocrc files and/or command line
 options.
 .SS The Settings menu and configuration files
 .PP
 The Settings menu is used to change the user-definable settings of \fBtexdoctk\fP
-for the duration of the programm call or as new defaults. The latter case is
+for the duration of the program call or as new defaults. The latter case is
 the purpose of the Save button, which generates or rewrites the user's own
 ~/.texdocrc file. The system defaults cannot be edited with the Settings
 menu.
@@ -96,7 +96,7 @@ file but to stdout by default, so a redirect is needed, e.g.
 .B a2ps myfile.txt >myfile.ps
 .PP
 The system-wide configuration file is ($TEXMFMAIN)/texdoctk/texdocrc.defaults
-and should only be writeable by the administrator of the installation using any
+and should only be writable by the administrator of the installation using any
 text editor. The optional user configuration file is ~/.texdocrc and can
 override all but those system settings which affect the installation as a
 whole. The preferred way of changing it is through the Settings menu.
