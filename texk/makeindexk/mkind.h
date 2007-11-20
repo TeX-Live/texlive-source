@@ -337,14 +337,14 @@ ensuing.
 #define ROMAN_MAX     16	/* maximum length of Roman page number */
 				/* field */
 
-#define STRING_MAX    512	/* maximum length of host filename */
+#define STRING_MAX    999	/* maximum length of host filename */
 
 /*====================================================================*/
 
 #if USE_KPATHSEA
-#define VERSION       "version 2.15 [12-Oct-2007] (kpathsea + Thai support)"
+#define VERSION       "version 2.15 [20-Nov-2007] (kpathsea + Thai support)"
 #else
-#define VERSION       "version 2.15 [12-Oct-2007] (with Thai support)"
+#define VERSION       "version 2.15 [20-Nov-2007] (with Thai support)"
 #endif
 
 #define PUT_VERSION { \

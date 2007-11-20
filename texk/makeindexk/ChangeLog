@@ -1,3 +1,10 @@
+2007-11-20  Karl Berry  <karl@tug.org>
+
+	* mkind.c (sty_fn): use STRING_MAX, not LINE_MAX.
+	From Peter Ansell, 19 Nov 2007 10:11:40.
+
+	* mkind.h (STRING_MAX): bump again to 999.
+
 2007-10-12  Karl Berry  <karl@tug.org>
 
 	* mkind.h (STRING_MAX): bump to 512, why not?
