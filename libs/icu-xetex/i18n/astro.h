@@ -1,5 +1,5 @@
 /************************************************************************
- * Copyright (C) 1996-2003, International Business Machines Corporation *
+ * Copyright (C) 1996-2006, International Business Machines Corporation *
  * and others. All Rights Reserved.                                     *
  ************************************************************************
  *  2003-nov-07   srl       Port from Java
@@ -497,7 +497,7 @@ public:
    * Note: In this case, "vernal" refers to the northern hemisphere's seasons.
    * @internal
    */
-  static double VERNAL_EQUINOX();
+//  static double VERNAL_EQUINOX();
 
   /**
    * Constant representing the summer solstice.
@@ -513,7 +513,7 @@ public:
    * Note: In this case, "autumn" refers to the northern hemisphere's seasons.
    * @internal
    */
-  static double AUTUMN_EQUINOX();
+//  static double AUTUMN_EQUINOX();
 
   /**
    * Constant representing the winter solstice.
@@ -521,7 +521,7 @@ public:
    * Note: In this case, "winter" refers to the northern hemisphere's seasons.
    * @internal
    */
-  static double WINTER_SOLSTICE();
+//  static double WINTER_SOLSTICE();
 
   /**
    * Find the next time at which the sun's ecliptic longitude will have
@@ -596,14 +596,14 @@ public:
    * For use with {@link #getMoonTime getMoonTime}
    * @internal
    */
-  static const MoonAge NEW_MOON();
+//  static const MoonAge NEW_MOON();
 
   /**
    * Constant representing the moon's first quarter.
    * For use with {@link #getMoonTime getMoonTime}
    * @internal
    */
-  static const MoonAge FIRST_QUARTER();
+//  static const MoonAge FIRST_QUARTER();
 
   /**
    * Constant representing a full moon.
@@ -617,7 +617,7 @@ public:
    * For use with {@link #getMoonTime getMoonTime}
    * @internal
    */
-  static const MoonAge LAST_QUARTER();
+//  static const MoonAge LAST_QUARTER();
 
   /**
    * Find the next or previous time at which the Moon's ecliptic
@@ -643,18 +643,20 @@ public:
   //-------------------------------------------------------------------------
 
   // private
-  class U_I18N_API AngleFunc : public UMemory {
+  class AngleFunc : public UMemory {
   public:
     virtual double eval(CalendarAstronomer&) = 0;
+    virtual ~AngleFunc();
   };
   friend class AngleFunc;
 
   UDate timeOfAngle(AngleFunc& func, double desired,
                     double periodDays, double epsilon, UBool next);
 
-  class U_I18N_API CoordFunc : public UMemory {
+  class CoordFunc : public UMemory {
   public:
     virtual void eval(Equatorial& result, CalendarAstronomer&) = 0;
+    virtual ~CoordFunc();
   };
   friend class CoordFunc;
 
@@ -757,7 +759,7 @@ private:
   /**
    * @internal
    */
-  UDate local(UDate localMillis);
+//  UDate local(UDate localMillis);
 };
 
 U_NAMESPACE_END

@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 1997-2005, International Business Machines Corporation and others. All Rights Reserved.
+* Copyright (C) 1997-2006, International Business Machines Corporation and others. All Rights Reserved.
 ********************************************************************************
 *
 * File MSGFMT.H
@@ -611,7 +611,7 @@ public:
      * @param status    Input/output error code.  If the pattern
      *                  cannot be parsed, the failure code is set.
      * @return the standard equivalent of the original pattern
-     * @since ICU 3.4
+     * @stable ICU 3.4
      */
     static UnicodeString autoQuoteApostrophe(const UnicodeString& pattern, 
         UErrorCode& status);

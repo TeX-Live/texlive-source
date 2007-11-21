@@ -1,13 +1,13 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/hr.xml
+// * Source File:<path>/common/main/hr.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/hr.xml
+ *  ICU <specials> source: <path>/xml/main/hr.xml
  */
 hr{
     Countries{
@@ -31,7 +31,7 @@ hr{
         054{"Melanezija"}
         057{"Micronezija"}
         061{"Polinezija"}
-        062{"Južno-centralna Azija"}
+        062{"Južna Azija"}
         142{"Azija"}
         145{"Zapadna Azija"}
         150{"Europa"}
@@ -67,7 +67,7 @@ hr{
         BI{"Burundi"}
         BJ{"Benin"}
         BM{"Bermuda"}
-        BN{"Brunei Darussalam"}
+        BN{"Brunei"}
         BO{"Bolivija"}
         BR{"Brazil"}
         BS{"Bahami"}
@@ -278,7 +278,7 @@ hr{
         WS{"Samoa"}
         YE{"Jemen"}
         YT{"Majote"}
-        ZA{"Južna Afrika"}
+        ZA{"Južnoafrička Republika"}
         ZM{"Zambija"}
         ZW{"Zimbabve"}
     }
@@ -532,7 +532,7 @@ hr{
             "Hrvatski dinar",
         }
         HRK{
-            "HRK",
+            "Kn",
             "Kuna",
         }
         HTG{
@@ -988,7 +988,7 @@ hr{
             "Zimbabveanski dolar",
         }
     }
-    ExemplarCharacters{"[a-p r-v z đ ć č ž š {lj} {nj} {dž}]"}
+    ExemplarCharacters{"[a-c č ć d đ {dž} e-l {lj} m n {nj} o p r s š t-v z ž]"}
     Keys{
         calendar{"Kalendar"}
         collation{"Poredavanje"}
@@ -1081,7 +1081,7 @@ hr{
         "E",
         "‰",
         "∞",
-        "�",
+        "NaN",
         "+",
     }
     Scripts{
@@ -1105,13 +1105,9 @@ hr{
             traditional{"Tradicionano poredavanje"}
         }
     }
-    Version{"1.48"}
+    Version{"1.67"}
     calendar{
         gregorian{
-            DateTimeElements:intvector{
-                2,
-                1,
-            }
             DateTimePatterns{
                 "HH:mm:ss z",
                 "HH:mm:ss z",
@@ -1154,6 +1150,16 @@ hr{
                         "p",
                         "s",
                     }
+                }
+            }
+            eras{
+                abbreviated{
+                    "pr.n.e.",
+                    "AD",
+                }
+                wide{
+                    "Prije Krista",
+                    "Poslije Krista",
                 }
             }
             monthNames{
@@ -1246,7 +1252,62 @@ hr{
                     }
                 }
             }
+            quarters{
+                format{
+                    abbreviated{
+                        "1kv",
+                        "2kv",
+                        "3kv",
+                        "4kv",
+                    }
+                    wide{
+                        "1. kvartal",
+                        "2. kvartal",
+                        "3. kvartal",
+                        "4. kvartal",
+                    }
+                }
+            }
         }
     }
     localPatternChars{"GanjkHmsSEDFwWxhKzAeugXZvcL"}
+    zoneStrings{
+        "Africa:Kinshasa"{
+            ec{"Kinšasa"}
+        }
+        "Africa:Lubumbashi"{
+            ec{"Lubumbaši"}
+        }
+        "Antarctica:South_Pole"{
+            ec{"Južni pol"}
+        }
+        "Asia:Anadyr"{
+            ec{"Anadir"}
+        }
+        "Asia:Kamchatka"{
+            ec{"Kamčatka"}
+        }
+        "Asia:Krasnoyarsk"{
+            ec{"Krasnojarsk"}
+        }
+        "Asia:Shanghai"{
+            ec{"Šangaj"}
+        }
+        "Asia:Tashkent"{
+            ec{"Taškent"}
+        }
+        "Europe:Kiev"{
+            ec{"Kijev"}
+        }
+        "Europe:Moscow"{
+            ec{"Moskva"}
+        }
+        "Europe:Uzhgorod"{
+            ec{"Uzgorod"}
+        }
+        "Europe:Zaporozhye"{
+            ec{"Zaporožje"}
+        }
+        hourFormat{"+HHmm;-HHmm"}
+    }
 }

@@ -1,6 +1,6 @@
 /*
 ********************************************************************************
-*   Copyright (C) 1997-2005, International Business Machines
+*   Copyright (C) 1997-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 ********************************************************************************
 *
@@ -48,38 +48,31 @@ U_NAMESPACE_END
 #include "unicode/ubrk.h"
 #include "unicode/strenum.h"
 #include "unicode/utext.h"
+#include "unicode/umisc.h"
 
 U_NAMESPACE_BEGIN
-
-#if !UCONFIG_NO_SERVICE
-/**
- * Opaque type returned by registerInstance.
- * @stable
- */
-typedef const void* URegistryKey;
-#endif
 
 /**
  * The BreakIterator class implements methods for finding the location
  * of boundaries in text. BreakIterator is an abstract base class.
  * Instances of BreakIterator maintain a current position and scan over
  * text returning the index of characters where boundaries occur.
- * <P>
+ * <p>
  * Line boundary analysis determines where a text string can be broken
  * when line-wrapping. The mechanism correctly handles punctuation and
  * hyphenated words.
- * <P>
+ * <p>
  * Sentence boundary analysis allows selection with correct
  * interpretation of periods within numbers and abbreviations, and
  * trailing punctuation marks such as quotation marks and parentheses.
- * <P>
+ * <p>
  * Word boundary analysis is used by search and replace functions, as
  * well as within text editing applications that allow the user to
  * select words with a double click. Word selection provides correct
  * interpretation of punctuation marks within and following
  * words. Characters that are not part of a word, such as symbols or
  * punctuation marks, have word-breaks on both sides.
- * <P>
+ * <p>
  * Character boundary analysis allows users to interact with
  * characters as they expect to, for example, when moving the cursor
  * through a text string. Character boundary analysis provides correct
@@ -87,126 +80,22 @@ typedef const void* URegistryKey;
  * character is stored.  For example, an accented character might be
  * stored as a base character and a diacritical mark. What users
  * consider to be a character can differ between languages.
- * <P>
- * This is the interface for all text boundaries.
- * <P>
- * Examples:
- * <P>
- * Helper function to output text
- * <pre>
- * \code
- *    void printTextRange( BreakIterator& iterator, int32_t start, int32_t end )
- *    {
- *        UnicodeString textBuffer, temp;
- *        CharacterIterator *strIter = iterator.createText();
- *        strIter->getText(temp);
- *        cout << " " << start << " " << end << " |"
- *             << temp.extractBetween(start, end, textBuffer)
- *             << "|" << endl;
- *        delete strIter;
- *    }
- * \endcode
- * </pre>
- * Print each element in order:
- * <pre>
- * \code
- *    void printEachForward( BreakIterator& boundary)
- *    {
- *       int32_t start = boundary.first();
- *       for (int32_t end = boundary.next();
- *         end != BreakIterator::DONE;
- *         start = end, end = boundary.next())
- *         {
- *             printTextRange( boundary, start, end );
- *         }
- *    }
- * \endcode
- * </pre>
- * Print each element in reverse order:
- * <pre>
- * \code
- *    void printEachBackward( BreakIterator& boundary)
- *    {
- *       int32_t end = boundary.last();
- *       for (int32_t start = boundary.previous();
- *         start != BreakIterator::DONE;
- *         end = start, start = boundary.previous())
- *         {
- *             printTextRange( boundary, start, end );
- *         }
- *    }
- * \endcode
- * </pre>
- * Print first element
- * <pre>
- * \code
- *    void printFirst(BreakIterator& boundary)
- *    {
- *        int32_t start = boundary.first();
- *        int32_t end = boundary.next();
- *        printTextRange( boundary, start, end );
- *    }
- * \endcode
- * </pre>
- * Print last element
- * <pre>
- *  \code
- *    void printLast(BreakIterator& boundary)
- *    {
- *        int32_t end = boundary.last();
- *        int32_t start = boundary.previous();
- *        printTextRange( boundary, start, end );
- *    }
- * \endcode
- * </pre>
- * Print the element at a specified position
- * <pre>
- * \code
- *    void printAt(BreakIterator &boundary, int32_t pos )
- *    {
- *        int32_t end = boundary.following(pos);
- *        int32_t start = boundary.previous();
- *        printTextRange( boundary, start, end );
- *    }
- * \endcode
- * </pre>
- * Creating and using text boundaries
- * <pre>
- * \code
- *       void BreakIterator_Example( void )
- *       {
- *           BreakIterator* boundary;
- *           UnicodeString stringToExamine("Aaa bbb ccc. Ddd eee fff.");
- *           cout << "Examining: " << stringToExamine << endl;
+ * <p>
+ * The text boundary positions are found according to the rules
+ * described in Unicode Standard Annex #29, Text Boundaries, and
+ * Unicode Standard Annex #14, Line Breaking Properties.  These
+ * are available at http://www.unicode.org/reports/tr14/ and
+ * http://www.unicode.org/reports/tr29/.
+ * <p>
+ * In addition to the C++ API defined in this header file, a
+ * plain C API with equivalent functionality is defined in the
+ * file ubrk.h
+ * <p>
+ * Code snippits illustrating the use of the Break Iterator APIs
+ * are available in the ICU User Guide, 
+ * http://icu.sourceforge.net/userguide/boundaryAnalysis.html
+ * and in the sample program icu/source/samples/break/break.cpp"
  *
- *           //print each sentence in forward and reverse order
- *           boundary = BreakIterator::createSentenceInstance( Locale::US );
- *           boundary->setText(stringToExamine);
- *           cout << "----- forward: -----------" << endl;
- *           printEachForward(*boundary);
- *           cout << "----- backward: ----------" << endl;
- *           printEachBackward(*boundary);
- *           delete boundary;
- *
- *           //print each word in order
- *           boundary = BreakIterator::createWordInstance();
- *           boundary->setText(stringToExamine);
- *           cout << "----- forward: -----------" << endl;
- *           printEachForward(*boundary);
- *           //print first element
- *           cout << "----- first: -------------" << endl;
- *           printFirst(*boundary);
- *           //print last element
- *           cout << "----- last: --------------" << endl;
- *           printLast(*boundary);
- *           //print word at charpos 10
- *           cout << "----- at pos 10: ---------" << endl;
- *           printAt(*boundary, 10 );
- *
- *           delete boundary;
- *       }
- * \endcode
- * </pre>
  */
 class U_COMMON_API BreakIterator : public UObject {
 public:
@@ -255,11 +144,9 @@ public:
 
     /**
      * Return a CharacterIterator over the text being analyzed.
-     * Changing the state of the returned iterator can have undefined consequences
-     * on the operation of the break iterator.  If you need to change it, clone it first.
      * @stable ICU 2.0
      */
-    virtual const CharacterIterator& getText(void) const = 0;
+    virtual CharacterIterator& getText(void) const = 0;
 
 
     /**
@@ -304,6 +191,8 @@ public:
     /**
      * Change the text over which this operates. The text boundary is
      * reset to the start.
+     * Note that setText(UText *) provides similar functionality to this function,
+     * and is more efficient.
      * @param it The CharacterIterator used to change the text.
      * @stable ICU 2.0
      */
@@ -613,7 +502,7 @@ public:
     /**
      * Returns the locale for this break iterator. Two flavors are available: valid and
      * actual locale.
-     * @draft ICU 2.8 likely to change after ICU 3.0, based on feedback
+     * @stable ICU 2.8
      */
     Locale getLocale(ULocDataLocaleType type, UErrorCode& status) const;
 
@@ -626,8 +515,8 @@ public:
     const char *getLocaleID(ULocDataLocaleType type, UErrorCode& status) const;
 
  private:
-    static BreakIterator* buildInstance(const Locale& loc, const char *type, UBool dict, UErrorCode& status);
-    static BreakIterator* createInstance(const Locale& loc, UBreakIteratorType kind, UErrorCode& status);
+    static BreakIterator* buildInstance(const Locale& loc, const char *type, int32_t kind, UErrorCode& status);
+    static BreakIterator* createInstance(const Locale& loc, int32_t kind, UErrorCode& status);
     static BreakIterator* makeInstance(const Locale& loc, int32_t kind, UErrorCode& status);
 
     friend class ICUBreakIteratorFactory;

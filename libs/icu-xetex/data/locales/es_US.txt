@@ -1,18 +1,32 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/es_US.xml
+// * Source File:<path>/common/main/es_US.xml
 // *
 // ***************************************************************************
 es_US{
     MeasurementSystem:int{1}
+    NumberElements{
+        ".",
+        ",",
+        ";",
+        "%",
+        "0",
+        "#",
+        "-",
+        "E",
+        "‰",
+        "∞",
+        "NaN",
+        "+",
+    }
     PaperSize:intvector{
         279,
         216,
     }
-    Version{"1.35"}
+    Version{"1.49"}
     calendar{
         gregorian{
             DateTimeElements:intvector{

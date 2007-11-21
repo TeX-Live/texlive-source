@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *                                                                            *
-* Copyright (C) 2001-2004, International Business Machines                   *
+* Copyright (C) 2001-2006, International Business Machines                   *
 *                Corporation and others. All Rights Reserved.                *
 *                                                                            *
 ******************************************************************************
@@ -26,9 +26,11 @@
 #include "uassert.h"
 
 static cleanupFunc *gCommonCleanupFunctions[UCLN_COMMON_COUNT];
+static cleanupFunc *gLibCleanupFunctions[UCLN_COMMON];
 
-void ucln_common_registerCleanup(ECleanupCommonType type,
-                                 cleanupFunc *func)
+U_CFUNC void
+ucln_common_registerCleanup(ECleanupCommonType type,
+                            cleanupFunc *func)
 {
     U_ASSERT(UCLN_COMMON_START < type && type < UCLN_COMMON_COUNT);
     if (UCLN_COMMON_START < type && type < UCLN_COMMON_COUNT)
@@ -37,10 +39,30 @@ void ucln_common_registerCleanup(ECleanupCommonType type,
     }
 }
 
-U_CFUNC UBool ucln_common_lib_cleanup(void) {
-    ECleanupCommonType commonFunc;
+U_CAPI void U_EXPORT2
+ucln_registerCleanup(ECleanupLibraryType type,
+                     cleanupFunc *func)
+{
+    U_ASSERT(UCLN_START < type && type < UCLN_COMMON);
+    if (UCLN_START < type && type < UCLN_COMMON)
+    {
+        gLibCleanupFunctions[type] = func;
+    }
+}
 
-    for (commonFunc = UCLN_COMMON_START+1; commonFunc<UCLN_COMMON_COUNT; commonFunc++) {
+U_CFUNC UBool ucln_lib_cleanup(void) {
+    ECleanupLibraryType libType = UCLN_START;
+    ECleanupCommonType commonFunc = UCLN_COMMON_START;
+
+    for (libType++; libType<UCLN_COMMON; libType++) {
+        if (gLibCleanupFunctions[libType])
+        {
+            gLibCleanupFunctions[libType]();
+            gLibCleanupFunctions[libType] = NULL;
+        }
+    }
+
+    for (commonFunc++; commonFunc<UCLN_COMMON_COUNT; commonFunc++) {
         if (gCommonCleanupFunctions[commonFunc])
         {
             gCommonCleanupFunctions[commonFunc]();

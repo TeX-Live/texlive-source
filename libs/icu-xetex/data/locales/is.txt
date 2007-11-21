@@ -1,15 +1,16 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/is.xml
+// * Source File:<path>/common/main/is.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/is.xml
+ *  ICU <specials> source: <path>/xml/main/is.xml
  */
 is{
+    AuxExemplarCharacters{"[c q w z]"}
     Countries{
         AD{"Andorra"}
         AE{"Sameinuðu arabísku furstadæmin"}
@@ -702,7 +703,7 @@ is{
         }
         RUR{
             "RUR",
-            "Rússnesk rúbla",
+            "Rússnesk rúbla (1991-1998)",
         }
         RWF{
             "RWF",
@@ -885,7 +886,7 @@ is{
             "Simbabveskur dalur",
         }
     }
-    ExemplarCharacters{"[a-záéíóúýöæðþ]"}
+    ExemplarCharacters{"[a á b d ð e é f-i í j-o ó p r-u ú v y ý þ æ ö]"}
     Keys{
         calendar{"Dagatal"}
         collation{"Röðun"}
@@ -1069,7 +1070,7 @@ is{
         ia{"Interlingva"}
         iba{"Íban"}
         id{"Indónesíska"}
-        ie{"Interlingva"}
+        ie{"Interlingve"}
         ig{"Ígbó"}
         ii{"Sísúanjí"}
         ijo{"Íjó"}
@@ -1275,7 +1276,7 @@ is{
         smj{"Lúlesamíska"}
         smn{"Enaresamíska"}
         sms{"Skoltesamíska"}
-        sn{"Sínótíbesk mál (önnur)"}
+        sn{"Shona"}
         snk{"Sóninke"}
         so{"Sómalska"}
         sog{"Sogdíen"}
@@ -1310,8 +1311,8 @@ is{
         tli{"Tlingit"}
         tmh{"Tamasjek"}
         tn{"Tsúana"}
-        to{"Tongverska"}
-        tog{"Tongverska"}
+        to{"Tongverska (Tongaeyjar)"}
+        tog{"Tongverska (Nyasa)"}
         tpi{"Tokpisin"}
         tr{"Tyrkneska"}
         ts{"Tsonga"}
@@ -1373,7 +1374,7 @@ is{
         "E",
         "‰",
         "∞",
-        "�",
+        "NaN",
         "+",
     }
     Types{
@@ -1394,7 +1395,7 @@ is{
             traditional{"Hefðbundin"}
         }
     }
-    Version{"1.43"}
+    Version{"1.61"}
     calendar{
         gregorian{
             DateTimePatterns{
@@ -1486,6 +1487,22 @@ is{
                         "o",
                         "n",
                         "d",
+                    }
+                }
+            }
+            quarters{
+                format{
+                    abbreviated{
+                        "F1",
+                        "F2",
+                        "F3",
+                        "F4",
+                    }
+                    wide{
+                        "1st fjórðungur",
+                        "2nd fjórðungur",
+                        "3rd fjórðungur",
+                        "4th fjórðungur",
                     }
                 }
             }

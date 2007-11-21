@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2003, International Business Machines Corporation and
+ * Copyright (c) 1997-2006, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
  
@@ -18,7 +18,8 @@
 // *****************************************************************************
 // class TimeZoneRegressionTest
 // *****************************************************************************
-
+/* length of an array */
+#define ARRAY_LENGTH(array) (sizeof(array)/sizeof(array[0]))
 #define CASE(id,test) case id: name = #test; if (exec) { logln(#test "---"); logln((UnicodeString)""); test(); } break
 
 void 
@@ -44,7 +45,8 @@ TimeZoneRegressionTest::runIndexedTest( int32_t index, UBool exec, const char* &
         CASE(14, TestJ186);
         CASE(15, TestJ449);
         CASE(16, TestJDK12API);
-
+        CASE(17, Test4176686);
+        CASE(18, Test4184229);
         default: name = ""; break;
     }
 }
@@ -221,25 +223,36 @@ void TimeZoneRegressionTest:: Test4084933() {
      *  The following was added just for consistency.  It shows that going *to* Daylight
      *  Savings Time (PDT) does work at 2am.
      */
-
     int32_t offset5 = tz->getOffset(1,
         1997, UCAL_APRIL, 6, UCAL_SUNDAY, (2*60*60*1000), status);
     int32_t offset6 = tz->getOffset(1,
         1997, UCAL_APRIL, 6, UCAL_SUNDAY, (2*60*60*1000)-1, status);
-
+    int32_t offset5a = tz->getOffset(1,
+        1997, UCAL_APRIL, 6, UCAL_SUNDAY, (3*60*60*1000), status);
+    int32_t offset6a = tz->getOffset(1,
+        1997, UCAL_APRIL, 6, UCAL_SUNDAY, (3*60*60*1000)-1, status);
     int32_t offset7 = tz->getOffset(1,
         1997, UCAL_APRIL, 6, UCAL_SUNDAY, (1*60*60*1000), status);
     int32_t offset8 = tz->getOffset(1,
         1997, UCAL_APRIL, 6, UCAL_SUNDAY, (1*60*60*1000)-1, status);
-
     int32_t SToffset = (int32_t)(-8 * 60*60*1000L);
     int32_t DToffset = (int32_t)(-7 * 60*60*1000L);
-    if (offset1 != SToffset || offset2 != SToffset ||
-        offset3 != SToffset || offset4 != DToffset ||
-        offset5 != DToffset || offset6 != SToffset ||
-        offset7 != SToffset || offset8 != SToffset
-        || U_FAILURE(status))
-        errln("Fail: TimeZone misbehaving");
+        
+#define ERR_IF_FAIL(x) if(x) { errln("FAIL: TimeZone misbehaving - %s", #x); }
+
+        ERR_IF_FAIL(U_FAILURE(status))
+        ERR_IF_FAIL(offset1 != SToffset)
+        ERR_IF_FAIL(offset2 != SToffset)
+        ERR_IF_FAIL(offset3 != SToffset)
+        ERR_IF_FAIL(offset4 != DToffset)
+        ERR_IF_FAIL(offset5 != DToffset)
+        ERR_IF_FAIL(offset6 != SToffset)
+        ERR_IF_FAIL(offset5a != DToffset)
+        ERR_IF_FAIL(offset6a != DToffset)
+        ERR_IF_FAIL(offset7 != SToffset)
+        ERR_IF_FAIL(offset8 != SToffset)
+
+#undef ERR_IF_FAIL
 
     delete tz;
 }
@@ -871,16 +884,16 @@ TimeZoneRegressionTest::Test4162593()
         // Must construct the Date object AFTER setting the default zone
         int32_t *p = (int32_t*)DATA_INT[j];
         UDate d = CalendarRegressionTest::makeDate(p[0], p[1], p[2], p[3], p[4]);
-        UBool transitionExpected = DATA_BOOL[j];
+       UBool transitionExpected = DATA_BOOL[j];
 
         UnicodeString temp;
         logln(tz->getID(temp) + ":");
         for (int32_t i = 0; i < 4; ++i) {
             FieldPosition pos(0);
             zone[i].remove();
-            zone[i] = fmt->format(d, zone[i], pos);
+            zone[i] = fmt->format(d+ i*ONE_HOUR, zone[i], pos);
             logln(UnicodeString("") + i + ": " + d + " / " + zone[i]);
-            d += (double) ONE_HOUR;
+            //d += (double) ONE_HOUR;
         }
         if(zone[0] == zone[1] &&
             (zone[1] == zone[2]) != transitionExpected &&
@@ -894,6 +907,74 @@ TimeZoneRegressionTest::Test4162593()
     delete fmt;
     delete asuncion;
     delete DATA_TZ[0];
+}
+
+  /**
+    * getDisplayName doesn't work with unusual savings/offsets.
+    */
+void TimeZoneRegressionTest::Test4176686() {
+    // Construct a zone that does not observe DST but
+    // that does have a DST savings (which should be ignored).
+    UErrorCode status = U_ZERO_ERROR;
+    int32_t offset = 90 * 60000; // 1:30
+    SimpleTimeZone* z1 = new SimpleTimeZone(offset, "_std_zone_");
+    z1->setDSTSavings(45 * 60000, status); // 0:45
+
+    // Construct a zone that observes DST for the first 6 months.
+    SimpleTimeZone* z2 = new SimpleTimeZone(offset, "_dst_zone_");
+    z2->setDSTSavings(45 * 60000, status); // 0:45
+    z2->setStartRule(UCAL_JANUARY, 1, 0, status);
+    z2->setEndRule(UCAL_JULY, 1, 0, status);
+
+    // Also check DateFormat
+    DateFormat* fmt1 = new SimpleDateFormat(UnicodeString("z"), status);
+    if(!assertSuccess("trying to construct", status))return;
+    fmt1->setTimeZone(*z1); // Format uses standard zone
+    DateFormat* fmt2 = new SimpleDateFormat(UnicodeString("z"), status);
+    if(!assertSuccess("trying to construct", status))return;
+    fmt2->setTimeZone(*z2); // Format uses DST zone
+    Calendar* tempcal = Calendar::createInstance(status);
+    tempcal->clear();
+    tempcal->set(1970, UCAL_FEBRUARY, 1);
+    UDate dst = tempcal->getTime(status); // Time in DST
+    tempcal->set(1970, UCAL_AUGUST, 1);
+    UDate std = tempcal->getTime(status); // Time in standard
+
+    // Description, Result, Expected Result
+    UnicodeString a,b,c,d,e,f,g,h,i,j,k,l;
+    UnicodeString DATA[] = {
+        "z1->getDisplayName(false, SHORT)/std zone",
+        z1->getDisplayName(FALSE, TimeZone::SHORT, a), "GMT+01:30",
+        "z1->getDisplayName(false, LONG)/std zone",
+        z1->getDisplayName(FALSE, TimeZone::LONG, b), "GMT+01:30",
+        "z1->getDisplayName(true, SHORT)/std zone",
+        z1->getDisplayName(TRUE, TimeZone::SHORT, c), "GMT+01:30",
+        "z1->getDisplayName(true, LONG)/std zone",
+        z1->getDisplayName(TRUE, TimeZone::LONG, d ), "GMT+01:30",
+        "z2->getDisplayName(false, SHORT)/dst zone",
+        z2->getDisplayName(FALSE, TimeZone::SHORT, e), "GMT+01:30",
+        "z2->getDisplayName(false, LONG)/dst zone",
+        z2->getDisplayName(FALSE, TimeZone::LONG, f ), "GMT+01:30",
+        "z2->getDisplayName(true, SHORT)/dst zone",
+        z2->getDisplayName(TRUE, TimeZone::SHORT, g), "GMT+02:15",
+        "z2->getDisplayName(true, LONG)/dst zone",
+        z2->getDisplayName(TRUE, TimeZone::LONG, h ), "GMT+02:15",
+        "DateFormat.format(std)/std zone", fmt1->format(std, i), "GMT+01:30",
+        "DateFormat.format(dst)/std zone", fmt1->format(dst, j), "GMT+01:30",
+        "DateFormat.format(std)/dst zone", fmt2->format(std, k), "GMT+01:30",
+        "DateFormat.format(dst)/dst zone", fmt2->format(dst, l), "GMT+02:15",
+    };
+
+    for (int32_t idx=0; idx<(int32_t)ARRAY_LENGTH(DATA); idx+=3) {
+        if (DATA[idx+1]!=(DATA[idx+2])) {
+            errln("FAIL: " + DATA[idx] + " -> " + DATA[idx+1] + ", exp " + DATA[idx+2]);
+        }
+    }
+    delete z1;
+    delete z2;
+    delete fmt1;
+    delete fmt2;
+    delete tempcal;
 }
 
 /**
@@ -1034,7 +1115,7 @@ TimeZoneRegressionTest::TestJDK12API()
 
     // verify error checking
     pst->getOffset(1,
-        1997, (UCalendarDateFields)-1, 26, UCAL_SUNDAY, (2*60*60*1000), status);
+        1997, UCAL_FIELD_COUNT+1, 26, UCAL_SUNDAY, (2*60*60*1000), status);
     if(U_SUCCESS(status))
         errln("FAILURE: getOffset() succeeded with -1 for month");
 
@@ -1049,6 +1130,77 @@ TimeZoneRegressionTest::TestJDK12API()
 
     delete pst;
     delete cst;
+}
+/**
+ * SimpleTimeZone allows invalid DOM values.
+ */
+void TimeZoneRegressionTest::Test4184229() {
+    SimpleTimeZone* zone = NULL;
+    UErrorCode status = U_ZERO_ERROR;
+    zone = new SimpleTimeZone(0, "A", 0, -1, 0, 0, 0, 0, 0, 0, status);
+    if(U_SUCCESS(status)){
+        errln("Failed. No exception has been thrown for DOM -1 startDay");
+    }else{
+       logln("(a) " + UnicodeString( u_errorName(status)));
+    }
+    status = U_ZERO_ERROR;
+    delete zone;
+
+    zone = new SimpleTimeZone(0, "A", 0, 0, 0, 0, 0, -1, 0, 0, status);
+    if(U_SUCCESS(status)){
+        errln("Failed. No exception has been thrown for DOM -1 endDay");
+    }else{
+       logln("(b) " + UnicodeString(u_errorName(status)));
+    }
+    status = U_ZERO_ERROR;
+    delete zone;
+
+    zone = new SimpleTimeZone(0, "A", 0, -1, 0, 0, 0, 0, 0, 1000, status);
+    if(U_SUCCESS(status)){
+        errln("Failed. No exception has been thrown for DOM -1 startDay+savings");
+    }else{
+       logln("(c) " + UnicodeString(u_errorName(status)));
+    }
+    status = U_ZERO_ERROR;
+    delete zone;
+    zone = new SimpleTimeZone(0, "A", 0, 0, 0, 0, 0, -1, 0, 0, 1000, status);
+    if(U_SUCCESS(status)){
+        errln("Failed. No exception has been thrown for DOM -1 endDay+ savings");
+    }else{
+       logln("(d) " + UnicodeString(u_errorName(status)));
+    }
+    status = U_ZERO_ERROR;
+    delete zone;
+    // Make a valid constructor call for subsequent tests.
+    zone = new SimpleTimeZone(0, "A", 0, 1, 0, 0, 0, 1, 0, 0, status);
+    
+    zone->setStartRule(0, -1, 0, 0, status);
+    if(U_SUCCESS(status)){
+        errln("Failed. No exception has been thrown for DOM -1 setStartRule +savings");
+    } else{
+        logln("(e) " + UnicodeString(u_errorName(status)));
+    }
+    zone->setStartRule(0, -1, 0, status);
+    if(U_SUCCESS(status)){
+        errln("Failed. No exception has been thrown for DOM -1 setStartRule");
+    } else{
+        logln("(f) " + UnicodeString(u_errorName(status)));
+    }
+
+    zone->setEndRule(0, -1, 0, 0, status);
+    if(U_SUCCESS(status)){
+        errln("Failed. No exception has been thrown for DOM -1 setEndRule+savings");
+    } else{
+        logln("(g) " + UnicodeString(u_errorName(status)));
+    }   
+
+    zone->setEndRule(0, -1, 0, status);
+    if(U_SUCCESS(status)){
+        errln("Failed. No exception has been thrown for DOM -1 setEndRule");
+    } else{
+        logln("(h) " + UnicodeString(u_errorName(status)));
+    }
+    delete zone;
 }
 
 #endif /* #if !UCONFIG_NO_FORMATTING */

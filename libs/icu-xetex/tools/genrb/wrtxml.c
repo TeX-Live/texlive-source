@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2002-2005, International Business Machines
+*   Copyright (C) 2002-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -288,6 +288,7 @@ static char* convertAndEscape(char** pDest, int32_t destCap, int32_t* destLength
             temp = (char*) uprv_malloc(sizeof(char)*destCap);
             if(temp==NULL){
                 *status=U_MEMORY_ALLOCATION_ERROR;
+                uprv_free(dest);
                 return NULL;
             }
             uprv_memmove(temp,dest,destLen);
@@ -308,13 +309,7 @@ static char* convertAndEscape(char** pDest, int32_t destCap, int32_t* destLength
 #define LF       0x000D
 #define AT_SIGN  0x0040
 
-static const UChar tokens[][11] = {
-    {0x0040, 0x0074, 0x0072, 0x0061, 0x006e, 0x0073, 0x006c, 0x0061, 0x0074, 0x0065, 0x0000}, /* @translate */
-    {0x0040, 0x006e, 0x006f, 0x0074, 0x0065, 0x0000}                                          /* @note */
-};
 
-static const UChar yes[] = {  0x0079, 0x0065, 0x0073, 0x0000}; /* yes */
-static const UChar no[] ={ 0x006e, 0x006f, 0x0000 };           /* no */
 
 
 
@@ -503,7 +498,7 @@ string_write_xml(struct SResource *res, const char* id, const char* language, UE
 
         T_FileStream_write(out,valStrStart, (int32_t)uprv_strlen(valStrStart));
        /* T_FileStream_write(out,language, (int32_t)uprv_strlen(language)); */
-        T_FileStream_write(out,"\">", 2);
+        T_FileStream_write(out,">", 1);
 
         buf = convertAndEscape(&buf,0,&bufLen,res->u.fString.fChars,res->u.fString.fLength,status);
 
@@ -543,7 +538,7 @@ string_write_xml(struct SResource *res, const char* id, const char* language, UE
         T_FileStream_write(out,valStrStart, (int32_t)uprv_strlen(valStrStart));
 
         /*T_FileStream_write(out,language, (int32_t)uprv_strlen(language));*/
-        T_FileStream_write(out,"\">", 2);
+        T_FileStream_write(out,">", 1);
 
         buf = convertAndEscape(&buf,0,&bufLen,res->u.fString.fChars,res->u.fString.fLength,status);
         if(U_FAILURE(*status)){
@@ -870,9 +865,18 @@ bin_write_xml( struct SResource *res, const char* id, const char* language, UErr
     if(res->u.fBinaryValue.fFileName!=NULL){
         uprv_strcpy(fileName, res->u.fBinaryValue.fFileName);
         f = uprv_strrchr(fileName, '\\');
-        f++;
+        if (f != NULL) {
+            f++;
+        }
+        else {
+            f = fileName;
+        }
         ext = uprv_strrchr(fileName, '.');
 
+        if (ext == NULL) {
+            fprintf(stderr, "Error: %s is an unknown binary filename type.\n", fileName);
+            exit(U_ILLEGAL_ARGUMENT_ERROR);
+        }
         if(uprv_strcmp(ext, ".jpg")==0 || uprv_strcmp(ext, ".jpeg")==0 || uprv_strcmp(ext, ".gif")==0 ){
             m_type = "\"image";
         } else if(uprv_strcmp(ext, ".wav")==0 || uprv_strcmp(ext, ".au")==0 ){
@@ -987,10 +991,10 @@ bin_write_xml( struct SResource *res, const char* id, const char* language, UErr
         write_tabs(out);
         T_FileStream_write(out,end,(int32_t)uprv_strlen(end));
 
-        uprv_free(fn);
         uprv_free(sid);
         sid = NULL;
     }
+    uprv_free(fn);
 }
 
 
@@ -1163,8 +1167,8 @@ bundle_write_xml(struct SRBRoot *bundle, const char *outputDir,const char* outpu
     char* xmlfileName = NULL;
     char* outputFileName = NULL;
     char* originalFileName = NULL;
-    const char* fileStart = "<file xml:space = \"preserve\" datatype=\"ICUResourceBundle\" source-language = \"";
-    const char* file1 = "\" datatype = \"text\" ";
+    const char* fileStart = "<file xml:space = \"preserve\" source-language = \"";
+    const char* file1 = "\" datatype = \"ICUResourceBundle\" ";
     const char* file2 = "original = \"";
     const char* file3 = "\" tool = \"genrb\" ";
     const char* file4 = "date = \"";
@@ -1275,14 +1279,14 @@ bundle_write_xml(struct SRBRoot *bundle, const char *outputDir,const char* outpu
     }
 
     if (U_FAILURE(*status)) {
-        return;
+        goto cleanup_bundle_write_xml;
     }
 
     out= T_FileStream_open(xmlfileName,"w");
 
     if(out==NULL){
         *status = U_FILE_ACCESS_ERROR;
-        return;
+        goto cleanup_bundle_write_xml;
     }
     T_FileStream_write(out,xmlHeader, (int32_t)uprv_strlen(xmlHeader));
 
@@ -1291,7 +1295,7 @@ bundle_write_xml(struct SRBRoot *bundle, const char *outputDir,const char* outpu
         enc = outputEnc;
         conv=ucnv_open(enc,status);
         if(U_FAILURE(*status)){
-            return;
+            goto cleanup_bundle_write_xml;
         }
     }
     T_FileStream_write(out,bundleStart, (int32_t)uprv_strlen(bundleStart));
@@ -1338,6 +1342,7 @@ bundle_write_xml(struct SRBRoot *bundle, const char *outputDir,const char* outpu
 
     ucnv_close(conv);
 
+cleanup_bundle_write_xml:
     if(originalFileName!= NULL) {
         uprv_free(originalFileName);
         originalFileName = NULL;

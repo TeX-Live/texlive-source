@@ -15,11 +15,11 @@
 
 U_NAMESPACE_BEGIN
 
-GlyphIterator::GlyphIterator(LEGlyphStorage &theGlyphStorage, GlyphPositionAdjustments *theGlyphPositionAdjustments, le_bool rightToLeft, le_uint16 theLookupFlags, LETag theFeatureTag,
-    const GlyphDefinitionTableHeader *theGlyphDefinitionTableHeader)
+GlyphIterator::GlyphIterator(LEGlyphStorage &theGlyphStorage, GlyphPositionAdjustments *theGlyphPositionAdjustments, le_bool rightToLeft, le_uint16 theLookupFlags,
+                             FeatureMask theFeatureMask, const GlyphDefinitionTableHeader *theGlyphDefinitionTableHeader)
   : direction(1), position(-1), nextLimit(-1), prevLimit(-1),
     glyphStorage(theGlyphStorage), glyphPositionAdjustments(theGlyphPositionAdjustments),
-    srcIndex(-1), destIndex(-1), lookupFlags(theLookupFlags), featureTag(theFeatureTag), featureParam(0),
+    srcIndex(-1), destIndex(-1), lookupFlags(theLookupFlags), featureMask(theFeatureMask), featureParam(0),
     glyphClassDefinitionTable(NULL), markAttachClassDefinitionTable(NULL)
 
 {
@@ -52,13 +52,13 @@ GlyphIterator::GlyphIterator(GlyphIterator &that)
     srcIndex = that.srcIndex;
     destIndex = that.destIndex;
     lookupFlags = that.lookupFlags;
-    featureTag = that.featureTag;
+    featureMask = that.featureMask;
     featureParam = that.featureParam;
     glyphClassDefinitionTable = that.glyphClassDefinitionTable;
     markAttachClassDefinitionTable = that.markAttachClassDefinitionTable;
 }
 
-GlyphIterator::GlyphIterator(GlyphIterator &that, LETag newFeatureTag, le_int32 newFeatureParam)
+GlyphIterator::GlyphIterator(GlyphIterator &that, FeatureMask newFeatureMask, le_int32 newFeatureParam)
   : glyphStorage(that.glyphStorage)
 {
     direction    = that.direction;
@@ -70,7 +70,7 @@ GlyphIterator::GlyphIterator(GlyphIterator &that, LETag newFeatureTag, le_int32 
     srcIndex = that.srcIndex;
     destIndex = that.destIndex;
     lookupFlags = that.lookupFlags;
-    featureTag = newFeatureTag;
+    featureMask = newFeatureMask;
     featureParam = newFeatureParam;
     glyphClassDefinitionTable = that.glyphClassDefinitionTable;
     markAttachClassDefinitionTable = that.markAttachClassDefinitionTable;
@@ -88,7 +88,7 @@ GlyphIterator::GlyphIterator(GlyphIterator &that, le_uint16 newLookupFlags)
     srcIndex = that.srcIndex;
     destIndex = that.destIndex;
     lookupFlags = newLookupFlags;
-    featureTag = that.featureTag;
+    featureMask = that.featureMask;
     featureParam = that.featureParam;
     glyphClassDefinitionTable = that.glyphClassDefinitionTable;
     markAttachClassDefinitionTable = that.markAttachClassDefinitionTable;
@@ -99,12 +99,12 @@ GlyphIterator::~GlyphIterator()
     // nothing to do, right?
 }
 
-void GlyphIterator::reset(le_uint16 newLookupFlags, LETag newFeatureTag)
+void GlyphIterator::reset(le_uint16 newLookupFlags, FeatureMask newFeatureMask)
 {
-    position    = prevLimit;
-    featureTag  = newFeatureTag;
+    position     = prevLimit;
+    featureMask  = newFeatureMask;
     featureParam = 0;
-    lookupFlags = newLookupFlags;
+    lookupFlags  = newLookupFlags;
 }
 
 LEGlyphID *GlyphIterator::insertGlyphs(le_int32 count)
@@ -375,32 +375,30 @@ le_bool GlyphIterator::filterGlyph(le_uint32 index) const
     }
 }
 
-static const LETag emptyTag = 0;
-static const LETag defaultTag = 0xFFFFFFFF;
-
 le_bool GlyphIterator::hasFeatureTag()
 {
-    if (featureTag == defaultTag || featureTag == emptyTag) {
-    	featureParam = 0;
+    featureParam = 0;
+
+    if (featureMask == 0) {
         return TRUE;
     }
 
     LEErrorCode success = LE_NO_ERROR;
-    const LETag *tagList = (const LETag *) glyphStorage.getAuxData(position, success);
+    FeatureMask fm = glyphStorage.getAuxData(position, success);
 
-    if (tagList != NULL) {
-        for (le_int32 tag = 0; tagList[tag] != emptyTag; tag += 1) {
-            if (tagList[tag] == featureTag) {
-				const le_int32 *paramList = (const le_int32 *) glyphStorage.getAuxData2(position, success);
-				if (paramList != NULL)
-					featureParam = paramList[tag];
-				else
-					featureParam = 0;
-                return TRUE;
+    if ((fm & featureMask) != 0) {
+    	const le_int32 *paramList = (const le_int32 *) glyphStorage.getAuxParam(position, success);
+        if (paramList != NULL) {
+            fm = featureMask;
+            while ((fm & 0x80000000UL) == 0) {
+            	++paramList;
+            	fm <<= 1;
             }
+            featureParam = *paramList;
         }
+        return TRUE;
     }
-
+    
     return FALSE;
 }
 

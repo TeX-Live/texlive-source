@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2000-2003, International Business Machines
+*   Copyright (C) 2000-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -42,4 +42,4 @@ MBCSOpen(UCMFile *ucm);
 U_CFUNC NewConverter *
 CnvExtOpen(UCMFile *ucm);
 
-#endif
+#endif /* __GENMBCS_H__ */

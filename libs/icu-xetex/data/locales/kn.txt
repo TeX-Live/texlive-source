@@ -1,13 +1,13 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/kn.xml
+// * Source File:<path>/common/main/kn.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/kn.xml
+ *  ICU <specials> source: <path>/xml/main/kn.xml
  */
 kn{
     Countries{
@@ -20,20 +20,14 @@ kn{
         SG{"ಸಿಂಗಪುರ"}
         TR{"ತುರ್ಕಿ"}
     }
-    Currencies{
-        INR{
-            "रु",
-            "INR",
-        }
-    }
-    ExemplarCharacters{"[ಂಃಅ-ಌಎ-ಐಒ-ನಪ-ಳವ-ಹ಼-ೄೆ-ೈೊ-್ೕೖೞೠೡ೦-೯]"}
+    ExemplarCharacters{"[಼ ಂ ಃ ೦-೯ ಅ-ಋ ೠ ಌ ೡ ಎ-ಐ ಒ-ನ ಪ-ಲ ವ-ಹ ಳ ೞ ಽ-ೄ ೆ-ೈ ೊ-್ ೕ ೖ]"}
     Languages{
         kn{"ಕನ್ನಡ"}
     }
     LocaleScript{
         "Knda",
     }
-    Version{"1.31"}
+    Version{"1.46"}
     calendar{
         gregorian{
             AmPmMarkers{
@@ -91,6 +85,16 @@ kn{
                         "ಅಕ್ಟೋಬರ್",
                         "ನವೆಂಬರ್",
                         "ಡಿಸೆಂಬರ್",
+                    }
+                }
+            }
+            quarters{
+                format{
+                    wide{
+                        "ಒಂದು  1",
+                        "ಎರಡು 2",
+                        "ಮೂರು 3",
+                        "ನಾಲೃಕ  4",
                     }
                 }
             }

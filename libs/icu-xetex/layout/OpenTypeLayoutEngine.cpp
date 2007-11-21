@@ -1,7 +1,7 @@
 
 /*
  *
- * (C) Copyright IBM Corp. 1998-2005 - All Rights Reserved
+ * (C) Copyright IBM Corp. 1998-2006 - All Rights Reserved
  *
  */
 
@@ -12,6 +12,7 @@
 #include "LayoutEngine.h"
 #include "OpenTypeLayoutEngine.h"
 #include "ScriptAndLanguageTags.h"
+#include "CharSubstitutionFilter.h"
 
 #include "GlyphSubstitutionTables.h"
 #include "GlyphDefinitionTables.h"
@@ -26,52 +27,66 @@ U_NAMESPACE_BEGIN
 
 UOBJECT_DEFINE_RTTI_IMPLEMENTATION(OpenTypeLayoutEngine)
 
-static const LETag emptyTag = 0x00000000;
+#define ccmpFeatureTag LE_CCMP_FEATURE_TAG
+#define ligaFeatureTag LE_LIGA_FEATURE_TAG
+#define cligFeatureTag LE_CLIG_FEATURE_TAG
+#define kernFeatureTag LE_KERN_FEATURE_TAG
+#define markFeatureTag LE_MARK_FEATURE_TAG
+#define mkmkFeatureTag LE_MKMK_FEATURE_TAG
 
-static const LETag ccmpFeatureTag = LE_CCMP_FEATURE_TAG;
-static const LETag loclFeatureTag = LE_LOCL_FEATURE_TAG;
-static const LETag ligaFeatureTag = LE_LIGA_FEATURE_TAG;
-static const LETag cligFeatureTag = LE_CLIG_FEATURE_TAG;
-static const LETag kernFeatureTag = LE_KERN_FEATURE_TAG;
-static const LETag markFeatureTag = LE_MARK_FEATURE_TAG;
-static const LETag mkmkFeatureTag = LE_MKMK_FEATURE_TAG;
+// 'dlig' not used at the moment
+#define dligFeatureTag 0x646C6967
 
-static const LETag dligFeatureTag = 0x646C6967; // 'dlig' not used at the moment
-static const LETag paltFeatureTag = 0x70616C74; // 'palt'
+// 'palt'
+#define paltFeatureTag 0x70616C74
 
-// default has no ligatures, that's what java does.  this is the minimal set.
-static const LETag minimalFeatures[] = {ccmpFeatureTag, loclFeatureTag, markFeatureTag, mkmkFeatureTag, emptyTag};
+#define ccmpFeatureMask 0x80000000UL
+#define ligaFeatureMask 0x40000000UL
+#define cligFeatureMask 0x20000000UL
+#define kernFeatureMask 0x10000000UL
+#define paltFeatureMask 0x08000000UL
+#define markFeatureMask 0x04000000UL
+#define mkmkFeatureMask 0x02000000UL
 
-// kerning (kern, palt following adobe recommendation for cjk 'kerning') but no ligatures.
-static const LETag kernFeatures[] = {ccmpFeatureTag, loclFeatureTag, kernFeatureTag, paltFeatureTag, 
-				     markFeatureTag, mkmkFeatureTag, emptyTag};
+#define minimalFeatures     (ccmpFeatureMask | markFeatureMask | mkmkFeatureMask)
+#define ligaFeatures        (ligaFeatureMask | cligFeatureMask | minimalFeatures)
+#define kernFeatures        (kernFeatureMask | paltFeatureMask | minimalFeatures)
+#define kernAndLigaFeatures (ligaFeatures    | kernFeatures)
+ 
+static const FeatureMap featureMap[] =
+{
+    {ccmpFeatureTag, ccmpFeatureMask},
+    {ligaFeatureTag, ligaFeatureMask},
+    {cligFeatureTag, cligFeatureMask}, 
+	{kernFeatureTag, kernFeatureMask},
+    {paltFeatureTag, paltFeatureMask},
+    {markFeatureTag, markFeatureMask},
+    {mkmkFeatureTag, mkmkFeatureMask}
+};
 
-// ligatures (liga, clig) but no kerning.  omit dlig for now.
-static const LETag ligaFeatures[] = {ccmpFeatureTag, loclFeatureTag, ligaFeatureTag, cligFeatureTag, markFeatureTag, 
-				     mkmkFeatureTag, emptyTag};
-
-// kerning and ligatures.
-static const LETag kernAndLigaFeatures[] = {ccmpFeatureTag, loclFeatureTag, ligaFeatureTag, cligFeatureTag, 
-					    kernFeatureTag, paltFeatureTag, markFeatureTag, mkmkFeatureTag, emptyTag};
-
+static const le_int32 featureMapCount = LE_ARRAY_SIZE(featureMap);
 
 OpenTypeLayoutEngine::OpenTypeLayoutEngine(const LEFontInstance *fontInstance, le_int32 scriptCode, le_int32 languageCode,
                         le_int32 typoFlags, const GlyphSubstitutionTableHeader *gsubTable)
-    : LayoutEngine(fontInstance, scriptCode, languageCode, typoFlags),
-      fFeatureList(minimalFeatures), fFeatureParamList(NULL), fFeatureOrder(NULL),
-      fGSUBTable(gsubTable), fGDEFTable(NULL), fGPOSTable(NULL), fSubstitutionFilter(NULL)
+    : LayoutEngine(fontInstance, scriptCode, languageCode, typoFlags), fFeatureMask(minimalFeatures),
+      fFeatureMap(featureMap), fFeatureParamList(NULL), fFeatureMapCount(featureMapCount), fFeatureOrder(FALSE),
+      fGSUBTable(gsubTable), fGDEFTable(NULL), fGPOSTable(NULL), fSubstitutionFilter(NULL), fFilterZeroWidth(TRUE)
 {
     static const le_uint32 gdefTableTag = LE_GDEF_TABLE_TAG;
     static const le_uint32 gposTableTag = LE_GPOS_TABLE_TAG;
     const GlyphPositioningTableHeader *gposTable = (const GlyphPositioningTableHeader *) getFontTable(gposTableTag);
 
     // todo: switch to more flags and bitfield rather than list of feature tags?
-    switch (typoFlags) {
+    switch (typoFlags & ~0x80000000L) {
     case 0: break; // default
-    case 1: fFeatureList = kernFeatures; break;
-    case 2: fFeatureList = ligaFeatures; break;
-    case 3: fFeatureList = kernAndLigaFeatures; break;
+    case 1: fFeatureMask = kernFeatures; break;
+    case 2: fFeatureMask = ligaFeatures; break;
+    case 3: fFeatureMask = kernAndLigaFeatures; break;
     default: break;
+    }
+
+    if (typoFlags & 0x80000000L) {
+        fSubstitutionFilter = new CharSubstitutionFilter(fontInstance);
     }
 
     setScriptAndLanguageTags();
@@ -94,14 +109,18 @@ void OpenTypeLayoutEngine::reset()
 
 OpenTypeLayoutEngine::OpenTypeLayoutEngine(const LEFontInstance *fontInstance, le_int32 scriptCode, le_int32 languageCode,
 					   le_int32 typoFlags)
-    : LayoutEngine(fontInstance, scriptCode, languageCode, typoFlags), fFeatureOrder(NULL),
-      fGSUBTable(NULL), fGDEFTable(NULL), fGPOSTable(NULL), fSubstitutionFilter(NULL)
+    : LayoutEngine(fontInstance, scriptCode, languageCode, typoFlags), fFeatureOrder(FALSE),
+      fGSUBTable(NULL), fGDEFTable(NULL), fGPOSTable(NULL), fSubstitutionFilter(NULL), fFilterZeroWidth(TRUE)
 {
     setScriptAndLanguageTags();
 }
 
 OpenTypeLayoutEngine::~OpenTypeLayoutEngine()
 {
+    if (fTypoFlags & 0x80000000L) {
+        delete fSubstitutionFilter;
+    }
+
     reset();
 }
 
@@ -150,7 +169,7 @@ le_int32 OpenTypeLayoutEngine::characterProcessing(const LEUnicode chars[], le_i
     glyphStorage.allocateGlyphArray(outCharCount, rightToLeft, success);
     glyphStorage.allocateAuxData(success);
     for (le_int32 i = 0; i < outCharCount; i += 1) {
-        glyphStorage.setAuxData(i, (void *) fFeatureList, (void *) fFeatureParamList, success);
+        glyphStorage.setAuxData(i, fFeatureMask, (void *) fFeatureParamList, success);
     }
 
     return outCharCount;
@@ -170,14 +189,15 @@ le_int32 OpenTypeLayoutEngine::glyphProcessing(const LEUnicode chars[], le_int32
         return 0;
     }
 
-    mapCharsToGlyphs(chars, offset, count, rightToLeft, rightToLeft, glyphStorage, success);
+    mapCharsToGlyphs(chars, offset, count, rightToLeft, rightToLeft, fFilterZeroWidth, glyphStorage, success);
 
     if (LE_FAILURE(success)) {
         return 0;
     }
 
     if (fGSUBTable != NULL) {
-        count = fGSUBTable->process(glyphStorage, rightToLeft, fScriptTag, fLangSysTag, fGDEFTable, fSubstitutionFilter, fFeatureOrder);
+        count = fGSUBTable->process(glyphStorage, rightToLeft, fScriptTag, fLangSysTag, fGDEFTable, fSubstitutionFilter,
+                                    fFeatureMap, fFeatureMapCount, fFeatureOrder);
     }
 
     return count;
@@ -214,6 +234,10 @@ le_int32 OpenTypeLayoutEngine::computeGlyphs(const LEUnicode chars[], le_int32 o
 
     outCharCount = characterProcessing(chars, offset, count, max, rightToLeft, outChars, fakeGlyphStorage, success);
 
+    if (LE_FAILURE(success)) {
+        return 0;
+    }
+
     if (outChars != NULL) {
         fakeGlyphCount = glyphProcessing(outChars, 0, outCharCount, outCharCount, rightToLeft, fakeGlyphStorage, success);
         LE_DELETE_ARRAY(outChars); // FIXME: a subclass may have allocated this, in which case this delete might not work...
@@ -221,6 +245,10 @@ le_int32 OpenTypeLayoutEngine::computeGlyphs(const LEUnicode chars[], le_int32 o
     } else {
         fakeGlyphCount = glyphProcessing(chars, offset, count, max, rightToLeft, fakeGlyphStorage, success);
         //adjustGlyphs(chars, offset, count, rightToLeft, fakeGlyphs, fakeGlyphCount);
+    }
+
+    if (LE_FAILURE(success)) {
+        return 0;
     }
 
     outGlyphCount = glyphPostProcessing(fakeGlyphStorage, glyphStorage, success);
@@ -268,7 +296,8 @@ void OpenTypeLayoutEngine::adjustGlyphPositions(const LEUnicode chars[], le_int3
         }
 #endif
 
-        fGPOSTable->process(glyphStorage, adjustments, reverse, fScriptTag, fLangSysTag, fGDEFTable, fFontInstance, fFeatureOrder);
+        fGPOSTable->process(glyphStorage, adjustments, reverse, fScriptTag, fLangSysTag, fGDEFTable, fFontInstance,
+                            fFeatureMap, fFeatureMapCount, fFeatureOrder);
 
         float xAdjust = 0, yAdjust = 0;
 

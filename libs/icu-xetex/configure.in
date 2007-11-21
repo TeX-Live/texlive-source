@@ -1,6 +1,6 @@
 dnl -*-m4-*-
 dnl configure.in for ICU
-dnl Copyright (c) 1999-2005, International Business Machines Corporation and
+dnl Copyright (c) 1999-2006, International Business Machines Corporation and
 dnl others. All Rights Reserved.
 dnl Stephen F. Booth, heavily modified by Yves and others
 
@@ -34,12 +34,17 @@ AC_SUBST(LIB_VERSION)
 AC_SUBST(LIB_VERSION_MAJOR)
 AC_MSG_RESULT([release $VERSION, library $LIB_VERSION])
 
-UNICODE_VERSION="4.1"
+UNICODE_VERSION="5.0"
 AC_SUBST(UNICODE_VERSION)
 
-AC_SUBST(CPPFLAGS)
-#AC_SUBST(CINTLTST_CPPFLAGS)
+dnl Determine the host system
+AC_CANONICAL_HOST
 
+AC_SUBST(CPPFLAGS)
+
+dnl This variable is needed on z/OS because the C++ compiler only recognizes .C
+_CXX_CXXSUFFIX=cc
+export _CXX_CXXSUFFIX
 dnl Checks for programs
 AC_PROG_CC
 AC_PROG_CXX
@@ -54,7 +59,7 @@ if test "$srcdir" = "."; then
 fi
 
 #AC_CHECK_PROG(AUTOCONF, autoconf, autoconf, true)
-AC_CHECK_PROG(STRIP, strip, strip, true)
+#AC_CHECK_PROG(STRIP, strip, strip, true)
 
 dnl Check for the platform make
 AC_PATH_PROGS(U_MAKE, gmake gnumake, make)
@@ -63,8 +68,8 @@ AC_SUBST(U_MAKE)
 dnl Check for doxygen to generate documentation
 AC_PATH_PROG(DOXYGEN,doxygen,,$PATH:/usr/local/bin:/usr/bin)
 
-dnl Determine the host system and Makefile fragment
-AC_CANONICAL_HOST
+dnl Check that the linker is usable
+ICU_PROG_LINK
 
 dnl Determine the executable suffix
 dnl We don't use AC_EXEEXT because some compilers output separate debugging
@@ -86,6 +91,7 @@ AC_CHECK_64BIT_LIBS
 AC_SUBST(ARFLAGS)
 AC_SUBST(COMPILE_LINK_ENVVAR)
 
+dnl Determine the Makefile fragment
 ICU_CHECK_MH_FRAG
 
 dnl Checks for libraries and other host specific stuff
@@ -287,9 +293,20 @@ if test $threads = true; then
   dnl Check to see if we are using CygWin with MSVC
   case "${host}" in
   *-pc-cygwin*|*-pc-mingw*)
+    dnl For gcc, the thread options are set by mh-mingw/mh-cygwin
+    ICU_USE_THREADS=1
     if test "$ac_cv_prog_gcc" = no; then
       dnl We're using normal windows compilers. Threading is available.
       ICU_USE_THREADS=1
+      if test $ENABLE_DEBUG = 1; then
+        dnl /MDd means 'compiles and links a debugable multithreaded program with DLL'
+        CFLAGS="${CFLAGS} /MDd"
+        CXXFLAGS="${CXXFLAGS} /MDd"
+      else
+        dnl /MD means 'compiles and links a multithreaded program with DLL'
+        CFLAGS="${CFLAGS} /MD"
+        CXXFLAGS="${CXXFLAGS} /MD"
+      fi
     fi ;;
   *-*-hpux*)
     dnl Add -mt because it does several nice things on newer compilers.
@@ -387,7 +404,7 @@ then
             CXXFLAGS="${CXXFLAGS} -AA"
         ;;
     esac
-    AC_MSG_CHECKING([iostream usability])
+    AC_MSG_CHECKING([for iostream usability])
     AC_TRY_COMPILE([#include <iostream>],[],
         [ac_cv_header_iostream=yes],[ac_cv_header_iostream=no])
     if test $icu_cv_host_frag = mh-cygwin-msvc
@@ -403,16 +420,13 @@ then
         U_IOSTREAM_SOURCE=199711
     else
         CXXFLAGS="${OLD_CXXFLAGS}"
-        AC_CHECK_HEADER(iostream.h)
-        if test $ac_cv_header_iostream_h = yes; then
-            AC_MSG_CHECKING([whether ostream is really defined])
-            AC_CACHE_VAL(ac_cv_iostream_ok,
-                AC_TRY_LINK([#include <iostream.h>],[ostream &testout = cout; testout << "test" << endl;],ac_cv_iostream_ok=yes,ac_cv_iostream_ok=no))
-            AC_MSG_RESULT($ac_cv_iostream_ok)
-            if test $ac_cv_iostream_ok = yes
-            then
-                U_IOSTREAM_SOURCE=198506
-            fi
+        AC_MSG_CHECKING([whether ostream in iostream.h is really defined])
+        AC_CACHE_VAL(ac_cv_iostream_ok,
+            AC_TRY_LINK([#include <iostream.h>],[ostream &testout = cout; testout << "test" << endl;],ac_cv_iostream_ok=yes,ac_cv_iostream_ok=no))
+        AC_MSG_RESULT($ac_cv_iostream_ok)
+        if test $ac_cv_iostream_ok = yes
+        then
+            U_IOSTREAM_SOURCE=198506
         fi
     fi
     if test x$streams != x
@@ -473,7 +487,7 @@ AC_MSG_CHECKING([for namespace support])
 AC_CACHE_VAL(ac_cv_namespace_ok,
     [AC_TRY_LINK(
     changequote(<<, >>)dnl
-    <<namespace x_version {void f(){}};
+    <<namespace x_version {void f(){}}
     namespace x = x_version;
     using namespace x_version;
     >>,
@@ -732,6 +746,7 @@ AC_DO_CHECK_SIZEOF(wchar_t,$ac_default_sizeof_wchar_t,[
 #if STDC_HEADERS
 #include <stddef.h>
 #endif
+#include <stdlib.h>
 #if HAVE_WCHAR_H
 #include <string.h>
 #include <wchar.h>
@@ -763,7 +778,7 @@ AC_ARG_ENABLE(extras,
 		esac], 
 	extras=true)
 ICU_CONDITIONAL(EXTRAS, test "$extras" = true)
-AC_ARG_ENABLE(extras,
+AC_ARG_ENABLE(icuio,
 	[  --enable-icuio          build ICU's icuio library [default=yes]],
 	[case "${enableval}" in
 		yes) icuio=true ;;
@@ -797,12 +812,12 @@ AC_ARG_WITH(data-packaging,
         [datapackaging=])
 
 dnl Note:  'thesysconfdir' is an evaluated version, for Man pages, so also for thedatadir, thelibdir, etc.. 
-thesysconfdir=`eval echo $sysconfdir`
-AC_SUBST(thesysconfdir)
+#thesysconfdir=`eval echo $sysconfdir`
+#AC_SUBST(thesysconfdir)
+#thelibdir=`test "x$exec_prefix" = xNONE && exec_prefix="$prefix"; eval echo $libdir`
+#AC_SUBST(thelibdir)
 thedatadir=`eval echo $datadir`
 AC_SUBST(thedatadir)
-thelibdir=`test "x$exec_prefix" = xNONE && exec_prefix="$prefix"; eval echo $libdir`
-AC_SUBST(thelibdir)
 dnl Always put raw data files in share/icu/{version}, etc.   Never use lib/icu/{version} for data files.. Actual shared libraries will go in {libdir}. 
 pkgicudatadir=$datadir
 thepkgicudatadir=$thedatadir
@@ -810,30 +825,6 @@ AC_SUBST(pkgicudatadir)
 AC_SUBST(thepkgicudatadir)
 
 dnl Shouldn't need the AC_SUBST
-dnl Deprecated support for --enable-mapped
-
-AC_ARG_ENABLE(mapped,,
-       [case "${enableval}" in
-               yes) mapped=archive ;;
-               no)  mapped=library ;;
-               *) AC_MSG_ERROR(bad value ${enableval} for --enable-mapped; use --with-data-packaging now) ;;
-	esac],
-       [mapped=])
-
-if test x"$mapped" != x; then
-    case $mapped in
-	archive)
-    	    AC_MSG_WARN(use --with-data-packaging=archive instead of --enable-mapped)
-	    ;;
-	library)
-    	    AC_MSG_WARN(use --with-data-packaging=library instead of --disable-mapped)
-	    ;;
-    esac
-    if test x"$datapackaging" != x -a x"$mapped" != x"$datapackaging"; then
-	AC_MSG_ERROR(conflicting values used for --with-data-packaging and deprecated --enable-mapped)
-    fi
-    datapackaging=$mapped
-fi
 
 if test x"$datapackaging" = x -o x"$datapackaging" = xauto; then
 	datapackaging=library
@@ -841,19 +832,15 @@ fi
 
 case "$datapackaging" in
     files)
-	DATA_PACKAGING_CPPFLAGS=-DUDATA_FILES
 	DATA_PACKAGING_MODE=files
 	;;
     archive)
-	DATA_PACKAGING_CPPFLAGS=-DUDATA_MAP
 	DATA_PACKAGING_MODE=common
 	;;
     library)
-	DATA_PACKAGING_CPPFLAGS=-DUDATA_DLL
 	DATA_PACKAGING_MODE=dll
 	;;
 esac
-AC_SUBST(DATA_PACKAGING_CPPFLAGS)
 AC_SUBST(DATA_PACKAGING_MODE)
 
 dnl Sets a library suffix
@@ -910,7 +897,7 @@ dnl set ICUDATA_CHAR to 'e' for any EBCDIC (which should be big endian) platform
 case "${host}" in
 	*-*-solaris*) 	platform=U_SOLARIS ;;
 	*-*-linux*) 	platform=U_LINUX ;;
-	*-*-*bsd*) 	platform=U_BSD ;;
+	*-*-*bsd*|*-*-dragonfly*) 	platform=U_BSD ;;
 	*-*-aix*) 	platform=U_AIX ;;
 	*-*-hpux*) 	platform=U_HPUX ;;
 	*-apple-darwin*|*-apple-rhapsody*)	platform=U_DARWIN ;;
@@ -928,7 +915,6 @@ case "${host}" in
 	*-*-beos)		platform=U_BEOS ;;
 	*-*-irix*)		platform=U_IRIX ;;
 	*-ncr-*)		platform=U_MPRAS ;;
-	*-sequent-*)	platform=PTX ;;
 	*) 		platform=U_UNKNOWN_PLATFORM ;;
 esac
 AC_SUBST(ICUDATA_CHAR)
@@ -942,12 +928,11 @@ dnl Handle -rpath options for shared library paths
 case "${host}" in
 	*-*-solaris*) 	ld_rpath_suf=":" ;;
 	*-*-linux*) 	ld_rpath_suf=" " ;;
-	*-*-*bsd*) 	ld_rpath_suf=" " ;;
+	*-*-*bsd*|*-*-dragonfly*) 	ld_rpath_suf=" " ;;
 	*-*-aix*) 	ld_rpath_suf="" ;;
 	*-*-hpux*) 	ld_rpath_suf=":" ;;
 	*-*ibm-openedition*|*-*-os390*)	ld_rpath_suf="" ;;
 	*-*-os400*)	ld_rpath_suf=" " ;;
-	*-sequent-*)	ld_rpath_suf="" ;;
 	*-*-irix*)      ld_rpath_suf=" " ;;
 	*) 		ld_rpath_suf="" ;;
 esac
@@ -1019,14 +1004,18 @@ AC_OUTPUT([icudefs.mk \
 		layoutex/Makefile \
 		io/Makefile \
 		extra/Makefile \
-		extra/uconv/Makefile extra/scrptrun/Makefile \
-		tools/Makefile tools/ctestfw/Makefile \
+		extra/uconv/Makefile \
+		extra/scrptrun/Makefile \
+		tools/Makefile \
+		tools/ctestfw/Makefile \
+		tools/toolutil/Makefile \
 		tools/makeconv/Makefile \
 		tools/genrb/Makefile \
 		tools/genuca/Makefile \
 		tools/genccode/Makefile \
 		tools/gencmn/Makefile \
 		tools/gencnval/Makefile \
+		tools/genctd/Makefile \
 		tools/gennames/Makefile \
 		tools/gentest/Makefile \
 		tools/gennorm/Makefile \
@@ -1036,10 +1025,11 @@ AC_OUTPUT([icudefs.mk \
 		tools/genpname/Makefile \
 		tools/genbrk/Makefile \
 		tools/gensprep/Makefile \
+		tools/icupkg/Makefile \
 		tools/icuswap/Makefile \
 		tools/pkgdata/Makefile \
-		tools/toolutil/Makefile \
 		tools/dumpce/Makefile \
+		tools/tzcode/Makefile \
 		test/Makefile \
 		test/testdata/Makefile \
 		test/testdata/pkgdata.inc \
@@ -1052,11 +1042,19 @@ AC_OUTPUT([icudefs.mk \
 		test/letest/Makefile \
 		test/threadtest/Makefile \
 		samples/Makefile samples/date/Makefile \
-		samples/cal/Makefile samples/layout/Makefile \
+		samples/cal/Makefile samples/csdet/Makefile samples/layout/Makefile \
 		common/unicode/platform.h])
 
 if test $ICU_USE_THREADS = 0; then
   echo  " *** Note: configuring the ICU without pthread support or testing. If this isn't what you want, then run configure with --enable-threads=yes or check the messages [above] to see why we couldn't find pthread_create()" 1>&6
 fi
 
+if test -n "`$U_MAKE -v 2>&1 | grep '^GNU Make'`"; then
 echo "You must use $U_MAKE to build ICU."
+else
+echo "WARNING: $U_MAKE may not be GNU make."
+echo "This may cause ICU to fail to build. Please make sure that GNU make"
+echo "is in your PATH so that this configure script can detect its location."
+fi
+
+$as_unset _CXX_CXXSUFFIX

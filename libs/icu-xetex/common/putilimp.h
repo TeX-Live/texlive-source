@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 1997-2005, International Business Machines
+*   Copyright (C) 1997-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -135,19 +135,6 @@ U_INTERNAL int32_t U_EXPORT2 uprv_min(int32_t d, int32_t y);
 U_INTERNAL double  U_EXPORT2 uprv_maxMantissa(void);
 
 /**
- * Return the floor of the log base 10 of a given double.
- * This method compensates for inaccuracies which arise naturally when
- * computing logs, and always gives the correct value.  The parameter
- * must be positive and finite.
- * (Thanks to Alan Liu for supplying this function.)
- *
- * @param d the double value to apply the common log function for.
- * @return the log of value d.
- * @internal
- */
-U_INTERNAL int16_t  U_EXPORT2 uprv_log10(double d);
-
-/**
  * Floating point utility to calculate the logarithm of a double.
  * @internal
  */
@@ -260,19 +247,34 @@ U_INTERNAL UBool U_EXPORT2 uprv_pathIsAbsolute(const char *path);
 #  elif defined(OS400)
 /*
  * With the provided macro we should never be out of range of a given segment
- * (a traditional/typical segment that is).  Our segments have 5 bytes for the id
- * and 3 bytes for the offset.  The key is that the casting takes care of only
- * retrieving the offset portion minus x1000.  Hence, the smallest offset seen in
- * a program is x001000 and when casted to an int would be 0.  That's why we can
- * only add 0xffefff.  Otherwise, we would exceed the segment.
+ * (a traditional/typical segment that is).  Our segments have 5 bytes for the
+ * id and 3 bytes for the offset.  The key is that the casting takes care of
+ * only retrieving the offset portion minus x1000.  Hence, the smallest offset
+ * seen in a program is x001000 and when casted to an int would be 0.
+ * That's why we can only add 0xffefff.  Otherwise, we would exceed the segment.
  *
  * Currently, 16MB is the current addressing limitation on as/400.  This macro
  * may eventually be changed to use 2GB addressability for the newer version of
  * as/400 machines.
  */
 #    define U_MAX_PTR(base) ((void *)(((char *)base)-((int32_t)(base))+((int32_t)0xffefff)))
+#  elif defined(__GNUC__) && __GNUC__ >= 4
+/*
+ * Due to a compiler optimization bug, gcc 4 causes test failures when doing
+ * this math arithmetic on pointers on some platforms. It seems like the
+ * pointers are considered signed instead of unsigned. The uintptr_t type
+ * isn't available on all platforms (i.e MSVC 6) and pointers aren't always
+ * a scalar value (i.e. i5/OS in the lines above).
+ */
+#    define U_MAX_PTR(base) \
+    ((void *)(((uintptr_t)(base)+0x7fffffffu) > (uintptr_t)(base) \
+        ? ((uintptr_t)(base)+0x7fffffffu) \
+        : (uintptr_t)-1))
 #  else
-#    define U_MAX_PTR(base) ((void *)(((char *)(base)+0x7fffffffu) > (char *)(base) ? ((char *)(base)+0x7fffffffu) : (char *)-1))
+#    define U_MAX_PTR(base) \
+    ((char *)(((char *)(base)+0x7fffffffu) > (char *)(base) \
+        ? ((char *)(base)+0x7fffffffu) \
+        : (char *)-1))
 #  endif
 #endif
 

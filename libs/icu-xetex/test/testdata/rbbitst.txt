@@ -1,4 +1,4 @@
-﻿# Copyright (c) 2001-2004 International Business Machines
+﻿# Copyright (c) 2001-2006 International Business Machines
 # Corporation and others. All Rights Reserved.
 #
 # RBBI Test Data
@@ -12,6 +12,7 @@
 #   <sent>    any following data is for sentence break testing
 #   <line>    any following data is for line break testing
 #   <char>    any following data is for char break testing
+#   <locale local_name>  Switch to the named locale at the next occurence of <word>, <sent>, etc.
 #   <data> ... </data>   test data.  May span multiple lines.
 #      <>        Break position, status == 0
 #      •         Break position, status == 0   (Bullet, \u2022) 
@@ -22,7 +23,7 @@
 #
 
 
-#   Temp debugging tests
+#   Temp debugging tests 
 <line>
 #     to test for bug #4097920
 <data>•dog,cat,mouse •(one)•(two)\n<100></data>
@@ -87,6 +88,8 @@
 #     (Requires special casing in implementation, which is why it gets a test.)
 <data>•\uffff•\uffff• •a•</data>
 
+#  Treat Japanese Half Width voicing marks as combining
+<data>•A\uff9e•B\uff9f\uff9e\uff9f•C•</data>
 
 ########################################################################################
 #
@@ -156,7 +159,7 @@
 
 <data>•abc<200>\u4e01<400>\u4e02<400>\u3005<200>\u4e03<400>\u4e03<400>abc<200> •</data>
 
-<data>•\u06c9\uc799<200>\ufffa•</data>
+<data>•\u06c9\uc799\ufffa<200></data>
 
 #      
 #      Try some words from other scripts.
@@ -184,6 +187,11 @@
 #  Failures from monkey tests
 #
 <data>•\u8527<400>\u02ba<200>\u0027\u0d42•\u00b7•\u09ea<100></data>
+
+#
+# Jitterbug 5276 - treat Japanese half width voicing marks as Grapheme Extend
+#
+<data>•A\uff9e\uff9fBC<200> •1\uff9e\uff9f23<100></data>
 
 ########################################################################################
 #
@@ -217,19 +225,19 @@ doing? •This\n<100> costs $20,00,000. •</data>
 "This isn't it." •Hi! \
 •This is a simple sample sentence. •(This is it.) •This is a simple sample sentence. •\
 "This isn't it." •\
-Hi! •This is a simple sample sentence. •It does not have to make any sense as you can see. •Nel mezzo del cammin di nostra vita, mi ritrovai in una selva oscura. •Che la dritta via aveo smarrita. •He said, that I said, that you said!•! •Don't rock the boat.\u2029•Because I am the daddy, that is why. 
-•Not on my time (el timo.)•! •</data>
+Hi! •This is a simple sample sentence. •It does not have to make any sense as you can see. •Nel mezzo del cammin di nostra vita, mi ritrovai in una selva oscura. •Che la dritta via aveo smarrita. •He said, that I said, that you said!! •Don't rock the boat.\u2029•Because I am the daddy, that is why. 
+•Not on my time (el timo.)! •</data>
 
-<data>•Hello.  •So what!•!\u2029•"But now," he said, \
+<data>•Hello.  •So what!!\u2029•"But now," he said, \
 "I know!" •\
-Harris thumbed down several, including "Away We Go" (which became the huge success Oklahoma!)•. •One species, B. anthracis, is highly virulent.
+Harris thumbed down several, including "Away We Go" (which became the huge success Oklahoma!). •One species, B. anthracis, is highly virulent.
 •Wolf said about Sounder:\
 "Beautifully thought-out and directed." •\
 Have you ever said, "This is where\tI shall live"? •He answered, \
-"You may not!" •Another popular saying is: "How do you do?"•. \n•\
+"You may not!" •Another popular saying is: "How do you do?". \n•\
 Yet another popular saying is: \
 'I'm fine thanks.' •\
-What is the proper use of the abbreviation pp.•? •Yes, I am definatelly 12" tall!•!\
+What is the proper use of the abbreviation pp.? •Yes, I am definatelly 12" tall!!\
 •Now\r<100>is\n<100>the\r\n<100>time\n<100>\r<100>for\r<100>\r<100></data>
 
 <data>•No breaks when . is surrounded by UPPER.Case letters.  •</data>
@@ -245,13 +253,13 @@ What is the proper use of the abbreviation pp.•? •Yes, I am definatelly 12" 
 #      Treat fullwidth variants of .!? the same as their
 #      normal counterparts
 #
-<data>•I know I'm right\uff0e •Right\uff1f •Right\uff01 •</data>"
+<data>•I know I'm right\uff0e •Right\uff1f •Right\uff01 •</data>
 
 
 #
 #       Don't break sentences at boundary between CJK and digits
 #
-<data>•\u5487\u67ff\ue591\u5017\u61b3\u60a1\u9510\u8165\u9de8\u97e48888\u821c\u8165\u7fc8\u51ce\u306d\ue30b\u2494\u56d8\u4ec0\u60b1\u8560\u51ba\u611d\u57b6\u2510\u5d46\u97e5\u7751\u3002•Bye, now<100></data>"
+<data>•\u5487\u67ff\ue591\u5017\u61b3\u60a1\u9510\u8165\u9de8\u97e48888\u821c\u8165\u7fc8\u51ce\u306d\ue30b\u2494\u56d8\u4ec0\u60b1\u8560\u51ba\u611d\u57b6\u2510\u5d46\u97e5\u7751\u3002•Bye, now<100></data>
 
 #
 #      Breaks around '(' following a sentence TERM.  (Rule 9)
@@ -310,7 +318,7 @@ What is the proper use of the abbreviation pp.•? •Yes, I am definatelly 12" 
 #         Regression test for bug #1984, Sentence break in Arabic text.
   
 <data>\
-•\u0623\u0633\u0627\u0633\u064b\u0627\u060c\u0020\u062a\u062a\u0639\u0627"\u0645\u0644\u0020\u0627\u0644\u062d\u0648\u0627\u0633\u064a\u0628\u0020"\u0641\u0642\u0637\u0020\u0645\u0639\u0020\u0627\u0644\u0623\u0631\u0642\u0627\u0645\u060c\u0648\u062a\u0642\u0648\u0645\u0020\u0628\u062a\u062e\u0632\u064a\u0646\u0020\u0627\u0644\u0623\u062d\u0631\u0641\u0020\u0648\u0627\u0644\u0645\u062d\u0627\u0631\u0641\u0020\u0627\u0644\u0623\u062e\u0631\u0649\u0020\u0628\u0639\u062f\u0020\u0623\u0646\u062a\u064f\u0639\u0637\u064a\u0020\u0631\u0642\u0645\u0627\u0020\u0645\u0639\u064a\u0646\u0627\u0020\u0644\u0643\u0644\u0020\u0648\u0627\u062d\u062f\u0020\u0645\u0646\u0647\u0627\u002e\u0020•\u0648\u0642\u0628\u0644\u0020\u0627\u062e\u062a\u0631\u0627\u0639\u0022\u064a\u0648\u0646\u0650\u0643\u0648\u062f\u0022\u060c\u0020\u0643\u0627\u0646\u0020\u0647\u0646\u0627\u0643\u0020\u0645\u0626\u0627\u062a\u0020\u0627\u0644\u0623\u0646\u0638\u0645\u0629\u0020\u0644\u0644\u062a\u0634\u0641\u064a\u0631\u0648\u062a\u062e\u0635\u064a\u0635\u0020\u0647\u0630\u0647\u0020\u0627\u0644\u0623\u0631\u0642\u0627\u0645\u0020\u0644\u0644\u0645\u062d\u0627\u0631\u0641\u060c\u0020\u0648\u0644\u0645\u0020\u064a\u0648\u062c\u062f\u0020\u0646\u0638\u0627\u0645\u062a\u0634\u0641\u064a\u0020\u0639\u0644\u0649\u0020\u062c\u0645\u064a\u0639\u0020\u0627\u0644\u0645\u062d\u0627\u0631\u0641\u0020\u0627\u0644\u0636\u0631\u0648\u0631\u064a\u0629.  •</data>"
+•\u0623\u0633\u0627\u0633\u064b\u0627\u060c\u0020\u062a\u062a\u0639\u0627"\u0645\u0644\u0020\u0627\u0644\u062d\u0648\u0627\u0633\u064a\u0628\u0020"\u0641\u0642\u0637\u0020\u0645\u0639\u0020\u0627\u0644\u0623\u0631\u0642\u0627\u0645\u060c\u0648\u062a\u0642\u0648\u0645\u0020\u0628\u062a\u062e\u0632\u064a\u0646\u0020\u0627\u0644\u0623\u062d\u0631\u0641\u0020\u0648\u0627\u0644\u0645\u062d\u0627\u0631\u0641\u0020\u0627\u0644\u0623\u062e\u0631\u0649\u0020\u0628\u0639\u062f\u0020\u0623\u0646\u062a\u064f\u0639\u0637\u064a\u0020\u0631\u0642\u0645\u0627\u0020\u0645\u0639\u064a\u0646\u0627\u0020\u0644\u0643\u0644\u0020\u0648\u0627\u062d\u062f\u0020\u0645\u0646\u0647\u0627\u002e\u0020•\u0648\u0642\u0628\u0644\u0020\u0627\u062e\u062a\u0631\u0627\u0639\u0022\u064a\u0648\u0646\u0650\u0643\u0648\u062f\u0022\u060c\u0020\u0643\u0627\u0646\u0020\u0647\u0646\u0627\u0643\u0020\u0645\u0626\u0627\u062a\u0020\u0627\u0644\u0623\u0646\u0638\u0645\u0629\u0020\u0644\u0644\u062a\u0634\u0641\u064a\u0631\u0648\u062a\u062e\u0635\u064a\u0635\u0020\u0647\u0630\u0647\u0020\u0627\u0644\u0623\u0631\u0642\u0627\u0645\u0020\u0644\u0644\u0645\u062d\u0627\u0631\u0641\u060c\u0020\u0648\u0644\u0645\u0020\u064a\u0648\u062c\u062f\u0020\u0646\u0638\u0627\u0645\u062a\u0634\u0641\u064a\u0020\u0639\u0644\u0649\u0020\u062c\u0645\u064a\u0639\u0020\u0627\u0644\u0645\u062d\u0627\u0631\u0641\u0020\u0627\u0644\u0636\u0631\u0648\u0631\u064a\u0629.  •</data>
 
 #         Try a few more of the less common sentence endings.
 <data>•Hello, world\u3002 •Hello, world\u1803 •Hello, world\u2048 •Hello, world\u203c •Let's end here. •</data>
@@ -473,7 +481,7 @@ What is the proper use of the abbreviation pp.•? •Yes, I am definatelly 12" 
 <data>•\u4e01•\ud840\udc01•\u4e02•abc •\ue000 •\udb80\udc01•</data>
 
 #      Regression for bug 836
-<data>•AAA•(AAA •</data> 
+<data>•AAA(AAA •</data> 
 
 #       Try some words from other scripts.
 #          Greek, Cyrillic, Hebrew, Arabic, Arabic, Georgian, Latin
@@ -498,4 +506,27 @@ What is the proper use of the abbreviation pp.•? •Yes, I am definatelly 12" 
 <data>•123  •Start •with •a •number.•</data>
 
 <data>•'•start •with •a •case-•ignorable •cha'r'a'cter•</data>
+
+
+##########################################################################################
+#
+#   Thai Tests
+#
+##########################################################################################
+<locale th>
+<word>
+#
+# Test data originally from the test code source file
+#      // @suwit -- Thai sample data from GVT Guideline
+#
+<data>•\u0E2B\u0E19\u0E36\u0E48\u0E07<200>\u0E04\u0E33<200>\u0E44\u0E17\u0E22<200>\
+\u0E2A\u0E32\u0E21\u0E32\u0E23\u0E16<200>\u0E1B\u0E23\u0E30\u0E01\u0E2D\u0E1A<200>\
+\u0E14\u0E49\u0E27\u0E22<200>\u0e2b\u0e25\u0e32\u0e22<200>\
+\u0e1e\u0e22\u0e32\u0e07\u0e04\u0e4c<200></data>
+
+#
+#  Jitterbug 3671 Test Case
+#
+<data>•สวัสดี<200>ครับ<200>สบาย<200>ดี<200>ไหม<200> •ครับ<200></data>
+
 

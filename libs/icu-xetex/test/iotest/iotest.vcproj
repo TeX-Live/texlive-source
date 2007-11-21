@@ -29,6 +29,7 @@
 				RuntimeLibrary="3"
 				BufferSecurityCheck="TRUE"
 				DisableLanguageExtensions="TRUE"
+				TreatWChar_tAsBuiltInType="TRUE"
 				PrecompiledHeaderFile=".\Debug/iotest.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
@@ -90,6 +91,7 @@
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
 				DisableLanguageExtensions="TRUE"
+				TreatWChar_tAsBuiltInType="TRUE"
 				PrecompiledHeaderFile=".\Release/iotest.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
@@ -139,23 +141,38 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx">
 			<File
-				RelativePath="filetst.c">
+				RelativePath=".\filetst.c">
 			</File>
 			<File
-				RelativePath="iotest.cpp">
+				RelativePath=".\iotest.cpp">
 			</File>
 			<File
-				RelativePath="strtst.c">
+				RelativePath=".\stream.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						DisableLanguageExtensions="FALSE"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						DisableLanguageExtensions="FALSE"/>
+				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="trnstst.c">
+				RelativePath=".\strtst.c">
+			</File>
+			<File
+				RelativePath=".\trnstst.c">
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx">
 			<File
-				RelativePath="iotest.h">
+				RelativePath=".\iotest.h">
 			</File>
 		</Filter>
 	</Files>

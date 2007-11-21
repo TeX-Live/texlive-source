@@ -1,6 +1,7 @@
 /*
 *******************************************************************************
-* Copyright (C) 1996-2005, International Business Machines Corporation and others. All Rights Reserved.
+* Copyright (C) 1996-2006, International Business Machines Corporation and others.
+* All Rights Reserved.
 *******************************************************************************
 */
 
@@ -160,34 +161,34 @@ typedef enum UDateFormatStyle {
 /**
  * FieldPosition and UFieldPosition selectors for format fields
  * defined by DateFormat and UDateFormat.
- * @draft ICU 3.0
+ * @stable ICU 3.0
  */
 typedef enum UDateFormatField {
     /**
      * FieldPosition and UFieldPosition selector for 'G' field alignment,
      * corresponding to the UCAL_ERA field.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     UDAT_ERA_FIELD = 0,
 
     /**
      * FieldPosition and UFieldPosition selector for 'y' field alignment,
      * corresponding to the UCAL_YEAR field.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     UDAT_YEAR_FIELD = 1,
 
     /**
      * FieldPosition and UFieldPosition selector for 'M' field alignment,
      * corresponding to the UCAL_MONTH field.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     UDAT_MONTH_FIELD = 2,
 
     /**
      * FieldPosition and UFieldPosition selector for 'd' field alignment,
      * corresponding to the UCAL_DATE field.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     UDAT_DATE_FIELD = 3,
 
@@ -196,7 +197,7 @@ typedef enum UDateFormatField {
      * corresponding to the UCAL_HOUR_OF_DAY field.
      * UDAT_HOUR_OF_DAY1_FIELD is used for the one-based 24-hour clock.
      * For example, 23:59 + 01:00 results in 24:59.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     UDAT_HOUR_OF_DAY1_FIELD = 4,
 
@@ -205,70 +206,70 @@ typedef enum UDateFormatField {
      * corresponding to the UCAL_HOUR_OF_DAY field.
      * UDAT_HOUR_OF_DAY0_FIELD is used for the zero-based 24-hour clock.
      * For example, 23:59 + 01:00 results in 00:59.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     UDAT_HOUR_OF_DAY0_FIELD = 5,
 
     /**
      * FieldPosition and UFieldPosition selector for 'm' field alignment,
      * corresponding to the UCAL_MINUTE field.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     UDAT_MINUTE_FIELD = 6,
 
     /**
      * FieldPosition and UFieldPosition selector for 's' field alignment,
      * corresponding to the UCAL_SECOND field.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     UDAT_SECOND_FIELD = 7,
 
     /**
      * FieldPosition and UFieldPosition selector for 'S' field alignment,
      * corresponding to the UCAL_MILLISECOND field.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     UDAT_FRACTIONAL_SECOND_FIELD = 8,
 
     /**
      * FieldPosition and UFieldPosition selector for 'E' field alignment,
      * corresponding to the UCAL_DAY_OF_WEEK field.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     UDAT_DAY_OF_WEEK_FIELD = 9,
 
     /**
      * FieldPosition and UFieldPosition selector for 'D' field alignment,
      * corresponding to the UCAL_DAY_OF_YEAR field.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     UDAT_DAY_OF_YEAR_FIELD = 10,
 
     /**
      * FieldPosition and UFieldPosition selector for 'F' field alignment,
      * corresponding to the UCAL_DAY_OF_WEEK_IN_MONTH field.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     UDAT_DAY_OF_WEEK_IN_MONTH_FIELD = 11,
 
     /**
      * FieldPosition and UFieldPosition selector for 'w' field alignment,
      * corresponding to the UCAL_WEEK_OF_YEAR field.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     UDAT_WEEK_OF_YEAR_FIELD = 12,
 
     /**
      * FieldPosition and UFieldPosition selector for 'W' field alignment,
      * corresponding to the UCAL_WEEK_OF_MONTH field.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     UDAT_WEEK_OF_MONTH_FIELD = 13,
 
     /**
      * FieldPosition and UFieldPosition selector for 'a' field alignment,
      * corresponding to the UCAL_AM_PM field.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     UDAT_AM_PM_FIELD = 14,
 
@@ -277,7 +278,7 @@ typedef enum UDateFormatField {
      * corresponding to the UCAL_HOUR field.
      * UDAT_HOUR1_FIELD is used for the one-based 12-hour clock.
      * For example, 11:30 PM + 1 hour results in 12:30 AM.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     UDAT_HOUR1_FIELD = 15,
 
@@ -286,7 +287,7 @@ typedef enum UDateFormatField {
      * corresponding to the UCAL_HOUR field.
      * UDAT_HOUR0_FIELD is used for the zero-based 12-hour clock.
      * For example, 11:30 PM + 1 hour results in 00:30 AM.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     UDAT_HOUR0_FIELD = 16,
 
@@ -294,42 +295,42 @@ typedef enum UDateFormatField {
      * FieldPosition and UFieldPosition selector for 'z' field alignment,
      * corresponding to the UCAL_ZONE_OFFSET and
      * UCAL_DST_OFFSET fields.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     UDAT_TIMEZONE_FIELD = 17,
 
     /**
      * FieldPosition and UFieldPosition selector for 'Y' field alignment,
      * corresponding to the UCAL_YEAR_WOY field.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     UDAT_YEAR_WOY_FIELD = 18,
 
     /**
      * FieldPosition and UFieldPosition selector for 'e' field alignment,
      * corresponding to the UCAL_DOW_LOCAL field.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     UDAT_DOW_LOCAL_FIELD = 19,
 
     /**
      * FieldPosition and UFieldPosition selector for 'u' field alignment,
      * corresponding to the UCAL_EXTENDED_YEAR field.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     UDAT_EXTENDED_YEAR_FIELD = 20,
 
     /**
      * FieldPosition and UFieldPosition selector for 'g' field alignment,
      * corresponding to the UCAL_JULIAN_DAY field.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     UDAT_JULIAN_DAY_FIELD = 21,
 
     /**
      * FieldPosition and UFieldPosition selector for 'A' field alignment,
      * corresponding to the UCAL_MILLISECONDS_IN_DAY field.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     UDAT_MILLISECONDS_IN_DAY_FIELD = 22,
 
@@ -337,11 +338,13 @@ typedef enum UDateFormatField {
      * FieldPosition and UFieldPosition selector for 'Z' field alignment,
      * corresponding to the UCAL_ZONE_OFFSET and
      * UCAL_DST_OFFSET fields.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     UDAT_TIMEZONE_RFC_FIELD = 23,
 
-     /**
+#ifndef U_HIDE_DRAFT_API
+
+    /**
      * FieldPosition and UFieldPosition selector for 'v' field alignment,
      * corresponding to the UCAL_ZONE_OFFSET field.
      * @draft ICU 3.4
@@ -363,15 +366,35 @@ typedef enum UDateFormatField {
      */
     UDAT_STANDALONE_MONTH_FIELD = 26,
 
+    /**
+     * FieldPosition selector for "Q" field alignment,
+     * corresponding to quarters. This is implemented
+     * using the {@link Calendar#MONTH} field. This
+     * displays the quarter.
+     * @draft ICU 3.6
+     */
+    UDAT_QUARTER_FIELD = 27,
+
+    /**
+     * FieldPosition selector for the "q" field alignment,
+     * corresponding to stand-alone quarters. This is
+     * implemented using the {@link Calendar#MONTH} field.
+     * This displays the stand-alone quarter.
+     * @draft ICU 3.6
+     */
+    UDAT_STANDALONE_QUARTER_FIELD = 28,
+
+#endif /*U_HIDE_DRAFT_API*/
+   
    /**
      * Number of FieldPosition and UFieldPosition selectors for 
      * DateFormat and UDateFormat.
      * Valid selectors range from 0 to UDAT_FIELD_COUNT-1.
      * This value is subject to change if new fields are defined
      * in the future.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
-    UDAT_FIELD_COUNT = 27
+    UDAT_FIELD_COUNT = 29
 
 } UDateFormatField;
 
@@ -687,7 +710,15 @@ typedef enum UDateFormatSymbolType {
     /** Standalone context versions of weekdays */
     UDAT_STANDALONE_WEEKDAYS,
     UDAT_STANDALONE_SHORT_WEEKDAYS,
-    UDAT_STANDALONE_NARROW_WEEKDAYS
+    UDAT_STANDALONE_NARROW_WEEKDAYS,
+    /** The quarters, for example 1st Quarter */
+    UDAT_QUARTERS,
+    /** The short quarter names, for example Q1 */
+    UDAT_SHORT_QUARTERS,
+    /** Standalone context versions of quarters */
+    UDAT_STANDALONE_QUARTERS,
+    UDAT_STANDALONE_SHORT_QUARTERS
+
 } UDateFormatSymbolType;
 
 struct UDateFormatSymbols;
@@ -767,9 +798,9 @@ udat_setSymbols(    UDateFormat             *format,
  * @param type type of the locale we're looking for (valid or actual) 
  * @param status error code for the operation
  * @return the locale name
- * @draft ICU 2.8 likely to change after ICU 3.0, based on feedback
+ * @stable ICU 2.8
  */
-U_DRAFT const char* U_EXPORT2
+U_STABLE const char* U_EXPORT2
 udat_getLocaleByType(const UDateFormat *fmt,
                      ULocDataLocaleType type,
                      UErrorCode* status); 

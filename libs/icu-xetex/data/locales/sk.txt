@@ -1,24 +1,25 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/sk.xml
+// * Source File:<path>/common/main/sk.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/sk.xml
+ *  ICU <specials> source: <path>/xml/main/sk.xml
  */
 sk{
     Countries{
         001{"Svet"}
         002{"Afrika"}
         005{"Južná Amerika"}
+        011{"Západná Afrika"}
         013{"Stredná Amerika"}
         014{"Východná Afrika"}
         015{"Severná Afrika"}
         017{"Stredná Afrika"}
-        018{"Južná Afrika"}
+        018{"Južná Afrika [018]"}
         019{"Americký kontinent"}
         021{"Severná Amerika"}
         029{"Karibik"}
@@ -1192,7 +1193,7 @@ sk{
         }
         YUD{
             "YUD",
-            "Juhoslávsky dinár",
+            "Juhoslávsky dinár [YUD]",
         }
         YUM{
             "YUM",
@@ -1227,7 +1228,10 @@ sk{
             "Zimbabský dolár",
         }
     }
-    ExemplarCharacters{"[a-z ý á é í ó ú ä ô ĺ ŕ č ď ľ ň š ť ž]"}
+    ExemplarCharacters{
+        "[a á ä b c č d ď e é f-h {ch} i í j-l ĺ ľ m n ň o ó ô p-r ŕ s š t ť u ú v-y "
+        "ý z ž]"
+    }
     Keys{
         calendar{"Kalendár"}
         collation{"Triedenie"}
@@ -1279,7 +1283,7 @@ sk{
         "E",
         "‰",
         "∞",
-        "�",
+        "NaN",
         "+",
     }
     Scripts{
@@ -1307,13 +1311,9 @@ sk{
             traditional{"Tradičné"}
         }
     }
-    Version{"1.45"}
+    Version{"1.65"}
     calendar{
         gregorian{
-            DateTimeElements:intvector{
-                2,
-                4,
-            }
             DateTimePatterns{
                 "H:mm:ss z",
                 "H:mm:ss z",
@@ -1412,7 +1412,77 @@ sk{
                     }
                 }
             }
+            quarters{
+                format{
+                    wide{
+                        "1. štvrťrok",
+                        "2. štvrťrok",
+                        "3. štvrťrok",
+                        "4. štvrťrok",
+                    }
+                }
+            }
         }
     }
     localPatternChars{"GanjkHmsSEDFwWxhKzAeugXZvcL"}
+    zoneStrings{
+        "Antarctica:South_Pole"{
+            ec{"Južný pól"}
+        }
+        "Asia:Irkutsk"{
+            ec{"Irkutsko"}
+        }
+        "Asia:Kamchatka"{
+            ec{"Kamčatka"}
+        }
+        "Asia:Krasnoyarsk"{
+            ec{"Krasnojarsko"}
+        }
+        "Asia:Sakhalin"{
+            ec{"Sachalin"}
+        }
+        "Asia:Shanghai"{
+            ec{"Šanghaj"}
+        }
+        "Asia:Tashkent"{
+            ec{"Taškent"}
+        }
+        "Asia:Ulaanbaatar"{
+            ec{"Ulanbátar"}
+        }
+        "Asia:Yakutsk"{
+            ec{"Jakutsko"}
+        }
+        "Asia:Yekaterinburg"{
+            ec{"Jekaterinburg"}
+        }
+        "Atlantic:Azores"{
+            ec{"Azorské ostrovy"}
+        }
+        "Atlantic:Canary"{
+            ec{"Kanárske ostrovy"}
+        }
+        "Europe:Kiev"{
+            ec{"Kyjev"}
+        }
+        "Europe:Lisbon"{
+            ec{"Lisabon"}
+        }
+        "Europe:London"{
+            ec{"Londýn"}
+        }
+        "Europe:Moscow"{
+            ec{"Moskva"}
+        }
+        "Europe:Uzhgorod"{
+            ec{"Užhorod"}
+        }
+        "Europe:Zaporozhye"{
+            ec{"Záporožie"}
+        }
+        "Pacific:Galapagos"{
+            ec{"Galapágy"}
+        }
+        hourFormat{"+HHmm;-HHmm"}
+    }
 }

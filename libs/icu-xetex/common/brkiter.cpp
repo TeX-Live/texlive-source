@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 1997-2005, International Business Machines Corporation and    *
+* Copyright (C) 1997-2006, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 *
@@ -22,16 +22,19 @@
 
 #if !UCONFIG_NO_BREAK_ITERATION
 
-#include "unicode/dbbi.h"
+#include "unicode/rbbi.h"
 #include "unicode/brkiter.h"
 #include "unicode/udata.h"
 #include "unicode/ures.h"
+#include "unicode/ustring.h"
 #include "ucln_cmn.h"
 #include "cstring.h"
 #include "mutex.h"
 #include "servloc.h"
 #include "locbased.h"
 #include "uresimp.h"
+#include "uassert.h"
+#include "ubrkimpl.h"
 
 // *****************************************************************************
 // class BreakIterator
@@ -45,15 +48,18 @@ U_NAMESPACE_BEGIN
 // -------------------------------------
 
 BreakIterator*
-BreakIterator::buildInstance(const Locale& loc, const char *type, UBool dict, UErrorCode &status)
+BreakIterator::buildInstance(const Locale& loc, const char *type, int32_t kind, UErrorCode &status)
 {
     char fnbuff[256];
+    char ext[4]={'\0'};
     char actualLocale[ULOC_FULLNAME_CAPACITY];
     int32_t size;
     const UChar* brkfname = NULL;
-    UResourceBundle brkRulesStack, brkNameStack;
-    UResourceBundle *brkRules = &brkRulesStack, *brkName = &brkNameStack;
-    BreakIterator *result = NULL;
+    UResourceBundle brkRulesStack;
+    UResourceBundle brkNameStack;
+    UResourceBundle *brkRules = &brkRulesStack;
+    UResourceBundle *brkName  = &brkNameStack;
+    RuleBasedBreakIterator *result = NULL;
     
     if (U_FAILURE(status))
         return NULL;
@@ -62,7 +68,13 @@ BreakIterator::buildInstance(const Locale& loc, const char *type, UBool dict, UE
     ures_initStackObject(brkName);
 
     // Get the locale
-    UResourceBundle *b = ures_open(NULL, loc.getName(), &status);
+    UResourceBundle *b = ures_open(U_ICUDATA_BRKITR, loc.getName(), &status);
+    /* this is a hack for now. Should be fixed when the data is fetched from
+        brk_index.txt */
+    if(status==U_USING_DEFAULT_WARNING){
+        status=U_ZERO_ERROR;
+        ures_openFillIn(b, U_ICUDATA_BRKITR, "", &status);
+    }
 
     // Get the "boundaries" array.
     if (U_SUCCESS(status)) {
@@ -71,57 +83,48 @@ BreakIterator::buildInstance(const Locale& loc, const char *type, UBool dict, UE
         brkName = ures_getByKeyWithFallback(brkRules, type, brkName, &status);
         // Get the actual string
         brkfname = ures_getString(brkName, &size, &status);
+        U_ASSERT((size_t)size<sizeof(fnbuff));
+        if ((size_t)size>=sizeof(fnbuff)) {
+            size=0;
+            if (U_SUCCESS(status)) {
+                status = U_BUFFER_OVERFLOW_ERROR;
+            }
+        }
 
         // Use the string if we found it
         if (U_SUCCESS(status) && brkfname) {
             uprv_strncpy(actualLocale,
                 ures_getLocale(brkName, &status),
                 sizeof(actualLocale)/sizeof(actualLocale[0]));
-            u_UCharsToChars(brkfname, fnbuff, size+1);
+            
+            UChar* extStart=u_strchr(brkfname, 0x002e);
+            int len = 0;
+            if(extStart!=NULL){
+                len = extStart-brkfname;
+                u_UCharsToChars(extStart+1, ext, sizeof(ext)); // nul terminates the buff
+                u_UCharsToChars(brkfname, fnbuff, len);
+            }
+            fnbuff[len]=0; // nul terminate
         }
     }
 
     ures_close(brkRules);
     ures_close(brkName);
     
-    UDataMemory* file = udata_open(NULL, "brk", fnbuff, &status);
+    UDataMemory* file = udata_open(U_ICUDATA_BRKITR, ext, fnbuff, &status);
     if (U_FAILURE(status)) {
         ures_close(b);
         return NULL;
     }
 
-    // We found the break rules; now see if a dictionary is needed
-    if (dict)
-    {
-        UErrorCode localStatus = U_ZERO_ERROR;
-        brkName = &brkNameStack;
-        ures_initStackObject(brkName);
-        brkName = ures_getByKeyWithFallback(b, "BreakDictionaryData", brkName, &localStatus);
-#if 0
-        if (U_SUCCESS(localStatus)) {
-            brkfname = ures_getString(&brkname, &size, &localStatus);
-        }
-#endif
-        if (U_SUCCESS(localStatus)) {
-#if 0
-            u_UCharsToChars(brkfname, fnbuff, size);
-            fnbuff[size] = '\0';
-#endif
-            result = new DictionaryBasedBreakIterator(file, "thaidict.brk", status);
-        }
-        ures_close(brkName);
-    }
-    
-    // If there is still no result but we haven't had an error, no dictionary,
-    // so make a non-dictionary break iterator
-    if (U_SUCCESS(status) && result == NULL) {
-        result = new RuleBasedBreakIterator(file, status);
-    }
+    // Create a RuleBasedBreakIterator
+    result = new RuleBasedBreakIterator(file, status);
 
-    // If there is a result, set the valid locale and actual locale
+    // If there is a result, set the valid locale and actual locale, and the kind
     if (U_SUCCESS(status) && result != NULL) {
         U_LOCALE_BASED(locBased, *result);
         locBased.setLocaleIDs(ures_getLocaleByType(b, ULOC_VALID_LOCALE, &status), actualLocale);
+        result->setBreakType(kind);
     }
 
     ures_close(b);
@@ -361,7 +364,7 @@ BreakIterator::getAvailableLocales(void)
 // -------------------------------------
 
 BreakIterator*
-BreakIterator::createInstance(const Locale& loc, UBreakIteratorType kind, UErrorCode& status)
+BreakIterator::createInstance(const Locale& loc, int32_t kind, UErrorCode& status)
 {
     if (U_FAILURE(status)) {
         return NULL;
@@ -408,19 +411,19 @@ BreakIterator::makeInstance(const Locale& loc, int32_t kind, UErrorCode& status)
     BreakIterator *result = NULL;
     switch (kind) {
     case UBRK_CHARACTER: 
-        result = BreakIterator::buildInstance(loc, "grapheme", FALSE, status);
+        result = BreakIterator::buildInstance(loc, "grapheme", kind, status);
         break;
     case UBRK_WORD:
-        result = BreakIterator::buildInstance(loc, "word", TRUE, status);
+        result = BreakIterator::buildInstance(loc, "word", kind, status);
         break;
     case UBRK_LINE:
-        result = BreakIterator::buildInstance(loc, "line", TRUE, status);
+        result = BreakIterator::buildInstance(loc, "line", kind, status);
         break;
     case UBRK_SENTENCE:
-        result = BreakIterator::buildInstance(loc, "sentence", FALSE, status);
+        result = BreakIterator::buildInstance(loc, "sentence", kind, status);
         break;
     case UBRK_TITLE:
-        result = BreakIterator::buildInstance(loc, "title", FALSE, status);
+        result = BreakIterator::buildInstance(loc, "title", kind, status);
         break;
     default:
         status = U_ILLEGAL_ARGUMENT_ERROR;

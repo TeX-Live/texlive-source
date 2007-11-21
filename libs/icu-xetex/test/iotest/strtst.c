@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 2004-2005, International Business Machines
+*   Copyright (C) 2004-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *   file name:  strtst.c
@@ -42,8 +42,11 @@ static void TestString(void) {
         origPtr = (void *) INT64_C(0x1000200030004000);
     } else if (sizeof(void *) == 16) {
         /* iSeries */
-        int32_t massiveBigEndianPtr[] = { 0x10002000, 0x30004000, 0x50006000, 0x70008000 };
-        origPtr = *((void **)massiveBigEndianPtr);
+        union {
+            int32_t arr[4];
+            void *ptr;
+        } massiveBigEndianPtr = {{ 0x10002000, 0x30004000, 0x50006000, 0x70008000 }};
+        origPtr = massiveBigEndianPtr.ptr;
     } else {
         log_err("sizeof(void*)=%d hasn't been tested before", (int)sizeof(void*));
     }
@@ -93,35 +96,35 @@ static void TestString(void) {
 
     u_sprintf(uStringBuf, "Float f: %f", myFloat);
     *newDoubleValuePtr = -1.0;
-    u_sscanf(uStringBuf, "Float f: %f", newDoubleValuePtr);
+    u_sscanf(uStringBuf, "Float f: %lf", newDoubleValuePtr);
     if (myFloat != *newDoubleValuePtr) {
         log_err("%%f Got: %f, Expected: %f\n", *newDoubleValuePtr, myFloat);
     }
 
     u_sprintf(uStringBuf, "Lowercase float e: %e", myFloat);
     *newDoubleValuePtr = -1.0;
-    u_sscanf(uStringBuf, "Lowercase float e: %e", newDoubleValuePtr);
+    u_sscanf(uStringBuf, "Lowercase float e: %le", newDoubleValuePtr);
     if (myFloat != *newDoubleValuePtr) {
         log_err("%%e Got: %e, Expected: %e\n", *newDoubleValuePtr, myFloat);
     }
 
     u_sprintf(uStringBuf, "Uppercase float E: %E", myFloat);
     *newDoubleValuePtr = -1.0;
-    u_sscanf(uStringBuf, "Uppercase float E: %E", newDoubleValuePtr);
+    u_sscanf(uStringBuf, "Uppercase float E: %lE", newDoubleValuePtr);
     if (myFloat != *newDoubleValuePtr) {
         log_err("%%E Got: %E, Expected: %E\n", *newDoubleValuePtr, myFloat);
     }
 
     u_sprintf(uStringBuf, "Lowercase float g: %g", myFloat);
     *newDoubleValuePtr = -1.0;
-    u_sscanf(uStringBuf, "Lowercase float g: %g", newDoubleValuePtr);
+    u_sscanf(uStringBuf, "Lowercase float g: %lg", newDoubleValuePtr);
     if (myFloat != *newDoubleValuePtr) {
         log_err("%%g Got: %g, Expected: %g\n", *newDoubleValuePtr, myFloat);
     }
 
     u_sprintf(uStringBuf, "Uppercase float G: %G", myFloat);
     *newDoubleValuePtr = -1.0;
-    u_sscanf(uStringBuf, "Uppercase float G: %G", newDoubleValuePtr);
+    u_sscanf(uStringBuf, "Uppercase float G: %lG", newDoubleValuePtr);
     if (myFloat != *newDoubleValuePtr) {
         log_err("%%G Got: %G, Expected: %G\n", *newDoubleValuePtr, myFloat);
     }
@@ -279,7 +282,7 @@ static void TestLocalizedString(void) {
 
     u_fprintf(strFile, "%d", 1234);
     u_frewind(strFile);
-	numResult = -1;
+    numResult = -1;
     u_fscanf(strFile, "%d", &numResult);
     u_fclose(strFile);
     u_uastrcpy(uBuffer,"1.234");
@@ -294,15 +297,15 @@ static void TestLocalizedString(void) {
     strFile = u_fstropen(testStr, sizeof(testStr)/sizeof(testStr[0]), NULL);
     u_fprintf(strFile, "%d", 1234);
     u_frewind(strFile);
-	numResult = -1;
+    numResult = -1;
     u_fscanf(strFile, "%d", &numResult);
     u_fclose(strFile);
     if (numResult != 1234) {
-		log_err("u_fscanf failed to work on a default locale string Got: %d, Expected: 1234\n", numResult);
+        log_err("u_fscanf failed to work on a default locale string Got: %d, Expected: 1234\n", numResult);
     }
-	if (u_fstropen(testStr, -1, NULL) != NULL) {
-		log_err("u_fstropen returned a UFILE* on a negative buffer size\n", numResult);
-	}
+    if (u_fstropen(testStr, -1, NULL) != NULL) {
+        log_err("u_fstropen returned a UFILE* on a negative buffer size\n", numResult);
+    }
 #endif
 }
 
@@ -728,9 +731,11 @@ static void TestVargs(void) {
 
 static void TestCount(void) {
 #if !UCONFIG_NO_FORMATTING
+    static const UChar x15[] = { 0x78, 0x31, 0x35, 0 };
     UChar testStr[16];
+    UChar character;
     int16_t i16 = -1;
-    int32_t i32 = -1;
+    int32_t i32 = -1, actual_count, actual_result;
     int64_t i64 = -1;
     u_uastrcpy(testStr, "1233456789");
     if (u_sscanf(testStr, "%*3[123]%n%*[1-9]", &i32) != 0) {
@@ -750,6 +755,19 @@ static void TestCount(void) {
     }
     if (i64 != 10) {
         log_err("test 3: scanf did not return 10\n", i64);
+    }
+    actual_result = u_sscanf(x15, "%C%d%n", &character, &i32, &actual_count);
+    if (actual_result != 2) {
+        log_err("scanf should return 2, but returned %d\n", actual_result);
+    }
+    if (character != 0x78) {
+        log_err("scanf should return 0x78 for the character, but returned %X\n", character);
+    }
+    if (i32 != 15) {
+        log_err("scanf should return 15 for the number, but returned %d\n", i32);
+    }
+    if (actual_count != 3) {
+        log_err("scanf should return 3 for actual_count, but returned %d\n", actual_count);
     }
 #endif
 }

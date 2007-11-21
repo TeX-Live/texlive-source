@@ -1,9 +1,9 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/he_IL.xml
+// * Source File:<path>/common/main/he_IL.xml
 // *
 // ***************************************************************************
 he_IL{
@@ -13,5 +13,23 @@ he_IL{
         "#,##0%",
         "#E0",
     }
-    Version{"1.29"}
+    Version{"1.40"}
+    calendar{
+        gregorian{
+            DateTimeElements:intvector{
+                1,
+                1,
+            }
+            weekend:intvector{
+                6,
+                0,
+                7,
+                86400000,
+            }
+        }
+    }
+    delimiters{
+        alternateQuotationEnd{"\""}
+        alternateQuotationStart{"\""}
+    }
 }

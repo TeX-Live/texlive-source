@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 1997-2005, International Business Machines Corporation and    *
+* Copyright (C) 1997-2006, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 *
@@ -28,12 +28,13 @@
 
 #include "unicode/numfmt.h"
 #include "unicode/locid.h"
-#include "unicode/ures.h"
 #include "unicode/dcfmtsym.h"
 #include "unicode/decimfmt.h"
 #include "unicode/ustring.h"
 #include "unicode/ucurr.h"
 #include "unicode/curramt.h"
+#include "winnmfmt.h"
+#include "uresimp.h"
 #include "uhash.h"
 #include "cmemory.h"
 #include "servloc.h"
@@ -825,6 +826,36 @@ NumberFormat::makeInstance(const Locale& desiredLocale,
         return NULL;
     }
 
+#ifdef U_WINDOWS
+    char buffer[8];
+    int32_t count = desiredLocale.getKeywordValue("compat", buffer, sizeof(buffer), status);
+
+    // if the locale has "@compat=host", create a host-specific NumberFormat
+    if (count > 0 && uprv_strcmp(buffer, "host") == 0) {
+        Win32NumberFormat *f = NULL;
+        UBool curr = TRUE;
+
+        switch (style) {
+        case kNumberStyle:
+            curr = FALSE;
+            // fall-through
+
+        case kCurrencyStyle:
+            f = new Win32NumberFormat(desiredLocale, curr, status);
+
+            if (U_SUCCESS(status)) {
+                return f;
+            }
+
+            delete f;
+            break;
+            
+        default:
+            break;
+        }
+    }
+#endif
+
     NumberFormat* f = NULL;
     DecimalFormatSymbols* symbolsToAdopt = NULL;
     UnicodeString pattern;
@@ -859,37 +890,11 @@ NumberFormat::makeInstance(const Locale& desiredLocale,
     if (U_FAILURE(status) || symbolsToAdopt == NULL) {
         goto cleanup;
     }
-
-    // Here we assume that the locale passed in is in the canonical
-    // form, e.g: pt_PT_@currency=PTE not pt_PT_PREEURO
     if(style==kCurrencyStyle){
-        char currencyCode[8]={0};
-        int32_t currencyCodeCap = sizeof(currencyCode);
-        const char* locName = desiredLocale.getName();
-        currencyCodeCap = uloc_getKeywordValue(locName, "currency", currencyCode, currencyCodeCap, &status);
-        if(U_SUCCESS(status) && currencyCodeCap > 0) {
-            /* An explicit currency was requested */
-            UErrorCode localStatus = U_ZERO_ERROR;
-            UResourceBundle *currency = ures_getByKeyWithFallback(resource, "Currencies", NULL, &localStatus);
-            currency = ures_getByKeyWithFallback(currency, currencyCode, currency, &localStatus);
-            if(U_SUCCESS(localStatus) && ures_getSize(currency)>2) {
-                currency = ures_getByIndex(currency, 2, currency, &localStatus);
-                int32_t currPatternLen = 0;
-                const UChar *currPattern = ures_getStringByIndex(currency, (int32_t)0, &currPatternLen, &localStatus);
-                UnicodeString decimalSep = ures_getStringByIndex(currency, (int32_t)1, NULL, &localStatus);
-                UnicodeString groupingSep = ures_getStringByIndex(currency, (int32_t)2, NULL, &localStatus);
-                if(U_SUCCESS(localStatus)){
-                    symbolsToAdopt->setSymbol(DecimalFormatSymbols::kGroupingSeparatorSymbol, groupingSep);
-                    symbolsToAdopt->setSymbol(DecimalFormatSymbols::kMonetarySeparatorSymbol, decimalSep);
-                    pattern.setTo(TRUE, currPattern, currPatternLen);
-                    status = localStatus;
-                }
-            }
-            ures_close(currency);
-            /* else An explicit currency was requested and is unknown or locale data is malformed. */
-            /* ucurr_* API will get the correct value later on. */
+        const UChar* currPattern = symbolsToAdopt->getCurrencyPattern();
+        if(currPattern!=NULL){
+            pattern.setTo(currPattern, u_strlen(currPattern));
         }
-        /* else no currency keyword used. */
     }
     f = new DecimalFormat(pattern, symbolsToAdopt, status);
     if (U_FAILURE(status) || f == NULL) {

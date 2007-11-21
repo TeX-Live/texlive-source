@@ -1,9 +1,9 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/zh_Hans_CN.xml
+// * Source File:<path>/common/main/zh_Hans_CN.xml
 // *
 // ***************************************************************************
 zh_Hans_CN{
@@ -13,9 +13,13 @@ zh_Hans_CN{
         "#,##0%",
         "#E0",
     }
-    Version{"1.16"}
+    Version{"1.27"}
     calendar{
         gregorian{
+            DateTimeElements:intvector{
+                1,
+                1,
+            }
             DateTimePatterns{
                 "ahh'时'mm'分'ss'秒' z",
                 "ahh'时'mm'分'ss'秒'",
@@ -27,6 +31,47 @@ zh_Hans_CN{
                 "yy-M-d",
                 "{1} {0}",
             }
+        }
+    }
+    zoneStrings{
+        "Asia:Kamchatka"{
+            ec{"堪察加"}
+        }
+        "Asia:Novosibirsk"{
+            ec{"诺沃西比尔斯克"}
+        }
+        "Asia:Oral"{
+            ec{"乌拉尔"}
+        }
+        "Asia:Sakhalin"{
+            ec{"萨哈林"}
+        }
+        "Asia:Shanghai"{
+            ec{"Shanghai"}
+            ld{"中国夏令时间"}
+        }
+        "Asia:Tokyo"{
+            ec{"Tokyo"}
+            ld{"日本夏令时间"}
+        }
+        "Atlantic:Canary"{
+            ec{"加那利"}
+        }
+        "Atlantic:Madeira"{
+            ec{"马德拉"}
+        }
+        "Pacific:Honolulu"{
+            ec{"Honolulu"}
+            ld{"夏威夷夏令时间"}
+        }
+        "Pacific:Kiritimati"{
+            ec{"基里巴斯（圣诞岛）"}
+        }
+        "Pacific:Kosrae"{
+            ec{"库赛埃"}
+        }
+        "Pacific:Kwajalein"{
+            ec{"夸贾林"}
         }
     }
 }

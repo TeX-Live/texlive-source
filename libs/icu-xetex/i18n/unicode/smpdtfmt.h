@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 1997-2005, International Business Machines Corporation and others. All Rights Reserved.
+* Copyright (C) 1997-2006, International Business Machines Corporation and others. All Rights Reserved.
 *******************************************************************************
 *
 * File SMPDTFMT.H
@@ -724,6 +724,21 @@ private:
                         const UnicodeString* stringArray, int32_t stringArrayCount, Calendar& cal) const;
 
     /**
+     * Private code-size reduction function used by subParse.
+     * @param text the time text being parsed.
+     * @param start where to start parsing.
+     * @param field the date field being parsed.
+     * @param stringArray the string array to parsed.
+     * @param stringArrayCount the size of the array.
+     * @param cal a Calendar set to the date and time to be formatted
+     *            into a date/time string.
+     * @return the new start position if matching succeeded; a negative number
+     * indicating matching failure, otherwise.
+     */
+    int32_t matchQuarterString(const UnicodeString& text, int32_t start, UCalendarDateFields field,
+                               const UnicodeString* stringArray, int32_t stringArrayCount, Calendar& cal) const;
+
+    /**
      * Private member function that converts the parsed date strings into
      * timeFields. Returns -start (for ParsePosition) if failed.
      * @param text the time text to be parsed.
@@ -773,23 +788,23 @@ private:
     void         parseAmbiguousDatesAsAfter(UDate startDate, UErrorCode& status);
 
     /**
-     * Given a canonical time zone id, return the row index in our symbols for that id,
-     * or -1 if none found.
-     */
-    int32_t      getTimeZoneIndex(const UnicodeString& id) const;
-
-    /**
      * Given text, a start in the text, and a row index, return the column index that
      * of the zone name that matches (case insensitive) at start, or 0 if none matches.
-     */
+     *
     int32_t      matchZoneString(const UnicodeString& text, int32_t start, int32_t zi) const;
+    */
 
     /**
      * Given text, a start in the text, and a calendar, return the next offset in the text
      * after matching the zone string.  If we fail to match, return 0.  Update the calendar
      * as appropriate.
      */
-    int32_t      subParseZoneString(const UnicodeString& text, int32_t start, Calendar& cal) const;
+    int32_t      subParseZoneString(const UnicodeString& text, int32_t start, Calendar& cal, UErrorCode& status) const;
+    
+    /**
+     * append the gmt string
+     */
+    inline void appendGMT(UnicodeString &appendTo, Calendar& cal, UErrorCode& status) const;
 
     /**
      * Used to map pattern characters to Calendar field identifiers.

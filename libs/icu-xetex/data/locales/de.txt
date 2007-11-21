@@ -1,13 +1,13 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/de.xml
+// * Source File:<path>/common/main/de.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/de.xml
+ *  ICU <specials> source: <path>/xml/main/de.xml
  */
 de{
     Countries{
@@ -20,24 +20,25 @@ de{
         014{"Ostafrika"}
         015{"Nordafrika"}
         017{"Zentralafrika"}
-        018{"Südafrika"}
         019{"Nord-, Mittel- und Südamerika"}
         021{"Nordamerika"}
         029{"Karibik"}
         030{"Ostasien"}
+        034{"Südasien"}
         035{"Südostasien"}
         039{"Südeuropa"}
         053{"Australien und Neuseeland"}
         054{"Melanesien"}
-        057{"Mikronesien"}
         061{"Polynesien"}
         062{"Süd-Zentralasien"}
         142{"Asien"}
+        143{"Zentralasien"}
         145{"Westasien"}
         150{"Europa"}
         151{"Osteuropa"}
         154{"Nordeuropa"}
         155{"Westeuropa"}
+        419{"Lateinamerika und Karibik"}
         830{"Kanalinseln"}
         833{"Insel Man"}
         AD{"Andorra"}
@@ -293,7 +294,7 @@ de{
         }
         AFA{
             "AFA",
-            "Afghani",
+            "Afghani (1927-2002)",
         }
         AFN{
             "Af",
@@ -381,7 +382,7 @@ de{
         }
         BGL{
             "BGL",
-            "Lew",
+            "Lew (1962-1999)",
         }
         BGN{
             "BGN",
@@ -1224,7 +1225,7 @@ de{
             "Simbabwe Dollar",
         }
     }
-    ExemplarCharacters{"[a-z ä ö ü ß]"}
+    ExemplarCharacters{"[a ä b-o ö p-s ß t u ü v-z]"}
     Keys{
         calendar{"Kalender"}
         collation{"Sortierung"}
@@ -1360,6 +1361,7 @@ de{
         fat{"Fanti-Sprache"}
         ff{"Ful"}
         fi{"Finnisch"}
+        fil{"Filipino"}
         fiu{"Finnougrische Sprachen (Andere)"}
         fj{"Fidschianisch"}
         fo{"Färöisch"}
@@ -1713,8 +1715,14 @@ de{
         "E",
         "‰",
         "∞",
-        "�",
+        "NaN",
         "+",
+    }
+    NumberPatterns{
+        "#,##0.###",
+        "¤ #,##0.00",
+        "#,##0%",
+        "#E0",
     }
     Scripts{
         Arab{"Arabisch"}
@@ -1787,16 +1795,12 @@ de{
         POSIX{"Posix"}
         REVISED{"Revidiert"}
     }
-    Version{"1.52"}
+    Version{"1.77"}
     calendar{
         gregorian{
             AmPmMarkers{
                 "vorm.",
                 "nachm.",
-            }
-            DateTimeElements:intvector{
-                2,
-                4,
             }
             DateTimePatterns{
                 "H:mm' Uhr 'z",
@@ -1852,6 +1856,35 @@ de{
                     "n. Chr.",
                 }
             }
+            fields{
+                day{
+                    dn{"Tag"}
+                }
+                dayperiod{
+                    dn{"Tageshälfte"}
+                }
+                era{
+                    dn{"Epoche"}
+                }
+                hour{
+                    dn{"Stunde"}
+                }
+                month{
+                    dn{"Monat"}
+                }
+                second{
+                    dn{"Sekunde"}
+                }
+                week{
+                    dn{"Woche"}
+                }
+                weekday{
+                    dn{"Wochentag"}
+                }
+                year{
+                    dn{"Jahr"}
+                }
+            }
             monthNames{
                 format{
                     abbreviated{
@@ -1900,6 +1933,16 @@ de{
                     }
                 }
             }
+            quarters{
+                format{
+                    wide{
+                        "1. Quartal",
+                        "2. Quartal",
+                        "3. Quartal",
+                        "4. Quartal",
+                    }
+                }
+            }
         }
     }
     delimiters{
@@ -1910,13 +1953,75 @@ de{
     }
     localPatternChars{"GjMtkHmsSEDFwWahKzJeugAZvcL"}
     zoneStrings{
-        {
-            "Europe/Berlin",
-            "Mitteleuropäische Zeit",
-            "MEZ",
-            "Mitteleuropäische Sommerzeit",
-            "MESZ",
-            "Berlin",
+        "America:Mexico_City"{
+            ec{"Mexiko-Stadt"}
+        }
+        "America:St_Johns"{
+            ec{"St. John's"}
+        }
+        "Antarctica:South_Pole"{
+            ec{"Südpol"}
+        }
+        "Antarctica:Vostok"{
+            ec{"Wostok"}
+        }
+        "Asia:Kamchatka"{
+            ec{"Kamtschatka"}
+        }
+        "Asia:Krasnoyarsk"{
+            ec{"Krasnojarsk"}
+        }
+        "Asia:Novosibirsk"{
+            ec{"Nowosibirsk"}
+        }
+        "Asia:Sakhalin"{
+            ec{"Sachalin"}
+        }
+        "Asia:Tashkent"{
+            ec{"Taschkent"}
+        }
+        "Asia:Ulaanbaatar"{
+            ec{"Ulan-Bator"}
+        }
+        "Asia:Vladivostok"{
+            ec{"Wladiwostok"}
+        }
+        "Asia:Yakutsk"{
+            ec{"Jakutsk"}
+        }
+        "Asia:Yekaterinburg"{
+            ec{"Jekaterinburg"}
+        }
+        "Atlantic:Azores"{
+            ec{"Azoren"}
+        }
+        "Atlantic:Canary"{
+            ec{"Kanaren"}
+        }
+        "Europe:Berlin"{
+            ec{"Berlin"}
+            ld{"Mitteleuropäische Sommerzeit"}
+            ls{"Mitteleuropäische Zeit"}
+            sd{"MESZ"}
+            ss{"MEZ"}
+        }
+        "Europe:Kiev"{
+            ec{"Kiew"}
+        }
+        "Europe:Lisbon"{
+            ec{"Lissabon"}
+        }
+        "Europe:Moscow"{
+            ec{"Moskau"}
+        }
+        "Europe:Uzhgorod"{
+            ec{"Uschgorod"}
+        }
+        "Europe:Zaporozhye"{
+            ec{"Saporischja"}
+        }
+        "Pacific:Easter"{
+            ec{"Osterinsel"}
         }
     }
 }

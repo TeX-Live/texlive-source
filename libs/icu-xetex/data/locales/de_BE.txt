@@ -1,9 +1,9 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/de_BE.xml
+// * Source File:<path>/common/main/de_BE.xml
 // *
 // ***************************************************************************
 de_BE{
@@ -19,9 +19,13 @@ de_BE{
         "#,##0%",
         "#E0",
     }
-    Version{"1.30"}
+    Version{"1.42"}
     calendar{
         gregorian{
+            DateTimeElements:intvector{
+                2,
+                4,
+            }
             DateTimePatterns{
                 "HH 'h' mm 'min' ss 's' z",
                 "HH:mm:ss z",
@@ -50,17 +54,17 @@ de_BE{
                 format{
                     abbreviated{
                         "Jan",
-                        "Feb",
+                        "Februar",
                         "Mär",
                         "Apr",
                         "Mai",
                         "Jun",
                         "Jul",
-                        "Aug",
-                        "Sep",
-                        "Okt",
-                        "Nov",
-                        "Dez",
+                        "August",
+                        "September",
+                        "Oktober",
+                        "November",
+                        "Dezember",
                     }
                 }
             }

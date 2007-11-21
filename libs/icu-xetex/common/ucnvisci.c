@@ -1,6 +1,6 @@
 /*  
 **********************************************************************
-*   Copyright (C) 2000-2004, International Business Machines
+*   Copyright (C) 2000-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *   file name:  ucnvisci.c
@@ -70,28 +70,28 @@ typedef enum  {
 
 
 /**
- * Enumeration for switching code pages if <ATX>+<one of below values>
+ * Enumeration for switching code pages if <ATR>+<one of below values>
  * is encountered
  */
 typedef enum {
-    DEF =0x40,
-    RMN =0x41,
-    DEV =0x42,
-    BNG =0x43,
-    TML =0x44,
-    TLG =0x45,
-    ASM =0x46,
-    ORI =0x47,
-    KND =0x48,
-    MLM =0x49,
-    GJR =0x4A,
-    PNJ =0x4B,
-    ARB =0x71,
-    PES =0x72,
-    URD =0x73,
-    SND =0x74,
-    KSM =0x75,
-    PST =0x76
+    DEF = 0x40,
+    RMN = 0x41,
+    DEV = 0x42,
+    BNG = 0x43,
+    TML = 0x44,
+    TLG = 0x45,
+    ASM = 0x46,
+    ORI = 0x47,
+    KND = 0x48,
+    MLM = 0x49,
+    GJR = 0x4A,
+    PNJ = 0x4B,
+    ARB = 0x71,
+    PES = 0x72,
+    URD = 0x73,
+    SND = 0x74,
+    KSM = 0x75,
+    PST = 0x76
 }ISCIILang;
 
 typedef enum{
@@ -116,10 +116,18 @@ typedef struct{
     MaskEnum currentMaskToUnicode;   /* mask for current state in toUnicode */
     MaskEnum defMaskToUnicode;       /* mask for default state in toUnicode */
     UBool isFirstBuffer;             /* boolean for fromUnicode to see if we need to announce the first script */
+    UBool resetToDefaultToUnicode;   /* boolean for reseting to default delta and mask when a newline is encountered*/
     char name[30];
 }UConverterDataISCII; 
 
-static const uint16_t lookupInitialData[][3]={
+typedef struct LookupDataStruct
+{
+    UniLang uniLang;
+    MaskEnum maskEnum;
+    ISCIILang isciiLang;
+} LookupDataStruct;
+
+static const LookupDataStruct lookupInitialData[]={
     { DEVANAGARI, DEV_MASK,  DEV },
     { BENGALI,    BNG_MASK,  BNG },
     { GURMUKHI,   PNJ_MASK,  PNJ },
@@ -141,15 +149,16 @@ _ISCIIOpen(UConverter *cnv, const char *name,const char *locale,uint32_t options
         converterData->contextCharToUnicode=NO_CHAR_MARKER;
         cnv->toUnicodeStatus = missingCharMarker;
         converterData->contextCharFromUnicode=0x0000;
+        converterData->resetToDefaultToUnicode=FALSE;
         /* check if the version requested is supported */
         if((options & UCNV_OPTIONS_VERSION_MASK) < 9){
             /* initialize state variables */
             converterData->currentDeltaFromUnicode=converterData->currentDeltaToUnicode=
             converterData->defDeltaToUnicode=
-                    (uint16_t)(lookupInitialData[options & UCNV_OPTIONS_VERSION_MASK][0] * DELTA);
+                    (uint16_t)(lookupInitialData[options & UCNV_OPTIONS_VERSION_MASK].uniLang * DELTA);
 
             converterData->currentMaskFromUnicode = converterData->currentMaskToUnicode = 
-            converterData->defMaskToUnicode=lookupInitialData[options & UCNV_OPTIONS_VERSION_MASK][1];
+            converterData->defMaskToUnicode=lookupInitialData[options & UCNV_OPTIONS_VERSION_MASK].maskEnum;
             
             converterData->isFirstBuffer=TRUE;
             uprv_strcpy(converterData->name,"ISCII,version=");
@@ -198,9 +207,10 @@ _ISCIIReset(UConverter *cnv, UConverterResetChoice choice){
     if(choice!=UCNV_RESET_TO_UNICODE) {
         cnv->fromUChar32=0x0000; 
         data->contextCharFromUnicode=0x00;
-        data->currentMaskFromUnicode=data->defDeltaToUnicode;
+        data->currentMaskFromUnicode=data->defMaskToUnicode;
         data->currentDeltaFromUnicode=data->defDeltaToUnicode;
         data->isFirstBuffer=TRUE;
+        data->resetToDefaultToUnicode=FALSE;
     }
 }
 
@@ -809,7 +819,6 @@ UConverter_fromUnicode_ISCII_OFFSETS_LOGIC (UConverterFromUnicodeArgs * args,
     int32_t* offsets = args->offsets;
     uint32_t targetByteUnit = 0x0000;
     UChar32 sourceChar = 0x0000;
-    UBool useFallback;
     UConverterDataISCII *converterData;
     uint16_t newDelta=0;
     uint16_t range = 0;
@@ -821,7 +830,6 @@ UConverter_fromUnicode_ISCII_OFFSETS_LOGIC (UConverterFromUnicodeArgs * args,
     }
     /* initialize data */
     converterData=(UConverterDataISCII*)args->converter->extraInfo;
-    useFallback = args->converter->useFallback;
     newDelta=converterData->currentDeltaFromUnicode;
     range = (uint16_t)(newDelta/DELTA);
     
@@ -844,7 +852,7 @@ UConverter_fromUnicode_ISCII_OFFSETS_LOGIC (UConverterFromUnicodeArgs * args,
             }
             if(sourceChar == LF){                         
                 targetByteUnit = ATR<<8;
-                targetByteUnit += (uint8_t) lookupInitialData[range][2];
+                targetByteUnit += (uint8_t) lookupInitialData[range].isciiLang;
                 args->converter->fromUnicodeStatus=sourceChar;
                 /* now append ATR and language code */
                 WRITE_TO_TARGET_FROM_U(args,offsets,source,target,targetLimit,targetByteUnit,err);
@@ -890,7 +898,7 @@ UConverter_fromUnicode_ISCII_OFFSETS_LOGIC (UConverterFromUnicodeArgs * args,
                     /* Now are we in the same block as the previous? */
                     if(newDelta!= converterData->currentDeltaFromUnicode || converterData->isFirstBuffer){
                         converterData->currentDeltaFromUnicode = newDelta;
-                        converterData->currentMaskFromUnicode = lookupInitialData[range][1];
+                        converterData->currentMaskFromUnicode = lookupInitialData[range].maskEnum;
                         deltaChanged =TRUE;
                         converterData->isFirstBuffer=FALSE;
                     }
@@ -916,7 +924,7 @@ UConverter_fromUnicode_ISCII_OFFSETS_LOGIC (UConverterFromUnicodeArgs * args,
                      */
                     uint16_t temp=0;              
                     temp =(uint16_t)(ATR<<8);
-                    temp += (uint16_t)((uint8_t) lookupInitialData[range][2]);
+                    temp += (uint16_t)((uint8_t) lookupInitialData[range].isciiLang);
                     /* reset */
                     deltaChanged=FALSE;
                     /* now append ATR and language code */
@@ -997,8 +1005,10 @@ static const int32_t lookupTable[][2]={
     { BENGALI,    BNG_MASK },
     { ORIYA,      ORI_MASK },
     { KANNADA,    KND_MASK },
+    { MALAYALAM,  MLM_MASK },
     { GUJARATI,   GJR_MASK },
-    { GURMUKHI,   PNJ_MASK },
+    { GURMUKHI,   PNJ_MASK }
+
 };
 
 #define WRITE_TO_TARGET_TO_U(args,source,target,offsets,offset,targetUniChar,delta, err){\
@@ -1099,7 +1109,7 @@ UConverter_toUnicode_ISCII_OFFSETS_LOGIC(UConverterToUnicodeArgs *args,
                     data->currentDeltaToUnicode = 
                         (uint16_t)(lookupTable[sourceChar & 0x0F][0] * DELTA);
                     data->currentMaskToUnicode = 
-                        lookupTable[sourceChar & 0x0F][1] ;
+                        (MaskEnum)lookupTable[sourceChar & 0x0F][1] ;
                 }
                 else if(sourceChar==DEF){
                     /* switch back to default */
@@ -1200,6 +1210,14 @@ UConverter_toUnicode_ISCII_OFFSETS_LOGIC(UConverterToUnicodeArgs *args,
                     *contextCharToUnicode = sourceChar;
                 }
                 break;
+            case 0x0A:
+                /* fall through */
+            case 0x0D:
+                data->resetToDefaultToUnicode = TRUE;
+                GET_MAPPING(sourceChar,targetUniChar,data);
+                *contextCharToUnicode = sourceChar;
+                break;
+
             case ISCII_NUKTA:
                 /* handle soft halant */
                 if(*contextCharToUnicode == ISCII_HALANT){
@@ -1221,7 +1239,7 @@ UConverter_toUnicode_ISCII_OFFSETS_LOGIC(UConverterToUnicodeArgs *args,
                     if(found){
                         /* find out if the mapping is valid in this state */                                            
                         if(validityTable[(uint8_t)targetUniChar] & data->currentMaskToUnicode){       
-                            targetUniChar += data->currentDeltaToUnicode ;
+                            /*targetUniChar += data->currentDeltaToUnicode ;*/
                             *contextCharToUnicode= NO_CHAR_MARKER;
                             *toUnicodeStatus = missingCharMarker;
                             break;
@@ -1248,6 +1266,11 @@ UConverter_toUnicode_ISCII_OFFSETS_LOGIC(UConverterToUnicodeArgs *args,
             if(targetUniChar != missingCharMarker ){
                 /* now save the targetUniChar for delayed write */
                 *toUnicodeStatus = (UChar) targetUniChar;
+                if(data->resetToDefaultToUnicode==TRUE){
+                    data->currentDeltaToUnicode = data->defDeltaToUnicode;
+                    data->currentMaskToUnicode = data->defMaskToUnicode;
+                    data->resetToDefaultToUnicode=FALSE;
+                }
             }else{
             
                 /* we reach here only if targetUniChar == missingCharMarker 
@@ -1321,7 +1344,7 @@ _ISCII_SafeClone(const UConverter *cnv,
     }
 
     localClone = (struct cloneISCIIStruct *)stackBuffer;
-    uprv_memcpy(&localClone->cnv, cnv, sizeof(UConverter));
+    /* ucnv.c/ucnv_safeClone() copied the main UConverter already */
 
     uprv_memcpy(&localClone->mydata, cnv->extraInfo, sizeof(UConverterDataISCII));
     localClone->cnv.extraInfo = &localClone->mydata;
@@ -1343,7 +1366,7 @@ _ISCIIGetUnicodeSet(const UConverter *cnv,
     scripts, we add all roundtrippable characters to this set. */
     sa->addRange(sa->set, 0, ASCII_END);
     for (script = DEVANAGARI; script <= MALAYALAM; script++) {
-        mask = (uint8_t)(lookupInitialData[script][1]);
+        mask = (uint8_t)(lookupInitialData[script].maskEnum);
         for (idx = 0; idx < DELTA; idx++) {
             if (validityTable[idx] & mask) {
                 sa->add(sa->set, idx + (script * DELTA) + INDIC_BLOCK_BEGIN);

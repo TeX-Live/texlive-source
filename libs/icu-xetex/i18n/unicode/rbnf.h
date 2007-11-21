@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 1997-2005, International Business Machines Corporation and others.
+* Copyright (C) 1997-2006, International Business Machines Corporation and others.
 * All Rights Reserved.
 *******************************************************************************
 */
@@ -22,7 +22,7 @@
  *
  * @stable ICU 2.4
  */
-#if defined(U_INT64_T_UNAVAILABLE) || UCONFIG_NO_FORMATTING
+#if UCONFIG_NO_FORMATTING
 #define U_HAVE_RBNF 0
 #else
 #define U_HAVE_RBNF 1
@@ -57,16 +57,13 @@ class Collator;
 #endif
 
 /**
- *
- * <h2> Rule Based Number Format C++ API </h2>
- *
- * <p>A class that formats numbers according to a set of rules. This number formatter is
+ * The RuleBasedNumberFormat class formats numbers according to a set of rules. This number formatter is
  * typically used for spelling out numeric values in words (e.g., 25,3476 as
  * &quot;twenty-five thousand three hundred seventy-six&quot; or &quot;vingt-cinq mille trois
  * cents soixante-seize&quot; or
  * &quot;f&uuml;nfundzwanzigtausenddreihundertsechsundsiebzig&quot;), but can also be used for
  * other complicated formatting tasks, such as formatting a number of seconds as hours,
- * minutes and seconds (e.g., 3,730 as &quot;1:02:10&quot;).</p>
+ * minutes and seconds (e.g., 3,730 as &quot;1:02:10&quot;).
  *
  * <p>The resources contain three predefined formatters for each locale: spellout, which
  * spells out a value in words (123 is &quot;one hundred twenty-three&quot;); ordinal, which
@@ -517,7 +514,7 @@ public:
      * syntax.
      * @param perror The parse error if an error was encountered.
      * @param status The status indicating whether the constructor succeeded.
-     * @draft ICU 3.2
+     * @stable ICU 3.2
      */
     RuleBasedNumberFormat(const UnicodeString& rules, UParseError& perror, UErrorCode& status);
 
@@ -542,7 +539,7 @@ public:
      * names in the description.  These will be copied by the constructor.
      * @param perror The parse error if an error was encountered.
      * @param status The status indicating whether the constructor succeeded.
-     * @draft ICU 3.2
+     * @stable ICU 3.2
      */
     RuleBasedNumberFormat(const UnicodeString& rules, const UnicodeString& localizations,
                         UParseError& perror, UErrorCode& status);
@@ -589,7 +586,7 @@ public:
      * lenient parsing.
      * @param perror The parse error if an error was encountered.
      * @param status The status indicating whether the constructor succeeded.
-     * @draft ICU 3.2
+     * @stable ICU 3.2
      */
     RuleBasedNumberFormat(const UnicodeString& rules, const UnicodeString& localizations,
                         const Locale& locale, UParseError& perror, UErrorCode& status);
@@ -680,7 +677,7 @@ public:
   /**
    * Return the number of locales for which we have localized rule set display names.
    * @return the number of locales for which we have localized rule set display names.
-   * @draft ICU 3.2
+   * @stable ICU 3.2
    */
   virtual int32_t getNumberOfRuleSetDisplayNameLocales(void) const;
 
@@ -690,7 +687,7 @@ public:
    * @param status set to a failure code when this function fails
    * @return the locale
    * @see #getNumberOfRuleSetDisplayNameLocales
-   * @draft ICU 3.2
+   * @stable ICU 3.2
    */
   virtual Locale getRuleSetDisplayNameLocale(int32_t index, UErrorCode& status) const;
 
@@ -705,7 +702,7 @@ public:
      * display name is desired
      * @return the display name for the given index, which might be bogus if there is an error
      * @see #getRuleSetName
-     * @draft ICU 3.2
+     * @stable ICU 3.2
      */
   virtual UnicodeString getRuleSetDisplayName(int32_t index, 
                           const Locale& locale = Locale::getDefault());
@@ -715,8 +712,8 @@ public:
      * The locale is matched against the locales for which there is display name data, using
      * normal fallback rules.  If no locale matches, the default display name is returned.
      * @return the display name for the rule set
-     * @draft ICU 3.2
-     * @see #getRuleSetDisplayNames
+     * @stable ICU 3.2
+     * @see #getRuleSetDisplayName
      */
   virtual UnicodeString getRuleSetDisplayName(const UnicodeString& ruleSetName, 
                           const Locale& locale = Locale::getDefault());
@@ -861,7 +858,7 @@ public:
    * @param parsePosition On entry, contains the position of the first character
    * in "text" to examine.  On exit, has been updated to contain the position
    * of the first character in "text" that wasn't consumed by the parse.
-   * @see #setLenientParseMode
+   * @see #setLenient
    * @stable ICU 2.0
    */
   virtual void parse(const UnicodeString& text,
@@ -921,7 +918,7 @@ public:
    * Returns true if lenient-parse mode is turned on.  Lenient parsing is off
    * by default.
    * @return true if lenient-parse mode is turned on.
-   * @see #setLenientParseMode
+   * @see #setLenient
    * @stable ICU 2.0
    */
   virtual inline UBool isLenient(void) const;
@@ -942,7 +939,7 @@ public:
    * Return the name of the current default rule set.  If the current rule set is
    * not public, returns a bogus (and empty) UnicodeString.
    * @return the name of the current default rule set
-   * @draft ICU 3.0
+   * @stable ICU 3.0
    */
   virtual UnicodeString getDefaultRuleSetName() const;
 

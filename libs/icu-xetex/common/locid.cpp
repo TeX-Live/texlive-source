@@ -1,6 +1,6 @@
 /*
  **********************************************************************
- *   Copyright (C) 1997-2005, International Business Machines
+ *   Copyright (C) 1997-2006, International Business Machines
  *   Corporation and others.  All Rights Reserved.
  **********************************************************************
 *
@@ -160,7 +160,7 @@ void locale_set_default_internal(const char *id)
     umtx_unlock(NULL);
     if (hashTableNeedsInit) {
         status = U_ZERO_ERROR;
-        UHashtable *tHashTable = uhash_open(uhash_hashChars, uhash_compareChars, &status);
+        UHashtable *tHashTable = uhash_open(uhash_hashChars, uhash_compareChars, NULL, &status);
         if (U_FAILURE(status)) {
             return;
         }
@@ -357,7 +357,7 @@ Locale::Locale( const   char * newLanguage,
 
         /*if the whole string is longer than our internal limit, we need
         to go to the heap for temporary buffers*/
-        if (size > ULOC_FULLNAME_CAPACITY)
+        if (size >= ULOC_FULLNAME_CAPACITY)
         {
             togo_heap = (char *)uprv_malloc(sizeof(char)*(size+1));
             togo = togo_heap;
@@ -604,7 +604,7 @@ Locale& Locale::init(const char* localeID, UBool canonicalize)
 
         // successful end of init()
         return *this;
-    } while(0);
+    } while(0); /*loop doesn't iterate*/
 
     // when an error occurs, then set this object to "bogus" (there is no UErrorCode here)
     setToBogus();
@@ -937,6 +937,7 @@ Locale::getAvailableLocales(int32_t& count)
            newLocaleList = new Locale[locCount];
         }
         if (newLocaleList == NULL) {
+            count = 0;
             return NULL;
         }
 
@@ -1107,13 +1108,13 @@ const Locale &
 Locale::getLocale(int locid)
 {
     Locale *localeCache = getLocaleCache();
-    U_ASSERT(locid < eMAX_LOCALES);
+    U_ASSERT((locid < eMAX_LOCALES)&&(locid>=0));
     if (localeCache == NULL) {
         // Failure allocating the locale cache.
         //   The best we can do is return a NULL reference.
         locid = 0;
     }
-    return localeCache[locid];
+    return localeCache[locid]; /*operating on NULL*/
 }
 
 /*

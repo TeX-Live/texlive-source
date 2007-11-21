@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1999-2005, International Business Machines Corporation and
+ * Copyright (c) 1999-2006, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -88,7 +88,7 @@ MultithreadTest::~MultithreadTest()
 
 #if (ICU_USE_THREADS==0)
 void MultithreadTest::runIndexedTest( int32_t index, UBool exec, 
-                const char* &name, char* par ) {
+                const char* &name, char* /*par*/ ) {
   if (exec) logln("TestSuite MultithreadTest: ");
 
   if(index == 0)
@@ -551,6 +551,7 @@ void MultithreadTest::TestThreads()
 {
     char threadTestChars[THREADTEST_NRTHREADS + 1];
     SimpleThread *threads[THREADTEST_NRTHREADS];
+    int32_t numThreadsStarted = 0;
 
     int32_t i;
     for(i=0;i<THREADTEST_NRTHREADS;i++)
@@ -566,11 +567,18 @@ void MultithreadTest::TestThreads()
         if (threads[i]->start() != 0) {
             errln("Error starting thread %d", i);
         }
+        else {
+            numThreadsStarted++;
+        }
         SimpleThread::sleep(100);
         logln(" Subthread started.");
     }
 
     logln("Waiting for threads to be set..");
+    if (numThreadsStarted == 0) {
+        errln("No threads could be started for testing!");
+        return;
+    }
 
     int32_t patience = 40; // seconds to wait
 
@@ -665,9 +673,19 @@ void MultithreadTest::TestMutex()
     umtx_lock(&gTestMutexA);
     TestMutexThread  *threads[TESTMUTEX_THREAD_COUNT];
     int i;
+    int32_t numThreadsStarted = 0;
     for (i=0; i<TESTMUTEX_THREAD_COUNT; i++) {
         threads[i] = new TestMutexThread;
-        threads[i]->start();
+        if (threads[i]->start() != 0) {
+            errln("Error starting thread %d", i);
+        }
+        else {
+            numThreadsStarted++;
+        }
+    }
+    if (numThreadsStarted == 0) {
+        errln("No threads could be started for testing!");
+        return;
     }
 
     int patience = 0;
@@ -1153,7 +1171,7 @@ cleanupAndReturn:
 #if !UCONFIG_NO_COLLATION
 
 #define kCollatorThreadThreads   10  // # of threads to spawn
-#define kCollatorThreadPatience kCollatorThreadThreads*100
+#define kCollatorThreadPatience kCollatorThreadThreads*30
 
 struct Line {
     UChar buff[25];
@@ -1287,7 +1305,7 @@ void MultithreadTest::TestCollators()
                     "INFO: Working with the stub file.\n"
                     "If you need the full conformance test, please\n"
                     "download the appropriate data files from:\n"
-                    "http://oss.software.ibm.com/cvs/icu4j/unicodetools/com/ibm/text/data/");
+                    "http://dev.icu-project.org/cgi-bin/viewcvs.cgi/unicodetools/com/ibm/text/data/");
             }
         }
     }
@@ -1303,7 +1321,7 @@ void MultithreadTest::TestCollators()
 
     while (fgets(buffer, 1024, testFile) != NULL) {
         offset = 0;
-        if(*buffer == 0 || buffer[0] == '#') {
+        if(*buffer == 0 || strlen(buffer) < 3 || buffer[0] == '#') {
             continue;
         }
         offset = u_parseString(buffer, bufferU, 1024, &first, &status);
@@ -1315,8 +1333,10 @@ void MultithreadTest::TestCollators()
         lineNum++;
     }
     fclose(testFile);
-
-
+    if(U_FAILURE(status)) {
+      errln("Couldn't read the test file!");
+      return;
+    }
 
     UCollator *coll = ucol_open("root", &status);
     if(U_FAILURE(status)) {
@@ -1350,9 +1370,12 @@ void MultithreadTest::TestCollators()
         noSpawned++;
     }
     logln("Spawned all");
+    if (noSpawned == 0) {
+        errln("No threads could be spawned.");
+        return;
+    }
 
-    //for(int32_t patience = kCollatorThreadPatience;patience > 0; patience --)
-    for(;;)
+    for(int32_t patience = kCollatorThreadPatience;patience > 0; patience --)
     {
         logln("Waiting...");
 

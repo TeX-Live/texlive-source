@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *                                                                            *
-* Copyright (C) 2003-2005, International Business Machines                   *
+* Copyright (C) 2003-2006, International Business Machines                   *
 *                Corporation and others. All Rights Reserved.                *
 *                                                                            *
 ******************************************************************************
@@ -26,40 +26,36 @@
  * \brief C API: Provides access to locale data. 
  */
 
-/** A locale data object.
- *  For usage in C programs.
- *  @draft ICU 3.4
- */
-typedef struct ULocaleData {
-    /**
-     * Controls the "No Substitute" behavior of this locale data object
-     */
-    UBool noSubstitute;
+/** Forward declaration of the ULocaleData structure. @draft ICU 3.6 */
+struct ULocaleData;
 
-    /**
-     * Pointer to the resource bundle associated with this locale data object
-     */
-    UResourceBundle *bundle;
-} ULocaleData;
+/** A locale data object. @draft ICU 3.6 */
+typedef struct ULocaleData ULocaleData;
+
+
 
 /** The possible types of exemplar character sets.
   * @draft ICU 3.4
   */
-typedef enum ULocaleDataExemplarSetType {
-     ULOCDATA_ES_STANDARD,      /* Basic set */
-     ULOCDATA_ES_AUXILIARY,     /* Auxiliary set */
-     ULOCDATA_ES_COUNT
+typedef enum ULocaleDataExemplarSetType  {
+#ifndef U_HIDE_DRAFT_API 
+     ULOCDATA_ES_STANDARD=0,      /* Basic set */
+     ULOCDATA_ES_AUXILIARY=1,     /* Auxiliary set */
+#endif
+     ULOCDATA_ES_COUNT=3
 } ULocaleDataExemplarSetType;
 
 /** The possible types of delimiters.
   * @draft ICU 3.4
   */
 typedef enum ULocaleDataDelimiterType {
-     ULOCDATA_QUOTATION_START,     /* Quotation start */
-     ULOCDATA_QUOTATION_END,       /* Quotation end */
-     ULOCDATA_ALT_QUOTATION_START, /* Alternate quotation start */
-     ULOCDATA_ALT_QUOTATION_END,   /* Alternate quotation end */
-     ULOCDATA_DELIMITER_COUNT
+#ifndef U_HIDE_DRAFT_API 
+    ULOCDATA_QUOTATION_START = 0,     /* Quotation start */
+     ULOCDATA_QUOTATION_END = 1,       /* Quotation end */
+     ULOCDATA_ALT_QUOTATION_START = 2, /* Alternate quotation start */
+     ULOCDATA_ALT_QUOTATION_END = 3,   /* Alternate quotation end */
+#endif
+     ULOCDATA_DELIMITER_COUNT = 4
 } ULocaleDataDelimiterType;
 
 /**
@@ -155,17 +151,15 @@ ulocdata_getExemplarSet(ULocaleData *uld, USet *fillIn,
 U_DRAFT int32_t U_EXPORT2 
 ulocdata_getDelimiter(ULocaleData *uld, ULocaleDataDelimiterType type, UChar *result, int32_t resultLength, UErrorCode *status);
 
-#ifndef U_HIDE_DRAFT_API
 /**
  * Enumeration for representing the measurement systems.
- * @draft ICU 2.8
+ * @stable ICU 2.8
  */
 typedef enum UMeasurementSystem {
     UMS_SI,     /** Measurement system specified by SI otherwise known as Metric system. */
     UMS_US,     /** Measurement system followed in the United States of America. */ 
     UMS_LIMIT
 } UMeasurementSystem;
-#endif /*U_HIDE_DRAFT_API */
 
 /**
  * Returns the measurement system used in the locale specified by the localeID.
@@ -175,9 +169,9 @@ typedef enum UMeasurementSystem {
  * @param status        Must be a valid pointer to an error code value,
  *                      which must not indicate a failure before the function call.
  * @return UMeasurementSystem the measurement system used in the locale.
- * @draft ICU 2.8
+ * @stable ICU 2.8
  */
-U_DRAFT UMeasurementSystem U_EXPORT2
+U_STABLE UMeasurementSystem U_EXPORT2
 ulocdata_getMeasurementSystem(const char *localeID, UErrorCode *status);
 
 /**
@@ -194,9 +188,9 @@ ulocdata_getMeasurementSystem(const char *localeID, UErrorCode *status);
  * @param width         A pointer to int to recieve the width information.
  * @param status        Must be a valid pointer to an error code value,
  *                      which must not indicate a failure before the function call.
- * @draft ICU 2.8
+ * @stable ICU 2.8
  */
-U_DRAFT void U_EXPORT2
+U_STABLE void U_EXPORT2
 ulocdata_getPaperSize(const char *localeID, int32_t *height, int32_t *width, UErrorCode *status);
 
 #endif

@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 1999-2005, International Business Machines
+*   Copyright (C) 1999-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -377,7 +377,7 @@ storeMapping(uint32_t codepoint, uint32_t* mapping,int32_t length,
 
     /* initialize the hashtable */
     if(hashTable==NULL){
-        hashTable = uhash_open(hashEntry, compareEntries, status);
+        hashTable = uhash_open(hashEntry, compareEntries, NULL, status);
         uhash_setValueDeleter(hashTable, valueDeleter);
     }
     
@@ -492,11 +492,11 @@ extern void
 storeRange(uint32_t start, uint32_t end, UStringPrepType type,UErrorCode* status){
     uint16_t trieWord = 0;
 
-    trieWord += (_SPREP_TYPE_THRESHOLD + type); /* the top 4 bits contain the value */
-    if(trieWord > 0xFFFF){
+    if((int)(_SPREP_TYPE_THRESHOLD + type) > 0xFFFF){
         fprintf(stderr,"trieWord cannot contain value greater than 0xFFFF.\n");
         exit(U_ILLEGAL_CHAR_FOUND);
     }
+    trieWord = (_SPREP_TYPE_THRESHOLD + type); /* the top 4 bits contain the value */
     if(start == end){
         uint32_t savedTrieWord = utrie_get32(sprepTrie, start, NULL);
         if(savedTrieWord>0){
@@ -574,7 +574,7 @@ getFoldedValue(UNewTrie *trie, UChar32 start, int32_t offset) {
 #endif /* #if !UCONFIG_NO_IDNA */
 
 extern void
-generateData(const char *dataDir, const char *packageName, const char* bundleName) {
+generateData(const char *dataDir, const char* bundleName) {
     static uint8_t sprepTrieBlock[100000];
 
     UNewDataMemory *pData;
@@ -610,12 +610,7 @@ generateData(const char *dataDir, const char *packageName, const char* bundleNam
 
 #endif
 
-    if(packageName != NULL) {
-      uprv_strcpy(fileName,packageName);
-      uprv_strcat(fileName,"_");
-    } else {
-      fileName[0]=0;
-    }
+    fileName[0]=0;
     uprv_strcat(fileName,bundleName);
     /* write the data */
     pData=udata_create(dataDir, DATA_TYPE, fileName, &dataInfo,

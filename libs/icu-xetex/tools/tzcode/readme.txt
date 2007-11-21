@@ -1,11 +1,15 @@
 **********************************************************************
-* Copyright (c) 2003-2005, International Business Machines
+* Copyright (c) 2003-2006, International Business Machines
 * Corporation and others.  All Rights Reserved.
 **********************************************************************
 * Author: Alan Liu
 * Created: August 18 2003
 * Since: ICU 2.8
 **********************************************************************
+
+Note:  this directory currently contains tzcode as of tzcode2006h.tar.gz
+   with localtime.c  patches from tzcode2006i.tar.gz
+
 
 ----------------------------------------------------------------------
 OVERVIEW
@@ -56,91 +60,29 @@ several parts.  E.g.:
   tzcode2003a.tar.gz      98 KB        3/24/2003     2:32:00 PM
   tzdata2003a.tar.gz      132 KB       3/24/2003     2:32:00 PM
 
-ICU only uses the tzcodeYYYYV.tar.gz and tzdataYYYYV.tar.gz files,
+ICU only uses the tzdataYYYYV.tar.gz files,
 where YYYY is the year and V is the version letter ('a'...'z').
+
+This directory has partial contents of tzcode checked into ICU
 
 ----------------------------------------------------------------------
 HOWTO
 
-1. Obtain the current versions of tzcodeYYYYV.tar.gz (aka `tzcode')
-   and tzdataYYYYV.tar.gz (aka `tzdata') from the FTP site given
+0. Note, these instructions will only work on POSIX type systems.
+
+1. Obtain the current versions of tzdataYYYYV.tar.gz (aka `tzdata') from the FTP site given
    above.  Either manually download or use wget:
 
    $ cd {path_to}/icu/source/tools/tzcode
-   $ wget "ftp://elsie.nci.nih.gov/pub/tz*.tar.gz"
+   $ wget "ftp://elsie.nci.nih.gov/pub/tzdata*.tar.gz"
 
-2. Unpack tzcode and tzdata directly into the directory tzcode:
-
-   $ tar xzvf tzcode*.tar.gz
-   $ tar xzvf tzdata*.tar.gz
+2. copy only one tzdata*.tar.gz file into the icu/source/data/in/ directory (you may have to create this directory)
 
    *** Make sure you only have ONE FILE named tzdata*.tar.gz in the
        directory.
-   *** Do NOT delete the tzdata*.tar.gz file.
 
-   The Makefile looks in the current directory to determine the
-   version of Olson data it is building by looking for tzdata*.tar.gz.
+3. Build ICU normally. You will see a notice "updating zoneinfo.txt..."
 
-3. Apply the ICU patch to zic.c:
-
-   $ patch < patch-icu-tzcode
-
-   If patch complains at this point, there is a mismatch that must be
-   manually addressed.  See the CVS log of `patch-icu-tzcode' for
-   version details.
-
-4. Build:
-
-   $ make icu_data
-
-5. Copy the data files to the correct location in the ICU4C/ICU4J
-   source trees:
-
-   $ cp zoneinfo.txt ../../../data/misc/
-   $ cp ZoneMetaData.java {path_to}/icu4j/src/com/ibm/icu/impl
-
-6. Rebuild ICU:
-
-   $ cd ../../../
-   $ {*make}
-
-7. Don't forget to check in the new zoneinfo.txt (from its location at
+4. For ICU maintainers, don't forget to check in the new
+    zoneinfo.txt (from its location at
    {path_to}/icu/source/data/misc/zoneinfo.txt) into CVS.
-
-----------------------------------------------------------------------
-HOWTO regenerate patch-icu-tzcode
-
-If you need to edit any of the tzcode* files, you will need to
-regenerate the patch file as follows.
-
-1. Follow the above instructions to extract and patch the tzcode*
-   files in {path_to}/icu/source/tools/tzcode.  Modify any of the
-   tzcode files.
-
-2. Extract a clean set of the tzcode* files into a new directory,
-   ../tzcode.orig/:
-
-   $ mkdir ../tzcode.orig
-   $ cd ../tzcode.orig
-   $ tar xzf ../tzcode/tzcode*.tar.gz
-   $ cd ../tzcode
-
-3. Compute diffs, ignoring files that are in only one directory:
-
-   $ diff -ur ../tzcode.orig . | grep -vE -e "^Only in " > patch-icu-tzcode
-
-4. Test the patch-icu-tzcode file by regenerating and diffing the
-   files again in another directory.  The expected output from the
-   final diff command is *nothing*.
-
-   $ mkdir ../tzcode.new
-   $ cd ../tzcode.new
-   $ tar xzf ../tzcode/tzcode*.tar.gz
-   $ patch < ../tzcode/patch-icu-tzcode
-   $ cd ../tzcode
-   $ diff -ur ../tzcode.new . | grep -vE -e "^Only in "
-
-5. Check in the new patch-icu-tzcode file.
-
-----------------------------------------------------------------------
-eof

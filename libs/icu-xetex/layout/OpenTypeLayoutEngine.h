@@ -1,8 +1,5 @@
-
 /*
- * %W% %E%
- *
- * (C) Copyright IBM Corp. 1998-2005 - All Rights Reserved
+ * (C) Copyright IBM Corp. 1998-2006 - All Rights Reserved
  *
  */
 
@@ -45,7 +42,7 @@ U_NAMESPACE_BEGIN
  *
  * @internal
  */
-class OpenTypeLayoutEngine : public LayoutEngine
+class U_LAYOUT_API OpenTypeLayoutEngine : public LayoutEngine
 {
 public:
     /**
@@ -125,6 +122,13 @@ public:
      */
     static UClassID getStaticClassID();
 
+    /**
+     * The array of language tags, indexed by language code.
+     *
+     * @internal
+     */
+    static const LETag languageTags[];
+
 private:
 
     /**
@@ -138,29 +142,40 @@ private:
      */
     static const LETag scriptTags[];
 
-    /**
-     * The array of language tags, indexed by language code.
-     */
-    static const LETag languageTags[];
-
 protected:
     /**
-     * A list of "default" features. The default characterProcessing method
-     * will apply all of these tags to every glyph.
+     * A set of "default" features. The default characterProcessing method
+     * will apply all of these features to every glyph.
      *
      * @internal
      */
-    const LETag *fFeatureList;
+    FeatureMask fFeatureMask;
+
+    /**
+     * A set of mappings from feature tags to feature masks. These may
+     * be in the order in which the featues should be applied, but they
+     * don't need to be.
+     *
+     * @internal
+     */
+    const FeatureMap *fFeatureMap;
     const le_int32 *fFeatureParamList;
 
     /**
-     * A list of tags in the order in which the features in
-     * the font should be applied, as opposed to using the
-     * order of the lookups in the font.
+     * The length of the feature map.
      *
      * @internal
      */
-    const LETag *fFeatureOrder;
+    le_int32 fFeatureMapCount;
+
+    /**
+     * <code>TRUE</code> if the features in the
+     * feature map are in the order in which they
+     * must be applied.
+     *
+     * @internal
+     */
+    le_bool fFeatureOrder;
 
     /**
      * The address of the GSUB table.
@@ -206,6 +221,14 @@ protected:
      * @internal
      */
     LETag fLangSysTag;
+
+    /**
+     * <code>TRUE</code> if <code>mapCharsToGlyphs</code> should replace ZWJ / ZWNJ with a glyph
+     * with no contours.
+     *
+     * @internal
+     */
+    le_bool fFilterZeroWidth;
 
     /**
      * This method does the OpenType character processing. It assigns the OpenType feature

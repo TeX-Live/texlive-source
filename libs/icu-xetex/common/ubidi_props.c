@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2004-2005, International Business Machines
+*   Copyright (C) 2004-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -191,7 +191,9 @@ ubidi_openBinary(const uint8_t *bin, int32_t length, UErrorCode *pErrorCode) {
 U_CAPI void U_EXPORT2
 ubidi_closeProps(UBiDiProps *bdp) {
     if(bdp!=NULL) {
+#if !UBIDI_HARDCODE_DATA
         udata_close(bdp->mem);
+#endif
         uprv_free(bdp);
     }
 }
@@ -199,17 +201,21 @@ ubidi_closeProps(UBiDiProps *bdp) {
 /* UBiDiProps singleton ----------------------------------------------------- */
 
 static UBiDiProps *gBdp=NULL, *gBdpDummy=NULL;
+#if !UBIDI_HARDCODE_DATA
 static UErrorCode gErrorCode=U_ZERO_ERROR;
 static int8_t gHaveData=0;
+#endif
 
 static UBool U_CALLCONV
 ubidi_cleanup(void) {
     ubidi_closeProps(gBdp);
     gBdp=NULL;
-    gErrorCode=U_ZERO_ERROR;
-    gHaveData=0;
     ubidi_closeProps(gBdpDummy);
     gBdpDummy=NULL;
+#if !UBIDI_HARDCODE_DATA
+    gErrorCode=U_ZERO_ERROR;
+    gHaveData=0;
+#endif
     return TRUE;
 }
 

@@ -2,7 +2,7 @@
 //
 //  file:  regexcmp.cpp
 //
-//  Copyright (C) 2002-2004 International Business Machines Corporation and others.
+//  Copyright (C) 2002-2006 International Business Machines Corporation and others.
 //  All Rights Reserved.
 //
 //  This file contains the ICU regular expression compiler, which is responsible
@@ -60,7 +60,7 @@ RegexCompile::RegexCompile(RegexPattern *rxp, UErrorCode &status) : fParenStack(
     fCharNum          = 0;
     fQuoteMode        = FALSE;
     fInBackslashQuote = FALSE;
-    fModeFlags        = fRXPat->fFlags;
+    fModeFlags        = fRXPat->fFlags | 0x80000000;
     fEOLComments      = TRUE;
 
     fMatchOpenParen   = -1;
@@ -339,11 +339,10 @@ UBool RegexCompile::doParseActions(EParseAction action)
         fRXPat->fCompiledPat->addElement(URX_BUILD(URX_STATE_SAVE, 2), *fStatus);
         fRXPat->fCompiledPat->addElement(URX_BUILD(URX_JMP,  3), *fStatus);
         fRXPat->fCompiledPat->addElement(URX_BUILD(URX_FAIL, 0), *fStatus);
-        fRXPat->fCompiledPat->addElement(URX_BUILD(URX_NOP,  0), *fStatus);
-        fRXPat->fCompiledPat->addElement(URX_BUILD(URX_NOP,  0), *fStatus);
 
-        fParenStack.push(-1, *fStatus);     // Begin a Paren Stack Frame
-        fParenStack.push( 3, *fStatus);     // Push location of first NOP
+        // Standard open nonCapture paren action emits the two NOPs and
+        //   sets up the paren stack frame.
+        doParseActions((EParseAction)doOpenNonCaptureParen);
         break;
 
     case doPatFinish:
@@ -1333,6 +1332,7 @@ UBool RegexCompile::doParseActions(EParseAction action)
     case doSetMatchMode:
         // We've got a (?i) or similar.  The match mode is being changed, but
         //   the change is not scoped to a parenthesized block.
+        U_ASSERT(fNewModeFlags < 0);
         fModeFlags = fNewModeFlags;
 
         // Prevent any string from spanning across the change of match mode.
@@ -1363,6 +1363,7 @@ UBool RegexCompile::doParseActions(EParseAction action)
             fParenStack.push(fRXPat->fCompiledPat->size()-1, *fStatus);   // The second NOP
 
             // Set the current mode flags to the new values.
+            U_ASSERT(fNewModeFlags < 0);
             fModeFlags = fNewModeFlags;
         }
         break;
@@ -1620,6 +1621,7 @@ void   RegexCompile::insertOp(int32_t where) {
     //  the compiled pattern.   (Negative values are frame boundaries, and don't need fixing.)
     for (loc=0; loc<fParenStack.size(); loc++) {
         int32_t x = fParenStack.elementAti(loc);
+        U_ASSERT(x < code->size());
         if (x>where) {
             x++;
             fParenStack.setElementAt(x, loc);
@@ -1726,6 +1728,7 @@ void  RegexCompile::handleCloseParen() {
     //  the value they had at the open paren.  Saved value is
     //  at the top of the paren stack.  
     fModeFlags = fParenStack.popi();
+    U_ASSERT(fModeFlags < 0);
     
     // DO any additional fixups, depending on the specific kind of
     // parentesized grouping this is
@@ -2240,7 +2243,7 @@ void   RegexCompile::matchStartType() {
                     // character may have distinct cased forms.  Add all of them
                     //   to the set of possible starting match chars.
                     UnicodeSet s(c, c);
-                    s.closeOver(USET_CASE);
+                    s.closeOver(USET_CASE_INSENSITIVE);
                     fRXPat->fInitialChars->addAll(s);
                 } else {
                     // Char has no case variants.  Just add it as-is to the
@@ -2366,7 +2369,7 @@ void   RegexCompile::matchStartType() {
                     int32_t stringStartIdx = URX_VAL(op);
                     UChar32  c = fRXPat->fLiteralText.char32At(stringStartIdx);
                     UnicodeSet s(c, c);
-                    s.closeOver(USET_CASE);
+                    s.closeOver(USET_CASE_INSENSITIVE);
                     fRXPat->fInitialChars->addAll(s);
                     numInitialStrings += 2;  // Matching on an initial string not possible.
                 }
@@ -2958,8 +2961,8 @@ int32_t   RegexCompile::maxMatchLength(int32_t start, int32_t end) {
             
             // End of look-ahead ops should always be consumed by the processing at
             //  the URX_LA_START op.
-            U_ASSERT(FALSE);
-            break;
+            // U_ASSERT(FALSE);
+            // break;
             
         case URX_LB_START:
             {
@@ -3235,18 +3238,15 @@ static const UChar      chCR        = 0x0d;      // New lines, for terminating c
 static const UChar      chLF        = 0x0a;
 static const UChar      chNEL       = 0x85;      //    NEL newline variant
 static const UChar      chLS        = 0x2028;    //    Unicode Line Separator
-static const UChar      chApos      = 0x27;      //  single quote, for quoted chars.
 static const UChar      chPound     = 0x23;      // '#', introduces a comment.
 static const UChar      chE         = 0x45;      // 'E'
-static const UChar      chBackSlash = 0x5c;      // '\'  introduces a char escape
-static const UChar      chLParen    = 0x28;
-static const UChar      chRParen    = 0x29;
-static const UChar      chLBracket  = 0x5b;
-static const UChar      chRBracket  = 0x5d;
-static const UChar      chRBrace    = 0x7d;
 static const UChar      chUpperN    = 0x4E;
 static const UChar      chLowerP    = 0x70;
 static const UChar      chUpperP    = 0x50;
+static const UChar      chBackSlash = 0x5c;      // '\'  introduces a char escape
+static const UChar      chLBracket  = 0x5b;
+static const UChar      chRBracket  = 0x5d;
+static const UChar      chRBrace    = 0x7d;
 
 
 //------------------------------------------------------------------------------
@@ -3425,7 +3425,6 @@ void RegexCompile::nextChar(RegexPatternChar &c) {
 UnicodeSet *RegexCompile::scanSet() {
     UnicodeSet    *uset = NULL;
     ParsePosition  pos;
-    int            startPos;
     int            i;
 
     if (U_FAILURE(*fStatus)) {
@@ -3433,7 +3432,6 @@ UnicodeSet *RegexCompile::scanSet() {
     }
 
     pos.setIndex(fScanIndex);
-    startPos = fScanIndex;
     UErrorCode localStatus = U_ZERO_ERROR;
     uint32_t   usetFlags = 0;
     if (fModeFlags & UREGEX_CASE_INSENSITIVE) {

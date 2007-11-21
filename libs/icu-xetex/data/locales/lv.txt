@@ -1,15 +1,16 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/lv.xml
+// * Source File:<path>/common/main/lv.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/lv.xml
+ *  ICU <specials> source: <path>/xml/main/lv.xml
  */
 lv{
+    AuxExemplarCharacters{"[y q w x]"}
     Countries{
         AD{"Andora"}
         AE{"Apvienotie Arābu Emirāti"}
@@ -59,6 +60,7 @@ lv{
         CN{"Ķīna"}
         CO{"Kolumbija"}
         CR{"Kostarika"}
+        CS{"Serbija un Melnkalne"}
         CU{"Kuba"}
         CV{"Kaboverde"}
         CX{"Ziemsvētku sala"}
@@ -227,6 +229,7 @@ lv{
         TR{"Turcija"}
         TT{"Trinidāda un Tobāgo"}
         TV{"Tuvalu"}
+        TW{"Taivāna"}
         TZ{"Tanzānija"}
         UA{"Ukraina"}
         UG{"Uganda"}
@@ -255,7 +258,7 @@ lv{
             "LVL",
         }
     }
-    ExemplarCharacters{"[a-z ā ē ī ō ū ģ ķ ļ ņ ŗ č š ž]"}
+    ExemplarCharacters{"[a ā b c č d e ē f g ģ h i ī j k ķ l ļ m n ņ o p r s š t u ū v z ž]"}
     Languages{
         ar{"arābu"}
         bg{"bulgāru"}
@@ -302,16 +305,12 @@ lv{
         "E",
         "‰",
         "∞",
-        "�",
+        "NaN",
         "+",
     }
-    Version{"1.38"}
+    Version{"1.57"}
     calendar{
         gregorian{
-            DateTimeElements:intvector{
-                2,
-                1,
-            }
             DateTimePatterns{
                 "HH:mm:ss z",
                 "HH:mm:ss z",
@@ -380,6 +379,22 @@ lv{
                         "oktobris",
                         "novembris",
                         "decembris",
+                    }
+                }
+            }
+            quarters{
+                format{
+                    abbreviated{
+                        "C1",
+                        "C2",
+                        "C3",
+                        "C4",
+                    }
+                    wide{
+                        "1. ceturksnis",
+                        "2. ceturksnis",
+                        "3. ceturksnis",
+                        "4. ceturksnis",
                     }
                 }
             }

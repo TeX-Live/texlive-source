@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2002-2004, International Business Machines
+*   Copyright (C) 2002-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -50,11 +50,12 @@ noopCurrent(UCharIterator * /*iter*/) {
 
 static uint32_t U_CALLCONV
 noopGetState(const UCharIterator * /*iter*/) {
-    return 0;
+    return UITER_NO_STATE;
 }
 
 static void U_CALLCONV
-noopSetState(UCharIterator * /*iter*/, uint32_t /*state*/, UErrorCode * /*pErrorCode*/) {
+noopSetState(UCharIterator * /*iter*/, uint32_t /*state*/, UErrorCode *pErrorCode) {
+    *pErrorCode=U_UNSUPPORTED_ERROR;
 }
 
 static const UCharIterator noopIterator={

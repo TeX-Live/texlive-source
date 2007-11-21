@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 1999-2005, International Business Machines
+*   Copyright (C) 1999-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************/
@@ -20,32 +20,6 @@
 
 #include "udatamem.h"
 #include "umapfile.h"
-
-#if U_ICU_VERSION_MAJOR_NUM>3 || (U_ICU_VERSION_MAJOR_NUM==3 && U_ICU_VERSION_MINOR_NUM>4)
-#   error Time bomb: After ICU 3.4 move the definition of UCONFIG_NO_FILE_IO to uconfig.h. Use Jitterbug 4614.
-#endif
-
-/**
- * \def UCONFIG_NO_FILE_IO
- * This switch turns off all file access in the common library
- * where file access is only used for data loading.
- * ICU data must then be provided in the form of a data DLL (or with an
- * equivalent way to link to the data residing in an executable,
- * as in building a combined library with both the common library's code and
- * the data), or via udata_setCommonData().
- * Application data must be provided via udata_setAppData() or by using
- * "open" functions that take pointers to data, for example ucol_openBinary().
- *
- * File access is not used at all in the i18n library.
- *
- * File access cannot be turned off for the icuio library or for the ICU
- * test suites and ICU tools.
- *
- * @draft ICU 3.6
- */
-#ifndef UCONFIG_NO_FILE_IO
-#   define UCONFIG_NO_FILE_IO 0
-#endif
 
 /* memory-mapping base definitions ------------------------------------------ */
 
@@ -66,6 +40,7 @@
 #   define NOIME
 #   define NOMCX
 #   include <windows.h>
+#   include "cmemory.h"
 
     typedef HANDLE MemoryMap;
 
@@ -74,7 +49,7 @@
 #   define MAP_IMPLEMENTATION MAP_WIN32
 
 /* ### Todo: properly auto detect mmap(). Until then, just add your platform here. */
-#elif U_HAVE_MMAP || defined(U_AIX) || defined(U_HPUX) || defined(OS390) || defined(PTX)
+#elif U_HAVE_MMAP || defined(U_AIX) || defined(U_HPUX) || defined(OS390)
     typedef size_t MemoryMap;
 
 #   define IS_MAP(map) ((map)!=0)
@@ -151,6 +126,9 @@
     {
         HANDLE map;
         HANDLE file;
+        SECURITY_ATTRIBUTES mappingAttributes;
+        SECURITY_ATTRIBUTES *mappingAttributesPtr = NULL;
+        SECURITY_DESCRIPTOR securityDesc;
 
         UDataMemory_init(pData); /* Clear the output struct.        */
 
@@ -162,8 +140,24 @@
             return FALSE;
         }
 
+        /* Declare and initialize a security descriptor.
+           This is required for multiuser systems on Windows 2000 SP4 and beyond */
+        if (InitializeSecurityDescriptor(&securityDesc, SECURITY_DESCRIPTOR_REVISION)) {
+            /* give the security descriptor a Null Dacl done using the  "TRUE, (PACL)NULL" here	*/
+            if (SetSecurityDescriptorDacl(&securityDesc, TRUE, (PACL)NULL, FALSE)) {
+                /* Make the security attributes point to the security descriptor */
+                uprv_memset(&mappingAttributes, 0, sizeof(mappingAttributes));
+                mappingAttributes.nLength = sizeof(mappingAttributes);
+                mappingAttributes.lpSecurityDescriptor = &securityDesc;
+                mappingAttributes.bInheritHandle = FALSE; /* object uninheritable */
+                mappingAttributesPtr = &mappingAttributes;
+            }
+        }
+        /* else creating security descriptors can fail when we are on Windows 98,
+           and mappingAttributesPtr == NULL for that case. */
+
         /* create an unnamed Windows file-mapping object for the specified file */
-        map=CreateFileMapping(file, NULL, PAGE_READONLY, 0, 0, NULL);
+        map=CreateFileMapping(file, mappingAttributesPtr, PAGE_READONLY, 0, 0, NULL);
         CloseHandle(file);
         if(map==NULL) {
             return FALSE;

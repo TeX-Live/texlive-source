@@ -3,7 +3,7 @@ README for libs/icu-xetex directory
 This directory contains a *MODIFIED* version of the ICU library source code,
 for use by XeTeX.
 
-The ICU source code for release 3.4 was checked out from CVS and imported to
+The ICU source code for release 3.6 was checked out from CVS and imported to
 the XeTeX repository; records of the modifications made (primarily extensions to
 non-Latin support in the Layout Engine) can be found in the XeTeX repository.
 

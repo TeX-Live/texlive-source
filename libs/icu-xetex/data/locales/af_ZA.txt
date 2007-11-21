@@ -1,9 +1,9 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/af_ZA.xml
+// * Source File:<path>/common/main/af_ZA.xml
 // *
 // ***************************************************************************
 af_ZA{
@@ -13,9 +13,13 @@ af_ZA{
         "#,##0%",
         "#E0",
     }
-    Version{"1.27"}
+    Version{"1.39"}
     calendar{
         gregorian{
+            DateTimeElements:intvector{
+                1,
+                1,
+            }
             DateTimePatterns{
                 "h:mm:ss a",
                 "h:mm:ss a",

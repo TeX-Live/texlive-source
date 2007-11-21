@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 1999-2005, International Business Machines
+*   Copyright (C) 1999-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -119,33 +119,72 @@ enum {
             (UBiDiLevel)((ubidi)->defaultParaLevel ? (ubidi)->dirProps[index]>>7 \
                                                    : (ubidi)->paraLevel)
 
-/* Paragraph type for multiple paragraph support ---   -------------------- */
+/* Paragraph type for multiple paragraph support ---------------------------- */
 typedef int32_t Para;
 
 #define CR  0x000D
 #define LF  0x000A
 
 /* Run structure for reordering --------------------------------------------- */
+enum {
+    LRM_BEFORE=1,
+    LRM_AFTER=2,
+    RLM_BEFORE=4,
+    RLM_AFTER=8
+};
 
 typedef struct Run {
     int32_t logicalStart,   /* first character of the run; b31 indicates even/odd level */
-            visualLimit;    /* last visual position of the run +1 */
+            visualLimit,    /* last visual position of the run +1 */
+            insertRemove;   /* if >0, flags for inserting LRM/RLM before/after run,
+                               if <0, count of bidi controls within run            */
 } Run;
 
 /* in a Run, logicalStart will get this bit set if the run level is odd */
 #define INDEX_ODD_BIT (1UL<<31)
 
-#define MAKE_INDEX_ODD_PAIR(index, level) (index|((int32_t)level<<31))
-#define ADD_ODD_BIT_FROM_LEVEL(x, level)  ((x)|=((int32_t)level<<31))
+#define MAKE_INDEX_ODD_PAIR(index, level) ((index)|((int32_t)(level)<<31))
+#define ADD_ODD_BIT_FROM_LEVEL(x, level)  ((x)|=((int32_t)(level)<<31))
 #define REMOVE_ODD_BIT(x)                 ((x)&=~INDEX_ODD_BIT)
 
-#define GET_INDEX(x)   (x&~INDEX_ODD_BIT)
-#define GET_ODD_BIT(x) ((uint32_t)x>>31)
-#define IS_ODD_RUN(x)  ((x&INDEX_ODD_BIT)!=0)
-#define IS_EVEN_RUN(x) ((x&INDEX_ODD_BIT)==0)
+#define GET_INDEX(x)   ((x)&~INDEX_ODD_BIT)
+#define GET_ODD_BIT(x) ((uint32_t)(x)>>31)
+#define IS_ODD_RUN(x)  (((x)&INDEX_ODD_BIT)!=0)
+#define IS_EVEN_RUN(x) (((x)&INDEX_ODD_BIT)==0)
 
 U_CFUNC UBool
 ubidi_getRuns(UBiDi *pBiDi);
+
+/** BiDi control code points */
+enum {
+    ZWNJ_CHAR=0x200c,
+    ZWJ_CHAR,
+    LRM_CHAR,
+    RLM_CHAR,
+    LRE_CHAR=0x202a,
+    RLE_CHAR,
+    PDF_CHAR,
+    LRO_CHAR,
+    RLO_CHAR
+};
+
+#define IS_BIDI_CONTROL_CHAR(c) (((uint32_t)(c)&0xfffffffc)==ZWNJ_CHAR || (uint32_t)((c)-LRE_CHAR)<5)
+
+/* InsertPoints structure for noting where to put BiDi marks ---------------- */
+
+typedef struct Point {
+    int32_t pos;            /* position in text */
+    int32_t flag;           /* flag for LRM/RLM, before/after */
+} Point;
+
+typedef struct InsertPoints {
+    int32_t capacity;       /* number of points allocated */
+    int32_t size;           /* number of points used */
+    int32_t confirmed;      /* number of points confirmed */
+    UErrorCode errorCode;   /* for eventual memory shortage */
+    Point *points;          /* pointer to array of points */
+} InsertPoints;
+
 
 /* UBiDi structure ----------------------------------------------------------- */
 
@@ -162,7 +201,20 @@ struct UBiDi {
     const UChar *text;
 
     /* length of the current text */
+    int32_t originalLength;
+
+    /* if the UBIDI_OPTION_STREAMING option is set, this is the length
+     * of text actually processed by ubidi_setPara, which may be shorter than
+     * the original length.
+     * Otherwise, it is identical to the original length.
+     */
     int32_t length;
+
+    /* if the UBIDI_OPTION_REMOVE_CONTROLS option is set, and/or
+     * marks are allowed to be inserted in one of the reordering mode, the
+     * length of the result string may be different from the processed length.
+     */
+    int32_t resultLength;
 
     /* memory sizes in bytes */
     int32_t dirPropsSize, levelsSize, parasSize, runsSize;
@@ -182,7 +234,18 @@ struct UBiDi {
 
     /* are we performing an approximation of the "inverse BiDi" algorithm? */
     UBool isInverse;
-    UBool isInverse2;
+
+    /* are we using the basic algorithm or its variation? */
+    UBiDiReorderingMode reorderingMode;
+
+    /* UBIDI_REORDER_xxx values must be ordered so that all the regular
+     * logical to visual modes come first, and all inverse BiDi modes
+     * come last.
+     */
+    #define UBIDI_REORDER_LAST_LOGICAL_TO_VISUAL    UBIDI_REORDER_NUMBERS_SPECIAL
+
+    /* bitmask for reordering options */
+    uint32_t reorderingOptions;
 
     /* must block separators receive level 0? */
     UBool orderParagraphsLTR;
@@ -202,6 +265,9 @@ struct UBiDi {
     /* flags is a bit set for which directional properties are in the text */
     Flags flags;
 
+    /* lastArabicPos is index to the last AL in the text, -1 if none */
+    int32_t lastArabicPos;
+
     /* characters after trailingWSStart are WS and are */
     /* implicitly at the paraLevel (rule (L1)) - levels may not reflect that */
     int32_t trailingWSStart;
@@ -220,6 +286,16 @@ struct UBiDi {
 
     /* for non-mixed text, we only need a tiny array of runs (no malloc()) */
     Run simpleRuns[1];
+
+    /* for inverse Bidi with insertion of directional marks */
+    InsertPoints insertPoints;
+
+    /* for option UBIDI_OPTION_REMOVE_CONTROLS */
+    int32_t controlCount;
+
+    /* for Bidi class callback */
+    UBiDiClassCallback *fnClassCallback;    /* action pointer */
+    const void *coClassCallback;            /* context pointer */
 };
 
 #define IS_VALID_PARA(x) ((x) && ((x)->pParaBiDi==(x)))

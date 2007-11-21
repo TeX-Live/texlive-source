@@ -1,6 +1,6 @@
 /***********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2005, International Business Machines Corporation
+ * Copyright (c) 1997-2006, International Business Machines Corporation
  * and others. All Rights Reserved.
  ***********************************************************************/
  
@@ -54,6 +54,7 @@ DateFormatRoundTripTest::runIndexedTest( int32_t index, UBool exec, const char* 
     optionv = (par && *par=='v');
     switch (index) {
         CASE(0,TestDateFormatRoundTrip)
+        CASE(1, TestCentury)
         default: name = ""; break;
     }
 }
@@ -82,6 +83,26 @@ DateFormatRoundTripTest::failure(UErrorCode status, const char* msg, const Unico
     return FALSE;
 }
 
+void DateFormatRoundTripTest::TestCentury()
+{
+    UErrorCode status = U_ZERO_ERROR;
+    Locale locale("es_PA");
+    UnicodeString pattern = "MM/dd/yy hh:mm:ss a z";
+    SimpleDateFormat fmt(pattern, locale, status);
+    if(!assertSuccess("trying to construct", status))return;
+    UDate date[] = {-55018555891590.05, 0, 0};
+    UnicodeString result[2];
+
+    fmt.format(date[0], result[0]);
+    date[1] = fmt.parse(result[0], status);
+    fmt.format(date[1], result[1]);
+    date[2] = fmt.parse(result[1], status);
+
+    if (date[1] != date[2] || result[0] != result[1]) {
+        errln("Round trip failure: \"%S\" (%f), \"%S\" (%f)", result[0].getBuffer(), date[1], result[1].getBuffer(), date[2]);
+    }
+}
+
 // ==
 
 void DateFormatRoundTripTest::TestDateFormatRoundTrip() 
@@ -90,6 +111,7 @@ void DateFormatRoundTripTest::TestDateFormatRoundTrip()
 
     getFieldCal = Calendar::createInstance(status);
     failure(status, "Calendar::createInstance");
+    if(!assertSuccess("trying to construct", status))return;
 
 
     int32_t locCount = 0;
@@ -255,7 +277,7 @@ void DateFormatRoundTripTest::test(DateFormat *fmt, const Locale &origLocale, UB
     // patterns we have, but it may be a problem later.
 
     UBool hasEra = (pat.indexOf(UnicodeString("G")) != -1);
-    UBool hasZone = (pat.indexOf(UnicodeString("Z")) != -1) || (pat.indexOf(UnicodeString("z")) != -1);
+    UBool hasZone = (pat.indexOf(UnicodeString("Z")) != -1) || (pat.indexOf(UnicodeString("z")) != -1) || (pat.indexOf(UnicodeString("v")) != -1);
 
     // Because patterns contain incomplete data representing the Date,
     // we must be careful of how we do the roundtrip.  We start with
@@ -289,7 +311,7 @@ void DateFormatRoundTripTest::test(DateFormat *fmt, const Locale &origLocale, UB
             for(loop = 0; loop < DEPTH; ++loop) {
                 if (loop > 0)  {
                     d[loop] = fmt->parse(s[loop-1], status);
-                    failure(status, "fmt->parse", s[loop-1]);
+                    failure(status, "fmt->parse", s[loop-1]+" in locale: " + origLocale.getName());
                     status = U_ZERO_ERROR; /* any error would have been reported */
                 }
 

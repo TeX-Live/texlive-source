@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2005, International Business Machines Corporation and
+ * Copyright (c) 1997-2006, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /********************************************************************************
@@ -42,7 +42,7 @@ static const char* const txt_testResultStrings[] = {
     "Quotes ', {, a 1 {0}",
     "Quotes ', {, a 1 {0}",
     "You deposited 1 times an amount of $3,456.00 on 1/12/70",
-    "{2,time,full}, for 3,456, 1 is 5:46:40 AM PST and full date is Monday, January 12, 1970",
+    "{2,time,full}, for 3,456, 1 is 5:46:40 AM PT and full date is Monday, January 12, 1970",
     "{1,number,percent} for 1 is 345,600%"
 };
 
@@ -257,7 +257,7 @@ static void MessageFormatTest( void )
 
 
 /*test u_formatMessage() with sample patterns */
-static void TestSampleMessageFormat()
+static void TestSampleMessageFormat(void)
 {
     UChar *str;
     UChar *result;
@@ -557,7 +557,7 @@ static void TestSampleFormatAndParseWithError(void)
 }
 
 /* Test u_formatMessage() and u_parseMessage() , format and parse sequence and round trip */
-static void TestSampleFormatAndParse()
+static void TestSampleFormatAndParse(void)
 {
 
     UChar *result, *tzID, *str;
@@ -650,7 +650,7 @@ static void TestSampleFormatAndParse()
 }
 
 /* test message format with a choice option */
-static void TestMsgFormatChoice()
+static void TestMsgFormatChoice(void)
 {
     UChar* str;
     UErrorCode status = U_ZERO_ERROR;
@@ -737,7 +737,7 @@ static void TestMsgFormatChoice()
 }
 
 /*test u_parseMessage() with various test patterns */
-static void TestParseMessage()
+static void TestParseMessage(void)
 {
     UChar pattern[100];
     UChar source[100];
@@ -1033,6 +1033,19 @@ static void MessageLength(void)
     }
 }
 
+static void TestErrorChaining(void) {
+    UErrorCode status = U_USELESS_COLLATOR_ERROR;
+
+    umsg_open(NULL, 0, NULL, NULL, &status);
+    umsg_applyPattern(NULL, NULL, 0, NULL, &status);
+    umsg_clone(NULL, &status);
+    umsg_close(NULL);
+
+    /* All of this code should have done nothing. */
+    if (status != U_USELESS_COLLATOR_ERROR) {
+        log_err("Status got changed to %s\n", u_errorName(status));
+    }
+}
 
 void addMsgForTest(TestNode** root);
 
@@ -1050,6 +1063,7 @@ void addMsgForTest(TestNode** root)
     addTest(root, &TestParseMessageWithValist, "tsformat/cmsgtst/TestParseMessageWithValist");
     addTest(root, &TestJ904, "tsformat/cmsgtst/TestJ904");
     addTest(root, &MessageLength, "tsformat/cmsgtst/MessageLength");
+    addTest(root, &TestErrorChaining, "tsformat/cmsgtst/TestErrorChaining");
 }
 
 #endif /* #if !UCONFIG_NO_FORMATTING */

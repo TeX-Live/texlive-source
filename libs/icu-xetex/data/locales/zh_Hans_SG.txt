@@ -1,9 +1,9 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/zh_Hans_SG.xml
+// * Source File:<path>/common/main/zh_Hans_SG.xml
 // *
 // ***************************************************************************
 zh_Hans_SG{
@@ -12,7 +12,6 @@ zh_Hans_SG{
         CZ{"捷克"}
         ID{"印尼"}
         KR{"南韩"}
-        MK{"马其顿"}
         NZ{"纽西兰"}
         SA{"沙地阿拉伯"}
     }
@@ -26,9 +25,13 @@ zh_Hans_SG{
         "#,##0%",
         "#E0",
     }
-    Version{"1.17"}
+    Version{"1.32"}
     calendar{
         gregorian{
+            DateTimeElements:intvector{
+                1,
+                1,
+            }
             DateTimePatterns{
                 "a hh:mm:ss",
                 "a hh:mm:ss",

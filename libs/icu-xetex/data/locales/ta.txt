@@ -1,13 +1,13 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/ta.xml
+// * Source File:<path>/common/main/ta.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/ta.xml
+ *  ICU <specials> source: <path>/xml/main/ta.xml
  */
 ta{
     Countries{
@@ -183,7 +183,7 @@ ta{
             "INR",
         }
     }
-    ExemplarCharacters{"[ஂஃஅ-ஊஎ-ஐஒ-கஙசஜஞடணதந-பம-ஹா-ூெ-ைொ-்ௗ௦-௺‌‍]"}
+    ExemplarCharacters{"[ஃ அ-ஊ எ-ஐ ஒ-க ங ச ஜ ஞ ட ண த ந-ப ம-வ ஷ-ஹ ா-ூ ெ-ை ொ-்]"}
     Languages{
         aa{"அபார்"}
         ab{"அப்காஸின்"}
@@ -231,7 +231,7 @@ ta{
         hr{"கரோஷியன்"}
         hu{"ஹங்கேரியன்"}
         hy{"ஆர்மேனியன்"}
-        ia{"இன்டர்லிங்குவா"}
+        ia{"இன்டர்லிங்குவா [ia]"}
         id{"இந்தோனேஷியன்"}
         ie{"இன்டர்லிங்குவா"}
         ik{"இனுபெக்"}
@@ -280,7 +280,6 @@ ta{
         rm{"ரைட்டோ-ரோமென்ஸ்"}
         rn{"கிருந்தி"}
         ro{"ரோமேனியன்"}
-        root{"தமிழ்"}
         ru{"ரஷியன்"}
         rw{"கின்யர்வென்டா"}
         sa{"சமஸ்கிருதம்"}
@@ -336,7 +335,7 @@ ta{
         "#,##,##0%",
         "#E0",
     }
-    Version{"1.35"}
+    Version{"1.52"}
     calendar{
         gregorian{
             AmPmMarkers{
@@ -403,16 +402,25 @@ ta{
                     }
                 }
             }
+            quarters{
+                format{
+                    wide{
+                        "வந்ந௧  1",
+                        "ரெஂட௨ 2",
+                        "மூடு௩ 3",
+                        "நால்௪ 4",
+                    }
+                }
+            }
         }
     }
     zoneStrings{
-        {
-            "Asia/Calcutta",
-            "இந்திய நேரப்படி",
-            "IST",
-            "இந்திய நேரப்படி",
-            "IST",
-            "Calcutta",
+        "Asia:Calcutta"{
+            ec{"Calcutta"}
+            ld{"இந்திய நேரப்படி"}
+            ls{"இந்திய நேரப்படி"}
+            sd{"IST"}
+            ss{"IST"}
         }
     }
 }

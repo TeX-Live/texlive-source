@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 1997-2005, International Business Machines Corporation and    *
+* Copyright (C) 1997-2006, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 *
@@ -526,6 +526,16 @@ TimeZone::initDefault()
     hostStrID.append((UChar)0);
     hostStrID.truncate(hostStrID.length()-1);
     default_zone = createSystemTimeZone(hostStrID);
+
+    int32_t hostIDLen = hostStrID.length();
+    if (default_zone != NULL && rawOffset != default_zone->getRawOffset()
+        && (3 <= hostIDLen && hostIDLen <= 4))
+    {
+        // Uh oh. This probably wasn't a good id.
+        // It was probably an ambiguous abbreviation
+        delete default_zone;
+        default_zone = NULL;
+    }
 
 #if 0
     // NOTE: As of ICU 2.8, we no longer have an offsets table, since
@@ -1073,7 +1083,15 @@ TimeZone::getDisplayName(UBool daylight, EDisplayType style, UnicodeString& resu
 {
     return getDisplayName(daylight,style, Locale::getDefault(), result);
 }
-
+//--------------------------------------
+int32_t 
+TimeZone::getDSTSavings()const {
+    if (useDaylightTime()) {
+        return 3600000;
+    }
+    return 0;
+}
+//---------------------------------------
 UnicodeString&
 TimeZone::getDisplayName(UBool daylight, EDisplayType style, const Locale& locale, UnicodeString& result) const
 {
@@ -1100,14 +1118,17 @@ TimeZone::getDisplayName(UBool daylight, EDisplayType style, const Locale& local
     // and hence the same display name.
     // We don't cache these because they're small and cheap to create.
     UnicodeString tempID;
-    SimpleTimeZone *tz =  daylight ?
-        // For the pure-DST zone, we use JANUARY and DECEMBER
-
-        new SimpleTimeZone(getRawOffset(), getID(tempID),
-                           UCAL_JANUARY , 1, 0, 0,
-                           UCAL_DECEMBER , 31, 0, U_MILLIS_PER_DAY, status) :
-        new SimpleTimeZone(getRawOffset(), getID(tempID));
-
+    SimpleTimeZone *tz = NULL;
+    if(daylight  && useDaylightTime()){
+        // For the pure-DST zone, we use JANUARY and DECEMBER        
+        int savings = getDSTSavings();
+        tz = new SimpleTimeZone(getRawOffset(), getID(tempID),
+                                UCAL_JANUARY, 1, 0, 0,
+                                UCAL_FEBRUARY, 1, 0, 0,
+                                savings, status);
+    }else{
+        tz = new SimpleTimeZone(getRawOffset(), getID(tempID));
+    }
     format.applyPattern(style == LONG ? ZZZZ_STR : Z_STR);
     Calendar *myCalendar = (Calendar*)format.getCalendar();
     myCalendar->setTimeZone(*tz); // copy
@@ -1115,7 +1136,7 @@ TimeZone::getDisplayName(UBool daylight, EDisplayType style, const Locale& local
     delete tz;
 
     FieldPosition pos(FieldPosition::DONT_CARE);
-    return format.format(UDate(196262345678.), result, pos); // Must use a valid date here.
+    return format.format(UDate(864000000L), result, pos); // Must use a valid date here.
 }
 
 

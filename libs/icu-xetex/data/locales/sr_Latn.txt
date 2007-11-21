@@ -1,15 +1,16 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/sr_Latn.xml
+// * Source File:<path>/common/main/sr_Latn.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/sr_Latn.xml
+ *  ICU <specials> source: <path>/xml/main/sr_Latn.xml
  */
 sr_Latn{
+    AuxExemplarCharacters{"[q w-y]"}
     Countries{
         001{"Svet"}
         002{"Afrika"}
@@ -278,7 +279,7 @@ sr_Latn{
         WS{"Samoa"}
         YE{"Jemen"}
         YT{"Majote"}
-        ZA{"Južna Afrika"}
+        ZA{"Južnoafrička Republika"}
         ZM{"Zambija"}
         ZW{"Zimbabve"}
     }
@@ -312,7 +313,7 @@ sr_Latn{
             "Švajcarski franak",
         }
         CNY{
-            "CNY",
+            "U",
             "Kineski Juan Renminbi",
         }
         CSD{
@@ -420,7 +421,7 @@ sr_Latn{
             "YUN",
         }
     }
-    ExemplarCharacters{"[a-p r-v z đ ć č ž š {lj} {nj} {dž}]"}
+    ExemplarCharacters{"[a-c ć č d đ {dž} e-l {lj} m n {nj} o p r s š t-v z ž]"}
     Keys{
         calendar{"Kalendar"}
         collation{"Sortiranje"}
@@ -448,6 +449,7 @@ sr_Latn{
         fr{"Francuski"}
         ga{"Irski"}
         he{"Hebrejski"}
+        hi{"Hindi"}
         hr{"Hrvatski"}
         hu{"Mađarski"}
         hy{"Armenski"}
@@ -499,17 +501,22 @@ sr_Latn{
         Cher{"Čeroki"}
         Copt{"koptičko pismo"}
         Cyrl{"Ćirilica"}
+        Cyrs{"ćirilica (crkveno slovenska varijanta)"}
         Deva{"Devanagari"}
         Dsrt{"Dezeret"}
         Ethi{"etiopsko pismo"}
         Geor{"gruzijsko pismo"}
+        Glag{"glagoljica"}
         Goth{"Gotika"}
         Grek{"grčko pismo"}
         Hebr{"hebrejsko pismo"}
         Hira{"Hiragana"}
         Hrkt{"Katakana ili Hiragana"}
         Kana{"Katakana"}
+        Khmr{"kmersko pismo"}
+        Latf{"Latinica (Fraktur varijanta)"}
         Latn{"Latinica"}
+        Runr{"runsko pismo"}
     }
     Types{
         calendar{
@@ -522,14 +529,16 @@ sr_Latn{
             japanese{"Japanski kalendar"}
         }
         collation{
+            big5han{"Tradicionalni kineski"}
             direct{"Direktno sortiranje"}
+            gb2312han{"Pojednostavljeni kineski"}
             phonebook{"Sortiranje po azbuci"}
             pinyin{"Pinjin sortiranje"}
             stroke{"Sortiranje po broju crta"}
             traditional{"Tradicionalno sortiranje"}
         }
     }
-    Version{"1.30"}
+    Version{"1.52"}
     calendar{
         gregorian{
             DateTimePatterns{
@@ -630,6 +639,69 @@ sr_Latn{
                     }
                 }
             }
+            quarters{
+                format{
+                    abbreviated{
+                        "K1",
+                        "K2",
+                        "K3",
+                        "K4",
+                    }
+                    wide{
+                        "Prvi kvartal",
+                        "Drugi kvartal",
+                        "Treći kvartal",
+                        "Četvrti kvartal",
+                    }
+                }
+            }
+        }
+    }
+    zoneStrings{
+        "Africa:Kinshasa"{
+            ec{"Kinšasa"}
+        }
+        "Africa:Lubumbashi"{
+            ec{"Lumumbaši"}
+        }
+        "Antarctica:South_Pole"{
+            ec{"Južni pol"}
+        }
+        "Asia:Anadyr"{
+            ec{"Anadir"}
+        }
+        "Asia:Kamchatka"{
+            ec{"Kamčatka"}
+        }
+        "Asia:Krasnoyarsk"{
+            ec{"Krasnojarsk"}
+        }
+        "Asia:Shanghai"{
+            ec{"Šangaj"}
+        }
+        "Asia:Tashkent"{
+            ec{"Taškent"}
+        }
+        "Europe:Belgrade"{
+            ec{"Belgrade"}
+            ld{"Centralno Evropsko Letnje Vreme"}
+            ls{"Centralno Evropsko Vreme"}
+        }
+        "Europe:Kiev"{
+            ec{"Kijev"}
+        }
+        "Europe:Moscow"{
+            ec{"Moskva"}
+        }
+        "Europe:Sarajevo"{
+            ec{"Sarajevo"}
+            ls{"Srednje Evropsko Vrijeme"}
+        }
+        "Europe:Uzhgorod"{
+            ec{"Užgorod"}
+        }
+        "Europe:Zaporozhye"{
+            ec{"Zaporožje"}
         }
     }
 }

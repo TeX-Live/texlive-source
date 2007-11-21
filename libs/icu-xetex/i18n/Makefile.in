@@ -1,6 +1,6 @@
 #******************************************************************************
 #
-#   Copyright (C) 1998-2005, International Business Machines
+#   Copyright (C) 1998-2006, International Business Machines
 #   Corporation and others.  All Rights Reserved.
 #
 #******************************************************************************
@@ -15,7 +15,6 @@ top_builddir = ..
 
 ## All the flags and other definitions are included here.
 include $(top_builddir)/icudefs.mk
--include Makefile.local
 
 ## Build directory information
 subdir = i18n
@@ -33,7 +32,7 @@ endif
 
 ifneq ($(ENABLE_SHARED),)
 SO_TARGET = $(LIBDIR)/$(LIBICU)$(TARGET_STUBNAME)$(ICULIBSUFFIX).$(SO)
-ALL_SO_TARGETS = $(SO_TARGET) $(MIDDLE_SO_TARGET) $(FINAL_SO_TARGET)
+ALL_SO_TARGETS = $(SO_TARGET) $(MIDDLE_SO_TARGET) $(FINAL_SO_TARGET) $(SHARED_OBJECT)
 
 ifeq ($(ENABLE_SO_VERSION_DATA),1)
 SO_VERSION_DATA = i18n.res
@@ -42,9 +41,9 @@ endif
 ifeq ($(OS390BATCH),1)
 BATCH_TARGET = $(BATCH_I18N_TARGET)
 BATCH_LIBS = $(BATCH_LIBICUUC) -lm
-endif # OS390BATCH
+endif   # OS390BATCH
 
-endif # ENABLE_SHARED
+endif   # ENABLE_SHARED
 
 ALL_TARGETS = $(TARGET) $(ALL_SO_TARGETS) $(BATCH_TARGET)
 
@@ -52,18 +51,21 @@ DYNAMICCPPFLAGS = $(SHAREDLIBCPPFLAGS)
 DYNAMICCFLAGS = $(SHAREDLIBCFLAGS)
 DYNAMICCXXFLAGS = $(SHAREDLIBCXXFLAGS)
 
-LDFLAGS += $(LDFLAGSICUI18N)
-CPPFLAGS += -I$(srcdir) -I$(top_builddir)/common -I$(top_srcdir)/common $(LIBCPPFLAGS)
+ifneq ($(top_builddir),$(top_srcdir))
+CPPFLAGS += -I$(top_builddir)/common
+endif
+CPPFLAGS += -I$(srcdir) -I$(top_srcdir)/common $(LIBCPPFLAGS)
 DEFS += -DU_I18N_IMPLEMENTATION
+LDFLAGS += $(LDFLAGSICUI18N)
 LIBS = $(LIBICUUC) $(DEFAULT_LIBS)
 
 OBJECTS = ucln_in.o \
 fmtable.o format.o msgfmt.o umsg.o numfmt.o unum.o decimfmt.o dcfmtsym.o \
 ucurr.o digitlst.o fmtable_cnv.o \
 choicfmt.o datefmt.o smpdtfmt.o dtfmtsym.o udat.o \
-nfrs.o nfrule.o nfsubs.o rbnf.o \
+nfrs.o nfrule.o nfsubs.o rbnf.o ucsdet.o \
 ucal.o calendar.o gregocal.o timezone.o simpletz.o olsontz.o \
-astro.o buddhcal.o islamcal.o japancal.o gregoimp.o hebrwcal.o chnsecal.o \
+astro.o buddhcal.o islamcal.o japancal.o gregoimp.o hebrwcal.o \
 coleitr.o coll.o tblcoll.o sortkey.o bocsu.o ucoleitr.o \
 ucol.o ucol_res.o ucol_bld.o ucol_sit.o ucol_tok.o ucol_wgt.o ucol_cnt.o ucol_elm.o \
 strmatch.o usearch.o search.o stsearch.o \
@@ -72,15 +74,18 @@ cpdtrans.o rbt.o rbt_data.o rbt_pars.o rbt_rule.o rbt_set.o \
 nultrans.o remtrans.o casetrn.o titletrn.o tolowtrn.o toupptrn.o anytrans.o \
 name2uni.o uni2name.o nortrans.o quant.o transreg.o \
 regexcmp.o rematch.o repattrn.o regexst.o uregex.o uregexc.o \
-ulocdata.o measfmt.o currfmt.o curramt.o currunit.o measure.o utmscale.o
+ulocdata.o measfmt.o currfmt.o curramt.o currunit.o measure.o utmscale.o \
+csdetect.o csmatch.o csr2022.o csrecog.o csrmbcs.o csrsbcs.o csrucode.o csrutf8.o inputext.o \
+windtfmt.o winnmfmt.o
 
+## Header files to install
+HEADERS = $(srcdir)/unicode/*.h
 
 STATIC_OBJECTS = $(OBJECTS:.o=.$(STATIC_O))
 
 DEPS = $(OBJECTS:.o=.d)
 
-## Header files to install
-HEADERS= $(srcdir)/unicode/*.h
+-include Makefile.local
 
 ## List of phony targets
 .PHONY : all all-local install install-local clean clean-local	\
@@ -100,7 +105,7 @@ check: all check-local
 
 all-local: $(ALL_TARGETS)
 
-install-local: install-headers install-library 
+install-local: install-headers install-library
 
 install-library: all-local
 	$(MKINSTALLDIRS) $(DESTDIR)$(libdir)
@@ -154,14 +159,14 @@ $(TARGET): $(TARGET)($(STATIC_OBJECTS))
 endif
 
 ifneq ($(ENABLE_SHARED),)
-$(FINAL_SO_TARGET): $(OBJECTS) $(SO_VERSION_DATA)
+$(SHARED_OBJECT): $(OBJECTS) $(SO_VERSION_DATA)
 	$(SHLIB.cc) $(LD_SONAME) $(OUTOPT)$@ $^ $(LIBS)
 
 ifeq ($(OS390BATCH),1)
 $(BATCH_TARGET):$(OBJECTS)
 	$(SHLIB.cc) $(LD_SONAME) $(OUTOPT)$@ $^ $(BATCH_LIBS)
-endif # OS390BATCH
-endif
+endif   # OS390BATCH
+endif   # ENABLE_SHARED
 
 ifeq (,$(MAKECMDGOALS))
 -include $(DEPS)
@@ -170,3 +175,4 @@ ifneq ($(patsubst %clean,,$(MAKECMDGOALS)),)
 -include $(DEPS)
 endif
 endif
+

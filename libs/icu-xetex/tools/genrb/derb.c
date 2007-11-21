@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 1999-2005, International Business Machines
+*   Copyright (C) 1999-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -33,6 +33,17 @@
 #if defined(U_WINDOWS) || defined(U_CYGWIN)
 #include <io.h>
 #include <fcntl.h>
+#define USE_FILENO_BINARY_MODE 1
+/* Windows likes to rename Unix-like functions */
+#ifndef fileno
+#define fileno _fileno
+#endif
+#ifndef setmode
+#define setmode _setmode
+#endif
+#ifndef O_BINARY
+#define O_BINARY _O_BINARY
+#endif
 #endif
 
 #define DERB_VERSION "1.0"
@@ -44,8 +55,6 @@ static UConverter *defaultConverter = 0;
 static const int32_t indentsize = 4;
 static int32_t truncsize = DERB_DEFAULT_TRUNC;
 static UBool trunc = FALSE;
-
-static const UChar baderror[] = { 0x0042, 0x0041, 0x0044, 0x0000 };
 
 static const char *getEncodingName(const char *encoding);
 static void reportError(const char *pname, UErrorCode *status, const char *when);
@@ -285,7 +294,7 @@ main(int argc, char* argv[]) {
             if (tostdout) {
                 out = stdout;
 #if defined(U_WINDOWS) || defined(U_CYGWIN)
-                if (_setmode(_fileno(out), _O_BINARY) == -1) {
+                if (setmode(fileno(out), O_BINARY) == -1) {
                     fprintf(stderr, "%s: couldn't set standard output to binary mode\n", pname);
                     return 4;
                 }

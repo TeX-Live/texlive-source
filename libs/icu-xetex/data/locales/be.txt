@@ -1,13 +1,13 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/be.xml
+// * Source File:<path>/common/main/be.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/be.xml
+ *  ICU <specials> source: <path>/xml/main/be.xml
  */
 be{
     Countries{
@@ -65,7 +65,7 @@ be{
             "долар ЗША",
         }
     }
-    ExemplarCharacters{"[а-з й-ш ы-я ’ёіў {дж} {дз}]"}
+    ExemplarCharacters{"[’ а-д {дж} {дз} е ё ж з й і к-у ў ф-ш ы-я]"}
     Languages{
         ar{"арабскі"}
         be{"Беларускі"}
@@ -94,20 +94,16 @@ be{
         "E",
         "‰",
         "∞",
-        "�",
+        "NaN",
         "+",
     }
     Scripts{
         Cyrl{"кірылічны"}
         Latn{"лацінскі"}
     }
-    Version{"1.36"}
+    Version{"1.52"}
     calendar{
         gregorian{
-            DateTimeElements:intvector{
-                2,
-                1,
-            }
             DateTimePatterns{
                 "HH.mm.ss z",
                 "HH.mm.ss z",
@@ -203,6 +199,22 @@ be{
                         "к",
                         "л",
                         "с",
+                    }
+                }
+            }
+            quarters{
+                format{
+                    abbreviated{
+                        "1-ы кв.",
+                        "2-ы кв.",
+                        "3-ы кв.",
+                        "4-ы кв.",
+                    }
+                    wide{
+                        "1-ы квартал",
+                        "2-ы квартал",
+                        "3-ы квартал",
+                        "4-ы квартал",
                     }
                 }
             }

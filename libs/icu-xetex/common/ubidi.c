@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 1999-2005, International Business Machines
+*   Copyright (C) 1999-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -215,6 +215,9 @@ ubidi_getMemory(void **pMemory, int32_t *pSize, UBool mayAllocate, int32_t sizeN
             /* not enough memory, and we must not allocate */
             return FALSE;
         } else if(sizeNeeded!=*pSize && mayAllocate) {
+            /* FOOD FOR THOUGHT: in hope to improve performance, we should
+             * try never shrinking memory, only growing it when required.
+             */
             /* we may try to grow or shrink */
             void *memory;
 
@@ -243,12 +246,16 @@ ubidi_close(UBiDi *pBiDi) {
         if(pBiDi->levelsMemory!=NULL) {
             uprv_free(pBiDi->levelsMemory);
         }
-        if(pBiDi->parasMemory!=NULL) {
-            uprv_free(pBiDi->parasMemory);
-        }
         if(pBiDi->runsMemory!=NULL) {
             uprv_free(pBiDi->runsMemory);
         }
+        if(pBiDi->parasMemory!=NULL) {
+            uprv_free(pBiDi->parasMemory);
+        }
+        if(pBiDi->insertPoints.points!=NULL) {
+            uprv_free(pBiDi->insertPoints.points);
+        }
+
         uprv_free(pBiDi);
     }
 }
@@ -259,6 +266,8 @@ U_CAPI void U_EXPORT2
 ubidi_setInverse(UBiDi *pBiDi, UBool isInverse) {
     if(pBiDi!=NULL) {
         pBiDi->isInverse=isInverse;
+        pBiDi->reorderingMode = isInverse ? UBIDI_REORDER_INVERSE_NUMBERS_AS_L
+                                          : UBIDI_REORDER_DEFAULT;
     }
 }
 
@@ -268,6 +277,58 @@ ubidi_isInverse(UBiDi *pBiDi) {
         return pBiDi->isInverse;
     } else {
         return FALSE;
+    }
+}
+
+/* FOOD FOR THOUGHT: currently the reordering modes are a mixture of
+ * algorithm for direct BiDi, algorithm for inverse BiDi and the bizarre
+ * concept of RUNS_ONLY which is a double operation.
+ * It could be advantageous to divide this into 3 concepts:
+ * a) Operation: direct / inverse / RUNS_ONLY
+ * b) Direct algorithm: default / NUMBERS_SPECIAL / GROUP_NUMBERS_WITH_L
+ * c) Inverse algorithm: default / INVERSE_LIKE_DIRECT / NUMBERS_SPECIAL
+ * This would allow combinations not possible today like RUNS_ONLY with
+ * NUMBERS_SPECIAL.
+ * Also allow to set INSERT_MARKS for the direct step of RUNS_ONLY and
+ * REMOVE_CONTROLS for the inverse step.
+ * Not all combinations would be supported, and probably not all do make sense.
+ * This would need to document which ones are supported and what are the
+ * fallbacks for unsupported combinations.
+ */
+U_CAPI void U_EXPORT2
+ubidi_setReorderingMode(UBiDi *pBiDi, UBiDiReorderingMode reorderingMode) {
+    if ((pBiDi != NULL) && (reorderingMode >= UBIDI_REORDER_DEFAULT)
+                        && (reorderingMode < UBIDI_REORDER_COUNT)) {
+        pBiDi->reorderingMode = reorderingMode;
+        pBiDi->isInverse = reorderingMode == UBIDI_REORDER_INVERSE_NUMBERS_AS_L;
+    }
+}
+
+U_CAPI UBiDiReorderingMode U_EXPORT2
+ubidi_getReorderingMode(UBiDi *pBiDi) {
+    if (pBiDi != NULL) {
+        return pBiDi->reorderingMode;
+    } else {
+        return UBIDI_REORDER_DEFAULT;
+    }
+}
+
+U_CAPI void U_EXPORT2
+ubidi_setReorderingOptions(UBiDi *pBiDi, uint32_t reorderingOptions) {
+    if (reorderingOptions & UBIDI_OPTION_REMOVE_CONTROLS) {
+        reorderingOptions&=~UBIDI_OPTION_INSERT_MARKS;
+    }
+    if (pBiDi != NULL) {
+        pBiDi->reorderingOptions = reorderingOptions;
+    }
+}
+
+U_CAPI uint32_t U_EXPORT2
+ubidi_getReorderingOptions(UBiDi *pBiDi) {
+    if (pBiDi != NULL) {
+        return pBiDi->reorderingOptions;
+    } else {
+        return 0;
     }
 }
 
@@ -283,12 +344,20 @@ getDirProps(UBiDi *pBiDi) {
     const UChar *text=pBiDi->text;
     DirProp *dirProps=pBiDi->dirPropsMemory;    /* pBiDi->dirProps is const */
 
-    int32_t i=0, i0, i1, length=pBiDi->length;
+    int32_t i=0, i0, i1, length=pBiDi->originalLength;
     Flags flags=0;      /* collect all directionalities in the text */
     UChar32 uchar;
-    DirProp dirProp = 0, paraDirDefault = 0; /* initialize to avoid compiler warnings */
+    DirProp dirProp=0, paraDirDefault=0;/* initialize to avoid compiler warnings */
     UBool isDefaultLevel=IS_DEFAULT_LEVEL(pBiDi->paraLevel);
-    UBool paraLevelStillDefault=FALSE;  /* flag for real value not set */
+    /* for inverse BiDi, the default para level is set to RTL if there is a
+       strong character at either end of the text                           */
+    UBool isDefaultLevelInverse=isDefaultLevel &&
+            (pBiDi->reorderingMode==UBIDI_REORDER_INVERSE_LIKE_DIRECT ||
+             pBiDi->reorderingMode==UBIDI_REORDER_INVERSE_FOR_NUMBERS_SPECIAL);
+    int32_t lastArabicPos=-1;
+    int32_t controlCount=0;
+    UBool removeBiDiControls = pBiDi->reorderingOptions &
+                               UBIDI_OPTION_REMOVE_CONTROLS;
 
     typedef enum {
          NOT_CONTEXTUAL,                /* 0: not contextual paraLevel */
@@ -299,14 +368,18 @@ getDirProps(UBiDi *pBiDi) {
     int32_t paraStart=0;                /* index of first char in paragraph */
     DirProp paraDir;                    /* == CONTEXT_RTL within paragraphs
                                            starting with strong R char      */
+    DirProp lastStrongDir=0;            /* for default level & inverse BiDi */
+    int32_t lastStrongLTR=0;            /* for STREAMING option             */
 
+    if(pBiDi->reorderingOptions & UBIDI_OPTION_STREAMING) {
+        pBiDi->length=0;
+        lastStrongLTR=0;
+    }
     if(isDefaultLevel) {
         paraDirDefault=pBiDi->paraLevel&1 ? CONTEXT_RTL : 0;
-        state=LOOKING_FOR_STRONG;
-        paraStart=0;
         paraDir=paraDirDefault;
-        pBiDi->paraLevel&=1;            /* set to default */
-        paraLevelStillDefault=TRUE;
+        lastStrongDir=paraDirDefault;
+        state=LOOKING_FOR_STRONG;
     } else {
         state=NOT_CONTEXTUAL;
         paraDir=0;
@@ -317,11 +390,12 @@ getDirProps(UBiDi *pBiDi) {
      * the DEFAULT_XXX values are designed so that
      * their bit 0 alone yields the intended default
      */
-    for( /* i=0 above */ ; i<length; /* i is incremented by UTF_NEXT_CHAR */) {
+    for( /* i=0 above */ ; i<length; ) {
+        /* i is incremented by UTF_NEXT_CHAR */
         i0=i;           /* index of first code unit */
         UTF_NEXT_CHAR(text, i, length, uchar);
         i1=i-1;         /* index of last code unit, gets the directional property */
-        flags|=DIRPROP_FLAG(dirProp=ubidi_getClass(pBiDi->bdp, uchar));
+        flags|=DIRPROP_FLAG(dirProp=ubidi_getCustomizedClass(pBiDi, uchar));
         dirProps[i1]=dirProp|paraDir;
         if(i1>i0) {     /* set previous code units' properties to BN */
             flags|=DIRPROP_FLAG(BN);
@@ -332,13 +406,9 @@ getDirProps(UBiDi *pBiDi) {
         if(state==LOOKING_FOR_STRONG) {
             if(dirProp==L) {
                 state=FOUND_STRONG_CHAR;
-                if(paraLevelStillDefault) {
-                    paraLevelStillDefault=FALSE;
-                    pBiDi->paraLevel=0;
-                }
                 if(paraDir) {
                     paraDir=0;
-                    for(i1=paraStart; i1<=i; i1++) {
+                    for(i1=paraStart; i1<i; i1++) {
                         dirProps[i1]&=~CONTEXT_RTL;
                     }
                 }
@@ -346,31 +416,66 @@ getDirProps(UBiDi *pBiDi) {
             }
             if(dirProp==R || dirProp==AL) {
                 state=FOUND_STRONG_CHAR;
-                if(paraLevelStillDefault) {
-                    paraLevelStillDefault=FALSE;
-                    pBiDi->paraLevel=1;
-                }
                 if(paraDir==0) {
                     paraDir=CONTEXT_RTL;
-                    for(i1=paraStart; i1<=i; i1++) {
+                    for(i1=paraStart; i1<i; i1++) {
                         dirProps[i1]|=CONTEXT_RTL;
                     }
                 }
                 continue;
             }
         }
-        if((dirProp==B)&&(i<length)) {  /* B not last char in text */
-            if(!((uchar==CR) && (text[i]==LF))) {
-                pBiDi->paraCount++;
+        if(dirProp==L) {
+            lastStrongDir=0;
+            lastStrongLTR=i;            /* i is index to next character */
+        }
+        else if(dirProp==R) {
+            lastStrongDir=CONTEXT_RTL;
+        }
+        else if(dirProp==AL) {
+            lastStrongDir=CONTEXT_RTL;
+            lastArabicPos=i-1;
+        }
+        else if(dirProp==B) {
+            if(pBiDi->reorderingOptions & UBIDI_OPTION_STREAMING) {
+                pBiDi->length=i;        /* i is index to next character */
+            }
+            if(isDefaultLevelInverse && (lastStrongDir==CONTEXT_RTL) &&(paraDir!=lastStrongDir)) {
+                for( ; paraStart<i; paraStart++) {
+                    dirProps[paraStart]|=CONTEXT_RTL;
+                }
+            }
+            if(i<length) {              /* B not last char in text */
+                if(!((uchar==CR) && (text[i]==LF))) {
+                    pBiDi->paraCount++;
+                }
                 if(isDefaultLevel) {
                     state=LOOKING_FOR_STRONG;
                     paraStart=i;        /* i is index to next character */
                     paraDir=paraDirDefault;
-                    /* keep the paraLevel of the first paragraph even if it
-                       defaulted (no strong char was found)                 */
-                    paraLevelStillDefault=FALSE;
+                    lastStrongDir=paraDirDefault;
                 }
             }
+        }
+        if(removeBiDiControls && IS_BIDI_CONTROL_CHAR(uchar)) {
+            controlCount++;
+        }
+    }
+    if(isDefaultLevelInverse && (lastStrongDir==CONTEXT_RTL) &&(paraDir!=lastStrongDir)) {
+        for(i1=paraStart; i1<length; i1++) {
+            dirProps[i1]|=CONTEXT_RTL;
+        }
+    }
+    if(isDefaultLevel) {
+        pBiDi->paraLevel=GET_PARALEVEL(pBiDi, 0);
+    }
+    if(pBiDi->reorderingOptions & UBIDI_OPTION_STREAMING) {
+        if((lastStrongLTR>pBiDi->length) &&
+           (GET_PARALEVEL(pBiDi, lastStrongLTR)==0)) {
+            pBiDi->length = lastStrongLTR;
+        }
+        if(pBiDi->length<pBiDi->originalLength) {
+            pBiDi->paraCount--;
         }
     }
     /* The following line does nothing new for contextual paraLevel, but is
@@ -381,14 +486,17 @@ getDirProps(UBiDi *pBiDi) {
         flags|=DIRPROP_FLAG(L);
     }
 
+    pBiDi->controlCount = controlCount;
     pBiDi->flags=flags;
+    pBiDi->lastArabicPos=lastArabicPos;
 }
 
 /* perform (X1)..(X9) ------------------------------------------------------- */
 
 /* determine if the text is mixed-directional or single-directional */
 static UBiDiDirection
-directionFromFlags(Flags flags) {
+directionFromFlags(UBiDi *pBiDi) {
+    Flags flags=pBiDi->flags;
     /* if the text contains AN and neutrals, then some neutrals may become RTL */
     if(!(flags&MASK_RTL || ((flags&DIRPROP_FLAG(AN)) && (flags&MASK_POSSIBLE_N)))) {
         return UBIDI_LTR;
@@ -466,13 +574,15 @@ resolveExplicitLevels(UBiDi *pBiDi) {
     int32_t paraIndex=0;
 
     /* determine if the text is mixed-directional or single-directional */
-    direction=directionFromFlags(flags);
+    direction=directionFromFlags(pBiDi);
 
-    /* we may not need to resolve any explicit levels */
-    if(direction!=UBIDI_MIXED) {
+    /* we may not need to resolve any explicit levels, but for multiple
+       paragraphs we want to loop on all chars to set the para boundaries */
+    if((direction!=UBIDI_MIXED) && (pBiDi->paraCount==1)) {
         /* not mixed directionality: levels don't matter - trailingWSStart will be 0 */
     } else if((pBiDi->paraCount==1) &&
-              (!(flags&MASK_EXPLICIT) || pBiDi->isInverse)) {
+              (!(flags&MASK_EXPLICIT) ||
+               (pBiDi->reorderingMode > UBIDI_REORDER_LAST_LOGICAL_TO_VISUAL))) {
         /* mixed, but all characters are at the same embedding level */
         /* or we are in "inverse BiDi" */
         /* and we don't have contextual multiple paragraphs with some B char */
@@ -604,8 +714,9 @@ resolveExplicitLevels(UBiDi *pBiDi) {
 
         /* again, determine if the text is mixed-directional or single-directional */
         pBiDi->flags=flags;
-        direction=directionFromFlags(flags);
+        direction=directionFromFlags(pBiDi);
     }
+
     return direction;
 }
 
@@ -661,7 +772,408 @@ checkExplicitLevels(UBiDi *pBiDi, UErrorCode *pErrorCode) {
 
     /* determine if the text is mixed-directional or single-directional */
     pBiDi->flags=flags;
-    return directionFromFlags(flags);
+    return directionFromFlags(pBiDi);
+}
+
+/*********************************************************************/
+/* The Properties state machine table                                */
+/*********************************************************************/
+/*                                                                   */
+/* All table cells are 8 bits:                                       */
+/*      bits 0..4:  next state                                       */
+/*      bits 5..7:  action to perform (if > 0)                       */
+/*                                                                   */
+/* Cells may be of format "n" where n represents the next state      */
+/* (except for the rightmost column).                                */
+/* Cells may also be of format "_(x,y)" where x represents an action */
+/* to perform and y represents the next state.                       */
+/*                                                                   */
+/*********************************************************************/
+/* Definitions and type for properties state table                   */
+/*********************************************************************/
+#define IMPTABPROPS_COLUMNS 14
+#define IMPTABPROPS_RES (IMPTABPROPS_COLUMNS - 1)
+#define GET_STATEPROPS(cell) ((cell)&0x1f)
+#define GET_ACTIONPROPS(cell) ((cell)>>5)
+#define _(action, newState) ((uint8_t)(newState+(action<<5)))
+
+static const uint8_t groupProp[] =          /* dirProp regrouped */
+{
+/*  L   R   EN  ES  ET  AN  CS  B   S   WS  ON  LRE LRO AL  RLE RLO PDF NSM BN  */
+    0,  1,  2,  7,  8,  3,  9,  6,  5,  4,  4,  10, 10, 12, 10, 10, 10, 11, 10
+};
+enum { _L=0, _R=1, _EN=2, _AN=3, _ON=4, _S=5, _B=6 }; /* reduced dirProp */
+
+/*********************************************************************/
+/*                                                                   */
+/*      PROPERTIES  STATE  TABLE                                     */
+/*                                                                   */
+/* In table impTabProps,                                             */
+/*      - the ON column regroups ON and WS                           */
+/*      - the BN column regroups BN, LRE, RLE, LRO, RLO, PDF         */
+/*      - the Res column is the reduced property assigned to a run   */
+/*                                                                   */
+/* Action 1: process current run1, init new run1                     */
+/*        2: init new run2                                           */
+/*        3: process run1, process run2, init new run1               */
+/*        4: process run1, set run1=run2, init new run2              */
+/*                                                                   */
+/* Notes:                                                            */
+/*  1) This table is used in resolveImplicitLevels().                */
+/*  2) This table triggers actions when there is a change in the Bidi*/
+/*     property of incoming characters (action 1).                                                   */
+/*  3) Most such property sequences are processed immediately (in    */
+/*     fact, passed to processPropertySeq().                         */
+/*  4) However, numbers are assembled as one sequence. This means    */
+/*     that undefined situations (like CS following digits, until    */
+/*     it is known if the next char will be a digit) are held until  */
+/*     following chars define them.                                  */
+/*     Example: digits followed by CS, then comes another CS or ON;  */
+/*              the digits will be processed, then the CS assigned   */
+/*              as the start of an ON sequence (action 3).           */
+/*  5) There are cases where more than one sequence must be          */
+/*     processed, for instance digits followed by CS followed by L:  */
+/*     the digits must be processed as one sequence, and the CS      */
+/*     must be processed as an ON sequence, all this before starting */
+/*     assembling chars for the opening L sequence.                  */
+/*                                                                   */
+/*                                                                   */
+static const uint8_t impTabProps[][IMPTABPROPS_COLUMNS] =
+{
+/*                        L ,     R ,    EN ,    AN ,    ON ,     S ,     B ,    ES ,    ET ,    CS ,    BN ,   NSM ,    AL ,  Res */
+/* 0 Init        */ {     1 ,     2 ,     4 ,     5 ,     7 ,    15 ,    17 ,     7 ,     9 ,     7 ,     0 ,     7 ,     3 ,  _ON },
+/* 1 L           */ {     1 , _(1,2), _(1,4), _(1,5), _(1,7),_(1,15),_(1,17), _(1,7), _(1,9), _(1,7),     1 ,     1 , _(1,3),   _L },
+/* 2 R           */ { _(1,1),     2 , _(1,4), _(1,5), _(1,7),_(1,15),_(1,17), _(1,7), _(1,9), _(1,7),     2 ,     2 , _(1,3),   _R },
+/* 3 AL          */ { _(1,1), _(1,2), _(1,6), _(1,6), _(1,8),_(1,16),_(1,17), _(1,8), _(1,8), _(1,8),     3 ,     3 ,     3 ,   _R },
+/* 4 EN          */ { _(1,1), _(1,2),     4 , _(1,5), _(1,7),_(1,15),_(1,17),_(2,10),    11 ,_(2,10),     4 ,     4 , _(1,3),  _EN },
+/* 5 AN          */ { _(1,1), _(1,2), _(1,4),     5 , _(1,7),_(1,15),_(1,17), _(1,7), _(1,9),_(2,12),     5 ,     5 , _(1,3),  _AN },
+/* 6 AL:EN/AN    */ { _(1,1), _(1,2),     6 ,     6 , _(1,8),_(1,16),_(1,17), _(1,8), _(1,8),_(2,13),     6 ,     6 , _(1,3),  _AN },
+/* 7 ON          */ { _(1,1), _(1,2), _(1,4), _(1,5),     7 ,_(1,15),_(1,17),     7 ,_(2,14),     7 ,     7 ,     7 , _(1,3),  _ON },
+/* 8 AL:ON       */ { _(1,1), _(1,2), _(1,6), _(1,6),     8 ,_(1,16),_(1,17),     8 ,     8 ,     8 ,     8 ,     8 , _(1,3),  _ON },
+/* 9 ET          */ { _(1,1), _(1,2),     4 , _(1,5),     7 ,_(1,15),_(1,17),     7 ,     9 ,     7 ,     9 ,     9 , _(1,3),  _ON },
+/*10 EN+ES/CS    */ { _(3,1), _(3,2),     4 , _(3,5), _(4,7),_(3,15),_(3,17), _(4,7),_(4,14), _(4,7),    10 , _(4,7), _(3,3),  _EN },
+/*11 EN+ET       */ { _(1,1), _(1,2),     4 , _(1,5), _(1,7),_(1,15),_(1,17), _(1,7),    11 , _(1,7),    11 ,    11 , _(1,3),  _EN },
+/*12 AN+CS       */ { _(3,1), _(3,2), _(3,4),     5 , _(4,7),_(3,15),_(3,17), _(4,7),_(4,14), _(4,7),    12 , _(4,7), _(3,3),  _AN },
+/*13 AL:EN/AN+CS */ { _(3,1), _(3,2),     6 ,     6 , _(4,8),_(3,16),_(3,17), _(4,8), _(4,8), _(4,8),    13 , _(4,8), _(3,3),  _AN },
+/*14 ON+ET       */ { _(1,1), _(1,2), _(4,4), _(1,5),     7 ,_(1,15),_(1,17),     7 ,    14 ,     7 ,    14 ,    14 , _(1,3),  _ON },
+/*15 S           */ { _(1,1), _(1,2), _(1,4), _(1,5), _(1,7),    15 ,_(1,17), _(1,7), _(1,9), _(1,7),    15 , _(1,7), _(1,3),   _S },
+/*16 AL:S        */ { _(1,1), _(1,2), _(1,6), _(1,6), _(1,8),    16 ,_(1,17), _(1,8), _(1,8), _(1,8),    16 , _(1,8), _(1,3),   _S },
+/*17 B           */ { _(1,1), _(1,2), _(1,4), _(1,5), _(1,7),_(1,15),    17 , _(1,7), _(1,9), _(1,7),    17 , _(1,7), _(1,3),   _B }
+};
+
+/*  we must undef macro _ because the levels table have a different
+ *  structure (4 bits for action and 4 bits for next state.
+ */
+#undef _
+
+/*********************************************************************/
+/* The levels state machine tables                                   */
+/*********************************************************************/
+/*                                                                   */
+/* All table cells are 8 bits:                                       */
+/*      bits 0..3:  next state                                       */
+/*      bits 4..7:  action to perform (if > 0)                       */
+/*                                                                   */
+/* Cells may be of format "n" where n represents the next state      */
+/* (except for the rightmost column).                                */
+/* Cells may also be of format "_(x,y)" where x represents an action */
+/* to perform and y represents the next state.                       */
+/*                                                                   */
+/* This format limits each table to 16 states each and to 15 actions.*/
+/*                                                                   */
+/*********************************************************************/
+/* Definitions and type for levels state tables                      */
+/*********************************************************************/
+#define IMPTABLEVELS_COLUMNS (_B + 2)
+#define IMPTABLEVELS_RES (IMPTABLEVELS_COLUMNS - 1)
+#define GET_STATE(cell) ((cell)&0x0f)
+#define GET_ACTION(cell) ((cell)>>4)
+#define _(action, newState) ((uint8_t)(newState+(action<<4)))
+
+typedef uint8_t ImpTab[][IMPTABLEVELS_COLUMNS];
+typedef uint8_t ImpAct[];
+
+/* FOOD FOR THOUGHT: each ImpTab should have its associated ImpAct,
+ * instead of having a pair of ImpTab and a pair of ImpAct.
+ */
+typedef struct ImpTabPair {
+    ImpTab * pImpTab[2];
+    ImpAct * pImpAct[2];
+} ImpTabPair;
+
+/*********************************************************************/
+/*                                                                   */
+/*      LEVELS  STATE  TABLES                                        */
+/*                                                                   */
+/* In all levels state tables,                                       */
+/*      - state 0 is the initial state                               */
+/*      - the Res column is the increment to add to the text level   */
+/*        for this property sequence.                                */
+/*                                                                   */
+/* The impAct arrays for each table of a pair map the local action   */
+/* numbers of the table to the total list of actions. For instance,  */
+/* action 2 in a given table corresponds to the action number which  */
+/* appears in entry [2] of the impAct array for that table.          */
+/* The first entry of all impAct arrays must be 0.                   */
+/*                                                                   */
+/* Action 1: init conditional sequence                               */
+/*        2: prepend conditional sequence to current sequence        */
+/*        3: set ON sequence to new level - 1                        */
+/*        4: init EN/AN/ON sequence                                  */
+/*        5: fix EN/AN/ON sequence followed by R                     */
+/*        6: set previous level sequence to level 2                  */
+/*                                                                   */
+/* Notes:                                                            */
+/*  1) These tables are used in processPropertySeq(). The input      */
+/*     is property sequences as determined by resolveImplicitLevels. */
+/*  2) Most such property sequences are processed immediately        */
+/*     (levels are assigned).                                        */
+/*  3) However, some sequences cannot be assigned a final level till */
+/*     one or more following sequences are received. For instance,   */
+/*     ON following an R sequence within an even-level paragraph.    */
+/*     If the following sequence is R, the ON sequence will be       */
+/*     assigned basic run level+1, and so will the R sequence.       */
+/*  4) S is generally handled like ON, since its level will be fixed */
+/*     to paragraph level in adjustWSLevels().                       */
+/*                                                                   */
+
+static const ImpTab impTabL_DEFAULT =   /* Even paragraph level */
+/*  In this table, conditional sequences receive the higher possible level
+    until proven otherwise.
+*/
+{
+/*                         L ,     R ,    EN ,    AN ,    ON ,     S ,     B , Res */
+/* 0 : init       */ {     0 ,     1 ,     0 ,     2 ,     0 ,     0 ,     0 ,  0 },
+/* 1 : R          */ {     0 ,     1 ,     3 ,     3 , _(1,4), _(1,4),     0 ,  1 },
+/* 2 : AN         */ {     0 ,     1 ,     0 ,     2 , _(1,5), _(1,5),     0 ,  2 },
+/* 3 : R+EN/AN    */ {     0 ,     1 ,     3 ,     3 , _(1,4), _(1,4),     0 ,  2 },
+/* 4 : R+ON       */ { _(2,0),     1 ,     3 ,     3 ,     4 ,     4 , _(2,0),  1 },
+/* 5 : AN+ON      */ { _(2,0),     1 , _(2,0),     2 ,     5 ,     5 , _(2,0),  1 }
+};
+static const ImpTab impTabR_DEFAULT =   /* Odd  paragraph level */
+/*  In this table, conditional sequences receive the lower possible level
+    until proven otherwise.
+*/
+{
+/*                         L ,     R ,    EN ,    AN ,    ON ,     S ,     B , Res */
+/* 0 : init       */ {     1 ,     0 ,     2 ,     2 ,     0 ,     0 ,     0 ,  0 },
+/* 1 : L          */ {     1 ,     0 ,     1 ,     3 , _(1,4), _(1,4),     0 ,  1 },
+/* 2 : EN/AN      */ {     1 ,     0 ,     2 ,     2 ,     0 ,     0 ,     0 ,  1 },
+/* 3 : L+AN       */ {     1 ,     0 ,     1 ,     3 ,     5 ,     5 ,     0 ,  1 },
+/* 4 : L+ON       */ { _(2,1),     0 , _(2,1),     3 ,     4 ,     4 ,     0 ,  0 },
+/* 5 : L+AN+ON    */ {     1 ,     0 ,     1 ,     3 ,     5 ,     5 ,     0 ,  0 }
+};
+static const ImpAct impAct0 = {0,1,2,3,4,5,6};
+static const ImpTabPair impTab_DEFAULT = {{(ImpTab*)&impTabL_DEFAULT,
+                                           (ImpTab*)&impTabR_DEFAULT},
+                                          {(ImpAct*)&impAct0, (ImpAct*)&impAct0}};
+
+static const ImpTab impTabL_NUMBERS_SPECIAL =   /* Even paragraph level */
+/*  In this table, conditional sequences receive the higher possible level
+    until proven otherwise.
+*/
+{
+/*                         L ,     R ,    EN ,    AN ,    ON ,     S ,     B , Res */
+/* 0 : init       */ {     0 ,     2 ,    1 ,      1 ,     0 ,     0 ,     0 ,  0 },
+/* 1 : L+EN/AN    */ {     0 ,     2 ,    1 ,      1 ,     0 ,     0 ,     0 ,  2 },
+/* 2 : R          */ {     0 ,     2 ,    4 ,      4 , _(1,3),     0 ,     0 ,  1 },
+/* 3 : R+ON       */ { _(2,0),     2 ,    4 ,      4 ,     3 ,     3 , _(2,0),  1 },
+/* 4 : R+EN/AN    */ {     0 ,     2 ,    4 ,      4 , _(1,3), _(1,3),     0 ,  2 }
+  };
+static const ImpTabPair impTab_NUMBERS_SPECIAL = {{(ImpTab*)&impTabL_NUMBERS_SPECIAL,
+                                                   (ImpTab*)&impTabR_DEFAULT},
+                                                  {(ImpAct*)&impAct0, (ImpAct*)&impAct0}};
+
+static const ImpTab impTabL_GROUP_NUMBERS_WITH_R =
+/*  In this table, EN/AN+ON sequences receive levels as if associated with R
+    until proven that there is L or sor/eor on both sides. AN is handled like EN.
+*/
+{
+/*                         L ,     R ,    EN ,    AN ,    ON ,     S ,     B , Res */
+/* 0 init         */ {     0 ,     3 , _(1,1), _(1,1),     0 ,     0 ,     0 ,  0 },
+/* 1 EN/AN        */ { _(2,0),     3 ,     1 ,     1 ,     2 , _(2,0), _(2,0),  2 },
+/* 2 EN/AN+ON     */ { _(2,0),     3 ,     1 ,     1 ,     2 , _(2,0), _(2,0),  1 },
+/* 3 R            */ {     0 ,     3 ,     5 ,     5 , _(1,4),     0 ,     0 ,  1 },
+/* 4 R+ON         */ { _(2,0),     3 ,     5 ,     5 ,     4 , _(2,0), _(2,0),  1 },
+/* 5 R+EN/AN      */ {     0 ,     3 ,     5 ,     5 , _(1,4),     0 ,     0 ,  2 }
+};
+static const ImpTab impTabR_GROUP_NUMBERS_WITH_R =
+/*  In this table, EN/AN+ON sequences receive levels as if associated with R
+    until proven that there is L on both sides. AN is handled like EN.
+*/
+{
+/*                         L ,     R ,    EN ,    AN ,    ON ,     S ,     B , Res */
+/* 0 init         */ {     2 ,     0 ,     1 ,     1 ,     0 ,     0 ,     0 ,  0 },
+/* 1 EN/AN        */ {     2 ,     0 ,     1 ,     1 ,     0 ,     0 ,     0 ,  1 },
+/* 2 L            */ {     2 ,     0 , _(1,4), _(1,4), _(1,3),     0 ,     0 ,  1 },
+/* 3 L+ON         */ { _(2,2),     0 ,     4 ,     4 ,     3 ,     0 ,     0 ,  0 },
+/* 4 L+EN/AN      */ { _(2,2),     0 ,     4 ,     4 ,     3 ,     0 ,     0 ,  1 }
+};
+static const ImpTabPair impTab_GROUP_NUMBERS_WITH_R = {
+                        {(ImpTab*)&impTabL_GROUP_NUMBERS_WITH_R,
+                         (ImpTab*)&impTabR_GROUP_NUMBERS_WITH_R},
+                        {(ImpAct*)&impAct0, (ImpAct*)&impAct0}};
+
+
+static const ImpTab impTabL_INVERSE_NUMBERS_AS_L =
+/*  This table is identical to the Default LTR table except that EN and AN are
+    handled like L.
+*/
+{
+/*                         L ,     R ,    EN ,    AN ,    ON ,     S ,     B , Res */
+/* 0 : init       */ {     0 ,     1 ,     0 ,     0 ,     0 ,     0 ,     0 ,  0 },
+/* 1 : R          */ {     0 ,     1 ,     0 ,     0 , _(1,4), _(1,4),     0 ,  1 },
+/* 2 : AN         */ {     0 ,     1 ,     0 ,     0 , _(1,5), _(1,5),     0 ,  2 },
+/* 3 : R+EN/AN    */ {     0 ,     1 ,     0 ,     0 , _(1,4), _(1,4),     0 ,  2 },
+/* 4 : R+ON       */ { _(2,0),     1 , _(2,0), _(2,0),     4 ,     4 , _(2,0),  1 },
+/* 5 : AN+ON      */ { _(2,0),     1 , _(2,0), _(2,0),     5 ,     5 , _(2,0),  1 }
+};
+static const ImpTab impTabR_INVERSE_NUMBERS_AS_L =
+/*  This table is identical to the Default RTL table except that EN and AN are
+    handled like L.
+*/
+{
+/*                         L ,     R ,    EN ,    AN ,    ON ,     S ,     B , Res */
+/* 0 : init       */ {     1 ,     0 ,     1 ,     1 ,     0 ,     0 ,     0 ,  0 },
+/* 1 : L          */ {     1 ,     0 ,     1 ,     1 , _(1,4), _(1,4),     0 ,  1 },
+/* 2 : EN/AN      */ {     1 ,     0 ,     1 ,     1 ,     0 ,     0 ,     0 ,  1 },
+/* 3 : L+AN       */ {     1 ,     0 ,     1 ,     1 ,     5 ,     5 ,     0 ,  1 },
+/* 4 : L+ON       */ { _(2,1),     0 , _(2,1), _(2,1),     4 ,     4 ,     0 ,  0 },
+/* 5 : L+AN+ON    */ {     1 ,     0 ,     1 ,     1 ,     5 ,     5 ,     0 ,  0 }
+};
+static const ImpTabPair impTab_INVERSE_NUMBERS_AS_L = {
+                        {(ImpTab*)&impTabL_INVERSE_NUMBERS_AS_L,
+                         (ImpTab*)&impTabR_INVERSE_NUMBERS_AS_L},
+                        {(ImpAct*)&impAct0, (ImpAct*)&impAct0}};
+
+static const ImpTab impTabR_INVERSE_LIKE_DIRECT =   /* Odd  paragraph level */
+/*  In this table, conditional sequences receive the lower possible level
+    until proven otherwise.
+*/
+{
+/*                         L ,     R ,    EN ,    AN ,    ON ,     S ,     B , Res */
+/* 0 : init       */ {     1 ,     0 ,     2 ,     2 ,     0 ,     0 ,     0 ,  0 },
+/* 1 : L          */ {     1 ,     0 ,     1 ,     2 , _(1,3), _(1,3),     0 ,  1 },
+/* 2 : EN/AN      */ {     1 ,     0 ,     2 ,     2 ,     0 ,     0 ,     0 ,  1 },
+/* 3 : L+ON       */ { _(2,1), _(3,0),     6 ,     4 ,     3 ,     3 , _(3,0),  0 },
+/* 4 : L+ON+AN    */ { _(2,1), _(3,0),     6 ,     4 ,     5 ,     5 , _(3,0),  3 },
+/* 5 : L+AN+ON    */ { _(2,1), _(3,0),     6 ,     4 ,     5 ,     5 , _(3,0),  2 },
+/* 6 : L+ON+EN    */ { _(2,1), _(3,0),     6 ,     4 ,     3 ,     3 , _(3,0),  1 }
+};
+static const ImpAct impAct1 = {0,1,11,12};
+/* FOOD FOR THOUGHT: in LTR table below, check case "JKL 123abc"
+ */
+static const ImpTabPair impTab_INVERSE_LIKE_DIRECT = {
+                        {(ImpTab*)&impTabL_DEFAULT,
+                         (ImpTab*)&impTabR_INVERSE_LIKE_DIRECT},
+                        {(ImpAct*)&impAct0, (ImpAct*)&impAct1}};
+
+static const ImpTab impTabL_INVERSE_LIKE_DIRECT_WITH_MARKS =
+/*  The case handled in this table is (visually):  R EN L
+*/
+{
+/*                         L ,     R ,    EN ,    AN ,    ON ,     S ,     B , Res */
+/* 0 : init       */ {     0 , _(6,3),     0 ,     1 ,     0 ,     0 ,     0 ,  0 },
+/* 1 : L+AN       */ {     0 , _(6,3),     0 ,     1 , _(1,2), _(3,0),     0 ,  4 },
+/* 2 : L+AN+ON    */ { _(2,0), _(6,3), _(2,0),     1 ,     2 , _(3,0), _(2,0),  3 },
+/* 3 : R          */ {     0 , _(6,3), _(5,5), _(5,6), _(1,4), _(3,0),     0 ,  3 },
+/* 4 : R+ON       */ { _(3,0), _(4,3), _(5,5), _(5,6),     4 , _(3,0), _(3,0),  3 },
+/* 5 : R+EN       */ { _(3,0), _(4,3),     5 , _(5,6), _(1,4), _(3,0), _(3,0),  4 },
+/* 6 : R+AN       */ { _(3,0), _(4,3), _(5,5),     6 , _(1,4), _(3,0), _(3,0),  4 }
+};
+static const ImpTab impTabR_INVERSE_LIKE_DIRECT_WITH_MARKS =
+/*  The cases handled in this table are (visually):  R EN L
+                                                     R L AN L
+*/
+{
+/*                         L ,     R ,    EN ,    AN ,    ON ,     S ,     B , Res */
+/* 0 : init       */ { _(1,3),     0 ,     1 ,     1 ,     0 ,     0 ,     0 ,  0 },
+/* 1 : R+EN/AN    */ { _(2,3),     0 ,     1 ,     1 ,     2 , _(4,0),     0 ,  1 },
+/* 2 : R+EN/AN+ON */ { _(2,3),     0 ,     1 ,     1 ,     2 , _(4,0),     0 ,  0 },
+/* 3 : L          */ {     3 ,     0 ,     3 , _(3,6), _(1,4), _(4,0),     0 ,  1 },
+/* 4 : L+ON       */ { _(5,3), _(4,0),     5 , _(3,6),     4 , _(4,0), _(4,0),  0 },
+/* 5 : L+ON+EN    */ { _(5,3), _(4,0),     5 , _(3,6),     4 , _(4,0), _(4,0),  1 },
+/* 6 : L+AN       */ { _(5,3), _(4,0),     6 ,     6 ,     4 , _(4,0), _(4,0),  3 }
+};
+static const ImpAct impAct2 = {0,1,7,8,9,10};
+static const ImpTabPair impTab_INVERSE_LIKE_DIRECT_WITH_MARKS = {
+                        {(ImpTab*)&impTabL_INVERSE_LIKE_DIRECT_WITH_MARKS,
+                         (ImpTab*)&impTabR_INVERSE_LIKE_DIRECT_WITH_MARKS},
+                        {(ImpAct*)&impAct0, (ImpAct*)&impAct2}};
+
+static const ImpTabPair impTab_INVERSE_FOR_NUMBERS_SPECIAL = {
+                        {(ImpTab*)&impTabL_NUMBERS_SPECIAL,
+                         (ImpTab*)&impTabR_INVERSE_LIKE_DIRECT},
+                        {(ImpAct*)&impAct0, (ImpAct*)&impAct1}};
+
+static const ImpTab impTabL_INVERSE_FOR_NUMBERS_SPECIAL_WITH_MARKS =
+/*  The case handled in this table is (visually):  R EN L
+*/
+{
+/*                         L ,     R ,    EN ,    AN ,    ON ,     S ,     B , Res */
+/* 0 : init       */ {     0 , _(6,2),     1 ,     1 ,     0 ,     0 ,     0 ,  0 },
+/* 1 : L+EN/AN    */ {     0 , _(6,2),     1 ,     1 ,     0 , _(3,0),     0 ,  4 },
+/* 2 : R          */ {     0 , _(6,2), _(5,4), _(5,4), _(1,3), _(3,0),     0 ,  3 },
+/* 3 : R+ON       */ { _(3,0), _(4,2), _(5,4), _(5,4),     3 , _(3,0), _(3,0),  3 },
+/* 4 : R+EN/AN    */ { _(3,0), _(4,2),     4 ,     4 , _(1,3), _(3,0), _(3,0),  4 }
+};
+static const ImpTabPair impTab_INVERSE_FOR_NUMBERS_SPECIAL_WITH_MARKS = {
+                        {(ImpTab*)&impTabL_INVERSE_FOR_NUMBERS_SPECIAL_WITH_MARKS,
+                         (ImpTab*)&impTabR_INVERSE_LIKE_DIRECT_WITH_MARKS},
+                        {(ImpAct*)&impAct0, (ImpAct*)&impAct2}};
+
+#undef _
+
+typedef struct {
+    ImpTab * pImpTab;                   /* level table pointer          */
+    ImpAct * pImpAct;                   /* action map array             */
+    int32_t startON;                    /* start of ON sequence         */
+    int32_t startL2EN;                  /* start of level 2 sequence    */
+    int32_t lastStrongRTL;              /* index of last found R or AL  */
+    int32_t state;                      /* current state                */
+    UBiDiLevel runLevel;                /* run level before implicit solving */
+} LevState;
+
+/*------------------------------------------------------------------------*/
+
+static void
+addPoint(UBiDi *pBiDi, int32_t pos, int32_t flag)
+  /* param pos:     position where to insert
+     param flag:    one of LRM_BEFORE, LRM_AFTER, RLM_BEFORE, RLM_AFTER
+  */
+{
+#define FIRSTALLOC  10
+    Point point;
+    InsertPoints * pInsertPoints=&(pBiDi->insertPoints);
+
+    if (pInsertPoints->capacity == 0)
+    {
+        pInsertPoints->points=uprv_malloc(sizeof(Point)*FIRSTALLOC);
+        if (pInsertPoints->points == NULL)
+        {
+            pInsertPoints->errorCode=U_MEMORY_ALLOCATION_ERROR;
+            return;
+        }
+        pInsertPoints->capacity=FIRSTALLOC;
+    }
+    if (pInsertPoints->size >= pInsertPoints->capacity) /* no room for new point */
+    {
+        void * savePoints=pInsertPoints->points;
+        pInsertPoints->points=uprv_realloc(pInsertPoints->points,
+                                           pInsertPoints->capacity*2*sizeof(Point));
+        if (pInsertPoints->points == NULL)
+        {
+            pInsertPoints->points=savePoints;
+            pInsertPoints->errorCode=U_MEMORY_ALLOCATION_ERROR;
+            return;
+        }
+        else  pInsertPoints->capacity*=2;
+    }
+    point.pos=pos;
+    point.flag=flag;
+    pInsertPoints->points[pInsertPoints->size]=point;
+    pInsertPoints->size++;
+#undef FIRSTALLOC
 }
 
 /* perform rules (Wn), (Nn), and (In) on a run of the text ------------------ */
@@ -672,16 +1184,6 @@ checkExplicitLevels(UBiDi *pBiDi, UErrorCode *pErrorCode) {
  * (except for W5: sequences of ET) and keeps track of changes
  * in a rule Wp that affect a later Wq (p<q).
  *
- * historyOfEN is a variable-saver: it contains 4 boolean states;
- * a bit in it set to 1 means:
- *  bit 0: the current code is an EN after W2
- *  bit 1: the current code is an EN after W4
- *  bit 2: the previous code was an EN after W2
- *  bit 3: the previous code was an EN after W4
- * In other words, b0..1 have transitions of EN in the current iteration,
- * while b2..3 have the transitions of EN in the previous iteration.
- * A simple historyOfEN<<=2 suffices for the propagation.
- *
  * The (Nn) and (In) rules are also performed in that same single loop,
  * but effectively one iteration behind for white space.
  *
@@ -689,356 +1191,310 @@ checkExplicitLevels(UBiDi *pBiDi, UErrorCode *pErrorCode) {
  * to actually store the intermediate directional properties in dirProps[].
  */
 
-#define EN_SHIFT 2
-#define EN_AFTER_W2 1
-#define EN_AFTER_W4 2
-#define EN_ALL 3
-#define PREV_EN_AFTER_W2 4
-#define PREV_EN_AFTER_W4 8
+static void
+processPropertySeq(UBiDi *pBiDi, LevState *pLevState, uint8_t _prop,
+                   int32_t start, int32_t limit) {
+    uint8_t cell, oldStateSeq, actionSeq;
+    ImpTab * pImpTab=pLevState->pImpTab;
+    ImpAct * pImpAct=pLevState->pImpAct;
+    UBiDiLevel * levels=pBiDi->levels;
+    UBiDiLevel level, addLevel;
+    InsertPoints * pInsertPoints;
+    int32_t start0, k;
+
+    start0=start;                           /* save original start position */
+    oldStateSeq=pLevState->state;
+    cell=(*pImpTab)[oldStateSeq][_prop];
+    pLevState->state=GET_STATE(cell);       /* isolate the new state */
+    actionSeq=(*pImpAct)[GET_ACTION(cell)]; /* isolate the action */
+    addLevel=(*pImpTab)[pLevState->state][IMPTABLEVELS_RES];
+
+    if(actionSeq) {
+        switch(actionSeq) {
+        case 1:                         /* init ON seq */
+            pLevState->startON=start0;
+            break;
+
+        case 2:                         /* prepend ON seq to current seq */
+            start=pLevState->startON;
+            break;
+
+        case 3:                         /* L or S after possible relevant EN/AN */
+            /* check if we had EN after R/AL */
+            if (pLevState->startL2EN >= 0) {
+                addPoint(pBiDi, pLevState->startL2EN, LRM_BEFORE);
+            }
+            pLevState->startL2EN=-1;  /* not within previous if since could also be -2 */
+            /* check if we had any relevant EN/AN after R/AL */
+            pInsertPoints=&(pBiDi->insertPoints);
+            if ((pInsertPoints->capacity == 0) ||
+                (pInsertPoints->size <= pInsertPoints->confirmed))
+            {
+                /* nothing, just clean up */
+                pLevState->lastStrongRTL=-1;
+                /* check if we have a pending conditional segment */
+                level=(*pImpTab)[oldStateSeq][IMPTABLEVELS_RES];
+                if ((level & 1) && (pLevState->startON > 0)) {  /* after ON */
+                    start=pLevState->startON;   /* reset to basic run level */
+                }
+                if (_prop == _S)                /* add LRM before S */
+                {
+                    addPoint(pBiDi, start0, LRM_BEFORE);
+                    pInsertPoints->confirmed=pInsertPoints->size;
+                }
+                break;
+            }
+            /* reset previous RTL cont to level for LTR text */
+            for (k=pLevState->lastStrongRTL+1; k<start0; k++)
+            {
+                /* reset odd level, leave runLevel+2 as is */
+                levels[k]=(levels[k] - 2) & ~1;
+            }
+            /* mark insert points as confirmed */
+            pInsertPoints->confirmed=pInsertPoints->size;
+            pLevState->lastStrongRTL=-1;
+            if (_prop == _S)            /* add LRM before S */
+            {
+                addPoint(pBiDi, start0, LRM_BEFORE);
+                pInsertPoints->confirmed=pInsertPoints->size;
+            }
+            break;
+
+        case 4:                         /* R/AL after possible relevant EN/AN */
+            /* just clean up */
+            pInsertPoints=&(pBiDi->insertPoints);
+            if (pInsertPoints->capacity > 0)
+                /* remove all non confirmed insert points */
+                pInsertPoints->size=pInsertPoints->confirmed;
+            pLevState->startON=-1;
+            pLevState->startL2EN=-1;
+            pLevState->lastStrongRTL=limit - 1;
+            break;
+
+        case 5:                         /* EN/AN after R/AL + possible cont */
+            /* check for real AN */
+            if ((_prop == _AN) && (NO_CONTEXT_RTL(pBiDi->dirProps[start0]) == AN) &&
+                (pBiDi->reorderingMode!=UBIDI_REORDER_INVERSE_FOR_NUMBERS_SPECIAL))
+            {
+                /* real AN */
+                if (pLevState->startL2EN == -1) /* if no relevant EN already found */
+                {
+                    /* just note the righmost digit as a strong RTL */
+                    pLevState->lastStrongRTL=limit - 1;
+                    break;
+                }
+                if (pLevState->startL2EN >= 0)  /* after EN, no AN */
+                {
+                    addPoint(pBiDi, pLevState->startL2EN, LRM_BEFORE);
+                    pLevState->startL2EN=-2;
+                }
+                /* note AN */
+                addPoint(pBiDi, start0, LRM_BEFORE);
+                break;
+            }
+            /* if first EN/AN after R/AL */
+            if (pLevState->startL2EN == -1) {
+                pLevState->startL2EN=start0;
+            }
+            break;
+
+        case 6:                         /* note location of latest R/AL */
+            pLevState->lastStrongRTL=limit - 1;
+            pLevState->startON=-1;
+            break;
+
+        case 7:                         /* L after R+ON/EN/AN */
+            /* include possible adjacent number on the left */
+            for (k=start0-1; k>=0 && !(levels[k]&1); k--);
+            if(k>=0) {
+                addPoint(pBiDi, k, RLM_BEFORE);             /* add RLM before */
+                pInsertPoints=&(pBiDi->insertPoints);
+                pInsertPoints->confirmed=pInsertPoints->size;   /* confirm it */
+            }
+            pLevState->startON=start0;
+            break;
+
+        case 8:                         /* AN after L */
+            /* AN numbers between L text on both sides may be trouble. */
+            /* tentatively bracket with LRMs; will be confirmed if followed by L */
+            addPoint(pBiDi, start0, LRM_BEFORE);    /* add LRM before */
+            addPoint(pBiDi, start0, LRM_AFTER);     /* add LRM after  */
+            break;
+
+        case 9:                         /* R after L+ON/EN/AN */
+            /* false alert, infirm LRMs around previous AN */
+            pInsertPoints=&(pBiDi->insertPoints);
+            pInsertPoints->size=pInsertPoints->confirmed;
+            if (_prop == _S)            /* add RLM before S */
+            {
+                addPoint(pBiDi, start0, RLM_BEFORE);
+                pInsertPoints->confirmed=pInsertPoints->size;
+            }
+            break;
+
+        case 10:                        /* L after L+ON/AN */
+            level=pLevState->runLevel + addLevel;
+            for(k=pLevState->startON; k<start0; k++) {
+                if (levels[k]<level)
+                    levels[k]=level;
+            }
+            pInsertPoints=&(pBiDi->insertPoints);
+            pInsertPoints->confirmed=pInsertPoints->size;   /* confirm inserts */
+            pLevState->startON=start0;
+            break;
+
+        case 11:                        /* L after L+ON+EN/AN/ON */
+            level=pLevState->runLevel;
+            for(k=start0-1; k>=pLevState->startON; k--) {
+                if(levels[k]==level+3) {
+                    while(levels[k]==level+3) {
+                        levels[k--]-=2;
+                    }
+                    while(levels[k]==level) {
+                        k--;
+                    }
+                }
+                if(levels[k]==level+2) {
+                    levels[k]=level;
+                    continue;
+                }
+                levels[k]=level+1;
+            }
+            break;
+
+        case 12:                        /* R after L+ON+EN/AN/ON */
+            level=pLevState->runLevel+1;
+            for(k=start0-1; k>=pLevState->startON; k--) {
+                if(levels[k]>level) {
+                    levels[k]-=2;
+                }
+            }
+            break;
+
+        default:                        /* we should never get here */
+            start=start0+25;
+            start/=(start-start0-25);   /* force program crash */
+            break;
+        }
+    }
+    if((addLevel) || (start < start0)) {
+        level=pLevState->runLevel + addLevel;
+        for(k=start; k<limit; k++) {
+            levels[k]=level;
+        }
+    }
+}
 
 static void
 resolveImplicitLevels(UBiDi *pBiDi,
                       int32_t start, int32_t limit,
                       DirProp sor, DirProp eor) {
     const DirProp *dirProps=pBiDi->dirProps;
-    UBiDiLevel *levels=pBiDi->levels;
 
-    int32_t i, next, neutralStart=-1;
-    DirProp prevDirProp, dirProp, nextDirProp, lastStrong, beforeNeutral=L;
-    UBiDiLevel numberLevel;
-    uint8_t historyOfEN;
+    LevState levState;
+    int32_t i, start1, start2;
+    uint8_t oldStateImp, stateImp, actionImp;
+    uint8_t gprop, resProp, cell;
+    UBool inverseRTL;
+    DirProp nextStrongProp=R;
+    int32_t nextStrongPos=-1;
 
-    /* initialize: current at sor, next at start (it is start<limit) */
-    next=start;
-    dirProp=lastStrong=sor;
-    nextDirProp=NO_CONTEXT_RTL(dirProps[next]);
-    historyOfEN=0;
-
-    if(pBiDi->isInverse) {
-        /*
-         * For "inverse BiDi", we set the levels of numbers just like for
-         * regular L characters, plus a flag that ubidi_getRuns() will use
-         * to set a similar flag on the corresponding output run.
-         */
-        numberLevel=levels[start];
-        if(numberLevel&1) {
-            ++numberLevel;
-        }
+    /* check for RTL inverse BiDi mode */
+    /* FOOD FOR THOUGHT: in case of RTL inverse BiDi, it would make sense to
+     * loop on the text characters from end to start.
+     * This would need a different properties state table (at least different
+     * actions) and different levels state tables (maybe very similar to the
+     * LTR corresponding ones.
+     */
+    inverseRTL=((start<pBiDi->lastArabicPos) && (GET_PARALEVEL(pBiDi, start) & 1) &&
+                (pBiDi->reorderingMode==UBIDI_REORDER_INVERSE_LIKE_DIRECT  ||
+                 pBiDi->reorderingMode==UBIDI_REORDER_INVERSE_FOR_NUMBERS_SPECIAL));
+    /* initialize for levels state table */
+    levState.startL2EN=-1;              /* used for INVERSE_LIKE_DIRECT_WITH_MARKS */
+    levState.lastStrongRTL=-1;          /* used for INVERSE_LIKE_DIRECT_WITH_MARKS */
+    levState.state=0;
+    levState.runLevel=pBiDi->levels[start];
+    levState.pImpTab=((pBiDi->pImpTabPair)->pImpTab)[levState.runLevel&1];
+    levState.pImpAct=((pBiDi->pImpTabPair)->pImpAct)[levState.runLevel&1];
+    processPropertySeq(pBiDi, &levState, sor, start, start);
+    /* initialize for property state table */
+    if(dirProps[start]==NSM) {
+        stateImp = 1 + sor;
     } else {
-        /* normal BiDi: least greater even level */
-        numberLevel=(UBiDiLevel)((levels[start]+2)&~1);
+        stateImp=0;
     }
+    start1=start;
+    start2=start;
 
-    /*
-     * In all steps of this implementation, BN and explicit embedding codes
-     * must be treated as if they didn't exist (X9).
-     * They will get levels set before a non-neutral character, and remain
-     * undefined before a neutral one, but adjustWSLevels() will take care
-     * of all of them.
-     */
-    while(DIRPROP_FLAG(nextDirProp)&MASK_BN_EXPLICIT) {
-        if(++next<limit) {
-            nextDirProp=NO_CONTEXT_RTL(dirProps[next]);
+    for(i=start; i<=limit; i++) {
+        if(i>=limit) {
+            gprop=eor;
         } else {
-            nextDirProp=eor;
-            break;
+            DirProp prop, prop1;
+            prop=NO_CONTEXT_RTL(dirProps[i]);
+            if(inverseRTL) {
+                if(prop==AL) {
+                    /* AL before EN does not make it AN */
+                    prop=R;
+                } else if(prop==EN) {
+                    if(nextStrongPos<=i) {
+                        /* look for next strong char (L/R/AL) */
+                        int32_t j;
+                        nextStrongProp=R;   /* set default */
+                        nextStrongPos=limit;
+                        for(j=i+1; j<limit; j++) {
+                            prop1=NO_CONTEXT_RTL(dirProps[j]);
+                            if(prop1==L || prop1==R || prop1==AL) {
+                                nextStrongProp=prop1;
+                                nextStrongPos=j;
+                                break;
+                            }
+                        }
+                    }
+                    if(nextStrongProp==AL) {
+                        prop=AN;
+                    }
+                }
+            }
+            gprop=groupProp[prop];
         }
-    }
-
-    /*
-     * Note: at the end of this file, there is a prototype
-     * of a version of this function that uses a statetable
-     * at the core of this state machine.
-     * If you make changes to this state machine,
-     * please update that prototype as well.
-     */
-
-    /* loop for entire run */
-    while(next<limit) {
-        /* advance */
-        prevDirProp=dirProp;
-        dirProp=nextDirProp;
-        i=next;
-        do {
-            if(++next<limit) {
-                nextDirProp=NO_CONTEXT_RTL(dirProps[next]);
-            } else {
-                nextDirProp=eor;
+        oldStateImp=stateImp;
+        cell=impTabProps[oldStateImp][gprop];
+        stateImp=GET_STATEPROPS(cell);      /* isolate the new state */
+        actionImp=GET_ACTIONPROPS(cell);    /* isolate the action */
+        if((i==limit) && (actionImp==0)) {
+            /* there is an unprocessed sequence if its property == eor   */
+            actionImp=1;                    /* process the last sequence */
+        }
+        if(actionImp) {
+            resProp=impTabProps[oldStateImp][IMPTABPROPS_RES];
+            switch(actionImp) {
+            case 1:             /* process current seq1, init new seq1 */
+                processPropertySeq(pBiDi, &levState, resProp, start1, i);
+                start1=i;
+                break;
+            case 2:             /* init new seq2 */
+                start2=i;
+                break;
+            case 3:             /* process seq1, process seq2, init new seq1 */
+                processPropertySeq(pBiDi, &levState, resProp, start1, start2);
+                processPropertySeq(pBiDi, &levState, _ON, start2, i);
+                start1=i;
+                break;
+            case 4:             /* process seq1, set seq1=seq2, init new seq2 */
+                processPropertySeq(pBiDi, &levState, resProp, start1, start2);
+                start1=start2;
+                start2=i;
+                break;
+            default:            /* we should never get here */
+                start=start1+25;
+                start/=(start-start1-25);   /* force program crash */
                 break;
             }
-        } while(DIRPROP_FLAG(nextDirProp)&MASK_BN_EXPLICIT);
-        historyOfEN<<=EN_SHIFT;
-
-        /* (W1..W7) */
-        switch(dirProp) {
-        case L:
-            lastStrong=L;
-            break;
-        case R:
-            lastStrong=R;
-            break;
-        case AL:
-            /* (W3) */
-            lastStrong=AL;
-            dirProp=R;
-            break;
-        case EN:
-            /* we have to set historyOfEN correctly */
-            if(lastStrong==AL) {
-                /* (W2) */
-                dirProp=AN;
-            } else {
-                if(lastStrong==L) {
-                    /* (W7) */
-                    dirProp=L;
-                }
-                /* this EN stays after (W2) and (W4) - at least before (W7) */
-                historyOfEN|=EN_ALL;
-            }
-            break;
-        case ES:
-            if( historyOfEN&PREV_EN_AFTER_W2 &&     /* previous was EN before (W4) */
-                nextDirProp==EN && lastStrong!=AL   /* next is EN and (W2) won't make it AN */
-            ) {
-                /* (W4) */
-                if(lastStrong!=L) {
-                    dirProp=EN;
-                } else {
-                    /* (W7) */
-                    dirProp=L;
-                }
-                historyOfEN|=EN_AFTER_W4;
-            } else {
-                /* (W6) */
-                dirProp=ON;
-            }
-            break;
-        case CS:
-            if( historyOfEN&PREV_EN_AFTER_W2 &&     /* previous was EN before (W4) */
-                nextDirProp==EN && lastStrong!=AL   /* next is EN and (W2) won't make it AN */
-            ) {
-                /* (W4) */
-                if(lastStrong!=L) {
-                    dirProp=EN;
-                } else {
-                    /* (W7) */
-                    dirProp=L;
-                }
-                historyOfEN|=EN_AFTER_W4;
-            } else if(prevDirProp==AN &&                    /* previous was AN */
-                      (nextDirProp==AN ||                   /* next is AN */
-                      (nextDirProp==EN && lastStrong==AL))  /* or (W2) will make it one */
-            ) {
-                /* (W4) */
-                dirProp=AN;
-            } else {
-                /* (W6) */
-                dirProp=ON;
-            }
-            break;
-        case ET:
-            /* get sequence of ET; advance only next, not current, previous or historyOfEN */
-            if(next<limit) {
-                while(DIRPROP_FLAG(nextDirProp)&MASK_ET_NSM_BN /* (W1), (X9) */) {
-                    if(++next<limit) {
-                        nextDirProp=NO_CONTEXT_RTL(dirProps[next]);
-                    } else {
-                        nextDirProp=eor;
-                        break;
-                    }
-                }
-            }
-
-            /* now process the sequence of ET like a single ET */
-            if((historyOfEN&PREV_EN_AFTER_W4) ||     /* previous was EN before (W5) */
-                (nextDirProp==EN && lastStrong!=AL)   /* next is EN and (W2) won't make it AN */
-            ) {
-                /* (W5) */
-                if(lastStrong!=L) {
-                    dirProp=EN;
-                } else {
-                    /* (W7) */
-                    dirProp=L;
-                }
-            } else {
-                /* (W6) */
-                dirProp=ON;
-            }
-
-            /* apply the result of (W1), (W5)..(W7) to the entire sequence of ET */
-            break;
-        case NSM:
-            /* (W1) */
-            dirProp=prevDirProp;
-            /* set historyOfEN back to prevDirProp's historyOfEN */
-            historyOfEN>>=EN_SHIFT;
-            /*
-             * Technically, this should be done before the switch() in the form
-             *      if(nextDirProp==NSM) {
-             *          dirProps[next]=nextDirProp=dirProp;
-             *      }
-             *
-             * - effectively one iteration ahead.
-             * However, whether the next dirProp is NSM or is equal to the current dirProp
-             * does not change the outcome of any condition in (W2)..(W7).
-             */
-            break;
-        case B:
-            lastStrong=sor;
-            dirProp=GET_LR_FROM_LEVEL(levels[i]);
-            break;
-        default:
-            break;
-        }
-
-        /* here, it is always [prev,this,next]dirProp!=BN; it may be next>i+1 */
-
-        /* perform (Nn) - here, only L, R, EN, AN, and neutrals are left */
-        /* for "inverse BiDi", treat neutrals like L */
-        /* this is one iteration late for the neutrals */
-        if(DIRPROP_FLAG(dirProp)&MASK_N) {
-            if(neutralStart<0) {
-                /* start of a sequence of neutrals */
-                neutralStart=i;
-                beforeNeutral=prevDirProp;
-            }
-        } else /* not a neutral, can be only one of { L, R, EN, AN } */ {
-            /*
-             * Note that all levels[] values are still the same at this
-             * point because this function is called for an entire
-             * same-level run.
-             * Therefore, we need to read only one actual level.
-             */
-            UBiDiLevel level=levels[i];
-
-            if(neutralStart>=0) {
-                UBiDiLevel final;
-                /* end of a sequence of neutrals (dirProp is "afterNeutral") */
-                if(!(pBiDi->isInverse)) {
-                    if(beforeNeutral==L) {
-                        if(dirProp==L) {
-                            final=0;                /* make all neutrals L (N1) */
-                        } else {
-                            final=level;            /* make all neutrals "e" (N2) */
-                        }
-                    } else /* beforeNeutral is one of { R, EN, AN } */ {
-                        if(dirProp==L) {
-                            final=level;            /* make all neutrals "e" (N2) */
-                        } else {
-                            final=1;                /* make all neutrals R (N1) */
-                        }
-                    }
-                } else {
-                    /* "inverse BiDi": collapse [before]dirProps L, EN, AN into L */
-                    if(beforeNeutral!=R) {
-                        if(dirProp!=R) {
-                            final=0;                /* make all neutrals L (N1) */
-                        } else {
-                            final=level;            /* make all neutrals "e" (N2) */
-                        }
-                    } else /* beforeNeutral is one of { R, EN, AN } */ {
-                        if(dirProp!=R) {
-                            final=level;            /* make all neutrals "e" (N2) */
-                        } else {
-                            final=1;                /* make all neutrals R (N1) */
-                        }
-                    }
-                }
-                /* perform (In) on the sequence of neutrals */
-                if((level^final)&1) {
-                    /* do something only if we need to _change_ the level */
-                    do {
-                        ++levels[neutralStart];
-                    } while(++neutralStart<i);
-                }
-                neutralStart=-1;
-            }
-
-            /* perform (In) on the non-neutral character */
-            /*
-             * in the cases of (W5), processing a sequence of ET,
-             * and of (X9), skipping BN,
-             * there may be multiple characters from i to <next
-             * that all get (virtually) the same dirProp and (really) the same level
-             */
-            if(dirProp==L) {
-                if(level&1) {
-                    ++level;
-                } else {
-                    i=next;     /* we keep the levels */
-                }
-            } else if(dirProp==R) {
-                if(!(level&1)) {
-                    ++level;
-                } else {
-                    i=next;     /* we keep the levels */
-                }
-            } else /* EN or AN */ {
-                /* this level depends on whether we do "inverse BiDi" */
-                level=numberLevel;
-            }
-
-            /* apply the new level to the sequence, if necessary */
-            while(i<next) {
-                levels[i++]=level;
-            }
-        }
-        if(pBiDi->defaultParaLevel&&((i+1)<limit)&&(dirProps[i]==B)) {
-            dirProp=GET_LR_FROM_LEVEL(levels[i+1]);
         }
     }
-
-    /* perform (Nn) - here,
-       the character after the neutrals is eor, which is either L or R */
-    /* this is one iteration late for the neutrals */
-    if(neutralStart>=0) {
-        /*
-         * Note that all levels[] values are still the same at this
-         * point because this function is called for an entire
-         * same-level run.
-         * Therefore, we need to read only one actual level.
-         */
-        UBiDiLevel level=levels[neutralStart], final;
-
-        /* end of a sequence of neutrals (eor is "afterNeutral") */
-        if(!(pBiDi->isInverse)) {
-            if(beforeNeutral==L) {
-                if(eor==L) {
-                    final=0;                /* make all neutrals L (N1) */
-                } else {
-                    final=level;            /* make all neutrals "e" (N2) */
-                }
-            } else /* beforeNeutral is one of { R, EN, AN } */ {
-                if(eor==L) {
-                    final=level;            /* make all neutrals "e" (N2) */
-                } else {
-                    final=1;                /* make all neutrals R (N1) */
-                }
-            }
-        } else {
-            /* "inverse BiDi": collapse [before]dirProps L, EN, AN into L */
-            if(beforeNeutral!=R) {
-                if(eor!=R) {
-                    final=0;                /* make all neutrals L (N1) */
-                } else {
-                    final=level;            /* make all neutrals "e" (N2) */
-                }
-            } else /* beforeNeutral is one of { R, EN, AN } */ {
-                if(eor!=R) {
-                    final=level;            /* make all neutrals "e" (N2) */
-                } else {
-                    final=1;                /* make all neutrals R (N1) */
-                }
-            }
-        }
-        /* perform (In) on the sequence of neutrals */
-        if((level^final)&1) {
-            /* do something only if we need to _change_ the level */
-            do {
-                ++levels[neutralStart];
-            } while(++neutralStart<limit);
-        }
-    }
+    /* flush possible pending sequence, e.g. ON */
+    processPropertySeq(pBiDi, &levState, eor, limit, limit);
 }
 
 /* perform (L1) and (X9) ---------------------------------------------------- */
@@ -1088,6 +1544,159 @@ adjustWSLevels(UBiDi *pBiDi) {
     }
 }
 
+#define BIDI_MIN(x, y)   ((x)<(y) ? (x) : (y))
+#define BIDI_ABS(x)      ((x)>=0  ? (x) : (-(x)))
+static void
+setParaRunsOnly(UBiDi *pBiDi, const UChar *text, int32_t length,
+                UBiDiLevel paraLevel, UErrorCode *pErrorCode) {
+    void *runsOnlyMemory;
+    int32_t *visualMap;
+    UChar *visualText;
+    const UBiDiLevel *levels;
+    UBiDiLevel *saveLevels;
+    Run *runs;
+    int32_t visualLength, i, j, visualStart, logicalStart,
+            runCount, runLength, addedRuns, insertRemove,
+            start, limit, step, indexOddBit, logicalPos,
+            index, index1;
+    uint32_t saveOptions;
+
+    pBiDi->reorderingMode=UBIDI_REORDER_DEFAULT;
+    if(length==0) {
+        ubidi_setPara(pBiDi, text, length, paraLevel, NULL, pErrorCode);
+        goto cleanup3;
+    }
+    /* obtain memory for mapping table and visual text */
+    runsOnlyMemory=uprv_malloc(length*(sizeof(int32_t)+sizeof(UChar)+sizeof(UBiDiLevel)));
+    if(runsOnlyMemory==NULL) {
+        *pErrorCode=U_MEMORY_ALLOCATION_ERROR;
+        goto cleanup3;
+    }
+    visualMap=runsOnlyMemory;
+    visualText=(UChar *)&visualMap[length];
+    saveLevels=(UBiDiLevel *)&visualText[length];
+    saveOptions=pBiDi->reorderingOptions;
+    if(saveOptions & UBIDI_OPTION_INSERT_MARKS) {
+        pBiDi->reorderingOptions&=~UBIDI_OPTION_INSERT_MARKS;
+        pBiDi->reorderingOptions|=UBIDI_OPTION_REMOVE_CONTROLS;
+    }
+    ubidi_setPara(pBiDi, text, length, paraLevel, NULL, pErrorCode);
+    levels=ubidi_getLevels(pBiDi, pErrorCode);
+
+    /* FOOD FOR THOUGHT: instead of writing the visual text, we could use
+     * the visual map and the dirProps array to drive the second call
+     * to ubidi_setPara (but must make provision for possible removal of
+     * BiDi controls.  Alternatively, only use the dirProps array via
+     * customized classifier callback.
+     */
+    visualLength=ubidi_writeReordered(pBiDi, visualText, length,
+                                      UBIDI_DO_MIRRORING, pErrorCode);
+    pBiDi->reorderingOptions=saveOptions;
+    ubidi_getVisualMap(pBiDi, visualMap, pErrorCode);
+    if(U_FAILURE(*pErrorCode)) {
+        goto cleanup2;
+    }
+    uprv_memcpy(saveLevels, levels, length*sizeof(UBiDiLevel));
+
+    pBiDi->reorderingMode=UBIDI_REORDER_INVERSE_LIKE_DIRECT;
+    paraLevel=pBiDi->paraLevel^1;
+    ubidi_setPara(pBiDi, visualText, visualLength, paraLevel, NULL, pErrorCode);
+    if(U_FAILURE(*pErrorCode)) {
+        goto cleanup1;
+    }
+    ubidi_getRuns(pBiDi);
+    /* check if some runs must be split, count how many splits */
+    addedRuns=0;
+    runCount=pBiDi->runCount;
+    runs=pBiDi->runs;
+    visualStart=0;
+    for(i=0; i<runCount; i++, visualStart+=runLength) {
+        runLength=runs[i].visualLimit-visualStart;
+        if(runLength<2) {
+            continue;
+        }
+        logicalStart=GET_INDEX(runs[i].logicalStart);
+        for(j=logicalStart+1; j<logicalStart+runLength; j++) {
+            index=visualMap[j];
+            index1=visualMap[j-1];
+            if((BIDI_ABS(index-index1)!=1) || (saveLevels[index]!=saveLevels[index1])) {
+                addedRuns++;
+            }
+        }
+    }
+    if(addedRuns) {
+        if(getRunsMemory(pBiDi, runCount+addedRuns)) {
+            if(runCount==1) {
+                /* because we switch from UBiDi.simpleRuns to UBiDi.runs */
+                pBiDi->runsMemory[0]=runs[0];
+            }
+            runs=pBiDi->runs=pBiDi->runsMemory;
+            pBiDi->runCount+=addedRuns;
+        } else {
+            goto cleanup1;
+        }
+    }
+    /* split runs which are not consecutive in source text */
+    for(i=runCount-1; i>=0; i--) {
+        runLength= i==0 ? runs[0].visualLimit :
+                          runs[i].visualLimit-runs[i-1].visualLimit;
+        logicalStart=runs[i].logicalStart;
+        indexOddBit=GET_ODD_BIT(logicalStart);
+        logicalStart=GET_INDEX(logicalStart);
+        if(runLength<2) {
+            if(addedRuns) {
+                runs[i+addedRuns]=runs[i];
+            }
+            logicalPos=visualMap[logicalStart];
+            runs[i+addedRuns].logicalStart=MAKE_INDEX_ODD_PAIR(logicalPos,
+                                            saveLevels[logicalPos]^indexOddBit);
+            continue;
+        }
+        if(indexOddBit) {
+            start=logicalStart;
+            limit=logicalStart+runLength-1;
+            step=1;
+        } else {
+            start=logicalStart+runLength-1;
+            limit=logicalStart;
+            step=-1;
+        }
+        for(j=start; j!=limit; j+=step) {
+            index=visualMap[j];
+            index1=visualMap[j+step];
+            if((BIDI_ABS(index-index1)!=1) || (saveLevels[index]!=saveLevels[index1])) {
+                logicalPos=BIDI_MIN(visualMap[start], index);
+                runs[i+addedRuns].logicalStart=MAKE_INDEX_ODD_PAIR(logicalPos,
+                                            saveLevels[logicalPos]^indexOddBit);
+                runs[i+addedRuns].visualLimit=runs[i].visualLimit;
+                runs[i].visualLimit-=BIDI_ABS(j-start)+1;
+                insertRemove=runs[i].insertRemove&(LRM_AFTER|RLM_AFTER);
+                runs[i+addedRuns].insertRemove=insertRemove;
+                runs[i].insertRemove&=~insertRemove;
+                start=j+step;
+                addedRuns--;
+            }
+        }
+        if(addedRuns) {
+            runs[i+addedRuns]=runs[i];
+        }
+        logicalPos=BIDI_MIN(visualMap[start], visualMap[limit]);
+        runs[i+addedRuns].logicalStart=MAKE_INDEX_ODD_PAIR(logicalPos,
+                                            saveLevels[logicalPos]^indexOddBit);
+    }
+
+  cleanup1:
+    /* restore initial paraLevel */
+    pBiDi->paraLevel^=1;
+  cleanup2:
+    /* restore real text */
+    pBiDi->text=text;
+    /* free memory for mapping table and visual text */
+    uprv_free(runsOnlyMemory);
+  cleanup3:
+    pBiDi->reorderingMode=UBIDI_REORDER_RUNS_ONLY;
+}
+
 /* ubidi_setPara ------------------------------------------------------------ */
 
 U_CAPI void U_EXPORT2
@@ -1111,22 +1720,26 @@ ubidi_setPara(UBiDi *pBiDi, const UChar *text, int32_t length,
         length=u_strlen(text);
     }
 
+    /* special treatment for RUNS_ONLY mode */
+    if(pBiDi->reorderingMode==UBIDI_REORDER_RUNS_ONLY) {
+        setParaRunsOnly(pBiDi, text, length, paraLevel, pErrorCode);
+        return;
+    }
+
     /* initialize the UBiDi structure */
     pBiDi->pParaBiDi=NULL;          /* mark unfinished setPara */
     pBiDi->text=text;
-    pBiDi->length=length;
+    pBiDi->length=pBiDi->originalLength=pBiDi->resultLength=length;
     pBiDi->paraLevel=paraLevel;
     pBiDi->direction=UBIDI_LTR;
-    pBiDi->trailingWSStart=length;  /* the levels[] will reflect the WS run */
+    pBiDi->paraCount=1;
 
     pBiDi->dirProps=NULL;
     pBiDi->levels=NULL;
     pBiDi->runs=NULL;
+    pBiDi->insertPoints.size=0;         /* clean up from last call */
+    pBiDi->insertPoints.confirmed=0;    /* clean up from last call */
 
-    /* initialize paras for single paragraph */
-    pBiDi->paraCount=1;
-    pBiDi->paras=pBiDi->simpleParas;
-    pBiDi->simpleParas[0]=length;
     /*
      * Save the original paraLevel if contextual; otherwise, set to 0.
      */
@@ -1173,6 +1786,9 @@ ubidi_setPara(UBiDi *pBiDi, const UChar *text, int32_t length,
         *pErrorCode=U_MEMORY_ALLOCATION_ERROR;
         return;
     }
+    /* the processed length may have changed if UBIDI_OPTION_STREAMING */
+    length= pBiDi->length;
+    pBiDi->trailingWSStart=length;  /* the levels[] will reflect the WS run */
     /* allocate paras memory */
     if(pBiDi->paraCount>1) {
         if(getInitialParasMemory(pBiDi, pBiDi->paraCount)) {
@@ -1182,6 +1798,10 @@ ubidi_setPara(UBiDi *pBiDi, const UChar *text, int32_t length,
             *pErrorCode=U_MEMORY_ALLOCATION_ERROR;
             return;
         }
+    } else {
+        /* initialize paras for single paragraph */
+        pBiDi->paras=pBiDi->simpleParas;
+        pBiDi->simpleParas[0]=length;
     }
 
     /* are explicit levels specified? */
@@ -1224,6 +1844,45 @@ ubidi_setPara(UBiDi *pBiDi, const UChar *text, int32_t length,
         pBiDi->trailingWSStart=0;
         break;
     default:
+        /*
+         *  Choose the right implicit state table
+         */
+        switch(pBiDi->reorderingMode) {
+        case UBIDI_REORDER_DEFAULT:
+            pBiDi->pImpTabPair=&impTab_DEFAULT;
+            break;
+        case UBIDI_REORDER_NUMBERS_SPECIAL:
+            pBiDi->pImpTabPair=&impTab_NUMBERS_SPECIAL;
+            break;
+        case UBIDI_REORDER_GROUP_NUMBERS_WITH_R:
+            pBiDi->pImpTabPair=&impTab_GROUP_NUMBERS_WITH_R;
+            break;
+        case UBIDI_REORDER_RUNS_ONLY:
+            /* we should never get here */
+            pBiDi=NULL;
+            pBiDi->text=NULL;           /* make the program crash! */
+            break;
+        case UBIDI_REORDER_INVERSE_NUMBERS_AS_L:
+            pBiDi->pImpTabPair=&impTab_INVERSE_NUMBERS_AS_L;
+            break;
+        case UBIDI_REORDER_INVERSE_LIKE_DIRECT:
+            if (pBiDi->reorderingOptions & UBIDI_OPTION_INSERT_MARKS) {
+                pBiDi->pImpTabPair=&impTab_INVERSE_LIKE_DIRECT_WITH_MARKS;
+            } else {
+                pBiDi->pImpTabPair=&impTab_INVERSE_LIKE_DIRECT;
+            }
+            break;
+        case UBIDI_REORDER_INVERSE_FOR_NUMBERS_SPECIAL:
+            if (pBiDi->reorderingOptions & UBIDI_OPTION_INSERT_MARKS) {
+                pBiDi->pImpTabPair=&impTab_INVERSE_FOR_NUMBERS_SPECIAL_WITH_MARKS;
+            } else {
+                pBiDi->pImpTabPair=&impTab_INVERSE_FOR_NUMBERS_SPECIAL;
+            }
+            break;
+        default:
+            pBiDi->pImpTabPair=&impTab_DEFAULT;
+            break;
+        }
         /*
          * If there are no external levels specified and there
          * are no significant explicit level codes in the text,
@@ -1297,18 +1956,20 @@ ubidi_setPara(UBiDi *pBiDi, const UChar *text, int32_t length,
                 }
             } while(limit<length);
         }
-
+        /* check if we got any memory shortage while adding insert points */
+        if (U_FAILURE(pBiDi->insertPoints.errorCode))
+        {
+            *pErrorCode=pBiDi->insertPoints.errorCode;
+            return;
+        }
         /* reset the embedding levels for some non-graphic characters (L1), (X9) */
         adjustWSLevels(pBiDi);
-
-        /* for "inverse BiDi", ubidi_getRuns() modifies the levels of numeric runs following RTL runs */
-        if(pBiDi->isInverse) {
-            if(!ubidi_getRuns(pBiDi)) {
-                *pErrorCode=U_MEMORY_ALLOCATION_ERROR;
-                return;
-            }
-        }
         break;
+    }
+    if(pBiDi->reorderingOptions & UBIDI_OPTION_REMOVE_CONTROLS) {
+        pBiDi->resultLength -= pBiDi->controlCount;
+    } else {
+        pBiDi->resultLength += pBiDi->insertPoints.size;
     }
     pBiDi->pParaBiDi=pBiDi;             /* mark successful setPara */
 }
@@ -1350,7 +2011,25 @@ ubidi_getText(const UBiDi *pBiDi) {
 U_CAPI int32_t U_EXPORT2
 ubidi_getLength(const UBiDi *pBiDi) {
     if(IS_VALID_PARA_OR_LINE(pBiDi)) {
+        return pBiDi->originalLength;
+    } else {
+        return 0;
+    }
+}
+
+U_CAPI int32_t U_EXPORT2
+ubidi_getProcessedLength(const UBiDi *pBiDi) {
+    if(IS_VALID_PARA_OR_LINE(pBiDi)) {
         return pBiDi->length;
+    } else {
+        return 0;
+    }
+}
+
+U_CAPI int32_t U_EXPORT2
+ubidi_getResultLength(const UBiDi *pBiDi) {
+    if(IS_VALID_PARA_OR_LINE(pBiDi)) {
+        return pBiDi->resultLength;
     } else {
         return 0;
     }
@@ -1376,7 +2055,7 @@ ubidi_countParagraphs(UBiDi *pBiDi) {
     }
 }
 
-U_STABLE void U_EXPORT2
+U_CAPI void U_EXPORT2
 ubidi_getParagraphByIndex(const UBiDi *pBiDi, int32_t paraIndex,
                           int32_t *pParaStart, int32_t *pParaLimit,
                           UBiDiLevel *pParaLevel, UErrorCode *pErrorCode) {
@@ -1408,7 +2087,7 @@ ubidi_getParagraphByIndex(const UBiDi *pBiDi, int32_t paraIndex,
     return;
 }
 
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 ubidi_getParagraph(const UBiDi *pBiDi, int32_t charIndex,
                           int32_t *pParaStart, int32_t *pParaLimit,
                           UBiDiLevel *pParaLevel, UErrorCode *pErrorCode) {
@@ -1430,140 +2109,53 @@ ubidi_getParagraph(const UBiDi *pBiDi, int32_t charIndex,
     return paraIndex;
 }
 
-/* statetable prototype ----------------------------------------------------- */
-
-/*
- * This is here for possible future
- * performance work and is not compiled right now.
- */
-
-#if 0
-/*
- * This is a piece of code that could be part of ubidi.c/resolveImplicitLevels().
- * It replaces in the (Wn) state machine the switch()-if()-cascade with
- * just a few if()s and a state table.
- */
-
-/* use the state table only for the following dirProp's */
-#define MASK_W_TABLE (FLAG(L)|FLAG(R)|FLAG(AL)|FLAG(EN)|FLAG(ES)|FLAG(CS)|FLAG(ET)|FLAG(AN))
-
-/*
- * inputs:
- *
- * 0..1 historyOfEN - 2b
- * 2    prevDirProp==AN - 1b
- * 3..4 lastStrong, one of { L, R, AL, none } - 2b
- * 5..7 dirProp, one of { L, R, AL, EN, ES, CS, ET, AN } - 3b
- * 8..9 nextDirProp, one of { EN, AN, other }
- *
- * total: 10b=1024 states
- */
-enum { _L, _R, _AL, _EN, _ES, _CS, _ET, _AN, _OTHER };  /* lastStrong, dirProp */
-enum { __EN, __AN, __OTHER };                           /* nextDirProp */
-
-#define LAST_STRONG_SHIFT 3
-#define DIR_PROP_SHIFT 5
-#define NEXT_DIR_PROP_SHIFT 8
-
-/* masks after shifting */
-#define LAST_STRONG_MASK 3
-#define DIR_PROP_MASK 7
-#define STATE_MASK 0x1f
-
-/* convert dirProp into _dirProp (above enum) */
-static DirProp inputDirProp[dirPropCount]={ _X<<DIR_PROP_SHIFT, ... };
-
-/* convert dirProp into __dirProp (above enum) */
-static DirProp inputNextDirProp[dirPropCount]={ __X<<NEXT_DIR_PROP_SHIFT, ... };
-
-/*
- * outputs:
- *
- * dirProp, one of { L, R, EN, AN, ON } - 3b
- *
- * 0..1 historyOfEN - 2b
- * 2    prevDirProp==AN - 1b
- * 3..4 lastStrong, one of { L, R, AL, none } - 2b
- * 5..7 new dirProp, one of { L, R, EN, AN, ON }
- *
- * total: 8 bits=1 byte per state
- */
-enum { ___L, ___R, ___EN, ___AN, ___ON, ___count };
-
-/* convert ___dirProp into dirProp (above enum) */
-static DirProp outputDirProp[___count]={ X, ... };
-
-/* state table */
-static uint8_t wnTable[1024]={ /* calculate with switch()-if()-cascade */ };
-
-static void
-resolveImplicitLevels(BiDi *pBiDi,
-                      Index start, Index end,
-                      DirProp sor, DirProp eor) {
-    /* new variable */
-    uint8_t state;
-
-    /* remove variable lastStrong */
-
-    /* set initial state (set lastStrong, the rest is 0) */
-    state= sor==L ? 0 : _R<<LAST_STRONG_SHIFT;
-
-    while(next<limit) {
-        /* advance */
-        prevDirProp=dirProp;
-        dirProp=nextDirProp;
-        i=next;
-        do {
-            if(++next<limit) {
-                nextDirProp=NO_CONTEXT_RTL(dirProps[next]);
-            } else {
-                nextDirProp=eor;
-                break;
-            }
-        } while(FLAG(nextDirProp)&MASK_BN_EXPLICIT);
-
-        /* (W1..W7) */
-        /* ### This may be more efficient with a switch(dirProp). */
-        if(FLAG(dirProp)&MASK_W_TABLE) {
-            state=wnTable[
-                    ((int)state)|
-                    inputDirProp[dirProp]|
-                    inputNextDirProp[nextDirProp]
-            ];
-            dirProp=outputDirProp[state>>DIR_PROP_SHIFT];
-            state&=STATE_MASK;
-        } else if(dirProp==ET) {
-            /* get sequence of ET; advance only next, not current, previous or historyOfEN */
-            while(next<limit && FLAG(nextDirProp)&MASK_ET_NSM_BN /* (W1), (X9) */) {
-                if(++next<limit) {
-                    nextDirProp=NO_CONTEXT_RTL(dirProps[next]);
-                } else {
-                    nextDirProp=eor;
-                    break;
-                }
-            }
-
-            state=wnTable[
-                    ((int)state)|
-                    _ET<<DIR_PROP_SHIFT|
-                    inputNextDirProp[nextDirProp]
-            ];
-            dirProp=outputDirProp[state>>DIR_PROP_SHIFT];
-            state&=STATE_MASK;
-
-            /* apply the result of (W1), (W5)..(W7) to the entire sequence of ET */
-        } else if(dirProp==NSM) {
-            /* (W1) */
-            dirProp=prevDirProp;
-            /* keep prevDirProp's EN and AN states! */
-        } else /* other */ {
-            /* set EN and AN states to 0 */
-            state&=LAST_STRONG_MASK<<LAST_STRONG_SHIFT;
-        }
-
-        /* perform (Nn) and (In) as usual */
+U_CAPI void U_EXPORT2
+ubidi_setClassCallback(UBiDi *pBiDi, UBiDiClassCallback *newFn,
+                       const void *newContext, UBiDiClassCallback **oldFn,
+                       const void **oldContext, UErrorCode *pErrorCode)
+{
+    if(pErrorCode==NULL || U_FAILURE(*pErrorCode)) {
+        return;
+    } else if(pBiDi==NULL) {
+        *pErrorCode=U_ILLEGAL_ARGUMENT_ERROR;
+        return;
     }
-    /* perform (Nn) and (In) as usual */
+    if( oldFn )
+    {
+        *oldFn = pBiDi->fnClassCallback;
+    }
+    if( oldContext )
+    {
+        *oldContext = pBiDi->coClassCallback;
+    }
+    pBiDi->fnClassCallback = newFn;
+    pBiDi->coClassCallback = newContext;
 }
-#endif
+
+U_CAPI void U_EXPORT2
+ubidi_getClassCallback(UBiDi *pBiDi, UBiDiClassCallback **fn, const void **context)
+{
+    if( fn )
+    {
+        *fn = pBiDi->fnClassCallback;
+    }
+    if( context )
+    {
+        *context = pBiDi->coClassCallback;
+    }
+}
+
+U_CAPI UCharDirection U_EXPORT2
+ubidi_getCustomizedClass(UBiDi *pBiDi, UChar32 c)
+{
+    UCharDirection dir;
+
+    if( pBiDi->fnClassCallback == NULL ||
+        (dir = (*pBiDi->fnClassCallback)(pBiDi->coClassCallback, c)) == U_BIDI_CLASS_DEFAULT )
+    {
+        return ubidi_getClass(pBiDi->bdp, c);
+    } else {
+        return dir;
+    }
+}
 

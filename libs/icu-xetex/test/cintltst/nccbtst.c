@@ -1,15 +1,16 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2004, International Business Machines Corporation and
+ * Copyright (c) 1997-2006, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*
+********************************************************************************
 * File NCCBTST.C
 *
 * Modification History:
 *        Name                            Description
 *    Madhu Katragadda     7/21/1999      Testing error callback routines
-**************************************************************************************
+********************************************************************************
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,6 +24,7 @@
 #include "unicode/utypes.h"
 #include "unicode/ustring.h"
 #include "nccbtst.h"
+#include "unicode/ucnv_cb.h"
 #define NEW_MAX_BUFFER 999
 
 #define nct_min(x,y)  ((x<y) ? x : y)
@@ -78,6 +80,8 @@ static void setNuConvTestName(const char *codepage, const char *direction)
 }
 
 
+static void TestCallBackFailure(void);
+
 void addTestConvertErrorCallBack(TestNode** root);
 
 void addTestConvertErrorCallBack(TestNode** root)
@@ -86,8 +90,13 @@ void addTestConvertErrorCallBack(TestNode** root)
     addTest(root, &TestStopCallBack,  "tsconv/nccbtst/TestStopCallBack");
     addTest(root, &TestSubCallBack,   "tsconv/nccbtst/TestSubCallBack");
     addTest(root, &TestSubWithValueCallBack, "tsconv/nccbtst/TestSubWithValueCallBack");
+
+#if !UCONFIG_NO_LEGACY_CONVERSION
     addTest(root, &TestLegalAndOtherCallBack,  "tsconv/nccbtst/TestLegalAndOtherCallBack");
     addTest(root, &TestSingleByteCallBack,  "tsconv/nccbtst/TestSingleByteCallBack");
+#endif
+
+    addTest(root, &TestCallBackFailure,  "tsconv/nccbtst/TestCallBackFailure");
 }
 
 static void TestSkipCallBack()
@@ -112,12 +121,13 @@ static void TestSubCallBack()
     TestSub(1,NEW_MAX_BUFFER);
     TestSub(1,1);
     TestSub(NEW_MAX_BUFFER, 1);
+
+#if !UCONFIG_NO_LEGACY_CONVERSION
     TestEBCDIC_STATEFUL_Sub(1, 1);
     TestEBCDIC_STATEFUL_Sub(1, NEW_MAX_BUFFER);
     TestEBCDIC_STATEFUL_Sub(NEW_MAX_BUFFER, 1);
     TestEBCDIC_STATEFUL_Sub(NEW_MAX_BUFFER, NEW_MAX_BUFFER);
-
-
+#endif
 }
 
 static void TestSubWithValueCallBack()
@@ -128,6 +138,7 @@ static void TestSubWithValueCallBack()
     TestSubWithValue(NEW_MAX_BUFFER, 1);
 }
 
+#if !UCONFIG_NO_LEGACY_CONVERSION
 static void TestLegalAndOtherCallBack()
 {
     TestLegalAndOthers(NEW_MAX_BUFFER, NEW_MAX_BUFFER);
@@ -143,6 +154,7 @@ static void TestSingleByteCallBack()
     TestSingleByte(1,1);
     TestSingleByte(NEW_MAX_BUFFER, 1);
 }
+#endif
 
 static void TestSkip(int32_t inputsize, int32_t outputsize)
 {
@@ -161,6 +173,7 @@ static void TestSkip(int32_t inputsize, int32_t outputsize)
     /*From Unicode*/
     log_verbose("Testing fromUnicode with UCNV_FROM_U_CALLBACK_SKIP  \n");
 
+#if !UCONFIG_NO_LEGACY_CONVERSION
     {
         static const UChar   sampleText[] =  { 0x0000, 0xAC00, 0xAC01, 0xEF67, 0xD700 };
         static const UChar  sampleText2[] =  { 0x6D63, 0x6D64, 0x6D65, 0x6D66 };
@@ -193,6 +206,7 @@ static void TestSkip(int32_t inputsize, int32_t outputsize)
             log_err("u->ibm-930 with skip with untaken fallbacks did not match.\n");
         }
     }
+#endif
 
     {
         static const UChar usasciiFromU[] = { 0x61, 0x80, 0x4e00, 0x31, 0xd800, 0xdfff, 0x39 };
@@ -213,6 +227,7 @@ static void TestSkip(int32_t inputsize, int32_t outputsize)
             log_err("u->US-ASCII with skip did not match.\n");
         }
 
+#if !UCONFIG_NO_LEGACY_CONVERSION
         /* SBCS NLTC codepage 367 for US-ASCII */
         if(!testConvertFromUnicode(usasciiFromU, sizeof(usasciiFromU)/U_SIZEOF_UCHAR,
                                    usasciiFromUBytes, sizeof(usasciiFromUBytes),
@@ -222,6 +237,7 @@ static void TestSkip(int32_t inputsize, int32_t outputsize)
         ) {
             log_err("u->ibm-367 with skip did not match.\n");
         }
+#endif
 
         /* ISO-Latin-1 */
         if(!testConvertFromUnicode(latin1FromU, sizeof(latin1FromU)/U_SIZEOF_UCHAR,
@@ -233,6 +249,7 @@ static void TestSkip(int32_t inputsize, int32_t outputsize)
             log_err("u->LATIN_1 with skip did not match.\n");
         }
 
+#if !UCONFIG_NO_LEGACY_CONVERSION
         /* windows-1252 */
         if(!testConvertFromUnicode(latin1FromU, sizeof(latin1FromU)/U_SIZEOF_UCHAR,
                                    latin1FromUBytes, sizeof(latin1FromUBytes),
@@ -365,6 +382,7 @@ static void TestSkip(int32_t inputsize, int32_t outputsize)
 
         };
 
+#endif
 
         static const UChar SCSU_inputText[]={ 0x0041, 0xd801/*illegal*/, 0x0042, };
 
@@ -379,6 +397,8 @@ static void TestSkip(int32_t inputsize, int32_t outputsize)
             2,
 
         };
+
+#if !UCONFIG_NO_LEGACY_CONVERSION
         /* ISCII */
         static const UChar iscii_inputText[]={ 0x0041, 0x3712/*unassigned*/, 0x0042, };
         static const uint8_t to_iscii[]={  
@@ -456,7 +476,8 @@ static void TestSkip(int32_t inputsize, int32_t outputsize)
         if(!testConvertFromUnicodeWithContext(hz_inputText1, sizeof(hz_inputText1)/sizeof(hz_inputText1[0]),
                 to_hz1, sizeof(to_hz1), "hz",
                 UCNV_FROM_U_CALLBACK_SKIP, from_hzOffs1, NULL, 0,UCNV_SKIP_STOP_ON_ILLEGAL,U_ILLEGAL_CHAR_FOUND ))
-            log_err("u-> hz with skip & UCNV_SKIP_STOP_ON_ILLEGAL did not match.\n"); 
+            log_err("u-> hz with skip & UCNV_SKIP_STOP_ON_ILLEGAL did not match.\n");
+#endif
         
         /*SCSU*/
         if(!testConvertFromUnicode(SCSU_inputText, sizeof(SCSU_inputText)/sizeof(SCSU_inputText[0]),
@@ -464,6 +485,7 @@ static void TestSkip(int32_t inputsize, int32_t outputsize)
                 UCNV_FROM_U_CALLBACK_SKIP, from_SCSUOffs, NULL, 0 ))
             log_err("u-> SCSU with skip did not match.\n");
 
+#if !UCONFIG_NO_LEGACY_CONVERSION
         /*ISCII*/
         if(!testConvertFromUnicode(iscii_inputText, sizeof(iscii_inputText)/sizeof(iscii_inputText[0]),
                 to_iscii, sizeof(to_iscii), "ISCII,version=0",
@@ -474,7 +496,7 @@ static void TestSkip(int32_t inputsize, int32_t outputsize)
                 to_iscii1, sizeof(to_iscii1), "ISCII,version=0",
                 UCNV_FROM_U_CALLBACK_SKIP, from_isciiOffs1, NULL, 0,UCNV_SKIP_STOP_ON_ILLEGAL,U_ILLEGAL_CHAR_FOUND ))
             log_err("u-> iscii with skip & UCNV_SKIP_STOP_ON_ILLEGAL did not match.\n");
-      
+#endif     
     }
 
     log_verbose("Testing fromUnicode for BOCU-1 with UCNV_TO_U_CALLBACK_SKIP\n");
@@ -625,6 +647,7 @@ static void TestSkip(int32_t inputsize, int32_t outputsize)
     /*to Unicode*/
     log_verbose("Testing toUnicode with UCNV_TO_U_CALLBACK_SKIP  \n");
 
+#if !UCONFIG_NO_LEGACY_CONVERSION
     {
 
         static const UChar IBM_949skiptoUnicode[]= {0x0000, 0xAC00, 0xAC01, 0xD700 };
@@ -656,6 +679,7 @@ static void TestSkip(int32_t inputsize, int32_t outputsize)
                 UCNV_TO_U_CALLBACK_SKIP, fromIBM930Offs, NULL, 0,"i",U_ILLEGAL_CHAR_FOUND ))
             log_err("ibm-930->u with skip did not match.\n");
     }
+#endif
 
     {
         static const uint8_t usasciiToUBytes[] = { 0x61, 0x80, 0x31 };
@@ -676,6 +700,7 @@ static void TestSkip(int32_t inputsize, int32_t outputsize)
             log_err("US-ASCII->u with skip did not match.\n");
         }
 
+#if !UCONFIG_NO_LEGACY_CONVERSION
         /* SBCS NLTC codepage 367 for US-ASCII */
         if(!testConvertToUnicode(usasciiToUBytes, sizeof(usasciiToUBytes),
                                  usasciiToU, sizeof(usasciiToU)/U_SIZEOF_UCHAR,
@@ -685,6 +710,7 @@ static void TestSkip(int32_t inputsize, int32_t outputsize)
         ) {
             log_err("ibm-367->u with skip did not match.\n");
         }
+#endif
 
         /* ISO-Latin-1 */
         if(!testConvertToUnicode(latin1ToUBytes, sizeof(latin1ToUBytes),
@@ -696,6 +722,7 @@ static void TestSkip(int32_t inputsize, int32_t outputsize)
             log_err("LATIN_1->u with skip did not match.\n");
         }
 
+#if !UCONFIG_NO_LEGACY_CONVERSION
         /* windows-1252 */
         if(!testConvertToUnicode(latin1ToUBytes, sizeof(latin1ToUBytes),
                                  latin1ToU, sizeof(latin1ToU)/U_SIZEOF_UCHAR,
@@ -705,8 +732,10 @@ static void TestSkip(int32_t inputsize, int32_t outputsize)
         ) {
             log_err("windows-1252->u with skip did not match.\n");
         }
+#endif
     }
 
+#if !UCONFIG_NO_LEGACY_CONVERSION
     {
         static const uint8_t sampleTxtEBCIDIC_STATEFUL [] ={
             0x0e, 0x5d, 0x5f , 0x41, 0x79, 0x41, 0x44
@@ -869,6 +898,8 @@ static void TestSkip(int32_t inputsize, int32_t outputsize)
             log_err("LMBCS->u with skip did not match.\n");
 
     }
+#endif
+
     log_verbose("Testing to Unicode for UTF-8 with UCNV_TO_U_CALLBACK_SKIP \n");
     {
         const uint8_t sampleText1[] = { 0x31, 0xe4, 0xba, 0x8c, 
@@ -1068,7 +1099,10 @@ static void TestStop(int32_t inputsize, int32_t outputsize)
 
     gInBufferSize = inputsize;
     gOutBufferSize = outputsize;
+
     /*From Unicode*/
+
+#if !UCONFIG_NO_LEGACY_CONVERSION
     if(!testConvertFromUnicode(sampleText, sizeof(sampleText)/sizeof(sampleText[0]),
             expstopIBM_949, sizeof(expstopIBM_949), "ibm-949",
             UCNV_FROM_U_CALLBACK_STOP, toIBM949Offsstop, NULL, 0 ))
@@ -1200,6 +1234,8 @@ static void TestStop(int32_t inputsize, int32_t outputsize)
 
 
     }
+#endif
+
     log_verbose("Testing fromUnicode for SCSU with UCNV_FROM_U_CALLBACK_STOP \n");
     {
         static const UChar SCSU_inputText[]={ 0x0041, 0xd801/*illegal*/, 0x0042, };
@@ -1218,7 +1254,10 @@ static void TestStop(int32_t inputsize, int32_t outputsize)
             log_err("u-> SCSU with skip did not match.\n");
     
     }
+
     /*to Unicode*/
+
+#if !UCONFIG_NO_LEGACY_CONVERSION
     if(!testConvertToUnicode(expstopIBM_949, sizeof(expstopIBM_949),
              IBM_949stoptoUnicode, sizeof(IBM_949stoptoUnicode)/sizeof(IBM_949stoptoUnicode[0]),"ibm-949",
             UCNV_TO_U_CALLBACK_STOP, fromIBM949Offs, NULL, 0 ))
@@ -1275,6 +1314,8 @@ static void TestStop(int32_t inputsize, int32_t outputsize)
                 UCNV_TO_U_CALLBACK_STOP, from_euc_twOffs, NULL, 0 ))
             log_err("euc-tw->u with stop did not match.\n");
     }
+#endif
+
     log_verbose("Testing toUnicode for UTF-8 with UCNV_TO_U_CALLBACK_STOP \n");
     {
         static const uint8_t sampleText1[] = { 0x31, 0xe4, 0xba, 0x8c, 
@@ -1331,6 +1372,8 @@ static void TestSub(int32_t inputsize, int32_t outputsize)
     gOutBufferSize = outputsize;
 
     /*from unicode*/
+
+#if !UCONFIG_NO_LEGACY_CONVERSION
     if(!testConvertFromUnicode(sampleText, sizeof(sampleText)/sizeof(sampleText[0]),
             expsubIBM_949, sizeof(expsubIBM_949), "ibm-949", 
             UCNV_FROM_U_CALLBACK_SUBSTITUTE, toIBM949Offssub, NULL, 0 ))
@@ -1384,6 +1427,7 @@ static void TestSub(int32_t inputsize, int32_t outputsize)
                 UCNV_FROM_U_CALLBACK_SUBSTITUTE, from_euc_twOffs, NULL, 0 ))
             log_err("u-> euc-tw with substitute did not match.\n");
     }
+#endif
 
     log_verbose("Testing fromUnicode for SCSU with UCNV_FROM_U_CALLBACK_SUBSTITUTE \n");
     {
@@ -1493,6 +1537,8 @@ static void TestSub(int32_t inputsize, int32_t outputsize)
     }
 
     /*to unicode*/
+
+#if !UCONFIG_NO_LEGACY_CONVERSION
     if(!testConvertToUnicode(expsubIBM_949, sizeof(expsubIBM_949),
              IBM_949subtoUnicode, sizeof(IBM_949subtoUnicode)/sizeof(IBM_949subtoUnicode[0]),"ibm-949",
             UCNV_TO_U_CALLBACK_SUBSTITUTE, fromIBM949Offs, NULL, 0 ))
@@ -1557,10 +1603,9 @@ static void TestSub(int32_t inputsize, int32_t outputsize)
            euc_jptoUnicode, sizeof(euc_jptoUnicode)/sizeof(euc_jptoUnicode[0]),"euc-jp",
           UCNV_TO_U_CALLBACK_SUBSTITUTE, from_euc_jpOffs, NULL, 0 ,"i", U_ILLEGAL_CHAR_FOUND))
             log_err("euc-jp->u with substitute did not match.\n");
-
-
-
     }
+#endif
+
     log_verbose("Testing toUnicode for UTF-8 with UCNV_TO_U_CALLBACK_SUBSTITUTE \n");
     {
         const uint8_t sampleText1[] = { 0x31, 0xe4, 0xba, 0x8c, 
@@ -1585,6 +1630,7 @@ static void TestSub(int32_t inputsize, int32_t outputsize)
             log_err("scsu->u with stop did not match.\n");;
     }
 
+#if !UCONFIG_NO_LEGACY_CONVERSION
     log_verbose("Testing ibm-930 subchar/subchar1\n");
     {
         static const UChar u1[]={         0x6d63,           0x6d64,     0x6d65,     0x6d66,     0xdf };
@@ -1623,6 +1669,7 @@ static void TestSub(int32_t inputsize, int32_t outputsize)
             log_err("gb18030->u with substitute did not match.\n");
         }
     }
+#endif
 
     log_verbose("Testing UTF-7 toUnicode with substitute callbacks\n");
     {
@@ -1750,6 +1797,8 @@ static void TestSubWithValue(int32_t inputsize, int32_t outputsize)
     gOutBufferSize = outputsize;
 
     /*from Unicode*/
+
+#if !UCONFIG_NO_LEGACY_CONVERSION
     if(!testConvertFromUnicode(sampleText, sizeof(sampleText)/sizeof(sampleText[0]),
             expsubwvalIBM_949, sizeof(expsubwvalIBM_949), "ibm-949", 
             UCNV_FROM_U_CALLBACK_ESCAPE, toIBM949Offs, NULL, 0 ))
@@ -2187,11 +2236,12 @@ static void TestSubWithValue(int32_t inputsize, int32_t outputsize)
                 UCNV_FROM_U_CALLBACK_ESCAPE, from_isciiOffs, NULL, 0 ))
             log_err("u-> iscii with subst with value did not match.\n");
     }
-
+#endif
 
     log_verbose("Testing toUnicode with UCNV_TO_U_CALLBACK_ESCAPE \n");
     /*to Unicode*/
     {
+#if !UCONFIG_NO_LEGACY_CONVERSION
         static const uint8_t sampleTxtToU[]= { 0x00, 0x9f, 0xaf, 
             0x81, 0xad, /*unassigned*/
             0x89, 0xd3 };
@@ -2302,7 +2352,7 @@ static void TestSubWithValue(int32_t inputsize, int32_t outputsize)
             0x42,};
 
         static const int32_t from_isciiOffs [] ={0,1,2,2,2,2,3,4,5,5,5,5,6  };
-
+#endif
 
         /*UTF8*/
         static const uint8_t sampleTxtUTF8[]={
@@ -2341,7 +2391,8 @@ static void TestSubWithValue(int32_t inputsize, int32_t outputsize)
             9
         };
 
-        
+
+#if !UCONFIG_NO_LEGACY_CONVERSION        
         if(!testConvertToUnicode(sampleTxtToU, sizeof(sampleTxtToU),
                  IBM_943toUnicode, sizeof(IBM_943toUnicode)/sizeof(IBM_943toUnicode[0]),"ibm-943",
                 UCNV_TO_U_CALLBACK_ESCAPE, fromIBM943Offs, NULL, 0 ))
@@ -2424,6 +2475,8 @@ static void TestSubWithValue(int32_t inputsize, int32_t outputsize)
                  isciitoUnicode, sizeof(isciitoUnicode)/sizeof(isciitoUnicode[0]),"ISCII,version=0",
                 UCNV_TO_U_CALLBACK_ESCAPE, from_isciiOffs, NULL, 0))
             log_err("ISCII ->u with substitute with value did not match.\n");
+#endif
+
         if(!testConvertToUnicode(sampleTxtUTF8, sizeof(sampleTxtUTF8),
                 UTF8ToUnicode, sizeof(UTF8ToUnicode)/sizeof(UTF8ToUnicode[0]),"UTF-8",
                 UCNV_TO_U_CALLBACK_ESCAPE, fromUTF8, NULL, 0))
@@ -2435,6 +2488,7 @@ static void TestSubWithValue(int32_t inputsize, int32_t outputsize)
     }
 }
 
+#if !UCONFIG_NO_LEGACY_CONVERSION
 static void TestLegalAndOthers(int32_t inputsize, int32_t outputsize)
 {
     static const UChar    legalText[] =  { 0x0000, 0xAC00, 0xAC01, 0xD700 };
@@ -2522,8 +2576,7 @@ static void TestEBCDIC_STATEFUL_Sub(int32_t inputsize, int32_t outputsize)
         UCNV_FROM_U_CALLBACK_SUBSTITUTE, offset_930_subvaried, mySubChar, 1 ))
             log_err("u-> ibm-930(EBCDIC_STATEFUL) with subst(setSubChar=0x3f) did not match.\n");
 }
-
-
+#endif
 
 UBool testConvertFromUnicode(const UChar *source, int sourceLen,  const uint8_t *expect, int expectLen, 
                 const char *codepage, UConverterFromUCallback callback , const int32_t *expectOffsets, 
@@ -2533,28 +2586,28 @@ UBool testConvertFromUnicode(const UChar *source, int sourceLen,  const uint8_t 
 
     UErrorCode status = U_ZERO_ERROR;
     UConverter *conv = 0;
-    uint8_t junkout[NEW_MAX_BUFFER]; /* FIX */
+    char junkout[NEW_MAX_BUFFER]; /* FIX */
     int32_t junokout[NEW_MAX_BUFFER]; /* FIX */
     const UChar *src;
-    uint8_t *end;
-    uint8_t *targ;
+    char *end;
+    char *targ;
     int32_t *offs;
     int i;
     int32_t  realBufferSize;
-    uint8_t *realBufferEnd;
+    char *realBufferEnd;
     const UChar *realSourceEnd;
     const UChar *sourceLimit;
     UBool checkOffsets = TRUE;
     UBool doFlush;
     char junk[9999];
     char offset_str[9999];
-    uint8_t *p;
+    char *p;
     UConverterFromUCallback oldAction = NULL;
     const void* oldContext = NULL;
 
 
     for(i=0;i<NEW_MAX_BUFFER;i++)
-        junkout[i] = 0xF0;
+        junkout[i] = (char)0xF0;
     for(i=0;i<NEW_MAX_BUFFER;i++)
         junokout[i] = 0xFF;
     setNuConvTestName(codepage, "FROM");
@@ -2684,7 +2737,7 @@ UBool testConvertFromUnicode(const UChar *source, int sourceLen,  const uint8_t 
     {
         log_err("Expected %d chars out, got %d %s\n", expectLen, targ-junkout, gNuConvTestName);
         log_verbose("Expected %d chars out, got %d %s\n", expectLen, targ-junkout, gNuConvTestName);
-        printSeqErr(junkout, (int32_t)(targ-junkout));
+        printSeqErr((const uint8_t *)junkout, (int32_t)(targ-junkout));
         printSeqErr(expect, expectLen);
         return FALSE;
     }
@@ -2695,7 +2748,7 @@ UBool testConvertFromUnicode(const UChar *source, int sourceLen,  const uint8_t 
         if(memcmp(junokout,expectOffsets,(targ-junkout) * sizeof(int32_t) )){
             log_err("did not get the expected offsets while %s \n", gNuConvTestName);
             log_err("Got Output : ");
-            printSeqErr(junkout, (int32_t)(targ-junkout));
+            printSeqErr((const uint8_t *)junkout, (int32_t)(targ-junkout));
             log_err("Got Offsets:      ");
             for(p=junkout;p<targ;p++)
                 log_err("%d,", junokout[p-junkout]); 
@@ -2719,7 +2772,7 @@ UBool testConvertFromUnicode(const UChar *source, int sourceLen,  const uint8_t 
         log_err("source: ");
         printUSeqErr(source, sourceLen);
         log_err("Got:      ");
-        printSeqErr(junkout, expectLen);
+        printSeqErr((const uint8_t *)junkout, expectLen);
         log_err("Expected: ");
         printSeqErr(expect, expectLen);
         return FALSE;
@@ -2734,9 +2787,9 @@ UBool testConvertToUnicode( const uint8_t *source, int sourcelen, const UChar *e
     UConverter *conv = 0;
     UChar   junkout[NEW_MAX_BUFFER]; /* FIX */
     int32_t junokout[NEW_MAX_BUFFER]; /* FIX */
-    const uint8_t *src;
-    const uint8_t *realSourceEnd;
-    const uint8_t *srcLimit;
+    const char *src;
+    const char *realSourceEnd;
+    const char *srcLimit;
     UChar *targ;
     UChar *end;
     int32_t *offs;
@@ -2771,7 +2824,7 @@ UBool testConvertToUnicode( const uint8_t *source, int sourcelen, const UChar *e
 
     log_verbose("Converter opened..\n");
 
-    src = source;
+    src = (const char *)source;
     targ = junkout;
     offs = junokout;
 
@@ -2831,8 +2884,8 @@ UBool testConvertToUnicode( const uint8_t *source, int sourcelen, const UChar *e
         char errChars[50]; /* should be sufficient */
         int8_t errLen = 50;
         UErrorCode err = U_ZERO_ERROR;
-        const uint8_t* limit= NULL;
-        const uint8_t* start= NULL;
+        const char* limit= NULL;
+        const char* start= NULL;
         ucnv_getInvalidChars(conv,errChars, &errLen, &err);
         if(U_FAILURE(err)){
             log_err("ucnv_getInvalidChars failed with error : %s\n",u_errorName(err));
@@ -2841,7 +2894,7 @@ UBool testConvertToUnicode( const uint8_t *source, int sourcelen, const UChar *e
         limit = src;
         /* length of in invalid chars should be equal to returned length*/
         start = src - errLen;
-        if(uprv_strncmp(errChars,(char*)start,errLen)!=0){
+        if(uprv_strncmp(errChars,start,errLen)!=0){
             log_err("ucnv_getInvalidChars did not return the correct invalid chars for encoding %s \n", ucnv_getName(conv,&err));
         }
     }
@@ -2898,7 +2951,7 @@ UBool testConvertToUnicode( const uint8_t *source, int sourcelen, const UChar *e
                 log_err("0x%04x,", junkout[i]);
             log_err("\n");
             log_err("From source:      ");
-            for(i=0; i<(src-source); i++)
+            for(i=0; i<(src-(const char *)source); i++)
                 log_err("  0x%02x,", (unsigned char)source[i]);
             log_err("\n");
         }
@@ -2930,28 +2983,28 @@ UBool testConvertFromUnicodeWithContext(const UChar *source, int sourceLen,  con
 
     UErrorCode status = U_ZERO_ERROR;
     UConverter *conv = 0;
-    uint8_t junkout[NEW_MAX_BUFFER]; /* FIX */
+    char junkout[NEW_MAX_BUFFER]; /* FIX */
     int32_t junokout[NEW_MAX_BUFFER]; /* FIX */
     const UChar *src;
-    uint8_t *end;
-    uint8_t *targ;
+    char *end;
+    char *targ;
     int32_t *offs;
     int i;
     int32_t  realBufferSize;
-    uint8_t *realBufferEnd;
+    char *realBufferEnd;
     const UChar *realSourceEnd;
     const UChar *sourceLimit;
     UBool checkOffsets = TRUE;
     UBool doFlush;
     char junk[9999];
     char offset_str[9999];
-    uint8_t *p;
+    char *p;
     UConverterFromUCallback oldAction = NULL;
     const void* oldContext = NULL;
 
 
     for(i=0;i<NEW_MAX_BUFFER;i++)
-        junkout[i] = 0xF0;
+        junkout[i] = (char)0xF0;
     for(i=0;i<NEW_MAX_BUFFER;i++)
         junokout[i] = 0xFF;
     setNuConvTestName(codepage, "FROM");
@@ -3061,7 +3114,7 @@ UBool testConvertFromUnicodeWithContext(const UChar *source, int sourceLen,  con
     {
         log_err("Expected %d chars out, got %d %s\n", expectLen, targ-junkout, gNuConvTestName);
         log_verbose("Expected %d chars out, got %d %s\n", expectLen, targ-junkout, gNuConvTestName);
-        printSeqErr(junkout, (int32_t)(targ-junkout));
+        printSeqErr((const uint8_t *)junkout, (int32_t)(targ-junkout));
         printSeqErr(expect, expectLen);
         return FALSE;
     }
@@ -3072,7 +3125,7 @@ UBool testConvertFromUnicodeWithContext(const UChar *source, int sourceLen,  con
         if(memcmp(junokout,expectOffsets,(targ-junkout) * sizeof(int32_t) )){
             log_err("did not get the expected offsets while %s \n", gNuConvTestName);
             log_err("Got Output : ");
-            printSeqErr(junkout, (int32_t)(targ-junkout));
+            printSeqErr((const uint8_t *)junkout, (int32_t)(targ-junkout));
             log_err("Got Offsets:      ");
             for(p=junkout;p<targ;p++)
                 log_err("%d,", junokout[p-junkout]); 
@@ -3096,7 +3149,7 @@ UBool testConvertFromUnicodeWithContext(const UChar *source, int sourceLen,  con
         log_err("source: ");
         printUSeqErr(source, sourceLen);
         log_err("Got:      ");
-        printSeqErr(junkout, expectLen);
+        printSeqErr((const uint8_t *)junkout, expectLen);
         log_err("Expected: ");
         printSeqErr(expect, expectLen);
         return FALSE;
@@ -3110,9 +3163,9 @@ UBool testConvertToUnicodeWithContext( const uint8_t *source, int sourcelen, con
     UConverter *conv = 0;
     UChar   junkout[NEW_MAX_BUFFER]; /* FIX */
     int32_t junokout[NEW_MAX_BUFFER]; /* FIX */
-    const uint8_t *src;
-    const uint8_t *realSourceEnd;
-    const uint8_t *srcLimit;
+    const char *src;
+    const char *realSourceEnd;
+    const char *srcLimit;
     UChar *targ;
     UChar *end;
     int32_t *offs;
@@ -3147,7 +3200,7 @@ UBool testConvertToUnicodeWithContext( const uint8_t *source, int sourcelen, con
 
     log_verbose("Converter opened..\n");
 
-    src = source;
+    src = (const char *)source;
     targ = junkout;
     offs = junokout;
 
@@ -3255,7 +3308,7 @@ UBool testConvertToUnicodeWithContext( const uint8_t *source, int sourcelen, con
                 log_err("0x%04x,", junkout[i]);
             log_err("\n");
             log_err("From source:      ");
-            for(i=0; i<(src-source); i++)
+            for(i=0; i<(src-(const char *)source); i++)
                 log_err("  0x%02x,", (unsigned char)source[i]);
             log_err("\n");
         }
@@ -3278,3 +3331,24 @@ UBool testConvertToUnicodeWithContext( const uint8_t *source, int sourcelen, con
         return FALSE;
     }
 }
+
+static void TestCallBackFailure(void) {
+    UErrorCode status = U_USELESS_COLLATOR_ERROR;
+    ucnv_cbFromUWriteBytes(NULL, NULL, -1, -1, &status);
+    if (status != U_USELESS_COLLATOR_ERROR) {
+        log_err("Error: ucnv_cbFromUWriteBytes did not react correctly to a bad UErrorCode\n");
+    }
+    ucnv_cbFromUWriteUChars(NULL, NULL, NULL, -1, &status);
+    if (status != U_USELESS_COLLATOR_ERROR) {
+        log_err("Error: ucnv_cbFromUWriteUChars did not react correctly to a bad UErrorCode\n");
+    }
+    ucnv_cbFromUWriteSub(NULL, -1, &status);
+    if (status != U_USELESS_COLLATOR_ERROR) {
+        log_err("Error: ucnv_cbFromUWriteSub did not react correctly to a bad UErrorCode\n");
+    }
+    ucnv_cbToUWriteUChars(NULL, NULL, -1, -1, &status);
+    if (status != U_USELESS_COLLATOR_ERROR) {
+        log_err("Error: ucnv_cbToUWriteUChars did not react correctly to a bad UErrorCode\n");
+    }
+}
+

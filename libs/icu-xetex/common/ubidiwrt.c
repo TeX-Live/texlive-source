@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 2000-2005, International Business Machines
+*   Copyright (C) 2000-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -46,18 +46,6 @@
 # error reimplement ubidi_writeReordered() for UTF-8, see comment above
 #endif
 
-/** BiDi control code points */
-enum {
-    LRM_CHAR=0x200e,
-    RLM_CHAR,
-    LRE_CHAR=0x202a,
-    RLE_CHAR,
-    PDF_CHAR,
-    LRO_CHAR,
-    RLO_CHAR
-};
-
-#define IS_BIDI_CONTROL_CHAR(c) (((uint32_t)(c)&0xfffffffe)==LRM_CHAR || (uint32_t)((c)-LRE_CHAR)<5)
 #define IS_COMBINING(type) ((1UL<<(type))&(1UL<<U_NON_SPACING_MARK|1UL<<U_COMBINING_SPACING_MARK|1UL<<U_ENCLOSING_MARK))
 
 /*
@@ -378,7 +366,7 @@ ubidi_writeReordered(UBiDi *pBiDi,
 
     /* more error checking */
     if( pBiDi==NULL ||
-        (text=ubidi_getText(pBiDi))==NULL || (length=ubidi_getLength(pBiDi))<0 ||
+        (text=pBiDi->text)==NULL || (length=pBiDi->length)<0 ||
         destSize<0 || (destSize>0 && dest==NULL))
     {
         *pErrorCode=U_ILLEGAL_ARGUMENT_ERROR;
@@ -388,7 +376,7 @@ ubidi_writeReordered(UBiDi *pBiDi,
     /* do input and output overlap? */
     if( dest!=NULL &&
         ((text>=dest && text<dest+destSize) ||
-         (dest>=text && dest<text+length)))
+         (dest>=text && dest<text+pBiDi->originalLength)))
     {
         *pErrorCode=U_ILLEGAL_ARGUMENT_ERROR;
         return 0;
@@ -409,13 +397,31 @@ ubidi_writeReordered(UBiDi *pBiDi,
     destCapacity=destSize;
 
     /*
+     * Option "insert marks" implies UBIDI_INSERT_LRM_FOR_NUMERIC if the
+     * reordering mode (checked below) is appropriate.
+     */
+    if(pBiDi->reorderingOptions & UBIDI_OPTION_INSERT_MARKS) {
+        options|=UBIDI_INSERT_LRM_FOR_NUMERIC;
+        options&=~UBIDI_REMOVE_BIDI_CONTROLS;
+    }
+    /*
+     * Option "remove controls" implies UBIDI_REMOVE_BIDI_CONTROLS
+     * and cancels UBIDI_INSERT_LRM_FOR_NUMERIC.
+     */
+    if(pBiDi->reorderingOptions & UBIDI_OPTION_REMOVE_CONTROLS) {
+        options|=UBIDI_REMOVE_BIDI_CONTROLS;
+        options&=~UBIDI_INSERT_LRM_FOR_NUMERIC;
+    }
+    /*
      * If we do not perform the "inverse BiDi" algorithm, then we
      * don't need to insert any LRMs, and don't need to test for it.
      */
-    if(!ubidi_isInverse(pBiDi)) {
+    if((pBiDi->reorderingMode != UBIDI_REORDER_INVERSE_NUMBERS_AS_L) &&
+       (pBiDi->reorderingMode != UBIDI_REORDER_INVERSE_LIKE_DIRECT)  &&
+       (pBiDi->reorderingMode != UBIDI_REORDER_INVERSE_FOR_NUMBERS_SPECIAL) &&
+       (pBiDi->reorderingMode != UBIDI_REORDER_RUNS_ONLY)) {
         options&=~UBIDI_INSERT_LRM_FOR_NUMERIC;
     }
-
     /*
      * Iterate through all visual runs and copy the run text segments to
      * the destination, according to the options.
@@ -449,16 +455,34 @@ ubidi_writeReordered(UBiDi *pBiDi,
             /* insert BiDi controls for "inverse BiDi" */
             const DirProp *dirProps=pBiDi->dirProps;
             const UChar *src;
+            UChar uc;
             UBiDiDirection dir;
+            int32_t markFlag;
 
             for(run=0; run<runCount; ++run) {
                 dir=ubidi_getVisualRun(pBiDi, run, &logicalStart, &runLength);
                 src=text+logicalStart;
+                /* check if something relevant in insertPoints */
+                markFlag=pBiDi->runs[run].insertRemove;
+                if(markFlag<0) {        /* insert count */
+                    markFlag=0;
+                }
 
                 if(UBIDI_LTR==dir) {
-                    if(/*run>0 &&*/ dirProps[logicalStart]!=L) {
+                    if((pBiDi->isInverse) &&
+                       (/*run>0 &&*/ dirProps[logicalStart]!=L)) {
+                        markFlag |= LRM_BEFORE;
+                    }
+                    if (markFlag & LRM_BEFORE) {
+                        uc=LRM_CHAR;
+                    }
+                    else if (markFlag & RLM_BEFORE) {
+                        uc=RLM_CHAR;
+                    }
+                    else  uc=0;
+                    if(uc) {
                         if(destSize>0) {
-                            *dest++=LRM_CHAR;
+                            *dest++=uc;
                         }
                         --destSize;
                     }
@@ -469,16 +493,38 @@ ubidi_writeReordered(UBiDi *pBiDi,
                     dest+=runLength;
                     destSize-=runLength;
 
-                    if(/*run<runCount-1 &&*/ dirProps[logicalStart+runLength-1]!=L) {
+                    if((pBiDi->isInverse) &&
+                       (/*run<runCount-1 &&*/ dirProps[logicalStart+runLength-1]!=L)) {
+                        markFlag |= LRM_AFTER;
+                    }
+                    if (markFlag & LRM_AFTER) {
+                        uc=LRM_CHAR;
+                    }
+                    else if (markFlag & RLM_AFTER) {
+                        uc=RLM_CHAR;
+                    }
+                    else  uc=0;
+                    if(uc) {
                         if(destSize>0) {
-                            *dest++=LRM_CHAR;
+                            *dest++=uc;
                         }
                         --destSize;
                     }
-                } else {
-                    if(/*run>0 &&*/ !(MASK_R_AL&DIRPROP_FLAG(dirProps[logicalStart+runLength-1]))) {
+                } else {                /* RTL run */
+                    if((pBiDi->isInverse) &&
+                       (/*run>0 &&*/ !(MASK_R_AL&DIRPROP_FLAG(dirProps[logicalStart+runLength-1])))) {
+                        markFlag |= RLM_BEFORE;
+                    }
+                    if (markFlag & LRM_BEFORE) {
+                        uc=LRM_CHAR;
+                    }
+                    else if (markFlag & RLM_BEFORE) {
+                        uc=RLM_CHAR;
+                    }
+                    else  uc=0;
+                    if(uc) {
                         if(destSize>0) {
-                            *dest++=RLM_CHAR;
+                            *dest++=uc;
                         }
                         --destSize;
                     }
@@ -489,9 +535,20 @@ ubidi_writeReordered(UBiDi *pBiDi,
                     dest+=runLength;
                     destSize-=runLength;
 
-                    if(/*run<runCount-1 &&*/ !(MASK_R_AL&DIRPROP_FLAG(dirProps[logicalStart]))) {
+                    if((pBiDi->isInverse) &&
+                       (/*run<runCount-1 &&*/ !(MASK_R_AL&DIRPROP_FLAG(dirProps[logicalStart])))) {
+                        markFlag |= RLM_AFTER;
+                    }
+                    if (markFlag & LRM_AFTER) {
+                        uc=LRM_CHAR;
+                    }
+                    else if (markFlag & RLM_AFTER) {
+                        uc=RLM_CHAR;
+                    }
+                    else  uc=0;
+                    if(uc) {
                         if(destSize>0) {
-                            *dest++=RLM_CHAR;
+                            *dest++=uc;
                         }
                         --destSize;
                     }

@@ -1,13 +1,13 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/ms.xml
+// * Source File:<path>/common/main/ms.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/ms.xml
+ *  ICU <specials> source: <path>/xml/main/ms.xml
  */
 ms{
     Countries{
@@ -256,20 +256,19 @@ ms{
             "Ringgit Malaysia",
         }
     }
-    ExemplarCharacters{"[a-z]"}
+    ExemplarCharacters{
+        "[a {ai} {au} b-d {dz} e-k {kh} l-n {ng} {ngg} {ny} o-s {sy} t {ts} u {ua} v-"
+        "z]"
+    }
     Languages{
         ms{"Bahasa Melayu"}
     }
     LocaleScript{
         "Latn",
     }
-    Version{"1.29"}
+    Version{"1.44"}
     calendar{
         gregorian{
-            DateTimeElements:intvector{
-                2,
-                1,
-            }
             dayNames{
                 format{
                     abbreviated{
@@ -321,6 +320,22 @@ ms{
                         "Oktober",
                         "November",
                         "Disember",
+                    }
+                }
+            }
+            quarters{
+                format{
+                    abbreviated{
+                        "S1",
+                        "S2",
+                        "S3",
+                        "S4",
+                    }
+                    wide{
+                        "suku pertama",
+                        "suku kedua",
+                        "suku ketiga",
+                        "suku keempat",
                     }
                 }
             }

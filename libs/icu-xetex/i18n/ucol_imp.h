@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 1998-2005, International Business Machines
+*   Copyright (C) 1998-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -43,7 +43,7 @@
 
 #include "unicode/ucol.h"
 #include "utrie.h"
-#include "unicode/ures.h"
+#include "uresimp.h"
 #include "unicode/udata.h"
 #include "unicode/uiter.h"
 
@@ -279,9 +279,6 @@ typedef struct collIterate {
   uint32_t CEs[UCOL_EXPAND_CE_BUFFER_SIZE]; /* This is where we store CEs */
   UChar stackWritableBuffer[UCOL_WRITABLE_BUFFER_SIZE]; /* A writable buffer. */
   UCharIterator *iterator;
-  uint32_t consumedChars; /* number of extra consumed chars in a contraction */
-                          /* used in conjuction with iterator state for partial */
-                          /* sortkeys */
   /*int32_t iteratorIndex;*/
 } collIterate;
 
@@ -298,7 +295,6 @@ struct collIterateState {
     uint8_t   origFlags;
     uint32_t   iteratorIndex;
     int32_t    iteratorMove;
-    uint32_t consumedChars;
 };
 
 U_CAPI void U_EXPORT2 
@@ -562,7 +558,7 @@ enum {
     UCOL_BYTE_FIRST_TAILORED = 0x04,
     UCOL_BYTE_COMMON = 0x05,
     UCOL_BYTE_FIRST_UCA = UCOL_BYTE_COMMON,
-    UCOL_CODAN_PLACEHOLDER = 0x26,
+    UCOL_CODAN_PLACEHOLDER = 0x27,
     UCOL_BYTE_LAST_LATIN_PRIMARY = 0x4C,
     UCOL_BYTE_FIRST_NON_LATIN_PRIMARY = 0x4D,
     UCOL_BYTE_UNSHIFTED_MAX = 0xFF
@@ -862,16 +858,18 @@ struct UCollator {
     uint32_t *latinOneCEs;
     char* validLocale;
     char* requestedLocale;
+    const UChar *rules;
+    const UCollator *UCA;
+    ResourceCleaner *resCleaner;
     UResourceBundle *rb;
     UResourceBundle *elements;
     const UCATableHeader *image;
-    /*CompactEIntArray *mapping;*/
-    UTrie *mapping;
+    UTrie mapping;
     const uint32_t *latinOneMapping;
     const uint32_t *expansion;
     const UChar    *contractionIndex;
     const uint32_t *contractionCEs;
-    const uint8_t  *scriptOrder;
+    /*const uint8_t  *scriptOrder;*/
 
     const uint32_t *endExpansionCE;    /* array of last ces in an expansion ce.
                                           corresponds to expansionCESize */
@@ -885,11 +883,8 @@ struct UCollator {
     UChar          minUnsafeCP;        /* Smallest unsafe Code Point. */
     UChar          minContrEndCP;      /* Smallest code point at end of a contraction */
 
-    const UChar *rules;
     int32_t rulesLength;
     int32_t latinOneTableLen;
-
-    /*UErrorCode errorCode;*/             /* internal error code */
 
     uint32_t variableTopValue;
     UColAttributeValue frenchCollation;
@@ -931,10 +926,7 @@ struct UCollator {
     uint8_t tertiaryTopCount;
     uint8_t tertiaryBottomCount;
 
-    UDataInfo dataInfo;               /* Data info of UCA table */
-    const UCollator *UCA;
-    ResourceCleaner *resCleaner;
-
+    UVersionInfo dataVersion;               /* Data info of UCA table */
 };
 
 U_CDECL_END

@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2000-2003, International Business Machines
+*   Copyright (C) 2000-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -54,4 +54,4 @@ struct NewConverter {
              UNewDataMemory *pData, int32_t tableType);
 };
 
-#endif
+#endif /* __MAKECONV_H__ */

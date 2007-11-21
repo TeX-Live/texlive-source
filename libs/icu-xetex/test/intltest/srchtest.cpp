@@ -1,6 +1,6 @@
 /*
 *****************************************************************************
-* Copyright (C) 2001-2004, International Business Machines orporation  
+* Copyright (C) 2001-2006, International Business Machines orporation  
 * and others. All Rights Reserved.
 ****************************************************************************/
 
@@ -24,7 +24,11 @@
         if (exec) {                   \
             logln(#test "---");       \
             logln((UnicodeString)""); \
-            test();                   \
+            if(areBroken) {           \
+                  errln(__FILE__ " cannot test - failed to create collator.");  \
+            } else {                  \
+                test();               \
+            }                         \
         }                             \
         break;
 
@@ -94,12 +98,11 @@ StringSearchTest::~StringSearchTest()
 void StringSearchTest::runIndexedTest(int32_t index, UBool exec, 
                                       const char* &name, char* ) 
 {
+    UBool areBroken = FALSE;
     if (m_en_us_ == NULL && m_fr_fr_ == NULL && m_de_ == NULL &&
         m_es_ == NULL && m_en_wordbreaker_ == NULL &&
         m_en_characterbreaker_ == NULL && exec) {
-      errln(__FILE__ " cannot test - failed to create collator.");
-      name = "";
-      return;
+        areBroken = TRUE;
     }
 
     switch (index) {
@@ -150,6 +153,7 @@ void StringSearchTest::runIndexedTest(int32_t index, UBool exec,
         CASE(32, TestContractionCanonical)
         CASE(33, TestUClassID)
         CASE(34, TestSubclass)
+        CASE(35, TestCoverage)
         default: name = ""; break;
     }
 }
@@ -2269,6 +2273,39 @@ void StringSearchTest::TestSubclass()
     }
     if (search.previous(status) != USEARCH_DONE) {
         errln("Error should have reached the start of the iteration");
+    }
+}
+
+class StubSearchIterator:public SearchIterator{
+public:
+    StubSearchIterator(){}
+    virtual void setOffset(int32_t , UErrorCode &) {};
+    virtual int32_t getOffset(void) const {return 0;};
+    virtual SearchIterator* safeClone(void) const {return NULL;};
+    virtual int32_t handleNext(int32_t , UErrorCode &){return 0;};
+    virtual int32_t handlePrev(int32_t , UErrorCode &) {return 0;};
+    virtual UClassID getDynamicClassID() const {
+        static char classID = 0;
+        return (UClassID)&classID; 
+    }
+};
+
+void StringSearchTest::TestCoverage(){
+    StubSearchIterator stub1, stub2;
+    UErrorCode status = U_ZERO_ERROR;
+
+    if (stub1 != stub2){
+        errln("new StubSearchIterator should be equal");
+    }
+
+    stub2.setText(UnicodeString("ABC"), status);
+    if (U_FAILURE(status)) {
+        errln("Error: SearchIterator::SetText");
+    }
+
+    stub1 = stub2;
+    if (stub1 != stub2){
+        errln("SearchIterator::operator =  assigned object should be equal");
     }
 }
 

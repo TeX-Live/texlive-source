@@ -1,6 +1,6 @@
 /*
 ******************************************************************************
-*   Copyright (C) 1996-2005, International Business Machines                 *
+*   Copyright (C) 1996-2006, International Business Machines                 *
 *   Corporation and others.  All Rights Reserved.                            *
 ******************************************************************************
 */
@@ -58,17 +58,13 @@
 #include "unicode/normlzr.h"
 #include "unicode/locid.h"
 #include "unicode/uniset.h"
+#include "unicode/umisc.h"
 
 U_NAMESPACE_BEGIN
 
 class StringEnumeration;
 
 #if !UCONFIG_NO_SERVICE
-/**
- * @stable ICU 2.6
- */
-typedef const void* URegistryKey;
-
 /**
  * @stable ICU 2.6
  */
@@ -623,7 +619,7 @@ public:
      * @param status input-output error code
      * @return a string enumeration over locale strings. The caller is
      * responsible for closing the result.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     static StringEnumeration* U_EXPORT2 getKeywords(UErrorCode& status);
 
@@ -636,7 +632,7 @@ public:
      * @param status input-output error code
      * @return a string enumeration over collation keyword values, or NULL
      * upon error. The caller is responsible for deleting the result.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     static StringEnumeration* U_EXPORT2 getKeywordValues(const char *keyword, UErrorCode& status);
 
@@ -665,7 +661,7 @@ public:
      * @param status reference to input-output error code
      * @return the functionally equivalent collation locale, or the root
      * locale upon error.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     static Locale U_EXPORT2 getFunctionalEquivalent(const char* keyword, const Locale& locale,
                                           UBool& isAvailable, UErrorCode& status);
@@ -983,7 +979,7 @@ public:
 
     /**
      * Destructor
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     virtual ~CollatorFactory();
 

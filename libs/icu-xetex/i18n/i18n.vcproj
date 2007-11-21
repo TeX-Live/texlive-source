@@ -27,6 +27,7 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
 				DisableLanguageExtensions="TRUE"
+				TreatWChar_tAsBuiltInType="TRUE"
 				PrecompiledHeaderFile=".\Release/i18n.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
@@ -39,10 +40,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin\icuin34.dll"
+				OutputFile="..\..\bin\icuin36.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				ProgramDatabaseFile=".\..\..\lib\icuin34.pdb"
+				ProgramDatabaseFile=".\..\..\lib\icuin36.pdb"
 				EnableCOMDATFolding="2"
 				BaseAddress="0x4a900000"
 				ImportLibrary="..\..\lib\icuin.lib"/>
@@ -93,6 +94,7 @@
 				RuntimeLibrary="3"
 				BufferSecurityCheck="TRUE"
 				DisableLanguageExtensions="TRUE"
+				TreatWChar_tAsBuiltInType="TRUE"
 				PrecompiledHeaderFile=".\Debug/i18n.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
@@ -106,11 +108,11 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin\icuin34d.dll"
+				OutputFile="..\..\bin\icuin36d.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\..\..\lib\icuin34d.pdb"
+				ProgramDatabaseFile=".\..\..\lib\icuin36d.pdb"
 				BaseAddress="0x4a900000"
 				ImportLibrary="..\..\lib\icuind.lib"/>
 			<Tool
@@ -432,12 +434,6 @@
 "
 						Outputs="..\..\include\unicode\$(InputFileName)"/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\chnsecal.cpp">
-			</File>
-			<File
-				RelativePath=".\chnsecal.h">
 			</File>
 			<File
 				RelativePath=".\choicfmt.cpp">
@@ -1091,6 +1087,42 @@
 						Outputs="..\..\include\unicode\$(InputFileName)"/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\windtfmt.cpp">
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						DisableLanguageExtensions="FALSE"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						DisableLanguageExtensions="FALSE"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\windtfmt.h">
+			</File>
+			<File
+				RelativePath=".\winnmfmt.cpp">
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						DisableLanguageExtensions="FALSE"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						DisableLanguageExtensions="FALSE"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\winnmfmt.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="misc"
@@ -1370,6 +1402,86 @@
 			</File>
 			<File
 				RelativePath=".\unicode\utrans.h">
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy &quot;$(InputPath)&quot; ..\..\include\unicode
+"
+						Outputs="..\..\include\unicode\$(InputFileName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy &quot;$(InputPath)&quot; ..\..\include\unicode
+"
+						Outputs="..\..\include\unicode\$(InputFileName)"/>
+				</FileConfiguration>
+			</File>
+		</Filter>
+		<Filter
+			Name="charset detect"
+			Filter="">
+			<File
+				RelativePath=".\csdetect.cpp">
+			</File>
+			<File
+				RelativePath=".\csdetect.h">
+			</File>
+			<File
+				RelativePath=".\csmatch.cpp">
+			</File>
+			<File
+				RelativePath=".\csmatch.h">
+			</File>
+			<File
+				RelativePath=".\csr2022.cpp">
+			</File>
+			<File
+				RelativePath=".\csr2022.h">
+			</File>
+			<File
+				RelativePath=".\csrecog.cpp">
+			</File>
+			<File
+				RelativePath=".\csrecog.h">
+			</File>
+			<File
+				RelativePath=".\csrmbcs.cpp">
+			</File>
+			<File
+				RelativePath=".\csrmbcs.h">
+			</File>
+			<File
+				RelativePath=".\csrsbcs.cpp">
+			</File>
+			<File
+				RelativePath=".\csrsbcs.h">
+			</File>
+			<File
+				RelativePath=".\csrucode.cpp">
+			</File>
+			<File
+				RelativePath=".\csrucode.h">
+			</File>
+			<File
+				RelativePath=".\csrutf8.cpp">
+			</File>
+			<File
+				RelativePath=".\csrutf8.h">
+			</File>
+			<File
+				RelativePath=".\inputext.cpp">
+			</File>
+			<File
+				RelativePath=".\inputext.h">
+			</File>
+			<File
+				RelativePath=".\ucsdet.cpp">
+			</File>
+			<File
+				RelativePath=".\unicode\ucsdet.h">
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool

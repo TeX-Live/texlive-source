@@ -1,15 +1,16 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/eo.xml
+// * Source File:<path>/common/main/eo.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/eo.xml
+ *  ICU <specials> source: <path>/xml/main/eo.xml
  */
 eo{
+    AuxExemplarCharacters{"[q w-y]"}
     Countries{
         AD{"Andoro"}
         AE{"Unuiĝintaj Arabaj Emirlandos"}
@@ -236,7 +237,7 @@ eo{
         ZM{"Zambio"}
         ZW{"Zimbabvo"}
     }
-    ExemplarCharacters{"[a-z ŭ ĉ ĝ ĥ ĵ ŝ]"}
+    ExemplarCharacters{"[a-c ĉ d-g ĝ h ĥ i j ĵ k-p r s ŝ t u ŭ v z]"}
     Languages{
         aa{"afara"}
         ab{"abĥaza"}
@@ -391,19 +392,15 @@ eo{
         "E",
         "‰",
         "∞",
-        "�",
+        "NaN",
         "+",
     }
-    Version{"1.36"}
+    Version{"1.52"}
     calendar{
         gregorian{
             AmPmMarkers{
                 "atm",
                 "ptm",
-            }
-            DateTimeElements:intvector{
-                2,
-                4,
             }
             DateTimePatterns{
                 "H'-a horo kaj 'm z",
@@ -473,6 +470,22 @@ eo{
                         "oktobro",
                         "novembro",
                         "decembro",
+                    }
+                }
+            }
+            quarters{
+                format{
+                    abbreviated{
+                        "K1",
+                        "K2",
+                        "K3",
+                        "K4",
+                    }
+                    wide{
+                        "1a kvaronjaro",
+                        "2a kvaronjaro",
+                        "3a kvaronjaro",
+                        "4a kvaronjaro",
                     }
                 }
             }

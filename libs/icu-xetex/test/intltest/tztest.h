@@ -1,7 +1,7 @@
 
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2003, International Business Machines Corporation and
+ * Copyright (c) 1997-2005, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
  
@@ -83,6 +83,10 @@ public:
 
     void TestEquivalentIDs(void);
 
+    void TestAliasedNames(void);
+    
+    void TestFractionalDST(void);
+    
     static const UDate INTERVAL;
 
 private:

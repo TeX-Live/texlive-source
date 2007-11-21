@@ -1,19 +1,34 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/nl_BE.xml
+// * Source File:<path>/common/main/nl_BE.xml
 // *
 // ***************************************************************************
 nl_BE{
+    Countries{
+        172{"Gemenebest van Onafhankelijke Staten"}
+        833{"Het Eiland Man"}
+    }
+    Languages{
+        lv{"Lets"}
+        oc{"Occitaans (na 1500); Provençaals"}
+        sa{"Sanskriet"}
+        sh{"Servo-Kroatisch"}
+    }
     NumberPatterns{
         "#,##0.###",
         "#,##0.00 ¤",
         "#,##0%",
         "#E0",
     }
-    Version{"1.31"}
+    Types{
+        collation{
+            traditional{"Traditioneel"}
+        }
+    }
+    Version{"1.49"}
     calendar{
         gregorian{
             DateTimeElements:intvector{
@@ -21,7 +36,7 @@ nl_BE{
                 4,
             }
             DateTimePatterns{
-                "HH.mm' u. 'z",
+                "HH:mm:ss v",
                 "HH:mm:ss z",
                 "HH:mm:ss",
                 "HH:mm",

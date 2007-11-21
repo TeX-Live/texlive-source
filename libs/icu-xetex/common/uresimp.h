@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 2000-2005, International Business Machines
+*   Copyright (C) 2000-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 */
@@ -84,9 +84,9 @@ U_CAPI void U_EXPORT2 ures_initStackObject(UResourceBundle* resB);
 /* Some getters used by the copy constructor */
 U_CFUNC const char* ures_getName(const UResourceBundle* resB);
 U_CFUNC const char* ures_getPath(const UResourceBundle* resB);
-U_CFUNC void ures_appendResPath(UResourceBundle *resB, const char* toAdd, int32_t lenToAdd);
+/*U_CFUNC void ures_appendResPath(UResourceBundle *resB, const char* toAdd, int32_t lenToAdd);*/
 /*U_CFUNC void ures_setResPath(UResourceBundle *resB, const char* toAdd);*/
-U_CFUNC void ures_freeResPath(UResourceBundle *resB);
+/*U_CFUNC void ures_freeResPath(UResourceBundle *resB);*/
 
 /* Candidates for export */
 U_CFUNC UResourceBundle *ures_copyResb(UResourceBundle *r, const UResourceBundle *original, UErrorCode *status);
@@ -165,4 +165,77 @@ ures_getFunctionalEquivalent(char *result, int32_t resultCapacity,
 U_INTERNAL UEnumeration* U_EXPORT2
 ures_getKeywordValues(const char *path, const char *keyword, UErrorCode *status);
 
+/**
+ * Test if 2 resource bundles are equal
+ * @param res1
+ * @param res2
+ * @param status error code
+ * @internal ICU 3.6
+ */
+U_INTERNAL UBool U_EXPORT2
+ures_equal(const UResourceBundle* res1, const UResourceBundle* res2);
+
+/**
+ * Clones the given resource bundle
+ * @param res
+ * @param status error code
+ * @internal ICU 3.6
+ */
+U_INTERNAL UResourceBundle* U_EXPORT2
+ures_clone(const UResourceBundle* res, UErrorCode* status);
+
+/**
+ * Returns the parent bundle. Internal. DONOT close the returned bundle!!!
+ * @param res
+ * @internal ICU 3.6
+ */
+U_INTERNAL const UResourceBundle* U_EXPORT2
+ures_getParentBundle(const UResourceBundle* res);
+
+
+/**
+ * Get a resource with multi-level fallback. Normally only the top level resources will
+ * fallback to its parent. This performs fallback on subresources. For example, when a table
+ * is defined in a resource bundle and a parent resource bundle, normally no fallback occurs
+ * on the sub-resources because the table is defined in the current resource bundle, but this
+ * function can perform fallback on the sub-resources of the table.
+ * @param resB              a resource
+ * @param inKey             a key associated with the requested resource
+ * @param fillIn            if NULL a new UResourceBundle struct is allocated and must be deleted by the caller.
+ *                          Alternatively, you can supply a struct to be filled by this function.
+ * @param status: fills in the outgoing error code
+ *                could be <TT>U_MISSING_RESOURCE_ERROR</TT> if the key is not found
+ *                could be a non-failing error 
+ *                e.g.: <TT>U_USING_FALLBACK_WARNING</TT>,<TT>U_USING_DEFAULT_WARNING </TT>
+ * @return                  a pointer to a UResourceBundle struct. If fill in param was NULL, caller must delete it
+ * @internal ICU 3.0
+ */
+U_INTERNAL UResourceBundle* U_EXPORT2 
+ures_getByKeyWithFallback(const UResourceBundle *resB, 
+                          const char* inKey, 
+                          UResourceBundle *fillIn, 
+                          UErrorCode *status);
+
+
+/**
+ * Get a String with multi-level fallback. Normally only the top level resources will
+ * fallback to its parent. This performs fallback on subresources. For example, when a table
+ * is defined in a resource bundle and a parent resource bundle, normally no fallback occurs
+ * on the sub-resources because the table is defined in the current resource bundle, but this
+ * function can perform fallback on the sub-resources of the table.
+ * @param resB              a resource
+ * @param inKey             a key associated with the requested resource
+ * @param status: fills in the outgoing error code
+ *                could be <TT>U_MISSING_RESOURCE_ERROR</TT> if the key is not found
+ *                could be a non-failing error 
+ *                e.g.: <TT>U_USING_FALLBACK_WARNING</TT>,<TT>U_USING_DEFAULT_WARNING </TT>
+ * @return                  a pointer to a UResourceBundle struct. If fill in param was NULL, caller must delete it
+ * @internal ICU 3.4
+ * @draft ICU 3.4
+ */
+U_INTERNAL const UChar* U_EXPORT2 
+ures_getStringByKeyWithFallback(const UResourceBundle *resB, 
+                          const char* inKey,  
+                          int32_t* len,
+                          UErrorCode *status);
 #endif /*URESIMP_H*/

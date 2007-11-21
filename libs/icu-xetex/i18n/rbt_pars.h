@@ -1,5 +1,7 @@
 /*
-* Copyright (C) 1999-2005, International Business Machines Corporation and others. All Rights Reserved.
+**********************************************************************
+* Copyright (C) 1999-2006, International Business Machines Corporation
+* and others. All Rights Reserved.
 **********************************************************************
 *   Date        Name        Description
 *   11/17/99    aliu        Creation.
@@ -17,6 +19,8 @@
 #include "unicode/parseerr.h"
 #include "unicode/unorm.h"
 #include "rbt.h"
+#include "hash.h"
+#include "uvector.h"
 
 U_NAMESPACE_BEGIN
 
@@ -25,8 +29,6 @@ class UnicodeFunctor;
 class ParseData;
 class RuleHalf;
 class ParsePosition;
-class UVector;
-class Hashtable;
 class StringMatcher;
 
 class TransliteratorParser : public UMemory {
@@ -37,13 +39,13 @@ class TransliteratorParser : public UMemory {
      * A Vector of TransliterationRuleData objects, one for each discrete group
      * of rules in the rule set
      */
-    UVector* dataVector;
+    UVector dataVector;
 
     /**
      * PUBLIC data member.
      * A Vector of UnicodeStrings containing all of the ID blocks in the rule set
      */
-    UVector* idBlockVector;
+    UVector idBlockVector;
 
     /**
      * PUBLIC data member containing the parsed compound filter, if any.
@@ -60,12 +62,6 @@ class TransliteratorParser : public UMemory {
     UTransDirection direction;
 
     /**
-     * We use a single error code during parsing.  Rather than pass it
-     * through each API, we keep it here.
-     */
-    UErrorCode status;
-
-    /**
      * Parse error information.
      */
     UParseError parseError;
@@ -80,13 +76,13 @@ class TransliteratorParser : public UMemory {
      * is copied into the array data.variables.  As with data.variables,
      * element 0 corresponds to character data.variablesBase.
      */
-    UVector* variablesVector;
+    UVector variablesVector;
 
     /**
      * Temporary table of variable names.  When parsing is complete, this is
      * copied into data.variableNames.
      */
-    Hashtable* variableNames;    
+    Hashtable variableNames;    
     
     /**
      * String of standins for segments.  Used during the parsing of a single
@@ -101,7 +97,7 @@ class TransliteratorParser : public UMemory {
      * segmentStandins.charAt(0) is the standin for "$1" and corresponds
      * to StringMatcher object segmentObjects.elementAt(0), etc.
      */
-    UVector* segmentObjects;
+    UVector segmentObjects;
 
     /**
      * The next available stand-in for variables.  This starts at some point in
@@ -139,7 +135,7 @@ public:
     /**
      * Constructor.
      */
-    TransliteratorParser();
+    TransliteratorParser(UErrorCode &statusReturn);
 
     /**
      * Destructor.
@@ -181,7 +177,8 @@ private:
      * @param direction  either FORWARD or REVERSE.
      */
     void parseRules(const UnicodeString& rules,
-                    UTransDirection direction);
+                    UTransDirection direction,
+                    UErrorCode& status);
 
     /**
      * MAIN PARSER.  Parse the next rule in the given rule string, starting
@@ -200,14 +197,14 @@ private:
      * @param limit      pointer past the last character of the rule.
      * @return           the index after the last character parsed.
      */
-    int32_t parseRule(const UnicodeString& rule, int32_t pos, int32_t limit);
+    int32_t parseRule(const UnicodeString& rule, int32_t pos, int32_t limit, UErrorCode& status);
 
     /**
      * Set the variable range to [start, end] (inclusive).
      * @param start    the start value of the range.
      * @param end      the end value of the range.
      */
-    void setVariableRange(int32_t start, int32_t end);
+    void setVariableRange(int32_t start, int32_t end, UErrorCode& status);
 
     /**
      * Assert that the given character is NOT within the variable range.
@@ -250,7 +247,7 @@ private:
      * @return the position index after the final ';' of the pragma,
      * or -1 on failure.
      */
-    int32_t parsePragma(const UnicodeString& rule, int32_t pos, int32_t limit);
+    int32_t parsePragma(const UnicodeString& rule, int32_t pos, int32_t limit, UErrorCode& status);
 
     /**
      * Called by main parser upon syntax error.  Search the rule string
@@ -262,7 +259,8 @@ private:
      * @param start position of first character of current rule.
      * @return start position of first character of current rule.
      */
-    int32_t syntaxError(UErrorCode parseErrorCode, const UnicodeString&, int32_t start);
+    int32_t syntaxError(UErrorCode parseErrorCode, const UnicodeString&, int32_t start,
+                        UErrorCode& status);
 
     /**
      * Parse a UnicodeSet out, store it, and return the stand-in character
@@ -273,7 +271,8 @@ private:
      * @return        the stand-in character used to represent it.
      */
     UChar parseSet(const UnicodeString& rule,
-                   ParsePosition& pos);
+                   ParsePosition& pos,
+                   UErrorCode& status);
 
     /**
      * Generate and return a stand-in for a new UnicodeFunctor.  Store
@@ -281,28 +280,28 @@ private:
      * @param adopted the UnicodeFunctor to be adopted.
      * @return        a stand-in for a new UnicodeFunctor.
      */
-    UChar generateStandInFor(UnicodeFunctor* adopted);
+    UChar generateStandInFor(UnicodeFunctor* adopted, UErrorCode& status);
 
     /**
      * Return the standin for segment seg (1-based).
      * @param seg    the given segment.
      * @return       the standIn character for the given segment.
      */
-    UChar getSegmentStandin(int32_t seg);
+    UChar getSegmentStandin(int32_t seg, UErrorCode& status);
 
     /**
      * Set the object for segment seg (1-based).
      * @param seg      the given segment.
      * @param adopted  the StringMatcher to be adopted.
      */
-    void setSegmentObject(int32_t seg, StringMatcher* adopted);
+    void setSegmentObject(int32_t seg, StringMatcher* adopted, UErrorCode& status);
 
     /**
      * Return the stand-in for the dot set.  It is allocated the first
      * time and reused thereafter.
      * @return    the stand-in for the dot set.
      */
-    UChar getDotStandIn();
+    UChar getDotStandIn(UErrorCode& status);
 
     /**
      * Append the value of the given variable name to the given
@@ -311,7 +310,8 @@ private:
      * @param buf     the given UnicodeString to append to.
      */
     void appendVariableDef(const UnicodeString& name,
-                           UnicodeString& buf);
+                           UnicodeString& buf,
+                           UErrorCode& status);
 
     /**
      * Glue method to get around access restrictions in C++.

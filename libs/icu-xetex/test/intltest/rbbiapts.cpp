@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1999-2005, International Business Machines Corporation and
+ * Copyright (c) 1999-2006, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /************************************************************************
@@ -20,6 +20,7 @@
 #include "rbbiapts.h"
 #include "rbbidata.h"
 #include "cstring.h"
+#include "ubrkimpl.h"
 #include "unicode/ustring.h"
 #include "unicode/utext.h"
 
@@ -147,8 +148,8 @@ void RBBIAPITest::TestCloneEquals()
 void RBBIAPITest::TestBoilerPlate()
 {
     UErrorCode status = U_ZERO_ERROR;
-    BreakIterator* a = BreakIterator::createLineInstance(Locale("hi"), status);
-    BreakIterator* b = BreakIterator::createLineInstance(Locale("hi_IN"),status);
+    BreakIterator* a = BreakIterator::createWordInstance(Locale("hi"), status);
+    BreakIterator* b = BreakIterator::createWordInstance(Locale("hi_IN"),status);
     if (U_FAILURE(status)) {
         errln("Creation of break iterator failed %s", u_errorName(status));
         return;
@@ -156,7 +157,7 @@ void RBBIAPITest::TestBoilerPlate()
     if(*a!=*b){
         errln("Failed: boilerplate method operator!= does not return correct results");
     }
-    BreakIterator* c = BreakIterator::createLineInstance(Locale("th"),status);
+    BreakIterator* c = BreakIterator::createWordInstance(Locale("ja"),status);
     if(a && c){
         if(*c==*a){
             errln("Failed: boilerplate method opertator== does not return correct results");
@@ -259,8 +260,10 @@ void RBBIAPITest::TestGetSetAdoptText()
     CharacterIterator* text3= new StringCharacterIterator(str2, 3, 10, 3); //  "ond str"
     
     wordIter1->setText(str1);
-    if(wordIter1->getText() != *text1)
-       errln((UnicodeString)"ERROR:1 error in setText or getText ");
+    CharacterIterator *tci = &wordIter1->getText();
+    UnicodeString      tstr;
+    tci->getText(tstr);
+    TEST_ASSERT(tstr == str1);
     if(wordIter1->current() != 0)
         errln((UnicodeString)"ERROR:1 setText did not set the iteration position to the beginning of the text, it is" + wordIter1->current() + (UnicodeString)"\n");
 
@@ -272,9 +275,14 @@ void RBBIAPITest::TestGetSetAdoptText()
 
 
     charIter1->adoptText(text1Clone);
-    if( wordIter1->getText() == charIter1->getText() || 
-        wordIter1->getText() != *text2 ||  charIter1->getText() != *text1 )
-        errln((UnicodeString)"ERROR:2 error is getText or setText()");
+    TEST_ASSERT(wordIter1->getText() != charIter1->getText());
+    tci = &wordIter1->getText();
+    tci->getText(tstr);
+    TEST_ASSERT(tstr == str2);
+    tci = &charIter1->getText();
+    tci->getText(tstr);
+    TEST_ASSERT(tstr == str1);
+
 
     RuleBasedBreakIterator* rb=(RuleBasedBreakIterator*)wordIter1->clone();
     rb->adoptText(text1);
@@ -285,13 +293,17 @@ void RBBIAPITest::TestGetSetAdoptText()
         errln((UnicodeString)"ERROR:2 error in adoptText ");
 
     // Adopt where iterator range is less than the entire orignal source string.
+    //   (With the change of the break engine to working with UText internally,
+    //    CharacterIterators starting at positions other than zero are not supported)
     rb->adoptText(text3);
-    if(rb->preceding(2) != 3) {
-        errln((UnicodeString)"ERROR:3 error in adoptText ");
-    }
-    if(rb->following(11) != BreakIterator::DONE) {
-        errln((UnicodeString)"ERROR:4 error in adoptText ");
-    }
+    TEST_ASSERT(rb->preceding(2) == 0);
+    TEST_ASSERT(rb->following(11) == BreakIterator::DONE);
+    //if(rb->preceding(2) != 3) {
+    //    errln((UnicodeString)"ERROR:3 error in adoptText ");
+    //}
+    //if(rb->following(11) != BreakIterator::DONE) {
+    //    errln((UnicodeString)"ERROR:4 error in adoptText ");
+    //}
 
     // UText API
     //
@@ -341,6 +353,13 @@ void RBBIAPITest::TestGetSetAdoptText()
     TEST_ASSERT(pos==0);
     pos = wordIter1->previous();
     TEST_ASSERT(pos==UBRK_DONE);
+
+    status = U_ZERO_ERROR;
+    UnicodeString sEmpty;
+    UText *gut2 = utext_openUnicodeString(NULL, &sEmpty, &status);
+    wordIter1->getUText(gut2, status);
+    TEST_ASSERT_SUCCESS(status);
+    utext_close(gut2);
 
     utext_close(ut);
     utext_close(ut2);
@@ -858,17 +877,17 @@ void RBBIAPITest::TestBug2190() {
 void RBBIAPITest::TestRegistration() {
 #if !UCONFIG_NO_SERVICE
     UErrorCode status = U_ZERO_ERROR;
-    BreakIterator* thai_word = BreakIterator::createWordInstance("th_TH", status);
+    BreakIterator* ja_word = BreakIterator::createWordInstance("ja_JP", status);
     
     // ok to not delete these if we exit because of error?
-    BreakIterator* thai_char = BreakIterator::createCharacterInstance("th_TH", status);
+    BreakIterator* ja_char = BreakIterator::createCharacterInstance("ja_JP", status);
     BreakIterator* root_word = BreakIterator::createWordInstance("", status);
     BreakIterator* root_char = BreakIterator::createCharacterInstance("", status);
     
-    URegistryKey key = BreakIterator::registerInstance(thai_word, "xx", UBRK_WORD, status);
+    URegistryKey key = BreakIterator::registerInstance(ja_word, "xx", UBRK_WORD, status);
     {
-        if (thai_word && *thai_word == *root_word) {
-            errln("thai not different from root");
+        if (ja_word && *ja_word == *root_word) {
+            errln("japan not different from root");
         }
     }
     
@@ -876,7 +895,7 @@ void RBBIAPITest::TestRegistration() {
         BreakIterator* result = BreakIterator::createWordInstance("xx_XX", status);
         UBool fail = TRUE;
         if(result){
-            fail = *result != *thai_word;
+            fail = *result != *ja_word;
         }
         delete result;
         if (fail) {
@@ -885,14 +904,14 @@ void RBBIAPITest::TestRegistration() {
     }
     
     {
-        BreakIterator* result = BreakIterator::createCharacterInstance("th_TH", status);
+        BreakIterator* result = BreakIterator::createCharacterInstance("ja_JP", status);
         UBool fail = TRUE;
         if(result){
-            fail = *result != *thai_char;
+            fail = *result != *ja_char;
         }
         delete result;
         if (fail) {
-            errln("bad result for th_TH/char");
+            errln("bad result for ja_JP/char");
         }
     }
     
@@ -977,8 +996,8 @@ void RBBIAPITest::TestRegistration() {
     }
     
     
-    // that_word was adopted by factory
-    delete thai_char;
+    // ja_word was adopted by factory
+    delete ja_char;
     delete root_word;
     delete root_char;
 #endif
@@ -989,7 +1008,7 @@ void RBBIAPITest::RoundtripRule(const char *dataFile) {
     UParseError parseError;
     parseError.line = 0;
     parseError.offset = 0;
-    UDataMemory *data = udata_open(NULL, "brk", dataFile, &status);
+    UDataMemory *data = udata_open(U_ICUDATA_BRKITR, "brk", dataFile, &status);
     uint32_t length;
     const UChar *builtSource;
     const uint8_t *rbbiRules;
@@ -1025,8 +1044,8 @@ void RBBIAPITest::TestRoundtripRules() {
     RoundtripRule("line");
     RoundtripRule("char");
     if (!quick) {
-        RoundtripRule("word_th");
-        RoundtripRule("line_th");
+        RoundtripRule("word_ja");
+        RoundtripRule("word_POSIX");
     }
 }
 

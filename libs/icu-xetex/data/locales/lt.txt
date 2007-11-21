@@ -1,17 +1,45 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/lt.xml
+// * Source File:<path>/common/main/lt.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/lt.xml
+ *  ICU <specials> source: <path>/xml/main/lt.xml
  */
 lt{
+    AuxExemplarCharacters{"[q w x]"}
     Countries{
+        001{"Pasaulis"}
+        002{"Afrika"}
+        005{"Pietų Amerika"}
+        011{"Vakarų Afrika"}
+        013{"Centrinė Amerika"}
+        014{"Rytų Afrika"}
+        015{"Šiaurės Afrika"}
+        017{"Vidurio Afrika"}
+        018{"Pietų Afrika [018]"}
+        019{"Amerika"}
+        029{"Karibai"}
+        030{"Rytų Azija"}
+        034{"Pietų Azija"}
+        035{"Pietryčių Azija"}
+        039{"Pietų Europa"}
+        053{"Australija ir Naujoji Zelandija"}
+        054{"Melanezija"}
+        057{"Mikronezija [057]"}
+        061{"Polinezija"}
+        142{"Azija"}
+        143{"Centrinė Azija"}
+        145{"Vakarų Azija"}
+        150{"Europa"}
+        151{"Rytų Europa"}
+        154{"Šiaurės Europa"}
+        155{"Vakarų Europa"}
         200{"Čekoslovakija"}
+        419{"Lotynų Amerika ir Karibai"}
         AD{"Andora"}
         AE{"Jungtiniai Arabų Emyratai"}
         AF{"Afganistanas"}
@@ -60,6 +88,7 @@ lt{
         CN{"Kinija"}
         CO{"Kolumbija"}
         CR{"Kosta Rika"}
+        CS{"Serbija ir Juodkalnija"}
         CU{"Kuba"}
         CV{"Žaliasis Kyšulys"}
         CX{"Kalėdų sala"}
@@ -103,7 +132,7 @@ lt{
         GW{"Bisau Gvinėja"}
         GY{"Gajana"}
         HK{"Kinijos S.A.R.Honkongas"}
-        HM{"Heardo salos"}
+        HM{"Heardo ir McDonaldo Salų Sritis"}
         HN{"Hondūras"}
         HR{"Kroatija"}
         HT{"Haitis"}
@@ -151,7 +180,7 @@ lt{
         ML{"Malis"}
         MM{"Mianmaras"}
         MN{"Mongolija"}
-        MO{"Kinijos S.A.R. Makao"}
+        MO{"Macao"}
         MP{"Marianos šiaurinės salos"}
         MQ{"Martinika"}
         MR{"Mauritanija"}
@@ -191,7 +220,6 @@ lt{
         PW{"Palau"}
         PY{"Paragvajus"}
         QA{"Kataras"}
-        RE{"Rejunjonas"}
         RO{"Rumunija"}
         RU{"Rusijos Federacija"}
         RW{"Ruanda"}
@@ -289,10 +317,15 @@ lt{
             "JAV doleris",
         }
     }
-    ExemplarCharacters{"[a-z ą ę į ų ė ū č š ž]"}
+    ExemplarCharacters{"[a ą b c č d e ę ė f-i į y j-p r s š t u ų ū v z ž]"}
+    Keys{
+        calendar{"kalendorius"}
+        currency{"valiuta"}
+    }
     Languages{
         ar{"Arabų"}
         bg{"Bulgarų"}
+        bn{"Bengalų"}
         cs{"Čekų"}
         da{"Danų"}
         de{"Vokiečių"}
@@ -320,6 +353,7 @@ lt{
         sk{"Slovakų"}
         sl{"Slovėnų"}
         sv{"Švedų"}
+        th{"Tajų"}
         tr{"Turkų"}
         zh{"Kinų"}
     }
@@ -337,22 +371,18 @@ lt{
         "E",
         "‰",
         "∞",
-        "�",
+        "NaN",
         "+",
     }
     Scripts{
         Latn{"Latin"}
     }
-    Version{"1.45"}
+    Version{"1.71"}
     calendar{
         gregorian{
             AmPmMarkers{
                 "priešpiet",
                 "popiet",
-            }
-            DateTimeElements:intvector{
-                2,
-                4,
             }
             DateTimePatterns{
                 "HH:mm:ss z",
@@ -402,6 +432,41 @@ lt{
                 abbreviated{
                     "pr. Kr.",
                     "po Kr.",
+                }
+            }
+            fields{
+                day{
+                    dn{"diena"}
+                }
+                dayperiod{
+                    dn{"dienos metas"}
+                }
+                era{
+                    dn{"era"}
+                }
+                hour{
+                    dn{"valanda"}
+                }
+                minute{
+                    dn{"minutė"}
+                }
+                month{
+                    dn{"mėnuo"}
+                }
+                second{
+                    dn{"Sekundė"}
+                }
+                week{
+                    dn{"savaitė"}
+                }
+                weekday{
+                    dn{"savaitės diena"}
+                }
+                year{
+                    dn{"metai"}
+                }
+                zone{
+                    dn{"juosta"}
                 }
             }
             monthNames{
@@ -466,7 +531,53 @@ lt{
                     }
                 }
             }
+            quarters{
+                format{
+                    abbreviated{
+                        "K1",
+                        "K2",
+                        "K3",
+                        "K4",
+                    }
+                    wide{
+                        "pirmas ketvirtis",
+                        "antras ketvirtis",
+                        "trečias ketvirtis",
+                        "ketvirtas ketvirtis",
+                    }
+                }
+            }
         }
     }
+    delimiters{
+        quotationEnd{"“"}
+        quotationStart{"„"}
+    }
     localPatternChars{"GanjkHmsSEDFwWxhKzAeugXZvcL"}
+    zoneStrings{
+        "America:Chicago"{
+            ec{"Čikaga"}
+        }
+        "America:Denver"{
+            ec{"Denveris"}
+        }
+        "America:Indiana:Petersburg"{
+            ec{"Peterburgas"}
+        }
+        "America:Los_Angeles"{
+            ec{"Los Andželas"}
+        }
+        "America:Moncton"{
+            ec{"Monktonas"}
+        }
+        "America:New_York"{
+            ec{"Niujorkas"}
+        }
+        "America:Phoenix"{
+            ec{"Fyniksas"}
+        }
+        "America:Sao_Paulo"{
+            ec{"San Paulas"}
+        }
+    }
 }

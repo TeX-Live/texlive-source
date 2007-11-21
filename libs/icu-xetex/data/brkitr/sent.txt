@@ -1,14 +1,18 @@
 #
-#   Copyright (C) 2002-2005, International Business Machines Corporation and others.
+#   Copyright (C) 2002-2006, International Business Machines Corporation and others.
 #       All Rights Reserved.
 #
 #   file:  sent.txt
 #
 #   ICU Sentence Break Rules
 #      See Unicode Standard Annex #29.
-#      These rules are based on TR 29 version 4.0.0
+#      These rules are based on SA 29 version 5.0.0
+#      Includes post 5.0 changes to treat Japanese half width voicing marks
+#        as Grapheme Extend.
 #
 
+
+$VoiceMarks   = [\uff9e\uff9f];
 
 #
 # Character categories as defined in TR 29
@@ -18,130 +22,103 @@ $Format    = [\p{Sentence_Break = Format}];
 $Sp        = [\p{Sentence_Break = Sp}];
 $Lower     = [\p{Sentence_Break = Lower}];
 $Upper     = [\p{Sentence_Break = Upper}];
-$OLetter   = [\p{Sentence_Break = OLetter}];
+$OLetter   = [\p{Sentence_Break = OLetter}-$VoiceMarks];
 $Numeric   = [\p{Sentence_Break = Numeric}];
 $ATerm     = [\p{Sentence_Break = ATerm}];
-$Term      = [\p{Sentence_Break = STerm}];
+$STerm     = [\p{Sentence_Break = STerm}];
 $Close     = [\p{Sentence_Break = Close}];
 
 #
 # Define extended forms of the character classes,
 #   incorporate grapheme cluster + format chars.
+#   Rules 4 and 5.  
 
-$Extend     = [[:Grapheme_Extend = TRUE:]];
-$ATermEx    = $ATerm   $Extend* $Format*;
-$NumericEx  = $Numeric $Extend* $Format*;
-$UpperEx    = $Upper   $Extend* $Format*;
-$TermEx     = $Term    $Extend* $Format*;
 
-#
-#  $SepSeq keeps together CRLF as a separator.  (CRLF is a grapheme cluster)
-#
-$SepSeq  = $Sep | \u000d\u000a;
+$CR         = \u000d;
+$LF         = \u000a;
+$Extend     = [[:Grapheme_Extend = TRUE:]$VoiceMarks];
 
-# $InteriorChars are those that never trigger a following break.
-$InteriorChars = [^$Term $ATerm $Sep];   #Note:  includes Extend and Format chars
+$SpEx       = $Sp      ($Extend | $Format)*;
+$LowerEx    = $Lower   ($Extend | $Format)*;
+$UpperEx    = $Upper   ($Extend | $Format)*;
+$OLetterEx  = $OLetter ($Extend | $Format)*;
+$NumericEx  = $Numeric ($Extend | $Format)*;
+$ATermEx    = $ATerm   ($Extend | $Format)*;
+$STermEx    = $STerm   ($Extend | $Format)*;
+$CloseEx    = $Close   ($Extend | $Format)*;
+
 
 ## -------------------------------------------------
 
+!!chain;
 !!forward;
 
-# Rule 6.  Match an ATerm (.) that does not cause a break because a number immediately follows it.
-$NumberFollows = $InteriorChars* $ATermEx $NumericEx;
+# Rule 3 - break after separators.  Keep CR/LF together.
+#
+$CR $LF;
 
 
-# Rule 7.  $UppersSurround   Match a no-break sentence fragment containing a . surrounded by Uppers
-$UppersSurround = $InteriorChars* $UpperEx $ATermEx $UpperEx;
+# Rule 4 - Break after $Sep.
+# Rule 5 - Ignore $Format and $Extend
+#
+[^$Sep]? ($Extend | $Format)*;
 
-# Rule 8   Matches a sentence fragment containing "." that should not cause a sentence break,
-#          because a lower case word follows the period.
-$LowerWordFollows  = $InteriorChars* $ATermEx $Close* $Sp* [^$OLetter $Upper $Lower $Sep]* $Lower;
 
-# Rules 3, 9, 10, 11
-#                       Matches a simple sentence, or the trailing part of a complex sentence,
-#                       where a simple sentence contains no interior "."s.
-$TermEndSequence   = $InteriorChars* ($TermEx | $ATermEx) $Close* $Sp* $SepSeq?;
-$EndSequence       = $InteriorChars* $SepSeq?;
+# Rule 6
+$ATermEx $NumericEx;
 
-# Put them all together.
-($NumberFollows | $UppersSurround |  $LowerWordFollows)*  $TermEndSequence{0};   # status = UBRK_SENTENCE_TERM
-($NumberFollows | $UppersSurround |  $LowerWordFollows)*  $EndSequence{100};     # status = UBRK_SENTENCE_SEP
+# Rule 7
+$UpperEx $ATermEx $UpperEx;
+
+#Rule 8
+#  Note:  follows errata for Unicode 5.0 boundary rules.
+$NotLettersEx = [^$OLetter $Upper $Lower $Sep $ATerm $STerm] ($Extend | $Format)*;
+$ATermEx $CloseEx* $SpEx* $NotLettersEx* $Lower;
+
+# Rule 8a
+($STermEx | $ATermEx) $CloseEx* $SpEx* ($STermEx | $ATermEx);
+
+#Rule 9, 10, 11
+($STermEx | $ATermEx) $CloseEx* $SpEx* $Sep?;
+
+#Rule 12
+[[^$STerm $ATerm $Close $Sp $Sep $Format $Extend]{bof}] ($Extend | $Format | $Close | $Sp)* .;
+[[^$STerm $ATerm $Close $Sp $Sep $Format $Extend]{bof}] ($Extend | $Format | $Close | $Sp)* ([$Sep{eof}] | $CR $LF){100};
 
 ## -------------------------------------------------
 
 !!reverse;
 
-# rule 6
+$SpEx_R       = ($Extend | $Format)* $Sp;
+$ATermEx_R    = ($Extend | $Format)* $ATerm;
+$STermEx_R    = ($Extend | $Format)* $STerm;
+$CloseEx_R    = ($Extend | $Format)* $Close;
 
-$RULE6 = $Numeric $Format* $Extend* $ATerm;
+#
+#  Reverse rules.
+#     For now, use the old style inexact reverse rules, which are easier
+#     to write, but less efficient.
+#     TODO:  exact reverse rules.  It appears that exact reverse rules
+#            may require improving support for look-ahead breaks in the
+#            builder.  Needs more investigation.
+#
 
-# rule 7
+[{bof}] (.? | $LF $CR) [^$Sep]* [$Sep {eof}] ($SpEx_R* $CloseEx_R* ($STermEx_R | $ATermEx_R))*;
+#.*;
 
-$RULE7 = $Upper $Format* $Extend* $ATerm $Format* $Extend* $Upper;
-
-# rule 8
-
-$RULE8 = $Lower ($Format* $Extend* [^$OLetter $Upper $Lower $Sep])* 
-             ($Format* $Extend* $Sp)* ($Format* $Extend* $Close)*
-             $Format* $Extend* $ATerm;
-
-# rule 9, 10, 11
-
-# $CR $LF
-$End = $Sep | \u000a\u000d
-       | $Format* $Extend* $Sp* $Format* $Extend* $Close* $Format* 
-		 $Extend* ($Term | $ATerm)
-	   | $Sep $Format* $Extend* $Sp* $Format* $Extend* $Close* $Format* 
-		 $Extend* ($Term | $ATerm);
-	
-# rule 12
-
-$RULE12 = [^$Sep $Term $ATerm];
-
-$Join = ($RULE6 | $RULE7 | $RULE8 | $RULE12)*;
-
-$End;
-
-$End? $Join [$RULE12 - $Sp - $Close];
-
-# forces a break at the beginning of text "$Sp blah blah blah"
-# remember the break iterators takes the longest match
-$NOT_T_A_S_C = [^$Term $ATerm $Sp $Close];
-$End? $Join $Sp / [$NOT_T_A_S_C {eof}];
-
-# forces a break at the beginning of text "$Close blah blah blah"
-$NOT_T_A_C = [^$Term $ATerm $Close];
-$End? $Join $Close / [$NOT_T_A_C {eof}];
-
-## -------------------------------------------------
-
-!!safe_reverse;
-
-# rule 4
-$Extend+ [^$Extend];
-
-# rule 7
-$Extend* $ATerm $Format* $Extend* $Upper;
-
-# rule 8
-($Extend* $Term)+ ($Extend* $Sp $Format*)* ($Extend* $Close $Format*)* $Extend* $ATerm;
-
-# rule 11
-($Extend* $Sp $Format*)* ($Extend* $Close $Format*)*;
-($Extend* $Sp $Format*)* ($Extend* $Close $Format*)* $Extend* ($Term | $ATerm);
-
-## -------------------------------------------------
-
-!!safe_forward;
-
-# rule 7
-
-$ATerm $Extend* $Format* $Upper;
-
-# rule 8
-
-$Lower .;
-
-# rule 11
-
-($Close $Extend* $Format*)* ($Sp $Extend* $Format*)*;
+# Explanation for this rule:
+#
+#    It needs to back over
+#        The $Sep at which we probably begin
+#        All of the non $Sep chars leading to the preceding $Sep
+#        The preceding $Sep, which will be the second one that the rule matches.
+#        Any immediately preceding STerm or ATerm sequences.  We need to see these
+#              to get the correct rule status when moving forwards again.
+#        
+# [{bof}]           inhibit rule chaining.  Without this, rule would loop on itself and match
+#                   the entire string.
+#
+# (.? | $LF $CR)    Match one $Sep instance.  Use .? rather than $Sep because position might be
+#                   at the beginning of the string at this point, and we don't want to fail.
+#                   Can only use {eof} once, and it is used later.
+#

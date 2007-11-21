@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2003, International Business Machines
+*   Copyright (C) 2003-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -19,8 +19,6 @@
 *   in various IDNA conversion processes.
 */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "unicode/utypes.h"
 
 #if !UCONFIG_NO_IDNA && !UCONFIG_NO_TRANSLITERATION
@@ -40,6 +38,7 @@
 #include "sprpimpl.h"
 #include "testidna.h"
 #include "punyref.h"
+#include <stdlib.h>
 
 UBool beVerbose=FALSE, haveCopyright=TRUE;
 
@@ -222,8 +221,12 @@ getValues(uint32_t result, int32_t& value, UBool& isIndex){
          * the source codepoint is copied to the destination
          */
         type = USPREP_TYPE_LIMIT;
+        isIndex =FALSE;
+        value = 0;
     }else if(result >= _SPREP_TYPE_THRESHOLD){
         type = (UStringPrepType) (result - _SPREP_TYPE_THRESHOLD);
+        isIndex =FALSE;
+        value = 0;
     }else{
         /* get the state */
         type = USPREP_MAP;

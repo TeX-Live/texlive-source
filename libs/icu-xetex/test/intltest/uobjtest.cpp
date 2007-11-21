@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 2002-2005, International Business Machines Corporation and
+ * Copyright (c) 2002-2006, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -261,7 +261,7 @@ void UObjectTest::testIDs()
 #if !UCONFIG_NO_BREAK_ITERATION
     /* TESTCLASSID_ABSTRACT(BreakIterator); No staticID!  */
     TESTCLASSID_FACTORY(RuleBasedBreakIterator, BreakIterator::createLineInstance("mt",status));
-    TESTCLASSID_FACTORY(DictionaryBasedBreakIterator, BreakIterator::createLineInstance("th",status));
+    //TESTCLASSID_FACTORY(DictionaryBasedBreakIterator, BreakIterator::createLineInstance("th",status));
 #endif
     
     //TESTCLASSID_DEFAULT(EscapeTransliterator);
@@ -284,7 +284,7 @@ void UObjectTest::testIDs()
     TESTCLASSID_TRANSLIT(UnicodeNameTransliterator, "Any-Name");
     TESTCLASSID_TRANSLIT(UppercaseTransliterator, "Upper");
     TESTCLASSID_CTOR(CaseMapTransliterator, (UnicodeString(), NULL));
-    //TESTCLASSID_CTOR(Quantifier, (NULL, 0, 0));
+    TESTCLASSID_CTOR(Quantifier, (NULL, 0, 0));
 #if UOBJTEST_TEST_INTERNALS
     TESTCLASSID_CTOR(FunctionReplacer, (NULL,NULL) ); /* don't care */
 #endif
@@ -414,6 +414,13 @@ void UObjectTest::testUMemory() {
     // destroy object and delete space manually
     p->~UnicodeString(); 
     UnicodeString::operator delete(p, stackMemory); 
+
+    // Jitterbug 4452, for coverage
+    UnicodeString *pa = new UnicodeString[2];
+    if ( !pa[0].isEmpty() || !pa[1].isEmpty()){
+        errln("constructor used with array new did not work right");
+    }
+    delete [] pa;
 #endif
 
     // try to call the compiler-generated UMemory::operator=(class UMemory const &)
@@ -429,7 +436,7 @@ void UObjectTest::TestMFCCompatibility() {
     if(str->charAt(0) != 0x0040) {
         errln("debug new doesn't work.");
     }
-    delete str;
+    UnicodeString::operator delete(str, __FILE__, __LINE__);
 #endif
 }
 

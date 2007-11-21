@@ -28,6 +28,7 @@
 				RuntimeLibrary="3"
 				BufferSecurityCheck="TRUE"
 				DisableLanguageExtensions="TRUE"
+				TreatWChar_tAsBuiltInType="TRUE"
 				PrecompiledHeaderFile=".\Debug/layout.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
@@ -41,11 +42,11 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin\icule34d.dll"
+				OutputFile="..\..\bin\icule36d.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\..\..\lib\icule34d.pdb"
+				ProgramDatabaseFile=".\..\..\lib\icule36d.pdb"
 				BaseAddress="0x4ac00000"
 				ImportLibrary="..\..\lib\iculed.lib"/>
 			<Tool
@@ -94,6 +95,7 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
 				DisableLanguageExtensions="TRUE"
+				TreatWChar_tAsBuiltInType="TRUE"
 				PrecompiledHeaderFile=".\Release/layout.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
@@ -105,10 +107,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin\icule34.dll"
+				OutputFile="..\..\bin\icule36.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				ProgramDatabaseFile=".\..\..\lib\icule34.pdb"
+				ProgramDatabaseFile=".\..\..\lib\icule36.pdb"
 				EnableCOMDATFolding="2"
 				BaseAddress="0x4ac00000"
 				ImportLibrary="..\..\lib\icule.lib"/>
@@ -221,6 +223,9 @@
 				RelativePath=".\GXLayoutEngine.cpp">
 			</File>
 			<File
+				RelativePath=".\HangulLayoutEngine.cpp">
+			</File>
+			<File
 				RelativePath=".\HanLayoutEngine.cpp">
 			</File>
 			<File
@@ -284,6 +289,9 @@
 				RelativePath=".\MarkToMarkPosnSubtables.cpp">
 			</File>
 			<File
+				RelativePath=".\MirroredCharData.cpp">
+			</File>
+			<File
 				RelativePath=".\MorphTables.cpp">
 			</File>
 			<File
@@ -317,6 +325,9 @@
 				RelativePath=".\SegmentSingleProcessor.cpp">
 			</File>
 			<File
+				RelativePath=".\ShapingTypeData.cpp">
+			</File>
+			<File
 				RelativePath=".\SimpleArrayProcessor.cpp">
 			</File>
 			<File
@@ -345,6 +356,12 @@
 			</File>
 			<File
 				RelativePath=".\ThaiStateTables.cpp">
+			</File>
+			<File
+				RelativePath=".\TibetanLayoutEngine.cpp">
+			</File>
+			<File
+				RelativePath=".\TibetanReordering.cpp">
 			</File>
 			<File
 				RelativePath=".\TrimmedArrayProcessor.cpp">
@@ -441,10 +458,10 @@
 				RelativePath=".\GXLayoutEngine.h">
 			</File>
 			<File
-				RelativePath=".\HanLayoutEngine.h">
+				RelativePath=".\HangulLayoutEngine.h">
 			</File>
 			<File
-				RelativePath=".\HindiFeatureTags.h">
+				RelativePath=".\HanLayoutEngine.h">
 			</File>
 			<File
 				RelativePath=".\IndicLayoutEngine.h">
@@ -742,6 +759,12 @@
 			</File>
 			<File
 				RelativePath=".\ThaiShaping.h">
+			</File>
+			<File
+				RelativePath=".\TibetanLayoutEngine.h">
+			</File>
+			<File
+				RelativePath=".\TibetanReordering.h">
 			</File>
 			<File
 				RelativePath=".\TrimmedArrayProcessor.h">

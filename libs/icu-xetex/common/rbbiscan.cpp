@@ -2,7 +2,7 @@
 //
 //  file:  rbbiscan.cpp
 //
-//  Copyright (C) 2002-2005, International Business Machines Corporation and others.
+//  Copyright (C) 2002-2006, International Business Machines Corporation and others.
 //  All Rights Reserved.
 //
 //  This file contains the Rule Based Break Iterator Rule Builder functions for
@@ -142,7 +142,7 @@ RBBIRuleScanner::RBBIRuleScanner(RBBIRuleBuilder *rb)
     }
 
     fSymbolTable = new RBBISymbolTable(this, rb->fRules, *rb->fStatus);
-    fSetTable    = uhash_open(uhash_hashUnicodeString, uhash_compareUnicodeString, rb->fStatus);
+    fSetTable    = uhash_open(uhash_hashUnicodeString, uhash_compareUnicodeString, NULL, rb->fStatus);
     uhash_setValueDeleter(fSetTable, RBBISetTable_deleter);
 }
 
@@ -289,13 +289,13 @@ UBool RBBIRuleScanner::doParseActions(EParseAction action)
 
             // Make a symbol table entry for the $variableRef node.
             fSymbolTable->addEntry(varRefNode->fText, varRefNode, *fRB->fStatus);
-			if (U_FAILURE(*fRB->fStatus)) { 
-				// This is a round-about way to get the parse position set
-				//  so that duplicate symbols error messages include a line number.
-				UErrorCode t = *fRB->fStatus;
-				*fRB->fStatus = U_ZERO_ERROR;
-				error(t);  
-			}
+            if (U_FAILURE(*fRB->fStatus)) {
+                // This is a round-about way to get the parse position set
+                //  so that duplicate symbols error messages include a line number.
+                UErrorCode t = *fRB->fStatus;
+                *fRB->fStatus = U_ZERO_ERROR;
+                error(t);
+            }
 
             // Clean up the stack.
             delete startExprNode;
@@ -435,7 +435,6 @@ UBool RBBIRuleScanner::doParseActions(EParseAction action)
             fRB->fRules.extractBetween(n->fFirstPos, n->fLastPos, n->fText);
             break;
         }
-        break;
 
     case doSlash:
         // Scanned a '/', which identifies a look-ahead break position in a rule.
@@ -1149,7 +1148,7 @@ void RBBIRuleScanner::scanSet() {
 
     // Verify that the set contains at least one code point.
     //
-    if (uset->charAt(0) == -1) {
+    if (uset->isEmpty()) {
         // This set is empty.
         //  Make it an error, because it almost certainly is not what the user wanted.
         //  Also, avoids having to think about corner cases in the tree manipulation code

@@ -1,15 +1,16 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/da.xml
+// * Source File:<path>/common/main/da.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/da.xml
+ *  ICU <specials> source: <path>/xml/main/da.xml
  */
 da{
+    AuxExemplarCharacters{"[á é í ó ú ý]"}
     Countries{
         AD{"Andorra"}
         AE{"Forenede Arabiske Emirater"}
@@ -641,7 +642,7 @@ da{
             "Ny israelsk shekel",
         }
         INR{
-            "=0#Rs.|1#Re.|1<Rs.",
+            "INR",
             "Indisk rupee",
         }
         IQD{
@@ -1181,91 +1182,94 @@ da{
             "Zimbabwisk dollar",
         }
     }
-    ExemplarCharacters{"[a-z æ å ø á é í ó ú ý]"}
+    ExemplarCharacters{"[a-z æ ø å]"}
     Keys{
         calendar{"Kalender"}
         collation{"Sortering"}
         currency{"Valuta"}
     }
     Languages{
-        aa{"Afar"}
-        ab{"Abkhasisk"}
-        ace{"Achinesisk"}
-        ach{"Acoli"}
-        ada{"Adangme"}
-        ady{"Adyghe"}
-        ae{"Avestan"}
-        af{"Afrikaans"}
-        afa{"Afro-asiatisk (øvrige)"}
-        afh{"Afrihili"}
-        ak{"Akan"}
-        akk{"Akkadisk"}
-        ale{"Aleutiske sprog"}
-        alg{"Algonkiske sprog"}
-        am{"Amharisk"}
-        an{"Aragonesisk"}
+        aa{"afar"}
+        ab{"abkhasisk"}
+        ace{"achinesisk"}
+        ach{"acoli"}
+        ada{"adangme"}
+        ady{"adyghe"}
+        ae{"avestan"}
+        af{"afrikaans"}
+        afa{"afro-asiatisk (øvrige)"}
+        afh{"afrihili"}
+        ain{"ainu"}
+        ak{"akan"}
+        akk{"akkadisk"}
+        ale{"aleutisk"}
+        alg{"algonkiske sprog"}
+        am{"amharisk"}
+        an{"aragonesisk"}
         ang{"Angelsaksisk (ca.450-1100)"}
-        apa{"Apache sprog"}
-        ar{"Arabisk"}
-        arc{"Aramæisk"}
-        arn{"Araukansk"}
-        arp{"Arapaho"}
-        art{"Kunstsprog (øvrige)"}
-        arw{"Arawak"}
-        as{"Assamesisk"}
-        ast{"Asturisk"}
-        aus{"Australske sprog"}
-        av{"Avarisk"}
-        awa{"Awadhi"}
+        apa{"apache sprog"}
+        ar{"arabisk"}
+        arc{"aramæisk"}
+        arn{"araukansk"}
+        arp{"arapaho"}
+        art{"kunstsprog (øvrige)"}
+        arw{"arawak"}
+        as{"assamesisk"}
+        ast{"asturisk"}
+        ath{"athapaskiske sprog"}
+        aus{"australske sprog"}
+        av{"avarisk"}
+        awa{"awadhi"}
         ay{"Aymara"}
-        az{"Aserbajdsjan"}
-        ba{"Bashkir"}
-        bad{"Banda"}
-        bal{"Baluchi"}
-        ban{"Balinesisk"}
-        bas{"Basa"}
-        bat{"Baltiske sprog (øvrige)"}
-        be{"Hviderussisk"}
-        bej{"Beja"}
-        bem{"Bemba"}
-        ber{"Berberiske sprog"}
-        bg{"Bulgarsk"}
-        bh{"Bihari"}
-        bho{"Bhojpuri"}
-        bi{"Bislama"}
-        bik{"Bikol"}
-        bin{"Bini"}
+        az{"aserbajdsjansk"}
+        ba{"bashkir"}
+        bad{"banda"}
+        bai{"bamilekiske sprog"}
+        bal{"baluchi"}
+        ban{"balinesisk"}
+        bas{"basa"}
+        bat{"baltiske sprog (øvrige)"}
+        be{"hviderussisk"}
+        bej{"beja"}
+        bem{"bemba"}
+        ber{"berberisk"}
+        bg{"bulgarsk"}
+        bh{"bihari"}
+        bho{"bhojpuri"}
+        bi{"bislama"}
+        bik{"bikol"}
+        bin{"bini"}
         bla{"Siksika"}
-        bm{"Bambara"}
-        bn{"Bengalsk"}
-        bnt{"Bantu"}
+        bm{"bambara"}
+        bn{"bengalsk"}
+        bnt{"bantu"}
         bo{"Tibetansk"}
-        br{"Bretonsk"}
-        bra{"Braj"}
-        bs{"Bosnisk"}
-        btk{"Batak"}
-        bua{"Buriat"}
-        bug{"Buginesisk"}
-        byn{"Blin"}
-        ca{"Katalansk"}
-        cad{"Caddo"}
-        cai{"Mellemamerikanske indianske sprog (øvrige)"}
-        car{"Caribisk"}
-        cau{"Kaukasiske sprog (øvrige)"}
-        ce{"Tjetjensk"}
-        ceb{"Cebuano"}
-        cel{"Keltiske sprog (øvrige)"}
-        ch{"Chamorro"}
+        br{"bretonsk"}
+        bra{"braj"}
+        bs{"bosnisk"}
+        btk{"batak"}
+        bua{"buriatisk"}
+        bug{"buginesisk"}
+        byn{"blin"}
+        ca{"katalansk"}
+        cad{"caddo"}
+        cai{"mellemamerikansk indiansk (øvrige)"}
+        car{"caribisk"}
+        cau{"kaukasisk (øvrige)"}
+        ce{"tjetjensk"}
+        ceb{"cebuano"}
+        cel{"keltisk (øvrige)"}
+        ch{"chamorro"}
         chb{"Chibcha"}
-        chg{"Chagatai"}
+        chg{"chagatai"}
         chk{"Chuukese"}
         chm{"Mari"}
         chn{"Chinook"}
         cho{"Choctaw"}
         chp{"Chipewyan"}
-        chr{"Cherokee"}
-        chy{"Cheyenne"}
-        cmc{"Chamic sprog"}
+        chr{"cherokee"}
+        chy{"cheyenne"}
+        cmc{"chamic sprog"}
         co{"Korsikansk"}
         cop{"Koptisk"}
         cpe{"Kreolsk og pidgin, baseret på engelsk (øvrige)"}
@@ -1308,7 +1312,7 @@ da{
         eo{"Esperanto"}
         es{"Spansk"}
         et{"Estisk"}
-        eu{"Baskisk"}
+        eu{"baskisk"}
         ewo{"Ewondo"}
         fa{"Persisk"}
         fan{"Fang"}
@@ -1340,7 +1344,7 @@ da{
         gor{"Gorontalo"}
         got{"Gotisk"}
         grb{"Grebo"}
-        grc{"Græsk, Old- (til 1453)"}
+        grc{"oldgræsk (til 1453)"}
         gu{"Gujaratisk"}
         gv{"Manx"}
         gwi{"Gwichʼin"}
@@ -1359,7 +1363,7 @@ da{
         ht{"Haitisk"}
         hu{"Ungarsk"}
         hup{"Hupa"}
-        hy{"Armensk"}
+        hy{"armensk"}
         hz{"Herero"}
         ia{"Interlingua"}
         iba{"Iban"}
@@ -1440,7 +1444,7 @@ da{
         mai{"Maithili"}
         mak{"Makasar"}
         man{"Mandingo"}
-        map{"Malajo-polynesiske sprog (øvrige)"}
+        map{"malajo-polynesisk"}
         mas{"Masai"}
         mdf{"Moksha"}
         mdr{"Mandar"}
@@ -1468,7 +1472,7 @@ da{
         mun{"Munda (øvrige)"}
         mus{"Creek"}
         mwr{"Marwari"}
-        my{"Burmesisk"}
+        my{"burmesisk"}
         myn{"Maya sprog"}
         myv{"Erzya"}
         na{"Nauru"}
@@ -1532,6 +1536,7 @@ da{
         roa{"Romanske sprog (øvrige)"}
         rom{"Romani"}
         ru{"Russisk"}
+        rup{"arumænsk"}
         rw{"Kinyarwanda"}
         sa{"Sanskrit"}
         sad{"Sandawe"}
@@ -1568,7 +1573,7 @@ da{
         so{"Somalisk"}
         sog{"Sogdiansk"}
         son{"Songhai"}
-        sq{"Albansk"}
+        sq{"albansk"}
         sr{"Serbisk"}
         srr{"Serer"}
         ss{"Swati"}
@@ -1606,7 +1611,7 @@ da{
         tsi{"Tsimshisk"}
         tt{"Tatarisk"}
         tum{"Tumbuka"}
-        tut{"Tyrkisk-tatariske sprog (øvrige)"}
+        tut{"tyrkisk-tatarisk (øvrige)"}
         tvl{"Tuvalu"}
         tw{"Twi"}
         ty{"Tahitiansk"}
@@ -1658,8 +1663,14 @@ da{
         "E",
         "‰",
         "∞",
-        "�",
+        "NaN",
         "+",
+    }
+    NumberPatterns{
+        "#,##0.###",
+        "¤ #,##0.00",
+        "#,##0 %",
+        "#E0",
     }
     Scripts{
         Arab{"Arabisk"}
@@ -1704,18 +1715,14 @@ da{
             traditional{"Traditionel sorteringsrækkefølge"}
         }
     }
-    Version{"1.46"}
+    Version{"1.68"}
     calendar{
         gregorian{
-            DateTimeElements:intvector{
-                2,
-                4,
-            }
             DateTimePatterns{
-                "H.mm.ss z",
-                "H.mm.ss z",
-                "H.mm.ss",
-                "H.mm",
+                "HH.mm.ss z",
+                "HH.mm.ss z",
+                "HH.mm.ss",
+                "HH.mm",
                 "EEEE 'den' d. MMMM yyyy",
                 "d. MMM yyyy",
                 "dd/MM/yyyy",
@@ -1759,6 +1766,41 @@ da{
                 abbreviated{
                     "f.Kr.",
                     "e.Kr.",
+                }
+            }
+            fields{
+                day{
+                    dn{"dag"}
+                }
+                dayperiod{
+                    dn{"dagtid"}
+                }
+                era{
+                    dn{"tid"}
+                }
+                hour{
+                    dn{"time"}
+                }
+                minute{
+                    dn{"minut"}
+                }
+                month{
+                    dn{"måned"}
+                }
+                second{
+                    dn{"sekund"}
+                }
+                week{
+                    dn{"uge"}
+                }
+                weekday{
+                    dn{"ugedag"}
+                }
+                year{
+                    dn{"år"}
+                }
+                zone{
+                    dn{"zone"}
                 }
             }
             monthNames{
@@ -1809,137 +1851,151 @@ da{
                     }
                 }
             }
+            quarters{
+                format{
+                    abbreviated{
+                        "K1",
+                        "K2",
+                        "K3",
+                        "K4",
+                    }
+                    wide{
+                        "1. kvartal",
+                        "2. kvartal",
+                        "3. kvartal",
+                        "4. kvartal",
+                    }
+                }
+            }
         }
     }
     localPatternChars{"GuMtkHmsSEDFwWahKzUeygAZvcL"}
     zoneStrings{
-        {
-            "America/Halifax",
-            "Atlantic-normaltid",
-            "AST",
-            "Atlantic-sommertid",
-            "ADT",
-            "Halifax",
+        "Africa:Casablanca"{
+            ec{"Casablanca"}
+            ld{"Verdenstid"}
+            ls{"Verdenstid"}
+            sd{"GMT"}
+            ss{"GMT"}
         }
-        {
-            "America/St_Johns",
-            "Newfoundland-normaltid",
-            "CNT",
-            "Newfoundland-sommertid",
-            "CDT",
-            "St. Johns",
+        "America:Anchorage"{
+            ec{"Anchorage"}
+            ld{"Alaska-sommertid"}
+            ls{"Alaska-normaltid"}
+            sd{"AKDT"}
+            ss{"AKST"}
         }
-        {
-            "Asia/Shanghai",
-            "Kinesisk normaltid",
-            "CTT",
-            "Kinesisk normaltid",
-            "CDT",
-            "Shanghai",
+        "America:Chicago"{
+            ec{"Chicago"}
+            ld{"Central-sommertid"}
+            ls{"Central-normaltid"}
+            sd{"CDT"}
+            ss{"CST"}
         }
-        {
-            "Europe/Paris",
-            "Mellemeuropæisk normaltid",
-            "CET",
-            "Mellemeuropæisk sommertid",
-            "CEST",
-            "Paris",
+        "America:Denver"{
+            ec{"Denver"}
+            ld{"Mountain-sommertid"}
+            ls{"Mountain-normaltid"}
+            sd{"MDT"}
+            ss{"MST"}
         }
-        {
-            "Asia/Jerusalem",
-            "Israelsk normaltid",
-            "IST",
-            "Israelsk sommertid",
-            "IDT",
-            "Jerusalem",
+        "America:Godthab"{
+            ec{"Nuuk"}
         }
-        {
-            "Asia/Tokyo",
-            "Japansk normaltid",
-            "JST",
-            "Japansk normaltid",
-            "JST",
-            "Tokyo",
+        "America:Halifax"{
+            ec{"Halifax"}
+            ld{"Atlantic-sommertid"}
+            ls{"Atlantic-normaltid"}
+            sd{"ADT"}
+            ss{"AST"}
         }
-        {
-            "Africa/Casablanca",
-            "Verdenstid",
-            "GMT",
-            "Verdenstid",
-            "GMT",
-            "Casablanca",
+        "America:Indianapolis"{
+            ec{"Indianapolis"}
+            ld{"Indianapolis, sommertid"}
+            ls{"Indianapolis, normaltid"}
         }
-        {
-            "Europe/Bucharest",
-            "Østeuropæisk normaltid",
-            "EET",
-            "Østeuropæisk sommertid",
-            "EEST",
-            "Bukarest",
+        "America:Los_Angeles"{
+            ec{"Los Angeles"}
+            ld{"Pacific-sommertid"}
+            ls{"Pacific-normaltid"}
+            sd{"PDT"}
+            ss{"PST"}
         }
-        {
-            "Pacific/Honolulu",
-            "Hawaii-normaltid",
-            "HST",
-            "Hawaii-normaltid",
-            "HST",
-            "Honolulu",
+        "America:New_York"{
+            ec{"New York"}
+            ld{"Eastern-sommertid"}
+            ls{"Eastern-normaltid"}
+            sd{"EDT"}
+            ss{"EST"}
         }
-        {
-            "America/Anchorage",
-            "Alaska-normaltid",
-            "AST",
-            "Alaska-sommertid",
-            "ADT",
-            "Anchorage",
+        "America:Phoenix"{
+            ec{"Phoenix"}
+            ld{"Mountain-normaltid"}
+            ls{"Mountain-normaltid"}
+            sd{"MST"}
+            ss{"MST"}
         }
-        {
-            "America/Los_Angeles",
-            "Pacific-normaltid",
-            "PST",
-            "Pacific-sommertid",
-            "PDT",
-            "Los Angeles",
+        "America:St_Johns"{
+            ec{"St. Johns"}
+            ld{"Newfoundland-sommertid"}
+            ls{"Newfoundland-normaltid"}
+            sd{"NDT"}
+            ss{"NST"}
         }
-        {
-            "America/Phoenix",
-            "Mountain-normaltid",
-            "MST",
-            "Mountain-normaltid",
-            "MST",
-            "Phoenix",
+        "Antarctica:South_Pole"{
+            ec{"Sydpolen"}
         }
-        {
-            "America/Denver",
-            "Mountain-normaltid",
-            "MST",
-            "Mountain-sommertid",
-            "MDT",
-            "Denver",
+        "Asia:Jerusalem"{
+            ec{"Jerusalem"}
+            ld{"Israelsk sommertid"}
+            ls{"Israelsk normaltid"}
+            sd{"IDT"}
+            ss{"IST"}
         }
-        {
-            "America/Chicago",
-            "Central-normaltid",
-            "CST",
-            "Central-sommertid",
-            "CDT",
-            "Chicago",
+        "Asia:Shanghai"{
+            ec{"Shanghai"}
+            ld{"Kinesisk normaltid"}
+            ls{"Kinesisk normaltid"}
         }
-        {
-            "America/Indianapolis",
-            "Eastern-normaltid",
-            "EST",
-            "Eastern-normaltid",
-            "EST",
-            "Indianapolis",
+        "Asia:Tokyo"{
+            ec{"Tokyo"}
+            ld{"Japansk normaltid"}
+            ls{"Japansk normaltid"}
+            sd{"JST"}
+            ss{"JST"}
         }
-        {
-            "America/New_York",
-            "Eastern-normaltid",
-            "EST",
-            "Eastern-sommertid",
-            "EDT",
-            "New York",
+        "Atlantic:Canary"{
+            ec{"De Kanariske Øer"}
+        }
+        "Europe:Bucharest"{
+            ec{"Bukarest"}
+            ld{"Østeuropæisk sommertid"}
+            ls{"Østeuropæisk normaltid"}
+            sd{"EEST"}
+            ss{"EET"}
+        }
+        "Europe:Lisbon"{
+            ec{"Lissabon"}
+        }
+        "Europe:Moscow"{
+            ec{"Moskva"}
+        }
+        "Europe:Paris"{
+            ec{"Paris"}
+            ld{"Mellemeuropæisk sommertid"}
+            ls{"Mellemeuropæisk normaltid"}
+            sd{"CEST"}
+            ss{"CET"}
+        }
+        "Pacific:Easter"{
+            ec{"Påskeøen"}
+        }
+        "Pacific:Honolulu"{
+            ec{"Honolulu"}
+            ld{"Hawaii-normaltid"}
+            ls{"Hawaii-normaltid"}
+            sd{"HST"}
+            ss{"HST"}
         }
     }
 }

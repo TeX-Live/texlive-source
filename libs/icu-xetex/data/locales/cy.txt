@@ -1,15 +1,16 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/cy.xml
+// * Source File:<path>/common/main/cy.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/cy.xml
+ *  ICU <specials> source: <path>/xml/main/cy.xml
  */
 cy{
+    AuxExemplarCharacters{"[j k q v x z]"}
     Countries{
         GB{"Prydain Fawr"}
     }
@@ -47,7 +48,10 @@ cy{
             "Doler yr UDA",
         }
     }
-    ExemplarCharacters{"[a-z âäáàêëéèîïíìôöóòûüúùŵẅẃẁŷÿýỳ]"}
+    ExemplarCharacters{
+        "[a á à â ä b c {ch} d {dd} e é è ê ë f {ff} g-i í ì î ï l {ll} m n {ng} o ó "
+        "ò ô ö p {ph} r {rh} s t {th} u ú ù û ü w ẃ ẁ ŵ ẅ y ý ỳ ŷ ÿ]"
+    }
     Languages{
         ar{"Arabeg"}
         cy{"Cymraeg"}
@@ -65,12 +69,29 @@ cy{
     LocaleScript{
         "Latn",
     }
+    NumberPatterns{
+        "#,##0.###",
+        "¤ #,##0.00",
+        "#,##0%",
+        "#E0",
+    }
     Scripts{
         Latn{"Lladin"}
     }
-    Version{"1.23"}
+    Version{"1.41"}
     calendar{
         gregorian{
+            DateTimePatterns{
+                "HH:mm:ss z",
+                "HH:mm:ss z",
+                "HH:mm:ss",
+                "HH:mm",
+                "EEEE, yyyy MMMM dd",
+                "yyyy MMMM d",
+                "yyyy MMM d",
+                "yy/MM/dd",
+                "{1} {0}",
+            }
             dayNames{
                 format{
                     abbreviated{
@@ -153,5 +174,8 @@ cy{
                 }
             }
         }
+    }
+    zoneStrings{
+        hourFormat{"+HHmm;-HHmm"}
     }
 }

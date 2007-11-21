@@ -1,10 +1,10 @@
 // ***************************************************************************
 // *
-// *   Copyright (C) 1997-2005, International Business Machines
+// *   Copyright (C) 1997-2006, International Business Machines
 // *   Corporation and others.  All Rights Reserved.
 // *
 // ***************************************************************************
-CurrencyData{
+CurrencyData:table(nofallback){
     // Currency metadata.  Unlike the "Currencies" element, this is
     // NOT true locale data.  It exists only in root.  The two
     // integers are the fraction digits for each currency, and the
@@ -32,7 +32,9 @@ CurrencyData{
         KMF:intvector { 0, 0 } // Comoro Franc: COMOROS (KM)
         KRW:intvector { 0, 0 } // Won: KOREA, REPUBLIC OF (KR)
         KWD:intvector { 3, 0 } // Kuwaiti Dinar: KUWAIT (KW)
+        LUF:intvector { 0, 0 } // LUXEMBOURG Franc: LUXEMBOURG (LU)
         LYD:intvector { 3, 0 } // Lybian Dinar: LIBYAN ARAB JAMAHIRIYA (LY)
+        MGA:intvector { 0, 0 } // Malagascy Ariary: MADAGASCAR (MG)
         MGF:intvector { 0, 0 } // Malagasy Franc: MADAGASCAR (MG)
         OMR:intvector { 3, 0 } // Rial Omani: OMAN (OM)
         PYG:intvector { 0, 0 } // Guarani: PARAGUAY (PY)
@@ -66,7 +68,7 @@ CurrencyData{
         AU { "AUD" } // AUSTRALIA: Australian Dollar
         AW { "AWG" } // ARUBA: Aruban Guilder
         AX { "EUR" } // Aland Islands: Euro
-        AZ { "AZM" } // AZERBAIJAN: Azerbaijanian Manat
+        AZ { "AZN" } // AZERBAIJAN: Azerbaijanian Manat
         BA { "BAM" } // BOSNIA AND HERZEGOVINA: Convertible Marks
         BB { "BBD" } // BARBADOS: Barbados Dollar
         BD { "BDT" } // BANGLADESH: Taka
@@ -134,6 +136,7 @@ CurrencyData{
         GD { "XCD" } // GRENADA: East Caribbean Dollar
         GE { "GEL" } // GEORGIA: Lari
         GF { "EUR" } // FRENCH GUIANA: Euro
+        GG { "GBP" } // GUERNSEY: Pound Sterling
         GH { "GHC" } // GHANA: Cedi
         GI { "GIP" } // GIBRALTAR: Gibraltar Pound
         GL { "DKK" } // GREENLAND: Danish Krone
@@ -158,6 +161,7 @@ CurrencyData{
         IE { "EUR" } // IRELAND: Euro
         IE_PREEURO { "IEP" }
         IL { "ILS" } // ISRAEL: New Israeli Sheqel
+        IM { "GBP" } // ISLE OF MAN: Pound Sterling
         IN { "INR" } // INDIA: Indian Rupee
         IO { "USD" } // BRITISH INDIAN OCEAN TERRITORY: US Dollar
         IQ { "IQD" } // IRAQ: Iraqi Dinar
@@ -165,6 +169,7 @@ CurrencyData{
         IS { "ISK" } // ICELAND: Iceland Krona
         IT { "EUR" } // ITALY: Euro
         IT_PREEURO { "ITL" }
+        JE { "GBP" } // JERSEY: Pound Sterling
         JM { "JMD" } // JAMAICA: Jamaican Dollar
         JO { "JOD" } // JORDAN: Jordanian Dinar
         JP { "JPY" } // JAPAN: Yen
@@ -211,7 +216,7 @@ CurrencyData{
         MW { "MWK" } // MALAWI: Kwacha
         MX { "MXN" } // MEXICO: Mexican Peso
         MY { "MYR" } // MALAYSIA: Malaysian Ringgit
-        MZ { "MZM" } // MOZAMBIQUE: Metical
+        MZ { "MZN" } // MOZAMBIQUE: Metical
         NA { "ZAR" } // NAMIBIA: Rand
         NC { "XPF" } // NEW CALEDONIA: CFP Franc
         NE { "XOF" } // NIGER: CFA Franc BCEAO
@@ -242,7 +247,7 @@ CurrencyData{
         PY { "PYG" } // PARAGUAY: Guarani
         QA { "QAR" } // QATAR: Qatari Rial
         RE { "EUR" } // REUNION: Euro
-        RO { "ROL" } // ROMANIA: Leu
+        RO { "RON" } // ROMANIA: Leu
         RU { "RUB" } // RUSSIAN FEDERATION: Russian Ruble
         RW { "RWF" } // RWANDA: Rwanda Franc
         SA { "SAR" } // SAUDI ARABIA: Saudi Riyal
@@ -252,7 +257,8 @@ CurrencyData{
         SE { "SEK" } // SWEDEN: Swedish Krona
         SG { "SGD" } // SINGAPORE: Singapore Dollar
         SH { "SHP" } // SAINT HELENA: Saint Helena Pound
-        SI { "SIT" } // SLOVENIA: Tolar
+        SI { "EUR" } // SLOVENIA: Euro
+        SI_PREEURO { "SIT" } // SLOVENIA: Tolar
         SJ { "NOK" } // SVALBARD AND JAN MAYEN: Norwegian Krone
         SK { "SKK" } // SLOVAKIA: Slovak Koruna
         SL { "SLL" } // SIERRA LEONE: Leone

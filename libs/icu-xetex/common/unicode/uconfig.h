@@ -1,6 +1,6 @@
 /*  
 **********************************************************************
-*   Copyright (C) 2002-2005, International Business Machines
+*   Copyright (C) 2002-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *   file name:  uconfig.h
@@ -23,6 +23,13 @@
  * By default, all modules are built.
  * The switches are fairly coarse, controlling large modules.
  * Basic services cannot be turned off.
+ *
+ * Building with any of these options does not guarantee that the
+ * ICU build process will completely work. It is recommended that
+ * the ICU libraries and data be built using the normal build.
+ * At that time you should remove the data used by those services.
+ * After building the ICU data library, you should rebuild the ICU
+ * libraries with these switches customized to your needs.
  *
  * @stable ICU 2.4
  */
@@ -59,11 +66,33 @@
 /* common library switches -------------------------------------------------- */
 
 /**
+ * \def UCONFIG_NO_FILE_IO
+ * This switch turns off all file access in the common library
+ * where file access is only used for data loading.
+ * ICU data must then be provided in the form of a data DLL (or with an
+ * equivalent way to link to the data residing in an executable,
+ * as in building a combined library with both the common library's code and
+ * the data), or via udata_setCommonData().
+ * Application data must be provided via udata_setAppData() or by using
+ * "open" functions that take pointers to data, for example ucol_openBinary().
+ *
+ * File access is not used at all in the i18n library.
+ *
+ * File access cannot be turned off for the icuio library or for the ICU
+ * test suites and ICU tools.
+ *
+ * @draft ICU 3.6
+ */
+#ifndef UCONFIG_NO_FILE_IO
+#   define UCONFIG_NO_FILE_IO 0
+#endif
+
+/**
  * \def UCONFIG_NO_CONVERSION
  * ICU will not completely build with this switch turned on.
  * This switch turns off all converters.
  *
- * @draft ICU 3.2
+ * @stable ICU 3.2
  */
 #ifndef UCONFIG_NO_CONVERSION
 #   define UCONFIG_NO_CONVERSION 0
@@ -177,7 +206,7 @@
  * \def UCONFIG_NO_SERVICE
  * This switch turns off service registration.
  *
- * @draft ICU 3.2
+ * @stable ICU 3.2
  */
 #ifndef UCONFIG_NO_SERVICE
 #   define UCONFIG_NO_SERVICE 0

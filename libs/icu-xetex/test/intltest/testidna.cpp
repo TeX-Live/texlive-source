@@ -1,7 +1,7 @@
 /*
  *******************************************************************************
  *
- *   Copyright (C) 2003-2005, International Business Machines
+ *   Copyright (C) 2003-2006, International Business Machines
  *   Corporation and others.  All Rights Reserved.
  *
  *******************************************************************************
@@ -395,7 +395,7 @@ static struct ErrorCases{
         0x0000
       },
       "www..com",
-      U_IDNA_ERROR_LIMIT, //TODO: Fix this to U_IDNA_ZERO_LENGTH_LABEL_ERROR, in 3.6
+      U_IDNA_ZERO_LENGTH_LABEL_ERROR,
       TRUE, TRUE, FALSE
     },
     { 
@@ -1423,7 +1423,7 @@ void TestIDNA::testRootLabelSeparator(const char* testName, CompareFunc func,
 // runIndexedTest
 //---------------------------------------------
 
-void TestIDNA::runIndexedTest( int32_t index, UBool exec, const char* &name, char* /*par*/ )
+void TestIDNA::runIndexedTest( int32_t index, UBool exec, const char* &name, char* par)
 {
     if (exec) logln((UnicodeString)"TestSuite IDNA API ");
     switch (index) {
@@ -1447,8 +1447,7 @@ void TestIDNA::runIndexedTest( int32_t index, UBool exec, const char* &name, cha
                 if(exec){
                     logln("TestSuite IDNA conf----"); logln();
                     IdnaConfTest test;
-                    const char* name = "idnaconf";
-                    test.runIndexedTest(0,TRUE,name);
+                    callTest(test, par);
                 }
                 break;
             }
@@ -1651,7 +1650,11 @@ void TestIDNA::TestIDNAMonkeyTest(){
     int i;
 
     getInstance(status);    // Init prep
-    
+    if (U_FAILURE(status)) {
+        errln("Test could not initialize. Got %s", u_errorName(status));
+        return;
+    }
+
     for(i=0; i<loopCount; i++){
         source.truncate(0);
         getTestSource(source);
@@ -1720,6 +1723,13 @@ void TestIDNA::TestCompareReferenceImpl(){
 }
 
 void TestIDNA::TestRefIDNA(){
+    UErrorCode status = U_ZERO_ERROR;
+    getInstance(status);    // Init prep
+    if (U_FAILURE(status)) {
+        errln("Test could not initialize. Got %s", u_errorName(status));
+        return;
+    }
+
     testToASCII("idnaref_toASCII", idnaref_toASCII);
     testToUnicode("idnaref_toUnicode", idnaref_toUnicode);
     testIDNToASCII("idnaref_IDNToASCII", idnaref_IDNToASCII);

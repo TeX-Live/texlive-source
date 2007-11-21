@@ -1,13 +1,13 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/en_US_POSIX.xml
+// * Source File:<path>/common/main/en_US_POSIX.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/en_US_POSIX.xml
+ *  ICU <specials> source: <path>/xml/main/en_US_POSIX.xml
  */
 en_US_POSIX{
     NumberElements{
@@ -30,8 +30,5 @@ en_US_POSIX{
         "#0%",
         "0.000000E+000",
     }
-    Version{"1.32"}
-    boundaries{
-        word{"word_POSIX"}
-    }
+    Version{"1.47"}
 }

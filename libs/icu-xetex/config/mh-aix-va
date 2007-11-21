@@ -1,6 +1,6 @@
 ## -*-makefile-*-
 ## Aix-specific setup (for Visual Age 5+)
-## Copyright (c) 1999-2004, International Business Machines Corporation and
+## Copyright (c) 1999-2005, International Business Machines Corporation and
 ## others. All Rights Reserved.
 
 ## Commands to generate dependency files
@@ -43,10 +43,6 @@ LD_RPATH_PRE=
 ## Environment variable to set a runtime search path
 LDLIBRARYPATH_ENVVAR = LIBPATH
 
-## Override Versioned target for a shared library.
-FINAL_SO_TARGET=  $(basename $(SO_TARGET))$(SO_TARGET_VERSION).$(SO)
-MIDDLE_SO_TARGET= $(basename $(SO_TARGET))$(SO_TARGET_VERSION_MAJOR).$(SO)
-
 # The following is for Makefile.inc's use.
 ICULIBSUFFIX_VERSION = $(LIB_VERSION_MAJOR)
 
@@ -61,14 +57,21 @@ LD_SONAME =
 GENCCODE_ASSEMBLY=-a xlc
 
 ## Shared object suffix
-#SO=	so
+SOBJ=	so
 # without the -brtl option, the library names use .a. AIX is funny that way.
 SO=	a
 ## Non-shared intermediate object suffix
 STATIC_O = o
 
+## Override Versioned target for a shared library.
+FINAL_SO_TARGET=  $(basename $(SO_TARGET))$(SO_TARGET_VERSION).$(SO)
+MIDDLE_SO_TARGET= $(basename $(SO_TARGET))$(SO_TARGET_VERSION_MAJOR).$(SO)
+SHARED_OBJECT = $(notdir $(FINAL_SO_TARGET:.$(SO)=.$(SOBJ)))
+
 ## Build archive from shared object
 %.a : %.so
+	$(AR) $(ARFLAGS) $@ $<
+$(LIBDIR)/%.a : %.so
 	$(AR) $(ARFLAGS) $@ $<
 
 ## Build import list from export list

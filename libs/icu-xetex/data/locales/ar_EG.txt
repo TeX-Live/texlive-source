@@ -1,15 +1,22 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/ar_EG.xml
+// * Source File:<path>/common/main/ar_EG.xml
 // *
 // ***************************************************************************
 ar_EG{
-    Version{"1.27"}
+    Scripts{
+        Ital{"الأيطالية القديمة"}
+    }
+    Version{"1.39"}
     calendar{
         gregorian{
+            DateTimeElements:intvector{
+                7,
+                1,
+            }
             eras{
                 wide{
                     "قبل الميلاد",

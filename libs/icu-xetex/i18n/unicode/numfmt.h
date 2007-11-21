@@ -1,5 +1,7 @@
 /*
-* Copyright (C) {1997-2005}, International Business Machines Corporation and others. All Rights Reserved.
+********************************************************************************
+* Copyright (C) 1997-2006, International Business Machines Corporation and others.
+* All Rights Reserved.
 ********************************************************************************
 *
 * File NUMFMT.H
@@ -39,11 +41,6 @@ U_NAMESPACE_BEGIN
 #if !UCONFIG_NO_SERVICE
 class NumberFormatFactory;
 class StringEnumeration;
-
-/**
- * @internal
- */
-typedef const void* URegistryKey;
 #endif
 
 /**
@@ -645,7 +642,7 @@ public:
      * to use.  It need not be null-terminated.  May be the empty
      * string or NULL to indicate no currency.
      * @param ec input-output error code
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     virtual void setCurrency(const UChar* theCurrency, UErrorCode& ec);
 
@@ -771,7 +768,7 @@ public:
 
     /**
      * Destructor
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     virtual ~NumberFormatFactory();
 
@@ -802,7 +799,7 @@ public:
 
 /**
  * A NumberFormatFactory that supports a single locale.  It can be visible or invisible.
- * @draft ICU 3.0
+ * @stable ICU 2.6
  */
 class U_I18N_API SimpleNumberFormatFactory : public NumberFormatFactory {
 protected:
@@ -825,7 +822,7 @@ public:
     SimpleNumberFormatFactory(const Locale& locale, UBool visible = TRUE);
 
     /**
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     virtual ~SimpleNumberFormatFactory();
 

@@ -1,16 +1,19 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/mr.xml
+// * Source File:<path>/common/main/mr.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/mr.xml
+ *  ICU <specials> source: <path>/xml/main/mr.xml
  */
 mr{
+    AuxExemplarCharacters{"[\u200C \u200D]"}
     Countries{
+        BR{"ब्राजील"}
+        DE{"जमिन"}
         IN{"भारत"}
     }
     Currencies{
@@ -19,7 +22,7 @@ mr{
             "INR",
         }
     }
-    ExemplarCharacters{"[ँ-ह़-्ॐ-॔ॠ-ॣ०-९ॽ‌‍]"}
+    ExemplarCharacters{"[़ ँ-ः ०-९ ॐ अ-ऍ ए-ऑ ओ-न प-र ल ळ व-ह ऽ-ॅ े-ॉ ो-्]"}
     Languages{
         aa{"अफार"}
         ab{"अबखेजियन"}
@@ -116,7 +119,7 @@ mr{
         rm{"रहटो-रोमान्स्"}
         rn{"किरुन्दी"}
         ro{"रोमानियन्"}
-        root{"मराठी"}
+        root{"शिखर"}
         ru{"रष्यन्"}
         rw{"किन्यार्वान्डा"}
         sa{"संस्कृत"}
@@ -166,7 +169,7 @@ mr{
     LocaleScript{
         "Deva",
     }
-    Version{"1.32"}
+    Version{"1.50"}
     calendar{
         gregorian{
             AmPmMarkers{
@@ -236,13 +239,12 @@ mr{
         }
     }
     zoneStrings{
-        {
-            "Asia/Calcutta",
-            "भारतीय समय",
-            "IST",
-            "भारतीय समय",
-            "IST",
-            "Calcutta",
+        "Asia:Calcutta"{
+            ec{"Calcutta"}
+            ld{"भारतीय समय"}
+            ls{"भारतीय समय"}
+            sd{"IST"}
+            ss{"IST"}
         }
     }
 }

@@ -1,15 +1,16 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/ps.xml
+// * Source File:<path>/common/main/ps.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/ps.xml
+ *  ICU <specials> source: <path>/xml/main/ps.xml
  */
 ps{
+    AuxExemplarCharacters{"[\u200C \u200D]"}
     Countries{
         AF{"افغانستان"}
         AL{"البانیه"}
@@ -76,12 +77,15 @@ ps{
         YE{"یمن"}
     }
     Currencies{
-        AFA{
-            "افغانۍ",
+        AFN{
+            "؋",
             "افغانۍ",
         }
     }
-    ExemplarCharacters{"[ء-ؤئ-غفقل-وي-ْٰٔټپځڅ-چډړږژښکګڼی-ۍې ‌‍‏‎]"}
+    ExemplarCharacters{
+        "[َ ِ ُ ً ٍ ٌ ّ ْ ٔ ٰ آ ا أ ء ب پ ت ټ ث ج ځ چ څ ح-د ډ ذ ر ړ ز ژ ږ س ش ښ ص-غ ف"
+        " ق ک ګ ل-ن ڼ ه ة و ؤ ی ي ې ۍ ئ]"
+    }
     Languages{
         ar{"عربي"}
         bal{"بلوڅي"}
@@ -119,7 +123,10 @@ ps{
     LocaleScript{
         "Arab",
     }
-    Version{"1.26"}
+    Scripts{
+        Arab{"عربي"}
+    }
+    Version{"1.39"}
     calendar{
         gregorian{
             AmPmMarkers{
@@ -139,15 +146,6 @@ ps{
             }
             dayNames{
                 format{
-                    abbreviated{
-                        "ی.",
-                        "د.",
-                        "س.",
-                        "چ.",
-                        "پ.",
-                        "ج.",
-                        "ش.",
-                    }
                     wide{
                         "یکشنبه",
                         "دوشنبه",
@@ -168,18 +166,18 @@ ps{
             monthNames{
                 format{
                     abbreviated{
-                        "جنو",
-                        "فبر",
-                        "مار",
-                        "اپر",
-                        "مـی",
+                        "جنوري",
+                        "فبروري",
+                        "مارچ",
+                        "اپریل",
+                        "می",
                         "جون",
-                        "جول",
-                        "اګس",
-                        "سپت",
-                        "اکت",
-                        "نوم",
-                        "دسم",
+                        "جولای",
+                        "اګست",
+                        "سپتمبر",
+                        "اکتوبر",
+                        "نومبر",
+                        "دسمبر",
                     }
                     wide{
                         "جنوري",
@@ -198,15 +196,49 @@ ps{
                 }
             }
         }
+        persian{
+            monthNames{
+                format{
+                    abbreviated{
+                        "وری",
+                        "غویی",
+                        "غبرګولی",
+                        "چنګاښ",
+                        "زمری",
+                        "وږی",
+                        "تله",
+                        "لړم",
+                        "لیندۍ",
+                        "مرغومی",
+                        "سلواغه",
+                        "کب",
+                    }
+                    wide{
+                        "وری",
+                        "غویی",
+                        "غبرګولی",
+                        "چنګاښ",
+                        "زمری",
+                        "وږی",
+                        "تله",
+                        "لړم",
+                        "لیندۍ",
+                        "مرغومی",
+                        "سلواغه",
+                        "کب",
+                    }
+                }
+            }
+        }
+    }
+    layout{
+        characters{"right-to-left"}
+        lines{"top-to-bottom"}
     }
     zoneStrings{
-        {
-            "Asia/Kabul",
-            "د افغانستان په وخت",
-            "AFT",
-            "د افغانستان په وخت",
-            "AFT",
-            "کابل",
+        "Asia:Kabul"{
+            ec{"کابل"}
         }
+        regionFormat{"د {0} په وخت"}
     }
 }

@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 2004-2005, International Business Machines
+*   Copyright (C) 2004-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *   file name:  filetst.c
@@ -53,8 +53,11 @@ static void TestFileFromICU(UFILE *myFile) {
         origPtr = (void *) INT64_C(0x1000200030004000);
     } else if (sizeof(void *) == 16) {
         /* iSeries */
-        int32_t massiveBigEndianPtr[] = { 0x10002000, 0x30004000, 0x50006000, 0x70008000 };
-        origPtr = *((void **)massiveBigEndianPtr);
+        union {
+            int32_t arr[4];
+            void *ptr;
+        } massiveBigEndianPtr = {{ 0x10002000, 0x30004000, 0x50006000, 0x70008000 }};
+        origPtr = massiveBigEndianPtr.ptr;
     } else {
         log_err("sizeof(void*)=%d hasn't been tested before", (int)sizeof(void*));
     }
@@ -90,8 +93,8 @@ static void TestFileFromICU(UFILE *myFile) {
     u_fprintf(myFile, "Pointer to integer Value: %d\n", *n);
     u_fprintf(myFile, "This is a long test123456789012345678901234567890123456789012345678901234567890\n");
     *n = 1;
-    fprintf(u_fgetfile(myFile), "\tNormal fprintf count: n=%d %n n=%d\n", (int)*n, (int*)n, (int)*n);
-    fprintf(u_fgetfile(myFile), "\tNormal fprintf count value: n=%d\n", (int)*n);
+    u_fprintf(myFile, "\tNormal fprintf count: n=%d %n n=%d\n", (int)*n, (int*)n, (int)*n);
+    fprintf(u_fgetfile(myFile), "\tNormal fprintf count value: n=%d\n", (int)*n); /* Should be 27 as stated later on. */
 
     u_fclose(myFile);
     myFile = u_fopen(STANDARD_TEST_FILE, "r", NULL, NULL);
@@ -163,27 +166,27 @@ static void TestFileFromICU(UFILE *myFile) {
         log_err("%%X Got: %X, Expected: %X\n", *newValuePtr, *n);
     }
     *newDoubleValuePtr = -1.0;
-    u_fscanf(myFile, "Float %%f: %f\n", newDoubleValuePtr);
+    u_fscanf(myFile, "Float %%f: %lf\n", newDoubleValuePtr);
     if (myFloat != *newDoubleValuePtr) {
         log_err("%%f Got: %f, Expected: %f\n", *newDoubleValuePtr, myFloat);
     }
     *newDoubleValuePtr = -1.0;
-    u_fscanf(myFile, "Lowercase float %%e: %e\n", newDoubleValuePtr);
+    u_fscanf(myFile, "Lowercase float %%e: %le\n", newDoubleValuePtr);
     if (myFloat != *newDoubleValuePtr) {
         log_err("%%e Got: %e, Expected: %e\n", *newDoubleValuePtr, myFloat);
     }
     *newDoubleValuePtr = -1.0;
-    u_fscanf(myFile, "Uppercase float %%E: %E\n", newDoubleValuePtr);
+    u_fscanf(myFile, "Uppercase float %%E: %lE\n", newDoubleValuePtr);
     if (myFloat != *newDoubleValuePtr) {
         log_err("%%E Got: %E, Expected: %E\n", *newDoubleValuePtr, myFloat);
     }
     *newDoubleValuePtr = -1.0;
-    u_fscanf(myFile, "Lowercase float %%g: %g\n", newDoubleValuePtr);
+    u_fscanf(myFile, "Lowercase float %%g: %lg\n", newDoubleValuePtr);
     if (myFloat != *newDoubleValuePtr) {
         log_err("%%g Got: %g, Expected: %g\n", *newDoubleValuePtr, myFloat);
     }
     *newDoubleValuePtr = -1.0;
-    u_fscanf(myFile, "Uppercase float %%G: %G\n", newDoubleValuePtr);
+    u_fscanf(myFile, "Uppercase float %%G: %lG\n", newDoubleValuePtr);
     if (myFloat != *newDoubleValuePtr) {
         log_err("%%G Got: %G, Expected: %G\n", *newDoubleValuePtr, myFloat);
     }
@@ -433,12 +436,12 @@ static void TestfgetsBuffers(void) {
     }
 
     u_fputc(0x3BC, myFile);
-	if (u_fputc(0x110000, myFile) != U_EOF) {
+    if (u_fputc(0x110000, myFile) != U_EOF) {
         log_err("u_fputc should return U_EOF for 0x110000.\n");
-	}
-	if (u_fputc((UChar32)0xFFFFFFFFu, myFile) != U_EOF) {
+    }
+    if (u_fputc((UChar32)0xFFFFFFFFu, myFile) != U_EOF) {
         log_err("u_fputc should return U_EOF for 0xFFFFFFFF.\n");
-	}
+    }
     u_fputc(0xFF41, myFile);
     u_memset(buffer, 0xBEEF, sizeof(buffer)/sizeof(buffer[0]));
     u_memset(expectedBuffer, 0, sizeof(expectedBuffer)/sizeof(expectedBuffer[0]));
@@ -1396,32 +1399,32 @@ static void TestVargs(void) {
 static void TestUnicodeFormat(void)
 {
 #if !UCONFIG_NO_FORMATTING
-	/* Make sure that invariant conversion doesn't happen on the _u formats. */
+    /* Make sure that invariant conversion doesn't happen on the _u formats. */
     UChar myUString[256];
-	UFILE *myFile;
-	static const UChar TEST_STR[] = { 0x03BC, 0x0025, 0x0024, 0};
-	static const UChar PERCENT_S[] = { 0x03BC, 0x0025, 0x0053, 0};
+    UFILE *myFile;
+    static const UChar TEST_STR[] = { 0x03BC, 0x0025, 0x0024, 0};
+    static const UChar PERCENT_S[] = { 0x03BC, 0x0025, 0x0053, 0};
 
-	u_memset(myUString, 0x2a, sizeof(myUString)/sizeof(*myUString));
+    u_memset(myUString, 0x2a, sizeof(myUString)/sizeof(*myUString));
 
     myFile = u_fopen(STANDARD_TEST_FILE, "w", NULL, "UTF-8");
     if (!myFile) {
         log_err("Test file can't be opened\n");
         return;
     }
-	u_fprintf_u(myFile, PERCENT_S, TEST_STR);
-	u_fclose(myFile);
+    u_fprintf_u(myFile, PERCENT_S, TEST_STR);
+    u_fclose(myFile);
 
     myFile = u_fopen(STANDARD_TEST_FILE, "r", NULL, "UTF-8");
     if (!myFile) {
         log_err("Test file can't be opened\n");
         return;
     }
-	u_fscanf_u(myFile, PERCENT_S, myUString);
-	u_fclose(myFile);
-	if (u_strcmp(TEST_STR, myUString) != 0) {
+    u_fscanf_u(myFile, PERCENT_S, myUString);
+    u_fclose(myFile);
+    if (u_strcmp(TEST_STR, myUString) != 0) {
         log_err("u_fscanf_u doesn't work.\n");
-	}
+    }
 #endif
 }
 

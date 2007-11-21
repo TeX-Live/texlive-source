@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2005, International Business Machines Corporation and
+ * Copyright (c) 1997-2006, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -16,7 +16,51 @@
 #include "locmap.h"
 #include "uresimp.h"
 
-static UBool isCurrencyPreEuro(const char* currencyKey){
+/*--------------------------------------------------------------------
+  Time bomb - allows temporary behavior that expires at a given
+              release
+ ---------------------------------------------------------------------*/
+static const UVersionInfo ICU_37 = {3,7,0,0};
+
+/*
+returns a new UnicodeSet that is a flattened form of the original
+UnicodeSet.
+*/
+static USet*
+createFlattenSet(USet *origSet, UErrorCode *status) {
+
+
+    USet *newSet = NULL;
+    int32_t origItemCount = 0;
+    int32_t idx, graphmeSize;
+    UChar32 start, end;
+    UChar graphme[64];
+    if (U_FAILURE(*status)) {
+        log_err("createFlattenSet called with %s\n", u_errorName(*status));
+        return NULL;
+    }
+    newSet = uset_open(1, 0);
+    origItemCount = uset_getItemCount(origSet);
+    for (idx = 0; idx < origItemCount; idx++) {
+        graphmeSize = uset_getItem(origSet, idx,
+            &start, &end, 
+            graphme, (int32_t)(sizeof(graphme)/sizeof(graphme[0])),
+            status);
+        if (U_FAILURE(*status)) {
+            log_err("ERROR: uset_getItem returned %s\n", u_errorName(*status));
+            *status = U_ZERO_ERROR;
+        }
+        if (graphmeSize) {
+            uset_addAllCodePoints(newSet, graphme, graphmeSize);
+        }
+        else {
+            uset_addRange(newSet, start, end);
+        }
+    }
+    return newSet;
+}
+static UBool 
+isCurrencyPreEuro(const char* currencyKey){
     if( strcmp(currencyKey, "PTE") == 0 ||
         strcmp(currencyKey, "ESP") == 0 ||
         strcmp(currencyKey, "LUF") == 0 ||
@@ -117,26 +161,8 @@ TestKeyInRootRecursive(UResourceBundle *root, const char *rootName,
             if (U_SUCCESS(errorCode)
                 && (ures_getType(subSubBundle) == URES_ARRAY || ures_getType(subSubRootBundle) == URES_ARRAY))
             {
-                /* TODO: Properly check for 2D arrays and zoneStrings */
-                if (subBundleKey != NULL && strcmp(subBundleKey, "zoneStrings") == 0) {
-/*                    int32_t minSize = ures_getSize(subBundle);
-                    int32_t idx;
-
-                    for (idx = 0; idx < minSize; idx++) {
-                        UResourceBundle *subSubBundleAtIndex = ures_getByIndex(subBundle, idx, NULL, &errorCode);
-                        if (ures_getSize(subSubBundleAtIndex) != 6) {
-                            log_err("zoneStrings at index %d has wrong size for locale \"%s\". array size=%d\n",
-                                    idx,
-                                    locale,
-                                    ures_getSize(subSubBundleAtIndex));
-                        }
-                        ures_close(subSubBundleAtIndex);
-                    }*/
-                }
-                else {
-                    /* Here is one of the recursive parts */
-                    TestKeyInRootRecursive(subRootBundle, rootName, subBundle, locale);
-                }
+                /* Here is one of the recursive parts */
+                TestKeyInRootRecursive(subRootBundle, rootName, subBundle, locale);
             }
             else {
                 int32_t minSize = ures_getSize(subRootBundle);
@@ -283,7 +309,8 @@ TestKeyInRootRecursive(UResourceBundle *root, const char *rootName,
                         subBundleKey,
                         ures_getKey(currentBundle),
                         locale);
-            } else if (strcmp(subBundleKey, "localPatternChars") == 0) {
+            } else if (strcmp(subBundleKey, "localPatternChars") == 0 &&
+                       isICUVersionAtLeast(ICU_37)) {
                 /* Check well-formedness of localPatternChars.  First, the
                  * length must match the number of fields defined by
                  * DateFormat.  Second, each character in the string must
@@ -348,8 +375,13 @@ TestKeyInRootRecursive(UResourceBundle *root, const char *rootName,
 #endif
         }
         else if (ures_getType(subBundle) == URES_TABLE) {
-            /* Here is one of the recursive parts */
-            TestKeyInRootRecursive(subRootBundle, rootName, subBundle, locale);
+            if (strcmp(subBundleKey, "availableFormats")!=0) {
+                /* Here is one of the recursive parts */
+                TestKeyInRootRecursive(subRootBundle, rootName, subBundle, locale);
+            }
+            else {
+                log_verbose("Skipping key %s in %s\n", subBundleKey, locale);
+            }
         }
         else if (ures_getType(subBundle) == URES_BINARY || ures_getType(subBundle) == URES_INT) {
             /* Can't do anything to check it */
@@ -737,17 +769,21 @@ findStringSetMismatch(const char *currLoc, const UChar *string, int32_t langSize
                       const UChar *exemplarCharacters, int32_t exemplarLen,
                       UBool ignoreNumbers) {
     UErrorCode errorCode = U_ZERO_ERROR;
-    USet *exemplarSet = uset_openPatternOptions(exemplarCharacters, exemplarLen, USET_CASE_INSENSITIVE, &errorCode);
+    USet *origSet = uset_openPatternOptions(exemplarCharacters, exemplarLen, USET_CASE_INSENSITIVE, &errorCode);
+    USet *exemplarSet = createFlattenSet(origSet, &errorCode);
     int32_t strIdx;
+    uset_close(origSet);
     if (U_FAILURE(errorCode)) {
-      log_err("%s: error uset_openPattern returned %s\n", currLoc, u_errorName(errorCode));
+        log_err("%s: error uset_openPattern returned %s\n", currLoc, u_errorName(errorCode));
         return -1;
     }
 
     for (strIdx = 0; strIdx < langSize; strIdx++) {
         if (!uset_contains(exemplarSet, string[strIdx])
-            && string[strIdx] != 0x0020 && string[strIdx] != 0x00A0 && string[strIdx] != 0x002e && string[strIdx] != 0x002c && string[strIdx] != 0x002d && string[strIdx] != 0x0027) {
+            && string[strIdx] != 0x0020 && string[strIdx] != 0x00A0 && string[strIdx] != 0x002e && string[strIdx] != 0x002c && string[strIdx] != 0x002d && string[strIdx] != 0x0027
+            && string[strIdx] != 0x200C && string[strIdx] != 0x200D) {
             if (!ignoreNumbers || (ignoreNumbers && (string[strIdx] < 0x30 || string[strIdx] > 0x39))) {
+                uset_close(exemplarSet);
                 return strIdx;
             }
         }
@@ -755,7 +791,19 @@ findStringSetMismatch(const char *currLoc, const UChar *string, int32_t langSize
     uset_close(exemplarSet);
     return -1;
 }
-
+/* include non-invariant chars */
+static int32_t
+myUCharsToChars(const UChar* us, char* cs, int32_t len){
+    int32_t i=0;
+    for(; i< len; i++){
+        if(us[i] < 0x7f){
+            cs[i] = (char)us[i];
+        }else{
+            return -1;
+        }
+    }
+    return i;
+}
 static void 
 findSetMatch( UScriptCode *scriptCodes, int32_t scriptsLen, 
               USet *exemplarSet,
@@ -797,7 +845,7 @@ findSetMatch( UScriptCode *scriptCodes, int32_t scriptsLen,
             UChar32 end = 0;
             UChar *str = NULL;
             int32_t strCapacity = 0;
-
+            
             strCapacity = uset_getItem(exemplarSet, i, &start, &end, str, strCapacity, &status);
             if(U_SUCCESS(status)){
                 int32_t j;
@@ -809,6 +857,16 @@ findSetMatch( UScriptCode *scriptCodes, int32_t scriptsLen,
                         }
                     }
                     if(existsInScript == FALSE){
+                        for( j = 0; j < scriptsLen; j++){
+                            UChar toPattern[500]={'\0'};
+                            char pat[500]={'\0'};
+                            int32_t len = uset_toPattern(scripts[j], toPattern, 500, TRUE, &status);
+                            len = myUCharsToChars(toPattern, pat, len);
+                            log_err("uset_indexOf(\\u%04X)=%i uset_indexOf(\\u%04X)=%i\n", start, uset_indexOf(scripts[0], start), end, uset_indexOf(scripts[0], end));
+                            if(len!=-1){
+                                log_err("Pattern: %s\n",pat);
+                            }
+                        }
                         log_err("ExemplarCharacters and LocaleScript containment test failed for locale %s. \n", locale);
                     }
                 }else{
@@ -840,10 +898,6 @@ findSetMatch( UScriptCode *scriptCodes, int32_t scriptsLen,
 }
 
 static void VerifyTranslation(void) {
-#if U_ICU_VERSION_MAJOR_NUM == 3 && U_ICU_VERSION_MINOR_NUM == 4
-    /* Disabled until the CLDR data can be fixed. */
-    return;
-#else
     UResourceBundle *root, *currentLocale;
     int32_t locCount = uloc_countAvailable();
     int32_t locIndex;
@@ -857,7 +911,6 @@ static void VerifyTranslation(void) {
     int32_t end;
     UResourceBundle *resArray;
 
-    log_err("This test fails in exhaustive mode. Please fix the CLDR data\n");
     if (locCount <= 1) {
         log_data_err("At least root needs to be installed\n");
     }
@@ -1031,7 +1084,6 @@ static void VerifyTranslation(void) {
     }
 
     ures_close(root);
-#endif
 }
 
 /* adjust this limit as appropriate */
@@ -1043,6 +1095,7 @@ static void TestExemplarSet(void){
     UErrorCode ec = U_ZERO_ERROR;
     UEnumeration* avail;
     USet* exemplarSets[2];
+    USet* unassignedSet;
     UScriptCode code[MAX_SCRIPTS_PER_LOCALE];
     USet* codeSets[MAX_SCRIPTS_PER_LOCALE];
     int32_t codeLen;
@@ -1053,7 +1106,9 @@ static void TestExemplarSet(void){
     int32_t strLen;
     UChar32 start, end;
     
-    exemplarSets[0] = exemplarSets[1] = NULL;
+    unassignedSet = NULL;
+    exemplarSets[0] = NULL;
+    exemplarSets[1] = NULL;
     for (i=0; i<MAX_SCRIPTS_PER_LOCALE; ++i) {
         codeSets[i] = NULL;
     }
@@ -1062,6 +1117,10 @@ static void TestExemplarSet(void){
     if (!assertSuccess("ures_openAvailableLocales", &ec)) goto END;
     n = uenum_count(avail, &ec);
     if (!assertSuccess("uenum_count", &ec)) goto END;
+
+    u_uastrcpy(ubuf, "[:unassigned:]");
+    unassignedSet = uset_openPattern(ubuf, -1, &ec);
+    if (!assertSuccess("uset_openPattern", &ec)) goto END;
 
     for(i=0; i<n; i++){
         const char* locale = uenum_next(avail, NULL, &ec);
@@ -1076,6 +1135,9 @@ static void TestExemplarSet(void){
             exemplarSets[k] = exemplarSet;
             if (!assertSuccess("ulocaledata_getExemplarSet", &ec)) goto END;
 
+            if (uset_containsSome(exemplarSet, unassignedSet)) {
+                log_err("ExemplarSet contains unassigned characters for locale : %s\n", locale);
+            }
             codeLen = uscript_getCode(locale, code, 8, &ec);
             if (!assertSuccess("uscript_getCode", &ec)) goto END;
 
@@ -1085,6 +1147,10 @@ static void TestExemplarSet(void){
             }
             for (j=0; j<codeLen; ++j) {
                 uprv_strcpy(cbuf, "[:");
+                if(code[j]==-1){
+                    log_err("USCRIPT_INVALID_CODE returned for locale: %s\n", locale);
+                    continue;
+                }
                 uprv_strcat(cbuf, uscript_getShortName(code[j]));
                 uprv_strcat(cbuf, ":]");
                 u_uastrcpy(ubuf, cbuf);
@@ -1101,14 +1167,14 @@ static void TestExemplarSet(void){
                 if (!assertSuccess("uset_getItem", &ec)) goto END;
                 if (strLen == 0) {
                     for (j=0; j<codeLen; ++j) {
-                        if (uset_containsRange(codeSets[j], start, end)) {
+                        if (codeSets[j]!=NULL && uset_containsRange(codeSets[j], start, end)) {
                             existsInScript = TRUE;
                             break;
                         }
                     }
                 } else {
                     for (j=0; j<codeLen; ++j) {
-                        if (uset_containsString(codeSets[j], ubuf, strLen)) {
+                        if (codeSets[j]!=NULL && uset_containsString(codeSets[j], ubuf, strLen)) {
                             existsInScript = TRUE;
                             break;
                         }
@@ -1135,9 +1201,43 @@ static void TestExemplarSet(void){
     uenum_close(avail);
     uset_close(exemplarSets[0]);
     uset_close(exemplarSets[1]);
+    uset_close(unassignedSet);
     for (i=0; i<MAX_SCRIPTS_PER_LOCALE; ++i) {
         uset_close(codeSets[i]);
     }
+}
+
+static void TestCoverage(void){
+    ULocaleDataDelimiterType types[] = {
+     ULOCDATA_QUOTATION_START,     /* Quotation start */
+     ULOCDATA_QUOTATION_END,       /* Quotation end */
+     ULOCDATA_ALT_QUOTATION_START, /* Alternate quotation start */
+     ULOCDATA_ALT_QUOTATION_END,   /* Alternate quotation end */
+     ULOCDATA_DELIMITER_COUNT
+    };
+    int i;
+    UBool sub;
+    UErrorCode status = U_ZERO_ERROR;
+    ULocaleData *uld = ulocdata_open(uloc_getDefault(), &status);
+
+    if(U_FAILURE(status)){
+        log_err("ulocdata_open error");
+        return;
+    }
+
+
+    for(i = 0; i < ULOCDATA_DELIMITER_COUNT; i++){
+        UChar result[32] = {0,};
+        status = U_ZERO_ERROR;
+        ulocdata_getDelimiter(uld, types[i], result, 32, &status);
+        if (U_FAILURE(status)){
+            log_err("ulocdata_getgetDelimiter error with type %d", types[i]);
+        }
+    }
+
+    sub = ulocdata_getNoSubstitute(uld);
+    ulocdata_setNoSubstitute(uld,sub);
+    ulocdata_close(uld);
 }
 
 static void TestCurrencyList(void){
@@ -1186,4 +1286,5 @@ void addCLDRTest(TestNode** root)
     TESTCASE(VerifyTranslation);
     TESTCASE(TestExemplarSet);
     TESTCASE(TestCurrencyList);
+    TESTCASE(TestCoverage);
 }

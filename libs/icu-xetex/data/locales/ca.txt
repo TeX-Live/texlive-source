@@ -1,13 +1,13 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/ca.xml
+// * Source File:<path>/common/main/ca.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/ca.xml
+ *  ICU <specials> source: <path>/xml/main/ca.xml
  */
 ca{
     Countries{
@@ -20,7 +20,7 @@ ca{
         AN{"Antilles Holandeses"}
         AO{"Angola"}
         AR{"Argentina"}
-        AT{"Âustria"}
+        AT{"Àustria"}
         AU{"Austràlia"}
         AW{"Aruba"}
         AZ{"Azerbaidjan"}
@@ -251,13 +251,13 @@ ca{
             "Dòlar EUA",
         }
     }
-    ExemplarCharacters{"[a-z é í ó ú à è ò ï ü ŀ ç ñ]"}
+    ExemplarCharacters{"[a à b c ç d e é è f-i í ï j-n ñ o ó ò p-u ú ü v-z]"}
     Languages{
         aa{"àfar"}
         ab{"abkhaz"}
         af{"afrikaans"}
         am{"amhàric"}
-        ar{"ârab"}
+        ar{"àrab"}
         as{"assamès"}
         ay{"aimara"}
         az{"àzeri"}
@@ -407,19 +407,15 @@ ca{
         "E",
         "‰",
         "∞",
-        "�",
+        "NaN",
         "+",
     }
     Scripts{
         Latn{"Llatí"}
     }
-    Version{"1.48"}
+    Version{"1.67"}
     calendar{
         gregorian{
-            DateTimeElements:intvector{
-                2,
-                1,
-            }
             DateTimePatterns{
                 "H:mm:ss z",
                 "H:mm:ss z",
@@ -488,6 +484,22 @@ ca{
                         "octubre",
                         "novembre",
                         "desembre",
+                    }
+                }
+            }
+            quarters{
+                format{
+                    abbreviated{
+                        "1T",
+                        "2T",
+                        "3T",
+                        "4T",
+                    }
+                    wide{
+                        "1r trimestre",
+                        "2n trimestre",
+                        "3r trimestre",
+                        "4t trimestre",
                     }
                 }
             }

@@ -1,9 +1,9 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/om_KE.xml
+// * Source File:<path>/common/main/om_KE.xml
 // *
 // ***************************************************************************
 om_KE{
@@ -13,12 +13,16 @@ om_KE{
         "#,##0%",
         "#E0",
     }
-    Version{"1.27"}
+    Version{"1.38"}
     calendar{
         gregorian{
             AmPmMarkers{
                 "WD",
                 "WB",
+            }
+            DateTimeElements:intvector{
+                7,
+                1,
             }
             DateTimePatterns{
                 "h:mm:ss a",

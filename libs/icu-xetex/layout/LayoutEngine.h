@@ -1,7 +1,7 @@
 
 /*
  *
- * (C) Copyright IBM Corp. 1998-2005 - All Rights Reserved
+ * (C) Copyright IBM Corp. 1998-2006 - All Rights Reserved
  *
  */
 
@@ -254,6 +254,7 @@ protected:
      * @param count - the number of characters to be mapped
      * @param reverse - if <code>TRUE</code>, the output will be in reverse order
      * @param mirror - if <code>TRUE</code>, do character mirroring
+     * @param filterZeroWidth - if <code>TRUE</code> replace ZWJ / ZWNJ with a glyph with no contours.
      * @param glyphStorage - the object which holds the per-glyph storage. The glyph and char
      *                       indices arrays will be filled in.
      * @param success - set to an error code if the operation fails
@@ -262,7 +263,7 @@ protected:
      *
      * @internal
      */
-    virtual void mapCharsToGlyphs(const LEUnicode chars[], le_int32 offset, le_int32 count, le_bool reverse, le_bool mirror, LEGlyphStorage &glyphStorage, LEErrorCode &success);
+    virtual void mapCharsToGlyphs(const LEUnicode chars[], le_int32 offset, le_int32 count, le_bool reverse, le_bool mirror, le_bool filterZeroWidth, LEGlyphStorage &glyphStorage, LEErrorCode &success);
 
     /**
      * This is a convenience method that forces the advance width of mark
@@ -313,7 +314,7 @@ public:
 
     /**
      * This method will invoke the layout steps in their correct order by calling
-     * the computeGlyphs, positionGlyphs and adjustGlyphPosition methods.. It will
+     * the computeGlyphs, positionGlyphs and adjustGlyphPosition methods. It will
      * compute the glyph, character index and position arrays.
      *
      * @param chars - the input character context
@@ -327,8 +328,12 @@ public:
      *
      * @return the number of glyphs in the glyph array
      *
-     * Note; the glyph, character index and position array can be accessed
-     * using the getter method below.
+     * Note: The glyph, character index and position array can be accessed
+     * using the getter methods below.
+     *
+     * Note: If you call this method more than once, you must call the reset()
+     * method first to free the glyph, character index and position arrays
+     * allocated by the previous call.
      *
      * @stable ICU 2.8
      */

@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2005, International Business Machines Corporation and
+ * Copyright (c) 1997-2006, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /********************************************************************************
@@ -233,11 +233,11 @@ void TestCzechMonths459()
     UErrorCode status = U_ZERO_ERROR;
     UChar *date;
     
-	ctest_setTimeZone(NULL, &status);
+    ctest_setTimeZone(NULL, &status);
     fmt = udat_open(UDAT_FULL, UDAT_FULL, "cs", NULL, 0, NULL, 0, &status);
     if(U_FAILURE(status)){
         log_err("Error in constructing the date format\n");
-		ctest_resetTimeZone();
+        ctest_resetTimeZone();
         return;
     }
     lneed=0;
@@ -267,10 +267,17 @@ void TestCzechMonths459()
     }
     d = udat_parse(fmt, juneStr, u_strlen(juneStr), &pos, &status);
     date = myDateFormat(fmt, d);
-    if(u_strcmp(myDateFormat(fmt, june), myDateFormat(fmt, d) ) !=0)
-        log_err("Error in handling the czech month june\n");
-    else
-        log_verbose("Pass: Date = %s (czech month June)\n", aescstrdup(date, -1));
+
+    if(U_SUCCESS(status)){
+        UChar* out1 = myDateFormat(fmt, june);
+        UChar* out2 = myDateFormat(fmt, d);
+        if(u_strcmp(out1, out2) !=0)
+            log_err("Error in handling the czech month june\n");
+        else
+            log_verbose("Pass: Date = %s (czech month June)\n", aescstrdup(date, -1));
+    }else{
+        log_err("udat_parse failed. Error. %s\n",u_errorName(status));
+    }
     pos=0;
     d = udat_parse(fmt, julyStr, u_strlen(julyStr), &pos, &status);
     date = myDateFormat(fmt, d);
@@ -279,7 +286,7 @@ void TestCzechMonths459()
     else
         log_verbose("Pass: Date = %s (czech month July)\n", aescstrdup(date, -1));
     
-	ctest_resetTimeZone();
+    ctest_resetTimeZone();
     udat_close(fmt);
     ucal_close(cal);
     free(pattern);

@@ -26,6 +26,8 @@
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
+				DisableLanguageExtensions="TRUE"
+				TreatWChar_tAsBuiltInType="TRUE"
 				PrecompiledHeaderFile=".\Release/toolutil.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
@@ -37,11 +39,11 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\..\bin\icutu34.dll"
+				OutputFile="..\..\..\bin\icutu36.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib"
-				ProgramDatabaseFile=".\..\..\..\lib\icutu34.pdb"
+				ProgramDatabaseFile=".\..\..\..\lib\icutu36.pdb"
 				EnableCOMDATFolding="2"
 				BaseAddress="0x4ac00000"
 				ImportLibrary="..\..\..\lib\icutu.lib"/>
@@ -90,6 +92,8 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				BufferSecurityCheck="TRUE"
+				DisableLanguageExtensions="TRUE"
+				TreatWChar_tAsBuiltInType="TRUE"
 				PrecompiledHeaderFile=".\Debug/toolutil.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
@@ -102,12 +106,12 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\..\bin\icutu34d.dll"
+				OutputFile="..\..\..\bin\icutu36d.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\..\..\..\lib\icutu34d.pdb"
+				ProgramDatabaseFile=".\..\..\..\lib\icutu36d.pdb"
 				BaseAddress="0x4ac00000"
 				ImportLibrary="..\..\..\lib\icutud.lib"/>
 			<Tool
@@ -149,10 +153,31 @@
 				RelativePath=".\filestrm.c">
 			</File>
 			<File
+				RelativePath=".\package.cpp">
+			</File>
+			<File
+				RelativePath=".\pkgitems.cpp">
+			</File>
+			<File
 				RelativePath=".\propsvec.c">
 			</File>
 			<File
+				RelativePath=".\swapimpl.cpp">
+			</File>
+			<File
 				RelativePath=".\toolutil.c">
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						DisableLanguageExtensions="FALSE"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						DisableLanguageExtensions="FALSE"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\ucbuf.c">
@@ -186,7 +211,16 @@
 				RelativePath=".\filestrm.h">
 			</File>
 			<File
+				RelativePath=".\package.h">
+			</File>
+			<File
+				RelativePath=".\pkg_imp.h">
+			</File>
+			<File
 				RelativePath=".\propsvec.h">
+			</File>
+			<File
+				RelativePath=".\swapimpl.h">
 			</File>
 			<File
 				RelativePath=".\toolutil.h">

@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1998-2005, International Business Machines Corporation and
+ * Copyright (c) 1998-2006, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*
@@ -26,6 +26,7 @@
 #include "filestrm.h"
 #include "udatamem.h"
 #include "cintltst.h"
+#include "ubrkimpl.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -600,10 +601,12 @@ static void TestUDataOpenChoiceDemo1() {
     const char* name[]={
         "cnvalias",
         "unames",
-        "test"
+        "test",
+        "nam"
     };
     const char* type="icu";
     const char* testPath="testdata";
+    const char* fullTestDataPath = loadTestData(&status);
 
     result=udata_openChoice(NULL, "icu", name[0], isAcceptable1, NULL, &status);
     if(U_FAILURE(status)){
@@ -613,6 +616,7 @@ static void TestUDataOpenChoiceDemo1() {
         udata_close(result);
     }
 
+    status=U_ZERO_ERROR;
     result=udata_openChoice(NULL, type, name[1], isAcceptable1, NULL, &status);
     if(U_FAILURE(status)){
         status=U_ZERO_ERROR;
@@ -621,11 +625,15 @@ static void TestUDataOpenChoiceDemo1() {
             log_err("FAIL: udata_openChoice() failed name=%s, type=%s, \n errorcode=%s\n", name[1], type, myErrorName(status));
         }
     }
+    else {
+        log_err("FAIL: udata_openChoice() unexpectedly passed. name=%s, type=%s, \n errorcode=%s\n", name[1], type, myErrorName(status));
+    }
 
     if(U_SUCCESS(status)){
         udata_close(result);
     }
 
+    status=U_ZERO_ERROR;
     result=udata_openChoice(testPath, type, name[2], isAcceptable1, NULL, &status);
     if(U_FAILURE(status)){
         status=U_ZERO_ERROR;
@@ -634,9 +642,25 @@ static void TestUDataOpenChoiceDemo1() {
             log_err("FAIL: udata_openChoice() failed path=%s name=%s, type=%s, \n errorcode=%s\n", testPath, name[2], type, myErrorName(status));
         }
     }
+    else {
+        log_err("FAIL: udata_openChoice() unexpectedly passed. name=%s, type=%s, \n errorcode=%s\n", name[2], type, myErrorName(status));
+    }
 
     if(U_SUCCESS(status)){
         udata_close(result);
+    }
+
+    status=U_ZERO_ERROR;
+    type="typ";
+    result=udata_openChoice(fullTestDataPath, type, name[3], isAcceptable1, NULL, &status);
+    if(status != U_INVALID_FORMAT_ERROR){
+        log_err("FAIL: udata_openChoice() did not fail as expected. name=%s, type=%s, \n errorcode=%s\n", name[3], type, myErrorName(status));
+    }
+
+    status=U_USELESS_COLLATOR_ERROR;
+    result=udata_openChoice(fullTestDataPath, type, name[3], isAcceptable1, NULL, &status);
+    if(status != U_USELESS_COLLATOR_ERROR){
+        log_err("FAIL: udata_openChoice() did not fail as expected. name=%s, type=%s, \n errorcode=%s\n", name[3], type, myErrorName(status));
     }
 }
 
@@ -1100,6 +1124,97 @@ static void TestICUDataName()
 
 /* test data swapping ------------------------------------------------------- */
 
+#ifdef OS400
+/* See comments in genccode.c on when this special implementation can be removed. */
+static const struct {
+    double bogus;
+    const char *bytes;
+} gOffsetTOCAppDataItem1={ 0.0, /* alignment bytes */
+    "\x00\x14" /* sizeof(UDataInfo) *//* MappedData { */
+    "\xda"
+    "\x27"                            /* } */
+    "\x00\x14" /* sizeof(UDataInfo) *//* UDataInfo  { */
+    "\0\0"
+    "\1"       /* U_IS_BIG_ENDIAN   */
+    "\1"       /* U_CHARSET_FAMILY  */
+    "\2"       /* U_SIZEOF_WHAR_T   */
+    "\0"
+    "\x31\x31\x31\x31"
+    "\0\0\0\0"
+    "\0\0\0\0"                        /* } */
+};
+#else
+static const struct {
+    double bogus;
+    MappedData bytes1;
+    UDataInfo bytes2;
+    uint8_t bytes3;
+} gOffsetTOCAppDataItem1={
+    0.0,                            /* alignment bytes */
+    { sizeof(UDataInfo), 0xda, 0x27 },  /* MappedData */
+
+    {sizeof(UDataInfo),
+    0,
+
+    U_IS_BIG_ENDIAN,
+    U_CHARSET_FAMILY,
+    sizeof(UChar),
+    0,
+
+    {0x31, 0x31, 0x31, 0x31},     /* dataFormat="1111" */
+    {0, 0, 0, 0},                 /* formatVersion */
+    {0, 0, 0, 0}}                 /* dataVersion */
+};
+#endif
+
+static const UChar gOffsetTOCGarbage[] = { /* "I have been very naughty!" */
+    0x49, 0x20, 0x68, 0x61, 0x76, 0x65, 0x20, 0x62, 0x65, 0x65, 0x6E,
+    0x20, 0x76, 0x65, 0x72, 0x79, 0x20, 0x6E, 0x61, 0x75, 0x67, 0x68, 0x74, 0x79, 0x21
+};
+
+/* Original source: icu/source/tools/genccode */
+static const struct {
+    uint16_t headerSize;
+    uint8_t magic1, magic2;
+    UDataInfo info;
+    char padding[8];
+    uint32_t count, reserved;
+    const struct {
+        const char *const name; 
+        const void *const data;
+    } toc[3];
+} gOffsetTOCAppData_dat = {
+    32,          /* headerSize */
+    0xda,        /* magic1,  (see struct MappedData in udata.c)  */
+    0x27,        /* magic2     */
+    {            /*UDataInfo   */
+        sizeof(UDataInfo),      /* size        */
+        0,                      /* reserved    */
+        U_IS_BIG_ENDIAN,
+        U_CHARSET_FAMILY,
+        sizeof(UChar),   
+        0,               /* reserved      */
+        {                /* data format identifier */
+           0x54, 0x6f, 0x43, 0x50}, /* "ToCP" */
+           {1, 0, 0, 0},   /* format version major, minor, milli, micro */
+           {0, 0, 0, 0}    /* dataVersion   */
+    },
+    {0,0,0,0,0,0,0,0},  /* Padding[8]   */ 
+    3,                  /* count        */
+    0,                  /* Reserved     */
+    {                   /*  TOC structure */
+        { "OffsetTOCAppData/a/b", &gOffsetTOCAppDataItem1 },
+        { "OffsetTOCAppData/gOffsetTOCAppDataItem1", &gOffsetTOCAppDataItem1 },
+        { "OffsetTOCAppData/gOffsetTOCGarbage", &gOffsetTOCGarbage }
+    }
+};
+
+/* Unfortunately, trie dictionaries are in a C++ header */
+int32_t
+triedict_swap(const UDataSwapper *ds,
+            const void *inData, int32_t length, void *outData,
+            UErrorCode *pErrorCode);
+
 /* test cases for maximum data swapping code coverage */
 static const struct {
     const char *name, *type;
@@ -1116,6 +1231,8 @@ static const struct {
     {"el",                       "res", ures_swap},
     /* ICU's root */
     {"root",                     "res", ures_swap},
+    /* Test a 32-bit key table. This is large. */
+    {"*testtable32",             "res", ures_swap},
 
     /* ICU 2.6 resource bundle - data format 1.0, without indexes[] (little-endian ASCII) */
     {"*icu26_testtypes",         "res", ures_swap},
@@ -1143,7 +1260,9 @@ static const struct {
     {"gb18030",                  "cnv", ucnv_swap},
     /* MBCS conversion table file with extension */
     {"*test4x",                  "cnv", ucnv_swap},
+#endif
 
+#if !UCONFIG_NO_CONVERSION
     /* alias table */
     {"cnvalias",                 "icu", ucnv_swapAliases},
 #endif
@@ -1154,6 +1273,7 @@ static const struct {
 
 #if !UCONFIG_NO_BREAK_ITERATION
     {"char",                     "brk", ubrk_swap},
+    {"thaidict",                 "ctd", triedict_swap},
 #endif
 
     /* the last item should not be #if'ed so that it can reliably omit the last comma */
@@ -1181,7 +1301,8 @@ static const struct {
     {"unames",                   "icu", uchar_swapNames}
 };
 
-#define SWAP_BUFFER_SIZE 1000000
+/* Large enough for the largest swappable data item. */
+#define SWAP_BUFFER_SIZE 1800000
 
 static void U_CALLCONV
 printError(void *context, const char *fmt, va_list args) {
@@ -1198,6 +1319,7 @@ TestSwapCase(UDataMemory *pData, const char *name,
     int32_t length, dataLength, length2, headerLength;
 
     UErrorCode errorCode;
+    UErrorCode badStatus;
 
     UBool inEndian, oppositeEndian;
     uint8_t inCharset, oppositeCharset;
@@ -1259,6 +1381,20 @@ TestSwapCase(UDataMemory *pData, const char *name,
         }
     }
 
+    /*
+    Check error checking of swappable data not specific to this swapper.
+    This should always fail.
+    */
+    badStatus = U_ZERO_ERROR;
+    length=swapFn(ds, &gOffsetTOCAppData_dat, -1, NULL, &badStatus);
+    if(badStatus != U_UNSUPPORTED_ERROR) {
+        log_err("swapFn(%s->!isBig+same charset) unexpectedly succeeded on bad data - %s\n",
+                name, u_errorName(errorCode));
+        udata_closeSwapper(ds);
+        return;
+    }
+
+    /* Now allow errors to be printed */
     ds->printError=printError;
 
     /* preflight the length */
@@ -1415,6 +1551,13 @@ TestSwapData() {
     }
 
     /* Test that printError works as expected. */
+    errorCode=U_USELESS_COLLATOR_ERROR;
+    ds=udata_openSwapper(U_IS_BIG_ENDIAN, U_ASCII_FAMILY,
+                         !U_IS_BIG_ENDIAN, U_ASCII_FAMILY,
+                         &errorCode);
+    if (ds != NULL || errorCode != U_USELESS_COLLATOR_ERROR) {
+        log_err("udata_openSwapper should have returned NULL with bad argument\n", name);
+    }
     errorCode=U_ZERO_ERROR;
     ds=udata_openSwapper(U_IS_BIG_ENDIAN, U_ASCII_FAMILY,
                          !U_IS_BIG_ENDIAN, U_ASCII_FAMILY,
@@ -1427,11 +1570,6 @@ TestSwapData() {
         log_err("udata_printError can't properly print error messages. Got = %s\n", name);
     }
     errorCode = U_USELESS_COLLATOR_ERROR;
-    if (udata_openSwapperForInputData(NULL, 0,
-                         !U_IS_BIG_ENDIAN, U_ASCII_FAMILY,
-                         &errorCode) != NULL) {
-        log_err("udata_openSwapperForInputData should have returned NULL with bad argument\n", name);
-    }
     ds=udata_openSwapperForInputData(NULL, 0,
                          !U_IS_BIG_ENDIAN, U_ASCII_FAMILY,
                          &errorCode);
@@ -1439,6 +1577,31 @@ TestSwapData() {
         log_err("udata_openSwapperForInputData should have returned NULL with bad argument\n", name);
     }
     errorCode=U_ZERO_ERROR;
+    ds=udata_openSwapperForInputData(NULL, 0,
+                         !U_IS_BIG_ENDIAN, U_ASCII_FAMILY,
+                         &errorCode);
+    if (ds != NULL || errorCode != U_ILLEGAL_ARGUMENT_ERROR) {
+        log_err("udata_openSwapperForInputData should have returned NULL with bad argument\n", name);
+    }
+    errorCode=U_ZERO_ERROR;
+    memset(buffer, 0, sizeof(2*SWAP_BUFFER_SIZE));
+    ds=udata_openSwapperForInputData(buffer, 2*SWAP_BUFFER_SIZE,
+                         !U_IS_BIG_ENDIAN, U_ASCII_FAMILY,
+                         &errorCode);
+    if (ds != NULL || errorCode != U_UNSUPPORTED_ERROR) {
+        log_err("udata_openSwapperForInputData should have returned NULL with bad argument\n", name);
+    }
+    errorCode=U_ZERO_ERROR;
+
+    /* Test argument checking. ucol_swapBinary is normally tested via ures_swap, and isn't normally called directly. */
+#if !UCONFIG_NO_COLLATION
+    ucol_swapBinary(NULL, NULL, -1, NULL, NULL);
+    ucol_swapBinary(NULL, NULL, -1, NULL, &errorCode);
+    if (errorCode != U_ILLEGAL_ARGUMENT_ERROR) {
+        log_err("ucol_swapBinary did not fail as expected\n", name);
+    }
+    errorCode=U_ZERO_ERROR;
+#endif
 
     for(i=0; i<LENGTHOF(swapCases); ++i) {
         /* build the name for logging */
@@ -1447,6 +1610,11 @@ TestSwapData() {
             pkg=loadTestData(&errorCode);
             nm=swapCases[i].name+1;
             uprv_strcpy(name, "testdata");
+        } else if (uprv_strcmp(swapCases[i].type, "brk")==0
+            || uprv_strcmp(swapCases[i].type, "ctd")==0) {
+            pkg=U_ICUDATA_BRKITR;
+            nm=swapCases[i].name;
+            uprv_strcpy(name, U_ICUDATA_BRKITR);
         } else {
             pkg=NULL;
             nm=swapCases[i].name;
@@ -1469,92 +1637,6 @@ TestSwapData() {
 
     uprv_free(buffer);
 }
-
-
-#ifdef OS400
-/* See comments in genccode.c on when this special implementation can be removed. */
-static const struct {
-    double bogus;
-    const char *bytes;
-} gOffsetTOCAppDataItem1={ 0.0, /* alignment bytes */
-    "\x00\x14" /* sizeof(UDataInfo) *//* MappedData { */
-    "\xda"
-    "\x27"                            /* } */
-    "\x00\x14" /* sizeof(UDataInfo) *//* UDataInfo  { */
-    "\0\0"
-    "\1"       /* U_IS_BIG_ENDIAN   */
-    "\1"       /* U_CHARSET_FAMILY  */
-    "\2"       /* U_SIZEOF_WHAR_T   */
-    "\0"
-    "\x31\x31\x31\x31"
-    "\0\0\0\0"
-    "\0\0\0\0"                        /* } */
-};
-#else
-static const struct {
-    double bogus;
-    MappedData bytes1;
-    UDataInfo bytes2;
-    uint8_t bytes3;
-} gOffsetTOCAppDataItem1={
-    0.0,                            /* alignment bytes */
-    { sizeof(UDataInfo), 0xda, 0x27 },  /* MappedData */
-
-    {sizeof(UDataInfo),
-    0,
-
-    U_IS_BIG_ENDIAN,
-    U_CHARSET_FAMILY,
-    sizeof(UChar),
-    0,
-
-    {0x31, 0x31, 0x31, 0x31},     /* dataFormat="1111" */
-    {0, 0, 0, 0},                 /* formatVersion */
-    {0, 0, 0, 0}}                 /* dataVersion */
-};
-#endif
-
-static const UChar gOffsetTOCGarbage[] = { /* "I have been very naughty!" */
-    0x49, 0x20, 0x68, 0x61, 0x76, 0x65, 0x20, 0x62, 0x65, 0x65, 0x6E,
-    0x20, 0x76, 0x65, 0x72, 0x79, 0x20, 0x6E, 0x61, 0x75, 0x67, 0x68, 0x74, 0x79, 0x21
-};
-
-/* Original source: icu/source/tools/genccode */
-static const struct {
-    uint16_t headerSize;
-    uint8_t magic1, magic2;
-    UDataInfo info;
-    char padding[8];
-    uint32_t count, reserved;
-    const struct {
-        const char *const name; 
-        const void *const data;
-    } toc[3];
-} gOffsetTOCAppData_dat = {
-    32,          /* headerSize */
-    0xda,        /* magic1,  (see struct MappedData in udata.c)  */
-    0x27,        /* magic2     */
-    {            /*UDataInfo   */
-        sizeof(UDataInfo),      /* size        */
-        0,                      /* reserved    */
-        U_IS_BIG_ENDIAN,
-        U_CHARSET_FAMILY,
-        sizeof(UChar),   
-        0,               /* reserved      */
-        {                /* data format identifier */
-           0x54, 0x6f, 0x43, 0x50}, /* "ToCP" */
-           {1, 0, 0, 0},   /* format version major, minor, milli, micro */
-           {0, 0, 0, 0}    /* dataVersion   */
-    },
-    {0,0,0,0,0,0,0,0},  /* Padding[8]   */ 
-    3,                  /* count        */
-    0,                  /* Reserved     */
-    {                   /*  TOC structure */
-        { "OffsetTOCAppData/a/b", &gOffsetTOCAppDataItem1 },
-        { "OffsetTOCAppData/gOffsetTOCAppDataItem1", &gOffsetTOCAppDataItem1 },
-        { "OffsetTOCAppData/gOffsetTOCGarbage", &gOffsetTOCGarbage }
-    }
-};
 
 
 static void PointerTableOfContents() {
@@ -1612,6 +1694,10 @@ static void SetBadCommonData(void) {
     /* It's difficult to test that udata_setCommonData really works within the test framework.
        So we just test that foolish people can't do bad things. */
     UErrorCode status;
+    char badBuffer[sizeof(gOffsetTOCAppData_dat)];
+
+    memset(badBuffer, 0, sizeof(badBuffer));
+    strcpy(badBuffer, "Hello! I'm not good data.");
 
     /* Check that we don't do anything */
     status = U_FILE_ACCESS_ERROR;
@@ -1636,6 +1722,13 @@ static void SetBadCommonData(void) {
     }
     else {
         log_verbose("Can't test setting common data because files mode may have been used.\n");
+    }
+
+    /* Check that we verify that the data isn't bad */
+    status = U_ZERO_ERROR;
+    udata_setAppData("invalid path", badBuffer, &status);
+    if (status != U_INVALID_FORMAT_ERROR) {
+        log_err("FAIL: udata_setAppData doesn't verify data validity.\n");
     }
 }
 

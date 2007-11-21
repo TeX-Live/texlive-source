@@ -1,15 +1,16 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/kok.xml
+// * Source File:<path>/common/main/kok.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/kok.xml
+ *  ICU <specials> source: <path>/xml/main/kok.xml
  */
 kok{
+    AuxExemplarCharacters{"[\u200C \u200D]"}
     Countries{
         IN{"भारत"}
     }
@@ -19,7 +20,10 @@ kok{
             "INR",
         }
     }
-    ExemplarCharacters{"[ँ-ह़-्ॐ-॔क़-ॣ०-९ॽ‌‍]"}
+    ExemplarCharacters{
+        "[़ ँ-ः ०-९ ॐ अ-ऍ ए-ऑ ओ-क {क़} ख {ख़} ग {ग़} घ-ज {ज़} झ-ड {ड़} ढ {ढ़} ण-न प फ"
+        " {फ़} ब-य {य़} र ल ळ व-ह ऽ-ॅ े-ॉ ो-्]"
+    }
     Languages{
         aa{"अफार"}
         ab{"अबखेज़ियन"}
@@ -165,7 +169,7 @@ kok{
     LocaleScript{
         "Deva",
     }
-    Version{"1.31"}
+    Version{"1.42"}
     calendar{
         gregorian{
             AmPmMarkers{
@@ -235,13 +239,12 @@ kok{
         }
     }
     zoneStrings{
-        {
-            "Asia/Calcutta",
-            "भारतीय समय",
-            "IST",
-            "भारतीय समय",
-            "IST",
-            "Calcutta",
+        "Asia:Calcutta"{
+            ec{"Calcutta"}
+            ld{"भारतीय समय"}
+            ls{"भारतीय समय"}
+            sd{"IST"}
+            ss{"IST"}
         }
     }
 }

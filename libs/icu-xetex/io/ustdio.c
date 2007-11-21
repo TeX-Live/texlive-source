@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 1998-2005, International Business Machines
+*   Copyright (C) 1998-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -35,9 +35,6 @@
 #define DELIM_NEL 0x0085
 #define DELIM_LS 0x2028
 #define DELIM_PS 0x2029
-
-/* Leave this copyright notice here! */
-static const char copyright[] = U_COPYRIGHT_STRING;
 
 /* TODO: is this correct for all codepages? Should we just use \n and let the converter handle it? */
 #ifdef U_WINDOWS
@@ -299,7 +296,6 @@ u_file_write_flush(const UChar *chars,
     /* Set up conversion parameters */
     UErrorCode  status       = U_ZERO_ERROR;
     const UChar *mySource    = chars;
-    const UChar *sourceAlias = chars;
     const UChar *mySourceEnd;
     char        charBuffer[UFILE_CHARBUFFER_SIZE];
     char        *myTarget   = charBuffer;
@@ -315,7 +311,6 @@ u_file_write_flush(const UChar *chars,
     {
         /* Do the transliteration */
         mySource = u_file_translit(f, chars, &count, flushTranslit);
-        sourceAlias = mySource;
     }
 #endif
 
@@ -336,7 +331,6 @@ u_file_write_flush(const UChar *chars,
     /* Perform the conversion in a loop */
     do {
         status     = U_ZERO_ERROR;
-        sourceAlias = mySource;
         if(f->fConverter != NULL) { /* We have a valid converter */
             ucnv_fromUnicode(f->fConverter,
                 &myTarget,

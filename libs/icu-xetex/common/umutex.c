@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 1997-2005, International Business Machines
+*   Copyright (C) 1997-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -21,6 +21,14 @@
 #include "unicode/utypes.h"
 #include "uassert.h"
 #include "ucln_cmn.h"
+
+#if defined(U_DARWIN)
+#include <AvailabilityMacros.h>
+#if (ICU_USE_THREADS == 1) && defined(MAC_OS_X_VERSION_10_4) && defined(MAC_OS_X_VERSION_MIN_REQUIRED) && (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_4)
+#include <libkern/OSAtomic.h>
+#define USE_MAC_OS_ATOMIC_INCREMENT 1
+#endif
+#endif
 
 /* Assume POSIX, and modify as necessary below */
 #define POSIX
@@ -511,6 +519,8 @@ umtx_atomic_inc(int32_t *p)  {
     } else {
         #if defined (U_WINDOWS) && ICU_USE_THREADS == 1
             retVal = InterlockedIncrement((LONG*)p);
+        #elif defined(USE_MAC_OS_ATOMIC_INCREMENT)
+            retVal = OSAtomicIncrement32Barrier(p);
         #elif defined (POSIX) && ICU_USE_THREADS == 1
             umtx_lock(&gIncDecMutex);
             retVal = ++(*p);
@@ -531,6 +541,8 @@ umtx_atomic_dec(int32_t *p) {
     } else {
         #if defined (U_WINDOWS) && ICU_USE_THREADS == 1
             retVal = InterlockedDecrement((LONG*)p);
+        #elif defined(USE_MAC_OS_ATOMIC_INCREMENT)
+            retVal = OSAtomicDecrement32Barrier(p);
         #elif defined (POSIX) && ICU_USE_THREADS == 1
             umtx_lock(&gIncDecMutex);
             retVal = --(*p);
@@ -552,7 +564,6 @@ umtx_atomic_dec(int32_t *p) {
 U_CAPI void U_EXPORT2
 u_setAtomicIncDecFunctions(const void *context, UMtxAtomicFn *ip, UMtxAtomicFn *dp,
                                 UErrorCode *status) {
-    int32_t   testInt;
     if (U_FAILURE(*status)) {
         return;
     }
@@ -571,11 +582,15 @@ u_setAtomicIncDecFunctions(const void *context, UMtxAtomicFn *ip, UMtxAtomicFn *
     pDecFn = dp;
     gIncDecContext = context;
 
-    testInt = 0;
-    U_ASSERT(umtx_atomic_inc(&testInt) == 1);     /* Sanity Check.    Do the functions work at all? */
-    U_ASSERT(testInt == 1);
-    U_ASSERT(umtx_atomic_dec(&testInt) == 0);
-    U_ASSERT(testInt == 0);
+#if !U_RELEASE
+    {
+        int32_t   testInt = 0;
+        U_ASSERT(umtx_atomic_inc(&testInt) == 1);     /* Sanity Check.    Do the functions work at all? */
+        U_ASSERT(testInt == 1);
+        U_ASSERT(umtx_atomic_dec(&testInt) == 0);
+        U_ASSERT(testInt == 0);
+    }
+#endif
 }
 
 

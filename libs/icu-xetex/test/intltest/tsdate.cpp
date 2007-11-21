@@ -1,6 +1,5 @@
 /***********************************************************************
- * COPYRIGHT: 
- * Copyright (c) 1997-2004, International Business Machines Corporation
+ * Copyright (c) 1997-2006, International Business Machines Corporation
  * and others. All Rights Reserved.
  ***********************************************************************/
 
@@ -15,6 +14,7 @@
 
 #include <float.h>
 #include <stdlib.h>
+#include <math.h>
 
 const double IntlTestDateFormat::ONEYEAR = 365.25 * ONEDAY; // Approximate
 
@@ -214,7 +214,7 @@ void IntlTestDateFormat::tryDate(UDate theDate)
         }
     }
 }
-    
+
 // Return a random double from 0.01 to 1, inclusive
 double IntlTestDateFormat::randDouble()
 {
@@ -235,7 +235,7 @@ double IntlTestDateFormat::randDouble()
             d = -d;
         if (d > 0.0)
         {
-            double e = uprv_floor(uprv_log10(d));
+            double e = uprv_floor(log10(d));
             if (e < -2.0)
                 d *= uprv_pow10((int32_t)(-e-2));
             else if (e > -1.0)

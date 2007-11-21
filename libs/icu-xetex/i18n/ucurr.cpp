@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-* Copyright (c) 2002-2005, International Business Machines
+* Copyright (c) 2002-2006, International Business Machines
 * Corporation and others.  All Rights Reserved.
 **********************************************************************
 */
@@ -754,7 +754,8 @@ static const struct CurrencyList {
     {"ATS", UCURR_COMMON|UCURR_DEPRECATED},
     {"AUD", UCURR_COMMON|UCURR_NON_DEPRECATED},
     {"AWG", UCURR_COMMON|UCURR_NON_DEPRECATED},
-    {"AZM", UCURR_COMMON|UCURR_NON_DEPRECATED},
+    {"AZM", UCURR_COMMON|UCURR_DEPRECATED},
+    {"AZN", UCURR_COMMON|UCURR_NON_DEPRECATED},
     {"BAD", UCURR_COMMON|UCURR_DEPRECATED},
     {"BAM", UCURR_COMMON|UCURR_NON_DEPRECATED},
     {"BBD", UCURR_COMMON|UCURR_NON_DEPRECATED},
@@ -791,7 +792,7 @@ static const struct CurrencyList {
     {"CHW", UCURR_UNCOMMON|UCURR_NON_DEPRECATED},
     {"CLF", UCURR_UNCOMMON|UCURR_NON_DEPRECATED},
     {"CLP", UCURR_COMMON|UCURR_NON_DEPRECATED},
-    {"CNX", UCURR_COMMON|UCURR_DEPRECATED},
+    {"CNX", UCURR_UNCOMMON|UCURR_DEPRECATED},
     {"CNY", UCURR_COMMON|UCURR_NON_DEPRECATED},
     {"COP", UCURR_COMMON|UCURR_NON_DEPRECATED},
     {"COU", UCURR_UNCOMMON|UCURR_NON_DEPRECATED},
@@ -899,7 +900,8 @@ static const struct CurrencyList {
     {"MXV", UCURR_UNCOMMON|UCURR_NON_DEPRECATED},
     {"MYR", UCURR_COMMON|UCURR_NON_DEPRECATED},
     {"MZE", UCURR_COMMON|UCURR_NON_DEPRECATED},
-    {"MZM", UCURR_COMMON|UCURR_NON_DEPRECATED},
+    {"MZM", UCURR_COMMON|UCURR_DEPRECATED},
+    {"MZN", UCURR_COMMON|UCURR_NON_DEPRECATED},
     {"NAD", UCURR_COMMON|UCURR_NON_DEPRECATED},
     {"NGN", UCURR_COMMON|UCURR_NON_DEPRECATED},
     {"NIC", UCURR_COMMON|UCURR_DEPRECATED},
@@ -922,7 +924,8 @@ static const struct CurrencyList {
     {"PYG", UCURR_COMMON|UCURR_NON_DEPRECATED},
     {"QAR", UCURR_COMMON|UCURR_NON_DEPRECATED},
     {"RHD", UCURR_COMMON|UCURR_DEPRECATED},
-    {"ROL", UCURR_COMMON|UCURR_NON_DEPRECATED},
+    {"ROL", UCURR_COMMON|UCURR_DEPRECATED},
+    {"RON", UCURR_COMMON|UCURR_NON_DEPRECATED},
     {"RUB", UCURR_COMMON|UCURR_NON_DEPRECATED},
     {"RUR", UCURR_COMMON|UCURR_DEPRECATED},
     {"RWF", UCURR_COMMON|UCURR_NON_DEPRECATED},
@@ -934,7 +937,7 @@ static const struct CurrencyList {
     {"SEK", UCURR_COMMON|UCURR_NON_DEPRECATED},
     {"SGD", UCURR_COMMON|UCURR_NON_DEPRECATED},
     {"SHP", UCURR_COMMON|UCURR_NON_DEPRECATED},
-    {"SIT", UCURR_COMMON|UCURR_NON_DEPRECATED},
+    {"SIT", UCURR_COMMON|UCURR_DEPRECATED},
     {"SKK", UCURR_COMMON|UCURR_NON_DEPRECATED},
     {"SLL", UCURR_COMMON|UCURR_NON_DEPRECATED},
     {"SOS", UCURR_COMMON|UCURR_NON_DEPRECATED},
@@ -1025,7 +1028,7 @@ ucurr_countCurrencyList(UEnumeration *enumerator, UErrorCode * /*pErrorCode*/) {
 static const char* U_CALLCONV
 ucurr_nextCurrencyList(UEnumeration *enumerator,
                         int32_t* resultLength,
-                        UErrorCode *pErrorCode)
+                        UErrorCode * /*pErrorCode*/)
 {
     UCurrencyContext *myContext = (UCurrencyContext *)(enumerator->context);
 
@@ -1041,7 +1044,9 @@ ucurr_nextCurrencyList(UEnumeration *enumerator,
         }
     }
     /* We enumerated too far. */
-    *pErrorCode = U_INDEX_OUTOFBOUNDS_ERROR;
+    if (resultLength) {
+        *resultLength = 0;
+    }
     return NULL;
 }
 

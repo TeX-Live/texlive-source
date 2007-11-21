@@ -1,6 +1,6 @@
 /*  
 **********************************************************************
-*   Copyright (C) 2002-2005, International Business Machines
+*   Copyright (C) 2002-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *   file name:  ucnv_u8.c
@@ -101,6 +101,7 @@ static void ucnv_toUnicode_UTF8 (UConverterToUnicodeArgs * args,
     {
         inBytes = args->converter->mode;            /* restore # of bytes to consume */
         i = args->converter->toULength;             /* restore # of bytes consumed */
+        args->converter->toULength = 0;
 
         ch = args->converter->toUnicodeStatus;/*Stores the previously calculated ch from a previous call*/
         args->converter->toUnicodeStatus = 0;
@@ -165,7 +166,6 @@ morebytes:
                 (isCESU8 ? i <= 3 : !UTF_IS_SURROGATE(ch)))
             {
                 /* Normal valid byte when the loop has not prematurely terminated (i < inBytes) */
-                args->converter->toULength = 0;
                 if (ch <= MAXIMUM_UCS2) 
                 {
                     /* fits in 16 bits */
@@ -230,6 +230,7 @@ static void ucnv_toUnicode_UTF8_OFFSETS_LOGIC (UConverterToUnicodeArgs * args,
     {
         inBytes = args->converter->mode;            /* restore # of bytes to consume */
         i = args->converter->toULength;             /* restore # of bytes consumed */
+        args->converter->toULength = 0;
 
         ch = args->converter->toUnicodeStatus;/*Stores the previously calculated ch from a previous call*/
         args->converter->toUnicodeStatus = 0;
@@ -292,7 +293,6 @@ morebytes:
                 (isCESU8 ? i <= 3 : !UTF_IS_SURROGATE(ch)))
             {
                 /* Normal valid byte when the loop has not prematurely terminated (i < inBytes) */
-                args->converter->toULength = 0;
                 if (ch <= MAXIMUM_UCS2) 
                 {
                     /* fits in 16 bits */
@@ -349,7 +349,7 @@ U_CFUNC void ucnv_fromUnicode_UTF8 (UConverterFromUnicodeArgs * args,
     const UChar *sourceLimit = args->sourceLimit;
     const unsigned char *targetLimit = (unsigned char *) args->targetLimit;
     UBool isCESU8 = (UBool)(args->converter->sharedData == &_CESU8Data);
-    UChar32 ch, ch2;
+    UChar32 ch;
     int16_t indexToWrite;
     char temp[4];
 
@@ -394,7 +394,6 @@ lowsurrogate:
                         if(UTF_IS_SECOND_SURROGATE(trail)) {
                             ++mySource;
                             ch=UTF16_GET_PAIR_VALUE(ch, trail);
-                            ch2 = 0;
                             /* convert this supplementary code point */
                             /* exit this condition tree */
                         } else {
@@ -466,7 +465,7 @@ U_CFUNC void ucnv_fromUnicode_UTF8_OFFSETS_LOGIC (UConverterFromUnicodeArgs * ar
     const UChar *sourceLimit = args->sourceLimit;
     const unsigned char *targetLimit = (unsigned char *) args->targetLimit;
     UBool isCESU8 = (UBool)(args->converter->sharedData == &_CESU8Data);
-    UChar32 ch, ch2;
+    UChar32 ch;
     int32_t offsetNum, nextSourceIndex;
     int16_t indexToWrite;
     char temp[4];
@@ -522,7 +521,6 @@ lowsurrogate:
                             ++mySource;
                             ++nextSourceIndex;
                             ch=UTF16_GET_PAIR_VALUE(ch, trail);
-                            ch2 = 0;
                             /* convert this supplementary code point */
                             /* exit this condition tree */
                         } else {

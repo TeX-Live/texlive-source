@@ -1,13 +1,13 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/pt.xml
+// * Source File:<path>/common/main/pt.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/pt.xml
+ *  ICU <specials> source: <path>/xml/main/pt.xml
  */
 pt{
     Countries{
@@ -59,6 +59,7 @@ pt{
         CN{"China"}
         CO{"Colômbia"}
         CR{"Costa Rica"}
+        CS{"Sérvia e Montenegro"}
         CU{"Cuba"}
         CV{"Cabo Verde"}
         CX{"Ilhas Natal"}
@@ -264,7 +265,7 @@ pt{
             "Afegane (1927-2002)",
         }
         AFN{
-            "AFA",
+            "AFN",
             "Afegane",
         }
         ALL{
@@ -1163,10 +1164,6 @@ pt{
             "XDR",
             "Direitos Especiais de Giro",
         }
-        XEU{
-            "XEU",
-            "Unidade Monetária Européia",
-        }
         XFO{
             "XFO",
             "Franco-ouro francês",
@@ -1228,7 +1225,7 @@ pt{
             "Dólar do Zimbábwe",
         }
     }
-    ExemplarCharacters{"[a-zãõçáéíóúàâêôüò]"}
+    ExemplarCharacters{"[a á à â ã b c ç d e é ê f-i í j-o ó ò ô õ p-u ú ü v-z]"}
     Keys{
         calendar{"Calendário"}
         collation{"Intercalação"}
@@ -1701,7 +1698,7 @@ pt{
         "E",
         "‰",
         "∞",
-        "�",
+        "NaN",
         "+",
     }
     Scripts{
@@ -1783,13 +1780,9 @@ pt{
     Variants{
         REVISED{"Revisado"}
     }
-    Version{"1.42"}
+    Version{"1.65"}
     calendar{
         gregorian{
-            DateTimeElements:intvector{
-                2,
-                1,
-            }
             DateTimePatterns{
                 "HH'H'mm'm'ss's' z",
                 "HH:mm:ss z",
@@ -1888,136 +1881,188 @@ pt{
                     }
                 }
             }
+            quarters{
+                format{
+                    abbreviated{
+                        "T1",
+                        "T2",
+                        "T3",
+                        "T4",
+                    }
+                    wide{
+                        "1º trimestre",
+                        "2º trimestre",
+                        "3º trimestre",
+                        "4º trimestre",
+                    }
+                }
+            }
         }
     }
     zoneStrings{
-        {
-            "America/Halifax",
-            "Horário Padrão Atlântico",
-            "AST",
-            "Horário de Verão Atlântico",
-            "ADT",
-            "Halifax",
+        "Africa:Casablanca"{
+            ec{"Casablanca"}
+            ld{"Horário do Meridiano de Greenwich"}
+            ls{"Horário do Meridiano de Greenwich"}
+            sd{"GMT"}
+            ss{"GMT"}
         }
-        {
-            "America/St_Johns",
-            "Horário Padrão de Terra Nova",
-            "CNT",
-            "Horário de Verão de Terra Nova",
-            "CDT",
-            "St. Johns",
+        "America:Anchorage"{
+            ec{"Anchorage"}
+            ld{"Horário de Verão do Alasca"}
+            ls{"Horário Padrão do Alasca"}
         }
-        {
-            "Asia/Shanghai",
-            "Horário Padrão da China",
-            "CTT",
-            "Horário Padrão da China",
-            "CDT",
-            "Xangai",
+        "America:Araguaina"{
+            ec{"Araguaína"}
         }
-        {
-            "Europe/Paris",
-            "Horário Padrão Europa Central",
-            "CET",
-            "Horário de Verão Europa Central",
-            "CEST",
-            "Paris",
+        "America:Argentina:Tucuman"{
+            ec{"Tucumán"}
         }
-        {
-            "Asia/Jerusalem",
-            "Horário Padrão de Israel",
-            "IST",
-            "Horário de Verão de Israel",
-            "IDT",
-            "Jerusalém",
+        "America:Belem"{
+            ec{"Belém"}
         }
-        {
-            "Asia/Tokyo",
-            "Horário Padrão do Japão",
-            "JST",
-            "Horário Padrão do Japão",
-            "JST",
-            "Tóquio",
+        "America:Cancun"{
+            ec{"Cancún"}
         }
-        {
-            "Africa/Casablanca",
-            "Horário do Meridiano de Greenwich",
-            "GMT",
-            "Horário do Meridiano de Greenwich",
-            "GMT",
-            "Casablanca",
+        "America:Chicago"{
+            ec{"Chicago"}
+            ld{"Horário de Verão Central"}
+            ls{"Horário Padrão Central"}
+            sd{"CDT"}
+            ss{"CST"}
         }
-        {
-            "Europe/Bucharest",
-            "Horário Padrão da Europa Oriental",
-            "EET",
-            "Horário de Verão da Europa Oriental",
-            "EEST",
-            "Bucareste",
+        "America:Cordoba"{
+            ec{"Córdoba"}
         }
-        {
-            "Pacific/Honolulu",
-            "Horário Padrão do Havaí",
-            "HST",
-            "Horário Padrão do Havaí",
-            "HST",
-            "Honolulu",
+        "America:Cuiaba"{
+            ec{"Cuiabá"}
         }
-        {
-            "America/Anchorage",
-            "Horário Padrão do Alasca",
-            "AST",
-            "Horário de Verão do Alasca",
-            "ADT",
-            "Anchorage",
+        "America:Denver"{
+            ec{"Denver"}
+            ld{"Horário de Verão Montanha"}
+            ls{"Horário Padrão Montanha"}
+            sd{"MDT"}
+            ss{"MST"}
         }
-        {
-            "America/Los_Angeles",
-            "Horário Padrão do Pacífico",
-            "PST",
-            "Horário de Verão do Pacífico",
-            "PDT",
-            "Los Angeles",
+        "America:Guayaquil"{
+            ec{"Guaiaquil"}
         }
-        {
-            "America/Phoenix",
-            "Horário Padrão Montanha",
-            "MST",
-            "Horário Padrão Montanha",
-            "MST",
-            "Phoenix",
+        "America:Halifax"{
+            ec{"Halifax"}
+            ld{"Horário de Verão Atlântico"}
+            ls{"Horário Padrão Atlântico"}
+            sd{"ADT"}
+            ss{"AST"}
         }
-        {
-            "America/Denver",
-            "Horário Padrão Montanha",
-            "MST",
-            "Horário de Verão Montanha",
-            "MDT",
-            "Denver",
+        "America:Indianapolis"{
+            ec{"Indianápolis"}
         }
-        {
-            "America/Chicago",
-            "Horário Padrão Central",
-            "CST",
-            "Horário de Verão Central",
-            "CDT",
-            "Chicago",
+        "America:Los_Angeles"{
+            ec{"Los Angeles"}
+            ld{"Horário de Verão do Pacífico"}
+            ls{"Horário Padrão do Pacífico"}
+            sd{"PDT"}
+            ss{"PST"}
         }
-        {
-            "America/Indianapolis",
-            "Horário Padrão Oriental",
-            "EST",
-            "Horário Padrão Oriental",
-            "EST",
-            "Indianápolis",
+        "America:Maceio"{
+            ec{"Maceió"}
         }
-        {
-            "America/New_York",
-            "Horário Padrão Oriental",
-            "EST",
-            "Horário de Verão Oriental",
-            "EDT",
-            "Nova Iorque",
+        "America:Merida"{
+            ec{"Mérida"}
+        }
+        "America:Mexico_City"{
+            ec{"Cidade do México"}
+        }
+        "America:New_York"{
+            ec{"Nova Iorque"}
+            ld{"Horário de Verão Oriental"}
+            ls{"Horário Padrão Oriental"}
+            sd{"EDT"}
+            ss{"EST"}
+        }
+        "America:North_Dakota:Center"{
+            ec{"Central"}
+        }
+        "America:Phoenix"{
+            ec{"Phoenix"}
+            ld{"Horário Padrão Montanha"}
+            ls{"Horário Padrão Montanha"}
+            sd{"MST"}
+            ss{"MST"}
+        }
+        "America:Sao_Paulo"{
+            ec{"São Paulo"}
+        }
+        "America:St_Johns"{
+            ec{"St. Johns"}
+            ld{"Horário de Verão de Terra Nova"}
+            ls{"Horário Padrão de Terra Nova"}
+            sd{"NDT"}
+            ss{"NST"}
+        }
+        "Antarctica:South_Pole"{
+            ec{"Pólo Sul"}
+        }
+        "Asia:Jakarta"{
+            ec{"Jacarta"}
+        }
+        "Asia:Jerusalem"{
+            ec{"Jerusalém"}
+            ld{"Horário de Verão de Israel"}
+            ls{"Horário Padrão de Israel"}
+            sd{"IDT"}
+            ss{"IST"}
+        }
+        "Asia:Shanghai"{
+            ec{"Xangai"}
+            ld{"Horário Padrão da China"}
+            ls{"Horário Padrão da China"}
+        }
+        "Asia:Tokyo"{
+            ec{"Tóquio"}
+            ld{"Horário Padrão do Japão"}
+            ls{"Horário Padrão do Japão"}
+            sd{"JST"}
+            ss{"JST"}
+        }
+        "Atlantic:Azores"{
+            ec{"Açores"}
+        }
+        "Atlantic:Canary"{
+            ec{"Canárias"}
+        }
+        "Europe:Bucharest"{
+            ec{"Bucareste"}
+            ld{"Horário de Verão da Europa Oriental"}
+            ls{"Horário Padrão da Europa Oriental"}
+            sd{"EEST"}
+            ss{"EET"}
+        }
+        "Europe:Lisbon"{
+            ec{"Lisboa"}
+        }
+        "Europe:London"{
+            ec{"Londres"}
+        }
+        "Europe:Paris"{
+            ec{"Paris"}
+            ld{"Horário de Verão Europa Central"}
+            ls{"Horário Padrão Europa Central"}
+            sd{"CEST"}
+            ss{"CET"}
+        }
+        "Pacific:Galapagos"{
+            ec{"Galápagos"}
+        }
+        "Pacific:Honolulu"{
+            ec{"Honolulu"}
+            ld{"Horário Padrão do Havaí"}
+            ls{"Horário Padrão do Havaí"}
+            sd{"HST"}
+            ss{"HST"}
+        }
+        "Pacific:Tahiti"{
+            ec{"Taiti"}
         }
     }
 }

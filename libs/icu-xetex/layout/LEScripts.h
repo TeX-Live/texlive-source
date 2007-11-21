@@ -1,20 +1,22 @@
 /*
  *
- * (C) Copyright IBM Corp. 1998-2005. All Rights Reserved.
+ * (C) Copyright IBM Corp. 1998-2006. All Rights Reserved.
  *
  * WARNING: THIS FILE IS MACHINE GENERATED. DO NOT HAND EDIT IT UNLESS
  * YOU REALLY KNOW WHAT YOU'RE DOING.
+ *
+ * Generated on: 08/21/2006 02:35:13 PM HST
  */
 
 #ifndef __LESCRIPTS_H
 #define __LESCRIPTS_H
 
 #include "LETypes.h"
+
 /**
- * \file 
+ * \file
  * \brief C++ API: Constants for Unicode script values
  */
-
 
 U_NAMESPACE_BEGIN
 
@@ -22,7 +24,7 @@ U_NAMESPACE_BEGIN
  * Constants for Unicode script values, generated using
  * ICU4J's <code>UScript</code> class.
  *
- * @draft ICU 3.0
+ * @draft ICU 3.6
  */
 
 enum ScriptCodes {
@@ -33,7 +35,7 @@ enum ScriptCodes {
     bengScriptCode =  4,
     bopoScriptCode =  5,
     cherScriptCode =  6,
-    qaacScriptCode =  7,
+    coptScriptCode =  7,
     cyrlScriptCode =  8,
     dsrtScriptCode =  9,
     devaScriptCode = 10,
@@ -81,8 +83,57 @@ enum ScriptCodes {
     taleScriptCode = 52,
     ugarScriptCode = 53,
     hrktScriptCode = 54,
+    bugiScriptCode = 55,
+    glagScriptCode = 56,
+    kharScriptCode = 57,
+    syloScriptCode = 58,
+    taluScriptCode = 59,
+    tfngScriptCode = 60,
+    xpeoScriptCode = 61,
+    baliScriptCode = 62,
+    batkScriptCode = 63,
+    blisScriptCode = 64,
+    brahScriptCode = 65,
+    chamScriptCode = 66,
+    cirtScriptCode = 67,
+    cyrsScriptCode = 68,
+    egydScriptCode = 69,
+    egyhScriptCode = 70,
+    egypScriptCode = 71,
+    geokScriptCode = 72,
+    hansScriptCode = 73,
+    hantScriptCode = 74,
+    hmngScriptCode = 75,
+    hungScriptCode = 76,
+    indsScriptCode = 77,
+    javaScriptCode = 78,
+    kaliScriptCode = 79,
+    latfScriptCode = 80,
+    latgScriptCode = 81,
+    lepcScriptCode = 82,
+    linaScriptCode = 83,
+    mandScriptCode = 84,
+    mayaScriptCode = 85,
+    meroScriptCode = 86,
+    nkooScriptCode = 87,
+    orkhScriptCode = 88,
+    permScriptCode = 89,
+    phagScriptCode = 90,
+    phnxScriptCode = 91,
+    plrdScriptCode = 92,
+    roroScriptCode = 93,
+    saraScriptCode = 94,
+    syreScriptCode = 95,
+    syrjScriptCode = 96,
+    syrnScriptCode = 97,
+    tengScriptCode = 98,
+    vaiiScriptCode = 99,
+    vispScriptCode = 100,
+    xsuxScriptCode = 101,
+    zxxxScriptCode = 102,
+    zzzzScriptCode = 103,
 
-    scriptCodeCount = 55
+    scriptCodeCount = 104
 };
 
 U_NAMESPACE_END

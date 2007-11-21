@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2005, International Business Machines Corporation and
+ * Copyright (c) 1997-2006, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -138,6 +138,8 @@ public:
      * Further test the formatting of time zones.
      */
     virtual void TestDateFormatZone146(void);
+
+    void TestTimeZoneStringsAPI(void);
  
 public: // package
     /**
@@ -161,12 +163,35 @@ public: // package
 
     void TestGenericTimeZoneOrder(void);
 
+public:
+    /**
+     * Test host-specific formatting.
+     */
+    void TestHost(void);
+
+public:
+    /**
+     * Test patterns added in CLDR 1.4
+     */
+    void TestEras(void);
+
+    void TestNarrowNames(void);
+
+    void TestStandAloneDays(void);
+
+    void TestStandAloneMonths(void);
+
+    void TestQuarters(void);
+
  private:
     void expectParse(const char** data, int32_t data_length,
                      const Locale& locale);
 
     void expect(const char** data, int32_t data_length,
                 const Locale& loc);
+
+    void expectFormat(const char **data, int32_t data_length,
+                      const Locale &locale);
 };
 
 #endif /* #if !UCONFIG_NO_FORMATTING */

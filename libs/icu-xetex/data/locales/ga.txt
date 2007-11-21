@@ -1,15 +1,16 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/ga.xml
+// * Source File:<path>/common/main/ga.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/ga.xml
+ *  ICU <specials> source: <path>/xml/main/ga.xml
  */
 ga{
+    AuxExemplarCharacters{"[ḃ ċ ḋ ḟ ġ ṁ ṗ ṡ ṫ]"}
     Countries{
         AD{"Andóra"}
         AE{"Aontas na nÉimíríochtaí Arabacha"}
@@ -1222,7 +1223,7 @@ ga{
             "Dollar Siombábach",
         }
     }
-    ExemplarCharacters{"[a-z á é í ó ú]"}
+    ExemplarCharacters{"[a á b-e é f-i í j-o ó p-u ú v-z]"}
     Languages{
         aa{"Afar"}
         ab{"Abcáisis"}
@@ -1348,12 +1349,23 @@ ga{
     LocaleScript{
         "Latn",
     }
-    Version{"1.36"}
+    Version{"1.51"}
     calendar{
         gregorian{
             AmPmMarkers{
                 "a.m.",
                 "p.m.",
+            }
+            DateTimePatterns{
+                "HH:mm:ss z",
+                "HH:mm:ss z",
+                "HH:mm:ss",
+                "HH:mm",
+                "EEEE, yyyy MMMM dd",
+                "yyyy MMMM d",
+                "yyyy MMM d",
+                "yy/MM/dd",
+                "{1} {0}",
             }
             dayNames{
                 format{
@@ -1414,34 +1426,63 @@ ga{
                         "Nollaig",
                     }
                 }
+                stand-alone{
+                    narrow{
+                        "E",
+                        "F",
+                        "M",
+                        "A",
+                        "B",
+                        "M",
+                        "I",
+                        "L",
+                        "M",
+                        "D",
+                        "S",
+                        "N",
+                    }
+                }
+            }
+            quarters{
+                format{
+                    abbreviated{
+                        "R1",
+                        "R2",
+                        "R3",
+                        "R4",
+                    }
+                    wide{
+                        "1ú ráithe",
+                        "2ú ráithe",
+                        "3ú ráithe",
+                        "4ú ráithe",
+                    }
+                }
             }
         }
     }
     localPatternChars{"RbMLkUnsSElFtTauKcBeyrACvdz"}
     zoneStrings{
-        {
-            "Europe/Belfast",
-            "Meán-Am Greenwich",
-            "MAG",
-            "Am Samhraidh na Breataine",
-            "ASB",
-            "Béal Feirste",
+        "Europe:Belfast"{
+            ec{"Béal Feirste"}
+            ld{"Am Samhraidh na Breataine"}
+            ls{"Meán-Am Greenwich"}
+            sd{"ASB"}
+            ss{"MAG"}
         }
-        {
-            "Europe/London",
-            "Meán-Am Greenwich",
-            "MAG",
-            "Am Samhraidh na Breataine",
-            "ASB",
-            "Londain",
+        "Europe:Dublin"{
+            ec{"Baile Átha Cliath"}
+            ld{"Am Samhraidh na hÉireann"}
+            ls{"Meán-Am Greenwich"}
+            sd{"ASÉ"}
+            ss{"MAG"}
         }
-        {
-            "Europe/Dublin",
-            "Meán-Am Greenwich",
-            "MAG",
-            "Am Samhraidh na hÉireann",
-            "ASÉ",
-            "Baile Átha Cliath",
+        "Europe:London"{
+            ec{"Londain"}
+            ld{"Am Samhraidh na Breataine"}
+            ls{"Meán-Am Greenwich"}
+            sd{"ASB"}
+            ss{"MAG"}
         }
     }
 }

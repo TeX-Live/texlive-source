@@ -1,6 +1,6 @@
 /*
  **********************************************************************
- *   Copyright (C) 1999-2005, International Business Machines
+ *   Copyright (C) 1999-2006, International Business Machines
  *   Corporation and others.  All Rights Reserved.
  **********************************************************************
  *   Date        Name        Description
@@ -279,8 +279,6 @@ public:
 
     UBool anchorStart;
     UBool anchorEnd;
-    
-    UErrorCode ec;
 
     /**
      * The segment number from 1..n of the next '(' we see
@@ -296,12 +294,13 @@ public:
     RuleHalf(TransliteratorParser& parser);
     ~RuleHalf();
 
-    int32_t parse(const UnicodeString& rule, int32_t pos, int32_t limit);
+    int32_t parse(const UnicodeString& rule, int32_t pos, int32_t limit, UErrorCode& status);
 
     int32_t parseSection(const UnicodeString& rule, int32_t pos, int32_t limit,
                          UnicodeString& buf,
                          const UnicodeString& illegal,
-                         UBool isSegment);
+                         UBool isSegment,
+                         UErrorCode& status);
 
     /**
      * Remove context.
@@ -322,8 +321,9 @@ public:
 
     int syntaxError(UErrorCode code,
                     const UnicodeString& rule,
-                    int32_t start) {
-        return parser.syntaxError(code, rule, start);
+                    int32_t start,
+                    UErrorCode& status) {
+        return parser.syntaxError(code, rule, start, status);
     }
 
 private:
@@ -333,7 +333,6 @@ private:
 };
 
 RuleHalf::RuleHalf(TransliteratorParser& p) :
-    ec(U_ZERO_ERROR),
     parser(p)
 {
     cursor = -1;
@@ -354,13 +353,13 @@ RuleHalf::~RuleHalf() {
  * @return the index after the terminating character, or
  * if limit was reached, limit
  */
-int32_t RuleHalf::parse(const UnicodeString& rule, int32_t pos, int32_t limit) {
+int32_t RuleHalf::parse(const UnicodeString& rule, int32_t pos, int32_t limit, UErrorCode& status) {
     int32_t start = pos;
     text.truncate(0);
-    pos = parseSection(rule, pos, limit, text, ILLEGAL_TOP, FALSE);
+    pos = parseSection(rule, pos, limit, text, ILLEGAL_TOP, FALSE, status);
 
     if (cursorOffset > 0 && cursor != cursorOffsetPos) {
-        return syntaxError(U_MISPLACED_CURSOR_OFFSET, rule, start);
+        return syntaxError(U_MISPLACED_CURSOR_OFFSET, rule, start, status);
     }
     
     return pos;
@@ -392,7 +391,7 @@ int32_t RuleHalf::parse(const UnicodeString& rule, int32_t pos, int32_t limit) {
 int32_t RuleHalf::parseSection(const UnicodeString& rule, int32_t pos, int32_t limit,
                                UnicodeString& buf,
                                const UnicodeString& illegal,
-                               UBool isSegment) {
+                               UBool isSegment, UErrorCode& status) {
     int32_t start = pos;
     ParsePosition pp;
     UnicodeString scratch;
@@ -416,19 +415,19 @@ int32_t RuleHalf::parseSection(const UnicodeString& rule, int32_t pos, int32_t l
         if (u_strchr(HALF_ENDERS, c) != NULL) {
             if (isSegment) {
                 // Unclosed segment
-                return syntaxError(U_UNCLOSED_SEGMENT, rule, start);
+                return syntaxError(U_UNCLOSED_SEGMENT, rule, start, status);
             }
             break;
         }
         if (anchorEnd) {
             // Text after a presumed end anchor is a syntax err
-            return syntaxError(U_MALFORMED_VARIABLE_REFERENCE, rule, start);
+            return syntaxError(U_MALFORMED_VARIABLE_REFERENCE, rule, start, status);
         }
         if (UnicodeSet::resemblesPattern(rule, pos-1)) {
             pp.setIndex(pos-1); // Backup to opening '['
-            buf.append(parser.parseSet(rule, pp));
-            if (U_FAILURE(parser.status)) {
-                return syntaxError(U_MALFORMED_SET, rule, start);
+            buf.append(parser.parseSet(rule, pp, status));
+            if (U_FAILURE(status)) {
+                return syntaxError(U_MALFORMED_SET, rule, start, status);
             }
             pos = pp.getIndex();                    
             continue;
@@ -436,14 +435,14 @@ int32_t RuleHalf::parseSection(const UnicodeString& rule, int32_t pos, int32_t l
         // Handle escapes
         if (c == ESCAPE) {
             if (pos == limit) {
-                return syntaxError(U_TRAILING_BACKSLASH, rule, start);
+                return syntaxError(U_TRAILING_BACKSLASH, rule, start, status);
             }
             UChar32 escaped = rule.unescapeAt(pos); // pos is already past '\\'
             if (escaped == (UChar32) -1) {
-                return syntaxError(U_MALFORMED_UNICODE_ESCAPE, rule, start);
+                return syntaxError(U_MALFORMED_UNICODE_ESCAPE, rule, start, status);
             }
             if (!parser.checkVariableRange(escaped)) {
-                return syntaxError(U_VARIABLE_RANGE_OVERLAP, rule, start);
+                return syntaxError(U_VARIABLE_RANGE_OVERLAP, rule, start, status);
             }
             buf.append(escaped);
             continue;
@@ -464,7 +463,7 @@ int32_t RuleHalf::parseSection(const UnicodeString& rule, int32_t pos, int32_t l
                 quoteStart = buf.length();
                 for (;;) {
                     if (iq < 0) {
-                        return syntaxError(U_UNTERMINATED_QUOTE, rule, start);
+                        return syntaxError(U_UNTERMINATED_QUOTE, rule, start, status);
                     }
                     scratch.truncate(0);
                     rule.extractBetween(pos, iq, scratch);
@@ -482,7 +481,7 @@ int32_t RuleHalf::parseSection(const UnicodeString& rule, int32_t pos, int32_t l
 
                 for (iq=quoteStart; iq<quoteLimit; ++iq) {
                     if (!parser.checkVariableRange(buf.charAt(iq))) {
-                        return syntaxError(U_VARIABLE_RANGE_OVERLAP, rule, start);
+                        return syntaxError(U_VARIABLE_RANGE_OVERLAP, rule, start, status);
                     }
                 }
             }
@@ -490,11 +489,11 @@ int32_t RuleHalf::parseSection(const UnicodeString& rule, int32_t pos, int32_t l
         }
 
         if (!parser.checkVariableRange(c)) {
-            return syntaxError(U_VARIABLE_RANGE_OVERLAP, rule, start);
+            return syntaxError(U_VARIABLE_RANGE_OVERLAP, rule, start, status);
         }
 
         if (illegal.indexOf(c) >= 0) {
-            syntaxError(U_ILLEGAL_CHARACTER, rule, start);
+            syntaxError(U_ILLEGAL_CHARACTER, rule, start, status);
         }
 
         switch (c) {
@@ -507,7 +506,7 @@ int32_t RuleHalf::parseSection(const UnicodeString& rule, int32_t pos, int32_t l
                 anchorStart = TRUE;
             } else {
               return syntaxError(U_MISPLACED_ANCHOR_START,
-                                 rule, start);
+                                 rule, start, status);
             }
           break;
         case SEGMENT_OPEN:
@@ -522,7 +521,7 @@ int32_t RuleHalf::parseSection(const UnicodeString& rule, int32_t pos, int32_t l
                 int32_t segmentNumber = nextSegmentNumber++; // 1-based
                 
                 // Parse the segment
-                pos = parseSection(rule, pos, limit, buf, ILLEGAL_SEG, TRUE);
+                pos = parseSection(rule, pos, limit, buf, ILLEGAL_SEG, TRUE, status);
                 
                 // After parsing a segment, the relevant characters are
                 // in buf, starting at offset bufSegStart.  Extract them
@@ -533,9 +532,9 @@ int32_t RuleHalf::parseSection(const UnicodeString& rule, int32_t pos, int32_t l
                                       segmentNumber, *parser.curData);
                 
                 // Record and associate object and segment number
-                parser.setSegmentObject(segmentNumber, m);
+                parser.setSegmentObject(segmentNumber, m, status);
                 buf.truncate(bufSegStart);
-                buf.append(parser.getSegmentStandin(segmentNumber));
+                buf.append(parser.getSegmentStandin(segmentNumber, status));
             }
             break;
         case FUNCTION:
@@ -547,13 +546,13 @@ int32_t RuleHalf::parseSection(const UnicodeString& rule, int32_t pos, int32_t l
                 // The next character MUST be a segment open
                 if (single == NULL ||
                     !ICU_Utility::parseChar(rule, iref, SEGMENT_OPEN)) {
-                    return syntaxError(U_INVALID_FUNCTION, rule, start);
+                    return syntaxError(U_INVALID_FUNCTION, rule, start, status);
                 }
                 
                 Transliterator *t = single->createInstance();
                 delete single;
                 if (t == NULL) {
-                    return syntaxError(U_INVALID_FUNCTION, rule, start);
+                    return syntaxError(U_INVALID_FUNCTION, rule, start, status);
                 }
                 
                 // bufSegStart is the offset in buf to the first
@@ -561,7 +560,7 @@ int32_t RuleHalf::parseSection(const UnicodeString& rule, int32_t pos, int32_t l
                 int32_t bufSegStart = buf.length();
                 
                 // Parse the segment
-                pos = parseSection(rule, iref, limit, buf, ILLEGAL_FUNC, TRUE);
+                pos = parseSection(rule, iref, limit, buf, ILLEGAL_FUNC, TRUE, status);
                 
                 // After parsing a segment, the relevant characters are
                 // in buf, starting at offset bufSegStart.
@@ -572,7 +571,7 @@ int32_t RuleHalf::parseSection(const UnicodeString& rule, int32_t pos, int32_t l
                 
                 // Replace the buffer contents with a stand-in
                 buf.truncate(bufSegStart);
-                buf.append(parser.generateStandInFor(r));
+                buf.append(parser.generateStandInFor(r, status));
             }
             break;
         case SymbolTable::SYMBOL_REF:
@@ -595,9 +594,9 @@ int32_t RuleHalf::parseSection(const UnicodeString& rule, int32_t pos, int32_t l
                     r = ICU_Utility::parseNumber(rule, pos, 10);
                     if (r < 0) {
                         return syntaxError(U_UNDEFINED_SEGMENT_REFERENCE,
-                                           rule, start);
+                                           rule, start, status);
                     }
-                    buf.append(parser.getSegmentStandin(r));
+                    buf.append(parser.getSegmentStandin(r, status));
                 } else {
                     pp.setIndex(pos);
                     UnicodeString name = parser.parseData->
@@ -617,13 +616,13 @@ int32_t RuleHalf::parseSection(const UnicodeString& rule, int32_t pos, int32_t l
                     // that case appendVariableDef() will append the
                     // special placeholder char variableLimit-1.
                     varStart = buf.length();
-                    parser.appendVariableDef(name, buf);
+                    parser.appendVariableDef(name, buf, status);
                     varLimit = buf.length();
                 }
             }
             break;
         case DOT:
-            buf.append(parser.getDotStandIn());
+            buf.append(parser.getDotStandIn(status));
             break;
         case KLEENE_STAR:
         case ONE_OR_MORE:
@@ -637,7 +636,7 @@ int32_t RuleHalf::parseSection(const UnicodeString& rule, int32_t pos, int32_t l
             {
                 if (isSegment && buf.length() == bufStart) {
                     // The */+ immediately follows '('
-                    return syntaxError(U_MISPLACED_QUANTIFIER, rule, start);
+                    return syntaxError(U_MISPLACED_QUANTIFIER, rule, start, status);
                 }
 
                 int32_t qstart, qlimit;
@@ -675,7 +674,7 @@ int32_t RuleHalf::parseSection(const UnicodeString& rule, int32_t pos, int32_t l
                 }
                 m = new Quantifier(m, min, max);
                 buf.truncate(qstart);
-                buf.append(parser.generateStandInFor(m));
+                buf.append(parser.generateStandInFor(m, status));
             }
             break;
 
@@ -693,31 +692,31 @@ int32_t RuleHalf::parseSection(const UnicodeString& rule, int32_t pos, int32_t l
         //------------------------------------------------------
         case CONTEXT_ANTE:
             if (ante >= 0) {
-                return syntaxError(U_MULTIPLE_ANTE_CONTEXTS, rule, start);
+                return syntaxError(U_MULTIPLE_ANTE_CONTEXTS, rule, start, status);
             }
             ante = buf.length();
             break;
         case CONTEXT_POST:
             if (post >= 0) {
-                return syntaxError(U_MULTIPLE_POST_CONTEXTS, rule, start);
+                return syntaxError(U_MULTIPLE_POST_CONTEXTS, rule, start, status);
             }
             post = buf.length();
             break;
         case CURSOR_POS:
             if (cursor >= 0) {
-                return syntaxError(U_MULTIPLE_CURSORS, rule, start);
+                return syntaxError(U_MULTIPLE_CURSORS, rule, start, status);
             }
             cursor = buf.length();
             break;
         case CURSOR_OFFSET:
             if (cursorOffset < 0) {
                 if (buf.length() > 0) {
-                    return syntaxError(U_MISPLACED_CURSOR_OFFSET, rule, start);
+                    return syntaxError(U_MISPLACED_CURSOR_OFFSET, rule, start, status);
                 }
                 --cursorOffset;
             } else if (cursorOffset > 0) {
                 if (buf.length() != cursorOffsetPos || cursor >= 0) {
-                    return syntaxError(U_MISPLACED_CURSOR_OFFSET, rule, start);
+                    return syntaxError(U_MISPLACED_CURSOR_OFFSET, rule, start, status);
                 }
                 ++cursorOffset;
             } else {
@@ -727,7 +726,7 @@ int32_t RuleHalf::parseSection(const UnicodeString& rule, int32_t pos, int32_t l
                     cursorOffsetPos = buf.length();
                     cursorOffset = 1;
                 } else {
-                    return syntaxError(U_MISPLACED_CURSOR_OFFSET, rule, start);
+                    return syntaxError(U_MISPLACED_CURSOR_OFFSET, rule, start, status);
                 }
             }
             break;
@@ -744,7 +743,7 @@ int32_t RuleHalf::parseSection(const UnicodeString& rule, int32_t pos, int32_t l
                 !((c >= 0x0030/*'0'*/ && c <= 0x0039/*'9'*/) ||
                   (c >= 0x0041/*'A'*/ && c <= 0x005A/*'Z'*/) ||
                   (c >= 0x0061/*'a'*/ && c <= 0x007A/*'z'*/))) {
-                return syntaxError(U_UNQUOTED_SPECIAL, rule, start);
+                return syntaxError(U_UNQUOTED_SPECIAL, rule, start, status);
             }
             buf.append(c);
             break;
@@ -807,32 +806,29 @@ UBool RuleHalf::isValidInput(TransliteratorParser& transParser) {
 /**
  * Constructor.
  */
-TransliteratorParser::TransliteratorParser() {
-    dataVector = NULL;
-    idBlockVector = NULL;
+TransliteratorParser::TransliteratorParser(UErrorCode &statusReturn) :
+dataVector(statusReturn),
+idBlockVector(statusReturn),
+variablesVector(statusReturn),
+segmentObjects(statusReturn)
+{
+    idBlockVector.setDeleter(uhash_deleteUnicodeString);
     curData = NULL;
     compoundFilter = NULL;
     parseData = NULL;
-    variablesVector = NULL;
-    variableNames = NULL;
-    segmentObjects = NULL;
+    variableNames.setValueDeleter(uhash_deleteUnicodeString);
 }
 
 /**
  * Destructor.
  */
 TransliteratorParser::~TransliteratorParser() {
-    while (dataVector != NULL && !dataVector->isEmpty())
-        delete (TransliterationRuleData*)(dataVector->orphanElementAt(0));
-    delete dataVector;
-    delete idBlockVector;
+    while (!dataVector.isEmpty())
+        delete (TransliterationRuleData*)(dataVector.orphanElementAt(0));
     delete compoundFilter;
     delete parseData;
-    while (variablesVector != NULL && !variablesVector->isEmpty())
-        delete (UnicodeFunctor*)variablesVector->orphanElementAt(0);
-    delete variablesVector;
-    delete variableNames;
-    delete segmentObjects;
+    while (!variablesVector.isEmpty())
+        delete (UnicodeFunctor*)variablesVector.orphanElementAt(0);
 }
 
 void
@@ -841,9 +837,8 @@ TransliteratorParser::parse(const UnicodeString& rules,
                             UParseError& pe,
                             UErrorCode& ec) {
     if (U_SUCCESS(ec)) {
-        parseRules(rules, transDirection);
+        parseRules(rules, transDirection, ec);
         pe = parseError;
-        ec = status;
     }
 }
 
@@ -869,55 +864,35 @@ UnicodeSet* TransliteratorParser::orphanCompoundFilter() {
  * rules
  */
 void TransliteratorParser::parseRules(const UnicodeString& rule,
-                                      UTransDirection theDirection) {
+                                      UTransDirection theDirection,
+                                      UErrorCode& status) {
     // Clear error struct
     parseError.line = parseError.offset = -1;
     parseError.preContext[0] = parseError.postContext[0] = (UChar)0;
-    status = U_ZERO_ERROR;
 
     UBool parsingIDs = TRUE;
     int32_t ruleCount = 0;
     
-    if (dataVector == NULL)
-        dataVector = new UVector(status);
-    else {
-        while (!dataVector->isEmpty())
-            delete (TransliterationRuleData*)(dataVector->orphanElementAt(0));
+    while (!dataVector.isEmpty()) {
+        delete (TransliterationRuleData*)(dataVector.orphanElementAt(0));
     }
     if (U_FAILURE(status)) {
         return;
     }
 
-    if (idBlockVector == NULL) {
-        idBlockVector = new UVector(status);
-        idBlockVector->setDeleter(uhash_deleteUnicodeString);
-    }
-    else
-        idBlockVector->removeAllElements();
-    if (U_FAILURE(status)) {
-        return;
-    }
+    idBlockVector.removeAllElements();
     curData = NULL;
-    
     direction = theDirection;
     ruleCount = 0;
 
     delete compoundFilter;
     compoundFilter = NULL;
 
-    if (variablesVector == NULL) {
-        variablesVector = new UVector(status);
-    } else {
-        while (!variablesVector->isEmpty())
-            delete (UnicodeFunctor*)variablesVector->orphanElementAt(0);
+    while (!variablesVector.isEmpty()) {
+        delete (UnicodeFunctor*)variablesVector.orphanElementAt(0);
     }
-    if (variableNames == NULL) {
-        variableNames = new Hashtable(status);
-        variableNames->setValueDeleter(uhash_deleteUnicodeString);
-    } else {
-        variableNames->removeAll();
-    }
-    parseData = new ParseData(0, variablesVector, variableNames);
+    variableNames.removeAll();
+    parseData = new ParseData(0, &variablesVector, &variableNames);
     if (parseData == NULL) {
         status = U_MEMORY_ALLOCATION_ERROR;
         return;
@@ -979,9 +954,9 @@ void TransliteratorParser::parseRules(const UnicodeString& rule,
             if (!parsingIDs) {
                 if (curData != NULL) {
                     if (direction == UTRANS_FORWARD)
-                        dataVector->addElement(curData, status);
+                        dataVector.addElement(curData, status);
                     else
-                        dataVector->insertElementAt(curData, 0, status);
+                        dataVector.insertElementAt(curData, 0, status);
                     curData = NULL;
                 }
                 parsingIDs = TRUE;
@@ -1009,7 +984,7 @@ void TransliteratorParser::parseRules(const UnicodeString& rule,
                     {
                         if (compoundFilter != NULL) {
                             // Multiple compound filters
-                            syntaxError(U_MULTIPLE_COMPOUND_FILTERS, rule, pos);
+                            syntaxError(U_MULTIPLE_COMPOUND_FILTERS, rule, pos, status);
                             delete f;
                         } else {
                             compoundFilter = f;
@@ -1021,7 +996,7 @@ void TransliteratorParser::parseRules(const UnicodeString& rule,
                 } else {
                     // Invalid ::id
                     // Can be parsed as neither an ID nor a global filter
-                    syntaxError(U_INVALID_ID, rule, pos);
+                    syntaxError(U_INVALID_ID, rule, pos, status);
                 }
             }
             delete id;
@@ -1029,9 +1004,9 @@ void TransliteratorParser::parseRules(const UnicodeString& rule,
         } else {
             if (parsingIDs) {
                 if (direction == UTRANS_FORWARD)
-                    idBlockVector->addElement(new UnicodeString(idBlockResult), status);
+                    idBlockVector.addElement(new UnicodeString(idBlockResult), status);
                 else
-                    idBlockVector->insertElementAt(new UnicodeString(idBlockResult), 0, status);
+                    idBlockVector.insertElementAt(new UnicodeString(idBlockResult), 0, status);
                 idBlockResult.remove();
                 parsingIDs = FALSE;
                 curData = new TransliterationRuleData(status);
@@ -1041,41 +1016,41 @@ void TransliteratorParser::parseRules(const UnicodeString& rule,
                 // E000..F8FF for variables and other stand-ins.  Currently
                 // the range F000..F8FF is typically sufficient.  The 'use
                 // variable range' pragma allows rule sets to modify this.
-                setVariableRange(0xF000, 0xF8FF);
+                setVariableRange(0xF000, 0xF8FF, status);
             }
 
             if (resemblesPragma(rule, pos, limit)) {
-                int32_t ppp = parsePragma(rule, pos, limit);
+                int32_t ppp = parsePragma(rule, pos, limit, status);
                 if (ppp < 0) {
-                    syntaxError(U_MALFORMED_PRAGMA, rule, pos);
+                    syntaxError(U_MALFORMED_PRAGMA, rule, pos, status);
                 }
                 pos = ppp;
             // Parse a rule
             } else {
-                pos = parseRule(rule, pos, limit);
+                pos = parseRule(rule, pos, limit, status);
             }
         }
     }
 
     if (parsingIDs && idBlockResult.length() > 0) {
         if (direction == UTRANS_FORWARD)
-            idBlockVector->addElement(new UnicodeString(idBlockResult), status);
+            idBlockVector.addElement(new UnicodeString(idBlockResult), status);
         else
-            idBlockVector->insertElementAt(new UnicodeString(idBlockResult), 0, status);
+            idBlockVector.insertElementAt(new UnicodeString(idBlockResult), 0, status);
     }
     else if (!parsingIDs && curData != NULL) {
         if (direction == UTRANS_FORWARD)
-            dataVector->addElement(curData, status);
+            dataVector.addElement(curData, status);
         else
-            dataVector->insertElementAt(curData, 0, status);
+            dataVector.insertElementAt(curData, 0, status);
     }
     
     if (U_SUCCESS(status)) {
         // Convert the set vector to an array
-        int32_t i, dataVectorSize = dataVector->size();
+        int32_t i, dataVectorSize = dataVector.size();
         for (i = 0; i < dataVectorSize; i++) {
-            TransliterationRuleData* data = (TransliterationRuleData*)dataVector->elementAt(i);
-            data->variablesLength = variablesVector->size();
+            TransliterationRuleData* data = (TransliterationRuleData*)dataVector.elementAt(i);
+            data->variablesLength = variablesVector.size();
             if (data->variablesLength == 0) {
                 data->variables = 0;
             } else {
@@ -1085,19 +1060,19 @@ void TransliteratorParser::parseRules(const UnicodeString& rule,
 
             for (int32_t j = 0; j < data->variablesLength; j++) {
                 data->variables[j] =
-                    ((UnicodeSet*)variablesVector->elementAt(j));
+                    ((UnicodeSet*)variablesVector.elementAt(j));
             }
             
-            data->variableNames->removeAll();
+            data->variableNames.removeAll();
             int32_t pos = -1;
-            const UHashElement* he = variableNames->nextElement(pos);
+            const UHashElement* he = variableNames.nextElement(pos);
             while (he != NULL) {
-                data->variableNames->put(*((UnicodeString*)(he->key.pointer)),
+                data->variableNames.put(*((UnicodeString*)(he->key.pointer)),
                     ((UnicodeString*)(he->value.pointer))->clone(), status);
-                he = variableNames->nextElement(pos);
+                he = variableNames.nextElement(pos);
             }
         }
-        variablesVector->removeAllElements();   // keeps them from getting deleted when we succeed
+        variablesVector.removeAllElements();   // keeps them from getting deleted when we succeed
 
         // Index the rules
         if (compoundFilter != NULL) {
@@ -1108,11 +1083,11 @@ void TransliteratorParser::parseRules(const UnicodeString& rule,
         }        
 
         for (i = 0; i < dataVectorSize; i++) {
-            TransliterationRuleData* data = (TransliterationRuleData*)dataVector->elementAt(i);
+            TransliterationRuleData* data = (TransliterationRuleData*)dataVector.elementAt(i);
             data->ruleSet.freeze(parseError, status);
         }
-        if (idBlockVector->size() == 1 && ((UnicodeString*)idBlockVector->elementAt(0))->isEmpty()) {
-            idBlockVector->removeElementAt(0);
+        if (idBlockVector.size() == 1 && ((UnicodeString*)idBlockVector.elementAt(0))->isEmpty()) {
+            idBlockVector.removeElementAt(0);
         }
     }
 }
@@ -1120,14 +1095,14 @@ void TransliteratorParser::parseRules(const UnicodeString& rule,
 /**
  * Set the variable range to [start, end] (inclusive).
  */
-void TransliteratorParser::setVariableRange(int32_t start, int32_t end) {
+void TransliteratorParser::setVariableRange(int32_t start, int32_t end, UErrorCode& status) {
     if (start > end || start < 0 || end > 0xFFFF) {
         status = U_MALFORMED_PRAGMA;
         return;
     }
     
     curData->variablesBase = (UChar) start;
-    if (dataVector->size() == 0) {
+    if (dataVector.size() == 0) {
         variableNext = (UChar) start;
         variableLimit = (UChar) (end + 1);
     }
@@ -1188,7 +1163,7 @@ UBool TransliteratorParser::resemblesPragma(const UnicodeString& rule, int32_t p
  * @return the position index after the final ';' of the pragma,
  * or -1 on failure.
  */
-int32_t TransliteratorParser::parsePragma(const UnicodeString& rule, int32_t pos, int32_t limit) {
+int32_t TransliteratorParser::parsePragma(const UnicodeString& rule, int32_t pos, int32_t limit, UErrorCode& status) {
     int32_t array[2];
     
     // resemblesPragma() has already returned true, so we
@@ -1203,7 +1178,7 @@ int32_t TransliteratorParser::parsePragma(const UnicodeString& rule, int32_t pos
     // use nfc rules;
     int p = ICU_Utility::parsePattern(rule, pos, limit, PRAGMA_VARIABLE_RANGE, array);
     if (p >= 0) {
-        setVariableRange(array[0], array[1]);
+        setVariableRange(array[0], array[1], status);
         return p;
     }
     
@@ -1242,7 +1217,7 @@ int32_t TransliteratorParser::parsePragma(const UnicodeString& rule, int32_t pos
  * indicators.  Once it does a lexical breakdown of the rule at pos, it
  * creates a rule object and adds it to our rule list.
  */
-int32_t TransliteratorParser::parseRule(const UnicodeString& rule, int32_t pos, int32_t limit) {
+int32_t TransliteratorParser::parseRule(const UnicodeString& rule, int32_t pos, int32_t limit, UErrorCode& status) {
     // Locate the left side, operator, and right side
     int32_t start = pos;
     UChar op = 0;
@@ -1250,11 +1225,7 @@ int32_t TransliteratorParser::parseRule(const UnicodeString& rule, int32_t pos, 
 
     // Set up segments data
     segmentStandins.truncate(0);
-    if (segmentObjects == NULL) {
-        segmentObjects = new UVector(status);
-    } else {
-        segmentObjects->removeAllElements();
-    }
+    segmentObjects.removeAllElements();
 
     // Use pointers to automatics to make swapping possible.
     RuleHalf _left(*this), _right(*this);
@@ -1262,13 +1233,13 @@ int32_t TransliteratorParser::parseRule(const UnicodeString& rule, int32_t pos, 
     RuleHalf* right = &_right;
 
     undefinedVariableName.remove();
-    pos = left->parse(rule, pos, limit);
+    pos = left->parse(rule, pos, limit, status);
     if (U_FAILURE(status)) {
         return start;
     }
 
     if (pos == limit || u_strchr(gOPERATORS, (op = rule.charAt(--pos))) == NULL) {
-        return syntaxError(U_MISSING_OPERATOR, rule, start);
+        return syntaxError(U_MISSING_OPERATOR, rule, start, status);
     }
     ++pos;
 
@@ -1292,7 +1263,7 @@ int32_t TransliteratorParser::parseRule(const UnicodeString& rule, int32_t pos, 
         break;
     }
 
-    pos = right->parse(rule, pos, limit);
+    pos = right->parse(rule, pos, limit, status);
     if (U_FAILURE(status)) {
         return start;
     }
@@ -1302,7 +1273,7 @@ int32_t TransliteratorParser::parseRule(const UnicodeString& rule, int32_t pos, 
             ++pos;
         } else {
             // RuleHalf parser must have terminated at an operator
-            return syntaxError(U_UNQUOTED_SPECIAL, rule, start);
+            return syntaxError(U_UNQUOTED_SPECIAL, rule, start, status);
         }
     }
 
@@ -1316,19 +1287,19 @@ int32_t TransliteratorParser::parseRule(const UnicodeString& rule, int32_t pos, 
         // defined).
         if (undefinedVariableName.length() == 0) {
             // "Missing '$' or duplicate definition"
-            return syntaxError(U_BAD_VARIABLE_DEFINITION, rule, start);
+            return syntaxError(U_BAD_VARIABLE_DEFINITION, rule, start, status);
         }
         if (left->text.length() != 1 || left->text.charAt(0) != variableLimit) {
             // "Malformed LHS"
-            return syntaxError(U_MALFORMED_VARIABLE_DEFINITION, rule, start);
+            return syntaxError(U_MALFORMED_VARIABLE_DEFINITION, rule, start, status);
         }
         if (left->anchorStart || left->anchorEnd ||
             right->anchorStart || right->anchorEnd) {
-            return syntaxError(U_MALFORMED_VARIABLE_DEFINITION, rule, start);
+            return syntaxError(U_MALFORMED_VARIABLE_DEFINITION, rule, start, status);
         } 
         // We allow anything on the right, including an empty string.
         UnicodeString* value = new UnicodeString(right->text);
-        variableNames->put(undefinedVariableName, value, status);
+        variableNames.put(undefinedVariableName, value, status);
         ++variableLimit;
         return pos;
     }
@@ -1338,21 +1309,21 @@ int32_t TransliteratorParser::parseRule(const UnicodeString& rule, int32_t pos, 
     if (undefinedVariableName.length() != 0) {
         return syntaxError(// "Undefined variable $" + undefinedVariableName,
                     U_UNDEFINED_VARIABLE,
-                    rule, start);
+                    rule, start, status);
     }
 
     // Verify segments
-    if (segmentStandins.length() > segmentObjects->size()) {
-        syntaxError(U_UNDEFINED_SEGMENT_REFERENCE, rule, start);
+    if (segmentStandins.length() > segmentObjects.size()) {
+        syntaxError(U_UNDEFINED_SEGMENT_REFERENCE, rule, start, status);
     }
     for (i=0; i<segmentStandins.length(); ++i) {
         if (segmentStandins.charAt(i) == 0) {
-            syntaxError(U_INTERNAL_TRANSLITERATOR_ERROR, rule, start); // will never happen
+            syntaxError(U_INTERNAL_TRANSLITERATOR_ERROR, rule, start, status); // will never happen
         }
     }
-    for (i=0; i<segmentObjects->size(); ++i) {
-        if (segmentObjects->elementAt(i) == NULL) {
-            syntaxError(U_INTERNAL_TRANSLITERATOR_ERROR, rule, start); // will never happen
+    for (i=0; i<segmentObjects.size(); ++i) {
+        if (segmentObjects.elementAt(i) == NULL) {
+            syntaxError(U_INTERNAL_TRANSLITERATOR_ERROR, rule, start, status); // will never happen
         }
     }
     
@@ -1405,21 +1376,21 @@ int32_t TransliteratorParser::parseRule(const UnicodeString& rule, int32_t pos, 
         !left->isValidInput(*this) || !right->isValidOutput(*this) ||
         left->ante > left->post) {
 
-        return syntaxError(U_MALFORMED_RULE, rule, start);
+        return syntaxError(U_MALFORMED_RULE, rule, start, status);
     }
 
     // Flatten segment objects vector to an array
     UnicodeFunctor** segmentsArray = NULL;
-    if (segmentObjects->size() > 0) {
-        segmentsArray = (UnicodeFunctor **)uprv_malloc(segmentObjects->size() * sizeof(UnicodeFunctor *));
-        segmentObjects->toArray((void**) segmentsArray);
+    if (segmentObjects.size() > 0) {
+        segmentsArray = (UnicodeFunctor **)uprv_malloc(segmentObjects.size() * sizeof(UnicodeFunctor *));
+        segmentObjects.toArray((void**) segmentsArray);
     }
 
     curData->ruleSet.addRule(new TransliterationRule(
                                  left->text, left->ante, left->post,
                                  right->text, right->cursor, right->cursorOffset,
                                  segmentsArray,
-                                 segmentObjects->size(),
+                                 segmentObjects.size(),
                                  left->anchorStart, left->anchorEnd,
                                  curData,
                                  status), status);
@@ -1437,8 +1408,10 @@ int32_t TransliteratorParser::parseRule(const UnicodeString& rule, int32_t pos, 
  * @param start position of first character of current rule
  */
 int32_t TransliteratorParser::syntaxError(UErrorCode parseErrorCode,
-                                               const UnicodeString& rule,
-                                               int32_t pos) {
+                                          const UnicodeString& rule,
+                                          int32_t pos,
+                                          UErrorCode& status)
+{
     parseError.offset = pos;
     parseError.line = 0 ; /* we are not using line numbers */
     
@@ -1469,23 +1442,24 @@ int32_t TransliteratorParser::syntaxError(UErrorCode parseErrorCode,
  * used to represent it.
  */
 UChar TransliteratorParser::parseSet(const UnicodeString& rule,
-                                          ParsePosition& pos) {
+                                          ParsePosition& pos,
+                                          UErrorCode& status) {
     UnicodeSet* set = new UnicodeSet(rule, pos, USET_IGNORE_SPACE, parseData, status);
     set->compact();
-    return generateStandInFor(set);
+    return generateStandInFor(set, status);
 }
 
 /**
  * Generate and return a stand-in for a new UnicodeFunctor.  Store
  * the matcher (adopt it).
  */
-UChar TransliteratorParser::generateStandInFor(UnicodeFunctor* adopted) {
+UChar TransliteratorParser::generateStandInFor(UnicodeFunctor* adopted, UErrorCode& status) {
     // assert(obj != null);
     
     // Look up previous stand-in, if any.  This is a short list
     // (typical n is 0, 1, or 2); linear search is optimal.
-    for (int32_t i=0; i<variablesVector->size(); ++i) {
-        if (variablesVector->elementAt(i) == adopted) { // [sic] pointer comparison
+    for (int32_t i=0; i<variablesVector.size(); ++i) {
+        if (variablesVector.elementAt(i) == adopted) { // [sic] pointer comparison
             return (UChar) (curData->variablesBase + i);
         }
     }
@@ -1495,14 +1469,14 @@ UChar TransliteratorParser::generateStandInFor(UnicodeFunctor* adopted) {
         status = U_VARIABLE_RANGE_EXHAUSTED;
         return 0;
     }
-    variablesVector->addElement(adopted, status);
+    variablesVector.addElement(adopted, status);
     return variableNext++;
 }
 
 /**
  * Return the standin for segment seg (1-based).
  */
-UChar TransliteratorParser::getSegmentStandin(int32_t seg) {
+UChar TransliteratorParser::getSegmentStandin(int32_t seg, UErrorCode& status) {
     // Special character used to indicate an empty spot
     UChar empty = curData->variablesBase - 1;
     while (segmentStandins.length() < seg) {
@@ -1518,7 +1492,7 @@ UChar TransliteratorParser::getSegmentStandin(int32_t seg) {
         // Set a placeholder in the master variables vector that will be
         // filled in later by setSegmentObject().  We know that we will get
         // called first because setSegmentObject() will call us.
-        variablesVector->addElement((void*) NULL, status);
+        variablesVector.addElement((void*) NULL, status);
         segmentStandins.setCharAt(seg-1, c);
     }
     return c;
@@ -1527,32 +1501,32 @@ UChar TransliteratorParser::getSegmentStandin(int32_t seg) {
 /**
  * Set the object for segment seg (1-based).
  */
-void TransliteratorParser::setSegmentObject(int32_t seg, StringMatcher* adopted) {
+void TransliteratorParser::setSegmentObject(int32_t seg, StringMatcher* adopted, UErrorCode& status) {
     // Since we call parseSection() recursively, nested
     // segments will result in segment i+1 getting parsed
     // and stored before segment i; be careful with the
     // vector handling here.
-    if (segmentObjects->size() < seg) {
-        segmentObjects->setSize(seg);
+    if (segmentObjects.size() < seg) {
+        segmentObjects.setSize(seg);
     }
-    int32_t index = getSegmentStandin(seg) - curData->variablesBase;
-    if (segmentObjects->elementAt(seg-1) != NULL ||
-        variablesVector->elementAt(index) != NULL) {
+    int32_t index = getSegmentStandin(seg, status) - curData->variablesBase;
+    if (segmentObjects.elementAt(seg-1) != NULL ||
+        variablesVector.elementAt(index) != NULL) {
         // should never happen
         status = U_INTERNAL_TRANSLITERATOR_ERROR;
         return;
     }
-    segmentObjects->setElementAt(adopted, seg-1);
-    variablesVector->setElementAt(adopted, index);
+    segmentObjects.setElementAt(adopted, seg-1);
+    variablesVector.setElementAt(adopted, index);
 }
 
 /**
  * Return the stand-in for the dot set.  It is allocated the first
  * time and reused thereafter.
  */
-UChar TransliteratorParser::getDotStandIn() {
+UChar TransliteratorParser::getDotStandIn(UErrorCode& status) {
     if (dotStandIn == (UChar) -1) {
-        dotStandIn = generateStandInFor(new UnicodeSet(DOT_SET, status));
+        dotStandIn = generateStandInFor(new UnicodeSet(DOT_SET, status), status);
     }
     return dotStandIn;
 }
@@ -1562,8 +1536,9 @@ UChar TransliteratorParser::getDotStandIn() {
  * UnicodeString.
  */
 void TransliteratorParser::appendVariableDef(const UnicodeString& name,
-                                                  UnicodeString& buf) {
-    const UnicodeString* s = (const UnicodeString*) variableNames->get(name);
+                                                  UnicodeString& buf,
+                                                  UErrorCode& status) {
+    const UnicodeString* s = (const UnicodeString*) variableNames.get(name);
     if (s == NULL) {
         // We allow one undefined variable so that variable definition
         // statements work.  For the first undefined variable we return

@@ -1,6 +1,6 @@
 /*
  **********************************************************************
- *   Copyright (C) 2002-2005, International Business Machines
+ *   Copyright (C) 2002-2006, International Business Machines
  *   Corporation and others.  All Rights Reserved.
  **********************************************************************
  */
@@ -10,6 +10,7 @@
  * BreakIterator...
  */
 #include "layout/LETypes.h"
+#include "layout/LEScripts.h"
 #include "layout/LELanguages.h"
 #include "layout/LayoutEngine.h"
 #include "layout/LEFontInstance.h"
@@ -131,7 +132,7 @@ le_int32 StyleRuns::getRuns(le_int32 runLimits[], le_int32 styleIndices[])
  * process, rather for all scripts which require
  * complex processing for correct rendering.
  */
-static const le_bool complexTable[] = {
+static const le_bool complexTable[scriptCodeCount] = {
     FALSE , /* Zyyy */
     FALSE,  /* Qaai */
     TRUE,   /* Arab */
@@ -186,7 +187,56 @@ static const le_bool complexTable[] = {
     FALSE,  /* Shaw */
     FALSE,  /* Tale */
     FALSE,  /* Ugar */
-    FALSE   /* Hrkt */
+    FALSE,  /* Hrkt */
+    FALSE,  /* Bugi */
+    FALSE,  /* Glag */
+    FALSE,  /* Khar */
+    FALSE,  /* Sylo */
+    FALSE,  /* Talu */
+    FALSE,  /* Tfng */
+    FALSE,  /* Xpeo */
+    FALSE,  /* Bali */
+    FALSE,  /* Batk */
+    FALSE,  /* Blis */
+    FALSE,  /* Brah */
+    FALSE,  /* Cham */
+    FALSE,  /* Cirt */
+    FALSE,  /* Cyrs */
+    FALSE,  /* Egyd */
+    FALSE,  /* Egyh */
+    FALSE,  /* Egyp */
+    FALSE,  /* Geok */
+    FALSE,  /* Hans */
+    FALSE,  /* Hant */
+    FALSE,  /* Hmng */
+    FALSE,  /* Hung */
+    FALSE,  /* Inds */
+    FALSE,  /* Java */
+    FALSE,  /* Kali */
+    FALSE,  /* Latf */
+    FALSE,  /* Latg */
+    FALSE,  /* Lepc */
+    FALSE,  /* Lina */
+    FALSE,  /* Mand */
+    FALSE,  /* Maya */
+    FALSE,  /* Mero */
+    FALSE,  /* Nkoo */
+    FALSE,  /* Orkh */
+    FALSE,  /* Perm */
+    FALSE,  /* Phag */
+    FALSE,  /* Phnx */
+    FALSE,  /* Plrd */
+    FALSE,  /* Roro */
+    FALSE,  /* Sara */
+    FALSE,  /* Syre */
+    FALSE,  /* Syrj */
+    FALSE,  /* Syrn */
+    FALSE,  /* Teng */
+    FALSE,  /* Taii */
+    FALSE,  /* Visp */
+    FALSE,  /* Xsux */
+    FALSE,  /* Zxxx */
+    FALSE   /* Zzzz */
 };
 
 
@@ -450,14 +500,17 @@ le_bool ParagraphLayout::isComplex(const LEUnicode chars[], le_int32 count)
     UErrorCode scriptStatus = U_ZERO_ERROR;
     UScriptCode scriptCode  = USCRIPT_INVALID_CODE;
     UScriptRun *sr = uscript_openRun(chars, count, &scriptStatus);
+    le_bool result = FALSE;
 
     while (uscript_nextRun(sr, NULL, NULL, &scriptCode)) {
         if (isComplex(scriptCode)) {
-            return TRUE;
+            result = TRUE;
+            break;
         }
     }
 
-    return FALSE;
+    uscript_closeRun(sr);
+    return result;
 }
 
 le_int32 ParagraphLayout::getAscent() const

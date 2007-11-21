@@ -1,6 +1,6 @@
 /*
  **********************************************************************
- *   Copyright (C) 1998-2004, International Business Machines
+ *   Copyright (C) 1998-2006, International Business Machines
  *   Corporation and others.  All Rights Reserved.
  **********************************************************************
  */
@@ -12,6 +12,11 @@
 U_NAMESPACE_BEGIN
 
 UOBJECT_DEFINE_RTTI_IMPLEMENTATION(LEGlyphStorage)
+
+LEInsertionCallback::~LEInsertionCallback()
+{
+	// nothing to do...
+}
 
 LEGlyphStorage::LEGlyphStorage()
     : fGlyphCount(0), fGlyphs(NULL), fCharIndices(NULL), fPositions(NULL),
@@ -38,6 +43,7 @@ void LEGlyphStorage::reset()
         LE_DELETE_ARRAY(fAuxData);
         fAuxData = NULL;
     }
+
     if (fAuxParam != NULL) {
         LE_DELETE_ARRAY(fAuxParam);
         fAuxParam = NULL;
@@ -119,7 +125,8 @@ le_int32 LEGlyphStorage::allocatePositions(LEErrorCode &success)
     }
 
     if (fPositions != NULL) {
-        LE_DELETE_ARRAY(fPositions);
+        success = LE_INTERNAL_ERROR;
+        return -1;
     }
 
     fPositions = LE_NEW_ARRAY(float, 2 * (fGlyphCount + 1));
@@ -139,7 +146,12 @@ le_int32 LEGlyphStorage::allocateAuxData(LEErrorCode &success)
         return -1;
     }
 
-    fAuxData = LE_NEW_ARRAY(void *, fGlyphCount);
+    if (fAuxData != NULL || fAuxParam != NULL) {
+        success = LE_INTERNAL_ERROR;
+        return -1;
+    }
+
+    fAuxData = LE_NEW_ARRAY(le_uint32, fGlyphCount);
     fAuxParam = LE_NEW_ARRAY(void *, fGlyphCount);
 
     if (fAuxData == NULL || fAuxParam == NULL) {
@@ -311,7 +323,7 @@ void LEGlyphStorage::setCharIndex(le_int32 glyphIndex, le_int32 charIndex, LEErr
     fCharIndices[glyphIndex] = charIndex;
 }
 
-void LEGlyphStorage::getAuxData(void *auxData[], LEErrorCode &success) const
+void LEGlyphStorage::getAuxData(le_uint32 auxData[], LEErrorCode &success) const
 {
     if (LE_FAILURE(success)) {
       return;
@@ -330,26 +342,26 @@ void LEGlyphStorage::getAuxData(void *auxData[], LEErrorCode &success) const
     LE_ARRAY_COPY(auxData, fAuxData, fGlyphCount);
 }
 
-void *LEGlyphStorage::getAuxData(le_int32 glyphIndex, LEErrorCode &success) const
+le_uint32 LEGlyphStorage::getAuxData(le_int32 glyphIndex, LEErrorCode &success) const
 {
     if (LE_FAILURE(success)) {
-        return NULL;
+        return 0;
     }
 
     if (fAuxData == NULL) {
         success = LE_NO_LAYOUT_ERROR;
-        return NULL;
+        return 0;
     }
     
     if (glyphIndex < 0 || glyphIndex >= fGlyphCount) {
         success = LE_INDEX_OUT_OF_BOUNDS_ERROR;
-        return NULL;
+        return 0;
     }
 
     return fAuxData[glyphIndex];
 }
 
-void *LEGlyphStorage::getAuxData2(le_int32 glyphIndex, LEErrorCode &success) const
+void *LEGlyphStorage::getAuxParam(le_int32 glyphIndex, LEErrorCode &success) const
 {
     if (LE_FAILURE(success)) {
         return NULL;
@@ -368,7 +380,7 @@ void *LEGlyphStorage::getAuxData2(le_int32 glyphIndex, LEErrorCode &success) con
     return fAuxParam[glyphIndex];
 }
 
-void LEGlyphStorage::setAuxData(le_int32 glyphIndex, void *auxData, void *auxParam, LEErrorCode &success)
+void LEGlyphStorage::setAuxData(le_int32 glyphIndex, le_uint32 auxData, void *auxParam, LEErrorCode &success)
 {
     if (LE_FAILURE(success)) {
         return;
@@ -499,6 +511,7 @@ void LEGlyphStorage::adoptAuxDataArrays(LEGlyphStorage &from)
     if (fAuxData != NULL) {
         LE_DELETE_ARRAY(fAuxData);
     }
+
     if (fAuxParam != NULL) {
         LE_DELETE_ARRAY(fAuxParam);
     }
@@ -539,8 +552,9 @@ le_int32 LEGlyphStorage::applyInsertions()
     fCharIndices = (le_int32 *)  LE_GROW_ARRAY(fCharIndices, newGlyphCount);
 
     if (fAuxData != NULL) {
-        fAuxData     = (void **) LE_GROW_ARRAY(fAuxData,     newGlyphCount);
+        fAuxData = (le_uint32 *) LE_GROW_ARRAY(fAuxData,     newGlyphCount);
     }
+
     if (fAuxParam != NULL) {
         fAuxParam     = (void **) LE_GROW_ARRAY(fAuxParam,     newGlyphCount);
     }

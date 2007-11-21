@@ -1,7 +1,7 @@
 /*
  *******************************************************************************
  *
- *   Copyright (C) 2003-2005, International Business Machines
+ *   Copyright (C) 2003-2006, International Business Machines
  *   Corporation and others.  All Rights Reserved.
  *
  *******************************************************************************
@@ -197,19 +197,18 @@ initCache(UErrorCode *status) {
     makeCache = (SHARED_DATA_HASHTABLE ==  NULL);
     umtx_unlock(&usprepMutex);
     if(makeCache) {
-        UHashtable *newCache = uhash_open(hashEntry, compareEntries, status);
-        if (U_FAILURE(*status)) {
-            return;
-        }
-        umtx_lock(&usprepMutex);
-        if(SHARED_DATA_HASHTABLE == NULL) {
-            SHARED_DATA_HASHTABLE = newCache;
-            ucln_common_registerCleanup(UCLN_COMMON_USPREP, usprep_cleanup);
-            newCache = NULL;
-        }
-        umtx_unlock(&usprepMutex);
-        if(newCache != NULL) {
-            uhash_close(newCache);
+        UHashtable *newCache = uhash_open(hashEntry, compareEntries, NULL, status);
+        if (U_SUCCESS(*status)) {
+            umtx_lock(&usprepMutex);
+            if(SHARED_DATA_HASHTABLE == NULL) {
+                SHARED_DATA_HASHTABLE = newCache;
+                ucln_common_registerCleanup(UCLN_COMMON_USPREP, usprep_cleanup);
+                newCache = NULL;
+            }
+            umtx_unlock(&usprepMutex);
+            if(newCache != NULL) {
+                uhash_close(newCache);
+            }
         }
     }
 }
@@ -317,7 +316,9 @@ usprep_getProfile(const char* path,
     stackKey.path = (char*) path;
 
     /* fetch the data from the cache */
+    umtx_lock(&usprepMutex);
     profile = (UStringPrepProfile*) (uhash_get(SHARED_DATA_HASHTABLE,&stackKey));
+    umtx_unlock(&usprepMutex);
     
     if(profile == NULL){
         UStringPrepKey* key   = (UStringPrepKey*) uprv_malloc(sizeof(UStringPrepKey));
@@ -356,7 +357,7 @@ usprep_getProfile(const char* path,
             key->path      = (char*) uprv_malloc(uprv_strlen(path)+1);
             if(key->path == NULL){
                 *status = U_MEMORY_ALLOCATION_ERROR;
-                uprv_free(key->path);
+                uprv_free(key->name);
                 uprv_free(key);
                 uprv_free(profile);
                 return NULL;
@@ -366,6 +367,10 @@ usprep_getProfile(const char* path,
 
         /* load the data */
         if(!loadData(profile, path, name, _SPREP_DATA_TYPE, status) || U_FAILURE(*status) ){
+            uprv_free(key->path);
+            uprv_free(key->name);
+            uprv_free(key);
+            uprv_free(profile);
             return NULL;
         }
         
@@ -378,6 +383,7 @@ usprep_getProfile(const char* path,
             if(U_FAILURE(*status)) {
                 usprep_unload(profile);
                 uprv_free(key->path);
+                uprv_free(key->name);
                 uprv_free(key);
                 uprv_free(profile);
                 return NULL;
@@ -411,7 +417,7 @@ usprep_open(const char* path,
     usprep_init();
        
     /* initialize the profile struct members */
-    return usprep_getProfile(path,name,status);;
+    return usprep_getProfile(path,name,status);
 }
 
 U_CAPI void U_EXPORT2
@@ -473,8 +479,12 @@ getValues(uint16_t trieWord, int16_t& value, UBool& isIndex){
          * the source codepoint is copied to the destination
          */
         type = USPREP_TYPE_LIMIT;
+        isIndex =FALSE;
+        value = 0;
     }else if(trieWord >= _SPREP_TYPE_THRESHOLD){
         type = (UStringPrepType) (trieWord - _SPREP_TYPE_THRESHOLD);
+        isIndex =FALSE;
+        value = 0;
     }else{
         /* get the type */
         type = USPREP_MAP;
@@ -482,12 +492,10 @@ getValues(uint16_t trieWord, int16_t& value, UBool& isIndex){
         if(trieWord & 0x02){
             isIndex = TRUE;
             value = trieWord  >> 2; //mask off the lower 2 bits and shift
-
         }else{
             isIndex = FALSE;
             value = (int16_t)trieWord;
             value =  (value >> 2);
-
         }
  
         if((trieWord>>2) == _SPREP_MAX_INDEX_VALUE){
@@ -799,7 +807,7 @@ usprep_prepare(   const UStringPrepProfile* profile,
             return FALSE;
         }
     }
-    if(b2Len <= destCapacity){
+    if(b2Len>0 && b2Len <= destCapacity){
         uprv_memmove(dest,b2, b2Len*U_SIZEOF_UCHAR);
     }
 

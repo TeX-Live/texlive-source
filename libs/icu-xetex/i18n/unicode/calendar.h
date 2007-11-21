@@ -1,6 +1,6 @@
 /*
 ********************************************************************************
-*   Copyright (C) 1997-2005, International Business Machines
+*   Copyright (C) 1997-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 ********************************************************************************
 *
@@ -37,6 +37,7 @@
 #include "unicode/locid.h"
 #include "unicode/timezone.h"
 #include "unicode/ucal.h"
+#include "unicode/umisc.h"
 
 U_NAMESPACE_BEGIN
 
@@ -45,14 +46,9 @@ class ICUServiceFactory;
 /**
  * @internal
  */
-typedef const void* URegistryKey;
-
-/**
- * @internal
- */
 typedef int32_t UFieldResolutionTable[12][8];
 
-/**.
+/**
  * <code>Calendar</code> is an abstract base class for converting between
  * a <code>UDate</code> object and a set of integer fields such as
  * <code>YEAR</code>, <code>MONTH</code>, <code>DAY</code>, <code>HOUR</code>,
@@ -1591,7 +1587,7 @@ protected:
      * computed.  This occurs only in setTimeInMillis().  A calendar set
      * to this state will compute all fields from the time if it becomes
      * necessary, but otherwise will delay such computation.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     UBool fAreFieldsVirtuallySet;
 
@@ -2091,7 +2087,7 @@ private:
      *  @param type type of the locale we're looking for (valid or actual)
      *  @param status error code for the operation
      *  @return the locale
-     *  @draft ICU 2.8 likely to change after ICU 3.0, based on feedback
+     *  @stable ICU 2.8
      */
     Locale getLocale(ULocDataLocaleType type, UErrorCode &status) const;
 

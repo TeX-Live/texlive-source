@@ -1,6 +1,6 @@
 /*
 ******************************************************************************
-*   Copyright (C) 2001-2003, International Business Machines
+*   Copyright (C) 2001-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 ******************************************************************************
 *
@@ -30,19 +30,6 @@ U_NAMESPACE_USE
 typedef struct collIterate collIterator;
 
 /* public methods ---------------------------------------------------- */
-
-/**
-* Since this is going to be deprecated, I'll leave it as it is
-*/
-U_CAPI int32_t U_EXPORT2
-ucol_keyHashCode(const uint8_t *key, 
-                       int32_t  length)
-{
-
-    CollationKey newKey(key, length);
-    return newKey.hashCode();
-}
-
 
 U_CAPI UCollationElements* U_EXPORT2
 ucol_openElements(const UCollator  *coll,
@@ -115,15 +102,16 @@ U_CAPI int32_t U_EXPORT2
 ucol_next(UCollationElements *elems, 
           UErrorCode         *status)
 {
-  uint32_t result;
+  int32_t result;
   if (U_FAILURE(*status)) {
     return UCOL_NULLORDER;
   }
 
   elems->reset_ = FALSE;
 
-  result = ucol_getNextCE(elems->iteratordata_.coll, &elems->iteratordata_, 
-                          status);
+  result = (int32_t)ucol_getNextCE(elems->iteratordata_.coll,
+                                   &elems->iteratordata_, 
+                                   status);
   
   if (result == UCOL_NO_MORE_CES) {
     result = UCOL_NULLORDER;
@@ -140,7 +128,7 @@ ucol_previous(UCollationElements *elems,
   }
   else
   {
-    uint32_t result;
+    int32_t result;
 
     if (elems->reset_ && 
         (elems->iteratordata_.pos == elems->iteratordata_.string)) {
@@ -155,8 +143,9 @@ ucol_previous(UCollationElements *elems,
 
     elems->reset_ = FALSE;
 
-    result = ucol_getPrevCE(elems->iteratordata_.coll, &(elems->iteratordata_), 
-                            status);
+    result = (int32_t)ucol_getPrevCE(elems->iteratordata_.coll,
+                                     &(elems->iteratordata_), 
+                                     status);
 
     if (result == UCOL_NO_MORE_CES) {
       result = UCOL_NULLORDER;

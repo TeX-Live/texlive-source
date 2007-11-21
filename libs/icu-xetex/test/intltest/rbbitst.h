@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1999-2005, International Business Machines Corporation and
+ * Copyright (c) 1999-2006, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /************************************************************************
@@ -60,7 +60,6 @@ public:
     void TestThaiLineBreak();
     void TestMixedThaiLineBreak();
     void TestMaiyamok();
-    void TestThaiWordBreak();
     void TestMonkey(char *params);
 
     void TestExtended();
@@ -73,6 +72,7 @@ public:
     void TestSentBreaks();
     void TestBug3818();
     void TestJapaneseWordBreak();
+    void TestTrieDict();
     void TestDebug();
 
 

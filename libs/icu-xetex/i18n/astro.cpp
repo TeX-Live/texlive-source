@@ -1,5 +1,5 @@
 /************************************************************************
- * Copyright (C) 1996-2004, International Business Machines Corporation *
+ * Copyright (C) 1996-2006, International Business Machines Corporation *
  * and others. All Rights Reserved.                                     *
  ************************************************************************
  *  2003-nov-07   srl       Port from Java
@@ -617,9 +617,9 @@ CalendarAstronomer::Equatorial& CalendarAstronomer::getSunPosition(CalendarAstro
  * @internal
  * @deprecated ICU 2.4. This class may be removed or modified.
  */
-double CalendarAstronomer::VERNAL_EQUINOX() {
+/*double CalendarAstronomer::VERNAL_EQUINOX() {
   return 0;
-}
+}*/
 
 /**
  * Constant representing the summer solstice.
@@ -639,9 +639,9 @@ double CalendarAstronomer::SUMMER_SOLSTICE() {
  * @internal
  * @deprecated ICU 2.4. This class may be removed or modified.
  */
-double CalendarAstronomer::AUTUMN_EQUINOX() {
+/*double CalendarAstronomer::AUTUMN_EQUINOX() {
   return  (CalendarAstronomer::PI);
-}
+}*/
 
 /**
  * Constant representing the winter solstice.
@@ -650,9 +650,11 @@ double CalendarAstronomer::AUTUMN_EQUINOX() {
  * @internal
  * @deprecated ICU 2.4. This class may be removed or modified.
  */
-double CalendarAstronomer::WINTER_SOLSTICE() {
+/*double CalendarAstronomer::WINTER_SOLSTICE() {
   return  ((CalendarAstronomer::PI*3)/2);
-}
+}*/
+
+CalendarAstronomer::AngleFunc::~AngleFunc() {}
 
 /**
  * Find the next time at which the sun's ecliptic longitude will have
@@ -674,6 +676,8 @@ UDate CalendarAstronomer::getSunTime(double desired, UBool next)
                       MINUTE_MS,
                       next);
 }
+
+CalendarAstronomer::CoordFunc::~CoordFunc() {}
 
 class RiseSetCoordFunc : public CalendarAstronomer::CoordFunc {
 public:
@@ -1124,9 +1128,9 @@ double CalendarAstronomer::getMoonPhase() {
  * @internal
  * @deprecated ICU 2.4. This class may be removed or modified.
  */
-const CalendarAstronomer::MoonAge CalendarAstronomer::NEW_MOON() {
+/*const CalendarAstronomer::MoonAge CalendarAstronomer::NEW_MOON() {
   return  CalendarAstronomer::MoonAge(0);
-}
+}*/
 
 /**
  * Constant representing the moon's first quarter.
@@ -1134,9 +1138,9 @@ const CalendarAstronomer::MoonAge CalendarAstronomer::NEW_MOON() {
  * @internal
  * @deprecated ICU 2.4. This class may be removed or modified.
  */
-const CalendarAstronomer::MoonAge CalendarAstronomer::FIRST_QUARTER() {
+/*const CalendarAstronomer::MoonAge CalendarAstronomer::FIRST_QUARTER() {
   return   CalendarAstronomer::MoonAge(CalendarAstronomer::PI/2);
-}
+}*/
 
 /**
  * Constant representing a full moon.
@@ -1159,9 +1163,9 @@ public:
   virtual double eval(CalendarAstronomer&a) { return a.getMoonAge(); }
 };
 
-const CalendarAstronomer::MoonAge CalendarAstronomer::LAST_QUARTER() {
+/*const CalendarAstronomer::MoonAge CalendarAstronomer::LAST_QUARTER() {
   return  CalendarAstronomer::MoonAge((CalendarAstronomer::PI*3)/2);
-}
+}*/
 
 /**
  * Find the next or previous time at which the Moon's ecliptic
@@ -1421,7 +1425,7 @@ void CalendarAstronomer::clearCache() {
  * @internal
  * @deprecated ICU 2.4. This class may be removed or modified.
  */
-UDate CalendarAstronomer::local(UDate localMillis) {
+/*UDate CalendarAstronomer::local(UDate localMillis) {
   // TODO - srl ?
   TimeZone *tz = TimeZone::createDefault();
   int32_t rawOffset;
@@ -1430,7 +1434,7 @@ UDate CalendarAstronomer::local(UDate localMillis) {
   tz->getOffset(localMillis, TRUE, rawOffset, dstOffset, status);
   delete tz;
   return localMillis - rawOffset;
-}
+}*/
 
 // Debugging functions
 UnicodeString CalendarAstronomer::Ecliptic::toString() const
@@ -1488,13 +1492,14 @@ UnicodeString CalendarAstronomer::Horizon::toString() const
 
 void CalendarCache::createCache(CalendarCache** cache, UErrorCode& status) {
   ucln_i18n_registerCleanup(UCLN_I18N_ASTRO_CALENDAR, calendar_astro_cleanup);
-  *cache = new CalendarCache(32, status);
   if(cache == NULL) {
     status = U_MEMORY_ALLOCATION_ERROR;
-  }
-  if(U_FAILURE(status)) {
-    delete *cache;
-    *cache = NULL;
+  } else {
+    *cache = new CalendarCache(32, status);
+    if(U_FAILURE(status)) {
+      delete *cache;
+      *cache = NULL;
+    }
   }
 }
 
@@ -1522,7 +1527,6 @@ int32_t CalendarCache::get(CalendarCache** cache, int32_t key, UErrorCode &statu
 }
 
 void CalendarCache::put(CalendarCache** cache, int32_t key, int32_t value, UErrorCode &status) {
-
   if(U_FAILURE(status)) {
     return;
   }
@@ -1543,7 +1547,7 @@ void CalendarCache::put(CalendarCache** cache, int32_t key, int32_t value, UErro
 }
 
 CalendarCache::CalendarCache(int32_t size, UErrorCode &status) {
-  fTable = uhash_openSize(uhash_hashLong, uhash_compareLong, size, &status);
+  fTable = uhash_openSize(uhash_hashLong, uhash_compareLong, NULL, size, &status);
   U_DEBUG_ASTRO_MSG(("%p: Opening.\n", fTable));
 }
 

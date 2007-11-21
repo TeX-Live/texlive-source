@@ -1,16 +1,47 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/it.xml
+// * Source File:<path>/common/main/it.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/it.xml
+ *  ICU <specials> source: <path>/xml/main/it.xml
  */
 it{
+    AuxExemplarCharacters{"[í ï ú]"}
     Countries{
+        001{"Mondo"}
+        002{"Africa"}
+        005{"America del Sud"}
+        009{"Oceania"}
+        011{"Africa occidentale"}
+        013{"America centrale"}
+        014{"Africa orientale"}
+        015{"Africa del Nord"}
+        017{"Africa centrale"}
+        018{"Africa del Sud"}
+        019{"Americhe"}
+        021{"America del Nord"}
+        029{"Caraibi"}
+        030{"Asia orientale"}
+        034{"Asia del Sud"}
+        035{"Asia sudorientale"}
+        039{"Europa del Sud"}
+        053{"Australia e Nuova Zelanda"}
+        054{"Melanesia"}
+        057{"Regione Micronesiana"}
+        061{"Polinesia"}
+        142{"Asia"}
+        143{"Asia centrale"}
+        145{"Asia occidentale"}
+        150{"Europa"}
+        151{"Europa orientale"}
+        154{"Europa del Nord"}
+        155{"Europa occidentale"}
+        172{"Comunità di Stati Indipendenti"}
+        419{"America Latina e Caraibi"}
         AD{"Andorra"}
         AE{"Emirati Arabi Uniti"}
         AF{"Afghanistan"}
@@ -62,7 +93,7 @@ it{
         CS{"Serbia e Montenegro"}
         CU{"Cuba"}
         CV{"Capo Verde"}
-        CX{"Isola Christmas"}
+        CX{"Isola di Christmas"}
         CY{"Cipro"}
         CZ{"Repubblica Ceca"}
         DE{"Germania"}
@@ -191,6 +222,7 @@ it{
         PW{"Palau"}
         PY{"Paraguay"}
         QA{"Qatar"}
+        QO{"Oceania lontana"}
         RE{"Réunion"}
         RO{"Romania"}
         RU{"Federazione Russa"}
@@ -210,7 +242,7 @@ it{
         SN{"Senegal"}
         SO{"Somalia"}
         SR{"Suriname"}
-        ST{"São Tomé e Príncipe"}
+        ST{"Sao Tomé e Príncipe"}
         SV{"El Salvador"}
         SY{"Siria"}
         SZ{"Swaziland"}
@@ -277,7 +309,7 @@ it{
             "Dram Armeno",
         }
         ANG{
-            "NA f.",
+            "ANG",
             "Fiorino delle Antille Olandesi",
         }
         AOA{
@@ -472,6 +504,10 @@ it{
             "C",
             "Colón Costaricano",
         }
+        CSD{
+            "CSD",
+            "Dinaro serbo",
+        }
         CSK{
             "CSK",
             "Corona forte cecoslovacca",
@@ -646,7 +682,7 @@ it{
         }
         IDR{
             "Rp",
-            "Rupia Indiana",
+            "Rupia Indonesiana",
         }
         IEP{
             "IR£",
@@ -1014,7 +1050,7 @@ it{
         }
         STD{
             "Db",
-            "Dobra di São Tomé e Principe",
+            "Dobra di Sao Tomé e Principe",
         }
         SUR{
             "SUR",
@@ -1184,6 +1220,10 @@ it{
             "CFPF",
             "Franco CFP",
         }
+        XXX{
+            "XXX",
+            "Nessuna valuta",
+        }
         YDD{
             "YDD",
             "Dinaro dello Yemen",
@@ -1229,7 +1269,7 @@ it{
             "Dollaro dello Zimbabwe",
         }
     }
-    ExemplarCharacters{"[a-zéóàèìòíúùï]"}
+    ExemplarCharacters{"[a à b-e é è f-i ì j-o ó ò p-u ù v-z]"}
     Keys{
         calendar{"Calendario"}
         collation{"Collazione"}
@@ -1246,6 +1286,7 @@ it{
         af{"afrikaans"}
         afa{"afro-asiatica (altra lingua)"}
         afh{"afrihili"}
+        ain{"ainu"}
         ak{"akan"}
         akk{"accado"}
         ale{"aleuto"}
@@ -1361,9 +1402,11 @@ it{
         eu{"basco"}
         ewo{"ewondo"}
         fa{"persiano"}
+        fan{"fang"}
         fat{"fanti"}
         ff{"fulah"}
         fi{"finlandese"}
+        fil{"filippino"}
         fiu{"ugrofinnica (altra lingua)"}
         fj{"figiano"}
         fo{"faroese"}
@@ -1452,7 +1495,7 @@ it{
         kn{"kannada"}
         ko{"coreano"}
         kok{"konkani"}
-        kos{"Kosraean"}
+        kos{"kosraean"}
         kpe{"kpelle"}
         kr{"kanuri"}
         krc{"karachay-Balkar"}
@@ -1518,6 +1561,7 @@ it{
         mul{"multilingua"}
         mun{"munda (altra lingua)"}
         mus{"creek"}
+        mwl{"mirandese"}
         mwr{"marwari"}
         my{"birmano"}
         myn{"lingue maya"}
@@ -1526,7 +1570,6 @@ it{
         nah{"nahuatl"}
         nai{"indiano del Nord America (altra lingua)"}
         nap{"napoletano"}
-        nb{"norvegese bokmål"}
         nd{"ndebele del nord"}
         nds{"basso tedesco; basso sassone"}
         ne{"nepalese"}
@@ -1583,6 +1626,7 @@ it{
         roa{"lingua romanza (altra lingua)"}
         rom{"romani"}
         ru{"russo"}
+        rup{"arumeno"}
         rw{"kinyarwanda"}
         sa{"sanscrito"}
         sad{"sandawe"}
@@ -1593,6 +1637,7 @@ it{
         sas{"sasak"}
         sat{"santali"}
         sc{"sardo"}
+        scn{"siciliano"}
         sco{"scozzese"}
         sd{"sindhi"}
         se{"sami del nord"}
@@ -1647,6 +1692,7 @@ it{
         tk{"turcomanno"}
         tkl{"tokelau"}
         tl{"tagalog"}
+        tlh{"klingon"}
         tli{"tlingit"}
         tmh{"tamashek"}
         tn{"tswana"}
@@ -1659,7 +1705,7 @@ it{
         tt{"tatarico"}
         tum{"tumbuka"}
         tup{"lingue tupi"}
-        tut{"turco-tatarica (altra lingua)"}
+        tut{"altaica (altra lingua)"}
         tvl{"tuvalu"}
         tw{"ci"}
         ty{"taitiano"}
@@ -1686,7 +1732,7 @@ it{
         xal{"kalmyk"}
         xh{"xosa"}
         yao{"yao (bantu)"}
-        yap{"Yapese"}
+        yap{"yapese"}
         yi{"yiddish"}
         yo{"yoruba"}
         ypk{"lingue yupik"}
@@ -1712,25 +1758,38 @@ it{
         "E",
         "‰",
         "∞",
-        "�",
+        "NaN",
         "+",
     }
     Scripts{
         Arab{"arabo"}
-        Armn{"armenio"}
+        Armn{"armeno"}
+        Bali{"balinese"}
+        Batk{"batak"}
         Beng{"bengali"}
+        Blis{"simboli bliss"}
         Bopo{"bopomofo"}
+        Brah{"brahmi"}
         Brai{"braille"}
+        Bugi{"buginese"}
         Buhd{"buhid"}
         Cans{"simboli aborigeni canadesi unificati"}
+        Cham{"cham"}
         Cher{"cherokee"}
+        Cirt{"cirth"}
         Copt{"copto"}
         Cprt{"cipriota"}
         Cyrl{"cirillico"}
+        Cyrs{"cirillico (variante antica chiesa slavonica)"}
         Deva{"devanagari"}
         Dsrt{"deseret"}
+        Egyd{"egiziano demotico"}
+        Egyh{"ieratico egiziano"}
+        Egyp{"geroglifici egiziani"}
         Ethi{"etiope"}
+        Geok{"kutsuri"}
         Geor{"georgiano"}
+        Glag{"glagolitico"}
         Goth{"gotico"}
         Grek{"greco"}
         Gujr{"gujarati"}
@@ -1740,16 +1799,24 @@ it{
         Hano{"hanunoo"}
         Hans{"han semplificato"}
         Hant{"han tradizionale"}
-        Hebr{"ebreo"}
+        Hebr{"ebraico"}
         Hira{"hiragana"}
+        Hmng{"pahawn hmong"}
+        Hrkt{"katanaka o hiragana"}
+        Hung{"antico ungherese"}
+        Inds{"indu"}
         Ital{"italico antico"}
+        Java{"javanese"}
         Kana{"katakana"}
         Khmr{"khmer"}
         Knda{"kannada"}
         Laoo{"lao"}
+        Latf{"latino (variante fraktur)"}
+        Latg{"latino (variante gaelica)"}
         Latn{"latino"}
         Limb{"limbu"}
-        Linb{"B lineare"}
+        Lina{"lineare A"}
+        Linb{"lineare B"}
         Mlym{"malayalam"}
         Mong{"mongolo"}
         Mymr{"myanmar"}
@@ -1784,7 +1851,9 @@ it{
             japanese{"Calendario Giapponese"}
         }
         collation{
+            big5han{"Cinese Tradizionale"}
             direct{"Ordine Diretto"}
+            gb2312han{"Cinese Semplificato"}
             phonebook{"Ordine Elenco Telefonico"}
             pinyin{"Ordine Pinyin"}
             stroke{"Ordine Segni"}
@@ -1792,18 +1861,20 @@ it{
         }
     }
     Variants{
-        REVISED{"Modificato"}
+        1901{"ortografia tradizionale tedesca"}
+        1996{"ortografia tedesca del 1996"}
+        NEDIS{"dialetto del Natisone"}
+        POLYTONI{"politonico"}
+        REVISED{"ortografia revisionata"}
+        ROZAJ{"resiano"}
+        SAAHO{"saho"}
     }
-    Version{"1.48"}
+    Version{"1.70"}
     calendar{
         gregorian{
             AmPmMarkers{
                 "m.",
                 "p.",
-            }
-            DateTimeElements:intvector{
-                2,
-                4,
             }
             DateTimePatterns{
                 "HH:mm:ss z",
@@ -1855,6 +1926,41 @@ it{
                     "dC",
                 }
             }
+            fields{
+                day{
+                    dn{"giorno"}
+                }
+                dayperiod{
+                    dn{"periodo del giorno"}
+                }
+                era{
+                    dn{"era"}
+                }
+                hour{
+                    dn{"ora"}
+                }
+                minute{
+                    dn{"minuto"}
+                }
+                month{
+                    dn{"mese"}
+                }
+                second{
+                    dn{"secondo"}
+                }
+                week{
+                    dn{"settimana"}
+                }
+                weekday{
+                    dn{"giorno della settimana"}
+                }
+                year{
+                    dn{"anno"}
+                }
+                zone{
+                    dn{"zona"}
+                }
+            }
             monthNames{
                 format{
                     abbreviated{
@@ -1903,6 +2009,22 @@ it{
                     }
                 }
             }
+            quarters{
+                format{
+                    abbreviated{
+                        "T1",
+                        "T2",
+                        "T3",
+                        "T4",
+                    }
+                    wide{
+                        "1o trimestre",
+                        "2o trimestre",
+                        "3o trimestre",
+                        "4o trimestre",
+                    }
+                }
+            }
         }
     }
     delimiters{
@@ -1911,134 +2033,102 @@ it{
         quotationEnd{"’"}
         quotationStart{"‘"}
     }
+    measurementSystemNames{
+        US{"USA"}
+        metric{"Metrico"}
+    }
     zoneStrings{
-        {
-            "America/Halifax",
-            "Ora Standard Atlantico",
-            "AST",
-            "Ora Legale Atlantico",
-            "ADT",
-            "Halifax",
+        "Africa:Casablanca"{
+            ec{"Casablanca"}
         }
-        {
-            "America/St_Johns",
-            "Ora Standard Newfoundland",
-            "CNT",
-            "Ora Legale Newfoundland",
-            "CDT",
-            "St. Johns",
+        "Africa:Timbuktu"{
+            ec{"Timbuctu"}
         }
-        {
-            "Asia/Shanghai",
-            "Ora Standard Cina",
-            "CTT",
-            "Ora Standard Cina",
-            "CDT",
-            "Shanghai",
+        "America:Anchorage"{
+            ec{"Anchorage"}
+            ld{"Ora Legale Alaska"}
+            ls{"Ora Standard Alaska"}
         }
-        {
-            "Europe/Paris",
-            "Ora Standard Centrale Europeo",
-            "CET",
-            "Ora Legale Centrale Europeo",
-            "CEST",
-            "Parigi",
+        "America:Cordoba"{
+            ec{"Cordova"}
         }
-        {
-            "Asia/Jerusalem",
-            "Ora Standard Israele",
-            "IST",
-            "Ora Legale Israele",
-            "IDT",
-            "Gerusalemme",
+        "America:Mexico_City"{
+            ec{"Città del Messico"}
         }
-        {
-            "Asia/Tokyo",
-            "Ora Standard Giappone",
-            "JST",
-            "Ora Standard Giappone",
-            "JST",
-            "Tokyo",
+        "America:Sao_Paulo"{
+            ec{"San Paolo"}
         }
-        {
-            "Africa/Casablanca",
-            "Ora Meridiano Greenwich",
-            "GMT",
-            "Ora Meridiano Greenwich",
-            "GMT",
-            "Casablanca",
+        "America:St_Johns"{
+            ec{"St. Johns"}
         }
-        {
-            "Europe/Bucharest",
-            "Ora Standard Europa Orientale",
-            "EET",
-            "Ora Legale Europa Orientale",
-            "EEST",
-            "Bucarest",
+        "Antarctica:South_Pole"{
+            ec{"Polo Sud"}
         }
-        {
-            "Pacific/Honolulu",
-            "Ora Standard Hawaii",
-            "HST",
-            "Ora Standard Hawaii",
-            "HST",
-            "Honolulu",
+        "Asia:Jakarta"{
+            ec{"Giacarta"}
         }
-        {
-            "America/Anchorage",
-            "Ora Standard Alaska",
-            "AST",
-            "Ora Legale Alaska",
-            "ADT",
-            "Anchorage",
+        "Asia:Jerusalem"{
+            ec{"Gerusalemme"}
+            ld{"Ora Legale Israele"}
+            ls{"Ora Standard Israele"}
+            sd{"IDT"}
+            ss{"IST"}
         }
-        {
-            "America/Los_Angeles",
-            "Ora Standard Pacifico",
-            "PST",
-            "Ora Legale Pacifico",
-            "PDT",
-            "Los Angeles",
+        "Asia:Samarkand"{
+            ec{"Samarcanda"}
         }
-        {
-            "America/Phoenix",
-            "Ora Standard Mountain",
-            "MST",
-            "Ora Standard Mountain",
-            "MST",
-            "Phoenix",
+        "Asia:Shanghai"{
+            ec{"Shanghai"}
+            ld{"Ora Standard Cina"}
+            ls{"Ora Standard Cina"}
+            sd{"CDT"}
+            ss{"CTT"}
         }
-        {
-            "America/Denver",
-            "Ora Standard Mountain",
-            "MST",
-            "Ora Legale Mountain",
-            "MDT",
-            "Denver",
+        "Asia:Tokyo"{
+            ec{"Tokyo"}
+            ld{"Ora Standard Giappone"}
+            ls{"Ora Standard Giappone"}
+            sd{"JST"}
+            ss{"JST"}
         }
-        {
-            "America/Chicago",
-            "Ora Standard Centrale",
-            "CST",
-            "Ora Legale Centrale",
-            "CDT",
-            "Chicago",
+        "Atlantic:Azores"{
+            ec{"Azzorre"}
         }
-        {
-            "America/Indianapolis",
-            "Ora Standard Orientale",
-            "EST",
-            "Ora Standard Orientale",
-            "EST",
-            "Indianapolis",
+        "Atlantic:Canary"{
+            ec{"Canarie"}
         }
-        {
-            "America/New_York",
-            "Ora Standard Orientale",
-            "EST",
-            "Ora Legale Orientale",
-            "EDT",
-            "New York",
+        "Europe:Bucharest"{
+            ec{"Bucarest"}
+            ld{"Ora Legale Europa Orientale"}
+            ls{"Ora Standard Europa Orientale"}
+            sd{"EEDT"}
+            ss{"EET"}
+        }
+        "Europe:Lisbon"{
+            ec{"Lisbona"}
+        }
+        "Europe:London"{
+            ec{"Londra"}
+        }
+        "Europe:Moscow"{
+            ec{"Mosca"}
+        }
+        "Europe:Paris"{
+            ec{"Parigi"}
+            ld{"Ora Legale Europa Centrale"}
+            ls{"Ora Standard Europa Centrale"}
+            sd{"CEDT"}
+            ss{"CET"}
+        }
+        "Pacific:Easter"{
+            ec{"Pasqua"}
+        }
+        "Pacific:Honolulu"{
+            ec{"Honolulu"}
+            ld{"Ora Standard Hawaii"}
+            ls{"Ora Standard Hawaii"}
+            sd{"HST"}
+            ss{"HST"}
         }
     }
 }

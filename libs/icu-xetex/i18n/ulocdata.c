@@ -21,6 +21,22 @@
 #define MEASUREMENT_SYSTEM  "MeasurementSystem"
 #define PAPER_SIZE          "PaperSize"
 
+/** A locale data object.
+ *  For usage in C programs.
+ *  @draft ICU 3.4
+ */
+struct ULocaleData {
+    /**
+     * Controls the "No Substitute" behavior of this locale data object
+     */
+    UBool noSubstitute;
+
+    /**
+     * Pointer to the resource bundle associated with this locale data object
+     */
+    UResourceBundle *bundle;
+};
+
 U_CAPI ULocaleData* U_EXPORT2
 ulocdata_open(const char *localeID, UErrorCode *status)
 {
@@ -86,8 +102,7 @@ ulocdata_getExemplarSet(ULocaleData *uld, USet *fillIn,
         localStatus = U_MISSING_RESOURCE_ERROR;
     }
        
-    if (U_FAILURE(localStatus) || (localStatus != U_USING_DEFAULT_WARNING && 
-                                   localStatus != U_USING_FALLBACK_WARNING )) {
+    if (localStatus != U_ZERO_ERROR) {
         *status = localStatus;
     }
     
@@ -129,8 +144,7 @@ ulocdata_getDelimiter(ULocaleData *uld, ULocaleDataDelimiterType type,
         localStatus = U_MISSING_RESOURCE_ERROR;
     }
 
-    if (U_FAILURE(localStatus) || (localStatus != U_USING_DEFAULT_WARNING && 
-                                   localStatus != U_USING_FALLBACK_WARNING )) {
+    if (localStatus != U_ZERO_ERROR) {
         *status = localStatus;
     }
 
@@ -146,8 +160,7 @@ ulocdata_getDelimiter(ULocaleData *uld, ULocaleDataDelimiterType type,
         localStatus = U_MISSING_RESOURCE_ERROR;
     }
 
-    if (U_FAILURE(localStatus) || (localStatus != U_USING_DEFAULT_WARNING && 
-                                   localStatus != U_USING_FALLBACK_WARNING )) {
+    if (localStatus != U_ZERO_ERROR) {
         *status = localStatus;
     }
     

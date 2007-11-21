@@ -1,15 +1,19 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/tr.xml
+// * Source File:<path>/common/main/tr.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/tr.xml
+ *  ICU <specials> source: <path>/xml/main/tr.xml
  */
 tr{
+    AuxExemplarCharacters{
+        "[á à ă â å ä ā æ é è ĕ ê ë ē í ì ĭ î ï ī ñ ó ò ŏ ô ø ō œ q ß ú ù ŭ û ū w x ÿ"
+        "]"
+    }
     Countries{
         001{"Dünya"}
         002{"Afrika"}
@@ -20,7 +24,7 @@ tr{
         014{"Doğu Afrika"}
         015{"Kuzey Afrika"}
         017{"Orta Afrika"}
-        018{"Güney Afrika"}
+        018{"Güney Afrika [018]"}
         019{"Amerika"}
         021{"Kuzey Amerika"}
         029{"Karayipler"}
@@ -851,10 +855,6 @@ tr{
             "Lm",
             "Malta Lirası",
         }
-        MTP{
-            "MTP",
-            "Malta Lirası",
-        }
         MUR{
             "MUR",
             "Mauritius Rupisi",
@@ -1179,10 +1179,6 @@ tr{
             "XBA",
             "Birleşik Avrupa Birimi",
         }
-        XBB{
-            "XBB",
-            "Avrupa Para Birimi",
-        }
         XBC{
             "XBC",
             "Avrupa Hesap Birimi (XBC)",
@@ -1264,7 +1260,7 @@ tr{
             "Zimbabwe Doları",
         }
     }
-    ExemplarCharacters{"[a-zâûöüıçşğİ]"}
+    ExemplarCharacters{"[a-c ç d-g ğ h ı i İ j-o ö p r s ş t u ü v y z]"}
     Keys{
         calendar{"Takvim"}
         collation{"Sıralama"}
@@ -1543,8 +1539,14 @@ tr{
         "E",
         "‰",
         "∞",
-        "�",
+        "NaN",
         "+",
+    }
+    NumberPatterns{
+        "#,##0.###",
+        "¤ #,##0.00",
+        "#,##0%",
+        "#E0",
     }
     Scripts{
         Arab{"Arapça"}
@@ -1587,13 +1589,9 @@ tr{
             traditional{"Geleneksel"}
         }
     }
-    Version{"1.50"}
+    Version{"1.70"}
     calendar{
         gregorian{
-            DateTimeElements:intvector{
-                2,
-                1,
-            }
             DateTimePatterns{
                 "HH:mm:ss z",
                 "HH:mm:ss z",
@@ -1644,6 +1642,41 @@ tr{
                     "MS",
                 }
             }
+            fields{
+                day{
+                    dn{"Gün"}
+                }
+                dayperiod{
+                    dn{"Günün Bölümü"}
+                }
+                era{
+                    dn{"Miladi Dönem"}
+                }
+                hour{
+                    dn{"Saat"}
+                }
+                minute{
+                    dn{"Dakika"}
+                }
+                month{
+                    dn{"Ay"}
+                }
+                second{
+                    dn{"Saniye"}
+                }
+                week{
+                    dn{"Hafta"}
+                }
+                weekday{
+                    dn{"Haftanın Günü"}
+                }
+                year{
+                    dn{"Yıl"}
+                }
+                zone{
+                    dn{"Saat Dilimi"}
+                }
+            }
             monthNames{
                 format{
                     abbreviated{
@@ -1692,7 +1725,294 @@ tr{
                     }
                 }
             }
+            quarters{
+                format{
+                    abbreviated{
+                        "Ç1",
+                        "Ç2",
+                        "Ç3",
+                        "Ç4",
+                    }
+                    wide{
+                        "1. çeyrek",
+                        "2. çeyrek",
+                        "3. çeyrek",
+                        "4. çeyrek",
+                    }
+                }
+            }
+        }
+        hebrew{
+            monthNames{
+                format{
+                    abbreviated{
+                        "Tişri",
+                        "Heşvan",
+                        "Kislev",
+                        "Tevet",
+                        "Şevat",
+                        "Veadar",
+                        "Adar",
+                        "Nisan",
+                        "Iyar",
+                        "Sivan",
+                        "Tamuz",
+                        "Av",
+                        "Ellul",
+                    }
+                    wide{
+                        "Tişri",
+                        "Heşvan",
+                        "Kislev",
+                        "Tevet",
+                        "Şevat",
+                        "Veadar",
+                        "Adar",
+                        "Nisan",
+                        "İyar",
+                        "Sivan",
+                        "Tamuz",
+                        "Av",
+                        "Ellul",
+                    }
+                }
+            }
+        }
+        islamic{
+            monthNames{
+                format{
+                    abbreviated{
+                        "Muharrem",
+                        "Safer",
+                        "Rebiülevvel",
+                        "Rebiülahir",
+                        "Cemaziyelevvel",
+                        "Cemaziyelahir",
+                        "Recep",
+                        "Shaʻban",
+                        "Ramadan",
+                        "Shawwal",
+                        "Zilkade",
+                        "Dhuʻl-Hijjah",
+                    }
+                    wide{
+                        "Muharrem",
+                        "Safer",
+                        "Rebiülevvel",
+                        "Rebiülahir",
+                        "Cemaziyelevvel",
+                        "Cemaziyelahir",
+                        "Recep",
+                        "Şaban",
+                        "Ramazan",
+                        "Şevval",
+                        "Zilkade",
+                        "Zilhicce",
+                    }
+                }
+            }
+        }
+        islamic-civil{
+            monthNames{
+                format{
+                    wide{
+                        "Muharrem",
+                        "Safer",
+                        "Rebiülevvel",
+                        "Rebiülahir",
+                        "Cemaziyelevvel",
+                        "Cemaziyelahir",
+                        "Recep",
+                        "Şaban",
+                        "Ramazan",
+                        "Şevval",
+                        "Zilkade",
+                        "Zilhicce",
+                    }
+                }
+            }
+        }
+        persian{
+            monthNames{
+                format{
+                    abbreviated{
+                        "Ferwerdin",
+                        "Ordibeheşt",
+                        "Hordâd",
+                        "Tir",
+                        "Mordâd",
+                        "Şehrivar",
+                        "Mehr",
+                        "Aban",
+                        "Azar",
+                        "Dey",
+                        "Behman",
+                        "Esfand",
+                    }
+                    wide{
+                        "Ferwerdin",
+                        "Ordibeheşt",
+                        "Hordâd",
+                        "Tir",
+                        "Mordâd",
+                        "Şehrivar",
+                        "Mehr",
+                        "Âbân",
+                        "Âzar",
+                        "Daî",
+                        "Behman",
+                        "İsfand",
+                    }
+                }
+            }
         }
     }
     localPatternChars{"GanjkHmsSEDFwWxhKzAeugXZvcL"}
+    zoneStrings{
+        "Africa:Ceuta"{
+            ec{"Septe"}
+        }
+        "Africa:Kinshasa"{
+            ec{"Kinşasa"}
+        }
+        "Africa:Lubumbashi"{
+            ec{"Lubumbaşi"}
+        }
+        "America:Anchorage"{
+            ec{"Anchorage"}
+            ld{"Alaska Yaz Saati"}
+            ls{"Alaska Standart Saati"}
+        }
+        "America:Cancun"{
+            ec{"Kankun"}
+        }
+        "America:Chicago"{
+            ec{"Şikago"}
+            ld{"Merkezi Yaz Saati"}
+            ls{"Merkezi Standart Saati"}
+        }
+        "America:Denver"{
+            ec{"Denver"}
+            ld{"ABD Sıradağlar Yaz Saati"}
+            ls{"ABD Sıradağlar Standart Saati"}
+        }
+        "America:Halifax"{
+            ec{"Halifax"}
+            ld{"Atlantik Yaz Saati"}
+            ls{"Atlantik Standart Saati"}
+        }
+        "America:Indianapolis"{
+            ec{"Indianapolis"}
+            ld{"Doğu (Indianapolis) Yaz Saati"}
+            ls{"Doğu Standart Saati"}
+        }
+        "America:Los_Angeles"{
+            ec{"Los Angeles"}
+            ld{"Pasifik Yaz Saati"}
+            ls{"Pasifik Standart Saati"}
+        }
+        "America:Mexico_City"{
+            ec{"Meksiko City"}
+        }
+        "America:New_York"{
+            ec{"New York"}
+            ld{"Doğu Yaz Saati"}
+            ls{"Doğu Standart Saati"}
+        }
+        "America:Phoenix"{
+            ec{"Phoenix"}
+            ld{"ABD Sıradağlar Standart Saati"}
+            ls{"ABD Sıradağlar Standart Saati"}
+        }
+        "America:St_Johns"{
+            ec{"St Johns"}
+            ld{"Newfoundland Yaz Saati"}
+            ls{"Newfoundland Standart Saati"}
+        }
+        "Antarctica:South_Pole"{
+            ec{"Güney Kutbu"}
+        }
+        "Asia:Almaty"{
+            ec{"Almatı"}
+        }
+        "Asia:Aqtau"{
+            ec{"Şevçenko"}
+        }
+        "Asia:Aqtobe"{
+            ec{"Aktyubinsk"}
+        }
+        "Asia:Choibalsan"{
+            ec{"Çoybalsan"}
+        }
+        "Asia:Chongqing"{
+            ec{"Çunking"}
+        }
+        "Asia:Hovd"{
+            ec{"Kobdo"}
+        }
+        "Asia:Jakarta"{
+            ec{"Cakarta"}
+        }
+        "Asia:Kamchatka"{
+            ec{"Kamçatka"}
+        }
+        "Asia:Kashgar"{
+            ec{"Kaşgar"}
+        }
+        "Asia:Kuching"{
+            ec{"Kuçing"}
+        }
+        "Asia:Oral"{
+            ec{"Uralsk"}
+        }
+        "Asia:Qyzylorda"{
+            ec{"Kızıl-Orda"}
+        }
+        "Asia:Samarkand"{
+            ec{"Semerkand"}
+        }
+        "Asia:Shanghai"{
+            ec{"Şangay"}
+            ld{"Çin Standart Saati"}
+            ls{"Çin Standart Saati"}
+        }
+        "Asia:Tashkent"{
+            ec{"Taşkent"}
+        }
+        "Asia:Ulaanbaatar"{
+            ec{"Ulanbator"}
+        }
+        "Asia:Urumqi"{
+            ec{"Urumçi"}
+        }
+        "Atlantic:Azores"{
+            ec{"Azor Adaları"}
+        }
+        "Atlantic:Canary"{
+            ec{"Kanarya"}
+        }
+        "Australia:Melbourne"{
+            ec{"Melborn"}
+        }
+        "Australia:Sydney"{
+            ec{"Sidney"}
+        }
+        "Europe:Lisbon"{
+            ec{"Lizbon"}
+        }
+        "Europe:London"{
+            ec{"Londra"}
+        }
+        "Europe:Moscow"{
+            ec{"Moskova"}
+        }
+        "Pacific:Honolulu"{
+            ec{"Honolulu"}
+            ld{"Hawaii Standart Saati"}
+            ls{"Hawaii Standart Saati"}
+        }
+        "Pacific:Marquesas"{
+            ec{"Markiz"}
+        }
+    }
 }

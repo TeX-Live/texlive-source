@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-* Copyright (C) 1999-2005, International Business Machines
+* Copyright (C) 1999-2006, International Business Machines
 * Corporation and others. All Rights Reserved.
 **********************************************************************
 *   Date        Name        Description
@@ -373,7 +373,7 @@ public:
      * @see #registerInstance
      * @stable ICU 2.0
      */
-    virtual Transliterator* clone() const { return 0; }
+    virtual Transliterator* clone() const;
 
     /**
      * Transliterates a segment of a string, with optional filtering.
@@ -606,8 +606,8 @@ protected:
      * [<code>pos.start</code>, <code>pos.limit</code>) without
      * applying the filter. End user code should call <code>
      * transliterate()</code> instead of this method. Subclass code
-     * should call <code>filteredTransliterate()</code> instead of
-     * this method.<p>
+     * and wrapping transliterators should call
+	 * <code>filteredTransliterate()</code> instead of this method.<p>
      *
      * @param text the buffer holding transliterated and
      * untransliterated text
@@ -628,7 +628,8 @@ protected:
                                      UTransPosition& pos,
                                      UBool incremental) const = 0;
 
-    /**
+public:
+	/**
      * Transliterate a substring of text, as specified by index, taking filters
      * into account.  This method is for subclasses that need to delegate to
      * another transliterator, such as CompoundTransliterator.
@@ -642,9 +643,6 @@ protected:
     virtual void filteredTransliterate(Replaceable& text,
                                        UTransPosition& index,
                                        UBool incremental) const;
-
-    friend class CompoundTransliterator; // for filteredTransliterate()
-    friend class AnyTransliterator; // for filteredTransliterate()
 
 private:
 
@@ -891,7 +889,7 @@ public:
      * @return the number of transliterators that compose this
      * transliterator, or 1 if this transliterator is not composed of
      * multiple transliterators
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     int32_t countElements() const;
 
@@ -912,7 +910,7 @@ public:
      * transliterator, if this transliterator is made up of multiple
      * transliterators, otherwise a reference to this object if given
      * an index of 0
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     const Transliterator& getElement(int32_t index, UErrorCode& ec) const;
 
@@ -982,7 +980,7 @@ public:
                                 Token context);
 
     /**
-     * Registers a instance <tt>obj</tt> of a subclass of
+     * Registers an instance <tt>obj</tt> of a subclass of
      * <code>Transliterator</code> with the system.  When
      * <tt>createInstance()</tt> is called with an ID string that is
      * equal to <tt>obj->getID()</tt>, then <tt>obj->clone()</tt> is
@@ -999,6 +997,23 @@ public:
      * @stable ICU 2.0
      */
     static void U_EXPORT2 registerInstance(Transliterator* adoptedObj);
+
+    /**
+     * Registers an ID string as an alias of another ID string.
+     * That is, after calling this function, <tt>createInstance(aliasID)</tt>
+     * will return the same thing as <tt>createInstance(realID)</tt>.
+     * This is generally used to create shorter, more mnemonic aliases
+     * for long compound IDs.
+     *
+     * @param aliasID The new ID being registered.
+     * @param realID The ID that the new ID is to be an alias for.
+     * This can be a compound ID and can include filters and should
+     * refer to transliterators that have already been registered with
+     * the framework, although this isn't checked.
+     * @draft ICU 3.6
+     */
+     static void U_EXPORT2 registerAlias(const UnicodeString& aliasID,
+                                                                const UnicodeString& realID);
 
 protected:
 
@@ -1019,6 +1034,11 @@ protected:
      * @internal
      */
     static void _registerInstance(Transliterator* adoptedObj);
+
+	/**
+	 * @internal
+	 */
+	static void _registerAlias(const UnicodeString& aliasID, const UnicodeString& realID);
 
     /**
      * Register two targets as being inverses of one another.  For
@@ -1083,7 +1103,7 @@ public:
      * @return a newly-created StringEnumeration over the transliterators
      * available at the time of the call. The caller should delete this object
      * when done using it.
-     * @draft ICU 3.0
+     * @stable ICU 3.0
      */
     static StringEnumeration* U_EXPORT2 getAvailableIDs(UErrorCode& ec);
 
@@ -1279,8 +1299,9 @@ inline int32_t Transliterator::getMaximumContextLength(void) const {
 
 inline void Transliterator::setID(const UnicodeString& id) {
     ID = id;
-    // NUL-terminate the ID string
-    ID.getTerminatedBuffer();
+    // NUL-terminate the ID string, which is a non-aliased copy.
+    ID.append((UChar)0);
+    ID.truncate(ID.length()-1);
 }
 
 inline Transliterator::Token Transliterator::integerToken(int32_t i) {

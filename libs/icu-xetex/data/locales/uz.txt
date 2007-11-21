@@ -1,15 +1,16 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/uz.xml
+// * Source File:<path>/common/main/uz.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/uz.xml
+ *  ICU <specials> source: <path>/xml/main/uz.xml
  */
 uz{
+    AuxExemplarCharacters{"[ц щ ы ь]"}
     Countries{
         AF{"Афғонистон"}
         BR{"Бразилия"}
@@ -62,7 +63,7 @@ uz{
             "Ўзбекистон сўм",
         }
     }
-    ExemplarCharacters{"[а-яёіўѣѳѵҳ]"}
+    ExemplarCharacters{"[а-г ғ д е ё ж-к қ л-у ў ф х ҳ ч ш ъ э-я]"}
     Languages{
         ar{"Арабча"}
         de{"Олмонча"}
@@ -91,7 +92,7 @@ uz{
         "E",
         "‰",
         "∞",
-        "�",
+        "NaN",
         "+",
     }
     Scripts{
@@ -99,7 +100,7 @@ uz{
         Cyrl{"Кирил"}
         Latn{"Лотин"}
     }
-    Version{"1.20"}
+    Version{"1.32"}
     calendar{
         gregorian{
             dayNames{
@@ -183,6 +184,15 @@ uz{
                     }
                 }
             }
+        }
+    }
+    zoneStrings{
+        "Asia:Kabul"{
+            ec{"کابل"}
+            ld{"افغانستان وقتی"}
+            ls{"افغانستان وقتی"}
+            sd{"AFT"}
+            ss{"AFT"}
         }
     }
 }

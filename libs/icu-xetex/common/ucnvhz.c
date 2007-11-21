@@ -1,6 +1,6 @@
 /*  
 **********************************************************************
-*   Copyright (C) 2000-2004, International Business Machines
+*   Copyright (C) 2000-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *   file name:  ucnvhz.c
@@ -53,10 +53,10 @@
 
 
 typedef struct{
+    UConverter* gbConverter;
     int32_t targetIndex;
     int32_t sourceIndex;
     UBool isEscapeAppended;
-    UConverter* gbConverter;
     UBool isStateDBCS;
     UBool isTargetUCharDBCS;
 }UConverterDataHZ;
@@ -69,16 +69,11 @@ _HZOpen(UConverter *cnv, const char *name,const char *locale,uint32_t options, U
     cnv->fromUnicodeStatus= 0;
     cnv->mode=0;
     cnv->fromUChar32=0x0000;
-    cnv->extraInfo = uprv_malloc (sizeof (UConverterDataHZ));
+    cnv->extraInfo = uprv_malloc(sizeof(UConverterDataHZ));
     if(cnv->extraInfo != NULL){
+        uprv_memset(cnv->extraInfo, 0, sizeof(UConverterDataHZ));
         ((UConverterDataHZ*)cnv->extraInfo)->gbConverter = ucnv_open("ibm-1386",errorCode);
-        ((UConverterDataHZ*)cnv->extraInfo)->isStateDBCS = FALSE;
-        ((UConverterDataHZ*)cnv->extraInfo)->isEscapeAppended = FALSE;
-        ((UConverterDataHZ*)cnv->extraInfo)->targetIndex = 0;
-        ((UConverterDataHZ*)cnv->extraInfo)->sourceIndex = 0;
-        ((UConverterDataHZ*)cnv->extraInfo)->isTargetUCharDBCS = FALSE;
     }
-    /* test for NULL */
     else {
         *errorCode = U_MEMORY_ALLOCATION_ERROR;
         return;
@@ -148,7 +143,8 @@ UConverter_toUnicode_HZ_OFFSETS_LOGIC(UConverterToUnicodeArgs *args,
     UChar32 targetUniChar = 0x0000;
     UChar mySourceChar = 0x0000;
     UConverterDataHZ* myData=(UConverterDataHZ*)(args->converter->extraInfo);
-       
+    tempBuf[0]=0; 
+    tempBuf[1]=0;
     if ((args->converter == NULL) || (args->targetLimit < args->target) || (mySourceLimit < args->source)){
         *err = U_ILLEGAL_ARGUMENT_ERROR;
         return;
@@ -261,9 +257,17 @@ SAVE_STATE:
                     *err = U_ILLEGAL_CHAR_FOUND;
                 }
                 if(myData->isStateDBCS){
-                    args->converter->toUBytes[0] = (uint8_t)(tempBuf[0]-0x80);
-                    args->converter->toUBytes[1] = (uint8_t)(tempBuf[1]-0x80);
-                    args->converter->toULength=2;
+                    /* this should never occur since isStateDBCS is set to true 
+                     * only after tempBuf[0] and tempBuf[1]
+                     * are set to the input ..  just to please BEAM 
+                     */
+                    if(tempBuf[0]==0 || tempBuf[1]==0){
+                        *err = U_INTERNAL_PROGRAM_ERROR;
+                    }else{
+                        args->converter->toUBytes[0] = (uint8_t)(tempBuf[0]-0x80);
+                        args->converter->toUBytes[1] = (uint8_t)(tempBuf[1]-0x80);
+                        args->converter->toULength=2;
+                    }
                 }
                 else{
                     args->converter->toUBytes[0] = (uint8_t)mySourceChar;
@@ -295,11 +299,10 @@ UConverter_fromUnicode_HZ_OFFSETS_LOGIC (UConverterFromUnicodeArgs * args,
     int32_t mySourceLength = (int32_t)(args->sourceLimit - args->source);
     int32_t length=0;
     uint32_t targetUniChar = 0x0000;
-    UChar32 mySourceChar = 0x0000,c=0x0000;
+    UChar32 mySourceChar = 0x0000;
     UConverterDataHZ *myConverterData=(UConverterDataHZ*)args->converter->extraInfo;
     UBool isTargetUCharDBCS = (UBool) myConverterData->isTargetUCharDBCS;
     UBool oldIsTargetUCharDBCS = isTargetUCharDBCS;
-    UBool isEscapeAppended =FALSE;
     int len =0;
     const char* escSeq=NULL;
     
@@ -315,7 +318,7 @@ UConverter_fromUnicode_HZ_OFFSETS_LOGIC (UConverterFromUnicodeArgs * args,
         targetUniChar = missingCharMarker;
         if (myTargetIndex < targetLength){
             
-            c=mySourceChar = (UChar) mySource[mySourceIndex++];
+            mySourceChar = (UChar) mySource[mySourceIndex++];
             
 
             oldIsTargetUCharDBCS = isTargetUCharDBCS;
@@ -344,13 +347,13 @@ UConverter_fromUnicode_HZ_OFFSETS_LOGIC (UConverterFromUnicodeArgs * args,
                         len =ESC_LEN;
                         escSeq = SB_ESCAPE;
                         CONCAT_ESCAPE_MACRO(args, myTargetIndex, targetLength, escSeq,err,len,mySourceIndex);
-                        myConverterData->isEscapeAppended =isEscapeAppended =TRUE;
+                        myConverterData->isEscapeAppended = TRUE;
                     }
                     else{ /* Shifting from a single byte to double byte mode*/
                         len =ESC_LEN;
                         escSeq = DB_ESCAPE;
                         CONCAT_ESCAPE_MACRO(args, myTargetIndex, targetLength, escSeq,err,len,mySourceIndex);
-                        myConverterData->isEscapeAppended =isEscapeAppended =TRUE;
+                        myConverterData->isEscapeAppended = TRUE;
                         
                     }
                 }
@@ -457,20 +460,28 @@ _HZ_WriteSub(UConverterFromUnicodeArgs *args, int32_t offsetIndex, UErrorCode *e
         *p++= UCNV_CLOSE_BRACE;
         convData->isTargetUCharDBCS=FALSE;
     }
-    *p++= cnv->subChar[0];
+    *p++= (char)cnv->subChars[0];
 
     ucnv_cbFromUWriteBytes(args,
                            buffer, (int32_t)(p - buffer),
                            offsetIndex, err);
 }
 
-/* structure for SafeClone calculations */
+/*
+ * Structure for cloning an HZ converter into a single memory block.
+ * ucnv_safeClone() of the HZ converter will align the entire cloneHZStruct,
+ * and then ucnv_safeClone() of the sub-converter may additionally align
+ * subCnv inside the cloneHZStruct, for which we need the deadSpace after
+ * subCnv. This is because UAlignedMemory may be larger than the actually
+ * necessary alignment size for the platform.
+ * The other cloneHZStruct fields will not be moved around,
+ * and are aligned properly with cloneHZStruct's alignment.
+ */
 struct cloneHZStruct
 {
     UConverter cnv;
-    UAlignedMemory deadSpace1;
     UConverter subCnv;
-    UAlignedMemory deadSpace2;
+    UAlignedMemory deadSpace;
     UConverterDataHZ mydata;
 };
 
@@ -494,14 +505,14 @@ _HZ_SafeClone(const UConverter *cnv,
     }
 
     localClone = (struct cloneHZStruct *)stackBuffer;
-    uprv_memcpy(&localClone->cnv, cnv, sizeof(UConverter));
+    /* ucnv.c/ucnv_safeClone() copied the main UConverter already */
 
     uprv_memcpy(&localClone->mydata, cnv->extraInfo, sizeof(UConverterDataHZ));
     localClone->cnv.extraInfo = &localClone->mydata;
     localClone->cnv.isExtraLocal = TRUE;
 
     /* deep-clone the sub-converter */
-    size = (int32_t)sizeof(UConverter);
+    size = (int32_t)(sizeof(UConverter) + sizeof(UAlignedMemory)); /* include size of padding */
     ((UConverterDataHZ*)localClone->cnv.extraInfo)->gbConverter =
         ucnv_safeClone(((UConverterDataHZ*)cnv->extraInfo)->gbConverter, &localClone->subCnv, &size, status);
 

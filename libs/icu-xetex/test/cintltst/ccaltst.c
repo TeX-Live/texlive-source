@@ -1,16 +1,16 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2005, International Business Machines Corporation and
+ * Copyright (c) 1997-2006, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
-/********************************************************************************
+/******************************************************************************
 *
 * File CCALTST.C
 *
 * Modification History:
 *        Name                     Description            
 *     Madhu Katragadda               Creation
-*********************************************************************************/
+*******************************************************************************/
 
 /* C API AND FUNCTIONALITY TEST FOR CALENDAR (ucol.h)*/
 
@@ -28,6 +28,8 @@
 #include "ccaltst.h"
 #include "cformtst.h"
 
+void TestGregorianChange(void);
+
 void addCalTest(TestNode** root);
 
 void addCalTest(TestNode** root)
@@ -40,7 +42,7 @@ void addCalTest(TestNode** root)
     addTest(root, &TestGetLimits, "tsformat/ccaltst/TestGetLimits");
     addTest(root, &TestDOWProgression, "tsformat/ccaltst/TestDOWProgression");
     addTest(root, &TestGMTvsLocal, "tsformat/ccaltst/TestGMTvsLocal");
-
+    addTest(root, &TestGregorianChange, "tsformat/ccaltst/TestGregorianChange");
 }
 
 /* "GMT" */
@@ -894,7 +896,7 @@ static void TestGetLimits()
     val = ucal_get(cal, UCAL_DAY_OF_WEEK, &status);
     min = ucal_getLimit(cal, UCAL_DAY_OF_WEEK, UCAL_MINIMUM, &status);
     max = ucal_getLimit(cal, UCAL_DAY_OF_WEEK, UCAL_MAXIMUM, &status);
-    if ( (min != UCAL_SUNDAY || max != UCAL_SATURDAY ) && (min > val > max)  && (val != UCAL_FRIDAY)){
+    if ( (min != UCAL_SUNDAY || max != UCAL_SATURDAY ) && (min > val && val > max)  && (val != UCAL_FRIDAY)){
            log_err("FAIL: Min/max bad\n");
            log_err("FAIL: Day of week %d out of range\n", val);
            log_err("FAIL: FAIL: Day of week should be SUNDAY Got %d\n", val);
@@ -905,7 +907,7 @@ static void TestGetLimits()
     val = ucal_get(cal, UCAL_DAY_OF_WEEK_IN_MONTH, &status);
     min = ucal_getLimit(cal, UCAL_DAY_OF_WEEK_IN_MONTH, UCAL_MINIMUM, &status);
     max = ucal_getLimit(cal, UCAL_DAY_OF_WEEK_IN_MONTH, UCAL_MAXIMUM, &status);
-    if ( (min != 0 || max != 5 ) && (min > val > max)  && (val != 1)){
+    if ( (min != 0 || max != 5 ) && (min > val && val > max)  && (val != 1)){
            log_err("FAIL: Min/max bad\n");
            log_err("FAIL: Day of week in month %d out of range\n", val);
            log_err("FAIL: FAIL: Day of week in month should be SUNDAY Got %d\n", val);
@@ -937,7 +939,7 @@ static void TestGetLimits()
     ac_min=ucal_getLimit(cal, UCAL_MINUTE, UCAL_ACTUAL_MINIMUM, &status);
     ac_max=ucal_getLimit(cal, UCAL_SECOND, UCAL_ACTUAL_MAXIMUM, &status);
     if( (min!=0 || max!= 11 || gr_min!=0 || le_max!=60 || ac_min!=0 || ac_max!=60) &&
-        (min>val>max) && val!=4){
+        (min>val && val>max) && val!=4){
                 
         log_err("FAIL: Min/max bad\n");
         log_err("FAIL: Hour of Day %d out of range\n", val);
@@ -1271,6 +1273,52 @@ static void verify2(const char* msg, UCalendar* c, UDateFormat* dat, int32_t yea
     }
 
         
+}
+
+void TestGregorianChange() {
+    static const UChar utc[] = { 0x45, 0x74, 0x63, 0x2f, 0x47, 0x4d, 0x54, 0 }; /* "Etc/GMT" */
+    const int32_t dayMillis = 86400 * INT64_C(1000);    /* 1 day = 86400 seconds */
+    UCalendar *cal;
+    UDate date;
+    UErrorCode errorCode = U_ZERO_ERROR;
+
+    /* Test ucal_setGregorianChange() on a Gregorian calendar. */
+    errorCode = U_ZERO_ERROR;
+    cal = ucal_open(utc, -1, "", UCAL_GREGORIAN, &errorCode);
+    if(U_FAILURE(errorCode)) {
+        log_err("ucal_open(UTC) failed: %s\n", u_errorName(errorCode));
+        return;
+    }
+    ucal_setGregorianChange(cal, -365 * (dayMillis * (UDate)1), &errorCode);
+    if(U_FAILURE(errorCode)) {
+        log_err("ucal_setGregorianChange(1969) failed: %s\n", u_errorName(errorCode));
+    } else {
+        date = ucal_getGregorianChange(cal, &errorCode);
+        if(U_FAILURE(errorCode) || date != -365 * (dayMillis * (UDate)1)) {
+            log_err("ucal_getGregorianChange() failed: %s, date = %f\n", u_errorName(errorCode), date);
+        }
+    }
+    ucal_close(cal);
+
+    /* Test ucal_setGregorianChange() on a non-Gregorian calendar where it should fail. */
+    errorCode = U_ZERO_ERROR;
+    cal = ucal_open(utc, -1, "th@calendar=buddhist", UCAL_TRADITIONAL, &errorCode);
+    if(U_FAILURE(errorCode)) {
+        log_err("ucal_open(UTC, non-Gregorian) failed: %s\n", u_errorName(errorCode));
+        return;
+    }
+    ucal_setGregorianChange(cal, -730 * (dayMillis * (UDate)1), &errorCode);
+    if(errorCode != U_UNSUPPORTED_ERROR) {
+        log_err("ucal_setGregorianChange(non-Gregorian calendar) did not yield U_UNSUPPORTED_ERROR but %s\n",
+                u_errorName(errorCode));
+    }
+    errorCode = U_ZERO_ERROR;
+    date = ucal_getGregorianChange(cal, &errorCode);
+    if(errorCode != U_UNSUPPORTED_ERROR) {
+        log_err("ucal_getGregorianChange(non-Gregorian calendar) did not yield U_UNSUPPORTED_ERROR but %s\n",
+                u_errorName(errorCode));
+    }
+    ucal_close(cal);
 }
 
 #endif /* #if !UCONFIG_NO_FORMATTING */

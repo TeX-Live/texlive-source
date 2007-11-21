@@ -1,13 +1,13 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/eu.xml
+// * Source File:<path>/common/main/eu.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/eu.xml
+ *  ICU <specials> source: <path>/xml/main/eu.xml
  */
 eu{
     Countries{
@@ -56,6 +56,7 @@ eu{
         HR{"Kroazia"}
         HU{"Hungaria"}
         IE{"Irlanda"}
+        IN{"India"}
         IQ{"Irak"}
         IS{"Islandia"}
         IT{"Italia"}
@@ -132,9 +133,18 @@ eu{
             }
         }
     }
-    ExemplarCharacters{"[a-zñç]"}
+    ExemplarCharacters{"[a-c ç d-n ñ o-z]"}
     Languages{
+        de{"alemanera"}
+        en{"ingelera"}
+        es{"espainiera"}
         eu{"euskara"}
+        fr{"frantsesera"}
+        it{"italiera"}
+        ja{"japoniera"}
+        pt{"portugalera"}
+        ru{"errusiera"}
+        zh{"txinera"}
     }
     LocaleScript{
         "Latn",
@@ -150,10 +160,10 @@ eu{
         "E",
         "‰",
         "∞",
-        "�",
+        "NaN",
         "+",
     }
-    Version{"1.36"}
+    Version{"1.51"}
     calendar{
         gregorian{
             dayNames{
@@ -207,6 +217,22 @@ eu{
                         "urria",
                         "azaroa",
                         "abendua",
+                    }
+                }
+            }
+            quarters{
+                format{
+                    abbreviated{
+                        "Hh1",
+                        "Hh2",
+                        "Hh3",
+                        "Hh4",
+                    }
+                    wide{
+                        "1. hiruhilekoa",
+                        "2. hiruhilekoa",
+                        "3. hiruhilekoa",
+                        "4. hiruhilekoa",
                     }
                 }
             }

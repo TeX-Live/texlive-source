@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2005, International Business Machines Corporation and
+ * Copyright (c) 1997-2006, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /********************************************************************************
@@ -281,9 +281,12 @@ void TestProperty()
       ICU 2.4 currVersionArray = {0x21, 0x40, 0x04, 0x04};
       ICU 2.6 currVersionArray = {0x21, 0x40, 0x03, 0x03};
       ICU 2.8 currVersionArray = {0x29, 0x80, 0x00, 0x04};
+      ICU 3.4 currVersionArray = {0x31, 0xC0, 0x00, 0x04};
     */
-    UVersionInfo currVersionArray = {0x31, 0xC0, 0x00, 0x04};
-    UVersionInfo currUCAVersionArray = {4, 1, 0, 0};
+    UVersionInfo currVersionArray = {0x31, 0xC0, 0x00, 0x05};
+    /* ICU 3.4 had UCA 4.1 */
+    /*UVersionInfo currUCAVersionArray = {4, 1, 0, 0};*/
+    UVersionInfo currUCAVersionArray = {5, 0, 0, 0};
     UVersionInfo versionArray = {0, 0, 0, 0};
     UVersionInfo versionUCAArray = {0, 0, 0, 0};
     
@@ -637,11 +640,13 @@ void TestDecomposition() {
     ucol_close(vi_VN);
 }
 
-#define CLONETEST_COLLATOR_COUNT 3
+#define CLONETEST_COLLATOR_COUNT 4
 
 void TestSafeClone() {
     UChar* test1;
     UChar* test2;
+    static const UChar umlautUStr[] = {0x00DC, 0};
+    static const UChar oeStr[] = {0x0055, 0x0045, 0};
     UCollator * someCollators [CLONETEST_COLLATOR_COUNT];
     UCollator * someClonedCollators [CLONETEST_COLLATOR_COUNT];
     UCollator * col;
@@ -649,6 +654,8 @@ void TestSafeClone() {
     int8_t testSize = 6;    /* Leave this here to test buffer alingment in memory*/
     uint8_t buffer [CLONETEST_COLLATOR_COUNT] [U_COL_SAFECLONE_BUFFERSIZE];
     int32_t bufferSize = U_COL_SAFECLONE_BUFFERSIZE;
+    const char sampleRuleChars[] = "&Z < CH";
+    UChar sampleRule[sizeof(sampleRuleChars)];
     int index;
 
     if (TestBufferSize()) {
@@ -660,14 +667,16 @@ void TestSafeClone() {
     test2=(UChar*)malloc(sizeof(UChar) * testSize);
     u_uastrcpy(test1, "abCda");
     u_uastrcpy(test2, "abcda");
+    u_uastrcpy(sampleRule, sampleRuleChars);
     
     /* one default collator & two complex ones */
     someCollators[0] = ucol_open("en_US", &err);
     someCollators[1] = ucol_open("ko", &err);
     someCollators[2] = ucol_open("ja_JP", &err);
+    someCollators[3] = ucol_openRules(sampleRule, -1, UCOL_ON, UCOL_TERTIARY, NULL, &err);
     if(U_FAILURE(err)) {
-      log_data_err("Couldn't open one or more collators\n");
-      return;
+        log_data_err("Couldn't open one or more collators\n");
+        return;
     }
 
     /* Check the various error & informational states: */
@@ -736,23 +745,60 @@ void TestSafeClone() {
 
     err = U_ZERO_ERROR;
 
+    /* Test that a cloned collator doesn't accidentally use UCA. */
+    col=ucol_open("de@collation=phonebook", &err);
+    bufferSize = U_COL_SAFECLONE_BUFFERSIZE;
+    someClonedCollators[0] = ucol_safeClone(col, buffer[0], &bufferSize, &err);
+    doAssert( (ucol_greater(col, umlautUStr, u_strlen(umlautUStr), oeStr, u_strlen(oeStr))), "Original German phonebook collation sorts differently than expected");
+    doAssert( (ucol_greater(someClonedCollators[0], umlautUStr, u_strlen(umlautUStr), oeStr, u_strlen(oeStr))), "Cloned German phonebook collation sorts differently than expected");
+    if (!ucol_equals(someClonedCollators[0], col)) {
+        log_err("FAIL: Cloned German phonebook collator is not equal to original.\n");
+    }
+    ucol_close(col);
+    ucol_close(someClonedCollators[0]);
+
+    err = U_ZERO_ERROR;
+
     /* change orig & clone & make sure they are independent */
 
     for (index = 0; index < CLONETEST_COLLATOR_COUNT; index++)
     {
-        bufferSize = U_COL_SAFECLONE_BUFFERSIZE;
-        someClonedCollators[index] = ucol_safeClone(someCollators[index], buffer[index], &bufferSize, &err);
+        ucol_setStrength(someCollators[index], UCOL_IDENTICAL);
+        bufferSize = 1;
+        err = U_ZERO_ERROR;
+        ucol_close(ucol_safeClone(someCollators[index], buffer[index], &bufferSize, &err));
+        if (err != U_SAFECLONE_ALLOCATED_WARNING) {
+            log_err("FAIL: collator number %d was not allocated.\n", index);
+        }
 
-        ucol_setStrength(someClonedCollators[index], UCOL_TERTIARY);
+        bufferSize = U_COL_SAFECLONE_BUFFERSIZE;
+        err = U_ZERO_ERROR;
+        someClonedCollators[index] = ucol_safeClone(someCollators[index], buffer[index], &bufferSize, &err);
+        if (someClonedCollators[index] == NULL
+            || someClonedCollators[index] < (UCollator *)buffer[index]
+            || someClonedCollators[index] > (UCollator *)(buffer[index]+(U_COL_SAFECLONE_BUFFERSIZE-1)))
+        {
+            log_err("FAIL: Cloned collator didn't use provided buffer.\n");
+            return;
+        }
+        if (!ucol_equals(someClonedCollators[index], someCollators[index])) {
+            log_err("FAIL: Cloned collator is not equal to original at index = %d.\n", index);
+        }
+
+        /* Check the usability */
         ucol_setStrength(someCollators[index], UCOL_PRIMARY);
-        ucol_setAttribute(someClonedCollators[index], UCOL_CASE_LEVEL, UCOL_OFF, &err);
         ucol_setAttribute(someCollators[index], UCOL_CASE_LEVEL, UCOL_OFF, &err);
         
-        doAssert( (ucol_greater(someClonedCollators[index], test1, u_strlen(test1), test2, u_strlen(test2))), "Result should be \"abCda\" >>> \"abcda\" ");
         doAssert( (ucol_equal(someCollators[index], test1, u_strlen(test1), test2, u_strlen(test2))), "Result should be \"abcda\" == \"abCda\"");
         
-        ucol_close(someClonedCollators[index]);
+        /* Close the original to make sure that the clone is usable. */
         ucol_close(someCollators[index]);
+
+        ucol_setStrength(someClonedCollators[index], UCOL_TERTIARY);
+        ucol_setAttribute(someClonedCollators[index], UCOL_CASE_LEVEL, UCOL_OFF, &err);
+        doAssert( (ucol_greater(someClonedCollators[index], test1, u_strlen(test1), test2, u_strlen(test2))), "Result should be \"abCda\" >>> \"abcda\" ");
+
+        ucol_close(someClonedCollators[index]);
     }
     free(test1);
     free(test2);
@@ -818,10 +864,12 @@ void TestSortKey()
 {   
     uint8_t *sortk1 = NULL, *sortk2 = NULL, *sortk3 = NULL, *sortkEmpty = NULL;
     uint8_t sortk2_compat[] = { 
-        /* 3.4 key, UCA 4.1 */
-        0x28, 0x2a, 0x2c, 0x2e, 0x28, 0x01, 
-        0x09, 0x01, 0x09, 0x01, 0x27, 0x01, 
-        0x92, 0x93, 0x94, 0x95, 0x92, 0x00        
+        /* 3.6 key, from UCA 5.0 */
+        0x29, 0x2b, 0x2d, 0x2f, 0x29, 0x01, 
+        0x09, 0x01, 0x09, 0x01, 0x28, 0x01, 
+        0x92, 0x93, 0x94, 0x95, 0x92, 0x00
+        /* 3.4 key, from UCA 4.1 */
+        /* 0x28, 0x2a, 0x2c, 0x2e, 0x28, 0x01, 0x09, 0x01, 0x09, 0x01, 0x27, 0x01, 0x92, 0x93, 0x94, 0x95, 0x92, 0x00 */
         /* 2.6.1 key */
         /* 0x26, 0x28, 0x2A, 0x2C, 0x26, 0x01, 0x09, 0x01, 0x09, 0x01, 0x25, 0x01, 0x92, 0x93, 0x94, 0x95, 0x92, 0x00 */
         /* 2.2 key */
@@ -1788,7 +1836,7 @@ static void TestShortString(void)
         int32_t    expectedOffset;
         uint32_t   expectedIdentifier;
     } testCases[] = {
-        {"LDE_RDE_KPHONEBOOK_T0041_ZLATN","B2800_KPHONEBOOK_LDE", "de@collation=phonebook", U_USING_FALLBACK_WARNING, 0, 0 },
+        {"LDE_RDE_KPHONEBOOK_T0041_ZLATN","B2900_KPHONEBOOK_LDE", "de@collation=phonebook", U_USING_FALLBACK_WARNING, 0, 0 },
         {"LEN_RUS_NO_AS_S4","AS_LEN_NO_S4", NULL, U_USING_FALLBACK_WARNING, 0, 0 },
         {"LDE_VPHONEBOOK_EO_SI","EO_KPHONEBOOK_LDE_SI", "de@collation=phonebook", U_ZERO_ERROR, 0, 0 },
         {"LDE_Kphonebook","KPHONEBOOK_LDE", "de@collation=phonebook", U_ZERO_ERROR, 0, 0 },
@@ -2043,7 +2091,14 @@ TestOpenBinary(void)
   uint8_t *image = imageBuffer;
   int32_t imageBufferCapacity = 32768;
 
-  int32_t imageSize = ucol_cloneBinary(coll, image, imageBufferCapacity, &status);
+  int32_t imageSize;
+
+  if((coll==NULL)||(UCA==NULL)||(U_FAILURE(status))) {
+       log_data_err("could not load collators or error occured: %s\n",
+       u_errorName(status));
+       return;
+  }		
+  imageSize = ucol_cloneBinary(coll, image, imageBufferCapacity, &status);
   if(U_FAILURE(status)) {
     image = (uint8_t *)malloc(imageSize*sizeof(uint8_t));
     status = U_ZERO_ERROR;

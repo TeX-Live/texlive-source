@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 1997-2005, International Business Machines Corporation and    *
+* Copyright (C) 1997-2006, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 *
@@ -325,31 +325,18 @@ DecimalFormat::construct(UErrorCode&             status,
     if (pattern->indexOf((UChar)kCurrencySign) >= 0) {
         // If it looks like we are going to use a currency pattern
         // then do the time consuming lookup.
-        if (symbolsToAdopt == NULL) {
-            setCurrencyForLocale(uloc_getDefault(), status);
-        } else {
-            setCurrencyForSymbols();
-        }
+        setCurrencyForSymbols();
     } else {
         setCurrency(NULL, status);
     }
 
     applyPattern(*pattern, FALSE /*not localized*/,parseErr, status);
-}
-
-/**
- * Sets our currency to be the default currency for the given locale.
- */
-void DecimalFormat::setCurrencyForLocale(const char* locale, UErrorCode& ec) {
-    const UChar* c = NULL;
-    if (U_SUCCESS(ec)) {
-        // Trap an error in mapping locale to currency.  If we can't
-        // map, then don't fail and set the currency to "".
-        UErrorCode ec2 = U_ZERO_ERROR;
-        UChar c[4];
-        ucurr_forLocale(locale, c, 4, &ec2);
+    
+    // If it was a currency format, apply the appropriate rounding by
+    // resetting the currency. NOTE: this copies fCurrency on top of itself.
+    if (fIsCurrencyFormat) {
+        setCurrency(getCurrency(), status);
     }
-    setCurrency(c, ec);
 }
 
 //------------------------------------------------------------------------------
@@ -832,7 +819,12 @@ DecimalFormat::subformat(UnicodeString& appendTo,
     // Gets the localized zero Unicode character.
     UChar32 zero = getConstSymbol(DecimalFormatSymbols::kZeroDigitSymbol).char32At(0);
     int32_t zeroDelta = zero - '0'; // '0' is the DigitList representation of zero
-    const UnicodeString *grouping = &getConstSymbol(DecimalFormatSymbols::kGroupingSeparatorSymbol);
+    const UnicodeString *grouping ;
+    if(fIsCurrencyFormat) {
+        grouping = &getConstSymbol(DecimalFormatSymbols::kMonetaryGroupingSeparatorSymbol);
+    }else{
+        grouping = &getConstSymbol(DecimalFormatSymbols::kGroupingSeparatorSymbol);
+    }
     const UnicodeString *decimal;
     if(fIsCurrencyFormat) {
         decimal = &getConstSymbol(DecimalFormatSymbols::kMonetarySeparatorSymbol);
@@ -1764,7 +1756,9 @@ int32_t DecimalFormat::skipUWhiteSpace(const UnicodeString& text, int32_t pos) {
 int32_t DecimalFormat::compareComplexAffix(const UnicodeString& affixPat,
                                            const UnicodeString& text,
                                            int32_t pos,
-                                           UChar* currency) const {
+                                           UChar* currency) const
+{
+    int32_t start = pos;
     U_ASSERT(currency != NULL ||
              (fCurrencyChoice != NULL && *getCurrency() != 0));
 
@@ -1850,7 +1844,7 @@ int32_t DecimalFormat::compareComplexAffix(const UnicodeString& affixPat,
             i = skipRuleWhiteSpace(affixPat, i);
         }
     }
-    return pos;
+    return pos - start;
 }
 
 /**

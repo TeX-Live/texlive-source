@@ -28,6 +28,7 @@
 				RuntimeLibrary="1"
 				BufferSecurityCheck="TRUE"
 				DisableLanguageExtensions="TRUE"
+				TreatWChar_tAsBuiltInType="TRUE"
 				PrecompiledHeaderFile=".\Debug/cintltst.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
@@ -90,6 +91,7 @@
 				BufferSecurityCheck="TRUE"
 				EnableFunctionLevelLinking="TRUE"
 				DisableLanguageExtensions="TRUE"
+				TreatWChar_tAsBuiltInType="TRUE"
 				PrecompiledHeaderFile=".\Release/cintltst.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
@@ -268,9 +270,6 @@
 				RelativePath=".\trietest.c">
 			</File>
 			<File
-				RelativePath=".\ucmptst.c">
-			</File>
-			<File
 				RelativePath=".\uenumtst.c">
 			</File>
 		</Filter>
@@ -318,6 +317,9 @@
 			</File>
 			<File
 				RelativePath=".\stdnmtst.c">
+			</File>
+			<File
+				RelativePath=".\ucsdetst.c">
 			</File>
 		</Filter>
 		<Filter
@@ -474,9 +476,6 @@
 			</File>
 			<File
 				RelativePath=".\cucdtst.c">
-			</File>
-			<File
-				RelativePath=".\cucdtst.h">
 			</File>
 			<File
 				RelativePath=".\usettest.c">

@@ -1,6 +1,10 @@
+#******************************************************************************
+#
+#   Copyright (C) 1999-2006, International Business Machines
+#   Corporation and others.  All Rights Reserved.
+#
+#******************************************************************************
 ## Makefile.in for ICU - test/intltest
-## Copyright (c) 1999-2005, International Business Machines Corporation and
-## others. All Rights Reserved.
 
 ## Source directory information
 srcdir = @srcdir@
@@ -8,6 +12,7 @@ top_srcdir = @top_srcdir@
 
 top_builddir = ../..
 
+## All the flags and other definitions are included here.
 include $(top_builddir)/icudefs.mk
 
 ## Build directory information
@@ -27,17 +32,20 @@ BUILDDIR := $(BUILDDIR:test\\intltest/../../=)
 # Simplify the path for Windows 98
 BUILDDIR := $(BUILDDIR:TEST\\INTLTEST/../../=)
 
-CPPFLAGS += -I$(top_builddir)/common -I$(top_srcdir)/common -I$(top_srcdir)/i18n -I$(top_srcdir)/tools/toolutil -I$(top_srcdir)/tools/ctestfw
+ifneq ($(top_builddir),$(top_srcdir))
+CPPFLAGS += -I$(top_builddir)/common
+endif
+CPPFLAGS += -I$(top_srcdir)/common -I$(top_srcdir)/i18n -I$(top_srcdir)/tools/toolutil -I$(top_srcdir)/tools/ctestfw
 DEFS += -D'U_TOPSRCDIR="$(top_srcdir)/"' -D'U_TOPBUILDDIR="$(BUILDDIR)"'
 LIBS = $(LIBCTESTFW) $(LIBICUI18N) $(LIBICUUC) $(LIBICUTOOLUTIL) $(DEFAULT_LIBS) $(LIB_M)
 
-OBJECTS = allcoll.o apicoll.o astrotst.o callimts.o calregts.o caltest.o \
+OBJECTS = aliastst.o allcoll.o apicoll.o astrotst.o callimts.o calregts.o caltest.o \
 caltztst.o canittst.o citrtest.o cntabcol.o convtest.o currcoll.o \
 dadrcoll.o dcfmapts.o decoll.o dtfmapts.o dtfmrgts.o dtfmtrtts.o dtfmttst.o	\
 encoll.o escoll.o ficoll.o frcoll.o g7coll.o intltest.o	\
 itercoll.o itformat.o itmajor.o itutil.o jacoll.o lcukocol.o	\
 loctest.o miscdtfm.o mnkytst.o msfmrgts.o nmfmapts.o nmfmtrt.o		\
-numfmtst.o numrgts.o pptest.o regcoll.o restest.o restsnew.o \
+numfmtst.o numrgts.o pptest.o regcoll.o restest.o restsnew.o rndmcoll.o \
 sdtfmtts.o svccoll.o tchcfmt.o	\
 tfsmalls.o tmsgfmt.o trcoll.o tscoll.o tsdate.o tsdcfmsy.o tsdtfmsy.o	\
 tsmthred.o tsnmfmt.o tsputil.o tstnrapi.o tstnorm.o tzbdtest.o		\
@@ -47,13 +55,16 @@ testutil.o transrt.o trnserr.o normconf.o sfwdchit.o \
 jamotest.o srchtest.o reptest.o regextst.o \
 itrbnf.o itrbnfrt.o itrbnfp.o ucaconf.o icusvtst.o \
 uobjtest.o idnaref.o idnaconf.o nptrans.o punyref.o testidn.o testidna.o incaltst.o \
-calcasts.o v32test.o uvectest.o textfile.o tokiter.o utxttest.o
+calcasts.o v32test.o uvectest.o textfile.o tokiter.o utxttest.o wbnf.o \
+windttst.o winnmtst.o winutil.o csdetest.o
 
 
 DEPS = $(OBJECTS:.o=.d)
 
+-include Makefile.local
+
 ## List of phony targets
-.PHONY : all all-local install install-local clean clean-local \
+.PHONY : all all-local install install-local clean clean-local	\
 distclean distclean-local dist dist-local check check-local
 
 ## Clear suffix list
@@ -79,8 +90,6 @@ clean-local:
 
 distclean-local: clean-local
 	$(RMV) Makefile
-
--include Makefile.local
 
 check-local: all-local
 	$(INVOKE) ./$(TARGET) $(INTLTEST_OPTS) || true

@@ -1,9 +1,9 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/en_SG.xml
+// * Source File:<path>/common/main/en_SG.xml
 // *
 // ***************************************************************************
 en_SG{
@@ -17,30 +17,24 @@ en_SG{
             "USD",
         }
     }
-    Version{"1.31"}
+    Version{"1.43"}
     calendar{
         gregorian{
+            DateTimeElements:intvector{
+                1,
+                1,
+            }
             DateTimePatterns{
-                "a hh:mm:ss",
-                "a hh:mm:ss",
-                "a hh:mm",
-                "a hh:mm",
-                "dd MMMM yyyy",
-                "dd MMM yyyy",
-                "dd-MMM-yy",
-                "dd/MM/yy",
+                "h:mm:ss a v",
+                "h:mm:ss a z",
+                "h:mm:ss a",
+                "h:mm a",
+                "EEEE, MMMM d, yyyy",
+                "MMMM d, yyyy",
+                "MMM d, yyyy",
+                "M/d/yy",
                 "{1} {0}",
             }
-        }
-    }
-    zoneStrings{
-        {
-            "Asia/Singapore",
-            "Singapore Standard Time",
-            "SST",
-            "Singapore Standard Time",
-            "SST",
-            "Singapore",
         }
     }
 }

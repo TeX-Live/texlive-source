@@ -1,13 +1,13 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/et.xml
+// * Source File:<path>/common/main/et.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/et.xml
+ *  ICU <specials> source: <path>/xml/main/et.xml
  */
 et{
     Countries{
@@ -59,6 +59,7 @@ et{
         CN{"Hiina"}
         CO{"Colombia"}
         CR{"Costa Rica"}
+        CS{"Serbia ja Montenegro"}
         CU{"Kuuba"}
         CV{"Cabo Verde"}
         CX{"Jõulusaar"}
@@ -267,7 +268,7 @@ et{
             }
         }
     }
-    ExemplarCharacters{"[a-z õ ä ö ü š ž]"}
+    ExemplarCharacters{"[a-s š z ž t-w õ ä ö ü x y]"}
     Languages{
         ar{"Araabia"}
         bg{"Bulgaaria"}
@@ -314,16 +315,12 @@ et{
         "E",
         "‰",
         "∞",
-        "�",
+        "NaN",
         "+",
     }
-    Version{"1.40"}
+    Version{"1.56"}
     calendar{
         gregorian{
-            DateTimeElements:intvector{
-                2,
-                1,
-            }
             DateTimePatterns{
                 "H:mm:ss z",
                 "H:mm:ss z",
@@ -392,6 +389,22 @@ et{
                         "oktoober",
                         "november",
                         "detsember",
+                    }
+                }
+            }
+            quarters{
+                format{
+                    abbreviated{
+                        "K1",
+                        "K2",
+                        "K3",
+                        "K4",
+                    }
+                    wide{
+                        "1. kvartal",
+                        "2. kvartal",
+                        "3. kvartal",
+                        "4. kvartal",
                     }
                 }
             }

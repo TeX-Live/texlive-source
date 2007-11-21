@@ -1,6 +1,6 @@
 /*
 ********************************************************************************
-*   Copyright (C) 1996-2005, International Business Machines
+*   Copyright (C) 1996-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 ********************************************************************************
 *
@@ -154,11 +154,9 @@ _openProps(UCharProps *ucp, UErrorCode *pErrorCode) {
 
 #endif
 
-U_CFUNC int8_t
+#if !UCHAR_HARDCODE_DATA
+static int8_t
 uprv_loadPropsData(UErrorCode *pErrorCode) {
-#if UCHAR_HARDCODE_DATA
-    return TRUE;
-#else
     /* load Unicode character properties data from file if necessary */
 
     /*
@@ -168,7 +166,6 @@ uprv_loadPropsData(UErrorCode *pErrorCode) {
      */
     if(havePropsData==0) {
         UCharProps ucp={ NULL };
-        UCaseProps *csp;
 
         if(U_FAILURE(*pErrorCode)) {
             return havePropsData;
@@ -187,7 +184,6 @@ uprv_loadPropsData(UErrorCode *pErrorCode) {
                 ucp.pData32=NULL;
                 uprv_memcpy(&propsTrie, &ucp.propsTrie, sizeof(propsTrie));
                 uprv_memcpy(&propsVectorsTrie, &ucp.propsVectorsTrie, sizeof(propsVectorsTrie));
-                csp=NULL;
             }
 
             /* initialize some variables */
@@ -213,10 +209,7 @@ uprv_loadPropsData(UErrorCode *pErrorCode) {
     }
 
     return havePropsData;
-#endif
 }
-
-#if !UCHAR_HARDCODE_DATA
 
 static int8_t 
 loadPropsData(void) {
@@ -806,11 +799,11 @@ u_charAge(UChar32 c, UVersionInfo versionArray) {
 U_CAPI UScriptCode U_EXPORT2
 uscript_getScript(UChar32 c, UErrorCode *pErrorCode) {
     if(pErrorCode==NULL || U_FAILURE(*pErrorCode)) {
-        return 0;
+        return USCRIPT_INVALID_CODE;
     }
     if((uint32_t)c>0x10ffff) {
         *pErrorCode=U_ILLEGAL_ARGUMENT_ERROR;
-        return 0;
+        return USCRIPT_INVALID_CODE;
     }
 
     return (UScriptCode)(u_getUnicodeProperties(c, 0)&UPROPS_SCRIPT_MASK);

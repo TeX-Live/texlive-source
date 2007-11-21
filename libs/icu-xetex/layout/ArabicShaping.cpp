@@ -1,6 +1,6 @@
 /*
  *
- * (C) Copyright IBM Corp. 1998-2004 - All Rights Reserved
+ * (C) Copyright IBM Corp. 1998-2005 - All Rights Reserved
  *
  */
 
@@ -8,48 +8,30 @@
 #include "OpenTypeTables.h"
 #include "ArabicShaping.h"
 #include "LEGlyphStorage.h"
+#include "ClassDefinitionTables.h"
 
 U_NAMESPACE_BEGIN
 
+// This table maps Unicode joining types to
+// ShapeTypes.
+const ArabicShaping::ShapeType ArabicShaping::shapeTypes[] =
+{
+    ArabicShaping::ST_NOSHAPE_NONE, // [U]
+    ArabicShaping::ST_NOSHAPE_DUAL, // [C]
+    ArabicShaping::ST_DUAL,         // [D]
+    ArabicShaping::ST_LEFT,         // [L]
+    ArabicShaping::ST_RIGHT,        // [R]
+    ArabicShaping::ST_TRANSPARENT   // [T]
+};
+
+// Draft Mongolian shaping classes, not provided by the Unicode data files at this time
 enum {
     _c_ = ArabicShaping::ST_NOSHAPE_DUAL,
     _d_ = ArabicShaping::ST_DUAL,
     _n_ = ArabicShaping::ST_NONE,
     _r_ = ArabicShaping::ST_RIGHT,
     _t_ = ArabicShaping::ST_TRANSPARENT,
-    _x_ = ArabicShaping::ST_NOSHAPE_NONE,
-    _A_ = ArabicShaping::ST_ALAPH,
-    _R_ = ArabicShaping::ST_DALATH_RISH
-};
-
-const ArabicShaping::ShapeType ArabicShaping::shapeTypes[] =
-{
-// Arabic block
-    _t_, _t_, _t_, _t_, _t_, _t_, _x_, _x_, _x_, _x_, _x_, _n_, _x_, _x_, _x_, _n_,   // 0x610 - 0x61f
-    _x_, _n_, _r_, _r_, _r_, _r_, _d_, _r_, _d_, _r_, _d_, _d_, _d_, _d_, _d_, _r_,   // 0x620 - 0x62f
-    _r_, _r_, _r_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _x_, _x_, _x_, _x_, _x_,   // 0x630 - 0x63f
-    _c_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _r_, _d_, _d_, _t_, _t_, _t_, _t_, _t_,   // 0x640 - 0x64f
-    _t_, _t_, _t_, _t_, _t_, _t_, _t_, _t_, _t_, _t_, _t_, _t_, _t_, _t_, _t_, _x_,   // 0x650 - 0x65f
-    _n_, _n_, _n_, _n_, _n_, _n_, _n_, _n_, _n_, _n_, _n_, _n_, _n_, _n_, _d_, _d_,   // 0x660 - 0x66f
-    _t_, _r_, _r_, _r_, _n_, _r_, _r_, _r_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_,   // 0x670 - 0x67f
-    _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _r_, _r_, _r_, _r_, _r_, _r_, _r_, _r_,   // 0x680 - 0x68f
-    _r_, _r_, _r_, _r_, _r_, _r_, _r_, _r_, _r_, _r_, _d_, _d_, _d_, _d_, _d_, _d_,   // 0x690 - 0x69f
-    _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_,   // 0x6a0 - 0x6af
-    _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_,   // 0x6b0 - 0x6bf
-    _r_, _d_, _r_, _r_, _r_, _r_, _r_, _r_, _r_, _r_, _r_, _r_, _d_, _r_, _d_, _r_,   // 0x6c0 - 0x6cf
-    _d_, _d_, _r_, _r_, _n_, _r_, _t_, _t_, _t_, _t_, _t_, _t_, _t_, _x_, _t_, _t_,   // 0x6d0 - 0x6df
-    _t_, _t_, _t_, _t_, _t_, _n_, _n_, _t_, _t_, _n_, _t_, _t_, _t_, _t_, _r_, _r_,   // 0x6e0 - 0x6ef
-    _n_, _n_, _n_, _n_, _n_, _n_, _n_, _n_, _n_, _n_, _d_, _d_, _d_, _n_, _n_, _d_,   // 0x6f0 - 0x6ff
-// Syriac
-    _n_, _n_, _n_, _n_, _n_, _n_, _n_, _n_, _n_, _n_, _n_, _n_, _n_, _n_, _n_, _t_,   // 0x700 - 0x70f
-    _A_, _t_, _d_, _d_, _d_, _R_, _R_, _r_, _r_, _r_, _d_, _d_, _d_, _d_, _r_, _d_,   // 0x710 - 0x71f
-    _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _r_, _d_, _R_, _d_, _r_, _d_, _d_, _R_,   // 0x720 - 0x72f
-    _t_, _t_, _t_, _t_, _t_, _t_, _t_, _t_, _t_, _t_, _t_, _t_, _t_, _t_, _t_, _t_,   // 0x730 - 0x73f
-    _t_, _t_, _t_, _t_, _t_, _t_, _t_, _t_, _t_, _t_, _t_, _x_, _x_, _r_, _d_, _d_,   // 0x740 - 0x74f
-// Arabic Supplement
-    _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _r_, _r_, _r_, _d_, _d_, _d_, _d_,   // 0x750 - 0x75f
-    _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _d_, _r_, _r_, _d_, _x_, _x_,   // 0x760 - 0x76f
-    _x_, _x_, _x_, _x_, _x_, _x_, _x_, _x_, _x_, _x_, _x_, _x_, _x_, _x_, _x_, _x_    // 0x770 - 0x77f
+    _x_ = ArabicShaping::ST_NOSHAPE_NONE
 };
 
 const ArabicShaping::ShapeType ArabicShaping::mongolianTypes[] =
@@ -68,8 +50,7 @@ const ArabicShaping::ShapeType ArabicShaping::mongolianTypes[] =
 };
 
 /*
-    shaping array holds types for Arabic/Syriac chars between 0610 and 077f;
-    mongolian array holds types for Mongolian chars between 1800 and 18af;
+    shaping array holds types for Arabic chars between 0610 and 0700
     other values are either unshaped, or transparent if a mark or format
     code, except for format codes 200c (zero-width non-joiner) and 200d 
     (dual-width joiner) which are both unshaped and non_joining or
@@ -77,97 +58,112 @@ const ArabicShaping::ShapeType ArabicShaping::mongolianTypes[] =
 */
 ArabicShaping::ShapeType ArabicShaping::getShapeType(LEUnicode c)
 {
-    if (c >= 0x0300 && c <= 0x206f) {
-        if (/*c >= 0x0300 &&*/ c <= 0x036f) { // Combining Marks
-            return ST_TRANSPARENT;
-        } else if (c >= 0x0610 && c <= 0x077f) { // Arabic/Syriac/Arabic Supplement
-            return shapeTypes[c - 0x0610];
-        } else if (c >= 0x1800 && c <= 0x18af) { // Mongolian
-            return mongolianTypes[c - 0x1800];
-        } else if (c == 0x200c) {   // ZWNJ
-            return ST_NOSHAPE_NONE;
-        } else if (c == 0x200d) {   // ZWJ
-            return ST_NOSHAPE_DUAL;
-        } else if (c >= 0x202a && c <= 0x202e) { // LRE - RLO
-            return ST_TRANSPARENT;
-        } else if (c >= 0x206a /*&& c <= 0x206f*/) { // Inhibit Symmetric Swapping - Nominal Digit Shapes
-            return ST_TRANSPARENT;
-        }
+    const ClassDefinitionTable *joiningTypes = (const ClassDefinitionTable *) ArabicShaping::shapingTypeTable;
+    le_int32 joiningType = joiningTypes->getGlyphClass(c);
+
+    if (joiningType == JT_RIGHT_JOINING) { // check for Syriac exceptions ALAPH, DALATH, RISH
+        if (c == 0x0710)
+            return ST_ALAPH;
+        if (c == 0x0715 || c == 0x0716 || c == 0x072A || c == 0x072F)
+            return ST_DALATH_RISH;
+    }
+
+	if (joiningType == 0) { // check for Mongolian range, not supported by ArabicShaping::shapingTypeTable
+		if (c >= 0x1800 && c <= 0x18af)
+			return mongolianTypes[c - 0x1800];
+	}
+
+    if (joiningType >= 0 && joiningType < JT_COUNT) {
+        return shapeTypes[joiningType];
     }
 
     return ST_NOSHAPE_NONE;
 }
 
-static const LETag isolFeatureTag = LE_ISOL_FEATURE_TAG;
-static const LETag initFeatureTag = LE_INIT_FEATURE_TAG;
-static const LETag mediFeatureTag = LE_MEDI_FEATURE_TAG;
-static const LETag finaFeatureTag = LE_FINA_FEATURE_TAG;
-static const LETag ligaFeatureTag = LE_LIGA_FEATURE_TAG;
-static const LETag msetFeatureTag = LE_MSET_FEATURE_TAG;
-static const LETag markFeatureTag = LE_MARK_FEATURE_TAG;
-static const LETag ccmpFeatureTag = LE_CCMP_FEATURE_TAG;
-static const LETag rligFeatureTag = LE_RLIG_FEATURE_TAG;
-static const LETag caltFeatureTag = LE_CALT_FEATURE_TAG;
-static const LETag dligFeatureTag = LE_DLIG_FEATURE_TAG;
-static const LETag cswhFeatureTag = LE_CSWH_FEATURE_TAG;
-static const LETag cursFeatureTag = LE_CURS_FEATURE_TAG;
-static const LETag kernFeatureTag = LE_KERN_FEATURE_TAG;
-static const LETag mkmkFeatureTag = LE_MKMK_FEATURE_TAG;
-static const LETag med2FeatureTag = LE_MED2_FEATURE_TAG;
-static const LETag fin2FeatureTag = LE_FIN2_FEATURE_TAG;
-static const LETag fin3FeatureTag = LE_FIN3_FEATURE_TAG;
+#define isolFeatureTag LE_ISOL_FEATURE_TAG
+#define initFeatureTag LE_INIT_FEATURE_TAG
+#define mediFeatureTag LE_MEDI_FEATURE_TAG
+#define med2FeatureTag LE_MED2_FEATURE_TAG
+#define finaFeatureTag LE_FINA_FEATURE_TAG
+#define fin2FeatureTag LE_FIN2_FEATURE_TAG
+#define fin3FeatureTag LE_FIN3_FEATURE_TAG
+#define ligaFeatureTag LE_LIGA_FEATURE_TAG
+#define msetFeatureTag LE_MSET_FEATURE_TAG
+#define markFeatureTag LE_MARK_FEATURE_TAG
+#define ccmpFeatureTag LE_CCMP_FEATURE_TAG
+#define rligFeatureTag LE_RLIG_FEATURE_TAG
+#define caltFeatureTag LE_CALT_FEATURE_TAG
+#define dligFeatureTag LE_DLIG_FEATURE_TAG
+#define cswhFeatureTag LE_CSWH_FEATURE_TAG
+#define cursFeatureTag LE_CURS_FEATURE_TAG
+#define kernFeatureTag LE_KERN_FEATURE_TAG
+#define mkmkFeatureTag LE_MKMK_FEATURE_TAG
 
-static const LETag emptyTag       = 0x00000000; // ''
+// NOTE:
+// The isol, fina, init and medi features must be
+// defined in the above order, and have masks that
+// are all in the same byte.
+#define isolFeatureMask 0x80000000UL
+#define finaFeatureMask 0x40000000UL
+#define initFeatureMask 0x20000000UL
+#define mediFeatureMask 0x10000000UL
+#define fin2FeatureMask 0x08000000UL
+#define fin3FeatureMask 0x04000000UL
+#define med2FeatureMask 0x03000000UL /* two bits, from shifting either fin2 or fin3 */
 
-static const LETag featureOrder[] = 
-{
-    ccmpFeatureTag, isolFeatureTag, finaFeatureTag, fin2FeatureTag, fin3FeatureTag, mediFeatureTag,
-    med2FeatureTag, initFeatureTag, rligFeatureTag, caltFeatureTag, ligaFeatureTag, dligFeatureTag,
-    cswhFeatureTag, msetFeatureTag, cursFeatureTag, kernFeatureTag, markFeatureTag, mkmkFeatureTag,
-    emptyTag
+#define ccmpFeatureMask 0x00800000UL
+#define rligFeatureMask 0x00400000UL
+#define caltFeatureMask 0x00200000UL
+#define ligaFeatureMask 0x00100000UL
+#define dligFeatureMask 0x00080000UL
+#define cswhFeatureMask 0x00040000UL
+#define msetFeatureMask 0x00020000UL
+#define cursFeatureMask 0x00010000UL
+#define kernFeatureMask 0x00008000UL
+#define markFeatureMask 0x00004000UL
+#define mkmkFeatureMask 0x00002000UL
+
+#define ISOL_FEATURES (isolFeatureMask | ligaFeatureMask | msetFeatureMask | markFeatureMask | ccmpFeatureMask | rligFeatureMask | caltFeatureMask | dligFeatureMask | cswhFeatureMask | cursFeatureMask | kernFeatureMask | mkmkFeatureMask)
+
+#define SHAPE_MASK 0xFF000000UL
+
+static const FeatureMap featureMap[] = {
+    {ccmpFeatureTag, ccmpFeatureMask},
+    {isolFeatureTag, isolFeatureMask},
+    {finaFeatureTag, finaFeatureMask},
+    {fin2FeatureTag, fin2FeatureMask},
+    {fin3FeatureTag, fin3FeatureMask},
+    {mediFeatureTag, mediFeatureMask},
+    {med2FeatureTag, med2FeatureMask},
+    {initFeatureTag, initFeatureMask},
+    {rligFeatureTag, rligFeatureMask},
+    {caltFeatureTag, caltFeatureMask},
+    {ligaFeatureTag, ligaFeatureMask},
+    {dligFeatureTag, dligFeatureMask},
+    {cswhFeatureTag, cswhFeatureMask},
+    {msetFeatureTag, msetFeatureMask},
+    {cursFeatureTag, cursFeatureMask},
+    {kernFeatureTag, kernFeatureMask},
+    {markFeatureTag, markFeatureMask},
+    {mkmkFeatureTag, mkmkFeatureMask}
 };
 
-const LETag ArabicShaping::tagArray[] =
+const FeatureMap *ArabicShaping::getFeatureMap(le_int32 &count)
 {
-    isolFeatureTag, ligaFeatureTag, msetFeatureTag, markFeatureTag, ccmpFeatureTag, rligFeatureTag,
-        caltFeatureTag, dligFeatureTag, cswhFeatureTag, cursFeatureTag, kernFeatureTag, mkmkFeatureTag, emptyTag,
+    count = LE_ARRAY_SIZE(featureMap);
 
-    finaFeatureTag, ligaFeatureTag, msetFeatureTag, markFeatureTag, ccmpFeatureTag, rligFeatureTag,
-        caltFeatureTag, dligFeatureTag, cswhFeatureTag, cursFeatureTag, kernFeatureTag, mkmkFeatureTag, emptyTag,
-
-    initFeatureTag, ligaFeatureTag, msetFeatureTag, markFeatureTag, ccmpFeatureTag, rligFeatureTag,
-        caltFeatureTag, dligFeatureTag, cswhFeatureTag, cursFeatureTag, kernFeatureTag, mkmkFeatureTag, emptyTag,
-
-    mediFeatureTag, ligaFeatureTag, msetFeatureTag, markFeatureTag, ccmpFeatureTag, rligFeatureTag,
-        caltFeatureTag, dligFeatureTag, cswhFeatureTag, cursFeatureTag, kernFeatureTag, mkmkFeatureTag, emptyTag,
-
-    fin2FeatureTag, ligaFeatureTag, msetFeatureTag, markFeatureTag, ccmpFeatureTag, rligFeatureTag,
-        caltFeatureTag, dligFeatureTag, cswhFeatureTag, cursFeatureTag, kernFeatureTag, mkmkFeatureTag, emptyTag,
-
-    fin3FeatureTag, ligaFeatureTag, msetFeatureTag, markFeatureTag, ccmpFeatureTag, rligFeatureTag,
-        caltFeatureTag, dligFeatureTag, cswhFeatureTag, cursFeatureTag, kernFeatureTag, mkmkFeatureTag, emptyTag,
-
-    med2FeatureTag, ligaFeatureTag, msetFeatureTag, markFeatureTag, ccmpFeatureTag, rligFeatureTag,
-        caltFeatureTag, dligFeatureTag, cswhFeatureTag, cursFeatureTag, kernFeatureTag, mkmkFeatureTag, emptyTag,
-
-    med2FeatureTag, ligaFeatureTag, msetFeatureTag, markFeatureTag, ccmpFeatureTag, rligFeatureTag,
-        caltFeatureTag, dligFeatureTag, cswhFeatureTag, cursFeatureTag, kernFeatureTag, mkmkFeatureTag, emptyTag
-            // this entry repeated so that both fin2 and fin3 map to med2 via a +2 offset
-};
-
-#define TAGS_PER_GLYPH ((sizeof ArabicShaping::tagArray / sizeof ArabicShaping::tagArray[0]) / 8)
-
-const LETag *ArabicShaping::getFeatureOrder()
-{
-    return featureOrder;
+    return featureMap;
 }
 
 void ArabicShaping::adjustTags(le_int32 outIndex, le_int32 shapeOffset, LEGlyphStorage &glyphStorage)
 {
     LEErrorCode success = LE_NO_ERROR;
-    const LETag *glyphTags = (const LETag *) glyphStorage.getAuxData(outIndex, success);
+    FeatureMask featureMask = (FeatureMask) glyphStorage.getAuxData(outIndex, success);
+    FeatureMask shape = featureMask & SHAPE_MASK;
 
-    glyphStorage.setAuxData(outIndex, (void *) &glyphTags[TAGS_PER_GLYPH * shapeOffset], NULL, success);
+    shape >>= shapeOffset;
+
+    glyphStorage.setAuxData(outIndex, ((featureMask & ~SHAPE_MASK) | shape), NULL, success);
 }
 
 void ArabicShaping::shape(const LEUnicode *chars, le_int32 offset, le_int32 charCount, le_int32 charMax,
@@ -232,7 +228,7 @@ void ArabicShaping::shape(const LEUnicode *chars, le_int32 offset, le_int32 char
         LEUnicode c = chars[in];
         ShapeType t = getShapeType(c);
 
-        glyphStorage.setAuxData(out, (void *) tagArray, NULL, success);
+        glyphStorage.setAuxData(out, ISOL_FEATURES, NULL, success);
 
         if ((t & MASK_TRANSPARENT) != 0) {
             continue;

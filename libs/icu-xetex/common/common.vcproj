@@ -27,6 +27,7 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
 				DisableLanguageExtensions="TRUE"
+				TreatWChar_tAsBuiltInType="TRUE"
 				PrecompiledHeaderFile=".\Release/common.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
@@ -38,10 +39,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin\icuuc34.dll"
+				OutputFile="..\..\bin\icuuc36.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				ProgramDatabaseFile=".\..\..\lib\icuuc34.pdb"
+				ProgramDatabaseFile=".\..\..\lib\icuuc36.pdb"
 				EnableCOMDATFolding="2"
 				BaseAddress="0x4a800000"
 				ImportLibrary="..\..\lib\icuuc.lib"/>
@@ -90,6 +91,7 @@
 				RuntimeLibrary="3"
 				BufferSecurityCheck="TRUE"
 				DisableLanguageExtensions="TRUE"
+				TreatWChar_tAsBuiltInType="TRUE"
 				PrecompiledHeaderFile=".\Debug/common.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
@@ -102,11 +104,11 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin\icuuc34d.dll"
+				OutputFile="..\..\bin\icuuc36d.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\..\..\lib\icuuc34d.pdb"
+				ProgramDatabaseFile=".\..\..\lib\icuuc36d.pdb"
 				BaseAddress="0x4a800000"
 				ImportLibrary="..\..\lib\icuucd.lib"/>
 			<Tool
@@ -208,10 +210,10 @@
 			Name="break iteration"
 			Filter="">
 			<File
-				RelativePath=".\brkdict.cpp">
+				RelativePath=".\brkeng.cpp">
 			</File>
 			<File
-				RelativePath=".\brkdict.h">
+				RelativePath=".\brkeng.h">
 			</File>
 			<File
 				RelativePath=".\brkiter.cpp">
@@ -236,9 +238,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\dbbi.cpp">
-			</File>
-			<File
 				RelativePath=".\unicode\dbbi.h">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -258,10 +257,10 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\dbbi_tbl.cpp">
+				RelativePath=".\dictbe.cpp">
 			</File>
 			<File
-				RelativePath=".\dbbi_tbl.h">
+				RelativePath=".\dictbe.h">
 			</File>
 			<File
 				RelativePath=".\rbbi.cpp">
@@ -328,6 +327,12 @@
 				RelativePath=".\rbbitblb.h">
 			</File>
 			<File
+				RelativePath=".\triedict.cpp">
+			</File>
+			<File
+				RelativePath=".\triedict.h">
+			</File>
+			<File
 				RelativePath=".\ubrk.cpp">
 			</File>
 			<File
@@ -348,6 +353,9 @@
 "
 						Outputs="..\..\include\unicode\$(InputFileName)"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\ubrkimpl.h">
 			</File>
 		</Filter>
 		<Filter
@@ -402,12 +410,6 @@
 			</File>
 			<File
 				RelativePath=".\uarrsort.h">
-			</File>
-			<File
-				RelativePath=".\ucmp8.c">
-			</File>
-			<File
-				RelativePath=".\ucmp8.h">
 			</File>
 			<File
 				RelativePath=".\uenum.c">
@@ -625,6 +627,25 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\unicode\uintrnal.h">
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy &quot;$(InputPath)&quot; ..\..\include\unicode
+"
+						Outputs="..\..\include\unicode\$(InputFileName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy &quot;$(InputPath)&quot; ..\..\include\unicode
+"
+						Outputs="..\..\include\unicode\$(InputFileName)"/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\unicode\umachine.h">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -642,6 +663,9 @@
 "
 						Outputs="..\..\include\unicode\$(InputFileName)"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\umath.c">
 			</File>
 			<File
 				RelativePath=".\umutex.c">
@@ -682,6 +706,25 @@
 			</File>
 			<File
 				RelativePath=".\unicode\urename.h">
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy &quot;$(InputPath)&quot; ..\..\include\unicode
+"
+						Outputs="..\..\include\unicode\$(InputFileName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy &quot;$(InputPath)&quot; ..\..\include\unicode
+"
+						Outputs="..\..\include\unicode\$(InputFileName)"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\unicode\usystem.h">
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
@@ -764,6 +807,24 @@
 "
 						Outputs="..\..\include\unicode\$(InputFileName)"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\wintz.c">
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						DisableLanguageExtensions="FALSE"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						DisableLanguageExtensions="FALSE"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\wintz.h">
 			</File>
 		</Filter>
 		<Filter
@@ -1103,6 +1164,9 @@
 			</File>
 			<File
 				RelativePath=".\util.h">
+			</File>
+			<File
+				RelativePath=".\util_props.cpp">
 			</File>
 		</Filter>
 		<Filter

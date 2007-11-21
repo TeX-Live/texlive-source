@@ -1,13 +1,13 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/cs.xml
+// * Source File:<path>/common/main/cs.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/cs.xml
+ *  ICU <specials> source: <path>/xml/main/cs.xml
  */
 cs{
     Countries{
@@ -279,7 +279,7 @@ cs{
         WS{"Samoa"}
         YE{"Jemen"}
         YT{"Mayotte"}
-        ZA{"Jižní Afrika"}
+        ZA{"Jihoafrická republika"}
         ZM{"Zambie"}
         ZW{"Zimbabwe"}
     }
@@ -517,7 +517,7 @@ cs{
             "Escudo kapverdské",
         }
         CYP{
-            "£",
+            "CYP",
             "Libra kyperská",
         }
         CZK{
@@ -866,7 +866,7 @@ cs{
         }
         MWK{
             "MK",
-            "Kwacha",
+            "Kwacha malawská",
         }
         MXN{
             "MEX$",
@@ -1218,15 +1218,15 @@ cs{
         }
         YUD{
             "YUD",
-            "Dinár jugoslávský nový",
+            "Dinár jugoslávský nový [YUD]",
         }
         YUM{
             "YUM",
-            "Dinár jugoslávský",
+            "Dinár jugoslávský nový [YUM]",
         }
         YUN{
             "YUN",
-            "Dinár jugoslávský",
+            "Dinár jugoslávský konvertibilní",
         }
         ZAL{
             "ZAL",
@@ -1238,7 +1238,7 @@ cs{
         }
         ZMK{
             "ZMK",
-            "Kwacha",
+            "Kwacha zambijská",
         }
         ZRN{
             "ZRN",
@@ -1253,7 +1253,7 @@ cs{
             "Dolar zimbabwský",
         }
     }
-    ExemplarCharacters{"[a-z ý á é í ó ú ě ů č ď ň ř š ť ž]"}
+    ExemplarCharacters{"[a á b c č d ď e é ě f-h {ch} i í j-n ň o ó p-r ř s š t ť u ú ů v-y ý z ž]"}
     Keys{
         calendar{"Kalendář"}
         collation{"Třídění"}
@@ -1300,6 +1300,7 @@ cs{
         gl{"Haličština"}
         gn{"Guaranština"}
         gu{"Gujaratština"}
+        gv{"Manština"}
         ha{"Hausa"}
         he{"Hebrejština"}
         hi{"Hindština"}
@@ -1341,7 +1342,6 @@ cs{
         my{"Barmština"}
         na{"Nauru"}
         ne{"Nepálština"}
-        nl{"Holandština"}
         no{"Norština"}
         oc{"Occitan"}
         om{"Oromo (Afan)"}
@@ -1414,7 +1414,7 @@ cs{
         "E",
         "‰",
         "∞",
-        "�",
+        "NaN",
         "+",
     }
     Scripts{
@@ -1422,7 +1422,7 @@ cs{
     }
     Types{
         calendar{
-            buddhist{"Budhistický kalendář"}
+            buddhist{"Buddhistický kalendář"}
             chinese{"Čínský kalendář"}
             gregorian{"Gregoriánský kalendář"}
             hebrew{"Hebrejský kalendář"}
@@ -1431,20 +1431,16 @@ cs{
             japanese{"Japonský kalendář"}
         }
     }
-    Version{"1.61"}
+    Version{"1.83"}
     calendar{
         gregorian{
             AmPmMarkers{
                 "dop.",
                 "odp.",
             }
-            DateTimeElements:intvector{
-                2,
-                1,
-            }
             DateTimePatterns{
-                "H:mm:ss z",
-                "H:mm:ss z",
+                "HH:mm:ss z",
+                "HH:mm:ss z",
                 "H:mm:ss",
                 "H:mm",
                 "EEEE, d. MMMM yyyy",
@@ -1495,18 +1491,18 @@ cs{
             monthNames{
                 format{
                     abbreviated{
-                        "1.",
-                        "2.",
-                        "3.",
-                        "4.",
-                        "5.",
-                        "6.",
-                        "7.",
-                        "8.",
-                        "9.",
-                        "10.",
-                        "11.",
-                        "12.",
+                        "ledna",
+                        "úno",
+                        "bře",
+                        "dub",
+                        "května",
+                        "června",
+                        "července",
+                        "srp",
+                        "září",
+                        "říj",
+                        "lis",
+                        "prosince",
                     }
                     narrow{
                         "l",
@@ -1582,125 +1578,187 @@ cs{
                     }
                 }
             }
+            quarters{
+                format{
+                    wide{
+                        "1. čtvrtletí",
+                        "2. čtvrtletí",
+                        "3. čtvrtletí",
+                        "4. čtvrtletí",
+                    }
+                }
+            }
         }
     }
     delimiters{
         alternateQuotationEnd{"‘"}
         alternateQuotationStart{"‚"}
+        quotationEnd{"“"}
+        quotationStart{"„"}
+    }
+    layout{
+        /**
+         * Used for figuring out the casing of characters in a list.
+         */
+        casing{"titlecase-firstword"}
     }
     localPatternChars{"GuMtkHmsSEDFwWahKzUeygAZvcL"}
     zoneStrings{
-        {
-            "America/Halifax",
-            "Atlantický standardní čas",
-            "AST",
-            "Atlantický letní čas",
-            "ADT",
-            "Halifax",
+        "Africa:Casablanca"{
+            ec{"Casablanca"}
+            ld{"Greenwichský střední čas"}
+            ls{"Greenwichský střední čas"}
+            sd{"GMT"}
+            ss{"GMT"}
         }
-        {
-            "Europe/Paris",
-            "Středoevropský standardní čas",
-            "CET",
-            "Středoevropský letní čas",
-            "CEST",
-            "Paříž",
+        "America:Anchorage"{
+            ec{"Anchorage"}
+            ld{"Aljašský letní čas"}
+            ls{"Aljašský standardní čas"}
+            sd{"AKDT"}
+            ss{"AKST"}
         }
-        {
-            "Asia/Jerusalem",
-            "Izraelský standardní čas",
-            "IST",
-            "Izraelský letní čas",
-            "IDT",
-            "Jeruzalém",
+        "America:Chicago"{
+            ec{"Chicago"}
+            ld{"Centrální letní čas"}
+            ls{"Centrální standardní čas"}
+            sd{"CDT"}
+            ss{"CST"}
         }
-        {
-            "Asia/Tokyo",
-            "Japonský standardní čas",
-            "JST",
-            "Japonský standardní čas",
-            "JST",
-            "Tokio",
+        "America:Cordoba"{
+            ec{"Kordoba"}
         }
-        {
-            "Africa/Casablanca",
-            "Greenwichský střední čas",
-            "GMT",
-            "Greenwichský střední čas",
-            "GMT",
-            "Casablanca",
+        "America:Denver"{
+            ec{"Denver"}
+            ld{"Horský letní čas"}
+            ls{"Horský standardní čas"}
+            sd{"MDT"}
+            ss{"MST"}
         }
-        {
-            "Europe/Bucharest",
-            "Východoevropský standardní čas",
-            "EET",
-            "Východoevropský letní čas",
-            "EEST",
-            "Bukurešť",
+        "America:Halifax"{
+            ec{"Halifax"}
+            ld{"Atlantický letní čas"}
+            ls{"Atlantický standardní čas"}
+            sd{"ADT"}
+            ss{"AST"}
         }
-        {
-            "Pacific/Honolulu",
-            "Havajský standardní čas",
-            "HST",
-            "Havajský standardní čas",
-            "HST",
-            "Honolulu",
+        "America:Indianapolis"{
+            ec{"Indianapolis"}
+            ld{"Východní letní čas (Indianapolis)"}
+            ls{"Východní standardní čas"}
         }
-        {
-            "America/Anchorage",
-            "Aljašský standardní čas",
-            "AST",
-            "Aljašský letní čas",
-            "ADT",
-            "Anchorage",
+        "America:Los_Angeles"{
+            ec{"Los Angeles"}
+            ld{"Pacifický letní čas"}
+            ls{"Pacifický standardní čas"}
+            sd{"PDT"}
+            ss{"PST"}
         }
-        {
-            "America/Los_Angeles",
-            "Pacifický standardní čas",
-            "PST",
-            "Pacifický letní čas",
-            "PDT",
-            "Los Angeles",
+        "America:New_York"{
+            ec{"New York"}
+            ld{"Východní letní čas (New York)"}
+            ls{"Východní standardní čas (New York)"}
+            sd{"EDT"}
+            ss{"EST"}
         }
-        {
-            "America/Phoenix",
-            "Horský standardní čas",
-            "MST",
-            "Horský standardní čas",
-            "MST",
-            "Phoenix",
+        "America:Phoenix"{
+            ec{"Phoenix"}
+            ld{"Horský standardní čas"}
+            ls{"Horský standardní čas"}
+            sd{"MST"}
+            ss{"MST"}
         }
-        {
-            "America/Denver",
-            "Horský standardní čas",
-            "MST",
-            "Horský letní čas",
-            "MDT",
-            "Denver",
+        "America:Tijuana"{
+            ec{"Tichuana"}
         }
-        {
-            "America/Chicago",
-            "Centrální standardní čas",
-            "CST",
-            "Centrální letní čas",
-            "CDT",
-            "Chicago",
+        "Antarctica:South_Pole"{
+            ec{"Jižní pól"}
         }
-        {
-            "America/Indianapolis",
-            "Východní standardní čas",
-            "EST",
-            "Východní standardní čas",
-            "EST",
-            "Indianapolis",
+        "Asia:Jerusalem"{
+            ec{"Jeruzalém"}
+            ld{"Izraelský letní čas"}
+            ls{"Izraelský standardní čas"}
+            sd{"IDT"}
+            ss{"IST"}
         }
-        {
-            "America/New_York",
-            "Východní standardní čas",
-            "EST",
-            "Východní letní čas",
-            "EDT",
-            "New York",
+        "Asia:Kamchatka"{
+            ec{"Kamčatka"}
+        }
+        "Asia:Kashgar"{
+            ec{"Kašghar"}
+        }
+        "Asia:Krasnoyarsk"{
+            ec{"Krasnojarsk"}
+        }
+        "Asia:Sakhalin"{
+            ec{"Sachalin"}
+        }
+        "Asia:Tashkent"{
+            ec{"Taškent"}
+        }
+        "Asia:Tokyo"{
+            ec{"Tokio"}
+            ld{"Japonský letní čas"}
+            ls{"Japonský standardní čas"}
+            sd{"JST"}
+            ss{"JST"}
+        }
+        "Asia:Ulaanbaatar"{
+            ec{"Ulánbátar"}
+        }
+        "Asia:Yakutsk"{
+            ec{"Jakutsk"}
+        }
+        "Asia:Yekaterinburg"{
+            ec{"Jekatěrinburg"}
+        }
+        "Atlantic:Azores"{
+            ec{"Azorské ostrovy"}
+        }
+        "Atlantic:Canary"{
+            ec{"Kanárské ostrovy"}
+        }
+        "Europe:Bucharest"{
+            ec{"Bukurešť"}
+            ld{"Východoevropský letní čas"}
+            ls{"Východoevropský standardní čas"}
+            sd{"EEST"}
+            ss{"EET"}
+        }
+        "Europe:Kiev"{
+            ec{"Kyjev"}
+        }
+        "Europe:Lisbon"{
+            ec{"Lisabon"}
+        }
+        "Europe:London"{
+            ec{"Londýn"}
+        }
+        "Europe:Moscow"{
+            ec{"Moskva"}
+        }
+        "Europe:Paris"{
+            ec{"Paříž"}
+            ld{"Středoevropský letní čas"}
+            ls{"Středoevropský standardní čas"}
+            sd{"CEST"}
+            ss{"CET"}
+        }
+        "Europe:Uzhgorod"{
+            ec{"Užhorod"}
+        }
+        "Europe:Zaporozhye"{
+            ec{"Záporoží"}
+        }
+        "Pacific:Galapagos"{
+            ec{"Galapágy"}
+        }
+        "Pacific:Honolulu"{
+            ec{"Honolulu"}
+            ld{"Havajský letní čas"}
+            ls{"Havajský standardní čas"}
+            sd{"HST"}
+            ss{"HST"}
         }
     }
 }

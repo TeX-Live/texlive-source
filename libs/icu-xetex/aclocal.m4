@@ -1,5 +1,5 @@
 dnl aclocal.m4 for ICU
-dnl Copyright (c) 1999-2005, International Business Machines Corporation and
+dnl Copyright (c) 1999-2006, International Business Machines Corporation and
 dnl others. All Rights Reserved.
 dnl Stephen F. Booth
 
@@ -43,7 +43,7 @@ powerpc*-*-linux*)
 	else
 	  	icu_cv_host_frag=mh-cygwin-msvc
 	fi ;;
-*-*-*bsd*) 	icu_cv_host_frag=mh-bsd-gcc ;;
+*-*-*bsd*|*-*-dragonfly*) 	icu_cv_host_frag=mh-bsd-gcc ;;
 *-*-aix*)
 	if test "$GCC" = yes; then
 		icu_cv_host_frag=mh-aix-gcc
@@ -72,7 +72,6 @@ powerpc*-*-linux*)
 *-dec-osf*) icu_cv_host_frag=mh-alpha-osf ;;
 *-*-nto*)	icu_cv_host_frag=mh-qnx ;;
 *-ncr-*)	icu_cv_host_frag=mh-mpras ;;
-*-sequent-*) 	icu_cv_host_frag=mh-ptx ;;
 *) 		icu_cv_host_frag=mh-unknown ;;
 esac
 		]
@@ -87,6 +86,18 @@ if $2; then
 else
   $1_TRUE='#'
 fi])
+
+dnl ICU_PROG_LINK - Make sure that the linker is usable
+AC_DEFUN(ICU_PROG_LINK,
+[
+case "${host}" in
+    *-*-cygwin*|*-*-mingw*)
+        if test "$GCC" != yes && test -n "`link --version 2>&1 | grep 'GNU coreutils'`"; then
+            AC_MSG_ERROR([link.exe is not a valid linker. Your PATH is incorrect.
+                  Please follow the directions in ICU's readme.])
+        fi;;
+    *);;
+esac])
 
 dnl AC_SEARCH_LIBS_FIRST(FUNCTION, SEARCH-LIBS [, ACTION-IF-FOUND
 dnl            [, ACTION-IF-NOT-FOUND [, OTHER-LIBRARIES]]])
@@ -177,6 +188,27 @@ AC_DEFUN(AC_CHECK_64BIT_LIBS,
                 ENABLE_64BIT_LIBS=no
             fi
             ;;
+        x86_64-*-cygwin)
+            if test "$GCC" = yes; then
+                if test -n "`$CXX -dumpspecs 2>&1 && $CC -dumpspecs 2>&1 | grep -v __LP64__`"; then
+                    ENABLE_64BIT_LIBS=yes
+                else
+                    ENABLE_64BIT_LIBS=no
+                fi
+            else
+                ENABLE_64BIT_LIBS=no
+                OLD_CPPFLAGS="${CPPFLAGS}"
+                OLD_LDFLAGS="${LDFLAGS}"
+                CPPFLAGS="${CPPFLAGS} /DWIN64"
+                LDFLAGS="${LDFLAGS} /MACHINE:AMD64"
+                AC_TRY_RUN(int main(void) {return 0;},
+                   ENABLE_64BIT_LIBS=yes, ENABLE_64BIT_LIBS=no, ENABLE_64BIT_LIBS=no)
+                if test "$ENABLE_64BIT_LIBS" = no; then
+                    CPPFLAGS="${OLD_CPPFLAGS}"
+                    LDFLAGS="${OLD_LDFLAGS}"
+                fi
+            fi
+            ;;
         *-*-aix*|powerpc64-*-linux*)
             if test "$ac_cv_prog_gcc" = no; then
                 # Note: Have not tested 64-bitness with gcc.
@@ -224,25 +256,38 @@ AC_DEFUN(AC_CHECK_64BIT_LIBS,
                 fi
             fi
             ;;
-#        *-*ibm-openedition*|*-*-os390*)
-#            OLD_CFLAGS="${CFLAGS}"
-#            OLD_CXXFLAGS="${CXXFLAGS}"
-#            OLD_LDFLAGS="${LDFLAGS}"
-#            CFLAGS="${CFLAGS} -Wc,lp64,expo"
-#            CXXFLAGS="${CXXFLAGS} -Wc,lp64,expo"
-#            LDFLAGS="${LDFLAGS} -Wl,lp64"
-#            AC_TRY_RUN(int main(void) {return 0;},
-#               ENABLE_64BIT_LIBS=yes, ENABLE_64BIT_LIBS=no, ENABLE_64BIT_LIBS=no)
-#            if test "$ENABLE_64BIT_LIBS" = no; then
-#                CFLAGS="${OLD_CFLAGS}"
-#                CXXFLAGS="${OLD_CXXFLAGS}"
-#                LDFLAGS="${OLD_LDFLAGS}"
-#            fi
-#            ;;
+        *-*ibm-openedition*|*-*-os390*)
+            OLD_CFLAGS="${CFLAGS}"
+            OLD_CXXFLAGS="${CXXFLAGS}"
+            OLD_LDFLAGS="${LDFLAGS}"
+            CFLAGS="${CFLAGS} -Wc,lp64"
+            CXXFLAGS="${CXXFLAGS} -Wc,lp64"
+            LDFLAGS="${LDFLAGS} -Wl,lp64"
+            AC_TRY_RUN(int main(void) {return 0;},
+               ENABLE_64BIT_LIBS=yes, ENABLE_64BIT_LIBS=no, ENABLE_64BIT_LIBS=no)
+            if test "$ENABLE_64BIT_LIBS" = no; then
+                CFLAGS="${OLD_CFLAGS}"
+                CXXFLAGS="${OLD_CXXFLAGS}"
+                LDFLAGS="${OLD_LDFLAGS}"
+            fi
+            ;;
         *)
             ENABLE_64BIT_LIBS=no
             ;;
         esac
+    else
+        if test "$GCC" = yes; then
+            OLD_CFLAGS="${CFLAGS}"
+            OLD_CXXFLAGS="${CXXFLAGS}"
+            CFLAGS="${CFLAGS} -m32"
+            CXXFLAGS="${CXXFLAGS} -m32"
+            AC_TRY_RUN(int main(void) {return 0;},
+               ENABLE_64BIT_LIBS=no, ENABLE_64BIT_LIBS=yes, ENABLE_64BIT_LIBS=yes)
+            if test "$ENABLE_64BIT_LIBS" = yes; then
+                CFLAGS="${OLD_CFLAGS}"
+                CXXFLAGS="${OLD_CXXFLAGS}"
+            fi
+        fi
     fi
     dnl Individual tests that fail should reset their own flags.
     AC_MSG_RESULT($ENABLE_64BIT_LIBS)
@@ -266,7 +311,7 @@ AC_DEFUN(AC_CHECK_STRICT_COMPILE,
     then
         if test "$GCC" = yes
         then
-            CFLAGS="$CFLAGS -Wall -ansi -pedantic -Wshadow -Wpointer-arith -Wmissing-prototypes -Wwrite-strings -Winline -Wno-long-long -fno-strict-aliasing"
+            CFLAGS="$CFLAGS -Wall -ansi -pedantic -Wshadow -Wpointer-arith -Wmissing-prototypes -Wwrite-strings -Wno-long-long"
             case "${host}" in
             *-*-solaris*)
                 CFLAGS="$CFLAGS -D__STDC__=0";;
@@ -282,7 +327,7 @@ AC_DEFUN(AC_CHECK_STRICT_COMPILE,
         fi
         if test "$GXX" = yes
         then
-            CXXFLAGS="$CXXFLAGS -W -Wall -ansi -pedantic -Wpointer-arith -Wwrite-strings -Winline -Wno-long-long"
+            CXXFLAGS="$CXXFLAGS -W -Wall -ansi -pedantic -Wpointer-arith -Wwrite-strings -Wno-long-long"
             case "${host}" in
             *-*-solaris*)
                 CXXFLAGS="$CXXFLAGS -D__STDC__=0";;

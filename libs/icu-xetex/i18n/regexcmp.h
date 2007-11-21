@@ -1,7 +1,7 @@
 //
 //  regexcmp.h
 //
-//  Copyright (C) 2002-2003, International Business Machines Corporation and others.
+//  Copyright (C) 2002-2005, International Business Machines Corporation and others.
 //  All Rights Reserved.
 //
 //  This file contains declarations for the class RegexCompile
@@ -130,8 +130,8 @@ private:
     UBool                         fInBackslashQuote; // Scan is between a '\' and the following char.
     UBool                         fEOLComments;      // When scan is just after '(?',  inhibit #... to 
                                                      //   end of line comments, in favor of (?#...) comments.
-    int                           fLineNum;          // Line number in input file.
-    int                           fCharNum;          // Char position within the line.
+    int32_t                       fLineNum;          // Line number in input file.
+    int32_t                       fCharNum;          // Char position within the line.
     UChar32                       fLastChar;         // Previous char, needed to count CR-LF
                                                      //   as a single line, not two.
     UChar32                       fPeekChar;         // Saved char, if we've scanned ahead.
@@ -147,13 +147,16 @@ private:
                                                      //   parsing.  index by p[state][char-class]
 
     uint16_t                      fStack[kStackSize];  // State stack, holds state pushes
-    int                           fStackPtr;           //  and pops as specified in the state
+    int32_t                       fStackPtr;           //  and pops as specified in the state
                                                        //  transition rules.
 
     //
     //  Data associated with the generation of the pcode for the match engine
     //
     int32_t                       fModeFlags;        // Match Flags.  (Case Insensitive, etc.)
+                                                     //   Always has high bit (31) set so that flag values
+                                                     //   on the paren stack are distinguished from relocatable
+                                                     //   pcode addresses.
     int32_t                       fNewModeFlags;     // New flags, while compiling (?i, holds state
                                                      //   until last flag is scanned.
     UBool                         fSetModeFlag;      // true for (?ismx, false for (?-ismx

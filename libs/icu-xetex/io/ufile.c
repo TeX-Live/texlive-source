@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 1998-2005, International Business Machines
+*   Copyright (C) 1998-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -20,7 +20,12 @@
 
 /* define for fileno.  */
 #ifndef _XOPEN_SOURCE
+#if __STDC_VERSION__ >= 199901L
+/* It is invalid to compile an XPG3, XPG4, XPG4v2 or XPG5 application using c99 */
+#define _XOPEN_SOURCE 600
+#else
 #define _XOPEN_SOURCE 4
+#endif
 #endif
 
 #include "locmap.h"
@@ -42,9 +47,13 @@ u_finit(FILE        *f,
         const char    *locale,
         const char    *codepage)
 {
-    UErrorCode status     = U_ZERO_ERROR;
-    UFILE     *result     = (UFILE*) uprv_malloc(sizeof(UFILE));
-    if(result == NULL || f == NULL) {
+    UErrorCode status = U_ZERO_ERROR;
+    UFILE     *result;
+    if(f == NULL) {
+        return 0;
+    }
+    result = (UFILE*) uprv_malloc(sizeof(UFILE));
+    if(result == NULL) {
         return 0;
     }
 
@@ -55,9 +64,9 @@ u_finit(FILE        *f,
     if (0 <= result->fFileno && result->fFileno <= 2) {
         /* stdin, stdout and stderr need to be special cased for Windows 98 */
 #if _MSC_VER >= 1400
-		result->fFile = &__iob_func()[_fileno(f)];
+        result->fFile = &__iob_func()[_fileno(f)];
 #else
-		result->fFile = &_iob[_fileno(f)];
+        result->fFile = &_iob[_fileno(f)];
 #endif
     }
     else
@@ -72,10 +81,6 @@ u_finit(FILE        *f,
 
 #if !UCONFIG_NO_FORMATTING
         /* if locale is 0, use the default */
-        if(locale == 0) {
-            locale = uloc_getDefault();
-        }
-
         if(u_locbund_init(&result->str.fBundle, locale) == 0) {
             /* DO NOT FCLOSE HERE! */
             uprv_free(result);
@@ -146,10 +151,6 @@ u_fstropen(UChar *stringBuf,
 
 #if !UCONFIG_NO_FORMATTING
     /* if locale is 0, use the default */
-    if(locale == 0) {
-        locale = uloc_getDefault();
-    }
-
     if(u_locbund_init(&result->str.fBundle, locale) == 0) {
         /* DO NOT FCLOSE HERE! */
         uprv_free(result);

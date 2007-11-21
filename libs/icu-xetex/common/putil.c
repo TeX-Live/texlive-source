@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 1997-2005, International Business Machines
+*   Copyright (C) 1997-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -36,23 +36,21 @@
 ******************************************************************************
 */
 
-#ifndef PTX
-
 /* Define _XOPEN_SOURCE for Solaris and friends. */
 /* NetBSD needs it to be >= 4 */
 #ifndef _XOPEN_SOURCE
+#if __STDC_VERSION__ >= 199901L
+/* It is invalid to compile an XPG3, XPG4, XPG4v2 or XPG5 application using c99 */
+#define _XOPEN_SOURCE 600
+#else
 #define _XOPEN_SOURCE 4
 #endif
-
-/* Define __USE_POSIX and __USE_XOPEN for Linux and glibc. */
-#ifndef __USE_POSIX
-#define __USE_POSIX
-#endif
-#ifndef __USE_XOPEN
-#define __USE_XOPEN
 #endif
 
-#endif /* PTX */
+/* Make sure things like readlink and such functions work. */
+#ifndef _XOPEN_SOURCE_EXTENDED
+#define _XOPEN_SOURCE_EXTENDED 1
+#endif
 
 /* include ICU headers */
 #include "unicode/utypes.h"
@@ -84,6 +82,7 @@
 #   define NOIME
 #   define NOMCX
 #   include <windows.h>
+#   include "wintz.h"
 #elif defined(U_CYGWIN) && defined(__STRICT_ANSI__)
 /* tzset isn't defined in strict ANSI on Cygwin. */
 #   undef __STRICT_ANSI__
@@ -102,12 +101,9 @@
 #   define ICU_NO_USER_DATA_OVERRIDE 1
 #elif defined(OS390)
 #include "unicode/ucnv.h"   /* Needed for UCNV_SWAP_LFNL_OPTION_STRING */
-#elif defined(U_AIX)
-#elif defined(U_SOLARIS) || defined(U_LINUX)
-#elif defined(U_HPUX)
-#elif defined(U_DARWIN)
-#include <sys/file.h>
-#include <sys/param.h>
+#elif defined(U_DARWIN) || defined(U_LINUX) || defined(U_BSD)
+#include <limits.h>
+#include <unistd.h>
 #elif defined(U_QNX)
 #include <sys/neutrino.h>
 #endif
@@ -136,41 +132,14 @@ static const char copyright[] = U_COPYRIGHT_STRING;
 
 /* We return QNAN rather than SNAN*/
 #define SIGN 0x80000000U
-#if defined(__GNUC__) || defined(_MSC_VER)
-/*
-    This is an optimization for when u_topNBytesOfDouble
-    and u_bottomNBytesOfDouble can't be properly optimized by the compiler
-    or when faster infinity and NaN usage is helpful.
-*/
-#define USE_64BIT_DOUBLE_OPTIMIZATION 1
-#else
-#define USE_64BIT_DOUBLE_OPTIMIZATION 0
-#endif
 
-#if USE_64BIT_DOUBLE_OPTIMIZATION
-/* gcc 3.2 has an optimization bug */
-static const int64_t gNan64 = INT64_C(0x7FF8000000000000);
-static const int64_t gInf64 = INT64_C(0x7FF0000000000000);
-static const double * const fgNan = (const double * const)(&gNan64);
-static const double * const fgInf = (const double * const)(&gInf64);
-#else
-
-#if IEEE_754
-#define NAN_TOP ((int16_t)0x7FF8)
-#define INF_TOP ((int16_t)0x7FF0)
-#elif defined(OS390)
-#define NAN_TOP ((int16_t)0x7F08)
-#define INF_TOP ((int16_t)0x3F00)
-#endif
-
-/* statics */
-static UBool fgNaNInitialized = FALSE;
-static UBool fgInfInitialized = FALSE;
-static double gNan;
-static double gInf;
-static double * fgNan = &gNan;
-static double * fgInf = &gInf;
-#endif
+/* Make it easy to define certain types of constants */
+typedef union {
+    int64_t i64; /* This must be defined first in order to allow the initialization to work. This is a C89 feature. */
+    double d64;
+} BitPatternConversion;
+static const BitPatternConversion gNan = { (int64_t) INT64_C(0x7FF8000000000000) };
+static const BitPatternConversion gInf = { (int64_t) INT64_C(0x7FF0000000000000) };
 
 /*---------------------------------------------------------------------------
   Platform utilities
@@ -186,8 +155,11 @@ static double * fgInf = &gInf;
 #   define U_POSIX_LOCALE    1
 #endif
 
-/* Utilities to get the bits from a double */
-#if !USE_64BIT_DOUBLE_OPTIMIZATION
+/*
+    WARNING! u_topNBytesOfDouble and u_bottomNBytesOfDouble
+    can't be properly optimized by the gcc compiler sometimes (i.e. gcc 3.2).
+*/
+#if !IEEE_754
 static char*
 u_topNBytesOfDouble(double* d, int n)
 {
@@ -277,35 +249,10 @@ U_CAPI UBool U_EXPORT2
 uprv_isNaN(double number)
 {
 #if IEEE_754
-#if USE_64BIT_DOUBLE_OPTIMIZATION
-    /* gcc 3.2 has an optimization bug */
+    BitPatternConversion convertedNumber;
+    convertedNumber.d64 = number;
     /* Infinity is 0x7FF0000000000000U. Anything greater than that is a NaN */
-    return (UBool)(((*((int64_t *)&number)) & U_INT64_MAX) > gInf64);
-
-#else
-    /* This should work in theory, but it doesn't, so we resort to the more*/
-    /* complicated method below.*/
-    /*  return number != number;*/
-
-    /* You can't return number == getNaN() because, by definition, NaN != x for*/
-    /* all x, including NaN (that is, NaN != NaN).  So instead, we compare*/
-    /* against the known bit pattern.  We must be careful of endianism here.*/
-    /* The pattern we are looking for id:*/
-
-    /*   7FFy yyyy yyyy yyyy  (some y non-zero)*/
-
-    /* There are two different kinds of NaN, but we ignore the distinction*/
-    /* here.  Note that the y value must be non-zero; if it is zero, then we*/
-    /* have infinity.*/
-
-    uint32_t highBits = *(uint32_t*)u_topNBytesOfDouble(&number,
-                              sizeof(uint32_t));
-    uint32_t lowBits  = *(uint32_t*)u_bottomNBytesOfDouble(&number,
-                             sizeof(uint32_t));
-
-    return (UBool)(((highBits & 0x7FF00000L) == 0x7FF00000L) &&
-      (((highBits & 0x000FFFFFL) != 0) || (lowBits != 0)));
-#endif
+    return (UBool)((convertedNumber.i64 & U_INT64_MAX) > gInf.i64);
 
 #elif defined(OS390)
     uint32_t highBits = *(uint32_t*)u_topNBytesOfDouble(&number,
@@ -328,32 +275,10 @@ U_CAPI UBool U_EXPORT2
 uprv_isInfinite(double number)
 {
 #if IEEE_754
-#if USE_64BIT_DOUBLE_OPTIMIZATION
-    /* gcc 3.2 has an optimization bug */
-    return (UBool)(((*((int64_t *)&number)) & U_INT64_MAX) == gInf64);
-#else
-
-    /* We know the top bit is the sign bit, so we mask that off in a copy of */
-    /* the number and compare against infinity. [LIU]*/
-    /* The following approach doesn't work for some reason, so we go ahead and */
-    /* scrutinize the pattern itself. */
-    /*  double a = number; */
-    /*  *(int8_t*)u_topNBytesOfDouble(&a, 1) &= 0x7F;*/
-    /*  return a == uprv_getInfinity();*/
-    /* Instead, We want to see either:*/
-
-    /*   7FF0 0000 0000 0000*/
-    /*   FFF0 0000 0000 0000*/
-
-    uint32_t highBits = *(uint32_t*)u_topNBytesOfDouble(&number,
-                        sizeof(uint32_t));
-    uint32_t lowBits  = *(uint32_t*)u_bottomNBytesOfDouble(&number,
-                        sizeof(uint32_t));
-
-    return (UBool)(((highBits  & ~SIGN) == 0x7FF00000U) &&
-      (lowBits == 0x00000000U));
-#endif
-
+    BitPatternConversion convertedNumber;
+    convertedNumber.d64 = number;
+    /* Infinity is exactly 0x7FF0000000000000U. */
+    return (UBool)((convertedNumber.i64 & U_INT64_MAX) == gInf.i64);
 #elif defined(OS390)
     uint32_t highBits = *(uint32_t*)u_topNBytesOfDouble(&number,
                         sizeof(uint32_t));
@@ -398,19 +323,7 @@ U_CAPI double U_EXPORT2
 uprv_getNaN()
 {
 #if IEEE_754 || defined(OS390)
-#if !USE_64BIT_DOUBLE_OPTIMIZATION
-    if (!fgNaNInitialized) {
-        /* This variable is always initialized with the same value,
-        so a mutex isn't needed. */
-        int i;
-        int8_t* p = (int8_t*)fgNan;
-        for(i = 0; i < sizeof(double); ++i)
-            *p++ = 0;
-        *(int16_t*)u_topNBytesOfDouble(fgNan, sizeof(NAN_TOP)) = NAN_TOP;
-        fgNaNInitialized = TRUE;
-    }
-#endif
-    return *fgNan;
+    return gNan.d64;
 #else
     /* If your platform doesn't support IEEE 754 but *does* have an NaN value,*/
     /* you'll need to replace this default implementation with what's correct*/
@@ -423,20 +336,7 @@ U_CAPI double U_EXPORT2
 uprv_getInfinity()
 {
 #if IEEE_754 || defined(OS390)
-#if !USE_64BIT_DOUBLE_OPTIMIZATION
-    if (!fgInfInitialized)
-    {
-        /* This variable is always initialized with the same value,
-        so a mutex isn't needed. */
-        int i;
-        int8_t* p = (int8_t*)fgInf;
-        for(i = 0; i < sizeof(double); ++i)
-            *p++ = 0;
-        *(int16_t*)u_topNBytesOfDouble(fgInf, sizeof(INF_TOP)) = INF_TOP;
-        fgInfInitialized = TRUE;
-    }
-#endif
-    return *fgInf;
+    return gInf.d64;
 #else
     /* If your platform doesn't support IEEE 754 but *does* have an infinity*/
     /* value, you'll need to replace this default implementation with what's*/
@@ -515,12 +415,6 @@ uprv_fmax(double x, double y)
     return (x > y ? x : y);
 }
 
-U_CAPI int32_t U_EXPORT2
-uprv_max(int32_t x, int32_t y)
-{
-    return (x > y ? x : y);
-}
-
 U_CAPI double U_EXPORT2
 uprv_fmin(double x, double y)
 {
@@ -539,12 +433,6 @@ uprv_fmin(double x, double y)
 #endif
 
     /* this should work for all flt point w/o NaN and Inf special cases */
-    return (x > y ? y : x);
-}
-
-U_CAPI int32_t U_EXPORT2
-uprv_min(int32_t x, int32_t y)
-{
     return (x > y ? y : x);
 }
 
@@ -587,40 +475,6 @@ U_CAPI double U_EXPORT2
 uprv_maxMantissa(void)
 {
     return pow(2.0, DBL_MANT_DIG + 1.0) - 1.0;
-}
-
-/**
- * Return the floor of the log base 10 of a given double.
- * This method compensates for inaccuracies which arise naturally when
- * computing logs, and always give the correct value.  The parameter
- * must be positive and finite.
- * (Thanks to Alan Liu for supplying this function.)
- */
-U_CAPI int16_t U_EXPORT2
-uprv_log10(double d)
-{
-#ifdef OS400
-    /* We don't use the normal implementation because you can't underflow */
-    /* a double otherwise an underflow exception occurs */
-    return log10(d);
-#else
-    /* The reason this routine is needed is that simply taking the*/
-    /* log and dividing by log10 yields a result which may be off*/
-    /* by 1 due to rounding errors.  For example, the naive log10*/
-    /* of 1.0e300 taken this way is 299, rather than 300.*/
-    double alog10 = log(d) / log(10.0);
-    int16_t ailog10 = (int16_t) floor(alog10);
-
-    /* Positive logs could be too small, e.g. 0.99 instead of 1.0*/
-    if (alog10 > 0 && d >= pow(10.0, (double)(ailog10 + 1)))
-        ++ailog10;
-
-    /* Negative logs could be too big, e.g. -0.99 instead of -1.0*/
-    else if (alog10 < 0 && d < pow(10.0, (double)(ailog10)))
-        --ailog10;
-
-    return ailog10;
-#endif
 }
 
 U_CAPI double U_EXPORT2
@@ -681,487 +535,6 @@ uprv_digitsAfterDecimal(double x)
   platform with new implementations.
   ---------------------------------------------------------------------------*/
 
-/* Win32 time zone detection ------------------------------------------------ */
-
-#ifdef U_WINDOWS
-
-/*
-  This code attempts to detect the Windows time zone, as set in the
-  Windows Date and Time control panel.  It attempts to work on
-  multiple flavors of Windows (9x, Me, NT, 2000, XP) and on localized
-  installs.  It works by directly interrogating the registry and
-  comparing the data there with the data returned by the
-  GetTimeZoneInformation API, along with some other strategies.  The
-  registry contains time zone data under one of two keys (depending on
-  the flavor of Windows):
-
-    HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Time Zones\
-    HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones\
-
-  Under this key are several subkeys, one for each time zone.  These
-  subkeys are named "Pacific" on Win9x/Me and "Pacific Standard Time"
-  on WinNT/2k/XP.  There are some other wrinkles; see the code for
-  details.  The subkey name is NOT LOCALIZED, allowing us to support
-  localized installs.
-
-  Under the subkey are data values.  We care about:
-
-    Std   Standard time display name, localized
-    TZI   Binary block of data
-
-  The TZI data is of particular interest.  It contains the offset, two
-  more offsets for standard and daylight time, and the start and end
-  rules.  This is the same data returned by the GetTimeZoneInformation
-  API.  The API may modify the data on the way out, so we have to be
-  careful, but essentially we do a binary comparison against the TZI
-  blocks of various registry keys.  When we find a match, we know what
-  time zone Windows is set to.  Since the registry key is not
-  localized, we can then translate the key through a simple table
-  lookup into the corresponding ICU time zone.
-
-  This strategy doesn't always work because there are zones which
-  share an offset and rules, so more than one TZI block will match.
-  For example, both Tokyo and Seoul are at GMT+9 with no DST rules;
-  their TZI blocks are identical.  For these cases, we fall back to a
-  name lookup.  We attempt to match the display name as stored in the
-  registry for the current zone to the display name stored in the
-  registry for various Windows zones.  By comparing the registry data
-  directly we avoid conversion complications.
-
-  Author: Alan Liu
-  Since: ICU 2.6
-  Based on original code by Carl Brown <cbrown@xnetinc.com>
-*/
-
-/**
- * Layout of the binary registry data under the "TZI" key.
- */
-typedef struct {
-   LONG       Bias;
-   LONG       StandardBias;
-   LONG       DaylightBias; /* Tweaked by GetTimeZoneInformation */
-   SYSTEMTIME StandardDate;
-   SYSTEMTIME DaylightDate;
-} TZI;
-
-typedef struct {
-    const char* icuid;
-    const char* winid;
-} WindowsICUMap;
-
-/**
- * Mapping between Windows zone IDs and ICU zone IDs.  This list has
- * been mechanically checked; all zone offsets match (most important)
- * and city names match the display city names (where possible).  The
- * presence or absence of DST differs in some cases, but this is
- * acceptable as long as the zone is semantically the same (which has
- * been manually checked).
- *
- * Windows 9x/Me zone IDs are listed as "Pacific" rather than "Pacific
- * Standard Time", which is seen in NT/2k/XP.  This is fixed-up at
- * runtime as needed.  The one exception is "Mexico Standard Time 2",
- * which is not present on Windows 9x/Me.
- *
- * Zones that are not unique under Offset+Rules should be grouped
- * together for efficiency (see code below).  In addition, rules MUST
- * be grouped so that all zones of a single offset are together.
- *
- * Comments list S(tandard) or D(aylight), as declared by Windows,
- * followed by the display name (data from Windows XP).
- *
- * NOTE: Etc/GMT+12 is CORRECT for offset GMT-12:00.  Consult
- * documentation elsewhere for an explanation.
- */
-static const WindowsICUMap ZONE_MAP[] = {
-    "Etc/GMT+12",           "Dateline", /* S (GMT-12:00) International Date Line West */
-
-    "Pacific/Apia",         "Samoa", /* S (GMT-11:00) Midway Island, Samoa */
-
-    "Pacific/Honolulu",     "Hawaiian", /* S (GMT-10:00) Hawaii */
-
-    "America/Anchorage",    "Alaskan", /* D (GMT-09:00) Alaska */
-
-    "America/Los_Angeles",  "Pacific", /* D (GMT-08:00) Pacific Time (US & Canada); Tijuana */
-
-    "America/Phoenix",      "US Mountain", /* S (GMT-07:00) Arizona */
-    "America/Denver",       "Mountain", /* D (GMT-07:00) Mountain Time (US & Canada) */
-    "America/Chihuahua",    "Mexico Standard Time 2", /* D (GMT-07:00) Chihuahua, La Paz, Mazatlan */
-
-    "America/Managua",      "Central America", /* S (GMT-06:00) Central America */
-    "America/Regina",       "Canada Central", /* S (GMT-06:00) Saskatchewan */
-    "America/Mexico_City",  "Mexico", /* D (GMT-06:00) Guadalajara, Mexico City, Monterrey */
-    "America/Chicago",      "Central", /* D (GMT-06:00) Central Time (US & Canada) */
-
-    "America/Indianapolis", "US Eastern", /* S (GMT-05:00) Indiana (East) */
-    "America/Bogota",       "SA Pacific", /* S (GMT-05:00) Bogota, Lima, Quito */
-    "America/New_York",     "Eastern", /* D (GMT-05:00) Eastern Time (US & Canada) */
-
-    "America/Caracas",      "SA Western", /* S (GMT-04:00) Caracas, La Paz */
-    "America/Santiago",     "Pacific SA", /* D (GMT-04:00) Santiago */
-    "America/Halifax",      "Atlantic", /* D (GMT-04:00) Atlantic Time (Canada) */
-
-    "America/St_Johns",     "Newfoundland", /* D (GMT-03:30) Newfoundland */
-
-    "America/Buenos_Aires", "SA Eastern", /* S (GMT-03:00) Buenos Aires, Georgetown */
-    "America/Godthab",      "Greenland", /* D (GMT-03:00) Greenland */
-    "America/Sao_Paulo",    "E. South America", /* D (GMT-03:00) Brasilia */
-
-    "America/Noronha",      "Mid-Atlantic", /* D (GMT-02:00) Mid-Atlantic */
-
-    "Atlantic/Cape_Verde",  "Cape Verde", /* S (GMT-01:00) Cape Verde Is. */
-    "Atlantic/Azores",      "Azores", /* D (GMT-01:00) Azores */
-
-    "Africa/Casablanca",    "Greenwich", /* S (GMT) Casablanca, Monrovia */
-    "Europe/London",        "GMT", /* D (GMT) Greenwich Mean Time : Dublin, Edinburgh, Lisbon, London */
-
-    "Africa/Lagos",         "W. Central Africa", /* S (GMT+01:00) West Central Africa */
-    "Europe/Berlin",        "W. Europe", /* D (GMT+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna */
-    "Europe/Paris",         "Romance", /* D (GMT+01:00) Brussels, Copenhagen, Madrid, Paris */
-    "Europe/Sarajevo",      "Central European", /* D (GMT+01:00) Sarajevo, Skopje, Warsaw, Zagreb */
-    "Europe/Belgrade",      "Central Europe", /* D (GMT+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague */
-
-    "Africa/Johannesburg",  "South Africa", /* S (GMT+02:00) Harare, Pretoria */
-    "Asia/Jerusalem",       "Israel", /* S (GMT+02:00) Jerusalem */
-    "Europe/Istanbul",      "GTB", /* D (GMT+02:00) Athens, Istanbul, Minsk */
-    "Europe/Helsinki",      "FLE", /* D (GMT+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius */
-    "Africa/Cairo",         "Egypt", /* D (GMT+02:00) Cairo */
-    "Europe/Bucharest",     "E. Europe", /* D (GMT+02:00) Bucharest */
-
-    "Africa/Nairobi",       "E. Africa", /* S (GMT+03:00) Nairobi */
-    "Asia/Riyadh",          "Arab", /* S (GMT+03:00) Kuwait, Riyadh */
-    "Europe/Moscow",        "Russian", /* D (GMT+03:00) Moscow, St. Petersburg, Volgograd */
-    "Asia/Baghdad",         "Arabic", /* D (GMT+03:00) Baghdad */
-
-    "Asia/Tehran",          "Iran", /* D (GMT+03:30) Tehran */
-
-    "Asia/Muscat",          "Arabian", /* S (GMT+04:00) Abu Dhabi, Muscat */
-    "Asia/Tbilisi",         "Caucasus", /* D (GMT+04:00) Baku, Tbilisi, Yerevan */
-
-    "Asia/Kabul",           "Afghanistan", /* S (GMT+04:30) Kabul */
-
-    "Asia/Karachi",         "West Asia", /* S (GMT+05:00) Islamabad, Karachi, Tashkent */
-    "Asia/Yekaterinburg",   "Ekaterinburg", /* D (GMT+05:00) Ekaterinburg */
-
-    "Asia/Calcutta",        "India", /* S (GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi */
-
-    "Asia/Katmandu",        "Nepal", /* S (GMT+05:45) Kathmandu */
-
-    "Asia/Colombo",         "Sri Lanka", /* S (GMT+06:00) Sri Jayawardenepura */
-    "Asia/Dhaka",           "Central Asia", /* S (GMT+06:00) Astana, Dhaka */
-    "Asia/Novosibirsk",     "N. Central Asia", /* D (GMT+06:00) Almaty, Novosibirsk */
-
-    "Asia/Rangoon",         "Myanmar", /* S (GMT+06:30) Rangoon */
-
-    "Asia/Bangkok",         "SE Asia", /* S (GMT+07:00) Bangkok, Hanoi, Jakarta */
-    "Asia/Krasnoyarsk",     "North Asia", /* D (GMT+07:00) Krasnoyarsk */
-
-    "Australia/Perth",      "W. Australia", /* S (GMT+08:00) Perth */
-    "Asia/Taipei",          "Taipei", /* S (GMT+08:00) Taipei */
-    "Asia/Singapore",       "Singapore", /* S (GMT+08:00) Kuala Lumpur, Singapore */
-    "Asia/Hong_Kong",       "China", /* S (GMT+08:00) Beijing, Chongqing, Hong Kong, Urumqi */
-    "Asia/Irkutsk",         "North Asia East", /* D (GMT+08:00) Irkutsk, Ulaan Bataar */
-
-    "Asia/Tokyo",           "Tokyo", /* S (GMT+09:00) Osaka, Sapporo, Tokyo */
-    "Asia/Seoul",           "Korea", /* S (GMT+09:00) Seoul */
-    "Asia/Yakutsk",         "Yakutsk", /* D (GMT+09:00) Yakutsk */
-
-    "Australia/Darwin",     "AUS Central", /* S (GMT+09:30) Darwin */
-    "Australia/Adelaide",   "Cen. Australia", /* D (GMT+09:30) Adelaide */
-
-    "Pacific/Guam",         "West Pacific", /* S (GMT+10:00) Guam, Port Moresby */
-    "Australia/Brisbane",   "E. Australia", /* S (GMT+10:00) Brisbane */
-    "Asia/Vladivostok",     "Vladivostok", /* D (GMT+10:00) Vladivostok */
-    "Australia/Hobart",     "Tasmania", /* D (GMT+10:00) Hobart */
-    "Australia/Sydney",     "AUS Eastern", /* D (GMT+10:00) Canberra, Melbourne, Sydney */
-
-    "Asia/Magadan",         "Central Pacific", /* S (GMT+11:00) Magadan, Solomon Is., New Caledonia */
-
-    "Pacific/Fiji",         "Fiji", /* S (GMT+12:00) Fiji, Kamchatka, Marshall Is. */
-    "Pacific/Auckland",     "New Zealand", /* D (GMT+12:00) Auckland, Wellington */
-
-    "Pacific/Tongatapu",    "Tonga", /* S (GMT+13:00) Nuku'alofa */
-    NULL,                   NULL
-};
-
-typedef struct {
-    const char* winid;
-    const char* altwinid;
-} WindowsZoneRemap;
-
-/**
- * If a lookup fails, we attempt to remap certain Windows ids to
- * alternate Windows ids.  If the alternate listed here begins with
- * '-', we use it as is (without the '-').  If it begins with '+', we
- * append a " Standard Time" if appropriate.
- */
-static const WindowsZoneRemap ZONE_REMAP[] = {
-    "Central European",     "-Warsaw",
-    "Central Europe",       "-Prague Bratislava",
-    "China",                "-Beijing",
-                                               
-    "Greenwich",            "+GMT",
-    "GTB",                  "+GFT",
-    "Arab",                 "+Saudi Arabia",
-    "SE Asia",              "+Bangkok",
-    "AUS Eastern",          "+Sydney",
-    NULL,                   NULL,
-};
-
-/**
- * Various registry keys and key fragments.
- */
-static const char CURRENT_ZONE_REGKEY[] = "SYSTEM\\CurrentControlSet\\Control\\TimeZoneInformation\\";
-static const char STANDARD_NAME_REGKEY[] = "StandardName";
-static const char STANDARD_TIME_REGKEY[] = " Standard Time";
-static const char TZI_REGKEY[] = "TZI";
-static const char STD_REGKEY[] = "Std";
-
-/**
- * HKLM subkeys used to probe for the flavor of Windows.  Note that we
- * specifically check for the "GMT" zone subkey; this is present on
- * NT, but on XP has become "GMT Standard Time".  We need to
- * discriminate between these cases.
- */
-static const char* const WIN_TYPE_PROBE_REGKEY[] = {
-    /* WIN_9X_ME_TYPE */
-    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Time Zones",
-
-    /* WIN_NT_TYPE */
-    "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones\\GMT"
-
-    /* otherwise: WIN_2K_XP_TYPE */
-};
-
-/**
- * The time zone root subkeys (under HKLM) for different flavors of
- * Windows.
- */
-static const char* const TZ_REGKEY[] = {
-    /* WIN_9X_ME_TYPE */
-    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Time Zones\\",
-
-    /* WIN_NT_TYPE | WIN_2K_XP_TYPE */
-    "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones\\"
-};
-
-/**
- * Flavor of Windows, from our perspective.  Not a real OS version,
- * but rather the flavor of the layout of the time zone information in
- * the registry.
- */
-enum {
-    WIN_9X_ME_TYPE = 0,
-    WIN_NT_TYPE = 1,
-    WIN_2K_XP_TYPE = 2
-};
-
-/**
- * Auxiliary Windows time zone function.  Attempts to open the given
- * Windows time zone ID as a registry key.  Returns ERROR_SUCCESS if
- * successful.  Caller must close the registry key.  Handles
- * variations in the resource layout in different flavors of Windows.
- *
- * @param hkey output parameter to receive opened registry key
- * @param winid Windows zone ID, e.g., "Pacific", without the
- * " Standard Time" suffix (if any).  Special case "Mexico Standard Time 2"
- * allowed.
- * @param winType Windows flavor (WIN_9X_ME_TYPE, etc.)
- * @return ERROR_SUCCESS upon success
- */
-static LONG openTZRegKey(HKEY *hkey, const char* winid, int winType) {
-    LONG result;
-    char subKeyName[96];
-    char* name;
-    int i;
-
-    uprv_strcpy(subKeyName, TZ_REGKEY[(winType == WIN_9X_ME_TYPE) ? 0 : 1]);
-    name = &subKeyName[strlen(subKeyName)];
-    uprv_strcat(subKeyName, winid);
-    if (winType != WIN_9X_ME_TYPE) {
-        /* Don't modify "Mexico Standard Time 2", which does not occur
-           on WIN_9X_ME_TYPE.  Also, if the type is WIN_NT_TYPE, then
-           in practice this means the GMT key is not followed by
-           " Standard Time", so don't append in that case. */
-        int isMexico2 = (winid[uprv_strlen(winid)- 1] == '2');
-        if (!isMexico2 &&
-            !(winType == WIN_NT_TYPE && uprv_strcmp(winid, "GMT") == 0)) {
-            uprv_strcat(subKeyName, STANDARD_TIME_REGKEY);
-        }
-    }
-    result = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-                          subKeyName,
-                          0,
-                          KEY_QUERY_VALUE,
-                          hkey);
-
-    if (result != ERROR_SUCCESS) {
-        /* If the primary lookup fails, try to remap the Windows zone
-           ID, according to the remapping table. */
-        for (i=0; ZONE_REMAP[i].winid; ++i) {
-            if (uprv_strcmp(winid, ZONE_REMAP[i].winid) == 0) {
-                uprv_strcpy(name, ZONE_REMAP[i].altwinid + 1);
-                if (*(ZONE_REMAP[i].altwinid) == '+' &&
-                    winType != WIN_9X_ME_TYPE) {
-                    uprv_strcat(subKeyName, STANDARD_TIME_REGKEY);                
-                }
-                result = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-                                      subKeyName,
-                                      0,
-                                      KEY_QUERY_VALUE,
-                                      hkey);
-                break;
-            }
-        }
-    }
-
-    return result;
-}
-
-/**
- * Main Windows time zone detection function.  Returns the Windows
- * time zone, translated to an ICU time zone, or NULL upon failure.
- */
-static const char* detectWindowsTimeZone() {
-    int winType;
-    LONG result;
-    HKEY hkey;
-    TZI tziKey;
-    TZI tziReg;
-    DWORD cbData = sizeof(TZI);
-    TIME_ZONE_INFORMATION apiTZI;
-    char stdName[32];
-    DWORD stdNameSize;
-    char stdRegName[64];
-    DWORD stdRegNameSize;
-    int firstMatch, lastMatch;
-    int j;
-
-    /* Detect the version of windows by trying to open a sequence of
-       probe keys.  We don't use the OS version API because what we
-       really want to know is how the registry is laid out.
-       Specifically, is it 9x/Me or not, and is it "GMT" or "GMT
-       Standard Time". */
-    for (winType=0; winType<2; ++winType) {
-        result = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-                              WIN_TYPE_PROBE_REGKEY[winType],
-                              0,
-                              KEY_QUERY_VALUE,
-                              &hkey);
-        RegCloseKey(hkey);
-        if (result == ERROR_SUCCESS) {
-            break;
-        }
-    }
-
-    /* Obtain TIME_ZONE_INFORMATION from the API, and then convert it
-       to TZI.  We could also interrogate the registry directly; we do
-       this below if needed. */
-    uprv_memset(&apiTZI, 0, sizeof(apiTZI));
-    GetTimeZoneInformation(&apiTZI);
-    tziKey.Bias = apiTZI.Bias;
-    uprv_memcpy((char *)&tziKey.StandardDate, (char*)&apiTZI.StandardDate,
-           sizeof(apiTZI.StandardDate));
-    uprv_memcpy((char *)&tziKey.DaylightDate, (char*)&apiTZI.DaylightDate,
-           sizeof(apiTZI.DaylightDate));
-
-    /* For each zone that can be identified by Offset+Rules, see if we
-       have a match.  Continue scanning after finding a match,
-       recording the index of the first and the last match.  We have
-       to do this because some zones are not unique under
-       Offset+Rules. */
-    firstMatch = lastMatch = -1;
-    for (j=0; ZONE_MAP[j].icuid; j++) {
-        result = openTZRegKey(&hkey, ZONE_MAP[j].winid, winType);
-        if (result == ERROR_SUCCESS) {
-            result = RegQueryValueEx(hkey,
-                                     TZI_REGKEY,
-                                     NULL,
-                                     NULL,
-                                     (LPBYTE)&tziReg,
-                                     &cbData);
-        }
-        RegCloseKey(hkey);
-        if (result == ERROR_SUCCESS) {
-            /* Assume that offsets are grouped together, and bail out
-               when we've scanned everything with a matching
-               offset. */
-            if (firstMatch >= 0 && tziKey.Bias != tziReg.Bias) {
-                break;
-            }
-            /* Windows alters the DaylightBias in some situations.
-               Using the bias and the rules suffices, so overwrite
-               these unreliable fields. */
-            tziKey.StandardBias = tziReg.StandardBias;
-            tziKey.DaylightBias = tziReg.DaylightBias;
-            if (uprv_memcmp((char *)&tziKey, (char*)&tziReg,
-                       sizeof(tziKey)) == 0) {
-                if (firstMatch < 0) {
-                    firstMatch = j;
-                }
-                lastMatch = j;
-            }
-        }
-    }
-
-    /* This should never happen; if it does it means our table doesn't
-       match Windows AT ALL, perhaps because this is post-XP? */
-    if (firstMatch < 0) {
-        return NULL;
-    }
-    
-    if (firstMatch != lastMatch) {
-        /* Offset+Rules lookup yielded >= 2 matches.  Try to match the
-           localized display name.  Get the name from the registry
-           (not the API). This avoids conversion issues.  Use the
-           standard name, since Windows modifies the daylight name to
-           match the standard name if there is no DST. */
-        result = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-                              CURRENT_ZONE_REGKEY,
-                              0,
-                              KEY_QUERY_VALUE,
-                              &hkey);
-        if (result == ERROR_SUCCESS) {
-            stdNameSize = sizeof(stdName);
-            result = RegQueryValueEx(hkey,
-                                     (LPTSTR)STANDARD_NAME_REGKEY,
-                                     NULL,
-                                     NULL,
-                                     (LPBYTE)stdName,
-                                     &stdNameSize);
-            RegCloseKey(hkey);
-
-            /* Scan through the Windows time zone data in the registry
-               again (just the range of zones with matching TZIs) and
-               look for a standard display name match. */
-            for (j=firstMatch; j<=lastMatch; j++) {
-                result = openTZRegKey(&hkey, ZONE_MAP[j].winid, winType);
-                if (result == ERROR_SUCCESS) {
-                    stdRegNameSize = sizeof(stdRegName);
-                    result = RegQueryValueEx(hkey,
-                                             (LPTSTR)STD_REGKEY,
-                                             NULL,
-                                             NULL,
-                                             (LPBYTE)stdRegName,
-                                             &stdRegNameSize);
-                }
-                RegCloseKey(hkey);
-                if (result == ERROR_SUCCESS &&
-                    stdRegNameSize == stdNameSize &&
-                    uprv_memcmp(stdName, stdRegName, stdNameSize) == 0) {
-                    firstMatch = j; /* record the match */
-                    break;
-                }
-            }
-        } else {
-            RegCloseKey(hkey); /* should never get here */
-        }
-    }
-
-    return ZONE_MAP[firstMatch].icuid;
-}
-
-#endif /*U_WINDOWS*/
-
 /* Generic time zone layer -------------------------------------------------- */
 
 /* Time zone utilities */
@@ -1209,58 +582,103 @@ uprv_timezone()
 extern U_IMPORT char *U_TZNAME[];
 #endif
 
-#if defined(U_DARWIN)   /* For Mac OS X */
+#if !UCONFIG_NO_FILE_IO && (defined(U_DARWIN) || defined(U_LINUX) || defined(U_BSD))
+/* These platforms are likely to use Olson timezone IDs. */
+#define CHECK_LOCALTIME_LINK 1
 #define TZZONELINK      "/etc/localtime"
 #define TZZONEINFO      "/usr/share/zoneinfo/"
-static char *gTimeZoneBuffer = NULL; /* Heap allocated */
+static char gTimeZoneBuffer[PATH_MAX];
+static char *gTimeZoneBufferPtr = NULL;
+#endif
+
+#ifndef U_WINDOWS
+#define isNonDigit(ch) (ch < '0' || '9' < ch)
+static UBool isValidOlsonID(const char *id) {
+    int32_t idx = 0;
+
+    /* Determine if this is something like Iceland (Olson ID)
+    or AST4ADT (non-Olson ID) */
+    while (id[idx] && isNonDigit(id[idx]) && id[idx] != ',') {
+        idx++;
+    }
+
+    /* If we went through the whole string, then it might be okay.
+    The timezone is sometimes set to "CST-7CDT", "CST6CDT5,J129,J131/19:30",
+    "GRNLNDST3GRNLNDDT" or similar, so we cannot use it.
+    The rest of the time it could be an Olson ID. George */
+    return (UBool)(id[idx] == 0
+        || uprv_strcmp(id, "PST8PDT") == 0
+        || uprv_strcmp(id, "MST7MDT") == 0
+        || uprv_strcmp(id, "CST6CDT") == 0
+        || uprv_strcmp(id, "EST5EDT") == 0);
+}
 #endif
 
 U_CAPI const char* U_EXPORT2
 uprv_tzname(int n)
 {
 #ifdef U_WINDOWS
-    char* id = (char*) detectWindowsTimeZone();
+    const char *id = uprv_detectWindowsTimeZone();
+
     if (id != NULL) {
         return id;
     }
-#endif
+#else
+    const char *tzenv = NULL;
 
-#if defined(U_DARWIN)
+/*#if defined(U_DARWIN)
     int ret;
-
-    char *tzenv;
 
     tzenv = getenv("TZFILE");
     if (tzenv != NULL) {
         return tzenv;
     }
+#endif*/
 
-#if 0
-    /* TZ is often set to "PST8PDT" or similar, so we cannot use it. Alan */
     tzenv = getenv("TZ");
-    if (tzenv != NULL) {
+    if (tzenv != NULL && isValidOlsonID(tzenv))
+    {
+        /* This might be a good Olson ID. */
+        if (uprv_strncmp(tzenv, "posix/", 6) == 0
+            || uprv_strncmp(tzenv, "right/", 6) == 0)
+        {
+            /* Remove the posix/ or right/ prefix. */
+            tzenv += 6;
+        }
         return tzenv;
     }
-#endif
-    
-    /* Caller must handle threading issues */
-    if (gTimeZoneBuffer == NULL) {
-        gTimeZoneBuffer = (char *) uprv_malloc(MAXPATHLEN + 2);
+    /* else U_TZNAME will give a better result. */
 
-        ret = readlink(TZZONELINK, gTimeZoneBuffer, MAXPATHLEN + 2);
+#if defined(CHECK_LOCALTIME_LINK)
+    /* Caller must handle threading issues */
+    if (gTimeZoneBufferPtr == NULL) {
+        /*
+        This is a trick to look at the name of the link to get the Olson ID
+        because the tzfile contents is underspecified.
+        This isn't guaranteed to work because it may not be a symlink.
+        */
+        int32_t ret = (int32_t)readlink(TZZONELINK, gTimeZoneBuffer, sizeof(gTimeZoneBuffer));
         if (0 < ret) {
-            gTimeZoneBuffer[ret] = '\0';
-            if (uprv_strncmp(gTimeZoneBuffer, TZZONEINFO, sizeof(TZZONEINFO) - 1) == 0) {
-                return (gTimeZoneBuffer += sizeof(TZZONEINFO) - 1);
+            int32_t tzZoneInfoLen = uprv_strlen(TZZONEINFO);
+            gTimeZoneBuffer[ret] = 0;
+            if (uprv_strncmp(gTimeZoneBuffer, TZZONEINFO, tzZoneInfoLen) == 0
+                && isValidOlsonID(gTimeZoneBuffer + tzZoneInfoLen))
+            {
+                return (gTimeZoneBufferPtr = gTimeZoneBuffer + tzZoneInfoLen);
             }
         }
-
-        uprv_free(gTimeZoneBuffer);
-        gTimeZoneBuffer = NULL;
     }
+    else {
+        return gTimeZoneBufferPtr;
+    }
+#endif
 #endif
 
 #ifdef U_TZNAME
+    /*
+    U_TZNAME is usually a non-unique abbreviation,
+    which isn't normally usable.
+    */
     return U_TZNAME[n];
 #else
     return "";
@@ -1384,7 +802,7 @@ u_getDataDirectory(void) {
     There may also be some platforms where environment variables
     are not allowed.
     */
-#   if !defined(ICU_NO_USER_DATA_OVERRIDE) && (!defined(UCONFIG_NO_FILE_IO) || !UCONFIG_NO_FILE_IO)
+#   if !defined(ICU_NO_USER_DATA_OVERRIDE) && !UCONFIG_NO_FILE_IO
     /* First try to get the environment variable */
     path=getenv("ICU_DATA");
 #   endif
@@ -1520,32 +938,48 @@ static const char *uprv_getPOSIXID(void)
 {
     static const char* posixID = NULL;
     if (posixID == 0) {
-        posixID = getenv("LC_ALL");
-        if (posixID == 0) {
-            posixID = getenv("LANG");
+        /*
+        * On Solaris two different calls to setlocale can result in 
+        * different values. Only get this value once.
+        *
+        * We must check this first because an application can set this.
+        *
+        * LC_ALL can't be used because it's platform dependent. The LANG
+        * environment variable seems to affect LC_CTYPE variable by default.
+        * Here is what setlocale(LC_ALL, NULL) can return.
+        * HPUX can return 'C C C C C C C'
+        * Solaris can return /en_US/C/C/C/C/C on the second try.
+        * Linux can return LC_CTYPE=C;LC_NUMERIC=C;...
+        *
+        * The default codepage detection also needs to use LC_CTYPE.
+        * 
+        * Do not call setlocale(LC_*, "")! Using an empty string instead
+        * of NULL, will modify the libc behavior.
+        */
+        posixID = setlocale(LC_CTYPE, NULL);
+        if ((posixID == 0)
+            || (uprv_strcmp("C", posixID) == 0)
+            || (uprv_strcmp("POSIX", posixID) == 0))
+        {
+            /* Maybe we got some garbage.  Try something more reasonable */
+            posixID = getenv("LC_ALL");
             if (posixID == 0) {
-                /*
-                * On Solaris two different calls to setlocale can result in 
-                * different values. Only get this value once.
-                */
-                posixID = setlocale(LC_ALL, NULL);
+                posixID = getenv("LC_CTYPE");
+                if (posixID == 0) {
+                    posixID = getenv("LANG");
+                }
             }
+        }
+
+        if ((posixID==0)
+            || (uprv_strcmp("C", posixID) == 0)
+            || (uprv_strcmp("POSIX", posixID) == 0))
+        {
+            /* Nothing worked.  Give it a nice POSIX default value. */
+            posixID = "en_US_POSIX";
         }
     }
 
-    if (posixID==0)
-    {
-        /* Nothing worked.  Give it a nice value. */
-        posixID = "en_US";
-    }
-    else if ((uprv_strcmp("C", posixID) == 0)
-        || (uprv_strchr(posixID, ' ') != NULL)
-        || (uprv_strchr(posixID, '/') != NULL))
-    {   /* HPUX returns 'C C C C C C C' */
-        /* Solaris can return /en_US/C/C/C/C/C on the second try. */
-        /* Maybe we got some garbage.  Give it a nice value. */
-        posixID = "en_US_POSIX";
-    }
     return posixID;
 }
 #endif
@@ -1595,7 +1029,7 @@ The leftmost codepage (.xxx) wins.
 
     if ((p = uprv_strchr(posixID, '.')) != NULL) {
         /* assume new locale can't be larger than old one? */
-        correctedPOSIXLocale = uprv_malloc(uprv_strlen(posixID));
+        correctedPOSIXLocale = uprv_malloc(uprv_strlen(posixID)+1);
         uprv_strncpy(correctedPOSIXLocale, posixID, p-posixID);
         correctedPOSIXLocale[p-posixID] = 0;
 
@@ -1608,7 +1042,7 @@ The leftmost codepage (.xxx) wins.
     /* Note that we scan the *uncorrected* ID. */
     if ((p = uprv_strrchr(posixID, '@')) != NULL) {
         if (correctedPOSIXLocale == NULL) {
-            correctedPOSIXLocale = uprv_malloc(uprv_strlen(posixID));
+            correctedPOSIXLocale = uprv_malloc(uprv_strlen(posixID)+1);
             uprv_strncpy(correctedPOSIXLocale, posixID, p-posixID);
             correctedPOSIXLocale[p-posixID] = 0;
         }
@@ -1617,12 +1051,7 @@ The leftmost codepage (.xxx) wins.
         /* Take care of any special cases here.. */
         if (!uprv_strcmp(p, "nynorsk")) {
             p = "NY";
-
-            /*      Should we assume no_NO_NY instead of possible no__NY?
-            * if (!uprv_strcmp(correctedPOSIXLocale, "no")) {
-            *     uprv_strcpy(correctedPOSIXLocale, "no_NO");
-            * }
-            */
+            /* Don't worry about no__NY. In practice, it won't appear. */
         }
 
         if (uprv_strchr(correctedPOSIXLocale,'_') == NULL) {
@@ -1645,6 +1074,8 @@ The leftmost codepage (.xxx) wins.
 
         /* Should there be a map from 'no@nynorsk' -> no_NO_NY here?
          * How about 'russian' -> 'ru'?
+         * Many of the other locales using ISO codes will be handled by the
+         * canonicalization functions in uloc_getDefault.
          */
     }
 
@@ -1810,6 +1241,81 @@ The leftmost codepage (.xxx) wins.
 
 }
 
+#if U_POSIX_LOCALE
+/*
+Due to various platform differences, one platform may specify a charset,
+when they really mean a different charset. Remap the names so that they are
+compatible with ICU.
+*/
+static const char*
+remapPlatformDependentCodepage(const char *locale, const char *name) {
+    if (locale != NULL && *locale == 0) {
+        /* Make sure that an empty locale is handled the same way. */
+        locale = NULL;
+    }
+    if (name == NULL) {
+        return NULL;
+    }
+#if defined(U_AIX)
+    if (uprv_strcmp(name, "IBM-943") == 0) {
+        /* Use the ASCII compatible ibm-943 */
+        name = "Shift-JIS";
+    }
+    else if (uprv_strcmp(name, "IBM-1252") == 0) {
+        /* Use the windows-1252 that contains the Euro */
+        name = "IBM-5348";
+    }
+#elif defined(U_SOLARIS)
+    if (locale != NULL && uprv_strcmp(name, "EUC") == 0) {
+        /* Solaris underspecifies the "EUC" name. */
+        if (uprv_strcmp(locale, "zh_CN") == 0) {
+            name = "EUC-CN";
+        }
+        else if (uprv_strcmp(locale, "zh_TW") == 0) {
+            name = "EUC-TW";
+        }
+        else if (uprv_strcmp(locale, "ko_KR") == 0) {
+            name = "EUC-KR";
+        }
+    }
+#elif defined(U_DARWIN)
+    if (locale == NULL && *name == 0) {
+        /*
+        No locale was specified, and an empty name was passed in.
+        This usually indicates that nl_langinfo didn't return valid information.
+        Mac OS X uses UTF-8 by default (especially the locale data and console).
+        */
+        name = "UTF-8";
+    }
+#endif
+    /* return NULL when "" is passed in */
+    if (*name == 0) {
+        name = NULL;
+    }
+    return name;
+}
+
+static const char*  
+getCodepageFromPOSIXID(const char *localeName, char * buffer, int32_t buffCapacity)
+{
+    char localeBuf[100];
+    const char *name = NULL;
+    char *variant = NULL;
+
+    if (localeName != NULL && (name = (uprv_strchr(localeName, '.'))) != NULL) {
+        size_t localeCapacity = uprv_min(sizeof(localeBuf), (name-localeName)+1);
+        uprv_strncpy(localeBuf, localeName, localeCapacity);
+        localeBuf[localeCapacity-1] = 0; /* ensure NULL termination */
+        name = uprv_strncpy(buffer, name+1, buffCapacity);
+        buffer[buffCapacity-1] = 0; /* ensure NULL termination */
+        if ((variant = (uprv_strchr(name, '@'))) != NULL) {
+            *variant = 0;
+        }
+        name = remapPlatformDependentCodepage(localeBuf, name);
+    }
+    return name;
+}
+#endif
 
 static const char*  
 int_getDefaultCodepage()
@@ -1850,58 +1356,32 @@ int_getDefaultCodepage()
 
 #elif U_POSIX_LOCALE
     static char codesetName[100];
-    char *name = NULL;
-    char *euro = NULL;
     const char *localeName = NULL;
+    const char *name = NULL;
 
     uprv_memset(codesetName, 0, sizeof(codesetName));
 
-    /* Check setlocale before the environment variables
-       because the application may have set it first */
-
-    /* Use setlocale in a nice way.
+    /* Use setlocale in a nice way, and then check some environment variables.
        Maybe the application used setlocale already.
-       Normally this won't work. */
-    localeName = setlocale(LC_CTYPE, NULL);
-    if (localeName != NULL && (name = (uprv_strchr(localeName, '.'))) != NULL) {
-        /* strip the locale name and look at the suffix only */
-        name = uprv_strncpy(codesetName, name+1, sizeof(codesetName));
-        codesetName[sizeof(codesetName)-1] = 0;
-        if ((euro = (uprv_strchr(name, '@'))) != NULL) {
-           *euro = 0;
-        }
-        /* if we can find the codset name from setlocale, return that. */
-        if (*name) {
-            return name;
-        }
+    */
+    localeName = uprv_getPOSIXID();
+    name = getCodepageFromPOSIXID(localeName, codesetName, sizeof(codesetName));
+    if (name) {
+        /* if we can find the codeset name from setlocale, return that. */
+        return name;
     }
     /* else "C" was probably returned. That's underspecified. */
-
-    /* Use setlocale a little more forcefully.
-       The application didn't use setlocale */
-    localeName = setlocale(LC_CTYPE, "");
-    if (localeName != NULL && (name = (uprv_strchr(localeName, '.'))) != NULL) {
-        /* strip the locale name and look at the suffix only */
-        name = uprv_strncpy(codesetName, name+1, sizeof(codesetName));
-        codesetName[sizeof(codesetName)-1] = 0;
-        if ((euro = (uprv_strchr(name, '@'))) != NULL) {
-           *euro = 0;
-        }
-        /* if we can find the codset name from setlocale, return that. */
-        if (*name) {
-            return name;
-        }
-    }
-    /* else "C" or something like it was returned. That's still underspecified. */
 
 #if U_HAVE_NL_LANGINFO_CODESET
     if (*codesetName) {
         uprv_memset(codesetName, 0, sizeof(codesetName));
     }
-    /* When available, check nl_langinfo first because it usually gives more
-       useful names. It depends on LC_CTYPE and not LANG or LC_ALL */
+    /* When available, check nl_langinfo because it usually gives more
+       useful names. It depends on LC_CTYPE and not LANG or LC_ALL.
+       nl_langinfo may use the same buffer as setlocale. */
     {
         const char *codeset = nl_langinfo(U_NL_LANGINFO_CODESET);
+        codeset = remapPlatformDependentCodepage(NULL, codeset);
         if (codeset != NULL) {
             uprv_strncpy(codesetName, codeset, sizeof(codesetName));
             codesetName[sizeof(codesetName)-1] = 0;
@@ -1910,28 +1390,9 @@ int_getDefaultCodepage()
     }
 #endif
 
-    /* Try a locale specified by the user.
-       This is usually underspecified and usually checked by setlocale already. */
-    if (*codesetName) {
-        uprv_memset(codesetName, 0, sizeof(codesetName));
-    }
-    localeName = uprv_getPOSIXID();
-    if (localeName != NULL && (name = (uprv_strchr(localeName, '.'))) != NULL) {
-        /* strip the locale name and look at the suffix only */
-        name = uprv_strncpy(codesetName, name+1, sizeof(codesetName));
-        codesetName[sizeof(codesetName)-1] = 0;
-        if ((euro = (uprv_strchr(name, '@'))) != NULL) {
-           *euro = 0;
-        }
-        /* if we can find the codset name, return that. */
-        if (*name) {
-            return name;
-        }
-    }
-
     if (*codesetName == 0)
     {
-        /* if the table lookup failed, return US ASCII (ISO 646). */
+        /* Everything failed. Return US ASCII (ISO 646). */
         uprv_strcpy(codesetName, "US-ASCII");
     }
     return codesetName;

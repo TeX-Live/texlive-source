@@ -1,6 +1,6 @@
 /*
  *
- * (C) Copyright IBM Corp. 1998-2005 - All Rights Reserved
+ * (C) Copyright IBM Corp. 1998-2006 - All Rights Reserved
  *
  */
 
@@ -11,8 +11,6 @@
 #include "IndicReordering.h"
 
 U_NAMESPACE_BEGIN
-
-#define ARRAY_SIZE(array) (sizeof array  / sizeof array[0])
 
 // Split matra table indices
 #define _x1  (1 << CF_INDEX_SHIFT)
@@ -33,6 +31,7 @@ U_NAMESPACE_BEGIN
 #define _sb  (CC_STRESS_MARK | CF_POS_BELOW)
 #define _iv  (CC_INDEPENDENT_VOWEL)
 #define _i2  (CC_INDEPENDENT_VOWEL_2)
+#define _i3  (CC_INDEPENDENT_VOWEL_3)
 #define _ct  (CC_CONSONANT | CF_CONSONANT)
 #define _cn  (CC_CONSONANT_WITH_NUKTA | CF_CONSONANT)
 #define _nu  (CC_NUKTA)
@@ -44,6 +43,7 @@ U_NAMESPACE_BEGIN
 #define _lm  (_dv | CF_LENGTH_MARK)
 #define _l1  (CC_SPLIT_VOWEL_PIECE_1 | CF_POS_BEFORE)
 #define _a1  (CC_SPLIT_VOWEL_PIECE_1 | CF_POS_ABOVE)
+#define _b2  (CC_SPLIT_VOWEL_PIECE_2 | CF_POS_BELOW)
 #define _r2  (CC_SPLIT_VOWEL_PIECE_2 | CF_POS_AFTER)
 #define _m2  (CC_SPLIT_VOWEL_PIECE_2 | CF_LENGTH_MARK)
 #define _m3  (CC_SPLIT_VOWEL_PIECE_3 | CF_LENGTH_MARK)
@@ -100,13 +100,13 @@ static const IndicClassTable::CharClass bengCharClasses[] =
 static const IndicClassTable::CharClass punjCharClasses[] =
 {
     _xx, _ma, _ma, _mp, _xx, _iv, _iv, _iv, _iv, _iv, _iv, _xx, _xx, _xx, _xx, _iv, // 0A00 - 0A0F
-    _iv, _xx, _xx, _iv, _iv, _ct, _ct, _ct, _ct, _ct, _ct, _ct, _ct, _ct, _ct, _ct, // 0A10 - 0A1F
+    _iv, _xx, _xx, _i3, _iv, _ct, _ct, _ct, _ct, _ct, _ct, _ct, _ct, _ct, _ct, _ct, // 0A10 - 0A1F
     _ct, _ct, _ct, _ct, _ct, _ct, _ct, _ct, _ct, _xx, _ct, _ct, _ct, _ct, _ct, _bb, // 0A20 - 0A2F
     _vt, _xx, _ct, _cn, _xx, _bb, _cn, _xx, _ct, _bb, _xx, _xx, _nu, _xx, _dr, _dl, // 0A30 - 0A3F
-    _dr, _db, _db, _xx, _xx, _xx, _xx, _da, _da, _xx, _xx, _da, _da, _vr, _xx, _xx, // 0A40 - 0A4F
+    _dr, _b2, _db, _xx, _xx, _xx, _xx, _da, _da, _xx, _xx, _a1, _da, _vr, _xx, _xx, // 0A40 - 0A4F
     _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _cn, _cn, _cn, _ct, _xx, _cn, _xx, // 0A50 - 0A5F
     _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, // 0A60 - 0A6F
-    _ma, _ma, _ct, _ct, _xx                                                         // 0A70 - 0A74
+    _ma, _ma, _xx, _xx, _xx                                                         // 0A70 - 0A74
 };
 
 static const IndicClassTable::CharClass gujrCharClasses[] =
@@ -134,7 +134,7 @@ static const IndicClassTable::CharClass oryaCharClasses[] =
 
 static const IndicClassTable::CharClass tamlCharClasses[] =
 {
-    _xx, _xx, _ma, _mp, _xx, _iv, _iv, _iv, _iv, _iv, _iv, _xx, _xx, _xx, _iv, _iv, // 0B80 - 0B8F
+    _xx, _xx, _ma, _xx, _xx, _iv, _iv, _iv, _iv, _iv, _iv, _xx, _xx, _xx, _iv, _iv, // 0B80 - 0B8F
     _iv, _xx, _iv, _iv, _iv, _ct, _xx, _xx, _xx, _ct, _ct, _xx, _ct, _xx, _ct, _ct, // 0B90 - 0B9F
     _xx, _xx, _xx, _ct, _ct, _xx, _xx, _xx, _ct, _ct, _ct, _xx, _xx, _xx, _ct, _ct, // 0BA0 - 0BAF
     _ct, _ct, _ct, _ct, _ct, _ct, _xx, _ct, _ct, _ct, _xx, _xx, _xx, _xx, _r2, _dr, // 0BB0 - 0BBF
@@ -185,6 +185,18 @@ static const IndicClassTable::CharClass mlymCharClasses[] =
     _xx, _xx, _xx, _xx, _xx, _xx, _xx, _m2, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, // 0D50 - 0D5F
     _iv, _iv, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx  // 0D60 - 0D6F
 };
+ 
+static const IndicClassTable::CharClass sinhCharClasses[] =
+{
+    _xx, _xx, _mp, _mp, _xx, _iv, _iv, _iv, _iv, _iv, _iv, _iv, _iv, _iv, _iv, _iv, // 0D80 - 0D8F
+    _iv, _iv, _iv, _iv, _iv, _iv, _iv, _xx, _xx, _xx, _ct, _ct, _ct, _ct, _ct, _ct, // 0D90 - 0D9F
+    _ct, _ct, _ct, _ct, _ct, _ct, _ct, _ct, _ct, _ct, _ct, _ct, _ct, _ct, _ct, _ct, // 0DA0 - 0DAF
+    _ct, _ct, _xx, _ct, _ct, _ct, _ct, _ct, _ct, _ct, _ct, _ct, _xx, _ct, _xx, _xx, // 0DB0 - 0DBF
+    _ct, _ct, _ct, _ct, _ct, _ct, _ct, _xx, _xx, _xx, _vr, _xx, _xx, _xx, _xx, _dr, // 0DC0 - 0DCF
+    _dr, _dr, _da, _da, _db, _xx, _db, _xx, _dr, _dl, _s1, _dl, _s2, _s3, _s4, _dr, // 0DD0 - 0DDF
+    _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, // 0DE0 - 0DEF
+    _xx, _xx, _dr, _dr, _xx                                                         // 0DF0 - 0DF4
+};
 
 //
 // Split matra tables
@@ -198,10 +210,13 @@ static const SplitMatra tamlSplitTable[] = {{0x0BC6, 0x0BBE}, {0x0BC7, 0x0BBE}, 
 static const SplitMatra teluSplitTable[] = {{0x0C46, 0x0C56}};
 
 static const SplitMatra kndaSplitTable[] = {{0x0CBF, 0x0CD5}, {0x0CC6, 0x0CD5}, {0x0CC6, 0x0CD6}, {0x0CC6, 0x0CC2},
-                                   {0x0CC6, 0x0CC2, 0x0CD5}};
+                                            {0x0CC6, 0x0CC2, 0x0CD5}};
 
 static const SplitMatra mlymSplitTable[] = {{0x0D46, 0x0D3E}, {0x0D47, 0x0D3E}, {0x0D46, 0x0D57}};
 
+ 
+static const SplitMatra sinhSplitTable[] = {{0x0DD9, 0x0DCA}, {0x0DD9, 0x0DCF}, {0x0DD9, 0x0DCF,0x0DCA},
+                                            {0x0DD9, 0x0DDF}};
 //
 // Script Flags
 //
@@ -209,15 +224,16 @@ static const SplitMatra mlymSplitTable[] = {{0x0D46, 0x0D3E}, {0x0D47, 0x0D3E}, 
 // FIXME: post 'GSUB' reordering of MATRA_PRE's for Malayalam and Tamil
 // FIXME: reformed Malayalam needs to reorder VATTU to before base glyph...
 // FIXME: eyelash RA only for Devanagari??
-#define DEVA_SCRIPT_FLAGS (SF_EYELASH_RA | SF_NO_POST_BASE_LIMIT)
-#define BENG_SCRIPT_FLAGS (SF_REPH_AFTER_BELOW | SF_NO_POST_BASE_LIMIT)
-#define PUNJ_SCRIPT_FLAGS (SF_NO_POST_BASE_LIMIT)
-#define GUJR_SCRIPT_FLAGS (SF_NO_POST_BASE_LIMIT)
-#define ORYA_SCRIPT_FLAGS (SF_REPH_AFTER_BELOW | SF_NO_POST_BASE_LIMIT)
-#define TAML_SCRIPT_FLAGS (SF_MPRE_FIXUP | SF_NO_POST_BASE_LIMIT)
-#define TELU_SCRIPT_FLAGS (SF_MATRAS_AFTER_BASE | 3)
-#define KNDA_SCRIPT_FLAGS (SF_MATRAS_AFTER_BASE | 3)
-#define MLYM_SCRIPT_FLAGS (SF_MPRE_FIXUP | SF_NO_POST_BASE_LIMIT)
+#define DEVA_SCRIPT_FLAGS (SF_EYELASH_RA | SF_NO_POST_BASE_LIMIT | SF_FILTER_ZERO_WIDTH)
+#define BENG_SCRIPT_FLAGS (SF_REPH_AFTER_BELOW | SF_NO_POST_BASE_LIMIT | SF_FILTER_ZERO_WIDTH)
+#define PUNJ_SCRIPT_FLAGS (SF_NO_POST_BASE_LIMIT | SF_FILTER_ZERO_WIDTH)
+#define GUJR_SCRIPT_FLAGS (SF_NO_POST_BASE_LIMIT | SF_FILTER_ZERO_WIDTH)
+#define ORYA_SCRIPT_FLAGS (SF_REPH_AFTER_BELOW | SF_NO_POST_BASE_LIMIT | SF_FILTER_ZERO_WIDTH)
+#define TAML_SCRIPT_FLAGS (SF_MPRE_FIXUP | SF_NO_POST_BASE_LIMIT | SF_FILTER_ZERO_WIDTH)
+#define TELU_SCRIPT_FLAGS (SF_MATRAS_AFTER_BASE | SF_FILTER_ZERO_WIDTH | 3)
+#define KNDA_SCRIPT_FLAGS (SF_MATRAS_AFTER_BASE | SF_FILTER_ZERO_WIDTH | 3)
+#define MLYM_SCRIPT_FLAGS (SF_MPRE_FIXUP | SF_NO_POST_BASE_LIMIT | SF_FILTER_ZERO_WIDTH)
+#define SINH_SCRIPT_FLAGS (SF_MPRE_FIXUP | SF_NO_POST_BASE_LIMIT)
 
 //
 // Indic Class Tables
@@ -240,10 +256,12 @@ static const IndicClassTable kndaClassTable = {0x0C80, 0x0CEF, 4, KNDA_SCRIPT_FL
 
 static const IndicClassTable mlymClassTable = {0x0D00, 0x0D6F, 3, MLYM_SCRIPT_FLAGS, mlymCharClasses, mlymSplitTable};
 
+static const IndicClassTable sinhClassTable = {0x0D80, 0x0DF4, 3, SINH_SCRIPT_FLAGS, sinhCharClasses, sinhSplitTable};
+
 //
 // IndicClassTable addresses
 //
-static const IndicClassTable * const indicClassTables[] = {
+static const IndicClassTable * const indicClassTables[scriptCodeCount] = {
     NULL,            /* 'zyyy' (COMMON) */
     NULL,            /* 'qaai' (INHERITED) */
     NULL,            /* 'arab' (ARABIC) */
@@ -251,7 +269,7 @@ static const IndicClassTable * const indicClassTables[] = {
     &bengClassTable, /* 'beng' (BENGALI) */
     NULL,            /* 'bopo' (BOPOMOFO) */
     NULL,            /* 'cher' (CHEROKEE) */
-    NULL,            /* 'qaac' (COPTIC) */
+    NULL,            /* 'copt' (COPTIC) */
     NULL,            /* 'cyrl' (CYRILLIC) */
     NULL,            /* 'dsrt' (DESERET) */
     &devaClassTable, /* 'deva' (DEVANAGARI) */
@@ -277,7 +295,7 @@ static const IndicClassTable * const indicClassTables[] = {
     NULL,            /* 'ital' (OLD-ITALIC) */
     &oryaClassTable, /* 'orya' (ORIYA) */
     NULL,            /* 'runr' (RUNIC) */
-    NULL,            /* 'sinh' (SINHALA) */
+    &sinhClassTable, /* 'sinh' (SINHALA) */
     NULL,            /* 'syrc' (SYRIAC) */
     &tamlClassTable, /* 'taml' (TAMIL) */
     &teluClassTable, /* 'telu' (TELUGU) */
@@ -298,7 +316,56 @@ static const IndicClassTable * const indicClassTables[] = {
     NULL,            /* 'shaw' (SHAVIAN) */
     NULL,            /* 'tale' (TAI_LE) */
     NULL,            /* 'ugar' (UGARITIC) */
-    NULL             /* 'hrkt' (KATAKANA_OR_HIRAGANA) */
+    NULL,            /* 'hrkt' (KATAKANA_OR_HIRAGANA) */
+    NULL,            /* 'bugi' (BUGINESE) */
+    NULL,            /* 'glag' (GLAGOLITIC) */
+    NULL,            /* 'khar' (KHAROSHTHI) */
+    NULL,            /* 'sylo' (SYLOTI_NAGRI) */
+    NULL,            /* 'talu' (NEW_TAI_LUE) */
+    NULL,            /* 'tfng' (TIFINAGH) */
+    NULL,            /* 'xpeo' (OLD_PERSIAN) */
+    NULL,            /* 'bali' (BALINESE) */
+    NULL,            /* 'batk' (BATK) */
+    NULL,            /* 'blis' (BLIS) */
+    NULL,            /* 'brah' (BRAH) */
+    NULL,            /* 'cham' (CHAM) */
+    NULL,            /* 'cirt' (CIRT) */
+    NULL,            /* 'cyrs' (CYRS) */
+    NULL,            /* 'egyd' (EGYD) */
+    NULL,            /* 'egyh' (EGYH) */
+    NULL,            /* 'egyp' (EGYP) */
+    NULL,            /* 'geok' (GEOK) */
+    NULL,            /* 'hans' (HANS) */
+    NULL,            /* 'hant' (HANT) */
+    NULL,            /* 'hmng' (HMNG) */
+    NULL,            /* 'hung' (HUNG) */
+    NULL,            /* 'inds' (INDS) */
+    NULL,            /* 'java' (JAVA) */
+    NULL,            /* 'kali' (KALI) */
+    NULL,            /* 'latf' (LATF) */
+    NULL,            /* 'latg' (LATG) */
+    NULL,            /* 'lepc' (LEPC) */
+    NULL,            /* 'lina' (LINA) */
+    NULL,            /* 'mand' (MAND) */
+    NULL,            /* 'maya' (MAYA) */
+    NULL,            /* 'mero' (MERO) */
+    NULL,            /* 'nko ' (NKO) */
+    NULL,            /* 'orkh' (ORKH) */
+    NULL,            /* 'perm' (PERM) */
+    NULL,            /* 'phag' (PHAGS_PA) */
+    NULL,            /* 'phnx' (PHOENICIAN) */
+    NULL,            /* 'plrd' (PLRD) */
+    NULL,            /* 'roro' (RORO) */
+    NULL,            /* 'sara' (SARA) */
+    NULL,            /* 'syre' (SYRE) */
+    NULL,            /* 'syrj' (SYRJ) */
+    NULL,            /* 'syrn' (SYRN) */
+    NULL,            /* 'teng' (TENG) */
+    NULL,            /* 'vai ' (VAII) */
+    NULL,            /* 'visp' (VISP) */
+    NULL,            /* 'xsux' (CUNEIFORM) */
+    NULL,            /* 'zxxx' (ZXXX) */
+    NULL             /* 'zzzz' (UNKNOWN) */
 };
 
 IndicClassTable::CharClass IndicClassTable::getCharClass(LEUnicode ch) const
@@ -336,6 +403,17 @@ le_int32 IndicReordering::getWorstCaseExpansion(le_int32 scriptCode)
     }
 
     return classTable->getWorstCaseExpansion();
+}
+
+le_bool IndicReordering::getFilterZeroWidth(le_int32 scriptCode)
+{
+    const IndicClassTable *classTable = IndicClassTable::getScriptClassTable(scriptCode);
+
+    if (classTable == NULL) {
+        return TRUE;
+    }
+
+    return classTable->getFilterZeroWidth();
 }
 
 U_NAMESPACE_END

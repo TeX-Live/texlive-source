@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 1998-2005, International Business Machines
+*   Copyright (C) 1998-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -249,6 +249,19 @@ ucnv_safeClone(const UConverter* cnv, void *stackBuffer, int32_t *pBufferSize, U
     uprv_memcpy(localConverter, cnv, sizeof(UConverter));
     localConverter->isCopyLocal = localConverter->isExtraLocal = FALSE;
 
+    /* copy the substitution string */
+    if (cnv->subChars == (uint8_t *)cnv->subUChars) {
+        localConverter->subChars = (uint8_t *)localConverter->subUChars;
+    } else {
+        localConverter->subChars = (uint8_t *)uprv_malloc(UCNV_ERROR_BUFFER_LENGTH * U_SIZEOF_UCHAR);
+        if (localConverter->subChars == NULL) {
+            uprv_free(allocatedConverter);
+            UTRACE_EXIT_STATUS(*status);
+            return NULL;
+        }
+        uprv_memcpy(localConverter->subChars, cnv->subChars, UCNV_ERROR_BUFFER_LENGTH * U_SIZEOF_UCHAR);
+    }
+
     /* now either call the safeclone fcn or not */
     if (cnv->sharedData->impl->safeClone != NULL) {
         /* call the custom safeClone function */
@@ -256,6 +269,9 @@ ucnv_safeClone(const UConverter* cnv, void *stackBuffer, int32_t *pBufferSize, U
     }
 
     if(localConverter==NULL || U_FAILURE(*status)) {
+        if (allocatedConverter != NULL && allocatedConverter->subChars != (uint8_t *)allocatedConverter->subUChars) {
+            uprv_free(allocatedConverter->subChars);
+        }
         uprv_free(allocatedConverter);
         UTRACE_EXIT_STATUS(*status);
         return NULL;
@@ -295,27 +311,6 @@ ucnv_safeClone(const UConverter* cnv, void *stackBuffer, int32_t *pBufferSize, U
 U_CAPI void  U_EXPORT2
 ucnv_close (UConverter * converter)
 {
-    /* first, notify the callback functions that the converter is closed */
-    UConverterToUnicodeArgs toUArgs = {
-        sizeof(UConverterToUnicodeArgs),
-            TRUE,
-            NULL,
-            NULL,
-            NULL,
-            NULL,
-            NULL,
-            NULL
-    };
-    UConverterFromUnicodeArgs fromUArgs = {
-        sizeof(UConverterFromUnicodeArgs),
-            TRUE,
-            NULL,
-            NULL,
-            NULL,
-            NULL,
-            NULL,
-            NULL
-    };
     UErrorCode errorCode = U_ZERO_ERROR;
 
     UTRACE_ENTRY_OC(UTRACE_UCNV_CLOSE);
@@ -329,14 +324,48 @@ ucnv_close (UConverter * converter)
     UTRACE_DATA3(UTRACE_OPEN_CLOSE, "close converter %s at %p, isCopyLocal=%b",
         ucnv_getName(converter, &errorCode), converter, converter->isCopyLocal);
 
-    toUArgs.converter = fromUArgs.converter = converter;
+    /* In order to speed up the close, only call the callbacks when they have been changed.
+    This performance check will only work when the callbacks are set within a shared library
+    or from user code that statically links this code. */
+    /* first, notify the callback functions that the converter is closed */
+    if (converter->fromCharErrorBehaviour != UCNV_TO_U_DEFAULT_CALLBACK) {
+        UConverterToUnicodeArgs toUArgs = {
+            sizeof(UConverterToUnicodeArgs),
+                TRUE,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL
+        };
 
-    converter->fromCharErrorBehaviour(converter->toUContext, &toUArgs, NULL, 0, UCNV_CLOSE, &errorCode);
-    errorCode = U_ZERO_ERROR;
-    converter->fromUCharErrorBehaviour(converter->fromUContext, &fromUArgs, NULL, 0, 0, UCNV_CLOSE, &errorCode);
+        toUArgs.converter = converter;
+        errorCode = U_ZERO_ERROR;
+        converter->fromCharErrorBehaviour(converter->toUContext, &toUArgs, NULL, 0, UCNV_CLOSE, &errorCode);
+    }
+    if (converter->fromUCharErrorBehaviour != UCNV_FROM_U_DEFAULT_CALLBACK) {
+        UConverterFromUnicodeArgs fromUArgs = {
+            sizeof(UConverterFromUnicodeArgs),
+                TRUE,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL
+        };
+        fromUArgs.converter = converter;
+        errorCode = U_ZERO_ERROR;
+        converter->fromUCharErrorBehaviour(converter->fromUContext, &fromUArgs, NULL, 0, 0, UCNV_CLOSE, &errorCode);
+    }
 
     if (converter->sharedData->impl->close != NULL) {
         converter->sharedData->impl->close(converter);
+    }
+
+    if (converter->subChars != (uint8_t *)converter->subUChars) {
+        uprv_free(converter->subChars);
     }
 
     /*
@@ -349,7 +378,7 @@ ucnv_close (UConverter * converter)
     }
 
     if(!converter->isCopyLocal){
-        uprv_free (converter);
+        uprv_free(converter);
     }
 
     UTRACE_EXIT();
@@ -386,15 +415,19 @@ ucnv_getSubstChars (const UConverter * converter,
     if (U_FAILURE (*err))
         return;
 
+    if (converter->subCharLen <= 0) {
+        /* Unicode string or empty string from ucnv_setSubstString(). */
+        *len = 0;
+        return;
+    }
+
     if (*len < converter->subCharLen) /*not enough space in subChars */
     {
         *err = U_INDEX_OUTOFBOUNDS_ERROR;
         return;
     }
 
-  uprv_memcpy (mySubChar, converter->subChar, converter->subCharLen);   /*fills in the subchars */
-  *len = converter->subCharLen; /*store # of bytes copied to buffer */
-    uprv_memcpy (mySubChar, converter->subChar, converter->subCharLen);   /*fills in the subchars */
+    uprv_memcpy (mySubChar, converter->subChars, converter->subCharLen);   /*fills in the subchars */
     *len = converter->subCharLen; /*store # of bytes copied to buffer */
 }
 
@@ -415,7 +448,7 @@ ucnv_setSubstChars (UConverter * converter,
         return;
     }
     
-    uprv_memcpy (converter->subChar, mySubChar, len); /*copies the subchars */
+    uprv_memcpy (converter->subChars, mySubChar, len); /*copies the subchars */
     converter->subCharLen = len;  /*sets the new len */
 
     /*
@@ -426,6 +459,93 @@ ucnv_setSubstChars (UConverter * converter,
     converter->subChar1 = 0;
     
     return;
+}
+
+U_DRAFT void U_EXPORT2
+ucnv_setSubstString(UConverter *cnv,
+                    const UChar *s,
+                    int32_t length,
+                    UErrorCode *err) {
+    UAlignedMemory cloneBuffer[U_CNV_SAFECLONE_BUFFERSIZE / sizeof(UAlignedMemory) + 1];
+    char chars[UCNV_ERROR_BUFFER_LENGTH];
+
+    UConverter *clone;
+    uint8_t *subChars;
+    int32_t cloneSize, length8;
+
+    /* Let the following functions check all arguments. */
+    cloneSize = sizeof(cloneBuffer);
+    clone = ucnv_safeClone(cnv, cloneBuffer, &cloneSize, err);
+    ucnv_setFromUCallBack(clone, UCNV_FROM_U_CALLBACK_STOP, NULL, NULL, NULL, err);
+    length8 = ucnv_fromUChars(clone, chars, (int32_t)sizeof(chars), s, length, err);
+    ucnv_close(clone);
+    if (U_FAILURE(*err)) {
+        return;
+    }
+
+    if (cnv->sharedData->impl->writeSub == NULL
+#if !UCONFIG_NO_LEGACY_CONVERSION
+        || (cnv->sharedData->staticData->conversionType == UCNV_MBCS &&
+         ucnv_MBCSGetType(cnv) != UCNV_EBCDIC_STATEFUL)
+#endif
+    ) {
+        /* The converter is not stateful. Store the charset bytes as a fixed string. */
+        subChars = (uint8_t *)chars;
+    } else {
+        /*
+         * The converter has a non-default writeSub() function, indicating
+         * that it is stateful.
+         * Store the Unicode string for on-the-fly conversion for correct
+         * state handling.
+         */
+        if (length > UCNV_ERROR_BUFFER_LENGTH) {
+            /*
+             * Should not occur. The converter should output at least one byte
+             * per UChar, which means that ucnv_fromUChars() should catch all
+             * overflows.
+             */
+            *err = U_BUFFER_OVERFLOW_ERROR;
+            return;
+        }
+        subChars = (uint8_t *)s;
+        if (length < 0) {
+            length = u_strlen(s);
+        }
+        length8 = length * U_SIZEOF_UCHAR;
+    }
+
+    /*
+     * For storing the substitution string, select either the small buffer inside
+     * UConverter or allocate a subChars buffer.
+     */
+    if (length8 > UCNV_MAX_SUBCHAR_LEN) {
+        /* Use a separate buffer for the string. Outside UConverter to not make it too large. */
+        if (cnv->subChars == (uint8_t *)cnv->subUChars) {
+            /* Allocate a new buffer for the string. */
+            cnv->subChars = (uint8_t *)uprv_malloc(UCNV_ERROR_BUFFER_LENGTH * U_SIZEOF_UCHAR);
+            if (cnv->subChars == NULL) {
+                cnv->subChars = (uint8_t *)cnv->subUChars;
+                *err = U_MEMORY_ALLOCATION_ERROR;
+                return;
+            }
+            uprv_memset(cnv->subChars, 0, UCNV_ERROR_BUFFER_LENGTH * U_SIZEOF_UCHAR);
+        }
+    }
+
+    /* Copy the substitution string into the UConverter or its subChars buffer. */
+    if (length8 == 0) {
+        cnv->subCharLen = 0;
+    } else {
+        uprv_memcpy(cnv->subChars, subChars, length8);
+        if (subChars == (uint8_t *)chars) {
+            cnv->subCharLen = (int8_t)length8;
+        } else /* subChars == s */ {
+            cnv->subCharLen = (int8_t)-length;
+        }
+    }
+
+    /* See comment in ucnv_setSubstChars(). */
+    cnv->subChar1 = 0;
 }
 
 /*resets the internal states of a converter
@@ -1839,6 +1959,12 @@ ucnv_convertEx(UConverter *targetCnv, UConverter *sourceCnv,
     }
 
     if(pivotStart==NULL) {
+        if(!flush) {
+            /* streaming conversion requires an explicit pivot buffer */
+            *pErrorCode=U_ILLEGAL_ARGUMENT_ERROR;
+            return;
+        }
+
         /* use the stack pivot buffer */
         pivotStart=myPivotSource=myPivotTarget=pivotBuffer;
         pivotSource=&myPivotSource;

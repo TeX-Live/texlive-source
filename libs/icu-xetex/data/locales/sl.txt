@@ -1,15 +1,16 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/sl.xml
+// * Source File:<path>/common/main/sl.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/sl.xml
+ *  ICU <specials> source: <path>/xml/main/sl.xml
  */
 sl{
+    AuxExemplarCharacters{"[q w-y]"}
     Countries{
         001{"Svet"}
         002{"Afrika"}
@@ -20,7 +21,7 @@ sl{
         014{"Vzhodna Afrika"}
         015{"Severna Afrika"}
         017{"Centralna Afrika"}
-        018{"Južna Afrika"}
+        018{"Južna Afrika [018]"}
         019{"Amerike"}
         021{"Severna Amerika"}
         029{"Karibi"}
@@ -320,7 +321,7 @@ sl{
             "Ameriški Dolar",
         }
     }
-    ExemplarCharacters{"[a-pr-vzčšž]"}
+    ExemplarCharacters{"[a-c č d-p r s š t-v z ž]"}
     Keys{
         calendar{"Kolendar"}
         collation{"Zlaganje"}
@@ -372,7 +373,7 @@ sl{
         "E",
         "‰",
         "∞",
-        "�",
+        "NaN",
         "+",
     }
     Scripts{
@@ -396,13 +397,9 @@ sl{
             traditional{"Tradicionano zlaganje"}
         }
     }
-    Version{"1.48"}
+    Version{"1.67"}
     calendar{
         gregorian{
-            DateTimeElements:intvector{
-                2,
-                1,
-            }
             DateTimePatterns{
                 "H:mm:ss z",
                 "H:mm:ss z",
@@ -451,6 +448,10 @@ sl{
                 abbreviated{
                     "pr.n.š.",
                     "po Kr.",
+                }
+                wide{
+                    "pred našim štetjem",
+                    "naše štetje",
                 }
             }
             monthNames{
@@ -501,7 +502,62 @@ sl{
                     }
                 }
             }
+            quarters{
+                format{
+                    abbreviated{
+                        "K1",
+                        "K2",
+                        "K3",
+                        "K4",
+                    }
+                    wide{
+                        "Prvo četrtletje",
+                        "Drugo četrtletje",
+                        "Tretje četrtletje",
+                        "Četrto četrtletje",
+                    }
+                }
+            }
         }
     }
     localPatternChars{"GanjkHmsSEDFwWxhKzAeugXZvcL"}
+    zoneStrings{
+        "Africa:Kinshasa"{
+            ec{"Kinšasa"}
+        }
+        "Africa:Lubumbashi"{
+            ec{"Lubumbaši"}
+        }
+        "Antarctica:South_Pole"{
+            ec{"Južni pol"}
+        }
+        "Asia:Anadyr"{
+            ec{"Anadir"}
+        }
+        "Asia:Kamchatka"{
+            ec{"Kamčatka"}
+        }
+        "Asia:Krasnoyarsk"{
+            ec{"Krasnojarsk"}
+        }
+        "Asia:Shanghai"{
+            ec{"Šangaj"}
+        }
+        "Asia:Tashkent"{
+            ec{"Taškent"}
+        }
+        "Europe:Kiev"{
+            ec{"Kijev"}
+        }
+        "Europe:Moscow"{
+            ec{"Moskva"}
+        }
+        "Europe:Uzhgorod"{
+            ec{"Užgorod"}
+        }
+        "Europe:Zaporozhye"{
+            ec{"Zaporožje"}
+        }
+        hourFormat{"+HHmm;-HHmm"}
+    }
 }

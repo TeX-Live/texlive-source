@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 1997-2005, International Business Machines
+*   Copyright (C) 1997-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -97,8 +97,12 @@
 
 /* Define 64 bit limits */
 #if !U_INT64_IS_LONG_LONG
-#define INT64_C(x) ((int64_t)x)
-#define UINT64_C(x) ((uint64_t)x)
+# ifndef INT64_C
+#  define INT64_C(x) ((int64_t)x)
+# endif
+# ifndef UINT64_C
+#  define UINT64_C(x) ((uint64_t)x)
+# endif
 /* else use the umachine.h definition */
 #endif
 
@@ -168,8 +172,14 @@ typedef unsigned int uint32_t;
 /* 1 or 0 to enable or disable threads.  If undefined, default is: enable threads. */
 #define ICU_USE_THREADS 1
 
-/* Windows currently only runs on x86 CPUs which currently all have strong memory models. */
+/* On strong memory model CPUs (e.g. x86 CPUs), we use a safe & quick double check mutex lock. */
+/*
+Microsoft can define _M_IX86, _M_AMD64 (before Visual Studio 8) or _M_X64 (starting in Visual Studio 8). 
+Intel can define _M_IX86 or _M_X64
+*/
+#if defined(_M_IX86) || defined(_M_AMD64) || defined(_M_X64) || (defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__)))
 #define UMTX_STRONG_MEMORY_MODEL 1
+#endif
 
 #ifndef U_DEBUG
 #ifdef _DEBUG
@@ -271,7 +281,7 @@ typedef unsigned int uint32_t;
 #   endif
 #endif
 
-#if defined(_MSC_VER) && defined(_M_IX86)
+#if defined(_MSC_VER) && defined(_M_IX86) && !defined(_MANAGED)
 #define U_ALIGN_CODE(val)    __asm      align val
 #else
 #define U_ALIGN_CODE(val)

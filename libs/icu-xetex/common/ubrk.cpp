@@ -1,6 +1,6 @@
 /*
 *****************************************************************************************
-*   Copyright (C) 1996-2005, International Business Machines
+*   Copyright (C) 1996-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *****************************************************************************************
 */
@@ -17,6 +17,7 @@
 #include "unicode/uchriter.h"
 #include "unicode/rbbi.h"
 #include "rbbirb.h"
+#include "uassert.h"
 
 U_NAMESPACE_USE
 
@@ -59,6 +60,9 @@ ubrk_open(UBreakIteratorType type,
   case UBRK_TITLE:
     result = BreakIterator::createTitleInstance(Locale(locale), *status);
     break;
+
+  default:
+    *status = U_ILLEGAL_ARGUMENT_ERROR;
   }
 
   // check for allocation error
@@ -70,18 +74,12 @@ ubrk_open(UBreakIteratorType type,
     return 0;
   }
 
-  if (text != NULL) {
-      UCharCharacterIterator *iter = 0;
-      iter = new UCharCharacterIterator(text, textLength);
-      if(iter == 0) {
-          *status = U_MEMORY_ALLOCATION_ERROR;
-          delete result;
-          return 0;
-      }
-      result->adoptText(iter);
-  }
 
-  return (UBreakIterator*)result;
+  UBreakIterator *uBI = (UBreakIterator *)result;
+  if (text != NULL) {
+      ubrk_setText(uBI, text, textLength, status);
+  }
+  return uBI;
 }
 
 
@@ -111,17 +109,11 @@ ubrk_openRules(  const UChar        *rules,
         return 0;
     }
 
+    UBreakIterator *uBI = (UBreakIterator *)result;
     if (text != NULL) {
-        UCharCharacterIterator *iter = 0;
-        iter = new UCharCharacterIterator(text, textLength);
-        if(iter == 0) {
-            *status = U_MEMORY_ALLOCATION_ERROR;
-            delete result;
-            return 0;
-        }
-        result->adoptText(iter);
+        ubrk_setText(uBI, text, textLength, status);
     }
-    return (UBreakIterator *)result;
+    return uBI;
 }
 
 
@@ -141,6 +133,12 @@ ubrk_safeClone(
     if (!pBufferSize || !bi){
        *status = U_ILLEGAL_ARGUMENT_ERROR;
         return 0;
+    }
+    // Clear any incoming Safe Clone Allocated warning.
+    //  Propagating this through to our return would really
+    //  confuse our caller.
+    if (*status==U_SAFECLONE_ALLOCATED_WARNING) {
+        *status = U_ZERO_ERROR;
     }
     return (UBreakIterator *)(((BreakIterator*)bi)->
         createBufferClone(stackBuffer, *pBufferSize, *status));
@@ -168,33 +166,23 @@ ubrk_setText(UBreakIterator* bi,
              int32_t         textLength,
              UErrorCode*     status)
 {
-
-  if (U_FAILURE(*status)) return;
-
-  const CharacterIterator& biText = ((BreakIterator*)bi)->getText();
-
-  int32_t textLen = (textLength == -1 ? u_strlen(text) : textLength);
-  if (biText.getDynamicClassID() == UCharCharacterIterator::getStaticClassID()) {
-      ((UCharCharacterIterator&)biText).setText(text, textLen);
-  }
-  else {
-      UCharCharacterIterator *iter = 0;
-      iter = new UCharCharacterIterator(text, textLen);
-      if(iter == 0) {
-        *status = U_MEMORY_ALLOCATION_ERROR;
-        return;
-      }
-      ((BreakIterator*)bi)->adoptText(iter);
-  }
+    BreakIterator *brit = (BreakIterator *)bi;
+    UText  ut = UTEXT_INITIALIZER;
+    utext_openUChars(&ut, text, textLength, status);
+    brit->setText(&ut, *status);
+    // A stack allocated UText wrapping a UCHar * string
+    //   can be dumped without explicitly closing it.
 }
+
+
 
 U_DRAFT void U_EXPORT2
 ubrk_setUText(UBreakIterator *bi,
              UText          *text,
              UErrorCode     *status)
 {
-    BreakIterator *brit = (BreakIterator *)bi;
-    brit->setText(text, *status);
+    RuleBasedBreakIterator *brit = (RuleBasedBreakIterator *)bi;
+    brit->RuleBasedBreakIterator::setText(text, *status);
 }
 
 
@@ -205,35 +193,35 @@ U_CAPI int32_t U_EXPORT2
 ubrk_current(const UBreakIterator *bi)
 {
 
-  return ((BreakIterator*)bi)->current();
+  return ((RuleBasedBreakIterator*)bi)->RuleBasedBreakIterator::current();
 }
 
 U_CAPI int32_t U_EXPORT2
 ubrk_next(UBreakIterator *bi)
 {
 
-  return ((BreakIterator*)bi)->next();
+  return ((RuleBasedBreakIterator*)bi)->RuleBasedBreakIterator::next();
 }
 
 U_CAPI int32_t U_EXPORT2
 ubrk_previous(UBreakIterator *bi)
 {
 
-  return ((BreakIterator*)bi)->previous();
+  return ((RuleBasedBreakIterator*)bi)->RuleBasedBreakIterator::previous();
 }
 
 U_CAPI int32_t U_EXPORT2
 ubrk_first(UBreakIterator *bi)
 {
 
-  return ((BreakIterator*)bi)->first();
+  return ((RuleBasedBreakIterator*)bi)->RuleBasedBreakIterator::first();
 }
 
 U_CAPI int32_t U_EXPORT2
 ubrk_last(UBreakIterator *bi)
 {
 
-  return ((BreakIterator*)bi)->last();
+  return ((RuleBasedBreakIterator*)bi)->RuleBasedBreakIterator::last();
 }
 
 U_CAPI int32_t U_EXPORT2
@@ -241,7 +229,7 @@ ubrk_preceding(UBreakIterator *bi,
            int32_t offset)
 {
 
-  return ((BreakIterator*)bi)->preceding(offset);
+  return ((RuleBasedBreakIterator*)bi)->RuleBasedBreakIterator::preceding(offset);
 }
 
 U_CAPI int32_t U_EXPORT2
@@ -249,7 +237,7 @@ ubrk_following(UBreakIterator *bi,
            int32_t offset)
 {
 
-  return ((BreakIterator*)bi)->following(offset);
+  return ((RuleBasedBreakIterator*)bi)->RuleBasedBreakIterator::following(offset);
 }
 
 U_CAPI const char* U_EXPORT2
@@ -270,20 +258,20 @@ ubrk_countAvailable()
 U_CAPI  UBool U_EXPORT2
 ubrk_isBoundary(UBreakIterator *bi, int32_t offset)
 {
-    return ((BreakIterator *)bi)->isBoundary(offset);
+    return ((RuleBasedBreakIterator *)bi)->RuleBasedBreakIterator::isBoundary(offset);
 }
 
 
 U_CAPI  int32_t U_EXPORT2
 ubrk_getRuleStatus(UBreakIterator *bi)
 {
-    return ((RuleBasedBreakIterator *)bi)->getRuleStatus();
+    return ((RuleBasedBreakIterator *)bi)->RuleBasedBreakIterator::getRuleStatus();
 }
 
 U_CAPI  int32_t U_EXPORT2
 ubrk_getRuleStatusVec(UBreakIterator *bi, int32_t *fillInVec, int32_t capacity, UErrorCode *status)
 {
-    return ((RuleBasedBreakIterator *)bi)->getRuleStatusVec(fillInVec, capacity, *status);
+    return ((RuleBasedBreakIterator *)bi)->RuleBasedBreakIterator::getRuleStatusVec(fillInVec, capacity, *status);
 }
 
 

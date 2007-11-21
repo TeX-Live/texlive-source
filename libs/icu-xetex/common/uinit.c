@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *                                                                            *
-* Copyright (C) 2001-2005, International Business Machines                   *
+* Copyright (C) 2001-2006, International Business Machines                   *
 *                Corporation and others. All Rights Reserved.                *
 *                                                                            *
 ******************************************************************************
@@ -30,19 +30,6 @@ static UBool gICUInitialized = FALSE;
 static UMTX  gICUInitMutex   = NULL;
 
 
-static cleanupFunc *gLibCleanupFunctions[UCLN_COMMON];
-
-U_CAPI void U_EXPORT2
-ucln_registerCleanup(ECleanupLibraryType type,
-                     cleanupFunc *func)
-{
-    U_ASSERT(UCLN_START < type && type < UCLN_COMMON);
-    if (UCLN_START < type && type < UCLN_COMMON)
-    {
-        gLibCleanupFunctions[type] = func;
-    }
-}
-
 /************************************************
  The cleanup order is important in this function.
  Please be sure that you have read ucln.h
@@ -50,21 +37,11 @@ ucln_registerCleanup(ECleanupLibraryType type,
 U_CAPI void U_EXPORT2
 u_cleanup(void)
 {
-    ECleanupLibraryType libType;
-
     UTRACE_ENTRY_OC(UTRACE_U_CLEANUP);
     umtx_lock(NULL);     /* Force a memory barrier, so that we are sure to see   */
     umtx_unlock(NULL);   /*   all state left around by any other threads.        */
 
-    for (libType = UCLN_START+1; libType<UCLN_COMMON; libType++) {
-        if (gLibCleanupFunctions[libType])
-        {
-            gLibCleanupFunctions[libType]();
-            gLibCleanupFunctions[libType] = NULL;
-        }
-    }
-
-    ucln_common_lib_cleanup();
+    ucln_lib_cleanup();
 
     umtx_destroy(&gICUInitMutex);
     umtx_cleanup();
@@ -108,7 +85,7 @@ u_init(UErrorCode *status) {
      * available.
      */
 #if !UCONFIG_NO_CONVERSION
-    ucnv_io_countStandards(status);
+    ucnv_io_countTotalAliases(status);
 #endif
 #else
     /* Do any required init for services that don't have open operations
@@ -118,7 +95,7 @@ u_init(UErrorCode *status) {
      */
 
     /* Char Properties */
-    uprv_loadPropsData(status);
+    uprv_haveProperties(status);
 
     /* load the case and bidi properties but don't fail if they are not available */
     u_isULowercase(0x61);

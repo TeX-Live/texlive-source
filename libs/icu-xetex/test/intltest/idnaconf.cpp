@@ -1,7 +1,7 @@
 /*
  *******************************************************************************
  *
- *   Copyright (C) 2005, International Business Machines
+ *   Copyright (C) 2005-2006, International Business Machines
  *   Corporation and others.  All Rights Reserved.
  *
  *******************************************************************************
@@ -52,7 +52,7 @@ IdnaConfTest::~IdnaConfTest(){
     delete [] base;
 }
 
-
+#if !UCONFIG_NO_IDNA
 /* this function is modified from RBBITest::ReadAndConvertFile() 
  *
  */
@@ -161,13 +161,13 @@ UBool IdnaConfTest::ReadOneLine(UnicodeString& buf){
     buf.remove();
     int t = 0;
     while (curOffset < len){
-        if (t = isNewlineMark()) {  // end of line
+        if ((t = isNewlineMark())) {  // end of line
             curOffset += t;
             break;
         }
         UChar c = base[curOffset];
         if (c == BACKSLASH && curOffset < len -1){  // escaped new line mark
-            if (t = isNewlineMark()){
+            if ((t = isNewlineMark())){
                 curOffset += 1 + t;  // BACKSLAH and NewlineMark
                 continue;
             }
@@ -284,12 +284,13 @@ void IdnaConfTest::Test(void){
     UnicodeString value;
 
     // skip everything before the first "=====" and "=====" itself
-    for (;;){
-        ReadOneLine(s);
-        if (s.compare(C_TAG, -1) == 0){   //"====="
+    do {
+        if (!ReadOneLine(s)) {
+            errln("End of file prematurely found");
             break;
         }
     }
+    while (s.compare(C_TAG, -1) != 0);   //"====="
 
     while(ReadOneLine(s)){
         s.trim();
@@ -334,8 +335,12 @@ void IdnaConfTest::Test(void){
 
     Call(); // for last record
 }
-
-
+#else
+void IdnaConfTest::Test(void)
+{
+  // test nothing...
+}
+#endif
 
 void IdnaConfTest::runIndexedTest( int32_t index, UBool exec, const char* &name, char* /*par*/){
     switch (index) {

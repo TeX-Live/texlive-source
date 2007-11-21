@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 2000-2005, International Business Machines Corporation and
+ * Copyright (c) 2000-2006, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*
@@ -100,7 +100,7 @@ static void TestStandardName()
         /*dotestname("cp1252", "MIME", "windows-1252") &&*/
         dotestname("ascii", "MIME", "US-ASCII") &&
         dotestname("csiso2022jp2", "MIME", "ISO-2022-JP-2") &&
-        dotestname("Iso20-22__cN", "MIME", "ISO-2022-CN") &&
+        dotestname("Iso20-22__cN", "IANA", "ISO-2022-CN") &&
         dotestname("ascii", "IANA", "ANSI_X3.4-1968") &&
         dotestname("cp850", "IANA", "IBM850") &&
         dotestname("crazy", "MIME", NULL) &&
@@ -152,7 +152,7 @@ static void TestCanonicalName()
         dotestconv("ibm-5305", "IANA", NULL) &&     /* mapping does not exist */
         dotestconv("cp1208", "", "UTF-8") &&        /* default name due to ordering */
         dotestconv("UTF16_BigEndian", "", "UTF-16BE") &&        /* non-default name due to ordering */
-        dotestconv("ISO-2022-CN", "MIME", "ISO_2022,locale=zh,version=0") &&/* default name */
+        dotestconv("ISO-2022-CN", "IANA", "ISO_2022,locale=zh,version=0") &&/* default name */
         dotestconv("Shift_JIS", "MIME", "ibm-943_P15A-2003") &&/* ambiguous alias */
         dotestconv("Shift_JIS", "", "ibm-943_P130-1999") &&/* ambiguous alias */
         dotestconv("ibm-943", "", "ibm-943_P15A-2003") &&/* ambiguous alias */
@@ -170,8 +170,9 @@ static void TestCanonicalName()
 static UBool doTestNames(const char *name, const char *standard, const char **expected, int32_t size) {
     UErrorCode err = U_ZERO_ERROR;
     UEnumeration *myEnum = ucnv_openStandardNames(name, standard, &err);
+    const char *enumName, *testName;
     int32_t enumCount = uenum_count(myEnum, &err);
-    int32_t idx, repeatTimes = 3;
+    int32_t idx, len, repeatTimes = 3;
     if (size != enumCount) {
         log_err("FAIL: different size arrays. Got %d. Expected %d\n", enumCount, size);
         return 0;
@@ -183,9 +184,8 @@ static UBool doTestNames(const char *name, const char *standard, const char **ex
     log_verbose("\n%s %s\n", name, standard);
     while (repeatTimes-- > 0) {
         for (idx = 0; idx < enumCount; idx++) {
-            int32_t len;
-            const char *enumName = uenum_next(myEnum, &len, &err);
-            const char *testName = expected[idx];
+            enumName = uenum_next(myEnum, &len, &err);
+            testName = expected[idx];
             if (uprv_strcmp(enumName, testName) != 0 || U_FAILURE(err)
                 || len != (int32_t)uprv_strlen(expected[idx]))
             {
@@ -194,6 +194,13 @@ static UBool doTestNames(const char *name, const char *standard, const char **ex
             }
             log_verbose("%s\n", enumName);
             err = U_ZERO_ERROR;
+        }
+        if (enumCount >= 0) {
+            /* one past the list of all names must return NULL */
+            enumName = uenum_next(myEnum, &len, &err);
+            if (enumName != NULL || len != 0 || U_FAILURE(err)) {
+                log_err("FAIL: uenum_next(past the list) did not return NULL[0] with U_SUCCESS(). name=%s standard=%s len=%d err=%s\n", name, standard, len, u_errorName(err));
+            }
         }
         log_verbose("\n    reset\n");
         uenum_reset(myEnum, &err);

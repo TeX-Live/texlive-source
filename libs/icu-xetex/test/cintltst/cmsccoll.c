@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 2001-2005, International Business Machines Corporation and
+ * Copyright (c) 2001-2006, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*******************************************************************************
@@ -3296,7 +3296,7 @@ static void TestNewJapanese(void) {
 
   static const char *test2[] = {
     "\\u306f\\u309d", /* H\\u309d */
-    /*"\\u30cf\\u30fd",*/ /* K\\u30fd */
+    "\\u30cf\\u30fd", /* K\\u30fd */
     "\\u306f\\u306f", /* HH */
     "\\u306f\\u30cf", /* HK */
     "\\u30cf\\u30cf", /* KK */
@@ -3379,7 +3379,7 @@ static void TestStrCollIdenticalPrefix(void) {
     "ab\\ud9b0\\udc70",
     "ab\\ud9b0\\udc71"
   };
-  genericRulesTestWithResult(rule, test, sizeof(test)/sizeof(test[0]), UCOL_EQUAL);
+  genericRulesStarterWithResult(rule, test, sizeof(test)/sizeof(test[0]), UCOL_EQUAL);
 }
 /* Contractions should have all their canonically equivalent */
 /* strings included */
@@ -3398,7 +3398,7 @@ static void TestContractionClosure(void) {
 
 
   for(i = 0; i<(sizeof(tests)/sizeof(tests[0])); i++) {
-    genericRulesTestWithResult(tests[i].rules, tests[i].data, tests[i].len, UCOL_EQUAL);
+    genericRulesStarterWithResult(tests[i].rules, tests[i].data, tests[i].len, UCOL_EQUAL);
   }
 }
 
@@ -3560,7 +3560,7 @@ static void TestRuleOptions(void) {
     },
 
     { "&[last variable]<a &[before 3][last variable]<<<c<<<b ",
-        {  "c", "b", "\\uD802\\uDE47", "a", "\\u02d0" }, 5
+        {  "c", "b", "\\uD834\\uDF71", "a", "\\u02d0" }, 5
     },
 
     { "&[first regular]<a"
@@ -3570,7 +3570,7 @@ static void TestRuleOptions(void) {
 
     { "&[before 1][last regular]<b"
       "&[last regular]<a",
-        { "b", "\\uD800\\uDFCF", "a", "\\u4e00" }, 4
+        { "b", "\\uD808\\uDF6E", "a", "\\u4e00" }, 4
     },
 
     { "&[before 1][first implicit]<b"
@@ -4637,9 +4637,12 @@ TestThaiSortKey(void)
   UErrorCode status = U_ZERO_ERROR;
   uint8_t key[256];
   int32_t keyLen = 0;
+  /* NOTE: there is a Thai tailoring that moves Yammakan. It should not move it, */
+  /* since it stays in the same relative position. This should be addressed in CLDR */
   /* UCA 4.0 uint8_t expectedKey[256] = { 0x01, 0xd9, 0xb2, 0x01, 0x05, 0x00 }; */
-  /* UCA 4.1 moves Yammakan */
-  uint8_t expectedKey[256] = { 0x01, 0xdb, 0x3a, 0x01, 0x05, 0x00 };
+  /* UCA 4.1 uint8_t expectedKey[256] = { 0x01, 0xdb, 0x3a, 0x01, 0x05, 0x00 }; */
+  /* UCA 5.0 moves Yammakan */
+  uint8_t expectedKey[256] = { 0x01, 0xdc, 0xce, 0x01, 0x05, 0x00 }; 
   UCollator *coll = ucol_open("th", &status);
   if(U_FAILURE(status)) {
     log_err("Could not open a collator, exiting (%s)\n", u_errorName(status));
@@ -4653,6 +4656,101 @@ TestThaiSortKey(void)
 
   ucol_close(coll);
 }
+
+static void
+TestUpperFirstQuaternary(void)
+{
+  const char* tests[] = { "B", "b", "Bb", "bB" };
+  UColAttribute att[] = { UCOL_STRENGTH, UCOL_CASE_FIRST };
+  UColAttributeValue attVals[] = { UCOL_QUATERNARY, UCOL_UPPER_FIRST };
+  genericLocaleStarterWithOptions("root", tests, sizeof(tests)/sizeof(tests[0]), att, attVals, sizeof(att)/sizeof(att[0]));
+}
+
+static void
+TestJ4960(void)
+{
+  const char* tests[] = { "\\u00e2T", "aT" };
+  UColAttribute att[] = { UCOL_STRENGTH, UCOL_CASE_LEVEL };
+  UColAttributeValue attVals[] = { UCOL_PRIMARY, UCOL_ON };
+  const char* tests2[] = { "a", "A" };
+  const char* rule = "&[first tertiary ignorable]=A=a";
+  UColAttribute att2[] = { UCOL_CASE_LEVEL };
+  UColAttributeValue attVals2[] = { UCOL_ON };
+  /* Test whether we correctly ignore primary ignorables on case level when */
+  /* we have only primary & case level */
+  genericLocaleStarterWithOptionsAndResult("root", tests, sizeof(tests)/sizeof(tests[0]), att, attVals, sizeof(att)/sizeof(att[0]), UCOL_EQUAL);
+  /* Test whether ICU4J will make case level for sortkeys that have primary strength */
+  /* and case level */
+  genericLocaleStarterWithOptions("root", tests2, sizeof(tests2)/sizeof(tests2[0]), att, attVals, sizeof(att)/sizeof(att[0]));
+  /* Test whether completely ignorable letters have case level info (they shouldn't) */
+  genericRulesStarterWithOptionsAndResult(rule, tests2, sizeof(tests2)/sizeof(tests2[0]), att2, attVals2, sizeof(att2)/sizeof(att2[0]), UCOL_EQUAL);
+}
+
+static void
+TestJ5223(void)
+{
+  static const char *test = "this is a test string";
+  UChar ustr[256];
+  int32_t ustr_length = u_unescape(test, ustr, 256);
+  unsigned char sortkey[256];
+  int32_t sortkey_length;
+  UErrorCode status = U_ZERO_ERROR;
+  static UCollator *coll = NULL;
+  coll = ucol_open("root", &status);
+  if(U_FAILURE(status)) {
+    log_err("Couldn't open UCA\n");
+    return;
+  }
+  ucol_setStrength(coll, UCOL_PRIMARY);
+  ucol_setAttribute(coll, UCOL_STRENGTH, UCOL_PRIMARY, &status);
+  ucol_setAttribute(coll, UCOL_NORMALIZATION_MODE, UCOL_ON, &status);
+  if (U_FAILURE(status)) {
+    log_err("Failed setting atributes\n");
+    return;
+  } 
+  sortkey_length = ucol_getSortKey(coll, ustr, ustr_length, NULL, 0);
+  if (sortkey_length > 256) return;
+
+  /* we mark the position where the null byte should be written in advance */
+  sortkey[sortkey_length-1] = 0xAA;
+
+  /* we set the buffer size one byte higher than needed */
+  sortkey_length = ucol_getSortKey(coll, ustr, ustr_length, sortkey,
+    sortkey_length+1);
+
+  /* no error occurs (for me) */
+  if (sortkey[sortkey_length-1] == 0xAA) {
+    log_err("Hit bug at first try\n");
+  }
+
+  /* we mark the position where the null byte should be written again */
+  sortkey[sortkey_length-1] = 0xAA;
+
+  /* this time we set the buffer size to the exact amount needed */
+  sortkey_length = ucol_getSortKey(coll, ustr, ustr_length, sortkey,
+    sortkey_length);
+
+  /* now the trailing null byte is not written */
+  if (sortkey[sortkey_length-1] == 0xAA) {
+    log_err("Hit bug at second try\n");
+  }
+
+  ucol_close(coll);
+}
+
+/* Regression test for Thai partial sort key problem */
+static void
+TestJ5232(void)
+{
+    const static char *test[] = {
+        "\\u0e40\\u0e01\\u0e47\\u0e1a\\u0e40\\u0e25\\u0e47\\u0e21",
+        "\\u0e40\\u0e01\\u0e47\\u0e1a\\u0e40\\u0e25\\u0e48\\u0e21"
+    };
+    
+    genericLocaleStarter("th", test, sizeof(test)/sizeof(test[0]));
+}
+
+
 
 #define TEST(x) addTest(root, &x, "tscoll/cmsccoll/" # x)
 
@@ -4718,6 +4816,10 @@ void addMiscCollTest(TestNode** root)
     /*TEST(TestMoreBefore);*/
     TEST(TestTailorNULL);
     TEST(TestThaiSortKey);
+    TEST(TestUpperFirstQuaternary);
+    TEST(TestJ4960);
+    TEST(TestJ5223);
+    TEST(TestJ5232);
 }
 
 #endif /* #if !UCONFIG_NO_COLLATION */

@@ -1,12 +1,17 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/es_CL.xml
+// * Source File:<path>/common/main/es_CL.xml
 // *
 // ***************************************************************************
 es_CL{
+    Countries{
+        005{"Sudamérica"}
+        EH{"Sahara Occidental"}
+        TT{"Trinidad y Tobago"}
+    }
     Currencies{
         CLP{
             "$",
@@ -23,7 +28,18 @@ es_CL{
         "#,##0%",
         "#E0",
     }
-    Version{"1.28"}
+    Scripts{
+        Bali{"balinés"}
+    }
+    Types{
+        collation{
+            phonebook{"orden de directorio telefónico"}
+        }
+    }
+    Variants{
+        1996{"Ortografía alemana de 1996"}
+    }
+    Version{"1.43"}
     calendar{
         gregorian{
             DateTimePatterns{

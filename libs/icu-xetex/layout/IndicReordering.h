@@ -27,16 +27,17 @@ U_NAMESPACE_BEGIN
 #define CC_STRESS_MARK            2U
 #define CC_INDEPENDENT_VOWEL      3U
 #define CC_INDEPENDENT_VOWEL_2    4U
-#define CC_CONSONANT              5U
-#define CC_CONSONANT_WITH_NUKTA   6U
-#define CC_NUKTA                  7U
-#define CC_DEPENDENT_VOWEL        8U
-#define CC_SPLIT_VOWEL_PIECE_1    9U
-#define CC_SPLIT_VOWEL_PIECE_2   10U
-#define CC_SPLIT_VOWEL_PIECE_3   11U
-#define CC_VIRAMA                12U
-#define CC_ZERO_WIDTH_MARK       13U
-#define CC_COUNT                 14U
+#define CC_INDEPENDENT_VOWEL_3    5U
+#define CC_CONSONANT              6U
+#define CC_CONSONANT_WITH_NUKTA   7U
+#define CC_NUKTA                  8U
+#define CC_DEPENDENT_VOWEL        9U
+#define CC_SPLIT_VOWEL_PIECE_1   10U
+#define CC_SPLIT_VOWEL_PIECE_2   11U
+#define CC_SPLIT_VOWEL_PIECE_3   12U
+#define CC_VIRAMA                13U
+#define CC_ZERO_WIDTH_MARK       14U
+#define CC_COUNT                 15U
 
 // Character class flags
 #define CF_CLASS_MASK    0x0000FFFFU
@@ -63,6 +64,7 @@ U_NAMESPACE_BEGIN
 #define SF_REPH_AFTER_BELOW      0x40000000U
 #define SF_EYELASH_RA            0x20000000U
 #define SF_MPRE_FIXUP            0x10000000U
+#define SF_FILTER_ZERO_WIDTH     0x08000000U
 
 #define SF_POST_BASE_LIMIT_MASK  0x0000FFFFU
 #define SF_NO_POST_BASE_LIMIT    0x00007FFFU
@@ -85,6 +87,7 @@ struct IndicClassTable
     const SplitMatra *splitMatraTable;
 
     inline le_int32 getWorstCaseExpansion() const;
+    inline le_bool getFilterZeroWidth() const;
 
     CharClass getCharClass(LEUnicode ch) const;
 
@@ -125,13 +128,15 @@ class IndicReordering /* not : public UObject because all methods are static */ 
 public:
     static le_int32 getWorstCaseExpansion(le_int32 scriptCode);
 
+    static le_bool getFilterZeroWidth(le_int32 scriptCode);
+
     static le_int32 reorder(const LEUnicode *theChars, le_int32 charCount, le_int32 scriptCode,
         LEUnicode *outChars, LEGlyphStorage &glyphStorage,
         MPreFixups **outMPreFixups);
 
     static void adjustMPres(MPreFixups *mpreFixups, LEGlyphStorage &glyphStorage);
 
-    static const LETag *getFeatureOrder();
+    static const FeatureMap *getFeatureMap(le_int32 &count);
 
 private:
     // do not instantiate
@@ -144,6 +149,11 @@ private:
 inline le_int32 IndicClassTable::getWorstCaseExpansion() const
 {
     return worstCaseExpansion;
+}
+
+inline le_bool IndicClassTable::getFilterZeroWidth() const
+{
+    return (scriptFlags & SF_FILTER_ZERO_WIDTH) != 0;
 }
 
 inline const SplitMatra *IndicClassTable::getSplitMatra(CharClass charClass) const

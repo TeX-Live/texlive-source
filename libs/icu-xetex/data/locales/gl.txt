@@ -1,13 +1,13 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/gl.xml
+// * Source File:<path>/common/main/gl.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/gl.xml
+ *  ICU <specials> source: <path>/xml/main/gl.xml
  */
 gl{
     Countries{
@@ -24,7 +24,7 @@ gl{
             }
         }
     }
-    ExemplarCharacters{"[a-záéíóúüñ]"}
+    ExemplarCharacters{"[a á b-e é f-i í j-n ñ o ó p-u ú ü v-z]"}
     Languages{
         gl{"galego"}
     }
@@ -42,10 +42,10 @@ gl{
         "E",
         "‰",
         "∞",
-        "�",
+        "NaN",
         "+",
     }
-    Version{"1.23"}
+    Version{"1.39"}
     calendar{
         gregorian{
             dayNames{
@@ -99,6 +99,22 @@ gl{
                         "Outubro",
                         "Novembro",
                         "Decembro",
+                    }
+                }
+            }
+            quarters{
+                format{
+                    abbreviated{
+                        "T1",
+                        "T2",
+                        "T3",
+                        "T4",
+                    }
+                    wide{
+                        "1er trimestre",
+                        "2on trimestre",
+                        "3er trimestre",
+                        "4rt trimestre",
                     }
                 }
             }

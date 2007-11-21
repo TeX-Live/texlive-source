@@ -1,9 +1,9 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/es_MX.xml
+// * Source File:<path>/common/main/es_MX.xml
 // *
 // ***************************************************************************
 es_MX{
@@ -17,7 +17,21 @@ es_MX{
             "Dólar Americano",
         }
     }
-    Version{"1.27"}
+    NumberElements{
+        ".",
+        ",",
+        ";",
+        "%",
+        "0",
+        "#",
+        "-",
+        "E",
+        "‰",
+        "∞",
+        "NaN",
+        "+",
+    }
+    Version{"1.41"}
     calendar{
         gregorian{
             DateTimePatterns{

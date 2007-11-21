@@ -1,6 +1,6 @@
 /***********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2005, International Business Machines Corporation
+ * Copyright (c) 1997-2006, International Business Machines Corporation
  * and others. All Rights Reserved.
  ***********************************************************************/
  
@@ -19,6 +19,7 @@
 #include "unicode/resbund.h"
 #include "unicode/calendar.h"
 #include "unicode/datefmt.h"
+#include "unicode/ucurr.h"
 #include "putilimp.h"
 
 class MyNumberFormatTest : public NumberFormat 
@@ -878,11 +879,11 @@ void NumberFormatRegressionTest::Test4070798 (void)
         0x35, 0x00a0, 0x37, 0x38, 0x39, 0x2c, 0x39, 0x39, 0x20, 0x46
     };
     UChar chars3 [] = {
-        0x2d, 0x35, 0x37, 0x38, 0x00a0, 0x39, 0x39, 0x39, 0x25
+        0x2d, 0x35, 0x37, 0x38, 0x00a0, 0x39, 0x39, 0x39, 0x00a0, 0x25
     };
     UnicodeString expectedDefault(chars1, 10, 10);
     UnicodeString expectedCurrency(chars2, 10, 10);
-    UnicodeString expectedPercent(chars3, 9, 9);
+    UnicodeString expectedPercent(chars3, 10, 10);
 
     UErrorCode status = U_ZERO_ERROR;
     char loc[256]={0};
@@ -954,11 +955,11 @@ void NumberFormatRegressionTest::Test4071005 (void)
         0x35, 0x00a0, 0x37, 0x38, 0x39, 0x2c, 0x39, 0x39, 0x20, 0x24
     };
     UChar chars3 [] = {
-        0x2d, 0x35, 0x37, 0x38, 0x00a0, 0x39, 0x39, 0x39, 0x25
+        0x2d, 0x35, 0x37, 0x38, 0x00a0, 0x39, 0x39, 0x39, 0x00a0, 0x25
     };
     UnicodeString expectedDefault(chars1, 10, 10);
     UnicodeString expectedCurrency(chars2, 10, 10);
-    UnicodeString expectedPercent(chars3, 9, 9);
+    UnicodeString expectedPercent(chars3, 10, 10);
 
     UErrorCode status = U_ZERO_ERROR;
     formatter = NumberFormat::createInstance(Locale::getCanadaFrench(), status);
@@ -1683,6 +1684,21 @@ void NumberFormatRegressionTest::Test4122840(void)
             DecimalFormat *fmt2 = new DecimalFormat(buf, *symbols, status);
             failure(status, "new DecimalFormat");
             
+            // Get the currency (if there is one) so we can set the rounding and fraction
+            const UChar *currency = fmt1->getCurrency();
+            if (*currency != 0) {
+                double rounding = ucurr_getRoundingIncrement(currency, &status);
+                int32_t frac = ucurr_getDefaultFractionDigits(currency, &status);
+                if (U_SUCCESS(status)) {
+                    fmt2->setRoundingIncrement(rounding);
+                    fmt2->setMinimumFractionDigits(frac);
+                    fmt2->setMaximumFractionDigits(frac);
+                }
+                else {
+                    failure(status, "Fetching currency rounding/fractions");
+                }
+            }
+            
             UnicodeString result2;
             fmt2->format(1.111, result2, pos);
             
@@ -2385,6 +2401,17 @@ void NumberFormatRegressionTest::Test4212072(void) {
             if (U_FAILURE(status)) {
                 continue;
             }
+            
+            // Make sure we set the currency attributes appropriately
+            if (j == 1) {   // Currency format
+                f2.setCurrency(f2.getCurrency(), status);
+            }
+            failure(status,
+                    UnicodeString("setCurrency() for (") + pat + ")", avail[i]);
+            if (U_FAILURE(status)) {
+                continue;
+            }
+
             if (*df != f2) {
                 UnicodeString l, p;
                 errln(UnicodeString("FAIL: ") + type[j] + avail[i].getDisplayName(l) +

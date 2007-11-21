@@ -1,6 +1,6 @@
 /******************************************************************************
 *
-*   Copyright (C) 2000-2005, International Business Machines
+*   Copyright (C) 2000-2006, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -67,6 +67,8 @@ void pkg_mode_dll(UPKGOptions *o, FileStream *makefile, UErrorCode *status)
         sprintf(tmp, "# File to make:\nBATCH_TARGET=\"//'${LOADMOD}(IXMI" U_ICU_VERSION_SHORT "TE)'\"\n\n");
     else if (uprv_strcmp(o->libName, U_LIBICUDATA_NAME"_stub") == 0)
         sprintf(tmp, "# File to make:\nBATCH_TARGET=\"//'${LOADMOD}(IXMI" U_ICU_VERSION_SHORT "D1)'\"\n\n");
+    else
+        sprintf(tmp, "\n");
     T_FileStream_writeLine(makefile, tmp);
 #endif
     
@@ -163,13 +165,8 @@ void pkg_mode_dll(UPKGOptions *o, FileStream *makefile, UErrorCode *status)
     
     T_FileStream_writeLine(makefile, "# 'TOCOBJ' contains C Table of Contents objects [if any]\n");
     
-    if(!o->embed) {
-      sprintf(tmp, "$(TEMP_DIR)/$(NAME)_dat.c: $(CMNLIST)\n"
+    sprintf(tmp, "$(TEMP_DIR)/$(NAME)_dat.c: $(CMNLIST)\n"
                  "\t$(INVOKE) $(GENCMN) -e $(ENTRYPOINT) -n $(NAME) -S -s $(SRCDIR) -d $(TEMP_DIR) 0 $(CMNLIST)\n\n");
-    } else {
-      sprintf(tmp, "$(TEMP_DIR)/$(NAME)_dat.c: $(CMNLIST)\n"
-                 "\t$(INVOKE) $(GENCMN) -e $(ENTRYPOINT) -n $(NAME) -S -E -d $(TEMP_DIR) 0 $(CMNLIST)\n\n");
-    }
 
     T_FileStream_writeLine(makefile, tmp);
     sprintf(tmp, "TOCOBJ= $(NAME)_dat%s \n\n", OBJ_SUFFIX);
@@ -221,9 +218,16 @@ void pkg_mode_dll(UPKGOptions *o, FileStream *makefile, UErrorCode *status)
                                      "\t$(SHLIB.c) -o $@ $(OBJECTS) $(DLL_LDFLAGS)\n\n");
 #endif
     
+#ifdef U_AIX
+    T_FileStream_writeLine(makefile, "$(TARGETDIR)/$(FINAL_SO_TARGET): $(OBJECTS) $(LISTFILES) $(DLL_DEPS)\n"
+                                     "\t$(SHLIB.c) -o $(FINAL_SO_TARGET:.$(SO)=.$(SOBJ)) $(OBJECTS) $(DLL_LDFLAGS)\n"
+                                     "\t$(AR) $(ARFLAGS) $@ $(FINAL_SO_TARGET:.$(SO)=.$(SOBJ))\n"
+                                     "\t-$(AR) vt $@\n\n");
+#else
     T_FileStream_writeLine(makefile, "$(TARGETDIR)/$(FINAL_SO_TARGET): $(OBJECTS) $(LISTFILES) $(DLL_DEPS)\n"
                                      "\t$(SHLIB.c) -o $@ $(OBJECTS) $(DLL_LDFLAGS)\n"
                                      "\t-ls -l $@\n\n");
+#endif
 
 #ifdef OS390
   /*

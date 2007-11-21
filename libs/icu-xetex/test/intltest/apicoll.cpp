@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2005, International Business Machines Corporation and
+ * Copyright (c) 1997-2006, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 //===============================================================================
@@ -39,6 +39,7 @@
 #include "unicode/chariter.h"
 #include "unicode/schriter.h"
 #include "unicode/ustring.h"
+#include "unicode/ucol.h"
 
 #include "sfwdchit.h"
 #include "cmemory.h"
@@ -101,8 +102,9 @@ CollationAPITest::TestProperty(/* char* par */)
       ICU 2.4 currVersionArray = {0x21, 0x40, 0x04, 0x04};
       ICU 2.6 currVersionArray = {0x21, 0x40, 0x03, 0x03};
       ICU 2.8 currVersionArray = {0x29, 0x80, 0x00, 0x04};
+      ICU 3.4 currVersionArray = {0x31, 0xC0, 0x00, 0x04};
     */
-    UVersionInfo currVersionArray = {0x31, 0xC0, 0x00, 0x04};
+    UVersionInfo currVersionArray = {0x31, 0xC0, 0x00, 0x05};
     UVersionInfo versionArray;
     int i = 0;
 
@@ -912,12 +914,43 @@ CollationAPITest::TestDuplicate(/* char* par */)
     }
     Collator *col2 = col1->clone();
     doAssert((*col1 == *col2), "Cloned object is not equal to the orginal");
-    UnicodeString ruleset("< a, A < b, B < c, C < d, D, e, E");
-    RuleBasedCollator *col3 = new RuleBasedCollator(ruleset, status);
+    UnicodeString *ruleset = new UnicodeString("< a, A < b, B < c, C < d, D, e, E");
+    RuleBasedCollator *col3 = new RuleBasedCollator(*ruleset, status);
     doAssert((*col1 != *col3), "Cloned object is equal to some dummy");
     *col3 = *((RuleBasedCollator*)col1);
     doAssert((*col1 == *col3), "Copied object is not equal to the orginal");
+
+    if (U_FAILURE(status)) {
+        logln("Collation tailoring failed.");
+        return;
+    }
+
+    UCollationResult res;
+    UnicodeString first((UChar)0x0061);
+    UnicodeString second((UChar)0x0062);
+    UnicodeString copiedEnglishRules(((RuleBasedCollator*)col1)->getRules());
+
     delete col1;
+    delete ruleset;
+
+    // Try using the cloned collators after deleting the original data
+    res = col2->compare(first, second, status);
+    if(res != UCOL_LESS) {
+        errln("a should be less then b after tailoring");
+    }
+    if (((RuleBasedCollator*)col2)->getRules() != copiedEnglishRules) {
+        errln(UnicodeString("English rule difference. ")
+            + copiedEnglishRules + UnicodeString("\ngetRules=") + ((RuleBasedCollator*)col2)->getRules());
+    }
+    res = col3->compare(first, second, status);
+    if(res != UCOL_LESS) {
+        errln("a should be less then b after tailoring");
+    }
+    if (col3->getRules() != copiedEnglishRules) {
+        errln(UnicodeString("English rule difference. ")
+            + copiedEnglishRules + UnicodeString("\ngetRules=") + col3->getRules());
+    }
+
     delete col2;
     delete col3;
 }
@@ -1019,11 +1052,17 @@ void CollationAPITest::TestSortKey()
     col->setAttribute(UCOL_STRENGTH, UCOL_IDENTICAL, status);
 
     uint8_t key2compat[] = {
+        /* 3.6 key, from UCA 5.0 */
+        0x29, 0x2b, 0x2d, 0x2f, 0x29, 0x01, 
+        0x09, 0x01, 0x09, 0x01, 0x28, 0x01, 
+        0x92, 0x93, 0x94, 0x95, 0x92, 0x00
+        
         /* 3.4 key, from UCA 4.1 */
+        /*
         0x28, 0x2a, 0x2c, 0x2e, 0x28, 0x01, 
         0x09, 0x01, 0x09, 0x01, 0x27, 0x01, 
         0x92, 0x93, 0x94, 0x95, 0x92, 0x00
-
+        */
         /* 2.6.1 key */
         /*
         0x26, 0x28, 0x2A, 0x2C, 0x26, 0x01, 
@@ -2144,6 +2183,56 @@ void CollationAPITest::TestNULLCharTailoring()
     delete coll;
 }
 
+void CollationAPITest::TestClone() {
+    logln("\ninit c0");
+    UErrorCode status = U_ZERO_ERROR;
+    RuleBasedCollator* c0 = (RuleBasedCollator*)Collator::createInstance(status);
+    c0->setStrength(Collator::TERTIARY);
+    dump("c0", c0, status);
+
+    logln("\ninit c1");
+    RuleBasedCollator* c1 = (RuleBasedCollator*)Collator::createInstance(status);
+    c1->setStrength(Collator::TERTIARY);
+    UColAttributeValue val = c1->getAttribute(UCOL_CASE_FIRST, status);
+    if(val == UCOL_LOWER_FIRST){
+        c1->setAttribute(UCOL_CASE_FIRST, UCOL_UPPER_FIRST, status);
+    }else{
+        c1->setAttribute(UCOL_CASE_FIRST, UCOL_LOWER_FIRST, status);
+    }
+    dump("c0", c0, status);
+    dump("c1", c1, status);
+    
+    logln("\ninit c2");
+    RuleBasedCollator* c2 = (RuleBasedCollator*)c1->clone();
+    val = c2->getAttribute(UCOL_CASE_FIRST, status);
+    if(val == UCOL_LOWER_FIRST){
+        c2->setAttribute(UCOL_CASE_FIRST, UCOL_UPPER_FIRST, status);
+    }else{
+        c2->setAttribute(UCOL_CASE_FIRST, UCOL_LOWER_FIRST, status);
+    }
+    if(U_FAILURE(status)){
+        errln("set and get attributes of collator failed. %s\n", u_errorName(status));
+        return;
+    }
+    dump("c0", c0, status);
+    dump("c1", c1, status);
+    dump("c2", c2, status);
+    if(*c1 == *c2){
+        errln("The cloned objects refer to same data");
+    }
+    delete c0;
+    delete c1;
+    delete c2;
+}
+
+ void CollationAPITest::dump(UnicodeString msg, RuleBasedCollator* c, UErrorCode& status) {
+    const char* bigone = "One";
+    const char* littleone = "one";
+  
+    logln(msg + " " + c->compare(bigone, littleone) +
+                        " s: " + c->getStrength() +
+                        " u: " + c->getAttribute(UCOL_CASE_FIRST, status));
+}
 void CollationAPITest::runIndexedTest( int32_t index, UBool exec, const char* &name, char* /*par */)
 {
     if (exec) logln("TestSuite CollationAPITest: ");
@@ -2171,6 +2260,7 @@ void CollationAPITest::runIndexedTest( int32_t index, UBool exec, const char* &n
         case 20: name = "TestUClassID"; if (exec) TestUClassID(); break;
         case 21: name = "TestSubclass"; if (exec) TestSubclass(); break;
         case 22: name = "TestNULLCharTailoring"; if (exec) TestNULLCharTailoring(); break;
+        case 23: name = "TestClone"; if (exec) TestClone(); break;
         default: name = ""; break;
     }
 }

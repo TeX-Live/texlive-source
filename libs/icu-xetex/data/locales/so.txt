@@ -1,13 +1,13 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2005 International Business Machines
+// * Copyright (C) 2006 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File: ../../../cldr/common/main/so.xml
+// * Source File:<path>/common/main/so.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: ./xml/main/so.xml
+ *  ICU <specials> source: <path>/xml/main/so.xml
  */
 so{
     Countries{
@@ -112,29 +112,9 @@ so{
         ZW{"Simbaabwe"}
     }
     Currencies{
-        EUR{
-            "€",
-            "EUR",
-        }
-        GBP{
-            "£",
-            "GBP",
-        }
-        INR{
-            "=0#Rs.|1#Re.|1<Rs.",
-            "INR",
-        }
-        JPY{
-            "¥",
-            "JPY",
-        }
         KES{
             "Ksh",
             "KES",
-        }
-        USD{
-            "$",
-            "USD",
         }
     }
     ExemplarCharacters{"[a-z]"}
@@ -144,16 +124,12 @@ so{
     LocaleScript{
         "Latn",
     }
-    Version{"1.30"}
+    Version{"1.42"}
     calendar{
         gregorian{
             AmPmMarkers{
                 "sn",
                 "gn",
-            }
-            DateTimeElements:intvector{
-                7,
-                1,
             }
             DateTimePatterns{
                 "h:mm:ss a",
@@ -185,6 +161,17 @@ so{
                         "Khamiis",
                         "Jimco",
                         "Sabti",
+                    }
+                }
+                stand-alone{
+                    narrow{
+                        "A",
+                        "I",
+                        "S",
+                        "A",
+                        "K",
+                        "J",
+                        "S",
                     }
                 }
             }
@@ -223,6 +210,22 @@ so{
                         "Bisha Tobnaad",
                         "Bisha Kow iyo Tobnaad",
                         "Bisha Laba iyo Tobnaad",
+                    }
+                }
+                stand-alone{
+                    narrow{
+                        "K",
+                        "L",
+                        "S",
+                        "A",
+                        "S",
+                        "L",
+                        "T",
+                        "S",
+                        "S",
+                        "T",
+                        "K",
+                        "L",
                     }
                 }
             }

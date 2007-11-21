@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 1997-2005, International Business Machines Corporation and    *
+* Copyright (C) 1997-2006, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 *
@@ -34,7 +34,7 @@
 #include "japancal.h"
 #include "islamcal.h"
 #include "hebrwcal.h"
-#include "chnsecal.h"
+//#include "chnsecal.h"
 #include "unicode/calendar.h"
 #include "cpputils.h"
 #include "servloc.h"
@@ -111,7 +111,7 @@ static const char* fldName(UCalendarDateFields f) {
 }
 
 
-
+#if UCAL_DEBUG_DUMP
 // from CalendarTest::calToStr - but doesn't modify contents.
 void ucal_dump(const Calendar &cal) {
     cal.dump();
@@ -147,7 +147,7 @@ void Calendar::dump() const {
 U_CFUNC void ucal_dump(UCalendar* cal) {
     ucal_dump( *((Calendar*)cal)  );
 }
-
+#endif
 
 #endif
 
@@ -685,20 +685,24 @@ Calendar::createInstance(TimeZone* zone, const Locale& aLocale, UErrorCode& succ
     else
 #endif
     {
+        UErrorCode feErr;
         char calLocaleType[ULOC_FULLNAME_CAPACITY];
         calLocaleType[0] = 0; // NULL terminate
         int32_t keywordCapacity = aLocale.getKeywordValue("calendar", calLocaleType, sizeof(calLocaleType)-1, success);
         if (keywordCapacity == 0) {
             char funcEquiv[ULOC_FULLNAME_CAPACITY];
 
+            feErr = success;
+
             // fetch default calendar id
             ures_getFunctionalEquivalent(funcEquiv, sizeof(funcEquiv)-1,
                                         NULL, "calendar", "calendar",
                                         aLocale.getName(), 
-                                        NULL, FALSE, &success);
+                                        NULL, FALSE, &feErr);
             keywordCapacity = uloc_getKeywordValue(funcEquiv, "calendar", calLocaleType, 
-                                sizeof(calLocaleType)-1, &success);
-            if (keywordCapacity == 0 || U_FAILURE(success)) {
+                                sizeof(calLocaleType)-1, &feErr);  // This can fail if there is no data.  
+            // Don't want to stop calendar construction just because we couldn't get this type.
+            if (keywordCapacity == 0 || U_FAILURE(feErr)) {
                 // no calendar type.  Default to nothing.
                 calLocaleType[0] = 0;
             }
@@ -2723,15 +2727,15 @@ int32_t Calendar::handleGetExtendedYearFromWeekFields(int32_t yearWoy, int32_t w
 
    int32_t minDays = getMinimalDaysInFirstWeek();
    UBool jan1InPrevYear = FALSE;  // January 1st in the year of WOY is the 1st week?  (i.e. first week is < minimal )
-   UBool nextJan1InPrevYear = FALSE; // January 1st of Year of WOY + 1 is in the first week? 
+   //UBool nextJan1InPrevYear = FALSE; // January 1st of Year of WOY + 1 is in the first week? 
 
    if((7 - first) < minDays) { 
      jan1InPrevYear = TRUE;
    }
 
-   if((7 - nextFirst) < minDays) {
-     nextJan1InPrevYear = TRUE;
-   }
+//   if((7 - nextFirst) < minDays) {
+//     nextJan1InPrevYear = TRUE;
+//   }
    
    switch(bestField) {
    case UCAL_WEEK_OF_YEAR:

@@ -1,6 +1,6 @@
 # ******************************************************************************
 # *
-# *   Copyright (C) 1995-2005, International Business Machines
+# *   Copyright (C) 1995-2006, International Business Machines
 # *   Corporation and others.  All Rights Reserved.
 # *
 # ******************************************************************************
@@ -165,6 +165,8 @@ UTF-16BE { IANA* MIME* JAVA* }  x-utf-16be { JAVA }
                                 ibm-17585 { IBM } # Unicode 3.0, UTF-16 BE
                                 ibm-21680 { IBM } # Unicode 4.0, UTF-16 BE with IBM PUA
                                 ibm-21681 { IBM } # Unicode 4.0, UTF-16 BE
+                                ibm-25776 { IBM } # Unicode 4.1, UTF-16 BE with IBM PUA
+                                ibm-25777 { IBM } # Unicode 4.1, UTF-16 BE
                                 ibm-61955 { IBM } # UTF-16BE with Gaidai University (Japan) PUA
                                 ibm-61956 { IBM } # UTF-16BE with HKSCS-Big 5 PUA
                                 windows-1201 { WINDOWS* }
@@ -184,6 +186,8 @@ UTF-16LE { IANA* MIME* JAVA* }  x-utf-16le { JAVA }
                                 ibm-17587 { IBM } # Unicode 3.0, UTF-16 LE
                                 ibm-21682 { IBM } # Unicode 4.0, UTF-16 LE with IBM PUA
                                 ibm-21683 { IBM } # Unicode 4.0, UTF-16 LE
+                                ibm-25778 { IBM } # Unicode 4.1, UTF-16 LE with IBM PUA
+                                ibm-25779 { IBM } # Unicode 4.1, UTF-16 LE
                                 UTF16_LittleEndian
                                 windows-1200 { WINDOWS* }
 
@@ -285,7 +289,7 @@ ibm-367_P100-1995 { UTR22* }    ibm-367 { IBM* } IBM367 { IANA* }   # This is AS
 # Central Europe
 ibm-912_P100-1995 { UTR22* }
                         ibm-912 { IBM* JAVA }
-                        iso-8859-2 { MIME* IANA JAVA* WINDOWS }
+                        ISO-8859-2 { MIME* IANA JAVA* WINDOWS }
                         ISO_8859-2:1987 { IANA* WINDOWS JAVA }
                         latin2 { IANA WINDOWS JAVA }
                         csISOLatin2 { IANA WINDOWS JAVA }
@@ -299,7 +303,7 @@ ibm-912_P100-1995 { UTR22* }
 # Maltese Esperanto
 ibm-913_P100-2000 { UTR22* }
                         ibm-913 { IBM* JAVA }
-                        iso-8859-3 { MIME* IANA WINDOWS JAVA* }
+                        ISO-8859-3 { MIME* IANA WINDOWS JAVA* }
                         ISO_8859-3:1988 { IANA* WINDOWS JAVA }
                         latin3 { IANA JAVA WINDOWS }
                         csISOLatin3 { IANA WINDOWS }
@@ -313,7 +317,7 @@ ibm-913_P100-2000 { UTR22* }
 # Baltic
 ibm-914_P100-1995 { UTR22* }
                         ibm-914 { IBM* JAVA }
-                        iso-8859-4 { MIME* IANA WINDOWS JAVA* }
+                        ISO-8859-4 { MIME* IANA WINDOWS JAVA* }
                         latin4 { IANA WINDOWS JAVA }
                         csISOLatin4 { IANA WINDOWS JAVA }
                         iso-ir-110 { IANA WINDOWS JAVA }
@@ -327,7 +331,7 @@ ibm-914_P100-1995 { UTR22* }
 # Cyrillic
 ibm-915_P100-1995 { UTR22* }
                         ibm-915 { IBM* JAVA }
-                        iso-8859-5 { MIME* IANA WINDOWS JAVA* }
+                        ISO-8859-5 { MIME* IANA WINDOWS JAVA* }
                         cyrillic { IANA WINDOWS JAVA }
                         csISOLatinCyrillic { IANA WINDOWS JAVA }
                         iso-ir-144 { IANA WINDOWS JAVA }
@@ -344,7 +348,7 @@ ibm-915_P100-1995 { UTR22* }
 # -E requires the client to handle the ISO 6429 bidirectional controls
 ibm-1089_P100-1995 { UTR22* }
                         ibm-1089 { IBM* JAVA }
-                        iso-8859-6 { MIME* IANA WINDOWS JAVA* }
+                        ISO-8859-6 { MIME* IANA WINDOWS JAVA* }
                         arabic { IANA WINDOWS JAVA }
                         csISOLatinArabic { IANA WINDOWS JAVA }
                         iso-ir-127 { IANA WINDOWS JAVA }
@@ -361,7 +365,7 @@ ibm-1089_P100-1995 { UTR22* }
 # ISO Greek (with euro update). This is really ISO_8859-7:2003
 ibm-9005_X100-2005 { UTR22* }
                         ibm-9005 { IBM* }
-                        iso-8859-7 { MIME* IANA WINDOWS }
+                        ISO-8859-7 { MIME* IANA WINDOWS }
                         greek { IANA WINDOWS }
                         greek8 { IANA WINDOWS }
                         ELOT_928 { IANA WINDOWS }
@@ -375,7 +379,7 @@ ibm-9005_X100-2005 { UTR22* }
 # JDK 1.5 has these aliases.
 ibm-813_P100-1995 { UTR22* }
                         ibm-813 { IBM* JAVA }
-                        iso-8859-7 { JAVA* }
+                        ISO-8859-7 { JAVA* }
                         greek { JAVA }
                         greek8 { JAVA }
                         ELOT_928 { JAVA }
@@ -394,7 +398,7 @@ ibm-813_P100-1995 { UTR22* }
 # -E requires the client to handle the ISO 6429 bidirectional controls
 ibm-916_P100-1995 { UTR22* }
                         ibm-916 { IBM* JAVA }
-                        iso-8859-8 { MIME* IANA WINDOWS JAVA* }
+                        ISO-8859-8 { MIME* IANA WINDOWS JAVA* }
                         hebrew { IANA WINDOWS JAVA }
                         csISOLatinHebrew { IANA WINDOWS JAVA }
                         iso-ir-138 { IANA WINDOWS JAVA }
@@ -409,7 +413,7 @@ ibm-916_P100-1995 { UTR22* }
 # Turkish
 ibm-920_P100-1995 { UTR22* }
                         ibm-920 { IBM* JAVA }
-                        iso-8859-9 { MIME* IANA WINDOWS JAVA* }
+                        ISO-8859-9 { MIME* IANA WINDOWS JAVA* }
                         latin5 { IANA WINDOWS JAVA }
                         csISOLatin5 { IANA JAVA }
                         iso-ir-148 { IANA WINDOWS JAVA }
@@ -421,18 +425,40 @@ ibm-920_P100-1995 { UTR22* }
                         windows-28599 { WINDOWS* }
                         ECMA-128    # IANA doesn't have this alias 6/24/2002
 
+# Nordic languages
+iso-8859_10-1998 { UTR22* } ISO-8859-10 { MIME* IANA* }
+                        iso-ir-157 { IANA }
+                        l6 { IANA }
+                        ISO_8859-10:1992 { IANA }
+                        csISOLatin6 { IANA }
+                        latin6 { IANA }
+
+# Thai
+# Be warned. There several iso-8859-11 codepage variants, and they are all incompatible.
+# ISO-8859-11 is a superset of TIS-620. The difference is that ISO-8859-11 contains the C1 control codes.
+iso-8859_11-2001 { UTR22* } ISO-8859-11
+                        thai8 # HP-UX alias. HP-UX says TIS-620, but it's closer to ISO-8859-11.
+
 # iso-8859-13, PC Baltic (w/o euro update)
 ibm-921_P100-1995 { UTR22* }
                         ibm-921 { IBM* }
-                        iso-8859-13 { IANA* MIME* JAVA* }
+                        ISO-8859-13 { IANA* MIME* JAVA* }
                         8859_13 { JAVA }
                         cp921
                         921
 
+# Celtic
+iso-8859_14-1998 { UTR22* } ISO-8859-14 { IANA* }
+                        iso-ir-199 { IANA }
+                        ISO_8859-14:1998 { IANA }
+                        latin8 { IANA }
+                        iso-celtic { IANA }
+                        l8 { IANA }
+
 # Latin 9
 ibm-923_P100-1998 { UTR22* }
                         ibm-923 { IBM* JAVA }
-                        iso-8859-15 { IANA* MIME* WINDOWS JAVA* }
+                        ISO-8859-15 { IANA* MIME* WINDOWS JAVA* }
                         Latin-9 { IANA WINDOWS }
                         l9 { WINDOWS }
                         8859_15 { JAVA }
@@ -494,6 +520,7 @@ ibm-33722_P12A-1999 { UTR22* }
                         X-EUC-JP { WINDOWS JAVA }   # Japan EUC. x-euc-jp is a MIME name
                         eucjis { JAVA }
                         windows-51932 { WINDOWS* }
+                        ujis # Linux sometimes uses this name. This is an unfortunate generic and rarely used name. Its use is discouraged.
                         ibm-33722_VPUA
                         IBM-eucJP
 ibm-33722_P120-1999 { UTR22* }  # Japan EUC with \ <-> Yen mapping
@@ -529,6 +556,7 @@ ibm-1375_P100-2003 { UTR22* }   # IBM's interpretation of Windows' Taiwan Big-5 
                         ibm-1375 { IBM* }
                         Big5-HKSCS
                         MS950_HKSCS { JAVA* }
+                        hkbig5 # from HP-UX 11i, which can't handle supplementary characters.
                         # windows-950 # Windows-950 can be w/ or w/o HKSCS extensions. By default it's not.
                         # windows-950_hkscs
 
@@ -667,8 +695,8 @@ ibm-874_P100-1995 { UTR22* }    # Thai PC (w/o euro update).
                         ibm-874 { IBM* JAVA }
                         ibm-9066 { IBM }    # Yes ibm-874 == ibm-9066. ibm-1161 has the euro update.
                         cp874 { JAVA* }
-                        TIS-620 { IANA* JAVA }  # This actually separate from ibm-874, which is similar to this table
-                        tis620.2533 { JAVA }    # This actually separate from ibm-874, which is similar to this table
+                        TIS-620 { IANA* JAVA }  # This is actually separate from ibm-874, which is similar to this table
+                        tis620.2533 { JAVA }    # This is actually separate from ibm-874, which is similar to this table
                         eucTH               # eucTH is an unusual alias from Solaris.  eucTH has fewer mappings than TIS620
 
 ibm-1162_P100-1999 { UTR22* }   # Thai (w/ euro update)
@@ -707,12 +735,12 @@ ibm-4909_P100-1999 { UTR22* }   ibm-4909 { IBM* } # ISO Greek (w/ euro update), 
 # cp is usually used to denote IBM in Java, and that is why we don't do that anymore.
 # The windows-* aliases mean windows codepages.
 ibm-5346_P100-1998 { UTR22* }   ibm-5346 { IBM* } windows-1250 { IANA* JAVA* WINDOWS* } cp1250 { WINDOWS JAVA } # Windows Latin2 (w/ euro update)
-ibm-5347_P100-1998 { UTR22* }   ibm-5347 { IBM* } windows-1251 { IANA* JAVA* WINDOWS* } cp1251 { WINDOWS JAVA } # Windows Cyrillic (w/ euro update)
+ibm-5347_P100-1998 { UTR22* }   ibm-5347 { IBM* } windows-1251 { IANA* JAVA* WINDOWS* } cp1251 { WINDOWS JAVA } ANSI1251 # Windows Cyrillic (w/ euro update). ANSI1251 is from Solaris
 ibm-5348_P100-1997 { UTR22* }   ibm-5348 { IBM* } windows-1252 { IANA* JAVA* WINDOWS* } cp1252 { JAVA }         # Windows Latin1 (w/ euro update)
 ibm-5349_P100-1998 { UTR22* }   ibm-5349 { IBM* } windows-1253 { IANA* JAVA* WINDOWS* } cp1253 { JAVA }         # Windows Greek (w/ euro update)
 ibm-5350_P100-1998 { UTR22* }   ibm-5350 { IBM* } windows-1254 { IANA* JAVA* WINDOWS* } cp1254 { JAVA }         # Windows Turkish (w/ euro update)
 ibm-9447_P100-2002 { UTR22* }   ibm-9447 { IBM* } windows-1255 { IANA* JAVA* WINDOWS* } cp1255 { JAVA }         # Windows Hebrew (w/ euro update)
-windows-1256-2000 { UTR22* }    windows-1256 { IANA* JAVA* WINDOWS* } cp1256 { WINDOWS JAVA }                   # Windows Arabic (w/ euro update)
+ibm-9448_X100-2005 { UTR22* }   ibm-9448 { IBM* } windows-1256 { IANA* JAVA* WINDOWS* } cp1256 { WINDOWS JAVA } # Windows Arabic (w/ euro update)
 ibm-9449_P100-2002 { UTR22* }   ibm-9449 { IBM* } windows-1257 { IANA* JAVA* WINDOWS* } cp1257 { JAVA }         # Windows Baltic (w/ euro update)
 ibm-5354_P100-1998 { UTR22* }   ibm-5354 { IBM* } windows-1258 { IANA* JAVA* WINDOWS* } cp1258 { JAVA }         # Windows Vietnamese (w/ euro update)
 
@@ -732,8 +760,8 @@ ibm-5353_P100-1998 { UTR22* }   ibm-5353 { IBM* } windows-1257  # Somewhat old W
 ibm-1258_P100-1997 { UTR22* }   ibm-1258 { IBM* } windows-1258  # Old Windows Vietnamese (w/o euro update)
 
 macos-0_2-10.2 { UTR22* }       macintosh { IANA* MIME* WINDOWS } mac { IANA } csMacintosh { IANA } windows-10000 { WINDOWS* } # Apple latin 1
-macos-6-10.2 { UTR22* }         x-mac-greek { MIME* WINDOWS } windows-10006 { WINDOWS* } macgr           # Apple Greek
-macos-7_3-10.2 { UTR22* }       x-mac-cyrillic { MIME* WINDOWS } windows-10007 { WINDOWS* } maccy        # Apple Cyrillic
+macos-6_2-10.4 { UTR22* }       x-mac-greek { MIME* WINDOWS } windows-10006 { WINDOWS* } macgr           # Apple Greek
+macos-7_3-10.2 { UTR22* }       x-mac-cyrillic { MIME* WINDOWS } windows-10007 { WINDOWS* } mac-cyrillic maccy # Apple Cyrillic
 macos-29-10.2 { UTR22* }        x-mac-centraleurroman { MIME* } windows-10029 { WINDOWS* } x-mac-ce { WINDOWS } macce   # Apple Central Europe
 macos-35-10.2 { UTR22* }        x-mac-turkish { MIME* WINDOWS } windows-10081 { WINDOWS* } mactr         # Apple Turkish
 
@@ -755,18 +783,18 @@ ibm-1133_P100-1997 { UTR22* }   ibm-1133 { IBM* }                               
 # The _generic_ ISO-2022 converter is disabled starting 2003-dec-03 (ICU 2.8).
 # For details see the icu mailing list from 2003-dec-01 and the ucnv2022.c file.
 # Language-specific variants of ISO-2022 continue to be available as listed below.
-# ISO_2022                         ISO-2022 { MIME* } 2022 cp2022
+# ISO_2022                         ISO-2022
 
-ISO_2022,locale=ja,version=0    ISO-2022-JP { IANA* MIME* JAVA* } csISO2022JP { JAVA }
-ISO_2022,locale=ja,version=1    ISO-2022-JP-1 JIS JIS_Encoding { IANA* }
-ISO_2022,locale=ja,version=2    ISO-2022-JP-2 { IANA* MIME* } csISO2022JP2
-ISO_2022,locale=ja,version=3    JIS7 csJISEncoding
+ISO_2022,locale=ja,version=0    ISO-2022-JP { IANA* MIME* JAVA* } csISO2022JP { IANA JAVA }
+ISO_2022,locale=ja,version=1    ISO-2022-JP-1 JIS_Encoding { IANA* } csJISEncoding { IANA } ibm-5054 { IBM* } JIS
+ISO_2022,locale=ja,version=2    ISO-2022-JP-2 { IANA* MIME* } csISO2022JP2 { IANA }
+ISO_2022,locale=ja,version=3    JIS7
 ISO_2022,locale=ja,version=4    JIS8
-ISO_2022,locale=ko,version=0    ISO-2022-KR { IANA* MIME* JAVA* } csISO2022KR { JAVA } # This uses ibm-949
-ISO_2022,locale=ko,version=1    ibm-25546
-ISO_2022,locale=zh,version=0    ISO-2022-CN { IANA* MIME* JAVA* } csISO2022CN { JAVA }
-ISO_2022,locale=zh,version=1    ISO-2022-CN-EXT { IANA* MIME* }
-HZ                              HZ-GB-2312 { IANA* MIME* }
+ISO_2022,locale=ko,version=0    ISO-2022-KR { IANA* MIME* JAVA* } csISO2022KR { IANA JAVA } # This uses ibm-949
+ISO_2022,locale=ko,version=1    ibm-25546 { IBM* }
+ISO_2022,locale=zh,version=0    ISO-2022-CN { IANA* JAVA* } csISO2022CN { JAVA }
+ISO_2022,locale=zh,version=1    ISO-2022-CN-EXT { IANA* }
+HZ                              HZ-GB-2312 { IANA* }
 
 # Part of iso-2022
 ibm-897_P100-1995 { UTR22* }    ibm-897 { IBM* } JIS_X0201 { IANA* } X0201 { IANA } csHalfWidthKatakana { IANA }
@@ -784,17 +812,20 @@ ISCII,version=8         x-iscii-ma { WINDOWS } windows-57009 { WINDOWS* } iscii-
 
 # Lotus specific
 LMBCS-1                 lmbcs ibm-65025 { IBM* }
-LMBCS-2
-LMBCS-3
-LMBCS-4
-LMBCS-5
-LMBCS-6
-LMBCS-8
-LMBCS-11
-LMBCS-16
-LMBCS-17
-LMBCS-18
-LMBCS-19
+
+# These Lotus specific converters still work, but they aren't advertised in this alias table.
+# These are almost never used outside of Lotus software, and they take a lot of time when creating the available converter list.
+#LMBCS-2
+#LMBCS-3
+#LMBCS-4
+#LMBCS-5
+#LMBCS-6
+#LMBCS-8
+#LMBCS-11
+#LMBCS-16
+#LMBCS-17
+#LMBCS-18
+#LMBCS-19
 
 # EBCDIC codepages according to the CDRA
 
@@ -856,6 +887,7 @@ ibm-1123_P100-1995 { UTR22* }   ibm-1123 { IBM* JAVA } cp1123 { JAVA* } 1123 { J
 ibm-1130_P100-1997 { UTR22* }   ibm-1130 { IBM* }       # EBCDIC Vietnamese
 ibm-1132_P100-1998 { UTR22* }   ibm-1132 { IBM* }       # EBCDIC Lao
 ibm-1137_P100-1999 { UTR22* }   ibm-1137 { IBM* }       # Devanagari EBCDIC (based on Unicode character set)
+ibm-4517_P100-2005 { UTR22* }   ibm-4517 { IBM* }       # EBCDIC Arabic. Update of ibm-421
 
 # with Euro
 ibm-1140_P100-1997 { UTR22* }   ibm-1140 { IBM* } IBM01140 { IANA* JAVA } CCSID01140 { IANA JAVA } CP01140 { IANA JAVA } cp1140 { JAVA* } ebcdic-us-37+euro { IANA } # EBCDIC US
@@ -884,10 +916,10 @@ ibm-1399_P110-2003 { UTR22* }   ibm-1399 { IBM* }                   # Host MBCS 
 ibm-5123_P100-1999 { UTR22* }   ibm-5123 { IBM* }                   # Host Roman Jis. Euro update of ibm-1027. SBCS portion of ibm-1390.
 ibm-8482_P100-1999 { UTR22* }   ibm-8482 { IBM* }                   # host SBCS (Katakana). Euro update of ibm-290. SBCS portion of ibm-1399.
 ibm-16684_P110-2003 { UTR22* }  ibm-16684 { IBM* }                  # DBCS Jis + Roman Jis Host. This is the DBCS portion of ibm-1390 and ibm-1399 (JIS X 0213)
-ibm-4899_P100-1998 { UTR22* }   ibm-4899 { IBM* }                   # Old EBCDIC Hebrew
-ibm-4971_P100-1999 { UTR22* }   ibm-4971 { IBM* }                   # EBCDIC Greek
-ibm-12712_P100-1998 { UTR22* }  ibm-12712 { IBM* } ebcdic-he        # EBCDIC Hebrew (new sheqel, control charaters update)
-ibm-16804_X110-1999 { UTR22* }  ibm-16804 { IBM* } ebcdic-ar        # EBCDIC Arabic
+ibm-4899_P100-1998 { UTR22* }   ibm-4899 { IBM* }                   # Old EBCDIC Hebrew. Update of ibm-803
+ibm-9067_X100-2005 { UTR22* }   ibm-9067 { IBM* }                   # EBCDIC Greek. Update of ibm-875 and ibm-4971
+ibm-12712_P100-1998 { UTR22* }  ibm-12712 { IBM* } ebcdic-he        # EBCDIC Hebrew (new sheqel, control charaters update). Update of ibm-424
+ibm-16804_X110-1999 { UTR22* }  ibm-16804 { IBM* } ebcdic-ar        # EBCDIC Arabic. Update of ibm-420
 
 
 # EBCDIC codepages for S/390, with LF and NL codes swapped
@@ -939,6 +971,8 @@ ibm-16804_X110-1999,swaplfnl  ibm-16804-s390
 
 ebcdic-xml-us
 
+# TODO Consider removing this table
+ibm-4971_P100-1999 { UTR22* }   ibm-4971 { IBM* }                   # EBCDIC Greek. Update of ibm-875 and superceded by ibm-9067
 
 
 # These were removed due to age, and they are rarely used.
