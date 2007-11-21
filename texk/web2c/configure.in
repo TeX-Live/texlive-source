@@ -102,6 +102,8 @@ sinclude(../../libs/teckit/withenable.ac)
 sinclude(../../libs/teckit/teckit.ac)
 sinclude(../../libs/icu-xetex/withenable.ac)
 sinclude(../../libs/icu-xetex/icu-xetex.ac)
+sinclude(../../libs/graphite-engine/withenable.ac)
+sinclude(../../libs/graphite-engine/graphite-engine.ac)
 
 # Whether to build mf-nowin.
 : ${with_mf_nowin=no} # Default.

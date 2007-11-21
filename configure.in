@@ -64,6 +64,7 @@ case "$target" in
     *-darwin*)
         : ${INSTALL='/usr/bin/install -c -p'}; export INSTALL
         : ${NCURSES_CPP_FIX=true}; export NCURSES_CPP_FIX
+        AC_MSG_RESULT([no, but using other fixes for Darwin])
         ;;
     *)
         AC_MSG_RESULT(no)
@@ -113,6 +114,7 @@ LIBXPDFDIR=libs/xpdf
 FREETYPEDIR=libs/freetype
 FREETYPE2DIR=libs/freetype2
 ICUDIR=libs/icu-xetex
+GRAPHITEDIR=libs/graphite-engine
 TECKITDIR=libs/teckit
 GDDIR=libs/gd
 LIBOBSDCOMPATDIR=libs/obsdcompat
@@ -201,6 +203,12 @@ test "$with_xetex" != no  && : ${needs_icu=yes}
 : ${needs_icu=no}
 export needs_icu
 
+# we need graphite for xetex
+test ! -d $srcdir/$GRAPHITEDIR && : ${needs_graphite=no}
+test "$with_xetex"   != no     && : ${needs_graphite=yes}
+: ${needs_graphite=no}
+export needs_graphite
+
 # we need teckit for xetex
 test ! -d $srcdir/$TECKITDIR && : ${needs_teckit=no}
 test "$with_xetex" != no     && : ${needs_teckit=yes}
@@ -217,10 +225,11 @@ sinclude(libs/gd/gd.ac)
 sinclude(libs/freetype/freetype.ac)
 sinclude(libs/freetype2/freetype2.ac)
 sinclude(libs/icu-xetex/icu-xetex.ac)
+sinclude(libs/graphite-engine/graphite-engine.ac)
 sinclude(libs/teckit/teckit.ac)
 sinclude(libs/obsdcompat/libobsd-compat.ac)
 
-LIBSDEP="$CURSESDEP $ZLIBDEP $LIBPNGDEP $LIBXPDFDEP $LIBT1DEP $GDDEP $FREETYPEDEP $FREETYPE2DEP $ICUDEP $TECKITDEP $LIBOBSDDEP"
+LIBSDEP="$CURSESDEP $ZLIBDEP $LIBPNGDEP $LIBXPDFDEP $LIBT1DEP $GDDEP $FREETYPEDEP $FREETYPE2DEP $ICUDEP $GRAPHITEDEP $TECKITDEP $LIBOBSDDEP"
 
 LIBSDIRS=
 test "$needs_teckit" = yes \
@@ -243,6 +252,8 @@ test "$needs_freetype2" = yes && test "$using_system_freetype2" != yes \
   && LIBSDIRS="$FREETYPE2DIR $LIBSDIRS"
 test "$needs_icu" = yes && test "$using_system_icu" != yes \
   && LIBSDIRS="$ICUDIR $LIBSDIRS"
+test "$needs_graphite" = yes \
+  && LIBSDIRS="$GRAPHITEDIR $LIBSDIRS"
 test "$needs_obsdcompat" = yes \
   && LIBSDIRS="$LIBOBSDCOMPATDIR $LIBSDIRS"
 
