@@ -7,6 +7,10 @@
 #include <kpathsea/tex-make.h> /* for kpse_make_tex_discard_errors */
 
 #ifdef XeTeX
+#include <zlib.h>
+#endif
+
+#ifdef XeTeX
 /* added typedefs for unicodefile and voidpointer */
 #define XETEX_UNICODE_FILE_DEFINED	1
 typedef struct {
@@ -217,9 +221,22 @@ extern void setupboundvariable P3H(integer *, const_string, integer);
 #define ofmopenin(f)	open_input (&(f), kpse_ofm_format, FOPEN_RBIN_MODE)
 #define bopenout(f)	open_output (&(f), FOPEN_WBIN_MODE)
 #define bclose		aclose
+#ifdef XeTeX
+/* f is declared as gzFile (typedef'd as void *), but we temporarily
+   use it for a FILE * so that we can use the standard open calls */
+#define wopenin(f)	(open_input ((FILE**)&(f), DUMP_FORMAT, FOPEN_RBIN_MODE) \
+						&& (f = gzdopen(fileno((FILE*)f), FOPEN_RBIN_MODE)))
+#define wopenout(f)	(open_output ((FILE**)&(f), FOPEN_WBIN_MODE) \
+						&& (f = gzdopen(fileno((FILE*)f), FOPEN_WBIN_MODE)) \
+						&& (gzsetparams(f, 1, Z_DEFAULT_STRATEGY) == Z_OK))
+#define wclose(f)	gzclose(f)
+#define weof(f)		gzeof(f)
+#else
 #define wopenin(f)	open_input (&(f), DUMP_FORMAT, FOPEN_RBIN_MODE)
 #define wopenout	bopenout
 #define wclose		aclose
+#endif
+
 #ifdef XeTeX
 #define uopenin(f,p,m,d) u_open_in(&(f), p, FOPEN_RBIN_MODE, m, d)
 #endif
@@ -286,8 +303,13 @@ extern void paintrow (/*screenrow, pixelcolor, transspec, screencol*/);
   } while (0)
 
 /* We define the routines to do the actual work in texmf.c.  */
+#ifdef XeTeX
+extern void do_dump P4H(char *, int, int, gzFile);
+extern void do_undump P4H(char *, int, int, gzFile);
+#else
 extern void do_dump P4H(char *, int, int, FILE *);
 extern void do_undump P4H(char *, int, int, FILE *);
+#endif
 
 /* Use the above for all the other dumping and undumping.  */
 #define generic_dump(x) dumpthings (x, 1)

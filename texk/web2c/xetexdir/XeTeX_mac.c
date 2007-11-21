@@ -633,6 +633,9 @@ loadAATfont(ATSFontRef fontRef, long scaled_size, const char* cp1)
 	ATSUFontID	fontID = FMGetFontFromATSFontRef(fontRef);
 	ATSUStyle	style = 0;
 	OSStatus	status = ATSUCreateStyle(&style);
+	double		extend = 1.0;
+	double		slant = 0.0;
+	
 	if (status == noErr) {
 		UInt32	rgbValue;
 		Fixed	tracking = 0x80000000;
@@ -785,44 +788,36 @@ loadAATfont(ATSFontRef fontRef, long scaled_size, const char* cp1)
 					goto next_option;
 				}
 				
-				if (strncmp(cp1, "color", 5) == 0) {
+				if (strncmp(cp1, "extend", 6) == 0) {
+					cp3 = cp1 + 6;
+					if (*cp3 != '=')
+						goto bad_option;
+					++cp3;
+					extend = read_double(&cp3);
+					goto next_option;
+				}
+		
+				if (strncmp(cp1, "slant", 5) == 0) {
 					cp3 = cp1 + 5;
 					if (*cp3 != '=')
 						goto bad_option;
 					++cp3;
-					rgbValue = 0;
-					unsigned	alpha = 0;
-					int i;
-					for (i = 0; i < 6; ++i) {
-						if (*cp3 >= '0' && *cp3 <= '9')
-							rgbValue = (rgbValue << 4) + *cp3 - '0';
-						else if (*cp3 >= 'A' && *cp3 <= 'F')
-							rgbValue = (rgbValue << 4) + *cp3 - 'A' + 10;
-						else if (*cp3 >= 'a' && *cp3 <= 'f')
-							rgbValue = (rgbValue << 4) + *cp3 - 'a' + 10;
-						else
-							goto bad_option;
-						++cp3;
-					}
-					rgbValue <<= 8;
-					for (i = 0; i < 2; ++i) {
-						if (*cp3 >= '0' && *cp3 <= '9')
-							alpha = (alpha << 4) + *cp3 - '0';
-						else if (*cp3 >= 'A' && *cp3 <= 'F')
-							alpha = (alpha << 4) + *cp3 - 'A' + 10;
-						else if (*cp3 >= 'a' && *cp3 <= 'f')
-							alpha = (alpha << 4) + *cp3 - 'a' + 10;
-						else
-							break;
-						++cp3;
-					}
-					if (i == 2)
-						rgbValue += alpha;
+					slant = read_double(&cp3);
+					goto next_option;
+				}
+		
+				if (strncmp(cp1, "color", 5) == 0) {
+					const char* s;
+					cp3 = cp1 + 5;
+					if (*cp3 != '=')
+						goto bad_option;
+					++cp3;
+					s = cp3;
+					rgbValue = read_rgb_a(&cp3);
+					if ((cp3 == s+6) || (cp3 == s+8))
+						loadedfontflags |= FONT_FLAGS_COLORED;
 					else
-						rgbValue += 0xFF;
-					
-					loadedfontflags |= FONT_FLAGS_COLORED;
-					
+						goto bad_option;
 					goto next_option;
 				}
 				
@@ -831,33 +826,8 @@ loadAATfont(ATSFontRef fontRef, long scaled_size, const char* cp1)
 					if (*cp3 != '=')
 						goto bad_option;
 					++cp3;
-
-					int		sign = 1;
-					if (*cp3 == '-') {
-						sign = -1;
-						++cp3;
-					}
-					else if (*cp3 == '+') {
-						++cp3;
-					}
-
-					double	val = 0.0;
-					while (*cp3 >= '0' && *cp3 <= '9') {
-						val = val * 10.0 + *cp3 - '0';
-						++cp3;
-					}
-					if (*cp3 == '.' || *cp3 == ',') {
-						++cp3;
-						double	dec = 10.0;
-						while (*cp3 >= '0' && *cp3 <= '9') {
-							val = val + (*cp3 - '0') / dec;
-							++cp3;
-							dec = dec * 10.0;
-						}
-					}
-					
-					tracking = sign * X2Fix(val);
-					
+					double	val = read_double(&cp3);
+					tracking = X2Fix(val);
 					goto next_option;
 				}
 				
@@ -866,33 +836,8 @@ loadAATfont(ATSFontRef fontRef, long scaled_size, const char* cp1)
 					if (*cp3 != '=')
 						goto bad_option;
 					++cp3;
-
-					int		sign = 1;
-					if (*cp3 == '-') {
-						sign = -1;
-						++cp3;
-					}
-					else if (*cp3 == '+') {
-						++cp3;
-					}
-
-					double	val = 0.0;
-					while (*cp3 >= '0' && *cp3 <= '9') {
-						val = val * 10.0 + *cp3 - '0';
-						++cp3;
-					}
-					if (*cp3 == '.' || *cp3 == ',') {
-						++cp3;
-						double	dec = 10.0;
-						while (*cp3 >= '0' && *cp3 <= '9') {
-							val = val + (*cp3 - '0') / dec;
-							++cp3;
-							dec = dec * 10.0;
-						}
-					}
-					
-					loadedfontletterspace = sign * (val / 100.0) * scaled_size;
-					
+					double	val = read_double(&cp3);
+					loadedfontletterspace = (val / 100.0) * scaled_size;					
 					goto next_option;
 				}
 				
@@ -903,7 +848,7 @@ loadAATfont(ATSFontRef fontRef, long scaled_size, const char* cp1)
 					cp3 = cp2;
 					if (*cp3 == ';' || *cp3 == ':')
 						--cp3;
-					while (*cp3 == ' ' || *cp3 == '\t')
+					while (*cp3 == '\0' || *cp3 == ' ' || *cp3 == '\t')
 						--cp3;
 					if (*cp3)
 						++cp3;
@@ -949,6 +894,14 @@ loadAATfont(ATSFontRef fontRef, long scaled_size, const char* cp1)
 				ATSUSetAttributes(style, 1, tags, sizes, attrs);
 			}
 			
+			if (extend != 1.0 || slant != 0.0) {
+				CGAffineTransform	t = { extend, slant, 0, 1.0, 0, 0 };
+				tags[0] = kATSUFontMatrixTag;
+				sizes[0] = sizeof(CGAffineTransform);
+				attrs[0] = &t;
+				ATSUSetAttributes(style, 1, tags, sizes, attrs);
+			}
+			
 			free((char*)featureTypes);
 			free((char*)selectorValues);
 			free((char*)axes);
@@ -958,6 +911,31 @@ loadAATfont(ATSFontRef fontRef, long scaled_size, const char* cp1)
 
 	nativefonttypeflag = AAT_FONT_FLAG;
 	return style;
+}
+
+int
+countpdffilepages()
+{
+	int	rval = 0;
+
+    char*		pic_path = kpse_find_file((char*)nameoffile + 1, kpse_pict_format, 1);
+	CFURLRef	picFileURL = NULL;
+	if (pic_path) {
+		picFileURL = CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault, (UInt8*)pic_path, strlen(pic_path), false);
+		if (picFileURL != NULL) {
+			FSRef	picFileRef;
+			CFURLGetFSRef(picFileURL, &picFileRef);
+			CGPDFDocumentRef	document = CGPDFDocumentCreateWithURL(picFileURL);
+			if (document != NULL) {
+				rval = CGPDFDocumentGetNumberOfPages(document);
+				CGPDFDocumentRelease(document);
+			}
+			CFRelease(picFileURL);
+		}
+		free(pic_path);
+	}
+
+	return rval;
 }
 
 int

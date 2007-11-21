@@ -216,4 +216,10 @@ typedef struct {
 	MathValueRecord	italicsCorrection[ANY_NUMBER];
 } MathItalicsCorrectionInfo;
 
+typedef struct {
+	le_uint16	coverage;
+	le_uint16	topAccentAttachmentCount;
+	MathValueRecord	topAccentAttachment[ANY_NUMBER];
+} MathTopAccentAttachment;
+
 #endif

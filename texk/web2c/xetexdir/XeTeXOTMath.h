@@ -40,9 +40,10 @@ extern "C" {
 	int getnativemathsyparam(int f, int n);
 	int getnativemathexparam(int f, int n);
 	int getotmathconstant(int f, int n);
-	int getotmathvariant(int f, int g, int v, int* adv);
-	void* getotassemblyptr(int f, int g);
+	int getotmathvariant(int f, int g, int v, int* adv, int horiz);
+	void* getotassemblyptr(int f, int g, int horiz);
 	int getotmathitalcorr(int f, int g);
+	int getotmathaccentpos(int f, int g);
 	int otpartcount(const GlyphAssembly* a);
 	int otpartglyph(const GlyphAssembly* a, int i);
 	int otpartisextender(const GlyphAssembly* a, int i);

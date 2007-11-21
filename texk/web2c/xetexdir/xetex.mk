@@ -4,6 +4,10 @@
 
 Makefile: $(srcdir)/xetexdir/xetex.mk
 
+# this should probably move to common.mk some day,
+# but need to check possible effect on other programs
+ALL_CXXFLAGS = @CXXFLAGS@
+
 # We build xetex unless configure decides to skip it
 xetex = @XETEX@ xetex
 
@@ -81,7 +85,14 @@ ZLIBSRCDIR = $(srcdir)/$(ZLIBDIR)
 FONTCONFIGCPPFLAGS = @FONTCONFIGCPPFLAGS@
 FONTCONFIGLDFLAGS  = @FONTCONFIGLDFLAGS@
 
-xetexlibs = $(LDICU) $(LDTECKIT) $(LDFREETYPE2) $(LDZLIB)
+GRAPHITEDIR = ../../libs/graphite-engine
+GRAPHITESRCDIR = $(srcdir)/$(GRAPHITEDIR)
+
+GRAPHITEFLAGS = @GRAPHITECPPFLAGS@
+LDGRAPHITE = @LDGRAPHITE@
+GRAPHITEDEP = @GRAPHITEDEP@
+
+xetexlibs = $(LDICU) $(LDTECKIT) $(LDFREETYPE2) $(LDGRAPHITE) $(LDZLIB)
 
 # Font-related headers
 XeTeXFontHdrs = \
@@ -103,15 +114,21 @@ XeTeXImageHdrs = \
 	$(srcdir)/xetexdir/pngimage.h
 
 # Extract xetex version
-xetexdir/xetex.version: $(srcdir)/xetexdir/xetex-new.ch
+xetexdir/xetex.version: $(srcdir)/xetexdir/xetex.ch
 	test -d xetexdir || mkdir xetexdir
-	grep '^@d XeTeX_version_string==' $(srcdir)/xetexdir/xetex-new.ch \
+	grep '^@d XeTeX_version_string==' $(srcdir)/xetexdir/xetex.ch \
 	  | sed "s/^.*'-//;s/'.*$$//" >xetexdir/xetex.version
+
+# Extract etex version
+xetexdir/etex.version: $(srcdir)/etexdir/etex.ch
+	test -d xetexdir || mkdir xetexdir
+	grep '^@d eTeX_version_string==' $(srcdir)/etexdir/etex.ch \
+	  | sed "s/^.*'-//;s/'.*$$//" >xetexdir/etex.version
 
 # The C sources.
 xetex_c = xetexini.c xetex0.c xetex1.c xetex2.c
 xetex_o = xetexini.o xetex0.o xetex1.o xetex2.o xetexextra.o
-xetex_add_o = trans.o XeTeX_ext.o $(xetex_platform_o)
+xetex_add_o = trans.o XeTeX_ext.o xetex_pool.o $(xetex_platform_o)
 
 # these compilations require the path to TECkit headers;
 # just setting it in XCFLAGS doesn't seem to work when we're called
@@ -125,6 +142,8 @@ xetex1.o: xetex1.c $(srcdir)/xetexdir/XeTeX_ext.h
 xetex2.o: xetex2.c $(srcdir)/xetexdir/XeTeX_ext.h
 	$(compile) $(TECKITFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
 xetexextra.o: xetexextra.c $(srcdir)/xetexdir/XeTeX_ext.h
+	$(compile) $(TECKITFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
+xetex_pool.o: xetex_pool.c $(srcdir)/xetexdir/XeTeX_ext.h
 	$(compile) $(TECKITFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
 
 # image support
@@ -155,10 +174,11 @@ xetex_ot_layout_o = \
 		XeTeXLayoutInterface.o XeTeXOTLayoutEngine.o \
 		XeTeXFontInst.o cmaps.o FontTableCache.o \
 		XeTeXOTMath.o \
+		XeTeXGrLayout.o \
 		$(xetex_platform_layout_o) 
 
 XeTeXLayoutInterface.o: $(srcdir)/xetexdir/XeTeXLayoutInterface.cpp $(XeTeXFontHdrs)
-	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(FONTCONFIGCPPFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
+	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(GRAPHITEFLAGS) $(FONTCONFIGCPPFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
 XeTeXOTLayoutEngine.o: $(srcdir)/xetexdir/XeTeXOTLayoutEngine.cpp $(XeTeXFontHdrs)
 	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(FONTCONFIGCPPFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
 
@@ -185,6 +205,9 @@ XeTeXFontInst_FT2.o: $(srcdir)/xetexdir/XeTeXFontInst_FT2.cpp $(XeTeXFontHdrs)
 XeTeXOTMath.o: $(srcdir)/xetexdir/XeTeXOTMath.cpp $(XeTeXFontHdrs)
 	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(FONTCONFIGCPPFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
 
+XeTeXGrLayout.o: $(srcdir)/xetexdir/XeTeXGrLayout.cpp $(srcdir)/xetexdir/XeTeXGrLayout.h $(XeTeXFontHdrs)
+	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(GRAPHITEFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
+
 # special rules for files that need the TECkit headers as well
 XeTeX_ext.o: $(srcdir)/xetexdir/XeTeX_ext.c xetexd.h
 	$(compile) $(ICUCFLAGS) $(FTFLAGS) $(TECKITFLAGS) $(LIBPNGCPPFLAGS) $(LIBXPDFCPPFLAGS) $(ZLIBCPPFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
@@ -205,16 +228,20 @@ $(xetex_c) xetexcoerce.h xetexd.h: xetex.p $(web2c_texmf)
 	$(web2c) xetex
 xetexextra.c: lib/texmfmp.c xetexdir/xetexextra.h
 	sed s/TEX-OR-MF-OR-MP/xetex/ $(srcdir)/lib/texmfmp.c >$@
-xetexdir/xetexextra.h: xetexdir/xetexextra.in xetexdir/xetex.version
+xetexdir/xetexextra.h: xetexdir/xetexextra.in xetexdir/xetex.version xetexdir/etex.version
 	test -d xetexdir || mkdir xetexdir
-	sed s/XETEX-VERSION/`cat xetexdir/xetex.version`/ \
+	sed -e s/XETEX-VERSION/`cat xetexdir/xetex.version`/ \
+	    -e s/ETEX-VERSION/`cat xetexdir/etex.version`/ \
 	  $(srcdir)/xetexdir/xetexextra.in >$@
 
-# Tangling
-xetex.p xetex.pool: ./otangle xetex.web # xetex.ch
-	./otangle xetex.web # xetex.ch
+xetex_pool.c: xetex.pool
+	perl $(srcdir)/xetexdir/pool2c.pl $< $@
 
-# Generation of the web [and ch] file.
+# Tangling
+xetex.p xetex.pool: ./otangle xetex.web
+	./otangle xetex.web
+
+# Generation of the web file.
 #   Sources for xetex.web:
 xetex_web_srcs = $(srcdir)/tex.web \
   $(srcdir)/etexdir/etex.ch \
@@ -222,10 +249,7 @@ xetex_web_srcs = $(srcdir)/tex.web \
   $(srcdir)/tex.ch \
   $(srcdir)/etexdir/tex.ch1 \
   $(srcdir)/etexdir/tex.ech \
-  $(srcdir)/xetexdir/xetex-new.ch \
-  $(srcdir)/xetexdir/xetex-noenc.ch \
-  $(srcdir)/xetexdir/xetex-upwards.ch \
-  $(srcdir)/xetexdir/xetex-otmath.ch
+  $(srcdir)/xetexdir/xetex.ch
 xetex.web: tie xetexdir/xetex.mk $(xetex_web_srcs)
 	$(TIE) -m xetex.web $(xetex_web_srcs)
 
@@ -258,7 +282,7 @@ xetex.web: tie xetexdir/xetex.mk $(xetex_web_srcs)
 clean:: xetex-clean
 xetex-clean: # etrip-clean
 	$(LIBTOOL) --mode=clean $(RM) xetex
-	rm -f $(xetex_o) $(xetex_c) xetexextra.c xetexcoerce.h xetexd.h
+	rm -f $(xetex_o) $(xetex_c) xetexextra.c xetex_pool.c xetexcoerce.h xetexd.h
 	rm -f xetexdir/xetexextra.h xetexdir/xetex.version
 	rm -f xetex.p xetex.pool xetex.web xetex.ch
 	rm -f xetex.fmt xetex.log
@@ -289,7 +313,7 @@ xelatex.fmt: xetex
 # Install
 install-xetex: install-xetex-exec install-xetex-data
 install-xetex-exec: install-xetex-programs install-xetex-links
-install-xetex-data: install-xetex-pool @FMU@ install-xetex-dumps
+install-xetex-data: @FMU@ install-xetex-dumps
 install-xetex-dumps: install-xetex-fmts
 
 install-programs: @XETEX@ install-xetex-programs
@@ -310,7 +334,5 @@ install-xetex-fmts: xefmts $(xefmtdir)
 	    (cd ${DESTDIR}$(bindir) && (rm -f $$base; $(LN) xetex $$base)); done
 
 install-data:: @XETEX@ install-xetex-data
-install-xetex-pool: xetex.pool $(texpooldir)
-	$(INSTALL_DATA) xetex.pool ${DESTDIR}$(texpooldir)/xetex.pool
 
 # end of xetex.mk

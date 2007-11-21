@@ -87,6 +87,7 @@ typedef enum {
   JM_EXP   = 0xdf,
 
   JM_APP0  = 0xe0,
+  JM_APP1  = 0xe1,
   JM_APP2  = 0xe2,
   JM_APP14 = 0xee,
   JM_APP15 = 0xef,

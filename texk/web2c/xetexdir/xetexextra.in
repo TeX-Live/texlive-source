@@ -51,7 +51,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
-#define BANNER "This is XeTeX, Version 3.141592-XETEX-VERSION"
+#define BANNER "This is XeTeX, Version 3.141592-ETEX-VERSION-XETEX-VERSION"
 #define COPYRIGHT_HOLDER "SIL International"
 #define AUTHOR "Jonathan Kew"
 #define PROGRAM_HELP XETEXHELP

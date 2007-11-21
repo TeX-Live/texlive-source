@@ -64,33 +64,39 @@ typedef struct {
 	float	ht;
 } realrect;
 
-#define xCoord(p)				p.x
-#define yCoord(p)				p.y
+#define xCoord(p)				(p).x
+#define yCoord(p)				(p).y
 
-#define wdField(r)				r.wd
-#define htField(r)				r.ht
+#define wdField(r)				(r).wd
+#define htField(r)				(r).ht
 
-#define aField(t)				t.a
-#define bField(t)				t.b
-#define cField(t)				t.c
-#define dField(t)				t.d
+#define aField(t)				(t).a
+#define bField(t)				(t).b
+#define cField(t)				(t).c
+#define dField(t)				(t).d
 #ifdef XETEX_MAC /* transform fields have different names */
-#define txField(t)				t.tx
-#define tyField(t)				t.ty
+#define txField(t)				(t).tx
+#define tyField(t)				(t).ty
 #else
-#define txField(t)				t.x
-#define tyField(t)				t.y
+#define txField(t)				(t).x
+#define tyField(t)				(t).y
 #endif
-#define xField(t)				t.x
-#define yField(t)				t.y
+#define xField(t)				(t).x
+#define yField(t)				(t).y
 
-#define setPoint(P,X,Y)			do { P.x = X; P.y = Y; } while (0)
+#define setPoint(P,X,Y)			do { (P).x = X; (P).y = Y; } while (0)
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 void makeidentity(transform* t);
 void makescale(transform* t, double xscale, double yscale);
 void maketranslation(transform* t, double dx, double dy);
 void makerotation(transform* t, double a);
 void transformpoint(realpoint* p, const transform* t);
 void transformconcat(transform* t1, const transform* t2);
+#ifdef __cplusplus
+};
+#endif
 
 #endif /* _TRANS_H_ */

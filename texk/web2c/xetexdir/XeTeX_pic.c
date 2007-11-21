@@ -32,6 +32,22 @@ XeTeX_pic.c
 #include "jpegimage.h"
 #include "bmpimage.h"
 
+
+int
+countpdffilepages()
+{
+	int	rval = 0;
+
+    char*		pic_path = kpse_find_file((char*)nameoffile + 1, kpse_pict_format, 1);
+	if (pic_path) {
+		rval = pdf_count_pages(pic_path);
+		free(pic_path);
+	}
+
+	return rval;
+}
+
+
 /*
 	locate picture file from /nameoffile+1/ using kpathsearch
 	pdfBoxType indicates which pdf bounding box to use (0 for \XeTeXpicfile)

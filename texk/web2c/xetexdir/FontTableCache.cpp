@@ -48,6 +48,7 @@ struct FontTableCacheEntry
 {
     LETag tag;
     const void *table;
+    le_uint32 size;
 };
 
 FontTableCache::FontTableCache()
@@ -69,6 +70,7 @@ FontTableCache::initialize()
     for (int i = 0; i < fTableCacheSize; i += 1) {
         fTableCache[i].tag   = 0;
         fTableCache[i].table = NULL;
+        fTableCache[i].size  = 0;
     }
 }
 
@@ -84,27 +86,33 @@ void FontTableCache::dispose()
 
         fTableCache[i].tag   = 0;
         fTableCache[i].table = NULL;
+        fTableCache[i].size  = 0;
     }
 
     fTableCacheCurr = 0;
 }
 
-const void *FontTableCache::find(LETag tableTag) const
+const void *FontTableCache::find(LETag tableTag, le_uint32 *tableSize) const
 {
     for (int i = 0; i < fTableCacheCurr; i += 1) {
         if (fTableCache[i].tag == tableTag) {
+            if (tableSize != NULL)
+                *tableSize = fTableCache[i].size;
             return fTableCache[i].table;
         }
     }
 
-    const void *table = readFontTable(tableTag);
+    le_uint32  length;
+    const void *table = readFontTable(tableTag, length);
 
-    ((FontTableCache *) this)->add(tableTag, table);
+    ((FontTableCache *) this)->add(tableTag, table, length);
+    if (tableSize != NULL)
+        *tableSize = length;
 
     return table;
 }
 
-void FontTableCache::add(LETag tableTag, const void *table)
+void FontTableCache::add(LETag tableTag, const void *table, le_uint32 length)
 {
     if (fTableCacheCurr >= fTableCacheSize) {
         le_int32 newSize = fTableCacheSize + TABLE_CACHE_GROW;
@@ -114,6 +122,7 @@ void FontTableCache::add(LETag tableTag, const void *table)
         for (le_int32 i = fTableCacheSize; i < newSize; i += 1) {
             fTableCache[i].tag   = 0;
             fTableCache[i].table = NULL;
+            fTableCache[i].size  = 0;
         }
 
         fTableCacheSize = newSize;
@@ -121,6 +130,7 @@ void FontTableCache::add(LETag tableTag, const void *table)
 
     fTableCache[fTableCacheCurr].tag   = tableTag;
     fTableCache[fTableCacheCurr].table = table;
+    fTableCache[fTableCacheCurr].size  = length;
 
     fTableCacheCurr += 1;
 }

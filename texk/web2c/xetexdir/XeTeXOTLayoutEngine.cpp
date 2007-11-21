@@ -54,6 +54,12 @@ static le_int32 getLanguageCode(LETag languageTag)
 	return -1;
 }
 
+/*
+ * XeTeXOTLayoutEngine
+ */
+
+UOBJECT_DEFINE_RTTI_IMPLEMENTATION(XeTeXOTLayoutEngine)
+
 LayoutEngine* XeTeXOTLayoutEngine::LayoutEngineFactory
 				(const XeTeXFontInst* fontInstance,
 					LETag scriptTag, LETag languageTag,
@@ -62,11 +68,13 @@ LayoutEngine* XeTeXOTLayoutEngine::LayoutEngineFactory
 					LEErrorCode &success)
 {
     static le_uint32 gsubTableTag = LE_GSUB_TABLE_TAG;
+    static le_uint32 gposTableTag = LE_GPOS_TABLE_TAG;
 
     if (LE_FAILURE(success))
         return NULL;
 
     const GlyphSubstitutionTableHeader* gsubTable = (const GlyphSubstitutionTableHeader*)fontInstance->getFontTable(gsubTableTag);
+    const GlyphPositioningTableHeader* gposTable = (const GlyphPositioningTableHeader*)fontInstance->getFontTable(gposTableTag);
     LayoutEngine *result = NULL;
 	
 	le_uint32   scriptCode = getScriptCode(scriptTag);
@@ -74,7 +82,8 @@ LayoutEngine* XeTeXOTLayoutEngine::LayoutEngineFactory
 
 	le_int32	typoFlags = 3;
 
-    if (gsubTable != NULL && gsubTable->coversScript(scriptTag)) {
+    if ((gsubTable != NULL && gsubTable->coversScript(scriptTag))
+    	|| (gposTable != NULL && gposTable->coversScript(scriptTag))) {
         switch (scriptCode) {
         case bengScriptCode:
         case devaScriptCode:
@@ -102,7 +111,7 @@ LayoutEngine* XeTeXOTLayoutEngine::LayoutEngineFactory
         case hiraScriptCode:
         case kanaScriptCode:
         case hrktScriptCode:
-            result = new XeTeXHanLayoutEngine(fontInstance, scriptTag, languageTag, gsubTable, addFeatures, addParams, removeFeatures);
+            result = new XeTeXHanLayoutEngine(fontInstance, scriptTag, languageTag, gsubTable, gposTable, addFeatures, addParams, removeFeatures);
             break;
 
         case khmrScriptCode:
@@ -110,7 +119,7 @@ LayoutEngine* XeTeXOTLayoutEngine::LayoutEngineFactory
             break;
 
         default:
-            result = new XeTeXOTLayoutEngine(fontInstance, scriptTag, languageTag, gsubTable, addFeatures, addParams, removeFeatures);
+            result = new XeTeXOTLayoutEngine(fontInstance, scriptTag, languageTag, gsubTable, gposTable, addFeatures, addParams, removeFeatures);
             break;
         }
     }
@@ -149,21 +158,13 @@ LayoutEngine* XeTeXOTLayoutEngine::LayoutEngineFactory
     return result;
 }
 
-/*
- * XeTeXOTLayoutEngine
- */
-
-const char XeTeXOTLayoutEngine::fgClassID=0;
-
 XeTeXOTLayoutEngine::XeTeXOTLayoutEngine(
 	const LEFontInstance* fontInstance, LETag scriptTag, LETag languageTag,
-	const GlyphSubstitutionTableHeader* gsubTable,
+	const GlyphSubstitutionTableHeader* gsubTable, const GlyphPositioningTableHeader* gposTable,
 	const LETag* addFeatures, const le_int32* addParams, const LETag* removeFeatures)
 		: OpenTypeLayoutEngine(fontInstance, getScriptCode(scriptTag), getLanguageCode(languageTag), 3, gsubTable)
 {
-    static le_uint32 gposTableTag = LE_GPOS_TABLE_TAG;
-
-	fDefaultFeatures = fFeatureList;
+	fDefaultFeatureMap = fFeatureMap;
 	
 	// check the result of setScriptAndLanguageTags(), in case they were unknown to ICU
 	if (fScriptTag != scriptTag || fLangSysTag != languageTag) {
@@ -172,7 +173,6 @@ XeTeXOTLayoutEngine::XeTeXOTLayoutEngine(
 	
 		// reset the GPOS if the tags changed
 		fGPOSTable = NULL;
-		const GlyphPositioningTableHeader *gposTable = (const GlyphPositioningTableHeader *) getFontTable(gposTableTag);
 		if (gposTable != NULL && gposTable->coversScriptAndLanguage(fScriptTag, fLangSysTag)) {
 			fGPOSTable = gposTable;
 		}
@@ -183,8 +183,8 @@ XeTeXOTLayoutEngine::XeTeXOTLayoutEngine(
 
 XeTeXOTLayoutEngine::~XeTeXOTLayoutEngine()
 {
-	if (fFeatureList != NULL && fFeatureList != fDefaultFeatures)
-		LE_DELETE_ARRAY(fFeatureList);
+	if (fFeatureMap != NULL && fFeatureMap != fDefaultFeatureMap)
+		LE_DELETE_ARRAY(fFeatureMap);
 	if (fFeatureParamList != NULL)
 		LE_DELETE_ARRAY(fFeatureParamList);
 }
@@ -194,69 +194,104 @@ void XeTeXOTLayoutEngine::adjustFeatures(const LETag* addTags, const le_int32* a
 	// bail out if nothing was requested!
 	if ((addTags == NULL || *addTags == emptyTag) && (removeTags == NULL || *removeTags == emptyTag))
 		return;
-	
-	// count the max possible number of tags we might end up with
-	le_uint32   count = 0;
-	const LETag*	pTag = fFeatureList;
-	while (*pTag++ != emptyTag)
-		count++;
-	if (addTags != NULL && *addTags != emptyTag) {
-		pTag = addTags;
-		while (*pTag++ != emptyTag)
-			count++;
-	}
-	
-	// allocate new array for the tag list, big enough for max count
-	LETag* newList = LE_NEW_ARRAY(LETag, count + 1);
-	
-	// copy the existing tags, skipping any in the remove list
-	LETag*  dest = newList;
-	le_int32* newParams = LE_NEW_ARRAY(le_int32, count);
-	le_int32*	dest2 = newParams;
-	pTag = fFeatureList;
-	while (*pTag != emptyTag) {
-		const LETag*	t = removeTags;
-		if (t != NULL)
-			while (*t != emptyTag)
-				if (*t == *pTag)
+
+	// figure out total tag count: initial set - removed tags + added tags omitting duplicates
+	le_int32	totalCount = 0;
+	for (le_int32 i = 0; i < fFeatureMapCount; ++i) {
+		// skip any that are disabled by the mask
+		if ((fFeatureMask & fFeatureMap[i].mask) != 0) {
+			bool	remove = false;
+			for (const LETag* r = removeTags; r != NULL && *r != emptyTag; ++r)
+				if (*r == fFeatureMap[i].tag) {
+					remove = true;
 					break;
-				else
-					t++;
-		if (t == NULL || *t == emptyTag) {
-			*dest++ = *pTag;
-			*dest2++ = 0;
+				}
+			if (!remove)
+				++totalCount;
 		}
-		pTag++;
 	}
-	
-	// copy the added tags and parameters, skipping any already present
-	pTag = addTags;
-	const le_int32* pParam = addParams;
-	if (pTag != NULL)
-		while (*pTag != emptyTag) {
-			const LETag*	t = newList;
-			while (t < dest)
-				if (*t == *pTag)
-					break;
-				else
-					t++;
-			if (t == dest) {
-				*dest++ =  *pTag;
-				*dest2++ = *pParam;
+	for (const LETag* a = addTags; a != NULL && *a != emptyTag; ++a) {
+		// before counting an add tag, check original map, and check for duplicates in list
+		bool	add = true;
+		for (le_int32 i = 0; i < fFeatureMapCount; ++i)
+			if (*a == fFeatureMap[i].tag) {
+				if ((fFeatureMask & fFeatureMap[i].mask) != 0)
+					add = false;
+				break;
 			}
-			pTag++;
-			pParam++;
+		if (add) {
+			for (const LETag* t = addTags; t != a; ++t)
+				if (*a == *t) {
+					add = false;
+					break;
+				}
 		}
+		if (add)
+			++totalCount;
+	}
 	
-	// terminate the new list
-	*dest = emptyTag;
+	if (totalCount > 32)
+		fprintf(stderr, "\n*** feature count exceeds mask size; some features will be ignored\n");
+
+	// allocate new map
+	FeatureMap* newFeatureMap = LE_NEW_ARRAY(FeatureMap, totalCount);
+	le_int32	newFeatureCount = 0;
+	le_int32*	newParamList = (addParams == NULL) ? NULL : LE_NEW_ARRAY(le_int32, totalCount);
 	
-	// delete the previous list, unless it was the static default array
-	if (fFeatureList != fDefaultFeatures)
-		LE_DELETE_ARRAY(fFeatureList);
-	
-	fFeatureList = newList;
-	fFeatureParamList = newParams;
+	// copy the features into the map and assign mask bits
+	FeatureMask	newFeatureMask = 0;
+	FeatureMask	maskBit = 0x80000000UL;
+	for (le_int32 i = 0; i < fFeatureMapCount; ++i) {
+		bool	remove = false;
+		if ((fFeatureMask & fFeatureMap[i].mask) == 0)
+			remove = true;
+		else
+			for (const LETag* r = removeTags; r != NULL && *r != emptyTag; ++r)
+				if (*r == fFeatureMap[i].tag) {
+					remove = true;
+					break;
+				}
+		if (!remove) {
+			newFeatureMap[newFeatureCount].tag = fFeatureMap[i].tag;
+			newFeatureMap[newFeatureCount].mask = maskBit;
+			if (newParamList != NULL)
+				newParamList[newFeatureCount] = 0;
+			++newFeatureCount;
+			newFeatureMask |= maskBit;
+			maskBit >>= 1;
+		}
+	}
+	const le_int32* param = addParams;
+	for (const LETag* a = addTags; a != NULL && *a != emptyTag; ++a) {
+		bool	add = true;
+		for (le_int32 i = 0; i < fFeatureMapCount; ++i)
+			if (*a == fFeatureMap[i].tag) {
+				if ((fFeatureMask & fFeatureMap[i].mask) != 0)
+					add = false;
+				break;
+			}
+		if (add) {
+			for (const LETag* t = addTags; t != a; ++t)
+				if (*a == *t) {
+					add = false;
+					break;
+				}
+		}
+		if (add) {
+			newFeatureMap[newFeatureCount].tag = *a;
+			newFeatureMap[newFeatureCount].mask = maskBit;
+			if (newParamList != NULL)
+				newParamList[newFeatureCount] = *param++;
+			++newFeatureCount;
+			newFeatureMask |= maskBit;
+			maskBit >>= 1;
+		}
+	}
+
+	fFeatureMask = newFeatureMask;
+	fFeatureMap = newFeatureMap;
+	fFeatureMapCount = newFeatureCount;
+	fFeatureParamList = newParamList;
 }
 
 
@@ -264,7 +299,7 @@ void XeTeXOTLayoutEngine::adjustFeatures(const LETag* addTags, const le_int32* a
  * XeTeXHanLayoutEngine
  */
 
-const char XeTeXHanLayoutEngine::fgClassID=0;
+UOBJECT_DEFINE_RTTI_IMPLEMENTATION(XeTeXHanLayoutEngine)
 
 static const LETag loclFeatureTag = LE_LOCL_FEATURE_TAG;
 static const LETag smplFeatureTag = LE_SMPL_FEATURE_TAG;
@@ -272,18 +307,36 @@ static const LETag tradFeatureTag = LE_TRAD_FEATURE_TAG;
 static const LETag vertFeatureTag = LE_VERT_FEATURE_TAG;
 static const LETag vrt2FeatureTag = LE_VRT2_FEATURE_TAG;
 
-static const LETag horizontalFeatures[] = {loclFeatureTag, emptyTag};
-static const LETag verticalFeatures[] = {loclFeatureTag, vrt2FeatureTag, vertFeatureTag, emptyTag};
+#define loclFeatureMask 0x80000000UL
+#define smplFeatureMask 0x40000000UL
+#define tradFeatureMask 0x20000000UL
+#define vertFeatureMask 0x10000000UL
+#define vrt2FeatureMask 0x08000000UL
+
+static const FeatureMap featureMap[] = {
+    {loclFeatureTag, loclFeatureMask},
+    {smplFeatureTag, smplFeatureMask},
+    {tradFeatureTag, tradFeatureMask},
+    {vertFeatureTag, vertFeatureMask},
+    {vrt2FeatureTag, vrt2FeatureMask},
+};
+static const le_int32 featureMapCount = LE_ARRAY_SIZE(featureMap);
+
+#define HORIZ_FEATURES (loclFeatureMask)
+#define VERT_FEATURES  (loclFeatureMask|vertFeatureMask|vrt2FeatureMask)
 
 XeTeXHanLayoutEngine::XeTeXHanLayoutEngine(const XeTeXFontInst *fontInstance, LETag scriptTag, LETag languageTag,
-                            const GlyphSubstitutionTableHeader *gsubTable,
+                            const GlyphSubstitutionTableHeader *gsubTable, const GlyphPositioningTableHeader *gposTable,
 							const LETag *addFeatures, const le_int32* addParams,
 							const LETag *removeFeatures)
-	: XeTeXOTLayoutEngine(fontInstance, scriptTag, languageTag, gsubTable, NULL, NULL, NULL)
+	: XeTeXOTLayoutEngine(fontInstance, scriptTag, languageTag, gsubTable, gposTable, NULL, NULL, NULL)
 {
-	// reset the default feature list
-	fFeatureList = fontInstance->getLayoutDirVertical() ? verticalFeatures : horizontalFeatures;
-	fDefaultFeatures = fFeatureList;
+	// reset the feature map and default features
+	fFeatureMap = featureMap;
+	fDefaultFeatureMap = fFeatureMap;
+	fFeatureMapCount = featureMapCount;
+
+	fFeatureMask = fontInstance->getLayoutDirVertical() ? VERT_FEATURES : HORIZ_FEATURES;
 	
 	// then apply any adjustments
 	adjustFeatures(addFeatures, addParams, removeFeatures);

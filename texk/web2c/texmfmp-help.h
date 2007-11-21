@@ -427,13 +427,7 @@ const_string XETEXHELP[] = {
     "-mltex                  enable MLTeX extensions such as \\charsubdef",
     "-output-comment=STRING  use STRING for XDV file comment instead of date",
     "-output-directory=DIR   use DIR as the directory to write files to",
-    "-output-driver=CMD      use CMD as the XDV-to-PDF driver instead of "
-#ifdef XETEX_MAC
-                             "xdv2pdf"
-#else
-                             "xdvipdfmx"
-#endif
-                             ,
+    "-output-driver=CMD      use CMD as the XDV-to-PDF driver instead of xdvipdfmx",
     "-no-pdf                 generate XDV (extended DVI) output rather than PDF",
     "[-no]-parse-first-line  disable/enable parsing of the first line of the",
     "                          input file",

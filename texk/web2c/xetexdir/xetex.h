@@ -51,7 +51,7 @@ authorization from SIL International.
 #define makexdvglypharraydata(p)				makeXDVGlyphArrayData(&(mem[p]))
 #define xdvbufferbyte(i)						xdvbuffer[i]
 
-void* getotassemblyptr(int f, int g); /* function in XeTeXOTMath.cpp */
+void* getotassemblyptr(int f, int g, int horiz); /* function in XeTeXOTMath.cpp */
 
 #define pic_node_size		8
 

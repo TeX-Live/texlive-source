@@ -1,48 +1,3 @@
-% /****************************************************************************\
-%  Part of the XeTeX typesetting system
-%  copyright (c) 1994-2006 by SIL International
-%  written by Jonathan Kew
-% 
-% Permission is hereby granted, free of charge, to any person obtaining  
-% a copy of this software and associated documentation files (the  
-% "Software"), to deal in the Software without restriction, including  
-% without limitation the rights to use, copy, modify, merge, publish,  
-% distribute, sublicense, and/or sell copies of the Software, and to  
-% permit persons to whom the Software is furnished to do so, subject to  
-% the following conditions:
-%
-% The above copyright notice and this permission notice shall be  
-% included in all copies or substantial portions of the Software.
-%
-% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
-% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
-% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
-% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
-% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
-% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
-% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-%
-% Except as contained in this notice, the name of SIL International  
-% shall not be used in advertising or otherwise to promote the sale,  
-% use or other dealings in this Software without prior written  
-% authorization from SIL International.
-% \****************************************************************************/
-
-% Changes for XeTeX
-% =================
-%
-% Procedure to build xetex from web sources:
-%
-% (1) build etex-web2c.web:
-%	./tie -m etex.web ../../../../TeX/texk/web2c/tex.web ../../../../TeX/texk/web2c/etexdir/etex.ch ../../../../TeX/texk/web2c/etexdir/etex.fix
-%
-% (2) add xetex features, and remove enctex ones
-%	./tie -m xetex.web etex.web xetex-new.ch xetex-noenc.ch
-%
-% (4) use otangle, web2c, etc....
-%	./otangle xetex.web
-%	./web2c ........
-
 @x
 @* \[1] Introduction.
 @y
@@ -55,8 +10,8 @@
 @d eTeX_version_string=='-2.2' {current \eTeX\ version}
 
 @d XeTeX_version=0
-@d XeTeX_revision==".996"
-@d XeTeX_version_string=='-0.996-patch1' {current \XeTeX\ version}
+@d XeTeX_revision==".997"
+@d XeTeX_version_string=='-0.997' {current \XeTeX\ version}
 @z
 
 @x
@@ -93,7 +48,11 @@
 @#
 @d XeTeX_dash_break_code			= 1 {non-zero to enable breaks after en- and em-dashes}
 @#
-@d XeTeX_default_input_mode_code    = 2 {input mode for newly opened files}
+@d XeTeX_upwards_code = 2 {non-zero if the main vertical list is being built upwards}
+@d XeTeX_use_glyph_metrics_code = 3 {non-zero to use exact glyph height/depth}
+@d XeTeX_inter_char_tokens_code = 4 {non-zero to enable \\XeTeXinterchartokens insertion}
+@#
+@d XeTeX_default_input_mode_code    = 5 {input mode for newly opened files}
 @d XeTeX_input_mode_auto    = 0
 @d XeTeX_input_mode_utf8    = 1
 @d XeTeX_input_mode_utf16be = 2
@@ -101,9 +60,9 @@
 @d XeTeX_input_mode_raw     = 4
 @d XeTeX_input_mode_icu_mapping = 5
 @#
-@d XeTeX_default_input_encoding_code = 3 {str_number of encoding name if mode = ICU}
+@d XeTeX_default_input_encoding_code = 6 {str_number of encoding name if mode = ICU}
 @#
-@d eTeX_states=4 {number of \eTeX\ state variables in |eqtb|}
+@d eTeX_states=7 {number of \eTeX\ state variables in |eqtb|}
 @z
 
 @x
@@ -115,9 +74,11 @@
 
 @d biggest_char=65535 {the largest allowed character number;
    must be |<=max_quarterword|}
+@d biggest_usv=@"10FFFF {the largest Unicode Scalar Value}
 @d too_big_char=65536 {|biggest_char+1|}
 @d special_char=65537 {|biggest_char+2|}
 @d number_chars=65536 {|biggest_char+1|}
+@d number_usvs=@"110000
 @d biggest_reg=255 {the largest allowed register number;
    must be |<=max_quarterword|}
 @d number_regs=256 {|biggest_reg+1|}
@@ -168,6 +129,178 @@ system libraries.
 @z
 
 @x
+@!xord: array [text_char] of ASCII_code;
+  {specifies conversion of input characters}
+xchr: array [ASCII_code] of text_char;
+   { specifies conversion of output characters }
+xprn: array [ASCII_code] of ASCII_code;
+   { non zero iff character is printable }
+mubyte_read: array [ASCII_code] of pointer;
+   { non zero iff character begins the multi byte code }
+mubyte_write: array [ASCII_code] of str_number;
+   { non zero iff character expands to multi bytes in log and write files }
+mubyte_cswrite: array [0..127] of pointer;
+   { non null iff cs mod 128 expands to multi bytes in log and write files }
+mubyte_skip: integer;  { the number of bytes to skip in |buffer| }
+mubyte_keep: integer; { the number of chars we need to keep unchanged }
+mubyte_skeep: integer; { saved |mubyte_keep| }
+mubyte_prefix: integer; { the type of mubyte prefix }
+mubyte_tablein: boolean; { the input side of table will be updated }
+mubyte_tableout: boolean; { the output side of table will be updated }
+mubyte_relax: boolean; { the relax prefix is used }
+mubyte_start: boolean; { we are making the token at the start of the line }
+mubyte_sstart: boolean; { saved |mubyte_start| }
+mubyte_token: pointer; { the token returned by |read_buffer| }
+mubyte_stoken: pointer; { saved first token in mubyte primitive }
+mubyte_sout: integer; { saved value of |mubyte_out| }
+mubyte_slog: integer; { saved value of |mubyte_log| }
+spec_sout: integer; { saved value of |spec_out| }
+no_convert: boolean; { conversion supressed by noconvert primitive }
+active_noconvert: boolean; { true if noconvert primitive is active }
+write_noexpanding: boolean; { true only if we need not write expansion }
+cs_converting: boolean; { true only if we need csname converting }
+special_printing: boolean; { true only if we need converting in special }
+message_printing: boolean; { true if message or errmessage prints to string }
+@y
+@!xchr: ^text_char;
+  {dummy variable so tangle doesn't complain; not actually used}
+@z
+
+@x
+xchr[@'40]:=' ';
+xchr[@'41]:='!';
+xchr[@'42]:='"';
+xchr[@'43]:='#';
+xchr[@'44]:='$';
+xchr[@'45]:='%';
+xchr[@'46]:='&';
+xchr[@'47]:='''';@/
+xchr[@'50]:='(';
+xchr[@'51]:=')';
+xchr[@'52]:='*';
+xchr[@'53]:='+';
+xchr[@'54]:=',';
+xchr[@'55]:='-';
+xchr[@'56]:='.';
+xchr[@'57]:='/';@/
+xchr[@'60]:='0';
+xchr[@'61]:='1';
+xchr[@'62]:='2';
+xchr[@'63]:='3';
+xchr[@'64]:='4';
+xchr[@'65]:='5';
+xchr[@'66]:='6';
+xchr[@'67]:='7';@/
+xchr[@'70]:='8';
+xchr[@'71]:='9';
+xchr[@'72]:=':';
+xchr[@'73]:=';';
+xchr[@'74]:='<';
+xchr[@'75]:='=';
+xchr[@'76]:='>';
+xchr[@'77]:='?';@/
+xchr[@'100]:='@@';
+xchr[@'101]:='A';
+xchr[@'102]:='B';
+xchr[@'103]:='C';
+xchr[@'104]:='D';
+xchr[@'105]:='E';
+xchr[@'106]:='F';
+xchr[@'107]:='G';@/
+xchr[@'110]:='H';
+xchr[@'111]:='I';
+xchr[@'112]:='J';
+xchr[@'113]:='K';
+xchr[@'114]:='L';
+xchr[@'115]:='M';
+xchr[@'116]:='N';
+xchr[@'117]:='O';@/
+xchr[@'120]:='P';
+xchr[@'121]:='Q';
+xchr[@'122]:='R';
+xchr[@'123]:='S';
+xchr[@'124]:='T';
+xchr[@'125]:='U';
+xchr[@'126]:='V';
+xchr[@'127]:='W';@/
+xchr[@'130]:='X';
+xchr[@'131]:='Y';
+xchr[@'132]:='Z';
+xchr[@'133]:='[';
+xchr[@'134]:='\';
+xchr[@'135]:=']';
+xchr[@'136]:='^';
+xchr[@'137]:='_';@/
+xchr[@'140]:='`';
+xchr[@'141]:='a';
+xchr[@'142]:='b';
+xchr[@'143]:='c';
+xchr[@'144]:='d';
+xchr[@'145]:='e';
+xchr[@'146]:='f';
+xchr[@'147]:='g';@/
+xchr[@'150]:='h';
+xchr[@'151]:='i';
+xchr[@'152]:='j';
+xchr[@'153]:='k';
+xchr[@'154]:='l';
+xchr[@'155]:='m';
+xchr[@'156]:='n';
+xchr[@'157]:='o';@/
+xchr[@'160]:='p';
+xchr[@'161]:='q';
+xchr[@'162]:='r';
+xchr[@'163]:='s';
+xchr[@'164]:='t';
+xchr[@'165]:='u';
+xchr[@'166]:='v';
+xchr[@'167]:='w';@/
+xchr[@'170]:='x';
+xchr[@'171]:='y';
+xchr[@'172]:='z';
+xchr[@'173]:='{';
+xchr[@'174]:='|';
+xchr[@'175]:='}';
+xchr[@'176]:='~';@/
+@y
+{ don't need to set up xchr here }
+@z
+
+@x
+{Initialize |xchr| to the identity mapping.}
+for i:=0 to @'37 do xchr[i]:=i;
+for i:=@'177 to @'377 do xchr[i]:=i;
+{Initialize enc\TeX\ data.}
+for i:=0 to 255 do mubyte_read[i]:=null;
+for i:=0 to 255 do mubyte_write[i]:=0;
+for i:=0 to 128 do mubyte_cswrite[i]:=null;
+mubyte_keep := 0; mubyte_start := false;
+write_noexpanding := false; cs_converting := false;
+special_printing := false; message_printing := false;
+no_convert := false; active_noconvert := false;
+@y
+@z
+
+@x
+for i:=first_text_char to last_text_char do xord[chr(i)]:=invalid_code;
+for i:=@'200 to @'377 do xord[xchr[i]]:=i;
+for i:=0 to @'176 do xord[xchr[i]]:=i;
+{Set |xprn| for printable ASCII, unless |eight_bit_p| is set.}
+for i:=0 to 255 do xprn[i]:=(eight_bit_p or ((i>=" ")and(i<="~")));
+
+{The idea for this dynamic translation comes from the patch by
+ Libor Skarvada \.{<libor@@informatics.muni.cz>}
+ and Petr Sojka \.{<sojka@@informatics.muni.cz>}. I didn't use any of the
+ actual code, though, preferring a more general approach.}
+
+{This updates the |xchr|, |xord|, and |xprn| arrays from the provided
+ |translate_filename|.  See the function definition in \.{texmfmp.c} for
+ more comments.}
+if translate_filename then read_tcx_file;
+@y
+@z
+
+@x
 @* \[3] Input and output.
 @y
 @* \[3] Input and output.
@@ -183,6 +316,12 @@ system libraries.
 @!name_length:0..file_name_size;@/{this many characters are actually
   relevant in |name_of_file| (the rest are blank)}
 @!name_length16:0..file_name_size;
+@z
+
+@x
+@!buffer:^ASCII_code; {lines of characters being read}
+@y
+@!buffer:^UnicodeScalar; {lines of characters being read}
 @z
 
 @x
@@ -266,9 +405,20 @@ incr(str_ptr); str_start_macro(str_ptr):=pool_ptr;
 @x
 begin j:=str_start[s];
 while j<str_start[s+1] do
+  begin if so(str_pool[j])<>buffer[k] then
 @y
 begin j:=str_start_macro(s);
 while j<str_start_macro(s+1) do
+  begin
+    if buffer[k]>=@"10000 then
+      if so(str_pool[j])<>@"D800+(buffer[k]-@"10000)div@"400 then
+        begin result:=false; goto not_found;
+        end
+      else if so(str_pool[j+1])<>@"DC00+(buffer[k]-@"10000)mod@"400 then
+        begin result:=false; goto not_found;
+        end
+      else incr(j)
+    else if so(str_pool[j])<>buffer[k] then
 @z
 
 @x
@@ -346,41 +496,80 @@ end
 @z
 
 @x
-name_of_file := xmalloc_array (ASCII_code, name_length + 1);
-@y
-name_of_file := xmalloc_array (UTF8_code, name_length + 1);
-@z
+@ When the \.{WEB} system program called \.{TANGLE} processes the \.{TEX.WEB}
+description that you are now reading, it outputs the \PASCAL\ program
+\.{TEX.PAS} and also a string pool file called \.{TEX.POOL}. The \.{INITEX}
+@.WEB@>@.INITEX@>
+program reads the latter file, where each string appears as a two-digit decimal
+length followed by the string itself, and the information is recorded in
+\TeX's string memory.
 
-@x
+@<Glob...@>=
+@!init @!pool_file:alpha_file; {the string-pool file output by \.{TANGLE}}
+tini
+
+@ @d bad_pool(#)==begin wake_up_terminal; write_ln(term_out,#);
+  a_close(pool_file); get_strings_started:=false; return;
+  end
+@<Read the other strings...@>=
+name_length := strlen (pool_name);
+name_of_file := xmalloc_array (ASCII_code, name_length + 1);
+strcpy (stringcast(name_of_file+1), pool_name); {copy the string}
+if a_open_in (pool_file, kpse_texpool_format) then
+  begin c:=false;
+  repeat @<Read one string, but return |false| if the
+    string memory space is getting too tight for comfort@>;
+  until c;
+  a_close(pool_file); get_strings_started:=true;
+  end
+else  bad_pool('! I can''t read ', pool_name, '; bad path?')
+@.I can't read TEX.POOL@>
+
+@ @<Read one string...@>=
+begin if eof(pool_file) then bad_pool('! ', pool_name, ' has no check sum.');
+@.TEX.POOL has no check sum@>
+read(pool_file,m); read(pool_file,n); {read two digits of string length}
+if m='*' then @<Check the pool check sum@>
 else  begin if (xord[m]<"0")or(xord[m]>"9")or@|
       (xord[n]<"0")or(xord[n]>"9") then
-@y
-else  begin if (m<"0")or(m>"9")or@|
-      (n<"0")or(n>"9") then
-@z
-
-@x
+    bad_pool('! ', pool_name, ' line doesn''t begin with two digits.');
+@.TEX.POOL line doesn't...@>
   l:=xord[m]*10+xord[n]-"0"*11; {compute the length}
-@y
-  l:=m*10+n-"0"*11; {compute the length}
-@z
-
-@x
+  if pool_ptr+l+string_vacancies>pool_size then
+    bad_pool('! You have to increase POOLSIZE.');
+@.You have to increase POOLSIZE@>
+  for k:=1 to l do
+    begin if eoln(pool_file) then m:=' '@+else read(pool_file,m);
     append_char(xord[m]);
-@y
-    append_char(m);
-@z
+    end;
+  read_ln(pool_file); g:=make_string;
+  end;
+end
 
-@x
+@ The \.{WEB} operation \.{@@\$} denotes the value that should be at the
+end of this \.{TEX.POOL} file; any other value means that the wrong pool
+file has been loaded.
+@^check sum@>
+
+@<Check the pool check sum@>=
+begin a:=0; k:=1;
 loop@+  begin if (xord[n]<"0")or(xord[n]>"9") then
-@y
-loop@+  begin if (n<"0")or(n>"9") then
-@z
-
-@x
+  bad_pool('! ', pool_name, ' check sum doesn''t have nine digits.');
+@.TEX.POOL check sum...@>
   a:=10*a+xord[n]-"0";
+  if k=9 then goto done;
+  incr(k); read(pool_file,n);
+  end;
+done: if a<>@$ then
+  bad_pool('! ', pool_name, ' doesn''t match; tangle me again (or fix the path).');
+@.TEX.POOL doesn't match@>
+c:=true;
+end
 @y
-  a:=10*a+n-"0";
+@ @<Read the other strings...@>=
+if init_pool(pool_size-string_vacancies) = 0 then
+  get_strings_started:=false;
+get_strings_started:=true;
 @z
 
 @x
@@ -462,11 +651,16 @@ when it comes to determining whether a character is printable.
   if l<10 then print_visible_char(l+"0")@+else print_visible_char(l-10+"a")
 
 @<Basic printing...@>=
-procedure print_char(@!s:ASCII_code); {prints a single character}
+procedure print_char(@!s:integer); {prints a single character}
 label exit;
 var l: small_number;
-begin if (selector>pseudo) and (not doing_special) then {"printing" to a new string, don't encode chars}
-  begin print_visible_char(s); return;
+begin if (selector>pseudo) and (not doing_special) then
+  {"printing" to a new string, encode as UTF-16 rather than UTF-8}
+  begin if s>=@"10000 then begin
+      print_visible_char(@"D800 + (s - @"10000) div @"400);
+      print_visible_char(@"DC00 + (s - @"10000) mod @"400);
+    end else print_visible_char(s);
+    return;
   end;
 if @<Character |s| is the current new-line character@> then
  if selector<pseudo then
@@ -493,19 +687,36 @@ end else begin
 		print_visible_char(@"C0 + s div @"40);
 		print_visible_char(@"80 + s mod @"40);
 	end
-	else begin
-		print_visible_char(@"E0 + s div @"1000);
+	else if s<@"10000 then begin
+		print_visible_char(@"E0 + (s div @"1000));
 		print_visible_char(@"80 + (s mod @"1000) div @"40);
-		print_visible_char(@"80 + (s mod @"1000) mod @"40);
+		print_visible_char(@"80 + (s mod @"40));
+	end else begin
+		print_visible_char(@"F0 + (s div @"40000));
+		print_visible_char(@"80 + (s mod @"40000) div @"1000);
+		print_visible_char(@"80 + (s mod @"1000) div @"40);
+		print_visible_char(@"80 + (s mod @"40));
 	end
 end;
 exit:end;
 
+@ @d native_room(#)==while native_text_size <= native_len+# do begin
+    native_text_size:=native_text_size+128;
+    native_text:=xrealloc(native_text, native_text_size * sizeof(UTF16_code));
+  end
+@d append_native(#)==begin native_text[native_len]:=#; incr(native_len); end
+
 @ @<Glob...@>=
-doing_special: boolean;
+@!doing_special: boolean;
+@!native_text: ^UTF16_code; { buffer for collecting native-font strings }
+@!native_text_size: integer; { size of buffer }
+@!native_len: integer;
+@!save_native_len: integer;
 
 @ @<Set init...@>=
 doing_special:=false;
+native_text_size:=128;
+native_text:=xmalloc(native_text_size * sizeof(UTF16_code));
 @z
 
 @x
@@ -570,7 +781,13 @@ else if s<biggest_char then
     end;
 j:=str_start_macro(s);
 while j<str_start_macro(s+1) do
-  begin print_char(so(str_pool[j])); incr(j);
+  if (so(str_pool[j])>=@"D800) and (so(str_pool[j])<=@"DFFF) then
+  begin if (so(str_pool[j])<=@"DBFF) and (j+1<str_start_macro(s+1))
+    and (so(str_pool[j+1])>=@"DC00) and (so(str_pool[j+1])<=@"DFFF) then
+    begin print_char(@"10000 + (so(str_pool[j])-@"D800) * @"400
+                     + so(str_pool[j+1])-@"DC00); j:=j+2;
+    end
+  end else begin print_char(so(str_pool[j])); incr(j);
   end;
 exit:end;
 @z
@@ -600,11 +817,25 @@ possible aid to future software arch\ae ologists.
 @z
 
 @x
+if translate_filename then begin
+  wterm(' (');
+  fputs(translate_filename, stdout);
+  wterm_ln(')');
+end;
+@y
+if translate_filename then begin
+  wterm(' (WARNING: translate-file "');
+  fputs(translate_filename, stdout);
+  wterm_ln('" ignored)');
+end;
+@z
+
+@x
 begin  @<Set variable |c| to the current escape character@>;
 if c>=0 then if c<256 then print(c);
 @y
 begin  @<Set variable |c| to the current escape character@>;
-if c>=0 then if c<=biggest_char then print_char(c);
+if c>=0 then if c<=biggest_usv then print_char(c);
 @z
 
 @x
@@ -684,6 +915,12 @@ if max_quarterword-min_quarterword<@"FFFF then bad:=19;
 @z
 
 @x
+@!word_file = file of memory_word;
+@y
+@!word_file = gzFile;
+@z
+
+@x
 @* \[9] Dynamic memory allocation.
 @y
 @* \[9] Dynamic memory allocation.
@@ -710,8 +947,7 @@ and then a word containing a size field for the node, a font number, a length, a
 Then there is a field containing a C pointer to a glyph info array;
 this and the glyph count are set by |set_native_metrics|.
 Copying and freeing of these nodes needs to take account of this!
-This is followed by |length| bytes, for the actual characters of the string.
-(Yes, we count in bytes, even though what we store there is UTF-16.)
+This is followed by |2*length| bytes, for the actual characters of the string (in UTF-16).
 
 So |native_node_size|, which does not include any space for the actual text, is 6.}
 
@@ -804,15 +1040,18 @@ hlist_node,vlist_node,ins_node,whatsit_node,mark_node,adjust_node,
 case type(p) of
 hlist_node,vlist_node,ins_node,mark_node,adjust_node,
   unset_node: print("[]");
-whatsit_node: if subtype(p)=native_word_node then begin
-	if native_font(p)<>font_in_short_display then begin
+whatsit_node:
+  case subtype(p) of
+    native_word_node: begin
+      if native_font(p)<>font_in_short_display then begin
 		print_esc(font_id_text(native_font(p)));
 		print_char(" ");
 		font_in_short_display:=native_font(p);
+	  end;
+	  print_native_word(p);
 	end;
-	print_native_word(p);
-end else
-	print("[]");
+	othercases print("[]")
+  endcases;
 @z
 
 @x
@@ -956,9 +1195,9 @@ single-character control sequences.
 @d single_base=active_base+256 {equivalents of one-character control sequences}
 @d null_cs=single_base+256 {equivalent of \.{\\csname\\endcsname}}
 @y
-@d single_base=active_base+number_chars
+@d single_base=active_base+number_usvs
    {equivalents of one-character control sequences}
-@d null_cs=single_base+number_chars {equivalent of \.{\\csname\\endcsname}}
+@d null_cs=single_base+number_usvs {equivalent of \.{\\csname\\endcsname}}
 @z
 
 @x
@@ -1021,6 +1260,13 @@ primitive("XeTeXlinebreakskip",assign_glue,glue_base+XeTeX_linebreak_skip_code);
 @z
 
 @x
+@d etex_toks=etex_toks_base+1 {end of \eTeX's token list parameters}
+@y
+@d XeTeX_inter_char_loc=every_eof_loc+1 {not really used, but serves as a flag}
+@d etex_toks=XeTeX_inter_char_loc+1 {end of \eTeX's token list parameters}
+@z
+
+@x
 @d toks_base=etex_toks {table of 256 token list registers}
 @#
 @d etex_pen_base=toks_base+256 {start of table of \eTeX's penalties}
@@ -1056,18 +1302,15 @@ primitive("XeTeXlinebreakskip",assign_glue,glue_base+XeTeX_linebreak_skip_code);
 @#
 @d box_base=etex_pens {table of number_regs box registers}
 @d cur_font_loc=box_base+number_regs {internal font number outside math mode}
-@d xord_code_base=cur_font_loc+1
-@d xchr_code_base=xord_code_base+1
-@d xprn_code_base=xchr_code_base+1
-@d math_font_base=xprn_code_base+1
+@d math_font_base=cur_font_loc+1
 @d cat_code_base=math_font_base+number_math_fonts
   {table of number_chars command codes (the ``catcodes'')}
-@d lc_code_base=cat_code_base+number_chars {table of number_chars lowercase mappings}
-@d uc_code_base=lc_code_base+number_chars {table of number_chars uppercase mappings}
-@d sf_code_base=uc_code_base+number_chars {table of number_chars spacefactor mappings}
-@d math_code_base=sf_code_base+number_chars {table of number_chars math mode mappings}
-@d char_sub_code_base=math_code_base+number_chars {table of character substitutions}
-@d int_base=char_sub_code_base+number_chars {beginning of region 5}
+@d lc_code_base=cat_code_base+number_usvs {table of number_chars lowercase mappings}
+@d uc_code_base=lc_code_base+number_usvs {table of number_chars uppercase mappings}
+@d sf_code_base=uc_code_base+number_usvs {table of number_chars spacefactor mappings}
+@d math_code_base=sf_code_base+number_usvs {table of number_chars math mode mappings}
+@d char_sub_code_base=math_code_base+number_usvs {table of character substitutions}
+@d int_base=char_sub_code_base+number_usvs {beginning of region 5}
 @z
 
 @x
@@ -1100,7 +1343,7 @@ for k:=math_font_base to math_font_base+number_math_fonts-1 do eqtb[k]:=eqtb[cur
 @x
 for k:=0 to 255 do
 @y
-for k:=0 to number_chars-1 do
+for k:=0 to number_usvs-1 do
 @z
 
 @x
@@ -1139,12 +1382,23 @@ else  begin print_esc("scriptscriptfont");
 @z
 
 @x
+@d mubyte_in_code=web2c_int_base+3 {if positive then reading mubytes is active}
+@d mubyte_out_code=web2c_int_base+4 {if positive then printing mubytes is active}
+@d mubyte_log_code=web2c_int_base+5 {if positive then print mubytes to log and terminal}
+@d spec_out_code=web2c_int_base+6 {if positive then print specials by mubytes}
+@d web2c_int_pars=web2c_int_base+7 {total number of web2c's integer parameters}
+@y
+@d web2c_int_pars=web2c_int_base+3 {total number of web2c's integer parameters}
+@z
+
+@x
 @d eTeX_state_code=etex_int_base+9 {\eTeX\ state variables}
 @d etex_int_pars=eTeX_state_code+eTeX_states {total number of \eTeX's integer parameters}
 @y
-@d XeTeX_linebreak_locale_code=etex_int_base+9 {string number of locale to use for linebreak locations}
-@d XeTeX_linebreak_penalty_code=etex_int_base+10 {penalty to use at locale-dependent linebreak locations}
-@d eTeX_state_code=etex_int_base+11 {\eTeX\ state variables}
+@d suppress_fontnotfound_error_code=etex_int_base+9 {suppress errors for missing fonts}
+@d XeTeX_linebreak_locale_code=etex_int_base+10 {string number of locale to use for linebreak locations}
+@d XeTeX_linebreak_penalty_code=etex_int_base+11 {penalty to use at locale-dependent linebreak locations}
+@d eTeX_state_code=etex_int_base+12 {\eTeX\ state variables}
 @d etex_int_pars=eTeX_state_code+eTeX_states {total number of \eTeX's integer parameters}
 @z
 
@@ -1159,9 +1413,18 @@ else  begin print_esc("scriptscriptfont");
 @z
 
 @x
+@d mubyte_in==int_par(mubyte_in_code)
+@d mubyte_out==int_par(mubyte_out_code)
+@d mubyte_log==int_par(mubyte_log_code)
+@d spec_out==int_par(spec_out_code)
+@y
+@z
+
+@x
 @d saving_hyph_codes==int_par(saving_hyph_codes_code)
 @y
 @d saving_hyph_codes==int_par(saving_hyph_codes_code)
+@d suppress_fontnotfound_error==int_par(suppress_fontnotfound_error_code)
 @d XeTeX_linebreak_locale==int_par(XeTeX_linebreak_locale_code)
 @d XeTeX_linebreak_penalty==int_par(XeTeX_linebreak_penalty_code)
 @z
@@ -1175,12 +1438,35 @@ XeTeX_linebreak_penalty_code:print_esc("XeTeXlinebreakpenalty");
 @z
 
 @x
+mubyte_in_code:print_esc("mubytein");
+mubyte_out_code:print_esc("mubyteout");
+mubyte_log_code:print_esc("mubytelog");
+spec_out_code:print_esc("specialout");
+@y
+@z
+
+@x
 primitive("errorcontextlines",assign_int,int_base+error_context_lines_code);@/
 @!@:error_context_lines_}{\.{\\errorcontextlines} primitive@>
 @y
 primitive("errorcontextlines",assign_int,int_base+error_context_lines_code);@/
 @!@:error_context_lines_}{\.{\\errorcontextlines} primitive@>
 primitive("XeTeXlinebreakpenalty",assign_int,int_base+XeTeX_linebreak_penalty_code);@/
+@z
+
+@x
+if enctex_p then
+  begin enctex_enabled_p:=true;
+  primitive("mubytein",assign_int,int_base+mubyte_in_code);@/
+@!@:mubyte_in_}{\.{\\mubytein} primitive@>
+  primitive("mubyteout",assign_int,int_base+mubyte_out_code);@/
+@!@:mubyte_out_}{\.{\\mubyteout} primitive@>
+  primitive("mubytelog",assign_int,int_base+mubyte_log_code);@/
+@!@:mubyte_log_}{\.{\\mubytelog} primitive@>
+  primitive("specialout",assign_int,int_base+spec_out_code);@/
+@!@:spec_out_}{\.{\\specialout} primitive@>
+end;
+@y
 @z
 
 @x
@@ -1261,9 +1547,35 @@ for q:=active_base to box_base+biggest_reg do
 @z
 
 @x
+begin @<Compute the hash code |h|@>;
+p:=h+hash_base; {we start searching here; note that |0<=h<hash_prime|}
+loop@+begin if text(p)>0 then if length(text(p))=l then
+@y
+@!ll:integer; {length in utf16 code units}
+begin @<Compute the hash code |h|@>;
+p:=h+hash_base; {we start searching here; note that |0<=h<hash_prime|}
+ll:=l; for d:=0 to l-1 do if buffer[j+d]>=@"10000 then incr(ll);
+loop@+begin if text(p)>0 then if length(text(p))=ll then
+@z
+
+@x
+str_room(l); d:=cur_length;
 while pool_ptr>str_start[str_ptr] do
 @y
+str_room(ll); d:=cur_length;
 while pool_ptr>str_start_macro(str_ptr) do
+@z
+
+@x
+for k:=j to j+l-1 do append_char(buffer[k]);
+@y
+for k:=j to j+l-1 do begin
+  if buffer[k]<@"10000 then append_char(buffer[k])
+  else begin
+    append_char(@"D800+(buffer[k]-@"10000)div@"400);
+    append_char(@"DC00+(buffer[k]-@"10000)mod@"400);
+  end
+end;
 @z
 
 @x
@@ -1280,6 +1592,53 @@ the sequential searching in one of the 128 token lists.
 @z
 
 @x
+procedure print_cs(@!p:integer); {prints a purported control sequence}
+var q: pointer;
+    s: str_number;
+begin
+  if active_noconvert and (not no_convert) and
+     (eq_type(p) = let) and (equiv(p) = normal+11) then { noconvert }
+  begin
+     no_convert := true;
+     return;
+  end;
+  s := 0;
+  if cs_converting and (not no_convert) then
+  begin
+    q := mubyte_cswrite [p mod 128] ;
+    while q <> null do
+    if info (q) = p then
+    begin
+      s := info (link(q)); q := null;
+    end else  q := link (link (q));
+  end;
+  no_convert := false;
+  if s > 0 then print (s)
+  else if p<hash_base then {single character}
+@y
+procedure print_cs(@!p:integer); {prints a purported control sequence}
+begin if p<hash_base then {single character}
+@z
+
+@x
+  else print(p-active_base)
+@y
+  else print_char(p-active_base)
+@z
+
+@x
+exit: end;
+@y
+end;
+@z
+
+@x
+  if p<single_base then print(p-active_base)
+@y
+  if p<single_base then print_char(p-active_base)
+@z
+
+@x
 else  begin k:=str_start[s]; l:=str_start[s+1]-k;
 @y
 else  begin k:=str_start_macro(s); l:=str_start_macro(s+1)-k;
@@ -1290,6 +1649,15 @@ primitive("delimiter",delim_num,0);@/
 @y
 primitive("delimiter",delim_num,0);@/
 primitive("XeTeXdelimiter",delim_num,1);@/
+@z
+
+@x
+if enctex_p then
+begin
+  primitive("endmubyte",end_cs_name,10);@/
+@!@:end_mubyte_}{\.{\\endmubyte} primitive@>
+end;
+@y
 @z
 
 @x
@@ -1363,42 +1731,6 @@ radical: if chr_code=1 then print_esc("XeTeXradical") else print_esc("radical");
 @* \[19] Saving and restoring equivalents.
 @z
 
--- based on Omega; not needed with new xetex delimiter coding
- x
-@ The |eq_define| and |eq_word_define| routines take care of local definitions.
- y
-@#
-procedure eq_word_define1(@!p:pointer;@!w:integer);
-label exit;
-begin if eTeX_ex and(read_cint1(eqtb[p])=w) then
-  begin assign_trace(p,"reassigning")@;@/
-  return;
-  end;
-assign_trace(p,"changing")@;@/
-if xeq_level[p]<>cur_level then
-  begin eq_save(p,xeq_level[p]); xeq_level[p]:=cur_level;
-  end;
-set_cint1(eqtb[p],w);
-assign_trace(p,"into")@;@/
-exit:end;
-
-@ The |eq_define| and |eq_word_define| routines take care of local definitions.
- z
-
- x
-@ Subroutine |save_for_after| puts a token on the stack for save-keeping.
- y
-@#
-procedure geq_word_define1(@!p:pointer;@!w:integer); {global |eq_word_define1|}
-begin assign_trace(p,"globally changing")@;@/
-begin set_cint1(eqtb[p],w); xeq_level[p]:=level_one;
-end;
-assign_trace(p,"into")@;@/
-end;
-
-@ Subroutine |save_for_after| puts a token on the stack for save-keeping.
- z
-
 @x
 @* \[20] Token lists.
 @y
@@ -1444,29 +1776,69 @@ thus, a token fits comfortably in a halfword.
 @d end_match_token=@'7000 {$2^8\cdot|end_match|$}
 @d protected_token=@'7001 {$2^8\cdot|end_match|+1$}
 @y
-@d cs_token_flag=@"FFFFF {amount added to the |eqtb| location in a
+@d cs_token_flag=    @"1FFFFFF {@"FFFFF amount added to the |eqtb| location in a
   token that stands for a control sequence; is a multiple of~65536, less~1}
-@d max_char_val=@"10000 {to separate char and command code}
-@d left_brace_token=@"10000 {$2^16\cdot|left_brace|$}
-@d left_brace_limit=@"20000 {$2^16\cdot(|left_brace|+1)$}
-@d right_brace_token=@"20000 {$2^16\cdot|right_brace|$}
-@d right_brace_limit=@"30000 {$2^16\cdot(|right_brace|+1)$}
-@d math_shift_token=@"30000 {$2^16\cdot|math_shift|$}
-@d tab_token=@"40000 {$2^16\cdot|tab_mark|$}
-@d out_param_token=@"50000 {$2^16\cdot|out_param|$}
-@d space_token=@"A0020 {$2^16\cdot|spacer|+|" "|$}
-@d letter_token=@"B0000 {$2^16\cdot|letter|$}
-@d other_token=@"C0000 {$2^16\cdot|other_char|$}
-@d match_token=@"D0000 {$2^16\cdot|match|$}
-@d end_match_token=@"E0000 {$2^16\cdot|end_match|$}
+@d max_char_val=      @"200000 {@"10000 to separate char and command code}
+@d left_brace_token=  @"200000 {@"10000 $2^16\cdot|left_brace|$}
+@d left_brace_limit=  @"400000 {@"20000 $2^16\cdot(|left_brace|+1)$}
+@d right_brace_token= @"400000 {@"20000 $2^16\cdot|right_brace|$}
+@d right_brace_limit= @"600000 {@"30000 $2^16\cdot(|right_brace|+1)$}
+@d math_shift_token=  @"600000 {@"30000 $2^16\cdot|math_shift|$}
+@d tab_token=         @"800000 {@"40000 $2^16\cdot|tab_mark|$}
+@d out_param_token=   @"A00000 {@"50000 $2^16\cdot|out_param|$}
+@d space_token=      @"1400020 {@"A0020 $2^16\cdot|spacer|+|" "|$}
+@d letter_token=     @"1600000 {@"B0000 $2^16\cdot|letter|$}
+@d other_token=      @"1800000 {@"C0000 $2^16\cdot|other_char|$}
+@d match_token=      @"1A00000 {@"D0000 $2^16\cdot|match|$}
+@d end_match_token=  @"1C00000 {@"E0000 $2^16\cdot|end_match|$}
 
 @d protected_token=end_match_token+1 {$2^8\cdot|end_match|+1$}
+@z
+
+@x
+procedure show_token_list(@!p,@!q:integer;@!l:integer);
+label exit;
+var m,@!c:integer; {pieces of a token}
+@!match_chr:ASCII_code; {character used in a `|match|'}
+@y
+procedure show_token_list(@!p,@!q:integer;@!l:integer);
+label exit;
+var m,@!c:integer; {pieces of a token}
+@!match_chr:integer; {character used in a `|match|'}
 @z
 
 @x
 else  begin m:=info(p) div @'400; c:=info(p) mod @'400;
 @y
 else  begin m:=info(p) div max_char_val; c:=info(p) mod max_char_val;
+@z
+
+@x
+@<Display the token ...@>=
+case m of
+left_brace,right_brace,math_shift,tab_mark,sup_mark,sub_mark,spacer,
+  letter,other_char: print(c);
+mac_param: begin print(c); print(c);
+  end;
+out_param: begin print(match_chr);
+  if c<=9 then print_char(c+"0")
+  else  begin print_char("!"); return;
+    end;
+  end;
+match: begin match_chr:=c; print(c); incr(n); print_char(n);
+@y
+@<Display the token ...@>=
+case m of
+left_brace,right_brace,math_shift,tab_mark,sup_mark,sub_mark,spacer,
+  letter,other_char: print_char(c);
+mac_param: begin print_char(c); print_char(c);
+  end;
+out_param: begin print_char(match_chr);
+  if c<=9 then print_char(c+"0")
+  else  begin print_char("!"); return;
+    end;
+  end;
+match: begin match_chr:=c; print_char(c); incr(n); print_char(n);
 @z
 
 @x
@@ -1498,6 +1870,51 @@ var n:integer; {temp variable}
 @z
 
 @x
+@d inserted=4 {|token_type| code for inserted texts}
+@d macro=5 {|token_type| code for defined control sequences}
+@d output_text=6 {|token_type| code for output routines}
+@d every_par_text=7 {|token_type| code for \.{\\everypar}}
+@d every_math_text=8 {|token_type| code for \.{\\everymath}}
+@d every_display_text=9 {|token_type| code for \.{\\everydisplay}}
+@d every_hbox_text=10 {|token_type| code for \.{\\everyhbox}}
+@d every_vbox_text=11 {|token_type| code for \.{\\everyvbox}}
+@d every_job_text=12 {|token_type| code for \.{\\everyjob}}
+@d every_cr_text=13 {|token_type| code for \.{\\everycr}}
+@d mark_text=14 {|token_type| code for \.{\\topmark}, etc.}
+@#
+@d eTeX_text_offset=output_routine_loc-output_text
+@y
+@d backed_up_char=4 {special code for backed-up char from \\XeTeXinterchartoks hook}
+@d inserted=5 {|token_type| code for inserted texts}
+@d macro=6 {|token_type| code for defined control sequences}
+@d output_text=7 {|token_type| code for output routines}
+@d every_par_text=8 {|token_type| code for \.{\\everypar}}
+@d every_math_text=9 {|token_type| code for \.{\\everymath}}
+@d every_display_text=10 {|token_type| code for \.{\\everydisplay}}
+@d every_hbox_text=11 {|token_type| code for \.{\\everyhbox}}
+@d every_vbox_text=12 {|token_type| code for \.{\\everyvbox}}
+@d every_job_text=13 {|token_type| code for \.{\\everyjob}}
+@d every_cr_text=14 {|token_type| code for \.{\\everycr}}
+@d mark_text=15 {|token_type| code for \.{\\topmark}, etc.}
+@d inter_char_text=16 {text from \\XeTeXinterchartoks}
+@#
+@d eTeX_text_offset=output_routine_loc-output_text-1 {1 more to make space for the inter_char_text}
+@z
+
+@x
+backed_up: if loc=null then print_nl("<recently read> ")
+@y
+backed_up_char,backed_up: if loc=null then print_nl("<recently read> ")
+@z
+
+@x
+every_eof_text: print_nl("<everyeof> ");
+@y
+inter_char_text: print_nl("<XeTeXinterchartoks> ");
+every_eof_text: print_nl("<everyeof> ");
+@z
+
+@x
 for q:=p to first_count-1 do print_char(trick_buf[q mod error_line]);
 print_ln;
 for q:=1 to n do print_char(" "); {print |n| spaces to begin line~2}
@@ -1512,9 +1929,31 @@ for q:=first_count to p-1 do print_visible_char(trick_buf[q mod error_line]);
 @z
 
 @x
+i := start; mubyte_skeep := mubyte_keep;
+mubyte_sstart := mubyte_start; mubyte_start := false;
+if j>0 then while i < j do
+begin
+  if i=loc then set_trick_count;
+  print_buffer(i);
+end;
+mubyte_keep := mubyte_skeep; mubyte_start := mubyte_sstart
+@y
+if j>0 then for i:=start to j-1 do
+  begin if i=loc then set_trick_count;
+  print_char(buffer[i]);
+  end
+@z
+
+@x
 @* \[23] Maintaining the input stacks.
 @y
 @* \[23] Maintaining the input stacks.
+@z
+
+@x
+      othercases print_cmd_chr(assign_toks,t-output_text+output_routine_loc)
+@y
+      othercases print_cmd_chr(assign_toks,t-output_text+output_routine_loc+1)
 @z
 
 @x
@@ -1530,17 +1969,64 @@ if name>17 then u_close(cur_file); {forget it}
 @z
 
 @x
+Some additional routines used by the enc\TeX extension have to be
+declared at this point.
+
+@p @t\4@>@<Declare additional routines for enc\TeX@>@/
+
+@y
+@z
+
+@x
 primitive("par",par_end,256); {cf. |scan_file_name|}
 @y
 primitive("par",par_end,too_big_char); {cf. |scan_file_name|}
 @z
 
 @x
+@d start_cs=26 {another}
+@y
+@d start_cs=26 {another}
+@d not_exp=27
+@z
+
+@x
+  exit; {go here when the next input token has been got}
+@y
+  not_exp, {go here when ^^ turned out not to start an expanded code}
+  exit; {go here when the next input token has been got}
+@z
+
+@x
+@!i,@!j: 0..buf_size; {more indexes for encTeX}
+@!mubyte_incs: boolean; {control sequence is converted by mubyte}
+@!p:pointer;  {for encTeX test if noexpanding}
+@y
+@z
+
+@x
 @!c,@!cc:ASCII_code; {constituents of a possible expanded code}
 @!d:2..3; {number of excess characters in an expanded code}
 @y
-@!c,@!cc,@!ccc,@!cccc:ASCII_code; {constituents of a possible expanded code}
-@!d:2..7; {number of excess characters in an expanded code}
+@!c:UnicodeScalar; {constituent of a possible expanded code}
+@!d:small_number; {number of excess characters in an expanded code}
+@!sup_count:small_number; {number of identical sup_mark characters}
+@z
+
+@x
+  begin
+    { Use |k| instead of |loc| for type correctness. }
+    k := loc;
+    cur_chr := read_buffer (k);
+    loc := k; incr (loc);
+    if (mubyte_token > 0) then
+    begin
+      state := mid_line;
+      cur_cs := mubyte_token - cs_token_flag;
+      goto found;
+    end;
+@y
+  begin cur_chr:=buffer[loc]; incr(loc);
 @z
 
 @x
@@ -1564,20 +2050,99 @@ primitive("par",par_end,too_big_char); {cf. |scan_file_name|}
 @z
 
 @x
+@<If this |sup_mark| starts an expanded character...@>=
+begin if cur_chr=buffer[loc] then if loc<limit then
   begin c:=buffer[loc+1]; @+if c<@'200 then {yes we have an expanded char}
+    begin loc:=loc+2;
+    if is_hex(c) then if loc<=limit then
+      begin cc:=buffer[loc]; @+if is_hex(cc) then
+        begin incr(loc); hex_to_cur_chr; goto reswitch;
+        end;
+      end;
+    if c<@'100 then cur_chr:=c+@'100 @+else cur_chr:=c-@'100;
+    goto reswitch;
+    end;
+  end;
+state:=mid_line;
+end
 @y
-  begin if (cur_chr=buffer[loc+1]) and (cur_chr=buffer[loc+2]) and
-           ((loc+6)<=limit) then
-     begin c:=buffer[loc+3]; cc:=buffer[loc+4];
-       ccc:=buffer[loc+5]; cccc:=buffer[loc+6];
-       if is_hex(c) and is_hex(cc) and is_hex(ccc) and is_hex(cccc) then
-       begin loc:=loc+7; long_hex_to_cur_chr; goto reswitch;
-       end;
-     end;
-  c:=buffer[loc+1]; @+if c<@'200 then {yes we have an expanded char}
+@<If this |sup_mark| starts an expanded character...@>=
+begin if cur_chr=buffer[loc] then if loc<limit then
+  begin sup_count:=2;
+  {we have ^^ and another char; check how many ^s we have altogether, up to a max of 6}
+  while (sup_count<6) and (loc+2*sup_count-2<=limit) and (cur_chr=buffer[loc+sup_count-1]) do
+    incr(sup_count);
+  {check whether we have enough hex chars for the number of ^s}
+  for d:=1 to sup_count do
+    if not is_hex(buffer[loc+sup_count-2+d]) then {found a non-hex char, so do single ^^X style}
+      begin c:=buffer[loc+1];
+      if c<@'200 then
+        begin loc:=loc+2;
+        if c<@'100 then cur_chr:=c+@'100 @+else cur_chr:=c-@'100;
+        goto reswitch;
+        end;
+      goto not_exp;
+      end;
+  {there were the right number of hex chars, so convert them}
+  cur_chr:=0;
+  for d:=1 to sup_count do
+    begin c:=buffer[loc+sup_count-2+d];
+    if c<="9" then cur_chr:=16*cur_chr+c-"0"
+    else cur_chr:=16*cur_chr+c-"a"+10;
+    end;
+  {check the resulting value is within the valid range}
+  if cur_chr>biggest_usv then
+    begin cur_chr:=buffer[loc];
+    goto not_exp;
+    end;
+  loc:=loc+2*sup_count-1;
+  goto reswitch;
+  end;
+not_exp:
+state:=mid_line;
+end
 @z
 
 @x
+else  begin start_cs:
+   mubyte_incs := false; k := loc; mubyte_skeep := mubyte_keep;
+   cur_chr := read_buffer (k); cat := cat_code (cur_chr);
+   if (mubyte_in>0) and (not mubyte_incs) and
+     ((mubyte_skip>0) or (cur_chr<>buffer[k])) then mubyte_incs := true;
+   incr (k);
+   if mubyte_token > 0 then
+   begin
+     state := mid_line;
+     cur_cs := mubyte_token - cs_token_flag;
+     goto found;
+   end;
+@y
+else  begin start_cs: k:=loc; cur_chr:=buffer[k]; cat:=cat_code(cur_chr);
+  incr(k);
+@z
+
+@x
+  mubyte_keep := mubyte_skeep;
+  cur_cs:=single_base + read_buffer(loc); incr(loc);
+@y
+  cur_cs:=single_base+buffer[loc]; incr(loc);
+@z
+
+@x
+if write_noexpanding then
+begin
+  p := mubyte_cswrite [cur_cs mod 128];
+  while p <> null do
+    if info (p) = cur_cs then
+    begin
+      cur_cmd := relax; cur_chr := 256; p := null;
+    end else p := link (link (p));
+end;
+@y
+@z
+
+@x
+@<If an expanded...@>=
 begin if buffer[k]=cur_chr then @+if cat=sup_mark then @+if k<limit then
   begin c:=buffer[k+1]; @+if c<@'200 then {yes, one is indeed present}
     begin d:=2;
@@ -1598,40 +2163,115 @@ begin if buffer[k]=cur_chr then @+if cat=sup_mark then @+if k<limit then
   end;
 end
 @y
-begin if buffer[k]=cur_chr then @+if cat=sup_mark then @+if k<limit then
-  begin if (cur_chr=buffer[k+1]) and (cur_chr=buffer[k+2]) and
-           ((k+6)<=limit) then
-     begin c:=buffer[k+3]; cc:=buffer[k+4];
-       ccc:=buffer[k+5]; cccc:=buffer[k+6];
-       if is_hex(c) and is_hex(cc) and is_hex(ccc) and is_hex(cccc) then
-       begin d:=7; long_hex_to_cur_chr; buffer[k-1]:=cur_chr;
-             while k<=limit do
-                begin buffer[k]:=buffer[k+d]; incr(k);
-                end;
-             goto start_cs;
-       end
-     end
-     else begin
-       c:=buffer[k+1]; @+if c<@'200 then {yes, one is indeed present}
-       begin
-          d:=2;
-          if is_hex(c) then @+if k+2<=limit then
-            begin cc:=buffer[k+2]; @+if is_hex(cc) then incr(d);
-            end;
-          if d>2 then
-            begin hex_to_cur_chr; buffer[k-1]:=cur_chr;
-            end
-          else if c<@'100 then buffer[k-1]:=c+@'100
-          else buffer[k-1]:=c-@'100;
-          limit:=limit-d; first:=first-d;
-          while k<=limit do
-            begin buffer[k]:=buffer[k+d]; incr(k);
-            end;
-          goto start_cs;
-       end
-     end
+@<If an expanded...@>=
+begin if (cat=sup_mark) and (buffer[k]=cur_chr) and (k<limit) then
+  begin sup_count:=2;
+  {we have ^^ and another char; check how many ^s we have altogether, up to a max of 6}
+  while (sup_count<6) and (k+2*sup_count-2<=limit) and (buffer[k+sup_count-1]=cur_chr) do
+    incr(sup_count);
+  {check whether we have enough hex chars for the number of ^s}
+  for d:=1 to sup_count do
+    if not is_hex(buffer[k+sup_count-2+d]) then {found a non-hex char, so do single ^^X style}
+      begin c:=buffer[k+1];
+      if c<@'200 then
+        begin if c<@'100 then buffer[k-1]:=c+@'100 @+else buffer[k-1]:=c-@'100;
+        d:=2; limit:=limit-d;
+        while k<=limit do
+          begin buffer[k]:=buffer[k+d]; incr(k);
+          end;
+        goto start_cs;
+        end
+      else sup_count:=0;
+      end;
+  if sup_count>0 then {there were the right number of hex chars, so convert them}
+    begin cur_chr:=0;
+    for d:=1 to sup_count do
+      begin c:=buffer[k+sup_count-2+d];
+      if c<="9" then cur_chr:=16*cur_chr+c-"0"
+      else cur_chr:=16*cur_chr+c-"a"+10;
+      end;
+    {check the resulting value is within the valid range}
+    if cur_chr>biggest_usv then cur_chr:=buffer[k]
+    else  begin buffer[k-1]:=cur_chr;
+      d:=2*sup_count-1;
+      {shift the rest of the buffer left by |d| chars}
+      limit:=limit-d;
+      while k<=limit do
+        begin buffer[k]:=buffer[k+d]; incr(k);
+        end;
+      goto start_cs;
+      end
+    end
   end
 end
+@z
+
+@x
+@ @<Scan ahead in the buffer...@>=
+begin
+  repeat cur_chr := read_buffer (k); cat := cat_code (cur_chr);
+    if mubyte_token>0 then cat := escape;
+    if (mubyte_in>0) and (not mubyte_incs) and (cat=letter) and
+      ((mubyte_skip>0) or (cur_chr<>buffer[k])) then mubyte_incs := true;
+    incr (k);
+  until (cat <> letter) or (k > limit);
+  @<If an expanded...@>;
+  if cat <> letter then
+  begin
+    decr (k); k := k - mubyte_skip;
+  end;
+  if k > loc + 1 then { multiletter control sequence has been scanned }
+  begin
+    if mubyte_incs then { multibyte in csname occurrs }
+    begin
+      i := loc; j := first; mubyte_keep := mubyte_skeep;
+      if j - loc + k > max_buf_stack then
+      begin
+        max_buf_stack := j - loc + k;
+        if max_buf_stack >= buf_size then
+        begin
+          max_buf_stack := buf_size;
+          overflow ("buffer size", buf_size);
+        end;
+      end;
+      while i < k do
+      begin
+        buffer [j] := read_buffer (i);
+        incr (i); incr (j);
+      end;
+      if j = first+1 then
+        cur_cs := single_base + buffer [first]
+      else
+        cur_cs := id_lookup (first, j-first);
+    end else cur_cs := id_lookup (loc, k-loc) ;
+    loc := k;
+    goto found;
+  end;
+end
+@y
+@ @<Scan ahead in the buffer...@>=
+begin repeat cur_chr:=buffer[k]; cat:=cat_code(cur_chr); incr(k);
+until (cat<>letter)or(k>limit);
+@<If an expanded...@>;
+if cat<>letter then decr(k);
+  {now |k| points to first nonletter}
+if k>loc+1 then {multiletter control sequence has been scanned}
+  begin cur_cs:=id_lookup(loc,k-loc); loc:=k; goto found;
+  end;
+end
+@z
+
+@x
+    if write_noexpanding then
+    begin
+      p := mubyte_cswrite [cur_cs mod 128];
+      while p <> null do
+        if info (p) = cur_cs then
+        begin
+          cur_cmd := relax; cur_chr := 256; p := null;
+        end else p := link (link (p));
+    end;
+@y
 @z
 
 @x
@@ -1722,6 +2362,13 @@ while k<str_start_macro(s+1) do
 @z
 
 @x
+@d tok_val=5 {token lists}
+@y
+@d tok_val=5 {token lists}
+@d inter_char_val=6 {inter-character (class) token lists}
+@z
+
+@x
 @!cur_val:integer; {value returned by numeric scanners}
 @y
 @!cur_val:integer; {value returned by numeric scanners}
@@ -1741,12 +2388,15 @@ def_code: @<Fetch a character code from some table@>;
 def_code: @<Fetch a character code from some table@>;
 XeTeX_def_code:
   begin
-    scan_char_num;
-    if m=math_code_base then begin
+    scan_usv_num;
+    if m=sf_code_base then begin
+      scanned_result(ho(sf_code(cur_val) div @"10000))(int_val)
+    end
+    else if m=math_code_base then begin
       scanned_result(ho(math_code(cur_val)))(int_val)
     end
     else if m=math_code_base+1 then begin
-      print_err("Can't use \XeTeXmathcode as a number");
+      print_err("Can't use \XeTeXmathcode as a number (try \XeTeXmathcodenum)");
       help2("\XeTeXmathcode is for setting a mathcode from separate values;")@/
       ("use \XeTeXmathcodenum to access them as single values."); error;
       scanned_result(0)(int_val)
@@ -1754,12 +2404,20 @@ XeTeX_def_code:
     else if m=del_code_base then begin
       scanned_result(ho(del_code(cur_val)))(int_val)
     end else begin
-      print_err("Can't use \XeTeXdelcode as a number");
+      print_err("Can't use \XeTeXdelcode as a number (try \XeTeXdelcodenum)");
       help2("\XeTeXdelcode is for setting a delcode from separate values;")@/
       ("use \XeTeXdelcodenum to access them as single values."); error;
       scanned_result(0)(int_val);
     end;
   end;
+@z
+
+@x
+@ @<Fetch a character code from some table@>=
+begin scan_char_num;
+@y
+@ @<Fetch a character code from some table@>=
+begin scan_usv_num;
 @z
 
 @x
@@ -1800,12 +2458,31 @@ end
 @z
 
 @x
+else if m<math_code_base then scanned_result(equiv(m+cur_val))(int_val)
+@y
+else if m<sf_code_base then scanned_result(equiv(m+cur_val))(int_val)
+else if m<math_code_base then scanned_result(equiv(m+cur_val) mod @"10000)(int_val)
+@z
+
+@x
+  else cur_val:=equiv(m);
+@y
+  else if cur_chr=XeTeX_inter_char_loc then begin
+    scan_eight_bit_int; cur_ptr:=cur_val;
+    scan_eight_bit_int;
+    find_sa_element(inter_char_val, cur_ptr * @"100 + cur_val, false);
+    if cur_ptr=null then cur_val:=null
+    else cur_val:=sa_ptr(cur_ptr);
+  end else cur_val:=equiv(m);
+@z
+
+@x
 @d eTeX_dim=eTeX_int+8 {first of \eTeX\ codes for dimensions}
 @y
 @#
 @d XeTeX_int=eTeX_int+8 {first of \XeTeX\ codes for integers}
 @#
-@d eTeX_dim=XeTeX_int+29 {first of \eTeX\ codes for dimensions}
+@d eTeX_dim=XeTeX_int+30 {first of \eTeX\ codes for dimensions}
  {changed for \XeTeX\ to make room for \XeTeX\ integers}
 @z
 
@@ -1817,12 +2494,22 @@ if (cur_val<0)or(cur_val>255) then
 @.Bad register code@>
   help2("A register number must be between 0 and 255.")@/
 @y
-procedure scan_eight_bit_int; {only used for insertion numbers now}
+procedure scan_char_class;
+begin scan_int;
+if (cur_val<0)or(cur_val>256) then
+  begin print_err("Bad character class");
+@.Bad character code@>
+  help2("A character class must be between 0 and 256.")@/
+    ("I changed this one to zero."); int_error(cur_val); cur_val:=0;
+  end;
+end;
+
+procedure scan_eight_bit_int;
 begin scan_int;
 if (cur_val<0)or(cur_val>255) then
   begin print_err("Bad register code");
 @.Bad register code@>
-  help2("An insertion number must be between 0 and 255.")@/
+  help2("A register code or char class must be between 0 and 255.")@/
 @z
 
 @x
@@ -1918,7 +2605,7 @@ end;
 @x
 if cur_val>255 then
 @y
-if cur_val>biggest_char then
+if cur_val>biggest_usv then
 @z
 
 @x
@@ -1950,7 +2637,7 @@ begin
   xetex_scan_dimen(mu,inf,shortcut,true);
 end;
 
-@ For XeTeX, we have an additional version |scan_decimal|, like |scan_dimen| 
+@ For XeTeX, we have an additional version |scan_decimal|, like |scan_dimen|
 but without any scanning of units.
 
 @p procedure scan_decimal;
@@ -2057,7 +2744,7 @@ else  begin u_close(read_file[m]); read_open[m]:=closed;
 if (cur_cmd>active_char)or(cur_chr>255) then {not a character}
   begin m:=relax; n:=256;
 @y
-if (cur_cmd>active_char)or(cur_chr>biggest_char) then {not a character}
+if (cur_cmd>active_char)or(cur_chr>biggest_usv) then {not a character}
   begin m:=relax; n:=too_big_char;
 @z
 
@@ -2065,7 +2752,7 @@ if (cur_cmd>active_char)or(cur_chr>biggest_char) then {not a character}
 if (cur_cmd>active_char)or(cur_chr>255) then
   begin cur_cmd:=relax; cur_chr:=256;
 @y
-if (cur_cmd>active_char)or(cur_chr>biggest_char) then
+if (cur_cmd>active_char)or(cur_chr>biggest_usv) then
   begin cur_cmd:=relax; cur_chr:=too_big_char;
 @z
 
@@ -2272,7 +2959,7 @@ must_quote:=false;
 quote_char:=0;
 if a<>0 then begin
   j:=str_start_macro(a);
-  while ((not must_quote) or (quote_char=0)) and (j<>str_start_macro(a+1)) do begin
+  while ((not must_quote) or (quote_char=0)) and (j<str_start_macro(a+1)) do begin
     if (str_pool[j]=" ") then must_quote:=true
     else if (str_pool[j]="""") or (str_pool[j]="'") then begin
       must_quote:=true;
@@ -2283,7 +2970,7 @@ if a<>0 then begin
 end;
 if n<>0 then begin
   j:=str_start_macro(n);
-  while ((not must_quote) or (quote_char=0)) and (j<>str_start_macro(n+1)) do begin
+  while ((not must_quote) or (quote_char=0)) and (j<str_start_macro(n+1)) do begin
     if (str_pool[j]=" ") then must_quote:=true
     else if (str_pool[j]="""") or (str_pool[j]="'") then begin
       must_quote:=true;
@@ -2294,7 +2981,7 @@ if n<>0 then begin
 end;
 if e<>0 then begin
   j:=str_start_macro(e);
-  while ((not must_quote) or (quote_char=0)) and (j<>str_start_macro(e+1)) do begin
+  while ((not must_quote) or (quote_char=0)) and (j<str_start_macro(e+1)) do begin
     if (str_pool[j]=" ") then must_quote:=true
     else if (str_pool[j]="""") or (str_pool[j]="'") then begin
       must_quote:=true;
@@ -2465,6 +3152,33 @@ loop@+begin if (cur_cmd>other_char)or(cur_chr>biggest_char) then
 @z
 
 @x
+if enctex_enabled_p then
+  begin wlog_cr; wlog(encTeX_banner); wlog(', reencoding enabled');
+    if translate_filename then
+      begin wlog_cr;
+        wlog(' (\xordcode, \xchrcode, \xprncode overridden by TCX)');
+    end;
+  end;
+@y
+@z
+
+@x
+if translate_filename then begin
+  wlog_cr;
+  wlog(' (');
+  fputs(translate_filename, log_file);
+  wlog(')');
+  end;
+@y
+if translate_filename then begin
+  wlog_cr;
+  wlog(' (WARNING: translate-file "');
+  fputs(translate_filename, log_file);
+  wlog('" ignored)');
+  end;
+@z
+
+@x
   if open_in_name_ok(stringcast(name_of_file+1))
      and a_open_in(cur_file, kpse_tex_format) then
     goto done;
@@ -2497,11 +3211,13 @@ loop@+begin if (cur_cmd>other_char)or(cur_chr>biggest_char) then
 @x
 @d non_char==qi(256) {a |halfword| code that can't match a real character}
 @y
-@d ot_font_flag=65534
-@d aat_font_flag=65535
+@d otgr_font_flag=@"FFFE
+@d aat_font_flag=@"FFFF
 @d is_atsu_font(#)==(font_area[#]=aat_font_flag)
-@d is_ot_font(#)==(font_area[#]=ot_font_flag)
-@d is_native_font(#)==(is_atsu_font(#) or is_ot_font(#))
+@d is_ot_font(#)==((font_area[#]=otgr_font_flag) and (usingOpenType(font_layout_engine[#])))
+@d is_gr_font(#)==((font_area[#]=otgr_font_flag) and (usingGraphite(font_layout_engine[#])))
+@d is_otgr_font(#)==(font_area[#]=otgr_font_flag)
+@d is_native_font(#)==(is_atsu_font(#) or is_otgr_font(#))
 	{native fonts have font_area = 65534 or 65535,
 	 which would be a string containing an invalid Unicode character}
 
@@ -2548,9 +3264,9 @@ pack_file_name(nom,aire,cur_ext);
 if quoted_filename then begin
   { quoted name, so try for a native font }
   g:=load_native_font(u,nom,aire,s);
-  if g=null_font then goto bad_tfm else goto done;
+  if g<>null_font then goto done;
 end;
-{ it was an unquoted name, so try for a TFM file }
+{ it was an unquoted name, or not found as an installed font, so try for a TFM file }
 @<Read and check the font data if file exists;
   |abort| if the \.{TFM} file is
 @z
@@ -2559,16 +3275,15 @@ end;
 bad_tfm: @<Report that the font won't be loaded@>;
 @y
 if g<>null_font then goto done;
-if file_name_quote_char=0 then begin
+if not quoted_filename then begin
   { we failed to find a TFM file, so try for a native font }
   g:=load_native_font(u,nom,aire,s);
   if g<>null_font then goto done
 end;
 bad_tfm:
-if (not file_opened) and (file_name_quote_char<>0) then begin
-  @<Report that native font couldn't be found, and |goto done|@>;
-end;
-@<Report that the font won't be loaded@>;
+if suppress_fontnotfound_error=0 then begin
+  @<Report that the font won't be loaded@>;
+  end;
 @z
 
 @x
@@ -2593,17 +3308,6 @@ else print(" not loadable: Metric (TFM) file or installed font not found");
 @ @<Read and check...@>=
 @<Open |tfm_file| for input@>;
 @y
-@ @<Report that native font couldn't be found, and |goto done|@>=
-start_font_error_message;
-@.Font x=xx not loadable...@>
-print(" not loadable: installed font not found");
-help4("I wasn't able to find this font in the Mac OS,")@/
-("so I will ignore the font specification.")@/
-("You might try inserting a different font spec;")@/
-("e.g., type `I\font<same font id>=<substitute font name>'.");
-error;
-goto done
-
 @ @<Read and check...@>=
 @<Open |tfm_file| for input and |begin|@>;
 @z
@@ -2630,7 +3334,7 @@ if b_open_in(tfm_file) then begin
   file_opened:=true
 @z
 
-@x we have to move this before new_native_character
+@x
 @ When \TeX\ wants to typeset a character that doesn't exist, the
 character node is not created; thus the output routine can assume
 that characters exist when it sees them. The following procedure
@@ -2848,7 +3552,7 @@ p:=list_ptr(this_box);
 @y
 @ Extra stuff for justifiable AAT text; need to merge runs of words and normal spaces.
 
-@d is_native_word_node(#) == (not is_char_node(#)) and (type(#) = whatsit_node) and (subtype(#) = native_word_node)
+@d is_native_word_node(#) == ((not is_char_node(#)) and (type(#) = whatsit_node) and (subtype(#) = native_word_node))
 
 @<Merge sequences of words using AAT fonts and inter-word spaces into single nodes@>=
 p := list_ptr(this_box);
@@ -2942,24 +3646,116 @@ while (q <> null) and (not is_char_node(q)) and (type(q) = disc_node) do
 @z
 
 @x
+@p procedure vlist_out; {output a |vlist_node| box}
+@y
+@p procedure vlist_out; {output a |vlist_node| box}
+@z
+
+@x
+@!cur_g:scaled; {rounded equivalent of |cur_glue| times the glue ratio}
+begin cur_g:=0; cur_glue:=float_constant(0);
+this_box:=temp_ptr; g_order:=glue_order(this_box);
+g_sign:=glue_sign(this_box); p:=list_ptr(this_box);
+incr(cur_s);
+if cur_s>0 then dvi_out(push);
+if cur_s>max_push then max_push:=cur_s;
+save_loc:=dvi_offset+dvi_ptr; left_edge:=cur_h; cur_v:=cur_v-height(this_box);
+@y
+@!cur_g:scaled; {rounded equivalent of |cur_glue| times the glue ratio}
+@!upwards:boolean; {whether we're stacking upwards}
+begin cur_g:=0; cur_glue:=float_constant(0);
+this_box:=temp_ptr; g_order:=glue_order(this_box);
+g_sign:=glue_sign(this_box); p:=list_ptr(this_box);
+upwards:=(subtype(this_box)=min_quarterword+1);
+incr(cur_s);
+if cur_s>0 then dvi_out(push);
+if cur_s>max_push then max_push:=cur_s;
+save_loc:=dvi_offset+dvi_ptr; left_edge:=cur_h;
+if upwards then cur_v:=cur_v+depth(this_box) else cur_v:=cur_v-height(this_box);
+@z
+
+@x
+kern_node:cur_v:=cur_v+width(p);
+@y
+kern_node:if upwards then cur_v:=cur_v-width(p) else cur_v:=cur_v+width(p);
+@z
+
+@x
+move_past: cur_v:=cur_v+rule_ht;
+@y
+move_past: if upwards then cur_v:=cur_v-rule_ht else cur_v:=cur_v+rule_ht;
+@z
+
+@x
+@<Output a box in a vlist@>=
+if list_ptr(p)=null then cur_v:=cur_v+height(p)+depth(p)
+else  begin cur_v:=cur_v+height(p); synch_v;
+  save_h:=dvi_h; save_v:=dvi_v;
+  if cur_dir=right_to_left then cur_h:=left_edge-shift_amount(p)
+  else cur_h:=left_edge+shift_amount(p); {shift the box right}
+  temp_ptr:=p;
+  if type(p)=vlist_node then vlist_out@+else hlist_out;
+  dvi_h:=save_h; dvi_v:=save_v;
+  cur_v:=save_v+depth(p); cur_h:=left_edge;
+  end
+@y
+@<Output a box in a vlist@>=
+if list_ptr(p)=null then
+  if upwards then cur_v:=cur_v-height(p)-depth(p)
+  else cur_v:=cur_v+height(p)+depth(p)
+else  begin if upwards then cur_v:=cur_v-depth(p) else cur_v:=cur_v+height(p); synch_v;
+  save_h:=dvi_h; save_v:=dvi_v;
+  if cur_dir=right_to_left then cur_h:=left_edge-shift_amount(p)
+  else cur_h:=left_edge+shift_amount(p); {shift the box right}
+  temp_ptr:=p;
+  if type(p)=vlist_node then vlist_out@+else hlist_out;
+  dvi_h:=save_h; dvi_v:=save_v;
+  if upwards then cur_v:=save_v-height(p) else cur_v:=save_v+depth(p); cur_h:=left_edge;
+  end
+@z
+
+@x
+cur_v:=cur_v+rule_ht;
+@y
+if upwards then cur_v:=cur_v-rule_ht else cur_v:=cur_v+rule_ht;
+@z
+
+@x
+begin if tracing_output>0 then
+@y
+begin if job_name=0 then open_log_file;
+if tracing_output>0 then
+@z
+
+@x
 dvi_four(last_bop); last_bop:=page_loc;
 @y
 dvi_four(last_bop); last_bop:=page_loc;
+{ generate a pagesize \special at start of page }
+old_setting:=selector; selector:=new_string;
+print("pdf:pagesize ");
 if (pdf_page_width > 0) and (pdf_page_height > 0) then begin
-  { generate a papersize \special at start of page }
-  old_setting:=selector; selector:=new_string;
-  print("papersize ");
+  print("width"); print(" ");
   if mag=1000 then print_scaled(pdf_page_width)
   else print_scaled(xn_over_d(pdf_page_width,mag,1000));
-  print("pt"); print(",");
+  print("pt"); print(" ");
+  print("height"); print(" ");
   if mag=1000 then print_scaled(pdf_page_height)
   else print_scaled(xn_over_d(pdf_page_height,mag,1000));
   print("pt");
-  selector:=old_setting;
-  dvi_out(xxx1); dvi_out(cur_length);
-  for s:=str_start_macro(str_ptr) to pool_ptr-1 do dvi_out(so(str_pool[s]));
-  pool_ptr:=str_start_macro(str_ptr); {erase the string}
-end;
+end else
+  print("default");
+selector:=old_setting;
+dvi_out(xxx1); dvi_out(cur_length);
+for s:=str_start_macro(str_ptr) to pool_ptr-1 do dvi_out(so(str_pool[s]));
+pool_ptr:=str_start_macro(str_ptr); {erase the string}
+@z
+
+@x
+cur_v:=height(p)+v_offset; temp_ptr:=p;
+@y
+cur_v:=height(p)+v_offset; { does this need changing for upwards mode ???? }
+temp_ptr:=p;
 @z
 
 @x
@@ -2971,18 +3767,30 @@ if not no_pdf_output then fflush(dvi_file);
 
 @x
   print_nl("Output written on "); print_file_name(0, output_file_name, 0);
-@y
-  print_nl("Output written on "); print(output_file_name);
-@z
-
-@x
+@.Output written on x@>
+  print(" ("); print_int(total_pages);
+  if total_pages<>1 then print(" pages")
+  else print(" page");
   print(", "); print_int(dvi_offset+dvi_ptr); print(" bytes).");
   b_close(dvi_file);
 @y
-  if no_pdf_output then begin
-    print(", "); print_int(dvi_offset+dvi_ptr); print(" bytes).");
-  end else print(").");
-  dvi_close(dvi_file);
+  k:=dvi_close(dvi_file);
+  if k=0 then begin
+    print_nl("Output written on "); print(output_file_name);
+@.Output written on x@>
+    print(" ("); print_int(total_pages);
+    if total_pages<>1 then print(" pages")
+    else print(" page");
+    if no_pdf_output then begin
+      print(", "); print_int(dvi_offset+dvi_ptr); print(" bytes).");
+    end else print(").");
+  end else begin
+    print_nl("Error "); print_int(k); print(" (");
+    if no_pdf_output then printcstring(strerror(k))
+    else print("driver return code");
+    print(") generating output;");
+    print_nl("file "); print(output_file_name); print(" may not be valid.");
+    end;
 @z
 
 @x
@@ -3005,6 +3813,52 @@ label reswitch, common_ending, exit, restart;
 @!hd:eight_bits; {height and depth indices for a character}
 @!pp,@!ppp: pointer;
 @!total_chars, @!k: integer;
+@z
+
+@x
+@d vpack(#)==vpackage(#,max_dimen) {special case of unconstrained depth}
+@y
+@d vpack(#)==vpackage(#,max_dimen) {special case of unconstrained depth}
+@z
+
+@x
+subtype(r):=min_quarterword; shift_amount(r):=0;
+@y
+if XeTeX_upwards then subtype(r):=min_quarterword+1 else subtype(r):=min_quarterword;
+shift_amount(r):=0;
+@z
+
+@x
+@p procedure append_to_vlist(@!b:pointer);
+var d:scaled; {deficiency of space between baselines}
+@!p:pointer; {a new glue specification}
+begin if prev_depth>ignore_depth then
+  begin d:=width(baseline_skip)-prev_depth-height(b);
+  if d<line_skip_limit then p:=new_param_glue(line_skip_code)
+  else  begin p:=new_skip_param(baseline_skip_code);
+    width(temp_ptr):=d; {|temp_ptr=glue_ptr(p)|}
+    end;
+  link(tail):=p; tail:=p;
+  end;
+link(tail):=b; tail:=b; prev_depth:=depth(b);
+end;
+@y
+@p procedure append_to_vlist(@!b:pointer);
+var d:scaled; {deficiency of space between baselines}
+@!p:pointer; {a new glue specification}
+@!upwards:boolean;
+begin upwards:=XeTeX_upwards;
+  if prev_depth>ignore_depth then
+  begin if upwards then d:=width(baseline_skip)-prev_depth-depth(b)
+  else d:=width(baseline_skip)-prev_depth-height(b);
+  if d<line_skip_limit then p:=new_param_glue(line_skip_code)
+  else  begin p:=new_skip_param(baseline_skip_code);
+    width(temp_ptr):=d; {|temp_ptr=glue_ptr(p)|}
+    end;
+  link(tail):=p; tail:=p;
+  end;
+link(tail):=b; tail:=b; if upwards then prev_depth:=height(b) else prev_depth:=depth(b);
+end;
 @z
 
 @x
@@ -3060,6 +3914,175 @@ print_ASCII(qo(character(p)) + (fam(p) div @"100) * @"10000);
 @z
 
 @x
+@d mathsy_end(#)==fam_fnt(2+#)]].sc
+@d mathsy(#)==font_info[#+param_base[mathsy_end
+@d math_x_height==mathsy(5) {height of `\.x'}
+@d math_quad==mathsy(6) {\.{18mu}}
+@d num1==mathsy(8) {numerator shift-up in display styles}
+@d num2==mathsy(9) {numerator shift-up in non-display, non-\.{\\atop}}
+@d num3==mathsy(10) {numerator shift-up in non-display \.{\\atop}}
+@d denom1==mathsy(11) {denominator shift-down in display styles}
+@d denom2==mathsy(12) {denominator shift-down in non-display styles}
+@d sup1==mathsy(13) {superscript shift-up in uncramped display style}
+@d sup2==mathsy(14) {superscript shift-up in uncramped non-display}
+@d sup3==mathsy(15) {superscript shift-up in cramped styles}
+@d sub1==mathsy(16) {subscript shift-down if superscript is absent}
+@d sub2==mathsy(17) {subscript shift-down if superscript is present}
+@d sup_drop==mathsy(18) {superscript baseline below top of large box}
+@d sub_drop==mathsy(19) {subscript baseline below bottom of large box}
+@d delim1==mathsy(20) {size of \.{\\atopwithdelims} delimiters
+  in display styles}
+@d delim2==mathsy(21) {size of \.{\\atopwithdelims} delimiters in non-displays}
+@d axis_height==mathsy(22) {height of fraction lines above the baseline}
+@d total_mathsy_params=22
+@y
+NB: the access functions here must all put the font # into /f/ for mathsy().
+
+The accessors are defined with
+define_mathsy_accessor(NAME)(fontdimen-number)(NAME)
+because I can't see how to only give the name once, with WEB's limited
+macro capabilities. This seems a bit ugly, but it works.
+
+@d total_mathsy_params=22
+
+{the following are OpenType MATH constant indices for use with OT math fonts}
+@d	scriptPercentScaleDown = 0
+@d	scriptScriptPercentScaleDown = 1
+@d	delimitedSubFormulaMinHeight = 2
+@d	displayOperatorMinHeight = 3
+@d	mathLeading = 4
+@d	firstMathValueRecord = mathLeading
+@d	axisHeight = 5
+@d	accentBaseHeight = 6
+@d	flattenedAccentBaseHeight = 7
+@d	subscriptShiftDown = 8
+@d	subscriptTopMax = 9
+@d	subscriptBaselineDropMin = 10
+@d	superscriptShiftUp = 11
+@d	superscriptShiftUpCramped = 12
+@d	superscriptBottomMin = 13
+@d	superscriptBaselineDropMax = 14
+@d	subSuperscriptGapMin = 15
+@d	superscriptBottomMaxWithSubscript = 16
+@d	spaceAfterScript = 17
+@d	upperLimitGapMin = 18
+@d	upperLimitBaselineRiseMin = 19
+@d	lowerLimitGapMin = 20
+@d	lowerLimitBaselineDropMin = 21
+@d	stackTopShiftUp = 22
+@d	stackTopDisplayStyleShiftUp = 23
+@d	stackBottomShiftDown = 24
+@d	stackBottomDisplayStyleShiftDown = 25
+@d	stackGapMin = 26
+@d	stackDisplayStyleGapMin = 27
+@d	stretchStackTopShiftUp = 28
+@d	stretchStackBottomShiftDown = 29
+@d	stretchStackGapAboveMin = 30
+@d	stretchStackGapBelowMin = 31
+@d	fractionNumeratorShiftUp = 32
+@d	fractionNumeratorDisplayStyleShiftUp = 33
+@d	fractionDenominatorShiftDown = 34
+@d	fractionDenominatorDisplayStyleShiftDown = 35
+@d	fractionNumeratorGapMin = 36
+@d	fractionNumDisplayStyleGapMin = 37
+@d	fractionRuleThickness = 38
+@d	fractionDenominatorGapMin = 39
+@d	fractionDenomDisplayStyleGapMin = 40
+@d	skewedFractionHorizontalGap = 41
+@d	skewedFractionVerticalGap = 42
+@d	overbarVerticalGap = 43
+@d	overbarRuleThickness = 44
+@d	overbarExtraAscender = 45
+@d	underbarVerticalGap = 46
+@d	underbarRuleThickness = 47
+@d	underbarExtraDescender = 48
+@d	radicalVerticalGap = 49
+@d	radicalDisplayStyleVerticalGap = 50
+@d	radicalRuleThickness = 51
+@d	radicalExtraAscender = 52
+@d	radicalKernBeforeDegree = 53
+@d	radicalKernAfterDegree = 54
+@d	lastMathValueRecord = radicalKernAfterDegree
+@d	radicalDegreeBottomRaisePercent = 55
+@d	lastMathConstant = radicalDegreeBottomRaisePercent
+
+
+@d mathsy(#)==font_info[#+param_base[f]].sc
+
+@d define_mathsy_end(#)==
+    # := rval;
+  end
+@d define_mathsy_body(#)==
+  var
+    f: integer;
+    rval: scaled;
+  begin
+    f := fam_fnt(2 + size_code);
+    if is_ot_font(f) then
+      rval := get_native_mathsy_param(f, #)
+    else
+      rval := mathsy(#);
+    define_mathsy_end
+@d define_mathsy_accessor(#)==function #(size_code: integer): scaled; define_mathsy_body
+
+@p define_mathsy_accessor(math_x_height)(5)(math_x_height);
+define_mathsy_accessor(math_quad)(6)(math_quad);
+define_mathsy_accessor(num1)(8)(num1);
+define_mathsy_accessor(num2)(9)(num2);
+define_mathsy_accessor(num3)(10)(num3);
+define_mathsy_accessor(denom1)(11)(denom1);
+define_mathsy_accessor(denom2)(12)(denom2);
+define_mathsy_accessor(sup1)(13)(sup1);
+define_mathsy_accessor(sup2)(14)(sup2);
+define_mathsy_accessor(sup3)(15)(sup3);
+define_mathsy_accessor(sub1)(16)(sub1);
+define_mathsy_accessor(sub2)(17)(sub2);
+define_mathsy_accessor(sup_drop)(18)(sup_drop);
+define_mathsy_accessor(sub_drop)(19)(sub_drop);
+define_mathsy_accessor(delim1)(20)(delim1);
+define_mathsy_accessor(delim2)(21)(delim2);
+define_mathsy_accessor(axis_height)(22)(axis_height);
+@z
+
+@x
+@d mathex(#)==font_info[#+param_base[fam_fnt(3+cur_size)]].sc
+@d default_rule_thickness==mathex(8) {thickness of \.{\\over} bars}
+@d big_op_spacing1==mathex(9) {minimum clearance above a displayed op}
+@d big_op_spacing2==mathex(10) {minimum clearance below a displayed op}
+@d big_op_spacing3==mathex(11) {minimum baselineskip above displayed op}
+@d big_op_spacing4==mathex(12) {minimum baselineskip below displayed op}
+@d big_op_spacing5==mathex(13) {padding above and below displayed limits}
+@d total_mathex_params=13
+@y
+@d total_mathex_params=13
+
+@d mathex(#)==font_info[#+param_base[f]].sc
+
+@d define_mathex_end(#)==
+    # := rval;
+  end
+@d define_mathex_body(#)==
+  var
+    f: integer;
+    rval: scaled;
+  begin
+    f := fam_fnt(3 + cur_size);
+    if is_ot_font(f) then
+      rval := get_native_mathex_param(f, #)
+    else
+      rval := mathex(#);
+  define_mathex_end
+@d define_mathex_accessor(#)==function #:scaled; define_mathex_body
+
+@p define_mathex_accessor(default_rule_thickness)(8)(default_rule_thickness);
+define_mathex_accessor(big_op_spacing1)(9)(big_op_spacing1);
+define_mathex_accessor(big_op_spacing2)(10)(big_op_spacing2);
+define_mathex_accessor(big_op_spacing3)(11)(big_op_spacing3);
+define_mathex_accessor(big_op_spacing4)(12)(big_op_spacing4);
+define_mathex_accessor(big_op_spacing5)(13)(big_op_spacing5);
+@z
+
+@x
 else cur_size:=16*((cur_style-text_style) div 2);
 @y
 else cur_size:=script_size*((cur_style-text_style) div 2);
@@ -3067,14 +4090,176 @@ else cur_size:=script_size*((cur_style-text_style) div 2);
 
 @x
 function var_delimiter(@!d:pointer;@!s:small_number;@!v:scaled):pointer;
+label found,continue;
+var b:pointer; {the box that will be constructed}
 @y
+procedure stack_glyph_into_box(@!b:pointer;@!f:internal_font_number;@!g:integer);
+var p,q:pointer;
+begin
+  p:=get_node(glyph_node_size);
+  type(p):=whatsit_node; subtype(p):=glyph_node;
+  native_font(p):=f; native_glyph(p):=g;
+  set_native_glyph_metrics(p, 1);
+  link(p):=list_ptr(b); list_ptr(b):=p;
+  height(b):=height(p); width(b):=width(p);
+end;
+
+procedure stack_glue_into_box(@!b:pointer;@!min,max:scaled);
+var p,q:pointer;
+begin
+  q:=new_spec(zero_glue);
+  width(q):=min;
+  stretch(q):=max-min;
+  p:=new_glue(q);
+  link(p):=list_ptr(b); list_ptr(b):=p;
+  height(b):=height(p); width(b):=width(p);
+end;
+
+function build_opentype_assembly(@!f:internal_font_number;@!a:void_pointer;@!h:scaled):pointer;
+  {return a box with height at least |h|, using font |f|, with glyph assembly info from |a|}
+var
+  b:pointer; {the box we're constructing}
+  n:integer; {the number of repetitions of each extender}
+  i,j:integer; {indexes}
+  g:integer; {glyph code}
+  p:pointer; {temp pointer}
+  h_max,o,oo,prev_o,min_o:scaled;
+  no_extenders: boolean;
+  nat,str:scaled; {natural height, stretch}
+begin
+  b:=new_null_box;
+  type(b):=vlist_node;
+
+  {figure out how many repeats of each extender to use}
+  n:=-1;
+  no_extenders:=true;
+  min_o:=ot_min_connector_overlap(f);
+  repeat
+    n:=n+1;
+    {calc max possible height with this number of extenders}
+    h_max:=0;
+    prev_o:=0;
+    for i:=0 to ot_part_count(a)-1 do begin
+      if ot_part_is_extender(a, i) then begin
+        no_extenders:=false;
+        for j:=1 to n do begin
+          o:=ot_part_start_connector(f, a, i);
+          if min_o<o then o:=min_o;
+          if prev_o<o then o:=prev_o;
+          h_max:=h_max-o+ot_part_full_advance(f, a, i);
+          prev_o:=ot_part_end_connector(f, a, i);
+        end
+      end else begin
+        o:=ot_part_start_connector(f, a, i);
+        if min_o<o then o:=min_o;
+        if prev_o<o then o:=prev_o;
+        h_max:=h_max-o+ot_part_full_advance(f, a, i);
+        prev_o:=ot_part_end_connector(f, a, i);
+      end;
+    end;
+  until (h_max>=h) or no_extenders;
+
+  {assemble box using |n| copies of each extender,
+   with appropriate glue wherever an overlap occurs}
+  prev_o:=0;
+  for i:=0 to ot_part_count(a)-1 do begin
+    if ot_part_is_extender(a, i) then begin
+      for j:=1 to n do begin
+        o:=ot_part_start_connector(f, a, i);
+        if prev_o<o then o:=prev_o;
+        oo:=o; {max overlap}
+        if min_o<o then o:=min_o;
+        if oo>0 then stack_glue_into_box(b, -oo, -o);
+        g:=ot_part_glyph(a, i);
+        stack_glyph_into_box(b, f, g);
+        prev_o:=ot_part_end_connector(f, a, i);
+      end
+    end else begin
+      o:=ot_part_start_connector(f, a, i);
+      if prev_o<o then o:=prev_o;
+      oo:=o; {max overlap}
+      if min_o<o then o:=min_o;
+      if oo>0 then stack_glue_into_box(b, -oo, -o);
+      g:=ot_part_glyph(a, i);
+      stack_glyph_into_box(b, f, g);
+      prev_o:=ot_part_end_connector(f, a, i);
+    end;
+  end;
+
+  {find natural height and total stretch of the box}
+  p:=list_ptr(b); nat:=0; str:=0;
+  while p<>null do begin
+    if type(p)=whatsit_node then nat:=nat+height(p)+depth(p)
+    else if type(p)=glue_node then begin
+      nat:=nat+width(glue_ptr(p));
+      str:=str+stretch(glue_ptr(p));
+    end;
+    p:=link(p);
+  end;
+
+  {set glue so as to stretch the connections if needed}
+  depth(b):=0;
+  if (h>nat) and (str>0) then begin
+    glue_order(b):=normal; glue_sign(b):=stretching;
+    glue_set(b):=unfloat((h-nat)/str);
+    height(b):=nat+round(str*float(glue_set(b)));
+  end else height(b):=nat;
+
+  build_opentype_assembly:=b;
+end;
+
 function var_delimiter(@!d:pointer;@!s:integer;@!v:scaled):pointer;
+label found,continue;
+var b:pointer; {the box that will be constructed}
+ot_assembly_ptr:void_pointer;
 @z
 
 @x
 @!z: small_number; {runs through font family members}
 @y
 @!z: integer; {runs through font family members}
+@z
+
+@x
+loop@+  begin @<Look at the variants of |(z,x)|; set |f| and |c| whenever
+    a better character is found; |goto found| as soon as a
+    large enough variant is encountered@>;
+  if large_attempt then goto found; {there were none large enough}
+  large_attempt:=true; z:=large_fam(d); x:=large_char(d);
+  end;
+found: if f<>null_font then
+  @<Make variable |b| point to a box for |(f,c)|@>
+else  begin b:=new_null_box;
+  width(b):=null_delimiter_space; {use this width if no delimiter was found}
+  end;
+@y
+ot_assembly_ptr:=nil;
+loop@+  begin @<Look at the variants of |(z,x)|; set |f| and |c| whenever
+    a better character is found; |goto found| as soon as a
+    large enough variant is encountered@>;
+  if large_attempt then goto found; {there were none large enough}
+  large_attempt:=true; z:=large_fam(d); x:=large_char(d);
+  end;
+found: if f<>null_font then begin
+  if not is_ot_font(f) then
+    @<Make variable |b| point to a box for |(f,c)|@>
+  else begin
+    {for OT fonts, c is the glyph ID to use}
+    if ot_assembly_ptr<>nil then
+      b:=build_opentype_assembly(f, ot_assembly_ptr, v)
+    else begin
+      b:=new_null_box; type(b):=vlist_node; list_ptr(b):=get_node(glyph_node_size);
+      type(list_ptr(b)):=whatsit_node; subtype(list_ptr(b)):=glyph_node;
+      native_font(list_ptr(b)):=f; native_glyph(list_ptr(b)):=c;
+      set_native_glyph_metrics(list_ptr(b), 1);
+      width(b):=width(list_ptr(b));
+      height(b):=height(list_ptr(b));
+      depth(b):=depth(list_ptr(b));
+    end
+  end
+end else  begin b:=new_null_box;
+  width(b):=null_delimiter_space; {use this width if no delimiter was found}
+  end;
 @z
 
 @x
@@ -3089,6 +4274,29 @@ function var_delimiter(@!d:pointer;@!s:integer;@!v:scaled):pointer;
   until z<16;
 @y
   until z<script_size;
+@z
+
+@x
+@ @<Look at the list of characters starting with |x|...@>=
+@y
+@ @<Look at the list of characters starting with |x|...@>=
+if is_ot_font(g) then begin
+  b:=new_native_character(g, x);
+  x:=get_native_glyph(b, 0);
+  free_node(b, native_size(b));
+  f:=g; c:=x; w:=0; n:=0;
+  repeat
+    y:=get_ot_math_variant(g, x, n, address_of(u), 0);
+    if u>w then begin
+      c:=y; w:=u;
+      if u>=v then goto found;
+    end;
+    n:=n+1;
+  until u<0;
+  {if we get here, then we didn't find a big enough glyph; check if the char is extensible}
+  ot_assembly_ptr:=get_ot_assembly_ptr(g, x, 0);
+  if ot_assembly_ptr<>nil then goto found;
+end else
 @z
 
 @x
@@ -3132,7 +4340,7 @@ end;
 
 @x
 @!cur_size:small_number; {size code corresponding to |cur_style|}
-@y with 256 families, this can be up to 768
+@y
 @!cur_size:integer; {size code corresponding to |cur_style|}
 @z
 
@@ -3162,6 +4370,44 @@ end else begin if (qo(cur_c)>=font_bc[cur_f])and(qo(cur_c)<=font_ec[cur_f]) then
 @z
 
 @x
+procedure make_radical(@!q:pointer);
+var x,@!y:pointer; {temporary registers for box construction}
+@!delta,@!clr:scaled; {dimensions involved in the calculation}
+begin x:=clean_box(nucleus(q),cramped_style(cur_style));
+if cur_style<text_style then {display style}
+  clr:=default_rule_thickness+(abs(math_x_height(cur_size)) div 4)
+else  begin clr:=default_rule_thickness; clr:=clr + (abs(clr) div 4);
+  end;
+y:=var_delimiter(left_delimiter(q),cur_size,height(x)+depth(x)+clr+
+  default_rule_thickness);
+@y
+procedure make_radical(@!q:pointer);
+var x,@!y:pointer; {temporary registers for box construction}
+f:internal_font_number;
+rule_thickness:scaled; {rule thickness}
+@!delta,@!clr:scaled; {dimensions involved in the calculation}
+begin f:=fam_fnt(small_fam(left_delimiter(q)) + cur_size);
+if is_ot_font(f) then rule_thickness:=get_ot_math_constant(f,radicalRuleThickness)
+else rule_thickness:=default_rule_thickness;
+x:=clean_box(nucleus(q),cramped_style(cur_style));
+if is_ot_font(f) then begin
+  if cur_style<text_style then {display style}
+    clr:=get_ot_math_constant(f,radicalDisplayStyleVerticalGap)
+  else clr:=get_ot_math_constant(f,radicalVerticalGap);
+end else begin
+  if cur_style<text_style then {display style}
+    clr:=rule_thickness+(abs(math_x_height(cur_size)) div 4)
+  else  begin clr:=rule_thickness; clr:=clr + (abs(clr) div 4);
+    end;
+end;
+y:=var_delimiter(left_delimiter(q),cur_size,height(x)+depth(x)+clr+rule_thickness);
+if is_ot_font(f) then begin
+  depth(y):=height(y)+depth(y)-rule_thickness;
+  height(y):=rule_thickness;
+end;
+@z
+
+@x
 procedure make_math_accent(@!q:pointer);
 label done,done1;
 var p,@!x,@!y:pointer; {temporary registers for box construction}
@@ -3184,13 +4430,13 @@ procedure make_math_accent(@!q:pointer);
 label done,done1;
 var p,@!x,@!y:pointer; {temporary registers for box construction}
 @!a:integer; {address of lig/kern instruction}
-@!c:integer; {accent character}
+@!c,@!g:integer; {accent character}
 @!f:internal_font_number; {its font}
 @!i:four_quarters; {its |char_info|}
 @!s:scaled; {amount to skew the accent to the right}
 @!h:scaled; {height of character being accented}
 @!delta:scaled; {space to remove between accent and accentee}
-@!w:scaled; {width of the accentee, not including sub/superscripts}
+@!w,@!wa,@!w2:scaled; {width of the accentee, not including sub/superscripts}
 begin fetch(accent_chr(q));
 x:=null;
 if is_native_font(cur_f) then
@@ -3205,6 +4451,209 @@ else if char_exists(cur_i) then
   @<Switch to a larger accent if available and appropriate@>;
   end;
 if x<>null then begin
+@z
+
+@x
+  y:=char_box(f,c);
+  shift_amount(y):=s+half(w-width(y));
+@y
+  y:=char_box(f,c);
+  if is_native_font(f) then begin
+    {turn the native_word node into a native_glyph one}
+    p:=get_node(glyph_node_size);
+    type(p):=whatsit_node; subtype(p):=glyph_node;
+    native_font(p):=f; native_glyph(p):=get_native_glyph(list_ptr(y), 0);
+    set_native_glyph_metrics(p, 1);
+    free_node(list_ptr(y), native_size(list_ptr(y)));
+    list_ptr(y):=p;
+
+    @<Switch to a larger native-font accent if available and appropriate@>;
+
+    {determine horiz positioning}
+    wa:=get_ot_math_accent_pos(f,native_glyph(p));
+    if wa=@"7FFFFFFF then wa:=half(width(y));
+    p:=list_ptr(x);
+    if (type(p)=whatsit_node) and (subtype(p)=glyph_node) and (link(p)=null) then begin
+      w:=get_ot_math_accent_pos(native_font(p), native_glyph(p));
+      if w=@"7FFFFFFF then w:=half(width(x));
+    end else
+      w:=half(width(x));
+    shift_amount(y):=s+w-wa;
+  end else
+    shift_amount(y):=s+half(w-width(y));
+@z
+
+@x
+@ @<Switch to a larger accent if available and appropriate@>=
+@y
+@ @<Switch to a larger native-font accent if available and appropriate@>=
+  wa:=width(x);
+  c:=native_glyph(p);
+  a:=0;
+  repeat
+    g:=get_ot_math_variant(f, c, a, address_of(w2), 1);
+    if (w2>0) and (w2<=wa) then begin
+      native_glyph(p):=g;
+      set_native_glyph_metrics(p, 1);
+      incr(a);
+    end;
+  until (w2<0) or (w2>=wa);
+{
+  if (w2<0) then begin
+    ot_assembly_ptr:=get_ot_assembly_ptr(f, c, 1);
+    if ot_assembly_ptr<>nil then begin
+      free_node(p,glyph_node_size);
+      p:=build_opentype_assembly(cur_f, ot_assembly_ptr, w1);
+      list_ptr(y):=p;
+      goto found;
+    end;
+  end else
+}
+    set_native_glyph_metrics(p, 1);
+{found:}
+  width(y):=width(p); height(y):=height(p); depth(y):=depth(p);
+  if depth(y)<0 then depth(y):=0;
+
+@ @<Switch to a larger accent if available and appropriate@>=
+@z
+
+@x
+@<Adjust \(s)|shift_up| and |shift_down| for the case of no fraction line@>=
+begin if cur_style<text_style then clr:=7*default_rule_thickness
+else clr:=3*default_rule_thickness;
+@y
+@<Adjust \(s)|shift_up| and |shift_down| for the case of no fraction line@>=
+begin if is_ot_font(fam_fnt(3+cur_size)) then begin
+  if cur_style<text_style then clr:=get_ot_math_constant(fam_fnt(3+cur_size), stackDisplayStyleGapMin)
+  else clr:=get_ot_math_constant(fam_fnt(3+cur_size), stackGapMin);
+end else begin
+  if cur_style<text_style then clr:=7*default_rule_thickness
+  else clr:=3*default_rule_thickness;
+end;
+@z
+
+@x
+@<Adjust \(s)|shift_up| and |shift_down| for the case of a fraction line@>=
+begin if cur_style<text_style then clr:=3*thickness(q)
+else clr:=thickness(q);
+delta:=half(thickness(q));
+delta1:=clr-((shift_up-depth(x))-(axis_height(cur_size)+delta));
+delta2:=clr-((axis_height(cur_size)-delta)-(height(z)-shift_down));
+@y
+@<Adjust \(s)|shift_up| and |shift_down| for the case of a fraction line@>=
+begin if is_ot_font(fam_fnt(3+cur_size)) then begin
+  delta:=half(thickness(q));
+  if cur_style<text_style then clr:=get_ot_math_constant(fam_fnt(3+cur_size), fractionNumDisplayStyleGapMin)
+  else clr:=get_ot_math_constant(fam_fnt(3+cur_size), fractionNumeratorGapMin);
+  delta1:=clr-((shift_up-depth(x))-(axis_height(cur_size)+delta));
+  if cur_style<text_style then clr:=get_ot_math_constant(fam_fnt(3+cur_size), fractionDenomDisplayStyleGapMin)
+  else clr:=get_ot_math_constant(fam_fnt(3+cur_size), fractionDenominatorGapMin);
+  delta2:=clr-((axis_height(cur_size)-delta)-(height(z)-shift_down));
+end else begin
+  if cur_style<text_style then clr:=3*thickness(q)
+  else clr:=thickness(q);
+  delta:=half(thickness(q));
+  delta1:=clr-((shift_up-depth(x))-(axis_height(cur_size)+delta));
+  delta2:=clr-((axis_height(cur_size)-delta)-(height(z)-shift_down));
+end;
+@z
+
+@x
+function make_op(@!q:pointer):scaled;
+var delta:scaled; {offset between subscript and superscript}
+@!p,@!v,@!x,@!y,@!z:pointer; {temporary registers for box construction}
+@!c:quarterword;@+@!i:four_quarters; {registers for character examination}
+@!shift_up,@!shift_down:scaled; {dimensions for box calculation}
+begin if (subtype(q)=normal)and(cur_style<text_style) then
+  subtype(q):=limits;
+if math_type(nucleus(q))=math_char then
+  begin fetch(nucleus(q));
+  if (cur_style<text_style)and(char_tag(cur_i)=list_tag) then {make it larger}
+    begin c:=rem_byte(cur_i); i:=orig_char_info(cur_f)(c);
+    if char_exists(i) then
+      begin cur_c:=c; cur_i:=i; character(nucleus(q)):=c;
+      end;
+    end;
+  delta:=char_italic(cur_f)(cur_i); x:=clean_box(nucleus(q),cur_style);
+  if (math_type(subscr(q))<>empty)and(subtype(q)<>limits) then
+    width(x):=width(x)-delta; {remove italic correction}
+  shift_amount(x):=half(height(x)-depth(x)) - axis_height(cur_size);
+    {center vertically}
+  math_type(nucleus(q)):=sub_box; info(nucleus(q)):=x;
+  end
+else delta:=0;
+if subtype(q)=limits then
+  @<Construct a box with limits above and below it, skewed by |delta|@>;
+make_op:=delta;
+end;
+@y
+function make_op(@!q:pointer):scaled;
+label found;
+var delta:scaled; {offset between subscript and superscript}
+@!p,@!v,@!x,@!y,@!z:pointer; {temporary registers for box construction}
+@!c:quarterword;@+@!i:four_quarters; {registers for character examination}
+@!shift_up,@!shift_down:scaled; {dimensions for box calculation}
+@!h1,@!h2:scaled; {height of original text-style symbol and possible replacement}
+@!n,@!g:integer; {potential variant index and glyph code}
+@!ot_assembly_ptr:void_pointer;
+begin if (subtype(q)=normal)and(cur_style<text_style) then
+  subtype(q):=limits;
+delta:=0;
+if math_type(nucleus(q))=math_char then
+  begin fetch(nucleus(q));
+  if not is_ot_font(cur_f) then begin
+    if (cur_style<text_style)and(char_tag(cur_i)=list_tag) then {make it larger}
+      begin c:=rem_byte(cur_i); i:=orig_char_info(cur_f)(c);
+      if char_exists(i) then
+        begin cur_c:=c; cur_i:=i; character(nucleus(q)):=c;
+        end;
+      end;
+    delta:=char_italic(cur_f)(cur_i);
+  end;
+  x:=clean_box(nucleus(q),cur_style);
+  if is_ot_font(cur_f) then begin
+    p:=list_ptr(x);
+    if (type(p)=whatsit_node) and (subtype(p)=glyph_node) then begin
+      if cur_style<text_style then begin
+        {try to replace the operator glyph with a display-size variant,
+         ensuring it is larger than the text size}
+        h1:=get_ot_math_constant(cur_f,displayOperatorMinHeight);
+        if h1<(height(p)+depth(p))*5/4 then h1:=(height(p)+depth(p))*5/4;
+        c:=native_glyph(p);
+        n:=0;
+        repeat
+          g:=get_ot_math_variant(cur_f, c, n, address_of(h2), 0);
+          if h2>0 then native_glyph(p):=g;
+          incr(n);
+        until (h2<0) or (h2>=h1);
+        if (h2<0) then begin
+          {if we get here, then we didn't find a big enough glyph; check if the char is extensible}
+          ot_assembly_ptr:=get_ot_assembly_ptr(cur_f, c, 0);
+          if ot_assembly_ptr<>nil then begin
+            free_node(p,glyph_node_size);
+            p:=build_opentype_assembly(cur_f, ot_assembly_ptr, h1);
+            list_ptr(x):=p;
+            delta:=0;
+            goto found;
+          end;
+        end else
+          set_native_glyph_metrics(p, 1);
+      end;
+      delta:=get_ot_math_ital_corr(cur_f, native_glyph(p));
+found:
+      width(x):=width(p); height(x):=height(p); depth(x):=depth(p);
+    end
+  end;
+  if (math_type(subscr(q))<>empty)and(subtype(q)<>limits) then
+    width(x):=width(x)-delta; {remove italic correction}
+  shift_amount(x):=half(height(x)-depth(x)) - axis_height(cur_size);
+    {center vertically}
+  math_type(nucleus(q)):=sub_box; info(nucleus(q)):=x;
+  end;
+if subtype(q)=limits then
+  @<Construct a box with limits above and below it, skewed by |delta|@>;
+make_op:=delta;
+end;
 @z
 
 @x
@@ -3223,20 +4672,53 @@ if char_exists(cur_i) then
 @ @<Create a character node |p| for |nucleus(q)|...@>=
 begin fetch(nucleus(q));
 if is_native_font(cur_f) then begin
-  delta:=0; p:=new_native_character(cur_f, qo(cur_c));
+  z:=new_native_character(cur_f, qo(cur_c));
+  p:=get_node(glyph_node_size);
+  type(p):=whatsit_node; subtype(p):=glyph_node;
+  native_font(p):=cur_f; native_glyph(p):=get_native_glyph(z, 0);
+  set_native_glyph_metrics(p, 1);
+  free_node(z, native_size(z));
+  delta:=get_ot_math_ital_corr(cur_f, native_glyph(p));
+  if (math_type(nucleus(q))=math_text_char)and(space(cur_f)<>0) then
+    delta:=0; {no italic correction in mid-word of text font}
+  if (math_type(subscr(q))=empty)and(delta<>0) then
+    begin link(p):=new_kern(delta); delta:=0;
+    end;
 end else if char_exists(cur_i) then
 @z
 
 @x
+@ The purpose of |make_scripts(q,delta)| is to attach the subscript and/or
+superscript of noad |q| to the list that starts at |new_hlist(q)|,
+given that subscript and superscript aren't both empty. The superscript
+will appear to the right of the subscript by a given distance |delta|.
+
+We set |shift_down| and |shift_up| to the minimum amounts to shift the
+baseline of subscripts and superscripts based on the given nucleus.
+
+@<Declare math...@>=
 procedure make_scripts(@!q:pointer;@!delta:scaled);
 var p,@!x,@!y,@!z:pointer; {temporary registers for box construction}
 @!shift_up,@!shift_down,@!clr:scaled; {dimensions in the calculation}
 @!t:small_number; {subsidiary size code}
+begin p:=new_hlist(q);
+if is_char_node(p) then
 @y
+@ The purpose of |make_scripts(q,delta)| is to attach the subscript and/or
+superscript of noad |q| to the list that starts at |new_hlist(q)|,
+given that subscript and superscript aren't both empty. The superscript
+will appear to the right of the subscript by a given distance |delta|.
+
+We set |shift_down| and |shift_up| to the minimum amounts to shift the
+baseline of subscripts and superscripts based on the given nucleus.
+
+@<Declare math...@>=
 procedure make_scripts(@!q:pointer;@!delta:scaled);
 var p,@!x,@!y,@!z:pointer; {temporary registers for box construction}
 @!shift_up,@!shift_down,@!clr:scaled; {dimensions in the calculation}
 @!t:integer; {subsidiary size code}
+begin p:=new_hlist(q);
+if is_char_node(p) or (p<>null and is_native_word_node(p)) then
 @z
 
 @x
@@ -3547,7 +5029,7 @@ hyphen_passed := 0; { location of last hyphen we saw }
 for j := l_hyf to hn - r_hyf do begin
   { if this is a valid break.... }
   if odd(hyf[j]) then begin
-  
+
 	{ make a |native_word_node| for the fragment before the hyphen }
 	q := new_native_word_node(hf, j - hyphen_passed);
 	for i := 0 to j - hyphen_passed - 1 do
@@ -3555,13 +5037,13 @@ for j := l_hyf to hn - r_hyf do begin
 	set_native_metrics(q, XeTeX_use_glyph_metrics);
 	link(s) := q; { append the new node }
 	s := q;
-	
+
 	{ make the |disc_node| for the hyphenation point }
     q := new_disc;
 	pre_break(q) := new_native_character(hf, hyf_char);
 	link(s) := q;
 	s := q;
-	
+
 	hyphen_passed := j;
   end
 end;
@@ -3766,6 +5248,14 @@ incr(max_hyph_char);
 @y
 @d main_loop=70 {go here to typeset a string of consecutive characters}
 @d collect_native=71 {go here to collect characters in a "native" font string}
+@d collected=72
+@z
+
+@x
+  append_normal_space,exit;
+@y
+  collect_native,collected,
+  append_normal_space,exit;
 @z
 
 @x
@@ -3775,17 +5265,113 @@ hmode+char_num: begin scan_usv_num; cur_chr:=cur_val; goto main_loop;@+end;
 @z
 
 @x
+hmode+spacer: if space_factor=1000 then goto append_normal_space
+  else app_space;
+hmode+ex_space,mmode+ex_space: goto append_normal_space;
+@t\4@>@<Cases of |main_control| that are not part of the inner loop@>@;
+end; {of the big |case| statement}
+@y
+othercases begin
+  if abs(mode)=hmode then check_for_post_char_toks(big_switch);
+  case abs(mode)+cur_cmd of
+    hmode+spacer: if space_factor=1000 then goto append_normal_space
+      else app_space;
+    hmode+ex_space,mmode+ex_space: goto append_normal_space;
+    @t\4@>@<Cases of |main_control| that are not part of the inner loop@>
+    end
+  end
+endcases; {of the big |case| statement}
+@z
+
+@x
+append_normal_space:@<Append a normal inter-word space to the current list,
+@y
+append_normal_space:check_for_post_char_toks(big_switch);
+@<Append a normal inter-word space to the current list,
+@z
+
+@x
 @!main_p:pointer; {temporary register for list manipulation}
 @y
 @!main_p:pointer; {temporary register for list manipulation}
 @!main_pp,@!main_ppp:pointer; {more temporary registers for list manipulation}
 @!main_h:pointer; {temp for hyphen offset in native-font text}
 @!is_hyph:boolean; {whether the last char seen is the font's hyphenchar}
+@!space_class:integer;
+@!prev_class:integer;
 @z
 
 @x
+@d adjust_space_factor==@t@>@;@/
+  main_s:=sf_code(cur_chr);
+@y
+@d adjust_space_factor==@t@>@;@/
+  main_s:=sf_code(cur_chr) mod @"10000;
+@z
+
+@x
+@<Append character |cur_chr|...@>=
+if ((head=tail) and (mode>0)) then begin
+  if (insert_src_special_auto) then append_src_special;
+end;
 adjust_space_factor;@/
 @y
+@d check_for_inter_char_toks(#)=={check for a spacing token list, goto # if found,
+                               or big_switch in case of the initial letter of a run}
+	cur_ptr:=null;
+	space_class:=sf_code(cur_chr) div @"10000;
+
+	if XeTeX_inter_char_tokens_en and space_class <> 256 then begin {class 256 = ignored (for combining marks etc)}
+		if prev_class = 255 then begin {boundary}
+			if (state<>token_list) or (token_type<>backed_up_char) then begin
+				find_sa_element(inter_char_val, 255*@"100 + space_class, false);
+				if cur_ptr<>null then begin
+					if cur_cs=0 then begin
+						if cur_cmd=char_num then cur_cmd:=char_given;
+						cur_tok:=(cur_cmd*max_char_val)+cur_chr;
+					end else cur_tok:=cs_token_flag+cur_cs; {can't happen?}
+					back_input; token_type:=backed_up_char;
+					begin_token_list(sa_ptr(cur_ptr), inter_char_text);
+					goto big_switch;
+				end
+			end
+		end else begin
+			find_sa_element(inter_char_val, prev_class*@"100 + space_class, false);
+			if cur_ptr<>null then begin
+				if cur_cs=0 then begin
+					if cur_cmd=char_num then cur_cmd:=char_given;
+					cur_tok:=(cur_cmd*max_char_val)+cur_chr;
+				end else cur_tok:=cs_token_flag+cur_cs; {can't happen?}
+				back_input; token_type:=backed_up_char;
+				begin_token_list(sa_ptr(cur_ptr), inter_char_text);
+				prev_class:=255;
+				goto #;
+			end;
+		end;
+		prev_class:=space_class;
+	end
+
+@d check_for_post_char_toks(#)==
+	if XeTeX_inter_char_tokens_en and (space_class<>256) and (prev_class<>255) then begin
+		prev_class:=255;
+		find_sa_element(inter_char_val, space_class*@"100 + 255, false); {boundary}
+		if cur_ptr<>null then begin
+			if cur_cs=0 then begin
+				if cur_cmd=char_num then cur_cmd:=char_given;
+				cur_tok:=(cur_cmd*max_char_val)+cur_chr;
+			end else cur_tok:=cs_token_flag+cur_cs;
+			back_input;
+			begin_token_list(sa_ptr(cur_ptr), inter_char_text);
+			goto #;
+		end;
+	end
+
+@<Append character |cur_chr|...@>=
+if ((head=tail) and (mode>0)) then begin
+  if (insert_src_special_auto) then append_src_special;
+end;
+
+prev_class := 255; {boundary}
 
 { added code for native font support }
 if is_native_font(cur_font) then begin
@@ -3793,20 +5379,24 @@ if is_native_font(cur_font) then begin
 
 	main_h := 0;
 	main_f := cur_font;
+	native_len := 0;
 
 collect_native:
 	adjust_space_factor;
+
+	check_for_inter_char_toks(collected);
+
 	if (cur_chr > @"FFFF) then begin
-		str_room(2);
-		append_char((cur_chr - @"10000) div 1024 + @"D800);
-		append_char((cur_chr - @"10000) mod 1024 + @"DC00);
+		native_room(2);
+		append_native((cur_chr - @"10000) div 1024 + @"D800);
+		append_native((cur_chr - @"10000) mod 1024 + @"DC00);
 	end else begin
-		str_room(1);
-		append_char(cur_chr);
+		native_room(1);
+		append_native(cur_chr);
 	end;
 	is_hyph := (cur_chr = hyphen_char[main_f])
-		or (XeTeX_dash_break_en and (cur_chr = @"2014) or (cur_chr = @"2013));
-	if (main_h = 0) and is_hyph then main_h := cur_length;
+		or (XeTeX_dash_break_en and ((cur_chr = @"2014) or (cur_chr = @"2013)));
+	if (main_h = 0) and is_hyph then main_h := native_len;
 
 	{try to collect as many chars as possible in the same font}
 	get_next;
@@ -3819,28 +5409,30 @@ collect_native:
 		goto collect_native;
 	end;
 
+	check_for_post_char_toks(collected);
+
+collected:
 	if (font_mapping[main_f] <> 0) then begin
-		main_k := apply_mapping(font_mapping[main_f], address_of(str_pool[str_start_macro(str_ptr)]), cur_length);
-		pool_ptr := str_start_macro(str_ptr); { flush the string, as we'll be using the mapped text instead }
-		str_room(main_k);
+		main_k := apply_mapping(font_mapping[main_f], native_text, native_len);
+		native_len := 0;
+		native_room(main_k);
 		main_h := 0;
 		for main_p := 0 to main_k - 1 do begin
-			append_char(mapped_text[main_p]);
+			append_native(mapped_text[main_p]);
 			if (main_h = 0) and ((mapped_text[main_p] = hyphen_char[main_f])
 				or (XeTeX_dash_break_en and ((mapped_text[main_p] = @"2014) or (mapped_text[main_p] = @"2013)) ) )
-			then main_h := cur_length;
+			then main_h := native_len;
 		end
 	end;
 
 	if tracing_lost_chars > 0 then begin
-		temp_ptr := str_start_macro(str_ptr);
-		main_p := temp_ptr + cur_length;
-		while (temp_ptr < main_p) do begin
-			main_k := str_pool[temp_ptr];
+		temp_ptr := 0;
+		while (temp_ptr < native_len) do begin
+			main_k := native_text[temp_ptr];
 			incr(temp_ptr);
 			if (main_k >= @"D800) and (main_k < @"DC00) then begin
 				main_k := @"10000 + (main_k - @"D800) * 1024;
-				main_k := main_k + str_pool[temp_ptr] - @"DC00;
+				main_k := main_k + native_text[temp_ptr] - @"DC00;
 				incr(temp_ptr);
 			end;
 			if map_char_to_glyph(main_f, main_k) = 0 then
@@ -3848,48 +5440,54 @@ collect_native:
 		end
 	end;
 
-	main_k := cur_length;
+	main_k := native_len;
 	main_pp := tail;
 
 	if mode=hmode then begin
 
 		main_ppp := head;
-		if main_ppp<>main_pp then
-			while (link(main_ppp)<>main_pp) do
-				main_ppp:=link(main_ppp);	{ find node preceding tail }
+		if main_ppp<>main_pp then	{ find node preceding tail, skipping discretionaries }
+			while (link(main_ppp)<>main_pp) do begin
+				if (not is_char_node(main_ppp)) and (type(main_ppp=disc_node)) then begin
+					temp_ptr:=main_ppp;
+					for main_p:=1 to replace_count(temp_ptr) do main_ppp:=link(main_ppp);
+				end;
+				if main_ppp<>main_pp then main_ppp:=link(main_ppp);
+			end;
 
-		temp_ptr := str_start_macro(str_ptr);
+		temp_ptr := 0;
 		repeat
 			if main_h = 0 then main_h := main_k;
 
-			if (not is_char_node(main_pp))
+			if      (not is_char_node(main_pp))
 				and (type(main_pp)=whatsit_node)
 				and (subtype(main_pp)=native_word_node)
 				and (native_font(main_pp)=main_f)
 				and (main_ppp<>main_pp)
-				and type(main_ppp)<>disc_node
+				and (not is_char_node(main_ppp))
+				and (type(main_ppp)<>disc_node)
 			then begin
 
 				{ make a new temp string that contains the concatenated text of |tail| + the current word/fragment }
 				main_k := main_h + native_length(main_pp);
-				str_room(main_k);
-				
-				temp_ptr := pool_ptr;
+				native_room(main_k);
+
+				save_native_len := native_len;
 				for main_p := 0 to native_length(main_pp) - 1 do
-					append_char(get_native_char(main_pp, main_p));
-				for main_p := str_start_macro(str_ptr) to temp_ptr - 1 do
-					append_char(str_pool[main_p]);
+					append_native(get_native_char(main_pp, main_p));
+				for main_p := 0 to main_h - 1 do
+					append_native(native_text[temp_ptr + main_p]);
 
-				do_locale_linebreaks(temp_ptr, main_k);
+				do_locale_linebreaks(save_native_len, main_k);
 
-				pool_ptr := temp_ptr;	{ discard the temp string }
-				main_k := cur_length - main_h;	{ and set main_k to remaining length of new word }
-				temp_ptr := str_start_macro(str_ptr) + main_h;	{ pointer to remaining fragment }
+				native_len := save_native_len;	{ discard the temp string }
+				main_k := native_len - main_h - temp_ptr;	{ and set main_k to remaining length of new word }
+				temp_ptr := main_h;	{ pointer to remaining fragment }
 
 				main_h := 0;
-				while (main_h < main_k) and (str_pool[temp_ptr + main_h] <> hyphen_char[main_f])
+				while (main_h < main_k) and (native_text[temp_ptr + main_h] <> hyphen_char[main_f])
 					and ( (not XeTeX_dash_break_en)
-						or ((str_pool[temp_ptr + main_h] <> @"2014) and (str_pool[temp_ptr + main_h] <> @"2013)) )
+						or ((native_text[temp_ptr + main_h] <> @"2014) and (native_text[temp_ptr + main_h] <> @"2013)) )
 				do incr(main_h);	{ look for next hyphen or end of text }
 				if (main_h < main_k) then incr(main_h);
 
@@ -3909,33 +5507,34 @@ collect_native:
 				main_k := main_k - main_h;	{ decrement remaining length }
 
 				main_h := 0;
-				while (main_h < main_k) and (str_pool[temp_ptr + main_h] <> hyphen_char[main_f])
+				while (main_h < main_k) and (native_text[temp_ptr + main_h] <> hyphen_char[main_f])
 					and ( (not XeTeX_dash_break_en)
-						or ((str_pool[temp_ptr + main_h] <> @"2014) and (str_pool[temp_ptr + main_h] <> @"2013)) )
+						or ((native_text[temp_ptr + main_h] <> @"2014) and (native_text[temp_ptr + main_h] <> @"2013)) )
 				do incr(main_h);	{ look for next hyphen or end of text }
 				if (main_h < main_k) then incr(main_h);
 
 			end;
-			
+
 			if (main_k > 0) or is_hyph then begin
 				tail_append(new_disc);	{ add a break if we aren't at end of text (must be a hyphen),
 											or if last char in original text was a hyphen }
+				main_pp:=tail;
 			end;
 		until main_k = 0;
-		
+
 	end else begin
 		{ must be restricted hmode, so no need for line-breaking or discretionaries }
 		if (not is_char_node(main_pp)) and (type(main_pp)=whatsit_node) and (subtype(main_pp)=native_word_node) and (native_font(main_pp)=main_f) then begin
 			{ total string length for the new merged whatsit }
 			link(main_pp) := new_native_word_node(main_f, main_k + native_length(main_pp));
 			tail := link(main_pp);
-	
+
 			{ copy text from the old one into the new }
 			for main_p := 0 to native_length(main_pp) - 1 do
 				set_native_char(tail, main_p, get_native_char(main_pp, main_p));
 			{ append the new text }
 			for main_p := 0 to main_k - 1 do
-				set_native_char(tail, main_p + native_length(main_pp), str_pool[str_start_macro(str_ptr) + main_p]);
+				set_native_char(tail, main_p + native_length(main_pp), native_text[main_p]);
 			set_native_metrics(tail, XeTeX_use_glyph_metrics);
 
 			{ remove the preceding node from the list }
@@ -3951,23 +5550,52 @@ collect_native:
 			link(main_pp) := new_native_word_node(main_f, main_k);
 			tail := link(main_pp);
 			for main_p := 0 to main_k - 1 do
-				set_native_char(tail, main_p, str_pool[str_start_macro(str_ptr) + main_p]);
+				set_native_char(tail, main_p, native_text[main_p]);
 			set_native_metrics(tail, XeTeX_use_glyph_metrics);
 		end
 	end;
-	
-	pool_ptr := str_start_macro(str_ptr);
-	goto reswitch;
+
+	if cur_ptr<>null then goto big_switch
+	else goto reswitch;
 end;
 { End of added code for native fonts }
 
 adjust_space_factor;@/
+check_for_inter_char_toks(big_switch);
+@z
+
+@x
+main_loop_lookahead+1: adjust_space_factor;
+@y
+main_loop_lookahead+1: adjust_space_factor;
+check_for_inter_char_toks(big_switch);
 @z
 
 @x
 non_math(math_given), non_math(math_comp), non_math(delim_num),
 @y
 non_math(math_given), non_math(XeTeX_math_given), non_math(math_comp), non_math(delim_num),
+@z
+
+@x
+begin d:=box_max_depth; unsave; save_ptr:=save_ptr-3;
+if mode=-hmode then cur_box:=hpack(link(head),saved(2),saved(1))
+else  begin cur_box:=vpackage(link(head),saved(2),saved(1),d);
+  if c=vtop_code then @<Readjust the height and depth of |cur_box|,
+    for \.{\\vtop}@>;
+  end;
+pop_nest; box_end(saved(0));
+@y
+@!u,v:integer; {saved values for upwards mode flag}
+begin d:=box_max_depth; u:=XeTeX_upwards_state; unsave; save_ptr:=save_ptr-3;
+v:=XeTeX_upwards_state; XeTeX_upwards_state:=u;
+if mode=-hmode then cur_box:=hpack(link(head),saved(2),saved(1))
+else  begin cur_box:=vpackage(link(head),saved(2),saved(1),d);
+  if c=vtop_code then @<Readjust the height and depth of |cur_box|,
+    for \.{\\vtop}@>;
+  end;
+XeTeX_upwards_state:=v;
+pop_nest; box_end(saved(0));
 @z
 
 @x
@@ -4060,6 +5688,30 @@ delta:=round((w-a)/float_constant(2)+h*t-x*s);
 if is_native_font(f) and (a=0) then { special case for non-spacing marks }
   delta:=round((w-lsb+rsb)/float_constant(2)+h*t-x*s)
 else delta:=round((w-a)/float_constant(2)+h*t-x*s);
+@z
+
+@x
+procedure cs_error;
+begin
+if cur_chr = 10 then
+begin
+  print_err("Extra "); print_esc("endmubyte");
+@.Extra \\endmubyte@>
+  help1("I'm ignoring this, since I wasn't doing a \mubyte.");
+end else begin
+  print_err("Extra "); print_esc("endcsname");
+@.Extra \\endcsname@>
+  help1("I'm ignoring this, since I wasn't doing a \csname.");
+end;
+error;
+end;
+@y
+procedure cs_error;
+begin print_err("Extra "); print_esc("endcsname");
+@.Extra \\endcsname@>
+help1("I'm ignoring this, since I wasn't doing a \csname.");
+error;
+end;
 @z
 
 @x
@@ -4294,6 +5946,34 @@ plane_and_fam_field(accent_chr(tail))
 @z
 
 @x
+@ @<Check that the necessary fonts...@>=
+if (font_params[fam_fnt(2+text_size)]<total_mathsy_params)or@|
+   (font_params[fam_fnt(2+script_size)]<total_mathsy_params)or@|
+   (font_params[fam_fnt(2+script_script_size)]<total_mathsy_params) then
+@y
+@ @<Check that the necessary fonts...@>=
+if ((font_params[fam_fnt(2+text_size)]<total_mathsy_params)
+    and (not is_ot_font(fam_fnt(2+text_size)))) or@|
+   ((font_params[fam_fnt(2+script_size)]<total_mathsy_params)
+    and (not is_ot_font(fam_fnt(2+script_size)))) or@|
+   ((font_params[fam_fnt(2+script_script_size)]<total_mathsy_params)
+    and (not is_ot_font(fam_fnt(2+script_script_size)))) then
+@z
+
+@x
+else if (font_params[fam_fnt(3+text_size)]<total_mathex_params)or@|
+   (font_params[fam_fnt(3+script_size)]<total_mathex_params)or@|
+   (font_params[fam_fnt(3+script_script_size)]<total_mathex_params) then
+@y
+else if ((font_params[fam_fnt(3+text_size)]<total_mathex_params)
+    and (not is_ot_font(fam_fnt(3+text_size)))) or@|
+   ((font_params[fam_fnt(3+script_size)]<total_mathex_params)
+    and (not is_ot_font(fam_fnt(3+script_size)))) or@|
+   ((font_params[fam_fnt(3+script_script_size)]<total_mathex_params)
+    and (not is_ot_font(fam_fnt(3+script_script_size)))) then
+@z
+
+@x
 @* \[49] Mode-independent processing.
 @y
 @* \[49] Mode-independent processing.
@@ -4311,6 +5991,128 @@ any_mode(XeTeX_def_code),
 @y
 @d word_define(#)==if global then geq_word_define(#)@+else eq_word_define(#)
 @d word_define1(#)==if global then geq_word_define1(#)@+else eq_word_define1(#)
+@z
+
+@x
+if enctex_p then
+begin
+  primitive("mubyte",let,normal+10);@/
+@!@:mubyte_}{\.{\\mubyte} primitive@>
+  primitive("noconvert",let,normal+11);@/
+@!@:noconvert_}{\.{\\noconvert} primitive@>
+end;
+@y
+@z
+
+@x
+let: if chr_code<>normal then
+      if chr_code = normal+10 then print_esc("mubyte")
+      else if chr_code = normal+11 then print_esc("noconvert")
+      else print_esc("futurelet")
+  else print_esc("let");
+@y
+let: if chr_code<>normal then print_esc("futurelet")@+else print_esc("let");
+@z
+
+@x
+let:  if cur_chr = normal+11 then do_nothing  { noconvert primitive }
+      else if cur_chr = normal+10 then        { mubyte primitive }
+      begin
+        selector:=term_and_log;
+        get_token;
+        mubyte_stoken := cur_tok;
+        if cur_tok <= cs_token_flag then mubyte_stoken := cur_tok mod 256;
+        mubyte_prefix := 60;  mubyte_relax := false;
+        mubyte_tablein := true; mubyte_tableout := true;
+        get_x_token;
+        if cur_cmd = spacer then get_x_token;
+        if cur_cmd = sub_mark then
+        begin
+          mubyte_tableout := false; get_x_token;
+          if cur_cmd = sub_mark then
+          begin
+            mubyte_tableout := true; mubyte_tablein := false;
+            get_x_token;
+          end;
+        end else if (mubyte_stoken > cs_token_flag) and
+                    (cur_cmd = mac_param) then
+                 begin
+                   mubyte_tableout := false;
+                   scan_int; mubyte_prefix := cur_val; get_x_token;
+                   if mubyte_prefix > 50 then mubyte_prefix := 52;
+                   if mubyte_prefix <= 0 then mubyte_prefix := 51;
+                 end
+        else if (mubyte_stoken > cs_token_flag) and (cur_cmd = relax) then
+             begin
+               mubyte_tableout := true; mubyte_tablein := false;
+               mubyte_relax := true; get_x_token;
+             end;
+        r := get_avail; p := r;
+        while cur_cs = 0 do begin store_new_token (cur_tok); get_x_token; end;
+        if (cur_cmd <> end_cs_name) or (cur_chr <> 10) then
+        begin
+          print_err("Missing "); print_esc("endmubyte"); print(" inserted");
+          help2("The control sequence marked <to be read again> should")@/
+("not appear in <byte sequence> between \mubyte and \endmubyte.");
+          back_error;
+        end;
+        p := link(r);
+        if (p = null) and mubyte_tablein then
+        begin
+          print_err("The empty <byte sequence>, ");
+          print_esc("mubyte"); print(" ignored");
+          help2("The <byte sequence> in")@/
+("\mubyte <token> <byte sequence>\endmubyte should not be empty.");
+          error;
+        end else begin
+          while p <> null do
+          begin
+            append_char (info(p) mod 256);
+            p := link (p);
+          end;
+          flush_list (r);
+          if (str_start [str_ptr] + 1 = pool_ptr) and
+            (str_pool [pool_ptr-1] = mubyte_stoken) then
+          begin
+            if mubyte_read [mubyte_stoken] <> null
+               and mubyte_tablein then  { clearing data }
+                  dispose_munode (mubyte_read [mubyte_stoken]);
+            if mubyte_tablein then mubyte_read [mubyte_stoken] := null;
+            if mubyte_tableout then mubyte_write [mubyte_stoken] := 0;
+            pool_ptr := str_start [str_ptr];
+          end else begin
+            if mubyte_tablein then mubyte_update;    { updating input side }
+            if mubyte_tableout then  { updating output side }
+            begin
+              if mubyte_stoken > cs_token_flag then { control sequence }
+              begin
+                dispose_mutableout (mubyte_stoken-cs_token_flag);
+                if (str_start [str_ptr] < pool_ptr) or mubyte_relax then
+                begin       { store data }
+                  r := mubyte_cswrite[(mubyte_stoken-cs_token_flag) mod 128];
+                  p := get_avail;
+                  mubyte_cswrite[(mubyte_stoken-cs_token_flag) mod 128] := p;
+                  info (p) := mubyte_stoken-cs_token_flag;
+                  link (p) := get_avail;
+                  p := link (p);
+                  if mubyte_relax then begin
+                    info (p) := 0; pool_ptr := str_start [str_ptr];
+                  end else info (p) := slow_make_string;
+                  link (p) := r;
+                end;
+              end else begin                       { single character  }
+                if str_start [str_ptr] = pool_ptr then
+                  mubyte_write [mubyte_stoken] := 0
+                else
+                  mubyte_write [mubyte_stoken] := slow_make_string;
+              end;
+            end else pool_ptr := str_start [str_ptr];
+          end;
+        end;
+      end else begin   { let primitive }
+        n:=cur_chr;
+@y
+let:  begin n:=cur_chr;
 @z
 
 @x
@@ -4393,6 +6195,39 @@ else begin n:=cur_chr; get_r_token; p:=cur_cs; define(p,relax,too_big_char);
 @z
 
 @x
+    else e:=true;
+@y
+    else e:=true
+  else if cur_chr=XeTeX_inter_char_loc then begin
+    scan_eight_bit_int; cur_ptr:=cur_val;
+    scan_eight_bit_int;
+    find_sa_element(inter_char_val, cur_ptr*@"100 + cur_val, true);
+    cur_chr:=cur_ptr; e:=true;
+  end;
+@z
+
+@x
+  else q:=equiv(cur_chr);
+@y
+  else if cur_chr=XeTeX_inter_char_loc then begin
+    scan_eight_bit_int; cur_ptr:=cur_val;
+    scan_eight_bit_int;
+    find_sa_element(inter_char_val, cur_ptr*@"100 + cur_val, false);
+    if cur_ptr=null then q:=null
+    else q:=sa_ptr(cur_ptr);
+  end else q:=equiv(cur_chr);
+@z
+
+@x
+if enctex_p then
+begin
+  primitive("xordcode",def_code,xord_code_base);
+@!@:xord_code_}{\.{\\xordcode} primitive@>
+  primitive("xchrcode",def_code,xchr_code_base);
+@!@:xchr_code_}{\.{\\xchrcode} primitive@>
+  primitive("xprncode",def_code,xprn_code_base);
+@!@:xprn_code_}{\.{\\xprncode} primitive@>
+end;
 primitive("mathcode",def_code,math_code_base);
 @y
 primitive("mathcode",def_code,math_code_base);
@@ -4401,17 +6236,33 @@ primitive("XeTeXmathcode",XeTeX_def_code,math_code_base+1);
 @z
 
 @x
+primitive("sfcode",def_code,sf_code_base);
+@!@:sf_code_}{\.{\\sfcode} primitive@>
 primitive("delcode",def_code,del_code_base);
 @y
+primitive("sfcode",def_code,sf_code_base);
+@!@:sf_code_}{\.{\\sfcode} primitive@>
+primitive("XeTeXcharclass",XeTeX_def_code,sf_code_base);
 primitive("delcode",def_code,del_code_base);
 primitive("XeTeXdelcodenum",XeTeX_def_code,del_code_base);
 primitive("XeTeXdelcode",XeTeX_def_code,del_code_base+1);
 @z
 
 @x
+def_code: if chr_code=xord_code_base then print_esc("xordcode")
+  else if chr_code=xchr_code_base then print_esc("xchrcode")
+  else if chr_code=xprn_code_base then print_esc("xprncode")
+  else if chr_code=cat_code_base then print_esc("catcode")
+@y
+def_code: if chr_code=cat_code_base then print_esc("catcode")
+@z
+
+@x
 def_family: print_size(chr_code-math_font_base);
 @y
-XeTeX_def_code: if chr_code=math_code_base then print_esc("XeTeXmathcodenum")
+XeTeX_def_code:
+  if chr_code=sf_code_base then print_esc("XeTeXcharclass")
+  else if chr_code=math_code_base then print_esc("XeTeXmathcodenum")
   else if chr_code=math_code_base+1 then print_esc("XeTeXmathcode")
   else if chr_code=del_code_base then print_esc("XeTeXdelcodenum")
   else print_esc("XeTeXdelcode");
@@ -4420,17 +6271,26 @@ def_family: print_size(chr_code-math_font_base);
 
 @x
 def_code: begin @<Let |n| be the largest legal code value, based on |cur_chr|@>;
+  p:=cur_chr; scan_char_num;
 @y
 XeTeX_def_code: begin
-    if cur_chr = math_code_base then begin
-      p:=cur_chr; scan_char_num;
+    if cur_chr = sf_code_base then begin
+      p:=cur_chr; scan_usv_num;
+      p:=p+cur_val;
+	  n:=sf_code(cur_val) mod @"10000;
+      scan_optional_equals;
+      scan_char_class;
+      define(p,data,cur_val*@"10000 + n);
+    end
+    else if cur_chr = math_code_base then begin
+      p:=cur_chr; scan_usv_num;
       p:=p+cur_val;
       scan_optional_equals;
       scan_xetex_math_char_int;
       define(p,data,hi(cur_val));
     end
     else if cur_chr = math_code_base+1 then begin
-      p:=cur_chr-1; scan_char_num;
+      p:=cur_chr-1; scan_usv_num;
       p:=p+cur_val;
       scan_optional_equals;
       scan_math_class_int; n := set_class_field(cur_val);
@@ -4439,7 +6299,7 @@ XeTeX_def_code: begin
       define(p,data,hi(n));
     end
     else if cur_chr = del_code_base then begin
-      p:=cur_chr; scan_char_num;
+      p:=cur_chr; scan_usv_num;
       p:=p+cur_val;
       scan_optional_equals;
       scan_int; {scan_xetex_del_code_int; !!FIXME!!}
@@ -4452,7 +6312,7 @@ extended:        @"40000000                      FLAG
                  +  ff << 21 (mult by @"200000)  FAMILY
                  +   1ccccc (21 bits)            USV
 }
-      p:=cur_chr-1; scan_char_num;
+      p:=cur_chr-1; scan_usv_num;
       p:=p+cur_val;
       scan_optional_equals;
       n := @"40000000; {extended delcode flag}
@@ -4462,6 +6322,16 @@ extended:        @"40000000                      FLAG
     end;
   end;
 def_code: begin @<Let |n| be the largest legal code value, based on |cur_chr|@>;
+  p:=cur_chr; scan_usv_num;
+@z
+
+@x
+  if p=xord_code_base then p:=cur_val
+  else if p=xchr_code_base then p:=cur_val+256
+  else if p=xprn_code_base then p:=cur_val+512
+  else p:=p+cur_val;
+@y
+  p:=p+cur_val;
 @z
 
 @x
@@ -4471,8 +6341,13 @@ def_code: begin @<Let |n| be the largest legal code value, based on |cur_chr|@>;
   else if p<math_code_base then define(p,data,cur_val)
   else if p<del_code_base then define(p,data,hi(cur_val))
 @y
-  if p<math_code_base then define(p,data,cur_val)
-  else if p<del_code_base then begin
+  if p<math_code_base then begin
+    if p>=sf_code_base then begin
+      n:=equiv(p) div @"10000;
+      define(p,data,n*@"10000 + cur_val);
+    end else
+      define(p,data,cur_val)
+  end else if p<del_code_base then begin
     if cur_val=@"8000 then cur_val:=active_math_char
     else cur_val:=set_class_field(cur_val div @"1000) +
                   set_family_field((cur_val mod @"1000) div @"100) +
@@ -4481,26 +6356,10 @@ def_code: begin @<Let |n| be the largest legal code value, based on |cur_chr|@>;
     end
 @z
 
--- from Omega; not needed with new xetex delimiter coding
- x
-  else word_define(p,cur_val);
- y
-  else begin
-    cur_val1 := cur_val mod @"1000; { large delim code }
-    cur_val1 := set_family_field(cur_val1 div @"100) + cur_val1 mod @"100;
-    cur_val := cur_val div @"1000;
-    cur_val := set_class_field((cur_val div @"1000) mod 8) +
-               set_family_field((cur_val div @"100) mod @"10) +
-               (cur_val mod @"100);
-    word_define(p, cur_val);
-    word_define1(p, cur_val1);
-  end;
- z
-
 @x
 else n:=255
 @y
-else n:=biggest_char
+else n:=biggest_usv
 @z
 
 @x
@@ -4559,9 +6418,17 @@ set_font:begin print("select font ");
 @z
 
 @x
+message_printing := true; active_noconvert := true;
+token_show(def_ref);
+message_printing := false; active_noconvert := false;
+@y
+token_show(def_ref);
+@z
+
+@x
 @!c:eight_bits; {character code}
 @y
-@!c:ASCII_code; {character code}
+@!c:integer; {character code}
 @z
 
 @x
@@ -4583,9 +6450,26 @@ set_font:begin print("select font ");
 @z
 
 @x
+@<Dump enc\TeX-specific data@>;
+@y
+@z
+
+@x
 @!format_engine: ^text_char;
 @y
 @!format_engine: ^char;
+@z
+
+@x
+@!dummy_xord: ASCII_code;
+@!dummy_xchr: text_char;
+@!dummy_xprn: ASCII_code;
+@y
+@z
+
+@x
+@<Undump enc\TeX-specific data@>;
+@y
 @z
 
 @x
@@ -4595,9 +6479,19 @@ format_engine:=xmalloc_array(char,x+4);
 @z
 
 @x
+@<Dump |xord|, |xchr|, and |xprn|@>;
+@y
+@z
+
+@x
 format_engine:=xmalloc_array(text_char, x);
 @y
 format_engine:=xmalloc_array(char, x);
+@z
+
+@x
+@<Undump |xord|, |xchr|, and |xprn|@>;
+@y
 @z
 
 @x
@@ -4610,6 +6504,18 @@ dump_things(str_start_macro(too_big_char), str_ptr+1-too_big_char);
 undump_checked_things(0, pool_ptr, str_start[0], str_ptr+1);@/
 @y
 undump_checked_things(0, pool_ptr, str_start_macro(too_big_char), str_ptr+1-too_big_char);@/
+@z
+
+@x
+if eTeX_ex then for k:=int_val to tok_val do dump_int(sa_root[k]);
+@y
+if eTeX_ex then for k:=int_val to inter_char_val do dump_int(sa_root[k]);
+@z
+
+@x
+if eTeX_ex then for k:=int_val to tok_val do
+@y
+if eTeX_ex then for k:=int_val to inter_char_val do
 @z
 
 @x
@@ -4672,10 +6578,31 @@ k:=biggest_lang+1;
 @z
 
 @x
+undump_int(x);
+if (x<>69069)or feof(fmt_file) then goto bad_fmt
+@y
+undump_int(x);
+if (x<>69069) then goto bad_fmt;
+if not w_eof(fmt_file) then goto bad_fmt
+@z
+
+@x
+@* \[51] The main program.
+@y
+@* \[51] The main program.
+@z
+
+@x
   setup_bound_var (15000)('max_strings')(max_strings);
 @y
   setup_bound_var (15000)('max_strings')(max_strings);
   max_strings:=max_strings+too_big_char; {the max_strings value doesn't include the 64K synthetic strings}
+@z
+
+@x
+  buffer:=xmalloc_array (ASCII_code, buf_size);
+@y
+  buffer:=xmalloc_array (UnicodeScalar, buf_size);
 @z
 
 @x
@@ -4688,6 +6615,16 @@ k:=biggest_lang+1;
     print_file_name(0, log_name, 0); print_char(".");
 @y
     print(log_name); print_char(".");
+@z
+
+@x
+if enctex_enabled_p then
+  begin wterm(encTeX_banner); wterm_ln(', reencoding enabled.');
+    if translate_filename then begin
+      wterm_ln(' (\xordcode, \xchrcode, \xprncode overridden by TCX)');
+    end;
+  end;
+@y
 @z
 
 @x
@@ -4751,6 +6688,7 @@ primitive("XeTeXpicfile",extension,pic_file_code);@/
 primitive("XeTeXpdffile",extension,pdf_file_code);@/
 primitive("XeTeXglyph",extension,glyph_code);@/
 primitive("XeTeXlinebreaklocale", extension, XeTeX_linebreak_locale_extension_code);@/
+primitive("XeTeXinterchartoks",assign_toks,XeTeX_inter_char_loc);
 
 primitive("pdfsavepos",extension,pdf_save_pos_node);@/
 @z
@@ -4763,7 +6701,8 @@ primitive("pdfsavepos",extension,pdf_save_pos_node);@/
   pdf_file_code:print_esc("XeTeXpdffile");
   glyph_code:print_esc("XeTeXglyph");
   XeTeX_linebreak_locale_extension_code:print_esc("XeTeXlinebreaklocale");
-
+  XeTeX_input_encoding_extension_code:print_esc("XeTeXinputencoding");
+  XeTeX_default_encoding_extension_code:print_esc("XeTeXdefaultencoding");
   pdf_save_pos_node: print_esc("pdfsavepos");
 @z
 
@@ -4782,12 +6721,67 @@ pdf_save_pos_node: @<Implement \.{\\pdfsavepos}@>;
 @z
 
 @x
+if mubyte_out + mubyte_zero < 0 then write_mubyte(tail) := 0
+else if mubyte_out + mubyte_zero >= 2*mubyte_zero then
+       write_mubyte(tail) := 2*mubyte_zero - 1
+     else write_mubyte(tail) := mubyte_out + mubyte_zero;
+@y
+@z
+
+@x
+@<Implement \.{\\special}@>=
+begin new_whatsit(special_node,write_node_size);
+if spec_out + mubyte_zero < 0 then write_stream(tail) := 0
+else if spec_out + mubyte_zero >= 2*mubyte_zero then
+       write_stream(tail) := 2*mubyte_zero - 1
+     else write_stream(tail) := spec_out + mubyte_zero;
+if mubyte_out + mubyte_zero < 0 then write_mubyte(tail) := 0
+else if mubyte_out + mubyte_zero >= 2*mubyte_zero then
+       write_mubyte(tail) := 2*mubyte_zero - 1
+     else write_mubyte(tail) := mubyte_out + mubyte_zero;
+if (spec_out = 2) or (spec_out = 3) then
+  if (mubyte_out > 2) or (mubyte_out = -1) or (mubyte_out = -2) then
+    write_noexpanding := true;
+p:=scan_toks(false,true); write_tokens(tail):=def_ref;
+write_noexpanding := false;
+end
+@y
+@<Implement \.{\\special}@>=
+begin new_whatsit(special_node,write_node_size); write_stream(tail):=0;
+p:=scan_toks(false,true); write_tokens(tail):=def_ref;
+end
+@z
+
+@x
+if (s = "write") and (write_mubyte (p) <> mubyte_zero) then
+begin
+  print_char ("<"); print_int (write_mubyte(p)-mubyte_zero); print_char (">");
+end;
+@y
+@z
+
+@x
 @ @<Display the whatsit...@>=
 @y
 procedure print_native_word(@!p:pointer);
-var i:integer;
+var i,c,cc:integer;
 begin
-	for i:=0 to native_length(p) - 1 do print_char(get_native_char(p,i));
+	for i:=0 to native_length(p) - 1 do begin
+		c:=get_native_char(p,i);
+		if (c >= @"D800) and (c <= @"DBFF) then begin
+			if i < native_length(p) - 1 then begin
+				cc:=get_native_char(p, i+1);
+				if (cc >= @"DC00) and (cc <= @"DFFF) then begin
+					c := @"10000 + (c - @"D800) * @"400 + (cc - @"DC00);
+					print_char(c);
+					incr(i);
+				end else
+					print(".");
+			end else
+				print(".");
+		end	else
+			print_char(c);
+	end
 end;
 
 @ @<Display the whatsit...@>=
@@ -4815,10 +6809,6 @@ native_word_node:begin
 	print_char(" ");
 	print_native_word(p);
   end;
-@{
-deleted_native_node:
-	print("[DELETED]");
-@}
 glyph_node:begin
     print_esc(font_id_text(native_font(p)));
     print(" glyph#");
@@ -5054,6 +7044,24 @@ out_what(p)
 @ @<Output the whatsit node |p| in a vlist@>=
 begin
 	case subtype(p) of
+	glyph_node: begin
+		cur_v:=cur_v+height(p);
+		cur_h:=left_edge;
+
+		{ synch DVI state to TeX state }
+		synch_h; synch_v;
+		f := native_font(p);
+		if f<>dvi_f then @<Change font |dvi_f| to |f|@>;
+
+		dvi_out(set_glyph_string);
+		dvi_four(0); { width }
+		dvi_two(1); { glyph count }
+		dvi_four(0); { x-offset as fixed point }
+		dvi_two(native_glyph(p));
+
+		cur_v:=cur_v+depth(p);
+		cur_h:=left_edge;
+	end;
 	pic_node, pdf_node: begin
 		save_h:=dvi_h; save_v:=dvi_v;
 		cur_v:=cur_v+height(p);
@@ -5061,13 +7069,13 @@ begin
 		dvi_h:=save_h; dvi_v:=save_v;
 		cur_v:=save_v+depth(p); cur_h:=left_edge;
 	end;
-	
+
 	pdf_save_pos_node:
 		@<Save current position to |pdf_last_x_pos|, |pdf_last_y_pos|@>;
-	
+
 	othercases
 		out_what(p)
-	
+
 	endcases
 end
 @z
@@ -5108,7 +7116,7 @@ begin
 		synch_h; synch_v;
 		f := native_font(p);
 		if f<>dvi_f then @<Change font |dvi_f| to |f|@>;
-		
+
 		if subtype(p) = glyph_node then begin
 			dvi_out(set_glyph_string);
 			dvi_four(width(p));
@@ -5124,10 +7132,10 @@ begin
 			end;
 			cur_h := cur_h + width(p);
 		end;
-		
+
 		dvi_h := cur_h;
 	end;
-	
+
 	pic_node, pdf_node: begin
 		save_h:=dvi_h; save_v:=dvi_v;
 		cur_v:=base_line;
@@ -5137,13 +7145,13 @@ begin
 		dvi_h:=save_h; dvi_v:=save_v;
 		cur_h:=edge; cur_v:=base_line;
 	end;
-	
+
 	pdf_save_pos_node:
 		@<Save current position to |pdf_last_x_pos|, |pdf_last_y_pos|@>;
-	
+
 	othercases
 		out_what(p)
-	
+
 	endcases
 end
 @z
@@ -5162,6 +7170,27 @@ doing_special := true;
 @z
 
 @x
+spec_sout := spec_out;  spec_out := write_stream(p) - mubyte_zero;
+mubyte_sout := mubyte_out;  mubyte_out := write_mubyte(p) - mubyte_zero;
+active_noconvert := true;
+mubyte_slog := mubyte_log;
+mubyte_log := 0;
+if (mubyte_out > 0) or (mubyte_out = -1) then mubyte_log := 1;
+if (spec_out = 2) or (spec_out = 3) then
+begin
+  if (mubyte_out > 0) or (mubyte_out = -1) then
+  begin
+    special_printing := true; mubyte_log := 1;
+  end;
+  if mubyte_out > 1 then cs_converting := true;
+end;
+@y
+@z
+
+@x
+if (spec_out = 1) or (spec_out = 3) then
+  for k:=str_start[str_ptr] to pool_ptr-1 do
+    str_pool[k] := si(xchr[so(str_pool[k])]);
 for k:=str_start[str_ptr] to pool_ptr-1 do dvi_out(so(str_pool[k]));
 spec_out := spec_sout; mubyte_out := mubyte_sout; mubyte_log := mubyte_slog;
 special_printing := false; cs_converting := false;
@@ -5178,6 +7207,30 @@ doing_special := false;
 @y
 @!j:small_number; {write stream number}
 @!k:integer;
+@z
+
+@x
+begin
+mubyte_sout := mubyte_out;  mubyte_out := write_mubyte(p) - mubyte_zero;
+if (mubyte_out > 2) or (mubyte_out = -1) or (mubyte_out = -2) then
+  write_noexpanding := true;
+@<Expand macros in the token list
+@y
+begin @<Expand macros in the token list
+@z
+
+@x
+active_noconvert := true;
+if mubyte_out > 1 then cs_converting := true;
+mubyte_slog := mubyte_log;
+if (mubyte_out > 0) or (mubyte_out = -1) then mubyte_log := 1
+else mubyte_log := 0;
+token_show(def_ref); print_ln;
+cs_converting := false; write_noexpanding := false;
+active_noconvert := false;
+mubyte_out := mubyte_sout; mubyte_log := mubyte_slog;
+@y
+token_show(def_ref); print_ln;
 @z
 
 @x
@@ -5367,7 +7420,7 @@ begin
 
 	{ look for any scaling requests for this picture }
 	make_identity(address_of(t));
-	
+
 	check_keywords := true;
 	while check_keywords do begin
 		if scan_keyword("scaled") then begin
@@ -5431,11 +7484,11 @@ begin
 	end;
 
 	if (x_size_req <> 0.0) or (y_size_req <> 0.0) then do_size_requests;
-	
+
 	calc_min_and_max;
 	make_translation(address_of(t2), -xmin, -ymin);
 	transform_concat(address_of(t), address_of(t2));
-	
+
 	if result = 0 then begin
 
 		new_whatsit(pic_node, pic_node_size + (strlen(pic_path) + sizeof(memory_word) - 1) div sizeof(memory_word));
@@ -5445,21 +7498,21 @@ begin
 		end;
 		pic_path_length(tail) := strlen(pic_path);
 		pic_page(tail) := page;
-			
+
 		width(tail) := X2Fix(xmax - xmin);
 		height(tail) := X2Fix(ymax - ymin);
 		depth(tail) := 0;
-	
+
 		pic_transform1(tail) := X2Fix(aField(t));
 		pic_transform2(tail) := X2Fix(bField(t));
 		pic_transform3(tail) := X2Fix(cField(t));
 		pic_transform4(tail) := X2Fix(dField(t));
 		pic_transform5(tail) := X2Fix(txField(t));
 		pic_transform6(tail) := X2Fix(tyField(t));
-	
+
 		memcpy(address_of(mem[tail + pic_node_size]), pic_path, strlen(pic_path));
 		libc_free(pic_path);
-	
+
 	end else begin
 
 		print_err("Unable to load picture or PDF file '");
@@ -5482,7 +7535,7 @@ end;
 begin
 	{ scan a filename-like arg for the input encoding }
 	scan_and_pack_name;
-	
+
 	{ convert it to "mode" and "encoding" values, and apply to the current input file }
 	i := get_encoding_mode_and_info(address_of(j));
 	if i = XeTeX_input_mode_auto then begin
@@ -5497,7 +7550,7 @@ end
 begin
 	{ scan a filename-like arg for the input encoding }
 	scan_and_pack_name;
-	
+
 	{ convert it to "mode" and "encoding" values, and store them as defaults for new input files }
 	XeTeX_default_input_mode := get_encoding_mode_and_info(address_of(j));
 	XeTeX_default_input_encoding := j;
@@ -5565,6 +7618,8 @@ end
 @d pdf_last_x_pos_code        = XeTeX_int+27
 @d pdf_last_y_pos_code        = XeTeX_int+28
 
+@d XeTeX_pdf_page_count_code  = XeTeX_int+29
+
 { NB: must update eTeX_dim when items are added here! }
 @z
 
@@ -5619,6 +7674,8 @@ primitive("XeTeXlastfontchar", last_item, XeTeX_last_char_code);
 
 primitive("pdflastxpos",last_item,pdf_last_x_pos_code);
 primitive("pdflastypos",last_item,pdf_last_y_pos_code);
+
+primitive("XeTeXpdfpagecount",last_item,XeTeX_pdf_page_count_code);
 @z
 
 @x
@@ -5662,6 +7719,8 @@ XeTeX_last_char_code: print_esc("XeTeXlastfontchar");
 
   pdf_last_x_pos_code:  print_esc("pdflastxpos");
   pdf_last_y_pos_code:  print_esc("pdflastypos");
+
+XeTeX_pdf_page_count_code: print_esc("XeTeXpdfpagecount");
 @z
 
 @x
@@ -5675,14 +7734,13 @@ XeTeX_count_glyphs_code:
     scan_font_ident; n:=cur_val;
     if is_atsu_font(n) then
       cur_val:=atsu_font_get(m - XeTeX_int, font_layout_engine[n])
-    else if is_ot_font(n) then
+    else if is_otgr_font(n) then
       cur_val:=ot_font_get(m - XeTeX_int, font_layout_engine[n])
     else
       cur_val:=0;
   end;
 
-XeTeX_count_variations_code,
-XeTeX_count_features_code:
+XeTeX_count_variations_code:
   begin
     scan_font_ident; n:=cur_val;
     if is_atsu_font(n) then
@@ -5691,14 +7749,21 @@ XeTeX_count_features_code:
       cur_val:=0;
     end;
   end;
+XeTeX_count_features_code:
+  begin
+    scan_font_ident; n:=cur_val;
+    if is_atsu_font(n) then
+      cur_val:=atsu_font_get(m - XeTeX_int, font_layout_engine[n])
+    else if is_gr_font(n) then 
+      cur_val:=ot_font_get(m - XeTeX_int, font_layout_engine[n])
+    else
+      cur_val:=0;
+  end;
 
 XeTeX_variation_code,
 XeTeX_variation_min_code,
 XeTeX_variation_max_code,
-XeTeX_variation_default_code,
-XeTeX_feature_code_code,
-XeTeX_is_exclusive_feature_code,
-XeTeX_count_selectors_code:
+XeTeX_variation_default_code:
   begin
     scan_font_ident; n:=cur_val;
     if is_atsu_font(n) then begin
@@ -5709,6 +7774,22 @@ XeTeX_count_selectors_code:
     end;
   end;
 
+XeTeX_feature_code_code,
+XeTeX_is_exclusive_feature_code,
+XeTeX_count_selectors_code:
+  begin
+    scan_font_ident; n:=cur_val;
+    if is_atsu_font(n) then begin
+      scan_int; k:=cur_val;
+      cur_val:=atsu_font_get_1(m - XeTeX_int, font_layout_engine[n], k);
+    end else if is_gr_font(n) then begin
+      scan_int; k:=cur_val;
+      cur_val:=ot_font_get_1(m - XeTeX_int, font_layout_engine[n], k);
+    end else begin
+      not_atsu_gr_font_error(last_item, m, n); cur_val:=-1;
+    end;
+  end;
+
 XeTeX_selector_code_code,
 XeTeX_is_default_selector_code:
   begin
@@ -5716,13 +7797,15 @@ XeTeX_is_default_selector_code:
     if is_atsu_font(n) then begin
       scan_int; k:=cur_val; scan_int;
       cur_val:=atsu_font_get_2(m - XeTeX_int, font_layout_engine[n], k, cur_val);
+    end else if is_gr_font(n) then begin
+      scan_int; k:=cur_val; scan_int;
+      cur_val:=ot_font_get_2(m - XeTeX_int, font_layout_engine[n], k, cur_val);
     end else begin
-      not_atsu_font_error(last_item, m, n); cur_val:=-1;
+      not_atsu_gr_font_error(last_item, m, n); cur_val:=-1;
     end;
   end;
 
-XeTeX_find_variation_by_name_code,
-XeTeX_find_feature_by_name_code:
+XeTeX_find_variation_by_name_code:
   begin
     scan_font_ident; n:=cur_val;
     if is_atsu_font(n) then begin
@@ -5733,14 +7816,31 @@ XeTeX_find_feature_by_name_code:
     end;
   end;
 
+XeTeX_find_feature_by_name_code:
+  begin
+    scan_font_ident; n:=cur_val;
+    if is_atsu_font(n) then begin
+      scan_and_pack_name;
+      cur_val:=atsu_font_get_named(m - XeTeX_int, font_layout_engine[n]);
+    end else if is_gr_font(n) then begin
+      scan_and_pack_name;
+      cur_val:=gr_font_get_named(m - XeTeX_int, font_layout_engine[n]);
+    end else begin
+      not_atsu_gr_font_error(last_item, m, n); cur_val:=-1;
+    end;
+  end;
+
 XeTeX_find_selector_by_name_code:
   begin
     scan_font_ident; n:=cur_val;
     if is_atsu_font(n) then begin
       scan_int; k:=cur_val; scan_and_pack_name;
       cur_val:=atsu_font_get_named_1(m - XeTeX_int, font_layout_engine[n], k);
+    end else if is_gr_font(n) then begin
+      scan_int; k:=cur_val; scan_and_pack_name;
+      cur_val:=gr_font_get_named_1(m - XeTeX_int, font_layout_engine[n], k);
     end else begin
-      not_atsu_font_error(last_item, m, n); cur_val:=-1;
+      not_atsu_gr_font_error(last_item, m, n); cur_val:=-1;
     end;
   end;
 
@@ -5750,20 +7850,17 @@ XeTeX_OT_count_scripts_code:
     if is_ot_font(n) then
       cur_val:=ot_font_get(m - XeTeX_int, font_layout_engine[n])
     else begin
-{
-      not_ot_font_error(last_item, m, n); cur_val:=-1;
-}
       cur_val:=0;
     end;
   end;
-  
+
 XeTeX_OT_count_languages_code,
 XeTeX_OT_script_code:
   begin
     scan_font_ident; n:=cur_val;
     if is_ot_font(n) then begin
-      scan_int; k:=cur_val;
-      cur_val:=ot_font_get_1(m - XeTeX_int, font_layout_engine[n], k);
+      scan_int;
+      cur_val:=ot_font_get_1(m - XeTeX_int, font_layout_engine[n], cur_val);
     end else begin
       not_ot_font_error(last_item, m, n); cur_val:=-1;
     end;
@@ -5815,10 +7912,9 @@ XeTeX_font_type_code:
   begin
     scan_font_ident; n:=cur_val;
     if is_atsu_font(n) then cur_val:=1
-    else begin
-      if is_ot_font(n) then cur_val:=2
-      else cur_val:=0
-    end
+    else if is_ot_font(n) then cur_val:=2
+    else if is_gr_font(n) then cur_val:=3
+    else cur_val:=0;
   end;
 
 XeTeX_first_char_code,XeTeX_last_char_code:
@@ -5834,6 +7930,12 @@ XeTeX_first_char_code,XeTeX_last_char_code:
 
   pdf_last_x_pos_code:  cur_val := pdf_last_x_pos;
   pdf_last_y_pos_code:  cur_val := pdf_last_y_pos;
+
+XeTeX_pdf_page_count_code:
+  begin
+    scan_and_pack_name;
+    cur_val:=count_pdf_file_pages;
+  end;
 
 @ Slip in an extra procedure here and there....
 
@@ -5852,6 +7954,14 @@ begin
   print_err("Cannot use "); print_cmd_chr(cmd, c);
   print(" with "); print(font_name[f]);
   print("; not an AAT font");
+  error;
+end;
+
+procedure not_atsu_gr_font_error(cmd, c: integer; f: integer);
+begin
+  print_err("Cannot use "); print_cmd_chr(cmd, c);
+  print(" with "); print(font_name[f]);
+  print("; not an AAT or Graphite font");
   error;
 end;
 
@@ -5884,8 +7994,7 @@ XeTeX_glyph_name_code: print_esc("XeTeXglyphname");
 eTeX_revision_code: do_nothing;
 XeTeX_revision_code: do_nothing;
 
-XeTeX_variation_name_code,
-XeTeX_feature_name_code:
+XeTeX_variation_name_code:
   begin
     scan_font_ident; fnt:=cur_val;
     if is_atsu_font(fnt) then begin
@@ -5894,13 +8003,22 @@ XeTeX_feature_name_code:
       not_atsu_font_error(convert, c, fnt);
   end;
 
+XeTeX_feature_name_code:
+  begin
+    scan_font_ident; fnt:=cur_val;
+    if is_atsu_font(fnt) or is_gr_font(fnt) then begin
+      scan_int; arg1:=cur_val; arg2:=0;
+    end else
+      not_atsu_gr_font_error(convert, c, fnt);
+  end;
+
 XeTeX_selector_name_code:
   begin
     scan_font_ident; fnt:=cur_val;
-    if is_atsu_font(fnt) then begin
+    if is_atsu_font(fnt) or is_gr_font(fnt) then begin
       scan_int; arg1:=cur_val; scan_int; arg2:=cur_val;
     end else
-      not_atsu_font_error(convert, c, fnt);
+      not_atsu_gr_font_error(convert, c, fnt);
   end;
 
 XeTeX_glyph_name_code:
@@ -5916,14 +8034,36 @@ XeTeX_glyph_name_code:
 eTeX_revision_code: print(eTeX_revision);
 XeTeX_revision_code: print(XeTeX_revision);
 
-XeTeX_variation_name_code,
-XeTeX_feature_name_code,
-XeTeX_selector_name_code:
+XeTeX_variation_name_code:
     if is_atsu_font(fnt) then
       atsu_print_font_name(c, font_layout_engine[fnt], arg1, arg2);
 
+XeTeX_feature_name_code,
+XeTeX_selector_name_code:
+    if is_atsu_font(fnt) then
+      atsu_print_font_name(c, font_layout_engine[fnt], arg1, arg2)
+    else if is_gr_font(fnt) then
+      gr_print_font_name(c, font_layout_engine[fnt], arg1, arg2);
+
 XeTeX_glyph_name_code:
     if is_native_font(fnt) then print_glyph_name(fnt, arg1);
+@z
+
+@x
+@ @<Dump the \eTeX\ state@>=
+dump_int(eTeX_mode);
+for j:=0 to eTeX_states-1 do eTeX_state(j):=0; {disable all enhancements}
+@y
+@ @<Dump the \eTeX\ state@>=
+dump_int(eTeX_mode);
+{ in a deliberate change from e-TeX, we allow non-zero state variables to be dumped }
+@z
+
+@x
+every_eof_loc: print_esc("everyeof");
+@y
+every_eof_loc: print_esc("everyeof");
+XeTeX_inter_char_loc: print_esc("XeTeXinterchartoks");
 @z
 
 @x
@@ -5974,6 +8114,15 @@ font_char_ic_code: begin scan_font_ident; q:=cur_val; scan_usv_num;
 @y
 @d TeXXeT_en==(TeXXeT_state>0) {is \TeXXeT\ enabled?}
 
+@d XeTeX_upwards_state==eTeX_state(XeTeX_upwards_code)
+@d XeTeX_upwards==(XeTeX_upwards_state>0)
+
+@d XeTeX_use_glyph_metrics_state==eTeX_state(XeTeX_use_glyph_metrics_code)
+@d XeTeX_use_glyph_metrics==(XeTeX_use_glyph_metrics_state>0)
+
+@d XeTeX_inter_char_tokens_state==eTeX_state(XeTeX_inter_char_tokens_code)
+@d XeTeX_inter_char_tokens_en==(XeTeX_inter_char_tokens_state>0)
+
 @d XeTeX_dash_break_state == eTeX_state(XeTeX_dash_break_code)
 @d XeTeX_dash_break_en == (XeTeX_dash_break_state>0)
 
@@ -5984,7 +8133,11 @@ font_char_ic_code: begin scan_font_ident; q:=cur_val; scan_usv_num;
 @x
 eTeX_state_code+TeXXeT_code:print_esc("TeXXeTstate");
 @y
+suppress_fontnotfound_error_code:print_esc("suppressfontnotfounderror");
 eTeX_state_code+TeXXeT_code:print_esc("TeXXeTstate");
+eTeX_state_code+XeTeX_upwards_code:print_esc("XeTeXupwardsmode");
+eTeX_state_code+XeTeX_use_glyph_metrics_code:print_esc("XeTeXuseglyphmetrics");
+eTeX_state_code+XeTeX_inter_char_tokens_code:print_esc("XeTeXinterchartokenstate");
 eTeX_state_code+XeTeX_dash_break_code:print_esc("XeTeXdashbreakstate");
 @z
 
@@ -5992,8 +8145,15 @@ eTeX_state_code+XeTeX_dash_break_code:print_esc("XeTeXdashbreakstate");
 primitive("TeXXeTstate",assign_int,eTeX_state_base+TeXXeT_code);
 @!@:TeXXeT_state_}{\.{\\TeXXeT_state} primitive@>
 @y
+primitive("suppressfontnotfounderror",assign_int,int_base+suppress_fontnotfound_error_code);@/
 primitive("TeXXeTstate",assign_int,eTeX_state_base+TeXXeT_code);
 @!@:TeXXeT_state_}{\.{\\TeXXeT_state} primitive@>
+primitive("XeTeXupwardsmode",assign_int,eTeX_state_base+XeTeX_upwards_code);
+@!@:XeTeX_upwards_mode_}{\.{\\XeTeX_upwards_mode} primitive@>
+primitive("XeTeXuseglyphmetrics",assign_int,eTeX_state_base+XeTeX_use_glyph_metrics_code);
+@!@:XeTeX_use_glyph_metrics_}{\.{\\XeTeX_use_glyph_metrics} primitive@>
+primitive("XeTeXinterchartokenstate",assign_int,eTeX_state_base+XeTeX_inter_char_tokens_code);
+@!@:XeTeX_use_inter_char_tokens_}{\.{\\XeTeX_use_inter_char_tokens} primitive@>
 
 primitive("XeTeXdashbreakstate",assign_int,eTeX_state_base+XeTeX_dash_break_code);
 @!@:XeTeX_dash_break_state_}{\.{\\XeTeX_dash_break_state} primitive@>
@@ -6037,6 +8197,12 @@ str_pool[pool_ptr]:=si(" "); l:=str_start_macro(s);
 @z
 
 @x
+  buffer[m]:=info(p) mod @'400; incr(m); p:=link(p);
+@y
+  buffer[m]:=info(p) mod max_char_val; incr(m); p:=link(p);
+@z
+
+@x
 if_font_char_code:begin scan_font_ident; n:=cur_val; scan_char_num;
   if (font_bc[n]<=cur_val)and(font_ec[n]>=cur_val) then
     b:=char_exists(char_info(n)(qi(cur_val)))
@@ -6055,9 +8221,57 @@ if_font_char_code:begin scan_font_ident; n:=cur_val; scan_usv_num;
 @z
 
 @x
+@d mark_val=6 {the additional mark classes}
+@y
+@d mark_val=7 {the additional mark classes}
+@z
+
+@x
+for i:=int_val to tok_val do sa_root[i]:=null;
+@y
+for i:=int_val to inter_char_val do sa_root[i]:=null;
+@z
+
+@x
       for c := str_start[text(h)] to str_start[text(h) + 1] - 1
 @y
       for c := str_start_macro(text(h)) to str_start_macro(text(h) + 1) - 1
+@z
+
+@x
+@ Dumping the |xord|, |xchr|, and |xprn| arrays.  We dump these always
+in the format, so a TCX file loaded during format creation can set a
+default for users of the format.
+
+@<Dump |xord|, |xchr|, and |xprn|@>=
+dump_things(xord[0], 256);
+dump_things(xchr[0], 256);
+dump_things(xprn[0], 256);
+
+@ Undumping the |xord|, |xchr|, and |xprn| arrays.  This code is more
+complicated, because we want to ensure that a TCX file specified on
+the command line will override whatever is in the format.  Since the
+tcx file has already been loaded, that implies throwing away the data
+in the format.  Also, if no |translate_filename| is given, but
+|eight_bit_p| is set we have to make all characters printable.
+
+@<Undump |xord|, |xchr|, and |xprn|@>=
+if translate_filename then begin
+  for k:=0 to 255 do undump_things(dummy_xord, 1);
+  for k:=0 to 255 do undump_things(dummy_xchr, 1);
+  for k:=0 to 255 do undump_things(dummy_xprn, 1);
+  end
+else begin
+  undump_things(xord[0], 256);
+  undump_things(xchr[0], 256);
+  undump_things(xprn[0], 256);
+  if eight_bit_p then
+    for k:=0 to 255 do
+      xprn[k]:=1;
+end;
+
+
+@y
 @z
 
 @x
@@ -6144,7 +8358,7 @@ begin
 		end;
 		len := apply_mapping(font_mapping[f], address_of(str_pool[str_start_macro(str_ptr)]), cur_length);
 		pool_ptr := str_start_macro(str_ptr); { flush the string, as we'll be using the mapped text instead }
-		
+
 		i := 0;
 		while i < len do begin
 			if (mapped_text[i] >= @"D800) and (mapped_text[i] < @"DC00) then begin
@@ -6176,7 +8390,7 @@ begin
 		p := get_node(native_node_size + 1);
 		type(p) := whatsit_node;
 		subtype(p) := native_word_node;
-		
+
 		native_size(p) := native_node_size + 1;
 		native_glyph_count(p) := 0;
 		native_glyph_info_ptr(p) := null_ptr;
@@ -6239,6 +8453,21 @@ begin
 	end_diagnostic(false);
 end;
 
+procedure graphite_warning;
+var
+	i: integer;
+begin
+	begin_diagnostic;
+	print_nl("Font `");
+	i := 1;
+	while ord(name_of_file[i]) <> 0 do begin
+		print_visible_char(name_of_file[i]); { this is already UTF-8 }
+		incr(i);
+	end;
+	print("' does not support Graphite. Trying ICU layout instead.");
+	end_diagnostic(false);
+end;
+
 function load_native_font(u: pointer; nom, aire:str_number; s: scaled): internal_font_number;
 label
 	done;
@@ -6258,13 +8487,13 @@ begin
 	if (s < 0) then actual_size := -s * unity div 100 else actual_size := s;
 	font_engine := find_native_font(name_of_file + 1, actual_size);
 	if font_engine = 0 then goto done;
-	
+
 	{ look again to see if the font is already loaded, now that we know its canonical name }
 	str_room(name_length);
 	for k := 1 to name_length do
 		append_char(name_of_file[k]);
     full_name := make_string; { not slow_make_string because we'll flush it if the font was already loaded }
-    
+
 	for f:=font_base+1 to font_ptr do
   		if (font_area[f] = native_font_type_flag) and str_eq_str(font_name[f], full_name) and (font_size[f] = actual_size) then begin
   		    release_font_engine(font_engine, native_font_type_flag);
@@ -6272,7 +8501,7 @@ begin
   		    load_native_font := f;
   		    goto done;
         end;
-	
+
 	if (font_ptr = font_max) or (fmem_ptr + 8 > font_mem_size) then begin
 		@<Apologize for not loading the font, |goto done|@>;
 	end;
@@ -6283,7 +8512,7 @@ begin
 
 	{ store the canonical name }
 	font_name[font_ptr] := full_name;
-	
+
 	font_check[font_ptr].b0 := 0;
 	font_check[font_ptr].b1 := 0;
 	font_check[font_ptr].b2 := 0;
@@ -6310,16 +8539,16 @@ begin
 	hyphen_char[font_ptr] := default_hyphen_char;
 	skew_char[font_ptr] := default_skew_char;
 	param_base[font_ptr] := fmem_ptr-1;
-	
+
 	font_layout_engine[font_ptr] := font_engine;
 	font_mapping[font_ptr] := 0; { don't use the mapping, if any, when measuring space here }
 	font_letter_space[font_ptr] := loaded_font_letter_space;
-	
+
 	{measure the width of the space character and set up font parameters}
 	p := new_native_character(font_ptr, " ");
 	s := width(p) + loaded_font_letter_space;
 	free_node(p, native_size(p));
-	
+
 	font_info[fmem_ptr].sc := font_slant;							{slant}
 	incr(fmem_ptr);
 	font_info[fmem_ptr].sc := s;									{space = width of space character}
@@ -6336,7 +8565,7 @@ begin
 	incr(fmem_ptr);
 	font_info[fmem_ptr].sc := cap_ht;								{cap_height}
 	incr(fmem_ptr);
-	
+
 	font_mapping[font_ptr] := loaded_font_mapping;
 	font_flags[font_ptr] := loaded_font_flags;
 
@@ -6344,40 +8573,366 @@ begin
 done:
 end;
 
-procedure do_locale_linebreaks(s: pointer; len: integer);
+procedure do_locale_linebreaks(s: integer; len: integer);
 var
 	offs, prevOffs, i: integer;
 	use_penalty, use_skip: boolean;
 begin
-	if XeTeX_linebreak_locale = 0 then begin
+	if (XeTeX_linebreak_locale = 0) or (len = 1) then begin
 		link(tail) := new_native_word_node(main_f, len);
 		tail := link(tail);
 		for i := 0 to len - 1 do
-			set_native_char(tail, i, str_pool[s + i]);
+			set_native_char(tail, i, native_text[s + i]);
 		set_native_metrics(tail, XeTeX_use_glyph_metrics);
 	end else begin
 		use_skip := XeTeX_linebreak_skip <> zero_glue;
 		use_penalty := XeTeX_linebreak_penalty <> 0 or not use_skip;
-		linebreak_start(XeTeX_linebreak_locale, address_of(str_pool[s]), len);
-		offs := 0;
-		repeat
-			prevOffs := offs;
-			offs := linebreak_next;
-			if offs > 0 then begin
-				if prevOffs <> 0 then begin
-					if use_penalty then
-						tail_append(new_penalty(XeTeX_linebreak_penalty));
-					if use_skip then
-						tail_append(new_param_glue(XeTeX_linebreak_skip_code));
+		if (is_gr_font(main_f)) and (str_eq_str(XeTeX_linebreak_locale, "G")) then begin
+			initGraphiteBreaking(font_layout_engine[main_f], native_text + s, len);
+			offs := 0;
+			repeat
+				prevOffs := offs;
+				offs := findNextGraphiteBreak(offs, 15); {klbWordBreak = 15}
+				if offs > 0 then begin
+					if prevOffs <> 0 then begin
+						if use_penalty then
+							tail_append(new_penalty(XeTeX_linebreak_penalty));
+						if use_skip then
+							tail_append(new_param_glue(XeTeX_linebreak_skip_code));
+					end;
+					link(tail) := new_native_word_node(main_f, offs - prevOffs);
+					tail := link(tail);
+					for i := prevOffs to offs - 1 do
+						set_native_char(tail, i - prevOffs, native_text[s + i]);
+					set_native_metrics(tail, XeTeX_use_glyph_metrics);
 				end;
-				link(tail) := new_native_word_node(main_f, offs - prevOffs);
-				tail := link(tail);
-				for i := prevOffs to offs - 1 do
-					set_native_char(tail, i - prevOffs, str_pool[s + i]);
-				set_native_metrics(tail, XeTeX_use_glyph_metrics);
-			end;
-		until offs < 0;
+			until offs < 0;
+		end
+		else begin
+			linebreak_start(XeTeX_linebreak_locale, native_text + s, len);
+			offs := 0;
+			repeat
+				prevOffs := offs;
+				offs := linebreak_next;
+				if offs > 0 then begin
+					if prevOffs <> 0 then begin
+						if use_penalty then
+							tail_append(new_penalty(XeTeX_linebreak_penalty));
+						if use_skip then
+							tail_append(new_param_glue(XeTeX_linebreak_skip_code));
+					end;
+					link(tail) := new_native_word_node(main_f, offs - prevOffs);
+					tail := link(tail);
+					for i := prevOffs to offs - 1 do
+						set_native_char(tail, i - prevOffs, native_text[s + i]);
+					set_native_metrics(tail, XeTeX_use_glyph_metrics);
+				end;
+			until offs < 0;
+		end
 	end
 end;
 
 @z
+
+@x
+@* \[54/enc\TeX] System-dependent changes for enc\TeX.
+
+@d encTeX_banner == ' encTeX v. Jun. 2004'
+
+@ The boolean variable |enctex_p| is set by web2c according to the given
+command line option (or an entry in the configuration file) before any
+\TeX{} function is called.
+
+@<Global...@> =
+@!enctex_p: boolean;
+
+
+@ The boolean variable |enctex_enabled_p| is used to enable enc\TeX's
+primitives.  It is initialised to |false|.  When loading a \.{FMT} it
+is set to the value of the boolean |enctex_p| saved in the \.{FMT} file.
+Additionally it is set to the value of |enctex_p| in Ini\TeX.
+
+@<Glob...@>=
+@!enctex_enabled_p:boolean;  {enable encTeX}
+
+
+@ @<Set init...@>=
+enctex_enabled_p:=false;
+
+
+@ Auxiliary functions/procedures for enc\TeX{} (by Petr Olsak) follow.
+These functions implement the \.{\\mubyte} code to convert
+the multibytes in |buffer| to one byte or to one control
+sequence. These functions manipulate a mubyte tree: each node of
+this tree is token list with n+1 tokens (first token consist the byte
+from the byte sequence itself and the other tokens point to the
+branches). If you travel from root of the tree to a leaf then you
+find exactly one byte sequence which we have to convert to one byte or
+control sequence. There are two variants of the leaf: the ``definitive
+end'' or the ``middle leaf'' if a longer byte sequence exists and the mubyte
+tree continues under this leaf. First variant is implemented as one
+memory word where the link part includes the token to
+which we have to convert and type part includes the number 60 (normal
+conversion) or 1..52 (insert the control sequence).
+The second variant of ``middle leaf'' is implemented as two memory words:
+first one has a type advanced by 64 and link points to the second
+word where info part includes the token to which we have to convert
+and link points to the next token list with the branches of
+the subtree.
+
+The inverse: one byte to multi byte (for log printing and \.{\\write}
+printing) is implemented via a pool. Each multibyte sequence is stored
+in a pool as a string and |mubyte_write|[{\it printed char\/}] points
+to this string.
+
+@d new_mubyte_node ==
+  link (p) := get_avail; p := link (p); info (p) := get_avail; p := info (p)
+@d subinfo (#) == subtype (#)
+
+@<Basic printing...@>=
+{ read |buffer|[|i|] and convert multibyte.  |i| should have been
+  of type 0..|buf_size|, but web2c doesn't like that construct in
+  argument lists. }
+function read_buffer(var i:integer):ASCII_code;
+var p: pointer;
+    last_found: integer;
+    last_type: integer;
+begin
+  mubyte_skip := 0; mubyte_token := 0;
+  read_buffer := buffer[i];
+  if mubyte_in = 0 then
+  begin
+    if mubyte_keep > 0 then mubyte_keep := 0;
+    return ;
+  end;
+  last_found := -2;
+  if (i = start) and (not mubyte_start) then
+  begin
+    mubyte_keep := 0;
+    if (end_line_char >= 0) and (end_line_char < 256) then
+      if mubyte_read [end_line_char] <> null then
+      begin
+        mubyte_start := true; mubyte_skip := -1;
+        p := mubyte_read [end_line_char];
+        goto continue;
+      end;
+  end;
+restart:
+  mubyte_start := false;
+  if (mubyte_read [buffer[i]] = null) or (mubyte_keep > 0) then
+  begin
+    if mubyte_keep > 0 then decr (mubyte_keep);
+    return ;
+  end;
+  p := mubyte_read [buffer[i]];
+continue:
+  if type (p) >= 64 then
+  begin
+    last_type := type (p) - 64;
+    p := link (p);
+    mubyte_token := info (p); last_found := mubyte_skip;
+  end else if type (p) > 0 then
+  begin
+    last_type := type (p);
+    mubyte_token := link (p);
+    goto found;
+  end;
+  incr (mubyte_skip);
+  if i + mubyte_skip > limit then
+  begin
+    mubyte_skip := 0;
+    if mubyte_start then goto restart;
+    return;
+  end;
+  repeat
+    p := link (p);
+    if subinfo (info(p)) = buffer [i+mubyte_skip] then
+    begin
+      p := info (p); goto continue;
+    end;
+  until link (p) = null;
+  mubyte_skip := 0;
+  if mubyte_start then goto restart;
+  if last_found = -2 then return;  { no found }
+  mubyte_skip := last_found;
+found:
+  if mubyte_token < 256 then  { multibyte to one byte }
+  begin
+    read_buffer := mubyte_token;  mubyte_token := 0;
+    i := i + mubyte_skip;
+    if mubyte_start and (i >= start) then mubyte_start := false;
+    return;
+  end else begin     { multibyte to control sequence }
+    read_buffer := 0;
+    if last_type = 60 then { normal conversion }
+      i := i + mubyte_skip
+    else begin            { insert control sequence }
+      decr (i); mubyte_keep := last_type;
+      if i < start then mubyte_start := true;
+      if last_type = 52 then mubyte_keep := 10000;
+      if last_type = 51 then mubyte_keep := mubyte_skip + 1;
+      mubyte_skip := -1;
+    end;
+    if mubyte_start and (i >= start) then mubyte_start := false;
+    return;
+  end;
+exit: end;
+
+@ @<Declare additional routines for enc\TeX@>=
+procedure mubyte_update; { saves new string to mubyte tree }
+var j: pool_pointer;
+    p: pointer;
+    q: pointer;
+    in_mutree: integer;
+begin
+  j := str_start [str_ptr];
+  if mubyte_read [so(str_pool[j])] = null then
+  begin
+    in_mutree := 0;
+    p := get_avail;
+    mubyte_read [so(str_pool[j])] := p;
+    subinfo (p) := so(str_pool[j]); type (p) := 0;
+  end else begin
+    in_mutree := 1;
+    p := mubyte_read [so(str_pool[j])];
+  end;
+  incr (j);
+  while j < pool_ptr do
+  begin
+    if in_mutree = 0 then
+    begin
+      new_mubyte_node; subinfo (p) := so(str_pool[j]); type (p) := 0;
+    end else { |in_mutree| = 1 }
+      if (type (p) > 0) and (type (p) < 64) then
+      begin
+        type (p) := type (p) + 64;
+        q := link (p); link (p) := get_avail; p := link (p);
+        info (p) := q;
+        new_mubyte_node; subinfo (p) := so(str_pool[j]); type (p) := 0;
+        in_mutree := 0;
+      end else begin
+        if type (p) >= 64 then p := link (p);
+        repeat
+          p := link (p);
+          if subinfo (info(p)) = so(str_pool[j]) then
+          begin
+            p := info (p);
+            goto continue;
+          end;
+        until link (p) = null;
+        new_mubyte_node; subinfo (p) := so(str_pool[j]); type (p) := 0;
+        in_mutree := 0;
+      end;
+continue:
+    incr (j);
+  end;
+  if in_mutree = 1 then
+  begin
+    if type (p) = 0 then
+    begin
+       type (p) := mubyte_prefix + 64;
+       q := link (p);  link (p) := get_avail; p := link (p);
+       link (p) := q; info (p) := mubyte_stoken;
+       return;
+    end;
+    if type (p) >= 64 then
+    begin
+      type (p) := mubyte_prefix + 64;
+      p := link (p); info (p) := mubyte_stoken;
+      return;
+    end;
+  end;
+  type (p) := mubyte_prefix;
+  link (p) := mubyte_stoken;
+exit: end;
+@#
+procedure dispose_munode (p: pointer); { frees a mu subtree recursivelly }
+var q: pointer;
+begin
+  if (type (p) > 0) and (type (p) < 64) then free_avail (p)
+  else begin
+    if type (p) >= 64 then
+    begin
+      q := link (p); free_avail (p); p := q;
+    end;
+    q := link (p); free_avail (p); p := q;
+    while p <> null do
+    begin
+      dispose_munode (info (p));
+      q := link (p);
+      free_avail (p);
+      p := q;
+    end;
+  end;
+end;
+@#
+procedure dispose_mutableout (cs: pointer); { frees record from out table }
+var p, q, r: pointer;
+begin
+  p := mubyte_cswrite [cs mod 128];
+  r := null;
+  while p <> null do
+    if info (p) = cs then
+    begin
+      if r <> null then link (r) := link (link (p))
+      else mubyte_cswrite[cs mod 128] := link (link (p));
+      q := link (link(p));
+      free_avail (link(p)); free_avail (p);
+      p := q;
+    end else begin
+      r := link (p); p := link (r);
+    end;
+end;
+
+@ The |print_buffer| procedure prints one character from |buffer|[|i|].
+It also increases |i| to the next character in the buffer.
+
+@<Basic printing...@>=
+{ print one char from |buffer|[|i|]. |i| should have been of type
+  0..|buf_size|, but web2c doesn't like that construct in argument lists. }
+procedure print_buffer(var i:integer);
+var c: ASCII_code;
+begin
+  if mubyte_in = 0 then print (buffer[i]) { normal TeX }
+  else if mubyte_log > 0 then print_char (buffer[i])
+       else begin
+         c := read_buffer (i);
+         if mubyte_token > 0 then print_cs (mubyte_token-cs_token_flag)
+         else print (c);
+       end;
+  incr (i);
+end;
+
+@ Additional material to dump for enc\TeX.  This includes whether
+enc\TeX is enabled, and if it is we also have to dump the \.{\\mubyte}
+arrays.
+
+@<Dump enc\TeX-specific data@>=
+dump_int(@"45435458);  {enc\TeX's magic constant: "ECTX"}
+if not enctex_p then dump_int(0)
+else begin
+  dump_int(1);
+  dump_things(mubyte_read[0], 256);
+  dump_things(mubyte_write[0], 256);
+  dump_things(mubyte_cswrite[0], 128);
+end;
+
+@ Undumping the additional material we dumped for enc\TeX.  This includes
+conditionally undumping the \.{\\mubyte} arrays.
+
+@<Undump enc\TeX-specific data@>=
+undump_int(x);   {check magic constant of enc\TeX}
+if x<>@"45435458 then goto bad_fmt;
+undump_int(x);   {undump |enctex_p| flag into |enctex_enabled_p|}
+if x=0 then enctex_enabled_p:=false
+else if x<>1 then goto bad_fmt
+else begin
+  enctex_enabled_p:=true;
+  undump_things(mubyte_read[0], 256);
+  undump_things(mubyte_write[0], 256);
+  undump_things(mubyte_cswrite[0], 128);
+end;
+
+@y
+@z
+

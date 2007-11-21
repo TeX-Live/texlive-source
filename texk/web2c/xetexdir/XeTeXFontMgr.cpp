@@ -212,7 +212,7 @@ XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
 				varString.append("USP");
 				goto skip_to_slash;
 			}
-			if (strncmp(cp, "PAN", 5) == 0) {
+			if (strncmp(cp, "PAN", 3) == 0) {
 				sReqEngine = 'P';
 				cp += 3;
 				if (varString.length() > 0 && *(varString.end() - 1) != '/')
@@ -220,15 +220,15 @@ XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
 				varString.append("PAN");
 				goto skip_to_slash;
 			}
-			if (strncmp(cp, "GRA", 8) == 0) {
+*/
+			if (strncmp(cp, "GR", 2) == 0) {
 				sReqEngine = 'G';
-				cp += 3;
+				cp += 2;
 				if (varString.length() > 0 && *(varString.end() - 1) != '/')
 					varString.append("/");
-				varString.append("GRA");
+				varString.append("GR");
 				goto skip_to_slash;
 			}
-*/
 			if (*cp == 'S') {
 				char*	start = cp;
 				++cp;

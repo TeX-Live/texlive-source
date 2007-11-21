@@ -53,18 +53,29 @@ authorization from SIL International.
 @define function uopenout();
 @define procedure uclose();
 @define function dviopenout();
-@define procedure dviclose();
+@define function dviclose();
 @define function delcode1();
 @define procedure setdelcode1();
 @define function readcint1();
 @define procedure setcint1();
+@define procedure printcstring();
 @define procedure printutf8str();
 @define procedure setinputfileencoding();
 @define procedure terminatefontmanager;
+@define function initpool();
+@define type gzFile;
+@define function weof();
 
+@define procedure initGraphiteBreaking();
+@define function findNextGraphiteBreak();
+@define function usingOpenType();
+@define function usingGraphite();
+@define procedure grprintfontname();
+@define function grfontgetnamed();
+@define function grfontgetnamed1();
+
+@define function strerror();
 @define procedure memcpy();
-@define function casttoptr();
-@define function casttointeger();
 @define function glyphinfobyte();
 @define function casttoushort();
 
@@ -98,6 +109,7 @@ authorization from SIL International.
 @define function getotmathvariant();
 @define function getotassemblyptr();
 @define function getotmathitalcorr();
+@define function getotmathaccentpos();
 
 @define function otpartcount();
 @define function otpartglyph();
@@ -133,6 +145,7 @@ authorization from SIL International.
 
 @define function findpicfile();
 @define function picpathbyte();
+@define function countpdffilepages;
 
 @define procedure makeidentity();
 @define procedure makescale();

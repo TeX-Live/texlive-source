@@ -84,12 +84,16 @@ float getGlyphWidth(XeTeXFont font, UInt32 gid);
 UInt32 countGlyphs(XeTeXFont font);
 
 XeTeXLayoutEngine createLayoutEngine(PlatformFontRef fontRef, XeTeXFont font, UInt32 scriptTag, UInt32 languageTag,
-						UInt32* addFeatures, SInt32* addParams, UInt32* removeFeatures, UInt32 rgbValue);
+						UInt32* addFeatures, SInt32* addParams, UInt32* removeFeatures, UInt32 rgbValue,
+						float extend, float slant);
 
 void deleteLayoutEngine(XeTeXLayoutEngine engine);
 
 XeTeXFont getFont(XeTeXLayoutEngine engine);
 PlatformFontRef getFontRef(XeTeXLayoutEngine engine);
+
+float getExtendFactor(XeTeXLayoutEngine engine);
+float getSlantFactor(XeTeXLayoutEngine engine);
 
 SInt32 layoutChars(XeTeXLayoutEngine engine, UInt16* chars, SInt32 offset, SInt32 count, SInt32 max,
 						char rightToLeft, float x, float y, SInt32* status);
@@ -135,6 +139,33 @@ int	findGlyphInPostTable(const char* p, int tableSize, const char* glyphName);
 const char* getGlyphName(XeTeXFont font, UInt16 gid, int* len);
 
 int getFontCharRange(XeTeXLayoutEngine engine, int reqFirst);
+
+/* graphite interface functions... */
+XeTeXLayoutEngine createGraphiteEngine(PlatformFontRef fontRef, XeTeXFont font,
+										const char* name,
+										UInt32 rgbValue, int rtl, UInt32 languageTag,
+										float extend, float slant,
+										int nFeatures, const int* featureIDs, const int* featureValues);
+int makeGraphiteSegment(XeTeXLayoutEngine engine, const UniChar* txtPtr, int txtLen);
+void getGraphiteGlyphInfo(XeTeXLayoutEngine engine, int index, UInt16* glyphID, float* x, float* y);
+float graphiteSegmentWidth(XeTeXLayoutEngine engine);
+void initGraphiteBreaking(XeTeXLayoutEngine engine, const UniChar* txtPtr, int txtLen);
+int findNextGraphiteBreak(int iOffset, int iBrkVal);
+
+int usingOpenType(XeTeXLayoutEngine engine);
+int usingGraphite(XeTeXLayoutEngine engine);
+
+int findGraphiteFeature(XeTeXLayoutEngine engine, const char* s, const char* e, int* f, int* v);
+
+UInt32 countGraphiteFeatures(XeTeXLayoutEngine engine);
+UInt32 getGraphiteFeatureCode(XeTeXLayoutEngine engine, UInt32 index);
+UInt32 countGraphiteFeatureSettings(XeTeXLayoutEngine engine, UInt32 feature);
+UInt32 getGraphiteFeatureSettingCode(XeTeXLayoutEngine engine, UInt32 feature, UInt32 index);
+UInt32 getGraphiteFeatureDefaultSetting(XeTeXLayoutEngine engine, UInt32 feature);
+void getGraphiteFeatureLabel(XeTeXLayoutEngine engine, UInt32 feature, unsigned short* buf);
+void getGraphiteFeatureSettingLabel(XeTeXLayoutEngine engine, UInt32 feature, UInt32 setting, unsigned short* buf);
+long findGraphiteFeatureNamed(XeTeXLayoutEngine engine, const char* name, int namelength);
+long findGraphiteFeatureSettingNamed(XeTeXLayoutEngine engine, UInt32 feature, const char* name, int namelength);
 
 #ifdef __cplusplus
 };

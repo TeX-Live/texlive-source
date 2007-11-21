@@ -82,3 +82,25 @@ pdf_get_rect(char* filename, int page_num, int pdf_box, realrect* box)
 
 	return 0;
 }
+
+int
+pdf_count_pages(char* filename)
+{
+	int			pages = 0;
+	GString*	name = new GString(filename);
+	PDFDoc*		doc = new PDFDoc(name);
+	
+	if (!doc) {
+		delete name;
+		return 0;
+	}
+	
+	/* if the doc got created, it now owns name, so we mustn't delete it! */
+	
+	if (doc->isOk())
+		pages = doc->getNumPages();
+
+	delete doc;
+
+	return pages;
+}

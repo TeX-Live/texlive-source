@@ -166,6 +166,11 @@ const void *XeTeXFontInst::getFontTable(LETag tableTag) const
     return FontTableCache::find(tableTag);
 }
 
+const void *XeTeXFontInst::getFontTable(LETag tableTag, le_uint32 *length) const
+{
+    return FontTableCache::find(tableTag, length);
+}
+
 const void *XeTeXFontInst::readFontTable(LETag tableTag) const
 {
     le_uint32 len;

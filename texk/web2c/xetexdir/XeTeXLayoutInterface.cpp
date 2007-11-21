@@ -41,14 +41,20 @@ authorization from SIL International.
 
 #include "XeTeXswap.h"
 
+#include "XeTeXGrLayout.h"
+
 #include "Features.h"
 #include "ScriptAndLanguage.h"
 
 #include "unicode/ubidi.h"
+#include "unicode/utext.h"
 
 #include <math.h>
 
 struct XeTeXLayoutEngine_rec
+	/* this is used for both ICU and Graphite, because so much of the font stuff is common;
+	   however, it is not possible to call ICU-specific things like layoutChars for a
+	   Graphite-based engine, or Graphite functions for an ICU one! */
 {
 	LayoutEngine*	layoutEngine;
 	XeTeXFontInst*	font;
@@ -58,6 +64,11 @@ struct XeTeXLayoutEngine_rec
 	UInt32*			addedFeatures;
 	UInt32*			removedFeatures;
 	UInt32			rgbValue;
+	float			extend;
+	float			slant;
+	gr::Segment*		grSegment;
+	XeTeXGrFont*		grFont;
+	XeTeXGrTextSource*	grSource;
 };
 
 /*******************************************************************/
@@ -314,6 +325,175 @@ UInt32 getIndFeature(XeTeXFont font, UInt32 script, UInt32 language, UInt32 inde
 	return 0;
 }
 
+UInt32 countGraphiteFeatures(XeTeXLayoutEngine engine)
+{
+	std::pair<gr::FeatureIterator, gr::FeatureIterator>	fi = engine->grFont->getFeatures();
+	UInt32	rval = 0;
+	while (fi.first != fi.second) {
+		++rval;
+		++fi.first;
+	}
+	return rval;
+}
+
+UInt32 getGraphiteFeatureCode(XeTeXLayoutEngine engine, UInt32 index)
+{
+	std::pair<gr::FeatureIterator, gr::FeatureIterator>	fi = engine->grFont->getFeatures();
+	while (index > 0 && fi.first != fi.second) {
+		--index;
+		++fi.first;
+	}
+	if (fi.first != fi.second)
+		return *fi.first;
+	return 0;
+}
+
+UInt32 countGraphiteFeatureSettings(XeTeXLayoutEngine engine, UInt32 feature)
+{
+	std::pair<gr::FeatureIterator, gr::FeatureIterator>	fi = engine->grFont->getFeatures();
+	while (fi.first != fi.second && *fi.first != feature)
+		++fi.first;
+	if (fi.first != fi.second) {
+		std::pair<gr::FeatureSettingIterator, gr::FeatureSettingIterator>
+				si = engine->grFont->getFeatureSettings(fi.first);
+		UInt32	rval = 0;
+		while (si.first != si.second) {
+			++rval;
+			++si.first;
+		}
+		return rval;
+	}
+	return 0;
+}
+
+UInt32 getGraphiteFeatureSettingCode(XeTeXLayoutEngine engine, UInt32 feature, UInt32 index)
+{
+	std::pair<gr::FeatureIterator, gr::FeatureIterator>	fi = engine->grFont->getFeatures();
+	while (fi.first != fi.second && *fi.first != feature)
+		++fi.first;
+	if (fi.first != fi.second) {
+		std::pair<gr::FeatureSettingIterator, gr::FeatureSettingIterator>
+				si = engine->grFont->getFeatureSettings(fi.first);
+		while (index > 0 && si.first != si.second) {
+			--index;
+			++si.first;
+		}
+		if (si.first != si.second)
+			return *si.first;
+	}
+	return 0;
+}
+
+UInt32 getGraphiteFeatureDefaultSetting(XeTeXLayoutEngine engine, UInt32 feature)
+{
+	std::pair<gr::FeatureIterator, gr::FeatureIterator>	fi = engine->grFont->getFeatures();
+	while (fi.first != fi.second && *fi.first != feature)
+		++fi.first;
+	if (fi.first != fi.second) {
+		gr::FeatureSettingIterator	si = engine->grFont->getDefaultFeatureValue(fi.first);
+		return *si;
+	}
+	return 0;
+}
+
+void getGraphiteFeatureLabel(XeTeXLayoutEngine engine, UInt32 feature, unsigned short* buf)
+{
+	buf[0] = 0;
+	std::pair<gr::FeatureIterator, gr::FeatureIterator>	fi = engine->grFont->getFeatures();
+	while (fi.first != fi.second && *fi.first != feature)
+		++fi.first;
+	if (fi.first != fi.second) {
+		engine->grFont->getFeatureLabel(fi.first, 0x0409, buf);
+	}
+}
+
+void getGraphiteFeatureSettingLabel(XeTeXLayoutEngine engine, UInt32 feature, UInt32 setting, unsigned short* buf)
+{
+	buf[0] = 0;
+	std::pair<gr::FeatureIterator, gr::FeatureIterator>	fi = engine->grFont->getFeatures();
+	while (fi.first != fi.second && *fi.first != feature)
+		++fi.first;
+	if (fi.first != fi.second) {
+		std::pair<gr::FeatureSettingIterator, gr::FeatureSettingIterator>
+				si = engine->grFont->getFeatureSettings(fi.first);
+		while (si.first != si.second && *si.first != setting)
+			++si.first;
+		if (si.first != si.second) {
+			engine->grFont->getFeatureSettingLabel(si.first, 0x0409, buf);
+		}
+	}
+}
+
+long findGraphiteFeatureNamed(XeTeXLayoutEngine engine, const char* name, int namelength)
+{
+	long		rval = -1;
+	UErrorCode	status = (UErrorCode)0;
+
+	std::pair<gr::FeatureIterator,gr::FeatureIterator>	features = engine->grFont->getFeatures();
+	while (features.first != features.second) {
+		gr::utf16	label[128];
+		if (engine->grFont->getFeatureLabel(features.first, 0x409, &label[0])) {
+			UText* ut1 = utext_openUTF8(NULL, name, namelength, &status);
+			UText* ut2 = utext_openUChars(NULL, &label[0], -1, &status);
+			UChar32	ch1 = 0, ch2 = 0;
+			while (ch1 != U_SENTINEL) {
+				ch1 = utext_next32(ut1);
+				ch2 = utext_next32(ut2);
+				if (ch1 != ch2)
+					break;
+			}
+			ut1 = utext_close(ut1);
+			ut2 = utext_close(ut2);
+			if (ch1 == ch2) {
+				rval = *features.first;
+				break;
+			}
+		}
+		++features.first;
+	}
+
+	return rval;
+}
+
+long findGraphiteFeatureSettingNamed(XeTeXLayoutEngine engine, UInt32 feature, const char* name, int namelength)
+{
+	long		rval = -1;
+	UErrorCode	status = (UErrorCode)0;
+
+	std::pair<gr::FeatureIterator,gr::FeatureIterator>	features = engine->grFont->getFeatures();
+	while (features.first != features.second) {
+		if (*features.first == feature) {
+			std::pair<gr::FeatureSettingIterator,gr::FeatureSettingIterator>
+					settings = engine->grFont->getFeatureSettings(features.first);
+			while (settings.first != settings.second) {
+				gr::utf16	label[128];
+				if (engine->grFont->getFeatureSettingLabel(settings.first, 0x409, &label[0])) {
+					UText* ut1 = utext_openUTF8(NULL, name, namelength, &status);
+					UText* ut2 = utext_openUChars(NULL, &label[0], -1, &status);
+					UChar32	ch1 = 0, ch2 = 0;
+					while (ch1 != U_SENTINEL) {
+						ch1 = utext_next32(ut1);
+						ch2 = utext_next32(ut2);
+						if (ch1 != ch2)
+							break;
+					}
+					ut1 = utext_close(ut1);
+					ut2 = utext_close(ut2);
+					if (ch1 == ch2) {
+						rval = *settings.first;
+						break;
+					}
+				}
+				++settings.first;
+			}
+			break;
+		}
+	}
+
+	return rval;
+
+}
+
 float getGlyphWidth(XeTeXFont font, UInt32 gid)
 {
 	LEPoint	adv;
@@ -332,8 +512,19 @@ XeTeXFont getFont(XeTeXLayoutEngine engine)
 	return (XeTeXFont)(engine->font);
 }
 
+float getExtendFactor(XeTeXLayoutEngine engine)
+{
+	return engine->extend;
+}
+
+float getSlantFactor(XeTeXLayoutEngine engine)
+{
+	return engine->slant;
+}
+
 XeTeXLayoutEngine createLayoutEngine(PlatformFontRef fontRef, XeTeXFont font, UInt32 scriptTag, UInt32 languageTag,
-										UInt32* addFeatures, SInt32* addParams, UInt32* removeFeatures, UInt32 rgbValue)
+										UInt32* addFeatures, SInt32* addParams, UInt32* removeFeatures, UInt32 rgbValue,
+										float extend, float slant)
 {
 	LEErrorCode status = LE_NO_ERROR;
 	XeTeXLayoutEngine result = new XeTeXLayoutEngine_rec;
@@ -344,6 +535,13 @@ XeTeXLayoutEngine createLayoutEngine(PlatformFontRef fontRef, XeTeXFont font, UI
 	result->addedFeatures = addFeatures;
 	result->removedFeatures = removeFeatures;
 	result->rgbValue = rgbValue;
+	result->extend = extend;
+	result->slant = slant;
+
+	result->grSegment = NULL;
+	result->grSource = NULL;
+	result->grFont = NULL;
+
 	result->layoutEngine = XeTeXOTLayoutEngine::LayoutEngineFactory((XeTeXFontInst*)font, scriptTag, languageTag,
 						(LETag*)addFeatures, (le_int32*)addParams, (LETag*)removeFeatures, status);
 	if (LE_FAILURE(status) || result->layoutEngine == NULL) {
@@ -358,6 +556,9 @@ void deleteLayoutEngine(XeTeXLayoutEngine engine)
 {
 	delete engine->layoutEngine;
 	delete engine->font;
+	delete engine->grSegment;
+	delete engine->grSource;
+	delete engine->grFont;
 }
 
 SInt32 layoutChars(XeTeXLayoutEngine engine, UInt16 chars[], SInt32 offset, SInt32 count, SInt32 max,
@@ -381,6 +582,11 @@ void getGlyphPositions(XeTeXLayoutEngine engine, float positions[], SInt32* stat
 {
 	LEErrorCode success = (LEErrorCode)*status;
 	engine->layoutEngine->getGlyphPositions(positions, success);
+
+	if (engine->extend != 1.0 || engine->slant != 0.0)
+		for (int i = 0; i <= engine->layoutEngine->getGlyphCount(); ++i)
+			positions[2*i] = positions[2*i] * engine->extend - positions[2*i+1] * engine->slant;
+
 	*status = success;
 }
 
@@ -388,6 +594,10 @@ void getGlyphPosition(XeTeXLayoutEngine engine, SInt32 index, float* x, float* y
 {
 	LEErrorCode success = (LEErrorCode)*status;
 	engine->layoutEngine->getGlyphPosition(index, *x, *y, success);
+
+	if (engine->extend != 1.0 || engine->slant != 0.0)
+		*x = *x * engine->extend - *y * engine->slant;
+
 	*status = success;
 }
 
@@ -664,3 +874,202 @@ GetFontCharRange_AAT(ATSUStyle style, int reqFirst)
 	}
 }
 #endif
+
+/* Graphite interface */
+
+gr::LayoutEnvironment	layoutEnv;
+
+XeTeXLayoutEngine createGraphiteEngine(PlatformFontRef fontRef, XeTeXFont font,
+										const char* name,
+										UInt32 rgbValue, int rtl, UInt32 languageTag,
+										float extend, float slant,
+										int nFeatures, const int* featureIDs, const int* featureValues)
+{
+	// check if the font supports graphite, and return NULL if not
+	const UInt32	kttiSilf = 0x53696C66;	// from GrConstants.h
+	if (getFontTablePtr(font, kttiSilf) == NULL)
+		return NULL;
+
+	XeTeXLayoutEngine result = new XeTeXLayoutEngine_rec;
+	result->fontRef = fontRef;
+	result->font = (XeTeXFontInst*)font;
+	result->scriptTag = 0;
+	result->languageTag = languageTag;
+	result->addedFeatures = NULL;
+	result->removedFeatures = NULL;
+	result->rgbValue = rgbValue;
+	result->extend = extend;
+	result->slant = slant;
+	result->layoutEngine = NULL;
+
+	result->grFont = new XeTeXGrFont(result->font, name);
+
+	result->grSource = new XeTeXGrTextSource(rtl);
+	result->grSource->setFeatures(nFeatures, featureIDs, featureValues);
+	if (languageTag != 0)
+		result->grSource->setLanguage(languageTag);
+
+	result->grSegment = NULL;
+	
+	layoutEnv.setDumbFallback(true);
+
+	return result;
+}
+
+int
+makeGraphiteSegment(XeTeXLayoutEngine engine, const UniChar* txtPtr, int txtLen)
+{
+	if (engine->grSegment) {
+		delete engine->grSegment;
+		engine->grSegment = NULL;
+	}
+
+	engine->grSource->setText(txtPtr, txtLen);
+	try {
+		engine->grSegment = new gr::RangeSegment(engine->grFont, engine->grSource, &layoutEnv);
+	}
+	catch (gr::FontException f) {
+		fprintf(stderr, "*** makeGraphiteSegment: font error %d, returning 0\n", (int)f.errorCode);
+		return 0;
+	}
+	catch (...) {
+		fprintf(stderr, "*** makeGraphiteSegment: segment creation failed, returning 0\n");
+		return 0;
+	}
+
+	return engine->grSegment->glyphs().second - engine->grSegment->glyphs().first;
+}
+
+void
+getGraphiteGlyphInfo(XeTeXLayoutEngine engine, int index, UInt16* glyphID, float* x, float* y)
+{
+	if (engine->grSegment == NULL) {
+		*glyphID = 0;
+		*x = *y = 0.0;
+		return;
+	}
+	gr::GlyphIterator	i = engine->grSegment->glyphs().first + index;
+	*glyphID = i->glyphID();
+	if (engine->extend != 1.0 || engine->slant != 0.0)
+		*x = i->origin() * engine->extend + i->yOffset() * engine->slant;
+	else
+		*x = i->origin();
+	*y = - i->yOffset();
+}
+
+float
+graphiteSegmentWidth(XeTeXLayoutEngine engine)
+{
+	if (engine->grSegment == NULL)
+		return 0.0;
+	//return engine->grSegment->advanceWidth(); // can't use this because it ignores trailing WS
+	try {
+		return engine->extend * engine->grSegment->getRangeWidth(0, engine->grSource->getLength(), false, false, false);
+	}
+	catch (gr::FontException f) {
+		fprintf(stderr, "*** graphiteSegmentWidth: font error %d, returning 0.0\n", (int)f.errorCode);
+		return 0.0;
+	}
+	catch (...) {
+		fprintf(stderr, "*** graphiteSegmentWidth: getRangeWidth failed, returning 0.0\n");
+		return 0.0;
+	}
+}
+
+/* line-breaking uses its own private textsource and segment, not the engine's ones */
+static XeTeXGrTextSource*	lbSource = NULL;
+static gr::Segment*			lbSegment = NULL;
+static XeTeXLayoutEngine	lbEngine = NULL;
+
+void
+initGraphiteBreaking(XeTeXLayoutEngine engine, const UniChar* txtPtr, int txtLen)
+{
+	if (lbSource == NULL)
+		lbSource = new XeTeXGrTextSource(0);
+
+	if (lbSegment != NULL) {
+		delete lbSegment;
+		lbSegment = NULL;
+	}
+
+	lbSource->setText(txtPtr, txtLen);
+	
+	if (lbEngine != engine) {
+		gr::FeatureSetting	features[64];
+		size_t	nFeatures = engine->grSource->getFontFeatures(0, features);
+		lbSource->setFeatures(nFeatures, &features[0]);
+		lbEngine = engine;
+	}
+	
+	try {
+		lbSegment = new gr::RangeSegment(engine->grFont, lbSource, &layoutEnv);
+	}
+	catch (gr::FontException f) {
+		fprintf(stderr, "*** initGraphiteBreaking: font error %d\n", (int)f.errorCode);
+	}
+	catch (...) {
+		fprintf(stderr, "*** initGraphiteBreaking: segment creation failed\n");
+	}
+}
+
+int
+findNextGraphiteBreak(int iOffset, int iBrkVal)
+{
+	if (lbSegment == NULL)
+		return -1;
+	if (iOffset < lbSource->getLength()) {
+		while (++iOffset < lbSource->getLength()) {
+			const gr::GlyphSetIterator&	gsi = lbSegment->charToGlyphs(iOffset).first;
+			if (gsi == lbSegment->charToGlyphs(iOffset).second)
+				continue;
+			if (gsi->breakweight() < gr::klbNoBreak && gsi->breakweight() >= -(gr::LineBrk)iBrkVal)
+				return iOffset;
+			if (gsi->breakweight() > gr::klbNoBreak && gsi->breakweight() <= (gr::LineBrk)iBrkVal)
+				return iOffset + 1;
+		}
+		return lbSource->getLength();
+	}
+	else
+		return -1;
+}
+
+
+int usingOpenType(XeTeXLayoutEngine engine)
+{
+	return engine->layoutEngine != NULL;
+}
+
+int usingGraphite(XeTeXLayoutEngine engine)
+{
+	return engine->grFont != NULL;
+}
+
+int
+findGraphiteFeature(XeTeXLayoutEngine engine, const char* s, const char* e, int* f, int* v)
+	/* s...e is a "feature=setting" string; look for this in the font */
+{
+	while (*s == ' ' || *s == '\t')
+		++s;
+	const char* cp = s;
+	while (cp < e && *cp != '=')
+		++cp;
+	if (cp == e)
+		return 0;
+
+	*f = findGraphiteFeatureNamed(engine, s, cp - s);
+	if (*f == -1)
+		return 0;
+
+	++cp;
+	while (cp < e && (*cp == ' ' || *cp == '\t'))
+		++cp;
+	if (cp == e)
+		return 0;
+
+	*v = findGraphiteFeatureSettingNamed(engine, *f, cp, e - cp);
+	if (*v == -1)
+		return 0;
+	
+	return 1;
+}
+
