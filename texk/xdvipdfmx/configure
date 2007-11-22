@@ -463,7 +463,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE LN_S build build_cpu build_vendor build_os host host_cpu host_vendor host_os EGREP ECHO AR ac_ct_AR RANLIB ac_ct_RANLIB CPP CXX CXXFLAGS ac_ct_CXX CXXDEPMODE am__fastdepCXX_TRUE am__fastdepCXX_FALSE CXXCPP F77 FFLAGS ac_ct_F77 LIBTOOL xdvipdfmx_LDFLAGS TDS_VERSION_11_TRUE TDS_VERSION_11_FALSE LIBOBJS LIBPNGCPPFLAGS LDLIBPNG LIBPNGDEP ZLIBCPPFLAGS LDZLIB ZLIBDEP FREETYPE2CPPFLAGS LDFREETYPE2 FREETYPE2DEP FT2CPPFLAGS LDFT2 FT2DEP dvipdfmx_LDFLAGS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE LN_S build build_cpu build_vendor build_os host host_cpu host_vendor host_os EGREP ECHO AR ac_ct_AR RANLIB ac_ct_RANLIB CPP CXX CXXFLAGS ac_ct_CXX CXXDEPMODE am__fastdepCXX_TRUE am__fastdepCXX_FALSE CXXCPP F77 FFLAGS ac_ct_F77 LIBTOOL xdvipdfmx_LDFLAGS TDS_VERSION_11_TRUE TDS_VERSION_11_FALSE LIBOBJS LIBPNGCPPFLAGS LDLIBPNG LIBPNGDEP ZLIBCPPFLAGS LDZLIB ZLIBDEP FREETYPE2CPPFLAGS LDFREETYPE2 FREETYPE2DEP dvipdfmx_LDFLAGS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -1828,7 +1828,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE=xdvipdfmx
- VERSION=0.4
+ VERSION=0.5
 
 
 cat >>confdefs.h <<_ACEOF
@@ -18867,7 +18867,8 @@ if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
-   echo "$as_me:$LINENO: result: yes" >&5
+
+      echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
 
 echo "$as_me:$LINENO: checking for xbasename in -lkpathsea" >&5
@@ -18957,7 +18958,8 @@ else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
- echo "$as_me:$LINENO: result: no" >&5
+
+      echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6;
       { { echo "$as_me:$LINENO: error:
 This version of dvipdfmx requires that kpathsea and its headers be installed.
@@ -19028,7 +19030,8 @@ if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
-   echo "$as_me:$LINENO: result: yes" >&5
+
+      echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6;
 
 cat >>confdefs.h <<\_ACEOF
@@ -19050,7 +19053,8 @@ else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
- echo "$as_me:$LINENO: result: no" >&5
+
+      echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6;
 
 cat >>confdefs.h <<\_ACEOF
@@ -19155,7 +19159,8 @@ if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
-   echo "$as_me:$LINENO: result: yes" >&5
+
+      echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
       if test x"$using_installed_freetype" = xyes; then
         echo "$as_me:$LINENO: checking for FT_Init_FreeType in -lfreetype" >&5
@@ -19245,7 +19250,8 @@ else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
- echo "$as_me:$LINENO: result: no" >&5
+
+      echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
           { { echo "$as_me:$LINENO: error:
 This version of xdvipdfmx requires that FreeType2 and its headers be available.
@@ -22474,7 +22480,8 @@ if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
-   echo "$as_me:$LINENO: result: yes" >&5
+
+      echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
       echo "$as_me:$LINENO: checking for FcInit in -lfontconfig" >&5
 echo $ECHO_N "checking for FcInit in -lfontconfig... $ECHO_C" >&6
@@ -22556,8 +22563,12 @@ else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-CPPFLAGS=$_cppflags LDDFLAGS=$_ldflags echo "$as_me:$LINENO: result: no" >&5
+
+      CPPFLAGS=$_cppflags
+      LDDFLAGS=$_ldflags
+      echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
+
 
 fi
 rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
@@ -22606,7 +22617,8 @@ if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
-   echo "$as_me:$LINENO: result: yes" >&5
+
+      echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
 
 cat >>confdefs.h <<\_ACEOF
@@ -22619,8 +22631,10 @@ else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
- echo "$as_me:$LINENO: result: no" >&5
+
+      echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
+
 
 fi
 rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
@@ -23474,7 +23488,8 @@ if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
-   echo "$as_me:$LINENO: result: yes" >&5
+
+      echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
       echo "$as_me:$LINENO: checking for paperpswidth in -lpaper" >&5
 echo $ECHO_N "checking for paperpswidth in -lpaper... $ECHO_C" >&6
@@ -23556,8 +23571,12 @@ else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-CPPFLAGS=$_cppflags LDDFLAGS=$_ldflags echo "$as_me:$LINENO: result: no" >&5
+
+      CPPFLAGS=$_cppflags
+      LDDFLAGS=$_ldflags
+      echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
+
 
 fi
 rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
@@ -23619,7 +23638,8 @@ if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
-   echo "$as_me:$LINENO: result: yes" >&5
+
+      echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
       echo "$as_me:$LINENO: checking for compress in -lz" >&5
 echo $ECHO_N "checking for compress in -lz... $ECHO_C" >&6
@@ -23775,8 +23795,12 @@ else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-CPPFLAGS=$_cppflags LDDFLAGS=$_ldflags echo "$as_me:$LINENO: result: no" >&5
+
+      CPPFLAGS=$_cppflags
+      LDDFLAGS=$_ldflags
+      echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
+
 
 fi
 rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
@@ -24001,7 +24025,8 @@ if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
-   echo "$as_me:$LINENO: result: yes" >&5
+
+      echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
       echo "$as_me:$LINENO: checking for png_get_image_width in -lpng" >&5
 echo $ECHO_N "checking for png_get_image_width in -lpng... $ECHO_C" >&6
@@ -24082,8 +24107,12 @@ else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-CPPFLAGS=$_cppflags LDDFLAGS=$_ldflags echo "$as_me:$LINENO: result: no" >&5
+
+      CPPFLAGS=$_cppflags
+      LDDFLAGS=$_ldflags
+      echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
+
 
 fi
 rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
@@ -24858,9 +24887,6 @@ s,@ZLIBDEP@,$ZLIBDEP,;t t
 s,@FREETYPE2CPPFLAGS@,$FREETYPE2CPPFLAGS,;t t
 s,@LDFREETYPE2@,$LDFREETYPE2,;t t
 s,@FREETYPE2DEP@,$FREETYPE2DEP,;t t
-s,@FT2CPPFLAGS@,$FT2CPPFLAGS,;t t
-s,@LDFT2@,$LDFT2,;t t
-s,@FT2DEP@,$FT2DEP,;t t
 s,@dvipdfmx_LDFLAGS@,$dvipdfmx_LDFLAGS,;t t
 s,@LTLIBOBJS@,$LTLIBOBJS,;t t
 CEOF

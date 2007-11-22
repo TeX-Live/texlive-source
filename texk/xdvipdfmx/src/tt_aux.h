@@ -26,10 +26,12 @@
 #include "pdfobj.h"
 #include "sfnt.h"
 
+extern void tt_aux_set_verbose();
+
 /* TTC (TrueType Collection) */
 extern ULONG    ttc_read_offset (sfnt *sfont, int ttc_idx);
 
 /* FontDescriptor */
-extern pdf_obj *tt_get_fontdesc (sfnt *sfont, int *embed, int type);
+extern pdf_obj *tt_get_fontdesc (sfnt *sfont, int *embed, int type, const char* fontname);
 
 #endif /* _TT_AUX_H_ */

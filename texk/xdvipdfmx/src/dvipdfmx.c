@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.47 2006/12/11 13:23:26 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.52 2007/05/18 05:19:00 chofchof Exp $
     
 	This is xdvipdfmx, an extended version of...
 
@@ -70,6 +70,7 @@ static long opt_flags = 0;
 #define OPT_TPIC_TRANSPARENT_FILL (1 << 1)
 #define OPT_CIDFONT_FIXEDPITCH    (1 << 2)
 #define OPT_FONTMAP_FIRST_MATCH   (1 << 3)
+#define OPT_NO_OBJSTM             (1 << 4)
 
 static char   ignore_colors = 0;
 static double annot_grow    = 0.0;
@@ -89,11 +90,12 @@ static unsigned key_bits    = 40;
 static unsigned permission  = 0x003C;
 
 /* Page device */
-static double paper_width  = 595.0;
-static double paper_height = 842.0;
+double paper_width  = 595.0;	/* not static, we allow dvi.c to access them */
+double paper_height = 842.0;
+char   landscape_mode    = 0;
+
 static double x_offset = 72.0;
 static double y_offset = 72.0;
-static char   landscape_mode    = 0;
 
 int always_embed = 0; /* always embed fonts, regardless of licensing flags */
 
@@ -130,12 +132,12 @@ set_default_pdf_filename(void)
 }
 
 static void
-usage (void)
+usage (int exit_code)
 {
   fprintf (stdout, "\nThis is %s-%s by Jonathan Kew and Jin-Hwan Cho,\n", PACKAGE, VERSION);
   fprintf (stdout, "an extended version of DVIPDFMx, which in turn was\n");
   fprintf (stdout, "an extended version of dvipdfm-0.13.2c developed by Mark A. Wicks.\n");
-  fprintf (stdout, "\nCopyright (c) 2006 SIL International and Jin-Hwan Cho.\n");
+  fprintf (stdout, "\nCopyright (c) 2006-07 SIL International and Jin-Hwan Cho.\n");
   fprintf (stdout, "\nThis is free software; you can redistribute it and/or modify\n");
   fprintf (stdout, "it under the terms of the GNU General Public License as published by\n");
   fprintf (stdout, "the Free Software Foundation; either version 2 of the License, or\n");
@@ -143,44 +145,54 @@ usage (void)
   fprintf (stdout, "\nUsage: xdvipdfmx [options] xdvfile\n");
   fprintf (stdout, "-c \t\tIgnore color specials (for B&W printing)\n");
   fprintf (stdout, "-d number\tSet PDF decimal digits (0-5) [2]\n");
-  fprintf (stdout, "-l \t\tLandscape mode\n");
 #if 0
   /* Not supported */
   fprintf (stdout, "-e \t\tDisable partial font embedding [default is enabled]\n");
 #endif
   fprintf (stdout, "-f filename\tSet font map file name [t1fonts.map]\n");
+  fprintf (stdout, "-g dimension\tAnnotation \"grow\" amount [0.0in]\n");
+  fprintf (stdout, "-h \t\tShow this help message\n");
+  fprintf (stdout, "-l \t\tLandscape mode\n");
   fprintf (stdout, "-m number\tSet additional magnification\n");
   fprintf (stdout, "-o filename\tSet output file name [dvifile.pdf]\n");
   fprintf (stdout, "-p papersize\tSet papersize [a4]\n");
+  fprintf (stdout, "-q \t\tBe quiet\n");
   fprintf (stdout, "-r resolution\tSet resolution (in DPI) for raster fonts [600]\n");
   fprintf (stdout, "-s pages\tSelect page ranges (-)\n");
+#ifndef NO_THUMBNAIL
   fprintf (stdout, "-t \t\tEmbed thumbnail images\n");
+#endif /* !NO_THUMBNAIL */
   fprintf (stdout, "-x dimension\tSet horizontal offset [1.0in]\n");
   fprintf (stdout, "-y dimension\tSet vertical offset [1.0in]\n");
   fprintf (stdout, "-z number  \tSet zlib compression level (0-9) [9]\n");
 
-  fprintf (stdout, "-v         \tBe verbose\n");
-  fprintf (stdout, "-vv        \tBe more verbose\n");
+  fprintf (stdout, "-v \t\tBe verbose\n");
+  fprintf (stdout, "-vv\t\tBe more verbose\n");
   fprintf (stdout, "-C number\tSpecify miscellaneous option flags [0]:\n");
   fprintf (stdout, "\t\t  0x0001 reserved\n");
   fprintf (stdout, "\t\t  0x0002 Use semi-transparent filling for tpic shading command,\n");
-  fprintf (stdout, "\t\t         instead of opaque gray color. (requires PDF 1.4)\n");
+  fprintf (stdout, "\t\t\t instead of opaque gray color. (requires PDF 1.4)\n");
   fprintf (stdout, "\t\t  0x0004 Treat all CIDFont as fixed-pitch font.\n");
   fprintf (stdout, "\t\t  0x0008 Do not replace duplicate fontmap entries.\n");
+  fprintf (stdout, "\t\t  0x0010 Do not create object streams.\n");
   fprintf (stdout, "\t\tPositive values are always ORed with previously given flags.\n");
   fprintf (stdout, "\t\tAnd negative values replace old values.\n");
-  fprintf (stdout, "-E         \tAlways try to embed fonts, regardless of licensing flags.\n");
+  fprintf (stdout, "-D template\tPS->PDF conversion command line template [none]\n");
+  fprintf (stdout, "-E \t\tAlways try to embed fonts, regardless of licensing flags.\n");
+  fprintf (stdout, "-K number\tEncryption key bits [40]\n");
+  fprintf (stdout, "-M \t\tExperimental mps-to-pdf mode\n");
   fprintf (stdout, "-O number\tSet maximum depth of open bookmark items [0]\n");
   fprintf (stdout, "-P number\tSet permission flags for PDF encryption [0x003C]\n");
-  fprintf (stdout, "-S         \tEnable PDF encryption\n");
-  fprintf (stdout, "-T         \tEmbed thumbnail images. Remove images files when finished.\n");
-  fprintf (stdout, "-M         \tExperimental mps-to-pdf mode\n");
-  fprintf (stdout, "-V number\tSet PDF minor version [3]\n");
+  fprintf (stdout, "-S \t\tEnable PDF encryption\n");
+#ifndef NO_THUMBNAIL
+  fprintf (stdout, "-T \t\tEmbed thumbnail images. Remove images files when finished.\n");
+#endif /* !NO_THUMBNAIL */
+  fprintf (stdout, "-V number\tSet PDF minor version [4]\n");
   fprintf (stdout, "\nAll dimensions entered on the command line are \"true\" TeX dimensions.\n");
   fprintf (stdout, "Argument of \"-s\" lists physical page ranges separated by commas, e.g., \"-s 1-3,5-6\"\n");
   fprintf (stdout, "Papersize is specified by paper format (e.g., \"a4\") or by w<unit>,h<unit> (e.g., \"20cm,30cm\").\n");
 
-  exit(1);
+  exit(exit_code);
 }
 
 
@@ -322,7 +334,7 @@ select_pages (const char *pagespec)
 /* It doesn't work as expected (due to dvi filename). */
 #define CHECK_ARG(n,m) if (argc < (n) + 1) {\
   fprintf (stderr, "\nMissing %s after \"-%c\".\n", (m), *flag);\
-  usage();\
+  usage(1);\
 }
 
 static void
@@ -429,9 +441,9 @@ do_args (int argc, char *argv[])
           ver_minor = atoi(argv[1]);
           POP_ARG();
         }
-        if (ver_minor < 3 || ver_minor > 5) {
-          WARN("PDF version 1.%d not supported. (1.3 used instead)", ver_minor);
-          ver_minor = 3;
+        if (ver_minor < 3 || ver_minor > 6) {
+          WARN("PDF version 1.%d not supported. (1.4 used instead)", ver_minor);
+          ver_minor = 4;
         }
         pdf_set_version((unsigned) ver_minor);
       }
@@ -505,9 +517,12 @@ do_args (int argc, char *argv[])
       case 'E':
         always_embed = 1;
         break;
+      case 'h':
+        usage(0);
+        break;
       default:
         fprintf (stderr, "Unknown option in \"%s\"", flag);
-        usage();
+        usage(1);
         break;
       }
     }
@@ -525,12 +540,13 @@ do_args (int argc, char *argv[])
       pdf_enc_set_verbose();
       pdf_obj_set_verbose();
       dpx_file_set_verbose();
+      tt_aux_set_verbose();
     }
   }
 
   if (argc > 1) {
     fprintf(stderr, "Multiple dvi filenames?");
-    usage();
+    usage(1);
   } else if (argc > 0) {
     /*
      * The only legitimate way to have argc == 0 here is
@@ -641,6 +657,7 @@ do_dvi_pages (void)
 {
   long     page_no, page_count, i, step;
   double   page_width, page_height;
+  double   init_paper_width, init_paper_height;
   pdf_rect mediabox;
 
   spc_exec_at_begin_document();
@@ -655,8 +672,8 @@ do_dvi_pages (void)
     num_page_ranges = 1;
   }
 
-  page_width  = paper_width;
-  page_height = paper_height;
+  init_paper_width  = page_width  = paper_width;
+  init_paper_height = page_height = paper_height;
   page_count  = 0;
 
   mediabox.llx = 0.0;
@@ -679,6 +696,7 @@ do_dvi_pages (void)
         char   lm;
 
         /* Users want to change page size even after page is started! */
+        page_width = paper_width; page_height = paper_height;
         w = page_width; h = page_height; lm = landscape_mode;
         xo = x_offset; yo = y_offset;
         dvi_scan_paper_size(page_no, &w, &h, &xo, &yo, &lm);
@@ -694,8 +712,8 @@ do_dvi_pages (void)
           x_offset = xo;
           y_offset = yo;
         }
-        if (page_width  != paper_width ||
-            page_height != paper_height) {
+        if (page_width  != init_paper_width ||
+            page_height != init_paper_height) {
           mediabox.llx = 0.0;
           mediabox.lly = 0.0;
           mediabox.urx = page_width;
@@ -781,12 +799,6 @@ main (int argc, char *argv[])
 {
   double dvi2pts;
 
-  if (argc < 2) {
-    fprintf(stderr, "No dvi filename specified.");
-    usage();
-    return 1;
-  }
-
 #ifdef MIKTEX
   miktex_initialize();
 #else
@@ -818,25 +830,24 @@ main (int argc, char *argv[])
   pdf_font_set_dpi(font_dpi);
 
   if (dvi_filename == NULL) {
-    if (pdf_filename == NULL) {
-      WARN("No dvi or pdf filename specified.");
-      usage();
-      return 1;
-    }
-    else {
+    if (verbose)
+      MESG("No dvi filename specified, reading standard input.\n");
+    if (pdf_filename == NULL)
       if (verbose)
-        MESG("No dvi filename specified, reading standard input.");
-    }
+        MESG("No pdf filename specified, writing to standard output.\n");
   }
 
-  if (pdf_filename == NULL)
+  if (pdf_filename == NULL && dvi_filename != NULL)
     set_default_pdf_filename();
 
   if (do_encryption) {
     pdf_enc_set_passwd(key_bits, permission, dvi_filename, pdf_filename);
-    if (key_bits > 40)
+    if (key_bits > 40 && pdf_get_version() < 4)
       pdf_set_version(4);
   }
+
+  if (!(opt_flags & OPT_NO_OBJSTM))
+    pdf_enable_objstm();
 
   if (mp_mode) {
     x_offset = 0.0;
@@ -854,13 +865,14 @@ main (int argc, char *argv[])
     }
   }
 
-  MESG("%s -> %s\n", dvi_filename == NULL ? "stdin" : dvi_filename, pdf_filename);
+  MESG("%s -> %s\n", dvi_filename == NULL ? "stdin" : dvi_filename,
+		     pdf_filename == NULL ? "stdout" : pdf_filename);
 
   /* Set default paper size here so that all page's can inherite it.
    * annot_grow:    Margin of annotation.
    * bookmark_open: Miximal depth of open bookmarks.
    */
-  pdf_open_document(pdf_filename,
+  pdf_open_document(pdf_filename, do_encryption,
                     paper_width, paper_height, annot_grow, bookmark_open);
 
   /* Ignore_colors placed here since

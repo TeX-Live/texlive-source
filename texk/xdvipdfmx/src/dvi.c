@@ -61,6 +61,7 @@
 #ifdef XETEX
 #include "pdfcolor.h"
 #include "pdfximage.h"
+#include "pdfdev.h"
 #include "ft2build.h"
 #include FT_FREETYPE_H
 #include FT_TRUETYPE_TABLES_H
@@ -98,6 +99,11 @@ static struct dvi_header
 
 static double dev_origin_x = 72.0, dev_origin_y = 770.0;
 
+double get_origin (int x)
+{
+  return x ? dev_origin_x : dev_origin_y;
+}
+
 #define PHYSICAL 1
 #define VIRTUAL  2
 #define SUBFONT  3
@@ -122,6 +128,8 @@ static struct loaded_font
   FT_Face ft_face;
   unsigned short *glyph_widths;
   int   layout_dir;
+  double extend;
+  double slant;
 #endif
 } *loaded_fonts = NULL;
 static int num_loaded_fonts = 0, max_loaded_fonts = 0;
@@ -147,6 +155,8 @@ static struct font_def
   char  *fam_name, *sty_name; /* only used for native fonts in XeTeX */
   unsigned long rgba_color;   /* only used for native fonts in XeTeX */
   int    layout_dir; /* 1 = vertical, 0 = horizontal */
+  int    extend;
+  int    slant;
 #endif
 } *def_fonts = NULL;
 
@@ -157,6 +167,8 @@ static struct font_def
 #define XDV_FLAG_COLORED        0x0200
 #define XDV_FLAG_FEATURES       0x0400
 #define XDV_FLAG_VARIATIONS     0x0800
+#define XDV_FLAG_EXTEND			0x1000
+#define XDV_FLAG_SLANT			0x2000
 #endif
 
 static int num_def_fonts = 0, max_def_fonts = 0;
@@ -600,6 +612,8 @@ read_font_record (SIGNED_QUAD tex_id)
   def_fonts[num_def_fonts].sty_name    = NULL;
   def_fonts[num_def_fonts].rgba_color  = 0xffffffff;
   def_fonts[num_def_fonts].layout_dir  = 0;
+  def_fonts[num_def_fonts].extend      = 0x00010000; /* 1.0 */
+  def_fonts[num_def_fonts].slant       = 0;
 #endif
   num_def_fonts++;
 
@@ -663,6 +677,14 @@ read_native_font_record (SIGNED_QUAD tex_id)
         (void)get_unsigned_quad(dvi_file); /* skip axis and value for each variation setting */
       WARN("Variation axes are not supported; ignoring variation settings for font %s.\n", font_name);
     }
+    if (flags & XDV_FLAG_EXTEND)
+      def_fonts[num_def_fonts].extend = get_signed_quad(dvi_file);
+    else
+      def_fonts[num_def_fonts].extend = 0x00010000;
+    if (flags & XDV_FLAG_SLANT)
+      def_fonts[num_def_fonts].slant = get_signed_quad(dvi_file);
+    else
+      def_fonts[num_def_fonts].slant = 0;
     num_def_fonts++;
   } else {
     ERROR("Unknown native_font flags.");
@@ -826,6 +848,12 @@ void
 dvi_link_annot (int flag)
 {
   link_annot = flag;
+}
+
+int
+dvi_is_tracking_boxes(void)
+{
+  return (compute_boxes && link_annot && marked_depth >= tagged_depth);
 }
 
 void
@@ -1003,12 +1031,12 @@ dvi_locate_font (const char *tfm_name, spt_t ptsize)
 #ifdef XETEX
 static int
 dvi_locate_native_font (const char *ps_name, const char *fam_name,
-                        const char *sty_name, spt_t ptsize, int layout_dir)
+                        const char *sty_name, spt_t ptsize, int layout_dir, int extend, int slant)
 {
   int           cur_id = -1;
   fontmap_rec  *mrec;
   int           i;
-  char         *fontmap_key = malloc(strlen(ps_name) + 3);
+  char         *fontmap_key = malloc(strlen(ps_name) + 30); // CHECK this is enough
 
   if (verbose)
     MESG("<%s(%s:%s)@%.2fpt", ps_name, fam_name, sty_name, ptsize * dvi2pts);
@@ -1017,10 +1045,10 @@ dvi_locate_native_font (const char *ps_name, const char *fam_name,
 
   cur_id = num_loaded_fonts++;
 
-  sprintf(fontmap_key, "%s/%c", ps_name, layout_dir == 0 ? 'H' : 'V');
+  sprintf(fontmap_key, "%s/%c/%d/%d", ps_name, layout_dir == 0 ? 'H' : 'V', extend, slant);
   mrec = pdf_lookup_fontmap_record(fontmap_key);
   if (mrec == NULL) {
-    if (pdf_load_native_font(ps_name, fam_name, sty_name, layout_dir) == -1) {
+    if (pdf_load_native_font(ps_name, fam_name, sty_name, layout_dir, extend, slant) == -1) {
     ERROR("Cannot proceed without the \"native\" font: %s (%s %s)...",
           ps_name, fam_name, sty_name);
     }
@@ -1043,6 +1071,8 @@ dvi_locate_native_font (const char *ps_name, const char *fam_name,
   }
   loaded_fonts[cur_id].glyph_widths = mrec->opt.glyph_widths;
   loaded_fonts[cur_id].layout_dir = layout_dir;
+  loaded_fonts[cur_id].extend = mrec->opt.extend;
+  loaded_fonts[cur_id].slant = mrec->opt.slant;
 
   if (verbose)
     MESG(">");
@@ -1678,7 +1708,9 @@ do_fnt (SIGNED_QUAD tex_id)
                                        def_fonts[i].fam_name,
                                        def_fonts[i].sty_name,
                                        def_fonts[i].point_size,
-                                       def_fonts[i].layout_dir);
+                                       def_fonts[i].layout_dir,
+                                       def_fonts[i].extend,
+                                       def_fonts[i].slant);
     } else {
       font_id = dvi_locate_font(def_fonts[i].font_name,
 	                        def_fonts[i].point_size);
@@ -1734,6 +1766,7 @@ static void
 do_xxx (UNSIGNED_QUAD size) 
 {
   UNSIGNED_QUAD i;
+#if 0  
   Ubyte  *buffer;	/* FIXME - no need for new buffer here */
 
   buffer = NEW(size+1, Ubyte);
@@ -1742,6 +1775,10 @@ do_xxx (UNSIGNED_QUAD size)
   }
   dvi_do_special(buffer, size);
   RELEASE(buffer);
+#else
+  dvi_do_special(dvi_page_buffer + dvi_page_buf_index, size);
+  dvi_page_buf_index += size;
+#endif
 }
 
 static void
@@ -1864,6 +1901,9 @@ do_native_font_def (int scanning)
   }
 }
 
+/* globals initialized by fontmap.c when it opens freetype */
+extern FT_Int ft_major, ft_minor, ft_patch;
+
 static void
 do_glyph_array (int yLocsPresent)
 {
@@ -1901,8 +1941,10 @@ do_glyph_array (int yLocsPresent)
     glyph_id = get_buffered_unsigned_pair(); /* freetype glyph index */
     if (glyph_id < font->ft_face->num_glyphs) {
       if (font->glyph_widths[glyph_id] == 0xffff) {
-        if (FT_IS_SFNT(font->ft_face)) {
-          /* CFF driver of freetype does not set vertical metrics correctly,
+        if (FT_IS_SFNT(font->ft_face)
+          && ((ft_major < 2) || ((ft_major == 2) && (ft_minor < 2)))) {
+          /* prior to version 2.2.0,
+             CFF driver of freetype does not set vertical metrics correctly,
              so we'll read the metrics directly */
           TT_HoriHeader  *dir_hea; /* vhea structure is identical */
           dir_hea = FT_Get_Sfnt_Table(font->ft_face, (font->layout_dir == 0)
@@ -1919,13 +1961,14 @@ do_glyph_array (int yLocsPresent)
             font->glyph_widths[glyph_id] = 0;
         }
         else {
-          FT_Load_Glyph(font->ft_face, glyph_id, FT_LOAD_NO_SCALE);
+          FT_Load_Glyph(font->ft_face, glyph_id, FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);
           font->glyph_widths[glyph_id] = (font->layout_dir == 0)
                                           ? font->ft_face->glyph->metrics.horiAdvance
                                           : font->ft_face->glyph->metrics.vertAdvance;
         }
       }
       glyph_width = (double)font->size * (double)font->glyph_widths[glyph_id] / (double)font->ft_face->units_per_EM;
+      glyph_width = glyph_width * font->extend;
       if (compute_boxes && link_annot && marked_depth >= tagged_depth) {
         pdf_rect rect;
         height = (double)font->size * (double)font->ft_face->ascender / (double)font->ft_face->units_per_EM;
@@ -2426,6 +2469,9 @@ scan_special (double *wd, double *ht, double *xo, double *yo, char *lm, const ch
   char  *q, *p = (char *) buf;
   char  *endptr;
   int    ns_pdf = 0, error = 0;
+  double tmp;
+  extern double paper_width, paper_height;
+  extern char   landscape_mode;
 
   endptr = p + size;
 
@@ -2454,21 +2500,26 @@ scan_special (double *wd, double *ht, double *xo, double *yo, char *lm, const ch
         else {
           skip_white(&p, endptr);
           if (!strcmp(kp, "width")) {
-            error = read_length(wd, dvi_tell_mag(), &p, endptr);
+            error = read_length(&tmp, dvi_tell_mag(), &p, endptr);
             if (!error)
-              *wd *= dvi_tell_mag();
+              *wd = tmp * dvi_tell_mag();
           } else if (!strcmp(kp, "height")) {
-            error = read_length(ht, dvi_tell_mag(), &p, endptr);
+            error = read_length(&tmp, dvi_tell_mag(), &p, endptr);
             if (!error)
-              *ht *= dvi_tell_mag();
+              *ht = tmp * dvi_tell_mag();
           } else if (!strcmp(kp, "xoffset")) {
-            error = read_length(xo, dvi_tell_mag(), &p, endptr);
+            error = read_length(&tmp, dvi_tell_mag(), &p, endptr);
             if (!error)
-              *xo *= dvi_tell_mag();
+              *xo = tmp * dvi_tell_mag();
           } else if (!strcmp(kp, "yoffset")) {
-            error = read_length(yo, dvi_tell_mag(), &p, endptr);
+            error = read_length(&tmp, dvi_tell_mag(), &p, endptr);
             if (!error)
-              *yo *= dvi_tell_mag();
+              *yo = tmp * dvi_tell_mag();
+          } else if (!strcmp(kp, "default")) {
+            *wd = paper_width;
+            *ht = paper_height;
+            *lm = landscape_mode;
+            *xo = *yo = 72.0;
           }
           RELEASE(kp);
         }
@@ -2482,18 +2533,25 @@ scan_special (double *wd, double *ht, double *xo, double *yo, char *lm, const ch
         qchr = *p; p++;
         skip_white(&p, endptr);
       }
-      error = read_length(wd, 1.0, &p, endptr);
+      error = read_length(&tmp, 1.0, &p, endptr);
       if (!error) {
+        *wd = tmp;
         skip_white(&p, endptr);
         if (p < endptr && *p == ',') {
           p++; skip_white(&p, endptr);
         }
-        error = read_length(ht, 1.0, &p, endptr);
+        error = read_length(&tmp, 1.0, &p, endptr);
+        if (!error)
+          *ht = tmp;
         skip_white(&p, endptr);
       }
       if (!error && qchr) { /* Check if properly quoted */
         if (p >= endptr || *p != qchr)
           error = -1;
+      }
+      if (error == 0) {
+        paper_width  = *wd;
+        paper_height = *ht;
       }
     }
     RELEASE(q);

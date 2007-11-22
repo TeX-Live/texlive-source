@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencrypt.h,v 1.2 2002/10/30 02:27:13 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencrypt.h,v 1.3 2007/04/03 05:25:50 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -23,13 +23,14 @@
 #ifndef _PDFENCRYPT_H_
 #define _PDFENCRYPT_H_
 
+#include "pdfobj.h"
+
 extern void pdf_enc_set_verbose (void);
-extern unsigned char *pdf_enc_id_string (void);
-extern void pdf_enc_set_encryption (void);
+extern pdf_obj *pdf_enc_id_array (void);
 extern void pdf_enc_set_label (unsigned long label);
 extern void pdf_enc_set_generation (unsigned generation);
 extern void pdf_enc_set_passwd (unsigned size, unsigned perm, char *dviname, char *pdfname);
 extern void pdf_encrypt_data (unsigned char *data, unsigned long len);
-extern void create_encrypt (void);
+extern pdf_obj *pdf_encrypt_obj (void);
 
 #endif /* _PDFENCRYPT_H_ */

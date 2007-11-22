@@ -38,6 +38,13 @@
 
 extern int always_embed; /* flag declared in dvipdfmx.c */
 
+static int verbose = 0;
+
+void tt_aux_set_verbose()
+{
+  ++verbose;
+}
+
 ULONG ttc_read_offset (sfnt *sfont, int ttc_idx)
 {
   LONG version;
@@ -137,7 +144,7 @@ ULONG ttc_read_offset (sfnt *sfont, int ttc_idx)
 #define ALLCAP     (1 << 16) /* All-cap font */
 #define SMALLCAP   (1 << 17) /* Small-cap font */
 #define FORCEBOLD  (1 << 18) /* Force bold at small text sizes */
-pdf_obj *tt_get_fontdesc (sfnt *sfont, int *embed, int type)
+pdf_obj *tt_get_fontdesc (sfnt *sfont, int *embed, int type, const char* fontname)
 {
   pdf_obj *descriptor = NULL;
   pdf_obj *bbox = NULL;
@@ -184,26 +191,16 @@ pdf_obj *tt_get_fontdesc (sfnt *sfont, int *embed, int type)
       /* the least restrictive license granted takes precedence. */
       *embed = 1;
     } else if (os2->fsType & 0x0004) {
-      static char previewWarningIssued = 0;
-      if (previewWarningIssued == 0) {
-        fprintf(stderr,
-              "\n** NOTICE: This document contains a `Preview & Print only' licensed font **\n");
-        previewWarningIssued = 1;
-      }
+      if (verbose > 0)
+        MESG("** NOTICE: Font \"%s\" permits \"Preview & Print\" embedding only **\n", fontname);
       *embed = 1;
     } else {
       if (always_embed) {
-        static char licenseWarningIssued = 0;
-        if (licenseWarningIssued == 0) {
-          fprintf(stderr,
-                "\n** NOTICE: This document contains an embedded font with licensing restrictions **\n");
-          licenseWarningIssued = 1;
-        }
+        MESG("** NOTICE: Font \"%s\" may be subject to embedding restrictions **\n", fontname);
         *embed = 1;
       }
       else {
-        fprintf(stderr,
-                "\n*** Embedding disabled due to licensing restriction ***\n");
+        WARN("Embedding of font \"%s\" disabled due to license restrictions", fontname);
         *embed = 0;
       }
     }

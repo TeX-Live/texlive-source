@@ -2022,13 +2022,13 @@ pdf_doc_add_page_content (const char *buffer, unsigned length)
 static char *doccreator = NULL; /* Ugh */
 
 void
-pdf_open_document (const char *filename,
+pdf_open_document (const char *filename, int do_encryption,
                    double media_width, double media_height,
                    double annot_grow_amount, int bookmark_open_depth)
 {
   pdf_doc *p = &pdoc;
 
-  pdf_out_init(filename);
+  pdf_out_init(filename, do_encryption);
 
   pdf_doc_init_catalog(p);
 
@@ -2054,7 +2054,11 @@ pdf_open_document (const char *filename,
   pdf_doc_init_names    (p);
   pdf_doc_init_page_tree(p, media_width, media_height);
 
-  create_encrypt();
+  if (do_encryption) {
+    pdf_obj *encrypt = pdf_encrypt_obj();
+    pdf_set_encrypt(encrypt, pdf_enc_id_array());
+    pdf_release_obj(encrypt);
+  }
 
 #ifndef NO_THUMBNAIL
   /* Create a default name for thumbnail image files */

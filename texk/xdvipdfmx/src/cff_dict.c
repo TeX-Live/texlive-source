@@ -1,5 +1,5 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cff_dict.c,v 1.13 2004/08/26 16:02:26 hirata Exp $
-    
+/*  $Header: /home/cvsroot/dvipdfmx/src/cff_dict.c,v 1.15 2007/07/05 05:45:06 chofchof Exp $
+
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
     Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
@@ -430,7 +430,7 @@ static long pack_real (card8 *dest, long destlen, double value)
 {
   long e;
   int i = 0, pos = 2;
-#define CFF_REAL_MAX_LEN 17
+  char buffer[32];
 
   if (destlen < 2)
     ERROR("%s: Buffer overflow.", CFF_DEBUG_STR);
@@ -448,28 +448,19 @@ static long pack_real (card8 *dest, long destlen, double value)
     pos++;
   }
 
-  e = 0;
-  if (value >= 10.0) {
-    while (value >= 10.0) {
-      value /= 10.0;
-      e++;
-    }
-  } else if (value < 1.0) {
-    while (value < 1.0) {
-      value *= 10.0;
-      e--;
-    }
-  }
+  /* To avoid the problem with Mac OS X 10.4 Quartz,
+   * change the presion of the real numbers
+   * on June 27, 2007 for musix20.pfb */
+  sprintf(buffer, "%.13g", value);
 
-  sprintf(work_buffer, "%1.14g", value);
-  for (i=0;i<CFF_REAL_MAX_LEN;i++) {
+  for (i = 0; buffer[i] != '\0'; i++) {
     unsigned char ch = 0;
-    if (work_buffer[i] == '\0') {
-      break;
-    } else if (work_buffer[i] == '.') {
+    if (buffer[i] == '.') {
       ch = 0x0a;
-    } else if (work_buffer[i] >= '0' && work_buffer[i] <= '9') {
-      ch = work_buffer[i] - '0';
+    } else if (buffer[i] >= '0' && buffer[i] <= '9') {
+      ch = buffer[i] - '0';
+    } else if (buffer[i] == 'e') {
+      ch = (buffer[++i] == '-' ? 0x0c : 0x0b);
     } else {
       ERROR("%s: Invalid character.", CFF_DEBUG_STR);
     }
@@ -483,53 +474,6 @@ static long pack_real (card8 *dest, long destlen, double value)
       dest[pos/2] = (ch << 4);
     }
     pos++;
-  }
-
-  if (e > 0) {
-    if (pos % 2) {
-      dest[pos/2] += 0x0b;
-    } else {
-      if (destlen < pos/2 + 1)
-	ERROR("%s: Buffer overflow.", CFF_DEBUG_STR);
-      dest[pos/2] = 0xb0;
-    }
-    pos++;
-  } else if (e < 0) {
-    if (pos % 2) {
-      dest[pos/2] += 0x0c;
-    } else {
-      if (destlen < pos/2 + 1)
-	ERROR("%s: Buffer overflow.", CFF_DEBUG_STR);
-      dest[pos/2] = 0xc0;
-    }
-    e *= -1;
-    pos++;
-  }
-
-  if (e != 0) {
-    sprintf(work_buffer, "%ld", e);
-    for (i=0;i<CFF_REAL_MAX_LEN;i++) {
-      unsigned char ch = 0;
-      if (work_buffer[i] == '\0') {
-	break;
-      } else if (work_buffer[i] == '.') {
-	ch = 0x0a;
-      } else if (work_buffer[i] >= '0' && work_buffer[i] <= '9') {
-	ch = work_buffer[i] - '0';
-      } else {
-	ERROR("%s: Invalid character.", CFF_DEBUG_STR);
-      }
-
-      if (destlen < pos/2 + 1)
-	ERROR("%s: Buffer overflow.", CFF_DEBUG_STR);
-
-      if (pos % 2) {
-	dest[pos/2] += ch;
-      } else {
-	dest[pos/2] = (ch << 4);
-      }
-      pos++;
-    }
   }
 
   if (pos % 2) {

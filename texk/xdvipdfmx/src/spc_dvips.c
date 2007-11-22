@@ -32,6 +32,9 @@
 
 #include "dpxfile.h"
 
+#include "dvi.h"
+#include "dvicodes.h"
+
 #include "pdfparse.h"
 
 #include "pdfdoc.h"
@@ -45,14 +48,49 @@
 
 #include "specials.h"
 #include "spc_util.h"
+#include "mfileio.h"
 
 #include "spc_dvips.h"
+#include "spc_xtx.h"
 
 
 static int    block_pending = 0;
 static double pending_x     = 0.0;
 static double pending_y     = 0.0;
 static int    position_set  = 0;
+
+static char** ps_headers = 0;
+static int num_ps_headers = 0;
+
+static int
+spc_handler_ps_header (struct spc_env *spe, struct spc_arg *args)
+{
+  char *ps_header, *pro;
+
+  skip_white(&args->curptr, args->endptr);
+  if (args->curptr + 1 >= args->endptr ||
+      args->curptr[0] != '=') {
+    spc_warn(spe, "No filename specified for PSfile special.");
+    return  -1;
+  }
+  args->curptr++;
+
+  pro = malloc(args->endptr - args->curptr + 1);
+  strncpy(pro, args->curptr, args->endptr - args->curptr);
+  pro[args->endptr - args->curptr] = 0;
+  ps_header = kpse_find_file(pro, kpse_tex_ps_header_format, 0);
+  if (!ps_header) {
+    spc_warn(spe, "PS header %s not found.", pro);
+    return -1;
+  }
+  free(pro);
+
+  if (!(num_ps_headers & 0x0f))
+    ps_headers = realloc(ps_headers, sizeof(char*) * (num_ps_headers + 16));
+  ps_headers[num_ps_headers++] = ps_header;
+  args->curptr = args->endptr;
+  return 0;
+}
 
 static char *
 parse_filename (char **pp, char *endptr)
@@ -243,6 +281,462 @@ spc_handler_ps_literal (struct spc_env *spe, struct spc_arg *args)
   return  error;
 }
 
+static char *global_defs = 0;
+static char *page_defs = 0;
+static char *temporary_defs = 0;
+static char *distiller_template = 0;
+static pdf_coord *put_stack;
+static int put_stack_depth = -1;
+static char *gs_in = 0;
+
+static int
+spc_handler_ps_tricks_gdef (struct spc_env *spe, struct spc_arg *args)
+{
+  FILE* fp;
+
+  fp = fopen(global_defs, "a");
+  fwrite(args->curptr, 1, args->endptr - args->curptr, fp);
+  fprintf(fp, "\n");
+  fclose(fp);
+
+  return 0;
+}
+
+static int
+spc_handler_ps_tricks_pdef (struct spc_env *spe, struct spc_arg *args)
+{
+  FILE* fp;
+  pdf_tmatrix M, T = { 1, 0, 0, 1, 0, 0 };
+  pdf_coord pt;
+
+  pdf_dev_currentmatrix(&M);
+  pdf_dev_get_fixed_point(&pt);
+  T.e = pt.x;
+  T.f = pt.y;
+  pdf_concatmatrix(&M, &T);
+  if (page_defs == 0)
+    page_defs = dpx_create_temp_file();
+  fp = fopen(page_defs, "a");
+  fprintf(fp, "gsave initmatrix [%f %f %f %f %f %f] concat %f %f moveto\n", M.a, M.b, M.c, M.d, M.e, M.f, spe->x_user - pt.x, spe->y_user - pt.y);
+  fwrite(args->curptr, 1, args->endptr - args->curptr, fp);
+  fprintf(fp, "\ngrestore\n");
+  fclose(fp);
+
+  return 0;
+}
+
+static int
+spc_handler_ps_tricks_tdef (struct spc_env *spe, struct spc_arg *args)
+{
+  FILE* fp;
+  if (!temporary_defs)
+    temporary_defs = dpx_create_temp_file();
+  fp = fopen(temporary_defs, "w");
+  fwrite(args->curptr, 1, args->endptr - args->curptr, fp);
+  fprintf(fp, "\n");
+  fclose(fp);
+
+  return 0;
+}
+
+static int calculate_PS (char *string, int length, double *res1, double *res2);
+
+static int
+spc_handler_ps_tricks_bput (struct spc_env *spe, struct spc_arg *args, int must_def, int pre_def)
+{
+  char *PutBegin, *formula, *ncLabel;
+  int label = 0;
+  pdf_coord tr;
+  pdf_tmatrix M, T = { 1, 0, 0, 1, 0, 0 };
+
+  if (must_def != 0) {
+    ncLabel = strstr(args->curptr, "LPut");
+    if (ncLabel != 0 && ncLabel < args->endptr - 3)
+      label = 1;
+    ncLabel = strstr(args->curptr, "HPutPos");
+    if (ncLabel != 0 && ncLabel < args->endptr - 6)
+      label = 1;
+  }
+
+  if (pre_def == 0) {
+    dpx_delete_temp_file(temporary_defs);
+    temporary_defs = 0;
+  }
+
+  pdf_dev_currentmatrix(&M);
+  formula = malloc(args->endptr - args->curptr + 120);
+  if (label != 0) {
+    sprintf(formula, "[%f %f %f %f %f %f] concat %f %f moveto\n", M.a, M.b, M.c, M.d, M.e, M.f, spe->x_user + get_origin(1), spe->y_user + get_origin(0));
+  } else
+    sprintf(formula, "[%f %f %f %f %f %f] concat %f %f moveto\n", M.a, M.b, M.c, M.d, M.e, M.f, spe->x_user, spe->y_user);
+  strncat(formula, args->curptr, args->endptr - args->curptr);
+  PutBegin = strstr(formula, "PutBegin");
+  strcpy(PutBegin, "exch = =");
+  *(PutBegin + 8) = 0;
+  if (calculate_PS(formula, strlen(formula), &tr.x, &tr.y) == 0) {
+    if (!(++put_stack_depth & 0x0f))
+      put_stack = realloc(put_stack, (put_stack_depth + 16) * sizeof(pdf_coord));
+    put_stack[put_stack_depth] = tr;
+  }
+  T.e = tr.x; T.f = tr.y;
+
+  pdf_dev_concat(&T);
+
+  if (must_def != 0) {
+    FILE* fp;
+    if (!temporary_defs)
+      temporary_defs = dpx_create_temp_file();
+    fp  = fopen(temporary_defs, "a");
+    fprintf(fp, "gsave\n");
+    if (label == 0)
+      fprintf(fp, "[%f %f %f %f %f %f] concat %f %f moveto\n", M.a, M.b, M.c, M.d, M.e, M.f, spe->x_user, spe->y_user);
+    fwrite(args->curptr, 1, args->endptr - args->curptr, fp);
+    fprintf(fp, "\ngrestore\n");
+    fclose(fp);
+  }
+
+  free(formula);
+  return 0;
+}
+
+static int
+spc_handler_ps_tricks_eput (struct spc_env *spe, struct spc_arg *args)
+{
+  pdf_coord tr = put_stack[put_stack_depth--];
+  pdf_tmatrix M = { 1, 0, 0, 1, -tr.x, -tr.y };
+
+  pdf_dev_concat(&M);
+
+  return 0;
+}
+
+/* Rotation without gsave/grestore. */
+static double* RAngles = 0;
+static int RAngleCount = -1;
+
+static int
+spc_handler_ps_tricks_brotate (struct spc_env *spe, struct spc_arg *args)
+{
+  double value, RAngle = 0;
+  char *cmd, *RotBegin;
+  int i, l = args->endptr - args->curptr;
+
+  static char *pre = "tx@Dict begin /RAngle { %f } def\n";
+  static char *post = "= end";
+
+  if (!(++RAngleCount & 0x0f))
+    RAngles = realloc(RAngles, (RAngleCount + 16) * sizeof(double));
+  for (i = 0; i < RAngleCount; i++)
+    RAngle += RAngles[i];
+  cmd = calloc(l + strlen(pre) + strlen(post) + 12, 1);
+  sprintf(cmd, pre, RAngle);
+  strncat(cmd, args->curptr, l);
+  RotBegin = strstr(cmd, "RotBegin");
+  strcpy(RotBegin, post);
+  if (calculate_PS(cmd, strlen(cmd), &value, 0) != 0)
+    return -1;
+  RAngles[RAngleCount] = value;
+
+  return  spc_handler_xtx_do_rotate (spe->x_user, spe->y_user, value);
+}
+
+static int
+spc_handler_ps_tricks_erotate (struct spc_env *spe, struct spc_arg *args)
+{
+  double value = RAngles[RAngleCount--];
+
+  return  spc_handler_xtx_do_rotate (spe->x_user, spe->y_user, (-1.0) * value);
+}
+
+static int
+check_next_obj(unsigned char * buffer)
+{
+  switch (buffer[0]) {
+    case XXX1:
+      if (buffer[1] < 5)
+        return 0;
+      buffer += 2;
+      break;
+    case XXX2:
+      buffer += 3;
+      break;
+    case XXX3:
+      buffer += 4;
+      break;
+    case XXX4:
+      buffer += 5;
+      break;
+    default:
+      return 0;
+  }
+
+  if (strncmp(buffer, "pst:", 4))
+    return 0;
+  return 1;
+}
+
+static int
+spc_handler_ps_tricks_parse_path (struct spc_env *spe, struct spc_arg *args,
+			      int flag)
+{
+  FILE* fp;
+  int k;
+  pdf_tmatrix M;
+  char *distiller_template = get_distiller_template();
+  char *gs_out;
+  char *clip;
+  int error;
+
+  if (!distiller_template)
+    distiller_template = get_distiller_template();
+
+  pdf_dev_currentmatrix(&M);
+  if (!gs_in) {
+    gs_in = dpx_create_temp_file();
+    if (!gs_in) {
+      WARN("Failed to create temporary input file for PSTricks image conversion.");
+      return  -1;
+    }
+    fp = fopen(gs_in, "w");
+    for (k = 0; k < num_ps_headers; k++)
+      fprintf(fp, "(%s) run\n", ps_headers[k]);
+    fprintf(fp, "[%f %f %f %f %f %f] concat %f %f translate 0 0 moveto\n", M.a, M.b, M.c, M.d, M.e, M.f, spe->x_user, spe->y_user);
+    fprintf(fp, "(%s) run\n", global_defs);
+    if (page_defs != 0)
+      fprintf(fp, "(%s) run\n", page_defs);
+
+#if 0
+    fprintf(fp, "/clip {stroke} def\n");
+    fwrite(args->curptr, 1, args->endptr - args->curptr, fp);
+#else
+    clip = strstr(args->curptr, " clip");
+    if (clip == 0 || clip > args->endptr - 5) {
+      fprintf(fp, "tx@TextPathDict begin /stroke {} def\n");
+      fwrite(args->curptr, 1, args->endptr - args->curptr, fp);
+      fprintf(fp, "\nend\n");
+      fclose(fp);
+      return 0;
+    } else {
+      fwrite(args->curptr, 1, clip - args->curptr, fp);
+      fprintf(fp, " stroke ");
+      skip_white(&clip, args->endptr);
+      parse_ident(&clip, args->endptr);
+      fwrite(clip, 1, args->endptr - clip, fp);
+    }
+#endif
+  } else {
+    fp = fopen(gs_in, "a");
+    fprintf(fp, "flattenpath stroke\n");
+  }
+  fclose(fp);
+
+  gs_out = dpx_create_temp_file();
+  if (!gs_out) {
+    WARN("Failed to create temporary output file for PSTricks image conversion.");
+    RELEASE(gs_in);
+    gs_in = 0;
+    return  -1;
+  }
+
+  error = dpx_file_apply_filter(distiller_template, gs_in, gs_out);
+  if (error) {
+    WARN("Image format conversion for PSTricks failed.");
+    RELEASE(gs_in);
+    gs_in = 0;
+    return error;
+  }
+
+  fp = fopen(gs_out, "r");
+   if (pdf_copy_clip(fp, 0, 0, 0) != 0) {
+    spc_warn(spe, "Failed to parse the clipping path.");
+    RELEASE(gs_in);
+    gs_in = 0;
+    RELEASE(gs_out);
+    return -1;
+  }
+  fclose(fp);
+
+  dpx_delete_temp_file(gs_out);
+  dpx_delete_temp_file(gs_in);
+  gs_in = 0;
+
+  return 0;
+}
+
+static int
+spc_handler_ps_tricks_render (struct spc_env *spe, struct spc_arg *args)
+{
+  FILE* fp;
+  int k;
+  pdf_tmatrix M;
+
+  if (!distiller_template)
+    distiller_template = get_distiller_template();
+
+  pdf_dev_currentmatrix(&M);
+  if (!gs_in) {
+    gs_in = dpx_create_temp_file();
+    if (!gs_in) {
+      WARN("Failed to create temporary input file for PSTricks image conversion.");
+      return  -1;
+    }
+    fp = fopen(gs_in, "w");
+    for (k = 0; k < num_ps_headers; k++)
+      fprintf(fp, "(%s) run\n", ps_headers[k]);
+    fprintf(fp, "[%f %f %f %f %f %f] concat %f %f translate 0 0 moveto\n", M.a, M.b, M.c, M.d, M.e, M.f, spe->x_user, spe->y_user);
+    fprintf(fp, "(%s) run\n", global_defs);
+    if (page_defs != 0)
+      fprintf(fp, "(%s) run\n", page_defs);
+  } else
+    fp = fopen(gs_in, "a");
+
+  fprintf(fp, "\nsave\n");
+  fwrite(args->curptr, 1, args->endptr - args->curptr, fp);
+  fprintf(fp, "\ncount 1 sub {pop} repeat restore\n");
+
+  if (check_next_obj(args->endptr)) {
+    fclose(fp);
+  } else {
+    char *distiller_template = get_distiller_template();
+    char *gs_out;
+    int error, form_id;
+    transform_info p;
+    transform_info_clear(&p);
+    pdf_invertmatrix(&M);
+    p.matrix = M;
+
+    fclose(fp);
+
+    gs_out = dpx_create_temp_file();
+    if (!gs_out) {
+      WARN("Failed to create temporary output file for PSTricks image conversion.");
+      RELEASE(gs_in);
+      gs_in = 0;
+      return  -1;
+    }
+
+    error = dpx_file_apply_filter(distiller_template, gs_in, gs_out);
+    if (error) {
+      WARN("Image format conversion for PSTricks failed.");
+      RELEASE(gs_in);
+      gs_in = 0;
+      return error;
+    }
+
+    form_id = pdf_ximage_findresource(gs_out, 0, 0);
+    if (form_id < 0) {
+      spc_warn(spe, "Failed to read converted PSTricks image file.");
+      RELEASE(gs_in);
+      gs_in = 0;
+      RELEASE(gs_out);
+      return  -1;
+    }
+    pdf_dev_put_image(form_id, &p, 0, 0);
+
+    dpx_delete_temp_file(gs_out);
+    dpx_delete_temp_file(gs_in);
+    gs_in = 0;
+  }
+
+  return 0;
+}
+
+typedef enum {
+  render	= 1 << 0,
+  global_def	= 1 << 1,
+  page_def	= 1 << 2,
+  new_temp	= 1 << 3,
+  add_temp	= 1 << 4,
+  begin_put	= 1 << 5,
+  end_put	= 1 << 6,
+  begin_rotate	= 1 << 7,
+  end_rotate	= 1 << 8,
+  parse		= 1 << 9,
+  req_ref	= 1 << 10
+} Operation;
+
+/*	ToDo: all the substring search must be centralized so that	*
+ *	keys can be read from external configuration.			*/
+struct pstricks_key_ {
+  char * key;
+  Operation exec;
+} pstricks_key[] = {
+  /* The first 5 are hard-coded here. */
+  {"LPut",	add_temp | req_ref},
+  {"HPutPos",	add_temp | req_ref},
+  {"PutBegin",	begin_put},
+  {"RotBegin",	begin_rotate},
+  {"clip",	parse},
+  /* The rest can be read from an external source. */
+  {"NewNode",	page_def | req_ref},
+  {"InitNC",	render | new_temp},
+  {"/Glbx",	add_temp},
+  {"NewtonSolving",	add_temp},
+  {"PutEnd",	end_put},
+  {"RotEnd",	end_rotate},
+  {"mtrxc",	parse},
+  {"stroke",	render},
+  {"fill",	render},
+  {"Fill",	render},
+  {" Glbx", req_ref},
+  {"TextPathShow", parse},
+  {"/rotAngle", page_def},
+  {"NAngle", req_ref}
+};
+
+static int
+spc_handler_ps_trickscmd (struct spc_env *spe, struct spc_arg *args)
+{
+  char *test_string;
+  int k, error = 0, f_exec = 0;
+
+  /* Hack time! */
+  /* The problem is that while any macros in pstricks.tex
+   * can be overridden by the codes in pstricks.con, you cannot
+   * modify the pst@Verb specials generated by other PSTricks
+   * packages.  So pstricks generate specials won't signal what
+   * to expect for you.
+   */
+  test_string = malloc(args->endptr - args->curptr + 1);
+  strncpy(test_string, args->curptr, args->endptr - args->curptr);
+  test_string[args->endptr - args->curptr] = 0;
+  for (k = 0; k < sizeof(pstricks_key) / sizeof(pstricks_key[0]); k++) {
+    if (strstr(test_string, pstricks_key[k].key) != 0)
+      f_exec |= pstricks_key[k].exec;
+  }
+  free(test_string);
+
+  if (f_exec & new_temp)
+    error |= spc_handler_ps_tricks_tdef(spe, args);
+  if (f_exec & render)
+    error |= spc_handler_ps_tricks_render(spe, args);
+  if (f_exec & parse)
+    error |= spc_handler_ps_tricks_parse_path(spe, args, f_exec);
+  if (f_exec & begin_put)
+    error |= spc_handler_ps_tricks_bput(spe, args, (f_exec & add_temp), (f_exec & req_ref));
+  if (f_exec & end_put)
+    error |= spc_handler_ps_tricks_eput(spe, args);
+  if (f_exec & begin_rotate)
+    error |= spc_handler_ps_tricks_brotate(spe, args);
+  if (f_exec & end_rotate)
+    error |= spc_handler_ps_tricks_erotate(spe, args);
+  if (f_exec & page_def)
+    error |= spc_handler_ps_tricks_pdef (spe, args);
+  if (f_exec == 0)
+    error |= spc_handler_ps_tricks_pdef (spe, args);
+
+  args->curptr = args->endptr;
+  return error;
+}
+
+static int
+spc_handler_ps_tricksobj (struct spc_env *spe, struct spc_arg *args)
+{
+  int error = spc_handler_ps_tricks_render(spe, args);
+  args->curptr = args->endptr;
+  return error;
+}
+
 static int
 spc_handler_ps_default (struct spc_env *spe, struct spc_arg *args)
 {
@@ -283,18 +777,30 @@ spc_handler_ps_default (struct spc_env *spe, struct spc_arg *args)
 }
 
 static struct spc_handler dvips_handlers[] = {
+  {"header",      spc_handler_ps_header},
   {"PSfile",        spc_handler_ps_file},
   {"psfile",        spc_handler_ps_file},
   {"ps: plotfile",  spc_handler_ps_plotfile}, /* FIXME */
   {"PS: plotfile",  spc_handler_ps_plotfile}, /* FIXME */
   {"PS:",           spc_handler_ps_literal},
   {"ps:",           spc_handler_ps_literal},
+  {"PST:",          spc_handler_ps_trickscmd},
+  {"pst:",          spc_handler_ps_tricksobj},
   {"\" ",           spc_handler_ps_default}
 };
 
 int
 spc_dvips_at_begin_page (void)
 {
+  FILE* fp;
+
+  if (page_defs) {
+    dpx_delete_temp_file(page_defs);
+    page_defs = 0;
+  }
+
+  put_stack_depth = -1;
+
   return  0;
 }
 
@@ -302,18 +808,31 @@ int
 spc_dvips_at_end_page (void)
 {
   mps_eop_cleanup();
+  if (!temporary_defs) {
+    dpx_delete_temp_file(temporary_defs);
+    temporary_defs = 0;
+  }
   return  0;
 }
 
 int
 spc_dvips_at_begin_document (void)
 {
+  FILE* fp;
+
+  /* This, together with \pscharpath support code, must be moved to xtex.pro header. */
+  global_defs = dpx_create_temp_file();
+  fp = fopen(global_defs, "w");
+  fprintf(fp, "tx@Dict begin /STV {} def end\n");
+  fclose(fp);
   return  0;
 }
 
 int
 spc_dvips_at_end_document (void)
 {
+  dpx_delete_temp_file(global_defs);
+  dpx_delete_temp_file(page_defs);
   return  0;
 }
 
@@ -376,8 +895,8 @@ spc_dvips_setup_handler (struct spc_handler *handle,
 
   for (i = 0;
        i < sizeof(dvips_handlers) / sizeof(struct spc_handler); i++) {
-    if (keylen == strlen(dvips_handlers[i].key) &&
-	!strncmp(key, dvips_handlers[i].key, keylen)) {
+    if (keylen <= strlen(dvips_handlers[i].key) && 
+	!strncmp(key, dvips_handlers[i].key, strlen(dvips_handlers[i].key))) {
 
       skip_white(&args->curptr, args->endptr);
 
@@ -393,3 +912,50 @@ spc_dvips_setup_handler (struct spc_handler *handle,
   return  -1;
 }
 
+#ifdef __EMX__
+#define GS_CALCULATOR "gsos2 -q -dNOPAUSE -dBATCH -sDEVICE=nullpage -f  "
+#else
+#define GS_CALCULATOR "gs -q -dNOPAUSE -dBATCH -sDEVICE=nullpage -f  "
+#endif
+
+static
+int calculate_PS (char *string, int length, double *res1, double *res2) {
+  char *formula, *cmd;
+  FILE *fp, *coord;
+  int k;
+
+  if (res1 == 0 && res2 == 0)
+    return -1;
+  formula = dpx_create_temp_file();
+  fp = fopen(formula, "w");
+  for (k = 0; k < num_ps_headers; k++)
+    fprintf(fp, "(%s) run\n", ps_headers[k]);
+  fprintf(fp, "0 0 moveto\n");
+  fprintf(fp, "(%s) run\n", global_defs);
+  if (page_defs != 0)
+    fprintf(fp, "(%s) run\n", page_defs);
+  if (temporary_defs)
+    fprintf(fp, "(%s) run\n", temporary_defs);
+  fwrite(string, 1, length, fp);
+  fclose(fp);
+  k = strlen(GS_CALCULATOR) + strlen(formula) + 2;
+  cmd = malloc(k);
+  strcpy(cmd, GS_CALCULATOR);
+  strcat(cmd, " ");
+  strcat(cmd, formula);
+
+  coord = popen(cmd, "r");
+  if (coord) {
+    if (res1 == 0)
+      fscanf(coord, " %lf ", res2);
+    else if (res2 == 0)
+      fscanf(coord, " %lf ", res1);
+    else
+      fscanf(coord, " %lf %lf ", res1, res2);
+  } else
+    return -1;
+
+  pclose(coord);
+  dpx_delete_temp_file(formula);
+  return 0;
+}

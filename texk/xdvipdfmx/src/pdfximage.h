@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.h,v 1.8 2005/07/30 11:44:18 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.h,v 1.10 2007/05/18 05:19:01 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -43,6 +43,8 @@ typedef struct {
   double  ydpi;
 
   long min_dpi; /* NOT USED YET */
+
+  double xdensity, ydensity; /* scale factor for bp */
 } ximage_info;
 
 typedef struct {
@@ -75,6 +77,7 @@ extern void pdf_ximage_set_form  (pdf_ximage *ximage, void *info, pdf_obj *resou
 
 /* from psimage.h */
 extern void set_distiller_template (char *s);
+extern char *get_distiller_template (void);
 
 extern int
 pdf_ximage_scale_image (int            id,
@@ -83,4 +86,6 @@ pdf_ximage_scale_image (int            id,
                         transform_info *p  /* arg */
                        );
 
+/* from dvipdfmx.c */
+extern void pdf_ximage_disable_ebb (void);
 #endif /* _PDFXIMAGE_H_ */

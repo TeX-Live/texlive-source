@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.h,v 1.21 2005/05/04 16:10:06 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.h,v 1.22 2007/04/03 05:25:50 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -51,10 +51,11 @@ typedef struct pdf_obj  pdf_obj;
 extern void     pdf_obj_set_verbose (void);
 extern void     pdf_error_cleanup   (void);
 
-extern void     pdf_out_init      (const char *filename);
+extern void     pdf_out_init      (const char *filename, int do_encryption);
 extern void     pdf_out_flush     (void);
 extern void     pdf_set_version   (unsigned version);
 extern unsigned pdf_get_version   (void);
+extern void     pdf_enable_objstm (void);
 
 extern pdf_obj *pdf_new_obj     (int type);
 extern void     pdf_release_obj (pdf_obj *object);
@@ -124,7 +125,7 @@ extern pdf_obj *pdf_dict_keys   (pdf_obj *dict);
  * pdf_link_obj() it rather than allocate/free-ing them each time. But I
  * already removed that.
  */
-extern void     pdf_add_dict     (pdf_obj *dict, pdf_obj *key,    pdf_obj *value); 
+extern int      pdf_add_dict     (pdf_obj *dict, pdf_obj *key,    pdf_obj *value); 
 extern void     pdf_put_dict     (pdf_obj *dict, const char *key, pdf_obj *value); 
 
 /* Apply proc(key, value, pdata) for each key-value pairs in dict, stop if proc()
@@ -160,7 +161,7 @@ extern void      pdf_set_compression (int level);
 
 extern void      pdf_set_info     (pdf_obj *obj);
 extern void      pdf_set_root     (pdf_obj *obj);
-extern void      pdf_set_encrypt  (pdf_obj *obj);
+extern void      pdf_set_encrypt  (pdf_obj *encrypt, pdf_obj *id);
 
 extern int      check_for_pdf     (FILE *file);
 extern pdf_obj *pdf_open          (FILE *file);
@@ -171,7 +172,7 @@ extern pdf_obj *pdf_import_object (pdf_obj *object);
 
 extern int      pdfobj_escape_str (char *buffer, int size, const unsigned char *s, int len);
 
-extern pdf_obj *pdf_new_ref       (unsigned long label, int generation);
+extern pdf_obj *pdf_new_ref       (unsigned long label, unsigned short generation);
 extern void     pdf_copy_object   (pdf_obj *dst, pdf_obj *src);
 
 #endif  /* _PDFOBJ_H_ */

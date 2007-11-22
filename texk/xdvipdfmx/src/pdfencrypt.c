@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencrypt.c,v 1.8 2005/07/20 08:49:55 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencrypt.c,v 1.9 2007/04/03 05:25:50 chofchof Exp $
  
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -71,7 +71,6 @@ static const unsigned char padding_string[MAX_STR_LEN] = {
 
 static char owner_passwd[MAX_PWD_LEN], user_passwd[MAX_PWD_LEN];
 
-static unsigned char do_encryption = 0;
 static unsigned char verbose = 0;
 
 void pdf_enc_set_verbose (void)
@@ -379,7 +378,6 @@ void pdf_enc_set_passwd (unsigned bits, unsigned perm, char *dviname, char *pdfn
     fflush(stderr);
   }
 
-  do_encryption = 1;
   key_size = (unsigned char)(bits / 8);
   algorithm = (key_size == 5 ? 1 : 2);
   permission = (unsigned long)perm | 0x000000C0;
@@ -395,8 +393,6 @@ void pdf_enc_set_passwd (unsigned bits, unsigned perm, char *dviname, char *pdfn
 void pdf_encrypt_data (unsigned char *data, unsigned long len)
 {
   unsigned char *result;
-
-  if (!do_encryption) return;
 
   memcpy(in_buf, key_data, key_size);
   in_buf[key_size]   = (unsigned char)(current_label) & 0xFF;
@@ -416,20 +412,15 @@ void pdf_encrypt_data (unsigned char *data, unsigned long len)
   RELEASE (result);
 }
 
-void create_encrypt (void)
+pdf_obj *pdf_encrypt_obj (void)
 {
   pdf_obj *doc_encrypt;
 
-  if (!do_encryption) return;
-
 #ifdef DEBUG
-  fprintf (stderr, "(create_encrypt)");
+  fprintf (stderr, "(pdf_encrypt_obj)");
 #endif
 
-  /* Create an empty Encryption entry and make it
-     be the root object */
   doc_encrypt = pdf_new_dict ();
-  pdf_set_encrypt (doc_encrypt);
 
   /* KEY  : Filter
    * TYPE : name
@@ -509,20 +500,15 @@ void create_encrypt (void)
 		pdf_new_name ("P"),
 		pdf_new_number (permission));
 
-  do_encryption = 0;
-  pdf_release_obj (doc_encrypt);
-  do_encryption = 1;
+  return doc_encrypt;
 }
 
-unsigned char *pdf_enc_id_string (void)
+pdf_obj *pdf_enc_id_array (void)
 {
-  register int i;
-  static unsigned char result[MAX_STR_LEN+1];
-
-  for (i = 0; i < MAX_KEY_LEN; i++)
-    sprintf((char *)(result+2*i), "%02x", id_string[i]);
-
-  return result;
+  pdf_obj *id = pdf_new_array();
+  pdf_add_array(id, pdf_new_string(id_string, MAX_KEY_LEN));
+  pdf_add_array(id, pdf_new_string(id_string, MAX_KEY_LEN));
+  return id;
 }
 
 void pdf_enc_set_label (unsigned long label)

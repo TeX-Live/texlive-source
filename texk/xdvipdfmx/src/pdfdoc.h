@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.h,v 1.19 2005/07/30 11:44:18 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.h,v 1.20 2007/04/03 05:26:49 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -32,7 +32,7 @@
 
 extern void     pdf_doc_set_verbose (void);
 
-extern void     pdf_open_document  (const char *filename,
+extern void     pdf_open_document  (const char *filename, int do_encryption,
 				    double media_width, double media_height,
 				    double annot_grow_amount, int bookmark_open_depth);
 extern void     pdf_close_document (void);

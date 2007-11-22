@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_pdfm.c,v 1.24 2006/12/11 12:46:03 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_pdfm.c,v 1.26 2007/04/25 09:44:49 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -862,9 +862,27 @@ spc_handler_pdfm_outline (struct spc_env *spe, struct spc_arg *args)
 {
   struct spc_pdf_ *sd = &_pdf_stat;
   pdf_obj   *item_dict, *tmp;
-  int        level;
+  int        level, is_open = -1;
   int        current_depth;
 
+  skip_white(&args->curptr, args->endptr);
+
+  /*
+   * pdf:outline is extended to support open/close feature
+   *
+   * pdf:outline 1 ... (as DVIPDFM)
+   * pdf:outline [] 1 ... (open bookmark)
+   * pdf:outline [-] 1 ... (closed bookmark)
+   */
+  if (args->curptr+3 < args->endptr && *args->curptr == '[') {
+    args->curptr++;
+    if (*args->curptr == '-') {
+      args->curptr++;
+    } else {
+      is_open = 1;
+    }
+    args->curptr++;
+  }
   skip_white(&args->curptr, args->endptr);
 
   tmp = parse_pdf_object(&args->curptr, args->endptr);
@@ -912,7 +930,7 @@ spc_handler_pdfm_outline (struct spc_env *spe, struct spc_arg *args)
       pdf_doc_bookmarks_down();
   }
 
-  pdf_doc_bookmarks_add(item_dict, -1); /* Use global setting for open/close */
+  pdf_doc_bookmarks_add(item_dict, is_open);
 
   return  0;
 }

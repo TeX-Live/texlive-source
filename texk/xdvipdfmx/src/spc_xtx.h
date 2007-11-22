@@ -38,5 +38,6 @@ extern int  spc_xtx_at_end_document   (void);
 extern int  spc_xtx_check_special (const char *buffer, long size);
 extern int  spc_xtx_setup_handler (struct spc_handler *handle,
 				    struct spc_env *spe, struct spc_arg *args);
+extern int spc_handler_xtx_do_rotate (double x_user, double y_user, double value);
 
 #endif /* _SPC_XTX_H_ */

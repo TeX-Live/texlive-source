@@ -207,6 +207,7 @@ pdf_invertmatrix (pdf_tmatrix *M)
     W.c = -(M->c) / det;  W.d =  (M->a) / det;
     W.e =  (M->c) * (M->f) - (M->d) * (M->e);
     W.f =  (M->b) * (M->e) - (M->a) * (M->f);
+    W.e /= det; W.f /= det;
   }
 
   pdf_copymatrix(M, &W);
@@ -710,7 +711,7 @@ pdf_path__isarect (pdf_path *pa,
  (c) == 'f' || (c) == 'F' || \
  (c) == 's' || (c) == 'S' || \
  (c) == 'b' || (c) == 'B' || \
- (c) == 'W' \
+ (c) == 'W' || (c) == ' ' \
 )
 
 static /* __inline__ */ int
@@ -752,7 +753,7 @@ pdf_dev__rectshape (pdf_dev           *P,
 
   ASSERT(r && PT_OP_VALID(opchr));
 
-  isclip = (opchr == 'W') ? 1 : 0;
+  isclip = (opchr == 'W' || opchr == ' ') ? 1 : 0;
 
   /* disallow matrix for clipping.
    * q ... clip Q does nothing and
@@ -789,16 +790,20 @@ pdf_dev__rectshape (pdf_dev           *P,
   buf[len++] = ' ';
   buf[len++] = 'r'; buf[len++] = 'e';
 
-  buf[len++] = ' ';
-  buf[len++] = opchr;
+  if (opchr != ' ') {
+    buf[len++] = ' ';
+    buf[len++] = opchr;
 
-  buf[len++] = ' ';
-  buf[len++] = isclip ? 'n' : 'Q';
+    buf[len++] = ' ';
+    buf[len++] = isclip ? 'n' : 'Q';
+  }
 
   pdf_doc_add_page_content(buf, len); len = 0;
 
   return 0;
 }
+
+static int path_added = 0;
 
 /* FIXME */
 static int
@@ -815,13 +820,17 @@ pdf_dev__flushpath (pdf_dev   *P,
   pdf_coord *pt;
   int        n_pts, n_seg;
   int        len = 0;
+  int        isclip = 0;
   int        isrect, i, j;
 
   ASSERT(pa && PT_OP_VALID(opchr));
 
-  if (PA_LENGTH(pa) <= 0)
+  isclip = (opchr == 'W') ? 1 : 0;
+
+  if (PA_LENGTH(pa) <= 0 && path_added == 0)
     return 0;
 
+  path_added = 0;
   graphics_mode();
   isrect = pdf_path__isarect(pa, ignore_rule); 
   if (isrect) {
@@ -864,6 +873,9 @@ pdf_dev__flushpath (pdf_dev   *P,
   b[len++] = opchr;
   if (rule == PDF_FILL_RULE_EVENODD)
     b[len++] = '*';
+  if (isclip) {
+    b[len++] = ' '; b[len++] = 'n';
+  }
 
   pdf_doc_add_page_content(b, len);
 
@@ -899,6 +911,8 @@ typedef struct pdf_gstate_
   /* internal */
   pdf_path  path;
   long      flags;
+  /* bookkeeping the origin of the last transform applied */
+  pdf_coord pt_fixee;
 } pdf_gstate;
 
 
@@ -1019,6 +1033,8 @@ pdf_dev__init_gstate (pdf_gstate *gs)
   /* Internal variables */
   gs->flags = 0;
   pdf_path__initpath(pa);
+  gs->pt_fixee.x = 0;
+  gs->pt_fixee.y = 0;
 
   return;
 }
@@ -1065,6 +1081,8 @@ pdf_dev__copy_gstate (pdf_gstate *gs1, pdf_gstate *gs2)
 
   pdf_color_copycolor(&gs1->fillcolor  , &gs2->fillcolor);
   pdf_color_copycolor(&gs1->strokecolor, &gs2->strokecolor);
+  gs1->pt_fixee.x = gs2->pt_fixee.x;
+  gs1->pt_fixee.y = gs2->pt_fixee.y;
 
   return;
 }
@@ -1172,15 +1190,18 @@ pdf_dev_concat (const pdf_tmatrix *M)
     return -1;
   }
 
-  buf[len++] = ' ';
-  len += pdf_sprint_matrix(buf + len, M);
-  buf[len++] = ' ';
-  buf[len++] = 'c';
-  buf[len++] = 'm';
-  pdf_doc_add_page_content(buf, len);
+  if (fabs(M->a - 1.0) > 1.e-8 || fabs(M->b) > 1.e-8
+   || fabs(M->c) > 1.e-8 || fabs(M->d - 1.0) > 1.e-8
+   || fabs(M->e) > 1.e-8 || fabs(M->f) > 1.e-8) {
+    buf[len++] = ' ';
+    len += pdf_sprint_matrix(buf + len, M);
+    buf[len++] = ' ';
+    buf[len++] = 'c';
+    buf[len++] = 'm';
+    pdf_doc_add_page_content(buf, len);
 
-  pdf_concatmatrix(CTM, M);
-
+    pdf_concatmatrix(CTM, M);
+  }
   inversematrix(&W, M);
 
   pdf_path__transform (cpa, &W);
@@ -1572,6 +1593,38 @@ pdf_dev_curveto  (double x0, double y0,
 }
 
 int
+pdf_dev_vcurveto  (double x0, double y0,
+                  double x1, double y1)
+{
+  m_stack    *gss = &_gsstck;
+  pdf_gstate *gs  = m_stack_top(gss);
+  pdf_path   *cpa = &gs->path;
+  pdf_coord  *cpt = &gs->cp;
+  pdf_coord   p0, p1;
+
+  p0.x = x0; p0.y = y0;
+  p1.x = x1; p1.y = y1;
+
+  return pdf_path__curveto(cpa, cpt, cpt, &p0, &p1);
+}
+
+int
+pdf_dev_ycurveto  (double x0, double y0,
+                  double x1, double y1)
+{
+  m_stack    *gss = &_gsstck;
+  pdf_gstate *gs  = m_stack_top(gss);
+  pdf_path   *cpa = &gs->path;
+  pdf_coord  *cpt = &gs->cp;
+  pdf_coord   p0, p1;
+
+  p0.x = x0; p0.y = y0;
+  p1.x = x1; p1.y = y1;
+
+  return pdf_path__curveto(cpa, cpt, &p0, &p1, &p1);
+}
+
+int
 pdf_dev_rcurveto (double x0, double y0,
                   double x1, double y1,
                   double x2, double y2)
@@ -1771,4 +1824,37 @@ pdf_dev_rectclip (double x, double y,
   r.ury = y + h;
   
   return  pdf_dev__rectshape(NULL, &r, NULL, 'W');
+}
+
+int
+pdf_dev_rectadd (double x, double y,
+                  double w, double h)
+{
+  pdf_rect r;
+
+  r.llx = x;
+  r.lly = y;
+  r.urx = x + w;
+  r.ury = y + h;
+  path_added = 1;
+
+  return  pdf_dev__rectshape(NULL, &r, NULL, ' ');
+}
+
+void
+pdf_dev_set_fixed_point (double x, double y)
+{
+  m_stack    *gss = &_gsstck;
+  pdf_gstate *gs  = m_stack_top(gss);
+  gs->pt_fixee.x = x;
+  gs->pt_fixee.y = y;
+}
+
+void
+pdf_dev_get_fixed_point (pdf_coord *p)
+{
+  m_stack    *gss = &_gsstck;
+  pdf_gstate *gs  = m_stack_top(gss);
+  p->x = gs->pt_fixee.x;
+  p->y = gs->pt_fixee.y;
 }

@@ -16,7 +16,8 @@ kpse_ofm_format;
 kpse_ovf_format;
 kpse_truetype_format;
     ],
-    [ AC_MSG_RESULT(yes)
+    [
+      AC_MSG_RESULT(yes)
       AC_CHECK_LIB(kpathsea, xbasename,
         [],
         [ AC_MSG_ERROR([
@@ -24,7 +25,8 @@ This version of dvipdfmx requires xbasename() in kpathsea library.
           ]) ]
       )
     ],
-    [ AC_MSG_RESULT(no);
+    [
+      AC_MSG_RESULT(no);
       AC_MSG_ERROR([
 This version of dvipdfmx requires that kpathsea and its headers be installed.
 If you are sure they are installed and in a standard place, maybe you need a
@@ -52,11 +54,13 @@ kpse_cmap_format;
 kpse_sfd_format;
 kpse_opentype_format;
     ],
-    [ AC_MSG_RESULT(yes);
+    [
+      AC_MSG_RESULT(yes);
       AC_DEFINE([__TDS_VERSION__],  0x200406L, [Define if your libkpathsea supports enc formats])
       AM_CONDITIONAL(TDS_VERSION_11, true)
     ],
-    [ AC_MSG_RESULT(no);
+    [
+      AC_MSG_RESULT(no);
       AC_DEFINE([__TDS_VERSION__],  0x200302L, [Define if your libkpathsea supports enc formats])
       AM_CONDITIONAL(TDS_VERSION_11, false)
     ]
@@ -85,7 +89,8 @@ fi
       ], [
 z_stream p;
     ],
-    [ AC_MSG_RESULT(yes)
+    [
+      AC_MSG_RESULT(yes)
       AC_CHECK_LIB(z, compress, [
         AC_DEFINE(HAVE_ZLIB, 1, [Define if you have zlib and its headers])
         LIBS="$LIBS -lz"
@@ -94,7 +99,11 @@ z_stream p;
         ])
       ])
     ],
-    [CPPFLAGS=$_cppflags LDDFLAGS=$_ldflags AC_MSG_RESULT(no)]
+    [
+      CPPFLAGS=$_cppflags
+      LDDFLAGS=$_ldflags
+      AC_MSG_RESULT(no)
+    ]
  )
 ])
 
@@ -120,13 +129,18 @@ fi
       ], [
 png_infop p;
     ],
-    [ AC_MSG_RESULT(yes)
+    [
+      AC_MSG_RESULT(yes)
       AC_CHECK_LIB(png, png_get_image_width,
         [ AC_DEFINE(HAVE_LIBPNG, 1, [Define if you have libpng])
           LIBS="$LIBS -lpng" ], , -lz
       )
     ],
-    [CPPFLAGS=$_cppflags LDDFLAGS=$_ldflags AC_MSG_RESULT(no)]
+    [
+      CPPFLAGS=$_cppflags
+      LDDFLAGS=$_ldflags
+      AC_MSG_RESULT(no)
+    ]
   )
 ])
 
@@ -151,13 +165,18 @@ fi
       ], [
 struct paper *p;
     ],
-    [ AC_MSG_RESULT(yes)
+    [
+      AC_MSG_RESULT(yes)
       AC_CHECK_LIB(paper, paperpswidth, [
         AC_DEFINE(HAVE_LIBPAPER, 1, [Define if you have libpaper])
         LIBS="$LIBS -lpaper"
       ])
     ],
-    [CPPFLAGS=$_cppflags LDDFLAGS=$_ldflags AC_MSG_RESULT(no)]
+    [
+      CPPFLAGS=$_cppflags
+      LDDFLAGS=$_ldflags
+      AC_MSG_RESULT(no)
+    ]
   )
 ])
 
@@ -183,13 +202,18 @@ fi
       ], [
 FcObjectSet *os;
     ],
-    [ AC_MSG_RESULT(yes)
+    [ 
+      AC_MSG_RESULT(yes)
       AC_CHECK_LIB(fontconfig, FcInit, [
         AC_DEFINE(HAVE_LIBFONTCONFIG, 1, [Define if you have libfontconfig])
         LIBS="$LIBS -lfontconfig"
       ])
     ],
-    [CPPFLAGS=$_cppflags LDDFLAGS=$_ldflags AC_MSG_RESULT(no)]
+    [
+      CPPFLAGS=$_cppflags
+      LDDFLAGS=$_ldflags
+      AC_MSG_RESULT(no)
+    ]
   )
 ])
 
@@ -234,7 +258,8 @@ AC_DEFUN([AC_CHECK_LIBFREETYPE], [
     [
 FT_Face face;
     ],
-    [ AC_MSG_RESULT(yes)
+    [ 
+      AC_MSG_RESULT(yes)
       if test x"$using_installed_freetype" = xyes; then
         AC_CHECK_LIB(freetype, FT_Init_FreeType, [
           AC_DEFINE(HAVE_LIBFREETYPE, 1, [Define if you have libfreetype])
@@ -244,7 +269,8 @@ FT_Face face;
         AC_DEFINE(HAVE_LIBFREETYPE, 1, [Define if you have libfreetype])
       fi
     ],
-    [ AC_MSG_RESULT(no)
+    [ 
+      AC_MSG_RESULT(no)
           AC_MSG_ERROR([
 This version of xdvipdfmx requires that FreeType2 and its headers be available.
 You can use the --with-freetype2 option to indicate the location of the installed
@@ -265,11 +291,14 @@ AC_DEFUN([AC_HAS_APP_SERVICES], [
       ], [
 ATSFontRef fontRef;
     ],
-    [ AC_MSG_RESULT(yes)
+    [
+      AC_MSG_RESULT(yes)
       AC_DEFINE(HAVE_APP_SERVICES, 1, [Define if you have ApplicationServices (Mac OS X)])
       LIBS="$LIBS -framework ApplicationServices"
     ],
-    [ AC_MSG_RESULT(no) ]
+    [
+      AC_MSG_RESULT(no)
+    ]
   )
 ])
 

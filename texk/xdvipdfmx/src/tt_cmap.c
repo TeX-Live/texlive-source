@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/tt_cmap.c,v 1.24 2005/07/08 14:18:05 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/tt_cmap.c,v 1.25 2007/04/13 06:48:03 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -1685,7 +1685,7 @@ fprintf(stderr, "otf_load_Unicode_CMap(%s, %d)\n", map_name, ttc_index);
   sfont = sfnt_open(fp, -1);
 #endif
   if (!sfont) {
-    ERROR("Could not open TrueType font file \"%s\"", map_name);
+    ERROR("Could not open OpenType/TrueType font file \"%s\"", map_name);
   }
   switch (sfont->type) {
   case SFNT_TYPE_TTC:
@@ -1699,12 +1699,12 @@ fprintf(stderr, "otf_load_Unicode_CMap(%s, %d)\n", map_name, ttc_index);
     offset = 0;
     break;
   default:
-    ERROR("Not a TrueType/TTC font?: %s", map_name);
+    ERROR("Not a OpenType/TrueType/TTC font?: %s", map_name);
     break;
   }
 
   if (sfnt_read_table_directory(sfont, offset) < 0)
-    ERROR("Could not read TrueType table directory.");
+    ERROR("Could not read OpenType/TrueType table directory.");
 
   base_name = NEW(strlen(map_name)+strlen("-UCS4-H")+5, char);
   if (wmode)
@@ -1761,18 +1761,21 @@ fprintf(stderr, "otf_load_Unicode_CMap(%s, %d)\n", map_name, ttc_index);
     return cmap_id;
   }
 
-  ttcmap = tt_cmap_read(sfont, 3, 10);
+  ttcmap = tt_cmap_read(sfont, 3, 10); /* Microsoft UCS4 */
   if (!ttcmap) {
-    ttcmap = tt_cmap_read(sfont, 3, 1);
-  }
-  if (!ttcmap) {
-    ERROR("Unable to read TrueType Unicode cmap table.");
+    ttcmap = tt_cmap_read(sfont, 3, 1); /* Microsoft UCS2 */
+    if (!ttcmap) {
+      ttcmap = tt_cmap_read(sfont, 0, 3); /* Unicode 2.0 or later */
+      if (!ttcmap) {
+        ERROR("Unable to read OpenType/TrueType Unicode cmap table.");
+      }
+    }
   }
   cmap_id = load_base_CMap(base_name, wmode,
 			   (is_cidfont ? &csi : NULL),
 			   GIDToCIDMap, ttcmap);
   if (cmap_id < 0)
-    ERROR("Failed to read TrueType cmap table.");
+    ERROR("Failed to read OpenType/TrueType cmap table.");
 
   if (!otl_tags) {
     RELEASE(cmap_name);

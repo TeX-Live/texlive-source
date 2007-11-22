@@ -112,7 +112,7 @@ spc_handler_color_default (struct spc_env *spe, struct spc_arg *args)
     pdf_color_clear();
     pdf_dev_setcolor(&colorspec, 0);
     pdf_dev_setcolor(&colorspec, 1);
-    pdf_color_push(); /* save currentcolor */
+    pdf_color_set_default(&colorspec); /* save currentcolor */
   }
 
   return  error;

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dpxfile.c,v 1.14 2005/12/18 14:56:47 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dpxfile.c,v 1.15 2007/03/17 04:48:41 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -520,9 +520,9 @@ dpx_find_enc_file (const char *filename)
   }
 #else
 # if defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
-  fqpn = kpse_find_file(filename, kpse_enc_format, 0);
+  fqpn = kpse_find_file(q, kpse_enc_format, 0);
 # else
-  fqpn = kpse_find_file(filename, kpse_tex_ps_header_format, 0);
+  fqpn = kpse_find_file(q, kpse_tex_ps_header_format, 0);
 # endif
 #endif /* MIKTEX */
 

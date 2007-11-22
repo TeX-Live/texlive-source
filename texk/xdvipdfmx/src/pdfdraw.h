@@ -83,6 +83,10 @@ extern int    pdf_dev_rlineto       (double x0 , double y0);
 extern int    pdf_dev_curveto       (double x0 , double y0,
                                      double x1 , double y1,
                                      double x2 , double y2);
+extern int    pdf_dev_vcurveto      (double x0 , double y0,
+                                     double x1 , double y1);
+extern int    pdf_dev_ycurveto      (double x0 , double y0,
+                                     double x1 , double y1);
 extern int    pdf_dev_rcurveto      (double x0 , double y0,
                                      double x1 , double y1,
                                      double x2 , double y2);
@@ -107,6 +111,7 @@ extern int    pdf_dev_rectstroke    (double x, double y,
                                     );
 extern int    pdf_dev_rectfill      (double x, double y, double w, double h);
 extern int    pdf_dev_rectclip      (double x, double y, double w, double h);
+extern int    pdf_dev_rectadd       (double x, double y, double w, double h);
  
 extern int    pdf_dev_flushpath     (char p_op, int fill_rule);
 
@@ -156,4 +161,6 @@ extern void   pdf_dev_grestore_to   (int depth);
 extern int    pdf_dev_currentcolor  (pdf_color *color, int is_fill);
 extern int    pdf_dev_setcolor      (const pdf_color *color, int is_fill);
 
+extern void pdf_dev_set_fixed_point (double x, double y);
+extern void pdf_dev_get_fixed_point (pdf_coord *p);
 #endif /* _PDF_DRAW_H_ */

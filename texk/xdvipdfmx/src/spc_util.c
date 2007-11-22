@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_util.c,v 1.7 2005/08/12 16:27:52 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_util.c,v 1.8 2007/04/24 09:29:39 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -237,6 +237,8 @@ spc_util_read_colorspec (struct spc_env *spe, pdf_color *colorspec, struct spc_a
     error = spc_read_color_color(spe, colorspec, ap);
   else
     error = spc_read_color_pdf(spe, colorspec, ap);
+
+  skip_blank(&ap->curptr, ap->endptr);
 
   return  error;
 }
@@ -636,6 +638,7 @@ spc_util_read_dimtrns (struct spc_env *spe, transform_info *ti, struct spc_arg *
 #ifdef  cmyk
 #undef  cmyk
 #endif
+#define gray(g)       {1, {g}}
 #define rgb8(r,g,b)   {3, {((r)/255.0), ((g)/255.0), ((b)/255.0), 0.0}}
 #define cmyk(c,m,y,k) {4, {(c), (m), (y), (k)}}
 
@@ -709,9 +712,13 @@ static struct colordef_
   {"Sepia",          cmyk(0.00, 0.83, 1.00, 0.70)},
   {"Brown",          cmyk(0.00, 0.81, 1.00, 0.60)},
   {"Tan",            cmyk(0.14, 0.42, 0.56, 0.00)},
-  {"Gray",           cmyk(0.00, 0.00, 0.00, 0.50)},
-  {"Black",          cmyk(0.00, 0.00, 0.00, 1.00)},
-  {"White",          cmyk(0.00, 0.00, 0.00, 0.00)},
+  /* Adobe Reader 7 and 8 had problem when gray and cmyk black colors
+   * are mixed. No problem with Previewer.app.
+   * It happens when \usepackage[dvipdfm]{graphicx} and then called
+   * \usepackage{color} without dvipdfm option. */
+  {"Gray",           gray(0.5)},
+  {"Black",          gray(0.0)},
+  {"White",          gray(1.0)},
   {NULL}
 };
 

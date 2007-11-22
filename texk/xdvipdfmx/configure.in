@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(src/dvipdfmx.c)
-AM_INIT_AUTOMAKE(xdvipdfmx, 0.4)
+AM_INIT_AUTOMAKE(xdvipdfmx, 0.5)
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
 
@@ -160,9 +160,9 @@ dnl just let them be empty.
   AC_SUBST(ZLIBCPPFLAGS)
   AC_SUBST(LDZLIB)
   AC_SUBST(ZLIBDEP)
-  AC_SUBST(FT2CPPFLAGS)
-  AC_SUBST(LDFT2)
-  AC_SUBST(FT2DEP)
+  AC_SUBST(FREETYPE2CPPFLAGS)
+  AC_SUBST(LDFREETYPE2)
+  AC_SUBST(FREETYPE2DEP)
   AC_SUBST(dvipdfmx_LDFLAGS)
   AC_SUBST(xdvipdfmx_LDFLAGS)
 fi

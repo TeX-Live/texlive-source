@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pngimage.c,v 1.24 2004/09/11 14:50:29 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pngimage.c,v 1.25 2007/05/18 05:19:01 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -165,7 +165,7 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
   png_structp png_ptr;
   png_infop   png_info_ptr;
   png_byte    bpc, color_type;
-  png_uint_32 width, height, rowbytes;
+  png_uint_32 width, height, rowbytes, xppm, yppm;
   
   pdf_ximage_init_image_info(&info);
 
@@ -192,6 +192,8 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
   width      = png_get_image_width (png_ptr, png_info_ptr);
   height     = png_get_image_height(png_ptr, png_info_ptr);
   bpc        = png_get_bit_depth   (png_ptr, png_info_ptr);
+  xppm       = png_get_x_pixels_per_meter(png_ptr, png_info_ptr);
+  yppm       = png_get_y_pixels_per_meter(png_ptr, png_info_ptr);
 
   info.xdpi  = png_get_x_pixels_per_meter(png_ptr, png_info_ptr) * 0.0254;
   info.ydpi  = png_get_y_pixels_per_meter(png_ptr, png_info_ptr) * 0.0254;
@@ -214,6 +216,10 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
   info.width  = width;
   info.height = height;
   info.bits_per_component = bpc;
+  if (xppm > 0)
+    info.xdensity = 72.0 / 0.0254 / xppm;
+  if (yppm > 0)
+    info.ydensity = 72.0 / 0.0254 / yppm;
 
   stream_data_ptr = (png_bytep) NEW(rowbytes*height, png_byte);
   read_image_data(png_ptr, png_info_ptr, stream_data_ptr, height, rowbytes);

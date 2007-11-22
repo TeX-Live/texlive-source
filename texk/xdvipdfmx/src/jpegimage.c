@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/jpegimage.c,v 1.8 2004/09/05 13:30:05 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/jpegimage.c,v 1.9 2007/05/18 05:19:01 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -113,6 +113,7 @@ typedef enum {
   JM_EXP   = 0xdf,
 
   JM_APP0  = 0xe0,
+  JM_APP1  = 0xe1,
   JM_APP2  = 0xe2,
   JM_APP14 = 0xee,
   JM_APP15 = 0xef,
@@ -334,6 +335,32 @@ jpeg_include_image (pdf_ximage *ximage, FILE *fp)
   info.bits_per_component = j_info.bits_per_component;
   info.num_components     = j_info.num_components;
 
+#define IS_JFIF(j) ((j).flags & HAVE_APPn_JFIF)
+  if (IS_JFIF(j_info)) {
+    struct JPEG_APPn_JFIF *app_data;
+    int i;
+    for (i = 0; i < j_info.num_appn; i++) {
+      if (j_info.appn[i].marker  != JM_APP0 ||
+	  j_info.appn[i].app_sig != JS_APPn_JFIF)
+        continue;
+    }
+    if (i < j_info.num_appn) {
+      app_data = (struct JPEG_APPn_JFIF *)j_info.appn[i].app_data;
+      switch (app_data->units) {
+      case 1: /* pixels per inch */
+        info.xdensity = 72.0 / app_data->Xdensity;
+        info.ydensity = 72.0 / app_data->Ydensity;
+        break;
+      case 2: /* pixels per centimeter */
+        info.xdensity = 72.0 / 2.54 / app_data->Xdensity;
+        info.ydensity = 72.0 / 2.54 / app_data->Ydensity;
+        break;
+      default:
+        break;
+      }
+    }
+  }
+
   info.xdpi = j_info.xdpi;
   info.ydpi = j_info.ydpi;
 
@@ -502,6 +529,134 @@ read_APP14_Adobe (struct JPEG_info *j_info, FILE *fp, unsigned short length)
   add_APPn_marker(j_info, JM_APP14, JS_APPn_ADOBE, app_data);
 
   return 7;
+}
+
+static unsigned long
+read_exif_bytes(unsigned char **p, int n, int b)
+{
+  unsigned long rval = 0;
+  unsigned char *pp = *p;
+  if (b) {
+    switch (n) {
+      case 4:
+        rval += *pp++; rval <<= 8;
+        rval += *pp++; rval <<= 8;
+      case 2:
+        rval += *pp++; rval <<= 8;
+        rval += *pp;
+        break;
+    }
+  }
+  else {
+    pp += n;
+    switch (n) {
+      case 4:
+        rval += *--pp; rval <<= 8;
+        rval += *--pp; rval <<= 8;
+      case 2:
+        rval += *--pp; rval <<= 8;
+        rval += *--pp;
+        break;
+    }
+  }
+  *p += n;
+  return rval;
+}
+
+static unsigned short
+read_APP1_Exif (struct JPEG_info *j_info, FILE *fp, unsigned short length)
+{
+  /* this doesn't save the data, just reads the tags we need */
+  /* based on info from http://www.exif.org/Exif2-2.PDF */
+  unsigned char *buffer = NEW(length, unsigned char);
+  unsigned char *p, *rp;
+  unsigned char *tiff_header;
+  char bigendian;
+  int i;
+  double rational_value;
+  int num_fields, tag, type, count, value, num, den;
+  double xres = 72.0;
+  double yres = 72.0;
+  double res_unit = 1.0;
+  fread(buffer, length, 1, fp);
+  p = buffer;
+  while ((p < buffer + length) && (*p == 0))
+    ++p;
+  tiff_header = p;
+  if ((*p == 'M') && (*(p+1) == 'M'))
+    bigendian = 1;
+  else if ((*p == 'I') && (*(p+1) == 'I'))
+    bigendian = 0;
+  else
+    goto err;
+  p += 2;
+  i = read_exif_bytes(&p, 2, bigendian);
+  if (i != 42)
+    goto err;
+  i = read_exif_bytes(&p, 4, bigendian);
+  p = tiff_header + i;
+  num_fields = read_exif_bytes(&p, 2, bigendian);
+  while (num_fields-- > 0) {
+    tag = read_exif_bytes(&p, 2, bigendian);
+    type = read_exif_bytes(&p, 2, bigendian);
+    count = read_exif_bytes(&p, 4, bigendian);
+    switch (type) {
+      case 1: /* byte */
+        value = *p++;
+        p += 3;
+        break;
+      case 3: /* short */
+        value = read_exif_bytes(&p, 2, bigendian);
+        p += 2;
+        break;
+      case 4: /* long */
+      case 9: /* slong */
+        value = read_exif_bytes(&p, 4, bigendian);
+        break;
+      case 5: /* rational */
+      case 10: /* srational */
+        value = read_exif_bytes(&p, 4, bigendian);
+        rp = tiff_header + value;
+        num = read_exif_bytes(&rp, 4, bigendian);
+        den = read_exif_bytes(&rp, 4, bigendian);
+        break;
+      case 7: /* undefined */
+        value = *p++;
+        p += 3;
+        break;
+      case 2: /* ascii */
+      default:
+        p += 4;
+        break;
+    }
+    switch (tag) {
+      case 282: /* x res */
+        if (den != 0)
+          xres = num / den;
+        break;
+      case 283: /* y res */
+        if (den != 0)
+          yres = num / den;
+        break;
+      case 296: /* res unit */
+        switch (value) {
+          case 2:
+            res_unit = 1.0;
+            break;
+          case 3:
+            res_unit = 2.54;
+            break;
+        }
+    }
+  }
+  
+  
+  j_info->xdpi = xres * res_unit;
+  j_info->ydpi = yres * res_unit;
+
+err:
+  RELEASE(buffer);
+  return length;
 }
 
 static unsigned short
@@ -697,6 +852,17 @@ JPEG_scan_file (struct JPEG_info *j_info, FILE *fp)
 	  length -= read_APP0_JFIF(j_info, fp, length);
 	} else if (!memcmp(app_sig, "JFXX", 5)) {
 	  length -= read_APP0_JFXX(j_info, fp, length);
+	}
+      }
+      seek_relative(fp, length);
+      break;
+    case JM_APP1:
+      if (length > 5) {
+	if (fread(app_sig, sizeof(char), 5, fp) != 5)
+	  return -1;
+	length -= 5;
+	if (!memcmp(app_sig, "Exif\000", 5)) {
+	  length -= read_APP1_Exif(j_info, fp, length);
 	}
       }
       seek_relative(fp, length);
