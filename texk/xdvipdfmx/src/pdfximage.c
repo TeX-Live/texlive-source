@@ -65,7 +65,6 @@ struct attr_
   long     width, height;
   double   xdensity, ydensity;
   pdf_rect bbox;
-  double   xdpi, ydpi;
 };
 
 struct pdf_ximage_
@@ -125,7 +124,6 @@ pdf_init_ximage_struct (pdf_ximage *I)
   I->attr.xdensity = I->attr.ydensity = 1.0;
   I->attr.bbox.llx = I->attr.bbox.lly = 0;
   I->attr.bbox.urx = I->attr.bbox.ury = 0;
-  I->attr.xdpi = I->attr.ydpi = 72.0;
 }
 
 static void
@@ -480,7 +478,7 @@ pdf_ximage_init_image_info (ximage_info *info)
   info->bits_per_component = 0;
   info->num_components = 0;
   info->min_dpi = 0;
-  info->xdpi = info->ydpi = 72.0;
+  info->xdensity = info->ydensity = 1.0;
 }
 
 void
@@ -498,9 +496,6 @@ pdf_ximage_set_image (pdf_ximage *I, void *image_info, pdf_obj *resource)
   I->attr.height = info->height; /* The height of the image, in samples */
   I->attr.xdensity = info->xdensity;
   I->attr.ydensity = info->ydensity;
-
-  I->attr.xdpi = info->xdpi;
-  I->attr.ydpi = info->ydpi;
 
   I->reference = pdf_ref_obj(resource);
 

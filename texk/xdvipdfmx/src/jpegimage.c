@@ -360,9 +360,10 @@ jpeg_include_image (pdf_ximage *ximage, FILE *fp)
       }
     }
   }
-
-  info.xdpi = j_info.xdpi;
-  info.ydpi = j_info.ydpi;
+  else { /* resolution data from EXIF is handled here */
+    info.xdensity = 72.0 / j_info.xdpi;
+    info.ydensity = 72.0 / j_info.ydpi;
+  }
 
   pdf_ximage_set_image(ximage, &info, stream);
   JPEG_info_clear(&j_info);
@@ -649,7 +650,6 @@ read_APP1_Exif (struct JPEG_info *j_info, FILE *fp, unsigned short length)
         }
     }
   }
-  
   
   j_info->xdpi = xres * res_unit;
   j_info->ydpi = yres * res_unit;

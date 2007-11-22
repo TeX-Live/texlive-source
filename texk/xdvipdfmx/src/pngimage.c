@@ -166,7 +166,7 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
   png_infop   png_info_ptr;
   png_byte    bpc, color_type;
   png_uint_32 width, height, rowbytes, xppm, yppm;
-  
+
   pdf_ximage_init_image_info(&info);
 
   stream      = NULL;
@@ -194,9 +194,6 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
   bpc        = png_get_bit_depth   (png_ptr, png_info_ptr);
   xppm       = png_get_x_pixels_per_meter(png_ptr, png_info_ptr);
   yppm       = png_get_y_pixels_per_meter(png_ptr, png_info_ptr);
-
-  info.xdpi  = png_get_x_pixels_per_meter(png_ptr, png_info_ptr) * 0.0254;
-  info.ydpi  = png_get_y_pixels_per_meter(png_ptr, png_info_ptr) * 0.0254;
 
   /* We do not need 16-bpc color. Ask libpng to convert down to 8-bpc. */
   if (bpc > 8) {

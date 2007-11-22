@@ -39,9 +39,6 @@ typedef struct {
   int  bits_per_component;
   int  num_components;
 
-  double  xdpi;
-  double  ydpi;
-
   long min_dpi; /* NOT USED YET */
 
   double xdensity, ydensity; /* scale factor for bp */
