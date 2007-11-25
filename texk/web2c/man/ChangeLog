@@ -1,3 +1,9 @@
+2007-11-25  Karl Berry  <karl@tug.org>
+
+	* patgen.man: mention that the "patterns" input file to patgen is
+	not an actual TeX patterns file.
+	Kurt Roeckx, 17 Nov 2007 20:54:43, debian bug 450875.
+
 2007-04-20  Karl Berry  <karl@tug.org>
 
 	* gftodvi.man: no way to override output filename for gftodvi
