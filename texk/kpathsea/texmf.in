@@ -258,15 +258,15 @@ TTF2TFMINPUTS =                 .;$TEXMF/ttf2pk//
 MFINPUTS = .;$TEXMF/metafont//;{$TEXMF/fonts,$VARTEXFONTS}/source//
 MPINPUTS = .;$TEXMF/metapost//
 
-% allow for compressed files, and various extenions
+% allow for compressed files, and various extensions.
 TEXDOCSSUFFIX   = ;.pdf;.ps;.dvi;.html;.txt;.tex
 TEXDOCSCOMPRESS = ;.gz;.bz2;.zip;.Z
 TEXDOCEXT       = {$TEXDOCSSUFFIX}{$TEXDOCSCOMPRESS}
 
-% Dump files (fmt/base/mem) for vir{tex,mf,mp} to read (see web2c/INSTALL),
-% and string pools (.pool) for ini{tex,mf,mp}.  It is silly that we have six
-% paths and directories here (they all resolve to a single place by default),
-% but historically ...
+% Dump files (fmt/base/mem) for vir{tex,mf,mp} to read (see
+% web2c/INSTALL), and string pools (.pool) for ini{tex,mf,mp}.  It is
+% painful that we have six paths and directories here (they all resolve
+% to a single place by default), but historically ...
 TEXFORMATS = .;$TEXMF/web2c/{$engine,}//
 MFBASES = .;$TEXMF/web2c/{$engine,}//
 MPMEMS = .;$TEXMF/web2c/{$engine,}//
