@@ -1,5 +1,5 @@
 # Makefile fragment for MetaPost.
-# $Id: metapost.mk,v 1.2 2005/07/25 10:03:53 olaf Exp $
+# $Id: metapost.mk,v 1.15 2005/07/04 07:51:41 taco Exp $
 #
 # Public domain. 
 #
@@ -20,21 +20,19 @@ mpware_sources = mpware/dmp.c mpware/makempx.in mpware/mpto.c mpware/newer.c
 mp_c = mpini.c mp0.c mp1.c mp2.c
 mp_o = mpini.o mp0.o mp1.o mp2.o mpextra.o loadpool.o
 
-# this will break cross-compiles, but i dont know how to fix.
-# -- Taco 
 loadpool.c: mp.pool $(mpostdir)/makecpool
-	./$(mpostdir)/makecpool mp.pool mpdir/mplib.h > loadpool.c
-
+	$(native)/$(mpostdir)/makecpool mp.pool mpdir/mplib.h > loadpool.c
+# mpostlibsdep also includes makecpool
 mpost: $(mp_o) $(mpostlibsdep)
 	$(kpathsea_link) $(mp_o) $(mpostlibs) $(LOADLIBES)
-$(mp_c) mpcoerce.h mpd.h: mp.p $(web2c_texmf) $(srcdir)/$(mpostdir)/mp.defines web2c/cvtmf1.sed web2c/cvtmf2.sed
+$(mp_c) mpcoerce.h mpd.h: mp.p $(web2c_texmf) $(srcdir)/$(mpostdir)/mp.defines  web2c/cvtmf1.sed web2c/cvtmf2.sed
 	$(web2c) mp
 mpextra.c: lib/texmfmp.c
 	sed s/TEX-OR-MF-OR-MP/mp/ $(srcdir)/lib/texmfmp.c >$@
-mp.p mp.pool: tangle mp.web mp.ch
-	$(tangle) mp.web mp.ch
+mp.p mp.pool: tie tangle mp.web mp.ch
+	$(tangle) $(srcdir)/mp.web $(srcdir)/mp.ch
 check: mpost-check
-mpost-check: mptrap mpost.mem $(mpware_programs)
+mpost-check: mptrap mpost.mem $(mpware)
 	./mpost --progname=mpost '&./mpost \tracingstats:=1; end.'
 	TEXMFCNF=../kpathsea \
 	  MAKEMPX_BINDIR=`pwd`:`pwd`/mpware MPXCOMMAND=mpware/makempx \
@@ -96,9 +94,13 @@ mptrap-clean:
 # mpware
 
 # We put mpware (written directly in C) in a subdirectory.
+$(mpware): $(mpware_programs)
+
 $(mpware_programs): $(mpware_sources)
-	cd mpware && $(MAKE) $(common_makeargs)
+	cd $(mpware) && $(MAKE) $(common_makeargs)
 
 install-programs: install-mpware-programs
 install-mpware-programs: $(mpware_programs)
 	cd $(mpware) && $(MAKE) $(install_makeargs) install-exec
+
+mp-programs: $(metapost) $(mpware)

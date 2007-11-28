@@ -23,8 +23,8 @@
  *  gets modified.
  */
 
-char *banner = "% Written by DMP, Version 0.992";	/* first line of output */
-char *term_banner = "This is DMP, Version 0.992";
+char *banner = "% Written by DMP, Version 1.002";	/* first line of output */
+char *term_banner = "This is DMP, Version 1.002";
 
 #include <stdio.h>
 #include <stdlib.h>

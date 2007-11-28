@@ -184,17 +184,6 @@ void mpfontencodings (int lastfnum, int encodings_only) {
 	  if (encodings_only || (!is_subsetted (fm))) {
 	    e = fm->encoding;
 	    write_enc (NULL, e, 0);
-	  }
-	}
-      }
-    }
-  }
-  for (f=nullfont+1;f<=lastfnum;f++) {
-    if (fontsizes[f]!=0 && hasfmentry (f)) { 
-      fm = (fm_entry *) mpfontmap[f];
-      if (fm != NULL && (fm->ps_name != NULL)) {
-	if (is_reencoded (fm)) {
-	  if (encodings_only || (!is_subsetted (fm))) {
             /* clear for next run */
             e->objnum = 0;
 	  }

@@ -14,7 +14,7 @@ CXX = @CXX@
 
 XCPPFLAGS=-I.. -I$(srcdir)/.. -I../.. -I$(srcdir)/../..
 
-OBJS = mapfile.o avl.o avlstuff.o utils.o writeenc.o writet1.o writefont.o
+OBJS = mapfile.o avl.o avlstuff.o utils.o writeenc.o writet1.o writefont.o turningnumber.o
 
 all: libmpost.a makecpool
 
@@ -34,7 +34,7 @@ clean::
 depend:
 	rm -f $(OBJS)
 	XXCFLAGS=-MM XCFLAGS=-MM $(MAKE) -k $(OBJS) | \
-	    grep -v "^$(CC)\|$(CXX)\|$(AR)\|make\|klibtool" | \
+	    grep -v "^$(CC)\|$(CXX)\|$(AR)\|make" | \
 	    sed 's: [^ ]*/\.\./libs/[^ ]*::g' > $(srcdir)/depend.mk
 
 kpse_include mpdir/depend.mk

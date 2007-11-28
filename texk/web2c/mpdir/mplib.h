@@ -297,4 +297,8 @@ extern void writezip (boolean);
 extern void avlputobj (integer, integer);
 extern integer avlfindobj (integer, integer, integer);
 
+/* turningnumber.c */
+
+extern angle bezierslope(integer,integer,integer,integer,integer,integer,integer,integer,int);
+
 #endif                          /* MPOSTLIB */

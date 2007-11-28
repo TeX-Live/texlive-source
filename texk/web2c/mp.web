@@ -97,8 +97,8 @@ undergoes any modifications, so that it will be clear which version of
 @^extensions to \MP@>
 @^system dependencies@>
 
-@d banner=='This is MetaPost, Version 0.993' {printed when \MP\ starts}
-@d metapost_version=="0.993"
+@d banner=='This is MetaPost, Version 1.002' {printed when \MP\ starts}
+@d metapost_version=="1.002"
 
 @ Different \PASCAL s have slightly different conventions, and the present
 @!@:PASCAL H}{\ph@>
@@ -17088,10 +17088,7 @@ if p<>null then
 found:pict_length:=n;
 end;
 
-@ The turning number is computed only with respect to a triangular pen whose
-@:turning_number_}{\&{turningnumber} primitive@>
-vertices are $(0,1)$ and $(\pm{1\over2},0)$.  The choice of pen isn't supposed
-to matter but rounding error could make a difference if the path has a cusp.
+@ Implement |turningnumber|
 
 @<Additional cases of unary...@>=
 turning_op:if cur_type=pair_type then flush_cur_exp(0)
@@ -17099,8 +17096,99 @@ turning_op:if cur_type=pair_type then flush_cur_exp(0)
   else if left_type(cur_exp)=endpoint then
      flush_cur_exp(0) {not a cyclic path}
   else  begin
-    flush_cur_exp(turn_cycles(cur_exp));
+    flush_cur_exp(turn_cycles_wrapper(cur_exp));
     end;
+
+@ The function |an_angle| returns the value of the |angle| primitive, or $0$ if the
+argument is |origin|.
+
+@<Declare unary action...@>=
+function an_angle (@!xpar,@!ypar:scaled):angle;
+begin
+  if (not ((xpar=0) and (ypar=0))) then
+    an_angle := n_arg(xpar,ypar)
+  else
+    an_angle := 0;
+end;
+
+@ The actual turning number is (for the moment) computed in a C function
+that receives eight integers corresponding to the four controlling points,
+and returns a single angle.  Besides those, we have to account for discrete
+moves at the actual points.
+
+@d p_nextnext==link(link(p))
+@d p_next==link(p)
+
+@d seven_twenty_deg==@'5500000000 {$720\cdot2^{20}$, represents $720^\circ$}
+
+@<Declare unary action...@>=
+function new_turn_cycles (@!c:pointer):scaled;
+label exit;
+var @!res,ang:angle; { the angles of intermediate results }
+@!turns:scaled;  { the turn counter }
+@!p:pointer;     { for running around the path }
+@!xp,yp:integer;   { coordinates of next point }
+@!x,y:integer;   { helper coordinates }
+@!in_angle,out_angle:angle;     { helper angles}
+@!old_setting:0..max_selector; {saved |selector| setting}
+begin
+res:=0;
+turns:= 0;
+p:=c;
+old_setting := selector; selector:=term_only;
+if internal[tracing_commands]>unity then begin
+  begin_diagnostic;
+  print_nl("");
+  end_diagnostic(false);
+end;
+repeat
+  xp := x_coord(p_next); yp := y_coord(p_next);
+  ang  := bezier_slope(x_coord(p), y_coord(p), right_x(p), right_y(p),
+                      left_x(p_next), left_y(p_next), xp, yp, internal[tracing_commands]);
+  if ang>seven_twenty_deg then begin
+    print_err("Strange path");
+    error;
+    new_turn_cycles := 0;
+    return;
+    end;
+  res  := res + ang;
+  if res > one_eighty_deg then begin
+    res := res - three_sixty_deg;
+    turns := turns + unity;
+  end;
+  if res <= -one_eighty_deg then begin
+    res := res + three_sixty_deg;
+    turns := turns - unity;
+  end;
+  { incoming angle at next point }
+  x := left_x(p_next);  y := left_y(p_next);
+  if (xp=x)and(yp=y) then begin x := right_x(p);  y := right_y(p);  end;
+  if (xp=x)and(yp=y) then begin x := x_coord(p);  y := y_coord(p);  end;
+  in_angle := an_angle(xp - x, yp - y);
+  { outgoing angle at next point }
+  x := right_x(p_next);  y := right_y(p_next);
+  if (xp=x)and(yp=y) then begin x := left_x(p_nextnext);  y := left_y(p_nextnext);  end;
+  if (xp=x)and(yp=y) then begin x := x_coord(p_nextnext); y := y_coord(p_nextnext); end;
+  out_angle := an_angle(x - xp, y- yp);
+  ang  := (out_angle - in_angle);
+  reduce_angle(ang);
+  if ang<>0 then begin
+    res  := res + ang;
+    if res >= one_eighty_deg then begin
+      res := res - three_sixty_deg;
+      turns := turns + unity;
+    end;
+    if res <= -one_eighty_deg then begin
+      res := res + three_sixty_deg;
+      turns := turns - unity;
+    end;
+  end;
+  p := link(p);
+until p=c;
+new_turn_cycles := turns;
+exit:
+selector:=old_setting;
+end;
 
 
 @ This code is based on Bogus\l{}av Jackowski's
@@ -17130,19 +17218,6 @@ the old code was not always correct either, and worse, it sometimes failed for w
 paths as well. All known bugs that were triggered by the original code no longer occur
 with this code, and it runs roughly 3 times as fast because the algorithm is much simpler.
 
-@ The macro |Angle()| returns the value of the |angle| primitive, or $0$ if the argument is
-|origin|. Converting that calling convention to web code gives the |an_angle| function.
-
-@<Declare unary action...@>=
-function an_angle (@!xpar,@!ypar:scaled):angle;
-begin
-  if (not ((xpar=0) and (ypar=0))) then
-    an_angle := n_arg(xpar,ypar)
-  else
-    an_angle := 0;
-end;
-
-
 @ It is possible to overflow the return value of the |turn_cycles|
 function when the path is sufficiently long and winding, but I am not
 going to bother testing for that. In any case, it would only return
@@ -17163,29 +17238,50 @@ var @!res,ang:angle; { the angles of intermediate results }
 @!turns:scaled;  { the turn counter }
 @!p:pointer;     { for running around the path }
 begin  res:=0;  turns:= 0; p:=c;
-if ((link(p) = p) or (link(link(p)) = p)) then
-  if an_angle (x_coord(p) - right_x(p),  y_coord(p) - right_y(p)) >= 0 then
-     turn_cycles := unity
-  else
-     turn_cycles := -unity
-else begin
-  repeat
-    ang  := an_angle (x_coord(p_to) - x_coord(p_here), y_coord(p_to) - y_coord(p_here))
-      	- an_angle (x_coord(p_here) - x_coord(p_from), y_coord(p_here) - y_coord(p_from));
-    reduce_angle(ang);
-    res  := res + ang;
-    if res >= three_sixty_deg then  begin
-      res := res - three_sixty_deg;
-      turns := turns + unity;
-    end;
-    if res <= -three_sixty_deg then begin
-      res := res + three_sixty_deg;
-      turns := turns - unity;
-    end;
-    p := link(p);
-  until p=c;
-  turn_cycles := turns;
+repeat
+  ang  := an_angle (x_coord(p_to) - x_coord(p_here), y_coord(p_to) - y_coord(p_here))
+    	- an_angle (x_coord(p_here) - x_coord(p_from), y_coord(p_here) - y_coord(p_from));
+  reduce_angle(ang);
+  res  := res + ang;
+  if res >= three_sixty_deg then  begin
+    res := res - three_sixty_deg;
+    turns := turns + unity;
+  end;
+  if res <= -three_sixty_deg then begin
+    res := res + three_sixty_deg;
+    turns := turns - unity;
+  end;
+  p := link(p);
+until p=c;
+turn_cycles := turns;
 end;
+
+@ @<Declare unary action...@>=
+function turn_cycles_wrapper (@!c:pointer):scaled;
+  var nval,oval:scaled;
+  saved_t_o:scaled; {tracing\_online saved }
+begin
+ if (link(c)=c)or(link(link(c))=c) then
+   if an_angle (x_coord(c) - right_x(c),  y_coord(c) - right_y(c)) > 0 then
+     turn_cycles_wrapper := unity
+   else
+     turn_cycles_wrapper := -unity
+ else begin
+   nval := new_turn_cycles(c);
+   oval := turn_cycles(c);
+   if nval<>oval then begin
+     saved_t_o:=internal[tracing_online];
+     internal[tracing_online]:=unity;
+     begin_diagnostic;
+     print_nl ("Warning: the turningnumber algorithms do not agree. The current computed value is ");
+     print_scaled(nval);
+     print(", but the 'connect-the-dots' algorithm returned ");
+     print_scaled(oval);
+     end_diagnostic(false);
+     internal[tracing_online]:=saved_t_o;
+   end;
+   turn_cycles_wrapper := nval;
+   end;
 end;
 
 @ @<Declare unary action...@>=
@@ -21649,6 +21745,7 @@ This routine issues a warning message if the user has asked for it.
 procedure lost_warning(@!f:font_number;@!k:pool_pointer);
 begin if internal[tracing_lost_chars]>0 then
   begin begin_diagnostic;
+  if selector=log_only then incr(selector);
   print_nl("Missing character: There is no ");
 @.Missing character@>
   print(so(str_pool[k])); print(" in font ");
@@ -21786,8 +21883,7 @@ function new_dummy_font: font_number;
 begin
     new_dummy_font := read_font_info("dummy");
 end;
-
-@x
+@#
 function round_xn_over_d(@!x:scaled; @!n,@!d:integer):scaled;
 var positive:boolean; {was |x>=0|?}
 @!t,@!u,@!v:nonnegative_integer; {intermediate quantities}
@@ -22395,9 +22491,9 @@ begin
       (gs_colormodel<>cmyk_model) then
       begin
       if color_model(p)=uninitialized_model then begin
-        gs_red:=unity;
-        gs_green:=unity;
-        gs_blue:=unity;
+        gs_red:=0;
+        gs_green:=0;
+        gs_blue:=0;
         gs_black:=unity;@/
         end
       else begin
@@ -22649,14 +22745,14 @@ if internal[mpprocset]=0 then begin
 else begin
   if fill_also then print_nl("B") else print_ln;
   if (txy<>0)or(tyx<>0) then
-    begin {print_ln;}
+    begin
     print(" [");
     ps_pair_out(txx,tyx);
     ps_pair_out(txy,tyy);@/
     ps_print("0 0] t");
     end
   else if (txx<>unity)or(tyy<>unity) then
-    begin {print_ln;}
+    begin
     ps_pair_out(txx,tyy);
     print(" s");
     end;
@@ -22673,7 +22769,7 @@ tyx:=left_y(p);@/
 txy:=right_x(p);
 tyy:=right_y(p);
 if (x_coord(p)<>0)or(y_coord(p)<>0) then
-  begin print_ln; print_cmd("gsave ","q ");
+  begin print_nl(""); print_cmd("gsave ","q ");
   ps_pair_out(x_coord(p),y_coord(p));
   ps_print("translate ");@/
   txx:=txx-x_coord(p);
@@ -23046,9 +23142,7 @@ end
 @ @<Print any pending specials@>=
 t:=link(spec_head);
 while t<>null do
-  begin if length(value(t))<=emergency_line_length then print(value(t))
-  else overflow("output line length",emergency_line_length);
-@:MetaPost capacity exceeded output line length}{\quad output line length@>
+  begin  print(value(t));
   print_ln;
   t:=link(t);
   end;
@@ -23202,7 +23296,7 @@ begin
         end
       else begin
 	begin_diagnostic;
-        {selector:=term_and_log;}
+        if selector=log_only then incr(selector);
 	print_err("Warning: font ");
 	print(font_name[f]);
 	print(" cannot be found in any fontmapfile!");
@@ -23696,11 +23790,13 @@ if ldf<>null_font then begin
     end;
   end;
 if internal[mpprocset]>0 then begin
+  print_nl("%%BeginResource: procset mpost");
   if (internal[prologues]>0)and(ldf<>null_font) then
     print("/bd{bind def}bind def/fshow {exch findfont exch scalefont setfont show}bd")
   else
     print_nl("/bd{bind def}bind def");
   @<Print the procset@>;
+  print_nl("%%EndResource");
   print_ln;
   end;
 end

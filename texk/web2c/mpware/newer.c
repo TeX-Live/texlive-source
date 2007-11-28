@@ -87,7 +87,7 @@ main(int argc, char **argv)
 	} else if (strcmp(argv[1], "-version") == 0 ||
 		   strcmp(argv[1], "--version") == 0) {
 
-	    fputs("newer 0.992\n\
+	    fputs("newer 1.002\n\
 This program is in the public domain.\n\
 Primary author of newer: John Hobby.\n\
 Current maintainer: Taco Hoekwater.\n", stdout);
