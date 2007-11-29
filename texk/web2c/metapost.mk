@@ -21,7 +21,7 @@ mp_c = mpini.c mp0.c mp1.c mp2.c
 mp_o = mpini.o mp0.o mp1.o mp2.o mpextra.o loadpool.o
 
 loadpool.c: mp.pool $(mpostdir)/makecpool
-	$(native)/$(mpostdir)/makecpool mp.pool mpdir/mplib.h > loadpool.c
+	$(mpostdir)/makecpool mp.pool mpdir/mplib.h > loadpool.c
 # mpostlibsdep also includes makecpool
 mpost: $(mp_o) $(mpostlibsdep)
 	$(kpathsea_link) $(mp_o) $(mpostlibs) $(LOADLIBES)
