@@ -267,9 +267,9 @@ TEXDOCEXT       = {$TEXDOCSSUFFIX}{$TEXDOCSCOMPRESS}
 % web2c/INSTALL), and string pools (.pool) for ini{tex,mf,mp}.  It is
 % painful that we have six paths and directories here (they all resolve
 % to a single place by default), but historically ...
-TEXFORMATS = .;$TEXMF/web2c/{$engine,}//
-MFBASES = .;$TEXMF/web2c/{$engine,}//
-MPMEMS = .;$TEXMF/web2c/{$engine,}//
+TEXFORMATS = .;$TEXMF/web2c{/$engine,}
+MFBASES = .;$TEXMF/web2c{/$engine,}
+MPMEMS = .;$TEXMF/web2c{/$engine,}
 TEXPOOL = .;$TEXMF/web2c
 MFPOOL = .;$TEXMF/web2c
 MPPOOL = .;$TEXMF/web2c
