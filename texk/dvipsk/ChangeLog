@@ -1,3 +1,10 @@
+2007-12-02  Karl Berry  <karl@tug.org>
+
+	* skippage.c (skippage): do not test for noomega here; we aren't
+	actually parsing the DVI operations, so argument bytes can
+	erroneously cause complaints.
+	Report on tex-live from W. Fleischer, 27 Nov 2007 17:43:47.
+
 2007-10-24  Karl Berry  <karl@tug.org>
 
 	* config.ps (unknown): duplicated entry, remove one.

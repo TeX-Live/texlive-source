@@ -19,7 +19,6 @@ extern integer debug_flag;
 extern integer pagenum ;
 extern char errbuf[] ;
 extern FILE *dvifile ;
-extern Boolean noomega ;
 /*
  *   And now the big routine.
  */
@@ -61,13 +60,8 @@ case 146: case 151: case 156: case 160: case 165: case 170: case 238:
 case 145: case 150: case 155: case 159: case 164: case 169: case 237:
    cmd = dvibyte() ;
 /* two byte commands */
-case 129: case 134:
-         if (noomega) {
-            (void)sprintf(errbuf,
-               "! DVI file contains unexpected Omega command (%d)",cmd) ;
-            error(errbuf) ;
-         }
-case 144: case 149: case 154: case 158: case 163: case 168: case 236:
+case 129: case 134: case 144: case 149: case 154: case 158: case 163:
+case 168: case 236:
    cmd = dvibyte() ;
 /* one byte commands */
 case 128: case 133: case 143: case 148: case 153: case 157: case 162:
