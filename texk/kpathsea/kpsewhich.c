@@ -231,8 +231,7 @@ lookup P1C(string, name)
 -help                  print this message and exit.\n\
 -interactive           ask for additional filenames to look up.\n\
 [-no]-mktex=FMT        disable/enable mktexFMT generation (FMT=pk/mf/tex/tfm).\n\
--mode=STRING           set device name for $MAKETEX_MODE to STRING;\n\
-                       no default.\n\
+-mode=STRING           set device name for $MAKETEX_MODE to STRING; no default.\n\
 -must-exist            search the disk as well as ls-R if necessary\n\
 -path=STRING           search in the path STRING.\n\
 -progname=STRING       set program name to STRING.\n\
@@ -364,10 +363,10 @@ read_command_line P2C(int, argc,  string *, argv)
     } else if (ARGUMENT_IS ("version")) {
       extern KPSEDLL char *kpathsea_version_string; /* from version.c */
       puts (kpathsea_version_string);
-      puts ("Copyright 2005 Karl Berry & Olaf Weber.\n\
-There is NO warranty.  You may redistribute this software\n\
-under the terms of the GNU General Public License.\n\
-For more information about these matters, see the files named GPL and LGPL.");
+      puts ("Copyright 2008 Karl Berry & Olaf Weber.\n\
+License LGPLv2.1+: GNU Lesser GPL version 2.1 or later <http://gnu.org/licenses/lgpl.html>\n\
+This is free software: you are free to change and redistribute it.\n\
+There is NO WARRANTY, to the extent permitted by law.\n");
       exit (0);
     }
 

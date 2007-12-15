@@ -1,3 +1,8 @@
+2007-12-15  Karl Berry  <karl@tug.org>
+
+	* kpsewhich.c (read_command_line, USAGE): improve --version and
+	--help messages.
+
 2007-12-01  Karl Berry  <karl@tug.org>
 
 	* texmf.in (MPMEMS, MFBASES, TEXFORMATS): switch to /$engine,
