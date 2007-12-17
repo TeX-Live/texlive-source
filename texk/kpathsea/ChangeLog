@@ -1,3 +1,7 @@
+2007-12-17  Karl Berry  <karl@tug.org>
+
+	* kpathsea.texi (Path searching options): clarify --expand-path doc.
+
 2007-12-15  Karl Berry  <karl@tug.org>
 
 	* kpsewhich.c (read_command_line, USAGE): improve --version and

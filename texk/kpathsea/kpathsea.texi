@@ -1191,7 +1191,7 @@ of guessing the search path from the filename.  @samp{//} and all the
 usual expansions are supported (@pxref{Path expansion}).  This option
 and @samp{--format} are mutually exclusive.  To output the complete
 directory expansion of a path, instead of doing a one-shot lookup, see
-@samp{--expand-path} in the following section.
+@samp{--expand-path} and @samp{--show-path} in the following section.
 
 @item --progname=@var{name}
 @opindex --progname=@var{name}
@@ -1234,9 +1234,13 @@ hierarchy.  @xref{Path expansion}.
 @item
 @opindex --expand-path=@var{string}
 @samp{--expand-path=@var{string}} outputs the complete expansion of
-@var{string} as a colon-separated path.  This is useful to construct a
-search path for a program that doesn't accept recursive subdirectory
-specifications.  Nonexistent directories are culled from the output:
+@var{string}, with each element separated by the usual path separator
+on the current system (@samp{;} on Windows, @samp{:} otherwise).
+This may be useful to construct a custom search path for a format not
+otherwise supported.  To retrieve the search path for a format that is
+already supported, see @samp{--show-path}, next.
+
+Nonexistent directories are culled from the output:
 
 @example
 $ kpsewhich --expand-path '/tmp'
@@ -1254,6 +1258,7 @@ For one-shot uses of an arbitrary (not built in to Kpathsea) path, see
 lookups of file type @var{name}.  Either a filename extension
 (@samp{pk}, @samp{.vf}, etc.) or an integer can be used, just as with
 @samp{--format}, described in the previous section.
+
 @end itemize
 
 
