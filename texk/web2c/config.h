@@ -90,20 +90,8 @@ typedef SCHAR_TYPE schar;
 
 typedef INTEGER_TYPE integer;
 
-/* We need a type that's at least 64 bits wide.  */
-#if defined(__STDC_VERSION__) && __STDC_VERSION__>=199901L
-  /* C99; this is easy */
-  #include <stdint.h>
-  #define LONGINTEGER_TYPE int_least64_t
-  #define LONGINTEGER_MAX INT_LEAST64_MAX
-  #define LONGINTEGER_MIN INT_LEAST64_MIN
-#else
-  /* C++ or <C99; let's hope long is 64bit */
-  #define LONGINTEGER_TYPE long
-  #define LONGINTEGER_MAX LONG_MAX
-  #define LONGINTEGER_MIN LONG_MIN
-#endif
-typedef LONGINTEGER_TYPE longinteger;
+/* We need a type that's at least off_t wide */
+typedef off_t longinteger;
 
 
 /* I don't want to write a configure test for remove when all Unix

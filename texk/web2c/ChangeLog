@@ -1,3 +1,7 @@
+2007-12-19  Karl Berry  <karl@tug.org>
+
+	* config.h (LONGINTEGER_TYPE): swtich to off_t.
+
 2007-10-23  Karl Berry  <karl@tug.org>
 
 	* config.h (LONGINTEGER_TYPE): #define, depending on the C version.
