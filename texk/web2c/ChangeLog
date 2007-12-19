@@ -1,6 +1,10 @@
 2007-12-19  Karl Berry  <karl@tug.org>
 
-	* config.h (LONGINTEGER_TYPE): swtich to off_t.
+	* tangle.ch (max_bytes): increase to 65535.
+
+	* config.h (LONGINTEGER_TYPE): switch to off_t.
+	
+	(Both of these from Martin S.)
 
 2007-10-23  Karl Berry  <karl@tug.org>
 

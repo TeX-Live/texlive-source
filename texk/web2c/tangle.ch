@@ -64,12 +64,16 @@ procedure initialize;
 @!buf_size=3000; {maximum length of input line}
 @z
 @x
+@!max_bytes=45000; {|1/ww| times the number of bytes in identifiers,
+  strings, and module names; must be less than 65536}
 @!max_toks=50000; {|1/zz| times the number of bytes in compressed \PASCAL\ code;
   must be less than 65536}
 @!max_names=4000; {number of identifiers, strings, module names;
   must be less than 10240}
 @!max_texts=2000; {number of replacement texts, must be less than 10240}
 @y
+@!max_bytes=65535; {|1/ww| times the number of bytes in identifiers,
+  strings, and module names; must be less than 65536}
 @!max_toks=65535; {|1/zz| times the number of bytes in compressed \PASCAL\ code;
   must be less than 65536}
 @!max_names=10000; {number of identifiers, strings, module names;
