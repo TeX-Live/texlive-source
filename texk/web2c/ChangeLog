@@ -1,3 +1,8 @@
+2007-12-19  Martin Schröder <martin@oneiros.de>
+
+	* tex.ch (ssup_max_strings): increase to 2097151
+		 (sup_main_memory): increase to 256000000
+
 2007-12-19  Karl Berry  <karl@tug.org>
 
 	* tangle.ch (max_bytes): increase to 65535.
