@@ -1,7 +1,7 @@
 /* str-list.h: Declarations for string lists.
 
+   Copyright 1993, 1994, 2007 Karl Berry.
    Copyright 1999, 2005 Olaf Weber.
-   Copyright 1993, 94 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -13,11 +13,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    Lesser General Public License for more details.
 
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-*/
+   You should have received a copy of the GNU Lesser General Public License
+   along with this library; if not, see <http://www.gnu.org/licenses/>.  */
 
 #ifndef KPATHSEA_STR_LIST_H
 #define KPATHSEA_STR_LIST_H
@@ -54,7 +51,11 @@ extern void str_list_concat P2H(str_list_type * target, str_list_type more);
    themselves).  */
 extern void str_list_free P1H(str_list_type *l);
 
-/* Append each element of more to each element of target. */
-extern void str_list_concat_elements P2H(str_list_type * target, str_list_type more);
+/* Append each element of MORE to each element of TARGET.  */
+extern void str_list_concat_elements
+  P2H(str_list_type *target, str_list_type more);
+
+/* Remove duplicate elements from L, freeing their space.  */
+extern void str_list_uniqify P1H(str_list_type *l);
 
 #endif /* not KPATHSEA_STR_LIST_H */

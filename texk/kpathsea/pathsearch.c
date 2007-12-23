@@ -1,7 +1,7 @@
 /* pathsearch.c: look up a filename in a path.
 
+   Copyright 1993, 1994, 1995, 1997, 2007 Karl Berry.
    Copyright 1997-2005 Olaf Weber.
-   Copyright 1993, 94, 95, 97 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -13,11 +13,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    Lesser General Public License for more details.
 
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-*/
+   You should have received a copy of the GNU Lesser General Public License
+   along with this library; if not, see <http://www.gnu.org/licenses/>.  */
 
 #include <kpathsea/config.h>
 #include <kpathsea/c-pathch.h>
@@ -402,7 +399,7 @@ static string *
 search_list P4C(const_string, path,  const_string*, names,
                 boolean, must_exist,  boolean, all)
 {
-  str_list_type ret_list;
+  str_list_type ret_list, uniq_list;
   const_string* namep;
   string elt;
   boolean done = false;
@@ -510,6 +507,11 @@ search_list P4C(const_string, path,  const_string*, names,
   }
 
  out:
+  /* Uniqify, since our paths can often end up finding the same file
+     more than once.  */
+  str_list_uniqify (&ret_list);
+  
+  /* Add NULL if we will be returning multiple elements.  */
   if (STR_LIST_LENGTH (ret_list) == 0
       || (all && STR_LIST_LAST_ELT (ret_list) != NULL))
     str_list_add (&ret_list, NULL);
@@ -522,8 +524,8 @@ search_list P4C(const_string, path,  const_string*, names,
     if (KPSE_DEBUG_P (KPSE_DEBUG_SEARCH)) {
       DEBUGF1 ("search([%s", *names);
       for (namep = names+1; *namep != NULL; namep++) {
-        fputc(' ', stderr);
-        fputs(*namep, stderr);
+        fputc (' ', stderr);
+        fputs (*namep, stderr);
       }
       fputs ("]) =>", stderr);
     }
@@ -540,7 +542,7 @@ search_list P4C(const_string, path,  const_string*, names,
   return STR_LIST (ret_list);
 }
 
-/* Search PATH for the first NAME.  */
+/* Search PATH for the first NAME according to MUST_EXIST.  */
 
 string
 kpse_path_search P3C(const_string, path,  const_string, name,
@@ -552,20 +554,21 @@ kpse_path_search P3C(const_string, path,  const_string, name,
   return ret;
 }
 
-/* Search PATH for the first occurence of one of the NAMES. */
+/* Many inputs, return (more or less indeterminate) one matching string.  */
 
 string
 kpse_path_search_list P3C(const_string, path,  const_string*, names,
-                          boolean, must_exist)
+                          boolean,  must_exist)
 {
-  string *ret_list = search_list (path, names, must_exist, false);
+  string *ret_list
+    = kpse_path_search_list_generic (path, names, must_exist, false);
   string ret = *ret_list;
   free (ret_list);
   return ret;
-}    
+}
 
-/* Search all elements of PATH for files named NAME.  Not sure if it's
-   right to assert `must_exist' here, but it suffices now.  */
+/* Search PATH for all files named NAME.  Might have been better not
+   to assert `must_exist' here, but it's too late to change.  */
 
 string *
 kpse_all_path_search P2C(const_string, path,  const_string, name)
@@ -574,11 +577,24 @@ kpse_all_path_search P2C(const_string, path,  const_string, name)
   return ret;
 }
 
+
+/* Many inputs, return list, allow specifying MUST_EXIST and ALL.  */
+
+string *
+kpse_path_search_list_generic P4C(const_string, path,  const_string*, names,
+                                  boolean, must_exist,  boolean, all)
+{
+  string *ret = search_list (path, names, must_exist, all);
+  return ret;
+}    
+
+
+/* Many inputs, return list, MUST_EXIST and ALL always true.  */
+
 string *
 kpse_all_path_search_list P2C(const_string, path,  const_string*, names)
 {
-    string *ret = search_list (path, names, true, true);
-    return ret;
+  return kpse_path_search_list_generic (path, names, true, true);
 }
 
 #ifdef TEST

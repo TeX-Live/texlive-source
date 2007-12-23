@@ -174,8 +174,14 @@ extern KPSEDLL const_string kpse_init_format P1H(kpse_file_format_type);
 /* If FORMAT has a non-null `suffix' member, append it to NAME "."
    and call `kpse_path_search' with the result and the other arguments.
    If that fails, try just NAME.  */
-extern KPSEDLL string kpse_find_file P3H(const_string name,  
+extern KPSEDLL string kpse_find_file P3H(const_string name,
                             kpse_file_format_type format,  boolean must_exist);
+
+/* Ditto, allowing ALL parameter and hence returning a NULL-terminated
+   list of results.  */
+extern KPSEDLL string *kpse_find_file_generic
+  P4H(const_string name, kpse_file_format_type format,
+      boolean must_exist, boolean all);
 
 /* Here are some abbreviations.  */
 #define kpse_find_mf(name)   kpse_find_file (name, kpse_mf_format, true)
@@ -197,7 +203,6 @@ extern KPSEDLL FILE *kpse_open_file P2H(const_string, kpse_file_format_type);
 /* This function is used to set kpse_program_name (from progname.c) to
    a different value.  It will clear the path searching information, to
    ensure that the search paths are appropriate to the new name. */
-
 extern KPSEDLL void kpse_reset_program_name P1H(const_string progname);
 
 #endif /* not KPATHSEA_TEX_FILE_H */

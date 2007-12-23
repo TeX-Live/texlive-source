@@ -295,10 +295,9 @@ init_path PVAR2C(kpse_format_info_type *, info, const_string, default_path, ap)
 }}
 
 
-/* Some file types have more than one suffix.  */
-/* Some times it is convenient to modify the list of searched suffixes.
-   *** Don't complain if this function goes away. ***
- */
+/* Some file types have more than one suffix, and sometimes it is
+   convenient to modify the list of searched suffixes.  */ 
+
 void
 kpse_set_suffixes PVAR2C(kpse_file_format_type, format,
   boolean, alternate,  ap)
@@ -309,8 +308,7 @@ kpse_set_suffixes PVAR2C(kpse_file_format_type, format,
 
   if (alternate) {
     list = &kpse_format_info[format].alt_suffix;
-  } 
-  else {
+  } else {
     list = &kpse_format_info[format].suffix;
   }
 
@@ -745,18 +743,31 @@ string
 kpse_find_file P3C(const_string, name,  kpse_file_format_type, format,
                    boolean, must_exist)
 {
+  string *ret_list = kpse_find_file_generic (name, format, must_exist, false);
+  string ret = *ret_list;
+  free (ret_list);
+  return ret;
+}
+
+/* As with `kpse_find_file', but also allow passing ALL for the search,
+   hence we always return a NULL-terminated list.  */
+
+string *
+kpse_find_file_generic P4C(const_string, name,  kpse_file_format_type, format,
+                           boolean, must_exist,  boolean, all)
+{
   const_string *ext;
-  unsigned name_len = 0;
-  boolean name_has_suffix_already = false;
   string mapped_name;
   string *mapped_names;
   const_string *target;
   unsigned count;
+  unsigned name_len = 0;
+  boolean name_has_suffix_already = false;
   boolean use_fontmaps = (format == kpse_tfm_format
                           || format == kpse_gf_format
                           || format == kpse_pk_format
                           || format == kpse_ofm_format);
-  string ret = NULL;
+  string *ret = NULL;
 
   /* NAME being NULL is a programming bug somewhere.  NAME can be empty,
      though; this happens with constructs like `\input\relax'.  */
@@ -765,12 +776,12 @@ kpse_find_file P3C(const_string, name,  kpse_file_format_type, format,
   if (FMT_INFO.path == NULL)
     kpse_init_format (format);
 
-  if (KPSE_DEBUG_P(KPSE_DEBUG_SEARCH))
+  if (KPSE_DEBUG_P (KPSE_DEBUG_SEARCH))
     DEBUGF3 ("kpse_find_file: searching for %s of type %s (from %s)\n",
              name, FMT_INFO.type, FMT_INFO.path_source);
 
   /* Do variable and tilde expansion. */
-  name = kpse_expand(name);
+  name = kpse_expand (name);
   
   /* Does NAME already end in a possible suffix?  */
   name_len = strlen (name);
@@ -789,7 +800,7 @@ kpse_find_file P3C(const_string, name,  kpse_file_format_type, format,
     }
   }
 
-  /* Set up target list. */
+  /* Set up list of target names to search for. */
   count = 0;
   target = XTALLOC1 (const_string);
   /* Case #1: NAME doesn't have a suffix which is equal to a "standard"
@@ -827,31 +838,12 @@ kpse_find_file P3C(const_string, name,  kpse_file_format_type, format,
   /* Terminate list. */
   target[count] = NULL;
 
-  /* Search. */
-#if 0
-  /* Simple version, just do the search for the list, and pound disk
-   * then and there if appropriate.
-   */
-  ret = kpse_path_search_list (FMT_INFO.path, target, must_exist);
-#elif 0
-  /* Variant where we delay disk-pounding. */
-  ret = kpse_path_search_list (FMT_INFO.path, target, false);
-  if (!ret && must_exist)
-      ret = kpse_path_search_list (FMT_INFO.path, target, true);
-#else
-  /* Variant that tries the match the original behaviour more closely.
-   * The distinction is that we pound the disk for a far shorter list
-   * of names.
-   *
-   * This is the fastest variant, because it does fewer disk accesses
-   * than the two variants above -- for example some 750 calls of
-   * access(2) compared to 1500.
-   */
-  ret = kpse_path_search_list (FMT_INFO.path, target, false);
+  /* Search, trying to minimize disk-pounding.  */
+  ret = kpse_path_search_list_generic (FMT_INFO.path, target, false, all);
   /* Do we need to pound the disk? */
-  if (!ret && must_exist) {
+  if (! *ret && must_exist) {
     for (count = 0; target[count]; count++)
-      free((void*)target[count]);
+      free ((void *) target[count]);
     count = 0;
     /* We look for a subset of the previous set of names, so the
      * target array is large enough.  In particular, we don't pound
@@ -859,31 +851,37 @@ kpse_find_file P3C(const_string, name,  kpse_file_format_type, format,
      * should?
      */
     if (!name_has_suffix_already && FMT_INFO.suffix_search_only) {
-      for (ext = FMT_INFO.suffix; !ret && *ext; ext++)
+      for (ext = FMT_INFO.suffix; *ext; ext++)
         target[count++] = concat (name, *ext);
     }
     if (name_has_suffix_already || !FMT_INFO.suffix_search_only) {
       target[count++] = xstrdup (name);
     }
     target[count] = NULL;
-    ret = kpse_path_search_list (FMT_INFO.path, target, true);
+    ret = kpse_path_search_list_generic (FMT_INFO.path, target, true, all);
   }
-#endif  
   
   /* Free the list we created. */
   for (count = 0; target[count]; count++)
-    free((void*)target[count]);
-  free(target);
+    free ((void *) target[count]);
+  free (target);
   
-  /* If nothing was found, call mktex* to create a missing file.  */
+  /* If nothing was found, call mktex* to create a missing file.  Since
+     this returns a single string, morph it into a list.  */
   if (!ret && must_exist) {
-    ret = kpse_make_tex (format, name);
+    ret = XTALLOC (2, string);
+    ret[0] = kpse_make_tex (format, name);
+    if (ret[0]) {
+      ret[1] = NULL;
+    }
   }
 
-  free((void*)name);
+  free ((void *) name);
 
   return ret;
 }
+
+
 
 /* Open NAME along the search path for TYPE for reading and return the
    resulting file, or exit with an error message.  */

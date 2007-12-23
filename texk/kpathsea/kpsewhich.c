@@ -165,11 +165,9 @@ find_format P2C(string, name, boolean, is_filename)
 static unsigned
 lookup P1C(string, name)
 {
+  int i;
   string ret = NULL;
   string *ret_list = NULL;
-  int i;
-  unsigned local_dpi;
-  kpse_glyph_file_type glyph_ret;
   
   if (user_path) {
     if (show_all) {
@@ -186,11 +184,15 @@ lookup P1C(string, name)
       case kpse_pk_format:
       case kpse_gf_format:
       case kpse_any_glyph_format:
-        /* Try to extract the resolution from the name.  */
-        local_dpi = find_dpi (name);
-        if (!local_dpi)
-          local_dpi = dpi;
-        ret = kpse_find_glyph (remove_suffix (name), local_dpi, fmt, &glyph_ret);
+        {
+          kpse_glyph_file_type glyph_ret;
+          /* Try to extract the resolution from the name.  */
+          unsigned local_dpi = find_dpi (name);
+          if (!local_dpi)
+            local_dpi = dpi;
+          ret = kpse_find_glyph (remove_suffix (name), local_dpi, fmt,
+                                 &glyph_ret);
+        }
         break;
 
       case kpse_last_format:
@@ -199,7 +201,11 @@ lookup P1C(string, name)
         /* fall through */
 
       default:
-        ret = kpse_find_file (name, fmt, must_exist);
+        if (show_all) {
+          ret_list = kpse_find_file_generic (name, fmt, must_exist, true);
+        } else {
+          ret = kpse_find_file (name, fmt, must_exist);
+        }
     }
   }
   

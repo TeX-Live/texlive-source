@@ -1,7 +1,7 @@
 /* pathsearch.h: mostly-generic path searching.
 
+   Copyright 1993, 1994, 1996, 1997, 2007 Karl Berry.
    Copyright 1999-2005 Olaf Weber.
-   Copyright 1993, 94, 96, 97 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -13,11 +13,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    Lesser General Public License for more details.
 
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-*/
+   You should have received a copy of the GNU Lesser General Public License
+   along with this library; if not, see <http://www.gnu.org/licenses/>.  */
 
 #ifndef KPATHSEA_PATHSEARCH_H
 #define KPATHSEA_PATHSEARCH_H
@@ -69,27 +66,33 @@ extern KPSEDLL str_llist_type *kpse_element_dirs P1H(string elt);
    the filesystem.)
    
    The caller must expand PATH. This is because it makes more sense to
-   do this once, in advance, instead of for every search using it.
+   do this once, in advance, instead of for every search.
    
-   In any case, return the complete filename if found, otherwise NULL.  */
-extern KPSEDLL string kpse_path_search P3H(const_string path,
-                                           const_string name,
-                                           boolean must_exist);
+   In any case, return a matching filename if found, otherwise NULL.
+   If more than one file matches, which one gets returned is
+   unspecified.  */
+extern KPSEDLL string kpse_path_search
+  P3H(const_string path, const_string name, boolean must_exist);
 
-/* Like kpse_path_search, except we're given a list of names. */
-extern KPSEDLL string kpse_path_search_list P3H(const_string path,
-                                                const_string* names,
-                                                boolean must_exist);
+/* Like `kpse_path_search', except look for a list of NAMES.  */
+extern KPSEDLL string kpse_path_search_list
+  P3H(const_string path, const_string* names, boolean must_exist);
 
-/* Like `kpse_path_search' with MUST_EXIST true, but return a list of
-   all the filenames (or NULL if none), instead of taking the first.  */
-extern KPSEDLL string *kpse_all_path_search P2H(const_string path,
-                                                const_string name);
+/* Like `kpse_path_search' with MUST_EXIST true, but always return all
+   matches in a NULL-terminated list.  */
+extern KPSEDLL string *kpse_all_path_search
+  P2H(const_string path, const_string name);
 
-/* Like `kpse_path_search_list' with MUST_EXIST true, but return a list of
-   all the filenames (or NULL if none), instead of taking the first.  */
-extern KPSEDLL string *kpse_all_path_search_list P2H(const_string path,
-                                                     const_string* names);
+/* Search for any of the NAMES in PATH, and allow specifying both
+   MUST_EXIST and ALL.  */
+extern KPSEDLL string *kpse_path_search_list_generic
+  P4H(const_string path, const_string* names, boolean must_exist, boolean all);
 
+/* Search for any of NAMES, with MUST_EXIST and ALL true.  */
+extern KPSEDLL string *kpse_all_path_search_list
+  P2H(const_string path, const_string* names);
+
+/* The naming of all these functions is rather scattered and
+   inconsistent, but they grew over time, and we don't want to change
+   the meaning of existing names.  */
 #endif /* not KPATHSEA_PATHSEARCH_H */
-

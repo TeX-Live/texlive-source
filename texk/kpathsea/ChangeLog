@@ -1,3 +1,19 @@
+2007-12-22  Karl Berry  <karl@tug.org>
+
+	* kpsewhich.c (lookup): handle --all for regular lookups as well
+		as user-specific paths.
+	* pathsearch.c (search_list): uniqify list before returning.
+	(kpse_path_search_list_generic): new fn.
+	(kpse_all_path_search_list, kpse_path_search_list): rewrite to
+		call ..._generic.
+	* pathsearch.h (kpse_path_search_list_generic): declare it.
+	* str-list.c (str_list_uniqify): new fn.
+	* str-list.h (str_list_uniqify): declare it.
+	* tex-file.c (kpse_find_file_generic): new name for kpse_find_file
+		code, with addition of argument to find all.
+        (kpse_find_file): rewrite to call ..._generic.
+	* tex-file.h (kpse_find_file_generic): declare it.
+
 2007-12-17  Karl Berry  <karl@tug.org>
 
 	* kpathsea.texi (Path searching options): clarify --expand-path doc.
