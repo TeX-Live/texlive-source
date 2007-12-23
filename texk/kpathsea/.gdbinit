@@ -10,4 +10,5 @@ set env TEXINPUTS !!/home/texlive/karl/Master/texmf-dist/tex/latex//:!!/home/tex
 # preload.cfg
 #set env TEXMFDBS  /home/texlive/karl/Master/texmf
 #set env TEXINPUTS !!/home/texlive/karl/Master/texmf/tex/generic//:!!/home/texlive/karl/Master/texmf/tex//
-set args --all --debug=32 preload.cfg
+#  --debug=32
+set args --all --subdir=tex/latex/base preload.cfg

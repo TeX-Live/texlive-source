@@ -26,6 +26,7 @@
 #include <kpathsea/line.h>
 #include <kpathsea/pathsearch.h>
 #include <kpathsea/proginit.h>
+#include <kpathsea/str-list.h>
 #include <kpathsea/tex-file.h>
 #include <kpathsea/tex-glyph.h>
 #include <kpathsea/variable.h>
@@ -42,6 +43,9 @@ string braces_to_expand = NULL;
 string path_to_expand = NULL;
 string path_to_show = NULL;
 string var_to_value = NULL;
+
+/* Only match files in given subdirs.  (-subdir) */
+str_list_type subdir_paths;
 
 /* The file type and path for lookups.  (-format, -path) */
 kpse_file_format_type user_format = kpse_last_format;
@@ -159,6 +163,36 @@ find_format P2C(string, name, boolean, is_filename)
   
   return ret;
 }
+
+
+
+/* Return newly-allocated NULL-terminated list of strings from MATCHES
+   that are prefixed with any of the subdirectories in SUBDIRS.  That
+   is, for a string S in MATCHES, its dirname must end with one of the
+   elements in SUBDIRS.  For instance, if subdir=foo/bar, that will
+   match a string foo/bar/baz or /some/texmf/foo/bar/baz.
+   
+   We don't reallocate the actual strings, just the list elements.
+   Perhaps later we will implement wildcards or // or something.  */
+
+static string *
+subdir_match P2C(str_list_type, subdirs,  string *, matches)
+{
+  string *ret = XTALLOC1 (string);
+  unsigned len = 1;
+  unsigned m;
+  
+  for (m = 0; matches[m]; m++) {
+    string s = matches[m];
+    ret = XRETALLOC (ret, len + 1, string);
+    ret[len-1] = s;
+    len++;
+  }
+  ret[len-1] = NULL;
+  return ret;
+}
+
+
 
 /* Look up a single filename NAME.  Return 0 if success, 1 if failure.  */
 
@@ -209,8 +243,21 @@ lookup P1C(string, name)
     }
   }
   
-  if (ret)
-    puts (ret);
+  /* Turn single return into a null-terminated list for uniform treatment.  */
+  if (ret) {
+    ret_list = XTALLOC (2, string);
+    ret_list[0] = ret;
+    ret_list[1] = NULL;
+  }
+
+  /* Filter by subdirectories, if specified.  */
+  if (STR_LIST_LENGTH (subdir_paths) > 0) {
+    string *new_list = subdir_match (subdir_paths, ret_list);
+    free (ret_list);
+    ret_list = new_list;
+  }
+
+  /* Print output.  */
   if (ret_list) {
     for (i = 0; ret_list[i]; i++)
       puts (ret_list[i]);
@@ -271,6 +318,7 @@ static struct option long_options[]
       { "no-mktex",		1, 0, 0 },
       { "progname",		1, 0, 0 },
       { "separator",		1, 0, 0 },
+      { "subdir",		1, 0, 0 },
       { "show-path",		1, 0, 0 },
       { "var-value",		1, 0, 0 },
       { "version",              0, 0, 0 },
@@ -362,6 +410,9 @@ read_command_line P2C(int, argc,  string *, argv)
     } else if (ARGUMENT_IS ("show-path")) {
       path_to_show = optarg;
       user_format_string = optarg;
+
+    } else if (ARGUMENT_IS ("subdir")) {
+      str_list_add (&subdir_paths, optarg);
 
     } else if (ARGUMENT_IS ("var-value")) {
       var_to_value = optarg;
