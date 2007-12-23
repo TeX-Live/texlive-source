@@ -254,48 +254,52 @@ static char *helparr[] = {
 "or",
 "           dvips fname[.ftype[.fmode]] [options]",
 #endif
-"a*  Conserve memory, not time      A   Print only odd (TeX) pages      ",
-"b # Page copies, for posters e.g.  B   Print only even (TeX) pages     ",
-"c # Uncollated copies              C # Collated copies                 ",
-"d # Debugging                      D # Resolution                      ",
-"e # Maxdrift value                 E*  Try to create EPSF              ",
-"f*  Run as filter                  F*  Send control-D at end           ",
+"Convert DVI input files to PostScript.",
+"See http://tug.org/dvips/ for the full manual and other information.",
+"",
+"Options:",
+"-a*  Conserve memory, not time       -A   Print only odd (TeX) pages",
+"-b # Page copies, for posters e.g.   -B   Print only even (TeX) pages",
+"-c # Uncollated copies               -C # Collated copies",
+"-d # Debugging                       -D # Resolution",
+"-e # Maxdrift value                  -E*  Try to create EPSF",
+"-f*  Run as filter                   -F*  Send control-D at end",
 #ifdef SHIFTLOWCHARS
-"                                   G*  Shift low chars to higher pos.  ",
+"                                     -G*  Shift low chars to higher pos.",
 #endif
-"h f Add header file                                                    ",
-"i*  Separate file per section                                          ",
-"j*  Download fonts partially                                           ",
-"k*  Print crop marks               K*  Pull comments from inclusions   ",
-"l # Last page                                                          ",
-"m*  Manual feed                    M*  Don't make fonts                ",
-"mode s Metafont device name                                            ",
-"n # Maximum number of pages        N*  No structured comments          ",
-"noomega  Disable Omega extensions                                      ",
-"o f Output file                    O c Set/change paper offset         ",
+"-h f Add header file",
+"-i*  Separate file per section",
+"-j*  Download fonts partially",
+"-k*  Print crop marks                -K*  Pull comments from inclusions",
+"-l # Last page",
+"-m*  Manual feed                     -M*  Don't make fonts",
+"-mode s Metafont device name",
+"-n # Maximum number of pages         -N*  No structured comments",
+"-noomega  Disable Omega extensions",
+"-o f Output file                     -O c Set/change paper offset",
 #if defined(MSDOS) || defined(OS2)
-"p # First page                     P s Load $s.cfg                     ",
+"-p # First page                      -P s Load $s.cfg",
 #else
-"p # First page                     P s Load config.$s                  ",
+"-p # First page                      -P s Load config.$s",
 #endif
-"pp l Print only pages listed                                           ",
-"q*  Run quietly                                                        ",
-"r*  Reverse order of pages         R*  Run securely                    ",
-"s*  Enclose output in save/restore S # Max section size in pages       ",
-"t s Paper format                   T c Specify desired page size       ",  
-"u s PS mapfile                     U*  Disable string param trick      ",
-"v   Print version number and quit  V*  Send downloadable PS fonts as PK",
-"x # Override dvi magnification     X # Horizontal resolution           ",
-"y # Multiply by dvi magnification  Y # Vertical resolution             ",  
+"-pp l Print only pages listed",
+"-q*  Run quietly",
+"-r*  Reverse order of pages          -R*  Run securely",
+"-s*  Enclose output in save/restore  -S # Max section size in pages",
+"-t s Paper format                    -T c Specify desired page size",  
+"-u s PS mapfile                      -U*  Disable string param trick",
+"-v   Print version number and quit   -V*  Send downloadable PS fonts as PK",
+"-x # Override dvi magnification      -X # Horizontal resolution",
+"-y # Multiply by dvi magnification   -Y # Vertical resolution",  
 #ifdef HPS
-"z*  Hyper PS                       Z*  Compress bitmap fonts           ",
+"-z*  Hyper PS                        -Z*  Compress bitmap fonts",
 #else
-"                                   Z*  Compress bitmap fonts           ",
+"                                     -Z*  Compress bitmap fonts",
 #endif
-/* "-   Interactive query of options", */
-"    # = number   f = file   s = string  * = suffix, `0' to turn off    ",
-"    c = comma-separated dimension pair (e.g., 3.2in,-32.1cm)           ",
-"    l = comma-separated list of page ranges (e.g., 1-4,7-9)            ", 0} ;
+/*"-   Interactive query of options", */
+"    # = number   f = file   s = string  * = suffix, `0' to turn off",
+"    c = comma-separated dimension pair (e.g., 3.2in,-32.1cm)",
+"    l = comma-separated list of page ranges (e.g., 1-4,7-9)", 0} ;
 
 void
 help P1C(int, status)
