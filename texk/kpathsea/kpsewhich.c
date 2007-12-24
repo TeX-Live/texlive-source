@@ -183,10 +183,31 @@ subdir_match P2C(str_list_type, subdirs,  string *, matches)
   unsigned m;
   
   for (m = 0; matches[m]; m++) {
-    string s = matches[m];
-    ret = XRETALLOC (ret, len + 1, string);
-    ret[len-1] = s;
-    len++;
+    unsigned loc;
+    unsigned e;
+    string s = xstrdup (matches[m]);
+    for (loc = strlen (s); loc > 0 && !IS_DIR_SEP (s[loc-1]); loc--)
+      ;
+    while (IS_DIR_SEP (s[loc-1])) {
+      loc--;
+    }
+    s[loc] = 0;  /* wipe out basename */
+    
+    for (e = 0; e < STR_LIST_LENGTH (subdirs); e++) {
+      string subdir = STR_LIST_ELT (subdirs, e);
+      unsigned subdir_len = strlen (subdir);
+      while (subdir_len > 0 && IS_DIR_SEP (subdir[subdir_len-1])) {
+        subdir_len--;
+        subdir[subdir_len] = 0; /* remove trailing slashes from subdir spec */
+      }
+      if (FILESTRCASEEQ (subdir, s + loc - subdir_len)) {
+        /* matched, save this one.  */
+        ret = XRETALLOC (ret, len + 1, string);
+        ret[len-1] = matches[m];
+        len++;
+      }
+    }
+    free (s);
   }
   ret[len-1] = NULL;
   return ret;

@@ -1,6 +1,6 @@
 2007-12-23  Karl Berry  <karl@tug.org>
 
-	* kpsewhich.c (subdir_match): start implementation.
+	* kpsewhich.c (subdir_match): new fn.
 	(lookup): call it if requested.
 	(subdir_paths): new global.
 	(read_command_line): new option --subdir.
