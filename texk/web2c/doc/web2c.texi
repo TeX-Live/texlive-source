@@ -12,7 +12,7 @@ The latest version is available from ftp://ftp.tug.org/tex/texinfo.tex.}
 @end tex
 
 @set version 7.5.6
-@set month-year January 2007
+@set month-year December 2007
 
 @c Define new indices for commands in auxiliary files, filenames, and options.
 @defcodeindex cm
@@ -30,7 +30,10 @@ The latest version is available from ftp://ftp.tug.org/tex/texinfo.tex.}
 
 @dircategory TeX
 @direntry
-* Web2c: (web2c).                    TeX, Metafont, and companion programs.
+* Web2c: (web2c).               TeX, Metafont, and companion programs.
+@end direntry
+@dircategory Individual utilities
+@direntry
 * bibtex: (web2c)bibtex invocation.             Maintaining bibliographies.
 * dmp: (web2c)dmp invocation.                   Troff->MPX (MetaPost pictures).
 * dvicopy: (web2c)dvicopy invocation.           Virtual font expansion
@@ -2104,7 +2107,7 @@ environment variable @code{KPATHSEA_DEBUG} to @samp{-1} before running
 the program.
 
 The suffix @samp{gf} is supplied if not already present.  This suffix is
-not an extension; no @samp{.} precedes it: for instance @file{cmr10.600gf}.
+not an extension, no @samp{.} precedes it; for instance, @file{cmr10.600gf}.
 
 The output filename is the basename of @var{gfname} extended with
 @file{.dvi}, e.g., @samp{gftodvi /wherever/foo.600gf} creates
@@ -2137,15 +2140,26 @@ of the figure.
 @cindex slant font
 @dfn{slant font} (no default): for diagonal lines, which are otherwise
 simulated using horizontal and vertical rules.
-
 @end itemize
 
 To change the default fonts, you must use @code{special} commands in
-your Metafont source file.
+your Metafont source file, typically via commands like @code{slantfont
+slantlj4}.  There is no default slant font since no one printer is
+suitable as a default.  You can make your own by copying one of the
+existing files, such as
+@file{.../fonts/source/public/misc/slantlj4.mf} and then running
+@command{mf} on it.
+
+For testing purposes, you may it useful to run @code{mf rtest} (hit
+RETURN when it stops) to get a @file{gf} file of a thorn glyph.  Or
+use @command{mfw} instead of @command{mf} to have the glyph(s)
+displayed on the screen.  After that, @code{gftodvi rtest.2602gf}
+should produce @file{rtest.dvi}, which you process as usual.
 
 The program accepts the following option, as well as the standard
 @samp{-verbose}, @samp{-help}, and @samp{-version} (@pxref{Common
 options}):
+
 @table @samp
 @item -overflow-label-offset=@var{points}
 @opindex -overflow-label-offset=@var{points}

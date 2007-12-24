@@ -1,3 +1,8 @@
+2007-12-24  Karl Berry  <karl@tug.org>
+
+	* doc/web2c.texi (gftodvi invocation): talk a bit more about slant
+	fonts, pursuant to DEK's message to tex-k of 10 Jul 2005 18:38:11.
+
 2007-12-19  Martin Schröder <martin@oneiros.de>
 
 	* tex.ch (ssup_max_strings): increase to 2097151
