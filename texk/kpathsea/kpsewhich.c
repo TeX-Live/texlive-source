@@ -518,6 +518,12 @@ main P2C(int, argc,  string *, argv)
     puts (value);
   }
   
+  /* --subdir must imply --all, since we filter here after doing the
+     search, rather than inside the search itself.  */
+  if (STR_LIST_LENGTH (subdir_paths) > 0) {
+    show_all = 1;
+  }
+  
   for (; optind < argc; optind++) {
     unfound += lookup (argv[optind]);
   }
