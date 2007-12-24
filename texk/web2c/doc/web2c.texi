@@ -2688,6 +2688,11 @@ If @var{mpxfile} is not specified, the output goes to the basename of
 @var{dvifile} extended with @file{.mpx}, e.g., @samp{dvitomp
 /wherever/foo.dvi} creates @file{./foo.mpx}.
 
+@cindex color, in DVItoMP
+DVItoMP supports Dvips-style color specials, such as @samp{color push
+@var{name}} and @samp{color pop}, outputting them as @code{withcolor}
+MetaPost commands.
+
 The only options are @samp{-help} and @samp{-version} (@pxref{Common
 options}).
 

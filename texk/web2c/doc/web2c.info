@@ -1,8 +1,11 @@
-This is web2c.info, produced by makeinfo version 4.8 from web2c.texi.
-
 INFO-DIR-SECTION TeX
 START-INFO-DIR-ENTRY
-* Web2c: (web2c).                    TeX, Metafont, and companion programs.
+This is web2c.info, produced by makeinfo version 4.11 from web2c.texi.
+
+* Web2c: (web2c).               TeX, Metafont, and companion programs.
+END-INFO-DIR-ENTRY
+INFO-DIR-SECTION Individual utilities
+START-INFO-DIR-ENTRY
 * bibtex: (web2c)bibtex invocation.             Maintaining bibliographies.
 * dmp: (web2c)dmp invocation.                   Troff->MPX (MetaPost pictures).
 * dvicopy: (web2c)dvicopy invocation.           Virtual font expansion
@@ -59,7 +62,7 @@ Web2c
 
 This document describes how to install and use the programs in the Web2c
 implementation of the TeX system, especially for Unix systems.  It
-corresponds to Web2c version 7.5.6, released in January 2007.
+corresponds to Web2c version 7.5.6, released in December 2007.
 
 * Menu:
 
@@ -84,7 +87,7 @@ File: web2c.info,  Node: Introduction,  Next: Installation,  Prev: Top,  Up: Top
 **************
 
 This manual corresponds to version 7.5.6 of Web2c, released in
-January 2007.
+December 2007.
 
    "Web2c" is the name of a TeX implementation, originally for Unix,
 but now also running under DOS, Amiga, and other operating systems. By
@@ -148,7 +151,7 @@ File: web2c.info,  Node: Installation,  Next: Commonalities,  Prev: Introduction
 
 Installing Web2c is mostly the same as installing any other
 Kpathsea-using program.  Therefore, for the basic steps involved, see
-*Note Installation: (kpathsea)Installation.  (A copy is in the file
+*note Installation: (kpathsea)Installation.  (A copy is in the file
 `kpathsea/INSTALL'.)
 
    One peculiarity to Web2c is that the source distribution comes in two
@@ -176,7 +179,7 @@ to report a bug, see the file `kpathsea/BUGS' (*note Bugs:
      install the basic fonts, macros, and other library files.  *Note
      Installation: (kpathsea)Installation.
 
-   * If you do not wish to use the standard file locations, see *Note
+   * If you do not wish to use the standard file locations, see *note
      Changing search paths: (kpathsea)Changing search paths.
 
    * Some Web2c features are enabled or disabled at `configure' time,
@@ -207,7 +210,7 @@ package-specific options come last.
 
    For a description of the generic options (which mainly allow you to
 specify installation directories) and basic `configure' usage, see
-*Note Running `configure' scripts: (autoconf)Invoking configure, a copy
+*note Running `configure' scripts: (autoconf)Invoking configure, a copy
 is in the file `kpathsea/CONFIGURE'.
 
 `--disable-dump-share'
@@ -636,7 +639,7 @@ File: web2c.info,  Node: Three programs,  Prev: Output file location,  Up: Commo
 TeX, Metafont, and MetaPost have a number of features in common.
 Besides the ones here, the common command-line options are described in
 the previous section.  The configuration file options that let you
-control some array sizes and other features are described in *Note
+control some array sizes and other features are described in *note
 Runtime options::.
 
 * Menu:
@@ -1216,7 +1219,7 @@ File: web2c.info,  Node: Languages and hyphenation,  Next: IPC and TeX,  Prev: F
 4.4 Languages and hyphenation
 =============================
 
-TeX supports most natural languages.  See also *Note TeX extensions:
+TeX supports most natural languages.  See also *note TeX extensions:
 TeX extensions.
 
 * Menu:
@@ -1493,7 +1496,7 @@ File: web2c.info,  Node: TeX extensions,  Prev: IPC and TeX,  Up: TeX
 
 The base TeX program has been extended in many ways.  Here's a partial
 list.  Please send information on extensions not listed here to the
-address in *Note Reporting bugs: (kpathsea)Reporting bugs.
+address in *note Reporting bugs: (kpathsea)Reporting bugs.
 
 e-TeX
      Adds many new primitives, including right-to-left typesetting.
@@ -1649,11 +1652,11 @@ File: web2c.info,  Node: Initial Metafont,  Next: Modes,  Prev: mf invocation,  
 `inimf' is the "initial" form of Metafont, which does lengthy
 initializations avoided by the "virgin" (`vir') form, so as to be
 capable of dumping `.base' files (*note Memory dumps::).  For a
-detailed comparison of virgin and initial forms, see *Note Initial and
+detailed comparison of virgin and initial forms, see *note Initial and
 virgin::.  In past releases, a separate program `inimf' was installed
 to invoke the initial form, but this is no longer the case.
 
-   For a list of options and other information, see *Note mf
+   For a list of options and other information, see *note mf
 invocation::.
 
    The only memory dump file commonly used with Metafont is the default
@@ -1665,7 +1668,7 @@ hand if necessary (e.g., if a Metafont update is issued):
 shell.)  Then install the resulting `plain.base' in `$(basedir)'
 (`/usr/local/share/texmf/web2c' by default), and link `mf.base' to it.
 
-   For an explanation of the additional `modes.mf' file, see *Note
+   For an explanation of the additional `modes.mf' file, see *note
 Modes::.  This file has no counterpart in TeX or MetaPost.
 
    In the past, it was sometimes useful to create a base file
@@ -1713,7 +1716,7 @@ characteristics dynamically, by invoking Metafont with an assignment to
    This is most useful when you are working on the definition of a new
 mode.
 
-   The MAGNIFICATION and MFNAME arguments are explained in *Note mf
+   The MAGNIFICATION and MFNAME arguments are explained in *note mf
 invocation::.  In the file `newmode.mf', you should have the following
 (with no `mode_def' or `enddef'), if you are using `modes.mf'
 conventions:
@@ -1828,7 +1831,7 @@ the environment variable `KPATHSEA_DEBUG' to `-1' before running the
 program.
 
    The suffix `gf' is supplied if not already present.  This suffix is
-not an extension; no `.' precedes it: for instance `cmr10.600gf'.
+not an extension, no `.' precedes it; for instance, `cmr10.600gf'.
 
    The output filename is the basename of GFNAME extended with `.dvi',
 e.g., `gftodvi /wherever/foo.600gf' creates `./foo.dvi'.
@@ -1852,12 +1855,22 @@ with labels, titles, and annotations, as specified in Appendix H
    * "slant font" (no default): for diagonal lines, which are otherwise
      simulated using horizontal and vertical rules.
 
-
    To change the default fonts, you must use `special' commands in your
-Metafont source file.
+Metafont source file, typically via commands like `slantfont slantlj4'.
+There is no default slant font since no one printer is suitable as a
+default.  You can make your own by copying one of the existing files,
+such as `.../fonts/source/public/misc/slantlj4.mf' and then running
+`mf' on it.
+
+   For testing purposes, you may it useful to run `mf rtest' (hit
+RETURN when it stops) to get a `gf' file of a thorn glyph.  Or use
+`mfw' instead of `mf' to have the glyph(s) displayed on the screen.
+After that, `gftodvi rtest.2602gf' should produce `rtest.dvi', which
+you process as usual.
 
    The program accepts the following option, as well as the standard
 `-verbose', `-help', and `-version' (*note Common options::):
+
 `-overflow-label-offset=POINTS'
      Typeset the so-called overflow labels, if any, POINTS TeX points
      from the right edge of the character bounding box.  The default is
@@ -1937,7 +1950,7 @@ D.E. Knuth.)
      contains only MFT directives as described above.  The default
      style file is named `plain.mft', which defines this properly for
      programs using plain Metafont.  The MFT files is searched along the
-     `MFTINPUTS' path; see *Note Supported file formats:
+     `MFTINPUTS' path; see *note Supported file formats:
      (kpathsea)Supported file formats.
 
      Other examples of MFT style files are `cmbase.mft', which defines
@@ -2112,11 +2125,11 @@ File: web2c.info,  Node: Initial MetaPost,  Next: makempx invocation,  Prev: mpo
 `inimpost' is the "initial" form of MetaPost, which does lengthy
 initializations avoided by the "virgin" (`vir') form, so as to be
 capable of dumping `.mem' files (*note Memory dumps::).  For a detailed
-comparison of virgin and initial forms, see *Note Initial and virgin::.
+comparison of virgin and initial forms, see *note Initial and virgin::.
 In past releases, a separate program `inimpost' was installed for the
 initial form, but this is no longer the case.
 
-   For a list of options and other information, see *Note mpost
+   For a list of options and other information, see *note mpost
 invocation::.
 
    The principal memory dump file used with MetaPost is the default,
@@ -2138,8 +2151,8 @@ similar to those produced with Metafont in proof mode and GFtoDVI
 
    Another MetaPost mem file, named MetaFun, provides many advanced
 features.  It was developed and maintained by Pragma ADE.  The home
-page for MetaFun, and other MetaPost-related things from Pragma:
-`http://www.pragma-ade.com/metapost.htm'.
+page for MetaFun, other MetaPost-related things, and lots more from
+Pragma: `http://www.pragma-ade.com/'.
 
 
 File: web2c.info,  Node: makempx invocation,  Next: dvitomp invocation,  Prev: Initial MetaPost,  Up: MetaPost
@@ -2255,6 +2268,9 @@ so-called MPX file.  This program is generally invoked only by MakeMPX
 If MPXFILE is not specified, the output goes to the basename of DVIFILE
 extended with `.mpx', e.g., `dvitomp /wherever/foo.dvi' creates
 `./foo.mpx'.
+
+   DVItoMP supports Dvips-style color specials, such as `color push
+NAME' and `color pop', outputting them as `withcolor' MetaPost commands.
 
    The only options are `-help' and `-version' (*note Common options::).
 
@@ -2950,7 +2966,7 @@ obsolete.
    Font files with the `.pl' (property list) suffix are the plain text
 (human-readable) analog of the binary `.tfm' files.  The TFtoPL and
 PLtoTF programs convert between the two formats (*note tftopl
-invocation:: and *Note pltotf invocation::).
+invocation:: and *note pltotf invocation::).
 
    Font files with the `.mf' suffix are in Metafont source format.
 These are the files used by Metafont to generate rastered fonts for
@@ -2958,10 +2974,10 @@ specific typefaces at specific magnifications for the specific
 resolution and type of mapping used by your device.
 
    The suffix `.vf' identifies "virtual font" files, for which `.vpl'
-is the human-readable analog.  See *Note vftovp invocation::, and *Note
+is the human-readable analog.  See *Note vftovp invocation::, and *note
 vptovf invocation::.  For further discussion of virtual fonts, see
 `CTAN:/doc/virtual-fonts.knuth', `CTAN:/help/virtualfonts.txt', and
-*Note Virtual fonts: (dvips)Virtual fonts.
+*note Virtual fonts: (dvips)Virtual fonts.
 
    (This section is based on documentation in the original Unix TeX
 distribution by Pierre MacKay and Elizabeth Tachikawa.)
@@ -3756,7 +3772,7 @@ Index
                                                               (line  15)
 * -output-directory:                     Common options.      (line  67)
 * -output-level=N:                       dvitype invocation.  (line  36)
-* -overflow-label-offset=POINTS:         gftodvi invocation.  (line  49)
+* -overflow-label-offset=POINTS:         gftodvi invocation.  (line  59)
 * -page-start=PAGE-SPEC <1>:             dvitype invocation.  (line  50)
 * -page-start=PAGE-SPEC:                 dvicopy invocation.  (line  28)
 * -parse-first-line:                     Common options.      (line  77)
@@ -3925,6 +3941,7 @@ Index
 * cmbase.mf:                             Initial Metafont.    (line  28)
 * cmbase.mft:                            mft invocation.      (line  75)
 * cmmf.base not recommended:             Initial Metafont.    (line  28)
+* color, in DVItoMP:                     dvitomp invocation.  (line  16)
 * comments, in TCX files:                TCX files.           (line  71)
 * comments, MFT control:                 mft invocation.      (line  24)
 * common options:                        Common options.      (line   6)
@@ -4334,7 +4351,7 @@ Index
 * non-Unix system, compiling on:         Additional targets.  (line  12)
 * NUL, not allowed in filenames:         \input filenames.    (line  35)
 * octal character codes, in TCX files:   TCX files.           (line  78)
-* offset for overflow labels:            gftodvi invocation.  (line  49)
+* offset for overflow labels:            gftodvi invocation.  (line  59)
 * older-than, file comparisons:          newer invocation.    (line   6)
 * Omega:                                 TeX extensions.      (line  16)
 * online Metafont graphics:              Online Metafont graphics.
@@ -4350,7 +4367,7 @@ Index
                                                               (line   6)
 * output files, written by TeX programs: tex invocation.      (line  51)
 * output_comment for DVI files:          tex invocation.      (line 120)
-* overflow label offset:                 gftodvi invocation.  (line  49)
+* overflow label offset:                 gftodvi invocation.  (line  59)
 * packet length:                         pktype invocation.   (line  50)
 * page, starting <1>:                    dvitype invocation.  (line  50)
 * page, starting:                        dvicopy invocation.  (line  28)
@@ -4671,78 +4688,78 @@ Index
 
 
 Tag Table:
-Node: Top2979
-Node: Introduction3977
-Node: Installation7157
-Node: configure options9321
-Node: Compile-time options11403
-Node: Additional targets12529
-Node: Triptrap13810
-Node: Runtime options15339
-Node: Commonalities17111
-Node: Option conventions17716
-Node: Common options18940
-Node: Path searching23452
-Node: Output file location24474
-Node: Three programs25514
-Node: Initial and virgin26273
-Node: Memory dumps27373
-Node: Creating memory dumps27840
-Node: Determining the memory dump to use29101
-Node: Hardware and memory dumps30725
-Node: Editor invocation33194
-Node: \input filenames33924
-Node: TeX36917
-Node: tex invocation38007
-Node: Initial TeX45939
-Node: Formats47428
-Node: Languages and hyphenation50367
-Node: MLTeX50795
-Node: \charsubdef52290
-Node: \tracingcharsubdef54616
-Node: TCX files55191
-Node: patgen invocation60615
-Node: IPC and TeX61332
-Node: TeX extensions61933
-Node: Metafont63234
-Node: mf invocation64522
-Node: Initial Metafont68405
-Node: Modes70158
-Node: Online Metafont graphics72413
-Node: gftodvi invocation75686
-Node: mft invocation77945
-Node: MetaPost82000
-Node: mpost invocation83021
-Node: Initial MetaPost88206
-Node: makempx invocation90018
-Node: dvitomp invocation94023
-Node: dmp invocation94652
-Node: mpto invocation98673
-Node: newer invocation99655
-Node: BibTeX100592
-Node: bibtex invocation100953
-Node: Basic BibTeX style files103278
-Node: WEB104620
-Node: tangle invocation105903
-Node: weave invocation108026
-Node: pooltype invocation109434
-Node: DVI utilities110564
-Node: dvicopy invocation111508
-Node: dvitype invocation112806
-Node: dvitype output example115161
-Node: Font utilities118212
-Node: Font file formats119392
-Node: gftopk invocation122691
-Node: pktogf invocation123895
-Node: pktype invocation125074
-Node: gftype invocation127909
-Node: tftopl invocation132425
-Node: pltotf invocation137059
-Node: vftovp invocation138124
-Node: vptovf invocation140408
-Node: Font utilities available elsewhere141462
-Node: Legalisms143882
-Node: References146053
-Node: Index150438
+Node: Top3053
+Node: Introduction4052
+Node: Installation7233
+Node: configure options9397
+Node: Compile-time options11479
+Node: Additional targets12605
+Node: Triptrap13886
+Node: Runtime options15415
+Node: Commonalities17187
+Node: Option conventions17792
+Node: Common options19016
+Node: Path searching23528
+Node: Output file location24550
+Node: Three programs25590
+Node: Initial and virgin26349
+Node: Memory dumps27449
+Node: Creating memory dumps27916
+Node: Determining the memory dump to use29177
+Node: Hardware and memory dumps30801
+Node: Editor invocation33270
+Node: \input filenames34000
+Node: TeX36993
+Node: tex invocation38083
+Node: Initial TeX46015
+Node: Formats47504
+Node: Languages and hyphenation50443
+Node: MLTeX50871
+Node: \charsubdef52366
+Node: \tracingcharsubdef54692
+Node: TCX files55267
+Node: patgen invocation60691
+Node: IPC and TeX61408
+Node: TeX extensions62009
+Node: Metafont63310
+Node: mf invocation64598
+Node: Initial Metafont68481
+Node: Modes70234
+Node: Online Metafont graphics72489
+Node: gftodvi invocation75762
+Node: mft invocation78584
+Node: MetaPost82639
+Node: mpost invocation83660
+Node: Initial MetaPost88845
+Node: makempx invocation90656
+Node: dvitomp invocation94661
+Node: dmp invocation95432
+Node: mpto invocation99453
+Node: newer invocation100435
+Node: BibTeX101372
+Node: bibtex invocation101733
+Node: Basic BibTeX style files104058
+Node: WEB105400
+Node: tangle invocation106683
+Node: weave invocation108806
+Node: pooltype invocation110214
+Node: DVI utilities111344
+Node: dvicopy invocation112288
+Node: dvitype invocation113586
+Node: dvitype output example115941
+Node: Font utilities118992
+Node: Font file formats120172
+Node: gftopk invocation123471
+Node: pktogf invocation124675
+Node: pktype invocation125854
+Node: gftype invocation128689
+Node: tftopl invocation133205
+Node: pltotf invocation137839
+Node: vftovp invocation138904
+Node: vptovf invocation141188
+Node: Font utilities available elsewhere142242
+Node: Legalisms144662
+Node: References146833
+Node: Index151218
 
 End Tag Table
