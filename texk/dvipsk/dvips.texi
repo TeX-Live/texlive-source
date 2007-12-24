@@ -3,7 +3,7 @@
 @settitle Dvips: A DVI-to-PostScript translator
 
 @set version 5.96dev
-@set month-year September 2007
+@set month-year December 2007
 
 @copying
 This manual documents Dvips version @value{version}
@@ -1077,13 +1077,20 @@ more information.
 @cindex papersize special, and no @samp{-t}
 Set the paper type to @var{papertype}, usually defined in one of the
 configuration files, along with the appropriate PostScript code to
-select it (@pxref{Config file paper sizes}).  You can also specify a
-@var{papertype} of @samp{landscape}, which rotates a document by 90
-degrees.  To rotate a document whose paper type is not the default, you
+select it (@pxref{Config file paper sizes}).
+@itemize @minus{}
+@item You can also specify a @var{papertype} of @samp{landscape},
+which rotates a document by 90 degrees.
+@item To rotate a document whose paper type is not the default, you
 can use the @samp{-t} option twice, once for the paper type, and once
-for @samp{landscape}.  You should not use any @samp{-t} option when
-@TeX{} writes a @samp{papersize} special, as is done by some @LaTeX{}
-packages, e.g., @samp{hyperref.sty}.
+for @samp{landscape}.
+@item In general, you should not use any @samp{-t} option when
+using a @samp{papersize} special, as some @LaTeX{} packages do, e.g.,
+@samp{hyperref.sty}.
+@item The exception is when using a nonstandard paper size that is not
+already defined in @file{config.ps}; in this case, you need to specify
+@samp{-t@tie{}unknown}.
+@end itemize
 
 @item -T @var{hsize},@var{vsize}
 @opindex -T @var{hsize},@var{vsize}
@@ -1623,11 +1630,12 @@ on the command line, that takes precedence.
 @cindex paper size, general
 
 Most @TeX{} documents at a particular site are designed to use the
-standard paper size (letter size in the United States, A4 in Europe).
-The Dvips program can be customized either sitewide or for a particular
-printer.
+local standard paper size (letter size in the United States, A4 in
+Europe).  The Dvips program can be customized either sitewide or for a
+particular printer.
 
 @cindex landscape orientation, defined
+@cindex portrait orientation, defined
 But many documents are designed for other paper sizes.  For instance,
 you may want to design a document that has the long edge of the paper
 horizontal.  This can be useful when typesetting booklets, brochures,
@@ -1636,11 +1644,12 @@ is called @dfn{landscape} orientation (the default orientation is
 @dfn{portrait}).  Alternatively, a document might be designed for ledger
 or A3 paper.
 
-Since the intended paper size is a document design decision, not a
-printing decision, such information should be given in the @TeX{} file
-and not on the Dvips command line.  For this reason, Dvips supports a
-@samp{papersize} special.  It is hoped that this special will become
-standard over time for @TeX{} previewers and other printer drivers.
+Since the intended paper size in these cases is a document design
+decision, not a printing decision, such information should be given in
+the @TeX{} file and not on the Dvips command line.  For this reason,
+Dvips supports a @samp{papersize} special.  It is hoped that this
+special will become standard over time for @TeX{} previewers and other
+printer drivers.
 
 Some @LaTeX{} packages, e.g., @samp{hyperref.sty}, write a
 @samp{papersize} special into the DVI file.  In this case, you need
@@ -1691,8 +1700,14 @@ Of course, such a @code{\special} only informs Dvips of the desired
 paper size; you must also adjust @code{\hsize} and @code{\vsize} in your
 @TeX{} document typeset to those dimensions.
 
+@findex unknown@r{, paper format for @samp{-t}}
+When using the @code{papersize} special, you generally should not also
+specify @code{-t} on the command line (@pxref{Option details}).  The
+exception is when using a nonstandard paper size that isn't
+predefined; in this case, use @code{-t@tie{}unknown}.
+
 The @code{papersize} special must occur somewhere on the first page of
-the document.
+the document.  Some packages, notably @samp{hyperref}, insert this special.
 
 
 @node Config file paper sizes
@@ -1773,21 +1788,28 @@ comment or two would be okay).  Also, some printers want
 setting the paper size.  There is no solution I could find that works
 for both (except maybe specifying both).
 
+When using a paper size that is not already defined in
+@file{config.ps}, you probably want to say @samp{-t@tie{}unknown} on
+the command line; the @code{unknown} paper size definition in
+@file{config.ps} has the requisite PostScript incantation to set the
+PostScript page size, as just described.
+
 @flindex mkdvipspapers
-The Perl 5 script @file{contrib/mkdvipspapers} in the distribution
-directory may help in determining appropriate paper size definitions.
+The Perl 5 script @file{contrib/configs/mkdvipspapers} in the
+distribution directory may help in determining appropriate paper size
+definitions.
 
 @flindex config.ps @r{paper sizes}
 @findex letter @r{paper size}
 @findex a4 @r{paper size}
-The default @code{letter} and @code{a4} paper size definitions in
-@file{config.ps} execute the @code{setpagedevice} operator if it
-exists (it was defined in PostScript Level 2), or the @samp{letter} or
-@samp{a4} operator if they exist (they are nonstandard and thus
-perhaps cause failures on certain (unknown) printers).  Not
-executing any page size definition at all confuses PostScript
-conversion programs such as @command{ps2pdf}, so we want to execute
-one if we can.
+Notwithstanding the above, the default @code{letter} and @code{a4}
+paper size definitions in @file{config.ps} execute the
+@code{setpagedevice} operator if it exists (it was defined in
+PostScript Level 2), or the @samp{letter} or @samp{a4} operator if
+they exist (they are nonstandard and thus perhaps cause failures on
+certain (unknown) printers).  Not executing any page size definition
+at all confuses PostScript conversion programs such as
+@command{ps2pdf}, so we want to execute one if we can.
 
 @findex letterSize @r{paper size}
 @findex A4size @r{paper size}
@@ -3641,7 +3663,7 @@ An alternative to Afm2tfm for creating virtual fonts is Alan Jeffrey's
 
 Afm2tfm allows you to specify a different encoding for a PostScript font
 (for a general introduction to encodings, @pxref{Encodings}). The 
-@samp{-t} options changes the @TeX{} encoding, @samp{-p} changes the
+@samp{-t} option changes the @TeX{} encoding, @samp{-p} changes the
 PostScript encoding, and @samp{-T} changes both simultaneously, as
 detailed in the sections below.
 
