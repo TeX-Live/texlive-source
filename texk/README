@@ -1,44 +1,32 @@
-This directory contains TeX-related programs that use the kpathsea
-library for configuration and path searching (and the library itself).
+$Id$
+Copyright 2006, 2007 TeX Users Group.
+(Originally written in 2006 by Karl Berry.)
+You may freely use, modify and/or distribute this file.
 
-For the simplest possible installation, see the beginning of
-kpathsea/INSTALL.
+This TeX Live directory contains the programs that use the kpathsea
+library for configuration and path searching, and the library itself.
 
-If you want to override the defaults, read both <program>/INSTALL (e.g.,
-web2c/INSTALL) and kpathsea/INSTALL.
+Some programs can be built on their own, but others, including kpathsea
+itself, cannot.  Instead, try configure --enable-tetex-build in .., or
+using the Build script there.  In general, for TeX Live we only test
+configuring the whole tree.
 
-Other files are not necessary reading for basic installation, but may
-prove helpful:
-- etc/unixtex.ftp describes how to obtain a TeX system by ftp or on
-  physical media, and some alternative TeX distributions.
-- README in each subdirectory briefly summarizes that directory.
-- NEWS in each subdirectory has noteworthy changes by release.
-- kpathsea/BUGS has bug reporting information.
-- kpathsea/CONFIGURE has generic instructions on running configure scripts.
+Upstream sources for the programs as last checked:
 
-Please send bug reports and suggestions for either the programs or the
-documentation, no matter how small, to tex-k@mail.tug.org.  But please
-read kpathsea/BUGS first.  (That file also tells you how to join the
-mailing list yourself, and how to receive announcements only.)
+afm2pl 0.7.03 - ok 5dec06
+  http://tex.aanhet.net/afm2pl/
 
-For general documentation on the coding and usage standards this
-distribution follows, see the GNU standards document
-http://www.gnu.org/prep/standards, especially the `Makefile
-Conventions', `Configuration', and `User Interfaces' sections.
+devnag - from devnag package installed in texmf-dist.
 
-The files in the etc/ directory are present for informational purposes.
-They are not used or installed by the programs.  For example, a copy of
-texinfo.tex is there in case you want to produce DVI files from the
-Texinfo manuals.
+dvipdfmx 20061211 - ok 14dec06
+  http://project.ktug.or.kr/dvipdfmx/snapshot/current/
+  -> http://www.ctan.org/tex-archive/dviware/dvipdfmx/
 
-If you know enough about TeX to be reading this, then you (or your
-institution) should consider joining the TeX Users Group
-(http://tug.org)) -- if you're already a member, thanks for your
-support!  TUG produces the periodicals TUGboat (http://tug.org/TUGboat),
-The PracTeX Journal (http://tug.org/pracjourn), sponsors an annual
-meeting and publishes the proceedings, and more.
+dvipng 1.9 - ok 5dec06
+  http://www.ctan.org/tex-archive/dviware/dvipng/
 
-This is free software.  See the files COPYING* for copying permissions.
+dvi2tty 5.3.1 - needs update 18may07
+  http://www.mesa.nl/pub/dvi2tty/
 
-Karl Berry
-Olaf Weber
+xdvik 22.84.10 - ok 4dec06
+  http://xdvi.sourceforge.net/

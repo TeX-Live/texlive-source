@@ -27,7 +27,7 @@ That should be it for normal builds.  Email tex-live@tug.org if problems.
 
 
 Running ./reautoconf here reruns autoconf, both old (the hacked 2.13
-we have here) and new (assumed to be in /usr/bin/autoconf).
+we have here) and new (assumed to be in /usr/bin/autoconf), as needed.
 
 Automadness:
 should be oldest > newest in this order (often used alternate names
