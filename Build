@@ -10,6 +10,7 @@ cd $mydir || exit 1
 
 : ${TL_WORKDIR=Work}
 
+LANG=C
 if test "x$1" != "x--no-clean"; then
   test -f Makefile && make clean 
   rm -rf $TL_WORKDIR inst
@@ -55,5 +56,5 @@ export GNUMAKE
          --datadir=$TL_INSTALL_DEST \
          $TL_XDVI_TOOLKIT \
          $TL_CONFIGURE_ARGS \
-         "$@" \
- && time $TL_MAKE $TL_TARGET)
+         "$@" |tee configure.log\
+ && time $TL_MAKE $TL_TARGET 2>&1|tee make.log)
