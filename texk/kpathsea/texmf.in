@@ -81,25 +81,25 @@ TEXMFSYSCONFIG = @texmf@-config
 
 % User texmf trees are allowed as follows.
 % This used to be HOMETEXMF.
-TEXMFHOME = $HOME/texmf
+TEXMFHOME = ~/texmf
 
 % TEXMFVAR, where texconfig stores variable runtime data.
 % With teTeX-3.0 or later, this must be set.
 % For sharing this tree with $TEXMFMAIN:
 %   TEXMFVAR = $TEXMFMAIN
 % For using a separate tree:
-%   TEXMFVAR = $HOME/.texmf-var  # teTeX 3.0 default
-TEXMFVAR = $HOME/.texlive2007/texmf-var
+%   TEXMFVAR = ~/.texmf-var  # teTeX 3.0 default
+TEXMFVAR = ~/.texlive2007/texmf-var
 
 % TEXMFCONFIG, where texconfig stores configuration data.
 % With teTeX-3.0 or later, this must be set.
 % For sharing this tree with $TEXMFMAIN:
 %   TEXMFCONFIG = $TEXMFMAIN
 % For using a separate tree:
-%   TEXMFCONFIG = $HOME/.texmf-config  # teTeX 3.0 default
+%   TEXMFCONFIG = ~/.texmf-config  # teTeX 3.0 default
 % For using a separate tree:
 %   TEXMFCONFIG = $SELFAUTOPARENT/texmf-config
-TEXMFCONFIG = $HOME/.texlive2007/texmf-config
+TEXMFCONFIG = ~/.texlive2007/texmf-config
 
 % Now, list all the texmf trees. If you have multiple trees you can
 % use shell brace notation, like this:
@@ -132,12 +132,12 @@ VARTEXFONTS = @vartexfonts@
 TEXMFDBS = {!!$TEXMFSYSCONFIG,!!$TEXMFSYSVAR,!!$TEXMFMAIN,!!$TEXMFLOCAL,!!$TEXMFDIST}
 
 % It may be convenient to define TEXMF like this:
-%   TEXMF = {$TEXMFHOME,!!$TEXMFLOCAL,!!$TEXMFMAIN,$HOME}
+%   TEXMF = {$TEXMFHOME,!!$TEXMFLOCAL,!!$TEXMFMAIN,~}
 % which allows users to set up entire texmf trees, and tells TeX to
 % look in places like ~/tex and ~/bibtex.  If you do this, define TEXMFDBS
 % like this:
 %   TEXMFDBS = $TEXMFHOME;$TEXMFLOCAL;$TEXMFMAIN;$VARTEXFONTS
-% or mktexlsr will generate an ls-R file for $HOME when called, which is
+% or mktexlsr will generate an ls-R file for ~ when called, which is
 % rarely desirable.  If you do this you'll want to define SYSTEXMF like
 % this:
 %   SYSTEXMF = $TEXMFLOCAL;$TEXMFMAIN;$TEXMFDIST
@@ -370,7 +370,7 @@ TRFONTS = /usr{/local,}/share/groff/{current/font,site-font}/devps
 MPSUPPORT = .;$TEXMF/metapost/support
 
 % For xdvi to find mime.types and .mailcap, if they do not exist in
-% $HOME.  These are single directories, not paths.
+% ~.  These are single directories, not paths.
 % (But the default mime.types, at least, may well suffice.)
 MIMELIBDIR = @prefix@/etc
 MAILCAPLIBDIR = @prefix@/etc
