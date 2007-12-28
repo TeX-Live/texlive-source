@@ -199,13 +199,16 @@ maininit P2C(int, ac, string *, av)
      the web (which would read the base file, etc.).  */
   parse_options (ac, av);
   
+  /* If -progname was not specified, default to the dump name.  */
+  if (!user_progname) user_progname = dump_name;
+  
   /* Do this early so we can inspect program_invocation_name and
      kpse_program_name below, and because we have to do this before
      any path searching.  */
   kpse_set_program_name (argv[0], user_progname);
 
   /* FIXME: gather engine names in a single spot. */
-  xputenv("engine", TEXMFENGINENAME);
+  xputenv ("engine", TEXMFENGINENAME);
   
   /* Were we given a simple filename? */
   main_input_file = get_input_file_name();
@@ -963,14 +966,12 @@ parse_options P2C(int, argc,  string *, argv)
       
     } else if (ARGUMENT_IS (DUMP_OPTION)) {
       dump_name = optarg;
-      if (!user_progname) user_progname = optarg;
       dumpoption = true;
 
 #ifdef TeX
     /* FIXME: Obsolete -- for backward compatibility only. */
     } else if (ARGUMENT_IS ("efmt")) {
       dump_name = optarg;
-      if (!user_progname) user_progname = optarg;
       dumpoption = true;
 #endif
 

@@ -1,3 +1,9 @@
+2007-12-28  Karl Berry  <karl@tug.org>
+
+	* texmfmp.c (parse_options): do not set user_progname at
+	DUMP_OPTION or efmt.
+	(maininit): instead, do it here, after options are read.
+
 2007-09-05  Karl Berry  <karl@tug.org>
 
 	* texmfmp.c (long_options): move output-directory output to be
