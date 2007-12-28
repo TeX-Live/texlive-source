@@ -1,6 +1,6 @@
 bin_PROGRAMS = lzmainfo
 lzmainfo_SOURCES = lzmainfo.c
-lzmainfo_LDADD = @top_srcdir@/src/liblzmadec/liblzmadec.la
+lzmainfo_LDADD = @top_builddir@/src/liblzmadec/liblzmadec.la
 AM_CFLAGS = -I@top_srcdir@/src/liblzmadec
 AM_LDFLAGS = -static
 

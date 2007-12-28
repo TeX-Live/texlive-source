@@ -189,7 +189,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CXXFLAGS = @SDK_CXXFLAGS@ -I../ -I../sdk -I../sdk/7zip
+AM_CXXFLAGS = @SDK_CXXFLAGS@ -I@top_srcdir@/src -I@top_srcdir@/src/sdk -I@top_srcdir@/src/sdk/7zip
 lzma_SOURCES = lzmp.cpp Exception.h \
 		../sdk/Common/C_FileIO.cpp \
 		../sdk/Common/CRC.cpp \

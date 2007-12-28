@@ -1,4 +1,4 @@
-AM_CXXFLAGS = @SDK_CXXFLAGS@ -I../ -I../sdk -I../sdk/7zip
+AM_CXXFLAGS = @SDK_CXXFLAGS@ -I@top_srcdir@/src -I@top_srcdir@/src/sdk -I@top_srcdir@/src/sdk/7zip
 
 # Avoid dependency on libstdc++:
 #AM_LDFLAGS = -lsupc++ -static-libgcc
