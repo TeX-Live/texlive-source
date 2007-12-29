@@ -56,5 +56,5 @@ export GNUMAKE
          --datadir=$TL_INSTALL_DEST \
          $TL_XDVI_TOOLKIT \
          $TL_CONFIGURE_ARGS \
-         "$@" |tee configure.log\
+         "$@" 2>&1|tee configure.log\
  && time $TL_MAKE $TL_TARGET 2>&1|tee make.log)
