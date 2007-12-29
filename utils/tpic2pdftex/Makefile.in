@@ -1,0 +1,53 @@
+# Makefile.in for tpic2pdftex
+# created from Makefile by Norbert Preining
+#
+#$Id: Makefile,v 1.21 2007/01/14 13:35:17 hahe Exp hahe $
+
+.PRECIOUS:	%.tpic %.tex
+
+VPATH = @srcdir@
+srcdir = @srcdir@
+SHELL = @SHELL@
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+
+INSTALL = @INSTALL@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+INSTALL_DATA = @INSTALL_DATA@
+
+first:
+	: nothing to be done
+
+all:	example.pdf beamerexample.pdf
+
+example.pdf:	example.tex
+	pdftex $<
+
+beamerexample.pdf:	beamerexample.tex
+	pdflatex $<
+
+%.tpic:	%.pic Makefile
+	pic -z -t $< > $@
+
+%.tex:	%.tpic
+	tpic2pdftex $< > $@
+
+install:
+	$(INSTALL) -d $(bindir)
+	$(INSTALL_SCRIPT) $(srcdir)/tpic2pdftex $(bindir)/tpic2pdftex
+
+clean:
+	- rm *.tex
+	- rm *.log
+	- rm *.toc
+	- rm *.out
+	- rm *.snm
+	- rm *.nav
+	- rm *.aux
+	- rm *.tpic
+
+allclean:
+	make clean
+	- rm *.pdf

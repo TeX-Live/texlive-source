@@ -4892,7 +4892,7 @@ test "$needs_obsdcompat" = yes \
 subdirs="$subdirs libs"
 
 
-PKGS='dialog lcdf-typetools lzma-utils mkjobtexmf pdfopen ps2eps psutils t1utils texi2html texinfo'
+PKGS='dialog lcdf-typetools lzma-utils mkjobtexmf pdfopen ps2eps psutils t1utils texi2html texinfo tpic2pdftex'
 ESUBDIRS=
 test -d utils || mkdir utils
 for pkg in $PKGS; do

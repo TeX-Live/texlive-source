@@ -34,3 +34,6 @@ AC_ARG_WITH([texi2html],
 
 AC_ARG_WITH([texinfo],
         [  --without-texinfo       do not build the texinfo package])
+
+AC_ARG_WITH([tpic2pdftex],
+        [  --without-tpic2pdftex   do not build the tpic2pdftex package])
