@@ -4,6 +4,7 @@
 #$Id: Makefile,v 1.21 2007/01/14 13:35:17 hahe Exp hahe $
 
 .PRECIOUS:	%.tpic %.tex
+.PHONY:		first all
 
 VPATH = @srcdir@
 srcdir = @srcdir@
@@ -20,7 +21,10 @@ INSTALL_DATA = @INSTALL_DATA@
 first:
 	: nothing to be done
 
-all:	example.pdf beamerexample.pdf
+all:
+	: nothing to be done
+
+doc:	example.pdf beamerexample.pdf
 
 example.pdf:	example.tex
 	pdftex $<
@@ -32,7 +36,7 @@ beamerexample.pdf:	beamerexample.tex
 	pic -z -t $< > $@
 
 %.tex:	%.tpic
-	tpic2pdftex $< > $@
+	$(srcdir)/tpic2pdftex $< > $@
 
 install:
 	$(INSTALL) -d $(bindir)
