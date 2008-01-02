@@ -1,3 +1,8 @@
+2008-01-02  Jonathan Kew  <jonathan_kew@sil.org>
+
+	* tex.ch (expand_depth, et al.): when calling expand, don't
+	recurse enough to clobber the os stack.  Default value 10000.
+
 2007-12-24  Karl Berry  <karl@tug.org>
 
 	* doc/web2c.texi (gftodvi invocation): talk a bit more about slant
