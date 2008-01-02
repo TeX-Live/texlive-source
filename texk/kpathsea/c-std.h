@@ -1,7 +1,7 @@
 /* c-std.h: the first header files.
 
    Copyright 1999, 2005 Olaf Weber
-   Copyright 1992, 93, 94, 95, 96, 97 Karl Berry.
+   Copyright 1992, 1993, 1994, 1995, 1996, 1997, 2008 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -51,11 +51,7 @@ extern char *getenv ();
 #else
 #ifndef STDC_HEADERS
 #ifndef ALLOC_RETURN_TYPE
-#ifdef DOSISH
 #define ALLOC_RETURN_TYPE void
-#else
-#define ALLOC_RETURN_TYPE char
-#endif /* not DOSISH */
 #endif /* not ALLOC_RETURN_TYPE */
 extern ALLOC_RETURN_TYPE *calloc (), *malloc (), *realloc ();
 #endif /* not STDC_HEADERS */
