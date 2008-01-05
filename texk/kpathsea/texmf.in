@@ -440,12 +440,11 @@ RUBYINPUTS   = .;$TEXMF/scripts/{$progname,$engine,}/ruby//
 %
 TEXMFCNF = {$SELFAUTOLOC,$SELFAUTODIR,$SELFAUTOPARENT}{,{/share,}/texmf{-local,}/web2c};/.$TETEXDIR;$TEXMF/web2c;@web2c@
 
-# $progname: kpathsea v. 3.5.3 or later overwrites this at runtime. To
-# avoid empty expansions from binaries linked against an earlier
-# version of the library, we set $progname and $engine to something
-# non-empty:
-progname = unset
-engine = unset
+# kpathsea 3.5.3 and later sets these at runtime. To avoid empty
+# expansions from binaries linked against an earlier version of the
+# library, we set $progname and $engine to something non-empty:
+progname = unsetprogname
+engine = unsetengine
 
 
 %  Part 2: Non-path options.
@@ -537,7 +536,7 @@ TEX = etex
 % For some xy-pic samples, you may need as much as 700000 words of memory.
 % For the vast majority of documents, 60000 or less will do.
 %
-main_memory = 1500000 % words of inimemory available; also applies to inimf&mp
+main_memory = 3000000 % words of inimemory available; also applies to inimf&mp
 extra_mem_top = 0     % extra high memory for chars, tokens, etc.
 extra_mem_bot = 0     % extra low memory for boxes, glue, breakpoints, etc.
 
@@ -547,7 +546,7 @@ extra_mem_bot.context = 4000000
 
 % Words of font info for TeX (total size of all TFM files, approximately).
 % Must be >= 20000 and <= 4000000 (without tex.ch changes).
-font_mem_size = 1200000
+font_mem_size = 2500000
 
 % Total number of fonts. Must be >= 50 and <= 2000 (without tex.ch changes).
 font_max = 2000
@@ -578,14 +577,14 @@ buf_size = 200000
 % for all known free hyphenation patterns to be loaded simultaneously
 % (as TeX Live does).
 %
-trie_size = 300000
+trie_size = 400000
 
 hyph_size = 8191        % prime number of hyphenation exceptions, >610, <32767.
                         % http://primes.utm.edu/curios/page.php/8191.html
 nest_size = 500         % simultaneous semantic levels (e.g., groups)
 max_in_open = 15        % simultaneous input files and error insertions
 param_size = 10000      % simultaneous macro parameters
-save_size = 5000        % for saving values outside current group
+save_size = 50000       % for saving values outside current group
 stack_size = 5000       % simultaneous input sources
 
 % These are Omega-specific.

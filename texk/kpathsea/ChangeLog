@@ -1,3 +1,12 @@
+2008-01-05  Karl Berry  <karl@tug.org>
+
+	* texmf.in (progname, engine): distinguish the unset values.
+	(main_memory): increase to 3M.
+	(font_mem_size): increase to 2.5M.
+	(trie_size): increase to 400K.
+	(save_size): increase to 50K.
+	These size changes per gwtex (except a bit more).
+
 2008-01-02  Karl Berry  <karl@tug.org>
 
 	* c-std.h (ALLOC_RETURN_TYPE) [!STDC_HEADERS]: just use void in
