@@ -1,5 +1,5 @@
 %
-% Copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
+% Copyright (c) 1996-2008 Han The Thanh, <thanh@pdftex.org>
 %
 % This file is part of pdfTeX.
 %
@@ -17,7 +17,7 @@
 % pdfTeX; if not, write to the Free Software Foundation, Inc., 51 Franklin
 % Street, Fifth Floor, Boston, MA 02110-1301 USA.
 %
-% $Id: pdftex.ch 114 2007-05-23 18:23:49Z ms $
+% $Id: pdftex.ch 330 2008-01-06 17:01:05Z oneiros $
 %
 @x [0.0] l.83 - WEAVE: we want the whole file
   \def\?##1]{\hbox{Changes to \hbox to 1em{\hfil##1}.\ }}
@@ -298,9 +298,11 @@ undump_things(font_check[null_font], font_ptr+1-null_font);
 
 @x [51.1]
   setup_bound_var (0)('hash_extra')(hash_extra);
+  setup_bound_var (10000)('expand_depth')(expand_depth);
 
 @y
   setup_bound_var (0)('hash_extra')(hash_extra);
+  setup_bound_var (10000)('expand_depth')(expand_depth);
   setup_bound_var (72)('pk_dpi')(pk_dpi);
 @z
 
