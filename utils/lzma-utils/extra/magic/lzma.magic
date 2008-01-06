@@ -1,0 +1,15 @@
+# LZMA (Lempel-Ziv-Markov chain-Algorithm) file format supported by:
+#   - 7-Zip <http://7-zip.org/>
+#   - LZMA SDK <http://7-zip.org/sdk.html>
+#   - LZMA Utils <http://tukaani.org/lzma/>
+#
+# Note that this is different format than the original format created
+# by LZMA_Alone from older versions of LZMA SDK. These files are
+# non-trivial to detect, because they have no magic bytes.
+#
+# This file has been put into the public domain by Lasse Collin.
+# Last updated: 2007-08-12
+
+0x00    ustring         \xFFLZMA\x00    lzma compressed data,
+>0x06	ubyte&0x10      0x00            single-block stream
+>0x06   ubyte&0x10      0x10            multi-block stream
