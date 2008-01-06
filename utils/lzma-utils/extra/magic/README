@@ -1,3 +1,0 @@
-Don't use either of these magic files, they suffer from limitations of
-the `file' command that doesn't allow matching non-contiguous byte
-ranges unless you want it to give empty messages. :(
