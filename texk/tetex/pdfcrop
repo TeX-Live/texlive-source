@@ -5,7 +5,7 @@ $^W=1; # turn warning on
 #
 # pdfcrop.pl
 #
-# Copyright (C) 2002, 2004 Heiko Oberdiek.
+# Copyright (C) 2002, 2004, 2005, 2008 Heiko Oberdiek.
 #
 # This program may be distributed and/or modified under the
 # conditions of the LaTeX Project Public License, either version 1.2
@@ -15,17 +15,17 @@ $^W=1; # turn warning on
 # and version 1.2 or later is part of all distributions of LaTeX
 # version 1999/12/01 or later.
 #
-# See file "readme.txt" for a list of files that belong to this project.
+# See file "README" for a list of files that belong to this project.
 #
 # This file "pdfcrop.pl" may be renamed to "pdfcrop"
 # for installation purposes.
 #
 my $file        = "pdfcrop.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
-my $version     = "1.5";
-my $date        = "2004/06/24";
+my $version     = "1.8";
+my $date        = "2008/01/09";
 my $author      = "Heiko Oberdiek";
-my $copyright   = "Copyright (c) 2002, 2004 by $author.";
+my $copyright   = "Copyright (c) 2002-2008 by $author.";
 #
 # Reqirements: Perl5, Ghostscript
 # History:
@@ -36,6 +36,11 @@ my $copyright   = "Copyright (c) 2002, 2004 by $author.";
 #   2002/11/29 v1.4: Option --papersize added.
 #   2004/06/24 v1.5: Clear map file entries so that pdfTeX
 #                    does not touch the fonts.
+#   2004/06/26 v1.6: Use mgs.exe instead of gswin32c.exe for MIKTEX.
+#   2005/03/11 v1.7: Support of spaces in file names
+#                    (open("-|") is used for ghostscript call).
+#   2008/01/09 v1.8: Fix for moving the temporary file to the output
+#                    file across file system boundaries.
 #
 
 ### program identification
@@ -51,6 +56,8 @@ $GS = "gs386"    if $^O =~ /dos/i;
 $GS = "gsos2"    if $^O =~ /os2/i;
 $GS = "gswin32c" if $^O =~ /mswin32/i;
 $GS = "gswin32c" if $^O =~ /cygwin/i;
+$GS = "mgs"      if defined($ENV{"TEXSYSTEM"}) and
+                    $ENV{"TEXSYSTEM"} =~ /miktex/i;
 
 # Windows detection (no SIGHUP)
 my $Win = 0;
@@ -195,10 +202,19 @@ $SIG{'__DIE__'} = \&clean;
 
 ### Calculation of BoundingBoxes
 
-my $cmd = "$::opt_gscmd -sDEVICE=bbox -dBATCH -dNOPAUSE ";
-$cmd .= "-sPAPERSIZE=$::opt_papersize " if $::opt_papersize;
-$cmd .= "-c save pop -f " . $inputfile;
-my $cmdpipe = $cmd . " 2>&1 1>$null |";
+my @gsargs = (
+    "-sDEVICE=bbox",
+    "-dBATCH",
+    "-dNOPAUSE",
+);
+push @gsargs, "-sPAPERSIZE=$::opt_papersize" if $::opt_papersize;
+push @gsargs,
+    "-c",
+    "save",
+    "pop",
+    "-f",
+    $inputfile
+;
 
 my $tmpfile = "$tmp.tex";
 push @unlink_files, $tmpfile;
@@ -251,26 +267,35 @@ END_TMP_HEAD
 
 print "* Running ghostscript for BoundingBox calculation ...\n"
     if $::opt_verbose;
-print "* Ghostscript pipe: $cmdpipe\n" if $::opt_debug;
+print "* Ghostscript call: $::opt_gscmd @gsargs\n" if $::opt_debug;
 
 my $page = 0;
-open(CMD, $cmdpipe) or
-    die "$Error Cannot call ghostscript!\n";
-while (<CMD>) {
-    my $bb = ($::opt_hires) ? "%%HiResBoundingBox" : "%%BoundingBox";
-    next unless
-        /^$bb:\s*([\.\d]+) ([\.\d]+) ([\.\d]+) ([\.\d]+)/o;
-    $page++;
-    print "* Page $page: $1 $2 $3 $4\n" if $::opt_verbose;
-    if ($::opt_clip) {
-        print TMP "\\pageclip $page [$1 $2 $3 $4][$llx $lly $urx $ury]\n";
+my $pid = open(KID_TO_READ, "-|");
+if ($pid) { # parent
+    while (<KID_TO_READ>) {
+        my $bb = ($::opt_hires) ? "%%HiResBoundingBox" : "%%BoundingBox";
+        next unless
+            /^$bb:\s*([\.\d]+) ([\.\d]+) ([\.\d]+) ([\.\d]+)/o;
+        $page++;
+        print "* Page $page: $1 $2 $3 $4\n" if $::opt_verbose;
+        if ($::opt_clip) {
+            print TMP "\\pageclip $page [$1 $2 $3 $4][$llx $lly $urx $ury]\n";
+        }
+        else {
+            my ($a, $b, $c, $d) = ($1 - $llx, $2 - $ury, $3 + $urx, $4 + $lly);
+            print TMP "\\page $page [$a $b $c $d]\n";
+        }
     }
-    else {
-        my ($a, $b, $c, $d) = ($1 - $llx, $2 - $ury, $3 + $urx, $4 + $lly);
-        print TMP "\\page $page [$a $b $c $d]\n";
-    }
+    close(KID_TO_READ)
+            || die "!!! Error: Execution of ghostscript failed: $?\n";
 }
-close(CMD);
+else { # child
+    open STDERR, '>&STDOUT' or die "!!! Error: Cannot redirect stderr: $!\n";
+    open STDOUT, ">$null" or die "!!! Error: Cannot write to $null!\n";
+    exec($::opt_gscmd, @gsargs)
+            || die "!!! Error: Ghostscript run failed: $!\n";
+    # NOT REACHED
+}
 
 print TMP "\\csname \@\@end\\endcsname\n\\end\n";
 close(TMP);
@@ -278,6 +303,7 @@ close(TMP);
 ### Run pdfTeX
 
 push @unlink_files, "$tmp.log";
+my $cmd;
 if ($::opt_verbose) {
     $cmd = "$::opt_pdftexcmd -interaction=nonstopmode $tmp";
 }
@@ -297,10 +323,14 @@ if ($?) {
 }
 
 ### Move temp file to output
-rename "$tmp.pdf", $outputfile or
-    die "$Error Cannot move `$tmp.pdf' to `$outputfile'!\n";
+if (!rename("$tmp.pdf", $outputfile)) {
+    use File::Copy;
+    move "$tmp.pdf", $outputfile or
+            die "$Error Cannot move `$tmp.pdf' to `$outputfile'!\n";
+}
 
-print "==> $page pages written on `$outputfile'.\n";
+print "==> $page page", (($page == 1) ? "" : "s"),
+      " written on `$outputfile'.\n";
 
 $exit_code = 0;
 cleanup();
