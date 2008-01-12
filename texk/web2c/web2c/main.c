@@ -267,7 +267,10 @@ main P2C(int, argc, string *, argv)
   xfclose (coerce, coerce_name);
 
   if (debug)
-    fprintf (stderr, "%d symbols.\n", next_sym_free);
+    {
+      fprintf (stderr, "%d symbols.\n", next_sym_free);
+      fprintf (stderr, "%d strings.\n", next_string_free);
+    }
 
   return EXIT_SUCCESS;
 }
