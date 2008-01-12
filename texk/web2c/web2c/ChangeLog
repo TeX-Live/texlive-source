@@ -1,3 +1,9 @@
+2008-01-12  Karl Berry  <karl@tug.org>
+
+	* web2c/main.c (max_strings, hash_prime, sym_table_size, unused):
+	increase substantially, per luatex.
+	ntg-pdftex mail from Akira, 10 Jan 2008 23:49:02.
+
 2007-10-23  Karl Berry  <karl@tug.org>
 
 	* common.defines (longinteger): make accessible to web sources.
