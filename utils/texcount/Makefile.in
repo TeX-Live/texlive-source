@@ -1,0 +1,40 @@
+# Makefile.in
+# Makefile.in for TeXCount
+#
+# Copyright 2008 by Heiko Oberdiek.
+#
+# The file is part of the TeX Live distribution and was written for 
+# inclusion of TeXCount (CTAN/support/texcount) into the Build process.
+#
+# Licensed under GPL
+#
+
+VPATH = @srcdir@
+srcdir = @srcdir@
+SHELL = @SHELL@
+
+prefix = @prefix@
+datarootdir = @datarootdir@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+
+INSTALL = @INSTALL@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+
+default all:
+
+texcount: TeXcount.pl
+	(echo "#! /usr/bin/env perl"; echo '$^W = 1;' ; tail --lines=+2 TeXcount.pl) > texcount
+install:
+	$(INSTALL) -d $(bindir)
+	$(INSTALL_SCRIPT) $(srcdir)/texcount $(bindir)/texcount
+
+uninstall:
+	-rm -f $(bindir)/texcount 
+
+clean:
+	-rm -f texcount
+
+distclean: clean
+	-rm -f Makefile config.status config.log config.cache
+

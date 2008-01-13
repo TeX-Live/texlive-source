@@ -1,0 +1,8 @@
+TeXcount.pl is a Perl script that counts the number of words in the 
+text of LaTeX files. It has rules for handling most of the common 
+macros and provieds colour coded output indicating which parts have 
+been counted. Go to
+  http://folk.uio.no/einarro/Comp/texwordcount.html
+for more information or to access the script online as a web service.
+
+The license is LaTeX Project Public License.
