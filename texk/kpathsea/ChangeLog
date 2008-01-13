@@ -1,5 +1,7 @@
 2008-01-13  Karl Berry  <karl@tug.org>
 
+	* remote.c-no: remove this stub.  Suggestion from Martin.
+
 	* mktexpk: use $MT_MKTEXDIR in the error message if making
 	PKDESTDIR fails, instead of hardwiring mktexdir.
 	From Javier, 7 Jan 2008 11:33:18.
