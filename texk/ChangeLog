@@ -1,3 +1,8 @@
+2008-01-13  Karl Berry  <karl@tug.org>
+
+	* withenable.ac (afm2pl, dtl): more --without options.
+	Found by Patrice.
+
 2007-01-10  Karl Berry  <karl@tug.org>
 
 	* dvipos/Makefile (DEFS): add -I../../../texk for

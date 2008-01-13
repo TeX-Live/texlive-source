@@ -1,11 +1,15 @@
 dnl withenable.ac: --with and --enable options.
 
+AC_ARG_WITH([afm2pl],
+	[  --without-afm2pl           do not build the afm2pl package])
 AC_ARG_WITH([bibtex8],
 	[  --without-bibtex8          do not build the bibtex8 package])
 AC_ARG_WITH([cjkutils],
 	[  --without-cjkutils         do not build the cjkutils package])
 AC_ARG_WITH([detex],
 	[  --without-detex            do not build the detex package])
+AC_ARG_WITH([devnag],
+	[  --without-devnag           do not build the devnag package])
 AC_ARG_WITH([dtl],
 	[  --without-dtl              do not build the dtl package])
 AC_ARG_WITH([dvi2tty],
