@@ -1,5 +1,9 @@
 2008-01-13  Karl Berry  <karl@tug.org>
 
+	* mktexpk: use $MT_MKTEXDIR in the error message if making
+	PKDESTDIR fails, instead of hardwiring mktexdir.
+	From Javier, 7 Jan 2008 11:33:18.
+
 	* kpsewhich.c (subdir_match): protect again loc going infinitely
 	negative.  Found by dak, 8 Jan 2008 14:51:08.
 

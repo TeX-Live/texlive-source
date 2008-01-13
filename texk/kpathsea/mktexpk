@@ -4,7 +4,8 @@
 # (If you change or delete the word `original' on the previous line,
 # installation won't write this script over yours.)
 # 
-# te@dbs.uni-hannover.de, kb@mail.tug.org, and infovore@xs4all.nl.
+# Originally written by Thomas Esser, Karl Berry, and Olaf Weber.
+# Report bugs to tex-k@tug.org.
 # Public domain.
 
 version='$Id: mktexpk,v 1.34 2005/06/21 10:49:10 olaf Exp $'
@@ -212,7 +213,7 @@ fi
 
 "$MT_MKTEXDIR" "$PKDESTDIR"
 if test ! -d "$PKDESTDIR"; then
-  echo "$progname: mktexdir $PKDESTDIR failed." >&2
+  echo "$progname: $MT_MKTEXDIR $PKDESTDIR failed." >&2
   exit 1
 fi
 
