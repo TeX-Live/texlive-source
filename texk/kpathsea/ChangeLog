@@ -1,3 +1,8 @@
+2008-01-13  Karl Berry  <karl@tug.org>
+
+	* kpsewhich.c (subdir_match): protect again loc going infinitely
+	negative.  Found by dak, 8 Jan 2008 14:51:08.
+
 2008-01-05  Karl Berry  <karl@tug.org>
 
 	* texmf.in (progname, engine): distinguish the unset values.

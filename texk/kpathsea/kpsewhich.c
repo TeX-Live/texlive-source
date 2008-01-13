@@ -1,7 +1,7 @@
 /* kpsewhich -- standalone path lookup and variable expansion for Kpathsea.
    Ideas from Thomas Esser, Pierre MacKay, and many others.
 
-   Copyright (C) 1995-2007 Karl Berry & Olaf Weber.
+   Copyright (C) 1995-2008 Karl Berry & Olaf Weber.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -188,7 +188,7 @@ subdir_match P2C(str_list_type, subdirs,  string *, matches)
     string s = xstrdup (matches[m]);
     for (loc = strlen (s); loc > 0 && !IS_DIR_SEP (s[loc-1]); loc--)
       ;
-    while (IS_DIR_SEP (s[loc-1])) {
+    while (loc > 0 && IS_DIR_SEP (s[loc-1])) {
       loc--;
     }
     s[loc] = 0;  /* wipe out basename */
