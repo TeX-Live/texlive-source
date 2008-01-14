@@ -2756,7 +2756,9 @@ lookup:
    * `--debug=NUM' sets the debugging options to NUM.  *Note
      Debugging::.
 
-   * `--var-value=VARIABLE' output the value of VARIABLE.
+   * `--var-value=VARIABLE' outputs the value of VARIABLE, expanding
+     `$' (*note Variable expansion:: and `~' (*note Tilde expansion::)
+     constructs, but not performing other expansions.
 
    * `--expand-braces=STRING' outputs the variable and brace expansion
      of STRING.  *Note Path expansion::.
@@ -3508,9 +3510,9 @@ Index
 * --enable-shared:                       configure options.   (line  27)
 * --engine=NAME:                         Path searching options.
                                                               (line  20)
-* --expand-braces=STRING:                Auxiliary tasks.     (line  14)
-* --expand-path=STRING:                  Auxiliary tasks.     (line  22)
-* --expand-var=STRING:                   Auxiliary tasks.     (line  17)
+* --expand-braces=STRING:                Auxiliary tasks.     (line  16)
+* --expand-path=STRING:                  Auxiliary tasks.     (line  24)
+* --expand-var=STRING:                   Auxiliary tasks.     (line  19)
 * --format=NAME:                         Path searching options.
                                                               (line  25)
 * --help:                                Standard options.    (line   8)
@@ -3524,7 +3526,7 @@ Index
                                                               (line 120)
 * --progname=NAME:                       Path searching options.
                                                               (line 129)
-* --show-path=NAME:                      Auxiliary tasks.     (line  39)
+* --show-path=NAME:                      Auxiliary tasks.     (line  41)
 * --srcdir, for building multiple architectures: configure scenarios.
                                                               (line  18)
 * --var-value=VARIABLE:                  Auxiliary tasks.     (line  12)
@@ -4641,20 +4643,20 @@ Node: Database format106913
 Node: Invoking kpsewhich107926
 Node: Path searching options108803
 Node: Auxiliary tasks113270
-Node: Standard options114944
-Node: TeX support115264
-Node: Supported file formats116555
-Node: File lookup123703
-Node: Glyph lookup124994
-Node: Basic glyph lookup126121
-Node: Fontmap127000
-Node: Fallback font129617
-Node: Suppressing warnings130582
-Node: Programming131687
-Node: Programming overview132200
-Node: Calling sequence134476
-Node: Program-specific files139505
-Node: Programming with config files140543
-Node: Index141843
+Node: Standard options115080
+Node: TeX support115400
+Node: Supported file formats116691
+Node: File lookup123839
+Node: Glyph lookup125130
+Node: Basic glyph lookup126257
+Node: Fontmap127136
+Node: Fallback font129753
+Node: Suppressing warnings130718
+Node: Programming131823
+Node: Programming overview132336
+Node: Calling sequence134612
+Node: Program-specific files139641
+Node: Programming with config files140679
+Node: Index141979
 
 End Tag Table

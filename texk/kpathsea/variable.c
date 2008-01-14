@@ -1,7 +1,7 @@
 /* variable.c: variable expansion.
 
-    Copyright 1997, 99, 2001, 02, 05 Olaf Weber.
-    Copyright 1993, 94, 95, 96 Karl Berry.
+    Copyright 1993, 1994, 1995, 1996, 2008 Karl Berry.
+    Copyright 1997, 1999, 2001, 2002, 2005 Olaf Weber.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -12,18 +12,16 @@
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
     Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public
-    License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-*/
+ 
+    You should have received a copy of the GNU Lesser General Public License
+    along with this library; if not, see <http://www.gnu.org/licenses/>.  */
 
 #include <kpathsea/config.h>
 
 #include <kpathsea/c-ctype.h>
 #include <kpathsea/cnf.h>
 #include <kpathsea/fn.h>
+#include <kpathsea/tilde.h>
 #include <kpathsea/variable.h>
 
 
@@ -34,28 +32,38 @@ kpse_var_value P1C(const_string, var)
 {
   string vtry, ret;
 
-  assert(kpse_program_name);
+  assert (kpse_program_name);
 
   /* First look for VAR.progname. */
-  vtry = concat3(var, ".", kpse_program_name);
+  vtry = concat3 (var, ".", kpse_program_name);
   ret = getenv (vtry);
   free (vtry);
 
   if (!ret || !*ret) {
     /* Now look for VAR_progname. */
-    vtry = concat3(var, "_", kpse_program_name);
+    vtry = concat3 (var, "_", kpse_program_name);
     ret = getenv (vtry);
     free (vtry);
   }
 
+  /* Just plain VAR.  */
   if (!ret || !*ret)
     ret = getenv (var);
 
+  /* Not in the environment; check a config file.  */
   if (!ret || !*ret)
     ret = kpse_cnf_get (var);
 
-  if (ret)
-    ret = kpse_var_expand (ret);
+  /* We have a value; do variable and tilde expansion.  We want to use ~
+     in the cnf files, to adapt nicely to Windows and to avoid extra /'s
+     (see tilde.c), but we also want kpsewhich -var-value=foo to not
+     have any literal ~ characters, so our shell scripts don't have to
+     worry about doing the ~ expansion.  */
+  if (ret) {
+    string tmp = kpse_var_expand (ret);
+    ret = kpse_tilde_expand (tmp);
+    free (tmp);
+  }
 
 #ifdef KPSE_DEBUG
   if (KPSE_DEBUG_P (KPSE_DEBUG_VARS))

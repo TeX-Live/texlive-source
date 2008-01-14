@@ -1,6 +1,6 @@
 /* variable.h: Declare variable expander.
 
-   Copyright (C) 1993, 95 Karl Berry.
+   Copyright (C) 1993, 1995, 2008 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -12,11 +12,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    Lesser General Public License for more details.
 
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-*/
+   You should have received a copy of the GNU Lesser General Public License
+   along with this library; if not, see <http://www.gnu.org/licenses/>.  */
 
 #ifndef KPATHSEA_VARIABLE_H
 #define KPATHSEA_VARIABLE_H
@@ -29,7 +26,7 @@
    file value, or NULL.  */
 extern KPSEDLL string kpse_var_value P1H(const_string var);
 
-/* Expand $VAR and ${VAR} references in SRC, returning the (always newly
+/* Expand $VAR, ${VAR}, and ~ references in SRC, returning the (always newly
    dynamically-allocated) result.  An unterminated ${ or any other
    character following $ produce error messages, and that part of SRC is
    ignored.  In the $VAR form, the variable name consists of consecutive

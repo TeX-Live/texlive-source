@@ -1220,7 +1220,9 @@ lookup:
 
 @item
 @opindex --var-value=@var{variable}
-@samp{--var-value=@var{variable}} output the value of @var{variable}.
+@samp{--var-value=@var{variable}} outputs the value of @var{variable},
+expanding @samp{$} (@pxref{Variable expansion} and @samp{~} (@pxref{Tilde
+expansion}) constructs, but not performing other expansions.
 
 @item
 @opindex --expand-braces=@var{string}
