@@ -1,3 +1,7 @@
+2008-01-14  Karl Berry  <karl@tug.org>
+
+	* pdfcrop: update to 1.8 from CTAN.
+
 2007-11-03  Karl Berry  <karl@tug.org>
 
 	* texlinks.man: --unlink, sort.  From Edd.
