@@ -3,7 +3,7 @@
 @settitle Kpathsea: A library for path searching
 
 @set version 3.5.6dev
-@set month-year May 2007
+@set month-year January 2008
 
 @c Define new indices for commands, filenames, and options.
 @defcodeindex cm
@@ -35,7 +35,7 @@
 This file documents the Kpathsea library for path searching.
 
 Copyright @copyright{} 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
-2004, 2005, 2007 Karl Berry & Olaf Weber.
+2004, 2005, 2007, 2008 Karl Berry & Olaf Weber.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -675,8 +675,11 @@ Variable expansion is implemented in the source file
 @cindex expansion, tilde
 
 @vindex HOME@r{, as ~ expansion}
+@vindex USERPROFILE@r{, as ~ expansion}
 A leading @samp{~} in a path element is replaced by the value of the
-environment variable @code{HOME}, or @file{.} if @code{HOME} is not set.
+environment variable @code{HOME}, or @file{.} if @code{HOME} is not
+set.  On Windows, the environment variable @code{USERPROFILE} is
+checked instead of @code{HOME}.
 
 A leading @samp{~@var{user}} in a path element is replaced by
 @var{user}'s home directory from the system @file{passwd} database.

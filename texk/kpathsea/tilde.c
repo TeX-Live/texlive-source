@@ -1,7 +1,7 @@
 /* tilde.c: Expand user's home directories.
 
-    Copyright 1997, 98, 2005, Olaf Weber.
-    Copyright 1993, 95, 96, 97 Karl Berry.
+    Copyright 1997, 1998, 2005, Olaf Weber.
+    Copyright 1993, 1995, 1996, 1997, 2008 Karl Berry.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -13,11 +13,8 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
     Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public
-    License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-*/
+   You should have received a copy of the GNU Lesser General Public License
+   along with this library; if not, see <http://www.gnu.org/licenses/>.  */
 
 #include <kpathsea/config.h>
 
@@ -28,6 +25,11 @@
 #include <pwd.h>
 #endif
 
+#ifdef WIN32
+#define HOMEVAR "USERPROFILE"
+#else
+#define HOMEVAR "HOME"
+#endif
 
 /* If NAME has a leading ~ or ~user, Unix-style, expand it to the user's
    home directory, and return a new malloced string.  If no ~, or no
@@ -62,7 +64,7 @@ kpse_tilde_expand P1C(const_string, name)
   /* If a bare tilde, return the home directory or `.'.  (Very unlikely
      that the directory name will do anyone any good, but ...  */
   } else if (name[1] == 0) {
-    home = getenv ("HOME");
+    home = getenv (HOMEVAR);
     if (!home) {
       home = ".";
     }
@@ -72,7 +74,7 @@ kpse_tilde_expand P1C(const_string, name)
      Should really check for doubled intermediate slashes, too.  */
   } else if (IS_DIR_SEP (name[1])) {
     unsigned c = 1;
-    home = getenv ("HOME");
+    home = getenv (HOMEVAR);
     if (!home) {
       home = ".";
     }

@@ -14,7 +14,7 @@ END-INFO-DIR-ENTRY
    This file documents the Kpathsea library for path searching.
 
    Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004,
-2005, 2007 Karl Berry & Olaf Weber.
+2005, 2007, 2008 Karl Berry & Olaf Weber.
 
    Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -38,7 +38,7 @@ Kpathsea library
 
 This manual documents how to install and use the Kpathsea library for
 filename lookup.  It corresponds to version 3.5.6dev, released in
-May 2007.
+January 2008.
 
 * Menu:
 
@@ -59,7 +59,7 @@ File: kpathsea.info,  Node: Introduction,  Next: Installation,  Prev: Top,  Up: 
 **************
 
 This manual corresponds to version 3.5.6dev of the Kpathsea library,
-released in May 2007.
+released in January 2008.
 
    The library's fundamental purpose is to return a filename from a
 list of directories specified by the user, similar to what shells do
@@ -2309,7 +2309,8 @@ File: kpathsea.info,  Node: Tilde expansion,  Next: Brace expansion,  Prev: Vari
 ---------------------
 
 A leading `~' in a path element is replaced by the value of the
-environment variable `HOME', or `.' if `HOME' is not set.
+environment variable `HOME', or `.' if `HOME' is not set.  On Windows,
+the environment variable `USERPROFILE' is checked instead of `HOME'.
 
    A leading `~USER' in a path element is replaced by USER's home
 directory from the system `passwd' database.
@@ -3627,7 +3628,7 @@ Index
 * .web:                                  Supported file formats.
                                                               (line  43)
 * / may not be /:                        Searching overview.  (line  13)
-* /, trailing in home directory:         Tilde expansion.     (line  18)
+* /, trailing in home directory:         Tilde expansion.     (line  19)
 * //:                                    Subdirectory expansion.
                                                               (line   6)
 * /afs/... , installing into:            Installing files.    (line  32)
@@ -4306,7 +4307,7 @@ Index
 * retrieving TeX:                        unixtex.ftp.         (line   6)
 * right-hand side of variable assignments: Config files.      (line  44)
 * Rokicki, Tom:                          History.             (line  12)
-* root user:                             Tilde expansion.     (line  18)
+* root user:                             Tilde expansion.     (line  19)
 * runtime configuration files:           Config files.        (line   6)
 * runtime debugging:                     Debugging.           (line   6)
 * Sauter fonts, and dynamic source creation: mktex scripts.   (line   6)
@@ -4478,11 +4479,11 @@ Index
 * TFMFONTS:                              Supported file formats.
                                                               (line 172)
 * tilde expansion:                       Tilde expansion.     (line   6)
-* tilde.c:                               Tilde expansion.     (line  24)
+* tilde.c:                               Tilde expansion.     (line  25)
 * time system call:                      Logging.             (line  15)
 * tolerance for glyph lookup:            Basic glyph lookup.  (line  15)
 * total disk space:                      Disk space.          (line   6)
-* trailing / in home directory:          Tilde expansion.     (line  18)
+* trailing / in home directory:          Tilde expansion.     (line  19)
 * trailing colons:                       Default expansion.   (line   6)
 * TRFONTS:                               Supported file formats.
                                                               (line 177)
@@ -4515,6 +4516,7 @@ Index
 * USE_TEXMFVAR:                          mktex configuration. (line 122)
 * USE_VARTEXFONTS:                       mktex configuration. (line 112)
 * Usenet TeX newsgroup:                  Mailing lists.       (line  29)
+* USERPROFILE, as ~ expansion:           Tilde expansion.     (line   6)
 * varfonts:                              mktex configuration. (line 106)
 * variable expansion:                    Variable expansion.  (line   6)
 * variable.c:                            Variable expansion.  (line  32)
@@ -4574,85 +4576,85 @@ Index
 
 
 Tag Table:
-Node: Top1469
-Node: Introduction2114
-Node: History4092
-Node: Installation8184
-Node: Simple installation8974
-Node: Custom installation12557
-Node: Disk space13731
-Node: Kpathsea application distributions14615
-Node: Changing search paths15730
-Node: Default path features16912
-Node: Default path generation19048
-Node: Running configure20491
-Node: configure shells21542
-Node: configure options22594
-Node: configure environment24101
-Node: configure scenarios25903
-Node: Shared library27489
-Node: Running make28503
-Node: Installing files30550
-Node: Cleaning up32497
-Node: Filename database generation33545
-Node: mktex scripts34112
-Node: mktex configuration35069
-Node: mktex script names40613
-Node: mktex script arguments41711
-Node: Installation testing42601
-Node: Security42965
-Node: TeX directory structure45532
-Node: unixtex.ftp49954
-Node: Electronic distribution51969
-Node: CD-ROM distribution54734
-Node: Other TeX packages55704
-Node: Reporting bugs57000
-Node: Bug checklist57740
-Node: Mailing lists61442
-Node: Debugging62801
-Node: Logging67873
-Node: Common problems69743
-Node: Unable to find files70574
-Node: Slow path searching72985
-Node: Unable to generate fonts74362
-Node: TeX or Metafont failing76871
-Node: Empty Makefiles78749
-Node: XtStrings79979
-Node: dlopen80815
-Node: ShellWidgetClass81633
-Node: Pointer combination warnings83265
-Node: Path searching83654
-Node: Searching overview84301
-Node: Path sources87673
-Node: Config files88744
-Node: Path expansion92144
-Node: Default expansion93093
-Node: Variable expansion95163
-Node: Tilde expansion96566
-Node: Brace expansion97464
-Node: KPSE_DOT expansion98569
-Node: Subdirectory expansion99082
-Node: Filename database101431
-Node: ls-R102745
-Node: Filename aliases105639
-Node: Database format106817
-Node: Invoking kpsewhich107830
-Node: Path searching options108707
-Node: Auxiliary tasks113174
-Node: Standard options114848
-Node: TeX support115168
-Node: Supported file formats116459
-Node: File lookup123607
-Node: Glyph lookup124898
-Node: Basic glyph lookup126025
-Node: Fontmap126904
-Node: Fallback font129521
-Node: Suppressing warnings130486
-Node: Programming131591
-Node: Programming overview132104
-Node: Calling sequence134380
-Node: Program-specific files139409
-Node: Programming with config files140447
-Node: Index141747
+Node: Top1475
+Node: Introduction2124
+Node: History4106
+Node: Installation8198
+Node: Simple installation8988
+Node: Custom installation12571
+Node: Disk space13745
+Node: Kpathsea application distributions14629
+Node: Changing search paths15744
+Node: Default path features16926
+Node: Default path generation19062
+Node: Running configure20505
+Node: configure shells21556
+Node: configure options22608
+Node: configure environment24115
+Node: configure scenarios25917
+Node: Shared library27503
+Node: Running make28517
+Node: Installing files30564
+Node: Cleaning up32511
+Node: Filename database generation33559
+Node: mktex scripts34126
+Node: mktex configuration35083
+Node: mktex script names40627
+Node: mktex script arguments41725
+Node: Installation testing42615
+Node: Security42979
+Node: TeX directory structure45546
+Node: unixtex.ftp49968
+Node: Electronic distribution51983
+Node: CD-ROM distribution54748
+Node: Other TeX packages55718
+Node: Reporting bugs57014
+Node: Bug checklist57754
+Node: Mailing lists61456
+Node: Debugging62815
+Node: Logging67887
+Node: Common problems69757
+Node: Unable to find files70588
+Node: Slow path searching72999
+Node: Unable to generate fonts74376
+Node: TeX or Metafont failing76885
+Node: Empty Makefiles78763
+Node: XtStrings79993
+Node: dlopen80829
+Node: ShellWidgetClass81647
+Node: Pointer combination warnings83279
+Node: Path searching83668
+Node: Searching overview84315
+Node: Path sources87687
+Node: Config files88758
+Node: Path expansion92158
+Node: Default expansion93107
+Node: Variable expansion95177
+Node: Tilde expansion96580
+Node: Brace expansion97560
+Node: KPSE_DOT expansion98665
+Node: Subdirectory expansion99178
+Node: Filename database101527
+Node: ls-R102841
+Node: Filename aliases105735
+Node: Database format106913
+Node: Invoking kpsewhich107926
+Node: Path searching options108803
+Node: Auxiliary tasks113270
+Node: Standard options114944
+Node: TeX support115264
+Node: Supported file formats116555
+Node: File lookup123703
+Node: Glyph lookup124994
+Node: Basic glyph lookup126121
+Node: Fontmap127000
+Node: Fallback font129617
+Node: Suppressing warnings130582
+Node: Programming131687
+Node: Programming overview132200
+Node: Calling sequence134476
+Node: Program-specific files139505
+Node: Programming with config files140543
+Node: Index141843
 
 End Tag Table

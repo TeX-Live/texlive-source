@@ -1,3 +1,10 @@
+2008-01-14  Karl Berry  <karl@tug.org>
+
+	* tilde.c (HOMEVAR): new #define; "USERPROFILE" on Windows,
+	"HOME" else.
+	* tilde.h: adjust comments.
+	* kpathsea.texi (Tilde expansion): document this.
+
 2008-01-13  Karl Berry  <karl@tug.org>
 
 	* remote.c-no: remove this stub.  Suggestion from Martin.

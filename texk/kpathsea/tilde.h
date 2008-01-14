@@ -1,6 +1,6 @@
 /* tilde.h: Declare tilde expander.
 
-   Copyright 1993 Karl Berry.
+   Copyright 1993, 2008 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -12,11 +12,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    Lesser General Public License for more details.
 
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-*/
+   You should have received a copy of the GNU Lesser General Public License
+   along with this library; if not, see <http://www.gnu.org/licenses/>.  */
 
 #ifndef KPATHSEA_TILDE_H
 #define KPATHSEA_TILDE_H
@@ -25,8 +22,9 @@
 #include <kpathsea/types.h>
 
 
-/* Replace a leading ~ or ~name in FILENAME with getenv ("HOME") or
-   name's home directory, respectively.  FILENAME may not be null.  */
+/* Replace a leading ~ or ~NAME in FILENAME with getenv ("HOME"), or
+   getenv ('USERPROFILE") on Windows, or with NAME's home directory,
+   respectively.  Excise trailing slashes.  FILENAME may not be null.  */
 
 extern string kpse_tilde_expand P1H(const_string filename);
 
