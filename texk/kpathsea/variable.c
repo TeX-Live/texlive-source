@@ -61,8 +61,13 @@ kpse_var_value P1C(const_string, var)
      worry about doing the ~ expansion.  */
   if (ret) {
     string tmp = kpse_var_expand (ret);
+    if (tmp != ret) {
+      free (ret);
+    }
     ret = kpse_tilde_expand (tmp);
-    free (tmp);
+    if (ret != tmp) {
+      free (tmp);
+    }
   }
 
 #ifdef KPSE_DEBUG

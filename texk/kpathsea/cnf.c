@@ -1,7 +1,7 @@
 /* cnf.c: read config files.
 
+   Copyright 1994, 1995, 1996, 1997, 2008 Karl Berry.
    Copyright 1997-2005 Olaf Weber.
-   Copyright 1994, 95, 96, 97 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -13,11 +13,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    Lesser General Public License for more details.
 
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-*/
+   You should have received a copy of the GNU Lesser General Public License
+   along with this library; if not, see <http://www.gnu.org/licenses/>.  */
 
 #include <kpathsea/config.h>
 #include <kpathsea/c-fopen.h>
@@ -251,5 +248,4 @@ kpse_cnf_get P1C(const_string, name)
   }
   
   return ret;
-
 }

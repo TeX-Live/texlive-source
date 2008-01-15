@@ -1,3 +1,7 @@
+2008-01-15  Karl Berry  <karl@tug.org>
+
+	* variable.c (kpse_var_value): only free if new memory.
+
 2008-01-14  Karl Berry  <karl@tug.org>
 
 	* variable.c (kpse_var_value): also do ~ expansion.
