@@ -61,9 +61,9 @@ kpse_var_value P1C(const_string, var)
      worry about doing the ~ expansion.  */
   if (ret) {
     string tmp = kpse_var_expand (ret);
-    if (tmp != ret) {
-      free (ret);
-    }
+    /* We don't want to free the previous value of ret here; apparently
+       it's used later, somewhere, somehow.  (The end result was a crash
+       when making tex.fmt.)  Sigh.  */
     ret = kpse_tilde_expand (tmp);
     if (ret != tmp) {
       free (tmp);

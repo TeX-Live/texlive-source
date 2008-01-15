@@ -810,14 +810,14 @@ kpse_find_file_generic P4C(const_string, name,  kpse_file_format_type, format,
     for (ext = FMT_INFO.suffix; *ext; ext++) {
       string name_with_suffix = concat (name, *ext);
       target[count++] = name_with_suffix;
-      XRETALLOC(target, count+1, const_string);
+      XRETALLOC (target, count+1, const_string);
       if (use_fontmaps
           && (mapped_names = kpse_fontmap_lookup (name_with_suffix)) != NULL)
       {
         /* FIXME: we leak mapped_names and its elements, some of the time */
         while ((mapped_name = *mapped_names++) != NULL) {
           target[count++] = xstrdup (mapped_name);
-          XRETALLOC(target, count+1, const_string);
+          XRETALLOC (target, count+1, const_string);
         }
       }
     }
@@ -826,12 +826,12 @@ kpse_find_file_generic P4C(const_string, name,  kpse_file_format_type, format,
      searches are allowed or the name already includes a suffix. */
   if (name_has_suffix_already || !FMT_INFO.suffix_search_only) {
     target[count++] = xstrdup (name);
-    XRETALLOC(target, count+1, const_string);
+    XRETALLOC (target, count+1, const_string);
     if (use_fontmaps && (mapped_names = kpse_fontmap_lookup (name)) != NULL) {
       /* FIXME: we leak mapped_names and its elements, some of the time */
       while ((mapped_name = *mapped_names++) != NULL) {
         target[count++] = xstrdup (mapped_name);
-        XRETALLOC(target, count+1, const_string);
+        XRETALLOC (target, count+1, const_string);
       }
     }
   }
@@ -846,10 +846,8 @@ kpse_find_file_generic P4C(const_string, name,  kpse_file_format_type, format,
       free ((void *) target[count]);
     count = 0;
     /* We look for a subset of the previous set of names, so the
-     * target array is large enough.  In particular, we don't pound
-     * the disk for alternate names from the fontmaps.  Perhaps we
-     * should?
-     */
+       target array is large enough.  In particular, we don't pound
+       the disk for alternate names from the fontmaps.  */
     if (!name_has_suffix_already && FMT_INFO.suffix_search_only) {
       for (ext = FMT_INFO.suffix; *ext; ext++)
         target[count++] = concat (name, *ext);
@@ -868,7 +866,7 @@ kpse_find_file_generic P4C(const_string, name,  kpse_file_format_type, format,
   
   /* If nothing was found, call mktex* to create a missing file.  Since
      this returns a single string, morph it into a list.  */
-  if (!ret && must_exist) {
+  if (! *ret && must_exist) {
     ret = XTALLOC (2, string);
     ret[0] = kpse_make_tex (format, name);
     if (ret[0]) {

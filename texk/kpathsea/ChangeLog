@@ -1,6 +1,9 @@
 2008-01-15  Karl Berry  <karl@tug.org>
 
 	* variable.c (kpse_var_value): only free if new memory.
+	
+	* tex-file.c (kpse_find_file_generic): call kpse_make_tex if the
+	first element of the list is NULL, not the list itself.
 
 2008-01-14  Karl Berry  <karl@tug.org>
 
