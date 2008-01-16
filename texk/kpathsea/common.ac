@@ -1,3 +1,6 @@
+dnl Public domain.
+dnl Originally written by Karl Berry
+dnl
 dnl Common Autoconf sinclude file for kpathsea-using programs.  (Have to
 dnl use the m4 `sinclude' builtin instead of `include', since Autoconf
 dnl disables `include'.)

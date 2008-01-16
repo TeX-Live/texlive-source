@@ -4,8 +4,8 @@
    problem, don't. Edit the c-auto.h file created by configure,
    instead.  Even better, fix configure to give the right answer.
 
+   Copyright 1994-97, 2008 Karl Berry.
    Copyright 1997-99, 2002, 2005 Olaf Weber.
-   Copyright 1994-97 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,11 +17,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    Lesser General Public License for more details.
 
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-*/
+   You should have received a copy of the GNU Lesser General Public License
+   along with this library; if not, see <http://www.gnu.org/licenses/>.  */
 
 /* Guard against double inclusion. */
 #ifndef KPATHSEA_C_AUTO_H

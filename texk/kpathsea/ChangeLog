@@ -1,3 +1,7 @@
+2008-01-16  Karl Berry  <karl@tug.org>
+
+	* absolute.c through config.h: replace FSF physical address with url.
+
 2008-01-15  Karl Berry  <karl@tug.org>
 
 	* variable.c (kpse_var_value): only free if new memory.

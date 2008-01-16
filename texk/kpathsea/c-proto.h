@@ -1,7 +1,7 @@
 /* c-proto.h: macros to include or discard prototypes.
 
-   Copyright 1999, 2000, 01, 03, 04, 05 Olaf Weber.
-   Copyright 1992, 93, 95, 96 Karl Berry.
+   Copyright 1992, 1993, 1995, 1996, 2008 Karl Berry.
+   Copyright 1999, 2000, 2001, 2003, 2004, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -13,11 +13,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    Lesser General Public License for more details.
 
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-*/
+   You should have received a copy of the GNU Lesser General Public License
+   along with this library; if not, see <http://www.gnu.org/licenses/>.  */
 
 #ifndef KPATHSEA_C_PROTO_H
 #define KPATHSEA_C_PROTO_H
