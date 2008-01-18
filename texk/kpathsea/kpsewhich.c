@@ -202,7 +202,7 @@ subdir_match P2C(str_list_type, subdirs,  string *, matches)
       }
       if (FILESTRCASEEQ (subdir, s + loc - subdir_len)) {
         /* matched, save this one.  */
-        ret = XRETALLOC (ret, len + 1, string);
+        XRETALLOC (ret, len + 1, string);
         ret[len-1] = matches[m];
         len++;
       }

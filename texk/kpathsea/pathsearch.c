@@ -399,7 +399,7 @@ static string *
 search_list P4C(const_string, path,  const_string*, names,
                 boolean, must_exist,  boolean, all)
 {
-  str_list_type ret_list, uniq_list;
+  str_list_type ret_list;
   const_string* namep;
   string elt;
   boolean done = false;
