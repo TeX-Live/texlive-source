@@ -1,3 +1,10 @@
+2008-01-18  Karl Berry  <karl@tug.org>
+
+	* cpascal.h (recorder_record_input, recorder_record_output): need
+	const_string as arg to avoid warnings compiling *extra.c.
+	* texmfmp.c (user_progname): make const_string a la dump_name,
+	since we assign them.
+
 2008-01-02  Jonathan Kew  <jonathan_kew@sil.org>
 
 	* tex.ch (expand_depth, et al.): when calling expand, don't

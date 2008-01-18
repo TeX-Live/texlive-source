@@ -115,7 +115,7 @@ char **argv;
 int argc;
 
 /* If the user overrides argv[0] with -progname.  */
-static string user_progname;
+static const_string user_progname;
 
 /* The C version of what might wind up in DUMP_VAR.  */
 static const_string dump_name;
@@ -187,6 +187,7 @@ maininit P2C(int, ac, string *, av)
   /* Must be initialized before options are parsed.  */
   interactionoption = 4;
 
+  /* Have things to record as we go along.  */
   kpse_record_input = recorder_record_input;
   kpse_record_output = recorder_record_output;
 
@@ -200,7 +201,8 @@ maininit P2C(int, ac, string *, av)
   parse_options (ac, av);
   
   /* If -progname was not specified, default to the dump name.  */
-  if (!user_progname) user_progname = dump_name;
+  if (!user_progname)
+    user_progname = dump_name;
   
   /* Do this early so we can inspect program_invocation_name and
      kpse_program_name below, and because we have to do this before
