@@ -1,5 +1,6 @@
 /* access -- test for access permissions of a file.
 
+   Copyright 2008 Karl Berry.
    Copyright 1997-2001, 2005 Olaf Weber.
 
    This program is free software; you can redistribute it and/or modify
@@ -13,7 +14,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this library; if not, see <http://www.gnu.org/licenses/>.  */
+   along with this software; if not, see <http://www.gnu.org/licenses/>.  */
 
 #include <stdio.h>
 #include <kpathsea/config.h>

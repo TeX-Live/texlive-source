@@ -1,10 +1,11 @@
 /* Declarations for getopt.
 
+   Copyright 2008 Karl Berry.
    Copyright 1989,90,91,92,93,94,96,97,2000,05 Free Software Foundation, Inc.
 
    The original version of this file was part of the GNU C Library.
    Its master source is NOT part of the C library, however.
-   The master source lives in /gd/gnu/lib.
+   The master source lives in libc.
    This version has been modified for use with libkpathsea.
 
    This library is free software; you can redistribute it and/or
@@ -17,11 +18,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    Lesser General Public License for more details.
 
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-*/
+   You should have received a copy of the GNU Lesser General Public License
+   along with this library; if not, see <http://www.gnu.org/licenses/>.  */
 
 #ifndef _GETOPT_H
 #define _GETOPT_H 1

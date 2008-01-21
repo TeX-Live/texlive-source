@@ -1,3 +1,7 @@
+2008-01-21  Karl Berry  <karl@tug.org>
+
+	* db.c through magstep.c: replace FSF physical address with url.
+
 2008-01-18  Karl Berry  <karl@tug.org>
 
 	* kpsewhich.c (subdir_match): XRETALLOC is a statement not a function.
