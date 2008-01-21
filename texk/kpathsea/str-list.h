@@ -1,6 +1,6 @@
 /* str-list.h: Declarations for string lists.
 
-   Copyright 1993, 1994, 2007 Karl Berry.
+   Copyright 1993, 1994, 2007, 2008 Karl Berry.
    Copyright 1999, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or

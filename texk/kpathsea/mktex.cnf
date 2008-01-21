@@ -1,3 +1,5 @@
+# Public domain.
+# 
 # The mktex.cnf file, if it exists, can be used to tailor a setup to
 # local conditions.  If you use the mktex scripts, this file can contain
 # generic bourne shell code.  However, the C emulations of the scripts
