@@ -1058,14 +1058,17 @@ abbreviation is accepted.
 @cindex path searching options
 
 Kpsewhich looks up each non-option argument on the command line as a
-filename, and returns the first file found.  There is no option to
-return all the files with a particular name (you can run the Unix
-@samp{find} utility for that, @pxref{Invoking find,,, findutils, GNU
-find utilities}).
+filename, and returns the first file found.
 
 Various options alter the path searching behavior:
 
 @table @samp
+@item --all
+@opindex --all
+@cindex all matches, finding
+Report all matches found, one per line.  By default, if there is more
+than one match, just one will be reported (chosen effectively at random).
+
 @item --dpi=@var{num}
 @opindex --dpi=@var{num}
 @opindex -D @var{num}
@@ -1201,6 +1204,91 @@ directory expansion of a path, instead of doing a one-shot lookup, see
 Set the program name to @var{name}; default is @samp{kpsewhich}.  This
 can affect the search paths via the @samp{.@var{prognam}} feature in
 configuration files (@pxref{Config files}).
+
+@item --subdir=@var{string}
+@opindex --subdir=@var{string}
+Report only those matches whose directory part @emph{ends} with
+@var{string} (compared literally, except case is ignored on a
+case-insensitive operating system).  For example, suppose there are
+two matches for a given name:
+
+@example
+kpsewhich foo.sty
+@result{} /some/where/foo.sty
+/another/place/foo.sty
+@end example
+
+@noindent
+Then we can narrow the result to what we are interested in with
+@option{--subdir}:
+
+@example
+kpsewhich --subdir=where foo.sty
+@result{} /some/where/foo.sty
+
+kpsewhich --subdir=place foo.sty
+@result{} /another/place/foo.sty
+@end example
+
+@noindent
+The string to match must be at the end of the directory part of the
+match, and it is taken literally, with no pattern matching:
+
+@example
+kpsewhich --subdir=another foo.sty
+@result{}
+@end example
+
+@noindent
+The string to match may cross directory components:
+
+@example
+kpsewhich --subdir=some/where foo.sty
+@result{} /some/where/foo.sty
+@end example
+
+@noindent
+@option{--subdir} implies @option{--all}; if there is more than one
+match, they will all be reported (in our example, both @samp{where}
+and @samp{place} end in @samp{e}):
+
+@example
+kpsewhich --subdir=e
+@result{} /some/where/foo.sty
+/another/place/foo.sty
+@end example
+
+@noindent
+Because of the above rules, the presence of a leading @samp{/} is
+important, since it ``anchors'' the match to a full component name:
+
+@example
+kpsewhich --subdir=/lace foo.sty
+@result{} 
+@end example
+
+@noindent
+However, a trailing @samp{/} is immaterial (and ignored), since the
+match always takes place at the end of the directory part:
+
+@example
+kpsewhich --subdir=lace/ foo.sty
+@result{} /another/place/foo.sty
+@end example
+
+@noindent
+The purpose of these rules is to make it convenient to find results
+only within a particular area of the tree.  For instance, a given
+script named @file{foo.lua} might exist within both
+@file{texmf-dist/scripts/pkg1/} and @file{texmf-dist/scripts/pkg2/}.
+By specifying, say, @samp{--subdir=/pkg1}, you can be sure of getting
+the one you are interested in.
+
+We only match at the end because a site might happen to install @TeX{}
+in @file{/some/coincidental/pkg1/path/}, and we wouldn't want
+@file{texmf-dist/scripts/pkg2/} to match that when searching for
+@samp{/pkg1}.
+
 @end table
 
 
