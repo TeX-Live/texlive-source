@@ -2618,12 +2618,14 @@ File: kpathsea.info,  Node: Path searching options,  Next: Auxiliary tasks,  Up:
 ----------------------------
 
 Kpsewhich looks up each non-option argument on the command line as a
-filename, and returns the first file found.  There is no option to
-return all the files with a particular name (you can run the Unix
-`find' utility for that, *note Invoking find: (findutils)Invoking
-find.).
+filename, and returns the first file found.
 
    Various options alter the path searching behavior:
+
+`--all'
+     Report all matches found, one per line.  By default, if there is
+     more than one match, just one will be reported (chosen effectively
+     at random).
 
 `--dpi=NUM'
      Set the resolution to NUM; this only affects `gf' and `pk'
@@ -2743,6 +2745,69 @@ find.).
      Set the program name to NAME; default is `kpsewhich'.  This can
      affect the search paths via the `.PROGNAM' feature in
      configuration files (*note Config files::).
+
+`--subdir=STRING'
+     Report only those matches whose directory part _ends_ with STRING
+     (compared literally, except case is ignored on a case-insensitive
+     operating system).  For example, suppose there are two matches for
+     a given name:
+
+          kpsewhich foo.sty
+          => /some/where/foo.sty
+          /another/place/foo.sty
+
+     Then we can narrow the result to what we are interested in with
+     `--subdir':
+
+          kpsewhich --subdir=where foo.sty
+          => /some/where/foo.sty
+
+          kpsewhich --subdir=place foo.sty
+          => /another/place/foo.sty
+
+     The string to match must be at the end of the directory part of the
+     match, and it is taken literally, with no pattern matching:
+
+          kpsewhich --subdir=another foo.sty
+          =>
+
+     The string to match may cross directory components:
+
+          kpsewhich --subdir=some/where foo.sty
+          => /some/where/foo.sty
+
+     `--subdir' implies `--all'; if there is more than one match, they
+     will all be reported (in our example, both `where' and `place' end
+     in `e'):
+
+          kpsewhich --subdir=e
+          => /some/where/foo.sty
+          /another/place/foo.sty
+
+     Because of the above rules, the presence of a leading `/' is
+     important, since it "anchors" the match to a full component name:
+
+          kpsewhich --subdir=/lace foo.sty
+          =>
+
+     However, a trailing `/' is immaterial (and ignored), since the
+     match always takes place at the end of the directory part:
+
+          kpsewhich --subdir=lace/ foo.sty
+          => /another/place/foo.sty
+
+     The purpose of these rules is to make it convenient to find results
+     only within a particular area of the tree.  For instance, a given
+     script named `foo.lua' might exist within both
+     `texmf-dist/scripts/pkg1/' and `texmf-dist/scripts/pkg2/'.  By
+     specifying, say, `--subdir=/pkg1', you can be sure of getting the
+     one you are interested in.
+
+     We only match at the end because a site might happen to install TeX
+     in `/some/coincidental/pkg1/path/', and we wouldn't want
+     `texmf-dist/scripts/pkg2/' to match that when searching for
+     `/pkg1'.
+
 
 
 File: kpathsea.info,  Node: Auxiliary tasks,  Next: Standard options,  Prev: Path searching options,  Up: Invoking kpsewhich
@@ -3499,36 +3564,40 @@ Index
 
 * !! in path specifications:             ls-R.                (line  52)
 * $ expansion:                           Variable expansion.  (line   6)
+* --all:                                 Path searching options.
+                                                              (line  12)
 * --color=tty:                           ls-R.                (line  21)
 * --debug=NUM:                           Auxiliary tasks.     (line   9)
 * --disable-static:                      configure options.   (line  31)
 * --dpi=NUM:                             Path searching options.
-                                                              (line  15)
+                                                              (line  17)
 * --enable options:                      configure options.   (line  16)
 * --enable-maintainer-mode:              configure options.   (line  34)
 * --enable-shared <1>:                   Shared library.      (line   6)
 * --enable-shared:                       configure options.   (line  27)
 * --engine=NAME:                         Path searching options.
-                                                              (line  20)
+                                                              (line  22)
 * --expand-braces=STRING:                Auxiliary tasks.     (line  16)
 * --expand-path=STRING:                  Auxiliary tasks.     (line  24)
 * --expand-var=STRING:                   Auxiliary tasks.     (line  19)
 * --format=NAME:                         Path searching options.
-                                                              (line  25)
+                                                              (line  27)
 * --help:                                Standard options.    (line   8)
 * --interactive:                         Path searching options.
-                                                              (line  99)
+                                                              (line 101)
 * --mode=STRING:                         Path searching options.
-                                                              (line 110)
+                                                              (line 112)
 * --must-exist:                          Path searching options.
-                                                              (line 115)
+                                                              (line 117)
 * --path=STRING:                         Path searching options.
-                                                              (line 120)
+                                                              (line 122)
 * --progname=NAME:                       Path searching options.
-                                                              (line 129)
+                                                              (line 131)
 * --show-path=NAME:                      Auxiliary tasks.     (line  41)
 * --srcdir, for building multiple architectures: configure scenarios.
                                                               (line  18)
+* --subdir=STRING:                       Path searching options.
+                                                              (line 136)
 * --var-value=VARIABLE:                  Auxiliary tasks.     (line  12)
 * --version:                             Standard options.    (line  10)
 * --with options:                        configure options.   (line  16)
@@ -3541,14 +3610,14 @@ Index
 * -Bdynamic:                             ShellWidgetClass.    (line  45)
 * -Bstatic:                              ShellWidgetClass.    (line  45)
 * -D NUM:                                Path searching options.
-                                                              (line  15)
+                                                              (line  17)
 * -dynamic:                              ShellWidgetClass.    (line  43)
 * -g, compiling without:                 configure scenarios. (line  32)
 * -L option to ls:                       ls-R.                (line  38)
 * -mktex=FILETYPE:                       Path searching options.
-                                                              (line 104)
+                                                              (line 106)
 * -no-mktex=FILETYPE:                    Path searching options.
-                                                              (line 104)
+                                                              (line 106)
 * -O, compiling with:                    configure scenarios. (line  32)
 * -static:                               ShellWidgetClass.    (line  43)
 * . directories, ignored:                ls-R.                (line  33)
@@ -3661,6 +3730,8 @@ Index
 * aliases, for filenames:                Filename aliases.    (line   6)
 * all:                                   Suppressing warnings.
                                                               (line  13)
+* all matches, finding:                  Path searching options.
+                                                              (line  12)
 * alphabetical order, not:               Subdirectory expansion.
                                                               (line   6)
 * Amiga support:                         Custom installation. (line  19)
@@ -3766,7 +3837,7 @@ Index
                                                               (line  25)
 * config.log:                            Bug checklist.       (line  28)
 * config.ps:                             Path searching options.
-                                                              (line  35)
+                                                              (line  37)
 * config.ps, search path for:            Supported file formats.
                                                               (line  47)
 * config.status:                         Bug checklist.       (line  31)
@@ -3873,7 +3944,7 @@ Index
 * ENCFONTS:                              Supported file formats.
                                                               (line  51)
 * engine name:                           Path searching options.
-                                                              (line  20)
+                                                              (line  22)
 * environment variable, source for path: Path sources.        (line   9)
 * environment variables for TeX:         Supported file formats.
                                                               (line   6)
@@ -3999,7 +4070,7 @@ Index
 * installation, simple:                  Simple installation. (line   6)
 * installing files:                      Installing files.    (line   6)
 * interactive query:                     Path searching options.
-                                                              (line  99)
+                                                              (line 101)
 * interface, not frozen:                 Introduction.        (line  27)
 * introduction:                          Introduction.        (line   6)
 * kdebug::                               Debugging.           (line 105)
@@ -4247,11 +4318,11 @@ Index
 * PDF generation:                        Kpathsea application distributions.
                                                               (line  16)
 * pdftex.cfg:                            Path searching options.
-                                                              (line  35)
+                                                              (line  37)
 * PDFTEXCONFIG:                          Supported file formats.
                                                               (line 136)
 * pdftexconfig.tex:                      Path searching options.
-                                                              (line  35)
+                                                              (line  37)
 * permission denied:                     Searching overview.  (line  56)
 * permissions, directory:                Security.            (line  51)
 * permissions, file:                     Security.            (line  47)
@@ -4304,7 +4375,7 @@ Index
 * reporting bugs:                        Reporting bugs.      (line   6)
 * resident.c:                            Calling sequence.    (line  45)
 * resolution, setting:                   Path searching options.
-                                                              (line  15)
+                                                              (line  17)
 * resolutions, last-resort:              Fallback font.       (line   6)
 * retrieving TeX:                        unixtex.ftp.         (line   6)
 * right-hand side of variable assignments: Config files.      (line  44)
@@ -4642,21 +4713,21 @@ Node: Filename aliases105735
 Node: Database format106913
 Node: Invoking kpsewhich107926
 Node: Path searching options108803
-Node: Auxiliary tasks113270
-Node: Standard options115080
-Node: TeX support115400
-Node: Supported file formats116691
-Node: File lookup123839
-Node: Glyph lookup125130
-Node: Basic glyph lookup126257
-Node: Fontmap127136
-Node: Fallback font129753
-Node: Suppressing warnings130718
-Node: Programming131823
-Node: Programming overview132336
-Node: Calling sequence134612
-Node: Program-specific files139641
-Node: Programming with config files140679
-Node: Index141979
+Node: Auxiliary tasks115452
+Node: Standard options117262
+Node: TeX support117582
+Node: Supported file formats118873
+Node: File lookup126021
+Node: Glyph lookup127312
+Node: Basic glyph lookup128439
+Node: Fontmap129318
+Node: Fallback font131935
+Node: Suppressing warnings132900
+Node: Programming134005
+Node: Programming overview134518
+Node: Calling sequence136794
+Node: Program-specific files141823
+Node: Programming with config files142861
+Node: Index144161
 
 End Tag Table
