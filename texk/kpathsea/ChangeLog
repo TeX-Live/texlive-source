@@ -1,5 +1,7 @@
 2008-01-21  Karl Berry  <karl@tug.org>
 
+	* kpsewhich.c, kpathsea.texi: document --all and --subdir.
+
 	* db.c through tex-file.c: replace FSF physical address with url.
 
 2008-01-18  Karl Berry  <karl@tug.org>
