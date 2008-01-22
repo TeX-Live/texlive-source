@@ -1,3 +1,4 @@
+# beginning of libpng.ac
 if test "$needs_pnglib" = no; then
   LIBPNGCPPFLAGS=
   LDLIBPNG=
@@ -50,3 +51,4 @@ fi
 AC_SUBST(LIBPNGCPPFLAGS)
 AC_SUBST(LDLIBPNG)
 AC_SUBST(LIBPNGDEP)
+# end of libpng.ac
