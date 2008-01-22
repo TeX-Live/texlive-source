@@ -1,10 +1,11 @@
 #! /bin/sh
-
-# A "reautoconf" script found at the root of the
-# web2c/teTeX/TeX-Live tree Used to run autoconf Versions 2.13 (old)
-# resp. 2.59 (new) in various directories.  Adapted from Peter
-# Breitenlohner's original version.
+# $Id$
+# This "reautoconf" script found at the root of the TeX Live source tree 
+# runs a hacked autoconf 2.13 in various directories and the
+# current autoconf (from PATH) in the rest.
+# Adapted from Peter Breitenlohner's original version.
 #
+# Copyright 2008 Karl Berry.
 # Copyright 2005 Olaf Weber.
 # Copyright 2004 Peter Breitenlohner.
 #
@@ -19,96 +20,72 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+# along with this library; if not, see <http://www.gnu.org/licenses/>.
+
+unset CDPATH
 
 [ -f ./texk/make/common.mk ] || {
-	echo "*** can't find ./texk/make/common.mk"
+	echo "$0: *** can't find ./texk/make/common.mk (from `pwd`)" >&2
 	exit 1
 }
 
 # Remember the topdir.
 topdir=`pwd`
 
-# "acold" runs autoconf-2.13
-# "acnew" runs autoconf-2.59
-
+# "acold" runs our hacked autoconf-2.13 with special includes.
 acold () {	# $dir=current
-	echo "    Running autoconf-2.13 in \`$dir'"
+	echo "$0: running our autoconf2.13 in \`$dir'"
 	$topdir/texk/autoconf2.13 -m "$topdir/texk/etc/autoconf"
 }
 
-# For new autoconf (2.59 and later) two things have to be done:
-#
-# 1. Rebuild aclocal.m4, using a patched version of aclocal-1.9.5.
-#
-# The patches (as obtained from one of the automake maintainers)
-# can be found in
-#	ftp://ftpth.mppmu.mpg.de/pub/peb/web2c/autoconf/aclocal.patch
-# and should be part of the next release, i.e., automake-1.9.6.
-#
-# Obviously directories that come with a prebuilt aclocal.m4, but without
-# the ingredients to rebuild it, need special treatment.
-#
-# 2. Run /usr/local/bin/autoconf
-
-###################################
-# The patch quoted above fixes only part of the sinclude problems.
-# The generated aclocal.m4 still contains erroneous m4_include's
-# that have to be removed before running autoconf.
-###################################
-
+# acnew runs autoconf from PATH.
 acnew () {	# $dir=current, $dir/$rdir->./texk/m4 with the KPSE macros.
-	#arg="-I $rdir"
-	#[ -n "$1" ] && {
-	#	# Move existing aclocal.m4 into subdir and build new one
-	#	mkdir m4
-	#	mv aclocal.m4 m4/oldlocal.m4
-	#	arg="-I m4 $arg"
-	#}
-	#echo "Running aclocal-1.9 (patched) in \`$dir'"
-	#$topdir/config/aclocal-1.9peb --force $arg || return
-	echo "    Running /usr/bin/autoconf in \`$dir'"
-	/usr/bin/autoconf --force || return
-	#rm -rf autom4te.cache
+	echo "$0: running $TL_AUTOCONF in \`$dir'"
+	$TL_AUTOCONF --force || return
 }
 
-# Autoconf in .
+: ${TL_AUTOCONF=autoconf}
+echo "$0: new $TL_AUTOCONF = `$TL_AUTOCONF --version | sed 1q`"
+echo "$0: if you want to use a different autoconf, set TL_AUTOCONF."
+
+# Autoconf in . (the top level).
 dir=. rdir=texk/m4
 acold
 
 # Autoconf in all other directories
 for dir in `find utils libs texk -name configure.in | sed 's,/configure.in$,,'`; do
-	case $dir in
-		*/texi*)	# texinfo and texi2html are automade
-		;;
-		*/ncurses)	# ncurses has it's own special configure
-		;;
-		*/icu*)		# ICU needs new autoconf
-			(cd $dir; acnew)
-		;;
-		*/libgnuw32)	# only for windows
-		;;
-		utils/*)	# Skip everything in utils for now.
-		;;
-		*/curl)		# Is automade.
-		;;
-		texk)	rdir=m4
-			(cd $dir; acold)
-		;;
-		texk/*)	rdir=`echo $dir | sed -e 's,^texk/,,' -e 's,[^/]*,..,g'`/m4
-			case $dir in
-				*/devnag|*/dvipdfmx|*/xdvipdfmx)
-					(cd $dir; acnew);;
-				*)	(cd $dir; acold);;
-			esac
-		;;
-		*)	rdir=`echo $dir | sed 's,[^/]*,..,g'`/texk/m4
-			case $dir in
-			*/t1utils|*/lcdf-typetools|*/curl|*/expat)
-				(cd $dir; acnew) ;;
-			*)	(cd $dir; acold) ;;
-			esac
-		;;
-	esac
+  case $dir in
+    */texi*)	# texinfo and texi2html are automade
+    ;;
+    */ncurses)	# ncurses has its own special configure
+    ;;
+    */icu*)     # ICU needs new autoconf
+            (cd $dir; acnew)
+    ;;
+    */libgnuw32)# only for windows
+    ;;
+    utils/*)	# Skip everything in utils for now.
+    ;;
+    */curl)	# Is automade.
+    ;;
+    texk)	rdir=m4
+            (cd $dir; acold)
+    ;;
+    texk/*)	rdir=`echo $dir | sed -e 's,^texk/,,' -e 's,[^/]*,..,g'`/m4
+            case $dir in
+                    */devnag|*/dvipdfmx|*/xdvipdfmx)
+                            (cd $dir; acnew);;
+                    *)	(cd $dir; acold);;
+            esac
+    ;;
+    *)	rdir=`echo $dir | sed 's,[^/]*,..,g'`/texk/m4
+            case $dir in
+            */t1utils|*/lcdf-typetools|*/curl|*/expat)
+                    (cd $dir; acnew) ;;
+            *)	(cd $dir; acold) ;;
+            esac
+    ;;
+esac
 done
+
+echo "$0: done."

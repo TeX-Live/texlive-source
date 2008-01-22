@@ -8413,7 +8413,7 @@ else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-	CPPFLAGS=$_cppflags LDDFLAGS=$_ldflags
+	CPPFLAGS=$_cppflags LDFLAGS=$_ldflags
      { echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6; }
 
@@ -8702,7 +8702,7 @@ else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-	CPPFLAGS=$_cppflags LDDFLAGS=$_ldflags
+	CPPFLAGS=$_cppflags LDFLAGS=$_ldflags
      { echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6; }
 

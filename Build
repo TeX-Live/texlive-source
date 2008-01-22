@@ -1,8 +1,11 @@
 #!/bin/sh
 # $Id$
 # Originally written many years ago by Sebastian Rahtz.  Public domain.
-# To build (mostly) without optimization, try CFLAGS=-g Build.
-# Any options given are passed along to configure.
+# To build (mostly) without optimization, try
+# CFLAGS=-g CXXFLAGS=-g Build
+# 
+# Any options given are passed along to configure, and everything can be
+# overridden with environment variables.
 
 # cd to our source directory.
 mydir=`dirname $0`
