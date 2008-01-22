@@ -94,7 +94,8 @@ z_stream p;
         ])
       ])
     ],
-    [CPPFLAGS=$_cppflags LDDFLAGS=$_ldflags AC_MSG_RESULT(no)]
+    [CPPFLAGS=$_cppflags LDFLAGS=$_ldflags
+     AC_MSG_RESULT(no)]
  )
 ])
 
@@ -126,7 +127,8 @@ png_infop p;
           LIBS="$LIBS -lpng" ], , -lz
       )
     ],
-    [ AC_MSG_RESULT(no) ]
+    [CPPFLAGS=$_cppflags LDFLAGS=$_ldflags
+     AC_MSG_RESULT(no) ]
   )
 ])
 
