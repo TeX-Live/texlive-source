@@ -15,6 +15,9 @@ else
     fi
   fi
 
+  # be sure we have a good value for CPP, since we're about to save it.
+  AC_PROG_CPP
+  
   OLD_LDFLAGS=$LDFLAGS
   OLD_CPP=$CPP
   OLD_LIBS=$LIBS

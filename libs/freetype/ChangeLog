@@ -1,0 +1,6 @@
+2008-01-23  Karl Berry  <karl@tug.org>
+
+	* freetype.ac: call AC_PROG_CPP, else when used from
+	ttf2pk/configure --with-system-freetype, CPP is not defined.
+	Report from Jonathan Kew, 3 Nov 2006 11:08:13 ff.
+
