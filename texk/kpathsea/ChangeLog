@@ -168,7 +168,7 @@
 	TEXMFSYSCONFIG, VARTEXFONTS, MIMELIBDIR, MAILCAPLIBDIR, TEXMFNCF):
 	use @texmf@ etc. expansions so that (hopefully)
 	--disable-multiplatform works again.  For TEXMFCNF, restore
-	inclusion of $TEXMF/web2c, too.  Reported by Peter Munster.
+	inclusion of $TEXMF/web2c, too.  Reported by Peter M\"unster.
 
 2007-03-21  Karl Berry  <karl@tug.org>
 
