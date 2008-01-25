@@ -1,6 +1,7 @@
 2008-01-25  Karl Berry  <karl@tug.org>
 
-	* variable.c (expand): do ~ expansion here too, for --expand-var.
+	* variable.c (expand): do ~ expansion here too, for --expand-var,
+	or mktexnam fails.
 	Report from Werner Lemberg, 24 Jan 2008 02:19:49.
 	* kpathsea.texi (Auxiliary tasks): document this.
 
