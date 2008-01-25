@@ -2828,8 +2828,8 @@ lookup:
    * `--expand-braces=STRING' outputs the variable and brace expansion
      of STRING.  *Note Path expansion::.
 
-   * `--expand-var=STRING' outputs the variable expansion of STRING.
-     For example, the `mktex...' scripts run `kpsewhich
+   * `--expand-var=STRING' outputs the variable and tilde expansion of
+     STRING.  For example, the `mktex...' scripts run `kpsewhich
      --expand-var='$TEXMF'' to find the root of the TeX system
      hierarchy.  *Note Path expansion::.
 
@@ -4714,20 +4714,20 @@ Node: Database format106913
 Node: Invoking kpsewhich107926
 Node: Path searching options108803
 Node: Auxiliary tasks115452
-Node: Standard options117262
-Node: TeX support117582
-Node: Supported file formats118873
-Node: File lookup126021
-Node: Glyph lookup127312
-Node: Basic glyph lookup128439
-Node: Fontmap129318
-Node: Fallback font131935
-Node: Suppressing warnings132900
-Node: Programming134005
-Node: Programming overview134518
-Node: Calling sequence136794
-Node: Program-specific files141823
-Node: Programming with config files142861
-Node: Index144161
+Node: Standard options117273
+Node: TeX support117593
+Node: Supported file formats118884
+Node: File lookup126032
+Node: Glyph lookup127323
+Node: Basic glyph lookup128450
+Node: Fontmap129329
+Node: Fallback font131946
+Node: Suppressing warnings132911
+Node: Programming134016
+Node: Programming overview134529
+Node: Calling sequence136805
+Node: Program-specific files141834
+Node: Programming with config files142872
+Node: Index144172
 
 End Tag Table

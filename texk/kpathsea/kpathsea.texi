@@ -1319,10 +1319,10 @@ expansion of @var{string}.  @xref{Path expansion}.
 
 @item
 @opindex --expand-var=@var{string}
-@samp{--expand-var=@var{string}} outputs the variable expansion of
-@var{string}.  For example, the @samp{mktex@dots{}} scripts run
-@samp{kpsewhich --expand-var='$TEXMF'} to find the root of the @TeX{} system
-hierarchy.  @xref{Path expansion}.
+@samp{--expand-var=@var{string}} outputs the variable and tilde
+expansion of @var{string}.  For example, the @samp{mktex@dots{}}
+scripts run @samp{kpsewhich --expand-var='$TEXMF'} to find the root of
+the @TeX{} system hierarchy.  @xref{Path expansion}.
 
 @item
 @opindex --expand-path=@var{string}

@@ -156,6 +156,15 @@ expand P3C(fn_type *, expansion,  const_string, start,  const_string, end)
       expanding (var, true);
       value = kpse_var_expand (value);
       expanding (var, false);
+      
+      { /* Do tilde expansion; see explanation above in kpse_var_value.  */
+        string tmp = kpse_tilde_expand (value);
+        if (value != tmp) {
+          free (value);
+          value = tmp;
+        }
+      }
+      
       fn_grow (expansion, value, strlen (value));
       free (value);
     }
@@ -181,7 +190,7 @@ expand P3C(fn_type *, expansion,  const_string, start,  const_string, end)
 
 
 /* Maybe we should support some or all of the various shell ${...}
-   constructs, especially ${var-value}.  */
+   constructs, especially ${var-value}.  We do do ~ expansion.  */
 
 string
 kpse_var_expand P1C(const_string, src)
