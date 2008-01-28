@@ -1,4 +1,5 @@
 #!/bin/sh
+# $Id$
 #
 # Thomas Esser, David Aspinall, Simon Wilkinson.
 # Public domain.
@@ -94,7 +95,7 @@ case `(uname -s) 2>/dev/null` in
 	: ${TEXDOCVIEW_dvi='(xdvi %s) &'}
 	: ${TEXDOCVIEW_pdf='(acroread %s) &'}
 	: ${TEXDOCVIEW_ps='(gv %s) &'}
-	: ${TEXDOCVIEW_html='mozilla -remote openURL'"'(%s)'"' 2>/dev/null || mozilla %s &'}
+        : ${TEXDOCVIEW_html='firefox -remote openURL'"'(%s)'"' 2>/dev/null || firefox %s &'}
 	: ${TEXDOCVIEW_txt="${PAGER-more} %s"}
 	: ${TEXDOCVIEW_="${PAGER-more} %s"} # no extension, default to pager
         extlist='.dvi .dvi.gz .dvi.bz2 .pdf .pdf.gz .pdf.bz2 .ps .ps.gz .ps.bz2 .txt .txt.gz .txt.bz2 .html'

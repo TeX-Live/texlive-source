@@ -47,7 +47,7 @@ PDF viewer\&.  Defaults to \fBacroread\fP(1)\&.
 PostScript viewer\&.  Defaults to
 \fBghostview\fP(1)\&.
 .IP "\fB$TEXDOCVIEW_html\fP" 
-HTML viewer\&.  Defaults to \fBnetscape\fP(1)\&.
+HTML viewer\&.  Defaults to \fBfirefox\fP(1)\&.
 .IP "\fB$TEXDOCVIEW_txt\fP" 
 Text viewer\&.  Defaults to \fB$PAGER-more\fP\&.
 .PP 
