@@ -1,0 +1,10 @@
+2008-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Support for autoconf-2.59+:
+	* kpse_cross.m4, kpse_maint.m4, kpse_asm.m4, kpse_mtim.m4
+	(all new): Copied from ../etc/autoconf/acsite.m4 with some
+	trivial changes.
+	* kpse_unset.m4 (new): Copied from ../etc/autoconf/acspecific.m4
+	with some trivial changes.
+	* kpse_inc.m4 (new): kpse_include mechanism for autoconf-2.59.
+

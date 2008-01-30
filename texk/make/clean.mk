@@ -7,7 +7,7 @@ clean:: mostlyclean
 	rm -f $(library).a squeeze *.bad *.dvi *.lj
 
 distclean:: extraclean clean
-	rm -f Makefile Makefile.aux kpse_empty
+	rm -f Makefile Makefile.aux
 	rm -f config.status config.log config.cache c-auto.h libtool
 	rm -rf conftest*
 	rm -f stamp-auto stamp-tangle stamp-ctangle
