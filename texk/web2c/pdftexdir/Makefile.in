@@ -1,5 +1,6 @@
-# Makefile for libpdf - te@dbs.uni-hannover.de
 # $Id: Makefile.in 152 2007-06-25 22:19:35Z ms $
+# @configure_input@
+# Makefile for libpdf - te@dbs.uni-hannover.de
 
 kpse_include ../make/common.mk
 kpse_include ../make/programs.mk

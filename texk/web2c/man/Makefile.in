@@ -1,3 +1,4 @@
+# @configure_input@
 # Makefile for web2c manual pages.
 # 
 # You need to change the variables and the pathnames only if this

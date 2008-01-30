@@ -1,4 +1,5 @@
-# Makefile for TeX-project WEB sources to C conversion programs.
+# @configure_input@
+# Makefile for otps.
 
 # These get expanded from the parent directory, not this one.
 kpse_include ../make/common.mk

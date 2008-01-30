@@ -1,3 +1,4 @@
+# @configure_input@
 # Makefile for the web2c library.
 
 kpse_include ../make/common.mk

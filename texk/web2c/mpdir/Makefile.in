@@ -1,3 +1,4 @@
+# @configure_input@
 # Makefile for libmpost - taco@elvenkind.com, but
 # mostly ripped off from Makefile.in from pdftex
 # $Id $

@@ -1,5 +1,6 @@
-# Makefile for web2c --kb@mail.tug.org. Public domain.
 # $Id: //depot/Build/source.development/TeX/texk/web2c/Makefile.in#66 $
+# @configure_input@
+# Makefile for web2c --kb@mail.tug.org. Public domain.
 version = @WEB2CVERSION@
 
 # This makefile uses static rules with many targets (to be compatible to

@@ -1,3 +1,4 @@
+# @configure_input@
 # Makefile for TeX-project WEB sources to C conversion programs.
 
 # This makefile uses static rules with many targets (to be compatible to

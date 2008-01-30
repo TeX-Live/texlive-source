@@ -1,3 +1,7 @@
+2008-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.in: Add @configure_input@ line.
+
 2008-01-12  Karl Berry  <karl@tug.org>
 
 	* web2c/main.c (main): output next_string_free if debugging.

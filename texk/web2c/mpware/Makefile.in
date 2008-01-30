@@ -1,3 +1,4 @@
+# @configure_input@
 # Makefile for the MetaPost support programs.
 
 kpse_include ../make/paths.mk

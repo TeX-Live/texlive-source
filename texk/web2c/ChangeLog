@@ -1,3 +1,11 @@
+2008-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Convert from autoconf-2.13 to autoconf-2.59+:
+	* Makefile.in, doc/Makefile.in, mpdir/Makefile.in:
+	Add @configure_input@ lines.
+	* aclocal.m4 (new): Generated (aclocal -I ../m4).
+	* configure: Regenerated (autoconf).
+
 2008-01-18  Karl Berry  <karl@tug.org>
 
 	* cpascal.h (recorder_record_input, recorder_record_output): need

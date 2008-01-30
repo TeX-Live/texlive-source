@@ -1,3 +1,7 @@
+2008-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.in: Add @configure_input@ line.
+
 2007-10-14  Karl Berry  <karl@tug.org>
 
 	* Makefile.in (depend): Run $(CXX) -MM directly, not through make.

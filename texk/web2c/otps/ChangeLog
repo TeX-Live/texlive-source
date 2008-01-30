@@ -1,3 +1,7 @@
+2008-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.in: Add @configure_input@ line.
+
 2006-05-25  Roozbeh Pournader  <roozbeh@farsiweb.info>
 
 

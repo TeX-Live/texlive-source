@@ -1,4 +1,5 @@
 # Makefile.in for dvidvi  -- S Rahtz s.rahtz@elsevier.co.uk.  Public domain.
+# @configure_input@
 version = 1.0
 kpse_include ../make/paths.mk
 kpse_include ../make/common.mk

@@ -1,3 +1,4 @@
+# @configure_input@
 # Makefile for Web2c documentation.
 
 kpse_include ../make/paths.mk

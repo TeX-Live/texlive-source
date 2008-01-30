@@ -1,4 +1,5 @@
 # $Id$
+# @configure_input@
 # Makefile for kpathsea.  Public domain.
 version = @KPSEVERSION@
 
