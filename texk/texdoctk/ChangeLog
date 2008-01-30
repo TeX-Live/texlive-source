@@ -1,0 +1,3 @@
+2008-01-31  Karl Berry  <karl@tug.org>
+
+	* Makefile.in: switch from ac_include to kpse_include.

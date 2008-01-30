@@ -1,11 +1,11 @@
-# Makefile for texlive's extra scripts 
+# Makefile for texdoctk.
 # Public domain.
 
-ac_include ../make/paths.mk
-ac_include ../make/common.mk
-ac_include ../make/programs.mk
+kpse_include ../make/paths.mk
+kpse_include ../make/common.mk
+kpse_include ../make/programs.mk
 
-all:  texdoctk
+all: texdoctk
 default: all
 
 install: install-data install-exec
