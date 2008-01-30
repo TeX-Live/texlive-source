@@ -1,3 +1,0 @@
-%%TeXDict begin /Orientation 1 N end
-[1 0 0 1 0 0] concat
-
