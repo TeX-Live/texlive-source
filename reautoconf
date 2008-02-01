@@ -1,4 +1,8 @@
 #! /bin/sh
+
+echo "autoconf stuff in transition, do not use! --peb/martin/karl 1feb08"
+/bin/false
+
 # $Id$
 # This "reautoconf" script found at the root of the TeX Live source tree 
 # runs a hacked autoconf 2.13 in various directories and the
