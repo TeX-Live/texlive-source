@@ -7,6 +7,10 @@
 # Any options given are passed along to configure, and everything can be
 # overridden with environment variables.
 
+# clean up environment
+unset TEXMFCNF
+export TEXMFCNF
+
 # cd to our source directory.
 mydir=`dirname $0`
 cd $mydir || exit 1
