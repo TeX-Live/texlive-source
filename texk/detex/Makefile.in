@@ -1,4 +1,5 @@
 # Makefile.in for detex. Thomas Esser, 2002. Public domain.
+# @configure_input@
 
 all: detex
 

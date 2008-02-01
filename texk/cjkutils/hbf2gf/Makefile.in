@@ -1,3 +1,4 @@
+# @configure_input@
 # Makefile for hbf2gf -- wl@gnu.org
 # Heavy modifications for TeX Live / teTeX by Thomas Esser, te@tug.org.
 

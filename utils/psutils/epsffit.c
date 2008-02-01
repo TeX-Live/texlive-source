@@ -40,7 +40,7 @@ static void usage(void)
    exit(1);
 }
 
-void main(int argc, char **argv)
+int main(int argc, char **argv)
 {
    int bbfound = 0;              /* %%BoundingBox: found */
    int urx, ury, llx, lly;
@@ -186,5 +186,5 @@ void main(int argc, char **argv)
    } else
       message(FATAL, "no %%%%BoundingBox:\n");
 
-   exit(0);
+   return 0;
 }

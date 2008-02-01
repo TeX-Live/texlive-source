@@ -54,7 +54,7 @@ distclean::
 	  (cd $$d && $(MAKE) $(makeargs) $@) || exit 1; else true; fi; done
 
 distclean realclean::
-	rm -f Makefile Makefile.aux config.status config.cache config.log libtool kpse_empty
+	rm -f Makefile Makefile.aux config.status config.cache config.log libtool
 
 # Unconditionally remake the library, since we don't want to write out
 # the dependencies here.

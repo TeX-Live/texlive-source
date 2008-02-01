@@ -1,3 +1,5 @@
+# @configure_input@
+
 RM = @RM@
 
 all_subdirs = conv scripts hbf2gf

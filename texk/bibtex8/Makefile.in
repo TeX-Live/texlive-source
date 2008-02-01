@@ -1,3 +1,4 @@
+# @configure_input@
 # Makefile for bibtex8.  Public domain.
 
 version = 3.71

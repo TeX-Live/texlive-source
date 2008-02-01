@@ -1,3 +1,4 @@
+# @configure_input@
 # Makefile for tex4ht in TeX Live.  Public domain.
 # Originally written by S. Rahtz.
 version = 1.0

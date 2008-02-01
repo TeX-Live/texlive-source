@@ -65,8 +65,12 @@ AC_SUBST(version_info)
 
 dnl NLS/gettext nightmare^H^H^H^H^H^H^H^H^H^H support...
 
+dnl autoconf-2.59+ disallows AC_REQUIRE outside AC_DEFUN
+AC_DEFUN([ft_AC_REQUIRE_AC_PROG_MAKE_SET],
+         [AC_REQUIRE([AC_PROG_MAKE_SET])])
+
 if test "$USE_NLS" = "yes"; then
-  AC_REQUIRE([AC_PROG_MAKE_SET])
+  ft_AC_REQUIRE_AC_PROG_MAKE_SET
   AC_CHECK_HEADERS(locale.h)
   AC_CHECK_FUNCS(setlocale)
   AC_SUBST(HAVE_LOCALE_H)  
@@ -250,11 +254,11 @@ dnl Another bug: to make --srcdir work correctly we have to create the
 dnl directory hierarchy first since autoconf only uses mkdir.
 $srcdir/mkinstalldirs lib/arch/unix test/arch/unix
 
-KPSE_CONFIG_FILES(Makefile
+AC_CONFIG_FILES([Makefile
            MakeSub
            lib/arch/unix/Makefile
-           test/arch/unix/Makefile 
-           po/Makefile.in,
+           test/arch/unix/Makefile])
+AC_CONFIG_FILES([po/Makefile.in],
           [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile])
 AC_OUTPUT
 

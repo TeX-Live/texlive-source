@@ -1,3 +1,4 @@
+# @configure_input@
 # Makefile for ps2pkm --te@dbs.uni-hannover.de. Public domain.
 version = 1.5m
 

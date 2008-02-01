@@ -1,4 +1,5 @@
 # Makefile.in for lacheck  -- S Rahtz s.rahtz@elsevier.co.uk.  Public domain.
+# @configure_input@
 # Remember to change when lacheck is updated.
 REV = 1.26
 version = 1.0

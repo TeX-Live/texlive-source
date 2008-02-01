@@ -1,3 +1,4 @@
+# @configure_input@
 #
 #  Makefile for ChkTeX project, creates the stuff.
 #  Copyright (C) 1996 Jens T. Berger Thielemann

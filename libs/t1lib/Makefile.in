@@ -1,3 +1,5 @@
+# @configure_input@
+
 kpse_include ../../texk/make/common.mk
 kpse_include ../../texk/make/programs.mk
 kpse_include ../../texk/make/library.mk

@@ -11,4 +11,5 @@ AC_SET_MAKE
 
 sinclude(../../multiplatform.ac)
 
-AC_OUTPUT(Makefile patchlev.h)
+AC_CONFIG_FILES([Makefile patchlev.h])
+AC_OUTPUT

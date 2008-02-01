@@ -1,3 +1,8 @@
+2008-01-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.in (depend): Substitute $(srcdir) in depend.mk.
+	* depend.mk: Regenerated.
+
 2008-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.in: Add @configure_input@ line.

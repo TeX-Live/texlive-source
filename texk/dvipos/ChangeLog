@@ -1,3 +1,10 @@
+2008-01-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Convert from autoconf-2.13 to autoconf-2.59+:
+	* Makefile.in: Add @configure_input@ line.
+	* aclocal.m4 (new): Generated (aclocal -I ../m4).
+	* configure: Regenerated (autoconf).
+
 2007-01-07  Vladimir Volovich <vvv@vsu.ru>
 	* build scripts: provide configure(.in) and Makefile.in so that
 	dvipos builds cleanly with kpathsea and for the TeXLive

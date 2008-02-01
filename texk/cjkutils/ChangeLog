@@ -1,0 +1,8 @@
+2008-01-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Convert from autoconf-2.13 to autoconf-2.59+:
+	* Makefile.in, conv/Makefile.in, scripts/Makefile.in,
+	hbf2gf/Makefile.in: Add @configure_input@ lines.
+	* aclocal.m4 (new): Generated (aclocal -I ../m4).
+	* configure: Regenerated (autoconf).
+

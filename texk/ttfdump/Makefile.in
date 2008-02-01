@@ -1,4 +1,5 @@
-# Makefile for Autoconf.
+# Makefile.in for Autoconf.
+# @configure_input@
 # Copyright (C) 1992, 1993, 1994 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify

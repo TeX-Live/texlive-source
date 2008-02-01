@@ -1,3 +1,11 @@
+2008-01-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Convert from autoconf-2.13 to autoconf-2.59+:
+	* Makefile.in: Add @configure_input@ line.
+	* acinclude.m4 (new): Renamed from aclocal.m4.
+	* aclocal.m4 (new): Generated (aclocal -I ../m4).
+	* configure: Regenerated (autoconf).
+
 2007-07-15  Karl Berry  <karl@tug.org>
 
 	* version: change to 0.13.3TL.

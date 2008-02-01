@@ -1,3 +1,11 @@
+2008-01-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Convert from autoconf-2.13 to autoconf-2.59+:
+	* Makefile.in, libttf/Makefile.in, src/Makefile.in: Add
+	@configure_input@ lines.
+	* configure.in: Autoupdated.
+	* configure: Regenerated (autoconf).
+
 Mon Jul  6 06:07:01 1998  Werner Lemberg  <wl@gnu.org>
 
 	* include/gcache.h,

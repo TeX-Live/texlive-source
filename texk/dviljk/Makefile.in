@@ -1,3 +1,4 @@
+# @configure_input@
 # Makefile for dviljk -- kb@mail.tug.org.  Public domain.
 version = 2.6
 

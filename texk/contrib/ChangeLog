@@ -1,3 +1,11 @@
+2008-01-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Convert from autoconf-2.13 to autoconf-2.59+:
+	* glob/Makefile.in: Add @configure_input@ line.
+	* glob/configure.in: Require autoconf-2.59,
+	revert KPSE_CONFIG_FILES to AC_CONFIG_FILES.
+	* glob/configure: Regenerated (autoconf).
+
 2003-01-08  Olaf Weber  <olaf@infovore.xs4all.nl>
 
 	* mktex.h: Update from Fabrice.

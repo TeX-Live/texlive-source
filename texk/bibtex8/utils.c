@@ -703,7 +703,8 @@ FILE *open_ip_file (Integer_T search_path)
         case BST_FILE_SEARCH_PATH:
 #ifdef KPATHSEA
 	  status = ((full_filespec = kpse_find_file(filename, kpse_bst_format, false)) == NULL);
-#else            status = find_file (BST_INPUT_ENVVAR, BST_INPUT_PATH,
+#else
+            status = find_file (BST_INPUT_ENVVAR, BST_INPUT_PATH,
                                 filename, full_filespec);
 #endif
             break;

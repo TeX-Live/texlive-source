@@ -1,3 +1,10 @@
+2008-01-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Convert from autoconf-2.13 to autoconf-2.59+:
+	* Makefile.in: Add @configure_input@ line.
+	* aclocal.m4 (new): Generated (aclocal -I ../m4).
+	* configure: Regenerated (autoconf).
+
 June 24 2005
   Release 0.7.03
   * .enc files now searched under <texmf>/fonts/enc
@@ -5,15 +12,18 @@ June 24 2005
   * No longer dependant on header files from texk/dvipsk
   * The MinGW-compiled Windows binary should now have correct
     default search paths, even without explicit configuration.
+
 July 2004
   Release 0.7.02
   * LIGFILES -> LIGFONTS
   * diffs for tex-file.c, tex-file.h and texmf.in now obsolete
   * two more configurable global font dimensions;
     afm2tfm compatibility option for font dimensions
+
 Mar 13 2004
   Release 0.7.01
   * Made function getline mac-compatible and fixed off-b-one error
+
 Feb 16 2004
   Release 0.7
   * Preparation for inclusion in teTeX/TeX Live source tree.

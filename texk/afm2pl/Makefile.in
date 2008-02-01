@@ -1,3 +1,4 @@
+# @configure_input@
 # Makefile for afm2pl. Thomas Esser. public domain.
 
 program = afm2pl

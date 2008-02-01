@@ -1,0 +1,26 @@
+2008-02-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Convert from autoconf-2.13 to autoconf-2.59+:
+	* Makefile.in: Add @configure_input@ line.
+	* configure: Regenerated (autoconf).
+
+	* epsffit.c(main): Changed return type void into int, changed
+	exit at end into return.
+
+	* psresize.c(main): Changed return type void into int, changed
+	exit at end into return.
+
+	* psselect.c(main): Changed return type void into int, changed
+	exit at end into return.
+
+	* psbook.c(main): Changed return type void into int, changed
+	exit at end into return.
+
+	* psnup.c(main): Changed return type void into int, changed
+	exit at end into return.
+
+	* pstops.c(main): Changed return type void into int, changed
+	exit at end into return.
+
+	* pserror.c(message): Explicit type int for column.
+

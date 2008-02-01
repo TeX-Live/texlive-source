@@ -1,3 +1,4 @@
+# @configure_input@
 # Makefile for gsftopkk --kb@cs.umb.edu. Modified Yves.Arrouye@imag.fr
 version = 1.19
 

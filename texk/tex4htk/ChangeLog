@@ -1,3 +1,12 @@
+2008-01-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Convert from autoconf-2.13 to autoconf-2.59+:
+	* Makefile.in: Add @configure_input@ line, replace ac_include
+	by kpse_include.
+	* configure.in: Use KPSE_CONFIG_FILES([Makefile]).
+	* aclocal.m4 (new): Generated (aclocal -I ../m4).
+	* configure: Regenerated (autoconf).
+
 2004-09-18  Karl Berry  <karl@tug.org>
 
 	* Update for current tex4ht with all fixes, from:

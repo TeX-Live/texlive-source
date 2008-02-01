@@ -1,3 +1,4 @@
+# @configure_input@
 # Makefile for ttf2pk --te@dbs.uni-hannover.de. Public domain.
 
 kpse_include ../make/paths.mk

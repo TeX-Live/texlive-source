@@ -112,7 +112,7 @@ static PageSpec *parsespecs(char *str)
    return (head);
 }
 
-void main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
    PageSpec *specs = NULL;
    int nobinding = 0;
@@ -194,5 +194,5 @@ void main(int argc, char *argv[])
 
    pstops(modulo, pagesperspec, nobinding, specs, draw);
 
-   exit(0);
+   return 0;
 }

@@ -1,3 +1,4 @@
+# @configure_input@
 # Makefile for dvi2tty --te@informatik.uni-hannover.de. Public domain.
 version = 4.0
 

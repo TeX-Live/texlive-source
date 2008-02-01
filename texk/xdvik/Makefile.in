@@ -1,3 +1,4 @@
+# @configure_input@
 # Makefile for xdvik 
 #
 # - 1999/05/08: janl: Removed submakes for libwww and kpathsea.  That's what

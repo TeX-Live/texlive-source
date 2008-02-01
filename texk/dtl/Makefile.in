@@ -1,3 +1,4 @@
+# @configure_input@
 # Makefile.in for dtl  -- S Rahtz s.rahtz@elsevier.co.uk.  Public domain.
 version = 1.0
 

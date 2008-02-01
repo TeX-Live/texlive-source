@@ -91,7 +91,7 @@ static PageRange *addrange(char *str, PageRange *rp)
 }
 
 
-void main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
    int currentpg, maxpage = 0;
    int even = 0, odd = 0, reverse = 0;
@@ -235,5 +235,5 @@ void main(int argc, char *argv[])
    }
    writetrailer();
 
-   exit(0);
+   return 0;
 }

@@ -1,3 +1,5 @@
+# @configure_input@
+
 all:
 	(cd xpdf; $(MAKE) libxpdf.a)
 	(cd goo; $(MAKE) libGoo.a)
@@ -13,4 +15,4 @@ distclean maintainer-clean extraclean: clean
 	(cd goo; $(MAKE) $@)
 	(cd fofi; $(MAKE) $@)
 	rm -f Makefile config.cache config.log config.status aconf.h
-	rm -f fofi/Makefile.aux goo/Makefile.aux xpdf/Makefile.aux kpse_empty
+	rm -f fofi/Makefile.aux goo/Makefile.aux xpdf/Makefile.aux

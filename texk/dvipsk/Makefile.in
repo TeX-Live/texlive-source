@@ -1,3 +1,4 @@
+# @configure_input@
 # Makefile for dvipsk -- kb@mail.tug.org. Public domain.
 version = 5.96dev
 

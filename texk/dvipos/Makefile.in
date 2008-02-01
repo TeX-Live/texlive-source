@@ -1,4 +1,5 @@
-# Public domain
+# Makefile.in for dvipos.  Public domain.
+# @configure_input@
 
 kpse_include ../make/paths.mk
 kpse_include ../make/common.mk

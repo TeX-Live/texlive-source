@@ -32,7 +32,7 @@ dnl
 dnl The check for libresolv is in case you are attempting to link statically
 dnl and happen to have a libresolv.a lying around (and no libnsl.a).
 dnl
-AC_DEFUN(AC_LIBRARY_NET, [
+AC_DEFUN([AC_LIBRARY_NET], [
    # Most operating systems have gethostbyname() in the default searched
    # libraries (i.e. libc):
    AC_CHECK_FUNC(gethostbyname, ,

@@ -1,3 +1,4 @@
+# @configure_input@
 # Makefile for makeindexk --te@dbs.uni-hannover.de. Public domain.
 version = 2.13
 

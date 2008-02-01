@@ -66,7 +66,7 @@ static int nextdiv(int n, int m)
    return (0);
 }
 
-void main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
    int horiz, vert, rotate, column, flip, leftright, topbottom;
    int nup = 1;
@@ -331,6 +331,6 @@ void main(int argc, char *argv[])
       pstops(nup, 1, 0, specs, draw);		/* do page rearrangement */
    }
 
-   exit(0);
+   return 0;
 }
 

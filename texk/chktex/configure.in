@@ -27,7 +27,8 @@ dnl
 
 
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(ChkTeX.c)
+AC_INIT
+AC_CONFIG_SRCDIR([ChkTeX.c])
 AC_SUBST(SCRIPTS)
 SCRIPTS=
 AC_SUBST(ELISPDIR)
@@ -178,4 +179,5 @@ AC_FUNC_VPRINTF
 AC_CHECK_FUNCS(access closedir fileno isatty opendir readdir stat dnl
 strcasecmp strdup strlwr strtol)
 
-AC_OUTPUT(Makefile deweb MakeHTML)
+AC_CONFIG_FILES([Makefile deweb MakeHTML])
+AC_OUTPUT

@@ -1,3 +1,5 @@
+# @configure_input@
+
 kpse_include ../make/paths.mk
 kpse_include ../make/common.mk
 kpse_include ../make/programs.mk

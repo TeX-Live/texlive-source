@@ -67,7 +67,7 @@ int main() {
         ac_compile_t1lib=0,
         ac_compile_t1lib=1,
         ac_compile_t1lib=1
-	])
+	)
       if test $ac_compile_t1lib = 0; then
 	  AC_MSG_RESULT(yes)
       else

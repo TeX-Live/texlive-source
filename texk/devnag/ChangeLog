@@ -1,6 +1,6 @@
- Version 2.0 of devnag is the first major revision of the program
- since its original release. It is based on version 1.6 (there are
- no releases 1.7, 1.8 or 1.9).
+2008-01-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Autoreconfed.
 
  Version 2.01 is a bugfix release, containing two changes in
  coding. (1) Previous versions of devnag have output "[" and "]"
@@ -8,3 +8,8 @@
  this can interact badly with LaTeX, and the form of output has
  been changed to avoid the problem. (2) \cline has been added to
  the list of LaTeX commands which devnag knows how to handle.
+
+ Version 2.0 of devnag is the first major revision of the program
+ since its original release. It is based on version 1.6 (there are
+ no releases 1.7, 1.8 or 1.9).
+

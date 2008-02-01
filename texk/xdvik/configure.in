@@ -1,10 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
-dnl e.g.:
-dnl /usr/bin/autoconf --macrodir=../etc/autoconf configure.in > configure        
-dnl the macrodir argument is neccessary to make the non-standard `ac_include'
-dnl extension (acsite.m4) available to autoconf.        
+
 AC_INIT(xdvi.c)
-AC_PREREQ(2.13)
+AC_PREREQ(2.59)
 
 AC_CONFIG_HEADERS([c-auto.h:c-auto.in], [date >stamp-auto])
 
