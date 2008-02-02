@@ -1,4 +1,5 @@
 # $Id$
+# @configure_input@
 # Makefile for teTeX distribution, also used for TeX Live.
 
 # This program is free software; you can redistribute it and/or modify

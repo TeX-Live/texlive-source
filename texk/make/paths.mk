@@ -22,6 +22,7 @@ scriptdir = $(bindir)
 libdir = @libdir@
 
 # Architecture-independent files.
+datarootdir = @datarootdir@
 datadir = @datadir@
 
 # Header files.

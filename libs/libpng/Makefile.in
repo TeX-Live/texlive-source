@@ -1,3 +1,4 @@
+# @configure_input@
 # Makefile for libpng - te@dbs.uni-hannover.de
 
 # This file (together with libpng.ac withenable.ac) is

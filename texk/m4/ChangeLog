@@ -1,3 +1,9 @@
+2008-02-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse_subdirs.m4 (new): Define KPSE_CONFIG_SUBDIRS, used in
+	../configure.in and ../../configure.in in order to avoid shell
+	variables as arguments of AC_CONFIG_SUBDIRS.
+
 2008-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Support for autoconf-2.59+:

@@ -1,3 +1,4 @@
+# @configure_input@
 # Thomas Esser, Makefile.in for zlib / teTeX. (C) 2002-2004, public domain.
 
 kpse_include ../texk/make/common.mk

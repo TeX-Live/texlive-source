@@ -1,6 +1,5 @@
-This is ../../../../TeXlive-svn/utils/texi2html/doc/texi2html.info,
-produced by makeinfo version 4.8 from
-../../../../TeXlive-svn/utils/texi2html/doc/texi2html.texi.
+This is texi2html.info, produced by makeinfo version 4.8 from
+texi2html.texi.
 
    Copyright (C) 1999, 2000, 2001, 2002, 2003
 Free Software Foundation, Inc.
@@ -3546,93 +3545,93 @@ Appendix D Concept Index
 
 
 Tag Table:
-Node: Top3047
-Node: Overview5675
-Node: whytexi2html7465
-Node: Obtaining texi2html9548
-Node: Installation9831
-Node: Invoking texi2html12021
-Node: Splitting output13201
-Node: Output files16535
-Node: Expansion19797
-Node: Texinfo related options20706
-Node: Page layout options21773
-Node: Style options22670
-Node: Expanding TeX regions24990
-Node: Using init files26136
-Node: Initialization files28025
-Node: Redefining functions29972
-Node: Function prototypes31038
-Node: Changing the page layout32114
-Node: The different pages33472
-Node: The page layout35190
-Ref: Element labels36474
-Node: Navigation panel38203
-Node: General purpose variables38866
-Node: Button specifications39643
-Node: Panel formatting function42979
-Node: Program variables43778
-Node: Elements hashes44488
-Node: Global informations45007
-Node: Global functions47527
-Node: Output initialization48272
-Node: Output finalization49735
-Node: css50212
-Node: Customizing header51284
-Node: Customizing section54097
-Node: Customizing footer55101
-Node: Special pages56981
-Node: Special pages content57315
-Node: Top element text57619
-Node: Contents and Overview text58908
-Node: Footnotes text61657
-Node: About text61965
-Node: Special pages layout63485
-Node: File names64686
-Node: External index files66567
-Node: Customizing HTML68697
-Node: Three contexts70419
-Node: Commands without argument71193
-Node: Style and accent commands72615
-Node: Hash reference interface74108
-Ref: Reference hash args74984
-Node: String interface77354
-Node: Define your own interface79339
-Node: Anchors images and spaces81059
-Node: Text83933
-Node: Strings85269
-Node: References86859
-Node: Reference to external manual87066
-Node: Internal reference89070
-Node: Alignement commands90006
-Node: Paragraph and preformatted region90970
-Node: Paragraph and preformatted formatting91306
-Node: Avoiding paragraphs95043
-Node: Complex formats95448
-Node: Lists tables97145
-Node: Table and list items97617
-Node: Whole table list101562
-Node: Definitions103116
-Node: Definition line103598
-Node: Definition formatting105051
-Node: Headings106503
-Node: Special regions107470
-Node: Menus109508
-Node: Menu parts109960
-Node: Menu formatting111389
-Node: Indices114296
-Node: Index entry place114973
-Node: Index list115596
-Node: Floats and lists of floats118701
-Node: Floats120186
-Node: Lists of floats121502
-Node: Footnotes123731
-Node: Other and unknown commands126246
-Node: Internationalization130195
-Node: Translating strings130625
-Node: Adding new strings132283
-Node: Indexop133160
-Node: Indexvr137004
-Node: Indexcp150789
+Node: Top2959
+Node: Overview5587
+Node: whytexi2html7377
+Node: Obtaining texi2html9460
+Node: Installation9743
+Node: Invoking texi2html11933
+Node: Splitting output13113
+Node: Output files16447
+Node: Expansion19709
+Node: Texinfo related options20618
+Node: Page layout options21685
+Node: Style options22582
+Node: Expanding TeX regions24902
+Node: Using init files26048
+Node: Initialization files27937
+Node: Redefining functions29884
+Node: Function prototypes30950
+Node: Changing the page layout32026
+Node: The different pages33384
+Node: The page layout35102
+Ref: Element labels36386
+Node: Navigation panel38115
+Node: General purpose variables38778
+Node: Button specifications39555
+Node: Panel formatting function42891
+Node: Program variables43690
+Node: Elements hashes44400
+Node: Global informations44919
+Node: Global functions47439
+Node: Output initialization48184
+Node: Output finalization49647
+Node: css50124
+Node: Customizing header51196
+Node: Customizing section54009
+Node: Customizing footer55013
+Node: Special pages56893
+Node: Special pages content57227
+Node: Top element text57531
+Node: Contents and Overview text58820
+Node: Footnotes text61569
+Node: About text61877
+Node: Special pages layout63397
+Node: File names64598
+Node: External index files66479
+Node: Customizing HTML68609
+Node: Three contexts70331
+Node: Commands without argument71105
+Node: Style and accent commands72527
+Node: Hash reference interface74020
+Ref: Reference hash args74896
+Node: String interface77266
+Node: Define your own interface79251
+Node: Anchors images and spaces80971
+Node: Text83845
+Node: Strings85181
+Node: References86771
+Node: Reference to external manual86978
+Node: Internal reference88982
+Node: Alignement commands89918
+Node: Paragraph and preformatted region90882
+Node: Paragraph and preformatted formatting91218
+Node: Avoiding paragraphs94955
+Node: Complex formats95360
+Node: Lists tables97057
+Node: Table and list items97529
+Node: Whole table list101474
+Node: Definitions103028
+Node: Definition line103510
+Node: Definition formatting104963
+Node: Headings106415
+Node: Special regions107382
+Node: Menus109420
+Node: Menu parts109872
+Node: Menu formatting111301
+Node: Indices114208
+Node: Index entry place114885
+Node: Index list115508
+Node: Floats and lists of floats118613
+Node: Floats120098
+Node: Lists of floats121414
+Node: Footnotes123643
+Node: Other and unknown commands126158
+Node: Internationalization130107
+Node: Translating strings130537
+Node: Adding new strings132195
+Node: Indexop133072
+Node: Indexvr136916
+Node: Indexcp150701
 
 End Tag Table

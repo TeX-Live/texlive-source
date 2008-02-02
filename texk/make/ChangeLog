@@ -1,3 +1,7 @@
+2008-02-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* paths.mk: Add datarootdir for Autoconf 2.60+.
+
 2007-07-29  Karl Berry  <karl@tug.org>
 
 	* rdepend.mk: replace all texk/kpathsea, not just first.

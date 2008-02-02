@@ -1,3 +1,11 @@
+2008-02-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Convert from autoconf-2.13 to autoconf-2.59+:
+	* configure.in: Use KPSE_CONFIG_SUBDIRS.
+	* Makefile.in: Add @configure_input@ line.
+	* aclocal.m4 (new): Generated (aclocal -I texk/m4).
+	* configure: Regenerated (autoconf).
+
 2007-10-06  Karl Berry  <karl@tug.org>
 
 	* Build (TL_WORKDIR): allow override of "Work".

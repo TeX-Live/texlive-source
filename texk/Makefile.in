@@ -1,3 +1,4 @@
+# @configure_input@
 # Top-level Makefile for kpathsea-using programs.
 
 # Package subdirectories, the library, and all subdirectories.

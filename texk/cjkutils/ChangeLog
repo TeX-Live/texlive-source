@@ -1,3 +1,9 @@
+2008-01-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.in: Use AC_CONFIG_FILES([Makefile]) instead of
+	KPSE_CONFIG_FILES.
+	* configure: Regenerated.
+
 2008-01-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Convert from autoconf-2.13 to autoconf-2.59+:

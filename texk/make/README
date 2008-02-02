@@ -10,9 +10,9 @@ kb@mail.tug.org
 With the long overdue transition from autoconf-2.13 to autoconf-2.59+
 this is handled as follows:
 
-Every 'ac_include' in Makefile.in are replaced by 'kpse_include' and the
-command 'AC_CONFIG_FILES([Makefile])' in configure.in (or configure.ac)
-is replaced by 'KPSE_CONFIG_FILES([Makefile])'.
+Each 'ac_include' in Makefile.in is replaced by 'kpse_include' and the
+command 'AC_CONFIG_FILES([Makefile])' in configure.in or configure.ac is
+replaced by 'KPSE_CONFIG_FILES([Makefile])'.
 
 The macro KPSE_CONFIG_FILES (defined in kpse_inc.m4) uses standard
 autoconf mechanisms to achieve the desired substitutions.

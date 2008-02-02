@@ -52,6 +52,7 @@ AC_PROG_INSTALL
 
 sinclude(../kpathsea/withenable.ac)
 
-KPSE_CONFIG_FILES([Makefile conv/Makefile hbf2gf/Makefile scripts/Makefile])
+AC_CONFIG_FILES([Makefile])
+KPSE_CONFIG_FILES([conv/Makefile hbf2gf/Makefile scripts/Makefile])
 AC_OUTPUT
 date >stamp-auto

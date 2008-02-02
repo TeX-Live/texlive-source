@@ -259,19 +259,21 @@ test "$needs_obsdcompat" = yes \
 
 AC_CONFIG_SUBDIRS([libs])
 
-PKGS='dialog lcdf-typetools lzma-utils mkjobtexmf pdfopen ps2eps psutils t1utils texcount texi2html texinfo tpic2pdftex'
-ESUBDIRS=
-test -d utils || mkdir utils
-for pkg in $PKGS; do
-  if test -d $srcdir/utils/$pkg; then
-    if eval "test \"`echo '$with_'${pkg}|sed 's/-/_/g'`\" != no"; then
-      ESUBDIRS="$ESUBDIRS utils/$pkg"
-      AC_CONFIG_SUBDIRS([utils/$pkg])
-    fi
-  fi
-done
+KPSE_CONFIG_SUBDIRS([
+ dialog
+ lcdf-typetools
+ lzma-utils
+ mkjobtexmf
+ pdfopen
+ ps2eps
+ psutils
+ t1utils
+ texcount
+ texi2html
+ texinfo
+ tpic2pdftex
+], [utils])
 
-AC_SUBST(ESUBDIRS)
 AC_SUBST(LIBSDEP)
 AC_SUBST(LIBSDIRS)
 

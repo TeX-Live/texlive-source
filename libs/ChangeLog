@@ -1,0 +1,8 @@
+2008-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Convert from autoconf-2.13 to autoconf-2.59+:
+	* libpng/Makefile.in, zlib/Makefile.in: Add @configure_input@
+	lines.
+	* aclocal.m4 (new): Generated (aclocal -I ../texk/m4).
+	* configure: Regenerated (autoconf).
+

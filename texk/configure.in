@@ -15,7 +15,7 @@ dnl
 AC_INIT(kpathsea/kpathsea.texi)
 
 dnl These configure scripts won't work with anything else.
-AC_PREREQ(2.13)
+AC_PREREQ(2.59)
 
 AC_PROG_MAKE_SET
 
@@ -47,7 +47,9 @@ if test "x$with_x" = xno; then
   with_xdvik=no
 fi
 
-PKGS='
+AC_CONFIG_SUBDIRS([kpathsea web2c])
+
+KPSE_CONFIG_SUBDIRS([
  afm2pl
  bibtex8
  cjkutils
@@ -76,33 +78,7 @@ PKGS='
  xdv2pdf
  xdvik
  xdvipdfmx
-'
-
-ESUBDIRS=
-for pkg in $PKGS; do
-  if eval "test \"x`echo '$with_'${pkg}`\" != xno"; then
-    ESUBDIRS="$ESUBDIRS $pkg"
-
-    if test "$pkg" = dvipos; then
-      # attempt to discover if srcdir = builddir.
-      dir_src=`cd $srcdir/dvipos && /bin/pwd`
-      dir_work=`/bin/pwd`/dvipos  # may not exist, so don't cd
-      echo "testing configure kludge for dvipos..."
-      if test "$dir_src" != "$dir_work"; then
-        # this is a terrible kludge, but dvipos has no real configure
-        # and it is claimed crucial for context.
-        # So copy the entire sam2p srcdir into objdir.
-        rm -rf $dir_work
-        mkdir $dir_work
-        cp -pr $dir_src/* $dir_work/  # omit .svn
-        echo "  copied dvipos dir_src ($dir_src) dir_work ($dir_work)"
-      fi
-    fi
-  fi
-done
-AC_SUBST(ESUBDIRS)
-
-AC_CONFIG_SUBDIRS(kpathsea web2c $ESUBDIRS)
+])
 
 KPSE_CONFIG_FILES([Makefile])
 AC_OUTPUT

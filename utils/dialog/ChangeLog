@@ -1,0 +1,5 @@
+2008-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Convert from autoconf-2.13 to autoconf-2.59+:
+	* configure.in: Updated syntax.
+	* configure: Regenerated (autoconf).
