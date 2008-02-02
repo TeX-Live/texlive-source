@@ -4221,8 +4221,8 @@ fi
 
 
 
-ac_config_files="$ac_config_files Makefile.aux:Makefile.in"
-ac_config_files="$ac_config_files Makefile:Makefile.aux"
+ac_config_files="$ac_config_files Makefile"
+
 ac_config_files="$ac_config_files conv/Makefile.aux:conv/Makefile.in"
 ac_config_files="$ac_config_files conv/Makefile:conv/Makefile.aux"
 ac_config_files="$ac_config_files hbf2gf/Makefile.aux:hbf2gf/Makefile.in"
@@ -4817,8 +4817,7 @@ for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
     "hbf2gf/c-auto.h") CONFIG_HEADERS="$CONFIG_HEADERS hbf2gf/c-auto.h:hbf2gf/c-auto.in" ;;
-    "Makefile.aux") CONFIG_FILES="$CONFIG_FILES Makefile.aux:Makefile.in" ;;
-    "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile:Makefile.aux" ;;
+    "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "conv/Makefile.aux") CONFIG_FILES="$CONFIG_FILES conv/Makefile.aux:conv/Makefile.in" ;;
     "conv/Makefile") CONFIG_FILES="$CONFIG_FILES conv/Makefile:conv/Makefile.aux" ;;
     "hbf2gf/Makefile.aux") CONFIG_FILES="$CONFIG_FILES hbf2gf/Makefile.aux:hbf2gf/Makefile.in" ;;
@@ -5344,76 +5343,6 @@ $as_echo "$as_me: $ac_file is unchanged" >&6;}
 
 
   case $ac_file$ac_mode in
-    "Makefile.aux":F) # Discard the file just generated and first resolve kpse_include's
-  kpse_input=`case Makefile.in in
-  [\\/$]*) # Absolute
-    test -f "Makefile.in" || { { $as_echo "$as_me:$LINENO: error: cannot find input file: Makefile.in" >&5
-$as_echo "$as_me: error: cannot find input file: Makefile.in" >&2;}
-   { (exit 1); exit 1; }; }
-    echo "Makefile.in";;
-  *) # Relative
-    if test -f "Makefile.in"; then
-      # Build tree
-      echo "Makefile.in"
-    elif test -f "$srcdir/Makefile.in"; then
-      # Source tree
-      echo "$srcdir/Makefile.in"
-    else
-      # /dev/null tree
-      { { $as_echo "$as_me:$LINENO: error: cannot find input file: Makefile.in" >&5
-$as_echo "$as_me: error: cannot find input file: Makefile.in" >&2;}
-   { (exit 1); exit 1; }; }
-    fi;;
-  esac` || { (exit 1); exit 1; }
-# Replace lines of the form "kpse_include foo" with the contents of foo:
-# first, from the kpse_include lines construct a list of file names.
-# From that list, we construct a second list of those files that exist.
-# Then we construct a list of sed commands for including those files,
-# and a sed command that removes the kpse_include lines. We don't attempt
-# to read non-existent files because some (buggy) versions of sed choke
-# on this. Have to use sed because old (Ultrix, SunOs) awk does not support
-# getline or system. (Anyway, configure scripts aren't supposed to use awk.)
-# Can't use only one -e and commands {dr foo} because foo has to be last.
-# Be careful, because the filename may contain /.
-# Be careful with whitespace; we need to use echo.
-kpse_file_substs=`sed -n '/^kpse_include/s%[ 	]*\(.*\)%\1%p' "$kpse_input"`
-if test x"$kpse_file_substs" = x; then
-  { $as_echo "$as_me:$LINENO: WARNING: No need to use \`KPSE_CONFIG_FILES' for input \`Makefile.in'
-               without any \`kpse_include' directives" >&5
-$as_echo "$as_me: WARNING: No need to use \`KPSE_CONFIG_FILES' for input \`Makefile.in'
-               without any \`kpse_include' directives" >&2;}
-fi
-# Create the sed command line ...
-# Input lines containing "@configure_input@" are output twice,
-# first with our modifications and then unmodified.
-kpse_substs="sed -e '/@configure_input@/ { h; \
-  s,@configure_input@,Makefile.aux.  Generated from `echo Makefile.in |
-  sed 's,.*/,,'` by configure.,; G }'"
-for kpse_inc in $kpse_file_substs; do
-  kpse_read=`case $kpse_inc in
-    [\\/$]*) # Absolute
-      if test -f "$kpse_inc"; then
-        echo "$kpse_inc"
-      fi;;
-    *) # Relative
-      if test -f "$kpse_inc"; then
-        # Build tree
-        echo "$kpse_inc"
-      elif test -f "$srcdir/$kpse_inc"; then
-        # Source tree
-        echo "$srcdir/$kpse_inc"
-      fi;;
-  esac`
-  if test -n "$kpse_read"; then
-    kpse_mung=`echo $kpse_inc | sed 's,/,%,g'`
-    kpse_substs="$kpse_substs -e '/^kpse_include $kpse_mung$/r $kpse_read'"
-  fi
-done
-# ... and fix the whitespace and escaped slashes.
-kpse_substs=`echo "$kpse_substs" | sed -e 's,%,\\\/,g' \
-  -e 's/kpse_include /kpse_include[ 	]*/g'`
-(eval $kpse_substs -e '/^kpse_include/d' "$kpse_input") > Makefile.aux
- ;;
     "conv/Makefile.aux":F) # Discard the file just generated and first resolve kpse_include's
   kpse_input=`case conv/Makefile.in in
   [\\/$]*) # Absolute
