@@ -68,7 +68,7 @@ int asprintf(char **, const char *, ...);
 
 #ifndef HAVE_SNPRINTF
 /* see http://www.openbsd.org/cgi-bin/man.cgi?query=snprintf */
-int snprintf(char *, size_t, const char *, ...);
+int snprintf(char *, size_t, SNPRINTF_CONST char *, ...);
 #endif 
 
 #ifndef HAVE_STRTOLL
