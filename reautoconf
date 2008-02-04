@@ -1,6 +1,7 @@
 #! /bin/sh
 
 echo "autoconf stuff in transition, do not use! --peb/martin/karl 1feb08"
+exit 1
 /bin/false
 
 # $Id$
