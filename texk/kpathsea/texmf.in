@@ -89,7 +89,7 @@ TEXMFHOME = ~/texmf
 %   TEXMFVAR = $TEXMFMAIN
 % For using a separate tree:
 %   TEXMFVAR = ~/.texmf-var  # teTeX 3.0 default
-TEXMFVAR = ~/.texlive2007/texmf-var
+TEXMFVAR = ~/.texlive2008/texmf-var
 
 % TEXMFCONFIG, where texconfig stores configuration data.
 % With teTeX-3.0 or later, this must be set.
@@ -99,7 +99,7 @@ TEXMFVAR = ~/.texlive2007/texmf-var
 %   TEXMFCONFIG = ~/.texmf-config  # teTeX 3.0 default
 % For using a separate tree:
 %   TEXMFCONFIG = $SELFAUTOPARENT/texmf-config
-TEXMFCONFIG = ~/.texlive2007/texmf-config
+TEXMFCONFIG = ~/.texlive2008/texmf-config
 
 % Now, list all the texmf trees. If you have multiple trees you can
 % use shell brace notation, like this:
