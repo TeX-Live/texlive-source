@@ -11548,7 +11548,7 @@ fi
 # first with our modifications and then unmodified.
 kpse_substs="sed -e '/@configure_input@/ { h; \
   s,@configure_input@,Makefile.aux.  Generated from `echo Makefile.in |
-  sed 's,.*/,,'` by configure.,; G }'"
+  sed 's,.*/,,'` by configure.,; G; }'"
 for kpse_inc in $kpse_file_substs; do
   kpse_read=`case $kpse_inc in
     [\\/$]*) # Absolute

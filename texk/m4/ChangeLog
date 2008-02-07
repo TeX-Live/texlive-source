@@ -1,3 +1,7 @@
+2008-02-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse_inc.m4: Stricter sed syntax.
+
 2008-02-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse_subdirs.m4 (new): Define KPSE_CONFIG_SUBDIRS, used in

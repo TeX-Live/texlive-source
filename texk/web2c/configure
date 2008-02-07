@@ -11952,7 +11952,7 @@ fi
 # first with our modifications and then unmodified.
 kpse_substs="sed -e '/@configure_input@/ { h; \
   s,@configure_input@,omegafonts/Makefile.aux.  Generated from `echo omegafonts/Makefile.in |
-  sed 's,.*/,,'` by configure.,; G }'"
+  sed 's,.*/,,'` by configure.,; G; }'"
 for kpse_inc in $kpse_file_substs; do
   kpse_read=`case $kpse_inc in
     [\\/$]*) # Absolute
@@ -12022,7 +12022,7 @@ fi
 # first with our modifications and then unmodified.
 kpse_substs="sed -e '/@configure_input@/ { h; \
   s,@configure_input@,otps/Makefile.aux.  Generated from `echo otps/Makefile.in |
-  sed 's,.*/,,'` by configure.,; G }'"
+  sed 's,.*/,,'` by configure.,; G; }'"
 for kpse_inc in $kpse_file_substs; do
   kpse_read=`case $kpse_inc in
     [\\/$]*) # Absolute
@@ -12092,7 +12092,7 @@ fi
 # first with our modifications and then unmodified.
 kpse_substs="sed -e '/@configure_input@/ { h; \
   s,@configure_input@,pdftexdir/Makefile.aux.  Generated from `echo pdftexdir/Makefile.in |
-  sed 's,.*/,,'` by configure.,; G }'"
+  sed 's,.*/,,'` by configure.,; G; }'"
 for kpse_inc in $kpse_file_substs; do
   kpse_read=`case $kpse_inc in
     [\\/$]*) # Absolute
@@ -12162,7 +12162,7 @@ fi
 # first with our modifications and then unmodified.
 kpse_substs="sed -e '/@configure_input@/ { h; \
   s,@configure_input@,Makefile.aux.  Generated from `echo Makefile.in |
-  sed 's,.*/,,'` by configure.,; G }'"
+  sed 's,.*/,,'` by configure.,; G; }'"
 for kpse_inc in $kpse_file_substs; do
   kpse_read=`case $kpse_inc in
     [\\/$]*) # Absolute
@@ -12232,7 +12232,7 @@ fi
 # first with our modifications and then unmodified.
 kpse_substs="sed -e '/@configure_input@/ { h; \
   s,@configure_input@,doc/Makefile.aux.  Generated from `echo doc/Makefile.in |
-  sed 's,.*/,,'` by configure.,; G }'"
+  sed 's,.*/,,'` by configure.,; G; }'"
 for kpse_inc in $kpse_file_substs; do
   kpse_read=`case $kpse_inc in
     [\\/$]*) # Absolute
@@ -12302,7 +12302,7 @@ fi
 # first with our modifications and then unmodified.
 kpse_substs="sed -e '/@configure_input@/ { h; \
   s,@configure_input@,lib/Makefile.aux.  Generated from `echo lib/Makefile.in |
-  sed 's,.*/,,'` by configure.,; G }'"
+  sed 's,.*/,,'` by configure.,; G; }'"
 for kpse_inc in $kpse_file_substs; do
   kpse_read=`case $kpse_inc in
     [\\/$]*) # Absolute
@@ -12372,7 +12372,7 @@ fi
 # first with our modifications and then unmodified.
 kpse_substs="sed -e '/@configure_input@/ { h; \
   s,@configure_input@,man/Makefile.aux.  Generated from `echo man/Makefile.in |
-  sed 's,.*/,,'` by configure.,; G }'"
+  sed 's,.*/,,'` by configure.,; G; }'"
 for kpse_inc in $kpse_file_substs; do
   kpse_read=`case $kpse_inc in
     [\\/$]*) # Absolute
@@ -12442,7 +12442,7 @@ fi
 # first with our modifications and then unmodified.
 kpse_substs="sed -e '/@configure_input@/ { h; \
   s,@configure_input@,mpware/Makefile.aux.  Generated from `echo mpware/Makefile.in |
-  sed 's,.*/,,'` by configure.,; G }'"
+  sed 's,.*/,,'` by configure.,; G; }'"
 for kpse_inc in $kpse_file_substs; do
   kpse_read=`case $kpse_inc in
     [\\/$]*) # Absolute
@@ -12512,7 +12512,7 @@ fi
 # first with our modifications and then unmodified.
 kpse_substs="sed -e '/@configure_input@/ { h; \
   s,@configure_input@,mpdir/Makefile.aux.  Generated from `echo mpdir/Makefile.in |
-  sed 's,.*/,,'` by configure.,; G }'"
+  sed 's,.*/,,'` by configure.,; G; }'"
 for kpse_inc in $kpse_file_substs; do
   kpse_read=`case $kpse_inc in
     [\\/$]*) # Absolute
@@ -12582,7 +12582,7 @@ fi
 # first with our modifications and then unmodified.
 kpse_substs="sed -e '/@configure_input@/ { h; \
   s,@configure_input@,web2c/Makefile.aux.  Generated from `echo web2c/Makefile.in |
-  sed 's,.*/,,'` by configure.,; G }'"
+  sed 's,.*/,,'` by configure.,; G; }'"
 for kpse_inc in $kpse_file_substs; do
   kpse_read=`case $kpse_inc in
     [\\/$]*) # Absolute
@@ -12652,7 +12652,7 @@ fi
 # first with our modifications and then unmodified.
 kpse_substs="sed -e '/@configure_input@/ { h; \
   s,@configure_input@,window/Makefile.aux.  Generated from `echo window/Makefile.in |
-  sed 's,.*/,,'` by configure.,; G }'"
+  sed 's,.*/,,'` by configure.,; G; }'"
 for kpse_inc in $kpse_file_substs; do
   kpse_read=`case $kpse_inc in
     [\\/$]*) # Absolute

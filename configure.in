@@ -46,7 +46,6 @@ fi
 AC_CANONICAL_SYSTEM
 
 dnl Various compiler directives
-dnl Various compiler directives
 AC_MSG_CHECKING(whether to define additional compiler specific flags)
 case "$target" in
     alpha*-dec*)

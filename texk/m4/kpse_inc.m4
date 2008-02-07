@@ -80,18 +80,11 @@ if test x"$kpse_file_substs" = x; then
                without any \`kpse_include' directives])
 fi
 # Create the sed command line ...
-dnl # Input lines containing "@configure_input@" are output twice,
-dnl # first unmodified and then with our modifications.
-dnl kpse_substs="sed -e '/@configure_input@/p' \
-dnl   -e 's,@configure_input@,$1.  Generated from `echo $2 |
-dnl   sed 's,.*/,,'` by configure.,'"
-dnl 
-dnl I hope this is portable
 # Input lines containing "@configure_input@" are output twice,
 # first with our modifications and then unmodified.
 kpse_substs="sed -e '/@configure_input@/ { h; \
   s,@configure_input@,$1.  Generated from `echo $2 |
-  sed 's,.*/,,'` by configure.,; G }'"
+  sed 's,.*/,,'` by configure.,; G; }'"
 for kpse_inc in $kpse_file_substs; do
   kpse_read=`case $kpse_inc in
     [[\\/$]]*) # Absolute
