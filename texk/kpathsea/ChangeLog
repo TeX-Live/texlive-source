@@ -1,3 +1,7 @@
+2008-02-08  Karl Berry  <karl@tug.org>
+
+	* texmf.in: texlive2008 to match texmf/web2c/texmf.cnf.
+
 2008-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Convert from autoconf-2.13 to autoconf-2.59+:
