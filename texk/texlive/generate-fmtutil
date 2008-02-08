@@ -1,0 +1,39 @@
+#!/xusr/bin/env texlua
+--*-Lua-*-
+-- $Id: generate-updmap.fmtutil 6485 2008-02-01 20:15:06Z reinhardk $
+
+-- Copyright (C) 2007 2008 Reinhard Kotucha, Norbert Preining
+-- You may freely use, modify and/or distribute this file.
+
+-- Wrapper for Perl scripts.
+
+
+if string.find(arg[0], "/") then -- UNIX path
+   filename=select(1, string.gsub(arg[0], ".*/", ""))
+elseif string.find(arg[0], "\\") then -- Windows path
+   filename=select(1, string.gsub(arg[0], ".*\\", ""))
+else -- no path
+   filename=arg[0]
+end
+
+basename=select(1, string.gsub(filename, "\.texlua$", ""))
+
+basename="generate-fmtutil"
+
+kpse.set_program_name(basename)
+
+TEXDIR=kpse.var_value("SELFAUTOPARENT")
+
+os.setenv("PERL5LIB", TEXDIR.."/tlpkg/tlperl/lib")
+
+perlbin=TEXDIR.."/tlpkg/tlperl/bin/perl.exe"
+script=kpse.find_file(basename..".pl", "texmfscripts")
+
+command={perlbin, script}
+
+for i=1, #arg do
+    command[#command+1]=arg[i]
+end
+
+ret=os.spawn(command)
+os.exit(ret)
