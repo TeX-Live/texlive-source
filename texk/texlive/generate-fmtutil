@@ -38,7 +38,8 @@ if (not(script)) then
   os.exit(1)
 end
 
-command={perlbin, script}
+command={'"'..perlbin..'"', '"'..script..'"'}
+command[0] = perlbin
 
 for i=1, #arg do
     command[#command+1]=arg[i]
