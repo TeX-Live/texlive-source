@@ -1,4 +1,6 @@
-AC_INIT(EXTRA.LIB)
+dnl configure.in for TeX Live source/libs.
+dnl Public domain.
+AC_INIT(zlib/zlib.h)
 
 AC_CONFIG_AUX_DIR(../config)
 AC_SET_MAKE
