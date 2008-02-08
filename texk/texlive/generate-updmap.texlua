@@ -1,4 +1,4 @@
-#!/xusr/bin/env texlua
+#!/usr/bin/env texlua
 --*-Lua-*-
 -- $Id: generate-updmap.texlua 6485 2008-02-01 20:15:06Z reinhardk $
 
