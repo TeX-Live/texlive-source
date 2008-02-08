@@ -36,6 +36,11 @@ end
 
 script=kpse.find_file(basename..".pl", "texmfscripts")
 
+if (not(script)) then
+  print ("Cannot find "..basename..".pl".." using kpse, exiting!")
+  os.exit(1)
+end
+
 command={perlbin, script}
 
 for i=1, #arg do
