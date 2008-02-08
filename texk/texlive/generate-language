@@ -20,7 +20,7 @@ basename=select(1, string.gsub(filename, "\.texlua$", ""))
 
 basename="generate-language"
 
-kpse.set_program_name(basename)
+kpse.set_program_name(filename)
 
 TEXDIR=kpse.var_value("SELFAUTOPARENT")
 
