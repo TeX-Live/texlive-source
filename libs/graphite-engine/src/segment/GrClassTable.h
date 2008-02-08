@@ -110,6 +110,8 @@ protected:
 
 class GrClassTable
 {
+	friend class FontMemoryUsage;
+
 public:
 	//	Constructor & destructor:
 	GrClassTable()

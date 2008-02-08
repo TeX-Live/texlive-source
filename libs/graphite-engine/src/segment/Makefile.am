@@ -14,6 +14,7 @@ libgraphite_la_SOURCES += $(segmentdir)/GrPass.cpp
 libgraphite_la_SOURCES += $(segmentdir)/GrSlotState.cpp
 libgraphite_la_SOURCES += $(segmentdir)/GrSlotStream.cpp
 libgraphite_la_SOURCES += $(segmentdir)/GrTableManager.cpp
+libgraphite_la_SOURCES += $(segmentdir)/MemoryUsage.cpp
 libgraphite_la_SOURCES += $(segmentdir)/Platform.cpp
 libgraphite_la_SOURCES += $(segmentdir)/SegmentAux.cpp
 libgraphite_la_SOURCES += $(segmentdir)/Segment.cpp
@@ -22,5 +23,4 @@ libgraphite_la_SOURCES += $(segmentdir)/TestPasses.cpp
 libgraphite_la_SOURCES += $(segmentdir)/TransductionLog.cpp
 
 EXTRA_DIST += $(segmentdir)/*.h
-EXTRA_DIST += $(segmentdir)/explicit_instantiations.cpp
 

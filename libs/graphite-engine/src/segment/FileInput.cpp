@@ -98,7 +98,7 @@ bool GrBufferIStream::OpenBuffer(byte * pbBuffer, int cb)
 
 	m_pbStart = pbBuffer;
 	m_pbNext = pbBuffer;
-	if (cb >= 0)
+	if (cb > 0)
 		m_pbLim = m_pbStart + cb;
 	// otherwise we don't know the length
 

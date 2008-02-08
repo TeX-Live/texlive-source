@@ -64,9 +64,9 @@ am_libgraphite_la_OBJECTS = Debug.lo Util.lo Font.lo TtfUtil.lo \
 	FileFont.lo FileInput.lo FontCache.lo FontFace.lo \
 	GrCharStream.lo GrClassTable.lo GrEngine.lo GrFeature.lo \
 	GrFSM.lo GrGlyphTable.lo GrPassActionCode.lo GrPass.lo \
-	GrSlotState.lo GrSlotStream.lo GrTableManager.lo Platform.lo \
-	SegmentAux.lo Segment.lo TestFSM.lo TestPasses.lo \
-	TransductionLog.lo SegmentPainter.lo
+	GrSlotState.lo GrSlotStream.lo GrTableManager.lo \
+	MemoryUsage.lo Platform.lo SegmentAux.lo Segment.lo TestFSM.lo \
+	TestPasses.lo TransductionLog.lo SegmentPainter.lo
 libgraphite_la_OBJECTS = $(am_libgraphite_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir)
 depcomp = $(SHELL) $(top_srcdir)/config/depcomp
@@ -141,6 +141,7 @@ PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
 REL_CODENAME = @REL_CODENAME@
+SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 SIZEOF_WCHAR_T = @SIZEOF_WCHAR_T@
@@ -207,8 +208,7 @@ EXTRA_DIST = $(top_srcdir)/include/graphite/BinTree.h \
 	$(top_srcdir)/include/graphite/GenericResource.h \
 	$(top_srcdir)/include/graphite/HashMap.h $(genericdir)/*.h \
 	$(genericdir)/BinTree_i.cpp $(genericdir)/HashMap_i.cpp \
-	$(fontdir)/*.h $(segmentdir)/*.h \
-	$(segmentdir)/explicit_instantiations.cpp
+	$(fontdir)/*.h $(segmentdir)/*.h
 graphiteinclude_HEADERS = $(top_srcdir)/include/graphite/FileFont.h \
 	$(top_srcdir)/include/graphite/Font.h \
 	$(top_srcdir)/include/graphite/GraphiteProcess.h \
@@ -229,6 +229,7 @@ graphiteinclude_HEADERS = $(top_srcdir)/include/graphite/FileFont.h \
 	$(top_srcdir)/include/graphite/IGrEngine.h \
 	$(top_srcdir)/include/graphite/IGrJustifier.h \
 	$(top_srcdir)/include/graphite/ITextSource.h \
+	$(top_srcdir)/include/graphite/MemoryUsage.h \
 	$(top_srcdir)/include/graphite/SegmentAux.h \
 	$(top_srcdir)/include/graphite/Segment.h \
 	$(top_srcdir)/include/graphite/SegmentPainter.h
@@ -243,10 +244,10 @@ libgraphite_la_SOURCES = $(genericdir)/Debug.cpp \
 	$(segmentdir)/GrGlyphTable.cpp \
 	$(segmentdir)/GrPassActionCode.cpp $(segmentdir)/GrPass.cpp \
 	$(segmentdir)/GrSlotState.cpp $(segmentdir)/GrSlotStream.cpp \
-	$(segmentdir)/GrTableManager.cpp $(segmentdir)/Platform.cpp \
-	$(segmentdir)/SegmentAux.cpp $(segmentdir)/Segment.cpp \
-	$(segmentdir)/TestFSM.cpp $(segmentdir)/TestPasses.cpp \
-	$(segmentdir)/TransductionLog.cpp \
+	$(segmentdir)/GrTableManager.cpp $(segmentdir)/MemoryUsage.cpp \
+	$(segmentdir)/Platform.cpp $(segmentdir)/SegmentAux.cpp \
+	$(segmentdir)/Segment.cpp $(segmentdir)/TestFSM.cpp \
+	$(segmentdir)/TestPasses.cpp $(segmentdir)/TransductionLog.cpp \
 	$(painterdir)/SegmentPainter.cpp
 genericdir = $(top_srcdir)/src/generic
 fontdir = $(top_srcdir)/src/font
@@ -338,6 +339,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GrSlotState.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GrSlotStream.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GrTableManager.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MemoryUsage.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Platform.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Segment.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SegmentAux.Plo@am__quote@
@@ -501,6 +503,13 @@ GrTableManager.lo: $(segmentdir)/GrTableManager.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(segmentdir)/GrTableManager.cpp' object='GrTableManager.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrTableManager.lo `test -f '$(segmentdir)/GrTableManager.cpp' || echo '$(srcdir)/'`$(segmentdir)/GrTableManager.cpp
+
+MemoryUsage.lo: $(segmentdir)/MemoryUsage.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT MemoryUsage.lo -MD -MP -MF "$(DEPDIR)/MemoryUsage.Tpo" -c -o MemoryUsage.lo `test -f '$(segmentdir)/MemoryUsage.cpp' || echo '$(srcdir)/'`$(segmentdir)/MemoryUsage.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/MemoryUsage.Tpo" "$(DEPDIR)/MemoryUsage.Plo"; else rm -f "$(DEPDIR)/MemoryUsage.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(segmentdir)/MemoryUsage.cpp' object='MemoryUsage.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o MemoryUsage.lo `test -f '$(segmentdir)/MemoryUsage.cpp' || echo '$(srcdir)/'`$(segmentdir)/MemoryUsage.cpp
 
 Platform.lo: $(segmentdir)/Platform.cpp
 @am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Platform.lo -MD -MP -MF "$(DEPDIR)/Platform.Tpo" -c -o Platform.lo `test -f '$(segmentdir)/Platform.cpp' || echo '$(srcdir)/'`$(segmentdir)/Platform.cpp; \

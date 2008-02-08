@@ -1,3 +1,28 @@
+silgraphite2.0 (1:2.2.1-1) feisty; urgency=low
+
+  * 30% speedup
+  * various bug fixes
+
+ -- Martin Hosken <martin_hosken@sil.org>  Mon, 27 Aug 2007 16:47:26 +0100
+
+silgraphite2.0 (1:2.2.0-1.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Fix the broken graphite.pc file (Closes: #433225):
+     - debian/rules:
+         Added an include of cdbs's simple-patchsys.mk.
+     - debian/patches/fix_cflags_in_graphite.pc.diff
+         Added this patch to fix the graphite.pc file by appending the missing
+         ``graphite'' directory to the Cflags in graphite.pc.in.
+
+ -- Cyril Brulebois <cyril.brulebois@enst-bretagne.fr>  Mon, 20 Aug 2007 01:20:35 +0000
+
+silgraphite2.0 (1:2.2.0-1) unstable; urgency=low
+
+  * Release 2.2.0
+
+ -- Daniel Glassey <wdg@debian.org>  Thu, 28 Jun 2007 10:56:17 +0100
+
 silgraphite2.0 (1:2.1+0447svn-1) unstable; urgency=low
 
   * Update svn

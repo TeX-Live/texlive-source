@@ -88,6 +88,7 @@ class Font;
 class GrSlotStream {
 
 	friend class GrSlotState;
+	friend class FontMemoryUsage;
 
 public:
 	//	Constructor:

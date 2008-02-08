@@ -5,7 +5,7 @@ namespace gr
 {
 
 
-// used to allow table sharing between font copies
+// used to allow table sharing among font copies
 // TBD: should this be a real class or is it acceptable to 
 // make the attributes public
 class FontTableCache

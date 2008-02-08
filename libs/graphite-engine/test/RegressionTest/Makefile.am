@@ -5,10 +5,15 @@ EXTRA_DIST = \
 	romanText.wpx \
 	xlineText.wpx \
 	grtest_arabic.ttf \
+	grtest_badVersion.ttf \
+	grtest_badCmap.ttf \
 	grtest_burmese.ttf \
 	grtest_roman.ttf \
-	grtest_xline.ttf xline.gdl \
-	Makefile.vc makedebug.bat \
+	grtest_taiviet.ttf \
+	grtest_xline.ttf \
+	xline.gdl \
+	Makefile.vc \
+	makedebug.bat \
 	readme.txt
 
 noinst_PROGRAMS = regression-test

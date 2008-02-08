@@ -1610,7 +1610,7 @@ void GrSlotStream::AppendLineBreak(GrTableManager * ptman, GrCharStream * pchstr
 		pengst->NewSlot(ptman->LBGlyphID(), fval, 0, ichwSegOffset, -1, &pslotNew);
 	}
 
-	pslotNew->m_lb = lb;
+	pslotNew->m_lb = sdata8(lb);
 	pslotNew->SetSpecialSlotFlag(fInitial ? kspslLbInitial : kspslLbFinal);
 	//pslotNew->m_fInitialLB = fInitial; // TODO: remove
 	pslotNew->SetDirectionality(dirc);

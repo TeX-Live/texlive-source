@@ -75,20 +75,20 @@ Segment::Segment() :
 	m_cbNextSegDat(0),
 	m_prgInitDat(NULL),
 	m_cbInitDat(0),
-	m_fUseSepBase(0),
+//	m_fUseSepBase(0),
 	//m_psegAltEndLine(NULL),
 	m_prgisloutBefore(NULL),
 	m_prgisloutAfter(NULL),
-	m_prgvisloutAssocs(NULL),
+	m_prgpvisloutAssocs(NULL),
 	m_prgisloutLigature(NULL),
 	m_prgiComponent(NULL),
-	m_psstrm(NULL),
+//	m_psstrm(NULL),
 	m_cslout(0),
 	m_prgslout(NULL),
 	m_prgnSlotVarLenBuf(NULL),
-	m_cnUserDefn(0),
+//	m_cnUserDefn(0),
 	m_cnCompPerLig(0),
-	m_cnFeat(0),
+//	m_cnFeat(0),
 	m_cginf(0),
 	m_prgginf(NULL)
 {
@@ -96,8 +96,8 @@ Segment::Segment() :
 
 	g_csegTotal++;
 
-	m_stuFaceName.erase();
-	m_stuBaseFaceName.erase();
+//	m_stuFaceName.erase();
+//	m_stuBaseFaceName.erase();
 	m_vnSkipOffsets.clear();
 }
 
@@ -247,12 +247,12 @@ void Segment::Initialize(ITextSource * pgts, int ichwMin, int ichwLim,
 	m_dxsVisibleWidth = -1;
 	m_dxsTotalWidth = -1;
 
-	m_psstrm = NULL;
+//	m_psstrm = NULL;
 	m_prgslout = NULL;
 	m_prgnSlotVarLenBuf = NULL;
 	m_prgisloutBefore = NULL;
 	m_prgisloutAfter = NULL;
-	m_prgvisloutAssocs = NULL;
+	m_prgpvisloutAssocs = NULL;
 	m_prgisloutLigature = NULL;
 	m_prgiComponent = NULL;
 
@@ -261,12 +261,12 @@ void Segment::Initialize(ITextSource * pgts, int ichwMin, int ichwLim,
 
 	//m_psegAltEndLine = NULL;
 
-	m_stuFaceName.erase();
-	m_stuBaseFaceName.erase();
-	m_fUseSepBase = false;
+//	m_stuFaceName.erase();
+//	m_stuBaseFaceName.erase();
+//	m_fUseSepBase = false;
 
-	m_psegPrev = NULL;	// obsolete
-	m_psegNext = NULL;
+//	m_psegPrev = NULL;	// obsolete
+//	m_psegNext = NULL;
 
 	//InitializePlatform();
 }
@@ -311,7 +311,12 @@ void Segment::DestroyContents()
 	delete[] m_prgnSlotVarLenBuf;
 	delete[] m_prgisloutBefore;
 	delete[] m_prgisloutAfter;
-	delete[] m_prgvisloutAssocs;
+	for (int ichw = 0; ichw < m_ichwAssocsLim - m_ichwAssocsMin; ichw++)
+	{
+		if (m_prgpvisloutAssocs && m_prgpvisloutAssocs[ichw])
+			delete m_prgpvisloutAssocs[ichw];
+	}
+	delete[] m_prgpvisloutAssocs;
 	delete[] m_prgisloutLigature;
 	delete[] m_prgiComponent;
 	delete[] m_prgbNextSegDat;
@@ -446,14 +451,14 @@ Segment::Segment(Segment & seg)
 	m_cbNextSegDat = seg.m_cbNextSegDat;
 	m_prgbNextSegDat = new byte[m_cbNextSegDat];
 	std::copy(seg.m_prgbNextSegDat, seg.m_prgbNextSegDat + m_cbNextSegDat, m_prgbNextSegDat);
-	m_psegPrev = seg.m_psegPrev;
-	m_psegNext = seg.m_psegNext;
-	m_stuFaceName = seg.m_stuFaceName;
-	m_stuBaseFaceName = seg.m_stuBaseFaceName;
-	m_fUseSepBase = seg.m_fUseSepBase;
-	m_pixHeight = seg.m_pixHeight;
-	m_fBold = seg.m_fBold;
-	m_fItalic = seg.m_fItalic;
+//	m_psegPrev = seg.m_psegPrev;
+//	m_psegNext = seg.m_psegNext;
+//	m_stuFaceName = seg.m_stuFaceName;
+//	m_stuBaseFaceName = seg.m_stuBaseFaceName;
+//	m_fUseSepBase = seg.m_fUseSepBase;
+//	m_pixHeight = seg.m_pixHeight;
+//	m_fBold = seg.m_fBold;
+//	m_fItalic = seg.m_fItalic;
 	m_lbStart = seg.m_lbStart;
 	m_lbEnd = seg.m_lbEnd;
 	m_fStartLine = seg.m_fStartLine;
@@ -463,8 +468,8 @@ Segment::Segment(Segment & seg)
 	m_dysFontAscent = seg.m_dysFontAscent;
 	m_dysFontDescent = seg.m_dysFontDescent;
 	m_xysEmSquare = seg.m_xysEmSquare;
-	m_xsDPI = seg.m_xsDPI;
-	m_ysDPI = seg.m_ysDPI;
+//	m_xsDPI = seg.m_xsDPI;
+//	m_ysDPI = seg.m_ysDPI;
 	m_dxsStretch = seg.m_dxsStretch;
 	m_dxsWidth = seg.m_dxsWidth;
 	m_dysHeight = seg.m_dysHeight;
@@ -488,15 +493,21 @@ Segment::Segment(Segment & seg)
 	std::copy(seg.m_prgisloutBefore, seg.m_prgisloutBefore + dichw, m_prgisloutBefore);
 	m_prgisloutAfter = new int[dichw];
 	std::copy(seg.m_prgisloutAfter, seg.m_prgisloutAfter + dichw, m_prgisloutAfter);
-	m_prgvisloutAssocs = new std::vector<int>[dichw];
-	std::copy(seg.m_prgvisloutAssocs, seg.m_prgvisloutAssocs + dichw,
-			 m_prgvisloutAssocs);
+	m_prgpvisloutAssocs = new std::vector<int> * [dichw];
+	for (int ivislout = 0; ivislout < dichw; ivislout++)
+	{
+		std::vector<int> * pvislout = seg.m_prgpvisloutAssocs[ivislout];
+		if (pvislout)
+		{
+			std::vector<int> * pvisloutNew = new std::vector<int>;
+			m_prgpvisloutAssocs[ivislout] = pvisloutNew;
+            *pvisloutNew = *pvislout; // copy the vector
+		}
+	}
 	m_prgisloutLigature = new int[dichw];
 	std::copy(seg.m_prgisloutLigature, seg.m_prgisloutLigature + dichw, m_prgisloutLigature);
-	m_prgiComponent = new int[dichw];
+	m_prgiComponent = new sdata8[dichw];
 	std::copy(seg.m_prgiComponent, seg.m_prgiComponent + dichw, m_prgiComponent);
-
-	// m_psstrm
 
 	m_cslout = seg.m_cslout;
 	int cnExtraPerSlot = (m_cslout > 0) ? seg.m_prgslout[0].CExtraSpaceSlout() : 0;
@@ -511,9 +522,9 @@ Segment::Segment(Segment & seg)
 			cnExtraPerSlot);
 	}
 
-	m_cnUserDefn = seg.m_cnUserDefn;
+//	m_cnUserDefn = seg.m_cnUserDefn;
 	m_cnCompPerLig = seg.m_cnCompPerLig;
-	m_cnFeat = seg.m_cnFeat;
+//	m_cnFeat = seg.m_cnFeat;
 	m_cslotRestartBackup = seg.m_cslotRestartBackup;
 	std::copy(seg.m_prgnSlotVarLenBuf, seg.m_prgnSlotVarLenBuf + 
 				(m_cslout * cnExtraPerSlot), m_prgnSlotVarLenBuf);
@@ -921,14 +932,19 @@ std::pair<GlyphIterator, GlyphIterator> Segment::glyphs()
 ----------------------------------------------------------------------------------------------*/
 std::pair<GlyphSetIterator, GlyphSetIterator> Segment::charToGlyphs(toffset ich)
 {
-	std::vector<int> * pvislout = UnderlyingToLogicalAssocs(ich);
+	std::vector<int> vislout = UnderlyingToLogicalAssocs(ich);
 
-	// UnderlyingToLogicalAssocs can return NULL for edge cases
-	if (pvislout == NULL)
+	if (vislout.size() == 0)
 		return std::make_pair(GlyphSetIterator(), GlyphSetIterator());
 	else
-		return std::make_pair(GlyphSetIterator(*this, 0, *pvislout), 
-			GlyphSetIterator(*this, pvislout->size(), *pvislout));
+	{
+		// Note that BOTH instances of GlyphSetIterator must use the same underlying vector,
+		// so that comparisons make sense.
+		RcVector * qvislout = new RcVector(vislout);
+		return std::make_pair(
+			GlyphSetIterator(*this, 0, qvislout), 
+			GlyphSetIterator(*this, vislout.size(), qvislout));
+	}
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -1107,7 +1123,7 @@ LineBrk Segment::getBreakWeight(int ich, bool fBreakBefore)
 		return klbClipBreak;
 	GrSlotOutput * psloutFirst = m_prgslout + isloutFirst;
 	bool fNotFirst = false;
-	if (psloutFirst->HasComponents()
+	if ((psloutFirst->NumberOfComponents() > 0)
 		&& psloutFirst->UnderlyingComponent(0) != ich)
 	{
 		// Not the first component of a ligature.
@@ -1124,7 +1140,7 @@ LineBrk Segment::getBreakWeight(int ich, bool fBreakBefore)
 		return klbClipBreak;
 	GrSlotOutput * psloutLast = m_prgslout + isloutLast;
 	bool fNotLast = false;
-	if (psloutLast->HasComponents()
+	if ((psloutLast->NumberOfComponents() > 0)
 		&& psloutLast->UnderlyingComponent(psloutLast->NumberOfComponents() - 1) != ich)
 	{
 		// Not the last component of a ligature.
@@ -1285,7 +1301,7 @@ int Segment::findNextBreakPoint(int ichStart,
 			else
 				iginfMin = iginfMid;
 		}
-		Assert(iginfLim < m_cginf);
+		Assert(iginfLim <= m_cginf);
 		if (iginfLim >= m_cginf) iginfLim = m_cginf - 1;
 		ichFit = PhysicalSurfaceToUnderlying(iginfLim, false);
 	}
@@ -1534,11 +1550,11 @@ void Segment::SetUpOutputArrays(Font * pfont, GrTableManager * ptman,
 	m_mFontEmUnits = EngineImpl()->GetFontEmUnits();
 
 	pfont->getFontMetrics(&m_dysFontAscent, &m_dysFontDescent, &m_xysEmSquare);
-	m_xsDPI = (float)pfont->getDPIx();
-	m_ysDPI = (float)pfont->getDPIy();
+//	m_xsDPI = (float)pfont->getDPIx();
+//	m_ysDPI = (float)pfont->getDPIy();
 
 	// Note that storing both of these values is redundant; they should be the same.
-	Assert(m_xysEmSquare == m_pixHeight);
+//	Assert(m_xysEmSquare == m_pixHeight);
 
 	m_twsh = twsh;
 	m_fParaRtl = fParaRtl;
@@ -1560,24 +1576,24 @@ void Segment::SetUpOutputArrays(Font * pfont, GrTableManager * ptman,
 
 	m_prgisloutAfter = new int[cchwInThisSeg];
 
-	m_prgvisloutAssocs = new std::vector<int>[cchwInThisSeg];
+	m_prgpvisloutAssocs = new std::vector<int> * [cchwInThisSeg];
 
 	m_prgisloutLigature = new int[cchwInThisSeg];
 
-	m_prgiComponent = new int[cchwInThisSeg];
+	m_prgiComponent = new sdata8[cchwInThisSeg];
 
 	int cslot = 0;
-	m_psstrm = psstrmFinal; // TODO: make a local variable
-	if (m_psstrm)
-		cslot = m_psstrm->FinalSegLim();
+	//m_psstrm = psstrmFinal; // TODO: make a local variable
+	if (psstrmFinal)
+		cslot = psstrmFinal->FinalSegLim();
 	else
 		Assert(fEmpty);
 
 	float xsMin = 0;
 	int islot;
-	int islotMin = (m_psstrm) ? m_psstrm->IndexOffset() : 0;
+	int islotMin = (psstrmFinal) ? psstrmFinal->IndexOffset() : 0;
 	for (islot = islotMin; islot < cslot; islot++)
-		xsMin = min(xsMin, m_psstrm->SlotAt(islot)->XPosition());
+		xsMin = min(xsMin, psstrmFinal->SlotAt(islot)->XPosition());
 
 	//	For right-to-left segments, the draw origin is at the left side of the visible
 	//	portion of the text. So if necessary, scoot everything left so that the invisible
@@ -1587,7 +1603,7 @@ void Segment::SetUpOutputArrays(Font * pfont, GrTableManager * ptman,
 	float dxsInvisible = (m_fEndLine) ? m_dxsTotalWidth - m_dxsVisibleWidth : 0;
 	for (islot = islotMin; ((m_nDirDepth % 2) && (islot < cslot)); islot++)
 	{
-		GrSlotState * pslot = m_psstrm->SlotAt(islot);
+		GrSlotState * pslot = psstrmFinal->SlotAt(islot);
 		// int islout = islot - islotMin;
 		if (pslot->GlyphID() == chwLB)
 			continue; // skip over linebreak markers
@@ -1606,38 +1622,50 @@ void Segment::SetUpOutputArrays(Font * pfont, GrTableManager * ptman,
 	{
 		m_prgisloutBefore[ichw] = kPosInfinity;
 		m_prgisloutAfter[ichw]  = kNegInfinity;
-		m_prgvisloutAssocs[ichw].clear();
+		m_prgpvisloutAssocs[ichw] = new std::vector<int>;
 		m_prgisloutLigature[ichw] = kNegInfinity;
 		m_prgiComponent[ichw] = 0;
 	}
 
 	m_cslout = csloutSurface;
-	m_cnUserDefn = ptman->NumUserDefn();
+	if (ptman->NumUserDefn() > 0 && ptman->NumCompPerLig() > 0)
+	{
+		int x; x = 3;
+	}
+
+//	m_cnUserDefn = ptman->NumUserDefn();
 	m_cnCompPerLig = ptman->NumCompPerLig();
-	m_cnFeat = ptman->NumFeat();
+//	m_cnFeat = ptman->NumFeat();
 	//	Normal buffers, plus underlying indices of ligature components, plus
 	//	map from used components to defined components.
-	int cnExtraPerSlot = m_cnUserDefn +	(m_cnCompPerLig * 2) + m_cnFeat + (m_cnCompPerLig * 2);
+//	int cnExtraPerSlot = m_cnUserDefn +	(m_cnCompPerLig * 2) + m_cnFeat + (m_cnCompPerLig * 2);
+
+	// We don't need to store the user-defined slot attributes or the features in the segment itself.
+	// What we need is: (1) component.ref attr settings, (2) slot-attribute indices,
+	// (3) underlying indicates of ligature components, and (4) map from used components
+	// to defined components
+	int cnExtraPerSlot = m_cnCompPerLig * 4;
 	m_prgslout = new GrSlotOutput[m_cslout];
 	m_prgnSlotVarLenBuf = new u_intslot[m_cslout * cnExtraPerSlot];
 
 	m_isloutVisLim = 0;
-	if (m_psstrm)
+	if (psstrmFinal)
 	{
 		for (islot = islotMin; islot < psstrmFinal->FinalSegLim(); ++islot)
 		{
-			int isloutAdj = islot - islotMin;
+			int isloutRel = islot - islotMin;
 
 			GrSlotState * pslot = psstrmFinal->SlotAt(islot);
-			pslot->SetPosPassIndex(isloutAdj, false);
+			pslot->SetPosPassIndex(isloutRel, false);
 			pslot->EnsureCacheForOutput(ptman);
-			GrSlotOutput * pslout = OutputSlot(isloutAdj);
-			pslout->SetBufferPtr(m_prgnSlotVarLenBuf + (isloutAdj * cnExtraPerSlot));
-			pslout->CopyFrom(pslot);
+			GrSlotOutput * pslout = OutputSlot(isloutRel);
+			pslout->SetBufferPtr(m_prgnSlotVarLenBuf + (isloutRel * cnExtraPerSlot));
+			pslout->InitializeOutputFrom(pslot);
 			pslout->SetBeforeAssoc(pslot->BeforeAssoc());
 			pslout->SetAfterAssoc(pslot->AfterAssoc());
 			if (pslot->HasComponents())
-				pslot->SetComponentRefsFor(pslout); // also sets it for pslout, since they share the buffer
+				pslot->SetComponentRefsFor(pslout);
+			Assert(pslot->HasComponents() == (pslout->NumberOfComponents() > 0));
 			//if (pslot->HasClusterMembers())
 			//{
 				//Assert(pslot->HasClusterMembers() || pslot->ClusterRootOffset() == 0);
@@ -1659,7 +1687,7 @@ void Segment::SetUpOutputArrays(Font * pfont, GrTableManager * ptman,
 		int isloutBaseIndex = pslot->Base(psstrmFinal)->PosPassIndex();
 		if (!pslot->IsBase())
 		{
-			OutputSlot(isloutBaseIndex)->AddClusterMember(pslot->PosPassIndex());
+			OutputSlot(isloutBaseIndex)->AddClusterMember(isloutBaseIndex, pslot->PosPassIndex());
 			OutputSlot(isloutAdj)->SetClusterBase(isloutBaseIndex);
 		}
 		else if (pslot->HasClusterMembers() && pslot->IsBase())
@@ -1680,7 +1708,7 @@ void Segment::SetUpOutputArrays(Font * pfont, GrTableManager * ptman,
 	
 	//	Final output for draw routines.
 
-	SetUpGlyphInfo(ptman, chwLB, nDirDepth, islotMin, cslot);
+	SetUpGlyphInfo(ptman, psstrmFinal, chwLB, nDirDepth, islotMin, cslot);
 
 	//SetUpOutputArraysPlatform(ptman, chwLB, nDirDepth, islotMin, cslot);
 
@@ -1689,8 +1717,8 @@ void Segment::SetUpOutputArrays(Font * pfont, GrTableManager * ptman,
 /*----------------------------------------------------------------------------------------------
 	Set up the data structures that represent the actual rendered glyphs for the new segment.
 ----------------------------------------------------------------------------------------------*/
-void Segment::SetUpGlyphInfo(GrTableManager * ptman, gid16 chwLB, int nDirDepth,
-	int islotMin, int cslot)
+void Segment::SetUpGlyphInfo(GrTableManager * ptman, GrSlotStream * psstrmFinal,
+	gid16 chwLB, int nDirDepth, int islotMin, int cslot)
 {
 	//int paraDirLevel = (ptman->State()->ParaRightToLeft()) ? 1 : 0;
 
@@ -1699,7 +1727,7 @@ void Segment::SetUpGlyphInfo(GrTableManager * ptman, gid16 chwLB, int nDirDepth,
 	int islot;
 	for (islot = islotMin; islot < cslot; islot++)
 	{
-		if (m_psstrm->SlotAt(islot)->GlyphID() != chwLB)
+		if (psstrmFinal->SlotAt(islot)->GlyphID() != chwLB)
 		{
 			m_cginf++;
 		}
@@ -1718,7 +1746,7 @@ void Segment::SetUpGlyphInfo(GrTableManager * ptman, gid16 chwLB, int nDirDepth,
 	int iginf = 0;
 	for (int islot = islotMin; islot < cslot; islot++)
 	{
-		GrSlotState * pslot = m_psstrm->SlotAt(islot);
+		GrSlotState * pslot = psstrmFinal->SlotAt(islot);
 
 		if (pslot->GlyphID() == chwLB)
 		{
@@ -1737,32 +1765,37 @@ void Segment::SetUpGlyphInfo(GrTableManager * ptman, gid16 chwLB, int nDirDepth,
 
 		// Fill in stuff in the output slot that is needed by the GlyphInfo object.
 		pslout->m_xsAdvanceX = pslot->GlyphMetricLogUnits(ptman, kgmetAdvWidth);
-		pslout->m_ysAdvanceY = pslot->GlyphMetricLogUnits(ptman, kgmetAdvHeight);
-		pslout->m_rectBB.top
-			= pslot->YPosition() + pslot->GlyphMetricLogUnits(ptman, kgmetBbTop);
-		pslout->m_rectBB.bottom
-			= pslot->YPosition() + pslot->GlyphMetricLogUnits(ptman, kgmetBbBottom);
-		pslout->m_rectBB.left
-			= pslot->XPosition() + pslot->GlyphMetricLogUnits(ptman, kgmetBbLeft);
-		if (pslot->IsSpace(ptman))
-			pslout->m_rectBB.right
-				= pslot->XPosition() + pslot->GlyphMetricLogUnits(ptman, kgmetAdvWidth);
-		else
-			pslout->m_rectBB.right
-				= pslot->XPosition() + pslot->GlyphMetricLogUnits(ptman, kgmetBbRight);
+		//pslout->m_ysAdvanceY = pslot->GlyphMetricLogUnits(ptman, kgmetAdvHeight);
+		//pslout->m_rectBB.top
+		//	= pslot->YPosition() + pslot->GlyphMetricLogUnits(ptman, kgmetBbTop);
+		//pslout->m_rectBB.bottom
+		//	= pslot->YPosition() + pslot->GlyphMetricLogUnits(ptman, kgmetBbBottom);
+		//pslout->m_rectBB.left
+		//	= pslot->XPosition() + pslot->GlyphMetricLogUnits(ptman, kgmetBbLeft);
+		//if (pslot->IsSpace(ptman))
+		//	pslout->m_rectBB.right
+		//		= pslot->XPosition() + pslot->GlyphMetricLogUnits(ptman, kgmetAdvWidth);
+		//else
+		//	pslout->m_rectBB.right
+		//		= pslot->XPosition() + pslot->GlyphMetricLogUnits(ptman, kgmetBbRight);
 
 		iginf++;
 	}
 
 	if (cslot - islotMin == 0)
 		m_isloutGinf0 = 0;
+	if (m_isloutGinf0 == -1)
+	{
+		Assert(m_cginf == 0);
+		m_isloutGinf0 = ((OutputSlot(0)->IsInitialLineBreak()) ? 1 : 0);
+	}
 
 	Assert(m_isloutGinf0 == 0 || m_isloutGinf0 == 1);
 }
 
 /*
 // OLD VERSION
-void Segment::SetUpGlyphInfo(GrTableManager * ptman, gid16 chwLB, int nDirDepth,
+void Segment::SetUpGlyphInfo(GrTableManager * ptman, GrSlotStream * psstrmFinal, gid16 chwLB, int nDirDepth,
 	int islotMin, int cslot)
 {
 	int paraDirLevel = (ptman->State()->ParaRightToLeft()) ? 1 : 0;
@@ -1771,7 +1804,7 @@ void Segment::SetUpGlyphInfo(GrTableManager * ptman, gid16 chwLB, int nDirDepth,
 	int islot;
 	for (islot = islotMin; islot < cslot; islot++)
 	{
-		if (m_psstrm->SlotAt(islot)->GlyphID() != chwLB)
+		if (psstrmFinal->SlotAt(islot)->GlyphID() != chwLB)
 			m_cginf++;
 	}
 
@@ -1788,7 +1821,7 @@ void Segment::SetUpGlyphInfo(GrTableManager * ptman, gid16 chwLB, int nDirDepth,
 	m_isloutGinf0 = -1;
 	for (islot = islotMin; islot < cslot; islot++)
 	{
-		GrSlotState * pslot = m_psstrm->SlotAt(islot);
+		GrSlotState * pslot = psstrmFinal->SlotAt(islot);
 
 		int islout = islot - islotMin;
 		if (pslot->GlyphID() == chwLB)
@@ -2030,6 +2063,30 @@ void Segment::AdjustAfterArrayFromNextSeg()
 
 #endif  //	--------------------------  END OF OBSOLETE CODE  ----------------------------------
 
+
+/*----------------------------------------------------------------------------------------------
+	Generate a list of all the glyphs that are attached to the base with the given index.
+	Note that we want to generate glyph indices, not slot indices.
+
+	@param disloutCluster	- indicates how far on either side of the base to look.
+----------------------------------------------------------------------------------------------*/
+void Segment::ClusterMembersForGlyph(int isloutBase, int disloutCluster,
+	std::vector<int> & visloutRet)
+{
+	for (int islout = max(0, isloutBase - disloutCluster);
+		islout < min(m_cslout, isloutBase + disloutCluster + 1);
+		islout++)
+	{
+		if (islout == isloutBase)
+			continue;	// don't include the base itself
+		GrSlotOutput * pslout = m_prgslout + islout;
+		if (pslout->ClusterBase() == isloutBase)
+		{
+			visloutRet.push_back(islout);
+		}
+	}
+}
+
 /*----------------------------------------------------------------------------------------------
 	Record an underlying-to-surface association mapping, based on the fact that there is
 	a corresponding surface-to-underlying association in the streams.
@@ -2062,7 +2119,7 @@ void Segment::RecordSurfaceAssoc(int ichwUnder, int islotSurface, int nDir)
 			min(m_prgisloutAfter[ ichwUnder - m_ichwAssocsMin], islotSurface);
 	}
 
-	m_prgvisloutAssocs[ichwUnder - m_ichwAssocsMin].push_back(islotSurface);
+	m_prgpvisloutAssocs[ichwUnder - m_ichwAssocsMin]->push_back(islotSurface);
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -2083,7 +2140,8 @@ void Segment::RecordLigature(int ichwUnder, int islotSurface, int iComponent)
 	Assert(m_prgisloutLigature[ichwUnder - m_ichwAssocsMin] == kNegInfinity);
 
 	m_prgisloutLigature[ichwUnder - m_ichwAssocsMin] = islotSurface;
-	m_prgiComponent[    ichwUnder - m_ichwAssocsMin] = iComponent;
+	Assert(iComponent < kMaxComponentsPerGlyph);
+	m_prgiComponent[    ichwUnder - m_ichwAssocsMin] = sdata8(iComponent);
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -2141,12 +2199,12 @@ void Segment::EnsureSpaceAtLineBoundaries(int ichwUnder)
 					m_prgisloutAfter + cchwPreAdd);
 		delete[] prgisloutTmp;
 
-		std::vector<int> * pvisloutTmp = m_prgvisloutAssocs;
-		m_prgvisloutAssocs = new std::vector<int>[cchwNewLim - cchwNewMin];
-		std::swap_ranges(m_prgvisloutAssocs + cchwPreAdd,
-						m_prgvisloutAssocs + cchwPreAdd +
-						(m_ichwAssocsLim - m_ichwAssocsMin), pvisloutTmp);
-		delete[] pvisloutTmp;
+		std::vector<int> ** ppvisloutTmp = m_prgpvisloutAssocs;
+		m_prgpvisloutAssocs = new std::vector<int> * [cchwNewLim - cchwNewMin];
+		std::swap_ranges(m_prgpvisloutAssocs + cchwPreAdd,
+						m_prgpvisloutAssocs + cchwPreAdd +
+						(m_ichwAssocsLim - m_ichwAssocsMin), ppvisloutTmp);
+		delete[] ppvisloutTmp;
 
 		prgisloutTmp = m_prgisloutLigature;
 		m_prgisloutLigature = new int[cchwNewLim - cchwNewMin];
@@ -2154,11 +2212,11 @@ void Segment::EnsureSpaceAtLineBoundaries(int ichwUnder)
 				m_prgisloutLigature + cchwPreAdd);
 		delete[] prgisloutTmp;
 
-		prgisloutTmp = m_prgiComponent;
-		m_prgiComponent = new int[cchwNewLim - cchwNewMin];
-		std::copy(prgisloutTmp, prgisloutTmp + (m_ichwAssocsLim - m_ichwAssocsMin),
+		sdata8 * prgiCompTmp = m_prgiComponent;
+		m_prgiComponent = new sdata8[cchwNewLim - cchwNewMin];
+		std::copy(prgiCompTmp, prgiCompTmp + (m_ichwAssocsLim - m_ichwAssocsMin),
 					m_prgiComponent + cchwPreAdd);
-		delete[] prgisloutTmp;
+		delete[] prgiCompTmp;
 
 		//	Initialize new slots.
 		int i;
@@ -2166,7 +2224,7 @@ void Segment::EnsureSpaceAtLineBoundaries(int ichwUnder)
 		{
 			m_prgisloutBefore[i] = kPosInfinity;
 			m_prgisloutAfter[i]  = kNegInfinity;
-			m_prgvisloutAssocs[i].clear();
+			m_prgpvisloutAssocs[i] = new std::vector<int>;
 			m_prgisloutLigature[i] = kNegInfinity;
 			m_prgiComponent[i] = 0;
 		}
@@ -2176,7 +2234,7 @@ void Segment::EnsureSpaceAtLineBoundaries(int ichwUnder)
 		{
 			m_prgisloutBefore[i] = kPosInfinity;
 			m_prgisloutAfter[i]  = kNegInfinity;
-			m_prgvisloutAssocs[i].clear();
+			m_prgpvisloutAssocs[i] = new std::vector<int>;
 			m_prgisloutLigature[i] = kNegInfinity;
 			m_prgiComponent[i] = 0;
 		}
@@ -2212,11 +2270,11 @@ void Segment::SetFont(Font * pfont)
 {
 	m_pfont = pfont->copyThis();
 
-	m_fBold = pfont->bold();
-	m_fItalic = pfont->italic();
+//	m_fBold = pfont->bold();
+//	m_fItalic = pfont->italic();
 	// Note that we store the character height (which does not include the internal leading),
 	// not the actual font height, ie, ascent + descent. This is what is used in the LOGFONT.
-	pfont->getFontMetrics(NULL, NULL, &m_pixHeight);
+	pfont->getFontMetrics(NULL, NULL, &m_xysEmSquare); // m_xysEmSquare = m_pixHeight
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -2308,7 +2366,7 @@ int Segment::LogicalSurfaceToUnderlying(int islout, float xsOffset, float ysClic
 
 	//	If the slot has components, see if the offset falls within one of them.
 
-	if (pslout->HasComponents())
+	if (pslout->NumberOfComponents() > 0)
 	{
 		GrEngine * pgreng = EngineImpl();
 		if (!pgreng)
@@ -2387,6 +2445,9 @@ LNotLigature:
 		//while (!GrCharStream::AtUnicodeCharBoundary(m_pgts, ichwBase + dichw + diCharAdj))
 		//	diCharAdj--;
 	}
+
+	if (dichw == kNegInfinity || dichw == kPosInfinity)
+		return dichw;
 
 	// This should be true because of the way the associations are set up:
 	Assert(GrCharStream::AtUnicodeCharBoundary(m_pgts, m_ichwMin + dichw)); // + diCharAdj));
@@ -2516,6 +2577,7 @@ int Segment::LogicalToPhysicalSurface(int islout)
 	return the physical surface locations of all the associated surface glyphs.
 	OBSOLETE
 ----------------------------------------------------------------------------------------------*/
+#if 0
 void Segment::UnderlyingToPhysicalAssocs(int ichw, std::vector<int> & viginf)
 {
 	int ichwSegOffset = ichw - m_ichwMin;
@@ -2539,29 +2601,48 @@ void Segment::UnderlyingToPhysicalAssocs(int ichw, std::vector<int> & viginf)
 		}
 	}
 }
+#endif
 
 /*----------------------------------------------------------------------------------------------
 	Given an underlying character position (relative to the beginning of the string),
 	return a pointer to the vector containing the logical surface locations of
 	all the associated surface glyphs.
 
-	WARNING: this method returns a pointer to the actual data, not a copy of it.
-	Do not modify the returned vector!
+	Returns an empty vector (not something containing infinities) if the character is
+	"invisible."
 ----------------------------------------------------------------------------------------------*/
-std::vector<int> * Segment::UnderlyingToLogicalAssocs(int ichw)
+std::vector<int> Segment::UnderlyingToLogicalAssocs(int ichw)
 {
+	std::vector<int> vnEmpty;
+	vnEmpty.clear();
+	Assert(vnEmpty.size() == 0);
+
 	int ichwSegOffset = ichw - m_ichwMin;
 
 	if (ichwSegOffset < m_ichwAssocsMin)
-		return NULL;	// probably rendered in previous segment
+		return vnEmpty;	// probably rendered in previous segment
 
 	else if (ichwSegOffset >= m_ichwAssocsLim)
-		return NULL;	// probably rendered in following segment
+		return vnEmpty;	// probably rendered in following segment
 
+	else if (m_prgpvisloutAssocs[ichwSegOffset - m_ichwAssocsMin] == NULL)
+	{
+		// Create a vector using the before and after values.
+		std::vector<int> visloutRet;
+		int isloutBefore = m_prgisloutBefore[ichwSegOffset - m_ichwAssocsMin];
+		int isloutAfter = m_prgisloutAfter[ichwSegOffset - m_ichwAssocsMin];
+		if (isloutBefore != kPosInfinity && isloutBefore != kNegInfinity)
+            visloutRet.push_back(isloutBefore);
+		if (isloutAfter != kPosInfinity && isloutAfter != kNegInfinity && isloutBefore != isloutAfter)
+		{
+			visloutRet.push_back(isloutAfter);
+		}
+		return visloutRet;
+	}
 	else
 	{
-		std::vector<int> * pvisloutRet = &(m_prgvisloutAssocs[ichwSegOffset - m_ichwAssocsMin]);
-		return pvisloutRet;
+		std::vector<int> * pvisloutRet = m_prgpvisloutAssocs[ichwSegOffset - m_ichwAssocsMin];
+		return *pvisloutRet;
 	}
 }
 
@@ -2573,15 +2654,12 @@ std::vector<int> * Segment::UnderlyingToLogicalAssocs(int ichw)
 int Segment::UnderlyingToLogicalInThisSeg(int ichw)
 {
 	int isloutTest = kNegInfinity;
-	std::vector<int> * pvislout = UnderlyingToLogicalAssocs(ichw);
-	if (pvislout)
+	std::vector<int> vislout = UnderlyingToLogicalAssocs(ichw);
+	for (size_t iislout = 0; iislout < vislout.size(); iislout++)
 	{
-		for (size_t iislout = 0; iislout < pvislout->size(); iislout++)
-		{
-			isloutTest = (*pvislout)[iislout];
-			if (isloutTest != kNegInfinity && isloutTest != kPosInfinity)
-				return isloutTest;
-		}
+		isloutTest = vislout[iislout];
+		if (isloutTest != kNegInfinity && isloutTest != kPosInfinity)
+			return isloutTest;
 	}
 	return isloutTest;
 }
@@ -2591,20 +2669,26 @@ int Segment::UnderlyingToLogicalInThisSeg(int ichw)
 ----------------------------------------------------------------------------------------------*/
 bool Segment::SameSurfaceGlyphs(int ichw1, int ichw2)
 {
-    std::vector<int> * pvislout1 = UnderlyingToLogicalAssocs(ichw1);
-	std::vector<int> * pvislout2 = UnderlyingToLogicalAssocs(ichw2);
+    std::vector<int> vislout1 = UnderlyingToLogicalAssocs(ichw1);
+	std::vector<int> vislout2 = UnderlyingToLogicalAssocs(ichw2);
 
-	if (pvislout1 == NULL || pvislout1 == NULL)
-		return false;
-
-	if (pvislout1->size() != pvislout2->size())
-		return false;
-	for (size_t islout = 0; islout < pvislout1->size(); islout++)
+	bool fRet = true;
+	if (vislout1.size() == 0 || vislout2.size() == 0)
+		fRet = false;
+	else if (vislout1.size() != vislout2.size())
+		fRet = false;
+	else
 	{
-		if ((*pvislout1)[islout] != (*pvislout2)[islout])
-			return false;
+		for (size_t islout = 0; islout < vislout1.size(); islout++)
+		{
+			if (vislout1[islout] != vislout2[islout])
+			{
+				fRet = false;
+				break;
+			}
+		}
 	}
-	return true;
+	return fRet;
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -2767,9 +2851,9 @@ GrResult Segment::getUniscribeClusters(
 		//	insertion is not allowed.
 		for (ich = 0; ich < m_dichwLim; ich++)
 		{
-			std::vector<int> * pvislout = UnderlyingToLogicalAssocs(ich + m_ichwMin);
+			std::vector<int> vislout = UnderlyingToLogicalAssocs(ich + m_ichwMin);
 
-			if (!pvislout || pvislout->size() == 0)
+			if (vislout.size() == 0)
 			{
 				// No glyphs represent this character. Merge it with the previous
 				// character.
@@ -2779,9 +2863,9 @@ GrResult Segment::getUniscribeClusters(
 			}
 
 			size_t iislout;
-			for (iislout = 0; iislout < pvislout->size(); iislout++)
+			for (iislout = 0; iislout < vislout.size(); iislout++)
 			{
-				int islout = (*pvislout)[iislout];
+				int islout = vislout[iislout];
 				if (!m_prgslout[islout].InsertBefore())
 				{
 					// This glyph does not allow insertion before it; make its character part
@@ -2823,6 +2907,10 @@ GrResult Segment::getUniscribeClusters(
 		for (ich = 0; ich < m_dichwLim - 1; ich++)
 		{
 			Assert(visloutBefore[ich] <= visloutAfter[ich]);
+			Assert(visloutBefore[ich] != kPosInfinity);
+			Assert(visloutBefore[ich] != kNegInfinity);
+			Assert(visloutAfter[ich] != kPosInfinity);
+			Assert(visloutAfter[ich] != kNegInfinity);
 			const int b1 = visloutBefore[ich];
 			const int a1 = visloutAfter[ich];
 			const int b2 = visloutBefore[ich + 1];
@@ -3174,10 +3262,11 @@ int Segment::GlyphHit(float xsClick, float ysClick)
 		return 0;
 	}
 
-	//	Find all BB that OVERLAP the click point (BbLeft < XClick < BbRight).
+	//	Find all BB that OVERLAP the click point (bb.left < XClick < bb.right).
 	for (iginf = iginfHit; iginf >= 0; iginf--)
 	{
-		if (m_prgginf[iginf].bb().left <= xsClick && xsClick <= m_prgginf[iginf].bb().right)
+		Rect rectBB = m_prgginf[iginf].bb();
+		if (rectBB.left <= xsClick && xsClick <= rectBB.right)
 		{
 			viginfNear.push_back(iginf);
 		}
@@ -3194,11 +3283,36 @@ int Segment::GlyphHit(float xsClick, float ysClick)
 		}
 	}
 
-	//	Find all BB for which the click is within their advance width.
+	if (viginfNear.size() > 2 && viginfHit.size() == 0)
+	{
+		// No hit along y-axis; find the closest thing.
+		float dy = float(10000000.0);
+		for (int iiginf2 = 0; iiginf2 < (int)viginfNear.size(); iiginf2++)
+		{
+			Rect rectBB = m_prgginf[viginfNear[iiginf2]].bb();
+			if (fabsf(rectBB.top - ysClick) < dy)
+			{
+				dy = fabsf(rectBB.top - ysClick);
+				viginfHit.clear();
+				viginfHit.push_back(viginfNear[iiginf2]);
+			}
+			if (fabsf(rectBB.bottom - ysClick) < dy)
+			{
+				dy = fabsf(rectBB.bottom - ysClick);
+				viginfHit.clear();
+				viginfHit.push_back(viginfNear[iiginf2]);
+			}
+		}
+	}
+
+	//	Find all BB for which the click is within their advance width, if any.
 	for (iiginf = 0; iiginf < (int)viginfHit.size(); iiginf++)
 	{
-		Rect rectBB = m_prgginf[viginfHit[iiginf]].bb();
-		if (rectBB.left <= xsClick && xsClick <= rectBB.right)
+		//Rect rectBB = m_prgginf[viginfHit[iiginf]].bb(); -- ?? this tests the bounding box again :-/
+		//if (rectBB.left <= xsClick && xsClick <= rectBB.right)
+		gr::GlyphInfo * pginf = m_prgginf + viginfHit[iiginf];
+		if (pginf->advanceWidth() == 0 // advance width is irrelevant
+			|| (pginf->origin() < xsClick && xsClick <= pginf->origin() + pginf->advanceWidth()))
 		{
 			viginfInside.push_back(viginfHit[iiginf]);
 		}
@@ -3253,7 +3367,8 @@ int Segment::GlyphHit(float xsClick, float ysClick)
 
 /*----------------------------------------------------------------------------------------------
 	Select the bounding box we will use for a mouse hit.
-	Select the BB with the left-most (LTR) or right-most (RTL) edge.
+	First select any glyph with a significantly smaller bounding box.
+	Then, select the BB with the left-most (LTR) or right-most (RTL) edge.
 	If more than one BB has same edge of interest, select the one that is closest to the
 		the baseline.
 	If that is a tie, select the one with the lowest islout.
@@ -3272,6 +3387,27 @@ int Segment::SelectBb(std::vector<int> & viginf, bool fRTL)
 	if (viginf.size() == 1)
 		return viginf[0];
 
+	// Find a glyph that has a signficantly smaller bounding box.
+	// The idea is that it is going to be harder to hit than the bigger glyph.
+	float smallestArea = float(1000000000.0);
+	float largestArea  = 0.0;
+	size_t iiginfSmallest;
+	size_t iiginf;
+	for (iiginf = 0; iiginf < viginf.size(); iiginf++)
+	{
+		gr::GlyphInfo * pginf = m_prgginf + viginf[iiginf];
+		Rect rectBB = pginf->bb();
+		float thisArea = (rectBB.right - rectBB.left) * (rectBB.top - rectBB.bottom);
+		if (smallestArea > thisArea)
+		{
+			smallestArea = thisArea;
+			iiginfSmallest = iiginf;
+		}
+		largestArea = max(largestArea, thisArea);
+	}
+	if (smallestArea * 2.0 < largestArea)
+		return viginf[iiginfSmallest];
+
 	//	Find appropriate x coor of leading edge.
 	float xsLeading;
 	if (!fRTL)
@@ -3279,27 +3415,28 @@ int Segment::SelectBb(std::vector<int> & viginf, bool fRTL)
 	else
 		xsLeading = m_prgginf[viginf[0]].bb().right;
 
-	size_t iiginf;
 	for (iiginf = 1; iiginf < viginf.size(); iiginf++)
 	{
+		Rect rectBB = m_prgginf[viginf[iiginf]].bb();
 		if (!fRTL)
-			xsLeading = min(xsLeading, m_prgginf[viginf[iiginf]].bb().left);
+			xsLeading = min(xsLeading, rectBB.left);
 		else
-			xsLeading = max(xsLeading, m_prgginf[viginf[iiginf]].bb().right);
+			xsLeading = max(xsLeading, rectBB.right);
 	}
 
 	//	Find BBs with the leading edge.
 	std::vector<int> viginfSameEdge;
 	for (iiginf = 0; iiginf < viginf.size(); iiginf++)
 	{
+		Rect rectBB = m_prgginf[viginf[iiginf]].bb();
 		if (!fRTL)
 		{
-			if (m_prgginf[viginf[iiginf]].bb().left == xsLeading)
+			if (rectBB.left == xsLeading)
 				viginfSameEdge.push_back(viginf[iiginf]);
 		}
 		else
 		{
-			if (m_prgginf[viginf[iiginf]].bb().right == xsLeading)
+			if (rectBB.right == xsLeading)
 				viginfSameEdge.push_back(viginf[iiginf]);
 		}
 	}

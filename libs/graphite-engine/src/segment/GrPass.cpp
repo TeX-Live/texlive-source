@@ -44,11 +44,12 @@ namespace gr
 ----------------------------------------------------------------------------------------------*/
 GrPass::GrPass(int i)
 	:	m_ipass(i),
-		vnStack(128),
+		m_fxdVersion(0),
 		m_nMaxRuleContext(0),
 		m_pfsm(NULL),
 		m_nMaxRuleLoop(0),
 		m_nMaxBackup(0),
+		m_crul(0),
 		m_prgchwRuleSortKeys(NULL),
 		m_prgcritRulePreModContext(NULL),
 		m_cbPassConstraint(0),
@@ -57,10 +58,14 @@ GrPass::GrPass(int i)
 		m_prgbPConstraintBlock(NULL),
 		m_prgbConstraintBlock(NULL),
 		m_prgbActionBlock(NULL),
+		m_cbConstraints(0),
+		m_cbActions(0),
 		m_prgibConstraintDebug(NULL),
 		m_prgibRuleDebug(NULL),
 		m_fCheckRules(false),
-		m_prgfRuleOkay(NULL)
+		m_prgfRuleOkay(NULL),
+		m_vnStack(128),
+		m_pzpst(NULL)
 {
 }
 
@@ -227,14 +232,17 @@ bool GrPass::ReadFromFont(GrIStream & grstrm, int fxdSilfVersion, int fxdRuleVer
 	int cb = m_cbPassConstraint;
 	m_prgbPConstraintBlock = new byte[cb];
 	grstrm.ReadBlockFromFont(m_prgbPConstraintBlock, cb);
+	m_cbConstraints = cb;
 
 	cb = m_prgibConstraintStart[m_crul];
 	m_prgbConstraintBlock = new byte[cb];
 	grstrm.ReadBlockFromFont(m_prgbConstraintBlock, cb);
+	m_cbConstraints += cb;
 
 	cb = m_prgibActionStart[m_crul];
 	m_prgbActionBlock = new byte[cb];
 	grstrm.ReadBlockFromFont(m_prgbActionBlock, cb);
+	m_cbActions = cb;
 
 	//	Rule-validity flags
 	m_prgfRuleOkay = new bool[m_crul];
@@ -773,7 +781,8 @@ int GrPass::ExtendFinalOutput(GrTableManager * ptman,
 //	Assert(m_cslotSkipToResync == 0);
 
 	int islotOutputLB = -1;
-	int islotInitWritePos = psstrmOutput->WritePos();
+	//int islotInitWritePos = psstrmOutput->WritePos();
+	int islotNoLbUpTo = psstrmOutput->WritePos();;
 
 	while (true)
 	{
@@ -859,9 +868,12 @@ int GrPass::ExtendFinalOutput(GrTableManager * ptman,
 		RunRule(ptman, ruln, psstrmInput, psstrmOutput);
 
 		if (fHaveLineBreak)
+		{
 			islotOutputLB =
 				psstrmOutput->FindFinalLineBreak(ptman->LBGlyphID(),
-					islotInitWritePos, psstrmOutput->WritePos());
+					islotNoLbUpTo, psstrmOutput->WritePos());
+			islotNoLbUpTo = psstrmOutput->WritePos();
+		}
 
 		psstrmOutput->CalcIndexOffset(ptman);
 	}
@@ -1715,7 +1727,7 @@ int GrPass::Unwind(GrTableManager * ptman,
 	if (!psstrmIn->NoReproc())
 		islotIn = min(islotIn, psstrmIn->ReprocMin());
 	psstrmIn->ClearReprocBuffer();
-	int islotOut;
+	int islotOut = 0;
 	if (islotIn < psstrmIn->SlotsSkippedToResync() ||
 		islotIn == 0 ||
 		psstrmIn->ReadPos() == 0)

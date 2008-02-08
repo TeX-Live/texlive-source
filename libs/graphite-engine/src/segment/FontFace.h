@@ -44,6 +44,8 @@ class Segment;
 ----------------------------------------------------------------------------------------------*/
 class FontFace
 {
+	friend class gr::FontMemoryUsage;
+
 public:
 	FontFace()
 	{
@@ -52,7 +54,8 @@ public:
 
 	~FontFace()
 	{
-		s_pFontCache->RemoveFontFace(m_pgreng->FaceName(), m_pgreng->Bold(), m_pgreng->Italic());
+		if (s_pFontCache)
+			s_pFontCache->RemoveFontFace(m_pgreng->FaceName(), m_pgreng->Bold(), m_pgreng->Italic());
 		delete m_pgreng;
 	}
 
@@ -63,7 +66,7 @@ public:
 	void DecFontCount()
 	{
 		m_cfonts--;
-		if (m_cfonts <= 0 && s_pFontCache->GetFlushMode() == kflushAuto)
+		if (m_cfonts <= 0 && (s_pFontCache == NULL || s_pFontCache->GetFlushMode() == kflushAuto))
 			delete this;
 	}
 
@@ -73,10 +76,12 @@ public:
 	}
 
 	static FontFace * GetFontFace(Font * pfont,
-		std::wstring strFaceName, bool fBold, bool fItalic);
+		std::wstring strFaceName, bool fBold, bool fItalic,
+		bool fDumbFallback = false);
 
 	GrResult InitFontFace(Font * pfont,
-		std::wstring stuFaceName, bool fBold, bool fItalic);
+		std::wstring stuFaceName, bool fBold, bool fItalic,
+		bool fDumbLayout);
 
 	FontErrorCode IsValidForGraphite(int * pnVersion, int * pnSubVersion)
 	{
@@ -172,6 +177,16 @@ public:
 		m_pgreng->get_ScriptDirection(&script_dirs, &err_dummy, 1);
 		return ScriptDirCode(script_dirs);
 	}
+
+	bool BadFont(FontErrorCode * pferr = NULL)
+	{
+		return m_pgreng->BadFont(pferr);
+	}
+	bool DumbFallback(FontErrorCode * pferr = NULL)
+	{
+		return m_pgreng->DumbFallback(pferr);
+	}
+
 public:
 	// For use in segment creation:
 	void RenderLineFillSegment(Segment * pseg, Font * pfont, ITextSource * pts,
@@ -205,6 +220,9 @@ public:
 	//		return true;
 	//}
 	//void DbgCheckFontFace();
+
+	static void calculateAllMemoryUsage(FontMemoryUsage & fmu);
+	void calculateMemoryUsage(FontMemoryUsage & fmu);
 
 protected:
 	// Number of fonts in existence that use this face; when it goes to zero, delete.

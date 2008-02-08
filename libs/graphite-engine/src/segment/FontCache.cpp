@@ -171,11 +171,9 @@ bool FontCache::RemoveFontFace(std::wstring strFaceName, bool fBold, bool fItali
 
 	Assert(m_cfface >= 0);
 
-	if (m_cfface <= 0 && m_flush == kflushAuto && fZapCache)
+	if (m_flush == kflushAuto && fZapCache)
 	{
-		// All items are NULL; delete this cache. Probably this is because
-		// the program is exiting.
-		FontFace::ZapFontCache();
+		DeleteIfEmpty();
 	}
 
 	return fPrevVal;
@@ -247,6 +245,17 @@ void FontCache::InsertCacheItem(int ifci)
 	pfci->pffaceBold = NULL;
 	pfci->pffaceItalic = NULL;
 	pfci->pffaceBI = NULL;
+}
+
+/*----------------------------------------------------------------------------------------------
+	Delete the cache if it is empty.
+----------------------------------------------------------------------------------------------*/
+void FontCache::DeleteIfEmpty()
+{
+	if (m_cfface <= 0)
+		// All items are NULL; delete this cache. Probably this is because
+		// the program is exiting.
+		FontFace::ZapFontCache();
 }
 
 /*----------------------------------------------------------------------------------------------

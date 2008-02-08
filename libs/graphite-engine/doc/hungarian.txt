@@ -45,7 +45,7 @@ l	long integer (whatever that means)
 ch	character (width irrelevant)
 chs	short character (8-bit)
 chw	wide character (16-bit)
-chl	32-bit character
+chl	long (32-bit) character
 str	string (char-width irrelevant)
 sta	ANSI string (8-bit)
 stu	Unicode string (16-bit)
@@ -59,6 +59,9 @@ m	em-units
 xs	logical units, x-coordinates (source)
 ys	logical units, y-coordinates (source)
 xys	logical units, x- or y-coordinates (source)
+xd	display units, x-coordinates
+yd	display units, y-coordinates
+xyd	display units, x- or y-coordinates
 
 
 *** Common Graphite-specific class prefixes (not a complete list)
@@ -113,11 +116,11 @@ cch		character count
 ipassPrev	index of previous pass
 pppass		pointer to a pointer to a pass
 iislot		index to an index to a GrSlotState
-vichw		vector of character indices
+vich		vector of character indices
 prgchw		pointer to the start of a wide-char buffer
 dislot		delta to apply to an index of a GrSlotState
 m_ipass		index of pass (member variable)
-ppassNew	newly created pass
+ppassNew	pointer to a newly created pass
 clrBack		background color
 m_igbbFirst	index to the first glyph bounding box (member variable)
 islotLim	1 + index of the last slot

@@ -45,7 +45,7 @@ namespace gr
 /*----------------------------------------------------------------------------------------------
 	Constructor.
 ----------------------------------------------------------------------------------------------*/
-Font::Font(const Font & fontSrc) : m_pfface(fontSrc.m_pfface)
+Font::Font(const Font & fontSrc) : m_pfface(fontSrc.m_pfface), m_fTablesCached(false)
 {
 	if (m_pfface)
 		m_pfface->IncFontCount();
@@ -69,6 +69,28 @@ void Font::SetFlushMode(int flush)
 }
 
 /*----------------------------------------------------------------------------------------------
+	Cache the common tables if necessary.
+----------------------------------------------------------------------------------------------*/
+void Font::EnsureTablesCached()
+{
+	if (m_fTablesCached)
+		return;
+
+	size_t cbBogus;
+	m_pHead = getTable(TtfUtil::TableIdTag(ktiHead), &cbBogus);
+	m_pHmtx = getTable(TtfUtil::TableIdTag(ktiHmtx), &m_cbHmtxSize);
+	m_pGlyf = getTable(TtfUtil::TableIdTag(ktiGlyf), &cbBogus);
+	m_pLoca = getTable(TtfUtil::TableIdTag(ktiLoca), &m_cbLocaSize);
+
+	// getTable can return 0 for the lengths if it is hard to calculate them, but it should
+	// never do that for hmtx or loca.
+	Assert(m_cbHmtxSize > 0);
+	Assert(m_cbLocaSize > 0);
+
+	m_fTablesCached = true;
+}
+
+/*----------------------------------------------------------------------------------------------
 	Return the flush mode of the font-cache.
 ----------------------------------------------------------------------------------------------*/
 int Font::GetFlushMode()
@@ -80,25 +102,34 @@ int Font::GetFlushMode()
 	Return the internal object representing the font-face. This is the object that is stored
 	in Graphite's internal cache.
 ----------------------------------------------------------------------------------------------*/
-inline FontFace & Font::fontFace()
+inline FontFace & Font::fontFace(bool fDumbFallback)
 {
 	if (m_pfface == 0)
-		initialiseFontFace();
+		initialiseFontFace(fDumbFallback);
 	return *m_pfface;
 }
 
-void Font::initialiseFontFace()
+void Font::initialiseFontFace(bool fDumbFallback)
 {
 	std::wstring stuFaceName;
 	bool         fBold, fItalic;
 
 	UniqueCacheInfo(stuFaceName, fBold, fItalic);
 	
-	m_pfface = FontFace::GetFontFace(this, stuFaceName, fBold, fItalic);
+	m_pfface = FontFace::GetFontFace(this, stuFaceName, fBold, fItalic, fDumbFallback);
 
 	Assert(m_pfface != 0);
 	
 	m_pfface->IncFontCount();
+
+	FontException fexptn;
+	fexptn.version = -1;
+	fexptn.subVersion = -1;
+	if (m_pfface->BadFont(&fexptn.errorCode)
+		|| (!fDumbFallback && m_pfface->DumbFallback(&fexptn.errorCode)))
+	{
+		throw fexptn;
+	}
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -137,38 +168,60 @@ void Font::UniqueCacheInfo(std::wstring & stuFace, bool & fBold, bool & fItalic)
 ----------------------------------------------------------------------------------------------*/
 void Font::getGlyphPoint(gid16 glyphID, unsigned int pointNum, Point & pointReturn)
 {
+	EnsureTablesCached();
+
 	// Default values 
 	pointReturn.x = 0;
 	pointReturn.y = 0;
 
-	// this isn't used very often, so don't bother caching
-	size_t cbLocaSize = 0;
-	const void * pGlyf = getTable(TtfUtil::TableIdTag(ktiGlyf), &cbLocaSize);
-	if (pGlyf == 0)	return;
+	if (m_pGlyf == 0) return;
+	if (m_pHead == 0) return;
+	if (m_pLoca == 0) return;
 
-	const void * pHead = getTable(TtfUtil::TableIdTag(ktiHead), &cbLocaSize);
-	if (pHead == 0) return;
+	size_t cContours;
+	size_t cPoints;
 
-	const void * pLoca = getTable(TtfUtil::TableIdTag(ktiLoca), &cbLocaSize);
-	if (pLoca == 0)	return;
+	const size_t CONTOUR_BUF_SIZE = 16;
+	const size_t POINT_BUF_SIZE = 64;
+	// Fixed-size buffers that will be used in most cases:
+	bool rgfOnCurveFixedBuf[POINT_BUF_SIZE], *rgfOnCurveHeapBuf=0;
+	int  rgnEndPtFixedBuf[CONTOUR_BUF_SIZE], *rgnEndPtHeapBuf=0,
+	     rgnXFixedBuf[POINT_BUF_SIZE],       *rgnXHeapBuf=0,
+	     rgnYFixedBuf[POINT_BUF_SIZE],       *rgnYHeapBuf=0;
 
-	const size_t MAX_CONTOURS = 32;
-	int cnPoints = MAX_CONTOURS;
-	bool rgfOnCurve[MAX_CONTOURS];
-	int prgnX[MAX_CONTOURS];
-	int prgnY[MAX_CONTOURS];
-	
-	if (TtfUtil::GlyfPoints(glyphID, pGlyf, pLoca, 
-		cbLocaSize, pHead, 0, 0, 
-		prgnX, prgnY, rgfOnCurve, cnPoints))
+	if (!TtfUtil::GlyfContourCount(glyphID, m_pGlyf, m_pLoca, m_cbLocaSize, m_pHead, cContours))
+		return;	//  can't figure it out
+
+	int * prgnEndPt = (cContours > CONTOUR_BUF_SIZE) ? 
+		rgnEndPtHeapBuf = new int[cContours] : 
+		rgnEndPtFixedBuf;
+
+	if (!TtfUtil::GlyfContourEndPoints(glyphID, m_pGlyf, m_pLoca, m_cbLocaSize, m_pHead, 
+		prgnEndPt, cContours))
+	{
+		return;	// should have been caught above
+	}
+	cPoints = prgnEndPt[cContours - 1] + 1;
+
+	bool* prgfOnCurve = (cPoints > POINT_BUF_SIZE) ? rgfOnCurveHeapBuf= new bool[cPoints] : rgfOnCurveFixedBuf;
+	int * prgnX       = (cPoints > POINT_BUF_SIZE) ? rgnXHeapBuf=       new int[cPoints]  : rgnXFixedBuf;
+	int * prgnY       = (cPoints > POINT_BUF_SIZE) ? rgnYHeapBuf=       new int[cPoints]  : rgnYFixedBuf;
+
+	if (TtfUtil::GlyfPoints(glyphID, m_pGlyf, m_pLoca, m_cbLocaSize, m_pHead, 0, 0, 
+		prgnX, prgnY, prgfOnCurve, cPoints))
 	{
 		float nPixEmSquare;
 		getFontMetrics(0, 0, &nPixEmSquare);
 
-		const float nDesignUnitsPerPixel =  float(TtfUtil::DesignUnits(pHead)) / nPixEmSquare;
+		const float nDesignUnitsPerPixel =  float(TtfUtil::DesignUnits(m_pHead)) / nPixEmSquare;
 		pointReturn.x = prgnX[pointNum] / nDesignUnitsPerPixel;
 		pointReturn.y = prgnY[pointNum] / nDesignUnitsPerPixel;
 	}
+
+	delete[] rgnEndPtHeapBuf;
+	delete[] rgfOnCurveHeapBuf;
+	delete[] rgnXHeapBuf;
+	delete[] rgnYHeapBuf;
 }
 
 
@@ -177,6 +230,8 @@ void Font::getGlyphPoint(gid16 glyphID, unsigned int pointNum, Point & pointRetu
 ----------------------------------------------------------------------------------------------*/
 void Font::getGlyphMetrics(gid16 glyphID, gr::Rect & boundingBox, gr::Point & advances)
 {
+	EnsureTablesCached();
+
 	// Setup default return values in case of failiure.
 	boundingBox.left = 0;
 	boundingBox.right = 0;
@@ -185,51 +240,43 @@ void Font::getGlyphMetrics(gid16 glyphID, gr::Rect & boundingBox, gr::Point & ad
 	advances.x = 0;
 	advances.y = 0;
 
-	// get the necessary tables.
-	size_t locaSize, hmtxSize;
-	const void * pHead = getTable(TtfUtil::TableIdTag(ktiHead), &locaSize);
-	if (pHead == 0) return;
-
-	const void * pHmtx = getTable(TtfUtil::TableIdTag(ktiHmtx), &hmtxSize);
-	if (pHmtx == 0) return;
+	if (m_pHead == 0) return;
 
 	// Calculate the number of design units per pixel.
 	float pixelEmSquare;
 	getFontMetrics(0, 0, &pixelEmSquare);
-	const float designUnitsPerPixel = 
-		float(TtfUtil::DesignUnits(pHead)) / pixelEmSquare;
+	const float pixelsPerDesignUnit =
+		pixelEmSquare / float(TtfUtil::DesignUnits(m_pHead));
+
+	// getTable can return 0 for the lengths if it is hard to calculate them, but it should
+	// never do that for hmtx or loca.
+	Assert(m_cbHmtxSize > 0);
 
 	// Use the Hmtx and Head tables to find the glyph advances.
 	int lsb;
 	unsigned int advance = 0;
-	if (TtfUtil::HorMetrics(glyphID, pHmtx, hmtxSize, pHead, 
+	if (TtfUtil::HorMetrics(glyphID, m_pHmtx, m_cbHmtxSize, m_pHead,
 			lsb, advance))
 	{
-		advances.x = (advance / designUnitsPerPixel);
+		advances.x = (advance * pixelsPerDesignUnit);
 		advances.y = 0.0f;		
 	}
 
-	const void * pGlyf = getTable(TtfUtil::TableIdTag(ktiGlyf), &locaSize);
-	if (pGlyf == 0)	return;
+	if (m_pGlyf == 0) return;
+	if (m_pLoca == 0) return;
+	Assert(m_cbLocaSize > 0);
 
-//	const void * pHhea = getTable(TtfUtil::TableIdTag(ktiHhea), &locaSize);
-//	if (pHhea == 0)	return;
-
-	const void * pLoca = getTable(TtfUtil::TableIdTag(ktiLoca), &locaSize);
-	if (pLoca == 0)	return;
-
-	// Fetch the glyph bounding box, GlyphBox may return false for a 
-	// whitespace glyph.
+	// Fetch the glyph bounding box. GlyphBox may return false for a whitespace glyph.
 	// Note that using GlyfBox here allows attachment points (ie, points lying outside
 	// the glyph's outline) to affect the bounding box, which might not be what we want.
 	int xMin, xMax, yMin, yMax;
-	if (TtfUtil::GlyfBox(glyphID, pGlyf, pLoca, locaSize, pHead,
+	if (TtfUtil::GlyfBox(glyphID, m_pGlyf, m_pLoca, m_cbLocaSize, m_pHead,
 			xMin, yMin, xMax, yMax))
 	{
-		boundingBox.left = (xMin / designUnitsPerPixel);
-		boundingBox.bottom = (yMin / designUnitsPerPixel);
-		boundingBox.right = (xMax / designUnitsPerPixel);
-		boundingBox.top = (yMax / designUnitsPerPixel);
+		boundingBox.left = (xMin * pixelsPerDesignUnit);
+		boundingBox.bottom = (yMin * pixelsPerDesignUnit);
+		boundingBox.right = (xMax * pixelsPerDesignUnit);
+		boundingBox.top = (yMax * pixelsPerDesignUnit);
 	}
 }
 
@@ -308,51 +355,100 @@ bool Font::getFeatureSettingLabel(FeatureSettingIterator fsit, lgid nLanguage, u
 ----------------------------------------------------------------------------------------------*/
 size_t Font::NumberOfFeatures()
 {
-	return fontFace().NumberOfFeatures();
+	try {
+		return fontFace().NumberOfFeatures();
+	}
+	catch (...) { return 0; }
 }
 featid Font::FeatureID(size_t ifeat)
 {
-	return fontFace().FeatureID(ifeat);
+	try {
+		return fontFace().FeatureID(ifeat);
+	}
+	catch (...) { return 0; }
 }
 size_t Font::FeatureWithID(featid id)
 {
-	return fontFace().FeatureWithID(id);
+	try {
+		return fontFace().FeatureWithID(id);
+	}
+	catch (...) { return 0; }
 }
 bool Font::GetFeatureLabel(size_t ifeat, lgid language, utf16 * label)
 {
-	return fontFace().GetFeatureLabel(ifeat, language, label);
+	try {
+		return fontFace().GetFeatureLabel(ifeat, language, label);
+	}
+	catch (...)
+	{
+		*label = 0;
+		return false;
+	}
 }
 int Font::GetFeatureDefault(size_t ifeat) // index of default setting
 {
-	return fontFace().GetFeatureDefault(ifeat);
+	try {
+		return fontFace().GetFeatureDefault(ifeat);
+	}
+	catch (...) { return 0; }
 }
 size_t Font::NumberOfSettings(size_t ifeat)
 {
-	return fontFace().NumberOfSettings(ifeat);
+	try {
+		return fontFace().NumberOfSettings(ifeat);
+	}
+	catch (...) { return 0; }
 }
 int Font::GetFeatureSettingValue(size_t ifeat, size_t ifset)
 {
-	return fontFace().GetFeatureSettingValue(ifeat, ifset);
+	try {
+		return fontFace().GetFeatureSettingValue(ifeat, ifset);
+	}
+	catch (...) { return 0; }
 }
 bool Font::GetFeatureSettingLabel(size_t ifeat, size_t ifset, lgid language, utf16 * label)
 {
-	return fontFace().GetFeatureSettingLabel(ifeat, ifset, language, label);
+	try {
+		return fontFace().GetFeatureSettingLabel(ifeat, ifset, language, label);
+	}
+	catch (...)
+	{ 
+		*label = 0;
+		return false;
+	}
 }
 size_t Font::NumberOfFeatLangs()
 {
-	return fontFace().NumberOfFeatLangs();
+	try {
+		return fontFace().NumberOfFeatLangs();
+	}
+	catch (...) { return 0; }
 }
 short Font::FeatLabelLang(size_t ilang)
 {
-	return fontFace().FeatLabelLang(ilang);
+	try {
+		return fontFace().FeatLabelLang(ilang);
+	}
+	catch (...) { return 0; }
 }
 size_t Font::NumberOfLanguages()
 {
-	return fontFace().NumberOfLanguages();
+	try {
+		return fontFace().NumberOfLanguages();
+	}
+	catch (...) { return 0; }
 }
 isocode Font::LanguageCode(size_t ilang)
 {
-	return fontFace().LanguageCode(ilang);
+	try {
+		return fontFace().LanguageCode(ilang);
+	}
+	catch (...)
+	{
+		isocode ret;
+		std::fill_n(ret.rgch, sizeof(ret.rgch), '\0');
+		return ret;
+	}
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -383,7 +479,14 @@ std::pair<LanguageIterator, LanguageIterator> Font::getSupportedLanguages()
 ----------------------------------------------------------------------------------------------*/
 ScriptDirCode Font::getSupportedScriptDirections() const throw()
 {
-	return m_pfface->ScriptDirection();
+	try {
+		Font * pfontThis = const_cast<Font *>(this);
+		FontFace & fface = pfontThis->fontFace();
+		return fface.ScriptDirection();
+	}
+	catch (...) {
+		return kfsdcHorizLtr;
+	}
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -392,22 +495,22 @@ ScriptDirCode Font::getSupportedScriptDirections() const throw()
 void Font::RenderLineFillSegment(Segment * pseg, ITextSource * pts, LayoutEnvironment & layout,
 	toffset ichStart, toffset ichStop, float xsMaxWidth, bool fBacktracking)
 {
-	fontFace().RenderLineFillSegment(pseg, this, pts, layout, ichStart, ichStop, xsMaxWidth,
-		fBacktracking);
+	fontFace(layout.dumbFallback()).RenderLineFillSegment(pseg, this, pts, layout,
+		ichStart, ichStop, xsMaxWidth, fBacktracking);
 }
 
 void Font::RenderRangeSegment(Segment * pseg, ITextSource * pts, LayoutEnvironment & layout,
 	toffset ichStart, toffset ichStop)
 {
-	fontFace().RenderRangeSegment(pseg, this, pts, layout, ichStart, ichStop);
+	fontFace(layout.dumbFallback()).RenderRangeSegment(pseg, this, pts, layout, ichStart, ichStop);
 }
 
 void Font::RenderJustifiedSegment(Segment * pseg, ITextSource * pts,
 	LayoutEnvironment & layout, toffset ichStart, toffset ichStop,
 	float xsCurrentWidth, float xsDesiredWidth)
 {
-	fontFace().RenderJustifiedSegment(pseg, this, pts, layout, ichStart, ichStop,
-		xsCurrentWidth, xsDesiredWidth);
+	fontFace(layout.dumbFallback()).RenderJustifiedSegment(pseg, this, pts, layout,
+		ichStart, ichStop, xsCurrentWidth, xsDesiredWidth);
 }
 
 /*----------------------------------------------------------------------------------------------

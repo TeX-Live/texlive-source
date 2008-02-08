@@ -107,7 +107,9 @@ protected:
 	Do these seem to be worth the inconvenience of added complexity	in understanding
 	and debugging?
 ----------------------------------------------------------------------------------------------*/
-class GrFSM {
+class GrFSM
+{
+	friend class FontMemoryUsage;
 
 public:
 	GrFSM() :
@@ -140,7 +142,7 @@ public:
 	int GetRuleToApply(GrTableManager *, GrPass * ppass,
 		GrSlotStream * psstrmIn, GrSlotStream * psstrmOut);
 
-	int RunTransitionTable(GrSlotStream * psstrmIn, GrSlotStream * psstrmOut,
+	int RunTransitionTable(GrPass * ppass, GrSlotStream * psstrmIn, GrSlotStream * psstrmOut,
 		int * prgrowAccepting, int * prgcslotMatched);
 	int RunTransitionTableOptimized(GrSlotStream * psstrmIn, GrSlotStream * psstrmOut,
 		int * prgrowAccepting, int * prgcslotMatched);
@@ -182,6 +184,7 @@ protected:
 	data16 *		m_prgrulnMatched;	// long ordered list of rule indices matched by
 										// subsequent states; total length is sum of number
 										// of rules matched for each accepting state
+	int m_crulnMatched; // needed only for memory instrumentation
 
 	//	Transition matrix--for optimized version:
 //	short **		m_prgprgrowXitions;	// ((m_crow-m_crowFinal) * m_ccol) of these;

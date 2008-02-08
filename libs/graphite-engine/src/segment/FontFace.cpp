@@ -47,7 +47,8 @@ FontCache * FontFace::s_pFontCache = 0;
 	Called from the font constructor.
 ----------------------------------------------------------------------------------------------*/
 FontFace * FontFace::GetFontFace(Font * pfont,
-	std::wstring strFaceName, bool fBold, bool fItalic)
+	std::wstring strFaceName, bool fBold, bool fItalic,
+	bool fDumbFallback)
 {
 	if (s_pFontCache == NULL)
 		s_pFontCache = new FontCache;
@@ -59,7 +60,7 @@ FontFace * FontFace::GetFontFace(Font * pfont,
 
 	// Create a new font face.
 	pfface = new FontFace();
-	pfface->InitFontFace(pfont, strFaceName, fBold, fItalic);
+	pfface->InitFontFace(pfont, strFaceName, fBold, fItalic, fDumbFallback);
 	return pfface;
 }
 
@@ -67,7 +68,8 @@ FontFace * FontFace::GetFontFace(Font * pfont,
 	Initialize the engine using the given Graphite font.
 ----------------------------------------------------------------------------------------------*/
 GrResult FontFace::InitFontFace(Font * pfont,
-	std::wstring stuFaceName, bool fBold, bool fItalic)
+	std::wstring stuFaceName, bool fBold, bool fItalic,
+	bool fDumbFallback)
 {
 	AssertPtrN(pfont);
 
@@ -96,20 +98,42 @@ GrResult FontFace::InitFontFace(Font * pfont,
 //	res = InitFromControlFile(pfont, stuFaceName.c_str(), fBold, fItalic);
 //#endif // GR_FW
 
-	//if (ResultFailed(res))
-	//{
-
-
 	// Read directly from the font.
 	m_pgreng->DestroyContents();
-	GrResult res = m_pgreng->ReadFontTables(pfont, fItalic);
-
-	//}
+	GrResult res = kresUnexpected;
+	try {
+		res = m_pgreng->ReadFontTables(pfont, fItalic);
+	}
+	catch (...)
+	{
+		if (fDumbFallback && m_pgreng->DumbFallback() && !m_pgreng->BadFont())
+		{
+			// If we have a basically good font but can't do Graphite,
+			// just go with empty tables, which should be set up.
+			res = m_pgreng->m_resFontRead;
+		}
+		else
+		{
+			if (m_cfonts == 0)
+			{
+				//s_pFontCache->DeleteIfEmpty();
+				//Assert(s_pFontCache == 0);
+				delete this;	// will also delete GrEngine
+			}
+			else
+			{
+				delete m_pgreng;
+			}
+			m_pgreng = NULL;
+			throw; // throw original exception
+		}
+	}
 
 	m_pgreng->m_resFontValid = res;
 
 	m_pgreng->m_fBold = fBold;
 	m_pgreng->m_fItalic = fItalic;
+
 	s_pFontCache->CacheFontFace(m_pgreng->FaceName(), fBold, fItalic, this);
 
 	return m_pgreng->m_resFontValid;
@@ -120,9 +144,11 @@ GrResult FontFace::InitFontFace(Font * pfont,
 	device.
 
 	@return A GrResult indicating whether we were successful in loading the Graphite font:
-	kresOk means success, kresFail means the Graphite font could not be found,
-	kresUnexpected means the Graphite tables could not be loaded; kresFalse means it is
-	not a Graphite font at all (has no Silf table).
+	- kresOk means success
+	- kresFail means the Graphite font could not be found or the basic font tables
+		(head, name, cmap) could not be loaded
+	- kresUnexpected means the Graphite tables could not be loaded
+	- kresFalse means it is	not a Graphite font at all (has no Silf table).
 ----------------------------------------------------------------------------------------------*/
 GrResult GrEngine::ReadFontTables(Font * pfont, bool fItalic)
 {
@@ -136,12 +162,15 @@ GrResult GrEngine::ReadFontTables(Font * pfont, bool fItalic)
 
 	bool fOk = false;
 
-	const void * pHeadTbl; const void * pCmapTbl; const void * pSileTbl; const void * pSilfTbl;
- 	const void * pFeatTbl; const void * pGlatTbl; const void * pGlocTbl; const void * pNameTbl; const void * pSillTbl;
-	size_t cbHeadSz, cbCmapSz, /*cbSileSz,*/ cbSilfSz, cbFeatSz, cbGlatSz, cbGlocSz, cbNameSz, cbSillSz;
+	const void * pHeadTbl; const void * pSileTbl; const void * pSilfTbl;
+ 	const void * pFeatTbl; const void * pGlatTbl; const void * pGlocTbl; const void * pSillTbl;
+	//const void * pCmapTbl; const void * pNameTbl;
+	size_t cbHeadSz, cbSilfSz, cbFeatSz, cbGlatSz, cbGlocSz, cbSillSz;
+	//size_t cbCmapSz, cbSileSz, cbNameSz;
 
 	m_fFakeItalic = false;
 
+	bool fBasicTables = false;
 	bool fSilf = false; // does the font have some sort of Silf table?
 	int nCheckSum = 0;
 
@@ -199,7 +228,7 @@ GrResult GrEngine::ReadFontTables(Font * pfont, bool fItalic)
 	//if (pSileTbl)
 	//{
 	//	pgg->get_FontCharProperties(&chrpOriginal);
-	//	grstrm.OpenBuffer(sile_tbl, sile_tbl.size());
+	//	grstrm.OpenBuffer(pSileTbl, sile_tbl.size());
 	//	m_fUseSepBase = ReadSileTable(pgg, grstrm, 0, &m_mFontEmUnits, &fMismatchedBase);
 	//	grstrm.Close();
 
@@ -216,63 +245,20 @@ GrResult GrEngine::ReadFontTables(Font * pfont, bool fItalic)
 	// We don't need the offset table, and there's no way to get it anyway
 	// without a font file.
 
-	// cmap
-	res = (pCmapTbl = pfont->getTable(TtfUtil::TableIdTag(ktiCmap), &cbCmapSz)) ? kresOk : kresFail;
-	fOk = pCmapTbl && (cbCmapSz == 0 || TtfUtil::CheckTable(ktiCmap, pCmapTbl, cbCmapSz));
+	// cmap and name
+	Assert(!m_fCmapTblCopy);
+	Assert(!m_fNameTblCopy);
+	fOk = SetCmapAndNameTables(pfont);
 	if (!fOk)
 	{
-		m_stuInitError = L"could not locate cmap table";
-		m_ferr = kferrFindCmapTable;
-		ReturnResult(kresFail);
+		goto LUnexpected;
 	}
 
-	// Make a private copy of the cmap for the engine's use.
-	m_pCmapTbl = new byte[cbCmapSz];
-	std::copy(reinterpret_cast<const byte*>(pCmapTbl), 
-			  reinterpret_cast<const byte*>(pCmapTbl) + cbCmapSz, m_pCmapTbl);
-
-	// MS Unicode cmap
-	m_pCmap_3_1 = TtfUtil::FindCmapSubtable(m_pCmapTbl, 3, 1);
-	m_pCmap_3_10 = TtfUtil::FindCmapSubtable(m_pCmapTbl, 3, 10);
-	if (!m_pCmap_3_1)
-		m_pCmap_3_1 = TtfUtil::FindCmapSubtable(m_pCmapTbl, 3, 0);
-	if (!m_pCmap_3_1)
-	{
-		m_stuInitError = L"failure to load cmap subtable";
-		m_ferr = kferrLoadCmapSubtable;
-		ReturnResult(kresFail);
-	}
-	if (!TtfUtil::CheckCmap31Subtable(m_pCmap_3_1))
-	{
-		m_stuInitError = L"checking cmap subtable failed";
-		m_ferr = kferrCheckCmapSubtable;
-		ReturnResult(kresFail);
-	}
+	fBasicTables = true;
 
 	// If we have a bad base file, don't do Graphite stuff.
 	if (fBadBase || fMismatchedBase)
 		goto LUnexpected;
-
-	// name
-
-	// Currently the only stuff we're getting from the name table are our feature names,
-	// so use the version from the Graphite font (not the base font if any).
-	//////if (m_fUseSepBase)
-	//////	pgg->SetupGraphics(&chrpOriginal);
-
-	// name - need feature names later
-	res = (pNameTbl = (byte *)pfont->getTable(TtfUtil::TableIdTag(ktiName), &cbNameSz)) ? kresOk : kresFail;
-	fOk = pNameTbl && (cbNameSz == 0 || TtfUtil::CheckTable(ktiName, pNameTbl, cbNameSz));
-	if (!fOk)
-	{
-		m_stuInitError = L"could not locate name table";
-		m_ferr = kferrFindNameTable;
-		ReturnResult(kresFail);
-	}
-	// Make a private copy of the name table for the engine's use.
-	m_pNameTbl = new byte[cbNameSz];
-	std::copy(reinterpret_cast<const byte*>(pNameTbl), 
-			  reinterpret_cast<const byte*>(pNameTbl) + cbNameSz, m_pNameTbl);
 
 	/****
 	Obtain font name from InitNew() now instead of reading from font file. InitNew should
@@ -360,13 +346,27 @@ GrResult GrEngine::ReadFontTables(Font * pfont, bool fItalic)
     		&m_fxdBadVersion);
 	if (!fOk)
 	{
-		wchar_t rgch[20];
-		swprintf(rgch, 20, L"%d", m_fxdBadVersion >> 16);
+//		wchar_t rgch1[50];
+//		wchar_t rgch2[50];
+//#if defined(_WIN32)
+//		// This version does not work in Windows, in spite of being documented:
+//		// swprintf(rgch, 50, L"%d", (m_fxdBadVersion >> 16));
+//		// Removing the size argument make it work.
+//		swprintf(rgch1, L"%d", (m_fxdBadVersion >> 16));
+//		swprintf(rgch2, L"%d", (m_fxdBadVersion & 0x0000FFFF));
+//#else
+//		swprintf(rgch1, 50, L"%d", (m_fxdBadVersion >> 16));
+//		swprintf(rgch2, 50, L"%d", (m_fxdBadVersion & 0x0000FFFF));
+//#endif
+		char rgch[50]; // more than enough space to print two 16-bit ints
+		char *pch = &rgch[0];
+		sprintf(rgch, "%d.%d", (m_fxdBadVersion >> 16), (m_fxdBadVersion & 0x0000FFFF));
 		std::wstring stu = L"unsupported version (";
-		stu.append(rgch);
-		swprintf(rgch, 20, L"%d", m_fxdBadVersion & 0x0000FFFF);
-		stu.append(L".");
-		stu.append(rgch);
+		//stu.append(rgch1);
+		//stu.append(L".");
+		//stu.append(rgch2);
+		while (*pch != 0)
+			stu.push_back((wchar_t)*pch++);
 		stu.append(L") of Graphite tables");
 		m_stuInitError.assign(stu.c_str());
 		m_ferr = kferrBadVersion;
@@ -461,7 +461,12 @@ LUnexpected:
 
 	CreateEmpty();
 	m_nFontCheckSum = nCheckSum;
-	m_resFontRead = (fSilf) ? kresUnexpected : kresFalse;
+	if (!fBasicTables)
+		m_resFontRead = kresFail;		// bad font
+	else if (!fSilf)
+		m_resFontRead = kresFalse;		// no Silf table--not a Graphite font
+	else
+		m_resFontRead = kresUnexpected;	// couldn't read the Graphite tables
 
 	fexptn.errorCode = m_ferr;
 	fexptn.version = m_fxdBadVersion >> 16;
@@ -469,6 +474,113 @@ LUnexpected:
 	throw fexptn;
 
 	ReturnResult(m_resFontRead);
+}
+
+/*----------------------------------------------------------------------------------------------
+	Read the cmap and name tables.
+	
+	This is called from two places. One is when we first initialize the engine. Also, if the
+	font tables have not been actually copied from the font, they may have been deleted
+	when the font was deleted. So when reusing the engine, set them to something valid based
+	on the current font.
+----------------------------------------------------------------------------------------------*/
+bool GrEngine::SetCmapAndNameTables(Font * pfont)
+{
+	GrResult res = kresOk;
+	bool fOk;
+	const void * pCmapTbl;
+ 	const void * pNameTbl;
+	size_t cbCmapSz, cbNameSz;
+
+	// cmap
+	if (!m_fCmapTblCopy)
+	{
+		res = (pCmapTbl = pfont->getTable(TtfUtil::TableIdTag(ktiCmap), &cbCmapSz)) ? kresOk : kresFail;
+		fOk = pCmapTbl && (cbCmapSz == 0 || TtfUtil::CheckTable(ktiCmap, pCmapTbl, cbCmapSz));
+		if (!fOk)
+		{
+			m_stuInitError = L"could not locate cmap table";
+			m_ferr = kferrFindCmapTable;
+			return false;
+		}
+
+		if (pCmapTbl && cbCmapSz > 0)
+		{
+			// Make a private copy of the cmap for the engine's use.
+			m_pCmapTbl = new byte[cbCmapSz];
+			std::copy(reinterpret_cast<const byte*>(pCmapTbl), 
+					reinterpret_cast<const byte*>(pCmapTbl) + cbCmapSz, m_pCmapTbl);
+			m_fCmapTblCopy = true;
+			m_cbCmapTbl = cbCmapSz;
+		}
+		else
+		{
+			m_pCmapTbl = const_cast<byte*>(reinterpret_cast<const byte*>(pCmapTbl));
+			m_fCmapTblCopy = false;
+		}
+
+		// MS Unicode cmap
+		m_pCmap_3_1 = TtfUtil::FindCmapSubtable(m_pCmapTbl, 3, 1);
+		m_pCmap_3_10 = TtfUtil::FindCmapSubtable(m_pCmapTbl, 3, 10);
+		if (!m_pCmap_3_1)
+			m_pCmap_3_1 = TtfUtil::FindCmapSubtable(m_pCmapTbl, 3, 0);
+		if (!m_pCmap_3_1)
+		{
+			m_stuInitError = L"failure to load cmap subtable";
+			m_ferr = kferrLoadCmapSubtable;
+			return false;
+		}
+		if (!TtfUtil::CheckCmap31Subtable(m_pCmap_3_1))
+		{
+			m_stuInitError = L"checking cmap subtable failed";
+			m_ferr = kferrCheckCmapSubtable;
+			return false;
+		}
+	}
+	else
+	{
+		Assert(m_pCmapTbl);
+	}
+
+	// name table - eventually need feature label strings
+
+	// Currently the only stuff we're getting from the name table are our feature names,
+	// so use the version from the Graphite font (not the base font if any).
+	//////if (m_fUseSepBase)
+	//////	pgg->SetupGraphics(&chrpOriginal);
+
+	if (!m_fNameTblCopy)
+	{
+		res = (pNameTbl = (byte *)pfont->getTable(TtfUtil::TableIdTag(ktiName), &cbNameSz)) ? kresOk : kresFail;
+		fOk = pNameTbl && (cbNameSz == 0 || TtfUtil::CheckTable(ktiName, pNameTbl, cbNameSz));
+		if (!fOk)
+		{
+			m_stuInitError = L"could not locate name table";
+			m_ferr = kferrFindNameTable;
+			return false;
+		}
+
+		if (pNameTbl && cbNameSz > 0)
+		{
+			// Make a private copy of the name table for the engine's use.
+			m_pNameTbl = new byte[cbNameSz];
+			std::copy(reinterpret_cast<const byte*>(pNameTbl), 
+				reinterpret_cast<const byte*>(pNameTbl) + cbNameSz, m_pNameTbl);
+			m_fNameTblCopy = true;
+			m_cbNameTbl = cbNameSz;
+		}
+		else
+		{
+			m_pNameTbl = const_cast<byte*>(reinterpret_cast<const byte*>(pNameTbl));
+			m_fNameTblCopy = false;
+		}
+	}
+	else
+	{
+		Assert(m_pNameTbl);
+	}
+
+	return true;
 }
 
 
@@ -480,7 +592,6 @@ LUnexpected:
 //	Assert(chw0 >= 0x0040); // A
 //	Assert(chw0 <= 0x007A); // z
 //}
-
 
 } // namespace gr
 

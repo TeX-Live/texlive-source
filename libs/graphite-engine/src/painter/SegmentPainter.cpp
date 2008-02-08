@@ -520,7 +520,7 @@ void SegmentPainter::pointToChar(Point zptdClickPosition, int * pichw, bool * pf
 	if (m_pseg->m_dysAscent < 0 || m_pseg->m_dxsWidth < 0)
 		m_pseg->ComputeDimensions();
 
-	if (m_pseg->m_dichwLim == 0)
+	if (m_pseg->m_dichwLim == 0 || m_pseg->m_cginf == 0)
 	{
 		*pichw = m_pseg->m_ichwMin;
 		*pfAssocPrev = false;
@@ -1435,6 +1435,8 @@ void SegmentPainter::InvertSplitIP(float xs, float ysTop, float ysBottom,
 void SegmentPainter::CalcIP(int ichwSel, bool fBefore,
 	float * pxs, float * pysTop, float * pysBottom, bool * pfRtl)
 {
+	Font & font = this->m_pseg->getFont();
+
 	int ichw = (fBefore) ? ichwSel : ichwSel - 1;
 
 	int iginfOutput;
@@ -1508,77 +1510,89 @@ void SegmentPainter::CalcIP(int ichwSel, bool fBefore,
 		if (kPosInfinity == iginfOutput || kNegInfinity == iginfOutput)
 			*pxs = kPosInfFloat;
 
-		else if (psloutTmp->IsPartOfCluster())
+		else
 		{
-			//	Cluster member.
-
-			if (AtEdgeOfCluster(psloutTmp, islout, fBefore) &&
-				!CanInsertIntoCluster(psloutTmp, islout))
+			bool fCluster = (psloutTmp->IsPartOfCluster());
+			bool fHighlightBB = fCluster;
+			// Test below should match the one in CalcHighlightRect:
+			if ((psloutTmp->ClusterAdvance() == 0
+				|| psloutTmp->GlyphMetricLogUnits(&font, kgmetAdvWidth) == 0)
+				&& !psloutTmp->IsSpace())
 			{
-				//	Place the IP at the edge of the whole cluster.
+				fHighlightBB = true;	// use bounding box for zero-advance glyph
+			}
+			if (fHighlightBB)
+			{
+				//	Cluster member or zero-width glyph.
 
-				int isloutBase = psloutTmp->ClusterBase();
-				GrSlotOutput * psloutBase = m_pseg->OutputSlot(isloutBase);
-				//int igbbBase = psloutBase->GlyphBbIndex();
-				int iginfBase = m_pseg->LogicalToPhysicalSurface(isloutBase);
-				
-				float xsBase = m_pseg->GlyphLeftEdge(iginfBase);
+				if (fCluster && AtEdgeOfCluster(psloutTmp, islout, fBefore) &&
+					!CanInsertIntoCluster(psloutTmp, islout))
+				{
+					//	Place the IP at the edge of the whole cluster.
 
-				float xsLeft = xsBase + psloutBase->ClusterXOffset();
-				float xsRight = xsBase + psloutBase->ClusterAdvance();
+					int isloutBase = psloutTmp->ClusterBase();
+					GrSlotOutput * psloutBase = m_pseg->OutputSlot(isloutBase);
+					//int igbbBase = psloutBase->GlyphBbIndex();
+					int iginfBase = m_pseg->LogicalToPhysicalSurface(isloutBase);
+					
+					float xsBase = m_pseg->GlyphLeftEdge(iginfBase);
 
-				if (fBefore == *pfRtl)
-					//	Position of interest is to the right
-					*pxs = xsRight;
+					float xsLeft = xsBase + psloutBase->ClusterXOffset();
+					float xsRight = xsBase + psloutBase->ClusterAdvance();
+
+					if (fBefore == *pfRtl)
+						//	Position of interest is to the right
+						*pxs = xsRight;
+					else
+						//	Position of interest is to the left.
+						*pxs = xsLeft;
+				}
 				else
-					//	Position of interest is to the left.
-					*pxs = xsLeft;
+				{
+					//	Place the IP on the perimeter of the bounding box of the cluster member.
+
+					float xsGlyphStart = m_pseg->GlyphLeftEdge(iginfOutput);
+
+//					float dysFontAscent;
+//					res = GetFontAscentSourceUnits(pgg, &dysFontAscent);
+//					if (ResultFailed(res))	THROW(WARN(res));
+//					dysFontAscent += m_dysXAscent;
+
+					float ysBbTop = psloutTmp->GlyphMetricLogUnits(&font, kgmetBbTop);
+					float ysBbBottom = psloutTmp->GlyphMetricLogUnits(&font, kgmetBbBottom);
+					float xsBbLeft = psloutTmp->GlyphMetricLogUnits(&font, kgmetBbLeft);
+					float xsBbRight = psloutTmp->GlyphMetricLogUnits(&font, kgmetBbRight);
+
+					int twoPixels = 2;	// assume dest coords are in pixels
+
+					if (fBefore == *pfRtl)
+						//	Position of interest is to the right
+						*pxs = xsGlyphStart + xsBbRight + twoPixels;
+					else
+						//	Position of interest is to the left.
+						*pxs = xsGlyphStart + xsBbLeft - twoPixels;
+
+					GlyphInfo * pginf = m_pseg->m_prgginf + iginfOutput;
+					float ysGlyph = pginf->yOffset();
+					float ysGlyphBaseline = m_pseg->m_dysAscent - ysGlyph;	// relative to top
+
+					*pysTop = ysGlyphBaseline - ysBbTop - twoPixels;
+					*pysBottom = ysGlyphBaseline - ysBbBottom + twoPixels;
+				}
 			}
 			else
 			{
-				//	Place the IP on the perimeter of the bounding box of the cluster member.
-
-				float xsGlyphStart = m_pseg->GlyphLeftEdge(iginfOutput);
-
-//				float dysFontAscent;
-//				res = GetFontAscentSourceUnits(pgg, &dysFontAscent);
-//				if (ResultFailed(res))	THROW(WARN(res));
-//				dysFontAscent += m_dysXAscent;
-
-				float ysBbTop = psloutTmp->GlyphMetricLogUnits(kgmetBbTop);
-				float ysBbBottom = psloutTmp->GlyphMetricLogUnits(kgmetBbBottom);
-				float xsBbLeft = psloutTmp->GlyphMetricLogUnits(kgmetBbLeft);
-				float xsBbRight = psloutTmp->GlyphMetricLogUnits(kgmetBbRight);
-
-				int twoPixels = 2;	// assume dest coords are in pixels
-
+				// Insertion point goes at origin or advance width of glyph.
+	
+				*pxs = m_pseg->GlyphLeftEdge(iginfOutput);
 				if (fBefore == *pfRtl)
+				{
 					//	Position of interest is to the right
-					*pxs = xsGlyphStart + xsBbRight + twoPixels;
-				else
-					//	Position of interest is to the left.
-					*pxs = xsGlyphStart + xsBbLeft - twoPixels;
-
-				GlyphInfo * pginf = m_pseg->m_prgginf + iginfOutput;
-				float ysGlyph = pginf->yOffset();
-				float ysGlyphBaseline = m_pseg->m_dysAscent - ysGlyph;	// relative to top
-
-				*pysTop = ysGlyphBaseline - ysBbTop - twoPixels;
-				*pysBottom = ysGlyphBaseline - ysBbBottom + twoPixels;
+					//*pxs += psloutTmp->GlyphMetricLogUnits(&font, kgmetAdvWidth);
+					*pxs += psloutTmp->ClusterAdvance();
+				}
+				// else position of interest is to the left
 			}
-		}
-		else
-		{
-			// Insertion point goes at origin or advance width of glyph.
-
-			*pxs = m_pseg->GlyphLeftEdge(iginfOutput);
-			if (fBefore == *pfRtl)
-			{
-				//	Position of interest is to the right
-				//*pxs += psloutTmp->GlyphMetricLogUnits(kgmetAdvWidth);
-				*pxs += psloutTmp->ClusterAdvance();
-			}
-			// else position of interest is to the left
 		}
 	}
 }
@@ -1635,11 +1649,40 @@ bool SegmentPainter::AtEdgeOfCluster(GrSlotOutput * pslout, int islout, bool fBe
 
 	//	If the adjacent slot in whatever direction we're interested in has the same
 	//	cluster base, this slot is not on the edge of the cluster.
-	int isloutAdjacentBase = (fBefore) ?
-		m_pseg->OutputSlot(islout - 1)->ClusterBase() :
-		m_pseg->OutputSlot(islout + 1)->ClusterBase();
+	//  -- NO, because you could have an intervening glyph that is not part of the
+	//	cluster.
+	//int isloutAdjacentBase = (fBefore) ?
+	//	m_pseg->OutputSlot(islout - 1)->ClusterBase() :
+	//	m_pseg->OutputSlot(islout + 1)->ClusterBase();
+	//return (isloutAdjacentBase != m_pseg->OutputSlot(islout)->ClusterBase());
 
-	return (isloutAdjacentBase != m_pseg->OutputSlot(islout)->ClusterBase());
+	// Ask the cluster base.
+	return AtEdgeOfCluster(m_pseg->OutputSlot(pslout->ClusterBase()), pslout->ClusterBase(),
+		pslout, islout, fBefore);
+}
+
+bool SegmentPainter::AtEdgeOfCluster(GrSlotOutput * psloutBase, int isloutBase,
+	GrSlotOutput * pslout, int islout, bool fBefore)
+{
+	//	Compare pslout to all the members of the cluster. If it is the minimum or maximum, it
+	//	is at an edge.
+	if (fBefore && isloutBase < islout)
+		return false;
+	if (!fBefore && isloutBase > islout)
+		return false;
+
+	std::vector<int> visloutCluster;
+	m_pseg->ClusterMembersForGlyph(isloutBase, psloutBase->ClusterRange(), visloutCluster);
+
+	for (size_t iislout = 0; iislout < visloutCluster.size(); iislout++)
+	{
+		int isloutMember = visloutCluster[iislout];
+		if (fBefore && isloutMember < islout)
+			return false;
+		if (!fBefore && isloutMember > islout)
+			return false;
+	}
+	return true;
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -1655,16 +1698,19 @@ bool SegmentPainter::CanInsertIntoCluster(GrSlotOutput * pslout, int islout)
 	if (islout != isloutBase)
 	{
 		//	Ask the cluster base.
-		Assert(pslout->NumClusterMembers() == 0);
+		Assert(pslout->ClusterRange() == 0);
 		return CanInsertIntoCluster(m_pseg->OutputSlot(isloutBase), isloutBase);
 	}
 
 	if (!AtEdgeOfCluster(pslout, islout, true) && pslout->InsertBefore())
 		return true;
 
-	for (int iislout = 0; iislout < pslout->NumClusterMembers(); iislout++)
+	std::vector<int> visloutCluster;
+	m_pseg->ClusterMembersForGlyph(isloutBase, pslout->ClusterRange(), visloutCluster);
+
+	for (size_t iislout = 0; iislout < visloutCluster.size(); iislout++)
 	{
-		int isloutMember = pslout->ClusterMember(iislout);
+		int isloutMember = visloutCluster[iislout];
 		if (AtEdgeOfCluster(m_pseg->OutputSlot(isloutMember), isloutMember, true))
 			// Inserting before the first member of the cluster doesn't count.
 			continue;
@@ -1752,6 +1798,8 @@ void SegmentPainter::CalcHighlightRect(int ichw,
 	GrGlyphTable * pgtbl = (pgreng) ? pgreng->GlyphTable() : NULL;
 	//bool fRtl = m_pseg->rightToLeft();
 
+	Font & font = m_pseg->getFont();
+
 	if (!GrCharStream::AtUnicodeCharBoundary(m_pseg->GetString(), ichw))
 		//	Second half of a surrogate pair, or UTF-8: ignore.
 		return;
@@ -1802,26 +1850,40 @@ void SegmentPainter::CalcHighlightRect(int ichw,
 	}
 	else
 	{
-		std::vector<int> * pvislout = m_pseg->UnderlyingToLogicalAssocs(ichw);
-		if (!pvislout)
+		std::vector<int> vislout = m_pseg->UnderlyingToLogicalAssocs(ichw);
+		if (vislout.size() == 0)
 			return;
 
 		float xsGlyphLeft, xsGlyphRight;
 
 		res = kresOk;
 
-		for (size_t iislout = 0; iislout < pvislout->size(); iislout++)
+		for (size_t iislout = 0; iislout < vislout.size(); iislout++)
 		{
-			int islout = (*pvislout)[iislout];
+			int islout = vislout[iislout];
+			if (islout == kNegInfinity || islout == kPosInfinity)
+				continue;
 			int iginfTmp = m_pseg->LogicalToPhysicalSurface(islout);
+			Assert(iginfTmp != kNegInfinity);
+			Assert(iginfTmp != kPosInfinity);
 
 			if (fSkipTrSpace && islout >= m_pseg->m_isloutVisLim)
 				continue;
 
 			Rect rsNew;
 			GrSlotOutput * psloutTmp = m_pseg->OutputSlot(islout);
+			bool fHighlightBB = psloutTmp->IsPartOfCluster();
+			//	Test below should match the one in CalcIP--
+			//	If the glyph has no advance width but does have a real bounding box,
+			//	highlight the bounding box. Review: do we want this???
+			if ((psloutTmp->ClusterAdvance() == 0
+				|| psloutTmp->GlyphMetricLogUnits(&font, kgmetAdvWidth) == 0)
+				&& !psloutTmp->IsSpace())
+			{
+				fHighlightBB = true;
+			}
 			xsGlyphLeft = m_pseg->GlyphLeftEdge(iginfTmp);
-			if (psloutTmp->IsPartOfCluster())
+			if (fHighlightBB)
 			{
 				//	For now, highlight just the bounding box of this glyph. After we finish 
 				//	highlighting all glyphs individually, we'll go back and highlight
@@ -1836,10 +1898,10 @@ void SegmentPainter::CalcHighlightRect(int ichw,
 				float ysForGlyph = pginf->yOffset();
 				float ysGlyphBaseline = m_pseg->m_dysAscent - ysForGlyph;	// relative to top
 
-				float ysBbTop = psloutTmp->GlyphMetricLogUnits(kgmetBbTop);
-				float ysBbBottom = psloutTmp->GlyphMetricLogUnits(kgmetBbBottom);
-				float xsBbLeft = psloutTmp->GlyphMetricLogUnits(kgmetBbLeft);
-				float xsBbRight = psloutTmp->GlyphMetricLogUnits(kgmetBbRight);
+				float ysBbTop = psloutTmp->GlyphMetricLogUnits(&font, kgmetBbTop);
+				float ysBbBottom = psloutTmp->GlyphMetricLogUnits(&font, kgmetBbBottom);
+				float xsBbLeft = psloutTmp->GlyphMetricLogUnits(&font, kgmetBbLeft);
+				float xsBbRight = psloutTmp->GlyphMetricLogUnits(&font, kgmetBbRight);
 
 				rsNew.top = ysGlyphBaseline - ysBbTop - 2;
 				rsNew.bottom = ysGlyphBaseline - ysBbBottom + 2;
@@ -1853,9 +1915,12 @@ void SegmentPainter::CalcHighlightRect(int ichw,
 				//	Highlight entire width of the glyph from the top of the line to the bottom.
 				//	Horizontally, highlight from the origin of the glyph to the advance width.
 
-				//xsGlyphRight = xsGlyphLeft + psloutTmp->GlyphMetricLogUnits(kgmetAdvWidth);
+				//xsGlyphRight = xsGlyphLeft + psloutTmp->GlyphMetricLogUnits(&font kgmetAdvWidth);
 				xsGlyphRight = xsGlyphLeft + psloutTmp->ClusterAdvance();
 
+				if (xsGlyphLeft > xsGlyphRight)
+					std::swap(xsGlyphLeft, xsGlyphRight);
+				
 				rsNew.top = 0;
 				rsNew.bottom = m_pseg->m_dysHeight;
 				rsNew.left = xsGlyphLeft;
@@ -1889,7 +1954,7 @@ void SegmentPainter::CalcCompleteCluster(int islout,
 	//GrEngine * pgreng = m_pseg->EngineImpl();
 
 	GrSlotOutput * pslout = m_pseg->OutputSlot(islout);
-	if (pslout->NumClusterMembers() == 0)
+	if (pslout->ClusterRange() == 0)
 		return;
 
 	int iginfDraw = m_pseg->LogicalToPhysicalSurface(islout);
@@ -1898,9 +1963,11 @@ void SegmentPainter::CalcCompleteCluster(int islout,
 
 	bool fAllHighlighted = true;
 
-	for (int i = 0; i < pslout->NumClusterMembers(); i++)
+	std::vector<int> visloutCluster;
+	m_pseg->ClusterMembersForGlyph(islout, pslout->ClusterRange(), visloutCluster);
+	for (size_t i = 0; i < visloutCluster.size(); i++)
 	{
-		int iginfMemberDraw = m_pseg->LogicalToPhysicalSurface(pslout->ClusterMember(i));
+		int iginfMemberDraw = m_pseg->LogicalToPhysicalSurface(visloutCluster[i]);
 		if (!prgfHighlighted[iginfMemberDraw])
 		{
 			fAllHighlighted = false;

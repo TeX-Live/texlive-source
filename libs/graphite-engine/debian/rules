@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 #DEB_AUTO_UPDATE_DEBIAN_CONTROL:=yes
 
-DEB_TAR_SRCDIR := silgraphite-2.2.0
+DEB_TAR_SRCDIR := silgraphite-2.2.1
 include /usr/share/cdbs/1/rules/tarball.mk
 
 include /usr/share/cdbs/1/rules/debhelper.mk

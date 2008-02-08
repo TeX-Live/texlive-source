@@ -18,6 +18,7 @@ Description:
 	Include files
 ***********************************************************************************************/
 // Language headers
+#include <algorithm>
 #include <cassert>
 #include <cstddef>
 #include <stdexcept>
@@ -78,12 +79,34 @@ namespace
 		return float(f)/float(2^R);
 	}
 
-	const char id_to_tag_map[][5] = {
-		"cmap", "cvt ", "cryp", "head", "fpgm", "gdir", "glyf", 
-		"hdmx", "hhea", "hmtx", "loca", "kern", "LTSH", "maxp", 
-		"name", "OS/2", "post", "prep", "Feat", "Glat", "Gloc",
-		"Silf", "Sile", "Sill"
-	};
+#define MAKE_TAG(a,b,c,d) ((a << 24UL) + (b << 16UL) + (c << 8UL) + (d))
+	const gr::fontTableId32 mapIdToTag[] = {
+		MAKE_TAG('c','m','a','p'),
+		MAKE_TAG('c','v','t',' '),
+		MAKE_TAG('c','r','y','p'),
+		MAKE_TAG('h','e','a','d'),
+		MAKE_TAG('f','p','g','m'),
+		MAKE_TAG('g','d','i','r'),
+		MAKE_TAG('g','l','y','f'), 
+		MAKE_TAG('h','d','m','x'),
+		MAKE_TAG('h','h','e','a'),
+		MAKE_TAG('h','m','t','x'),
+		MAKE_TAG('l','o','c','a'),
+		MAKE_TAG('k','e','r','n'),
+		MAKE_TAG('L','T','S','H'),
+		MAKE_TAG('m','a','x','p'), 
+		MAKE_TAG('n','a','m','e'),
+		MAKE_TAG('O','S','/','2'),
+		MAKE_TAG('p','o','s','t'),
+		MAKE_TAG('p','r','e','p'),
+		MAKE_TAG('F','e','a','t'),
+		MAKE_TAG('G','l','a','t'),
+		MAKE_TAG('G','l','o','c'),
+		MAKE_TAG('S','i','l','f'),
+		MAKE_TAG('S','i','l','e'),
+		MAKE_TAG('S','i','l','l')
+ 	};
+
 
 /*----------------------------------------------------------------------------------------------
 	Table of standard Postscript glyph names. From Martin Hosken. Disagress with ttfdump.exe
@@ -156,6 +179,7 @@ level GlyfPoints method. */
 
 namespace TtfUtil
 {
+
 
 /*----------------------------------------------------------------------------------------------
 	Get offset and size of the offset table needed to find table directory
@@ -1080,7 +1104,7 @@ size_t LocaLookup(gr::gid16 nGlyphId,
 	// CheckTable verifies the index_to_loc_format is valid
 	if (read(pTable->index_to_loc_format) == Sfnt::FontHeader::ShortIndexLocFormat)
 	{ // loca entries are two bytes and have been divided by two
-		if (nGlyphId < (lLocaSize >> 1) - 1)
+		if (nGlyphId <= (lLocaSize >> 1) - 1) // allow sentinel value to be accessed
 		{
 			const uint16 * pTable = reinterpret_cast<const uint16 *>(pLoca);
 			return (read(pTable[nGlyphId]) << 1);
@@ -1089,7 +1113,7 @@ size_t LocaLookup(gr::gid16 nGlyphId,
 	
 	if (read(pTable->index_to_loc_format) == Sfnt::FontHeader::LongIndexLocFormat)
 	{ // loca entries are four bytes
-		if (nGlyphId < (lLocaSize >> 2) - 1)
+		if (nGlyphId <= (lLocaSize >> 2) - 1)
 		{
 			const uint32 * pTable = reinterpret_cast<const uint32 *>(pLoca);
 			return read(pTable[nGlyphId]);
@@ -1500,6 +1524,23 @@ bool GetComponentTransform(const void * pSimpleGlyf, int nCompId,
 void * GlyfLookup(gr::gid16 nGlyphId, const void * pGlyf, const void * pLoca, 
 						   size_t lLocaSize, const void * pHead)
 {
+	// test for valid glyph id
+	// CheckTable verifies the index_to_loc_format is valid
+	
+	const Sfnt::FontHeader * pTable 
+		= reinterpret_cast<const Sfnt::FontHeader *>(pHead);
+
+	if (read(pTable->index_to_loc_format) == Sfnt::FontHeader::ShortIndexLocFormat)
+	{ // loca entries are two bytes (and have been divided by two)
+		if (nGlyphId >= (lLocaSize >> 1) - 1) // don't allow nGlyphId to access sentinel
+			throw std::out_of_range("glyph id out of range for font");
+	}
+	if (read(pTable->index_to_loc_format) == Sfnt::FontHeader::LongIndexLocFormat)
+	{ // loca entries are four bytes
+		if (nGlyphId >= (lLocaSize >> 2) - 1)
+			throw std::out_of_range("glyph id out of range for font");
+	}
+
 	long lGlyfOffset = LocaLookup(nGlyphId, pLoca, lLocaSize, pHead);
 	void * pSimpleGlyf = GlyfLookup(pGlyf, lGlyfOffset); // invalid loca offset returns null
 	return pSimpleGlyf;
@@ -1580,7 +1621,7 @@ bool GlyfBox(gr::gid16  nGlyphId, const void * pGlyf, const void * pLoca,
 		False may indicate a white space glyph or a multi-level composite glyph.
 ----------------------------------------------------------------------------------------------*/
 bool GlyfContourCount(gr::gid16 nGlyphId, const void * pGlyf, const void * pLoca, 
-							  long lLocaSize, const void * pHead, size_t & cnContours)
+	size_t lLocaSize, const void * pHead, size_t & cnContours)
 {
 	cnContours = static_cast<size_t>(INT_MIN);
 
@@ -1633,8 +1674,8 @@ bool GlyfContourCount(gr::gid16 nGlyphId, const void * pGlyf, const void * pLoca
 		False may indicate a white space glyph or a multi-level composite glyph.
 ----------------------------------------------------------------------------------------------*/
 bool GlyfContourEndPoints(gr::gid16 nGlyphId, const void * pGlyf, const void * pLoca, 
-								   long lLocaSize, const void * pHead, 
-								   int * prgnContourEndPoint, size_t cnPoints)
+	size_t lLocaSize, const void * pHead, 
+	int * prgnContourEndPoint, size_t cnPoints)
 {
 	std::fill_n(prgnContourEndPoint, cnPoints, INT_MIN);
 
@@ -1851,18 +1892,42 @@ bool CalcAbsolutePoints(int * prgnX, int * prgnY, int cnPoints)
 	return true;
 }
 
-// returns native order unsigned long
+/*----------------------------------------------------------------------------------------------
+	Convert a numerical table ID to a string containing the actual name of the table.
+	Returns native order unsigned long.
+---------------------------------------------------------------------------------------------*/
 gr::fontTableId32 TableIdTag(const TableId tid)
 {
-	assert(sizeof id_to_tag_map == 5*ktiLast);
+	assert(sizeof(mapIdToTag) == sizeof(gr::fontTableId32) * ktiLast);
 	assert(tid < ktiLast);
-	const char *table_tag = id_to_tag_map[tid];
 
-	gr::fontTableId32 r  = table_tag[0] << 24;
-	                  r |= table_tag[1] << 16;
-	                  r |= table_tag[2] << 8;
-	                  r |= table_tag[3];
-	return r;
+	return mapIdToTag[tid];
 }
+
+/*----------------------------------------------------------------------------------------------
+	Return the length of the 'name' table in bytes.
+	Currently used.
+---------------------------------------------------------------------------------------------*/
+#if 0
+size_t NameTableLength(const gr::byte * pTable)
+{
+	gr::byte * pb = (const_cast<gr::byte *>(pTable)) + 2; // skip format
+	size_t cRecords = *pb++ << 8; cRecords += *pb++;
+	int dbStringOffset0 = (*pb++) << 8; dbStringOffset0 += *pb++;
+	int dbMaxStringOffset = 0;
+	for (size_t irec = 0; irec < cRecords; irec++)
+	{
+		int nPlatform = (*pb++) << 8; nPlatform += *pb++;
+		int nEncoding = (*pb++) << 8; nEncoding += *pb++;
+		int nLanguage = (*pb++) << 8; nLanguage += *pb++;
+		int nName = (*pb++) << 8; nName += *pb++;
+		int cbStringLen = (*pb++) << 8; cbStringLen += *pb++;
+		int dbStringOffset = (*pb++) << 8; dbStringOffset += *pb++;
+		if (dbMaxStringOffset < dbStringOffset + cbStringLen)
+			dbMaxStringOffset = dbStringOffset + cbStringLen;
+	}
+	return dbStringOffset0 + dbMaxStringOffset;
+}
+#endif
 
 } // end of namespace TtfUtil

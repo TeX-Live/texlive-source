@@ -18,6 +18,7 @@ graphiteinclude_HEADERS += $(top_srcdir)/include/graphite/IGraphiteProcess.h
 graphiteinclude_HEADERS += $(top_srcdir)/include/graphite/IGrEngine.h
 graphiteinclude_HEADERS += $(top_srcdir)/include/graphite/IGrJustifier.h
 graphiteinclude_HEADERS += $(top_srcdir)/include/graphite/ITextSource.h
+graphiteinclude_HEADERS += $(top_srcdir)/include/graphite/MemoryUsage.h
 graphiteinclude_HEADERS += $(top_srcdir)/include/graphite/SegmentAux.h
 graphiteinclude_HEADERS += $(top_srcdir)/include/graphite/Segment.h
 graphiteinclude_HEADERS += $(top_srcdir)/include/graphite/SegmentPainter.h

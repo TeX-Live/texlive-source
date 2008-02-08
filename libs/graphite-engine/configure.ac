@@ -1,6 +1,6 @@
 AC_PREREQ(2.54)
 
-AC_INIT(silgraphite, 2.2.0, silgraphite-devel@lists.sourceforge.net)
+AC_INIT(silgraphite, 2.2.1, silgraphite-devel@lists.sourceforge.net)
 AC_CONFIG_SRCDIR(src/segment/GrEngine.cpp)
 AC_CONFIG_AUX_DIR(config)
 
@@ -119,6 +119,7 @@ AC_CONFIG_FILES(Makefile \
 		silgraphite-uninstalled.pc:uninstalled-top.pc.in:silgraphite.pc.in \
 		src/Makefile \
 		test/Makefile \
-		test/RegressionTest/Makefile)
+		test/RegressionTest/Makefile \
+        test/ProfileHarness/Makefile)
 
 AC_OUTPUT

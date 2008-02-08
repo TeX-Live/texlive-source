@@ -973,7 +973,8 @@ void Segment::LogUnderlyingToSurface(GrTableManager * ptman, std::ostream & strm
 	int ichw;
 	for (ichw = 0; ichw < (m_ichwAssocsLim - m_ichwAssocsMin); ichw++)
 	{
-		cassocs = max(cassocs, m_prgvisloutAssocs[ichw].size());
+		if (m_prgpvisloutAssocs[ichw])
+			cassocs = max(cassocs, m_prgpvisloutAssocs[ichw]->size());
 		if (m_prgisloutLigature[ichw] != kNegInfinity)
 			fLigs = true;
 	}
@@ -1080,7 +1081,7 @@ void Segment::LogUnderlyingToSurface(GrTableManager * ptman, std::ostream & strm
 	}
 	strmOut <<"\n";
 
-	for (size_t ix = 1; ix < cassocs - 1; ix++) //(cassocs > 2)
+	for (int ix = 1; ix < signed(cassocs) - 1; ix++) //(cassocs > 2)
 	{
 		if (ix == 1)
 			strmOut << "other          ";
@@ -1088,10 +1089,13 @@ void Segment::LogUnderlyingToSurface(GrTableManager * ptman, std::ostream & strm
 			strmOut << "               ";
 		for (ichw = 0; ichw < (m_ichwAssocsLim - m_ichwAssocsMin); ichw++)
 		{
-			if (m_prgvisloutAssocs[ichw].size() <= ix)
+			std::vector<int> * pvislout = m_prgpvisloutAssocs[ichw];
+			if (pvislout == NULL)
 				strmOut << "       ";
-			else if (m_prgvisloutAssocs[ichw][ix] != m_prgisloutAfter[ichw])
-				ptman->LogInTable(strmOut, m_prgvisloutAssocs[ichw][ix]);
+			else if (signed(pvislout->size()) <= ix)
+				strmOut << "       ";
+			else if ((*pvislout)[ix] != m_prgisloutAfter[ichw])
+				ptman->LogInTable(strmOut, (*pvislout)[ix]);
 			else
 				strmOut << "       ";
 		}
@@ -1171,8 +1175,7 @@ void Segment::LogSurfaceToUnderlying(GrTableManager * ptman, std::ostream & strm
 		else
 		{
 			ptman->LogHexInTable(strmOut, psloutTmp->GlyphID());
-			if (psloutTmp->HasComponents())
-				ccomp = max(ccomp, psloutTmp->NumberOfComponents());
+			ccomp = max(ccomp, psloutTmp->NumberOfComponents());
 		}
 	}
 	strmOut << "\n";
@@ -1464,9 +1467,9 @@ void GrSlotState::SlotAttrsModified(bool * rgfMods, bool fPreJust, int * pccomp,
 		if (m_nAttachLevel != 0)
 			rgfMods[kslatAttLevel] = true;
 
-		if (m_lb != kNotYetSet)
+		if (m_lb != kNotYetSet8)
 			rgfMods[kslatBreak] = true;
-		if (m_dirc != kNotYetSet)
+		if (m_dirc != kNotYetSet8)
 			rgfMods[kslatDir] = true;
 		if (m_fInsertBefore != true)
 			rgfMods[kslatInsert] = true;
@@ -1759,14 +1762,14 @@ void GrSlotState::LogSlotAttribute(GrTableManager * ptman,
 		break;
 
 	case kslatBreak:
-		if (m_lb != (pslotPrev ? pslotPrev->m_lb : kNotYetSet))
+		if (m_lb != (pslotPrev ? pslotPrev->m_lb : kNotYetSet8))
 		{
 			ptman->LogBreakWeightInTable(strmOut, m_lb);
 			return;
 		}
 		break;
 	case kslatDir:
-		if (m_dirc != (pslotPrev ? pslotPrev->m_dirc : kNotYetSet))
+		if (m_dirc != (pslotPrev ? pslotPrev->m_dirc : kNotYetSet8))
 		{
 			ptman->LogDirCodeInTable(strmOut, m_dirc);
 			return;

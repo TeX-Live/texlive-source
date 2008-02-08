@@ -209,7 +209,7 @@ public:
 		m_yScale = scaleFromDpi(dpi);
 	}
 	
-	bool isValid() { return m_isValid; };
+	bool isValid() { return m_fIsValid; };
 protected:
 	/** Default constructor is not used */
 	FileFont();
@@ -225,10 +225,11 @@ protected:
 	// pixel-coord = design-coord * pixels-per-em / font-em-square
 	float scaleFromDpi(int dpi)
 	{
-		return (dpi * m_pointSize) / (72.0f * m_emSquare);
+		return (dpi * m_pointSize) / (72.0f * m_mEmSquare);
 	}
+
 	// Member variables:
-	FILE *m_file;
+	FILE * m_pfile;
 	
 	unsigned long m_clrFore;
 	unsigned long m_clrBack;
@@ -238,14 +239,14 @@ protected:
 	FontTableCache * m_pTableCache;
 
 	// KRS: I think these should be cached otherwise Segment::LineContextSegment doesn't work
-	float m_ascent;
-	float m_descent;
-	float m_emSquare;
+	float m_mAscent;
+	float m_mDescent;
+	float m_mEmSquare;
 	float m_pointSize;
 	int m_dpiX;
 	int m_dpiY;
-	bool m_isValid;
-	std::wstring m_faceName;
+	bool m_fIsValid;
+	std::wstring m_stuFaceName;
 	byte * m_pHeader;
 	byte * m_pTableDir;
 	float m_xScale;

@@ -34,6 +34,8 @@ class Font;
 class EngineState
 {
 	friend class GrTableManager;
+	friend class FontMemoryUsage;
+
 public:
 	EngineState();
 	void Initialize(GrEngine *, GrTableManager *);
@@ -310,6 +312,7 @@ protected:
 ----------------------------------------------------------------------------------------------*/
 
 class GrTableManager {
+	friend class FontMemoryUsage;
 
 public:
 	//	Constructor & destructor:
@@ -487,7 +490,7 @@ protected:
 	void InitSegmentAsEmpty(Segment * psegNew, Font * pfont, GrCharStream * pchstrm,
 		bool fStartLine, bool fEndLine);
 
-	void InitSegmentToDelete(Segment * psegNew);
+	void InitSegmentToDelete(Segment * psegNew, Font * pfont, GrCharStream * pchstrm);
 
 	int ChunkInPrev(int ipass, int islot, GrCharStream * pchstrm);
 

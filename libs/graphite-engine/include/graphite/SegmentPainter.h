@@ -26,7 +26,8 @@ Description:
 namespace gr
 {
 
-	class Segment;
+class Segment;
+
 /*----------------------------------------------------------------------------------------------
 	A SegmentPainter handles the UI-related operations on for segment.
 
@@ -82,14 +83,12 @@ public:
 		int charIndex, bool assocPrevMatch, bool assocPrevNeeded,
 		int anchorIndex, bool movingRight, bool * inThisSeg);
 
-
 	//	For calculating underlines:
 	struct LineSeg {	// hungarian: ls
 		float left;
 		float right;
 	};
 
-	
 	static float ScaleX(float xs, Rect rs, Rect rd);
 	static float ScaleY(float ys, Rect rs, Rect rd);
 
@@ -157,6 +156,8 @@ protected:
 		float * pxsBefore, float ysBeforeTop, float ysBeforeBottom,
 		float * pxsAfter, float ysAfterTop, float ysAfterBottom);
 	bool AtEdgeOfCluster(GrSlotOutput * pslout, int islout, bool fBefore);
+	bool AtEdgeOfCluster(GrSlotOutput * psloutBase, int isloutBase,
+		GrSlotOutput * pslout, int islout, bool fBefore);
 	bool CanInsertIntoCluster(GrSlotOutput * pslout, int islout);
 
 	void CalcPartialLigatures(bool * prgfAllSelected,

@@ -22,9 +22,11 @@ Description:
 #define NO_EXCEPTIONS 1
 
 // It's okay to use functions that were declared deprecated by VS 2005:
+#ifdef _MSC_VER
 #define _CRT_SECURE_NO_DEPRECATE
 #pragma warning(disable: 4996) // warning: function was declared deprecated
 #pragma warning(disable: 4702) // unreachable code
+#endif
 
 #include "GrCommon.h"
 
@@ -150,11 +152,12 @@ struct Rect
 #include "FontFace.h"
 #include "Segment.h"
 #include "SegmentPainter.h"
-#ifdef _WIN32
-#include <hash_map>
-#include "WinFont.h"
-#include "WinSegmentPainter.h"
-#endif
+
+//#ifdef _WIN32
+//#include <hash_map>
+//#include "WinFont.h"
+//#include "WinSegmentPainter.h"
+//#endif
 
 // Internal headers
 #include "TtfUtil.h"

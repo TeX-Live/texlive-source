@@ -35,6 +35,7 @@ class PassState {
 	friend class GrSubPass;
 	friend class GrBidiPass;
 	friend class GrPosPass;
+	friend class FontMemoryUsage;
 
 public:
 	PassState()
@@ -135,6 +136,7 @@ protected:
 	Hungarian: pass
 ----------------------------------------------------------------------------------------------*/
 class GrPass {
+	friend class FontMemoryUsage;
 
 protected:
 	//	Action command codes; these MUST match the corresponding definitions in the compiler:
@@ -189,6 +191,8 @@ public:
 	GrPass(int i);
 	//	Destructor:
 	virtual ~GrPass();
+
+	int PassNumber() { return m_ipass; }
 
 	bool ReadFromFont(GrIStream & grstrm, int fxdSilfVersion, int fxdRuleVersion, int nOffset);
 	void InitializeWithNoRules();
@@ -392,7 +396,6 @@ protected:
 
 	int m_fxdVersion;
 
-	std::vector<int> vnStack;	
 	//	number of items required from previous pass; don't access directly, use the getter
 	//	method, because GrBidiPass overrides to always use 1.
 	int m_nMaxRuleContext;
@@ -425,12 +428,18 @@ protected:
 	byte * m_prgbConstraintBlock;  // rule constraints
 	byte * m_prgbActionBlock;
 
+	int m_cbConstraints;	// needed for memory instrumentation only
+	int m_cbActions;		// needed for memory instrumentation only
+
 	bool m_fHasDebugStrings;
 	data16 * m_prgibConstraintDebug;	// m_crul+1 of these
 	data16 * m_prgibRuleDebug;		// m_crul+1 of these
 
 	bool m_fCheckRules;
 	bool * m_prgfRuleOkay;
+
+	std::vector<int> m_vnStack;	// for stack machine processing (more efficient than creating the
+								// vector each time)
 
 	//	state of process for this pass
 	PassState * m_pzpst;
@@ -470,7 +479,10 @@ public:
 	
 	Hungarian: pass
 ----------------------------------------------------------------------------------------------*/
-class GrGlyphGenPass : public GrPass {
+class GrGlyphGenPass : public GrPass
+{
+	friend class FontMemoryUsage;
+
 public:
 	GrGlyphGenPass(int ipass) : GrPass(ipass)
 	{
@@ -497,7 +509,10 @@ protected:
 
 	Hungarian: pass
 ----------------------------------------------------------------------------------------------*/
-class GrLineBreakPass : public GrPass {
+class GrLineBreakPass : public GrPass
+{
+	friend class FontMemoryUsage;
+
 public:
 	GrLineBreakPass(int ipass) : GrPass(ipass)
 	{
@@ -538,7 +553,10 @@ public:
 
 	Hungarian: pass
 ----------------------------------------------------------------------------------------------*/
-class GrSubPass : public GrPass {
+class GrSubPass : public GrPass
+{
+	friend class FontMemoryUsage;
+
 public:
 	GrSubPass(int ipass) : GrPass(ipass)
 	{
@@ -615,6 +633,8 @@ public:
 ----------------------------------------------------------------------------------------------*/
 class GrBidiPass : public GrSubPass
 {
+	friend class FontMemoryUsage;
+
 public:
 	//	Constructor:
 	GrBidiPass(int ipass)
@@ -677,7 +697,10 @@ public:
 
 	Hungarian: pass
 ----------------------------------------------------------------------------------------------*/
-class GrPosPass : public GrPass {
+class GrPosPass : public GrPass
+{
+	friend class FontMemoryUsage;
+
 public:
 	GrPosPass(int ipass) : GrPass(ipass)
 	{

@@ -66,7 +66,6 @@ LINK_OBJS=\
 #    "$(INTDIR)\HashMap_i$(OBJEXT)"\
     "$(INTDIR)\Debug$(OBJEXT)"\
     "$(INTDIR)\Util$(OBJEXT)"\
-    "$(INTDIR)\explicit_instantiations$(OBJEXT)"\
     "$(INTDIR)\Font$(OBJEXT)"\
     "$(INTDIR)\FileFont$(OBJEXT)"\
     "$(INTDIR)\FontCache$(OBJEXT)"\
@@ -83,6 +82,7 @@ LINK_OBJS=\
     "$(INTDIR)\GrSlotState$(OBJEXT)"\
     "$(INTDIR)\GrSlotStream$(OBJEXT)"\
     "$(INTDIR)\GrTableManager$(OBJEXT)"\
+    "$(INTDIR)\MemoryUsage$(OBJEXT)"\
     "$(INTDIR)\Segment$(OBJEXT)"\
     "$(INTDIR)\SegmentAux$(OBJEXT)"\
     "$(INTDIR)\SegmentPainter$(OBJEXT)"\
@@ -99,7 +99,6 @@ LINK_DLL_OBJS=\
 #    "$(INTDIR)\HashMap_i_dll$(OBJEXT)"\
     "$(INTDIR)\Debug_dll$(OBJEXT)"\
     "$(INTDIR)\Util_dll$(OBJEXT)"\
-    "$(INTDIR)\explicit_instantiations_dll$(OBJEXT)"\
     "$(INTDIR)\Font_dll$(OBJEXT)"\
     "$(INTDIR)\WinFont_dll$(OBJEXT)"\
     "$(INTDIR)\FileFont_dll$(OBJEXT)"\
@@ -117,6 +116,7 @@ LINK_DLL_OBJS=\
     "$(INTDIR)\GrSlotState_dll$(OBJEXT)"\
     "$(INTDIR)\GrSlotStream_dll$(OBJEXT)"\
     "$(INTDIR)\GrTableManager_dll$(OBJEXT)"\
+    "$(INTDIR)\MemoryUsage_dll$(OBJEXT)"\
     "$(INTDIR)\Segment_dll$(OBJEXT)"\
     "$(INTDIR)\SegmentAux_dll$(OBJEXT)"\
     "$(INTDIR)\SegmentPainter_dll$(OBJEXT)"\
@@ -135,7 +135,6 @@ BSC32_SBRS=\
 #    "$(INTDIR)\HashMap_i$(SBREXT)"\
     "$(INTDIR)\Debug$(SBREXT)"\
     "$(INTDIR)\Util$(SBREXT)"\
-    "$(INTDIR)\explicit_instantiations$(SBREXT)"\
     "$(INTDIR)\Font$(SBREXT)"\
     "$(INTDIR)\WinFont$(SBREXT)"\
     "$(INTDIR)\FileFont$(SBREXT)"\
@@ -153,6 +152,7 @@ BSC32_SBRS=\
     "$(INTDIR)\GrSlotState$(SBREXT)"\
     "$(INTDIR)\GrSlotStream$(SBREXT)"\
     "$(INTDIR)\GrTableManager$(SBREXT)"\
+    "$(INTDIR)\MemoryUsage$(SBREXT)"\
     "$(INTDIR)\Segment$(SBREXT)"\
     "$(INTDIR)\SegmentAux$(SBREXT)"\
     "$(INTDIR)\SegmentPainter$(SBREXT)"\
@@ -358,22 +358,6 @@ lib_dll : "$(OUTDIR)/$(TARGET)_dll.lib"
 	
 "$(INTDIR)\TtfUtil_dll$(OBJEXT)" : "src/font/TtfUtil.cpp"
 	@- $(CPP) $(CPPFLAGS) /D "_DLL" /Fo"$(INTDIR)\TtfUtil_dll$(OBJEXT)" $?
-	
-!ENDIF
-
-!IF "$(CFG)" == "DEBUG"
-"$(INTDIR)\explicit_instantiations$(OBJEXT)" "$(INTDIR)\explicit_instantiations$(SBREXT)" : "src/segment/explicit_instantiations.cpp"
-	@- $(CPP) $(CPPFLAGS) $(CPP_DEBUG) /Fo"$(INTDIR)\explicit_instantiations$(OBJEXT)" $?
-
-"$(INTDIR)\explicit_instantiations_dll$(OBJEXT)" "$(INTDIR)\explicit_instantiations_dll$(SBREXT)" : "src/segment/explicit_instantiations.cpp"
-	@- $(CPP) $(CPPFLAGS) /D "_DLL" $(CPP_DEBUG) /Fo"$(INTDIR)\explicit_instantiations_dll$(OBJEXT)" $?
-	
-!ELSE
-"$(INTDIR)\explicit_instantiations$(OBJEXT)" : "src/segment/explicit_instantiations.cpp"
-	@- $(CPP) $(CPPFLAGS) $(CPP_DEBUG) /Fo"$(INTDIR)\explicit_instantiations$(OBJEXT)" $?
-	
-"$(INTDIR)\explicit_instantiations_dll$(OBJEXT)" : "src/segment/explicit_instantiations.cpp"
-	@- $(CPP) $(CPPFLAGS) /D "_DLL" /Fo"$(INTDIR)\explicit_instantiations_dll$(OBJEXT)" $?
 	
 !ENDIF
 
@@ -598,6 +582,22 @@ lib_dll : "$(OUTDIR)/$(TARGET)_dll.lib"
 	
 "$(INTDIR)\GrTableManager_dll$(OBJEXT)" : "src/segment/GrTableManager.cpp"
 	@- $(CPP) $(CPPFLAGS) /D "_DLL" /Fo"$(INTDIR)\GrTableManager_dll$(OBJEXT)" $?
+	
+!ENDIF
+
+!IF "$(CFG)" == "DEBUG"
+"$(INTDIR)\MemoryUsage$(OBJEXT)" "$(INTDIR)\MemoryUsage$(SBREXT)" : "src/segment/MemoryUsage.cpp"
+	@- $(CPP) $(CPPFLAGS) $(CPP_DEBUG) /Fo"$(INTDIR)\MemoryUsage$(OBJEXT)" $?
+
+"$(INTDIR)\MemoryUsage_dll$(OBJEXT)" "$(INTDIR)\MemoryUsage_dll$(SBREXT)" : "src/segment/MemoryUsage.cpp"
+	@- $(CPP) $(CPPFLAGS) /D "_DLL" $(CPP_DEBUG) /Fo"$(INTDIR)\MemoryUsage_dll$(OBJEXT)" $?
+	
+!ELSE
+"$(INTDIR)\MemoryUsage$(OBJEXT)" : "src/segment/MemoryUsage.cpp"
+	@- $(CPP) $(CPPFLAGS) $(CPP_DEBUG) /Fo"$(INTDIR)\MemoryUsage$(OBJEXT)" $?
+	
+"$(INTDIR)\MemoryUsage_dll$(OBJEXT)" : "src/segment/MemoryUsage.cpp"
+	@- $(CPP) $(CPPFLAGS) /D "_DLL" /Fo"$(INTDIR)\MemoryUsage_dll$(OBJEXT)" $?
 	
 !ENDIF
 

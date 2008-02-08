@@ -30,15 +30,15 @@ namespace gr
 
 FileFont::FileFont()
 	: Font(),
-	m_file(NULL),
+	m_pfile(NULL),
 	m_pTableCache(NULL),
-	m_ascent(0),
-	m_descent(0),
-	m_emSquare(0),
+	m_mAscent(0),
+	m_mDescent(0),
+	m_mEmSquare(0),
 	m_pointSize(0),
 	m_dpiX(FUDGE_FACTOR),
 	m_dpiY(FUDGE_FACTOR),
-	m_isValid(false),
+	m_fIsValid(false),
 	m_pHeader(NULL),
 	m_pTableDir(NULL),
 	m_xScale(1.0f),
@@ -51,24 +51,24 @@ FileFont::FileFont()
 	m_clrBack = (unsigned long)kclrTransparent;
 }
 
-FileFont::FileFont(FILE * file, float pointSize, 
+FileFont::FileFont(FILE * pfile, float pointSize, 
 				   unsigned int dpiX, unsigned int dpiY)
 	: Font(),
-	m_file(file),
+	m_pfile(pfile),
 	m_pTableCache(NULL),
-	m_ascent(0),
-	m_descent(0),
-	m_emSquare(0),
+	m_mAscent(0),
+	m_mDescent(0),
+	m_mEmSquare(0),
 	m_pointSize(pointSize),
 	m_dpiX(dpiX),
 	m_dpiY(dpiY),
-	m_isValid(false),
+	m_fIsValid(false),
 	m_pHeader(NULL),
 	m_pTableDir(NULL),
 	m_xScale(1.0f),
 	m_yScale(1.0f)
 {
-	Assert(m_file); // shouldn't be null
+	Assert(m_pfile); // shouldn't be null
 	initializeFromFace();
 	
 }
@@ -76,22 +76,22 @@ FileFont::FileFont(FILE * file, float pointSize,
 FileFont::FileFont(char * fileName, float pointSize, 
 				   unsigned int dpiX, unsigned int dpiY)
 	: Font(),
-	m_file(NULL),
+	m_pfile(NULL),
 	m_pTableCache(NULL),
-	m_ascent(0),
-	m_descent(0),
-	m_emSquare(0),
+	m_mAscent(0),
+	m_mDescent(0),
+	m_mEmSquare(0),
 	m_pointSize(pointSize),
 	m_dpiX(dpiX),
 	m_dpiY(dpiY),
-	m_isValid(false),
+	m_fIsValid(false),
 	m_pHeader(NULL),
 	m_pTableDir(NULL),
 	m_xScale(1.0f),
 	m_yScale(1.0f)
 {
 	Assert(fileName); // shouldn't be null but we play safe anyway
-	m_file = fopen(fileName, "rb");
+	m_pfile = fopen(fileName, "rb");
 
 	initializeFromFace();
 }
@@ -99,22 +99,22 @@ FileFont::FileFont(char * fileName, float pointSize,
 FileFont::FileFont(std::string fileName, float pointSize, 
 				   unsigned int dpiX, unsigned int dpiY)
 	: Font(),
-	m_file(NULL),
+	m_pfile(NULL),
 	m_pTableCache(NULL),
-	m_ascent(0),
-	m_descent(0),
-	m_emSquare(0),
+	m_mAscent(0),
+	m_mDescent(0),
+	m_mEmSquare(0),
 	m_pointSize(pointSize),
 	m_dpiX(dpiX),
 	m_dpiY(dpiY),
-	m_isValid(false),
+	m_fIsValid(false),
 	m_pHeader(NULL),
 	m_pTableDir(NULL),
 	m_xScale(1.0f),
 	m_yScale(1.0f)
 {
 	Assert(fileName.length()); // shouldn't be null but we play safe anyway
-	m_file = fopen(fileName.c_str(), "rb");
+	m_pfile = fopen(fileName.c_str(), "rb");
 
 	initializeFromFace();
 }
@@ -130,61 +130,61 @@ FileFont::initializeFromFace()
 	m_clrFore = (unsigned long)kclrBlack;
 	m_clrBack = (unsigned long)kclrTransparent;
 
-	if (m_file)
+	if (m_pfile)
 	{
 		size_t lOffset, lSize;
 		TtfUtil::GetHeaderInfo(lOffset, lSize);
 		m_pHeader = new byte [lSize];
-		m_isValid = true;
+		m_fIsValid = true;
 		if (!m_pHeader) 
 		{
-			m_isValid = false;
+			m_fIsValid = false;
 			return;
 		}
-		m_isValid = (fseek(m_file, lOffset, SEEK_SET) == 0);
-		size_t bytesRead = fread(m_pHeader, 1, lSize, m_file);
+		m_fIsValid = (fseek(m_pfile, lOffset, SEEK_SET) == 0);
+		size_t bytesRead = fread(m_pHeader, 1, lSize, m_pfile);
 		Assert(bytesRead == lSize);
-		m_isValid = TtfUtil::CheckHeader(m_pHeader);
+		m_fIsValid = TtfUtil::CheckHeader(m_pHeader);
 
-		if (!m_isValid) return;
-		m_isValid = TtfUtil::GetTableDirInfo(m_pHeader, lOffset, lSize);
+		if (!m_fIsValid) return;
+		m_fIsValid = TtfUtil::GetTableDirInfo(m_pHeader, lOffset, lSize);
 		m_pTableDir = new byte[lSize];
 		if (!m_pTableDir) 
 		{
-			m_isValid = false;
+			m_fIsValid = false;
 			return;
 		}
 		// if lOffset hasn't changed this isn't needed
-		fseek(m_file, lOffset, SEEK_SET);
-		bytesRead = fread(m_pTableDir, 1, lSize, m_file);
+		fseek(m_pfile, lOffset, SEEK_SET);
+		bytesRead = fread(m_pTableDir, 1, lSize, m_pfile);
 		Assert(bytesRead == lSize);
 		
 		// now read head tables
-		m_isValid = TtfUtil::GetTableInfo(ktiOs2, m_pHeader, m_pTableDir, 
+		m_fIsValid = TtfUtil::GetTableInfo(ktiOs2, m_pHeader, m_pTableDir, 
 										  lOffset, lSize);
-		if (!m_isValid) 
+		if (!m_fIsValid) 
 		{
 			return;
 		}
 		byte * pTable = readTable(ktiOs2, lSize);
 		// get ascent, descent, style while we have the OS2 table loaded
-		if (!m_isValid || !pTable) 
+		if (!m_fIsValid || !pTable) 
 		{
 			return;
 		}
-		m_isValid = TtfUtil::FontOs2Style(pTable, m_fBold, m_fItalic);
-		m_ascent = static_cast<float>(TtfUtil::FontAscent(pTable));
-		m_descent = static_cast<float>(TtfUtil::FontDescent(pTable));
+		m_fIsValid = TtfUtil::FontOs2Style(pTable, m_fBold, m_fItalic);
+		m_mAscent = static_cast<float>(TtfUtil::FontAscent(pTable));
+		m_mDescent = static_cast<float>(TtfUtil::FontDescent(pTable));
 		
 		pTable = readTable(ktiName, lSize);
-		if (!m_isValid || !pTable) 
+		if (!m_fIsValid || !pTable) 
 		{
 			return;
 		}
 		if (!TtfUtil::Get31EngFamilyInfo(pTable, lOffset, lSize))
 		{
 			// not English name
-			m_isValid = false;
+			m_fIsValid = false;
 			return;
 		}
 		Assert(lSize %2 == 0);// should be utf16
@@ -195,37 +195,34 @@ FileFont::initializeFromFace()
 		std::copy(pTable16, pTable16 + cchw - 1, rgchwFace);
 		rgchwFace[cchw - 1] = 0;  // zero terminate
 		TtfUtil::SwapWString(rgchwFace, cchw - 1);
+// We could use something like "if (sizeof(std::wstring::value_type) == 4)" here,
+// but a compile-time switch is preferable.
 #if SIZEOF_WCHAR_T == 4
-//		if (sizeof(std::wstring::value_type) == 4)
-//		{
 			for (int c16 = 0; c16 < cchw; )
 			{
 				int charUsed = 0;
 				utf32 cch32 = GrCharStream::Utf16ToUtf32(&(rgchwFace[c16]), 
 														cchw - c16, &charUsed);
-				m_faceName.push_back(cch32);
+				m_stuFaceName.push_back(cch32);
 				c16 += charUsed;
 			}
 //		}
 #else
-//		else
-//		{
-			m_faceName.assign(rgchwFace);
-//		}
+			m_stuFaceName.assign(rgchwFace);
 #endif
 		pTable = readTable(ktiHead, lSize);
-		if (!m_isValid || !pTable) 
+		if (!m_fIsValid || !pTable) 
 		{
 			return;
 		}
-		m_emSquare = static_cast<float>(TtfUtil::DesignUnits(pTable));
+		m_mEmSquare = static_cast<float>(TtfUtil::DesignUnits(pTable));
 		// can now set the scale
 		m_xScale = scaleFromDpi(m_dpiX);
 		m_yScale = scaleFromDpi(m_dpiY);
 	}
 	else
 	{
-		m_isValid = false;
+		m_fIsValid = false;
 	}
 }
 
@@ -249,7 +246,7 @@ FileFont::readTable(int /*TableId*/ tid, size_t & size)
 			lOffset, lSize);
 	if (!isValid) 
 		return NULL;
-	fseek(m_file, lOffset, SEEK_SET);
+	fseek(m_pfile, lOffset, SEEK_SET);
 	// only allocate if needed
 	pTable = m_pTableCache->allocateTable(tableId, lSize);
 	
@@ -258,7 +255,7 @@ FileFont::readTable(int /*TableId*/ tid, size_t & size)
 		isValid = false;
 		return NULL;
 	}
-	size_t bytesRead = fread(pTable, 1, lSize, m_file);
+	size_t bytesRead = fread(pTable, 1, lSize, m_pfile);
 	isValid = bytesRead == lSize;
 	if (isValid)
 	{
@@ -287,14 +284,16 @@ FileFont::~FileFont()
 			delete [] m_pTableDir;
 			delete m_pTableCache;
 			m_pTableCache = NULL;
-			if (m_file) fclose(m_file);
+			if (m_pfile)
+				fclose(m_pfile);
 		}
 	}
 	else
 	{
 		delete [] m_pHeader;
 		delete [] m_pTableDir;
-		if (m_file) fclose(m_file);
+		if (m_pfile)
+			fclose(m_pfile);
 	}
 	// note the DecFontCount(); is done in the Font base class
 }
@@ -313,14 +312,14 @@ Font * FileFont::copyThis()
 FileFont::FileFont(const FileFont & font, float pointSize, 
 				   unsigned int dpiX, unsigned int dpiY)
 : Font(font),
-	m_file(font.m_file),
-	m_ascent(font.m_ascent),
-	m_descent(font.m_descent),
-	m_emSquare(font.m_emSquare),
+	m_pfile(font.m_pfile),
+	m_mAscent(font.m_mAscent),
+	m_mDescent(font.m_mDescent),
+	m_mEmSquare(font.m_mEmSquare),
 	m_pointSize(font.m_pointSize),
 	m_dpiX(font.m_dpiX),
 	m_dpiY(font.m_dpiY),
-	m_isValid(font.m_isValid),
+	m_fIsValid(font.m_fIsValid),
 	m_pHeader(font.m_pHeader),
 	m_pTableDir(font.m_pTableDir),
 	m_xScale(font.m_xScale),
@@ -343,7 +342,7 @@ FileFont::FileFont(const FileFont & font, float pointSize,
 	// colors are not used
 	m_clrFore = font.m_clrFore;
 	m_clrBack = font.m_clrBack;
-	m_faceName.assign(font.m_faceName);
+	m_stuFaceName.assign(font.m_stuFaceName);
 	
 	m_pTableCache = font.m_pTableCache;
 	// use the same table cache between instances
@@ -353,7 +352,7 @@ FileFont::FileFont(const FileFont & font, float pointSize,
 	
 	// I dont' see why we need to reget the face, but WinFont does
 	//m_pfface = FontFace::GetFontFace(this, m_fpropDef.szFaceName,
-	//																 m_fpropDef.fBold, m_fpropDef.fItalic);
+	//					m_fpropDef.fBold, m_fpropDef.fItalic);
 }
 
 
@@ -398,9 +397,9 @@ FileFont::getTable(fontTableId32 tableID, size_t * pcbSize)
 void FileFont::getFontMetrics(float * pAscent, float * pDescent,
 		float * pEmSquare)
 {
-		if (pEmSquare) *pEmSquare = m_emSquare * m_xScale;
-		if (pAscent) *pAscent = m_ascent * m_yScale;
-		if (pDescent) *pDescent = m_descent * m_yScale;
+		if (pEmSquare) *pEmSquare = m_mEmSquare * m_xScale;
+		if (pAscent) *pAscent = m_mAscent * m_yScale;
+		if (pDescent) *pDescent = m_mDescent * m_yScale;
 }
 
 
@@ -419,7 +418,7 @@ bool FileFont::FontHasGraphiteTables(char * fileName)
 bool FileFont::fontHasGraphiteTables()
 {
 	size_t tableSize;
-	bool isGraphiteFont = m_isValid;
+	bool isGraphiteFont = m_fIsValid;
 	isGraphiteFont &= (readTable(ktiSilf, tableSize) != NULL);
 	return isGraphiteFont;
 }

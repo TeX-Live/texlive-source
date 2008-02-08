@@ -19,7 +19,7 @@ How to add a test:
 		and data.
 
 Things that still need testing:
-	Ligatures
+	Ligatures (there is one small test of this)
 	Justification
 	Fake italic
 -------------------------------------------------------------------------------*//*:End Ignore*/
@@ -30,7 +30,7 @@ Things that still need testing:
 //:>	Test constants and methods
 //:>********************************************************************************************
 
-const int g_numberOfTests = 17;	// *** increment as tests are added ***
+const int g_numberOfTests = 23;	// *** increment as tests are added ***
 
 TestCase * g_ptcaseList;		// list of test cases
 
@@ -45,26 +45,35 @@ typedef unsigned char byte;
 int TestCase::SetupTests(TestCase ** pptcaseList)
 {
 	g_ptcaseList = new TestCase[g_numberOfTests];
+	int cptcase = 0;
 
 	//	The number of methods called here should equal g_numberOfTests above.
-	g_ptcaseList[0].SetupSimpleTest();
-	g_ptcaseList[1].SetupSimpleBacktrackTest();
-	g_ptcaseList[2].SetupBurmese1();
-	g_ptcaseList[3].SetupBurmese2();
-	g_ptcaseList[4].SetupBurmese3();
-	g_ptcaseList[5].SetupBurmese4();
-	g_ptcaseList[6].SetupRoman();
-	g_ptcaseList[7].SetupRomanFeatures();
-	g_ptcaseList[8].SetupNoWhiteSpace();
-	g_ptcaseList[9].SetupNoWhiteSpaceFailure();
-	g_ptcaseList[10].SetupOnlyWhiteSpace();
-	g_ptcaseList[11].SetupCrossLine1();
-	g_ptcaseList[12].SetupCrossLine2();
-	g_ptcaseList[13].SetupCrossLine3();
-	g_ptcaseList[14].SetupCrossLine4();
-	g_ptcaseList[15].SetupArabic1();
-	g_ptcaseList[16].SetupArabic2();
+	g_ptcaseList[0].SetupSimpleTest();				cptcase++;
+	g_ptcaseList[1].SetupSimpleBacktrackTest();		cptcase++;
+	g_ptcaseList[2].SetupBurmese1();				cptcase++;
+	g_ptcaseList[3].SetupBurmese2();				cptcase++;
+	g_ptcaseList[4].SetupBurmese3();				cptcase++;
+	g_ptcaseList[5].SetupBurmese4();				cptcase++;
+	g_ptcaseList[6].SetupRoman();					cptcase++;
+	g_ptcaseList[7].SetupRomanFeatures();			cptcase++;
+	g_ptcaseList[8].SetupStackingAndBridging();		cptcase++;
+	g_ptcaseList[9].SetupNoWhiteSpace();			cptcase++;
+	g_ptcaseList[10].SetupNoWhiteSpaceNoSeg();		cptcase++;
+	g_ptcaseList[11].SetupOnlyWhiteSpace();			cptcase++;
+	g_ptcaseList[12].SetupCrossLine1();				cptcase++;
+	g_ptcaseList[13].SetupCrossLine2();				cptcase++;
+	g_ptcaseList[14].SetupCrossLine3();				cptcase++;
+	g_ptcaseList[15].SetupCrossLine4();				cptcase++;
+	g_ptcaseList[16].SetupArabic1();				cptcase++;
+	g_ptcaseList[17].SetupArabic2();				cptcase++;
+	g_ptcaseList[18].SetupTaiViet1();				cptcase++;
+	g_ptcaseList[19].SetupTaiViet2();				cptcase++;
+	g_ptcaseList[20].SetupDumbFallback1();			cptcase++;
+	g_ptcaseList[21].SetupDumbFallback2();			cptcase++;
+	g_ptcaseList[22].SetupBadFont();				cptcase++;
 	// *** Add more method calls here. ***
+
+	assert(cptcase == g_numberOfTests);
 
 	*pptcaseList = g_ptcaseList;
 
@@ -77,8 +86,9 @@ int TestCase::SetupTests(TestCase ** pptcaseList)
 void TestCase::SetupSimpleTest()
 {
 	m_testName = "Simple";
-	m_debug = false;
-	m_traceLog = false;
+	//m_debug = true;
+	//m_traceLog = false;
+	//m_skip = true;
 
 	//	Input:
 	m_fontName = L"Graphite Test Roman";
@@ -106,20 +116,31 @@ void TestCase::SetupSimpleTest()
 	const int glyphCnt = 15;	// number of glyphs in the segment
 
 	// need glyphCnt elements in these arrays:
-	gid16 glyphList[] =	{55, 77, 78, 90,  3, 78, 90,  3, 68,  3, 91, 73, 90, 91, 17};
+	gid16 glyphList[] =	{55, 75, 76, 86,  3, 76, 86,  3, 68,  3, 87, 72, 86, 87, 17};
 	int xPositions[] =  { 0,  9, 17, 22, 28, 33, 37, 43, 48, 55, 60, 64, 71, 77, 82};
 	int yPositions[] =  { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0};
 	int advWidths[] =   { 9,  8,  4,  6,  4,  4,  6,  4,  7,  4,  4,  7,  6,  4,  4};
 
+	int bbLefts[] =     { 0,  9, 18, 22, 28, 33, 38, 43, 48, 55, 60, 65, 72, 78, 83};
+	int bbRights[] =    { 9, 17, 21, 27, 33, 37, 43, 48, 55, 60, 64, 71, 77, 82, 85};
+	int bbTops[] =      {10, 11, 10,  7,  0, 10,  7,  0,  7,  0,  9,  7,  7,  9,  1};
+	int bbBottoms[] =   { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0};
+
+	int charsToGlyphs[] = {
+		1, 1, 1,	2, 1, 2,	3, 1, 3,	4, 1, 4,	5, 1, 5,	6, 1, 6,	7, 1, 7
+	};
+	int c2gCount = 21;
+
 	//	Each line in clickStuff represents one click test with the following items:
 	//		click x-coord, click y-coord, char index, assoc-prev,
 	//		prim sel Top, prim sel bottom, prim sel left,
-	//		sec sel Top, sec sel bottom, sec sel left,
+	//		sec sel Top, sec sel bottom, sec sel left
+	//  Y-coordinates are offsets from segment top; ie, (0,0) is segment top-left.
 	const int clickTestCnt = 3;
 	int clickStuff[] = {
-		11, 25,    1, false,   0, 24,  8,   kAbsent, kAbsent, kAbsent,
-		42,  5,    7, true,    0, 24, 42,   kAbsent, kAbsent, kAbsent,
-		90, 40,   15, true,    0, 24, 85,   kAbsent, kAbsent, kAbsent
+		11, 25,    1, false,   0, 24,  8,   kAbsent, kAbsent, kAbsent,	// below baseline
+		42,  5,    7, true,    0, 24, 42,   kAbsent, kAbsent, kAbsent,	// near top of text
+		90, 16,   15, true,    0, 24, 85,   kAbsent, kAbsent, kAbsent	// near baseline
 	};
 
 	//	Finish setting up test case.
@@ -129,7 +150,9 @@ void TestCase::SetupSimpleTest()
 	SetXPositions(xPositions);
 	SetYPositions(yPositions);
 	SetAdvWidths(advWidths);
+	SetBBs(bbLefts, bbRights, bbTops, bbBottoms);
 	SetInsPtFlags(insPtFlags);
+	SetCharsToGlyphs(charsToGlyphs, c2gCount);
 	SetClickTests(clickTestCnt, clickStuff);
 }
 
@@ -139,6 +162,7 @@ void TestCase::SetupSimpleTest()
 void TestCase::SetupSimpleBacktrackTest()
 {
 	m_testName = "Simple Backtrack";
+	//m_skip = true;
 
 	//	Input:
 	m_fontName = L"Graphite Test Roman";
@@ -165,7 +189,7 @@ void TestCase::SetupSimpleBacktrackTest()
 	const int glyphCnt = 10;	// number of glyphs in the segment
 
 	// need glyphCnt elements in these arrays:
-	gid16 glyphList[] =	{55, 77, 78, 90,  3, 78, 90,  3, 68,  3};
+	gid16 glyphList[] =	{55, 75, 76, 86,  3, 76, 86,  3, 68,  3};
 	int xPositions[] =  { 0,  9, 17, 22, 28, 33, 37, 43, 48, 55};
 	int yPositions[] =  { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0};
 	int advWidths[] =   { 9,  8,  4,  6,  4,  4,  6,  4,  7,  4};
@@ -180,6 +204,7 @@ void TestCase::SetupSimpleBacktrackTest()
 	SetXPositions(xPositions);
 	SetYPositions(yPositions);
 	SetAdvWidths(advWidths);
+	SetBBs(NULL, NULL, NULL, NULL);
 	SetInsPtFlags(insPtFlags);
 	SetOutputContextBlock(contextBlockOutSize, contextBlockOut);
 }
@@ -192,7 +217,8 @@ void TestCase::SetupBurmese1()
 {
 	m_testName = "Burmese 1";
 	m_debug = false;
-	m_traceLog = false;
+	//m_traceLog = true;
+	//m_skip = true;
 
 	//	Input:
 	m_fontName = L"Graphite Test Burmese";
@@ -213,6 +239,16 @@ void TestCase::SetupBurmese1()
 		45,		// glyph count
 		5);		// number of click-tests
 
+	// Each group = glyph-index, base, number of attached, glyphs, attached-glyph-indices
+	int attachments[] = {
+		0,0,0,		1,1,0,	2,2,2,3,4,	3,2,0,		4,2,0,		5,5,1,6,	6,5,0,		7,7,3,8,9,10,
+		8,7,0,		9,7,0,	10,7,0,		11,11,0,	12,12,0,	13,13,0,	14,14,0,	15,15,0,
+		16,16,1,17,	17,16,0,	18,18,1,19,			19,18,0,	20,20,1,21,	21,20,0,	22,22,1,23,
+		23,22,0,	24,24,0,	25,25,0
+	};
+	int attCount = sizeof(attachments) / sizeof(int);
+	SetAttachedClusters(attachments, attCount);
+
 	const int contextBlockOutSize = 11;
 	gr::byte contextBlockOut[] = { 20, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	SetOutputContextBlock(contextBlockOutSize, contextBlockOut);
@@ -221,6 +257,9 @@ void TestCase::SetupBurmese1()
 void TestCase::SetupBurmese2()
 {
 	m_testName = "Burmese 2";
+	//m_debug = true;
+	//m_traceLog = true;
+	//m_skip = true;
 
 	//	Input:
 	m_fontName = L"Graphite Test Burmese";
@@ -251,6 +290,8 @@ void TestCase::SetupBurmese3()
 {
 	m_testName = "Burmese 3";
 	//m_debug = true;
+	//m_traceLog = true;
+	//m_skip = true;
 
 	//	Input:
 	m_fontName = L"Graphite Test Burmese";
@@ -282,6 +323,7 @@ void TestCase::SetupBurmese4()
 	m_testName = "Burmese 4";
 	//m_traceLog = true;
 	//m_debug = true;
+	//m_skip = true;
 
 	//	Input:
 	m_fontName = L"Graphite Test Burmese";
@@ -328,10 +370,23 @@ void TestCase::SetupBurmeseAux(int charCnt, int glyphCnt, int clickTestCnt)
 	int yPositions[] =  {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0};
 	int advWidths[] =   { 17,  2,  9,  4,  0, 10,  0, 17,  2,  0,  0, 15,  6, 10, 10,  2,  7,  0, 10,  9,  9,  0, 10,  7,  2,  6, 17,  7, 17,  7,  6, 10,  6, 10,  2, 10,  7, 10,  7,  9,  4,  9,  0,  0,  6};
 
+	int bbLefts[] =     {  0, 10, 21, 23, 23, 30, 33, 41, 51, 49, 53, 58, 73, 80, 90, 96,100,103,111,109,121,123,131,132,141,143,150,165,175,189,198,206,215,223,233,235,243,253,254,263,265,272,275,275,281};
+	int bbRights[] =    { 16, 19, 28, 25, 28, 39, 38, 56, 54, 55, 56, 72, 79, 88, 98,101,109,109,119,119,129,129,139,138,142,149,166,173,190,197,205,214,222,231,244,244,251,261,260,271,267,280,280,278,288};
+	int bbTops[] =      {  7,  7,  7, -1, 15,  7, 15,  7, -1, 15, -2, 15,  0,  7,  7,  7,  7, 15,  7, -1,  7, 15,  7, -1,  7,  0,  7,  7,  7,  7,  0,  7,  0,  7, 16,  7,  7,  7, -1,  7, -1,  7, 15, -2,  0};
+	int bbBottoms[] =   {  0, -7, -1, -7,  9,  0,  9,  0, -7,  9, -5,  0,  0,  0,  0, -7,  0,  9, -4, -7,  0,  9,  0, -7,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, -7,  0,  0,  0, -7, -1, -7,  0,  9, -5,  0};
+
+	// Each group = char-index, number of glyphs, glyph-indices.
+	int charsToGlyphs[] = {
+		0, 1, 0,	1, 1, 1,	2, 1, 1,	3, 1, 1,	4, 1, 1,	5, 1, 2,	6, 1, 3,	7, 1, 3,
+		8, 1, 4,	9, 1, 4,	10, 1, 5,	11, 1, 6,	12, 1, 6,	13, 1, 7
+	};
+	int c2gCount = sizeof(charsToGlyphs) / sizeof(int);
+
 	//	Each line in clickStuff represents one click test with the following items:
 	//		click x-coord, click y-coord, char index, assoc-prev,
 	//		prim sel Top, prim sel bottom, prim sel left,
-	//		sec sel Top, sec sel bottom, sec sel left,
+	//		sec sel Top, sec sel bottom, sec sel left
+	//  Y-coordinates are offsets from segment top; ie, (0,0) is segment top-left.
 	int clickStuff[] = {
 		 10, 25,    1, true,    0, 25, 16,   kAbsent, kAbsent, kAbsent,
 		 40,  5,   13, false,   0, 25, 39,   kAbsent, kAbsent, kAbsent,
@@ -347,6 +402,8 @@ void TestCase::SetupBurmeseAux(int charCnt, int glyphCnt, int clickTestCnt)
 	SetXPositions(xPositions);
 	SetYPositions(yPositions);
 	SetAdvWidths(advWidths);
+	SetCharsToGlyphs(charsToGlyphs, c2gCount);
+	SetBBs(bbLefts, bbRights, bbTops, bbBottoms);
 	SetInsPtFlags(insPtFlags);
 	SetClickTests(clickTestCnt, clickStuff);
 }
@@ -380,6 +437,7 @@ void TestCase::SetupRoman()
 	m_testName = "Roman";
 	//m_traceLog = true;
 	//m_debug = true;
+	//m_skip = true;
 
 	//	Input:
 	m_fontName = L"Graphite Test Roman";
@@ -394,35 +452,47 @@ void TestCase::SetupRoman()
 	m_backtrack = false;
 
 	//	Output:
-	m_segWidth = 236;			// physical width of segment
+	m_segWidth = 278;			// physical width of segment
 
-	const int charCnt = 23;		// number of characters in the segment
+	const int charCnt = 26;		// number of characters in the segment
 
 	// need charCnt elements in this array:
 	bool insPtFlags[] = {
-		true,  false, false, true,  true, true,  true, false,  false, true,
-		true,  true,  false, false, true, false, true, false,  true,  false,
-		false, false, false
+		true, true, true, true, true, true, true, true, true, true,
+		true, true, true, true, true, true, true, true, true, true,
+		true, true, true, true, true, true
 	};
 
-	const int glyphCnt = 21;	// number of glyphs in the segment
+	const int glyphCnt = 24;	// number of glyphs in the segment
 
 	// need glyphCnt elements in these arrays:
-	//                    0                                       10                                      20
-	gid16 glyphList[] =	{73,752,749, 87,833, 90, 75,2181,296, 68,751,750, 79,752, 44,752, 84,806,749,759,753};
-	int xPositions[] =  { 0, 23, 23, 21, 41, 45, 64,  88,116,148,170,170,169,188,183,203,199,229,229,229,229};
-	int yPositions[] =  { 0,  0, 10,  0, -6,  0,  0,   0,  0,  0,  0, 10,  0,  0,  0, 10,  0,  0,  0, 10, 20};
-	int advWidths[] =   {21,  0,  0, 24,  0, 18, 24,  28, 31, 21,  0,  0, 13,  0, 15,  0, 37,  0,  0,  0,  0};
+	//                    0                                             10                                             20
+	gid16 glyphList[] =	{72,1815,1768, 83,1789, 86, 74,1943,1956,1926,1061, 68,1777,1755,805,1815, 44,1815,  80,1833,1768,1855,1838,637};
+	int xPositions[] =  { 0,  23,  23, 21,  41, 45, 64,  88,  98, 112, 116,148, 171, 171,170, 188,183, 203, 199, 230, 230, 230, 230,236};
+	int yPositions[] =  { 0,   0,  10,  0,  -6,  0,  0,   0,   0,   0,   0,  0,   0,  10,  0,   0,  0,  10,   0,   0,   0,  10,  20,  0};
+	int advWidths[] =   {21,   0,   0, 24,   0, 18, 24,  13,  13,   4,  31, 21,   0,   0, 13,   0, 15,   0,  37,   0,   0,   0,   0, 41};
+
+	// Each group = glyph-index, base, number of attached, glyphs, attached-glyph-indices
+	int attachments[] = {
+		0,0,2,1,2,	1,0,0,		2,0,0,		3,3,0,			4,4,0,		5,5,0,		6,6,0,		7,7,2,8,9,
+		8,7,0,		9,7,0,		10,10,0,	11,11,2,12,13,	12,11,0,	13,11,0,	14,14,1,15,	15,14,0,
+		16,16,1,17,	17,16,0,	18,18,4,19,20,21,22,		19,18,0,	20,18,0,	21,18,0,	22,18,0,
+		23,23,0
+	};
+	int attCount = sizeof(attachments) / sizeof(int);
 
 	//	Each line in clickStuff represents one click test with the following items:
 	//		click x-coord, click y-coord, char index, assoc-prev,
 	//		prim sel Top, prim sel bottom, prim sel left,
-	//		sec sel Top, sec sel bottom, sec sel left,
-	const int clickTestCnt = 3;
+	//		sec sel Top, sec sel bottom, sec sel left
+	//  Y-coordinates are offsets from segment top; ie, (0,0) is segment top-left.
+	const int clickTestCnt = 5;
 	int clickStuff[] = {
-		10, 15,    3, true,    0, 72, 20,   kAbsent, kAbsent, kAbsent,
+		10, 15,    2, false,   9, 21,  1,   20, 30, 18,
 		61, 50,    6, true,    0, 72, 63,   kAbsent, kAbsent, kAbsent,
-		90, 40,    9, false,   0, 72, 87,   kAbsent, kAbsent, kAbsent
+		90, 40,    7, false,   0, 72, 87,   kAbsent, kAbsent, kAbsent,
+       260, 40,   25, true,    0, 73,263,   kAbsent, kAbsent, kAbsent,	// ligature
+       267, 40,   25, false,   0, 73,263,   kAbsent, kAbsent, kAbsent,	// ligature
 	};
 
 	//	Finish setting up test case.
@@ -432,6 +502,8 @@ void TestCase::SetupRoman()
 	SetXPositions(xPositions);
 	SetYPositions(yPositions);
 	SetAdvWidths(advWidths);
+	SetBBs(NULL, NULL, NULL, NULL);
+	SetAttachedClusters(attachments, attCount);
 	SetInsPtFlags(insPtFlags);
 	SetClickTests(clickTestCnt, clickStuff);
 }
@@ -441,6 +513,7 @@ void TestCase::SetupRomanFeatures()
 	m_testName = "Roman Features";
 	//m_traceLog = true;
 	//m_debug = true;
+	//m_skip = true;
 
 	//	Input:
 	m_fontName = L"Graphite Test Roman";
@@ -459,33 +532,35 @@ void TestCase::SetupRomanFeatures()
 	m_fset[2].id = 1029;	m_fset[2].value = 1;	// vietnamese diacritics
 	m_fset[3].id = 1032;	m_fset[3].value = 1;	// literacy alternates
 	m_fset[4].id = 1034;	m_fset[4].value = 1;	// y-hook  alternate (default)
-	m_fset[5].id = 0;
+	m_fset[5].id = 1051;	m_fset[5].value = 0;	// diacritic selection
+	m_fset[6].id = 0;
 
 	//	Output:
-	m_segWidth = 265;			// physical width of segment
+	m_segWidth = 307;			// physical width of segment
 
-	const int charCnt = 23;		// number of characters in the segment
+	const int charCnt = 26;		// number of characters in the segment
 
 	// need charCnt elements in this array:
 	bool insPtFlags[] = {
 		true,  false, false, true,  true, true,  true, true,   true,  true,
 		true,  true,  false, false, true, false, true, false,  true,  false,
-		false, false, false
+		false, false, false, true,  true, true
 	};
 
-	const int glyphCnt = 22;	// number of glyphs in the segment
+	const int glyphCnt = 23;	// number of glyphs in the segment
 
 	// need glyphCnt elements in these arrays:
-	//                    0                                       10                                       20
-	gid16 glyphList[] =	{73,752,749, 87,833, 90, 76,1581,128,122,298, 69,1964, 79,752, 44,752, 84,806,749,759,753};
-	int xPositions[] =  { 0, 23, 23, 21, 41, 45, 64,  87,104,121,138,173, 174,198,217,211,231,227,258,258,258,258};
-	int yPositions[] =  { 0,  0, 10,  0, -6,  0,  0,   0,  0,  0,  0,  0,   0,  0,  0,  0, 10,  0,  0,  0, 10, 20};
-	int advWidths[] =   {21,  0,  0, 24,  0, 18, 23,  17, 17, 17, 34, 24,  24, 13,  0, 15,  0, 37,  0,  0,  0,  0};
+	//                    0                                             10                                              20
+	gid16 glyphList[] =	{72,1815,1768, 83,1789, 86,681,1659,1667,1662,1056,274,1778, 805,1815,  44,1815,  80,1833,1768,1855,1838,637};
+	int xPositions[] =  { 0,  23,  23, 21,  41, 45, 64,  87, 104, 121, 138,173, 174, 198, 217, 211, 231, 227, 258, 258, 258, 258,265};
+	int yPositions[] =  { 0,   0,  10,  0,  -6,  0,  0,   0,   0,   0,   0,  0,   0,   0,   0,   0,  10,   0,   0,   0,  10,  20,  0};
+	int advWidths[] =   {21,   0,   0, 24,   0, 18, 23,  17,  17,  17,  34, 24,  24,  13,   0,  15,   0,  37,   0,   0,   0,   0, 41};
 
 	//	Each line in clickStuff represents one click test with the following items:
 	//		click x-coord, click y-coord, char index, assoc-prev,
 	//		prim sel Top, prim sel bottom, prim sel left,
-	//		sec sel Top, sec sel bottom, sec sel left,
+	//		sec sel Top, sec sel bottom, sec sel left
+	//  Y-coordinates are offsets from segment top; ie, (0,0) is segment top-left.
 	const int clickTestCnt = 3;
 	int clickStuff[] = {
 		 10, 15,    3, true,    0, 72,  20,   kAbsent, kAbsent, kAbsent,
@@ -500,6 +575,7 @@ void TestCase::SetupRomanFeatures()
 	SetXPositions(xPositions);
 	SetYPositions(yPositions);
 	SetAdvWidths(advWidths);
+	SetBBs(NULL, NULL, NULL, NULL);
 	SetInsPtFlags(insPtFlags);
 	SetClickTests(clickTestCnt, clickStuff);
 }
@@ -510,10 +586,111 @@ std::wstring TestCase::RomanText()
 	wchar_t charData[] = {
 		0x0065, 0x0303, 0x0300, 0x0070, 0x0361, 0x0073, 0x0067, 0x02e8, 0x02e5, 0x02e7,
 		0x014a, 0x0061, 0x0302, 0x0301, 0x0069, 0x0303, 0x0049, 0x0303, 0x006d, 0x033c,
-		0x0300, 0x0308, 0x0304, 0x0000
+		0x0300, 0x0308, 0x0304, 0x0066, 0x0066, 0x0069, 0x0000
 	};
 	strRet.assign(charData);
 	return strRet;
+}
+
+/*----------------------------------------------------------------------------------------------
+	A set of tests for handling complex diacritic stacking and bridging.
+----------------------------------------------------------------------------------------------*/
+void TestCase::SetupStackingAndBridging()
+{
+	m_testName = "Roman Stacking and Bridging";
+	//m_traceLog = true;
+	//m_debug = true;
+	//m_skip = true;
+
+	//	Input:
+	m_fontName = L"Graphite Test Roman";
+	m_fontFile = "grtest_roman.ttf";
+	m_fontSize = 36;				// font size in points
+	m_prefBreak = klbWordBreak;		// preferred break-weight
+	m_availWidth = 500;				// width available for segment
+	m_bold = false;
+	m_italic = false;
+	m_rtl = false;
+	m_backtrack = false;
+
+	// text to render
+	wchar_t charData[] = {
+		0x0061,0x035d,0x0061,0x0020,0x0074,0x035d,0x0061,0x0020,0x0061,0x0300,
+		0x0300,0x035d,0x0061,0x0020,0x0283,0x0300,0x0300,0x035d,0x0061,0x0020,
+		0x0061,0x0316,0x0316,0xf176,0x0061,0x0020,0x0283,0x0300,0x0300,0xf176,
+		0x0061,0x0020,0x0061,0x0316,0x0316,0xf176,0x0061,0x0020,0x0283,0x035d,
+		0xf176,0x0061,0x0000
+	};
+	m_text.assign(charData);
+
+	//	Output:
+	m_segWidth = 414;			// physical width of segment
+
+	const int charCnt = 42;		// number of characters in the segment
+
+	// need charCnt elements in this array:
+	bool insPtFlags[] = {
+		true, true, true, true, true, true, true, true, true, true,
+		true, true, true, true, true, true, true, true, true, true,
+		true, true, true, true, true, true, true, true, true, true,
+		true, true, true, true, true, true, true, true, true, true,
+		true, true,
+	};
+
+	const int glyphCnt = 42;	// number of glyphs in the segment
+
+	// 68 = a, 97 = t, 1305 = esh, 1768 = upper grave, 1765 = lower grave, 1802 = upper bridge,
+	// 1801 = lower bridge
+
+	// need glyphCnt elements in these arrays:
+	//                    0                                           10                                            20                                             30                                            40     
+	gid16 glyphList[] =	{68,1802, 68, 3,  87,1802, 68,  3,  68,1768,1768,1802,  68,  3,1305,1768,1768,1802, 68,  3, 68,1765,1765,1801, 68,  3,1305,1768,1768,1801, 68,  3, 68,1765,1765,1801, 68,  3,1305,1802,1801, 68};
+	int xPositions[] =  { 0,  21, 21, 42, 56,  73, 69, 91, 105, 127, 127, 126, 126,147, 161, 181, 181, 178,177,199,212, 235, 235, 234,234,255, 269, 289, 289, 286,285,307,320, 343, 343, 342,342,363, 377, 393, 393,393};
+	int yPositions[] =  { 0,  -7,  0,  0,  0,  -1,  0,  0,   0,   0,  10,  12,   0,  0,   0,  10,  20,  23,  0,  0,  0,   0, -9,  -17,  0,  0,   0,  10,  20,  -6,  0,  0,  0,   0,  -9, -17,  0,  0,   0,   3,  -6,  0};
+	int advWidths[] =   {21,   0, 21, 13, 13,   0, 21, 13,  21,   0,   0,   0,  21, 13,  16,   0,   0,   0, 21, 13, 21,   0,  0,    0, 21, 13,  16,   0,   0,   0, 21, 13, 21,   0,   0,   0, 21, 13,  16,   0,   0, 21};
+
+	int bbLefts[] =     { 1,   0, 23, 42, 56,  52, 71, 91, 106, 108, 108, 105, 128,147, 159, 162, 162, 157,179,199,214, 217, 217, 213,235,255, 267, 270, 270, 265,287,307,322, 325, 325, 321,343,363, 375, 373, 373,395};
+	int bbRights[] =    {21,  41, 42, 56, 69,  93, 91,105, 126, 119, 119, 146, 147,161, 178, 173, 173, 198,199,212,234, 228, 228, 254,255,269, 286, 281, 281, 306,306,320,342, 336, 336, 362,363,377, 394, 413, 414,414};
+	int bbTops [] =     {22,  33, 22,  0, 28,  40, 22,  0,  22,  32,  42,  54,  22,  0,  33,  42,  53,  64, 22,  0, 22,  -3, -13, -26, 22,  0,  33,  42,  53, -15, 22,  0, 22,  -3, -13, -26, 22,  0,  33,  44, -15, 22};
+	int bbBottoms [] =  { 0,  26,  0,  0,  0,  33,  0,  0,   0,  24,  34,  47,   0,  0, -10,  34,  44,  57,  0,  0,  0, -11, -21, -32,  0,  0, -10,  34,  44, -21,  0,  0,  0, -11, -21, -32,  0,  0, -10,  38, -21, 0};
+	
+	// Each group = glyph-index, base, number of attached, glyphs, attached-glyph-indices
+	int attachments[] = {
+		0,0,0,	1,1,0,	2,2,0,		3,3,0,		4,4,0,		5,5,0,				6,6,0,		7,7,0,
+		8,8,2,9,10,		9,8,0,		10,8,0,		11,11,0,	12,12,0,			13,13,0,	14,14,2,15,16,
+		15,14,0,		16,14,0,	17,17,0,	18,18,0,	19,19,0,		20,20,2,21,22,	21,20,0,
+		22,20,0,		23,23,0,	24,24,0,	25,25,0,		26,26,2,27,28,	27,26,0,	28,26,0,
+		29,29,0,		30,30,0,	31,31,0,	32,32,2,33,34,	33,32,0,		34,32,0,	35,35,0,
+		36,36,0,		37,37,0,	38,38,0,	39,39,0,		40,40,0,		41,41,0
+	};
+	int attCount = sizeof(attachments) / sizeof(int);
+
+	//	Each line in clickStuff represents one click test with the following items:
+	//		click x-coord, click y-coord, char index, assoc-prev,
+	//		prim sel Top, prim sel bottom, prim sel left,
+	//		sec sel Top, sec sel bottom, sec sel left
+	//  Y-coordinates are offsets from segment top; ie, (0,0) is segment top-left.
+	const int clickTestCnt = 6;
+	int clickStuff[] = {
+		109, 25,    9, false,   19, 32, 105,   30, 56, 125,	// first grave on 4th a
+		178, 26,   15, true,    19, 66, 176,    9, 21, 159,	// top of 1st esh, right side
+		220, 84,   23, false,   78, 89, 210,   65, 77, 228,	// first lower bridge diac
+		271, 40,   26, false,    0, 72, 266,  kAbsent, kAbsent, kAbsent,  // second esh, left side
+		271, 65,   26, false,    0, 72, 266,  kAbsent, kAbsent, kAbsent,  // just below second esh, left side
+		271, 68,   29, false,   67, 78, 262,    0, 11, 280		// lower bridge diac under esh, left side
+	};
+
+	//	Finish setting up test case.
+	SetCharCount(charCnt);
+	SetGlyphCount(glyphCnt);
+	SetGlyphList(glyphList);
+	SetXPositions(xPositions);
+	SetYPositions(yPositions);
+	SetAdvWidths(advWidths);
+	SetBBs(bbLefts, bbRights, bbTops, bbBottoms);
+	SetInsPtFlags(insPtFlags);
+	SetAttachedClusters(attachments, attCount);
+	SetClickTests(clickTestCnt, clickStuff);
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -522,6 +699,9 @@ std::wstring TestCase::RomanText()
 void TestCase::SetupNoWhiteSpace()
 {
 	m_testName = "No white space";
+	//m_debug = true;
+	//m_traceLog = true;
+	//m_skip = true;
 
 	//	Input:
 	m_fontName = L"Graphite Test Roman";
@@ -551,7 +731,7 @@ void TestCase::SetupNoWhiteSpace()
 	const int glyphCnt = 16;	// number of glyphs in the segment
 
 	// need glyphCnt elements in these arrays:
-	gid16 glyphList[] =	{55, 77, 73,  3,  3, 88, 92, 78, 71, 82,  3, 70, 89, 86, 94, 85};
+	gid16 glyphList[] =	{55, 75, 72,  3,  3, 84, 88, 76, 70, 78,  3, 69, 85, 82, 90, 81};
 	int xPositions[] =  { 0,  9, 17, 24, 29, 34, 42, 50, 54, 61, 69, 74, 82, 87, 95,107};
 	int yPositions[] =  { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0};
 	int advWidths[] =   { 9,  8,  7,  4,  4,  8,  8,  4,  7,  8,  4,  8,  5,  8, 11,  8};
@@ -566,14 +746,16 @@ void TestCase::SetupNoWhiteSpace()
 	SetXPositions(xPositions);
 	SetYPositions(yPositions);
 	SetAdvWidths(advWidths);
+	SetBBs(NULL, NULL, NULL, NULL);
 	SetInsPtFlags(insPtFlags);
 	SetClickTests(0, NULL);
 	SetOutputContextBlock(contextBlockOutSize, contextBlockOut);
 }
 
-void TestCase::SetupNoWhiteSpaceFailure()
+void TestCase::SetupNoWhiteSpaceNoSeg()
 {
-	m_testName = "No white space - failure";
+	m_testName = "No white space - no segment";
+	//m_skip = true;
 
 	//	Input:
 	m_fontName = L"Graphite Test Roman";
@@ -606,6 +788,7 @@ void TestCase::SetupNoWhiteSpaceFailure()
 void TestCase::SetupOnlyWhiteSpace()
 {
 	m_testName = "Only white space";
+	//m_skip = true;
 
 	//	Input:
 	m_fontName = L"Graphite Test Roman";
@@ -639,7 +822,8 @@ void TestCase::SetupOnlyWhiteSpace()
 	//	Each line in clickStuff represents one click test with the following items:
 	//		click x-coord, click y-coord, char index, assoc-prev,
 	//		prim sel Top, prim sel bottom, prim sel left,
-	//		sec sel Top, sec sel bottom, sec sel left,
+	//		sec sel Top, sec sel bottom, sec sel left
+	//  Y-coordinates are offsets from segment top; ie, (0,0) is segment top-left.
 	const int clickTestCnt = 6;
 	int clickStuff[] = {
 		 2,  25,    0, false,   0, 24,  -1,   kAbsent, kAbsent, kAbsent,
@@ -657,6 +841,7 @@ void TestCase::SetupOnlyWhiteSpace()
 	SetXPositions(xPositions);
 	SetYPositions(yPositions);
 	SetAdvWidths(advWidths);
+	SetBBs(NULL, NULL, NULL, NULL);
 	SetInsPtFlags(insPtFlags);
 	SetClickTests(clickTestCnt, clickStuff);
 }
@@ -667,6 +852,7 @@ void TestCase::SetupOnlyWhiteSpace()
 void TestCase::SetupCrossLine1()
 {
 	m_testName = "Cross-line 1";
+	//m_skip = true;
 
 	//	Input:
 	m_fontName = L"Graphite Test CrossLine";
@@ -702,7 +888,8 @@ void TestCase::SetupCrossLine1()
 	//	Each line in clickStuff represents one click test with the following items:
 	//		click x-coord, click y-coord, char index, assoc-prev,
 	//		prim sel Top, prim sel bottom, prim sel left,
-	//		sec sel Top, sec sel bottom, sec sel left,
+	//		sec sel Top, sec sel bottom, sec sel left
+	//  Y-coordinates are offsets from segment top; ie, (0,0) is segment top-left.
 	const int clickTestCnt = 0;
 	int * clickStuff = NULL;
 	//int clickStuff[] = ;
@@ -720,6 +907,7 @@ void TestCase::SetupCrossLine1()
 	SetXPositions(xPositions);
 	SetYPositions(yPositions);
 	SetAdvWidths(advWidths);
+	SetBBs(NULL, NULL, NULL, NULL);
 	SetInsPtFlags(insPtFlags);
 	SetClickTests(clickTestCnt, clickStuff);
 	SetOutputContextBlock(contextBlockOutSize, contextBlockOut);
@@ -730,6 +918,7 @@ void TestCase::SetupCrossLine2()
 	m_testName = "Cross-line 2";
 	//m_traceLog = true;
 	//m_debug = true;
+	//m_skip = true;
 
 	//	Input:
 	m_fontName = L"Graphite Test CrossLine";
@@ -770,7 +959,8 @@ void TestCase::SetupCrossLine2()
 	//	Each line in clickStuff represents one click test with the following items:
 	//		click x-coord, click y-coord, char index, assoc-prev,
 	//		prim sel Top, prim sel bottom, prim sel left,
-	//		sec sel Top, sec sel bottom, sec sel left,
+	//		sec sel Top, sec sel bottom, sec sel left
+	//  Y-coordinates are offsets from segment top; ie, (0,0) is segment top-left.
 	const int clickTestCnt = 0;
 	int * clickStuff = NULL;
 	//int clickStuff[] = ;
@@ -788,6 +978,7 @@ void TestCase::SetupCrossLine2()
 	SetXPositions(xPositions);
 	SetYPositions(yPositions);
 	SetAdvWidths(advWidths);
+	SetBBs(NULL, NULL, NULL, NULL);
 	SetInsPtFlags(insPtFlags);
 	SetClickTests(clickTestCnt, clickStuff);
 	SetInputContextBlock(contextBlockInSize, contextBlockIn);
@@ -797,6 +988,7 @@ void TestCase::SetupCrossLine2()
 void TestCase::SetupCrossLine3()
 {
 	m_testName = "Cross-line 3";
+	//m_skip = true;
 
 	//	Input:
 	m_fontName = L"Graphite Test CrossLine";
@@ -837,7 +1029,8 @@ void TestCase::SetupCrossLine3()
 	//	Each line in clickStuff represents one click test with the following items:
 	//		click x-coord, click y-coord, char index, assoc-prev,
 	//		prim sel Top, prim sel bottom, prim sel left,
-	//		sec sel Top, sec sel bottom, sec sel left,
+	//		sec sel Top, sec sel bottom, sec sel left
+	//  Y-coordinates are offsets from segment top; ie, (0,0) is segment top-left.
 	const int clickTestCnt = 0;
 	int * clickStuff = NULL;
 	//int clickStuff[] = ;
@@ -855,6 +1048,7 @@ void TestCase::SetupCrossLine3()
 	SetXPositions(xPositions);
 	SetYPositions(yPositions);
 	SetAdvWidths(advWidths);
+	SetBBs(NULL, NULL, NULL, NULL);
 	SetInsPtFlags(insPtFlags);
 	SetClickTests(clickTestCnt, clickStuff);
 	SetInputContextBlock(contextBlockInSize, contextBlockIn);
@@ -864,6 +1058,7 @@ void TestCase::SetupCrossLine3()
 void TestCase::SetupCrossLine4()
 {
 	m_testName = "Cross-line 4";
+	//m_skip = true;
 
 	//	Input:
 	m_fontName = L"Graphite Test CrossLine";
@@ -904,7 +1099,8 @@ void TestCase::SetupCrossLine4()
 	//	Each line in clickStuff represents one click test with the following items:
 	//		click x-coord, click y-coord, char index, assoc-prev,
 	//		prim sel Top, prim sel bottom, prim sel left,
-	//		sec sel Top, sec sel bottom, sec sel left,
+	//		sec sel Top, sec sel bottom, sec sel left
+	//  Y-coordinates are offsets from segment top; ie, (0,0) is segment top-left.
 	const int clickTestCnt = 0;
 	int * clickStuff = NULL;
 	//int clickStuff[] = ;
@@ -922,6 +1118,7 @@ void TestCase::SetupCrossLine4()
 	SetXPositions(xPositions);
 	SetYPositions(yPositions);
 	SetAdvWidths(advWidths);
+	SetBBs(NULL, NULL, NULL, NULL);
 	SetInsPtFlags(insPtFlags);
 	SetClickTests(clickTestCnt, clickStuff);
 	SetInputContextBlock(contextBlockInSize, contextBlockIn);
@@ -942,8 +1139,9 @@ std::wstring TestCase::CrossLineText()
 void TestCase::SetupArabic1()
 {
 	m_testName = "Arabic 1";
-	m_debug = true;
+	//m_debug = true;
 	m_traceLog = false;
+	//m_skip = true;
 
 	//	Input:
 	m_fontName = L"Graphite Test Arabic";
@@ -963,10 +1161,20 @@ void TestCase::SetupArabic1()
 		61,		// character count
 		61);	// glyph count
 
+	// Each group = glyph-index, base, number of attached, glyphs, attached-glyph-indices
+	int attachments[] = {
+		0,0,0,		1,1,1,2,	2,1,0,		3,3,4,4,5,6,7,	4,3,0,		5,3,0,		6,3,0,		7,3,0,
+		8,8,0,		9,9,4,10,11,12,13,		10,9,0,			11,9,0,		12,9,0,		13,9,0,		14,14,0,
+		15,15,0,	16,16,1,17,	17,16,0,	18,18,1,19,		19,18,0		// etc
+	};
+	int attCount = sizeof(attachments) / sizeof(int);
+	SetAttachedClusters(attachments, attCount);
+
 	//	Each line in clickStuff represents one click test with the following items:
 	//		click x-coord, click y-coord, char index, assoc-prev,
 	//		prim sel Top, prim sel bottom, prim sel left,
-	//		sec sel Top, sec sel bottom, sec sel left,
+	//		sec sel Top, sec sel bottom, sec sel left
+	//  Y-coordinates are offsets from segment top; ie, (0,0) is segment top-left.
 	int clickStuff[] = {
 		199, 13,    37, true,    0, 35,196,   kAbsent, kAbsent, kAbsent,
 		396, 13,     3, false,   8, 26,399,   10, 17, 397,
@@ -982,6 +1190,7 @@ void TestCase::SetupArabic2()
 	m_testName = "Arabic 2";
 	m_debug = false;
 	m_traceLog = false;
+	//m_skip = true;
 
 	//	Input:
 	m_fontName = L"Graphite Test Arabic";
@@ -1036,6 +1245,7 @@ void TestCase::SetupArabicAux(int charCnt, int glyphCnt)
 	SetXPositions(xPositions);
 	SetYPositions(yPositions);
 	SetAdvWidths(advWidths);
+	SetBBs(NULL, NULL, NULL, NULL);
 	SetInsPtFlags(insPtFlags);
 }
 
@@ -1055,7 +1265,340 @@ std::wstring TestCase::ArabicText()
 	return strRet;
 }
 
+/*----------------------------------------------------------------------------------------------
+	A set of tests that uses Tai Viet script to test positioning.
+----------------------------------------------------------------------------------------------*/
+void TestCase::SetupTaiViet1()
+{
+	m_testName = "Tai Viet Collisions";
+	//m_traceLog = true;
+	//m_debug = true;
+	//m_skip = true;
 
+	//	Input:
+	m_fontName = L"Graphite Test TaiViet";
+	m_fontFile = "grtest_taiviet.ttf";
+	m_fontSize = 36;				// font size in points
+	m_prefBreak = klbWordBreak;		// preferred break-weight
+	m_availWidth = 2000;				// width available for segment
+	m_bold = false;
+	m_italic = false;
+	m_rtl = false;
+	m_backtrack = false;
+	m_text = TaiVietText();
+
+	m_fset[0].id = 2001;	m_fset[0].value = 2;	// vowel position = final consonant
+	m_fset[1].id = 1051;	m_fset[1].value = 0;	// diacritic selection = off
+	m_fset[2].id = 2102;	m_fset[2].value = 0;	// collision avoidance = off
+	m_fset[3].id = 0;
+
+	//	Output:
+	m_segWidth = 946;			// physical width of segment
+
+	const int charCnt = 46;		// number of characters in the segment
+
+	// need charCnt elements in this array:
+	bool insPtFlags[] = {
+		true,  true,  false, true,  true,  true,  false, true,  true,  true,
+		false, false, true,  true,  false, true,  true,  false, false, true,
+		true,  false, false, true,  true,  false, false, true,  true,  false,
+		false, true,  true,  false, true,  true,  false, false, true,  true,
+		false, true,  true,  true,  false, false
+	};
+
+	const int glyphCnt = 46;	// number of glyphs in the segment
+
+	// need glyphCnt elements in these arrays:
+	//                    0                                          10                                            20                                            30                                            40     
+	gid16 glyphList[] =	{59, 70, 71, 65, 59,  70, 71, 23,  32, 175,  70,  65,  55, 70,  73,  55, 175, 184,185, 55, 76, 184,185,  55, 77, 70, 185,  41,  77,  70, 23, 56,175,  65,  27,  93, 70,185,  53,  69,  81, 50, 27,175, 70, 23};
+	int xPositions[] =  { 0, 72, 47, 72,101, 174,149,174, 206, 281, 283, 251, 283,352, 316, 352, 418, 425,386,425,493, 495,458, 495,556,559, 528, 559, 623, 623,591,623,706, 676, 706, 776,777,738, 777, 836, 816,843,880,944,946,912};
+	int yPositions[] =  { 0,  0,  0,  0,  0,   0,  0,  0,   0,   0,  15,   0,   0,  0,   0,   0,   5,  13,  0,  0,  5,  22,  0,   0,  0,  5,   0,   0,   0,   0,  0,  0,  0,   0,   0,   5, 19,  0,   0,   8,   0,  0,  0,  5, 21,  0};
+	int advWidths[] =   {47,  0, 24, 29, 47,   0, 24, 32,  44,   0,   0,  29,  33,  0,  36,  33,   0,   0, 26, 33,  0,   0, 26,  33,  0,  0,  26,  32,   0,   0, 32, 52,  0,  29,  32,   0,  0, 26,  39,   0,  26, 36, 32,  0,  0, 32};
+
+	int bbLefts[] =     { 5, 45, 52, 73,106, 147,154,177, 209, 254, 257, 252, 286,326, 322, 355, 391, 414,390,428,463, 484, 462,498,540,532, 532, 562, 607, 597,594,627,679, 677, 709, 744,751,742, 784, 825, 820,849,883,917,919,915};
+	int bbRights[] =    {72, 72, 63, 97,174, 174,165,211, 277, 281, 283, 276, 349,352, 355, 419, 418, 422,409,491,494, 491, 481,561,553,559, 551, 621, 620, 623,628,681,706, 701, 756, 776,777,761, 835, 833, 840,882,930,944,946,949};
+	int bbTops [] =     {60, 50, 25, 25, 60,  50, 25, 41,  60,  49,  66,  25,  60, 50,  40,  60,  55,  65, 36, 60, 56,  74,  36, 60, -5, 55,  36,  60,  -5,  50, 41, 40, 49,  25,  55,  56, 69, 36,  55,  61,  41, 40, 55, 55, 71, 41};
+	int bbBottoms [] =  { 0, 35,  0,  0,  0,  35,  0,  0,   0,  34,  50,   0,   0, 35,   0,   0,  39,  51,  0,  0, 40,  60,   0,  0,-27, 40,   0,   0, -27,  35,  0,  0, 34,   0,   0,  40, 54,  0,   0,  45,   0, 0,   0, 39, 56,  0};
+	
+	// Each group = glyph-index, base, number of attached, glyphs, attached-glyph-indices
+	int attachments[] = {
+		0,0,0,		1,2,0,		2,2,1,1,		3,3,0,	4,4,0,	5,6,0,	6,6,1,5,	7,7,0,
+		8,8,0,		9,11,0,		10,11,0,		11,11,2,9,10,	12,12,0,		13,14,0,	14,14,1,13,
+		15,15,0,	16,18,0,	17,18,0,		18,18,2,16,17,	19,19,0,		20,22,0,	21,22,0,
+		22,22,2,20,21,	23,23,0,		24,26,0,	25,26,0,	26,26,2,24,25,	27,27,0,	28,30,0,
+		29,30,0,		30,30,2,28,29,	31,31,0,	32,33,0,	33,33,1,32,		34,34,0,	35,37,0,
+		36,37,0,		37,37,2,35,36,	38,38,0,	39,40,0,	40,40,1,39,		41,41,0,	42,42,0,
+		43,45,0,		44,45,0,		45,45,2,43,44
+	};
+	int attCount = sizeof(attachments) / sizeof(int);
+
+	//	Each line in clickStuff represents one click test with the following items:
+	//		click x-coord, click y-coord, char index, assoc-prev,
+	//		prim sel Top, prim sel bottom, prim sel left,
+	//		sec sel Top, sec sel bottom, sec sel left
+	//  Y-coordinates are offsets from segment top; ie, (0,0) is segment top-left.
+	const int clickTestCnt = 4;
+	int clickStuff[] = {
+		 55, 40,   1, true,   0,100,  46,  kAbsent, kAbsent, kAbsent,
+		 65, 20,   1, false,  0,100,  46,  kAbsent, kAbsent, kAbsent,	// adjust to the left to get a valid IP?
+		 95, 84,   4, true,   0,100, 100,  kAbsent, kAbsent, kAbsent,
+		104, 40,   4, false,  0,100, 100,  kAbsent, kAbsent, kAbsent
+	};
+
+	//	Finish setting up test case.
+	SetCharCount(charCnt);
+	SetGlyphCount(glyphCnt);
+	SetGlyphList(glyphList);
+	SetXPositions(xPositions);
+	SetYPositions(yPositions);
+	SetAdvWidths(advWidths);
+	SetBBs(bbLefts, bbRights, bbTops, bbBottoms);
+	SetInsPtFlags(insPtFlags);
+	SetAttachedClusters(attachments, attCount);
+	SetClickTests(clickTestCnt, clickStuff);
+}
+
+/*----------------------------------------------------------------------------------------------
+	A set of tests that uses Tai Viet script to test positioning.
+----------------------------------------------------------------------------------------------*/
+void TestCase::SetupTaiViet2()
+{
+	m_testName = "Tai Viet No Collisions";
+	//m_traceLog = true;
+	//m_debug = true;
+	//m_skip = true;
+
+	//	Input:
+	m_fontName = L"Graphite Test TaiViet";
+	m_fontFile = "grtest_taiviet.ttf";
+	m_fontSize = 36;				// font size in points
+	m_prefBreak = klbWordBreak;		// preferred break-weight
+	m_availWidth = 2000;				// width available for segment
+	m_bold = false;
+	m_italic = false;
+	m_rtl = false;
+	m_backtrack = false;
+	m_text = TaiVietText();
+
+	m_fset[0].id = 2001;	m_fset[0].value = 2;	// vowel position = final consonant
+	m_fset[1].id = 1051;	m_fset[1].value = 1;	// diacritic selection = on
+	m_fset[2].id = 2102;	m_fset[2].value = 1;	// collision avoidance = off
+	m_fset[3].id = 0;
+
+	//	Output:
+	m_segWidth = 947;			// physical width of segment
+
+	const int charCnt = 46;		// number of characters in the segment
+
+	// need charCnt elements in this array:
+	bool insPtFlags[] = {
+		true, true, true, true, true, true, true, true, true, true,
+		true, true, true, true, true, true, true, true, true, true,
+		true, true, true, true, true, true, true, true, true, true,
+		true, true, true, true, true, true, true, true, true, true,
+		true, true, true, true, true, true
+	};
+
+	const int glyphCnt = 46;	// number of glyphs in the segment
+
+	// need glyphCnt elements in these arrays:
+	//                    0                                          10                                            20                                            30                                            40     
+	gid16 glyphList[] =	{59, 70, 71, 65, 59,  70, 71, 23,  32, 175,  70,  65,  55, 70,  73,  55, 175, 184,185, 55, 76, 184,185,  55, 77, 70, 185,  41,  77,  70, 23, 56,175,  65,  27,  93, 70,185,  53,  69,  81, 50, 27,175, 70, 23};
+	int xPositions[] =  { 0, 82, 47, 72,101, 184,149,174, 206, 281, 283, 251, 283,359, 316, 352, 418, 431,386,425,496, 508,458, 497,559,578, 530, 561, 626, 635,593,626,709, 678, 708, 778,780,740, 780, 853, 819,846,882,942,947,914};
+	int yPositions[] =  { 0, -3,  0,  0,  0,  -3,  0,  0,   0,   0,  22,   0,   0,  0,   0,   0,   0,   9,  0,  0,  2,  20,  0,   0,  0,  1,   0,   0,   0,   0,  0,  0, -4,   0,   0,   5, 25,  0,   0,   8,   0,  0,  0,  0, 23,  0};
+	int advWidths[] =   {47,  0, 24, 29, 47,   0, 24, 32,  44,   0,   0,  29,  33,  0,  36,  33,   0,   0, 26, 33,  0,   0, 26,  33,  0,  0,  26,  32,   0,   0, 32, 52,  0,  29,  32,   0,  0, 26,  39,   0,  26, 36, 32,  0,  0, 32};
+
+	int bbLefts[] =     { 5, 56, 52, 73,106, 158,154,177, 209, 254, 257, 252, 286,333, 322, 355, 391, 420,390,428,466, 497, 462,500,542,552, 534, 564, 609, 609,597,629,682, 679, 711, 747,753,744, 786, 842, 823,851,885,916,921,918};
+	int bbRights[] =    {72, 82, 63, 97,174, 184,165,211, 277, 281, 283, 276, 349,359, 355, 419, 418, 427,409,491,496, 504, 481,564,555,578, 553, 624, 622, 635,630,684,709, 703, 758, 778,780,763, 837, 850, 842,885,932,942,947,951};
+	int bbTops [] =     {60, 46, 25, 25, 60,  46, 25, 41,  60,  49,  73,  25,  60, 50,  40,  60,  50,  60, 36, 60, 54,  72,  36, 60, -5, 52,  36,  60,  -5,  50, 41, 40, 45,  25,  55,  56, 75, 36,  55,  61,  41, 40, 55, 50, 73, 41};
+	int bbBottoms [] =  { 0, 31,  0,  0,  0,  31,  0,  0,   0,  34,  57,   0,   0, 35,   0,   0,  34,  46,  0,  0, 37,  57,   0,  0,-27, 36,   0,   0, -27,  35,  0,  0, 29,   0,   0,  40, 60,  0,   0,  45,   0, 0,   0, 34, 58,  0};
+	
+	// Each group = glyph-index, base, number of attached, glyphs, attached-glyph-indices
+	int attachments[] = {
+		0,0,0,		1,2,0,		2,2,1,1,		3,3,0,	4,4,0,	5,6,0,	6,6,1,5,	7,7,0,
+		8,8,0,		9,11,0,		10,11,0,		11,11,2,9,10,	12,12,0,		13,14,0,	14,14,1,13,
+		15,15,0,	16,18,0,	17,18,0,		18,18,2,16,17,	19,19,0,		20,22,0,	21,22,0,
+		22,22,2,20,21,	23,23,0,		24,26,0,	25,26,0,	26,26,2,24,25,	27,27,0,	28,30,0,
+		29,30,0,		30,30,2,28,29,	31,31,0,	32,33,0,	33,33,1,32,		34,34,0,	35,37,0,
+		36,37,0,		37,37,2,35,36,	38,38,0,	39,40,0,	40,40,1,39,		41,41,0,	42,42,0,
+		43,45,0,		44,45,0,		45,45,2,43,44
+	};
+	int attCount = sizeof(attachments) / sizeof(int);
+
+	//	Each line in clickStuff represents one click test with the following items:
+	//		click x-coord, click y-coord, char index, assoc-prev,
+	//		prim sel top, prim sel bottom, prim sel left,
+	//		sec sel top, sec sel bottom, sec sel left
+	//  Y-coordinates are offsets from segment top; ie, (0,0) is segment top-left.
+	const int clickTestCnt = 4;
+	int clickStuff[] = {
+		 55, 40,   2, false, 35, 65,  49,       14, 33, 82,
+		 65, 20,   1, false,  0,100,  50,  kAbsent, kAbsent, kAbsent,
+		 95, 84,   4, true,   0,100, 100,  kAbsent, kAbsent, kAbsent,
+		104, 40,   4, false,  0,100, 100,  kAbsent, kAbsent, kAbsent
+	};
+
+	//	Finish setting up test case.
+	SetCharCount(charCnt);
+	SetGlyphCount(glyphCnt);
+	SetGlyphList(glyphList);
+	SetXPositions(xPositions);
+	SetYPositions(yPositions);
+	SetAdvWidths(advWidths);
+	SetBBs(bbLefts, bbRights, bbTops, bbBottoms);
+	SetInsPtFlags(insPtFlags);
+	SetAttachedClusters(attachments, attCount);
+	SetClickTests(clickTestCnt, clickStuff);
+}
+
+std::wstring TestCase::TaiVietText()
+{
+	std::wstring strRet;
+	wchar_t charData[] = {
+		0xe00f,0xe042,0xe031,0xe02b,0xe00f,0xe042,0xe031,0xe025,0xe021,0xe033,
+		0xe042,0xe02b,0xe01c,0xe042,0xe03e,0xe01c,0xe033,0xe040,0xe009,0xe01c,
+		0xe039,0xe040,0xe009,0xe01c,0xe035,0xe042,0xe009,0xe024,0xe035,0xe042,
+		0xe025,0xe01b,0xe033,0xe02b,0xe00a,0xe030,0xe042,0xe009,0xe01e,0xe040,
+		0xe03b,0xe019,0xe00a,0xe033,0xe042,0xe025,0x0000
+	};
+	strRet.assign(charData);
+	return strRet;
+}
+
+/*----------------------------------------------------------------------------------------------
+	Set up a test where the font is bad and we revert to dumb rendering
+----------------------------------------------------------------------------------------------*/
+void TestCase::SetupDumbFallback1()
+{
+	m_testName = "Dumb Fallback 1";
+	//m_debug = true;
+	m_traceLog = false;
+	//m_skip = true;
+
+	//	Input:
+	m_fontName = L"GrErr BadVersion";
+	m_fontFile = "grtest_badVersion.ttf";
+	m_text = RomanText();			// text to render
+	m_fontSize = 12;				// font size in points
+	m_prefBreak = klbWordBreak;		// preferred break-weight
+	m_availWidth = 500;				// width available for segment
+	m_bold = false;
+	m_italic = false;
+	m_rtl = false;
+	m_backtrack = false;
+	m_dumbFallback = true;
+
+	//	Output:
+	m_badFont = true;
+	m_segWidth = 196;			// physical width of segment
+
+	const int charCnt = 26;		// number of characters in the segment
+
+	// need charCnt elements in this array:
+	bool insPtFlags[] = {
+		true, true, true, true, true, true, true, true, true, true,
+		true, true, true, true, true, true, true, true, true, true,
+		true, true,	true, true, true, true
+	};
+
+	const int glyphCnt = 26;	// number of glyphs in the segment
+
+	// need glyphCnt elements in these arrays:
+	//                    0                                      10                                      20
+	gid16 glyphList[] =	{71,  0,  0, 82,  0, 85, 73,  0,  0,  0,  0, 67,  0,  0, 75,  0, 43,  0, 79,  0,  0,  0,  0, 72, 72, 75};
+	int xPositions[] =  { 0,  7, 15, 23, 31, 39, 46, 54, 62, 70, 78, 86, 93,101,109,114,122,128,136,149,157,165,173,181,186,192};
+	int yPositions[] =  { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0};
+	int advWidths[] =   { 7,  8,  8,  8,  8,  6,  8,  8,  8,  8,  8,  7,  8,  8,  4,  8,  5,  8, 12,  8,  8,  8,  8,  5,  5,  4};
+
+	const int clickTestCnt = 0;
+	int * clickStuff = NULL;
+
+	//	Finish setting up test case.
+	SetCharCount(charCnt);
+	SetGlyphCount(glyphCnt);
+	SetGlyphList(glyphList);
+	SetXPositions(xPositions);
+	SetYPositions(yPositions);
+	SetAdvWidths(advWidths);
+	SetBBs(NULL, NULL, NULL, NULL);
+	SetInsPtFlags(insPtFlags);
+	SetClickTests(clickTestCnt, clickStuff);
+}
+
+/*----------------------------------------------------------------------------------------------
+	Now make sure we will get a crash when we turn dumb rendering off for the same font.
+----------------------------------------------------------------------------------------------*/
+void TestCase::SetupDumbFallback2()
+{
+	m_testName = "Dumb Fallback 2";
+	//m_debug = true;
+	m_traceLog = false;
+	//m_skip = true;
+
+	//	Input:
+	m_fontName = L"GrErr BadVersion";
+	m_fontFile = "grtest_badVersion.ttf";
+	m_text = L"This is a test.";	// text to render
+	m_fontSize = 12;				// font size in points
+	m_prefBreak = klbWordBreak;		// preferred break-weight
+	m_availWidth = 500;				// width available for segment
+	m_bold = false;
+	m_italic = false;
+	m_rtl = false;
+	m_backtrack = false;
+	m_dumbFallback = false;
+
+	//	Output:
+	m_badFont = true;
+	m_noSegment = true;
+	m_segWidth = 0;			// physical width of segment
+
+	const int charCnt = 0;		// number of characters in the segment
+
+	const int glyphCnt = 0;	// number of glyphs in the segment
+
+	//	Finish setting up test case.
+	SetCharCount(charCnt);
+	SetGlyphCount(glyphCnt);
+}
+
+/*----------------------------------------------------------------------------------------------
+	Now make sure we will get a crash when we turn dumb rendering off for the same font.
+----------------------------------------------------------------------------------------------*/
+void TestCase::SetupBadFont()
+{
+	m_testName = "Bad Font";
+	//m_debug = true;
+	m_traceLog = false;
+	//m_skip = true;
+
+	//	Input:
+	//	The font has been corrupted so that the size of the cmap in the directory is invalid.
+	m_fontName = L"Graphite Test Roman";
+	m_fontFile = "grtest_badCmap.ttf";
+	m_text = L"This is a test.";	// text to render
+	m_fontSize = 12;				// font size in points
+	m_prefBreak = klbWordBreak;		// preferred break-weight
+	m_availWidth = 500;				// width available for segment
+	m_bold = false;
+	m_italic = false;
+	m_rtl = false;
+	m_backtrack = false;
+	m_dumbFallback = true;	// wants to do dumb fall-back, but can't because the font is totally invalid
+
+	//	Output:
+	m_badFont = true;
+	m_noSegment = true;
+	m_segWidth = 0;			// physical width of segment
+
+	const int charCnt = 0;		// number of characters in the segment
+
+	const int glyphCnt = 0;	// number of glyphs in the segment
+
+	//	Finish setting up test case.
+	SetCharCount(charCnt);
+	SetGlyphCount(glyphCnt);
+}
 // *** Add more methods here. ***
 
 
@@ -1079,6 +1622,7 @@ TestCase::TestCase()
 	m_testName = "Unknown";
 	m_debug = false;
 	m_traceLog = false;
+	m_skip = false;
 
 	m_fontName.erase();
 	m_fontFile.erase();
@@ -1097,7 +1641,9 @@ TestCase::TestCase()
 	m_contextBlockIn = NULL;
 	m_initWithPrev = false;
 	memset(m_fset, 0, MAXFEAT * sizeof(FeatureSetting));
+	m_dumbFallback = true;
 
+	m_badFont = false;
 	m_noSegment = false;			// yes, a segment should be generated
 	m_charCount = 0;
 	m_glyphCount = 0;
@@ -1105,7 +1651,15 @@ TestCase::TestCase()
 	m_xPositions = NULL;
 	m_yPositions = NULL;
 	m_advWidths = NULL;
+	m_bbLefts = NULL;
+	m_bbRights = NULL;
+	m_bbTops = NULL;
+	m_bbBottoms = NULL;
 	m_insPointFlags = NULL;
+	m_charsToGlyphs = NULL;
+	m_c2gCount = 0;
+	m_attGlyphs = NULL;
+	m_attGCount = 0;
 	m_contextBlockOutSize = 0;
 	m_contextBlockOut = NULL;
 
@@ -1122,7 +1676,13 @@ TestCase::~TestCase()
 	delete[] m_xPositions;
 	delete[] m_yPositions;
 	delete[] m_advWidths;
+	delete[] m_bbLefts;
+	delete[] m_bbRights;
+	delete[] m_bbTops;
+	delete[] m_bbBottoms;
 	delete[] m_insPointFlags;
+	delete[] m_charsToGlyphs;
+	delete[] m_attGlyphs;
 	delete[] m_clickTests;
 	delete[] m_contextBlockIn;
 	delete[] m_contextBlockOut;
@@ -1144,6 +1704,10 @@ void TestCase::SetGlyphCount(int glyphCount)
 	m_xPositions = new int[glyphCount];
 	m_yPositions = new int[glyphCount];
 	m_advWidths = new int[glyphCount];
+	m_bbLefts = new int[glyphCount];
+	m_bbRights = new int[glyphCount];
+	m_bbTops = new int[glyphCount];
+	m_bbBottoms = new int[glyphCount];
 }
 
 void TestCase::SetGlyphList(gid16 * glyphList)
@@ -1170,10 +1734,50 @@ void TestCase::SetAdvWidths(int * advWidths)
 		m_advWidths[i] = advWidths[i];
 }
 
+void TestCase::SetBBs(int * bbLefts, int * bbRights, int * bbTops, int * bbBottoms)
+{
+	if (bbLefts == NULL) // no bb tests
+	{
+		delete[] m_bbLefts;
+		delete[] m_bbRights;
+		delete[] m_bbTops;
+		delete[] m_bbBottoms;
+		m_bbLefts = NULL;
+		m_bbRights = NULL;
+		m_bbTops = NULL;
+		m_bbBottoms = NULL;
+		return;
+	}
+
+	for (int i = 0; i < m_glyphCount; i++)
+	{
+		m_bbLefts[i] = bbLefts[i];
+		m_bbRights[i] = bbRights[i];
+		m_bbTops[i] = bbTops[i];
+		m_bbBottoms[i] = bbBottoms[i];
+	}
+}
+
 void TestCase::SetInsPtFlags(bool * flags)
 {
 	for (int i = 0; i < m_charCount; i++)
 		m_insPointFlags[i] = flags[i];
+}
+
+void TestCase::SetCharsToGlyphs(int * stuff, int count)
+{
+	m_c2gCount = count;
+	m_charsToGlyphs = new int[count];
+	for (int i = 0; i < count; i++)
+		m_charsToGlyphs[i] = stuff[i];
+}
+
+void TestCase::SetAttachedClusters(int * stuff, int count)
+{
+	m_attGCount = count;
+	m_attGlyphs = new int[count];
+	for (int i = 0; i < count; i++)
+		m_attGlyphs[i] = stuff[i];
 }
 
 void TestCase::SetClickTests(int clickTestCount, int * clickStuff)

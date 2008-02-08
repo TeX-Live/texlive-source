@@ -43,6 +43,7 @@ class Segment;
 class GrEngine : public GraphiteProcess
 {
 	friend class FontFace;
+	friend class FontMemoryUsage;
 
 public:
 	// Constructors & destructors:
@@ -405,14 +406,16 @@ protected:
 									// control file
 
 	GrResult m_resFontRead;		// kresOk if the Graphite font was loaded successfully;
-								// kresFail if the Graphite font could not be found;
+								// kresFail if the font could not be found or basic tables couldn't be read;
+								// kresFalse if the Silf table is not present;
 								// kresUnexpected if the Graphite tables could not be loaded
 
-	GrResult m_resFontValid;	// kresOk if Graphite font & dc font match cmaps
-								// kresUnexpected if dumb rendering
-								// kresFail if dumb rendering with no cmap
-								// kresInvalidArg if the engine is not yet initialized
-
+	GrResult m_resFontValid;	// kresInvalidArg if the engine is not yet initialized
+								// Originally:
+								//	kresOk if Graphite font & dc font match cmaps
+								//	kresUnexpected/kresFalse if dumb rendering
+								//	kresFail if dumb rendering with no cmap
+								// But now it is apparently just = to m_resFontRead otherwise.
 	FontErrorCode m_ferr;
 	int m_fxdBadVersion;
 
@@ -475,14 +478,14 @@ protected:
 	int m_mFontEmUnits;		// number of design units in the Em square for the font
 
 	//	for pseudo-glyph mappings
-	int				m_cpsd;				// number of psuedo-glyphs
-	GrPseudoMap *	m_prgpsd;
-	int				m_dipsdInit;		// (max power of 2 <= m_cpsd);
-										//		size of initial range to consider
-	int				m_cPsdLoop;			// log2(max power of 2 <= m_cpsd);
-										//		indicates how many iterations are necessary
-	int				m_ipsdStart;		// m_cpsd - m_dipsdInit;
-										//		where to start search
+	int m_cpsd;				// number of psuedo-glyphs
+	GrPseudoMap * m_prgpsd;
+	int m_dipsdInit;		// (max power of 2 <= m_cpsd);
+							//		size of initial range to consider
+	int m_cPsdLoop;			// log2(max power of 2 <= m_cpsd);
+							//		indicates how many iterations are necessary
+	int m_ipsdStart;		// m_cpsd - m_dipsdInit;
+							//		where to start search
 
 	// for Unicode to glyph ID mapping
 	////TableBuffer	m_tbufCmap;	// hold the full cmap table
@@ -491,10 +494,14 @@ protected:
 							//		use for Unicode to Glyph ID conversion
 	void * m_pCmap_3_10;
 	byte * m_pCmapTbl;
+	bool m_fCmapTblCopy;
+	int m_cbCmapTbl;		// needed only for memory instrumentation
 
 	// for feature names and maybe other strings from font later
 	////TableBuffer	m_tbufNameTbl;	// hold full name table; use Name() method to access
 	byte * m_pNameTbl;
+	bool m_fNameTblCopy;
+	int m_cbNameTbl;		// needed only for memory instrumentation
 
 	bool m_fLogXductn;	// true if we want to log the transduction process
 
@@ -546,8 +553,22 @@ protected:
 		int chwMaxGlyphID, int fxdSilfVersion);
 	bool ReadFeatTable(GrIStream & grstrm, long lTableStart);
 	bool ReadSillTable(GrIStream & grstrm, long lTableStart);
+	bool SetCmapAndNameTables(Font * pfont);
 
 	void CreateEmpty();
+
+	bool BadFont(FontErrorCode * pferr = NULL)
+	{
+		if (pferr)
+			*pferr = m_ferr;
+		return (m_resFontValid == kresFail || m_resFontRead == kresFail);
+	}
+	bool DumbFallback(FontErrorCode * pferr = NULL)
+	{
+		if (pferr)
+			*pferr = m_ferr;
+		return (m_resFontValid != kresOk || m_resFontRead != kresOk);
+	}
 
 	gid16 MapToPseudo(int nUnicode);
 

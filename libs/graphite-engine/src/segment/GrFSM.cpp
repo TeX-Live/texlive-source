@@ -102,8 +102,8 @@ bool GrFSM::ReadFromFont(GrIStream & grstrm, int fxdVersion)
 	//	rules in the pass; some rules may be listed multiply, if they are matched by more
 	//	than one state.
 	int crulInMap = m_prgirulnMin[crowSuccess];
-
 	m_prgrulnMatched = new data16[crulInMap];
+	m_crulnMatched = crulInMap;
 	pchw = m_prgrulnMatched;
 	for (i = 0; i < crulInMap; i++, pchw++)
 	{
@@ -167,7 +167,7 @@ int GrFSM::GetRuleToApply(GrTableManager * ptman, GrPass * ppass,
 	int prgcslotMatched[kMaxSlotsPerRule];
 
 	//	Run the transition table until it jams.
-	int crowAccepting = RunTransitionTable(psstrmIn, psstrmOut,
+	int crowAccepting = RunTransitionTable(ppass, psstrmIn, psstrmOut,
 		prgrowAccepting, prgcslotMatched);
 
 	//	Nothing matched; fail quickly.
@@ -274,9 +274,11 @@ int GrFSM::GetRuleToApply(GrTableManager * ptman, GrPass * ppass,
 	@param prgrowAccepting	- array to fill in with accepting rows
 	@param prgcslotMatched	- corresponding array with number of slots matched
 ----------------------------------------------------------------------------------------------*/
-int GrFSM::RunTransitionTable(GrSlotStream * psstrmIn, GrSlotStream * psstrmOut,
+int GrFSM::RunTransitionTable(GrPass * ppass, GrSlotStream * psstrmIn, GrSlotStream * psstrmOut,
 	int * prgrowAccepting, int * prgcslotMatched)
 {
+	int ipass = ppass->PassNumber();
+
 	// Remember we're reading the pre-context items from the output stream, not the input.
 	int cslotPreContextAvail = psstrmOut->WritePos();
 
@@ -305,12 +307,24 @@ int GrFSM::RunTransitionTable(GrSlotStream * psstrmIn, GrSlotStream * psstrmOut,
 			//	no more input
 			return (prowTop - prgrowAccepting);
 
-		//	Get next glyph.
-		gid16 chwGlyphID = (cslot < 0) ?
-			psstrmOut->PeekBack(cslot)->GlyphID() :
-			psstrmIn->Peek(cslot)->GlyphID();
-
-		int col = FindColumn(chwGlyphID);
+		//	Figure out what column the input glyph belong in.
+		//	Since this is a time-critical routine, we cache the results for the current pass.
+		GrSlotState * pslot = (cslot < 0) ?
+			psstrmOut->PeekBack(cslot) :
+			psstrmIn->Peek(cslot);
+		int col;
+		if (pslot->PassNumberForColumn() == ipass)
+		{
+			col = pslot->FsmColumn();
+		}
+		else
+		{
+			gid16 chwGlyphID = (cslot < 0) ?
+				psstrmOut->PeekBack(cslot)->GlyphID() :
+				psstrmIn->Peek(cslot)->GlyphID();
+			col = FindColumn(chwGlyphID);
+			pslot->CacheFsmColumn(ipass, col);
+		}
 		int rowNext;
 		if (col < 0)
 			rowNext = 0;
@@ -488,8 +502,10 @@ int GrFSM::FindColumn(gid16 chwGlyphID)
 		else
 		{
 			nTest = pmcrCurr->m_chwFirst - chwGlyphID;
-			if (nTest < 0)
-				nTest = (chwGlyphID <= pmcrCurr->m_chwLast) ? 0 : nTest;
+			if (nTest < 0 && chwGlyphID <= pmcrCurr->m_chwLast)
+				//nTest = 0;
+				// This is a tiny bit more efficient:
+				return pmcrCurr->m_col;
 		}
 
 		if (nTest == 0)

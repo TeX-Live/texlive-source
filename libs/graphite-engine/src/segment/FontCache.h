@@ -24,11 +24,13 @@ namespace gr
 {
 
 class FontFace;
+class FontMemoryUsage;
 
 /*----------------------------------------------------------------------------------------------
 	TODO: change from a sorted list to a hash table, if performance so requires.
 ----------------------------------------------------------------------------------------------*/
 class FontCache {
+	friend class FontMemoryUsage;
 
 public:
 	FontCache()
@@ -69,6 +71,7 @@ public:
 	void GetFontFace(std::wstring strFaceName, bool fBold, bool fItalic, FontFace ** ppfface);
 	void CacheFontFace(std::wstring strFaceName, bool fBold, bool fItalic, FontFace * pfface);
 	bool RemoveFontFace(std::wstring strFaceName, bool fBold, bool fItalic, bool fZapCache = true);
+	void DeleteIfEmpty();
 	void AssertEmpty();
 
 	int GetFlushMode()
@@ -79,6 +82,8 @@ public:
 
 	// Debugging:
 	//bool DbgCheckFontCache();
+
+	void calculateMemoryUsage(FontMemoryUsage & fmu);
 
 protected:
 	int FindCacheItem(std::wstring strFaceName);

@@ -32,8 +32,9 @@ public:
 	void SetupBurmese4();
 	void SetupRoman();
 	void SetupRomanFeatures();
+	void SetupStackingAndBridging();
 	void SetupNoWhiteSpace();
-	void SetupNoWhiteSpaceFailure();
+	void SetupNoWhiteSpaceNoSeg();
 	void SetupOnlyWhiteSpace();
 	void SetupCrossLine1();
 	void SetupCrossLine2();
@@ -41,6 +42,11 @@ public:
 	void SetupCrossLine4();
 	void SetupArabic1();
 	void SetupArabic2();
+	void SetupTaiViet1();
+	void SetupTaiViet2();
+	void SetupDumbFallback1();
+	void SetupDumbFallback2();
+	void SetupBadFont();
 	//	*** Add more methods here. ***
 
 protected:
@@ -51,6 +57,7 @@ protected:
 	std::wstring RomanText();
 	std::wstring CrossLineText();
 	std::wstring ArabicText();
+	std::wstring TaiVietText();
 
 public:
 	const static int kAbsent = -100;	// not present in data
@@ -68,6 +75,7 @@ public:
 	std::string TestName()			{ return m_testName; }
 	bool RunDebugger()				{ return m_debug; }
 	bool TraceLog()					{ return m_traceLog; }
+	bool Skip()						{ return m_skip; }
 
 	std::wstring Text()				{ return m_text; }
 	std::wstring FontName()			{ return m_fontName; }
@@ -84,6 +92,7 @@ public:
 	bool Rtl()						{ return m_rtl; }
 	bool ParaRtl()					{ return m_paraRtl; }
 	size_t FirstChar()				{ return m_firstChar; }
+	bool DumbFallback()				{ return m_dumbFallback; }
 	size_t InputContextBlock(gr::byte ** ppContextBlock)
 	{
 		*ppContextBlock = m_contextBlockIn;
@@ -91,15 +100,28 @@ public:
 	}
 
 	bool InitWithPrevSeg()			{ return m_initWithPrev; }
+	bool BadFont()					{ return m_badFont; }
 	bool NoSegment()				{ return m_noSegment; }
 	int SegWidth()					{ return m_segWidth; }
 	int CharCount()					{ return m_charCount; }
 	int GlyphCount()				{ return m_glyphCount; }
+
 	int GlyphID(int i)				{ return m_glyphArray[i]; }
 	int XPos(int i)					{ return m_xPositions[i]; }
 	int YPos(int i)					{ return m_yPositions[i]; }
 	int AdvWidth(int i)				{ return m_advWidths[i]; }
+	int BbLeft(int i)				{ return m_bbLefts[i]; }
+	int BbRight(int i)				{ return m_bbRights[i]; }
+	int BbTop(int i)				{ return m_bbTops[i]; }
+	int BbBottom(int i)				{ return m_bbBottoms[i]; }
+	bool BbTests()					{ return (m_bbLefts != NULL); }
+
 	int InsPtFlag(int i)			{ return m_insPointFlags[i]; }
+
+	int CharToGlyphCount()			{ return m_c2gCount; }
+	int CharToGlyphItem(int i)		{ return m_charsToGlyphs[i]; }
+	int AttachedGlyphCount()		{ return m_attGCount; }	// that is, the lenght of the data
+	int AttachedGlyphItem(int i)	{ return m_attGlyphs[i]; }
 
 	int NumberOfClickTests()		{ return m_clickTestCount; }
 	int XClick(int i)				{ return m_clickTests[i].xClick; }
@@ -144,6 +166,7 @@ protected:
 	bool m_debug;		// break into the debugger when running this test
 	bool m_traceLog;	// generate a logging file (tracelog.txt) for this test; if this is turned on for
 						// more than one test, the tests will be appended
+	bool m_skip;
 
 #define MAXFEAT 10
 
@@ -166,12 +189,14 @@ protected:
 	size_t m_contextBlockInSize;	// default: 0
 	gr::byte * m_contextBlockIn;	// default: NULL -- DELETE
 	bool m_initWithPrev;			// default: false
+	bool m_dumbFallback;			// default: true
 	// start of line flag
 	// resolution
 	// justification
 
 	//	Output:
-	bool m_noSegment;	// no segment should be generated
+	bool m_badFont;			// default: false
+	bool m_noSegment;		// no segment should be generated
 	int m_segWidth;
 	int m_charCount;
 	int m_glyphCount;
@@ -179,13 +204,20 @@ protected:
 	int * m_xPositions;
 	int * m_yPositions;
 	int * m_advWidths;
+	int * m_bbLefts;
+	int * m_bbRights;
+	int * m_bbTops;
+	int * m_bbBottoms;
 	bool * m_insPointFlags;
+	int * m_charsToGlyphs;	// char-to-glyph mappings
+	int m_c2gCount;
+	int * m_attGlyphs;		// attachment clusters
+	int m_attGCount;
 	int m_clickTestCount;
 	ClickTest * m_clickTests;
 	size_t m_contextBlockOutSize;
 	gr::byte * m_contextBlockOut;
 	// glyphs-to-chars
-	// chars-to-glyphs
 	// pdichwContext
 	// arrow key behavior
 	// etc.
@@ -197,7 +229,10 @@ protected:
 	void SetXPositions(int * posList);
 	void SetYPositions(int * posList);
 	void SetAdvWidths(int * advWidths);
+	void SetBBs(int * bbLefts, int * bbRights, int * bbTops, int * bbBottoms);
 	void SetInsPtFlags(bool * flags);
+	void SetCharsToGlyphs(int * stuff, int count);
+	void SetAttachedClusters(int * stuff, int count);
 	void SetClickTests(int clickTestCount, int * clickStuff);
 	void SetInputContextBlock(int contextBlockInSize, gr::byte * contextBlockIn);
 	void SetOutputContextBlock(int contextBlockOutSize, gr::byte * contextBlockIn);

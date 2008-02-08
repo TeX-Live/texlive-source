@@ -77,11 +77,12 @@ float GlyphInfo::attachedClusterAdvance() const throw()
 
 std::pair<gr::GlyphSetIterator, gr::GlyphSetIterator> GlyphInfo::attachedClusterGlyphs() const
 {
+	std::vector<int> visloutClusterMembers;
+	m_pslout->ClusterMembers(m_pseg, m_islout, visloutClusterMembers);
+	RcVector * qvislout = new RcVector(visloutClusterMembers);
 	return std::make_pair(
-		GlyphSetIterator(*m_pseg, 0, 
-			m_pslout->m_visloutClusterMembers), 
-		GlyphSetIterator(*m_pseg, m_pslout->m_visloutClusterMembers.size(),
-			m_pslout->m_visloutClusterMembers));
+		GlyphSetIterator(*m_pseg, 0, qvislout), 
+		GlyphSetIterator(*m_pseg, visloutClusterMembers.size(), qvislout));
 }
 
 size_t GlyphInfo::logicalIndex()
@@ -104,7 +105,8 @@ float GlyphInfo::advanceWidth()		// logical units
 
 float GlyphInfo::advanceHeight()	// logical units; zero for horizontal fonts
 {
-	return m_pslout->m_xysAdvY;
+	Font & font = m_pseg->getFont();
+	return m_pslout->GlyphMetricLogUnits(&font, kgmetAdvHeight);
 }
 
 float GlyphInfo::yOffset()
@@ -114,7 +116,7 @@ float GlyphInfo::yOffset()
 
 Rect GlyphInfo::bb()				// logical units
 {
-	return m_pslout->m_rectBB;
+	return m_pslout->BoundingBox(m_pseg->getFont());
 }
 
 bool GlyphInfo::isSpace()
@@ -221,13 +223,21 @@ bool GlyphInfo::erroneous()
 //:>	GlyphIterator methods
 //:>********************************************************************************************
 
-	// Constructor
+// Constructor
 GlyphIterator::GlyphIterator(Segment & seg, size_t iginf)
-: _itr(seg.m_prgginf + iginf)
+: m_pginf(seg.m_prgginf + iginf)
 {}
 
-GlyphIterator::GlyphIterator(const GlyphSetIterator &set_itr)
-: _itr(set_itr->segment().m_prgginf + set_itr->logicalIndex())
+// Copy constructor.
+// Check if the incoming iterator is null, as we cannot dereference
+//  it to get the segment, and create a null GlyphIterator.
+//  Technically this might better be an assert as converting a null
+//  GlyphSetIterator into a null GlyphIterator is pointless and suggests
+//  some kind of error.
+GlyphIterator::GlyphIterator(const GlyphSetIterator & sit)
+: m_pginf((sit == GlyphSetIterator())
+			? 0 
+			: sit->segment().m_prgginf + sit->logicalIndex())
 {}
  
 /*----------------------------------------------------------------------------------------------
@@ -236,9 +246,10 @@ GlyphIterator::GlyphIterator(const GlyphSetIterator &set_itr)
 
 GlyphSetIterator::reference GlyphSetIterator::operator*() const
 {
-	assert(_seg_ptr);
+	assert(m_pseg != 0);
+	assert(m_vit != std::vector<int>::const_iterator());
 														// in the case of a non-contiguous list
-	return _seg_ptr->m_prgginf[(*_itr) - _seg_ptr->m_isloutGinf0];
+	return m_pseg->m_prgginf[(*m_vit) - m_pseg->m_isloutGinf0];
 }
 
 

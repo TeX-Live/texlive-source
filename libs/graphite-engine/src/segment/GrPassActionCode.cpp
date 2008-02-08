@@ -10,6 +10,8 @@ Last reviewed: Not yet.
 
 Description:
     A continution of the GrPass file, including functions to run the action commands.
+    
+This comment could create a merge conflict. It can be removed.
 ----------------------------------------------------------------------------------------------*/
 
 //:>********************************************************************************************
@@ -64,8 +66,9 @@ int GrPass::RunCommandCode(GrTableManager * ptman,
 {
 	byte * pbNext = pbStart;
 
-	std::vector<int> vnStack;
+//	std::vector<int> vnStack;
 //	vnStack.EnsureSpace(128);	// make it nice and big
+    m_vnStack.clear();
 
 	gAssert(fConstraints || islot == 0);
 
@@ -85,7 +88,7 @@ int GrPass::RunCommandCode(GrTableManager * ptman,
 		nRet = RunOneCommand(ptman, fConstraints, op,
 			&pbNext, &fMustGet, &fInserting,
 			psstrmIn, psstrmOut, islot,
-			vnStack, &smf);
+			m_vnStack, &smf);
 
 		if (smf == ksmfDone)
 			return nRet;

@@ -347,7 +347,7 @@ void GrTableManager::Run(Segment * psegNew, Font * pfont,
 	m_fLogging = (pstrmLog != NULL);
 
 	int cbPrev;
-	byte * pbPrevSegDat;
+	byte * pbPrevSegDat = NULL;
 	if (psegPrev)
 		cbPrev = psegPrev->NextSegInitBuffer(&pbPrevSegDat);
 	else if (psegInit)
@@ -493,7 +493,7 @@ void GrTableManager::Run(Segment * psegNew, Font * pfont,
 			{
 				// Nothing will fit. Initialize the new segment just enough so that
 				// we can delete it.
-				InitSegmentToDelete(psegNew);
+				InitSegmentToDelete(psegNew, pfont, pchstrm);
 				return;
 			}
 		}
@@ -730,14 +730,14 @@ void GrTableManager::InitNewSegment(Segment * psegNew,
 		{
 			// Invalid empty segment.
 			Assert(ichwMin == ichwLim);
-			InitSegmentToDelete(psegNew);
+			InitSegmentToDelete(psegNew, pfont, pchstrm);
 		}
 		return;
 	}
 
 	Assert(psegNew);
 
-	psegNew->Initialize(pchstrm->String(),
+	psegNew->Initialize(pchstrm->TextSrc(),
 		ichwMin, ichwLim,
 		lbStart, lbEnd, est, fStartLine, fEndLine, m_pgreng->RightToLeft());
 
@@ -761,10 +761,18 @@ void GrTableManager::InitNewSegment(Segment * psegNew,
 	couldn't find a valid break point. Initialize it just enough so that it can be
 	deleted by the client.
 ----------------------------------------------------------------------------------------------*/
-void GrTableManager::InitSegmentToDelete(Segment * psegNew)
+void GrTableManager::InitSegmentToDelete(Segment * psegNew, Font * pfont,
+	GrCharStream * pchstrm)
 {
-	psegNew->Initialize(NULL, 0, 0, klbClipBreak, klbClipBreak, kestNothingFit,
-		false, false, false);
+	psegNew->Initialize(pchstrm->TextSrc(), 0, 0,
+		klbClipBreak, klbClipBreak, kestNothingFit, false, false,
+		m_pgreng->RightToLeft());
+
+	psegNew->SetEngine(m_pgreng);
+	psegNew->SetFont(pfont);
+	psegNew->SetJustifier(NULL); // can't justify an empty segment
+	psegNew->SetFaceName(m_pgreng->FaceName(), m_pgreng->BaseFaceName());
+	psegNew->SetPreContext(0);
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -877,7 +885,7 @@ void GrTableManager::InitSegmentAsEmpty(Segment * psegNew, Font * pfont,
 
 	Assert(psegNew);
 
-	psegNew->Initialize(pchstrm->String(), ichwMin, ichwLim,
+	psegNew->Initialize(pchstrm->TextSrc(), ichwMin, ichwLim,
 		lbStart, lbEnd, kestNoMore, fStartLine, fEndLine, m_pgreng->RightToLeft());
 
 	psegNew->SetEngine(m_pgreng);
@@ -890,18 +898,15 @@ void GrTableManager::InitSegmentAsEmpty(Segment * psegNew, Font * pfont,
 	int * pcbNextSegDat = &cbNextSegDat;
 
 	//	Initialization for (theoretical) next segment.
-	if (pbNextSegDat)
-	{
-		byte * pb = pbNextSegDat;
-		*pb++ = byte(lbEnd);
-		*pb++ = kdircNeutral;
-		*pb++ = kdircNeutral;
+	byte * pb = pbNextSegDat;
+	*pb++ = byte(lbEnd);
+	*pb++ = kdircNeutral;
+	*pb++ = kdircNeutral;
+	*pb++ = 0;
+	for (int ipass = 0; ipass < m_cpass; ipass++)
 		*pb++ = 0;
-		for (int ipass = 0; ipass < m_cpass; ipass++)
-			*pb++ = 0;
-		*pcbNextSegDat = 0;
-		psegNew->RecordInitializationForNextSeg(*pcbNextSegDat, pbNextSegDat);
-	}
+	*pcbNextSegDat = 0;
+	psegNew->RecordInitializationForNextSeg(*pcbNextSegDat, pbNextSegDat);
 
 	psegNew->SetPreContext(0);
 }
@@ -931,11 +936,12 @@ bool GrTableManager::Backtrack(int * pislotPrevBreak,
 	LineBrk * plbFound)
 {
 	int islotStartTry;
-	if (*pislotPrevBreak == ichwCallerBtLim - 1)
-	{
-		islotStartTry = *pislotPrevBreak;
-	}
-	else if (*pislotPrevBreak == -1)
+	//if (*pislotPrevBreak == ichwCallerBtLim - 1)
+	//{
+	//	islotStartTry = *pislotPrevBreak;
+	//}
+	//else
+	if (*pislotPrevBreak == -1)
 	{
 		//	If no line break has been found so far, figure out where to start trying based
 		//	on where the final stream choked.
@@ -955,6 +961,10 @@ bool GrTableManager::Backtrack(int * pislotPrevBreak,
 			islotStartTry = *pislotPrevBreak - 2;	// skip inserted LB and previous slot
 		else
 			islotStartTry = *pislotPrevBreak - 1;	// skip previous slot
+	}
+	if (ichwCallerBtLim > -1 && islotStartTry > ichwCallerBtLim - 1)
+	{
+		islotStartTry = ichwCallerBtLim - 1;
 	}
 
 	//	Determine if we want to insert an actual line-break "glyph". Don't do that if
@@ -985,7 +995,7 @@ bool GrTableManager::Backtrack(int * pislotPrevBreak,
 	Assert(*plbMin <= lbMax);
 	GrSlotStream * psstrmLB = OutputStream(m_cpassLB);
 	islotStartTry = min(islotStartTry, psstrmLB->WritePos() - 1);
-	int islotNewBreak;
+	int islotNewBreak = -1;
 	while (lb <= lbMax)
 	{
 		LineBrk lbNextToTry;
@@ -1119,17 +1129,6 @@ void GrTableManager::InitializeForNextSeg(Segment * pseg,
 	std::vector<int> vcslotSkipOffsets;
 	vcslotSkipOffsets.resize(m_cpass);
 
-	if (cbNextMax == 0 || !pbNextSegDat)
-	{
-		// Caller is not interested in cross-line-boundary contextualization.
-		Assert(cbNextMax == 0);
-		Assert(!pbNextSegDat);
-		return;
-	}
-
-	if (cbNextMax < m_cpass + 4)
-		THROW(kresInvalidArg);
-
 	byte * pb = pbNextSegDat;
 
 	if (!fNextSegNeedsContext)
@@ -1198,8 +1197,8 @@ void GrTableManager::InitializeForNextSeg(Segment * pseg,
 		if (ipass >= m_cpassLB && m_engst.m_fInitialLB)
 			islotBackupMin++; // how far we can back up--not before the start of this segment
 
-		int islotPrevRS; // corresponding slot in the previous stream for rule-start position
-		int islotPrevPC; // same for pre-context position
+		int islotPrevRS = 0; // corresponding slot in the previous stream for rule-start position
+		int islotPrevPC = 0; // same for pre-context position
 
 		//	Initially we have to include at least this many prior slots:
 		int cslotSkipOffset = 0;
@@ -1406,6 +1405,7 @@ void GrTableManager::CalculateAssociations(Segment * pseg, int csloutSurface)
 	}
 
 	AdjustAssocsForOverlaps(pseg);
+	pseg->CleanUpAssocsVectors();
 
 //	pseg->AdjustForOverlapsWithPrevSeg();	// for any characters officially in the
 											// previous segment but rendered in this one,
@@ -1774,7 +1774,7 @@ void EngineState::NextSlot(GrSlotState ** ppslotRet)
 	}
 
 	*ppslotRet = m_vslotblk[m_islotblkCurr] + m_islotNext;
-	(*ppslotRet)->GrSlotAbstract::BasicInitialize(m_cUserDefn, m_cCompPerLig, m_cFeat,
+	(*ppslotRet)->BasicInitialize(m_cUserDefn, m_cCompPerLig, m_cFeat,
 		(m_vprgnSlotVarLenBufs[m_islotblkCurr] + (m_islotNext * cnExtraPerSlot)));
 	m_islotNext++;
 }
@@ -2481,7 +2481,7 @@ void GrTableManager::CalcPositionsUpTo(int ipass, GrSlotState * pslotLast,
 				//	Only do this for slots that have actually been processed by the final
 				//	pass, because others may have intermediate values that may be changed
 				//	later. 
-				m_engst.m_islotPosNext = pslotLastBase->PosPassIndex() + psstrm->IndexOffset() + 1;
+				m_engst.m_islotPosNext = pslot->PosPassIndex() + psstrm->IndexOffset() + 1;
 				m_engst.m_xsPosXNext = xs;
 				m_engst.m_ysPosYNext = ys;
 				m_engst.m_dxsTotWidthSoFar = *pxsWidth;

@@ -1,2 +1,2 @@
-SUBDIRS = RegressionTest
+SUBDIRS = ProfileHarness RegressionTest
 EXTRA_DIST = fonterrors

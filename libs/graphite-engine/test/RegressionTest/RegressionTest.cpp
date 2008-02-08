@@ -13,12 +13,14 @@ Description:
 -------------------------------------------------------------------------------*//*:End Ignore*/
 
 #include "main.h"
+#include "MemoryUsage.h"
 
 //:>********************************************************************************************
 //:>	Global variables
 //:>********************************************************************************************
 std::ofstream g_strmLog;	// log file output stream
 std::ofstream g_strmTrace;	// debugger trace for selected tests
+std::ofstream g_strmMemUsage;
 
 int g_errorCount;
 
@@ -28,6 +30,9 @@ bool g_debugMode = false;
 bool g_silentMode = false;
 
 int g_itcaseStart = 0;  // adjust to skip to a certain test
+
+SegmentMemoryUsage g_smu;
+FontMemoryUsage g_fmu;
 
 std::string g_fontPath = ".";
 #ifdef _WIN32
@@ -119,6 +124,11 @@ int main(int argc, char* argv[])
 
 //	::ReleaseDC(NULL, g_hdc);
 
+	// Output segment memory usage information.
+	//g_strmMemUsage.open("SegMemoryUsage.log");
+	//g_smu.prettyPrint(g_strmMemUsage);
+	//g_strmMemUsage.close();
+
 	return g_errorCount;
 }
 
@@ -162,11 +172,21 @@ void RunTests(int numberOfTests, TestCase * ptcaseList)
 ----------------------------------------------------------------------------------------------*/
 int RunOneTestCase(TestCase * ptcase, Segment * psegPrev, Segment ** ppsegRet, RtTextSrc ** pptsrcRet)
 {
+#ifdef _WIN32
+	if (ptcase->Skip())
+	{
+		std::cout << "\nskipped\n";
+		g_strmLog << "skipping\n";
+		*ppsegRet = NULL;
+		return 0;
+	}
+
 	// Break into the debugger if requested.
-	//if (ptcase->RunDebugger() && ::IsDebuggerPresent())
-	//{
-	//	::DebugBreak();
-	//}
+	if (ptcase->RunDebugger() && ::IsDebuggerPresent())
+	{
+		::DebugBreak();
+	}
+#endif
 
 	int errorCount = 0;
 
@@ -209,7 +229,7 @@ int RunOneTestCase(TestCase * ptcase, Segment * psegPrev, Segment ** ppsegRet, R
 
 	//	Generate a segment.
 	LayoutEnvironment layout;
-	layout.setDumbFallback(true);
+	layout.setDumbFallback(ptcase->DumbFallback());
 	layout.setStartOfLine(true);
 	layout.setRightToLeft(ptcase->ParaRtl());
 	if (ptcase->InitWithPrevSeg())
@@ -241,9 +261,21 @@ int RunOneTestCase(TestCase * ptcase, Segment * psegPrev, Segment ** ppsegRet, R
 	}
 	catch (...)
 	{
-		OutputError(ptcase, "ERROR: generating segment; remaining tests skipped");
+		if (!ptcase->NoSegment())
+		{
+			if (ptcase->BadFont() && !ptcase->DumbFallback())
+				// Weird situation.
+				OutputError(ptcase, "ERROR: bad font with no fallback, yet a segment was expected???");
+			else
+				OutputError(ptcase, "ERROR: generating segment; remaining tests skipped");
+			errorCount++;
+		}
+		// else segment creation failed as expected
+
+		// NB: failure to create a segment due to throwing an exception seems to result in a memory
+		// leak--the FontCache object FontFace::s_pFontCache does not get deleted.
+
 		*ppsegRet = NULL;
-		errorCount++;
 		return WriteLog(errorCount);
 	}
 
@@ -253,7 +285,7 @@ int RunOneTestCase(TestCase * ptcase, Segment * psegPrev, Segment ** ppsegRet, R
 		g_strmTrace.close();
 	}
 
-	if ((*ppsegRet)->segmentTermination() == kestNothingFit)
+	if ((*ppsegRet) && (*ppsegRet)->segmentTermination() == kestNothingFit)
 	{
 		delete *ppsegRet;
 		*ppsegRet = NULL;
@@ -278,6 +310,14 @@ int RunOneTestCase(TestCase * ptcase, Segment * psegPrev, Segment ** ppsegRet, R
 	}
 
 	Segment * pseg = *ppsegRet;
+
+	pseg->calculateMemoryUsage(g_smu);
+
+	// Calculate and output font memory usage.
+	//g_fmu = Font::calculateMemoryUsage();
+	//g_strmMemUsage.open("fontMemoryUsage.log");
+	//g_fmu.prettyPrint(g_strmMemUsage);
+	//g_strmMemUsage.close();	
 
 	//	Test results.
 	int segMin = pseg->startCharacter();
@@ -336,6 +376,34 @@ int RunOneTestCase(TestCase * ptcase, Segment * psegPrev, Segment ** ppsegRet, R
 					int((*gitThis).advanceWidth()), ptcase->AdvWidth(iglyph));
 				errorCount++;
 			}
+			if (ptcase->BbTests())
+			{
+				gr::Rect rectBb = (*gitThis).bb();
+				if (int(rectBb.left) != ptcase->BbLeft(iglyph))
+				{
+					OutputErrorWithValues(ptcase, "ERROR: bb left ", iglyph,
+						int(rectBb.left), ptcase->BbLeft(iglyph));
+					errorCount++;
+				}
+				if (int(rectBb.right) != ptcase->BbRight(iglyph))
+				{
+					OutputErrorWithValues(ptcase, "ERROR: bb right ", iglyph,
+						int(rectBb.right), ptcase->BbRight(iglyph));
+					errorCount++;
+				}
+				if (int(rectBb.top) != ptcase->BbTop(iglyph))
+				{
+					OutputErrorWithValues(ptcase, "ERROR: bb top ", iglyph,
+						int(rectBb.top), ptcase->BbTop(iglyph));
+					errorCount++;
+				}
+				if (int(rectBb.bottom) != ptcase->BbBottom(iglyph))
+				{
+					OutputErrorWithValues(ptcase, "ERROR: bb bottom ", iglyph,
+						int(rectBb.bottom), ptcase->BbBottom(iglyph));
+					errorCount++;
+				}
+			}
 		}
 	}
 
@@ -356,9 +424,91 @@ int RunOneTestCase(TestCase * ptcase, Segment * psegPrev, Segment ** ppsegRet, R
 		}
 	}
 
+	int c2gi = 0;
+	while (c2gi < ptcase->CharToGlyphCount())
+	{
+		int ichar = ptcase->CharToGlyphItem(c2gi++);
+		int glyphCount = ptcase->CharToGlyphItem(c2gi++);
+		std::pair<gr::GlyphSetIterator, gr::GlyphSetIterator> glyphSet = pseg->charToGlyphs(ichar);
+		gr::GlyphSetIterator gitStart = glyphSet.first;
+		gr::GlyphSetIterator gitStop = glyphSet.second;
+		if ((gitStop - gitStart) != glyphCount)
+		{
+			OutputErrorWithValues(ptcase, "ERROR: number of glyphs for char ", ichar,
+				gitStop - gitStart, glyphCount);
+			errorCount++;
+			c2gi += glyphCount;
+		}
+		else
+		{
+			GlyphSetIterator glyphLp = glyphSet.first;
+			for (int ig = 0; ig < glyphCount; ig++)
+			{
+				if (static_cast<int>((*glyphLp).logicalIndex()) != ptcase->CharToGlyphItem(c2gi))
+				{
+					OutputErrorWithValues(ptcase, "ERROR: glyph for char ", ichar,
+						(*glyphLp).logicalIndex(), ptcase->CharToGlyphItem(c2gi));
+					errorCount++;
+				}
+				c2gi++;
+				glyphLp++;
+			}
+		}
+	}
+
+	int att = 0;
+	while (att < ptcase->AttachedGlyphCount())
+	{
+		int iglyph = ptcase->AttachedGlyphItem(att++);
+		if (iglyph > cGlyphs)
+		{
+			OutputError(ptcase, "ERROR: non-existent glyph in attachment test ", iglyph);
+			errorCount++;
+			att++;
+			att += ptcase->AttachedGlyphItem(att) + 1;
+			continue;
+		}
+
+		GlyphIterator gitThis = gitBegin + iglyph;
+		GlyphIterator gitBase = gitThis->attachedClusterBase();
+		int ibase = gitBase->logicalIndex();
+		if (ibase != ptcase->AttachedGlyphItem(att))
+		{
+			OutputErrorWithValues(ptcase, "ERROR: attachment base for glyph ", iglyph,
+				ibase, ptcase->AttachedGlyphItem(att));
+			errorCount++;
+		}
+		att++;
+		std::pair<gr::GlyphSetIterator, gr::GlyphSetIterator> glyphSet = gitThis->attachedClusterGlyphs();
+		gr::GlyphSetIterator gitStart = glyphSet.first;
+		gr::GlyphSetIterator gitStop = glyphSet.second;
+		int glyphCount = ptcase->AttachedGlyphItem(att++);
+		if ((gitStop - gitStart) != glyphCount)
+		{
+			OutputErrorWithValues(ptcase, "ERROR: number of attachments for glyph ", iglyph,
+				gitStop - gitStart, glyphCount);
+			errorCount++;
+			att += glyphCount;
+		}
+		else
+		{
+			GlyphSetIterator glyphLp = glyphSet.first;
+			for (int ig = 0; ig < glyphCount; ig++)
+			{
+				if (static_cast<int>((*glyphLp).logicalIndex()) != ptcase->AttachedGlyphItem(att))
+				{
+					OutputErrorWithValues(ptcase, "ERROR: attachment for glyph ", iglyph,
+						(*glyphLp).logicalIndex(), ptcase->AttachedGlyphItem(att));
+					errorCount++;
+				}
+				att++;
+				glyphLp++;
+			}
+		}
+	}
+
 	for (int iclicktest = 0; iclicktest < ptcase->NumberOfClickTests(); iclicktest++)
 	{
-//		POINT ptClick;
         gr::Point ptClick;
 		ptClick.x = static_cast<float>(ptcase->XClick(iclicktest));
 		ptClick.y = static_cast<float>(ptcase->YClick(iclicktest));

@@ -135,6 +135,8 @@ class GrIStream;
 
 class GrLangTable
 {
+	friend class FontMemoryUsage;
+
 public:
 	GrLangTable()
 	{
@@ -185,6 +187,7 @@ protected:
 		data16 padBIG;
 	};
 	FeatSet * m_prgfset;
+	int m_cfset;	// needed for memory instrumentation only
 
 	int FindIndex(isocode lgcode);
 };

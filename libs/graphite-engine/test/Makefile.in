@@ -110,6 +110,7 @@ PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
 REL_CODENAME = @REL_CODENAME@
+SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 SIZEOF_WCHAR_T = @SIZEOF_WCHAR_T@
@@ -162,7 +163,7 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-SUBDIRS = RegressionTest
+SUBDIRS = ProfileHarness RegressionTest
 EXTRA_DIST = fonterrors
 all: all-recursive
 

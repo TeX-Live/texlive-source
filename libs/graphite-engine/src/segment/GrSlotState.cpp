@@ -58,6 +58,8 @@ void GrSlotState::Initialize(gid16 chw, GrEngine * pgreng,
 	u_intslot * pFeatBuf = PFeatureBuf();
 	for (size_t i = 0; i < m_cnFeat; i++)
 		pFeatBuf[i].nValue = fval.m_rgnFValues[i];
+	m_ipassFsmCol = -1;
+	m_colFsm = -1;
 
 	m_ipassModified = ipass;
 	m_ichwSegOffset = ichwSegOffset;
@@ -100,6 +102,8 @@ void GrSlotState::Initialize(gid16 chw, GrEngine * pgreng,
 	m_vpslotAssoc.clear();
 	pgreng->InitSlot(this);
 	// Caller is responsible for setting m_spsl.
+	m_ipassFsmCol = -1;
+	m_colFsm = -1;
 }
 
 //	for inserting new slots after pass 0 (under-pos and unicode are irrelevant)
@@ -121,6 +125,8 @@ void GrSlotState::Initialize(gid16 chw, GrEngine * pgreng,
 	m_vpslotAssoc.clear();
 	pgreng->InitSlot(this);
 	m_spsl = kspslNone;
+	m_ipassFsmCol = -1;
+	m_colFsm = -1;
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -129,18 +135,17 @@ void GrSlotState::Initialize(gid16 chw, GrEngine * pgreng,
 ----------------------------------------------------------------------------------------------*/
 void GrSlotState::InitializeFrom(GrSlotState * pslotOld, int ipass)
 {
+	CopyFrom(pslotOld, false);
+
 	m_ipassModified = ipass;
 	m_pslotPrevState = pslotOld;
 	m_ichwSegOffset = kInvalid;
 	m_vpslotAssoc.clear();
 	m_vpslotAssoc.push_back(pslotOld);
 
-	m_dislotRootFixed = pslotOld->m_dislotRootFixed;
-	m_vdislotAttLeaves.resize(pslotOld->m_vdislotAttLeaves.size());
-	for (size_t i = 0; i < pslotOld->m_vdislotAttLeaves.size(); i++)
-		m_vdislotAttLeaves[i] = pslotOld->m_vdislotAttLeaves[i];
-
-	GrSlotAbstract::CopyFrom(pslotOld);
+	// Since we're going on to a new pass, no point in copying these:
+	m_ipassFsmCol = -1;	
+	m_colFsm = -1;
 
 	////FixAttachmentTree(pslotOld);
 }
@@ -157,17 +162,85 @@ void GrSlotState::CopyFeaturesFrom(GrSlotState * pslotSrc)
 
 /*----------------------------------------------------------------------------------------------
 	Copy the basic information.
-	Warning: this function will break if GrSlotState and subclasses are given virtual
+	Warning: the functions below will break if GrSlotState and subclasses are given virtual
 	methods. In that case, we will need to copy from the address of the first variable in
 	GrSlotAbstract.
 ----------------------------------------------------------------------------------------------*/
-void GrSlotAbstract::CopyFrom(GrSlotState * pslot)
+void GrSlotState::CopyFrom(GrSlotState * pslot, bool fCopyEverything)
+{
+	GrSlotAbstract::CopyAbstractFrom(pslot);
+	std::copy(pslot->m_prgnVarLenBuf, pslot->m_prgnVarLenBuf + CExtraSpace(), m_prgnVarLenBuf);
+
+	if (fCopyEverything)
+	{
+		Assert(false);
+		m_ipassModified = pslot->m_ipassModified;
+		m_pslotPrevState = pslot->m_pslotPrevState;
+		m_ichwSegOffset = pslot->m_ichwSegOffset;
+		m_colFsm = pslot->m_colFsm;
+		m_ipassFsmCol = pslot->m_ipassFsmCol;
+		// TODO: copy m_vpslotAssocs.
+		m_fNeutralAssocs = pslot->m_fNeutralAssocs;
+	}
+
+	m_dislotRootFixed = pslot->m_dislotRootFixed;
+
+	m_vdislotAttLeaves.resize(pslot->m_vdislotAttLeaves.size());
+	for (size_t i = 0; i < pslot->m_vdislotAttLeaves.size(); i++)
+		m_vdislotAttLeaves[i] = pslot->m_vdislotAttLeaves[i];
+
+	m_islotPosPass = pslot->m_islotPosPass;
+	m_nUnicode = pslot->m_nUnicode;
+	m_dircProc = pslot->m_dircProc;
+	m_fDirProcessed = pslot->m_fDirProcessed;
+	m_cnUserDefn = pslot->m_cnUserDefn;
+	m_cnFeat = pslot->m_cnFeat;
+	m_bStyleIndex = pslot->m_bStyleIndex;
+	m_mAdvanceX = pslot->m_mAdvanceX;
+	m_mAdvanceY = pslot->m_mAdvanceY;
+	m_mShiftX = pslot->m_mShiftX;
+	m_mShiftY = pslot->m_mShiftY;
+	m_srAttachTo = pslot->m_srAttachTo;
+	m_nAttachLevel = pslot->m_nAttachLevel;
+	m_mAttachAtX = pslot->m_mAttachAtX;
+	m_mAttachAtY = pslot->m_mAttachAtY;
+	m_mAttachAtXOffset = pslot->m_mAttachAtXOffset;
+	m_mAttachAtYOffset = pslot->m_mAttachAtYOffset;
+	m_mAttachWithX = pslot->m_mAttachWithX;
+	m_mAttachWithY = pslot->m_mAttachWithY;
+	m_mAttachWithXOffset = pslot->m_mAttachWithXOffset;
+	m_mAttachWithYOffset = pslot->m_mAttachWithYOffset;
+	m_nAttachAtGpoint = pslot->m_nAttachAtGpoint;
+	m_nAttachWithGpoint = pslot->m_nAttachWithGpoint;
+	m_fAttachMod = pslot->m_fAttachMod;
+	m_fShiftMod = pslot->m_fShiftMod;
+	m_fIgnoreAdvance = pslot->m_fIgnoreAdvance;
+
+	m_nCompositeLevel = kNegInfinity;	// uncalculated, so don't need to copy the positions??
+}
+
+void GrSlotAbstract::CopyAbstractFrom(GrSlotState * pslot)
 {
 	u_intslot * pnBufSave = m_prgnVarLenBuf;
 	*this = *pslot;
 	m_prgnVarLenBuf = pnBufSave;
 	Assert(m_prgnVarLenBuf);
-	std::copy(pslot->m_prgnVarLenBuf, pslot->m_prgnVarLenBuf + CExtraSpace(), m_prgnVarLenBuf);
+}
+
+/*----------------------------------------------------------------------------------------------
+	Initialize the output slot from the one use within the passes, with the basic information.
+	Warning: this function will break if GrSlotState and subclasses are given virtual
+	methods. In that case, we will need to copy from the address of the first variable in
+	GrSlotAbstract.
+----------------------------------------------------------------------------------------------*/
+void GrSlotOutput::InitializeOutputFrom(GrSlotState * pslot)
+{
+	CopyAbstractFrom(pslot);
+
+	// Copy just the component information, which is of length (m_cnCompPerLig * 2)
+	//std::copy(pslot->PCompRefBuf(),
+	//	pslot->PCompRefBuf() + (m_cnCompPerLig * 2),
+	//	this->PCompRefBufSlout());
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -232,7 +305,7 @@ void GrSlotState::EnsureCacheForOutput(GrTableManager * ptman)
 		m_xysGlyphWidth = 0;
 		m_xysAdvX = 0;
 		m_xysAdvY = 0;
-		m_fIsSpace = true;
+		m_bIsSpace = true;
 	}
 	else
 	{
@@ -478,7 +551,7 @@ void GrSlotState::AllComponentRefs(std::vector<int> & vichw)
 	Get the value of the component.???.ref attribute for the slot.
 	Note that 'i' is the local index for the component as defined for this glyph.
 ----------------------------------------------------------------------------------------------*/
-GrSlotState * GrSlotAbstract::CompRefSlot(int i)
+GrSlotState * GrSlotState::CompRefSlot(int i)
 {
 	Assert(i < m_cnCompPerLig);
 	if (i < m_cnCompPerLig)
@@ -624,45 +697,42 @@ float GrSlotOutput::GlyphMetricLogUnits(Font * pfont, int nMetricID)
 	return GetGlyphMetric(pfont, nMetricID, m_chwActual);
 }
 
-float GrSlotOutput::GlyphMetricLogUnits(int gmet)
-{
-	// When the font is not passed as an argument, the values better be cached!
-
-	switch (gmet)
-	{ // There may be off by one errors below, depending on what width and height mean
-	case kgmetLsb:
-		return m_xysGlyphX;
-	case kgmetRsb:
-		return (m_xysAdvX - m_xysGlyphX - m_xysGlyphWidth);
-	case kgmetBbTop:
-		return m_xysGlyphY;
-	case kgmetBbBottom:
-		return (m_xysGlyphY - m_xysGlyphHeight);
-	case kgmetBbLeft:
-		return m_xysGlyphX;
-	case kgmetBbRight:
-		return (m_xysGlyphX + m_xysGlyphWidth);
-	case kgmetBbHeight:
-		return m_xysGlyphHeight;
-	case kgmetBbWidth:
-		return m_xysGlyphWidth;
-	case kgmetAdvWidth:
-		return m_xysAdvX;
-	case kgmetAdvHeight:
-		return m_xysAdvY;
-	default:
-		Warn("GetGlyphMetric was asked for an illegal metric.");
-	};
-
-	return 0;		
-}
+//float GrSlotOutput::GlyphMetricLogUnits(int gmet) -- obsolete: no longer caching these values
+//{
+//	// When the font is not passed as an argument, the values better be cached!
+//
+//	switch (gmet)
+//	{ // There may be off by one errors below, depending on what width and height mean
+//	case kgmetLsb:
+//		return m_xysGlyphX;
+//	case kgmetRsb:
+//		return (m_xysAdvX - m_xysGlyphX - m_xysGlyphWidth);
+//	case kgmetBbTop:
+//		return m_xysGlyphY;
+//	case kgmetBbBottom:
+//		return (m_xysGlyphY - m_xysGlyphHeight);
+//	case kgmetBbLeft:
+//		return m_xysGlyphX;
+//	case kgmetBbRight:
+//		return (m_xysGlyphX + m_xysGlyphWidth);
+//	case kgmetBbHeight:
+//		return m_xysGlyphHeight;
+//	case kgmetBbWidth:
+//		return m_xysGlyphWidth;
+//	case kgmetAdvWidth:
+//		return m_xysAdvX;
+//	case kgmetAdvHeight:
+//		return m_xysAdvY;
+//	default:
+//		Warn("GetGlyphMetric was asked for an illegal metric.");
+//	};
+//
+//	return 0;		
+//}
 
 
 float GrSlotAbstract::GetGlyphMetric(Font * pfont, int nMetricID, gid16 chwGlyphID)
 {
-	//GrResult res;
-	float xysRet = 0;
-
 	GlyphMetric gmet = GlyphMetric(nMetricID);
 
 	float yAscent, yDescent;
@@ -671,91 +741,70 @@ float GrSlotAbstract::GetGlyphMetric(Font * pfont, int nMetricID, gid16 chwGlyph
 
 	if (kgmetAscent == gmet)
 	{
-		if (m_xysFontAscent != -1)
-			return m_xysFontAscent;
-		//GrResult res = pgg->get_FontAscent(&xysRet);
-		//if (ResultFailed(res))
-		//{
-		//	WARN(res);
-		//	return 0;
-		//}
+		//if (m_xysFontAscent != -1)
+		//	return m_xysFontAscent;
 		pfont->getFontMetrics(&yAscent);
-		m_xysFontAscent = xysRet;
-		if (pfont)
-			m_xysFontAscent = yAscent;
-		return xysRet;
+		//m_xysFontAscent = xysRet;
+		//if (pfont)
+		//	m_xysFontAscent = yAscent;
+		return yAscent;
 	}
 
 	if (kgmetDescent == gmet)
 	{
-		if (m_xysFontDescent != -1)
-			return m_xysFontDescent;
-		//GrResult res = pgg->get_FontDescent(&xysRet);
-		//if (ResultFailed(res))
-		//{
-		//	WARN(res);
-		//	return 0;
-		//	m_xysFontDescent = xysRet;
-		//}
+		//if (m_xysFontDescent != -1)
+		//	return m_xysFontDescent;
 		pfont->getFontMetrics(NULL, &yDescent);
-		m_xysFontDescent = xysRet;
-		if (pfont)
-			m_xysFontDescent = yDescent;
-		return xysRet;
+		//m_xysFontDescent = xysRet;
+		//if (pfont)
+		//	m_xysFontDescent = yDescent;
+		return yDescent;
 	}
 
-	if (m_xysGlyphWidth == -1)
-	{
-		//res = pgg->GetGlyphMetrics(chwGlyphID, &m_xysGlyphWidth, &m_xysGlyphHeight,
-		//	&m_xysGlyphX, &m_xysGlyphY, &m_xysAdvX, &m_xysAdvY);
-		//if (ResultFailed(res))
-		//{
-		//	//WARN(res);
-		//	//return 0;
-		//	ThrowHr(WarnHr(res));
-		//}
-
+	float xysGlyphX, xysGlyphY, xysGlyphWidth, xysGlyphHeight, xysAdvX, xysAdvY;
+	//if (m_xysGlyphWidth == -1)
+	//{
 		pfont->getGlyphMetrics(chwGlyphID, rectBb, ptAdvances);
 
-		m_xysGlyphX = rectBb.left;
-		m_xysGlyphY = rectBb.top;
-		m_xysGlyphWidth = (rectBb.right - rectBb.left);
-		m_xysGlyphHeight = (rectBb.top - rectBb.bottom);
-		m_xysAdvX = ptAdvances.x;
-		m_xysAdvY = ptAdvances.y;
+		xysGlyphX = rectBb.left;
+		xysGlyphY = rectBb.top;
+		xysGlyphWidth = (rectBb.right - rectBb.left);
+		xysGlyphHeight = (rectBb.top - rectBb.bottom);
+		xysAdvX = ptAdvances.x;
+		xysAdvY = ptAdvances.y;
 
-		m_fIsSpace = (0 == m_xysGlyphX && 0 == m_xysGlyphY); // should agree with test done in IsSpace() below
+		m_bIsSpace = (0 == xysGlyphX && 0 == xysGlyphY); // should agree with test done in IsSpace() below
 
-		if (m_fIsSpace)
+		if (m_bIsSpace == 1)
 		{
 			// White space glyph - only case where nGlyphX == nGlyphY == 0
 			// nGlyphWidth & nGlyphHeight are always set to 16 for unknown reasons, so correct.
-			m_xysGlyphWidth = m_xysGlyphHeight = 0; 
+			xysGlyphWidth = xysGlyphHeight = 0; 
 		}
-	}
+	//}
 
 	switch (gmet)
-	{ // There may be off by one errors below, depending on what width and height mean
+	{ // There may be off-by-one errors below, depending on what width and height mean
 	case kgmetLsb:
-		return m_xysGlyphX;
+		return xysGlyphX;
 	case kgmetRsb:
-		return (m_xysAdvX - m_xysGlyphX - m_xysGlyphWidth);
+		return (xysAdvX - xysGlyphX - xysGlyphWidth);
 	case kgmetBbTop:
-		return m_xysGlyphY;
+		return xysGlyphY;
 	case kgmetBbBottom:
-		return (m_xysGlyphY - m_xysGlyphHeight);
+		return (xysGlyphY - xysGlyphHeight);
 	case kgmetBbLeft:
-		return m_xysGlyphX;
+		return xysGlyphX;
 	case kgmetBbRight:
-		return (m_xysGlyphX + m_xysGlyphWidth);
+		return (xysGlyphX + xysGlyphWidth);
 	case kgmetBbHeight:
-		return m_xysGlyphHeight;
+		return xysGlyphHeight;
 	case kgmetBbWidth:
-		return m_xysGlyphWidth;
+		return xysGlyphWidth;
 	case kgmetAdvWidth:
-		return m_xysAdvX;
+		return xysAdvX;
 	case kgmetAdvHeight:
-		return m_xysAdvY;
+		return xysAdvY;
 	default:
 		Warn("GetGlyphMetric was asked for an illegal metric.");
 	};
@@ -786,19 +835,23 @@ int GrSlotState::IsSpace(GrTableManager * ptman)
 	////	ptman->State()->Font()->getGlyphMetrics(gidActual, rectBb, ptAdvances);
 	////}
 
-	GetGlyphMetric(ptman->State()->GetFont(), kgmetBbLeft, gidActual);
+	if (m_bIsSpace == -1)
+		GetGlyphMetric(ptman->State()->GetFont(), kgmetBbLeft, gidActual);
 	// One call is enough to cache the information.
 	//GetGlyphMetric(ptman->State()->Font(), kgmetBbBottom, gidActual);
 
 	// should agree with test done in GetGlyphMetric() above
-	//////m_fIsSpace = (0 == m_xysGlyphX && 0 == m_xysGlyphY);
+	//////m_bIsSpace = (0 == m_xysGlyphX && 0 == m_xysGlyphY);
 
-	return m_fIsSpace;
+	Assert(m_bIsSpace == 0 || m_bIsSpace == 1);
+
+	return m_bIsSpace;
 }
 
 bool GrSlotOutput::IsSpace()
 {
-	return m_fIsSpace;
+	Assert(m_bIsSpace == 0 || m_bIsSpace == 1);
+	return m_bIsSpace;
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -1059,9 +1112,9 @@ void GrSlotState::InitLeafMetrics(GrTableManager * ptman, GrSlotState * pslotRoo
 
 	if (IsBase())
 	{
-		//	These two are actually meaningless numbers, for the base, but set them
-		//	to something reasonable.
-		m_xsOffsetX = xsShiftX;
+		//	The x-value below has to be zero because the shift is incorporated into
+		//	m_xsRootShiftX. (m_ysRootShiftY, on the other hand, isn't used anywhere.)
+		m_xsOffsetX = 0;
 		m_ysOffsetY = ysShiftY;
 
 		m_xsRootShiftX = xsShiftX;
@@ -1383,16 +1436,14 @@ void GrSlotOutput::ExactCopyFrom(GrSlotOutput * pslout, u_intslot * pnVarLenBuf,
 	m_ichwAfterAssoc = pslout->m_ichwAfterAssoc;
 	m_cComponents = pslout->m_cComponents;
 
-	for (size_t iislout = 0; iislout < pslout->m_visloutClusterMembers.size(); iislout++)
-		m_visloutClusterMembers.push_back(pslout->m_visloutClusterMembers[iislout]);
-
     m_isloutClusterBase = pslout->m_isloutClusterBase;
+	m_disloutCluster = pslout->m_disloutCluster;
 	m_xsClusterXOffset = pslout->m_xsClusterXOffset;
 	m_xsClusterAdvance = pslout->m_xsClusterAdvance;
 	m_igbb = pslout->m_igbb;
 	m_xsAdvanceX = pslout->m_xsAdvanceX;
-	m_ysAdvanceY = pslout->m_ysAdvanceY;
-	m_rectBB = pslout->m_rectBB;
+//	m_ysAdvanceY = pslout->m_ysAdvanceY;
+//	m_rectBB = pslout->m_rectBB;
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -1404,8 +1455,24 @@ void GrSlotOutput::ShiftForDirDepthChange(float dxsSegWidth)
 	float dxsShift = dxsSegWidth - m_xsAdvanceX - (2 * m_xsPositionX);
 	int tmp; tmp = (int) dxsShift;
 	m_xsPositionX += dxsShift;
-	m_rectBB.left += dxsShift;
-	m_rectBB.right += dxsShift;
+//	m_rectBB.left += dxsShift;
+//	m_rectBB.right += dxsShift;
+}
+
+/*----------------------------------------------------------------------------------------------
+	Return the indices of all the glyphs attached to this cluster, in logical order.
+	Return an empty vector if this glyph is not the base glyph or if there are no
+	attached glyphs.
+	This method return glyph indices, not slot indices.
+----------------------------------------------------------------------------------------------*/
+void GrSlotOutput::ClusterMembers(Segment * pseg, int isloutThis, std::vector<int> & visloutRet)
+{
+	if (m_isloutClusterBase == -1 || m_isloutClusterBase == isloutThis)	// yes, a base
+		pseg->ClusterMembersForGlyph(isloutThis, m_disloutCluster, visloutRet);
+	else
+	{
+		Assert(visloutRet.size() == 0);
+	}
 }
 
 } // namespace gr

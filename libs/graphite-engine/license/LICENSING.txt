@@ -1,7 +1,7 @@
-			   Graphite 2.1 and WorldPad 0.8 Licensing
+			       Graphite 2.1 Licensing
 
 		   Copyright 1999-2006, SIL International
-			    All rights reserved.
+			        All rights reserved.
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of either:

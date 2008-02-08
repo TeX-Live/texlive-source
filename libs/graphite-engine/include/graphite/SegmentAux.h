@@ -105,11 +105,11 @@ protected:
 };
 
 inline Segment & GlyphInfo::segment() throw () {
-	return *m_pseg;
+	return * m_pseg;
 }
 
 inline const Segment & GlyphInfo::segment() const throw () {
-	return *m_pseg;
+	return * m_pseg;
 }
 
 
@@ -123,8 +123,8 @@ class GlyphIterator
 	friend class GlyphInfo;
  	friend class Segment;
 
-	// Pointers into the glyph infor store
-	GlyphInfo * _itr;
+	// Pointers into the glyph info store
+	GlyphInfo * m_pginf;
 
 protected:
 	// Constructor
@@ -132,39 +132,39 @@ protected:
 
 public:
 	// Default constructor.
-	GlyphIterator() throw (): _itr(0) {}
+	GlyphIterator() throw (): m_pginf(0) {}
 
 	explicit GlyphIterator(const GlyphSetIterator &);
 
 	// Forward iterator requirements.
-	reference	  operator*() const		{ assert(_itr); return *_itr; }
-	pointer		  operator->() const		{ return _itr; }
-	GlyphIterator	& operator++() throw()		{ ++_itr; return *this; }
-	GlyphIterator	  operator++(int) throw()	{ GlyphIterator tmp = *this; operator++(); return tmp; }
+	reference		operator*() const		{ assert(m_pginf != 0); return *m_pginf; }
+	pointer			operator->() const		{ return m_pginf; }
+	GlyphIterator &	operator++() throw()	{ ++m_pginf; return *this; }
+	GlyphIterator	operator++(int) throw()	{ GlyphIterator tmp = *this; operator++(); return tmp; }
 
 	// Bidirectional iterator requirements
-	GlyphIterator	& operator--() throw()		{ --_itr; return *this; }
-	GlyphIterator	  operator--(int) throw()	{ GlyphIterator tmp = *this; operator--(); return tmp; }
+	GlyphIterator &	operator--() throw()	{ --m_pginf; return *this; }
+	GlyphIterator	operator--(int) throw()	{ GlyphIterator tmp = *this; operator--(); return tmp; }
 
 	// Random access iterator requirements
-	reference	  operator[](difference_type n) const		{ return _itr[n]; }
-	GlyphIterator	& operator+=(difference_type n)	throw()		{ _itr += n; return *this; }
-	GlyphIterator	  operator+(difference_type n) const throw()	{ GlyphIterator r = *this; return r += n; }
-	GlyphIterator	& operator-=(difference_type n)	throw()		{ _itr -= n; return *this; }
-	GlyphIterator	  operator-(difference_type n) const throw()	{ GlyphIterator r = *this; return r += -n; }
+	reference		operator[](difference_type n) const			{ return m_pginf[n]; }
+	GlyphIterator &	operator+=(difference_type n) throw()		{ m_pginf += n; return *this; }
+	GlyphIterator	operator+(difference_type n) const throw()	{ GlyphIterator r = *this; return r += n; }
+	GlyphIterator &	operator-=(difference_type n) throw()		{ m_pginf -= n; return *this; }
+	GlyphIterator	operator-(difference_type n) const throw()	{ GlyphIterator r = *this; return r += -n; }
  
 	// Relational operators.
   	// Forward iterator requirements
-	bool	operator==(const GlyphIterator & rhs) const throw()	{ return _itr == rhs._itr; }
-	bool	operator!=(const GlyphIterator & rhs) const throw()	{ return !(*this == rhs); }
+	bool operator==(const GlyphIterator & rhs) const throw()	{ return m_pginf == rhs.m_pginf; }
+	bool operator!=(const GlyphIterator & rhs) const throw()	{ return !(*this == rhs); }
 
 	// Random access iterator requirements
-	bool	operator<(const GlyphIterator & rhs) const throw()	{ return _itr < rhs._itr; }
-	bool	operator>(const GlyphIterator & rhs) const throw()	{ return _itr > rhs._itr; }
-	bool	operator<=(const GlyphIterator & rhs) const throw()	{ return !(*this > rhs); }
-	bool	operator>=(const GlyphIterator & rhs) const throw()	{ return !(*this < rhs); }
+	bool operator<(const GlyphIterator & rhs) const throw()	{ return m_pginf < rhs.m_pginf; }
+	bool operator>(const GlyphIterator & rhs) const throw()	{ return m_pginf > rhs.m_pginf; }
+	bool operator<=(const GlyphIterator & rhs) const throw() { return !(*this > rhs); }
+	bool operator>=(const GlyphIterator & rhs) const throw() { return !(*this < rhs); }
 
-	difference_type operator-(const GlyphIterator & rhs) const throw() { return _itr - rhs._itr; }
+	difference_type operator-(const GlyphIterator & rhs) const throw() { return m_pginf - rhs.m_pginf; }
 };
 
 inline GlyphIterator operator+(const GlyphIterator::difference_type n, const GlyphIterator & rhs)
@@ -172,6 +172,40 @@ inline GlyphIterator operator+(const GlyphIterator::difference_type n, const Gly
 	return rhs + n;
 }
 
+
+/*----------------------------------------------------------------------------------------------
+	This reference-counted vector is used as the basis of GlyphSetIterator. This is because
+	multiple iterators are based on the same vector, so it needs to hang around appropriately.
+----------------------------------------------------------------------------------------------*/
+class RcVector
+{
+	friend class GlyphSetIterator;
+
+public:
+	RcVector(std::vector<int> & vn)
+	{
+		m_vn = vn;
+		m_cref = 0;
+	}
+
+protected:
+	void IncRefCount() const
+	{
+		m_cref++;
+	}
+	void DecRefCount() const
+	{
+		m_cref--;
+		if (m_cref <= 0)
+			delete this;
+	}
+
+	const std::vector<int> & Vector() const { return m_vn; };
+
+	// member variables:
+	mutable int m_cref;
+	std::vector<int> m_vn;
+};
 
 /*----------------------------------------------------------------------------------------------
 	The GlyphSetIterator class allows the Graphite client to iterate over a non-contiguous
@@ -184,54 +218,87 @@ class GlyphSetIterator
 	friend class Segment;
  
 	// Segment containing the glyphs being iterated over.
-	const Segment *	_seg_ptr;
+	const Segment *	m_pseg;
 
 	// Sometimes, in the case of character-to-glyph look-ups or attached
 	// children, we need to represent a non-contiguous list; in these cases
 	// we first map through a vector of output-slot objects into the actual 
 	// glyph-info store.
-	std::vector<int>::const_iterator _itr;
+	std::vector<int>::const_iterator m_vit;
+
+	// Store a reliable copy of the vector we are iterating over:
+	const RcVector * m_qvislout;
 
 protected:
 	// Constructor that includes output-slot mapping list, used for non-contiguous lists:
-	GlyphSetIterator(Segment & seg, size_t islout, const std::vector<int> & vislout)
-	  : _seg_ptr(&seg), _itr(vislout.begin() + islout)
-	{}
-
+	GlyphSetIterator(Segment & seg, size_t islout, RcVector * qvislout)
+		: m_pseg(&seg), m_vit(qvislout->Vector().begin() + islout)
+	{
+		m_qvislout = qvislout;
+		m_qvislout->IncRefCount();
+	}
 public:
 	// Default constructor--no output-slot mapping:
-	GlyphSetIterator() throw (): _seg_ptr(0), _itr(std::vector<int>::const_iterator())
-	{}
+	GlyphSetIterator() throw() : m_pseg(0), m_vit(std::vector<int>::const_iterator())
+	{
+		m_qvislout = NULL;
+	}
+
+	// Copy constructor:
+	GlyphSetIterator(const GlyphSetIterator & sit) throw()
+	{
+		m_pseg = sit.m_pseg;
+		m_vit = sit.m_vit;
+		m_qvislout = sit.m_qvislout;
+		if (m_qvislout)
+			m_qvislout->IncRefCount();
+	}
+	// Assignment operator:
+	GlyphSetIterator & operator=(const GlyphSetIterator & sit) throw()
+	{
+		m_pseg = sit.m_pseg;
+		m_vit = sit.m_vit;
+		m_qvislout = sit.m_qvislout;
+		if (m_qvislout)
+			m_qvislout->IncRefCount();
+		return *this;
+	}
+	// Destructor:
+	~GlyphSetIterator()
+	{
+		if (m_qvislout)
+			m_qvislout->DecRefCount();
+	}
 
 	// Forward iterator requirements.
-	reference	          operator*() const;
-	pointer		          operator->() const		{ return &(operator*()); }
-	GlyphSetIterator	& operator++() throw()		{ ++_itr; return *this; }
-	GlyphSetIterator	  operator++(int) throw()	{ GlyphSetIterator tmp = *this; operator++(); return tmp; }
+	reference			operator*() const;
+	pointer				operator->() const		{ return &(operator*()); }
+	GlyphSetIterator &	operator++() throw()	{ ++m_vit; return *this; }
+	GlyphSetIterator	operator++(int) throw()	{ GlyphSetIterator tmp = *this; operator++(); return tmp; }
 
 	// Bidirectional iterator requirements
-	GlyphSetIterator	& operator--() throw()		{ --_itr; return *this; }
-	GlyphSetIterator	  operator--(int) throw()	{ GlyphSetIterator tmp = *this; operator--(); return tmp; }
+	GlyphSetIterator &	operator--() throw()	{ --m_vit; return *this; }
+	GlyphSetIterator	operator--(int) throw()	{ GlyphSetIterator tmp = *this; operator--(); return tmp; }
 
 	// Random access iterator requirements
-	reference	          operator[](difference_type n) const		{ return *operator+(n); }
-	GlyphSetIterator	& operator+=(difference_type n)	throw()		{ _itr += n; return *this; }
-	GlyphSetIterator	  operator+(difference_type n) const throw()	{ GlyphSetIterator r = *this; return r += n; }
-	GlyphSetIterator	& operator-=(difference_type n)	throw()		{ operator+=(-n); return *this; }
-	GlyphSetIterator	  operator-(difference_type n) const throw()	{ GlyphSetIterator r = *this; return r += -n; }
+	reference			operator[](difference_type n) const			{ return *operator+(n); }
+	GlyphSetIterator &	operator+=(difference_type n) throw()		{ m_vit += n; return *this; }
+	GlyphSetIterator	operator+(difference_type n) const throw()	{ GlyphSetIterator r = *this; return r += n; }
+	GlyphSetIterator &	operator-=(difference_type n) throw()		{ operator+=(-n); return *this; }
+	GlyphSetIterator	operator-(difference_type n) const throw()	{ GlyphSetIterator r = *this; return r += -n; }
  
 	// Relational operators.
   	// Forward iterator requirements
-	bool	operator==(const GlyphSetIterator & rhs) const throw()	{ return _itr == rhs._itr; }
-	bool	operator!=(const GlyphSetIterator & rhs) const throw()	{ return !(*this == rhs); }
+	bool operator==(const GlyphSetIterator & rhs) const throw()	{ return m_vit == rhs.m_vit; }
+	bool operator!=(const GlyphSetIterator & rhs) const throw()	{ return !(*this == rhs); }
 
 	// Random access iterator requirements
-	bool	operator<(const GlyphSetIterator & rhs) const throw()	{ return _itr < rhs._itr; }
-	bool	operator>(const GlyphSetIterator & rhs) const throw()	{ return _itr > rhs._itr; }
-	bool	operator<=(const GlyphSetIterator & rhs) const throw()	{ return !(*this > rhs); }
-	bool	operator>=(const GlyphSetIterator & rhs) const throw()	{ return !(*this < rhs); }
+	bool operator<(const GlyphSetIterator & rhs) const throw()	{ return m_vit < rhs.m_vit; }
+	bool operator>(const GlyphSetIterator & rhs) const throw()	{ return m_vit > rhs.m_vit; }
+	bool operator<=(const GlyphSetIterator & rhs) const throw()	{ return !(*this > rhs); }
+	bool operator>=(const GlyphSetIterator & rhs) const throw()	{ return !(*this < rhs); }
 
-	difference_type operator-(const GlyphSetIterator & rhs) const throw()	{ return _itr - rhs._itr; }
+	difference_type operator-(const GlyphSetIterator & rhs) const throw()	{ return m_vit - rhs.m_vit; }
 };
 
 inline GlyphSetIterator operator+(const GlyphSetIterator::difference_type n, const GlyphSetIterator & rhs)
@@ -285,7 +352,7 @@ public:
 	inline void setTrailingWs(TrWsHandling twsh)		{ m_twsh = twsh; }
 	inline void setLoggingStream(std::ostream * pstrm)	{ m_pstrmLog = pstrm; }
 	inline void setDumbFallback(bool f)					{ m_fDumbFallback = f; }
-	inline void setPrevSegment(Segment * pseg)		{ m_psegPrev = pseg; }
+	inline void setPrevSegment(Segment * pseg)			{ m_psegPrev = pseg; }
 	inline void setSegmentForInit(Segment * pseg)		{ m_psegInit = pseg; }
 	inline void setJustifier(IGrJustifier * pjust)		{ m_pjust = pjust; }
 

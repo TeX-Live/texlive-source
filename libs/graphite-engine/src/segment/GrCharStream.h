@@ -42,7 +42,7 @@ public:
 	}
 
 	//	Getters:
-	ITextSource * String()		{ return m_pgts; }
+	ITextSource * TextSrc()		{ return m_pgts; }
 	int Min()					{ return m_ichrMin; }
 	int Pos()					{ return m_ichrPos; }
 	int Lim()					{ return m_ichrLim; }

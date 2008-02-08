@@ -26,11 +26,10 @@ Description:
 
 //:End Ignore
 
-class GrEngine;
-
 namespace gr
 {
-
+class GrEngine;
+class SegmentMemoryUsage;
 
 class IGrJustifier;
 class GrTableManager;
@@ -51,6 +50,7 @@ class Segment
 	friend class GlyphInfo;
 	friend class GlyphIterator;
 	friend class GlyphSetIterator;
+	friend class SegmentMemoryUsage;
 
 public:
 	// Static methods
@@ -155,7 +155,7 @@ public:
 		m_cslotRestartBackup = cslotRestartBackup;
 		m_vnSkipOffsets.resize(vnSkipOffsets.size());
 		for (size_t i = 0; i < vnSkipOffsets.size(); i++)
-			m_vnSkipOffsets[i] = vnSkipOffsets[i];
+			m_vnSkipOffsets[i] = sdata8(vnSkipOffsets[i]);
 	}
 	int NextRestartBackup()
 	{
@@ -163,11 +163,12 @@ public:
 	}
 	int RestartBackup()
 	{
-		return (m_psegPrev)? m_psegPrev->NextRestartBackup(): 0;
+		//return (m_psegPrev)? m_psegPrev->NextRestartBackup(): 0;
+		return 0;
 	}
 	int SkipOffset(int ipass)
 	{
-		return m_vnSkipOffsets[ipass];
+		return int(m_vnSkipOffsets[ipass]);
 	}
 	DirCode PreviousStrongDir()
 	{
@@ -204,9 +205,9 @@ public:
 
 	void SetFaceName(std::wstring stu, std::wstring stuBase)
 	{
-		m_stuFaceName = stu;
-		m_stuBaseFaceName = stuBase;
-		m_fUseSepBase = (m_stuBaseFaceName.size() > 0);
+//		m_stuFaceName = stu;
+//		m_stuBaseFaceName = stuBase;
+//		m_fUseSepBase = (m_stuBaseFaceName.size() > 0);
 	}
 
 	void SetEngine(GrEngine * pgreng);
@@ -238,6 +239,19 @@ public:
 	void AdjustForOverlapsWithPrevSeg();
 	void MarkSlotInPrevSeg(int ichw, int islot);
 	void MarkSlotInNextSeg(int ichw, int islot);
+
+	void CleanUpAssocsVectors()
+	{
+		for (int iv = 0; iv < m_ichwAssocsLim - m_ichwAssocsMin; iv++)
+		{
+			std::vector<int> * pvislout = m_prgpvisloutAssocs[iv];
+			if (pvislout->size() <= 1)
+			{
+				delete pvislout;
+				*(m_prgpvisloutAssocs + iv) = NULL;
+			}
+		}
+	}
 
 	GrSlotOutput * OutputSlot(int islout);
 
@@ -302,11 +316,16 @@ public:
 
 	Rect ComponentRect(GrSlotOutput * pslout, int icomp);
 
+	void ClusterMembersForGlyph(int islout, int disloutCluster, std::vector<int> & visloutRet);
+
 	//	for transduction logging:
 	// implementations are empty unless TRACING is defined
 	void LogUnderlyingToSurface(GrTableManager * ptman, std::ostream & strmOut,
 		GrCharStream * pchstrm);
 	void LogSurfaceToUnderlying(GrTableManager * ptman, std::ostream & strmOut);
+
+	// calculate memory usage
+	void calculateMemoryUsage(SegmentMemoryUsage & smu);
 
 protected:
 	//	Member variables:
@@ -340,17 +359,17 @@ protected:
 	int m_dichPreContext;		// what part of this segment affects the previous;
 								// not really used for anything right now
 
-	Segment * m_psegPrev;	// OBSOLETE
-	Segment * m_psegNext;
+//	Segment * m_psegPrev;	// OBSOLETE
+//	Segment * m_psegNext;
 
 	// Font information:
-	std::wstring m_stuFaceName;
-	std::wstring m_stuBaseFaceName;
-	bool m_fUseSepBase;
+//	std::wstring m_stuFaceName;
+//	std::wstring m_stuBaseFaceName;
+//	bool m_fUseSepBase;
 
-	float m_pixHeight; // character height of font in pixels (NOT = ascent + descent)
-	bool m_fBold;
-	bool m_fItalic;
+//	float m_pixHeight; // character height of font in pixels (NOT = ascent + descent)
+//	bool m_fBold;
+//	bool m_fItalic;
 
 	LineBrk m_lbStart;
 	LineBrk m_lbEnd;
@@ -366,8 +385,8 @@ protected:
 	float m_dysFontAscent;
 	float m_dysFontDescent;
 	float m_xysEmSquare;	// em-square of the font in display units
-	float m_xsDPI;			// DPI of device on which segment was measured
-	float m_ysDPI;
+//	float m_xsDPI;			// DPI of device on which segment was measured
+//	float m_ysDPI;
 
 	float m_dxsStretch;	// difference between actual and natural width
 	float m_dxsWidth;	// width in absence of any stretch. -1 if not computed.
@@ -404,23 +423,23 @@ protected:
 	//	Underlying-to-surface associations:
 	int * m_prgisloutBefore;			// logical first
 	int * m_prgisloutAfter;				// logical last
-	std::vector<int> * m_prgvisloutAssocs;	// all; used by range selections
+	std::vector<int> ** m_prgpvisloutAssocs;	// all; used by range selections
 
 	int * m_prgisloutLigature;	// similar to above, index of associated ligature, or kNegInfinity
 
-	int * m_prgiComponent;		// component of the ligature that the corresponding character
+	sdata8 * m_prgiComponent;	// component of the ligature that the corresponding character
 								// represents; only meaningful if corresponding item in
 								// m_prgisloutLigature is set
 
-	GrSlotStream * m_psstrm;	// TODO: rework to remove this
+//	GrSlotStream * m_psstrm;	// TODO: rework to remove this
 	int m_cslout;
 	GrSlotOutput * m_prgslout;	// final output slots
 	u_intslot * m_prgnSlotVarLenBuf;	// var-length buffer for slots--one big buffer managed by the
 								// segment, but pointed to by the slots
 
-	int m_cnUserDefn;
+//	int m_cnUserDefn;	// this information is not stored in the segment itself
 	int m_cnCompPerLig;
-	int m_cnFeat;
+//	int m_cnFeat;		// this information is not stored in the segment itself
 
 	int m_cginf;
 	int m_isloutGinf0;	// islout index for m_prgginf[0];
@@ -434,7 +453,7 @@ protected:
 								// input that need to be reprocessed when starting
 								// the next segment
 
-	std::vector<int> m_vnSkipOffsets;		// skip offset for each pass when restarting
+	std::vector<sdata8> m_vnSkipOffsets;		// skip offset for each pass when restarting
 
 	DirCode m_dircPrevStrong;		// previous strong directionality code
 	DirCode m_dircPrevTerm;			// previous terminator code, if any
@@ -447,8 +466,8 @@ protected:
 
 	void ComputeDimensions();
 
-	void SetUpGlyphInfo(GrTableManager * ptman, gid16 chwLB, int nDirDepth,
-		int islotMin, int cslot);
+	void SetUpGlyphInfo(GrTableManager * ptman, GrSlotStream * psstrmFinal,
+		gid16 chwLB, int nDirDepth, int islotMin, int cslot);
 	void SetUpLigInfo(GrTableManager * ptman, GlyphInfo & ginf, GrSlotOutput * pslout);
 
 	void InitBeforeArrayFromPrevSeg();	// obsolete
@@ -468,7 +487,7 @@ protected:
 	int UnderlyingToPhysicalSurface(int ichw, bool fBefore);
 	int LogicalToPhysicalSurface(int islout);
 	void UnderlyingToPhysicalAssocs(int ichw, std::vector<int> & viginf);
-	std::vector<int> * UnderlyingToLogicalAssocs(int ichw);
+	std::vector<int> UnderlyingToLogicalAssocs(int ichw);
 	int UnderlyingToLogicalInThisSeg(int ichw);
 	bool SameSurfaceGlyphs(int ichw1, int ichw2);
 

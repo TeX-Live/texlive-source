@@ -130,6 +130,7 @@ PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
 REL_CODENAME = @REL_CODENAME@
+SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 SIZEOF_WCHAR_T = @SIZEOF_WCHAR_T@
@@ -188,10 +189,14 @@ EXTRA_DIST = \
 	romanText.wpx \
 	xlineText.wpx \
 	grtest_arabic.ttf \
+	grtest_badVersion.ttf \
+	grtest_badCmap.ttf \
 	grtest_burmese.ttf \
 	grtest_roman.ttf \
-	grtest_xline.ttf xline.gdl \
-	Makefile.vc makedebug.bat \
+	grtest_xline.ttf \
+	xline.gdl \
+	Makefile.vc \
+	makedebug.bat \
 	readme.txt
 
 AM_CPPFLAGS = -I$(top_srcdir)/include/graphite

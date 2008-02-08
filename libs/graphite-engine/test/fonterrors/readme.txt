@@ -2,7 +2,7 @@ FONTS FOR TESTING ERROR HANDLING
 
 This directory constains a set of fonts that have been deliberately corrupted in order to test Graphite's error recovery capabilities.
 
-The "correct" behavior of the font is that vowel are rendered as lowercase, consonants as uppercase, and digits are raised vertically. For some of the fonts, recovery will be adequate to show some smart behaviors; for others the engine will revert to pure dumb rendering.
+The "correct" behavior of the font is that vowels are rendered as lowercase, consonants as uppercase, and digits are raised vertically. For some of the fonts, recovery will be adequate to show some smart behaviors; for others the engine will revert to pure dumb rendering.
 
 
 * GrErr BadGloc - errBadGloc.ttf
@@ -15,7 +15,7 @@ The "correct" behavior of the font is that vowel are rendered as lowercase, cons
 	One of the offsets to the pass information points off to somewhere nonsensical.
 
 * GrErr BadStackMachine - errStackMachine.ttf
-	Extra bytes inserted into the stack machine commands for both of the substitution rules. The engine manages to recover and handle the rule correctly in this case. (Reproduce using lowercase consonants or uppercase vowels.)
+	Extra bytes have been inserted into the stack machine commands for both of the substitution rules. The engine manages to recover and handle the rule correctly in this case. (Reproduce using lowercase consonants or uppercase vowels.)
 
 * GrErr BadSubs - errSubs.ttf
 	A PutSubs command references a non-existent replacement class. This causes the glyph to appear as a square box. (Reproduce using lowercase consonants or uppercase vowels.)

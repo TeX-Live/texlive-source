@@ -93,7 +93,7 @@ protected:
 
 /*----------------------------------------------------------------------------------------------
 	Contains runs of attribute values for all the glyphs in the font; corresponds to
-	the "Glat" table in the ECF file.
+	the "Glat" table in the font.
 
 	Hungarian: gatbl
 ----------------------------------------------------------------------------------------------*/
@@ -102,6 +102,7 @@ class GrGlyphAttrTable
 {
 	friend class GrGlyphTable;
 	friend class GrGlyphSubTable;
+	friend class FontMemoryUsage;
 
 protected:
 	//	Constructor:
@@ -129,17 +130,17 @@ protected:
 	int GlyphAttr16BitValue(int ibMin, int ibLim, byte bAttrID);
 
 protected:
-	int			m_fxdSilfVersion;		// version number of the Silf table, which is used
-									// to interpret the attribute values
+	int m_fxdSilfVersion;		// version number of the Silf table, which is used
+								// to interpret the attribute values
 
 	//	Block of variable-length glyph attribute runs, matching the format of
 	//	GrGlyphAttrRun. We don't store instances of that class here because they
 	//	are variable length, and it would be too slow to read them individually from the
-	//	ECF file. Instead, we set up a single instance in the method that accesses the values;
+	//	font. Instead, we set up a single instance in the method that accesses the values;
 	//	having this instance will help debugging. Eventually we may want to do without it,
 	//	if it would help efficiency.
-	int			m_cbEntryBufLen;	// do we really need this?
-	byte *		m_prgbBIGEntries;
+	int m_cbEntryBufLen;	// needed only for memory instrumentation
+	byte * m_prgbBIGEntries;
 
 //:Ignore
 #ifdef OLD_TEST_STUFF
@@ -155,19 +156,20 @@ public:
 };
 
 /*----------------------------------------------------------------------------------------------
-	One glyph table per font (style) file; corresponds to the "Gloc" table in the ECF.
+	One glyph table per font (style) file; corresponds to the "Gloc" table in the font.
 	Currently there is only considered to be one style per file, so there is only one of
 	these. It holds the (non-zero) glyph attribute values for every glyph in the font.
 
 	Hungarian: gstbl
 
-	Review: Eventually we may need to make a subclass that uses 32-values for the offsets,
+	Review: Eventually we may need to make a subclass that uses 32-bit values for the offsets,
 	or just use a separate array pointer in this class. Which would be preferable?
 ----------------------------------------------------------------------------------------------*/
 
 class GrGlyphSubTable
 {
 	friend class GrGlyphTable;
+	friend class FontMemoryUsage;
 
 public:
 	//	Constructor:
@@ -246,27 +248,27 @@ public:
 	}
 
 protected:
-	int					m_fxdSilfVersion;	// version number of the Silf table, which is used
-											// to interpret the attribute values
-	bool				m_fHasDebugStrings;	// are debugging strings loaded into memory?
+	int m_fxdSilfVersion;		// version number of the Silf table, which is used
+								// to interpret the attribute values
+	bool m_fHasDebugStrings;	// are debugging strings loaded into memory?
 
-	int					m_nAttrIDLim;		// number of glyph attributes
-	int					m_cComponents;		// number of initial glyph attributes that
-											// represent ligature components
-	int					m_cnCompPerLig;
+	int m_nAttrIDLim;		// number of glyph attributes
+	int m_cComponents;		// number of initial glyph attributes that
+							// represent ligature components
+	int m_cnCompPerLig;
 
-	GrGlyphAttrTable *	m_pgatbl;
-	byte *				m_prgibBIGAttrValues;		// byte offsets for glyph attr values
-	bool				m_fGlocShort;				// flag for Gloc table format
-	data16 *			m_prgibBIGGlyphAttrDebug;	// byte offsets for glyph attr debug strings
+	GrGlyphAttrTable * m_pgatbl;
+	byte * m_prgibBIGAttrValues;		// byte offsets for glyph attr values - BIG endian
+	bool m_fGlocShort;					// flag for Gloc table format
+	data16 * m_prgibBIGGlyphAttrDebug;	// byte offsets for glyph attr debug strings - BIG endian
 
-	data16	m_chwBWAttr;		// breakweight attr ID; needed for converting
-								// between versions
+	data16 m_chwBWAttr;		// breakweight attr ID; needed for converting
+							// between versions
 
 	//	Attr IDs for justify.0.stretch and justify.0.stretchHW; these must always be looked
 	//	up in tandem.
-	data16	m_chwJStrAttr;
-	data16	m_chwJStrHWAttr;
+	data16 m_chwJStrAttr;
+	data16 m_chwJStrHWAttr;
 
 	int * m_prgnDefinedComponents;	// for each glyph, cache list of component attributes that
 									// are defined
@@ -292,6 +294,7 @@ public:
 class GrGlyphTable
 {
 	friend class GrGlyphSubTable;
+	friend class FontMemoryUsage;
 
 public:
 	//	Constructor:

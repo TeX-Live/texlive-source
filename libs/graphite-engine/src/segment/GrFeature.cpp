@@ -210,6 +210,7 @@ bool GrLangTable::ReadFromFont(GrIStream * pgrstrm, int fxdVersion)
 	Assert(cb % sizeof(FeatSet) == 0); // # of bytes fits nicely into FeatSet class
 	int cfset = cb / sizeof(FeatSet);
 	m_prgfset = new FeatSet[cfset];
+	m_cfset = cfset;
 	grstrm.ReadBlockFromFont(m_prgfset, cb);
 
 	return true;

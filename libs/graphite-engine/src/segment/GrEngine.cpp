@@ -119,6 +119,8 @@ void GrEngine::BasicInit()
 	// new interface stuff:
 	m_pCmapTbl = NULL;
 	m_pNameTbl = NULL;
+	m_fCmapTblCopy = false;
+	m_fNameTblCopy = false;
 
 	m_fLogXductn = false;
 
@@ -203,10 +205,14 @@ void GrEngine::DestroyContents(bool fDestroyCmap)
 		m_pCmap_3_1 = NULL;
 		m_pCmap_3_10 = NULL;
 
-		delete[] m_pCmapTbl;
-		delete[] m_pNameTbl;
+		if (m_fCmapTblCopy)
+			delete[] m_pCmapTbl;
+		if (m_fNameTblCopy)
+			delete[] m_pNameTbl;
 		m_pCmapTbl = NULL;
 		m_pNameTbl = NULL;
+		m_fCmapTblCopy = false;
+		m_fNameTblCopy = false;
 	}
 
 	delete m_ptman;
@@ -573,6 +579,8 @@ void GrEngine::MakeSegment(
 		// Uninitialized.
 		return;   // ReturnResult(kresUnexpected);
 
+	SetCmapAndNameTables(pfont);
+
 	int segmode = ksegmodeRange; // segment from range
 	if (fJust)
 		segmode = ksegmodeJust;	// justified segment
@@ -597,7 +605,9 @@ void GrEngine::MakeSegment(
 
 	//	Find the end of the range to render with the current font.
 	int nDirDepth;
-	int ichFontLim, ichStrmLim, ichSegLim;
+	int ichFontLim;
+    int ichStrmLim = 0;
+    int ichSegLim = 0;
 	switch (segmode)
 	{
 	case ksegmodeBreak:	// find break point
@@ -653,9 +663,9 @@ void GrEngine::MakeSegment(
 
 	//	Run the tables and get back a segment.
 
-	bool fMoreText;
-	int ichCallerBtLim;
-	bool fInfiniteWidth;
+	bool fMoreText = false;
+	int ichCallerBtLim = -1;
+	bool fInfiniteWidth = false;
 	switch (segmode)
 	{
 	//case ksegmodeMms:
@@ -886,26 +896,26 @@ int GrEngine::FindFontLim(ITextSource * pgts, int ichwMinFont, int * pnDirDepth)
 	implementation of the engine can't handle.
 ----------------------------------------------------------------------------------------------*/
 bool GrEngine::CheckTableVersions(GrIStream * pgrstrm,
-		byte *silf_tbl, int lSilfStart,
-		byte *gloc_tbl, int lGlocStart,
-		byte *feat_tbl, int lFeatStart,
+		byte *pSilfTbl, int lSilfStart,
+		byte *pGlobTbl, int lGlocStart,
+		byte *pFeatTbl, int lFeatStart,
 		int * pfxdBadVersion)
 {
-	pgrstrm->OpenBuffer(silf_tbl, isizeof(int));
+	pgrstrm->OpenBuffer(pSilfTbl, isizeof(int));
     pgrstrm->SetPositionInFont(lSilfStart);
 	*pfxdBadVersion = ReadVersion(*pgrstrm);
 	pgrstrm->CloseBuffer();
 	if (*pfxdBadVersion > kSilfVersion)
 		return false;
 
-	pgrstrm->OpenBuffer(gloc_tbl, lGlocStart + isizeof(int));
+	pgrstrm->OpenBuffer(pGlobTbl, lGlocStart + isizeof(int));
 	pgrstrm->SetPositionInFont(lGlocStart);
 	*pfxdBadVersion = ReadVersion(*pgrstrm);
 	pgrstrm->CloseBuffer();
 	if (*pfxdBadVersion > kGlocVersion)
 		return false;
 
-	pgrstrm->OpenBuffer(feat_tbl, isizeof(int));
+	pgrstrm->OpenBuffer(pFeatTbl, isizeof(int));
 	pgrstrm->SetPositionInFont(lFeatStart);
 	*pfxdBadVersion = ReadVersion(*pgrstrm);
 	pgrstrm->CloseBuffer();
@@ -1062,7 +1072,7 @@ bool GrEngine::ReadSilfTable(GrIStream & grstrm, long lTableStart, int iSubTable
 	data16 chwTmp;
 	*pchwMaxGlyphID = grstrm.ReadUShortFromFont();
 
-	//	extra ascent
+	//	extra ascent and descent
 	m_mXAscent = grstrm.ReadShortFromFont();
 	m_mXDescent = grstrm.ReadShortFromFont();
 
@@ -1111,9 +1121,9 @@ bool GrEngine::ReadSilfTable(GrIStream & grstrm, long lTableStart, int iSubTable
 	bTmp = grstrm.ReadByteFromFont();
 	m_chwDirAttr = bTmp;
 
-	//	Sanity checks.
-	if (m_chwPseudoAttr > 100 || m_chwBWAttr > 100 || m_chwDirAttr > 100)
-		return false; // bad table
+	//	Sanity checks--don't bother with these, I don't seem to be able to know what are reasonable values.
+	//if (m_chwPseudoAttr > 200 || m_chwBWAttr > 200 || m_chwDirAttr > 200)
+	//	return false; // bad table
 
 	if (*pfxdSilfVersion >= 0x00020000)
 	{
@@ -1824,7 +1834,7 @@ void GrEngine::InitSlot(GrSlotState * pslot, int nUnicode)
 
 LDefaults:
 	// Otherwise, in fill defaults for some basic values.
-	if (pslot->BreakWeight() == GrSlotState::kNotYetSet)
+	if (pslot->BreakWeight() == GrSlotState::kNotYetSet8)
 	{
 		switch (nUnicode)
 		{
@@ -1839,7 +1849,7 @@ LDefaults:
 		}
 	}
 
-	if ((int)pslot->Directionality() == GrSlotState::kNotYetSet)
+	if ((int)pslot->Directionality() == GrSlotState::kNotYetSet8)
 	{
 		switch (nUnicode)
 		{

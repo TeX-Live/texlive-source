@@ -19,6 +19,7 @@
     <RightToLeft24><Boolean val="false"/></RightToLeft24>
     <DefaultSerif24><Uni>Times New Roman</Uni></DefaultSerif24>
     <DefaultSansSerif24><Uni>Arial</Uni></DefaultSansSerif24>
+    <DefaultBodyFont24><Uni>Charis SIL</Uni></DefaultBodyFont24>
     <DefaultMonospace24><Uni>Courier New</Uni></DefaultMonospace24>
     <ICULocale24><Uni>en</Uni></ICULocale24>
     <KeyboardType24><Uni>standard</Uni></KeyboardType24>
@@ -48,7 +49,7 @@
     <BasedOn17><Uni></Uni></BasedOn17>
     <Next17><Uni>Normal</Uni></Next17>
     <Rules17>
-      <Prop italic="off" bold="off" superscript="off" underline="none" fontsize="10000" fontsizeUnit="mpt" offset="0" offsetUnit="mpt" forecolor="black" backcolor="white" undercolor="black" align="leading" firstIndent="0" leadingIndent="0" trailingIndent="0" spaceBefore="0" spaceAfter="0" lineHeight="10000" lineHeightUnit="mpt" rightToLeft="0" borderTop="0" borderBottom="0" borderLeading="0" borderTrailing="0" borderColor="black" bulNumScheme="0" bulNumStartAt="1" fontFamily="&lt;default serif&gt;">
+      <Prop italic="off" bold="off" superscript="off" underline="none" fontsize="10000" fontsizeUnit="mpt" offset="0" offsetUnit="mpt" forecolor="black" backcolor="white" undercolor="black" align="leading" firstIndent="0" leadingIndent="0" trailingIndent="0" spaceBefore="0" spaceAfter="0" lineHeight="10000" lineHeightUnit="mpt" lineHeightType="atLeast" rightToLeft="0" borderTop="0" borderBottom="0" borderLeading="0" borderTrailing="0" borderColor="black" bulNumScheme="0" bulNumStartAt="1" fontFamily="&lt;default serif&gt;">
         <BulNumFontInfo backcolor="white" bold="off" fontsize="10000mpt" forecolor="black" italic="off" offset="0mpt" superscript="off" undercolor="black" underline="none" fontFamily="Times New Roman"/>
       </Prop>
     </Rules17>
@@ -116,7 +117,7 @@
     </StyleRules15>
     <Contents16>
       <Str>
-        <Run ws="en" fontsize="36000" fontsizeUnit="mpt" fontFamily="Graphite Test Roman">ẽ̀p͡sg˨˥˧ŊấĩĨm̼̀̈̄</Run>
+        <Run ws="en" fontsize="36000" fontsizeUnit="mpt" fontFamily="Graphite Test Roman">ẽ̀p͡sg˨˥˧ŊấĩĨm̼̀̈̄ffi</Run>
       </Str>
     </Contents16>
   </StTxtPara>
@@ -136,7 +137,7 @@
     </StyleRules15>
     <Contents16>
       <Str>
-        <Run ws="en" fontsize="36000" fontsizeUnit="mpt" fontFamily="Graphite Test Roman" fontVariations="1024=2,1026=1,1029=1,1032=1">ẽ̀p͡sg˨˥˧ŊấĩĨm̼̀̈̄</Run>
+        <Run ws="en" fontsize="36000" fontsizeUnit="mpt" fontFamily="Graphite Test Roman" fontVariations="1026=1,1029=1,1032=1,1024=2,1051=0">ẽ̀p͡sg˨˥˧ŊấĩĨm̼̀̈̄ffi</Run>
       </Str>
     </Contents16>
   </StTxtPara>
@@ -147,6 +148,26 @@
     <Contents16>
       <Str>
         <Run ws="en" fontsize="36000" fontsizeUnit="mpt" fontFamily="Graphite Test Roman"></Run>
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <StyleRules15>
+      <Prop rightToLeft="0" namedStyle="Normal"/>
+    </StyleRules15>
+    <Contents16>
+      <Str>
+        <Run ws="en" fontsize="20000" fontsizeUnit="mpt" fontFamily="Graphite Test Roman">stacking and bridging:</Run>
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <StyleRules15>
+      <Prop rightToLeft="0" namedStyle="Normal"/>
+    </StyleRules15>
+    <Contents16>
+      <Str>
+        <Run ws="en" fontsize="36000" fontsizeUnit="mpt" fontFamily="Graphite Test Roman">a͝a t͝a à̀͝a ʃ̀̀͝a a̖̖a ʃ̀̀a a̖̖a</Run>
       </Str>
     </Contents16>
   </StTxtPara>
