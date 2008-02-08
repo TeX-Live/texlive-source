@@ -38,7 +38,11 @@ if (not(script)) then
   os.exit(1)
 end
 
-command={'"'..perlbin..'"', '"'..script..'"'}
+if (os.type == "windows") then
+  command={'"'..perlbin..'"', '"'..script..'"'}
+else
+  command={ perlbin, script }
+end
 command[0] = perlbin
 
 for i=1, #arg do
