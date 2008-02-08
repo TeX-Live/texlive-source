@@ -24,9 +24,16 @@ kpse.set_program_name(basename)
 
 TEXDIR=kpse.var_value("SELFAUTOPARENT")
 
-os.setenv("PERL5LIB", TEXDIR.."/tlpkg/tlperl/lib")
+-- if we are on win32 we have to use the shipped perl
+ostype = os.getenv("OS")
+perlbin="perl"
+if (ostype) then
+  if string.find(ostype, "Windows") then
+    os.setenv("PERL5LIB", TEXDIR.."/tlpkg/tlperl/lib")
+    perlbin=TEXDIR.."/tlpkg/tlperl/bin/perl.exe"
+  end
+end
 
-perlbin=TEXDIR.."/tlpkg/tlperl/bin/perl.exe"
 script=kpse.find_file(basename..".pl", "texmfscripts")
 
 command={perlbin, script}
@@ -37,3 +44,4 @@ end
 
 ret=os.spawn(command)
 os.exit(ret)
+
