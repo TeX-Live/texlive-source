@@ -1,11 +1,12 @@
 #!/usr/bin/env texlua
 --*-Lua-*-
--- $Id: generate-language.texlua 6485 2008-02-01 20:15:06Z reinhardk $
+-- $Id: texlua-perl-runner 6485 2008-02-01 20:15:06Z reinhardk $
 
 -- Copyright (C) 2007 2008 Reinhard Kotucha, Norbert Preining
 -- You may freely use, modify and/or distribute this file.
 
 -- Wrapper for Perl scripts.
+-- Support for -sys variants
 
 
 if string.find(arg[0], "/") then -- UNIX path
@@ -17,8 +18,6 @@ else -- no path
 end
 
 basename=select(1, string.gsub(filename, "\.texlua$", ""))
-
-basename="generate-language"
 
 kpse.set_program_name(filename)
 
