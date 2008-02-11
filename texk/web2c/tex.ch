@@ -2221,22 +2221,36 @@ name_of_file[name_length+1]:=0;
 @z
 
 @x [29.525] l.10163 - make_name_string
+@p function make_name_string:str_number;
+var k:1..file_name_size; {index into |name_of_file|}
+begin if (pool_ptr+name_length>pool_size)or(str_ptr=max_strings)or
+ (cur_length>0) then
+  make_name_string:="?"
+else  begin for k:=1 to name_length do append_char(xord[name_of_file[k]]);
   make_name_string:=make_string;
   end;
 @y
+@p function make_name_string:str_number;
+var k:1..file_name_size; {index into |name_of_file|}
+save_area_delimiter, save_ext_delimiter: pool_pointer;
+save_name_in_progress, save_stop_at_space: boolean;
+begin if (pool_ptr+name_length>pool_size)or(str_ptr=max_strings)or
+ (cur_length>0) then
+  make_name_string:="?"
+else  begin for k:=1 to name_length do append_char(xord[name_of_file[k]]);
   make_name_string:=make_string;
   end;
   {At this point we also set |cur_name|, |cur_ext|, and |cur_area| to
    match the contents of |name_of_file|.}
-  k:=1;
+  save_area_delimiter:=area_delimiter; save_ext_delimiter:=ext_delimiter;
+  save_name_in_progress:=name_in_progress; save_stop_at_space:=stop_at_space;
   name_in_progress:=true;
-  begin_name;
   stop_at_space:=false;
   while (k<=name_length)and(more_name(name_of_file[k])) do
-    incr(k);
-  stop_at_space:=true;
-  end_name;
-  name_in_progress:=false;
+    begin incr(k); append_char(xord[name_of_file[k]]); end;
+  stop_at_space:=save_stop_at_space;
+  name_in_progress:=save_name_in_progress;
+  area_delimiter:=save_area_delimiter; ext_delimiter:=save_ext_delimiter;
 @z
 
 @x [29.526] l.10194 - stop scanning file name if we're at end-of-line.
