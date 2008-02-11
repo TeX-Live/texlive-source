@@ -3,7 +3,7 @@
 @settitle Kpathsea: A library for path searching
 
 @set version 3.5.6dev
-@set month-year January 2008
+@set month-year February 2008
 
 @c Define new indices for commands, filenames, and options.
 @defcodeindex cm
@@ -24,11 +24,12 @@
 @direntry
 * Kpathsea: (kpathsea).                       File lookup along search paths.
 * kpsewhich: (kpathsea)Invoking kpsewhich.    TeX file searching.
+* mktexfmt: (kpathsea)mktex scripts.          Format (fmt/base/mem) generation.
+* mktexlsr: (kpathsea)Filename database.      Update ls-R.
 * mktexmf: (kpathsea)mktex scripts.           MF source generation.
 * mktexpk: (kpathsea)mktex scripts.           PK bitmap generation.
 * mktextex: (kpathsea)mktex scripts.          TeX source generation.
 * mktextfm: (kpathsea)mktex scripts.          TeX font metric generation.
-* mktexlsr: (kpathsea)Filename database.      Update ls-R.
 @end direntry
 
 @copying

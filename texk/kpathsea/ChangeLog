@@ -1,3 +1,8 @@
+2008-02-11  Karl Berry  <karl@tug.org>
+
+	* install.texi: mention mktexfmt, other mktex updates.
+	(Bug report from Ken Brooks, 03 Aug 2006 15:15:03.)
+
 2008-02-08  Karl Berry  <karl@tug.org>
 
 	* texmf.in: texlive2008 to match texmf/web2c/texmf.cnf.

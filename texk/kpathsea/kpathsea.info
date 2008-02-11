@@ -4,11 +4,12 @@ This is kpathsea.info, produced by makeinfo version 4.11 from kpathsea.texi.
 
 * Kpathsea: (kpathsea).                       File lookup along search paths.
 * kpsewhich: (kpathsea)Invoking kpsewhich.    TeX file searching.
+* mktexfmt: (kpathsea)mktex scripts.          Format (fmt/base/mem) generation.
+* mktexlsr: (kpathsea)Filename database.      Update ls-R.
 * mktexmf: (kpathsea)mktex scripts.           MF source generation.
 * mktexpk: (kpathsea)mktex scripts.           PK bitmap generation.
 * mktextex: (kpathsea)mktex scripts.          TeX source generation.
 * mktextfm: (kpathsea)mktex scripts.          TeX font metric generation.
-* mktexlsr: (kpathsea)Filename database.      Update ls-R.
 END-INFO-DIR-ENTRY
 
    This file documents the Kpathsea library for path searching.
@@ -38,7 +39,7 @@ Kpathsea library
 
 This manual documents how to install and use the Kpathsea library for
 filename lookup.  It corresponds to version 3.5.6dev, released in
-January 2008.
+February 2008.
 
 * Menu:
 
@@ -59,7 +60,7 @@ File: kpathsea.info,  Node: Introduction,  Next: Installation,  Prev: Top,  Up: 
 **************
 
 This manual corresponds to version 3.5.6dev of the Kpathsea library,
-released in January 2008.
+released in February 2008.
 
    The library's fundamental purpose is to return a filename from a
 list of directories specified by the user, similar to what shells do
@@ -847,11 +848,18 @@ File: kpathsea.info,  Node: mktex scripts,  Next: Installation testing,  Prev: F
 
 If Kpathsea cannot otherwise find a file, for some file types it is
 configured by default to invoke an external program to create it
-dynamically (*note mktex configuration::).  This is most useful for
-fonts (bitmaps, TFM's, and arbitrarily-sizable Metafont sources such as
-the Sauter and EC fonts), since any given document can use fonts never
-before referenced.  Trying to build all fonts in advance is therefore
-impractical, if not impossible.
+dynamically (*note mktex configuration::).  These are collectively
+known as "`mktex' scripts", since most of them are named `mktex...'.
+
+   For example, this is useful for fonts (bitmaps, TFM's, and
+arbitrarily-sizable Metafont sources such as the Sauter and EC fonts),
+since any given document can use fonts never before referenced.
+Building all fonts in advance is therefore impractical, if not
+impossible.
+
+   It is also useful for the TeX `.fmt' (and Metafont `.base' and
+Metapost `.mem' files, *note Memory dumps: (Web2c)Memory dumps.), where
+pre-generating every format consumes a lot of both time and space.
 
    The script is passed the name of the file to create and possibly
 other arguments, as explained below.  It must echo the full pathname of
@@ -860,9 +868,9 @@ diagnostics to standard error.
 
 * Menu:
 
-* mktex configuration::
-* mktex script names::
-* mktex script arguments::
+* config: mktex configuration.
+* names: mktex script names.
+* args: mktex script arguments.
 
 
 File: kpathsea.info,  Node: mktex configuration,  Next: mktex script names,  Up: mktex scripts
@@ -870,15 +878,16 @@ File: kpathsea.info,  Node: mktex configuration,  Next: mktex script names,  Up:
 2.2.9.1 `mktex' configuration
 .............................
 
-The following file types can run an external program to create missing
-files: `pk', `tfm', `mf', `tex'; the scripts are named `mktexpk',
-`mktextfm', `mktexmf', and `mktextex'.
+The list of file types and program names that can run an external
+program to create missing files is listed in the next section.  In the
+absence of `configure' options specifying otherwise, everything but
+`mktextex' will be enabled by default.  The `configure' options to
+change the defaults are:
 
-   In the absence of `configure' options specifying otherwise,
-everything but `mktextex' will be enabled by default. The `configure'
-options to change the defaults are:
-
+     --without-mktexfmt-default
      --without-mktexmf-default
+     --without-mktexocp-default
+     --without-mktexofm-default
      --without-mktexpk-default
      --without-mktextfm-default
      --with-mktextex-default
@@ -886,6 +895,11 @@ options to change the defaults are:
    The `configure' setting is overridden if the environment variable or
 configuration file value named for the script is set; e.g., `MKTEXPK'
 (*note mktex script arguments::).
+
+   `mktexfmt' reads a file `fmtutil.cnf', typically located in
+`texmf/web2c/' to glean its configuration information.  The rest of the
+files and features in this section are primarily intended for the font
+generation scripts.
 
    As distributed, all the scripts source a file
 `texmf/web2c/mktex.cnf' if it exists, so you can override various
@@ -900,6 +914,7 @@ installed anywhere).
 
    In addition, you can configure a number of features with the
 `MT_FEATURES' variable, which you can define:
+
    * in `mktex.opt', as just mentioned;
 
    * by editing the file `mktex.opt', either before `make install' (in
@@ -996,24 +1011,34 @@ File: kpathsea.info,  Node: mktex script names,  Next: mktex script arguments,  
 2.2.9.2 `mktex' script names
 ............................
 
-The following table shows the default name of the script for each
-possible file types.  (The source is the variable `kpse_make_specs' in
-`kpathsea/tex-make.c'.)
+The following table shows the default name of the script for each of
+the file types which support runtime generation.
 
-`mktexpk'
-     Glyph fonts.
-
-`mktextex'
-     TeX input files.
+`mktexfmt'
+     (`.fmt', `.base', `.mem') TeX/Metafont/MetaPost formats.  This
+     script is also named `fmtutil', and reads `fmtutil.cnf' for
+     configuration information.
 
 `mktexmf'
-     Metafont input files.
+     (`.mf') Metafont input files.
+
+`mkocp'
+     (`.ocp') Omega compiled process files.
+
+`mkofm'
+     (`.ofm') Omega font metric files.
+
+`mktexpk'
+     (`pk') Glyph fonts.
+
+`mktextex'
+     (`.tex') TeX input files (disabled by default).
 
 `mktextfm'
-     TFM files.
+     (`.tfm') TFM files.
 
-These names are overridden by an environment variable specific to the
-program--for example, `DVIPSMAKEPK' for Dvipsk.
+These names can be overridden by an environment variable specific to
+the program--for example, `DVIPSMAKEPK' for Dvipsk.
 
    If a `mktex...' script fails, the invocation is appended to a file
 `missfont.log' (by default) in the current directory.  You can then
@@ -3601,10 +3626,13 @@ Index
 * --var-value=VARIABLE:                  Auxiliary tasks.     (line  12)
 * --version:                             Standard options.    (line  10)
 * --with options:                        configure options.   (line  16)
-* --with-mktextex-default:               mktex configuration. (line  14)
-* --without-mktexmf-default:             mktex configuration. (line  14)
-* --without-mktexpk-default:             mktex configuration. (line  14)
-* --without-mktextfm-default:            mktex configuration. (line  14)
+* --with-mktextex-default:               mktex configuration. (line  12)
+* --without-mktexfmt-default:            mktex configuration. (line  12)
+* --without-mktexmf-default:             mktex configuration. (line  12)
+* --without-mktexocp-default:            mktex configuration. (line  12)
+* --without-mktexofm-default:            mktex configuration. (line  12)
+* --without-mktexpk-default:             mktex configuration. (line  12)
+* --without-mktextfm-default:            mktex configuration. (line  12)
 * -1 debugging value:                    Debugging.           (line  23)
 * -A option to ls:                       ls-R.                (line  33)
 * -Bdynamic:                             ShellWidgetClass.    (line  45)
@@ -3706,10 +3734,10 @@ Index
 * /etc/profile:                          Unable to find files.
                                                               (line  14)
 * /etc/profile and aliases:              ls-R.                (line  21)
-* /var/tmp/texfonts:                     mktex configuration. (line 107)
+* /var/tmp/texfonts:                     mktex configuration. (line 114)
 * 2602gf:                                Unable to generate fonts.
                                                               (line  36)
-* 8.3 filenames, using:                  mktex configuration. (line  62)
+* 8.3 filenames, using:                  mktex configuration. (line  69)
 * : may not be ::                        Searching overview.  (line  13)
 * :: expansion:                          Default expansion.   (line   6)
 * @VAR@ substitutions:                   Running configure.   (line   6)
@@ -3741,7 +3769,7 @@ Index
 * ANSI C:                                TeX or Metafont failing.
                                                               (line  30)
 * append-only directories and mktexpk:   Security.            (line  36)
-* appendonlydir:                         mktex configuration. (line  54)
+* appendonlydir:                         mktex configuration. (line  61)
 * architecture-(in)dependent files, installing only: Installing files.
                                                               (line  21)
 * architectures, compiling multiple:     configure scenarios. (line  18)
@@ -3851,7 +3879,7 @@ Index
 * configuration of optional features:    configure options.   (line  16)
 * configure error from sed:              Empty Makefiles.     (line   6)
 * configure options:                     configure options.   (line   6)
-* configure options for mktex scripts:   mktex configuration. (line  14)
+* configure options for mktex scripts:   mktex configuration. (line  12)
 * configure, running:                    Running configure.   (line   6)
 * context diff:                          Bug checklist.       (line  56)
 * continuation character:                Config files.        (line  26)
@@ -3892,7 +3920,7 @@ Index
                                                               (line  29)
 * directories, changing default installation: Default path generation.
                                                               (line   6)
-* directories, making append-only:       mktex configuration. (line  55)
+* directories, making append-only:       mktex configuration. (line  62)
 * directory permissions:                 Security.            (line  51)
 * directory structure, for TeX files:    TeX directory structure.
                                                               (line   6)
@@ -3915,22 +3943,22 @@ Index
 * dlsym.c:                               dlopen.              (line  21)
 * doc files:                             Supported file formats.
                                                               (line 158)
-* DOS compatible names:                  mktex configuration. (line  62)
+* DOS compatible names:                  mktex configuration. (line  69)
 * DOS support:                           Custom installation. (line  19)
 * DOS TeX implementations:               Other TeX packages.  (line   6)
-* dosnames:                              mktex configuration. (line  61)
+* dosnames:                              mktex configuration. (line  68)
 * dot files:                             ls-R.                (line  33)
 * doubled colons:                        Default expansion.   (line   6)
-* dpiNNN directories:                    mktex configuration. (line  62)
+* dpiNNN directories:                    mktex configuration. (line  69)
 * DVI drivers:                           Kpathsea application distributions.
                                                               (line  12)
-* DVILJMAKEPK:                           mktex script names.  (line  22)
+* DVILJMAKEPK:                           mktex script names.  (line  32)
 * DVILJSIZES:                            Fallback font.       (line   6)
 * DVIPSFONTS:                            Supported file formats.
                                                               (line 227)
 * DVIPSHEADERS:                          Supported file formats.
                                                               (line 184)
-* DVIPSMAKEPK:                           mktex script names.  (line  22)
+* DVIPSMAKEPK:                           mktex script names.  (line  32)
 * DVIPSSIZES:                            Fallback font.       (line   6)
 * dynamic creation of files:             mktex scripts.       (line   6)
 * dynamic linking problems with OpenWin libraries: ShellWidgetClass.
@@ -3967,7 +3995,7 @@ Index
 * externally-built filename database:    Filename database.   (line   6)
 * extra colons:                          Default expansion.   (line   6)
 * extraclean Make target:                Cleaning up.         (line  23)
-* failed mktex... script invocation:     mktex script names.  (line  25)
+* failed mktex... script invocation:     mktex script names.  (line  35)
 * fallback font:                         Fallback font.       (line   6)
 * fallback resolutions:                  Fallback font.       (line   6)
 * fallback resolutions, overriding:      Running make.        (line  10)
@@ -3993,14 +4021,16 @@ Index
                                                               (line   6)
 * filesystem search:                     Searching overview.  (line  22)
 * floating directories:                  Searching overview.  (line  22)
+* fmtutil:                               mktex script names.  (line  10)
+* fmtutils.cnf:                          mktex configuration. (line  24)
 * font alias files:                      Fontmap.             (line   6)
 * font generation failures:              Unable to generate fonts.
                                                               (line   6)
 * font of last resort:                   Fallback font.       (line   6)
 * font set, infinite:                    mktex scripts.       (line   6)
 * fontmap files:                         Fontmap.             (line   6)
-* fontmaps:                              mktex configuration. (line  80)
-* fontname:                              mktex configuration. (line  81)
+* fontmaps:                              mktex configuration. (line  87)
+* fontname:                              mktex configuration. (line  88)
 * fontnames, arbitrary length:           Fontmap.             (line  15)
 * fonts, being created:                  Simple installation. (line  79)
 * FOOINPUTS:                             Supported file formats.
@@ -4115,7 +4145,6 @@ Index
 * kpse_init_prog:                        Calling sequence.    (line  51)
 * kpse_init_prog, and MAKETEX_MODE:      Default path features.
                                                               (line  25)
-* kpse_make_specs:                       mktex script names.  (line   6)
 * kpse_open_file:                        Calling sequence.    (line  74)
 * kpse_program_name:                     Calling sequence.    (line  16)
 * kpse_set_progname:                     Calling sequence.    (line  30)
@@ -4149,7 +4178,7 @@ Index
 * LIGFONTS:                              Supported file formats.
                                                               (line  71)
 * lines, reading arbitrary-length:       Calling sequence.    (line  83)
-* Linux File System Standard:            mktex configuration. (line 107)
+* Linux File System Standard:            mktex configuration. (line 114)
 * Linux shells and configure:            configure shells.    (line  19)
 * Linux, using Web2c:                    CD-ROM distribution. (line  16)
 * lndir for building symlink trees:      configure scenarios. (line  18)
@@ -4185,7 +4214,7 @@ Index
 * MAKETEX_MODE:                          Default path features.
                                                               (line  19)
 * memory allocation routines:            Calling sequence.    (line  83)
-* metafont driver files:                 mktex configuration. (line  87)
+* metafont driver files:                 mktex configuration. (line  94)
 * Metafont failures:                     TeX or Metafont failing.
                                                               (line   6)
 * Metafont installation:                 Unable to generate fonts.
@@ -4208,24 +4237,27 @@ Index
                                                               (line 100)
 * mismatched checksum warnings:          Suppressing warnings.
                                                               (line  17)
-* missfont.log:                          mktex script names.  (line  25)
-* MISSFONT_LOG:                          mktex script names.  (line  30)
+* missfont.log:                          mktex script names.  (line  35)
+* MISSFONT_LOG:                          mktex script names.  (line  40)
 * missing character warnings:            Suppressing warnings.
                                                               (line  20)
+* mkocp:                                 mktex script names.  (line  18)
+* mkofm:                                 mktex script names.  (line  21)
 * mktex script configuration:            mktex configuration. (line   6)
 * mktex script names:                    mktex script names.  (line   6)
 * mktex scripts:                         mktex scripts.       (line   6)
-* mktex.cnf:                             mktex configuration. (line  23)
-* mktex.opt:                             mktex configuration. (line  34)
-* mktexdir:                              mktex configuration. (line  55)
-* mktexmf:                               mktex script names.  (line  17)
-* mktexpk:                               mktex script names.  (line  11)
+* mktex.cnf:                             mktex configuration. (line  29)
+* mktex.opt:                             mktex configuration. (line  29)
+* mktexdir:                              mktex configuration. (line  62)
+* mktexfmt:                              mktex script names.  (line  10)
+* mktexmf:                               mktex script names.  (line  15)
+* mktexpk:                               mktex script names.  (line  24)
 * mktexpk , initial runs:                Simple installation. (line  79)
 * mktexpk can't guess mode:              Unable to generate fonts.
                                                               (line  12)
-* mktextex:                              mktex script names.  (line  14)
-* mktextfm:                              mktex script names.  (line  20)
-* mode directory, omitting:              mktex configuration. (line  92)
+* mktextex:                              mktex script names.  (line  27)
+* mktextfm:                              mktex script names.  (line  30)
+* mode directory, omitting:              mktex configuration. (line  99)
 * Morgan, Tim:                           History.             (line  12)
 * mostlyclean Make target:               Cleaning up.         (line  10)
 * MPINPUTS:                              Supported file formats.
@@ -4236,7 +4268,7 @@ Index
                                                               (line 108)
 * MPSUPPORT:                             Supported file formats.
                                                               (line  84)
-* MT_FEATURES:                           mktex configuration. (line  34)
+* MT_FEATURES:                           mktex configuration. (line  40)
 * multiple architectures, compiling on:  configure scenarios. (line  18)
 * multiple architectures, directories for: configure scenarios.
                                                               (line  23)
@@ -4254,8 +4286,8 @@ Index
 * NFS and ls-R:                          ls-R.                (line  40)
 * NFS CTAN access:                       Electronic distribution.
                                                               (line  17)
-* nomfdrivers:                           mktex configuration. (line  86)
-* nomode:                                mktex configuration. (line  91)
+* nomfdrivers:                           mktex configuration. (line  93)
+* nomode:                                mktex configuration. (line  98)
 * non-English typesetting:               Kpathsea application distributions.
                                                               (line  28)
 * non-Unix operating systems:            Custom installation. (line  19)
@@ -4410,7 +4442,7 @@ Index
                                                               (line  10)
 * shells and configure:                  configure shells.    (line   6)
 * simple installation:                   Simple installation. (line   6)
-* site overrides for mktex...:           mktex configuration. (line  23)
+* site overrides for mktex...:           mktex configuration. (line  29)
 * size of distribution archives:         Disk space.          (line   6)
 * skeleton TeX directory:                TeX directory structure.
                                                               (line   6)
@@ -4431,15 +4463,15 @@ Index
 * static linking:                        ShellWidgetClass.    (line  39)
 * static linking and dlsym:              dlopen.              (line   6)
 * string routines:                       Calling sequence.    (line  83)
-* strip:                                 mktex configuration. (line 101)
-* stripsupplier:                         mktex configuration. (line  95)
-* striptypeface:                         mktex configuration. (line  98)
+* strip:                                 mktex configuration. (line 108)
+* stripsupplier:                         mktex configuration. (line 102)
+* striptypeface:                         mktex configuration. (line 105)
 * subdirectory searching:                Subdirectory expansion.
                                                               (line   6)
 * suggestions, making:                   Introduction.        (line  27)
 * Sun 2:                                 History.             (line  12)
 * Sun OpenWin patches:                   ShellWidgetClass.    (line  29)
-* supplier directory, omitting:          mktex configuration. (line  96)
+* supplier directory, omitting:          mktex configuration. (line 103)
 * supported file formats:                Supported file formats.
                                                               (line   6)
 * suppressing warnings:                  Suppressing warnings.
@@ -4489,7 +4521,6 @@ Index
                                                               (line  16)
 * tex-k-request@mail.tug.org:            Mailing lists.       (line   7)
 * tex-k@mail.tug.org (bug address):      Reporting bugs.      (line   8)
-* tex-make.c:                            mktex script names.  (line   6)
 * TEX_HUSH <1>:                          Suppressing warnings.
                                                               (line   6)
 * TEX_HUSH:                              Searching overview.  (line  56)
@@ -4533,11 +4564,11 @@ Index
 * TEXMFINI:                              Supported file formats.
                                                               (line  24)
 * TEXMFLOG:                              Logging.             (line  10)
-* TEXMFOUTPUT:                           mktex script names.  (line  30)
+* TEXMFOUTPUT:                           mktex script names.  (line  40)
 * TEXMFSCRIPTS:                          Supported file formats.
                                                               (line 164)
-* TEXMFVAR:                              mktex configuration. (line 117)
-* texmfvar:                              mktex configuration. (line 116)
+* TEXMFVAR:                              mktex configuration. (line 124)
+* texmfvar:                              mktex configuration. (line 123)
 * TEXPICTS:                              Supported file formats.
                                                               (line  62)
 * TEXPKS:                                Supported file formats.
@@ -4567,7 +4598,7 @@ Index
                                                               (line 181)
 * tug.org:                               unixtex.ftp.         (line   6)
 * tug@tug.org:                           Introduction.        (line  46)
-* typeface directory, omitting:          mktex configuration. (line  99)
+* typeface directory, omitting:          mktex configuration. (line 106)
 * ucbinclude, avoiding:                  Running make.        (line  44)
 * Ultrix shells and configure:           configure shells.    (line  25)
 * unable to find files:                  Unable to find files.
@@ -4586,16 +4617,16 @@ Index
 * unreadable files:                      Searching overview.  (line  56)
 * unusable ls-R warning:                 ls-R.                (line  45)
 * usage patterns, finding:               Logging.             (line   6)
-* USE_TEXMFVAR:                          mktex configuration. (line 122)
-* USE_VARTEXFONTS:                       mktex configuration. (line 112)
+* USE_TEXMFVAR:                          mktex configuration. (line 129)
+* USE_VARTEXFONTS:                       mktex configuration. (line 119)
 * Usenet TeX newsgroup:                  Mailing lists.       (line  29)
 * USERPROFILE, as ~ expansion:           Tilde expansion.     (line   6)
-* varfonts:                              mktex configuration. (line 106)
+* varfonts:                              mktex configuration. (line 113)
 * variable expansion:                    Variable expansion.  (line   6)
 * variable.c:                            Variable expansion.  (line  32)
 * variable.h:                            Programming with config files.
                                                               (line  10)
-* VARTEXFONTS:                           mktex configuration. (line 107)
+* VARTEXFONTS:                           mktex configuration. (line 114)
 * VAX 11/750:                            History.             (line  12)
 * version number, of Kpathsea:           Kpathsea application distributions.
                                                               (line   6)
@@ -4635,7 +4666,7 @@ Index
 * XDEFS:                                 Running make.        (line  23)
 * XDVIFONTS:                             Supported file formats.
                                                               (line 227)
-* XDVIMAKEPK:                            mktex script names.  (line  22)
+* XDVIMAKEPK:                            mktex script names.  (line  32)
 * XDVISIZES:                             Fallback font.       (line   6)
 * XLDFLAGS:                              Running make.        (line  29)
 * XLOADLIBES:                            Running make.        (line  32)
@@ -4649,85 +4680,85 @@ Index
 
 
 Tag Table:
-Node: Top1475
-Node: Introduction2124
-Node: History4106
-Node: Installation8198
-Node: Simple installation8988
-Node: Custom installation12571
-Node: Disk space13745
-Node: Kpathsea application distributions14629
-Node: Changing search paths15744
-Node: Default path features16926
-Node: Default path generation19062
-Node: Running configure20505
-Node: configure shells21556
-Node: configure options22608
-Node: configure environment24115
-Node: configure scenarios25917
-Node: Shared library27503
-Node: Running make28517
-Node: Installing files30564
-Node: Cleaning up32511
-Node: Filename database generation33559
-Node: mktex scripts34126
-Node: mktex configuration35083
-Node: mktex script names40627
-Node: mktex script arguments41725
-Node: Installation testing42615
-Node: Security42979
-Node: TeX directory structure45546
-Node: unixtex.ftp49968
-Node: Electronic distribution51983
-Node: CD-ROM distribution54748
-Node: Other TeX packages55718
-Node: Reporting bugs57014
-Node: Bug checklist57754
-Node: Mailing lists61456
-Node: Debugging62815
-Node: Logging67887
-Node: Common problems69757
-Node: Unable to find files70588
-Node: Slow path searching72999
-Node: Unable to generate fonts74376
-Node: TeX or Metafont failing76885
-Node: Empty Makefiles78763
-Node: XtStrings79993
-Node: dlopen80829
-Node: ShellWidgetClass81647
-Node: Pointer combination warnings83279
-Node: Path searching83668
-Node: Searching overview84315
-Node: Path sources87687
-Node: Config files88758
-Node: Path expansion92158
-Node: Default expansion93107
-Node: Variable expansion95177
-Node: Tilde expansion96580
-Node: Brace expansion97560
-Node: KPSE_DOT expansion98665
-Node: Subdirectory expansion99178
-Node: Filename database101527
-Node: ls-R102841
-Node: Filename aliases105735
-Node: Database format106913
-Node: Invoking kpsewhich107926
-Node: Path searching options108803
-Node: Auxiliary tasks115452
-Node: Standard options117273
-Node: TeX support117593
-Node: Supported file formats118884
-Node: File lookup126032
-Node: Glyph lookup127323
-Node: Basic glyph lookup128450
-Node: Fontmap129329
-Node: Fallback font131946
-Node: Suppressing warnings132911
-Node: Programming134016
-Node: Programming overview134529
-Node: Calling sequence136805
-Node: Program-specific files141834
-Node: Programming with config files142872
-Node: Index144172
+Node: Top1555
+Node: Introduction2205
+Node: History4188
+Node: Installation8280
+Node: Simple installation9070
+Node: Custom installation12653
+Node: Disk space13827
+Node: Kpathsea application distributions14711
+Node: Changing search paths15826
+Node: Default path features17008
+Node: Default path generation19144
+Node: Running configure20587
+Node: configure shells21638
+Node: configure options22690
+Node: configure environment24197
+Node: configure scenarios25999
+Node: Shared library27585
+Node: Running make28599
+Node: Installing files30646
+Node: Cleaning up32593
+Node: Filename database generation33641
+Node: mktex scripts34208
+Node: mktex configuration35485
+Node: mktex script names41304
+Node: mktex script arguments42695
+Node: Installation testing43585
+Node: Security43949
+Node: TeX directory structure46516
+Node: unixtex.ftp50938
+Node: Electronic distribution52953
+Node: CD-ROM distribution55718
+Node: Other TeX packages56688
+Node: Reporting bugs57984
+Node: Bug checklist58724
+Node: Mailing lists62426
+Node: Debugging63785
+Node: Logging68857
+Node: Common problems70727
+Node: Unable to find files71558
+Node: Slow path searching73969
+Node: Unable to generate fonts75346
+Node: TeX or Metafont failing77855
+Node: Empty Makefiles79733
+Node: XtStrings80963
+Node: dlopen81799
+Node: ShellWidgetClass82617
+Node: Pointer combination warnings84249
+Node: Path searching84638
+Node: Searching overview85285
+Node: Path sources88657
+Node: Config files89728
+Node: Path expansion93128
+Node: Default expansion94077
+Node: Variable expansion96147
+Node: Tilde expansion97550
+Node: Brace expansion98530
+Node: KPSE_DOT expansion99635
+Node: Subdirectory expansion100148
+Node: Filename database102497
+Node: ls-R103811
+Node: Filename aliases106705
+Node: Database format107883
+Node: Invoking kpsewhich108896
+Node: Path searching options109773
+Node: Auxiliary tasks116422
+Node: Standard options118243
+Node: TeX support118563
+Node: Supported file formats119854
+Node: File lookup127002
+Node: Glyph lookup128293
+Node: Basic glyph lookup129420
+Node: Fontmap130299
+Node: Fallback font132916
+Node: Suppressing warnings133881
+Node: Programming134986
+Node: Programming overview135499
+Node: Calling sequence137775
+Node: Program-specific files142804
+Node: Programming with config files143842
+Node: Index145142
 
 End Tag Table

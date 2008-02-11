@@ -858,11 +858,20 @@ fresh version every so often.
 @cindex EC fonts, and dynamic source creation
 If Kpathsea cannot otherwise find a file, for some file types it is
 configured by default to invoke an external program to create it
-dynamically (@pxref{mktex configuration}).  This is most useful for
-fonts (bitmaps, TFM's, and arbitrarily-sizable Metafont sources such as
-the Sauter and EC fonts), since any given document can use fonts never
-before referenced.  Trying to build all fonts in advance is therefore
-impractical, if not impossible.
+dynamically (@pxref{mktex configuration}).  These are collectively
+known as @dfn{@code{mktex} scripts}, since most of them are named
+@code{mktex...}.
+
+For example, this is useful for fonts (bitmaps, TFM's, and
+arbitrarily-sizable Metafont sources such as the Sauter and EC fonts),
+since any given document can use fonts never before referenced.
+Building all fonts in advance is therefore impractical, if not
+impossible.
+
+It is also useful for the @TeX{} @samp{.fmt} (and Metafont
+@samp{.base} and Metapost @samp{.mem} files, @pxref{Memory
+dumps,,,Web2c,web2c}), where pre-generating every format consumes a
+lot of both time and space.
 
 The script is passed the name of the file to create and possibly other
 arguments, as explained below.  It must echo the full pathname of the
@@ -870,9 +879,9 @@ file it created (and nothing else) to standard output; it can write
 diagnostics to standard error.
 
 @menu
-* mktex configuration::
-* mktex script names::
-* mktex script arguments::
+* config: mktex configuration.
+* names: mktex script names.
+* args: mktex script arguments.
 @end menu
 
 
@@ -884,22 +893,25 @@ diagnostics to standard error.
 @cindex enabling @file{mktex} scripts
 @cindex disabling @file{mktex} scripts
 
-The following file types can run an external program to create missing
-files: @file{pk}, @file{tfm}, @file{mf}, @file{tex}; the scripts are
-named @file{mktexpk}, @file{mktextfm}, @file{mktexmf}, and
-@file{mktextex}.
-
-In the absence of @code{configure} options specifying otherwise,
-everything but @file{mktextex} will be enabled by default. The
-@code{configure} options to change the defaults are:
+The list of file types and program names that can run an external
+program to create missing files is listed in the next section.  In the
+absence of @code{configure} options specifying otherwise, everything
+but @file{mktextex} will be enabled by default.  The @code{configure}
+options to change the defaults are:
 
 @cindex @code{configure} options for @file{mktex} scripts
+@opindex --without-mktexfmt-default
 @opindex --without-mktexmf-default
+@opindex --without-mktexocp-default
+@opindex --without-mktexofm-default
 @opindex --without-mktexpk-default
 @opindex --without-mktextfm-default
 @opindex --with-mktextex-default
 @example
+--without-mktexfmt-default
 --without-mktexmf-default
+--without-mktexocp-default
+--without-mktexofm-default
 --without-mktexpk-default
 --without-mktextfm-default
 --with-mktextex-default
@@ -909,23 +921,32 @@ The @code{configure} setting is overridden if the environment variable
 or configuration file value named for the script is set; e.g.,
 @file{MKTEXPK} (@pxref{mktex script arguments}).
 
+@flindex fmtutils.cnf
+@code{mktexfmt} reads a file @file{fmtutil.cnf}, typically located in
+@file{texmf/web2c/} to glean its configuration information.  The rest
+of the files and features in this section are primarily intended for
+the font generation scripts.
+
 @flindex mktex.cnf
+@flindex mktex.opt
 @cindex site overrides for @code{mktex@dots{}}
 As distributed, all the scripts source a file
-@file{texmf/web2c/mktex.cnf} if it exists, so you can override
-various defaults.  See @file{mktex.opt}, for instance, which defines
-the default mode, resolution, some special directory names, etc.  If you
-prefer not to change the distributed scripts, you can simply create
-@file{mktex.cnf} with the appropriate definitions (you do not need to
-create it if you have nothing to put in it).  @file{mktex.cnf} has no
-special syntax; it's an arbitrary Bourne shell script.  The distribution
-contains a sample @file{mktex.cnf} for you to copy and modify as you
-please (it is not installed anywhere).
+@file{texmf/web2c/mktex.cnf} if it exists, so you can override various
+defaults.  
+See @file{mktex.opt}, for instance, which defines the default mode,
+resolution, some special directory names, etc.  If you prefer not to
+change the distributed scripts, you can simply create @file{mktex.cnf}
+with the appropriate definitions (you do not need to create it if you
+have nothing to put in it).  @file{mktex.cnf} has no special syntax;
+it's an arbitrary Bourne shell script.  The distribution contains a
+sample @file{mktex.cnf} for you to copy and modify as you please (it
+is not installed anywhere).
 
 @flindex mktex.opt
 @vindex MT_FEATURES
 In addition, you can configure a number of features with the
 @code{MT_FEATURES} variable, which you can define:
+
 @itemize @bullet
 @item
 in @file{mktex.opt}, as just mentioned;
@@ -1051,34 +1072,46 @@ feature is enabled, and if set to @samp{0}, the feature is disabled.
 @cindex @file{mktex} script names
 @cindex names for @file{mktex} scripts
 
-@flindex tex-make.c
-@vindex kpse_make_specs
 The following table shows the default name of the script for each
-possible file types.  (The source is the variable @code{kpse_make_specs}
-in @file{kpathsea/tex-make.c}.)
+of the file types which support runtime generation.
 
 @table @file
-@item mktexpk
-@pindex mktexpk
-Glyph fonts.
-
-@item mktextex
-@pindex mktextex
-@TeX{} input files.
+@item mktexfmt
+@pindex mktexfmt
+@pindex fmtutil
+(@samp{.fmt}, @samp{.base}, @samp{.mem}) @TeX{}/Metafont/MetaPost
+formats.  This script is also named @command{fmtutil}, and reads
+@file{fmtutil.cnf} for configuration information.
 
 @item mktexmf
 @pindex mktexmf
-Metafont input files.
+(@samp{.mf}) Metafont input files.
+
+@item mkocp
+@pindex mkocp
+(@samp{.ocp}) Omega compiled process files.
+
+@item mkofm
+@pindex mkofm
+(@samp{.ofm}) Omega font metric files.
+
+@item mktexpk
+@pindex mktexpk
+(@samp{pk}) Glyph fonts.
+
+@item mktextex
+@pindex mktextex
+(@samp{.tex}) @TeX{} input files (disabled by default).
 
 @item mktextfm
 @pindex mktextfm
-TFM files.
+(@samp{.tfm}) TFM files.
 @end table
 
 @vindex DVIPSMAKEPK
 @vindex XDVIMAKEPK
 @vindex DVILJMAKEPK
-@noindent These names are overridden by an environment variable specific
+@noindent These names can be overridden by an environment variable specific
 to the program---for example, @code{DVIPSMAKEPK} for Dvipsk.
 
 @comment next two paragraphs are repeated in dvips.texi
@@ -1125,29 +1158,6 @@ A directory name. If the directory is absolute, it is used as-is.
 Otherwise, it is appended to the root destination directory set in the
 script.
 @end table
-
-@c  The feature mentioned here doesn't seem to be implemented.
-@c  Worse, the variable name clashed with the "switch" used to select
-@c  whether a mktex program is run at all.  However, a dearth of
-@c  complains suggests that no-one was using it anyway.
-@c
-@c @vindex MKTEXPK @r{environment variable}
-@c @cindex specification for @code{mktexpk}
-@c You can change the specification for the arguments passed to the
-@c external script by setting the environment variable named as the script
-@c name, but all capitals---@code{MKTEXPK}, for example.  If you've
-@c changed the script name by setting (say) @code{DVIPSMAKEPK} to
-@c @samp{foo}, then the spec is taken from the environment variable
-@c @code{FOO}.
-@c
-@c The spec can contain any variable references, to the above variables or
-@c any others.  As an example, the default spec for @code{mktexpk} is:
-@c @example
-@c $KPATHSEA_DPI $MAKETEX_BASE_DPI $MAKETEX_MAG $MAKETEX_MODE
-@c @end example
-@c
-@c @noindent The convention of passing the name of the file to be created
-@c as the first argument cannot be changed.
 
 
 @node Installation testing 
