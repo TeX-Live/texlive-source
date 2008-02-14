@@ -1,10 +1,11 @@
 AC_PREREQ(2.54)
-AC_INIT(teckit, 2.1.5, jonathan_kew@sil.org)
+AC_INIT(teckit, 2.5.1, jonathan_kew@sil.org)
 AM_CONFIG_HEADER([config.h])
 AC_CONFIG_SRCDIR([source/UnicodeNames.cpp])
+AC_CANONICAL_SYSTEM
+
 AM_INIT_AUTOMAKE
 
-# Optional features
 AM_MAINTAINER_MODE
 
 # Checks for programs.
@@ -13,26 +14,44 @@ AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 
-# Checks for libraries.
-## AC_CHECK_LIB(z, compress)
-sinclude(../zlib/withenable.ac)
-sinclude(../zlib/zlib.ac)
+if test "${target_os}" = "mingw32"; then
+AC_PROG_RC
+fi
 
-## omit this for TL - we don't need sfconv
-## AC_CHECK_LIB(expat, XML_ExpatVersion)
-## AM_CONDITIONAL(SYSTEM_EXPAT, test x$ac_cv_lib_expat_XML_ExpatVersion = xyes)
+AC_ARG_WITH(old-lib-names,
+[  --with-old-lib-names    Use old library names (for Windows only)],
+[case "${withval}" in
+  yes) oldnames=true ;;
+  no)  oldnames=false ;;
+  *) AC_MSG_ERROR(bad value ${withval} for --with-old-lib-names) ;;
+esac],[oldnames=false])
+AM_CONDITIONAL(OLD_LIB_NAMES, test x$oldnames = xtrue)
+
+sinclude(../../libs/zlib/withenable.ac)
+sinclude(../../libs/zlib/zlib.ac)
+
+# Checks for libraries.
+AC_CHECK_LIB(z, compress)
+AM_CONDITIONAL(SYSTEM_ZLIB, test x$ac_cv_lib_z_compress = xyes)
+SYSTEM_ZLIB=no
 
 # Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS([limits.h malloc.h memory.h stddef.h stdlib.h string.h])
+#AC_CHECK_HEADERS([limits.h malloc.h memory.h stddef.h stdlib.h string.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 #AC_TYPE_SIZE_T
+#AC_STRUCT_TM
+#AC_CHECK_SIZEOF(wchar_t)
+#AC_SUBST(SIZEOF_WCHAR_T)
 
 # Checks for library functions.
-AC_FUNC_MALLOC
-AC_FUNC_MEMCMP
-AC_FUNC_REALLOC
+#AC_FUNC_ERROR_AT_LINE
+#AC_FUNC_MALLOC
+#AC_FUNC_MEMCMP
+#AC_FUNC_REALLOC
+#AC_FUNC_VPRINTF
+#AC_CHECK_FUNCS([isascii memmove memset strcasecmp strchr strrchr strtoul])
 AC_C_BIGENDIAN
 
 # Enable debug
@@ -52,6 +71,36 @@ else
     CFLAGS="$CFLAGS -DNDEBUG"
     CXXFLAGS="$CXXFLAGS -DNDEBUG"
 fi
+
+# Enable final
+if test "$enable_final" = yes; then
+  CFLAGS="-O3 -DNDEBUG"
+  CXXFLAGS="-O3 -DNDEBUG"
+fi
+
+# Enable profile
+if test "$enable_profile" = yes; then
+  CFLAGS="$CFLAGS -pg "
+  CXXFLAGS="$CXXFLAGS -pg "
+fi
+if test "$enable_profilefn" = yes; then
+  CFLAGS="$CFLAGS -g -finstrument-functions "
+  CXXFLAGS="$CXXFLAGS -g -finstrument-functions "
+  LIBS="$LIBS -g -finstrument-functions -lfnccheck "
+fi
+
+# We only want expat for sfconv, so remember the libs setting without it
+# (this seems really hacky, but I don't know the proper way....!)
+noexpat_CFLAGS="$CFLAGS"
+noexpat_LIBS="$LIBS"
+AC_CHECK_LIB(expat, XML_ExpatVersion)
+AM_CONDITIONAL(SYSTEM_EXPAT, test x$ac_cv_lib_expat_XML_ExpatVersion = xyes)
+expat_CFLAGS="$CFLAGS"
+expat_LIBS="$LIBS"
+CFLAGS="$noexpat_CFLAGS"
+LIBS="$noexpat_LIBS"
+AC_SUBST(expat_CFLAGS)
+AC_SUBST(expat_LIBS)
 
 AC_CONFIG_FILES([ Makefile lib/Makefile bin/Makefile docs/Makefile test/Makefile])
 

@@ -16,6 +16,7 @@ Description:
 	Common types and defines for the engine and compiler
 
 History:
+	16-Sep-2006		jk	updated version to 2.4 (adding new compiler APIs for Bob E)
 	23-May-2005		jk	patch for 64-bit architectures (thanks to Ulrik P)
 	18-Mar-2005		jk	updated minor version for 2.3 (engine unchanged, XML option in compiler)
 	23-Sep-2003		jk	updated for version 2.1 - extended status values
@@ -25,7 +26,7 @@ History:
 #ifndef __TECkit_Common_H__
 #define __TECkit_Common_H__
 
-#define	kCurrentTECkitVersion	0x00020003	/* 16.16 version number */
+#define	kCurrentTECkitVersion	0x00020004	/* 16.16 version number */
 
 #ifndef __MACTYPES__
 #ifndef MAC_TYPES	/* these are all predefined if using a Mac prefix */

@@ -1,6 +1,6 @@
 package Encode::TECkit;
 
-=head1 TITLE
+=head1 NAME
 
 Encode::TECkit - TECkit Encode interface
 
@@ -31,6 +31,8 @@ normalizer or encoding form converter. Use C<Unicode::Normalize> and (un)pack fo
 require DynaLoader;
 @ISA = qw(DynaLoader);
 
+$VERSION = 0.05;
+
 bootstrap Encode::TECkit;
 
 my (%forms) = ('nfc' => 0x100, 'nfd' => 0x200);
@@ -60,7 +62,7 @@ cleared, then the direction is the opposite (Unicode to bytes).
 =item -style
 
 This specifies what form the data should be converted to. The only sensible values
-are: 1 for bytes and 2 for UTF-8.
+are: 1 for bytes, 2 for UTF-8 and 3 for Unicode to Unicode translation.
 
 =back
 
@@ -85,6 +87,9 @@ sub new
     
     if ($opts{'-form'})
     { $form = $forms{lc($opts{'-form'})}; }
+    else
+    { $form = 0; }
+
     if ($opts{'-raw'})
     { 
         ($res, $hr) = new_conv($fname, $opts{'-forward'}, $opts{'-style'} + $form);

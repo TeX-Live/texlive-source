@@ -25,7 +25,12 @@ using namespace std;
 
 #ifndef platformUTF16
 #ifdef __APPLE__
+#include <TargetConditionals.h>
+#if TARGET_RT_BIG_ENDIAN
 #define	platformUTF16	kForm_UTF16BE
+#else
+#define	platformUTF16	kForm_UTF16LE
+#endif
 #endif
 #endif
 

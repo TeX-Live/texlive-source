@@ -13,6 +13,7 @@ Description:
 
 Changes:
 
+	2008-01-23  jk  revised endian-ness stuff to allow Universal build
 	2006-06-02	jk	added support for extended string rules (>255 per initial char)
 	24-May-2005		change from Ulrik to work around MS VC++ 6 issues
 	21-May-2005		changes based on Ulrik Petersen's patch for MS VC++ 6
@@ -24,19 +25,22 @@ Changes:
 
 #ifdef HAVE_CONFIG_H
 #	include "config.h"	/* a Unix-ish setup where we have config.h available */
-#else
-#	if	(defined __dest_os && (__dest_os == __win32_os)) || defined WIN32	/* Windows target: little-endian */
+#endif
+
+#if	(defined(__dest_os) && (__dest_os == __win32_os)) || defined(WIN32)	/* Windows target: little-endian */
+#	undef WORDS_BIGENDIAN
+#endif
+
+#ifdef __APPLE__
+#include <TargetConditionals.h>
+#endif
+
+#if defined(TARGET_RT_BIG_ENDIAN)	/* the CodeWarrior prefix files or Apple TargetConditionals.h sets this */
+#	if TARGET_RT_BIG_ENDIAN
 #		undef WORDS_BIGENDIAN
+#		define WORDS_BIGENDIAN 1
 #	else
-#		if (defined TARGET_RT_BIG_ENDIAN)	/* the CodeWarrior prefix files set this */
-#			if TARGET_RT_BIG_ENDIAN
-#				define WORDS_BIGENDIAN 1
-#			else
-#				undef WORDS_BIGENDIAN
-#			endif
-#		else
-#			error Unsure about endianness!
-#		endif
+#		undef WORDS_BIGENDIAN
 #	endif
 #endif
 
@@ -279,6 +283,7 @@ protected:
 	void			AppendSpecial(UInt8 type, bool negate = false);
 	void			AppendClass(const string& className, bool negate = false);
 	void			AppendToRule(const Item& item);
+	bool			tagExists(bool rhs, const string& tag);
 	void			AssignTag(const string& tag);
 	void			SetMinMax(int repeatMin, int repeatMax);
 	void			FinishPass();
@@ -322,7 +327,7 @@ protected:
 				table.append(1, *xp);
  			}
 #endif
-	};
+	}
 
 	vector<Item>	reverseContext(const vector<Item>& ctx);
 	void			align(string& table, int alignment);
@@ -334,10 +339,12 @@ protected:
 	string			getContextID(const vector<Item>& ctx, bool isUnicode);
 };
 
-struct CharName {
-	unsigned int	usv;
-	const char*		name;
-};
-extern CharName	gUnicodeNames[];
+extern "C" {
+	struct CharName {
+		unsigned int	usv;
+		const char*		name;
+	};
+	extern CharName	gUnicodeNames[];
+}
 
 #endif	/* __Compiler_H__ */

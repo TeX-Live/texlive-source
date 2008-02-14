@@ -13,7 +13,7 @@ Description:
 -------------------------------------------------------------------------*/
 
 /*
-	2006-12-09	jk	patch from Vladimir Volovich to build on AIX
+	2006-06-19	jk			added new APIs to look up Unicode names
 	2006-01-12	jk			removed multi-char constants, use FOUR_CHAR_CODE to define UInt32 values instead
 							(no functional change, just to avoid compiler warnings)
     2005-07-07  jk  2.1.5   changed to use WORDS_BIGENDIAN rather than TARGET_RT_BIG_ENDIAN
@@ -32,6 +32,7 @@ Description:
 #include <iostream>
 #include <iomanip>
 #include <algorithm>
+#include <cstring>
 
 #include "zlib.h"
 
@@ -188,14 +189,85 @@ TECkit_DisposeCompiled(Byte* table)
 		free(table);
 }
 
+char*
+WINAPI
+TECkit_GetUnicodeName(UInt32 usv)
+{
+	const CharName	*c = &gUnicodeNames[0];
+	while (c->name != 0)
+		if (c->usv == usv)
+			return (char*)c->name;
+		else
+			++c;
+	return NULL;
+}
 
-inline UInt8
+char*
+WINAPI
+TECkit_GetTECkitName(UInt32 usv)
+{
+	static char	buffer[256];
+	const char*	name = TECkit_GetUnicodeName(usv);
+	if (name == NULL)
+		sprintf(buffer, "U+%04X", usv);
+	else {
+		char* cp = &buffer[0];
+		while (*name && (cp - buffer < 255)) {
+			if ((*name < '0') || (*name > '9' && *name < 'A') || (*name > 'Z'))
+				*cp++ = '_';
+			else
+				*cp++ = *name | 0x20;
+			++name;
+		}
+		*cp = 0;
+	}
+	return buffer;
+}
+
+static int
+unicodeNameCompare(const char* uniName, const char* idStr, UInt32 len)
+{ // idStr could be either a "real" unicode name or a teckit identifier
+  // when this is used by the TECkit_GetUnicodeValue API
+	while (*uniName || len != 0) {
+		if (len == 0)
+			return 1;
+		char	u = *uniName++;
+		char	i = *idStr++;
+		--len;
+		if ((i >= 'a') && (i <= 'z'))
+			i &= ~0x20;
+		if (u == i)
+			continue;
+		if ((u < '0') || (u > '9' && u < 'A') || (u > 'Z'))
+			u = '_';
+		if (u == i)
+			continue;
+		return u < i ? -1 : 1;
+	}
+	return 0;
+}
+
+int
+WINAPI
+TECkit_GetUnicodeValue(char* name)
+{
+	const CharName	*c = &gUnicodeNames[0];
+	int	len = strlen(name);
+	while (c->name != 0)
+		if (unicodeNameCompare(c->name, name, len) == 0)
+			return c->usv;
+		else
+			++c;
+	return -1;
+}
+
+static inline UInt8
 READ(const UInt8 p)
 {
 	return p;
 }
 
-inline UInt16
+static inline UInt16
 READ(const UInt16 p)
 {
 #ifdef WORDS_BIGENDIAN
@@ -205,7 +277,7 @@ READ(const UInt16 p)
 #endif
 }
 
-inline UInt32
+static inline UInt32
 READ(const UInt32 p)
 {
 #ifdef WORDS_BIGENDIAN
@@ -257,26 +329,6 @@ strmatch(const char* str, const char* txt, UInt32 len)
 		--len;
 	}
 	return true;
-}
-
-static int
-unicodeNameCompare(const char* uniName, const char* idStr, UInt32 len)
-{
-	while (*uniName || len != 0) {
-		if (len == 0)
-			return 1;
-		char	u = *uniName++;
-		char	i = *idStr++;
-		--len;
-		if ((u < '0') || (u > '9' && u < 'A') || (u > 'Z'))
-			u = '_';
-		if ((i >= 'a') && (i <= 'z'))
-			i &= ~0x20;
-		if (u == i)
-			continue;
-		return u < i ? -1 : 1;
-	}
-	return 0;
 }
 
 static const char*
@@ -1398,7 +1450,7 @@ Compiler::Compiler(const char* txt, UInt32 len, char inForm, bool cmp, bool genX
 					int	result = compress2(dest + 8, &destLen, compiledTable, compiledSize, Z_BEST_COMPRESSION);
 					if (result == Z_OK) {
 						destLen += 8;
-						realloc(dest, destLen);
+						dest = (Byte*)realloc(dest, destLen); // shrink dest to fit
 						WRITE(((FileHeader*)dest)->type, kMagicNumberCmp);
 						WRITE(((FileHeader*)dest)->version, compiledSize);
 						free(compiledTable);
@@ -2217,6 +2269,24 @@ Compiler::AppendClass(const string& className, bool negate)
 	AppendToRule(item);
 }
 
+bool
+Compiler::tagExists(bool rhs, const string& tag)
+{
+	if (rhs) {
+		if (   (findTag(tag, currentRule.rhsString) != -1)
+			|| (findTag(tag, currentRule.rhsPreContext) != -1)
+			|| (findTag(tag, currentRule.rhsPostContext) != -1))
+			return true;
+	}
+	else {
+		if (   (findTag(tag, currentRule.lhsString) != -1)
+			|| (findTag(tag, currentRule.lhsPreContext) != -1)
+			|| (findTag(tag, currentRule.lhsPostContext) != -1))
+			return true;
+	}
+	return false;
+}
+
 void
 Compiler::AssignTag(const string& tag)
 {
@@ -2224,29 +2294,45 @@ Compiler::AssignTag(const string& tag)
 		Error("item tag doesn't seem to be attached to a rule item", tag.c_str());
 		return;
 	}
-	Item*	item = 0;
+	Item*	item = NULL;
 	switch (ruleState) {
 		default:
-			// this can't happen
-			break;
+			Error("this can't happen (AssignTag)");
+			return;
 		case inLHSString:
+			if (tagExists(false, tag))
+				break;
 			item = &currentRule.lhsString.back();
 			break;
 		case inLHSPreContext:
+			if (tagExists(false, tag))
+				break;
 			item = &currentRule.lhsPreContext.back();
 			break;
 		case inLHSPostContext:
+			if (tagExists(false, tag))
+				break;
 			item = &currentRule.lhsPostContext.back();
 			break;
 		case inRHSString:
+			if (tagExists(true, tag))
+				break;
 			item = &currentRule.rhsString.back();
 			break;
 		case inRHSPreContext:
+			if (tagExists(true, tag))
+				break;
 			item = &currentRule.rhsPreContext.back();
 			break;
 		case inRHSPostContext:
+			if (tagExists(true, tag))
+				break;
 			item = &currentRule.rhsPostContext.back();
 			break;
+	}
+	if (item == NULL) {
+		Error("duplicate tag (ignored)", tag.c_str());
+		return;
 	}
 	if (item->tag.length() > 0) {
 		Error("rule item already has a tag", tag.c_str());
@@ -2322,7 +2408,8 @@ Compiler::setGroupPointers(vector<Item>::iterator b, vector<Item>::iterator e, i
 // set up the fwd and back pointers on bgroup/or/egroup
 // and propagate repeat counts from egroup to bgroup
 	vector<Item>::iterator	base = b;
-	vector<Item>::iterator	altStart = base - 1;
+	vector<Item>::iterator	altStart = startIndex > 0 ? base - 1 : e;
+	bool altSeen = false;
 	while (b != e) {
 		if (b->repeatMin == 0xff)
 			b->repeatMin = 1;
@@ -2336,7 +2423,8 @@ Compiler::setGroupPointers(vector<Item>::iterator b, vector<Item>::iterator e, i
 				break;
 			
 			case kMatchElem_Type_OR:
-				if (startIndex > 0 && (altStart->type == kMatchElem_Type_OR || altStart->type == kMatchElem_Type_BGroup))
+				// if startIndex > 0, then initial altStart will be valid
+				if ((startIndex > 0 || altSeen) && (altStart->type == kMatchElem_Type_OR || altStart->type == kMatchElem_Type_BGroup))
 					altStart->next = startIndex + (b - base);
 				else {
 					Error("this can't happen (setGroupPointers 1)");
@@ -2344,6 +2432,7 @@ Compiler::setGroupPointers(vector<Item>::iterator b, vector<Item>::iterator e, i
 				}
 				altStart = b;
 				altStart->start = startIndex - 1;
+				altSeen = true;
 				break;
 
 			case kMatchElem_Type_EGroup:
@@ -2384,7 +2473,7 @@ Compiler::setGroupPointers(vector<Item>::iterator b, vector<Item>::iterator e, i
 		}
 		++b;
 	}
-	if (altStart != base - 1)
+	if (altSeen)
 		altStart->next = startIndex + (b - base);	// set NEXT pointer of last OR
 	if (startIndex > 0) {	// we were handling a group, so set pointers of EGroup
 		if (b->type == kMatchElem_Type_EGroup)
@@ -2412,7 +2501,6 @@ Compiler::calcMaxLen(vector<Item>::iterator b, vector<Item>::iterator e)
 	int	len = 0;
 	int	maxLen = 0;
 	vector<Item>::iterator	base = b;
-	vector<Item>::iterator	altStart = base - 1;
 	while (b != e) {
 		switch (b->type) {
 			case 0:	// literal
@@ -2426,7 +2514,6 @@ Compiler::calcMaxLen(vector<Item>::iterator b, vector<Item>::iterator e)
 				if (len > maxLen)
 					maxLen = len;
 				len = 0;
-				altStart = b;
 				break;
 
 			case kMatchElem_Type_EGroup:
@@ -2579,9 +2666,17 @@ Compiler::associateItems(vector<Rule>& rules, bool fromUni, bool toUni)
 			if (errorCount > 0)
 				break;
 			ir->index = matchIndex;
-			vector<Item>::const_iterator im = m.begin() + ir->index;
+			vector<Item>::const_iterator im;
+			if (ir->index < m.end() - m.begin())
+				im = m.begin() + ir->index;
+			else
+				im = m.end();
 			switch (ir->type) {
 				case kMatchElem_Type_Class:
+					if (im == m.end()) {
+						Error("class in replacement does not have corresponding match item", 0, i->lineNumber);
+						break;
+					}
 					switch (im->type) {
 						case kMatchElem_Type_Class:
 							{
@@ -2600,9 +2695,13 @@ Compiler::associateItems(vector<Rule>& rules, bool fromUni, bool toUni)
 					
 				case kMatchElem_Type_Copy:
 					// COPY can correspond to anything except COPY on LHS
+					if (im == m.end()) {
+						Error("COPY in replacement does not have corresponding match item", 0, i->lineNumber);
+						break;
+					}
 					switch (im->type) {
 						case kMatchElem_Type_Copy:	
-							Error("can't associate copy elements", 0, i->lineNumber);
+							Error("can't associate COPY elements", 0, i->lineNumber);
 							break;
 						case kMatchElem_Type_EGroup:
 							// change replacement item to point to the BGroup instead
@@ -2631,6 +2730,10 @@ Compiler::associateItems(vector<Rule>& rules, bool fromUni, bool toUni)
 
 				case kMatchElem_Type_ANY:
 					// ANY on RHS can only correspond with LITERAL or ANY on LHS
+					if (im == m.end()) {
+						Error("ANY in replacement does not have corresponding match item", 0, i->lineNumber);
+						break;
+					}
 					switch (im->type) {
 						case 0:
 						case kMatchElem_Type_ANY:

@@ -130,6 +130,8 @@ convert(converter, input, style, isComplete)
             Safefree(outBuff);
             New(0, outBuff, outLen * 2, Byte);
             outLen = outLen * 2;
+            if (isComplete)
+                TECkit_ResetConverter((TECkit_Converter)converter);
         }
         hr = -hr;
         if (isComplete)

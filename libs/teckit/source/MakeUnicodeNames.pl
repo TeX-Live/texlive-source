@@ -16,10 +16,7 @@ while (<FH>) {
 close FH;
 
 print << '__END__';
-struct CharName {
-	unsigned int	usv;
-	const char*		name;
-};
+#include "Compiler.h"
 
 CharName	gUnicodeNames[] = {
 __END__

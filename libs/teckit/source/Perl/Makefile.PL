@@ -3,7 +3,6 @@ use Config;
 use Getopt::Std;
 
 $name = 'Encode::TECkit';
-$version = '0.05';
 
 getopts('d');
 
@@ -13,7 +12,7 @@ $c_ext = '.cpp';
 $o_ext = ($^O =~ m/win32/o) ? '.obj' : '.o';
 push(@ExtUtils::MakeMaker::Overridable, qw(pm_to_blib)) if ($^O eq 'MSWin32');
 
-$define = '-I.. "-I../Public-headers" -I../zlib/include -I../..';
+$define = '-I.. "-I../Public-headers" -I../../zlib-1.2.3 -I../..';
 $lddlflags = $Config{'lddlflags'};
 if ($Config{'byteorder'} eq '4321')
 { $define .= ' -DTARGET_RT_BIG_ENDIAN'; }
@@ -21,12 +20,13 @@ elsif (!$Config{'byteorder'} eq '1234')
 { die "Byteorder of $Config{'byteorder'} not currently supported by TECkit"; }
 # $libs = $Config{'libs'};
 $extras{OPTIMIZE} = '-g' if ($opt_d);
+$define .= " -DTRACING" if ($opt_d);
 
 
 if ($^O =~ m/win32/oi)
 {
     $lddlflags =~ s/:x86/:I386/o;
-    $lddlflags .= " ../zlib/lib/libz.a";
+    $lddlflags .= " ../../zlib-1.2.3/zlib.lib";
 #    $libs = 'strmbase.lib msvcprt.lib';
     $define .= ' -DWIN32 -GX -Fo$@';
     $ccflags = $Config{'ccflags'};
@@ -47,13 +47,10 @@ elsif ($^O eq 'linux' || $^O eq 'darwin')
 #    $lddlflags .= ' ' . join(' ', map {"-L$_"} split(' ', $Config{'libsdirs'}));
 }
 
-$fname = $name;
-$fname =~ s/::/-/og;
-$fname .= "-$version-$Config{'archname'}-$Config{'version'}";
 
 WriteMakefile(
     'NAME' => $name,
-    'VERSION' => $version,
+    'VERSION_FROM' => 'lib/Encode/TECkit.pm',
     'XS' => {'TECkit.xs' => 'TECkit.cpp'},
     'OBJECT' => $objects,
     'C' => [map {"$_" . $c_ext} @cpps],
@@ -115,26 +112,4 @@ sub MY::xs_o
     $str;
 }
 
-sub MY::postamble
-{
-    my ($res);
-    
-    $res = <<EOT;
-parpl : $fname.zip
-
-$fname.zip : $fname.par
-\tpar -b -O./$fname.parl $fname.par
-\techo perl $fname.parl --par-options -i $fname.par > setup.bat
-\t7z a -tzip $fname.zip $fname.parl setup.bat
-\tdel setup.bat
-
-par : $fname.par
-
-$fname.par : pure_all
-\tpar -p
-
-EOT
-    $res;
-}
-
-    
+1;

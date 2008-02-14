@@ -2,6 +2,7 @@
 	TxtConv.c
 	Copyright (c) 2002-2004 SIL International.
 
+	2008-01-23  jk  revised endian-ness stuff to allow Universal build
 	 5-May-2005		jk	added include <stdlib.h> and <string.h> to keep gcc happy
 	10-Mar-2004		jk	added -u option to control handling of unmappable input
 */
@@ -21,19 +22,22 @@
 
 #ifdef HAVE_CONFIG_H
 #	include "config.h"	/* a Unix-ish setup where we have config.h available */
-#else
-#	if	(defined __dest_os && (__dest_os == __win32_os)) || defined WIN32	/* Windows target: little-endian */
+#endif
+
+#if	(defined(__dest_os) && (__dest_os == __win32_os)) || defined(WIN32)	/* Windows target: little-endian */
+#	undef WORDS_BIGENDIAN
+#endif
+
+#ifdef __APPLE__
+#include <TargetConditionals.h>
+#endif
+
+#if defined(TARGET_RT_BIG_ENDIAN)	/* the CodeWarrior prefix files or Apple TargetConditionals.h sets this */
+#	if TARGET_RT_BIG_ENDIAN
 #		undef WORDS_BIGENDIAN
+#		define WORDS_BIGENDIAN 1
 #	else
-#		if (defined TARGET_RT_BIG_ENDIAN)	/* the CodeWarrior prefix files set this */
-#			if TARGET_RT_BIG_ENDIAN
-#				define WORDS_BIGENDIAN 1
-#			else
-#				undef WORDS_BIGENDIAN
-#			endif
-#		else
-#			error Unsure about endianness!
-#		endif
+#		undef WORDS_BIGENDIAN
 #	endif
 #endif
 

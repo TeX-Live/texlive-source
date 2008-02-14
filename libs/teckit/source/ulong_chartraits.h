@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <string>
+#include <cstring>
+#include <locale>
 
 /*
 	This used to be defined for unsigned long; changed to unsigned int for 64-bit architecture.

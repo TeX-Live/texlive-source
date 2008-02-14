@@ -2,12 +2,15 @@
 	TECkit_Compiler.h
 	
 	Public API to the TECkit compiler library.
+
+	18-Jan-2008		jk	added EXPORTED to declarations, for mingw32 cross-build
 	
 	Jonathan Kew	22-Dec-2001
 					14-May-2002		added WINAPI to function declarations
 					 5-Jul-2002		corrected placement of WINAPI/CALLBACK to keep MS compiler happy
 					18-Mar-2005		added option to generate XML representation
 					21-May-2005		changes based on Ulrik Petersen's patch for MS VC++ 6
+					16-Sep-2006		added APIs to convert USVs to names and vice versa
 */
 
 /*
@@ -41,6 +44,14 @@ extern "C" {
 #define CALLBACK
 #endif
 
+#ifndef EXPORTED
+#ifdef _WIN32
+#define EXPORTED __declspec(dllexport)
+#else
+#define EXPORTED
+#endif
+#endif
+
 #define kCompilerOpts_FormMask	0x0000000F	/* see TECkit_Common.h for encoding form constants */
 #define kCompilerOpts_Compress	0x00000010	/* generate compressed mapping table */
 #define kCompilerOpts_XML		0x00000020	/* instead of a compiled binary table, generate an XML representation of the mapping */
@@ -48,20 +59,38 @@ extern "C" {
 typedef void (CALLBACK *TECkit_ErrorFn)(void* userData, char* msg, char* param, UInt32 line);
 
 TECkit_Status
-WINAPI
+WINAPI EXPORTED
 TECkit_Compile(char* txt, UInt32 len, Byte doCompression, TECkit_ErrorFn errFunc, void* userData, Byte** outTable, UInt32* outLen);
 
 TECkit_Status
-WINAPI
+WINAPI EXPORTED
 TECkit_CompileOpt(char* txt, UInt32 len, TECkit_ErrorFn errFunc, void* userData, Byte** outTable, UInt32* outLen, UInt32 opts);
 
 void
-WINAPI
+WINAPI EXPORTED
 TECkit_DisposeCompiled(Byte* table);
 
 UInt32
-WINAPI
+WINAPI EXPORTED
 TECkit_GetCompilerVersion();
+
+/* new APIs for looking up Unicode names (as NUL-terminated C strings) */
+char*
+WINAPI EXPORTED
+TECkit_GetUnicodeName(UInt32 usv);
+	/* returns the Unicode name of usv, if available, else NULL */
+
+char*
+WINAPI EXPORTED
+TECkit_GetTECkitName(UInt32 usv);
+	/* returns the TECkit form of the name of usv, or "U+xxxx" if no name */
+	/* NB: returns value is a pointer to a static string, which will be
+	   overwritten by subsequent calls */
+
+int
+WINAPI EXPORTED
+TECkit_GetUnicodeValue(char* name);
+	/* returns Unicode value for a Unicode or TECkit name, or -1 if not known */
 
 #ifdef __cplusplus
 }
