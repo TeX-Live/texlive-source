@@ -1,3 +1,8 @@
+2008-02-14  Karl Berry  <karl@tug.org>
+
+	* texmf.in (font_mem_size): increase to 3000000.
+	(font_max): increase to 5000 (max_font_max increased in tex.ch).
+
 2008-02-11  Karl Berry  <karl@tug.org>
 
 	* install.texi: mention mktexfmt, other mktex updates.

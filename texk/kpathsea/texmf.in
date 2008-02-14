@@ -546,10 +546,10 @@ extra_mem_bot.context = 4000000
 
 % Words of font info for TeX (total size of all TFM files, approximately).
 % Must be >= 20000 and <= 4000000 (without tex.ch changes).
-font_mem_size = 2500000
+font_mem_size = 3000000
 
-% Total number of fonts. Must be >= 50 and <= 2000 (without tex.ch changes).
-font_max = 2000
+% Total number of fonts. Must be >= 50 and <= 5000 (without tex.ch changes).
+font_max = 5000
 
 % Extra space for the hash table of control sequences (which allows 10K
 % names as distributed).

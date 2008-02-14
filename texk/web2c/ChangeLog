@@ -1,3 +1,8 @@
+2008-02-14  Karl Berry  <karl@tug.org>
+
+	* tex.ch (max_font_max): increase to 5000.
+	Taco mail to tex-live, 13 Feb 2008 10:00:35.
+
 2008-02-11  Karl Berry  <karl@tug.org>
 
 	* tex.ch (make_name_string): avoid clobbering globals via

@@ -208,7 +208,7 @@ versions of the program.
 @d ssup_hyph_size == 65535 {Changing this requires changing (un)dumping!}
 @d iinf_hyphen_size == 610 {Must be not less than |hyph_prime|!}
 
-@d max_font_max=2000 {maximum number of internal fonts; this can be
+@d max_font_max=5000 {maximum number of internal fonts; this can be
                       increased, but |hash_size+max_font_max|
                       should not exceed 29000.}
 @d font_base=0 {smallest internal font number; must be
