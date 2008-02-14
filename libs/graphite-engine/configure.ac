@@ -1,6 +1,6 @@
 AC_PREREQ(2.54)
 
-AC_INIT(silgraphite, 2.2.1, silgraphite-devel@lists.sourceforge.net)
+AC_INIT(silgraphite, 2.3, silgraphite-devel@lists.sourceforge.net)
 AC_CONFIG_SRCDIR(src/segment/GrEngine.cpp)
 AC_CONFIG_AUX_DIR(config)
 
@@ -14,14 +14,18 @@ AC_C_BIGENDIAN
 
 # Optional features
 AC_ARG_ENABLE(tracing,
-    AC_HELP_STRING([--enable-tracing],
-        [build with support for trace Graphite logs (default=no)]))
+    AC_HELP_STRING([--disable-tracing],
+        [build without support for trace Graphite logs]))
+    test "x$enable_tracing" != xno && enable_tracing=yes
+
 AC_ARG_ENABLE(debug,
     AC_HELP_STRING([--enable-debug],
         [build with debugging. (default=no)]))
 AC_ARG_ENABLE(final,
-    AC_HELP_STRING([--enable-final],
-        [build with optimizations and no debugging. (default=no)]))
+    AC_HELP_STRING([--disable-final],
+        [build without optimizations and no debugging.]))
+    test "x$enable_final" != xno && enable_final=yes
+
 AC_ARG_ENABLE(profile,
     AC_HELP_STRING([--enable-profile],
         [allow profiling (default=no)]))

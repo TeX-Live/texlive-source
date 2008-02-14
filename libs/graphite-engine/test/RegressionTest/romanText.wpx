@@ -167,7 +167,12 @@
     </StyleRules15>
     <Contents16>
       <Str>
-        <Run ws="en" fontsize="36000" fontsizeUnit="mpt" fontFamily="Graphite Test Roman">a͝a t͝a à̀͝a ʃ̀̀͝a a̖̖a ʃ̀̀a a̖̖a</Run>
+        <Run ws="en" fontsize="36000" fontsizeUnit="mpt" fontFamily="Graphite Test Roman">a͝a t͝a à̀͝a </Run>
+        <Run ws="en" fontsize="36000" fontsizeUnit="mpt" forecolor="ff6000" fontFamily="Graphite Test Roman">ʃ̀̀͝a</Run>
+        <Run ws="en" fontsize="36000" fontsizeUnit="mpt" fontFamily="Graphite Test Roman"> a̖̖a </Run>
+        <Run ws="en" fontsize="36000" fontsizeUnit="mpt" forecolor="blue" fontFamily="Graphite Test Roman">ʃ̀̀a</Run>
+        <Run ws="en" fontsize="36000" fontsizeUnit="mpt" fontFamily="Graphite Test Roman"> </Run>
+        <Run ws="en" fontsize="36000" fontsizeUnit="mpt" forecolor="yellow" fontFamily="Graphite Test Roman">a̖̖a</Run>
       </Str>
     </Contents16>
   </StTxtPara>

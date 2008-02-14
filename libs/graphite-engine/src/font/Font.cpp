@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (C) 1999, 2001, 2005 SIL International. All rights reserved.
+Copyright (C) 1999 - 2008 SIL International. All rights reserved.
 
 Distributable under the terms of either the Common Public License or the
 GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -133,7 +133,7 @@ void Font::initialiseFontFace(bool fDumbFallback)
 }
 
 /*----------------------------------------------------------------------------------------------
-	Return uniquely identifying information that will be used a the key for this font
+	Return uniquely identifying information that will be used as the key for this font
 	in the font cache. This includes the font face name and the bold and italic flags.
 ----------------------------------------------------------------------------------------------*/
 void Font::UniqueCacheInfo(std::wstring & stuFace, bool & fBold, bool & fItalic)
@@ -154,7 +154,9 @@ void Font::UniqueCacheInfo(std::wstring & stuFace, bool & fBold, bool & fItalic)
 	std::copy(src_start, src_start + cchw, rgchwFace);
 	rgchwFace[cchw] = 0;  // zero terminate
 	TtfUtil::SwapWString(rgchwFace, cchw);
-	stuFace.assign(rgchwFace, rgchwFace + cchw);
+	for (size_t ich16 = 0; ich16 < cchw; ich16++)	// to handle situation where wchar_t is 4 bytes
+		stuFace.push_back(wchar_t(rgchwFace[ich16]));
+	///stuFace.assign(rgchwFace, rgchwFace + cchw);
 
 	const void * pOs2Tbl = getTable(TtfUtil::TableIdTag(ktiOs2), &cbSize);
 	TtfUtil::FontOs2Style(pOs2Tbl, fBold, fItalic);

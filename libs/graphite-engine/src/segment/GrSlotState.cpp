@@ -143,6 +143,9 @@ void GrSlotState::InitializeFrom(GrSlotState * pslotOld, int ipass)
 	m_vpslotAssoc.clear();
 	m_vpslotAssoc.push_back(pslotOld);
 
+	m_dircProc = pslotOld->m_dircProc;
+	m_fDirProcessed = pslotOld->m_fDirProcessed;
+
 	// Since we're going on to a new pass, no point in copying these:
 	m_ipassFsmCol = -1;	
 	m_colFsm = -1;

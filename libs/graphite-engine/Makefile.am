@@ -15,7 +15,7 @@ dist-hook:
 	find $(distdir) -name .svn | xargs rm -rf
 
 # VC_VERSION is the last released version of the software
-VC_VERSION = 2.2.1
+VC_VERSION = 2.3
 # D_VERSION gets the number of the current svn revision
 D_VERSION = `svnversion ${top_srcdir}|sed -e "s/[0-9]*\://g"`
 SVNDEB_VERSION = $(VC_VERSION)+0$(D_VERSION)svn

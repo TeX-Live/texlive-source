@@ -30,7 +30,7 @@ Things that still need testing:
 //:>	Test constants and methods
 //:>********************************************************************************************
 
-const int g_numberOfTests = 23;	// *** increment as tests are added ***
+const int g_numberOfTests = 25;	// *** increment as tests are added ***
 
 TestCase * g_ptcaseList;		// list of test cases
 
@@ -50,27 +50,29 @@ int TestCase::SetupTests(TestCase ** pptcaseList)
 	//	The number of methods called here should equal g_numberOfTests above.
 	g_ptcaseList[0].SetupSimpleTest();				cptcase++;
 	g_ptcaseList[1].SetupSimpleBacktrackTest();		cptcase++;
-	g_ptcaseList[2].SetupBurmese1();				cptcase++;
-	g_ptcaseList[3].SetupBurmese2();				cptcase++;
-	g_ptcaseList[4].SetupBurmese3();				cptcase++;
-	g_ptcaseList[5].SetupBurmese4();				cptcase++;
-	g_ptcaseList[6].SetupRoman();					cptcase++;
-	g_ptcaseList[7].SetupRomanFeatures();			cptcase++;
-	g_ptcaseList[8].SetupStackingAndBridging();		cptcase++;
-	g_ptcaseList[9].SetupNoWhiteSpace();			cptcase++;
-	g_ptcaseList[10].SetupNoWhiteSpaceNoSeg();		cptcase++;
-	g_ptcaseList[11].SetupOnlyWhiteSpace();			cptcase++;
-	g_ptcaseList[12].SetupCrossLine1();				cptcase++;
-	g_ptcaseList[13].SetupCrossLine2();				cptcase++;
-	g_ptcaseList[14].SetupCrossLine3();				cptcase++;
-	g_ptcaseList[15].SetupCrossLine4();				cptcase++;
-	g_ptcaseList[16].SetupArabic1();				cptcase++;
-	g_ptcaseList[17].SetupArabic2();				cptcase++;
-	g_ptcaseList[18].SetupTaiViet1();				cptcase++;
-	g_ptcaseList[19].SetupTaiViet2();				cptcase++;
-	g_ptcaseList[20].SetupDumbFallback1();			cptcase++;
-	g_ptcaseList[21].SetupDumbFallback2();			cptcase++;
-	g_ptcaseList[22].SetupBadFont();				cptcase++;
+	g_ptcaseList[2].SetupSurrogateTest();			cptcase++;
+	g_ptcaseList[3].SetupBurmese1();				cptcase++;
+	g_ptcaseList[4].SetupBurmese2();				cptcase++;
+	g_ptcaseList[5].SetupBurmese3();				cptcase++;
+	g_ptcaseList[6].SetupBurmese4();				cptcase++;
+	g_ptcaseList[7].SetupRoman();					cptcase++;
+	g_ptcaseList[8].SetupRomanFeatures();			cptcase++;
+	g_ptcaseList[9].SetupStackingAndBridging();		cptcase++;
+	g_ptcaseList[10].SetupNoWhiteSpace();			cptcase++;
+	g_ptcaseList[11].SetupNoWhiteSpaceNoSeg();		cptcase++;
+	g_ptcaseList[12].SetupOnlyWhiteSpace();			cptcase++;
+	g_ptcaseList[13].SetupCrossLine1();				cptcase++;
+	g_ptcaseList[14].SetupCrossLine2();				cptcase++;
+	g_ptcaseList[15].SetupCrossLine3();				cptcase++;
+	g_ptcaseList[16].SetupCrossLine4();				cptcase++;
+	g_ptcaseList[17].SetupArabic1();				cptcase++;
+	g_ptcaseList[18].SetupArabic2();				cptcase++;
+	g_ptcaseList[19].SetupTaiViet1();				cptcase++;
+	g_ptcaseList[20].SetupTaiViet2();				cptcase++;
+	g_ptcaseList[21].SetupDumbFallback1();			cptcase++;
+	g_ptcaseList[22].SetupDumbFallback2();			cptcase++;
+	g_ptcaseList[23].SetupBadFont();				cptcase++;
+	g_ptcaseList[24].SetupBugTest();				cptcase++;
 	// *** Add more method calls here. ***
 
 	assert(cptcase == g_numberOfTests);
@@ -87,7 +89,7 @@ void TestCase::SetupSimpleTest()
 {
 	m_testName = "Simple";
 	//m_debug = true;
-	//m_traceLog = false;
+	m_traceLog = true;
 	//m_skip = true;
 
 	//	Input:
@@ -207,6 +209,86 @@ void TestCase::SetupSimpleBacktrackTest()
 	SetBBs(NULL, NULL, NULL, NULL);
 	SetInsPtFlags(insPtFlags);
 	SetOutputContextBlock(contextBlockOutSize, contextBlockOut);
+}
+
+/*----------------------------------------------------------------------------------------------
+	Set up a test that includes surrogates.
+----------------------------------------------------------------------------------------------*/
+void TestCase::SetupSurrogateTest()
+{
+	m_testName = "Surrogates";
+	//m_debug = true;
+	m_traceLog = true;
+	//m_skip = true;
+
+	//	Input:
+	m_fontName = L"Graphite Test Roman";
+	m_fontFile = "grtest_roman.ttf";
+	m_text = L"abXXcdYYe";			// text to render
+	m_text[2] = 0xD835;
+	m_text[3] = 0xDD13;
+	m_text[6] = 0xD835;
+	m_text[7] = 0xDD10;
+	m_fontSize = 12;				// font size in points
+	m_prefBreak = klbWordBreak;		// preferred break-weight
+	m_availWidth = 500;				// width available for segment
+	m_bold = false;
+	m_italic = false;
+	m_rtl = false;
+	m_backtrack = false;
+
+	//	Output:
+	m_segWidth = 65;			// physical width of segment
+
+	const int charCnt = 9;		// number of characters in the segment
+
+	// need charCnt elements in this array:
+	bool insPtFlags[] = {
+		true, true, true, false, true, true, true, false, true
+	};
+
+	const int glyphCnt = 7;	// number of glyphs in the segment
+
+	// need glyphCnt elements in these arrays:
+	gid16 glyphList[] =	{68, 69,1227, 70, 71,1015, 72};
+	int xPositions[] =  { 0,  7,  15, 27, 34,  42, 58};
+	int yPositions[] =  { 0,  0,   0,  0,  0,   0,  0};
+	int advWidths[] =   { 7,  8,  12,  7,  8,  15,  7};
+
+	int bbLefts[] =     { 0,  7,  15, 28, 35,  43, 59};
+	int bbRights[] =    { 7, 14,  26, 34, 42,  57, 65};
+	int bbTops[] =      { 7, 11,  10,  7, 11,  10,  7};
+	int bbBottoms[] =   { 0,  0,  -3,  0,  0,   0,  0};
+
+	int charsToGlyphs[] = {
+		0, 1, 0,	1, 1, 1,	2, 1, 2,	3, 0,	4, 1, 3,	5, 1, 4,	6, 1, 5,	7, 0,
+		8, 1, 6,
+	};
+	int c2gCount = 25;
+
+	//	Each line in clickStuff represents one click test with the following items:
+	//		click x-coord, click y-coord, char index, assoc-prev,
+	//		prim sel Top, prim sel bottom, prim sel left,
+	//		sec sel Top, sec sel bottom, sec sel left
+	//  Y-coordinates are offsets from segment top; ie, (0,0) is segment top-left.
+	const int clickTestCnt = 3;
+	int clickStuff[] = {
+		17, 25,   2, false,   0, 24, 14,   kAbsent, kAbsent, kAbsent,	// below baseline
+		25,  5,   4, true,    0, 24, 26,   kAbsent, kAbsent, kAbsent,	// near top of text
+		55, 16,   8, true,    0, 24, 57,   kAbsent, kAbsent, kAbsent	// near baseline
+	};
+
+	//	Finish setting up test case.
+	SetCharCount(charCnt);
+	SetGlyphCount(glyphCnt);
+	SetGlyphList(glyphList);
+	SetXPositions(xPositions);
+	SetYPositions(yPositions);
+	SetAdvWidths(advWidths);
+	SetBBs(bbLefts, bbRights, bbTops, bbBottoms);
+	SetInsPtFlags(insPtFlags);
+	SetCharsToGlyphs(charsToGlyphs, c2gCount);
+	SetClickTests(clickTestCnt, clickStuff);
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -435,7 +517,7 @@ std::wstring TestCase::BurmeseText()
 void TestCase::SetupRoman()
 {
 	m_testName = "Roman";
-	//m_traceLog = true;
+	m_traceLog = true;
 	//m_debug = true;
 	//m_skip = true;
 
@@ -511,7 +593,7 @@ void TestCase::SetupRoman()
 void TestCase::SetupRomanFeatures()
 {
 	m_testName = "Roman Features";
-	//m_traceLog = true;
+	m_traceLog = true;
 	//m_debug = true;
 	//m_skip = true;
 
@@ -1570,7 +1652,7 @@ void TestCase::SetupBadFont()
 	m_testName = "Bad Font";
 	//m_debug = true;
 	m_traceLog = false;
-	//m_skip = true;
+	m_skip = true;
 
 	//	Input:
 	//	The font has been corrupted so that the size of the cmap in the directory is invalid.
@@ -1820,4 +1902,70 @@ void TestCase::SetOutputContextBlock(int contextBlockOutSize, gr::byte * pContex
 	m_contextBlockOutSize = contextBlockOutSize;
 	m_contextBlockOut = new gr::byte[contextBlockOutSize];
 	std::copy(pContextBlockOut, pContextBlockOut + contextBlockOutSize, m_contextBlockOut);
+}
+
+
+
+
+void TestCase::SetupBugTest()
+{
+	m_testName = "Bug Test";
+	m_traceLog = true;
+	m_debug = true;
+	m_skip = true;
+
+	//	Input:
+	m_fontName = L"Padauk";
+	m_fontFile = "grtest_infinity.ttf";
+
+	wchar_t charData[] = { 0x101e, 0x1032, 0x1015, 0x103c, 0x103d, 0x103e, 0x102d, 0x1038, 0x0000 };
+	m_text.assign(charData);
+	int charCnt = 8;
+
+	m_fontSize = 20;				// font size in points
+	m_prefBreak = klbWsBreak;		// preferred break-weight
+	m_worstBreak = klbHyphenBreak;	// worst-case break-weight
+	m_availWidth = 1000;			// width available for segment
+	m_bold = false;
+	m_italic = false;
+	m_backtrack = false;
+	m_rtl = false;
+
+	//	Output:
+	m_noSegment = false;
+	m_segWidth = 52;			// physical width of segment
+
+	// need charCnt elements in this array:
+	bool insPtFlags[] = {
+		true,  false,  true, true, false, false,  false, true
+	};
+
+	int glyphCnt = 7;
+	// need glyphCnt elements in these arrays:
+	gid16 glyphList[] =	{105,174,158,202,231,162,231};
+	int xPositions[] =  {  0, 17, 20, 22, 28, 29, 38};
+	int yPositions[] =  {  0,  0,  0,  0,  0,  0,  0};
+	int advWidths[] =   { 17,  2,  9,  4,  0, 10,  0};
+
+	int bbLefts[] =     {  0, 10, 21, 23, 23, 30, 33};
+	int bbRights[] =    { 16, 19, 28, 25, 28, 39, 38};
+	int bbTops[] =      {  7,  7,  7, -1, 15,  7, 15};
+	int bbBottoms[] =   {  0, -7, -1, -7,  9,  0,  9};
+
+	// Each group = char-index, number of glyphs, glyph-indices.
+	int charsToGlyphs[] = {
+		0, 1, 0,	1, 1, 1,	2, 1, 3,	3, 1, 2,	4, 1, 4,	5, 0,	6, 1, 5,	7, 1, 6
+	};
+	int c2gCount = sizeof(charsToGlyphs) / sizeof(int);
+
+	//	Finish setting up test case.
+	SetCharCount(charCnt);
+	SetGlyphCount(glyphCnt);
+	SetGlyphList(glyphList);
+	SetXPositions(xPositions);
+	SetYPositions(yPositions);
+	SetAdvWidths(advWidths);
+	SetCharsToGlyphs(charsToGlyphs, c2gCount);
+	SetBBs(bbLefts, bbRights, bbTops, bbBottoms);
+	SetInsPtFlags(insPtFlags);
 }

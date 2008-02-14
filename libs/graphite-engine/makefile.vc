@@ -3,6 +3,7 @@ TARGET=graphite
 
 CPP=cl.exe
 CPPFLAGS=/nologo /W4 /GR /GX /I "./src/font" /I "./src/painter" /I "./src/segment" /I "./src/textsource" /I "./src/generic" /I "./include/graphite" /I "../wrappers/win32" /D "GR_NAMESPACE" /D "WIN32" /D "_WINDOWS" /D "_UNICODE" /D "UNICODE" /D "TRACING"  /Fp"$(INTDIR)\graphite.pch" /YX /Fd"$(INTDIR)\\" /FD /c
+# /Wp62
 
 LINK=link.exe
 LINK_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /dll /pdb:"$(OUTDIR)\\graphite.pdb" /machine:I386 /out:"$(OUTDIR)\\$(TARGET).dll" /implib:"$(OUTDIR)\\$(TARGET).lib"
@@ -89,6 +90,7 @@ LINK_OBJS=\
 #    "$(INTDIR)\TestFSM$(OBJEXT)"\
 #    "$(INTDIR)\TestPasses$(OBJEXT)"\
     "$(INTDIR)\TransductionLog$(OBJEXT)"\
+    "$(INTDIR)\XmlTransductionLog$(OBJEXT)"\
     "$(INTDIR)\Platform$(OBJEXT)"\
     "$(INTDIR)\TtfUtil$(OBJEXT)"\
     "$(INTDIR)\WinFont$(OBJEXT)"\
@@ -123,6 +125,7 @@ LINK_DLL_OBJS=\
 #    "$(INTDIR)\TestFSM_dll$(OBJEXT)"\
 #    "$(INTDIR)\TestPasses_dll$(OBJEXT)"\
     "$(INTDIR)\TransductionLog_dll$(OBJEXT)"\
+    "$(INTDIR)\XmlTransductionLog_dll$(OBJEXT)"\
     "$(INTDIR)\WinSegmentPainter_dll$(OBJEXT)"\
     "$(INTDIR)\Platform_dll$(OBJEXT)"\
     "$(INTDIR)\TtfUtil_dll$(OBJEXT)"
@@ -159,6 +162,7 @@ BSC32_SBRS=\
 #    "$(INTDIR)\TestFSM$(SBREXT)"\
 #    "$(INTDIR)\TestPasses$(SBREXT)"\
     "$(INTDIR)\TransductionLog$(SBREXT)"\
+    "$(INTDIR)\XmlTransductionLog$(SBREXT)"\
     "$(INTDIR)\WinSegmentPainter$(SBREXT)"\
     "$(INTDIR)\Platform$(SBREXT)"\
     "$(INTDIR)\TtfUtil$(SBREXT)"\
@@ -678,6 +682,22 @@ lib_dll : "$(OUTDIR)/$(TARGET)_dll.lib"
 	
 "$(INTDIR)\TransductionLog_dll$(OBJEXT)" : "src/segment/TransductionLog.cpp"
 	@- $(CPP) $(CPPFLAGS) /D "_DLL" /Fo"$(INTDIR)\TransductionLog_dll$(OBJEXT)" $?
+	
+!ENDIF
+
+!IF "$(CFG)" == "DEBUG"
+"$(INTDIR)\XmlTransductionLog$(OBJEXT)" "$(INTDIR)\XmlTransductionLog$(SBREXT)" : "src/segment/XmlTransductionLog.cpp"
+	@- $(CPP) $(CPPFLAGS) $(CPP_DEBUG) /Fo"$(INTDIR)\XmlTransductionLog$(OBJEXT)" $?
+
+"$(INTDIR)\XmlTransductionLog_dll$(OBJEXT)" "$(INTDIR)\XmlTransductionLog_dll$(SBREXT)" : "src/segment/XmlTransductionLog.cpp"
+	@- $(CPP) $(CPPFLAGS) /D "_DLL" $(CPP_DEBUG) /Fo"$(INTDIR)\XmlTransductionLog_dll$(OBJEXT)" $?
+	
+!ELSE
+"$(INTDIR)\XmlTransductionLog$(OBJEXT)" : "src/segment/XmlTransductionLog.cpp"
+	@- $(CPP) $(CPPFLAGS) $(CPP_DEBUG) /Fo"$(INTDIR)\XmlTransductionLog$(OBJEXT)" $?
+	
+"$(INTDIR)\XmlTransductionLog_dll$(OBJEXT)" : "src/segment/XmlTransductionLog.cpp"
+	@- $(CPP) $(CPPFLAGS) /D "_DLL" /Fo"$(INTDIR)\XmlTransductionLog_dll$(OBJEXT)" $?
 	
 !ENDIF
 

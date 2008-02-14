@@ -604,7 +604,7 @@ void GrEngine::MakeSegment(
 	GetWritingSystemDirection(pgts, ichMin);
 
 	//	Find the end of the range to render with the current font.
-	int nDirDepth;
+	int nDirDepth = 0;
 	int ichFontLim;
     int ichStrmLim = 0;
     int ichSegLim = 0;

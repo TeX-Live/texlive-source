@@ -26,6 +26,7 @@ public:
 	//	Methods to set up test cases.
 	void SetupSimpleTest();
 	void SetupSimpleBacktrackTest();
+	void SetupSurrogateTest();	// TODO: add a test for UTF-8
 	void SetupBurmese1();
 	void SetupBurmese2();
 	void SetupBurmese3();
@@ -47,6 +48,7 @@ public:
 	void SetupDumbFallback1();
 	void SetupDumbFallback2();
 	void SetupBadFont();
+	void SetupBugTest();
 	//	*** Add more methods here. ***
 
 protected:

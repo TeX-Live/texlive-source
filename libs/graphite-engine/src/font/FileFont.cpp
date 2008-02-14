@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (C) 1999, 2001, 2005 SIL International. All rights reserved.
+Copyright (C) 1999 - 2008 SIL International. All rights reserved.
 
 Distributable under the terms of either the Common Public License or the
 GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -198,17 +198,20 @@ FileFont::initializeFromFace()
 // We could use something like "if (sizeof(std::wstring::value_type) == 4)" here,
 // but a compile-time switch is preferable.
 #if SIZEOF_WCHAR_T == 4
-			for (int c16 = 0; c16 < cchw; )
+			for (int cch16 = 0; cch16 < cchw; )
 			{
-				int charUsed = 0;
-				utf32 cch32 = GrCharStream::Utf16ToUtf32(&(rgchwFace[c16]), 
-														cchw - c16, &charUsed);
-				m_stuFaceName.push_back(cch32);
-				c16 += charUsed;
+				int cch16Used = 0;
+				utf32 ch32 = GrCharStream::Utf16ToUtf32(&(rgchwFace[cch16]), 
+														cchw - cch16, &cch16Used);
+				m_stuFaceName.push_back(ch32);
+				cch16 += cch16Used;
 			}
 //		}
 #else
-			m_stuFaceName.assign(rgchwFace);
+		m_stuFaceName.assign(rgchwFace);
+		// VS 2005 needs this:
+		//for (int cch16 = 0; cch16 < cchw; cch16++)
+		//	m_stuFaceName.push_back(rgchwFace[cch16]);
 #endif
 		pTable = readTable(ktiHead, lSize);
 		if (!m_fIsValid || !pTable) 

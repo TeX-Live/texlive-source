@@ -1122,7 +1122,6 @@ void GrTableManager::InitializeForNextSeg(Segment * pseg,
 	bool fNextSegNeedsContext, GrCharStream * pchstrm)
 {
 	byte pbNextSegDat[256];
-	int cbNextMax = 256;
 	int cbNextSegDat;
 	int * pcbNextSegDat = &cbNextSegDat;
 
@@ -1964,7 +1963,7 @@ GrResult EngineState::GetGlyphAttrForJustification(int iGlyph, int jgat, int nLe
 	float * pValueRet)
 {
 	GrResult res;
-	int valueRetInt;
+	int valueRetInt = 0;
 	switch(jgat)
 	{
 	case kjgatWeight:

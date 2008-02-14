@@ -172,7 +172,6 @@ void RunTests(int numberOfTests, TestCase * ptcaseList)
 ----------------------------------------------------------------------------------------------*/
 int RunOneTestCase(TestCase * ptcase, Segment * psegPrev, Segment ** ppsegRet, RtTextSrc ** pptsrcRet)
 {
-#ifdef _WIN32
 	if (ptcase->Skip())
 	{
 		std::cout << "\nskipped\n";
@@ -181,6 +180,7 @@ int RunOneTestCase(TestCase * ptcase, Segment * psegPrev, Segment ** ppsegRet, R
 		return 0;
 	}
 
+#ifdef _WIN32
 	// Break into the debugger if requested.
 	if (ptcase->RunDebugger() && ::IsDebuggerPresent())
 	{

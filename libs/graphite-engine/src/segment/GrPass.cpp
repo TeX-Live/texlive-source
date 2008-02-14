@@ -1804,6 +1804,12 @@ int GrBidiPass::Unwind(GrTableManager * ptman,
 	else {
 		islotIn = min(islotChanged, psstrmIn->ReadPos());
 		islotIn = max(islotIn - 1, 0);
+		while (islotIn > 0 && !StrongDir(psstrmIn->SlotAt(islotIn)->Directionality()))
+		{
+			psstrmIn->SlotAt(islotIn)->ZapDirLevel();
+			islotIn--;
+		}
+		Assert(islotIn == 0 || psstrmIn->SlotAt(islotIn)->DirHasBeenProcessed());
 		islotOut = 0;
 		while (islotIn > 0 && (islotOut = psstrmIn->ChunkInNext(islotIn)) == -1)
 			--islotIn;

@@ -3391,7 +3391,7 @@ int Segment::SelectBb(std::vector<int> & viginf, bool fRTL)
 	// The idea is that it is going to be harder to hit than the bigger glyph.
 	float smallestArea = float(1000000000.0);
 	float largestArea  = 0.0;
-	size_t iiginfSmallest;
+	size_t iiginfSmallest = 0;
 	size_t iiginf;
 	for (iiginf = 0; iiginf < viginf.size(); iiginf++)
 	{

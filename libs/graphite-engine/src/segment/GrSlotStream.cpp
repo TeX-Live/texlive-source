@@ -832,8 +832,8 @@ int GrSlotStream::GetSlotDirLevel(EngineState * pengst, int islot,
 			dircLB = (dircLB == kdircLlb) ? kdircL : kdircR;
 			for (int iislot = 0; iislot < signed(vislotTrailingWS.size()); iislot++)
 			{
-				islot = vislotTrailingWS[iislot];
-				m_vpslot[islot]->SetDirProcessed(dircLB);
+				int islotTmp = vislotTrailingWS[iislot];
+				m_vpslot[islotTmp]->SetDirProcessed(dircLB);
 			}
 		}
 

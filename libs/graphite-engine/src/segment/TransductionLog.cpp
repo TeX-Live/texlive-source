@@ -1620,8 +1620,8 @@ void GrSlotState::LogSlotAttribute(GrTableManager * ptman,
 		pslotPrev = pslotPrev->m_pslotPrevState;
 
 	//	General-purpose variables for em-unit attributes:
-	int mThis;
-	int mPrev;
+	int mThis = 0;
+	int mPrev = 0;
 	switch (slat)
 	{
 	case kslatShiftX:
