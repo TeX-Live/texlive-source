@@ -2239,18 +2239,21 @@ begin if (pool_ptr+name_length>pool_size)or(str_ptr=max_strings)or
   make_name_string:="?"
 else  begin for k:=1 to name_length do append_char(xord[name_of_file[k]]);
   make_name_string:=make_string;
-  end;
   {At this point we also set |cur_name|, |cur_ext|, and |cur_area| to
    match the contents of |name_of_file|.}
   save_area_delimiter:=area_delimiter; save_ext_delimiter:=ext_delimiter;
   save_name_in_progress:=name_in_progress; save_stop_at_space:=stop_at_space;
   name_in_progress:=true;
+  begin_name;
   stop_at_space:=false;
+  k:=1;
   while (k<=name_length)and(more_name(name_of_file[k])) do
-    begin incr(k); append_char(xord[name_of_file[k]]); end;
+    incr(k);
   stop_at_space:=save_stop_at_space;
+  end_name;
   name_in_progress:=save_name_in_progress;
   area_delimiter:=save_area_delimiter; ext_delimiter:=save_ext_delimiter;
+  end;
 @z
 
 @x [29.526] l.10194 - stop scanning file name if we're at end-of-line.

@@ -2,6 +2,9 @@
 
 	* tex.ch (max_font_max): increase to 5000.
 	Taco mail to tex-live, 13 Feb 2008 10:00:35.
+	
+	* tex.ch (make_name_string): further change from
+	Jonathan, tex-implementors  12 Feb 2008 14:33:56.
 
 2008-02-11  Karl Berry  <karl@tug.org>
 
