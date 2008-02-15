@@ -43,6 +43,8 @@ typedef ATSFontRef	PlatformFontRef;
 typedef FcPattern*	PlatformFontRef;
 #endif
 
+#include "XeTeXLayoutInterface.h"
+
 #ifdef __cplusplus	/* allow inclusion in plain C files just to get the typedefs above */
 
 #include <string>
@@ -83,6 +85,7 @@ public:
 											const char** famName, const char** styName) const;
 		// return Postscript, family, and style names, for use in .xdv
 
+	double							getDesignSize(XeTeXFont font);
 
 	char							getReqEngine() const;
 		// return the requested rendering technology for the most recent findFont
@@ -118,7 +121,8 @@ protected:
 								, parent(NULL)
 								, fontRef(ref), weight(0), width(0), slant(0)
 								, isReg(false), isBold(false), isItalic(false)
-								{ opSizeInfo.subFamilyID = 0; }
+								{ opSizeInfo.subFamilyID = 0;
+								  opSizeInfo.designSize = 100; } /* default to 10bp */
 							~Font()
 								{ delete fullName; delete psName; }
 
@@ -180,6 +184,8 @@ protected:
 	void			appendToList(std::list<std::string>* list, const char* str);
 	void			prependToList(std::list<std::string>* list, const char* str);
 	void			addToMaps(PlatformFontRef platformFont, const NameCollection* names);
+
+	const OpSizeRec* getOpSizePtr(XeTeXFont font);
 
 	virtual void	getOpSizeRecAndStyleFlags(Font* theFont);
 	virtual void	searchForHostPlatformFonts(const std::string& name) = 0;

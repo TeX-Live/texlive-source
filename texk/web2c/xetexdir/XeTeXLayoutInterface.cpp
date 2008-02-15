@@ -155,6 +155,11 @@ const char* getFullName(PlatformFontRef fontRef)
 	return XeTeXFontMgr::GetFontManager()->getFullName(fontRef);
 }
 
+double getDesignSize(XeTeXFont font)
+{
+	return XeTeXFontMgr::GetFontManager()->getDesignSize(font);
+}
+
 const char* getFontFilename(XeTeXLayoutEngine engine)
 {
 	return engine->font->getFilename();
@@ -1019,8 +1024,9 @@ findNextGraphiteBreak(int iOffset, int iBrkVal)
 		return -1;
 	if (iOffset < lbSource->getLength()) {
 		while (++iOffset < lbSource->getLength()) {
-			const gr::GlyphSetIterator&	gsi = lbSegment->charToGlyphs(iOffset).first;
-			if (gsi == lbSegment->charToGlyphs(iOffset).second)
+			const std::pair<gr::GlyphSetIterator,gr::GlyphSetIterator> gsiPair = lbSegment->charToGlyphs(iOffset);
+			const gr::GlyphSetIterator&	gsi = gsiPair.first;
+			if (gsi == gsiPair.second)
 				continue;
 			if (gsi->breakweight() < gr::klbNoBreak && gsi->breakweight() >= -(gr::LineBrk)iBrkVal)
 				return iOffset;

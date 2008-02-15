@@ -205,7 +205,8 @@ XeTeXFontInst_FT2.o: $(srcdir)/xetexdir/XeTeXFontInst_FT2.cpp $(XeTeXFontHdrs)
 XeTeXOTMath.o: $(srcdir)/xetexdir/XeTeXOTMath.cpp $(XeTeXFontHdrs)
 	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(FONTCONFIGCPPFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
 
-XeTeXGrLayout.o: $(srcdir)/xetexdir/XeTeXGrLayout.cpp $(srcdir)/xetexdir/XeTeXGrLayout.h $(XeTeXFontHdrs)
+XeTeXGrLayout.o: $(srcdir)/xetexdir/XeTeXGrLayout.cpp $(srcdir)/xetexdir/XeTeXGrLayout.h \
+		$(XeTeXFontHdrs) $(GRAPHITESRCDIR)/include/graphite/Font.h
 	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(GRAPHITEFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
 
 # special rules for files that need the TECkit headers as well
@@ -218,7 +219,8 @@ trans.o: $(srcdir)/xetexdir/trans.c
 	$(compile) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
 
 # Making xetex.
-xetex: $(xetex_o) $(xetex_add_o) $(xetex_images_o) $(xetex_ot_layout_o) $(EXTRADEPS)
+xetex: $(xetex_o) $(xetex_add_o) $(xetex_images_o) $(xetex_ot_layout_o) \
+		$(GRAPHITEDEP) $(TECKITDEP) $(FREETYPE2DEP) $(ICUDEP) $(EXTRADEPS)
 	@CXXHACKLINK@ $(xetex_o) $(xetex_add_o) $(xetex_images_o) $(xetex_ot_layout_o) \
 	$(FONTCONFIGLDFLAGS) $(socketlibs) $(xetexlibs) $(EXTRALIBS) \
 	@CXXHACKLDLIBS@ @CXXLDEXTRA@ @PTHREAD_CFLAGS@ @PTHREAD_LIBS@

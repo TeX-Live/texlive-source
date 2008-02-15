@@ -66,12 +66,6 @@ FontTableCache::initialize()
         fTableCacheSize = 0;
         return;
     }
-
-    for (int i = 0; i < fTableCacheSize; i += 1) {
-        fTableCache[i].tag   = 0;
-        fTableCache[i].table = NULL;
-        fTableCache[i].size  = 0;
-    }
 }
 
 FontTableCache::~FontTableCache()
@@ -83,10 +77,6 @@ void FontTableCache::dispose()
 {
     for (int i = fTableCacheCurr - 1; i >= 0; i -= 1) {
         LE_DELETE_ARRAY(fTableCache[i].table);
-
-        fTableCache[i].tag   = 0;
-        fTableCache[i].table = NULL;
-        fTableCache[i].size  = 0;
     }
 
     fTableCacheCurr = 0;
@@ -94,13 +84,20 @@ void FontTableCache::dispose()
 
 const void *FontTableCache::find(LETag tableTag, le_uint32 *tableSize) const
 {
-    for (int i = 0; i < fTableCacheCurr; i += 1) {
-        if (fTableCache[i].tag == tableTag) {
+	int lo = 0, hi = fTableCacheCurr;
+	while (lo < hi) {
+		int i = (lo + hi) >> 1;
+		const FontTableCacheEntry *e = fTableCache + i;
+		if (e->tag < tableTag)
+			lo = i + 1;
+		else if (e->tag > tableTag)
+			hi = i;
+		else {
             if (tableSize != NULL)
-                *tableSize = fTableCache[i].size;
-            return fTableCache[i].table;
-        }
-    }
+                *tableSize = e->size;
+            return e->table;
+		}
+	}
 
     le_uint32  length;
     const void *table = readFontTable(tableTag, length);
@@ -119,18 +116,18 @@ void FontTableCache::add(LETag tableTag, const void *table, le_uint32 length)
 
         fTableCache = (FontTableCacheEntry *) LE_GROW_ARRAY(fTableCache, newSize);
 
-        for (le_int32 i = fTableCacheSize; i < newSize; i += 1) {
-            fTableCache[i].tag   = 0;
-            fTableCache[i].table = NULL;
-            fTableCache[i].size  = 0;
-        }
-
         fTableCacheSize = newSize;
     }
 
-    fTableCache[fTableCacheCurr].tag   = tableTag;
-    fTableCache[fTableCacheCurr].table = table;
-    fTableCache[fTableCacheCurr].size  = length;
+	int i;
+	for (i = fTableCacheCurr; i > 0; --i) {
+		if (fTableCache[i-1].tag < tableTag)
+			break;
+		fTableCache[i] = fTableCache[i-1];
+	}
+    fTableCache[i].tag   = tableTag;
+    fTableCache[i].table = table;
+    fTableCache[i].size  = length;
 
     fTableCacheCurr += 1;
 }

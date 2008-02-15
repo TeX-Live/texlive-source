@@ -1062,7 +1062,7 @@ splitFontName(char* name, char** var, char** feat, char** end, int* index)
 
 void*
 findnativefont(unsigned char* uname, integer scaled_size)
-	/* scaled_size here is in TeX points */
+	/* scaled_size here is in TeX points, or is a negative integer for 'scaled' */
 {
 	void*	rval = NULL;
 	char*	nameString;
@@ -1105,8 +1105,20 @@ findnativefont(unsigned char* uname, integer scaled_size)
 		if (path == NULL)
 			path = kpse_find_file(nameString + 1, kpse_type1_format, 0);
 		if (path != NULL) {
+			if (scaled_size < 0) {
+				font = createFontFromFile(path, index, 655360L);
+				if (font != NULL) {
+					Fixed dsize = X2Fix(getDesignSize(font));
+					if (scaled_size == -1000)
+						scaled_size = dsize;
+					else
+						scaled_size = zxnoverd(dsize, -scaled_size, 1000);
+					deleteFont(font);
+				}
+			}
 			font = createFontFromFile(path, index, scaled_size);
 			if (font != NULL) {
+				loadedfontdesignsize = X2Fix(getDesignSize(font));
 				if (varString && strncmp(varString, "/GR", 3) == 0) {
 					rval = loadGraphiteFont(0, font, scaled_size, featString, nameString);
 					if (rval == NULL)
@@ -1134,6 +1146,18 @@ findnativefont(unsigned char* uname, integer scaled_size)
 			nameoffile = xmalloc(namelength + 4); /* +2 would be correct: initial space, final NUL */
 			nameoffile[0] = ' ';
 			strcpy((char*)nameoffile + 1, fullName);
+
+			if (scaled_size < 0) {
+				font = createFont(fontRef, scaled_size);
+				if (font != NULL) {
+					Fixed dsize = X2Fix(getDesignSize(font));
+					if (scaled_size == -1000)
+						scaled_size = dsize;
+					else
+						scaled_size = zxnoverd(dsize, -scaled_size, 1000);
+					deleteFont(font);
+				}
+			}
 	
 #ifdef XETEX_MAC
 			/* decide whether to use AAT or OpenType rendering with this font */
@@ -2692,10 +2716,22 @@ open_dvi_output(FILE** fptr)
 			if (*p++ == '\"')
 				++len;
 		len += strlen(outputdriver);
-		len += 8; /* space for -o flag, quotes, NUL */
+		if (output_directory)
+			len += strlen(output_directory);
+		len += 10; /* space for -o flag, quotes, NUL */
+		for (p = (const char*)nameoffile+1; *p; p++)
+			if (*p == '\"')
+				++len;	/* allow extra space to escape quotes in filename */
 		cmd = xmalloc(len);
 		strcpy(cmd, outputdriver);
 		strcat(cmd, " -o \"");
+		if (output_directory) {
+			len = strlen(output_directory);
+			if (IS_DIR_SEP(output_directory[len-1]))
+				output_directory[len-1] = '\0';
+			strcat(cmd, output_directory);
+			strcat(cmd, "/");
+		}
 		q = cmd + strlen(cmd);
 		for (p = (const char*)nameoffile+1; *p; p++) {
 			if (*p == '\"')
@@ -2708,6 +2744,14 @@ open_dvi_output(FILE** fptr)
 			char* cmd2 = concat3(cmd, " -p ", papersize);
 			free(cmd);
 			cmd = cmd2;
+		}
+		if (output_directory) {
+			char *fullname = concat3(output_directory, "/", nameoffile+1);
+			free(nameoffile);
+			namelength = strlen(fullname);
+			nameoffile = (char*)xmalloc(namelength+2);
+			strcpy(nameoffile+1, fullname);
+			free(fullname);
 		}
 		*fptr = popen(cmd, "w");
 		free(cmd);
@@ -2757,38 +2801,42 @@ get_uni_c(UFILE* f)
 
 		case UTF16BE:
 			rval = getc(f->f);
-			rval <<= 8;
-			rval += getc(f->f);
-			if (rval >= 0xd800 && rval <= 0xdbff) {
-				int	lo = getc(f->f);
-				lo <<= 8;
-				lo += getc(f->f);
-				if (lo >= 0xdc00 && lo <= 0xdfff)
-					rval = 0x10000 + (rval - 0xd800) * 0x400 + (lo - 0xdc00);
-				else {
-					rval = 0xfffd;
-					f->savedChar = lo;
+			if (rval != EOF) {
+				rval <<= 8;
+				rval += getc(f->f);
+				if (rval >= 0xd800 && rval <= 0xdbff) {
+					int	lo = getc(f->f);
+					lo <<= 8;
+					lo += getc(f->f);
+					if (lo >= 0xdc00 && lo <= 0xdfff)
+						rval = 0x10000 + (rval - 0xd800) * 0x400 + (lo - 0xdc00);
+					else {
+						rval = 0xfffd;
+						f->savedChar = lo;
+					}
 				}
+				else if (rval >= 0xdc00 && rval <= 0xdfff)
+					rval = 0xfffd;
 			}
-			else if (rval >= 0xdc00 && rval <= 0xdfff)
-				rval = 0xfffd;
 			break;
 
 		case UTF16LE:
 			rval = getc(f->f);
-			rval += (getc(f->f) << 8);
-			if (rval >= 0xd800 && rval <= 0xdbff) {
-				int	lo = getc(f->f);
-				lo += (getc(f->f) << 8);
-				if (lo >= 0xdc00 && lo <= 0xdfff)
-					rval = 0x10000 + (rval - 0xd800) * 0x400 + (lo - 0xdc00);
-				else {
-					rval = 0xfffd;
-					f->savedChar = lo;
+			if (rval != EOF) {
+				rval += (getc(f->f) << 8);
+				if (rval >= 0xd800 && rval <= 0xdbff) {
+					int	lo = getc(f->f);
+					lo += (getc(f->f) << 8);
+					if (lo >= 0xdc00 && lo <= 0xdfff)
+						rval = 0x10000 + (rval - 0xd800) * 0x400 + (lo - 0xdc00);
+					else {
+						rval = 0xfffd;
+						f->savedChar = lo;
+					}
 				}
+				else if (rval >= 0xdc00 && rval <= 0xdfff)
+					rval = 0xfffd;
 			}
-			else if (rval >= 0xdc00 && rval <= 0xdfff)
-				rval = 0xfffd;
 			break;
 
 		case RAW:

@@ -1,4 +1,28 @@
 @x
+\def\section{\mathhexbox278}
+@y
+\def\section{\mathhexbox278}
+\def\XeTeX{Xe\TeX}
+@z
+
+@x
+\def\title{\eTeX}
+@y
+\def\title{\XeTeX}
+@z
+
+@x
+\let\maybe=\iffalse % print only changed modules
+@y
+@z
+
+@x
+\let\maybe=\iffalse
+@y
+\let\maybe=\iftrue
+@z
+
+@x
 @* \[1] Introduction.
 @y
 @* \[1] Introduction.
@@ -60,7 +84,7 @@
 @d XeTeX_input_mode_raw     = 4
 @d XeTeX_input_mode_icu_mapping = 5
 @#
-@d XeTeX_default_input_encoding_code = 6 {str_number of encoding name if mode = ICU}
+@d XeTeX_default_input_encoding_code = 6 {|str_number| of encoding name if mode = ICU}
 @#
 @d eTeX_states=7 {number of \eTeX\ state variables in |eqtb|}
 @z
@@ -937,8 +961,8 @@ if max_quarterword-min_quarterword<@"FFFF then bad:=19;
 @y
 @d whatsit_node=8 {|type| of special extension nodes}
 
-{ added stuff here for native_word and picture nodes }
-@d native_word_node=40 {|subtype| in whatsits that hold native_font words
+{ added stuff here for |native_word| and picture nodes }
+@d native_word_node=40 {|subtype| in whatsits that hold |native_font| words
 	(0-3 are used for open, write, close, special; 4 is language; pdfTeX uses up through 30-something)
 
 To support ``native'' fonts, we build |native_word_nodes|, which are variable size whatsits.
@@ -951,7 +975,7 @@ This is followed by |2*length| bytes, for the actual characters of the string (i
 
 So |native_node_size|, which does not include any space for the actual text, is 6.}
 
-@d native_node_size=6 {size of a native_word node (plus the actual chars) -- see also xetex.h}
+@d native_node_size=6 {size of a |native_word| node (plus the actual chars) -- see also xetex.h}
 @d native_size(#)==mem[#+4].qqqq.b0
 @d native_font(#)==mem[#+4].qqqq.b1
 @d native_length(#)==mem[#+4].qqqq.b2
@@ -1004,7 +1028,7 @@ always be zero, as it happens.)
 
 So |pic_node_size|, which does not include any space for the picture file pathname, is 7.
 
-pdf_nodes are just like pic_nodes, but generate a different xdv file code.}
+|pdf_nodes| are just like |pic_nodes|, but generate a different xdv file code.}
 
 @d pic_node_size=8 { must sync with xetex.h }
 @d pic_path_length(#)==mem[#+4].hh.b0
@@ -1291,7 +1315,7 @@ primitive("XeTeXlinebreakskip",assign_glue,glue_base+XeTeX_linebreak_skip_code);
 @d char_sub_code_base=math_code_base+256 {table of character substitutions}
 @d int_base=char_sub_code_base+256 {beginning of region 5}
 @y
-@d toks_base=etex_toks {table of number_regs token list registers}
+@d toks_base=etex_toks {table of |number_regs| token list registers}
 @#
 @d etex_pen_base=toks_base+number_regs {start of table of \eTeX's penalties}
 @d inter_line_penalties_loc=etex_pen_base {additional penalties between lines}
@@ -1300,15 +1324,15 @@ primitive("XeTeXlinebreakskip",assign_glue,glue_base+XeTeX_linebreak_skip_code);
 @d display_widow_penalties_loc=etex_pen_base+3 {ditto, just before a display}
 @d etex_pens=etex_pen_base+4 {end of table of \eTeX's penalties}
 @#
-@d box_base=etex_pens {table of number_regs box registers}
+@d box_base=etex_pens {table of |number_regs| box registers}
 @d cur_font_loc=box_base+number_regs {internal font number outside math mode}
 @d math_font_base=cur_font_loc+1
 @d cat_code_base=math_font_base+number_math_fonts
-  {table of number_chars command codes (the ``catcodes'')}
-@d lc_code_base=cat_code_base+number_usvs {table of number_chars lowercase mappings}
-@d uc_code_base=lc_code_base+number_usvs {table of number_chars uppercase mappings}
-@d sf_code_base=uc_code_base+number_usvs {table of number_chars spacefactor mappings}
-@d math_code_base=sf_code_base+number_usvs {table of number_chars math mode mappings}
+  {table of |number_chars| command codes (the ``catcodes'')}
+@d lc_code_base=cat_code_base+number_usvs {table of |number_chars| lowercase mappings}
+@d uc_code_base=lc_code_base+number_usvs {table of |number_chars| uppercase mappings}
+@d sf_code_base=uc_code_base+number_usvs {table of |number_chars| spacefactor mappings}
+@d math_code_base=sf_code_base+number_usvs {table of |number_chars| math mode mappings}
 @d char_sub_code_base=math_code_base+number_usvs {table of character substitutions}
 @d int_base=char_sub_code_base+number_usvs {beginning of region 5}
 @z
@@ -1407,8 +1431,8 @@ else  begin print_esc("scriptscriptfont");
 @d del_code_base=count_base+256 {256 delimiter code mappings}
 @d dimen_base=del_code_base+256 {beginning of region 6}
 @y
-@d count_base=int_base+int_pars {number_regs user \.{\\count} registers}
-@d del_code_base=count_base+number_regs {number_chars delimiter code mappings}
+@d count_base=int_base+int_pars {|number_regs| user \.{\\count} registers}
+@d del_code_base=count_base+number_regs {|number_chars| delimiter code mappings}
 @d dimen_base=del_code_base+number_chars {beginning of region 6}
 @z
 
@@ -1433,7 +1457,7 @@ else  begin print_esc("scriptscriptfont");
 error_context_lines_code:print_esc("errorcontextlines");
 @y
 error_context_lines_code:print_esc("errorcontextlines");
-{XeTeX_linebreak_locale_code:print_esc("XeTeXlinebreaklocale");}
+{XeTeX\_linebreak\_locale\_code:print\_esc("XeTeXlinebreaklocale");}
 XeTeX_linebreak_penalty_code:print_esc("XeTeXlinebreakpenalty");
 @z
 
@@ -1776,21 +1800,21 @@ thus, a token fits comfortably in a halfword.
 @d end_match_token=@'7000 {$2^8\cdot|end_match|$}
 @d protected_token=@'7001 {$2^8\cdot|end_match|+1$}
 @y
-@d cs_token_flag=    @"1FFFFFF {@"FFFFF amount added to the |eqtb| location in a
+@d cs_token_flag=    @"1FFFFFF {was @@"FFFFF: amount added to the |eqtb| location in a
   token that stands for a control sequence; is a multiple of~65536, less~1}
-@d max_char_val=      @"200000 {@"10000 to separate char and command code}
-@d left_brace_token=  @"200000 {@"10000 $2^16\cdot|left_brace|$}
-@d left_brace_limit=  @"400000 {@"20000 $2^16\cdot(|left_brace|+1)$}
-@d right_brace_token= @"400000 {@"20000 $2^16\cdot|right_brace|$}
-@d right_brace_limit= @"600000 {@"30000 $2^16\cdot(|right_brace|+1)$}
-@d math_shift_token=  @"600000 {@"30000 $2^16\cdot|math_shift|$}
-@d tab_token=         @"800000 {@"40000 $2^16\cdot|tab_mark|$}
-@d out_param_token=   @"A00000 {@"50000 $2^16\cdot|out_param|$}
-@d space_token=      @"1400020 {@"A0020 $2^16\cdot|spacer|+|" "|$}
-@d letter_token=     @"1600000 {@"B0000 $2^16\cdot|letter|$}
-@d other_token=      @"1800000 {@"C0000 $2^16\cdot|other_char|$}
-@d match_token=      @"1A00000 {@"D0000 $2^16\cdot|match|$}
-@d end_match_token=  @"1C00000 {@"E0000 $2^16\cdot|end_match|$}
+@d max_char_val=      @"200000 {@@"10000 to separate char and command code}
+@d left_brace_token=  @"200000 {@@"10000 $2^16\cdot|left_brace|$}
+@d left_brace_limit=  @"400000 {@@"20000 $2^16\cdot(|left_brace|+1)$}
+@d right_brace_token= @"400000 {@@"20000 $2^16\cdot|right_brace|$}
+@d right_brace_limit= @"600000 {@@"30000 $2^16\cdot(|right_brace|+1)$}
+@d math_shift_token=  @"600000 {@@"30000 $2^16\cdot|math_shift|$}
+@d tab_token=         @"800000 {@@"40000 $2^16\cdot|tab_mark|$}
+@d out_param_token=   @"A00000 {@@"50000 $2^16\cdot|out_param|$}
+@d space_token=      @"1400020 {@@"A0020 $2^16\cdot|spacer|+|" "|$}
+@d letter_token=     @"1600000 {@@"B0000 $2^16\cdot|letter|$}
+@d other_token=      @"1800000 {@@"C0000 $2^16\cdot|other_char|$}
+@d match_token=      @"1A00000 {@@"D0000 $2^16\cdot|match|$}
+@d end_match_token=  @"1C00000 {@@"E0000 $2^16\cdot|end_match|$}
 
 @d protected_token=end_match_token+1 {$2^8\cdot|end_match|+1$}
 @z
@@ -1898,7 +1922,7 @@ var n:integer; {temp variable}
 @d mark_text=15 {|token_type| code for \.{\\topmark}, etc.}
 @d inter_char_text=16 {text from \\XeTeXinterchartoks}
 @#
-@d eTeX_text_offset=output_routine_loc-output_text-1 {1 more to make space for the inter_char_text}
+@d eTeX_text_offset=output_routine_loc-output_text-1 {1 more to make space for the |inter_char_text|}
 @z
 
 @x
@@ -2010,7 +2034,7 @@ primitive("par",par_end,too_big_char); {cf. |scan_file_name|}
 @y
 @!c:UnicodeScalar; {constituent of a possible expanded code}
 @!d:small_number; {number of excess characters in an expanded code}
-@!sup_count:small_number; {number of identical sup_mark characters}
+@!sup_count:small_number; {number of identical |sup_mark| characters}
 @z
 
 @x
@@ -2069,12 +2093,12 @@ end
 @<If this |sup_mark| starts an expanded character...@>=
 begin if cur_chr=buffer[loc] then if loc<limit then
   begin sup_count:=2;
-  {we have ^^ and another char; check how many ^s we have altogether, up to a max of 6}
+  {we have |^^| and another char; check how many |^|s we have altogether, up to a max of 6}
   while (sup_count<6) and (loc+2*sup_count-2<=limit) and (cur_chr=buffer[loc+sup_count-1]) do
     incr(sup_count);
-  {check whether we have enough hex chars for the number of ^s}
+  {check whether we have enough hex chars for the number of |^|s}
   for d:=1 to sup_count do
-    if not is_hex(buffer[loc+sup_count-2+d]) then {found a non-hex char, so do single ^^X style}
+    if not is_hex(buffer[loc+sup_count-2+d]) then {found a non-hex char, so do single |^^X| style}
       begin c:=buffer[loc+1];
       if c<@'200 then
         begin loc:=loc+2;
@@ -2166,12 +2190,12 @@ end
 @<If an expanded...@>=
 begin if (cat=sup_mark) and (buffer[k]=cur_chr) and (k<limit) then
   begin sup_count:=2;
-  {we have ^^ and another char; check how many ^s we have altogether, up to a max of 6}
+  {we have |^^| and another char; check how many |^|s we have altogether, up to a max of 6}
   while (sup_count<6) and (k+2*sup_count-2<=limit) and (buffer[k+sup_count-1]=cur_chr) do
     incr(sup_count);
-  {check whether we have enough hex chars for the number of ^s}
+  {check whether we have enough hex chars for the number of |^|s}
   for d:=1 to sup_count do
-    if not is_hex(buffer[k+sup_count-2+d]) then {found a non-hex char, so do single ^^X style}
+    if not is_hex(buffer[k+sup_count-2+d]) then {found a non-hex char, so do single |^^X| style}
       begin c:=buffer[k+1];
       if c<@'200 then
         begin if c<@'100 then buffer[k-1]:=c+@'100 @+else buffer[k-1]:=c-@'100;
@@ -3074,27 +3098,34 @@ for j:=1 to n do append_to_name(TEX_format_default[j]);
 @x
 @p function make_name_string:str_number;
 var k:1..file_name_size; {index into |name_of_file|}
+save_area_delimiter, save_ext_delimiter: pool_pointer;
+save_name_in_progress, save_stop_at_space: boolean;
 begin if (pool_ptr+name_length>pool_size)or(str_ptr=max_strings)or
  (cur_length>0) then
   make_name_string:="?"
 else  begin for k:=1 to name_length do append_char(xord[name_of_file[k]]);
   make_name_string:=make_string;
-  end;
   {At this point we also set |cur_name|, |cur_ext|, and |cur_area| to
    match the contents of |name_of_file|.}
-  k:=1;
+  save_area_delimiter:=area_delimiter; save_ext_delimiter:=ext_delimiter;
+  save_name_in_progress:=name_in_progress; save_stop_at_space:=stop_at_space;
   name_in_progress:=true;
   begin_name;
   stop_at_space:=false;
+  k:=1;
   while (k<=name_length)and(more_name(name_of_file[k])) do
     incr(k);
-  stop_at_space:=true;
+  stop_at_space:=save_stop_at_space;
   end_name;
-  name_in_progress:=false;
+  name_in_progress:=save_name_in_progress;
+  area_delimiter:=save_area_delimiter; ext_delimiter:=save_ext_delimiter;
+  end;
 end;
 @y
 @p function make_name_string:str_number;
-var k:1..file_name_size; {index into |name_of_file|}
+var k:0..file_name_size; {index into |name_of_file|}
+save_area_delimiter, save_ext_delimiter: pool_pointer;
+save_name_in_progress, save_stop_at_space: boolean;
 begin if (pool_ptr+name_length>pool_size)or(str_ptr=max_strings)or
  (cur_length>0) then
   make_name_string:="?"
@@ -3102,6 +3133,20 @@ else  begin
   make_utf16_name;
   for k:=0 to name_length16-1 do append_char(name_of_file16[k]);
   make_name_string:=make_string;
+  {At this point we also set |cur_name|, |cur_ext|, and |cur_area| to
+   match the contents of |name_of_file|.}
+  save_area_delimiter:=area_delimiter; save_ext_delimiter:=ext_delimiter;
+  save_name_in_progress:=name_in_progress; save_stop_at_space:=stop_at_space;
+  name_in_progress:=true;
+  begin_name;
+  stop_at_space:=false;
+  k:=0;
+  while (k<name_length16)and(more_name(name_of_file16[k])) do
+    incr(k);
+  stop_at_space:=save_stop_at_space;
+  end_name;
+  name_in_progress:=save_name_in_progress;
+  area_delimiter:=save_area_delimiter; ext_delimiter:=save_ext_delimiter;
   end;
 end;
 function u_make_name_string(var f:unicode_file):str_number;
@@ -3218,7 +3263,7 @@ if translate_filename then begin
 @d is_gr_font(#)==((font_area[#]=otgr_font_flag) and (usingGraphite(font_layout_engine[#])))
 @d is_otgr_font(#)==(font_area[#]=otgr_font_flag)
 @d is_native_font(#)==(is_atsu_font(#) or is_otgr_font(#))
-	{native fonts have font_area = 65534 or 65535,
+	{native fonts have |font_area| = 65534 or 65535,
 	 which would be a string containing an invalid Unicode character}
 
 @d non_char==qi(too_big_char) {a |halfword| code that can't match a real character}
@@ -3244,14 +3289,15 @@ if translate_filename then begin
   {|font_bchar| if it doesn't exist in the font, otherwise |non_char|}
 @#
 @!font_layout_engine: ^void_pointer; { either an ATSUStyle or a XeTeXLayoutEngine }
-@!font_mapping: ^void_pointer; { TECkit_Converter or 0 }
+@!font_mapping: ^void_pointer; { |TECkit_Converter| or 0 }
 @!font_flags: ^char; { flags:
-  0x01: font_colored
-  0x02: font_vertical }
+  0x01: |font_colored|
+  0x02: |font_vertical| }
 @!font_letter_space: ^scaled; { letterspacing to be applied to the font }
-@!loaded_font_mapping: void_pointer; { used by load_native_font to return mapping, if any }
-@!loaded_font_flags: char; { used by load_native_font to return flags }
+@!loaded_font_mapping: void_pointer; { used by |load_native_font| to return mapping, if any }
+@!loaded_font_flags: char; { used by |load_native_font| to return flags }
 @!loaded_font_letter_space: scaled;
+@!loaded_font_design_size: scaled;
 @!mapped_text: ^UTF16_code; { scratch buffer used while applying font mappings }
 @!xdv_buffer: ^char; { scratch buffer used in generating XDV output }
 @z
@@ -3389,19 +3435,19 @@ ec:=effective_char(false,f,qi(c));
 
 \yskip\hang|define_native_font| 252 k[4] s[4] flags[2]
 	lenps[1] lenfam[1] lensty[1] ps[lenps] fam[lenfam] sty[lensty]
-	if (flags & COLORED):
+	if (flags AND COLORED):
 		rgba[4]
-	if (flags & VARIATIONS):
+	if (flags AND VARIATIONS):
 		numvars[2]
 		axes[4nv]
 		values[4nv]
-	if (flags & MATRIX):
+	if (flags AND MATRIX):
 		ta[4] tb[4] tc[4] td[4] tx[4] ty[4]
 
 \yskip\hang|pic_file| 251 flags[1] t[4][6] p[2] len[2] path[l]
 	flags = 0 for raster image, 1 for PDF
 	t is transform matrix
-	p is page # from the graphic file (0-based)
+	p is page \# from the graphic file (0-based)
 	len is length of pathname
 	path is pathname of graphic file
 
@@ -3580,7 +3626,7 @@ check_next:
           end;
           goto end_node_run;
         end;
-        {@<Advance |q| past ignorable nodes@>;}
+        {@@<Advance |q| past ignorable nodes@@>;}
         if (q <> null) and is_native_word_node(q) and (native_font(q) = native_font(r)) then begin
           p := q; {record new tail of run in |p|}
           q := link(q);
@@ -3731,17 +3777,15 @@ if tracing_output>0 then
 dvi_four(last_bop); last_bop:=page_loc;
 @y
 dvi_four(last_bop); last_bop:=page_loc;
-{ generate a pagesize \special at start of page }
+{ generate a pagesize special at start of page }
 old_setting:=selector; selector:=new_string;
 print("pdf:pagesize ");
 if (pdf_page_width > 0) and (pdf_page_height > 0) then begin
   print("width"); print(" ");
-  if mag=1000 then print_scaled(pdf_page_width)
-  else print_scaled(xn_over_d(pdf_page_width,mag,1000));
+  print_scaled(pdf_page_width);
   print("pt"); print(" ");
   print("height"); print(" ");
-  if mag=1000 then print_scaled(pdf_page_height)
-  else print_scaled(xn_over_d(pdf_page_height,mag,1000));
+  print_scaled(pdf_page_height);
   print("pt");
 end else
   print("default");
@@ -3936,10 +3980,10 @@ print_ASCII(qo(character(p)) + (fam(p) div @"100) * @"10000);
 @d axis_height==mathsy(22) {height of fraction lines above the baseline}
 @d total_mathsy_params=22
 @y
-NB: the access functions here must all put the font # into /f/ for mathsy().
+NB: the access functions here must all put the font \# into /f/ for mathsy().
 
 The accessors are defined with
-define_mathsy_accessor(NAME)(fontdimen-number)(NAME)
+|define_mathsy_accessor(NAME)(fontdimen-number)(NAME)|
 because I can't see how to only give the name once, with WEB's limited
 macro capabilities. This seems a bit ugly, but it works.
 
@@ -4441,7 +4485,7 @@ begin fetch(accent_chr(q));
 x:=null;
 if is_native_font(cur_f) then
   begin c:=cur_c; f:=cur_f;
-  s:=0; {@<Compute the amount of skew@>;}
+  s:=0; {@@<Compute the amount of skew@@>;}
   x:=clean_box(nucleus(q),cramped_style(cur_style)); w:=width(x); h:=height(x);
   end
 else if char_exists(cur_i) then
@@ -4459,7 +4503,7 @@ if x<>null then begin
 @y
   y:=char_box(f,c);
   if is_native_font(f) then begin
-    {turn the native_word node into a native_glyph one}
+    {turn the |native_word| node into a |native_glyph| one}
     p:=get_node(glyph_node_size);
     type(p):=whatsit_node; subtype(p):=glyph_node;
     native_font(p):=f; native_glyph(p):=get_native_glyph(list_ptr(y), 0);
@@ -4499,7 +4543,7 @@ if x<>null then begin
     end;
   until (w2<0) or (w2>=wa);
 {
-  if (w2<0) then begin
+  |if (w2<0) then begin
     ot_assembly_ptr:=get_ot_assembly_ptr(f, c, 1);
     if ot_assembly_ptr<>nil then begin
       free_node(p,glyph_node_size);
@@ -4507,7 +4551,7 @@ if x<>null then begin
       list_ptr(y):=p;
       goto found;
     end;
-  end else
+  end else|
 }
     set_native_glyph_metrics(p, 1);
 {found:}
@@ -4900,8 +4944,7 @@ restart:
 for l := 0 to native_length(ha)-1 do begin
   c := get_native_char(ha, l);
   set_lc_code(c);
-  if (hc[0] = 0) {or (hc[0] > max_hyph_char) -- no, there can be letters > max_hyph_char in the word}
-  then begin
+  if (hc[0] = 0) then begin
     if (hn > 0) then begin
       { we've got some letters, and now found a non-letter, so break off the tail of the |native_word|
         and link it after this node, and goto done3 }
@@ -5316,8 +5359,8 @@ if ((head=tail) and (mode>0)) then begin
 end;
 adjust_space_factor;@/
 @y
-@d check_for_inter_char_toks(#)=={check for a spacing token list, goto # if found,
-                               or big_switch in case of the initial letter of a run}
+@d check_for_inter_char_toks(#)=={check for a spacing token list, goto |#| if found,
+                               or |big_switch| in case of the initial letter of a run}
 	cur_ptr:=null;
 	space_class:=sf_code(cur_chr) div @"10000;
 
@@ -5326,10 +5369,8 @@ adjust_space_factor;@/
 			if (state<>token_list) or (token_type<>backed_up_char) then begin
 				find_sa_element(inter_char_val, 255*@"100 + space_class, false);
 				if cur_ptr<>null then begin
-					if cur_cs=0 then begin
-						if cur_cmd=char_num then cur_cmd:=char_given;
-						cur_tok:=(cur_cmd*max_char_val)+cur_chr;
-					end else cur_tok:=cs_token_flag+cur_cs; {can't happen?}
+					if cur_cmd<>letter then cur_cmd:=other_char;
+					cur_tok:=(cur_cmd*max_char_val)+cur_chr;
 					back_input; token_type:=backed_up_char;
 					begin_token_list(sa_ptr(cur_ptr), inter_char_text);
 					goto big_switch;
@@ -5338,10 +5379,8 @@ adjust_space_factor;@/
 		end else begin
 			find_sa_element(inter_char_val, prev_class*@"100 + space_class, false);
 			if cur_ptr<>null then begin
-				if cur_cs=0 then begin
-					if cur_cmd=char_num then cur_cmd:=char_given;
-					cur_tok:=(cur_cmd*max_char_val)+cur_chr;
-				end else cur_tok:=cs_token_flag+cur_cs; {can't happen?}
+				if cur_cmd<>letter then cur_cmd:=other_char;
+				cur_tok:=(cur_cmd*max_char_val)+cur_chr;
 				back_input; token_type:=backed_up_char;
 				begin_token_list(sa_ptr(cur_ptr), inter_char_text);
 				prev_class:=255;
@@ -5357,7 +5396,7 @@ adjust_space_factor;@/
 		find_sa_element(inter_char_val, space_class*@"100 + 255, false); {boundary}
 		if cur_ptr<>null then begin
 			if cur_cs=0 then begin
-				if cur_cmd=char_num then cur_cmd:=char_given;
+				if cur_cmd=char_num then cur_cmd:=other_char;
 				cur_tok:=(cur_cmd*max_char_val)+cur_chr;
 			end else cur_tok:=cs_token_flag+cur_cs;
 			back_input;
@@ -5481,7 +5520,7 @@ collected:
 				do_locale_linebreaks(save_native_len, main_k);
 
 				native_len := save_native_len;	{ discard the temp string }
-				main_k := native_len - main_h - temp_ptr;	{ and set main_k to remaining length of new word }
+				main_k := native_len - main_h - temp_ptr;	{ and set |main_k| to remaining length of new word }
 				temp_ptr := main_h;	{ pointer to remaining fragment }
 
 				main_h := 0;
@@ -5733,11 +5772,11 @@ math_char_num: begin scan_fifteen_bit_int; c:=cur_val;
   end;
 @y
 math_char_num:
-  if cur_chr = 2 then begin { \XeTeXmathchar }
+  if cur_chr = 2 then begin { XeTeXmathchar }
     scan_math_class_int; c := set_class_field(cur_val);
     scan_math_fam_int;   c := c + set_family_field(cur_val);
     scan_usv_num;        c := c + cur_val;
-  end else if cur_chr = 1 then begin { \XeTeXmathcharnum }
+  end else if cur_chr = 1 then begin { XeTeXmathcharnum }
     scan_xetex_math_char_int; c := cur_val;
   end else begin scan_fifteen_bit_int;
     c := set_class_field(cur_val div @"1000) +
@@ -5757,11 +5796,11 @@ math_given: begin
   end;
 XeTeX_math_given: c:=cur_chr;
 delim_num: begin
-  if cur_chr=1 then begin {\XeTeXdelimiter <cls> <fam> <usv>}
+  if cur_chr=1 then begin {XeTeXdelimiter <cls> <fam> <usv>}
     scan_math_class_int; c := set_class_field(cur_val);
     scan_math_fam_int;   c := c + set_family_field(cur_val);
     scan_usv_num;        c := c + cur_val;
-  end else begin {\delimiter <27-bit delcode>}
+  end else begin {delimiter <27-bit delcode>}
     scan_delimiter_int;
     c := cur_val div @'10000; {get the 'small' delimiter field}
     c := set_class_field(c div @"1000) +
@@ -5785,12 +5824,12 @@ plane_and_fam_field(p) := plane_and_fam_field(p) + (math_char_field(c) div @"100
 mmode+math_char_num: begin scan_fifteen_bit_int; set_math_char(cur_val);
   end;
 @y
-mmode+math_char_num: if cur_chr = 2 then begin { \XeTeXmathchar }
+mmode+math_char_num: if cur_chr = 2 then begin { XeTeXmathchar }
     scan_math_class_int; t := set_class_field(cur_val);
     scan_math_fam_int; t := t + set_family_field(cur_val);
     scan_usv_num; t := t + cur_val;
     set_math_char(t);
-  end else if cur_chr = 1 then begin { \XeTeXmathcharnum }
+  end else if cur_chr = 1 then begin { XeTeXmathcharnum }
     scan_xetex_math_char_int; set_math_char(cur_val);
   end else begin scan_fifteen_bit_int;
     set_math_char(set_class_field(cur_val div @"1000) +
@@ -5811,7 +5850,7 @@ mmode+math_given: begin
   end;
 mmode+XeTeX_math_given: set_math_char(cur_chr);
 mmode+delim_num: begin
-  if cur_chr=1 then begin {\XeTeXdelimiter}
+  if cur_chr=1 then begin {XeTeXdelimiter}
     scan_math_class_int; t := set_class_field(cur_val);
     scan_math_fam_int; t := t + set_family_field(cur_val);
     scan_usv_num; t := t + cur_val;
@@ -5863,11 +5902,11 @@ begin if r then scan_twenty_seven_bit_int
 procedure scan_delimiter(@!p:pointer;@!r:boolean);
 begin
   if r then begin
-    if cur_chr=1 then begin {\XeTeXradical}
+    if cur_chr=1 then begin {XeTeXradical}
       cur_val1 := @"40000000; {extended delcode flag}
       scan_math_fam_int;   cur_val1 := cur_val1 + cur_val * @"200000;
       scan_usv_num;        cur_val := cur_val1 + cur_val;
-    end else {\radical}
+    end else {radical}
       scan_delimiter_int;
   end
 @z
@@ -5880,12 +5919,12 @@ begin
   letter,other_char: begin
     cur_val:=del_code(cur_chr);
     end;
-  delim_num: if cur_chr=1 then begin {\XeTeXdelimiter}
+  delim_num: if cur_chr=1 then begin {XeTeXdelimiter}
     cur_val1 := @"40000000; {extended delcode flag}
     scan_math_class_int; {discarded}
     scan_math_fam_int;   cur_val1 := cur_val1 + cur_val * @"200000;
     scan_usv_num;        cur_val := cur_val1 + cur_val;
-  end else scan_delimiter_int; {normal \delimiter}
+  end else scan_delimiter_int; {normal delimiter}
   othercases begin cur_val:=-1; end;
 @z
 
@@ -6302,15 +6341,15 @@ XeTeX_def_code: begin
       p:=cur_chr; scan_usv_num;
       p:=p+cur_val;
       scan_optional_equals;
-      scan_int; {scan_xetex_del_code_int; !!FIXME!!}
+      scan_int; {|scan_xetex_del_code_int|; !!FIXME!!}
       word_define(p,hi(cur_val));
     end else begin
 {
 bit usage in delcode values:
-original layout: @"00cffCFF  small/LARGE family & char
-extended:        @"40000000                      FLAG
-                 +  ff << 21 (mult by @"200000)  FAMILY
-                 +   1ccccc (21 bits)            USV
+original layout: @@"00cffCFF  small/LARGE family \& char
+extended:        @@"40000000                      FLAG
+                 +  ff << 21 (mult by @@"200000)  FAMILY
+                 +    1ccccc (21 bits)            USV
 }
       p:=cur_chr-1; scan_usv_num;
       p:=p+cur_val;
@@ -6596,7 +6635,7 @@ if not w_eof(fmt_file) then goto bad_fmt
   setup_bound_var (15000)('max_strings')(max_strings);
 @y
   setup_bound_var (15000)('max_strings')(max_strings);
-  max_strings:=max_strings+too_big_char; {the max_strings value doesn't include the 64K synthetic strings}
+  max_strings:=max_strings+too_big_char; {the |max_strings| value doesn't include the 64K synthetic strings}
 @z
 
 @x
@@ -6914,10 +6953,10 @@ begin
 				end
 			end;
 
-			{ now pp points to the non-native_word node that ended the chain, or null }
+			{ now pp points to the non-|native_word| node that ended the chain, or null }
 
-			{ we can just check type(p)=whatsit_node below, as we know that the chain
-			  contains only discretionaries and native_word nodes, no other whatsits or char_nodes }
+			{ we can just check type(p)=|whatsit_node| below, as we know that the chain
+			  contains only discretionaries and |native_word| nodes, no other whatsits or |char_nodes| }
 
 			if (pp <> link(p)) then begin
 				{ found a chain of at least two pieces starting at p }
@@ -6953,7 +6992,7 @@ begin
 				set_native_metrics(p, XeTeX_use_glyph_metrics); { and measure it (i.e., re-do the OT layout) }
 			end;
 
-			{ now incorporate the native_word node measurements into the box we're packing }
+			{ now incorporate the |native_word| node measurements into the box we're packing }
 			if height(p) > h then
 				h := height(p);
 			if depth(p) > d then
@@ -7388,7 +7427,7 @@ var
 	pdf_box_type: integer;
 	result: integer;
 begin
-	{ scan the filename and pack into name_of_file }
+	{ scan the filename and pack into |name_of_file| }
 	scan_file_name;
 	pack_cur_name;
 
@@ -7620,7 +7659,7 @@ end
 
 @d XeTeX_pdf_page_count_code  = XeTeX_int+29
 
-{ NB: must update eTeX_dim when items are added here! }
+{ NB: must update |eTeX_dim| when items are added here! }
 @z
 
 @x
@@ -8170,7 +8209,7 @@ glue_node: begin round_glue;
   @<Handle a glue node for mixed...@>;
   end;
 @y
-@ Need to measure native_word and picture nodes when reversing!
+@ Need to measure |native_word| and picture nodes when reversing!
 @<Cases of |reverse|...@>=
 whatsit_node:
   if (subtype(p)=native_word_node)
@@ -8294,7 +8333,7 @@ exit:end;
 effective_char_info:=null_character;
 exit:end;
 
-{ the following procedure has been moved so that new_native_character can call it }
+{ the following procedure has been moved so that |new_native_character| can call it }
 
 procedure char_warning(@!f:internal_font_number;@!c:integer);
 var old_setting: integer; {saved value of |tracing_online|}
@@ -8305,7 +8344,7 @@ begin if tracing_lost_chars>0 then
   print_nl("Missing character: There is no ");
 @.Missing character@>
   if c < @"10000 then print_ASCII(c)
-  else begin { non-Plane 0 Unicodes can't be sent through print_ASCII }
+  else begin { non-Plane 0 Unicodes can't be sent through |print_ASCII| }
     print("character number ");
     print_hex(c);
   end;
@@ -8320,7 +8359,7 @@ end;
 
 function new_native_word_node(@!f:internal_font_number;@!n:integer):pointer;
 	{ note that this function creates the node, but does not actually set its metrics;
-		call set_native_metrics(node) if that is required! }
+		call |set_native_metrics(node)| if that is required! }
 var
 	l:	integer;
 	q:	pointer;
@@ -8480,19 +8519,27 @@ var
 	f: internal_font_number;
 	full_name: str_number;
 begin
-	{ on entry here, the full name is packed into name_of_file in UTF8 form }
+	{ on entry here, the full name is packed into |name_of_file| in UTF8 form }
 
 	load_native_font := null_font;
 
-	if (s < 0) then actual_size := -s * unity div 100 else actual_size := s;
-	font_engine := find_native_font(name_of_file + 1, actual_size);
+	font_engine := find_native_font(name_of_file + 1, s);
 	if font_engine = 0 then goto done;
+	
+	if s>=0 then
+		actual_size := s
+	else begin
+		if (s <> -1000) then
+			actual_size := xn_over_d(loaded_font_design_size,-s,1000)
+		else
+			actual_size := loaded_font_design_size;
+	end;
 
 	{ look again to see if the font is already loaded, now that we know its canonical name }
 	str_room(name_length);
 	for k := 1 to name_length do
 		append_char(name_of_file[k]);
-    full_name := make_string; { not slow_make_string because we'll flush it if the font was already loaded }
+    full_name := make_string; { not |slow_make_string| because we'll flush it if the font was already loaded }
 
 	for f:=font_base+1 to font_ptr do
   		if (font_area[f] = native_font_type_flag) and str_eq_str(font_name[f], full_name) and (font_size[f] = actual_size) then begin
@@ -8508,7 +8555,7 @@ begin
 
 	{ we've found a valid installed font, and have room }
 	incr(font_ptr);
-	font_area[font_ptr] := native_font_type_flag; { set by find_native_font to either aat_font_flag or ot_font_flag }
+	font_area[font_ptr] := native_font_type_flag; { set by |find_native_font| to either |aat_font_flag| or |ot_font_flag| }
 
 	{ store the canonical name }
 	font_name[font_ptr] := full_name;
@@ -8518,7 +8565,7 @@ begin
 	font_check[font_ptr].b2 := 0;
 	font_check[font_ptr].b3 := 0;
 	font_glue[font_ptr] := null;
-	font_dsize[font_ptr] := 10 * unity;
+	font_dsize[font_ptr] := loaded_font_design_size;
 	font_size[font_ptr] := actual_size;
 
 	if (native_font_type_flag = aat_font_flag) then begin
@@ -8532,7 +8579,7 @@ begin
 	height_base[font_ptr] := ascent;
 	depth_base[font_ptr] := -descent;
 
-	font_params[font_ptr] := 8;		{ we add an extra \fontdimen: #8 -> cap_height }
+	font_params[font_ptr] := 8;		{ we add an extra fontdimen: \#8 -> |cap_height| }
 	font_bc[font_ptr] := 0;
 	font_ec[font_ptr] := 65535;
 	font_used[font_ptr] := false;
@@ -8549,21 +8596,21 @@ begin
 	s := width(p) + loaded_font_letter_space;
 	free_node(p, native_size(p));
 
-	font_info[fmem_ptr].sc := font_slant;							{slant}
+	font_info[fmem_ptr].sc := font_slant;							{|slant|}
 	incr(fmem_ptr);
-	font_info[fmem_ptr].sc := s;									{space = width of space character}
+	font_info[fmem_ptr].sc := s;									{|space| = width of space character}
 	incr(fmem_ptr);
-	font_info[fmem_ptr].sc := s div 2;								{space_stretch = 1/2 * space}
+	font_info[fmem_ptr].sc := s div 2;								{|space_stretch| = 1/2 * space}
 	incr(fmem_ptr);
-	font_info[fmem_ptr].sc := s div 3;								{space_shrink = 1/3 * space}
+	font_info[fmem_ptr].sc := s div 3;								{|space_shrink| = 1/3 * space}
 	incr(fmem_ptr);
-	font_info[fmem_ptr].sc := x_ht;									{x_height}
+	font_info[fmem_ptr].sc := x_ht;									{|x_height|}
 	incr(fmem_ptr);
-	font_info[fmem_ptr].sc := font_size[font_ptr];					{quad = font size}
+	font_info[fmem_ptr].sc := font_size[font_ptr];					{|quad| = font size}
 	incr(fmem_ptr);
-	font_info[fmem_ptr].sc := s div 3;								{extra_space = 1/3 * space}
+	font_info[fmem_ptr].sc := s div 3;								{|extra_space| = 1/3 * space}
 	incr(fmem_ptr);
-	font_info[fmem_ptr].sc := cap_ht;								{cap_height}
+	font_info[fmem_ptr].sc := cap_ht;								{|cap_height|}
 	incr(fmem_ptr);
 
 	font_mapping[font_ptr] := loaded_font_mapping;
