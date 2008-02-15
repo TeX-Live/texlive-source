@@ -221,25 +221,38 @@ read_length (double *vp, char **pp, char *endptr)
   v = atof(q);
   RELEASE(q);
 
+  skip_white(&p, endptr);
   q = parse_c_ident(&p, endptr);
   if (q) {
-    if (strlen(q) > strlen("true") &&
+    char *qq = q;
+    if (strlen(q) >= strlen("true") &&
         !memcmp(q, "true", strlen("true"))) {
       q += strlen("true"); /* just skip "true" */
     }
-    for (k = 0; _ukeys[k] && strcmp(_ukeys[k], q); k++);
-    switch (k) {
-    case K_UNIT__PT: u *= 72.0 / 72.27; break;
-    case K_UNIT__IN: u *= 72.0; break;
-    case K_UNIT__CM: u *= 72.0 / 2.54 ; break;
-    case K_UNIT__MM: u *= 72.0 / 25.4 ; break;
-    case K_UNIT__BP: u *= 1.0 ; break;
-    default:
-      WARN("Unknown unit of measure: %s", q);
-      error = -1;
-      break;
+    if (strlen(q) == 0) {
+      RELEASE(qq);
+      skip_white(&p, endptr);
+      qq = q = parse_c_ident(&p, endptr);
     }
-    RELEASE(q);
+    if (q) {
+      for (k = 0; _ukeys[k] && strcmp(_ukeys[k], q); k++);
+      switch (k) {
+      case K_UNIT__PT: u *= 72.0 / 72.27; break;
+      case K_UNIT__IN: u *= 72.0; break;
+      case K_UNIT__CM: u *= 72.0 / 2.54 ; break;
+      case K_UNIT__MM: u *= 72.0 / 25.4 ; break;
+      case K_UNIT__BP: u *= 1.0 ; break;
+      default:
+        WARN("Unknown unit of measure: %s", q);
+        error = -1;
+        break;
+      }
+      RELEASE(qq);
+    }
+    else {
+      WARN("Missing unit of measure after \"true\"");
+      error = -1;
+    }
   }
 
   *vp = v * u; *pp = p;

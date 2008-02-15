@@ -2436,26 +2436,39 @@ read_length (double *vp, double mag, char **pp, char *endptr)
   v = atof(q);
   RELEASE(q);
 
+  skip_white(&p, endptr);
   q = parse_c_ident(&p, endptr);
   if (q) {
-    if (strlen(q) > strlen("true") &&
+    char *qq = q; /* remember this for RELEASE, because q may be advanced */
+    if (strlen(q) >= strlen("true") &&
         !memcmp(q, "true", strlen("true"))) {
       u /= mag != 0.0 ? mag : 1.0; /* inverse magnify */
       q += strlen("true");
     }
-    for (k = 0; _ukeys[k] && strcmp(_ukeys[k], q); k++);
-    switch (k) {
-    case K_UNIT__PT: u *= 72.0 / 72.27; break;
-    case K_UNIT__IN: u *= 72.0; break;
-    case K_UNIT__CM: u *= 72.0 / 2.54 ; break;
-    case K_UNIT__MM: u *= 72.0 / 25.4 ; break;
-    case K_UNIT__BP: u *= 1.0 ; break;
-    default:
-      WARN("Unknown unit of measure: %s", q);
-      error = -1;
-      break;
+    if (strlen(q) == 0) { /* "true" was a separate word from the units */
+      RELEASE(qq);
+      skip_white(&p, endptr);
+      qq = q = parse_c_ident(&p, endptr);
     }
-    RELEASE(q);
+    if (q) {
+      for (k = 0; _ukeys[k] && strcmp(_ukeys[k], q); k++);
+      switch (k) {
+      case K_UNIT__PT: u *= 72.0 / 72.27; break;
+      case K_UNIT__IN: u *= 72.0; break;
+      case K_UNIT__CM: u *= 72.0 / 2.54 ; break;
+      case K_UNIT__MM: u *= 72.0 / 25.4 ; break;
+      case K_UNIT__BP: u *= 1.0 ; break;
+      default:
+        WARN("Unknown unit of measure: %s", q);
+        error = -1;
+        break;
+      }
+      RELEASE(qq);
+    }
+    else {
+      WARN("Missing unit of measure after \"true\"");
+      error = -1;
+    }
   }
 
   *vp = v * u; *pp = p;
@@ -2468,7 +2481,7 @@ scan_special (double *wd, double *ht, double *xo, double *yo, char *lm, const ch
 {
   char  *q, *p = (char *) buf;
   char  *endptr;
-  int    ns_pdf = 0, error = 0;
+  int    ns_pdf = 0, ns_xtx = 0, error = 0;
   double tmp;
   extern double paper_width, paper_height;
   extern char   landscape_mode;
@@ -2485,6 +2498,15 @@ scan_special (double *wd, double *ht, double *xo, double *yo, char *lm, const ch
       skip_white(&p, endptr);
       RELEASE(q);
       q = parse_c_ident(&p, endptr); ns_pdf = 1;
+    }
+  }
+  else if (q && !strcmp(q, "x")) {
+    skip_white(&p, endptr);
+    if (p < endptr && *p == ':') {
+      p++;
+      skip_white(&p, endptr);
+      RELEASE(q);
+      q = parse_c_ident(&p, endptr); ns_xtx = 1;
     }
   }
   skip_white(&p, endptr);
@@ -2533,16 +2555,16 @@ scan_special (double *wd, double *ht, double *xo, double *yo, char *lm, const ch
         qchr = *p; p++;
         skip_white(&p, endptr);
       }
-      error = read_length(&tmp, 1.0, &p, endptr);
+      error = read_length(&tmp, dvi_tell_mag(), &p, endptr);
       if (!error) {
-        *wd = tmp;
+        *wd = tmp * dvi_tell_mag();
         skip_white(&p, endptr);
         if (p < endptr && *p == ',') {
           p++; skip_white(&p, endptr);
         }
-        error = read_length(&tmp, 1.0, &p, endptr);
+        error = read_length(&tmp, dvi_tell_mag(), &p, endptr);
         if (!error)
-          *ht = tmp;
+          *ht = tmp * dvi_tell_mag();
         skip_white(&p, endptr);
       }
       if (!error && qchr) { /* Check if properly quoted */

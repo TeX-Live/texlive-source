@@ -337,15 +337,13 @@ jpeg_include_image (pdf_ximage *ximage, FILE *fp)
 
 #define IS_JFIF(j) ((j).flags & HAVE_APPn_JFIF)
   if (IS_JFIF(j_info)) {
-    struct JPEG_APPn_JFIF *app_data;
     int i;
     for (i = 0; i < j_info.num_appn; i++) {
-      if (j_info.appn[i].marker  != JM_APP0 ||
-	  j_info.appn[i].app_sig != JS_APPn_JFIF)
-        continue;
+      if (j_info.appn[i].marker == JM_APP0 && j_info.appn[i].app_sig == JS_APPn_JFIF)
+        break;
     }
     if (i < j_info.num_appn) {
-      app_data = (struct JPEG_APPn_JFIF *)j_info.appn[i].app_data;
+      struct JPEG_APPn_JFIF *app_data = (struct JPEG_APPn_JFIF *)j_info.appn[i].app_data;
       switch (app_data->units) {
       case 1: /* pixels per inch */
         info.xdensity = 72.0 / app_data->Xdensity;

@@ -521,7 +521,7 @@ tt_cmap_read (sfnt *sfont, USHORT platform, USHORT encoding)
     cmap->map = read_cmap12(sfont, length);
     break;
   default:
-    WARN("Unrecognized TrueType cmap format.");
+    WARN("Unrecognized OpenType/TrueType cmap format.");
     tt_cmap_release(cmap);
     return NULL;
   }
@@ -557,7 +557,7 @@ tt_cmap_release (tt_cmap *cmap)
 	release_cmap12(cmap->map);
 	break;
       default:
-	ERROR("Unrecognized TrueType cmap format.");
+	ERROR("Unrecognized OpenType/TrueType cmap format.");
       }
     }
     RELEASE(cmap);
@@ -575,7 +575,7 @@ tt_cmap_lookup (tt_cmap *cmap, long cc)
   ASSERT(cmap);
 
   if (cc > 0xffffL && cmap->format < 12) {
-    WARN("Four bytes charcode not supported in TrueType cmap format 0...6.");
+    WARN("Four bytes charcode not supported in OpenType/TrueType cmap format 0...6.");
     return 0;
   }
 
@@ -596,7 +596,7 @@ tt_cmap_lookup (tt_cmap *cmap, long cc)
     gid = lookup_cmap12(cmap->map, (ULONG) cc);
     break;
   default:
-    ERROR("Unrecognized TrueType cmap subtable format");
+    ERROR("Unrecognized OpenType/TrueType cmap subtable format");
     break;
   }
 
@@ -889,6 +889,8 @@ handle_subst_glyphs (CMap *cmap,
 	  for (k = 0; k < unicode_count; ++k) {
 	    len += UC_sput_UTF16BE(unicodes[k], &p, wbuf+WBUF_SIZE);
 	  }
+	  wbuf[0] = (gid >> 8) & 0xff;
+	  wbuf[1] =  gid & 0xff;
 	  CMap_add_bfchar(cmap, wbuf, 2, wbuf + 2, len);
 	}
       }
@@ -1117,7 +1119,7 @@ otf_create_ToUnicode_stream (const char *font_name,
 #endif
 
   if (!sfont) {
-    ERROR("Could not open TrueType font file \"%s\"", font_name);
+    ERROR("Could not open OpenType/TrueType font file \"%s\"", font_name);
   }
 
   switch (sfont->type) {
@@ -1133,7 +1135,7 @@ otf_create_ToUnicode_stream (const char *font_name,
   }
 
   if (sfnt_read_table_directory(sfont, offset) < 0) {
-    ERROR("Could not read TrueType table directory.");
+    ERROR("Could not read OpenType/TrueType table directory.");
   }
 
   cmap_add_id = CMap_cache_find(cmap_name);
@@ -1162,7 +1164,7 @@ otf_create_ToUnicode_stream (const char *font_name,
     }
   }
   if (cmap_obj == NULL)
-    WARN("Unable to read TrueType Unicode cmap table.");
+    WARN("Unable to read OpenType/TrueType Unicode cmap table.");
   tt_cmap_release(ttcmap);
   CMap_set_silent(0);
 
@@ -1614,10 +1616,10 @@ handle_gsub (pdf_obj *conf,
       rv = otl_gsub_select(gsub_list, script, language, feature);
       if (rv < 0) {
 	if (flag == 'p') {
-	  WARN("No GSUB featre %s.%s.%s loaded...",
+	  WARN("No GSUB feature %s.%s.%s loaded...",
 	       script, language, feature);
 	} else if (flag == 'r') {
-	  ERROR("No GSUB featre %s.%s.%s loaded...",
+	  ERROR("No GSUB feature %s.%s.%s loaded...",
 		script, language, feature);
 	}
       } else {
@@ -1850,7 +1852,7 @@ fprintf(stderr, "otf_load_Unicode_CMap(%s, %d)\n", map_name, ttc_index);
       }
       opt_conf = otl_conf_find_opt(conf, opt_tag);
       if (!opt_conf)
-	ERROR("There are no option \"%s\" in \"%s\".",
+	ERROR("There is no option \"%s\" in \"%s\".",
 	      opt_tag, conf_name);
       load_gsub(opt_conf, gsub_list, sfont);
     }
@@ -1861,7 +1863,7 @@ fprintf(stderr, "otf_load_Unicode_CMap(%s, %d)\n", map_name, ttc_index);
     if (opt_tag) {
       opt_conf = otl_conf_find_opt(conf, opt_tag);
       if (!opt_conf)
-	ERROR("There are no option \"%s\" in \"%s\".",
+	ERROR("There is no option \"%s\" in \"%s\".",
 	      opt_tag, conf_name);
       handle_gsub(opt_conf, ttcmap, gsub_list, &unencoded);
     }
