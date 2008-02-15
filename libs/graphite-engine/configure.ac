@@ -51,6 +51,7 @@ AC_CHECK_SIZEOF(wchar_t)
 AC_SUBST(SIZEOF_WCHAR_T)
 
 # Checks for library functions.
+AC_CHECK_FUNCS(fabsf)
 
 # Setup the build compiler flags and linker flags.
 # Enable debug

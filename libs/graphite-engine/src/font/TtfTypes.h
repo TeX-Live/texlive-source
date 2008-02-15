@@ -55,7 +55,7 @@ enum
 //**********************************************************************************************
 namespace Sfnt 
 {
-#pragma pack(push, 1)	// We need this or the structure members aren't alligned 
+#pragma pack(1)	// We need this or the structure members aren't alligned 
                      	// correctly.  Fortunately this form of pragma is supposed
                      	// to be recongnised by VS C++ too (at least according to 
                      	// MSDN).
@@ -382,7 +382,7 @@ namespace Sfnt
 		};
 	};
 
-#pragma pack(pop)
+#pragma pack()
 } // end of namespace Sfnt
 
 } // end of namespace TtfUtil

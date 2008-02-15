@@ -163,7 +163,7 @@ protected:
 		kzByteMask = 0x3F,
 		kzByteMark = 0x80,
 		kzUtf8ByteShift = 6,
-		kzUnicodeMax = 0x7FFFFFFF,
+		kzUnicodeMax = 0x7FFFFFFF
 	};
 
 	enum
