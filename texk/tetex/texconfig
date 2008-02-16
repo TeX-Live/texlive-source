@@ -478,7 +478,14 @@ listDvipsPapers()
 doGenerate()
 {
   if test -z "$1" || test "x$1" = xhelp; then
-    echo "xx"
+    echo "Usage: $progname generate fmtutil [ARG]...
+       $progname generate language [ARG]...
+       $progname generate updmap [ARG]...
+
+Generate the given configuration file, by invoking the generate-FILE
+scripts found in texmf/scripts.  Any additional arguments, such as
+-dest=/loc/ation, are passed to the script.  For more details, run
+$progname generate TYPE --help."
     return
   fi
   file=$1; shift
