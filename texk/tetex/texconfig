@@ -24,7 +24,7 @@ test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 progname=texconfig
 
 # the version string
-version=1193182750 # seconds since `00:00:00 1970-01-01 UTC'
+version=1203187848 # seconds since `00:00:00 1970-01-01 UTC'
                    # date '+%s' (with GNU date)
 
 envVars="
@@ -43,9 +43,8 @@ lastUpdatedFile=
 
 # 
 ###############################################################################
-# setupFMT(void)
-#   find a suitable version of fmt / adjust
-###############################################################################
+# setupFMT(void) - find a suitable version of fmt / adjust
+#
 setupFMT()
 {
   case $FMT in
@@ -61,9 +60,8 @@ setupFMT()
 }
 
 ###############################################################################
-# myFmt(args)
-#   run $FMT
-###############################################################################
+# myFmt(args) - run $FMT
+#
 myFmt()
 {
   setupFMT
@@ -73,7 +71,7 @@ myFmt()
 ###############################################################################
 # echoShowVariable(args ...)
 #   show environment variables which names are as args and their values
-###############################################################################
+#
 echoShowVariable()
 {
   for esv
@@ -87,7 +85,7 @@ echoShowVariable()
 ###############################################################################
 # echoShowKpseVariable(args ...)
 #   show kpathsea variables which names are as args and their values
-###############################################################################
+#
 echoShowKpseVariable()
 {
   for eskv
@@ -99,9 +97,8 @@ echoShowKpseVariable()
 }
 
 ###############################################################################
-# echoLocateBinary(args ...)
-#   show where programs actually exist
-###############################################################################
+# echoLocateBinary(args ...) - show where programs actually exist
+#
 echoLocateBinary()
 {
   for elb
@@ -119,9 +116,8 @@ echoLocateBinary()
 }
 
 ###############################################################################
-# echoLocateCfgfile(args ...)
-#   show where programs actually exist
-###############################################################################
+# echoLocateCfgfile(args ...) - show where files actually exist
+#
 echoLocateCfgfile()
 {
   for elc
@@ -138,9 +134,8 @@ echoLocateCfgfile()
 }
 
 ###############################################################################
-# checkForBinary(prog)
-#   echo full path of prog
-###############################################################################
+# checkForBinary(prog) - echo full path of prog
+#
 checkForBinary()
 {
   cfbBinary=$1
@@ -164,9 +159,8 @@ checkForBinary()
 }
 
 ###############################################################################
-# cleanup()
-#   clean up the temp area and exit with proper exit status
-###############################################################################
+# cleanup() - clean up the temp area and exit with proper exit status
+#
 cleanup()
 {
   rc=$1
@@ -176,9 +170,8 @@ cleanup()
 }
 
 ###############################################################################
-# setupTmpDir()
-#   set up a temp directory and a trap to remove it
-###############################################################################
+# setupTmpDir() - set up a temp directory and a trap to remove it
+#
 setupTmpDir()
 {
   case $needsCleanup in
@@ -192,9 +185,8 @@ setupTmpDir()
 }
 
 ###############################################################################
-# setupTexmfmain()
-#   get value for MT_TEXMFMAIN (with caching)
-###############################################################################
+# setupTexmfmain() - get value for MT_TEXMFMAIN (with caching)
+#
 setupTexmfmain()
 {
   case $MT_TEXMFMAIN in
@@ -204,9 +196,8 @@ setupTexmfmain()
 }
 
 ###############################################################################
-# setupTexmfmain()
-#   get value for MT_TEXMFDIST (with caching)
-###############################################################################
+# setupTexmfmain() - get value for MT_TEXMFDIST (with caching)
+#
 setupTexmfdist()
 {
   case $MT_TEXMFDIST in
@@ -216,9 +207,8 @@ setupTexmfdist()
 }
 
 ###############################################################################
-# setupTexmfvar()
-#   get value for MT_TEXMFVAR (with caching)
-###############################################################################
+# setupTexmfvar() - get value for MT_TEXMFVAR (with caching)
+#
 setupTexmfvar()
 {
   case $MT_TEXMVAR in
@@ -228,9 +218,8 @@ setupTexmfvar()
 }
 
 ###############################################################################
-# setupSystexmf()
-#   get value for MT_SYSTEXMF (with caching)
-###############################################################################
+# setupSystexmf() - get value for MT_SYSTEXMF (with caching)
+#
 setupSystexmf()
 {
   case $MT_SYSTEXMF in
@@ -242,7 +231,7 @@ setupSystexmf()
 ###############################################################################
 # abort(errmsg)
 #   print `errmsg' to stderr and exit with error code 1
-###############################################################################
+#
 abort()
 {
   echo "$progname: $1." >&2
@@ -252,7 +241,7 @@ abort()
 ###############################################################################
 # mktexdir(args)
 #   call mktexdir script, disable all features (to prevent sticky directories)
-###############################################################################
+#
 mktexdir()
 {
   setupTexmfmain
@@ -260,9 +249,8 @@ mktexdir()
 }
 
 ###############################################################################
-# tcfmgr(args)
-#   call tcfmgr script
-###############################################################################
+# tcfmgr(args) - call tcfmgr script
+#
 tcfmgr()
 {
   setupTexmfmain
@@ -270,9 +258,8 @@ tcfmgr()
 }
 
 ###############################################################################
-# mktexupd(args)
-#   call mktexupd script
-###############################################################################
+# mktexupd(args) - call mktexupd script
+#
 mktexupd()
 {
   setupTexmfmain
@@ -283,7 +270,7 @@ mktexupd()
 # getRelDir(file)
 #   matches file against SYSTEXMF. Returns relative directory of file within
 #   a texmf tree in variable relPart.
-###############################################################################
+#
 getRelDir()
 {
   file=$1
@@ -324,10 +311,10 @@ getRelDir()
 }
 
 ###############################################################################
-# configReplace(file, pattern, line)
+# configReplace(file pattern line)
 #   The first line in file that matches pattern gets replaced by line.
 #   line will be added at the end of the file if pattern does not match.
-###############################################################################
+#
 configReplace()
 {
   configReplaceFile=$1; configReplacePat=$2; configReplaceLine=$3
@@ -348,7 +335,7 @@ eof
 ###############################################################################
 # fmgrConfigReplace (file regex value)
 #   replaces line matching regex by value in file
-###############################################################################
+#
 fmgrConfigReplace()
 {
   fmgrConfigReplaceChanged=false
@@ -392,7 +379,7 @@ fmgrConfigReplace()
 ###############################################################################
 # setupDvipsPaper(paper)
 #   rearranges config.ps to make paper the first paper definition
-###############################################################################
+#
 setupDvipsPaper()
 {
   setupDvipsPaperChanged=false
@@ -436,9 +423,8 @@ eof
 }
 
 ###############################################################################
-# setupModesMfFile(void)
-#   find modes.mf file (with caching)
-###############################################################################
+# setupModesMfFile(void) - find modes.mf file (with caching)
+#
 setupModesMfFile()
 {
   case $modesMfFile in
@@ -452,9 +438,8 @@ setupModesMfFile()
 }
 
 ###############################################################################
-# locateConfigPsFile(void)
-#   find config.ps file (with caching)
-###############################################################################
+# locateConfigPsFile(void) - find config.ps file (with caching)
+#
 locateConfigPsFile()
 {
   case $configPsFile in
@@ -468,9 +453,8 @@ locateConfigPsFile()
 }
 
 ###############################################################################
-# listMfModes(file)
-#   list modes from modes.mf file
-###############################################################################
+# listMfModes(file) - list modes from modes.mf file
+#
 listMfModes()
 {
   grep mode_def "$modesMfFile" |
@@ -481,27 +465,42 @@ listMfModes()
 }
 
 ###############################################################################
-# listDvipsPapers(void)
-#   list paper definitions from config.ps
-###############################################################################
+# listDvipsPapers(void) - list paper definitions from config.ps
+#
 listDvipsPapers()
 {
   grep '@ ' $configPsFile | sed "s/..//;s/ / '/;s/\$/' /"
 }
 
 ###############################################################################
+# doGenerate(file args) - synthesize configuration FILE, passing ARGS
+# 
+doGenerate()
+{
+  if test -z "$1" || test "x$1" = xhelp; then
+    echo "xx"
+    return
+  fi
+  file=$1; shift
+  script=`kpsewhich --format=texmfscripts generate-$file.pl`
+  test -n "$script" || abort "could not find script generate-$file.pl"
+  echo "$0: running $script..."
+  $script "$@"
+  echo "$0: $script done."  
+}
+
+###############################################################################
 # getFormatsForHyphen(void)
 #   list all formats which have customizable hyphenation
-###############################################################################
+#
 getFormatsForHyphen()
 {
   fmtutil --catcfg | awk '$3 != "-" {print $1}' | sort
 }
 
 ###############################################################################
-# getRes(mode)
-#   print resolution (both X and Y axis) to metafont mode
-###############################################################################
+# getRes(mode) - print resolution (both X and Y axis) to metafont mode
+#
 getRes()
 {
   getResMode=$1
@@ -569,41 +568,44 @@ showDistVersionInfo()
 ###############################################################################
 tcBatch()
 {
-  help="texconfig allows adjusting and updating many aspects of the TeX
-system to the local system.  
+  help="texconfig supports adjusting and updating many aspects of
+the TeX installation.
 
-Usage: $progname conf                  (show basic configuration)
-       $progname dvipdfmx paper PAPER
-       $progname dvipdfm paper PAPER
-       $progname dvips OPTION...
+Usage: $progname conf                  (show configuration information)
+       $progname dvipdfmx paper PAPER  (dvipdfmx paper size)
+       $progname dvipdfm paper PAPER   (dvipdfm paper size)
+       $progname dvips [OPTION...]     (dvips options)
        $progname faq                   (show teTeX faq)
        $progname findprog PROG...      (show locations of PROGs, a la which)
        $progname font vardir DIR
        $progname font ro
        $progname font rw
        $progname formats               (edit fmtutil.cnf)
+       $progname generate [FILE]       (synthesize configuration FILE)
        $progname help                  (or --help; show this help)
        $progname hyphen FORMAT         (edit hyphenation config for FORMAT)
        $progname init [FORMAT]...      (rebuild FORMATs, or all formats
                                         plus run texlinks and updmap)
-       $progname mode MODE
-       $progname paper PAPER
-       $progname pdftex [OPTION]...
+       $progname mode MODE             (set Metafont MODE)
+       $progname paper PAPER           (set default paper size to PAPER)
+       $progname pdftex [OPTION]...    (pdftex options)
        $progname rehash                (rebuild ls-R files with mktexlsr)
        $progname version               (or --version; show version info)
-       $progname xdvi paper PAPER
+       $progname xdvi paper PAPER      (xdvi paper size)
 
 Get more help with:
        $progname dvipdfmx
        $progname dvipdfm
        $progname dvips
        $progname font
+       $progname generate
        $progname hyphen
        $progname mode
        $progname paper
        $progname pdftex
        $progname xdvi
 
+See http://tug.org/texlive/ for other documentation, etc.
 Report bugs to <tex-k@tug.org>."
 
   case $1 in
@@ -1041,6 +1043,12 @@ For more information about these \`features', consult the teTeX manual
         texlinks --multiplatform || rc=1
       fi
       ;;
+
+    generate)
+      shift  # omit the `generate'
+      doGenerate "$@"
+      ;;
+
     help|--help|-h)
       echo "$help"
       ;;
