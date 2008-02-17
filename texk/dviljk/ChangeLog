@@ -1,3 +1,16 @@
+2008-02-17  Joachim Schrod  <jschrod@acm.org>
+
+	Bump up version number to 2.6p5.
+
+	* dvi2xx.h (GetBytes): Sun Studio 11 cc complains about
+	incompatible types in conditional expressions; add a cast.
+	Problem reported by Vladimir Volovich <vvv@vsu.ru>.
+
+	* dvi2xx.c (mkdtemp): Add function if it's not available. Remove
+	the macro from config.h, it generated warnings and mkdir()
+	declaration was missing. Problem reported by Vladimir Volovich.
+	* configure.in: Add check for mktemp(). Regenerated configure.
+
 2008-01-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Convert from autoconf-2.13 to autoconf-2.59+:

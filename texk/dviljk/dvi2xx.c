@@ -1,5 +1,5 @@
 /* $Id: dvi2xx.c,v 2.5 1997/12/08 20:52:20 neumann Exp $ */
-#define VERSION "dviljk (version 2.6p4)"
+#define VERSION "dviljk (version 2.6p5)"
 /*
 #define DEBUGGS 1
 */
