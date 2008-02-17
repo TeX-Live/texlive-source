@@ -3923,7 +3923,7 @@ char *str;
 #endif
 char * mkdtemp ( char * template )
 {
-  if ( mktemp(template) == NULL ) {
+  if ( mktemp(template) == NULL  ||  template[0] == '\0' ) {
     if ( errno == 0 )  errno = EINVAL;	/* if it's tmpnam() */
     return NULL;
   }
