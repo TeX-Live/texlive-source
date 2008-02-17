@@ -1225,8 +1225,9 @@ Valid PAPER settings:
       p=$2; pXdvi=$2; pDvips=$2
       case $2 in
         letter)
-          pXdvi=us
-          ;;
+          pXdvi=us;;
+        a4)
+          pXdvi=a4;;
         "") echo "$help" >&2; rc=1; return;;
         *)
           echo "$progname: unknown PAPER \`$2' given as argument for \`$progname paper'" >&2
