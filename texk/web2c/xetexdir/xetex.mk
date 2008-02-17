@@ -207,7 +207,7 @@ XeTeXOTMath.o: $(srcdir)/xetexdir/XeTeXOTMath.cpp $(XeTeXFontHdrs)
 
 XeTeXGrLayout.o: $(srcdir)/xetexdir/XeTeXGrLayout.cpp $(srcdir)/xetexdir/XeTeXGrLayout.h \
 		$(XeTeXFontHdrs) $(GRAPHITESRCDIR)/include/graphite/Font.h
-	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(GRAPHITEFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
+	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(FONTCONFIGCPPFLAGS) $(GRAPHITEFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
 
 # special rules for files that need the TECkit headers as well
 XeTeX_ext.o: $(srcdir)/xetexdir/XeTeX_ext.c xetexd.h
