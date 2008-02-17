@@ -287,7 +287,7 @@ char *MFMODE     = MFMODE600;
    write a new one. [27 Jun 07 -js] */
 #define GetBytes(fp,buf,n) \
     ( sizeof(buf) != sizeof(void *) && sizeof(buf) > n ? \
-        read_multi(buf, 1, n, fp) \
+        (void)read_multi(buf, 1, n, fp)					\
       : Fatal("Try to read %d bytes in an array of size %d", n, sizeof(buf)) )
 
 

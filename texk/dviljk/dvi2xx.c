@@ -1097,18 +1097,6 @@ CloseFiles()
   }
 }
 
-/*-->GetBytes*/
-/**********************************************************************/
-/*****************************  GetBytes  *****************************/
-/**********************************************************************/
-/* get n bytes from file fp; now a macro, so we don't need it any more
-void
-GetBytes(FILEPTR fp, char *cp, int n)
-{
-  read_multi(cp,n,1,fp);
-}
-*/
-
 /*-->NoSignExtend*/
 /**********************************************************************/
 /***************************  NoSignExtend  ***************************/
@@ -4223,9 +4211,8 @@ int  n;
       /* We cannot use mkstemp, as we cannot pass two open file descriptors
 	 portably to Ghostscript. We don't want to use tmpnam() or tempnam()
 	 either, as they have tempfile creation race conditions. Instead we
-	 create a temporary directory with mkdtemp() -- if that's available.
-	 If not, we are thrown back to tempnam(), to get our functionality
-	 at all. We need to create the temporary directory only once per
+	 create a temporary directory with mkdtemp().
+	 We need to create the temporary directory only once per
 	 run; it will be deleted in AllDone(). */
       if ( tmp_dir[0] == '\0' ) {
 	char * base_dir;
