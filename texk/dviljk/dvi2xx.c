@@ -3913,6 +3913,28 @@ char *str;
 #endif /* __riscos */
 
 
+#ifndef HAVE_MKDTEMP
+/* If mkdtemp() is not available, supply an (unsecure) version of it. We try
+   to use mktemp() to get the temporary directory name, since that maps best
+   to mkdtemp() behavior. But if mktemp() is also not available, we resort
+   to tmpnam() which is supposed to be there from the C standard. */
+#ifndef HAVE_MKTEMP
+#define mktemp tmpnam
+#endif
+char * mkdtemp ( char * template )
+{
+  if ( mktemp(template) == NULL ) {
+    if ( errno == 0 )  errno = EINVAL;	/* if it's tmpnam() */
+    return NULL;
+  }
+  if ( mkdir(template, 0700) == -1 ) {
+    return NULL;
+  }
+  return template;
+}
+#endif
+
+
 /* interpret a \special command, made up of keyword=value pairs */
 #if NeedFunctionPrototypes
 void DoSpecial(char *str, int n)
@@ -3925,7 +3947,7 @@ int  n;
   bool	  first_keyword = _TRUE;
   char    xs[STRSIZE], ys[STRSIZE];
   char    *include_file = NULL;
-  enum    { None, VerbFile, HPFile, PSFile } file_type;
+  enum    { None, VerbFile, HPFile, PSFile } file_type = None;
   float   x,y;
   long4   x_pos, y_pos;
   KeyWord k;

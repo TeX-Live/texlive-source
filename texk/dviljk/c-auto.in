@@ -8,6 +8,9 @@
 /* Define to 1 if you have the `mkdtemp' function. */
 #undef HAVE_MKDTEMP
 
+/* Define to 1 if you have the `mktemp' function. */
+#undef HAVE_MKTEMP
+
 /* Define to 1 if you have the `rmdir' function. */
 #undef HAVE_RMDIR
 

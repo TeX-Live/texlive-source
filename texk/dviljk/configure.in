@@ -14,7 +14,7 @@ dnl These tests prevent reliable cross-compilation.  Sigh.
 AC_C_CHAR_UNSIGNED
 AC_CHECK_SIZEOF(long)
 
-AC_CHECK_FUNCS(rmdir unlink mkdtemp)
+AC_CHECK_FUNCS(rmdir unlink mkdtemp mktemp)
 
 KPSE_CONFIG_FILES([Makefile])
 AC_OUTPUT

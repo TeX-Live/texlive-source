@@ -448,11 +448,11 @@ typedef  FILE *FILEPTR;
 #define unlink(file)
 #endif
 
-/* If mkdtemp() does not exist, we have to use tmpnam(). */
+/* If mkdtemp() does not exist, we have to use mktemp() or tmpnam()
+   and mkdir(). For the latter, we need the declaration. */
 #ifndef HAVE_MKDTEMP
-#define mkdtemp(dir) (tmpnam(dir) ? \
-		      ( mkdir(dir, 0700) == -1 ? NULL : dir ) :	\
-		      ( errno = EINVAL, NULL ) )
+#include <sys/types.h>
+#include <sys/stat.h>
 #endif
 
 #ifndef KPATHSEA
