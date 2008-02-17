@@ -260,7 +260,6 @@ AC_CONFIG_SUBDIRS([libs])
 
 KPSE_CONFIG_SUBDIRS([
  dialog
- lcdf-typetools
  mkjobtexmf
  pdfopen
  ps2eps

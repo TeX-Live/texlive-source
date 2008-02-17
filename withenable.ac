@@ -8,9 +8,6 @@ AC_ARG_ENABLE([multiplatform],
 AC_ARG_WITH([dialog],
         [  --without-dialog        do not build the dialog package])
 
-AC_ARG_WITH([lcdf-typetools],
-        [  --without-lcdf-typetools do not build the lcdf-typetools package])
-
 AC_ARG_WITH([mkjobtexmf],
         [  --without-mkjobtexmf    do not build the mkjobtexmf package])
 

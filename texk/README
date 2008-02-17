@@ -28,5 +28,8 @@ dvipng 1.9 - ok 5dec06
 dvi2tty 5.3.1 - needs update 18may07
   http://www.mesa.nl/pub/dvi2tty/
 
+lcdf-typetools 2.66 - ok 17feb08
+  http://www.lcdf.org/type/
+
 xdvik 22.84.10 - ok 4dec06
   http://xdvi.sourceforge.net/

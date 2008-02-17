@@ -758,7 +758,6 @@ CPP
 XMKMF'
 ac_subdirs_all='libs
 utils/dialog
-utils/lcdf-typetools
 utils/mkjobtexmf
 utils/pdfopen
 utils/ps2eps
@@ -1366,7 +1365,6 @@ Optional Packages:
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-x                use the X Window System
   --without-dialog        do not build the dialog package
-  --without-lcdf-typetools do not build the lcdf-typetools package
   --without-mkjobtexmf    do not build the mkjobtexmf package
   --without-pdfopen       do not build the pdfopen package
   --without-ps2eps        do not build the ps2eps package
@@ -1377,34 +1375,35 @@ Optional Packages:
   --without-texi2html     do not build the texi2html package
   --without-texinfo       do not build the texinfo package
   --without-tpic2pdftex   do not build the tpic2pdftex package
-  --without-afm2pl           do not build the afm2pl package
-  --without-bibtex8          do not build the bibtex8 package
-  --without-cjkutils         do not build the cjkutils package
-  --without-detex            do not build the detex package
-  --without-devnag           do not build the devnag package
-  --without-dtl              do not build the dtl package
-  --without-dvi2tty          do not build the dvi2tty package
-  --without-dvidvi           do not build the dvidvi package
-  --without-dviljk           do not build the dviljk package
-  --without-dvipdfm          do not build the dvipdfm package
-  --without-dvipdfmx         do not build the dvipdfmx package
-  --without-dvipng           do not build the dvipng package
-  --without-dvipos           do not build the dvipos package
-  --without-dvipsk           do not build the dvipsk package
-  --without-gsftopk          do not build the gsftopk package
-  --without-lacheck          do not build the lacheck package
-  --without-makeindexk       do not build the makeindexk package
-  --without-musixflx         do not build the musixflx package
-  --without-ps2pkm           do not build the ps2pkm package
-  --without-seetexk          do not build the seetexk package
-  --without-tetex            do not build the tetex package
-  --without-tex4htk          do not build the tex4htk package
-  --without-texlive          do not build the texlive package
-  --without-ttf2pk           do not build the ttf2pk package
-  --without-tth              do not build the tth package
-  --without-xdvik            do not build the xdvik package
-  --without-xdvipdfmx        do not build the xdvipdfmx package
-  --without-xdv2pdf          do not build the xdv2pdf package
+  --without-afm2pl         do not build the afm2pl package
+  --without-bibtex8        do not build the bibtex8 package
+  --without-cjkutils       do not build the cjkutils package
+  --without-detex          do not build the detex package
+  --without-devnag         do not build the devnag package
+  --without-dtl            do not build the dtl package
+  --without-dvi2tty        do not build the dvi2tty package
+  --without-dvidvi         do not build the dvidvi package
+  --without-dviljk         do not build the dviljk package
+  --without-dvipdfm        do not build the dvipdfm package
+  --without-dvipdfmx       do not build the dvipdfmx package
+  --without-dvipng         do not build the dvipng package
+  --without-dvipos         do not build the dvipos package
+  --without-dvipsk         do not build the dvipsk package
+  --without-gsftopk        do not build the gsftopk package
+  --without-lacheck        do not build the lacheck package
+  --without-lcdf-typetools do not build the lcdf-typetools package
+  --without-makeindexk     do not build the makeindexk package
+  --without-musixflx       do not build the musixflx package
+  --without-ps2pkm         do not build the ps2pkm package
+  --without-seetexk        do not build the seetexk package
+  --without-tetex          do not build the tetex package
+  --without-tex4htk        do not build the tex4htk package
+  --without-texlive        do not build the texlive package
+  --without-ttf2pk         do not build the ttf2pk package
+  --without-tth            do not build the tth package
+  --without-xdvik          do not build the xdvik package
+  --without-xdvipdfmx      do not build the xdvipdfmx package
+  --without-xdv2pdf        do not build the xdv2pdf package
   --with-x-toolkit=KIT    OBSOLETE: use --with-mf-x-toolkit and/or
                           --with-xdvi-x-toolkit instead.
   --without-mktexmf-default    do not run mktexmf if MF source missing
@@ -5325,13 +5324,6 @@ fi
 
 
 
-# Check whether --with-lcdf-typetools was given.
-if test "${with_lcdf_typetools+set}" = set; then
-  withval=$with_lcdf_typetools;
-fi
-
-
-
 # Check whether --with-mkjobtexmf was given.
 if test "${with_mkjobtexmf+set}" = set; then
   withval=$with_mkjobtexmf;
@@ -5497,6 +5489,12 @@ fi
 # Check whether --with-lacheck was given.
 if test "${with_lacheck+set}" = set; then
   withval=$with_lacheck;
+fi
+
+
+# Check whether --with-lcdf-typetools was given.
+if test "${with_lcdf_typetools+set}" = set; then
+  withval=$with_lcdf_typetools;
 fi
 
 
@@ -9347,12 +9345,6 @@ if test -d $srcdir/utils/dialog; then
   if test "x$with_dialog" != xno; then
     ESUBDIRS="$ESUBDIRS utils/dialog"
     subdirs="$subdirs utils/dialog"
-  fi
-fi
-if test -d $srcdir/utils/lcdf-typetools; then
-  if test "x$with_lcdf_typetools" != xno; then
-    ESUBDIRS="$ESUBDIRS utils/lcdf-typetools"
-    subdirs="$subdirs utils/lcdf-typetools"
   fi
 fi
 if test -d $srcdir/utils/mkjobtexmf; then
