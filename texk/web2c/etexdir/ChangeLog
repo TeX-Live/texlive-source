@@ -1,3 +1,9 @@
+2008-02-17  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* etex.ch: Fixed a bug in hyph_code handling (\savinghyphcodes)
+	reported by Vladimir Volovich <vvv@vsu.ru>.
+	Corrected a few typos in TeX text.
+
 2005-08-03  Olaf Weber  <olaf@infovore.xs4all.nl>
 
 	* tex.ech: Implement -etex switch.

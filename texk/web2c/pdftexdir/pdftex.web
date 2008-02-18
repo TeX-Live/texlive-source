@@ -15,12 +15,11 @@
 % pdfTeX; if not, write to the Free Software Foundation, Inc., 51 Franklin
 % Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-% e-TeX is copyright (C) 1994,98 by Peter Breitenlohner; all rights are
-% reserved.  Copying of this file is authorized only if (1) you are Peter
-% Breitenlohner, or if (2) you make absolutely no changes to your copy.
-% (Programs such as PATCHWEB, TIE, or WEBMERGE allow the application of
-% several change files to tex.web; the master files tex.web and etex.ch
-% should stay intact.)
+% e-TeX is copyright (C) 1999-2008 by P. Breitenlohner (1994,98 by the NTS
+% team); all rights are reserved. Copying of this file is authorized only if
+% (1) you are P. Breitenlohner, or if (2) you make absolutely no changes to
+% your copy. (Programs such as TIE allow the application of several change
+% files to tex.web; the master files tex.web and etex.ch should stay intact.)
 
 % See etex_gen.tex for hints on how to install this program.
 % And see etripman.tex for details about how to validate it.
@@ -100,6 +99,9 @@
 %                 direction typesetting;
 %             fixed a bug in the revised glue rounding code, detected by
 %                 Tigran Aivazian <tigran@@aivazian.fsnet.co.uk>, Oct 2004.
+% Version 2.3 development was started in Feb 2008; released in Mon Year.
+%             fixed a bug in hyph_code handling (\savinghyphcodes)
+%                 reported by Vladimir Volovich <vvv@@vsu.ru>, Feb 2008.
 
 % Although considerable effort has been expended to make the e-TeX program
 % correct and reliable, no warranty is implied; the author disclaims any
@@ -35057,7 +35059,9 @@ else
     d := 0
 
 @ @d adv_past(#)==@+if subtype(#)=language_node then
-    begin cur_lang:=what_lang(#); l_hyf:=what_lhm(#); r_hyf:=what_rhm(#);@+end
+    begin cur_lang:=what_lang(#); l_hyf:=what_lhm(#); r_hyf:=what_rhm(#);
+    set_hyph_index;
+    end
 
 @<Advance \(p)past a whatsit node in the \(l)|line_break| loop@>=@+
 begin
@@ -35067,10 +35071,7 @@ if (subtype(cur_p) = pdf_refxform_node) or (subtype(cur_p) = pdf_refximage_node)
 end
 
 @ @<Advance \(p)past a whatsit node in the \(p)pre-hyphenation loop@>=@+
-if subtype(s)=language_node then
-  begin cur_lang:=what_lang(s); l_hyf:=what_lhm(s); r_hyf:=what_rhm(s);
-  set_hyph_index;
-  end
+adv_past(s)
 
 @ @<Prepare to move whatsit |p| to the current page, then |goto contribute|@>=
 begin
@@ -39039,7 +39040,7 @@ fields in the active nodes.
 @!best_pl_glue:array[very_loose_fit..tight_fit] of scaled; {corresponding
   glue stretch or shrink}
 
-@ The new algorithm for the last line requires that the stretchability
+@ The new algorithm for the last line requires that the stretchability of
 |par_fill_skip| is infinite and the stretchability of |left_skip| plus
 |right_skip| is finite.
 
@@ -39090,10 +39091,10 @@ if arith_error then
   if active_short(r)>0 then g:=max_dimen@+else g:=-max_dimen;
 if g>0 then
   @<Set the value of |b| to the badness of the last line for stretching,
-    compute the corresponding |fit_class, and |goto found||@>
+    compute the corresponding |fit_class|, and |goto found|@>
 else if g<0 then
   @<Set the value of |b| to the badness of the last line for shrinking,
-    compute the corresponding |fit_class, and |goto found||@>;
+    compute the corresponding |fit_class|, and |goto found|@>;
 not_found:end
 
 @ These badness computations are rather similar to those of the standard
