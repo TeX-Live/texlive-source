@@ -1,15 +1,28 @@
 ----------------------------
 Detailed Change Log:
 ----------------------------
+revision 1.64
+date: 2007-01-24 13:32:59 +0100;  author: bless;  state: Exp;  lines: +4 -4;
+- Year (C) update
+----------------------------
+revision 1.63
+date: 2007-01-24 13:29:37 +0100;  author: bless;  state: Exp;  lines: +3 -3;
+- Tried to make DSCfilter command more robust
+----------------------------
+revision 1.62 (not released)
+date: 2007-01-06 23:27:47 +0100;  author: bless;  state: Exp;  lines: +11 -5;
+- better detection for files that have a binary heading stuff containing
+  even %! as character sequence
+----------------------------
 revision 1.61
 date: 2006-12-28 17:34:06 +0100;  author: bless;  state: Exp;  lines: +5 -5;
 - changed year in comment and info printout only
 ----------------------------
-revision 1.60
+revision 1.60 (not released)
 date: 2006-12-28 17:31:39 +0100;  author: bless;  state: Exp;  lines: +9 -13;
 - incorporated changes for Windows/Cygwin detection by Karl Berry
 ----------------------------
-revision 1.59
+revision 1.59 (not released)
 date: 2006-04-04 11:04:47 +0200;  author: bless;  state: Exp;  lines: +4 -4;
 - removed surrounding ticks '' for -c $translation in $translatecmd
   (hint by Thomas Riedle)

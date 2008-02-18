@@ -1,6 +1,10 @@
 DOCUMENTATION
 =============
 Please see documentation in the manpage or doc/ sub directory.
+Note that the manpage may have an older version number in it,
+which is nothing to worry about since there may have been minor changes 
+incorporated into ps2eps not requiring any update of the 
+documentation.
 
 INSTALLATION
 ============

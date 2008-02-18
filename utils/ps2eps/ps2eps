@@ -3,9 +3,9 @@
 # {#!/usr/bin/perl}.   
 # ps2eps - convert PostScript to EPS (Encapsulated PostScript) files
 # -------------------------------------------------------------------
-# $Id: ps2eps,v 1.61 2006/12/28 16:34:06 bless Exp $
+# $Id: ps2eps,v 1.64 2007/01/24 12:32:59 bless Exp $
 # -------------------------------------------------------
-# (C)opyright 1999-2006 Roland Bless
+# (C)opyright 1999-2007 Roland Bless
 #
 # This program is free software; you can redistribute it and/or modify     
 # it under the terms of the GNU General Public License as published by     
@@ -57,7 +57,7 @@ else
 
 $bboxver=`bbox >$NULLDEV -V`;
 $bboxname= ($?== -1) ? "" : "bbox";
-$version= '$Id: ps2eps,v 1.61 2006/12/28 16:34:06 bless Exp $'; #'
+$version= '$Id: ps2eps,v 1.64 2007/01/24 12:32:59 bless Exp $'; #'
 $insertPScode= 1;     # Insert surrounding Postscript code
 $infhandle = STDIN;   # Standard input is the default input file
 $outfhandle = STDOUT; # Standard output is default output if STDIN is input
@@ -144,7 +144,7 @@ $licensetxt= "\
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n";
 
 @prgidtxt= ( "$prgname - convert PostScript to EPS (Encapsulated PostScript) files\n",
-	     "(C)opyright 1998-2006 Roland Bless\n\n" );
+	     "(C)opyright 1998-2007 Roland Bless\n\n" );
 
 @helptxt= ("Version: $ver[2]\n",
           "Operation:\n",
@@ -670,11 +670,17 @@ while ($infname= (shift @filenames))
     {
       if ( /%!/ ) # This is usually the smallest magic sequence
       {           # Note: Adobe Photoshop generated a binary heading, so ^ is not applicable
-	if (! /%!PS-Adobe.*/i) # some strange programs use other magics
+	# %! may be part of a binary sequence, but then control characters follow
+        # so skip %! if non alphanumeric characters follow
+	if ( ! /%!.*[^\w]{2,}/ )
 	{
-	   print STDERR "** Warning **: Weird heading line -- ",$_," -- ";
+	  # some heading without two control characters found
+	  $before_startps= 0;
+	  if (! /%!PS-Adobe.*/i) # some strange programs use other magics
+	  {
+	      print STDERR "** Warning **: Weird heading line -- ",$_," -- ";
+	  }
 	}
-	$before_startps= 0; 
       }
       next CREATEOUTPUT;
     }
@@ -863,7 +869,7 @@ while ($infname= (shift @filenames))
 	       ||
                /$linefilter/             # lines by linefilter
 	       ||
-	       ($removeDSC && (/^%( |!)(\w )+/ || /^%%/)) # any type of structured comment
+	       ($removeDSC && (/^%( |!)(\w )+/ || /^%%([A-Za-z]+\s)/)) # any type of structured comment
 	       ||
 	       ($removeADO && 
 		(/^statusdict begin.*ProductName.*print product print.*flush end\r?\n?$/ ||
