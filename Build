@@ -65,3 +65,6 @@ export GNUMAKE
          $TL_CONFIGURE_ARGS \
          "$@" 2>&1|tee configure.log\
  && time $TL_MAKE $TL_TARGET 2>&1|tee make.log)
+
+# we are interested in the number of binaries build
+ls inst/bin/*/|wc
