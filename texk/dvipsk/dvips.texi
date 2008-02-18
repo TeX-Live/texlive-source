@@ -3,7 +3,7 @@
 @settitle Dvips: A DVI-to-PostScript translator
 
 @set version 5.96dev
-@set month-year December 2007
+@set month-year February 2008
 
 @copying
 This manual documents Dvips version @value{version}
@@ -1043,12 +1043,13 @@ Output pages in reverse order.  By default, page 1 is output first.
 @cindex security
 @cindex shell command execution, disabling
 @cindex absolute filenames, disabling
+@cindex @file{..}-relative filenames
 Run securely.  @samp{-R2} disables both shell command execution in
 @code{\special} (via @samp{`}, @pxref{Dynamic creation of graphics})
 and config files (via the @samp{E} option, @pxref{Configuration file
-commands}) and opening of any absolute filenames.  @samp{-R1}, the
-default, forbids shell escapes but allows absolute filenames.
-@samp{-R0} allows both.
+commands}) and opening of any absolute or @file{..}-relative
+filenames.  @samp{-R1}, the default, forbids shell escapes but allows
+absolute filenames.  @samp{-R0} allows both.
 
 @item -s*
 @opindex -s
