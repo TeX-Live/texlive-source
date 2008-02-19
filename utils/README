@@ -21,6 +21,9 @@ pdfopen 0.5 - ok 26nov06
   (really xpdfopen)
   http://tex.aanhet.net/pdfopen
 
+ps2eps 1.64 - ok 19feb08
+  http://www.ipv6.tm.uka.de/~bless/ps2eps
+
 psutils p17 - ok 25nov06
   (Fabrice made small modifications for Windows, it seems)
   http://www.ctan.org/tex-archive/support/psutils/
