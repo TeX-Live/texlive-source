@@ -41,7 +41,7 @@ AC_DEFINE_UNQUOTED(GS_PATH, "$GS", [Define as the path to GhostScript.])
 dnl Check devices for GS
 dnl AC_GS_HAS_DEVICE(DEVICE,ACTION-IF-FAILED)
 dnl
-AC_DEFUN(AC_GS_HAS_DEVICE,
+AC_DEFUN([AC_GS_HAS_DEVICE],
  [AC_MSG_CHECKING([whether $GS has the $1 device])
   if $GS -h | grep $1 >/dev/null; then
     AC_MSG_RESULT(yes)
@@ -112,8 +112,8 @@ if test "$enable_timing" = "yes"; then
   AC_CHECK_FUNCS([ftime gettimeofday])
 fi
 
-AC_CHECK_LIB(m, main)
-AC_CHECK_LIB(gen, basename)
+AC_SEARCH_LIBS([pow], [m])
+AC_SEARCH_LIBS([basename], [gen])
 
 # let's skip dvigif for the moment.
 INSTALL_BIN_TARGET="install-dvipng"
@@ -124,7 +124,7 @@ dnl
 dnl MAKEINFO_CHECK_MACRO( MACRO, [ACTION-IF-FOUND 
 dnl					[, ACTION-IF-NOT-FOUND]])
 dnl
-AC_DEFUN(MAKEINFO_CHECK_MACRO,
+AC_DEFUN([MAKEINFO_CHECK_MACRO],
 [if test -n "$MAKEINFO" -a "$makeinfo" != ":"; then
   AC_MSG_CHECKING([if $MAKEINFO understands @$1{}])
   echo \\\\input texinfo > conftest.texi
@@ -144,7 +144,7 @@ dnl
 dnl MAKEINFO_CHECK_MACROS( MACRO ... [, ACTION-IF-FOUND 
 dnl					[, ACTION-IF-NOT-FOUND]])
 dnl
-AC_DEFUN(MAKEINFO_CHECK_MACROS,
+AC_DEFUN([MAKEINFO_CHECK_MACROS],
 [for ac_macro in $1; do
     MAKEINFO_CHECK_MACRO($ac_macro, $2, 
 	[MAKEINFO_MACROS="-D no-$ac_macro $MAKEINFO_MACROS"
@@ -184,7 +184,8 @@ AC_DEFINE(HAVE_LIBPNG)
 
 AC_DEFINE(HAVE_LIBZ)
 
-LIBS="../kpathsea/.libs/libkpathsea.a $LIBS"
+# Allow shared or static libkpathsea
+LIBS="-L../kpathsea/.libs -lkpathsea $LIBS"
 AC_DEFINE(HAVE_KPATHSEA_KPATHSEA_H)
 AC_DEFINE(HAVE_KPSE_ENC_FORMATS)
 AC_DEFINE(HAVE_LIBKPATHSEA)

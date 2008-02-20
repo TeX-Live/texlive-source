@@ -1,3 +1,9 @@
+2008-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Use AC_SEARCH_LIBS such that -lm and -lgen are
+	automatically appended to LIBS if needed.
+	Quote first arg of of AC_DEFUN.
+
 2006-12-24  Karl Berry  <karl@tug.org>
 
 	* dvipng.h: don't try stdbool if we have kpathsea, Staszek's old
