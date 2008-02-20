@@ -1,3 +1,33 @@
+******************************************************************************
+ Part of the XeTeX typesetting system
+ copyright (c) 1994-2008 by SIL International
+ written by Jonathan Kew
+
+Permission is hereby granted, free of charge, to any person obtaining  
+a copy of this software and associated documentation files (the  
+"Software"), to deal in the Software without restriction, including  
+without limitation the rights to use, copy, modify, merge, publish,  
+distribute, sublicense, and/or sell copies of the Software, and to  
+permit persons to whom the Software is furnished to do so, subject to  
+the following conditions:
+
+The above copyright notice and this permission notice shall be  
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Except as contained in this notice, the name of SIL International  
+shall not be used in advertising or otherwise to promote the sale,  
+use or other dealings in this Software without prior written  
+authorization from SIL International.
+******************************************************************************
+
 @x
 \def\section{\mathhexbox278}
 @y
@@ -7033,10 +7063,14 @@ end else
 
 @x
 @ @d adv_past(#)==@+if subtype(#)=language_node then
-    begin cur_lang:=what_lang(#); l_hyf:=what_lhm(#); r_hyf:=what_rhm(#);@+end
+    begin cur_lang:=what_lang(#); l_hyf:=what_lhm(#); r_hyf:=what_rhm(#);
+    set_hyph_index;
+    end
 @y
 @ @d adv_past(#)==@+if subtype(#)=language_node then
-    begin cur_lang:=what_lang(#); l_hyf:=what_lhm(#); r_hyf:=what_rhm(#);@+end
+    begin cur_lang:=what_lang(#); l_hyf:=what_lhm(#); r_hyf:=what_rhm(#);
+    set_hyph_index;
+    end
   else if (subtype(#)=native_word_node)
   or (subtype(#)=glyph_node)
   or (subtype(#)=pic_node)
@@ -8677,6 +8711,21 @@ begin
 			until offs < 0;
 		end
 	end
+end;
+
+procedure bad_utf8_warning;
+var
+	i: integer;
+begin
+	begin_diagnostic;
+	print_nl("Invalid UTF-8 byte sequence");
+	if terminal_input then print(" in terminal input")
+	else begin
+		print(" at line ");
+		print_int(line);
+	end;
+	print("; reading remainder as raw bytes.");
+	end_diagnostic(false);
 end;
 
 @z
