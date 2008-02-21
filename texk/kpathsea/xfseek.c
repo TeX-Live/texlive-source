@@ -23,8 +23,8 @@
 
 
 void
-xfseek P4C(FILE *, f,  long, offset,  int, wherefrom,  string, filename)
+xfseek P4C(FILE *, f,  off_t, offset,  int, wherefrom,  string, filename)
 {
-    if (fseek(f, offset, wherefrom) < 0)
+    if (fseeko(f, offset, wherefrom) < 0)
         FATAL_PERROR(filename);
 }

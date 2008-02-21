@@ -163,8 +163,8 @@ extern KPSEDLL int dir_links P2H(const_string fn, long nlinks);
    perror(3) with FILENAME as its argument.  */
 extern KPSEDLL FILE *xfopen P2H(const_string filename, const_string mode);
 extern KPSEDLL void xfclose P2H(FILE *, const_string filename);
-extern KPSEDLL void xfseek P4H(FILE *, long, int, string filename);
-extern KPSEDLL unsigned long xftell P2H(FILE *, string filename);
+extern KPSEDLL void xfseek P4H(FILE *, off_t, int, string filename);
+extern KPSEDLL off_t xftell P2H(FILE *, string filename);
 
 /* These call the corresponding function in the standard library, and
    abort if those routines fail.  Also, `xrealloc' calls `xmalloc' if

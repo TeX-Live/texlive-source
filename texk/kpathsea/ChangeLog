@@ -1,3 +1,7 @@
+2008-02-21  Martin Schröder <martin@pdftex.org>
+        * lib.h, xfseek.c, xftell.c: LFS support: use off_t instead off long
+        and fseeko instead of fseek
+
 2008-02-14  Karl Berry  <karl@tug.org>
 
 	* texmf.in (font_mem_size): increase to 3000000.
