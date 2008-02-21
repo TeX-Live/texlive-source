@@ -1,15 +1,12 @@
 # Private macros for the kpathsea library.
-# by Peter Breitenlohner <peb@mppmu.mpg.de>
-# based on earlier work
-# by Karl Berry <karl@freefriends.org>
-# Copyright (C) 1995 - 2008
+# Copyright (C) 1995 - 2008 Karl Berry, Peter Breitenlohner <tex-live@tug.org>
 # Free Software Foundation, Inc.
 #
-# This file is free software; the Free Software Foundation
-# gives unlimited permission to copy and/or distribute it,
+# This file is free software; the copyright holders
+# give unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
 
-# serial 1
+# serial 2
 
 # KPSE_CONFIG_FILES(FILE..., [COMMANDS], [INIT-CMDS])
 # ---------------------------------------------------

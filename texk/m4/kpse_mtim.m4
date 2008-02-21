@@ -1,9 +1,7 @@
 # Private macro for the kpathsea library.
-# by Karl Berry <karl@freefriends.org>
-# Copyright (C) 199? - 2008
-# Free Software Foundation, Inc.
+# Copyright (C) 1995 - 2008 Karl Berry <tex-live@tug.org>
 #
-# This file is free software; the Free Software Foundation
+# This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
 
