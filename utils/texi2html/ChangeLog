@@ -1,3 +1,7 @@
+2008-02-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: --enable-muliplatform modifies libdir.
+
 2007-01-14  Karl Berry  <karl@tug.org>
 
 	* texi2html.pl: use /usr/bin/env perl for TL.

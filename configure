@@ -1344,7 +1344,8 @@ if test -n "$ac_init_help"; then
 Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
-  --enable-multiplatform  put executables in bin/PLATFORM
+  --enable-multiplatform  put executables into bin/PLATFORM and libraries into
+                          lib/PLATFORM
   --enable-maintainer-mode  enable make rules and dependencies not useful
 			  (and sometimes confusing) to the casual installer
   --enable-ipc            enable TeX's --ipc option, i.e., pipe to a program
@@ -1369,41 +1370,40 @@ Optional Packages:
   --without-pdfopen       do not build the pdfopen package
   --without-ps2eps        do not build the ps2eps package
   --without-psutils       do not build the psutils package
-  --without-sam2p         do not build the sam2p package
   --without-t1utils       do not build the t1utils package
-  --without-texcount    do not build the texcount package
+  --without-texcount      do not build the texcount package
   --without-texi2html     do not build the texi2html package
   --without-texinfo       do not build the texinfo package
   --without-tpic2pdftex   do not build the tpic2pdftex package
-  --without-afm2pl         do not build the afm2pl package
-  --without-bibtex8        do not build the bibtex8 package
-  --without-cjkutils       do not build the cjkutils package
-  --without-detex          do not build the detex package
-  --without-devnag         do not build the devnag package
-  --without-dtl            do not build the dtl package
-  --without-dvi2tty        do not build the dvi2tty package
-  --without-dvidvi         do not build the dvidvi package
-  --without-dviljk         do not build the dviljk package
-  --without-dvipdfm        do not build the dvipdfm package
-  --without-dvipdfmx       do not build the dvipdfmx package
-  --without-dvipng         do not build the dvipng package
-  --without-dvipos         do not build the dvipos package
-  --without-dvipsk         do not build the dvipsk package
-  --without-gsftopk        do not build the gsftopk package
-  --without-lacheck        do not build the lacheck package
-  --without-lcdf-typetools do not build the lcdf-typetools package
-  --without-makeindexk     do not build the makeindexk package
-  --without-musixflx       do not build the musixflx package
-  --without-ps2pkm         do not build the ps2pkm package
-  --without-seetexk        do not build the seetexk package
-  --without-tetex          do not build the tetex package
-  --without-tex4htk        do not build the tex4htk package
-  --without-texlive        do not build the texlive package
-  --without-ttf2pk         do not build the ttf2pk package
-  --without-tth            do not build the tth package
-  --without-xdvik          do not build the xdvik package
-  --without-xdvipdfmx      do not build the xdvipdfmx package
-  --without-xdv2pdf        do not build the xdv2pdf package
+  --without-afm2pl        do not build the afm2pl package
+  --without-bibtex8       do not build the bibtex8 package
+  --without-cjkutils      do not build the cjkutils package
+  --without-detex         do not build the detex package
+  --without-devnag        do not build the devnag package
+  --without-dtl           do not build the dtl package
+  --without-dvi2tty       do not build the dvi2tty package
+  --without-dvidvi        do not build the dvidvi package
+  --without-dviljk        do not build the dviljk package
+  --without-dvipdfm       do not build the dvipdfm package
+  --without-dvipdfmx      do not build the dvipdfmx package
+  --without-dvipng        do not build the dvipng package
+  --without-dvipos        do not build the dvipos package
+  --without-dvipsk        do not build the dvipsk package
+  --without-gsftopk       do not build the gsftopk package
+  --without-lacheck       do not build the lacheck package
+  --without-lcdf-typetools
+                          do not build the lcdf-typetools package
+  --without-makeindexk    do not build the makeindexk package
+  --without-musixflx      do not build the musixflx package
+  --without-ps2pkm        do not build the ps2pkm package
+  --without-seetexk       do not build the seetexk package
+  --without-tetex         do not build the tetex package
+  --without-tex4htk       do not build the tex4htk package
+  --without-texlive       do not build the texlive package
+  --without-ttf2pk        do not build the ttf2pk package
+  --without-xdv2pdf       do not build the xdv2pdf package
+  --without-xdvik         do not build the xdvik package
+  --without-xdvipdfmx     do not build the xdvipdfmx package
   --with-x-toolkit=KIT    OBSOLETE: use --with-mf-x-toolkit and/or
                           --with-xdvi-x-toolkit instead.
   --without-mktexmf-default    do not run mktexmf if MF source missing
@@ -5258,12 +5258,18 @@ export enable_shared
 export enable_fmtutil with_mktexfmt_default
 
 : ${enable_multiplatform=yes}
-if test "x$enable_multiplatform" = xyes \
-  && test "x$bindir" = 'x${exec_prefix}/bin'
-then
-  bindir="$bindir/$host"
-  ac_configure_args="$ac_configure_args --bindir=$bindir"
+export enable_multiplatform
+if test "x$enable_multiplatform" = xyes; then
+  if test "x$bindir" = 'x${exec_prefix}/bin'; then
+    bindir="$bindir/$host"
+    ac_configure_args="$ac_configure_args '--bindir=$bindir'"
+  fi
+  if test "x$libdir" = 'x${exec_prefix}/lib'; then
+    libdir="$libdir/$host"
+    ac_configure_args="$ac_configure_args '--libdir=$libdir'"
+  fi
 fi
+
 test "${enable_nls+set}" = set || { enable_nls=no; export enable_nls; }
 
 
@@ -5308,8 +5314,7 @@ export with_cxx_runtime_hack
 
 # withenable.ac - Written long ago by Thomas Esser and Sebastian Rahtz.
 # Public domain.
-# Options to avoid/include the packages in utils/.
-#
+
 # Check whether --enable-multiplatform was given.
 if test "${enable_multiplatform+set}" = set; then
   enableval=$enable_multiplatform;
@@ -5317,75 +5322,53 @@ fi
 
 
 
+# Options to avoid/include the packages in utils/.
+#
+
 # Check whether --with-dialog was given.
 if test "${with_dialog+set}" = set; then
   withval=$with_dialog;
 fi
-
-
 
 # Check whether --with-mkjobtexmf was given.
 if test "${with_mkjobtexmf+set}" = set; then
   withval=$with_mkjobtexmf;
 fi
 
-
-
 # Check whether --with-pdfopen was given.
 if test "${with_pdfopen+set}" = set; then
   withval=$with_pdfopen;
 fi
-
-
 
 # Check whether --with-ps2eps was given.
 if test "${with_ps2eps+set}" = set; then
   withval=$with_ps2eps;
 fi
 
-
-
 # Check whether --with-psutils was given.
 if test "${with_psutils+set}" = set; then
   withval=$with_psutils;
 fi
-
-
-
-# Check whether --with-sam2p was given.
-if test "${with_sam2p+set}" = set; then
-  withval=$with_sam2p;
-fi
-
-
 
 # Check whether --with-t1utils was given.
 if test "${with_t1utils+set}" = set; then
   withval=$with_t1utils;
 fi
 
-
-
 # Check whether --with-texcount was given.
 if test "${with_texcount+set}" = set; then
   withval=$with_texcount;
 fi
-
-
 
 # Check whether --with-texi2html was given.
 if test "${with_texi2html+set}" = set; then
   withval=$with_texi2html;
 fi
 
-
-
 # Check whether --with-texinfo was given.
 if test "${with_texinfo+set}" = set; then
   withval=$with_texinfo;
 fi
-
-
 
 # Check whether --with-tpic2pdftex was given.
 if test "${with_tpic2pdftex+set}" = set; then
@@ -5396,178 +5379,149 @@ fi
 
 
 
+# Options to avoid/include the packages in texk/.
+#
+
 # Check whether --with-afm2pl was given.
 if test "${with_afm2pl+set}" = set; then
   withval=$with_afm2pl;
 fi
-
 
 # Check whether --with-bibtex8 was given.
 if test "${with_bibtex8+set}" = set; then
   withval=$with_bibtex8;
 fi
 
-
 # Check whether --with-cjkutils was given.
 if test "${with_cjkutils+set}" = set; then
   withval=$with_cjkutils;
 fi
-
 
 # Check whether --with-detex was given.
 if test "${with_detex+set}" = set; then
   withval=$with_detex;
 fi
 
-
 # Check whether --with-devnag was given.
 if test "${with_devnag+set}" = set; then
   withval=$with_devnag;
 fi
-
 
 # Check whether --with-dtl was given.
 if test "${with_dtl+set}" = set; then
   withval=$with_dtl;
 fi
 
-
 # Check whether --with-dvi2tty was given.
 if test "${with_dvi2tty+set}" = set; then
   withval=$with_dvi2tty;
 fi
-
 
 # Check whether --with-dvidvi was given.
 if test "${with_dvidvi+set}" = set; then
   withval=$with_dvidvi;
 fi
 
-
 # Check whether --with-dviljk was given.
 if test "${with_dviljk+set}" = set; then
   withval=$with_dviljk;
 fi
-
 
 # Check whether --with-dvipdfm was given.
 if test "${with_dvipdfm+set}" = set; then
   withval=$with_dvipdfm;
 fi
 
-
 # Check whether --with-dvipdfmx was given.
 if test "${with_dvipdfmx+set}" = set; then
   withval=$with_dvipdfmx;
 fi
-
 
 # Check whether --with-dvipng was given.
 if test "${with_dvipng+set}" = set; then
   withval=$with_dvipng;
 fi
 
-
 # Check whether --with-dvipos was given.
 if test "${with_dvipos+set}" = set; then
   withval=$with_dvipos;
 fi
-
 
 # Check whether --with-dvipsk was given.
 if test "${with_dvipsk+set}" = set; then
   withval=$with_dvipsk;
 fi
 
-
 # Check whether --with-gsftopk was given.
 if test "${with_gsftopk+set}" = set; then
   withval=$with_gsftopk;
 fi
-
 
 # Check whether --with-lacheck was given.
 if test "${with_lacheck+set}" = set; then
   withval=$with_lacheck;
 fi
 
-
 # Check whether --with-lcdf-typetools was given.
 if test "${with_lcdf_typetools+set}" = set; then
   withval=$with_lcdf_typetools;
 fi
-
 
 # Check whether --with-makeindexk was given.
 if test "${with_makeindexk+set}" = set; then
   withval=$with_makeindexk;
 fi
 
-
 # Check whether --with-musixflx was given.
 if test "${with_musixflx+set}" = set; then
   withval=$with_musixflx;
 fi
-
 
 # Check whether --with-ps2pkm was given.
 if test "${with_ps2pkm+set}" = set; then
   withval=$with_ps2pkm;
 fi
 
-
 # Check whether --with-seetexk was given.
 if test "${with_seetexk+set}" = set; then
   withval=$with_seetexk;
 fi
-
 
 # Check whether --with-tetex was given.
 if test "${with_tetex+set}" = set; then
   withval=$with_tetex;
 fi
 
-
 # Check whether --with-tex4htk was given.
 if test "${with_tex4htk+set}" = set; then
   withval=$with_tex4htk;
 fi
-
 
 # Check whether --with-texlive was given.
 if test "${with_texlive+set}" = set; then
   withval=$with_texlive;
 fi
 
-
 # Check whether --with-ttf2pk was given.
 if test "${with_ttf2pk+set}" = set; then
   withval=$with_ttf2pk;
 fi
 
-
-# Check whether --with-tth was given.
-if test "${with_tth+set}" = set; then
-  withval=$with_tth;
+# Check whether --with-xdv2pdf was given.
+if test "${with_xdv2pdf+set}" = set; then
+  withval=$with_xdv2pdf;
 fi
-
 
 # Check whether --with-xdvik was given.
 if test "${with_xdvik+set}" = set; then
   withval=$with_xdvik;
 fi
 
-
 # Check whether --with-xdvipdfmx was given.
 if test "${with_xdvipdfmx+set}" = set; then
   withval=$with_xdvipdfmx;
 fi
 
-
-# Check whether --with-xdv2pdf was given.
-if test "${with_xdv2pdf+set}" = set; then
-  withval=$with_xdv2pdf;
-fi
 
 
 

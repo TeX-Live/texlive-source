@@ -256,20 +256,11 @@ test "$needs_graphite" = yes \
 test "$needs_obsdcompat" = yes \
   && LIBSDIRS="$LIBOBSDCOMPATDIR $LIBSDIRS"
 
+dnl required subdir
 AC_CONFIG_SUBDIRS([libs])
 
-KPSE_CONFIG_SUBDIRS([
- dialog
- mkjobtexmf
- pdfopen
- ps2eps
- psutils
- t1utils
- texcount
- texi2html
- texinfo
- tpic2pdftex
-], [utils])
+dnl optional subdirs in utils/ => ESUBDIRS
+KPSE_CONFIG_SUBDIRS(kpse_utils_pkglist, [utils])
 
 AC_SUBST(LIBSDEP)
 AC_SUBST(LIBSDIRS)

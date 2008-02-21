@@ -5,23 +5,34 @@
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
 
-# serial 2
+# serial 3
+
+# KPSE_WITH_SUBDIRS(PKGLIST)
+# -----------------------
+# Specify optional packages to be built.  For each PKG in PKGLIST expand
+#	AC_ARG_WITH([PKG], [  --without-PKG           do not build the PKG package])
+# to produce standardized help messages.
+AC_DEFUN([KPSE_WITH_SUBDIRS],
+[AC_FOREACH([AC_Pkg], [$1],
+  [AC_ARG_WITH(AC_Pkg,
+    AS_HELP_STRING([--without-[]]AC_Pkg, [do not build the ]AC_Pkg[ package]))])
+])
 
 # KPSE_CONFIG_SUBDIRS(PKGLIST, [DIR])
 # -----------------------------------
 # Specify optional subdirectories to be configured.
-# First the shell variable ESUBDIRS initialize (to empty).  Then for
-# each PKG in PKGLIST, test if PKG (or optionally DIR/PKG) exists as
-# subdirectory of $srcdir and the value of the shell variable with_PKG
-# differs from "no"; if so append this subdirectoryi to the list of
-# subdirectories to be configured and to the shell variable ESUBDIRS.
+# First initialize the shell variable ESUBDIRS (to empty).  Then for
+# each PKG in PKGLIST, test if [DIR/]PKG exists as subdirectory of
+# $srcdir and the value of the shell variable with_PKG is not "no";
+# if so append this subdirectory to the list of subdirectories to be
+# configured and to the shell variable ESUBDIRS.
 # Finally ESUBDIRS is AC_SUBSTed.
 #
 # Examples: KPSE_CONFIG_SUBDIRS([dialog lcdf-typetools], [utils]) is
 # roughly equivalent to the shell code
 #	ESUBDIRS=
 #	  test -d utils || mkdir utils
-#	  for pkg in $PKGS; do
+#	  for pkg in dialog lcdf-typetools; do
 #	    if test -d $srcdir/utils/$pkg; then
 #	      if eval "test \"`echo '$with_'${pkg}|sed 's/-/_/g'`\" != no"; then
 #	        ESUBDIRS="$ESUBDIRS utils/$pkg"
@@ -32,7 +43,7 @@
 #	AC_SUBST(ESUBDIRS)
 # whereas KPSE_CONFIG_SUBDIRS([afm2pl bibtex8]) corresponds to
 #	ESUBDIRS=
-#	for pkg in $PKGS; do
+#	for pkg in afm2pl bibtex8; do
 #	  if test -d $srcdir/utils/$pkg; then
 #	    if eval "test \"x`echo '$with_'${pkg}`\" != xno"; then
 #	      ESUBDIRS="$ESUBDIRS $pkg"
@@ -46,7 +57,6 @@
 # an M4 loop and therefore M4 variables (i.e., shell literals) are
 # passed as arguments to AC_CONFIG_SUBDIRS, as required by modern
 # versions of Autoconf and Automake.
-
 AC_DEFUN([KPSE_CONFIG_SUBDIRS],
 [ESUBDIRS=
 m4_ifval([$2], [test -d $2 || mkdir $2])

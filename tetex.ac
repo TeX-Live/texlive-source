@@ -28,12 +28,18 @@ export enable_shared
 export enable_fmtutil with_mktexfmt_default
 
 : ${enable_multiplatform=yes}
-if test "x$enable_multiplatform" = xyes \
-  && test "x$bindir" = 'x${exec_prefix}/bin'
-then
-  bindir="$bindir/$host"
-  ac_configure_args="$ac_configure_args --bindir=$bindir"
+export enable_multiplatform
+if test "x$enable_multiplatform" = xyes; then
+  if test "x$bindir" = 'x${exec_prefix}/bin'; then
+    bindir="$bindir/$host"
+    ac_configure_args="$ac_configure_args '--bindir=$bindir'"
+  fi
+  if test "x$libdir" = 'x${exec_prefix}/lib'; then
+    libdir="$libdir/$host"
+    ac_configure_args="$ac_configure_args '--libdir=$libdir'"
+  fi
 fi
+
 test "${enable_nls+set}" = set || { enable_nls=no; export enable_nls; }
 
 AC_PREFIX_DEFAULT(/usr/local/teTeX)

@@ -1,3 +1,8 @@
+2008-02-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse_subdirs.m4 (KPSE_WITH_SUBDIRS): additional macro to
+	generate --without-PKG options for a list of packages.
+
 2008-02-21  Karl Berry  <karl@tug.org>
 
 	* kpse_asm.m4, kpse_cross.m4, kpse_inc.m4, kpse_mtim.m4,

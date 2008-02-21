@@ -184,12 +184,14 @@ gl_FUNC_MKSTEMP
 
 # For teTeX and TeX Live.
 AC_CANONICAL_HOST
-AC_ARG_ENABLE(multiplatform,
-  [  --enable-multiplatform      put executables in bin/PLATFORM])
+AC_ARG_ENABLE([multiplatform],
+  [AS_HELP_STRING([--enable-multiplatform],
+     [put executables into bin/PLATFORM and libraries into lib/PLATFORM])])dnl
 # if enable_multiplatform is set in the environment, use that.
-test "x$enable_multiplatform" = xyes \
-&& test "x$bindir" = 'x${exec_prefix}/bin' \
-&& bindir="$bindir/$host"
+if test "x$enable_multiplatform" = xyes; then
+  test "x$bindir" = 'x${exec_prefix}/bin' && bindir="$bindir/$host"
+  test "x$libdir" = 'x${exec_prefix}/lib' && libdir="$libdir/$host"
+fi
 
 # Taken from the example in
 # http://www.gnu.org/software/automake/manual/html_node/Conditionals.html.

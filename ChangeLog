@@ -1,3 +1,11 @@
+2008-02-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tetex.ac: --enable-muliplatform modifies libdir.
+
+	* withenable.ac (kpse_utils_pkglist): m4_defined list of all
+	optional packages, used to generate --without-PKG options.
+	* configure.in: use kpse_utils_pkglist to select subdirs.
+
 2008-02-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Convert from autoconf-2.13 to autoconf-2.59+:

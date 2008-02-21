@@ -50,14 +50,17 @@ dnl Checks for header files.
 dnl Checks for typedefs, structures, and compiler characteristics.
 
 dnl Checks for library functions.
-# For teTeX and TeX Live.
 
+# For teTeX and TeX Live.
 AC_CANONICAL_HOST
-AC_ARG_ENABLE(multiplatform,
-  [  --enable-multiplatform  put executables in bin/PLATFORM])
-test "x$enable_multiplatform" = xyes \
-&& test "x$bindir" = 'x${exec_prefix}/bin' \
-&& bindir="$bindir/$host"
+AC_ARG_ENABLE([multiplatform],
+  [AS_HELP_STRING([--enable-multiplatform],
+     [put executables into bin/PLATFORM and libraries into lib/PLATFORM])])dnl
+# if enable_multiplatform is set in the environment, use that.
+if test "x$enable_multiplatform" = xyes; then
+  test "x$bindir" = 'x${exec_prefix}/bin' && bindir="$bindir/$host"
+  test "x$libdir" = 'x${exec_prefix}/lib' && libdir="$libdir/$host"
+fi
 
 AC_CONFIG_FILES([texi2html:texi2html.pl], [chmod +x texi2html])
 AC_CONFIG_FILES([check_texinfo.pl], [chmod +x check_texinfo.pl])
