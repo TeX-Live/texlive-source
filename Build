@@ -67,4 +67,4 @@ export GNUMAKE
  && time $TL_MAKE $TL_TARGET 2>&1|tee make.log)
 
 # we are interested in the number of binaries build
-ls inst/bin/*/|wc
+ls ../inst/bin/*/*|wc
