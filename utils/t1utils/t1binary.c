@@ -59,9 +59,6 @@ typedef unsigned char byte;
 /* for PFB block buffering */
 static struct pfb_writer w;
 
-void fatal_error(const char *message, ...);
-void error(const char *message, ...);
-
 
 /* PFB font_reader functions */
 

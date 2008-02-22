@@ -55,11 +55,6 @@
 extern "C" {
 #endif
 
-/* for PFB block buffering */
-void fatal_error(const char *message, ...);
-void error(const char *message, ...);
-
-
 /* Some functions to read one, two, three, and four byte integers in 68000
    byte order (most significant byte first). */
 

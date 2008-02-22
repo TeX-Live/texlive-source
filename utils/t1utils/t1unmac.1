@@ -1,4 +1,4 @@
-.ds V 1.32
+.ds V 1.33
 .de M
 .BR "\\$1" "(\\$2)\\$3"
 ..
@@ -55,6 +55,14 @@ PFA only: Set the maximum length of encrypted lines in the output to
 .I num.
 (These are the lines consisting wholly of hexadecimal digits.) The default
 is 64.
+.SH EXAMPLES
+.LP
+On Mac OS X, you can use
+.B t1unmac
+to translate a font into PFA or PFB format as follows:
+.nf
+% \fBt1unmac\fR --raw FONTFILENAME/..namedfork/rsrc > OUTPUT
+.fi
 .SH "SEE ALSO"
 .LP
 .M t1mac 1 ,

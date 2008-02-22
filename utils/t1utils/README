@@ -1,4 +1,4 @@
-T1UTILS VERSION 1.30 NOTES
+T1UTILS VERSION 1.33 NOTES
 ==========================
 
    You need an ANSI C compiler, such as gcc.
@@ -10,13 +10,13 @@ install the utilities and their manual pages.
 details. The most commonly used option is `--prefix', which can be used
 to install the utilities in a place other than /usr/local.
 
-   Changes since version 1.2 (c) 1998-2003 Eddie Kohler, under the same
+   Changes since version 1.2 (c) 1998-2008 Eddie Kohler, under the same
 redistribution copyright as I. Lee Hetherington's. See below for I. Lee
 Hetherington's original README from 1992, updated slightly for today's
 t1utils.
 
 Eddie Kohler
-kohler@icir.org
+kohler@cs.ucla.edu
 
 ####################################################################
 

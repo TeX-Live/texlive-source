@@ -4,6 +4,13 @@
 extern "C" {
 #endif
 
+#ifdef WIN32
+# pragma warning (disable: 4007 4096)
+# define CDECL __cdecl
+#else
+# define CDECL
+#endif
+
 #define PFB_MARKER	128
 #define PFB_ASCII	1
 #define PFB_BINARY	2

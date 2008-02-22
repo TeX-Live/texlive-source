@@ -36,9 +36,6 @@ extern "C" {
 
 typedef unsigned char byte;
 
-void fatal_error(const char *message, ...);
-void error(const char *message, ...);
-
 /* resource fork layout */
 #define RFORK_HEADERLEN 256
 #define RFORK_MAP_RESERVEDLEN 22

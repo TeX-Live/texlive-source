@@ -346,7 +346,7 @@ static void eexec_end(void)
 /* This function is used by the binary search, bsearch(), for command names in
    the command table. */
 
-static int command_compare(const void *key, const void *item)
+static int CDECL command_compare(const void *key, const void *item)
 {
   return strcmp((const char *) key, ((const struct command *) item)->name);
 }
@@ -631,10 +631,8 @@ int main(int argc, char *argv[])
 	fatal_error("output file already specified");
       if (strcmp(clp->arg, "-") == 0)
 	ofp = stdout;
-      else {
-	ofp = fopen(clp->arg, "w");
-	if (!ofp) fatal_error("%s: %s", clp->arg, strerror(errno));
-      }
+      else if (!(ofp = fopen(clp->arg, "w")))
+	fatal_error("%s: %s", clp->arg, strerror(errno));
       break;
       
      case PFB_OPT:
@@ -666,10 +664,8 @@ particular purpose.\n");
 	goto output_file;
       if (strcmp(clp->arg, "-") == 0)
 	ifp = stdin;
-      else {
-	ifp = fopen(clp->arg, "r");
-	if (!ifp) fatal_error("%s: %s", clp->arg, strerror(errno));
-      }
+      else if (!(ifp = fopen(clp->arg, "r")))
+	fatal_error("%s: %s", clp->arg, strerror(errno));
       break;
       
      case Clp_Done:

@@ -32,7 +32,7 @@ srclinks:
 versionize:
 	perl -pi -e "s/^\\.ds V.*/.ds V $(VERSION)/;" t1ascii.1 t1binary.1 t1disasm.1 t1asm.1 t1unmac.1 t1mac.1
 	perl -pi -e 's/^Version:(\s*).*/Version:$${1}$(VERSION)/; s/$(PACKAGE)-[\w.]+\.tar\.gz/$(PACKAGE)-$(VERSION).tar.gz/;' t1utils.spec
-	perl -pi -e 's/VERSION [\d.ab]+$$/VERSION $(VERSION)/;' README
+	perl -pi -e 's/VERSION [\d.ab]+/VERSION $(VERSION)/;' README
 
 rpm: dist
 	buildarch=`rpm --showrc | awk '/^build arch/ { print $$4; }'` ; \
