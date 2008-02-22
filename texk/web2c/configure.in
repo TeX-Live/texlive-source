@@ -43,8 +43,6 @@ AC_CHECK_FUNCS(strerror gettimeofday ftime mkstemp mktemp)
 
 AC_TYPE_SIGNAL
 
-# AC_DECL_YYTEXT is just used to set LEX_OUTPUT_ROOT.
-AC_DECL_YYTEXT
 pb_AC_ASM_UNDERSCORE
 
 dnl pdfTeX likes inline functions in C code.

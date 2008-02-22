@@ -9,7 +9,6 @@ AC_C_CHAR_UNSIGNED
 AC_CHECK_SIZEOF(long)
 AC_PROG_YACC
 AC_PROG_LEX
-AC_DECL_YYTEXT
 KPSE_CONFIG_FILES([Makefile])
 AC_OUTPUT
 dnl Update stamp-auto, since we just remade `c-auto.h'.

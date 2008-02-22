@@ -10,7 +10,6 @@ AC_PROG_MAKE_SET
 AC_PROG_LN_S
 
 AC_PROG_LEX
-AC_DECL_YYTEXT
 AC_HEADER_TIME
 
 sinclude(../kpathsea/withenable.ac)
