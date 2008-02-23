@@ -1,3 +1,6 @@
+2008-02-23  Martin Schröder <martin@pdftex.org>
+        * lib.h: include c-std.h to get off_t from stdio.h
+
 2008-02-21  Martin Schröder <martin@pdftex.org>
         * lib.h, xfseek.c, xftell.c: LFS support: use off_t instead off long
         and fseeko instead of fseek
