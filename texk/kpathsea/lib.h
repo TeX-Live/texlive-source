@@ -20,7 +20,7 @@
 #define KPATHSEA_LIB_H
 
 #include <kpathsea/c-proto.h>
-#include <kpathsea/c-std.h>
+#include <kpathsea/systypes.h>
 #include <kpathsea/types.h>
 
 /* Define common sorts of messages.  */

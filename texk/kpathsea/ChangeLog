@@ -1,3 +1,6 @@
+2008-02-24  Martin Schröder <martin@pdftex.org>
+        * lib.h: systypes.h instaed of c-std.h
+
 2008-02-23  Martin Schröder <martin@pdftex.org>
         * lib.h: include c-std.h to get off_t from stdio.h
 
