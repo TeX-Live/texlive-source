@@ -1,5 +1,10 @@
 2008-02-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* config.mk: temporarily disable maintainer rules, they need to
+	be updated for Autoconf 2.59+.
+
+2008-02-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* paths.mk: Add datarootdir for Autoconf 2.60+.
 
 2007-07-29  Karl Berry  <karl@tug.org>
