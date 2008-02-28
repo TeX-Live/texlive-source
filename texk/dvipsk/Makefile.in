@@ -53,11 +53,14 @@ squeeze.o: squeeze.c
 squeeze: squeeze.o
 	$(build_link_command) squeeze.o
 
-@MAINT@$(srcdir)/writet1.c: $(srcdir)/../web2c/pdftexdir/writet1.c
-@MAINT@	cp -f $(srcdir)/../web2c/pdftexdir/writet1.c $@
+@MAINT@## # Temporarily disabled -- 2008-02-28 peb
+@MAINT@## # The new version includes ptexlib.h.
+@MAINT@## # Can't do this without adjusting CPPFLAGS!
+@MAINT@## $(srcdir)/writet1.c: $(srcdir)/../web2c/pdftexdir/writet1.c
+@MAINT@## 	cp -f $(srcdir)/../web2c/pdftexdir/writet1.c $@
 
-@MAINT@$(srcdir)/ptexmac.h: $(srcdir)/../web2c/pdftexdir/ptexmac.h
-@MAINT@	cp -f $(srcdir)/../web2c/pdftexdir/ptexmac.h $@
+@MAINT@## $(srcdir)/ptexmac.h: $(srcdir)/../web2c/pdftexdir/ptexmac.h
+@MAINT@## 	cp -f $(srcdir)/../web2c/pdftexdir/ptexmac.h $@
 
 $(prologues): squeeze
 texc.lpro: texc.script tex.lpro
