@@ -1,5 +1,5 @@
 $Id$
-Copyright 2006, 2007 TeX Users Group.
+Copyright 2006, 2007, 2008 TeX Users Group.
 (Originally written in 2006 by Karl Berry.)
 You may freely use, modify and/or distribute this file.
 
@@ -11,12 +11,34 @@ itself, cannot.  Instead, try configure --enable-tetex-build in .., or
 using the Build script there.  In general, for TeX Live we only test
 configuring the whole tree.
 
-Upstream sources for the programs as last checked:
+Sources for the programs as last checked:
 
 afm2pl 0.7.03 - ok 5dec06
   http://tex.aanhet.net/afm2pl/
 
+bibtex8 - ?
+
+chktex - ?
+
+cjkutils - from Werner Lemberg
+
+detex - ?
+
 devnag - from devnag package installed in texmf-dist.
+
+djgpp - ?
+
+dtl - ?
+
+dvi2tty 5.3.1 - needs update 18may07
+  http://www.mesa.nl/pub/dvi2tty/
+
+dvidvi - ?
+
+dviljk - Joachim Schrod
+
+dvipdfm - now moribund, but until dvipdfmx is a 100% replacement we
+  cannot drop it.
 
 dvipdfmx 20061211 - ok 14dec06
   http://project.ktug.or.kr/dvipdfmx/snapshot/current/
@@ -25,11 +47,45 @@ dvipdfmx 20061211 - ok 14dec06
 dvipng 1.9 - ok 5dec06
   http://www.ctan.org/tex-archive/dviware/dvipng/
 
-dvi2tty 5.3.1 - needs update 18may07
-  http://www.mesa.nl/pub/dvi2tty/
+dvipos - ?
+
+dvipsk - maintained here by Tom Rokicki, Karl Berry, Akira Kakuto, ...
+
+etc - random additional files
+
+gsftopk - from Paul Vojta?
+
+kpathsea - maintained here by Karl Berry, Akira Kakuto, ...
+
+lacheck - ?
+
+m4 - maintained here, part of our build
+
+make - maintained here, part of our build
+
+makeindexk - maintained here (but should it be?)
+
+musixflx - ?
+
+ps2pkm - ?
 
 lcdf-typetools 2.66 - ok 17feb08
   http://www.lcdf.org/type/
 
+tex4htk 
+  http://www.cse.ohio-state.edu/~gurari/TeX4ht/
+
+texlive - maintained here, scripts
+
+ttf2pk - ?
+
+web2c - maintained here by Karl Berry, ... - core web2c, plain tex, omega.
+        The TeX variant dirs (pdftexdir, xetexdir, etc.)
+        updated here by their respective maintainers.
+
+xdv2pdf - Jonathan Kew
+
 xdvik 22.84.10 - ok 4dec06
   http://xdvi.sourceforge.net/
+
+xdvipdfmx - Jonathan Kew
