@@ -5,8 +5,14 @@
 export enable_install_warnings
 
 # e.g. for lcdf-typetools
-: ${enable_tetex_build=yes}
-export enable_tetex_build
+# With --enable-maintainer-mode, just exporting enable_tetex_build=yes
+# isn't enough: e.g., `make' => `configure --recheck'.
+# FIXME: the same should also be done for other options
+if test "x$enable_tetex_build" = x; then
+  enable_tetex_build=yes
+  export enable_tetex_build
+  ac_configure_args="$ac_configure_args '--enable-tetex-build'"
+fi
 
 # for lcdf-typetools
 : ${with_kpathsea=yes}

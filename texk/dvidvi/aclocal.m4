@@ -14,4 +14,3 @@
 m4_include([../m4/kpse_cross.m4])
 m4_include([../m4/kpse_inc.m4])
 m4_include([../m4/kpse_maint.m4])
-m4_include([../m4/kpse_mtim.m4])

@@ -86,10 +86,11 @@ CXXFLAGS="$xdvi_iconv_save_cxxflags"
 LDFLAGS="$xdvi_iconv_save_ldflags"
 #
 if test $xdvi_iconv_char_pptr_type = "const_char_pptr"; then
-  AC_DEFINE(ICONV_CHAR_PPTR_TYPE, const char **)
+  AC_DEFINE([ICONV_CHAR_PPTR_TYPE], [const char **],
+            [Define the type of the iconv input string (char ** or const char **)])
   AC_MSG_RESULT([const char **])
 else
-  AC_DEFINE(ICONV_CHAR_PPTR_TYPE, char **)
+  AC_DEFINE([ICONV_CHAR_PPTR_TYPE], [char **])
   AC_MSG_RESULT([char **])
 fi
 AC_LANG_RESTORE]
@@ -145,7 +146,8 @@ xdvi_cv_setsid_in_vfork=no,
 # safe value for cross-compiling
 xdvi_cv_setsid_in_vfork=no)])
 if test $xdvi_cv_setsid_in_vfork = yes; then
-  AC_DEFINE(HAVE_GOOD_SETSID_VFORK)
+  AC_DEFINE([HAVE_GOOD_SETSID_VFORK], 1,
+            [Define if your system allows setsid() within vfork().])
 fi]
 fi)
 
@@ -171,7 +173,8 @@ x_linker_options=""
 if test $xdvi_linker_multiple_defns = yes; then
     x_linker_options="-Xlinker --allow-multiple-definition"
     LDFLAGS="$xdvi_save_LDFLAGS"
-    AC_DEFINE(LD_ALLOWS_MULTIPLE_DEFINITIONS)
+    AC_DEFINE([LD_ALLOWS_MULTIPLE_DEFINITIONS], 1,
+              [Define if your system allows multiple definitions of functions.])
 else
     LDFLAGS="$xdvi_save_LDFLAGS"
 
@@ -207,7 +210,7 @@ else
 
     if test $xdvi_linker_multiple_defns = yes; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(LD_ALLOWS_MULTIPLE_DEFINITIONS)
+        AC_DEFINE([LD_ALLOWS_MULTIPLE_DEFINITIONS])
     else
         AC_MSG_RESULT(no)
  	AC_MSG_WARN([Linker does not allow multiple definitions.
@@ -251,8 +254,10 @@ main()
 xdvi_cv_bitmap_type="`cat conftestval`",
 AC_MSG_ERROR(could not determine integer type for bitmap))])
 eval "$xdvi_cv_bitmap_type"
-AC_DEFINE_UNQUOTED(BMTYPE, $BMTYPE)
-AC_DEFINE_UNQUOTED(BMBYTES, $BMBYTES)
+AC_DEFINE_UNQUOTED([BMTYPE], [$BMTYPE],
+                   [Define to determine the integer type to be used in bitmaps.
+                    The type used will be "unsigned BMTYPE".])
+AC_DEFINE_UNQUOTED([BMBYTES], [$BMBYTES], [Define to the length (in bytes) of type BMTYPE.])
 AC_MSG_RESULT([unsigned $BMTYPE, size = $BMBYTES])])
 
 
@@ -265,7 +270,7 @@ AC_DEFUN([XDVI_CC_CONCAT],
 ], [puts("Testing" " string" " concatenation");
 ], xdvi_cc_concat=yes, xdvi_cc_concat=no)])
 if test $xdvi_cc_concat = yes; then
-  AC_DEFINE(HAVE_CC_CONCAT)
+  AC_DEFINE([HAVE_CC_CONCAT], 1, [Define if your C compiler can do string concatenation])
 fi])
 
 
@@ -281,7 +286,7 @@ choke me
 isastream(0);
 #endif], xdvi_cv_sys_streams=yes, xdvi_cv_sys_streams=no)])
 if test $xdvi_cv_sys_streams = yes; then
-  AC_DEFINE(HAVE_STREAMS)
+  AC_DEFINE([HAVE_STREAMS], 1, [Define if your system has STREAMS (and if X uses it).])
 fi])
 
 
@@ -294,7 +299,7 @@ AC_DEFUN([XDVI_FUNC_POLL],
 ], [poll((struct pollfd *) 0, 0, 0);],
 xdvi_cv_func_poll=yes, xdvi_cv_func_poll=no)])
 if test $xdvi_cv_func_poll = yes; then
-  AC_DEFINE(HAVE_POLL)
+  AC_DEFINE([HAVE_POLL], 1, [Define if your system has <poll.h> and poll().])
 else
   AC_CHECK_HEADERS(sys/select.h select.h)
 fi])
@@ -310,7 +315,7 @@ AC_DEFUN([XDVI_SYS_SUNOS_4],
 *) xdvi_cv_sys_sunos_4=no ;;
 esac])
 if test $xdvi_cv_sys_sunos_4 = yes; then
-  AC_DEFINE(SUNOS4)
+  AC_DEFINE([SUNOS4], 1, [Define if you are using SunOS 4.x.])
 fi])
 
 dnl ### Check for certain broken versions of Linux
@@ -323,15 +328,16 @@ AC_DEFUN([XDVI_SYS_OLD_LINUX],
 *) xdvi_cv_sys_old_linux=no ;;
 esac])
 if test $xdvi_cv_sys_old_linux = yes; then
-  AC_DEFINE(FLAKY_SIGPOLL)
+  AC_DEFINE([FLAKY_SIGPOLL], 1,
+            [Define if you are using Linux 2.1.xxx -- 2.2.8, or if you find it necessary.])
 fi])
 
 dnl ### Process a string argument
 
-dnl XDVI_ARG_STRING(PACKAGE, HELP-STRING, VARIABLE, DEFAULT_VALUE)
+dnl XDVI_ARG_STRING(PACKAGE, HELP-STRING, VARIABLE, DEFAULT_VALUE, DESCRIPTION)
 AC_DEFUN([XDVI_ARG_STRING],
-[AC_ARG_WITH($1, [$2], [AC_DEFINE_UNQUOTED($3, "$withval")
-], [AC_DEFINE($3, [$4])
+[AC_ARG_WITH([$1], [$2], [AC_DEFINE_UNQUOTED($3, ["$withval"], [$5])
+], [AC_DEFINE([$3], [$4])
 ])])
 
 
@@ -371,7 +377,7 @@ xdvi_cv_func_good_vsnprintf=no,
 # safe value for cross-compiling
 xdvi_cv_func_good_vsnprintf=no)])
 if test $xdvi_cv_func_good_vsnprintf = yes; then
-  AC_DEFINE(HAVE_GOOD_VSNPRINTF)
+  AC_DEFINE([HAVE_GOOD_VSNPRINTF], 1, [Define if the vsnprintf function works.])
 fi])
 
 dnl ### Check for memicmp(), which some installations have in string.h
@@ -382,7 +388,7 @@ AC_DEFUN([AC_FUNC_MEMICMP],
 ], [(void)memicmp((char *)NULL, (char *)NULL, 0);],
 xdvi_cv_memicmp=yes, xdvi_cv_memicmp=no)])
 if test $xdvi_cv_memicmp = yes; then
-  AC_DEFINE(HAVE_MEMICMP)
+  AC_DEFINE([HAVE_MEMICMP], 1, [Define if the memicmp() function is in <string.h>])
 fi])
 
 dnl dnl ### Check for realpath() added by SU 2002/04/10
@@ -492,11 +498,12 @@ dnl moved them out.	Peter Breitenlohner <peb@mppmu.mpg.de>
 dnl
 if test "x$xpm_includes" != x; then
     if test "x$xpm_includes" = xdefault; then
-	AC_DEFINE(HAVE_X11_XPM_H, 1)
+	AC_DEFINE([HAVE_X11_XPM_H], 1, [Define if you have the <X11/xpm.h> header file.])
     elif test -f "$xpm_includes/X11/xpm.h"; then
-	AC_DEFINE(HAVE_X11_XPM_H, 1)
+	AC_DEFINE([HAVE_X11_XPM_H], 1)
     elif test -f "$xpm_includes/xpm.h"; then
-	AC_DEFINE(HAVE_XPM_H, 1)
+	AC_DEFINE([HAVE_XPM_H], 1,
+	          [Define if you have the <xpm.h> header file (not in X11, e.g. Solaris 5.8).])
     fi
 fi
 
@@ -588,7 +595,7 @@ x_xpm_libs="-lXpm"
 # Now check the results of headers and libraries and set USE_XPM to 0
 # if one of them hadn't been found.
 #
-AC_DEFINE(USE_XPM, 1)
+AC_DEFINE([USE_XPM], 1, [Define if you want to use the Xpm library])
 xpm_libraries_result="$xpm_libraries"
 xpm_includes_result="$xpm_includes"
 if test "x$xpm_libraries_result" = "xdefault" ; then
@@ -762,9 +769,9 @@ fi
 motif_libdir_result="$motif_libdir"
 motif_include_result="$motif_include"
 test "$motif_libdir_result" = "" && 
-  motif_libdir_result="in default path" && AC_DEFINE(MOTIF, 1)
+  motif_libdir_result="in default path" && AC_DEFINE([MOTIF], 1, [Define to use the Motif toolkit.])
 test "$motif_include_result" = "" && 
-  motif_include_result="in default path" && AC_DEFINE(MOTIF, 1)
+  motif_include_result="in default path" && AC_DEFINE([MOTIF], 1)
 if test "$motif_libdir_result" = "no"; then
     if test "$default_toolkit" = "none"; then
         motif_libdir_result="(none)"
@@ -813,7 +820,7 @@ xdvi_use_xaw_panner=yes, xdvi_use_xaw_panner=no
 CPPFLAGS=$save_CPPFLAGS
 if test $xdvi_use_xaw_panner = yes; then
     AC_MSG_RESULT(yes)
-    AC_DEFINE(USE_XAW_PANNER)
+    AC_DEFINE([USE_XAW_PANNER], 1, [Define to use Xaw panner.])
 else
     AC_MSG_RESULT(no)
 fi
@@ -1028,7 +1035,8 @@ if test "${with_xdvi_x_toolkit}" = xaw; then
 	CPPFLAGS=$save_CPPFLAGS
 if test $xdvi_old_xaw = yes; then
     AC_MSG_RESULT(old)
-    AC_DEFINE(HAVE_OLD_XAW)
+    AC_DEFINE([HAVE_OLD_XAW], 1,
+              [Define if you have an old version of the Xaw library])
 else
     AC_MSG_RESULT(current)
 fi

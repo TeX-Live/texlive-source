@@ -9,11 +9,6 @@
 /* For wchar_t et al., that the X files might want. */
 #include <kpathsea/systypes.h>
 
-/* See xdvik/xdvi.h for the purpose of the FOIL...  */
-#ifdef FOIL_X_WCHAR_T
-#define wchar_t foil_x_defining_wchar_t
-#define X_WCHAR
-#endif
 #undef input /* the XWMHints structure has a field named `input' */
 #undef output
 #include <X11/Xlib.h>

@@ -4613,7 +4613,8 @@ fi
 { echo "$as_me:$LINENO: result: $xdvi_cv_func_good_vsnprintf" >&5
 echo "${ECHO_T}$xdvi_cv_func_good_vsnprintf" >&6; }
 if test $xdvi_cv_func_good_vsnprintf = yes; then
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define HAVE_GOOD_VSNPRINTF 1
 _ACEOF
 
@@ -4671,7 +4672,8 @@ fi
 { echo "$as_me:$LINENO: result: $xdvi_cv_memicmp" >&5
 echo "${ECHO_T}$xdvi_cv_memicmp" >&6; }
 if test $xdvi_cv_memicmp = yes; then
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define HAVE_MEMICMP 1
 _ACEOF
 
@@ -6987,7 +6989,8 @@ fi
 { echo "$as_me:$LINENO: result: $xdvi_cv_setsid_in_vfork" >&5
 echo "${ECHO_T}$xdvi_cv_setsid_in_vfork" >&6; }
 if test $xdvi_cv_setsid_in_vfork = yes; then
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define HAVE_GOOD_SETSID_VFORK 1
 _ACEOF
 
@@ -7045,7 +7048,8 @@ fi
 { echo "$as_me:$LINENO: result: $xdvi_cc_concat" >&5
 echo "${ECHO_T}$xdvi_cc_concat" >&6; }
 if test $xdvi_cc_concat = yes; then
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define HAVE_CC_CONCAT 1
 _ACEOF
 
@@ -7122,9 +7126,11 @@ fi
 fi
 
 eval "$xdvi_cv_bitmap_type"
+
 cat >>confdefs.h <<_ACEOF
 #define BMTYPE $BMTYPE
 _ACEOF
+
 
 cat >>confdefs.h <<_ACEOF
 #define BMBYTES $BMBYTES
@@ -7189,7 +7195,8 @@ fi
 { echo "$as_me:$LINENO: result: $xdvi_cv_sys_streams" >&5
 echo "${ECHO_T}$xdvi_cv_sys_streams" >&6; }
 if test $xdvi_cv_sys_streams = yes; then
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define HAVE_STREAMS 1
 _ACEOF
 
@@ -7208,7 +7215,8 @@ fi
 { echo "$as_me:$LINENO: result: $xdvi_cv_sys_sunos_4" >&5
 echo "${ECHO_T}$xdvi_cv_sys_sunos_4" >&6; }
 if test $xdvi_cv_sys_sunos_4 = yes; then
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define SUNOS4 1
 _ACEOF
 
@@ -7227,7 +7235,8 @@ fi
 { echo "$as_me:$LINENO: result: $xdvi_cv_sys_old_linux" >&5
 echo "${ECHO_T}$xdvi_cv_sys_old_linux" >&6; }
 if test $xdvi_cv_sys_old_linux = yes; then
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define FLAKY_SIGPOLL 1
 _ACEOF
 
@@ -7285,7 +7294,8 @@ fi
 { echo "$as_me:$LINENO: result: $xdvi_cv_func_poll" >&5
 echo "${ECHO_T}$xdvi_cv_func_poll" >&6; }
 if test $xdvi_cv_func_poll = yes; then
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define HAVE_POLL 1
 _ACEOF
 
@@ -7541,7 +7551,8 @@ echo "${ECHO_T}$xdvi_linker_multiple_defns" >&6; }
 if test $xdvi_linker_multiple_defns = yes; then
     x_linker_options="-Xlinker --allow-multiple-definition"
     LDFLAGS="$xdvi_save_LDFLAGS"
-    cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define LD_ALLOWS_MULTIPLE_DEFINITIONS 1
 _ACEOF
 
@@ -8515,7 +8526,8 @@ fi
 # Check whether --enable-grey was given.
 if test "${enable_grey+set}" = set; then
   enableval=$enable_grey; if test "$enableval" = yes; then
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define GREY 1
 _ACEOF
 
@@ -8533,7 +8545,8 @@ fi
 # Check whether --enable-color was given.
 if test "${enable_color+set}" = set; then
   enableval=$enable_color; if test "$enableval" = yes; then
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define COLOR 1
 _ACEOF
 
@@ -8555,11 +8568,13 @@ if test "${enable_t1lib+set}" = set; then
   enableval=$enable_t1lib; if test "$enableval" = yes; then
   T1LIB=1
   LDT1LIB=../../libs/t1lib/lib/.libs/libt1.a
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define LDT1LIB 1
 _ACEOF
 
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define T1LIB 1
 _ACEOF
 
@@ -8585,7 +8600,8 @@ fi
 # Check whether --enable-gf was given.
 if test "${enable_gf+set}" = set; then
   enableval=$enable_gf; if test "$enableval" != no; then
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define USE_GF 1
 _ACEOF
 
@@ -8598,7 +8614,8 @@ fi
 # Check whether --enable-a4 was given.
 if test "${enable_a4+set}" = set; then
   enableval=$enable_a4; if test "$enableval" = yes; then
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define A4 1
 _ACEOF
 
@@ -8642,7 +8659,8 @@ if test "${enable_magick+set}" = set; then
 
       X_EXTRA_LIBS="$X_EXTRA_LIBS $MAGIC_LIBDIR $MAGICK_LD"
       X_CFLAGS="$X_CFLAGS $MAGIC_INCLUDE $MAGICK_CPP"
-      cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define MAGICK 1
 _ACEOF
 
@@ -9155,7 +9173,8 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 if test $xdvi_old_xaw = yes; then
     { echo "$as_me:$LINENO: result: old" >&5
 echo "${ECHO_T}old" >&6; }
-    cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define HAVE_OLD_XAW 1
 _ACEOF
 
@@ -9201,9 +9220,11 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
 	 test ! -s conftest.err
        } && test -s conftest$ac_exeext &&
        $as_test_x conftest$ac_exeext; then
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define HAVE_WORKING_NL_LANGINFO_CODESET 1
 _ACEOF
+
  { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 else
@@ -9504,7 +9525,8 @@ fi
 
 if test "x$xpm_includes" != x; then
     if test "x$xpm_includes" = xdefault; then
-	cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define HAVE_X11_XPM_H 1
 _ACEOF
 
@@ -9514,7 +9536,8 @@ _ACEOF
 _ACEOF
 
     elif test -f "$xpm_includes/xpm.h"; then
-	cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define HAVE_XPM_H 1
 _ACEOF
 
@@ -9653,6 +9676,7 @@ x_xpm_libs="-lXpm"
 # Now check the results of headers and libraries and set USE_XPM to 0
 # if one of them hadn't been found.
 #
+
 cat >>confdefs.h <<\_ACEOF
 #define USE_XPM 1
 _ACEOF
@@ -9937,7 +9961,8 @@ fi
 motif_libdir_result="$motif_libdir"
 motif_include_result="$motif_include"
 test "$motif_libdir_result" = "" &&
-  motif_libdir_result="in default path" && cat >>confdefs.h <<\_ACEOF
+  motif_libdir_result="in default path" &&
+cat >>confdefs.h <<\_ACEOF
 #define MOTIF 1
 _ACEOF
 
@@ -10043,7 +10068,8 @@ CPPFLAGS=$save_CPPFLAGS
 if test $xdvi_use_xaw_panner = yes; then
     { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
-    cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define USE_XAW_PANNER 1
 _ACEOF
 
@@ -10054,7 +10080,8 @@ fi
 
 elif test "x$with_xdvi_x_toolkit" = xxaw; then
    prog_extension="xaw"
-   cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define XAW 1
 _ACEOF
 
@@ -10289,7 +10316,8 @@ fi
 motif_libdir_result="$motif_libdir"
 motif_include_result="$motif_include"
 test "$motif_libdir_result" = "" &&
-  motif_libdir_result="in default path" && cat >>confdefs.h <<\_ACEOF
+  motif_libdir_result="in default path" &&
+cat >>confdefs.h <<\_ACEOF
 #define MOTIF 1
 _ACEOF
 
@@ -10395,7 +10423,8 @@ CPPFLAGS=$save_CPPFLAGS
 if test $xdvi_use_xaw_panner = yes; then
     { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
-    cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define USE_XAW_PANNER 1
 _ACEOF
 
@@ -11078,7 +11107,8 @@ CXXFLAGS="$xdvi_iconv_save_cxxflags"
 LDFLAGS="$xdvi_iconv_save_ldflags"
 #
 if test $xdvi_iconv_char_pptr_type = "const_char_pptr"; then
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define ICONV_CHAR_PPTR_TYPE const char **
 _ACEOF
 
@@ -11434,7 +11464,8 @@ fi
 
 # Check whether --with-default-dvips-path was given.
 if test "${with_default_dvips_path+set}" = set; then
-  withval=$with_default_dvips_path; cat >>confdefs.h <<_ACEOF
+  withval=$with_default_dvips_path;
+cat >>confdefs.h <<_ACEOF
 #define DEFAULT_DVIPS_PATH "$withval"
 _ACEOF
 
@@ -11451,7 +11482,8 @@ fi
 
 # Check whether --with-default-ps2pdf-path was given.
 if test "${with_default_ps2pdf_path+set}" = set; then
-  withval=$with_default_ps2pdf_path; cat >>confdefs.h <<_ACEOF
+  withval=$with_default_ps2pdf_path;
+cat >>confdefs.h <<_ACEOF
 #define DEFAULT_PS2PDF_PATH "$withval"
 _ACEOF
 

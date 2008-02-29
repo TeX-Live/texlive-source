@@ -571,7 +571,7 @@ int CDECL main (int argc, char *argv[])
     usage();
     return 1;
   }
-#ifdef KPATHSEA
+#ifdef HAVE_KPATHSEA
   kpse_set_program_name (argv[0], NULL);
 #endif
 
@@ -583,7 +583,7 @@ int CDECL main (int argc, char *argv[])
 
   do_args (argc, argv);
 
-#ifdef KPATHSEA
+#ifdef HAVE_KPATHSEA
   kpse_init_prog ("", font_dpi, NULL, NULL);
   pk_set_dpi (font_dpi);
   kpse_set_program_enabled (kpse_pk_format, true, kpse_src_texmf_cnf);

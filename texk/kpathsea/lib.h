@@ -120,7 +120,7 @@ extern KPSEDLL const_string xbasename P1H(const_string name);
 /* Return directory part of NAME. This returns a new string. */
 extern KPSEDLL string xdirname P1H(const_string name);
 
-#ifndef HAVE_STRSTR
+#if !HAVE_DECL_STRSTR
 extern string strstr P2H(const_string haystack, const_string needle);
 #endif
 

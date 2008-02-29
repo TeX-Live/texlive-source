@@ -1,5 +1,9 @@
 dnl Public domain.
+
 AC_INIT(dvipos.c)
+AC_CONFIG_HEADERS([c-auto.h:c-auto.in], [date >stamp-auto])
+
 sinclude(../kpathsea/common.ac)
+
 KPSE_CONFIG_FILES([Makefile])
 AC_OUTPUT

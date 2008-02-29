@@ -1,3 +1,8 @@
+2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* newer.c, makempx.c: replace `#if HAVE_ST_MTIM' by
+	`#ifdef HAVE_STRUCT_STAT_ST_MTIM' (from AC_CHECK_MEMBERS).
+
 2008-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.in: Add @configure_input@ line.

@@ -1,3 +1,7 @@
+2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.in: update (AC_SET_MAKE -> AC_PROG_MAKE_SET).
+
 2008-02-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Convert from autoconf-2.13 to autoconf-2.59+:

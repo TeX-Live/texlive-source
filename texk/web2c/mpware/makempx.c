@@ -71,7 +71,7 @@
 #define INLINE_NEWER 1
 
 /* We may have high-res timers in struct stat.  If we do, use them.  */
-#if HAVE_ST_MTIM
+#ifdef HAVE_STRUCT_STAT_ST_MTIM
 #define ISNEWER(S,T) (S.st_mtim.tv_sec > T.st_mtim.tv_sec ||              \
                     (S.st_mtim.tv_sec  == T.st_mtim.tv_sec &&           \
                      S.st_mtim.tv_nsec >= T.st_mtim.tv_nsec))

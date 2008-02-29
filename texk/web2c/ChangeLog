@@ -1,3 +1,14 @@
+2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.in: replace PACKAGE_... by WEB2C_PACKAGE_... in
+	c-auto.h, to avoid conflicts with other packages.
+
+	* configure.in: use AH_TOP, AH_BOTTOM, and AC_DEFINE's third
+	argument to provide autoheader templates ...
+	* withenable.ac: use AC_DEFINE's third argument to provide
+	autoheader templates ...
+	* acconfig.h: ... removed.
+
 2008-02-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.in: remove AC_DECL_YYTEXT to avoid autoconf warning.

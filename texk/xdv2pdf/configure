@@ -651,7 +651,6 @@ build_alias
 host_alias
 target_alias
 VERSION
-MAINT
 CC
 CFLAGS
 LDFLAGS
@@ -1251,11 +1250,6 @@ if test -n "$ac_init_help"; then
 
   cat <<\_ACEOF
 
-Optional Features:
-  --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
-  --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
-  --enable-maint          enable autoconf portions of Makefile
-
 Some influential environment variables:
   CC          C compiler command
   CFLAGS      C compiler flags
@@ -1695,25 +1689,18 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 VERSION="0.991"
 
+
 cat >>confdefs.h <<\_ACEOF
 #define VERSION "0.991"
 _ACEOF
+
 
 cat >>confdefs.h <<\_ACEOF
 #define PACKAGE "xdv2pdf"
 _ACEOF
 
 
-ac_config_headers="$ac_config_headers config.h"
-
-
-# Check whether --enable-maint was given.
-if test "${enable_maint+set}" = set; then
-  enableval=$enable_maint; MAINT=''
-else
-  MAINT='#'
-fi
-
+ac_config_headers="$ac_config_headers c-auto.h:c-auto.in"
 
 
 
@@ -4211,13 +4198,16 @@ echo "${ECHO_T}no" >&6; }
 fi
 
 
+
 cat >>confdefs.h <<\_ACEOF
 #define KPATHSEA 1
 _ACEOF
 
+
 cat >>confdefs.h <<\_ACEOF
 #define HAVE_KPATHSEA 1
 _ACEOF
+
 
 cat >>confdefs.h <<\_ACEOF
 #define HAVE_KPSE_FORMATS 1
@@ -6050,7 +6040,7 @@ cat >>$CONFIG_STATUS <<\_ACEOF
 for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
-    "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
+    "c-auto.h") CONFIG_HEADERS="$CONFIG_HEADERS c-auto.h:c-auto.in" ;;
     "Makefile.aux") CONFIG_FILES="$CONFIG_FILES Makefile.aux:Makefile.in" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile:Makefile.aux" ;;
 
@@ -6152,7 +6142,6 @@ build_alias!$build_alias$ac_delim
 host_alias!$host_alias$ac_delim
 target_alias!$target_alias$ac_delim
 VERSION!$VERSION$ac_delim
-MAINT!$MAINT$ac_delim
 CC!$CC$ac_delim
 CFLAGS!$CFLAGS$ac_delim
 LDFLAGS!$LDFLAGS$ac_delim
@@ -6176,7 +6165,7 @@ LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 60; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 59; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5
@@ -6577,6 +6566,7 @@ echo "$as_me: $ac_file is unchanged" >&6;}
 
 
   case $ac_file$ac_mode in
+    "c-auto.h":H) date >stamp-auto ;;
     "Makefile.aux":F) # Discard the file just generated and first resolve kpse_include's
   kpse_input=`case Makefile.in in
   [\\/$]*) # Absolute

@@ -21,7 +21,9 @@ AC_SUBST(WEB2CVERSION)
 AC_DEFINE_UNQUOTED(WEB2CVERSION," (Web2C $WEB2CVERSION)")
 
 dnl Write output here, instead of putting a zillion -D's on the command line.
-AC_CONFIG_HEADERS([c-auto.h:c-auto.in], [date >stamp-auto])
+AC_CONFIG_HEADERS([c-auto.h:c-auto.in],
+ [sed 's/^#define PACKAGE_/#define WEB2C_PACKAGE_/' c-auto.h >c-auto.tmp && mv -f c-auto.tmp c-auto.h
+  date >stamp-auto])
 
 AC_PROG_CC
 AC_PROG_INSTALL
@@ -378,7 +380,7 @@ if test "x$with_x" = xyes; then
     *)  wfile=../$srcdir/window/$wfile;;
   esac
   (cd window && (rm -f x11.c; $LN_S $wfile x11.c))
-  AC_DEFINE(X11WIN)
+  AC_DEFINE([X11WIN], 1, [Define to include X11 window in Metafont.])
 fi
 AC_SUBST(x_ext_lib)
 AC_SUBST(x_tool_libs)
@@ -425,6 +427,32 @@ KPSE_CROSS_PATH_PROG(TIE, tie, ./tie)
 if test "x$with_omega" = xyes || test "x$with_aleph" = xyes || test "x$with_xetex" = xyes; then
 KPSE_CROSS_PATH_PROG(OTANGLE, otangle, ./otangle)
 fi
+
+AH_TOP([/* c-auto.h: defines for web2c, as determined by configure.
+
+   Copyright 1994-97, 2008 Karl Berry.
+   Copyright 1997-99, 2002, 2005 Olaf Weber.
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+
+/* Guard against double inclusion. */
+#ifndef WEB2C_C_AUTO_H
+#define WEB2C_C_AUTO_H
+
+/* web2c: the version string. */
+#define WEB2CVERSION "REPLACE-WITH-WEB2CVERSION"])
+AH_BOTTOM([#endif /* !WEB2C_C_AUTO_H */])
 
 dnl Generate `Makefile's, `config.status', and our header file.
 KPSE_CONFIG_FILES([Makefile doc/Makefile lib/Makefile man/Makefile mpware/Makefile 

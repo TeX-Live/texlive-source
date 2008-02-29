@@ -20,7 +20,7 @@ AC_ARG_ENABLE(timing,
 
 # Checks for programs.
 AC_SET_MAKE
-AC_PROG_CC
+AC_PROG_MAKE_SET
 AC_PROG_INSTALL
 AC_ARG_WITH(gs,
   AC_HELP_STRING([--with-gs=/PATH/TO/gs],[Hard-wire the location of GhostScript]), 

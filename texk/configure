@@ -3816,19 +3816,23 @@ fi
 
 # Check whether --with-editor was given.
 if test "${with_editor+set}" = set; then
-  withval=$with_editor; cat >>confdefs.h <<_ACEOF
+  withval=$with_editor;
+else
+  with_editor="vi +%d %s"
+fi
+
+
+cat >>confdefs.h <<_ACEOF
 #define EDITOR "$with_editor"
 _ACEOF
-
-
-fi
 
 
 # Check whether --enable-ipc was given.
 if test "${enable_ipc+set}" = set; then
   enableval=$enable_ipc; if test "x$enableval" = xyes; then
-  cat >>confdefs.h <<\_ACEOF
-#define IPC 1
+
+cat >>confdefs.h <<\_ACEOF
+#define IPC
 _ACEOF
 
   # -lsocket is needed on Solaris, at least.  Maybe -lnsl on SCO, too?
@@ -3990,9 +3994,11 @@ fi
 
 # Check whether --enable-auto-core was given.
 if test "${enable_auto_core+set}" = set; then
-  enableval=$enable_auto_core; cat >>confdefs.h <<\_ACEOF
-#define FUNNY_CORE_DUMP 1
+  enableval=$enable_auto_core;
+cat >>confdefs.h <<\_ACEOF
+#define FUNNY_CORE_DUMP
 _ACEOF
+
 
 fi
 
@@ -4000,8 +4006,9 @@ fi
 # Check whether --enable-dump-share was given.
 if test "${enable_dump_share+set}" = set; then
   enableval=$enable_dump_share; if test "x$enableval" = xno; then
-  cat >>confdefs.h <<\_ACEOF
-#define NO_DUMP_SHARE 1
+
+cat >>confdefs.h <<\_ACEOF
+#define NO_DUMP_SHARE
 _ACEOF
 
 fi
@@ -4027,8 +4034,9 @@ fi
 # Check whether --with-epsfwin was given.
 if test "${with_epsfwin+set}" = set; then
   withval=$with_epsfwin; if test "x$withval" = xyes; then
-  cat >>confdefs.h <<\_ACEOF
-#define EPSFWIN 1
+
+cat >>confdefs.h <<\_ACEOF
+#define EPSFWIN
 _ACEOF
 
 fi
@@ -4039,8 +4047,9 @@ fi
 # Check whether --with-hp2627win was given.
 if test "${with_hp2627win+set}" = set; then
   withval=$with_hp2627win; if test "x$withval" = xyes; then
-  cat >>confdefs.h <<\_ACEOF
-#define HP2627WIN 1
+
+cat >>confdefs.h <<\_ACEOF
+#define HP2627WIN
 _ACEOF
 
 fi
@@ -4051,8 +4060,9 @@ fi
 # Check whether --with-mftalkwin was given.
 if test "${with_mftalkwin+set}" = set; then
   withval=$with_mftalkwin; if test "x$withval" = xyes; then
-  cat >>confdefs.h <<\_ACEOF
-#define MFTALKWIN 1
+
+cat >>confdefs.h <<\_ACEOF
+#define MFTALKWIN
 _ACEOF
 
 fi
@@ -4063,8 +4073,9 @@ fi
 # Check whether --with-nextwin was given.
 if test "${with_nextwin+set}" = set; then
   withval=$with_nextwin; if test "x$withval" = xyes; then
-  cat >>confdefs.h <<\_ACEOF
-#define NEXTWIN 1
+
+cat >>confdefs.h <<\_ACEOF
+#define NEXTWIN
 _ACEOF
 
 fi
@@ -4075,8 +4086,9 @@ fi
 # Check whether --with-regiswin was given.
 if test "${with_regiswin+set}" = set; then
   withval=$with_regiswin; if test "x$withval" = xyes; then
-  cat >>confdefs.h <<\_ACEOF
-#define REGISWIN 1
+
+cat >>confdefs.h <<\_ACEOF
+#define REGISWIN
 _ACEOF
 
 fi
@@ -4088,8 +4100,9 @@ fi
 if test "${with_suntoolswin+set}" = set; then
   withval=$with_suntoolswin; if test "x$withval" = xyes; then
   wlibs="-lsuntool -lsunwindow -lpixrect $wlibs"
-  cat >>confdefs.h <<\_ACEOF
-#define SUNWIN 1
+
+cat >>confdefs.h <<\_ACEOF
+#define SUNWIN
 _ACEOF
 
 fi
@@ -4100,8 +4113,9 @@ fi
 # Check whether --with-tektronixwin was given.
 if test "${with_tektronixwin+set}" = set; then
   withval=$with_tektronixwin; if test "x$withval" = xyes; then
-  cat >>confdefs.h <<\_ACEOF
-#define TEKTRONIXWIN 1
+
+cat >>confdefs.h <<\_ACEOF
+#define TEKTRONIXWIN
 _ACEOF
 
 fi
@@ -4112,8 +4126,9 @@ fi
 # Check whether --with-unitermwin was given.
 if test "${with_unitermwin+set}" = set; then
   withval=$with_unitermwin; if test "x$withval" = xyes; then
-  cat >>confdefs.h <<\_ACEOF
-#define UNITERMWIN 1
+
+cat >>confdefs.h <<\_ACEOF
+#define UNITERMWIN
 _ACEOF
 
 fi
@@ -4174,7 +4189,8 @@ fi
 # Check whether --enable-grey was given.
 if test "${enable_grey+set}" = set; then
   enableval=$enable_grey; if test "$enableval" = yes; then
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define GREY 1
 _ACEOF
 
@@ -4192,7 +4208,8 @@ fi
 # Check whether --enable-color was given.
 if test "${enable_color+set}" = set; then
   enableval=$enable_color; if test "$enableval" = yes; then
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define COLOR 1
 _ACEOF
 
@@ -4214,11 +4231,13 @@ if test "${enable_t1lib+set}" = set; then
   enableval=$enable_t1lib; if test "$enableval" = yes; then
   T1LIB=1
   LDT1LIB=../../libs/t1lib/lib/.libs/libt1.a
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define LDT1LIB 1
 _ACEOF
 
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define T1LIB 1
 _ACEOF
 
@@ -4244,7 +4263,8 @@ fi
 # Check whether --enable-gf was given.
 if test "${enable_gf+set}" = set; then
   enableval=$enable_gf; if test "$enableval" != no; then
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define USE_GF 1
 _ACEOF
 
@@ -4257,7 +4277,8 @@ fi
 # Check whether --enable-a4 was given.
 if test "${enable_a4+set}" = set; then
   enableval=$enable_a4; if test "$enableval" = yes; then
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define A4 1
 _ACEOF
 
@@ -4301,7 +4322,8 @@ if test "${enable_magick+set}" = set; then
 
       X_EXTRA_LIBS="$X_EXTRA_LIBS $MAGIC_LIBDIR $MAGICK_LD"
       X_CFLAGS="$X_CFLAGS $MAGIC_INCLUDE $MAGICK_CPP"
-      cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define MAGICK 1
 _ACEOF
 
@@ -6253,7 +6275,7 @@ test "x$enable_libtool_lock" != xno && enable_libtool_lock=yes
 case $host in
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 6256 "configure"' > conftest.$ac_ext
+  echo '#line 6278 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -6815,7 +6837,7 @@ chmod -w .
 save_CFLAGS="$CFLAGS"
 CFLAGS="$CFLAGS -o out/conftest2.$ac_objext"
 compiler_c_o=no
-if { (eval echo configure:6818: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>out/conftest.err; } && test -s out/conftest2.$ac_objext; then
+if { (eval echo configure:6840: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>out/conftest.err; } && test -s out/conftest2.$ac_objext; then
   # The compiler can only warn and ignore the option if not recognized
   # So say no if there are warnings
   if test -s out/conftest.err; then
@@ -8756,7 +8778,7 @@ else
     lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 8759 "configure"
+#line 8781 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -8854,7 +8876,7 @@ else
     lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 8857 "configure"
+#line 8879 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H

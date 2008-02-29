@@ -3,7 +3,7 @@ dnl Public domain.
 AC_INIT(zlib/zlib.h)
 
 AC_CONFIG_AUX_DIR(../config)
-AC_SET_MAKE
+AC_PROG_MAKE_SET
 AC_PROG_CC
 AC_CANONICAL_SYSTEM
 AC_PROG_INSTALL

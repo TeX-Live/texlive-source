@@ -1,3 +1,10 @@
+2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.in: update (AC_SET_MAKE -> AC_PROG_MAKE_SET).
+	* tetex.ac: append --enable-tetex-build to args in addition
+	to exporting enable_tetex_build=yes (for maintainer mode).
+	* reautoconf: add autoheader, allow subdir selection.
+
 2008-02-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* reautoconf: major rewrite.

@@ -1,3 +1,7 @@
+2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* acinclude.m4: add quotes to DEFUN's first args.
+
 2008-02-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: --enable-muliplatform modifies libdir.

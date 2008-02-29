@@ -1,8 +1,9 @@
-This is texi2html.info, produced by makeinfo version 4.8 from
-texi2html.texi.
+This is ../../../../TeXlive-svn/utils/texi2html/doc/texi2html.info,
+produced by makeinfo version 4.11 from
+../../../../TeXlive-svn/utils/texi2html/doc/texi2html.texi.
 
-   Copyright (C) 1999, 2000, 2001, 2002, 2003
-Free Software Foundation, Inc.
+Copyright (C) 1999, 2000, 2001, 2002, 2003                        Free
+Software Foundation, Inc.
 
 Portions  
 of        
@@ -41,7 +42,7 @@ START-INFO-DIR-ENTRY
 * Texi2HTML: (texi2html).  Texinfo to HTML Converter.
 END-INFO-DIR-ENTRY
 
-   This file, last updated 1 February 2005, documents the `texi2html'
+   This file, last updated 17 January 2006, documents the `texi2html'
 script which converts Texinfo (http://www.texinfo.org) into HTML
 (http://w3c.org).  This edition is for `texi2html' version 1.76.
 
@@ -86,7 +87,7 @@ File: texi2html.info,  Node: Top,  Next: Overview,  Up: (dir)
 Texi2HTML
 *********
 
-This manual, last updated 1 February 2005, describes version 1.76 of
+This manual, last updated 17 January 2006, describes version 1.76 of
 the `texi2html' Perl script which converts Texinfo (*note Texinfo:
 (Texinfo)Top.) into HTML.
 
@@ -437,10 +438,10 @@ the output is split, and `--output' is set, the files are placed in the
 directory specified by the argument to the option.
 
    The basename may be overridden with `--prefix' (variable `$PREFIX').
-If `--short-ext' is given, `.htm' is appended instead of `.html' in
-the final step (variable `$SHORTEXTN').  The `--top-file' option
-overrides the top element file name (variable `$TOP_FILE').  This can
-be used to name the top element file `index.html'.  Similarly, `--toc-file'
+If `--short-ext' is given, `.htm' is appended instead of `.html' in the
+final step (variable `$SHORTEXTN').  The `--top-file' option overrides
+the top element file name (variable `$TOP_FILE').  This can be used to
+name the top element file `index.html'.  Similarly, `--toc-file'
 changes the name of the table of contents file (variable `$TOC_FILE').
 
    Reusing the example above, but this time calling `texi2html' like so:
@@ -566,7 +567,7 @@ Miscalleneous style changes may be achieved with command line options.
      specified, and `-' stands for the standard input (array `@CSS_FILES').
 
      The option use is the same than for `makeinfo' and is described
-     extensively in *Note HTML CSS: (texinfo)HTML CSS.  Briefly, the
+     extensively in *note HTML CSS: (texinfo)HTML CSS.  Briefly, the
      CSS `@import' lines from the external file CSS file are pasted
      before the `texi2html' CSS rules, and the external file CSS rules
      are pasted after the `texi2html' CSS rules.
@@ -626,9 +627,9 @@ File: texi2html.info,  Node: Using init files,  Prev: Expanding TeX regions,  Up
 Initialization variables are read first from
 `/usr/local/share/texi2html/Config' (the exact location being
 changeable with the `--pkgdatadir=dir' option of the `configure'
-script, see *Note Installation::), `/usr/local/etc/texi2html/Config'
+script, see *note Installation::), `/usr/local/etc/texi2html/Config'
 (the exact location being changeable with the `--sysconfdir=dir' option
-of the `configure' script, see *Note Installation::), from `./Config'
+of the `configure' script, see *note Installation::), from `./Config'
 then from `$HOME/.texi2html/Config'. Any command-line option can
 override the corresponding option set in init file, and the option `--init-file'
 specifies an init file to be loaded, with later settings overriding
@@ -662,7 +663,7 @@ File: texi2html.info,  Node: Initialization files,  Next: Changing the page layo
 5 Overview of initialization files content and loading
 ******************************************************
 
-The initialization files are `perl' files, read as explained in *Note
+The initialization files are `perl' files, read as explained in *note
 Using init files::. You don't need to know much of `perl' to do some
 simple changes in variable values, however, to be able to really take
 advantage of all the features of the initialization file, a good
@@ -761,7 +762,7 @@ File: texi2html.info,  Node: Changing the page layout,  Next: Customizing HTML, 
 ********************************
 
 Some features of the page layout might be specified with command line
-options, the corresponding variables are described in *Note Page layout
+options, the corresponding variables are described in *note Page layout
 options::.  Fine tuning of the page layout may be achieved with
 redefinition of other variables and function references in the
 initialization files.
@@ -1021,7 +1022,7 @@ _reference on a function_
 
 _reference on a scalar_
      The scalar value is printed. For some possibly usefull scalars,
-     *Note Elements hashes::.
+     *note Elements hashes::.
 
 _reference on an array_
      In this case the first array element should be a reference on text
@@ -1091,7 +1092,7 @@ File: texi2html.info,  Node: Elements hashes,  Next: Global informations,  Up: P
 -------------------------------------
 
 Four hashes are available, with key the elements labels (as described
-in *Note Element labels::) and values:
+in *note Element labels::) and values:
 
 `%Texi2HTML::NAME'
      The formatted element name
@@ -1568,7 +1569,7 @@ File: texi2html.info,  Node: About text,  Prev: Footnotes text,  Up: Special pag
 .................................
 
 The default about element contains an explaination of the buttons used
-in the document (`@SECTION_BUTTONS', *Note Button specifications::) and
+in the document (`@SECTION_BUTTONS', *note Button specifications::) and
 an example locating the buttons targets in an example.  The formatting
 of this text may be influenced by the following hashes and variables:
 
@@ -1694,7 +1695,7 @@ File: texi2html.info,  Node: External index files,  Prev: File names,  Up: Chang
 ===================================================
 
 Within the document, `@printindex' commands are expanded as explained
-in *Note Index list::. In case you want to do something special with
+in *note Index list::. In case you want to do something special with
 index entries, outside of the document, you should first set the
 variable `$IDX_SUMMARY' true. After that some function reference will
 be called for each non empty index. For each index there are 3 function
@@ -1735,7 +1736,7 @@ File: texi2html.info,  Node: Customizing HTML,  Next: Internationalization,  Pre
 
 Some simple customization may be achieved with the redefinition of the
 variables associated with the command line options. For the description
-and an explanation of the meaning of these variables, *Note Style
+and an explanation of the meaning of these variables, *note Style
 options::.
 
    Other variables and hash entries can be modified in initialization
@@ -2011,7 +2012,7 @@ commands are processed by redefining the following function reference:
      the command arguments formatted according to the same conventions
      than with the reference hash style (provided the value associated
      with the @-command is a hash reference with a $ARG key as
-     described in *Note Reference hash args::).  If $TEXT is split in
+     described in *note Reference hash args::).  If $TEXT is split in
      paragraphs each paragraph is passed through the function, and
      $NO_CLOSE is true if it is not the last paragraph, while $NO_OPEN
      is true if it is not the first paragraph.  $LINE_NR is an opaque
@@ -2152,7 +2153,7 @@ the string will be expanded by `texi2html'. For example, if we have
    `%{node_file_href}' will be expanded to an href for a node in a file
 by `texi2html' in the string. A `%%' will be expanded as `%'.
 
-   For more on internationalization, see *Note Internationalization::.
+   For more on internationalization, see *note Internationalization::.
 
 
 File: texi2html.info,  Node: References,  Next: Alignement commands,  Prev: Strings,  Up: Customizing HTML
@@ -2181,7 +2182,7 @@ external manual.
      node name mapped to an identifier acceptable as a file name.
      $XML_NODE_IDENTIFIER is the node name mapped to an identifier
      acceptable as an XML identifier.  Those identifiers are built as
-     explained in *Note HTML Xref: (texinfo)HTML Xref, thus allowing
+     explained in *note HTML Xref: (texinfo)HTML Xref, thus allowing
      for cross references to external manuals. $FILE is the manual or
      file name of the external reference. This function should return an
      href leading to the external manual.
@@ -2299,8 +2300,8 @@ controlled by function references:
      the preformatted region, $STYLE is the css style associated with
      that preformatted region (*Note css::). $REGION_NAME is the name
      of the command opening the preformatted region (`example'..., see
-     *Note Complex formats::) or a identifier for the preformatted
-     context (for example `menu-comment', see *Note Menus::).  The
+     *note Complex formats::) or a identifier for the preformatted
+     context (for example `menu-comment', see *note Menus::).  The
      alignment commands are not taken into account, as the spaces are
      preserved in preformatted regions, you should flush and center by
      hand.
@@ -2341,7 +2342,7 @@ File: texi2html.info,  Node: Complex formats,  Next: Lists tables,  Prev: Paragr
 ==============================================================
 
 Here we see how a whole complex format is formatted. For the formatting
-of the text, see *Note Paragraph and preformatted region::.
+of the text, see *note Paragraph and preformatted region::.
 
    The formatting of the complex formats is ultimately controlled by a
 function, however the default for this function uses a hash reference
@@ -2354,7 +2355,7 @@ each of the complex format commands (`example', `smallexample', `lisp',
 `begin' and `end'. An eval of `begin' should lead to the beginning of
 the formatted HTML, an eval of `end' should lead to the end of the
 formatted HTML. The enclosed text will be formatted as described in
-*Note Paragraph and preformatted region::, and the name of the complex
+*note Paragraph and preformatted region::, and the name of the complex
 format will be available to the function formatting the text.
 
    If you aren't satisfied with this scheme, you can redefine the
@@ -2364,7 +2365,7 @@ format formatting:
  -- Function Reference: $complex_format_text complex_format
           $format_name $preformatted_text
      $FORMAT_NAME is the complex format name, $PREFORMATTED_TEXT is the
-     text allready formatted as described in *Note Paragraph and
+     text allready formatted as described in *note Paragraph and
      preformatted region::.  This function returns the whole complex
      format.
 
@@ -3064,9 +3065,9 @@ formatting of the footnotes:
 
    The following function is only used when footnotes are at the bottom
 of a page and the document is split.  For customization of the
-footnotes page in case they are on a separated page or section, *Note
+footnotes page in case they are on a separated page or section, *note
 Special pages layout::. For the determination of the footnote
-locations, *Note Page layout options::.
+locations, *note Page layout options::.
 
  -- Function Reference: foot_section \@footnotes_lines
      This function formats a group of footnotes. \@FOOTNOTES_LINES is a
@@ -3172,7 +3173,7 @@ Appendix A Internationalization
 
 The strings written in the document are selected based on the document
 language. This can be used to customize the strings, as described in
-*Note Strings::. This also enables translation of the strings.
+*note Strings::. This also enables translation of the strings.
 
 * Menu:
 
@@ -3192,7 +3193,7 @@ is a `$LANGUAGES->{'LANGUAGE'}' hash in that file. The keys are the
 english strings, in `''', the values (in `''' after `=>') are the
 translations.  When a string contains a `%' followed by `{' NAME `}' it
 means that the string will be expanded by `texi2html'. For an example,
-see *Note Strings::.
+see *note Strings::.
 
    After that you should run the command `./manage_i18n.pl all' in the
 top directory, it should merge your file with the existing files in
@@ -3545,93 +3546,93 @@ Appendix D Concept Index
 
 
 Tag Table:
-Node: Top2959
-Node: Overview5587
-Node: whytexi2html7377
-Node: Obtaining texi2html9460
-Node: Installation9743
-Node: Invoking texi2html11933
-Node: Splitting output13113
-Node: Output files16447
-Node: Expansion19709
-Node: Texinfo related options20618
-Node: Page layout options21685
-Node: Style options22582
-Node: Expanding TeX regions24902
-Node: Using init files26048
-Node: Initialization files27937
-Node: Redefining functions29884
-Node: Function prototypes30950
-Node: Changing the page layout32026
-Node: The different pages33384
-Node: The page layout35102
-Ref: Element labels36386
-Node: Navigation panel38115
-Node: General purpose variables38778
-Node: Button specifications39555
-Node: Panel formatting function42891
-Node: Program variables43690
-Node: Elements hashes44400
-Node: Global informations44919
-Node: Global functions47439
-Node: Output initialization48184
-Node: Output finalization49647
-Node: css50124
-Node: Customizing header51196
-Node: Customizing section54009
-Node: Customizing footer55013
-Node: Special pages56893
-Node: Special pages content57227
-Node: Top element text57531
-Node: Contents and Overview text58820
-Node: Footnotes text61569
-Node: About text61877
-Node: Special pages layout63397
-Node: File names64598
-Node: External index files66479
-Node: Customizing HTML68609
-Node: Three contexts70331
-Node: Commands without argument71105
-Node: Style and accent commands72527
-Node: Hash reference interface74020
-Ref: Reference hash args74896
-Node: String interface77266
-Node: Define your own interface79251
-Node: Anchors images and spaces80971
-Node: Text83845
-Node: Strings85181
-Node: References86771
-Node: Reference to external manual86978
-Node: Internal reference88982
-Node: Alignement commands89918
-Node: Paragraph and preformatted region90882
-Node: Paragraph and preformatted formatting91218
-Node: Avoiding paragraphs94955
-Node: Complex formats95360
-Node: Lists tables97057
-Node: Table and list items97529
-Node: Whole table list101474
-Node: Definitions103028
-Node: Definition line103510
-Node: Definition formatting104963
-Node: Headings106415
-Node: Special regions107382
-Node: Menus109420
-Node: Menu parts109872
-Node: Menu formatting111301
-Node: Indices114208
-Node: Index entry place114885
-Node: Index list115508
-Node: Floats and lists of floats118613
-Node: Floats120098
-Node: Lists of floats121414
-Node: Footnotes123643
-Node: Other and unknown commands126158
-Node: Internationalization130107
-Node: Translating strings130537
-Node: Adding new strings132195
-Node: Indexop133072
-Node: Indexvr136916
-Node: Indexcp150701
+Node: Top3068
+Node: Overview5696
+Node: whytexi2html7486
+Node: Obtaining texi2html9569
+Node: Installation9852
+Node: Invoking texi2html12042
+Node: Splitting output13222
+Node: Output files16556
+Node: Expansion19818
+Node: Texinfo related options20727
+Node: Page layout options21794
+Node: Style options22691
+Node: Expanding TeX regions25011
+Node: Using init files26157
+Node: Initialization files28046
+Node: Redefining functions29993
+Node: Function prototypes31059
+Node: Changing the page layout32135
+Node: The different pages33493
+Node: The page layout35211
+Ref: Element labels36495
+Node: Navigation panel38224
+Node: General purpose variables38887
+Node: Button specifications39664
+Node: Panel formatting function43000
+Node: Program variables43799
+Node: Elements hashes44509
+Node: Global informations45028
+Node: Global functions47548
+Node: Output initialization48293
+Node: Output finalization49756
+Node: css50233
+Node: Customizing header51305
+Node: Customizing section54118
+Node: Customizing footer55122
+Node: Special pages57002
+Node: Special pages content57336
+Node: Top element text57640
+Node: Contents and Overview text58929
+Node: Footnotes text61678
+Node: About text61986
+Node: Special pages layout63506
+Node: File names64707
+Node: External index files66588
+Node: Customizing HTML68718
+Node: Three contexts70440
+Node: Commands without argument71214
+Node: Style and accent commands72636
+Node: Hash reference interface74129
+Ref: Reference hash args75005
+Node: String interface77375
+Node: Define your own interface79360
+Node: Anchors images and spaces81080
+Node: Text83954
+Node: Strings85290
+Node: References86880
+Node: Reference to external manual87087
+Node: Internal reference89091
+Node: Alignement commands90027
+Node: Paragraph and preformatted region90991
+Node: Paragraph and preformatted formatting91327
+Node: Avoiding paragraphs95064
+Node: Complex formats95469
+Node: Lists tables97166
+Node: Table and list items97638
+Node: Whole table list101583
+Node: Definitions103137
+Node: Definition line103619
+Node: Definition formatting105072
+Node: Headings106524
+Node: Special regions107491
+Node: Menus109529
+Node: Menu parts109981
+Node: Menu formatting111410
+Node: Indices114317
+Node: Index entry place114994
+Node: Index list115617
+Node: Floats and lists of floats118722
+Node: Floats120207
+Node: Lists of floats121523
+Node: Footnotes123752
+Node: Other and unknown commands126267
+Node: Internationalization130216
+Node: Translating strings130646
+Node: Adding new strings132304
+Node: Indexop133181
+Node: Indexvr137025
+Node: Indexcp150810
 
 End Tag Table

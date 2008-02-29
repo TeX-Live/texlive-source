@@ -1,9 +1,22 @@
-/* c-auto.in.  Generated automatically from configure.in by autoheader 2.13.  */
-/* acconfig.h -- used by autoheader when generating c-auto.in.
+/* c-auto.in.  Generated from configure.in by autoheader.  */
 
-   If you're thinking of editing acconfig.h to fix a configuration
-   problem, don't. Edit the c-auto.h file created by configure,
-   instead.  Even better, fix configure to give the right answer.  */
+/* c-auto.h: defines for web2c, as determined by configure.
+
+   Copyright 1994-97, 2008 Karl Berry.
+   Copyright 1997-99, 2002, 2005 Olaf Weber.
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Guard against double inclusion. */
 #ifndef WEB2C_C_AUTO_H
@@ -12,102 +25,178 @@
 /* web2c: the version string. */
 #define WEB2CVERSION "REPLACE-WITH-WEB2CVERSION"
 
-
-/* Define if type char is unsigned and you are not using gcc.  */
-#ifndef __CHAR_UNSIGNED__
-#undef __CHAR_UNSIGNED__
-#endif
-
-/* Define as __inline if that's what the C compiler calls it.  */
-#undef inline
-
-/* Define as the return type of signal handlers (int or void).  */
-#undef RETSIGTYPE
-
-/* Define if your processor stores words with the most significant
-   byte first (like Motorola and SPARC, unlike Intel and VAX).  */
-#undef WORDS_BIGENDIAN
-
-/* Define if the X Window System is missing or not being used.  */
-#undef X_DISPLAY_MISSING
-
-/* Define if lex declares yytext as a char [] by default.  */
-#undef YYTEXT_CHAR
-
-/* Define if lex declares yytext as a char * by default, not a char[].  */
-#undef YYTEXT_POINTER
-
-/* Define if lex declares yytext as a unsigned char [] by default.  */
-#undef YYTEXT_UCHAR
-
-/* tex: Define to enable --ipc.  */
-#undef IPC
-
-/* web2c: Define if gcc asm needs _ on external symbols.  */
+/* web2c: Define if gcc asm needs _ on external symbols. */
 #undef ASM_NEEDS_UNDERSCORE
 
-/* web2c: Define to enable HackyInputFileNameForCoreDump.tex.  */
+/* web2c: Default editor for interactive `e' option. */
+#undef EDITOR
+
+/* metafont: Define to include EPSF pseudo-window support */
+#undef EPSFWIN
+
+/* web2c: Define to enable HackyInputFileNameForCoreDump.tex. */
 #undef FUNNY_CORE_DUMP
 
-/* web2c: Define to disable architecture-independent dump files.
-   Faster on LittleEndian architectures.  */
-#undef NO_DUMP_SHARE
+/* Define if you have Carbon */
+#undef HAVE_CARBON
 
-/* web2c: Default editor for interactive `e' option.  Although we'd like
-   to use ${VISUAL-${EDITOR-foo}} here, chances are a user's editor
-   won't understand +lineno, so they'll just have to override
-   TEXEDIT/MFEDIT/MPEDIT to get what they want.  No particular reason
-   for emacs vs. vi, just historical.  */
-#ifdef WIN32
-#define EDITOR "emacs +%d \"%s\""
-#else
-#define EDITOR "vi +%d '%s'"
-#endif
+/* Define to 1 if you have the <ft2build.h> header file. */
+#undef HAVE_FT2BUILD_H
 
-/* web2c: Window system support for Metafont. */
-#undef EPSFWIN
-#undef HP2627WIN
-#undef MFTALKWIN
-#undef NEXTWIN
-#undef REGISWIN
-#undef SUNWIN
-#undef TEKTRONIXWIN
-#undef UNITERMWIN
-#undef X11WIN
-
-/* The number of bytes in a long.  */
-#undef SIZEOF_LONG
-
-/* Define if you have the ftime function.  */
+/* Define to 1 if you have the `ftime' function. */
 #undef HAVE_FTIME
 
-/* Define if you have the gettimeofday function.  */
+/* Define to 1 if you have the `gettimeofday' function. */
 #undef HAVE_GETTIMEOFDAY
 
-/* Define if you have the mkstemp function.  */
-#undef HAVE_MKSTEMP
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
 
-/* Define if you have the mktemp function.  */
-#undef HAVE_MKTEMP
+/* Define if you have libfontconfig */
+#undef HAVE_LIBFONTCONFIG
 
-/* Define if you have the strerror function.  */
-#undef HAVE_STRERROR
+/* Define to 1 if you have the `freetype' library (-lfreetype). */
+#undef HAVE_LIBFREETYPE
 
-/* Define if you have the <sys/time.h> header file.  */
-#undef HAVE_SYS_TIME_H
+/* Define to 1 if you have the `icuuc' library (-licuuc). */
+#undef HAVE_LIBICUUC
 
-/* Define if you have the <sys/timeb.h> header file.  */
-#undef HAVE_SYS_TIMEB_H
-
-/* Define if you have the <zlib.h> header file.  */
-#undef HAVE_ZLIB_H
-
-/* Define if you have the m library (-lm).  */
+/* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM
 
-/* Define if you have the posix library (-lposix).  */
+/* Define to 1 if you have the `posix' library (-lposix). */
 #undef HAVE_LIBPOSIX
 
-/* Define if you have the z library (-lz).  */
+/* Define to 1 if you have the `z' library (-lz). */
 #undef HAVE_LIBZ
+
+/* Define to 1 if you have the <memory.h> header file. */
+#undef HAVE_MEMORY_H
+
+/* Define to 1 if you have the `mkstemp' function. */
+#undef HAVE_MKSTEMP
+
+/* Define to 1 if you have the `mktemp' function. */
+#undef HAVE_MKTEMP
+
+/* Define if you have POSIX threads libraries and header files. */
+#undef HAVE_PTHREAD
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if you have the `strerror' function. */
+#undef HAVE_STRERROR
+
+/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/timeb.h> header file. */
+#undef HAVE_SYS_TIMEB_H
+
+/* Define to 1 if you have the <sys/time.h> header file. */
+#undef HAVE_SYS_TIME_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the <ubidi.h> header file. */
+#undef HAVE_UBIDI_H
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* Define to 1 if you have the <zlib.h> header file. */
+#undef HAVE_ZLIB_H
+
+/* metafont: Define to include HP 2627 window support */
+#undef HP2627WIN
+
+/* tex: Define to enable --ipc. */
+#undef IPC
+
+/* metafont: Define to include mftalk (generic server) window support */
+#undef MFTALKWIN
+
+/* metafont: Define to include NeXT window support */
+#undef NEXTWIN
+
+/* web2c: Define to disable architecture-independent dump files. Faster on
+   LittleEndian architectures. */
+#undef NO_DUMP_SHARE
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* Define to necessary symbol if this constant uses a non-standard name on
+   your system. */
+#undef PTHREAD_CREATE_JOINABLE
+
+/* metafont: Define to include Regis window support */
+#undef REGISWIN
+
+/* Define as the return type of signal handlers (`int' or `void'). */
+#undef RETSIGTYPE
+
+/* The size of `long', as computed by sizeof. */
+#undef SIZEOF_LONG
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* metafont: Define to include old Suntools window support (this is not X) */
+#undef SUNWIN
+
+/* metafont: Define to include Tektronix window support */
+#undef TEKTRONIXWIN
+
+/* metafont: Define to include Uniterm window support */
+#undef UNITERMWIN
+
+/* Define to 1 if your processor stores words with the most significant byte
+   first (like Motorola and SPARC, unlike Intel and VAX). */
+#undef WORDS_BIGENDIAN
+
+/* Define to include X11 window in Metafont. */
+#undef X11WIN
+
+/* Define to 1 if the X Window System is missing or not being used. */
+#undef X_DISPLAY_MISSING
+
+/* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
+   `char[]'. */
+#undef YYTEXT_POINTER
+
+/* Define to 1 if type `char' is unsigned and you are not using gcc.  */
+#ifndef __CHAR_UNSIGNED__
+# undef __CHAR_UNSIGNED__
+#endif
+
+/* Define to `__inline__' or `__inline' if that's what the C compiler
+   calls it, or to nothing if 'inline' is not supported under any name.  */
+#ifndef __cplusplus
+#undef inline
+#endif
+
 #endif /* !WEB2C_C_AUTO_H */

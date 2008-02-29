@@ -101,8 +101,10 @@ XDVI_OLD_XAW
 dnl nl_langinfo checks
 AC_MSG_CHECKING(if nl_langinfo(CODESET) is working)
 AC_TRY_LINK([#include <langinfo.h>], [char* cs = nl_langinfo(CODESET);],
- AC_DEFINE(HAVE_WORKING_NL_LANGINFO_CODESET) AC_MSG_RESULT(yes),
- AC_MSG_RESULT(no)
+ [AC_DEFINE([HAVE_WORKING_NL_LANGINFO_CODESET], 1,
+   [Define if the CODESET argument to nl_langinfo works.])
+ AC_MSG_RESULT(yes)],
+ [AC_MSG_RESULT(no)]
 )
 
 dnl First, check for libXp and libXext:
@@ -161,7 +163,7 @@ dnl XDVI_FIND_MOTIF also defines $prog_extension, AC_DEFINE(toolkit) and $x_tool
    XDVI_FIND_MOTIF(none, "$motif_include", "$motif_libdir")
 elif test "x$with_xdvi_x_toolkit" = xxaw; then
    prog_extension="xaw"
-   AC_DEFINE(XAW)
+   AC_DEFINE([XAW], 1, [Define to use the Xaw toolkit.])
    x_tool_libs="-lXaw"
 else
 dnl Motif with xaw as fallback
@@ -254,12 +256,14 @@ fi
 XDVI_ARG_STRING(default-dvips-path,
 [  --with-default-dvips-path=CMD
                           Use CMD as default DVI to PS converter],
-DEFAULT_DVIPS_PATH, "dvips")
+[DEFAULT_DVIPS_PATH], ["dvips"],
+[Define to point to the default command to use for printing (optional).])
 
 XDVI_ARG_STRING(default-ps2pdf-path,
 [  --with-default-ps2pdf-path=CMD
                           Use CMD as default PS to PDF converter],
-DEFAULT_PS2PDF_PATH, "ps2pdf")
+[DEFAULT_PS2PDF_PATH], ["ps2pdf"],
+[Define to point to the default command to use for printing (optional).])
 
 dnl ImageMagick support
 PS_DEF="$PS_DEF $MAGICK_DEF"

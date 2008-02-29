@@ -5,7 +5,48 @@ KPSEVERSION=3.5.6dev
 AC_SUBST(KPSEVERSION)
 AC_DEFINE_UNQUOTED(KPSEVERSION, "kpathsea version $KPSEVERSION")
 
+dnl Write output here, instead of putting a zillion -D's on the command line.
+AC_CONFIG_HEADERS([c-auto.h:c-auto.in],
+ [sed 's/^#define PACKAGE_/#define KPSE_PACKAGE_/' c-auto.h >c-auto.tmp && mv -f c-auto.tmp c-auto.h
+  date >stamp-auto])
+
 sinclude(common.ac)
+
+AH_TOP([/* c-auto.h: defines for kpathsea, as determined by configure.
+
+   Copyright 1994-97, 2008 Karl Berry.
+   Copyright 1997-99, 2002, 2005 Olaf Weber.
+
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
+
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
+   along with this library; if not, see <http://www.gnu.org/licenses/>.  */
+
+/* Guard against double inclusion. */
+#ifndef KPATHSEA_C_AUTO_H
+#define KPATHSEA_C_AUTO_H
+
+/* kpathsea: the version string. */
+#define KPSEVERSION "REPLACE-WITH-KPSEVERSION"
+
+/* kpathsea/configure.in tests for these functions with
+   kb_AC_KLIBTOOL_REPLACE_FUNCS, and naturally Autoheader doesn't know
+   about that macro.  Since the shared library stuff is all preliminary
+   anyway, I decided not to change Autoheader, but rather to hack them
+   in here.  */
+#undef HAVE_PUTENV
+#undef HAVE_STRCASECMP
+#undef HAVE_STRTOL
+#undef HAVE_STRSTR])
+AH_BOTTOM([#endif /* !KPATHSEA_C_AUTO_H */])
 
 KPSE_CONFIG_FILES([Makefile])
 AC_OUTPUT

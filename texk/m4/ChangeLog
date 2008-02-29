@@ -1,5 +1,10 @@
 2008-02-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* kpse_mtim.m4 (KPSE_STRUCT_ST_MTIM): removed, use instead
+	AC_CHECK_MEMBERS([struct stat.st_mtim]).
+
+2008-02-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* kpse_subdirs.m4 (KPSE_WITH_SUBDIRS): additional macro to
 	generate --without-PKG options for a list of packages.
 

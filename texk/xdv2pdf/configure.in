@@ -5,14 +5,10 @@ define([_version_],"0.991")
 
 VERSION=_version_
 AC_SUBST(VERSION)
-AC_DEFINE(VERSION,_version_)
-AC_DEFINE(PACKAGE,"xdv2pdf")
+AC_DEFINE(VERSION, _version_, [package version])
+AC_DEFINE(PACKAGE, "xdv2pdf", [package name])
 
-AC_CONFIG_HEADERS([config.h])
-
-AC_ARG_ENABLE(maint, [  --enable-maint          enable autoconf portions of Makefile],
-  [MAINT=''], [MAINT='#'])
-AC_SUBST(MAINT)  
+AC_CONFIG_HEADERS([c-auto.h:c-auto.in], [date >stamp-auto])
 
 dnl First, check if we're configuring on Mac OS X -- can't build elsewhere
 
@@ -38,9 +34,9 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 
-AC_DEFINE(KPATHSEA)
-AC_DEFINE(HAVE_KPATHSEA)
-AC_DEFINE(HAVE_KPSE_FORMATS)
+AC_DEFINE([KPATHSEA], 1, [define if you have kpathsea])
+AC_DEFINE([HAVE_KPATHSEA], 1, [define if you have kpathsea])
+AC_DEFINE([HAVE_KPSE_FORMATS], 1, [define if kpathsea supports type1 and vf formats])
 
 TTF_OPT=''
 AC_SUBST(TTF_OPT)

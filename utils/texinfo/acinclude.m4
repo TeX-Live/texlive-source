@@ -2,7 +2,7 @@
 
 #serial 3
 
-AC_DEFUN(jm_CHECK_DECLARATION,
+AC_DEFUN([jm_CHECK_DECLARATION],
 [
   AC_REQUIRE([AC_HEADER_STDC])dnl
   test -z "$ac_cv_header_memory_h" && AC_CHECK_HEADERS(memory.h)
@@ -33,7 +33,7 @@ char *(*pfn) = (char *(*)) $1
 
 dnl jm_CHECK_DECLARATIONS(INCLUDES, FUNCTION... [, ACTION-IF-DECLARED
 dnl                       [, ACTION-IF-NOT-DECLARED]])
-AC_DEFUN(jm_CHECK_DECLARATIONS,
+AC_DEFUN([jm_CHECK_DECLARATIONS],
 [
   for jm_func in $2
   do
@@ -51,7 +51,7 @@ AC_DEFUN(jm_CHECK_DECLARATIONS,
 dnl This is just a wrapper function to encapsulate this kludge.
 dnl Putting it in a separate file like this helps share it between
 dnl different packages.
-AC_DEFUN(txi_CHECK_DECLS,
+AC_DEFUN([txi_CHECK_DECLS],
 [
   headers='
 #include <stdio.h>

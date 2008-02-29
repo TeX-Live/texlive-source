@@ -13,15 +13,15 @@ sinclude(../kpathsea/withenable.ac)
 dnl Checks for header files.
 AC_HEADER_SYS_WAIT
 AC_HEADER_TIME
-AC_CHECK_HEADERS(poll.h sys/time.h)
+AC_CHECK_HEADERS([poll.h sys/time.h])
 
 dnl Checks for library functions.
 AC_FUNC_VFORK
 AC_TYPE_SIGNAL
-AC_CHECK_FUNCS(poll sigaction)
+AC_CHECK_FUNCS([poll sigaction])
 
 if test "$ac_cv_header_poll_h" = no || test "$ac_cv_func_poll" = no; then
-  AC_CHECK_HEADERS(sys/select.h select.h)
+  AC_CHECK_HEADERS([sys/select.h select.h])
 fi
 
 KPSE_CONFIG_FILES([Makefile])

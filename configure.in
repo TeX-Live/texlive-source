@@ -3,7 +3,7 @@ dnl Top-level configure for TeX Live build.  Public domain.
 AC_INIT(texk/make/common.mk)
 
 AC_CONFIG_AUX_DIR(config)
-AC_SET_MAKE
+AC_PROG_MAKE_SET
 AC_PROG_CC
 AC_PROG_CXX
 

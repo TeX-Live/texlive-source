@@ -41,13 +41,14 @@ AC_ARG_WITH([cxx-runtime-hack],
 
 AC_ARG_WITH([editor],
 [  --with-editor=CMD       invoke CMD from the e option [vi +%d %s]],
-  [AC_DEFINE_UNQUOTED(EDITOR, "$with_editor")
-])
+  [], [with_editor="vi +%d %s"])
+AC_DEFINE_UNQUOTED([EDITOR], ["$with_editor"],
+  [web2c: Default editor for interactive `e' option.])
 
 AC_ARG_ENABLE([ipc],
 [  --enable-ipc            enable TeX's --ipc option, i.e., pipe to a program],
 [if test "x$enableval" = xyes; then
-  AC_DEFINE(IPC)
+  AC_DEFINE([IPC], , [tex: Define to enable --ipc.])
   # -lsocket is needed on Solaris, at least.  Maybe -lnsl on SCO, too?
   # See ac_path_xtra.
   AC_CHECK_FUNC(connect)
@@ -60,12 +61,16 @@ AC_SUBST(socketlibs)
 
 AC_ARG_ENABLE([auto-core],
 [  --enable-auto-core      cause TeX&MF to dump core given a certain filename],
-  [AC_DEFINE(FUNNY_CORE_DUMP)])
+  [AC_DEFINE([FUNNY_CORE_DUMP], ,
+    [web2c: Define to enable HackyInputFileNameForCoreDump.tex.])
+])
 
 AC_ARG_ENABLE([dump-share],
 [  --disable-dump-share    make fmt/base/mem files architecture-dependent],
 [if test "x$enableval" = xno; then
-  AC_DEFINE(NO_DUMP_SHARE)
+  AC_DEFINE([NO_DUMP_SHARE], ,
+    [web2c: Define to disable architecture-independent dump files.
+     Faster on LittleEndian architectures.])
 fi
 ])
 
@@ -82,50 +87,58 @@ AC_ARG_WITH([mf-nowin],
 AC_ARG_WITH([epsfwin],
   [  --with-epsfwin          include EPSF pseudo-window support],
 [if test "x$withval" = xyes; then
-  AC_DEFINE(EPSFWIN)
+  AC_DEFINE([EPSFWIN], ,
+    [metafont: Define to include EPSF pseudo-window support])
 fi
 ])
 AC_ARG_WITH([hp2627win],
   [  --with-hp2627win        include HP 2627 window support in Metafont],
 [if test "x$withval" = xyes; then
-  AC_DEFINE(HP2627WIN)
+  AC_DEFINE([HP2627WIN], ,
+    [metafont: Define to include HP 2627 window support])
 fi
 ])
 AC_ARG_WITH([mftalkwin],
   [  --with-mftalkwin        include mftalk (generic server) window support],
 [if test "x$withval" = xyes; then
-  AC_DEFINE(MFTALKWIN)
+  AC_DEFINE([MFTALKWIN], ,
+    [metafont: Define to include mftalk (generic server) window support])
 fi
 ])
 AC_ARG_WITH([nextwin],
   [  --with-nextwin          include NeXT window support],
 [if test "x$withval" = xyes; then
-  AC_DEFINE(NEXTWIN)
+  AC_DEFINE([NEXTWIN], ,
+    [metafont: Define to include NeXT window support])
 fi
 ])
 AC_ARG_WITH([regiswin],
   [  --with-regiswin         include Regis window support],
 [if test "x$withval" = xyes; then
-  AC_DEFINE(REGISWIN)
+  AC_DEFINE([REGISWIN], ,
+    [metafont: Define to include Regis window support])
 fi
 ])
 AC_ARG_WITH([suntoolswin],
   [  --with-suntoolswin      include old Suntools window support (this is not X)],
 [if test "x$withval" = xyes; then
   wlibs="-lsuntool -lsunwindow -lpixrect $wlibs"
-  AC_DEFINE(SUNWIN)
+  AC_DEFINE([SUNWIN], ,
+    [metafont: Define to include old Suntools window support (this is not X)])
 fi
 ])
 AC_ARG_WITH([tektronixwin],
   [  --with-tektronixwin     include Tektronix window support],
 [if test "x$withval" = xyes; then
-  AC_DEFINE(TEKTRONIXWIN)
+  AC_DEFINE([TEKTRONIXWIN], ,
+    [metafont: Define to include Tektronix window support])
 fi
 ])
 AC_ARG_WITH([unitermwin],
   [  --with-unitermwin       include Uniterm window support],
 [if test "x$withval" = xyes; then
-  AC_DEFINE(UNITERMWIN)
+  AC_DEFINE([UNITERMWIN], ,
+    [metafont: Define to include Uniterm window support])
 fi
 ])
 

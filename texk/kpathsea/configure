@@ -1891,10 +1891,8 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
-
-
-
 ac_config_headers="$ac_config_headers c-auto.h:c-auto.in"
+
 
 
 ac_ext=c
@@ -5067,7 +5065,7 @@ test "x$enable_libtool_lock" != xno && enable_libtool_lock=yes
 case $host in
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5070 "configure"' > conftest.$ac_ext
+  echo '#line 5068 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -5629,7 +5627,7 @@ chmod -w .
 save_CFLAGS="$CFLAGS"
 CFLAGS="$CFLAGS -o out/conftest2.$ac_objext"
 compiler_c_o=no
-if { (eval echo configure:5632: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>out/conftest.err; } && test -s out/conftest2.$ac_objext; then
+if { (eval echo configure:5630: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>out/conftest.err; } && test -s out/conftest2.$ac_objext; then
   # The compiler can only warn and ignore the option if not recognized
   # So say no if there are warnings
   if test -s out/conftest.err; then
@@ -7570,7 +7568,7 @@ else
     lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 7573 "configure"
+#line 7571 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -7668,7 +7666,7 @@ else
     lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 7671 "configure"
+#line 7669 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -8902,7 +8900,7 @@ fi
 
 
 for ac_header in assert.h float.h limits.h memory.h pwd.h stdlib.h \
-                 string.h strings.h sys/param.h unistd.h
+                  string.h strings.h sys/param.h unistd.h
 do
 as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
 if { as_var=$as_ac_Header; eval "test \"\${$as_var+set}\" = set"; }; then
@@ -9040,6 +9038,74 @@ _ACEOF
 fi
 
 done
+
+{ echo "$as_me:$LINENO: checking whether strstr is declared" >&5
+echo $ECHO_N "checking whether strstr is declared... $ECHO_C" >&6; }
+if test "${ac_cv_have_decl_strstr+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+$ac_includes_default
+int
+main ()
+{
+#ifndef strstr
+  (void) strstr;
+#endif
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest.$ac_objext; then
+  ac_cv_have_decl_strstr=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_cv_have_decl_strstr=no
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_have_decl_strstr" >&5
+echo "${ECHO_T}$ac_cv_have_decl_strstr" >&6; }
+if test $ac_cv_have_decl_strstr = yes; then
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_DECL_STRSTR 1
+_ACEOF
+
+
+else
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_DECL_STRSTR 0
+_ACEOF
+
+
+fi
+
 
 
 
@@ -9641,9 +9707,9 @@ fi
 
 
 # Check whether struct stat provides high-res time.
-{ echo "$as_me:$LINENO: checking for st_mtim in struct stat" >&5
-echo $ECHO_N "checking for st_mtim in struct stat... $ECHO_C" >&6; }
-if test "${ac_cv_struct_st_mtim+set}" = set; then
+{ echo "$as_me:$LINENO: checking for struct stat.st_mtim" >&5
+echo $ECHO_N "checking for struct stat.st_mtim... $ECHO_C" >&6; }
+if test "${ac_cv_member_struct_stat_st_mtim+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
@@ -9652,12 +9718,13 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-#include <sys/types.h>
-#include <sys/stat.h>
+$ac_includes_default
 int
 main ()
 {
-struct stat s; s.st_mtim;
+static struct stat ac_aggr;
+if (ac_aggr.st_mtim)
+return 0;
   ;
   return 0;
 }
@@ -9679,22 +9746,66 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
 	 test -z "$ac_c_werror_flag" ||
 	 test ! -s conftest.err
        } && test -s conftest.$ac_objext; then
-  ac_cv_struct_st_mtim=yes
+  ac_cv_member_struct_stat_st_mtim=yes
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-	ac_cv_struct_st_mtim=no
+	cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+$ac_includes_default
+int
+main ()
+{
+static struct stat ac_aggr;
+if (sizeof ac_aggr.st_mtim)
+return 0;
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest.$ac_objext; then
+  ac_cv_member_struct_stat_st_mtim=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_cv_member_struct_stat_st_mtim=no
 fi
 
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
-{ echo "$as_me:$LINENO: result: $ac_cv_struct_st_mtim" >&5
-echo "${ECHO_T}$ac_cv_struct_st_mtim" >&6; }
-if test $ac_cv_struct_st_mtim = yes; then
-  cat >>confdefs.h <<\_ACEOF
-#define HAVE_ST_MTIM 1
+
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_member_struct_stat_st_mtim" >&5
+echo "${ECHO_T}$ac_cv_member_struct_stat_st_mtim" >&6; }
+if test $ac_cv_member_struct_stat_st_mtim = yes; then
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_STRUCT_STAT_ST_MTIM 1
 _ACEOF
+
 
 fi
 
@@ -9750,7 +9861,8 @@ fi
 { echo "$as_me:$LINENO: result: $kb_cv_c_prototypes" >&5
 echo "${ECHO_T}$kb_cv_c_prototypes" >&6; }
 if test "$kb_cv_c_prototypes" = yes; then
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define HAVE_PROTOTYPES 1
 _ACEOF
 
@@ -9809,7 +9921,8 @@ fi
 { echo "$as_me:$LINENO: result: $kb_cv_var_program_inv_name" >&5
 echo "${ECHO_T}$kb_cv_var_program_inv_name" >&6; }
 if test "$kb_cv_var_program_inv_name" = yes; then
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define HAVE_PROGRAM_INVOCATION_NAME 1
 _ACEOF
 
@@ -9878,7 +9991,8 @@ fi
 { echo "$as_me:$LINENO: result: $kb_cv_func_getcwd_forks" >&5
 echo "${ECHO_T}$kb_cv_func_getcwd_forks" >&6; }
 if test $kb_cv_func_getcwd_forks = yes; then
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define GETCWD_FORKS 1
 _ACEOF
 
@@ -10092,48 +10206,99 @@ fi
 
 
 # Implementation of those options.
+# _KPSE_DEFINE_MAKE_BY_DEFAULT
+
 if test "x$with_mktexmf_default" = xyes; then
-  cat >>confdefs.h <<\_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
 #define MAKE_TEX_MF_BY_DEFAULT 1
 _ACEOF
 
-fi
-if test "x$with_mktexpk_default" = xyes; then
+else
   cat >>confdefs.h <<\_ACEOF
+#define MAKE_TEX_MF_BY_DEFAULT 0
+_ACEOF
+
+fi
+
+if test "x$with_mktexpk_default" = xyes; then
+
+cat >>confdefs.h <<\_ACEOF
 #define MAKE_TEX_PK_BY_DEFAULT 1
 _ACEOF
 
-fi
-if test "x$with_mktextex_default" = xyes; then
+else
   cat >>confdefs.h <<\_ACEOF
+#define MAKE_TEX_PK_BY_DEFAULT 0
+_ACEOF
+
+fi
+
+if test "x$with_mktextex_default" = xyes; then
+
+cat >>confdefs.h <<\_ACEOF
 #define MAKE_TEX_TEX_BY_DEFAULT 1
 _ACEOF
 
-fi
-if test "x$with_mktexfmt_default" = xyes; then
+else
   cat >>confdefs.h <<\_ACEOF
+#define MAKE_TEX_TEX_BY_DEFAULT 0
+_ACEOF
+
+fi
+
+if test "x$with_mktexfmt_default" = xyes; then
+
+cat >>confdefs.h <<\_ACEOF
 #define MAKE_TEX_FMT_BY_DEFAULT 1
 _ACEOF
 
-fi
-if test "x$with_mktextfm_default" = xyes; then
+else
   cat >>confdefs.h <<\_ACEOF
+#define MAKE_TEX_FMT_BY_DEFAULT 0
+_ACEOF
+
+fi
+
+if test "x$with_mktextfm_default" = xyes; then
+
+cat >>confdefs.h <<\_ACEOF
 #define MAKE_TEX_TFM_BY_DEFAULT 1
 _ACEOF
 
-fi
-if test "x$with_mkocp_default" = xyes; then
+else
   cat >>confdefs.h <<\_ACEOF
+#define MAKE_TEX_TFM_BY_DEFAULT 0
+_ACEOF
+
+fi
+
+if test "x$with_mkocp_default" = xyes; then
+
+cat >>confdefs.h <<\_ACEOF
 #define MAKE_OMEGA_OCP_BY_DEFAULT 1
 _ACEOF
 
-fi
-if test "x$with_mkofm_default" = xyes; then
+else
   cat >>confdefs.h <<\_ACEOF
-#define MAKE_OMEGA_OFM_BY_DEFAULT 1
+#define MAKE_OMEGA_OCP_BY_DEFAULT 0
 _ACEOF
 
 fi
+
+if test "x$with_mkofm_default" = xyes; then
+
+cat >>confdefs.h <<\_ACEOF
+#define MAKE_OMEGA_OFM_BY_DEFAULT 1
+_ACEOF
+
+else
+  cat >>confdefs.h <<\_ACEOF
+#define MAKE_OMEGA_OFM_BY_DEFAULT 0
+_ACEOF
+
+fi
+
 
 # Is libm present.  FIXME: do we need it at all?
 
@@ -10277,6 +10442,11 @@ echo "$as_me: WARNING: \$BUILDCCLD set but not cross-compiling." >&2;}
   fi
   BUILDCCLD='$(CCLD)'
 fi
+
+
+
+
+
 
 
 
@@ -11381,7 +11551,8 @@ echo "$as_me: $ac_file is unchanged" >&6;}
 
 
   case $ac_file$ac_mode in
-    "c-auto.h":H) date >stamp-auto ;;
+    "c-auto.h":H) sed 's/^#define PACKAGE_/#define KPSE_PACKAGE_/' c-auto.h >c-auto.tmp && mv -f c-auto.tmp c-auto.h
+  date >stamp-auto ;;
     "Makefile.aux":F) # Discard the file just generated and first resolve kpse_include's
   kpse_input=`case Makefile.in in
   [\\/$]*) # Absolute

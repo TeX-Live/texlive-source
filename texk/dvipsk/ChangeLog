@@ -1,3 +1,7 @@
+2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* acconfig.h: removed.
+
 2008-02-17  Karl Berry  <karl@tug.org>
 
 	* config.ps (smallbook): new paper size for Texinfo.

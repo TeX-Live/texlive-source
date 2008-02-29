@@ -1,11 +1,33 @@
+2008-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* common.ac: replace the private macro KPSE_STRUCT_ST_MTIM
+	by AC_CHECK_MEMBERS([struct stat.st_mtim]).
+
+	* common.ac: use AC_CHECK_DECLS([strstr]) and ...
+	* lib.h: ... replace `#ifndef HAVE_STRSTR' by
+	`#if !HAVE_DECL_STRSTR'.
+
+	* common.ac: Move AC_CONFIG_HEADERS from here ...
+	* configure.in: ... to here and replace PACKAGE_... by
+	KPSE_PACKAGE_... in c-auto.h, to avoid conflicts with other
+	packages.
+
+	* configure.in: use AH_TOP, AH_BOTTOM, and AC_DEFINE's third
+	argument to provide autoheader templates ...
+	* common.ac: m4 code to generate AC_DEFINE with a third argument
+	for MAKE_..._BY_DEFAULT and set them to 0 or 1 ...
+	* withenable.ac: use AC_DEFINE's third argument to provide
+	autoheader templates ...
+	* acconfig.h: ... removed.
+
 2008-02-24  Martin Schröder <martin@pdftex.org>
-        * lib.h: systypes.h instaed of c-std.h
+        * lib.h: systypes.h instead of c-std.h
 
 2008-02-23  Martin Schröder <martin@pdftex.org>
         * lib.h: include c-std.h to get off_t from stdio.h
 
 2008-02-21  Martin Schröder <martin@pdftex.org>
-        * lib.h, xfseek.c, xftell.c: LFS support: use off_t instead off long
+        * lib.h, xfseek.c, xftell.c: LFS support: use off_t instead of long
         and fseeko instead of fseek
 
 2008-02-14  Karl Berry  <karl@tug.org>

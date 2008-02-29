@@ -1,3 +1,9 @@
+2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.in: added AC_CONFIG_HEADERS (moved
+	from ../kpathsea/common.ac to here) and
+	updated (AC_SET_MAKE -> AC_PROG_MAKE_SET).
+
 2008-01-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Convert from autoconf-2.13 to autoconf-2.59+:
