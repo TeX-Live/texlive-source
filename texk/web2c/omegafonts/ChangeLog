@@ -1,3 +1,9 @@
+2008-03-02  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (omfonts.o): depend on y_tab.h.
+	From Alexis Ballier, 29 Feb 2008 19:27:23, via
+	https://bugs.gentoo.org/show_bug.cgi?id=209362.
+
 2008-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.in: Add @configure_input@ line.

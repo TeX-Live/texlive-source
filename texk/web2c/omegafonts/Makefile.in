@@ -39,7 +39,7 @@ y_tab.c y_tab.h: pl.y
 	$(YACC) -d -v $(srcdir)/pl.y
 	-test -f y.tab.c && mv -f y.tab.c y_tab.c
 	-test -f y.tab.h && mv -f y.tab.h y_tab.h
-$(LEX_OUTPUT_ROOT).o: parser.h
+$(LEX_OUTPUT_ROOT).o: parser.h y_tab.h
 $(LEX_OUTPUT_ROOT).c: pl.l
 	$(LEX) $(srcdir)/pl.l
 
