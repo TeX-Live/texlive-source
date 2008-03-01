@@ -1,4 +1,4 @@
-T1UTILS VERSION 1.33 NOTES
+T1UTILS VERSION 1.34 NOTES
 ==========================
 
    You need an ANSI C compiler, such as gcc.
@@ -16,7 +16,7 @@ Hetherington's original README from 1992, updated slightly for today's
 t1utils.
 
 Eddie Kohler
-kohler@cs.ucla.edu
+ekohler@gmail.com
 
 ####################################################################
 

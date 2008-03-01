@@ -2,7 +2,7 @@
  *
  * This file contains functions for reading PFA and PFB files.
  *
- * (C) 1999-2003 Eddie Kohler <kohler@icir.org>, after code by
+ * (C) 1999-2008 Eddie Kohler <ekohler@gmail.com>, after code by
  * I. Lee Hetherington <ilh@lcs.mit.edu>. All rights reserved.
  *
  * Permission is hereby granted to use, modify, and distribute this program

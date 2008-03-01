@@ -1,15 +1,15 @@
 Summary:	Programs for manipulating PostScript Type 1 fonts
 
 Name:		t1utils
-Version:	1.33
+Version:	1.34
 Release:	1
-Source:		http://www.lcdf.org/type/t1utils-1.33.tar.gz
+Source:		http://www.lcdf.org/type/t1utils-1.34.tar.gz
 
 URL:		http://www.lcdf.org/type/
 
 Group:		Utilities/Printing
 Vendor:		Little Cambridgeport Design Factory
-Packager:	Eddie Kohler <kohler@icir.org>
+Packager:	Eddie Kohler <ekohler@gmail.com>
 License:	freely modifiable and distributable
 
 BuildRoot:	/tmp/t1utils-build

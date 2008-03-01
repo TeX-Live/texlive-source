@@ -12,7 +12,7 @@
  * I. Lee Hetherington (ilh@lcs.mit.edu)
  *
  * 1.5 and later versions contain changes by, and are maintained by,
- * Eddie Kohler <kohler@icir.org>.
+ * Eddie Kohler <ekohler@gmail.com>.
  *
  * New change log in `NEWS'. Old change log:
  *
@@ -125,7 +125,7 @@ Options:\n\
   -h, --help                    Print this message and exit.\n\
       --version                 Print version number and warranty and exit.\n\
 \n\
-Report bugs to <kohler@icir.org>.\n", program_name);
+Report bugs to <ekohler@gmail.com>.\n", program_name);
 }
 
 

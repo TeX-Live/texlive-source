@@ -810,7 +810,7 @@ Options:\n\
   -h, --help                  Print this message and exit.\n\
       --version               Print version number and warranty and exit.\n\
 \n\
-Report bugs to <kohler@icir.org>.\n", program_name);
+Report bugs to <ekohler@gmail.com>.\n", program_name);
 }
 
 #ifdef __cplusplus

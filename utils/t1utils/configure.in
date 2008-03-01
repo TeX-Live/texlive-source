@@ -1,7 +1,8 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(t1ascii.c)
-AM_INIT_AUTOMAKE(t1utils, 1.33)
+AM_INIT_AUTOMAKE(t1utils, 1.34)
 AM_CONFIG_HEADER(config.h)
+AM_MAINTAINER_MODE
 
 AC_PROG_CC
 AC_C_CONST
@@ -96,19 +97,22 @@ char *strerror(int errno);
 
 
 dnl
-dnl Output
+dnl Multiplatform output directories (for teTeX and TeX Live)
 dnl
 
-# For teTeX and TeX Live.
 AC_CANONICAL_HOST
 AC_ARG_ENABLE([multiplatform],
-  [AS_HELP_STRING([--enable-multiplatform],
-     [put executables into bin/PLATFORM and libraries into lib/PLATFORM])])dnl
-# if enable_multiplatform is set in the environment, use that.
+    [AS_HELP_STRING([--enable-multiplatform],
+	[put executables into bin/PLATFORM and libraries into lib/PLATFORM])])
 if test "x$enable_multiplatform" = xyes; then
-  test "x$bindir" = 'x${exec_prefix}/bin' && bindir="$bindir/$host"
-  test "x$libdir" = 'x${exec_prefix}/lib' && libdir="$libdir/$host"
+    test "x$bindir" = 'x${exec_prefix}/bin' && bindir="$bindir/$host"
+    test "x$libdir" = 'x${exec_prefix}/lib' && libdir="$libdir/$host"
 fi
+
+
+dnl
+dnl Output
+dnl
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
