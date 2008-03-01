@@ -1,3 +1,8 @@
+2008-03-02  Karl Berry  <karl@tug.org>
+
+	* cnf.c (read_all_cnf): change warning text when texmf.cnf is not
+	found to make it clear we are giving it, and keep it on one line.
+
 2008-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* common.ac: replace the private macro KPSE_STRUCT_ST_MTIM
