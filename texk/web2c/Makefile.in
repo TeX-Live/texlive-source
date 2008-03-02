@@ -562,13 +562,17 @@ kpse_include omegadir/omega.mk
 kpse_include alephdir/aleph.mk
 kpse_include pdftexdir/pdftex.mk
 kpse_include xetexdir/xetex.mk
+
 # 
-# Common
+# non-engine programs.
 programs = bibtex ctangle ctie cweave dvicopy dvitomp dvitype gftodvi gftopk \
  gftype mft $(odvicopy) $(odvitype) $(otangle) patgen $(pdftosrc) \
  pktogf pktype pltotf pooltype tangle tftopl tie $(ttf2afm) \
  vftovp vptovf weave
-engines = $(tex) $(etex) $(mf) $(mfn) $(mpost) \
+
+# include $(metapost) from metapost.mk even though it also includes
+# dvitomp.  Hopefully that doesn't hurt.
+engines = $(tex) $(etex) $(mf) $(mfn) $(metapost) \
           $(omega) $(aleph) \
           $(pdftex) $(pdfetex) \
           $(xetex)
@@ -577,7 +581,7 @@ programs: $(programs) $(engines) $(mpware_programs) \
           $(omegafonts_programs) $(otps_programs) $(pdftosrc)
 
 # Additional dependencies for relinking.
-# Note that each program and engine already depends on $(web2c_programs).
+# Each program and engine already depends on $(web2c_programs).
 $(web2c_programs) tangleboot ctangleboot: $(kpathsea) $(proglib)
 
 # 
@@ -688,8 +692,6 @@ cwebboot-clean:
 	rm -f cwebboot.o
 
 # Even web2c itself uses the library.
-# It's annoying to have to give all the filenames here, 
-# but texmfmp.c is an exception.
 lib_sources = lib/alloca.c lib/basechsuffix.c lib/chartostring.c \
   lib/eofeoln.c lib/fprintreal.c lib/input2int.c lib/inputint.c lib/main.c \
   lib/openclose.c lib/printversion.c lib/uexit.c lib/usage.c lib/version.c \
@@ -809,7 +811,7 @@ $(web2cdir)::
 install-programs: $(programs) $(bindir)
 	for p in $(programs); do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
 
-# Installation of each of the three main engines.
+# Installation of the main engines.
 install-tex: install-tex-exec install-tex-data
 install-mf: install-mf-exec install-mf-data
 install-mpost: install-mpost-exec install-mpost-data
