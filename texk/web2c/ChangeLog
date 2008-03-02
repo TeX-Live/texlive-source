@@ -4,6 +4,8 @@
 	Alexis Ballier, 29 Feb 2008 19:27:23, via
 	https://bugs.gentoo.org/show_bug.cgi?id=201187.
 
+	(default all): remove dumps, it's just troublemaking these days?
+
 2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.in: replace PACKAGE_... by WEB2C_PACKAGE_... in

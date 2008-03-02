@@ -121,7 +121,7 @@ tex = tex
 mf = mf
 @MFN@mfn = mf-nowin
 #  
-default all: programs manpages doc/web2c.info @FMU@ dumps
+default all: programs manpages doc/web2c.info @FMU@
 check: dumps
 
 bibtex: bibtex.o
@@ -722,6 +722,9 @@ all_fmts = tex.fmt $(fmts)
 all_bases = mf.base $(bases)
 all_mems = mpost.mem $(mems)
 
+# We used to build these by default, but nowadays the dumps are created
+# completely separately, e.g., at runtime by mktexfmt.  So just leave it
+# as an optional extra target.
 dumps: fmts bases mems
 fmts: $(all_fmts)
 bases: $(all_bases)
