@@ -10,11 +10,13 @@ man5dir = $(mandir)/man5
 
 SCRIPTS = \
   allcm allneeded dvi2fax dvired fmtutil fmtutil-sys fontinst \
-  kpsetool kpsewhere pdfcrop ps2frag ps4pdf pslatex rubibtex rumakeindex \
+  kpsetool kpsewhere ps2frag ps4pdf pslatex rubibtex rumakeindex \
   texconfig texconfig-dialog texconfig-sys texdoc texdoctk  \
   texlinks thumbpdf updmap updmap-sys
 
-PDFSCRIPTS = a2ping e2pall epstopdf
+LINKEDPERLSCRIPTS = epstopdf pdfcrop
+
+PDFSCRIPTS = a2ping e2pall
 
 CONTEXTSCRIPTS = \
   ctxtools exatools luatools makempy mpstools mptopdf mtxtools \
@@ -89,7 +91,7 @@ install-data:: $(INFOFILES)
 	$(INSTALL_SCRIPT) $(srcdir)/tcfmgr $(texmf)/texconfig/tcfmgr
 	$(INSTALL_DATA) $(srcdir)/tcfmgr.map $(texmf)/texconfig/tcfmgr.map
 
-install-exec:
+install-exec: install-linkedscripts
 	-$(SHELL) $(srcdir)/../mkinstalldirs $(scriptdir)
 	for s in $(SCRIPTS); do \
 	  $(INSTALL_SCRIPT) $(srcdir)/$$s $(scriptdir)/$$s; \
@@ -104,12 +106,28 @@ install-exec:
 	else \
 	  true; \
 	fi
-	cd $(scriptdir); rm -f allec kpsepath kpsexpand texhash; \
+	cd $(scriptdir) && rm -f allec kpsepath kpsexpand texhash; \
 	  ln -s allcm allec; \
 	  ln -s kpsetool kpsepath; \
 	  ln -s kpsetool kpsexpand; \
 	  ln -s mktexlsr texhash
-	cd $(scriptdir); rm -f mktexfmt; ln -s fmtutil mktexfmt
+	cd $(scriptdir) && rm -f mktexfmt; ln -s fmtutil mktexfmt
+
+# The idea here is to install the scripts themselves in texmf/scripts,
+# and have bin/arch/foo be a symlink to ../../texmf/scripts/foo/foo.pl
+# (for Perl).  That way we save a bit of disk space, but more
+# importantly omit duplication, and most importantly, make it possible
+# to invoke the same Perl script on Windows (via a texlua wrapper).
+# 
+# The installation into texmf/scripts is done (at present) by hand;
+# eventually it could and should be done by ctan2tl.
+# 
+install-linkedscripts:
+	-$(SHELL) $(srcdir)/../mkinstalldirs $(scriptdir)
+	for s in $(LINKEDPERLSCRIPTS); do \
+	  rm -f $(scriptdir)/$$s; \
+	  ln -s ../../texmf/scripts/$$s/$$s.pl $(scriptdir)/$$s; \
+	done
 
 kpse_include ../make/clean.mk
 
@@ -120,4 +138,3 @@ Makefile: $(srcdir)/Makefile.in config.status
 	$(SHELL) config.status
 
 depend:
-
