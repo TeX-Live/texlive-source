@@ -120,7 +120,9 @@ install-exec: install-linkedscripts
 # to invoke the same Perl script on Windows (via a texlua wrapper).
 # 
 # The installation into texmf/scripts is done (at present) by hand;
-# eventually it could and should be done by ctan2tl.
+# eventually it could and should be done by ctan2tl.  The texlua
+# wrapper for Windows is also done by hand, and also could/should be
+# done by ctan2tl.
 # 
 install-linkedscripts:
 	-$(SHELL) $(srcdir)/../mkinstalldirs $(scriptdir)
