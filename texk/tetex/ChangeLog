@@ -1,3 +1,7 @@
+2008-03-02  Karl Berry  <karl@tug.org>
+
+	* Makefile.in: more doc
+
 2008-02-16  Karl Berry  <karl@tug.org>
 
 	* texconfig (doGenerate): new fn to call generate-* scripts.
