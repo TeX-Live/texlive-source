@@ -1,16 +1,38 @@
 /* config.h.in.  Generated from configure.in by autoheader.  */
 
+/* Define if you have Mac OS X ApplicationServices */
+#undef HAVE_APP_SERVICES
+
 /* Define to 1 if you have the `basename' function. */
 #undef HAVE_BASENAME
 
 /* Define to 1 if you have the `close' function. */
 #undef HAVE_CLOSE
 
+/* Define to 1 if you have the declaration of `tzname', and to 0 if you don't.
+   */
+#undef HAVE_DECL_TZNAME
+
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
+
+/* Define if you have freetype2 and its headers */
+#undef HAVE_FREETYPE2
+
+/* Define to 1 if you have the <ft2build.h> header file. */
+#undef HAVE_FT2BUILD_H
+
 /* Define to 1 if you have the `getenv' function. */
 #undef HAVE_GETENV
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
+
+/* Define if you have libfontconfig */
+#undef HAVE_LIBFONTCONFIG
+
+/* Define to 1 if you have the `freetype' library (-lfreetype). */
+#undef HAVE_LIBFREETYPE
 
 /* Define to 1 if you have the `kpathsea' library (-lkpathsea). */
 #undef HAVE_LIBKPATHSEA
@@ -21,14 +43,8 @@
 /* Define if you have libpng */
 #undef HAVE_LIBPNG
 
-/* Define if you have libfontconfig */
-#undef HAVE_LIBFONTCONFIG
-
-/* Define if you have libfreetype */
-#undef HAVE_LIBFREETYPE
-
-/* Define if you have Mac OS X ApplicationServices framework */
-#undef HAVE_APP_SERVICES
+/* Define to 1 if you have the `z' library (-lz). */
+#undef HAVE_LIBZ
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
@@ -63,6 +79,12 @@
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
 
+/* external timezone variable */
+#undef HAVE_TIMEZONE
+
+/* struct tz has tm_gmtoff */
+#undef HAVE_TM_GMTOFF
+
 /* Define to 1 if your `struct tm' has `tm_zone'. Deprecated, use
    `HAVE_STRUCT_TM_TM_ZONE' instead. */
 #undef HAVE_TM_ZONE
@@ -70,12 +92,6 @@
 /* Define to 1 if you don't have `tm_zone' but do have the external array
    `tzname'. */
 #undef HAVE_TZNAME
-
-/* Define to 1 if you have the global `timezone` variable. */
-#undef HAVE_TIMEZONE
-
-/* Define to 1 if your `struct tm' has `tm_gmtoff'. */
-#undef HAVE_TM_GMTOFF
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
@@ -85,6 +101,9 @@
 
 /* Define if your zlib has the compress2 function */
 #undef HAVE_ZLIB_COMPRESS2
+
+/* Define to 1 if you have the <zlib.h> header file. */
+#undef HAVE_ZLIB_H
 
 /* Name of package */
 #undef PACKAGE
@@ -104,16 +123,16 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* The size of a `char', as computed by sizeof. */
+/* The size of `char', as computed by sizeof. */
 #undef SIZEOF_CHAR
 
-/* The size of a `int', as computed by sizeof. */
+/* The size of `int', as computed by sizeof. */
 #undef SIZEOF_INT
 
-/* The size of a `long', as computed by sizeof. */
+/* The size of `long', as computed by sizeof. */
 #undef SIZEOF_LONG
 
-/* The size of a `short', as computed by sizeof. */
+/* The size of `short', as computed by sizeof. */
 #undef SIZEOF_SHORT
 
 /* Define to 1 if you have the ANSI C header files. */
@@ -129,6 +148,12 @@
    first (like Motorola and SPARC, unlike Intel and VAX). */
 #undef WORDS_BIGENDIAN
 
+/* Define if part of a teTeX/TeX live build. */
+#undef XETEX
+
+/* Define if part of a teTeX/TeX live build for Mac OS X. */
+#undef XETEX_MAC
+
 /* Define if your libkpathsea supports enc formats */
 #undef __TDS_VERSION__
 
@@ -141,14 +166,5 @@
 #undef inline
 #endif
 
-/* Define to `unsigned' if <sys/types.h> does not define. */
+/* Define to `unsigned int' if <sys/types.h> does not define. */
 #undef size_t
-
-#ifdef HAVE_APP_SERVICES
-#define XETEX
-#define XETEX_MAC
-#else
-#ifdef HAVE_LIBFONTCONFIG
-#define XETEX
-#endif
-#endif
