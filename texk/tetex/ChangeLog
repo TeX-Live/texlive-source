@@ -3,6 +3,7 @@
 	* latex.info, latex2e.texi: remove; this will become a separate
 	package.
 	* Makefile.in: remove info-related stuff.
+	(LINKEDPERLSCRIPTS): add e2pall, pkfix, ps2eps.
 
 2008-03-02  Karl Berry  <karl@tug.org>
 
