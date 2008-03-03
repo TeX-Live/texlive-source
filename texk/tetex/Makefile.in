@@ -14,7 +14,7 @@ SCRIPTS = \
   texconfig texconfig-dialog texconfig-sys texdoc texdoctk  \
   texlinks thumbpdf updmap updmap-sys
 
-LINKEDPERLSCRIPTS = epstopdf pdfcrop
+LINKEDPERLSCRIPTS = epstopdf pdfcrop pkfix ps2eps
 
 PDFSCRIPTS = a2ping e2pall
 
