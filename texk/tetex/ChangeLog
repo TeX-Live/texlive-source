@@ -1,3 +1,9 @@
+2008-03-03  Karl Berry  <karl@tug.org>
+
+	* latex.info, latex2e.texi: remove; this will become a separate
+	package.
+	* Makefile.in: remove info-related stuff.
+
 2008-03-02  Karl Berry  <karl@tug.org>
 
 	* Makefile.in: more doc
