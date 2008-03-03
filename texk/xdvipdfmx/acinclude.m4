@@ -185,6 +185,7 @@ struct paper *p;
 #
 AC_DEFUN([AC_HAS_LIBFONTCONFIG], [
   _cppflags=$CPPFLAGS _ldflags=$LDFLAGS
+  have_libfontconfig=no
   AC_ARG_WITH(fontconfig,
     [  --with-fontconfig=DIR   use fontconfig include/library files from DIR],
     [
@@ -207,6 +208,7 @@ FcObjectSet *os;
       AC_CHECK_LIB(fontconfig, FcInit, [
         AC_DEFINE(HAVE_LIBFONTCONFIG, 1, [Define if you have libfontconfig])
         LIBS="$LIBS -lfontconfig"
+        have_libfontconfig=yes
       ])
     ],
     [
@@ -292,13 +294,14 @@ AC_DEFUN([AC_HAS_APP_SERVICES], [
 ATSFontRef fontRef;
     ],
     [
-      AC_MSG_RESULT(yes)
-      AC_DEFINE(HAVE_APP_SERVICES, 1, [Define if you have ApplicationServices (Mac OS X)])
+      have_app_services=yes
+      AC_DEFINE(HAVE_APP_SERVICES, 1, [Define if you have Mac OS X ApplicationServices])
       LIBS="$LIBS -framework ApplicationServices"
     ],
     [
-      AC_MSG_RESULT(no)
+      have_app_services=no
     ]
   )
+  AC_MSG_RESULT($have_app_services)
 ])
 

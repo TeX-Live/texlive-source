@@ -9,11 +9,15 @@ AM_MAINTAINER_MODE
 AC_DEFUN([AC_EXT_TIMEZONE],
 [AC_MSG_CHECKING([whether time.h defines timezone as an external variable])
 AC_TRY_LINK([#include <time.h>], [ -timezone; ],
-	[AC_MSG_RESULT(yes); AC_DEFINE(HAVE_TIMEZONE)], [AC_MSG_RESULT(no)])])
+	[AC_MSG_RESULT(yes)
+         AC_DEFINE(HAVE_TIMEZONE, [], [external timezone variable])],
+        [AC_MSG_RESULT(no)])])
 AC_DEFUN([AC_TZ_HAS_TM_GMTOFF],
 [AC_MSG_CHECKING([whether struct tz has tm_gmtoff as a member])
 AC_TRY_COMPILE([#include <time.h>], [struct tm *tp; tp->tm_gmtoff],
-	[AC_MSG_RESULT(yes); AC_DEFINE(HAVE_TM_GMTOFF)], [AC_MSG_RESULT(no)])])
+	[AC_MSG_RESULT(yes)
+         AC_DEFINE(HAVE_TM_GMTOFF, [], [struct tz has tm_gmtoff])],
+        [AC_MSG_RESULT(no)])])
 
 dnl Checks for programs.
 AC_PROG_CC
@@ -132,12 +136,20 @@ if test "x$enable_tetex_build" = xyes; then
   # yes, we have zlib and png.
   AC_DEFINE(HAVE_ZLIB)
   AC_DEFINE(HAVE_LIBPNG)
-  AC_DEFINE(HAVE_FREETYPE2)
+  AC_DEFINE([HAVE_FREETYPE2], [], [Define if you have freetype2 and its headers])
 
   # You must define HAVE_ZLIB_COMPRESS2 to enable '-z' option for controlling
   # zlib compression level, but zlib.ac included above does not do this test.
   # We assume zlib always has compress2() here although that's not always true.
   AC_DEFINE(HAVE_ZLIB_COMPRESS2, 1, [Define if your zlib has the compress2 function])
+
+  # for tetex/tex live build we may need to define XETEX and XETEX_MAC
+  if test "x$have_app_services" = xyes; then
+    AC_DEFINE([XETEX], [], [Define if part of a teTeX/TeX live build.])
+    AC_DEFINE([XETEX_MAC], [], [Define if part of a teTeX/TeX live build for Mac OS X.])
+  elif test "x$have_libfontconfig" = xyes; then
+    AC_DEFINE([XETEX])
+  fi
 
   # tetex/tex live build; this always has kpathsea, xbasename, etc.,
   # as we're building from current sources.  Do this stuff at the end so

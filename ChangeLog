@@ -1,3 +1,7 @@
+2008-03-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* reautoconf: run first autoheader, then autoconf.
+
 2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.in: update (AC_SET_MAKE -> AC_PROG_MAKE_SET).
