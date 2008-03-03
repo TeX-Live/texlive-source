@@ -1,3 +1,7 @@
+2008-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* sysdep.h: avoid redefinition of TRUE and FALSE.
+
 2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.in: added AC_CONFIG_HEADERS (moved

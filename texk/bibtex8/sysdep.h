@@ -204,8 +204,12 @@
 */
 #define BEGIN                       {
 #define END                         }
-#define TRUE                        1
-#define FALSE                       0
+#ifndef TRUE
+# define TRUE                       1
+#endif
+#ifndef FALSE
+# define FALSE                      0
+#endif
 #define REPEAT                      do
 #define UNTIL(X)                    while ( ! (X))
 #define DIV                         /
