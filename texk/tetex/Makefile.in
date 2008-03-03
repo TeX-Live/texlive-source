@@ -14,9 +14,7 @@ SCRIPTS = \
   texconfig texconfig-dialog texconfig-sys texdoc texdoctk  \
   texlinks thumbpdf updmap updmap-sys
 
-LINKEDPERLSCRIPTS = e2pall epstopdf pdfcrop pkfix ps2eps
-
-PDFSCRIPTS = a2ping 
+LINKEDPERLSCRIPTS = a2ping e2pall epstopdf pdfcrop pkfix ps2eps
 
 CONTEXTSCRIPTS = \
   ctxtools exatools luatools makempy mpstools mptopdf mtxtools \
@@ -33,7 +31,7 @@ manpgs = \
   ovf2ovp ovp2ovf ps2frag pslatex rubibtex rumakeindex texconfig texdoc \
   texdoctk thumbpdf ttf2afm updmap
 
-all: $(SCRIPTS) $(PDFSCRIPTS)
+all: $(SCRIPTS)
 default: all
 
 install: install-data install-exec
@@ -93,13 +91,6 @@ install-exec: install-linkedscripts
 	for s in $(CONTEXTSCRIPTS); do \
 	  $(INSTALL_SCRIPT) $(srcdir)/context/$$s $(scriptdir)/$$s; \
 	done
-	if test -f $(bindir)/pdftex; then \
-	  for s in $(PDFSCRIPTS); do \
-	    $(INSTALL_SCRIPT) $(srcdir)/$$s $(scriptdir)/$$s; \
-	  done; \
-	else \
-	  true; \
-	fi
 	cd $(scriptdir) && rm -f allec kpsepath kpsexpand texhash; \
 	  ln -s allcm allec; \
 	  ln -s kpsetool kpsepath; \
