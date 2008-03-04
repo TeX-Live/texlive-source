@@ -1293,6 +1293,7 @@ Optional Features:
 			  (and sometimes confusing) to the casual installer
   --disable-dependency-tracking  speeds up one-time build
   --enable-dependency-tracking   do not reject slow dependency extractors
+  --disable-largefile     omit support for large files
   --enable-tetex-build    build as part of a teTeX installation
 
 Optional Packages:
@@ -2248,11 +2249,6 @@ else
 fi
 
   MAINT=$MAINTAINER_MODE_TRUE
-
-
-
-# Timezone tests written by MAW for pdfdoc.c.
-#
 
 
 
@@ -3593,6 +3589,478 @@ echo "${ECHO_T}no" >&6; }
 fi
 
 
+
+# Check whether --enable-largefile was given.
+if test "${enable_largefile+set}" = set; then
+  enableval=$enable_largefile;
+fi
+
+if test "$enable_largefile" != no; then
+
+  { echo "$as_me:$LINENO: checking for special C compiler options needed for large files" >&5
+echo $ECHO_N "checking for special C compiler options needed for large files... $ECHO_C" >&6; }
+if test "${ac_cv_sys_largefile_CC+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_cv_sys_largefile_CC=no
+     if test "$GCC" != yes; then
+       ac_save_CC=$CC
+       while :; do
+	 # IRIX 6.2 and later do not support large files by default,
+	 # so use the C compiler's -n32 option if that helps.
+	 cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <sys/types.h>
+ /* Check that off_t can represent 2**63 - 1 correctly.
+    We can't simply define LARGE_OFF_T to be 9223372036854775807,
+    since some C++ compilers masquerading as C compilers
+    incorrectly reject 9223372036854775807.  */
+#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+  int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
+		       && LARGE_OFF_T % 2147483647 == 1)
+		      ? 1 : -1];
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+	 rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest.$ac_objext; then
+  break
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+
+fi
+
+rm -f core conftest.err conftest.$ac_objext
+	 CC="$CC -n32"
+	 rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest.$ac_objext; then
+  ac_cv_sys_largefile_CC=' -n32'; break
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+
+fi
+
+rm -f core conftest.err conftest.$ac_objext
+	 break
+       done
+       CC=$ac_save_CC
+       rm -f conftest.$ac_ext
+    fi
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_sys_largefile_CC" >&5
+echo "${ECHO_T}$ac_cv_sys_largefile_CC" >&6; }
+  if test "$ac_cv_sys_largefile_CC" != no; then
+    CC=$CC$ac_cv_sys_largefile_CC
+  fi
+
+  { echo "$as_me:$LINENO: checking for _FILE_OFFSET_BITS value needed for large files" >&5
+echo $ECHO_N "checking for _FILE_OFFSET_BITS value needed for large files... $ECHO_C" >&6; }
+if test "${ac_cv_sys_file_offset_bits+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  while :; do
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <sys/types.h>
+ /* Check that off_t can represent 2**63 - 1 correctly.
+    We can't simply define LARGE_OFF_T to be 9223372036854775807,
+    since some C++ compilers masquerading as C compilers
+    incorrectly reject 9223372036854775807.  */
+#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+  int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
+		       && LARGE_OFF_T % 2147483647 == 1)
+		      ? 1 : -1];
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest.$ac_objext; then
+  ac_cv_sys_file_offset_bits=no; break
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#define _FILE_OFFSET_BITS 64
+#include <sys/types.h>
+ /* Check that off_t can represent 2**63 - 1 correctly.
+    We can't simply define LARGE_OFF_T to be 9223372036854775807,
+    since some C++ compilers masquerading as C compilers
+    incorrectly reject 9223372036854775807.  */
+#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+  int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
+		       && LARGE_OFF_T % 2147483647 == 1)
+		      ? 1 : -1];
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest.$ac_objext; then
+  ac_cv_sys_file_offset_bits=64; break
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+  ac_cv_sys_file_offset_bits=unknown
+  break
+done
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_sys_file_offset_bits" >&5
+echo "${ECHO_T}$ac_cv_sys_file_offset_bits" >&6; }
+case $ac_cv_sys_file_offset_bits in #(
+  no | unknown) ;;
+  *)
+cat >>confdefs.h <<_ACEOF
+#define _FILE_OFFSET_BITS $ac_cv_sys_file_offset_bits
+_ACEOF
+;;
+esac
+rm -f conftest*
+  if test $ac_cv_sys_file_offset_bits = unknown; then
+    { echo "$as_me:$LINENO: checking for _LARGE_FILES value needed for large files" >&5
+echo $ECHO_N "checking for _LARGE_FILES value needed for large files... $ECHO_C" >&6; }
+if test "${ac_cv_sys_large_files+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  while :; do
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <sys/types.h>
+ /* Check that off_t can represent 2**63 - 1 correctly.
+    We can't simply define LARGE_OFF_T to be 9223372036854775807,
+    since some C++ compilers masquerading as C compilers
+    incorrectly reject 9223372036854775807.  */
+#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+  int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
+		       && LARGE_OFF_T % 2147483647 == 1)
+		      ? 1 : -1];
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest.$ac_objext; then
+  ac_cv_sys_large_files=no; break
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#define _LARGE_FILES 1
+#include <sys/types.h>
+ /* Check that off_t can represent 2**63 - 1 correctly.
+    We can't simply define LARGE_OFF_T to be 9223372036854775807,
+    since some C++ compilers masquerading as C compilers
+    incorrectly reject 9223372036854775807.  */
+#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+  int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
+		       && LARGE_OFF_T % 2147483647 == 1)
+		      ? 1 : -1];
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest.$ac_objext; then
+  ac_cv_sys_large_files=1; break
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+  ac_cv_sys_large_files=unknown
+  break
+done
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_sys_large_files" >&5
+echo "${ECHO_T}$ac_cv_sys_large_files" >&6; }
+case $ac_cv_sys_large_files in #(
+  no | unknown) ;;
+  *)
+cat >>confdefs.h <<_ACEOF
+#define _LARGE_FILES $ac_cv_sys_large_files
+_ACEOF
+;;
+esac
+rm -f conftest*
+  fi
+fi
+
+{ echo "$as_me:$LINENO: checking for _LARGEFILE_SOURCE value needed for large files" >&5
+echo $ECHO_N "checking for _LARGEFILE_SOURCE value needed for large files... $ECHO_C" >&6; }
+if test "${ac_cv_sys_largefile_source+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  while :; do
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <stdio.h>
+int
+main ()
+{
+return fseeko (stdin, 0, 0) && (fseeko) (stdin, 0, 0);
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext &&
+       $as_test_x conftest$ac_exeext; then
+  ac_cv_sys_largefile_source=no; break
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#define _LARGEFILE_SOURCE 1
+#include <stdio.h>
+int
+main ()
+{
+return fseeko (stdin, 0, 0) && (fseeko) (stdin, 0, 0);
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext &&
+       $as_test_x conftest$ac_exeext; then
+  ac_cv_sys_largefile_source=1; break
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+  ac_cv_sys_largefile_source=unknown
+  break
+done
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_sys_largefile_source" >&5
+echo "${ECHO_T}$ac_cv_sys_largefile_source" >&6; }
+case $ac_cv_sys_largefile_source in #(
+  no | unknown) ;;
+  *)
+cat >>confdefs.h <<_ACEOF
+#define _LARGEFILE_SOURCE $ac_cv_sys_largefile_source
+_ACEOF
+;;
+esac
+rm -f conftest*
+
+# We used to try defining _XOPEN_SOURCE=500 too, to work around a bug
+# in glibc 2.1.3, but that breaks too many other things.
+# If you want fseeko and ftello with glibc, upgrade to a fixed glibc.
+if test $ac_cv_sys_largefile_source != unknown; then
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_FSEEKO 1
+_ACEOF
+
+fi
+
+
 # Building inside teTeX or TeX Live?
 # Check whether --enable-tetex-build was given.
 if test "${enable_tetex_build+set}" = set; then
@@ -3664,8 +4132,7 @@ else
 fi
 
 
-
-{ echo "$as_me:$LINENO: checking for kpse_find_file in -lkpathsea" >&5
+  { echo "$as_me:$LINENO: checking for kpse_find_file in -lkpathsea" >&5
 echo $ECHO_N "checking for kpse_find_file in -lkpathsea... $ECHO_C" >&6; }
 if test "${ac_cv_lib_kpathsea_kpse_find_file+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -3744,30 +4211,25 @@ with -L pointing to the directory containing libkpathsea.a.
 fi
 
 
-
-  { echo "$as_me:$LINENO: checking whether you have kpathsea headers and they know about the required file formats" >&5
+    { echo "$as_me:$LINENO: checking whether you have kpathsea headers and they know about the required file formats" >&5
 echo $ECHO_N "checking whether you have kpathsea headers and they know about the required file formats... $ECHO_C" >&6; }
-  cat >conftest.$ac_ext <<_ACEOF
+ cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-
 #include <stdio.h>
 #include <kpathsea/kpathsea.h>
-
 int
 main ()
 {
-
 kpse_tex_ps_header_format;
-kpse_type1_format;
-kpse_vf_format;
-kpse_ofm_format;
-kpse_ovf_format;
-kpse_truetype_format;
-
+   kpse_type1_format;
+   kpse_vf_format;
+   kpse_ofm_format;
+   kpse_ovf_format;
+   kpse_truetype_format;
   ;
   return 0;
 }
@@ -3789,7 +4251,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
 	 test -z "$ac_c_werror_flag" ||
 	 test ! -s conftest.err
        } && test -s conftest.$ac_objext; then
-   { echo "$as_me:$LINENO: result: yes" >&5
+  { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
 { echo "$as_me:$LINENO: checking for xbasename in -lkpathsea" >&5
@@ -3861,67 +4323,51 @@ _ACEOF
   LIBS="-lkpathsea $LIBS"
 
 else
-   { { echo "$as_me:$LINENO: error:
-This version of dvipdfmx requires xbasename() in kpathsea library.
-          " >&5
-echo "$as_me: error:
-This version of dvipdfmx requires xbasename() in kpathsea library.
-          " >&2;}
+  { { echo "$as_me:$LINENO: error: This version of dvipdfmx requires xbasename() in kpathsea library." >&5
+echo "$as_me: error: This version of dvipdfmx requires xbasename() in kpathsea library." >&2;}
    { (exit 1); exit 1; }; }
-
 fi
-
 
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-	 { echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6; };
-      { { echo "$as_me:$LINENO: error:
-This version of dvipdfmx requires that kpathsea and its headers be installed.
+	{ echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
+   { { echo "$as_me:$LINENO: error: This version of dvipdfmx requires that kpathsea and its headers be installed.
 If you are sure they are installed and in a standard place, maybe you need a
 newer version of kpathsea?  You also might try setting the environment
 variable CPPFLAGS (or CFLAGS) with -I pointing to the directory containing
-the file \"tex-file.h\"
-      " >&5
-echo "$as_me: error:
-This version of dvipdfmx requires that kpathsea and its headers be installed.
+the file \"tex-file.h\"" >&5
+echo "$as_me: error: This version of dvipdfmx requires that kpathsea and its headers be installed.
 If you are sure they are installed and in a standard place, maybe you need a
 newer version of kpathsea?  You also might try setting the environment
 variable CPPFLAGS (or CFLAGS) with -I pointing to the directory containing
-the file \"tex-file.h\"
-      " >&2;}
+the file \"tex-file.h\"" >&2;}
    { (exit 1); exit 1; }; }
-
 fi
 
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
 
-
-  { echo "$as_me:$LINENO: checking whether kpathsea library supports TDS version 1.1 installation" >&5
+    { echo "$as_me:$LINENO: checking whether kpathsea library supports TDS version 1.1 installation" >&5
 echo $ECHO_N "checking whether kpathsea library supports TDS version 1.1 installation... $ECHO_C" >&6; }
-  cat >conftest.$ac_ext <<_ACEOF
+ cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-
 #include <stdio.h>
 #include <kpathsea/kpathsea.h>
 #include <kpathsea/tex-file.h>
-
 int
 main ()
 {
-
 kpse_enc_format;
-kpse_cmap_format;
-kpse_sfd_format;
-kpse_opentype_format;
-
+   kpse_cmap_format;
+   kpse_sfd_format;
+   kpse_opentype_format;
   ;
   return 0;
 }
@@ -3943,42 +4389,39 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
 	 test -z "$ac_c_werror_flag" ||
 	 test ! -s conftest.err
        } && test -s conftest.$ac_objext; then
-   { echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6; };
+  { echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6; }
 
 cat >>confdefs.h <<\_ACEOF
 #define __TDS_VERSION__ 0x200406L
 _ACEOF
 
-       if true; then
+    if true; then
   TDS_VERSION_11_TRUE=
   TDS_VERSION_11_FALSE='#'
 else
   TDS_VERSION_11_TRUE='#'
   TDS_VERSION_11_FALSE=
 fi
-
 
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-	 { echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6; };
+	{ echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
 
 cat >>confdefs.h <<\_ACEOF
 #define __TDS_VERSION__ 0x200302L
 _ACEOF
 
-       if false; then
+    if false; then
   TDS_VERSION_11_TRUE=
   TDS_VERSION_11_FALSE='#'
 else
   TDS_VERSION_11_TRUE='#'
   TDS_VERSION_11_FALSE=
 fi
-
-
 
 fi
 
@@ -5098,7 +5541,7 @@ done
 
 { echo "$as_me:$LINENO: checking whether time.h defines timezone as an external variable" >&5
 echo $ECHO_N "checking whether time.h defines timezone as an external variable... $ECHO_C" >&6; }
-cat >conftest.$ac_ext <<_ACEOF
+ cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
@@ -5108,7 +5551,7 @@ cat >>conftest.$ac_ext <<_ACEOF
 int
 main ()
 {
- -timezone;
+-timezone;
   ;
   return 0;
 }
@@ -5148,9 +5591,10 @@ fi
 
 rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
       conftest$ac_exeext conftest.$ac_ext
+
 { echo "$as_me:$LINENO: checking whether struct tz has tm_gmtoff as a member" >&5
 echo $ECHO_N "checking whether struct tz has tm_gmtoff as a member... $ECHO_C" >&6; }
-cat >conftest.$ac_ext <<_ACEOF
+ cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
@@ -5198,6 +5642,7 @@ echo "${ECHO_T}no" >&6; }
 fi
 
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
 
 { echo "$as_me:$LINENO: checking for an ANSI C-conforming const" >&5
 echo $ECHO_N "checking for an ANSI C-conforming const... $ECHO_C" >&6; }
@@ -8059,8 +8504,7 @@ _ACEOF
   # You must define HAVE_ZLIB_COMPRESS2 to enable '-z' option for controlling
   # zlib compression level, but zlib.ac included above does not do this test.
   # We assume zlib always has compress2() here although that's not always true.
-
-cat >>confdefs.h <<\_ACEOF
+  cat >>confdefs.h <<\_ACEOF
 #define HAVE_ZLIB_COMPRESS2 1
 _ACEOF
 
@@ -8073,37 +8517,29 @@ _ACEOF
   { echo "$as_me:$LINENO: tetex build enabled, LIBS now: $LIBS" >&5
 echo "$as_me: tetex build enabled, LIBS now: $LIBS" >&6;}
 else
-
   _cppflags=$CPPFLAGS _ldflags=$LDFLAGS
 
 # Check whether --with-paper was given.
 if test "${with_paper+set}" = set; then
-  withval=$with_paper;
-if test -d "$withval"; then
-  CPPFLAGS="$CPPFLAGS -I$withval/include"
-  LDFLAGS="$LDFLAGS -L$withval/lib"
+  withval=$with_paper; if test -d "$withval"; then
+     CPPFLAGS="$CPPFLAGS -I$withval/include"
+     LDFLAGS="$LDFLAGS -L$withval/lib"
+   fi
 fi
 
-
-fi
-
-  { echo "$as_me:$LINENO: checking for paper header files" >&5
+ { echo "$as_me:$LINENO: checking for paper header files" >&5
 echo $ECHO_N "checking for paper header files... $ECHO_C" >&6; }
-  cat >conftest.$ac_ext <<_ACEOF
+ cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-
 #include <paper.h>
-
 int
 main ()
 {
-
 struct paper *p;
-
   ;
   return 0;
 }
@@ -8125,15 +8561,14 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
 	 test -z "$ac_c_werror_flag" ||
 	 test ! -s conftest.err
        } && test -s conftest.$ac_objext; then
-   { echo "$as_me:$LINENO: result: yes" >&5
+  { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
-      { echo "$as_me:$LINENO: checking for paperpswidth in -lpaper" >&5
-echo $ECHO_N "checking for paperpswidth in -lpaper... $ECHO_C" >&6; }
-if test "${ac_cv_lib_paper_paperpswidth+set}" = set; then
+   { echo "$as_me:$LINENO: checking for library containing paperpswidth" >&5
+echo $ECHO_N "checking for library containing paperpswidth... $ECHO_C" >&6; }
+if test "${ac_cv_search_paperpswidth+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lpaper  $LIBS"
+  ac_func_search_save_LIBS=$LIBS
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
@@ -8156,7 +8591,14 @@ return paperpswidth ();
   return 0;
 }
 _ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
+for ac_lib in '' paper; do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  rm -f conftest.$ac_objext conftest$ac_exeext
 if { (ac_try="$ac_link"
 case "(($ac_try" in
   *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
@@ -8174,74 +8616,75 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
 	 test ! -s conftest.err
        } && test -s conftest$ac_exeext &&
        $as_test_x conftest$ac_exeext; then
-  ac_cv_lib_paper_paperpswidth=yes
+  ac_cv_search_paperpswidth=$ac_res
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-	ac_cv_lib_paper_paperpswidth=no
+
 fi
 
 rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
-      conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
+      conftest$ac_exeext
+  if test "${ac_cv_search_paperpswidth+set}" = set; then
+  break
 fi
-{ echo "$as_me:$LINENO: result: $ac_cv_lib_paper_paperpswidth" >&5
-echo "${ECHO_T}$ac_cv_lib_paper_paperpswidth" >&6; }
-if test $ac_cv_lib_paper_paperpswidth = yes; then
-
+done
+if test "${ac_cv_search_paperpswidth+set}" = set; then
+  :
+else
+  ac_cv_search_paperpswidth=no
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_search_paperpswidth" >&5
+echo "${ECHO_T}$ac_cv_search_paperpswidth" >&6; }
+ac_res=$ac_cv_search_paperpswidth
+if test "$ac_res" != no; then
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
 
 cat >>confdefs.h <<\_ACEOF
 #define HAVE_LIBPAPER 1
 _ACEOF
 
-        LIBS="$LIBS -lpaper"
-
 fi
-
 
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-	 { echo "$as_me:$LINENO: result: no" >&5
+	CPPFLAGS=$_cppflags
+   LDDFLAGS=$_ldflags
+   { echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6; }
-
 fi
 
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-
 
   _cppflags=$CPPFLAGS _ldflags=$LDFLAGS
 
 # Check whether --with-zlib was given.
 if test "${with_zlib+set}" = set; then
-  withval=$with_zlib;
-if test -d "$withval"; then
-  CPPFLAGS="$CPPFLAGS -I$withval/include"
-  LDFLAGS="$LDFLAGS -L$withval/lib"
+  withval=$with_zlib; if test -d "$withval"; then
+     CPPFLAGS="$CPPFLAGS -I$withval/include"
+     LDFLAGS="$LDFLAGS -L$withval/lib"
+   fi
 fi
 
-
-fi
-
-  { echo "$as_me:$LINENO: checking for zlib header files" >&5
+ { echo "$as_me:$LINENO: checking for zlib header files" >&5
 echo $ECHO_N "checking for zlib header files... $ECHO_C" >&6; }
-  cat >conftest.$ac_ext <<_ACEOF
+ cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-
 #include <zlib.h>
-
 int
 main ()
 {
-
 z_stream p;
-
   ;
   return 0;
 }
@@ -8263,15 +8706,14 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
 	 test -z "$ac_c_werror_flag" ||
 	 test ! -s conftest.err
        } && test -s conftest.$ac_objext; then
-   { echo "$as_me:$LINENO: result: yes" >&5
+  { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
-      { echo "$as_me:$LINENO: checking for compress in -lz" >&5
-echo $ECHO_N "checking for compress in -lz... $ECHO_C" >&6; }
-if test "${ac_cv_lib_z_compress+set}" = set; then
+      { echo "$as_me:$LINENO: checking for library containing compress" >&5
+echo $ECHO_N "checking for library containing compress... $ECHO_C" >&6; }
+if test "${ac_cv_search_compress+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lz  $LIBS"
+  ac_func_search_save_LIBS=$LIBS
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
@@ -8294,7 +8736,14 @@ return compress ();
   return 0;
 }
 _ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
+for ac_lib in '' z; do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  rm -f conftest.$ac_objext conftest$ac_exeext
 if { (ac_try="$ac_link"
 case "(($ac_try" in
   *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
@@ -8312,28 +8761,38 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
 	 test ! -s conftest.err
        } && test -s conftest$ac_exeext &&
        $as_test_x conftest$ac_exeext; then
-  ac_cv_lib_z_compress=yes
+  ac_cv_search_compress=$ac_res
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-	ac_cv_lib_z_compress=no
+
 fi
 
 rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
-      conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
+      conftest$ac_exeext
+  if test "${ac_cv_search_compress+set}" = set; then
+  break
 fi
-{ echo "$as_me:$LINENO: result: $ac_cv_lib_z_compress" >&5
-echo "${ECHO_T}$ac_cv_lib_z_compress" >&6; }
-if test $ac_cv_lib_z_compress = yes; then
-
+done
+if test "${ac_cv_search_compress+set}" = set; then
+  :
+else
+  ac_cv_search_compress=no
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_search_compress" >&5
+echo "${ECHO_T}$ac_cv_search_compress" >&6; }
+ac_res=$ac_cv_search_compress
+if test "$ac_res" != no; then
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
 
 cat >>confdefs.h <<\_ACEOF
 #define HAVE_ZLIB 1
 _ACEOF
 
-        LIBS="$LIBS -lz"
         { echo "$as_me:$LINENO: checking for compress2 in -lz" >&5
 echo $ECHO_N "checking for compress2 in -lz... $ECHO_C" >&6; }
 if test "${ac_cv_lib_z_compress2+set}" = set; then
@@ -8397,135 +8856,42 @@ fi
 echo "${ECHO_T}$ac_cv_lib_z_compress2" >&6; }
 if test $ac_cv_lib_z_compress2 = yes; then
 
-
 cat >>confdefs.h <<\_ACEOF
 #define HAVE_ZLIB_COMPRESS2 1
 _ACEOF
 
-
 fi
 
-
 fi
-
 
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-	CPPFLAGS=$_cppflags LDFLAGS=$_ldflags
-     { echo "$as_me:$LINENO: result: no" >&5
+	CPPFLAGS=$_cppflags
+   LDDFLAGS=$_ldflags
+   { echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6; }
-
 fi
 
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-
 
   _cppflags=$CPPFLAGS _ldflags=$LDFLAGS
 
 # Check whether --with-png was given.
 if test "${with_png+set}" = set; then
-  withval=$with_png;
-if test -d "$withval"; then
-  CPPFLAGS="$CPPFLAGS -I$withval/include"
-  LDFLAGS="$LDFLAGS -L$withval/lib"
+  withval=$with_png; if test -d "$withval"; then
+     CPPFLAGS="$CPPFLAGS -I$withval/include"
+     LDFLAGS="$LDFLAGS -L$withval/lib"
+   fi
 fi
 
-
-fi
-
-  { echo "$as_me:$LINENO: checking for pow" >&5
-echo $ECHO_N "checking for pow... $ECHO_C" >&6; }
-if test "${ac_cv_func_pow+set}" = set; then
+ { echo "$as_me:$LINENO: checking for library containing pow" >&5
+echo $ECHO_N "checking for library containing pow... $ECHO_C" >&6; }
+if test "${ac_cv_search_pow+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
-  cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-/* Define pow to an innocuous variant, in case <limits.h> declares pow.
-   For example, HP-UX 11i <limits.h> declares gettimeofday.  */
-#define pow innocuous_pow
-
-/* System header to define __stub macros and hopefully few prototypes,
-    which can conflict with char pow (); below.
-    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
-    <limits.h> exists even on freestanding compilers.  */
-
-#ifdef __STDC__
-# include <limits.h>
-#else
-# include <assert.h>
-#endif
-
-#undef pow
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char pow ();
-/* The GNU C library defines this for functions which it implements
-    to always fail with ENOSYS.  Some functions are actually named
-    something starting with __ and the normal name is an alias.  */
-#if defined __stub_pow || defined __stub___pow
-choke me
-#endif
-
-int
-main ()
-{
-return pow ();
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (ac_try="$ac_link"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
-  (eval "$ac_link") 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest$ac_exeext &&
-       $as_test_x conftest$ac_exeext; then
-  ac_cv_func_pow=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-	ac_cv_func_pow=no
-fi
-
-rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
-      conftest$ac_exeext conftest.$ac_ext
-fi
-{ echo "$as_me:$LINENO: result: $ac_cv_func_pow" >&5
-echo "${ECHO_T}$ac_cv_func_pow" >&6; }
-if test $ac_cv_func_pow = yes; then
-  :
-else
-  { echo "$as_me:$LINENO: checking for pow in -lm" >&5
-echo $ECHO_N "checking for pow in -lm... $ECHO_C" >&6; }
-if test "${ac_cv_lib_m_pow+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lm  $LIBS"
+  ac_func_search_save_LIBS=$LIBS
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
@@ -8548,7 +8914,14 @@ return pow ();
   return 0;
 }
 _ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
+for ac_lib in '' m; do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  rm -f conftest.$ac_objext conftest$ac_exeext
 if { (ac_try="$ac_link"
 case "(($ac_try" in
   *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
@@ -8566,43 +8939,49 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
 	 test ! -s conftest.err
        } && test -s conftest$ac_exeext &&
        $as_test_x conftest$ac_exeext; then
-  ac_cv_lib_m_pow=yes
+  ac_cv_search_pow=$ac_res
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-	ac_cv_lib_m_pow=no
+
 fi
 
 rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
-      conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
+      conftest$ac_exeext
+  if test "${ac_cv_search_pow+set}" = set; then
+  break
 fi
-{ echo "$as_me:$LINENO: result: $ac_cv_lib_m_pow" >&5
-echo "${ECHO_T}$ac_cv_lib_m_pow" >&6; }
-if test $ac_cv_lib_m_pow = yes; then
-  LIBS="$LIBS -lm"
+done
+if test "${ac_cv_search_pow+set}" = set; then
+  :
+else
+  ac_cv_search_pow=no
 fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_search_pow" >&5
+echo "${ECHO_T}$ac_cv_search_pow" >&6; }
+ac_res=$ac_cv_search_pow
+if test "$ac_res" != no; then
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
 
 fi
 
-  { echo "$as_me:$LINENO: checking for png header files" >&5
+ { echo "$as_me:$LINENO: checking for png header files" >&5
 echo $ECHO_N "checking for png header files... $ECHO_C" >&6; }
-  cat >conftest.$ac_ext <<_ACEOF
+ cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-
 #include <png.h>
-
 int
 main ()
 {
-
 png_infop p;
-
   ;
   return 0;
 }
@@ -8624,16 +9003,14 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
 	 test -z "$ac_c_werror_flag" ||
 	 test ! -s conftest.err
        } && test -s conftest.$ac_objext; then
-   { echo "$as_me:$LINENO: result: yes" >&5
+  { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
-      { echo "$as_me:$LINENO: checking for png_get_image_width in -lpng" >&5
-echo $ECHO_N "checking for png_get_image_width in -lpng... $ECHO_C" >&6; }
-if test "${ac_cv_lib_png_png_get_image_width+set}" = set; then
+      { echo "$as_me:$LINENO: checking for library containing png_get_image_width" >&5
+echo $ECHO_N "checking for library containing png_get_image_width... $ECHO_C" >&6; }
+if test "${ac_cv_search_png_get_image_width+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lpng -lz
-       $LIBS"
+  ac_func_search_save_LIBS=$LIBS
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
@@ -8656,7 +9033,14 @@ return png_get_image_width ();
   return 0;
 }
 _ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
+for ac_lib in '' png; do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib -lz $ac_func_search_save_LIBS"
+  fi
+  rm -f conftest.$ac_objext conftest$ac_exeext
 if { (ac_try="$ac_link"
 case "(($ac_try" in
   *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
@@ -8674,38 +9058,48 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
 	 test ! -s conftest.err
        } && test -s conftest$ac_exeext &&
        $as_test_x conftest$ac_exeext; then
-  ac_cv_lib_png_png_get_image_width=yes
+  ac_cv_search_png_get_image_width=$ac_res
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-	ac_cv_lib_png_png_get_image_width=no
+
 fi
 
 rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
-      conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
+      conftest$ac_exeext
+  if test "${ac_cv_search_png_get_image_width+set}" = set; then
+  break
 fi
-{ echo "$as_me:$LINENO: result: $ac_cv_lib_png_png_get_image_width" >&5
-echo "${ECHO_T}$ac_cv_lib_png_png_get_image_width" >&6; }
-if test $ac_cv_lib_png_png_get_image_width = yes; then
+done
+if test "${ac_cv_search_png_get_image_width+set}" = set; then
+  :
+else
+  ac_cv_search_png_get_image_width=no
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_search_png_get_image_width" >&5
+echo "${ECHO_T}$ac_cv_search_png_get_image_width" >&6; }
+ac_res=$ac_cv_search_png_get_image_width
+if test "$ac_res" != no; then
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
 
 cat >>confdefs.h <<\_ACEOF
 #define HAVE_LIBPNG 1
 _ACEOF
 
-          LIBS="$LIBS -lpng"
 fi
-
 
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-	CPPFLAGS=$_cppflags LDFLAGS=$_ldflags
-     { echo "$as_me:$LINENO: result: no" >&5
+	CPPFLAGS=$_cppflags
+   LDDFLAGS=$_ldflags
+   { echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6; }
-
 fi
 
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
