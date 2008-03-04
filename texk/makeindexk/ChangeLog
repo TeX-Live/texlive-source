@@ -1,3 +1,7 @@
+2008-03-04  Karl Berry  <karl@tug.org>
+
+	* makeindex.1: mention page_compositor option.  From Oleg Katsitadze.
+
 2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* acconfig.h: removed.
