@@ -33,7 +33,8 @@ subdir = data
 DIST_COMMON = $(dist_pkgdata_DATA) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/m4/maw-kpse.m4 \
+	$(top_srcdir)/m4/maw-libs.m4 $(top_srcdir)/m4/maw-time.m4 \
 	$(top_srcdir)/../../libs/libpng/withenable.ac \
 	$(top_srcdir)/../../libs/libpng/libpng.ac \
 	$(top_srcdir)/../../libs/zlib/withenable.ac \

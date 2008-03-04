@@ -44,7 +44,9 @@ DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	ltmain.sh missing mkinstalldirs
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/m4/maw-kpse.m4 \
+	$(top_srcdir)/m4/maw-libs.m4 $(top_srcdir)/m4/maw-macos.m4 \
+	$(top_srcdir)/m4/maw-time.m4 \
 	$(top_srcdir)/../../libs/libpng/withenable.ac \
 	$(top_srcdir)/../../libs/libpng/libpng.ac \
 	$(top_srcdir)/../../libs/zlib/withenable.ac \
@@ -204,6 +206,7 @@ xdvipdfmx_LDFLAGS = @xdvipdfmx_LDFLAGS@
 
 # skip the data subdir; we rely on dvipdfmx to provide those files
 SUBDIRS = src
+ACLOCAL_AMFLAGS = -I m4
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -404,7 +407,7 @@ distclean-tags:
 distdir: $(DISTFILES)
 	$(am__remove_distdir)
 	mkdir $(distdir)
-	$(mkdir_p) $(distdir)/../../libs/freetype2 $(distdir)/../../libs/libpng $(distdir)/../../libs/zlib
+	$(mkdir_p) $(distdir)/../../libs/freetype2 $(distdir)/../../libs/libpng $(distdir)/../../libs/zlib $(distdir)/m4
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \
