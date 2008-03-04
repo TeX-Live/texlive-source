@@ -1,5 +1,8 @@
 2008-03-04  Karl Berry  <karl@tug.org>
 
+	* mkind.h (ARABIC_MAX, ROMAN_MAX, NUMBER_MAX): increase to 99.
+	Not that anyone has ever hit the limit, but.   Report from Oleg.
+
 	* makeindex.1: mention page_compositor option.  From Oleg Katsitadze.
 
 2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>

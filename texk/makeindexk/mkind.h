@@ -304,7 +304,7 @@ violations are possible, with core dumps, or worse, incorrect output,
 ensuing.
 ======================================================================*/
 
-#define ARABIC_MAX    10	/* maximum digits in an Arabic page */
+#define ARABIC_MAX    99	/* maximum digits in an Arabic page */
 				/* number field */
 
 #define ARGUMENT_MAX  1024	/* maximum length of sort or actual key */
@@ -325,7 +325,7 @@ ensuing.
 #define LINE_MAX      72	/* maximum output line length (longer */
 				/* ones wrap if possible) */
 
-#define NUMBER_MAX    16	/* maximum digits in a Roman or Arabic */
+#define NUMBER_MAX    99	/* maximum digits in a Roman or Arabic */
 				/* page number */
 				/* (MAX(ARABIC_MAX,ROMAN_MAX)) */
 
@@ -334,7 +334,7 @@ ensuing.
 
 #define PAGETYPE_MAX  5		/* fixed at 5; see use in scanst.c */
 
-#define ROMAN_MAX     16	/* maximum length of Roman page number */
+#define ROMAN_MAX     99	/* maximum length of Roman page number */
 				/* field */
 
 #define STRING_MAX    999	/* maximum length of host filename */
