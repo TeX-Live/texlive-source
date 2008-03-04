@@ -16,15 +16,20 @@
 @MAINT@	cd $(top_srcdir) && aclocal -I ../m4
 @MAINT@	date >$(top_srcdir)/stamp-aclocal
 @MAINT@
-@MAINT@$(top_srcdir)/configure: $(configure_in) $(aclocal_m4)
+@MAINT@$(top_srcdir)/stamp-configure: $(configure_in) $(aclocal_m4)
 @MAINT@	cd $(top_srcdir) && autoconf
+@MAINT@	date >$(top_srcdir)/stamp-configure
+@MAINT@# For the case that configure is missing
+@MAINT@$(top_srcdir)/configure:
+@MAINT@	cd $(top_srcdir) && autoconf
+@MAINT@	date >$(top_srcdir)/stamp-configure
 @MAINT@
 @MAINT@$(top_srcdir)/c-auto.in: $(top_srcdir)/stamp-auto.in
 @MAINT@$(top_srcdir)/stamp-auto.in: $(configure_in) $(aclocal_m4)
 @MAINT@	cd $(top_srcdir) && autoheader
 @MAINT@	date >$(top_srcdir)/stamp-auto.in
 
-config.status: $(top_srcdir)/configure
+config.status: $(top_srcdir)/stamp-configure $(top_srcdir)/configure
 	$(SHELL) $@ --recheck
 
 # FIXME: Shouldn't this be $(top_builddir)/config.status

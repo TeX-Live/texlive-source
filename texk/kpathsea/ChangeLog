@@ -1,3 +1,7 @@
+2008-03-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* common.ac: add AC_SYS_LARGEFILE and AC_FUNC_FSEEKO.
+
 2008-03-02  Karl Berry  <karl@tug.org>
 
 	* cnf.c (read_all_cnf): change warning text when texmf.cnf is not

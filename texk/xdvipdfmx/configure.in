@@ -4,27 +4,16 @@ AM_INIT_AUTOMAKE(xdvipdfmx, 0.5)
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
 
-# Timezone tests written by MAW for pdfdoc.c.
-#
-AC_DEFUN([AC_EXT_TIMEZONE],
-[AC_MSG_CHECKING([whether time.h defines timezone as an external variable])
-AC_TRY_LINK([#include <time.h>], [ -timezone; ],
-	[AC_MSG_RESULT(yes)
-         AC_DEFINE(HAVE_TIMEZONE, [], [external timezone variable])],
-        [AC_MSG_RESULT(no)])])
-AC_DEFUN([AC_TZ_HAS_TM_GMTOFF],
-[AC_MSG_CHECKING([whether struct tz has tm_gmtoff as a member])
-AC_TRY_COMPILE([#include <time.h>], [struct tm *tp; tp->tm_gmtoff],
-	[AC_MSG_RESULT(yes)
-         AC_DEFINE(HAVE_TM_GMTOFF, [], [struct tz has tm_gmtoff])],
-        [AC_MSG_RESULT(no)])])
-
 dnl Checks for programs.
 AC_PROG_CC
+AM_PROG_CC_C_O
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
+
+AC_SYS_LARGEFILE
+AC_FUNC_FSEEKO
 
 # Building inside teTeX or TeX Live?
 AC_ARG_ENABLE(tetex-build, [  --enable-tetex-build    build as part of a teTeX installation])
@@ -80,13 +69,13 @@ with -L pointing to the directory containing libkpathsea.a.
   )
 
   dnl Check kpathsea support for required formats and funcs.
-  AC_CHECK_KPSE_SUPPORT
+  MAW_CHECK_KPSE_SUPPORT([xdvipdfmx])
 
   dnl Check for TDS version kpathsea library supports.
-  AC_CHECK_KPSE_TDS_VERSION
+  MAW_CHECK_KPSE_TDS_VERSION
 
   dnl Check for libfreetype, required for xdvipdfmx features
-  AC_CHECK_LIBFREETYPE
+  MAW_CHECK_LIBFREETYPE([xdvipdfmx])
 fi
 
 dnl Checks for header files.
@@ -99,8 +88,8 @@ AC_FUNC_MEMCMP
 AC_CHECK_FUNCS(open close system getenv mkstemp basename)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
-AC_EXT_TIMEZONE
-AC_TZ_HAS_TM_GMTOFF
+MAW_EXT_TIMEZONE
+MAW_TZ_HAS_TM_GMTOFF
 
 AC_C_CONST
 AC_C_INLINE
@@ -117,8 +106,8 @@ AC_CHECK_SIZEOF(long)
 
 dnl Check for additonal libraries.
 
-AC_HAS_LIBFONTCONFIG
-AC_HAS_APP_SERVICES
+MAW_HAS_LIBFONTCONFIG
+CHO_HAS_APP_SERVICES
 
 if test "x$enable_tetex_build" = xyes; then
   # Get these common libraries from the sources, too.
@@ -141,7 +130,7 @@ if test "x$enable_tetex_build" = xyes; then
   # You must define HAVE_ZLIB_COMPRESS2 to enable '-z' option for controlling
   # zlib compression level, but zlib.ac included above does not do this test.
   # We assume zlib always has compress2() here although that's not always true.
-  AC_DEFINE(HAVE_ZLIB_COMPRESS2, 1, [Define if your zlib has the compress2 function])
+  AC_DEFINE([HAVE_ZLIB_COMPRESS2], 1)
 
   # for tetex/tex live build we may need to define XETEX and XETEX_MAC
   if test "x$have_app_services" = xyes; then
@@ -160,9 +149,9 @@ if test "x$enable_tetex_build" = xyes; then
   AC_SUBST(xdvipdfmx_LDFLAGS)
   AC_MSG_NOTICE([tetex build enabled, LIBS now: $LIBS])
 else
-  AC_HAS_LIBPAPER
-  AC_HAS_ZLIB
-  AC_HAS_LIBPNG
+  MAW_HAS_LIBPAPER
+  MAW_HAS_ZLIB
+  MAW_HAS_LIBPNG
 
 dnl these variables are defined in the tetex case and used in src/Makefile.am.
 dnl just let them be empty.
@@ -179,5 +168,6 @@ dnl just let them be empty.
   AC_SUBST(xdvipdfmx_LDFLAGS)
 fi
 
-AC_OUTPUT(Makefile data/Makefile src/Makefile)
+AC_CONFIG_FILES([Makefile data/Makefile src/Makefile])
+AC_OUTPUT
 

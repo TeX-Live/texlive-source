@@ -1,3 +1,7 @@
+2008-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* config.mk: update maintainer rules.
+
 2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* config.mk: update and reactivate maintainer rules.

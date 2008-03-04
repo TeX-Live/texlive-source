@@ -35,17 +35,7 @@ AH_TOP([/* c-auto.h: defines for kpathsea, as determined by configure.
 #define KPATHSEA_C_AUTO_H
 
 /* kpathsea: the version string. */
-#define KPSEVERSION "REPLACE-WITH-KPSEVERSION"
-
-/* kpathsea/configure.in tests for these functions with
-   kb_AC_KLIBTOOL_REPLACE_FUNCS, and naturally Autoheader doesn't know
-   about that macro.  Since the shared library stuff is all preliminary
-   anyway, I decided not to change Autoheader, but rather to hack them
-   in here.  */
-#undef HAVE_PUTENV
-#undef HAVE_STRCASECMP
-#undef HAVE_STRTOL
-#undef HAVE_STRSTR])
+#define KPSEVERSION "REPLACE-WITH-KPSEVERSION"])
 AH_BOTTOM([#endif /* !KPATHSEA_C_AUTO_H */])
 
 KPSE_CONFIG_FILES([Makefile])
