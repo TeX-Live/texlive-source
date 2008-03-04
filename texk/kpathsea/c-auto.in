@@ -25,16 +25,6 @@
 /* kpathsea: the version string. */
 #define KPSEVERSION "REPLACE-WITH-KPSEVERSION"
 
-/* kpathsea/configure.in tests for these functions with
-   kb_AC_KLIBTOOL_REPLACE_FUNCS, and naturally Autoheader doesn't know
-   about that macro.  Since the shared library stuff is all preliminary
-   anyway, I decided not to change Autoheader, but rather to hack them
-   in here.  */
-#undef HAVE_PUTENV
-#undef HAVE_STRCASECMP
-#undef HAVE_STRTOL
-#undef HAVE_STRSTR
-
 /* Define to 1 if the `closedir' function returns void instead of `int'. */
 #undef CLOSEDIR_VOID
 
@@ -67,6 +57,9 @@
 
 /* Define to 1 if you have the <float.h> header file. */
 #undef HAVE_FLOAT_H
+
+/* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
+#undef HAVE_FSEEKO
 
 /* Define to 1 if you have the `getcwd' function. */
 #undef HAVE_GETCWD
@@ -209,6 +202,15 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
+
+/* Number of bits in a file offset, on hosts where this is settable. */
+#undef _FILE_OFFSET_BITS
+
+/* Define to 1 to make fseeko visible on some hosts (e.g. glibc 2.2). */
+#undef _LARGEFILE_SOURCE
+
+/* Define for large files, on AIX-style hosts. */
+#undef _LARGE_FILES
 
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const
