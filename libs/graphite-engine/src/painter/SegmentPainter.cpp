@@ -29,13 +29,6 @@ Description:
 #undef THIS_FILE
 DEFINE_THIS_FILE
 
-#ifndef HAVE_FABSF
-static float fabsf(float x)
-{
-	return (x < 0.0f) ? -x : x;
-}
-#endif
-
 //:>********************************************************************************************
 //:>	   Forward declarations
 //:>********************************************************************************************

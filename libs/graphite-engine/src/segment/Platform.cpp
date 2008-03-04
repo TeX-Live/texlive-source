@@ -89,6 +89,12 @@ int utf16cmp(const utf16 *s1, const char *s2)
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef HAVE_FABSF
+float fabsf(float x)
+{
+    return (x < 0.0f) ? -x : x;
+}
+#endif
 
 namespace gr
 {

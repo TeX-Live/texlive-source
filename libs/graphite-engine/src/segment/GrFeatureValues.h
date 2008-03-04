@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (C) 1999, 2001 SIL International. All rights reserved.
+Copyright (C) 1999 - 2008 SIL International. All rights reserved.
 
 Distributable under the terms of either the Common Public License or the
 GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -48,6 +48,11 @@ public:
 	{
 		m_nStyleIndex = fval.m_nStyleIndex;
 		std::copy(fval.m_rgnFValues, fval.m_rgnFValues + kMaxFeatures, m_rgnFValues);
+	}
+
+	bool FeatureValue(size_t ifeat)
+	{
+		return m_rgnFValues[ifeat];
 	}
 
 	//	For transduction logging:

@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (C) 1999, 2001 SIL International. All rights reserved.
+Copyright (C) 1999 - 2008 SIL International. All rights reserved.
 
 Distributable under the terms of either the Common Public License or the
 GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -212,7 +212,7 @@ typedef enum SlotAttrName {
 	kslatJStretch,		kslatJShrink,	kslatJStep,		kslatJWeight,	kslatJWidth,
 	// this must be last:
 	kslatUserDefn = kslatJStretch + 30,
-	// I think 30 is somewhat arbitrary. We at least need to save 15 slots for more levesl of
+	// I think 30 is somewhat arbitrary. We at least need to save 15 slots for more levels of
 	// justification attributes.
 
 	kslatMax,

@@ -41,6 +41,9 @@ Description:
 
 #ifndef _WIN32
 #include "GrMstypes.h"
+#ifndef HAVE_FABSF
+float fabsf(float x);
+#endif
 #endif
 #include "GrDebug.h"
 

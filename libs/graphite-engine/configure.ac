@@ -50,8 +50,9 @@ AC_TYPE_SIZE_T
 AC_CHECK_SIZEOF(wchar_t)
 AC_SUBST(SIZEOF_WCHAR_T)
 
-# Checks for library functions.
 AC_CHECK_FUNCS(fabsf)
+
+# Checks for library functions.
 
 # Setup the build compiler flags and linker flags.
 # Enable debug
@@ -59,7 +60,7 @@ build_flags=""
 if test "$enable_debug" = yes; then
   build_flags="$build_flags -O0 -g -Wall -Wno-unknown-pragmas -Wparentheses -Werror"
 else
-  build_flags="$build_flags -DNDEBUG"
+  build_flags="$build_flags -DNDEBUG -Wall -Wno-unknown-pragmas -Wparentheses -Werror"
 fi
 
 # Enable Graphite Trace logs - these are only used if a 

@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (C) 1999, 2001 SIL International. All rights reserved.
+Copyright (C) 1999 - 2008 SIL International. All rights reserved.
 
 Distributable under the terms of either the Common Public License or the
 GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -343,7 +343,21 @@ public:
 			return NULL;
 		return m_vpslotAssoc.back();
 	}
-	GrSlotState * AssocSlot(int i)		{ return m_vpslotAssoc[i]; }
+	////GrSlotState * AssocSlot(int i)		{ return m_vpslotAssoc[i]; }
+
+	GrSlotState * AssocSlot(int i)
+	{
+		if (i < 0)
+			return NULL;
+		if (i > signed(m_vpslotAssoc.size()))
+			return NULL;
+
+		GrSlotState * pslotAssoc = m_vpslotAssoc[i];
+		// handle possible reprocessing
+		while (pslotAssoc && pslotAssoc->PassModified() == m_ipassModified)
+			pslotAssoc = pslotAssoc->m_pslotPrevState;
+		return pslotAssoc;
+	}
 
 	void AllAssocs(std::vector<int> & vichw);
 	int BeforeAssoc();
@@ -850,10 +864,14 @@ public:
 	//	For transduction logging:
 #ifdef TRACING
 	void SlotAttrsModified(bool * rgfMods, bool fPreJust, int * pccomp, int * pcassoc);
-	void LogSlotAttribute(GrTableManager *, std::ostream &, int ipass, int slat, int icomp,
+	void LogSlotAttributeValue(GrTableManager *, std::ostream &, int ipass, int slat, int icomp,
 		bool fPreJust, bool fPostJust);
 	void LogAssociation(GrTableManager * ptman,
 		std::ostream & strmOut, int ipass, int iassoc, bool fBoth, bool fAfter);
+	void LogXmlAttributes(std::ostream & strmOut, GrTableManager * ptman, int ipass, int islot,
+		bool fPreJust, bool fPostJust, bool fBidi, int nIndent);
+	int GetSlotAttrValue(std::ostream & strmOut, GrTableManager * ptman,
+		int ipass, int slat, int iIndex, bool fPreJust, bool fPostJust);
 	int m_islotTmpIn;		// for use by transduction log; index of slot in input stream
 	int m_islotTmpOut;		// ditto; index of slot in output stream
 #endif // TRACING

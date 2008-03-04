@@ -89,7 +89,7 @@ void TestCase::SetupSimpleTest()
 {
 	m_testName = "Simple";
 	//m_debug = true;
-	m_traceLog = true;
+	//m_traceLog = true;
 	//m_skip = true;
 
 	//	Input:
@@ -218,7 +218,7 @@ void TestCase::SetupSurrogateTest()
 {
 	m_testName = "Surrogates";
 	//m_debug = true;
-	m_traceLog = true;
+	//m_traceLog = true;
 	//m_skip = true;
 
 	//	Input:
@@ -299,7 +299,7 @@ void TestCase::SetupBurmese1()
 {
 	m_testName = "Burmese 1";
 	m_debug = false;
-	//m_traceLog = true;
+	m_traceLog = true;
 	//m_skip = true;
 
 	//	Input:
@@ -1652,7 +1652,7 @@ void TestCase::SetupBadFont()
 	m_testName = "Bad Font";
 	//m_debug = true;
 	m_traceLog = false;
-	m_skip = true;
+	//m_skip = true;
 
 	//	Input:
 	//	The font has been corrupted so that the size of the cmap in the directory is invalid.

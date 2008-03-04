@@ -149,14 +149,15 @@ void Font::UniqueCacheInfo(std::wstring & stuFace, bool & fBold, bool & fItalic)
 	}
 	// byte * pvName = (byte *)pNameTbl + lOffset;
 	utf16 rgchwFace[128];
-	const size_t cchw = min(long(lSize / sizeof(utf16)), long(sizeof rgchwFace - 1));
-	const utf16 *src_start = reinterpret_cast<const utf16 *>(pNameTbl+ lOffset);
-	std::copy(src_start, src_start + cchw, rgchwFace);
+	const size_t cchw = min(long(lSize / sizeof(utf16)), long((sizeof(rgchwFace) / sizeof(utf16)) - 1));
+	// NOTE: there is a potential alignment problem in the following two lines, which can causes
+	// crashes on architectures that require alignment to word boundaries.
+	const utf16 * pchwNameStart = reinterpret_cast<const utf16 *>(pNameTbl+ lOffset);
+	std::copy(pchwNameStart, pchwNameStart + cchw, rgchwFace);
 	rgchwFace[cchw] = 0;  // zero terminate
 	TtfUtil::SwapWString(rgchwFace, cchw);
-	for (size_t ich16 = 0; ich16 < cchw; ich16++)	// to handle situation where wchar_t is 4 bytes
-		stuFace.push_back(wchar_t(rgchwFace[ich16]));
-	///stuFace.assign(rgchwFace, rgchwFace + cchw);
+	for (size_t ich16 = 0; ich16 < cchw; ich16++)		// equivalent to assign, but works in more situations
+		stuFace.push_back(wchar_t(rgchwFace[ich16]));	// where where wchar_t is 4 bytes
 
 	const void * pOs2Tbl = getTable(TtfUtil::TableIdTag(ktiOs2), &cbSize);
 	TtfUtil::FontOs2Style(pOs2Tbl, fBold, fItalic);
