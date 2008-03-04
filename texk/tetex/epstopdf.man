@@ -1,5 +1,5 @@
-.TH EPSTOPDF 1 "October 30, 1999"
-.\" man page by Jim Van Zandt <jrv@vanzandt.mv.com>         -*- nroff -*-
+.TH EPSTOPDF 1 "4 March 2008"
+.\" man page originally by Jim Van Zandt
 .SH NAME
 epstopdf \- convert an EPS file to PDF
 .SH SYNOPSIS
@@ -12,7 +12,7 @@ This means that when Ghostscript renders it, the result needs no
 cropping, and the PDF MediaBox is correct.  The result is piped to
 Ghostscript and a PDF version written.
 .P
-If the bounding box is not right, of course, you have problems...
+If the bounding box is not right, of course, you have problems.
 .SH OPTIONS
 .IP "\fB--outfile\fP=\fIfile\fP"
 write result to \fIfile\fP instead of standard output.
@@ -45,10 +45,17 @@ Example: look for HiresBoundingBox and produce corrected PostScript:
 epstopdf -d --nogs -hires test.ps>testcorr.ps 
 .fi
 .SH BUGS
-The only thing I have not allowed for is the case of
-"%%BoundingBox: (atend)", which is more complicated.
+The case of "%%BoundingBox: (atend)" is not supported.
+.PP
+Please send reports regarding the program or this man page
+to tex-k@tug.org.
 .SH SEE ALSO
 \fBgs\fP(1).
 .SH AUTHOR
-Sebastian Rahtz, for Elsevier Science.
-Now with extra tricks from Hans Hagen's texutil.
+The script was originally written by Sebastian Rahtz, for Elsevier
+Science, with subsequent contributions from many others.  Currently
+maintained by Gerben Wierda.
+.PP
+Man page originally written by Jim Van Zandt.
+.PP
+You may freely use, modify and/or distribute this file.
