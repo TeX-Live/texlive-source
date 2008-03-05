@@ -651,6 +651,7 @@ build_alias
 host_alias
 target_alias
 VERSION
+MAINT
 CC
 CFLAGS
 LDFLAGS
@@ -1701,6 +1702,9 @@ _ACEOF
 
 
 ac_config_headers="$ac_config_headers c-auto.h:c-auto.in"
+
+
+MAINT='#'
 
 
 
@@ -6142,6 +6146,7 @@ build_alias!$build_alias$ac_delim
 host_alias!$host_alias$ac_delim
 target_alias!$target_alias$ac_delim
 VERSION!$VERSION$ac_delim
+MAINT!$MAINT$ac_delim
 CC!$CC$ac_delim
 CFLAGS!$CFLAGS$ac_delim
 LDFLAGS!$LDFLAGS$ac_delim
@@ -6165,7 +6170,7 @@ LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 59; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 60; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5

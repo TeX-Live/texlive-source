@@ -1605,7 +1605,7 @@ doFontDef(FILE* xdv, int k)
 	const fontMapRec*	fr = getFontRec(nameStr);
 	if (fr != NULL) {
 		font.cgFont = fr->cgFont;
-		if (fr->cmap->size() > 0) {
+		if (fr->cmap != NULL && fr->cmap->size() > 0) {
 			if (font.charMap != NULL)
 				delete font.charMap;
 			font.charMap = fr->cmap;	// replacing map that was synthesized from the tfm coverage
