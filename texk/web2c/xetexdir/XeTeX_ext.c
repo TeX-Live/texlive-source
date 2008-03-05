@@ -849,8 +849,6 @@ loadGraphiteFont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, con
 	const char*	cp2;
 	const char*	cp3;
 
-	UInt32	tag;
-
 	UInt32	rgbValue = 0x000000FF;
 	UInt32	languageTag = 0;
 
@@ -2167,9 +2165,11 @@ measure_native_glyph(void* pNode, int use_glyph_metrics)
 		ATSGlyphIdealMetrics	metrics;
 		OSStatus	status = ATSUGlyphGetIdealMetrics(style, 1, &gid, 0, &metrics);
 			/* returns values in Quartz points, so we need to convert to TeX points */
-		node_width(node) = X2Fix(metrics.advance.x * 72.27 / 72.0);
-		if (use_glyph_metrics)
-			GetGlyphHeightDepth_AAT(style, gid, &ht, &dp);
+		if (status == noErr) {
+			node_width(node) = X2Fix(metrics.advance.x * 72.27 / 72.0);
+			if (use_glyph_metrics)
+				GetGlyphHeightDepth_AAT(style, gid, &ht, &dp);
+		}
 	}
 	else
 #endif
@@ -2261,10 +2261,6 @@ double Fix2X(Fixed f)
 #endif
 
 /* these are here, not XeTeX_mac.c, because we need stubs on other platforms */
-#ifndef XETEX_MAC
-typedef void* ATSUStyle; /* dummy declaration just so the stubs can compile */
-#endif
-
 void
 atsugetfontmetrics(ATSUStyle style, Fixed* ascent, Fixed* descent, Fixed* xheight, Fixed* capheight, Fixed* slant)
 {
@@ -2489,13 +2485,13 @@ atsufontgetnamed(int what, ATSUStyle style)
 	
 	switch (what) {
 		case XeTeX_find_variation_by_name:
-			rval = find_axis_by_name(fontID, nameoffile + 1, namelength);
+			rval = find_axis_by_name(fontID, (const char*)nameoffile + 1, namelength);
 			if (rval == 0)
 				rval = -1;
 			break;
 		
 		case XeTeX_find_feature_by_name:
-			rval = find_feature_by_name(fontID, nameoffile + 1, namelength);
+			rval = find_feature_by_name(fontID, (const char*)nameoffile + 1, namelength);
 			if (rval == 0x0000FFFF)
 				rval = -1;
 			break;
@@ -2516,7 +2512,7 @@ atsufontgetnamed1(int what, ATSUStyle style, int param)
 	
 	switch (what) {
 		case XeTeX_find_selector_by_name:
-			rval = find_selector_by_name(fontID, param, nameoffile + 1, namelength);
+			rval = find_selector_by_name(fontID, param, (const char*)nameoffile + 1, namelength);
 			if (rval == 0x0000FFFF)
 				rval = -1;
 			break;
@@ -2746,11 +2742,11 @@ open_dvi_output(FILE** fptr)
 			cmd = cmd2;
 		}
 		if (output_directory) {
-			char *fullname = concat3(output_directory, "/", nameoffile+1);
+			char *fullname = concat3(output_directory, "/", (const char*)nameoffile+1);
 			free(nameoffile);
 			namelength = strlen(fullname);
-			nameoffile = (char*)xmalloc(namelength+2);
-			strcpy(nameoffile+1, fullname);
+			nameoffile = (unsigned char*)xmalloc(namelength+2);
+			strcpy((char*)nameoffile+1, fullname);
 			free(fullname);
 		}
 		*fptr = popen(cmd, "w");
@@ -2768,13 +2764,14 @@ dviclose(FILE* fptr)
 	}
 	else
 		return pclose(fptr);
+	return 0;
 }
 
 int
 get_uni_c(UFILE* f)
 {
 	int	rval;
-	unsigned c;
+	int c;
 
 	if (f->savedChar != -1) {
 		rval = f->savedChar;
@@ -2784,21 +2781,10 @@ get_uni_c(UFILE* f)
 
 	switch (f->encodingMode) {
 		case UTF8:
-			/* FIXME: we don't currently check for malformed UTF-8 */
 			c = rval = getc(f->f);
 			if (rval != EOF) {
 				UInt16 extraBytes = bytesFromUTF8[rval];
 				switch (extraBytes) {	/* note: code falls through cases! */
-					default:
-					bad_utf8:
-						if (rval > 0x100)
-							rval = 0xfffd;
-						f->savedChar = c;
-					case 5:
-					case 4:
-						badutf8warning();
-						f->encodingMode = RAW;
-						return rval;
 					case 3: c = getc(f->f);
 						if (c < 0x80 || c >= 0xc0) goto bad_utf8;
 						rval <<= 6; rval += c;
@@ -2808,7 +2794,16 @@ get_uni_c(UFILE* f)
 					case 1: c = getc(f->f);
 						if (c < 0x80 || c >= 0xc0) goto bad_utf8;
 						rval <<= 6; rval += c;
-					case 0:	;
+					case 0:
+						break;
+
+					bad_utf8:
+						if (c != EOF)
+							ungetc(c, f->f);
+					case 5:
+					case 4:
+						badutf8warning();
+						return 0xfffd;		/* return without adjusting by offsetsFromUTF8 */
 				};
 				rval -= offsetsFromUTF8[extraBytes];
 			}

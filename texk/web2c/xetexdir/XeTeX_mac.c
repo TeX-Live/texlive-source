@@ -47,6 +47,7 @@ authorization from SIL International.
 
 #include "TECkit_Engine.h"
 #include "XeTeX_ext.h"
+#include "XeTeXLayoutInterface.h"
 
 #include "XeTeXswap.h"
 
@@ -377,7 +378,10 @@ float GetGlyphWidth_AAT(ATSUStyle style, UInt16 gid)
 {
 	ATSGlyphIdealMetrics	metrics;
 	OSStatus	status = ATSUGlyphGetIdealMetrics(style, 1, &gid, 0, &metrics);
-	return PStoTeXPoints(metrics.advance.x);
+	if (status == noErr)
+		return PStoTeXPoints(metrics.advance.x);
+	else
+		return 0;
 }
 
 void GetGlyphHeightDepth_AAT(ATSUStyle style, UInt16 gid, float* ht, float* dp)
@@ -396,10 +400,15 @@ void GetGlyphSidebearings_AAT(ATSUStyle style, UInt16 gid, float* lsb, float* rs
 {
 	ATSGlyphIdealMetrics	metrics;
 	OSStatus	status = ATSUGlyphGetIdealMetrics(style, 1, &gid, 0, &metrics);
-	GlyphBBox	bbox;
-	GetGlyphBBox_AAT(style, gid, &bbox);
-	*lsb = bbox.xMin;
-	*rsb = PStoTeXPoints(metrics.advance.x) - bbox.xMax;
+	if (status == noErr) {
+		GlyphBBox	bbox;
+		GetGlyphBBox_AAT(style, gid, &bbox);
+		*lsb = bbox.xMin;
+		*rsb = PStoTeXPoints(metrics.advance.x) - bbox.xMax;
+	}
+	else {
+		*lsb = *rsb = 0;
+	}
 }
 
 float GetGlyphItalCorr_AAT(ATSUStyle style, UInt16 gid)
@@ -407,10 +416,12 @@ float GetGlyphItalCorr_AAT(ATSUStyle style, UInt16 gid)
 	float	rval = 0.0;
 	ATSGlyphIdealMetrics	metrics;
 	OSStatus	status = ATSUGlyphGetIdealMetrics(style, 1, &gid, 0, &metrics);
-	GlyphBBox	bbox;
-	GetGlyphBBox_AAT(style, gid, &bbox);
-	if (bbox.xMax > PStoTeXPoints(metrics.advance.x))
-		rval = bbox.xMax - PStoTeXPoints(metrics.advance.x);
+	if (status == noErr) {
+		GlyphBBox	bbox;
+		GetGlyphBBox_AAT(style, gid, &bbox);
+		if (bbox.xMax > PStoTeXPoints(metrics.advance.x))
+			rval = bbox.xMax - PStoTeXPoints(metrics.advance.x);
+	}
 	return rval;
 }
 
@@ -432,15 +443,20 @@ int MapCharToGlyph_AAT(ATSUStyle style, UInt32 ch)
 		txt[0] = ch;
 
 	OSStatus	status = ATSUSetTextPointerLocation(sTextLayout, &txt[0], 0, len, len);
+	if (status != noErr)
+		return 0;
 	status = ATSUSetRunStyle(sTextLayout, style, 0, len);
+	if (status != noErr)
+		return 0;
 	
 	ByteCount	bufferSize = sizeof(ATSUGlyphInfoArray);
 	ATSUGlyphInfoArray	info;
 	status = ATSUGetGlyphInfo(sTextLayout, 0, len, &bufferSize, &info);
-	if (bufferSize > 0 && info.numGlyphs > 0)
-		return info.glyphs[0].glyphID;
-	else
-		return 0;
+	if (status == noErr) {
+		if (bufferSize > 0 && info.numGlyphs > 0)
+			return info.glyphs[0].glyphID;
+	}
+	return 0;
 }
 
 int MapGlyphToIndex_AAT(ATSUStyle style, const char* glyphName)

@@ -31,8 +31,6 @@ authorization from SIL International.
 #ifndef __XETEX_FONT_MANAGER_H
 #define __XETEX_FONT_MANAGER_H
 
-#include "XeTeX_ext.h"
-
 #ifdef XETEX_MAC
 #include <Carbon/Carbon.h>
 typedef ATSFontRef	PlatformFontRef;
@@ -42,6 +40,8 @@ typedef ATSFontRef	PlatformFontRef;
 #include FT_FREETYPE_H
 typedef FcPattern*	PlatformFontRef;
 #endif
+
+#include "XeTeX_ext.h"
 
 #include "XeTeXLayoutInterface.h"
 

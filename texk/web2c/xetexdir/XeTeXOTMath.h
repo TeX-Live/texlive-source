@@ -31,12 +31,17 @@ authorization from SIL International.
 #ifndef __XETEX_OT_MATH__
 #define __XETEX_OT_MATH__
 
+#ifdef XETEX_OT_MATH_IMPLEMENTATION
 #include "MathTable.h"
-
 #include "LEFontInstance.h"
+#else
+#define GlyphAssembly void /* used when we're just declaring the functions for xetex.ch */
+#endif
 
 /* public "C" APIs for calling from Web(-to-C) code */
+#ifdef __cplusplus
 extern "C" {
+#endif
 	int getnativemathsyparam(int f, int n);
 	int getnativemathexparam(int f, int n);
 	int getotmathconstant(int f, int n);
@@ -51,13 +56,15 @@ extern "C" {
 	int otpartendconnector(int f, const GlyphAssembly* a, int i);
 	int otpartfulladvance(int f, const GlyphAssembly* a, int i);
 	int otminconnectoroverlap(int f);
+#ifdef __cplusplus
 };
+#endif
 
-
+#ifdef XETEX_OT_MATH_IMPLEMENTATION
 /* internal functions */
 
 /* get a math font constant, scaled according to the font size */
 int getMathConstant(LEFontInstance*	fontInst, mathConstantIndex whichConstant);
-
+#endif
 
 #endif

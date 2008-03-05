@@ -210,6 +210,8 @@ extern const UInt32 byteMark;
 
 #include "trans.h"
 
+#include "XeTeXLayoutInterface.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -255,6 +257,7 @@ extern "C" {
 	integer mapglyphtoindex(integer font);
 	integer getfontcharrange(integer font, int first);
 	void printglyphname(integer font, integer gid);
+	UInt16 get_native_glyph_id(void* pNode, unsigned index);
 
 	void grprintfontname(integer what, void* pEngine, integer param1, integer param2);
 	integer grfontgetnamed(integer what, void* pEngine);
@@ -274,6 +277,22 @@ extern "C" {
 	int input_line(UFILE* f);
 	void makeutf16name();
 
+	int initpool();
+	void terminatefontmanager();
+	int maketexstring(const char* s);
+
+#ifndef XETEX_MAC
+typedef void* ATSUStyle; /* dummy declaration just so the stubs can compile */
+#endif
+
+	int atsufontget(int what, ATSUStyle style);
+	int atsufontget1(int what, ATSUStyle style, int param);
+	int atsufontget2(int what, ATSUStyle style, int param1, int param2);
+	int atsufontgetnamed(int what, ATSUStyle style);
+	int atsufontgetnamed1(int what, ATSUStyle style, int param);
+	void atsuprintfontname(int what, ATSUStyle style, int param1, int param2);
+	void atsugetfontmetrics(ATSUStyle style, Fixed* ascent, Fixed* descent, Fixed* xheight, Fixed* capheight, Fixed* slant);
+
 #ifdef XETEX_MAC
 /* functions in XeTeX_mac.c */
 	void* loadAATfont(ATSFontRef fontRef, integer scaled_size, const char* cp1);
@@ -287,11 +306,15 @@ extern "C" {
 	float GetGlyphItalCorr_AAT(ATSUStyle style, UInt16 gid);
 	char* GetGlyphName_AAT(ATSUStyle style, UInt16 gid, int* len);
 	int GetFontCharRange_AAT(ATSUStyle style, int reqFirst);
+	ATSUFontVariationAxis find_axis_by_name(ATSUFontID fontID, const char* name, int nameLength);
+	ATSUFontFeatureType find_feature_by_name(ATSUFontID fontID, const char* name, int nameLength);
+	ATSUFontFeatureSelector find_selector_by_name(ATSUFontID fontID, ATSUFontFeatureType featureType, const char* name, int nameLength);
 #endif
 #ifdef __cplusplus
 };
 #endif
 
+#include "XeTeXOTMath.h"
 
 /* some Mac OS X functions that we provide ourselves for other platforms */
 #ifndef XETEX_MAC

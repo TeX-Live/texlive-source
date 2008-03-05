@@ -128,45 +128,49 @@ xetexdir/etex.version: $(srcdir)/etexdir/etex.ch
 # The C sources.
 xetex_c = xetexini.c xetex0.c xetex1.c xetex2.c
 xetex_o = xetexini.o xetex0.o xetex1.o xetex2.o xetexextra.o
-xetex_add_o = trans.o XeTeX_ext.o xetex_pool.o $(xetex_platform_o)
+xetex_add_o = trans.o XeTeX_ext.o xetex_pool.o xetex_synctex.o $(xetex_platform_o)
 
 # these compilations require the path to TECkit headers;
 # just setting it in XCFLAGS doesn't seem to work when we're called
 # recursively from "make world" etc
 xetexini.o: xetexini.c $(srcdir)/xetexdir/XeTeX_ext.h
-	$(compile) $(TECKITFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
+	$(compile) $(TECKITFLAGS) $(FTFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
 xetex0.o: xetex0.c $(srcdir)/xetexdir/XeTeX_ext.h
-	$(compile) $(TECKITFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
+	$(compile) $(TECKITFLAGS) $(FTFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
 xetex1.o: xetex1.c $(srcdir)/xetexdir/XeTeX_ext.h
-	$(compile) $(TECKITFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
+	$(compile) $(TECKITFLAGS) $(FTFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
 xetex2.o: xetex2.c $(srcdir)/xetexdir/XeTeX_ext.h
-	$(compile) $(TECKITFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
+	$(compile) $(TECKITFLAGS) $(FTFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
 xetexextra.o: xetexextra.c $(srcdir)/xetexdir/XeTeX_ext.h
-	$(compile) $(TECKITFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
+	$(compile) $(TECKITFLAGS) $(FTFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
 xetex_pool.o: xetex_pool.c $(srcdir)/xetexdir/XeTeX_ext.h
-	$(compile) $(TECKITFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
+	$(compile) $(TECKITFLAGS) $(FTFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
 
 # image support
 mfileio.o: $(srcdir)/xetexdir/mfileio.c $(srcdir)/xetexdir/mfileio.h
-	$(compile) $(ALL_CFLAGS) -c $< -o $@
+	$(compile) $(ALL_CFLAGS) $(FTFLAGS) -c $< -o $@
 
 numbers.o: $(srcdir)/xetexdir/numbers.c $(srcdir)/xetexdir/numbers.h
-	$(compile) $(ALL_CFLAGS) -c $< -o $@
+	$(compile) $(ALL_CFLAGS) $(FTFLAGS) -c $< -o $@
 
 bmpimage.o: $(srcdir)/xetexdir/bmpimage.c $(srcdir)/xetexdir/bmpimage.h
-	$(compile) $(ALL_CFLAGS) -c $< -o $@
+	$(compile) $(ALL_CFLAGS) $(FTFLAGS) -c $< -o $@
 
 jpegimage.o: $(srcdir)/xetexdir/jpegimage.c $(srcdir)/xetexdir/jpegimage.h
-	$(compile) $(ALL_CFLAGS) -c $< -o $@
+	$(compile) $(ALL_CFLAGS) $(FTFLAGS) -c $< -o $@
 
 pngimage.o: $(srcdir)/xetexdir/pngimage.c $(srcdir)/xetexdir/pngimage.h
-	$(compile) $(ALL_CFLAGS) $(LIBPNGCPPFLAGS) $(ZLIBCPPFLAGS) -c $< -o $@
+	$(compile) $(ALL_CFLAGS) $(FTFLAGS) $(LIBPNGCPPFLAGS) $(ZLIBCPPFLAGS) -c $< -o $@
 
 pdfimage.o: $(srcdir)/xetexdir/pdfimage.cpp $(srcdir)/xetexdir/pdfimage.h
-	$(CXX) $(ALL_CFLAGS) $(LIBXPDFCPPFLAGS) -c $< -o $@
+	$(CXX) $(ALL_CFLAGS) $(FTFLAGS) $(LIBXPDFCPPFLAGS) -c $< -o $@
 
 XeTeX_pic.o: $(srcdir)/xetexdir/XeTeX_pic.c $(srcdir)/xetexdir/XeTeX_ext.h $(XeTeXImageHdrs)
-	$(compile) $(TECKITFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
+	$(compile) $(TECKITFLAGS) $(FTFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
+
+# sync
+xetex_synctex.o: $(srcdir)/synctex/synctex.c
+	$(compile) $(ALL_CFLAGS) $(TECKITFLAGS) $(FTFLAGS) $(XETEX_DEFINES) -c $< -o $@
 
 # Layout library
 xetex_ot_layout_o = \
@@ -188,7 +192,7 @@ XeTeXFontMgr_FC.o: $(srcdir)/xetexdir/XeTeXFontMgr_FC.cpp  $(XeTeXFontHdrs)
 	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(FONTCONFIGCPPFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
 
 XeTeXFontMgr_Mac.o: $(srcdir)/xetexdir/XeTeXFontMgr_Mac.mm  $(XeTeXFontHdrs)
-	gcc -ObjC++ $(ICUCFLAGS) $(FTFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
+	$(CXX) -ObjC++ $(ICUCFLAGS) $(FTFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
 
 cmaps.o: $(srcdir)/xetexdir/cmaps.cpp
 	$(CXX) $(ICUCFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
@@ -247,11 +251,13 @@ xetex.p xetex.pool: ./otangle xetex.web
 #   Sources for xetex.web:
 xetex_web_srcs = $(srcdir)/tex.web \
   $(srcdir)/etexdir/etex.ch \
+  $(srcdir)/synctex/synctex.ch \
   $(srcdir)/etexdir/tex.ch0 \
   $(srcdir)/tex.ch \
   $(srcdir)/etexdir/tex.ch1 \
   $(srcdir)/etexdir/tex.ech \
-  $(srcdir)/xetexdir/xetex.ch
+  $(srcdir)/xetexdir/xetex.ch \
+  $(srcdir)/xetexdir/sync-xetex.ch
 xetex.web: tie xetexdir/xetex.mk $(xetex_web_srcs)
 	$(TIE) -m xetex.web $(xetex_web_srcs)
 
@@ -286,7 +292,7 @@ xetex-clean: # etrip-clean
 	$(LIBTOOL) --mode=clean $(RM) xetex
 	rm -f $(xetex_o) $(xetex_c) xetexextra.c xetex_pool.c xetexcoerce.h xetexd.h
 	rm -f xetexdir/xetexextra.h xetexdir/xetex.version
-	rm -f xetex.p xetex.pool xetex.web xetex.ch
+	rm -f xetex.p xetex.pool xetex.web
 	rm -f xetex.fmt xetex.log
 	rm -f hello.dvi hello.log xfoo.out openout.log one.two.log uno.log
 	rm -f just.log batch.log write18.log mltextst.log texput.log

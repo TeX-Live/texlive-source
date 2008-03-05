@@ -35,6 +35,7 @@ authorization from SIL International.
 #include "ArabicLayoutEngine.h"
 #include "IndicLayoutEngine.h"
 #include "HanLayoutEngine.h"
+#include "TibetanLayoutEngine.h"
 
 #include "XeTeXFontInst.h"
 

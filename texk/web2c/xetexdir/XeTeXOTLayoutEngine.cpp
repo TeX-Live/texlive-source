@@ -94,6 +94,7 @@ LayoutEngine* XeTeXOTLayoutEngine::LayoutEngineFactory
         case guruScriptCode:
         case tamlScriptCode:
         case teluScriptCode:
+        case sinhScriptCode:
 //            result = new XeTeXIndicLayoutEngine(fontInstance, scriptTag, languageTag, gsubTable, addFeatures, removeFeatures);
             result = new IndicOpenTypeLayoutEngine(fontInstance, scriptCode, languageCode, typoFlags, gsubTable);
             break;
@@ -112,6 +113,10 @@ LayoutEngine* XeTeXOTLayoutEngine::LayoutEngineFactory
         case kanaScriptCode:
         case hrktScriptCode:
             result = new XeTeXHanLayoutEngine(fontInstance, scriptTag, languageTag, gsubTable, gposTable, addFeatures, addParams, removeFeatures);
+            break;
+
+        case tibtScriptCode:
+            result = new TibetanOpenTypeLayoutEngine(fontInstance, scriptCode, languageCode, typoFlags, gsubTable);
             break;
 
         case khmrScriptCode:
@@ -134,11 +139,12 @@ LayoutEngine* XeTeXOTLayoutEngine::LayoutEngineFactory
 		case guruScriptCode:
 		case tamlScriptCode:
 		case teluScriptCode:
+		case sinhScriptCode:
 			result = new IndicOpenTypeLayoutEngine(fontInstance, scriptCode, languageCode, typoFlags);
 			break;
 
 		case arabScriptCode:
-		case hebrScriptCode:
+//		case hebrScriptCode:
 			result = new UnicodeArabicOpenTypeLayoutEngine(fontInstance, scriptCode, languageCode, typoFlags);
 			break;
 

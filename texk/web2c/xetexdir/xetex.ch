@@ -509,8 +509,18 @@ else begin
 @z
 
 @x
+@!init function get_strings_started:boolean; {initializes the string pool,
+  but returns |false| if something goes wrong}
+label done,exit;
+var k,@!l:0..255; {small indices or counters}
+@!m,@!n:text_char; {characters input from |pool_file|}
+@!g:str_number; {garbage}
+@!a:integer; {accumulator for check sum}
+@!c:boolean; {check sum has been checked}
 begin pool_ptr:=0; str_ptr:=0; str_start[0]:=0;
 @y
+@!init function get_strings_started:boolean; {initializes the string pool,
+  but returns |false| if something goes wrong}
 begin pool_ptr:=0; str_ptr:=0;
 @z
 
@@ -3797,9 +3807,13 @@ if upwards then cur_v:=cur_v-rule_ht else cur_v:=cur_v+rule_ht;
 @z
 
 @x
-begin if tracing_output>0 then
+begin
+@<Record sheet {\sl synctex} information@>
+if tracing_output>0 then
 @y
-begin if job_name=0 then open_log_file;
+begin
+if job_name=0 then open_log_file;
+@<Record sheet {\sl synctex} information@>
 if tracing_output>0 then
 @z
 
@@ -7454,7 +7468,6 @@ var
 	corners: array[0..3] of real_point;
 	x_size_req,y_size_req: real;
 	check_keywords: boolean;
-	x_size, y_size: real;
 	xmin,xmax,ymin,ymax: real;
 	i: small_number;
 	page: integer;
@@ -8714,17 +8727,15 @@ begin
 end;
 
 procedure bad_utf8_warning;
-var
-	i: integer;
 begin
 	begin_diagnostic;
-	print_nl("Invalid UTF-8 byte sequence");
+	print_nl("Invalid UTF-8 byte or sequence");
 	if terminal_input then print(" in terminal input")
 	else begin
 		print(" at line ");
 		print_int(line);
 	end;
-	print("; reading remainder as raw bytes.");
+	print(" replaced by U+FFFD.");
 	end_diagnostic(false);
 end;
 
