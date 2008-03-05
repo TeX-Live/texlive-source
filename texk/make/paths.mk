@@ -36,6 +36,16 @@ manext = 1
 mandir = @mandir@
 man1dir = $(mandir)/man$(manext)
 
+# modifiable single-machine data.
+localstatedir = @localstatedir@
+
+# read-only single-machine data (configuration).
+sysconfdir = @sysconfdir@
+
+# executables that other programs run.
+libexecdir = @libexecdir@
+
+
 # TeX system-specific directories. Not all of the following are relevant
 # for all programs, but it seems cleaner to collect everything in one place.
 

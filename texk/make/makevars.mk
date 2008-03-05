@@ -5,6 +5,8 @@ makevars = prefix=$(prefix) exec_prefix=$(exec_prefix) \
   bindir=$(bindir) scriptdir=$(scriptdir) libdir=$(libdir) \
   datadir=$(datadir) infodir=$(infodir) includedir=$(includedir) \
   mandir=$(mandir) manext=$(manext) man1dir=$(man1dir) \
+  sysconfdir=$(sysconfdir) localstatedir=$(localstatedir) \
+  libexecdir=$(libexecdir) \
   texmf=$(texmf) web2cdir=$(web2cdir) vartexfonts=$(vartexfonts)\
   texinputdir=$(texinputdir) mfinputdir=$(mfinputdir) mpinputdir=$(mpinputdir)\
   fontdir=$(fontdir) fmtdir=$(fmtdir) basedir=$(basedir) memdir=$(memdir) \

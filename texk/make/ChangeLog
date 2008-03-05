@@ -1,3 +1,9 @@
+2008-03-05  Karl Berry  <karl@tug.org>
+
+	* makevars.mk: pass sysconfdir, localstatedir, libexecdir.
+	* paths.mk: define them.
+	From Patrice Dumas, 3 Mar 2008 00:41:09.
+
 2008-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* config.mk: update maintainer rules.
