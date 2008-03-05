@@ -20,9 +20,9 @@ Modifications:
     add AM_DISABLE_SHARED
 
 ==> freetype2 <==
-The freetype2 directory contains Freetype 2.2.1 sources from:
+The freetype2 directory contains Freetype 2.3.5 sources from:
 
-  http://download.savannah.gnu.org/releases/freetype/freetype-2.2.1.tar.bz2
+  http://download.savannah.gnu.org/releases/freetype/freetype-2.3.5.tar.bz2
 
 The following files have been added:
 
@@ -37,7 +37,7 @@ Modifications:
 
 
 ==> icu-xetex <==
-The icu-xetex directory contains a *MODIFIED* copy of ICU release 3.4,
+The icu-xetex directory contains a *MODIFIED* copy of ICU release 3.8.1,
 used in building xetex.
 
 The following files have been added:
