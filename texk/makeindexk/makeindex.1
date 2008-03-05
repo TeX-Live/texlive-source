@@ -284,8 +284,8 @@ that its argument is an index entry.
 Delimiter denoting a new level of subitem.
 .RE
 .TP
-.BR page_compositor " <char>"
-\'-\'
+.BR page_compositor " <string>"
+"-"
 .RS
 Delimiter separating parts of a composite page number (see
 \s-2SPECIAL EFFECTS\s+2 below).
@@ -1034,17 +1034,13 @@ becomes
 which represents an umlaut-accented `u' to the \*(TX family of
 processors.
 .LP
-Page numbers can consist of several parts under a hierarchical page
-numbering scheme.  For example, in a document with several appendices,
-pages in each appendix can be prefixed with a letter for the appendix,
-and the numbering in each appendix can start from one.  That is, pages
-in Appendix A will be numbered `A-1', `A-2', etc.; pages in Appendix B
-will be numbered `B-1', `B-2', etc.  Parts of a composite page number
-must be separated with
+A page number can be a composite of one or more fields
+separated by the delimiter bound to
 .B page_compositor
-(`-').  Page numbers may contain up to ten parts.
+(`-'), e.g., II-12 for page 12 of Chapter II.  Page numbers may
+contain up to ten fields.
 .PP
-From version 2.11 of
+Since version 2.11 of
 .IR makeindex ,
 the
 .B quote
