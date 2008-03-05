@@ -439,6 +439,7 @@ const_string XETEXHELP[] = {
     "-src-specials=WHERE     insert source specials in certain places of",
     "                          the XDV file. WHERE is a comma-separated value",
     "                          list: cr display hbox math par parend vbox",
+    "-synctex=NUMBER         generate SyncTeX data for previewers if nonzero",
     "-translate-file=TCXNAME (ignored)",
     "-8bit                   make all characters printable, don't use ^^X sequences",
     "-help                   display this help and exit",

@@ -191,6 +191,11 @@ maininit P2C(int, ac, string *, av)
   kpse_record_input = recorder_record_input;
   kpse_record_output = recorder_record_output;
 
+#if /*defined (pdfTeX) ||*/ defined(XeTeX) || defined(__syncTeX__)
+  /* 0 means don't use Synchronize TeXnology.  */
+  synctexoption = 0;
+#endif
+
 #if defined(pdfTeX)
   ptexbanner = BANNER;
 #endif
@@ -895,6 +900,10 @@ static struct option long_options[]
       { "no-shell-escape",           0, &shellenabledp, -1 },
       { "debug-format",              0, &debugformatfile, 1 },
       { "src-specials",              2, 0, 0 },
+#if /*defined(pdfTeX) ||*/ defined(XeTeX) || defined(__syncTeX__)
+      /* Synchronization: just like "interaction" above */
+      { "synctex",                   1, 0, 0 },
+#endif
 #endif /* TeX */
 #if defined (TeX) || defined (MF) || defined (MP)
       { "file-line-error-style",     0, &filelineerrorstylep, 1 },
@@ -1073,6 +1082,11 @@ parse_options P2C(int, argc,  string *, argv)
     } else if (ARGUMENT_IS ("help")) {
         usagehelp (PROGRAM_HELP, BUG_ADDRESS);
 
+#if /*defined (pdfTeX) ||*/ defined(XeTeX) || defined(__syncTeX__)
+    } else if (ARGUMENT_IS ("synctex")) {
+		/* Synchronize TeXnology: catching the command line option as an unsigned long  */
+		synctexoption = (int) strtoul(optarg, NULL, 0);
+ #endif
     } else if (ARGUMENT_IS ("version")) {
         char *versions;
 #if defined (pdfTeX) || defined(XeTeX)
