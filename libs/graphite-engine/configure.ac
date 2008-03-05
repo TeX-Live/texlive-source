@@ -34,9 +34,9 @@ AC_ARG_ENABLE(profilefn,
         [allow functioncheck profiling (default=no)]))
 
 # Checks for programs.
-AC_LANG_CPLUSPLUS
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
+AC_LANG_CPLUSPLUS
 
 AC_PATH_PROG(LSB_RELEASE, lsb_release, no)
 
