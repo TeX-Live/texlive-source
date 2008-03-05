@@ -10,9 +10,7 @@ AC_DEFINE(PACKAGE, "xdv2pdf", [package name])
 
 AC_CONFIG_HEADERS([c-auto.h:c-auto.in], [date >stamp-auto])
 
-dnl Disable maintainer portions of included makefile fragments
-MAINT='#'
-AC_SUBST(MAINT)  
+AM_MAINTAINER_MODE
 
 dnl First, check if we're configuring on Mac OS X -- can't build elsewhere
 
