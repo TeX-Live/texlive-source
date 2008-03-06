@@ -21,10 +21,10 @@
 #include <kpathsea/config.h>
 
 
-off_t
+unsigned long
 xftell P2C(FILE *, f,  string, filename)
 {
-    off_t where = ftello (f);
+    long where = ftello (f);
     
     if (where < 0)
         FATAL_PERROR(filename);

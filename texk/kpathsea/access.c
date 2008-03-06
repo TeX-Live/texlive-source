@@ -16,7 +16,6 @@
    You should have received a copy of the GNU General Public License
    along with this software; if not, see <http://www.gnu.org/licenses/>.  */
 
-#include <stdio.h>
 #include <kpathsea/config.h>
 #include <kpathsea/c-unistd.h>
 #include <kpathsea/c-memstr.h>

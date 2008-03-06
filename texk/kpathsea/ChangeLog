@@ -1,4 +1,19 @@
-2008-03-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2008-03-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* access.c, readlink.c: removed `#include <stdio.h>' preceeding
+	`#include <kpathsea/config.h>' (which in turn includes stdio.h).
+
+	* xfseek.c, xftell.c: reverted to state before 2008-02-21.
+	* xfseeko.c, xftello.c (both new): new functions using off_t
+	instead of long, and fseeko instead of fseek.
+	* lib.h: prototypes for xfseek, xfseeko, xftell, and xftello.
+	* Makefile.in (objects): added xfseeko.lo and xftello.lo.
+
+	* configure.in: construct package and (shared) library version
+	from m4_define'd parts, subtitute KPSE_LT_VERS ...
+	* Makefile.in ($(kpathsea)): ... here.
+
+2008-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* common.ac: add AC_SYS_LARGEFILE and AC_FUNC_FSEEKO.
 

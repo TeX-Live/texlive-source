@@ -1,4 +1,4 @@
-/* xfseek.c: fseek with error checking.
+/* xfseeko.c: fseeko with error checking.
 
     Copyright 2005     Olaf Weber
     Copyright 1992, 95 Karl Berry
@@ -23,8 +23,8 @@
 
 
 void
-xfseek P4C(FILE *, f,  long, offset,  int, wherefrom,  string, filename)
+xfseeko P4C(FILE *, f,  off_t, offset,  int, wherefrom,  string, filename)
 {
-    if (fseek(f, offset, wherefrom) < 0)
+    if (fseeko(f, offset, wherefrom) < 0)
         FATAL_PERROR(filename);
 }

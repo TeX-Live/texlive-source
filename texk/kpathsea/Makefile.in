@@ -28,7 +28,7 @@ kdefault.lo line.lo magstep.lo make-suffix.lo path-elt.lo \
 pathsearch.lo proginit.lo progname.lo readable.lo rm-suffix.lo \
 str-list.lo str-llist.lo tex-glyph.lo tex-hush.lo tex-make.lo \
 tilde.lo truncate.lo uppercasify.lo variable.lo version.lo xbasename.lo \
-xcalloc.lo xdirname.lo xfopen.lo xfseek.lo xftell.lo xgetcwd.lo xmalloc.lo \
+xcalloc.lo xdirname.lo xfopen.lo xfseek.lo xfseeko.lo xftell.lo xftello.lo xgetcwd.lo xmalloc.lo \
 xopendir.lo xputenv.lo xrealloc.lo xstat.lo xstrdup.lo $(liblobjs) $(malloc)
 liblobjs = @LTLIBOBJS@
 
@@ -55,7 +55,7 @@ kpsereadlink: readlink.o
 	$(link_command) readlink.o
 
 $(kpathsea): $(objects)
-	$(kpathsea_link) -rpath $(libdir) -version-info 4:0:0 $(objects)
+	$(kpathsea_link) -rpath $(libdir) -version-info @KPSE_LT_VERS@ $(objects)
 
 # Make variable substitutions for paths.h.
 texmf.cnf: texmf.in texmf.sed

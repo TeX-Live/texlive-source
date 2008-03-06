@@ -1,7 +1,7 @@
-/* xfseek.c: fseek with error checking.
+/* xftello.c: ftello with error checking.
 
-    Copyright 2005     Olaf Weber
-    Copyright 1992, 95 Karl Berry
+    Copyright 2005         Olaf Weber
+    Copyright 1992, 93, 95 Karl Berry
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -16,15 +16,18 @@
     You should have received a copy of the GNU Lesser General Public
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
 */
 
 #include <kpathsea/config.h>
 
 
-void
-xfseek P4C(FILE *, f,  long, offset,  int, wherefrom,  string, filename)
+off_t
+xftello P2C(FILE *, f,  string, filename)
 {
-    if (fseek(f, offset, wherefrom) < 0)
+    off_t where = ftello (f);
+    
+    if (where < 0)
         FATAL_PERROR(filename);
+    
+    return where;
 }
