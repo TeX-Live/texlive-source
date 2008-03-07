@@ -14,7 +14,12 @@ SCRIPTS = \
   texconfig texconfig-dialog texconfig-sys texdoc texdoctk  \
   texlinks thumbpdf updmap updmap-sys
 
-LINKEDPERLSCRIPTS = a2ping e2pall epstopdf pdfcrop pkfix ps2eps
+# .pl and in texmf
+LINKEDPLSCRIPTS = a2ping e2pall epstopdf pdfcrop pkfix ps2eps
+#
+# no extension and in texmf-dist.
+# (need to create a config file or something, ick.)
+LINKEDNOEXTSCRIPTS = glossaries/makeglossaries
 
 CONTEXTSCRIPTS = \
   ctxtools exatools luatools makempy mpstools mptopdf mtxtools \
@@ -109,11 +114,17 @@ install-exec: install-linkedscripts
 # wrapper for Windows is also done by hand, and also could/should be
 # done by ctan2tl.
 # 
+# $(scriptdir) here is the binary directory, e.g., bin/i386-linux.
+# 
 install-linkedscripts:
 	-$(SHELL) $(srcdir)/../mkinstalldirs $(scriptdir)
-	for s in $(LINKEDPERLSCRIPTS); do \
+	for s in $(LINKEDPLSCRIPTS); do \
 	  rm -f $(scriptdir)/$$s; \
 	  ln -s ../../texmf/scripts/$$s/$$s.pl $(scriptdir)/$$s; \
+	done
+	for s in $(LINKEDNOEXTSCRIPTS); do \
+	  target=$(scriptdir)/`basename $$s`; rm -f $$target; \
+	  ln -s ../../texmf-dist/scripts/$$s $$target`; \
 	done
 
 kpse_include ../make/clean.mk
