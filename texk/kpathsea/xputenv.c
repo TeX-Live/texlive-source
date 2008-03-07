@@ -33,8 +33,8 @@ extern int putenv ();
  * This function can be called many times during a run, and this
  * allows us to reclaim memory we allocated.
  */
-static const char **saved_env;
-static int          saved_count;
+static char **saved_env;
+static int    saved_count;
 
 /*
  * We have different arguments from the "standard" function.  A separate
@@ -95,7 +95,7 @@ xputenv(const char *var, const char *value)
     if (cur_loc == saved_count) {
         /* No old string. */
         saved_count++;
-        saved_env = XRETALLOC(saved_env, saved_count, const char *);
+        saved_env = XRETALLOC(saved_env, saved_count, char *);
     } else {
         /* We owned the old string. */
         free(saved_env[cur_loc]);

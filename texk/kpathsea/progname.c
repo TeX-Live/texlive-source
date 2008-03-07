@@ -371,7 +371,7 @@ selfdir P1C(const_string, argv0)
     }
     CloseLibrary((struct Library *) DOSBase);
 #else /* not AMIGA */
-    string elt;
+    const_string elt;
     struct stat s;
 
     /* Have to check PATH.  But don't call kpse_path_search since we don't

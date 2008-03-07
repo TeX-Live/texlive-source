@@ -1,3 +1,12 @@
+2008-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpsewhich.c (main): change type of value from string to
+	const_string, to avoid warning.
+	* progname.c (selfdir): change type of elt from string to
+	const_string, to avoid warning.
+	* xputenv.c: change type of saved_env from const_string to
+	string, to avoid warning.
+
 2008-03-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* access.c, readlink.c: removed `#include <stdio.h>' preceeding

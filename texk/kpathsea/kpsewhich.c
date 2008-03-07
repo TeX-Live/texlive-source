@@ -510,7 +510,7 @@ main P2C(int, argc,  string *, argv)
 
   /* Var to value. */
   if (var_to_value) {
-    string value = kpse_var_value (var_to_value);
+    const_string value = kpse_var_value (var_to_value);
     if (!value) {
       unfound++;
       value="";
