@@ -22,6 +22,7 @@ diagnostic log of the segment creation in grSegmentLog.txt
 #include <iomanip>
 #include <string>
 #include <sstream>
+#include <cstring>
 
 #include <graphite/GrClient.h>
 #include <graphite/ITextSource.h>

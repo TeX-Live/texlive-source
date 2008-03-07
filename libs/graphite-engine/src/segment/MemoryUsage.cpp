@@ -27,6 +27,7 @@ Description:
 #include "GrDebug.h"
 //#include <fstream>
 #include <iostream>
+#include <cstring>
 //#include <string>
 // Forward declarations.
 

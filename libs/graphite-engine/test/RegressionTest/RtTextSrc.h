@@ -15,6 +15,7 @@ Description:
 #ifndef RTTXTSRC_INCLUDED
 #define RTTXTSRC_INCLUDED
 
+#include <cstring>
 
 /*----------------------------------------------------------------------------------------------
 	Class: RtTextSrc

@@ -2603,7 +2603,7 @@ bool SegmentPainter::ArrowKeyPositionInternal(
 			{
 				//	Switching fAPNew would cause us to move in the opposite direction, so
 				//	that's not a good solution. Keep going.
-				if (iginfStart == 0 && !fForward || iginfStart == m_pseg->m_cginf && fForward)
+				if ((iginfStart == 0 && !fForward) || (iginfStart == m_pseg->m_cginf && fForward))
 				{
 					//	Can't go any further, so go with this even though AP is wrong.
 				}

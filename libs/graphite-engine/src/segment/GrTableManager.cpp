@@ -1459,7 +1459,7 @@ void GrTableManager::AdjustAssocsForOverlaps(Segment * pseg)
 			}
 		}
 
-		if (m_engst.m_fFinalLB || m_engst.m_fInsertedLB && ipass > m_cpassLB)
+		if ((m_engst.m_fFinalLB || m_engst.m_fInsertedLB) && ipass > m_cpassLB)
 		{
 			for (int islot = psstrm->WritePos(); islot-- > islotMin ; )
 			{

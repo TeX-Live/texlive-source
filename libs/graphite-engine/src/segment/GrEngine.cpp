@@ -16,6 +16,7 @@ Description: Contains the implementation of the GrEngine class.
 //:>********************************************************************************************
 #include "Main.h"
 #include <functional>
+#include <cstring>
 #ifdef _MSC_VER
 #pragma hdrstop
 #endif

@@ -733,8 +733,8 @@ void GrTableManager::LogAttributes(std::ostream & strmOut, int ipass,
 	//	Figure out which slot attributes were modified for some slot during the pass.
 	bool * prgfMods = new bool[kslatMax + NumUserDefn() - 1];
 
-	bool fPreJust = (!fJustWidths && ipass == m_ipassJust1 - 1 && ShouldLogJustification());
-	bool fPostJust = (fJustWidths || ipass == m_ipassJust1 && ShouldLogJustification());
+	bool fPreJust  = (!fJustWidths && ipass == m_ipassJust1 - 1 && ShouldLogJustification());
+	bool fPostJust = ((fJustWidths || ipass == m_ipassJust1)    && ShouldLogJustification());
 
 	int ccomp;	// max number of components per slot
 	int cassoc;	// max number of associations per slot

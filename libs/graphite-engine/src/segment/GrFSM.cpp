@@ -16,6 +16,9 @@ Description:
 //:>	   Include files
 //:>********************************************************************************************
 #include "Main.h"
+
+#include <cstring>
+
 #ifdef _MSC_VER
 #pragma hdrstop
 #endif
