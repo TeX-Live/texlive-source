@@ -872,8 +872,8 @@ isocode LanguageIterator::operator*()
 	{
 		Assert(false);
 		isocode codeRet;
-		codeRet.rgch[1] = '?'; codeRet.rgch[2] = '?';
-		codeRet.rgch[3] = '?'; codeRet.rgch[4] = 0;
+		codeRet.rgch[0] = '?'; codeRet.rgch[1] = '?';
+		codeRet.rgch[2] = '?'; codeRet.rgch[3] = 0;
 		return codeRet;
 	}
 
