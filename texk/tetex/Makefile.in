@@ -16,11 +16,10 @@ SCRIPTS = \
 
 # .pl and in texmf; the scripts do not exist here at all, the instances
 # in texmf are the masters (except sometimes it is CTAN).
-LINKEDPLSCRIPTS = a2ping e2pall epstopdf pdfcrop pkfix ps2eps texdoctk \
-  thumbpdf
-#
+LINKEDPLSCRIPTS = a2ping e2pall epstopdf pdfcrop pkfix ps2eps texdoctk
 LINKEDSCRIPTS = \
   texmf-dist/scripts/glossaries/makeglossaries \
+  texmf-dist/scripts/thumbpdf/thumbpdf.pl \
   texmf-dist/scripts/vpe/vpe.pl
 
 CONTEXTSCRIPTS = \
