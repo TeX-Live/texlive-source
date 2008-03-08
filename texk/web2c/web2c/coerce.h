@@ -56,3 +56,8 @@ extern void remembersourceinfo P2H(strnumber, int);
 #ifdef XeTeX
 #include <xetexdir/xetex.h>
 #endif /* XeTeX */
+
+#ifdef MP
+#define MPOSTCOERCE
+#include <mpdir/mplib.h>
+#endif /* MP */

@@ -1,3 +1,8 @@
+2008-03-09  Karl Berry  <karl@tug.org>
+
+	* coerce.h [MP]: #include <mpdir/mplib.h> to get declarations,
+	with MPOSTCOERCE defined to avoid re-including mpd.h.
+
 2008-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.in: Add @configure_input@ line.

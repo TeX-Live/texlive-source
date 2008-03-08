@@ -1908,6 +1908,8 @@ checkpoolpointer (poolpointer poolptr, size_t len)
   }
 }
 
+#ifndef MP  /* MP has its own in mpdir/utils.c */
+
 #ifndef XeTeX	/* XeTeX uses this from XeTeX_mac.c */
 static
 #endif
@@ -1942,14 +1944,15 @@ maketexstring(const_string s)
   else
     strpool[poolptr++] = rval;
   }
-#else
+#else /* ! XeTeX */
   while (len-- > 0)
     strpool[poolptr++] = *s++;
-#endif
+#endif /* ! XeTeX */
 
   return (makestring());
 }
-#endif
+#endif /* !MP */
+#endif /* !pdfTeX */
 
 strnumber
 makefullnamestring()
