@@ -1,15 +1,16 @@
 #!/bin/sh
 # $Id$
 # Originally written many years ago by Sebastian Rahtz.  Public domain.
-# To build (mostly) without optimization, try
-# CFLAGS=-g CXXFLAGS=-g Build
+# To build again from same sources, try Build --no-clean.
+# To build (mostly) without optimization, try Build --debug.
 # 
-# Any options given are passed along to configure, and everything can be
+# Any other options given are passed along to configure, and everything can be
 # overridden with environment variables.
 
 # clean up environment
 unset TEXMFCNF
 export TEXMFCNF
+LANG=C
 
 # cd to our source directory.
 mydir=`dirname $0`
@@ -17,19 +18,24 @@ cd $mydir || exit 1
 
 : ${TL_WORKDIR=Work}
 
-LANG=C
-if test "x$1" != "x--no-clean"; then
-  test -f Makefile && make clean 
-  rm -rf $TL_WORKDIR inst
-else
-  shift
-fi
-
-# allow override of install destination, just in case.
+# allow override of install destination.
 if test -z "$TL_INSTALL_DEST"; then
   H=`pwd`
   test -d inst || mkdir -p inst/texmf  # avoid configure warnings
   TL_INSTALL_DEST=$H/inst
+fi
+
+if test "x$1" = x--no-clean; then
+  shift
+else
+  test -f Makefile && make clean 
+  rm -rf $TL_WORKDIR $TL_INSTALL_DEST
+fi
+
+: ${TL_BUILD_ENV=}
+if test "x$1" = x--debug; then
+  TL_BUILD_ENV="CFLAGS=-g CXXFLAGS=-g"
+  shift
 fi
 
 unset CDPATH
@@ -39,32 +45,31 @@ cd $TL_WORKDIR || exit 1
 # allow override of configure location, just in case.
 : ${TL_CONFIGURE=../configure}
 
-# allow override of xdvi toolkit.
+# allow override of xdvi toolkit, default to standard xaw.
 : ${TL_XDVI_TOOLKIT=--with-xdvi-x-toolkit=xaw}
 
 # allow adding other configure args.
 : ${TL_CONFIGURE_ARGS=}
 
-# allow override of make program.
-: ${TL_MAKE=make}
-
 # allow override of make target.
 : ${TL_TARGET=world}
 
-# and then set GNUMAKE to that, for the sake of freetype2/configure.
+# allow override of make program.
+: ${TL_MAKE=make}
+
+# and then also set GNUMAKE to that, for the sake of freetype2/configure.
 : ${GNUMAKE=${TL_MAKE}}
 export GNUMAKE
 
-# Force building xdvi-xaw; motif is not always free and/or available.
-# --enable-gif is for sam2p; the gif patent has expired worldwide.
+# configure && make.
 (set -x; \
-  time $TL_CONFIGURE \
+   eval $TL_BUILD_ENV time $TL_CONFIGURE \
          --prefix=$TL_INSTALL_DEST \
          --datadir=$TL_INSTALL_DEST \
          $TL_XDVI_TOOLKIT \
          $TL_CONFIGURE_ARGS \
-         "$@" 2>&1|tee configure.log\
- && time $TL_MAKE $TL_TARGET 2>&1|tee make.log)
+         "$@" 2>&1 | tee configure.log\
+ && eval $TL_BUILD_ENV time $TL_MAKE $TL_TARGET 2>&1 | tee make.log)
 
-# we are interested in the number of binaries build
-ls ../inst/bin/*/*|wc
+# report the number of binaries built.
+ls $TL_INSTALL_DEST/bin/*/* | wc -l
