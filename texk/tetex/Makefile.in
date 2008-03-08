@@ -11,11 +11,12 @@ man5dir = $(mandir)/man5
 SCRIPTS = \
   allcm allneeded dvi2fax dvired fmtutil fmtutil-sys fontinst \
   kpsetool kpsewhere ps2frag ps4pdf pslatex rubibtex rumakeindex \
-  texconfig texconfig-dialog texconfig-sys texdoc texdoctk  \
+  texconfig texconfig-dialog texconfig-sys texdoc \
   texlinks thumbpdf updmap updmap-sys
 
-# .pl and in texmf
-LINKEDPLSCRIPTS = a2ping e2pall epstopdf pdfcrop pkfix ps2eps
+# .pl and in texmf; the scripts do not exist here at all, the instances
+# in texmf are the masters.
+LINKEDPLSCRIPTS = a2ping e2pall epstopdf pdfcrop pkfix ps2eps texdoctk
 #
 # no extension and in texmf-dist.
 # (need to create a config file or something, ick.)
