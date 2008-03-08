@@ -12,11 +12,12 @@ SCRIPTS = \
   allcm allneeded dvi2fax dvired fmtutil fmtutil-sys fontinst \
   kpsetool kpsewhere ps2frag ps4pdf pslatex rubibtex rumakeindex \
   texconfig texconfig-dialog texconfig-sys texdoc \
-  texlinks thumbpdf updmap updmap-sys
+  texlinks updmap updmap-sys
 
 # .pl and in texmf; the scripts do not exist here at all, the instances
-# in texmf are the masters.
-LINKEDPLSCRIPTS = a2ping e2pall epstopdf pdfcrop pkfix ps2eps texdoctk
+# in texmf are the masters (except sometimes it is CTAN).
+LINKEDPLSCRIPTS = a2ping e2pall epstopdf pdfcrop pkfix ps2eps texdoctk \
+  thumbpdf
 #
 # no extension and in texmf-dist.
 # (need to create a config file or something, ick.)
