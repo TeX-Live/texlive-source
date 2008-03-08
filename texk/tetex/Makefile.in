@@ -19,9 +19,9 @@ SCRIPTS = \
 LINKEDPLSCRIPTS = a2ping e2pall epstopdf pdfcrop pkfix ps2eps texdoctk \
   thumbpdf
 #
-# no extension and in texmf-dist.
-# (need to create a config file or something, ick.)
-LINKEDNOEXTSCRIPTS = glossaries/makeglossaries
+LINKEDSCRIPTS = \
+  texmf-dist/scripts/glossaries/makeglossaries \
+  texmf-dist/scripts/vpe/vpe.pl
 
 CONTEXTSCRIPTS = \
   ctxtools exatools luatools makempy mpstools mptopdf mtxtools \
@@ -120,13 +120,11 @@ install-exec: install-linkedscripts
 # 
 install-linkedscripts:
 	-$(SHELL) $(srcdir)/../mkinstalldirs $(scriptdir)
-	for s in $(LINKEDPLSCRIPTS); do \
-	  rm -f $(scriptdir)/$$s; \
-	  ln -s ../../texmf/scripts/$$s/$$s.pl $(scriptdir)/$$s; \
-	done
-	for s in $(LINKEDNOEXTSCRIPTS); do \
-	  target=$(scriptdir)/`basename $$s`; rm -f $$target; \
-	  ln -s ../../texmf-dist/scripts/$$s $$target`; \
+	# link to the basename, removing any extension, of the source.
+	for s in $(LINKEDSCRIPTS); do \
+	  target=$(scriptdir)/`basename $$s | sed 's,\.[^/]*$$,,'`; \
+	  rm -f $$target; \
+	  ln -s ../../$$s $$target; \
 	done
 
 kpse_include ../make/clean.mk
