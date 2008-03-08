@@ -14,10 +14,16 @@ SCRIPTS = \
   texconfig texconfig-dialog texconfig-sys texdoc \
   texlinks updmap updmap-sys
 
-# .pl and in texmf; the scripts do not exist here at all, the instances
-# in texmf are the masters (except sometimes it is CTAN).
-LINKEDPLSCRIPTS = a2ping e2pall epstopdf pdfcrop pkfix ps2eps texdoctk
+# These scripts do not exist here in /source/ at all, the instances
+# in texmf are the masters (except when it is CTAN).
 LINKEDSCRIPTS = \
+  texmf/scripts/a2ping/a2ping.pl \
+  texmf/scripts/epstopdf/epstopdf.pl \
+  texmf/scripts/pdfcrop/pdfcrop.pl \
+  texmf/scripts/pkfix/pkfix.pl \
+  texmf/scripts/ps2eps/ps2eps.pl \
+  texmf/scripts/tetex/e2pall.pl \
+  texmf/scripts/tetex/texdoctk.pl \
   texmf-dist/scripts/glossaries/makeglossaries \
   texmf-dist/scripts/thumbpdf/thumbpdf.pl \
   texmf-dist/scripts/vpe/vpe.pl
