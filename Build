@@ -72,4 +72,12 @@ export GNUMAKE
  && eval $TL_BUILD_ENV time $TL_MAKE $TL_TARGET 2>&1 | tee make.log)
 
 # report the number of binaries built.
-ls $TL_INSTALL_DEST/bin/*/* | wc -l
+bindir=$TL_INSTALL_DEST/bin
+count=`ls $bindir/*/* | wc -l`
+if test "$count" -gt 0; then
+  echo "$0: $count binaries under $bindir."
+else
+  echo "$0: Build failed, no binaries under $bindir."
+  exit 1
+fi
+
