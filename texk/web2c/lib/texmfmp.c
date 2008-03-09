@@ -1589,7 +1589,7 @@ getrandomseed()
 boolean
 input_line P1C(FILE *, f)
 {
-  int i;
+  int i = EOF;
 
   /* Recognize either LF or CR as a line terminator.  */
   last = first;

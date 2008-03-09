@@ -2,6 +2,7 @@
 
 	* texmfmp.c (maketexstring) [!MP]: only define this fn if !MP,
 	since MetaPost has its own in mpdir/utils.c.
+	(input_line): initialize i = EOF.  From Taco.
 
 2008-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
