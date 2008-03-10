@@ -15,7 +15,6 @@ ps2eps
 psutils
 t1utils
 texcount 
-texi2html
 texinfo
 tpic2pdftex
 ])
