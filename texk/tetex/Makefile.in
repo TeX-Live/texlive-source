@@ -26,6 +26,7 @@ LINKEDSCRIPTS = \
   texmf/scripts/tetex/texdoctk.pl \
   texmf-dist/scripts/glossaries/makeglossaries \
   texmf-dist/scripts/perltex/perltex.pl \
+  texmf-dist/scripts/texcount/TeXcount.pl \
   texmf-dist/scripts/thumbpdf/thumbpdf.pl \
   texmf-dist/scripts/vpe/vpe.pl
 
@@ -111,24 +112,26 @@ install-exec: install-linkedscripts
 	  ln -s mktexlsr texhash
 	cd $(scriptdir) && rm -f mktexfmt; ln -s fmtutil mktexfmt
 
-# The idea here is to install the scripts themselves in texmf/scripts,
-# and have bin/arch/foo be a symlink to ../../texmf/scripts/foo/foo.pl
-# (for Perl).  That way we save a bit of disk space, but more
-# importantly omit duplication, and most importantly, make it possible
-# to invoke the same Perl script on Windows (via a texlua wrapper).
+# The idea here is to install the scripts themselves in texmf*/scripts,
+# and have bin/arch/foo be a symlink to, say,
+# ../../texmf/scripts/foo/foo.pl (for Perl).  That way we save a bit of
+# disk space, but more importantly omit duplication, and most
+# importantly, make it possible to invoke the same Perl script on
+# Windows (via a texlua wrapper).
 # 
-# The installation into texmf/scripts is done (at present) by hand;
-# eventually it could and should be done by ctan2tl.  The texlua
-# wrapper for Windows is also done by hand, and also could/should be
-# done by ctan2tl.
+# The installation into texmf*/scripts is either done by hand; or via
+# ctan2tl.  The texlua wrapper for Windows is also done by hand, but
+# could/should also be done by ctan2tl.
 # 
-# $(scriptdir) here is the binary directory, e.g., bin/i386-linux.
+# By the way, $(scriptdir) here is the binary directory, e.g.,
+# bin/i386-linux, not the texmf*/scripts dir.
 # 
 install-linkedscripts:
 	-$(SHELL) $(srcdir)/../mkinstalldirs $(scriptdir)
 	# link to the basename, removing any extension, of the source.
+	# we downcase for the sake of TeXcount.pl -> texcount.
 	for s in $(LINKEDSCRIPTS); do \
-	  target=$(scriptdir)/`basename $$s | sed 's,\.[^/]*$$,,'`; \
+	  target=$(scriptdir)/`basename $$s | sed 's,\.[^/]*$$,,' | tr A-Z a-z`; \
 	  rm -f $$target; \
 	  ln -s ../../$$s $$target; \
 	done

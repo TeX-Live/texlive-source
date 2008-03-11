@@ -763,7 +763,6 @@ utils/pdfopen
 utils/ps2eps
 utils/psutils
 utils/t1utils
-utils/texcount
 utils/texinfo
 utils/tpic2pdftex
 texk'
@@ -1370,7 +1369,6 @@ Optional Packages:
   --without-ps2eps        do not build the ps2eps package
   --without-psutils       do not build the psutils package
   --without-t1utils       do not build the t1utils package
-  --without-texcount      do not build the texcount package
   --without-texinfo       do not build the texinfo package
   --without-tpic2pdftex   do not build the tpic2pdftex package
   --without-afm2pl        do not build the afm2pl package
@@ -5315,7 +5313,8 @@ esac
 export with_cxx_runtime_hack
 
 
-# withenable.ac - Written long ago by Thomas Esser and Sebastian Rahtz.
+e # withenable.ac - Written long ago by Thomas Esser and Sebastian Rahtz.
+
 # Public domain.
 
 # Check whether --enable-multiplatform was given.
@@ -5356,11 +5355,6 @@ fi
 # Check whether --with-t1utils was given.
 if test "${with_t1utils+set}" = set; then
   withval=$with_t1utils;
-fi
-
-# Check whether --with-texcount was given.
-if test "${with_texcount+set}" = set; then
-  withval=$with_texcount;
 fi
 
 # Check whether --with-texinfo was given.
@@ -9346,12 +9340,6 @@ if test -d $srcdir/utils/t1utils; then
   if test "x$with_t1utils" != xno; then
     ESUBDIRS="$ESUBDIRS utils/t1utils"
     subdirs="$subdirs utils/t1utils"
-  fi
-fi
-if test -d $srcdir/utils/texcount; then
-  if test "x$with_texcount" != xno; then
-    ESUBDIRS="$ESUBDIRS utils/texcount"
-    subdirs="$subdirs utils/texcount"
   fi
 fi
 if test -d $srcdir/utils/texinfo; then
