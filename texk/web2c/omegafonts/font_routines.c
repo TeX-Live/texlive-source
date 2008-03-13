@@ -3,7 +3,7 @@
 This file is part of Omega,
 which is based on the web2c distribution of TeX,
 
-Copyright (c) 1994--2001 John Plaice and Yannis Haralambous
+Copyright (C) 1994--2001 John Plaice and Yannis Haralambous
 Copyright (C) 2005, 2006 Roozbeh Pournader
 
 Omega is free software; you can redistribute it and/or modify
@@ -57,7 +57,7 @@ font_table_init(void)
 void
 font_no_incr(void)
 {
-    if (no_fonts == font_table_size) {
+    if (no_fonts * BLOCK == font_table_size) {
        font_table_size += BLOCK;
        font_table = (font *) xrealloc(font_table, font_table_size);
     }

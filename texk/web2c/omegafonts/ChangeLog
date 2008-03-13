@@ -1,3 +1,9 @@
+2008-03-13  Karl Berry  <karl@tug.org>
+
+	* font_routines.c (font_no_incr): change test to avoid reported
+	segfault on http://norgz.info/download/gregorio.ovp.  Report
+	from Elie Roux, 11 Mar 2008 17:19:46, fix from Arthur Reutenauer.
+
 2008-03-02  Karl Berry  <karl@tug.org>
 
 	* Makefile.in (omfonts.o): depend on y_tab.h.
