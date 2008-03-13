@@ -1,6 +1,6 @@
-# maw-macos.m4 - Mac OS X ApplicationServices framework
-# Copyright (C) 2005 - 2008 Jin-Hwan Cho <chofchof@ktug.or.kr>
-# Some Affiliation ?????????????
+# jfk-macos.m4 - Mac OS X ApplicationServices framework
+# Copyright (C) 2005 - 2008 Jonathan Kew <jonathan_kew@sil.org>
+# SIL International
 #
 # This file is free software; the copyright holders
 # give unlimited permission to copy and/or distribute it,
@@ -8,10 +8,10 @@
 
 # serial 1
 
-# CHO_HAS_APP_SERVICES
+# JFK_HAS_APP_SERVICES
 # --------------------
 # Check for ApplicationServices
-AC_DEFUN([CHO_HAS_APP_SERVICES],
+AC_DEFUN([JFK_HAS_APP_SERVICES],
 [AC_MSG_CHECKING([for Mac OS X ApplicationServices framework])
  AC_TRY_COMPILE(
   [#include <ApplicationServices/ApplicationServices.h>],
@@ -21,5 +21,5 @@ AC_DEFUN([CHO_HAS_APP_SERVICES],
    LIBS="$LIBS -framework ApplicationServices"],
   [have_app_services=no])
  AC_MSG_RESULT([$have_app_services])
-])# CHO_HAS_APP_SERVICES
+])# JFK_HAS_APP_SERVICES
 

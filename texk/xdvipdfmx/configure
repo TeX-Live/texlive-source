@@ -9739,19 +9739,19 @@ echo "${ECHO_T}$dynamic_linker" >&6; }
 test "$dynamic_linker" = no && can_build_shared=no
 
 if test "${lt_cv_sys_lib_search_path_spec+set}" = set; then
-  sys_lib_search_path_spec="$lt_cv_sys_lib_search_path_spec"
-  { echo "$as_me:$LINENO: overriding sys_lib_search_path_spec with" >&5
-echo "$as_me: overriding sys_lib_search_path_spec with" >&6;}
-  { echo "$as_me:$LINENO:   predefined value: $sys_lib_search_path_spec" >&5
-echo "$as_me:   predefined value: $sys_lib_search_path_spec" >&6;}
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  lt_cv_sys_lib_search_path_spec="$sys_lib_search_path_spec"
 fi
+
+sys_lib_search_path_spec="$lt_cv_sys_lib_search_path_spec"
 if test "${lt_cv_sys_lib_dlsearch_path_spec+set}" = set; then
-  sys_lib_dlsearch_path_spec="$lt_cv_sys_lib_dlsearch_path_spec"
-  { echo "$as_me:$LINENO: overriding sys_lib_dlsearch_path_spec with" >&5
-echo "$as_me: overriding sys_lib_dlsearch_path_spec with" >&6;}
-  { echo "$as_me:$LINENO:   predefined value: $sys_lib_dlsearch_path_spec" >&5
-echo "$as_me:   predefined value: $sys_lib_dlsearch_path_spec" >&6;}
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  lt_cv_sys_lib_dlsearch_path_spec="$sys_lib_dlsearch_path_spec"
 fi
+
+sys_lib_dlsearch_path_spec="$lt_cv_sys_lib_dlsearch_path_spec"
 
 variables_saved_for_relink="PATH $shlibpath_var $runpath_var"
 if test "$GCC" = yes; then
@@ -13702,19 +13702,19 @@ echo "${ECHO_T}$dynamic_linker" >&6; }
 test "$dynamic_linker" = no && can_build_shared=no
 
 if test "${lt_cv_sys_lib_search_path_spec+set}" = set; then
-  sys_lib_search_path_spec="$lt_cv_sys_lib_search_path_spec"
-  { echo "$as_me:$LINENO: overriding sys_lib_search_path_spec with" >&5
-echo "$as_me: overriding sys_lib_search_path_spec with" >&6;}
-  { echo "$as_me:$LINENO:   predefined value: $sys_lib_search_path_spec" >&5
-echo "$as_me:   predefined value: $sys_lib_search_path_spec" >&6;}
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  lt_cv_sys_lib_search_path_spec="$sys_lib_search_path_spec"
 fi
+
+sys_lib_search_path_spec="$lt_cv_sys_lib_search_path_spec"
 if test "${lt_cv_sys_lib_dlsearch_path_spec+set}" = set; then
-  sys_lib_dlsearch_path_spec="$lt_cv_sys_lib_dlsearch_path_spec"
-  { echo "$as_me:$LINENO: overriding sys_lib_dlsearch_path_spec with" >&5
-echo "$as_me: overriding sys_lib_dlsearch_path_spec with" >&6;}
-  { echo "$as_me:$LINENO:   predefined value: $sys_lib_dlsearch_path_spec" >&5
-echo "$as_me:   predefined value: $sys_lib_dlsearch_path_spec" >&6;}
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  lt_cv_sys_lib_dlsearch_path_spec="$sys_lib_dlsearch_path_spec"
 fi
+
+sys_lib_dlsearch_path_spec="$lt_cv_sys_lib_dlsearch_path_spec"
 
 variables_saved_for_relink="PATH $shlibpath_var $runpath_var"
 if test "$GCC" = yes; then
@@ -16323,19 +16323,19 @@ echo "${ECHO_T}$dynamic_linker" >&6; }
 test "$dynamic_linker" = no && can_build_shared=no
 
 if test "${lt_cv_sys_lib_search_path_spec+set}" = set; then
-  sys_lib_search_path_spec="$lt_cv_sys_lib_search_path_spec"
-  { echo "$as_me:$LINENO: overriding sys_lib_search_path_spec with" >&5
-echo "$as_me: overriding sys_lib_search_path_spec with" >&6;}
-  { echo "$as_me:$LINENO:   predefined value: $sys_lib_search_path_spec" >&5
-echo "$as_me:   predefined value: $sys_lib_search_path_spec" >&6;}
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  lt_cv_sys_lib_search_path_spec="$sys_lib_search_path_spec"
 fi
+
+sys_lib_search_path_spec="$lt_cv_sys_lib_search_path_spec"
 if test "${lt_cv_sys_lib_dlsearch_path_spec+set}" = set; then
-  sys_lib_dlsearch_path_spec="$lt_cv_sys_lib_dlsearch_path_spec"
-  { echo "$as_me:$LINENO: overriding sys_lib_dlsearch_path_spec with" >&5
-echo "$as_me: overriding sys_lib_dlsearch_path_spec with" >&6;}
-  { echo "$as_me:$LINENO:   predefined value: $sys_lib_dlsearch_path_spec" >&5
-echo "$as_me:   predefined value: $sys_lib_dlsearch_path_spec" >&6;}
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  lt_cv_sys_lib_dlsearch_path_spec="$sys_lib_dlsearch_path_spec"
 fi
+
+sys_lib_dlsearch_path_spec="$lt_cv_sys_lib_dlsearch_path_spec"
 
 variables_saved_for_relink="PATH $shlibpath_var $runpath_var"
 if test "$GCC" = yes; then
@@ -18944,19 +18944,19 @@ echo "${ECHO_T}$dynamic_linker" >&6; }
 test "$dynamic_linker" = no && can_build_shared=no
 
 if test "${lt_cv_sys_lib_search_path_spec+set}" = set; then
-  sys_lib_search_path_spec="$lt_cv_sys_lib_search_path_spec"
-  { echo "$as_me:$LINENO: overriding sys_lib_search_path_spec with" >&5
-echo "$as_me: overriding sys_lib_search_path_spec with" >&6;}
-  { echo "$as_me:$LINENO:   predefined value: $sys_lib_search_path_spec" >&5
-echo "$as_me:   predefined value: $sys_lib_search_path_spec" >&6;}
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  lt_cv_sys_lib_search_path_spec="$sys_lib_search_path_spec"
 fi
+
+sys_lib_search_path_spec="$lt_cv_sys_lib_search_path_spec"
 if test "${lt_cv_sys_lib_dlsearch_path_spec+set}" = set; then
-  sys_lib_dlsearch_path_spec="$lt_cv_sys_lib_dlsearch_path_spec"
-  { echo "$as_me:$LINENO: overriding sys_lib_dlsearch_path_spec with" >&5
-echo "$as_me: overriding sys_lib_dlsearch_path_spec with" >&6;}
-  { echo "$as_me:$LINENO:   predefined value: $sys_lib_dlsearch_path_spec" >&5
-echo "$as_me:   predefined value: $sys_lib_dlsearch_path_spec" >&6;}
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  lt_cv_sys_lib_dlsearch_path_spec="$sys_lib_dlsearch_path_spec"
 fi
+
+sys_lib_dlsearch_path_spec="$lt_cv_sys_lib_dlsearch_path_spec"
 
 variables_saved_for_relink="PATH $shlibpath_var $runpath_var"
 if test "$GCC" = yes; then

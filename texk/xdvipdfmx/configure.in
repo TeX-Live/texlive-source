@@ -69,13 +69,13 @@ with -L pointing to the directory containing libkpathsea.a.
   )
 
   dnl Check kpathsea support for required formats and funcs.
-  MAW_CHECK_KPSE_SUPPORT([xdvipdfmx])
+  CHO_CHECK_KPSE_SUPPORT([xdvipdfmx])
 
   dnl Check for TDS version kpathsea library supports.
-  MAW_CHECK_KPSE_TDS_VERSION
+  CHO_CHECK_KPSE_TDS_VERSION
 
   dnl Check for libfreetype, required for xdvipdfmx features
-  MAW_CHECK_LIBFREETYPE([xdvipdfmx])
+  CHO_CHECK_LIBFREETYPE([xdvipdfmx])
 fi
 
 dnl Checks for header files.
@@ -106,8 +106,8 @@ AC_CHECK_SIZEOF(long)
 
 dnl Check for additonal libraries.
 
-MAW_HAS_LIBFONTCONFIG
-CHO_HAS_APP_SERVICES
+CHO_HAS_LIBFONTCONFIG
+JFK_HAS_APP_SERVICES
 
 if test "x$enable_tetex_build" = xyes; then
   # Get these common libraries from the sources, too.
@@ -149,9 +149,9 @@ if test "x$enable_tetex_build" = xyes; then
   AC_SUBST(xdvipdfmx_LDFLAGS)
   AC_MSG_NOTICE([tetex build enabled, LIBS now: $LIBS])
 else
-  MAW_HAS_LIBPAPER
-  MAW_HAS_ZLIB
-  MAW_HAS_LIBPNG
+  CHO_HAS_LIBPAPER
+  CHO_HAS_ZLIB
+  CHO_HAS_LIBPNG
 
 dnl these variables are defined in the tetex case and used in src/Makefile.am.
 dnl just let them be empty.

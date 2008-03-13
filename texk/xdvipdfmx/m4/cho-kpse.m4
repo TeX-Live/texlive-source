@@ -1,6 +1,5 @@
-# maw-kpse.m4 - kpathsea features
-# Copyright (C) 1998 - 2008 Mark A. Wicks <mwicks@kettering.edu>
-# Kettering University
+# cho-kpse.m4 - kpathsea features
+# Copyright (C) 1998 - 2008 Jin-Hwan Cho <chofchof@ktug.or.kr>
 #
 # This file is free software; the copyright holders
 # give unlimited permission to copy and/or distribute it,
@@ -8,10 +7,10 @@
 
 # serial 1
 
-# MAW_CHECK_KPSE_SUPPORT(PACKAGE-NAME)
+# CHO_CHECK_KPSE_SUPPORT(PACKAGE-NAME)
 # ------------------------------------
 # Check for kpathsea features
-AC_DEFUN([MAW_CHECK_KPSE_SUPPORT],
+AC_DEFUN([CHO_CHECK_KPSE_SUPPORT],
 [AC_MSG_CHECKING([whether you have kpathsea headers and they know about the required file formats])
  AC_TRY_COMPILE(
   [#include <stdio.h>
@@ -32,12 +31,12 @@ If you are sure they are installed and in a standard place, maybe you need a
 newer version of kpathsea?  You also might try setting the environment
 variable CPPFLAGS (or CFLAGS) with -I pointing to the directory containing
 the file "tex-file.h"])])
-])# MAW_CHECK_KPSE_SUPPORT
+])# CHO_CHECK_KPSE_SUPPORT
 
-# MAW_CHECK_KPSE_TDS_VERSION
+# CHO_CHECK_KPSE_TDS_VERSION
 # --------------------------
 # Check for enc, cmap, sfd formats
-AC_DEFUN([MAW_CHECK_KPSE_TDS_VERSION],
+AC_DEFUN([CHO_CHECK_KPSE_TDS_VERSION],
 [AC_MSG_CHECKING([whether kpathsea library supports TDS version 1.1 installation])
  AC_TRY_COMPILE(
   [#include <stdio.h>
@@ -53,5 +52,5 @@ AC_DEFUN([MAW_CHECK_KPSE_TDS_VERSION],
   [AC_MSG_RESULT(no)
    AC_DEFINE([__TDS_VERSION__], [0x200302L], [Define if your libkpathsea supports enc formats])
    AM_CONDITIONAL([TDS_VERSION_11], [false])])
-])# MAW_CHECK_KPSE_TDS_VERSION
+])# CHO_CHECK_KPSE_TDS_VERSION
 
