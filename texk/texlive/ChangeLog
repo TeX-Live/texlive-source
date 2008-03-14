@@ -1,3 +1,9 @@
+2008-03-14  Karl Berry  <karl@tug.org>
+
+	* ppower4: remove.
+	* Makefile: don't install it.  (Symlink installed in
+	tetex/Makefile.in instead.)
+
 2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.in: added AC_CONFIG_HEADERS (moved
