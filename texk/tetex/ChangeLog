@@ -1,3 +1,8 @@
+2008-03-14  Karl Berry  <karl@tug.org>
+
+	* fmtutil: check for infinite loops.
+	From Stepan Kasal, http://bugzilla.redhat.com/show_bug.cgi?id=437008.
+
 2008-03-07  Karl Berry  <karl@tug.org>
 
 	* Makefile.in (LINKEDPLSCRIPTS): rename from LINKEDPERLSCRIPTS.

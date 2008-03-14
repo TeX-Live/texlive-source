@@ -29,6 +29,7 @@
 
 ###############################################################################
 # program history:
+#   further changes in texk/tetex/ChangeLog.
 #   2007-01-04  patch by JK to support $engine subdir (enabled by default)
 #   Fr Apr  8 19:15:05 CEST 2005 cleanup now has an argument for the return code
 #   Do Mar 02 10:42:31 CET 2006 add tmpdir to TEXFORMATS
@@ -83,7 +84,7 @@ test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 
 progname=fmtutil
 argv0=$0
-version=1168729197 # seconds since `00:00:00 1970-01-01 UTC'
+version=1205513038 # seconds since `00:00:00 1970-01-01 UTC'
                    # date '+%s' (with GNU date)
 
 cnf=fmtutil.cnf   # name of the config file
@@ -678,6 +679,15 @@ run_initex()
   esac
 
   rm -f $fmtfile
+
+  # Check for infinite recursion before running the iniTeX:
+  case :$mktexfmt_loop: in
+  *:"$format":*)
+    abort "Infinite recursion detected, giving up!" ;;
+  esac
+  mktexfmt_loop=$mktexfmt_loop:$format
+  export mktexfmt_loop
+
   verboseMsg "$progname: running \`$engine -ini  $tcxflag $jobswitch $prgswitch $texargs' ..."
 
   # run in a subshell to get a local effect of TEXPOOL manipulation:
