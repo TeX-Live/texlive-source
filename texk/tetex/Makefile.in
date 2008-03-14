@@ -24,12 +24,16 @@ LINKEDSCRIPTS = \
   texmf/scripts/ps2eps/ps2eps.pl \
   texmf/scripts/tetex/e2pall.pl \
   texmf/scripts/tetex/texdoctk.pl \
+  texmf/scripts/texlive/getnonfreefonts.pl \
   texmf-dist/scripts/glossaries/makeglossaries \
-  texmf-dist/scripts/ppower4/ppower4 \
   texmf-dist/scripts/perltex/perltex.pl \
   texmf-dist/scripts/texcount/TeXcount.pl \
   texmf-dist/scripts/thumbpdf/thumbpdf.pl \
+  texmf-dist/scripts/ppower4/ppower4.texlua \
   texmf-dist/scripts/vpe/vpe.pl
+
+LINKED_SYS_SCRIPTS = \
+  texmf/scripts/texlive/getnonfreefonts.pl
 
 CONTEXTSCRIPTS = \
   ctxtools exatools luatools makempy mpstools mptopdf mtxtools \
@@ -98,7 +102,7 @@ install-data::
 	$(INSTALL_SCRIPT) $(srcdir)/tcfmgr $(texmf)/texconfig/tcfmgr
 	$(INSTALL_DATA) $(srcdir)/tcfmgr.map $(texmf)/texconfig/tcfmgr.map
 
-install-exec: install-linkedscripts
+install-exec: install-linkedscripts install-linked-sys-scripts 
 	-$(SHELL) $(srcdir)/../mkinstalldirs $(scriptdir)
 	for s in $(SCRIPTS); do \
 	  $(INSTALL_SCRIPT) $(srcdir)/$$s $(scriptdir)/$$s; \
@@ -133,6 +137,18 @@ install-linkedscripts:
 	# we downcase for the sake of TeXcount.pl -> texcount.
 	for s in $(LINKEDSCRIPTS); do \
 	  target=$(scriptdir)/`basename $$s | sed 's,\.[^/]*$$,,' | tr A-Z a-z`; \
+	  rm -f $$target; \
+	  ln -s ../../$$s $$target; \
+	done
+
+install-linked-sys-scripts:
+	-$(SHELL) $(srcdir)/../mkinstalldirs $(scriptdir)
+	# link to the basename, removing any extension, of the source,
+	# and append -sys to the file name.
+	# we downcase for the sake of TeXcount.pl -> texcount-sys.
+	for s in $(LINKED_SYS_SCRIPTS); do \
+	  target=$(scriptdir)/`basename $$s | sed 's,\.[^/]*$$,,' | tr A-Z a-z`; \
+	  target="$target-sys" \
 	  rm -f $$target; \
 	  ln -s ../../$$s $$target; \
 	done

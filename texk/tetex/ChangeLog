@@ -1,3 +1,8 @@
+2008-03-14  Reinhard Kotucha  <reinhard.kotucha@web.de>
+
+	* Makefile.in (LINKED_SYS_SCRIPTS): new list for -sys progs.
+	Add getnonfreefonts.pl.
+
 2008-03-14  Karl Berry  <karl@tug.org>
 
 	* Makefile.in (LINKEDSCRIPTS): add ppower4, no longer in tetex.
