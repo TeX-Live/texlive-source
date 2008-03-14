@@ -1,3 +1,7 @@
+2008-03-15  Reinhard Kotucha  <reinhard.kotucha@web.de>
+
+	* Makefile.in (LINKEDSCRIPTS): add pdfthumb.
+
 2008-03-14  Reinhard Kotucha  <reinhard.kotucha@web.de>
 
 	* Makefile.in (LINKED_SYS_SCRIPTS): new list for -sys progs.
