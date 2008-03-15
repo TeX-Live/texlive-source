@@ -576,12 +576,12 @@ extern U_IMPORT char *U_TZNAME[];
 #if !UCONFIG_NO_FILE_IO && (defined(U_DARWIN) || defined(U_LINUX) || defined(U_BSD))
 /* These platforms are likely to use Olson timezone IDs. */
 #define CHECK_LOCALTIME_LINK 1
-#if defined(U_LINUX)
-#define TZDEFAULT       "/etc/localtime"
-#define TZZONEINFO      "/usr/share/zoneinfo/"
-#else
+#if defined(U_DARWIN)
 #include <tzfile.h>
 #define TZZONEINFO      (TZDIR "/")
+#else
+#define TZDEFAULT       "/etc/localtime"
+#define TZZONEINFO      "/usr/share/zoneinfo/"
 #endif
 static char gTimeZoneBuffer[PATH_MAX];
 static char *gTimeZoneBufferPtr = NULL;
