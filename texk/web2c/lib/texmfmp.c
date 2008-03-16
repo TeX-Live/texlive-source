@@ -297,8 +297,18 @@ maininit P2C(int, ac, string *, av)
   /* If we've set up the fmt/base default in any of the various ways
      above, also set its length.  */
   if (dump_name) {
-    /* adjust array for Pascal and provide extension */
-    DUMP_VAR = concat3 (" ", dump_name, DUMP_EXT);
+    const_string with_ext = NULL;
+    unsigned name_len = strlen (dump_name);
+    unsigned ext_len = strlen (DUMP_EXT);
+    
+    /* Provide extension if not there already.  */
+    if (name_len > ext_len
+        && FILESTRCASEEQ (dump_name + name_len - ext_len, DUMP_EXT)) {
+      with_ext = dump_name;
+    } else {
+      with_ext = concat (dump_name, DUMP_EXT);
+    }
+    DUMP_VAR = concat (" ", with_ext); /* adjust array for Pascal */
     DUMP_LENGTH_VAR = strlen (DUMP_VAR + 1);
   } else {
     /* For dump_name to be NULL is a bug.  */

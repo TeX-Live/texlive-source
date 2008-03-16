@@ -1,3 +1,8 @@
+2008-03-16  Karl Berry  <karl@tug.org>
+
+	* texmfmp.c (maininit): don't append DUMP_EXT if it's already
+	there.  Report from Hans.
+
 2008-03-09  Karl Berry  <karl@tug.org>
 
 	* texmfmp.c (maketexstring) [!MP]: only define this fn if !MP,
