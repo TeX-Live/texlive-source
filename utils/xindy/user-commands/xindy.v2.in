@@ -1,0 +1,302 @@
+#!@XINDY_PERL@
+# $Id: xindy.in,v 1.14 2005/05/02 19:16:27 jschrod Exp $
+#------------------------------------------------------------
+#
+# This is the old perl-frontend to the xindy indexing system.
+#
+# It is kept for compatibility reasons and is named xindy.v2 in
+# production. Most probably, you will not want to use it any more.
+#
+# This code is not supported. Don't report bugs, switch to the current
+# xindy script.
+#
+
+($progname = $0) =~ s#.*/##;
+
+$Date = `date`;
+
+require "getopts.pl";
+
+# $debug = 1;
+
+$numArgs = $#ARGV; # save number of command line arguments
+
+# parse for command-line options
+&Getopts( "dtvnio:l:f:L:" );
+
+$debug = $opt_d;
+
+# some debug-output
+print STDERR "progname:  $progname\n"  if $debug;
+print STDERR "\@ARGV:  @ARGV\n"  if $debug;
+print STDERR "\$#ARGV: $#ARGV\n" if $debug;
+
+#
+# Synopsis
+#
+
+sub usage {
+   print STDERR "\n$progname\t[-t] [-v] [-o output] [-l logfile] [-f filtprg] [-L n]
+\tindexstyle raw-index\n";
+   print STDERR <<EOMSG;
+
+options:
+
+  -t       Enters tracing-mode for markup-tags.
+  -v       Displays the current version of xindy.
+  -o       Specifies the output-file for the tagged index. If omitted, the
+           name of the raw-index is taken, with its extension
+           substituted by \`.ind'.
+  -f filt  Preprocess raw-index with \`filtprg' before reading.
+  -l file  Logfile into which xindy writes useful information.
+  -L n     Enter logging level \`n' = {1,2,3}.
+
+EOMSG
+   exit(2);
+}
+
+
+#
+# These functions check for the correct installation of the base
+# system.
+#
+
+sub check_bin {
+    print "runfile = $runfile\n" if $debug;
+    if ( ! -e $runfile ) {
+	print "Can't find \`$runfile' !\n";
+	exit(3);
+    }
+    if ( ! -x $runfile ) {
+	print "File \`$runfile' not executable !\n";
+	exit(4);
+    }
+}
+
+sub check_mem {
+    print "memfile = $memfile\n" if $debug;
+    if ( ! -e $memfile ) {
+	print "Can't find \`$memfile' !";
+	exit(5);
+    }
+}
+
+#
+# This function takes a string and quotes the `"' and '\' characters
+# with a leading backslash.
+#
+sub quote_string {
+    local($str) = @_;
+    $str =~ s#\\#\\\\#g;
+    $str =~ s#"#\\\"#g;
+    return $str;
+}
+
+sub remove_suffix {
+    local($str) = @_;
+    $str =~ s#\.[^\.]*$##;
+    return $str;
+}
+
+#
+# The generic signal handler that removes temporary files if
+# necessary.
+#
+
+sub sig_catch {
+    unlink $tmpfile;
+    exit(9);
+}
+
+sub sig_setup {
+    $SIG{"HUP"}  = "sig_catch"; # 1
+    $SIG{"INT"}  = "sig_catch"; # 2
+    $SIG{"QUIT"} = "sig_catch"; # 3
+    $SIG{"TERM"} = "sig_catch"; # 15
+    $SigHandlerSet = 1;
+}
+
+#
+# here we go...
+#
+
+$numArgs = $#ARGV;          # number of Commandline-Arguments
+
+if ( $numArgs eq 1 || $opt_v || $opt_i ) { # two arguments or -v,-i specified
+   $Idxsty = $ARGV[0];
+   $Rawidx = $ARGV[1];
+} else {
+    &usage;
+}
+
+print "Idxsty = $Idxsty\n" if $debug;
+print "Rawidx = $Rawidx\n" if $debug;
+
+# Define the default xindy library directory. It should be in a
+# sibling lib tree, maybe in a xindy subdirectory. Or the user may
+# set XINDY_LIBDIR explicitely.
+
+$0 =~ m:^(.*)/[^/]*$: ;
+$cmd_dir = $1 || '.';
+
+# library directory
+if ( $ENV{XINDY_LIBDIR} ) {
+    $LibDir = $ENV{XINDY_LIBDIR};
+    print "XINDY_LIBDIR (from Environment) = $LibDir\n" if $debug;
+} elsif ( -f "$cmd_dir/../lib/xindy.run" ) { # /opt style
+    $LibDir = "$cmd_dir/../lib";
+} elsif ( -d "$cmd_dir/../lib/xindy" ) { # /usr or /usr/local style
+    $LibDir = "$cmd_dir/../lib/xindy";
+} else {
+    die "Cannot locate xindy library directory";
+}
+$XINDY_LIBDIR=$LibDir;
+print "XINDY_LIBDIR = $XINDY_LIBDIR\n" if $debug;
+
+# modules directory
+if ( -d "$cmd_dir/../modules" ) {	# /opt style
+    $modules_dir = "$cmd_dir/../modules";
+} elsif ( -d "$LibDir/modules" ) {	# /usr or /usr/local style
+    $modules_dir = "$LibDir/modules";
+} else {
+    die "Cannot locate xindy modules directory";
+}
+
+$memfile="$XINDY_LIBDIR/xindy.mem";
+$runfile="$XINDY_LIBDIR/xindy.run";
+
+# Set initial searchpath
+$SEARCHPATH="(searchpath \".:$modules_dir\")";
+
+# Add/replace (depends on the specification) the search path according
+# to the environment variable
+if ( $XINDY_SEARCHPATH ne "" ) {
+    $SEARCHPATH="$SEARCHPATH (searchpath \"$XINDY_SEARCHPATH\")";
+}
+print "SEARCHPATH = $SEARCHPATH\n" if $debug;
+
+if ($opt_v) { $version = ":show-version t"; }
+if ($opt_t) { $tracing = ":markup-trace t"; }
+if ($opt_n) { $try = 1; }
+if ($opt_c) { $compile = "on"; }
+if ($opt_i) { $interactive = "on"; }
+if ($opt_m) { $memfile = $opt_m; }
+if ($opt_o) { $output = $opt_o; }
+if ($opt_f) { $filtprg = $opt_f; }
+if ($opt_l) { $logfile = $opt_l; }
+if ($opt_L) { $level = $opt_L; }
+
+# Now check if everything is present.
+
+if ( ! $try ) {
+    &check_bin;
+    &check_mem;
+}
+
+$xindy_run = "$runfile -B $XINDY_LIBDIR -q -M $memfile -E iso-8859-1";
+print "xindy_run = $xindy_run\n" if $debug;
+
+# Run xindy interactive if this was specified via -i.
+if ( $interactive ) {
+    print "$xindy_run\n" if $debug;
+    exec "$xindy_run";
+}
+
+# If specified via -v start xindy for showing the version-message.
+if ( $version ) {
+    print "$xindy_run -x \"(progn (xindy:startup $version) (exit))\"" if $debug;
+    exec "$xindy_run -x \"(progn (xindy:startup $version) (exit))\"";
+}
+
+# Quote the filenames, such that LISP can read it.
+$Idxsty = &quote_string($Idxsty);
+$Rawidx = &quote_string($Rawidx);
+
+# If no output-file was specified
+if ( ! $output ) {
+    # remove the suffix, if one exists
+    $output = &remove_suffix($Rawidx);
+    # append suffix ".ind"
+    $output = &quote_string("$output.ind");
+}
+
+# Run the intermediate filter if specified via -f.
+if ( $filtprg ) {
+    # create tmpfile
+    $tmpfile = "/tmp/xindy.$$";
+    &sig_setup; # setup signal handler for cleanup
+    print "Running filter: $filtprg < $Rawidx > $tmpfile\n";
+    system "$filtprg < $Rawidx > $tmpfile";
+    print "Finished running filter.\n\n";
+    $Rawidx = &quote_string($tmpfile);
+}
+
+# Prepare logfile option.
+if ( $logfile ) {
+    $logfile = ":logfile \"" . &quote_string($logfile) . "\"";
+}
+
+# Prepare trace-level.
+if ( $level ) {
+    $logging = ":trace-level $level";
+}
+
+# This is the complete LISP-SEXP needed to start the system.
+$xindy_cmd = "-x '(progn
+   $SEARCHPATH
+   (xindy:startup :idxstyle \"$Idxsty\"
+	          :rawindex \"$Rawidx\"
+		  :output   \"$output\"
+		  $logfile $version $tracing $logging)
+   (exit))'";
+
+
+# Run program and do final cleanup
+
+if ( $try ) {
+    print  "$xindy_run $xindy_cmd";
+} else {
+    if ( $SigHandlerSet ) {
+        system "$xindy_run $xindy_cmd";
+	unlink $tmpfile;
+    } else {
+        exec "$xindy_run $xindy_cmd";
+    }
+}
+
+
+#----------------------------------------------------------------------
+#
+# $Log: xindy.in,v $
+# Revision 1.14  2005/05/02 19:16:27  jschrod
+#     Support new RTE 2.2, built with CLISP 2.33.2, that needs -E option
+# to specify the default charset.
+#     xindy also has proper version output in Lisp now, no need for
+# workarounds in script any more.
+#
+# Revision 1.13  2004/05/24 19:52:02  jschrod
+#     Pass -B option to CLISP.
+# Change might be from Thomas Henlich <henlich@mmers1.mw.tu-dresden.de>,
+# made at 1999-12-22.
+#
+# Revision 1.12  2004/05/24 19:47:13  jschrod
+#     Introduce new driver script, as part of the "Companion Release".
+#
+# Revision 1.11  1999/09/23 07:22:39  kehr
+# Fixed an exit code problem reported by Peter Meszaros
+# <pmeszaros@effice.hu>.
+#
+# Revision 1.10  1998/03/12 10:58:21  kehr
+# Fixed bug with -f option.
+#
+# Revision 1.9  1997/04/03 13:23:51  kehr
+# Many bugs fixed during testing.
+#
+# Revision 1.8  1997/04/03 09:38:54  kehr
+# First check-in of the rewritten xindy script. The former shell-script
+# has now been replaced by a perl-script.
+#
+
+# Local Variables:
+# mode: perl
+# End:

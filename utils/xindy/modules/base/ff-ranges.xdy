@@ -1,0 +1,27 @@
+;; $Id: ff-ranges.xdy,v 1.1 2004/05/24 21:53:27 jschrod Exp $
+;;------------------------------------------------------------
+
+;;;
+;;; ff ranges
+;;;
+;;; Use "f" for two pages, "ff" notation for ranges of three pages,
+;;; and explicit ranges thereafter: 2f, 2ff, 2--6.
+;;;
+
+;; FIXME: This will output a warning about a redefinition if latex.xdy
+;; is already loaded. Which it is, most of the time. I don't want that
+;; message, and we should get rid of it.
+(define-location-class "arabic-page-numbers"
+		       ("arabic-numbers") :min-range-length 1)
+
+(markup-range :sep "f" :length 1 :ignore-end)
+(markup-range :sep "ff" :length 2 :ignore-end)
+(markup-range :sep "--")
+
+
+;;======================================================================
+;;
+;; $Log: ff-ranges.xdy,v $
+;; Revision 1.1  2004/05/24 21:53:27  jschrod
+;;     Standard modules, introduced in "LaTeX Companion Release".
+;;

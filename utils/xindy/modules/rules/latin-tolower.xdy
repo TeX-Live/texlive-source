@@ -1,0 +1,37 @@
+;; latin-tolower.xdy 			Roger Kehr	 14 Jan 98
+;;----------------------------------------------------------------------
+;;
+;; Maps all latin letters to their lowercase counterpart
+;;
+
+(define-rule-set "latin-tolower"
+
+  :rules (("A" "a" :string :again)
+	  ("B" "b" :string :again)
+	  ("C" "c" :string :again)
+	  ("D" "d" :string :again)
+	  ("E" "e" :string :again)
+	  ("F" "f" :string :again)
+	  ("G" "g" :string :again)
+	  ("H" "h" :string :again)
+	  ("I" "i" :string :again)
+	  ("J" "j" :string :again)
+	  ("K" "k" :string :again)
+	  ("L" "l" :string :again)
+	  ("M" "m" :string :again)
+	  ("N" "n" :string :again)
+	  ("O" "o" :string :again)
+	  ("P" "p" :string :again)
+	  ("Q" "q" :string :again)
+	  ("R" "r" :string :again)
+	  ("S" "s" :string :again)
+	  ("T" "t" :string :again)
+	  ("U" "u" :string :again)
+	  ("V" "v" :string :again)
+	  ("W" "w" :string :again)
+	  ("X" "x" :string :again)
+	  ("Y" "y" :string :again)
+	  ("Z" "z" :string :again)
+	  ))
+
+;; End

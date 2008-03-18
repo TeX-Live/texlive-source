@@ -1,0 +1,24 @@
+;; $Id: book-order.xdy,v 1.1 2004/05/24 21:53:27 jschrod Exp $
+;;------------------------------------------------------------
+
+;;;
+;;; book order scheme
+;;;
+
+;; NOTE: Assumes that makeindex.xdy has been loaded.
+
+(define-location-class-order ("roman-page-numbers"
+			      "Roman-page-numbers"
+			      "arabic-page-numbers"
+			      "alpha-page-numbers"
+			      "Alpha-page-numbers"
+			      "see"
+			      "seealso"))
+
+
+;;======================================================================
+;;
+;; $Log: book-order.xdy,v $
+;; Revision 1.1  2004/05/24 21:53:27  jschrod
+;;     Standard modules, introduced in "LaTeX Companion Release".
+;;

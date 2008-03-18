@@ -1,0 +1,8 @@
+
+(require "tex/inputenc/latin1.xdy")
+
+(merge-rule "~"Y"  "IJ" :string)
+(merge-rule "~"y"  "ij" :string)
+(merge-rule "\IJ"  "IJ" :string)
+(merge-rule "\ij"  "ij" :string)
+

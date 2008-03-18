@@ -1,0 +1,72 @@
+#!/usr/bin/perl
+
+$language = "Serbian";
+$prefix = "sr";
+$script = "cyrillic";
+
+$alphabet = [
+['А',  ['а','А'] @u{,['а̏','А̏'],['а̑','А̑']}],
+['Б',  ['б','Б']],
+['В',  ['в','В']],
+['Г',  ['г','Г']],
+                   [], # ghe with upturn (ukrainian)
+['Д',  ['д','Д']],
+['Ђ',  ['ђ','Ђ']],
+                   [], # gje (macedonian)
+['Е',  ['е','Е'] @u{,['е̏','Е̏'],['е̑','Е̑']}],
+                   [], # io (mongolian)
+                   [], # ukrainian ie
+['Ж',  ['ж','Ж']],
+['З',  ['з','З']],
+                   [], # dze (macedonian)
+['И',  ['и','И'] @u{,['и̏','И̏'],['и̑','И̑']}],
+                   [], # belarusian-ukrainian i
+                   [], # yi (ukrainian)
+                   [], # short i (many)
+['Ј',  ['ј','Ј']],
+['К',  ['к','К']],
+['Л',  ['л','Л']],
+['Љ',  ['љ','Љ']],
+['М',  ['м','М']],
+['Н',  ['н','Н']],
+['Њ',  ['њ','Њ']],
+['О',  ['о','О'] @u{,['о̏','О̏'],['о̑','О̑']}],
+                   [], # barred o (mongolian)
+['П',  ['п','П']],
+['Р',  ['р','Р'] @u{,['р̏','Р̏'],['р̑','Р̑']}],
+['С',  ['с','С']],
+['Т',  ['т','Т']],
+['Ћ',  ['ћ','Ћ']],
+                   [], # kje (macedonian)
+['У',  ['у','У'] @u{,['у̏','У̏'],['у̑','У̑']}],
+                   [], # short u (belarusian)
+                   [], # straight u (mongolian)
+['Ф',  ['ф','Ф']],
+['Х',  ['х','Х']],
+['Ц',  ['ц','Ц']],
+['Ч',  ['ч','Ч']],
+['Џ',  ['џ','Џ']],
+['Ш',  ['ш','Ш']],
+                   [], # shcha (many)
+                   [], # hard sign (bulgarian, russian)
+                   [], # yeru (belarusian, russian)
+                   [], # soft sign (many)
+                   [],
+                   [], # e (belarusian, russian)
+                   [], # yu (many)
+                   [], # ya (many)
+                   [], # soft sign (ukrainian)
+                   [],
+                   [],
+                   []
+];
+
+$sortcase = 'Aa';
+#$sortcase = 'aA';
+
+$ligatures = [
+];
+
+@special = ('?', '!', '.', 'letters', '-', '\''@u{, '̏', '̑'});
+
+do 'make-rules.pl';

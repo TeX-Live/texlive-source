@@ -1,0 +1,38 @@
+# $Id: Makefile.in,v 1.2 2005/06/14 01:41:56 jschrod Exp $
+#------------------------------------------------------------
+
+#
+# Makefile for CLISP module ordrules
+#
+# copied from CLISP module regex
+
+CC = @CC@
+CPPFLAGS = @CPPFLAGS@
+CFLAGS = @CFLAGS@
+INCLUDES=
+
+CLISP = $(CLISP_PATH) -q -norc
+
+all : ordrulei.o ordrules.o rxsub.o
+
+ordrulei.c : ordrulei.lsp
+	$(CLISP) -c ordrulei.lsp
+
+ordrulei.o : ordrulei.c
+	$(CC) $(CFLAGS) -I$(INCLUDES) -c ordrulei.c
+
+ordrules.o : ordrules.c ordrules.h rxsub.h debug.h mkind.h
+	$(CC) $(CFLAGS) -funsigned-char -I. -c ordrules.c
+
+rxsub.o : rxsub.c rxsub.h mkind.h
+	$(CC) $(CFLAGS) -I. -c rxsub.c
+
+# Make a module
+clisp-module : all
+
+clean:
+	rm -f core ordrulei.c *.o *.a
+	rm -f *.fas *.lib
+
+distclean: clean
+	rm -f version.lisp Makefile

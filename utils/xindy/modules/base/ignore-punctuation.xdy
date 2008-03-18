@@ -1,0 +1,42 @@
+;; $Id: ignore-punctuation.xdy,v 1.1 2004/05/24 21:53:27 jschrod Exp $
+;;------------------------------------------------------------
+
+;;;
+;;; ignore punctuation scheme
+;;;
+;;; all kind of punctuations are ignored during sorting
+;;;
+
+;; accents and other special characters (plus, etc) are not considered
+;; punctuations.
+
+(sort-rule "!" "")
+(sort-rule "\"" "")
+(sort-rule "/" "")
+(sort-rule "(" "")
+(sort-rule ")" "")
+(sort-rule "{" "")
+(sort-rule "}" "")
+(sort-rule "[" "")
+(sort-rule "]" "")
+(sort-rule "<" "")
+(sort-rule ">" "")
+(sort-rule "=" "")
+(sort-rule "?" "")
+(sort-rule "\\" "")
+(sort-rule "'" "")
+(sort-rule "|" "")
+(sort-rule "," "")
+(sort-rule ";" "")
+(sort-rule "." "")
+(sort-rule ":" "")
+(sort-rule "-" "")
+(sort-rule "_" "")
+
+
+;;======================================================================
+;;
+;; $Log: ignore-punctuation.xdy,v $
+;; Revision 1.1  2004/05/24 21:53:27  jschrod
+;;     Standard modules, introduced in "LaTeX Companion Release".
+;;

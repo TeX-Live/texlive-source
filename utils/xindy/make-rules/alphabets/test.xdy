@@ -1,0 +1,82 @@
+
+;; define other stuff
+(define-attributes ("default"))
+
+;; The description of the location-classes.
+;; Add more location classes as needed.
+
+(define-location-class "arabic-page-numbers" ("arabic-numbers"))
+(define-location-class "roman-page-numbers"  ("roman-numbers-lowercase"))
+(define-location-class "Roman-page-numbers"  ("roman-numbers-uppercase"))
+(define-location-class "alpha-page-numbers"  ("alpha"))
+(define-location-class "Alpha-page-numbers"  ("ALPHA"))
+
+;; The most frequently used cross reference class "see". Add more, if
+;; necessary.
+
+(define-crossref-class "see")
+(markup-crossref-list :open "\see{" :close "}{}" :class "see")
+
+;; In makeindex: page_precedence <string>  "rnaRA"
+;; List all location classes appearing in your document.
+
+(define-location-class-order ("roman-page-numbers"
+			      "arabic-page-numbers"
+			      "alpha-page-numbers"
+			      "Roman-page-numbers"
+			      "Alpha-page-numbers"
+			      "see"))
+
+
+;; preamble <string>        "\\begin{theindex}\n"
+;; postamble <string>       "\n\n\\end{theindex}\n"
+
+(markup-index :open  "\begin{theindex}~n"
+	      :close "~n~n\end{theindex}~n"
+	      :tree)
+
+;; These specifiers are not directly supported via a command-line
+;; switch as in makeindex. Add the appropriate markup-commands into
+;; the preamble.
+
+;; setpage_prefix <string>  "~n  \setcounter{page}{"
+;; setpage_suffix <string>  "}~n"
+
+;; group_skip <string>      "~n~n  \indexspace~n"
+
+(markup-letter-group-list :sep "~n~n  \indexspace~n")
+
+;; even though we comment out (%) the letter-group heading,
+;; the following is useful if you want to check the .ind-file
+(markup-letter-group :open-head "~n  % ")
+
+;; The indexentries (item_<..> specifiers)
+
+(markup-indexentry :open "~n  \item "           :depth 0)
+(markup-indexentry :open "~n    \subitem "      :depth 1)
+(markup-indexentry :open "~n      \subsubitem " :depth 2)
+
+;; Location-references
+
+;; delim_0 <string>         ", "
+;; delim_1 <string>         ", "
+;; delim_2 <string>         ", "
+
+(markup-locclass-list :open ", " :sep ", ")
+
+;; delim_n <string>         ", "
+
+(markup-locref-list   :sep ", ")
+
+;; delim_r <string>         "--"
+
+(markup-range :sep "--")
+
+;; That's all ;-)
+
+
+;; End
+
+;; Local Variables:
+;; mode: lisp
+;; End:

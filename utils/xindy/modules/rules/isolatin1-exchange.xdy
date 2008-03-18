@@ -1,0 +1,88 @@
+;; isolatin1-exchange.xdy		Roger Kehr	 14 Jan 98
+;;----------------------------------------------------------------------
+
+;; This style maps swap uppercase with lowercase letters of the ISO
+;; Latin1 alphabet in the range 160-255. These rules do not :again to
+;; prevent looping.
+
+(define-rule-set "isolatin1-exchange"
+
+  :rules (("À" "à" :string)
+	  ("Á" "á" :string)
+	  ("Â" "â" :string)
+	  ("Ã" "ã" :string)
+	  ("Ä" "ä" :string)
+	  ("Å" "å" :string)
+	  ("Æ" "æ" :string)
+
+	  ("Ç" "ç" :string)
+
+	  ("È" "è" :string)
+	  ("É" "é" :string)
+	  ("Ê" "ê" :string)
+	  ("Ë" "ë" :string)
+
+	  ("Ì" "ì" :string)
+	  ("Í" "í" :string)
+	  ("Î" "î" :string)
+	  ("Ï" "ï" :string)
+
+	  ("Ð" "ð" :string)
+	  ("Ñ" "ñ" :string)
+
+	  ("Ò" "ò" :string)
+	  ("Ó" "ó" :string)
+	  ("Ô" "ô" :string)
+	  ("Õ" "õ" :string)
+	  ("Ö" "ö" :string)
+	  ("Ø" "ø" :string)
+
+	  ("Ù" "ù" :string)
+	  ("Ú" "ú" :string)
+	  ("Û" "û" :string)
+	  ("Ü" "ü" :string)
+
+	  ("Ý" "ý" :string)
+	  ("Þ" "þ" :string)
+
+
+	  ("à" "À" :string)
+	  ("á" "Á" :string)
+	  ("â" "Â" :string)
+	  ("ã" "Ã" :string)
+	  ("ä" "Ä" :string)
+	  ("å" "Å" :string)
+	  ("æ" "Æ" :string)
+
+	  ("ç" "Ç" :string)
+
+	  ("è" "È" :string)
+	  ("é" "É" :string)
+	  ("ê" "Ê" :string)
+	  ("ë" "Ë" :string)
+
+	  ("ì" "Ì" :string)
+	  ("í" "Í" :string)
+	  ("î" "Î" :string)
+	  ("ï" "Ï" :string)
+
+	  ("ð" "Ð" :string)
+	  ("ñ" "Ñ" :string)
+
+	  ("ò" "Ò" :string)
+	  ("ó" "Ó" :string)
+	  ("ô" "Ô" :string)
+	  ("õ" "Õ" :string)
+	  ("ö" "Ö" :string)
+	  ("ø" "Ø" :string)
+
+	  ("ù" "Ù" :string)
+	  ("ú" "Ú" :string)
+	  ("û" "Û" :string)
+	  ("ü" "Ü" :string)
+
+	  ("ý" "Ý" :string)
+	  ("þ" "Þ" :string)
+	  ))
+
+;; End
