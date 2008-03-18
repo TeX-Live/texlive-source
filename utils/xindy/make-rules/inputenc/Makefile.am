@@ -19,7 +19,7 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-modulesdir = $(pkglibdir)/modules
+modulesdir = $(pkgdatadir)
 
 inputencdir = $(modulesdir)/tex/inputenc
 
@@ -47,7 +47,7 @@ latin.xdy : latin1.xdy latin2.xdy latin3.xdy
 
 %.xdy %.idx :
 	perl ./make-testidx.pl TS1,T2A,T1 $* >$*.tex
-	latex $*.tex
+	latex -interaction batchmode $*.tex
 	perl ./make-inp-rules.pl <$*.idx >$*.xdy
 
 PERLSCRIPTS = \

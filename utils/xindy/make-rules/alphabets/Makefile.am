@@ -19,7 +19,7 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-langdir	= $(pkglibdir)/modules/lang
+langdir	= $(pkgdatadir)/lang
 
 albaniandir = $(langdir)/albanian
 
@@ -1132,7 +1132,7 @@ alphabets-inc.tex : $(DOCS)
 	echo "\section{Codepage latin9}" >>$@
 	for i in $(DOCS_LATIN9); do echo "\input{$$i}" >>$@; done
 	echo "\ienc{cp1251}" >>$@
-	echo "\fenc{T2A}" >>$@
+	printf "%s\n" "\fenc{T2A}" >>$@
 	echo "\chapter{Cyrillic scripts}" >>$@
 	echo "\section{Codepage 1251}" >>$@
 	for i in $(DOCS_CYR_1251); do echo "\input{$$i}" >>$@; done
@@ -1150,8 +1150,8 @@ if BUILDRULES
 
 if BUILDDOCS
 alphabets-doc.pdf : alphabets-doc.tex alphabets-inc.tex
-	pdflatex alphabets-doc.tex
-	pdflatex alphabets-doc.tex
+	pdflatex -interaction batchmode alphabets-doc.tex
+	pdflatex -interaction batchmode alphabets-doc.tex
 
 docdir = $(datadir)/doc/$(PACKAGE_NAME)-$(PACKAGE_VERSION)
 

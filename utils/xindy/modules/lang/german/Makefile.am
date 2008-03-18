@@ -19,7 +19,7 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-langdir = $(pkglibdir)/modules/lang
+langdir = $(pkgdatadir)/lang
 
 germandir = $(langdir)/german
 
