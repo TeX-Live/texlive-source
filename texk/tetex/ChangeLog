@@ -1,3 +1,10 @@
+2008-03-18  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (install-linked-scripts): use $(LINKSUFFIX).
+	(LINKSUFFIX): new variable, for passing -sys.
+	(install-linked-sys-scripts): make install-linked-scripts
+	instead of repeating code.
+
 2008-03-15  Reinhard Kotucha  <reinhard.kotucha@web.de>
 
 	* Makefile.in (LINKEDSCRIPTS): add pdfthumb.

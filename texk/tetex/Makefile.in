@@ -16,7 +16,8 @@ SCRIPTS = \
 
 # These scripts do not exist here in /source/ at all, the instances
 # in texmf are the masters (except when it is CTAN).
-LINKEDSCRIPTS = \
+LINKSUFFIX =
+LINKED_SCRIPTS = \
   texmf/scripts/a2ping/a2ping.pl \
   texmf/scripts/epstopdf/epstopdf.pl \
   texmf/scripts/pdfcrop/pdfcrop.pl \
@@ -103,7 +104,7 @@ install-data::
 	$(INSTALL_SCRIPT) $(srcdir)/tcfmgr $(texmf)/texconfig/tcfmgr
 	$(INSTALL_DATA) $(srcdir)/tcfmgr.map $(texmf)/texconfig/tcfmgr.map
 
-install-exec: install-linkedscripts install-linked-sys-scripts 
+install-exec: install-linked-scripts install-linked-sys-scripts
 	-$(SHELL) $(srcdir)/../mkinstalldirs $(scriptdir)
 	for s in $(SCRIPTS); do \
 	  $(INSTALL_SCRIPT) $(srcdir)/$$s $(scriptdir)/$$s; \
@@ -132,27 +133,21 @@ install-exec: install-linkedscripts install-linked-sys-scripts
 # By the way, $(scriptdir) here is the binary directory, e.g.,
 # bin/i386-linux, not the texmf*/scripts dir.
 # 
-install-linkedscripts:
+install-linked-scripts:
 	-$(SHELL) $(srcdir)/../mkinstalldirs $(scriptdir)
 	# link to the basename, removing any extension, of the source.
 	# we downcase for the sake of TeXcount.pl -> texcount.
-	for s in $(LINKEDSCRIPTS); do \
+	# LINKSUFFIX is for -sys, see next target.
+	for s in $(LINKED_SCRIPTS); do \
 	  target=$(scriptdir)/`basename $$s | sed 's,\.[^/]*$$,,' | tr A-Z a-z`; \
+	  target=$$target$(LINKSUFFIX); \
 	  rm -f $$target; \
 	  ln -s ../../$$s $$target; \
 	done
 
 install-linked-sys-scripts:
-	-$(SHELL) $(srcdir)/../mkinstalldirs $(scriptdir)
-	# link to the basename, removing any extension, of the source,
-	# and append -sys to the file name.
-	# we downcase for the sake of TeXcount.pl -> texcount-sys.
-	for s in $(LINKED_SYS_SCRIPTS); do \
-	  target=$(scriptdir)/`basename $$s | sed 's,\.[^/]*$$,,' | tr A-Z a-z`; \
-	  target="$target-sys" \
-	  rm -f $$target; \
-	  ln -s ../../$$s $$target; \
-	done
+	$(MAKE) LINKSUFFIX=-sys LINKED_SCRIPTS="$(LINKED_SYS_SCRIPTS)" \
+	  install-linked-scripts
 
 kpse_include ../make/clean.mk
 
