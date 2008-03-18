@@ -50,31 +50,6 @@ namespace gr
 /*----------------------------------------------------------------------------------------------
 	Output a file showing a log of the transduction process and the resulting segment.
 ----------------------------------------------------------------------------------------------*/
-//bool GrTableManager::WriteTransductionLog(GrCharStream * pchstrm, Segment * psegRet,
-//	int cbPrevSegDat, byte * pbPrevSegDat, byte * pbNextSegDat, int * pcbNextSegDat)
-//{
-//#ifdef TRACING
-//	std::string staFile;
-//	if (!LogFileName(staFile))
-//		return false;
-//
-//	std::ofstream strmOut;
-//	if (cbPrevSegDat > 0)
-//		strmOut.open(staFile.c_str(), std::ios::app);	// append
-//	else
-//		strmOut.open(staFile.c_str());
-//	if (strmOut.fail())
-//		return false;
-//
-//	WriteXductnLog(strmOut, pchstrm, psegRet, cbPrevSegDat, pbPrevSegDat);
-//
-//	strmOut.close();
-//	return true;
-//#else
-//	return false;
-//#endif // TRACING
-//}
-
 bool GrTableManager::WriteXmlLog(std::ostream * pstrmLog,
 	GrCharStream * pchstrm, Segment * psegRet, int cbPrevSegDat, byte * pbPrevSegDat)
 {
@@ -89,42 +64,8 @@ bool GrTableManager::WriteXmlLog(std::ostream * pstrmLog,
 #endif // TRACING
 }
 
-/*----------------------------------------------------------------------------------------------
-	Append to the file, showing the surface/underlying mappings. This must be done after
-	figuring out all the associations.
 
-	Also write the final glyph positions, since they are now determined.
-----------------------------------------------------------------------------------------------*/
-//bool GrTableManager::WriteAssociationLog(GrCharStream * pchstrm, Segment * psegRet)
-//{
-//#ifdef TRACING
-//	std::string staFile;
-//	if (!LogFileName(staFile))
-//		return false;
-//
-//	std::ofstream strmOut;
-//	strmOut.open(staFile.c_str(), std::ios::app);	// append
-//	if (strmOut.fail())
-//		return false;
-//
-//	LogFinalPositions(strmOut);
-//
-//	strmOut << "\n\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n\n";
-//
-//	psegRet->LogUnderlyingToSurface(this, strmOut, pchstrm);
-//	psegRet->LogSurfaceToUnderlying(this, strmOut);
-//
-//	strmOut << "\n\n=======================================================================\n\n";
-//
-//	strmOut.close();
-//	return true;
-//#else
-//	return false;
-//#endif // TRACING
-//}
-
-#ifdef XMLOMIT
-bool GrTableManager::WriteAssociationLog(std::ostream * pstrmLog,
+bool GrTableManager::WriteXmlAssocLog(std::ostream * pstrmLog,
 	GrCharStream * pchstrm, Segment * psegRet)
 {
 #ifdef TRACING
@@ -134,19 +75,22 @@ bool GrTableManager::WriteAssociationLog(std::ostream * pstrmLog,
 	std::ostream & strmOut = *pstrmLog;
 	LogFinalPositions(strmOut);
 
-	strmOut << "\n\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n\n";
+	LogXmlTagOpen(strmOut, "Mappings", 1, true);
+	LogXmlTagPostAttrs(strmOut, true);
 
-	psegRet->LogUnderlyingToSurface(this, strmOut, pchstrm);
-	psegRet->LogSurfaceToUnderlying(this, strmOut);
+	//psegRet->LogXmlUnderlyingToSurface(strmOut, this, pchstrm, 2);
+	//psegRet->LogXmlSurfaceToUnderlying(strmOut, this, 2);
 
-	strmOut << "\n\n=======================================================================\n\n";
+	LogXmlTagClose(strmOut, "Mappings", 1, true);
+	
+	strmOut << "\n";
+	LogXmlTagClose(strmOut, "GraphiteTraceLog", 0, true);
 
 	return true;
 #else
 	return false;
 #endif // TRACING
 }
-#endif // XMLOMIT
 
 #ifdef TRACING
 
@@ -190,7 +134,9 @@ void GrTableManager::WriteXmlLogAux(std::ostream & strmOut,
 
 	LogXmlTagClose(strmOut, "SegmentRun", 1, true);
 	strmOut << "\n";
-	LogXmlTagClose(strmOut, "GraphiteTraceLog", 0, true);
+
+	// Don't do this until after we've logged the associations.
+	//LogXmlTagClose(strmOut, "GraphiteTraceLog", 0, true);
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -202,15 +148,32 @@ void GrTableManager::LogXmlUnderlying(std::ostream & strmOut, GrCharStream * pch
 	LogXmlTagOpen(strmOut, "Input", nIndent, true);
 	LogXmlTagPostAttrs(strmOut, true);
 
+	LogXmlUnderlyingAux(strmOut, pchstrm, cchwBackup, -1, nIndent,
+		true,	// text
+		true,	// features
+		true,	// color
+		false,	// string offset
+		false,	// ligature components
+		false);	// glyph associations
+
+	LogXmlTagClose(strmOut, "Input", nIndent, true);
+}
+
+void GrTableManager::LogXmlUnderlyingAux(std::ostream & strmOut, GrCharStream * pchstrm,
+	int cch32Backup, int cch32Lim, size_t nIndent,
+	bool fLogText, bool fLogFeatures, bool fLogColor, bool fLogStrOff, bool fLogLig, bool fLogGlyphs)
+{
 	int rgnChars[MAX_SLOTS];
 	bool rgfNewRun[MAX_SLOTS];
 	std::fill_n(rgfNewRun, MAX_SLOTS, false);
 	GrFeatureValues rgfval[MAX_SLOTS];
 	int cchwMaxRawChars;
 
-	int cnUtf32 = pchstrm->GetLogData(this, rgnChars, rgfNewRun, rgfval,
-		cchwBackup, &cchwMaxRawChars);
-	cnUtf32 = min(cnUtf32, MAX_SLOTS);
+	int cch32 = pchstrm->GetLogData(this, rgnChars, rgfNewRun, rgfval,
+		cch32Backup, &cchwMaxRawChars);
+	cch32 = min(cch32, MAX_SLOTS);
+	if (cch32Lim > -1)
+		cch32 = min(cch32Lim, cch32);
 
 	int ichw;
 
@@ -221,20 +184,20 @@ void GrTableManager::LogXmlUnderlying(std::ostream & strmOut, GrCharStream * pch
 	utf16 rgchwChars4[MAX_SLOTS];
 	utf16 rgchwChars5[MAX_SLOTS];
 	utf16 rgchwChars6[MAX_SLOTS];
-	utf16 rgiRawString[MAX_SLOTS];
+	utf16 rgiRawString[MAX_SLOTS];	// indices from underlying slots to text-source chars (0-based)
 
 	int rgichwRaw[MAX_SLOTS]; // index of input char with in the given UTF32, 1-based
 
 	if (cchwMaxRawChars > 1)
 	{
 		cchwMaxRawChars = min(cchwMaxRawChars, 6); // max of 6 raw (UTF-8 or UTF-16) chars per slot
-		pchstrm->GetLogDataRaw(this, cnUtf32, cchwBackup, cchwMaxRawChars,
+		pchstrm->GetLogDataRaw(this, cch32, cch32Backup, cchwMaxRawChars,
 			rgchwChars1, rgchwChars2, rgchwChars3, rgchwChars4, rgchwChars5, rgchwChars6,
 			rgichwRaw);
 	}
 	else
 	{
-		for (ichw = 0; ichw < cnUtf32; ichw++)
+		for (ichw = 0; ichw < cch32; ichw++)
 		{
 			rgichwRaw[ichw] = 1;
 			rgchwChars1[ichw] = rgnChars[ichw];
@@ -248,7 +211,7 @@ void GrTableManager::LogXmlUnderlying(std::ostream & strmOut, GrCharStream * pch
 
 	int ichUtf32 = 0;
 	ichw = 0;
-	while (ichUtf32 < cnUtf32)
+	while (ichUtf32 < cch32)
 	{
 		if (rgichwRaw[ichw] == 1)
 		{
@@ -258,7 +221,7 @@ void GrTableManager::LogXmlUnderlying(std::ostream & strmOut, GrCharStream * pch
 	}
 
 	int ichwFeat = 0;
-	for (ichw = 0; ichw < cnUtf32; ichw++)
+	for (ichw = 0; ichw < cch32; ichw++)
 	{
 		if (rgfNewRun[ichw])
 			ichwFeat = ichw;	// because rgfval only saves features for first of run
@@ -266,7 +229,7 @@ void GrTableManager::LogXmlUnderlying(std::ostream & strmOut, GrCharStream * pch
 		// See if there are any features.
 		bool fFeatures = false;
 		size_t ifeat;
-		for (ifeat = 0; ifeat < kMaxFeatures; ifeat++)
+		for (ifeat = 0; fLogFeatures && ifeat < kMaxFeatures; ifeat++)
 		{
 			if (rgfval[ichwFeat].FeatureValue(ifeat) != 0)
 			{
@@ -274,30 +237,39 @@ void GrTableManager::LogXmlUnderlying(std::ostream & strmOut, GrCharStream * pch
 				break;
 			}
 		}
-		LogXmlTagOpen(strmOut, "Char", nIndent+1, fFeatures);
 
-		LogXmlTagAttr(strmOut, "index", rgiRawString[ichw], 0);
+		bool fContent = fFeatures;
+
+		LogXmlTagOpen(strmOut, "Char", nIndent+1, fContent);
+
+		LogXmlTagAttr(strmOut, "index", rgiRawString[ichw] - cch32Backup, 0);
 		LogXmlTagAttrHex(strmOut, "usv", rgnChars[ichw], 0);
 
-		char rgch[20];
-		rgch[0] = (char)rgnChars[ichw];
-		rgch[1] = 0;
-		if (rgnChars[ichw] < 0x0100 && rgchwChars2[ichw] == 0)	// ANSI
-			LogXmlTagAttr(strmOut, "text", rgch);
-		else if (rgnChars[ichw] == knLRM)
-			LogXmlTagAttr(strmOut, "text", "<LRM>");
-		else if (rgnChars[ichw] == knRLM)
-			LogXmlTagAttr(strmOut, "text", "<RLM>");
-		else if (rgnChars[ichw] == knLRO)
-			LogXmlTagAttr(strmOut, "text", "<LRO>");
-		else if (rgnChars[ichw] == knRLO)
-			LogXmlTagAttr(strmOut, "text", "<RLO>");
-		else if (rgnChars[ichw] == knLRE)
-			LogXmlTagAttr(strmOut, "text", "<LRE>");
-		else if (rgnChars[ichw] == knRLE)
-			LogXmlTagAttr(strmOut, "text", "<RLE>");
-		else if (rgnChars[ichw] == knPDF)
-			LogXmlTagAttr(strmOut, "text", "<PDF>");
+		if (fLogText)
+		{
+			char rgch[20];
+			rgch[0] = (char)rgnChars[ichw];
+			rgch[1] = 0;
+			if (rgnChars[ichw] < 0x0100 && rgchwChars2[ichw] == 0)	// ANSI
+				LogXmlTagAttr(strmOut, "text", rgch);
+			else if (rgnChars[ichw] == knLRM)
+				LogXmlTagAttr(strmOut, "text", "<LRM>");
+			else if (rgnChars[ichw] == knRLM)
+				LogXmlTagAttr(strmOut, "text", "<RLM>");
+			else if (rgnChars[ichw] == knLRO)
+				LogXmlTagAttr(strmOut, "text", "<LRO>");
+			else if (rgnChars[ichw] == knRLO)
+				LogXmlTagAttr(strmOut, "text", "<RLO>");
+			else if (rgnChars[ichw] == knLRE)
+				LogXmlTagAttr(strmOut, "text", "<LRE>");
+			else if (rgnChars[ichw] == knRLE)
+				LogXmlTagAttr(strmOut, "text", "<RLE>");
+			else if (rgnChars[ichw] == knPDF)
+				LogXmlTagAttr(strmOut, "text", "<PDF>");
+		}
+
+		if (fLogStrOff)
+			LogXmlTagAttr(strmOut, "stringOffset", pchstrm->Min() + rgiRawString[ichw] - cch32Backup, 0);
 
 		if (rgchwChars2[ichw] != 0)
 		{
@@ -309,52 +281,63 @@ void GrTableManager::LogXmlUnderlying(std::ostream & strmOut, GrCharStream * pch
 				LogXmlTagAttr(strmOut, "textSourceUtf16", strHex.c_str());
 		}
 
-		IColorTextSource * tscolor = dynamic_cast<IColorTextSource *>(pchstrm->TextSrc());
-		if (tscolor)
+		if (fLogColor)
 		{
-			int clrFore, clrBack;
-			tscolor->getColors(ichw, &clrFore, &clrBack);
-			LogXmlTagColor(strmOut, "color", clrFore, false);
-			LogXmlTagColor(strmOut, "background", clrBack, true);
-		}
-
-		LogXmlTagPostAttrs(strmOut, fFeatures);
-
-		for (ifeat = 0; ifeat < kMaxFeatures; ifeat++)
-		{
-			if (rgfval[ichwFeat].FeatureValue(ifeat) != 0)
+			IColorTextSource * tscolor = dynamic_cast<IColorTextSource *>(pchstrm->TextSrc());
+			if (tscolor)
 			{
-				GrFeature * pfeat = Feature(ifeat);
-
-				LogXmlTagOpen(strmOut, "Feature", nIndent+2, false);
-				LogXmlTagAttr(strmOut, "id", pfeat->ID());
-				LogXmlTagAttr(strmOut, "value", rgfval[ichwFeat].FeatureValue(ifeat));
-				//LogXmlTagPostAttrs(strmOut, false);
-				LogXmlTagClose(strmOut, "Feature", nIndent+1, false);
+				int clrFore, clrBack;
+				tscolor->getColors(ichw, &clrFore, &clrBack);
+				LogXmlTagColor(strmOut, "color", clrFore, false);
+				LogXmlTagColor(strmOut, "background", clrBack, true);
 			}
 		}
 
-		LogXmlTagClose(strmOut, "Char", nIndent+1, fFeatures);
-	}
+		if (fLogLig)
+		{
 
-	LogXmlTagClose(strmOut, "Input", nIndent, true);
-}
+		}
 
-/*----------------------------------------------------------------------------------------------
-	Output the glyph IDs generated by the glyph generation pass (pass 0).
-----------------------------------------------------------------------------------------------*/
-//void GrTableManager::LogXmlPass0(std::ostream & strmOut)
+//if (fLogLig || fLogGlyphs)
 //{
-//	strmOut << "INPUT TO PASS 1\n\n";
-//
-//	GrSlotStream * psstrm = OutputStream(0);
-//
-//	LogSlotHeader(strmOut, psstrm->WritePos(), SP_PER_SLOT, LEADING_SP);
-//
-//	LogSlotGlyphs(strmOut, psstrm);
-//
-//	strmOut << "\n";
+//	size_t cassocs = 0;
+//	int fLigs = false;
+//	int ichw;
+//	for (ichw = 0; ichw < (m_ichwAssocsLim - m_ichwAssocsMin); ichw++)
+//	{
+//		if (m_prgpvisloutAssocs[ichw])
+//			cassocs = max(cassocs, m_prgpvisloutAssocs[ichw]->size());
+//		if (m_prgisloutLigature[ichw] != kNegInfinity)
+//			fLigs = true;
+//	}
 //}
+
+		LogXmlTagPostAttrs(strmOut, fContent);
+
+		if (fLogFeatures)
+		{
+			for (ifeat = 0; ifeat < kMaxFeatures; ifeat++)
+			{
+				if (rgfval[ichwFeat].FeatureValue(ifeat) != 0)
+				{
+					GrFeature * pfeat = Feature(ifeat);
+
+					LogXmlTagOpen(strmOut, "Feature", nIndent+2, false);
+					LogXmlTagAttr(strmOut, "id", pfeat->ID());
+					LogXmlTagAttr(strmOut, "value", rgfval[ichwFeat].FeatureValue(ifeat));
+					//LogXmlTagPostAttrs(strmOut, false);
+					LogXmlTagClose(strmOut, "Feature", nIndent+1, false);
+				}
+			}
+		}
+
+		if (fLogGlyphs)
+		{
+		}
+
+		LogXmlTagClose(strmOut, "Char", nIndent+1, fContent);
+	}
+}
 
 /*----------------------------------------------------------------------------------------------
 	Output the the results of pass.
@@ -417,24 +400,12 @@ void GrTableManager::LogXmlPass(std::ostream & strmOut, int ipass, int cslotSkip
 	LogXmlTagPostAttrs(strmOut, true);
 	bool fPreJust = (!fJustWidths && ipass == m_ipassJust1 - 1 && ShouldLogJustification());
 	bool fPostJust = (fJustWidths || ipass == m_ipassJust1 && ShouldLogJustification());
-	ppass->LogXmlGlyphs(strmOut, this, psstrmOut, m_ipassJust1, fPreJust, fPostJust, nIndent+2);
+	ppass->LogXmlGlyphs(strmOut, this, psstrmOut, m_ipassJust1, fPreJust, fPostJust, cslotSkipped, nIndent+2);
 	LogXmlTagClose(strmOut, "Output", nIndent+1, true);
 
 	LogXmlTagClose(strmOut, "Pass", nIndent, true);
 
 #ifdef XMLOMIT
-
-	// Do this later, after we're sure the positions have been set:
-	//if (ipass == m_cpass - 1)
-	//	LogFinalPositions(strmOut);
-
-	if (cslotSkipped > 0)
-	{
-		strmOut << "\n               ";
-		for (islot = 0; islot < cslotSkipped; islot++)
-			strmOut << "SKIP   ";
-		strmOut << "\n";
-	}
 
 	//	If this was the pass just before the justification routines get run, output a
 	//	special line that just shows the results, ie, the values of justify.width.
@@ -497,15 +468,19 @@ void PassState::LogXmlRules(std::ostream & strmOut, GrTableManager * ptman,
 }
 
 void GrPass::LogXmlGlyphs(std::ostream & strmOut, GrTableManager * ptman, GrSlotStream * psstrmOut, 
-	int ipassJust1, bool fPreJust, bool fPostJust, int nIndent)
+	int ipassJust1, bool fPreJust, bool fPostJust, int cslotSkipped, int nIndent)
 {
 	GrBidiPass * ppassBidi = dynamic_cast<GrBidiPass *>(this);
+	GrBidiPass * ppassBidiNext = (m_ipass + 1 >= ptman->NumberOfPasses()) ?
+		NULL :
+		dynamic_cast<GrBidiPass *>(ptman->Pass(m_ipass + 1));
 	m_pzpst->LogXmlGlyphs(strmOut, ptman, psstrmOut, ipassJust1, fPreJust, fPostJust,
-		(ppassBidi != NULL), nIndent);
+		(ppassBidi != NULL), (ppassBidiNext != NULL), cslotSkipped, nIndent);
 }
 
 void PassState::LogXmlGlyphs(std::ostream & strmOut, GrTableManager * ptman, GrSlotStream * psstrmOut,
-	int ipassJust1, bool fPreJust, bool fPostJust, bool fBidi, int nIndent)
+	int ipassJust1, bool fPreJust, bool fPostJust, bool fBidi, bool fBidiNext, int cslotSkipped,
+	int nIndent)
 {
 	ptman->LogXmlTagOpen(strmOut, "Output", nIndent, true);
 	ptman->LogXmlTagPostAttrs(strmOut, true);
@@ -528,6 +503,8 @@ void PassState::LogXmlGlyphs(std::ostream & strmOut, GrTableManager * ptman, GrS
 		GrSlotState * pslot = psstrmOut->SlotAt(islot);
 
 		bool fMod = (pslot->PassModified() >= m_ipass && m_ipass > 0);
+		if (fBidi || fBidiNext)
+			fMod = true;
 
 		ptman->LogXmlTagOpen(strmOut, "Glyph", nIndent+1, fMod);
 
@@ -540,13 +517,15 @@ void PassState::LogXmlGlyphs(std::ostream & strmOut, GrTableManager * ptman, GrS
 			ptman->LogXmlTagAttr(strmOut, "actual", pslot->ActualGlyphForOutput(ptman));
 		if (m_rgfInsertion[islot])
 			ptman->LogXmlTagAttr(strmOut, "inserted", "true");
+		if (islot < cslotSkipped)
+			ptman->LogXmlTagAttr(strmOut, "nextPassSkips", "true");
 
 		ptman->LogXmlTagPostAttrs(strmOut, fMod);
 
 		if (fMod)
 		{
-			pslot->LogXmlAttributes(strmOut, ptman, m_ipass, islot,
-				fPreJust, fPostJust, fBidi, nIndent+2);
+			pslot->LogXmlAttributes(strmOut, ptman, psstrmOut, m_ipass, islot,
+				fPreJust, fPostJust, fBidi, fBidiNext, nIndent+2);
 		}
 
 		ptman->LogXmlTagClose(strmOut, "Glyph", nIndent+1, fMod);
@@ -558,8 +537,9 @@ void PassState::LogXmlGlyphs(std::ostream & strmOut, GrTableManager * ptman, GrS
 /*----------------------------------------------------------------------------------------------
 	Write out the attributes that have changes.
 ----------------------------------------------------------------------------------------------*/
-void GrSlotState::LogXmlAttributes(std::ostream & strmOut, GrTableManager * ptman, int ipass,
-	int islot, bool fPreJust, bool fPostJust, bool fBidi, int nIndent)
+void GrSlotState::LogXmlAttributes(std::ostream & strmOut, GrTableManager * ptman,
+	GrSlotStream * psstrmOut, int ipass,
+	int islot, bool fPreJust, bool fPostJust, bool fBidi, bool fBidiNext, int nIndent)
 {
 	//	To handle reprocessing, in which case there may be a chain of slots modified
 	//	in the same pass:
@@ -580,19 +560,12 @@ void GrSlotState::LogXmlAttributes(std::ostream & strmOut, GrTableManager * ptma
 
 	//if (fJustWidths)
 	//{}
-	//else if (fBidi)
-	//{
-	//	// Special stuff for Bidi pass
-	//}
-	//else if (fBidiNext)
-	//{
-	//}
 
 	bool fLogAssocs = false;
 
 	for (int slat = 0; slat < kslatMax + ptman->NumUserDefn() - 1; slat++)
 	{
-		if (!prgfMods[slat])
+		if (!prgfMods[slat] && (slat != kslatDir || (!fBidi && !fBidiNext)))
 			continue;
 
 		if (slat == kslatPosX)
@@ -651,7 +624,7 @@ void GrSlotState::LogXmlAttributes(std::ostream & strmOut, GrTableManager * ptma
 			}
 		}
 
-		fLogAssocs = true;
+		fLogAssocs = (fLogAssocs || prgfMods[slat]);
 
 		if (slat == kslatCompRef)
 		{
@@ -668,13 +641,32 @@ void GrSlotState::LogXmlAttributes(std::ostream & strmOut, GrTableManager * ptma
 		}
 		else
 		{
+			std::string strValue = "newValue";
+			if ((!prgfMods[slat] && fBidiNext) || fBidi)
+				strValue = "value";
+
 			ptman->LogXmlTagOpen(strmOut, "Attribute", nIndent, false);
 			ptman->LogXmlTagAttr(strmOut, "name", strAttrName.c_str());
 			int nValue = GetSlotAttrValue(strmOut, ptman, ipass, slat, 0, fPreJust, fPostJust);
-			ptman->LogXmlTagAttr(strmOut, "newValue", nValue);
+			switch (slat)
+			{
+			case kslatDir:		ptman->LogXmlDirCode(strmOut, strValue.c_str(), nValue);break;
+			case kslatBreak:	ptman->LogXmlBreakWeight(strmOut, "newValue", nValue);	break;
+			default:			ptman->LogXmlTagAttr(strmOut, "newValue", nValue);		break;
+			}
 			ptman->LogXmlTagPostAttrs(strmOut, false);
 			ptman->LogXmlTagClose(strmOut, "Attribute", nIndent, false);
 		}
+	}
+
+	if (fBidi)
+	{
+		// Output final directionality level
+		ptman->LogXmlTagOpen(strmOut, "Attribute", nIndent, false);
+		ptman->LogXmlTagAttr(strmOut, "name", "directionLevel");
+		ptman->LogXmlTagAttr(strmOut, "value", DirLevel());
+		ptman->LogXmlTagPostAttrs(strmOut, false);
+		ptman->LogXmlTagClose(strmOut, "Attribute", nIndent, false);
 	}
 
 	if (m_vpslotAssoc.size() > 1)
@@ -683,7 +675,7 @@ void GrSlotState::LogXmlAttributes(std::ostream & strmOut, GrTableManager * ptma
 	{
 		// association change from previous stream
 		GrSlotState * pslotAssoc = AssocSlot(0);
-		if (pslotAssoc->m_islotTmpIn != islot)
+		if (pslotAssoc == NULL || pslotAssoc->m_islotTmpIn != islot)
 			fLogAssocs = true;
 	}
 	if (fLogAssocs)
@@ -703,6 +695,8 @@ void GrSlotState::LogXmlAttributes(std::ostream & strmOut, GrTableManager * ptma
 				strAssocs.append(rgch);
 			}
 		}
+		if (strAssocs.length() == 0)
+			strAssocs.assign("??");
 		ptman->LogXmlTagOpen(strmOut, "Associations", nIndent, false);
 		ptman->LogXmlTagAttr(strmOut, "slots", strAssocs.c_str());
 		//ptman->LogXmlTagPostAttrs(strmOut, false);
@@ -713,209 +707,6 @@ void GrSlotState::LogXmlAttributes(std::ostream & strmOut, GrTableManager * ptma
 }
 
 #if XMLOMIT
-/*----------------------------------------------------------------------------------------------
-	Write out a line for each slot attribute that changed during the pass.
-
-	@param	fJustWidths - a special pass that writes out just the effects of the justification
-				routines, ie, the values of justify.width
-----------------------------------------------------------------------------------------------*/
-void GrTableManager::LogAttributes(std::ostream & strmOut, int ipass,
-	bool fJustWidths)
-{
-	//	Figure out which slot attributes were modified for some slot during the pass.
-	bool * prgfMods = new bool[kslatMax + NumUserDefn() - 1];
-
-	bool fPreJust = (!fJustWidths && ipass == m_ipassJust1 - 1 && ShouldLogJustification());
-	bool fPostJust = (fJustWidths || ipass == m_ipassJust1 && ShouldLogJustification());
-
-	int ccomp;	// max number of components per slot
-	int cassoc;	// max number of associations per slot
-	SlotAttrsModified(ipass, prgfMods, fPreJust, &ccomp, &cassoc);
-
-	if (fPreJust)
-	{
-	//	prgfMods[kslatJStretch] = true;
-	//	prgfMods[kslatJShrink] = true;
-	//	prgfMods[kslatJStep] = true;
-	//	prgfMods[kslatWeight] = true;
-		prgfMods[kslatJWidth] = false;	// output j.width in its own line (we call this
-										// method with fJustWidths == true)
-	}
-	else if (fPostJust)
-		prgfMods[kslatJWidth] = true;
-
-	GrPass * ppass = Pass(ipass);
-	GrPass * ppassNext = (ipass < m_cpass - 1) ? Pass(ipass + 1) : NULL;
-	GrSlotStream * psstrm = OutputStream(ipass);
-
-	if (fJustWidths)
-	{}
-	else if (dynamic_cast<GrBidiPass *>(ppass))
-	{
-		//	Special stuff for Bidi pass:
-		//	Log value of directionality attribute.
-		strmOut << "directionality ";
-		int islot;
-		for (islot = 0; islot < psstrm->WritePos(); islot++)
-		{
-			GrSlotState * pslot = psstrm->SlotAt(islot);
-			LogDirCodeInTable(strmOut, pslot->DirProcessed());
-		}
-		strmOut << "\n";
-
-		//	Log final direction level for bidi pass.
-		strmOut << "dir level      ";
-		for (islot = 0; islot < psstrm->WritePos(); islot++)
-		{
-			GrSlotState * pslot = psstrm->SlotAt(islot);
-			LogInTable(strmOut, pslot->DirLevel());
-		}
-		strmOut << "\n";
-	}
-	else if (ppassNext && dynamic_cast<GrBidiPass *>(ppassNext))
-	{
-		//	Next pass is Bidi: log input values of directionality attribute that are input for it.
-		strmOut << "directionality ";
-		for (int islot = 0; islot < psstrm->WritePos(); islot++)
-		{
-			GrSlotState * pslot = psstrm->SlotAt(islot);
-			LogDirCodeInTable(strmOut, pslot->Directionality());
-		}
-		strmOut << "\n";
-	}
-
-	for (int slat = 0; slat < kslatMax + NumUserDefn() - 1; slat++)
-	{
-		int cIndexLim = 1;
-		if (slat == kslatCompRef)
-			cIndexLim = ccomp;
-		else if (slat == kslatUserDefn)
-			cIndexLim = 1; // kMaxUserDefinedSlotAttributes;
-
-		if (fJustWidths && slat != kslatJWidth)
-			continue;
-
-		bool fValidAttr = true;
-		for (int iIndex = 0; iIndex < cIndexLim; iIndex++)
-		{
-			if (prgfMods[slat])
-			{
-				switch(slat)
-				{
-				case kslatAdvX:			strmOut << "advance.x      "; break;
-				case kslatAdvY:			strmOut << "advance.y      "; break;
-				case kslatAttTo:		strmOut << "att.to         "; break;
-				case kslatAttAtX:		strmOut << "att.at.x       "; break;
-				case kslatAttAtY:		strmOut << "att.at.y       "; break;
-				case kslatAttAtGpt:		strmOut << "att.at.gpt     "; break;
-				case kslatAttAtXoff:	strmOut << "att.at.xoff    "; break;
-				case kslatAttAtYoff:	strmOut << "att.at.yoff    "; break;
-				case kslatAttWithX:		strmOut << "att.with.x     "; break;
-				case kslatAttWithY:		strmOut << "att.with.y     "; break;
-				case kslatAttWithGpt:	strmOut << "att.with.gpt   "; break;
-				case kslatAttWithXoff:	strmOut << "att.with.xoff  "; break;
-				case kslatAttWithYoff:	strmOut << "att.with.yoff  "; break;
-				case kslatAttLevel:		strmOut << "att.level      "; break;
-				case kslatBreak:		strmOut << "breakweight    "; break;
-				case kslatCompRef:		strmOut << "component " << iIndex + 1 // 1-based
-											<< "    "; break;
-				case kslatDir:			strmOut << "dir            "; break;
-				case kslatInsert:		strmOut << "insert         "; break;
-				case kslatMeasureSol:	strmOut << "measure.sol    "; break;
-				case kslatMeasureEol:	strmOut << "measure.eol    "; break;
-				case kslatJStretch:		strmOut << "j.stretch      "; break;
-				case kslatJShrink:		strmOut << "j.shrink       "; break;
-				case kslatJStep:		strmOut << "j.step         "; break;
-				case kslatJWeight:		strmOut << "j.weight       "; break;
-				case kslatJWidth:		strmOut << "j.width        "; break;
-				case kslatPosX:
-				case kslatPosY:
-					Assert(false);
-					break;
-				case kslatShiftX:		strmOut << "shift.x        "; break;
-				case kslatShiftY:		strmOut << "shift.y        "; break;
-				default:
-					if (kslatUserDefn <= slat &&
-						slat < kslatUserDefn + NumUserDefn())
-					{
-						strmOut << "user" << (slat - kslatUserDefn + 1) // 1-based
-							<< ((iIndex >= 9) ? "         " : "          ");
-					}
-					else
-					{
-						// Invalid attribute:
-						Warn("bad slot attribute");
-						fValidAttr = false;
-						break;
-					}
-				}
-
-				if (!fValidAttr)
-					break; // out of iIndex loop
-
-				for (int islot = 0; islot < psstrm->WritePos(); islot++)
-				{
-					GrSlotState * pslot = psstrm->SlotAt(islot);
-					pslot->LogSlotAttribute(this, strmOut, ipass, slat, iIndex,
-						fPreJust, fPostJust);
-				}
-
-				strmOut << "\n";
-			}
-		}
-	}
-
-	if (fJustWidths)
-		goto LDone;
-
-	for (int iassoc = 0; iassoc < cassoc; iassoc++)
-	{
-		//	Log associations. Put them on one line it that will work; otherwise use several.
-		bool fBoth = (cassoc <= 2);
-		bool fAfter = (iassoc == (cassoc - 1));
-		if (fBoth)
-			strmOut << "assocs         ";
-		else if (iassoc == 0)
-			strmOut << "assocs-before  ";
-		else if (fAfter)
-			strmOut << "      -after   ";
-		else
-			strmOut << "      -other   ";
-
-		for (int islot = 0; islot < psstrm->WritePos(); islot++)
-		{
-			GrSlotState * pslot = psstrm->SlotAt(islot);
-			pslot->LogAssociation(this, strmOut, ipass, iassoc, fBoth, fAfter);
-		}
-
-		strmOut << "\n";
-
-		if (fBoth)
-			break;
-	}
-
-	if (cassoc == 0 && dynamic_cast<GrBidiPass *>(ppass))
-	{
-		strmOut << "assocs         ";
-
-		//	Log associations for all slots moved during the Bidi pass.
-		for (int islot = 0; islot < psstrm->WritePos(); islot++)
-		{
-			GrSlotState * pslot = psstrm->SlotAt(islot);
-			if (pslot->m_islotTmpIn != pslot->m_islotTmpOut)
-				LogInTable(strmOut, pslot->m_islotTmpIn);
-			else
-				strmOut << "       ";
-		}
-
-		strmOut << "\n";
-	}
-
-LDone:
-
-	delete[] prgfMods;
-}
-
 /*----------------------------------------------------------------------------------------------
 	Write out the final positions.
 ----------------------------------------------------------------------------------------------*/
@@ -1045,16 +836,33 @@ int GrSlotState::GetSlotAttrValue(std::ostream & strmOut, GrTableManager * ptman
 	
 #endif // TRACING
 
-#ifdef XMLOMIT
 
 /*----------------------------------------------------------------------------------------------
 	Write out the final underlying-to-surface associations.
 ----------------------------------------------------------------------------------------------*/
-void Segment::LogUnderlyingToSurface(GrTableManager * ptman, std::ostream & strmOut,
-	GrCharStream * pchstrm)
+void Segment::LogXmlUnderlyingToSurface(std::ostream & strmOut, GrTableManager * ptman,
+	GrCharStream * pchstrm, int nIndent)
 {
 #ifdef TRACING
-	strmOut << "\n\nUNDERLYING TO SURFACE MAPPINGS\n\n";
+
+	ptman->LogXmlTagOpen(strmOut, "UnderlyingToSurface", nIndent, true);
+	ptman->LogXmlTagPostAttrs(strmOut, true);
+
+	ptman->LogXmlUnderlyingAux(strmOut, pchstrm, -m_ichwAssocsMin, (m_ichwAssocsLim - m_ichwAssocsMin),
+		nIndent+1,
+		true,	// text
+		false,	// features
+		false,	// color
+		true,	// string offset
+		true,	// ligature components
+		true	// glyph associations
+	);
+
+	ptman->LogXmlTagClose(strmOut, "UnderlyingToSurface", nIndent, true);
+
+
+#ifdef XMLOMIT
+	ptman->LogXmlTagOpen(strmOut, "UnderlyingToSurface", nIndent, true);
 
 	size_t cassocs = 0;
 	int fLigs = false;
@@ -1067,7 +875,6 @@ void Segment::LogUnderlyingToSurface(GrTableManager * ptman, std::ostream & strm
 			fLigs = true;
 	}
 
-//	ptman->LogSlotHeader(strmOut, m_ichwAssocsLim, SP_PER_SLOT, LEADING_SP, m_ichwAssocsMin);
 	ptman->LogUnderlyingHeader(strmOut, pchstrm->Min(), (pchstrm->Min() + m_ichwAssocsLim),
 		-m_ichwAssocsMin, NULL);
 
@@ -1235,8 +1042,12 @@ void Segment::LogUnderlyingToSurface(GrTableManager * ptman, std::ostream & strm
 	}
 
 	strmOut << "\n";
+#endif // XMLOMIT
 #endif // TRACING
+
 }
+
+#ifdef XMLOMIT
 
 /*----------------------------------------------------------------------------------------------
 	Write out the final surface-to-underlying associations.
@@ -1668,6 +1479,89 @@ void GrTableManager::LogXmlTagColor(std::ostream & strmOut, std::string strAttr,
 		break;
 	}
 
+	LogXmlTagAttr(strmOut, strAttr, strValue.c_str(), nIndent);
+}
+
+/*----------------------------------------------------------------------------------------------
+	Write a directionality code to the table.
+----------------------------------------------------------------------------------------------*/
+void GrTableManager::LogXmlDirCode(std::ostream & strmOut, std::string strAttr, int dircValue,
+	size_t nIndent)
+{
+	std::string strValue;
+	char rgch[20];
+	switch (dircValue)
+	{
+	case kdircUnknown:		strValue = "unknown";	break;
+	case kdircNeutral:		strValue = "ON";	break;
+	case kdircL:			strValue = "L";		break;
+	case kdircR:			strValue = "R";		break;
+	case kdircRArab:		strValue = "AR";	break;
+	case kdircEuroNum:		strValue = "EN";	break;
+	case kdircEuroSep:		strValue = "ES";	break;
+	case kdircEuroTerm:		strValue = "ET";	break;
+	case kdircArabNum:		strValue = "AN";	break;
+	case kdircComSep:		strValue = "CS";	break;
+	case kdircWhiteSpace:	strValue = "WS";	break;
+	case kdircBndNeutral:	strValue = "BN";	break;
+	case kdircNSM:			strValue = "NSM";	break;
+	case kdircLRO:			strValue = "LRO";	break;
+	case kdircRLO:			strValue = "RLO";	break;
+	case kdircLRE:			strValue = "LRE";	break;
+	case kdircRLE:			strValue = "RLE";	break;
+	case kdircPDF:			strValue = "PDF";	break;
+	case kdircPdfL:			strValue = "PDF-L";	break;
+	case kdircPdfR:			strValue = "PDF-R";	break;
+	case kdircLlb:			strValue = "L";		break;
+	case kdircRlb:			strValue = "R";		break;
+	default:
+		itoa(dircValue, rgch, 10);
+		strValue.assign(rgch);
+		break;
+	}
+	LogXmlTagAttr(strmOut, strAttr, strValue.c_str(), nIndent);
+}
+
+/*----------------------------------------------------------------------------------------------
+	Write a breakweight code to the table.
+----------------------------------------------------------------------------------------------*/
+void GrTableManager::LogXmlBreakWeight(std::ostream & strmOut, std::string strAttr, int lbValue,
+	size_t nIndent)
+{
+	std::string strValue;
+	char rgch[20];
+	if (lbValue < 0)
+	{
+		lbValue = lbValue * -1;
+		switch (lbValue)
+		{
+		case klbWsBreak:		strValue = "-ws";		break;
+		case klbWordBreak:		strValue = "-word";		break;
+		case klbHyphenBreak:	strValue = "-intra";	break;
+		case klbLetterBreak:	strValue = "-letter";	break;
+		case klbClipBreak:		strValue = "-clip";		break;
+		default:
+			itoa(lbValue * -1, rgch, 10);
+			strValue.assign(rgch);
+			break;
+		}
+	}
+	else
+	{
+		switch (lbValue)
+		{
+		case klbNoBreak:		strValue = "none";		break;
+		case klbWsBreak:		strValue = "ws";		break;
+		case klbWordBreak:		strValue = "word";		break;
+		case klbHyphenBreak:	strValue = "intra";		break;
+		case klbLetterBreak:	strValue = "letter";	break;
+		case klbClipBreak:		strValue = "clip";		break;
+		default:
+			itoa(lbValue, rgch, 10);
+			strValue.assign(rgch);
+			break;
+		}
+	}
 	LogXmlTagAttr(strmOut, strAttr, strValue.c_str(), nIndent);
 }
 

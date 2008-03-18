@@ -87,7 +87,8 @@ public:
 	void LogInsertionsAndDeletions(std::ostream & strmOut, GrSlotStream * psstrmOut);
 	void LogXmlRules(std::ostream & strmOut, GrTableManager *, GrSlotStream * psstrmIn, int nIndent);
 	void LogXmlGlyphs(std::ostream & strmOut, GrTableManager * ptman, GrSlotStream * psstrmOut,
-		int ipassJust1, bool fPreJust, bool fPostJust, bool fBidi, int nIndent);
+		int ipassJust1, bool fPreJust, bool fPostJust, bool fBidi, bool fBidiNext, int cslotsSkipped,
+		int nIndent);
 #endif // TRACING
 
 protected:
@@ -370,7 +371,7 @@ public:
 	void LogXmlRules(std::ostream & strmOut, GrTableManager * ptman,
 		GrSlotStream * psstrmIn, int nIndent);
 	void LogXmlGlyphs(std::ostream & strmOut, GrTableManager * ptman, GrSlotStream * psstrmOut,
-		int ipassJust1, bool fPreJust, bool fPostJust, int nIndent);
+		int ipassJust1, bool fPreJust, bool fPostJust, int cslotsSkipped, int nIndent);
 #endif // TRACING
 
 protected:

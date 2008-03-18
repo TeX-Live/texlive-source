@@ -349,7 +349,7 @@ public:
 	{
 		if (i < 0)
 			return NULL;
-		if (i > signed(m_vpslotAssoc.size()))
+		if (i >= signed(m_vpslotAssoc.size()))
 			return NULL;
 
 		GrSlotState * pslotAssoc = m_vpslotAssoc[i];
@@ -868,8 +868,9 @@ public:
 		bool fPreJust, bool fPostJust);
 	void LogAssociation(GrTableManager * ptman,
 		std::ostream & strmOut, int ipass, int iassoc, bool fBoth, bool fAfter);
-	void LogXmlAttributes(std::ostream & strmOut, GrTableManager * ptman, int ipass, int islot,
-		bool fPreJust, bool fPostJust, bool fBidi, int nIndent);
+	void LogXmlAttributes(std::ostream & strmOut, GrTableManager * ptman, GrSlotStream * psstrmOut,
+		int ipass, int islot,
+		bool fPreJust, bool fPostJust, bool fBidi, bool fBidiNext, int nIndent);
 	int GetSlotAttrValue(std::ostream & strmOut, GrTableManager * ptman,
 		int ipass, int slat, int iIndex, bool fPreJust, bool fPostJust);
 	int m_islotTmpIn;		// for use by transduction log; index of slot in input stream

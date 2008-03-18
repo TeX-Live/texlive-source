@@ -132,9 +132,6 @@ bool GrTableManager::WriteAssociationLog(std::ostream * pstrmLog,
 		return false;
 
 	std::ostream & strmOut = *pstrmLog;
-	LogFinalPositions(strmOut);
-
-	strmOut << "\n\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n\n";
 
 	psegRet->LogUnderlyingToSurface(this, strmOut, pchstrm);
 	psegRet->LogSurfaceToUnderlying(this, strmOut);
@@ -196,8 +193,9 @@ void GrTableManager::WriteXductnLog(std::ostream & strmOut,
 			LogPassOutput(strmOut, ipass, *(pbPrevSegDat + 4 + ipass));
 	}
 
-	// Do this later, after outputting final positions:
-	//strmOut << "\n\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n\n";
+	LogFinalPositions(strmOut);
+
+	strmOut << "\n\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n\n";
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -733,8 +731,8 @@ void GrTableManager::LogAttributes(std::ostream & strmOut, int ipass,
 	//	Figure out which slot attributes were modified for some slot during the pass.
 	bool * prgfMods = new bool[kslatMax + NumUserDefn() - 1];
 
-	bool fPreJust  = (!fJustWidths && ipass == m_ipassJust1 - 1 && ShouldLogJustification());
-	bool fPostJust = ((fJustWidths || ipass == m_ipassJust1)    && ShouldLogJustification());
+	bool fPreJust = (!fJustWidths && ipass == m_ipassJust1 - 1 && ShouldLogJustification());
+	bool fPostJust = ((fJustWidths || ipass == m_ipassJust1) && ShouldLogJustification());
 
 	int ccomp;	// max number of components per slot
 	int cassoc;	// max number of associations per slot
@@ -957,7 +955,7 @@ void GrTableManager::LogFinalPositions(std::ostream & strmOut)
 	}
 	strmOut << "\n";
 }
-#endif
+#endif // TRACING
 
 /*----------------------------------------------------------------------------------------------
 	Write out the final underlying-to-surface associations.

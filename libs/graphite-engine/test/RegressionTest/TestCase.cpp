@@ -25,7 +25,6 @@ Things that still need testing:
 -------------------------------------------------------------------------------*//*:End Ignore*/
 
 #include "main.h"
-
 #include <cstring>
 
 //:>********************************************************************************************
@@ -301,7 +300,7 @@ void TestCase::SetupBurmese1()
 {
 	m_testName = "Burmese 1";
 	m_debug = false;
-	m_traceLog = true;
+	//m_traceLog = true;
 	//m_skip = true;
 
 	//	Input:
@@ -936,6 +935,7 @@ void TestCase::SetupOnlyWhiteSpace()
 void TestCase::SetupCrossLine1()
 {
 	m_testName = "Cross-line 1";
+	//m_traceLog = true;
 	//m_skip = true;
 
 	//	Input:
@@ -1072,6 +1072,7 @@ void TestCase::SetupCrossLine2()
 void TestCase::SetupCrossLine3()
 {
 	m_testName = "Cross-line 3";
+	m_traceLog = true;
 	//m_skip = true;
 
 	//	Input:
@@ -1224,7 +1225,7 @@ void TestCase::SetupArabic1()
 {
 	m_testName = "Arabic 1";
 	//m_debug = true;
-	m_traceLog = false;
+	//m_traceLog = true;
 	//m_skip = true;
 
 	//	Input:
@@ -1273,7 +1274,7 @@ void TestCase::SetupArabic2()
 {
 	m_testName = "Arabic 2";
 	m_debug = false;
-	m_traceLog = false;
+	//m_traceLog = false;
 	//m_skip = true;
 
 	//	Input:
@@ -1556,7 +1557,7 @@ void TestCase::SetupDumbFallback1()
 {
 	m_testName = "Dumb Fallback 1";
 	//m_debug = true;
-	m_traceLog = false;
+	//m_traceLog = true;
 	//m_skip = true;
 
 	//	Input:
@@ -1616,7 +1617,7 @@ void TestCase::SetupDumbFallback2()
 {
 	m_testName = "Dumb Fallback 2";
 	//m_debug = true;
-	m_traceLog = false;
+	//m_traceLog = true;
 	//m_skip = true;
 
 	//	Input:
@@ -1653,8 +1654,8 @@ void TestCase::SetupBadFont()
 {
 	m_testName = "Bad Font";
 	//m_debug = true;
-	m_traceLog = false;
-	//m_skip = true;
+	//m_traceLog = true;
+	m_skip = true;
 
 	//	Input:
 	//	The font has been corrupted so that the size of the cmap in the directory is invalid.

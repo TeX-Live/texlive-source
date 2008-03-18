@@ -323,6 +323,10 @@ public:
 	void LogUnderlyingToSurface(GrTableManager * ptman, std::ostream & strmOut,
 		GrCharStream * pchstrm);
 	void LogSurfaceToUnderlying(GrTableManager * ptman, std::ostream & strmOut);
+	void LogXmlUnderlyingToSurface(std::ostream & strmOut, GrTableManager * ptman,
+		GrCharStream * pchstrm, int nIndent);
+	void LogXmlSurfaceToUnderlying(std::ostream & strmOut, GrTableManager * ptman,
+		GrCharStream * pchstrm, int nIndent);
 
 	// calculate memory usage
 	void calculateMemoryUsage(SegmentMemoryUsage & smu);

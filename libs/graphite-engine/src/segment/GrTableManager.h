@@ -453,17 +453,14 @@ public:
 	bool IsWhiteSpace(GrSlotState * pslot);
 
 	//	For transduction logging:
-	//bool WriteTransductionLog(GrCharStream * pchstrm, Segment * psegRet,
-	//	int cbPrev, byte * pbPrevSegDat, byte * pbNextSegDat, int * pcbNextSegDat);
-	//bool WriteAssociationLog(GrCharStream * pchstrm, Segment * psegRet);
 	bool WriteTransductionLog(std::ostream * pstrmLog,
 		GrCharStream * pchstrm, Segment * psegRet, int cbPrevSetDat, byte * pbPrevSegDat);
 	bool WriteAssociationLog(std::ostream * pstrmLog,
 		GrCharStream * pchstrm, Segment * psegRet);
 	bool WriteXmlLog(std::ostream * pstrmLog,
 		GrCharStream * pchstrm, Segment * psegRet, int cbPrevSegDat, byte * pbPrevSegDat);
-	//bool WriteXmlAssocLog(std::ostream * pstrmLog,
-	//	GrCharStream * pchstrm, Segment * psegRet);
+	bool WriteXmlAssocLog(std::ostream * pstrmLog,
+		GrCharStream * pchstrm, Segment * psegRet);
 
 #ifdef TRACING
 	void WriteXductnLog(std::ostream & strmOut, GrCharStream * pchstrm, Segment * psegRet,
@@ -488,8 +485,10 @@ public:
 
 	void WriteXmlLogAux(std::ostream & strmOut,
 		GrCharStream * pchstrm, Segment * psegRet, int cbPrevSegDat, byte * pbPrevSegDat);
-	void LogXmlUnderlying(std::ostream & strmOut, GrCharStream * pchstrm,
-		int cchwBackup, size_t nIndent);
+	void LogXmlUnderlying(std::ostream & strmOut, GrCharStream * pchstrm, int cchwBackup, size_t nIndent);
+	void LogXmlUnderlyingAux(std::ostream & strmOut, GrCharStream * pchstrm,
+		int cch32Backup, int cch32Lim, size_t nIndent,
+		bool fLogText, bool fLogFeatures, bool fLogColor, bool fLogStrOff, bool fLogLig, bool fLogGlyphs);
 	void LogXmlPass(std::ostream & strmOut, int ipass, int cslotSkipped, int nIndent);
 
 	void LogXmlTagOpen(std::ostream & strmOut, std::string strTag, size_t nIndent, bool fContent);
@@ -501,6 +500,9 @@ public:
 	std::string HexString(int n1, int n2, int n3, int n4, int n5, int n6);
 	std::string HexString(std::vector<int>);
 	void LogXmlTagColor(std::ostream & strmOut, std::string strAttr, int clrValue, bool fBack,
+		size_t nIndent = 0);
+	void LogXmlDirCode(std::ostream & strmOut, std::string strAttr, int dircValue, size_t nIndent = 0);
+	void LogXmlBreakWeight(std::ostream & strmOut, std::string strAttr, int dircValue,
 		size_t nIndent = 0);
 	void LogXmlComment(std::ostream & strmOut, std::string strComment, size_t nIndent = 0);
 
@@ -528,8 +530,8 @@ protected:
 		int islotStream0Break, int islotSurfaceBreak, LineBrk lbEnd,
 		bool fNextSegNeedsContext, GrCharStream * pchstrm);
 
-	void RecordAssocsAndOutput(Font * pfont,
-		Segment * pseg, bool fWidthIsCharCount,
+	void SetFinalPositions(Segment * pseg, bool fWidthIsCharCount);
+	void RecordAssocsAndOutput(Font * pfont, Segment * pseg,
 		TrWsHandling twsh, bool fParaRtl, int nDirDepth);
 
 	void CalculateAssociations(Segment * pseg, int csloutSurface);

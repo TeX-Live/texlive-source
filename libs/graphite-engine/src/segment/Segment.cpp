@@ -2969,6 +2969,10 @@ GrResult Segment::getUniscribeClusters(
 	return kresOk;
 }
 
+
+// suppress GCC 4.3 warning for optimized min()/max() when called with (ich, ich+1) or similar
+#pragma GCC diagnostic ignored "-Wstrict-overflow"
+
 /*----------------------------------------------------------------------------------------------
 	Merge the given characters into the same Uniscribe cluster. This means merging any
 	intervening characters as well.

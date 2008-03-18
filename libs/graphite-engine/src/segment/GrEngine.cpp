@@ -606,32 +606,26 @@ void GrEngine::MakeSegment(
 
 	//	Find the end of the range to render with the current font.
 	int nDirDepth = 0;
-	int ichFontLim;
+	int ichFontLim = FindFontLim(pgts, ichMin, &nDirDepth);
     int ichStrmLim = 0;
     int ichSegLim = 0;
 	switch (segmode)
 	{
 	case ksegmodeBreak:	// find break point
-		//	Find the end of the range to render with the current font. Here ichLim should be
-		//	the end of the text-source, unless we're backtracking.
-		ichFontLim = FindFontLim(pgts, ichMin, &nDirDepth);
+		//	Here ichLim should be the end of the text-source, unless we're backtracking.
 		ichStrmLim = min(ichFontLim, ichLim);
 		ichSegLim = -1; // unknown
 		break;
 	case ksegmodeJust:	// stretching an existing segment to achieve justification
-		ichFontLim = FindFontLim(pgts, ichMin, &nDirDepth);
 		ichStrmLim = ichFontLim;
 		ichSegLim = ichLim;
 		break;
 	//case ksegmodeMms:	// MakeMeasuredSegment
-	//	ichFontLim = FindFontLim(pgts, ichMin, ichLim, &nDirDepth);
 	//	ichLim = ichFontLim;
 	//	ichStrmLim = ichFontLim;
 	//	ichSegLim = -1; // process to the end of the stream
 	//	break;
 	case ksegmodeRange:	// segment from range
-		//	Find the end of the range to render with the current font.
-		ichFontLim = FindFontLim(pgts, ichMin, &nDirDepth);
 		ichLim = min(ichLim, ichFontLim);
 		ichStrmLim = ichFontLim;
 		ichSegLim = (ichLim == kPosInfinity) ? -1 : ichLim;

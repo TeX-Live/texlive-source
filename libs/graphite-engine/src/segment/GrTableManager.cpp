@@ -23,10 +23,10 @@ Description:
 #endif
 #undef THIS_FILE
 DEFINE_THIS_FILE
-#ifndef _WIN32
+//#ifndef _WIN32
 #include <stdlib.h>
 #include <math.h>
-#endif
+//#endif
 
 //:>********************************************************************************************
 //:>	Forward declarations
@@ -634,13 +634,16 @@ void GrTableManager::Run(Segment * psegNew, Font * pfont,
 		psegNew->FixTermination(est);
 	}
 
-	//	Do this before fixing up the associations below.
+	SetFinalPositions(psegNew, fWidthIsCharCount);
+
+	//	Do this before fixing up the associations below, so we can see the raw ones produced by the
+	//	rules themselves.
 	//if (m_pgreng->LoggingTransduction())
 	//	WriteTransductionLog(pchstrm, *ppsegRet,
 	//		cbPrev, pbPrevSegDat, pbNextSegDat, pcbNextSegDat);
 	WriteTransductionLog(pstrmLog, pchstrm, psegNew, cbPrev, pbPrevSegDat);
 
-	RecordAssocsAndOutput(pfont, psegNew, fWidthIsCharCount, twsh, fParaRtl, nDirDepth);
+	RecordAssocsAndOutput(pfont, psegNew, twsh, fParaRtl, nDirDepth);
 
 	//	Do this after fixing up the associations.
 	//if (m_pgreng->LoggingTransduction())
@@ -1331,21 +1334,11 @@ LBackupPC:
 
 	pseg->RecordInitializationForNextSeg(*pcbNextSegDat, pbNextSegDat);
 }
-
 /*----------------------------------------------------------------------------------------------
-	Calculate the associations, and record the output slots in the segment.
+	Make sure the final positions are set for every glyph.
 ----------------------------------------------------------------------------------------------*/
-void GrTableManager::RecordAssocsAndOutput(Font * pfont,
-	Segment * pseg, bool fWidthIsCharCount,
-	TrWsHandling twsh, bool fParaRtl, int nDirDepth)
+void GrTableManager::SetFinalPositions(Segment * pseg,  bool fWidthIsCharCount)
 {
-	int cchwUnderlying = pseg->stopCharacter() - pseg->startCharacter();
-
-	GrSlotStream * psstrmFinal = OutputStream(m_cpass-1);
-	int csloutSurface = psstrmFinal->WritePos() - psstrmFinal->IndexOffset(); // # of output slots
-
-	psstrmFinal->SetNeutralAssociations(LBGlyphID());
-
 	float xsTotalWidth, xsVisWidth;
 
 #ifdef OLD_TEST_STUFF
@@ -1358,6 +1351,19 @@ void GrTableManager::RecordAssocsAndOutput(Font * pfont,
 	CalcPositionsUpTo(m_cpass-1, reinterpret_cast<GrSlotState *>(NULL),
 		&xsTotalWidth, &xsVisWidth); 
 	pseg->SetWidths(xsVisWidth, xsTotalWidth);
+}
+
+/*----------------------------------------------------------------------------------------------
+	Calculate the associations, and record the output slots in the segment.
+----------------------------------------------------------------------------------------------*/
+void GrTableManager::RecordAssocsAndOutput(Font * pfont, Segment * pseg,
+	TrWsHandling twsh, bool fParaRtl, int nDirDepth)
+{
+	int cchwUnderlying = pseg->stopCharacter() - pseg->startCharacter();
+	GrSlotStream * psstrmFinal = OutputStream(m_cpass-1);
+	int csloutSurface = psstrmFinal->WritePos() - psstrmFinal->IndexOffset(); // # of output slots
+
+	psstrmFinal->SetNeutralAssociations(LBGlyphID());
 
 	pseg->SetUpOutputArrays(pfont, this, psstrmFinal, cchwUnderlying, csloutSurface, LBGlyphID(),
 		twsh, fParaRtl, nDirDepth);
