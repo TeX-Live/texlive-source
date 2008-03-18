@@ -34,7 +34,7 @@
   (export '(simple-condition-format-string)))
 ;; line 133 "base.nw"
 (defmacro info (&rest msg)
-  `(APPLY #'FORMAT *ERROR-OUTPUT* (LIST ,@msg)))
+  `(APPLY #'FORMAT *STANDARD-OUTPUT* (LIST ,@msg)))
 ;; line 138 "base.nw"
 (defparameter *nraw-error-message* "~&WARNING: ")
 

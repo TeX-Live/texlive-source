@@ -156,7 +156,7 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-modulesdir = $(pkglibdir)/modules
+modulesdir = $(pkgdatadir)
 inputencdir = $(modulesdir)/tex/inputenc
 INPUTENCS = \
 	cp1250.xdy \
@@ -414,7 +414,7 @@ latin.xdy : latin1.xdy latin2.xdy latin3.xdy
 
 %.xdy %.idx :
 	perl ./make-testidx.pl TS1,T2A,T1 $* >$*.tex
-	latex $*.tex
+	latex -interaction batchmode $*.tex
 	perl ./make-inp-rules.pl <$*.idx >$*.xdy
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

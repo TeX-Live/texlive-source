@@ -156,7 +156,7 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-modulesdir = $(pkglibdir)/modules
+modulesdir = $(pkgdatadir)
 stylesdir = $(modulesdir)/styles
 STYLES = \
 	example.xdy \

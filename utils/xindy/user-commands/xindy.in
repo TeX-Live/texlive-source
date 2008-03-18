@@ -309,11 +309,13 @@ BEGIN {
     }
 
     # modules directory
-    if ( -d "$cmd_dir/../modules" ) {	# /opt style
-	$modules_dir = "$cmd_dir/../modules";
-    } elsif ( -d "$lib_dir/modules" ) {	# /usr style
-	$modules_dir = "$lib_dir/modules";
-    } else {
+    $modules_dir = "/usr/share/xindy";
+    unless ( -d $modules_dir ) {
+    #if ( -d "$cmd_dir/../modules" ) {	# /opt style
+    #	$modules_dir = "$cmd_dir/../modules";
+    #} elsif ( -d "$lib_dir/modules" ) {	# /usr style
+    #	$modules_dir = "$lib_dir/modules";
+    #} else {
 	die "$cmd: Cannot locate xindy modules directory";
     }
 }
@@ -333,9 +335,7 @@ use File::Spec;
 # second-to-last has the extension ".xdy". Then, call the old driver
 # script with the original arguments...
 
-sub usage ()
-{
-    print STDERR <<_EOT_
+my $usage_msg = <<_EOT_
 
 usage: $cmd [-V?h] [-qv] [-d magic] [-o outfile.ind] [-t log] \\
             [-L lang] [-C codepage] [-M module] [-I input] \\
@@ -358,7 +358,11 @@ GNU-STYLE LONG OPTIONS FOR SHORT OPTIONS:
  -I / --input-markup   (supported: latex, omega, xindy)
 
 _EOT_
-  ;
+;
+
+sub usage ()
+{
+    print STDERR $usage_msg;
     exit 1;
 }
 
@@ -431,7 +435,7 @@ sub parse_options() {
     GetOptions(
 		'version|V'          => sub { output_version(0); },
 		'internal-version'   => sub { output_version(1); },
-		'help|h|?'           => \&usage,
+		'help|h|?'           => sub { print $usage_msg; exit 0; },
 		'quiet|q'            => \$quiet,
 		'verbose|v'          => \$verbose,
 		'debug|d=s'          => \@debug,

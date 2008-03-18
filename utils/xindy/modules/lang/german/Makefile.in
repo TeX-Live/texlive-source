@@ -156,7 +156,7 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-langdir = $(pkglibdir)/modules/lang
+langdir = $(pkgdatadir)/lang
 germandir = $(langdir)/german
 RULES = \
 	din5007.xdy \

@@ -320,9 +320,7 @@ use Getopt::Long qw(:config bundling);
 
 # Check arguments, store them in proper variables.
 
-sub usage ()
-{
-    print STDERR <<_EOT_
+my $usage_msg = <<_EOT_
 
 usage: $cmd [-V?h] [-qv] [-iglr] [-d magic] [-o outfile.ind] [-t log] \\
             [-L lang] [-C codepage] [-M module] [-I input] [idx0 idx1 ...]
@@ -347,7 +345,11 @@ GNU-STYLE LONG OPTIONS FOR SHORT OPTIONS:
  -I / --input-markup   (supported: latex, omega)
 
 _EOT_
-  ;
+;
+
+sub usage ()
+{
+    print STDERR $usage_msg;
     exit 1;
 }
 
@@ -399,7 +401,7 @@ sub parse_options() {
     my ($german, $letter_ordering, $no_ranges);
     GetOptions(
 	       'version|V'          => \$output_version,
-	       'help|h|?'           => \&usage,
+	       'help|h|?'           => sub { print $usage_msg; exit 0; },
 	       'quiet|q'            => \$quiet,
 	       'verbose|v'          => \$verbose,
 	       'stdin|i'            => \$stdin,

@@ -252,7 +252,7 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-langdir = $(pkglibdir)/modules/lang
+langdir = $(pkgdatadir)/lang
 albaniandir = $(langdir)/albanian
 ALBANIAN = \
 	albanian/latin1-lang.xdy \
@@ -2395,7 +2395,7 @@ alphabets-inc.tex : $(DOCS)
 	echo "\section{Codepage latin9}" >>$@
 	for i in $(DOCS_LATIN9); do echo "\input{$$i}" >>$@; done
 	echo "\ienc{cp1251}" >>$@
-	echo "\fenc{T2A}" >>$@
+	printf "%s\n" "\fenc{T2A}" >>$@
 	echo "\chapter{Cyrillic scripts}" >>$@
 	echo "\section{Codepage 1251}" >>$@
 	for i in $(DOCS_CYR_1251); do echo "\input{$$i}" >>$@; done
@@ -2411,8 +2411,8 @@ alphabets-inc.tex : $(DOCS)
 # whether to build docs
 
 @BUILDDOCS_TRUE@@BUILDRULES_TRUE@alphabets-doc.pdf : alphabets-doc.tex alphabets-inc.tex
-@BUILDDOCS_TRUE@@BUILDRULES_TRUE@	pdflatex alphabets-doc.tex
-@BUILDDOCS_TRUE@@BUILDRULES_TRUE@	pdflatex alphabets-doc.tex
+@BUILDDOCS_TRUE@@BUILDRULES_TRUE@	pdflatex -interaction batchmode alphabets-doc.tex
+@BUILDDOCS_TRUE@@BUILDRULES_TRUE@	pdflatex -interaction batchmode alphabets-doc.tex
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
