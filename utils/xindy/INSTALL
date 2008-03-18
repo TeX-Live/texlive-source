@@ -29,8 +29,8 @@ about other compilers.
 
 xindy contains CLISP, see http://clisp.cons.org/. If you have CLISP
 installed already, you can use it with the configure option
---enable-external-clisp, maybe you need to specify --clisp-path and
---clisp-dir, too. This is not intensively tested, though; if you have
+--enable-external-clisp, maybe you need to specify --enable-clisp-path and
+--enable-clisp-dir, too. This is not intensively tested, though; if you have
 problems with the resulting xindy system, please try it again with the
 xindy-internal CLISP.
 

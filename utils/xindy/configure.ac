@@ -61,10 +61,10 @@ dnl use external or internal CLISP
 AC_ARG_ENABLE(external-clisp, AS_HELP_STRING([--enable-external-clisp],[Use an external CLISP instead of the one in rte/]),[EXT_CLISP=$enableval],[EXT_CLISP=no])
 
 dnl test for CLISP
-AC_ARG_ENABLE(clisp-path, AS_HELP_STRING([--clisp-path],[Where to search the external CLISP]),[CLISP_PATH=$enableval],[CLISP_PATH=$(which clisp)])
+AC_ARG_ENABLE(clisp-path, AS_HELP_STRING([--enable-clisp-path],[Where to search the external CLISP]),[CLISP_PATH=$enableval],[CLISP_PATH=$(which clisp)])
 
 dnl test for CLISP linkkit
-AC_ARG_ENABLE(clisp-dir, AS_HELP_STRING([--clisp-dir],[Where to seach the external CLISP library]),[CLISP_DIR=$enableval],[CLISP_DIR=/usr/lib/clisp])
+AC_ARG_ENABLE(clisp-dir, AS_HELP_STRING([--enable-clisp-dir],[Where to seach the external CLISP library]),[CLISP_DIR=$enableval],[CLISP_DIR=/usr/lib/clisp])
 
 if test "$EXT_CLISP" != no; then
     AM_CONDITIONAL(EXT_CLISP, test -x "$CLISP_PATH" -a -x "$CLISP_DIR/clisp-link" -a -d "$CLISP_DIR/full" -a -d "$CLISP_DIR/linkkit")

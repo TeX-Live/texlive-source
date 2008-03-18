@@ -866,8 +866,8 @@ Optional Features:
                           YES)
   --enable-docs           build and install documentation (default is YES)
   --enable-external-clisp Use an external CLISP instead of the one in rte/
-  --clisp-path            Where to search the external CLISP
-  --clisp-dir             Where to seach the external CLISP library
+  --enable-clisp-path            Where to search the external CLISP
+  --enable-clisp-dir             Where to seach the external CLISP library
 
 Some influential environment variables:
   CXX         C++ compiler command
