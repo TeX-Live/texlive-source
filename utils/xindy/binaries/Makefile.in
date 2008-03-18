@@ -169,7 +169,7 @@ MEMFILE = xindy.mem
 XINDY_RUN = ./xindy.run -q -M ./base.mem
 
 # Where the modules are found at runtime.
-MODULEDIR = $(pkglibdir)/modules
+MODULEDIR = $(pkgdatadir)
 
 # Where the files xindy.run and xindy.mem should be installed.
 kerneldir = $(pkglibdir)
