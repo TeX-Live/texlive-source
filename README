@@ -11,6 +11,7 @@ Prerequisites:
   on MacOSX.
 - A terminal library such as ncurses must be present (both headers
   and library) for Texinfo to build.
+- X11 headers and libraries are required for pdfopen and xdvi to build.
 
 The binaries will be left in ./inst/bin/<stdplatform>.
 Ignore the other files and directories in ./inst.
