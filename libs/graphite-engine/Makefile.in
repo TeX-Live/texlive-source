@@ -103,7 +103,6 @@ CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
-DSYMUTIL = @DSYMUTIL@
 ECHO = @ECHO@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
@@ -128,7 +127,6 @@ MAINT = @MAINT@
 MAINTAINER_MODE_FALSE = @MAINTAINER_MODE_FALSE@
 MAINTAINER_MODE_TRUE = @MAINTAINER_MODE_TRUE@
 MAKEINFO = @MAKEINFO@
-NMEDIT = @NMEDIT@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
@@ -202,7 +200,7 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = silgraphite.pc
 
 # VC_VERSION is the last released version of the software
-VC_VERSION = 2.3
+VC_VERSION = 2.2.1
 # D_VERSION gets the number of the current svn revision
 D_VERSION = `svnversion ${top_srcdir}|sed -e "s/[0-9]*\://g"`
 SVNDEB_VERSION = $(VC_VERSION)+0$(D_VERSION)svn

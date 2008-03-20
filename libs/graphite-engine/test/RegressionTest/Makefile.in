@@ -96,7 +96,6 @@ CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
-DSYMUTIL = @DSYMUTIL@
 ECHO = @ECHO@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
@@ -121,7 +120,6 @@ MAINT = @MAINT@
 MAINTAINER_MODE_FALSE = @MAINTAINER_MODE_FALSE@
 MAINTAINER_MODE_TRUE = @MAINTAINER_MODE_TRUE@
 MAKEINFO = @MAKEINFO@
-NMEDIT = @NMEDIT@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
@@ -195,7 +193,6 @@ EXTRA_DIST = \
 	grtest_badCmap.ttf \
 	grtest_burmese.ttf \
 	grtest_roman.ttf \
-	grtest_taiviet.ttf \
 	grtest_xline.ttf \
 	xline.gdl \
 	Makefile.vc \
