@@ -1356,7 +1356,6 @@ Optional Packages:
   --with-freetype2-include=DIR
                           Specify the freetype2 header files location.
                             (both DIR and DIR/freetype2 will be added to the include paths)
-  --with-system-icu        use installed ICU library
   --with-icu-libdir=DIR
                           Specify directory where the ICU library resides.
   --with-icu-include=DIR
@@ -6811,12 +6810,9 @@ fi
 
 
 
-
-# Check whether --with-system_icu was given.
-if test "${with_system_icu+set}" = set; then
-  withval=$with_system_icu;
-fi
-
+# Not available because xetex uses a customized ICU layout engine
+# AC_ARG_WITH(system_icu,
+# [  --with-system-icu        use installed ICU library])
 
 
 # Check whether --with-icu_libdir was given.
@@ -6840,7 +6836,7 @@ else
   EXTRA_ICU_INCLUDE=
   EXTRA_ICU_LIBDIR=
 
-  if test "$with_system_icu" = yes; then
+  if test x"$with_system_icu" = xyes; then
     if test "x$with_icu_libdir" != x; then
       EXTRA_ICU_LIBDIR="-L$with_icu_libdir"
     fi
@@ -6856,7 +6852,7 @@ else
   LDFLAGS="$LDFLAGS $EXTRA_ICU_LIBDIR"
   CPP="$CPP $EXTRA_ICU_INCLUDE"
 
-  if test "$with_system_icu" = yes; then
+  if test x"$with_system_icu" = xyes; then
 
 { echo "$as_me:$LINENO: checking for ubidi_open in -licuuc" >&5
 echo $ECHO_N "checking for ubidi_open in -licuuc... $ECHO_C" >&6; }
@@ -6934,7 +6930,7 @@ fi
 
   fi
 
-  if test "$with_system_icu" = yes; then
+  if test x"$with_system_icu" = xyes; then
 
 for ac_header in ubidi.h
 do
@@ -7086,7 +7082,7 @@ echo "$as_me: WARNING: ubidi.h not found. Using my own ICU sources." >&2;}
   CPP=$OLD_CPP
   LIBS=$OLD_LIBS
 
-  if test "$with_system_icu" != yes; then
+  if test x"$with_system_icu" != xyes; then
     ICUCPPFLAGS='-I$(ICUDIR)/common -I$(ICUSRCDIR)/common -I$(ICUSRCDIR)/layout'
     LDICU='$(ICUDIR)/lib/libsicuuc.a $(ICUDIR)/lib/libsicule.a $(ICUDIR)/lib/libsicudata.a'
     ICUDEP='$(ICUDIR)/lib/libsicuuc.a $(ICUDIR)/lib/libsicule.a $(ICUDIR)/lib/libsicudata.a'
