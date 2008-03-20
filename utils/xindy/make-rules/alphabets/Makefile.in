@@ -184,6 +184,7 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 EXT_CLISP_FALSE = @EXT_CLISP_FALSE@
 EXT_CLISP_TRUE = @EXT_CLISP_TRUE@
+GREP = @GREP@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
@@ -210,9 +211,9 @@ SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
 YACC = @YACC@
+YFLAGS = @YFLAGS@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
-ac_ct_STRIP = @ac_ct_STRIP@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
 am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
@@ -229,25 +230,40 @@ build_cpu = @build_cpu@
 build_os = @build_os@
 build_vendor = @build_vendor@
 datadir = @datadir@
+datarootdir = @datarootdir@
+#	echo "\ienc{iso-8859-7}" >>$@
+#	echo "\fenc{LGR}" >>$@
+#	echo "\chapter{Other scripts}" >>$@
+#	for i in $(DOCS_OTHER); do echo "\input{$$i}" >>$@; done
+#	FIXME: UTF8 encoding
+#	echo "\section{UTF-8 scripts}" >>$@
+#	for i in $(DOCS_UTF8); do echo "\input{$$i}" >>$@; done
+#	echo "\ienc{utf8}" >>$@
+docdir = $(datadir)/doc/$(PACKAGE_NAME)-$(PACKAGE_VERSION)
+dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
 host_os = @host_os@
 host_vendor = @host_vendor@
+htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
 latex = @latex@
 libdir = @libdir@
 libexecdir = @libexecdir@
+localedir = @localedir@
 localstatedir = @localstatedir@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
+pdfdir = @pdfdir@
 pdflatex = @pdflatex@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
+psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
@@ -1144,7 +1160,6 @@ DOCS_UTF8 = \
 	$(DOCS_UTF8_OTHER)
 
 DOCS = $(DOCS_CPS) $(DOCS_LAT) $(DOCS_CYR) $(DOCS_OTHER) $(DOCS_UTF8)
-@BUILDDOCS_TRUE@@BUILDRULES_TRUE@docdir = $(datadir)/doc/$(PACKAGE_NAME)-$(PACKAGE_VERSION)
 @BUILDDOCS_TRUE@@BUILDRULES_TRUE@PDFS = alphabets-doc.pdf
 @BUILDDOCS_TRUE@@BUILDRULES_TRUE@doc_DATA = $(PDFS)
 DOC_CLEAN = \
@@ -2285,7 +2300,7 @@ uninstall-info: uninstall-info-recursive
 	iconv -f UTF-8 -t CP850 >$@
 
 romanian/latin2.pl : romanian/utf8.pl
-	sed -e 's/@u{\([^}]*\)}//g;' -f rom-comma-kludge.sed <$< | \
+	sed -e 's/@u{\([^}]*\)}//g;' -f $(srcdir)/rom-comma-kludge.sed <$< | \
 	iconv -f UTF-8 -t ISO8859-2 >$@
 
 %latin2.pl : %utf8.pl.in
@@ -2321,7 +2336,7 @@ romanian/latin2.pl : romanian/utf8.pl
 	iconv -f UTF-8 -t ISO-8859-15 >$@
 
 romanian/cp1250.pl : romanian/utf8.pl
-	sed -e 's/@u{\([^}]*\)}//g;' -f rom-comma-kludge.sed <$< | \
+	sed -e 's/@u{\([^}]*\)}//g;' -f $(srcdir)/rom-comma-kludge.sed <$< | \
 	iconv -f UTF-8 -t CP1250 >$@
 
 %cp1250.pl : %utf8.pl.in
@@ -2348,21 +2363,21 @@ romanian/cp1250.pl : romanian/utf8.pl
 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
 	iconv -f UTF-8 -t KOI8-U >$@
 
-# %tex.pl : %utf8.pl utf8-to-tex.sed
-#	sed -f utf8-to-tex.sed <$< >$@
+# %tex.pl : %utf8.pl $(srcdir)/utf8-to-tex.sed
+#	sed -f $(srcdir)/utf8-to-tex.sed <$< >$@
 
 %-lang.xdy : %-test.xdy
 	echo '(require "lang/$*.xdy")' >$@
 	sed -n '1,10 p' <$< >$@
 
 %-test.xdy : %.pl
-	perl $< $*
+	perl -I$(srcdir) $< $* $(srcdir)
 
 %-doc.tex : %.pl
-	perl $< $*
+	perl -I$(srcdir) $< $* $(srcdir)
 
 %.xdy :	%.pl
-	perl $< $*
+	perl -I$(srcdir) $< $* $(srcdir)
 
 alphabets-inc.tex : $(DOCS)
 	$(RM) $@
@@ -2399,20 +2414,12 @@ alphabets-inc.tex : $(DOCS)
 	echo "\chapter{Cyrillic scripts}" >>$@
 	echo "\section{Codepage 1251}" >>$@
 	for i in $(DOCS_CYR_1251); do echo "\input{$$i}" >>$@; done
-#	echo "\ienc{iso-8859-7}" >>$@
-#	echo "\fenc{LGR}" >>$@
-#	echo "\chapter{Other scripts}" >>$@
-#	for i in $(DOCS_OTHER); do echo "\input{$$i}" >>$@; done
-#	FIXME: UTF8 encoding
-#	echo "\section{UTF-8 scripts}" >>$@
-#	for i in $(DOCS_UTF8); do echo "\input{$$i}" >>$@; done
-#	echo "\ienc{utf8}" >>$@
 
 # whether to build docs
 
-@BUILDDOCS_TRUE@@BUILDRULES_TRUE@alphabets-doc.pdf : alphabets-doc.tex alphabets-inc.tex
-@BUILDDOCS_TRUE@@BUILDRULES_TRUE@	pdflatex -interaction batchmode alphabets-doc.tex
-@BUILDDOCS_TRUE@@BUILDRULES_TRUE@	pdflatex -interaction batchmode alphabets-doc.tex
+@BUILDDOCS_TRUE@@BUILDRULES_TRUE@alphabets-doc.pdf : $(srcdir)/alphabets-doc.tex alphabets-inc.tex
+@BUILDDOCS_TRUE@@BUILDRULES_TRUE@	pdflatex -interaction batchmode $(srcdir)/alphabets-doc.tex
+@BUILDDOCS_TRUE@@BUILDRULES_TRUE@	pdflatex -interaction batchmode $(srcdir)/alphabets-doc.tex
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
