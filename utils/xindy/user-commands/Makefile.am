@@ -23,15 +23,15 @@
 bin_SCRIPTS = xindy xindy.v2
 
 xindy: xindy.in
-	sed -e 's:@libdir\@:$(libdir):' xindy.in >xindy
+	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/xindy.in >xindy
 
 xindy.v2: xindy.v2.in
-	sed -e 's:@XINDY_PERL\@:/usr/bin/perl:' xindy.v2.in >xindy.v2
+	sed -e 's:@XINDY_PERL\@:/usr/bin/perl:' $(srcdir)/xindy.v2.in >xindy.v2
 
-xindy.1: xindy.in
+$(srcdir)/xindy.1: $(srcdir)/xindy.in
 	pod2man --verbose -n XINDY -r "Version 1.8" -c "xindy" $< $@
 
-texindy.1: texindy
+$(srcdir)/texindy.1: $(srcdir)/texindy
 	pod2man --verbose -n TEXINDY -r "Version 1.5" -c "xindy" $< $@
 
 dist_bin_SCRIPTS = texindy

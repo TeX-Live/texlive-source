@@ -72,9 +72,12 @@ check:
 	$(MAKE) -C $(clisp_builddir) check || $(MAKE) -C $(clisp_builddir) check
 endif
 
+ORDRULES_FILES = ordrules.c ordrules.h rxsub.c rxsub.h mkind.h debug.h link.sh
+
 xindy-build-dir: $(CLISP_PREREQ)
 	$(RM_R) xindy-build-dir
 	$(MAKE) -C ordrules ordrulei.c
+	test -f ordrules/link.sh || for i in $(ORDRULES_FILES); do cp $(top_srcdir)/rte/ordrules/$$i ordrules/; done
 	$(clisp_link) add-module-set ordrules $(fulldir) $@
 	cp $@/lisp.run $(binariesdir)/xindy.run
 	cp $@/lispinit.mem $(binariesdir)/base.mem

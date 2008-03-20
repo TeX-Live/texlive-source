@@ -729,7 +729,7 @@ nodist_vietnamese_DATA = $(VIETNAMESE)
 	iconv -f UTF-8 -t CP850 >$@
 
 romanian/latin2.pl : romanian/utf8.pl
-	sed -e 's/@u{\([^}]*\)}//g;' -f rom-comma-kludge.sed <$< | \
+	sed -e 's/@u{\([^}]*\)}//g;' -f $(srcdir)/rom-comma-kludge.sed <$< | \
 	iconv -f UTF-8 -t ISO8859-2 >$@
 
 %latin2.pl : %utf8.pl.in
@@ -765,7 +765,7 @@ romanian/latin2.pl : romanian/utf8.pl
 	iconv -f UTF-8 -t ISO-8859-15 >$@
 
 romanian/cp1250.pl : romanian/utf8.pl
-	sed -e 's/@u{\([^}]*\)}//g;' -f rom-comma-kludge.sed <$< | \
+	sed -e 's/@u{\([^}]*\)}//g;' -f $(srcdir)/rom-comma-kludge.sed <$< | \
 	iconv -f UTF-8 -t CP1250 >$@
 
 %cp1250.pl : %utf8.pl.in
@@ -792,8 +792,8 @@ romanian/cp1250.pl : romanian/utf8.pl
 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
 	iconv -f UTF-8 -t KOI8-U >$@
 
-# %tex.pl : %utf8.pl utf8-to-tex.sed
-#	sed -f utf8-to-tex.sed <$< >$@
+# %tex.pl : %utf8.pl $(srcdir)/utf8-to-tex.sed
+#	sed -f $(srcdir)/utf8-to-tex.sed <$< >$@
 
 
 
@@ -802,13 +802,13 @@ romanian/cp1250.pl : romanian/utf8.pl
 	sed -n '1,10 p' <$< >$@
 
 %-test.xdy : %.pl
-	perl $< $*
+	perl -I$(srcdir) $< $* $(srcdir)
 
 %-doc.tex : %.pl
-	perl $< $*
+	perl -I$(srcdir) $< $* $(srcdir)
 
 %.xdy :	%.pl
-	perl $< $*
+	perl -I$(srcdir) $< $* $(srcdir)
 
 SUBDIRS = \
 	albanian \
@@ -1145,15 +1145,15 @@ alphabets-inc.tex : $(DOCS)
 #	for i in $(DOCS_UTF8); do echo "\input{$$i}" >>$@; done
 #	echo "\ienc{utf8}" >>$@
 
+docdir = $(datadir)/doc/$(PACKAGE_NAME)-$(PACKAGE_VERSION)
+
 # whether to build docs
 if BUILDRULES
 
 if BUILDDOCS
-alphabets-doc.pdf : alphabets-doc.tex alphabets-inc.tex
-	pdflatex -interaction batchmode alphabets-doc.tex
-	pdflatex -interaction batchmode alphabets-doc.tex
-
-docdir = $(datadir)/doc/$(PACKAGE_NAME)-$(PACKAGE_VERSION)
+alphabets-doc.pdf : $(srcdir)/alphabets-doc.tex alphabets-inc.tex
+	pdflatex -interaction batchmode $(srcdir)/alphabets-doc.tex
+	pdflatex -interaction batchmode $(srcdir)/alphabets-doc.tex
 
 PDFS = alphabets-doc.pdf
 

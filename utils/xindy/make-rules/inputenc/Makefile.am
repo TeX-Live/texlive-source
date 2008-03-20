@@ -46,9 +46,9 @@ latin.xdy : latin1.xdy latin2.xdy latin3.xdy
 	sort -u latin?.xdy | grep -v '^;' >>latin.xdy
 
 %.xdy %.idx :
-	perl ./make-testidx.pl TS1,T2A,T1 $* >$*.tex
+	perl $(srcdir)/make-testidx.pl TS1,T2A,T1 $* >$*.tex
 	latex -interaction batchmode $*.tex
-	perl ./make-inp-rules.pl <$*.idx >$*.xdy
+	perl $(srcdir)/make-inp-rules.pl <$*.idx >$*.xdy
 
 PERLSCRIPTS = \
 	make-inp-rules.pl \

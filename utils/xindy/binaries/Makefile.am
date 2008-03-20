@@ -21,7 +21,7 @@
 ## Boston, MA 02110-1301 USA.
 
 # some global variables
-SRCDIR     = ../src
+SRCDIR     = $(top_srcdir)/src
 FAS        = base.fas locref.fas idxstyle.fas index.fas version.fas markup.fas
 DEFAULTS   = defaults.xdy
 DUMP_XINDY = $(SRCDIR)/dump-xindy.lsp

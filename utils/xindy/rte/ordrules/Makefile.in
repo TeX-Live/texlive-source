@@ -6,6 +6,8 @@
 #
 # copied from CLISP module regex
 
+@SET_MAKE@
+srcdir = @srcdir@
 CC = @CC@
 CPPFLAGS = @CPPFLAGS@
 CFLAGS = @CFLAGS@
@@ -15,8 +17,8 @@ CLISP = $(CLISP_PATH) -q -norc
 
 all : ordrulei.o ordrules.o rxsub.o
 
-ordrulei.c : ordrulei.lsp
-	$(CLISP) -c ordrulei.lsp
+ordrulei.c : $(srcdir)/ordrulei.lsp
+	$(CLISP) -c $(srcdir)/ordrulei.lsp -o ordrulei.fas
 
 ordrulei.o : ordrulei.c
 	$(CC) $(CFLAGS) -I$(INCLUDES) -c ordrulei.c
