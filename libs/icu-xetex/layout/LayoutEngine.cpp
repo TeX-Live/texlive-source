@@ -178,7 +178,7 @@ void LayoutEngine::getGlyphPosition(le_int32 glyphIndex, float &x, float &y, LEE
     fGlyphStorage->getGlyphPosition(glyphIndex, x, y, success);
 }
 
-le_int32 LayoutEngine::characterProcessing(const LEUnicode chars[], le_int32 offset, le_int32 count, le_int32 max, le_bool rightToLeft, le_bool doCanonGSUB,
+le_int32 LayoutEngine::characterProcessing(const LEUnicode chars[], le_int32 offset, le_int32 count, le_int32 max, le_bool rightToLeft,
                 LEUnicode *&outChars, LEGlyphStorage &/*glyphStorage*/, LEErrorCode &success)
 {
     if (LE_FAILURE(success)) {
@@ -242,16 +242,14 @@ le_int32 LayoutEngine::characterProcessing(const LEUnicode chars[], le_int32 off
 			LE_DELETE_ARRAY(reordered);
 		}
 
-		if (doCanonGSUB) {
-	        outCharCount = canonGSUBTable->process(fakeGlyphStorage, rightToLeft, scriptTag, langSysTag, NULL, substitutionFilter, canonFeatureMap, canonFeatureMapCount, FALSE);
+        outCharCount = canonGSUBTable->process(fakeGlyphStorage, rightToLeft, scriptTag, langSysTag, NULL, substitutionFilter, canonFeatureMap, canonFeatureMapCount, FALSE);
 
-	        out = (rightToLeft? outCharCount - 1 : 0);
+        out = (rightToLeft? outCharCount - 1 : 0);
 
-	        outChars = LE_NEW_ARRAY(LEUnicode, outCharCount);
-	        for (i = 0; i < outCharCount; i += 1, out += dir) {
-	            outChars[out] = (LEUnicode) LE_GET_GLYPH(fakeGlyphStorage[i]);
-	        }
-		}
+        outChars = LE_NEW_ARRAY(LEUnicode, outCharCount);
+        for (i = 0; i < outCharCount; i += 1, out += dir) {
+            outChars[out] = (LEUnicode) LE_GET_GLYPH(fakeGlyphStorage[i]);
+        }
 
         delete substitutionFilter;
     }
@@ -272,7 +270,7 @@ le_int32 LayoutEngine::computeGlyphs(const LEUnicode chars[], le_int32 offset, l
     }
 
     LEUnicode *outChars = NULL;
-    le_int32 outCharCount = characterProcessing(chars, offset, count, max, rightToLeft, TRUE, outChars, glyphStorage, success);
+    le_int32 outCharCount = characterProcessing(chars, offset, count, max, rightToLeft, outChars, glyphStorage, success);
 
     if (outChars != NULL) {
         mapCharsToGlyphs(outChars, 0, outCharCount, rightToLeft, rightToLeft, glyphStorage, success);
