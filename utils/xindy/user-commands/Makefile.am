@@ -28,6 +28,12 @@ xindy: xindy.in
 xindy.v2: xindy.v2.in
 	sed -e 's:@XINDY_PERL\@:/usr/bin/perl:' xindy.v2.in >xindy.v2
 
+xindy.1: xindy.in
+	pod2man --verbose -n XINDY -r "Version 1.8" -c "xindy" $< $@
+
+texindy.1: texindy
+	pod2man --verbose -n TEXINDY -r "Version 1.5" -c "xindy" $< $@
+
 dist_bin_SCRIPTS = texindy
 
 man_MANS = texindy.1 xindy.1 xindy.v2.1
