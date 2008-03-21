@@ -3,7 +3,7 @@
 @settitle Kpathsea: A library for path searching
 
 @set version 3.5.6dev
-@set month-year February 2008
+@set month-year March 2008
 
 @c Define new indices for commands, filenames, and options.
 @defcodeindex cm
@@ -442,6 +442,15 @@ Kpathsea reads @emph{all} @file{texmf.cnf} files in the search path, not
 just the first one found; definitions in earlier files override those in
 later files.  Thus, if the search path is @samp{.:$TEXMF}, values from
 @file{./texmf.cnf} override those from @file{$TEXMF/texmf.cnf}.
+
+@vindex KPATHSEA_WARNING
+@cindex warning, about missing @file{texmf.cnf}
+@cindex @file{texmf.cnf} missing, warning about
+If Kpathsea cannot find any @file{texmf.cnf} file, it reports a
+warning including all the directories it checked.  If you don't want
+to see this warning, set the environment variable
+@env{KPATHSEA_WARNING} to the single character @samp{0} (zero, not
+oh).
 
 While (or instead of) reading this description, you may find it helpful
 to look at the distributed @file{texmf.cnf}, which uses or at least

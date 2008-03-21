@@ -61,6 +61,10 @@ cd $TL_WORKDIR || exit 1
 : ${GNUMAKE=${TL_MAKE}}
 export GNUMAKE
 
+# Kpathsea is not going to be able to find its cnf files during the
+# build, so omit the warning about it.
+: ${KPATHSEA_WARNING=0}
+
 # configure && make.
 (set -x; \
    eval $TL_BUILD_ENV time $TL_CONFIGURE \

@@ -39,7 +39,7 @@ Kpathsea library
 
 This manual documents how to install and use the Kpathsea library for
 filename lookup.  It corresponds to version 3.5.6dev, released in
-February 2008.
+March 2008.
 
 * Menu:
 
@@ -60,7 +60,7 @@ File: kpathsea.info,  Node: Introduction,  Next: Installation,  Prev: Top,  Up: 
 **************
 
 This manual corresponds to version 3.5.6dev of the Kpathsea library,
-released in February 2008.
+released in March 2008.
 
    The library's fundamental purpose is to return a filename from a
 list of directories specified by the user, similar to what shells do
@@ -2160,6 +2160,11 @@ the first one found; definitions in earlier files override those in
 later files.  Thus, if the search path is `.:$TEXMF', values from
 `./texmf.cnf' override those from `$TEXMF/texmf.cnf'.
 
+   If Kpathsea cannot find any `texmf.cnf' file, it reports a warning
+including all the directories it checked.  If you don't want to see
+this warning, set the environment variable `KPATHSEA_WARNING' to the
+single character `0' (zero, not oh).
+
    While (or instead of) reading this description, you may find it
 helpful to look at the distributed `texmf.cnf', which uses or at least
 mentions most features.  The format of `texmf.cnf' files follows:
@@ -3741,7 +3746,7 @@ Index
 * : may not be ::                        Searching overview.  (line  13)
 * :: expansion:                          Default expansion.   (line   6)
 * @VAR@ substitutions:                   Running configure.   (line   6)
-* \, line continuation in texmf.cnf:     Config files.        (line  26)
+* \, line continuation in texmf.cnf:     Config files.        (line  31)
 * \openin:                               Searching overview.  (line  31)
 * \special, suppressing warnings about:  Suppressing warnings.
                                                               (line  31)
@@ -3787,7 +3792,7 @@ Index
 * Bach, Johann Sebastian:                Default expansion.   (line  41)
 * backbone of CTAN:                      Electronic distribution.
                                                               (line   6)
-* backslash-newline:                     Config files.        (line  26)
+* backslash-newline:                     Config files.        (line  31)
 * bash, recommended for running configure: configure shells.  (line   6)
 * basic glyph lookup:                    Basic glyph lookup.  (line   6)
 * Berry, Karl:                           History.             (line  12)
@@ -3795,7 +3800,7 @@ Index
                                                               (line  28)
 * binary mode, for file transfers:       Electronic distribution.
                                                               (line  20)
-* blank lines, in texmf.cnf:             Config files.        (line  24)
+* blank lines, in texmf.cnf:             Config files.        (line  29)
 * brace expansion:                       Brace expansion.     (line   6)
 * BSD universe:                          Running make.        (line  44)
 * bsh, ok with configure:                configure shells.    (line  14)
@@ -3831,13 +3836,13 @@ Index
                                                               (line  36)
 * cmr10, as fallback font:               Fallback font.       (line  15)
 * cmr10.vf:                              Searching overview.  (line  31)
-* cnf.c:                                 Config files.        (line  75)
+* cnf.c:                                 Config files.        (line  80)
 * cnf.h:                                 Programming with config files.
                                                               (line  23)
 * code sharing:                          Shared library.      (line   9)
 * color printers, configuring:           Simple installation. (line  60)
 * comments, in fontmap files:            Fontmap.             (line  28)
-* comments, in texmf.cnf:                Config files.        (line  22)
+* comments, in texmf.cnf:                Config files.        (line  27)
 * comments, making:                      Introduction.        (line  27)
 * common features in glyph lookup:       Basic glyph lookup.  (line   6)
 * common problems:                       Common problems.     (line   6)
@@ -3874,7 +3879,7 @@ Index
 * configuration compiler options:        configure environment.
                                                               (line  23)
 * configuration file, source for path:   Path sources.        (line  17)
-* configuration files as shell scripts.: Config files.        (line  67)
+* configuration files as shell scripts.: Config files.        (line  72)
 * configuration of mktex scripts:        mktex configuration. (line   6)
 * configuration of optional features:    configure options.   (line  16)
 * configure error from sed:              Empty Makefiles.     (line   6)
@@ -3882,7 +3887,7 @@ Index
 * configure options for mktex scripts:   mktex configuration. (line  12)
 * configure, running:                    Running configure.   (line   6)
 * context diff:                          Bug checklist.       (line  56)
-* continuation character:                Config files.        (line  26)
+* continuation character:                Config files.        (line  31)
 * core dumps, reporting:                 Bug checklist.       (line  62)
 * CPPFLAGS:                              configure environment.
                                                               (line  22)
@@ -4077,7 +4082,7 @@ Index
 * HOME, as ~ expansion:                  Tilde expansion.     (line   6)
 * HP-UX, compiling on:                   TeX or Metafont failing.
                                                               (line  30)
-* identifiers, characters valid in:      Config files.        (line  36)
+* identifiers, characters valid in:      Config files.        (line  41)
 * illegal pointer combination warnings:  Pointer combination warnings.
                                                               (line   6)
 * include fontmap directive:             Fontmap.             (line  33)
@@ -4124,6 +4129,7 @@ Index
 * KPATHSEA_DEBUG:                        Debugging.           (line  18)
 * kpathsea_debug:                        Debugging.           (line   6)
 * kpathsea_debug variable:               Calling sequence.    (line  37)
+* KPATHSEA_WARNING:                      Config files.        (line  18)
 * KPSE_BITMAP_TOLERANCE:                 Basic glyph lookup.  (line  15)
 * kpse_cnf_get:                          Programming with config files.
                                                               (line  23)
@@ -4410,7 +4416,7 @@ Index
                                                               (line  17)
 * resolutions, last-resort:              Fallback font.       (line   6)
 * retrieving TeX:                        unixtex.ftp.         (line   6)
-* right-hand side of variable assignments: Config files.      (line  44)
+* right-hand side of variable assignments: Config files.      (line  49)
 * Rokicki, Tom:                          History.             (line  12)
 * root user:                             Tilde expansion.     (line  19)
 * runtime configuration files:           Config files.        (line   6)
@@ -4436,7 +4442,7 @@ Index
                                                               (line 149)
 * sh5, ok with configure:                configure shells.    (line  25)
 * shared library, making:                Shared library.      (line   6)
-* shell scripts as configuration files:  Config files.        (line  67)
+* shell scripts as configuration files:  Config files.        (line  72)
 * shell variables:                       Variable expansion.  (line  17)
 * shell_escape, example for code:        Programming with config files.
                                                               (line  10)
@@ -4543,6 +4549,7 @@ Index
                                                               (line  62)
 * TEXMF:                                 TeX directory structure.
                                                               (line   6)
+* texmf.cnf missing, warning about:      Config files.        (line  18)
 * texmf.cnf, and variable expansion:     Variable expansion.  (line   6)
 * texmf.cnf, creating:                   Running make.        (line   6)
 * texmf.cnf, definition for:             Config files.        (line   6)
@@ -4639,6 +4646,7 @@ Index
 * Vojta, Paul:                           History.             (line  30)
 * Walsh, Norman:                         History.             (line  57)
 * warning about unusable ls-R:           ls-R.                (line  45)
+* warning, about missing texmf.cnf:      Config files.        (line  18)
 * warnings, file access:                 Searching overview.  (line  56)
 * warnings, pointer combinations:        Pointer combination warnings.
                                                               (line   6)
@@ -4652,7 +4660,7 @@ Index
                                                               (line 196)
 * whitespace, in fontmap files:          Fontmap.             (line  28)
 * whitespace, not ignored on continuation lines: Config files.
-                                                              (line  26)
+                                                              (line  31)
 * Windows TeX implementations:           Other TeX packages.  (line   6)
 * World Wide Web CTAN access:            Electronic distribution.
                                                               (line  17)
@@ -4681,84 +4689,84 @@ Index
 
 Tag Table:
 Node: Top1555
-Node: Introduction2205
-Node: History4188
-Node: Installation8280
-Node: Simple installation9070
-Node: Custom installation12653
-Node: Disk space13827
-Node: Kpathsea application distributions14711
-Node: Changing search paths15826
-Node: Default path features17008
-Node: Default path generation19144
-Node: Running configure20587
-Node: configure shells21638
-Node: configure options22690
-Node: configure environment24197
-Node: configure scenarios25999
-Node: Shared library27585
-Node: Running make28599
-Node: Installing files30646
-Node: Cleaning up32593
-Node: Filename database generation33641
-Node: mktex scripts34208
-Node: mktex configuration35485
-Node: mktex script names41304
-Node: mktex script arguments42695
-Node: Installation testing43585
-Node: Security43949
-Node: TeX directory structure46516
-Node: unixtex.ftp50938
-Node: Electronic distribution52953
-Node: CD-ROM distribution55718
-Node: Other TeX packages56688
-Node: Reporting bugs57984
-Node: Bug checklist58724
-Node: Mailing lists62426
-Node: Debugging63785
-Node: Logging68857
-Node: Common problems70727
-Node: Unable to find files71558
-Node: Slow path searching73969
-Node: Unable to generate fonts75346
-Node: TeX or Metafont failing77855
-Node: Empty Makefiles79733
-Node: XtStrings80963
-Node: dlopen81799
-Node: ShellWidgetClass82617
-Node: Pointer combination warnings84249
-Node: Path searching84638
-Node: Searching overview85285
-Node: Path sources88657
-Node: Config files89728
-Node: Path expansion93128
-Node: Default expansion94077
-Node: Variable expansion96147
-Node: Tilde expansion97550
-Node: Brace expansion98530
-Node: KPSE_DOT expansion99635
-Node: Subdirectory expansion100148
-Node: Filename database102497
-Node: ls-R103811
-Node: Filename aliases106705
-Node: Database format107883
-Node: Invoking kpsewhich108896
-Node: Path searching options109773
-Node: Auxiliary tasks116422
-Node: Standard options118243
-Node: TeX support118563
-Node: Supported file formats119854
-Node: File lookup127002
-Node: Glyph lookup128293
-Node: Basic glyph lookup129420
-Node: Fontmap130299
-Node: Fallback font132916
-Node: Suppressing warnings133881
-Node: Programming134986
-Node: Programming overview135499
-Node: Calling sequence137775
-Node: Program-specific files142804
-Node: Programming with config files143842
-Node: Index145142
+Node: Introduction2202
+Node: History4182
+Node: Installation8274
+Node: Simple installation9064
+Node: Custom installation12647
+Node: Disk space13821
+Node: Kpathsea application distributions14705
+Node: Changing search paths15820
+Node: Default path features17002
+Node: Default path generation19138
+Node: Running configure20581
+Node: configure shells21632
+Node: configure options22684
+Node: configure environment24191
+Node: configure scenarios25993
+Node: Shared library27579
+Node: Running make28593
+Node: Installing files30640
+Node: Cleaning up32587
+Node: Filename database generation33635
+Node: mktex scripts34202
+Node: mktex configuration35479
+Node: mktex script names41298
+Node: mktex script arguments42689
+Node: Installation testing43579
+Node: Security43943
+Node: TeX directory structure46510
+Node: unixtex.ftp50932
+Node: Electronic distribution52947
+Node: CD-ROM distribution55712
+Node: Other TeX packages56682
+Node: Reporting bugs57978
+Node: Bug checklist58718
+Node: Mailing lists62420
+Node: Debugging63779
+Node: Logging68851
+Node: Common problems70721
+Node: Unable to find files71552
+Node: Slow path searching73963
+Node: Unable to generate fonts75340
+Node: TeX or Metafont failing77849
+Node: Empty Makefiles79727
+Node: XtStrings80957
+Node: dlopen81793
+Node: ShellWidgetClass82611
+Node: Pointer combination warnings84243
+Node: Path searching84632
+Node: Searching overview85279
+Node: Path sources88651
+Node: Config files89722
+Node: Path expansion93367
+Node: Default expansion94316
+Node: Variable expansion96386
+Node: Tilde expansion97789
+Node: Brace expansion98769
+Node: KPSE_DOT expansion99874
+Node: Subdirectory expansion100387
+Node: Filename database102736
+Node: ls-R104050
+Node: Filename aliases106944
+Node: Database format108122
+Node: Invoking kpsewhich109135
+Node: Path searching options110012
+Node: Auxiliary tasks116661
+Node: Standard options118482
+Node: TeX support118802
+Node: Supported file formats120093
+Node: File lookup127241
+Node: Glyph lookup128532
+Node: Basic glyph lookup129659
+Node: Fontmap130538
+Node: Fallback font133155
+Node: Suppressing warnings134120
+Node: Programming135225
+Node: Programming overview135738
+Node: Calling sequence138014
+Node: Program-specific files143043
+Node: Programming with config files144081
+Node: Index145381
 
 End Tag Table

@@ -198,7 +198,11 @@ read_all_cnf P1H(void)
     }
     free (cnf_files);
   } else {
-    WARNING1 ("kpathsea: configuration file texmf.cnf not found in these directories: %s", cnf_path);
+    string warn = getenv ("KPATHSEA_WARNING");
+    if (!(warn && STREQ (warn, "0"))) {
+      WARNING1 ("kpathsea: configuration file texmf.cnf not found in these directories: %s", 
+        cnf_path);
+    }
   }
 }
 
