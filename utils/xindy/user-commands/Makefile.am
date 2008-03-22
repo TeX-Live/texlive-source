@@ -49,17 +49,18 @@ CLEANFILES = xindy xindy.v2
 
 IDENT_DATE = `ident $< | grep '\$$Id' | sed -e 's/^.*,v [^ ]* //' -e 's/ .*//' -e s:/:-:g`
 IDENT_VERSION = `ident $< | grep '\$$Id' | sed -e 's/^.*,v //' -e 's/ .*//'`
+POD2MAN = pod2man
 
 $(srcdir)/xindy.1: $(srcdir)/xindy.in
-	pod2man --center '$(PACKAGE_NAME)' \
-		--name=$(basename $@ .1 | tr '[a-z]' '[A-Z]')
+	-$(POD2MAN) --center '$(PACKAGE_NAME)' \
+		--name=$(basename $@ .1 | tr '[a-z]' '[A-Z]') \
 		--release "Version $(IDENT_VERSION)" \
 		--date "$(IDENT_DATE)" \
 		$< $@
 
 $(srcdir)/texindy.1: $(srcdir)/texindy
-	pod2man --center '$(PACKAGE_NAME)' \
-		--name=$(basename $@ .1 | tr '[a-z]' '[A-Z]')
+	-$(POD2MAN) --center '$(PACKAGE_NAME)' \
+		--name=$(basename $@ .1 | tr '[a-z]' '[A-Z]') \
 		--release "Version $(IDENT_VERSION)" \
 		--date "$(IDENT_DATE)" \
 		$< $@

@@ -36,10 +36,11 @@ dist-hook:
 
 IDENT_DATE = `ident $< | grep '\$$Id' | sed -e 's/^.*,v [^ ]* //' -e 's/ .*//' -e s:/:-:g`
 IDENT_VERSION = `ident $< | grep '\$$Id' | sed -e 's/^.*,v //' -e 's/ .*//'`
+POD2MAN = pod2man
 
 $(srcdir)/tex2xindy.1: $(srcdir)/tex2xindy.l
-	pod2man --center '$(PACKAGE_NAME)' \
-		--name=$(basename $@ .1 | tr '[a-z]' '[A-Z]')
+	-$(POD2MAN) --center '$(PACKAGE_NAME)' \
+		--name=$(basename $@ .1 | tr '[a-z]' '[A-Z]') \
 		--release "Version $(IDENT_VERSION)" \
 		--date "$(IDENT_DATE)" \
 		$< $@

@@ -53,18 +53,20 @@ dist_noinst_DATA = xindy.v2.pdf makeindex4.pdf
 
 doc_DATA = $(FILES) $(PDFS)
 
+GROFF = groff
+
 $(srcdir)/xindy.pdf: $(top_srcdir)/user-commands/xindy.1
-	groff -man -P-g $< | ps2pdf - $@
+	-$(GROFF) -man -P-g $< | ps2pdf - $@
 
 $(srcdir)/texindy.pdf: $(top_srcdir)/user-commands/texindy.1
-	groff -man -P-g $< | ps2pdf - $@
+	-$(GROFF) -man -P-g $< | ps2pdf - $@
 
 $(srcdir)/makeindex4.pdf: $(top_srcdir)/user-commands/makeindex4.1
-	groff -man -P-g $< | ps2pdf - $@
+	-$(GROFF) -man -P-g $< | ps2pdf - $@
 
 $(srcdir)/xindy.v2.pdf: $(top_srcdir)/user-commands/xindy.v2.1
-	groff -man -P-g $< | ps2pdf - $@
+	-$(GROFF) -man -P-g $< | ps2pdf - $@
 
 $(srcdir)/tex2xindy.pdf: $(top_srcdir)/tex2xindy/tex2xindy.1
-	groff -man -P-g $< | ps2pdf - $@
+	-$(GROFF) -man -P-g $< | ps2pdf - $@
 
