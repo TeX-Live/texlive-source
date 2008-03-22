@@ -38,7 +38,7 @@ build_triplet = @build@
 host_triplet = @host@
 subdir = user-commands
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(dist_bin_SCRIPTS)
+	$(am__dist_bin_SCRIPTS_DIST)
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ac_prog_latex.m4 \
 	$(top_srcdir)/m4/ac_prog_pdflatex.m4 \
@@ -50,6 +50,7 @@ CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" \
 	"$(DESTDIR)$(man1dir)"
 binSCRIPT_INSTALL = $(INSTALL_SCRIPT)
+am__dist_bin_SCRIPTS_DIST = texindy
 dist_binSCRIPT_INSTALL = $(INSTALL_SCRIPT)
 SCRIPTS = $(bin_SCRIPTS) $(dist_bin_SCRIPTS)
 SOURCES =
@@ -71,8 +72,7 @@ BUILDRULES_TRUE = @BUILDRULES_TRUE@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
-CLISP_DIR = @CLISP_DIR@
-CLISP_PATH = @CLISP_PATH@
+CLISP = @CLISP@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
@@ -113,6 +113,8 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+TETEX_BUILD_FALSE = @TETEX_BUILD_FALSE@
+TETEX_BUILD_TRUE = @TETEX_BUILD_TRUE@
 VERSION = @VERSION@
 YACC = @YACC@
 YFLAGS = @YFLAGS@
@@ -164,8 +166,8 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-bin_SCRIPTS = xindy xindy.v2
-dist_bin_SCRIPTS = texindy
+@TETEX_BUILD_FALSE@bin_SCRIPTS = xindy xindy.v2
+@TETEX_BUILD_FALSE@dist_bin_SCRIPTS = texindy
 man_MANS = texindy.1 xindy.1 xindy.v2.1
 EXTRA_DIST = $(man_MANS)
 CLEANFILES = xindy xindy.v2
@@ -323,6 +325,7 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+@TETEX_BUILD_FALSE@install-exec-hook:
 clean: clean-am
 
 clean-am: clean-generic mostlyclean-am
@@ -344,6 +347,8 @@ info-am:
 install-data-am: install-man
 
 install-exec-am: install-binSCRIPTS install-dist_binSCRIPTS
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
 
 install-info: install-info-am
 
@@ -376,13 +381,21 @@ uninstall-man: uninstall-man1
 	distclean-generic dvi dvi-am html html-am info info-am install \
 	install-am install-binSCRIPTS install-data install-data-am \
 	install-dist_binSCRIPTS install-exec install-exec-am \
-	install-info install-info-am install-man install-man1 \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic pdf pdf-am ps ps-am uninstall uninstall-am \
-	uninstall-binSCRIPTS uninstall-dist_binSCRIPTS \
+	install-exec-hook install-info install-info-am install-man \
+	install-man1 install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am uninstall \
+	uninstall-am uninstall-binSCRIPTS uninstall-dist_binSCRIPTS \
 	uninstall-info-am uninstall-man uninstall-man1
 
+
+@TETEX_BUILD_TRUE@install-exec-hook: xindy xindy.v2
+@TETEX_BUILD_TRUE@	$(INSTALL_SCRIPT) xindy $(prefix)/texmf/scripts/xindy/
+@TETEX_BUILD_TRUE@	$(LN_S) ../../texmf/scripts/xindy/xindy $(bindir)/xindy
+@TETEX_BUILD_TRUE@	$(INSTALL_SCRIPT) xindy.v2 $(prefix)/texmf/scripts/xindy/
+@TETEX_BUILD_TRUE@	$(LN_S) ../../texmf/scripts/xindy/xindy.v2 $(bindir)/xindy.v2
+@TETEX_BUILD_TRUE@	$(INSTALL_SCRIPT) $(srcdir)/texindy $(prefix)/texmf/scripts/xindy/
+@TETEX_BUILD_TRUE@	$(LN_S) ../../texmf/scripts/xindy/texindy $(bindir)/texindy
 
 xindy: xindy.in
 	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/xindy.in >xindy

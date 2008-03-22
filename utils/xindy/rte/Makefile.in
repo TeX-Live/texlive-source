@@ -61,8 +61,7 @@ BUILDRULES_TRUE = @BUILDRULES_TRUE@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
-CLISP_DIR = @CLISP_DIR@
-CLISP_PATH = @CLISP_PATH@
+CLISP = @CLISP@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
@@ -103,6 +102,8 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+TETEX_BUILD_FALSE = @TETEX_BUILD_FALSE@
+TETEX_BUILD_TRUE = @TETEX_BUILD_TRUE@
 VERSION = @VERSION@
 YACC = @YACC@
 YFLAGS = @YFLAGS@
@@ -156,10 +157,12 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 clisp_src = clisp-2.43
 clisp_builddir = $(shell pwd)/clisp-build-dir
+@EXT_CLISP_FALSE@CLISP_LIB = $(clisp_builddir)
+@EXT_CLISP_TRUE@CLISP_LIB = $(shell $(CLISP) -q -norc -x '(progn (princ *lib-directory*) (values))')
 @EXT_CLISP_FALSE@CLISP_PREREQ = $(clisp_link) $(fulldir)
 @EXT_CLISP_TRUE@CLISP_PREREQ = 
-fulldir = $(CLISP_DIR)/full
-clisp_link = $(CLISP_DIR)/clisp-link
+fulldir = $(CLISP_LIB)/full
+clisp_link = $(CLISP_LIB)/clisp-link
 binariesdir = ../binaries
 
 #clisp_modules=--with-export-syscalls --with-dynamic-ffi --ignore-absence-of-libsigsegv
@@ -292,13 +295,10 @@ uninstall-am: uninstall-info-am
 	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
 	pdf-am ps ps-am uninstall uninstall-am uninstall-info-am
 
+@EXT_CLISP_TRUE@    export CLISP = @CLISP@
+@EXT_CLISP_FALSE@    export CLISP = $(clisp_builddir)/clisp
 
-@EXT_CLISP_TRUE@    export CLISP_DIR = @CLISP_DIR@
-@EXT_CLISP_TRUE@    export CLISP_PATH = @CLISP_PATH@
-@EXT_CLISP_FALSE@    export CLISP_DIR = $(clisp_builddir)
-@EXT_CLISP_FALSE@    export CLISP_PATH = $(CLISP_DIR)/clisp
-
-export CLISP_LINKKIT = $(CLISP_DIR)/linkkit
+export CLISP_LINKKIT = $(CLISP_LIB)/linkkit
 
 # testing for MacOS X platform to circumvent faulty 'readline'
 # provided by Maarten Sneep <maarten.sneep@xs4all.nl>
@@ -327,8 +327,8 @@ all: xindy-build-dir
 xindy-build-dir: $(CLISP_PREREQ)
 	$(RM_R) xindy-build-dir
 	$(MAKE) -C ordrules ordrulei.c
-	test -f ordrules/link.sh || for i in $(ORDRULES_FILES); do cp $(top_srcdir)/rte/ordrules/$$i ordrules/; done
-	$(clisp_link) add-module-set ordrules $(fulldir) $@
+	test -f ordrules/link.sh || for i in $(ORDRULES_FILES); do cp -p $(top_srcdir)/rte/ordrules/$$i ordrules/; done
+	sh $(clisp_link) add-module-set ordrules $(fulldir) $@
 	cp $@/lisp.run $(binariesdir)/xindy.run
 	cp $@/lispinit.mem $(binariesdir)/base.mem
 

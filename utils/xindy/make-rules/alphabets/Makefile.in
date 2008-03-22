@@ -167,8 +167,7 @@ BUILDRULES_TRUE = @BUILDRULES_TRUE@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
-CLISP_DIR = @CLISP_DIR@
-CLISP_PATH = @CLISP_PATH@
+CLISP = @CLISP@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
@@ -209,6 +208,8 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+TETEX_BUILD_FALSE = @TETEX_BUILD_FALSE@
+TETEX_BUILD_TRUE = @TETEX_BUILD_TRUE@
 VERSION = @VERSION@
 YACC = @YACC@
 YFLAGS = @YFLAGS@
@@ -231,15 +232,7 @@ build_os = @build_os@
 build_vendor = @build_vendor@
 datadir = @datadir@
 datarootdir = @datarootdir@
-#	echo "\ienc{iso-8859-7}" >>$@
-#	echo "\fenc{LGR}" >>$@
-#	echo "\chapter{Other scripts}" >>$@
-#	for i in $(DOCS_OTHER); do echo "\input{$$i}" >>$@; done
-#	FIXME: UTF8 encoding
-#	echo "\section{UTF-8 scripts}" >>$@
-#	for i in $(DOCS_UTF8); do echo "\input{$$i}" >>$@; done
-#	echo "\ienc{utf8}" >>$@
-docdir = $(datadir)/doc/$(PACKAGE_NAME)-$(PACKAGE_VERSION)
+docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host = @host@
@@ -268,7 +261,8 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-langdir = $(pkgdatadir)/lang
+@TETEX_BUILD_FALSE@langdir = $(pkgdatadir)/lang
+@TETEX_BUILD_TRUE@langdir = $(prefix)/texmf/scripts/xindy/lang
 albaniandir = $(langdir)/albanian
 ALBANIAN = \
 	albanian/latin1-lang.xdy \
@@ -2414,6 +2408,14 @@ alphabets-inc.tex : $(DOCS)
 	echo "\chapter{Cyrillic scripts}" >>$@
 	echo "\section{Codepage 1251}" >>$@
 	for i in $(DOCS_CYR_1251); do echo "\input{$$i}" >>$@; done
+#	echo "\ienc{iso-8859-7}" >>$@
+#	echo "\fenc{LGR}" >>$@
+#	echo "\chapter{Other scripts}" >>$@
+#	for i in $(DOCS_OTHER); do echo "\input{$$i}" >>$@; done
+#	FIXME: UTF8 encoding
+#	echo "\section{UTF-8 scripts}" >>$@
+#	for i in $(DOCS_UTF8); do echo "\input{$$i}" >>$@; done
+#	echo "\ienc{utf8}" >>$@
 
 # whether to build docs
 

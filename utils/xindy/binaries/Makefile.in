@@ -74,8 +74,7 @@ BUILDRULES_TRUE = @BUILDRULES_TRUE@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
-CLISP_DIR = @CLISP_DIR@
-CLISP_PATH = @CLISP_PATH@
+CLISP = @CLISP@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
@@ -116,6 +115,8 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+TETEX_BUILD_FALSE = @TETEX_BUILD_FALSE@
+TETEX_BUILD_TRUE = @TETEX_BUILD_TRUE@
 VERSION = @VERSION@
 YACC = @YACC@
 YFLAGS = @YFLAGS@
@@ -175,12 +176,12 @@ DEFAULTS = defaults.xdy
 DUMP_XINDY = $(SRCDIR)/dump-xindy.lsp
 MEMFILE = xindy.mem
 XINDY_RUN = ./xindy.run -q -M ./base.mem
-
 # Where the modules are found at runtime.
-MODULEDIR = $(pkgdatadir)
-
+@TETEX_BUILD_FALSE@MODULEDIR = $(pkgdatadir)
+@TETEX_BUILD_TRUE@MODULEDIR = $(prefix)/texmf/scripts/xindy
 # Where the files xindy.run and xindy.mem should be installed.
-kerneldir = $(pkglibdir)
+@TETEX_BUILD_FALSE@kerneldir = $(pkglibdir)
+@TETEX_BUILD_TRUE@kerneldir = $(bindir)
 
 # *.lib files which should be cleaned
 FASLIBS = base.lib locref.lib idxstyle.lib index.lib version.lib markup.lib
