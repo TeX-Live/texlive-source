@@ -21,9 +21,6 @@
 
 SUBDIRS = style-tutorial
 
-docdir = $(datadir)/doc/$(PACKAGE_NAME)-$(PACKAGE_VERSION)
-
-
 FILES = \
 	dataflow.gif \
 	faq-1.html \

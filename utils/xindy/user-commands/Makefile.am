@@ -20,7 +20,18 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-bin_SCRIPTS = xindy xindy.v2
+if TETEX_BUILD
+install-exec-hook: xindy xindy.v2
+	$(INSTALL_SCRIPT) xindy $(prefix)/texmf/scripts/xindy/
+	$(LN_S) ../../texmf/scripts/xindy/xindy $(bindir)/xindy
+	$(INSTALL_SCRIPT) xindy.v2 $(prefix)/texmf/scripts/xindy/
+	$(LN_S) ../../texmf/scripts/xindy/xindy.v2 $(bindir)/xindy.v2
+	$(INSTALL_SCRIPT) $(srcdir)/texindy $(prefix)/texmf/scripts/xindy/
+	$(LN_S) ../../texmf/scripts/xindy/texindy $(bindir)/texindy
+else
+    bin_SCRIPTS = xindy xindy.v2
+    dist_bin_SCRIPTS = texindy
+endif
 
 xindy: xindy.in
 	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/xindy.in >xindy
@@ -33,8 +44,6 @@ $(srcdir)/xindy.1: $(srcdir)/xindy.in
 
 $(srcdir)/texindy.1: $(srcdir)/texindy
 	pod2man --verbose -n TEXINDY -r "Version 1.5" -c "xindy" $< $@
-
-dist_bin_SCRIPTS = texindy
 
 man_MANS = texindy.1 xindy.1 xindy.v2.1
 

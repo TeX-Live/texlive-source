@@ -26,18 +26,18 @@ clisp_src = clisp-2.43
 clisp_builddir = $(shell pwd)/clisp-build-dir
 
 if EXT_CLISP
-    export CLISP_DIR = @CLISP_DIR@
-    export CLISP_PATH = @CLISP_PATH@
+    CLISP_LIB = $(shell $(CLISP) -q -norc -x '(progn (princ *lib-directory*) (values))')
+    export CLISP = @CLISP@
     CLISP_PREREQ =
 else
-    export CLISP_DIR = $(clisp_builddir)
-    export CLISP_PATH = $(CLISP_DIR)/clisp
+    CLISP_LIB = $(clisp_builddir)
+    export CLISP = $(clisp_builddir)/clisp
     CLISP_PREREQ = $(clisp_link) $(fulldir)
 endif
 
-export CLISP_LINKKIT = $(CLISP_DIR)/linkkit
-fulldir = $(CLISP_DIR)/full
-clisp_link = $(CLISP_DIR)/clisp-link
+export CLISP_LINKKIT = $(CLISP_LIB)/linkkit
+fulldir = $(CLISP_LIB)/full
+clisp_link = $(CLISP_LIB)/clisp-link
 
 binariesdir = ../binaries
 
@@ -77,8 +77,8 @@ ORDRULES_FILES = ordrules.c ordrules.h rxsub.c rxsub.h mkind.h debug.h link.sh
 xindy-build-dir: $(CLISP_PREREQ)
 	$(RM_R) xindy-build-dir
 	$(MAKE) -C ordrules ordrulei.c
-	test -f ordrules/link.sh || for i in $(ORDRULES_FILES); do cp $(top_srcdir)/rte/ordrules/$$i ordrules/; done
-	$(clisp_link) add-module-set ordrules $(fulldir) $@
+	test -f ordrules/link.sh || for i in $(ORDRULES_FILES); do cp -p $(top_srcdir)/rte/ordrules/$$i ordrules/; done
+	sh $(clisp_link) add-module-set ordrules $(fulldir) $@
 	cp $@/lisp.run $(binariesdir)/xindy.run
 	cp $@/lispinit.mem $(binariesdir)/base.mem
 

@@ -147,6 +147,8 @@ if ( $ENV{XINDY_LIBDIR} ) {
     $LibDir = "$cmd_dir/../lib";
 } elsif ( -d "$cmd_dir/../lib/xindy" ) { # /usr or /usr/local style
     $LibDir = "$cmd_dir/../lib/xindy";
+} elsif ( -f "$cmd_dir/xindy.run" ) { # texlive style
+    $LibDir = $cmd_dir;
 } else {
     die "Cannot locate xindy library directory";
 }
@@ -158,6 +160,8 @@ if ( -d "$cmd_dir/../modules" ) {	# /opt style
     $modules_dir = "$cmd_dir/../modules";
 } elsif ( -d "$LibDir/modules" ) {	# /usr or /usr/local style
     $modules_dir = "$LibDir/modules";
+} elsif ( -d "$LibDir/../../texmf/scripts/xindy" ) { # texlive style
+    $modules_dir = "$LibDir/../../texmf/scripts/xindy";
 } else {
     die "Cannot locate xindy modules directory";
 }

@@ -294,6 +294,8 @@ BEGIN {
     # library directory
     if ( $ENV{XINDY_LIBDIR} ) {
 	$lib_dir = $ENV{XINDY_LIBDIR};
+    } elsif ( -f "$cmd_dir/xindy.run" ) { # texlive style
+	$lib_dir = $cmd_dir;
     } elsif ( '@libdir@' ne '@libdir' . '@' ) { # GNU configure at work?
 	if ( -d '@libdir@/xindy' ) {	# /usr style
 	    $lib_dir = '@libdir@/xindy';
@@ -309,13 +311,15 @@ BEGIN {
     }
 
     # modules directory
-    $modules_dir = "/usr/share/xindy";
-    unless ( -d $modules_dir ) {
-    #if ( -d "$cmd_dir/../modules" ) {	# /opt style
-    #	$modules_dir = "$cmd_dir/../modules";
-    #} elsif ( -d "$lib_dir/modules" ) {	# /usr style
-    #	$modules_dir = "$lib_dir/modules";
-    #} else {
+    if ( -d "$cmd_dir/../modules" ) {	# /opt style
+	$modules_dir = "$cmd_dir/../modules";
+    } elsif ( -d "$lib_dir/modules" ) {	# /usr style
+	$modules_dir = "$lib_dir/modules";
+    } elsif ( -d "$lib_dir/../../texmf/scripts/xindy" ) { # texlive style
+	$modules_dir = "$lib_dir/../../texmf/scripts/xindy";
+    } elsif ( -d "/usr/share/xindy" ) { # FSH style
+	$modules_dir = "/usr/share/xindy";
+    } else {
 	die "$cmd: Cannot locate xindy modules directory";
     }
 }

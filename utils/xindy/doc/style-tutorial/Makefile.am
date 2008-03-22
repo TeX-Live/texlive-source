@@ -19,8 +19,6 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-docdir = $(datadir)/doc/$(PACKAGE_NAME)-$(PACKAGE_VERSION)
-
 tutorialdir = $(docdir)/style-tutorial
 
 FILES = \

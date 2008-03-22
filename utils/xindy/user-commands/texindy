@@ -475,6 +475,8 @@ sub output_xindy_release () {
 	    $lib_dir = "$cmd_dir/../lib";
 	} elsif ( -d "$cmd_dir/../lib/xindy" ) { # /usr style
 	    $lib_dir = "$cmd_dir/../lib/xindy";
+	} elsif ( -f "$cmd_dir/xindy.run" ) { # texlive style
+	    $lib_dir = $cmd_dir;
 	} else {
 	    die "Cannot locate xindy library directory";
 	}

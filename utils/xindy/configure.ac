@@ -40,7 +40,7 @@ AC_PROG_MAKE_SET
 AC_PROG_GCC_TRADITIONAL
 
 dnl test for building make-rules
-AC_ARG_ENABLE(make-rules, AS_HELP_STRING([--enable-make-rules ],[build and install make-rules package (default is YES)]),[BUILDRULES=$enableval],[BUILDRULES=yes])
+AC_ARG_ENABLE(make-rules, AS_HELP_STRING([--enable-make-rules],[build and install make-rules package (default is YES)]),[BUILDRULES=$enableval],[BUILDRULES=yes])
 
 if test "$BUILDRULES" = "yes"; then
     AC_PROG_LATEX
@@ -49,7 +49,7 @@ fi
 AM_CONDITIONAL(BUILDRULES, test "$BUILDRULES" = "yes")
 
 dnl test for building Documentation
-AC_ARG_ENABLE(docs, AS_HELP_STRING([--enable-docs ],[build and install documentation (default is YES)]),[BUILDDOCS=$enableval],[BUILDDOCS=yes])
+AC_ARG_ENABLE(docs, AS_HELP_STRING([--enable-docs],[build and install documentation (default is YES)]),[BUILDDOCS=$enableval],[BUILDDOCS=yes])
 
 if test "$BUILDDOCS" = "yes"; then
     AC_PROG_PDFLATEX
@@ -57,34 +57,65 @@ fi
 
 AM_CONDITIONAL(BUILDDOCS, test "$BUILDDOCS" = "yes")
 
-dnl use external or internal CLISP
-AC_ARG_ENABLE(external-clisp, AS_HELP_STRING([--enable-external-clisp],[Use an external CLISP instead of the one in rte/]),[EXT_CLISP=$enableval],[EXT_CLISP=no])
+# Building inside teTeX or TeX Live?
+AC_ARG_ENABLE(tetex-build, AS_HELP_STRING([--enable-tetex-build],[Build as part of a teTeX installation]))
 
-dnl test for CLISP
-AC_ARG_ENABLE(clisp-path, AS_HELP_STRING([--enable-clisp-path],[Where to search the external CLISP]),[CLISP_PATH=$enableval],[CLISP_PATH=$(which clisp)])
+if test "x$enable_tetex_build" = xyes; then
+  if test ! -d $srcdir/../../texk/kpathsea; then
+    AC_MSG_ERROR([
+=========================================
 
-dnl test for CLISP linkkit
-AC_ARG_ENABLE(clisp-dir, AS_HELP_STRING([--enable-clisp-dir],[Where to seach the external CLISP library]),[CLISP_DIR=$enableval],[CLISP_DIR=/usr/lib/clisp])
+You specified --enable-tetex-build, but I can't find the kpathsea
+directory.  I expected it to be in $srcdir/../../texk/kpathsea.
 
-if test "$EXT_CLISP" != no; then
-    AM_CONDITIONAL(EXT_CLISP, test -x "$CLISP_PATH" -a -x "$CLISP_DIR/clisp-link" -a -d "$CLISP_DIR/full" -a -d "$CLISP_DIR/linkkit")
-    AC_SUBST(CLISP_PATH)
-    AC_SUBST(CLISP_DIR)
-
-    if test -n "$EXT_CLISP_TRUE"; then
-        if test "$EXT_CLISP" = yes; then
-            echo Help me! I should use an external CLISP, but I can\'t find it. >&2
-            exit 1
-        else
-            echo Using internal clisp
-            EXT_CLISP=no
-        fi
-    else
-        echo Using external clisp
-    fi
+=========================================])
+  fi
+  docdir="$prefix/texmf/doc/$PACKAGE_NAME"
 else
-    AM_CONDITIONAL(EXT_CLISP, false)
+  docdir="$datadir/doc/$PACKAGE_NAME-$PACKAGE_VERSION"
 fi
+AM_CONDITIONAL([TETEX_BUILD],[test "x$enable_tetex_build" = xyes])
+
+dnl use external or internal CLISP
+AC_ARG_WITH(external-clisp, AS_HELP_STRING([--with-external-clisp@<:@=PATH@:>@],[Use the external CLISP binary instead of re-building CLISP from source in the rte/ directory]))
+
+CLISP=
+if test "x$with_external_clisp" = xyes; then
+  AC_PATH_PROG(CLISP, clisp)
+  if test -z "$CLISP"; then
+    AC_MSG_ERROR([--with-external-clisp specified, but clisp binary not found in PATH])
+  fi
+elif test "x$with_external_clisp" = xno; then
+  if test -d "$srcdir/rte/clisp-2.43"; then
+    AC_MSG_NOTICE([Using internal clisp])
+  else
+    AC_MSG_ERROR([--without-external-clisp specified, but clisp source directory not found at $srcdir/rte/clisp-2.43])
+  fi
+elif test -n "$with_external_clisp"; then
+  CLISP="$with_external_clisp"
+else
+  AC_PATH_PROG(CLISP, clisp)
+  if test -n "$CLISP"; then
+    :
+  elif test -d "$srcdir/rte/clisp-2.43"; then
+    AC_MSG_NOTICE([Using internal clisp])
+  else
+    AC_MSG_ERROR([clisp binary not found in PATH, nor the clisp source directory at $srcdir/rte/clisp-2.43])
+  fi
+fi
+
+if test -n "$CLISP"; then
+  test -x "$CLISP" || AC_MSG_ERROR([clisp binary is not executable: $CLISP])
+  AC_MSG_CHECKING([for clisp library directory])
+  CLISP_LIB=$($CLISP -q -norc -x '(progn (princ *lib-directory*) (values))')
+  AC_MSG_RESULT([$CLISP_LIB])
+  test -f "$CLISP_LIB/clisp-link" || AC_MSG_ERROR([expected file is not found: $CLISP_LIB/clisp-link])
+  test -d "$CLISP_LIB/full" || AC_MSG_ERROR([expected directory is not found: $CLISP_LIB/full])
+  test -d "$CLISP_LIB/linkkit" || AC_MSG_ERROR([expected directory is not found: $CLISP_LIB/linkkit])
+  AC_MSG_NOTICE([Using external clisp])
+fi
+AC_SUBST(CLISP)
+AM_CONDITIONAL([EXT_CLISP], [test -n "$CLISP"])
 
 # Checks for libraries.
 AC_CHECK_LIB([fl], [main])

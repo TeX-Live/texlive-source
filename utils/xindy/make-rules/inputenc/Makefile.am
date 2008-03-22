@@ -19,7 +19,11 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-modulesdir = $(pkgdatadir)
+if TETEX_BUILD
+    modulesdir = $(prefix)/texmf/scripts/xindy
+else
+    modulesdir = $(pkgdatadir)
+endif
 
 inputencdir = $(modulesdir)/tex/inputenc
 

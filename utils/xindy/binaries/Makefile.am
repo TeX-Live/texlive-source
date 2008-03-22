@@ -28,12 +28,15 @@ DUMP_XINDY = $(SRCDIR)/dump-xindy.lsp
 MEMFILE    = xindy.mem
 XINDY_RUN  = ./xindy.run -q -M ./base.mem
 
+if TETEX_BUILD
+    MODULEDIR = $(prefix)/texmf/scripts/xindy
+    kerneldir = $(bindir)
+else
 # Where the modules are found at runtime.
-MODULEDIR = $(pkgdatadir)
-
+    MODULEDIR = $(pkgdatadir)
 # Where the files xindy.run and xindy.mem should be installed.
-kerneldir = $(pkglibdir)
-
+    kerneldir = $(pkglibdir)
+endif
 
 xindy.mem: $(DEFAULTS) $(FAS) base.mem xindy.run
 	rm -f $(MEMFILE)

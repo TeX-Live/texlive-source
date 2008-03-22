@@ -19,7 +19,11 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-langdir = $(pkgdatadir)/lang
+if TETEX_BUILD
+    langdir = $(prefix)/texmf/scripts/xindy/lang
+else
+    langdir = $(pkgdatadir)/lang
+endif
 
 germandir = $(langdir)/german
 

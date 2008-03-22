@@ -19,7 +19,11 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-langdir	= $(pkgdatadir)/lang
+if TETEX_BUILD
+    langdir = $(prefix)/texmf/scripts/xindy/lang
+else
+    langdir = $(pkgdatadir)/lang
+endif
 
 albaniandir = $(langdir)/albanian
 
@@ -1144,8 +1148,6 @@ alphabets-inc.tex : $(DOCS)
 #	echo "\section{UTF-8 scripts}" >>$@
 #	for i in $(DOCS_UTF8); do echo "\input{$$i}" >>$@; done
 #	echo "\ienc{utf8}" >>$@
-
-docdir = $(datadir)/doc/$(PACKAGE_NAME)-$(PACKAGE_VERSION)
 
 # whether to build docs
 if BUILDRULES
