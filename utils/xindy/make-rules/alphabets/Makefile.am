@@ -31,7 +31,6 @@ ALBANIAN = \
 	albanian/latin1-lang.xdy \
 	albanian/latin1-test.xdy \
 	albanian/latin1.xdy \
-	albanian/utf8.pl \
 	albanian/utf8-lang.xdy \
 	albanian/utf8-test.xdy \
 	albanian/utf8.xdy
@@ -50,7 +49,6 @@ BELARUSIAN = \
 	belarusian/isoir111-lang.xdy \
 	belarusian/isoir111-test.xdy \
 	belarusian/isoir111.xdy \
-	belarusian/utf8.pl \
 	belarusian/utf8-lang.xdy \
 	belarusian/utf8-test.xdy \
 	belarusian/utf8.xdy
@@ -70,7 +68,6 @@ BULGARIAN = \
 	bulgarian/koi8-r-lang.xdy \
 	bulgarian/koi8-r-test.xdy \
 	bulgarian/koi8-r.xdy \
-	bulgarian/utf8.pl \
 	bulgarian/utf8-lang.xdy \
 	bulgarian/utf8-test.xdy \
 	bulgarian/utf8.xdy
@@ -86,7 +83,6 @@ CROATIAN = \
 	croatian/latin2-lang.xdy \
 	croatian/latin2-test.xdy \
 	croatian/latin2.xdy \
-	croatian/utf8.pl \
 	croatian/utf8-lang.xdy \
 	croatian/utf8-test.xdy \
 	croatian/utf8.xdy
@@ -102,7 +98,6 @@ CZECH = \
 	czech/latin2-lang.xdy \
 	czech/latin2-test.xdy \
 	czech/latin2.xdy \
-	czech/utf8.pl \
 	czech/utf8-lang.xdy \
 	czech/utf8-test.xdy \
 	czech/utf8.xdy
@@ -119,7 +114,6 @@ DANISH = \
 	danish/latin9-lang.xdy \
 	danish/latin9-test.xdy \
 	danish/latin9.xdy \
-	danish/utf8.pl \
 	danish/utf8-lang.xdy \
 	danish/utf8-test.xdy \
 	danish/utf8.xdy
@@ -132,11 +126,9 @@ DUTCH = \
 	dutch/ij-as-ij-latin1-lang.xdy \
 	dutch/ij-as-ij-latin1-test.xdy \
 	dutch/ij-as-ij-latin1.xdy \
-	dutch/ij-as-ij-utf8.pl \
 	dutch/ij-as-ij-utf8-lang.xdy \
 	dutch/ij-as-ij-utf8-test.xdy \
 	dutch/ij-as-ij-utf8.xdy \
-	dutch/ij-as-y-utf8.pl \
 	dutch/ij-as-y-utf8.xdy \
 	dutch/ij-as-y-utf8-lang.xdy \
 	dutch/ij-as-y-utf8-test.xdy \
@@ -153,7 +145,6 @@ ENGLISH = \
 	english/latin9-lang.xdy  \
 	english/latin9-test.xdy \
 	english/latin9.xdy \
-	english/utf8.pl \
 	english/utf8-lang.xdy \
 	english/utf8-test.xdy \
 	english/utf8.xdy
@@ -166,7 +157,6 @@ ESPERANTO = \
 	esperanto/latin3-lang.xdy \
 	esperanto/latin3-test.xdy \
 	esperanto/latin3.xdy \
-	esperanto/utf8.pl \
 	esperanto/utf8-lang.xdy \
 	esperanto/utf8-test.xdy \
 	esperanto/utf8.xdy
@@ -182,7 +172,6 @@ ESTONIAN = \
 	estonian/latin9-lang.xdy \
 	estonian/latin9-test.xdy \
 	estonian/latin9.xdy \
-	estonian/utf8.pl \
 	estonian/utf8-lang.xdy \
 	estonian/utf8-test.xdy \
 	estonian/utf8.xdy
@@ -198,7 +187,6 @@ FINNISH = \
 	finnish/latin9-lang.xdy \
 	finnish/latin9-test.xdy \
 	finnish/latin9.xdy \
-	finnish/utf8.pl \
 	finnish/utf8-lang.xdy \
 	finnish/utf8-test.xdy \
 	finnish/utf8.xdy
@@ -214,7 +202,6 @@ FRENCH = \
 	french/latin9-lang.xdy \
 	french/latin9-test.xdy \
 	french/latin9.xdy \
-	french/utf8.pl \
 	french/utf8-lang.xdy \
 	french/utf8-test.xdy \
 	french/utf8.xdy
@@ -233,7 +220,6 @@ GENERAL = \
 	general/latin9-lang.xdy \
 	general/latin9-test.xdy \
 	general/latin9.xdy \
-	general/utf8.pl \
 	general/utf8-lang.xdy \
 	general/utf8-test.xdy \
 	general/utf8.xdy
@@ -243,7 +229,6 @@ nodist_general_DATA = $(GENERAL)
 georgiandir = $(langdir)/georgian
 
 GEORGIAN = \
-	georgian/utf8.pl \
 	georgian/utf8-lang.xdy \
 	georgian/utf8-test.xdy \
 	georgian/utf8.xdy
@@ -253,21 +238,18 @@ nodist_georgian_DATA = $(GEORGIAN)
 germandir = $(langdir)/german
 
 GERMAN = \
-	german/braille-utf8.pl \
 	german/braille-utf8-lang.xdy \
 	german/braille-utf8-test.xdy \
 	german/braille-utf8.xdy \
 	german/din5007-latin1-lang.xdy \
 	german/din5007-latin1-test.xdy \
 	german/din5007-latin1.xdy \
-	german/din5007-utf8.pl \
 	german/din5007-utf8-lang.xdy \
 	german/din5007-utf8-test.xdy \
 	german/din5007-utf8.xdy \
 	german/duden-latin1-lang.xdy \
 	german/duden-latin1-test.xdy \
 	german/duden-latin1.xdy \
-	german/duden-utf8.pl \
 	german/duden-utf8-lang.xdy \
 	german/duden-utf8-test.xdy \
 	german/duden-utf8.xdy
@@ -280,18 +262,15 @@ GREEK = \
 	greek/iso88597-lang.xdy \
 	greek/iso88597-test.xdy \
 	greek/iso88597.xdy \
-	greek/polytonic-utf8.pl \
 	greek/polytonic-utf8-lang.xdy \
 	greek/polytonic-utf8-test.xdy \
 	greek/polytonic-utf8.xdy \
 	greek/translit-latin4-lang.xdy \
 	greek/translit-latin4-test.xdy \
 	greek/translit-latin4.xdy \
-	greek/translit-utf8.pl \
 	greek/translit-utf8-lang.xdy \
 	greek/translit-utf8-test.xdy \
 	greek/translit-utf8.xdy \
-	greek/utf8.pl \
 	greek/utf8-lang.xdy \
 	greek/utf8-test.xdy \
 	greek/utf8.xdy
@@ -301,7 +280,6 @@ nodist_greek_DATA = $(GREEK)
 gypsydir = $(langdir)/gypsy
 
 GYPSY = \
-	gypsy/northrussian-utf8.pl \
 	gypsy/northrussian-utf8-lang.xdy \
 	gypsy/northrussian-utf8-test.xdy \
 	gypsy/northrussian-utf8.xdy
@@ -311,7 +289,6 @@ nodist_gypsy_DATA = $(GYPSY)
 hausadir = $(langdir)/hausa
 
 HAUSA = \
-	hausa/utf8.pl \
 	hausa/utf8-lang.xdy \
 	hausa/utf8-test.xdy \
 	hausa/utf8.xdy
@@ -324,7 +301,6 @@ HEBREW = \
 	hebrew/iso88598-lang.xdy \
 	hebrew/iso88598-test.xdy \
 	hebrew/iso88598.xdy \
-	hebrew/utf8.pl \
 	hebrew/utf8-lang.xdy \
 	hebrew/utf8-test.xdy \
 	hebrew/utf8.xdy
@@ -340,7 +316,6 @@ HUNGARIAN = \
 	hungarian/latin2-lang.xdy \
 	hungarian/latin2-test.xdy \
 	hungarian/latin2.xdy \
-	hungarian/utf8.pl \
 	hungarian/utf8-lang.xdy \
 	hungarian/utf8-test.xdy \
 	hungarian/utf8.xdy
@@ -356,7 +331,6 @@ ICELANDIC = \
 	icelandic/latin9-lang.xdy \
 	icelandic/latin9-test.xdy \
 	icelandic/latin9.xdy \
-	icelandic/utf8.pl \
 	icelandic/utf8-lang.xdy \
 	icelandic/utf8-test.xdy \
 	icelandic/utf8.xdy
@@ -369,7 +343,6 @@ ITALIAN = \
 	italian/latin1-lang.xdy \
 	italian/latin1-test.xdy \
 	italian/latin1.xdy \
-	italian/utf8.pl \
 	italian/utf8-lang.xdy \
 	italian/utf8-test.xdy \
 	italian/utf8.xdy
@@ -379,7 +352,6 @@ nodist_italian_DATA = $(ITALIAN)
 klingondir = $(langdir)/klingon
 
 KLINGON = \
-	klingon/utf8.pl \
 	klingon/utf8-lang.xdy \
 	klingon/utf8-test.xdy \
 	klingon/utf8.xdy
@@ -392,14 +364,12 @@ KURDISH = \
 	kurdish/bedirxan-latin5-lang.xdy \
 	kurdish/bedirxan-latin5-test.xdy \
 	kurdish/bedirxan-latin5.xdy \
-	kurdish/bedirxan-utf8.pl \
 	kurdish/bedirxan-utf8-lang.xdy \
 	kurdish/bedirxan-utf8-test.xdy \
 	kurdish/bedirxan-utf8.xdy \
 	kurdish/turkish-i-latin5-lang.xdy \
 	kurdish/turkish-i-latin5-test.xdy \
 	kurdish/turkish-i-latin5.xdy \
-	kurdish/turkish-i-utf8.pl \
 	kurdish/turkish-i-utf8-lang.xdy \
 	kurdish/turkish-i-utf8-test.xdy \
 	kurdish/turkish-i-utf8.xdy
@@ -409,7 +379,6 @@ nodist_kurdish_DATA = $(KURDISH)
 latindir = $(langdir)/latin
 
 LATIN = \
-	latin/utf8.pl \
 	latin/utf8-lang.xdy \
 	latin/utf8-test.xdy \
 	latin/utf8.xdy
@@ -422,7 +391,6 @@ LATVIAN = \
 	latvian/latin4-lang.xdy \
 	latvian/latin4-test.xdy \
 	latvian/latin4.xdy \
-	latvian/utf8.pl \
 	latvian/utf8-lang.xdy \
 	latvian/utf8-test.xdy \
 	latvian/utf8.xdy
@@ -435,7 +403,6 @@ LITHUANIAN = \
 	lithuanian/latin4-lang.xdy \
 	lithuanian/latin4-test.xdy \
 	lithuanian/latin4.xdy \
-	lithuanian/utf8.pl \
 	lithuanian/utf8-lang.xdy \
 	lithuanian/utf8-test.xdy \
 	lithuanian/utf8.xdy
@@ -451,7 +418,6 @@ LOWER_SORBIAN = \
 	lower-sorbian/latin2-lang.xdy \
 	lower-sorbian/latin2-test.xdy \
 	lower-sorbian/latin2.xdy \
-	lower-sorbian/utf8.pl \
 	lower-sorbian/utf8-lang.xdy \
 	lower-sorbian/utf8-test.xdy \
 	lower-sorbian/utf8.xdy
@@ -470,7 +436,6 @@ MACEDONIAN = \
 	macedonian/isoir111-lang.xdy \
 	macedonian/isoir111-test.xdy \
 	macedonian/isoir111.xdy \
-	macedonian/utf8.pl \
 	macedonian/utf8-lang.xdy \
 	macedonian/utf8-test.xdy \
 	macedonian/utf8.xdy
@@ -480,7 +445,6 @@ nodist_macedonian_DATA = $(MACEDONIAN)
 mongoliandir = $(langdir)/mongolian
 
 MONGOLIAN = \
-	mongolian/cyrillic-utf8.pl \
 	mongolian/cyrillic-utf8-lang.xdy \
 	mongolian/cyrillic-utf8-test.xdy \
 	mongolian/cyrillic-utf8.xdy
@@ -493,7 +457,6 @@ NORWEGIAN = \
 	norwegian/latin1-lang.xdy \
 	norwegian/latin1-test.xdy \
 	norwegian/latin1.xdy \
-	norwegian/utf8.pl \
 	norwegian/utf8-lang.xdy \
 	norwegian/utf8-test.xdy \
 	norwegian/utf8.xdy
@@ -509,7 +472,6 @@ POLISH = \
 	polish/latin2-lang.xdy \
 	polish/latin2-test.xdy \
 	polish/latin2.xdy \
-	polish/utf8.pl \
 	polish/utf8-lang.xdy \
 	polish/utf8-test.xdy \
 	polish/utf8.xdy
@@ -522,7 +484,6 @@ PORTUGUESE = \
 	portuguese/latin1-lang.xdy \
 	portuguese/latin1-test.xdy \
 	portuguese/latin1.xdy \
-	portuguese/utf8.pl \
 	portuguese/utf8-lang.xdy \
 	portuguese/utf8-test.xdy \
 	portuguese/utf8.xdy
@@ -535,7 +496,6 @@ ROMANIAN = \
 	romanian/latin2-lang.xdy \
 	romanian/latin2-test.xdy \
 	romanian/latin2.xdy \
-	romanian/utf8.pl \
 	romanian/utf8-lang.xdy \
 	romanian/utf8-test.xdy \
 	romanian/utf8.xdy
@@ -554,11 +514,9 @@ RUSSIAN = \
 	russian/koi8-r-lang.xdy \
 	russian/koi8-r-test.xdy \
 	russian/koi8-r.xdy \
-	russian/translit-iso-utf8.pl \
 	russian/translit-iso-utf8-lang.xdy \
 	russian/translit-iso-utf8-test.xdy \
 	russian/translit-iso-utf8.xdy \
-	russian/utf8.pl \
 	russian/utf8-lang.xdy \
 	russian/utf8-test.xdy \
 	russian/utf8.xdy
@@ -577,7 +535,6 @@ SERBIAN = \
 	serbian/isoir111-lang.xdy \
 	serbian/isoir111-test.xdy \
 	serbian/isoir111.xdy \
-	serbian/utf8.pl \
 	serbian/utf8-lang.xdy \
 	serbian/utf8-test.xdy \
 	serbian/utf8.xdy
@@ -593,7 +550,6 @@ SLOVAK = \
 	slovak/large-latin2-lang.xdy \
 	slovak/large-latin2-test.xdy \
 	slovak/large-latin2.xdy \
-	slovak/large-utf8.pl \
 	slovak/large-utf8-lang.xdy \
 	slovak/large-utf8-test.xdy \
 	slovak/large-utf8.xdy \
@@ -603,7 +559,6 @@ SLOVAK = \
 	slovak/small-latin2-lang.xdy \
 	slovak/small-latin2-test.xdy \
 	slovak/small-latin2.xdy \
-	slovak/small-utf8.pl \
 	slovak/small-utf8-lang.xdy \
 	slovak/small-utf8-test.xdy \
 	slovak/small-utf8.xdy
@@ -619,7 +574,6 @@ SLOVENIAN = \
 	slovenian/latin2-lang.xdy \
 	slovenian/latin2-test.xdy \
 	slovenian/latin2.xdy \
-	slovenian/utf8.pl \
 	slovenian/utf8-lang.xdy \
 	slovenian/utf8-test.xdy \
 	slovenian/utf8.xdy
@@ -632,14 +586,12 @@ SPANISH = \
 	spanish/modern-latin1-lang.xdy \
 	spanish/modern-latin1-test.xdy \
 	spanish/modern-latin1.xdy \
-	spanish/modern-utf8.pl \
 	spanish/modern-utf8-lang.xdy \
 	spanish/modern-utf8-test.xdy \
 	spanish/modern-utf8.xdy \
 	spanish/traditional-latin1-lang.xdy \
 	spanish/traditional-latin1-test.xdy \
 	spanish/traditional-latin1.xdy \
-	spanish/traditional-utf8.pl \
 	spanish/traditional-utf8-lang.xdy \
 	spanish/traditional-utf8-test.xdy \
 	spanish/traditional-utf8.xdy
@@ -655,7 +607,6 @@ SWEDISH = \
 	swedish/latin9-lang.xdy \
 	swedish/latin9-test.xdy \
 	swedish/latin9.xdy \
-	swedish/utf8.pl \
 	swedish/utf8-lang.xdy \
 	swedish/utf8-test.xdy \
 	swedish/utf8.xdy
@@ -671,7 +622,6 @@ TURKISH = \
 	turkish/latin5-lang.xdy \
 	turkish/latin5-test.xdy \
 	turkish/latin5.xdy \
-	turkish/utf8.pl \
 	turkish/utf8-lang.xdy \
 	turkish/utf8-test.xdy \
 	turkish/utf8.xdy
@@ -687,7 +637,6 @@ UKRAINIAN = \
 	ukrainian/koi8-u-lang.xdy \
 	ukrainian/koi8-u-test.xdy \
 	ukrainian/koi8-u.xdy \
-	ukrainian/utf8.pl \
 	ukrainian/utf8-lang.xdy \
 	ukrainian/utf8-test.xdy \
 	ukrainian/utf8.xdy
@@ -703,7 +652,6 @@ UPPER_SORBIAN = \
 	upper-sorbian/latin2-lang.xdy \
 	upper-sorbian/latin2-test.xdy \
 	upper-sorbian/latin2.xdy \
-	upper-sorbian/utf8.pl \
 	upper-sorbian/utf8-lang.xdy \
 	upper-sorbian/utf8-test.xdy \
 	upper-sorbian/utf8.xdy
@@ -713,13 +661,66 @@ nodist_upper_sorbian_DATA = $(UPPER_SORBIAN)
 vietnamesedir = $(langdir)/vietnamese
 
 VIETNAMESE = \
-	vietnamese/utf8.pl \
 	vietnamese/utf8-lang.xdy \
 	vietnamese/utf8-test.xdy \
 	vietnamese/utf8.xdy
 
 nodist_vietnamese_DATA = $(VIETNAMESE)
 
+nodist_noinst_DATA = \
+	albanian/utf8.pl \
+	belarusian/utf8.pl \
+	bulgarian/utf8.pl \
+	croatian/utf8.pl \
+	czech/utf8.pl \
+	danish/utf8.pl \
+	dutch/ij-as-ij-utf8.pl \
+	dutch/ij-as-y-utf8.pl \
+	english/utf8.pl \
+	esperanto/utf8.pl \
+	estonian/utf8.pl \
+	finnish/utf8.pl \
+	french/utf8.pl \
+	general/utf8.pl \
+	georgian/utf8.pl \
+	german/braille-utf8.pl \
+	german/din5007-utf8.pl \
+	german/duden-utf8.pl \
+	greek/polytonic-utf8.pl \
+	greek/translit-utf8.pl \
+	greek/utf8.pl \
+	gypsy/northrussian-utf8.pl \
+	hausa/utf8.pl \
+	hebrew/utf8.pl \
+	hungarian/utf8.pl \
+	icelandic/utf8.pl \
+	italian/utf8.pl \
+	klingon/utf8.pl \
+	kurdish/bedirxan-utf8.pl \
+	kurdish/turkish-i-utf8.pl \
+	latin/utf8.pl \
+	latvian/utf8.pl \
+	lithuanian/utf8.pl \
+	lower-sorbian/utf8.pl \
+	macedonian/utf8.pl \
+	mongolian/cyrillic-utf8.pl \
+	norwegian/utf8.pl \
+	polish/utf8.pl \
+	portuguese/utf8.pl \
+	romanian/utf8.pl \
+	russian/translit-iso-utf8.pl \
+	russian/utf8.pl \
+	serbian/utf8.pl \
+	slovak/large-utf8.pl \
+	slovak/small-utf8.pl \
+	slovenian/utf8.pl \
+	spanish/modern-utf8.pl \
+	spanish/traditional-utf8.pl \
+	swedish/utf8.pl \
+	turkish/utf8.pl \
+	ukrainian/utf8.pl \
+	upper-sorbian/utf8.pl \
+	vietnamese/utf8.pl
 
 %utf8.pl : %utf8.pl.in
 	sed -e 's/@.{\([^}]*\)}/\1/g;' <$< >$@
