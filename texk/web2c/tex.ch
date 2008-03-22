@@ -2279,10 +2279,10 @@ var k:0..buf_size; {index into |buffer|}
 if e=".tex" then show_context;
 @y
 if (e=".tex") or (e="") then show_context;
-print_ln; print("(Type <return> to retry, or <eof> to exit");
+print_ln; fputs(prompt_file_name_help_msg, stdout);
 if (e<>"") then
   begin
-    print(" Default file extension is `"); print(e); print("'");
+    print("; default file extension is `"); print(e); print("'");
   end;
 print(")"); print_ln;
 @z

@@ -183,6 +183,22 @@ typedef unsigned char *pointertobyte;
 
 /* TeX et al. have a variable free, but we also need the C routine.  */
 #define libcfree free
+
+/* We have a system-dependent prompt in tex.ch.  We don't want it in the
+   string pool, since (now that the pools are compiled into the
+   binaries), that would make the .fmt unsharable.  So go through this
+   circumlotion to print a C string.  The lack of the closing ) is
+   intentional, since the code adds more text sometimes.  Although the
+   eof character can be changed with stty or whatever, we're certainly
+   not going to try to extract the actual value from a terminal struct.
+   Anyone who is savvy enough to change it will not be confused.  */
+#ifdef WIN32
+#define promptfilenamehelpmsg "(Press Enter to retry, or Control-Z to exit"
+#else
+#define promptfilenamehelpmsg "(Press Enter to retry, or Control-D to exit"
+#endif
+
+
 
 /* Tangle removes underscores from names.  Put them back for things that
    are defined in C with _'s.  */
