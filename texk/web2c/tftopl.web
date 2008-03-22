@@ -12,6 +12,7 @@
 % Version 2.5 (September 1985) updated the standard codingscheme names.
 % Version 3 (October 1989) introduced new ligature capabilities.
 % Version 3.1 (November 1989) renamed z[] to lig_z[] for better portability.
+% Version 3.2 (February 2008) added a newline after a warning message.
 
 % Here is TeX material that gets inserted after \input webmac
 \def\hang{\hangindent 3em\indent\ignorespaces}
@@ -1295,8 +1296,8 @@ right;
 end
 
 @ We want to make sure that there is no cycle of characters linked together
-by |list_tag| entries, since such a cycle would get \TeX\ into an endless
-loop. If such a cycle exists, the routine here detects it when processing
+by |list_tag| entries, since \TeX\ doesn't want to risk endless loops.
+If such a cycle exists, the routine here detects it when processing
 the largest character code in the cycle.
 
 @<Output the character link unless there is a problem@>=
@@ -1572,8 +1573,10 @@ do_characters; print_ln('.');@/
 if level<>0 then print_ln('This program isn''t working!');
 @.This program isn't working@>
 if not perfect then
-  out('(COMMENT THE TFM FILE WAS BAD, SO THE DATA HAS BEEN CHANGED!)');
+  begin out('(COMMENT THE TFM FILE WAS BAD, SO THE DATA HAS BEEN CHANGED!)');
 @.THE TFM FILE WAS BAD...@>
+  write_ln(pl_file);
+  end;
 final_end:end.
 
 @* System-dependent changes.
