@@ -1,0 +1,60 @@
+.\" Copyright (c) 1996,1997 Roger Kehr
+.\" See section COPYING for conditions for redistribution
+.TH makeindex4 1L "February 1997" "Roger Kehr" ""
+.de BP
+.sp
+.ti \-.2i
+\(**
+..
+
+.SH NAME
+makeindex4 \- a wrapper for the \fBxindy\fP index processor
+
+.SH SYNOPSIS
+.hy 0
+.na
+.TP
+.B makeindex4 [options]...
+
+.SH DESCRIPTION
+.B makeindex4
+is a wrapper script that uses the \fBxindy\fP system as a replacement
+for the \fBmakeindex\fP index processor. Since it cannot completely
+simulate the behaviour of \fBmakeindex\fP it is only intended as a
+workaround and should not be used in the general case. If you want to
+exploit all features of \fBxindy\fP, styles files must be written.
+
+\fBmakeindex4\fP understands all command line options of
+\fBmakeindex\fP but gives appropriate warnings for unsupported options
+at run-time.
+
+It needs \fBtex2xindy\fP and \fBxindy\fP to work properly.
+
+.SH "SEE ALSO"
+xindy(1L),
+makeindex(1L),
+tex2xindy(1L)
+
+For detailed information about \fBxindy\fP and \fBtex2xindy\fP refer
+to the documentation that come with the \fBxindy\fP distribution.
+
+.SH "AUTHOR"
+Roger Kehr, Institut fuer Theoretische Informatik, TH-Darmstadt
+
+.SH "COPYING"
+Copyright (c) 1996,1997 Roger Kehr.
+.PP
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+.PP
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+.PP
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be included in
+translations approved by the Free Software Foundation instead of in
+the original English.

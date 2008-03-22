@@ -34,5 +34,12 @@ CLEANFILES = tex2xindy.c
 dist-hook:
 	rm -f $(distdir)/tex2xindy.c
 
-tex2xindy.1: tex2xindy.l
-	pod2man --verbose -n TEX2XINDY -r "Version 1.21" -c "xindy" $< $@
+IDENT_DATE = `ident $< | grep '\$$Id' | sed -e 's/^.*,v [^ ]* //' -e 's/ .*//' -e s:/:-:g`
+IDENT_VERSION = `ident $< | grep '\$$Id' | sed -e 's/^.*,v //' -e 's/ .*//'`
+
+$(srcdir)/tex2xindy.1: $(srcdir)/tex2xindy.l
+	pod2man --center '$(PACKAGE_NAME)' \
+		--name=$(basename $@ .1 | tr '[a-z]' '[A-Z]')
+		--release "Version $(IDENT_VERSION)" \
+		--date "$(IDENT_DATE)" \
+		$< $@

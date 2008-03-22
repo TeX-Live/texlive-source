@@ -22,14 +22,7 @@
 SUBDIRS = style-tutorial
 
 FILES = \
-	dataflow.gif \
-	faq-1.html \
-	faq-2.html \
-	faq-3.html \
-	faq-4.html \
-	faq.html \
-	index.gif \
-	makeindex4.pdf \
+	manual.html \
 	manual-1.html \
 	manual-2.html \
 	manual-3.html \
@@ -37,23 +30,41 @@ FILES = \
 	manual-5.html \
 	manual-6.html \
 	manual-7.html \
-	manual.html \
-	mappings.gif \
-	next.gif \
-	prev.gif \
-	README \
+	faq.html \
+	faq-1.html \
+	faq-2.html \
+	faq-3.html \
+	faq-4.html \
+	style-tutorial.html \
 	style-tutorial-1.html \
 	style-tutorial-2.html \
 	style-tutorial-3.html \
 	style-tutorial-4.html \
-	style-tutorial.html \
-	tex2xindy.pdf \
-	texindy.pdf \
-	toc.gif \
-	xindy.pdf
+	dataflow.gif \
+	index.gif \
+	mappings.gif \
+	README
 
 EXTRA_DIST = $(FILES)
 
-doc_DATA = $(FILES)
+PDFS = xindy.pdf texindy.pdf tex2xindy.pdf
 
+dist_noinst_DATA = xindy.v2.pdf makeindex4.pdf
+
+doc_DATA = $(FILES) $(PDFS)
+
+$(srcdir)/xindy.pdf: $(top_srcdir)/user-commands/xindy.1
+	groff -man -P-g $< | ps2pdf - $@
+
+$(srcdir)/texindy.pdf: $(top_srcdir)/user-commands/texindy.1
+	groff -man -P-g $< | ps2pdf - $@
+
+$(srcdir)/makeindex4.pdf: $(top_srcdir)/user-commands/makeindex4.1
+	groff -man -P-g $< | ps2pdf - $@
+
+$(srcdir)/xindy.v2.pdf: $(top_srcdir)/user-commands/xindy.v2.1
+	groff -man -P-g $< | ps2pdf - $@
+
+$(srcdir)/tex2xindy.pdf: $(top_srcdir)/tex2xindy/tex2xindy.1
+	groff -man -P-g $< | ps2pdf - $@
 

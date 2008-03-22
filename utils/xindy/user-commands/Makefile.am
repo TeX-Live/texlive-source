@@ -24,8 +24,8 @@ if TETEX_BUILD
 install-exec-hook: xindy xindy.v2
 	$(INSTALL_SCRIPT) xindy $(prefix)/texmf/scripts/xindy/
 	$(LN_S) ../../texmf/scripts/xindy/xindy $(bindir)/xindy
-	$(INSTALL_SCRIPT) xindy.v2 $(prefix)/texmf/scripts/xindy/
-	$(LN_S) ../../texmf/scripts/xindy/xindy.v2 $(bindir)/xindy.v2
+#	$(INSTALL_SCRIPT) xindy.v2 $(prefix)/texmf/scripts/xindy/
+#	$(LN_S) ../../texmf/scripts/xindy/xindy.v2 $(bindir)/xindy.v2
 	$(INSTALL_SCRIPT) $(srcdir)/texindy $(prefix)/texmf/scripts/xindy/
 	$(LN_S) ../../texmf/scripts/xindy/texindy $(bindir)/texindy
 else
@@ -39,15 +39,27 @@ xindy: xindy.in
 xindy.v2: xindy.v2.in
 	sed -e 's:@XINDY_PERL\@:/usr/bin/perl:' $(srcdir)/xindy.v2.in >xindy.v2
 
-$(srcdir)/xindy.1: $(srcdir)/xindy.in
-	pod2man --verbose -n XINDY -r "Version 1.8" -c "xindy" $< $@
+man_MANS = texindy.1 xindy.1
 
-$(srcdir)/texindy.1: $(srcdir)/texindy
-	pod2man --verbose -n TEXINDY -r "Version 1.5" -c "xindy" $< $@
-
-man_MANS = texindy.1 xindy.1 xindy.v2.1
+dist_noinst_MANS = xindy.v2.1 makeindex4.1
 
 EXTRA_DIST = $(man_MANS)
 
 CLEANFILES = xindy xindy.v2
 
+IDENT_DATE = `ident $< | grep '\$$Id' | sed -e 's/^.*,v [^ ]* //' -e 's/ .*//' -e s:/:-:g`
+IDENT_VERSION = `ident $< | grep '\$$Id' | sed -e 's/^.*,v //' -e 's/ .*//'`
+
+$(srcdir)/xindy.1: $(srcdir)/xindy.in
+	pod2man --center '$(PACKAGE_NAME)' \
+		--name=$(basename $@ .1 | tr '[a-z]' '[A-Z]')
+		--release "Version $(IDENT_VERSION)" \
+		--date "$(IDENT_DATE)" \
+		$< $@
+
+$(srcdir)/texindy.1: $(srcdir)/texindy
+	pod2man --center '$(PACKAGE_NAME)' \
+		--name=$(basename $@ .1 | tr '[a-z]' '[A-Z]')
+		--release "Version $(IDENT_VERSION)" \
+		--date "$(IDENT_DATE)" \
+		$< $@
