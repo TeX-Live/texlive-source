@@ -34,13 +34,14 @@ CLEANFILES = tex2xindy.c
 dist-hook:
 	rm -f $(distdir)/tex2xindy.c
 
-IDENT_DATE = `ident $< | grep '\$$Id' | sed -e 's/^.*,v [^ ]* //' -e 's/ .*//' -e s:/:-:g`
-IDENT_VERSION = `ident $< | grep '\$$Id' | sed -e 's/^.*,v //' -e 's/ .*//'`
+POD_DATE = `ident $< | grep '\$$Id' | sed -e 's/^.*,v [^ ]* //' -e 's/ .*//' -e s:/:-:g`
+POD_VERSION = `ident $< | grep '\$$Id' | sed -e 's/^.*,v //' -e 's/ .*//'`
+POD_NAME = `basename $@ .1 | tr '[a-z]' '[A-Z]'`
 POD2MAN = pod2man
 
 $(srcdir)/tex2xindy.1: $(srcdir)/tex2xindy.l
 	-$(POD2MAN) --center '$(PACKAGE_NAME)' \
-		--name=$(basename $@ .1 | tr '[a-z]' '[A-Z]') \
-		--release "Version $(IDENT_VERSION)" \
-		--date "$(IDENT_DATE)" \
+		--name="$(POD_NAME)" \
+		--release "Version $(POD_VERSION)" \
+		--date "$(POD_DATE)" \
 		$< $@

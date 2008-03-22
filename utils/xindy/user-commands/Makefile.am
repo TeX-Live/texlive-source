@@ -47,20 +47,21 @@ EXTRA_DIST = $(man_MANS)
 
 CLEANFILES = xindy xindy.v2
 
-IDENT_DATE = `ident $< | grep '\$$Id' | sed -e 's/^.*,v [^ ]* //' -e 's/ .*//' -e s:/:-:g`
-IDENT_VERSION = `ident $< | grep '\$$Id' | sed -e 's/^.*,v //' -e 's/ .*//'`
+POD_DATE = `ident $< | grep '\$$Id' | sed -e 's/^.*,v [^ ]* //' -e 's/ .*//' -e s:/:-:g`
+POD_VERSION = `ident $< | grep '\$$Id' | sed -e 's/^.*,v //' -e 's/ .*//'`
+POD_NAME = `basename $@ .1 | tr '[a-z]' '[A-Z]'`
 POD2MAN = pod2man
 
 $(srcdir)/xindy.1: $(srcdir)/xindy.in
 	-$(POD2MAN) --center '$(PACKAGE_NAME)' \
-		--name=$(basename $@ .1 | tr '[a-z]' '[A-Z]') \
-		--release "Version $(IDENT_VERSION)" \
-		--date "$(IDENT_DATE)" \
+		--name="$(POD_NAME)" \
+		--release "Version $(POD_VERSION)" \
+		--date "$(POD_DATE)" \
 		$< $@
 
 $(srcdir)/texindy.1: $(srcdir)/texindy
 	-$(POD2MAN) --center '$(PACKAGE_NAME)' \
-		--name=$(basename $@ .1 | tr '[a-z]' '[A-Z]') \
-		--release "Version $(IDENT_VERSION)" \
-		--date "$(IDENT_DATE)" \
+		--name="$(POD_NAME)" \
+		--release "Version $(POD_VERSION)" \
+		--date "$(POD_DATE)" \
 		$< $@
