@@ -1,3 +1,9 @@
+2008-03-24  Karl Berry  <karl@tug.org>
+
+	* tex.ch0,
+	* etex.ch,
+	* tex.ech: update for 3.1415926.
+
 2008-02-17  Peter Breitenlohner <peb@mppmu.mpg.de>
 
 	* etex.ch: Fixed a bug in hyph_code handling (\savinghyphcodes)

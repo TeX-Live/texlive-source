@@ -201,16 +201,16 @@ known as `\eTeX'.
 @z
 %---------------------------------------
 @x [1] m.2 l.188 - e-TeX basic
-@d banner=='This is TeX, Version 3.141592' {printed when \TeX\ starts}
+@d banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
 @y
 @d eTeX_version=2 { \.{\\eTeXversion} }
 @d eTeX_revision==".2" { \.{\\eTeXrevision} }
 @d eTeX_version_string=='-2.2' {current \eTeX\ version}
 @#
-@d eTeX_banner=='This is e-TeX, Version 3.141592',eTeX_version_string
+@d eTeX_banner=='This is e-TeX, Version 3.1415926',eTeX_version_string
   {printed when \eTeX\ starts}
 @#
-@d TeX_banner=='This is TeX, Version 3.141592' {printed when \TeX\ starts}
+@d TeX_banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
 @#
 @d banner==eTeX_banner
 @#
@@ -1709,7 +1709,7 @@ The |nucleus| of such noads is
 @z
 %---------------------------------------
 @x [34] m.696 l.13697 - e-TeX middle
-right_noad: begin print_esc("right"); print_delimiter(nucleus(p));
+right_noad: begin print_esc("right"); print_delimiter(delimiter(p));
   end;
 end;
 if subtype(p)<>normal then
