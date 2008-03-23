@@ -5313,7 +5313,7 @@ esac
 export with_cxx_runtime_hack
 
 
-e # withenable.ac - Written long ago by Thomas Esser and Sebastian Rahtz.
+# withenable.ac - Written long ago by Thomas Esser and Sebastian Rahtz.
 
 # Public domain.
 
