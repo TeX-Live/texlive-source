@@ -70,10 +70,10 @@ a modified \TeX{} version.
 @z
 
 @x [1.2] l.188
-@d banner=='This is TeX, Version 3.141592' {printed when \TeX\ starts}
+@d banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
 @y
-@d TeX_banner_k=='This is TeXk, Version 3.141592' {printed when \TeX\ starts}
-@d TeX_banner=='This is TeX, Version 3.141592' {printed when \TeX\ starts}
+@d TeX_banner_k=='This is TeXk, Version 3.1415926' {printed when \TeX\ starts}
+@d TeX_banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
 @#
 @d banner==TeX_banner
 @d banner_k==TeX_banner_k
@@ -83,6 +83,7 @@ a modified \TeX{} version.
 Actually the heading shown here is not quite normal: The |program| line
 does not mention any |output| file, because \ph\ would ask the \TeX\ user
 to specify a file name if |output| were specified here.
+@:PASCAL H}{\ph@>
 @^system dependencies@>
 @y
 @z
@@ -470,6 +471,7 @@ end;
 
 @x [3.28] l.850 - Do file closing in C.
 @ Files can be closed with the \ph\ routine `|close(f)|', which
+@:PASCAL H}{\ph@>
 @^system dependencies@>
 should be used when all input or output with respect to |f| has been completed.
 This makes |f| available to be opened again, if desired; and if |f| was used for
@@ -618,6 +620,7 @@ tini@/
 @x [3.33] l.964 - We don't need to open terminal files.
 @ Here is how to open the terminal files
 in \ph. The `\.{/I}' switch suppresses the first |get|.
+@:PASCAL H}{\ph@>
 @^system dependencies@>
 
 @d t_open_in==reset(term_in,'TTY:','/O/I') {open the terminal for text input}
@@ -632,6 +635,7 @@ any command line arguments the user has provided.  It's defined in C.
 
 @x [3.34] l.982 - Flushing output to terminal files.
 these operations can be specified in \ph:
+@:PASCAL H}{\ph@>
 @^system dependencies@>
 
 @d update_terminal == break(term_out) {empty the terminal output buffer}
@@ -3084,11 +3088,11 @@ arrays start at |0|.
 %%%%%%%% dynamic hyph_size
 @x 18137 m.926
 @!hyph_word:array[hyph_pointer] of str_number; {exception words}
-@!hyph_list:array[hyph_pointer] of pointer; {list of hyphen positions}
+@!hyph_list:array[hyph_pointer] of pointer; {lists of hyphen positions}
 @!hyph_count:hyph_pointer; {the number of words in the exception dictionary}
 @y  18139
 @!hyph_word: ^str_number; {exception words}
-@!hyph_list: ^pointer; {list of hyphen positions}
+@!hyph_list: ^pointer; {lists of hyphen positions}
 @!hyph_link: ^hyph_pointer; {link array for hyphen exceptions hash table}
 @!hyph_count:integer; {the number of words in the exception dictionary}
 @!hyph_next:integer; {next free slot in hyphen exceptions hash table}
