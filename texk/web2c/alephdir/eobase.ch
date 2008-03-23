@@ -3,7 +3,7 @@
 % This is the first of the set of
 % WEB change file containing code for various features extending Omega;
 % these files define the Aleph program, and are designed to be applied
-% to omega.web (Version 3.141592--1.15) compiled without XML support.
+% to omega.web compiled without XML support.
 % This change-file is heavily based on etex.ch,
 % defining version 2.1 of e-TeX.
 
@@ -29,7 +29,7 @@
 % John Plaice and Yannis Haralambous.
 
 % Aleph is designed in the form of a set of WEB changefiles
-% to be applied to Omega (version 3.141592--1.15)
+% to be applied to Omega
 % compiled without XML support. The changefiles are heavily based
 % on the e-TeX 2.1 changefiles. 
 

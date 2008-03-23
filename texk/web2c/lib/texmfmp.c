@@ -53,7 +53,7 @@
 #elif defined (Aleph)
 #include <alephdir/alephextra.h>
 #else
-#define BANNER "This is TeX, Version 3.141592"
+#define BANNER "This is TeX, Version 3.1415926"
 #define COPYRIGHT_HOLDER "D.E. Knuth"
 #define AUTHOR NULL
 #define PROGRAM_HELP TEXHELP

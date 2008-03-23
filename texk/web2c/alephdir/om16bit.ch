@@ -26,7 +26,7 @@
 @y
 % This program is copyright
 % (C) 1994--2000 by John Plaice and Yannis Haralambous.
-% It is designed to be a change file for D. E. Knuth's TeX version 3.141592.
+% It is designed to be a change file for D. E. Knuth's TeX.
 %
 % This program is copyright (C) 1982 by D. E. Knuth; all rights are reserved.
 @z

@@ -7,11 +7,11 @@
 % Public domain.
 
 @x
-@d banner=='This is Omega, Version 3.141592--1.15' {printed when \TeX\ starts}
-@d banner_k=='This is Omegak, Version 3.141592--1.15' {printed when \TeX\ starts}
+@d banner=='This is Omega, Version 3.1415926--1.15' {printed when \TeX\ starts}
+@d banner_k=='This is Omegak, Version 3.1415926--1.15' {printed when \TeX\ starts}
 @y
-@d banner=='This is e-Omega, Version 3.141592--1.15--2.1--RC1' {printed when \TeX\ starts}
-@d banner_k=='This is e-Omegak, Version 3.141592--1.15--2.1--RC1' {printed when \TeX\ starts}
+@d banner=='This is e-Omega, Version 3.1415926--1.15--2.1--RC1' {printed when \TeX\ starts}
+@d banner_k=='This is e-Omegak, Version 3.1415926--1.15--2.1--RC1' {printed when \TeX\ starts}
 @z
 
 @x [1.2] l.188 - Web2C: extensions imply we're not TeX.

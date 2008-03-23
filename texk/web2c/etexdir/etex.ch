@@ -1,6 +1,6 @@
-% This is etex.ch in text format, as of October 12, 2004.
+% This is etex.ch, a
 % WEB change file containing code for various features extending TeX;
-% to be applied to tex.web (Version 3.141592) in order to define the
+% to be applied to tex.web in order to define the
 % e-TeX program.
  
 % Note: This file defines etex.web in terms of changes to be applied to

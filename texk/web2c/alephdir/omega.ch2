@@ -52,9 +52,9 @@ print_err("e-Omega capacity exceeded, sorry [");
 @z
 
 @x
-  print("Omega output, Version 3.141592--1.15, ");
+  print("Omega output, Version 3.1415926--1.15, ");
 @y
-  print("e-Omega output, Version 3.141592--1.15--2.1--RC1, ");
+  print("e-Omega output, Version 3.1415926--1.15--2.1--RC1, ");
 @z
 
 @x

@@ -23,7 +23,7 @@ along with Aleph; if not, write to the Free Software Foundation, Inc.,
 
 */
 
-#define BANNER "This is Aleph, Version 3.141592--1.15--2.1 (RC1)"
+#define BANNER "This is Aleph, Version 3.1415926--1.15--2.1 (RC1)"
 #define COPYRIGHT_HOLDER "the Aleph task force"
 #define AUTHOR NULL
 #define PROGRAM_HELP ALEPHHELP

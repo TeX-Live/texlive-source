@@ -40,10 +40,10 @@
 @z
 
 @x
-@d banner=='This is Aleph, Version 3.141592--1.15--2.1 (RC1)' {printed when \TeX\ starts}
+@d banner=='This is Aleph, Version 3.1415926--1.15--2.1 (RC1)' {printed when \TeX\ starts}
 @y
-@d banner=='This is Aleph, Version 3.141592--1.15--2.1 (RC1)' {printed when \TeX\ starts}
-@d banner_k=='This is Alephk, Version 3.141592--1.15--2.1 (RC1)' {printed when \TeX\ starts}
+@d banner=='This is Aleph, Version 3.1415926--1.15--2.1 (RC1)' {printed when \TeX\ starts}
+@d banner_k=='This is Alephk, Version 3.1415926--1.15--2.1 (RC1)' {printed when \TeX\ starts}
 @z
 
 @x [1.4] l.233 - program header
