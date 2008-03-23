@@ -21,23 +21,17 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-AC_PREREQ(2.59)
+AC_PREREQ(2.60)
 AC_INIT([xindy], [2.3], [xindy-discuss@lists.sourceforge.net])
 
 ## make dist doesn't work yet, since configure makes CLISP.
 AM_INIT_AUTOMAKE([foreign no-dist])
 
 # Checks for programs.
-# FIXME: not used: CXX, CPP, YACC, LN_S. Why are they tested here?
-AC_PROG_CXX
 AC_PROG_CC
-AC_PROG_CPP
 AC_PROG_LEX
-AC_PROG_YACC
 AC_PROG_INSTALL
-AC_PROG_LN_S
 AC_PROG_MAKE_SET
-AC_PROG_GCC_TRADITIONAL
 
 dnl test for building make-rules
 AC_ARG_ENABLE(make-rules, AS_HELP_STRING([--enable-make-rules],[build and install make-rules package (default is YES)]),[BUILDRULES=$enableval],[BUILDRULES=yes])
@@ -57,7 +51,7 @@ fi
 
 AM_CONDITIONAL(BUILDDOCS, test "$BUILDDOCS" = "yes")
 
-# Building inside teTeX or TeX Live?
+# Building inside TeX Live?
 AC_ARG_ENABLE(tetex-build, AS_HELP_STRING([--enable-tetex-build],[Build as part of a teTeX installation]))
 
 if test "x$enable_tetex_build" = xyes; then
@@ -71,8 +65,6 @@ directory.  I expected it to be in $srcdir/../../texk/kpathsea.
 =========================================])
   fi
   docdir="$prefix/texmf/doc/$PACKAGE_NAME"
-else
-  docdir="$datadir/doc/$PACKAGE_NAME-$PACKAGE_VERSION"
 fi
 AM_CONDITIONAL([TETEX_BUILD],[test "x$enable_tetex_build" = xyes])
 

@@ -23,11 +23,11 @@
 if TETEX_BUILD
 install-exec-hook: xindy xindy.v2
 	$(INSTALL_SCRIPT) xindy $(prefix)/texmf/scripts/xindy/
-	$(LN_S) ../../texmf/scripts/xindy/xindy $(bindir)/xindy
+	ln -s ../../texmf/scripts/xindy/xindy $(bindir)/xindy
 #	$(INSTALL_SCRIPT) xindy.v2 $(prefix)/texmf/scripts/xindy/
-#	$(LN_S) ../../texmf/scripts/xindy/xindy.v2 $(bindir)/xindy.v2
+#	ln -s ../../texmf/scripts/xindy/xindy.v2 $(bindir)/xindy.v2
 	$(INSTALL_SCRIPT) $(srcdir)/texindy $(prefix)/texmf/scripts/xindy/
-	$(LN_S) ../../texmf/scripts/xindy/texindy $(bindir)/texindy
+	ln -s ../../texmf/scripts/xindy/texindy $(bindir)/texindy
 else
     bin_SCRIPTS = xindy xindy.v2
     dist_bin_SCRIPTS = texindy
