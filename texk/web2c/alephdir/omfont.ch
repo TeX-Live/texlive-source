@@ -716,6 +716,7 @@ fget; read_sixteen(nk);
 fget; read_sixteen(ne);
 fget; read_sixteen(np);
 if lf<>6+lh+(ec-bc+1)+nw+nh+nd+ni+nl+nk+ne+np then abort;
+if (nw=0)or(nh=0)or(nd=0)or(ni=0) then abort;
 end
 @y
 nco:=0; ncw:=0; npc:=0;
@@ -1863,9 +1864,11 @@ if not new_right_ghost then
 @z
 %---------------------------------------
 @x [46] m.1035 l.20122 - Omega
-  begin if character(tail)=qi(hyphen_char[main_f]) then if link(cur_q)>null then
+  begin if link(cur_q)>null then
+    if character(tail)=qi(hyphen_char[main_f]) then ins_disc:=true;
 @y
-  begin if character(tail)=qi(hyphen_char(main_f)) then if link(cur_q)>null then
+  begin if link(cur_q)>null then
+    if character(tail)=qi(hyphen_char(main_f)) then ins_disc:=true;
 @z
 %---------------------------------------
 @x [46] m.1036 l.20135 - Omega
@@ -1879,7 +1882,7 @@ main_i:=char_info(main_f)(cur_l);
 if not char_exists(main_i) then
   begin char_warning(main_f,cur_chr); free_avail(lig_stack); goto big_switch;
   end;
-tail_append(lig_stack) {|main_loop_lookahead| is next}
+link(tail):=lig_stack; tail:=lig_stack {|main_loop_lookahead| is next}
 @y
 if lig_stack=null then goto reswitch;
 cur_q:=tail; cur_l:=character(lig_stack);
@@ -1916,6 +1919,7 @@ if cur_cmd=no_boundary then bchar:=non_char;
 @x [46] m.1039 l.20193 - Omega
 @<If there's a ligature/kern command...@>=
 if char_tag(main_i)<>lig_tag then goto main_loop_wrapup;
+if cur_r=non_char then goto main_loop_wrapup;
 main_k:=lig_kern_start(main_f)(main_i); main_j:=font_info[main_k].qqqq;
 if skip_byte(main_j)<=stop_flag then goto main_lig_loop+2;
 main_k:=lig_kern_restart(main_f)(main_j);

@@ -1,4 +1,10 @@
+2008-03-23  Karl Berry  <karl@freefriends.org>
+
+	* Update to TeX 3.1415926; compile in pool files.
+	From Akira.
+
 2006-05-25  Roozbeh Pournader  <roozbeh@farsiweb.info>
+
 	* omfilter.ch: fixed a bug in OCP processing, increased
 	  active_mem_size from 2000 to 50000.
 

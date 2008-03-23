@@ -4,9 +4,9 @@
 
 Makefile: omegadir/omega.mk
 
-omegafonts_programs = omegafonts/omfonts
+omegafonts_programs = @OMEGA@ omegafonts/omfonts
 otps_programs = otps/otp2ocp otps/outocp
-omegafonts = omegafonts
+omegafonts = @OMEGA@ omegafonts
 otps = otps
 
 odvicopy = odvicopy
@@ -82,7 +82,7 @@ omega = @OMEGA@ omega
 omega_c = omegaini.c omega0.c omega1.c omega2.c omega3.c
 omega_o = omegaini.o omega0.o omega1.o omega2.o \
 	      omegaextra.o omega.o omegabis.o \
-              omega3.o
+              omega3.o omega-pool.o
 
 # Linking
 omega: $(omega_o)
@@ -163,6 +163,15 @@ omega.ch: omegadir/comsrcspec.ch
 	 $(srcdir)/omegadir/comdir.ch \
 	 $(srcdir)/omegadir/comxml.ch \
 	 $(srcdir)/omegadir/comsrcspec.ch
+
+omega-pool.c: omega.pool omegadir/makecpool
+	omegadir/makecpool omega.pool omegadir/omega-pool.h >omega-pool.c
+omegadir/makecpool: omegadir/makecpool.o
+	$(CC) $(CFLAGS) -o $@ omegadir/makecpool.o
+omegadir/makecpool.o: $(srcdir)/omegadir/makecpool.c
+	test -d omegadir || mkdir omegadir
+	$(CC) $(CFLAGS) -c -o $@ $(srcdir)/omegadir/makecpool.c
+
 # Check: right now all we do is build the format.
 check: @OMEGA@ omega-check
 omega-check: omega omega.fmt

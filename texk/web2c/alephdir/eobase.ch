@@ -182,11 +182,11 @@ to be known as `\Aleph'.
 @z
 %---------------------------------------
 @x [1] m.2 l.187 - e-TeX basic
-@d banner=='This is Omega, Version 3.141592--1.15' {printed when \TeX\ starts}
+@d banner=='This is Omega, Version 3.1415926--1.15' {printed when \TeX\ starts}
 @y
-@d banner=='This is Aleph, Version 3.141592--1.15--2.1' {printed when \TeX\ starts}
+@d banner=='This is Aleph, Version 3.1415926--1.15--2.1' {printed when \TeX\ starts}
 @#
-@d eTeX_version_string=='3.141592--1.15--2.1' {current \eTeX\ version}
+@d eTeX_version_string=='3.1415926--1.15--2.1' {current \eTeX\ version}
 @d eTeX_version=2 { \.{\\eTeXversion} }
 @d eTeX_revision==".1" { \.{\\eTeXrevision} }
 @#
@@ -1759,7 +1759,7 @@ The |nucleus| of such noads is
 @z
 %---------------------------------------
 @x [34] m.696 l.13670 - e-TeX middle
-right_noad: begin print_esc("right"); print_delimiter(nucleus(p));
+right_noad: begin print_esc("right"); print_delimiter(delimiter(p));
   end;
 end;
 if subtype(p)<>normal then

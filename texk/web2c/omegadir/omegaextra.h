@@ -24,7 +24,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 
 */
 
-#define BANNER "This is Omega, Version 3.141592-1.23.2.3"
+#define BANNER "This is Omega, Version 3.1415926-1.23.2.3"
 #define COPYRIGHT_HOLDER "J. Plaice and Y. Haralambous"
 #define AUTHOR NULL
 #define PROGRAM_HELP OMEGAHELP

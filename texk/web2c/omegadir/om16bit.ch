@@ -74,9 +74,9 @@ author' in the documentation are to D. E. Knuth.
 @z
 %---------------------------------------
 @x [1] m.2 l.187 - Omega
-@d banner=='This is TeX, Version 3.141592' {printed when \TeX\ starts}
+@d banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
 @y
-@d banner=='This is Omega, Version 3.141592-1.23.2.3' {printed when \TeX\ starts}
+@d banner=='This is Omega, Version 3.1415926-1.23.2.3' {printed when \TeX\ starts}
 @z
 %---------------------------------------
 @x [1] m.4 l.243
@@ -1270,7 +1270,7 @@ procedure print_cmd_chr(@!cmd:quarterword;@!chr_code:halfword);
 @z
 %---------------------------------------
 @x [24] m.334 l.7110 - Omega
-primitive("par",par_end,256); {cf. |scan_file_name|}
+primitive("par",par_end,256); {cf.\ |scan_file_name|}
 @y
 primitive("par",par_end,too_big_char); {cf. |scan_file_name|}
 @z
@@ -1387,8 +1387,6 @@ end;
 @!cur_val:integer; {value returned by numeric scanners}
 @y
 @!cur_val:integer; {value returned by numeric scanners}
-@!cur_val1:integer; {delcodes are now 51 digits}
-@!cur_val2:integer; {will be used in omxml.ch; this is cheating}
 @z
 %---------------------------------------
 @x [26] m.413 l.8335 - Omega

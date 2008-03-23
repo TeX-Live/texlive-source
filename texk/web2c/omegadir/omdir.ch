@@ -375,8 +375,6 @@ hlist_node,vlist_node,unset_node: begin r:=get_node(box_node_size);
 
 @<Glob...@>=
 @!cur_val:integer; {value returned by numeric scanners}
-@!cur_val1:integer; {delcodes are now 51 digits}
-@!cur_val2:integer; {will be used in omxml.ch; this is cheating}
 @!cur_val_level:int_val..tok_val; {the ``level'' of this value}
 @y
 @d int_val=0 {integer values}

@@ -3,7 +3,7 @@
 This file is part of Omega,
 which is based on the web2c distribution of TeX,
 
-Copyright (c) 1994--2001 John Plaice and Yannis Haralambous
+Copyright (c) 1994--2001, 2008 John Plaice and Yannis Haralambous
 
 Omega is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 
 }
 
+@define function loadpoolstrings();
 @define function newinputln ();
 @define function getfilemode ();
 @define function newinputline ();

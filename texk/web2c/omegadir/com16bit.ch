@@ -40,16 +40,17 @@
 @z
 
 @x
-@d banner=='This is Omega, Version 3.141592-1.23.2.3' {printed when \TeX\ starts}
+@d banner=='This is Omega, Version 3.1415926-1.23.2.3' {printed when \TeX\ starts}
 @y
-@d banner=='This is Omega, Version 3.141592-1.23.2.3' {printed when \TeX\ starts}
-@d banner_k=='This is Omegak, Version 3.141592-1.23.2.3' {printed when \TeX\ starts}
+@d banner=='This is Omega, Version 3.1415926-1.23.2.3' {printed when \TeX\ starts}
+@d banner_k=='This is Omegak, Version 3.1415926-1.23.2.3' {printed when \TeX\ starts}
 @z
 
 @x [1.4] l.233 - program header
 Actually the heading shown here is not quite normal: The |program| line
 does not mention any |output| file, because \ph\ would ask the \TeX\ user
 to specify a file name if |output| were specified here.
+@:PASCAL H}{\ph@>
 @^system dependencies@>
 @y
 @z
@@ -138,7 +139,7 @@ if ini_version then
 @y
 @d file_name_size == maxint
 @d ssup_error_line = 255
-@d ssup_max_strings ==200000
+@d ssup_max_strings == 2097151
 {Larger values may be used, but then the arrays consume much more memory.}
 @d ssup_trie_opcode == 65535
 @d ssup_trie_size == @"3FFFFF
@@ -188,7 +189,7 @@ if ini_version then
 @!engine_name=TEXMF_ENGINE_NAME; {the name of this engine}
 @#
 @!inf_main_memory = 2000000;
-@!sup_main_memory = 32000000;
+@!sup_main_memory = 256000000;
 
 @!inf_trie_size = 80000;
 @!sup_trie_size = ssup_trie_size;
@@ -345,6 +346,7 @@ end;
 
 @x [3.28] l.850 - Do file closing in C.
 @ Files can be closed with the \ph\ routine `|close(f)|', which
+@:PASCAL H}{\ph@>
 @^system dependencies@>
 should be used when all input or output with respect to |f| has been completed.
 This makes |f| available to be opened again, if desired; and if |f| was used for
@@ -468,6 +470,7 @@ tini@/
 @x [3.33] l.964 - We don't need to open terminal files.
 @ Here is how to open the terminal files
 in \ph. The `\.{/I}' switch suppresses the first |get|.
+@:PASCAL H}{\ph@>
 @^system dependencies@>
 
 @d t_open_in==reset(term_in,'TTY:','/O/I') {open the terminal for text input}
@@ -482,6 +485,7 @@ any command line arguments the user has provided.  It's defined in C.
 
 @x [3.34] l.982 - Flushing output to terminal files.
 these operations can be specified in \ph:
+@:PASCAL H}{\ph@>
 @^system dependencies@>
 
 @d update_terminal == break(term_out) {empty the terminal output buffer}
@@ -568,50 +572,74 @@ if last > first then
 @!init function get_strings_started:boolean; {initializes the string pool,
 @z
 
-% [4.51] Open the pool file using a path, and can't do string
-% assignments directly.  (`strcpy' and `strlen' work here because
-% `pool_name' is a constant string, and thus ends in a null and doesn't
-% start with a space.)
-@x [4.51] l.1314 - Open the pool file.
+@x
+@ @d bad_pool(#)==begin wake_up_terminal; write_ln(term_out,#);
+  a_close(pool_file); get_strings_started:=false; return;
+  end
+@<Read the other strings...@>=
 name_of_file:=pool_name; {we needn't set |name_length|}
 if a_open_in(pool_file) then
-@y
-name_length := strlen (pool_name);
-
-name_of_file := xmalloc_array (char, 1 + name_length);
-strcpy (name_of_file+1, pool_name); {copy the string}
-if a_open_in (pool_file, kpse_texpool_format) then
-@z
-
-@x [4.51] l.1322 - Make `OMEGA.POOL' lowercase, and change how it's read.
+  begin c:=false;
+  repeat @<Read one string, but return |false| if the
+    string memory space is getting too tight for comfort@>;
+  until c;
+  a_close(pool_file); get_strings_started:=true;
+  end
 else  bad_pool('! I can''t read OMEGA.POOL.')
-@y
-else  bad_pool('! I can''t read omega.pool; bad path?')
-@z
-@x [4.52] l.1326 - Make `OMEGA.POOL' lowercase, and change how it's read.
+@.I can't read OMEGA.POOL@>
+
+@ @<Read one string...@>=
 begin if eof(pool_file) then bad_pool('! OMEGA.POOL has no check sum.');
 @.OMEGA.POOL has no check sum@>
 read(pool_file,m,n); {read two digits of string length}
-@y
-begin if eof(pool_file) then bad_pool('! omega.pool has no check sum.');
-@.OMEGA.POOL has no check sum@>
-read(pool_file,m); read(pool_file,n); {read two digits of string length}
-@z
-@x [4.52] l.1332 - Make `OMEGA.POOL' lowercase, and change how it's read.
+if m='*' then @<Check the pool check sum@>
+else  begin if (m<"0")or(m>"9")or@|
+      (n<"0")or(n>"9") then
     bad_pool('! OMEGA.POOL line doesn''t begin with two digits.');
-@y
-    bad_pool('! omega.pool line doesn''t begin with two digits.');
-@z
-@x [4.53] l.1354 - Make `OMEGA.POOL' lowercase, and change how it's read.
+@.OMEGA.POOL line doesn't...@>
+  l:=m*10+n-"0"*11; {compute the length}
+  if pool_ptr+l+string_vacancies>pool_size then
+    bad_pool('! You have to increase POOLSIZE.');
+@.You have to increase POOLSIZE@>
+  for k:=1 to l do
+    begin if eoln(pool_file) then m:=' '@+else read(pool_file,m);
+    append_char(m);
+    end;
+  read_ln(pool_file); g:=make_string;
+  end;
+end
+
+@ The \.{WEB} operation \.{@@\$} denotes the value that should be at the
+end of this \.{OMEGA.POOL} file; any other value means that the wrong pool
+file has been loaded.
+@^check sum@>
+
+@<Check the pool check sum@>=
+begin a:=0; k:=1;
+loop@+  begin if (n<"0")or(n>"9") then
   bad_pool('! OMEGA.POOL check sum doesn''t have nine digits.');
-@y
-  bad_pool('! omega.pool check sum doesn''t have nine digits.');
-@z
-@x [4.53] l.1360 - Make `OMEGA.POOL' lowercase, and change how it's read.
+@.OMEGA.POOL check sum...@>
+  a:=10*a+n-"0";
+  if k=9 then goto done;
+  incr(k); read(pool_file,n);
+  end;
 done: if a<>@$ then bad_pool('! OMEGA.POOL doesn''t match; OTANGLE me again.');
+@.OMEGA.POOL doesn't match@>
+c:=true;
+end
 @y
-done: if a<>@$ then
-  bad_pool('! omega.pool doesn''t match; otangle me again (or fix the path).');
+@ @<Read the other strings...@>=
+  g := loadpoolstrings((pool_size-string_vacancies));
+  if g=0 then begin
+     wake_up_terminal; write_ln(term_out,'! You have to increase POOLSIZE.');
+     get_strings_started:=false;
+     return;
+  end;
+  get_strings_started:=true;
+
+@ Empty module
+
+@ Empty module
 @z
 
 @x [5.54] l.1422 - error_line
@@ -1315,22 +1343,39 @@ name_of_file[name_length+1]:=0;
 @z
 
 @x [29.525] l.10163 - make_name_string
+@p function make_name_string:str_number;
+var k:1..file_name_size; {index into |name_of_file|}
+begin if (pool_ptr+name_length>pool_size)or(str_ptr=max_strings)or
+ (cur_length>0) then
+  make_name_string:="?"
+else  begin for k:=1 to name_length do append_char(name_of_file[k]);
   make_name_string:=make_string;
   end;
 @y
+@p function make_name_string:str_number;
+var k:1..file_name_size; {index into |name_of_file|}
+save_area_delimiter, save_ext_delimiter: pool_pointer;
+save_name_in_progress, save_stop_at_space: boolean;
+begin if (pool_ptr+name_length>pool_size)or(str_ptr=max_strings)or
+ (cur_length>0) then
+  make_name_string:="?"
+else  begin for k:=1 to name_length do append_char(name_of_file[k]);
   make_name_string:=make_string;
-  end;
   {At this point we also set |cur_name|, |cur_ext|, and |cur_area| to
    match the contents of |name_of_file|.}
-  k:=1;
+  save_area_delimiter:=area_delimiter; save_ext_delimiter:=ext_delimiter;
+  save_name_in_progress:=name_in_progress; save_stop_at_space:=stop_at_space;
   name_in_progress:=true;
   begin_name;
   stop_at_space:=false;
+  k:=1;
   while (k<=name_length)and(more_name(name_of_file[k])) do
     incr(k);
-  stop_at_space:=true;
+  stop_at_space:=save_stop_at_space;
   end_name;
-  name_in_progress:=false;
+  name_in_progress:=save_name_in_progress;
+  area_delimiter:=save_area_delimiter; ext_delimiter:=save_ext_delimiter;
+  end;
 @z
 
 @x [29.526] l.10194 - stop scanning file name if we're at end-of-line.
@@ -1646,7 +1691,7 @@ arrays start at |0|.
 %%%%%%%% dynamic hyph_size
 @x 18137 m.926
 @!hyph_word:array[hyph_pointer] of str_number; {exception words}
-@!hyph_list:array[hyph_pointer] of pointer; {list of hyphen positions}
+@!hyph_list:array[hyph_pointer] of pointer; {lists of hyphen positions}
 @!hyph_count:hyph_pointer; {the number of words in the exception dictionary}
 @y  18139
 @!hyph_word: ^str_number; {exception words}
@@ -2451,6 +2496,7 @@ if (edit_name_start<>0) and (interaction>batch_mode) then
 @x [51.1335] l.24335 - Only do dump if ini.
   begin @!init for c:=top_mark_code to split_bot_mark_code do
     if cur_mark[c]<>null then delete_token_ref(cur_mark[c]);
+  if last_glue<>max_halfword then delete_glue_ref(last_glue);
   store_fmt_file; return;@+tini@/
 @y
   begin @!init if ini_version then

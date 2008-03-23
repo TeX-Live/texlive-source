@@ -17,7 +17,7 @@ alephbuild=rc2
 aleph_c = alephini.c aleph0.c aleph1.c aleph2.c aleph3.c
 aleph_o = alephini.o aleph0.o aleph1.o aleph2.o \
 	      alephextra.o aleph.o alephbis.o \
-              aleph3.o
+              aleph3.o aleph-pool.o
 
 # Linking
 aleph: $(aleph_o)
@@ -121,6 +121,14 @@ aleph.ch: $(calephdir)/ceostuff.ch
 	 $(srcdir)/$(calephdir)/comdir.ch \
 	 $(srcdir)/$(calephdir)/comsrcspec.ch \
 	 $(srcdir)/$(calephdir)/ceostuff.ch
+
+aleph-pool.c: aleph.pool alephdir/makecpool
+	alephdir/makecpool aleph.pool alephdir/aleph-pool.h >aleph-pool.c
+alephdir/makecpool: alephdir/makecpool.o
+	$(CC) $(CFLAGS) -o $@ alephdir/makecpool.o
+alephdir/makecpool.o: $(srcdir)/alephdir/makecpool.c
+	$(CC) $(CFLAGS) -c -o $@ $(srcdir)/alephdir/makecpool.c
+
 # Check: right now all we do is build the format.
 check: @ALEPH@ aleph-check
 aleph-check: aleph aleph.fmt

@@ -142,7 +142,7 @@ macro makes such six-tuples convenient.
 
 @d do_all_six(#)==#(1);#(2);#(3);#(4);#(5);#(6)
 
-@<Glo...@>=
+@<Glob...@>=
 @!active_width:array[1..6] of scaled;
   {distance from first active node to~|cur_p|}
 @!cur_active_width:array[1..6] of scaled; {distance from current active node}
