@@ -106,14 +106,12 @@ their Courier font. Both families are available on ftp.urc.tue.nl. The
 Courier font from IBM does have a rich set of accented characters not
 found in other Adobe fonts. Both fonts are fully hinted.
        
-Lee Hetherington <ilh@goldilocks.LCS.MIT.EDU> has written a set of
-type1 conversion utilities. These allow to convert from binary (PFB)
-to ASCII (PFA) and back. Or to convert a type1 font into readable
-PostScript (disassemble) with the possibility to edit it and to
-convert it back (assemble) to some type1 encoded form. They are
-available in:
-	ftp.cs.umb.edu (192.12.26.23) 
-	/pub/misc/t1utils-1.1.tar.Z
+Lee Hetherington has written a set of type1 conversion utilities. These
+allow to convert from binary (PFB) to ASCII (PFA) and back. Or to
+convert a type1 font into readable PostScript (disassemble) with the
+possibility to edit it and to convert it back (assemble) to some type1
+encoded form. They are now maintained by Eddie Kohler and available at
+http://www.lcdf.org/type (and as part of TeX Live).
 
 Type1 PostScript math fonts.
 ----------------------------

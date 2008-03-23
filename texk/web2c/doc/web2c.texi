@@ -12,7 +12,7 @@ The latest version is available from ftp://ftp.tug.org/tex/texinfo.tex.}
 @end tex
 
 @set version 7.5.6
-@set month-year December 2007
+@set month-year March 2008
 
 @c Define new indices for commands in auxiliary files, filenames, and options.
 @defcodeindex cm
@@ -4319,7 +4319,7 @@ distribution.  Alternatively, @code{ps2pk}, from
 @cindex PFA and PFB conversion
 @cindex PostScript Type 1 font conversion
 PostScript Type 1 font format conversion (i.e., between PFA and PFB
-formats): @url{ftp://ftp.tug.org/tex/t1utils.tar.gz}.
+formats): @url{http://www.lcdf.org/type}.
 
 @item
 @cindex scanned images of fonts
