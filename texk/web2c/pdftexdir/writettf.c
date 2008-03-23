@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License along
 with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: writettf.c 134 2007-06-24 21:18:47Z ms $
+$Id$
 */
 
 #include "ptexlib.h"
@@ -847,7 +847,7 @@ static int prepend_subset_tags(int index, char *p)
 {
     const boolean is_unicode = (name_tab[index].platform_id == 3);
     int i;
-    assert(index > 0 && index < name_record_num && fd_cur->subset_tag != NULL);
+    assert(index >= 0 && index < name_record_num && fd_cur->subset_tag != NULL);
     if (is_unicode) {
         for (i = 0; i < 6; ++i) {
             *p++ = 0;

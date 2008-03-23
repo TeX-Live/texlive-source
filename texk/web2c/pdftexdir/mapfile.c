@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License along
 with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: mapfile.c 116 2007-05-25 18:11:08Z ms $
+$Id$
 */
 
 #include <math.h>
@@ -528,7 +528,7 @@ static void fm_scan_line()
   done:
     if (fm->ps_name != NULL && (check_std_t1font(fm->ps_name) >= 0))
         set_std_t1font(fm);
-    if (is_fontfile(fm)) {
+    if (is_fontfile(fm) && strlen(fm_fontfile(fm)) > 3) {
         if (strcasecmp(strend(fm_fontfile(fm)) - 4, ".ttf") == 0)
             set_truetype(fm);
         else if (strcasecmp(strend(fm_fontfile(fm)) - 4, ".otf") == 0)

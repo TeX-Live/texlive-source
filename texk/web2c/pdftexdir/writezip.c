@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License along
 with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: writezip.c 168 2007-07-06 20:38:42Z oneiros $
+$Id$
 */
 
 #include "ptexlib.h"

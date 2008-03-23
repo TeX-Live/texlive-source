@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License along
 with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: writeenc.c 152 2007-06-25 22:19:35Z ms $
+$Id$
 */
 
 #include "ptexlib.h"

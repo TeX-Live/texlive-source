@@ -1,3 +1,38 @@
+--------------------------------------------------
+pdfTeX 3.1415926-1.40.8 was released on 2008-03-??
+--------------------------------------------------
+- Incorporated the new version of TeX: 3.1415926
+- Bugfix:
+  - Fonts from included PDFs for which maplines existed missed their /StemV
+    values
+- pdfTeX uses libpng 1.2.25
+
+-------------------------------------------------
+pdfTeX 3.141592-1.40.7 was released on 2008-02-17
+-------------------------------------------------
+- Bugfix:
+  - PDFs > 2GiB (LFS) were still broken on 32-bit systems
+
+-------------------------------------------------
+pdfTeX 3.141592-1.40.6 was released on 2008-02-04
+-------------------------------------------------
+- Bugfixes:
+  - inclusion of encrypted PDFs was broken (861)
+  - PDFs > 2GiB (LFS) would be broken, even on 64-bit systems. Now the basic
+    support for LFS is there, you only need to supply the right compiler flags
+    (this is not yet done automatically). See build.sh for hints on compiling.
+  - Page groups in pdfs (see the discussion in the notes vor v1.10a) are now
+    handled correctly (741)
+  - When including transparent PNGs pdftex now automatically adds a Page Group
+    (896)
+  - broken map files would lead to core dumps
+  - unusual TrueType fonts would lead to an assertion error (874)
+  - the null object in the object table was never initialized
+  - included PDFs with /PieceInfo lost their /LastModified date
+  - an empty colorstack crashed pdftex (897)
+- pdfTeX uses libpng 1.2.24
+- pdfTeX uses xpdf 3.02pl2
+
 -------------------------------------------------
 pdfTeX 3.141592-1.40.5 was released on 2007-07-31
 -------------------------------------------------
@@ -24,6 +59,8 @@ pdfTeX 3.141592-1.40.4 was released on 2007-07-11
     available, a broken PDF was produced. Now no PDF is generated and the error
     messages have been improved (721)
   - Problems with vf fonts (722)
+  - With pdf inclusion the font descriptor could get mixed up and miss some
+    required keys (810)
   - Font expansion led to wrong log output of \kerns (736)
   - \pdfprimitive was broken (see
     http://www.ntg.nl/pipermail/ntg-pdftex/2007-April/002860.html)
@@ -571,5 +608,5 @@ pdfTeX 3.14159-1.00a-pretest-20010806 was released on 2001-08-06
 pdfTeX 3.14159-1.00a-pretest-20010804 was released on 2001-08-04
 ----------------------------------------------------------------
 
-$Id: NEWS 216 2007-07-31 16:49:57Z oneiros $
+$Id$
 // vim: tw=79:ts=2:expandtab:autoindent

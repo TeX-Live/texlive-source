@@ -1,6 +1,5 @@
-# $Id: Makefile.in 152 2007-06-25 22:19:35Z ms $
-# @configure_input@
 # Makefile for libpdf - te@dbs.uni-hannover.de
+# $Id$
 
 kpse_include ../make/common.mk
 kpse_include ../make/programs.mk
@@ -9,7 +8,13 @@ kpse_include ../make/library.mk
 kpathsea_srcdir_parent = $(srcdir)/../..
 kpathsea_dir_parent = ../..
 
-ALL_CXXFLAGS = @CXXFLAGS@ @DEFS@ $(XXCFLAGS) -I. -I$(srcdir) -I$(kpathsea_dir_parent) -I$(kpathsea_srcdir_parent) @LIBXPDFCPPFLAGS@ -I$(LIBOBSDCOMPATDIR) -I$(LIBOBSDCOMPATDIR)/.. -I$(LIBOBSDCOMPATFSRCDIR) -I$(LIBOBSDCOMPATFSRCDIR)/..
+ALL_CXXFLAGS = @CXXFLAGS@ @DEFS@ $(XXCFLAGS) \
+  -I. -I$(srcdir) \
+  -I$(kpathsea_dir_parent) -I$(kpathsea_srcdir_parent) \
+  @LIBXPDFCPPFLAGS@ \
+  -I$(LIBOBSDCOMPATDIR) -I$(LIBOBSDCOMPATDIR)/.. \
+  -I$(LIBOBSDCOMPATSRCDIR) -I$(LIBOBSDCOMPATSRCDIR)/.. \
+  -DPDF_PARSER_ONLY -DDISABLE_OUTLINE
 CXX = @CXX@
 
 .SUFFIXES: .cc .o
@@ -31,13 +36,13 @@ LIBMD5DIR=../../../libs/md5
 LIBMD5SRCDIR=$(srcdir)/$(LIBMD5DIR)
 
 LIBOBSDCOMPATDIR=../../../libs/obsdcompat
-LIBOBSDCOMPATFSRCDIR=$(srcdir)/$(LIBOBSDCOMPATDIR)
+LIBOBSDCOMPATSRCDIR=$(srcdir)/$(LIBOBSDCOMPATDIR)
 
 XCPPFLAGS=-I.. -I$(srcdir)/.. -I../.. -I$(srcdir)/../.. -I$(LIBMD5DIR) \
   -I$(LIBMD5SRCDIR) @LIBPNGCPPFLAGS@ @ZLIBCPPFLAGS@ \
   -I$(LIBXPDFDIR) -I$(LIBXPDFDIR)/.. -I$(LIBXPDFSRCDIR) -I$(LIBXPDFSRCDIR)/.. \
-  -I$(LIBOBSDCOMPATDIR) -I$(LIBOBSDCOMPATDIR)/.. -I$(LIBOBSDCOMPATFSRCDIR) \
-  -I$(LIBOBSDCOMPATFSRCDIR)/.. -DpdfTeX
+  -I$(LIBOBSDCOMPATDIR) -I$(LIBOBSDCOMPATDIR)/.. -I$(LIBOBSDCOMPATSRCDIR) \
+  -I$(LIBOBSDCOMPATSRCDIR)/.. -DpdfTeX
 
 OBJS = epdf.o mapfile.o utils.o vfpacket.o pkin.o \
 writefont.o writet1.o writet3.o writezip.o writeenc.o writettf.o \
@@ -58,9 +63,9 @@ clean::
 	rm -f libpdf.a ttf2afm pdftosrc
 
 depend:
-	$(CXX) -MM $(ALL_CPPFLAGS) $(srcdir)/*.c \
-	  | sed -e 's, $(srcdir)/, $$(srcdir)/,g' \
-		-e 's, $(top_srcdir)/, $$(top_srcdir)/,g' \
-	  | cat >$(srcdir)/depend.mk
+	rm -f $(OBJS) ttf2afm.o pdftosrc.o
+	XXCFLAGS=-MM XCFLAGS=-MM $(MAKE) -k $(OBJS) ttf2afm.o pdftosrc.o | \
+	    grep -v "^$(CC)\|$(CXX)\|$(AR)\|make\" | \
+	    sed 's: [^ ]*/\.\./libs/[^ ]*::g' > $(srcdir)/depend.mk
 
 kpse_include pdftexdir/depend.mk

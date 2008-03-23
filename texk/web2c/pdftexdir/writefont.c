@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License along
 with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: writefont.c 165 2007-07-06 18:54:49Z oneiros $
+$Id$
 */
 
 #include "ptexlib.h"

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 1996-2008 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License along
 with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: image.h 114 2007-05-23 18:23:49Z ms $
+$Id$
 */
 
 #include <png.h>
@@ -63,6 +63,7 @@ typedef struct {
     integer y_res;
     integer num_pages;
     integer colorspace_ref;
+    integer group_ref;          // if it's <=0, the page has no group
     union {
         pdf_image_struct *pdf;
         png_image_struct png;
@@ -90,6 +91,7 @@ extern integer image_max;
 #define img_type(N)     (img_ptr(N)->image_type)
 #define img_color(N)    (img_ptr(N)->color_type)
 #define img_colorspace_ref(N) (img_ptr(N)->colorspace_ref)
+#define img_group_ref(N) (img_ptr(N)->group_ref)
 #define img_pages(N)    (img_ptr(N)->num_pages)
 #define img_width(N)    (img_ptr(N)->width)
 #define img_height(N)   (img_ptr(N)->height)
@@ -105,9 +107,11 @@ extern integer image_max;
 extern integer read_pdf_info(char *, char *, integer, integer, integer,
                              integer);
 extern void write_epdf(void);
+extern void write_additional_epdf_objects(void);
 extern void epdf_delete(void);
 extern void read_png_info(integer);
 extern void write_png(integer);
+extern void write_additional_png_objects(void);
 extern void read_jpg_info(integer);
 extern void write_jpg(integer);
 extern void read_jbig2_info(integer);

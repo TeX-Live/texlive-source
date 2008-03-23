@@ -1,4 +1,4 @@
-% Copyright (c) 1996-2007 Han Th\^e\llap{\raise 0.5ex\hbox{\'{}}} Th\`anh, <thanh@@pdftex.org>
+% Copyright (c) 1996-2008 Han Th\^e\llap{\raise 0.5ex\hbox{\'{}}} Th\`anh, <thanh@@pdftex.org>
 
 % This file is part of pdfTeX.
 
@@ -15,11 +15,12 @@
 % pdfTeX; if not, write to the Free Software Foundation, Inc., 51 Franklin
 % Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-% e-TeX is copyright (C) 1999-2008 by P. Breitenlohner (1994,98 by the NTS
-% team); all rights are reserved. Copying of this file is authorized only if
-% (1) you are P. Breitenlohner, or if (2) you make absolutely no changes to
-% your copy. (Programs such as TIE allow the application of several change
-% files to tex.web; the master files tex.web and etex.ch should stay intact.)
+% e-TeX is copyright (C) 1994,98 by Peter Breitenlohner; all rights are
+% reserved.  Copying of this file is authorized only if (1) you are Peter
+% Breitenlohner, or if (2) you make absolutely no changes to your copy.
+% (Programs such as PATCHWEB, TIE, or WEBMERGE allow the application of
+% several change files to tex.web; the master files tex.web and etex.ch
+% should stay intact.)
 
 % See etex_gen.tex for hints on how to install this program.
 % And see etripman.tex for details about how to validate it.
@@ -68,6 +69,7 @@
 % Version 3.1415 preserved nonexplicit kerns, tidied up (February 1993).
 % Version 3.14159 allowed fontmemsize to change; bulletproofing (March 1995).
 % Version 3.141592 fixed \xleaders, glueset, weird alignments (December 2002).
+% Version 3.1415926 was a general cleanup with minor fixes (February 2008).
 
 % A preliminary version of TeX--XeT was released in April 1992.
 % TeX--XeT version 1.0 was released in June 1992,
@@ -99,9 +101,6 @@
 %                 direction typesetting;
 %             fixed a bug in the revised glue rounding code, detected by
 %                 Tigran Aivazian <tigran@@aivazian.fsnet.co.uk>, Oct 2004.
-% Version 2.3 development was started in Feb 2008; released in Mon Year.
-%             fixed a bug in hyph_code handling (\savinghyphcodes)
-%                 reported by Vladimir Volovich <vvv@@vsu.ru>, Feb 2008.
 
 % Although considerable effort has been expended to make the e-TeX program
 % correct and reliable, no warranty is implied; the author disclaims any
@@ -232,6 +231,7 @@ complete version of \TeX\ was designed and coded by the author in late
 {\mc SAIL} language, for which an excellent debugging system was
 available. Preliminary plans to convert the {\mc SAIL} code into a form
 somewhat like the present ``web'' were developed by Luis Trabb~Pardo and
+@^Trabb Pardo, Luis Isidoro@>
 the author at the beginning of 1979, and a complete implementation was
 created by Ignacio~A. Zabala in 1979 and 1980. The \TeX82 program, which
 @^Zabala Salelles, Ignacio Andr\'es@>
@@ -284,20 +284,20 @@ known as `\eTeX'.
 @d eTeX_revision==".2" { \.{\\eTeXrevision} }
 @d eTeX_version_string=='-2.2' {current \eTeX\ version}
 @#
-@d eTeX_banner=='This is e-TeX, Version 3.141592',eTeX_version_string
+@d eTeX_banner=='This is e-TeX, Version 3.1415926',eTeX_version_string
   {printed when \eTeX\ starts}
 @#
 @d pdftex_version==140 { \.{\\pdftexversion} }
-@d pdftex_revision=="4" { \.{\\pdftexrevision} }
-@d pdftex_version_string=='-1.40.5' {current \pdfTeX\ version}
+@d pdftex_revision=="8" { \.{\\pdftexrevision} }
+@d pdftex_version_string=='-1.40.8-alpha-20080323' {current \pdfTeX\ version}
 @#
-@d pdfeTeX_banner=='This is pdfeTeX, Version 3.141592',pdftex_version_string,eTeX_version_string
+@d pdfeTeX_banner=='This is pdfeTeX, Version 3.1415926',pdftex_version_string,eTeX_version_string
    {printed when \pdfeTeX\ starts}
 @#
-@d pdfTeX_banner=='This is pdfTeX, Version 3.141592',pdftex_version_string
+@d pdfTeX_banner=='This is pdfTeX, Version 3.1415926',pdftex_version_string
    {printed when \pdfTeX\ starts}
 @#
-@d TeX_banner=='This is TeX, Version 3.141592' {printed when \TeX\ starts}
+@d TeX_banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
 @#
 @d banner==pdfeTeX_banner
 @#
@@ -360,6 +360,7 @@ portions of the program heading.
 Actually the heading shown here is not quite normal: The |program| line
 does not mention any |output| file, because \ph\ would ask the \TeX\ user
 to specify a file name if |output| were specified here.
+@:PASCAL H}{\ph@>
 @^system dependencies@>
 
 @d mtype==t@&y@&p@&e {this is a \.{WEB} coding trick:}
@@ -452,8 +453,9 @@ directives shown below specify full checking and inclusion of the \PASCAL\
 debugger when \TeX\ is being debugged, but they cause range checking and other
 redundant code to be eliminated when the production system is being generated.
 Arithmetic overflow will be detected in all cases.
+@:PASCAL H}{\ph@>
 @^system dependencies@>
-@^Overflow in arithmetic@>
+@^overflow in arithmetic@>
 
 @<Compiler directives@>=
 @{@&$C-,A+,D-@} {no range check, catch arithmetic overflow, no debug overhead}
@@ -487,6 +489,7 @@ if the compiler wants one. (Of course, if no default mechanism is
 available, the |case| statements of \TeX\ will have to be laboriously
 extended by listing all remaining cases. People who are stuck with such
 \PASCAL s have, in fact, done this, successfully but not happily!)
+@:PASCAL H}{\ph@>
 
 @d othercases == others: {default for cases not listed explicitly}
 @d endcases == @+end {follows the default case in an extended |case| statement}
@@ -979,6 +982,7 @@ begin rewrite(f,name_of_file,'/O'); w_open_out:=rewrite_OK(f);
 end;
 
 @ Files can be closed with the \ph\ routine `|close(f)|', which
+@:PASCAL H}{\ph@>
 @^system dependencies@>
 should be used when all input or output with respect to |f| has been completed.
 This makes |f| available to be opened again, if desired; and if |f| was used for
@@ -1094,6 +1098,7 @@ is considered an output file the file variable is |term_out|.
 
 @ Here is how to open the terminal files
 in \ph. The `\.{/I}' switch suppresses the first |get|.
+@:PASCAL H}{\ph@>
 @^system dependencies@>
 
 @d t_open_in==reset(term_in,'TTY:','/O/I') {open the terminal for text input}
@@ -1111,6 +1116,7 @@ issue an unexpected error message). The third, |wake_up_terminal|,
 is supposed to revive the terminal if the user has disabled it by
 some instruction to the operating system.  The following macros show how
 these operations can be specified in \ph:
+@:PASCAL H}{\ph@>
 @^system dependencies@>
 
 @d update_terminal == break(term_out) {empty the terminal output buffer}
@@ -1249,6 +1255,7 @@ not to those generated dynamically by the user.)
 Some \PASCAL\ compilers won't pack integers into a single byte unless the
 integers lie in the range |-128..127|. To accommodate such systems
 we access the string pool only via macros that can easily be redefined.
+@^system dependencies@>
 
 @d si(#) == # {convert from |ASCII_code| to |packed_ASCII_code|}
 @d so(#) == # {convert from |packed_ASCII_code| to |ASCII_code|}
@@ -1417,8 +1424,8 @@ extended character set recommended in {\sl The \TeX book\/} would, for
 example, be `|k in [0,@'10..@'12,@'14,@'15,@'33,@'177..@'377]|'.
 If character |k| cannot be printed, and |k<@'200|, then character |k+@'100| or
 |k-@'100| must be printable; moreover, ASCII codes |[@'41..@'46,
-@'60..@'71, @'141..@'146, @'160..@'171]| must be printable.
-Thus, at least 80 printable characters are needed.
+@'60..@'71, @'136, @'141..@'146, @'160..@'171]| must be printable.
+Thus, at least 81 printable characters are needed.
 @:TeXbook}{\sl The \TeX book@>
 @^character set dependencies@>
 @^system dependencies@>
@@ -1730,9 +1737,9 @@ to negative arguments, since such operations are not implemented consistently
 by all \PASCAL\ compilers.
 
 @<Basic print...@>=
-procedure print_int(@!n:integer); {prints an integer in decimal form}
+procedure print_int(@!n:longinteger); {prints an integer in decimal form}
 var k:0..23; {index to current digit; we assume that $|n|<10^{23}$}
-@!m:integer; {used to negate |n| in possibly dangerous cases}
+@!m:longinteger; {used to negate |n| in possibly dangerous cases}
 begin k:=0;
 if n<0 then
   begin print_char("-");
@@ -2343,7 +2350,7 @@ meters); two such quantities can be added without overflow on a 32-bit
 computer.
 
 The present implementation of \TeX\ does not check for overflow when
-@^Overflow in arithmetic@>
+@^overflow in arithmetic@>
 dimensions are added or subtracted. This could be done by inserting a
 few dozen tests of the form `\ignorespaces|if x>=@'10000000000 then
 @t\\{report\_overflow}@>|', but the chance of overflow is so remote that
@@ -3702,7 +3709,7 @@ leader_ptr(p):=null; glue_ptr(p):=q; incr(glue_ref_count(q));
 new_glue:=p;
 end;
 
-@ Still another subroutine is needed: this one is sort of a combination
+@ Still another subroutine is needed: This one is sort of a combination
 of |new_param_glue| and |new_glue|. It creates a glue node for one of
 the current glue parameters, but it makes a fresh copy of the glue
 specification, since that specification will probably be subject to change,
@@ -6860,7 +6867,7 @@ the values of |sa_chain| and |sa_level| respectively.
 @d save_level(#)==save_stack[#].hh.b1
   {saved level for regions 5 and 6, or group code}
 @d save_index(#)==save_stack[#].hh.rh
-  {|eqtb| location or |save_stack| location}
+  {|eqtb| location or token or |save_stack| location}
 @d restore_old_value=0 {|save_type| when a value should be restored later}
 @d restore_zero=1 {|save_type| when an undefined entry should be restored}
 @d insert_token=2 {|save_type| when a token is being saved for later use}
@@ -6889,7 +6896,7 @@ one that starts with \.{\\begingroup} should end with \.{\\endgroup}.
 @d align_group=6 {code for `\.{\\halign}\grp', `\.{\\valign}\grp'}
 @d no_align_group=7 {code for `\.{\\noalign}\grp'}
 @d output_group=8 {code for output routine}
-@d math_group=9 {code for, e.g, `\.{\char'136}\grp'}
+@d math_group=9 {code for, e.g., `\.{\char'136}\grp'}
 @d disc_group=10 {code for `\.{\\discretionary}\grp\grp\grp'}
 @d insert_group=11 {code for `\.{\\insert}\grp', `\.{\\vadjust}\grp'}
 @d vcenter_group=12 {code for `\.{\\vcenter}\grp'}
@@ -8233,7 +8240,7 @@ when detecting a blank line.
 @!par_token:halfword; {token representing `\.{\\par}'}
 
 @ @<Put each...@>=
-primitive("par",par_end,256); {cf. |scan_file_name|}
+primitive("par",par_end,256); {cf.\ |scan_file_name|}
 @!@:par_}{\.{\\par} primitive@>
 par_loc:=cur_val; par_token:=cs_token_flag+par_loc;
 
@@ -8341,7 +8348,7 @@ label restart, {go here to get the next input token}
   exit; {go here when the next input token has been got}
 var k:0..buf_size; {an index into |buffer|}
 @!t:halfword; {a token}
-@!cat:0..15; {|cat_code(cur_chr)|, usually}
+@!cat:0..max_char_code; {|cat_code(cur_chr)|, usually}
 @!c,@!cc:ASCII_code; {constituents of a possible expanded code}
 @!d:2..3; {number of excess characters in an expanded code}
 begin restart: cur_cs:=0;
@@ -8738,9 +8745,7 @@ or the evaluation of the conditional.
 |get_next| has already been called.
 
 \yskip\noindent
-In fact, these three procedures account for {\sl all\/} uses of |get_next|,
-except for two places in the ``inner loop'' when |cur_tok| need not be set,
-and except when the arguments to \.{\\ifx} are being scanned.
+In fact, these three procedures account for almost every use of |get_next|.
 
 @ No new control sequences will be defined except during a call of
 |get_token|, or when \.{\\csname} compresses a token list, because
@@ -9258,6 +9263,7 @@ help6("I've run across a `}' that doesn't seem to match anything.")@/
   ("argument that might be the root of the problem. But if")@/
   ("your `}' was spurious, just type `2' and it will go away.");
 incr(align_state); long_state:=call; cur_tok:=par_token; ins_error;
+goto continue;
 end {a white lie; the \.{\\par} won't always trigger a runaway}
 
 @ If |long_state=outer_call|, a runaway argument has already been reported.
@@ -9737,11 +9743,8 @@ if abs(mode)<>m then
   if level<>tok_val then scanned_result(0)(dimen_val)
   else scanned_result(0)(int_val);
   end
-else if m=vmode then
-  begin cur_val:=prev_depth; cur_val_level:=dimen_val;
-  end
-else begin cur_val:=space_factor; cur_val_level:=int_val;
-  end
+else if m=vmode then scanned_result(prev_depth)(dimen_val)
+else scanned_result(space_factor)(int_val)
 
 @ @<Fetch the |dead_cycles| or the |insert_penalties|@>=
 begin if m=0 then cur_val:=dead_cycles
@@ -10037,7 +10040,7 @@ comes into action before any of the basic scanning routines has assigned
 them a value.
 
 @<Set init...@>=
-cur_val:=0; cur_val_level:=int_val; radix:=0; cur_order:=0;
+cur_val:=0; cur_val_level:=int_val; radix:=0; cur_order:=normal;
 
 @ The |scan_int| routine is used also to scan the integer part of a
 fraction; for example, the `\.3' in `\.{3.14159}' will be found by
@@ -10350,7 +10353,7 @@ if mag<>1000 then
 end
 
 @ The necessary conversion factors can all be specified exactly as
-fractions whose numerator and denominator add to 32768 or less.
+fractions whose numerator and denominator sum to 32768 or less.
 According to the definitions here, $\rm2660\,dd\approx1000.33297\,mm$;
 this agrees well with the value $\rm1000.333\,mm$ cited by Bosshard
 @^Bosshard, Hans Rudolf@>
@@ -11893,7 +11896,7 @@ of three system-dependent
 procedures called |begin_name|, |more_name|, and |end_name|. In
 essence, if the user-specified characters of the file name are $c_1\ldots c_n$,
 the system-independent driver program does the operations
-$$|begin_name|;\,|more_name|(c_1);\,\ldots\,;|more_name|(c_n);
+$$|begin_name|;\,|more_name|(c_1);\,\ldots\,;\,|more_name|(c_n);
 \,|end_name|.$$
 These three procedures communicate with each other via global variables.
 Afterwards the file name will appear in the string pool as three strings
@@ -12956,6 +12959,7 @@ fget; read_sixteen(nk);
 fget; read_sixteen(ne);
 fget; read_sixteen(np);
 if lf<>6+lh+(ec-bc+1)+nw+nh+nd+ni+nl+nk+ne+np then abort;
+if (nw=0)or(nh=0)or(nd=0)or(ni=0) then abort;
 end
 
 @ The preliminary settings of the index-offset variables |char_base|,
@@ -14801,7 +14805,8 @@ if width(p)+h_offset>max_h then max_h:=width(p)+h_offset
 
 @ At the end of the program, we must finish things off by writing the
 post\-amble. If |total_pages=0|, the \.{DVI} file was never opened.
-If |total_pages>=65536|, the \.{DVI} file will lie.
+If |total_pages>=65536|, the \.{DVI} file will lie. And if
+|max_push>=65536|, the user deserves whatever chaos might ensue.
 
 An integer variable |k| will be declared for use by this routine.
 
@@ -15091,7 +15096,7 @@ end
 @!pdf_file: byte_file; {the PDF output file}
 @!pdf_buf: ^eight_bits; {pointer to the PDF output buffer or PDF object stream buffer}
 @!pdf_buf_size: integer; {end of PDF output buffer or PDF object stream buffer}
-@!pdf_ptr: integer; {pointer to the first unused byte in the PDF buffer or object stream buffer}
+@!pdf_ptr: longinteger; {pointer to the first unused byte in the PDF buffer or object stream buffer}
 @!pdf_op_buf: ^eight_bits; {the PDF output buffer}
 @!pdf_os_buf: ^eight_bits; {the PDF object stream buffer}
 @!pdf_os_buf_size: integer; {current size of the PDF object stream buffer, grows dynamically}
@@ -15104,8 +15109,8 @@ end
 @!pdf_os_mode: boolean; {true if producing object stream}
 @!pdf_os_enable: boolean; {true if object streams are globally enabled}
 @!pdf_os_cur_objnum: integer; {number of current object stream object}
-@!pdf_gone: integer; {number of bytes that were flushed to output}
-@!pdf_save_offset: integer; {to save |pdf_offset|}
+@!pdf_gone: longinteger; {number of bytes that were flushed to output}
+@!pdf_save_offset: longinteger; {to save |pdf_offset|}
 @!zip_write_state: integer; {which state of compression we are in}
 @!fixed_pdf_minor_version: integer; {fixed minor part of the PDF version}
 @!fixed_pdf_objcompresslevel: integer; {fixed level for activating PDF object streams}
@@ -15120,6 +15125,7 @@ end
 @!microseconds: integer;
 @!fixed_pdf_draftmode: integer; {fixed \\pdfdraftmode}
 @!fixed_pdf_draftmode_set: boolean; {|fixed_pdf_draftmode| has been set?}
+@!pdf_page_group_val: integer;
 
 @ @<Set init...@>=
 pdf_gone := 0;
@@ -15137,6 +15143,8 @@ zip_write_state := no_zip;
 pdf_minor_version_written := false;
 fixed_pdfoutput_set := false;
 fixed_pdf_draftmode_set := false;
+pdf_page_group_val := -1;
+
 
 @ @p
 function fix_int(val, min, max: integer): integer;
@@ -15221,8 +15229,10 @@ neccesary. We call |pdf_begin_stream| to begin a stream  and |pdf_end_stream|
 to finish it. The stream contents will be compressed if compression is turn on.
 
 @p procedure pdf_flush; {flush out the |pdf_buf|}
+var saved_pdf_gone : longinteger;
 begin
     if not pdf_os_mode then begin
+        saved_pdf_gone := pdf_gone;
         case zip_write_state of
             no_zip: if pdf_ptr > 0 then begin
                 if fixed_pdf_draftmode = 0 then write_pdf(0, pdf_ptr - 1);
@@ -15237,6 +15247,8 @@ begin
             end;
         end;
         pdf_ptr := 0;
+        if saved_pdf_gone > pdf_gone then
+            pdf_error("file size", "File size exceeds architectural limits (pdf_gone wraps around)");
     end;
 end;
 
@@ -15421,9 +15433,9 @@ begin
     str_in_str := true;
 end;
 
-procedure pdf_print_int(n:integer); {print out a integer to PDF buffer}
+procedure pdf_print_int(n:longinteger); {print out a integer to PDF buffer}
 var k:integer; {index to current digit ($0\le k\le23$); we assume that $|n|<10^{23}$}
-m:integer; {used to negate |n| in possibly dangerous cases}
+m:longinteger; {used to negate |n| in possibly dangerous cases}
 begin
   k:=0;
   if n<0 then
@@ -16022,7 +16034,9 @@ the same type.
 
 @<Types...@>=
 @!obj_entry = record@;@/
-    int0, int1, int2, int3, int4: integer;
+    int0, int1: integer;
+    int2: longinteger;
+    int3, int4: integer;
 end;
 
 @ The first field contains information representing identifier of this object.
@@ -16282,8 +16296,8 @@ so we can use this field for both}
 @!pdf_last_pages: integer; {pointer to most recently generated pages object}
 @!pdf_last_page: integer; {pointer to most recently generated page object}
 @!pdf_last_stream: integer; {pointer to most recently generated stream}
-@!pdf_stream_length: integer; {length of most recently generated stream}
-@!pdf_stream_length_offset: integer; {file offset of the last stream length}
+@!pdf_stream_length: longinteger; {length of most recently generated stream}
+@!pdf_stream_length_offset: longinteger; {file offset of the last stream length}
 @!pdf_seek_write_length: boolean; {flag whether to seek back and write \.{/Length}}
 @!pdf_last_byte: integer; {byte most recently written to PDF file; for \.{endstream} in new line}
 @!pdf_append_list_arg: integer; {for use with |pdf_append_list|}
@@ -16597,7 +16611,7 @@ end;
                       ((# >= 'A') and (# <= 'F')) or
                       ((# >= 'a') and (# <= 'f')))
 
-@p procedure pdf_print_fw_int(n, w: integer); {print out an integer with
+@p procedure pdf_print_fw_int(n: longinteger; w: integer); {print out an integer with
 fixed width; used for outputting cross-reference table}
 var k: integer; {$0\le k\le23$}
 begin
@@ -16611,10 +16625,10 @@ begin
     end;
 end;
 
-procedure pdf_out_bytes(n, w: integer); {print out an integer as
+procedure pdf_out_bytes(n: longinteger; w: integer); {print out an integer as
 a number of bytes; used for outputting \.{/XRef} cross-reference stream}
 var k: integer;
-byte: array[0..3] of integer; {digits in a number being output}
+byte: array[0..7] of integer; {digits in a number being output}
 begin
     k := 0;
     repeat byte[k] := n mod 256; n := n div 256; incr(k);
@@ -18841,6 +18855,12 @@ pdf_print_ln("]");
 if pdf_page_attr <> null then
     pdf_print_toks_ln(pdf_page_attr);
 @<Generate parent pages object@>;
+if pdf_page_group_val > 0 then begin
+    pdf_print("/Group ");
+    pdf_print_int(pdf_page_group_val);
+    pdf_print_ln(" 0 R");
+    pdf_page_group_val := -1;
+end;
 @<Generate array of annotations or beads in page@>;
 pdf_end_dict
 
@@ -19464,8 +19484,8 @@ write_fontstuff
 
 @ We will generate in each single step the parents of all Pages/Page objects in
 the previous level. These new generated Pages object will create a new level of
-Pages tree. We will repeat this until search only one Pages object. This one
-will be the Root object.
+the Pages tree. We will repeat this until we have only one Pages object. This
+one will be the Root object.
 
 @<Output pages tree@>=
 a := sys_obj_ptr + 1; {all Pages objects whose children are not Page objects
@@ -19741,14 +19761,18 @@ print_mod_date;
 @ @<Glob...@>=
 @!pdftex_banner: str_number;   {the complete banner}
 
-@ @<Output the |obj_tab|@>=
+@ @<Build a linked list of free objects@>=
 l := 0;
+set_obj_fresh(l); {null object at begin of list of free objects}
 for k := 1 to sys_obj_ptr do
     if not is_obj_written(k) then begin
         obj_link(l) := k;
         l := k;
     end;
-obj_link(l) := 0;
+obj_link(l) := 0
+
+@ @<Output the |obj_tab|@>=
+@<Build a linked list of free objects@>;
 pdf_save_offset := pdf_offset;
 pdf_print_ln("xref");
 pdf_print("0 "); pdf_print_int_ln(obj_ptr + 1);
@@ -19767,7 +19791,13 @@ end
 
 @ @<Output the cross-reference stream dictionary@>=
 pdf_new_dict(obj_type_others, 0, 0);
-if obj_offset(sys_obj_ptr) > 16777215 then
+if (obj_offset(sys_obj_ptr) > 16777215) 
+        and (obj_offset(sys_obj_ptr) > ((16777216 * 256) - 1)) then
+    {this obviously works only on platforms with more than 32 bits; the
+expression is not a constant because otherwise tangle would scream number too
+large}
+    xref_offset_width := 5
+else if obj_offset(sys_obj_ptr) > 16777215 then
     xref_offset_width := 4
 else if obj_offset(sys_obj_ptr) > 65535 then
     xref_offset_width := 3
@@ -19775,13 +19805,7 @@ else if obj_offset(sys_obj_ptr) > 255 then
     xref_offset_width := 2
 else
     xref_offset_width := 1;
-l := 0;
-for k := 1 to sys_obj_ptr do
-    if not is_obj_written(k) then begin
-        obj_link(l) := k;
-        l := k;
-    end;
-obj_link(l) := 0;
+@<Build a linked list of free objects@>;
 pdf_print_ln("/Type /XRef");
 pdf_print("/Index [0 ");
 pdf_print_int(obj_ptr);
@@ -20769,7 +20793,7 @@ baselineskip calculation is handled by the |append_to_vlist| routine.
 
 @p procedure append_to_vlist(@!b:pointer);
 var d:scaled; {deficiency of space between baselines}
-@!p:pointer; {a new glue specification}
+@!p:pointer; {a new glue node}
 begin if prev_depth>pdf_ignored_dimen then
   begin d:=width(baseline_skip)-prev_depth-height(b);
   if d<line_skip_limit then p:=new_param_glue(line_skip_code)
@@ -21173,11 +21197,11 @@ radical_noad: begin print_esc("radical"); print_delimiter(left_delimiter(p));
   end;
 accent_noad: begin print_esc("accent"); print_fam_and_char(accent_chr(p));
   end;
-left_noad: begin print_esc("left"); print_delimiter(nucleus(p));
+left_noad: begin print_esc("left"); print_delimiter(delimiter(p));
   end;
 right_noad: begin if subtype(p)=normal then print_esc("right")
   else print_esc("middle");
-  print_delimiter(nucleus(p));
+  print_delimiter(delimiter(p))
   end;
 end;
 if type(p)<left_noad then
@@ -21257,7 +21281,7 @@ larger as the type gets smaller.)
 
 @<Basic printing procedures@>=
 procedure print_size(@!s:integer);
-begin if s=0 then print_esc("textfont")
+begin if s=text_size then print_esc("textfont")
 else if s=script_size then print_esc("scriptfont")
 else print_esc("scriptscriptfont");
 end;
@@ -21869,8 +21893,8 @@ if subtype(q)=mu_glue then
 else if (cur_size<>text_size)and(subtype(q)=cond_math_glue) then
   begin p:=link(q);
   if p<>null then if (type(p)=glue_node)or(type(p)=kern_node) then
-      begin link(q):=link(p); link(p):=null; flush_node_list(p);
-      end;
+    begin link(q):=link(p); link(p):=null; flush_node_list(p);
+    end;
   end
 
 @ @<Cases for noads that can follow a |bin_noad|@>=
@@ -23245,7 +23269,7 @@ widths. Let $w_{ij}$ be the maximum of the natural widths of all entries
 that span columns $i$ through $j$, inclusive. The alignrecord for column~$i$
 contains $w_{ii}$ in its |width| field, and there is also a linked list of
 the nonzero $w_{ij}$ for increasing $j$, accessible via the |info| field;
-these span nodes contain the value $j-i-1+|min_quarterword|$ in their
+these span nodes contain the value $j-i+|min_quarterword|$ in their
 |link| fields. The values of $w_{ii}$ were initialized to |null_flag|, which
 we regard as $-\infty$.
 
@@ -23460,8 +23484,8 @@ it. (In case the enclosing mode is |mmode|, for displayed formulas,
 we will need to insert glue before and after the display; that part of the
 program will be deferred until we're more familiar with such operations.)
 
-In horizontal mode, the |clang| part of |aux| is undefined; an over-cautious
-\PASCAL\ runtime system may complain about this.
+In restricted horizontal mode, the |clang| part of |aux| is undefined;
+an over-cautious \PASCAL\ runtime system may complain about this.
 @^dirty \PASCAL@>
 
 @<Insert the \(c)current list into its environment@>=
@@ -23493,7 +23517,7 @@ line-breaking problem can be regarded as a special case of the problem of
 computing the shortest path in an acyclic network. The cited paper includes
 numerous examples and describes the history of line breaking as it has been
 practiced by printers through the ages. The present implementation adds two
-new ideas to the algorithm of 1980: memory space requirements are considerably
+new ideas to the algorithm of 1980: Memory space requirements are considerably
 reduced by using smaller records for inactive nodes than for active ones,
 and arithmetic overflow is avoided by using ``delta distances'' instead of
 keeping track of the total distance from the beginning of the paragraph to the
@@ -23717,7 +23741,7 @@ macro makes such six-tuples convenient.
 @d save_active_width(#) == prev_active_width[#] := active_width[#]
 @d restore_active_width(#) == active_width[#] := prev_active_width[#]
 
-@<Glo...@>=
+@<Glob...@>=
 @!active_width:array[1..8] of scaled;
   {distance from first active node to~|cur_p|}
 @!cur_active_width:array[1..8] of scaled; {distance from current active node}
@@ -23836,7 +23860,7 @@ for breakpoints. This variable is global, since it is used both by |line_break|
 and by its subprocedure |try_break|.
 
 Another global variable called |threshold| is used to determine the feasibility
-of individual lines: breakpoints are feasible if there is a way to reach
+of individual lines: Breakpoints are feasible if there is a way to reach
 them without creating lines whose badness exceeds |threshold|.  (The
 badness is compared to |threshold| before penalties are added, so that
 penalty values do not affect the feasibility of breakpoints, except that
@@ -26158,7 +26182,7 @@ $c_{k+1}$.
 
 @ @<Glob...@>=
 @!hyph_word:array[hyph_pointer] of str_number; {exception words}
-@!hyph_list:array[hyph_pointer] of pointer; {list of hyphen positions}
+@!hyph_list:array[hyph_pointer] of pointer; {lists of hyphen positions}
 @!hyph_count:hyph_pointer; {the number of words in the exception dictionary}
 
 @ @<Local variables for init...@>=
@@ -27309,7 +27333,9 @@ if page_head<>page_tail then
     while r<>page_ins_head do
       begin print_ln; print_esc("insert"); t:=qo(subtype(r));
       print_int(t); print(" adds ");
-      t:=x_over_n(height(r),1000)*count(t); print_scaled(t);
+      if count(t)=1000 then t:=height(r)
+      else t:=x_over_n(height(r),1000)*count(t);
+      print_scaled(t);
       if type(r)=split_up then
         begin q:=page_head; t:=0;
         repeat q:=link(q);
@@ -28195,11 +28221,9 @@ main_lig_loop:@<If there's a ligature/kern command relevant to |cur_l| and
 main_loop_move_lig:@<Move the cursor past a pseudo-ligature, then
   |goto main_loop_lookahead| or |main_lig_loop|@>
 
-@ If the current horizontal list is empty, the reference to |character(tail)|
-here is not strictly legal, since |tail| will be a node freshly returned by
-|get_avail|. But this should cause no problem on most implementations, and we
-do want the inner loop to be fast.
-@^dirty \PASCAL@>
+@ If |link(cur_q)| is nonnull when |wrapup| is invoked, |cur_q| points to
+the list of characters that were consumed while building the ligature
+character~|cur_l|.
 
 A discretionary break is not inserted for an explicit hyphen when we are in
 restricted horizontal mode. In particular, this avoids putting discretionary
@@ -28229,8 +28253,8 @@ nodes inside of other discretionaries.
   end
 
 @d wrapup(#)==if cur_l<non_char then
-  begin if character(tail)=qi(hyphen_char[main_f]) then if link(cur_q)>null then
-    ins_disc:=true;
+  begin if link(cur_q)>null then
+    if character(tail)=qi(hyphen_char[main_f]) then ins_disc:=true;
   if ligature_present then pack_lig(#);
   if ins_disc then
     begin ins_disc:=false;
@@ -28252,14 +28276,14 @@ main_i:=char_info(main_f)(cur_l);
 if not char_exists(main_i) then
   begin char_warning(main_f,cur_chr); free_avail(lig_stack); goto big_switch;
   end;
-tail_append(lig_stack) {|main_loop_lookahead| is next}
+link(tail):=lig_stack; tail:=lig_stack {|main_loop_lookahead| is next}
 
 @ Here we are at |main_loop_move_lig|.
 When we begin this code we have |cur_q=tail| and |cur_l=character(lig_stack)|.
 
 @<Move the cursor past a pseudo-ligature...@>=
 main_p:=lig_ptr(lig_stack);
-if main_p>null then tail_append(main_p);
+if main_p>null then tail_append(main_p); {append a single character}
 temp_ptr:=lig_stack; lig_stack:=link(temp_ptr);
 free_node(temp_ptr,small_node_size);
 main_i:=char_info(main_f)(cur_l); ligature_present:=true;
@@ -28305,6 +28329,7 @@ At the beginning of this code we have |main_i=char_info(main_f)(cur_l)|.
 tmp_k1 := get_auto_kern(main_f, cur_l, cur_r);
 @<If |tmp_k1| is not null then append that kern@>;
 if char_tag(main_i)<>lig_tag then goto main_loop_wrapup;
+if cur_r=non_char then goto main_loop_wrapup;
 main_k:=lig_kern_start(main_f)(main_i); main_j:=font_info[main_k].qqqq;
 if skip_byte(main_j)<=stop_flag then goto main_lig_loop+2;
 main_k:=lig_kern_restart(main_f)(main_j);
@@ -28852,7 +28877,7 @@ constructions like `\.{\\setbox3=}' can be followed by a variety of
 different kinds of boxes, and we would like to encode such things in an
 efficient way.
 
-In other words, there are two problems: To represent the context of a box,
+In other words, there are two problems: to represent the context of a box,
 and to represent its type.
 
 The first problem is solved by putting a ``context code'' on the |save_stack|,
@@ -28944,7 +28969,7 @@ vmode+hmove,hmode+vmove,mmode+vmove: begin t:=cur_chr;
 any_mode(leader_ship): scan_box(leader_flag-a_leaders+cur_chr);
 any_mode(make_box): begin_box(0);
 
-@ The global variable |cur_box| will point to a newly-made box. If the box
+@ The global variable |cur_box| will point to a newly made box. If the box
 is void, we will have |cur_box=null|. Otherwise we will have
 |type(cur_box)=hlist_node| or |vlist_node| or |rule_node|; the |rule_node|
 case can occur only with leaders.
@@ -29013,8 +29038,7 @@ end
 @ @<Append a new leader node ...@>=
 begin @<Get the next non-blank non-relax...@>;
 if ((cur_cmd=hskip)and(abs(mode)<>vmode))or@|
-   ((cur_cmd=vskip)and(abs(mode)=vmode))or@|
-   ((cur_cmd=mskip)and(abs(mode)=mmode)) then
+   ((cur_cmd=vskip)and(abs(mode)=vmode)) then
   begin append_glue; subtype(tail):=box_context-(leader_flag-a_leaders);
   leader_ptr(tail):=cur_box;
   end
@@ -31126,6 +31150,7 @@ shorthand_def: begin n:=cur_chr; get_r_token; p:=cur_cs; define(p,relax,256);
 @ @<Assignments@>=
 read_to_cs: begin j:=cur_chr; scan_int; n:=cur_val;
   if not scan_keyword("to") then
+@.to@>
     begin print_err("Missing `to' inserted");
 @.Missing `to'...@>
     help2("You should have said `\read<number> to \cs'.")@/
@@ -31301,6 +31326,7 @@ e:=false; {just in case, will be set |true| for sparse array elements}
 @<Compute the register location |l| and its type |p|; but |return| if invalid@>;
 if q=register then scan_optional_equals
 else if scan_keyword("by") then do_nothing; {optional `\.{by}'}
+@.by@>
 arith_error:=false;
 if q<multiply then @<Compute result of |register| or
     |advance|, put it in |cur_val|@>
@@ -31310,6 +31336,7 @@ if arith_error then
 @.Arithmetic overflow@>
   help2("I can't carry out that multiplication or division,")@/
     ("since the result is out of range.");
+  if p>=glue_val then delete_glue_ref(cur_val);
   error; return;
   end;
 if p<glue_val then sa_word_define(l,cur_val)
@@ -31317,7 +31344,7 @@ else  begin trap_zero_glue; sa_define(l,cur_val)(l,glue_ref,cur_val);
   end;
 exit: end;
 
-@ Here we use the fact that the consecutive codes |int_val...mu_val| and
+@ Here we use the fact that the consecutive codes |int_val..mu_val| and
 |assign_int..assign_mu_glue| correspond to each other nicely.
 
 @<Compute the register location |l| and its type |p|...@>=
@@ -32038,7 +32065,7 @@ so that the inverse relation between them is clear.
 The global variable |format_ident| is a string that is printed right
 after the |banner| line when \TeX\ is ready to start. For \.{INITEX} this
 string says simply `\.{(INITEX)}'; for other versions of \TeX\ it says,
-for example, `\.{(preloaded format=plain 82.11.19)}', showing the year,
+for example, `\.{(preloaded format=plain 1982.11.19)}', showing the year,
 month, and day that the format file was created. We have |format_ident=0|
 before \TeX's tables are loaded.
 
@@ -32830,6 +32857,7 @@ if c=1 then
   if sa_mark<>null then
     if do_marks(destroy_marks,0,sa_mark) then sa_mark:=null;
   for c:=last_box_code to vsplit_code do flush_node_list(disc_ptr[c]);
+  if last_glue<>max_halfword then delete_glue_ref(last_glue);
   store_fmt_file; return;@+tini@/
   print_nl("(\dump is performed only by INITEX)"); return;
 @:dump_}{\.{\\dump...only by INITEX}@>
@@ -35059,9 +35087,7 @@ else
     d := 0
 
 @ @d adv_past(#)==@+if subtype(#)=language_node then
-    begin cur_lang:=what_lang(#); l_hyf:=what_lhm(#); r_hyf:=what_rhm(#);
-    set_hyph_index;
-    end
+    begin cur_lang:=what_lang(#); l_hyf:=what_lhm(#); r_hyf:=what_rhm(#);@+end
 
 @<Advance \(p)past a whatsit node in the \(l)|line_break| loop@>=@+
 begin
@@ -35071,7 +35097,10 @@ if (subtype(cur_p) = pdf_refxform_node) or (subtype(cur_p) = pdf_refximage_node)
 end
 
 @ @<Advance \(p)past a whatsit node in the \(p)pre-hyphenation loop@>=@+
-adv_past(s)
+if subtype(s)=language_node then
+  begin cur_lang:=what_lang(s); l_hyf:=what_lhm(s); r_hyf:=what_rhm(s);
+  set_hyph_index;
+  end
 
 @ @<Prepare to move whatsit |p| to the current page, then |goto contribute|@>=
 begin
@@ -35782,14 +35811,19 @@ begin
 end;
 
 procedure out_image(p: pointer);
-var image: integer;
+var image, groupref: integer;
 begin
     image := obj_ximage_data(pdf_ximage_objnum(p));
     pdf_end_text;
     pdf_print_ln("q");
-    if pdf_lookup_list(pdf_ximage_list, pdf_ximage_objnum(p)) = null then
+    if pdf_lookup_list(pdf_ximage_list, pdf_ximage_objnum(p)) = null then 
         pdf_append_list(pdf_ximage_objnum(p))(pdf_ximage_list);
     if not is_pdf_image(image) then begin
+        if is_png_image(image) then begin
+           groupref := image_group_ref (image);
+           if (groupref>0) and (pdf_page_group_val<1) then 
+              pdf_page_group_val := groupref;
+        end;
         pdf_print_real(ext_xn_over_d(pdf_width(p),
                        ten_pow[6], one_hundred_bp), 4);
         pdf_print(" 0 0 ");
@@ -35800,6 +35834,7 @@ begin
         pdf_print_bp(pdf_y(cur_v));
     end
     else begin
+        if pdf_page_group_val<1 then pdf_page_group_val := image_group_ref (image);
         pdf_print_real(ext_xn_over_d(pdf_width(p),
                        ten_pow[6], image_width(image)), 6);
         pdf_print(" 0 0 ");
@@ -39040,7 +39075,7 @@ fields in the active nodes.
 @!best_pl_glue:array[very_loose_fit..tight_fit] of scaled; {corresponding
   glue stretch or shrink}
 
-@ The new algorithm for the last line requires that the stretchability of
+@ The new algorithm for the last line requires that the stretchability
 |par_fill_skip| is infinite and the stretchability of |left_skip| plus
 |right_skip| is finite.
 
@@ -39091,10 +39126,10 @@ if arith_error then
   if active_short(r)>0 then g:=max_dimen@+else g:=-max_dimen;
 if g>0 then
   @<Set the value of |b| to the badness of the last line for stretching,
-    compute the corresponding |fit_class|, and |goto found|@>
+    compute the corresponding |fit_class, and |goto found||@>
 else if g<0 then
   @<Set the value of |b| to the badness of the last line for shrinking,
-    compute the corresponding |fit_class|, and |goto found|@>;
+    compute the corresponding |fit_class, and |goto found||@>;
 not_found:end
 
 @ These badness computations are rather similar to those of the standard

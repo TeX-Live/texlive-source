@@ -1,10 +1,10 @@
 pdfTeX
 ======
 
-README for version 3.14159-1.40.5
-=================================
+README for version 3.1415926-1.40.8
+===================================
 
-This directory contains the version 1.40.5 of pdfTeX, an extended version
+This directory contains the version 1.40.8 of pdfTeX, an extended version
 of eTeX that can create PDF directly from TeX source files and enhance the
 result of TeX typesetting with the help of PDF. When PDF output is not
 selected, pdfTeX produces normal DVI output, otherwise it produces PDF
@@ -33,7 +33,7 @@ http://www.ntg.nl/mailman/listinfo/ntg-pdftex
 LEGAL ISSUES
 ============
 
-pdfTeX is copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
+pdfTeX is copyright (c) 1996-2008 Han The Thanh, <thanh@pdftex.org>
 
 pdfTeX is free software; you can redistribute it and/or modify it under the
 terms of the GNU General Public License as published by the Free Software
@@ -72,8 +72,11 @@ Peter Breitenlohner, Ricardo Sanchez Carmenes, Otfried Cheong, Thomas
 Esser, Hans Hagen, Hartmut Henkel, Taco Hoekwater, Pawel Jackowski, Pavel
 Janik, Tom Kacvinsky, Akira Kakuto, Reinhard Kotucha, Derek B. Noonburg,
 Heiko Oberdiek, Jiri Osoba, Fabrice Popineau, Sebastian Rahtz, Bernd
-Raichle, Tomas Rokicki, Martin Schröder, Petr Sojka, Ralf Utermann, Olaf
-Weber, Jiri Zlatuska.
+Raichle, Tomas Rokicki, Leonard Rosenthol, Martin Schröder, Petr Sojka,
+Ralf Utermann, Olaf Weber, Jiri Zlatuska.
+
+Some companies have supported the developement of pdfTeX: Adobe Systems
+Inc., ArtCom GmbH, Pragma ADE, QuinScape GmbH.
 
 pdfTeX is built on top of TeX, written by Donald Knuth cum suis (Liang and
 so), and eTeX, written by Peter Breitenlohner cum suis; part of the
@@ -84,5 +87,5 @@ paragraph optimization is inspired by the work of Hermann Zapf.
 
 Please send bug reports, offers of help, etc. to martin@pdftex.org
 
-$Id: README 216 2007-07-31 16:49:57Z oneiros $
+$Id$
 // vim: tw=75

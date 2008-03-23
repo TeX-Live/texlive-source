@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 1996-2008 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License along
 with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: ptexlib.h 185 2007-07-09 10:43:44Z oneiros $
+$Id$
 */
 
 #ifndef PDFTEXLIB
@@ -228,7 +228,7 @@ extern void pdftex_warn(const char *, ...);
 extern void setjobid(int, int, int, int);
 __attribute__ ((format(printf, 1, 2)))
 extern void tex_printf(const char *, ...);
-extern void writestreamlength(integer, integer);
+extern void writestreamlength(integer, longinteger);
 extern char *convertStringToPDFString(const char *in, int len);
 extern void printID(strnumber);
 extern void printcreationdate();
@@ -300,6 +300,7 @@ extern boolean checkimageb(integer);
 extern boolean checkimagec(integer);
 extern boolean checkimagei(integer);
 extern boolean ispdfimage(integer);
+extern boolean ispngimage(integer);
 extern integer epdforigx(integer);
 extern integer epdforigy(integer);
 extern integer imageheight(integer);
@@ -307,13 +308,14 @@ extern integer imagepages(integer);
 extern integer imagewidth(integer);
 extern integer imagexres(integer);
 extern integer imageyres(integer);
+extern integer imagecolordepth(integer);
+extern integer imagegroupref(integer);
 extern integer readimage(strnumber, integer, strnumber, integer, integer,
                          integer, integer);
 extern void deleteimage(integer);
 extern void img_free(void);
 extern void updateimageprocset(integer);
 extern void writeimage(integer);
-extern integer imagecolordepth(integer img);
 extern void dumpimagemeta();
 extern void undumpimagemeta(integer, integer);
 

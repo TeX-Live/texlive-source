@@ -34,13 +34,13 @@ kpse_include ../../texk/make/library.mk
 #------------------------------------------------------------------------
 
 PDFTOEPDF_OBJS = \
-	Array.o BuiltinFont.o BuiltinFontTables.o CMap.o \
-	Catalog.o CharCodeToUnicode.o Decrypt.o Dict.o Error.o \
-	FontEncodingTables.o GfxFont.o GfxState.o\
-	GlobalParams.o JArithmeticDecoder.o JBIG2Stream.o JPXStream.o Lexer.o Link.o \
-	NameToCharCode.o Object.o OutputDev.o Outline.o PDFDoc.o Page.o \
-	Parser.o PDFDocEncoding.o Stream.o UnicodeMap.o XRef.o Function.o \
-	PSTokenizer.o SecurityHandler.o
+	Array.o BuiltinFont.o BuiltinFontTables.o Catalog.o \
+	CharCodeToUnicode.o CMap.o Decrypt.o Dict.o Error.o \
+	FontEncodingTables.o Function.o GfxFont.o GfxState.o\
+	GlobalParams.o JArithmeticDecoder.o JBIG2Stream.o JPXStream.o \
+	Lexer.o Link.o NameToCharCode.o Object.o Outline.o OutputDev.o \
+	Page.o Parser.o PDFDocEncoding.o PDFDoc.o PSTokenizer.o \
+	SecurityHandler.o Stream.o UnicodeMap.o XRef.o 
 
 libxpdf.a: $(PDFTOEPDF_OBJS)
 	rm -f $@

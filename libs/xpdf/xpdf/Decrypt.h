@@ -73,7 +73,7 @@ public:
 		CryptAlgorithm algoA, int keyLength,
 		int objNum, int objGen);
   virtual ~DecryptStream();
-  virtual StreamKind getKind() { return strWeird; }
+  virtual StreamKind getKind() { return strCrypt; }
   virtual void reset();
   virtual int getChar();
   virtual int lookChar();

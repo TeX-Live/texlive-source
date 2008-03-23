@@ -1,15 +1,15 @@
 # Makefile fragment for pdfeTeX and web2c. --infovore@xs4all.nl. Public domain.
 # This fragment contains the parts of the makefile that are most likely to
 # differ between releases of pdfeTeX.
-# $Id: pdftex.mk 215 2007-07-31 16:32:04Z oneiros $
+# $Id$
 
 # We build pdftex
 pdftex = @PETEX@ pdftex
 pdftexdir = pdftexdir
 
 LIBOBSDCOMPATDIR=../../libs/obsdcompat
-LIBOBSDCOMPATFSRCDIR=$(srcdir)/$(LIBOBSDCOMPATDIR)
-XCPPFLAGS=-I$(LIBOBSDCOMPATDIR) -I$(LIBOBSDCOMPATDIR)/.. -I$(LIBOBSDCOMPATFSRCDIR) -I$(LIBOBSDCOMPATFSRCDIR)/..
+LIBOBSDCOMPATSRCDIR=$(srcdir)/$(LIBOBSDCOMPATDIR)
+XCPPFLAGS=-I$(LIBOBSDCOMPATDIR) -I$(LIBOBSDCOMPATDIR)/.. -I$(LIBOBSDCOMPATSRCDIR) -I$(LIBOBSDCOMPATSRCDIR)/..
 
 Makefile: $(srcdir)/$(pdftexdir)/pdftex.mk
 
@@ -69,7 +69,7 @@ pdftex-all.web: $(TIE) $(srcdir)/$(pdftexdir)/pdftex.web pdftex.ch
 	$(TIE) -m $@ $(srcdir)/$(pdftexdir)/pdftex.web pdftex.ch
 pdftex-all.tex: pdftex-all.web
 	$(WEAVE) pdftex-all.web
-	echo -e '1s/ webmac/ pdfwebmac/\nw\nq' | ed $@ >/dev/null 2>&1
+	{ echo '1s/ webmac/ pdfwebmac/'; echo w; echo q;} | ed $@ >/dev/null 2>&1
 pdftex-all.pdf: pdftex-all.tex
 	$(pdftex) pdftex-all.tex
 

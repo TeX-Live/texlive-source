@@ -17,7 +17,7 @@
 % pdfTeX; if not, write to the Free Software Foundation, Inc., 51 Franklin
 % Street, Fifth Floor, Boston, MA 02110-1301 USA.
 %
-% $Id: pdftex.ch 330 2008-01-06 17:01:05Z oneiros $
+% $Id$
 %
 @x [0.0] l.83 - WEAVE: we want the whole file
   \def\?##1]{\hbox{Changes to \hbox to 1em{\hfil##1}.\ }}
@@ -34,24 +34,24 @@
 % Public domain.
 
 @x [1] m.2 l.188 - Web2C: extensions imply we're not e-TeX
-@d eTeX_banner=='This is e-TeX, Version 3.141592',eTeX_version_string
+@d eTeX_banner=='This is e-TeX, Version 3.1415926',eTeX_version_string
 @y
-@d eTeX_banner_k=='This is e-TeXk, Version 3.141592',eTeX_version_string
-@d eTeX_banner=='This is e-TeX, Version 3.141592',eTeX_version_string
+@d eTeX_banner_k=='This is e-TeXk, Version 3.1415926',eTeX_version_string
+@d eTeX_banner=='This is e-TeX, Version 3.1415926',eTeX_version_string
 @z
 
 @x [1] m.2 l.188 - Web2C: extensions imply we're not pdfeTeX
-@d pdfeTeX_banner=='This is pdfeTeX, Version 3.141592',pdftex_version_string,eTeX_version_string
+@d pdfeTeX_banner=='This is pdfeTeX, Version 3.1415926',pdftex_version_string,eTeX_version_string
 @y
-@d pdfeTeX_banner_k=='This is pdfeTeXk, Version 3.141592',pdftex_version_string,eTeX_version_string
-@d pdfeTeX_banner=='This is pdfeTeX, Version 3.141592',pdftex_version_string,eTeX_version_string
+@d pdfeTeX_banner_k=='This is pdfeTeXk, Version 3.1415926',pdftex_version_string,eTeX_version_string
+@d pdfeTeX_banner=='This is pdfeTeX, Version 3.1415926',pdftex_version_string,eTeX_version_string
 @z
 
 @x [1] m.2 l.188 - Web2C: extensions imply we're not pdfTeX
-@d pdfTeX_banner=='This is pdfTeX, Version 3.141592',pdftex_version_string
+@d pdfTeX_banner=='This is pdfTeX, Version 3.1415926',pdftex_version_string
 @y
-@d pdfTeX_banner_k=='This is pdfTeXk, Version 3.141592',pdftex_version_string
-@d pdfTeX_banner=='This is pdfTeX, Version 3.141592',pdftex_version_string
+@d pdfTeX_banner_k=='This is pdfTeXk, Version 3.1415926',pdftex_version_string
+@d pdfTeX_banner=='This is pdfTeX, Version 3.1415926',pdftex_version_string
 @z
 
 @x [1] m.2 l.188 - banner

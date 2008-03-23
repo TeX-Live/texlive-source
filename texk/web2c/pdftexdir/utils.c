@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License along
 with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: utils.c 168 2007-07-06 20:38:42Z oneiros $
+$Id$
 */
 
 #include "openbsd-compat.h"
@@ -381,7 +381,7 @@ size_t xfwrite(void *ptr, size_t size, size_t nmemb, FILE * stream)
 int xfflush(FILE * stream)
 {
     if (fflush(stream) != 0)
-        pdftex_fail("fflush() failed");
+        pdftex_fail("fflush() failed (%s)", strerror(errno));
     return 0;
 }
 
@@ -389,7 +389,7 @@ int xgetc(FILE * stream)
 {
     int c = getc(stream);
     if (c < 0 && c != EOF)
-        pdftex_fail("getc() failed");
+        pdftex_fail("getc() failed (%s)", strerror(errno));
     return c;
 }
 
@@ -397,18 +397,18 @@ int xputc(int c, FILE * stream)
 {
     int i = putc(c, stream);
     if (i < 0)
-        pdftex_fail("putc() failed");
+        pdftex_fail("putc() failed (%s)", strerror(errno));
     return i;
 }
 
-void writestreamlength(integer length, integer offset)
+void writestreamlength(integer length, longinteger offset)
 {
     if (jobname_cstr == NULL)
         jobname_cstr = xstrdup(makecstring(jobname));
     if (fixedpdfdraftmode == 0) {
-        xfseek(pdffile, offset, SEEK_SET, jobname_cstr);
+        xfseek(pdffile, (off_t)offset, SEEK_SET, jobname_cstr);
         fprintf(pdffile, "%li", (long int) length);
-        xfseek(pdffile, pdfoffset(), SEEK_SET, jobname_cstr);
+        xfseek(pdffile, (off_t)pdfoffset(), SEEK_SET, jobname_cstr);
     }
 }
 
@@ -758,7 +758,7 @@ void printID(strnumber filename)
     md5_append(&state, (const md5_byte_t *) time_str, size);
     /* get the file name */
     if (getcwd(pwd, sizeof(pwd)) == NULL)
-        pdftex_fail("getcwd() failed (path too long?)");
+        pdftex_fail("getcwd() failed (%s), path too long?", strerror(errno));
     file_name = makecstring(filename);
     md5_append(&state, (const md5_byte_t *) pwd, strlen(pwd));
     md5_append(&state, (const md5_byte_t *) "/", 1);
@@ -1060,7 +1060,7 @@ void getfiledump(strnumber s, int offset, int length)
         return;
     }
     recorder_record_input(file_name);
-    if (fseek(f, (long) offset, SEEK_SET) != 0) {
+    if (fseek(f, (off_t) offset, SEEK_SET) != 0) {
         xfree(file_name);
         return;
     }
@@ -1542,6 +1542,9 @@ integer colorstackskippagestart(int colstack_no)
 
     if (!colstack->page_start) {
         return 1;
+    }
+    if (colstack->page_current == NULL) {
+        return 0;
     }
     if (strcmp(COLOR_DEFAULT, colstack->page_current) == 0) {
         return 2;

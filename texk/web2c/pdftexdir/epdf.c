@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License along
 with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: epdf.c 114 2007-05-23 18:23:49Z ms $
+$Id$
 */
 
 #include "ptexlib.h"
@@ -35,7 +35,7 @@ int is_subsetable(fm_entry * fm)
     return is_subsetted(fm);
 }
 
-fd_entry *epdf_create_fontdescriptor(fm_entry * fm)
+fd_entry *epdf_create_fontdescriptor(fm_entry * fm, int stemV)
 {
     fd_entry *fd;
     if ((fd = lookup_fd_entry(fm->ff_name, fm->slant, fm->extend)) == NULL) {
@@ -46,7 +46,9 @@ fd_entry *epdf_create_fontdescriptor(fm_entry * fm)
         fd->fd_objnum = pdfnewobjnum();
         assert(fm->ps_name != NULL);
         fd->fontname = xstrdup(fm->ps_name);    /* just fallback */
-        /* preset_fontmetrics (fo->fd, f); */
+        // stemV must be copied
+        fd->font_dim[STEMV_CODE].val = stemV;
+        fd->font_dim[STEMV_CODE].set = true;
         fd->gl_tree = avl_create(comp_string_entry, NULL, &avl_xallocator);
         assert(fd->gl_tree != NULL);
     }
