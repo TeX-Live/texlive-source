@@ -198,6 +198,14 @@ typedef unsigned char *pointertobyte;
 #define promptfilenamehelpmsg "(Press Enter to retry, or Control-D to exit"
 #endif
 
+/* We use this rather than a simple fputs so that the string will end up
+   in the .log file, too.  */
+#define printcstring(STR)     \
+  do {                        \
+    char *ch_ptr = (STR);     \
+    while (*ch_ptr)           \
+      printchar(*(ch_ptr++)); \
+  } while (0)
 
 
 /* Tangle removes underscores from names.  Put them back for things that

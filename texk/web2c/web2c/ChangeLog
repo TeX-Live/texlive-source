@@ -1,3 +1,8 @@
+2008-03-24  Karl Berry  <karl@tug.org>
+
+	* common.defines (printcstring): new procedure.
+	(promptfilenamehelpmsg): new var.
+	
 2008-03-09  Karl Berry  <karl@tug.org>
 
 	* coerce.h [MP]: #include <mpdir/mplib.h> to get declarations,

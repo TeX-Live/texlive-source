@@ -2283,7 +2283,7 @@ var k:0..buf_size; {index into |buffer|}
 if e=".tex" then show_context;
 @y
 if (e=".tex") or (e="") then show_context;
-print_ln; fputs(prompt_file_name_help_msg, stdout);
+print_ln; print_c_string(prompt_file_name_help_msg);
 if (e<>"") then
   begin
     print("; default file extension is `"); print(e); print("'");

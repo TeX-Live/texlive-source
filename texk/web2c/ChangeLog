@@ -1,3 +1,9 @@
+2008-03-24  Karl Berry  <karl@tug.org>
+
+	* tex.ch: use print_c_string to print the new prompt_file_name
+	help message, so it ends up in the log.
+	* cpascal.h (printcstring): #define it.
+
 2008-03-23  Karl Berry  <karl@tug.org>
 
 	* tex.web,
@@ -5,7 +11,6 @@
 
 	* tex.ch (prompt_file_name): output prompt_file_name_help_msg
 	instead of a string pool string.
-	* web2c/common.defines (promptfilenamehelpmsg): new var.
 	* cpascal.h: define it (conditionally for Windows).
 
 2008-03-22  Karl Berry  <karl@tug.org>

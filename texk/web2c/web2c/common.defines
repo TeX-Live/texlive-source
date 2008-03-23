@@ -164,6 +164,7 @@
 @define procedure kpseresetprogramname ();
 @define procedure kpsesetprogramenabled ();
 @define procedure libcfree ();
+@define procedure printcstring ();
 @define procedure printreal ();
 @define procedure printversionandexit ();
 @define procedure putbyte ();
