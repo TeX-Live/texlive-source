@@ -1,3 +1,7 @@
+2008-03-24  Karl Berry  <karl@tug.org>
+
+	* printversion.c: it's 2008.
+
 2008-03-16  Karl Berry  <karl@tug.org>
 
 	* texmfmp.c (maininit): don't append DUMP_EXT if it's already
