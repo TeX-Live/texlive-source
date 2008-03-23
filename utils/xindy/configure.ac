@@ -107,7 +107,7 @@ fi
 if test -n "$CLISP"; then
   test -x "$CLISP" || AC_MSG_ERROR([clisp binary is not executable: $CLISP])
   AC_MSG_CHECKING([for clisp library directory])
-  CLISP_LIB=$($CLISP -q -norc -x '(progn (princ *lib-directory*) (values))')
+  CLISP_LIB=`$CLISP -q -norc -x '(progn (princ *lib-directory*) (values))'`
   AC_MSG_RESULT([$CLISP_LIB])
   test -f "$CLISP_LIB/clisp-link" || AC_MSG_ERROR([expected file is not found: $CLISP_LIB/clisp-link])
   test -d "$CLISP_LIB/full" || AC_MSG_ERROR([expected directory is not found: $CLISP_LIB/full])

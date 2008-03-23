@@ -159,7 +159,6 @@ binariesdir = ../binaries
 
 #clisp_modules=--with-export-syscalls --with-dynamic-ffi --ignore-absence-of-libsigsegv
 clisp_modules := --with-dynamic-ffi --ignore-absence-of-libsigsegv
-RM_R = rm -rf
 ORDRULES_FILES = ordrules.c ordrules.h rxsub.c rxsub.h mkind.h debug.h link.sh
 
 # dist rules for clisp are handled via 'darcs dist', so here we include
@@ -328,22 +327,22 @@ all: xindy-build-dir
 @EXT_CLISP_FALSE@	$(MAKE) -C $(clisp_builddir) check || $(MAKE) -C $(clisp_builddir) check
 
 xindy-build-dir: $(CLISP_PREREQ)
-	$(RM_R) xindy-build-dir
-	$(MAKE) -C ordrules ordrulei.c
+	rm -rf xindy-build-dir
 	test -f ordrules/link.sh || for i in $(ORDRULES_FILES); do cp -p $(top_srcdir)/rte/ordrules/$$i ordrules/; done
+	$(MAKE) -C ordrules ordrulei.c
 	sh $(clisp_link) add-module-set ordrules $(fulldir) $@
 	cp $@/lisp.run $(binariesdir)/xindy.run
 	cp $@/lispinit.mem $(binariesdir)/base.mem
 
 clean-local:
-	$(RM_R) xindy-build-dir
+	rm -rf xindy-build-dir
 	$(MAKE) -C ordrules clean
 @EXT_CLISP_FALSE@	if [ -e $(clisp_builddir) ]; then $(MAKE) -C $(clisp_builddir) clean; fi
 
 # remove some extra files to match pristine clisp source
 distclean-local: clean
 	$(MAKE) -C ordrules distclean
-@EXT_CLISP_FALSE@	$(RM_R) $(clisp_builddir)
+@EXT_CLISP_FALSE@	rm -rf $(clisp_builddir)
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

@@ -4951,7 +4951,7 @@ echo "$as_me: error: clisp binary is not executable: $CLISP" >&2;}
    { (exit 1); exit 1; }; }
   { echo "$as_me:$LINENO: checking for clisp library directory" >&5
 echo $ECHO_N "checking for clisp library directory... $ECHO_C" >&6; }
-  CLISP_LIB=$($CLISP -q -norc -x '(progn (princ *lib-directory*) (values))')
+  CLISP_LIB=`$CLISP -q -norc -x '(progn (princ *lib-directory*) (values))'`
   { echo "$as_me:$LINENO: result: $CLISP_LIB" >&5
 echo "${ECHO_T}$CLISP_LIB" >&6; }
   test -f "$CLISP_LIB/clisp-link" || { { echo "$as_me:$LINENO: error: expected file is not found: $CLISP_LIB/clisp-link" >&5

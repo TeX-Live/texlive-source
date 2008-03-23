@@ -54,8 +54,6 @@ clisp_modules := --with-dynamic-ffi --ignore-absence-of-libsigsegv
 
 all: xindy-build-dir
 
-RM_R = rm -rf
-
 if !EXT_CLISP
 $(clisp_builddir): $(clisp_src)
 	cd $(clisp_src) && ./configure $(clisp_builddir) $(clisp_modules)
@@ -75,15 +73,15 @@ endif
 ORDRULES_FILES = ordrules.c ordrules.h rxsub.c rxsub.h mkind.h debug.h link.sh
 
 xindy-build-dir: $(CLISP_PREREQ)
-	$(RM_R) xindy-build-dir
-	$(MAKE) -C ordrules ordrulei.c
+	rm -rf xindy-build-dir
 	test -f ordrules/link.sh || for i in $(ORDRULES_FILES); do cp -p $(top_srcdir)/rte/ordrules/$$i ordrules/; done
+	$(MAKE) -C ordrules ordrulei.c
 	sh $(clisp_link) add-module-set ordrules $(fulldir) $@
 	cp $@/lisp.run $(binariesdir)/xindy.run
 	cp $@/lispinit.mem $(binariesdir)/base.mem
 
 clean-local:
-	$(RM_R) xindy-build-dir
+	rm -rf xindy-build-dir
 	$(MAKE) -C ordrules clean
 if !EXT_CLISP
 	if [ -e $(clisp_builddir) ]; then $(MAKE) -C $(clisp_builddir) clean; fi
@@ -93,7 +91,7 @@ endif
 distclean-local: clean
 	$(MAKE) -C ordrules distclean
 if !EXT_CLISP
-	$(RM_R) $(clisp_builddir)
+	rm -rf $(clisp_builddir)
 endif
 
 # dist rules for clisp are handled via 'darcs dist', so here we include
