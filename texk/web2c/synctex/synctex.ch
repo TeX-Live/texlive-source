@@ -365,13 +365,13 @@ type(page_head):=glue_node; subtype(page_head):=normal;
 @x
 @<Move the cursor past a pseudo-ligature...@>=
 main_p:=lig_ptr(lig_stack);
-if main_p>null then tail_append(main_p);
+if main_p>null then tail_append(main_p); {append a single character}
 temp_ptr:=lig_stack; lig_stack:=link(temp_ptr);
 free_node(temp_ptr,small_node_size);
 @y
 @<Move the cursor past a pseudo-ligature...@>=
 main_p:=lig_ptr(lig_stack);
-if main_p>null then tail_append(main_p);
+if main_p>null then tail_append(main_p); {append a single character}
 temp_ptr:=lig_stack; lig_stack:=link(temp_ptr);
 free_node(temp_ptr,small_node_size); {{\sl synctex} node size watch point: proper size!}
 @z

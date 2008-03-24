@@ -58,7 +58,6 @@ authorization from SIL International.
 @define procedure setdelcode1();
 @define function readcint1();
 @define procedure setcint1();
-@define procedure printcstring();
 @define procedure printutf8str();
 @define procedure setinputfileencoding();
 @define procedure terminatefontmanager;

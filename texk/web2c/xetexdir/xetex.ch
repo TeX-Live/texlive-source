@@ -69,19 +69,19 @@ authorization from SIL International.
 @z
 
 @x
-@d eTeX_banner_k=='This is e-TeXk, Version 3.141592',eTeX_version_string
-@d eTeX_banner=='This is e-TeX, Version 3.141592',eTeX_version_string
+@d eTeX_banner_k=='This is e-TeXk, Version 3.1415926',eTeX_version_string
+@d eTeX_banner=='This is e-TeX, Version 3.1415926',eTeX_version_string
   {printed when \eTeX\ starts}
 @#
-@d TeX_banner_k=='This is TeXk, Version 3.141592' {printed when \TeX\ starts}
-@d TeX_banner=='This is TeX, Version 3.141592' {printed when \TeX\ starts}
+@d TeX_banner_k=='This is TeXk, Version 3.1415926' {printed when \TeX\ starts}
+@d TeX_banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
 @#
 @d banner==eTeX_banner
 @d banner_k==eTeX_banner_k
 @y
-@d XeTeX_banner=='This is XeTeX, Version 3.141592',eTeX_version_string,XeTeX_version_string
+@d XeTeX_banner=='This is XeTeX, Version 3.1415926',eTeX_version_string,XeTeX_version_string
   {printed when \XeTeX\ starts}
-@d XeTeX_banner_k=='This is XeTeXk, Version 3.141592',eTeX_version_string,XeTeX_version_string
+@d XeTeX_banner_k=='This is XeTeXk, Version 3.1415926',eTeX_version_string,XeTeX_version_string
 @#
 @d banner==XeTeX_banner
 @d banner_k==XeTeX_banner_k
@@ -2042,9 +2042,9 @@ declared at this point.
 @z
 
 @x
-primitive("par",par_end,256); {cf. |scan_file_name|}
+primitive("par",par_end,256); {cf.\ |scan_file_name|}
 @y
-primitive("par",par_end,too_big_char); {cf. |scan_file_name|}
+primitive("par",par_end,too_big_char); {cf.\ |scan_file_name|}
 @z
 
 @x
@@ -3874,7 +3874,7 @@ if not no_pdf_output then fflush(dvi_file);
     end else print(").");
   end else begin
     print_nl("Error "); print_int(k); print(" (");
-    if no_pdf_output then printcstring(strerror(k))
+    if no_pdf_output then print_c_string(strerror(k))
     else print("driver return code");
     print(") generating output;");
     print_nl("file "); print(output_file_name); print(" may not be valid.");
@@ -3919,7 +3919,7 @@ shift_amount(r):=0;
 @x
 @p procedure append_to_vlist(@!b:pointer);
 var d:scaled; {deficiency of space between baselines}
-@!p:pointer; {a new glue specification}
+@!p:pointer; {a new glue node}
 begin if prev_depth>ignore_depth then
   begin d:=width(baseline_skip)-prev_depth-height(b);
   if d<line_skip_limit then p:=new_param_glue(line_skip_code)
@@ -3933,7 +3933,7 @@ end;
 @y
 @p procedure append_to_vlist(@!b:pointer);
 var d:scaled; {deficiency of space between baselines}
-@!p:pointer; {a new glue specification}
+@!p:pointer; {a new glue node}
 @!upwards:boolean;
 begin upwards:=XeTeX_upwards;
   if prev_depth>ignore_depth then

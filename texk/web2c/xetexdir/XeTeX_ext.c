@@ -443,14 +443,6 @@ getencodingmodeandinfo(integer* info)
 }
 
 void
-printcstring(const char* str)
-{
-	if (str != NULL)
-		while (*str)
-			printvisiblechar(*(str++));
-}
-
-void
 printutf8str(const unsigned char* str, int len)
 {
 	while (len-- > 0)
