@@ -63,10 +63,11 @@ When running `configure' for clisp, the following options should be noted:
   --ignore-absence-of-libsigsegv
 
     You may optionally install libsigsegv to improve clisp's runtime
-    behavios in case of clisp. If you don't have the libsigsegv
-    library, use the above option to let it build without libsigsegv.
+    behavior.  You may get libsigsegv sources from
+    http://ftp.gnu.org/pub/gnu/libsigsegv/
 
-    You may get libsigsegv sources from http://ftp.gnu.org/pub/gnu/libsigsegv/
+    If you don't have the libsigsegv library, use the above option to
+    let it build without libsigsegv.
 
   --with-libsigsegv-prefix=DIR
   --with-libffcall-prefix=DIR
