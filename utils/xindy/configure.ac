@@ -68,23 +68,23 @@ directory.  I expected it to be in $srcdir/../../texk/kpathsea.
 fi
 AM_CONDITIONAL([TETEX_BUILD],[test "x$enable_tetex_build" = xyes])
 
-dnl use external or internal CLISP
-AC_ARG_WITH(external-clisp, AS_HELP_STRING([--with-external-clisp@<:@=PATH@:>@],[Use the external CLISP binary instead of re-building CLISP from source in the rte/ directory]))
+dnl location of CLISP binary
+AC_ARG_WITH(clisp, AS_HELP_STRING([--with-clisp@<:@=PATH@:>@],[Use the existing CLISP binary instead of re-building CLISP from source in the rte/ directory]))
 
 CLISP=
-if test "x$with_external_clisp" = xyes; then
+if test "x$with_clisp" = xyes; then
   AC_PATH_PROG(CLISP, clisp)
   if test -z "$CLISP"; then
-    AC_MSG_ERROR([--with-external-clisp specified, but clisp binary not found in PATH])
+    AC_MSG_ERROR([--with-clisp specified, but clisp binary not found in PATH])
   fi
-elif test "x$with_external_clisp" = xno; then
+elif test "x$with_clisp" = xno; then
   if test -d "$srcdir/rte/clisp-2.43"; then
     AC_MSG_NOTICE([Using internal clisp])
   else
-    AC_MSG_ERROR([--without-external-clisp specified, but clisp source directory not found at $srcdir/rte/clisp-2.43])
+    AC_MSG_ERROR([--without-clisp specified, but clisp source directory not found at $srcdir/rte/clisp-2.43])
   fi
-elif test -n "$with_external_clisp"; then
-  CLISP="$with_external_clisp"
+elif test -n "$with_clisp"; then
+  CLISP="$with_clisp"
 else
   AC_PATH_PROG(CLISP, clisp)
   if test -n "$CLISP"; then
@@ -104,7 +104,6 @@ if test -n "$CLISP"; then
   test -f "$CLISP_LIB/clisp-link" || AC_MSG_ERROR([expected file is not found: $CLISP_LIB/clisp-link])
   test -d "$CLISP_LIB/full" || AC_MSG_ERROR([expected directory is not found: $CLISP_LIB/full])
   test -d "$CLISP_LIB/linkkit" || AC_MSG_ERROR([expected directory is not found: $CLISP_LIB/linkkit])
-  AC_MSG_NOTICE([Using external clisp])
 fi
 AC_SUBST(CLISP)
 AM_CONDITIONAL([EXT_CLISP], [test -n "$CLISP"])

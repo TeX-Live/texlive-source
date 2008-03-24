@@ -29,7 +29,7 @@ about other compilers.
 
 xindy contains CLISP, see http://clisp.cons.org/. If you have CLISP
 installed already, you can use it with the configure option
---with-external-clisp[=PATH]. This is not intensively tested, though;
+--with-clisp[=PATH]. This is not intensively tested, though;
 if you have problems with the resulting xindy system, please try it
 again with the xindy-internal CLISP.
 
