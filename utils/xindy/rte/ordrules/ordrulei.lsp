@@ -15,30 +15,6 @@
 
 (c-lines "#include \"ordrules.h\"~%")
 
-; clisp does not produce these include calls
-(c-lines
-  (concatenate 'string "#include <termios.h>~%"
-    "#include <bits/ipctypes.h>~%"
-    "#include <stddef.h>~%"))
-
-; The following lines are the lines 1845 to 1858 from
-; http://clisp.cvs.sourceforge.net/clisp/clisp/modules/bindings/glibc/linux.lisp?revision=1.25&view=markup
-
-;;; ============================== <dirent.h> ================================
-(c-lines "#include <dirent.h>~%")
-
-;;; ----------------------------- <bits/dirent.h> ---------------------------
-;; d_type is only in dirent64, not in dirent in <linux/dirent.h>,
-;; but it appears to BE required, and does appear in <bits/dirent.h>
-
-(c-lines "#ifndef __USE_FILE_OFFSET64
-typedef __ino_t clisp_dirent_ino_t;
-typedef __off_t clisp_dirent_off_t;
-#else
-typedef __ino64_t clisp_dirent_ino_t;
-typedef __off64_t clisp_dirent_off_t;
-#endif~%")
-
 ; Common OS definitions:
 (def-c-type size_t uint)
 
