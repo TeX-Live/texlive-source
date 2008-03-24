@@ -65,23 +65,30 @@ export GNUMAKE
 # build, so omit the warning about it.
 : ${KPATHSEA_WARNING=0}
 
-# configure && make.
-(set -x; \
-   eval $TL_BUILD_ENV time $TL_CONFIGURE \
-         --prefix=$TL_INSTALL_DEST \
-         --datadir=$TL_INSTALL_DEST \
-         $TL_XDVI_TOOLKIT \
-         $TL_CONFIGURE_ARGS \
-         "$@" 2>&1 | tee configure.log\
- && eval $TL_BUILD_ENV time $TL_MAKE $TL_TARGET 2>&1 | tee make.log)
+# configure && make.  Keep the tee outside, so that we can detect
+# failure at either step.
+{
+  set -x; \
+  eval $TL_BUILD_ENV time $TL_CONFIGURE \
+        --prefix=$TL_INSTALL_DEST \
+        --datadir=$TL_INSTALL_DEST \
+        $TL_XDVI_TOOLKIT \
+        $TL_CONFIGURE_ARGS \
+        "$@" \
+  && eval $TL_BUILD_ENV time $TL_MAKE $TL_TARGET
+  exitstatus=$?
+} 2>&1 | tee build.log
+ 
 
 # report the number of binaries built.
 bindir=$TL_INSTALL_DEST/bin
 count=`ls $bindir/*/* | wc -l`
 if test "$count" -gt 0; then
-  echo "$0: $count binaries under $bindir."
+  echo
+  echo "$0: $count binaries in $bindir."
 else
   echo "$0: Build failed, no binaries under $bindir."
   exit 1
 fi
 
+exit $exitstatus
