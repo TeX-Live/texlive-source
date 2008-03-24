@@ -1,3 +1,7 @@
+2008-03-25  Karl Berry  <karl@tug.org>
+
+	* tftopl.web: revised version 3.2 from Knuth.
+
 2008-03-24  Karl Berry  <karl@tug.org>
 
 	* tex.ch: use print_c_string to print the new prompt_file_name

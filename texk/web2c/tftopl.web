@@ -31,7 +31,7 @@
   \vfill
   \centerline{\titlefont The {\ttitlefont TFtoPL} processor}
   \vskip 15pt
-  \centerline{(Version 3.1, November 1989)}
+  \centerline{(Version 3.2, February 2008)}
   \vfill}
 \def\botofcontents{\vfill
   \centerline{\hsize 5in\baselineskip9pt
@@ -62,7 +62,7 @@ Extensions for an enhanced ligature mechanism were added by the author in 1989.
 The |banner| string defined here should be changed whenever \.{TFtoPL}
 gets modified.
 
-@d banner=='This is TFtoPL, Version 3.1' {printed when the program starts}
+@d banner=='This is TFtoPL, Version 3.2' {printed when the program starts}
 
 @ This program is written entirely in standard \PASCAL, except that
 it occasionally has lower case letters in strings that are output.
