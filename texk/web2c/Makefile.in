@@ -1,4 +1,4 @@
-# $Id: //depot/Build/source.development/TeX/texk/web2c/Makefile.in#66 $
+# $Id$
 # @configure_input@
 # Makefile for web2c --kb@mail.tug.org. Public domain.
 version = @WEB2CVERSION@
@@ -555,6 +555,7 @@ trip-clean:
 # 
 # Helper makefile fragment for pdf*tex.
 kpse_include pdftexdir/pdftexlib.mk
+#LUATEXkpse_include pdftexdir/luatexlib.mk
 # 
 # Makefile fragments:
 kpse_include etexdir/etex.mk
@@ -562,6 +563,7 @@ kpse_include omegadir/omega.mk
 kpse_include alephdir/aleph.mk
 kpse_include pdftexdir/pdftex.mk
 kpse_include xetexdir/xetex.mk
+#LUATEXkpse_include luatexdir/luatex.mk
 
 # 
 # non-engine programs.
@@ -575,7 +577,8 @@ programs = bibtex ctangle ctie cweave dvicopy dvitomp dvitype gftodvi gftopk \
 engines = $(tex) $(etex) $(mf) $(mfn) $(metapost) \
           $(omega) $(aleph) \
           $(pdftex) $(pdfetex) \
-          $(xetex)
+          $(xetex) #LUATEX\
+#LUATEX          $(luatex)
 
 programs: $(programs) $(engines) $(mpware_programs) \
           $(omegafonts_programs) $(otps_programs) $(pdftosrc)
@@ -1125,7 +1128,7 @@ installcheck:
 
 # 
 # Cleaning.
-all_subdirs = doc lib man $(mpware) web2c window $(omegafonts) $(otps) $(pdftexdir) $(mpostdir)
+all_subdirs = doc lib man $(mpware) web2c window $(omegafonts) $(otps) $(pdftexdir) $(mpostdir) #LUATEX $(luatexdir)
 
 # Having a multiple-target rule with the subdir loop fails because of
 # the dependencies introduced by clean.mk.  Yet, we want the

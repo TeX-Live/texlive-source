@@ -1,0 +1,122 @@
+<html><body>
+<h1>Cryptographic Library for Lua 5.0</h1>
+
+<p>
+This library offers basic cryptographic facilities for Lua 5.0:
+a hash (digest) function, an a pair crypt/decrypt.
+(<a href=md5.tar.gz>download</a>)
+
+
+<h2>Lua API</h2>
+
+All functions are registered inside a table <code>md5</code>.
+
+<ul>
+
+<li><code>md5.sum (message)</code>
+<p>
+Computes the MD5 message-digest of the string <code>message</code>.
+This function takes as input a message of arbitrary length and content
+and returns as output a 128-bit "fingerprint" (or "message digest")
+of the input.
+The output is formated as a binary string with 16 characters.
+It is conjectured that it is computationally infeasible to produce
+two messages having the same message digest, or to produce any
+message having a given pre-specified target message digest.
+(see <a href="ftp://ftp.isi.edu/in-notes/rfc1321.txt">
+RFC 1321</a>)
+<p>
+
+<li><code>md5.sumhexa (message)</code>
+<p>
+Similar to <code>md5.sum</code>,
+but returns its value as a string of 32 hexadecimal digits.
+
+<li><code>md5.crypt (message, key [,seed])</code>
+<p>
+Encrypts a string, using MD5 in CFB (Cipher-feedback mode).
+<code>message</code> is an arbitrary binary string to be encrypted.
+<code>key</code> is an arbitrary binary string to be used as a key.
+<code>seed</code> is an arbitrary binary string to be used as a seed;
+Returns the cyphertext (as a binary string).
+
+<p>
+If no seed is provided,
+the function uses the result of <code>os.time()</code> as a seed.
+It is recommended that you use different seeds for each message;
+the seed itself is not private, and should contain no private data,
+because it goes plain in the beginning of the encrypted message.
+
+<p>
+The length of the cyphertext is the length of the message plus the
+length of the seed plus one.
+<p>
+
+<li><code>md5.decrypt (message, key)</code>
+<p>
+Decrypts a string.
+The input <code>message</code> must be the result of a previous call
+to <code>crypt</code>.
+For any <code>msg</code>, <code>key</code>,
+and <code>seed</code>, we have that
+<pre>
+  md5.decrypt(md5.crypt(msg, key, seed), key) == msg
+</pre>
+<p>
+
+<li><code>md5.exor (s1, s2)</code>
+<p>
+Does a bit-a-bit exclusive or of strings <code>s1</code> and <code>s2</code>.
+Both strings must have the same length,
+which will be also the length of the resulting string.
+<p>
+
+</ul>
+
+
+<h2>C API</h2>
+
+The following functions are declared in <code>md5.h</code>
+<ul>
+
+<li><code>int luaopen_md5 (lua_State *L);</code>
+<p>
+Opens the library:
+Registers the above Lua functions in the given state.
+<p>
+
+<li><code>void md5 (const char *message, long len, char *output);</code>
+<p>
+Computes the MD5 message-digest of <code>message</code>.
+<code>len</code> is the length of <code>message</code>.
+<code>output</code> is a buffer that receives the result;
+it must have at least 16 bytes (128 bits).
+<p>
+
+</ul>
+
+<h2>INSTALL</h2>
+
+The following instructions assume that your Lua installation has a dynamic
+linking facility (function <code>loadlib</code>):
+
+<ul>
+
+<li>Build a shared library (<code>.so</code>, <code>.dll</code>, etc.)
+with files <code>md5.c</code> and <code>md5lib.c</code>.
+(There is a <code>makefile</code> for Linux and similar systems.)
+
+<li>Put the shared library somewhere,
+and edit file <code>md5.lua</code> to point to it.
+
+<li>Put the file <code>md5.lua</code> in a directory of your
+<code>LUA_PATH</code>.
+
+</ul>
+
+<p><br><small><em>
+$Id: md5.html,v 1.4 2003/04/28 16:40:42 roberto Exp $
+</em></small>
+
+</body></html>
+

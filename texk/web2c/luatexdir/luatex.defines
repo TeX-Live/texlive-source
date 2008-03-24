@@ -1,0 +1,560 @@
+{
+Copyright (c) 1996-2006 Han The Thanh, <thanh@pdftex.org>
+
+This file is part of pdfTeX.
+
+pdfTeX is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+pdfTeX is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with pdfTeX; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+$Id $
+}
+
+{ luatex.defines: additions for luaTeX }
+
+@define function new_node();
+@define function new_glyph_node;
+@define procedure flush_node();
+@define function copy_node();
+@define procedure couple_nodes();
+@define function copy_node_list();
+@define procedure flush_node_list();
+@define function string_to_pseudo();
+@define function do_set_attribute();
+@define function copy_attribute_list();
+@define procedure add_node_attr_ref();
+@define procedure replace_attribute_list();
+@define procedure update_attribute_cache;
+
+@define function new_span_node();
+
+@define function sizeof();
+@define procedure memset();
+@define function realloc();
+@define function malloc();
+@define function voidcast();
+@define function fixmemcast();
+@define function varmemcast();
+@define type void;
+@define procedure init_node_mem();
+@define procedure print_node_mem_stats();
+@define procedure dump_node_mem;
+@define procedure undump_node_mem;
+@define function visible_last_node_type();
+@define var NULL;
+@define var varmem;
+@define var var_mem_max;
+@define procedure check_buffer_overflow();
+@define procedure check_pool_overflow();
+
+@define function new_ligkern();
+@define function make_lang_data();
+@define procedure ext_do_line_break();
+@define procedure initialize_active;
+@define var active_node_size;
+@define var prev_char_p;
+@define function cur_break();
+@define function break_node();
+
+@define function divide_scaled();
+@define function divide_scaled_n();
+
+@define procedure new_hyphenation();
+@define procedure load_tex_hyphenation();
+@define procedure load_tex_patterns();
+@define procedure dump_language_data;
+@define procedure undump_language_data;
+@define function insert_discretionary();
+@define procedure set_pre_hyphen_char();
+@define procedure set_post_hyphen_char();
+@define function get_pre_hyphen_char();
+@define function get_post_hyphen_char();
+
+{ macros from luatex.h }
+@define function pdf_char_marked();
+@define function tex_b_open_in();
+@define function vf_b_open_in ();
+@define procedure pdf_mark_char();
+@define procedure writepdf();
+@define procedure pdfassert();
+
+@define procedure luacall();
+@define procedure luatokencall();
+@define procedure closelua();
+
+@define function  luacstring_input;
+@define function  luacstring_penultimate;
+@define function  luacstring_detokenized;
+@define function  luacstring_cattable;
+@define function  luacstring_defaultcattable;
+@define function  luacstring_simple;
+@define procedure luacstring_close();
+@define procedure luacstring_start();
+
+{ for callbacks }
+
+@define function  run_callback();
+@define function  run_and_save_callback();
+@define function  run_saved_callback();
+@define procedure destroy_saved_callback();
+@define function  callback_defined();
+@define function  callbackluaid();
+@define var find_write_file_callback;
+@define var find_output_file_callback;
+@define var find_image_file_callback;
+@define var find_format_file_callback;
+@define var find_read_file_callback;      
+@define var open_read_file_callback;
+@define var find_ocp_file_callback;
+@define var read_ocp_file_callback;
+@define var find_vf_file_callback;
+@define var read_vf_file_callback;
+@define var find_data_file_callback;
+@define var read_data_file_callback;
+@define var find_font_file_callback;
+@define var read_font_file_callback;
+@define var find_map_file_callback;
+@define var read_map_file_callback;
+@define var find_enc_file_callback;
+@define var read_enc_file_callback;
+@define var find_type1_file_callback;
+@define var read_type1_file_callback;
+@define var find_truetype_file_callback;
+@define var read_truetype_file_callback;
+@define var find_opentype_file_callback;
+@define var read_opentype_file_callback;
+@define var find_sfd_file_callback;
+@define var read_sfd_file_callback;
+@define var find_pk_file_callback;
+@define var read_pk_file_callback;
+@define var show_error_hook_callback;
+@define var process_input_buffer_callback;
+@define var start_page_number_callback;
+@define var stop_page_number_callback;
+@define var start_run_callback;
+@define var stop_run_callback;
+@define var define_font_callback;
+@define var token_filter_callback;
+@define var pre_linebreak_filter_callback;
+@define var post_linebreak_filter_callback;
+@define var buildpage_filter_callback;
+@define var hyphenate_callback;
+
+@define function lua_hyphenate_callback();
+
+@define procedure get_saved_lua_boolean();
+@define procedure get_saved_lua_number();
+@define procedure get_saved_lua_string();
+@define procedure get_lua_boolean();
+@define procedure get_lua_number();
+@define procedure get_lua_string();
+
+@define procedure get_token_lua;
+@define procedure lua_node_filter();
+@define procedure lua_node_filter_s();
+@define function lua_hpack_filter();
+@define function lua_vpack_filter();
+
+{ bits for extended char code access }
+
+@define function get_math_code();
+@define procedure set_math_code();
+@define function get_del_code_a();
+@define function get_del_code_b();
+@define procedure set_del_code();
+
+@define procedure unsave_math_codes ();
+@define procedure initialize_math_codes;
+@define procedure dump_math_codes;
+@define procedure undump_math_codes;
+
+@define function get_lc_code();
+@define procedure set_lc_code();
+
+@define function get_uc_code();
+@define procedure set_uc_code();
+
+@define function get_sf_code();
+@define procedure set_sf_code();
+
+@define function get_cat_code();
+@define procedure set_cat_code();
+
+@define function valid_catcode_table ();
+@define procedure clear_catcode_stack ();
+@define procedure copy_cat_codes ();
+@define procedure initex_cat_codes ();
+@define procedure unsave_cat_codes ();
+@define procedure unsave_text_codes ();
+@define procedure initializetextcodes;
+@define procedure dumptextcodes;
+@define procedure undumptextcodes;
+
+@define procedure dumpluacregisters;
+@define procedure undumpluacregisters;
+
+@define function do_a_open_out();
+@define function do_b_open_out();
+
+@define procedure flush_loggable_info;
+
+@define var extra_version_info;
+
+{ bits and pieces from aleph }
+
+@define procedure btestin ;
+
+@define function readtfmfile();
+@define function next_vf_byte;
+@define function read_vf_file();
+@define function read_ocp_file();
+@define function read_data_file();
+
+@define var ocp_tables;
+
+@define procedure allocate_ocp_table ();
+@define procedure dump_ocp_table ();
+@define procedure undump_ocp_table ();
+@define procedure run_external_ocp ();
+
+@define function loadpoolstrings();
+
+{ 'texfont' library definitions }
+
+@define procedure dump_font ();
+@define procedure undump_font ();
+@define function  is_valid_font();
+@define function  copy_font();
+@define function  scale_font();
+@define function  max_font_id;
+@define procedure set_max_font_id();
+
+@define function font_name();
+@define function font_area();
+@define function get_font_name();
+@define function get_font_area();
+@define function font_bc();
+@define function font_ec();
+
+@define function tex_font_name();
+@define function tex_font_area();
+@define procedure set_tex_font_name();
+
+@define procedure set_pdf_font_size();
+@define procedure set_pdf_font_num();
+@define procedure set_pdf_font_blink();
+@define procedure set_pdf_font_elink();
+@define procedure set_pdf_font_expand_ratio();
+@define procedure set_pdf_font_shrink();
+@define procedure set_pdf_font_stretch();
+@define procedure set_pdf_font_step();
+@define procedure set_pdf_font_auto_expand();
+@define procedure set_pdf_font_attr();
+
+@define function pdf_font_size();
+@define function pdf_font_num();
+@define function pdf_font_blink();
+@define function pdf_font_elink();
+@define function pdf_font_expand_ratio();
+@define function pdf_font_shrink();
+@define function pdf_font_stretch();
+@define function pdf_font_step();
+@define function pdf_font_auto_expand();
+@define function pdf_font_attr();
+
+@define function cmp_font_area();
+@define function cmp_font_name();
+@define function font_shareable();
+
+@define function fontglue();
+@define procedure setfontglue();
+
+@define function font_check_0();
+@define function font_check_1();
+@define function font_check_2();
+@define function font_check_3();
+
+@define function font_size();
+@define function font_slant();
+@define function font_extend();
+@define function font_used();
+@define procedure set_font_used();
+@define function font_touched();
+@define procedure set_font_touched();
+
+@define function font_dsize();
+@define function font_natural_dir();
+
+@define function font_params();
+@define function font_param();
+@define procedure set_font_params();
+@define procedure set_font_param();
+@define function slant();
+@define function quad();
+@define function x_height();
+@define function space();
+@define function extra_space();
+@define function space_stretch();
+@define function space_shrink();
+
+@define function font_kerns();
+@define function font_kern_sc();
+@define procedure adjust_font_kern();
+
+@define function font_italics();
+@define function font_italic();
+@define procedure set_font_italic();
+
+@define function has_lig();
+@define function has_kern();
+
+@define type liginfo;
+
+@define function get_ligature();
+@define function is_valid_ligature();
+@define function lig_type();
+@define function lig_replacement();
+
+@define function is_ligature();
+@define function is_leftboundary();
+@define function is_rightboundary();
+
+@define procedure set_to_character();
+@define procedure set_to_glyph();
+@define procedure set_is_leftghost();
+@define procedure set_is_rightghost();
+
+@define var non_boundarychar;
+
+@define function ext_top();
+@define function ext_mid();
+@define function ext_bot();
+@define function ext_rep();
+
+@define var ext_tag;
+@define var list_tag;
+
+@define var virtual_font_type;
+@define function font_type();
+
+@define function font_format();
+@define function char_index();
+@define function font_cidregistry();
+@define function font_encodingbytes();
+
+@define function font_map();
+@define procedure set_font_map();
+
+
+@define function hyphen_char();
+@define function skew_char();
+@define procedure set_hyphen_char();
+@define procedure set_skew_char();
+@define function char_exists();
+
+@define function char_used();
+@define function char_name();
+@define function char_width();
+@define function char_height();
+@define function char_depth();
+@define function char_italic();
+@define function char_tag();
+@define procedure set_char_tag();
+@define function char_remainder();
+
+@define function char_info_short();
+
+@define function has_packet();
+@define procedure do_vf_packet();
+@define function expand_font_name();
+@define function auto_expand_font();
+@define procedure vf_expand_local_fonts();
+@define function letter_space_font();
+@define function read_font_info();
+
+@define function get_tag_code();
+@define function get_lp_code();
+@define function get_rp_code();
+@define function get_ef_code();
+@define procedure set_tag_code();
+@define procedure set_lp_code();
+@define procedure set_rp_code();
+@define procedure set_ef_code();
+
+@define function test_no_ligatures();
+@define procedure set_no_ligatures();
+
+@define function get_kern();
+@define function charkern();
+
+{ functions from mapfile.c }
+@define function hasfmentry();
+@define procedure checkextfm();
+@define procedure pdfmapfile();
+@define procedure pdfmapline();
+@define procedure pdf_init_map_file();
+
+@define procedure writefontstuff;
+
+{ functions from utils.c }
+@define procedure escapehex();
+@define procedure escapename();
+@define procedure escapestring();
+@define function ext_xn_over_d();
+@define procedure getcreationdate;
+@define function get_resname_prefix;
+@define function makecstring();
+
+@define procedure append_string();
+@define procedure matchstrings();
+@define procedure libpdffinish;
+@define procedure makepdftexbanner;
+@define procedure printcreationdate;
+@define procedure printmoddate;
+@define procedure print_ID();
+@define procedure set_job_id();
+@define procedure unescapehex();
+@define procedure write_stream_length();
+@define procedure removepdffile;
+@define procedure garbagewarning;
+@define function newcolorstack();
+@define function colorstackset();
+@define function colorstackpush();
+@define function colorstackpop();
+@define function colorstackcurrent();
+@define function colorstackused;
+@define function colorstackskippagestart();
+@define procedure checkpdfsave();
+@define procedure checkpdfrestore();
+@define procedure pdfshipoutbegin();
+@define procedure pdfshipoutend();
+@define procedure pdfsetmatrix();
+@define procedure matrixtransformpoint();
+@define procedure matrixtransformrect();
+@define function matrixused;
+@define procedure matrixrecalculate();
+@define function getllx;
+@define function getlly;
+@define function geturx;
+@define function getury;
+
+{functions from texpdf.c }
+
+@define procedure pdf_print_char();
+@define procedure pdf_print();
+@define procedure pdf_print_int();
+@define procedure pdf_print_real();
+@define procedure pdf_print_str();
+
+{functions from textoken.c }
+
+@define function get_next;
+
+{ functions from vfpacket.c }
+@define function new_vf_packet();
+@define function packet_byte;
+@define procedure start_packet();
+@define procedure store_packet();
+
+{ functions from writefont.c }
+@define procedure do_pdf_font();
+
+{ functions from writeimg.c }
+@define function check_image_b();
+@define function check_image_c();
+@define function check_image_i();
+@define function epdf_orig_x();
+@define function epdf_orig_y();
+@define function image_pages();
+@define function image_colordepth();
+@define function image_index();
+@define function image_width();
+@define function image_height();
+@define function image_depth();
+@define function image_objnum();
+@define function image_imgnum();
+@define function is_pdf_image();
+@define function read_image();
+@define function new_image_entry;
+@define procedure update_image_procset();
+@define procedure write_image();
+@define procedure scale_image();
+@define procedure set_image_dimensions();
+@define procedure set_image_index();
+@define procedure out_image();
+
+{ functions from limglib.c }
+@define procedure lua_setximage();
+
+{ functions from writet3.c }
+@define function get_pk_char_width();
+
+{ functions from writezip.c }
+@define procedure write_zip();
+
+{ functions from avlstuff.c }
+@define procedure avl_put_obj();
+@define function avl_find_obj();
+
+{ functions from tounicode.c }
+@define procedure def_tounicode();
+
+{ end of luatex.defines }
+
+{texmf.defines}
+
+@define type two_halves;
+@define type four_quarters;
+
+@define function input_ln ();
+@define function is_new_source ();
+@define function get_job_name ();
+@define function make_full_name_string;
+
+@define procedure seconds_and_micros ();
+@define function ocp_open_in ();
+@define function open_in_name_ok ();
+@define function open_out_name_ok ();
+
+@define function w_open_in ();
+@define function w_open_out ();
+
+@define procedure dump_hh ();
+@define procedure dump_int ();
+@define procedure dump_things ();
+@define procedure dump_wd ();
+
+@define procedure undump_hh ();
+@define procedure undump_int ();
+@define procedure undump_qqqq ();
+@define procedure undump_things ();
+@define procedure undump_checked_things ();
+@define procedure undump_upper_check_things ();
+@define procedure undump_wd ();
+@define procedure w_close ();
+
+{common.defines}
+
+@define type memory_word; {for gftodvi, TeX, and Metafont}
+
+@define function a_open_in ();
+@define procedure a_close ();
+@define procedure b_close ();
+@define function a_open_out ();
+@define function b_open_out ();
+
+@define procedure write_dvi ();
+@define procedure write_pdf ();
+@define procedure write_ln ();
+
+@define procedure recorder_change_filename ();

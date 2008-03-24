@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "luazip_dll", "luazip_dll.vcproj", "{F7323180-F4E8-4994-9DE4-DB985CF23033}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "luazip_static", "luazip_static.vcproj", "{F4571BC6-4181-4D7C-BA2A-4398140445D0}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{F7323180-F4E8-4994-9DE4-DB985CF23033}.Debug.ActiveCfg = Debug|Win32
+		{F7323180-F4E8-4994-9DE4-DB985CF23033}.Debug.Build.0 = Debug|Win32
+		{F7323180-F4E8-4994-9DE4-DB985CF23033}.Release.ActiveCfg = Release|Win32
+		{F7323180-F4E8-4994-9DE4-DB985CF23033}.Release.Build.0 = Release|Win32
+		{F4571BC6-4181-4D7C-BA2A-4398140445D0}.Debug.ActiveCfg = Debug|Win32
+		{F4571BC6-4181-4D7C-BA2A-4398140445D0}.Debug.Build.0 = Debug|Win32
+		{F4571BC6-4181-4D7C-BA2A-4398140445D0}.Release.ActiveCfg = Release|Win32
+		{F4571BC6-4181-4D7C-BA2A-4398140445D0}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

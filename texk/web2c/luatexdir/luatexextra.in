@@ -1,0 +1,42 @@
+/*
+Copyright (c) 1996-2004 Han The Thanh, <thanh@pdftex.org>
+
+This file is part of pdfTeX.
+
+pdfTeX is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+pdfTeX is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with pdfTeX; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+$Id$
+*/
+
+/* luatexextra.in: banner etc. for luaTeX.
+
+   This is included by luaTeX, from ../luatexextra.c
+   (generated from ../lib/texmfmp.c).
+*/
+
+#define BANNER "This is luaTeX, Version 3.141592-LUATEX-VERSION-ETEX-VERSION"
+#define COPYRIGHT_HOLDER "Taco Hoekwater"
+#define AUTHOR NULL
+#define PROGRAM_HELP LUATEXHELP
+#define BUG_ADDRESS "dev-luatex@ntg.nl"
+#define DUMP_VAR TEX_format_default
+#define DUMP_LENGTH_VAR format_default_length
+#define DUMP_OPTION "fmt"
+#define DUMP_EXT ".fmt"
+#define INPUT_FORMAT kpse_tex_format
+#define INI_PROGRAM "luainitex"
+#define VIR_PROGRAM "luavirtex"
+#define TEXMFENGINENAME "luatex"
+

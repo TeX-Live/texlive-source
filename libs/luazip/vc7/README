@@ -1,0 +1,27 @@
+These are the Visual Studio 7 projects provided by the Kepler Project
+
+Files:
+
+	luazip_dll.vcproj
+	luazip_static.vcproj
+	luazip.sln
+	README
+
+Generated files:
+
+	lzip.suo
+
+	../lib/vc7/libzip.lib
+	../lib/vc7/libzipd.lib
+	../lib/vc7/zip.exp
+	../lib/vc7/zip.lib
+	../lib/vc7/zipd.exp
+	../lib/vc7/zipd.lib
+	../lib/vc7/zipd.pdb
+
+	../bin/vc7/zip.dll
+	../bin/vc7/zipd.dll
+	../bin/vc7/zipd.ilk
+
+Download source from:
+	http://prdownloads.sourceforge.net/zziplib/zziplib-0.12.83.tar.bz2?download

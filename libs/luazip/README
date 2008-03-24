@@ -1,0 +1,3 @@
+
+LuaZip is a Lua extension library used to read files stored inside zip files.
+Please see docs at doc/index.html or http://www.keplerproject.org/luazip

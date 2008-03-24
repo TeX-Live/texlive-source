@@ -1,5 +1,6 @@
 /* Some definitions that get appended to the `coerce.h' file that web2c
    outputs.  */
+/* $Id$ */
 
 /* The C compiler ignores most unnecessary casts (i.e., casts of
    something to its own type).  However, for structures, it doesn't.
@@ -48,6 +49,10 @@ extern boolean isnewsource P2H(strnumber, int);
 extern poolpointer makesrcspecial P2H(strnumber, int);
 extern void remembersourceinfo P2H(strnumber, int);
 #endif
+
+#ifdef luaTeX
+#include <luatexdir/luatex.h>
+#endif /* luaTeX */
 
 #ifdef pdfTeX
 #include <pdftexdir/pdftex.h>

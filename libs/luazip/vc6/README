@@ -1,0 +1,28 @@
+These are the Visual Studio 6 projects provided by the Kepler Project
+
+Files:
+
+	luazip_dll.dsp
+	luazip_static.dsp
+	luazip.dsw
+	README
+
+Generated files:
+
+	luazip.ncb
+	luazip.opt
+
+	../lib/vc6/libzip.lib
+	../lib/vc6/libzipd.lib
+	../lib/vc6/zip.exp
+	../lib/vc6/zip.lib
+	../lib/vc6/zipd.exp
+	../lib/vc6/zipd.lib
+	../lib/vc6/zipd.pdb
+
+	../bin/vc6/zip.dll
+	../bin/vc6/zipd.dll
+	../bin/vc6/zipd.ilk
+
+Download source from:
+	http://prdownloads.sourceforge.net/zziplib/zziplib-0.12.83.tar.bz2?download
