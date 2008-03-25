@@ -2321,7 +2321,7 @@ romanian/latin2.pl : romanian/utf8.pl
 
 %latin5.pl : %utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
-	iconv -f UTF-8 -t ISO8859-5 >$@
+	iconv -f UTF-8 -t ISO-8859-9 >$@
 
 %latin9.pl : %utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;s/@9{\([^}]*\)}/\1/g;' <$< | \
