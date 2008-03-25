@@ -315,8 +315,8 @@ BEGIN {
 	$modules_dir = "$cmd_dir/../modules";
     } elsif ( -d "$lib_dir/modules" ) {	# /usr style
 	$modules_dir = "$lib_dir/modules";
-    } elsif ( -d "$lib_dir/../../texmf/scripts/xindy" ) { # texlive style
-	$modules_dir = "$lib_dir/../../texmf/scripts/xindy";
+    } elsif ( -d "$lib_dir/../../texmf/xindy" ) { # texlive style
+	$modules_dir = "$lib_dir/../../texmf/xindy";
     } elsif ( -d "/usr/share/xindy" ) { # FSH style
 	$modules_dir = "/usr/share/xindy";
     } else {

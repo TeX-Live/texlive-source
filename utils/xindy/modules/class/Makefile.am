@@ -20,7 +20,7 @@
 ## Boston, MA 02110-1301 USA.
 
 if TETEX_BUILD
-    modulesdir = $(prefix)/texmf/scripts/xindy
+    modulesdir = $(prefix)/texmf/xindy
 else
     modulesdir = $(pkgdatadir)
 endif

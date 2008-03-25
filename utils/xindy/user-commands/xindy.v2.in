@@ -160,8 +160,8 @@ if ( -d "$cmd_dir/../modules" ) {	# /opt style
     $modules_dir = "$cmd_dir/../modules";
 } elsif ( -d "$LibDir/modules" ) {	# /usr or /usr/local style
     $modules_dir = "$LibDir/modules";
-} elsif ( -d "$LibDir/../../texmf/scripts/xindy" ) { # texlive style
-    $modules_dir = "$LibDir/../../texmf/scripts/xindy";
+} elsif ( -d "$LibDir/../../texmf/xindy" ) { # texlive style
+    $modules_dir = "$LibDir/../../texmf/xindy";
 } else {
     die "Cannot locate xindy modules directory";
 }

@@ -29,7 +29,7 @@ MEMFILE    = xindy.mem
 XINDY_RUN  = ./xindy.run -q -M ./base.mem
 
 if TETEX_BUILD
-    MODULEDIR = $(prefix)/texmf/scripts/xindy
+    MODULEDIR = $(prefix)/texmf/xindy
     kerneldir = $(bindir)
 else
 # Where the modules are found at runtime.

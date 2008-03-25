@@ -20,7 +20,7 @@
 ## Boston, MA 02110-1301 USA.
 
 if TETEX_BUILD
-    langdir = $(prefix)/texmf/scripts/xindy/lang
+    langdir = $(prefix)/texmf/xindy/lang
 else
     langdir = $(pkgdatadir)/lang
 endif
