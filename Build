@@ -65,10 +65,11 @@ export GNUMAKE
 # build, so omit the warning about it.
 : ${KPATHSEA_WARNING=0}
 
+# set -vx
+
 # configure && make.  Keep the tee outside, so that we can detect
 # failure at either step.
 {
-  set -x; \
   eval $TL_BUILD_ENV time $TL_CONFIGURE \
         --prefix=$TL_INSTALL_DEST \
         --datadir=$TL_INSTALL_DEST \
@@ -76,7 +77,10 @@ export GNUMAKE
         $TL_CONFIGURE_ARGS \
         "$@" \
   && eval $TL_BUILD_ENV time $TL_MAKE $TL_TARGET
-  exitstatus=$?
+  
+  # Too arcane to try to propagate the exit status through a pipeline.
+  # Just use a temp file.
+  echo $? >exitstatus.txt
 } 2>&1 | tee build.log
  
 
@@ -89,6 +93,6 @@ if test "$count" -gt 0; then
 else
   echo "$0: Build failed, no binaries under $bindir."
   exit 1
-fi
+fi | tee -a build.log
 
-exit $exitstatus
+exit `cat exitstatus.txt`
