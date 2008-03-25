@@ -1719,7 +1719,7 @@ if type(p)<left_noad then print_subsidiary_data(nucleus(p),".");
 @y
 right_noad: begin if subtype(p)=normal then print_esc("right")
   else print_esc("middle");
-  print_delimiter(nucleus(p));
+  print_delimiter(delimiter(p));
   end;
 end;
 if type(p)<left_noad then
