@@ -52,6 +52,7 @@ case $basefile in
     midcmd="| sed -f $srcdir/web2c/cvtbib.sed";;
   mf) # MF and MP are almost the same.
     more_defines="$srcdir/web2c/texmf.defines $srcdir/web2c/mfmp.defines"
+    more_defines="$more_defines $srcdir/web2c/loadpool.defines"
     precmd="| sed -f $srcdir/web2c/cvtmf1.sed"
     web2c_options="-m -c${basefile}coerce"
     hfile=texmfmp.h
@@ -78,7 +79,23 @@ ${basefile}coerce.h"
     output_files="$basefile[0-9].c ${basefile}ini.c ${basefile}d.h \
 ${basefile}coerce.h"
     ;;
-  tex|eomega|etex|pdftex|pdfetex|omega|aleph|xetex)
+  tex|etex)
+    more_defines="$srcdir/web2c/texmf.defines"
+    more_defines="$more_defines $srcdir/web2c/loadpool.defines"
+    prog_defines="$srcdir/${basefile}dir/$basefile.defines"
+    if test -f $prog_defines; then
+      more_defines="$more_defines $prog_defines"
+    fi
+    web2c_options="-t -c${basefile}coerce"
+    hfile=texmfmp.h
+    fixwrites_options=-t
+    postcmd="| ./web2c/splitup $splitup_options ${basefile}"
+    cfile=${basefile}2.c # last output file, or thereabouts
+    output=
+    output_files="$basefile[0-9].c ${basefile}ini.c ${basefile}d.h \
+${basefile}coerce.h"
+    ;;
+  pdftex|pdfetex|omega|aleph|xetex)
     more_defines="$srcdir/web2c/texmf.defines"
     prog_defines="$srcdir/${basefile}dir/$basefile.defines"
     if test -f $prog_defines; then
@@ -123,7 +140,7 @@ case $basefile in
     sed -e 's/(buftype)//g' -e 's/(pdstype)//g' <bibtex.h >xbibtex.h
     mv xbibtex.h bibtex.h
     ;;
-  tex|eomega|etex|pdftex|pdfetex|omega|aleph|mf|mp|xetex)
+  tex|etex|pdftex|pdfetex|omega|aleph|mf|mp|xetex)
     sleep 2 # so timestamps are definitely later, to avoid make weirdness
     cat ${basefile}coerce.h $srcdir/web2c/coerce.h >x${basefile}coerce.h
     mv x${basefile}coerce.h ${basefile}coerce.h

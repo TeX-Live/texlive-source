@@ -1,5 +1,17 @@
 2008-03-25  Karl Berry  <karl@tug.org>
 
+	 * Makefile.in,
+	 * tmf-pool.h,
+	 * mf-binpool.ch,
+	 * tex-mkcpool.c,
+	 * mf-mkcpool.c,
+	 * etexdir/etex.mk,
+	 * etexdir/etex-binpool.ch,
+	 * tex-binpool.ch,
+	 * web2c/convert,
+	 * web2c/loadpool.defines: integrate pool file in binary for
+	 tex, mf, and etex.  From Akira.
+
 	* tftopl.web: revised version 3.2 from Knuth.
 
 2008-03-24  Karl Berry  <karl@tug.org>

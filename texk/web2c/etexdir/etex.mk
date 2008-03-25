@@ -14,7 +14,7 @@ etexdir/etex.version: etexdir/etex.ch
 
 # The C sources.
 etex_c = etexini.c etex0.c etex1.c etex2.c
-etex_o = etexini.o etex0.o etex1.o etex2.o etexextra.o
+etex_o = etexini.o etex0.o etex1.o etex2.o etex-pool.o etexextra.o
 
 # Making etex.
 etex: $(etex_o)
@@ -44,12 +44,16 @@ etex_ch_srcs = etex.web \
   $(srcdir)/etexdir/tex.ch0 \
   $(srcdir)/tex.ch \
   $(srcdir)/etexdir/tex.ch1 \
-  $(srcdir)/etexdir/tex.ech
+  $(srcdir)/etexdir/tex.ech \
+  $(srcdir)/etexdir/etex-binpool.ch
 #   Rules:
 etex.web: tie etexdir/etex.mk $(etex_web_srcs)
 	$(TIE) -m etex.web $(etex_web_srcs)
 etex.ch: $(etex_ch_srcs)
 	$(TIE) -c etex.ch $(etex_ch_srcs)
+
+etex-pool.c: etex.pool tex-mkcpool tmf-pool.h
+	./tex-mkcpool etex.pool tmf-pool.h >etex-pool.c
 
 # Tests...
 check: @ETEX@ etex-check
@@ -186,7 +190,7 @@ latex.fmt: etex
 # Install
 install-etex: install-etex-exec install-etex-data
 install-etex-exec: install-etex-programs install-etex-links
-install-etex-data: install-etex-pool @FMU@ install-etex-dumps
+install-etex-data: @FMU@ install-etex-dumps
 install-etex-dumps: install-etex-fmts
 
 install-programs: @ETEX@ install-etex-programs
@@ -207,7 +211,5 @@ install-etex-fmts: efmts $(efmtdir)
 	    (cd $(bindir) && (rm -f $$base; $(LN) etex $$base)); done
 
 install-data:: @ETEX@ install-etex-data
-install-etex-pool: etex.pool $(texpooldir)
-	$(INSTALL_DATA) etex.pool $(texpooldir)/etex.pool
 
 # end of etex.mk

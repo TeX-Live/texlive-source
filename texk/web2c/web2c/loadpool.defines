@@ -1,0 +1,7 @@
+{ loadpool.defines
+
+}
+
+@define function loadpoolstrings();
+
+{ end of loadpool.defines }

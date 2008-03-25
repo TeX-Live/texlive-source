@@ -92,7 +92,7 @@ CTANGLE = @CTANGLE@
 TIE = @TIE@
 
 # Calling tangle
-tangle = WEBINPUTS=$(srcdir) $(TANGLE)
+tangle = WEBINPUTS=.:$(srcdir) $(TANGLE)
 ctangle = $(CTANGLE)
 tie = $(TIE)
 
@@ -428,8 +428,8 @@ dvitype_args = -output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*'
 # 
 # Metafont
 mf_c = mfini.c mf0.c mf1.c 
-mf_o = mfini.o mf0.o mf1.o mfextra.o
-mfn_o = mfini.o mf0.o mf1.o mfnowin.o
+mf_o = mfini.o mf0.o mf1.o mf-pool.o mfextra.o
+mfn_o = mfini.o mf0.o mf1.o mf-pool.o mfnowin.o
 mf: $(mf_o) $(windowlib)
 	$(kpathsea_link) $(mf_o) $(windowlink) $(LOADLIBES)
 mf-nowin: $(mfn_o) window/trap.o
@@ -442,8 +442,10 @@ mfextra.c: lib/texmfmp.c
 	sed s/TEX-OR-MF-OR-MP/mf/ $(srcdir)/lib/texmfmp.c >$@
 mfnowin.c: lib/texmfmp.c
 	sed s/TEX-OR-MF-OR-MP/mf/ $(srcdir)/lib/texmfmp.c >$@
-mf.p mf.pool: tangle mf.web mf.ch
-	$(tangle) mf.web mf.ch
+mf.p mf.pool: tangle mf.web mf-final.ch
+	$(tangle) $(srcdir)/mf.web mf-final.ch
+mf-final.ch: $(TIE) mf.web mf.ch mf-binpool.ch
+	$(TIE) -c $@ $(srcdir)/mf.web $(srcdir)/mf.ch $(srcdir)/mf-binpool.ch
 check: mf-check
 mf-check: trap mf.base
 	./mf --progname=mf '&./mf \tracingstats:=1; end.'
@@ -489,15 +491,36 @@ kpse_include metapost.mk
 # 
 # TeX
 tex_c = texini.c tex0.c tex1.c tex2.c
-tex_o = texini.o tex0.o tex1.o tex2.o texextra.o
+tex_o = texini.o tex0.o tex1.o tex2.o tex-pool.o texextra.o
 tex: $(tex_o)
 	$(kpathsea_link) $(tex_o) $(socketlibs) $(LOADLIBES)
 $(tex_c) texcoerce.h texd.h: tex.p $(web2c_texmf)
 	$(web2c) tex
 texextra.c: lib/texmfmp.c
 	sed s/TEX-OR-MF-OR-MP/tex/ $(srcdir)/lib/texmfmp.c >$@
-tex.p tex.pool: tangle tex.web tex.ch
-	$(tangle) tex.web tex.ch
+tex.p tex.pool: tangle tex.web tex-final.ch
+	$(tangle) $(srcdir)/tex.web tex-final.ch
+tex-final.ch: $(TIE) tex.web tex.ch tex-binpool.ch
+	$(TIE) -c $@ $(srcdir)/tex.web $(srcdir)/tex.ch $(srcdir)/tex-binpool.ch
+#
+# tools to load pool for tex, etex and mf
+#
+tex-pool.c: tex.pool tex-mkcpool tmf-pool.h
+	./tex-mkcpool tex.pool $(srcdir)/tmf-pool.h >tex-pool.c
+mf-pool.c: mf.pool mf-mkcpool tmf-pool.h
+	./mf-mkcpool mf.pool $(srcdir)/tmf-pool.h >mf-pool.c
+mf-pool.o: mf-pool.c tmf-pool.h mfd.h
+# we include mfd.h, so need lots more includes.
+	$(CC) $(CFLAGS) -I. -I.. -I$(srcdir) -DMETA_FONT -c -o $@ mf-pool.c
+tex-mkcpool: tex-mkcpool.o
+	$(CC) $(CFLAGS) -o $@ tex-mkcpool.o
+tex-mkcpool.o: tex-mkcpool.c
+	$(CC) $(CFLAGS) -c -o $@ $(srcdir)/tex-mkcpool.c
+mf-mkcpool: mf-mkcpool.o
+	$(CC) $(CFLAGS) -o $@ mf-mkcpool.o
+mf-mkcpool.o: mf-mkcpool.c
+	$(CC) $(CFLAGS) -c -o $@ $(srcdir)/mf-mkcpool.c
+
 check: tex-check
 tex-check: trip tex.fmt
 # Test truncation (but don't bother showing the warning msg).
@@ -600,7 +623,7 @@ tangle.c tangle.h: tangle.p
 # which we use to make the other programs.  We depend on tangleboot, even
 # though we might not use it.
 tangle.p: tangleboot tangle.web tangle.ch
-	WEBINPUTS=$(srcdir) $(TANGLEBOOT) tangle tangle
+	WEBINPUTS=.:$(srcdir) $(TANGLEBOOT) tangle tangle
 tangle.web:
 	@echo "You seem to be missing tangle.web, perhaps because you" >&2
 	@echo "didn't retrieve web.tar.gz, only web2c.tar.gz." >&2
@@ -628,7 +651,7 @@ stamp-tangle: tangleboot.p
 # just touch tangleboot.p and build tangle.
 tangleboot.p: tangle.web tangle.ch
 	if [ -r $(TANGLE) ] || [ -r $(TANGLE).exe ]; then \
-	  WEBINPUTS=$(srcdir) $(TANGLE) tangle tangle; \
+	  $(tangle) tangle tangle; \
 	  mv tangle.p tangleboot.p; \
 	elif [ -r tangleboot.p ]; then \
 	  touch tangleboot.p; \
@@ -826,9 +849,9 @@ install-tex-exec: @FMU@ install-tex-links
 install-mf-exec: @FMU@ install-mf-links
 install-mpost-exec: @FMU@ install-mpost-links
 
-install-tex-data: install-tex-pool @FMU@ install-tex-dumps
-install-mf-data: install-mf-pool @FMU@ install-mf-dumps
-install-mpost-data: install-mpost-pool @FMU@ install-mpost-dumps
+install-tex-data: @FMU@ install-tex-dumps
+install-mf-data: @FMU@ install-mf-dumps
+install-mpost-data: @FMU@ install-mpost-dumps
 
 install-tex-dumps: install-tex-fmts
 install-mf-dumps: install-mf-bases
@@ -892,14 +915,6 @@ install-mpost-mems: mems $(memdir)
 	mems="$(mems)"; \
 	  for f in $$mems; do base=`basename $$f .mem`; \
             (cd $(bindir) && (rm -f $$base; $(LN) mpost $$base)); done
-
-install-tex-pool: tex.pool $(texpooldir)
-	$(INSTALL_DATA) tex.pool $(texpooldir)/tex.pool
-install-mf-pool: mf.pool $(mfpooldir)
-	$(INSTALL_DATA) mf.pool $(mfpooldir)/mf.pool
-install-mpost-pool: # no longer used, the strings are in the binary
-# install-mpost-pool: mp.pool $(mppooldir)
-# 	$(INSTALL_DATA) mp.pool $(mppooldir)/mp.pool
 
 # Auxiliary files.
 install-data:: $(web2cdir)
