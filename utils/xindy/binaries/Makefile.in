@@ -164,7 +164,7 @@ MEMFILE = xindy.mem
 XINDY_RUN = ./xindy.run -q -M ./base.mem
 # Where the modules are found at runtime.
 @TETEX_BUILD_FALSE@MODULEDIR = $(pkgdatadir)
-@TETEX_BUILD_TRUE@MODULEDIR = $(prefix)/texmf/scripts/xindy
+@TETEX_BUILD_TRUE@MODULEDIR = $(prefix)/texmf/xindy
 # Where the files xindy.run and xindy.mem should be installed.
 @TETEX_BUILD_FALSE@kerneldir = $(pkglibdir)
 @TETEX_BUILD_TRUE@kerneldir = $(bindir)

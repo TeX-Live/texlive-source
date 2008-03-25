@@ -152,7 +152,7 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 @TETEX_BUILD_FALSE@langdir = $(pkgdatadir)/lang
-@TETEX_BUILD_TRUE@langdir = $(prefix)/texmf/scripts/xindy/lang
+@TETEX_BUILD_TRUE@langdir = $(prefix)/texmf/xindy/lang
 germandir = $(langdir)/german
 RULES = \
 	din5007.xdy \

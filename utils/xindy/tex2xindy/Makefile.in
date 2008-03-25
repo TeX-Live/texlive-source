@@ -462,7 +462,7 @@ dist-hook:
 	rm -f $(distdir)/tex2xindy.c
 
 @MAINTAINER_MODE_TRUE@$(srcdir)/tex2xindy.1: $(srcdir)/tex2xindy.l
-@MAINTAINER_MODE_TRUE@	-$(POD2MAN) --center '$(PACKAGE_NAME)' \
+@MAINTAINER_MODE_TRUE@	$(POD2MAN) --center '$(PACKAGE_NAME)' \
 @MAINTAINER_MODE_TRUE@		--name="$(POD_NAME)" \
 @MAINTAINER_MODE_TRUE@		--release "Version $(POD_VERSION)" \
 @MAINTAINER_MODE_TRUE@		--date "$(POD_DATE)" \

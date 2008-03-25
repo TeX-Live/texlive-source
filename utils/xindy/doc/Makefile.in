@@ -477,19 +477,19 @@ uninstall-am: uninstall-docDATA
 
 
 @MAINTAINER_MODE_TRUE@$(srcdir)/xindy.pdf: $(top_srcdir)/user-commands/xindy.1
-@MAINTAINER_MODE_TRUE@	-$(GROFF) -man -P-g $< | ps2pdf - $@
+@MAINTAINER_MODE_TRUE@	$(GROFF) -man -P-g $< | ps2pdf - $@
 
 @MAINTAINER_MODE_TRUE@$(srcdir)/texindy.pdf: $(top_srcdir)/user-commands/texindy.1
-@MAINTAINER_MODE_TRUE@	-$(GROFF) -man -P-g $< | ps2pdf - $@
+@MAINTAINER_MODE_TRUE@	$(GROFF) -man -P-g $< | ps2pdf - $@
 
 @MAINTAINER_MODE_TRUE@$(srcdir)/makeindex4.pdf: $(top_srcdir)/user-commands/makeindex4.1
-@MAINTAINER_MODE_TRUE@	-$(GROFF) -man -P-g $< | ps2pdf - $@
+@MAINTAINER_MODE_TRUE@	$(GROFF) -man -P-g $< | ps2pdf - $@
 
 @MAINTAINER_MODE_TRUE@$(srcdir)/xindy.v2.pdf: $(top_srcdir)/user-commands/xindy.v2.1
-@MAINTAINER_MODE_TRUE@	-$(GROFF) -man -P-g $< | ps2pdf - $@
+@MAINTAINER_MODE_TRUE@	$(GROFF) -man -P-g $< | ps2pdf - $@
 
 @MAINTAINER_MODE_TRUE@$(srcdir)/tex2xindy.pdf: $(top_srcdir)/tex2xindy/tex2xindy.1
-@MAINTAINER_MODE_TRUE@	-$(GROFF) -man -P-g $< | ps2pdf - $@
+@MAINTAINER_MODE_TRUE@	$(GROFF) -man -P-g $< | ps2pdf - $@
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
