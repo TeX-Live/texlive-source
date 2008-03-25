@@ -45,6 +45,7 @@ So you would need to install libffcall separately, before installing clisp,
 and change --with-dynamic-ffi to --with-ffcall in the xindy configure call.
 You can download libffcall sources from
 http://www.haible.de/bruno/packages-ffcall-README.html
+or from the "ffcall" directory in the clisp-2.43 tarball,
 or from http://packages.debian.org/sid/libffcall1
 (containing some improvements from Debian).
 Again, this is needed only for clisp 2.44 and newer.
