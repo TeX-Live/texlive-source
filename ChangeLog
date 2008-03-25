@@ -1,3 +1,13 @@
+2008-03-25  Karl Berry  <karl@tug.org>
+
+	* withenable.ac: enable xindy; rebuild configure.
+	* README,
+	* utils/README: document clisp & libffcall prerequisites.
+
+2008-03-24  Karl Berry  <karl@tug.org>
+
+	* Build: exit with appropriate status
+
 2008-03-09  Karl Berry  <karl@tug.org>
 
 	* Build: exit if no binaries.

@@ -2,19 +2,30 @@ $Id$
 Copyright 2004, 2006, 2007, 2008 TeX Users Group.
 You may freely use, modify and/or distribute this file.
 
-To build the source tree, run ./Build.
+To configure and make the source tree, run ./Build.
 To build (mostly) without optimization, run ./Build --debug.
+To make without configuring, run TL_CONFIGURE=true ./Build.
+
+(Nearly everything the Build script does can be overridden via
+environment variables; just take a look to see all the names.)
 
 Prerequisites:
-- Bison and Flex are needed for web2c.
-- libfontconfig (development) must be present for XeTeX to build, except
-  on MacOSX.
-- A terminal library such as ncurses must be present (both headers
-  and library) for Texinfo to build.
-- X11 headers and libraries are required for pdfopen and xdvi to build.
+- GNU clisp and GNU libffcall, must be present for xindy.  See more
+  details in utils/README.  (Alternative: Build --without-xindy.)
+
+- A terminal library such as ncurses (both headers and library, e.g, a
+  "development" package) must be present for Texinfo.
+  (Alternative: Build --without-texinfo.)
+
+- libfontconfig (again both headers and library) must be present for
+  XeTeX, except on MacOSX.  (Alternative: Build --without-xetex.)
+
+- X11 headers and libraries must be present for pdfopen and xdvi.
+
+- Bison and Flex (or maybe equivalents) are needed for web2c.
 
 The binaries will be left in ./inst/bin/<stdplatform>.
-Ignore the other files and directories in ./inst.
+For TeX Live, ignore the other files and directories that end up in ./inst.
 
 The new binaries are not directly usable from that location.  Instead,
 copy them to Master/bin/<tlplatformname>/.

@@ -35,3 +35,33 @@ vlna - only for Windows
 xindy 2.3 - ok 24mar08
   (with numerous adaptations for TL by Vladimir)
   http://www.ctan.org/tex-archive/indexing/xindy/
+
+  xindy requires GNU clisp and GNU libffcall.  If you can find
+  prepackaged versions for your system, go ahead and use them; their
+  precise version shouldn't matter.
+  
+  If you need or want to compile them from source, here is what karl did
+  on i386-linux -- but install the latest GNU libtool first:
+
+wget http://www.haible.de/bruno/gnu/ffcall-1.10.tar.gz
+tar xf ffcall-1.10.tar.gz && cd ffcall-1.10
+configure --prefix=/usr/local/gnu --enable-shared \
+&& make && make install  # as usual
+
+wget ftp://ftp.gnu.org/pub/gnu/clisp/latest/clisp-2.44.1.tar.gz
+tar xf clisp-2.44.1.tar.gz && cd clisp-2.44.1
+configure --prefix=/usr/local/gnu --ignore-absence-of-libsigsegv \
+  --with-libffcall-prefix=/usr/local/gnu \
+&& cd src && make && make install
+
+  Of course, adjust paths as desired.
+
+  clisp complains about my stack size being too small and I should run
+  ulimit, but I ignored that.  (If you actually care about clisp per se,
+  you should probably also install GNU libsigsegv; I didn't.)
+
+  Both tarballs are also available at ftp://tug.org/dist.
+
+  (Failed variation: clisp failed to link against static libffcall,
+   apparently wanting a dynamic library.  Not sure if configure
+   --without-dynamic-modules would have solved it.)

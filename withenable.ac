@@ -18,6 +18,7 @@ psutils
 t1utils
 texinfo
 tpic2pdftex
+xindy
 ])
 
 # Options to avoid/include the packages in utils/.
