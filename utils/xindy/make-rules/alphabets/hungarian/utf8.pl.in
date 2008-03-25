@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 # TODO: It seems that "ssz" has to be sorted like "szs" (?)
 # I don't know why, I don't know how...

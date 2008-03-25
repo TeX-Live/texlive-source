@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 $language = "Klingon";
 $variant = "Standard Okrand Latin transliteration";

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 $language = "Greek";
 $variant = "ISO transliteration, for western languages";

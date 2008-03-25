@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 # a string describing the language (to be exact, the sorting order)
 $language = "Test1";

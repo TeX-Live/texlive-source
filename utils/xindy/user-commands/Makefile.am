@@ -38,7 +38,7 @@ xindy: xindy.in
 	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/xindy.in >xindy
 
 xindy.v2: xindy.v2.in
-	sed -e 's:@XINDY_PERL\@:/usr/bin/perl:' $(srcdir)/xindy.v2.in >xindy.v2
+	sed -e 's:@XINDY_PERL\@:/usr/bin/env perl:' $(srcdir)/xindy.v2.in >xindy.v2
 
 man_MANS = texindy.1 xindy.1
 

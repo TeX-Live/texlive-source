@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 $language = "A general sorting order for Western European languages";
 $prefix = "xy";

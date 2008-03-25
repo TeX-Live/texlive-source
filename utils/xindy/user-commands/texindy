@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 # $Id: texindy,v 1.5 2006/07/30 10:30:42 jschrod Exp $
 #------------------------------------------------------------
 # (history at end)

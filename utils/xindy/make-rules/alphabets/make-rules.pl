@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 open XDY,">$ARGV[0].xdy";
 open DOC,">$ARGV[0]-doc.tex";
