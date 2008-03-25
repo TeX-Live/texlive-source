@@ -53,6 +53,7 @@ dist_noinst_DATA = xindy.v2.pdf makeindex4.pdf
 
 doc_DATA = $(FILES) $(PDFS)
 
+if MAINTAINER_MODE
 GROFF = groff
 
 $(srcdir)/xindy.pdf: $(top_srcdir)/user-commands/xindy.1
@@ -69,4 +70,4 @@ $(srcdir)/xindy.v2.pdf: $(top_srcdir)/user-commands/xindy.v2.1
 
 $(srcdir)/tex2xindy.pdf: $(top_srcdir)/tex2xindy/tex2xindy.1
 	-$(GROFF) -man -P-g $< | ps2pdf - $@
-
+endif

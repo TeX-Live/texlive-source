@@ -47,6 +47,7 @@ EXTRA_DIST = $(man_MANS)
 
 CLEANFILES = xindy xindy.v2
 
+if MAINTAINER_MODE
 POD_DATE = `ident $< | grep '\$$Id' | sed -e 's/^.*,v [^ ]* //' -e 's/ .*//' -e s:/:-:g`
 POD_VERSION = `ident $< | grep '\$$Id' | sed -e 's/^.*,v //' -e 's/ .*//'`
 POD_NAME = `basename $@ .1 | tr '[a-z]' '[A-Z]'`
@@ -65,3 +66,4 @@ $(srcdir)/texindy.1: $(srcdir)/texindy
 		--release "Version $(POD_VERSION)" \
 		--date "$(POD_DATE)" \
 		$< $@
+endif

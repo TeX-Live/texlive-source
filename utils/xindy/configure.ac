@@ -26,6 +26,7 @@ AC_INIT([xindy], [2.3], [xindy-discuss@lists.sourceforge.net])
 
 ## make dist doesn't work yet, since configure makes CLISP.
 AM_INIT_AUTOMAKE([foreign no-dist])
+AM_MAINTAINER_MODE
 
 # Checks for programs.
 AC_PROG_CC
