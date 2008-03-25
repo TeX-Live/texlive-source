@@ -22,12 +22,12 @@
 
 if TETEX_BUILD
 install-exec-hook: xindy xindy.v2
-	$(INSTALL_SCRIPT) xindy $(prefix)/texmf/scripts/xindy/
-	ln -s ../../texmf/scripts/xindy/xindy $(bindir)/xindy
-#	$(INSTALL_SCRIPT) xindy.v2 $(prefix)/texmf/scripts/xindy/
-#	ln -s ../../texmf/scripts/xindy/xindy.v2 $(bindir)/xindy.v2
-	$(INSTALL_SCRIPT) $(srcdir)/texindy $(prefix)/texmf/scripts/xindy/
-	ln -s ../../texmf/scripts/xindy/texindy $(bindir)/texindy
+	$(INSTALL_SCRIPT) xindy $(prefix)/texmf/scripts/xindy/xindy.pl
+	ln -s ../../texmf/scripts/xindy/xindy.pl $(bindir)/xindy
+#	$(INSTALL_SCRIPT) xindy.v2 $(prefix)/texmf/scripts/xindy/xindy.v2.pl
+#	ln -s ../../texmf/scripts/xindy/xindy.v2.pl $(bindir)/xindy.v2
+	$(INSTALL_SCRIPT) $(srcdir)/texindy $(prefix)/texmf/scripts/xindy/texindy.pl
+	ln -s ../../texmf/scripts/xindy/texindy.pl $(bindir)/texindy
 else
     bin_SCRIPTS = xindy xindy.v2
     dist_bin_SCRIPTS = texindy
@@ -54,14 +54,14 @@ POD_NAME = `basename $@ .1 | tr '[a-z]' '[A-Z]'`
 POD2MAN = pod2man
 
 $(srcdir)/xindy.1: $(srcdir)/xindy.in
-	-$(POD2MAN) --center '$(PACKAGE_NAME)' \
+	$(POD2MAN) --center '$(PACKAGE_NAME)' \
 		--name="$(POD_NAME)" \
 		--release "Version $(POD_VERSION)" \
 		--date "$(POD_DATE)" \
 		$< $@
 
 $(srcdir)/texindy.1: $(srcdir)/texindy
-	-$(POD2MAN) --center '$(PACKAGE_NAME)' \
+	$(POD2MAN) --center '$(PACKAGE_NAME)' \
 		--name="$(POD_NAME)" \
 		--release "Version $(POD_VERSION)" \
 		--date "$(POD_DATE)" \

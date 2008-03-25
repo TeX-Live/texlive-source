@@ -41,7 +41,7 @@ POD_NAME = `basename $@ .1 | tr '[a-z]' '[A-Z]'`
 POD2MAN = pod2man
 
 $(srcdir)/tex2xindy.1: $(srcdir)/tex2xindy.l
-	-$(POD2MAN) --center '$(PACKAGE_NAME)' \
+	$(POD2MAN) --center '$(PACKAGE_NAME)' \
 		--name="$(POD_NAME)" \
 		--release "Version $(POD_VERSION)" \
 		--date "$(POD_DATE)" \
