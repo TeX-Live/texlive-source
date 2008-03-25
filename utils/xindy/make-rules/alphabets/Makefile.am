@@ -727,7 +727,7 @@ nodist_noinst_DATA = \
 
 %latin1.pl : %utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
-	iconv -f UTF-8 -t ISO8859-1 >$@
+	iconv -f UTF-8 -t ISO-8859-1 >$@
 
 %cp850.pl : %utf8.pl.in
 	sed -e 's/@.{\([^}]*\)}//g;' <$< | \
@@ -735,19 +735,19 @@ nodist_noinst_DATA = \
 
 romanian/latin2.pl : romanian/utf8.pl
 	sed -e 's/@u{\([^}]*\)}//g;' -f $(srcdir)/rom-comma-kludge.sed <$< | \
-	iconv -f UTF-8 -t ISO8859-2 >$@
+	iconv -f UTF-8 -t ISO-8859-2 >$@
 
 %latin2.pl : %utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
-	iconv -f UTF-8 -t ISO8859-2 >$@
+	iconv -f UTF-8 -t ISO-8859-2 >$@
 
 %latin3.pl : %utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
-	iconv -f UTF-8 -t ISO8859-3 >$@
+	iconv -f UTF-8 -t ISO-8859-3 >$@
 
 %latin4.pl : %utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
-	iconv -f UTF-8 -t ISO8859-4 >$@
+	iconv -f UTF-8 -t ISO-8859-4 >$@
 
 %iso88595.pl : %utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
