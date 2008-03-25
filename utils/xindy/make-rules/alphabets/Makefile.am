@@ -807,13 +807,13 @@ romanian/cp1250.pl : romanian/utf8.pl
 	sed -n '1,10 p' <$< >$@
 
 %-test.xdy : %.pl
-	perl -I$(srcdir) $< $* $(srcdir)
+	perl -I$(srcdir) $< $*
 
 %-doc.tex : %.pl
-	perl -I$(srcdir) $< $* $(srcdir)
+	perl -I$(srcdir) $< $*
 
 %.xdy :	%.pl
-	perl -I$(srcdir) $< $* $(srcdir)
+	perl -I$(srcdir) $< $*
 
 SUBDIRS = \
 	albanian \
