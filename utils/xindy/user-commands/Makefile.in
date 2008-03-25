@@ -86,6 +86,7 @@ LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LTLIBOBJS = @LTLIBOBJS@
+MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 OBJEXT = @OBJEXT@
@@ -157,14 +158,14 @@ man_MANS = texindy.1 xindy.1
 dist_noinst_MANS = xindy.v2.1 makeindex4.1
 EXTRA_DIST = $(man_MANS)
 CLEANFILES = xindy xindy.v2
-POD_DATE = `ident $< | grep '\$$Id' | sed -e 's/^.*,v [^ ]* //' -e 's/ .*//' -e s:/:-:g`
-POD_VERSION = `ident $< | grep '\$$Id' | sed -e 's/^.*,v //' -e 's/ .*//'`
-POD_NAME = `basename $@ .1 | tr '[a-z]' '[A-Z]'`
-POD2MAN = pod2man
+@MAINTAINER_MODE_TRUE@POD_DATE = `ident $< | grep '\$$Id' | sed -e 's/^.*,v [^ ]* //' -e 's/ .*//' -e s:/:-:g`
+@MAINTAINER_MODE_TRUE@POD_VERSION = `ident $< | grep '\$$Id' | sed -e 's/^.*,v //' -e 's/ .*//'`
+@MAINTAINER_MODE_TRUE@POD_NAME = `basename $@ .1 | tr '[a-z]' '[A-Z]'`
+@MAINTAINER_MODE_TRUE@POD2MAN = pod2man
 all: all-am
 
 .SUFFIXES:
-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -189,9 +190,9 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 
-$(top_srcdir)/configure:  $(am__configure_deps)
+$(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-$(ACLOCAL_M4):  $(am__aclocal_m4_deps)
+$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 install-binSCRIPTS: $(bin_SCRIPTS)
 	@$(NORMAL_INSTALL)
@@ -404,19 +405,19 @@ xindy: xindy.in
 xindy.v2: xindy.v2.in
 	sed -e 's:@XINDY_PERL\@:/usr/bin/perl:' $(srcdir)/xindy.v2.in >xindy.v2
 
-$(srcdir)/xindy.1: $(srcdir)/xindy.in
-	-$(POD2MAN) --center '$(PACKAGE_NAME)' \
-		--name="$(POD_NAME)" \
-		--release "Version $(POD_VERSION)" \
-		--date "$(POD_DATE)" \
-		$< $@
+@MAINTAINER_MODE_TRUE@$(srcdir)/xindy.1: $(srcdir)/xindy.in
+@MAINTAINER_MODE_TRUE@	-$(POD2MAN) --center '$(PACKAGE_NAME)' \
+@MAINTAINER_MODE_TRUE@		--name="$(POD_NAME)" \
+@MAINTAINER_MODE_TRUE@		--release "Version $(POD_VERSION)" \
+@MAINTAINER_MODE_TRUE@		--date "$(POD_DATE)" \
+@MAINTAINER_MODE_TRUE@		$< $@
 
-$(srcdir)/texindy.1: $(srcdir)/texindy
-	-$(POD2MAN) --center '$(PACKAGE_NAME)' \
-		--name="$(POD_NAME)" \
-		--release "Version $(POD_VERSION)" \
-		--date "$(POD_DATE)" \
-		$< $@
+@MAINTAINER_MODE_TRUE@$(srcdir)/texindy.1: $(srcdir)/texindy
+@MAINTAINER_MODE_TRUE@	-$(POD2MAN) --center '$(PACKAGE_NAME)' \
+@MAINTAINER_MODE_TRUE@		--name="$(POD_NAME)" \
+@MAINTAINER_MODE_TRUE@		--release "Version $(POD_VERSION)" \
+@MAINTAINER_MODE_TRUE@		--date "$(POD_DATE)" \
+@MAINTAINER_MODE_TRUE@		$< $@
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

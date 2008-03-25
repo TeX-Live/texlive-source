@@ -98,6 +98,7 @@ LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LTLIBOBJS = @LTLIBOBJS@
+MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 OBJEXT = @OBJEXT@
@@ -192,11 +193,11 @@ EXTRA_DIST = $(FILES)
 PDFS = xindy.pdf texindy.pdf tex2xindy.pdf
 dist_noinst_DATA = xindy.v2.pdf makeindex4.pdf
 doc_DATA = $(FILES) $(PDFS)
-GROFF = groff
+@MAINTAINER_MODE_TRUE@GROFF = groff
 all: all-recursive
 
 .SUFFIXES:
-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -221,9 +222,9 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 
-$(top_srcdir)/configure:  $(am__configure_deps)
+$(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-$(ACLOCAL_M4):  $(am__aclocal_m4_deps)
+$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 install-docDATA: $(doc_DATA)
 	@$(NORMAL_INSTALL)
@@ -475,20 +476,20 @@ uninstall-am: uninstall-docDATA
 	tags-recursive uninstall uninstall-am uninstall-docDATA
 
 
-$(srcdir)/xindy.pdf: $(top_srcdir)/user-commands/xindy.1
-	-$(GROFF) -man -P-g $< | ps2pdf - $@
+@MAINTAINER_MODE_TRUE@$(srcdir)/xindy.pdf: $(top_srcdir)/user-commands/xindy.1
+@MAINTAINER_MODE_TRUE@	-$(GROFF) -man -P-g $< | ps2pdf - $@
 
-$(srcdir)/texindy.pdf: $(top_srcdir)/user-commands/texindy.1
-	-$(GROFF) -man -P-g $< | ps2pdf - $@
+@MAINTAINER_MODE_TRUE@$(srcdir)/texindy.pdf: $(top_srcdir)/user-commands/texindy.1
+@MAINTAINER_MODE_TRUE@	-$(GROFF) -man -P-g $< | ps2pdf - $@
 
-$(srcdir)/makeindex4.pdf: $(top_srcdir)/user-commands/makeindex4.1
-	-$(GROFF) -man -P-g $< | ps2pdf - $@
+@MAINTAINER_MODE_TRUE@$(srcdir)/makeindex4.pdf: $(top_srcdir)/user-commands/makeindex4.1
+@MAINTAINER_MODE_TRUE@	-$(GROFF) -man -P-g $< | ps2pdf - $@
 
-$(srcdir)/xindy.v2.pdf: $(top_srcdir)/user-commands/xindy.v2.1
-	-$(GROFF) -man -P-g $< | ps2pdf - $@
+@MAINTAINER_MODE_TRUE@$(srcdir)/xindy.v2.pdf: $(top_srcdir)/user-commands/xindy.v2.1
+@MAINTAINER_MODE_TRUE@	-$(GROFF) -man -P-g $< | ps2pdf - $@
 
-$(srcdir)/tex2xindy.pdf: $(top_srcdir)/tex2xindy/tex2xindy.1
-	-$(GROFF) -man -P-g $< | ps2pdf - $@
+@MAINTAINER_MODE_TRUE@$(srcdir)/tex2xindy.pdf: $(top_srcdir)/tex2xindy/tex2xindy.1
+@MAINTAINER_MODE_TRUE@	-$(GROFF) -man -P-g $< | ps2pdf - $@
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
