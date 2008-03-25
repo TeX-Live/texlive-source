@@ -21,7 +21,7 @@ An installed LaTeX system is required. It is needed to create the
 LaTeX-specific part of the sort rules that knows how to handle LaTeX
 Internal Character Encodings from *.idx files.
 
-Perl is required and expected in somewhere in the PATH.
+Perl is required and is expected somewhere in the PATH.
 (we're using the "#!/usr/bin/env perl" invocation).
 
 We know that xindy compiles with gcc (version 3 and 4). We don't know
