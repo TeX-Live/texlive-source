@@ -34,6 +34,8 @@ AC_PROG_LEX
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
+test "x$LEX" != "x:" || AC_MSG_ERROR([flex or lex is required, but not found])
+
 dnl test for building make-rules
 AC_ARG_ENABLE(make-rules, AS_HELP_STRING([--enable-make-rules],[build and install make-rules package (default is YES)]))
 dnl test for building Documentation
