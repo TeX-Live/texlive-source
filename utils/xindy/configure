@@ -695,14 +695,14 @@ am__fastdepCC_FALSE
 LEX
 LEX_OUTPUT_ROOT
 LEXLIB
+TETEX_BUILD_TRUE
+TETEX_BUILD_FALSE
 latex
 BUILDRULES_TRUE
 BUILDRULES_FALSE
 pdflatex
 BUILDDOCS_TRUE
 BUILDDOCS_FALSE
-TETEX_BUILD_TRUE
-TETEX_BUILD_FALSE
 CLISP
 EXT_CLISP_TRUE
 EXT_CLISP_FALSE
@@ -3680,13 +3680,54 @@ fi
 
 # Check whether --enable-make-rules was given.
 if test "${enable_make_rules+set}" = set; then
-  enableval=$enable_make_rules; BUILDRULES=$enableval
-else
-  BUILDRULES=yes
+  enableval=$enable_make_rules;
+fi
+
+# Check whether --enable-docs was given.
+if test "${enable_docs+set}" = set; then
+  enableval=$enable_docs;
 fi
 
 
-if test "$BUILDRULES" = "yes"; then
+# Building inside TeX Live?
+# Check whether --enable-tetex-build was given.
+if test "${enable_tetex_build+set}" = set; then
+  enableval=$enable_tetex_build;
+fi
+
+
+if test "x$enable_tetex_build" = xyes; then
+  if test ! -d $srcdir/../../texk/kpathsea; then
+    { { echo "$as_me:$LINENO: error:
+=========================================
+
+You specified --enable-tetex-build, but I can't find the kpathsea
+directory.  I expected it to be in $srcdir/../../texk/kpathsea.
+
+=========================================" >&5
+echo "$as_me: error:
+=========================================
+
+You specified --enable-tetex-build, but I can't find the kpathsea
+directory.  I expected it to be in $srcdir/../../texk/kpathsea.
+
+=========================================" >&2;}
+   { (exit 1); exit 1; }; }
+  fi
+  docdir="$prefix/texmf/doc/$PACKAGE_NAME"
+  if test -z "$enable_docs"; then enable_docs=no; fi
+  if test -z "$enable_make_rules"; then enable_make_rules=no; fi
+fi
+ if test "x$enable_tetex_build" = xyes; then
+  TETEX_BUILD_TRUE=
+  TETEX_BUILD_FALSE='#'
+else
+  TETEX_BUILD_TRUE='#'
+  TETEX_BUILD_FALSE=
+fi
+
+
+if test "x$enable_make_rules" != xno; then
 
 for ac_prog in latex elatex lambda
 do
@@ -3742,7 +3783,7 @@ fi
 
 fi
 
- if test "$BUILDRULES" = "yes"; then
+ if test "x$enable_make_rules" != xno; then
   BUILDRULES_TRUE=
   BUILDRULES_FALSE='#'
 else
@@ -3751,15 +3792,7 @@ else
 fi
 
 
-# Check whether --enable-docs was given.
-if test "${enable_docs+set}" = set; then
-  enableval=$enable_docs; BUILDDOCS=$enableval
-else
-  BUILDDOCS=yes
-fi
-
-
-if test "$BUILDDOCS" = "yes"; then
+if test "x$enable_docs" != xno; then
 
 for ac_prog in pdflatex
 do
@@ -3815,50 +3848,12 @@ fi
 
 fi
 
- if test "$BUILDDOCS" = "yes"; then
+ if test "x$enable_docs" != xno; then
   BUILDDOCS_TRUE=
   BUILDDOCS_FALSE='#'
 else
   BUILDDOCS_TRUE='#'
   BUILDDOCS_FALSE=
-fi
-
-
-# Building inside TeX Live?
-# Check whether --enable-tetex-build was given.
-if test "${enable_tetex_build+set}" = set; then
-  enableval=$enable_tetex_build;
-fi
-
-
-if test "x$enable_tetex_build" = xyes; then
-  if test ! -d $srcdir/../../texk/kpathsea; then
-    { { echo "$as_me:$LINENO: error:
-=========================================
-
-You specified --enable-tetex-build, but I can't find the kpathsea
-directory.  I expected it to be in $srcdir/../../texk/kpathsea.
-
-=========================================" >&5
-echo "$as_me: error:
-=========================================
-
-You specified --enable-tetex-build, but I can't find the kpathsea
-directory.  I expected it to be in $srcdir/../../texk/kpathsea.
-
-=========================================" >&2;}
-   { (exit 1); exit 1; }; }
-  fi
-  docdir="$prefix/texmf/doc/$PACKAGE_NAME"
-  if test -z "$enable_docs"; then enable_docs=no; fi
-  if test -z "$enable_make_rules"; then enable_make_rules=no; fi
-fi
- if test "x$enable_tetex_build" = xyes; then
-  TETEX_BUILD_TRUE=
-  TETEX_BUILD_FALSE='#'
-else
-  TETEX_BUILD_TRUE='#'
-  TETEX_BUILD_FALSE=
 fi
 
 
@@ -5195,6 +5190,13 @@ echo "$as_me: error: conditional \"am__fastdepCC\" was never defined.
 Usually this means the macro was only invoked conditionally." >&2;}
    { (exit 1); exit 1; }; }
 fi
+if test -z "${TETEX_BUILD_TRUE}" && test -z "${TETEX_BUILD_FALSE}"; then
+  { { echo "$as_me:$LINENO: error: conditional \"TETEX_BUILD\" was never defined.
+Usually this means the macro was only invoked conditionally." >&5
+echo "$as_me: error: conditional \"TETEX_BUILD\" was never defined.
+Usually this means the macro was only invoked conditionally." >&2;}
+   { (exit 1); exit 1; }; }
+fi
 if test -z "${BUILDRULES_TRUE}" && test -z "${BUILDRULES_FALSE}"; then
   { { echo "$as_me:$LINENO: error: conditional \"BUILDRULES\" was never defined.
 Usually this means the macro was only invoked conditionally." >&5
@@ -5206,13 +5208,6 @@ if test -z "${BUILDDOCS_TRUE}" && test -z "${BUILDDOCS_FALSE}"; then
   { { echo "$as_me:$LINENO: error: conditional \"BUILDDOCS\" was never defined.
 Usually this means the macro was only invoked conditionally." >&5
 echo "$as_me: error: conditional \"BUILDDOCS\" was never defined.
-Usually this means the macro was only invoked conditionally." >&2;}
-   { (exit 1); exit 1; }; }
-fi
-if test -z "${TETEX_BUILD_TRUE}" && test -z "${TETEX_BUILD_FALSE}"; then
-  { { echo "$as_me:$LINENO: error: conditional \"TETEX_BUILD\" was never defined.
-Usually this means the macro was only invoked conditionally." >&5
-echo "$as_me: error: conditional \"TETEX_BUILD\" was never defined.
 Usually this means the macro was only invoked conditionally." >&2;}
    { (exit 1); exit 1; }; }
 fi
@@ -5885,14 +5880,14 @@ am__fastdepCC_FALSE!$am__fastdepCC_FALSE$ac_delim
 LEX!$LEX$ac_delim
 LEX_OUTPUT_ROOT!$LEX_OUTPUT_ROOT$ac_delim
 LEXLIB!$LEXLIB$ac_delim
+TETEX_BUILD_TRUE!$TETEX_BUILD_TRUE$ac_delim
+TETEX_BUILD_FALSE!$TETEX_BUILD_FALSE$ac_delim
 latex!$latex$ac_delim
 BUILDRULES_TRUE!$BUILDRULES_TRUE$ac_delim
 BUILDRULES_FALSE!$BUILDRULES_FALSE$ac_delim
 pdflatex!$pdflatex$ac_delim
 BUILDDOCS_TRUE!$BUILDDOCS_TRUE$ac_delim
 BUILDDOCS_FALSE!$BUILDDOCS_FALSE$ac_delim
-TETEX_BUILD_TRUE!$TETEX_BUILD_TRUE$ac_delim
-TETEX_BUILD_FALSE!$TETEX_BUILD_FALSE$ac_delim
 CLISP!$CLISP$ac_delim
 EXT_CLISP_TRUE!$EXT_CLISP_TRUE$ac_delim
 EXT_CLISP_FALSE!$EXT_CLISP_FALSE$ac_delim

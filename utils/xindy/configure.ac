@@ -35,22 +35,9 @@ AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
 dnl test for building make-rules
-AC_ARG_ENABLE(make-rules, AS_HELP_STRING([--enable-make-rules],[build and install make-rules package (default is YES)]),[BUILDRULES=$enableval],[BUILDRULES=yes])
-
-if test "$BUILDRULES" = "yes"; then
-    AC_PROG_LATEX
-fi
-
-AM_CONDITIONAL(BUILDRULES, test "$BUILDRULES" = "yes")
-
+AC_ARG_ENABLE(make-rules, AS_HELP_STRING([--enable-make-rules],[build and install make-rules package (default is YES)]))
 dnl test for building Documentation
-AC_ARG_ENABLE(docs, AS_HELP_STRING([--enable-docs],[build and install documentation (default is YES)]),[BUILDDOCS=$enableval],[BUILDDOCS=yes])
-
-if test "$BUILDDOCS" = "yes"; then
-    AC_PROG_PDFLATEX
-fi
-
-AM_CONDITIONAL(BUILDDOCS, test "$BUILDDOCS" = "yes")
+AC_ARG_ENABLE(docs, AS_HELP_STRING([--enable-docs],[build and install documentation (default is YES)]))
 
 # Building inside TeX Live?
 AC_ARG_ENABLE(tetex-build, AS_HELP_STRING([--enable-tetex-build],[Build as part of a teTeX installation]))
@@ -70,6 +57,18 @@ directory.  I expected it to be in $srcdir/../../texk/kpathsea.
   if test -z "$enable_make_rules"; then enable_make_rules=no; fi
 fi
 AM_CONDITIONAL([TETEX_BUILD],[test "x$enable_tetex_build" = xyes])
+
+if test "x$enable_make_rules" != xno; then
+    AC_PROG_LATEX
+fi
+
+AM_CONDITIONAL([BUILDRULES], [test "x$enable_make_rules" != xno])
+
+if test "x$enable_docs" != xno; then
+    AC_PROG_PDFLATEX
+fi
+
+AM_CONDITIONAL([BUILDDOCS], [test "x$enable_docs" != xno])
 
 dnl location of CLISP binary
 AC_ARG_WITH(clisp, AS_HELP_STRING([--with-clisp@<:@=PATH@:>@],[Use the existing CLISP binary instead of re-building CLISP from source in the rte/ directory]))
