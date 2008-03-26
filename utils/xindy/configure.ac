@@ -66,6 +66,8 @@ directory.  I expected it to be in $srcdir/../../texk/kpathsea.
 =========================================])
   fi
   docdir="$prefix/texmf/doc/$PACKAGE_NAME"
+  if test -z "$enable_docs"; then enable_docs=no; fi
+  if test -z "$enable_make_rules"; then enable_make_rules=no; fi
 fi
 AM_CONDITIONAL([TETEX_BUILD],[test "x$enable_tetex_build" = xyes])
 
