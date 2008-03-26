@@ -3567,6 +3567,9 @@ fi
 rm -f conftest.l $LEX_OUTPUT_ROOT.c
 
 fi
+test "x$LEX" != "x:" || { { echo "$as_me:$LINENO: error: flex or lex is required, but not found" >&5
+echo "$as_me: error: flex or lex is required, but not found" >&2;}
+   { (exit 1); exit 1; }; }
 # Find a good install program.  We prefer a C program (faster),
 # so one script is as good as another.  But avoid the broken or
 # incompatible versions:
@@ -3677,10 +3680,6 @@ echo "${ECHO_T}no" >&6; }
   SET_MAKE="MAKE=${MAKE-make}"
 fi
 
-
-test "x$LEX" != "x:" || { { echo "$as_me:$LINENO: error: flex or lex is required, but not found" >&5
-echo "$as_me: error: flex or lex is required, but not found" >&2;}
-   { (exit 1); exit 1; }; }
 
 # Check whether --enable-make-rules was given.
 if test "${enable_make_rules+set}" = set; then

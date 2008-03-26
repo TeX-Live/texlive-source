@@ -31,10 +31,9 @@ AM_MAINTAINER_MODE
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_LEX
+test "x$LEX" != "x:" || AC_MSG_ERROR([flex or lex is required, but not found])
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
-
-test "x$LEX" != "x:" || AC_MSG_ERROR([flex or lex is required, but not found])
 
 dnl test for building make-rules
 AC_ARG_ENABLE(make-rules, AS_HELP_STRING([--enable-make-rules],[build and install make-rules package (default is YES)]))
