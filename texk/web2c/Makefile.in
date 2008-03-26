@@ -511,7 +511,7 @@ mf-pool.c: mf.pool mf-mkcpool tmf-pool.h
 	./mf-mkcpool mf.pool $(srcdir)/tmf-pool.h >mf-pool.c
 mf-pool.o: mf-pool.c tmf-pool.h mfd.h
 # we include mfd.h, so need lots more includes.
-	$(CC) $(CFLAGS) -I. -I.. -I$(srcdir) -DMETA_FONT -c -o $@ mf-pool.c
+	$(CC) $(CFLAGS) -I. -I.. -I$(srcdir) -I$(srcdir)/.. -DMETA_FONT -c -o $@ mf-pool.c
 tex-mkcpool: tex-mkcpool.o
 	$(CC) $(CFLAGS) -o $@ tex-mkcpool.o
 tex-mkcpool.o: tex-mkcpool.c
