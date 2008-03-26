@@ -417,7 +417,7 @@ uninstall-am: uninstall-nodist_inputencDATA
 latin.xdy : latin1.xdy latin2.xdy latin3.xdy
 	echo ';; Generated at' `date` 'from latin?.xdy' >latin.xdy
 	echo >>latin.xdy
-	sort -u latin?.xdy | grep -v '^;' >>latin.xdy
+	env - sort -u latin?.xdy | grep -v '^;' >>latin.xdy
 
 %.xdy %.idx :
 	perl $(srcdir)/make-testidx.pl TS1,T2A,T1 $* >$*.tex
