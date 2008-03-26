@@ -21,33 +21,30 @@
 ## Boston, MA 02110-1301 USA.
 
 if TETEX_BUILD
-install-exec-hook: xindy xindy.v2
+install-exec-hook: xindy
 	$(MKDIR_P) "$(prefix)/texmf/scripts/xindy"
-	-rm -f $(bindir)/xindy $(bindir)/xindy.v2 $(bindir)/texindy
+	-rm -f $(bindir)/xindy $(bindir)/texindy
 	$(INSTALL_SCRIPT) xindy $(prefix)/texmf/scripts/xindy/xindy.pl
 	ln -s ../../texmf/scripts/xindy/xindy.pl $(bindir)/xindy
-#	$(INSTALL_SCRIPT) xindy.v2 $(prefix)/texmf/scripts/xindy/xindy.v2.pl
-#	ln -s ../../texmf/scripts/xindy/xindy.v2.pl $(bindir)/xindy.v2
 	$(INSTALL_SCRIPT) $(srcdir)/texindy $(prefix)/texmf/scripts/xindy/texindy.pl
 	ln -s ../../texmf/scripts/xindy/texindy.pl $(bindir)/texindy
 else
-    bin_SCRIPTS = xindy xindy.v2
+    bin_SCRIPTS = xindy
     dist_bin_SCRIPTS = texindy
 endif
 
 xindy: xindy.in
 	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/xindy.in >xindy
 
-xindy.v2: xindy.v2.in
-	sed -e 's:@XINDY_PERL\@:/usr/bin/env perl:' $(srcdir)/xindy.v2.in >xindy.v2
-
 man_MANS = texindy.1 xindy.1
+
+dist_noinst_SCRIPTS = xindy.v2 makeindex4
 
 dist_noinst_MANS = xindy.v2.1 makeindex4.1
 
 EXTRA_DIST = $(man_MANS)
 
-CLEANFILES = xindy xindy.v2
+CLEANFILES = xindy
 
 if MAINTAINER_MODE
 POD_DATE = `ident $< | grep '\$$Id' | sed -e 's/^.*,v [^ ]* //' -e 's/ .*//' -e s:/:-:g`

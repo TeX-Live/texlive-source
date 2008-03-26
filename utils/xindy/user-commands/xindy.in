@@ -376,14 +376,7 @@ our ($quiet, $verbose, %debug,
 $input_markup = 'latex';
 $mem_file = "$lib_dir/xindy.mem";
 
-my @orig_argv = @ARGV;
 parse_options();
-
-if ( @ARGV == 2 ) {
-    if ( $ARGV[0] =~ /\.xdy$/ ) {
-	exec "$cmd_dir/xindy.v2", @orig_argv;
-    }
-}
 
 
 # This script creates temporary files. Whenever a file is created, its

@@ -34,7 +34,7 @@ build_triplet = @build@
 host_triplet = @host@
 subdir = user-commands
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(am__dist_bin_SCRIPTS_DIST)
+	$(am__dist_bin_SCRIPTS_DIST) $(dist_noinst_SCRIPTS)
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ac_prog_latex.m4 \
 	$(top_srcdir)/m4/ac_prog_pdflatex.m4 \
@@ -48,7 +48,7 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" \
 binSCRIPT_INSTALL = $(INSTALL_SCRIPT)
 am__dist_bin_SCRIPTS_DIST = texindy
 dist_binSCRIPT_INSTALL = $(INSTALL_SCRIPT)
-SCRIPTS = $(bin_SCRIPTS) $(dist_bin_SCRIPTS)
+SCRIPTS = $(bin_SCRIPTS) $(dist_bin_SCRIPTS) $(dist_noinst_SCRIPTS)
 SOURCES =
 man1dir = $(mandir)/man1
 NROFF = nroff
@@ -152,12 +152,13 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-@TETEX_BUILD_FALSE@bin_SCRIPTS = xindy xindy.v2
+@TETEX_BUILD_FALSE@bin_SCRIPTS = xindy
 @TETEX_BUILD_FALSE@dist_bin_SCRIPTS = texindy
 man_MANS = texindy.1 xindy.1
+dist_noinst_SCRIPTS = xindy.v2 makeindex4
 dist_noinst_MANS = xindy.v2.1 makeindex4.1
 EXTRA_DIST = $(man_MANS)
-CLEANFILES = xindy xindy.v2
+CLEANFILES = xindy
 @MAINTAINER_MODE_TRUE@POD_DATE = `ident $< | grep '\$$Id' | sed -e 's/^.*,v [^ ]* //' -e 's/ .*//' -e s:/:-:g`
 @MAINTAINER_MODE_TRUE@POD_VERSION = `ident $< | grep '\$$Id' | sed -e 's/^.*,v //' -e 's/ .*//'`
 @MAINTAINER_MODE_TRUE@POD_NAME = `basename $@ .1 | tr '[a-z]' '[A-Z]'`
@@ -391,21 +392,16 @@ uninstall-man: uninstall-man1
 	uninstall-man uninstall-man1
 
 
-@TETEX_BUILD_TRUE@install-exec-hook: xindy xindy.v2
+@TETEX_BUILD_TRUE@install-exec-hook: xindy
 @TETEX_BUILD_TRUE@	$(MKDIR_P) "$(prefix)/texmf/scripts/xindy"
-@TETEX_BUILD_TRUE@	-rm -f $(bindir)/xindy $(bindir)/xindy.v2 $(bindir)/texindy
+@TETEX_BUILD_TRUE@	-rm -f $(bindir)/xindy $(bindir)/texindy
 @TETEX_BUILD_TRUE@	$(INSTALL_SCRIPT) xindy $(prefix)/texmf/scripts/xindy/xindy.pl
 @TETEX_BUILD_TRUE@	ln -s ../../texmf/scripts/xindy/xindy.pl $(bindir)/xindy
-#	$(INSTALL_SCRIPT) xindy.v2 $(prefix)/texmf/scripts/xindy/xindy.v2.pl
-#	ln -s ../../texmf/scripts/xindy/xindy.v2.pl $(bindir)/xindy.v2
 @TETEX_BUILD_TRUE@	$(INSTALL_SCRIPT) $(srcdir)/texindy $(prefix)/texmf/scripts/xindy/texindy.pl
 @TETEX_BUILD_TRUE@	ln -s ../../texmf/scripts/xindy/texindy.pl $(bindir)/texindy
 
 xindy: xindy.in
 	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/xindy.in >xindy
-
-xindy.v2: xindy.v2.in
-	sed -e 's:@XINDY_PERL\@:/usr/bin/env perl:' $(srcdir)/xindy.v2.in >xindy.v2
 
 @MAINTAINER_MODE_TRUE@$(srcdir)/xindy.1: $(srcdir)/xindy.in
 @MAINTAINER_MODE_TRUE@	$(POD2MAN) --center '$(PACKAGE_NAME)' \
