@@ -393,6 +393,7 @@ uninstall-man: uninstall-man1
 
 @TETEX_BUILD_TRUE@install-exec-hook: xindy xindy.v2
 @TETEX_BUILD_TRUE@	$(MKDIR_P) "$(prefix)/texmf/scripts/xindy"
+@TETEX_BUILD_TRUE@	-rm -f $(bindir)/xindy $(bindir)/xindy.v2 $(bindir)/texindy
 @TETEX_BUILD_TRUE@	$(INSTALL_SCRIPT) xindy $(prefix)/texmf/scripts/xindy/xindy.pl
 @TETEX_BUILD_TRUE@	ln -s ../../texmf/scripts/xindy/xindy.pl $(bindir)/xindy
 #	$(INSTALL_SCRIPT) xindy.v2 $(prefix)/texmf/scripts/xindy/xindy.v2.pl

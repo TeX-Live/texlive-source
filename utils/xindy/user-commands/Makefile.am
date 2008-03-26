@@ -23,6 +23,7 @@
 if TETEX_BUILD
 install-exec-hook: xindy xindy.v2
 	$(MKDIR_P) "$(prefix)/texmf/scripts/xindy"
+	-rm -f $(bindir)/xindy $(bindir)/xindy.v2 $(bindir)/texindy
 	$(INSTALL_SCRIPT) xindy $(prefix)/texmf/scripts/xindy/xindy.pl
 	ln -s ../../texmf/scripts/xindy/xindy.pl $(bindir)/xindy
 #	$(INSTALL_SCRIPT) xindy.v2 $(prefix)/texmf/scripts/xindy/xindy.v2.pl
