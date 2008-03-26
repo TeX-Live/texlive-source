@@ -112,7 +112,6 @@ AC_SUBST(CLISP)
 AM_CONDITIONAL([EXT_CLISP], [test -n "$CLISP"])
 
 # Checks for libraries.
-AC_CHECK_LIB([fl], [main])
 
 # Checks for header files.
 AC_HEADER_STDC
