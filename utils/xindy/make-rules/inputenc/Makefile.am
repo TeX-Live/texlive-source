@@ -45,9 +45,9 @@ INPUTENCS = \
 	latin3.xdy
 
 latin.xdy : latin1.xdy latin2.xdy latin3.xdy
-	echo ';; Generated at' `date` 'from latin?.xdy' >latin.xdy
+	echo ';; this file was generated from $+' >latin.xdy
 	echo >>latin.xdy
-	env - sort -u latin?.xdy | grep -v '^;' >>latin.xdy
+	env - sort -u $+ | grep -v '^;' >>latin.xdy
 
 %.xdy %.idx :
 	perl $(srcdir)/make-testidx.pl TS1,T2A,T1 $* >$*.tex
