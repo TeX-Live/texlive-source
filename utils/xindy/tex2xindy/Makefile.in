@@ -170,7 +170,6 @@ tex2xindy_SOURCES = tex2xindy.l
 tex2xindy_LDADD = @LEXLIB@
 man_MANS = tex2xindy.1
 EXTRA_DIST = $(man_MANS)
-CLEANFILES = tex2xindy.c
 @MAINTAINER_MODE_TRUE@POD_DATE = `ident $< | grep '\$$Id' | sed -e 's/^.*,v [^ ]* //' -e 's/ .*//' -e s:/:-:g`
 @MAINTAINER_MODE_TRUE@POD_VERSION = `ident $< | grep '\$$Id' | sed -e 's/^.*,v //' -e 's/ .*//'`
 @MAINTAINER_MODE_TRUE@POD_NAME = `basename $@ .1 | tr '[a-z]' '[A-Z]'`
@@ -378,9 +377,6 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
-	$(MAKE) $(AM_MAKEFLAGS) \
-	  top_distdir="$(top_distdir)" distdir="$(distdir)" \
-	  dist-hook
 check-am: all-am
 check: check-am
 all-am: Makefile $(PROGRAMS) $(MANS)
@@ -405,7 +401,6 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
-	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
@@ -476,7 +471,7 @@ uninstall-man: uninstall-man1
 .MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
-	clean-generic ctags dist-hook distclean distclean-compile \
+	clean-generic ctags distclean distclean-compile \
 	distclean-generic distclean-tags distdir dvi dvi-am html \
 	html-am info info-am install install-am install-binPROGRAMS \
 	install-data install-data-am install-dvi install-dvi-am \
@@ -489,9 +484,6 @@ uninstall-man: uninstall-man1
 	tags uninstall uninstall-am uninstall-binPROGRAMS \
 	uninstall-man uninstall-man1
 
-
-dist-hook:
-	rm -f $(distdir)/tex2xindy.c
 
 @MAINTAINER_MODE_TRUE@$(srcdir)/tex2xindy.1: $(srcdir)/tex2xindy.l
 @MAINTAINER_MODE_TRUE@	$(POD2MAN) --center '$(PACKAGE_NAME)' \

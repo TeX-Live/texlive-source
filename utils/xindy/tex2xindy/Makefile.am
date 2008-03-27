@@ -29,11 +29,6 @@ man_MANS = tex2xindy.1
 
 EXTRA_DIST = $(man_MANS)
 
-CLEANFILES = tex2xindy.c
-
-dist-hook:
-	rm -f $(distdir)/tex2xindy.c
-
 if MAINTAINER_MODE
 POD_DATE = `ident $< | grep '\$$Id' | sed -e 's/^.*,v [^ ]* //' -e 's/ .*//' -e s:/:-:g`
 POD_VERSION = `ident $< | grep '\$$Id' | sed -e 's/^.*,v //' -e 's/ .*//'`
