@@ -549,7 +549,7 @@ We define |input_ln| in C, for efficiency. Nevertheless we quote the module
 tini@/
 @#
 @!bound_default:integer; {temporary for setup}
-@!bound_name:^char; {temporary for setup}
+@!bound_name:const_cstring; {temporary for setup}
 @#
 @!mem_bot:integer;{smallest index in the |mem| array dumped by \.{INITEX};
   must not be less than |mem_min|}
@@ -2319,7 +2319,7 @@ else
 @x [29.534] l.10285 - Adjust for C string conventions.
 @!months:packed array [1..36] of char; {abbreviations of month names}
 @y
-@!months:^char;
+@!months:const_cstring;
 @z
 
 @x [29.534] l.10300 - Filename change for the recorder.
@@ -5048,7 +5048,7 @@ if j=18 then
     if clobbered then print("clobbered")
     else begin {We have the string; run system(3). We don't have anything
             reasonable to do with the return status, unfortunately discard it.}
-      system(stringcast(address_of(str_pool[str_start[str_ptr]])));
+      system(conststringcast(address_of(str_pool[str_start[str_ptr]])));
       print("executed");
       end;
     end

@@ -137,6 +137,7 @@
 @define function round ();
 @define function strcmp ();
 @define function stringcast ();
+@define function conststringcast ();
 @define function strlen ();
 @define function strtol ();
 @define function trunc ();
@@ -191,6 +192,7 @@
 @define type boolean = 0..1;
 @define type cinttype;
 @define type cstring;
+@define type constcstring;
 @define type char = 0..255;
 @define type getoptstruct;
 @define type integer;

@@ -124,6 +124,7 @@ typedef FILE *text;
 /* To work around casting problems.  */
 #define intcast(x) ((integer) (x))
 #define stringcast(x) ((string) (x))
+#define conststringcast(x) ((const_string) (x))
 
 /* For throwing away input from the file F.  */
 #define vgetc(f) (void) getc (f)
@@ -177,6 +178,8 @@ typedef unsigned char *pointertobyte;
    -- var2 lacks the *.  */
 #define cstring string
 
+#define constcstring const_string
+
 /* Not all C libraries have fabs, so we'll roll our own.  */
 #undef fabs
 #define fabs(x) ((x) >= 0.0 ? (x) : -(x))
@@ -200,11 +203,11 @@ typedef unsigned char *pointertobyte;
 
 /* We use this rather than a simple fputs so that the string will end up
    in the .log file, too.  */
-#define printcstring(STR)     \
-  do {                        \
-    char *ch_ptr = (STR);     \
-    while (*ch_ptr)           \
-      printchar(*(ch_ptr++)); \
+#define printcstring(STR)        \
+  do {                           \
+    const_string ch_ptr = (STR); \
+    while (*ch_ptr)              \
+      printchar(*(ch_ptr++));    \
   } while (0)
 
 

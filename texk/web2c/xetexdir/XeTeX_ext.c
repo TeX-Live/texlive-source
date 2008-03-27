@@ -169,8 +169,8 @@ const UInt32 byteMark				= 0x00000080UL;
 
 
 /* if the user specifies a paper size or output driver program */
-string papersize;
-string outputdriver = "xdvipdfmx -q -E"; /* default to portable xdvipdfmx driver */
+const_string papersize;
+const_string outputdriver = "xdvipdfmx -q -E"; /* default to portable xdvipdfmx driver */
 
 
 void initversionstring(char **versions)
@@ -181,7 +181,7 @@ void initversionstring(char **versions)
 	extern FT_Library	gFreeTypeLibrary; /* in XeTeXFontInst_FT2 */
 	FT_Int	ftMajor, ftMinor, ftPatch;
 
-	char* fmt =
+	const_string fmt =
 		"Compiled with ICU version %s [with modifications for XeTeX]\n"
 		"Compiled with zlib version %s; using %s\n"
 		"Compiled with FreeType2 version %d.%d.%d; using %d.%d.%d\n"
@@ -348,7 +348,7 @@ static char* byteBuffer = NULL;
 	return true;
 }
 
-static void die(char*s, int i)
+static void die(const_string s, int i)
 {
 	fprintf(stderr, s, i);
 	fprintf(stderr, " - exiting\n");

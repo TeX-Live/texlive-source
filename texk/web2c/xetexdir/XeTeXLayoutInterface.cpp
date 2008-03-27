@@ -694,7 +694,7 @@ findGlyphInPostTable(const char* buffer, int tableSize, const char* glyphName)
 	switch (SWAP(p->format)) {
 		case 0x00010000:
 			{
-				char*	cp;
+				const char*	cp;
 				while ((cp = appleGlyphNames[g]) != 0) {
 					if (strcmp(glyphName, cp) == 0)
 						return g;

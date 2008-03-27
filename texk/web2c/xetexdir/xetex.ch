@@ -7335,14 +7335,14 @@ token_show(def_ref); print_ln;
 @z
 
 @x
-      system(stringcast(address_of(str_pool[str_start[str_ptr]])));
+      system(conststringcast(address_of(str_pool[str_start[str_ptr]])));
 @y
       if name_of_file then libc_free(name_of_file);
       name_of_file := xmalloc(cur_length * 3 + 2);
       k := 0;
       for d:=0 to cur_length-1 do append_to_name(str_pool[str_start_macro(str_ptr)+d]);
       name_of_file[k+1] := 0;
-      system(name_of_file + 1);
+      system(conststringcast(name_of_file+1));
 @z
 
 @x
