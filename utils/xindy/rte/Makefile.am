@@ -82,7 +82,7 @@ xindy-build-dir: $(CLISP_PREREQ)
 
 clean-local:
 	rm -rf xindy-build-dir
-	test "$(builddir)" != "$(srcdir)" && for i in $(ORDRULES_FILES); do rm -f ordrules/$$i; done
+	test "$(builddir)" = "$(srcdir)" || for i in $(ORDRULES_FILES); do rm -f ordrules/$$i; done
 if !EXT_CLISP
 	if [ -e $(clisp_builddir) ]; then $(MAKE) -C $(clisp_builddir) clean; fi
 endif
