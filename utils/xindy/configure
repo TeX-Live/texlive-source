@@ -3718,6 +3718,7 @@ directory.  I expected it to be in $srcdir/../../texk/kpathsea.
    { (exit 1); exit 1; }; }
   fi
   docdir="$prefix/texmf/doc/$PACKAGE_NAME"
+  mandir="$prefix/texmf/doc/man"
   if test -z "$enable_docs"; then enable_docs=no; fi
   if test -z "$enable_make_rules"; then enable_make_rules=no; fi
 fi
