@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.c,v 1.16 2007/05/18 05:19:01 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.c,v 1.17 2008/02/13 20:22:21 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -71,6 +71,7 @@ struct pdf_ximage_
 {
   char        *ident;
   char         res_name[16];
+  long         page_no, page_count;
 
   int          subtype;
 
@@ -79,7 +80,6 @@ struct pdf_ximage_
   char        *filename;
   pdf_obj     *reference;
   pdf_obj     *resource;
-  int          page_index;
   int          pdf_box;
 };
 
@@ -112,12 +112,12 @@ static void
 pdf_init_ximage_struct (pdf_ximage *I)
 {
   I->ident    = NULL;
+  I->page_no  = I->page_count = 0;
   I->filename = NULL;
   I->subtype  = -1;
   memset(I->res_name, 0, 16);
   I->reference = NULL;
   I->resource  = NULL;
-  I->page_index = 0;
   I->pdf_box    = 0;
 
   I->attr.width = I->attr.height = 0;
@@ -256,8 +256,8 @@ filter_put_form_attr (pdf_obj *kp, pdf_obj *vp, void *dp)
 
 
 static int
-load_image (const char *ident, int page_index, int pdf_box,
-            const char *fullname, int format, FILE  *fp)
+load_image (const char *ident,
+            const char *fullname, int format, FILE  *fp, long page_no)
 {
   struct ic_ *ic = &_ic;
   int         id = -1; /* ret */
@@ -271,6 +271,7 @@ load_image (const char *ident, int page_index, int pdf_box,
 
   I  = &ic->ximages[id];
   pdf_init_ximage_struct(I);
+  pdf_ximage_set_page(I, page_no, 0);
 
   switch (format) {
   case  IMAGE_TYPE_JPEG:
@@ -299,11 +300,12 @@ load_image (const char *ident, int page_index, int pdf_box,
   case  IMAGE_TYPE_PDF:
     if (_opts.verbose)
       MESG("[PDF]");
-    if (pdf_include_page(I, fp, page_index, pdf_box) < 0)
+//    if (pdf_include_page(I, fp, page_index, pdf_box) < 0)
+    if (pdf_include_page(I, fp) < 0)
       return  -1;
     I->subtype  = PDF_XOBJECT_TYPE_FORM;
-    I->page_index = page_index;
-    I->pdf_box = pdf_box;
+//    I->page_index = page_index;
+//    I->pdf_box = pdf_box;
     break;
   case  IMAGE_TYPE_EPS:
     if (_opts.verbose)
@@ -348,7 +350,7 @@ load_image (const char *ident, int page_index, int pdf_box,
 #define dpx_fclose(f)  (MFCLOSE((f)))
 
 int
-pdf_ximage_findresource (const char *ident, int page_index, int pdf_box)
+pdf_ximage_findresource (const char *ident, long page_no)
 {
   struct ic_ *ic = &_ic;
   int         id = -1;
@@ -359,9 +361,8 @@ pdf_ximage_findresource (const char *ident, int page_index, int pdf_box)
 
   for (id = 0; id < ic->count; id++) {
     I = &ic->ximages[id];
-    if (I->ident && !strcmp(ident, I->ident)
-      && page_index == I->page_index
-      && pdf_box == I->pdf_box) {
+    if (I->ident && !strcmp(ident, I->ident) &&
+	I->page_no == page_no + (page_no < 0 ? I->page_count+1 : 0)) {
       return  id;
     }
   }
@@ -393,7 +394,7 @@ pdf_ximage_findresource (const char *ident, int page_index, int pdf_box)
     id = mps_include_page(ident, fp);
     break;
   default:
-    id = load_image(ident, page_index, pdf_box, fullname, format, fp);
+    id = load_image(ident, fullname, format, fp, page_no);
     break;
   }
   dpx_fclose(fp);
@@ -529,6 +530,19 @@ pdf_ximage_set_form (pdf_ximage *I, void *form_info, pdf_obj *resource)
   I->resource  = NULL;
 }
 
+long
+pdf_ximage_get_page (pdf_ximage *I)
+{
+  return I->page_no;
+}
+
+void
+pdf_ximage_set_page (pdf_ximage *I, long page_no, long page_count)
+{
+  I->page_no    = page_no;
+  I->page_count = page_count;
+}
+
 
 #define CHECK_ID(c,n) do {\
   if ((n) < 0 || (n) >= (c)->count) {\
@@ -606,13 +620,14 @@ pdf_ximage_get_resname (int id)
   return I->res_name;
 }
 
+
 /* depth...
  * Dvipdfm treat "depth" as "yoffset" for pdf:image and pdf:uxobj
  * not as vertical dimension of scaled image. (And there are bugs.)
  * This part contains incompatibile behaviour than dvipdfm!
  */
-#define EBB_DPI 72	/* was 100 in dvipdfmx; changed to 72 to match xetex's ideas
-                       about graphics resolution/scaling */
+#define EBB_DPI 72
+
 static void
 scale_to_fit_I (pdf_tmatrix    *T,
                 transform_info *p,
@@ -865,7 +880,8 @@ ps_include_page (pdf_ximage *ximage, const char *filename)
     dpx_delete_temp_file(temp);
     return  -1;
   }
-  error = pdf_include_page(ximage, fp, 0, pdfbox_crop);
+//  error = pdf_include_page(ximage, fp, 0, pdfbox_crop);
+  error = pdf_include_page(ximage, fp);
   MFCLOSE(fp);
 
   if (_opts.verbose > 1) {

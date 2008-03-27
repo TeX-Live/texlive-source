@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfcolor.c,v 1.13 2006/12/11 12:46:03 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfcolor.c,v 1.14 2007/11/22 11:45:39 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -212,114 +212,27 @@ compare_color (const pdf_color *color1, const pdf_color *color2)
 }
 #endif
 
-static int
-valid_color_values (pdf_color *validated, const pdf_color *color)
+int
+pdf_color_is_valid (pdf_color *color)
 {
-  int  i, num_components = 0;
+  int  i, num_components;
 
   num_components = color->num_components;
   if (num_components != 1 &&
       num_components != 3 &&
       num_components != 4) {
     ERROR("Only RGB/CMYK/Gray currently supported.");
-    return -1;
+    return 0;
   }
 
   for (i = 0; i < num_components; i++) {
     if (color->values[i] < 0.0 || color->values[i] > 1.0) {
       WARN("Invalid color value: %g", color->values[i]);
-      return -1;
-    } else {
-      validated->values[i] = color->values[i];
-    }
-  }
-  validated->num_components = color->num_components;
-
-  return 0;
-}
-
-int
-pdf_dev_currentcolor (pdf_color *color, int is_fill)
-{
-  ASSERT(color);
-
-  if (is_fill) {
-    memcpy(color, &current_fill, sizeof(pdf_color));
-  } else {
-    memcpy(color, &current_stroke, sizeof(pdf_color));
-  }
-
-  return 0;
-}
-
-int
-pdf_dev_setcolor (const pdf_color *color, int is_fill)
-{
-  int       len = 0, colormode;
-  int       i;
-  char      format_buffer[128];
-  pdf_color validated;
-
-  if (!color) {
-    WARN("No color specified.");
-    return -1;
-  }
-
-  colormode = pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE);
-  if (!colormode) {
-    WARN("setcolor ignored. (Ignore color option set)");
-    return  0;
-  }
-
-  if (valid_color_values(&validated, color) < 0) {
-    return -1;
-  }
-
-#if  0
-  /* There are much problems in this :( */
-  if (is_fill) {
-    if (!compare_color(&validated, &current_fill)) {
-      return 0;
-    }
-  } else {
-    if (!compare_color(&validated, &current_stroke)) {
       return 0;
     }
   }
-#endif
-
-  graphics_mode();
-
-  for (i = 0; i < validated.num_components; i++) {
-    len = sprintf(format_buffer, " %g", ROUND(validated.values[i], 0.01));
-    pdf_doc_add_page_content(format_buffer, len);
-  }
-
-  switch (validated.num_components) {
-  case  3:
-    pdf_doc_add_page_content((is_fill ? " rg" : " RG"), 3);
-    break;
-  case  4:
-    pdf_doc_add_page_content((is_fill ? " k"  : " K" ), 2);
-    break;
-  case  1:
-    pdf_doc_add_page_content((is_fill ? " g"  : " G" ), 2);
-    break;
-  default:
-    ERROR("Only RGB/CMYK/Gray currently supported.");
-    return -1;
-    break;
-  }
-
-  if (is_fill) {
-    memcpy(&current_fill,   &validated, sizeof(pdf_color));
-  } else {
-    memcpy(&current_stroke, &validated, sizeof(pdf_color));
-  }
-
-  return  0;
+  return 1;
 }
-
 
 /* Dvipdfm special */
 pdf_color default_color = {
@@ -330,25 +243,64 @@ pdf_color default_color = {
 void
 pdf_color_set_default (const pdf_color *color)
 {
-  ASSERT(color);
-
-  memcpy(&default_color, color, sizeof(pdf_color));
+  pdf_color_copycolor(&default_color, color);
 }
 
-
-/*
- * Having color stack here is wrong.
- * dvi.c or XXX_special should treat this.
- */
 #define DEV_COLOR_STACK_MAX 128
 
 static struct {
-  int       next;
+  int       current;
   pdf_color stroke[DEV_COLOR_STACK_MAX];
   pdf_color fill[DEV_COLOR_STACK_MAX];
 } color_stack = {
   0,
 };
+
+void
+pdf_color_clear_stack (void)
+{
+  if (color_stack.current > 0) {
+    WARN("You've mistakenly made a global color change within nested colors.");
+  }
+  color_stack.current = 0;
+  pdf_color_copycolor(&color_stack.stroke[color_stack.current], &default_color);
+  pdf_color_copycolor(&color_stack.fill[color_stack.current], &default_color);
+  return;
+}
+
+void
+pdf_color_push (pdf_color *sc, pdf_color *fc)
+{
+  if (color_stack.current >= DEV_COLOR_STACK_MAX-1) {
+    WARN("Color stack overflow. Just ignore.");
+  } else {
+    color_stack.current++;
+    pdf_color_copycolor(&color_stack.stroke[color_stack.current], sc);
+    pdf_color_copycolor(&color_stack.fill[color_stack.current], fc);
+    pdf_dev_reset_color();
+  }
+  return;
+}
+
+void
+pdf_color_pop (void)
+{
+  if (color_stack.current <= 0) {
+    WARN("Color stack underflow. Just ignore.");
+  } else {
+    color_stack.current--;
+    pdf_dev_reset_color();
+  }
+  return;
+}
+
+void
+pdf_color_get_current (pdf_color **sc, pdf_color **fc)
+{
+  *sc = &color_stack.stroke[color_stack.current];
+  *fc = &color_stack.fill[color_stack.current];
+  return;
+}
 
 /* BUG (20060330): color change does not effect on the next page.
  *   The problem is due to the part of grestore because it restores
@@ -358,88 +310,10 @@ static struct {
 void
 pdf_dev_preserve_color (void)
 {
-  if (color_stack.next > 0) {
-    current_stroke = color_stack.stroke[color_stack.next];
-    current_fill   = color_stack.fill[color_stack.next];
+  if (color_stack.current > 0) {
+    current_stroke = color_stack.stroke[color_stack.current];
+    current_fill   = color_stack.fill[color_stack.current];
   }
-}
-
-void
-pdf_dev_reset_color (void)
-{
-  int  colormode;
-  pdf_color fillcolor, strokecolor;
-
-  /* Shouldn't give a warning */
-  colormode = pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE);
-  if (!colormode) {
-    return;
-  }
-
-  if (color_stack.next > 0) {
-    strokecolor = current_stroke;
-    fillcolor   = current_fill;
-  } else {
-    strokecolor = default_color;
-    fillcolor   = default_color;
-  }
-
-  pdf_dev_setcolor(&strokecolor, 0);
-  pdf_dev_setcolor(&fillcolor, 1);
- 
-  return;
-}
-
-
-void
-pdf_color_clear (void)
-{
-  color_stack.next = 0;
-}
-
-void
-pdf_color_push (void)
-{
-  int  current;
-
-  current = color_stack.next;
-  if (current >= DEV_COLOR_STACK_MAX) {
-    WARN("Exceeded depth of color stack.");
-    return;
-  }
-
-  memcpy(&color_stack.stroke[current],
-	 &current_stroke, sizeof(pdf_color));
-  memcpy(&color_stack.fill[current],
-	 &current_fill  , sizeof(pdf_color));
-
-  color_stack.next++;
-
-  return;
-}
-
-void
-pdf_color_pop (void)
-{
-  int  current;
-
-  current = --(color_stack.next);
-
-  if (current <  0) {
-    WARN("End color with no corresponding begin color.");
-    /*
-     * In the case of mismatched push and pop, color_stack.next must set
-     * to be the default value, 0. Otherwise causes segmentation fault
-     * in the next push command.
-     */
-    pdf_color_clear();
-    return;
-  }
-
-  pdf_dev_setcolor(&color_stack.stroke[current], 0);
-  pdf_dev_setcolor(&color_stack.fill[current]  , 1);
-
-  return;
 }
 
 /***************************** COLOR SPACE *****************************/

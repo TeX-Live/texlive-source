@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.h,v 1.22 2007/04/03 05:25:50 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.h,v 1.23 2007/11/14 03:36:01 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -55,7 +55,8 @@ extern void     pdf_out_init      (const char *filename, int do_encryption);
 extern void     pdf_out_flush     (void);
 extern void     pdf_set_version   (unsigned version);
 extern unsigned pdf_get_version   (void);
-extern void     pdf_enable_objstm (void);
+extern void     pdf_objstm_init   (void);
+extern void     pdf_objstm_close  (void);
 
 extern pdf_obj *pdf_new_obj     (int type);
 extern void     pdf_release_obj (pdf_obj *object);

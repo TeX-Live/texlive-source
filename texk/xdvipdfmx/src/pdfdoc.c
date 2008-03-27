@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.44 2006/12/20 08:10:13 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.50 2008/02/13 20:22:21 matthias Exp $
  
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -144,9 +144,9 @@ read_thumbnail (const char *thumb_filename)
   MFCLOSE(fp);
 
   if (found_in_cwd) {
-    xobj_id = pdf_ximage_findresource(thumb_filename, 0, 0);
+    xobj_id = pdf_ximage_findresource(thumb_filename, 0/*, 0*/);
   } else {
-    xobj_id = pdf_ximage_findresource(guess_filename, 0, 0);
+    xobj_id = pdf_ximage_findresource(guess_filename, 0/*, 0*/);
   }
 
   if (xobj_id < 0) {
@@ -511,7 +511,7 @@ asn_date (char *date_string)
 # ifdef HAVE_TM_GMTOFF
 #  define timezone (-bd_time->tm_gmtoff)
 # else
-#  define timezone  (-compute_timezone_offset())
+#  define timezone (-compute_timezone_offset())
 # endif /* not HAVE_TM_GMTOFF */
 #endif  /* not HAVE_TIMEZONE */
   time_t      current_time;
@@ -1037,6 +1037,7 @@ flush_bookmarks (pdf_olitem *node,
                pdf_new_name("Last"),
                pdf_link_obj(prev_ref));
 
+  pdf_release_obj(prev_ref);
   pdf_release_obj(node->dict);
   node->dict = NULL;
 
@@ -1334,10 +1335,10 @@ pdf_doc_add_annot (unsigned page_no, const pdf_rect *rect, pdf_obj *annot_dict)
 #endif
 
   rect_array = pdf_new_array();
-  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->llx - annot_grow, 0.01)));
-  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->lly - annot_grow, 0.01)));
-  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->urx + annot_grow, 0.01)));
-  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->ury + annot_grow, 0.01)));
+  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->llx - annot_grow, 0.001)));
+  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->lly - annot_grow, 0.001)));
+  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->urx + annot_grow, 0.001)));
+  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->ury + annot_grow, 0.001)));
   pdf_add_dict (annot_dict, pdf_new_name("Rect"), rect_array);
 
   pdf_add_array(page->annots, pdf_ref_obj(annot_dict));
@@ -1961,10 +1962,10 @@ doc_fill_page_background (pdf_doc *p)
   currentpage->contents = currentpage->background;
 
   pdf_dev_gsave();
-  pdf_color_push();
-  pdf_dev_setcolor(&bgcolor, 1); /* is_fill */
+  //pdf_color_push();
+  pdf_dev_set_nonstrokingcolor(&bgcolor);
   pdf_dev_rectfill(r.llx, r.lly, r.urx - r.llx, r.ury - r.lly);
-  pdf_color_pop();
+  //pdf_color_pop();
   pdf_dev_grestore();
 
   currentpage->contents = saved_content;
@@ -2022,7 +2023,8 @@ pdf_doc_add_page_content (const char *buffer, unsigned length)
 static char *doccreator = NULL; /* Ugh */
 
 void
-pdf_open_document (const char *filename, int do_encryption,
+pdf_open_document (const char *filename,
+		   int do_encryption, int do_objstm,
                    double media_width, double media_height,
                    double annot_grow_amount, int bookmark_open_depth)
 {
@@ -2059,6 +2061,9 @@ pdf_open_document (const char *filename, int do_encryption,
     pdf_set_encrypt(encrypt, pdf_enc_id_array());
     pdf_release_obj(encrypt);
   }
+
+  if (do_objstm)
+    pdf_objstm_init();
 
 #ifndef NO_THUMBNAIL
   /* Create a default name for thumbnail image files */
@@ -2121,6 +2126,8 @@ pdf_close_document (void)
     RELEASE(thumb_basename);
   }
 #endif /* !NO_THUMBNAIL */
+
+  pdf_objstm_close();
 
   return;
 }

@@ -72,6 +72,8 @@ static long opt_flags = 0;
 #define OPT_FONTMAP_FIRST_MATCH   (1 << 3)
 #define OPT_NO_OBJSTM             (1 << 4)
 
+static int    do_objstm;
+
 static char   ignore_colors = 0;
 static double annot_grow    = 0.0;
 static int    bookmark_open = 0;
@@ -137,7 +139,7 @@ usage (int exit_code)
   fprintf (stdout, "\nThis is %s-%s by Jonathan Kew and Jin-Hwan Cho,\n", PACKAGE, VERSION);
   fprintf (stdout, "an extended version of DVIPDFMx, which in turn was\n");
   fprintf (stdout, "an extended version of dvipdfm-0.13.2c developed by Mark A. Wicks.\n");
-  fprintf (stdout, "\nCopyright (c) 2006-07 SIL International and Jin-Hwan Cho.\n");
+  fprintf (stdout, "\nCopyright (c) 2006-2008 SIL International and Jin-Hwan Cho.\n");
   fprintf (stdout, "\nThis is free software; you can redistribute it and/or modify\n");
   fprintf (stdout, "it under the terms of the GNU General Public License as published by\n");
   fprintf (stdout, "the Free Software Foundation; either version 2 of the License, or\n");
@@ -601,8 +603,10 @@ read_config_file (const char *config)
 
   if (!(fp = MFOPEN (fullname, FOPEN_R_MODE))) {
     WARN("Could not open config file \"%s\".", fullname);
+    RELEASE(fullname);
     return;
   }
+  RELEASE(fullname);
   while ((start = mfgets (work_buffer, WORK_BUFFER_SIZE, fp)) != NULL) {
     char *argv[2];
     int   argc;
@@ -694,7 +698,6 @@ do_dvi_pages (void)
   mediabox.urx = paper_width;
   mediabox.ury = paper_height;
 
-  pdf_doc_set_creator (dvi_comment());
   pdf_doc_set_mediabox(0, &mediabox); /* Root node */
 
   for (i = 0; i < num_page_ranges && dvi_npages() > 0; i++) {
@@ -859,8 +862,7 @@ main (int argc, char *argv[])
       pdf_set_version(4);
   }
 
-  if (!(opt_flags & OPT_NO_OBJSTM))
-    pdf_enable_objstm();
+  do_objstm = !(opt_flags & OPT_NO_OBJSTM);
 
   if (mp_mode) {
     x_offset = 0.0;
@@ -871,6 +873,8 @@ main (int argc, char *argv[])
     dvi2pts = dvi_init(dvi_filename, mag);
     if (dvi2pts == 0.0)
       ERROR("dvi_init() failed!");
+
+    pdf_doc_set_creator(dvi_comment());
 
     dvi_scan_paper_size(0, &paper_width, &paper_height, &x_offset, &y_offset, &landscape_mode);
     if (landscape_mode) {
@@ -885,7 +889,7 @@ main (int argc, char *argv[])
    * annot_grow:    Margin of annotation.
    * bookmark_open: Miximal depth of open bookmarks.
    */
-  pdf_open_document(pdf_filename, do_encryption,
+  pdf_open_document(pdf_filename, do_encryption, do_objstm,
                     paper_width, paper_height, annot_grow, bookmark_open);
 
   /* Ignore_colors placed here since

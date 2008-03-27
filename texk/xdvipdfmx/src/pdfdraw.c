@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdraw.c,v 1.13 2006/12/11 12:46:03 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdraw.c,v 1.14 2007/11/22 17:10:12 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -268,7 +268,7 @@ static char    fmt_buf[1024]; /* FIXME */
 #define FORMAT_BUFF_LEN(p) 1024
 
 static void
-pdf_path__initpath (pdf_path *p)
+init_a_path (pdf_path *p)
 {
   ASSERT(p);
 
@@ -302,7 +302,7 @@ pdf_path__growpath  (pdf_path *p, int max_pe)
 }
     
 static void
-pdf_path__cleanpath (pdf_path *p)
+clear_a_path (pdf_path *p)
 {
   ASSERT(p);
 
@@ -1001,25 +1001,18 @@ m_stack_top (m_stack *stack)
 
 #define m_stack_depth(s)    ((s) ? (s)->size : 0)
 
-
-static m_stack _gsstck; /* FIXME */
-
+static m_stack gs_stack;
 
 static void
-pdf_dev__init_gstate (pdf_gstate *gs)
+init_a_gstate (pdf_gstate *gs)
 {
-  pdf_path    *pa = &gs->path;
-  pdf_color   *cf = &gs->fillcolor;
-  pdf_color   *cs = &gs->strokecolor;
-  pdf_tmatrix *M  = &gs->matrix;
-
   gs->cp.x = 0.0;
   gs->cp.y = 0.0;
 
-  pdf_setmatrix(M, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0);
+  pdf_setmatrix(&gs->matrix, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0);
 
-  pdf_color_graycolor(cs, 0.0);
-  pdf_color_graycolor(cf, 0.0);
+  pdf_color_graycolor(&gs->strokecolor, 0.0);
+  pdf_color_graycolor(&gs->fillcolor, 0.0);
 
   gs->linedash.num_dash = 0;
   gs->linedash.offset   = 0;
@@ -1032,7 +1025,7 @@ pdf_dev__init_gstate (pdf_gstate *gs)
 
   /* Internal variables */
   gs->flags = 0;
-  pdf_path__initpath(pa);
+  init_a_path(&gs->path);
   gs->pt_fixee.x = 0;
   gs->pt_fixee.y = 0;
 
@@ -1040,16 +1033,16 @@ pdf_dev__init_gstate (pdf_gstate *gs)
 }
 
 static void
-pdf_dev__clean_gstate (pdf_gstate *gs)
+clear_a_gstate (pdf_gstate *gs)
 {
-  pdf_path__cleanpath(&gs->path);
+  clear_a_path(&gs->path);
   memset(gs, 0, sizeof(pdf_gstate));
 
   return;
 }
 
 static void
-pdf_dev__copy_gstate (pdf_gstate *gs1, pdf_gstate *gs2)
+copy_a_gstate (pdf_gstate *gs1, pdf_gstate *gs2)
 {
   int   i;
 
@@ -1090,41 +1083,153 @@ pdf_dev__copy_gstate (pdf_gstate *gs1, pdf_gstate *gs2)
 void
 pdf_dev_init_gstates (void)
 {
-  m_stack    *gss = &_gsstck;
   pdf_gstate *gs;
 
-  m_stack_init(gss);
+  m_stack_init(&gs_stack);
 
   gs = NEW(1, pdf_gstate);
-  pdf_dev__init_gstate(gs);
+  init_a_gstate(gs);
 
-  m_stack_push(gss, gs); /* Initial state */
+  m_stack_push(&gs_stack, gs); /* Initial state */
 
   return;
 }
 
 void
-pdf_dev_clean_gstates (void)
+pdf_dev_clear_gstates (void)
 {
-  m_stack    *gss = &_gsstck;
   pdf_gstate *gs;
 
-  if (m_stack_depth(gss) > 1) /* at least 1 elem. */
-    WARN("GS stack depth not 0 at end of document.");
+  if (m_stack_depth(&gs_stack) > 1) /* at least 1 elem. */
+    WARN("GS stack depth is not zero at the end of the document.");
 
-  while ((gs = m_stack_pop(gss)) != NULL) {
-    pdf_dev__clean_gstate(gs);
+  while ((gs = m_stack_pop(&gs_stack)) != NULL) {
+    clear_a_gstate(gs);
     RELEASE(gs);
   }
-
   return;
+}
+
+int
+pdf_dev_gsave (void)
+{
+  pdf_gstate *gs0, *gs1;
+  pdf_color  *sc, *fc;
+
+  gs0 = m_stack_top(&gs_stack);
+  gs1 = NEW(1, pdf_gstate);
+  init_a_gstate(gs1);
+  copy_a_gstate(gs1, gs0);
+  pdf_color_get_current(&sc, &fc);
+  pdf_color_copycolor(&gs1->strokecolor, sc);
+  pdf_color_copycolor(&gs1->fillcolor, fc);
+  m_stack_push(&gs_stack, gs1);
+
+  pdf_doc_add_page_content(" q", 2);
+
+  return 0;
+}
+
+int
+pdf_dev_grestore (void)
+{
+  pdf_gstate *gs;
+  pdf_color   sc, fc;
+
+  if (m_stack_depth(&gs_stack) <= 1) { /* Initial state at bottom */
+    WARN("Too many grestores.");
+    return  -1;
+  }
+
+  gs = m_stack_pop(&gs_stack);
+//  pdf_color_copycolor(&sc, &gs->strokecolor);
+//  pdf_color_copycolor(&fc, &gs->fillcolor);
+  clear_a_gstate(gs);
+  RELEASE(gs);
+
+  pdf_doc_add_page_content(" Q", 2);
+
+  pdf_dev_reset_fonts();
+//  pdf_dev_set_strokingcolor(&sc);
+//  pdf_dev_set_nonstrokingcolor(&fc);
+
+  return  0;
 }
 
 
 int
+pdf_dev_push_gstate (void)
+{
+  m_stack    *gss = &gs_stack;
+  pdf_gstate *gs0;
+
+  gs0 = NEW(1, pdf_gstate);
+
+  init_a_gstate(gs0);
+
+  m_stack_push(gss, gs0);
+
+  return 0;
+}
+
+
+int
+pdf_dev_pop_gstate (void)
+{
+  m_stack    *gss = &gs_stack;
+  pdf_gstate *gs;
+
+  if (m_stack_depth(gss) <= 1) { /* Initial state at bottom */
+    WARN("Too many grestores.");
+    return  -1;
+  }
+
+  gs = m_stack_pop(gss);
+  clear_a_gstate(gs);
+  RELEASE(gs);
+
+  return  0;
+}
+
+
+int
+pdf_dev_current_depth (void)
+{
+  return (m_stack_depth(&gs_stack) - 1); /* 0 means initial state */
+}
+
+void
+pdf_dev_grestore_to (int depth)
+{
+  m_stack    *gss = &gs_stack;
+  pdf_gstate *gs;
+  pdf_color   sc, fc;
+
+  ASSERT(depth >= 0);
+
+  if (m_stack_depth(gss) > depth + 1) {
+    WARN("Closing pending transformations at end of page/XObject.");
+  }
+
+  while (m_stack_depth(gss) > depth + 1) {
+    pdf_doc_add_page_content(" Q", 2);
+    gs = m_stack_pop(gss);
+//    pdf_color_copycolor(&sc, &gs->strokecolor);
+//    pdf_color_copycolor(&fc, &gs->fillcolor);
+    clear_a_gstate(gs);
+    RELEASE(gs);
+  }
+  pdf_dev_reset_fonts();
+//  pdf_dev_set_strokingcolor(&sc);
+//  pdf_dev_set_nonstrokingcolor(&fc);
+
+  return;
+}
+
+int
 pdf_dev_currentpoint (pdf_coord *p)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   pdf_coord  *cpt = &gs->cp;
 
@@ -1138,7 +1243,7 @@ pdf_dev_currentpoint (pdf_coord *p)
 int
 pdf_dev_currentmatrix (pdf_tmatrix *M)
 {
-  m_stack     *gss = &_gsstck;
+  m_stack     *gss = &gs_stack;
   pdf_gstate  *gs  = m_stack_top(gss);
   pdf_tmatrix *CTM = &gs->matrix;
 
@@ -1153,7 +1258,7 @@ pdf_dev_currentmatrix (pdf_tmatrix *M)
 int
 pdf_dev_currentcolor (pdf_color *color, int is_fill)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   pdf_color  *fcl = &gs->fillcolor;
   pdf_color  *scl = &gs->strokecolor;
@@ -1169,7 +1274,7 @@ pdf_dev_currentcolor (pdf_color *color, int is_fill)
 int
 pdf_dev_concat (const pdf_tmatrix *M)
 {
-  m_stack     *gss = &_gsstck;
+  m_stack     *gss = &gs_stack;
   pdf_gstate  *gs  = m_stack_top(gss);
   pdf_path    *cpa = &gs->path;
   pdf_coord   *cpt = &gs->cp;
@@ -1210,128 +1315,6 @@ pdf_dev_concat (const pdf_tmatrix *M)
   return 0;
 }
 
-
-int
-pdf_dev_gsave (void)
-{
-  m_stack    *gss = &_gsstck;
-  pdf_gstate *gs0, *gs1;
-
-  gs0 = m_stack_top(gss);
-  gs1 = NEW(1, pdf_gstate);
-
-  pdf_dev__init_gstate(gs1);
-  pdf_dev__copy_gstate(gs1, gs0);
-
-  pdf_dev_currentcolor(&gs1->strokecolor, 0);
-  pdf_dev_currentcolor(&gs1->fillcolor, 1);
-
-  m_stack_push(gss, gs1);
-
-  pdf_doc_add_page_content(" q", 2);
-
-  return 0;
-}
-
-
-int
-pdf_dev_push_gstate (void)
-{
-  m_stack    *gss = &_gsstck;
-  pdf_gstate *gs0;
-
-  gs0 = NEW(1, pdf_gstate);
-
-  pdf_dev__init_gstate(gs0);
-
-  m_stack_push(gss, gs0);
-
-  return 0;
-}
-
-
-int
-pdf_dev_pop_gstate (void)
-{
-  m_stack    *gss = &_gsstck;
-  pdf_gstate *gs;
-
-  if (m_stack_depth(gss) <= 1) { /* Initial state at bottom */
-    WARN("Too many grestores.");
-    return  -1;
-  }
-
-  gs = m_stack_pop(gss);
-  pdf_dev__clean_gstate(gs);
-  RELEASE(gs);
-
-  return  0;
-}
-
-
-int
-pdf_dev_current_depth (void)
-{
-  m_stack  *gss = &_gsstck;
-
-  return (m_stack_depth(gss) - 1); /* 0 means initial state */
-}
-
-void
-pdf_dev_grestore_to (int depth)
-{
-  m_stack    *gss = &_gsstck;
-  pdf_gstate *gs;
-
-  ASSERT(depth >= 0);
-
-  if (m_stack_depth(gss) > depth + 1) {
-    WARN("Closing pending transformations at end of page/XObject.");
-  }
-
-  while (m_stack_depth(gss) > depth + 1) {
-    pdf_doc_add_page_content(" Q", 2);
-    gs = m_stack_pop(gss);
-    pdf_dev__clean_gstate(gs);
-    RELEASE(gs);
-  }
-  pdf_dev_reset_fonts();
-  pdf_dev_reset_color();
-
-  return;
-}
-
-int
-pdf_dev_grestore (void)
-{
-  m_stack    *gss = &_gsstck;
-  pdf_gstate *gs;
-  pdf_color   sc, fc;
-
-  if (m_stack_depth(gss) <= 1) { /* Initial state at bottom */
-    WARN("Too many grestores.");
-    return  -1;
-  }
-
-  gs = m_stack_pop(gss);
-
-  pdf_color_copycolor(&sc, &gs->strokecolor);
-  pdf_color_copycolor(&fc, &gs->fillcolor);
-
-  pdf_dev__clean_gstate(gs);
-  RELEASE(gs);
-
-  pdf_doc_add_page_content(" Q", 2);
-
-  pdf_dev_reset_fonts();
-  pdf_dev_reset_color();
-
-  pdf_dev_setcolor(&sc, 0);
-  pdf_dev_setcolor(&fc, 1);
-
-  return  0;
-}
-
 /*
  * num w        LW  linewidth (g.t. 0)
  * int J        LC  linecap
@@ -1345,7 +1328,7 @@ pdf_dev_grestore (void)
 int
 pdf_dev_setmiterlimit (double mlimit)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   int         len = 0;
   char       *buf = FORMAT_BUFF_PTR(NULL);
@@ -1365,7 +1348,7 @@ pdf_dev_setmiterlimit (double mlimit)
 int
 pdf_dev_setlinecap (int capstyle)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   int         len = 0;
   char       *buf = FORMAT_BUFF_PTR(NULL);
@@ -1382,7 +1365,7 @@ pdf_dev_setlinecap (int capstyle)
 int
 pdf_dev_setlinejoin (int joinstyle)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   int         len = 0;
   char       *buf = FORMAT_BUFF_PTR(NULL);
@@ -1399,7 +1382,7 @@ pdf_dev_setlinejoin (int joinstyle)
 int
 pdf_dev_setlinewidth (double width)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);  
   int         len = 0;
   char       *buf = FORMAT_BUFF_PTR(NULL);
@@ -1419,7 +1402,7 @@ pdf_dev_setlinewidth (double width)
 int
 pdf_dev_setdash (int count, double *pattern, double offset)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   int         len = 0;
   char       *buf = FORMAT_BUFF_PTR(NULL);
@@ -1445,7 +1428,7 @@ pdf_dev_setdash (int count, double *pattern, double offset)
 int
 pdf_dev_setflat (int flatness)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   int         len = 0;
   char       *buf = FORMAT_BUFF_PTR(NULL);
@@ -1466,7 +1449,7 @@ pdf_dev_setflat (int flatness)
 int
 pdf_dev_clip (void)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   pdf_path   *cpa = &gs->path;
 
@@ -1476,7 +1459,7 @@ pdf_dev_clip (void)
 int
 pdf_dev_eoclip (void)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   pdf_path   *cpa = &gs->path;
 
@@ -1486,7 +1469,7 @@ pdf_dev_eoclip (void)
 int
 pdf_dev_flushpath (char p_op, int fill_rule)
 {
-  m_stack    *gss   = &_gsstck;
+  m_stack    *gss   = &gs_stack;
   pdf_gstate *gs    = m_stack_top(gss);
   pdf_path   *cpa   = &gs->path;
   int         error = 0;
@@ -1506,7 +1489,7 @@ pdf_dev_flushpath (char p_op, int fill_rule)
 int
 pdf_dev_newpath (void)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   pdf_path   *p   = &gs->path;
 
@@ -1522,7 +1505,7 @@ pdf_dev_newpath (void)
 int
 pdf_dev_moveto (double x, double y)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   pdf_path   *cpa = &gs->path;
   pdf_coord  *cpt = &gs->cp;
@@ -1535,7 +1518,7 @@ pdf_dev_moveto (double x, double y)
 int
 pdf_dev_rmoveto (double x, double y)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   pdf_path   *cpa = &gs->path;
   pdf_coord  *cpt = &gs->cp;
@@ -1549,7 +1532,7 @@ pdf_dev_rmoveto (double x, double y)
 int
 pdf_dev_lineto (double x, double y)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   pdf_path   *cpa = &gs->path;
   pdf_coord  *cpt = &gs->cp;
@@ -1563,7 +1546,7 @@ pdf_dev_lineto (double x, double y)
 int
 pdf_dev_rlineto (double x, double y)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   pdf_path   *cpa = &gs->path;
   pdf_coord  *cpt = &gs->cp;
@@ -1579,7 +1562,7 @@ pdf_dev_curveto  (double x0, double y0,
                   double x1, double y1,
                   double x2, double y2)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   pdf_path   *cpa = &gs->path;
   pdf_coord  *cpt = &gs->cp;
@@ -1596,7 +1579,7 @@ int
 pdf_dev_vcurveto  (double x0, double y0,
                   double x1, double y1)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   pdf_path   *cpa = &gs->path;
   pdf_coord  *cpt = &gs->cp;
@@ -1612,7 +1595,7 @@ int
 pdf_dev_ycurveto  (double x0, double y0,
                   double x1, double y1)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   pdf_path   *cpa = &gs->path;
   pdf_coord  *cpt = &gs->cp;
@@ -1629,7 +1612,7 @@ pdf_dev_rcurveto (double x0, double y0,
                   double x1, double y1,
                   double x2, double y2)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   pdf_path   *cpa = &gs->path;
   pdf_coord  *cpt = &gs->cp;
@@ -1646,7 +1629,7 @@ pdf_dev_rcurveto (double x0, double y0,
 int
 pdf_dev_closepath (void)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   pdf_coord  *cpt = &gs->cp;
   pdf_path   *cpa = &gs->path;
@@ -1658,7 +1641,7 @@ pdf_dev_closepath (void)
 void
 pdf_dev_dtransform (pdf_coord *p, const pdf_tmatrix *M)
 {
-  m_stack     *gss = &_gsstck;
+  m_stack     *gss = &gs_stack;
   pdf_gstate  *gs  = m_stack_top(gss);
   pdf_tmatrix *CTM = &gs->matrix;
 
@@ -1672,7 +1655,7 @@ pdf_dev_dtransform (pdf_coord *p, const pdf_tmatrix *M)
 void
 pdf_dev_idtransform (pdf_coord *p, const pdf_tmatrix *M)
 {
-  m_stack     *gss = &_gsstck;
+  m_stack     *gss = &gs_stack;
   pdf_gstate  *gs  = m_stack_top(gss);
   pdf_tmatrix *CTM = &gs->matrix;
 
@@ -1686,7 +1669,7 @@ pdf_dev_idtransform (pdf_coord *p, const pdf_tmatrix *M)
 void
 pdf_dev_transform (pdf_coord *p, const pdf_tmatrix *M)
 {
-  m_stack     *gss = &_gsstck;
+  m_stack     *gss = &gs_stack;
   pdf_gstate  *gs  = m_stack_top(gss);
   pdf_tmatrix *CTM = &gs->matrix;
 
@@ -1700,7 +1683,7 @@ pdf_dev_transform (pdf_coord *p, const pdf_tmatrix *M)
 void
 pdf_dev_itransform (pdf_coord *p, const pdf_tmatrix *M)
 {
-  m_stack     *gss = &_gsstck;
+  m_stack     *gss = &gs_stack;
   pdf_gstate  *gs  = m_stack_top(gss);
   pdf_tmatrix *CTM = &gs->matrix;
 
@@ -1715,7 +1698,7 @@ int
 pdf_dev_arc  (double c_x , double c_y, double r,
               double a_0 , double a_1)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   pdf_path   *cpa = &gs->path;
   pdf_coord  *cpt = &gs->cp;
@@ -1731,7 +1714,7 @@ int
 pdf_dev_arcn (double c_x , double c_y, double r,
               double a_0 , double a_1)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   pdf_path   *cpa = &gs->path;
   pdf_coord  *cpt = &gs->cp;
@@ -1749,7 +1732,7 @@ pdf_dev_arcx (double c_x , double c_y,
               int    a_d ,
               double xar)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   pdf_path   *cpa = &gs->path;
   pdf_coord  *cpt = &gs->cp;
@@ -1765,7 +1748,7 @@ int
 pdf_dev_bspline (double x0, double y0,
                  double x1, double y1, double x2, double y2)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   pdf_path   *cpa = &gs->path;
   pdf_coord  *cpt = &gs->cp;  
@@ -1844,7 +1827,7 @@ pdf_dev_rectadd (double x, double y,
 void
 pdf_dev_set_fixed_point (double x, double y)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   gs->pt_fixee.x = x;
   gs->pt_fixee.y = y;
@@ -1853,7 +1836,7 @@ pdf_dev_set_fixed_point (double x, double y)
 void
 pdf_dev_get_fixed_point (pdf_coord *p)
 {
-  m_stack    *gss = &_gsstck;
+  m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   p->x = gs->pt_fixee.x;
   p->y = gs->pt_fixee.y;

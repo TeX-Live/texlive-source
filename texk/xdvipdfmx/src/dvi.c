@@ -128,8 +128,9 @@ static struct loaded_font
   FT_Face ft_face;
   unsigned short *glyph_widths;
   int   layout_dir;
-  double extend;
-  double slant;
+  float extend;
+  float slant;
+  float embolden;
 #endif
 } *loaded_fonts = NULL;
 static int num_loaded_fonts = 0, max_loaded_fonts = 0;
@@ -157,6 +158,7 @@ static struct font_def
   int    layout_dir; /* 1 = vertical, 0 = horizontal */
   int    extend;
   int    slant;
+  int    embolden;
 #endif
 } *def_fonts = NULL;
 
@@ -169,6 +171,7 @@ static struct font_def
 #define XDV_FLAG_VARIATIONS     0x0800
 #define XDV_FLAG_EXTEND			0x1000
 #define XDV_FLAG_SLANT			0x2000
+#define XDV_FLAG_EMBOLDEN		0x4000
 #endif
 
 static int num_def_fonts = 0, max_def_fonts = 0;
@@ -614,6 +617,7 @@ read_font_record (SIGNED_QUAD tex_id)
   def_fonts[num_def_fonts].layout_dir  = 0;
   def_fonts[num_def_fonts].extend      = 0x00010000; /* 1.0 */
   def_fonts[num_def_fonts].slant       = 0;
+  def_fonts[num_def_fonts].embolden    = 0;
 #endif
   num_def_fonts++;
 
@@ -685,6 +689,10 @@ read_native_font_record (SIGNED_QUAD tex_id)
       def_fonts[num_def_fonts].slant = get_signed_quad(dvi_file);
     else
       def_fonts[num_def_fonts].slant = 0;
+    if (flags & XDV_FLAG_EMBOLDEN)
+      def_fonts[num_def_fonts].embolden = get_signed_quad(dvi_file);
+    else
+      def_fonts[num_def_fonts].embolden = 0;
     num_def_fonts++;
   } else {
     ERROR("Unknown native_font flags.");
@@ -1031,12 +1039,12 @@ dvi_locate_font (const char *tfm_name, spt_t ptsize)
 #ifdef XETEX
 static int
 dvi_locate_native_font (const char *ps_name, const char *fam_name,
-                        const char *sty_name, spt_t ptsize, int layout_dir, int extend, int slant)
+                        const char *sty_name, spt_t ptsize, int layout_dir, int extend, int slant, int embolden)
 {
   int           cur_id = -1;
   fontmap_rec  *mrec;
   int           i;
-  char         *fontmap_key = malloc(strlen(ps_name) + 30); // CHECK this is enough
+  char         *fontmap_key = malloc(strlen(ps_name) + 40); // CHECK this is enough
 
   if (verbose)
     MESG("<%s(%s:%s)@%.2fpt", ps_name, fam_name, sty_name, ptsize * dvi2pts);
@@ -1045,10 +1053,10 @@ dvi_locate_native_font (const char *ps_name, const char *fam_name,
 
   cur_id = num_loaded_fonts++;
 
-  sprintf(fontmap_key, "%s/%c/%d/%d", ps_name, layout_dir == 0 ? 'H' : 'V', extend, slant);
+  sprintf(fontmap_key, "%s/%c/%d/%d/%d", ps_name, layout_dir == 0 ? 'H' : 'V', extend, slant, embolden);
   mrec = pdf_lookup_fontmap_record(fontmap_key);
   if (mrec == NULL) {
-    if (pdf_load_native_font(ps_name, fam_name, sty_name, layout_dir, extend, slant) == -1) {
+    if (pdf_load_native_font(ps_name, fam_name, sty_name, layout_dir, extend, slant, embolden) == -1) {
     ERROR("Cannot proceed without the \"native\" font: %s (%s %s)...",
           ps_name, fam_name, sty_name);
     }
@@ -1073,6 +1081,7 @@ dvi_locate_native_font (const char *ps_name, const char *fam_name,
   loaded_fonts[cur_id].layout_dir = layout_dir;
   loaded_fonts[cur_id].extend = mrec->opt.extend;
   loaded_fonts[cur_id].slant = mrec->opt.slant;
+  loaded_fonts[cur_id].embolden = mrec->opt.bold;
 
   if (verbose)
     MESG(">");
@@ -1710,7 +1719,8 @@ do_fnt (SIGNED_QUAD tex_id)
                                        def_fonts[i].point_size,
                                        def_fonts[i].layout_dir,
                                        def_fonts[i].extend,
-                                       def_fonts[i].slant);
+                                       def_fonts[i].slant,
+                                       def_fonts[i].embolden);
     } else {
       font_id = dvi_locate_font(def_fonts[i].font_name,
 	                        def_fonts[i].point_size);
@@ -1929,13 +1939,14 @@ do_glyph_array (int yLocsPresent)
 
   if (font->rgba_color != 0xffffffff) {
     pdf_color color;
-    pdf_color_push();
+//    pdf_color_push();
     pdf_color_rgbcolor(&color,
       (double)((unsigned char)(font->rgba_color >> 24) & 0xff) / 255,
       (double)((unsigned char)(font->rgba_color >> 16) & 0xff) / 255,
       (double)((unsigned char)(font->rgba_color >>  8) & 0xff) / 255);
-    pdf_dev_setcolor(&color, 0); /* stroke color */
-    pdf_dev_setcolor(&color, 1); /* fill color */
+    pdf_color_push(&color, &color);
+//    pdf_dev_setcolor(&color, 0); /* stroke color */
+//    pdf_dev_setcolor(&color, 1); /* fill color */
   }
   for (i = 0; i < slen; i++) {
     glyph_id = get_buffered_unsigned_pair(); /* freetype glyph index */
@@ -2037,9 +2048,7 @@ do_pic_file()
     transform is a 3x2 affine transform matrix expressed in fixed-point values
   */
   
-  if (page_no > 0)
-    --page_no; /* convert 1-based page number to 0-based index */
-  xobj_id = pdf_ximage_findresource(path, page_no, pdf_box);
+  xobj_id = pdf_ximage_findresource(path, page_no/*, pdf_box*/);
   if (xobj_id >= 0) {
       /* FIXME: this seems to work for 72dpi JPEGs, but isn't right for others;
          need to take the actual image resolution into account in pdf_dev_put_image,

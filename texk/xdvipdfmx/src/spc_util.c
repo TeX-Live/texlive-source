@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_util.c,v 1.8 2007/04/24 09:29:39 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_util.c,v 1.10 2008/02/13 20:22:21 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -411,9 +411,8 @@ spc_read_dimtrns_dvips (struct spc_env *spe, transform_info *t, struct spc_arg *
       spc_warn(spe, "Missing value for dimension/transformation: %s", kp);
       error = -1;
     }
-
+    RELEASE(kp);
     if (!vp || error) {
-      RELEASE(kp);
       break;
     }
 
@@ -476,7 +475,7 @@ spc_read_dimtrns_dvips (struct spc_env *spe, transform_info *t, struct spc_arg *
 
 
 static int
-spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *ap)
+spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *ap, long *page_no)
 {
   int     has_scale, has_xscale, has_yscale, has_rotate, has_matrix;
   const char *_dtkeys[] = {
@@ -493,6 +492,8 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
     "bbox", /* See "Dvipdfmx User's Manual", p.5 */
 #define  K_TRN__MATRIX 8
     "matrix",
+#define  K_TRN__PAGE   9
+    "page",
      NULL
   };
   double xscale, yscale, rotate;
@@ -592,6 +593,15 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
         }
       }
       break;
+    case  K_TRN__PAGE:
+      {
+	double page;
+	if (page_no && spc_util_read_numbers(&page, 1, spe, ap) == 1)
+	  *page_no = (long) page;
+	else
+	  error = -1;
+      }
+      break;
     default:
       error = -1;
       break;
@@ -630,14 +640,15 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
 }
 
 int
-spc_util_read_dimtrns (struct spc_env *spe, transform_info *ti, struct spc_arg *args, int syntax)
+spc_util_read_dimtrns (struct spc_env *spe, transform_info *ti, struct spc_arg *args, long *page_no, int syntax)
 {
   ASSERT(ti && spe && args);
 
   if (syntax) {
+    ASSERT(!page_no);
     return  spc_read_dimtrns_dvips(spe, ti, args);
   } else {
-    return  spc_read_dimtrns_pdfm (spe, ti, args);
+    return  spc_read_dimtrns_pdfm (spe, ti, args, page_no);
   }
 
   return  -1;

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_dvips.c,v 1.9 2005/08/19 12:06:24 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_dvips.c,v 1.10 2008/02/13 20:22:21 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -157,12 +157,12 @@ spc_handler_ps_file (struct spc_env *spe, struct spc_arg *args)
   }
 
   transform_info_clear(&ti);
-  if (spc_util_read_dimtrns(spe, &ti, args, 1) < 0) {
+  if (spc_util_read_dimtrns(spe, &ti, args, NULL, 1) < 0) {
     RELEASE(filename);
     return  -1;
   }
 
-  form_id = pdf_ximage_findresource(filename, 0, 0);
+  form_id = pdf_ximage_findresource(filename, 1);
   if (form_id < 0) {
     spc_warn(spe, "Failed to read image file: %s", filename);
     RELEASE(filename);
@@ -195,7 +195,7 @@ spc_handler_ps_plotfile (struct spc_env *spe, struct spc_arg *args)
     return -1;
   }
 
-  form_id = pdf_ximage_findresource(filename, 0, 0);
+  form_id = pdf_ximage_findresource(filename, 1);
   if (form_id < 0) {
     spc_warn(spe, "Could not open PS file: %s", filename);
     error = -1;
@@ -547,7 +547,7 @@ spc_handler_ps_tricks_parse_path (struct spc_env *spe, struct spc_arg *args,
   }
 
   fp = fopen(gs_out, "r");
-   if (pdf_copy_clip(fp, 0, 0, 0) != 0) {
+   if (pdf_copy_clip(fp, 1, 0, 0) != 0) {
     spc_warn(spe, "Failed to parse the clipping path.");
     RELEASE(gs_in);
     gs_in = 0;
@@ -623,7 +623,7 @@ spc_handler_ps_tricks_render (struct spc_env *spe, struct spc_arg *args)
       return error;
     }
 
-    form_id = pdf_ximage_findresource(gs_out, 0, 0);
+    form_id = pdf_ximage_findresource(gs_out, 1/*, 0*/);
     if (form_id < 0) {
       spc_warn(spe, "Failed to read converted PSTricks image file.");
       RELEASE(gs_in);

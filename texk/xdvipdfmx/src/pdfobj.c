@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.c,v 1.46 2007/05/18 05:19:01 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.c,v 1.49 2008/02/08 19:02:38 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -265,11 +265,20 @@ pdf_obj_set_verbose(void)
 static pdf_objstm *current_objstm = NULL;
 
 void
-pdf_enable_objstm ()
+pdf_objstm_init ()
 {
   if (pdf_version >= 5) {
     current_objstm = NEW(1, pdf_objstm);
     current_objstm->pos = 0;
+  }
+}
+
+void
+pdf_objstm_close ()
+{
+  if (current_objstm) {
+    RELEASE(current_objstm);
+    current_objstm = NULL;
   }
 }
 
@@ -549,6 +558,16 @@ void pdf_out (FILE *file, const void *buffer, long length)
         pdf_output_line_position = 0;
     }
   }
+}
+
+/*  returns 1 if a white-space character is necessary to separate
+    an object of type1 followed by an object of type2              */
+static
+int pdf_need_white (int type1, int type2)
+{
+  return !(type1 == PDF_STRING || type1 == PDF_ARRAY || type1 == PDF_DICT ||
+	   type2 == PDF_STRING || type2 == PDF_NAME ||
+	   type2 == PDF_ARRAY || type2 == PDF_DICT);
 }
 
 static
@@ -1138,13 +1157,17 @@ write_array (pdf_array *array, FILE *file)
   pdf_out_char(file, '[');
   if (array->size > 0) {
     unsigned long i;
-
+    int type1 = PDF_UNDEFINED, type2;
+    
     for (i = 0; i < array->size; i++) {
-      if (i > 0)
-	pdf_out_white(file);
-      if (!array->values[i])
+      if (array->values[i]) {
+	type2 = array->values[i]->type;
+	if (type1 != PDF_UNDEFINED && pdf_need_white(type1, type2))
+	  pdf_out_white(file);
+	type1 = type2;
+	pdf_write_obj(array->values[i], file);
+      } else
 	WARN("PDF array element #ld undefined.", i);
-      pdf_write_obj(array->values[i], file);
     }
   }
   pdf_out_char(file, ']');
@@ -1317,10 +1340,7 @@ write_dict (pdf_dict *dict, FILE *file)
   pdf_out (file, "<<\n", 3); /* dropping \n saves few kb. */
   while (dict->key != NULL) {
     pdf_write_obj(dict->key, file);
-    if (((dict -> value)->type) == PDF_BOOLEAN  ||
-	((dict -> value)->type) == PDF_NUMBER   ||
-	((dict -> value)->type) == PDF_INDIRECT ||
-	((dict -> value)->type) == PDF_NULL) {
+    if (pdf_need_white(PDF_NAME, (dict->value)->type)) {
       pdf_out_white(file);
     }
     pdf_write_obj(dict->value, file);
@@ -2214,7 +2234,7 @@ pdf_ref_file_obj (unsigned long obj_num, unsigned short obj_gen)
   if (!checklabel(obj_num, obj_gen)) {
     WARN("Can't resolve object: %lu %u",
          obj_num, obj_gen);
-    return NULL;
+    return pdf_new_null();
   }
   ref = xref_table[obj_num].indirect;
   if (ref != NULL)
@@ -2242,10 +2262,6 @@ pdf_new_ref (unsigned long obj_num, unsigned short obj_gen)
   pdf_obj      *result;
   pdf_indirect *indirect;
 
-  if (!checklabel(obj_num, obj_gen)) {
-    WARN("Invalid object label: %lu %hu", obj_num, obj_gen);
-    return NULL;
-  }
   result   = pdf_new_obj(PDF_INDIRECT);
   indirect = NEW(1, pdf_indirect);
   result->data = indirect;
@@ -2271,7 +2287,7 @@ pdf_read_object (unsigned long obj_num, unsigned short obj_gen)
   if (!checklabel(obj_num, obj_gen)) {
     WARN("Trying to read nonexistent object: %lu %u",
          obj_num, obj_gen);
-    return NULL;
+    return pdf_new_null();
   }
   if (labelfreed(obj_num, obj_gen)) {
     WARN("Trying to read deleted object: %lu %u",
