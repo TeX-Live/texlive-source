@@ -378,6 +378,18 @@ $mem_file = "$lib_dir/xindy.mem";
 
 parse_options();
 
+if ( @ARGV == 2 && $ARGV[0] =~ /\.xdy$/ ) {
+  print STDERR <<EOF;
+$cmd: deprecated calling convention detected.
+Please change your command to
+
+$cmd -I xindy -M $ARGV[0] $ARGV[1]
+
+Run "$cmd --help" for full list of options, or read the documentation.
+EOF
+  exit 1;
+}
+
 
 # This script creates temporary files. Whenever a file is created, its
 # name is added to @temp_files. In an END handler, the temporary files
