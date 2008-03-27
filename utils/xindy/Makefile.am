@@ -36,10 +36,11 @@ if BUILDDOCS
   DOCS = doc
 endif
 
+doc_DATA = NEWS README.distrib-source
+
 SUBDIRS = rte binaries tex2xindy modules user-commands src $(MAKE_RULES) $(DOCS)
 
 EXTRA_DIST = setup.sh ChangeLog.Gour README-clisp
 
 distclean-local:
-	rm -rf autom4te.cache
-
+	rm -rf $(srcdir)/autom4te.cache
