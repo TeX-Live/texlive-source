@@ -2,7 +2,10 @@
 ## autoconf/automake files.
 ## Or, call `automake Makefile' to create only Makefile.in.
 
+# Makefile for xindy
+
 ## Copyright (C) 2004-2005 by Gour.
+## Copyright (C) 2008 by Joachim Schrod.
 ##
 ## This program is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
@@ -19,9 +22,24 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = northrussian-utf8.pl.in
+INCLUDES=
 
-CLEANFILES = \
-	northrussian-utf8.pl \
-	northrussian-utf8.raw \
-	northrussian-utf8-doc.tex
+ordrulei.c: $(srcdir)/ordrulei.lsp
+	$(CLISP) -q -norc -c $(srcdir)/ordrulei.lsp -o ordrulei.fas
+
+ordrulei.o: ordrulei.c
+	$(CC) $(CFLAGS) -I$(INCLUDES) -c ordrulei.c
+
+ordrules.o: ordrules.c ordrules.h rxsub.h debug.h mkind.h
+	$(CC) $(CFLAGS) -funsigned-char -I. -c ordrules.c
+
+rxsub.o: rxsub.c rxsub.h mkind.h
+	$(CC) $(CFLAGS) -I. -c rxsub.c
+
+# Make a module
+clisp-module: ordrulei.o ordrules.o rxsub.o
+
+EXTRA_DIST = ordrulei.lsp ordrules.c ordrules.h rxsub.c rxsub.h mkind.h debug.h link.sh
+
+CLEANFILES = ordrulei.c ordrulei.fas ordrulei.lib ordrulei.o ordrules.o rxsub.o version.lisp
+

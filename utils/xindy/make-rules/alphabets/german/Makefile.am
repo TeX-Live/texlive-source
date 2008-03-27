@@ -20,22 +20,20 @@
 ## Boston, MA 02110-1301 USA.
 
 EXTRA_DIST = \
-	braille-utf8.pl.in  duden-latin1.pl \
-	din5007-latin1.pl duden-utf8.pl.in din5007-utf8.pl.in \
+	braille-utf8.pl.in duden-utf8.pl.in din5007-utf8.pl.in \
 	tex-din5007-latin1.xdy tex-duden-latin1.xdy tex-latin1.xdy
 
 CLEANFILES = \
+	braille-utf8.pl \
 	braille-utf8.raw \
 	braille-utf8-doc.tex \
+	din5007-utf8.pl \
 	din5007-latin1.raw \
 	din5007-latin1-doc.tex \
 	din5007-utf8.raw \
 	din5007-utf8-doc.tex \
+	duden-utf8.pl \
 	duden-latin1.raw \
 	duden-latin1-doc.tex \
 	duden-utf8.raw \
 	duden-utf8-doc.tex
-
-
-
-

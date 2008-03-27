@@ -20,17 +20,15 @@
 ## Boston, MA 02110-1301 USA.
 
 EXTRA_DIST = \
-	ij-as-ij-latin1.pl ij-as-y-utf8.pl.in ij-as-ij-utf8.pl.in \
+	ij-as-y-utf8.pl.in ij-as-ij-utf8.pl.in \
 	latin1.xdy tex-latin1.xdy
 
 CLEANFILES = \
+	ij-as-ij-utf8.pl \
+	ij-as-y-utf8.pl \
 	ij-as-ij-latin1.raw \
 	ij-as-ij-latin1-doc.tex \
 	ij-as-ij-utf8.raw \
 	ij-as-ij-utf8-doc.tex \
 	ij-as-y-utf8.raw \
 	ij-as-y-utf8-doc.tex
-
-
-
-

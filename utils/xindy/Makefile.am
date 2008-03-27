@@ -36,9 +36,9 @@ if BUILDDOCS
   DOCS = doc
 endif
 
-SUBDIRS = rte binaries tex2xindy modules user-commands $(MAKE_RULES) $(DOCS)
+SUBDIRS = rte binaries tex2xindy modules user-commands src $(MAKE_RULES) $(DOCS)
 
-EXTRA_DIST = src setup.sh ChangeLog.Gour
+EXTRA_DIST = setup.sh ChangeLog.Gour README-clisp
 
 distclean-local:
 	rm -rf autom4te.cache

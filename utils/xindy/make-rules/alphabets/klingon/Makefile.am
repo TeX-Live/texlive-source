@@ -23,11 +23,7 @@ EXTRA_DIST = \
 	utf8.pl.in \
 	translit-ascii.pl
 
-
 CLEANFILES = \
+	utf8.pl \
 	utf8.raw \
 	utf8-doc.tex
-
-
-
-

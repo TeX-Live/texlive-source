@@ -19,16 +19,13 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = cp1250.pl latin2.pl utf8.pl.in
+EXTRA_DIST = utf8.pl.in
 
 CLEANFILES = \
+	utf8.pl \
 	cp1250.raw \
 	cp1250-doc.tex \
 	latin2.raw \
 	latin2-doc.tex \
 	utf8.raw \
 	utf8-doc.tex
-
-
-
-

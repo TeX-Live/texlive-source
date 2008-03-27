@@ -45,9 +45,9 @@ FILES = \
 	mappings.gif \
 	README
 
-EXTRA_DIST = $(FILES)
-
 PDFS = xindy.pdf texindy.pdf tex2xindy.pdf
+
+EXTRA_DIST = $(FILES) $(PDFS)
 
 dist_noinst_DATA = xindy.v2.pdf makeindex4.pdf
 

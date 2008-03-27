@@ -2,7 +2,10 @@
 ## autoconf/automake files.
 ## Or, call `automake Makefile' to create only Makefile.in.
 
+# Makefile for xindy
+
 ## Copyright (C) 2004-2005 by Gour.
+## Copyright (C) 2008 by Joachim Schrod.
 ##
 ## This program is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
@@ -19,9 +22,4 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = northrussian-utf8.pl.in
-
-CLEANFILES = \
-	northrussian-utf8.pl \
-	northrussian-utf8.raw \
-	northrussian-utf8-doc.tex
+EXTRA_DIST = base.lsp dump-xindy.lsp idxstyle.lsp index.lsp locref.lsp markup.lsp version.lsp

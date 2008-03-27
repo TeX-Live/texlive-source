@@ -40,9 +40,7 @@ man_MANS = texindy.1 xindy.1
 
 dist_noinst_SCRIPTS = xindy.v2 makeindex4
 
-dist_noinst_MANS = xindy.v2.1 makeindex4.1
-
-EXTRA_DIST = $(man_MANS)
+EXTRA_DIST = $(man_MANS) xindy.in xindy.v2.1 makeindex4.1
 
 CLEANFILES = xindy
 

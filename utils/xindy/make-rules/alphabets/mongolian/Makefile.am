@@ -22,9 +22,6 @@
 EXTRA_DIST = cyrillic-utf8.pl.in
 
 CLEANFILES = \
+	cyrillic-utf8.pl \
 	cyrillic-utf8.raw \
 	cyrillic-utf8-doc.tex
-
-
-
-

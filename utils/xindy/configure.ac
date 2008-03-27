@@ -25,7 +25,7 @@ AC_PREREQ(2.60)
 AC_INIT([xindy], [2.3], [xindy-discuss@lists.sourceforge.net])
 
 ## make dist doesn't work yet, since configure makes CLISP.
-AM_INIT_AUTOMAKE([foreign no-dist])
+AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
 # Checks for programs.
@@ -193,7 +193,8 @@ AC_CONFIG_FILES([Makefile \
 		make-rules/inputenc/Makefile \
 		make-rules/styles/Makefile \
 		doc/Makefile \
-	    	doc/style-tutorial/Makefile
+	    	doc/style-tutorial/Makefile \
+		src/Makefile
 ])
 
 AC_OUTPUT

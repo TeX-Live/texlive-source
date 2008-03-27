@@ -19,20 +19,16 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = \
-    modern-latin1.pl modern-utf8.pl.in \
-    traditional-latin1.pl traditional-utf8.pl.in
+EXTRA_DIST = modern-utf8.pl.in traditional-utf8.pl.in
 
 CLEANFILES = \
+	modern-utf8.pl \
 	modern-latin1.raw \
 	modern-latin1-doc.tex \
 	modern-utf8.raw \
 	modern-utf8-doc.tex \
+	traditional-utf8.pl \
 	traditional-latin1.raw \
 	traditional-latin1-doc.tex \
 	traditional-utf8.raw \
 	traditional-utf8-doc.tex
-
-
-
-

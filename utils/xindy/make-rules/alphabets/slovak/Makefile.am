@@ -19,24 +19,20 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = \
-    large-cp1250.pl large-latin2.pl large-utf8.pl.in \
-    small-cp1250.pl small-latin2.pl small-utf8.pl.in
+EXTRA_DIST = large-utf8.pl.in small-utf8.pl.in
 
 CLEANFILES = \
+	large-utf8.pl \
 	large-cp1250.raw \
 	large-cp1250-doc.tex \
 	large-latin2.raw \
 	large-latin2-doc.tex \
 	large-utf8.raw \
 	large-utf8-doc.tex \
+	small-utf8.pl \
 	small-cp1250.raw \
 	small-cp1250-doc.tex \
 	small-latin2.raw \
 	small-latin2-doc.tex \
 	small-utf8.raw \
 	small-utf8-doc.tex
-
-
-
-

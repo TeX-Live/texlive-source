@@ -52,7 +52,7 @@ clisp_modules := --with-dynamic-ffi --ignore-absence-of-libsigsegv
 #	clisp_modules += --without-readline
 #endif
 
-all: xindy-build-dir
+all-local: xindy-build-dir
 
 if !EXT_CLISP
 $(clisp_builddir): $(clisp_src)
@@ -74,7 +74,7 @@ ORDRULES_FILES = ordrules.c ordrules.h rxsub.c rxsub.h mkind.h debug.h link.sh
 
 xindy-build-dir: $(CLISP_PREREQ)
 	rm -rf xindy-build-dir
-	test -f ordrules/link.sh || for i in $(ORDRULES_FILES); do cp -p $(top_srcdir)/rte/ordrules/$$i ordrules/; done
+	test -f ordrules/link.sh || for i in $(ORDRULES_FILES); do cp -p $(top_srcdir)/rte/ordrules/$$i ordrules/$$i; done
 	$(MAKE) -C ordrules ordrulei.c
 	sh $(clisp_link) add-module-set ordrules $(fulldir) $@
 	cp $@/lisp.run $(binariesdir)/xindy.run
@@ -82,19 +82,17 @@ xindy-build-dir: $(CLISP_PREREQ)
 
 clean-local:
 	rm -rf xindy-build-dir
-	$(MAKE) -C ordrules clean
+	test "$(builddir)" != "$(srcdir)" && for i in $(ORDRULES_FILES); do rm -f ordrules/$$i; done
 if !EXT_CLISP
 	if [ -e $(clisp_builddir) ]; then $(MAKE) -C $(clisp_builddir) clean; fi
 endif
 
+if !EXT_CLISP
 # remove some extra files to match pristine clisp source
 distclean-local: clean
-	$(MAKE) -C ordrules distclean
-if !EXT_CLISP
 	rm -rf $(clisp_builddir)
 endif
 
-# dist rules for clisp are handled via 'darcs dist', so here we include
-# only the rest of the 'rte' package + modified clisp's configure script!!
+SUBDIRS = ordrules
 
-EXTRA_DIST = NEWS README configure ordrules $(clisp_src)/configure
+EXTRA_DIST = NEWS README

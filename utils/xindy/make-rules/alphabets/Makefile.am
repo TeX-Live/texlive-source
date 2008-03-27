@@ -142,7 +142,7 @@ ENGLISH = \
 	english/cp1252-lang.xdy \
 	english/cp1252-test.xdy \
 	english/cp1252.xdy \
-	english/latin9-lang.xdy  \
+	english/latin9-lang.xdy \
 	english/latin9-test.xdy \
 	english/latin9.xdy \
 	english/utf8-lang.xdy \
@@ -865,7 +865,8 @@ SUBDIRS = \
 SCRS = \
 	alphabets-doc.tex \
 	make-rules.pl \
-	utf8-to-tex.sed
+	utf8-to-tex.sed \
+	rom-comma-kludge.sed
 
 ALPHABETS = \
 	$(ALBANIAN) \
@@ -1167,9 +1168,9 @@ endif # (end BUILDDOCS)
 endif # end (BUILDRULES)
 
 DOC_CLEAN = \
-	alphabets-doc.aux  \
+	alphabets-doc.aux \
 	alphabets-doc.log \
-	alphabets-doc.out  \
+	alphabets-doc.out \
 	alphabets-doc.pdf \
 	alphabets-inc.tex \
 	alphabets-doc.toc
