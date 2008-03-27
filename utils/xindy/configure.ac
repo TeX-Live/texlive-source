@@ -30,8 +30,8 @@ AM_MAINTAINER_MODE
 
 # Checks for programs.
 AC_PROG_CC
-AC_PROG_LEX
-test "x$LEX" != "x:" || AC_MSG_ERROR([flex or lex is required, but not found])
+AM_PROG_LEX
+dnl test "x$LEX" != "x:" || AC_MSG_ERROR([flex or lex is required, but not found])
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 

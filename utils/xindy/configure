@@ -3567,9 +3567,9 @@ fi
 rm -f conftest.l $LEX_OUTPUT_ROOT.c
 
 fi
-test "x$LEX" != "x:" || { { echo "$as_me:$LINENO: error: flex or lex is required, but not found" >&5
-echo "$as_me: error: flex or lex is required, but not found" >&2;}
-   { (exit 1); exit 1; }; }
+if test "$LEX" = :; then
+  LEX=${am_missing_run}flex
+fi
 # Find a good install program.  We prefer a C program (faster),
 # so one script is as good as another.  But avoid the broken or
 # incompatible versions:
