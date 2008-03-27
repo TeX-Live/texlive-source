@@ -8557,8 +8557,10 @@ end;
 function load_native_font(u: pointer; nom, aire:str_number; s: scaled): internal_font_number;
 label
 	done;
+const
+	first_math_fontdimen = 10;
 var
-	k: integer;
+	k, num_font_dimens: integer;
 	font_engine: void_pointer;	{really an ATSUStyle or XeTeXLayoutEngine}
 	actual_size: scaled;	{|s| converted to real size, if it was negative}
 	p: pointer;	{for temporary |native_char| node we'll create}
@@ -8596,7 +8598,12 @@ begin
   		    goto done;
         end;
 
-	if (font_ptr = font_max) or (fmem_ptr + 8 > font_mem_size) then begin
+	if (native_font_type_flag = otgr_font_flag) and isOpenTypeMathFont(font_engine) then
+		num_font_dimens := first_math_fontdimen + lastMathConstant
+	else
+		num_font_dimens := 8;
+
+	if (font_ptr = font_max) or (fmem_ptr + num_font_dimens > font_mem_size) then begin
 		@<Apologize for not loading the font, |goto done|@>;
 	end;
 
@@ -8626,7 +8633,8 @@ begin
 	height_base[font_ptr] := ascent;
 	depth_base[font_ptr] := -descent;
 
-	font_params[font_ptr] := 8;		{ we add an extra fontdimen: \#8 -> |cap_height| }
+	font_params[font_ptr] := num_font_dimens;	{ we add an extra fontdimen: \#8 -> |cap_height|;
+													then OT math fonts have a bunch more }
 	font_bc[font_ptr] := 0;
 	font_ec[font_ptr] := 65535;
 	font_used[font_ptr] := false;
@@ -8659,6 +8667,15 @@ begin
 	incr(fmem_ptr);
 	font_info[fmem_ptr].sc := cap_ht;								{|cap_height|}
 	incr(fmem_ptr);
+
+	if num_font_dimens = first_math_fontdimen + lastMathConstant then begin
+		font_info[fmem_ptr].int := num_font_dimens; { \fontdimen9 = number of assigned fontdimens }
+		incr(fmem_ptr);
+		for k := 0 to lastMathConstant do begin
+			font_info[fmem_ptr].sc := get_ot_math_constant(font_ptr, k);
+			incr(fmem_ptr);
+		end;
+	end;
 
 	font_mapping[font_ptr] := loaded_font_mapping;
 	font_flags[font_ptr] := loaded_font_flags;

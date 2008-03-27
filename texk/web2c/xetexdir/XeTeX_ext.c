@@ -618,6 +618,73 @@ read_rgb_a(const char** cp)
 	return rgbValue;
 }
 
+int
+readCommonFeatures(const char* feat, const char* end, float* extend, float* slant, float* embolden, float* letterspace, UInt32* rgbValue)
+	// returns 1 to go to next_option, -1 for bad_option, 0 to continue
+{
+	const char* sep;
+	if (strncmp(feat, "mapping", 7) == 0) {
+		sep = feat + 7;
+		if (*sep != '=')
+			return -1;
+		loadedfontmapping = load_mapping_file(sep + 1, end);
+		return 1;
+	}
+
+	if (strncmp(feat, "extend", 6) == 0) {
+		sep = feat + 6;
+		if (*sep != '=')
+			return -1;
+		++sep;
+		*extend = read_double(&sep);
+		return 1;
+	}
+
+	if (strncmp(feat, "slant", 5) == 0) {
+		sep = feat + 5;
+		if (*sep != '=')
+			return -1;
+		++sep;
+		*slant = read_double(&sep);
+		return 1;
+	}
+
+	if (strncmp(feat, "embolden", 8) == 0) {
+		sep = feat + 8;
+		if (*sep != '=')
+			return -1;
+		++sep;
+		*embolden = read_double(&sep);
+		return 1;
+	}
+
+	if (strncmp(feat, "letterspace", 11) == 0) {
+		sep = feat + 11;
+		if (*sep != '=')
+			return -1;
+		++sep;
+		*letterspace = read_double(&sep);
+		return 1;
+	}
+	
+	if (strncmp(feat, "color", 5) == 0) {
+		const char* s;
+		sep = feat + 5;
+		if (*sep != '=')
+			return -1;
+		++sep;
+		s = sep;
+		*rgbValue = read_rgb_a(&sep);
+		if ((sep == s+6) || (sep == s+8))
+			loadedfontflags |= FONT_FLAGS_COLORED;
+		else
+			return -1;
+		return 1;
+	}
+
+	return 0;
+}
+
 static void*
 loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const char* cp1)
 {
@@ -639,8 +706,12 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 
 	UInt32	rgbValue = 0x000000FF;
 
-	double	extend = 1.0;
-	double	slant = 0.0;
+	float	extend = 1.0;
+	float	slant = 0.0;
+	float	embolden = 0.0;
+	float	letterspace = 0.0;
+	
+	int i;
 
 	/* scan the feature string (if any) */
 	if (cp1 != NULL) {
@@ -672,57 +743,11 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 				goto next_option;
 			}
 			
-			if (strncmp(cp1, "mapping", 7) == 0) {
-				cp3 = cp1 + 7;
-				if (*cp3 != '=')
-					goto bad_option;
-				loadedfontmapping = load_mapping_file(cp3 + 1, cp2);
+			i = readCommonFeatures(cp1, cp2, &extend, &slant, &embolden, &letterspace, &rgbValue);
+			if (i == 1)
 				goto next_option;
-			}
-	
-			if (strncmp(cp1, "extend", 6) == 0) {
-				cp3 = cp1 + 6;
-				if (*cp3 != '=')
-					goto bad_option;
-				++cp3;
-				extend = read_double(&cp3);
-				goto next_option;
-			}
-	
-			if (strncmp(cp1, "slant", 5) == 0) {
-				cp3 = cp1 + 5;
-				if (*cp3 != '=')
-					goto bad_option;
-				++cp3;
-				slant = read_double(&cp3);
-				goto next_option;
-			}
-	
-			if (strncmp(cp1, "color", 5) == 0) {
-				const char* s;
-				cp3 = cp1 + 5;
-				if (*cp3 != '=')
-					goto bad_option;
-				++cp3;
-				s = cp3;
-				rgbValue = read_rgb_a(&cp3);
-				if ((cp3 == s+6) || (cp3 == s+8))
-					loadedfontflags |= FONT_FLAGS_COLORED;
-				else
-					goto bad_option;
-				goto next_option;
-			}
-
-			if (strncmp(cp1, "letterspace", 11) == 0) {
-				double	val;
-				cp3 = cp1 + 11;
-				if (*cp3 != '=')
-					goto bad_option;
-				++cp3;
-				val = read_double(&cp3);
-				loadedfontletterspace = (val / 100.0) * scaled_size;
-				goto next_option;
-			}
+			else if (i == -1)
+				goto bad_option;
 			
 			if (*cp1 == '+') {
 				SInt32	param = 0;
@@ -783,6 +808,12 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 		}
 	}
 	
+	if (embolden != 0.0)
+		embolden = embolden * Fix2X(scaled_size) / 100.0;
+
+	if (letterspace != 0.0)
+		loadedfontletterspace = (letterspace / 100.0) * scaled_size;
+
 	if ((loadedfontflags & FONT_FLAGS_COLORED) == 0)
 		rgbValue = 0x000000FF;
 
@@ -791,7 +822,7 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 
 	engine = createLayoutEngine(fontRef, font, scriptTag, languageTag,
 					addFeatures, addParams, removeFeatures, rgbValue,
-					extend, slant);
+					extend, slant, embolden);
 	if (engine == 0) {
 		// only free these if creation failed, otherwise the engine now owns them
 		if (addFeatures)
@@ -844,19 +875,23 @@ loadGraphiteFont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, con
 	UInt32	rgbValue = 0x000000FF;
 	UInt32	languageTag = 0;
 
-	double	extend = 1.0;
-	double	slant = 0.0;
+	float	extend = 1.0;
+	float	slant = 0.0;
+	float	embolden = 0.0;
+	float	letterspace = 0.0;
 	int		rtl = 0;
 
 	int		featureIDs[MAX_GRAPHITE_FEATURES];	
 	int		featureValues[MAX_GRAPHITE_FEATURES];
 	int		nFeatures = 0;
 	int		id, val;
+	
+	int i;
 
 	/* create a default engine so we can query the font for Graphite features;
 	   because of font caching, it's cheap to discard this and create the real one later */
 	engine = createGraphiteEngine(fontRef, font, faceName, rgbValue, rtl, languageTag,
-									extend, slant, 0, NULL, NULL);
+									extend, slant, embolden, 0, NULL, NULL);
 	if (engine == NULL)
 		return NULL;
 
@@ -882,57 +917,11 @@ loadGraphiteFont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, con
 				goto next_option;
 			}
 			
-			if (strncmp(cp1, "mapping", 7) == 0) {
-				cp3 = cp1 + 7;
-				if (*cp3 != '=')
-					goto bad_option;
-				loadedfontmapping = load_mapping_file(cp3 + 1, cp2);
+			i = readCommonFeatures(cp1, cp2, &extend, &slant, &embolden, &letterspace, &rgbValue);
+			if (i == 1)
 				goto next_option;
-			}
-	
-			if (strncmp(cp1, "extend", 6) == 0) {
-				cp3 = cp1 + 6;
-				if (*cp3 != '=')
-					goto bad_option;
-				++cp3;
-				extend = read_double(&cp3);
-				goto next_option;
-			}
-	
-			if (strncmp(cp1, "slant", 5) == 0) {
-				cp3 = cp1 + 5;
-				if (*cp3 != '=')
-					goto bad_option;
-				++cp3;
-				slant = read_double(&cp3);
-				goto next_option;
-			}
-	
-			if (strncmp(cp1, "color", 5) == 0) {
-				const char* s;
-				cp3 = cp1 + 5;
-				if (*cp3 != '=')
-					goto bad_option;
-				++cp3;
-				s = cp3;
-				rgbValue = read_rgb_a(&cp3);
-				if ((cp3 == s+6) || (cp3 == s+8))
-					loadedfontflags |= FONT_FLAGS_COLORED;
-				else
-					goto bad_option;
-				goto next_option;
-			}
-
-			if (strncmp(cp1, "letterspace", 11) == 0) {
-				double	val;
-				cp3 = cp1 + 11;
-				if (*cp3 != '=')
-					goto bad_option;
-				++cp3;
-				val = read_double(&cp3);
-				loadedfontletterspace = (val / 100.0) * scaled_size;
-				goto next_option;
-			}
+			else if (i == -1)
+				goto bad_option;
 			
 			if (readFeatureNumber(cp1, cp2, &id, &val)
 			 || findGraphiteFeature(engine, cp1, cp2, &id, &val)) {
@@ -983,6 +972,12 @@ loadGraphiteFont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, con
 		
 	}
 	
+	if (embolden != 0.0)
+		embolden = embolden * Fix2X(scaled_size) / 100.0;
+
+	if (letterspace != 0.0)
+		loadedfontletterspace = (letterspace / 100.0) * scaled_size;
+
 	if ((loadedfontflags & FONT_FLAGS_COLORED) == 0)
 		rgbValue = 0x000000FF;
 
@@ -991,7 +986,7 @@ loadGraphiteFont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, con
 
 //	deleteLayoutEngine(engine);
 	engine = createGraphiteEngine(fontRef, font, faceName, rgbValue, rtl, languageTag,
-					extend, slant, nFeatures, &featureIDs[0], &featureValues[0]);
+					extend, slant, embolden, nFeatures, &featureIDs[0], &featureValues[0]);
 	if (engine != NULL)
 		nativefonttypeflag = OTGR_FONT_FLAG;
 
@@ -1395,6 +1390,7 @@ grfontgetnamed1(integer what, void* pEngine, integer param)
 #define XDV_FLAG_VARIATIONS		0x0800
 #define XDV_FLAG_EXTEND			0x1000
 #define XDV_FLAG_SLANT			0x2000
+#define XDV_FLAG_EMBOLDEN		0x4000
 
 #ifdef XETEX_MAC
 static UInt32
@@ -1498,6 +1494,7 @@ makefontdef(integer f)
 	PlatformFontRef	fontRef = 0;
 	float	extend = 1.0;
 	float	slant = 0.0;
+	float	embolden = 0.0;
 
 #ifdef XETEX_MAC
 	ATSUStyle	style = NULL;
@@ -1528,6 +1525,10 @@ makefontdef(integer f)
 		extend = t.a;
 		slant = t.b;
 
+		float tmp = 0.0;
+		if (ATSUGetAttribute(style, kXeTeXEmboldenTag, sizeof(float), &tmp, 0) != kATSUNotSetErr)
+			embolden = tmp;
+
 		ATSUGetAttribute(style, kATSUSizeTag, sizeof(Fixed), &size, 0);
 	}
 	else
@@ -1552,6 +1553,7 @@ makefontdef(integer f)
 
 		extend = getExtendFactor(engine);
 		slant = getSlantFactor(engine);
+		embolden = getEmboldenFactor(engine);
 
 		size = X2Fix(getPointSize(engine));
 	}
@@ -1604,6 +1606,10 @@ makefontdef(integer f)
 	if (slant != 0.0) {
 		fontDefLength += 4;
 		flags |= XDV_FLAG_SLANT;
+	}
+	if (embolden != 0.0) {
+		fontDefLength += 4;
+		flags |= XDV_FLAG_EMBOLDEN;
 	}
 
 	if (fontDefLength > xdvBufSize) {
@@ -1667,6 +1673,11 @@ makefontdef(integer f)
 	}
 	if (flags & XDV_FLAG_SLANT) {
 		Fixed	f = X2Fix(slant);
+		*(UInt32*)(cp) = SWAP32(f);
+		cp += 4;
+	}
+	if (flags & XDV_FLAG_EMBOLDEN) {
+		Fixed	f = X2Fix(embolden);
 		*(UInt32*)(cp) = SWAP32(f);
 		cp += 4;
 	}

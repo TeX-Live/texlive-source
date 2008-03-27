@@ -649,8 +649,11 @@ loadAATfont(ATSFontRef fontRef, long scaled_size, const char* cp1)
 	ATSUFontID	fontID = FMGetFontFromATSFontRef(fontRef);
 	ATSUStyle	style = 0;
 	OSStatus	status = ATSUCreateStyle(&style);
-	double		extend = 1.0;
-	double		slant = 0.0;
+	float		extend = 1.0;
+	float		slant = 0.0;
+	float		embolden = 0.0;
+	float		letterspace = 0.0;
+	int i;
 	
 	if (status == noErr) {
 		UInt32	rgbValue;
@@ -796,46 +799,11 @@ loadAATfont(ATSFontRef fontRef, long scaled_size, const char* cp1)
 				
 				// didn't find feature or variation, try other options....
 	
-				if (strncmp(cp1, "mapping", 7) == 0) {
-					cp3 = cp1 + 7;
-					if (*cp3 != '=')
-						goto bad_option;
-					loadedfontmapping = load_mapping_file(cp3 + 1, cp2);
+				i = readCommonFeatures(cp1, cp2, &extend, &slant, &embolden, &letterspace, &rgbValue);
+				if (i == 1)
 					goto next_option;
-				}
-				
-				if (strncmp(cp1, "extend", 6) == 0) {
-					cp3 = cp1 + 6;
-					if (*cp3 != '=')
-						goto bad_option;
-					++cp3;
-					extend = read_double(&cp3);
-					goto next_option;
-				}
-		
-				if (strncmp(cp1, "slant", 5) == 0) {
-					cp3 = cp1 + 5;
-					if (*cp3 != '=')
-						goto bad_option;
-					++cp3;
-					slant = read_double(&cp3);
-					goto next_option;
-				}
-		
-				if (strncmp(cp1, "color", 5) == 0) {
-					const char* s;
-					cp3 = cp1 + 5;
-					if (*cp3 != '=')
-						goto bad_option;
-					++cp3;
-					s = cp3;
-					rgbValue = read_rgb_a(&cp3);
-					if ((cp3 == s+6) || (cp3 == s+8))
-						loadedfontflags |= FONT_FLAGS_COLORED;
-					else
-						goto bad_option;
-					goto next_option;
-				}
+				else if (i == -1)
+					goto bad_option;
 				
 				if (strncmp(cp1, "tracking", 8) == 0) {
 					cp3 = cp1 + 8;
@@ -844,16 +812,6 @@ loadAATfont(ATSFontRef fontRef, long scaled_size, const char* cp1)
 					++cp3;
 					double	val = read_double(&cp3);
 					tracking = X2Fix(val);
-					goto next_option;
-				}
-				
-				if (strncmp(cp1, "letterspace", 11) == 0) {
-					cp3 = cp1 + 11;
-					if (*cp3 != '=')
-						goto bad_option;
-					++cp3;
-					double	val = read_double(&cp3);
-					loadedfontletterspace = (val / 100.0) * scaled_size;					
 					goto next_option;
 				}
 				
@@ -917,6 +875,17 @@ loadAATfont(ATSFontRef fontRef, long scaled_size, const char* cp1)
 				attrs[0] = &t;
 				ATSUSetAttributes(style, 1, tags, sizes, attrs);
 			}
+			
+			if (embolden != 0.0) {
+				embolden = embolden * Fix2X(scaled_size) / 100.0;
+				tags[0] = kXeTeXEmboldenTag;
+				sizes[0] = sizeof(float);
+				attrs[0] = &embolden;
+				ATSUSetAttributes(style, 1, tags, sizes, attrs);
+			}
+			
+			if (letterspace != 0.0)
+				loadedfontletterspace = (letterspace / 100.0) * scaled_size;
 			
 			free((char*)featureTypes);
 			free((char*)selectorValues);

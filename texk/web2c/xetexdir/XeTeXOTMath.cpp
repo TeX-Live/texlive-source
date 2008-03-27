@@ -49,7 +49,7 @@ extern "C" {
 
 #include "LESwaps.h"
 
-int getMathConstant(LEFontInstance*	fontInst, mathConstantIndex whichConstant)
+static SInt16 getMathConstant(LEFontInstance* fontInst, mathConstantIndex whichConstant)
 {
 	const char* table = (const char*)fontInst->getFontTable(kMATHTableTag);
 	if (table == NULL)
@@ -80,7 +80,10 @@ getotmathconstant(int f, int n)
 
 	if (fontarea[f] == OTGR_FONT_FLAG) {
 		XeTeXFontInst*	font = (XeTeXFontInst*)getFont((XeTeXLayoutEngine)fontlayoutengine[f]);
-		rval = X2Fix(getMathConstant(font, (mathConstantIndex)n) * Fix2X(fontsize[f]) / font->getUnitsPerEM());
+		rval = getMathConstant(font, (mathConstantIndex)n);
+		/* scale according to font size, except the ones that are percentages */
+		if (n > scriptScriptPercentScaleDown && n < radicalDegreeBottomRaisePercent)
+			rval = X2Fix(rval * Fix2X(fontsize[f]) / font->getUnitsPerEM());
 	}
 	return rval;
 }
@@ -194,7 +197,7 @@ getnativemathexparam(int f, int n)
 }
 
 int
-getotmathvariant(int f, int g, int v, int* adv, int horiz)
+getotmathvariant(int f, int g, int v, integer* adv, int horiz)
 {
 	int	rval = g;
 	*adv = -1;

@@ -72,6 +72,7 @@ authorization from SIL International.
 @define procedure grprintfontname();
 @define function grfontgetnamed();
 @define function grfontgetnamed1();
+@define function isOpenTypeMathFont();
 
 @define function strerror();
 @define procedure memcpy();

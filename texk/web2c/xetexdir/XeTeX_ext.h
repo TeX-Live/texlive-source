@@ -64,6 +64,9 @@ typedef struct UFILE* unicodefile;
 #define FONT_FLAGS_COLORED	0x01
 #define FONT_FLAGS_VERTICAL	0x02
 
+#define kXeTeXEmboldenTag	0x10000 /* user-defined ATSUAttributeTag to carry 'embolden' value */
+
+
 /* some typedefs that XeTeX uses - on Mac OS, we get these from Apple headers,
    but otherwise we'll need these substitute definitions */
 
@@ -225,6 +228,7 @@ extern "C" {
 	void* load_mapping_file(const char* s, const char* e);
 	void* findnativefont(unsigned char* name, integer scaled_size);
 	void releasefontengine(void* engine, int type_flag);
+	int readCommonFeatures(const char* feat, const char* end, float* extend, float* slant, float* embolden, float* letterspace, UInt32* rgbValue);
 
 	/* the metrics params here are really TeX 'scaled' values, but that typedef isn't available every place this is included */
 	void otgetfontmetrics(void* engine, integer* ascent, integer* descent, integer* xheight, integer* capheight, integer* slant);

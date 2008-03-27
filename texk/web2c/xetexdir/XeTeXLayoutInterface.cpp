@@ -66,6 +66,7 @@ struct XeTeXLayoutEngine_rec
 	UInt32			rgbValue;
 	float			extend;
 	float			slant;
+	float			embolden;
 	gr::Segment*		grSegment;
 	XeTeXGrFont*		grFont;
 	XeTeXGrTextSource*	grSource;
@@ -527,9 +528,14 @@ float getSlantFactor(XeTeXLayoutEngine engine)
 	return engine->slant;
 }
 
+float getEmboldenFactor(XeTeXLayoutEngine engine)
+{
+	return engine->embolden;
+}
+
 XeTeXLayoutEngine createLayoutEngine(PlatformFontRef fontRef, XeTeXFont font, UInt32 scriptTag, UInt32 languageTag,
 										UInt32* addFeatures, SInt32* addParams, UInt32* removeFeatures, UInt32 rgbValue,
-										float extend, float slant)
+										float extend, float slant, float embolden)
 {
 	LEErrorCode status = LE_NO_ERROR;
 	XeTeXLayoutEngine result = new XeTeXLayoutEngine_rec;
@@ -542,6 +548,7 @@ XeTeXLayoutEngine createLayoutEngine(PlatformFontRef fontRef, XeTeXFont font, UI
 	result->rgbValue = rgbValue;
 	result->extend = extend;
 	result->slant = slant;
+	result->embolden = embolden;
 
 	result->grSegment = NULL;
 	result->grSource = NULL;
@@ -887,7 +894,7 @@ gr::LayoutEnvironment	layoutEnv;
 XeTeXLayoutEngine createGraphiteEngine(PlatformFontRef fontRef, XeTeXFont font,
 										const char* name,
 										UInt32 rgbValue, int rtl, UInt32 languageTag,
-										float extend, float slant,
+										float extend, float slant, float embolden,
 										int nFeatures, const int* featureIDs, const int* featureValues)
 {
 	// check if the font supports graphite, and return NULL if not
@@ -905,6 +912,7 @@ XeTeXLayoutEngine createGraphiteEngine(PlatformFontRef fontRef, XeTeXFont font,
 	result->rgbValue = rgbValue;
 	result->extend = extend;
 	result->slant = slant;
+	result->embolden = embolden;
 	result->layoutEngine = NULL;
 
 	result->grFont = new XeTeXGrFont(result->font, name);
@@ -1048,6 +1056,17 @@ int usingOpenType(XeTeXLayoutEngine engine)
 int usingGraphite(XeTeXLayoutEngine engine)
 {
 	return engine->grFont != NULL;
+}
+
+#define kMATHTableTag	0x4D415448 /* 'MATH' */
+
+int isOpenTypeMathFont(XeTeXLayoutEngine engine)
+{
+	if (engine->layoutEngine != NULL) {
+		if (engine->font->getFontTable(kMATHTableTag) != NULL)
+			return 1;
+	}
+	return 0;
 }
 
 int
