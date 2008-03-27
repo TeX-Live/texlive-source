@@ -13,6 +13,8 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
+
+# Makefile for xindy
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
@@ -31,8 +33,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = make-rules/alphabets/italian
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
+subdir = rte/ordrules
+DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
+	$(srcdir)/version.lisp.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ac_prog_latex.m4 \
 	$(top_srcdir)/m4/ac_prog_pdflatex.m4 \
@@ -40,7 +43,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/ac_prog_latex.m4 \
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = version.lisp
 SOURCES =
 DIST_SOURCES =
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -143,14 +146,9 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = utf8.pl.in
-CLEANFILES = \
-	utf8.pl \
-	latin1.raw \
-	latin1-doc.tex \
-	utf8.raw \
-	utf8-doc.tex
-
+INCLUDES = 
+EXTRA_DIST = ordrulei.lsp ordrules.c ordrules.h rxsub.c rxsub.h mkind.h debug.h link.sh
+CLEANFILES = ordrulei.c ordrulei.fas ordrulei.lib ordrulei.o ordrules.o rxsub.o version.lisp
 all: all-am
 
 .SUFFIXES:
@@ -163,9 +161,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  make-rules/alphabets/italian/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  rte/ordrules/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  make-rules/alphabets/italian/Makefile
+	  $(AUTOMAKE) --foreign  rte/ordrules/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -183,6 +181,8 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
+version.lisp: $(top_builddir)/config.status $(srcdir)/version.lisp.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 tags: TAGS
 TAGS:
 
@@ -311,6 +311,21 @@ uninstall-am:
 	maintainer-clean maintainer-clean-generic mostlyclean \
 	mostlyclean-generic pdf pdf-am ps ps-am uninstall uninstall-am
 
+
+ordrulei.c: $(srcdir)/ordrulei.lsp
+	$(CLISP) -q -norc -c $(srcdir)/ordrulei.lsp -o ordrulei.fas
+
+ordrulei.o: ordrulei.c
+	$(CC) $(CFLAGS) -I$(INCLUDES) -c ordrulei.c
+
+ordrules.o: ordrules.c ordrules.h rxsub.h debug.h mkind.h
+	$(CC) $(CFLAGS) -funsigned-char -I. -c ordrules.c
+
+rxsub.o: rxsub.c rxsub.h mkind.h
+	$(CC) $(CFLAGS) -I. -c rxsub.c
+
+# Make a module
+clisp-module: ordrulei.o ordrules.o rxsub.o
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

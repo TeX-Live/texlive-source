@@ -33,8 +33,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 subdir = user-commands
-DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(am__dist_bin_SCRIPTS_DIST) $(dist_noinst_SCRIPTS)
+DIST_COMMON = $(am__dist_bin_SCRIPTS_DIST) $(dist_noinst_SCRIPTS) \
+	$(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ac_prog_latex.m4 \
 	$(top_srcdir)/m4/ac_prog_pdflatex.m4 \
@@ -50,9 +50,11 @@ am__dist_bin_SCRIPTS_DIST = texindy
 dist_binSCRIPT_INSTALL = $(INSTALL_SCRIPT)
 SCRIPTS = $(bin_SCRIPTS) $(dist_bin_SCRIPTS) $(dist_noinst_SCRIPTS)
 SOURCES =
+DIST_SOURCES =
 man1dir = $(mandir)/man1
 NROFF = nroff
 MANS = $(man_MANS)
+DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AUTOCONF = @AUTOCONF@
@@ -156,8 +158,7 @@ top_srcdir = @top_srcdir@
 @TETEX_BUILD_FALSE@dist_bin_SCRIPTS = texindy
 man_MANS = texindy.1 xindy.1
 dist_noinst_SCRIPTS = xindy.v2 makeindex4
-dist_noinst_MANS = xindy.v2.1 makeindex4.1
-EXTRA_DIST = $(man_MANS)
+EXTRA_DIST = $(man_MANS) xindy.in xindy.v2.1 makeindex4.1
 CLEANFILES = xindy
 @MAINTAINER_MODE_TRUE@POD_DATE = `ident $< | grep '\$$Id' | sed -e 's/^.*,v [^ ]* //' -e 's/ .*//' -e s:/:-:g`
 @MAINTAINER_MODE_TRUE@POD_VERSION = `ident $< | grep '\$$Id' | sed -e 's/^.*,v //' -e 's/ .*//'`
@@ -284,6 +285,33 @@ TAGS:
 ctags: CTAGS
 CTAGS:
 
+
+distdir: $(DISTFILES)
+	@srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
+	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
+	list='$(DISTFILES)'; \
+	  dist_files=`for file in $$list; do echo $$file; done | \
+	  sed -e "s|^$$srcdirstrip/||;t" \
+	      -e "s|^$$topsrcdirstrip/|$(top_builddir)/|;t"`; \
+	case $$dist_files in \
+	  */*) $(MKDIR_P) `echo "$$dist_files" | \
+			   sed '/\//!d;s|^|$(distdir)/|;s,/[^/]*$$,,' | \
+			   sort -u` ;; \
+	esac; \
+	for file in $$dist_files; do \
+	  if test -f $$file || test -d $$file; then d=.; else d=$(srcdir); fi; \
+	  if test -d $$d/$$file; then \
+	    dir=`echo "/$$file" | sed -e 's,/[^/]*$$,,'`; \
+	    if test -d $(srcdir)/$$file && test $$d != $(srcdir); then \
+	      cp -pR $(srcdir)/$$file $(distdir)$$dir || exit 1; \
+	    fi; \
+	    cp -pR $$d/$$file $(distdir)$$dir || exit 1; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || cp -p $$d/$$file $(distdir)/$$file \
+	    || exit 1; \
+	  fi; \
+	done
 check-am: all-am
 check: check-am
 all-am: Makefile $(SCRIPTS) $(MANS)
@@ -379,12 +407,12 @@ uninstall-man: uninstall-man1
 .MAKE: install-am install-exec-am install-strip
 
 .PHONY: all all-am check check-am clean clean-generic distclean \
-	distclean-generic dvi dvi-am html html-am info info-am install \
-	install-am install-binSCRIPTS install-data install-data-am \
-	install-dist_binSCRIPTS install-dvi install-dvi-am \
-	install-exec install-exec-am install-exec-hook install-html \
-	install-html-am install-info install-info-am install-man \
-	install-man1 install-pdf install-pdf-am install-ps \
+	distclean-generic distdir dvi dvi-am html html-am info info-am \
+	install install-am install-binSCRIPTS install-data \
+	install-data-am install-dist_binSCRIPTS install-dvi \
+	install-dvi-am install-exec install-exec-am install-exec-hook \
+	install-html install-html-am install-info install-info-am \
+	install-man install-man1 install-pdf install-pdf-am install-ps \
 	install-ps-am install-strip installcheck installcheck-am \
 	installdirs maintainer-clean maintainer-clean-generic \
 	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am uninstall \

@@ -33,7 +33,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 subdir = make-rules/alphabets
-DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am
+DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ac_prog_latex.m4 \
 	$(top_srcdir)/m4/ac_prog_pdflatex.m4 \
@@ -43,6 +43,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 SOURCES =
+DIST_SOURCES =
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
 	install-dvi-recursive install-exec-recursive \
@@ -152,6 +153,7 @@ RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
 ETAGS = etags
 CTAGS = ctags
 DIST_SUBDIRS = $(SUBDIRS)
+DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AUTOCONF = @AUTOCONF@
@@ -353,7 +355,7 @@ ENGLISH = \
 	english/cp1252-lang.xdy \
 	english/cp1252-test.xdy \
 	english/cp1252.xdy \
-	english/latin9-lang.xdy  \
+	english/latin9-lang.xdy \
 	english/latin9-test.xdy \
 	english/latin9.xdy \
 	english/utf8-lang.xdy \
@@ -910,7 +912,8 @@ SUBDIRS = \
 SCRS = \
 	alphabets-doc.tex \
 	make-rules.pl \
-	utf8-to-tex.sed
+	utf8-to-tex.sed \
+	rom-comma-kludge.sed
 
 ALPHABETS = \
 	$(ALBANIAN) \
@@ -1149,9 +1152,9 @@ DOCS = $(DOCS_CPS) $(DOCS_LAT) $(DOCS_CYR) $(DOCS_OTHER) $(DOCS_UTF8)
 @BUILDDOCS_TRUE@@BUILDRULES_TRUE@PDFS = alphabets-doc.pdf
 @BUILDDOCS_TRUE@@BUILDRULES_TRUE@doc_DATA = $(PDFS)
 DOC_CLEAN = \
-	alphabets-doc.aux  \
+	alphabets-doc.aux \
 	alphabets-doc.log \
-	alphabets-doc.out  \
+	alphabets-doc.out \
 	alphabets-doc.pdf \
 	alphabets-inc.tex \
 	alphabets-doc.toc
@@ -2085,6 +2088,50 @@ GTAGS:
 
 distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
+
+distdir: $(DISTFILES)
+	@srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
+	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
+	list='$(DISTFILES)'; \
+	  dist_files=`for file in $$list; do echo $$file; done | \
+	  sed -e "s|^$$srcdirstrip/||;t" \
+	      -e "s|^$$topsrcdirstrip/|$(top_builddir)/|;t"`; \
+	case $$dist_files in \
+	  */*) $(MKDIR_P) `echo "$$dist_files" | \
+			   sed '/\//!d;s|^|$(distdir)/|;s,/[^/]*$$,,' | \
+			   sort -u` ;; \
+	esac; \
+	for file in $$dist_files; do \
+	  if test -f $$file || test -d $$file; then d=.; else d=$(srcdir); fi; \
+	  if test -d $$d/$$file; then \
+	    dir=`echo "/$$file" | sed -e 's,/[^/]*$$,,'`; \
+	    if test -d $(srcdir)/$$file && test $$d != $(srcdir); then \
+	      cp -pR $(srcdir)/$$file $(distdir)$$dir || exit 1; \
+	    fi; \
+	    cp -pR $$d/$$file $(distdir)$$dir || exit 1; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || cp -p $$d/$$file $(distdir)/$$file \
+	    || exit 1; \
+	  fi; \
+	done
+	list='$(DIST_SUBDIRS)'; for subdir in $$list; do \
+	  if test "$$subdir" = .; then :; else \
+	    test -d "$(distdir)/$$subdir" \
+	    || $(MKDIR_P) "$(distdir)/$$subdir" \
+	    || exit 1; \
+	    distdir=`$(am__cd) $(distdir) && pwd`; \
+	    top_distdir=`$(am__cd) $(top_distdir) && pwd`; \
+	    (cd $$subdir && \
+	      $(MAKE) $(AM_MAKEFLAGS) \
+	        top_distdir="$$top_distdir" \
+	        distdir="$$distdir/$$subdir" \
+		am__remove_distdir=: \
+		am__skip_length_check=: \
+	        distdir) \
+	      || exit 1; \
+	  fi; \
+	done
 check-am: all-am
 check: check-recursive
 all-am: Makefile $(DATA)
@@ -2222,52 +2269,52 @@ uninstall-am: uninstall-docDATA uninstall-nodist_albanianDATA \
 
 .PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
 	all all-am check check-am clean clean-generic ctags \
-	ctags-recursive distclean distclean-generic distclean-tags dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-docDATA install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-nodist_albanianDATA install-nodist_belarusianDATA \
-	install-nodist_bulgarianDATA install-nodist_croatianDATA \
-	install-nodist_czechDATA install-nodist_danishDATA \
-	install-nodist_dutchDATA install-nodist_englishDATA \
-	install-nodist_esperantoDATA install-nodist_estonianDATA \
-	install-nodist_finnishDATA install-nodist_frenchDATA \
-	install-nodist_generalDATA install-nodist_georgianDATA \
-	install-nodist_germanDATA install-nodist_greekDATA \
-	install-nodist_gypsyDATA install-nodist_hausaDATA \
-	install-nodist_hebrewDATA install-nodist_hungarianDATA \
-	install-nodist_icelandicDATA install-nodist_italianDATA \
-	install-nodist_klingonDATA install-nodist_kurdishDATA \
-	install-nodist_latinDATA install-nodist_latvianDATA \
-	install-nodist_lithuanianDATA install-nodist_lower_sorbianDATA \
-	install-nodist_macedonianDATA install-nodist_mongolianDATA \
-	install-nodist_norwegianDATA install-nodist_polishDATA \
-	install-nodist_portugueseDATA install-nodist_romanianDATA \
-	install-nodist_russianDATA install-nodist_serbianDATA \
-	install-nodist_slovakDATA install-nodist_slovenianDATA \
-	install-nodist_spanishDATA install-nodist_swedishDATA \
-	install-nodist_turkishDATA install-nodist_ukrainianDATA \
-	install-nodist_upper_sorbianDATA install-nodist_vietnameseDATA \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	installdirs-am maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am tags \
-	tags-recursive uninstall uninstall-am uninstall-docDATA \
-	uninstall-nodist_albanianDATA uninstall-nodist_belarusianDATA \
-	uninstall-nodist_bulgarianDATA uninstall-nodist_croatianDATA \
-	uninstall-nodist_czechDATA uninstall-nodist_danishDATA \
-	uninstall-nodist_dutchDATA uninstall-nodist_englishDATA \
-	uninstall-nodist_esperantoDATA uninstall-nodist_estonianDATA \
-	uninstall-nodist_finnishDATA uninstall-nodist_frenchDATA \
-	uninstall-nodist_generalDATA uninstall-nodist_georgianDATA \
-	uninstall-nodist_germanDATA uninstall-nodist_greekDATA \
-	uninstall-nodist_gypsyDATA uninstall-nodist_hausaDATA \
-	uninstall-nodist_hebrewDATA uninstall-nodist_hungarianDATA \
-	uninstall-nodist_icelandicDATA uninstall-nodist_italianDATA \
-	uninstall-nodist_klingonDATA uninstall-nodist_kurdishDATA \
-	uninstall-nodist_latinDATA uninstall-nodist_latvianDATA \
-	uninstall-nodist_lithuanianDATA \
+	ctags-recursive distclean distclean-generic distclean-tags \
+	distdir dvi dvi-am html html-am info info-am install \
+	install-am install-data install-data-am install-docDATA \
+	install-dvi install-dvi-am install-exec install-exec-am \
+	install-html install-html-am install-info install-info-am \
+	install-man install-nodist_albanianDATA \
+	install-nodist_belarusianDATA install-nodist_bulgarianDATA \
+	install-nodist_croatianDATA install-nodist_czechDATA \
+	install-nodist_danishDATA install-nodist_dutchDATA \
+	install-nodist_englishDATA install-nodist_esperantoDATA \
+	install-nodist_estonianDATA install-nodist_finnishDATA \
+	install-nodist_frenchDATA install-nodist_generalDATA \
+	install-nodist_georgianDATA install-nodist_germanDATA \
+	install-nodist_greekDATA install-nodist_gypsyDATA \
+	install-nodist_hausaDATA install-nodist_hebrewDATA \
+	install-nodist_hungarianDATA install-nodist_icelandicDATA \
+	install-nodist_italianDATA install-nodist_klingonDATA \
+	install-nodist_kurdishDATA install-nodist_latinDATA \
+	install-nodist_latvianDATA install-nodist_lithuanianDATA \
+	install-nodist_lower_sorbianDATA install-nodist_macedonianDATA \
+	install-nodist_mongolianDATA install-nodist_norwegianDATA \
+	install-nodist_polishDATA install-nodist_portugueseDATA \
+	install-nodist_romanianDATA install-nodist_russianDATA \
+	install-nodist_serbianDATA install-nodist_slovakDATA \
+	install-nodist_slovenianDATA install-nodist_spanishDATA \
+	install-nodist_swedishDATA install-nodist_turkishDATA \
+	install-nodist_ukrainianDATA install-nodist_upper_sorbianDATA \
+	install-nodist_vietnameseDATA install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs installdirs-am maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
+	pdf-am ps ps-am tags tags-recursive uninstall uninstall-am \
+	uninstall-docDATA uninstall-nodist_albanianDATA \
+	uninstall-nodist_belarusianDATA uninstall-nodist_bulgarianDATA \
+	uninstall-nodist_croatianDATA uninstall-nodist_czechDATA \
+	uninstall-nodist_danishDATA uninstall-nodist_dutchDATA \
+	uninstall-nodist_englishDATA uninstall-nodist_esperantoDATA \
+	uninstall-nodist_estonianDATA uninstall-nodist_finnishDATA \
+	uninstall-nodist_frenchDATA uninstall-nodist_generalDATA \
+	uninstall-nodist_georgianDATA uninstall-nodist_germanDATA \
+	uninstall-nodist_greekDATA uninstall-nodist_gypsyDATA \
+	uninstall-nodist_hausaDATA uninstall-nodist_hebrewDATA \
+	uninstall-nodist_hungarianDATA uninstall-nodist_icelandicDATA \
+	uninstall-nodist_italianDATA uninstall-nodist_klingonDATA \
+	uninstall-nodist_kurdishDATA uninstall-nodist_latinDATA \
+	uninstall-nodist_latvianDATA uninstall-nodist_lithuanianDATA \
 	uninstall-nodist_lower_sorbianDATA \
 	uninstall-nodist_macedonianDATA uninstall-nodist_mongolianDATA \
 	uninstall-nodist_norwegianDATA uninstall-nodist_polishDATA \
