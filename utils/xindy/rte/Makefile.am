@@ -21,77 +21,25 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-clisp_src = clisp-2.43
-
-clisp_builddir = $(shell pwd)/clisp-build-dir
-
-if EXT_CLISP
-    CLISP_LIB = $(shell $(CLISP) -q -norc -x '(progn (princ *lib-directory*) (values))')
-    export CLISP = @CLISP@
-    CLISP_PREREQ =
-else
-    CLISP_LIB = $(clisp_builddir)
-    export CLISP = $(clisp_builddir)/clisp
-    CLISP_PREREQ = $(clisp_link) $(fulldir)
-endif
-
 export CLISP_LINKKIT = $(CLISP_LIB)/linkkit
-fulldir = $(CLISP_LIB)/full
-clisp_link = $(CLISP_LIB)/clisp-link
 
 binariesdir = ../binaries
 
-#clisp_modules=--with-export-syscalls --with-dynamic-ffi --ignore-absence-of-libsigsegv
-clisp_modules := --with-dynamic-ffi --ignore-absence-of-libsigsegv
-
-# testing for MacOS X platform to circumvent faulty 'readline'
-# provided by Maarten Sneep <maarten.sneep@xs4all.nl>
-# FIXME: GNU make ifeq/endif clauses do not work in Automake files.
-# Either determine that case during configure or make them work.
-#ifeq ($(shell uname -s), Darwin)
-#	clisp_modules += --without-readline
-#endif
-
 all-local: xindy-build-dir
-
-if !EXT_CLISP
-$(clisp_builddir): $(clisp_src)
-	cd $(clisp_src) && ./configure $(clisp_builddir) $(clisp_modules)
-	cd $(clisp_builddir) && ./makemake $(clisp_modules) > Makefile
-
-$(CLISP_PREREQ): $(clisp_builddir)
-	$(MAKE) -C $(clisp_builddir)
-
-# Target names that are easy to type, to build CLISP alone during development.
-clisp-configure: $(clisp_builddir)
-clisp: $(CLISP_PREREQ)
-
-check:
-	$(MAKE) -C $(clisp_builddir) check || $(MAKE) -C $(clisp_builddir) check
-endif
 
 ORDRULES_FILES = ordrules.c ordrules.h rxsub.c rxsub.h mkind.h debug.h link.sh
 
-xindy-build-dir: $(CLISP_PREREQ)
+xindy-build-dir:
 	rm -rf xindy-build-dir
 	test -f ordrules/link.sh || for i in $(ORDRULES_FILES); do cp -p $(top_srcdir)/rte/ordrules/$$i ordrules/$$i; done
 	$(MAKE) -C ordrules ordrulei.c
-	sh $(clisp_link) add-module-set ordrules $(fulldir) $@
+	sh $(CLISP_LIB)/clisp-link add-module-set ordrules $(CLISP_LIB)/full $@
 	cp $@/lisp.run $(binariesdir)/xindy.run
 	cp $@/lispinit.mem $(binariesdir)/base.mem
 
 clean-local:
 	rm -rf xindy-build-dir
 	test "$(builddir)" = "$(srcdir)" || for i in $(ORDRULES_FILES); do rm -f ordrules/$$i; done
-if !EXT_CLISP
-	if [ -e $(clisp_builddir) ]; then $(MAKE) -C $(clisp_builddir) clean; fi
-endif
-
-if !EXT_CLISP
-# remove some extra files to match pristine clisp source
-distclean-local: clean
-	rm -rf $(clisp_builddir)
-endif
 
 SUBDIRS = ordrules
 

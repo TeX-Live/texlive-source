@@ -24,7 +24,6 @@
 AC_PREREQ(2.60)
 AC_INIT([xindy], [2.3], [xindy-discuss@lists.sourceforge.net])
 
-## make dist doesn't work yet, since configure makes CLISP.
 AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
@@ -35,28 +34,24 @@ dnl test "x$LEX" != "x:" || AC_MSG_ERROR([flex or lex is required, but not found
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
-dnl test for building make-rules
 AC_ARG_ENABLE(make-rules, AS_HELP_STRING([--enable-make-rules],[build and install make-rules package (default is YES)]))
-dnl test for building Documentation
 AC_ARG_ENABLE(docs, AS_HELP_STRING([--enable-docs],[build and install documentation (default is YES)]))
-
-# Building inside TeX Live?
-AC_ARG_ENABLE(tetex-build, AS_HELP_STRING([--enable-tetex-build],[Build as part of a teTeX installation]))
+AC_ARG_ENABLE(tetex-build, AS_HELP_STRING([--enable-tetex-build],[Build as part of a TeX Live installation]))
+AC_ARG_WITH(clisp, AS_HELP_STRING([--with-clisp=...],[Use the specified location of the clisp executable (default is search in PATH)]))
 
 if test "x$enable_tetex_build" = xyes; then
-  if test ! -d $srcdir/../../texk/kpathsea; then
-    AC_MSG_ERROR([
-=========================================
-
-You specified --enable-tetex-build, but I can't find the kpathsea
-directory.  I expected it to be in $srcdir/../../texk/kpathsea.
-
-=========================================])
-  fi
+dnl we don't really care whether $srcdir/../../texk/kpathsea is found, so don't test for it.
+  AC_MSG_NOTICE([Using installation layout for TeX Live])
   docdir="$prefix/texmf/doc/$PACKAGE_NAME"
   mandir="$prefix/texmf/doc/man"
-  if test -z "$enable_docs"; then enable_docs=no; fi
-  if test -z "$enable_make_rules"; then enable_make_rules=no; fi
+  if test -z "$enable_docs"; then
+    AC_MSG_NOTICE([Disabling docs building])
+    enable_docs=no;
+  fi
+  if test -z "$enable_make_rules"; then
+    AC_MSG_NOTICE([Disabling make-rules building])
+    enable_make_rules=no;
+  fi
 fi
 AM_CONDITIONAL([TETEX_BUILD],[test "x$enable_tetex_build" = xyes])
 
@@ -72,45 +67,32 @@ fi
 
 AM_CONDITIONAL([BUILDDOCS], [test "x$enable_docs" != xno])
 
-dnl location of CLISP binary
-AC_ARG_WITH(clisp, AS_HELP_STRING([--with-clisp@<:@=PATH@:>@],[Use the existing CLISP binary instead of re-building CLISP from source in the rte/ directory]))
-
 CLISP=
 if test "x$with_clisp" = xyes; then
   AC_PATH_PROG(CLISP, clisp)
-  if test -z "$CLISP"; then
-    AC_MSG_ERROR([--with-clisp specified, but clisp binary not found in PATH])
-  fi
 elif test "x$with_clisp" = xno; then
-  if test -d "$srcdir/rte/clisp-2.43"; then
-    AC_MSG_NOTICE([Using internal clisp])
-  else
-    AC_MSG_ERROR([--without-clisp specified, but clisp source directory not found at $srcdir/rte/clisp-2.43])
-  fi
+  AC_MSG_ERROR([--without-clisp specified, but clisp is required])
 elif test -n "$with_clisp"; then
   CLISP="$with_clisp"
 else
   AC_PATH_PROG(CLISP, clisp)
-  if test -n "$CLISP"; then
-    :
-  elif test -d "$srcdir/rte/clisp-2.43"; then
-    AC_MSG_NOTICE([Using internal clisp])
-  else
-    AC_MSG_ERROR([clisp binary not found in PATH, nor the clisp source directory at $srcdir/rte/clisp-2.43])
-  fi
 fi
 
 if test -n "$CLISP"; then
-  test -x "$CLISP" || AC_MSG_ERROR([clisp binary is not executable: $CLISP])
+  test -x "$CLISP" || AC_MSG_ERROR([clisp is not executable: $CLISP])
   AC_MSG_CHECKING([for clisp library directory])
   CLISP_LIB=`$CLISP -q -norc -x '(progn (princ *lib-directory*) (values))'`
   AC_MSG_RESULT([$CLISP_LIB])
-  test -f "$CLISP_LIB/clisp-link" || AC_MSG_ERROR([expected file is not found: $CLISP_LIB/clisp-link])
-  test -d "$CLISP_LIB/full" || AC_MSG_ERROR([expected directory is not found: $CLISP_LIB/full])
-  test -d "$CLISP_LIB/linkkit" || AC_MSG_ERROR([expected directory is not found: $CLISP_LIB/linkkit])
+  test -f "$CLISP_LIB/clisp-link" || AC_MSG_ERROR([clisp is not usable: expected file is not found: $CLISP_LIB/clisp-link])
+  test -d "$CLISP_LIB/full" || AC_MSG_ERROR([clisp is not usable: expected directory is not found: $CLISP_LIB/full])
+  test -d "$CLISP_LIB/linkkit" || AC_MSG_ERROR([clisp is not usable: expected directory is not found: $CLISP_LIB/linkkit])
+else
+  AC_MSG_ERROR([clisp is required but not found in PATH.
+Please install clisp or specify the clisp executable location
+via the --with-clisp=... option.])
 fi
 AC_SUBST(CLISP)
-AM_CONDITIONAL([EXT_CLISP], [test -n "$CLISP"])
+AC_SUBST(CLISP_LIB)
 
 # Checks for libraries.
 
