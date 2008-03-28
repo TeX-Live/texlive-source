@@ -144,7 +144,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = template.pl utf8.pl.in latin1.xdy
+EXTRA_DIST = template.pl utf8.pl.in
 CLEANFILES = \
 	utf8.pl \
 	cp1252.raw \
@@ -153,6 +153,8 @@ CLEANFILES = \
 	cp850-doc.tex \
 	latin9.raw \
 	latin9-doc.tex \
+	latin1.raw \
+	latin1-doc.tex \
 	utf8.raw \
 	utf8-doc.tex
 
