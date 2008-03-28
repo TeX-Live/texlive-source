@@ -167,6 +167,8 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 tex2xindy_SOURCES = tex2xindy.l
+
+#tex2xindy_LDADD = @LEXLIB@
 man_MANS = tex2xindy.1
 EXTRA_DIST = $(man_MANS)
 @MAINTAINER_MODE_TRUE@POD_DATE = `ident $< | grep '\$$Id' | sed -e 's/^.*,v [^ ]* //' -e 's/ .*//' -e s:/:-:g`

@@ -23,6 +23,8 @@ bin_PROGRAMS = tex2xindy
 
 tex2xindy_SOURCES = tex2xindy.l
 
+#tex2xindy_LDADD = @LEXLIB@
+
 man_MANS = tex2xindy.1
 
 EXTRA_DIST = $(man_MANS)
