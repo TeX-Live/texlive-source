@@ -144,10 +144,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = \
-	ij-as-y-utf8.pl.in ij-as-ij-utf8.pl.in \
-	latin1.xdy tex-latin1.xdy
-
+EXTRA_DIST = ij-as-y-utf8.pl.in ij-as-ij-utf8.pl.in tex-latin1.xdy
 CLEANFILES = \
 	ij-as-ij-utf8.pl \
 	ij-as-y-utf8.pl \

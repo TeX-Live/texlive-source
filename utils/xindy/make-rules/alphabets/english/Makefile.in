@@ -144,7 +144,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = utf8.pl.in ascii.xdy tex-ascii.xdy
+EXTRA_DIST = utf8.pl.in tex-ascii.xdy
 CLEANFILES = \
 	utf8.pl \
 	cp1252.raw \

@@ -144,7 +144,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = bedirxan-utf8.pl.in turkish-i-utf8.pl.in latin5.xdy
+EXTRA_DIST = bedirxan-utf8.pl.in turkish-i-utf8.pl.in
 CLEANFILES = \
 	bedirxan-utf8.pl \
 	bedirxan-latin5.raw \

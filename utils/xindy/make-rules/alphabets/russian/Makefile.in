@@ -144,10 +144,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = \
-	translit-iso-utf8.pl.in utf8.pl.in \
-	translit-iso-tex.xdy translit-tex.xdy translit-tgl-tex.xdy
-
+EXTRA_DIST = translit-iso-utf8.pl.in utf8.pl.in
 CLEANFILES = \
 	cp1251.raw \
 	cp1251-doc.tex \
