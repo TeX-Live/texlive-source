@@ -19,9 +19,7 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = \
-	translit-iso-utf8.pl.in utf8.pl.in \
-	translit-iso-tex.xdy translit-tex.xdy translit-tgl-tex.xdy
+EXTRA_DIST = translit-iso-utf8.pl.in utf8.pl.in
 
 CLEANFILES = \
 	cp1251.raw \

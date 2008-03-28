@@ -19,7 +19,7 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = polytonic-utf8.pl.in utf8.pl.in translit-utf8.pl.in translit-tex.xdy
+EXTRA_DIST = polytonic-utf8.pl.in utf8.pl.in translit-utf8.pl.in
 
 CLEANFILES = \
 	iso88597.raw \

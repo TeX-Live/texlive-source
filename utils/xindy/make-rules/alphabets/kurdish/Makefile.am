@@ -19,7 +19,7 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = bedirxan-utf8.pl.in turkish-i-utf8.pl.in latin5.xdy
+EXTRA_DIST = bedirxan-utf8.pl.in turkish-i-utf8.pl.in
 
 CLEANFILES = \
 	bedirxan-utf8.pl \

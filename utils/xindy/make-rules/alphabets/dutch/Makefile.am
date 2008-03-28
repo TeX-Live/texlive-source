@@ -19,9 +19,7 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = \
-	ij-as-y-utf8.pl.in ij-as-ij-utf8.pl.in \
-	latin1.xdy tex-latin1.xdy
+EXTRA_DIST = ij-as-y-utf8.pl.in ij-as-ij-utf8.pl.in tex-latin1.xdy
 
 CLEANFILES = \
 	ij-as-ij-utf8.pl \
