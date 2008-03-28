@@ -66,6 +66,7 @@ CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CLISP = @CLISP@
+CLISP_LIB = @CLISP_LIB@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CYGPATH_W = @CYGPATH_W@
@@ -155,18 +156,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-clisp_src = clisp-2.43
-clisp_builddir = $(shell pwd)/clisp-build-dir
-@EXT_CLISP_FALSE@CLISP_LIB = $(clisp_builddir)
-@EXT_CLISP_TRUE@CLISP_LIB = $(shell $(CLISP) -q -norc -x '(progn (princ *lib-directory*) (values))')
-@EXT_CLISP_FALSE@CLISP_PREREQ = $(clisp_link) $(fulldir)
-@EXT_CLISP_TRUE@CLISP_PREREQ = 
-fulldir = $(CLISP_LIB)/full
-clisp_link = $(CLISP_LIB)/clisp-link
 binariesdir = ../binaries
-
-#clisp_modules=--with-export-syscalls --with-dynamic-ffi --ignore-absence-of-libsigsegv
-clisp_modules := --with-dynamic-ffi --ignore-absence-of-libsigsegv
 ORDRULES_FILES = ordrules.c ordrules.h rxsub.c rxsub.h mkind.h debug.h link.sh
 SUBDIRS = ordrules
 EXTRA_DIST = NEWS README
@@ -405,15 +395,13 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-@EXT_CLISP_TRUE@distclean-local:
 clean: clean-recursive
 
 clean-am: clean-generic clean-local mostlyclean-am
 
 distclean: distclean-recursive
 	-rm -f Makefile
-distclean-am: clean-am distclean-generic distclean-local \
-	distclean-tags
+distclean-am: clean-am distclean-generic distclean-tags
 
 dvi: dvi-recursive
 
@@ -467,61 +455,32 @@ uninstall-am:
 .PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
 	all all-am all-local check check-am clean clean-generic \
 	clean-local ctags ctags-recursive distclean distclean-generic \
-	distclean-local distclean-tags distdir dvi dvi-am html html-am \
-	info info-am install install-am install-data install-data-am \
-	install-dvi install-dvi-am install-exec install-exec-am \
-	install-html install-html-am install-info install-info-am \
-	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs installdirs-am maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
-	pdf-am ps ps-am tags tags-recursive uninstall uninstall-am
+	distclean-tags distdir dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	installdirs-am maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am tags \
+	tags-recursive uninstall uninstall-am
 
-@EXT_CLISP_TRUE@    export CLISP = @CLISP@
-@EXT_CLISP_FALSE@    export CLISP = $(clisp_builddir)/clisp
 
 export CLISP_LINKKIT = $(CLISP_LIB)/linkkit
 
-# testing for MacOS X platform to circumvent faulty 'readline'
-# provided by Maarten Sneep <maarten.sneep@xs4all.nl>
-# FIXME: GNU make ifeq/endif clauses do not work in Automake files.
-# Either determine that case during configure or make them work.
-#ifeq ($(shell uname -s), Darwin)
-#	clisp_modules += --without-readline
-#endif
-
 all-local: xindy-build-dir
 
-@EXT_CLISP_FALSE@$(clisp_builddir): $(clisp_src)
-@EXT_CLISP_FALSE@	cd $(clisp_src) && ./configure $(clisp_builddir) $(clisp_modules)
-@EXT_CLISP_FALSE@	cd $(clisp_builddir) && ./makemake $(clisp_modules) > Makefile
-
-@EXT_CLISP_FALSE@$(CLISP_PREREQ): $(clisp_builddir)
-@EXT_CLISP_FALSE@	$(MAKE) -C $(clisp_builddir)
-
-# Target names that are easy to type, to build CLISP alone during development.
-@EXT_CLISP_FALSE@clisp-configure: $(clisp_builddir)
-@EXT_CLISP_FALSE@clisp: $(CLISP_PREREQ)
-
-@EXT_CLISP_FALSE@check:
-@EXT_CLISP_FALSE@	$(MAKE) -C $(clisp_builddir) check || $(MAKE) -C $(clisp_builddir) check
-
-xindy-build-dir: $(CLISP_PREREQ)
+xindy-build-dir:
 	rm -rf xindy-build-dir
 	test -f ordrules/link.sh || for i in $(ORDRULES_FILES); do cp -p $(top_srcdir)/rte/ordrules/$$i ordrules/$$i; done
 	$(MAKE) -C ordrules ordrulei.c
-	sh $(clisp_link) add-module-set ordrules $(fulldir) $@
+	sh $(CLISP_LIB)/clisp-link add-module-set ordrules $(CLISP_LIB)/full $@
 	cp $@/lisp.run $(binariesdir)/xindy.run
 	cp $@/lispinit.mem $(binariesdir)/base.mem
 
 clean-local:
 	rm -rf xindy-build-dir
 	test "$(builddir)" = "$(srcdir)" || for i in $(ORDRULES_FILES); do rm -f ordrules/$$i; done
-@EXT_CLISP_FALSE@	if [ -e $(clisp_builddir) ]; then $(MAKE) -C $(clisp_builddir) clean; fi
-
-# remove some extra files to match pristine clisp source
-@EXT_CLISP_FALSE@distclean-local: clean
-@EXT_CLISP_FALSE@	rm -rf $(clisp_builddir)
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

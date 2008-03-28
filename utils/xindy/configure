@@ -704,8 +704,7 @@ pdflatex
 BUILDDOCS_TRUE
 BUILDDOCS_FALSE
 CLISP
-EXT_CLISP_TRUE
-EXT_CLISP_FALSE
+CLISP_LIB
 CPP
 GREP
 EGREP
@@ -1315,13 +1314,13 @@ Optional Features:
   --enable-make-rules     build and install make-rules package (default is
                           YES)
   --enable-docs           build and install documentation (default is YES)
-  --enable-tetex-build    Build as part of a teTeX installation
+  --enable-tetex-build    Build as part of a TeX Live installation
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
-  --with-clisp[=PATH]     Use the existing CLISP binary instead of re-building
-                          CLISP from source in the rte/ directory
+  --with-clisp=...        Use the specified location of the clisp executable
+                          (default is search in PATH)
 
 Some influential environment variables:
   CC          C compiler command
@@ -1765,7 +1764,6 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-## make dist doesn't work yet, since configure makes CLISP.
 am__api_version='1.10'
 
 ac_aux_dir=
@@ -3691,36 +3689,33 @@ if test "${enable_docs+set}" = set; then
   enableval=$enable_docs;
 fi
 
-
-# Building inside TeX Live?
 # Check whether --enable-tetex-build was given.
 if test "${enable_tetex_build+set}" = set; then
   enableval=$enable_tetex_build;
 fi
 
 
+# Check whether --with-clisp was given.
+if test "${with_clisp+set}" = set; then
+  withval=$with_clisp;
+fi
+
+
 if test "x$enable_tetex_build" = xyes; then
-  if test ! -d $srcdir/../../texk/kpathsea; then
-    { { echo "$as_me:$LINENO: error:
-=========================================
-
-You specified --enable-tetex-build, but I can't find the kpathsea
-directory.  I expected it to be in $srcdir/../../texk/kpathsea.
-
-=========================================" >&5
-echo "$as_me: error:
-=========================================
-
-You specified --enable-tetex-build, but I can't find the kpathsea
-directory.  I expected it to be in $srcdir/../../texk/kpathsea.
-
-=========================================" >&2;}
-   { (exit 1); exit 1; }; }
-  fi
+  { echo "$as_me:$LINENO: Using installation layout for TeX Live" >&5
+echo "$as_me: Using installation layout for TeX Live" >&6;}
   docdir="$prefix/texmf/doc/$PACKAGE_NAME"
   mandir="$prefix/texmf/doc/man"
-  if test -z "$enable_docs"; then enable_docs=no; fi
-  if test -z "$enable_make_rules"; then enable_make_rules=no; fi
+  if test -z "$enable_docs"; then
+    { echo "$as_me:$LINENO: Disabling docs building" >&5
+echo "$as_me: Disabling docs building" >&6;}
+    enable_docs=no;
+  fi
+  if test -z "$enable_make_rules"; then
+    { echo "$as_me:$LINENO: Disabling make-rules building" >&5
+echo "$as_me: Disabling make-rules building" >&6;}
+    enable_make_rules=no;
+  fi
 fi
  if test "x$enable_tetex_build" = xyes; then
   TETEX_BUILD_TRUE=
@@ -3861,13 +3856,6 @@ else
 fi
 
 
-
-# Check whether --with-clisp was given.
-if test "${with_clisp+set}" = set; then
-  withval=$with_clisp;
-fi
-
-
 CLISP=
 if test "x$with_clisp" = xyes; then
   # Extract the first word of "clisp", so it can be a program name with args.
@@ -3910,20 +3898,10 @@ echo "${ECHO_T}no" >&6; }
 fi
 
 
-  if test -z "$CLISP"; then
-    { { echo "$as_me:$LINENO: error: --with-clisp specified, but clisp binary not found in PATH" >&5
-echo "$as_me: error: --with-clisp specified, but clisp binary not found in PATH" >&2;}
-   { (exit 1); exit 1; }; }
-  fi
 elif test "x$with_clisp" = xno; then
-  if test -d "$srcdir/rte/clisp-2.43"; then
-    { echo "$as_me:$LINENO: Using internal clisp" >&5
-echo "$as_me: Using internal clisp" >&6;}
-  else
-    { { echo "$as_me:$LINENO: error: --without-clisp specified, but clisp source directory not found at $srcdir/rte/clisp-2.43" >&5
-echo "$as_me: error: --without-clisp specified, but clisp source directory not found at $srcdir/rte/clisp-2.43" >&2;}
+  { { echo "$as_me:$LINENO: error: --without-clisp specified, but clisp is required" >&5
+echo "$as_me: error: --without-clisp specified, but clisp is required" >&2;}
    { (exit 1); exit 1; }; }
-  fi
 elif test -n "$with_clisp"; then
   CLISP="$with_clisp"
 else
@@ -3967,45 +3945,36 @@ echo "${ECHO_T}no" >&6; }
 fi
 
 
-  if test -n "$CLISP"; then
-    :
-  elif test -d "$srcdir/rte/clisp-2.43"; then
-    { echo "$as_me:$LINENO: Using internal clisp" >&5
-echo "$as_me: Using internal clisp" >&6;}
-  else
-    { { echo "$as_me:$LINENO: error: clisp binary not found in PATH, nor the clisp source directory at $srcdir/rte/clisp-2.43" >&5
-echo "$as_me: error: clisp binary not found in PATH, nor the clisp source directory at $srcdir/rte/clisp-2.43" >&2;}
-   { (exit 1); exit 1; }; }
-  fi
 fi
 
 if test -n "$CLISP"; then
-  test -x "$CLISP" || { { echo "$as_me:$LINENO: error: clisp binary is not executable: $CLISP" >&5
-echo "$as_me: error: clisp binary is not executable: $CLISP" >&2;}
+  test -x "$CLISP" || { { echo "$as_me:$LINENO: error: clisp is not executable: $CLISP" >&5
+echo "$as_me: error: clisp is not executable: $CLISP" >&2;}
    { (exit 1); exit 1; }; }
   { echo "$as_me:$LINENO: checking for clisp library directory" >&5
 echo $ECHO_N "checking for clisp library directory... $ECHO_C" >&6; }
   CLISP_LIB=`$CLISP -q -norc -x '(progn (princ *lib-directory*) (values))'`
   { echo "$as_me:$LINENO: result: $CLISP_LIB" >&5
 echo "${ECHO_T}$CLISP_LIB" >&6; }
-  test -f "$CLISP_LIB/clisp-link" || { { echo "$as_me:$LINENO: error: expected file is not found: $CLISP_LIB/clisp-link" >&5
-echo "$as_me: error: expected file is not found: $CLISP_LIB/clisp-link" >&2;}
+  test -f "$CLISP_LIB/clisp-link" || { { echo "$as_me:$LINENO: error: clisp is not usable: expected file is not found: $CLISP_LIB/clisp-link" >&5
+echo "$as_me: error: clisp is not usable: expected file is not found: $CLISP_LIB/clisp-link" >&2;}
    { (exit 1); exit 1; }; }
-  test -d "$CLISP_LIB/full" || { { echo "$as_me:$LINENO: error: expected directory is not found: $CLISP_LIB/full" >&5
-echo "$as_me: error: expected directory is not found: $CLISP_LIB/full" >&2;}
+  test -d "$CLISP_LIB/full" || { { echo "$as_me:$LINENO: error: clisp is not usable: expected directory is not found: $CLISP_LIB/full" >&5
+echo "$as_me: error: clisp is not usable: expected directory is not found: $CLISP_LIB/full" >&2;}
    { (exit 1); exit 1; }; }
-  test -d "$CLISP_LIB/linkkit" || { { echo "$as_me:$LINENO: error: expected directory is not found: $CLISP_LIB/linkkit" >&5
-echo "$as_me: error: expected directory is not found: $CLISP_LIB/linkkit" >&2;}
+  test -d "$CLISP_LIB/linkkit" || { { echo "$as_me:$LINENO: error: clisp is not usable: expected directory is not found: $CLISP_LIB/linkkit" >&5
+echo "$as_me: error: clisp is not usable: expected directory is not found: $CLISP_LIB/linkkit" >&2;}
+   { (exit 1); exit 1; }; }
+else
+  { { echo "$as_me:$LINENO: error: clisp is required but not found in PATH.
+Please install clisp or specify the clisp executable location
+via the --with-clisp=... option." >&5
+echo "$as_me: error: clisp is required but not found in PATH.
+Please install clisp or specify the clisp executable location
+via the --with-clisp=... option." >&2;}
    { (exit 1); exit 1; }; }
 fi
 
- if test -n "$CLISP"; then
-  EXT_CLISP_TRUE=
-  EXT_CLISP_FALSE='#'
-else
-  EXT_CLISP_TRUE='#'
-  EXT_CLISP_FALSE=
-fi
 
 
 # Checks for libraries.
@@ -5150,13 +5119,6 @@ echo "$as_me: error: conditional \"BUILDDOCS\" was never defined.
 Usually this means the macro was only invoked conditionally." >&2;}
    { (exit 1); exit 1; }; }
 fi
-if test -z "${EXT_CLISP_TRUE}" && test -z "${EXT_CLISP_FALSE}"; then
-  { { echo "$as_me:$LINENO: error: conditional \"EXT_CLISP\" was never defined.
-Usually this means the macro was only invoked conditionally." >&5
-echo "$as_me: error: conditional \"EXT_CLISP\" was never defined.
-Usually this means the macro was only invoked conditionally." >&2;}
-   { (exit 1); exit 1; }; }
-fi
 
 : ${CONFIG_STATUS=./config.status}
 ac_clean_files_save=$ac_clean_files
@@ -5829,13 +5791,13 @@ pdflatex!$pdflatex$ac_delim
 BUILDDOCS_TRUE!$BUILDDOCS_TRUE$ac_delim
 BUILDDOCS_FALSE!$BUILDDOCS_FALSE$ac_delim
 CLISP!$CLISP$ac_delim
-EXT_CLISP_TRUE!$EXT_CLISP_TRUE$ac_delim
-EXT_CLISP_FALSE!$EXT_CLISP_FALSE$ac_delim
+CLISP_LIB!$CLISP_LIB$ac_delim
 CPP!$CPP$ac_delim
 GREP!$GREP$ac_delim
 EGREP!$EGREP$ac_delim
 build!$build$ac_delim
 build_cpu!$build_cpu$ac_delim
+build_vendor!$build_vendor$ac_delim
 _ACEOF
 
   if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 97; then
@@ -5877,7 +5839,6 @@ _ACEOF
 ac_delim='%!_!# '
 for ac_last_try in false false false false false :; do
   cat >conf$$subs.sed <<_ACEOF
-build_vendor!$build_vendor$ac_delim
 build_os!$build_os$ac_delim
 host!$host$ac_delim
 host_cpu!$host_cpu$ac_delim
@@ -5887,7 +5848,7 @@ LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 8; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 7; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5
