@@ -21,26 +21,21 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-export CLISP_LINKKIT = $(CLISP_LIB)/linkkit
-
-binariesdir = ../binaries
-
-all-local: xindy-build-dir
+SUBDIRS = ordrules
+EXTRA_DIST = NEWS README
 
 ORDRULES_FILES = ordrules.c ordrules.h rxsub.c rxsub.h mkind.h debug.h link.sh
+binariesdir = ../binaries
 
-xindy-build-dir:
+all-local:
 	rm -rf xindy-build-dir
 	test -f ordrules/link.sh || for i in $(ORDRULES_FILES); do cp -p $(top_srcdir)/rte/ordrules/$$i ordrules/$$i; done
 	$(MAKE) -C ordrules ordrulei.c
-	sh $(CLISP_LIB)/clisp-link add-module-set ordrules $(CLISP_LIB)/full $@
-	cp $@/lisp.run $(binariesdir)/xindy.run
-	cp $@/lispinit.mem $(binariesdir)/base.mem
+	env CLISP_LINKKIT="$(CLISP_LIB)/linkkit" \
+	sh "$(CLISP_LIB)/clisp-link" add-module-set ordrules "$(CLISP_LIB)/full" xindy-build-dir
+	cp xindy-build-dir/lisp.run $(binariesdir)/xindy.run
+	cp xindy-build-dir/lispinit.mem $(binariesdir)/base.mem
 
 clean-local:
 	rm -rf xindy-build-dir
 	test "$(builddir)" = "$(srcdir)" || for i in $(ORDRULES_FILES); do rm -f ordrules/$$i; done
-
-SUBDIRS = ordrules
-
-EXTRA_DIST = NEWS README
