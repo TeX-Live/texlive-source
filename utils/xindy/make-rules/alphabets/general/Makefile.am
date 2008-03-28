@@ -19,7 +19,7 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = template.pl utf8.pl.in latin1.xdy
+EXTRA_DIST = template.pl utf8.pl.in
 
 CLEANFILES = \
 	utf8.pl \
@@ -29,5 +29,7 @@ CLEANFILES = \
 	cp850-doc.tex \
 	latin9.raw \
 	latin9-doc.tex \
+	latin1.raw \
+	latin1-doc.tex \
 	utf8.raw \
 	utf8-doc.tex

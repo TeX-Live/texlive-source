@@ -125,7 +125,7 @@ $alphabet = [
                    [], # z with dot above (polish)
 ['Þ',  ['þ','Þ']],
                    [], # wynn (english)
-['Æ',  ['æ','Æ']@u{,['ǽ','Ǽ'],['ę́','Ę́'],['ǿ','Ǿ']},['œ','Œ'],['ä','Ä']],
+['Æ',  ['æ','Æ']@u{,['ǽ','Ǽ'],['ę́','Ę́'],['ǿ','Ǿ']}@9{,['œ','Œ']},['ä','Ä']],
                    [], # o with stroke (danish, norwegian)
                    [], # a with ring above (danish, norwegian, swedish)
                    [], # a with diaeresis (finnish, swedish)

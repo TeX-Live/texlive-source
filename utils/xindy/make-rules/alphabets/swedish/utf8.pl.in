@@ -85,7 +85,7 @@ $alphabet = [
                    [], # r with caron (czech, slovak/large, upper sorbian)
                    [], # r with acute (lower sorbian)
                    [], # r with cedilla/comma (latvian)
-['S',  ['s','S']@u{,['ś','Ś']},['š','Š']],
+['S',  ['s','S']@u{,['ś','Ś']}@9{,['š','Š']}],
                    [], # sh (albanian)
                    [], # sz (hungarian)
                    [], # s with caron (many)

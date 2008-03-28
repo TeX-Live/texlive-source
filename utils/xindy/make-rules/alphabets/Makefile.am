@@ -114,6 +114,9 @@ DANISH = \
 	danish/latin9-lang.xdy \
 	danish/latin9-test.xdy \
 	danish/latin9.xdy \
+	danish/latin1-lang.xdy \
+	danish/latin1-test.xdy \
+	danish/latin1.xdy \
 	danish/utf8-lang.xdy \
 	danish/utf8-test.xdy \
 	danish/utf8.xdy
@@ -220,6 +223,9 @@ GENERAL = \
 	general/latin9-lang.xdy \
 	general/latin9-test.xdy \
 	general/latin9.xdy \
+	general/latin1-lang.xdy \
+	general/latin1-test.xdy \
+	general/latin1.xdy \
 	general/utf8-lang.xdy \
 	general/utf8-test.xdy \
 	general/utf8.xdy
@@ -331,6 +337,9 @@ ICELANDIC = \
 	icelandic/latin9-lang.xdy \
 	icelandic/latin9-test.xdy \
 	icelandic/latin9.xdy \
+	icelandic/latin1-lang.xdy \
+	icelandic/latin1-test.xdy \
+	icelandic/latin1.xdy \
 	icelandic/utf8-lang.xdy \
 	icelandic/utf8-test.xdy \
 	icelandic/utf8.xdy
@@ -607,6 +616,9 @@ SWEDISH = \
 	swedish/latin9-lang.xdy \
 	swedish/latin9-test.xdy \
 	swedish/latin9.xdy \
+	swedish/latin1-lang.xdy \
+	swedish/latin1-test.xdy \
+	swedish/latin1.xdy \
 	swedish/utf8-lang.xdy \
 	swedish/utf8-test.xdy \
 	swedish/utf8.xdy
@@ -726,7 +738,7 @@ nodist_noinst_DATA = \
 	sed -e 's/@.{\([^}]*\)}/\1/g;' <$< >$@
 
 %latin1.pl : %utf8.pl.in
-	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
+	sed -e 's/@u{\([^}]*\)}//g;s/@9{\([^}]*\)}//g;' <$< | \
 	iconv -f UTF-8 -t ISO-8859-1 >$@
 
 %cp850.pl : %utf8.pl.in

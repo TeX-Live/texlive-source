@@ -126,7 +126,7 @@ $alphabet = [
                    [], # thorn (icelandic)
                    [], # wynn (english)
 ['Æ',  ['æ','Æ']@u{,['ǽ','Ǽ']}],
-['Ø',  ['ø','Ø'],@u{['ǿ','Ǿ'],}['ö','Ö'],['œ','Œ']],
+['Ø',  ['ø','Ø'],@u{['ǿ','Ǿ'],}['ö','Ö']@9{,['œ','Œ']}],
 ['Å',  ['å','Å'],['aa','Aa','AA']@u{,['ǻ','Ǻ']}],
                    [], # a with diaeresis (finnish, swedish)
                    [], # o with diaeresis (finnish, swedish)
