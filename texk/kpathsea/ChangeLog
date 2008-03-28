@@ -1,3 +1,7 @@
+2008-03-27  Karl Berry  <karl@tug.org>
+
+	* tex-make.c: start "running" on a new line, tweak other msgs.
+
 2008-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpsewhich.c (main): change type of value from string to
