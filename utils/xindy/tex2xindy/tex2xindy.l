@@ -407,6 +407,7 @@ main(int argc, char* argv[])
     return (errors > 0);		/* 1 or 0 */
 }
 
+int yywrap (void) {return 1;}
 
 /* ============================================================
 
