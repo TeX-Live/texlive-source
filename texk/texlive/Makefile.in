@@ -11,7 +11,7 @@ LIVESCRIPTS = simpdftex \
               pdfthumb wordcount.sh \
 	      texlua-perl-runner
 
-TEXLUARUNNERS = generate-updmap generate-language generate-fmtutil
+TEXLUARUNNERS = tl-package-manager
 
 manpgs = getnonfreefonts getnonfreefonts-sys
 
