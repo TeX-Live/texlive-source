@@ -27,7 +27,9 @@ EXTRA_DIST = NEWS README
 ORDRULES_FILES = ordrules.c ordrules.h rxsub.c rxsub.h mkind.h debug.h link.sh
 binariesdir = ../binaries
 
-all-local:
+all-local: $(binariesdir)/xindy.run $(binariesdir)/base.mem
+
+$(binariesdir)/xindy.run $(binariesdir)/base.mem: 
 	rm -rf xindy-build-dir
 	test -f ordrules/link.sh || for i in $(ORDRULES_FILES); do cp -p $(top_srcdir)/rte/ordrules/$$i ordrules/$$i; done
 	$(MAKE) -C ordrules ordrulei.c

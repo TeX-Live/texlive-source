@@ -41,5 +41,6 @@ clisp-module: ordrulei.o ordrules.o rxsub.o
 
 EXTRA_DIST = ordrulei.lsp ordrules.c ordrules.h rxsub.c rxsub.h mkind.h debug.h link.sh
 
-CLEANFILES = ordrulei.c ordrulei.fas ordrulei.lib ordrulei.o ordrules.o rxsub.o version.lisp
+CLEANFILES = ordrulei.c ordrulei.fas ordrulei.lib ordrulei.o ordrules.o rxsub.o
 
+DISTCLEANFILES = version.lisp

@@ -149,7 +149,8 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 INCLUDES = 
 EXTRA_DIST = ordrulei.lsp ordrules.c ordrules.h rxsub.c rxsub.h mkind.h debug.h link.sh
-CLEANFILES = ordrulei.c ordrulei.fas ordrulei.lib ordrulei.o ordrules.o rxsub.o version.lisp
+CLEANFILES = ordrulei.c ordrulei.fas ordrulei.lib ordrulei.o ordrules.o rxsub.o
+DISTCLEANFILES = version.lisp
 all: all-am
 
 .SUFFIXES:
@@ -242,6 +243,7 @@ clean-generic:
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
