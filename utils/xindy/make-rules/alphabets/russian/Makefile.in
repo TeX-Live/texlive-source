@@ -155,6 +155,8 @@ CLEANFILES = \
 	translit-iso-utf8.pl \
 	translit-iso-utf8.raw \
 	translit-iso-utf8-doc.tex \
+	translit-iso-tex.raw \
+	translit-iso-tex-doc.tex \
 	utf8.pl \
 	utf8.raw \
 	utf8-doc.tex
