@@ -32,6 +32,8 @@ CLEANFILES = \
 	translit-latin4-doc.tex \
 	translit-utf8.raw \
 	translit-utf8-doc.tex \
+	translit-tex.raw \
+	translit-tex-doc.tex \
 	utf8.pl \
 	utf8.raw \
 	utf8-doc.tex

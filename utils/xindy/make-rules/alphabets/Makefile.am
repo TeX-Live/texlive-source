@@ -277,6 +277,9 @@ GREEK = \
 	greek/translit-utf8-lang.xdy \
 	greek/translit-utf8-test.xdy \
 	greek/translit-utf8.xdy \
+	greek/translit-tex-lang.xdy \
+	greek/translit-tex-test.xdy \
+	greek/translit-tex.xdy \
 	greek/utf8-lang.xdy \
 	greek/utf8-test.xdy \
 	greek/utf8.xdy
@@ -526,6 +529,9 @@ RUSSIAN = \
 	russian/translit-iso-utf8-lang.xdy \
 	russian/translit-iso-utf8-test.xdy \
 	russian/translit-iso-utf8.xdy \
+	russian/translit-iso-tex-lang.xdy \
+	russian/translit-iso-tex-test.xdy \
+	russian/translit-iso-tex.xdy \
 	russian/utf8-lang.xdy \
 	russian/utf8-test.xdy \
 	russian/utf8.xdy
@@ -809,10 +815,8 @@ romanian/cp1250.pl : romanian/utf8.pl
 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
 	iconv -f UTF-8 -t KOI8-U >$@
 
-# %tex.pl : %utf8.pl $(srcdir)/utf8-to-tex.sed
-#	sed -f $(srcdir)/utf8-to-tex.sed <$< >$@
-
-
+%tex.pl : %utf8.pl $(srcdir)/utf8-to-tex.sed
+	sed -f $(srcdir)/utf8-to-tex.sed <$< >$@
 
 %-lang.xdy : %-test.xdy
 	echo '(require "lang/$*.xdy")' >$@
