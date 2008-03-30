@@ -77,8 +77,10 @@ install_makeargs = INSTALL='$(INSTALL)' INSTALL_DATA='$(INSTALL_DATA)' \
 proglib = lib/lib.a
 windowlib = window/window.a
 
-# The sh script that does the conversion:
-web2c = srcdir=$(srcdir) $(SHELL) $(srcdir)/web2c/convert
+# The sh script that does the conversion.  The "." is the directory with
+# native tools; we don't attempt cross-compiling a la luatex.
+web2c = srcdir=$(srcdir) $(SHELL) $(srcdir)/web2c/convert .
+
 # Additional dependencies:
 web2c_common = web2c/convert web2c/common.defines
 web2c_programs = web2c/fixwrites web2c/splitup web2c/web2c

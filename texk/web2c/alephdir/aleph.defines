@@ -3,7 +3,7 @@
 This file is part of Aleph,
 which is based on the web2c distribution of TeX,
 
-Copyright (C) 1994--2000 John Plaice and Yannis Haralambous
+Copyright (C) 1994--2000, 2008 John Plaice and Yannis Haralambous
 Copyright (C) 2002--2004, 2008 the Aleph task force
 
 Aleph is free software; you can redistribute it and/or modify
@@ -22,7 +22,6 @@ along with Aleph; if not, write to the Free Software Foundation, Inc.,
 
 }
 
-@define function loadpoolstrings();
 @define function newinputln ();
 @define function getfilemode ();
 @define function newinputline ();

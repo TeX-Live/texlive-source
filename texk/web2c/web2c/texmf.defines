@@ -27,6 +27,7 @@
 @define function initscreen;
 @define function inputln ();
 @define function isnewsource ();
+@define function loadpoolstrings();
 @define function makefullnamestring;
 @define function makesrcspecial ();
 @define function ocpopenin ();

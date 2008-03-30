@@ -21,7 +21,6 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 
 }
 
-@define function loadpoolstrings();
 @define function newinputln ();
 @define function getfilemode ();
 @define function newinputline ();

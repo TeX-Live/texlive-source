@@ -1,15 +1,29 @@
 #!/bin/sh
 # Convert WEB programs not needing special treatment to C.
-# 
-# $1 is the Pascal file to be converted.
-# $2 is the C file to be created.
-# $3, if present, is extended with .h, and #included in the C file, and
-# extended with .defines, and prepended along with the common
-# definitions.
 
 : ${srcdir=.}
 
-usage="Usage: $0 <basefile>."
+usage="Usage: $0 TOOLDIR BASEFILE
+
+TOOLDIR is the root of a tree for native tools; when not cross-compiling,
+this is just the present web2c directory.
+
+BASEFILE is the root part of the file to be converted; it is extended
+native=$1
+shift
+
+with .p to make the name of the (input) Pascal file, and extended with
+.c and .h to make the name of the main (output) C files.  Additional
+files BASEini.c, BASEd.h, BASEcoerce.h are created for the larger program.
+"
+
+native=$1
+shift
+if test ! -d "$native"; then
+  echo "$0: native argument not a directory: $native" >&2
+  exit 1
+fi
+
 basefile=
 while test $# -gt 0; do
   case $1 in
@@ -21,7 +35,7 @@ while test $# -gt 0; do
   shift
 done
 if test -z "$basefile"; then
-  echo "Missing basefile argument." >&2
+  echo "$0: missing base (Pascal) file argument." >&2
   echo "$usage" >&2
   exit 1
 fi
@@ -49,20 +63,22 @@ output_files="$cfile $basefile.h"
 
 case $basefile in
   bibtex)
-    midcmd="| sed -f $srcdir/web2c/cvtbib.sed";;
+    midcmd="| sed -f $srcdir/web2c/cvtbib.sed"
+    ;;
+
   mf) # MF and MP are almost the same.
     more_defines="$srcdir/web2c/texmf.defines $srcdir/web2c/mfmp.defines"
-    more_defines="$more_defines $srcdir/web2c/loadpool.defines"
     precmd="| sed -f $srcdir/web2c/cvtmf1.sed"
     web2c_options="-m -c${basefile}coerce"
     hfile=texmfmp.h
     midcmd="| sed -f $srcdir/web2c/cvtmf2.sed"
-    postcmd="| ./web2c/splitup $splitup_options $basefile"
+    postcmd="| $native/web2c/splitup $splitup_options $basefile"
     cfile=${basefile}1.c # last output file, or thereabouts
     output=
     output_files="$basefile[0-9].c ${basefile}ini.c ${basefile}d.h \
 ${basefile}coerce.h"
     ;;
+
   mp) # MP now needs mp.defines for font inclusion library
     more_defines="$srcdir/web2c/texmf.defines $srcdir/web2c/mfmp.defines"
     prog_defines="$srcdir/${basefile}dir/$basefile.defines"
@@ -73,29 +89,14 @@ ${basefile}coerce.h"
     web2c_options="-m -c${basefile}coerce"
     hfile=texmfmp.h
     midcmd="| sed -f $srcdir/web2c/cvtmf2.sed"
-    postcmd="| ./web2c/splitup $splitup_options $basefile"
+    postcmd="| $native/web2c/splitup $splitup_options $basefile"
     cfile=${basefile}2.c # last output file, or thereabouts
     output=
     output_files="$basefile[0-9].c ${basefile}ini.c ${basefile}d.h \
 ${basefile}coerce.h"
     ;;
-  tex|etex)
-    more_defines="$srcdir/web2c/texmf.defines"
-    more_defines="$more_defines $srcdir/web2c/loadpool.defines"
-    prog_defines="$srcdir/${basefile}dir/$basefile.defines"
-    if test -f $prog_defines; then
-      more_defines="$more_defines $prog_defines"
-    fi
-    web2c_options="-t -c${basefile}coerce"
-    hfile=texmfmp.h
-    fixwrites_options=-t
-    postcmd="| ./web2c/splitup $splitup_options ${basefile}"
-    cfile=${basefile}2.c # last output file, or thereabouts
-    output=
-    output_files="$basefile[0-9].c ${basefile}ini.c ${basefile}d.h \
-${basefile}coerce.h"
-    ;;
-  pdftex|pdfetex|omega|aleph|xetex)
+
+  tex|eomega|etex|pdftex|pdfetex|omega|aleph|xetex)
     more_defines="$srcdir/web2c/texmf.defines"
     prog_defines="$srcdir/${basefile}dir/$basefile.defines"
     if test -f $prog_defines; then
@@ -104,20 +105,38 @@ ${basefile}coerce.h"
     web2c_options="-t -c${basefile}coerce"
     hfile=texmfmp.h
     fixwrites_options=-t
-    postcmd="| ./web2c/splitup $splitup_options ${basefile}"
+    postcmd="| $native/web2c/splitup $splitup_options ${basefile}"
     cfile=${basefile}2.c # last output file, or thereabouts
     output=
     output_files="$basefile[0-9].c ${basefile}ini.c ${basefile}d.h \
-${basefile}coerce.h"
+                  ${basefile}coerce.h"
+    ;;
+
+  luatex)
+    more_defines="$srcdir/web2c/texmf.defines"
+    prog_defines="$srcdir/${basefile}dir/$basefile.defines"
+    if test -f $prog_defines; then
+      more_defines="$more_defines $prog_defines"
+    fi
+    web2c_options="-t -c${basefile}coerce"
+    hfile=texmfmp.h
+    fixwrites_options=-t
+    splitup_options="-i -l 13500"
+    postcmd="| $native/web2c/splitup $splitup_options ${basefile}"
+    cfile=${basefile}2.c # last output file, or thereabouts
+    output=
+    output_files="$basefile[0-9].c ${basefile}ini.c ${basefile}d.h \
+                 ${basefile}coerce.h"
     ;;
 esac
 
 # Do it.
+#set -x
 eval "cat $srcdir/web2c/common.defines $more_defines $pascalfile \
   $precmd \
-  | ./web2c/web2c -h$hfile $web2c_options \
+  | $native/web2c/web2c -h$hfile $web2c_options \
   $midcmd \
-  | ./web2c/fixwrites $fixwrites_options $basefile \
+  | $native/web2c/fixwrites $fixwrites_options $basefile \
   $postcmd \
   $output"
 
@@ -140,7 +159,7 @@ case $basefile in
     sed -e 's/(buftype)//g' -e 's/(pdstype)//g' <bibtex.h >xbibtex.h
     mv xbibtex.h bibtex.h
     ;;
-  tex|etex|pdftex|pdfetex|omega|aleph|mf|mp|xetex)
+  tex|eomega|etex|luatex|pdftex|pdfetex|omega|aleph|mf|mp|xetex)
     sleep 2 # so timestamps are definitely later, to avoid make weirdness
     cat ${basefile}coerce.h $srcdir/web2c/coerce.h >x${basefile}coerce.h
     mv x${basefile}coerce.h ${basefile}coerce.h

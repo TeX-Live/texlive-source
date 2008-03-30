@@ -1,3 +1,14 @@
+2008-03-30  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (web2c): pass . for native tooldir argument.
+	* web2c/convert: accept tooldir argument a la luatex.
+	* web2c/texmf.defines (loadpoolstrings): define here.
+	* web2c/loadpool.defines: remove.
+	* luatexdir/luatex.defines,
+	* mpdir/mp.defines,
+	* omegadir/omega.defines,
+	* alephdir/aleph.defines (loadpoolstrings): rm.
+
 2008-03-25  Karl Berry  <karl@tug.org>
 
 	 * Makefile.in,
