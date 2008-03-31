@@ -57,6 +57,9 @@
 /* Define to 1 if you have the `gdImageGif' function. */
 #undef HAVE_GDIMAGEGIF
 
+/* Define to 1 if you have the `gdImageJpeg' function. */
+#undef HAVE_GDIMAGEJPEG
+
 /* Define to 1 if you have the `gdImagePngEx' function. */
 #undef HAVE_GDIMAGEPNGEX
 

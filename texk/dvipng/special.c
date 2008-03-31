@@ -362,7 +362,7 @@ void SetSpecial(char * special, int32_t length, int32_t hh, int32_t vv)
 	break;
       case 0xff: /* JPEG magic: 0xffd8 */
 	DEBUG_PRINT(DEBUG_DVI,("\n  INCLUDE JPEG \t%s",psfile));
-#ifdef HAVE_GDIMAGECREATETRUECOLOR
+#ifdef HAVE_GDIMAGEJPEG
 	fseek(psstream,0,SEEK_SET);
 	psimage=gdImageCreateFromJpeg(psstream);
 #else

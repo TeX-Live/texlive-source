@@ -170,8 +170,8 @@ sinclude(../../libs/freetype2/withenable.ac)
 sinclude(../../libs/freetype2/freetype2.ac)
 sinclude(../kpathsea/withenable.ac)
 
-dnl -- gd jpeg fn not defined? AC_DEFINE(HAVE_GDIMAGECREATETRUECOLOR)
-dnl then we get a warning about gdImageAlpha, but so what.
+AC_DEFINE(HAVE_GDIMAGEGIF)
+AC_DEFINE(HAVE_GDIMAGECREATETRUECOLOR)
 AC_DEFINE(HAVE_GDIMAGEPNGEX)
 AC_DEFINE(HAVE_GD_H)
 AC_DEFINE(HAVE_LIBGD)

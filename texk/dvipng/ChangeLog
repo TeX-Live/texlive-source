@@ -1,3 +1,8 @@
+2008-03-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* special.c: allow for libgd without jpeg support.
+	* configure.ac, config.h.in, configure: adapt.
+
 2008-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Use AC_SEARCH_LIBS such that -lm and -lgen are
