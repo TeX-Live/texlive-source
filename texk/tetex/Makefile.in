@@ -28,6 +28,7 @@ LINKED_SCRIPTS = \
   texmf/scripts/texlive/getnonfreefonts.pl \
   texmf/scripts/texlive/tl-package-manager.pl \
   texmf-dist/scripts/glossaries/makeglossaries \
+  texmf-dist/scripts/mkjobtexmf/mkjobtexmf.pl \
   texmf-dist/scripts/perltex/perltex.pl \
   texmf-dist/scripts/texcount/TeXcount.pl \
   texmf-dist/scripts/thumbpdf/thumbpdf.pl \
@@ -47,9 +48,11 @@ contextmanpgs = \
   ctxtools makempy mptopdf pstopdf texfind texmfstart \
   fdf2tex pdftools texexec texfont textools texutil
 
+# The man pages for script packages such as thumbpdf and mkjobtexmf are
+# copied here by hand; ctan2tl doesn't know how to handle this case, help.
 manpgs = \
   allcm allec allneeded dvi2fax dvired e2pall epstopdf fontinst \
-  kpsetool kpsewhere mkocp mkofm ofm2opl opl2ofm otp2ocp outocp \
+  kpsetool kpsewhere mkjobtexmf mkocp mkofm ofm2opl opl2ofm otp2ocp outocp \
   ovf2ovp ovp2ovf ps2frag pslatex rubibtex rumakeindex texconfig texdoc \
   texdoctk thumbpdf ttf2afm updmap
 

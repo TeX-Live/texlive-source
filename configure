@@ -758,7 +758,6 @@ CPP
 XMKMF'
 ac_subdirs_all='libs
 utils/dialog
-utils/mkjobtexmf
 utils/pdfopen
 utils/ps2eps
 utils/psutils
@@ -1365,7 +1364,6 @@ Optional Packages:
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-x                use the X Window System
   --without-dialog        do not build the dialog package
-  --without-mkjobtexmf    do not build the mkjobtexmf package
   --without-pdfopen       do not build the pdfopen package
   --without-ps2eps        do not build the ps2eps package
   --without-psutils       do not build the psutils package
@@ -5316,7 +5314,7 @@ export with_cxx_runtime_hack
 
 
 # withenable.ac - Written long ago by Thomas Esser and Sebastian Rahtz.
-# $Id: withenable.ac 7122 2008-03-24 13:49:08Z martin $
+# $Id: withenable.ac 7137 2008-03-25 00:14:10Z karl $
 
 # Public domain.
 
@@ -5333,11 +5331,6 @@ fi
 # Check whether --with-dialog was given.
 if test "${with_dialog+set}" = set; then
   withval=$with_dialog;
-fi
-
-# Check whether --with-mkjobtexmf was given.
-if test "${with_mkjobtexmf+set}" = set; then
-  withval=$with_mkjobtexmf;
 fi
 
 # Check whether --with-pdfopen was given.
@@ -9318,12 +9311,6 @@ if test -d $srcdir/utils/dialog; then
   if test "x$with_dialog" != xno; then
     ESUBDIRS="$ESUBDIRS utils/dialog"
     subdirs="$subdirs utils/dialog"
-  fi
-fi
-if test -d $srcdir/utils/mkjobtexmf; then
-  if test "x$with_mkjobtexmf" != xno; then
-    ESUBDIRS="$ESUBDIRS utils/mkjobtexmf"
-    subdirs="$subdirs utils/mkjobtexmf"
   fi
 fi
 if test -d $srcdir/utils/pdfopen; then

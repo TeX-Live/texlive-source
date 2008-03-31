@@ -11,7 +11,6 @@ dnl list of optional packages in utils/, i.e., subdirs of utils/
 dnl
 m4_define([kpse_utils_pkglist], [
 dialog
-mkjobtexmf
 pdfopen
 ps2eps
 psutils
