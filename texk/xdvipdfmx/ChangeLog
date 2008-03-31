@@ -3,7 +3,10 @@ $Header: /home/cvsroot/dvipdfmx/ChangeLog,v 1.141 2006/12/11 13:01:38 chofchof E
 ChangeLog: Changes for xdvipdfmx (teTeX / TeX live)
 ===================================================
 
-2008-03-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2008-03-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+	* Makefile.in, data/Makefile.in, src/Makefile.in: regenerated.
+
+2008-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: added `ACLOCAL_AMFLAGS -I m4'
 	* configure.in: moved macro definitions ...
