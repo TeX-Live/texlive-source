@@ -170,25 +170,49 @@ sinclude(../../libs/freetype2/withenable.ac)
 sinclude(../../libs/freetype2/freetype2.ac)
 sinclude(../kpathsea/withenable.ac)
 
-AC_DEFINE(HAVE_GDIMAGEGIF)
-AC_DEFINE(HAVE_GDIMAGECREATETRUECOLOR)
-AC_DEFINE(HAVE_GDIMAGEPNGEX)
-AC_DEFINE(HAVE_GD_H)
-AC_DEFINE(HAVE_LIBGD)
+if test "$with_system_freetype2" = yes; then
+  OLD_LIBS=$LIBS
+  LIBS="$LDFREETYPE2 $LIBS"
+  AC_CHECK_FUNCS([FT_Library_Version])
+  LIBS=$OLD_LIBS
+else
+  AC_DEFINE([HAVE_FT_LIBRARY_VERSION])
+fi
 
-AC_DEFINE(HAVE_T1LIB_H)
-AC_DEFINE(HAVE_LIBT1)
+if test "$with_system_gd" = yes; then
+  OLD_LIBS=$LIBS
+  LIBS="$LDGD $LIBS"
+  AC_CHECK_FUNCS([gdImageCreateTrueColor gdImagePngEx gdImageGif gdImageJpeg])
+  LIBS=$OLD_LIBS
+else
+  AC_DEFINE([HAVE_GDIMAGECREATETRUECOLOR])
+  AC_DEFINE([HAVE_GDIMAGEPNGEX])
+  AC_DEFINE([HAVE_GDIMAGEGIF])
+fi
 
-AC_DEFINE(HAVE_PNG_H)
-AC_DEFINE(HAVE_LIBPNG)
+AC_DEFINE([HAVE_GD_H])
+AC_DEFINE([HAVE_LIBGD])
 
-AC_DEFINE(HAVE_LIBZ)
+AC_DEFINE([HAVE_T1LIB_H], 1,
+          [Define to 1 if you have the <t1lib.h> header file.])
+AC_DEFINE([HAVE_LIBT1], 1,
+          [Define to 1 if you have the `t1' library (-lt1).])
+
+AC_DEFINE([HAVE_PNG_H], 1,
+          [Define to 1 if you have the <png.h> header file.])
+AC_DEFINE([HAVE_LIBPNG], 1,
+          [Define to 1 if you have the `png' library (-lpng).])
+
+AC_DEFINE([HAVE_LIBZ])
 
 # Allow shared or static libkpathsea
 LIBS="-L../kpathsea/.libs -lkpathsea $LIBS"
-AC_DEFINE(HAVE_KPATHSEA_KPATHSEA_H)
-AC_DEFINE(HAVE_KPSE_ENC_FORMATS)
-AC_DEFINE(HAVE_LIBKPATHSEA)
+AC_DEFINE([HAVE_KPATHSEA_KPATHSEA_H], 1,
+          [Define to 1 if you have the <kpathsea/kpathsea.h> header file.])
+AC_DEFINE([HAVE_KPSE_ENC_FORMATS], 1,
+          [Define to 1 if your kpathsea has kpse_enc_format.])
+AC_DEFINE([HAVE_LIBKPATHSEA], 1,
+          [Define to 1 if you have the `kpathsea' library (-lkpathsea).])
 
 #
 # Check for ApplicationServices framework (Mac OS X)

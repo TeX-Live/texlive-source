@@ -1,3 +1,7 @@
+2008-04-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: fix (system and included) library dependencies.
+
 2008-03-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* special.c: allow for libgd without jpeg support.
