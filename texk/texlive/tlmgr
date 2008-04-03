@@ -1,6 +1,6 @@
 #! /usr/bin/env texlua
 --*-Lua-*-
--- $Id: tlmgr.texlua 7030 2008-03-19 21:52:43Z reinhardk $
+-- $Id$
 
 -- Copyright (C) 2008 Reinhard Kotucha, Norbert Preining.
 -- You may freely use, modify and/or distribute this file.
@@ -47,7 +47,7 @@ function setupperl()
 end
 
 function findscript(scriptname)
-  script = kpse.find_file(scriptname, 'texmfscripts')
+  local script = kpse.find_file(scriptname, 'texmfscripts')
   if script then
     return script
   else
@@ -56,20 +56,18 @@ function findscript(scriptname)
   end
 end
 
-function rmdir(dirn)
+function rmdir(name)
   if os.type == 'windows' then
-    -- we have to replace all / with \
-    foo = string.gsub(dirn, '/', '\\')
-    ret = os.spawn({"rmdir", "/s", "/q", foo})
+    -- code from Hans
+    os.execute("rmdir /s /q " .. name:gsub('/', '\\'))
   else
-    ret = os.spawn({"rm", "-rf", dirn})
+    ret = os.spawn({"rm", "-rf", name})
   end
-  if ret then
-    return ret
-  else
-    io.stderr:write(filename..': removing '..dirn.." didn't work\n")
+  local ok = lfs.attributes(name)
+  if ok then
+    io.stderr:write(string.format("%s: removing '%s' didn't succeed\n",filename,name)
   end
-  return ret
+  return ok
 end
 
 if string.find(arg[0], '/') then -- UNIX path
