@@ -31,27 +31,16 @@ sinclude(../../libs/zlib/withenable.ac)
 sinclude(../../libs/zlib/zlib.ac)
 
 # Checks for libraries.
-AC_CHECK_LIB(z, compress)
-AM_CONDITIONAL(SYSTEM_ZLIB, test x$ac_cv_lib_z_compress = xyes)
-SYSTEM_ZLIB=no
+## NO! see above
+## AC_CHECK_LIB(z, compress)
+## AM_CONDITIONAL(SYSTEM_ZLIB, test x$ac_cv_lib_z_compress = xyes)
+## SYSTEM_ZLIB=no
 
 # Checks for header files.
 AC_HEADER_STDC
-#AC_CHECK_HEADERS([limits.h malloc.h memory.h stddef.h stdlib.h string.h])
+AC_CHECK_HEADERS([stdlib.h string.h])
 
-# Checks for typedefs, structures, and compiler characteristics.
-#AC_TYPE_SIZE_T
-#AC_STRUCT_TM
-#AC_CHECK_SIZEOF(wchar_t)
-#AC_SUBST(SIZEOF_WCHAR_T)
 
-# Checks for library functions.
-#AC_FUNC_ERROR_AT_LINE
-#AC_FUNC_MALLOC
-#AC_FUNC_MEMCMP
-#AC_FUNC_REALLOC
-#AC_FUNC_VPRINTF
-#AC_CHECK_FUNCS([isascii memmove memset strcasecmp strchr strrchr strtoul])
 AC_C_BIGENDIAN
 
 # Enable debug
