@@ -16,6 +16,7 @@
 --  generate-updmap   generate-updmap.pl
 --  generate-language generate-language.pl
 --  uninstall         uninstall-tl.pl and local code
+--  update            tl-package-manager.pl
 --  install           tl-package-manager.pl
 --  remove            tl-package-manager.pl
 --  search            tl-package-manager.pl
@@ -93,49 +94,57 @@ if arg[1] == 'help' then
 end
 
 if  arg[1] == 'uninstall' then
-  print ("removing the whole installation")
-  -- we have to call perl uninstall-tl.pl AND have to remove the following 
-  -- files:
-  -- TEXDIR/texmf{,-dist,-doc,-var,-config,}, TEXDIR/bin, TEXDIR/tlpkg, 
-  -- TEXDIR/install-tl.log, TEXMFSYSVAR
-  -- that should remove all the stuff
-  -- Or other options?
-  setupperl()
-  script = findscript('uninstall-tl.pl')
-  if script then
-    command = { perlbin, script }
+  print("If you answer yes here the whole TeX Live installation will be removed!")
+  io.stdout:write("Remove TeX Live (y/N): ") 
+  local yesno = io.read()
+  if yesno == 'y' or yesno == 'Y' or yesno == 'yes' or yesno == 'YES' then
+    print ("Ok, removing the whole installation:")
+    -- we have to call perl uninstall-tl.pl AND have to remove the following 
+    -- files:
+    -- TEXDIR/texmf{,-dist,-doc,-var,-config,}, TEXDIR/bin, TEXDIR/tlpkg, 
+    -- TEXDIR/install-tl.log, TEXMFSYSVAR
+    -- that should remove all the stuff
+    -- Or other options?
+    setupperl()
+    script = findscript('uninstall-tl.pl')
+    if script then
+      command = { perlbin, script }
+    else
+      os.exit(1)
+    end
+    for i=1, #arg do
+      command[#command+1] = arg[i]
+    end
+    command = fixwin(command)
+    ret = os.spawn(command)
+    -- here we should check the return value!!!
+    if not ret then
+      io.stderr:write(filename..': The removal script uninstall-tl.pl returned false\n')
+      io.stderr:write(filename..": We don't continue removing stuff\n")
+      os.exit(1)
+    end
+    -- on windows we have now removed the associations etc, while
+    -- on unix we have removed the symlinks in case they were present
+    --
+    -- now we have to remove all the files and directories
+    rmdir(TEXDIR.."/texmf-dist")
+    rmdir(TEXDIR.."/texmf-doc")
+    rmdir(TEXDIR.."/texmf-var")
+    rmdir(TEXDIR.."/texmf-config")
+    rmdir(TEXDIR.."/texmf")
+    rmdir(TEXDIR.."/tlpkg")
+    os.remove(TEXDIR.."/temp")
+    os.remove(TEXDIR.."/install-tl.log")
+    rmdir(TEXDIR.."/bin")
+    -- now everything should be removed, try to remove also TEXDIR
+    -- this will not succeed on win32 since texlua.exe is still in use
+    -- and thus removing TEXDIR/bin will not work. Damned.
+    os.remove(TEXDIR)
+    os.exit(0)
   else
-    os.exit(1)
+    print("Ok, cancelling the removal.")
+    os.exit(0)
   end
-  for i=1, #arg do
-    command[#command+1] = arg[i]
-  end
-  command = fixwin(command)
-  ret = os.spawn(command)
-  -- here we should check the return value!!!
-  if not ret then
-    io.stderr:write(filename..': The removal script uninstall-tl.pl returned false\n')
-    io.stderr:write(filename..": We don't continue removing stuff\n")
-    os.exit(1)
-  end
-  -- on windows we have now removed the associations etc, while
-  -- on unix we have removed the symlinks in case they were present
-  --
-  -- now we have to remove all the files and directories
-  rmdir(TEXDIR.."/texmf-dist")
-  rmdir(TEXDIR.."/texmf-doc")
-  rmdir(TEXDIR.."/texmf-var")
-  rmdir(TEXDIR.."/texmf-config")
-  rmdir(TEXDIR.."/texmf")
-  rmdir(TEXDIR.."/tlpkg")
-  os.remove(TEXDIR.."/temp")
-  os.remove(TEXDIR.."/install-tl.log")
-  rmdir(TEXDIR.."/bin")
-  -- now everything should be removed, try to remove also TEXDIR
-  -- this will not succeed on win32 since texlua.exe is still in use
-  -- and thus removing TEXDIR/bin will not work. Damned.
-  os.remove(TEXDIR)
-  os.exit(0)
 end
 
 if arg[1] == 'generate-fmtutil' then
