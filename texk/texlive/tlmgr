@@ -65,7 +65,7 @@ function rmdir(name)
   end
   local ok = lfs.attributes(name)
   if ok then
-    io.stderr:write(string.format("%s: removing '%s' didn't succeed\n",filename,name)
+    io.stderr:write(string.format("%s: removing '%s' didn't succeed\n",filename,name))
   end
   return ok
 end
@@ -128,9 +128,12 @@ if  arg[1] == 'uninstall' then
   rmdir(TEXDIR.."/texmf-config")
   rmdir(TEXDIR.."/texmf")
   rmdir(TEXDIR.."/tlpkg")
+  os.remove(TEXDIR.."/temp")
   os.remove(TEXDIR.."/install-tl.log")
   rmdir(TEXDIR.."/bin")
   -- now everything should be removed, try to remove also TEXDIR
+  -- this will not succeed on win32 since texlua.exe is still in use
+  -- and thus removing TEXDIR/bin will not work. Damned.
   os.remove(TEXDIR)
   os.exit(0)
 end
