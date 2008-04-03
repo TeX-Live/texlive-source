@@ -120,7 +120,6 @@ protected:
 	char		idBuffer[256];
 	
 	// used by the front end parser
-	UInt32		currCh;
 	UInt32		ungotten;
 	Token		tok;
 	const unsigned char*	tokStart;

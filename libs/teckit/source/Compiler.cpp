@@ -608,7 +608,7 @@ Compiler::Compiler(const char* txt, UInt32 len, char inForm, bool cmp, bool genX
 
 	if (inputForm != kForm_Bytes) {
 		// discard initial BOM if present
-		currCh = getChar();
+		UInt32 currCh = getChar();
 		if (currCh != 0xfeff)
 			ungetChar(currCh);
 	}
@@ -1698,7 +1698,7 @@ void
 Compiler::SkipSpaces(void)
 {
 	while (textPtr < textEnd) {
-		currCh = getChar();
+		UInt32 currCh = getChar();
 		if (currCh != ' ' && currCh != '\t') {
 			ungetChar(currCh);
 			break;

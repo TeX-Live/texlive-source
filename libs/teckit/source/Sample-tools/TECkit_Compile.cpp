@@ -8,6 +8,7 @@
 
 	 5-May-2005		jk	added include <stdlib.h> to keep gcc happy
 	24-May-2005		jk	change placement of CALLBACK for VC++6 (Ulrik)
+	 1-Apr-2008		jk	extern "C" decl for errFunc; const char* progName
 */
 
 #include "TECkit_Compiler.h"
@@ -22,12 +23,16 @@
 #include "console.h"
 #endif
 
+extern "C" {
+	static void CALLBACK errFunc(void* userData, char* msg, char* param, UInt32 line);
+};
+
 static
 void
 CALLBACK
-errFunc(void* usedData, char* msg, char* param, UInt32 line)
+errFunc(void* userData, char* msg, char* param, UInt32 line)
 {
-#pragma unused(usedData)
+#pragma unused(userData)
 
 	fprintf(stderr, "%s", msg);
 	if (param != 0)
@@ -40,7 +45,7 @@ errFunc(void* usedData, char* msg, char* param, UInt32 line)
 int
 main(int argc, char** argv)
 {
-	char*	progName = argv[0];
+	const char*	progName = argv[0];
 	char*	mapFileName = 0;
 	char*	tecFileName = 0;
 	int		errorCount = 0;
