@@ -1,0 +1,197 @@
+#! /usr/bin/env texlua
+--*-Lua-*-
+-- $Id: tlmgr.texlua 7030 2008-03-19 21:52:43Z reinhardk $
+
+-- Copyright (C) 2008 Reinhard Kotucha, Norbert Preining.
+-- You may freely use, modify and/or distribute this file.
+
+-- tlmgr
+-- one central managment utility for TeX Live
+-- it calls several supporting scripts from texmf/scripts/texlive
+-- and other places
+--
+-- Currently supported arguments
+--  help              local, not implemented
+--  generate-fmtutil  generate-fmtutil.pl
+--  generate-updmap   generate-updmap.pl
+--  generate-language generate-language.pl
+--  uninstall         uninstall-tl.pl and local code
+--  install           tl-package-manager.pl
+--  remove            tl-package-manager.pl
+--  search            tl-package-manager.pl
+--  globalsearch      tl-package-manager.pl
+--  *                 tl-package-manager.pl
+
+function fixwin(args_unix)
+  if os.type == 'windows' then
+    local args_win={}  -- new table
+    args_win[0]=args_unix[1]
+    for i=1, #args_unix do  
+      args_win[i]='"'..args_unix[i]..'"'
+    end
+    return args_win
+  else
+    return args_unix
+  end
+end
+
+function setupperl()
+  -- For Windows we use the shipped perl interpreter, otherwise we expect 
+  -- a perl to be installed
+  if  os.type == 'windows' then
+    perlbin=TEXDIR..'/tlpkg/tlperl/bin/perl.exe'
+    os.setenv('PERL5LIB', TEXDIR..'/tlpkg/tlperl/lib')
+  else
+    perlbin = 'perl'
+  end
+end
+
+function findscript(scriptname)
+  script = kpse.find_file(scriptname, 'texmfscripts')
+  if script then
+    return script
+  else
+    io.stderr:write(filename..': Cannot find script '..scriptname)
+    return false
+  end
+end
+
+function rmdir(dirn)
+  if os.type == 'windows' then
+    -- we have to replace all / with \
+    foo = string.gsub(dirn, '/', '\\')
+    ret = os.spawn({"rmdir", "/s", "/q", foo})
+  else
+    ret = os.spawn({"rm", "-rf", dirn})
+  end
+  if ret then
+    return ret
+  else
+    io.stderr:write(filename..': removing '..dirn.." didn't work\n")
+  end
+  return ret
+end
+
+if string.find(arg[0], '/') then -- UNIX path
+  filename=select(1, string.gsub(arg[0], '.*/', ''))
+elseif string.find(arg[0], '\\') then -- Windows path
+  filename=select(1, string.gsub(arg[0], '.*\\', ''))
+else -- no path
+  filename=arg[0]
+end
+
+
+basename=select(1, string.gsub(filename, '\.texlua$', ''))
+
+kpse.set_program_name(filename, basename)
+TEXDIR=kpse.var_value('SELFAUTOPARENT')
+TEXMFSYSVAR=kpse.var_value('TEXMFSYSVAR')
+BINDIR=kpse.var_value('SELFAUTOLOC')
+
+
+if arg[1] == 'help' then
+  print ("Usage: not implemented")
+  os.exit(0)
+end
+
+if  arg[1] == 'uninstall' then
+  print ("removing the whole installation")
+  -- we have to call perl uninstall-tl.pl AND have to remove the following 
+  -- files:
+  -- TEXDIR/texmf{,-dist,-doc,-var,-config,}, TEXDIR/bin, TEXDIR/tlpkg, 
+  -- TEXDIR/install-tl.log, TEXMFSYSVAR
+  -- that should remove all the stuff
+  -- Or other options?
+  setupperl()
+  script = findscript('uninstall-tl.pl')
+  if script then
+    command = { perlbin, script }
+  else
+    os.exit(1)
+  end
+  for i=1, #arg do
+    command[#command+1] = arg[i]
+  end
+  command = fixwin(command)
+  ret = os.spawn(command)
+  -- here we should check the return value!!!
+  if not ret then
+    io.stderr:write(filename..': The removal script uninstall-tl.pl returned false\n')
+    io.stderr:write(filename..": We don't continue removing stuff\n")
+    os.exit(1)
+  end
+  -- on windows we have now removed the associations etc, while
+  -- on unix we have removed the symlinks in case they were present
+  --
+  -- now we have to remove all the files and directories
+  rmdir(TEXDIR.."/texmf-dist")
+  rmdir(TEXDIR.."/texmf-doc")
+  rmdir(TEXDIR.."/texmf-var")
+  rmdir(TEXDIR.."/texmf-config")
+  rmdir(TEXDIR.."/texmf")
+  rmdir(TEXDIR.."/tlpkg")
+  os.remove(TEXDIR.."/install-tl.log")
+  rmdir(TEXDIR.."/bin")
+  -- now everything should be removed, try to remove also TEXDIR
+  os.remove(TEXDIR)
+  os.exit(0)
+end
+
+if arg[1] == 'generate-fmtutil' then
+  setupperl()
+  script = findscript('generate-fmtutil.pl')
+  if script then
+    command = { perlbin, script }
+  else
+    os.exit(1)
+  end
+end
+
+if arg[1] == 'generate-language' then
+  setupperl()
+  script = findscript('generate-language.pl')
+  if script then
+    command = { perlbin, script }
+  else
+    os.exit(1)
+  end
+end
+
+if arg[1] == 'generate-updmap' then
+  setupperl()
+  script = findscript('generate-updmap.pl')
+  if script then
+    command = { perlbin, script }
+  else
+    os.exit(1)
+  end
+end
+
+-- in all other cases we call tl-package-manager for now ...
+--
+-- if arg[1] == 'install' or arg[1] == 'remove' or arg[1] == 'search' or
+--  arg[1] == 'globalsearch' then
+  setupperl()
+  script = findscript('tl-package-manager.pl')
+  if script then
+    command = { perlbin, script }
+  else
+    os.exit(1)
+  end
+-- end
+
+for i=1, #arg do
+  command[#command+1]=arg[i]
+end
+
+command=fixwin(command)
+
+ret=os.spawn(command)
+os.exit(ret)
+
+-- Local Variables:
+-- perl-indent-level: 2
+-- tab-width: 2
+-- indent-tabs-mode: nil
+-- End:
+-- vim:set tabstop=2 expandtab: --
