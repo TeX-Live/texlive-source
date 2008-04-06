@@ -9,6 +9,7 @@
 #ifndef _ORDRULES_H
 #define _ORDRULES_H
 
+#include "clisp.h"
 #include <stdio.h>
 #include "mkind.h"
 #undef debug

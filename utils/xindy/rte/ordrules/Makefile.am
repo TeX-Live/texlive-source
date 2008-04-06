@@ -28,13 +28,13 @@ ordrulei.c: $(srcdir)/ordrulei.lsp
 	$(CLISP) -q -norc -c $(srcdir)/ordrulei.lsp -o ordrulei.fas
 
 ordrulei.o: ordrulei.c
-	$(CC) $(CFLAGS) -I$(INCLUDES) -c ordrulei.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) -I$(INCLUDES) -c ordrulei.c
 
 ordrules.o: ordrules.c ordrules.h rxsub.h debug.h mkind.h
-	$(CC) $(CFLAGS) -funsigned-char -I. -c ordrules.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) -I$(INCLUDES) -funsigned-char -I. -c ordrules.c
 
 rxsub.o: rxsub.c rxsub.h mkind.h
-	$(CC) $(CFLAGS) -I. -c rxsub.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) -I. -c rxsub.c
 
 # Make a module
 clisp-module: ordrulei.o ordrules.o rxsub.o
