@@ -93,6 +93,18 @@ via the --with-clisp=... option.])
 fi
 AC_SUBST(CLISP)
 AC_SUBST(CLISP_LIB)
+dnl CLISP_LIB may end with a backslash (on mingw)
+_AM_SUBST_NOTMAKE(CLISP_LIB)
+
+if test "x$EXEEXT" = "x.exe"; then
+  XINDY_RUN=xindy-lisp.exe
+  LISP_RUN=lisp.exe
+else
+  XINDY_RUN=xindy.run
+  LISP_RUN=lisp.run
+fi
+AC_SUBST(XINDY_RUN)
+AC_SUBST(LISP_RUN)
 
 # Checks for libraries.
 

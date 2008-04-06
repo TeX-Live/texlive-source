@@ -27,15 +27,15 @@ EXTRA_DIST = NEWS README
 ORDRULES_FILES = ordrules.c ordrules.h rxsub.c rxsub.h mkind.h debug.h link.sh
 binariesdir = ../binaries
 
-all-local: $(binariesdir)/xindy.run $(binariesdir)/base.mem
+all-local: $(binariesdir)/$(XINDY_RUN) $(binariesdir)/base.mem
 
-$(binariesdir)/xindy.run $(binariesdir)/base.mem: 
+$(binariesdir)/$(XINDY_RUN) $(binariesdir)/base.mem:
 	rm -rf xindy-build-dir
 	test -f ordrules/link.sh || for i in $(ORDRULES_FILES); do cp -p $(top_srcdir)/rte/ordrules/$$i ordrules/$$i; done
 	$(MAKE) -C ordrules ordrulei.c
-	env CLISP_LINKKIT="$(CLISP_LIB)/linkkit" \
-	sh "$(CLISP_LIB)/clisp-link" add-module-set ordrules "$(CLISP_LIB)/full" xindy-build-dir
-	cp xindy-build-dir/lisp.run $(binariesdir)/xindy.run
+	env CLISP_LINKKIT='@CLISP_LIB@/linkkit' \
+	sh '@CLISP_LIB@/clisp-link' add-module-set ordrules '@CLISP_LIB@/full' xindy-build-dir
+	cp xindy-build-dir/$(LISP_RUN) $(binariesdir)/$(XINDY_RUN)
 	cp xindy-build-dir/lispinit.mem $(binariesdir)/base.mem
 
 clean-local:

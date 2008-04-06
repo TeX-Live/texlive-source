@@ -26,7 +26,7 @@ FAS        = base.fas locref.fas idxstyle.fas index.fas version.fas markup.fas
 DEFAULTS   = defaults.xdy
 DUMP_XINDY = $(SRCDIR)/dump-xindy.lsp
 MEMFILE    = xindy.mem
-XINDY_RUN  = ./xindy.run -q -M ./base.mem
+RUN_XINDY  = ./$(XINDY_RUN) -q -norc -M ./base.mem
 
 if TETEX_BUILD
     MODULEDIR = $(prefix)/texmf/xindy
@@ -38,12 +38,11 @@ else
     kerneldir = $(pkglibdir)
 endif
 
-xindy.mem: $(DEFAULTS) $(FAS) base.mem xindy.run
+xindy.mem: $(DEFAULTS) $(FAS) base.mem $(XINDY_RUN)
 	rm -f $(MEMFILE)
-	$(XINDY_RUN) -x '(load "$(DUMP_XINDY)")'
+	$(RUN_XINDY) -x '(load "$(DUMP_XINDY)")'
 	gzip $(MEMFILE)
 	mv $(MEMFILE).gz $(MEMFILE)
-
 
 $(DEFAULTS):
 	@$(RM) $(DEFAULTS)
@@ -53,17 +52,16 @@ $(DEFAULTS):
 	@echo "  (pathname \"$(MODULEDIR)\")))"  >> $(DEFAULTS)
 	@echo "Finished $(DEFAULTS)."
 
-%.fas : $(SRCDIR)/%.lsp
-	$(XINDY_RUN) -c $< -o $@
+%.fas: $(SRCDIR)/%.lsp
+	$(RUN_XINDY) -c $< -o $@
 
 # *.lib files which should be cleaned
 FASLIBS = base.lib locref.lib idxstyle.lib index.lib version.lib markup.lib
 
 kernel_DATA = xindy.mem
 
-kernel_SCRIPTS = xindy.run
+kernel_SCRIPTS = $(XINDY_RUN)
 
-CLEANFILES = $(FAS) $(FASLIBS) defaults.xdy base.mem \
-	$(kernel_DATA) $(kernel_SCRIPTS)
+EXTRA_SCRIPTS = xindy.run xindy-lisp.exe
 
-
+CLEANFILES = $(FAS) $(FASLIBS) defaults.xdy base.mem xindy.mem $(XINDY_RUN)
