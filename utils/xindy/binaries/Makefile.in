@@ -67,7 +67,6 @@ CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CLISP = @CLISP@
-CLISP_LIB = @CLISP_LIB@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CYGPATH_W = @CYGPATH_W@
@@ -90,6 +89,7 @@ LEXLIB = @LEXLIB@
 LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LISP_RUN = @LISP_RUN@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
@@ -106,6 +106,7 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
+XINDY_RUN = @XINDY_RUN@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -164,7 +165,7 @@ FAS = base.fas locref.fas idxstyle.fas index.fas version.fas markup.fas
 DEFAULTS = defaults.xdy
 DUMP_XINDY = $(SRCDIR)/dump-xindy.lsp
 MEMFILE = xindy.mem
-XINDY_RUN = ./xindy.run -q -M ./base.mem
+RUN_XINDY = ./$(XINDY_RUN) -q -norc -M ./base.mem
 # Where the modules are found at runtime.
 @TETEX_BUILD_FALSE@MODULEDIR = $(pkgdatadir)
 @TETEX_BUILD_TRUE@MODULEDIR = $(prefix)/texmf/xindy
@@ -175,10 +176,9 @@ XINDY_RUN = ./xindy.run -q -M ./base.mem
 # *.lib files which should be cleaned
 FASLIBS = base.lib locref.lib idxstyle.lib index.lib version.lib markup.lib
 kernel_DATA = xindy.mem
-kernel_SCRIPTS = xindy.run
-CLEANFILES = $(FAS) $(FASLIBS) defaults.xdy base.mem \
-	$(kernel_DATA) $(kernel_SCRIPTS)
-
+kernel_SCRIPTS = $(XINDY_RUN)
+EXTRA_SCRIPTS = xindy.run xindy-lisp.exe
+CLEANFILES = $(FAS) $(FASLIBS) defaults.xdy base.mem xindy.mem $(XINDY_RUN)
 all: all-am
 
 .SUFFIXES:
@@ -381,9 +381,9 @@ uninstall-am: uninstall-kernelDATA uninstall-kernelSCRIPTS
 	uninstall-kernelDATA uninstall-kernelSCRIPTS
 
 
-xindy.mem: $(DEFAULTS) $(FAS) base.mem xindy.run
+xindy.mem: $(DEFAULTS) $(FAS) base.mem $(XINDY_RUN)
 	rm -f $(MEMFILE)
-	$(XINDY_RUN) -x '(load "$(DUMP_XINDY)")'
+	$(RUN_XINDY) -x '(load "$(DUMP_XINDY)")'
 	gzip $(MEMFILE)
 	mv $(MEMFILE).gz $(MEMFILE)
 
@@ -395,8 +395,8 @@ $(DEFAULTS):
 	@echo "  (pathname \"$(MODULEDIR)\")))"  >> $(DEFAULTS)
 	@echo "Finished $(DEFAULTS)."
 
-%.fas : $(SRCDIR)/%.lsp
-	$(XINDY_RUN) -c $< -o $@
+%.fas: $(SRCDIR)/%.lsp
+	$(RUN_XINDY) -c $< -o $@
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

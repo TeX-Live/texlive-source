@@ -705,6 +705,8 @@ BUILDDOCS_TRUE
 BUILDDOCS_FALSE
 CLISP
 CLISP_LIB
+XINDY_RUN
+LISP_RUN
 CPP
 GREP
 EGREP
@@ -3977,6 +3979,17 @@ fi
 
 
 
+
+if test "x$EXEEXT" = "x.exe"; then
+  XINDY_RUN=xindy-lisp.exe
+  LISP_RUN=lisp.exe
+else
+  XINDY_RUN=xindy.run
+  LISP_RUN=lisp.run
+fi
+
+
+
 # Checks for libraries.
 
 # Checks for header files.
@@ -5792,12 +5805,12 @@ BUILDDOCS_TRUE!$BUILDDOCS_TRUE$ac_delim
 BUILDDOCS_FALSE!$BUILDDOCS_FALSE$ac_delim
 CLISP!$CLISP$ac_delim
 CLISP_LIB!$CLISP_LIB$ac_delim
+XINDY_RUN!$XINDY_RUN$ac_delim
+LISP_RUN!$LISP_RUN$ac_delim
 CPP!$CPP$ac_delim
 GREP!$GREP$ac_delim
 EGREP!$EGREP$ac_delim
 build!$build$ac_delim
-build_cpu!$build_cpu$ac_delim
-build_vendor!$build_vendor$ac_delim
 _ACEOF
 
   if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 97; then
@@ -5839,6 +5852,8 @@ _ACEOF
 ac_delim='%!_!# '
 for ac_last_try in false false false false false :; do
   cat >conf$$subs.sed <<_ACEOF
+build_cpu!$build_cpu$ac_delim
+build_vendor!$build_vendor$ac_delim
 build_os!$build_os$ac_delim
 host!$host$ac_delim
 host_cpu!$host_cpu$ac_delim
@@ -5848,7 +5863,7 @@ LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 7; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 9; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5
