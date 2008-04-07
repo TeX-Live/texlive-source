@@ -164,10 +164,10 @@ sinclude(../../libs/libpng/withenable.ac)
 sinclude(../../libs/libpng/libpng.ac)
 sinclude(../../libs/t1lib/withenable.ac)
 sinclude(../../libs/t1lib/t1lib.ac)
-sinclude(../../libs/gd/withenable.ac)
-sinclude(../../libs/gd/gd.ac)
 sinclude(../../libs/freetype2/withenable.ac)
 sinclude(../../libs/freetype2/freetype2.ac)
+sinclude(../../libs/gd/withenable.ac)
+sinclude(../../libs/gd/gd.ac)
 sinclude(../kpathsea/withenable.ac)
 
 if test "$with_system_freetype2" = yes; then

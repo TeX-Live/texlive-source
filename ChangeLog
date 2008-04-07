@@ -1,3 +1,6 @@
+2008-04-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+	* configure.in: respect library dependencies.
+
 2008-03-25  Karl Berry  <karl@tug.org>
 
 	* withenable.ac: enable xindy; rebuild configure.

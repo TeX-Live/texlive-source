@@ -1,6 +1,5 @@
-# maw-libs.m4 - various libraries
-# Copyright (C) 1998 - 2008 Mark A. Wicks <mwicks@kettering.edu>
-# Kettering University
+# cho-libs.m4 - various libraries
+# Copyright (C) 1998 - 2008 Jin-Hwan Cho <chofchof@ktug.or.kr>
 #
 # This file is free software; the copyright holders
 # give unlimited permission to copy and/or distribute it,
@@ -8,10 +7,10 @@
 
 # serial 1
 
-# MAW_HAS_ZLIB
+# CHO_HAS_ZLIB
 # ------------
 # Check for zlib
-AC_DEFUN([MAW_HAS_ZLIB],
+AC_DEFUN([CHO_HAS_ZLIB],
 [_cppflags=$CPPFLAGS _ldflags=$LDFLAGS
  AC_ARG_WITH([zlib],  
   [AS_HELP_STRING([--with-zlib=DIR], [use zlib include/library files from DIR])],
@@ -31,12 +30,12 @@ AC_DEFUN([MAW_HAS_ZLIB],
   [CPPFLAGS=$_cppflags
    LDDFLAGS=$_ldflags
    AC_MSG_RESULT(no)])
-])# MAW_HAS_ZLIB
+])# CHO_HAS_ZLIB
 
-# MAW_HAS_LIBPNG
+# CHO_HAS_LIBPNG
 # --------------
 # Check for libpng
-AC_DEFUN([MAW_HAS_LIBPNG],
+AC_DEFUN([CHO_HAS_LIBPNG],
 [_cppflags=$CPPFLAGS _ldflags=$LDFLAGS
  AC_ARG_WITH([png],
   [AS_HELP_STRING([--with-png=DIR], [use png include/library files from DIR])],
@@ -56,12 +55,12 @@ AC_DEFUN([MAW_HAS_LIBPNG],
   [CPPFLAGS=$_cppflags
    LDDFLAGS=$_ldflags
    AC_MSG_RESULT(no)])
-])# MAW_HAS_LIBPNG
+])# CHO_HAS_LIBPNG
 
-# MAW_HAS_LIBPAPER
+# CHO_HAS_LIBPAPER
 # ----------------
 # Check for libpaper
-AC_DEFUN([MAW_HAS_LIBPAPER],
+AC_DEFUN([CHO_HAS_LIBPAPER],
 [_cppflags=$CPPFLAGS _ldflags=$LDFLAGS
  AC_ARG_WITH([paper],
   [AS_HELP_STRING([--with-paper=DIR], [use paper include/library files from DIR])],
@@ -79,12 +78,12 @@ AC_DEFUN([MAW_HAS_LIBPAPER],
   [CPPFLAGS=$_cppflags
    LDDFLAGS=$_ldflags
    AC_MSG_RESULT(no)])
-])# MAW_HAS_LIBPAPER
+])# CHO_HAS_LIBPAPER
 
-# MAW_HAS_LIBFONTCONFIG
+# CHO_HAS_LIBFONTCONFIG
 # ---------------------
 # Check for libfontconfig
-AC_DEFUN([MAW_HAS_LIBFONTCONFIG],
+AC_DEFUN([CHO_HAS_LIBFONTCONFIG],
 [_cppflags=$CPPFLAGS _ldflags=$LDFLAGS
  have_libfontconfig=no
  AC_ARG_WITH([fontconfig],
@@ -105,12 +104,12 @@ AC_DEFUN([MAW_HAS_LIBFONTCONFIG],
   [CPPFLAGS=$_cppflags
    LDDFLAGS=$_ldflags
    AC_MSG_RESULT(no)])
-])# MAW_HAS_LIBFONTCONFIG
+])# CHO_HAS_LIBFONTCONFIG
 
-# MAW_CHECK_LIBFREETYPE(PACKAGE-NAME)
+# CHO_CHECK_LIBFREETYPE(PACKAGE-NAME)
 # -----------------------------------
 # Check for libfreetype, fail with error if not found
-AC_DEFUN([MAW_CHECK_LIBFREETYPE],
+AC_DEFUN([CHO_CHECK_LIBFREETYPE],
 [_cppflags=$CPPFLAGS _ldflags=$LDFLAGS
  using_installed_freetype=yes
  AC_ARG_WITH(ft2lib,
@@ -147,5 +146,5 @@ AC_DEFUN([MAW_CHECK_LIBFREETYPE],
 You can use the --with-freetype2 option to indicate the location of the installed
 freetype2, or --with-ft2lib and --with-ft2include to point to the libfreetype.a
 library and the FreeType2 include files.])])
-])# MAW_CHECK_LIBFREETYPE
+])# CHO_CHECK_LIBFREETYPE
 

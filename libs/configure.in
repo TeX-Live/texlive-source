@@ -14,20 +14,20 @@ AC_PROG_RANLIB
 AM_MAINTAINER_MODE
 
 sinclude(../texk/kpathsea/withenable.ac)
-sinclude(t1lib/withenable.ac)
-sinclude(t1lib/t1lib.ac)
 sinclude(ncurses/withenable.ac)
 sinclude(ncurses/ncurses.ac)
-sinclude(libpng/withenable.ac)
-sinclude(libpng/libpng.ac)
 sinclude(zlib/withenable.ac)
 sinclude(zlib/zlib.ac)
-sinclude(gd/withenable.ac)
-sinclude(gd/gd.ac)
+sinclude(libpng/withenable.ac)
+sinclude(libpng/libpng.ac)
+sinclude(t1lib/withenable.ac)
+sinclude(t1lib/t1lib.ac)
 sinclude(freetype/withenable.ac)
 sinclude(freetype/freetype.ac)
 sinclude(freetype2/withenable.ac)
 sinclude(freetype2/freetype2.ac)
+sinclude(gd/withenable.ac)
+sinclude(gd/gd.ac)
 sinclude(icu-xetex/withenable.ac)
 sinclude(icu-xetex/icu-xetex.ac)
 sinclude(teckit/teckit.ac)
@@ -38,14 +38,20 @@ sinclude(graphite-engine/graphite-engine.ac)
 # system's terminfo definitions if configured without explicit --prefix.
 # ac_configure_args=`echo "$ac_configure_args" | sed 's@--prefix=[[^ ]]*@@'`
 
-if test "x$needs_libt1" != xno && test "$using_system_t1lib"  != yes; then
-  AC_CONFIG_SUBDIRS([t1lib type1])
-fi
 if test "x$needs_ncurses" != xno && test "$using_system_ncurses"  != yes; then
   AC_CONFIG_SUBDIRS([ncurses])
 fi
+if test "x$needs_zlib" != xno && test "$using_system_zlib"  != yes; then
+  KPSE_CONFIG_FILES([zlib/Makefile])
+fi
+if test "x$needs_pnglib" != xno && test "$using_system_pnglib"  != yes; then
+  KPSE_CONFIG_FILES([libpng/Makefile])
+fi
 if test "x$needs_libxpdf" != xno; then
   AC_CONFIG_SUBDIRS([xpdf])
+fi
+if test "x$needs_libt1" != xno && test "$using_system_t1lib"  != yes; then
+  AC_CONFIG_SUBDIRS([t1lib type1])
 fi
 if test "x$needs_freetype" != xno && test "$using_system_freetype" != yes; then
   AC_CONFIG_SUBDIRS([freetype])
@@ -60,20 +66,14 @@ if test "x$needs_icu" != xno && test "$using_system_icu" != yes; then
   ac_configure_args="$ac_configure_args --enable-static"
   AC_CONFIG_SUBDIRS([icu-xetex])
 fi
+if test "x$needs_teckit" != xno; then
+  AC_CONFIG_SUBDIRS([teckit])
+fi
 if test "x$needs_graphite_engine" != xno; then
   AC_CONFIG_SUBDIRS([graphite-engine])
 fi
-if test "x$needs_pnglib" != xno && test "$using_system_pnglib"  != yes; then
-  KPSE_CONFIG_FILES([libpng/Makefile])
-fi
-if test "x$needs_zlib" != xno && test "$using_system_zlib"  != yes; then
-  KPSE_CONFIG_FILES([zlib/Makefile])
-fi
 if test "x$needs_obsdcompat" != xno; then
   AC_CONFIG_SUBDIRS([obsdcompat])
-fi
-if test "x$needs_teckit" != xno; then
-  AC_CONFIG_SUBDIRS([teckit])
 fi
 
 # create md5 directory  when building outside the srcdir:

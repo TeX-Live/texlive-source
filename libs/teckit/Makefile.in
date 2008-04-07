@@ -39,9 +39,7 @@ DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	compile config.guess config.sub depcomp install-sh ltmain.sh \
 	missing mkinstalldirs
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/ax_misc.m4 \
-	$(top_srcdir)/ax_prog_rc.m4 \
-	$(top_srcdir)/../../libs/zlib/withenable.ac \
+am__aclocal_m4_deps = $(top_srcdir)/../../libs/zlib/withenable.ac \
 	$(top_srcdir)/../../libs/zlib/zlib.ac \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -78,7 +76,6 @@ distuninstallcheck_listfiles = find . -type f -print
 distcleancheck_listfiles = find . -type f -print
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
-AM_RCFLAGS = @AM_RCFLAGS@
 AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
@@ -131,8 +128,6 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
-RC = @RC@
-RCFLAGS = @RCFLAGS@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@

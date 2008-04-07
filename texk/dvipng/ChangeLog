@@ -1,3 +1,6 @@
+2008-04-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+	* configure.ac: respect library dependencies.
+
 2008-04-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: fix (system and included) library dependencies.

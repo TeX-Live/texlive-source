@@ -47,10 +47,10 @@ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/cho-kpse.m4 \
 	$(top_srcdir)/m4/cho-libs.m4 $(top_srcdir)/m4/jfk-macos.m4 \
 	$(top_srcdir)/m4/maw-time.m4 \
-	$(top_srcdir)/../../libs/libpng/withenable.ac \
-	$(top_srcdir)/../../libs/libpng/libpng.ac \
 	$(top_srcdir)/../../libs/zlib/withenable.ac \
 	$(top_srcdir)/../../libs/zlib/zlib.ac \
+	$(top_srcdir)/../../libs/libpng/withenable.ac \
+	$(top_srcdir)/../../libs/libpng/libpng.ac \
 	$(top_srcdir)/../../libs/freetype2/withenable.ac \
 	$(top_srcdir)/../../libs/freetype2/freetype2.ac \
 	$(top_srcdir)/configure.in

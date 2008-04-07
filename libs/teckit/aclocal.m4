@@ -13,8 +13,8 @@
 
 m4_ifndef([AC_AUTOCONF_VERSION],
   [m4_copy([m4_PACKAGE_VERSION], [AC_AUTOCONF_VERSION])])dnl
-m4_if(AC_AUTOCONF_VERSION, [2.61a],,
-[m4_warning([this file was generated for autoconf 2.61a.
+m4_if(AC_AUTOCONF_VERSION, [2.61],,
+[m4_warning([this file was generated for autoconf 2.61.
 You have another version of autoconf.  It may work, but is not guaranteed to.
 If you have problems, you may need to regenerate the build system entirely.
 To do so, use the procedure documented by the package, typically `autoreconf'.])])
@@ -1903,12 +1903,16 @@ esac
 AC_MSG_RESULT([$dynamic_linker])
 test "$dynamic_linker" = no && can_build_shared=no
 
-AC_CACHE_VAL([lt_cv_sys_lib_search_path_spec],
-[lt_cv_sys_lib_search_path_spec="$sys_lib_search_path_spec"])
-sys_lib_search_path_spec="$lt_cv_sys_lib_search_path_spec"
-AC_CACHE_VAL([lt_cv_sys_lib_dlsearch_path_spec],
-[lt_cv_sys_lib_dlsearch_path_spec="$sys_lib_dlsearch_path_spec"])
-sys_lib_dlsearch_path_spec="$lt_cv_sys_lib_dlsearch_path_spec"
+if test "${lt_cv_sys_lib_search_path_spec+set}" = set; then
+  sys_lib_search_path_spec="$lt_cv_sys_lib_search_path_spec"
+  AC_MSG_NOTICE([overriding sys_lib_search_path_spec with])
+  AC_MSG_NOTICE([  predefined value: $sys_lib_search_path_spec])
+fi
+if test "${lt_cv_sys_lib_dlsearch_path_spec+set}" = set; then
+  sys_lib_dlsearch_path_spec="$lt_cv_sys_lib_dlsearch_path_spec"
+  AC_MSG_NOTICE([overriding sys_lib_dlsearch_path_spec with])
+  AC_MSG_NOTICE([  predefined value: $sys_lib_dlsearch_path_spec])
+fi
 
 variables_saved_for_relink="PATH $shlibpath_var $runpath_var"
 if test "$GCC" = yes; then
@@ -7543,5 +7547,3 @@ AC_SUBST([am__tar])
 AC_SUBST([am__untar])
 ]) # _AM_PROG_TAR
 
-m4_include([ax_misc.m4])
-m4_include([ax_prog_rc.m4])

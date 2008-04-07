@@ -699,12 +699,12 @@ CPP
 GREP
 EGREP
 LIBOBJS
-LIBPNGCPPFLAGS
-LDLIBPNG
-LIBPNGDEP
 ZLIBCPPFLAGS
 LDZLIB
 ZLIBDEP
+LIBPNGCPPFLAGS
+LDLIBPNG
+LIBPNGDEP
 LTLIBOBJS'
 ac_subst_files=''
       ac_precious_vars='build_alias
@@ -1300,14 +1300,14 @@ Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-kpathsea=DIR     use kpathsea include/library files from DIR
-  --with-system-pnglib    use installed pnglib library
-  --with-pnglib-libdir=DIR  specify directory where the png library (libpng.a) resides.
-  --with-pnglib-include=DIR specify directory with the pnglib header files.
   --with-system-zlib         use installed zlib library
   --with-zlib-libdir=DIR
                           Specify directory where the zlib.a resides.
   --with-zlib-include=DIR
                           Specify the zlib header files location.
+  --with-system-pnglib    use installed pnglib library
+  --with-pnglib-libdir=DIR  specify directory where the png library (libpng.a) resides.
+  --with-pnglib-include=DIR specify directory with the pnglib header files.
   --with-paper=DIR        use paper include/library files from DIR
   --with-zlib=DIR         use zlib include/library files from DIR
   --with-png=DIR          use png include/library files from DIR
@@ -8054,150 +8054,6 @@ if test "x$enable_tetex_build" = xyes; then
   # Get these common libraries from the sources, too.
   # Seems like it would be simpler to treat kpathsea this way too, but
   # we're just starting from what lcdf-typetools did.
-  # beginning of libpng/withenable.ac
-# public domain.
-
-# Check whether --with-system-pnglib was given.
-if test "${with_system_pnglib+set}" = set; then
-  withval=$with_system_pnglib;
-fi
-
-
-
-# Check whether --with-pnglib_libdir was given.
-if test "${with_pnglib_libdir+set}" = set; then
-  withval=$with_pnglib_libdir;
-fi
-
-
-
-# Check whether --with-pnglib_include was given.
-if test "${with_pnglib_include+set}" = set; then
-  withval=$with_pnglib_include;
-fi
-
-# end of libpng/withenable.ac
-
-  # beginning of libpng.ac
-if test "$needs_pnglib" = no; then
-  LIBPNGCPPFLAGS=
-  LDLIBPNG=
-  LIBPNGDEP=
-else
-  EXTRA_LIBPNG_INCLUDE=
-  EXTRA_LIBPNG_LIBDIR=
-
-  if test "$with_system_pnglib" = yes; then
-    if test "x$with_pnglib_libdir" != x; then
-      EXTRA_LIBPNG_LIBDIR="-L$with_pnglib_libdir"
-    fi
-    if test "x$with_pnglib_include" != x; then
-      EXTRA_LIBPNG_INCLUDE="-I$with_pnglib_include"
-    fi
-  fi
-
-  OLD_LDFLAGS=$LDFLAGS
-  OLD_CPP=$CPP
-  OLD_LIBS=$LIBS
-
-  LDFLAGS="$LDFLAGS $EXTRA_LIBPNG_LIBDIR"
-  CPP="$CPP $EXTRA_LIBPNG_INCLUDE"
-
-  if test "$with_system_pnglib" = yes; then
-      { echo "$as_me:$LINENO: checking for png_set_read_fn in -lpng" >&5
-echo $ECHO_N "checking for png_set_read_fn in -lpng... $ECHO_C" >&6; }
-if test "${ac_cv_lib_png_png_set_read_fn+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lpng -lz -lm $LIBS"
-cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char png_set_read_fn ();
-int
-main ()
-{
-return png_set_read_fn ();
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (ac_try="$ac_link"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
-  (eval "$ac_link") 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest$ac_exeext &&
-       $as_test_x conftest$ac_exeext; then
-  ac_cv_lib_png_png_set_read_fn=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-	ac_cv_lib_png_png_set_read_fn=no
-fi
-
-rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
-      conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ echo "$as_me:$LINENO: result: $ac_cv_lib_png_png_set_read_fn" >&5
-echo "${ECHO_T}$ac_cv_lib_png_png_set_read_fn" >&6; }
-if test $ac_cv_lib_png_png_set_read_fn = yes; then
-  pnglib=-lpng
-else
-  { echo "$as_me:$LINENO: WARNING: Standard PNG library not found. Compiling my own." >&5
-echo "$as_me: WARNING: Standard PNG library not found. Compiling my own." >&2;}
-        with_system_pnglib=no
-fi
-
-  fi
-
-  LDFLAGS=$OLD_LDFLAGS
-  CPP=$OLD_CPP
-  LIBS=$OLD_LIBS
-
-  if test "$with_system_pnglib" != yes; then
-    LIBPNGCPPFLAGS='-I$(LIBPNGDIR) -I$(LIBPNGSRCDIR)'
-    LDLIBPNG='$(LIBPNGDIR)/libpng.a'
-    LIBPNGDEP='$(LIBPNGDIR)/libpng.a'
-    using_system_pnglib=no
-  else
-    LIBPNGCPPFLAGS="$EXTRA_LIBPNG_INCLUDE"
-    LDLIBPNG="$EXTRA_LIBPNG_LIBDIR -lpng"
-    LIBPNGDEP=
-    using_system_pnglib=yes
-  fi
-fi
-
-
-
-
-# end of libpng.ac
-
-
 
 # Check whether --with-system_zlib was given.
 if test "${with_system_zlib+set}" = set; then
@@ -8489,6 +8345,150 @@ fi
 
 
 
+
+
+  # beginning of libpng/withenable.ac
+# public domain.
+
+# Check whether --with-system-pnglib was given.
+if test "${with_system_pnglib+set}" = set; then
+  withval=$with_system_pnglib;
+fi
+
+
+
+# Check whether --with-pnglib_libdir was given.
+if test "${with_pnglib_libdir+set}" = set; then
+  withval=$with_pnglib_libdir;
+fi
+
+
+
+# Check whether --with-pnglib_include was given.
+if test "${with_pnglib_include+set}" = set; then
+  withval=$with_pnglib_include;
+fi
+
+# end of libpng/withenable.ac
+
+  # beginning of libpng.ac
+if test "$needs_pnglib" = no; then
+  LIBPNGCPPFLAGS=
+  LDLIBPNG=
+  LIBPNGDEP=
+else
+  EXTRA_LIBPNG_INCLUDE=
+  EXTRA_LIBPNG_LIBDIR=
+
+  if test "$with_system_pnglib" = yes; then
+    if test "x$with_pnglib_libdir" != x; then
+      EXTRA_LIBPNG_LIBDIR="-L$with_pnglib_libdir"
+    fi
+    if test "x$with_pnglib_include" != x; then
+      EXTRA_LIBPNG_INCLUDE="-I$with_pnglib_include"
+    fi
+  fi
+
+  OLD_LDFLAGS=$LDFLAGS
+  OLD_CPP=$CPP
+  OLD_LIBS=$LIBS
+
+  LDFLAGS="$LDFLAGS $EXTRA_LIBPNG_LIBDIR"
+  CPP="$CPP $EXTRA_LIBPNG_INCLUDE"
+
+  if test "$with_system_pnglib" = yes; then
+      { echo "$as_me:$LINENO: checking for png_set_read_fn in -lpng" >&5
+echo $ECHO_N "checking for png_set_read_fn in -lpng... $ECHO_C" >&6; }
+if test "${ac_cv_lib_png_png_set_read_fn+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lpng -lz -lm $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char png_set_read_fn ();
+int
+main ()
+{
+return png_set_read_fn ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext &&
+       $as_test_x conftest$ac_exeext; then
+  ac_cv_lib_png_png_set_read_fn=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_cv_lib_png_png_set_read_fn=no
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_lib_png_png_set_read_fn" >&5
+echo "${ECHO_T}$ac_cv_lib_png_png_set_read_fn" >&6; }
+if test $ac_cv_lib_png_png_set_read_fn = yes; then
+  pnglib=-lpng
+else
+  { echo "$as_me:$LINENO: WARNING: Standard PNG library not found. Compiling my own." >&5
+echo "$as_me: WARNING: Standard PNG library not found. Compiling my own." >&2;}
+        with_system_pnglib=no
+fi
+
+  fi
+
+  LDFLAGS=$OLD_LDFLAGS
+  CPP=$OLD_CPP
+  LIBS=$OLD_LIBS
+
+  if test "$with_system_pnglib" != yes; then
+    LIBPNGCPPFLAGS='-I$(LIBPNGDIR) -I$(LIBPNGSRCDIR)'
+    LDLIBPNG='$(LIBPNGDIR)/libpng.a'
+    LIBPNGDEP='$(LIBPNGDIR)/libpng.a'
+    using_system_pnglib=no
+  else
+    LIBPNGCPPFLAGS="$EXTRA_LIBPNG_INCLUDE"
+    LDLIBPNG="$EXTRA_LIBPNG_LIBDIR -lpng"
+    LIBPNGDEP=
+    using_system_pnglib=yes
+  fi
+fi
+
+
+
+
+# end of libpng.ac
 
 
   # yes, we have zlib and png.
@@ -9874,12 +9874,12 @@ CPP!$CPP$ac_delim
 GREP!$GREP$ac_delim
 EGREP!$EGREP$ac_delim
 LIBOBJS!$LIBOBJS$ac_delim
-LIBPNGCPPFLAGS!$LIBPNGCPPFLAGS$ac_delim
-LDLIBPNG!$LDLIBPNG$ac_delim
-LIBPNGDEP!$LIBPNGDEP$ac_delim
 ZLIBCPPFLAGS!$ZLIBCPPFLAGS$ac_delim
 LDZLIB!$LDZLIB$ac_delim
 ZLIBDEP!$ZLIBDEP$ac_delim
+LIBPNGCPPFLAGS!$LIBPNGCPPFLAGS$ac_delim
+LDLIBPNG!$LDLIBPNG$ac_delim
+LIBPNGDEP!$LIBPNGDEP$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 

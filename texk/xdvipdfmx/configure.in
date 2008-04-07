@@ -113,11 +113,11 @@ if test "x$enable_tetex_build" = xyes; then
   # Get these common libraries from the sources, too.
   # Seems like it would be simpler to treat kpathsea this way too, but
   # we're just starting from what lcdf-typetools did.
-  sinclude(../../libs/libpng/withenable.ac)
-  sinclude(../../libs/libpng/libpng.ac)
-
   sinclude(../../libs/zlib/withenable.ac)
   sinclude(../../libs/zlib/zlib.ac)
+
+  sinclude(../../libs/libpng/withenable.ac)
+  sinclude(../../libs/libpng/libpng.ac)
 
   sinclude(../../libs/freetype2/withenable.ac)
   sinclude(../../libs/freetype2/freetype2.ac)

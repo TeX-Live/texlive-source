@@ -68,10 +68,10 @@ with -L pointing to the directory containing libkpathsea.a.
   )
 
   dnl Check kpathsea support for required formats and funcs.
-  MAW_CHECK_KPSE_SUPPORT([dvipdfmx])
+  CHO_CHECK_KPSE_SUPPORT([dvipdfmx])
 
   dnl Check for TDS version kpathsea library supports.
-  MAW_CHECK_KPSE_TDS_VERSION
+  CHO_CHECK_KPSE_TDS_VERSION
 fi
 
 
@@ -106,11 +106,11 @@ if test "x$enable_tetex_build" = xyes; then
   # Get these common libraries from the sources, too.
   # Seems like it would be simpler to treat kpathsea this way too, but
   # we're just starting from what lcdf-typetools did.
-  sinclude(../../libs/libpng/withenable.ac)
-  sinclude(../../libs/libpng/libpng.ac)
-
   sinclude(../../libs/zlib/withenable.ac)
   sinclude(../../libs/zlib/zlib.ac)
+
+  sinclude(../../libs/libpng/withenable.ac)
+  sinclude(../../libs/libpng/libpng.ac)
 
   # yes, we have zlib and png.
   AC_DEFINE(HAVE_ZLIB)
@@ -128,9 +128,9 @@ if test "x$enable_tetex_build" = xyes; then
   LIBS="-lkpathsea -lm $LIBS"
   AC_MSG_NOTICE([tetex build enabled, LIBS now: $LIBS])
 else
-  MAW_HAS_LIBPAPER
-  MAW_HAS_ZLIB
-  MAW_HAS_LIBPNG
+  CHO_HAS_LIBPAPER
+  CHO_HAS_ZLIB
+  CHO_HAS_LIBPNG
 
 dnl these variables are defined in the tetex case and used in src/Makefile.am.
 dnl just let them be empty.
