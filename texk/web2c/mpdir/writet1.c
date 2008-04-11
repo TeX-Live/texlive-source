@@ -60,10 +60,6 @@ extern Boolean shiftlowchars;
 #  define fixedcontent        true
 
 static char *dvips_extra_charset;
-static char *cur_enc_name;
-static unsigned char *grid;
-static char *ext_glyph_names[256];
-static char print_buf[PRINTF_BUF_SIZE];
 static int hexline_length;
 const char notdef[] = ".notdef";
 /* static size_t last_ptr_index; */
@@ -757,7 +753,7 @@ key_entry font_keys[FONT_KEYS_NUM] = {
 static void t1_scan_keys (int tex_font,fm_entry *fm_cur)
 {
     int i, k;
-    char *p, *q, *r;
+    char *p, *r;
     key_entry *key;
     if (fm_extend (fm_cur) != 0 || fm_slant (fm_cur) != 0) {
         if (t1_prefix ("/FontMatrix")) {
@@ -1691,7 +1687,7 @@ int t1_updatefm (int f, fm_entry *fm)
   }
   t1_scan_only (f, fm);
   s = xstrdup(fontname_buf);
-  for (p=s; *p != ' ' && *p != 0; *p++);
+  for (p=s;*p != ' ' && *p != 0; p++);
   *p=0;
   fm->ps_name = s;
   t1_close_font_file ("");

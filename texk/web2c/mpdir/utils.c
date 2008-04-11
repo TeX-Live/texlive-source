@@ -52,7 +52,6 @@ static const char perforce_id[] =
 char *cur_file_name = NULL;
 strnumber last_tex_string;
 static char print_buf[PRINTF_BUF_SIZE];
-static char *jobname_cstr = NULL;
 static char *job_id_string = NULL;
 extern string ptexbanner;       /* from web2c/lib/texmfmp.c */
 extern string versionstring;    /* from web2c/lib/version.c */
@@ -103,14 +102,6 @@ void mp_printf (const char *fmt, ...)
     xfflush (stdout);
     va_end (args);
     selector = saved_selector; /* ps_file_only, probably */
-}
-
-/* Helper for pdftex_fail. */
-static void safe_print (const char *str)
-{
-    const char *c;
-    for (c = str; *c; ++c)
-        print (*c);
 }
 
 /* pdftex_fail may be called when a buffer overflow has happened/is
@@ -480,27 +471,6 @@ void unescapehex (poolpointer in)
 }
 
 
-/* Converts any string given in in in an allowed PDF string which is 
- * hexadecimal encoded;
- * sizeof(out) should be at least lin*2+1.
- */
-static void convertStringToHexString (const char *in, char *out, int lin)
-{
-    int i, j, k;
-    char buf[3];
-    j = 0;
-    for (i = 0; i < lin; i++) {
-        k = snprintf (buf, sizeof (buf),
-                      "%02X", (unsigned int) (unsigned char) in[i]);
-        check_nprintf (k, sizeof (buf));
-        out[j++] = buf[0];
-        out[j++] = buf[1];
-    }
-    out[j] = '\0';
-}
-
-
-
 /* makecfilename
   input/ouput same as makecstring:
     input: string number
@@ -650,7 +620,7 @@ static void fnstr_append (const char *s)
 /* this is not really a true crc32, but it should be just enough to keep
    subsets prefixes somewhat disjunct */
 unsigned long crc32 (int oldcrc, const Byte *buf, int len) {
-  unsigned long ret;
+  unsigned long ret = 0;
   int i;
   if (oldcrc==0)
 	ret = (23<<24)+(45<<16)+(67<<8)+89;
@@ -667,7 +637,7 @@ void make_subset_tag (fm_entry * fm_cur, char **glyph_names, int tex_font)
     int i;
     size_t l ;
     if (job_id_string ==NULL)
-      exit;
+      exit(1);
     l = strlen (job_id_string) + 1;
     
     alloc_array (char, l, SMALL_ARRAY_SIZE);

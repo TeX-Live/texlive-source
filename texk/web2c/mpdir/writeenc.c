@@ -42,7 +42,6 @@ void read_enc (enc_entry * e)
  */
 void write_enc (char **glyph_names, enc_entry * e, integer eobjnum)
 {
-    boolean is_notdef;
     int i;
     int s;
     int foffset;

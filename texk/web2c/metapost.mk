@@ -7,7 +7,8 @@
 
 Makefile: metapost.mk
 
-metapost = mpost dvitomp
+mpost = mpost
+metapost = $(mpost) dvitomp
 mpostdir = mpdir
 
 # mpware is the subdirectory.

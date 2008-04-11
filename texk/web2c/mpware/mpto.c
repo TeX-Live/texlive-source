@@ -50,7 +50,7 @@ char *tex_pretex = "\\mpxshipout%% line %d %s\n";
 char *tex_posttex = "\n\\stopmpxshipout\n";
 char *tex_preverb1 = "";	/* if very first instance */
 char *tex_preverb = "%% line %d %s\n";	/* all other instances */
-char *tex_postverb = "%\n";
+char *tex_postverb = "\n";
 
 /* According to CSTR #54 the ".lf" directive should be ".lf %d %s",
  * not ".lf line %d %s" as used in the original code.  This affects
@@ -297,6 +297,7 @@ void
 copytex(void)
 {
     char *s;			/* where a string to print stops */
+    char *t;			/* for finding start of last line */
     char c;
     char *res = NULL;
     do {
@@ -333,12 +334,18 @@ copytex(void)
     /* whitespace at the end */
     for (s = res + strlen(res) - 1;
 	 s >= res && (*s == ' ' || *s == '\t' || *s == '\r' || *s == '\n'); s--);
+    t = s;
     *(++s) = '\0';
     /* whitespace at the start */
     for (s = res;
 	 s < (res + strlen(res)) && (*s == ' ' || *s == '\t' || *s == '\r'
 				     || *s == '\n'); s++);
-    printf("%s%%",s);
+    for (; *t != '\n' && t > s; t--);
+    printf("%s", s);
+    /* put no '%' at end if it's only 1 line total, starting with '%';
+     * this covers the special case "%&format" in a single line. */
+    if (t != s || *t != '%')
+	printf("%%");
     free(res);
 }
 
@@ -397,7 +404,7 @@ main(int argc, char **argv)
 	exit(0);
     } else if (argc > 1 && (strcmp(argv[1], "--version") == 0
 			    || strcmp(argv[1], "-version") == 0)) {
-	printf("mpto 1.002\n\
+	printf("mpto 1.003\n\
 This program is in the public domain.\n\
 Primary author of mpto: John Hobby.\n\
 Current maintainer: Taco Hoekwater.\n");

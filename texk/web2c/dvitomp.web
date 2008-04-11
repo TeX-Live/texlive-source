@@ -65,7 +65,7 @@ an ``\.{MPX}'' file.
 The |banner| string defined here should be changed whenever \.{DVItoMP}
 gets modified.
 
-@d banner=='% Written by DVItoMP, Version 1.002'
+@d banner=='% Written by DVItoMP, Version 1.003'
   {the first line of the output file}
 
 @ This program is written in standard \PASCAL, except where it is necessary
@@ -113,15 +113,15 @@ procedure initialize; {this procedure gets things started properly}
 reduce \.{DVItoMP}'s capacity.
 
 @<Constants...@>=
-@!max_fonts=100; {maximum number of distinct fonts per \.{DVI} file}
-@!max_fnums=300; {maximum number of fonts plus fonts local to virtual fonts}
-@!max_widths=10000; {maximum number of different characters among all fonts}
-@!virtual_space=10000;
+@!max_fonts=1000; {maximum number of distinct fonts per \.{DVI} file}
+@!max_fnums=3000; {maximum number of fonts plus fonts local to virtual fonts}
+@!max_widths=256*max_fonts; {maximum number of different characters among all fonts}
+@!virtual_space=1000000;
   {maximum total bytes of typesetting commands for virtual fonts}
 @!line_length=79; {maximum output line length (must be at least 60)}
 @!stack_size=100; {\.{DVI} files shouldn't |push| beyond this depth}
-@!name_size=1000; {total length of all font file names}
-@!name_length=50; {a file name shouldn't be longer than this}
+@!name_size=100000; {total length of all font file names}
+@!name_length=250; {a file name shouldn't be longer than this}
 
 @ There is one more parameter that is a little harder to change because
 it is of type |real|.
@@ -514,33 +514,38 @@ end;
 @#
 function get_two_bytes:integer; {returns the next two bytes, unsigned}
 var a,@!b:eight_bits;
-begin @<Read two bytes into |a| and |b|@>;
+begin a:=0;b:=0; {for compiler warnings}
+@<Read two bytes into |a| and |b|@>;
 get_two_bytes:=a*256+b;
 end;
 @#
 function signed_pair:integer; {returns the next two bytes, signed}
 var a,@!b:eight_bits;
-begin @<Read two bytes into |a| and |b|@>;
+begin a:=0;b:=0; {for compiler warnings}
+@<Read two bytes into |a| and |b|@>;
 if a<128 then signed_pair:=a*256+b
 else signed_pair:=(a-256)*256+b;
 end;
 @#
 function get_three_bytes:integer; {returns the next three bytes, unsigned}
 var a,@!b,@!c:eight_bits;
-begin @<Read three bytes into |a|, |b|, and~|c|@>;
+begin a:=0;b:=0;c:=0; {for compiler warnings}
+@<Read three bytes into |a|, |b|, and~|c|@>;
 get_three_bytes:=(a*256+b)*256+c;
 end;
 @#
 function signed_trio:integer; {returns the next three bytes, signed}
 var a,@!b,@!c:eight_bits;
-begin @<Read three bytes into |a|, |b|, and~|c|@>;
+begin a:=0;b:=0;c:=0; {for compiler warnings}
+@<Read three bytes into |a|, |b|, and~|c|@>;
 if a<128 then signed_trio:=(a*256+b)*256+c
 else signed_trio:=((a-256)*256+b)*256+c;
 end;
 @#
 function signed_quad:integer; {returns the next four bytes, signed}
 var a,@!b,@!c,@!d:eight_bits;
-begin @<Read four bytes into |a|, |b|, |c|, and~|d|@>;
+begin a:=0;b:=0;c:=0;d:=0; {for compiler warnings}
+@<Read four bytes into |a|, |b|, |c|, and~|d|@>;
 if a<128 then signed_quad:=((a*256+b)*256+c)*256+d
 else signed_quad:=(((a-256)*256+b)*256+c)*256+d;
 end;
@@ -802,11 +807,12 @@ while f<nf do
     if exact then
       begin if abs(font_scaled_size[f]-font_scaled_size[ff])
           <= font_tolerance then
-        begin if not vf_reading then
+        begin if not vf_reading then begin
           if local_only[f] then
             begin font_num[f]:=font_num[ff]; local_only[f]:=false;
             end
           else if font_num[f]<>font_num[ff] then goto 99;
+          end;
         goto done;
         end;
       end
@@ -814,8 +820,9 @@ while f<nf do
     end;
   99:incr(f);
   end;
-done:if f<nf then
+done:if f<nf then begin
   @<Make sure fonts |f| and |ff| have matching design sizes and checksums@>;
+  end;
 match_font:=f;
 end;
 
@@ -886,9 +893,10 @@ if (nw=0)or(nw>256) then goto 9997;
 for k:=1 to 3+lh do
   begin if eof(tfm_file) then goto 9997;
   read_tfm_word;
-  if k=4 then
+  if k=4 then begin
     if b0<128 then tfm_check_sum:=((b0*256+b1)*256+b2)*256+b3
     else tfm_check_sum:=(((b0-256)*256+b1)*256+b2)*256+b3;
+    end;
   end;
 
 @ @<Store character-width indices...@>=
@@ -1040,7 +1048,7 @@ internal font number with the width information loaded.
 @p function select_font(@!e:integer):integer;
 var @!f:0..max_fonts; {the internal font number}
 @!ff:0..max_fonts; {internal font number for an existing version}
-@!k,@!l:integer; {general purpose loop counters}
+@!k:integer; {general purpose loop counter}
 begin @<Set |f| to the internal font number that corresponds to |e|,
   or |abort| if there is none@>;
 if info_base[f]=max_widths then
@@ -1487,7 +1495,8 @@ opcode.
 
 @<Declare a function called |first_par|@>=
 function first_par(o:eight_bits):integer;
-begin case o of
+begin first_par:=0; {for compiler warnings}
+case o of
 sixty_four_cases(set_char_0),sixty_four_cases(set_char_0+64):
   first_par:=o-set_char_0;
 set1,put1,fnt1,xxx1,fnt_def1: first_par:=get_byte;
@@ -1531,10 +1540,11 @@ begin o:=get_byte; p:=first_par(o);
 if eof(dvi_file) then bad_dvi('the DVI file ended prematurely');
 @.the DVI file ended prematurely@>
 if o<set1+4 then  {|set_char_0| through |set_char_127|, |set1| through |set4|}
-  begin if cur_font>max_fnums then
+  begin if cur_font>max_fnums then begin
     if vf_reading then
       abort('no font selected for character ',p:1,' in virtual font')
     else bad_dvi('no font selected for character ',p:1);
+    end;
 @.no font selected@>
   set_virtual_char(cur_font,p);
   h:=h+@<Width of character |p| in font |cur_font|@>;

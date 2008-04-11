@@ -356,6 +356,7 @@ end;
 
 @x [3.27] Do file closing in C.
 @ Files can be closed with the \ph\ routine `|close(f)|', which
+@:PASCAL H}{\ph@>
 @^system dependencies@>
 should be used when all input or output with respect to |f| has been completed.
 This makes |f| available to be opened again, if desired; and if |f| was used for
@@ -429,6 +430,7 @@ We define |input_ln| in C, for efficiency.  Nevertheless we quote the module
 @x [3.32] We don't need to open the terminal files.
 @ Here is how to open the terminal files
 in \ph. The `\.{/I}' switch suppresses the first |get|.
+@:PASCAL H}{\ph@>
 @^system dependencies@>
 
 @d t_open_in==reset(term_in,'TTY:','/O/I') {open the terminal for text input}
@@ -443,6 +445,7 @@ any command line arguments the user has provided.  It's defined in C.
 
 @x [3.33] Flushing output.
 these operations can be specified in \ph:
+@:PASCAL H}{\ph@>
 @^system dependencies@>
 
 @d update_terminal == break(term_out) {empty the terminal output buffer}

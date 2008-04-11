@@ -26,12 +26,12 @@
 @z
 
 @x [1] Duplicate banner line for use in |print_version_and_exit|.
-@d banner=='% Written by DVItoMP, Version 1.002'
+@d banner=='% Written by DVItoMP, Version 1.003'
   {the first line of the output file}
 @y
-@d banner=='% Written by DVItoMP, Version 1.002/color'
+@d banner=='% Written by DVItoMP, Version 1.003/color'
   {the first line of the output file}
-@d term_banner=='This is DVItoMP, Version 1.002/color'
+@d term_banner=='This is DVItoMP, Version 1.003/color'
   {the same in the usual format, as it would be shown on a terminal}
 @z
 
@@ -47,12 +47,6 @@ procedure initialize; {this procedure gets things started properly}
     kpse_set_progname (argv[0]); {initialize for the filename searches}
     parse_arguments;
     @<Set initial values@>@/
-@z
-
-@x [5] Increase parameter(s).
-@!virtual_space=10000;
-@y
-@!virtual_space=100000;
 @z
 
 @x [7] Remove non-local goto.
@@ -817,7 +811,7 @@ l := 1; r := num_named_colors;
 found := false;
 while (l <= r) and not found do begin
   m := (l + r) / 2;
-  k := strcmp(buf, named_colors[m].name);
+  k := strcmp(stringcast(buf), named_colors[m].name);
   if k = 0 then begin
     color_stack[color_stack_depth]:=xstrdup(named_colors[m].value);
     found := true;
@@ -828,7 +822,7 @@ while (l <= r) and not found do begin
 end;
 if not found then begin
    color_warn('non-hardcoded color "',stringcast(buf),'" in "color push" command');
-   color_stack[color_stack_depth]:=xstrdup(buf);
+   color_stack[color_stack_depth]:=xstrdup(stringcast(buf));
 end;
 
 @ Last but not least, this code snippet prints a \.{withcolor} specifier
