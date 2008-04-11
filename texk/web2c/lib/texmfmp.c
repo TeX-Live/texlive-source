@@ -46,6 +46,8 @@
 #elif defined (pdfTeX)
 #include <pdftexdir/pdftexextra.h>
 #include <pdftexdir/ptexlib.h>
+#elif defined (luaTeX)
+#include <luatexdir/luatexextra.h>
 #elif defined (Omega)
 #include <omegadir/omegaextra.h>
 #elif defined (eOmega)
@@ -109,6 +111,13 @@
 #include "xetexdir/XeTeX_ext.h"
 #endif
 
+#if defined(luaTeX)
+extern void lua_initialize(int ac, char **av);
+int etexp;
+#define MAYBE_STATIC  /* symbols needed in luainit.c */
+#else
+#define MAYBE_STATIC static
+#endif
 
 /* What we were invoked as and with.  */
 char **argv;
@@ -118,10 +127,10 @@ int argc;
 static const_string user_progname;
 
 /* The C version of what might wind up in DUMP_VAR.  */
-static const_string dump_name;
+MAYBE_STATIC const_string dump_name;
 
 /* The C version of the jobname, if given. */
-static const_string job_name;
+MAYBE_STATIC const_string c_job_name;
 
 /* Full source file name. */
 extern string fullnameoffile;
@@ -131,10 +140,10 @@ string translate_filename;
 string default_translate_filename;
 
 /* Needed for --src-specials option. */
-static char *last_source_name;
+MAYBE_STATIC char *last_source_name;
 static int last_lineno;
-static boolean srcspecialsoption = false;
-static void parse_src_specials_option P1H(const_string);
+MAYBE_STATIC boolean srcspecialsoption = false;
+MAYBE_STATIC void parse_src_specials_option P1H(const_string);
 
 /* The main body of the WEB is transformed into this procedure.  */
 extern TEXDLL void mainbody P1H(void);
@@ -155,7 +164,7 @@ static string get_input_file_name P1H(void);
 static int eightbitp;
 #endif /* Omega || eOmega || Aleph */
 
-#if defined(pdfTeX) || defined(pdfeTeX)
+#if defined(pdfTeX) || defined(pdfeTeX) || defined(luaTeX)
 char *ptexbanner;
 #endif
 
@@ -171,6 +180,30 @@ texmf_yesno(const_string var)
   string value = kpse_var_value (var);
   return value && (*value == 't' || *value == 'y' || *value == '1');
 }
+
+#ifdef luaTeX
+#define TEXformatdefault TEX_format_default
+#define debugformatfile debug_format_file
+#define formatdefaultlength format_default_length
+#define iniversion ini_version
+#define outputfilename output_file_name
+#define readyalready ready_already
+#define dumpoption dump_option
+#define outputcomment output_comment
+#define pdfoutputoption pdf_output_option
+#define pdfoutputvalue pdf_output_value
+#define pdfdraftmodeoption pdf_draftmode_option
+#define pdfdraftmodevalue pdf_draftmode_value
+#define dumpline dump_line
+#define bufsize buf_size
+#define maxbufstack max_buf_stack
+#define inopen in_open
+#define inputfile input_file
+#define strstart str_start
+#define strpool str_pool
+#define poolptr pool_ptr
+#define poolsize pool_size
+#endif
 
 /* The entry point: set up for reading the command line, which will
    happen in `topenin', then call the main body.  */
@@ -196,7 +229,7 @@ maininit P2C(int, ac, string *, av)
   synctexoption = 0;
 #endif
 
-#if defined(pdfTeX)
+#if defined(pdfTeX) || defined(luaTeX)
   ptexbanner = BANNER;
 #endif
 
@@ -259,10 +292,10 @@ maininit P2C(int, ac, string *, av)
       iniversion = true;
     } else if (FILESTRCASEEQ (kpse_program_name, "virtex")) {
       virversion = true;
-#if !defined(Omega) && !defined(eOmega) && !defined(Aleph)
+#if !defined(Omega) && !defined(eOmega) && !defined(Aleph) && !defined(luaTeX)
     } else if (FILESTRCASEEQ (kpse_program_name, "mltex")) {
       mltexp = true;
-#endif /* !Omega && !eOmega && !Aleph */
+#endif /* !Omega && !eOmega && !Aleph && !luaTeX */
 #endif /* TeX */
     }
 
@@ -276,7 +309,7 @@ maininit P2C(int, ac, string *, av)
 #ifdef TeX
   /* Sanity check: -mltex, -enc, -etex only work in combination with -ini. */
   if (!iniversion) {
-#if !defined(Omega) && !defined(eOmega) && !defined(Aleph)
+#if !defined(Omega) && !defined(eOmega) && !defined(Aleph) && !defined(luaTeX)
     if (mltexp) {
       fprintf(stderr, "-mltex only works with -ini\n");
     }
@@ -355,6 +388,7 @@ maininit P2C(int, ac, string *, av)
 #endif /* TeX */
 }
 
+#if !defined(WIN32) || defined(__MINGW32__)
 /* The entry point: set up for reading the command line, which will
    happen in `topenin', then call the main body.  */
 
@@ -370,12 +404,17 @@ main P2C(int, ac,  string *, av)
   _setmaxstdio(2048);
 #endif
 
-  maininit(ac, av);
+#if defined(luaTeX)
+  lua_initialize (ac, av);
+#else
+  maininit (ac, av);
+#endif
 
   /* Call the real main program.  */
   mainbody ();
   return EXIT_SUCCESS;
 } 
+#endif /* !(WIN32 || __MINGW32__) */
 
 /* This is supposed to ``open the terminal for input'', but what we
    really do is copy command line arguments into TeX's or Metafont's
@@ -450,7 +489,7 @@ topenin P1H(void)
 
   /* One more time, this time converting to TeX's internal character
      representation.  */
-#if !defined(Omega) && !defined(eOmega) && !defined(Aleph) && !defined(XeTeX)
+#if !defined(Omega) && !defined(eOmega) && !defined(Aleph) && !defined(XeTeX) && !defined(luaTeX)
   for (i = first; i < last; i++)
     buffer[i] = xord[buffer[i]];
 #endif
@@ -652,7 +691,7 @@ ipcpage P1C(int, is_eof)
 
 #if defined (TeX) || defined (MF) || defined (MP)
   /* TCX and Omega get along like sparks and gunpowder. */
-#if !defined(Omega) && !defined(eOmega) && !defined(Aleph) && !defined(XeTeX)
+#if !defined(Omega) && !defined(eOmega) && !defined(Aleph) && !defined(XeTeX) && !defined(luaTeX) 
 
 /* Return the next number following START, setting POST to the following
    character, as in strtol.  Issue a warning and return -1 if no number
@@ -892,17 +931,17 @@ static struct option long_options[]
       { "ipc",                       0, &ipcon, 1 },
       { "ipc-start",                 0, &ipcon, 2 },
 #endif /* IPC */
-#if !defined(Omega) && !defined(eOmega) && !defined(Aleph)
+#if !defined(Omega) && !defined(eOmega) && !defined(Aleph) && !defined(luaTeX)
       { "mltex",                     0, &mltexp, 1 },
 #if !defined(XeTeX)
       { "enc",                       0, &enctexp, 1 },
 #endif /* !XeTeX */
 #endif /* !Omega && !eOmega && !Aleph */
-#if defined (eTeX) || defined(pdfTeX) || defined(Aleph) || defined(XeTeX)
+#if defined (eTeX) || defined(pdfTeX) || defined(Aleph) || defined(XeTeX) || defined(luaTeX)
       { "etex",                      0, &etexp, 1 },
 #endif /* eTeX || pdfTeX || Aleph */
       { "output-comment",            1, 0, 0 },
-#if defined(pdfTeX)
+#if defined(pdfTeX) || defined(luaTeX)
       { "draftmode",                 0, 0, 0 },
       { "output-format",             1, 0, 0 },
 #endif /* pdfTeX */
@@ -927,7 +966,11 @@ static struct option long_options[]
       { "no-parse-first-line",       0, &parsefirstlinep, -1 },
       { "translate-file",            1, 0, 0 },
       { "default-translate-file",    1, 0, 0 },
+#if !defined(luaTeX)
       { "8bit",                      0, &eightbitp, 1 },
+#else
+      { "8bit",                      0, 0, 0 },
+#endif
 #if defined(XeTeX)
       { "no-pdf",                 0, &nopdfoutput, 1 },
       { "output-driver",          1, 0, 0 },
@@ -982,11 +1025,11 @@ parse_options P2C(int, argc,  string *, argv)
 
     } else if (ARGUMENT_IS ("jobname")) {
 #ifdef XeTeX
-      job_name = optarg;
+      c_job_name = optarg;
 #else
-      job_name = normalize_quotes(optarg, "jobname");
+      c_job_name = normalize_quotes (optarg, "jobname");
 #endif
-      
+
     } else if (ARGUMENT_IS (DUMP_OPTION)) {
       dump_name = optarg;
       dumpoption = true;
@@ -1040,7 +1083,7 @@ parse_options P2C(int, argc,  string *, argv)
           parse_src_specials_option(optarg);
        }
 #endif /* TeX */
-#if defined(pdfTeX)
+#if defined(pdfTeX) || defined(luaTeX)
     } else if (ARGUMENT_IS ("output-format")) {
        pdfoutputoption = 1;
        if (strcmp(optarg, "dvi") == 0) {
@@ -1099,9 +1142,10 @@ parse_options P2C(int, argc,  string *, argv)
 		/* Synchronize TeXnology: catching the command line option as an unsigned long  */
 		synctexoption = (int) strtoul(optarg, NULL, 0);
  #endif
+
     } else if (ARGUMENT_IS ("version")) {
         char *versions;
-#if defined (pdfTeX) || defined(XeTeX)
+#if defined (pdfTeX) || defined(XeTeX) || defined(luaTeX)
         initversionstring(&versions); 
 #else
         versions = NULL;
@@ -1360,7 +1404,7 @@ boolean openoutnameok P1C(const_string, fname)
    closed using pclose().
 */
 
-#if defined(pdfTeX) || defined(pdfeTeX)
+#if defined(pdfTeX) || defined(pdfeTeX) || defined(luaTeX)
 
 static FILE *pipes [] = {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
                          NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
@@ -1509,8 +1553,8 @@ void
 get_date_and_time P4C(integer *, minutes,  integer *, day,
                       integer *, month,  integer *, year)
 {
-  time_t clock = time ((time_t *) 0);
-  struct tm *tmptr = localtime (&clock);
+  time_t myclock = time ((time_t *) 0);
+  struct tm *tmptr = localtime (&myclock);
 
   *minutes = tmptr->tm_hour * 60 + tmptr->tm_min;
   *day = tmptr->tm_mday;
@@ -1565,8 +1609,8 @@ get_seconds_and_micros P2C(integer *, seconds,  integer *, micros)
   *seconds = tb.time;
   *micros  = tb.millitm*1000;
 #else
-  time_t clock = time((time_t*)NULL);
-  *seconds = clock;
+  time_t myclock = time((time_t*)NULL);
+  *seconds = myclock;
   *micros  = 0;
 #endif
 }
@@ -1586,8 +1630,8 @@ getrandomseed()
   ftime(&tb);
   return (tb.millitm + 1000 * tb.time);
 #else
-  time_t clock = time ((time_t*)NULL);
-  struct tm *tmptr = localtime(&clock);
+  time_t myclock = time ((time_t*)NULL);
+  struct tm *tmptr = localtime(&myclock);
   return (tmptr->tm_sec + 60*(tmptr->tm_min + 60*tmptr->tm_hour));
 #endif
 }
@@ -1636,7 +1680,7 @@ input_line P1C(FILE *, f)
     --last;
 
   /* Don't bother using xord if we don't need to.  */
-#if !defined(Omega) && !defined(eOmega) && !defined(Aleph)
+#if !defined(Omega) && !defined(eOmega) && !defined(Aleph) && !defined(luaTeX)
   for (i = first; i <= last; i++)
      buffer[i] = xord[buffer[i]];
 #endif
@@ -1873,7 +1917,7 @@ do_undump P4C(char *, p,  int, item_size,  int, nitems,  FILE *, in_file)
 #ifdef XeTeX
   if (gzread (in_file, p, item_size * nitems) != item_size * nitems)
 #else
-  if (fread (p, item_size, nitems, in_file) != nitems)
+  if (fread (p, item_size, nitems, in_file) != (size_t) nitems)
 #endif
     FATAL2 ("Could not undump %d %d-byte item(s)", nitems, item_size);
 
@@ -1909,7 +1953,7 @@ setupboundvariable P3C(integer *, var,  const_string, var_name,  integer, dflt)
 
 /* FIXME -- some (most?) of this can/should be moved to the Pascal/WEB side. */
 #if defined(TeX) || defined(MP) || defined(MF)
-#if !defined(pdfTeX)
+#if !defined(pdfTeX) && !defined(luaTeX)
 static void
 checkpoolpointer (poolpointer poolptr, size_t len)
 {
@@ -1978,8 +2022,8 @@ strnumber
 getjobname(strnumber name)
 {
     strnumber ret = name;
-    if (job_name != NULL)
-      ret = maketexstring(job_name);
+    if (c_job_name != NULL)
+      ret = maketexstring(c_job_name);
     return ret;
 }
 #endif
@@ -2107,7 +2151,7 @@ makesrcspecial P2C(strnumber, srcfilename,
    */
   sprintf (buf, "src:%d ", lineno);
 
-  if (poolptr + strlen(buf) + strlen(filename) >= poolsize) {
+  if (poolptr + strlen(buf) + strlen(filename) >= (size_t)poolsize) {
        fprintf (stderr, "\nstring pool overflow\n"); /* fixme */
        exit (1);
   }
@@ -2178,7 +2222,7 @@ callmakempx P2C(string, mpname,  string, mpxname)
 #if defined (__sun__) || defined (__cplusplus)
 #define NO_MF_ASM
 #endif
-#if defined(WIN32) && !defined(NO_MF_ASM)
+#if defined(WIN32) && !defined(NO_MF_ASM) && !defined(__MINGW32__)
 #include "lib/mfmpw32.c"
 #elif defined (__i386__) && defined (__GNUC__) && !defined (NO_MF_ASM)
 #include "lib/mfmpi386.asm"

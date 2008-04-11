@@ -1,5 +1,5 @@
 
-top_srcdir = ../../../../src/libs/luafontforge/fontforge
+top_srcdir = ../../../../libs/luafontforge/fontforge
 srcdir = $(top_srcdir)/fontforge
 
 CC = gcc
@@ -22,7 +22,7 @@ _CFLAGS = -I$(top_srcdir)/inc -I$(srcdir) -I. -Wall $(XCFLAGS) \
  -DNODYNAMIC=1 -D_NO_FREETYPE=1 -D_NO_LIBUNINAMESLIST=1 \
  -DFONTFORGE_CONFIG_NO_WINDOWING_UI=1 -DLUA_FF_LIB=1 -UHAVE_LIBINTL_H
 
-CFLAGS = -g -O2 $(_CFLAGS)
+CFLAGS = -g -O2
 
 all: $(OBJECTS)
 
@@ -33,4 +33,4 @@ splinerefigure.o: $(srcdir)/splinerefigure.c $(srcdir)/splinefont.h
 	$(CC) -g -c -o splinerefigure.o $(_CFLAGS) $(srcdir)/splinerefigure.c
 
 %.o: $(srcdir)/%.c $(srcdir)/splinefont.h $(srcdir)/views.h $(srcdir)/stemdb.h $(srcdir)/ttf.h $(srcdir)/unicoderange.h $(srcdir)/psfont.h $(srcdir)/groups.h $(srcdir)/edgelist.h $(srcdir)/edgelist2.h
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(_CFLAGS) $(CFLAGS) -c $< -o $@

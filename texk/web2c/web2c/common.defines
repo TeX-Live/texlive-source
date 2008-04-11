@@ -69,6 +69,8 @@
 @define const GFTODVIHELP;
 @define const GFTOPKHELP;
 @define const GFTYPEHELP;
+@define const LUATANGLEHELP;
+@define const LUATEXHELP;
 @define const MFTHELP;
 @define const ODVICOPYHELP;
 @define const ODVITYPEHELP;

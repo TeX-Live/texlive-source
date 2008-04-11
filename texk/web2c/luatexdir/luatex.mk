@@ -145,10 +145,10 @@ luatexbin:
 	$(MAKE) $(luatex_bin)
 
 luatex-cross:
-	$(MAKE) web2c-cross
+	$(MAKE) luatex-web2c-cross
 	$(MAKE) luatexbin
 
-web2c-cross: $(web2c_programs)
+luatex-web2c-cross: $(web2c_programs)
 	@if test ! -x $(linux_build_dir)/luatangle; then echo Error: linux_build_dir not ready; exit -1; fi
 	rm -f web2c/fixwrites web2c/splitup web2c/web2c
 	cp -f $(linux_build_dir)/web2c/fixwrites web2c

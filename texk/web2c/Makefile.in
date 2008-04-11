@@ -78,8 +78,10 @@ proglib = lib/lib.a
 windowlib = window/window.a
 
 # The sh script that does the conversion.  The "." is the directory with
-# native tools; we don't attempt cross-compiling a la luatex.
-web2c = srcdir=$(srcdir) $(SHELL) $(srcdir)/web2c/convert .
+# native tools; we don't attempt cross-compiling a la luatex.  The
+# $(native) variable is used in luatex.mk.
+native = .
+web2c = srcdir=$(srcdir) $(SHELL) $(srcdir)/web2c/convert $(native)
 
 # Additional dependencies:
 web2c_common = web2c/convert web2c/common.defines
@@ -96,7 +98,7 @@ TIE = @TIE@
 # Calling tangle
 tangle = WEBINPUTS=.:$(srcdir) $(TANGLE)
 ctangle = $(CTANGLE)
-tie = $(TIE)
+tie = $(native)/$(TIE)
 
 # The environment for making dumps.
 # No need to specify TEXMF, as ../kpathsea/texmf.cnf should contain
@@ -429,7 +431,7 @@ dvitype_args = -output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*'
 
 # 
 # Metafont
-mf_c = mfini.c mf0.c mf1.c 
+mf_c = mfini.c mf0.c mf1.c
 mf_o = mfini.o mf0.o mf1.o mf-pool.o mfextra.o
 mfn_o = mfini.o mf0.o mf1.o mf-pool.o mfnowin.o
 mf: $(mf_o) $(windowlib)
@@ -578,9 +580,10 @@ trip-clean:
 	rm -f trip.fot trip.log trip.dvi trip.typ tripos.tex 8terminal.tex
 	rm -rf tfm
 # 
-# Helper makefile fragment for pdf*tex.
+# Helper makefile fragments for pdf*tex and luatex.
+kpse_include libsluapdf.mk
 kpse_include pdftexdir/pdftexlib.mk
-#LUATEXkpse_include pdftexdir/luatexlib.mk
+kpse_include luatexdir/luatexlib.mk
 # 
 # Makefile fragments:
 kpse_include etexdir/etex.mk
@@ -588,7 +591,7 @@ kpse_include omegadir/omega.mk
 kpse_include alephdir/aleph.mk
 kpse_include pdftexdir/pdftex.mk
 kpse_include xetexdir/xetex.mk
-#LUATEXkpse_include luatexdir/luatex.mk
+kpse_include luatexdir/luatex.mk
 
 # 
 # non-engine programs.
@@ -602,8 +605,7 @@ programs = bibtex ctangle ctie cweave dvicopy dvitomp dvitype gftodvi gftopk \
 engines = $(tex) $(etex) $(mf) $(mfn) $(metapost) \
           $(omega) $(aleph) \
           $(pdftex) $(pdfetex) \
-          $(xetex) #LUATEX\
-#LUATEX          $(luatex)
+          $(xetex) $(luatex)
 
 programs: $(programs) $(engines) $(mpware_programs) \
           $(omegafonts_programs) $(otps_programs) $(pdftosrc)
@@ -1145,7 +1147,8 @@ installcheck:
 
 # 
 # Cleaning.
-all_subdirs = doc lib man $(mpware) web2c window $(omegafonts) $(otps) $(pdftexdir) $(mpostdir) #LUATEX $(luatexdir)
+all_subdirs = doc lib man $(mpware) web2c window $(omegafonts) $(otps) \
+              $(pdftexdir) $(mpostdir) $(luatexdir) 
 
 # Having a multiple-target rule with the subdir loop fails because of
 # the dependencies introduced by clean.mk.  Yet, we want the

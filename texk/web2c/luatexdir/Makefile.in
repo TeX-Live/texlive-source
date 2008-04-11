@@ -1,4 +1,4 @@
-# Makefile for libpdf - te@dbs.uni-hannover.de
+# Makefile for luatex.
 # $Id$
 
 kpse_include ../make/common.mk

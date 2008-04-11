@@ -10,7 +10,9 @@
    thing, the messages have a lot in common, so it's nice to have them
    in one place.)
 
-Copyright (C) 1995, 96 Karl Berry, 2001, 03, 04 Olaf Weber.
+Copyright 1995, 1996 Karl Berry.
+Copyright 2001, 2003, 2004 Olaf Weber.
+Copyright 2008 Taco Hoekwater.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,10 +25,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
+along with this program; if not, see <http://www.gnu.org/licenses/>.  */
 
-/* Note: Help messages for TeX & MF family moved to texmfmp-help.h, to
+/* Help messages for TeX & MF family are in texmfmp-help.h, to
    prevent multiple-definition errors. */
 
 #ifndef HELP_H
@@ -262,6 +263,20 @@ const_string OTANGLEHELP[] = {
     NULL
 };
 #endif /* OTANGLE */
+
+#if defined (LUATANGLE) || defined (LUATANGLEBOOT)
+const_string LUATANGLEHELP[] = {
+    "Usage: luatangle [OPTION]... WEBFILE[.web] [CHANGEFILE[.ch]]",
+    "  Tangle WEBFILE with CHANGEFILE into a Pascal program.",
+    "  Default CHANGEFILE is /dev/null;",
+    "  Pascal output goes to the basename of WEBFILE extended with `.p',",
+    "  and a string pool file, if necessary, to the same extended with `.pool'.",
+    "",
+    "-help       display this help and exit",
+    "-version    output version information and exit",
+    NULL
+};
+#endif /* LUATANGLE */
 
 #ifdef OVF2OVP
 const_string OVF2OVPHELP[] = {

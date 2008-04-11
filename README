@@ -10,6 +10,9 @@ To make without configuring, run TL_CONFIGURE=true ./Build.
 environment variables; just take a look to see all the names.)
 
 Prerequisites:
+- GNU make.  If your GNU make is invoked by some name other than `make',
+  try setting the envvar TL_MAKE to what is needed.
+
 - GNU clisp and GNU libffcall, must be present for xindy.  See more
   details in utils/README.  (Alternative: Build --without-xindy.)
 

@@ -1,5 +1,5 @@
 %{
-/* web2c.l -- lexical analysis for Tangle output.  Public domain.  */
+/* web2c.l -- lexical analysis for Tangle output.  Public domain. */
 
 #include "web2c.h"
 #include "y_tab.h"
@@ -33,7 +33,7 @@ yywrap P1H(void)
 %}
 DIGIT		[0-9]
 ALPHA		[a-zA-Z]
-ALPHANUM	({DIGIT}|{ALPHA})
+ALPHANUM	({DIGIT}|{ALPHA}|"_")
 IDENTIFIER	({ALPHA}{ALPHANUM}*)
 NUMBER		({DIGIT}+)
 SIGN		("+"|"-")
@@ -109,9 +109,9 @@ HHB1		("hh"{WW}"."{WW}"b1")
 		}
 
 
-"procedure "[a-z]+";"[ \n\t]*"forward;"	;
+"procedure "[a-z_]+";"[ \n\t]*"forward;"	;
 
-"function "[(),:a-z]+";"[ \n\t]*"forward;"	;
+"function "[(),:a-z_]+";"[ \n\t]*"forward;"	;
 
 "@define"	return last_tok=define_tok;
 "@field"	return last_tok=field_tok;

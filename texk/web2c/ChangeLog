@@ -1,3 +1,8 @@
+2008-04-11  Karl Berry  <karl@tug.org>
+
+	* xetexdir/xetex.h (Byte): #define to my_Byte and then #undef to avoid typedef
+	conflict between TECkit_Common.h and zlib; sigh.
+
 2008-03-30  Karl Berry  <karl@tug.org>
 
 	* Makefile.in (web2c): pass . for native tooldir argument.

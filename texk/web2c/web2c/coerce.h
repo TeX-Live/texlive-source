@@ -54,9 +54,11 @@ extern void remembersourceinfo P2H(strnumber, int);
 #include <luatexdir/luatex.h>
 #endif /* luaTeX */
 
-#ifdef pdfTeX
+/* When compiling the lib in luatexdir, we -DpdfTeX so code can be more
+   easily shared.  But we can't have both pdftexd.h and luatexd.h, etc.  */
+#if defined (pdfTeX) && !defined (luaTeX)
 #include <pdftexdir/pdftex.h>
-#endif /* pdfTeX */
+#endif /* pdfTeX and not luaTeX */
 
 #ifdef XeTeX
 #include <xetexdir/xetex.h>
