@@ -27,6 +27,8 @@ LINKED_SCRIPTS = \
   texmf/scripts/texlive/tlmgr.texlua \
   texmf/scripts/texlive/getnonfreefonts.pl \
   texmf/scripts/texlive/tl-package-manager.pl \
+  texmf/scripts/xindy/texindy.pl \
+  texmf/scripts/xindy/xindy.pl \
   texmf-dist/scripts/glossaries/makeglossaries \
   texmf-dist/scripts/mkjobtexmf/mkjobtexmf.pl \
   texmf-dist/scripts/perltex/perltex.pl \
