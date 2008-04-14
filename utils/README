@@ -1,18 +1,17 @@
 Copyright 2005, 2006, 2007, 2008 TeX Users Group.
 You may freely use, modify and/or distribute this file.
 
-Extra utilities we compile for TeX Live, at least sometimes.
+Extra utilities we (optionally) compile for TeX Live.
 
-gzip - only for Windows 
+gzip - (old) only for Windows 
 
-jpeg2ps - only for Windows
+jpeg2ps - (old) only for Windows
 
-dialog - seems to be a v1.0 in debian, asked te 5jun05; he said keep as -is
+dialog - seems to be a v1.0 in debian, asked te 5jun05; he said keep as-is
+    or else go through testing.  Perhaps best would be for dialog to use
+    a system ncurses (as texinfo does); then we could remove ncurses.
   http://hightek.org/dialog/
   http://packages.debian.org/cgi-bin/search_packages.pl?searchon=names&version=all&exact=1&keywords=dialog
-
-mkjobtexmf 0.4 - ok 6sep07
-  http://www.ctan.org/tex-archive/support/mkjobtexmf
 
 pdfopen 0.5 - ok 26nov06
   (really xpdfopen)
@@ -30,38 +29,44 @@ t1utils 1.34 - checked 2mar08
 
 texinfo 4.8 - ok 25nov06
 
-vlna - only for Windows
+vlna - (old) only for Windows
 
 xindy 2.3 - ok 24mar08
   (with numerous adaptations for TL by Vladimir)
   http://www.ctan.org/tex-archive/indexing/xindy/
 
-  xindy requires GNU clisp and GNU libffcall.  If you can find
-  prepackaged versions for your system, go ahead and use them; their
-  precise version shouldn't matter.
-  
-  If you need or want to compile them from source, here is what karl did
-  on i386-linux -- but install the latest GNU libtool first:
+mkdir clisp; cd clisp
+clisp_basedir=`pwd`
+clisp_toolsdir=$clisp_basedir/clisp-tools
+clisp_builddir=$clisp_basedir/clisp-build
+mkdir $clisp_toolsdir
 
+cd $clisp_basedir
+wget http://ftp.gnu.org/gnu/libsigsegv/libsigsegv-2.5.tar.gz
+gzip -dc libsigsegv-2.5.tar.gz | tar xf -
+cd libsigsegv-2.5
+./configure --prefix=$clisp_toolsdir && make && make check && make install
+
+cd $clisp_basedir
 wget http://www.haible.de/bruno/gnu/ffcall-1.10.tar.gz
-tar xf ffcall-1.10.tar.gz && cd ffcall-1.10
-configure --prefix=/usr/local/gnu --enable-shared \
-&& make && make install  # as usual
+gzip -dc ffcall-1.10.tar.gz | tar xf -
+cd ffcall-1.10
+./configure --prefix=$clisp_toolsdir && make && make check && make install
 
-wget ftp://ftp.gnu.org/pub/gnu/clisp/latest/clisp-2.44.1.tar.gz
-tar xf clisp-2.44.1.tar.gz && cd clisp-2.44.1
-configure --prefix=/usr/local/gnu --ignore-absence-of-libsigsegv \
-  --with-libffcall-prefix=/usr/local/gnu \
-&& cd src && make && make install
+cd $clisp_basedir
+wget http://ftp.gnu.org/gnu/clisp/release/2.44.1/clisp-2.44.1.tar.gz
+gzip -dc clisp-2.44.1.tar.gz | tar xf -
+cd clisp-2.44.1
+./configure $clisp_builddir --with-ffcall --with-libsigsegv-prefix=$clisp_toolsdir --with-libffcall-prefix=$clisp_toolsdir LDFLAGS="-L$clisp_toolsdir/lib" CPPFLAGS="-I$clisp_toolsdir/include" --without-readline
+cd $clisp_builddir
+make
 
-  Of course, adjust paths as desired.
+If you get:
+    configure: error: `LDFLAGS' was set to `-L/home/karl/src/clisp-tools/lib' in the previous run
+    configure: error: `CPPFLAGS' was set to `-I/home/karl/src/clisp-tools/include' in the previous run
+    configure: error: changes in the environment can compromise the build
+    configure: error: run `make distclean' and/or `rm ../config.cache' and start over
 
-  clisp complains about my stack size being too small and I should run
-  ulimit, but I ignored that.  (If you actually care about clisp per se,
-  you should probably also install GNU libsigsegv; I didn't.)
-
-  Both tarballs are also available at ftp://tug.org/dist.
-
-  (Failed variation: clisp failed to link against static libffcall,
-   apparently wanting a dynamic library.  Not sure if configure
-   --without-dynamic-modules would have solved it.)
+Then:
+rm config.cache
+make
