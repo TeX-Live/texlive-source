@@ -31,9 +31,14 @@ texinfo 4.8 - ok 25nov06
 
 vlna - (old) only for Windows
 
+
 xindy 2.3 - ok 24mar08
   (with numerous adaptations for TL by Vladimir)
   http://www.ctan.org/tex-archive/indexing/xindy/
+
+After building clisp as described below, run the TL
+  Build --with-clisp=$clisp_builddir/clisp
+to include xindy in the build.  It is disabled by default.
 
 mkdir clisp; cd clisp
 clisp_basedir=`pwd`
