@@ -77,16 +77,22 @@ install_makeargs = INSTALL='$(INSTALL)' INSTALL_DATA='$(INSTALL_DATA)' \
 proglib = lib/lib.a
 windowlib = window/window.a
 
+# 
 # The sh script that does the conversion.  The "." is the directory with
 # native tools; we don't attempt cross-compiling a la luatex.  The
 # $(native) variable is used in luatex.mk.
 native = .
 web2c = srcdir=$(srcdir) $(SHELL) $(srcdir)/web2c/convert $(native)
 
+# We put this in the web2c directory for lack of a better place, but it
+# is separate from (and simpler than) the actual web-to-C conversion programs.
+makecpool = $(native)/web2c/makecpool
+
 # Additional dependencies:
 web2c_common = web2c/convert web2c/common.defines
-web2c_programs = web2c/fixwrites web2c/splitup web2c/web2c
-web2c_texmf = $(web2c_common) $(web2c_programs) web2c/texmf.defines web2c/coerce.h
+web2c_programs = web2c/fixwrites web2c/splitup web2c/web2c $(makecpool)
+web2c_texmf = $(web2c_common) $(web2c_programs) \
+              web2c/texmf.defines web2c/coerce.h
 
 # The helper programs:
 TANGLEBOOT = @TANGLEBOOT@
@@ -431,8 +437,8 @@ dvitype_args = -output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*'
 
 # 
 # Metafont
-mf_c = mfini.c mf0.c mf1.c
-mf_o = mfini.o mf0.o mf1.o mf-pool.o mfextra.o
+mf_c  = mfini.c mf0.c mf1.c
+mf_o  = mfini.o mf0.o mf1.o mf-pool.o mfextra.o
 mfn_o = mfini.o mf0.o mf1.o mf-pool.o mfnowin.o
 mf: $(mf_o) $(windowlib)
 	$(kpathsea_link) $(mf_o) $(windowlink) $(LOADLIBES)
@@ -506,24 +512,16 @@ tex.p tex.pool: tangle tex.web tex-final.ch
 	$(tangle) $(srcdir)/tex.web tex-final.ch
 tex-final.ch: $(TIE) tex.web tex.ch tex-binpool.ch
 	$(TIE) -c $@ $(srcdir)/tex.web $(srcdir)/tex.ch $(srcdir)/tex-binpool.ch
+
+# tools to load pool for tex and mf.
 #
-# tools to load pool for tex, etex and mf
-#
-tex-pool.c: tex.pool tex-mkcpool tmf-pool.h
-	./tex-mkcpool tex.pool $(srcdir)/tmf-pool.h >tex-pool.c
-mf-pool.c: mf.pool mf-mkcpool tmf-pool.h
-	./mf-mkcpool mf.pool $(srcdir)/tmf-pool.h >mf-pool.c
+tex-pool.c: tex.pool $(makecpool) tmf-pool.h
+	$(makecpool) tex.pool $(srcdir)/tmf-pool.h >$@ || rm -f $@
+mf-pool.c: mf.pool $(makecpool) tmf-pool.h
+	$(makecpool) mf.pool $(srcdir)/tmf-pool.h >$@ || rm -f $@
 mf-pool.o: mf-pool.c tmf-pool.h mfd.h
 # we include mfd.h, so need lots more includes.
 	$(CC) $(CFLAGS) -I. -I.. -I$(srcdir) -I$(srcdir)/.. -DMETA_FONT -c -o $@ mf-pool.c
-tex-mkcpool: tex-mkcpool.o
-	$(CC) $(CFLAGS) -o $@ tex-mkcpool.o
-tex-mkcpool.o: tex-mkcpool.c
-	$(CC) $(CFLAGS) -c -o $@ $(srcdir)/tex-mkcpool.c
-mf-mkcpool: mf-mkcpool.o
-	$(CC) $(CFLAGS) -o $@ mf-mkcpool.o
-mf-mkcpool.o: mf-mkcpool.c
-	$(CC) $(CFLAGS) -c -o $@ $(srcdir)/mf-mkcpool.c
 
 check: tex-check
 tex-check: trip tex.fmt
@@ -743,6 +741,8 @@ web2c/splitup: web2c/splitup.c web2c/kps.c
 	cd web2c && $(MAKE) $(common_makeargs) splitup
 web2c/web2c: web2c/main.c web2c/web2c.h web2c/web2c.l web2c/web2c.y web2c/kps.c
 	cd web2c && $(MAKE) $(common_makeargs) web2c
+$(makecpool): web2c/makecpool.c
+	cd web2c && $(MAKE) $(common_makeargs) makecpool
 
 kpse_include ../make/tkpathsea.mk
 

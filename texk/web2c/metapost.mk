@@ -21,8 +21,8 @@ mpware_sources = mpware/dmp.c mpware/makempx.in mpware/mpto.c mpware/newer.c
 mp_c = mpini.c mp0.c mp1.c mp2.c
 mp_o = mpini.o mp0.o mp1.o mp2.o mpextra.o mp-loadpool.o
 
-mp-loadpool.c: mp.pool $(mpostdir)/makecpool
-	$(mpostdir)/makecpool mp.pool mpdir/mplib.h >$@
+mp-loadpool.c: mp.pool $(makecpool)
+	$(makecpool) mp.pool mpdir/mplib.h >$@ || rm -f $@
 # mpostlibsdep also includes makecpool
 mpost: $(mp_o) $(mpostlibsdep)
 	$(kpathsea_link) $(mp_o) $(mpostlibs) $(LOADLIBES)

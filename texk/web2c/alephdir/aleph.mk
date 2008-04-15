@@ -122,12 +122,8 @@ aleph.ch: $(calephdir)/ceostuff.ch
 	 $(srcdir)/$(calephdir)/comsrcspec.ch \
 	 $(srcdir)/$(calephdir)/ceostuff.ch
 
-aleph-pool.c: aleph.pool alephdir/makecpool
-	alephdir/makecpool aleph.pool alephdir/aleph-pool.h >aleph-pool.c
-alephdir/makecpool: alephdir/makecpool.o
-	$(CC) $(CFLAGS) -o $@ alephdir/makecpool.o
-alephdir/makecpool.o: $(srcdir)/alephdir/makecpool.c
-	$(CC) $(CFLAGS) -c -o $@ $(srcdir)/alephdir/makecpool.c
+aleph-pool.c: aleph.pool $(makecpool)
+	$(makecpool) aleph.pool alephdir/aleph-pool.h >$@ || rm -f $@
 
 # Check: right now all we do is build the format.
 check: @ALEPH@ aleph-check

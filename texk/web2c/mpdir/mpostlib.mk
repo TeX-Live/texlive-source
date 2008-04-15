@@ -13,15 +13,7 @@ mpostlib_sources = $(srcdir)/mpdir/*.c $(srcdir)/mpdir/*.h
 mpdir/libmpost.a: $(mpostlib_sources)
 	cd mpdir && $(MAKE) $(common_makeargs) libmpost.a
 
-# makecpool
-
-makecpool = mpdir/makecpool
-
-mpdir/makecpool: mpdir/makecpool.c
-	cd mpdir && $(MAKE) $(common_makeargs) makecpool
-
 # Convenience variables.
-
 mpostlibs = $(mpostlib)
 mpostlibsdep = $(mpostlib) $(makecpool)
 

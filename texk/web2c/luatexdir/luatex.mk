@@ -53,8 +53,8 @@ $(luatexdir)/luatexextra.h: $(luatexdir)/luatexextra.in $(luatexdir)/luatex.vers
 	test -d $(luatexdir) || mkdir $(luatexdir)
 	sed -e s/LUATEX-VERSION/`cat $(luatexdir)/luatex.version`/ \
 	  $(srcdir)/$(luatexdir)/luatexextra.in >$@
-loadpool.c: luatex.pool $(luatexdir)/makecpool
-	$(native)/$(luatexdir)/makecpool luatex.pool luatexdir/ptexlib.h > loadpool.c
+loadpool.c: luatex.pool $(makecpool)
+	$(makecpool) luatex.pool luatexdir/ptexlib.h >$@ || rm -f $@
 
 # luatangle we need a private version of tangle
 

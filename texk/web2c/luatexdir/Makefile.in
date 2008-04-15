@@ -107,7 +107,7 @@ textcodes.o \
 utils.o \
 writezip.o
 
-all: libpdf.a makecpool
+all: libpdf.a $(makecpool)
 
 libpdf.a: lua/mp.c lua/psout.c $(OBJS)
 	rm -f $@
@@ -119,9 +119,6 @@ lua/mp.c: lua/mp.w
 
 lua/psout.c: lua/psout.w
 	$(CTANGLE) $(srcdir)/lua/psout.w - lua/psout.c
-
-makecpool: makecpool.o
-	$(link_command) makecpool.o
 
 kpse_include ../make/clean.mk
 

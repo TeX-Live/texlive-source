@@ -164,13 +164,8 @@ omega.ch: omegadir/comsrcspec.ch
 	 $(srcdir)/omegadir/comxml.ch \
 	 $(srcdir)/omegadir/comsrcspec.ch
 
-omega-pool.c: omega.pool omegadir/makecpool
-	omegadir/makecpool omega.pool omegadir/omega-pool.h >omega-pool.c
-omegadir/makecpool: omegadir/makecpool.o
-	$(CC) $(CFLAGS) -o $@ omegadir/makecpool.o
-omegadir/makecpool.o: $(srcdir)/omegadir/makecpool.c
-	test -d omegadir || mkdir omegadir
-	$(CC) $(CFLAGS) -c -o $@ $(srcdir)/omegadir/makecpool.c
+omega-pool.c: omega.pool $(makecpool)
+	$(makecpool) omega.pool omegadir/omega-pool.h >$@ || rm -f $@
 
 # Check: right now all we do is build the format.
 check: @OMEGA@ omega-check

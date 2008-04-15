@@ -17,7 +17,7 @@ LEXLIB = @LEXLIB@
 LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
 YACC = @YACC@
 
-programs = web2c fixwrites splitup
+programs = web2c fixwrites splitup makecpool
 
 web2c_objects = kps.o main.o y_tab.o $(LEX_OUTPUT_ROOT).o
 all: $(programs)
@@ -41,8 +41,8 @@ splitup: splitup.o kps.o
 	$(build_link_command) splitup.o kps.o
 regfix: regfix.o kps.o
 	$(build_link_command) regfix.o kps.o
-
-$(programs):
+makecpool: makecpool.o 
+	$(build_link_command) makecpool.o
 
 main.o: main.c
 	$(build_compile) -c $<
@@ -57,6 +57,8 @@ fixwrites.o: fixwrites.c
 splitup.o: splitup.c
 	$(build_compile) -c $<
 regfix.o: regfix.c
+	$(build_compile) -c $<
+makecpool.o: makecpool.c
 	$(build_compile) -c $<
 
 Makefile: Makefile.in ../config.status
