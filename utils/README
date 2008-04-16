@@ -58,20 +58,13 @@ gzip -dc ffcall-1.10.tar.gz | tar xf -
 cd ffcall-1.10
 ./configure --prefix=$clisp_toolsdir && make && make check && make install
 
+# hack to fix configure error on 64-bit systems
+ln -s lib $clisp_toolsdir/lib64
+
 cd $clisp_basedir
 wget http://ftp.gnu.org/gnu/clisp/release/2.44.1/clisp-2.44.1.tar.gz
 gzip -dc clisp-2.44.1.tar.gz | tar xf -
 cd clisp-2.44.1
-./configure $clisp_builddir --with-ffcall --with-libsigsegv-prefix=$clisp_toolsdir --with-libffcall-prefix=$clisp_toolsdir LDFLAGS="-L$clisp_toolsdir/lib" CPPFLAGS="-I$clisp_toolsdir/include" --without-readline
+./configure --with-ffcall --with-libffcall-prefix=$clisp_toolsdir --with-libsigsegv-prefix=$clisp_toolsdir --without-readline $clisp_builddir
 cd $clisp_builddir
-make
-
-If you get:
-    configure: error: `LDFLAGS' was set to `-L/home/karl/src/clisp-tools/lib' in the previous run
-    configure: error: `CPPFLAGS' was set to `-I/home/karl/src/clisp-tools/include' in the previous run
-    configure: error: changes in the environment can compromise the build
-    configure: error: run `make distclean' and/or `rm ../config.cache' and start over
-
-Then:
-rm config.cache
 make
