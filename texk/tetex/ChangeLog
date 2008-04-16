@@ -1,3 +1,7 @@
+2008-04-16  Norbert Preining  <preining@logic.at>
+
+	* fmtutil: fix creation of dirs with spaces
+
 2008-04-14  Karl Berry  <karl@tug.org>
 
 	* Makefile.in (LINKED_SCRIPTS): no more *xindy, the xindy Makefile

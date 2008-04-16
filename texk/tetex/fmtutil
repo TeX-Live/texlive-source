@@ -702,7 +702,7 @@ run_initex()
   else
     fulldestdir="$destdir"
   fi
-  mkdir -p $fulldestdir
+  mkdir -p "$fulldestdir"
   if test -f $fmtfile; then
     grep '^! ' $format.log >/dev/null 2>&1 &&
       log_failure "\`$engine -ini $tcxflag $jobswitch $prgswitch $texargs' possibly failed."
