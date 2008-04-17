@@ -61,6 +61,7 @@ authorization from SIL International.
 @define procedure printutf8str();
 @define procedure setinputfileencoding();
 @define procedure terminatefontmanager;
+@define function initpool();
 
 @define procedure memcpy();
 @define function casttoptr();
@@ -133,6 +134,7 @@ authorization from SIL International.
 
 @define function findpicfile();
 @define function picpathbyte();
+@define function countpdffilepages;
 
 @define procedure makeidentity();
 @define procedure makescale();

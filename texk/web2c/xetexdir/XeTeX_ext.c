@@ -710,9 +710,9 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 
 			if (strncmp(cp1, "vertical", 8) == 0) {
 				cp3 = cp2;
-				if (*cp3 == ';' || *cp3 == ':')
+				if (*cp3 == ';' || *cp3 == ':' || *cp3 == ',')
 					--cp3;
-				while (*cp3 == ' ' || *cp3 == '\t')
+				while (*cp3 == '\0' || *cp3 == ' ' || *cp3 == '\t')
 					--cp3;
 				if (*cp3)
 					++cp3;
@@ -763,10 +763,11 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 }
 
 static void
-splitFontName(char* name, char** var, char** feat, char** end)
+splitFontName(char* name, char** var, char** feat, char** end, int* index)
 {
 	*var = NULL;
 	*feat = NULL;
+	*index = 0;
 	if (*name == '[') {
 		int	withinFileName = 1;
 #ifdef WIN32
@@ -784,8 +785,12 @@ splitFontName(char* name, char** var, char** feat, char** end)
 #ifdef WIN32
 					&& !((name - start == 1) && isalpha(*start))
 #endif
-					)
-					*var = name;
+					) {
+					++name;
+					while (*name >= '0' && *name <= '9')
+						*index = *index * 10 + *name++ - '0';
+					--name;
+				}
 				else if (!withinFileName && *feat == NULL)
 					*feat = name;
 			}
@@ -811,9 +816,9 @@ splitFontName(char* name, char** var, char** feat, char** end)
 
 void*
 findnativefont(unsigned char* uname, integer scaled_size)
-	/* scaled_size here is in TeX points */
+	/* scaled_size here is in TeX points, or is a negative integer for 'scaled' */
 {
-	void*	rval = 0;
+	void*	rval = NULL;
 	char*	nameString;
 	char*	var;
 	char*	feat;
@@ -823,13 +828,13 @@ findnativefont(unsigned char* uname, integer scaled_size)
 	char*	featString = NULL;
 	PlatformFontRef	fontRef;
 	XeTeXFont	font;
+	int		index = 0;
 
 	loadedfontmapping = NULL;
 	loadedfontflags = 0;
 	loadedfontletterspace = 0;
 
-	splitFontName(name, &var, &feat, &end);
-
+	splitFontName(name, &var, &feat, &end, &index);
 	nameString = xmalloc(var - name + 1);
 	strncpy(nameString, name, var - name);
 	nameString[var - name] = 0;
@@ -854,16 +859,22 @@ findnativefont(unsigned char* uname, integer scaled_size)
 		if (path == NULL)
 			path = kpse_find_file(nameString + 1, kpse_type1_format, 0);
 		if (path != NULL) {
-			int index = 0;
-			if (varString != NULL) {
-				char* cp;
-				for (cp = varString; *cp && isdigit(*cp); ++cp)
-					index = index * 10 + *cp - '0';
+			if (scaled_size < 0) {
+				font = createFontFromFile(path, index, 655360L);
+				if (font != NULL) {
+					Fixed dsize = X2Fix(getDesignSize(font));
+					if (scaled_size == -1000)
+						scaled_size = dsize;
+					else
+						scaled_size = zxnoverd(dsize, -scaled_size, 1000);
+					deleteFont(font);
+				}
 			}
 			font = createFontFromFile(path, index, scaled_size);
 			if (font != NULL) {
+				loadedfontdesignsize = X2Fix(getDesignSize(font));
 				rval = loadOTfont(0, font, scaled_size, featString);
-				if (rval == 0)
+				if (rval == NULL)
 					deleteFont(font);
 			}
 		}
@@ -883,6 +894,18 @@ findnativefont(unsigned char* uname, integer scaled_size)
 			nameoffile = xmalloc(namelength + 4); /* +2 would be correct: initial space, final NUL */
 			nameoffile[0] = ' ';
 			strcpy((char*)nameoffile + 1, fullName);
+
+			if (scaled_size < 0) {
+				font = createFont(fontRef, scaled_size);
+				if (font != NULL) {
+					Fixed dsize = X2Fix(getDesignSize(font));
+					if (scaled_size == -1000)
+						scaled_size = dsize;
+					else
+						scaled_size = zxnoverd(dsize, -scaled_size, 1000);
+					deleteFont(font);
+				}
+			}
 	
 #ifdef XETEX_MAC
 			/* decide whether to use AAT or OpenType rendering with this font */
@@ -1568,7 +1591,7 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 				for (runIndex = 0; runIndex < nRuns; ++runIndex) {
 					dir = ubidi_getVisualRun(pBiDi, runIndex, &logicalStart, &length);
 					nGlyphs = layoutChars(engine, (UniChar*)txtPtr, logicalStart, length, txtLen,
-											(dir == UBIDI_RTL), x, y, &status);
+											(dir == UBIDI_RTL), 0, 0, &status);
 	
 					getGlyphs(engine, glyphs, &status);
 					getGlyphPositions(engine, positions, &status);
@@ -1576,13 +1599,13 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 					for (i = 0; i < nGlyphs; ++i) {
 						if (glyphs[i] < 0xfffe) {
 							glyphIDs[realGlyphCount] = glyphs[i];
-							locations[realGlyphCount].x = X2Fix(positions[2*i]);
-							locations[realGlyphCount].y = X2Fix(positions[2*i+1]);
+							locations[realGlyphCount].x = X2Fix(positions[2*i] + x);
+							locations[realGlyphCount].y = X2Fix(positions[2*i+1] + y);
 							++realGlyphCount;
 						}
 					}
-					x = positions[2*i];
-					y = positions[2*i+1];
+					x += positions[2*i];
+					y += positions[2*i+1];
 				}
 				wid = x;
 			}
@@ -2299,10 +2322,22 @@ open_dvi_output(FILE** fptr)
 			if (*p++ == '\"')
 				++len;
 		len += strlen(outputdriver);
-		len += 8; /* space for -o flag, quotes, NUL */
+		if (output_directory)
+			len += strlen(output_directory);
+		len += 10; /* space for -o flag, quotes, NUL */
+		for (p = (const char*)nameoffile+1; *p; p++)
+			if (*p == '\"')
+				++len;	/* allow extra space to escape quotes in filename */
 		cmd = xmalloc(len);
 		strcpy(cmd, outputdriver);
 		strcat(cmd, " -o \"");
+		if (output_directory) {
+			len = strlen(output_directory);
+			if (IS_DIR_SEP(output_directory[len-1]))
+				output_directory[len-1] = '\0';
+			strcat(cmd, output_directory);
+			strcat(cmd, "/");
+		}
 		q = cmd + strlen(cmd);
 		for (p = (const char*)nameoffile+1; *p; p++) {
 			if (*p == '\"')
@@ -2315,6 +2350,14 @@ open_dvi_output(FILE** fptr)
 			char* cmd2 = concat3(cmd, " -p ", papersize);
 			free(cmd);
 			cmd = cmd2;
+		}
+		if (output_directory) {
+			char *fullname = concat3(output_directory, "/", nameoffile+1);
+			free(nameoffile);
+			namelength = strlen(fullname);
+			nameoffile = (char*)xmalloc(namelength+2);
+			strcpy(nameoffile+1, fullname);
+			free(fullname);
 		}
 		*fptr = popen(cmd, "w");
 		free(cmd);

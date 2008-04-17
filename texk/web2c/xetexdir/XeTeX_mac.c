@@ -961,6 +961,31 @@ loadAATfont(ATSFontRef fontRef, long scaled_size, const char* cp1)
 }
 
 int
+countpdffilepages()
+{
+	int	rval = 0;
+
+    char*		pic_path = kpse_find_file((char*)nameoffile + 1, kpse_pict_format, 1);
+	CFURLRef	picFileURL = NULL;
+	if (pic_path) {
+		picFileURL = CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault, (UInt8*)pic_path, strlen(pic_path), false);
+		if (picFileURL != NULL) {
+			FSRef	picFileRef;
+			CFURLGetFSRef(picFileURL, &picFileRef);
+			CGPDFDocumentRef	document = CGPDFDocumentCreateWithURL(picFileURL);
+			if (document != NULL) {
+				rval = CGPDFDocumentGetNumberOfPages(document);
+				CGPDFDocumentRelease(document);
+			}
+			CFRelease(picFileURL);
+		}
+		free(pic_path);
+	}
+
+	return rval;
+}
+
+int
 find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page)
 {
 	*path = NULL;

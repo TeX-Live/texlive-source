@@ -34,7 +34,6 @@ authorization from SIL International.
 #include "XeTeXFontMgr_FC.h"
 #endif
 
-#include "XeTeXLayoutInterface.h"
 #include "XeTeXswap.h"
 
 #include "Features.h"
@@ -43,6 +42,8 @@ authorization from SIL International.
 #include "sfnt.h"
 
 #include <math.h>
+
+extern Fixed loadedfontdesignsize;
 
 XeTeXFontMgr*	XeTeXFontMgr::sFontManager = NULL;
 char XeTeXFontMgr::sReqEngine = 0;
@@ -83,17 +84,22 @@ XeTeXFontMgr::Terminate()
 
 PlatformFontRef
 XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
-	// ptSize is in TeX points
+	// ptSize is in TeX points, or negative for 'scaled' factor
 	// "variant" string will be shortened (in-place) by removal of /B and /I if present
 {
 	std::string	nameStr(name);
 	Font*	font = NULL;
 	
+	int dsize = 100;
+	loadedfontdesignsize = 655360L;
+
 	for (int pass = 0; pass < 2; ++pass) {
 		// try full name as given
 		std::map<std::string,Font*>::iterator i = nameToFont.find(nameStr);
 		if (i != nameToFont.end()) {
 			font = i->second;
+			if (font->opSizeInfo.designSize != 0)
+				dsize = font->opSizeInfo.designSize;
 			break;
 		}
 
@@ -107,6 +113,8 @@ XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
 				i = f->second->styles->find(style);
 				if (i != f->second->styles->end()) {
 					font = i->second;
+					if (font->opSizeInfo.designSize != 0)
+						dsize = font->opSizeInfo.designSize;
 					break;
 				}
 			}
@@ -116,6 +124,8 @@ XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
 		i = psNameToFont.find(nameStr);
 		if (i != psNameToFont.end()) {
 			font = i->second;
+			if (font->opSizeInfo.designSize != 0)
+				dsize = font->opSizeInfo.designSize;
 			break;
 		}
 		
@@ -179,7 +189,7 @@ XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
 	Family*	parent = font->parent;
 	
 	// if there are variant requests, try to apply them
-	// and delete B or I codes from the string
+	// and delete B, I, and S=... codes from the string, just retain /engine option
 	sReqEngine = 0;
 	bool	reqBold = false;
 	bool	reqItal = false;
@@ -248,9 +258,6 @@ XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
 						++cp;
 					}
 				}
-				if (varString.length() > 0 && *(varString.end() - 1) != '/')
-					varString.append("/");
-				varString.append(start, cp);
 				goto skip_to_slash;
 			}
 			
@@ -359,8 +366,10 @@ XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
 	}
 
 	// if there's optical size info, try to apply it
-	if (font != NULL && font->opSizeInfo.subFamilyID != 0 && ptSize != 0.0) {
-		ptSize = ptSize * 720 / 72.27;	// convert TeX points to PS decipoints for comparison with the opSize values
+	if (ptSize < 0.0)
+		ptSize = dsize / 10.0;
+	if (font != NULL && font->opSizeInfo.subFamilyID != 0 && ptSize > 0.0) {
+		ptSize = ptSize * 10.0;	// convert to decipoints for comparison with the opSize values
 		double	bestMismatch = my_fmax(font->opSizeInfo.minSize - ptSize, ptSize - font->opSizeInfo.maxSize);
 		if (bestMismatch > 0.0) {
 			Font*	bestMatch = font;
@@ -378,6 +387,9 @@ XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
 			font = bestMatch;
 		}
 	}
+	
+	if (font != NULL && font->opSizeInfo.designSize != 0)
+		loadedfontdesignsize = (font->opSizeInfo.designSize << 16L) / 10;
 
 	return font->fontRef;
 }
@@ -450,58 +462,82 @@ XeTeXFontMgr::bestMatchFromFamily(const Family* fam, int wt, int wd, int slant) 
 	return bestMatch;
 }
 
+const XeTeXFontMgr::OpSizeRec*
+XeTeXFontMgr::getOpSizePtr(XeTeXFont font)
+{
+	const GlyphPositioningTableHeader* gposTable = (const GlyphPositioningTableHeader*)getFontTablePtr(font, LE_GPOS_TABLE_TAG);
+	if (gposTable != NULL) {
+		const FeatureListTable*	featureListTable = (const FeatureListTable*)((const char*)gposTable + SWAP(gposTable->featureListOffset));
+		for (int i = 0; i < SWAP(featureListTable->featureCount); ++i) {
+			UInt32  tag = SWAPT(featureListTable->featureRecordArray[i].featureTag);
+			if (tag == LE_SIZE_FEATURE_TAG) {
+				const FeatureTable*	feature = (const FeatureTable*)((const char*)featureListTable
+												+ SWAP(featureListTable->featureRecordArray[i].featureTableOffset));
+				UInt16	offset = SWAP(feature->featureParamsOffset);
+				const OpSizeRec*	pSizeRec;
+				/* if featureParamsOffset < (offset of feature from featureListTable),
+				   then we have a correct size table;
+				   otherwise we (presumably) have a "broken" one from the old FDK */
+				for (int i = 0; i < 2; ++i) {
+					if (i == 0)
+						pSizeRec = (const OpSizeRec*)((char*)feature + offset);
+					else
+						pSizeRec = (const OpSizeRec*)((char*)featureListTable + offset);
+					if (SWAP(pSizeRec->designSize) == 0)
+						continue;	// incorrect 'size' feature format
+					if (SWAP(pSizeRec->subFamilyID) == 0
+						&& SWAP(pSizeRec->nameCode) == 0
+						&& SWAP(pSizeRec->minSize) == 0
+						&& SWAP(pSizeRec->maxSize) == 0)
+						return pSizeRec;	// feature is valid, but no 'size' range
+					if (SWAP(pSizeRec->designSize) < SWAP(pSizeRec->minSize))	// check values are valid
+						continue;												// else try different interpretation
+					if (SWAP(pSizeRec->designSize) > SWAP(pSizeRec->maxSize))
+						continue;
+					if (SWAP(pSizeRec->maxSize) < SWAP(pSizeRec->minSize))
+						continue;
+					if (SWAP(pSizeRec->nameCode) < 256)
+						continue;
+					if (SWAP(pSizeRec->nameCode) > 32767)
+						continue;
+					return pSizeRec;
+				}
+			}
+		}
+	}
+
+	return NULL;
+}
+
+double
+XeTeXFontMgr::getDesignSize(XeTeXFont font)
+{
+	const OpSizeRec* pSizeRec = getOpSizePtr(font);
+	if (pSizeRec != NULL)
+		return SWAP(pSizeRec->designSize) / 10.0;
+	else
+		return 10.0;
+}
+
 void
 XeTeXFontMgr::getOpSizeRecAndStyleFlags(Font* theFont)
 {
 	XeTeXFont	font = createFont(theFont->fontRef, 655360);
 	if (font != 0) {
-		const GlyphPositioningTableHeader* gposTable = (const GlyphPositioningTableHeader*)getFontTablePtr(font, LE_GPOS_TABLE_TAG);
-		if (gposTable != NULL) {
-			const FeatureListTable*	featureListTable = (const FeatureListTable*)((const char*)gposTable + SWAP(gposTable->featureListOffset));
-			for (int i = 0; i < SWAP(featureListTable->featureCount); ++i) {
-				UInt32  tag = SWAPT(featureListTable->featureRecordArray[i].featureTag);
-				if (tag == LE_SIZE_FEATURE_TAG) {
-					const FeatureTable*	feature = (const FeatureTable*)((const char*)featureListTable
-													+ SWAP(featureListTable->featureRecordArray[i].featureTableOffset));
-					UInt16	offset = SWAP(feature->featureParamsOffset);
-					const OpSizeRec*	pSizeRec;
-					/* if featureParamsOffset < (offset of feature from featureListTable),
-					   then we have a correct size table;
-					   otherwise we (presumably) have a "broken" one from the old FDK */
-					for (int i = 0; i < 2; ++i) {
-						if (i == 0)
-							pSizeRec = (const OpSizeRec*)((char*)feature + offset);
-						else
-							pSizeRec = (const OpSizeRec*)((char*)featureListTable + offset);
-						if (SWAP(pSizeRec->designSize) == 0)
-							continue;	// incorrect 'size' feature format
-						if (SWAP(pSizeRec->subFamilyID) == 0
-							&& SWAP(pSizeRec->nameCode) == 0
-							&& SWAP(pSizeRec->minSize) == 0
-							&& SWAP(pSizeRec->maxSize) == 0)
-							break;	// feature is valid, but no 'size' range
-						if (SWAP(pSizeRec->designSize) < SWAP(pSizeRec->minSize))
-							continue;
-						if (SWAP(pSizeRec->designSize) > SWAP(pSizeRec->maxSize))
-							continue;
-						if (SWAP(pSizeRec->maxSize) <= SWAP(pSizeRec->minSize))
-							continue;
-						if (SWAP(pSizeRec->nameCode) < 256)
-							continue;
-						if (SWAP(pSizeRec->nameCode) > 32767)
-							continue;
-						// looks like we've found a usable feature!
-						theFont->opSizeInfo.designSize = SWAP(pSizeRec->designSize);
-						theFont->opSizeInfo.subFamilyID = SWAP(pSizeRec->subFamilyID);
-						theFont->opSizeInfo.nameCode = SWAP(pSizeRec->nameCode);
-						theFont->opSizeInfo.minSize = SWAP(pSizeRec->minSize);
-						theFont->opSizeInfo.maxSize = SWAP(pSizeRec->maxSize);
-						break;
-					}
-					break;
-				}
-			}
+		const OpSizeRec* pSizeRec = getOpSizePtr(font);
+		if (pSizeRec != NULL) {
+			theFont->opSizeInfo.designSize = SWAP(pSizeRec->designSize);
+			if (SWAP(pSizeRec->subFamilyID) == 0
+				&& SWAP(pSizeRec->nameCode) == 0
+				&& SWAP(pSizeRec->minSize) == 0
+				&& SWAP(pSizeRec->maxSize) == 0)
+				goto done_size;	// feature is valid, but no 'size' range
+			theFont->opSizeInfo.subFamilyID = SWAP(pSizeRec->subFamilyID);
+			theFont->opSizeInfo.nameCode = SWAP(pSizeRec->nameCode);
+			theFont->opSizeInfo.minSize = SWAP(pSizeRec->minSize);
+			theFont->opSizeInfo.maxSize = SWAP(pSizeRec->maxSize);
 		}
+	done_size:
 
 		const OS2TableHeader* os2Table = (const OS2TableHeader*)getFontTablePtr(font, LE_OS_2_TABLE_TAG);
 		if (os2Table != NULL) {

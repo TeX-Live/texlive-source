@@ -260,6 +260,7 @@ extern "C" {
   
 	const char* getGlyphNamePtr(const char* buffer, int tableSize, UInt16 gid, int* len);
 
+	int countpdffilepages();
 	int find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page);
 	int u_open_in(unicodefile* f, integer filefmt, const char* fopen_mode, integer mode, integer encodingData);
 	int open_dvi_output(FILE** fptr);

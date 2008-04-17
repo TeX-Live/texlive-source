@@ -129,7 +129,7 @@ LayoutEngine* XeTeXOTLayoutEngine::LayoutEngineFactory
 			break;
 
 		case arabScriptCode:
-		case hebrScriptCode:
+//		case hebrScriptCode:
 			result = new UnicodeArabicOpenTypeLayoutEngine(fontInstance, scriptCode, languageCode, typoFlags);
 			break;
 

@@ -1,6 +1,6 @@
 % /****************************************************************************\
 %  Part of the XeTeX typesetting system
-%  copyright (c) 1994-2006 by SIL International
+%  copyright (c) 1994-2008 by SIL International
 %  written by Jonathan Kew
 % 
 % Permission is hereby granted, free of charge, to any person obtaining  
@@ -55,8 +55,8 @@
 @d eTeX_version_string=='-2.2' {current \eTeX\ version}
 
 @d XeTeX_version=0
-@d XeTeX_revision==".996"
-@d XeTeX_version_string=='-0.996-patch1' {current \XeTeX\ version}
+@d XeTeX_revision==".996-patch2"
+@d XeTeX_version_string=='-0.996-patch2' {current \XeTeX\ version}
 @z
 
 @x
@@ -346,41 +346,80 @@ end
 @z
 
 @x
-name_of_file := xmalloc_array (ASCII_code, name_length + 1);
-@y
-name_of_file := xmalloc_array (UTF8_code, name_length + 1);
-@z
+@ When the \.{WEB} system program called \.{TANGLE} processes the \.{TEX.WEB}
+description that you are now reading, it outputs the \PASCAL\ program
+\.{TEX.PAS} and also a string pool file called \.{TEX.POOL}. The \.{INITEX}
+@.WEB@>@.INITEX@>
+program reads the latter file, where each string appears as a two-digit decimal
+length followed by the string itself, and the information is recorded in
+\TeX's string memory.
 
-@x
+@<Glob...@>=
+@!init @!pool_file:alpha_file; {the string-pool file output by \.{TANGLE}}
+tini
+
+@ @d bad_pool(#)==begin wake_up_terminal; write_ln(term_out,#);
+  a_close(pool_file); get_strings_started:=false; return;
+  end
+@<Read the other strings...@>=
+name_length := strlen (pool_name);
+name_of_file := xmalloc_array (ASCII_code, name_length + 1);
+strcpy (stringcast(name_of_file+1), pool_name); {copy the string}
+if a_open_in (pool_file, kpse_texpool_format) then
+  begin c:=false;
+  repeat @<Read one string, but return |false| if the
+    string memory space is getting too tight for comfort@>;
+  until c;
+  a_close(pool_file); get_strings_started:=true;
+  end
+else  bad_pool('! I can''t read ', pool_name, '; bad path?')
+@.I can't read TEX.POOL@>
+
+@ @<Read one string...@>=
+begin if eof(pool_file) then bad_pool('! ', pool_name, ' has no check sum.');
+@.TEX.POOL has no check sum@>
+read(pool_file,m); read(pool_file,n); {read two digits of string length}
+if m='*' then @<Check the pool check sum@>
 else  begin if (xord[m]<"0")or(xord[m]>"9")or@|
       (xord[n]<"0")or(xord[n]>"9") then
-@y
-else  begin if (m<"0")or(m>"9")or@|
-      (n<"0")or(n>"9") then
-@z
-
-@x
+    bad_pool('! ', pool_name, ' line doesn''t begin with two digits.');
+@.TEX.POOL line doesn't...@>
   l:=xord[m]*10+xord[n]-"0"*11; {compute the length}
-@y
-  l:=m*10+n-"0"*11; {compute the length}
-@z
-
-@x
+  if pool_ptr+l+string_vacancies>pool_size then
+    bad_pool('! You have to increase POOLSIZE.');
+@.You have to increase POOLSIZE@>
+  for k:=1 to l do
+    begin if eoln(pool_file) then m:=' '@+else read(pool_file,m);
     append_char(xord[m]);
-@y
-    append_char(m);
-@z
+    end;
+  read_ln(pool_file); g:=make_string;
+  end;
+end
 
-@x
+@ The \.{WEB} operation \.{@@\$} denotes the value that should be at the
+end of this \.{TEX.POOL} file; any other value means that the wrong pool
+file has been loaded.
+@^check sum@>
+
+@<Check the pool check sum@>=
+begin a:=0; k:=1;
 loop@+  begin if (xord[n]<"0")or(xord[n]>"9") then
-@y
-loop@+  begin if (n<"0")or(n>"9") then
-@z
-
-@x
+  bad_pool('! ', pool_name, ' check sum doesn''t have nine digits.');
+@.TEX.POOL check sum...@>
   a:=10*a+xord[n]-"0";
+  if k=9 then goto done;
+  incr(k); read(pool_file,n);
+  end;
+done: if a<>@$ then
+  bad_pool('! ', pool_name, ' doesn''t match; tangle me again (or fix the path).');
+@.TEX.POOL doesn't match@>
+c:=true;
+end
 @y
-  a:=10*a+n-"0";
+@ @<Read the other strings...@>=
+if init_pool(pool_size-string_vacancies) = 0 then
+  get_strings_started:=false;
+get_strings_started:=true;
 @z
 
 @x
@@ -501,11 +540,23 @@ end else begin
 end;
 exit:end;
 
+@ @d native_room(#)==while native_text_size <= native_len+# do begin
+    native_text_size:=native_text_size+128;
+    native_text:=xrealloc(native_text, native_text_size * sizeof(UTF16_code));
+  end
+@d append_native(#)==begin native_text[native_len]:=#; incr(native_len); end
+
 @ @<Glob...@>=
-doing_special: boolean;
+@!doing_special: boolean;
+@!native_text: ^UTF16_code; { buffer for collecting native-font strings }
+@!native_text_size: integer; { size of buffer }
+@!native_len: integer;
+@!save_native_len: integer;
 
 @ @<Set init...@>=
 doing_special:=false;
+native_text_size:=128;
+native_text:=xmalloc(native_text_size * sizeof(UTF16_code));
 @z
 
 @x
@@ -710,8 +761,7 @@ and then a word containing a size field for the node, a font number, a length, a
 Then there is a field containing a C pointer to a glyph info array;
 this and the glyph count are set by |set_native_metrics|.
 Copying and freeing of these nodes needs to take account of this!
-This is followed by |length| bytes, for the actual characters of the string.
-(Yes, we count in bytes, even though what we store there is UTF-16.)
+This is followed by |2*length| bytes, for the actual characters of the string (in UTF-16).
 
 So |native_node_size|, which does not include any space for the actual text, is 6.}
 
@@ -1142,9 +1192,10 @@ else  begin print_esc("scriptscriptfont");
 @d eTeX_state_code=etex_int_base+9 {\eTeX\ state variables}
 @d etex_int_pars=eTeX_state_code+eTeX_states {total number of \eTeX's integer parameters}
 @y
-@d XeTeX_linebreak_locale_code=etex_int_base+9 {string number of locale to use for linebreak locations}
-@d XeTeX_linebreak_penalty_code=etex_int_base+10 {penalty to use at locale-dependent linebreak locations}
-@d eTeX_state_code=etex_int_base+11 {\eTeX\ state variables}
+@d suppress_fontnotfound_error_code=etex_int_base+9 {suppress errors for missing fonts}
+@d XeTeX_linebreak_locale_code=etex_int_base+10 {string number of locale to use for linebreak locations}
+@d XeTeX_linebreak_penalty_code=etex_int_base+11 {penalty to use at locale-dependent linebreak locations}
+@d eTeX_state_code=etex_int_base+12 {\eTeX\ state variables}
 @d etex_int_pars=eTeX_state_code+eTeX_states {total number of \eTeX's integer parameters}
 @z
 
@@ -1162,6 +1213,7 @@ else  begin print_esc("scriptscriptfont");
 @d saving_hyph_codes==int_par(saving_hyph_codes_code)
 @y
 @d saving_hyph_codes==int_par(saving_hyph_codes_code)
+@d suppress_fontnotfound_error==int_par(suppress_fontnotfound_error_code)
 @d XeTeX_linebreak_locale==int_par(XeTeX_linebreak_locale_code)
 @d XeTeX_linebreak_penalty==int_par(XeTeX_linebreak_penalty_code)
 @z
@@ -1805,7 +1857,7 @@ end
 @#
 @d XeTeX_int=eTeX_int+8 {first of \XeTeX\ codes for integers}
 @#
-@d eTeX_dim=XeTeX_int+29 {first of \eTeX\ codes for dimensions}
+@d eTeX_dim=XeTeX_int+30 {first of \eTeX\ codes for dimensions}
  {changed for \XeTeX\ to make room for \XeTeX\ integers}
 @z
 
@@ -2536,6 +2588,7 @@ loop@+begin if (cur_cmd>other_char)or(cur_chr>biggest_char) then
 @!loaded_font_mapping: void_pointer; { used by load_native_font to return mapping, if any }
 @!loaded_font_flags: char; { used by load_native_font to return flags }
 @!loaded_font_letter_space: scaled;
+@!loaded_font_design_size: scaled;
 @!mapped_text: ^UTF16_code; { scratch buffer used while applying font mappings }
 @!xdv_buffer: ^char; { scratch buffer used in generating XDV output }
 @z
@@ -2548,9 +2601,9 @@ pack_file_name(nom,aire,cur_ext);
 if quoted_filename then begin
   { quoted name, so try for a native font }
   g:=load_native_font(u,nom,aire,s);
-  if g=null_font then goto bad_tfm else goto done;
+  if g<>null_font then goto done;
 end;
-{ it was an unquoted name, so try for a TFM file }
+{ it was an unquoted name, or not found as an installed font, so try for a TFM file }
 @<Read and check the font data if file exists;
   |abort| if the \.{TFM} file is
 @z
@@ -2559,16 +2612,15 @@ end;
 bad_tfm: @<Report that the font won't be loaded@>;
 @y
 if g<>null_font then goto done;
-if file_name_quote_char=0 then begin
+if not quoted_filename then begin
   { we failed to find a TFM file, so try for a native font }
   g:=load_native_font(u,nom,aire,s);
   if g<>null_font then goto done
 end;
 bad_tfm:
-if (not file_opened) and (file_name_quote_char<>0) then begin
-  @<Report that native font couldn't be found, and |goto done|@>;
-end;
-@<Report that the font won't be loaded@>;
+if suppress_fontnotfound_error=0 then begin
+  @<Report that the font won't be loaded@>;
+  end;
 @z
 
 @x
@@ -2593,17 +2645,6 @@ else print(" not loadable: Metric (TFM) file or installed font not found");
 @ @<Read and check...@>=
 @<Open |tfm_file| for input@>;
 @y
-@ @<Report that native font couldn't be found, and |goto done|@>=
-start_font_error_message;
-@.Font x=xx not loadable...@>
-print(" not loadable: installed font not found");
-help4("I wasn't able to find this font in the Mac OS,")@/
-("so I will ignore the font specification.")@/
-("You might try inserting a different font spec;")@/
-("e.g., type `I\font<same font id>=<substitute font name>'.");
-error;
-goto done
-
 @ @<Read and check...@>=
 @<Open |tfm_file| for input and |begin|@>;
 @z
@@ -2945,21 +2986,22 @@ while (q <> null) and (not is_char_node(q)) and (type(q) = disc_node) do
 dvi_four(last_bop); last_bop:=page_loc;
 @y
 dvi_four(last_bop); last_bop:=page_loc;
+{ generate a pagesize \special at start of page }
+old_setting:=selector; selector:=new_string;
+print("pdf:pagesize ");
 if (pdf_page_width > 0) and (pdf_page_height > 0) then begin
-  { generate a papersize \special at start of page }
-  old_setting:=selector; selector:=new_string;
-  print("papersize ");
-  if mag=1000 then print_scaled(pdf_page_width)
-  else print_scaled(xn_over_d(pdf_page_width,mag,1000));
-  print("pt"); print(",");
-  if mag=1000 then print_scaled(pdf_page_height)
-  else print_scaled(xn_over_d(pdf_page_height,mag,1000));
+  print("width"); print(" ");
+  print_scaled(pdf_page_width);
+  print("pt"); print(" ");
+  print("height"); print(" ");
+  print_scaled(pdf_page_height);
   print("pt");
-  selector:=old_setting;
-  dvi_out(xxx1); dvi_out(cur_length);
-  for s:=str_start_macro(str_ptr) to pool_ptr-1 do dvi_out(so(str_pool[s]));
-  pool_ptr:=str_start_macro(str_ptr); {erase the string}
-end;
+end else
+  print("default");
+selector:=old_setting;
+dvi_out(xxx1); dvi_out(cur_length);
+for s:=str_start_macro(str_ptr) to pool_ptr-1 do dvi_out(so(str_pool[s]));
+pool_ptr:=str_start_macro(str_ptr); {erase the string}
 @z
 
 @x
@@ -3786,27 +3828,27 @@ hmode+char_num: begin scan_usv_num; cur_chr:=cur_val; goto main_loop;@+end;
 @x
 adjust_space_factor;@/
 @y
-
 { added code for native font support }
 if is_native_font(cur_font) then begin
 	if mode>0 then if language<>clang then fix_language;
 
 	main_h := 0;
 	main_f := cur_font;
-
+	native_len := 0;
+	
 collect_native:
 	adjust_space_factor;
 	if (cur_chr > @"FFFF) then begin
-		str_room(2);
-		append_char((cur_chr - @"10000) div 1024 + @"D800);
-		append_char((cur_chr - @"10000) mod 1024 + @"DC00);
+		native_room(2);
+		append_native((cur_chr - @"10000) div 1024 + @"D800);
+		append_native((cur_chr - @"10000) mod 1024 + @"DC00);
 	end else begin
-		str_room(1);
-		append_char(cur_chr);
+		native_room(1);
+		append_native(cur_chr);
 	end;
 	is_hyph := (cur_chr = hyphen_char[main_f])
 		or (XeTeX_dash_break_en and (cur_chr = @"2014) or (cur_chr = @"2013));
-	if (main_h = 0) and is_hyph then main_h := cur_length;
+	if (main_h = 0) and is_hyph then main_h := native_len;
 
 	{try to collect as many chars as possible in the same font}
 	get_next;
@@ -3820,27 +3862,26 @@ collect_native:
 	end;
 
 	if (font_mapping[main_f] <> 0) then begin
-		main_k := apply_mapping(font_mapping[main_f], address_of(str_pool[str_start_macro(str_ptr)]), cur_length);
-		pool_ptr := str_start_macro(str_ptr); { flush the string, as we'll be using the mapped text instead }
-		str_room(main_k);
+		main_k := apply_mapping(font_mapping[main_f], native_text, native_len);
+		native_len := 0;
+		native_room(main_k);
 		main_h := 0;
 		for main_p := 0 to main_k - 1 do begin
-			append_char(mapped_text[main_p]);
+			append_native(mapped_text[main_p]);
 			if (main_h = 0) and ((mapped_text[main_p] = hyphen_char[main_f])
 				or (XeTeX_dash_break_en and ((mapped_text[main_p] = @"2014) or (mapped_text[main_p] = @"2013)) ) )
-			then main_h := cur_length;
+			then main_h := native_len;
 		end
 	end;
 
 	if tracing_lost_chars > 0 then begin
-		temp_ptr := str_start_macro(str_ptr);
-		main_p := temp_ptr + cur_length;
-		while (temp_ptr < main_p) do begin
-			main_k := str_pool[temp_ptr];
+		temp_ptr := 0;
+		while (temp_ptr < native_len) do begin
+			main_k := native_text[temp_ptr];
 			incr(temp_ptr);
 			if (main_k >= @"D800) and (main_k < @"DC00) then begin
 				main_k := @"10000 + (main_k - @"D800) * 1024;
-				main_k := main_k + str_pool[temp_ptr] - @"DC00;
+				main_k := main_k + native_text[temp_ptr] - @"DC00;
 				incr(temp_ptr);
 			end;
 			if map_char_to_glyph(main_f, main_k) = 0 then
@@ -3848,48 +3889,54 @@ collect_native:
 		end
 	end;
 
-	main_k := cur_length;
+	main_k := native_len;
 	main_pp := tail;
 
 	if mode=hmode then begin
 
 		main_ppp := head;
-		if main_ppp<>main_pp then
-			while (link(main_ppp)<>main_pp) do
-				main_ppp:=link(main_ppp);	{ find node preceding tail }
+		if main_ppp<>main_pp then	{ find node preceding tail, skipping discretionaries }
+			while (link(main_ppp)<>main_pp) do begin
+				if (not is_char_node(main_ppp)) and (type(main_ppp=disc_node)) then begin
+					temp_ptr:=main_ppp;
+					for main_p:=1 to replace_count(temp_ptr) do main_ppp:=link(main_ppp);
+				end;
+				if main_ppp<>main_pp then main_ppp:=link(main_ppp);
+			end;
 
-		temp_ptr := str_start_macro(str_ptr);
+		temp_ptr := 0;
 		repeat
 			if main_h = 0 then main_h := main_k;
 
-			if (not is_char_node(main_pp))
+			if      (not is_char_node(main_pp))
 				and (type(main_pp)=whatsit_node)
 				and (subtype(main_pp)=native_word_node)
 				and (native_font(main_pp)=main_f)
 				and (main_ppp<>main_pp)
-				and type(main_ppp)<>disc_node
+				and (not is_char_node(main_ppp))
+				and (type(main_ppp)<>disc_node)
 			then begin
 
 				{ make a new temp string that contains the concatenated text of |tail| + the current word/fragment }
 				main_k := main_h + native_length(main_pp);
-				str_room(main_k);
+				native_room(main_k);
 				
-				temp_ptr := pool_ptr;
+				save_native_len := native_len;
 				for main_p := 0 to native_length(main_pp) - 1 do
-					append_char(get_native_char(main_pp, main_p));
-				for main_p := str_start_macro(str_ptr) to temp_ptr - 1 do
-					append_char(str_pool[main_p]);
+					append_native(get_native_char(main_pp, main_p));
+				for main_p := 0 to main_h - 1 do
+					append_native(native_text[temp_ptr + main_p]);
 
-				do_locale_linebreaks(temp_ptr, main_k);
+				do_locale_linebreaks(save_native_len, main_k);
 
-				pool_ptr := temp_ptr;	{ discard the temp string }
-				main_k := cur_length - main_h;	{ and set main_k to remaining length of new word }
-				temp_ptr := str_start_macro(str_ptr) + main_h;	{ pointer to remaining fragment }
+				native_len := save_native_len;	{ discard the temp string }
+				main_k := native_len - main_h - temp_ptr;	{ and set main_k to remaining length of new word }
+				temp_ptr := main_h;	{ pointer to remaining fragment }
 
 				main_h := 0;
-				while (main_h < main_k) and (str_pool[temp_ptr + main_h] <> hyphen_char[main_f])
+				while (main_h < main_k) and (native_text[temp_ptr + main_h] <> hyphen_char[main_f])
 					and ( (not XeTeX_dash_break_en)
-						or ((str_pool[temp_ptr + main_h] <> @"2014) and (str_pool[temp_ptr + main_h] <> @"2013)) )
+						or ((native_text[temp_ptr + main_h] <> @"2014) and (native_text[temp_ptr + main_h] <> @"2013)) )
 				do incr(main_h);	{ look for next hyphen or end of text }
 				if (main_h < main_k) then incr(main_h);
 
@@ -3909,9 +3956,9 @@ collect_native:
 				main_k := main_k - main_h;	{ decrement remaining length }
 
 				main_h := 0;
-				while (main_h < main_k) and (str_pool[temp_ptr + main_h] <> hyphen_char[main_f])
+				while (main_h < main_k) and (native_text[temp_ptr + main_h] <> hyphen_char[main_f])
 					and ( (not XeTeX_dash_break_en)
-						or ((str_pool[temp_ptr + main_h] <> @"2014) and (str_pool[temp_ptr + main_h] <> @"2013)) )
+						or ((native_text[temp_ptr + main_h] <> @"2014) and (native_text[temp_ptr + main_h] <> @"2013)) )
 				do incr(main_h);	{ look for next hyphen or end of text }
 				if (main_h < main_k) then incr(main_h);
 
@@ -3920,6 +3967,7 @@ collect_native:
 			if (main_k > 0) or is_hyph then begin
 				tail_append(new_disc);	{ add a break if we aren't at end of text (must be a hyphen),
 											or if last char in original text was a hyphen }
+				main_pp:=tail;
 			end;
 		until main_k = 0;
 		
@@ -3935,7 +3983,7 @@ collect_native:
 				set_native_char(tail, main_p, get_native_char(main_pp, main_p));
 			{ append the new text }
 			for main_p := 0 to main_k - 1 do
-				set_native_char(tail, main_p + native_length(main_pp), str_pool[str_start_macro(str_ptr) + main_p]);
+				set_native_char(tail, main_p + native_length(main_pp), native_text[main_p]);
 			set_native_metrics(tail, XeTeX_use_glyph_metrics);
 
 			{ remove the preceding node from the list }
@@ -3951,12 +3999,11 @@ collect_native:
 			link(main_pp) := new_native_word_node(main_f, main_k);
 			tail := link(main_pp);
 			for main_p := 0 to main_k - 1 do
-				set_native_char(tail, main_p, str_pool[str_start_macro(str_ptr) + main_p]);
+				set_native_char(tail, main_p, native_text[main_p]);
 			set_native_metrics(tail, XeTeX_use_glyph_metrics);
 		end
 	end;
 	
-	pool_ptr := str_start_macro(str_ptr);
 	goto reswitch;
 end;
 { End of added code for native fonts }
@@ -5004,16 +5051,39 @@ end else
 
 @x
 @ @d adv_past(#)==@+if subtype(#)=language_node then
-    begin cur_lang:=what_lang(#); l_hyf:=what_lhm(#); r_hyf:=what_rhm(#);@+end
+    begin cur_lang:=what_lang(#); l_hyf:=what_lhm(#); r_hyf:=what_rhm(#);
+    set_hyph_index;
+    end
+
+@<Advance \(p)past a whatsit node in the \(l)|line_break| loop@>=@+
+adv_past(cur_p)
 @y
-@ @d adv_past(#)==@+if subtype(#)=language_node then
-    begin cur_lang:=what_lang(#); l_hyf:=what_lhm(#); r_hyf:=what_rhm(#);@+end
+@ @d adv_past_linebreak(#)==@+if subtype(#)=language_node then
+    begin cur_lang:=what_lang(#); l_hyf:=what_lhm(#); r_hyf:=what_rhm(#);
+    set_hyph_index;
+    end
   else if (subtype(#)=native_word_node)
   or (subtype(#)=glyph_node)
   or (subtype(#)=pic_node)
   or (subtype(#)=pdf_node)
   then
     begin act_width:=act_width+width(#); end
+
+@<Advance \(p)past a whatsit node in the \(l)|line_break| loop@>=@+
+adv_past_linebreak(cur_p)
+@z
+
+@x
+@ @<Advance \(p)past a whatsit node in the \(p)pre-hyphenation loop@>=@+
+adv_past(s)
+@y
+@ @d adv_past_prehyph(#)==@+if subtype(#)=language_node then
+    begin cur_lang:=what_lang(#); l_hyf:=what_lhm(#); r_hyf:=what_rhm(#);
+    set_hyph_index;
+    end
+
+@<Advance \(p)past a whatsit node in the \(p)pre-hyphenation loop@>=@+
+adv_past_prehyph(s)
 @z
 
 @x
@@ -5565,6 +5635,8 @@ end
 @d pdf_last_x_pos_code        = XeTeX_int+27
 @d pdf_last_y_pos_code        = XeTeX_int+28
 
+@d XeTeX_pdf_page_count_code  = XeTeX_int+29
+
 { NB: must update eTeX_dim when items are added here! }
 @z
 
@@ -5619,6 +5691,8 @@ primitive("XeTeXlastfontchar", last_item, XeTeX_last_char_code);
 
 primitive("pdflastxpos",last_item,pdf_last_x_pos_code);
 primitive("pdflastypos",last_item,pdf_last_y_pos_code);
+
+primitive("XeTeXpdfpagecount",last_item,XeTeX_pdf_page_count_code);
 @z
 
 @x
@@ -5662,6 +5736,8 @@ XeTeX_last_char_code: print_esc("XeTeXlastfontchar");
 
   pdf_last_x_pos_code:  print_esc("pdflastxpos");
   pdf_last_y_pos_code:  print_esc("pdflastypos");
+
+XeTeX_pdf_page_count_code: print_esc("XeTeXpdfpagecount");
 @z
 
 @x
@@ -5835,6 +5911,12 @@ XeTeX_first_char_code,XeTeX_last_char_code:
   pdf_last_x_pos_code:  cur_val := pdf_last_x_pos;
   pdf_last_y_pos_code:  cur_val := pdf_last_y_pos;
 
+XeTeX_pdf_page_count_code:
+  begin
+    scan_and_pack_name;
+    cur_val:=count_pdf_file_pages;
+  end;
+
 @ Slip in an extra procedure here and there....
 
 @<Error hand...@>=
@@ -5984,6 +6066,7 @@ font_char_ic_code: begin scan_font_ident; q:=cur_val; scan_usv_num;
 @x
 eTeX_state_code+TeXXeT_code:print_esc("TeXXeTstate");
 @y
+suppress_fontnotfound_error_code:print_esc("suppressfontnotfounderror");
 eTeX_state_code+TeXXeT_code:print_esc("TeXXeTstate");
 eTeX_state_code+XeTeX_dash_break_code:print_esc("XeTeXdashbreakstate");
 @z
@@ -6255,10 +6338,18 @@ begin
 
 	load_native_font := null_font;
 
-	if (s < 0) then actual_size := -s * unity div 100 else actual_size := s;
-	font_engine := find_native_font(name_of_file + 1, actual_size);
+	font_engine := find_native_font(name_of_file + 1, s);
 	if font_engine = 0 then goto done;
 	
+	if s>=0 then
+		actual_size := s
+	else begin
+		if (s <> -1000) then
+			actual_size := xn_over_d(loaded_font_design_size,-s,1000)
+		else
+			actual_size := loaded_font_design_size;
+	end;
+
 	{ look again to see if the font is already loaded, now that we know its canonical name }
 	str_room(name_length);
 	for k := 1 to name_length do
@@ -6289,7 +6380,7 @@ begin
 	font_check[font_ptr].b2 := 0;
 	font_check[font_ptr].b3 := 0;
 	font_glue[font_ptr] := null;
-	font_dsize[font_ptr] := 10 * unity;
+	font_dsize[font_ptr] := loaded_font_design_size;
 	font_size[font_ptr] := actual_size;
 
 	if (native_font_type_flag = aat_font_flag) then begin
@@ -6344,7 +6435,7 @@ begin
 done:
 end;
 
-procedure do_locale_linebreaks(s: pointer; len: integer);
+procedure do_locale_linebreaks(s: integer; len: integer);
 var
 	offs, prevOffs, i: integer;
 	use_penalty, use_skip: boolean;
@@ -6353,12 +6444,12 @@ begin
 		link(tail) := new_native_word_node(main_f, len);
 		tail := link(tail);
 		for i := 0 to len - 1 do
-			set_native_char(tail, i, str_pool[s + i]);
+			set_native_char(tail, i, native_text[s + i]);
 		set_native_metrics(tail, XeTeX_use_glyph_metrics);
 	end else begin
 		use_skip := XeTeX_linebreak_skip <> zero_glue;
 		use_penalty := XeTeX_linebreak_penalty <> 0 or not use_skip;
-		linebreak_start(XeTeX_linebreak_locale, address_of(str_pool[s]), len);
+		linebreak_start(XeTeX_linebreak_locale, native_text + s, len);
 		offs := 0;
 		repeat
 			prevOffs := offs;
@@ -6373,7 +6464,7 @@ begin
 				link(tail) := new_native_word_node(main_f, offs - prevOffs);
 				tail := link(tail);
 				for i := prevOffs to offs - 1 do
-					set_native_char(tail, i - prevOffs, str_pool[s + i]);
+					set_native_char(tail, i - prevOffs, native_text[s + i]);
 				set_native_metrics(tail, XeTeX_use_glyph_metrics);
 			end;
 		until offs < 0;

@@ -1953,22 +1953,65 @@ compare_paths P2C(const_string, p1, const_string, p2)
   return ret;
 }
 
-#ifdef XeTeX
-#define strstartar strstart
-#endif
+#ifdef XeTeX /* the string pool is UTF-16 but we want a UTF-8 string */
+
+string
+gettexstring P1C(strnumber, s)
+{
+  unsigned bytesToWrite = 0;
+  poolpointer len, i, j;
+  string name;
+  len = strstart[s + 1 - 65536L] - strstart[s - 65536L];
+  name = (string)xmalloc(len * 3 + 1); /* max UTF16->UTF8 expansion (code units, not bytes) */
+  for (i = 0, j = 0; i < len; i++) {
+    unsigned c = strpool[i + strstart[s - 65536L]];
+    if (c >= 0xD800 && c <= 0xDBFF) {
+      unsigned lo = strpool[++i + strstart[s - 65536L]];
+      if (lo >= 0xDC00 && lo <= 0xDFFF)
+        c = (c - 0xD800) * 0x0400 + lo - 0xDC00;
+      else
+        c = 0xFFFD;
+    }
+    if (c < 0x80)
+      bytesToWrite = 1;
+    else if (c < 0x800)
+      bytesToWrite = 2;
+    else if (c < 0x10000)
+      bytesToWrite = 3;
+    else if (c < 0x110000)
+      bytesToWrite = 4;
+    else {
+      bytesToWrite = 3;
+      c = 0xFFFD;
+    }
+
+    j += bytesToWrite;
+    switch (bytesToWrite) { /* note: everything falls through. */
+      case 4: name[--j] = ((c | 0x80) & 0xBF); c >>= 6;
+      case 3: name[--j] = ((c | 0x80) & 0xBF); c >>= 6;
+      case 2: name[--j] = ((c | 0x80) & 0xBF); c >>= 6;
+      case 1: name[--j] =  (c | firstByteMark[bytesToWrite]);
+    }
+    j += bytesToWrite;
+  }
+  name[j] = 0;
+  return name;
+}
+
+#else
 
 string
 gettexstring P1C(strnumber, s)
 {
   poolpointer len;
   string name;
-#if !defined(Omega) && !defined(eOmega) && !defined(Aleph) && !defined(XeTeX)
+#if !defined(Omega) && !defined(eOmega) && !defined(Aleph)
   len = strstart[s + 1] - strstart[s];
 #else
   len = strstartar[s + 1 - 65536L] - strstartar[s - 65536L];
 #endif
   name = (string)xmalloc (len + 1);
-#if !defined(Omega) && !defined(eOmega) && !defined(Aleph) && !defined(XeTeX)
+#if !defined(Omega) && !defined(eOmega) && !defined(Aleph)
   strncpy (name, (string)&strpool[strstart[s]], len);
 #else
   {
@@ -1981,9 +2024,7 @@ gettexstring P1C(strnumber, s)
   return name;
 }
 
-#ifdef XeTeX
-#undef strstartar
-#endif
+#endif /* not XeTeX */
 
 boolean
 isnewsource P2C(strnumber, srcfilename, int, lineno)
