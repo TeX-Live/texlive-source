@@ -1,5 +1,5 @@
 
-/* $Id: llualib.c 1013 2008-02-14 00:09:02Z oneiros $ */
+/* $Id: llualib.c 1169 2008-04-15 14:57:56Z oneiros $ */
 
 #include "luatex-api.h"
 #include <ptexlib.h>
@@ -49,17 +49,17 @@ void undump_luac_registers (void) {
   if (luabytecode_max>=0) {
 	i = (luabytecode_max+1);
 	if ((int)(UINT_MAX32/sizeof(bytecode)+1)<=i) {
-	  lua_fatal_error("Corrupt format file");
+	  lua_fatal_error(maketexstring("Corrupt format file"));
 	}
     lua_bytecode_registers = xmalloc(i*sizeof(bytecode));
 	luabytecode_bytes  = i*sizeof(bytecode);
-    for (i=0;i<=luabytecode_max;i++) {
+    for (i=0;i<=(unsigned)luabytecode_max;i++) {
       lua_bytecode_registers[i].done = 0;
       lua_bytecode_registers[i].size = 0;
       lua_bytecode_registers[i].buf = NULL;
     }
     undump_int(n);
-    for (i=0;i<n;i++) {
+    for (i=0;i<(unsigned)n;i++) {
       undump_int(k);
       undump_int(b.size);
       b.buf=xmalloc(b.size);
@@ -107,7 +107,7 @@ bytecode_register_shadow_get (lua_State* L, int k){
 
 int writer(lua_State* L, const void* b, size_t size, void* B) {
   bytecode* buf = (bytecode*)B;
-  if (buf->size + size > buf->alloc) {
+  if ((int)(buf->size + size) > buf->alloc) {
     buf->buf   = xrealloc(buf->buf,buf->alloc+size+LOAD_BUF_SIZE);
     buf->alloc = buf->alloc+size+LOAD_BUF_SIZE;
   }
@@ -176,7 +176,7 @@ int set_bytecode (lua_State *L) {
 	} else {
 	  luabytecode_bytes += sizeof(bytecode)*(k+1-luabytecode_max);
 	}
-    for (i=(luabytecode_max+1);i<=k;i++) {
+    for (i=(luabytecode_max+1);i<=(unsigned)k;i++) {
       lua_bytecode_registers[i].buf=NULL;
       lua_bytecode_registers[i].size=0;
       lua_bytecode_registers[i].done=0;

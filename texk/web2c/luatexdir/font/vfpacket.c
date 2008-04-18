@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with pdfTeX; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: vfpacket.c 1013 2008-02-14 00:09:02Z oneiros $
+$Id: vfpacket.c 1169 2008-04-15 14:57:56Z oneiros $
 */
 
 #include "ptexlib.h"
@@ -102,7 +102,7 @@ vf_packet_bytes (charinfo *co) {
     case packet_nop_code:
       break;
     default: 
-      pdf_error("vf", "invalid DVI command");     
+      pdf_error(maketexstring("vf"), maketexstring("invalid DVI command"));     
     }
   };
   return (cur_packet_byte +1);
@@ -211,7 +211,7 @@ do_vf_packet (internal_font_number vf_f, integer c) {
     case packet_nop_code:
       break;
     default: 
-      pdf_error("vf", "invalid DVI command");     
+      pdf_error(maketexstring("vf"), maketexstring("invalid DVI command"));     
     }
   };
   cur_h = save_cur_h;
@@ -268,7 +268,7 @@ integer *packet_local_fonts(internal_font_number f, integer *num) {
 	    (void)do_packet_byte();
 	  break;
 	default: 
-	  pdf_error("vf", "invalid DVI command");     
+	  pdf_error(maketexstring("vf"), maketexstring("invalid DVI command"));     
 	}
       }
     }
@@ -334,7 +334,7 @@ replace_packet_fonts(internal_font_number f, integer *old_fontid, integer *new_f
 	    (void)do_packet_byte();
 	  break;
 	default: 
-	  pdf_error("vf", "invalid DVI command");     
+	  pdf_error(maketexstring("vf"), maketexstring("invalid DVI command"));     
 	}
       }
     }

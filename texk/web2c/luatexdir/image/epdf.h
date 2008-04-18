@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with pdfTeX; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: epdf.h 1031 2008-02-14 23:03:20Z hhenkel $
+$Id: epdf.h 1125 2008-03-25 19:36:52Z hhenkel $
 */
 
 extern "C" {
@@ -45,6 +45,7 @@ extern "C" {
 #include <web2c/luatexdir/ptexmac.h>
 #include "openbsd-compat.h"
 #include "image.h"
+#include "../avlstuff.h"
 
 /* #-define pdfbufsize      pdfbufmax */
 
@@ -78,7 +79,6 @@ extern "C" {
     extern void read_pdf_info(image_dict *, integer, integer);
     extern void embed_whole_font(struct fd_entry *);
     extern void epdf_check_mem(void);
-    extern void epdf_delete(image_dict *);
     extern void epdf_free(void);
     __attribute__ ((format(printf, 1, 2)))
     extern void pdf_printf(const char *fmt, ...);
@@ -108,9 +108,6 @@ extern "C" {
 
 /* write_enc.c */
     extern void epdf_write_enc(char **, integer);
-
-/* write_enc.c */
-    extern pdf_img_struct *new_pdf_img_struct(void);
 
 /* utils.c */
     extern char *convertStringToPDFString(char *in, int len);

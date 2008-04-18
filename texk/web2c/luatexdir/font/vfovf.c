@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with LuaTeX; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: vfovf.c 1022 2008-02-14 11:49:30Z taco $
+$Id: vfovf.c 1169 2008-04-15 14:57:56Z oneiros $
 */
 
 #include "ptexlib.h"
@@ -167,7 +167,7 @@ pdf_check_vf_cur_val (void) {
  internal_font_number f;
  f = cur_val;
  if (font_type(f) == virtual_font_type)
-   pdf_error("font", "command cannot be used with virtual font");
+   pdf_error(maketexstring("font"), maketexstring("command cannot be used with virtual font"));
 }
 
 static void

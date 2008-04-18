@@ -1,4 +1,4 @@
-/* $Id: lfontlib.c 1013 2008-02-14 00:09:02Z oneiros $ */
+/* $Id: lfontlib.c 1171 2008-04-16 13:56:53Z taco $ */
 
 #include "luatex-api.h"
 #include <ptexlib.h>
@@ -181,6 +181,16 @@ deffont (lua_State *L) {
   return 0; /* not reached */
 }
 
+/* this returns the expected (!) next fontid. */
+static int 
+nextfontid (lua_State *L) {
+  int i = new_font();
+  lua_pushnumber(L,i);
+  delete_font(i);
+  return 1;
+}
+
+
 static int 
 getfont (lua_State *L) {
   int i;
@@ -201,6 +211,7 @@ static const struct luaL_reg fontlib [] = {
   {"getfont",       getfont},
   {"setfont",       setfont},
   {"define",        deffont},
+  {"nextid",        nextfontid},
   {"frozen",        frozenfont},
   {NULL, NULL}  /* sentinel */
 };

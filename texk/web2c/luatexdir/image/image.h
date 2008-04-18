@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with pdfTeX; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: image.h 1100 2008-03-09 13:40:48Z hhenkel $
+$Id: image.h 1125 2008-03-25 19:36:52Z hhenkel $
 */
 
 #ifndef IMAGE_H
@@ -41,14 +41,6 @@ extern integer zround(double);  /* from zround.c */
 #  define scaled          integer
 
 /**********************************************************************/
-
-typedef struct {
-    float width;
-    float height;
-    float orig_x;
-    float orig_y;
-    void *doc;
-} pdf_img_struct;
 
 typedef struct {
     png_structp png_ptr;
@@ -89,6 +81,8 @@ typedef struct {
     integer index;              /* /Im1, /Im2, ... */
     integer x_size;             /* dimensions in pixel counts as in JPG/PNG/JBIG2 file */
     integer y_size;
+    integer x_orig;             /* origin in sp for PDF files */
+    integer y_orig;
     integer x_res;              /* pixel resolution as in JPG/PNG/JBIG2 file */
     integer y_res;
     integer colorspace;         /* number of /ColorSpace object */
@@ -105,7 +99,6 @@ typedef struct {
     pdfboxspec_e page_box_spec; /* PDF page box spec.: media/crop/bleed/trim/art */
     dict_state state;
     union {
-        pdf_img_struct *pdf;
         png_img_struct *png;
         jpg_img_struct *jpg;
         jb2_img_struct *jb2;
@@ -116,6 +109,8 @@ typedef struct {
 #  define img_index(N)          ((N)->index)
 #  define img_xsize(N)          ((N)->x_size)
 #  define img_ysize(N)          ((N)->y_size)
+#  define img_xorig(N)          ((N)->x_orig)
+#  define img_yorig(N)          ((N)->y_orig)
 #  define img_xres(N)           ((N)->x_res)
 #  define img_yres(N)           ((N)->y_res)
 #  define img_colorspace(N)     ((N)->colorspace)
@@ -131,13 +126,6 @@ typedef struct {
 #  define img_colordepth(N)     ((N)->color_depth)
 #  define img_pagebox(N)        ((N)->page_box_spec)
 #  define img_state(N)          ((N)->state)
-
-#  define img_pdf_ptr(N)        ((N)->img_struct.pdf)
-#  define img_pdf_width(N)      ((N)->img_struct.pdf->width)
-#  define img_pdf_height(N)     ((N)->img_struct.pdf->height)
-#  define img_pdf_orig_x(N)     ((N)->img_struct.pdf->orig_x)
-#  define img_pdf_orig_y(N)     ((N)->img_struct.pdf->orig_y)
-#  define img_pdf_doc(N)        ((N)->img_struct.pdf->doc)
 
 #  define img_png_ptr(N)        ((N)->img_struct.png)
 #  define img_png_png_ptr(N)    ((N)->img_struct.png->png_ptr)
@@ -218,6 +206,6 @@ void write_epdf(image_dict *);
 
 /* pdftoepdf.cc */
 
-void epdf_delete(image_dict * idict);
+void unrefPdfDocument(char *);
 
 #endif

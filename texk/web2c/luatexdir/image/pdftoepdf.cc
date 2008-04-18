@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with pdfTeX; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: pdftoepdf.cc 1058 2008-02-19 21:13:58Z hhenkel $
+$Id: pdftoepdf.cc 1129 2008-03-27 19:43:44Z hhenkel $
 */
 
 #include <stdlib.h>
@@ -79,7 +79,8 @@ $Id: pdftoepdf.cc 1058 2008-02-19 21:13:58Z hhenkel $
 class PdfObject {
   public:
     PdfObject() {               // nothing
-    } ~PdfObject() {
+    }
+    ~PdfObject() {
         iObject.free();
     }
     Object *operator->() {
@@ -101,20 +102,16 @@ class PdfObject {
 // appended into a linked list. Duplicates are checked and removed from the
 // list of indirect objects during appending.
 
-enum InObjType {
-    objFont,
-    objFontDesc,
-    objOther
-};
+enum InObjType { objFont, objFontDesc, objOther };
 
 struct InObj {
     Ref ref;                    // ref in original PDF
     InObjType type;             // object type
-    InObj *next;                // next entry in list of indirect objects
     integer num;                // new object number in output PDF
     fd_entry *fd;               // pointer to /FontDescriptor object structure
     integer enc_objnum;         // Encoding for objFont
     int written;                // has it been written to output PDF?
+    InObj *next;                // next entry in list of indirect objects
 };
 
 struct UsedEncoding {
@@ -123,88 +120,103 @@ struct UsedEncoding {
     UsedEncoding *next;
 };
 
-static InObj *inObjList;
+static XRef *xref = NULL;
+static InObj *inObjList = NULL;
 static UsedEncoding *encodingList;
 static GBool isInit = gFalse;
 
-// --------------------------------------------------------------------
-// Maintain list of open embedded PDF files
-// --------------------------------------------------------------------
+//**********************************************************************
+// Maintain AVL tree of open embedded PDF files
+
+static avl_table *PdfDocumentTree = NULL;
 
 struct PdfDocument {
-    char *file_name;
+    char *file_path;            // full file name including path
     PDFDoc *doc;
     XRef *xref;
     InObj *inObjList;
-    int occurences;             // number of references to the document; the doc can be
-    // deleted when this is negative
-    PdfDocument *next;
+    int occurences;             // number of references to the PdfDocument; it can be deleted when occurences == 0
 };
 
-static PdfDocument *pdfDocuments = 0;
+/* AVL sort PdfDocument into PdfDocumentTree by file_path */
 
-static XRef *xref = 0;
-
-// Returns pointer to PdfDocument record for PDF file.
-// Creates a new record if it doesn't exist yet.
-// xref is made current for the document.
-
-static PdfDocument *find_add_document(char *file_name)
+static int CompPdfDocument(const void *pa, const void *pb, void *p)
 {
-    PdfDocument *p = pdfDocuments;
-    while (p && strcmp(p->file_name, file_name) != 0)
-        p = p->next;
-    if (p) {
-        xref = p->xref;
-        (p->occurences)++;
-#ifdef DEBUG
-        fprintf(stderr, "\npdfTeX Debug: Incrementing %s (%d)\n", p->file_name,
-                p->occurences);
-#endif
-        return p;
-    }
-    p = new PdfDocument;
-    p->file_name = xstrdup(file_name);
-    p->xref = xref = 0;
-    p->occurences = 0;
-#ifdef DEBUG
-    fprintf(stderr, "\npdfTeX Debug: Creating %s (%d)\n", p->file_name,
-            p->occurences);
-#endif
-    GString *docName = new GString(p->file_name);
-    p->doc = new PDFDoc(docName);       // takes ownership of docName
-    if (!p->doc->isOk() || !p->doc->okToPrint()) {
-        pdftex_fail("xpdf: reading PDF image failed");
-    }
-    p->inObjList = 0;
-    p->next = pdfDocuments;
-    pdfDocuments = p;
-    return p;
+    return strcmp(((const PdfDocument *) pa)->file_path,
+                  ((const PdfDocument *) pb)->file_path);
 }
 
-// Deallocate a PdfDocument with all its resources
+// Returns pointer to PdfDocument structure for PDF file.
 
-static void delete_document(PdfDocument * pdf_doc)
+static PdfDocument *findPdfDocument(char *file_path)
 {
-    PdfDocument **p = &pdfDocuments;
-    while (*p && *p != pdf_doc)
-        p = &((*p)->next);
-    // should not happen:
-    if (!*p)
-        return;
-    // unlink from list
-    *p = pdf_doc->next;
-    // free pdf_doc's resources
-    InObj *r, *n;
-    for (r = pdf_doc->inObjList; r != 0; r = n) {
-        n = r->next;
-        delete r;
-    }
-    xref = pdf_doc->xref;
-    delete pdf_doc->doc;
-    xfree(pdf_doc->file_name);
-    delete pdf_doc;
+    PdfDocument *pdf_doc, tmp;
+    assert(file_path != NULL);
+    if (PdfDocumentTree == NULL)
+        PdfDocumentTree = avl_create(CompPdfDocument, NULL, &avl_xallocator);
+    assert(PdfDocumentTree != NULL);
+    tmp.file_path = file_path;
+    pdf_doc = (PdfDocument *) avl_find(PdfDocumentTree, &tmp);
+    return pdf_doc;
 }
+
+// Returns pointer to PdfDocument structure for PDF file.
+// Creates a new structure if it doesn't exist yet.
+
+static PdfDocument *refPdfDocument(char *file_path)
+{
+    PdfDocument *pdf_doc = findPdfDocument(file_path);
+    if (pdf_doc == NULL) {
+        pdf_doc = new PdfDocument;
+        pdf_doc->file_path = xstrdup(file_path);
+        void **aa = avl_probe(PdfDocumentTree, pdf_doc);
+        assert(aa != NULL);
+        GString *docName = new GString(pdf_doc->file_path);
+        pdf_doc->doc = new PDFDoc(docName);     // takes ownership of docName
+        if (!pdf_doc->doc->isOk() || !pdf_doc->doc->okToPrint())
+            pdftex_fail("xpdf: reading PDF image failed");
+        pdf_doc->xref = NULL;
+        pdf_doc->inObjList = NULL;
+        pdf_doc->occurences = 0;        // 0 = unreferenced
+#ifdef DEBUG
+        fprintf(stderr, "\nluatex Debug: Creating %s (%d)\n",
+                pdf_doc->file_path, pdf_doc->occurences);
+#endif
+    }
+    pdf_doc->occurences++;
+#ifdef DEBUG
+    fprintf(stderr, "\nluatex Debug: Incrementing %s (%d)\n",
+            pdf_doc->file_path, pdf_doc->occurences);
+#endif
+    return pdf_doc;
+}
+
+static void deletePdfDocument(PdfDocument *);
+
+// Called when an image has been written and its resources in image_tab are
+// freed and it's not referenced anymore.
+
+void unrefPdfDocument(char *file_path)
+{
+    PdfDocument *pdf_doc = findPdfDocument(file_path);
+    assert(pdf_doc != NULL);
+    assert(pdf_doc->occurences > 0);    // aim for point landing
+    pdf_doc->occurences--;
+#ifdef DEBUG
+    fprintf(stderr, "\nluatex Debug: Decrementing %s (%d)\n",
+            pdf_doc->file_path, pdf_doc->occurences);
+#endif
+    if (pdf_doc->occurences == 0) {
+#ifdef DEBUG
+        fprintf(stderr, "\nluatex Debug: Deleting %s\n", pdf_doc->file_path);
+#endif
+        void *a = avl_delete(PdfDocumentTree, pdf_doc);
+        assert((PdfDocument *) a == pdf_doc);
+        deletePdfDocument(pdf_doc);
+    }
+}
+
+//**********************************************************************
 
 // Replacement for
 //      Object *initDict(Dict *dict1){ initObj(objDict); dict = dict1; return this; }
@@ -217,8 +229,6 @@ static void initDictFromDict(PdfObject & obj, Dict * dict)
         obj->dictAdd(copyString(dict->getKey(i)), dict->getValNF(i, &obj1));
     }
 }
-
-// --------------------------------------------------------------------
 
 static int addEncoding(GfxFont * gfont)
 {
@@ -241,7 +251,7 @@ static int addEncoding(GfxFont * gfont)
         addInObj(objFontDesc, ref, fd, 0)
 
 #define addOther(ref) \
-        addInObj(objOther, ref, 0, 0)
+        addInObj(objOther, ref, NULL, 0)
 
 static int addInObj(InObjType type, Ref ref, fd_entry * fd, integer e)
 {
@@ -250,14 +260,14 @@ static int addInObj(InObjType type, Ref ref, fd_entry * fd, integer e)
         pdftex_fail("PDF inclusion: invalid reference");
     n->ref = ref;
     n->type = type;
-    n->next = 0;
+    n->next = NULL;
     n->fd = fd;
     n->enc_objnum = e;
     n->written = 0;
-    if (inObjList == 0)
+    if (inObjList == NULL)
         inObjList = n;
     else {
-        for (p = inObjList; p != 0; p = p->next) {
+        for (p = inObjList; p != NULL; p = p->next) {
             if (p->ref.num == ref.num && p->ref.gen == ref.gen) {
                 delete n;
                 return p->num;
@@ -266,7 +276,7 @@ static int addInObj(InObjType type, Ref ref, fd_entry * fd, integer e)
         }
         // it is important to add new objects at the end of the list,
         // because new objects are being added while the list is being
-        // written out.
+        // written out by writeRefs().
         q->next = n;
     }
     if (type == objFontDesc)
@@ -275,8 +285,6 @@ static int addInObj(InObjType type, Ref ref, fd_entry * fd, integer e)
         n->num = pdf_new_objnum();
     return n->num;
 }
-
-static void copyObject(Object *);
 
 static void copyName(char *s)
 {
@@ -289,6 +297,8 @@ static void copyName(char *s)
             pdf_printf("#%.2X", *s & 0xFF);
     }
 }
+
+static void copyObject(Object *);
 
 static void copyDictEntry(Object * obj, int i)
 {
@@ -502,7 +512,7 @@ static char *convertNumToPDF(double n)
                 fval /= 10;
             }
         } else
-            buf[bindex++] = 0;
+            buf[bindex++] = '\0';
     }
     return (char *) buf;
 }
@@ -591,7 +601,7 @@ static void copyObject(Object * obj)
 static void writeRefs()
 {
     InObj *r;
-    for (r = inObjList; r != 0; r = r->next) {
+    for (r = inObjList; r != NULL; r = r->next) {
         if (!r->written) {
             Object obj1;
             r->written = 1;
@@ -621,20 +631,20 @@ static void writeEncodings()
     UsedEncoding *r, *n;
     char *glyphNames[256], *s;
     int i;
-    for (r = encodingList; r != 0; r = r->next) {
+    for (r = encodingList; r != NULL; r = r->next) {
         for (i = 0; i < 256; i++) {
             if (r->font->isCIDFont()) {
                 pdftex_warn
                     ("PDF inclusion: CID font included, encoding maybe wrong");
             }
-            if ((s = ((Gfx8BitFont *) r->font)->getCharName(i)) != 0)
+            if ((s = ((Gfx8BitFont *) r->font)->getCharName(i)) != NULL)
                 glyphNames[i] = s;
             else
                 glyphNames[i] = notdef;
         }
         epdf_write_enc(glyphNames, r->enc_objnum);
     }
-    for (r = encodingList; r != 0; r = n) {
+    for (r = encodingList; r != NULL; r = n) {
         n = r->next;
         delete r->font;
         delete r;
@@ -661,7 +671,6 @@ static PDFRectangle *get_pagebox(Page * page, integer pagebox_spec)
     return page->getMediaBox(); // to make the compiler happy
 }
 
-
 // Reads various information about the PDF and sets it up for later inclusion.
 // This will fail if the PDF version of the PDF is higher than
 // minor_pdf_version_wanted or page_name is given and can not be found.
@@ -676,28 +685,25 @@ read_pdf_info(image_dict * idict, integer minor_pdf_version_wanted,
     Page *page;
     int rotate;
     PDFRectangle *pagebox;
-    float pdf_version_found, pdf_version_wanted;
+    float pdf_version_found, pdf_version_wanted, pdf_width, pdf_height,
+        pdf_xorig, pdf_yorig;
     assert(idict != NULL);
     assert(img_type(idict) == IMAGE_TYPE_PDF);
-    assert(img_pdf_ptr(idict) == NULL);
-    img_pdf_ptr(idict) = new_pdf_img_struct();
     // initialize
-    if (!isInit) {
+    if (isInit == gFalse) {
         globalParams = new GlobalParams();
         globalParams->setErrQuiet(gFalse);
         isInit = gTrue;
     }
     // open PDF file
-    pdf_doc = find_add_document(img_filepath(idict));
-    img_pdf_doc(idict) = pdf_doc;
-
+    pdf_doc = refPdfDocument(img_filepath(idict));
     // check PDF version
     // this works only for PDF 1.x -- but since any versions of PDF newer
     // than 1.x will not be backwards compatible to PDF 1.x, pdfTeX will
     // then have to changed drastically anyway.
     pdf_version_found = pdf_doc->doc->getPDFVersion();
     pdf_version_wanted = 1 + (minor_pdf_version_wanted * 0.1);
-    if (pdf_version_found > pdf_version_wanted) {
+    if (pdf_version_found > pdf_version_wanted + 0.01) {
         char msg[] =
             "PDF inclusion: found PDF version <%.1f>, but at most version <%.1f> allowed";
         if (pdf_inclusion_errorlevel > 0) {
@@ -711,7 +717,7 @@ read_pdf_info(image_dict * idict, integer minor_pdf_version_wanted,
         // get page by name
         GString name(img_pagename(idict));
         LinkDest *link = pdf_doc->doc->findDest(&name);
-        if (link == 0 || !link->isOk())
+        if (link == NULL || !link->isOk())
             pdftex_fail("PDF inclusion: invalid destination <%s>",
                         img_pagename(idict));
         Ref ref = link->getPageRef();
@@ -734,53 +740,50 @@ read_pdf_info(image_dict * idict, integer minor_pdf_version_wanted,
     // get the pagebox (media, crop...) to use.
     pagebox = get_pagebox(page, img_pagebox(idict));
     if (pagebox->x2 > pagebox->x1) {
-        img_pdf_orig_x(idict) = pagebox->x1;
-        img_pdf_width(idict) = pagebox->x2 - pagebox->x1;
+        pdf_xorig = pagebox->x1;
+        pdf_width = pagebox->x2 - pagebox->x1;
     } else {
-        img_pdf_orig_x(idict) = pagebox->x2;
-        img_pdf_width(idict) = pagebox->x1 - pagebox->x2;
+        pdf_xorig = pagebox->x2;
+        pdf_width = pagebox->x1 - pagebox->x2;
     }
     if (pagebox->y2 > pagebox->y1) {
-        img_pdf_orig_y(idict) = pagebox->y1;
-        img_pdf_height(idict) = pagebox->y2 - pagebox->y1;
+        pdf_yorig = pagebox->y1;
+        pdf_height = pagebox->y2 - pagebox->y1;
     } else {
-        img_pdf_orig_y(idict) = pagebox->y2;
-        img_pdf_height(idict) = pagebox->y1 - pagebox->y2;
+        pdf_yorig = pagebox->y2;
+        pdf_height = pagebox->y1 - pagebox->y2;
     }
 
     rotate = page->getRotate();
     // handle page rotation and adjust dimens as needed
     if (rotate != 0) {
-        if (rotate % 90 == 0) {
-            // handle only the simple case: multiple of 90s.
-            // these are the only values allowed according to the
-            // reference (v1.3, p. 78).
-            // 180 needs no special treatment here
-            register float f;
-            switch (rotate) {
-            case 90:
-                f = img_pdf_height(idict);
-                img_pdf_height(idict) = img_pdf_width(idict);
-                img_pdf_width(idict) = f;
-                break;
-            case 270:
-                f = img_pdf_height(idict);
-                img_pdf_height(idict) = img_pdf_width(idict);
-                img_pdf_width(idict) = f;
-                break;
-            }
+        // handle only the simple case: multiple of 90s.
+        // these are the only values allowed according to the
+        // reference (v1.3, p. 78).
+        // 180 needs no special treatment here
+        register float f;
+        switch (rotate % 360) {
+        case 90:
+        case 270:
+            f = pdf_height;
+            pdf_height = pdf_width;
+            pdf_width = f;
+            break;
+        default:;
         }
     }
     pdf_doc->xref = pdf_doc->doc->getXRef();
-    img_xsize(idict) = bp2int(img_pdf_width(idict));
-    img_ysize(idict) = bp2int(img_pdf_height(idict));
+    img_xsize(idict) = bp2int(pdf_width);
+    img_ysize(idict) = bp2int(pdf_height);
+    img_xorig(idict) = bp2int(pdf_xorig);
+    img_yorig(idict) = bp2int(pdf_yorig);
 }
 
-// writes the current epf_doc.
+// Writes the current epf_doc.
 // Here the included PDF is copied, so most errors that can happen during PDF
 // inclusion will arise here.
 
-void write_epdf(image_dict * idict)
+static void write_epdf1(image_dict * idict)
 {
     Page *page;
     PdfObject contents, obj1, obj2;
@@ -792,15 +795,11 @@ void write_epdf(image_dict * idict)
     int rotate;
     double scale[6] = { 0, 0, 0, 0, 0, 0 };
     bool writematrix = false;
-    PdfDocument *pdf_doc = (PdfDocument *) img_pdf_doc(idict);
-    (pdf_doc->occurences)--;
-#ifdef DEBUG
-    fprintf(stderr, "\npdfTeX Debug: Decrementing %s (%d)\n",
-            pdf_doc->file_name, pdf_doc->occurences);
-#endif
+    PdfDocument *pdf_doc = (PdfDocument *) findPdfDocument(img_filepath(idict));
+    assert(pdf_doc != NULL);
     xref = pdf_doc->xref;
     inObjList = pdf_doc->inObjList;
-    encodingList = 0;
+    encodingList = NULL;
     page = pdf_doc->doc->getCatalog()->getPage(img_pagenum(idict));
     rotate = page->getRotate();
     PDFRectangle *pagebox;
@@ -812,8 +811,8 @@ void write_epdf(image_dict * idict)
 
     // write additional information
     pdf_printf("/%s.FileName (%s)\n", pdfkeyprefix,
-               convertStringToPDFString(pdf_doc->file_name,
-                                        strlen(pdf_doc->file_name)));
+               convertStringToPDFString(pdf_doc->file_path,
+                                        strlen(pdf_doc->file_path)));
     pdf_printf("/%s.PageNumber %i\n", pdfkeyprefix, (int) img_pagenum(idict));
     pdf_doc->doc->getDocInfoNF(&info);
     if (info.isRef()) {
@@ -826,42 +825,40 @@ void write_epdf(image_dict * idict)
 
     // handle page rotation
     if (rotate != 0) {
-        if (rotate % 90 == 0) {
-            // this handles only the simple case: multiple of 90s but these
-            // are the only values allowed according to the reference
-            // (v1.3, p. 78).
-            // the image is rotated around its center.
-            // the /Rotate key is clockwise while the matrix is
-            // counterclockwise :-%
-            tex_printf(", page is rotated %d degrees", rotate);
-            switch (rotate) {
-            case 90:
-                scale[1] = -1;
-                scale[2] = 1;
-                scale[4] = pagebox->x1 - pagebox->y1;
-                scale[5] = pagebox->y1 + pagebox->x2;
-                writematrix = true;
-                break;
-            case 180:
-                scale[0] = scale[3] = -1;
-                scale[4] = pagebox->x1 + pagebox->x2;
-                scale[5] = pagebox->y1 + pagebox->y2;
-                writematrix = true;
-                break;          // width and height are exchanged
-            case 270:
-                scale[1] = 1;
-                scale[2] = -1;
-                scale[4] = pagebox->x1 + pagebox->y2;
-                scale[5] = pagebox->y1 - pagebox->x1;
-                writematrix = true;
-                break;
-            }
-            if (writematrix) {  // The matrix is only written if the image is rotated.
-                sprintf(s, "/Matrix [%.8f %.8f %.8f %.8f %.8f %.8f]\n",
-                        scale[0],
-                        scale[1], scale[2], scale[3], scale[4], scale[5]);
-                pdf_printf(stripzeros(s));
-            }
+        // this handles only the simple case: multiple of 90s but these
+        // are the only values allowed according to the reference
+        // (v1.3, p. 78).
+        // the image is rotated around its center.
+        // the /Rotate key is clockwise while the matrix is
+        // counterclockwise :-%
+        tex_printf(", page is rotated %d degrees", rotate);
+        switch (rotate % 360) {
+        case 90:
+            scale[1] = -1;
+            scale[2] = 1;
+            scale[4] = pagebox->x1 - pagebox->y1;
+            scale[5] = pagebox->y1 + pagebox->x2;
+            writematrix = true;
+            break;
+        case 180:
+            scale[0] = scale[3] = -1;
+            scale[4] = pagebox->x1 + pagebox->x2;
+            scale[5] = pagebox->y1 + pagebox->y2;
+            writematrix = true;
+            break;              // width and height are exchanged
+        case 270:
+            scale[1] = 1;
+            scale[2] = -1;
+            scale[4] = pagebox->x1 + pagebox->y2;
+            scale[5] = pagebox->y1 - pagebox->x1;
+            writematrix = true;
+            break;
+        default:;
+        }
+        if (writematrix) {      // The matrix is only written if the image is rotated.
+            sprintf(s, "/Matrix [%.8f %.8f %.8f %.8f %.8f %.8f]\n",
+                    scale[0], scale[1], scale[2], scale[3], scale[4], scale[5]);
+            pdf_printf(stripzeros(s));
         }
     }
 
@@ -883,12 +880,12 @@ void write_epdf(image_dict * idict)
 #  else
         // FIXME: currently we don't know how to handle Page Groups so we abort gracefully :-(
         pdftex_fail
-            ("PDF inclusion: Page Group detected which pdfTeX can't handle. Sorry.");
+            ("PDF inclusion: Page Group detected which luatex can't handle. Sorry.");
 #  endif
 #else
         // FIXME: currently we don't know how to handle Page Groups so we at least give a warning :-(
         pdftex_warn
-            ("PDF inclusion: Page Group detected which pdfTeX can't handle. Ignoring it.");
+            ("PDF inclusion: Page Group detected which luatex can't handle. Ignoring it.");
 #endif
     }
     // write the page Metadata if it's there
@@ -970,25 +967,39 @@ void write_epdf(image_dict * idict)
     writeRefs();
     // write out all used encodings (and delete list)
     writeEncodings();
-    // save object list, xref
+    // save object list
     pdf_doc->inObjList = inObjList;
-    pdf_doc->xref = xref;
+    assert(xref == pdf_doc->xref);      // xref should be unchanged
 }
 
-// Called when an image has been written and it's resources in image_tab are
-// freed and it's not referenced anymore.
-
-void epdf_delete(image_dict * idict)
+void write_epdf(image_dict * idict)
 {
-    PdfDocument *pdf_doc = (PdfDocument *) img_pdf_doc(idict);
-    xref = pdf_doc->xref;
-    if (pdf_doc->occurences < 0) {
-#ifdef DEBUG
-        fprintf(stderr, "\npdfTeX Debug: Deleting %s\n", pdf_doc->file_name);
-#endif
-        delete_document(pdf_doc);
+    assert(idict != NULL);
+    write_epdf1(idict);
+    unrefPdfDocument(img_filepath(idict));
+}
+
+//**********************************************************************
+// Deallocate a PdfDocument with all its resources
+
+static void deletePdfDocument(PdfDocument * pdf_doc)
+{
+    assert(pdf_doc != NULL);
+    // free PdfDocument's resources
+    InObj *r, *n;
+    for (r = pdf_doc->inObjList; r != NULL; r = n) {
+        n = r->next;
+        delete r;
     }
-    img_pdf_doc(idict) = NULL;
+    delete pdf_doc->doc;
+    xfree(pdf_doc->file_path);
+    delete pdf_doc;
+}
+
+static void destroyPdfDocument(void *pa, void *pb)
+{
+    PdfDocument *pdf_doc = (PdfDocument *) pa;
+    deletePdfDocument(pdf_doc);
 }
 
 // Called when PDF embedding system is finalized.
@@ -996,13 +1007,10 @@ void epdf_delete(image_dict * idict)
 
 void epdf_check_mem()
 {
-    if (isInit) {
-        PdfDocument *p, *n;
-        for (p = pdfDocuments; p; p = n) {
-            n = p->next;
-            delete_document(p);
-        }
-        // see above for globalParams
+    if (PdfDocumentTree != NULL)
+        avl_destroy(PdfDocumentTree, destroyPdfDocument);
+    PdfDocumentTree = NULL;
+    if (isInit == gTrue)
         delete globalParams;
-    }
+    isInit = gFalse;
 }

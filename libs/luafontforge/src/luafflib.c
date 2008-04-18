@@ -255,11 +255,27 @@ static char *make_tag_string (unsigned int field) {
   return (char *)tag_string;
 }
 
+static char featbuf[32] = {0};
+
+static char *make_mactag_string (unsigned int field) {
+  sprintf( featbuf, "<%d,%d>", field>>16, field&0xffff );
+  return (char *)featbuf;
+}
+
+
 static void 
 dump_tag (lua_State *L, char *name, unsigned int field) {
   lua_checkstack(L,2);
   lua_pushstring(L,name);
   lua_pushlstring(L,make_tag_string(field),4);
+  lua_rawset(L,-3);
+}
+
+static void 
+dump_mactag (lua_State *L, char *name, unsigned int field) {
+  lua_checkstack(L,2);
+  lua_pushstring(L,name);
+  lua_pushstring(L,make_mactag_string(field));
   lua_rawset(L,-3);
 }
 
@@ -308,7 +324,11 @@ handle_scriptlanglist (lua_State *L, struct scriptlanglist *sll) {
 
 void
 do_handle_featurescriptlanglist (lua_State *L, struct featurescriptlanglist *features) {
-  dump_tag (L,"tag",features->featuretag);
+  if (features->ismac) {
+	dump_mactag (L,"tag",features->featuretag);
+  } else {
+	dump_tag (L,"tag",features->featuretag);
+  }
   lua_newtable(L);
   handle_scriptlanglist(L, features->scripts);
   lua_setfield(L,-2,"scripts");

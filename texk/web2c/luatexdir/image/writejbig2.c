@@ -75,7 +75,7 @@ object exists, reference it. Else create fresh one.
 
 09 Dec. 2002: JBIG2 seg. page numbers > 0 are now set to 1, see PDF Ref.
 
-$Id: writejbig2.c 1027 2008-02-14 21:01:03Z hhenkel $
+$Id: writejbig2.c 1127 2008-03-25 21:32:54Z hhenkel $
 ***********************************************************************/
 
 #include "writejbig2.h"
@@ -705,6 +705,7 @@ void read_jbig2_info(image_dict * idict)
     if (pip == NULL)
         pdftex_fail("read_jbig2_info(): page %d not found in JBIG2 image file",
                     (int) img_pagenum(idict));
+    img_totalpages(idict) = fip->numofpages;
     img_xsize(idict) = pip->width;
     img_ysize(idict) = pip->height;
     img_xres(idict) = (int) (pip->xres * 0.0254 + 0.5);

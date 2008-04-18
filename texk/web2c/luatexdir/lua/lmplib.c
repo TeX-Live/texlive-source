@@ -430,7 +430,7 @@ void mplib_write_ascii_file (MP mp, void *ff, const char *s) {
       } else if (f==mplib_data->ps_file_ptr) {
         APPEND_STRING(ps_out,s);
       } else {
-	fprintf((FILE *)f,s);
+		fprintf((FILE *)f,"%s",s);
       }
     }
   }
@@ -883,8 +883,7 @@ mplib_gr_tostring (lua_State *L) {
 static int
 mplib_gr_fields (lua_State *L) {
   const char **fields;
-  const char *f;
-  int i = 1;
+  int i ;
   struct mp_graphic_object **hh = is_gr_object(L,1);
   if (*hh) {
     switch ((*hh)->_type_field) {
@@ -899,9 +898,9 @@ mplib_gr_fields (lua_State *L) {
     default:                   fields = no_fields;
     }
     lua_newtable(L);
-    for (f = *fields; f != NULL; f++) {
-      lua_pushstring(L,f);
-      lua_rawseti(L,-2,i); i++;
+    for (i=0;fields[i]!=NULL;i++) {
+      lua_pushstring(L,fields[i]);
+      lua_rawseti(L,-2,(i+1));
     }
   } else {
     lua_pushnil(L);
@@ -926,16 +925,16 @@ mplib_push_path (lua_State *L, struct mp_knot *h, int is_pen) {
       lua_createtable(L,0,6);
       if (!is_pen) {
         if (p->left_type_field != mp_explicit) {
-	  mplib_push_S(left_type);
-	  lua_pushstring(L,knot_type_enum[p->left_type_field]);
-	  lua_rawset(L,-3);
-	}
-	if (p->right_type_field != mp_explicit) {
-	  mplib_push_S(right_type);
-	  lua_pushstring(L,knot_type_enum[p->right_type_field]);
-	  lua_rawset(L,-3);
-	}
-      }
+		  mplib_push_S(left_type);
+		  lua_pushstring(L,knot_type_enum[p->left_type_field]);
+		  lua_rawset(L,-3);
+		}
+		if (p->right_type_field != mp_explicit) {
+		  mplib_push_S(right_type);
+		  lua_pushstring(L,knot_type_enum[p->right_type_field]);
+		  lua_rawset(L,-3);
+		}
+	  }
       mplib_push_S(x_coord);
       mplib_push_number(L,p->x_coord_field);
       lua_rawset(L,-3);
@@ -962,6 +961,23 @@ mplib_push_path (lua_State *L, struct mp_knot *h, int is_pen) {
     } while (p!=h) ;
   } else {
     lua_pushnil(L);
+  }
+}
+
+/* this assumes that the top of the stack is a table 
+   or nil already in the case
+ */
+static void 
+mplib_push_pentype (lua_State *L, struct mp_knot *h) {
+  struct mp_knot *p; /* for scanning the path */
+  p=h;
+  if (p==NULL) {
+	/* do nothing */
+  } else if (p==p->next_field) {
+	mplib_push_S(type);
+	lua_pushstring(L,"elliptical");
+	lua_rawset(L,-3);
+  } else {
   }
 }
 
@@ -1012,6 +1028,7 @@ mplib_push_color (lua_State *L, struct mp_graphic_object *p ) {
 static void 
 mplib_push_dash (lua_State *L, struct mp_stroked_object *h ) {
   mp_dash_object *d;
+  double ds;
   if (h!=NULL && h->dash_p_field != NULL) {
     d  = h->dash_p_field;
     lua_newtable(L);
@@ -1021,7 +1038,8 @@ mplib_push_dash (lua_State *L, struct mp_stroked_object *h ) {
       int i = 0;
       lua_newtable(L);
       while (*(d->array_field+i) != -1) {
-	mplib_push_number(L, *(d->array_field+1));
+        ds = *(d->array_field+1) / 65536.0;
+	lua_pushnumber(L, ds);
 	i++;
 	lua_rawseti(L,-2,i);
       }
@@ -1064,6 +1082,7 @@ mplib_fill_field (lua_State *L, struct mp_fill_object *h) {
     mplib_push_path(L, h->htap_p_field, MPLIB_PATH);
   } else if (FIELD(pen)) {
     mplib_push_path(L, h->pen_p_field, MPLIB_PEN);
+	mplib_push_pentype(L, h->pen_p_field);
   } else if (FIELD(color)) {
     mplib_push_color(L,(mp_graphic_object *)h);
   } else if (FIELD(linejoin)) {
@@ -1085,6 +1104,7 @@ mplib_stroked_field (lua_State *L, struct mp_stroked_object *h) {
     mplib_push_path(L, h->path_p_field, MPLIB_PATH);
   } else if (FIELD(pen)) {
     mplib_push_path(L, h->pen_p_field, MPLIB_PEN);
+	mplib_push_pentype(L, h->pen_p_field);
   } else if (FIELD(color)) {
     mplib_push_color(L, (mp_graphic_object *)h);
   } else if (FIELD(dash)) {
@@ -1163,6 +1183,7 @@ mplib_gr_index (lua_State *L) {
   struct mp_graphic_object **hh = is_gr_object(L,1);
   if (*hh) {
     struct mp_graphic_object *h = *hh;
+
     if (mplib_is_S(type,2)) {
       lua_rawgeti(L,LUA_REGISTRYINDEX,mplib_type_Ses[h->_type_field]);
     } else {
@@ -1206,7 +1227,6 @@ static const struct luaL_reg mplib_gr_meta[] = {
   {"__gc",               mplib_gr_collect  },
   {"__tostring",         mplib_gr_tostring },
   {"__index",            mplib_gr_index    },
-  {"fields",             mplib_gr_fields   },
   {NULL, NULL}                /* sentinel */
 };
 
@@ -1220,7 +1240,8 @@ static const struct luaL_reg mplib_d [] = {
 
 
 static const struct luaL_reg mplib_m[] = {
-  {"new",                 mplib_new},
+  {"new",                 mplib_new            },
+  {"fields",              mplib_gr_fields      },
   {NULL, NULL}                /* sentinel */
 };
 
@@ -1228,6 +1249,7 @@ static const struct luaL_reg mplib_m[] = {
 int 
 luaopen_mp (lua_State *L) {
   mplib_init_Ses(L);
+
   luaL_newmetatable(L,MPLIB_GR_METATABLE);
   lua_pushvalue(L, -1); /* push metatable */
   lua_setfield(L, -2, "__index"); /* metatable.__index = metatable */

@@ -243,8 +243,8 @@ known as `\eTeX'.
 @d pdftex_version_string=='-2.00.0' {current \pdfTeX\ version}
 @#
 @d luatex_version==25 { \.{\\luatexversion} }
-@d luatex_revision=="1" { \.{\\luatexrevision} }
-@d luatex_version_string=='snapshot-0.25.1' {current \LuaTeX\ version}
+@d luatex_revision=="3" { \.{\\luatexrevision} }
+@d luatex_version_string=='snapshot-0.25.3' {current \LuaTeX\ version}
 @d luatex_date_info==-extra_version_info { the compile date is negated }
 @#
 @d luaTeX_banner=='This is LuaTeX, Version ',luatex_version_string,extra_version_info
@@ -10908,8 +10908,8 @@ at the value |p| that is returned. (If |p=temp_token_head|, the list is empty.)
 |lua_str_toks| is almost identical, but it also escapes the three
 symbols that |lua| considers special while scanning a literal string
 
-@d unicode_incr(#)==if str_pool[#]>@"F0 then #:=#+4 else if str_pool[#]>@"E0 
-     then #:=#+3 else if str_pool[#]>@"C0 then #:=#+2 else incr(#)
+@d unicode_incr(#)==if str_pool[#]>=@"F0 then #:=#+4 else if str_pool[#]>=@"E0 
+     then #:=#+3 else if str_pool[#]>=@"C0 then #:=#+2 else incr(#)
 
 
 @p @t\4@>@<Declare \eTeX\ procedures for token lists@>@;@/
@@ -16318,15 +16318,15 @@ var w, s_out: scaled;
 begin
     w := char_width(f,c);
     if hasfmentry(f) then begin
-        if pdf_cur_Tm_a = 0 then begin
-            call_func(divide_scaled_n(w, pdf_font_size(f),10000.0));
+        if pdf_cur_Tm_a = 1000 then begin
+            call_func(divide_scaled_n(w, pdf_font_size(f), 10000.0));
             pdf_delta_h := pdf_delta_h + scaled_out;
         end
         else begin
-            s := divide_scaled_n(round_xn_over_d(w, 1000, 1000 + pdf_cur_Tm_a),
-                               pdf_font_size(f),10000.0);
+            s := divide_scaled_n(round_xn_over_d(w, 1000, pdf_cur_Tm_a),
+                                 pdf_font_size(f), 10000.0);
             s_out := round_xn_over_d(round_xn_over_d(pdf_font_size(f), abs(s), 10000),
-                                     1000 + pdf_cur_Tm_a, 1000);
+                                     pdf_cur_Tm_a, 1000);
             if s < 0 then
                 s_out := -s_out;
             pdf_delta_h := pdf_delta_h + s_out;
@@ -16378,11 +16378,11 @@ end;
 @!pdf_output_value: integer;
 @!pdf_draftmode_option: integer;
 @!pdf_draftmode_value: integer;
-@!pdf_cur_Tm_a: integer; {|a| value of the current text matrix, ie the current
-                          horizontal scaling factor}
+@!pdf_cur_Tm_a: integer; {value |a| of the current text matrix, i.e.,
+                          the current horizontal scaling factor}
+@!pdf_cur_Tm_c: integer; {value |c| of the current text matrix, i.e., slant (skew, obliqueness)}
 @!pdf_last_f: internal_font_number; {last font in PDF output page}
 @!pdf_last_fs: internal_font_number; {last font size in PDF output page}
-
 
 @ Following procedures implement low-level subroutines to convert \TeX{}
 internal structures to PDF page description.
@@ -16434,19 +16434,26 @@ end;
 
 procedure pdf_set_textmatrix(v, v_out: scaled; f: internal_font_number);
 {set the next starting point to |cur_h|, |cur_v|}
-var pdf_new_Tm_a: integer; {|a| value of the new text matrix}
+var pdf_new_Tm_a, pdf_new_Tm_c: integer; {values |a| and |c| of the new text matrix}
 begin
     pdf_out(" ");
-    if f = pdf_f then
-        pdf_new_Tm_a := pdf_cur_Tm_a
-    else if not pdf_font_auto_expand(f) then
-        pdf_new_Tm_a := 0
-    else
-        pdf_new_Tm_a := pdf_font_expand_ratio(f);
-    if (pdf_new_Tm_a <> 0) or
-        ((pdf_new_Tm_a = 0) and (pdf_cur_Tm_a <> 0)) then begin
-        pdf_print_real(1000 + pdf_new_Tm_a, 3);
-        pdf_print(" 0 0 1 ");
+    if f = pdf_f then begin
+        pdf_new_Tm_a := pdf_cur_Tm_a;
+        pdf_new_Tm_c := pdf_cur_Tm_c;
+    end else begin
+        if pdf_font_auto_expand(f) then
+            pdf_new_Tm_a := 1000 + pdf_font_expand_ratio(f)
+        else
+            pdf_new_Tm_a := 1000;
+        pdf_new_Tm_c := 0 * font_slant(f); {don't activate it yet, needs fixing writefont.c etc.}
+    end;
+    if (pdf_new_Tm_a <> 1000) or (pdf_cur_Tm_a <> 1000)
+    or (pdf_new_Tm_c <> 0) or (pdf_cur_Tm_c <> 0)
+    then begin
+        pdf_print_real(pdf_new_Tm_a, 3);
+        pdf_print(" 0 ");
+        pdf_print_real(pdf_new_Tm_c, 3);
+        pdf_print(" 1 ");
         pdf_print_bp(cur_h - pdf_origin_h);
         pdf_h := pdf_origin_h + scaled_out;
         pdf_out(" ");
@@ -16454,7 +16461,8 @@ begin
         pdf_v := pdf_origin_v - scaled_out;
         pdf_print(" Tm");
         pdf_cur_Tm_a := pdf_new_Tm_a;
-        pdfassert(pdf_cur_Tm_a > -1000);
+        pdf_cur_Tm_c := pdf_new_Tm_c;
+        pdfassert(pdf_cur_Tm_a > 0);
     end else begin
         pdf_print_bp(cur_h - pdf_tj_start_h); {works only for unexpanded fonts}
         pdf_h := pdf_tj_start_h + scaled_out;
@@ -16582,7 +16590,8 @@ begin
     pdf_last_f := null_font;
     pdf_last_fs := 0;
     pdf_doing_string := false;
-    pdf_cur_Tm_a := 0;
+    pdf_cur_Tm_a := 1000;
+    pdf_cur_Tm_c := 0;
 end;
 
 @ @p
@@ -16596,18 +16605,16 @@ begin s_out:=0;
         pdf_end_string;
         pdf_set_font(f);
     end;
-    if pdf_cur_Tm_a = 0 then begin
-        s := divide_scaled_n(cur_h - (pdf_tj_start_h + pdf_delta_h), pdf_font_size(f),1000.0);
+    if pdf_cur_Tm_a = 1000 then begin
+        s := divide_scaled_n(cur_h - (pdf_tj_start_h + pdf_delta_h), pdf_font_size(f), 1000.0);
         s_out := scaled_out;
     end
     else begin
         s := divide_scaled_n(round_xn_over_d(cur_h - (pdf_tj_start_h + pdf_delta_h), 1000,
-                                           1000 + pdf_cur_Tm_a),
-                           pdf_font_size(f),
-	                   1000.0);
+                                             pdf_cur_Tm_a), pdf_font_size(f), 1000.0);
         if abs(s) < @'100000 then begin
             s_out := round_xn_over_d(round_xn_over_d(pdf_font_size(f), abs(s), 1000),
-                                     1000 + pdf_cur_Tm_a, 1000);
+                                     pdf_cur_Tm_a, 1000);
             if s < 0 then
                 s_out := -s_out;
         end;
@@ -27630,7 +27637,7 @@ by causing its width to be zero.
 begin if (e<>0)and((w-total_shrink[normal]+q<=z)or@|
    (total_shrink[sfi]<>0)or(total_shrink[fil]<>0)or
    (total_shrink[fill]<>0)or(total_shrink[filll]<>0)) then
-  begin flush_node(b);
+  begin list_ptr(b):=null; flush_node(b);
   b:=hpack(p,z-q,exactly);
   end
 else  begin e:=0;
@@ -34782,7 +34789,7 @@ var q:pointer;
 begin
  q := box(j);
  get_tex_box_width := 0;
- if q <> min_halfword then
+ if q <> null then
     get_tex_box_width := width(q);
 end;
 
@@ -34791,7 +34798,7 @@ var q:pointer;
 begin
   q := box(j);
   set_tex_box_width := 0;
-  if q <> min_halfword then
+  if q <> null then
     width(q) := v
   else
     set_tex_box_width := 1;
@@ -34802,7 +34809,7 @@ var q:pointer;
 begin
  q := box(j);
  get_tex_box_height := 0;
- if q <> min_halfword then
+ if q <> null then
     get_tex_box_height := height(q);
 end;
 
@@ -34811,7 +34818,7 @@ var q:pointer;
 begin
   q := box(j);
   set_tex_box_height := 0;
-  if q <> min_halfword then
+  if q <> null then
     height(q) := v
   else
     set_tex_box_height := 1;
@@ -34822,7 +34829,7 @@ var q:pointer;
 begin
  q := box(j);
  get_tex_box_depth := 0;
- if q <> min_halfword then
+ if q <> null then
     get_tex_box_depth := depth(q);
 end;
 
@@ -34831,7 +34838,7 @@ var q:pointer;
 begin
   q := box(j);
   set_tex_box_depth := 0;
-  if q <> min_halfword then
+  if q <> null then
     depth(q) := v
   else
     set_tex_box_depth := 1;

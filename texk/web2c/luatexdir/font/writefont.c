@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with pdfTeX; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: writefont.c 1112 2008-03-20 14:46:32Z taco $
+$Id: writefont.c 1139 2008-04-09 14:44:20Z taco $
 */
 
 #include "ptexlib.h"
@@ -596,6 +596,7 @@ void create_fontdictionary(fm_entry * fm, integer font_objnum,
 {
     fo_entry *fo = new_fo_entry();
     get_char_range(fo, f);      /* set fo->first_char and fo->last_char from f */
+    if (fo->last_char>255) fo->last_char=255; /* added 9-4-2008, mantis #25 */
     assert(fo->last_char >= fo->first_char);
     fo->fm = fm;
     fo->fo_objnum = font_objnum;

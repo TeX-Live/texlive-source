@@ -1,4 +1,4 @@
-/* $Id: luatoken.c 1013 2008-02-14 00:09:02Z oneiros $ */
+/* $Id: luatoken.c 1168 2008-04-15 13:43:34Z taco $ */
 
 #include "luatex-api.h"
 #include <ptexlib.h>
@@ -222,7 +222,7 @@ get_cur_cs (lua_State *L) {
   if (lua_isstring(L,-1)) {
     s = (char *)lua_tolstring(L,-1,&l);
     if (l>0) {
-      if (last+l>buf_size)
+      if ((int)(last+l)>buf_size)
         check_buffer_overflow(last+l);
       for (j=0;j<l;j++) {
 	buffer[last+1+j]=*s++;
@@ -330,7 +330,7 @@ tokenlist_to_cstring ( int p , int inhibit_par, int *siz) {
 			  Print_uchar(q-active_base);
 			}
 		  }
-		} else if ((q>=undefined_control_sequence)&&((q<=eqtb_size))||(q>eqtb_size+hash_extra)) {
+		} else if ((q>=undefined_control_sequence)&&((q<=eqtb_size)||(q>eqtb_size+hash_extra))) {
 		  Print_esc("IMPOSSIBLE.");
 		} else if ((zget_cs_text(q)<0)||(zget_cs_text(q)>=str_ptr)) {
 		  Print_esc("NONEXISTENT.");
@@ -439,8 +439,8 @@ tokenlist_to_luastring(lua_State *L, int p) {
 int
 tokenlist_from_lua(lua_State *L) {
   char *s;
-  int tok,i;
-  size_t j;
+  int tok;
+  size_t i,j;
   halfword p,q,r;
   r = get_avail();
   info(r)=0; /* ref count */

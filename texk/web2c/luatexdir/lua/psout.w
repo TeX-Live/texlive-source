@@ -4405,12 +4405,9 @@ format, it is closely modelled to the PostScript model. The array of
 dashes is ended by a single negative value, because this is not
 allowed in PostScript.
 
-@d gr_dash_scale(A) (gr_dash_p(A))->scale_field
-
 @<Types...@>=
 typedef struct {
   scaled offset_field;
-  scaled scale_field;
   scaled *array_field;
 } mp_dash_object ;
 
@@ -4707,7 +4704,6 @@ void mp_gr_fix_graphics_state (MP mp, mp_graphic_object *p) {
   scaled wx,wy,ww; /* dimensions of pen bounding box */
   boolean adj_wx; /* whether pixel rounding should be based on |wx| or |wy| */
   integer tx,ty; /* temporaries for computing |adj_wx| */
-  scaled scf; /* a scale factor for the dash pattern */
   if ( gr_has_color(p) )
     @<Make sure \ps\ will use the right color for object~|p|@>;
   if ( (gr_type(p)==mp_fill_code)||(gr_type(p)==mp_stroked_code) ) {
@@ -4980,13 +4976,6 @@ if ( gr_type(p)==mp_fill_code || gr_dash_p(p) == NULL) {
   hh=NULL;
 } else { 
   hh=gr_dash_p(p);
-  scf=mp_gr_get_pen_scale(mp, gr_pen_p((mp_fill_object *)p));
-  if ( scf==0 ) {
-    if ( gs_width==0 ) scf=hh->scale_field;  else hh=NULL;
-  } else { 
-    scf=mp_make_scaled(mp, gs_width,scf);
-    scf=mp_take_scaled(mp, scf, (hh == NULL ? unity : gr_dash_scale(p)));
-  }
 }
 if ( hh==NULL ) {
   if ( gs_dash_p!=NULL || gs_dash_init_done == false) {
@@ -5037,9 +5026,6 @@ scaled mp_gr_get_pen_scale (MP mp, mp_knot *p) {
 boolean mp_gr_same_dashes (mp_dash_object *h, mp_dash_object *hh) ;
 
 @ This function test if |h| and |hh| represent the same dash pattern.
-
-The |scale_field| is ignored in this test because it is not really
-a property of the PostScript format of a dash pattern.
 
 @c
 boolean mp_gr_same_dashes (mp_dash_object *h, mp_dash_object *hh) {
@@ -5496,9 +5482,12 @@ void mp_gr_ship_out (mp_edge_object *hh, int prologues, int procset) {
     case mp_start_bounds_code:
     case mp_stop_bounds_code:
 	  break;
-    case mp_special_code: 
-      mp_ps_print_nl (mp, gr_pre_script((mp_special_object *)p)); 
- 	  mp_ps_print_ln (mp);
+    case mp_special_code:  
+      {
+        mp_special_object *ps = (mp_special_object *)p;
+        mp_ps_print_nl (mp, gr_pre_script(ps)); 
+ 	    mp_ps_print_ln (mp);
+      }
       break;
     } /* all cases are enumerated */
     p=gr_link(p);

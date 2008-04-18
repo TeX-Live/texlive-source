@@ -623,7 +623,7 @@ void hnj_hyphen_load(
       repl = hnj_strdup(repl + 1);
     }
     */
-    for (i=0,j=0,e=0; i<l; i++) {
+    for (i=0,j=0,e=0; (unsigned)i<l; i++) {
       if (format[i]>='0'&&format[i]<='9') j++;
       if (is_utf8_follow(format[i])) e++;
     }
@@ -633,7 +633,7 @@ void hnj_hyphen_load(
              char *org = (         char*) malloc(2+l-e-j);
 			 /* remove hyphenation encoders (digits) from pat*/
     org[0] = '0';
-    for (i=0,j=0,e=0; i<l; i++) {
+    for (i=0,j=0,e=0; (unsigned)i<l; i++) {
       unsigned char c = format[i];
       if (is_utf8_follow(c)) {
         pat[j+e++] = c;
@@ -779,7 +779,7 @@ void hnj_hyphen_hyphenate(
   halfword here;
   for (char_num=0, here=begin_point; here!=end_point; here=get_vlink(here)) {
 
-    int ch = get_character(here);
+    int ch = get_lc_code(get_character(here));
 
     while (state!=-1) {
 	  /*   printf("%*s%s%c",char_num-strlen(get_state_str(state)),"",get_state_str(state),(char)ch);*/

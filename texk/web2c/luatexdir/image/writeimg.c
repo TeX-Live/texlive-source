@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with pdfTeX; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: writeimg.c 1119 2008-03-22 11:27:02Z hhenkel $
+$Id: writeimg.c 1152 2008-04-13 22:29:59Z hhenkel $
 */
 
 #include <assert.h>
@@ -168,18 +168,6 @@ static void check_type_by_extension(image_dict * idict)
 
 /**********************************************************************/
 
-pdf_img_struct *new_pdf_img_struct()
-{
-    pdf_img_struct *p;
-    p = xtalloc(1, pdf_img_struct);
-    p->width = 0;
-    p->height = 0;
-    p->orig_x = 0;
-    p->orig_y = 0;
-    p->doc = NULL;
-    return p;
-}
-
 void init_image(image * p)
 {
     assert(p != NULL);
@@ -208,6 +196,8 @@ void init_image_dict(image_dict * p)
     img_index(p) = 0;
     img_xsize(p) = 0;
     img_ysize(p) = 0;
+    img_xorig(p) = 0;
+    img_yorig(p) = 0;
     img_xres(p) = 0;
     img_yres(p) = 0;
     img_colorspace(p) = 0;
@@ -223,7 +213,7 @@ void init_image_dict(image_dict * p)
     img_colordepth(p) = 0;
     img_pagebox(p) = PDF_BOX_SPEC_MEDIA;
     img_state(p) = DICT_NEW;
-    img_pdf_ptr(p) = NULL;      /* union */
+    img_png_ptr(p) = NULL;      /* union */
 }
 
 image_dict *new_image_dict()
@@ -250,10 +240,26 @@ void free_dict_strings(image_dict * p)
 }
 
 void free_image_dict(image_dict * p)
-{
+{                               /* called from limglib.c */
+    assert(img_state(p) < DICT_REFERED);
+    switch (img_type(p)) {
+    case IMAGE_TYPE_PDF:
+        unrefPdfDocument(img_filepath(p));
+        break;
+    case IMAGE_TYPE_PNG:       /* assuming IMG_CLOSEINBETWEEN */
+        assert(img_png_ptr(p) == NULL);
+        break;
+    case IMAGE_TYPE_JPG:       /* assuming IMG_CLOSEINBETWEEN */
+        assert(img_jpg_ptr(p) == NULL);
+        break;
+    case IMAGE_TYPE_JBIG2:     /* todo: writejbig2.c cleanup */
+        break;
+    case IMAGE_TYPE_NONE:
+        break;
+    default:
+        assert(0);
+    }
     free_dict_strings(p);
-    if (img_type(p) == IMAGE_TYPE_PDF)
-        epdf_delete(p);
     assert(img_file(p) == NULL);
     xfree(p);
 }
@@ -405,7 +411,8 @@ void scale_img(image * img)
 
 void out_img(image * img, scaled hpos, scaled vpos)
 {
-    float a[7];                 /* transformation matrix (todo: indices should be reduced!) */
+    float a[6];                 /* transformation matrix */
+    float xoff, yoff, tmp;
     int r;                      /* number of digits after the decimal point */
     assert(img != 0);
     image_dict *idict = img_dict(img);
@@ -413,92 +420,94 @@ void out_img(image * img, scaled hpos, scaled vpos)
     scaled wd = img_width(img);
     scaled ht = img_height(img);
     scaled dp = img_depth(img);
-    if (img_type(idict) == IMAGE_TYPE_PDF) {
-        a[1] = wd * 1.0e6 / img_xsize(idict);
-        a[2] = 0;
-        a[3] = 0;
-        a[4] = (ht + dp) * 1.0e6 / img_ysize(idict);
-        a[5] = hpos -
-            (float) wd *bp2int(img_pdf_orig_x(idict)) / img_xsize(idict);
-        a[6] = vpos -
-            (float) ht *bp2int(img_pdf_orig_y(idict)) / img_ysize(idict);
-        r = 6;
-    } else {
-        a[1] = wd * 1.0e6 / one_hundred_bp;
-        a[2] = 0;
-        a[3] = 0;
-        a[4] = (ht + dp) * 1.0e6 / one_hundred_bp;
-        a[5] = hpos;
-        a[6] = vpos;
-        r = 4;
-    }
-    if ((img_transform(img) & 1) == 1) {
+    if ((img_transform(img) & 1) == 1) {        /* 90 deg. or 270 deg. rotated */
         if (ht == -dp)
             pdftex_fail("image transform: division by zero (height == -depth)");
         if (wd == 0)
             pdftex_fail("image transform: division by zero (width == 0)");
     }
-    switch (img_transform(img) & 7) {
-    case 0:                    /* unrotated */
+    a[1] = a[2] = 0;
+    if (img_type(idict) == IMAGE_TYPE_PDF) {
+        a[0] = 1.0e6 / img_xsize(idict);
+        a[3] = 1.0e6 / img_ysize(idict);
+        r = 6;
+    } else {
+        a[3] = a[0] = 1.0e6 / one_hundred_bp;
+        r = 4;
+    }
+    xoff = (float) img_xorig(idict) / img_xsize(idict);
+    yoff = (float) img_yorig(idict) / img_ysize(idict);
+    if ((img_transform(img) & 7) > 3) { /* mirrored */
+        a[0] *= -1;
+        xoff *= -1;
+    }
+    switch (img_transform(img) & 3) {
+    case 0:                    /* no transform */
         break;
     case 1:                    /* rot. 90 deg. (counterclockwise) */
-        a[2] = a[1] * (ht + dp) / wd;
-        a[1] = 0;
-        a[3] = -a[4] * wd / (ht + dp);
-        a[4] = 0;
-        a[5] += wd;
+        a[1] = a[0];
+        a[2] = -a[3];
+        a[3] = a[0] = 0;
+        tmp = yoff;
+        yoff = xoff;
+        xoff = -tmp;
+        break;
+    case 2:                    /* rot. 180 deg. (counterclockwise) */
+        a[0] *= -1;
+        a[3] *= -1;
+        xoff *= -1;
+        yoff *= -1;
+        break;
+    case 3:                    /* rot. 270 deg. (counterclockwise) */
+        a[1] = -a[0];
+        a[2] = a[3];
+        a[3] = a[0] = 0;
+        tmp = yoff;
+        yoff = -xoff;
+        xoff = tmp;
+        break;
+    default:;
+    }
+    xoff *= wd;
+    yoff *= ht + dp;
+    a[0] *= wd;
+    a[1] *= ht + dp;
+    a[2] *= wd;
+    a[3] *= ht + dp;
+    a[4] = hpos - xoff;
+    a[5] = vpos - yoff;
+    switch (img_transform(img) & 7) {
+    case 0:                    /* no transform */
+    case 7:                    /* mirrored, then rot. 270 deg. */
+        break;
+    case 1:                    /* rot. 90 deg. (counterclockwise) */
+    case 4:                    /* mirrored, unrotated */
+        a[4] += wd;
         break;
     case 2:                    /* rot. 180 deg. */
-        a[1] = -a[1];
-        a[4] = -a[4];
-        a[5] += wd;
-        a[6] += ht + dp;
+    case 5:                    /* mirrored, then rot. 90 deg. */
+        a[4] += wd;
+        a[5] += ht + dp;
         break;
     case 3:                    /* rot. 270 deg. */
-        a[2] = -a[1] * (ht + dp) / wd;
-        a[1] = 0;
-        a[3] = a[4] * wd / (ht + dp);
-        a[4] = 0;
-        a[6] += ht + dp;
-        break;
-    case 4:                    /* mirrored, unrotated */
-        a[1] = -a[1];
-        a[5] += wd;
-        break;
-    case 5:                    /* mirrored, then rot. 90 deg. */
-        a[2] = -a[1] * (ht + dp) / wd;
-        a[1] = 0;
-        a[3] = -a[4] * wd / (ht + dp);
-        a[4] = 0;
-        a[5] += wd;
-        a[6] += ht + dp;
-        break;
     case 6:                    /* mirrored, then rot. 180 deg. */
-        a[4] = -a[4];
-        a[6] += ht + dp;
+        a[5] += ht + dp;
         break;
-    case 7:                    /* mirrored, then rot. 270 deg. */
-        a[2] = a[1] * (ht + dp) / wd;
-        a[1] = 0;
-        a[3] = a[4] * wd / (ht + dp);
-        a[4] = 0;
-        break;
-    default:
-        assert(0);
+    default:;
     }
     pdf_end_text();
     pdf_printf("q\n");
+    pdf_print_real((integer) a[0], r);
+    pdfout(' ');
     pdf_print_real((integer) a[1], r);
     pdfout(' ');
     pdf_print_real((integer) a[2], r);
     pdfout(' ');
     pdf_print_real((integer) a[3], r);
     pdfout(' ');
-    pdf_print_real((integer) a[4], r);
+    pdf_print_bp((integer) a[4]);
     pdfout(' ');
     pdf_print_bp((integer) a[5]);
-    pdfout(' ');
-    pdf_print_bp((integer) a[6]);
     pdf_printf(" cm\n/Im");
     pdf_print_int(img_index(idict));
     pdf_print_resname_prefix();
@@ -621,12 +630,12 @@ integer image_colordepth(integer ref)
 
 integer epdf_orig_x(integer ref)
 {
-    return bp2int(img_pdf_orig_x(img_dict(img_array[ref])));
+    return img_xorig(img_dict(img_array[ref]));
 }
 
 integer epdf_orig_y(integer ref)
 {
-    return bp2int(img_pdf_orig_y(img_dict(img_array[ref])));
+    return img_yorig(img_dict(img_array[ref]));
 }
 
 integer image_objnum(integer ref)
@@ -658,8 +667,6 @@ void update_image_procset(integer ref)
 {
     pdf_image_procset |= img_color(img_dict(img_array[ref]));
 }
-
-/**********************************************************************/
 
 boolean check_image_b(integer procset)
 {

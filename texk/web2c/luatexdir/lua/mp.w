@@ -75,8 +75,8 @@ undergoes any modifications, so that it will be clear which version of
 
 @d banner "This is MetaPost, Version 1.003" /* printed when \MP\ starts */
 @d metapost_version "1.003"
-@d mplib_version "0.30"
-@d version_string " (Cweb version 0.30)"
+@d mplib_version "0.40"
+@d version_string " (Cweb version 0.40)"
 
 @d true 1
 @d false 0
@@ -659,6 +659,8 @@ char *mp_read_ascii_file (MP mp, void *ff, size_t *size) {
   FILE *f = (FILE *)ff;
   *size = 0;
   (void) mp; /* for -Wunused */
+  if (f==NULL)
+    return NULL;
 #if NOTTESTING
   c = fgetc(f);
   if (c==EOF)
@@ -700,7 +702,8 @@ void mp_read_binary_file (MP mp, void *f, void **data, size_t *size) {
   size_t len = 0;
   (void) mp;
 #if NOTTESTING
-  len = fread(*data,1,*size,(FILE *)f);
+  if (f!=NULL)
+    len = fread(*data,1,*size,(FILE *)f);
 #endif
   *size = len;
 }
@@ -719,7 +722,8 @@ void mp_write_binary_file (MP mp, void *f, void *s, size_t size) {
 void mp_close_file (MP mp, void *f) {
   (void) mp;
 #if NOTTESTING
-  fclose((FILE *)f);
+  if (f!=NULL)
+    fclose((FILE *)f);
 #endif
 }
 
@@ -727,7 +731,10 @@ void mp_close_file (MP mp, void *f) {
 int mp_eof_file (MP mp, void *f) {
   (void) mp;
 #if NOTTESTING
-  return feof((FILE *)f);
+  if (f!=NULL)
+    return feof((FILE *)f);
+   else 
+    return 1;
 #else
   return 0;
 #endif
@@ -737,7 +744,8 @@ int mp_eof_file (MP mp, void *f) {
 void mp_flush_file (MP mp, void *f) {
   (void) mp;
 #if NOTTESTING
-  fflush((FILE *)f);
+  if (f!=NULL)
+    fflush((FILE *)f);
 #endif
 }
 
@@ -9517,27 +9525,39 @@ dash_y(hh)=dash_y(h)
 @ |h| is an edge structure
 
 @c
-mp_dash_object *mp_export_dashes (MP mp, pointer h) {
+mp_dash_object *mp_export_dashes (MP mp, pointer q, scaled *w) {
   mp_dash_object *d;
-  pointer p;
+  pointer p, h;
+  scaled scf; /* scale factor */
   scaled *dashes = NULL;
   int num_dashes = 1;
+  h = dash_p(q);
   if (h==null ||  dash_list(h)==null_dash) 
 	return NULL;
   p = dash_list(h);
+  scf=mp_get_pen_scale(mp, pen_p(q));
+  if (scf==0) {
+    if (*w==0) scf = dash_scale(q); else return NULL;
+  } else {
+    scf=mp_make_scaled(mp, *w,scf);
+    scf=mp_take_scaled(mp, scf,dash_scale(q));
+  }
+  *w = scf;
   d = mp_xmalloc(mp,1,sizeof(mp_dash_object));
   start_x(null_dash)=start_x(p)+dash_y(h);
   while (p != null_dash) { 
 	dashes = mp_xrealloc(mp, dashes, num_dashes+2, sizeof(scaled));
-	dashes[(num_dashes-1)] = (stop_x(p)-start_x(p));
-	dashes[(num_dashes)]   = (start_x(link(p))-stop_x(p));
+	dashes[(num_dashes-1)] = 
+      mp_take_scaled(mp,(stop_x(p)-start_x(p)),scf);
+	dashes[(num_dashes)]   = 
+      mp_take_scaled(mp,(start_x(link(p))-stop_x(p)),scf);
 	dashes[(num_dashes+1)] = -1; /* terminus */
 	num_dashes+=2;
     p=link(p);
   }
   d->array_field  = dashes;
-  d->offset_field = mp_dash_offset(mp, h);
-  d->scale_field  = dash_scale(h);
+  d->offset_field = 
+    mp_take_scaled(mp,mp_dash_offset(mp, h),scf);
   return d;
 }
 
@@ -9590,8 +9610,6 @@ pointer mp_copy_objects (MP mp, pointer p, pointer q) {
 }
 
 @ @<Fix anything in graphical object |pp| that should differ from the...@>=
-if ( pre_script(p)!=null )  add_str_ref(pre_script(p));
-if ( post_script(p)!=null ) add_str_ref(post_script(p));
 switch (type(p)) {
 case mp_start_clip_code:
 case mp_start_bounds_code: 
@@ -9599,14 +9617,20 @@ case mp_start_bounds_code:
   break;
 case mp_fill_code: 
   path_p(pp)=mp_copy_path(mp, path_p(p));
+  if ( pre_script(p)!=null )  add_str_ref(pre_script(p));
+  if ( post_script(p)!=null ) add_str_ref(post_script(p));
   if ( pen_p(p)!=null ) pen_p(pp)=copy_pen(pen_p(p));
   break;
 case mp_stroked_code: 
+  if ( pre_script(p)!=null )  add_str_ref(pre_script(p));
+  if ( post_script(p)!=null ) add_str_ref(post_script(p));
   path_p(pp)=mp_copy_path(mp, path_p(p));
   pen_p(pp)=copy_pen(pen_p(p));
   if ( dash_p(p)!=null ) add_edge_ref(dash_p(pp));
   break;
 case mp_text_code: 
+  if ( pre_script(p)!=null )  add_str_ref(pre_script(p));
+  if ( post_script(p)!=null ) add_str_ref(post_script(p));
   add_str_ref(text_p(pp));
   break;
 case mp_stop_clip_code:
@@ -10376,7 +10400,7 @@ integer spec_offset; /* number of pen edges between |h| and the initial offset *
 @ @c @<Declare subroutines needed by |offset_prep|@>
 pointer mp_offset_prep (MP mp,pointer c, pointer h) {
   halfword n; /* the number of vertices in the pen polygon */
-  pointer p,q,q0,r,w, ww; /* for list manipulation */
+  pointer c0,p,q,q0,r,w, ww; /* for list manipulation */
   integer k_needed; /* amount to be added to |info(p)| when it is computed */
   pointer w0; /* a pointer to pen offset to use just before |p| */
   scaled dxin,dyin; /* the direction into knot |p| */
@@ -10385,7 +10409,7 @@ pointer mp_offset_prep (MP mp,pointer c, pointer h) {
   dx0=0; dy0=0;
   @<Initialize the pen size~|n|@>;
   @<Initialize the incoming direction and pen offset at |c|@>;
-  p=c; k_needed=0;
+  p=c; c0=c; k_needed=0;
   do {  
     q=link(p);
     @<Split the cubic between |p| and |q|, if necessary, into cubics
@@ -10456,7 +10480,7 @@ do {
   p=r;
 } while (p!=q);
 /* Check if we removed too much */
-if(q!=q0)
+if ((q!=q0)&&(q!=c||c==c0))
   q = link(q)
 
 @ @<Remove the cubic following |p| and update the data structures...@>=
@@ -23247,7 +23271,6 @@ void mp_do_write (MP mp) ;
 @ @<Record the end of file on |wr_file[n]|@>=
 { (mp->close_file)(mp,mp->wr_file[n]);
   xfree(mp->wr_fname[n]);
-  mp->wr_fname[n]=NULL;
   if ( n==mp->write_files-1 ) mp->write_files=n;
 }
 
@@ -25218,6 +25241,7 @@ void mp_ship_out (MP mp, pointer h) ;
 struct mp_edge_object *mp_gr_export(MP mp, pointer h) {
   pointer p; /* the current graphical object */
   integer t; /* a temporary value */
+  scaled d_width; /* the current pen width */
   mp_edge_object *hh; /* the first graphical object */
   struct mp_graphic_object *hq; /* something |hp| points to  */
   struct mp_text_object    *tt;
@@ -25244,6 +25268,7 @@ struct mp_edge_object *mp_gr_export(MP mp, pointer h) {
     case mp_fill_code:
       tf = (mp_fill_object *)hq;
       gr_pen_p(tf)        = mp_export_knot_list(mp,pen_p(p));
+      d_width = mp_get_pen_scale(mp, pen_p(p));
       if ((pen_p(p)==null) || pen_is_elliptical(pen_p(p)))  {
   	    gr_path_p(tf)       = mp_export_knot_list(mp,path_p(p));
       } else {
@@ -25265,6 +25290,7 @@ struct mp_edge_object *mp_gr_export(MP mp, pointer h) {
     case mp_stroked_code:
       ts = (mp_stroked_object *)hq;
       gr_pen_p(ts)        = mp_export_knot_list(mp,pen_p(p));
+      d_width = mp_get_pen_scale(mp, pen_p(p));
       if (pen_is_elliptical(pen_p(p)))  {
 	      gr_path_p(ts)       = mp_export_knot_list(mp,path_p(p));
       } else {
@@ -25286,7 +25312,7 @@ struct mp_edge_object *mp_gr_export(MP mp, pointer h) {
       gr_ljoin_val(ts)    = ljoin_val(p);
       gr_miterlim_val(ts) = miterlim_val(p);
       gr_lcap_val(ts)     = lcap_val(p);
-      gr_dash_p(ts)       = mp_export_dashes(mp,dash_p(p));
+      gr_dash_p(ts)       = mp_export_dashes(mp,p,&d_width);
       break;
     case mp_text_code:
       tt = (mp_text_object *)hq;
@@ -25666,6 +25692,7 @@ for (k=p;k<=mp->lo_mem_max;k++ )
   undump_wd(mp->mem[k]);
 undump(mp->lo_mem_max+1,hi_mem_stat_min,mp->hi_mem_min);
 undump(null,mp->mem_top,mp->avail); mp->mem_end=mp->mem_top;
+mp->last_pending=spec_head;
 for (k=mp->hi_mem_min;k<= mp->mem_end;k++) 
   undump_wd(mp->mem[k]);
 undump_int(mp->var_used); undump_int(mp->dyn_used)
@@ -25841,6 +25868,7 @@ if (mp->rd_fname!=NULL) {
   for (k=0;k<=(int)mp->read_files-1;k++ ) {
     if ( mp->rd_fname[k]!=NULL ) {
       (mp->close_file)(mp,mp->rd_file[k]);
+      xfree(mp->rd_fname[k]);      
    }
  }
 }
@@ -25848,6 +25876,7 @@ if (mp->wr_fname!=NULL) {
   for (k=0;k<=(int)mp->write_files-1;k++) {
     if ( mp->wr_fname[k]!=NULL ) {
      (mp->close_file)(mp,mp->wr_file[k]);
+      xfree(mp->wr_fname[k]); 
     }
   }
 }
@@ -25856,19 +25885,19 @@ if (mp->wr_fname!=NULL) {
 for (k=0;k<(int)mp->max_read_files;k++ ) {
   if ( mp->rd_fname[k]!=NULL ) {
     (mp->close_file)(mp,mp->rd_file[k]);
-    mp_xfree(mp->rd_fname[k]); 
+    xfree(mp->rd_fname[k]); 
   }
 }
-mp_xfree(mp->rd_file);
-mp_xfree(mp->rd_fname);
+xfree(mp->rd_file);
+xfree(mp->rd_fname);
 for (k=0;k<(int)mp->max_write_files;k++) {
   if ( mp->wr_fname[k]!=NULL ) {
     (mp->close_file)(mp,mp->wr_file[k]);
-    mp_xfree(mp->wr_fname[k]); 
+    xfree(mp->wr_fname[k]); 
   }
 }
-mp_xfree(mp->wr_file);
-mp_xfree(mp->wr_fname);
+xfree(mp->wr_file);
+xfree(mp->wr_fname);
 
 
 @ We want to produce a \.{TFM} file if and only if |mp_fontmaking| is positive.
