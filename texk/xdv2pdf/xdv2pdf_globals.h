@@ -33,6 +33,9 @@ GLOBAL	CGColorSpaceRef	gGrayColorSpace;
 
 GLOBAL	bool 		gPageStarted;
 GLOBAL	CGRect		gMediaBox;
+GLOBAL	double_t	gPaperWd;
+GLOBAL	double_t	gPaperHt;
+
 
 struct dviVars {
 	SInt32	h;

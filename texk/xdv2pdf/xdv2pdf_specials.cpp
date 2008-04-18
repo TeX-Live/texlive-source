@@ -480,8 +480,19 @@ doColorSpecial(const char* s, bool background)
 	}
 }
 
+static bool
+prefixMatch(const char* str, const char* prefix, const char*& remainder)
+{
+	int	len = strlen(prefix);
+	if (strncmp(str, prefix, len) == 0) {
+		remainder = str + len;
+		return true;
+	}
+	return false;
+}
+
 static double_t
-readDimen(const char* arg)	// currently reads unsigned dimens only; no negative paper sizes!
+readDimen(const char*& arg)	// currently reads unsigned dimens only; no negative paper sizes!
 {
 	double_t	rval = 0.0;
 	while ((*arg >= '0') && (*arg <= '9')) {
@@ -500,7 +511,7 @@ readDimen(const char* arg)	// currently reads unsigned dimens only; no negative 
 	}
 	const dimenRec*	dim = &sDimenRatios[0];
 	while (dim->name != 0) {
-		if (strcasecmp(arg, dim->name) == 0) {
+		if (prefixMatch(arg, dim->name, arg)) {
 			rval *= dim->factor;
 			break;
 		}
@@ -532,8 +543,10 @@ getPaperSize(const char* arg, double_t& paperWd, double_t& paperHt)
 		char*   s3 = strchr(s1, ',');
 		if (s3 != NULL) {
 			*s3++ = 0;
-			paperWd = readDimen(s1);
-			paperHt = readDimen(s3);
+			const char* s4 = s1;
+			paperWd = readDimen(s4);
+			s4 = s3;
+			paperHt = readDimen(s4);
 		}
 	}
 	if (s2 != NULL && strcasecmp(s2, "landscape") == 0) {
@@ -548,14 +561,32 @@ getPaperSize(const char* arg, double_t& paperWd, double_t& paperHt)
 }
 
 static bool
-prefixMatch(const char* str, const char* prefix, const char*& remainder)
+getPageSize(const char* arg, double_t& pageWd, double_t& pageHt)
 {
-	int	len = strlen(prefix);
-	if (strncmp(str, prefix, len) == 0) {
-		remainder = str + len;
-		return true;
+	pageHt = pageWd = 0.0;
+	while (*arg) {
+		while (*arg == ' ')
+			++arg;
+		if (prefixMatch(arg, "width", arg)) {
+			while (*arg == ' ')
+				++arg;
+			pageWd = readDimen(arg);
+			continue;
+		}
+		if (prefixMatch(arg, "height", arg)) {
+			while (*arg == ' ')
+				++arg;
+			pageHt = readDimen(arg);
+			continue;
+		}
+		if (prefixMatch(arg, "default", arg)) {
+			pageWd = gPaperWd;
+			pageHt = gPaperHt;
+			continue;
+		}
+		++arg;
 	}
-	return false;
+	return (pageHt > 0.0) && (pageWd > 0.0);
 }
 
 inline bool
@@ -582,7 +613,29 @@ doSpecial(const char* special)
 	int	u = strlen(special);
 	const char* specialArg;
 	
-	if (prefixMatch(special, "pdf:", specialArg))
+	if (prefixMatch(special, "pdf:pagesize", specialArg)) {
+		// NOTE: must come before the general pdf special check!
+		// syntax: \special{pdf:pagesize width <dim> height <dim>} etc
+		while (*specialArg && (*specialArg <= ' '))
+			++specialArg;
+		double_t	paperWd, paperHt;
+		if (getPageSize(specialArg, paperWd, paperHt)) {
+			gMediaBox = CGRectMake(0, 0, paperWd, paperHt);
+			if (gPageStarted) {
+				fprintf(stderr, "\n### warning on page [");
+				int i, j;
+				for (j = 9; j > 1; --j)
+					if (gCounts[j] != 0)
+						break;
+				for (i = 0; i < j; ++i)
+					fprintf(stderr, "%d.", gCounts[i]);
+				fprintf(stderr, "%d", gCounts[j]);
+				fprintf(stderr, "]: pdf page size \"%s\" will take effect from NEXT page ", specialArg);
+			}
+		}
+	}
+
+	else if (prefixMatch(special, "pdf:", specialArg))
 		doPDFspecial(specialArg);
 	
 	else if (prefixMatch(special, "color ", specialArg))
@@ -751,9 +804,8 @@ doSpecial(const char* special)
 			while (*specialArg && (*specialArg <= ' '))
 				++specialArg;
 		}
-		double_t	paperWd, paperHt;
-		if (getPaperSize(specialArg, paperWd, paperHt)) {
-			gMediaBox = CGRectMake(0, 0, paperWd, paperHt);
+		if (getPaperSize(specialArg, gPaperWd, gPaperHt)) {
+			gMediaBox = CGRectMake(0, 0, gPaperWd, gPaperHt);
 			if (gPageStarted) {
 				fprintf(stderr, "\n### warning on page [");
 				int i, j;
