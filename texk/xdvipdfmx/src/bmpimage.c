@@ -145,8 +145,8 @@ bmp_include_image (pdf_ximage *ximage, FILE *fp)
     /* ignore biSizeImage */ p += 4;
     biXPelsPerMeter = ULONG_LE(p); p += 4;
     biYPelsPerMeter = ULONG_LE(p); p += 4;
-    info.xdpi = biXPelsPerMeter * 0.0254; /* convert pixels per meter to DPI */
-    info.ydpi = biYPelsPerMeter * 0.0254;
+    info.xdensity = 72.0 / (biXPelsPerMeter * 0.0254);
+    info.ydensity = 72.0 / (biYPelsPerMeter * 0.0254);
     if (info.height < 0) {
       info.height = -info.height;
       flip = 0;

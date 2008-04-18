@@ -30,6 +30,8 @@
 /* spt_t */
 #include "pdfdev.h"
 
+extern double get_origin (int x);
+
 extern void  dvi_set_verbose (void);
 
 /* returns scale (dvi2pts) */
@@ -89,5 +91,8 @@ extern void  dvi_untag_depth   (void);
 extern void  dvi_compute_boxes (int flag);
 
 extern void  dvi_do_special    (const void *buffer, UNSIGNED_QUAD size);
+
+/* allow other modules (pdfdev) to ask whether we're collecting box areas */
+int dvi_is_tracking_boxes(void);
 
 #endif /* _DVI_H_ */

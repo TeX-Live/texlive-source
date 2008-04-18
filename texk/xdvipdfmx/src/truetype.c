@@ -117,10 +117,29 @@ pdf_font_open_truetype (pdf_font *font)
   ASSERT( fontdict && descriptor );
 
   {
+    char  fontname[256];
+    int   n;
     pdf_obj  *tmp;
-    tmp  = tt_get_fontdesc(sfont, &embedding, 1);
+
+    memset(fontname, 0, 256);
+    length = tt_get_ps_fontname(sfont, fontname, 255);
+    if (length < 1) {
+      length = MIN(strlen(ident), 255);
+      strncpy(fontname, ident, length);
+    }
+    fontname[length] = '\0';
+    for (n = 0; n < length; n++) {
+      if (fontname[n] == 0) {
+        memmove(fontname + n, fontname + n + 1, length - n - 1);
+      }
+    }
+    if (strlen(fontname) == 0)
+      ERROR("Can't find valid fontname for \"%s\".", ident);
+    pdf_font_set_fontname(font, fontname);
+
+    tmp  = tt_get_fontdesc(sfont, &embedding, 1, fontname);
     if (!tmp) {
-      ERROR("Could not obtain neccesary font info.");
+      ERROR("Could not obtain necessary font info.");
       sfnt_close(sfont);
       if (fp)
         DPXFCLOSE(fp);
@@ -162,27 +181,6 @@ pdf_font_open_truetype (pdf_font *font)
         pdf_add_dict(descriptor, pdf_new_name("Flags"), pdf_new_number(flags));
       }
     }
-  }
-
-  {
-    char  fontname[256];
-    int   n;
-
-    memset(fontname, 0, 256);
-    length = tt_get_ps_fontname(sfont, fontname, 255);
-    if (length < 1) {
-      length = MIN(strlen(ident), 255);
-      strncpy(fontname, ident, length);
-    }
-    fontname[length] = '\0';
-    for (n = 0; n < length; n++) {
-      if (fontname[n] == 0) {
-        memmove(fontname + n, fontname + n + 1, length - n - 1);
-      }
-    }
-    if (strlen(fontname) == 0)
-      ERROR("Can't find valid fontname for \"%s\".", ident);
-    pdf_font_set_fontname(font, fontname);
   }
 
   sfnt_close(sfont);

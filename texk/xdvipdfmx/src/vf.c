@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/vf.c,v 1.16 2005/07/20 10:41:54 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/vf.c,v 1.17 2007/04/17 10:12:04 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -768,7 +768,8 @@ static void vf_xxx (SIGNED_QUAD len, unsigned char **start, unsigned char *end)
        * Warning message from virtual font.
        */
       if (!memcmp((char *)p, "Warning:", 8)) {
-	WARN("VF:%s", p+8);
+        if (verbose)
+	  WARN("VF:%s", p+8);
       } else {
 	dvi_do_special(buffer, len);
       }

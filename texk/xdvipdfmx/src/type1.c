@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/type1.c,v 1.38 2005/07/17 09:53:38 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/type1.c,v 1.39 2007/04/17 10:06:30 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -268,7 +268,7 @@ get_font_attr (pdf_font *font, cff_font *cffont)
 }
 
 static void
-add_metrics (pdf_font *font, cff_font *cffont, double *widths, long num_glyphs)
+add_metrics (pdf_font *font, cff_font *cffont, char **enc_vec, double *widths, long num_glyphs)
 {
   pdf_obj *fontdict, *descriptor;
   pdf_obj *tmp_array;
@@ -321,7 +321,7 @@ add_metrics (pdf_font *font, cff_font *cffont, double *widths, long num_glyphs)
     }
     for (code = firstchar; code <= lastchar; code++) {
       if (usedchars[code]) {
-	gid = cff_encoding_lookup(cffont, code);
+	gid = cff_glyph_lookup(cffont, enc_vec[code]);
 	pdf_add_array(tmp_array,
 		      pdf_new_number(ROUND(widths[gid], 1.0)));
       } else {
@@ -541,16 +541,12 @@ pdf_font_load_type1 (pdf_font *font)
 		   pdf_new_name("Encoding"),
 		   pdf_new_name(pdf_encoding_get_name(encoding_id)));
     } else {
-#if 0
-      /*
-       * Gs not working with this.
-       */
+      /* CAUTION: Ghostscript may not work with this. Which Ghostscript? */
       pdf_add_dict(fontdict,
 		   pdf_new_name("Encoding"),
-		   pdf_get_encoding_resource(enc));
-#endif
+		   pdf_get_encoding_reference(encoding_id));
       if (!pdf_lookup_dict(fontdict, "ToUnicode"))
-      pdf_attach_ToUnicode_CMap(fontdict, encoding_id, usedchars);
+        pdf_attach_ToUnicode_CMap(fontdict, encoding_id, usedchars);
     }
     enc_vec = pdf_encoding_get_encoding(encoding_id);
   } else {
@@ -781,7 +777,7 @@ pdf_font_load_type1 (pdf_font *font)
   if (verbose > 2)
     MESG("]");
 
-  add_metrics(font, cffont, widths, num_glyphs);
+  add_metrics(font, cffont, enc_vec, widths, num_glyphs);
 
   offset = write_fontfile(font, cffont, num_glyphs);
   if (verbose > 1)

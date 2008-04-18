@@ -142,7 +142,7 @@ pdf_font_open_type1c (pdf_font *font)
    * Create font descriptor from OpenType tables.
    * We can also use CFF TOP DICT/Private DICT for this.
    */
-  tmp = tt_get_fontdesc(sfont, &embedding, 1);
+  tmp = tt_get_fontdesc(sfont, &embedding, 1, fontname);
   if (!tmp) {
     ERROR("Could not obtain neccesary font info from OpenType table.");
     return -1;

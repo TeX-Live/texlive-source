@@ -138,12 +138,17 @@ tt_read_post_table (sfnt *sfont)
     post->names           = NULL;
   } else if (post->Version == 0x00020000UL) {
     if (read_v2_post_names(post, sfont) < 0) {
-      WARN("Invalid TrueType 'post' table...");
+      WARN("Invalid version 2.0 'post' table");
       tt_release_post_table(post);
       post = NULL;
     }
-  } else if (post->Version == 0x00030000UL) {
+  } else if (post->Version == 0x00030000UL) { /* no glyph names provided */
     post->numberOfGlyphs  = 0; /* wrong */
+    post->glyphNamePtr    = NULL;
+    post->count           = 0;
+    post->names           = NULL;
+  } else if (post->Version == 0x00040000UL) { /* Apple format for printer-based fonts */
+    post->numberOfGlyphs  = 0; /* don't bother constructing char names, not sure if they'll ever be needed */
     post->glyphNamePtr    = NULL;
     post->count           = 0;
     post->names           = NULL;

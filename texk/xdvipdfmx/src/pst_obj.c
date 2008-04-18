@@ -555,9 +555,11 @@ parse_long (unsigned char **inbuf, unsigned char *inbufend, unsigned char base, 
     } else {
       break;
     }
-    val = val * base + c;
+    if (val < (LONG_MAX - c) / base) {
+      val = val * base + c;
+      count++;
+    }
     cur++;
-    count++;
   }
 
   if (ndigits != NULL)

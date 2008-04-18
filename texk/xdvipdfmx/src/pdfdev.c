@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdev.c,v 1.61 2006/12/11 12:46:03 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdev.c,v 1.64 2007/11/27 02:44:29 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -824,7 +824,7 @@ dev_set_font (int font_id)
     if (font->bold <= 0.0)
       len = sprintf(format_buffer, " 0 Tr");
     else
-      len = sprintf(format_buffer, " 2 Tr %.2f w", font->bold); /* _FIXME_ */
+      len = sprintf(format_buffer, " 2 Tr %.6f w", font->bold); /* _FIXME_ */
     pdf_doc_add_page_content(format_buffer, len);
   }
   text_state.bold_param = font->bold;
@@ -1131,11 +1131,8 @@ pdf_dev_set_string (spt_t xpos, spt_t ypos,
      * Same issues as earlier. Use floating point for simplicity.
      * This routine needs to be fast, so we don't call sprintf() or strcpy().
      */
-#if 0
-    text_state.offset -=
+    text_state.offset -= 
       (spt_t) (kern * font->extend * (font->sptsize / 1000.0));
-#endif
-    text_state.offset   -= delh;
     format_buffer[len++] = text_state.is_mb ? '>' : ')';
     if (font->wmode)
       len += p_itoa(-kern, format_buffer + len);
@@ -1191,7 +1188,7 @@ pdf_init_device (double dvi2pts, int precision, int black_and_white)
   dev_param.colormode = (black_and_white ? 0 : 1);
 
   graphics_mode();
-  pdf_color_clear();
+  pdf_color_clear_stack();
   pdf_dev_init_gstates();
 
   num_dev_fonts = 0;
@@ -1219,7 +1216,7 @@ pdf_close_device (void)
   num_dev_fonts = 0;
   max_dev_fonts = 0;
 
-  pdf_dev_clean_gstates();
+  pdf_dev_clear_gstates();
 }
 
 /*
@@ -1247,6 +1244,148 @@ pdf_dev_reset_fonts (void)
   text_state.is_mb         = 0;
 }
 
+void
+pdf_dev_reset_color(void)
+{
+  pdf_color *sc, *fc;
+
+  if (pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE)) {
+    pdf_color_get_current(&sc, &fc);
+    pdf_dev_set_strokingcolor(sc);
+    pdf_dev_set_nonstrokingcolor(fc);
+  }
+  return;
+}
+
+static int
+color_to_string (pdf_color *color, char *buffer)
+{
+  int i, len = 0;
+
+  for (i = 0; i < color->num_components; i++) {
+    len += sprintf(format_buffer+len, " %g", ROUND(color->values[i], 0.001));
+  }
+  return len;
+}
+
+void
+pdf_dev_set_color (pdf_color *color)
+{
+  int len;
+
+  if (!pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE)) {
+    WARN("Ignore color option was set. Just ignore.");
+    return;
+  } else if (!(color && pdf_color_is_valid(color))) {
+    WARN("No valid color is specified. Just ignore.");
+    return;
+  }
+
+  graphics_mode();
+  len = color_to_string(color, format_buffer);
+  format_buffer[len++] = ' ';
+  switch (color->num_components) {
+  case  3:
+    format_buffer[len++] = 'R';
+    format_buffer[len++] = 'G';
+    break;
+  case  4:
+    format_buffer[len++] = 'K';
+    break;
+  case  1:
+    format_buffer[len++] = 'G';
+    break;
+  default: /* already verified the given color */
+    break;
+  }
+  strncpy(format_buffer+len, format_buffer, len);
+  len = len << 1;
+  switch (color->num_components) {
+  case  3:
+    format_buffer[len-2] = 'r';
+    format_buffer[len-1] = 'g';
+    break;
+  case  4:
+    format_buffer[len-1] = 'k';
+    break;
+  case  1:
+    format_buffer[len-1] = 'g';
+  break;
+  default: /* already verified the given color */
+    break;
+  }
+  pdf_doc_add_page_content(format_buffer, len);
+  return;
+}
+
+void
+pdf_dev_set_strokingcolor (pdf_color *color)
+{
+  int len;
+
+  if (!pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE)) {
+    WARN("Ignore color option was set. Just ignore.");
+    return;
+  } else if (!(color && pdf_color_is_valid(color))) {
+    WARN("No valid color is specified. Just ignore.");
+    return;
+  }
+
+  graphics_mode();
+  len = color_to_string(color, format_buffer);
+  format_buffer[len++] = ' ';
+  switch (color->num_components) {
+  case  3:
+    format_buffer[len++] = 'R';
+    format_buffer[len++] = 'G';
+    break;
+  case  4:
+    format_buffer[len++] = 'K';
+    break;
+  case  1:
+    format_buffer[len++] = 'G';
+    break;
+  default: /* already verified the given color */
+    break;
+  }
+  pdf_doc_add_page_content(format_buffer, len);
+  return;
+}
+
+void
+pdf_dev_set_nonstrokingcolor (pdf_color *color)
+{
+  int len;
+
+  if (!pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE)) {
+    WARN("Ignore color option was set. Just ignore.");
+    return;
+  } else if (!(color && pdf_color_is_valid(color))) {
+    WARN("No valid color is specified. Just ignore.");
+    return;
+  }
+
+  graphics_mode();
+  len = color_to_string(color, format_buffer);
+  format_buffer[len++] = ' ';
+  switch (color->num_components) {
+  case  3:
+    format_buffer[len++] = 'r';
+    format_buffer[len++] = 'g';
+    break;
+  case  4:
+    format_buffer[len++] = 'k';
+    break;
+  case  1:
+    format_buffer[len++] = 'g';
+    break;
+  default: /* already verified the given color */
+    break;
+  }
+  pdf_doc_add_page_content(format_buffer, len);
+  return;
+}
+
 /* Not working */
 void
 pdf_dev_set_origin (double phys_x, double phys_y)
@@ -1262,9 +1401,6 @@ pdf_dev_set_origin (double phys_x, double phys_y)
   pdf_dev_concat(&M1);
 }
 
-static pdf_color saved_sc, saved_fc;
-static int have_saved_color = 0;
-
 void
 pdf_dev_bop (const pdf_tmatrix *M)
 {
@@ -1276,28 +1412,15 @@ pdf_dev_bop (const pdf_tmatrix *M)
   pdf_dev_concat(M);
 
   pdf_dev_reset_fonts();
-  pdf_dev_preserve_color(); /* preserve the last color in the previous page */
   pdf_dev_reset_color();
-
-  if (have_saved_color) {
-    pdf_dev_setcolor(&saved_sc, 0);
-    pdf_dev_setcolor(&saved_fc, 1);
-  }
 }
 
 void
 pdf_dev_eop (void)
 {
   int  depth;
-  
-  graphics_mode();
 
-  /* preserve the current color for start of next page, so \special{color...}
-     doesn't cease to have any effect at a page break;
-     note that printing pages out of order will break the assumptions here */
-  pdf_dev_currentcolor(&saved_sc, 0);
-  pdf_dev_currentcolor(&saved_fc, 1);
-  have_saved_color = 1;
+  graphics_mode();
 
   depth = pdf_dev_current_depth();
   if (depth != 1) {
@@ -1781,6 +1904,47 @@ pdf_dev_put_image (int             id,
   pdf_doc_add_page_resource("XObject",
                             res_name,
                             pdf_ximage_get_reference(id));
+
+  if (dvi_is_tracking_boxes()) {
+    pdf_tmatrix P;
+    int i;
+    pdf_rect rect;
+    pdf_coord corner[4];
+
+    pdf_dev_set_rect(&rect, 65536 * ref_x, 65536 * ref_y,
+	65536 * (r.urx - r.llx), 65536 * (r.ury - r.lly), 0);
+
+    corner[0].x = rect.llx; corner[0].y = rect.lly;
+    corner[1].x = rect.llx; corner[1].y = rect.ury;
+    corner[2].x = rect.urx; corner[2].y = rect.ury;
+    corner[3].x = rect.urx; corner[3].y = rect.lly;
+
+    pdf_copymatrix(&P, &(p->matrix));
+    for (i = 0; i < 4; ++i) {
+      corner[i].x -= rect.llx;
+      corner[i].y -= rect.lly;
+      pdf_dev_transform(&(corner[i]), &P);
+      corner[i].x += rect.llx;
+      corner[i].y += rect.lly;
+    }
+
+    rect.llx = corner[0].x;
+    rect.lly = corner[0].y;
+    rect.urx = corner[0].x;
+    rect.ury = corner[0].y;
+    for (i = 0; i < 4; ++i) {
+      if (corner[i].x < rect.llx)
+	rect.llx = corner[i].x;
+      if (corner[i].x > rect.urx)
+	rect.urx = corner[i].x;
+      if (corner[i].y < rect.lly)
+	rect.lly = corner[i].y;
+      if (corner[i].y > rect.ury)
+	rect.ury = corner[i].y;
+    }
+
+    pdf_doc_expand_box(&rect);
+  }
 
   return 0;
 }

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cidtype0.c,v 1.34 2005/07/17 09:53:37 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cidtype0.c,v 1.36 2007/06/30 01:18:13 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -182,7 +182,7 @@ add_CIDVMetrics (sfnt *sfont, pdf_obj *fontdict,
     vhea = tt_read_vhea_table(sfont);
   if (vhea && sfnt_find_table_pos(sfont, "vmtx") > 0) {
     sfnt_locate_table(sfont, "vmtx");
-    vmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, vhea->numOfLongVerMetrics);
+    vmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, vhea->numOfLongVerMetrics, vhea->numOfExSideBearings);
   }
   /*
    * OpenType font must have OS/2 table.
@@ -312,7 +312,7 @@ add_CIDMetrics (sfnt *sfont, pdf_obj *fontdict,
   hhea = tt_read_hhea_table(sfont);
 
   sfnt_locate_table(sfont, "hmtx");
-  hmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, hhea->numberOfHMetrics);
+  hmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, hhea->numOfLongHorMetrics, hhea->numOfExSideBearings);
 
   add_CIDHMetrics(sfont, fontdict, CIDToGIDMap, last_cid, maxp, head, hmtx);
   if (need_vmetrics)
@@ -472,8 +472,8 @@ CIDFont_type0_dofont (CIDFont *font)
   long   size, offset = 0;
   card8 *data;
   card16 num_glyphs, gid;
-  long   cid;
-  card16 cid_count, cs_count, last_cid;
+  long   cid, cid_count;
+  card16 cs_count, last_cid;
   int    fd, prev_fd, parent_id;
   char  *used_chars;
   unsigned char *CIDToGIDMap = NULL;
@@ -530,9 +530,9 @@ CIDFont_type0_dofont (CIDFont *font)
     ERROR("Not a CIDFont.");
 
   if (cff_dict_known(cffont->topdict, "CIDCount")) {
-    cid_count = (card16) cff_dict_get(cffont->topdict, "CIDCount", 0);
+    cid_count = (long) cff_dict_get(cffont->topdict, "CIDCount", 0);
   } else {
-    cid_count = CFF_CIDCOUNT_DEFAULT;
+    cid_count = CID_MAX + 1;
   }
 
   cff_read_charsets(cffont);
@@ -542,11 +542,6 @@ CIDFont_type0_dofont (CIDFont *font)
   cid = 0; last_cid = 0; num_glyphs = 0;
   for (cid = 0; cid <= CID_MAX; cid++) {
     if (is_used_char2(used_chars, cid)) {
-      if (cid >= cid_count) {
-	WARN("Glyph for CID %u missing in font \"%s\".", (CID) cid, font->ident);
-	used_chars[cid/8] &= ~(1 << (7 - (cid % 8)));
-	continue;
-      }
       gid = cff_charsets_lookup(cffont, cid);
       if (cid != 0 && gid == 0) {
 	WARN("Glyph for CID %u missing in font \"%s\".", (CID) cid, font->ident);
@@ -832,8 +827,8 @@ CIDFont_type0_open (CIDFont *font, const char *name,
 
   /* getting font info. from TrueType tables */
   if ((font->descriptor
-       = tt_get_fontdesc(sfont, &(opt->embed), 0)) == NULL)
-    ERROR("Could not obtain neccesary font info.");
+       = tt_get_fontdesc(sfont, &(opt->embed), 0, name)) == NULL)
+    ERROR("Could not obtain necessary font info.");
 
   if (opt->embed) {
     memmove(fontname + 7, fontname, strlen(fontname) + 1);
@@ -1244,8 +1239,8 @@ CIDFont_type0_t1copen (CIDFont *font, const char *name,
 
   /* getting font info. from TrueType tables */
   if ((font->descriptor
-       = tt_get_fontdesc(sfont, &(opt->embed), 0)) == NULL)
-    ERROR("Could not obtain neccesary font info.");
+       = tt_get_fontdesc(sfont, &(opt->embed), 0, name)) == NULL)
+    ERROR("Could not obtain necessary font info.");
 
   if (opt->embed) {
     memmove(fontname + 7, fontname, strlen(fontname) + 1);

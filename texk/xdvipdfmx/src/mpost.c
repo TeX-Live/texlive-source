@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/mpost.c,v 1.36 2006/12/11 12:46:03 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/mpost.c,v 1.38 2007/11/22 16:57:08 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -260,7 +260,8 @@ skip_prolog (char **start, char *end)
 
   save = *start;
   while (*start < end) {
-    skip_white(start, end);
+    if (**start != '%')
+      skip_white(start, end);
     if (*start >= end)
       break;
     if (!strncmp(*start, "%%EndProlog", 11)) {
@@ -1189,8 +1190,7 @@ do_operator (const char *token, double x_user, double y_user)
       pdf_color_cmykcolor(&color,
 			  values[0], values[1],
 			  values[2], values[3]);
-      pdf_dev_setcolor(&color, 0);
-      pdf_dev_setcolor(&color, 1);
+      pdf_dev_set_color(&color);
     }
     break;
   case SETGRAY:
@@ -1198,8 +1198,7 @@ do_operator (const char *token, double x_user, double y_user)
     error = pop_get_numbers(values, 1);
     if (!error) {
       pdf_color_graycolor(&color, values[0]);
-      pdf_dev_setcolor(&color, 0);
-      pdf_dev_setcolor(&color, 1);
+      pdf_dev_set_color(&color);
     }
     break;
   case SETRGBCOLOR:
@@ -1207,8 +1206,7 @@ do_operator (const char *token, double x_user, double y_user)
     if (!error) {
       pdf_color_rgbcolor(&color,
 			 values[0], values[1], values[2]);
-      pdf_dev_setcolor(&color, 0);
-      pdf_dev_setcolor(&color, 1);
+      pdf_dev_set_color(&color);
     }
     break;
 
@@ -1462,7 +1460,7 @@ mps_exec_inline (char **p, char *endptr,
 
   autorotate = pdf_dev_get_param(PDF_DEV_PARAM_AUTOROTATE);
   pdf_dev_set_param(PDF_DEV_PARAM_AUTOROTATE, 0);
-  pdf_color_push(); /* ... */
+  //pdf_color_push(); /* ... */
 
   /* Comment in dvipdfm:
    * Remember that x_user and y_user are off by 0.02 %
@@ -1470,7 +1468,7 @@ mps_exec_inline (char **p, char *endptr,
   pdf_dev_moveto(x_user, y_user);
   error = mp_parse_body(p, endptr, x_user, y_user);
 
-  pdf_color_pop(); /* ... */
+  //pdf_color_pop(); /* ... */
   pdf_dev_set_param(PDF_DEV_PARAM_AUTOROTATE, autorotate);
   pdf_dev_set_dirmode(dirmode);
 
@@ -1535,7 +1533,7 @@ mps_include_page (const char *ident, FILE *fp)
   dirmode    = pdf_dev_get_dirmode();
   autorotate = pdf_dev_get_param(PDF_DEV_PARAM_AUTOROTATE);
   pdf_dev_set_param(PDF_DEV_PARAM_AUTOROTATE, 0);
-  pdf_color_push();
+  //pdf_color_push();
 
   form_id  = pdf_doc_begin_grabbing(ident, 0.0, 0.0, &(info.bbox));
 
@@ -1562,7 +1560,7 @@ mps_include_page (const char *ident, FILE *fp)
 
   pdf_doc_end_grabbing();
 
-  pdf_color_pop();
+  //pdf_color_pop();
   pdf_dev_set_param(PDF_DEV_PARAM_AUTOROTATE, autorotate);
   pdf_dev_set_dirmode(dirmode);
 

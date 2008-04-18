@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_util.c,v 1.7 2005/08/12 16:27:52 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_util.c,v 1.10 2008/02/13 20:22:21 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -238,6 +238,8 @@ spc_util_read_colorspec (struct spc_env *spe, pdf_color *colorspec, struct spc_a
   else
     error = spc_read_color_pdf(spe, colorspec, ap);
 
+  skip_blank(&ap->curptr, ap->endptr);
+
   return  error;
 }
 
@@ -267,26 +269,39 @@ spc_util_read_length (struct spc_env *spe, double *vp /* ret. */, struct spc_arg
   v = atof(q);
   RELEASE(q);
 
+  skip_white(&ap->curptr, ap->endptr);
   q = parse_c_ident(&ap->curptr, ap->endptr);
   if (q) {
-    if (strlen(q) > strlen("true") &&
+    char *qq = q;
+    if (strlen(q) >= strlen("true") &&
         !memcmp(q, "true", strlen("true"))) {
       u /= spe->mag != 0.0 ? spe->mag : 1.0; /* inverse magnify */
       q += strlen("true");
     }
-    for (k = 0; ukeys[k] && strcmp(ukeys[k], q); k++);
-    switch (k) {
-    case K_UNIT__PT: u *= 72.0 / 72.27; break;
-    case K_UNIT__IN: u *= 72.0; break;
-    case K_UNIT__CM: u *= 72.0 / 2.54 ; break;
-    case K_UNIT__MM: u *= 72.0 / 25.4 ; break;
-    case K_UNIT__BP: u *= 1.0 ; break;
-    default:
-      spc_warn(spe, "Unknown unit of measure: %s", q);
-      error = -1;
-      break;
+    if (strlen(q) == 0) {
+      RELEASE(qq);
+      skip_white(&ap->curptr, ap->endptr);
+      qq = q = parse_c_ident(&ap->curptr, ap->endptr);
     }
-    RELEASE(q);
+    if (q) {
+      for (k = 0; ukeys[k] && strcmp(ukeys[k], q); k++);
+      switch (k) {
+      case K_UNIT__PT: u *= 72.0 / 72.27; break;
+      case K_UNIT__IN: u *= 72.0; break;
+      case K_UNIT__CM: u *= 72.0 / 2.54 ; break;
+      case K_UNIT__MM: u *= 72.0 / 25.4 ; break;
+      case K_UNIT__BP: u *= 1.0 ; break;
+      default:
+        spc_warn(spe, "Unknown unit of measure: %s", q);
+        error = -1;
+        break;
+      }
+      RELEASE(qq);
+    }
+    else {
+        spc_warn(spe, "Missing unit of measure after \"true\"");
+        error = -1;
+    }
   }
 
   *vp = v * u;
@@ -396,9 +411,8 @@ spc_read_dimtrns_dvips (struct spc_env *spe, transform_info *t, struct spc_arg *
       spc_warn(spe, "Missing value for dimension/transformation: %s", kp);
       error = -1;
     }
-
+    RELEASE(kp);
     if (!vp || error) {
-      RELEASE(kp);
       break;
     }
 
@@ -461,7 +475,7 @@ spc_read_dimtrns_dvips (struct spc_env *spe, transform_info *t, struct spc_arg *
 
 
 static int
-spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *ap)
+spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *ap, long *page_no)
 {
   int     has_scale, has_xscale, has_yscale, has_rotate, has_matrix;
   const char *_dtkeys[] = {
@@ -478,6 +492,8 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
     "bbox", /* See "Dvipdfmx User's Manual", p.5 */
 #define  K_TRN__MATRIX 8
     "matrix",
+#define  K_TRN__PAGE   9
+    "page",
      NULL
   };
   double xscale, yscale, rotate;
@@ -577,6 +593,15 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
         }
       }
       break;
+    case  K_TRN__PAGE:
+      {
+	double page;
+	if (page_no && spc_util_read_numbers(&page, 1, spe, ap) == 1)
+	  *page_no = (long) page;
+	else
+	  error = -1;
+      }
+      break;
     default:
       error = -1;
       break;
@@ -615,14 +640,15 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
 }
 
 int
-spc_util_read_dimtrns (struct spc_env *spe, transform_info *ti, struct spc_arg *args, int syntax)
+spc_util_read_dimtrns (struct spc_env *spe, transform_info *ti, struct spc_arg *args, long *page_no, int syntax)
 {
   ASSERT(ti && spe && args);
 
   if (syntax) {
+    ASSERT(!page_no);
     return  spc_read_dimtrns_dvips(spe, ti, args);
   } else {
-    return  spc_read_dimtrns_pdfm (spe, ti, args);
+    return  spc_read_dimtrns_pdfm (spe, ti, args, page_no);
   }
 
   return  -1;
@@ -636,6 +662,7 @@ spc_util_read_dimtrns (struct spc_env *spe, transform_info *ti, struct spc_arg *
 #ifdef  cmyk
 #undef  cmyk
 #endif
+#define gray(g)       {1, {g}}
 #define rgb8(r,g,b)   {3, {((r)/255.0), ((g)/255.0), ((b)/255.0), 0.0}}
 #define cmyk(c,m,y,k) {4, {(c), (m), (y), (k)}}
 
@@ -709,9 +736,13 @@ static struct colordef_
   {"Sepia",          cmyk(0.00, 0.83, 1.00, 0.70)},
   {"Brown",          cmyk(0.00, 0.81, 1.00, 0.60)},
   {"Tan",            cmyk(0.14, 0.42, 0.56, 0.00)},
-  {"Gray",           cmyk(0.00, 0.00, 0.00, 0.50)},
-  {"Black",          cmyk(0.00, 0.00, 0.00, 1.00)},
-  {"White",          cmyk(0.00, 0.00, 0.00, 0.00)},
+  /* Adobe Reader 7 and 8 had problem when gray and cmyk black colors
+   * are mixed. No problem with Previewer.app.
+   * It happens when \usepackage[dvipdfm]{graphicx} and then called
+   * \usepackage{color} without dvipdfm option. */
+  {"Gray",           gray(0.5)},
+  {"Black",          gray(0.0)},
+  {"White",          gray(1.0)},
   {NULL}
 };
 

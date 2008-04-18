@@ -74,6 +74,7 @@ spc_xtx_at_end_document (void)
 int
 spc_xtx_at_begin_page (void)
 {
+  /*pdf_dev_set_fixed_point(0, 0);*/
   return  0;
 }
 
@@ -84,22 +85,88 @@ spc_xtx_at_end_page (void)
 }
 
 static int
-spc_handler_xtx_scale (struct spc_env *spe, struct spc_arg *args)
+spc_handler_xtx_do_scale (double x_user, double y_user, double valueX, double valueY)
 {
   pdf_tmatrix     M = { 0, 0, 0, 0, 0, 0 };
+  pdf_coord       pt;
+
+
+  /* Create transformation matrix */
+  M.a = valueX;
+  M.d = valueY;
+  M.e = ((1.0 - M.a) * x_user - M.c * y_user);
+  M.f = ((1.0 - M.d) * y_user - M.b * x_user);
+
+  pdf_dev_concat(&M);
+  pdf_dev_get_fixed_point(&pt);
+  pdf_dev_set_fixed_point(x_user - pt.x, y_user - pt.y);
+
+  return  0;
+}
+static int
+spc_handler_xtx_scale (struct spc_env *spe, struct spc_arg *args)
+{
   double          values[2];
 
   if (spc_util_read_numbers(&values[0], 2, spe, args) < 2) {
     return -1;
   }
+  args->curptr = args->endptr;
+
+  return spc_handler_xtx_do_scale(spe->x_user, spe->y_user, values[0], values[1]);
+}
+
+/* Scaling without gsave/grestore. */
+static pdf_coord *scaleFactors = 0;
+static int scaleFactorCount = -1;
+
+static int
+spc_handler_xtx_bscale (struct spc_env *spe, struct spc_arg *args)
+{
+  double          values[2];
+
+  if (!(++scaleFactorCount & 0x0f))
+    scaleFactors = realloc(scaleFactors, (scaleFactorCount + 16) * sizeof(pdf_coord));
+  if (spc_util_read_numbers(&values[0], 2, spe, args) < 2) {
+    return -1;
+  }
+  if (fabs(values[0]) < 1.e-7 || fabs(values[1]) < 1.e-7) {
+    return -1;
+  }
+  scaleFactors[scaleFactorCount].x = 1 / values[0];
+  scaleFactors[scaleFactorCount].y = 1 / values[1];
+  args->curptr = args->endptr;
+
+  return  spc_handler_xtx_do_scale (spe->x_user, spe->y_user, values[0], values[1]);
+}
+
+static int
+spc_handler_xtx_escale (struct spc_env *spe, struct spc_arg *args)
+{
+  pdf_coord factor = scaleFactors[scaleFactorCount--];
+
+  args->curptr = args->endptr;
+
+  return  spc_handler_xtx_do_scale (spe->x_user, spe->y_user, factor.x, factor.y);
+}
+
+int
+spc_handler_xtx_do_rotate (double x_user, double y_user, double value)
+{
+  pdf_tmatrix     M = { 0, 0, 0, 0, 0, 0 };
+  pdf_coord       pt;
 
   /* Create transformation matrix */
-  M.a = values[0];
-  M.d = values[1];
-  M.e = ((1.0 - M.a) * spe->x_user - M.c * spe->y_user);
-  M.f = ((1.0 - M.d) * spe->y_user - M.b * spe->x_user);
+  M.a = cos(value * M_PI / 180);
+  M.b = sin(value * M_PI / 180);
+  M.c = -M.b;
+  M.d = M.a;
+  M.e = ((1.0 - M.a) * x_user - M.c * y_user);
+  M.f = ((1.0 - M.d) * y_user - M.b * x_user);
 
   pdf_dev_concat(&M);
+  pdf_dev_get_fixed_point(&pt);
+  pdf_dev_set_fixed_point(x_user - pt.x, y_user - pt.y);
 
   return  0;
 }
@@ -107,24 +174,14 @@ spc_handler_xtx_scale (struct spc_env *spe, struct spc_arg *args)
 static int
 spc_handler_xtx_rotate (struct spc_env *spe, struct spc_arg *args)
 {
-  pdf_tmatrix     M = { 0, 0, 0, 0, 0, 0 };
   double          value;
 
   if (spc_util_read_numbers(&value, 1, spe, args) < 1) {
     return -1;
   }
+  args->curptr = args->endptr;
 
-  /* Create transformation matrix */
-  M.a = cos(value * M_PI / 180);
-  M.b = sin(value * M_PI / 180);
-  M.c = -M.b;
-  M.d = M.a;
-  M.e = ((1.0 - M.a) * spe->x_user - M.c * spe->y_user);
-  M.f = ((1.0 - M.d) * spe->y_user - M.b * spe->x_user);
-
-  pdf_dev_concat(&M);
-
-  return  0;
+  return  spc_handler_xtx_do_rotate (spe->x_user, spe->y_user, value);
 }
 
 static int
@@ -275,6 +332,61 @@ spc_handler_xtx_fontmapfile (struct spc_env *spe, struct spc_arg *args)
   return  error;
 }
 
+static char overlay_name[256];
+
+static int
+spc_handler_xtx_initoverlay (struct spc_env *spe, struct spc_arg *args)
+{
+  skip_white(&args->curptr, args->endptr);
+  if (args->curptr >= args->endptr)
+    return -1;
+  strncpy(overlay_name, args->curptr, args->endptr - args->curptr);
+  overlay_name[args->endptr - args->curptr] = 0;
+
+  args->curptr = args->endptr;
+  return 0;
+}
+
+static int
+spc_handler_xtx_clipoverlay (struct spc_env *spe, struct spc_arg *args)
+{
+  skip_white(&args->curptr, args->endptr);
+  if (args->curptr >= args->endptr)
+    return -1;
+  pdf_dev_grestore();
+  pdf_dev_gsave();
+  if (strncmp(overlay_name, args->curptr, strlen(overlay_name)) != 0
+   && strncmp("all", args->curptr, strlen("all")) != 0)
+    pdf_doc_add_page_content(" 0 0 m W n", 10);
+
+  args->curptr = args->endptr;
+  return 0;
+}
+
+static int
+spc_handler_xtx_renderingmode (struct spc_env *spe, struct spc_arg *args)
+{
+  double value;
+
+  if (spc_util_read_numbers(&value, 1, spe, args) < 1) {
+    return -1;
+  }
+  if ((int) value < 0 || (int) value > 7) {
+    spc_warn(spe, "Invalid text rendering mode %d.\n", (int) value);
+    return -1;
+  }
+  sprintf(work_buffer, " %d Tr", (int) value);
+  pdf_doc_add_page_content(work_buffer, strlen(work_buffer));
+  skip_white(&args->curptr, args->endptr);
+  if (args->curptr < args->endptr) {
+    pdf_doc_add_page_content(" ", 1);
+    pdf_doc_add_page_content(args->curptr, args->endptr - args->curptr);
+  }
+
+  args->curptr = args->endptr;
+  return 0;
+}
+
 static int
 spc_handler_xtx_unsupportedcolor (struct spc_env *spe, struct spc_arg *args)
 {
@@ -312,6 +424,8 @@ static struct spc_handler xtx_handlers[] = {
   {"grestore",        spc_handler_xtx_grestore},
 
   {"scale",           spc_handler_xtx_scale},
+  {"bscale",           spc_handler_xtx_bscale},
+  {"escale",           spc_handler_xtx_escale},
   {"rotate",          spc_handler_xtx_rotate},
 
   {"fontmapline",     spc_handler_xtx_fontmapline},
@@ -319,6 +433,10 @@ static struct spc_handler xtx_handlers[] = {
 
   {"shadow",          spc_handler_xtx_unsupported},
   {"colorshadow",     spc_handler_xtx_unsupported},
+  {"renderingmode",   spc_handler_xtx_renderingmode},
+
+  {"initoverlay",     spc_handler_xtx_initoverlay},
+  {"clipoverlay",     spc_handler_xtx_clipoverlay},
 };
 
 int
