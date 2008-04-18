@@ -104,7 +104,7 @@ TIE = @TIE@
 # Calling tangle
 tangle = WEBINPUTS=.:$(srcdir) $(TANGLE)
 ctangle = $(CTANGLE)
-tie = $(native)/$(TIE)
+tie = $(TIE)
 
 # The environment for making dumps.
 # No need to specify TEXMF, as ../kpathsea/texmf.cnf should contain
