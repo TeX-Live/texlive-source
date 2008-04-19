@@ -364,6 +364,9 @@ if ( -f "$cmd_dir/xindy" && -x _ ) {
     $xindy = "$cmd_dir/xindy";
 } elsif ( -f "$cmd_dir/xindy.pl" && -x _ ) {
     $xindy = "$cmd_dir/xindy.pl";
+} elsif ( -f "$ENV{SELFAUTOLOC}/xindy.texlua" ) { # woe32
+    $xindy = "$ENV{SELFAUTOLOC}/xindy.texlua";
+    $cmd_dir = $ENV{"SELFAUTOLOC"};
 } else {
     die "$cmd: cannot locate xindy\n";
 }
@@ -387,10 +390,15 @@ unshift (@ARGV, map { ('-M', $_) } ($ENV{TEXINDY_AUTO_MODULE} || 'texindy',
 				    @modules));
 unshift (@ARGV, '-I', $input_markup);
 
-print "Calling xindy as: $cmd_dir/xindy @ARGV\n"  if (grep /^script$/, @debug);
+print "Calling xindy as: $xindy @ARGV\n"  if (grep /^script$/, @debug);
 
-exec $xindy, @ARGV;
-die "$cmd: could not execute xindy: $!\n";
+if ($xindy =~ m,\.texlua$,) {
+  system("texlua", $xindy, @ARGV);
+  exit $? if $? != -1;
+} else {
+  exec $xindy, @ARGV;
+}
+die "$cmd: could not execute $xindy: $!\n";
 
 
 # ------------------------------------------------------------
@@ -461,22 +469,28 @@ sub output_xindy_release () {
     if ( -f "$cmd_dir/../VERSION" ) {
 	$version_file = "$cmd_dir/../VERSION";
     } else {
+	my $xindy_run;
+	if ($^O eq "MSWin32" || $^O eq "cygwin") {
+	  $xindy_run = "xindy-lisp.exe";
+	} else {
+	  $xindy_run = "xindy.run";
+	}
 	# Where is the library directory?
 	my $lib_dir;
 	if ( $ENV{XINDY_LIBDIR} ) {
 	    $lib_dir = $ENV{XINDY_LIBDIR};
+	} elsif ( -f "$cmd_dir/$xindy_run" ) { # texlive style
+	    $lib_dir = $cmd_dir;
 	} elsif ( '@libdir@' ne '@libdir' . '@' ) { # GNU configure at work?
 	    if ( -d '@libdir@/xindy' ) { # /usr style
 		$lib_dir = '@libdir@/xindy';
 	    } else {
 		$lib_dir = '@libdir@'; # /opt style
 	    }
-	} elsif ( -f "$cmd_dir/../lib/xindy.run" ) { # /opt style
+	} elsif ( -f "$cmd_dir/../lib/$xindy_run" ) { # /opt style
 	    $lib_dir = "$cmd_dir/../lib";
 	} elsif ( -d "$cmd_dir/../lib/xindy" ) { # /usr style
 	    $lib_dir = "$cmd_dir/../lib/xindy";
-	} elsif ( -f "$cmd_dir/xindy.run" ) { # texlive style
-	    $lib_dir = $cmd_dir;
 	} else {
 	    die "Cannot locate xindy library directory";
 	}

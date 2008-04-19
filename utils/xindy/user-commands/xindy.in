@@ -286,25 +286,38 @@ BEGIN {
 # Determine environment. Where is our library directory, and our modules?
 
 use File::Basename;
-our ($cmd_dir, $cmd, $lib_dir, $modules_dir);
+our ($cmd_dir, $cmd, $xindy_run, $lib_dir, $modules_dir, $path_sep);
 BEGIN {
     $cmd_dir = dirname($0);
     $cmd = basename($0);
 
+    if ($^O eq "MSWin32" || $^O eq "cygwin") {
+      $xindy_run = "xindy-lisp.exe";
+      $path_sep = ";";
+    } else {
+      $xindy_run = "xindy.run";
+      $path_sep = ":";
+    }
+
     # library directory
     if ( $ENV{XINDY_LIBDIR} ) {
 	$lib_dir = $ENV{XINDY_LIBDIR};
-    } elsif ( -f "$cmd_dir/xindy.run" ) { # texlive style
+	die "$cmd: Invalid XINDY_LIBDIR setting: cannot find $lib_dir/$xindy_run" if ! -f "$lib_dir/$xindy_run";
+    } elsif ( -f "$cmd_dir/$xindy_run" ) { # texlive unix
 	$lib_dir = $cmd_dir;
+    } elsif ( exists $ENV{"SELFAUTOLOC"} && -f "$ENV{SELFAUTOLOC}/$xindy_run" ) { # texlive woe32
+	$lib_dir = $ENV{"SELFAUTOLOC"};
+	$cmd_dir = $ENV{"SELFAUTOLOC"};
     } elsif ( '@libdir@' ne '@libdir' . '@' ) { # GNU configure at work?
 	if ( -d '@libdir@/xindy' ) {	# /usr style
 	    $lib_dir = '@libdir@/xindy';
 	} else {
 	    $lib_dir = '@libdir@'; # /opt style
 	}
-    } elsif ( -f "$cmd_dir/../lib/xindy.run" ) { # /opt style
+	die "$cmd: Cannot locate $lib_dir/$xindy_run" if ! -f "$lib_dir/$xindy_run";
+    } elsif ( -f "$cmd_dir/../lib/$xindy_run" ) { # /opt style
 	$lib_dir = "$cmd_dir/../lib";
-    } elsif ( -d "$cmd_dir/../lib/xindy" ) { # /usr style
+    } elsif ( -f "$cmd_dir/../lib/xindy/$xindy_run" ) { # /usr style
 	$lib_dir = "$cmd_dir/../lib/xindy";
     } else {
 	die "$cmd: Cannot locate xindy library directory";
@@ -590,7 +603,7 @@ sub filter_index ( $$ ) {
 # Construct final xindy expression, from options.
 
 sub xindy_expression () {
-    my ($logging, $tracing, $trace_level);
+    my ($logging, $tracing, $trace_level, $searchpath);
 
     # Determine language module of make-rules framework. Part of the
     # complexity below is from compatibility with the TLC2
@@ -658,16 +671,18 @@ sub xindy_expression () {
 
     $style_file = quotify($style_file);
     $outfile = quotify($outfile);
+    $raw_index = quotify($raw_index);
     $logging = ':logfile ' . quotify($logfile)  if $logfile;
     $tracing = ':markup-trace :on'  if $debug{markup};
     $trace_level = ":trace-level $debug{trace_level}"  if $debug{trace_level};
+    $searchpath = quotify(join($path_sep, ".", $modules_dir, "$modules_dir/base"));
 
     my $exp = <<_EOT_
 (progn
-  (searchpath ".:$modules_dir:$modules_dir/base")
+  (searchpath $searchpath)
   (xindy:startup
     :idxstyle $style_file
-    :rawindex "$raw_index"
+    :rawindex $raw_index
     :output $outfile
     $logging
     $tracing
@@ -685,12 +700,18 @@ _EOT_
 sub call_xindy ( $$ ) {
     my ($mem_file, $xindy_exp) = @_;
 
-    my @command = ("$lib_dir/xindy.run", '-q',
+    my @command = ("$lib_dir/$xindy_run", '-q',
 		   '-B', $lib_dir, '-M', $mem_file, '-E', 'iso-8859-1');
     if ( $interactive ) {
 	print "Proposed xindy expression:\n\n$xindy_exp\n"  unless $quiet;
     } else {
-	push (@command, '-x', $xindy_exp);
+	#push (@command, '-x', $xindy_exp);
+	my ($output, $outfile) = tempfile();
+	push (@temp_files, $outfile);
+	print $output $xindy_exp;
+	close ($output);
+	print "xindy startup file: $outfile\n" if $debug{script};
+	push (@command, $outfile);
     }
 
     if ( $debug{script} ) {
@@ -748,7 +769,7 @@ sub output_xindy_release () {
 
 sub quotify ( $ ) {
     my $s = shift;
-    $s =~ s:[\\\"]:\\&1:g ;		# quote double-quote and backslash
+    $s =~ s:([\\\"]):\\$1:g ;		# quote double-quote and backslash
     return "\"$s\"";
 }
 
