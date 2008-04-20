@@ -155,9 +155,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-@TETEX_BUILD_FALSE@modulesdir = $(pkgdatadir)
-@TETEX_BUILD_TRUE@modulesdir = $(prefix)/texmf/xindy
-rulesdir = $(modulesdir)/rules
+rulesdir = $(pkgdatadir)/rules
 RULES = \
 	isolatin1-exchange.xdy \
 	latin-exchange.xdy \

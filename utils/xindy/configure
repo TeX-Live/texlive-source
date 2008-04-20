@@ -3706,6 +3706,7 @@ fi
 if test "x$enable_tetex_build" = xyes; then
   { echo "$as_me:$LINENO: Using installation layout for TeX Live" >&5
 echo "$as_me: Using installation layout for TeX Live" >&6;}
+  datadir="$prefix/texmf"
   docdir="$prefix/texmf/doc/$PACKAGE_NAME"
   mandir="$prefix/texmf/doc/man"
   if test -z "$enable_docs"; then

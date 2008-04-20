@@ -255,8 +255,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-@TETEX_BUILD_FALSE@langdir = $(pkgdatadir)/lang
-@TETEX_BUILD_TRUE@langdir = $(prefix)/texmf/xindy/lang
+langdir = $(pkgdatadir)/lang
 albaniandir = $(langdir)/albanian
 ALBANIAN = \
 	albanian/latin1-lang.xdy \
