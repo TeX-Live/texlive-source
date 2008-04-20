@@ -19,17 +19,9 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-if TETEX_BUILD
-    langdir = $(prefix)/texmf/xindy/lang
-else
-    langdir = $(pkgdatadir)/lang
-endif
+latindir = $(pkgdatadir)/lang/latin
 
-latindir = $(langdir)/latin
-
-RULES = \
-	caseisrt.xdy \
-	letgroup.xdy
+RULES = caseisrt.xdy letgroup.xdy
 
 EXTRA_DIST = $(RULES)
 

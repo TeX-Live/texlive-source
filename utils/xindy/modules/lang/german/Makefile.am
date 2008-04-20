@@ -19,18 +19,9 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-if TETEX_BUILD
-    langdir = $(prefix)/texmf/xindy/lang
-else
-    langdir = $(pkgdatadir)/lang
-endif
+germandir = $(pkgdatadir)/lang/german
 
-germandir = $(langdir)/german
-
-RULES = \
-	din5007.xdy \
-	duden.xdy \
-	tex.xdy
+RULES = din5007.xdy duden.xdy tex.xdy
 
 EXTRA_DIST = $(RULES)
 

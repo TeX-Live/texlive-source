@@ -19,13 +19,7 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-if TETEX_BUILD
-    modulesdir = $(prefix)/texmf/xindy
-else
-    modulesdir = $(pkgdatadir)
-endif
-
-texdir = $(modulesdir)/styles
+texdir = $(pkgdatadir)/styles
 
 RULES = basic.xdy makeidx.xdy
 

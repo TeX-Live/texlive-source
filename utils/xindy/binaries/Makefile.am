@@ -23,34 +23,28 @@
 # some global variables
 SRCDIR     = $(top_srcdir)/src
 FAS        = base.fas locref.fas idxstyle.fas index.fas version.fas markup.fas
-DEFAULTS   = defaults.xdy
 DUMP_XINDY = $(SRCDIR)/dump-xindy.lsp
-MEMFILE    = xindy.mem
 RUN_XINDY  = ./$(XINDY_RUN) -q -norc -M ./base.mem
 
 if TETEX_BUILD
-    MODULEDIR = $(prefix)/texmf/xindy
     kerneldir = $(bindir)
 else
-# Where the modules are found at runtime.
-    MODULEDIR = $(pkgdatadir)
 # Where the files xindy.run and xindy.mem should be installed.
     kerneldir = $(pkglibdir)
 endif
 
-xindy.mem: $(DEFAULTS) $(FAS) base.mem $(XINDY_RUN)
-	rm -f $(MEMFILE)
+xindy.mem: defaults.xdy $(FAS) base.mem $(XINDY_RUN)
+	rm -f $@
 	$(RUN_XINDY) -x '(load "$(DUMP_XINDY)")'
-	gzip $(MEMFILE)
-	mv $(MEMFILE).gz $(MEMFILE)
+	test "$(host_os)" != "mingw32" && gzip -9n $@ && mv $@.gz $@
 
-$(DEFAULTS):
-	@$(RM) $(DEFAULTS)
-	@echo "Creating file $(DEFAULTS)..."
-	@echo "(setq *load-paths* (list "         > $(DEFAULTS)
-	@echo "  (pathname \".\")"               >> $(DEFAULTS)
-	@echo "  (pathname \"$(MODULEDIR)\")))"  >> $(DEFAULTS)
-	@echo "Finished $(DEFAULTS)."
+defaults.xdy:
+	@$(RM) $@
+	@echo "Creating file $@ ..."
+	@echo "(setq *load-paths* (list "         > $@
+	@echo "  (pathname \".\")"               >> $@
+	@echo "  (pathname \"$(pkgdatadir)\")))" >> $@
+	@echo "Finished $@."
 
 %.fas: $(SRCDIR)/%.lsp
 	$(RUN_XINDY) -c $< -o $@

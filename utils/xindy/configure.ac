@@ -42,6 +42,7 @@ AC_ARG_WITH(clisp, AS_HELP_STRING([--with-clisp=...],[Use the specified location
 if test "x$enable_tetex_build" = xyes; then
 dnl we don't really care whether $srcdir/../../texk/kpathsea is found, so don't test for it.
   AC_MSG_NOTICE([Using installation layout for TeX Live])
+  datadir="$prefix/texmf"
   docdir="$prefix/texmf/doc/$PACKAGE_NAME"
   mandir="$prefix/texmf/doc/man"
   if test -z "$enable_docs"; then
