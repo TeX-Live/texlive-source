@@ -4,8 +4,7 @@
 : ${srcdir=.}
 
 li_count=`../makeinfo --no-split --html -o - $srcdir/html-extrali.txi 2>/dev/null \
-| grep '<li>' \
-| wc -l`
+| grep -c '<li>'`
 
 if test "$li_count" -ne 1; then
   echo "$li_count <li>s instead of one." >&2

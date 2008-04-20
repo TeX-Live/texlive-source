@@ -1,15 +1,15 @@
 /* window.h -- Structure and flags used in manipulating Info windows.
-   $Id: window.h,v 1.3 2004/04/11 17:56:46 karl Exp $
+   $Id: window.h,v 1.7 2008/02/26 16:51:06 karl Exp $
 
    This file is part of GNU Info, a program for reading online documentation
    stored in Info format.
 
-   Copyright (C) 1993, 1997, 2004 Free Software Foundation, Inc.
+   Copyright (C) 1993, 1997, 2004, 2007 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -17,8 +17,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
    Written by Brian Fox (bfox@ai.mit.edu). */
 
@@ -167,13 +166,13 @@ extern void window_goto_percentage (WINDOW *window, int percent);
 
 /* Build a new node which has FORMAT printed with ARG1 and ARG2 as the
    contents. */
-extern NODE *build_message_node (char *format, void *arg1, void *arg2);
+extern NODE *build_message_node (const char *format, void *arg1, void *arg2);
 
 /* Useful functions can be called from outside of window.c. */
 extern void initialize_message_buffer (void);
 
 /* Print FORMAT with ARG1,2 to the end of the current message buffer. */
-extern void printf_to_message_buffer (char *format, void *arg1, void *arg2,
+extern void printf_to_message_buffer (const char *format, void *arg1, void *arg2,
     void *arg3);
 
 /* Convert the contents of the message buffer to a node. */
@@ -189,13 +188,13 @@ extern int pad_to (int count, char *string);
    The arguments are treated similar to printf () arguments, but not all of
    printf () hair is present.  The message appears immediately.  If there was
    already a message appearing in the echo area, it is removed. */
-extern void window_message_in_echo_area (char *format, void *arg1, void *arg2);
+extern void window_message_in_echo_area (const char *format, void *arg1, void *arg2);
 
 /* Place a temporary message in the echo area built from FORMAT, ARG1
    and ARG2.  The message appears immediately, but does not destroy
    any existing message.  A future call to unmessage_in_echo_area ()
    restores the old contents. */
-extern void message_in_echo_area (char *format, void *arg1, void *arg2);
+extern void message_in_echo_area (const char *format, void *arg1, void *arg2);
 extern void unmessage_in_echo_area (void);
 
 /* Clear the echo area, removing any message that is already present.

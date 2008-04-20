@@ -1,16 +1,15 @@
-$Id: TODO,v 1.26 2004/11/22 23:57:32 karl Exp $
+$Id: TODO,v 1.44 2008/02/25 00:21:29 karl Exp $
 This is the todo list for GNU Texinfo.
 If you are interested in working on any of these, email bug-texinfo@gnu.org.
 
   Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2003, 
-  2001, 2002, 2003, 2004 Free Software Foundation.
+  2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Free Software Foundation.
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
 * General:
-  - @euro{}.
   - Support installation of manuals in different languages, along these lines:
     . support a LINGUAS file or variable saying which subdirs LL in the
       source to descend into (under doc/).
@@ -26,6 +25,8 @@ If you are interested in working on any of these, email bug-texinfo@gnu.org.
     For a test case, see texinfo cvs, with its one translated manual
     (info-fr.texi).
     From Wojciech Polak.
+  - Or even multibyte languages like Japanese, see msg:
+    http://lists.gnu.org/archive/html/bug-texinfo/2005-03/msg00000.html
   - Monitor and improve the dir categories in existing manuals,
     following the Free Software Directory categories.  Much mail to
     developers has already been sent, what's needed now is to check new
@@ -38,6 +39,7 @@ If you are interested in working on any of these, email bug-texinfo@gnu.org.
     especially 
       http://mail.gnu.org/archive/html/emacs-devel/2002-10/msg00090.html
       http://mail.gnu.org/archive/html/emacs-devel/2002-10/msg00137.html
+  - Extend and improve the tests.
   - Get Info declared as a MIME Content-Type.
   - Likewise the `info:' URI scheme; a library consortium has proposed a
     completely different purpose for the URI scheme, but I don't know
@@ -48,9 +50,6 @@ If you are interested in working on any of these, email bug-texinfo@gnu.org.
   - Support reference card creation, perhaps by only paying attention to
     sectioning and @def... commands.
   - Allow @end (and other?) commands to be indented in the source.
-  - Test for memory leaks, e.g., with valgrind:
-    http://developer.kde.org/~sewardj/
-  - Extend and improve the tests.
 
 * Language:
   - @else for the @if... conditionals.
@@ -65,7 +64,9 @@ If you are interested in working on any of these, email bug-texinfo@gnu.org.
   - @exercise/@answer command for, e.g., gawk.
   - Allow @hsep/@vsep at @item, instead of just in template.
   - Support automatic line numbering of examples.
-  - Better macro syntax.
+  - Better macro syntax, including a separate @inlinemacro (or
+    something) to distinguish macros that swallow their final newline
+    and those that don't.
   - Better def... command syntax.
   - Allow : in node names for info files, for names like
     `class::method'.  Likewise index entries.  A quoting mechanism such
@@ -76,7 +77,9 @@ If you are interested in working on any of these, email bug-texinfo@gnu.org.
 
 * Makeinfo:
   - Translation of "Appendix" etc. should depend on @doclang not $LANG.
-  - Try directory of main source file.
+  - Really support UTF-8 instead of just passing through the bytes.
+  - lang.c setup doesn't support @v{S} (S with caron) -- no named entity.
+  - Automatically do -I of directory of main source file.
   - Make makeinfo -E just do macro expansion, avoiding all error checks.
     That way, texi2dvi could run makeinfo --iftex -E.
   - A detexinfo program, like detex or delatex.  This command would
@@ -99,21 +102,26 @@ If you are interested in working on any of these, email bug-texinfo@gnu.org.
 
 * TeX:
   - Use @ as the escape character, and Texinfo syntax generally, in the
-    table of contents and index files.  Eliminate all the crazy
-    multiple redefinitions of every Texinfo command in different contexts.
+    table of contents and index files.
   - Support input in any encoding and language, via ec or Latin Modern fonts.
+    Including Unicode, e.g., UTF-8.  (Some work has been done.)
   - Reasonable way to change fonts from the default (some work has been
     done), to allow for PostScript fonts, for example.
   - @multitable: handle @hsep and @vsep.
   - @multitable: repeat table headings if multiple pages long.
   - @multitable: support a heading line concept (<thead> in HTML).
   - Introduce new command to change \bindingoffset.
-  - How about using latex2html to produce HTML?
-  - Table of contents gets misaligned if there are 10 or more [sub]sections.
+  - Use marks to define a real @thissection.
+  - Table of contents is misaligned if there are 10 or more [sub]sections.
   - Use url.sty (or something) to allow linebreak of url's.
+  - Make accent commands implicitly use @dotless{i/j}.
   - Include hyperlink \special's in the DVI output for xdvi, etc.
   - PDF: make each letter of the index (A, B, ...) a section in the TOC.
-    From Carsten Dominik <dominik@astro.uva.nl>.
+    From Carsten Dominik.
+  - PDF: use the PageLabels dictionary to allow jumping to logical
+    pages, presumably after xpdf/gv support it.  Section 8.3.1 of the
+    PDF reference.  From Werner Lemberg, texinfo-pretest mail of
+    27 Feb 2006 22:55:13 +0100.
 
 * Doc:
   - Include a complete functional summary, as in a reference card, in
@@ -123,13 +131,34 @@ If you are interested in working on any of these, email bug-texinfo@gnu.org.
     for an example of doing it in both the tex and info versions.
 
 * Info:
-  - Regular expression search.
+  - (By far the most important bug to fix.)
+    Support multibyte character sets, principally UTF-8; most
+    critically, do not break multibyte characters across lines, but lots
+    of other problems are present.  This implies major changes to Info,
+    since it currently assumes byte/character equivalence (having been
+    written long before multibyte character sets were common).
+
+    Here's a careful bug report on the subject (the sender can help test):
+    http://lists.gnu.org/archive/html/bug-texinfo/2007-11/msg00033.html
+    
+    Here's an initial bug report and "patch" that simply disables translation.
+    http://lists.gnu.org/archive/html/bug-texinfo/2006-08/msg00001.html
+    http://wiki.linuxfromscratch.org/patches/browser/trunk/texinfo/texinfo-4.8-multibyte-1.patch
+    
+  - The help message does not report Down/Up for next/prev-line.
+  - When scrolling through the help text, it should stop at the end, not
+    report "No more nodes" and go back to the beginning.
+  - It would be nice for h in the help window to quit help.
+  - It would be nice to be able to specify a preferred key to report in
+    the help message, instead of using the last one set; cf. q vs. C-x C-c.
   - Full-text search across all info files installed on the system.
-  - Support character sets other than ISO Latin 1.
   - Perhaps comply with LANGUAGE setting on a per-node basis, to allow
     incremental translation of Texinfo files.
+  - Display images when running under X, as Emacs 22+ can.
   - Search all nodes of dir file at startup, then can have
-    INFO-DIR-SEPARATE-GROUPS and other such.
+    INFO-DIR-SEPARATE-GROUPS and other such.  I.e., we could have
+    programs (what is now "Individual utilities") in one node, library
+    functions, in another, etc.  And how about supporting other languages?
   - Better dir file merging.
   - Global dir file (as in /etc/conf/dir) and texinfo config file
     specifying which info directories to search.  From Dale Mellor.
@@ -138,9 +167,9 @@ If you are interested in working on any of these, email bug-texinfo@gnu.org.
     Perhaps code from the pinfo viewer can be reused:
     http://zeus.polsl.gliwice.pl/~pborys/.
   - More sample .infokey files, so people can choose without writing their own.
-  - q within help should quit help like C-x 0.
-  - Incorporate an X-based viewer, perhaps saxinfo or tkinfo
-      http://www.math.ucsb.edu/~boldt/tkinfo/
+  - Incorporate an X-based viewer, perhaps the old GNU xinfo widget
+     (http://www.gnu.org/software/xinfo) or saxinfo
+     or tkinfo (http://www.math.ucsb.edu/~boldt/tkinfo/).
   - Make "info foo bar" search for bar in foo's index(es) if no menu match.
   - Handle M-n, C-u m, and C-u g like Emacs Info (opening new windows).
   - Write technical definition of Info format.
@@ -152,7 +181,6 @@ If you are interested in working on any of these, email bug-texinfo@gnu.org.
     @image (or other) files.  In subdirs.  Or something.
   - support info dir entries for other than the current info file name;
     see comments in menu_item_equal.
-  - merge features with Debian install-info, so we can have one program.
 
 * texindex:
   - read source file (specified by new option) for @documentlanguage
@@ -167,7 +195,7 @@ Ideas that will not be implemented:
 - Process Texinfo files directly instead of converting to Info:
   ftp://ftp.cs.berkeley.edu/ucb/people/phelps/tcltk/tkman.tar.Z, which
   uses Tcl/Tk 8.0 from ftp.smli.com in the /pub/tcl directory.
-  From: phelps@ecstasy.CS.Berkeley.EDU (Tom Phelps)
+  From: Tom Phelps @ berkeley
   [This has the disadvantage of needing to be updated when the
   Texinfo language changes, so don't.]
 
@@ -178,4 +206,5 @@ Ideas that will not be implemented:
 - Change bars.  This is difficult or impossible in TeX,
   unfortunately.  To do it right requires device driver support.
   wdiff or ediff may be all we can do.  Merely specifying what should be
-  changed is not obvious.
+  changed is not obvious.  texdiff (http://www.robmar.net/TexDiff) does
+  something reasonable for LaTeX, maybe it can be adapted.

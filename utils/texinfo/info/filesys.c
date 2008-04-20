@@ -1,13 +1,13 @@
 /* filesys.c -- filesystem specific functions.
-   $Id: filesys.c,v 1.6 2004/07/30 17:17:40 karl Exp $
+   $Id: filesys.c,v 1.11 2008/04/19 17:03:13 karl Exp $
 
-   Copyright (C) 1993, 1997, 1998, 2000, 2002, 2003, 2004 Free Software
-   Foundation, Inc.
+   Copyright (C) 1993, 1997, 1998, 2000, 2002, 2003, 2004, 2007
+   Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,8 +15,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
    Written by Brian Fox (bfox@ai.mit.edu). */
 
@@ -56,6 +55,7 @@ static char *info_suffixes[] = {
 static COMPRESSION_ALIST compress_suffixes[] = {
   { ".gz", "gunzip" },
   { ".bz2", "bunzip2" },
+  { ".lzma", "unlzma" },
   { ".z", "gunzip" },
   { ".Z", "uncompress" },
   { ".Y", "unyabba" },
@@ -694,7 +694,7 @@ is_dir_name (char *filename)
       strcpy (trydir, "dir");
       strcat (trydir, info_suffixes[i]);
       
-      if (strcasecmp (filename, trydir) == 0)
+      if (mbscasecmp (filename, trydir) == 0)
         return 1;
 
       for (c = 0; compress_suffixes[c].suffix; c++)
@@ -702,7 +702,7 @@ is_dir_name (char *filename)
           char dir_compressed[50]; /* can be short */
           strcpy (dir_compressed, trydir); 
           strcat (dir_compressed, compress_suffixes[c].suffix);
-          if (strcasecmp (filename, dir_compressed) == 0)
+          if (mbscasecmp (filename, dir_compressed) == 0)
             return 1;
         }
     }  

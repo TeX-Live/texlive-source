@@ -1,12 +1,11 @@
 #! /usr/local/bin/gawk -f
 
 # fixref.awk --- fix xrefs in texinfo documents
-# Copyright, 1991, Arnold David Robbins, arnold@skeeve.atl.ga.us
-# Copyright, 1998, Arnold David Robbins, arnold@gnu.org
+# Copyright 1991, 1998 Arnold David Robbins
 
 # FIXREF is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
+# the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 # 
 # FIXREF is distributed in the hope that it will be useful,
@@ -15,8 +14,7 @@
 # GNU General Public License for more details.
 # 
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Updated: Jul 21  1992	--- change unknown
 # Updated: Jul 18  1997 --- bug fix

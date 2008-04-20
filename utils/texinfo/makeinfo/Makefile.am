@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.5 2004/04/11 17:56:46 karl Exp $
+# $Id: Makefile.am,v 1.9 2006/06/21 08:08:48 akim Exp $
 # Makefile.am for texinfo/makeinfo.
 # Run automake in .. to produce Makefile.in from this.
 #
@@ -13,8 +13,12 @@
 bin_PROGRAMS = makeinfo
 
 localedir = $(datadir)/locale
-INCLUDES = -I$(top_srcdir)/lib -I../intl -DLOCALEDIR=\"$(localedir)\"
-LDADD = ../lib/libtxi.a $(LIBINTL)
+AM_CPPFLAGS = 					\
+  -I$(top_srcdir)				\
+  -I$(top_srcdir)/gnulib/lib 			\
+  -I$(top_builddir)/gnulib/lib			\
+  -DLOCALEDIR=\"$(localedir)\"
+LDADD = ../lib/libtxi.a $(top_builddir)/gnulib/lib/libgnu.a $(LIBINTL)
 
 makeinfo_SOURCES = \
   cmds.c cmds.h defun.c defun.h \

@@ -1,27 +1,162 @@
-$Id: NEWS,v 1.103 2004/12/24 16:43:58 karl Exp $
-This file records noteworthy changes, very tersely.
+$Id: NEWS,v 1.170 2008/04/20 13:30:00 karl Exp $
+This NEWS file records noteworthy changes, very tersely.
 See the manual for detailed information.
 
   Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000,
-  2001, 2002, 2003, 2004 Free Software Foundation, Inc.
+  2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Free Software Foundation, Inc.
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-
 *** IMPORTANT NEWS FOR ALL AUTHORS OF TEXINFO MANUALS ***
 
 As of version 4.2, Texinfo has a new command @copying to define the
-copyright and copying permissions for a manual.  It's important to
-switch to using it as soon as possible (as in your next release),
-because the historical method of doing copyright permissions using
-@ifinfo failed to output copyright information in the HTML (or XML)
-formats.  The manual has detailed explanations and examples.  For
-convenience, here's a url to one of the relevant sections:
+copyright and copying permissions for a manual.  If you haven't already,
+please switch to using it in your next release, because the historical
+method of doing copyright permissions using @ifinfo failed to output
+copyright information in the HTML (or XML) formats.  The manual has
+detailed explanations and examples.  For convenience, here's a url to
+one of the relevant sections:
   http://www.gnu.org/software/texinfo/manual/texinfo/html_node/Document-Permissions.html
 
 -------------------------------------------------------------------------------
+
+4.12 (20 April 2008)
+
+* Language:
+  . new commands @clicksequence, @click, and @clickstyle for documenting
+    GUI sequences, and @arrow for the default glyph used.
+  . new commands @geq{} and @leq{} for the normal >= and <= relations.
+
+* install-info:
+  . lzma compression supported.
+  . Much work towards compatibility with Debian's independent
+    implementation.  Changes in behavior:
+    - new entries are formatted to start at column 34 by default.
+    - existing entries are replaced by default.
+    - new sections are alphabetized among existing sections.
+    - if an entry being removed is the last one in a section, the
+      section is also removed.
+  . Also many new options:
+    --section REGEX TITLE.
+    --no-indent: disable formatting of new entries.
+    --menuentry, --name: specify left-hand side of an entry.
+    --dry-run: alias for --test.
+    --regex REGEX: renamed from --section regex, adds to all sections
+      matching REGEX by default.
+    --add-once: add only to first specified or matching section.
+    --align COL: start description at column COL.
+    --calign COL: start continuation lines in description at COL.
+    --max-width COL: wrap the description at COL.
+  . New section in the Texinfo manual describing all this.
+
+* Info:
+  Our goal with these changes to the default interface is to make Info
+  documents more easily and quickly readable, especially by non-experts.
+  . the PageUp and PageDown keys move through the whole document by
+    default, instead of just the current node.
+  . the h command shows the basic help, and H starts the Info tutorial.
+  . the newly-bound x command deletes the current window, e.g., within help.
+  . the scroll-step variable is set to 1 by default, for smooth scrolling.
+  . the cursor-movement-scrolls-p variable is set to 1 by default, so
+    link searches look through the whole document.
+  . regular expression searches are supported, and are the default for
+    both regular and incremental searches.
+  . the new R command toggles between regexp and literal-string searches.
+  . the new variable scroll-last-node controls scrolling at the end of
+    the last node; by default, it now simply reports there are no more
+    nodes.  To restore the old behavior, set scroll-last-node=Scroll.
+  . the precise line number specified in index entries is used if available.
+  . --usage=info shows usage for standalone Info.
+  . lzma compression supported.
+
+* Distribution:
+  . language support for no removed/renamed to nb, per Norwegian translators.
+  . new translation: es.
+  . bug fixes in make check (and elsewhere).
+  . gettext 0.17, automake 1.10.1, autoconf 2.62.
+
+
+4.11 (9 September 2007)
+
+* Language:
+  . @documentlanguage now supports an optional country code
+    specification after the language code, a la gettext.
+  . new command @allowcodebreaks controls breaks at _ and - within @code.
+  . new command @frenchspacing controls spacing after sentences.
+  . new command @fonttextsize allows changing body text font size to 10pt.
+  . new command @textdegree{} produces the normal degrees symbol.
+  . new command @thischapternum can be used in TeX headers/footers.
+  . new commands for quotes: @quotedblleft @quotedblright
+     @quoteleft @quoteright  @quotedblbase @quotesinglbase
+     @guillemetleft @guillemetright @guilsinglleft @guilsinglright.
+  . new option @set txicodequoteundirected produces an undirected quote
+    in code and example output, instead of the regular right quote.
+  . new option @set txicodequotebacktick produces a grave accent in
+    code and example output, instead of the regular left quote.
+* makeinfo:
+  . The @documentlanguage locale is used to translate various document strings.
+  . --enable-encoding is now the default, meaning Info and plain text
+    output use 8-bit characters given a supported @documentencoding.
+  . new option --css-ref=URL for creating a stylesheet <link> in HTML output.
+  . new option --transliterate-file-names to use a reduction-to-ASCII
+    algorithm for split HTML file names, useful for non-Latin-based languages.
+  . @enddots{} outputs three dots instead of four, for consistency with
+    texinfo.tex.
+  . the Local Variables coding: setting written by --enable-encoding now
+    comes at the very end, after the tags table, so that Emacs can find
+    it in more cases.
+  . @allow-recursion (never documented) is deprecated and produces a warning.
+  . @quote-args (never documented) is now the default behavior.
+  . centering and such take account of character widths.
+  . the --reference-limit option is now a no-op.
+  . improvements to XML and Docbook output and the DTD.
+* texinfo.tex:
+  . @thissection can now be used in custom headings, and @thischapter
+    works reliably even without @set chapternewpage.  Custom headings
+    have additional flexibility as well.
+* texi2dvi:
+  . pdftexi2dvi is a new wrapper to `texi2dvi --pdf', equal to texi2pdf,
+    for the sake of AUC-TeX which prepends `pdf' to the compilation
+    command when requested to produce PDF.
+* info:
+  . look for info files in the current directory first, by default.
+  . when calling man, use -a if no explicit section is found.
+  . avoid showing the top(1) man page for nonexistent info files.
+* install-info:
+  . new options --section-regex, --remove-exactly, --debug, --test.
+* Distribution:
+  . autoconf 2.60, automake 1.10, gettext 0.16.1.
+  . gettext support now [external].
+  . new translations: hu (Hungarian), rw (Kinyarwandan), vi (Vietnamese).
+  . most common sources imported from gnulib.
+
+4.10 (omitted)
+
+
+4.9 (29 June 2007)
+* GPLv3.
+* texi2dvi:
+  . new mode --build=tidy which supports compilation in a separate
+    directory, where intermediate files are preserved.
+  . new option --build-dir, to specify where the tidy build will take
+    place, either locally or globally.  This allows avoiding the clutter
+    while preserving auxiliary files.
+  . new support for AUC-TeX: texi2dvi (weakly) supports arguments a la
+    TeX such as `\nonstopmode\input{file.tex}'.
+  . new options --ps and --dvipdf, useful especially for pstricks documents.
+  . new option --src-specials, passed to TeX.
+* texinfo.tex:
+  . Latin1, Latin2, Latin9, and UTF-8 are supported -- only as well as
+    the Computer Modern fonts can manage, which means primarily English
+    and western European languages, to a limited extent.
+  . png and jpg images supported in pdf output.
+  . new Russian, Serbian, and Ukrainian translations for texinfo.tex:
+    txi-ru.tex, txi-sr.tex, txi-uk.tex.
+  . section names with \ characters work properly in pdf outlines.
+  . have .toc files use @ as the escape character, instead of \.
+
 
 4.8 (31 December 2004)
 * Language:
@@ -421,7 +556,7 @@ convenience, here's a url to one of the relevant sections:
 * info man page removed; use the Texinfo manual.
 * Automake used, other portability fixes.
 
-3.10 (nonexistent)
+3.10 (omitted)
 
 
 3.9 (4 October 1996)

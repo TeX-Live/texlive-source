@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: txitextest,v 1.5 2004/04/11 17:56:47 karl Exp $
+# $Id: txitextest,v 1.8 2006/08/14 13:18:20 karl Exp $
 # Test texinfo.tex changes by running various manuals through with an
 # old version, saving the .ps result from dvips, doing the same with a
 # new version, and comparing.  Idea from Stepan Kasal.
@@ -7,15 +7,15 @@
 # Another option is to run the manuals all the way through using
 # texi2dvi, which tests in another way.
 
-tsrc=/u/texinfo/src
+tsrc=`dirname $0`/..
 PATH=$tsrc/util:$PATH
 
 tdoc=$tsrc/doc
 default_manuals="$tdoc/texinfo.txi $tdoc/info.texi $tdoc/info-stnd.texi"
 
-olddir=$HOME/gnu/src/gnulib/config
+olddir=$tsrc/../gnulib/config
 newdir=$tdoc
-tempdir=/u/texinfo/@tests/testdir
+tempdir=$tsrc/@tests/test
 full=false
 manuals=
 
@@ -48,7 +48,7 @@ for manual in $manuals; do
   test $mandir = . && mandir=$initial_dir
   manual_base=`basename "$manual" | sed 's/\.[^.]*$//'`
   
-  rm -f $manual_base.* texinfo.tex
+  rm -rf $manual_base.* texinfo.tex
   ln -s $newdir/texinfo.tex texinfo.tex
 
   if $full; then
@@ -66,7 +66,7 @@ for manual in $manuals; do
     mv $manual_base.ps new.$manual_base.ps
 
     echo "$0: testing $manual_base... (old)"
-    rm -f $manual_base.* texinfo.tex
+    rm -rf $manual_base.* texinfo.tex
     ln -s $olddir/texinfo.tex texinfo.tex
     run_tex
     dvips $manual_base -o || exit 1

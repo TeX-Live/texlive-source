@@ -1,0 +1,59 @@
+#! /bin/sh
+# Copyright (C) 2003, 2005, 2007, 2008  Free Software Foundation, Inc.
+#
+# This file is part of GNU Texinfo.
+#
+# GNU Texinfo is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License,
+# or (at your option) any later version.
+#
+# GNU Texinfo is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Make sure no "local" variable identifier is used twice, since
+# local is not actually portable.
+
+. ./defs || exit 1
+
+set -e
+
+# Make sure quotes are used to protect the value.  See the comment in
+# texi2dvi itself about local.
+if sed -e 's/^[	 ]*#.*//' $TEXI2DVI |
+    $EGREP "\blocal [a-zA-Z_0-9]*=[^\"']" |
+    $EGREP -v "\blocal [a-zA-Z_0-9]*=[a-zA-Z0-9]*$" |
+    grep .
+then
+  false
+else
+  true
+fi
+
+
+# Make sure each name is used only once.
+if sed -n -e 's/^#.*//' \
+          -e 's/local \([a-zA-Z_0-9]*\)/\1/gp' $TEXI2DVI |
+    sort |
+    uniq -c |
+    grep -v '^.*1 ' |
+    grep .
+then
+  false
+else
+  true
+fi
+
+
+# Make sure we don't use $().
+if $FGREP '$(' $TEXI2DVI
+then
+  false
+else
+  true
+fi

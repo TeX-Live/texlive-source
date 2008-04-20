@@ -1,12 +1,13 @@
 /* search.c -- searching large bodies of text.
-   $Id: search.c,v 1.3 2004/04/11 17:56:46 karl Exp $
+   $Id: search.c,v 1.7 2007/12/17 19:12:11 karl Exp $
 
-   Copyright (C) 1993, 1997, 1998, 2002, 2004 Free Software Foundation, Inc.
+   Copyright (C) 1993, 1997, 1998, 2002, 2004, 2007
+   Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -14,12 +15,12 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-   Written by Brian Fox (bfox@ai.mit.edu). */
+   Originally written by Brian Fox (bfox@ai.mit.edu). */
 
 #include "info.h"
+#include <regex.h>
 
 #include "search.h"
 #include "nodes.h"
@@ -81,6 +82,164 @@ search (char *string, SEARCH_BINDING *binding)
     result = search_forward (string, binding);
 
   return (result);
+}
+
+/* Search forwards or backwards for anything matching the regexp in the text
+   delimited by BINDING. The search is forwards if BINDING->start is greater
+   than BINDING->end. */
+long
+regexp_search (char *regexp, SEARCH_BINDING *binding, long length)
+{
+  static char *previous_regexp = NULL;
+  static char *previous_content = NULL;
+  static int was_insensitive = 0;
+  static regex_t preg;
+  static regmatch_t *matches;
+  static int match_alloc = 0;
+  static int match_count = 0;
+  regoff_t pos;
+  long result;
+
+  if (previous_regexp == NULL
+      || (binding->flags & S_FoldCase != was_insensitive)
+      || (strcmp (previous_regexp, regexp) != 0))
+    {
+      /* need to compile a new regexp */
+      int result;
+      char *unescaped_regexp;
+      char *p, *q;
+
+      previous_content = NULL;
+
+      if (previous_regexp != NULL)
+        {
+          free (previous_regexp);
+          previous_regexp = NULL;
+          regfree (&preg);
+        }
+
+      was_insensitive = binding->flags & S_FoldCase;
+
+      /* expand the \n and \t in regexp */
+      unescaped_regexp = xmalloc (1 + strlen (regexp));
+      for (p = regexp, q = unescaped_regexp; *p != '\0'; p++, q++)
+        {
+          if (*p == '\\')
+            switch(*++p)
+              {
+              case 'n':
+                *q = '\n';
+                break;
+              case 't':
+                *q = '\t';
+                break;
+              case '\0':
+                *q = '\\';
+                p--;
+                break;
+              default:
+                *q++ = '\\';
+                *q = *p;
+                break;
+              }
+          else
+            *q = *p;
+        }
+      *q = '\0';
+
+      result = regcomp (&preg, unescaped_regexp,
+                       REG_EXTENDED|
+                       REG_NEWLINE|
+                       (was_insensitive ? REG_ICASE : 0));
+      free (unescaped_regexp);
+
+      if (result != 0)
+        {
+          int size = regerror (result, &preg, NULL, 0);
+          char *buf = xmalloc (size);
+          regerror (result, &preg, buf, size);
+          info_error (_("regexp error: %s"), buf, NULL);
+          return -1;
+        }
+
+      previous_regexp = xstrdup(regexp);
+    }
+
+  if (previous_content != binding->buffer)
+    {
+      /* new buffer to search in, let's scan it */
+      regoff_t start = 0;
+      char saved_char;
+
+      previous_content = binding->buffer;
+      saved_char = previous_content[length-1];
+      previous_content[length-1] = '\0';
+
+      for (match_count = 0; start < length; )
+        {
+          int result = 0;
+          if (match_count >= match_alloc)
+            {
+              /* match list full. Initially allocate 256 entries, then double
+                 every time we fill it */
+              match_alloc = (match_alloc > 0 ? match_alloc * 2 : 256);
+              matches = (regmatch_t*) xrealloc (matches,
+                                            match_alloc * sizeof(regmatch_t));
+            }
+
+          result = regexec (&preg, &previous_content[start],
+                            1, &matches[match_count], 0);
+          if (result == 0)
+            {
+              if (matches[match_count].rm_eo == 0)
+                {
+                  /* ignore empty matches */
+                  start++;
+                }
+              else
+                {
+                  matches[match_count].rm_so += start;
+                  matches[match_count].rm_eo += start;
+                  start = matches[match_count++].rm_eo;
+                }
+            }
+          else
+            {
+              break;
+            }
+        }
+      previous_content[length-1] = saved_char;
+    }
+
+  pos = binding->start;
+  if (pos > binding->end)
+    {
+      /* searching backward */
+      int i;
+      for (i = match_count - 1; i >= 0; i--)
+        {
+          if (matches[i].rm_so <= pos)
+            return matches[i].rm_so;
+        }
+    }
+  else
+    {
+      /* searching forward */
+      int i;
+      for (i = 0; i < match_count; i++)
+        {
+          if (matches[i].rm_so >= pos)
+            {
+              if (binding->flags & S_SkipDest)
+                return matches[i].rm_eo;
+              else
+                return matches[i].rm_so;
+            }
+        }
+    }
+
+  /* not found */
+  return -1;
 }
 
 /* Search forwards for STRING through the text delimited in BINDING. */

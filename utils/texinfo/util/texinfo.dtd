@@ -1,20 +1,22 @@
-<!-- $Id: texinfo.dtd,v 1.4 2004/12/19 15:08:55 karl Exp $
-   Document Type Definition for Texinfo.
+<!-- $Id: texinfo.dtd,v 1.13 2008/01/31 18:33:27 karl Exp $
+   Document Type Definition for Texinfo XML output (the '-'-xml option).
 
-   Author: Philippe Martin (feloy@free.fr)
-   Contributors:
-           Karl Eichwalder (keichwa@gmx.net)
-           Alper Ersoy (dirt@gtk.org)
-
-   Copyright (C) 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
+  Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008
+  Free Software Foundation, Inc.
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+   Author: Philippe Martin
+   Contributors:
+           Karl Eichwalder
+           Alper Ersoy
+           Karl Berry
+           Torsten Bronger
 -->
 
-<!-- ENTITIES -->
+<!-- * ENTITIES * -->
 
 <!-- Meta-information -->
 <!ENTITY % metainformation "setfilename | settitle | dircategory
@@ -34,27 +36,23 @@
 <!ENTITY % titlepage_cmds "author | booktitle | booksubtitle">
 
 <!-- block -->
-<!-- ***** -->
 <!ENTITY % block "menu | para | quotation | example | smallexample | lisp
                   | smalllisp | cartouche | copying
                   | format | smallformat | display
                   | smalldisplay | itemize | enumerate | sp | center | group
-                  | table | multitable | definition">
+                  | table | multitable | definition | float | image">
 
 <!-- API definitions -->
-<!-- *************** -->
 <!ENTITY % definition.cmds "defcategory | deffunction | defvariable | defparam
                             | defdelimiter | deftype | defparamtype | defdatatype
                             | defclass | defclassvar | defoperation">
 
 <!-- Headings -->
-<!-- ******** -->
 <!ENTITY % headings "majorheading | chapheading | heading | subheading
                      | subsubheading">
 
 
 <!-- Sectioning -->
-<!-- ********** -->
 <!ENTITY % section.level1 "top | chapter | unnumbered | appendix">
 
 <!ENTITY % section.level2 "section | unnumberedsec | appendixsec">
@@ -75,6 +73,7 @@
                                    | verbatim | titlepage | %toc;
                                    | %lang; | %variables;
                                    | %headings;
+                                   | listoffloats
                                    | printindex)*">
 
 <!ENTITY % section.level2.content "(%block;
@@ -95,37 +94,37 @@
                                     | %lang; | %variables;
                                     | %headings;)*">
 
+<!-- Options (many missing) -->
+<!ENTITY % onoff "on|off">
+<!ENTITY % option.cmds "frenchspacing">
 
 <!-- Inline -->
-<!-- ****** -->
 <!ENTITY % Inline.emphasize "strong | emph">
-<!ENTITY % Inline.fonts "b | i | r | sansserif | slanted | titlefont | tt">
+<!ENTITY % Inline.fonts "b | i | r | sansserif | slanted | titlefont | tt
+                         | sc">
 <!ENTITY % Inline.footnote "footnote">
-<!ENTITY % Inline.markup "code | command | env | file | option | samp
+<!ENTITY % Inline.markup "code | command | env | file | option | samp | verb
                           | dfn | cite | key | kbd | var | acronym | url"> 
-<!ENTITY % Inline.math "math">
+<!ENTITY % Inline.math "math | dmn">
 <!ENTITY % Inline.reference "xref | inforef | indexterm | email | uref">
-<!ENTITY % Inline.smallcaps "sc">
+<!ENTITY % Inline.misc "click | clicksequence | logo | punct">
 
 <!ENTITY % Inline.phrase
-           "%Inline.emphasize; | %Inline.smallcaps; | %Inline.fonts;
-            | %Inline.markup; | %Inline.math; | %Inline.reference;
-            | %Inline.footnote; ">
+           "%Inline.emphasize;  | %Inline.misc; | %Inline.fonts;
+            | %Inline.markup;   | %Inline.math; | %Inline.reference;
+            | %Inline.footnote; | %option.cmds; ">
 
 
-<!-- ************ -->
 <!-- * ELEMENTS * -->
-<!-- ************ -->
 
 <!-- TOP Level Element -->
-<!-- ***************** -->
-<!ELEMENT texinfo ((%metainformation; | titlepage | node | %block; | %toc;
+<!ELEMENT texinfo ((%metainformation; | titlepage | node | synindex | %block; | %toc;
                     | %variables; | %lang;)* )>
 <!ATTLIST texinfo xml:lang (%languagecodes;) 'en'>
 
 <!-- meta-information -->
 <!ELEMENT setfilename (#PCDATA)>
-<!ELEMENT settitle    (#PCDATA | %Inline.phrase; | footnote)*>
+<!ELEMENT settitle    (#PCDATA | %Inline.phrase;)*>
 <!ELEMENT dircategory (#PCDATA)>
 
 <!ELEMENT setvalue    (#PCDATA | %Inline.phrase;)*>
@@ -150,18 +149,16 @@
 <!ELEMENT booksubtitle (#PCDATA | %Inline.phrase;)*>
 
 <!-- NODES -->
-<!-- ***** -->
 <!ELEMENT node (nodename, nodenext?, nodeprev?, nodeup?,
-                (%section.all; | %block; | %toc; | %lang; | image)*) >
+                (%section.all; | %block; | %toc; | %lang;)*) >
 
 <!ELEMENT nodename (#PCDATA)>
 <!ELEMENT nodenext (#PCDATA)>
 <!ELEMENT nodeprev (#PCDATA)>
 <!ELEMENT nodeup   (#PCDATA)>
 
-<!-- SECTIONING -->
-<!-- ********** -->
 
+<!-- SECTIONING -->
 <!ELEMENT top           (title?, (%section.level1.content;))>
 
 <!ELEMENT chapter       (title?, (%section.level1.content;))>
@@ -180,18 +177,18 @@
 <!ELEMENT appendixsubsubsec (title?, (%section.level4.content;))>
 
 <!-- Headings and titles -->
-<!ELEMENT majorheading  (#PCDATA | %Inline.phrase; | footnote)*>
-<!ELEMENT chapheading   (#PCDATA | %Inline.phrase; | footnote)*>
-<!ELEMENT heading       (#PCDATA | %Inline.phrase; | footnote)*>
-<!ELEMENT subheading    (#PCDATA | %Inline.phrase; | footnote)*>
-<!ELEMENT subsubheading (#PCDATA | %Inline.phrase; | footnote)*>
-<!ELEMENT title         (#PCDATA | %Inline.phrase; | footnote)*>
+<!ELEMENT majorheading  (#PCDATA | %Inline.phrase;)*>
+<!ELEMENT chapheading   (#PCDATA | %Inline.phrase;)*>
+<!ELEMENT heading       (#PCDATA | %Inline.phrase;)*>
+<!ELEMENT subheading    (#PCDATA | %Inline.phrase;)*>
+<!ELEMENT subsubheading (#PCDATA | %Inline.phrase;)*>
+<!ELEMENT title         (#PCDATA | %Inline.phrase;)*>
 
 <!-- Negative Indentation in Blocks -->
 <!ELEMENT exdent       (#PCDATA | %Inline.phrase;)*>
 
+
 <!-- BLOCK Elements -->
-<!-- ************** -->
 
 <!ELEMENT quotation    (%block; | %Inline.phrase; | exdent)*>
 <!ELEMENT documentdescription (#PCDATA | %block; | %Inline.phrase;)*>
@@ -229,7 +226,7 @@
 <!ELEMENT verbatim     (#PCDATA)>
 <!ATTLIST verbatim     xml:space (preserve) #FIXED 'preserve'>
 
-<!ELEMENT para         (#PCDATA | %Inline.phrase; | footnote | %lang;)*>
+<!ELEMENT para         (#PCDATA | %Inline.phrase; | %lang;)*>
 <!ATTLIST para
           role CDATA #IMPLIED>
 
@@ -238,27 +235,28 @@
 <!ELEMENT menuentry (menunode?, menutitle?, menucomment?)>
 <!ELEMENT menunode (#PCDATA)>
 <!ELEMENT menutitle (#PCDATA)>
-<!ELEMENT menucomment (#PCDATA | para)*>
+<!ELEMENT menucomment (#PCDATA | %Inline.phrase;)*>
 
 <!-- Floating displays -->
-<!ELEMENT float (floattype, floatpos, (%block;)*, caption?)>
+<!ELEMENT float (floattype, floatpos, (%block;)*,
+                ((caption, shortcaption?) | (shortcaption, caption))?)>
 <!ATTLIST float
           name CDATA #IMPLIED>
 <!ELEMENT floattype (#PCDATA)>
 <!ELEMENT floatpos (#PCDATA)>
 <!ELEMENT caption (#PCDATA | %Inline.phrase;)*>
+<!ELEMENT shortcaption (#PCDATA | %Inline.phrase;)*>
 <!ELEMENT listoffloats EMPTY>
 <!ATTLIST listoffloats
           type CDATA #IMPLIED>
 
 <!-- Lists -->
 <!ELEMENT itemize (itemfunction, (item | itemize | enumerate | indexterm)*)>
-<!ELEMENT enumerate (enumarg?, (item | itemize | enumerate)*)>
+<!ELEMENT enumerate (item | itemize | enumerate | indexterm)*>
 <!ATTLIST enumerate
           first CDATA #IMPLIED>
 
 <!ELEMENT item (%block;)*>
-<!ELEMENT enumarg (#PCDATA)>
 
 <!ELEMENT itemfunction (#PCDATA | %Inline.phrase;)*>
 
@@ -275,26 +273,29 @@
 <!ELEMENT entry (#PCDATA | %Inline.phrase;)*>
 
 <!-- API definitions -->
-<!ELEMENT definition (definitionterm | definitionitem)+>
+<!ELEMENT definition (definitionterm | definitionitem | indexterm)+>
 <!ELEMENT definitionterm (%definition.cmds; | indexterm)+>
 <!ELEMENT definitionitem (%block;)*>
 
-<!ELEMENT defcategory  (#PCDATA | %Inline.phrase; | footnote)*>
-<!ELEMENT deffunction  (#PCDATA | %Inline.phrase; | footnote)*>
-<!ELEMENT defvariable  (#PCDATA | %Inline.phrase; | footnote)*>
-<!ELEMENT defparam     (#PCDATA | %Inline.phrase; | footnote)*>
-<!ELEMENT defdelimiter (#PCDATA | %Inline.phrase; | footnote)*>
-<!ELEMENT deftype      (#PCDATA | %Inline.phrase; | footnote)*>
-<!ELEMENT defparamtype (#PCDATA | %Inline.phrase; | footnote)*>
-<!ELEMENT defdatatype  (#PCDATA | %Inline.phrase; | footnote)*>
-<!ELEMENT defclass     (#PCDATA | %Inline.phrase; | footnote)*>
-<!ELEMENT defclassvar  (#PCDATA | %Inline.phrase; | footnote)*>
-<!ELEMENT defoperation (#PCDATA | %Inline.phrase; | footnote)*>
+<!ELEMENT defcategory  (#PCDATA | %Inline.phrase;)*>
+<!ELEMENT deffunction  (#PCDATA | %Inline.phrase;)*>
+<!ELEMENT defvariable  (#PCDATA | %Inline.phrase;)*>
+<!ELEMENT defparam     (#PCDATA | %Inline.phrase;)*>
+<!ELEMENT defdelimiter (#PCDATA | %Inline.phrase;)*>
+<!ELEMENT deftype      (#PCDATA | %Inline.phrase;)*>
+<!ELEMENT defparamtype (#PCDATA | %Inline.phrase;)*>
+<!ELEMENT defdatatype  (#PCDATA | %Inline.phrase;)*>
+<!ELEMENT defclass     (#PCDATA | %Inline.phrase;)*>
+<!ELEMENT defclassvar  (#PCDATA | %Inline.phrase;)*>
+<!ELEMENT defoperation (#PCDATA | %Inline.phrase;)*>
 
 <!-- INLINE Elements -->
-<!-- *************** -->
 
-<!-- Emphasize -->
+<!-- options -->
+<!ELEMENT frenchspacing (#PCDATA)> <!-- must be on or off -->
+<!ATTLIST frenchspacing val (%onoff;) 'off'>
+
+<!-- emphasize -->
 <!ELEMENT strong (#PCDATA | %Inline.phrase;)*>
 <!ELEMENT emph   (#PCDATA | %Inline.phrase;)*>
 
@@ -302,12 +303,13 @@
 <!ELEMENT sc (#PCDATA | %Inline.phrase;)*>
 
 <!-- fonts -->
-<!ELEMENT i  (#PCDATA | %Inline.phrase;)*>
 <!ELEMENT b  (#PCDATA | %Inline.phrase;)*>
-<!ELEMENT tt (#PCDATA | %Inline.phrase;)*>
+<!ELEMENT i  (#PCDATA | %Inline.phrase;)*>
 <!ELEMENT r  (#PCDATA | %Inline.phrase;)*>
-<!ELEMENT notfixedwidth (#PCDATA | %Inline.phrase;)*>
+<!ELEMENT sansserif   (#PCDATA | %Inline.phrase;)*>
+<!ELEMENT slanted     (#PCDATA | %Inline.phrase;)*>
 <!ELEMENT titlefont   (#PCDATA | %Inline.phrase;)*>
+<!ELEMENT tt (#PCDATA | %Inline.phrase;)*>
 
 <!-- markup -->
 <!ELEMENT code    (#PCDATA | %Inline.phrase;)*>
@@ -333,6 +335,7 @@
 
 <!-- math -->
 <!ELEMENT math    (#PCDATA | %Inline.phrase;)*>
+<!ELEMENT dmn     (#PCDATA | %Inline.phrase;)*>
 
 <!-- reference -->
 <!ELEMENT anchor EMPTY>
@@ -352,6 +355,11 @@
 <!ELEMENT inforefrefname  (#PCDATA | %Inline.phrase;)*>
 <!ELEMENT inforefinfoname (#PCDATA | %Inline.phrase;)*>
 
+<!ELEMENT synindex  EMPTY>
+<!ATTLIST synindex
+          code      (yes|no) 'no'
+          from      NMTOKEN #REQUIRED
+          to        NMTOKEN #REQUIRED>
 <!ELEMENT indexterm (#PCDATA | %Inline.phrase;)*>
 <!ATTLIST indexterm
           index CDATA #IMPLIED>
@@ -368,10 +376,14 @@
 <!ELEMENT footnote (para)>
 
 
-<!ELEMENT neos      EMPTY>
+<!ELEMENT punct     (#PCDATA)>
+<!ATTLIST punct
+          end-of-sentence (yes|no) #IMPLIED>
+<!ELEMENT logo      (#PCDATA)>
+<!ELEMENT linebreak EMPTY>
 
-<!ENTITY tex        "TeX">        <!-- Should become an element. -->
-<!ENTITY latex      "LaTeX">      <!-- Should become an element. -->
+<!ENTITY tex        "<logo>TeX</logo>">
+<!ENTITY latex      "<logo>LaTeX</logo>">
 <!ENTITY ellipsis   "&#x2026;">
 <!ENTITY lt         "&#x3c;">
 <!ENTITY gt         "&#x3e;">
@@ -381,21 +393,29 @@
 <!ENTITY euro       "&#x20ac;">
 <!ENTITY pounds     "&#xa3;">
 <!ENTITY minus      "&#x2212;">
-<!ENTITY linebreak  "&#xa;">      <!-- Should become an element. -->
+<!ENTITY linebreak  "<linebreak/>">
 <!ENTITY space      " ">          <!-- Should become an element. -->
-<!ENTITY dots       "&#x2026;<neos/>">
-<!ENTITY enddots    "&#x2026;">
+<!ENTITY dots       "<punct end-of-sentence='no'>&#x2026;</punct>">
+<!ENTITY enddots    "<punct end-of-sentence='yes'>&#x2026;</punct>">
 <!ENTITY amp        "&#x26;">
+<!ENTITY lsquo      "&#x2018;">
+<!ENTITY rsquo      "&#x2019;">
+<!ENTITY sbquo      "&#x201a;">
 <!ENTITY ldquo      "&#x201c;">
 <!ENTITY rdquo      "&#x201d;">
+<!ENTITY bdquo      "&#x201e;">
+<!ENTITY laquo      "&#xab;">
+<!ENTITY raquo      "&#xbb;">
+<!ENTITY lsaquo     "&#x2039;">
+<!ENTITY rsaquo     "&#x203a;">
 <!ENTITY mdash      "&#x2014;">
 <!ENTITY ndash      "&#x2013;">
-<!ENTITY period     ".<neos/>">
-<!ENTITY eosperiod  ".">
-<!ENTITY quest      "?<neos/>">
-<!ENTITY eosquest   "?">
-<!ENTITY excl       "!<neos/>">
-<!ENTITY eosexcl    "!">
+<!ENTITY period     "<punct end-of-sentence='no'>.</punct>">
+<!ENTITY eosperiod  "<punct end-of-sentence='yes'>.</punct>">
+<!ENTITY quest      "<punct end-of-sentence='no'>?</punct>">
+<!ENTITY eosquest   "<punct end-of-sentence='yes'>?</punct>">
+<!ENTITY excl       "<punct end-of-sentence='no'>!</punct>">
+<!ENTITY eosexcl    "<punct end-of-sentence='yes'>!</punct>">
 
 <!ENTITY auml "&#xe4;">
 <!ENTITY ouml "&#xf6;">
@@ -471,6 +491,9 @@
 <!ENTITY Aring "&#xc5;">
 <!ENTITY aring "&#xe5;">
 <!ENTITY szlig "&#xdf;">
+
+<!ENTITY rarr "&#x2192;">
+<!ENTITY rArr "&#x21d2;">
 
 <!ENTITY macr "&#xaf;">
 

@@ -1,12 +1,13 @@
 /* toc.c -- table of contents handling.
-   $Id: toc.c,v 1.6 2004/04/11 17:56:47 karl Exp $
+   $Id: toc.c,v 1.11 2007/09/15 23:48:46 karl Exp $
 
-   Copyright (C) 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+   Copyright (C) 1999, 2000, 2001, 2002, 2003, 2007
+   Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -14,8 +15,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
    Originally written by Karl Heinz Marbaise <kama@hippo.fido.de>.  */
 
@@ -194,7 +194,7 @@ contents_update_html (void)
       /* no, so return to sender ;-) */
       return;
 
-  add_html_block_elt_args ("\n<div class=\"contents\">\n<h2>%s</h2>\n<ul>\n", _("Table of Contents"));
+  add_html_block_elt_args ("\n<div class=\"contents\">\n<h2>%s</h2>\n<ul>\n", gdt("Table of Contents"));
 
   last_level = toc_entry_alist[0]->level;
 
@@ -268,9 +268,9 @@ contents_update_info (void)
   if (!toc_counter)
       return;
 
-  insert_string ((char *) _("Table of Contents"));
+  insert_string ((char *) gdt("Table of Contents"));
   insert ('\n');
-  for (i = 0; i < strlen (_("Table of Contents")); i++)
+  for (i = 0; i < strlen (gdt("Table of Contents")); i++)
     insert ('*');
   insert_string ("\n\n");
 
@@ -301,7 +301,7 @@ shortcontents_update_html (char *contents_filename)
   if (!toc_counter)
     return;
 
-  add_html_block_elt_args ("\n<div class=\"shortcontents\">\n<h2>%s</h2>\n<ul>\n", _("Short Contents"));
+  add_html_block_elt_args ("\n<div class=\"shortcontents\">\n<h2>%s</h2>\n<ul>\n", gdt("Short Contents"));
 
   if (contents_filename)
     toc_file = filename_part (contents_filename);
@@ -334,9 +334,9 @@ shortcontents_update_info (void)
   if (!toc_counter)
       return;
 
-  insert_string ((char *) _("Short Contents"));
+  insert_string ((char *) gdt("Short Contents"));
   insert ('\n');
-  for (i = 0; i < strlen (_("Short Contents")); i++)
+  for (i = 0; i < strlen (gdt("Short Contents")); i++)
     insert ('*');
   insert_string ("\n\n");
 

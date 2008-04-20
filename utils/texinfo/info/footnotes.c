@@ -1,13 +1,13 @@
 /* footnotes.c -- Some functions for manipulating footnotes.
-   $Id: footnotes.c,v 1.4 2004/04/11 17:56:45 karl Exp $
+   $Id: footnotes.c,v 1.8 2008/02/26 16:51:05 karl Exp $
 
-   Copyright (C) 1993, 1997, 1998, 1999, 2002, 2004 Free Software
+   Copyright (C) 1993, 1997, 1998, 1999, 2002, 2004, 2007 Free Software
    Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,8 +15,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
    Originally written by Brian Fox (bfox@ai.mit.edu). */
 
@@ -210,7 +209,7 @@ info_get_or_remove_footnotes (WINDOW *window)
           /* If we are hacking automatic footnotes, and there are footnotes
              but we couldn't display them, print a message to that effect. */
           if (auto_footnotes_p)
-            inform_in_echo_area ((char *) _("Footnotes could not be displayed"));
+            inform_in_echo_area (_("Footnotes could not be displayed"));
           return (FN_UNABLE);
         }
     }
@@ -257,11 +256,11 @@ DECLARE_INFO_COMMAND (info_show_footnotes,
       switch (result)
         {
         case FN_UNFOUND:
-          info_error ((char *) msg_no_foot_node, NULL, NULL);
+          info_error (msg_no_foot_node, NULL, NULL);
           break;
 
         case FN_UNABLE:
-          info_error ((char *) msg_win_too_small, NULL, NULL);
+          info_error (msg_win_too_small, NULL, NULL);
           break;
         }
     }

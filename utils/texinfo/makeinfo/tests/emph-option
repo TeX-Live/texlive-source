@@ -1,0 +1,10 @@
+#!/bin/sh
+# Test @option inside @emph. 
+
+unset TEXINFO_OUTPUT
+: ${srcdir=.}
+
+../makeinfo --no-split --html -o emph-option.out $srcdir/emph-option.txi || exit 1
+fgrep '<em>emphasized and referring to <samp></em>' emph-option.out && exit 3
+
+rm -f emph-option.out

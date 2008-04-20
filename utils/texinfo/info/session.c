@@ -1,13 +1,13 @@
 /* session.c -- user windowing interface to Info.
-   $Id: session.c,v 1.16 2004/12/14 00:15:36 karl Exp $
+   $Id: session.c,v 1.37 2008/03/23 23:32:22 karl Exp $
 
-   Copyright (C) 1993, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004
-   Free Software Foundation, Inc.
+   Copyright (C) 1993, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
+   2004, 2007, 2008 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,8 +15,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
    Originally written by Brian Fox (bfox@ai.mit.edu). */
 
@@ -64,6 +63,9 @@ static int info_windows_index = 0;
 /* Number of slots allocated to `info_windows'. */
 static int info_windows_slots = 0;
 
+/* Whether to use regexps or not for search.  */
+static int use_regex = 1;
+
 void remember_window_and_node (WINDOW *window, NODE *node);
 void forget_window_and_nodes (WINDOW *window);
 void display_startup_message_and_start (void);
@@ -110,7 +112,7 @@ begin_multiple_window_info_session (char *filename, char **nodenames)
           if (!largest)
             {
               display_update_display (windows);
-              info_error ((char *) msg_cant_find_window, NULL, NULL);
+              info_error (msg_cant_find_window, NULL, NULL);
               info_session ();
               xexit (0);
             }
@@ -125,7 +127,7 @@ begin_multiple_window_info_session (char *filename, char **nodenames)
           else
             {
               display_update_display (windows);
-              info_error ((char *) msg_win_too_small, NULL, NULL);
+              info_error (msg_win_too_small, NULL, NULL);
               info_session ();
               xexit (0);
             }
@@ -137,7 +139,7 @@ begin_multiple_window_info_session (char *filename, char **nodenames)
 /* Start an info session with INITIAL_NODE, and an error message in the echo
    area made from FORMAT and ARG. */
 void
-begin_info_session_with_error (NODE *initial_node, char *format,
+begin_info_session_with_error (NODE *initial_node, const char *format,
     void *arg1, void *arg2)
 {
   initialize_info_session (initial_node, 1);
@@ -159,7 +161,7 @@ display_startup_message_and_start (void)
   char *format;
 
   format = replace_in_documentation
-    ((char *) _("Welcome to Info version %s. Type \\[get-help-window] for help, \\[menu-item] for menu item."),
+    (_("Welcome to Info version %s. Type \\[get-help-window] for help, \\[menu-item] for menu item."),
      0);
 
   window_message_in_echo_area (format, VERSION, NULL);
@@ -266,7 +268,7 @@ initialize_info_session (NODE *node, int clear_screen)
       if (!term_name)
         term_name = "dumb";
 
-      info_error ((char *) msg_term_too_dumb, term_name, NULL);
+      info_error (msg_term_too_dumb, term_name, NULL);
       xexit (1);
     }
 
@@ -598,7 +600,7 @@ move_to_new_line (int old, int new, WINDOW *window)
 {
   if (old == -1)
     {
-      info_error ((char *) msg_cant_find_point, NULL, NULL);
+      info_error (msg_cant_find_point, NULL, NULL);
     }
   else
     {
@@ -606,7 +608,7 @@ move_to_new_line (int old, int new, WINDOW *window)
 
       if (new >= window->line_count || new < 0)
         return;
-
+      
       goal = window_get_goal_column (window);
       window->goal_column = goal;
 
@@ -616,6 +618,9 @@ move_to_new_line (int old, int new, WINDOW *window)
     }
 }
 
+static int forward_move_node_structure (WINDOW *window, int behaviour);
+static int backward_move_node_structure (WINDOW *window, int behaviour);
+
 /* Move WINDOW's point down to the next line if possible. */
 DECLARE_INFO_COMMAND (info_next_line, _("Move down to the next line"))
 {
@@ -624,11 +629,32 @@ DECLARE_INFO_COMMAND (info_next_line, _("Move down to the next line"))
   if (count < 0)
     info_prev_line (window, -count, key);
   else
-    {
-      old_line = window_line_of_point (window);
-      new_line = old_line + count;
-      move_to_new_line (old_line, new_line, window);
-    }
+    while (count)
+      {
+        int diff;
+
+        old_line = window_line_of_point (window);
+        diff = window->line_count - old_line;
+        if (diff > count)
+          diff = count;
+
+        count -= diff;
+        new_line = old_line + diff;
+        if (new_line >= window->line_count)
+          {
+            if (cursor_movement_scrolls_p)
+              {
+                if (forward_move_node_structure (window,
+                                                 info_scroll_behaviour))
+                  break;
+                move_to_new_line (0, 0, window);
+              }
+            else
+              break;
+          }
+        else
+          move_to_new_line (old_line, new_line, window);
+      }
 }
 
 /* Move WINDOW's point up to the previous line if possible. */
@@ -639,11 +665,31 @@ DECLARE_INFO_COMMAND (info_prev_line, _("Move up to the previous line"))
   if (count < 0)
     info_next_line (window, -count, key);
   else
-    {
-      old_line = window_line_of_point (window);
-      new_line = old_line - count;
-      move_to_new_line (old_line, new_line, window);
-    }
+    while (count)
+      {
+        int diff;
+        
+        old_line = window_line_of_point (window);
+        diff = old_line + 1;
+        if (diff > count)
+          diff = count;
+        
+        count -= diff;
+        new_line = old_line - diff;
+        
+        if (new_line < 0
+            && cursor_movement_scrolls_p)
+          {
+            if (backward_move_node_structure (window, info_scroll_behaviour))
+              break;
+            if (window->line_count > window->height)
+              set_window_pagetop (window, window->line_count - window->height);
+            move_to_new_line (window->line_count,
+                              window->line_count - 1, window);
+          }
+        else
+          move_to_new_line (old_line, new_line, window);
+      }
 }
 
 /* Move WINDOW's point to the end of the true line. */
@@ -692,11 +738,27 @@ DECLARE_INFO_COMMAND (info_forward_char, _("Move forward a character"))
     info_backward_char (window, -count, key);
   else
     {
-      window->point += count;
-
-      if (window->point >= window->node->nodelen)
-        window->point = window->node->nodelen - 1;
-
+      while (count)
+        {
+          int diff = window->node->nodelen - window->point;
+          
+          if (diff > count)
+            diff = count;
+          window->point += diff;
+          count -= diff;
+          if (window->point >= window->node->nodelen)
+            {
+              if (cursor_movement_scrolls_p
+                  && forward_move_node_structure (window,
+                                                  info_scroll_behaviour) == 0)
+                window->point = 0;
+              else
+                {
+                  window->point = window->node->nodelen - 1;
+                  break;
+                }
+            }
+        }
       info_show_point (window);
     }
 }
@@ -708,11 +770,34 @@ DECLARE_INFO_COMMAND (info_backward_char, _("Move backward a character"))
     info_forward_char (window, -count, key);
   else
     {
-      window->point -= count;
+      while (count)
+        {
+          int diff = count;
 
-      if (window->point < 0)
-        window->point = 0;
+          if (window->point < diff)
+            diff = window->point + 1;
+          
+          window->point -= diff;
+          count -= diff;
 
+          if (window->point < 0)
+            {
+              if (cursor_movement_scrolls_p
+                  && backward_move_node_structure (window,
+                                                   info_scroll_behaviour) == 0)
+                {
+                  window->point = window->node->nodelen - 1;
+                  if (window->line_count > window->height)
+                    set_window_pagetop (window,
+                                        window->line_count - window->height);
+                }
+              else
+                {
+                  window->point = 0;
+                  break;
+                }
+            }
+        }
       info_show_point (window);
     }
 }
@@ -739,8 +824,19 @@ DECLARE_INFO_COMMAND (info_forward_word, _("Move forward a word"))
   while (count)
     {
       if (point + 1 >= end)
-        return;
-
+        {
+          if (cursor_movement_scrolls_p
+              && forward_move_node_structure (window,
+                                              info_scroll_behaviour) == 0)
+            {
+              point = 0;
+              buffer = window->node->contents;
+              end = window->node->nodelen;
+            }
+          else
+            return;
+        }
+      
       /* If we are not in a word, move forward until we are in one.
          Then, move forward until we hit a non-alphabetic character. */
       c = buffer[point];
@@ -755,7 +851,20 @@ DECLARE_INFO_COMMAND (info_forward_word, _("Move forward a word"))
             }
         }
 
-      if (point >= end) return;
+      if (point >= end)
+        {
+          if (cursor_movement_scrolls_p
+              && forward_move_node_structure (window,
+                                              info_scroll_behaviour) == 0)
+            {
+              point = 0;
+              buffer = window->node->contents;
+              end = window->node->nodelen;
+            }
+          else
+            return;
+        }
+
 
       while (++point < end)
         {
@@ -787,8 +896,21 @@ DECLARE_INFO_COMMAND (info_backward_word, _("Move backward a word"))
   while (count)
     {
       if (point == 0)
-        break;
-
+        {
+          if (cursor_movement_scrolls_p
+              && backward_move_node_structure (window,
+                                               info_scroll_behaviour) == 0)
+            {
+              if (window->line_count > window->height)
+                set_window_pagetop (window,
+                                    window->line_count - window->height);
+              buffer = window->node->contents;
+              point = window->node->nodelen;
+            }
+          else
+            break;
+        }
+      
       /* Like info_forward_word (), except that we look at the
          characters just before point. */
 
@@ -836,64 +958,106 @@ char *info_scroll_choices[] = {
   "Continuous", "Next Only", "Page Only", (char *)NULL
 };
 
+/* Controls whether scroll-behavior affects line movement commands */
+int cursor_movement_scrolls_p = 1;
+
+/* Choices for the scroll-last-node variable */
+char *scroll_last_node_choices[] = {
+  "Stop", "Scroll", "Top", NULL
+};
+
+/* Controls what to do when a scrolling command is issued at the end of the
+   last node. */
+int scroll_last_node = SLN_Stop;
+
 /* Default window sizes for scrolling commands.  */
-int default_window_size = -1;	/* meaning 1 window-full */
-int default_scroll_size = -1;	/* meaning half screen size */
+int default_window_size = -1;   /* meaning 1 window-full */
+int default_scroll_size = -1;   /* meaning half screen size */
 
 #define INFO_LABEL_FOUND() \
   (info_parsed_nodename || (info_parsed_filename \
                             && !is_dir_name (info_parsed_filename)))
 
+static int
+last_node_p (NODE *node)
+{
+  info_next_label_of_node (node);
+  if (!INFO_LABEL_FOUND ())
+    {
+      info_up_label_of_node (node);
+      return !INFO_LABEL_FOUND () || strcmp (info_parsed_nodename, "Top") == 0;
+    }
+  return 0;
+}
+
 /* Move to 1st menu item, Next, Up/Next, or error in this window. */
-static void
+static int
 forward_move_node_structure (WINDOW *window, int behaviour)
 {
   switch (behaviour)
     {
     case IS_PageOnly:
-      info_error ((char *) msg_at_node_bottom, NULL, NULL);
-      break;
+      info_error (msg_at_node_bottom, NULL, NULL);
+      return 1;
 
     case IS_NextOnly:
       info_next_label_of_node (window->node);
       if (!info_parsed_nodename && !info_parsed_filename)
-        info_error ((char *) msg_no_pointer, (char *) _("Next"), NULL);
+        {
+          info_error (msg_no_pointer, (char *) _("Next"), NULL);
+          return 1;
+        }
       else
         {
-          window_message_in_echo_area ((char *) _("Following Next node..."),
-              NULL, NULL);
           info_handle_pointer ("Next", window);
         }
       break;
 
     case IS_Continuous:
       {
+        if (last_node_p (window->node))
+	  {
+	    switch (scroll_last_node)
+	      {
+	      case SLN_Stop:
+		info_error (_("No more nodes within this document."),
+			    NULL, NULL);
+		return 1;
+		
+	      case SLN_Scroll:
+		break;
+		
+	      case SLN_Top:
+		info_top_node (window, 1, 0);
+		return 0;
+		
+	      default:
+		abort ();
+	      }
+	  }
+	
         /* First things first.  If this node contains a menu, move down
            into the menu. */
-        {
-          REFERENCE **menu;
+	{
+	  REFERENCE **menu;
 
-          menu = info_menu_of_node (window->node);
-
-          if (menu)
-            {
-              info_free_references (menu);
-              window_message_in_echo_area ((char *) _("Selecting first menu item..."),
-                  NULL, NULL);
-              info_menu_digit (window, 1, '1');
-              return;
-            }
-        }
+	  menu = info_menu_of_node (window->node);
+	  
+	  if (menu)
+	    {
+	      info_free_references (menu);
+	      info_menu_digit (window, 1, '1');
+	      return 0;
+	    }
+	}
 
         /* Okay, this node does not contain a menu.  If it contains a
            "Next:" pointer, use that. */
         info_next_label_of_node (window->node);
         if (INFO_LABEL_FOUND ())
           {
-            window_message_in_echo_area ((char *) _("Selecting Next node..."),
-                NULL, NULL);
             info_handle_pointer ("Next", window);
-            return;
+            return 0;
           }
 
         /* Okay, there wasn't a "Next:" for this node.  Move "Up:" until we
@@ -960,12 +1124,8 @@ forward_move_node_structure (WINDOW *window, int behaviour)
 
                   /* This node has a "Next" pointer, and it is not the
                      same as the first menu item found in this node. */
-                  window_message_in_echo_area
-                    ((char *) _("Moving Up %d time(s), then Next."),
-                     (void *) (long) up_counter, NULL);
-
                   info_handle_pointer ("Next", window);
-                  return;
+                  return 0;
                 }
               else
                 {
@@ -985,34 +1145,37 @@ forward_move_node_structure (WINDOW *window, int behaviour)
                   window->point = info_win->points[old_current];
                   recalculate_line_starts (window);
                   window->flags |= W_UpdateWindow;
-                  info_error ((char *) _("No more nodes within this document."),
+                  info_error (_("No more nodes within this document."),
                       NULL, NULL);
+                  return 1;
                 }
             }
         }
         break;
       }
     }
+  return info_error_was_printed; /*FIXME*/
 }
 
 /* Move Prev, Up or error in WINDOW depending on BEHAVIOUR. */
-static void
+static int
 backward_move_node_structure (WINDOW *window, int behaviour)
 {
   switch (behaviour)
     {
     case IS_PageOnly:
-      info_error ((char *) msg_at_node_top, NULL, NULL);
-      break;
+      info_error (msg_at_node_top, NULL, NULL);
+      return 1;
 
     case IS_NextOnly:
       info_prev_label_of_node (window->node);
       if (!info_parsed_nodename && !info_parsed_filename)
-        info_error ((char *) _("No `Prev' for this node."), NULL, NULL);
+        {
+          info_error (_("No `Prev' for this node."), NULL, NULL);
+          return 1;
+        }
       else
         {
-          window_message_in_echo_area ((char *) _("Moving Prev in this window."),
-              NULL, NULL);
           info_handle_pointer ("Prev", window);
         }
       break;
@@ -1026,13 +1189,14 @@ backward_move_node_structure (WINDOW *window, int behaviour)
           info_up_label_of_node (window->node);
           if (!info_parsed_nodename && (!info_parsed_filename
                                         || is_dir_name (info_parsed_filename)))
-            info_error ((char *)
-                _("No `Prev' or `Up' for this node within this document."),
-                NULL, NULL);
+            {
+              info_error (
+                    _("No `Prev' or `Up' for this node within this document."),
+                          NULL, NULL);
+              return 1;
+            }
           else
             {
-              window_message_in_echo_area ((char *) _("Moving Up in this window."),
-                  NULL, NULL);
               info_handle_pointer ("Up", window);
             }
         }
@@ -1070,8 +1234,6 @@ backward_move_node_structure (WINDOW *window, int behaviour)
           /* Move to the previous node.  If this node now contains a menu,
              and we have not inhibited movement to it, move to the node
              corresponding to the last menu item. */
-          window_message_in_echo_area ((char *) _("Moving Prev in this window."),
-              NULL, NULL);
           info_handle_pointer ("Prev", window);
 
           if (!inhibit_menu_traversing)
@@ -1080,14 +1242,13 @@ backward_move_node_structure (WINDOW *window, int behaviour)
                      (menu = info_menu_of_node (window->node)))
                 {
                   info_free_references (menu);
-                  window_message_in_echo_area
-                    ((char *) _("Moving to `Prev's last menu item."), NULL, NULL);
                   info_menu_digit (window, 1, '0');
                 }
             }
         }
       break;
     }
+  return 0;
 }
 
 /* Move continuously forward through the node structure of this info file. */
@@ -1139,7 +1300,7 @@ _scroll_forward(WINDOW *window, int count, unsigned char key, int behaviour)
       /* Without an explicit numeric argument, scroll the bottom two
          lines to the top of this window,  Or, if at bottom of window,
          and the chosen behaviour is to scroll through nodes get the
-	 "Next" node for this window. */
+         "Next" node for this window. */
       if (default_window_size > 0)
         desired_top = window->pagetop + default_window_size;
       else if (!info_explicit_arg && count == 1)
@@ -1150,7 +1311,8 @@ _scroll_forward(WINDOW *window, int count, unsigned char key, int behaviour)
              another node, depending on BEHAVIOUR. */
           if (desired_top > window->line_count)
             {
-              forward_move_node_structure (window, behaviour);
+              if (forward_move_node_structure (window, behaviour))
+                info_end_of_node (window, 1, 0);
               return;
             }
         }
@@ -1178,16 +1340,20 @@ _scroll_backward(WINDOW *window, int count, unsigned char key, int behaviour)
 
       /* Without an explicit numeric argument, scroll the top two lines
          to the bottom of this window, or, depending on the selected
-	 behaviour, move to the previous, or Up'th node. */
+         behaviour, move to the previous, or Up'th node. */
       if (default_window_size > 0)
         desired_top = window->pagetop - default_window_size;
       else if (!info_explicit_arg && count == 1)
         {
-          desired_top = window->pagetop - (window->height - 2);
-
+	  desired_top = window->pagetop - (window->height - 2);
+	  
           if ((desired_top < 0) && (window->pagetop == 0))
             {
-              backward_move_node_structure (window, behaviour);
+              if ((backward_move_node_structure (window, behaviour) == 0)
+                  && (cursor_movement_scrolls_p))
+		info_end_of_node (window, 1, 0);
+              window->point = (window->line_starts[window->pagetop]
+                               - window->node->contents);
               return;
             }
         }
@@ -1198,6 +1364,8 @@ _scroll_backward(WINDOW *window, int count, unsigned char key, int behaviour)
         desired_top = 0;
 
       set_window_pagetop (window, desired_top);
+      window->point = (window->line_starts[window->pagetop]
+                       - window->node->contents);
     }
 }
 
@@ -1210,7 +1378,7 @@ DECLARE_INFO_COMMAND (info_scroll_forward, _("Scroll forward in this window"))
 /* Like info_scroll_forward, but sets default_window_size as a side
    effect.  */
 DECLARE_INFO_COMMAND (info_scroll_forward_set_window,
-		      _("Scroll forward in this window and set default window size"))
+                      _("Scroll forward in this window and set default window size"))
 {
   if (info_explicit_arg)
     default_window_size = count;
@@ -1226,7 +1394,7 @@ DECLARE_INFO_COMMAND (info_scroll_forward_page_only, _("Scroll forward in this w
 /* Like info_scroll_forward_page_only, but sets default_window_size as a side
    effect.  */
 DECLARE_INFO_COMMAND (info_scroll_forward_page_only_set_window,
-		      _("Scroll forward in this window staying within node and set default window size"))
+                      _("Scroll forward in this window staying within node and set default window size"))
 {
   if (info_explicit_arg)
     default_window_size = count;
@@ -1242,7 +1410,7 @@ DECLARE_INFO_COMMAND (info_scroll_backward, _("Scroll backward in this window"))
 /* Like info_scroll_backward, but sets default_window_size as a side
    effect.  */
 DECLARE_INFO_COMMAND (info_scroll_backward_set_window,
-		      _("Scroll backward in this window and set default window size"))
+                      _("Scroll backward in this window and set default window size"))
 {
   if (info_explicit_arg)
     default_window_size = count;
@@ -1259,7 +1427,7 @@ DECLARE_INFO_COMMAND (info_scroll_backward_page_only, _("Scroll backward in this
 /* Like info_scroll_backward_page_only, but sets default_window_size as a side
    effect.  */
 DECLARE_INFO_COMMAND (info_scroll_backward_page_only_set_window,
-		      _("Scroll backward in this window staying within node and set default window size"))
+                      _("Scroll backward in this window staying within node and set default window size"))
 {
   if (info_explicit_arg)
     default_window_size = count;
@@ -1290,10 +1458,10 @@ DECLARE_INFO_COMMAND (info_down_line, _("Scroll down by lines"))
       int desired_top = window->pagetop + count;
 
       if (desired_top >= window->line_count)
-	desired_top = window->line_count - 2;
+        desired_top = window->line_count - 2;
 
       if (window->pagetop <= desired_top)
-	set_window_pagetop (window, desired_top);
+        set_window_pagetop (window, desired_top);
     }
 }
 
@@ -1307,7 +1475,7 @@ DECLARE_INFO_COMMAND (info_up_line, _("Scroll up by lines"))
       int desired_top = window->pagetop - count;
 
       if (desired_top < 0)
-	desired_top = 0;
+        desired_top = 0;
 
       set_window_pagetop (window, desired_top);
     }
@@ -1316,7 +1484,7 @@ DECLARE_INFO_COMMAND (info_up_line, _("Scroll up by lines"))
 /* Scroll the window forward by N lines and remember N as default for
    subsequent commands.  */
 DECLARE_INFO_COMMAND (info_scroll_half_screen_down,
-		      _("Scroll down by half screen size"))
+                      _("Scroll down by half screen size"))
 {
   if (count < 0)
     info_scroll_half_screen_up (window, -count, key);
@@ -1326,23 +1494,23 @@ DECLARE_INFO_COMMAND (info_scroll_half_screen_down,
       int desired_top;
 
       if (info_explicit_arg)
-	default_scroll_size = count;
+        default_scroll_size = count;
       if (default_scroll_size > 0)
-	scroll_size = default_scroll_size;
+        scroll_size = default_scroll_size;
 
       desired_top = window->pagetop + scroll_size;
       if (desired_top >= window->line_count)
-	desired_top = window->line_count - 2;
+        desired_top = window->line_count - 2;
 
       if (window->pagetop <= desired_top)
-	set_window_pagetop (window, desired_top);
+        set_window_pagetop (window, desired_top);
     }
 }
 
 /* Scroll the window backward by N lines and remember N as default for
    subsequent commands.  */
 DECLARE_INFO_COMMAND (info_scroll_half_screen_up,
-		      _("Scroll up by half screen size"))
+                      _("Scroll up by half screen size"))
 {
   if (count < 0)
     info_scroll_half_screen_down (window, -count, key);
@@ -1352,13 +1520,13 @@ DECLARE_INFO_COMMAND (info_scroll_half_screen_up,
       int desired_top;
 
       if (info_explicit_arg)
-	default_scroll_size = count;
+        default_scroll_size = count;
       if (default_scroll_size > 0)
-	scroll_size = default_scroll_size;
+        scroll_size = default_scroll_size;
 
       desired_top = window->pagetop - scroll_size;
       if (desired_top < 0)
-	desired_top = 0;
+        desired_top = 0;
 
       set_window_pagetop (window, desired_top);
     }
@@ -1382,7 +1550,7 @@ DECLARE_INFO_COMMAND (info_next_window, _("Select the next window"))
   /* If no other window, error now. */
   if (!windows->next && !echo_area_is_active)
     {
-      info_error ((char *) msg_one_window, NULL, NULL);
+      info_error (msg_one_window, NULL, NULL);
       return;
     }
 
@@ -1422,7 +1590,7 @@ DECLARE_INFO_COMMAND (info_prev_window, _("Select the previous window"))
 
   if (!windows->next && !echo_area_is_active)
     {
-      info_error ((char *) msg_one_window, NULL, NULL);
+      info_error (msg_one_window, NULL, NULL);
       return;
     }
 
@@ -1478,7 +1646,7 @@ DECLARE_INFO_COMMAND (info_split_window, _("Split the current window"))
 
   if (!split)
     {
-      info_error ((char *) msg_win_too_small, NULL, NULL);
+      info_error (msg_win_too_small, NULL, NULL);
     }
   else
     {
@@ -1546,11 +1714,11 @@ DECLARE_INFO_COMMAND (info_delete_window, _("Delete the current window"))
 {
   if (!windows->next)
     {
-      info_error ((char *) msg_cant_kill_last, NULL, NULL);
+      info_error (msg_cant_kill_last, NULL, NULL);
     }
   else if (window->flags & W_WindowIsPerm)
     {
-      info_error ((char *) _("Cannot delete a permanent window"), NULL, NULL);
+      info_error (_("Cannot delete a permanent window"), NULL, NULL);
     }
   else
     {
@@ -1635,7 +1803,7 @@ DECLARE_INFO_COMMAND (info_scroll_other_window, _("Scroll the other window"))
   /* If only one window, give up. */
   if (!windows->next)
     {
-      info_error ((char *) msg_one_window, NULL, NULL);
+      info_error (msg_one_window, NULL, NULL);
       return;
     }
 
@@ -1676,6 +1844,17 @@ DECLARE_INFO_COMMAND (info_toggle_wrap,
               _("Toggle the state of line wrapping in the current window"))
 {
   window_toggle_wrap (window);
+}
+
+/* Toggle the usage of regular expressions in searches. */
+DECLARE_INFO_COMMAND (info_toggle_regexp,
+              _("Toggle the usage of regular expressions in searches"))
+{
+  use_regex = 1 - use_regex;
+  window_message_in_echo_area (use_regex
+                               ? _("Using regular expressions for searches.")
+                               : _("Using literal strings for searches."),
+                               NULL, NULL);
 }
 
 /* **************************************************************** */
@@ -1755,7 +1934,7 @@ info_select_reference (WINDOW *window, REFERENCE *entry)
       if (file_system_error)
         info_error (file_system_error, NULL, NULL);
       else
-        info_error ((char *) msg_cant_find_node, nodename, NULL);
+        info_error (msg_cant_find_node, nodename, NULL);
     }
 
   maybe_free (file_system_error);
@@ -1831,7 +2010,7 @@ info_handle_pointer (char *label, WINDOW *window)
           if (info_recent_file_error)
             info_error (info_recent_file_error, NULL, NULL);
           else
-            info_error ((char *) msg_cant_file_node, filename, nodename);
+            info_error (msg_cant_file_node, filename, nodename);
         }
 
       free (filename);
@@ -1839,7 +2018,7 @@ info_handle_pointer (char *label, WINDOW *window)
     }
   else
     {
-      info_error ((char *) msg_no_pointer, label, NULL);
+      info_error (msg_no_pointer, label, NULL);
     }
 }
 
@@ -1895,7 +2074,7 @@ DECLARE_INFO_COMMAND (info_last_node, _("Select the last node in this file"))
     }
 
   if (!node)
-    info_error ((char *) _("This window has no additional nodes"), NULL, NULL);
+    info_error (_("This window has no additional nodes"), NULL, NULL);
   else
     info_set_node_of_window (1, window, node);
 }
@@ -1928,7 +2107,7 @@ DECLARE_INFO_COMMAND (info_first_node, _("Select the first node in this file"))
     }
 
   if (!node)
-    info_error ((char *) _("This window has no additional nodes"), NULL, NULL);
+    info_error (_("This window has no additional nodes"), NULL, NULL);
   else
     info_set_node_of_window (1, window, node);
 }
@@ -1950,7 +2129,7 @@ DECLARE_INFO_COMMAND (info_menu_digit, _("Select this menu item"))
 
   if (!menu)
     {
-      info_error ((char *) msg_no_menu_node, NULL, NULL);
+      info_error (msg_no_menu_node, NULL, NULL);
       return;
     }
 
@@ -1974,7 +2153,7 @@ DECLARE_INFO_COMMAND (info_menu_digit, _("Select this menu item"))
         info_next_line (window, menu[i]->line_number - 1, key);
     }
   else
-    info_error ((char *) _("There aren't %d items in this menu."),
+    info_error (_("There aren't %d items in this menu."),
                 (void *) (long) item, NULL);
 
   info_free_references (menu);
@@ -2063,9 +2242,9 @@ info_menu_or_ref_item (WINDOW *window, int count,
   if (!menu)
     {
       if (builder == info_menu_of_node)
-        info_error ((char *) msg_no_menu_node, NULL, NULL);
+        info_error (msg_no_menu_node, NULL, NULL);
       else
-        info_error ((char *) msg_no_xref_node, NULL, NULL);
+        info_error (msg_no_xref_node, NULL, NULL);
       return;
     }
 
@@ -2132,13 +2311,13 @@ info_menu_or_ref_item (WINDOW *window, int count,
                         else if (window->point < refs[which]->start)
                           break;
                       }
-		    if (which > 0)
-		      {
-			if (closest == -1)
-			  which--;
-			else
-			  which = closest;
-		      }
+                    if (which > 0)
+                      {
+                        if (closest == -1)
+                          which--;
+                        else
+                          which = closest;
+                      }
                   }
 
                 defentry = (REFERENCE *)xmalloc (sizeof (REFERENCE));
@@ -2166,24 +2345,24 @@ info_menu_or_ref_item (WINDOW *window, int count,
       if (builder == info_menu_of_node)
         {
           if (defentry)
-	    {
-	      prompt = xmalloc (strlen (defentry->label)
-				+ strlen (_("Menu item (%s): ")));
-	      sprintf (prompt, _("Menu item (%s): "), defentry->label);
-	    }
+            {
+              prompt = xmalloc (strlen (defentry->label)
+                                + strlen (_("Menu item (%s): ")));
+              sprintf (prompt, _("Menu item (%s): "), defentry->label);
+            }
           else
-	    prompt = xstrdup (_("Menu item: "));
+            prompt = xstrdup (_("Menu item: "));
         }
       else
         {
           if (defentry)
-	    {
-	      prompt = xmalloc (strlen (defentry->label)
-				+ strlen (_("Follow xref (%s): ")));
-	      sprintf (prompt, _("Follow xref (%s): "), defentry->label);
-	    }
+            {
+              prompt = xmalloc (strlen (defentry->label)
+                                + strlen (_("Follow xref (%s): ")));
+              sprintf (prompt, _("Follow xref (%s): "), defentry->label);
+            }
           else
-	    prompt = xstrdup (_("Follow xref: "));
+            prompt = xstrdup (_("Follow xref: "));
         }
 
       line = info_read_completing_in_echo_area (window, prompt, menu);
@@ -2239,9 +2418,9 @@ info_menu_or_ref_item (WINDOW *window, int count,
 
           for (i = 0; menu && (ref = menu[i]); i++)
             {
-              /* Need to use strcasecmp because LINE is downcased
+              /* Need to use mbscasecmp because LINE is downcased
                  inside info_read_completing_in_echo_area.  */
-              if (strcasecmp (line, ref->label) == 0)
+              if (mbscasecmp (line, ref->label) == 0)
                 {
                   /* ref->end is more accurate estimate of position
                      for menus than ref->start.  Go figure.  */
@@ -2261,7 +2440,7 @@ info_menu_or_ref_item (WINDOW *window, int count,
         }
 
       if (!entry && defentry)
-        info_error ((char *) _("The reference disappeared! (%s)."), line, NULL);
+        info_error (_("The reference disappeared! (%s)."), line, NULL);
       else
         {
           NODE *orig = window->node;
@@ -2339,7 +2518,7 @@ DECLARE_INFO_COMMAND (info_find_menu, _("Move to the start of this node's menu")
   position = search (INFO_MENU_LABEL, &binding);
 
   if (position == -1)
-    info_error ((char *) msg_no_menu_node, NULL, NULL);
+    info_error (msg_no_menu_node, NULL, NULL);
   else
     {
       window->point = position;
@@ -2358,7 +2537,7 @@ DECLARE_INFO_COMMAND (info_visit_menu,
   menu = info_menu_of_node (window->node);
 
   if (!menu)
-    info_error ((char *) msg_no_menu_node, NULL, NULL);
+    info_error (msg_no_menu_node, NULL, NULL);
 
   for (i = 0; (!info_error_was_printed) && (entry = menu[i]); i++)
     {
@@ -2368,7 +2547,7 @@ DECLARE_INFO_COMMAND (info_visit_menu,
       window_tile_windows (TILE_INTERNALS);
 
       if (!new)
-        info_error ((char *) msg_win_too_small, NULL, NULL);
+        info_error (msg_win_too_small, NULL, NULL);
       else
         {
           active_window = new;
@@ -2417,28 +2596,28 @@ DECLARE_INFO_COMMAND (info_goto_node, _("Read a node name and select it"))
               {
                 entry = (REFERENCE *)xmalloc (sizeof (REFERENCE));
                 entry->filename = entry->nodename = (char *)NULL;
-		if (this_is_the_current_fb)
-		  entry->label = xstrdup (fb->tags[i]->nodename);
-		else
-		  {
-		    entry->label = (char *) xmalloc
-		      (4 + strlen (fb->filename) +
-		       strlen (fb->tags[i]->nodename));
-		    sprintf (entry->label, "(%s)%s",
-			     fb->filename, fb->tags[i]->nodename);
-		  }
+                if (this_is_the_current_fb)
+                  entry->label = xstrdup (fb->tags[i]->nodename);
+                else
+                  {
+                    entry->label = (char *) xmalloc
+                      (4 + strlen (fb->filename) +
+                       strlen (fb->tags[i]->nodename));
+                    sprintf (entry->label, "(%s)%s",
+                             fb->filename, fb->tags[i]->nodename);
+                  }
 
                 add_pointer_to_array
                   (entry, items_index, items, items_slots, 100, REFERENCE *);
               }
           }
       }
-    line = info_read_maybe_completing (window, (char *) _("Goto node: "),
+    line = info_read_maybe_completing (window, _("Goto node: "),
         items);
     info_free_references (items);
   }
 #else /* !GOTO_COMPLETES */
-  line = info_read_in_echo_area (window, (char *) _("Goto node: "));
+  line = info_read_in_echo_area (window, _("Goto node: "));
 #endif /* !GOTO_COMPLETES */
 
   /* If the user aborted, quit now. */
@@ -2480,11 +2659,11 @@ info_follow_menus (NODE *initial_node, char **menus,
       char *arg = *menus; /* Remember the name of the menu entry we want. */
 
       /* A leading space is certainly NOT part of a node name.  Most
-	 probably, they typed a space after the separating comma.  The
-	 strings in menus[] have their whitespace canonicalized, so
-	 there's at most one space to ignore.  */
+         probably, they typed a space after the separating comma.  The
+         strings in menus[] have their whitespace canonicalized, so
+         there's at most one space to ignore.  */
       if (*arg == ' ')
-	arg++;
+        arg++;
       if (!first_arg)
         first_arg = arg;
 
@@ -2519,11 +2698,11 @@ info_follow_menus (NODE *initial_node, char **menus,
 
           for (i = 0; (entry = menu[i]); i++)
             {
-              if (strcasecmp (entry->label, arg) == 0)
+              if (mbscasecmp (entry->label, arg) == 0)
                 break;
               else
                 if ((best_guess == -1)
-                    && (strncasecmp (entry->label, arg, strlen (arg)) == 0))
+                    && (mbsncasecmp (entry->label, arg, strlen (arg)) == 0))
                   best_guess = i;
             }
 
@@ -2537,12 +2716,12 @@ info_follow_menus (NODE *initial_node, char **menus,
         {
           if (arg == first_arg)
             {
-	      /* Maybe they typed "info foo" instead of "info -f foo".  */
-	      node = info_get_node (first_arg, 0);
-	      if (node)
-		add_file_directory_to_path (first_arg);
-	      else
-		node = make_manpage_node (first_arg);
+              /* Maybe they typed "info foo" instead of "info -f foo".  */
+              node = info_get_node (first_arg, 0);
+              if (node)
+                add_file_directory_to_path (first_arg);
+              else
+                node = make_manpage_node (first_arg);
               if (node)
                 goto maybe_got_node;
             }
@@ -2563,11 +2742,11 @@ info_follow_menus (NODE *initial_node, char **menus,
       /* Try to find this node.  */
       node = info_get_node (entry->filename, entry->nodename);
       if (!node && arg == first_arg)
-	{
-	  node = make_manpage_node (first_arg);
-	  if (node)
-	    goto maybe_got_node;
-	}
+        {
+          node = make_manpage_node (first_arg);
+          if (node)
+            goto maybe_got_node;
+        }
 
       /* Since we cannot find it, try using the label of the entry as a
          file, i.e., "(LABEL)Top".  */
@@ -2612,7 +2791,7 @@ split_list_of_nodenames (char *str)
     {
       if (*str == ',')
         {
-          *str++ = 0;		/* get past the null byte */
+          *str++ = 0;           /* get past the null byte */
           len++;
           nodes = xrealloc (nodes, len * sizeof (char *));
           nodes[len - 2] = str;
@@ -2630,7 +2809,7 @@ split_list_of_nodenames (char *str)
 DECLARE_INFO_COMMAND (info_menu_sequence,
    _("Read a list of menus starting from dir and follow them"))
 {
-  char *line = info_read_in_echo_area (window, (char *) _("Follow menus: "));
+  char *line = info_read_in_echo_area (window, _("Follow menus: "));
 
   /* If the user aborted, quit now. */
   if (!line)
@@ -2650,28 +2829,28 @@ DECLARE_INFO_COMMAND (info_menu_sequence,
       NODE *node = NULL;
 
       /* If DIR_NODE is NULL, they might be reading a file directly,
-	 like in "info -d . -f ./foo".  Try using "Top" instead.  */
+         like in "info -d . -f ./foo".  Try using "Top" instead.  */
       if (!dir_node)
-	{
-	  char *file_name = window->node->parent;
+        {
+          char *file_name = window->node->parent;
 
-	  if (!file_name)
-	    file_name = window->node->filename;
-	  dir_node = info_get_node (file_name, NULL);
-	}
+          if (!file_name)
+            file_name = window->node->filename;
+          dir_node = info_get_node (file_name, NULL);
+        }
 
       /* If we still cannot find the starting point, give up.
-	 We cannot allow a NULL pointer inside info_follow_menus.  */
+         We cannot allow a NULL pointer inside info_follow_menus.  */
       if (!dir_node)
-	info_error ((char *) msg_cant_find_node, "Top", NULL);
+        info_error (msg_cant_find_node, "Top", NULL);
       else
-	node = info_follow_menus (dir_node, nodes, &errstr, &errarg1, &errarg2);
+        node = info_follow_menus (dir_node, nodes, &errstr, &errarg1, &errarg2);
 
       free (nodes);
       if (!errstr)
         info_set_node_of_window (1, window, node);
       else
-        info_error ((char *) errstr, errarg1, errarg2);
+        info_error (errstr, errarg1, errarg2);
     }
 
   free (line);
@@ -2699,16 +2878,16 @@ entry_in_menu (char *arg, REFERENCE **menu, int exact)
       int best_guess = -1;
 
       for (i = 0; (entry = menu[i]); i++)
-	{
-	  if (strcasecmp (entry->label, arg) == 0)
-	    break;
-	  else
-	    if (strncasecmp (entry->label, arg, strlen (arg)) == 0)
-	      best_guess = i;
-	}
+        {
+          if (mbscasecmp (entry->label, arg) == 0)
+            break;
+          else
+            if (mbsncasecmp (entry->label, arg, strlen (arg)) == 0)
+              best_guess = i;
+        }
 
       if (!entry && best_guess != -1)
-	entry = menu[best_guess];
+        entry = menu[best_guess];
     }
 
   return entry;
@@ -2729,18 +2908,18 @@ info_intuit_options_node (WINDOW *window, NODE *initial_node, char *program)
   static const char *invocation_nodes[] = {
     "%s invocation",
     "Invoking %s",
-    "Preliminaries",	/* m4 has Invoking under Preliminaries! */
+    "Preliminaries",    /* m4 has Invoking under Preliminaries! */
     "Invocation",
     "Command Arguments",/* Emacs */
     "Invoking `%s'",
     "%s options",
     "Options",
-    "Option ",		/* e.g. "Option Summary" */
+    "Option ",          /* e.g. "Option Summary" */
     "Invoking",
-    "All options",	/* tar, paxutils */
+    "All options",      /* tar, paxutils */
     "Arguments",
-    "%s cmdline",	/* ar */
-    "%s",		/* last resort */
+    "%s cmdline",       /* ar */
+    "%s",               /* last resort */
     (const char *)0
   };
   NODE *node = NULL;
@@ -2759,37 +2938,37 @@ info_intuit_options_node (WINDOW *window, NODE *initial_node, char *program)
       menu = info_menu_of_node (initial_node);
 
       /* If no menu item in this node, stop here.  Perhaps this node
-	 is the one they need.  */
+         is the one they need.  */
       if (!menu)
-	break;
+        break;
 
       /* Look for node names typical for usage nodes in this menu.  */
       for (try_node = invocation_nodes; *try_node; try_node++)
-	{
-	  char *nodename;
+        {
+          char *nodename;
 
-	  nodename = xmalloc (strlen (program) + strlen (*try_node));
-	  sprintf (nodename, *try_node, program);
-	  /* The last resort "%s" is dangerous, so we restrict it
+          nodename = xmalloc (strlen (program) + strlen (*try_node));
+          sprintf (nodename, *try_node, program);
+          /* The last resort "%s" is dangerous, so we restrict it
              to exact matches here.  */
-	  entry = entry_in_menu (nodename, menu,
-				 strcmp (*try_node, "%s") == 0);
-	  free (nodename);
-	  if (entry)
-	    break;
-	}
+          entry = entry_in_menu (nodename, menu,
+                                 strcmp (*try_node, "%s") == 0);
+          free (nodename);
+          if (entry)
+            break;
+        }
 
       if (!entry)
-	break;
+        break;
 
       if (!entry->filename)
-	entry->filename = xstrdup (initial_node->parent ? initial_node->parent
-				   : initial_node->filename);
+        entry->filename = xstrdup (initial_node->parent ? initial_node->parent
+                                   : initial_node->filename);
       /* Try to find this node.  */
       node = info_get_node (entry->filename, entry->nodename);
       info_free_references (menu);
       if (!node)
-	break;
+        break;
     }
 
   /* We've got our best shot at the invocation node.  Now select it.  */
@@ -2809,21 +2988,21 @@ program_name_from_file_name (char *file_name)
 
   for (i = strlen (program_name) - 1; i > 0; i--)
     if (program_name[i] == '.'
-	&& (FILENAME_CMPN (program_name + i, ".info", 5) == 0
-	    || FILENAME_CMPN (program_name + i, ".inf", 4) == 0
+        && (FILENAME_CMPN (program_name + i, ".info", 5) == 0
+            || FILENAME_CMPN (program_name + i, ".inf", 4) == 0
 #ifdef __MSDOS__
-	    || FILENAME_CMPN (program_name + i, ".i", 2) == 0
+            || FILENAME_CMPN (program_name + i, ".i", 2) == 0
 #endif
-	    || isdigit (program_name[i + 1]))) /* a man page foo.1 */
+            || isdigit (program_name[i + 1]))) /* a man page foo.1 */
       {
-	program_name[i] = 0;
-	break;
+        program_name[i] = 0;
+        break;
       }
   return program_name;
 }
 
 DECLARE_INFO_COMMAND (info_goto_invocation_node,
-		      _("Find the node describing program invocation"))
+                      _("Find the node describing program invocation"))
 {
   const char *invocation_prompt = _("Find Invocation node of [%s]: ");
   char *program_name, *line;
@@ -2833,11 +3012,11 @@ DECLARE_INFO_COMMAND (info_goto_invocation_node,
   /* Intuit the name of the program they are likely to want.
      We use the file name of the current Info file as a hint.  */
   file_name = window->node->parent ? window->node->parent
-				   : window->node->filename;
+                                   : window->node->filename;
   default_program_name = program_name_from_file_name (file_name);
 
   prompt = (char *)xmalloc (strlen (default_program_name) +
-			    strlen (invocation_prompt));
+                            strlen (invocation_prompt));
   sprintf (prompt, invocation_prompt, default_program_name);
   line = info_read_in_echo_area (window, prompt);
   free (prompt);
@@ -2855,7 +3034,7 @@ DECLARE_INFO_COMMAND (info_goto_invocation_node,
      from the Top node.  */
   top_node = info_get_node (file_name, NULL);
   if (!top_node)
-    info_error ((char *) msg_cant_find_node, "Top", NULL);
+    info_error (msg_cant_find_node, "Top", NULL);
 
   info_intuit_options_node (window, top_node, program_name);
   free (line);
@@ -2867,7 +3046,7 @@ DECLARE_INFO_COMMAND (info_man, _("Read a manpage reference and select it"))
 {
   char *line;
 
-  line = info_read_in_echo_area (window, (char *) _("Get Manpage: "));
+  line = info_read_in_echo_area (window, _("Get Manpage: "));
 
   if (!line)
     {
@@ -2968,13 +3147,13 @@ kill_node (WINDOW *window, char *nodename)
   /* If there is a nodename, find it in our window list. */
   for (iw = 0; (info_win = info_windows[iw]); iw++)
     if (strcmp (nodename, info_win->nodes[info_win->current]->nodename) == 0
-	&& info_win->window == window)
+        && info_win->window == window)
       break;
 
   if (!info_win)
     {
       if (*nodename)
-        info_error ((char *) _("Cannot kill node `%s'"), nodename, NULL);
+        info_error (_("Cannot kill node `%s'"), nodename, NULL);
       else
         window_clear_echo_area ();
 
@@ -2984,7 +3163,7 @@ kill_node (WINDOW *window, char *nodename)
   /* If there are no more nodes left anywhere to view, complain and exit. */
   if (info_windows_index == 1 && info_windows[0]->nodes_index == 1)
     {
-      info_error ((char *) _("Cannot kill the last node"), NULL, NULL);
+      info_error (_("Cannot kill the last node"), NULL, NULL);
       return;
     }
 
@@ -3088,7 +3267,7 @@ DECLARE_INFO_COMMAND (info_view_file, _("Read the name of a file and select it")
 {
   char *line;
 
-  line = info_read_in_echo_area (window, (char *) _("Find file: "));
+  line = info_read_in_echo_area (window, _("Find file: "));
   if (!line)
     {
       info_abort_key (active_window, 1, 0);
@@ -3105,7 +3284,7 @@ DECLARE_INFO_COMMAND (info_view_file, _("Read the name of a file and select it")
           if (info_recent_file_error)
             info_error (info_recent_file_error, NULL, NULL);
           else
-            info_error ((char *) _("Cannot find `%s'."), line, NULL);
+            info_error (_("Cannot find `%s'."), line, NULL);
         }
       else
         info_set_node_of_window (1, window, node);
@@ -3148,7 +3327,7 @@ dump_nodes_to_file (char *filename, char **nodenames,
 
   if (!output_stream)
     {
-      info_error ((char *) _("Could not create output file `%s'."),
+      info_error (_("Could not create output file `%s'."),
           output_filename, NULL);
       return;
     }
@@ -3162,7 +3341,7 @@ dump_nodes_to_file (char *filename, char **nodenames,
     fclose (output_stream);
 
 #if defined (VERBOSE_NODE_DUMPING)
-  info_error ((char *) _("Done."), NULL, NULL);
+  info_error (_("Done."), NULL, NULL);
 #endif /* VERBOSE_NODE_DUMPING */
 }
 
@@ -3196,11 +3375,11 @@ dump_node_to_stream (char *filename, char *nodename,
       else
         {
           if (filename && *nodename != '(')
-            info_error ((char *) msg_cant_file_node,
+            info_error (msg_cant_file_node,
                 filename_non_directory (filename),
                 nodename);
           else
-            info_error ((char *) msg_cant_find_node, nodename, NULL);
+            info_error (msg_cant_find_node, nodename, NULL);
         }
       return;
     }
@@ -3217,7 +3396,7 @@ dump_node_to_stream (char *filename, char *nodename,
 
 #if defined (VERBOSE_NODE_DUMPING)
   /* Maybe we should print some information about the node being output. */
-  info_error ((char *) _("Writing node %s..."), node_printed_rep (node), NULL);
+  info_error (_("Writing node %s..."), node_printed_rep (node), NULL);
 #endif /* VERBOSE_NODE_DUMPING */
 
   write_node_to_stream (node, stream);
@@ -3266,7 +3445,7 @@ dump_node_to_file (NODE *node, char *filename, int dump_subnodes)
 
   if (!output_stream)
     {
-      info_error ((char *) _("Could not create output file `%s'."), filename,
+      info_error (_("Could not create output file `%s'."), filename,
           NULL);
       return;
     }
@@ -3284,7 +3463,7 @@ dump_node_to_file (NODE *node, char *filename, int dump_subnodes)
     fclose (output_stream);
 
 #if defined (VERBOSE_NODE_DUMPING)
-  info_error ((char *) _("Done."), NULL, NULL);
+  info_error (_("Done."), NULL, NULL);
 #endif /* VERBOSE_NODE_DUMPING */
 }
 
@@ -3328,13 +3507,13 @@ print_node (NODE *node)
 
   if (!printer_pipe)
     {
-      info_error ((char *) _("Cannot open pipe to `%s'."), print_command, NULL);
+      info_error (_("Cannot open pipe to `%s'."), print_command, NULL);
       return;
     }
 
 #if defined (VERBOSE_NODE_DUMPING)
   /* Maybe we should print some information about the node being output. */
-  info_error ((char *) _("Printing node %s..."), node_printed_rep (node), NULL);
+  info_error (_("Printing node %s..."), node_printed_rep (node), NULL);
 #endif /* VERBOSE_NODE_DUMPING */
 
   write_node_to_stream (node, printer_pipe);
@@ -3344,7 +3523,7 @@ print_node (NODE *node)
     fclose (printer_pipe);
 
 #if defined (VERBOSE_NODE_DUMPING)
-  info_error ((char *) _("Done."), NULL, NULL);
+  info_error (_("Done."), NULL, NULL);
 #endif /* VERBOSE_NODE_DUMPING */
 }
 
@@ -3427,7 +3606,9 @@ info_search_in_node (char *string, NODE *node, long int start,
   if (isearch_is_active)
     binding.flags |= S_SkipDest;
 
-  offset = search (string, &binding);
+  offset = (use_regex ? 
+            regexp_search (string, &binding, node->nodelen):
+            search (string, &binding));
 
   if (offset != -1 && window)
     {
@@ -3517,6 +3698,7 @@ info_search_internal (char *string, WINDOW *window,
       register int current_tag = 0, number_of_tags;
       char *last_subfile;
       TAG *tag;
+      char *msg = NULL;
 
       /* Find number of tags and current tag. */
       last_subfile = (char *)NULL;
@@ -3539,7 +3721,7 @@ info_search_internal (char *string, WINDOW *window,
       while (1)
         {
           NODE *node;
-
+	  
           /* Allow C-g to quit the search, failing it if pressed. */
           return_if_control_g (-1);
 
@@ -3547,10 +3729,16 @@ info_search_internal (char *string, WINDOW *window,
           for (i = current_tag + dir; i != current_tag; i += dir)
             {
               if (i < 0)
-                i = number_of_tags - 1;
+		{
+		  msg = N_("Search continued from the end of the document.");
+		  i = number_of_tags - 1;
+		}
               else if (i == number_of_tags)
-                i = 0;
-
+		{
+		  msg = N_("Search continued from the beginning of the document.");
+		  i = 0;
+		}
+	      
               tag = file_buffer->tags[i];
               if (tag->nodelen != 0)
                 break;
@@ -3564,7 +3752,7 @@ info_search_internal (char *string, WINDOW *window,
           if (!echo_area_is_active && (last_subfile != tag->filename))
             {
               window_message_in_echo_area
-                ((char *) _("Searching subfile %s ..."),
+                (_("Searching subfile %s ..."),
                  filename_non_directory (tag->filename), NULL);
 
               last_subfile = tag->filename;
@@ -3580,7 +3768,7 @@ info_search_internal (char *string, WINDOW *window,
                   if (info_recent_file_error)
                     info_error (info_recent_file_error, NULL, NULL);
                   else
-                    info_error ((char *) msg_cant_file_node,
+                    info_error (msg_cant_file_node,
                                 filename_non_directory (file_buffer->filename),
                                 tag->nodename);
                 }
@@ -3600,7 +3788,12 @@ info_search_internal (char *string, WINDOW *window,
               /* Yes!  We win. */
               remember_window_and_node (window, node);
               if (!echo_area_is_active)
-                window_clear_echo_area ();
+		{
+		  if (msg)
+		    window_message_in_echo_area ("%s", gettext (msg), NULL);
+		  else
+		    window_clear_echo_area ();
+		}
               return (0);
             }
 
@@ -3631,7 +3824,7 @@ DECLARE_INFO_COMMAND (info_search, _("Read a string and search for it"))
 }
 
 DECLARE_INFO_COMMAND (info_search_backward,
-		      _("Read a string and search backward for it"))
+                      _("Read a string and search backward for it"))
 {
   last_search_direction = count > 0 ? -1 : 1;
   last_search_case_sensitive = 0;
@@ -3655,7 +3848,7 @@ info_search_1 (WINDOW *window, int count, unsigned char key,
     {
       direction = 1;
       if (count == 0)
-        count = 1;	/* for backward compatibility */
+        count = 1;      /* for backward compatibility */
     }
 
   /* Read a string from the user, defaulting the search to SEARCH_STRING. */
@@ -3667,16 +3860,16 @@ info_search_1 (WINDOW *window, int count, unsigned char key,
 
   if (ask_for_string)
     {
-      prompt = (char *)xmalloc (strlen (_("%s%sfor string [%s]: "))
-				+ strlen (_("Search backward"))
-				+ strlen (_("Search"))
-				+ strlen (_(" case-sensitively "))
-				+ strlen (_(" "))
-				+ strlen (search_string));
+      prompt = (char *)xmalloc (strlen (_("%s%s%s [%s]: "))
+                                + strlen (_("Regexp search"))
+                                + strlen (_(" case-sensitively"))
+                                + strlen (_(" backward"))
+                                + strlen (search_string));
 
-      sprintf (prompt, _("%s%sfor string [%s]: "),
-               direction < 0 ? _("Search backward") : _("Search"),
-               case_sensitive ? _(" case-sensitively ") : _(" "),
+      sprintf (prompt, _("%s%s%s [%s]: "),
+               use_regex ? _("Regexp search") : _("Search"),
+               case_sensitive ? _(" case-sensitively") : "",
+               direction < 0 ? _(" backward") : "",
                search_string);
 
       line = info_read_in_echo_area (window, prompt);
@@ -3715,7 +3908,7 @@ info_search_1 (WINDOW *window, int count, unsigned char key,
                                    active_window, direction, case_sensitive);
 
   if (result != 0 && !info_error_was_printed)
-    info_error ((char *) _("Search failed."), NULL, NULL);
+    info_error (_("Search failed."), NULL, NULL);
   else if (old_pagetop != active_window->pagetop)
     {
       int new_pagetop;
@@ -3733,23 +3926,23 @@ info_search_1 (WINDOW *window, int count, unsigned char key,
 }
 
 DECLARE_INFO_COMMAND (info_search_next,
-		      _("Repeat last search in the same direction"))
+                      _("Repeat last search in the same direction"))
 {
   if (!last_search_direction)
-    info_error ((char *) _("No previous search string"), NULL, NULL);
+    info_error (_("No previous search string"), NULL, NULL);
   else
     info_search_1 (window, last_search_direction * count,
-		   key, last_search_case_sensitive, 0);
+                   key, last_search_case_sensitive, 0);
 }
 
 DECLARE_INFO_COMMAND (info_search_previous,
-		      _("Repeat last search in the reverse direction"))
+                      _("Repeat last search in the reverse direction"))
 {
   if (!last_search_direction)
-    info_error ((char *) _("No previous search string"), NULL, NULL);
+    info_error (_("No previous search string"), NULL, NULL);
   else
     info_search_1 (window, -last_search_direction * count,
-		   key, last_search_case_sensitive, 0);
+                   key, last_search_case_sensitive, 0);
 }
 
 /* **************************************************************** */
@@ -3848,9 +4041,11 @@ show_isearch_prompt (int dir, unsigned char *string, int failing_p)
   unsigned int prompt_len, p_rep_index, p_rep_size;
 
   if (dir < 0)
-    prefix = _("I-search backward: ");
+    prefix = use_regex ? _("Regexp I-search backward: ")
+                       : _("I-search backward: ");
   else
-    prefix = _("I-search: ");
+    prefix = use_regex ? _("Regexp I-search: ")
+                       : _("I-search: ");
 
   p_rep_index = p_rep_size = 0;
   p_rep = (char *)NULL;
@@ -3986,11 +4181,11 @@ incremental_search (WINDOW *window, int count, unsigned char ignore)
           else if (func == (VFunction *) isearch_forward
               || func == (VFunction *) isearch_backward)
             {
-	      /* If this key invokes an incremental search, then this
-		 means that we will either search again in the same
-		 direction, search again in the reverse direction, or
-		 insert the last search string that was accepted through
-		 incremental searching. */
+              /* If this key invokes an incremental search, then this
+                 means that we will either search again in the same
+                 direction, search again in the reverse direction, or
+                 insert the last search string that was accepted through
+                 incremental searching. */
               if ((func == (VFunction *) isearch_forward && dir > 0) ||
                   (func == (VFunction *) isearch_backward && dir < 0))
                 {
@@ -4062,17 +4257,17 @@ incremental_search (WINDOW *window, int count, unsigned char ignore)
               last_isearch_accepted = xstrdup (isearch_string);
             }
 
-	  /* If the key is the isearch_terminate_search_key, but some buffered
-	     input is pending, it is almost invariably because the ESC key is
-	     actually the beginning of an escape sequence, like in case they
-	     pressed an arrow key.  So don't gobble the ESC key, push it back
-	     into pending input.  */
-	  /* FIXME: this seems like a kludge!  We need a more reliable
-	     mechanism to know when ESC is a separate key and when it is
-	     part of an escape sequence.  */
+          /* If the key is the isearch_terminate_search_key, but some buffered
+             input is pending, it is almost invariably because the ESC key is
+             actually the beginning of an escape sequence, like in case they
+             pressed an arrow key.  So don't gobble the ESC key, push it back
+             into pending input.  */
+          /* FIXME: this seems like a kludge!  We need a more reliable
+             mechanism to know when ESC is a separate key and when it is
+             part of an escape sequence.  */
           if (key != RET  /* Emacs addicts want RET to get lost */
-	      && (key != isearch_terminate_search_key
-		  || info_any_buffered_input_p ()))
+              && (key != isearch_terminate_search_key
+                  || info_any_buffered_input_p ()))
             info_set_pending_input (key);
 
           if (func == (VFunction *) info_abort_key)
@@ -4104,19 +4299,29 @@ incremental_search (WINDOW *window, int count, unsigned char ignore)
             break;
           }
       
-
-      if (search_result == 0)
+      /* Regex isearch means we better search again every time.  We
+         might have had a failed search for "\", for example, but now we
+         have "\.".  */
+      if (use_regex)
         {
+          search_result = info_search_internal (isearch_string,
+                                                window, dir, case_sensitive);
+        }
+      else if (search_result == 0)
+        { /* I don't understand why we test for search_result being
+             zero; it means if the search failed we don't search again. 
+             Clearly the special check isn't applicable to regex search
+             anyway.  --karl, 11feb08.  */
           /* Check to see if the current search string is right here.  If
              we are looking at it, then don't bother calling the search
              function. */
           if (((dir < 0) &&
-	       ((case_sensitive ? strncmp : strncasecmp)
+               ((case_sensitive ? strncmp : mbsncasecmp)
                             (window->node->contents + window->point,
                              isearch_string, isearch_string_index) == 0)) ||
               ((dir > 0) &&
                ((window->point - isearch_string_index) >= 0) &&
-	       ((case_sensitive ? strncmp : strncasecmp)
+               ((case_sensitive ? strncmp : mbsncasecmp)
                             (window->node->contents +
                              (window->point - (isearch_string_index - 1)),
                              isearch_string, isearch_string_index) == 0)))
@@ -4126,7 +4331,7 @@ incremental_search (WINDOW *window, int count, unsigned char ignore)
             }
           else
             search_result = info_search_internal (isearch_string,
-						  window, dir, case_sensitive);
+                                                  window, dir, case_sensitive);
         }
 
       /* If this search failed, and we didn't already have a failed search,
@@ -4227,7 +4432,7 @@ info_gc_file_buffers (void)
 /* **************************************************************** */
 
 /* Move to the next or previous cross reference in this node. */
-static void
+static int
 info_move_to_xref (WINDOW *window, int count, unsigned char key, int dir)
 {
   long firstmenu, firstxref;
@@ -4235,6 +4440,10 @@ info_move_to_xref (WINDOW *window, int count, unsigned char key, int dir)
   long placement = -1;
   long start = 0;
   NODE *node = window->node;
+  int save_use_regex = use_regex;
+
+  /* Most of our keywords contain * characters; don't use regexes.  */
+  use_regex = 0;
 
   if (dir < 0)
     start = node->nodelen;
@@ -4270,8 +4479,10 @@ info_move_to_xref (WINDOW *window, int count, unsigned char key, int dir)
 
   if (firstmenu == -1 && firstxref == -1)
     {
-      info_error ((char *) msg_no_xref_node, NULL, NULL);
-      return;
+      if (!cursor_movement_scrolls_p)
+        info_error (msg_no_xref_node, NULL, NULL);
+      use_regex = save_use_regex;
+      return cursor_movement_scrolls_p;
     }
 
   /* There is at least one cross reference or menu entry in this node.
@@ -4298,6 +4509,9 @@ info_move_to_xref (WINDOW *window, int count, unsigned char key, int dir)
           (INFO_MENU_ENTRY_LABEL, node, nextmenu + dir, (WINDOW *)NULL, dir, 0);
     }
 
+  /* No more searches, back to whatever the user wanted.  */
+  use_regex = save_use_regex;
+
   /* If there is both a next menu entry, and a next xref entry, choose the
      one which occurs first.  Otherwise, select the one which actually
      appears in this node following point. */
@@ -4318,22 +4532,28 @@ info_move_to_xref (WINDOW *window, int count, unsigned char key, int dir)
      point, choose the first menu or xref entry appearing in this node. */
   if (placement == -1)
     {
-      if (firstmenu != -1 && firstxref != -1)
+      if (cursor_movement_scrolls_p)
+        return 1;
+      else
         {
-          if (((dir == 1) && (firstmenu < firstxref)) ||
-              ((dir == -1) && (firstmenu > firstxref)))
+          if (firstmenu != -1 && firstxref != -1)
+            {
+              if (((dir == 1) && (firstmenu < firstxref)) ||
+                  ((dir == -1) && (firstmenu > firstxref)))
+                placement = firstmenu + 1;
+              else
+                placement = firstxref;
+            }
+          else if (firstmenu != -1)
             placement = firstmenu + 1;
           else
             placement = firstxref;
         }
-      else if (firstmenu != -1)
-        placement = firstmenu + 1;
-      else
-        placement = firstxref;
     }
   window->point = placement;
   window_adjust_pagetop (window);
   window->flags |= W_UpdateWindow;
+  return 0;
 }
 
 DECLARE_INFO_COMMAND (info_move_to_prev_xref,
@@ -4342,7 +4562,16 @@ DECLARE_INFO_COMMAND (info_move_to_prev_xref,
   if (count < 0)
     info_move_to_prev_xref (window, -count, key);
   else
-    info_move_to_xref (window, count, key, -1);
+    {
+      while (info_move_to_xref (window, count, key, -1))
+        {
+          info_error_was_printed = 0;
+          if (backward_move_node_structure (window, info_scroll_behaviour))
+            break;
+          move_to_new_line (window->line_count, window->line_count - 1,
+                            window);
+        }
+    }
 }
 
 DECLARE_INFO_COMMAND (info_move_to_next_xref,
@@ -4351,7 +4580,19 @@ DECLARE_INFO_COMMAND (info_move_to_next_xref,
   if (count < 0)
     info_move_to_next_xref (window, -count, key);
   else
-    info_move_to_xref (window, count, key, 1);
+    {
+      /* Note: This can cause some blinking when the next cross reference is
+         located several nodes further. This effect can be easily suppressed
+         by setting display_inhibited to 1, however this will also make
+         error messages to be dumped on stderr, instead on the echo area. */ 
+      while (info_move_to_xref (window, count, key, 1))
+        {
+          info_error_was_printed = 0;
+          if (forward_move_node_structure (window, info_scroll_behaviour))
+            break;
+          move_to_new_line (0, 0, window);
+        }
+    }
 }
 
 /* Select the menu item or reference that appears on this line. */
@@ -4386,7 +4627,7 @@ DECLARE_INFO_COMMAND (info_abort_key, _("Cancel current operation"))
      do it. */
   if (!info_error_rings_bell_p)
     terminal_ring_bell ();
-  info_error ((char *) _("Quit"), NULL, NULL);
+  info_error (_("Quit"), NULL, NULL);
 
   info_initialize_numeric_arg ();
   info_clear_pending_input ();
@@ -4477,7 +4718,7 @@ DECLARE_INFO_COMMAND (info_quit, _("Quit using Info"))
 /* Declaration only.  Special cased in info_dispatch_on_key ().
    Doc string is to avoid ugly results with describe_key etc.  */
 DECLARE_INFO_COMMAND (info_do_lowercase_version,
-		      _("Run command bound to this key's lowercase variant"))
+                      _("Run command bound to this key's lowercase variant"))
 {}
 
 static void
@@ -4488,7 +4729,7 @@ dispatch_error (char *keyseq)
   rep = pretty_keyseq (keyseq);
 
   if (!echo_area_is_active)
-    info_error ((char *) _("Unknown command (%s)."), rep, NULL);
+    info_error (_("Unknown command (%s)."), rep, NULL);
   else
     {
       char *temp = xmalloc (1 + strlen (rep) + strlen (_("\"%s\" is invalid")));
@@ -4618,15 +4859,15 @@ info_dispatch_on_key (unsigned char key, Keymap map)
             if (func == (VFunction *) info_do_lowercase_version)
               {
 #if defined(INFOKEY)
-		unsigned char lowerkey;
+                unsigned char lowerkey;
 
-		lowerkey = Meta_p(key) ? Meta (tolower (UnMeta (key))) : tolower (key);
-		if (lowerkey == key)
-		  {
-		    add_char_to_keyseq (key);
-		    dispatch_error (info_keyseq);
-		    return;
-		  }
+                lowerkey = Meta_p(key) ? Meta (tolower (UnMeta (key))) : tolower (key);
+                if (lowerkey == key)
+                  {
+                    add_char_to_keyseq (key);
+                    dispatch_error (info_keyseq);
+                    return;
+                  }
                 info_dispatch_on_key (lowerkey, map);
 #else /* !INFOKEY */
                 info_dispatch_on_key (tolower (key), map);
@@ -4942,15 +5183,15 @@ info_gather_typeahead (void)
       chars_avail = pc_term_chars_avail ();
     else
       {
-	/* We could be more accurate by calling ltell, but we have no idea
-	   whether tty is buffered by stdio functions, and if so, how many
-	   characters are already waiting in the buffer.  So we punt.  */
-	struct stat st;
+        /* We could be more accurate by calling ltell, but we have no idea
+           whether tty is buffered by stdio functions, and if so, how many
+           characters are already waiting in the buffer.  So we punt.  */
+        struct stat st;
 
-	if (fstat (tty, &st) < 0)
-	  chars_avail = 1;
-	else
-	  chars_avail = st.st_size;
+        if (fstat (tty, &st) < 0)
+          chars_avail = 1;
+        else
+          chars_avail = st.st_size;
       }
     if (chars_avail > space_avail)
       chars_avail = space_avail;
@@ -4999,7 +5240,7 @@ info_get_input_char (void)
       {
         int n;
         do
-	  n = read (tty, &c, 1);
+          n = read (tty, &c, 1);
         while (n == -1 && errno == EINTR);
         rawkey = n == 1 ? c : EOF;
       }
@@ -5015,7 +5256,7 @@ info_get_input_char (void)
             {
               fclose (info_input_stream);
               info_input_stream = stdin;
-	      tty = fileno (info_input_stream);
+              tty = fileno (info_input_stream);
               display_inhibited = 0;
               display_update_display (windows);
               display_cursor_at_point (active_window);

@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: copying,v 1.2 2004/04/20 13:26:00 karl Exp $
+# $Id: copying,v 1.4 2007/07/01 18:38:52 karl Exp $
 # Test @copying.  The configure script for tramp uses this to make sure
 # the makeinfo that is present supports @copying.
 

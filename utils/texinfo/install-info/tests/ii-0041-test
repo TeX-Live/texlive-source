@@ -1,0 +1,34 @@
+#!/bin/sh
+# This file is free software; as a special exception the author gives
+# unlimited permission to copy and/or distribute it, with or without
+# modifications, as long as this notice is preserved.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+#This script requires `mktemp' and `zdiff' and is designed to be run from
+#a Makefile.
+
+. ./defs || exit 1
+
+outputdirfile=`mktemp`.gz
+cp ${testdir}/ii-0041-input-dir-file.gz $outputdirfile
+if [ "x$?" != "x0" ]; then
+  exit 1
+fi
+
+# when copying in distcheck, source will be readonly.
+chmod u+rw $outputdirfile || exit $?
+
+${install_info} ${testdir}/ii-0041-input-info-file $outputdirfile
+retval=$?
+if [ "x$retval" != "x0" ]; then
+  exit $retval
+fi
+
+zdiff ${testdir}/ii-0041-expected-dir-file.gz $outputdirfile
+retval=$?
+
+rm -f $outputdirfile
+exit $retval

@@ -1,0 +1,3514 @@
+# Kinyarwanda translations for texinfo package.
+# Copyright (C) 2005 Free Software Foundation, Inc.
+# This file is distributed under the same license as the texinfo package.
+# Steve Murphy <murf@e-tools.com>, 2005.
+# Steve performed initial rough translation from compendium built from translations provided by the following translators:
+# Philibert Ndandali  <ndandali@yahoo.fr>, 2005.
+# Viateur MUGENZI <muvia1@yahoo.fr>, 2005.
+# Noëlla Mupole <s24211045@tuks.co.za>, 2005.
+# Carole Karema <karemacarole@hotmail.com>, 2005.
+# JEAN BAPTISTE NGENDAHAYO <ngenda_denis@yahoo.co.uk>, 2005.
+# Augustin KIBERWA  <akiberwa@yahoo.co.uk>, 2005.
+# Donatien NSENGIYUMVA <ndonatienuk@yahoo.co.uk>, 2005.
+# Antoine Bigirimana <antoine@e-tools.com>, 2005.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: texinfo 4.7.94\n"
+"Report-Msgid-Bugs-To: bug-texinfo@gnu.org\n"
+"POT-Creation-Date: 2008-04-19 10:05-0700\n"
+"PO-Revision-Date: 2005-04-04 10:55-0700\n"
+"Last-Translator: Steven Michael Murphy <murf@e-tools.com>\n"
+"Language-Team: Kinyarwanda <translation-team-rw@lists.sourceforge.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: gnulib/lib/error.c:125
+msgid "Unknown system error"
+msgstr ""
+
+#: gnulib/lib/getopt.c:526 gnulib/lib/getopt.c:542
+#, fuzzy, c-format
+msgid "%s: option `%s' is ambiguous\n"
+msgstr "%s:Ihitamo ni"
+
+#: gnulib/lib/getopt.c:575 gnulib/lib/getopt.c:579
+#, fuzzy, c-format
+msgid "%s: option `--%s' doesn't allow an argument\n"
+msgstr "%s:Ihitamo Kwemerera"
+
+#: gnulib/lib/getopt.c:588 gnulib/lib/getopt.c:593
+#, fuzzy, c-format
+msgid "%s: option `%c%s' doesn't allow an argument\n"
+msgstr "%s:Ihitamo Kwemerera"
+
+#: gnulib/lib/getopt.c:636 gnulib/lib/getopt.c:655 gnulib/lib/getopt.c:971
+#: gnulib/lib/getopt.c:990
+#, fuzzy, c-format
+msgid "%s: option `%s' requires an argument\n"
+msgstr "%s:Ihitamo"
+
+#: gnulib/lib/getopt.c:693 gnulib/lib/getopt.c:696
+#, fuzzy, c-format
+msgid "%s: unrecognized option `--%s'\n"
+msgstr "%s:Ihitamo"
+
+#: gnulib/lib/getopt.c:704 gnulib/lib/getopt.c:707
+#, fuzzy, c-format
+msgid "%s: unrecognized option `%c%s'\n"
+msgstr "%s:Ihitamo"
+
+#: gnulib/lib/getopt.c:759 gnulib/lib/getopt.c:762
+#, fuzzy, c-format
+msgid "%s: illegal option -- %c\n"
+msgstr "%s:Ihitamo"
+
+#: gnulib/lib/getopt.c:768 gnulib/lib/getopt.c:771
+#, fuzzy, c-format
+msgid "%s: invalid option -- %c\n"
+msgstr "%s:Sibyo Ihitamo"
+
+#: gnulib/lib/getopt.c:823 gnulib/lib/getopt.c:839 gnulib/lib/getopt.c:1043
+#: gnulib/lib/getopt.c:1061
+#, fuzzy, c-format
+msgid "%s: option requires an argument -- %c\n"
+msgstr "%s:Ihitamo"
+
+#: gnulib/lib/getopt.c:892 gnulib/lib/getopt.c:908
+#, fuzzy, c-format
+msgid "%s: option `-W %s' is ambiguous\n"
+msgstr "%s:Ihitamo ni"
+
+#: gnulib/lib/getopt.c:932 gnulib/lib/getopt.c:950
+#, fuzzy, c-format
+msgid "%s: option `-W %s' doesn't allow an argument\n"
+msgstr "%s:Ihitamo Kwemerera"
+
+#: gnulib/lib/xalloc-die.c:34 gnulib/lib/xsetenv.c:37
+#, c-format
+msgid "memory exhausted"
+msgstr ""
+
+#: info/echo-area.c:283 info/session.c:735
+#, fuzzy
+msgid "Move forward a character"
+msgstr "Imbere a Inyuguti"
+
+#: info/echo-area.c:295 info/session.c:767
+#, fuzzy
+msgid "Move backward a character"
+msgstr "subira inyuma a Inyuguti"
+
+#: info/echo-area.c:307
+#, fuzzy
+msgid "Move to the start of this line"
+msgstr "Kuri i Gutangira Bya iyi Umurongo"
+
+#: info/echo-area.c:312
+#, fuzzy
+msgid "Move to the end of this line"
+msgstr "Kuri i Impera Bya iyi Umurongo"
+
+#: info/echo-area.c:320 info/session.c:808
+#, fuzzy
+msgid "Move forward a word"
+msgstr "Imbere a ijambo"
+
+#: info/echo-area.c:360 info/session.c:881
+#, fuzzy
+msgid "Move backward a word"
+msgstr "subira inyuma a ijambo"
+
+#: info/echo-area.c:400
+#, fuzzy
+msgid "Delete the character under the cursor"
+msgstr "i Inyuguti i indanga"
+
+#: info/echo-area.c:430
+#, fuzzy
+msgid "Delete the character behind the cursor"
+msgstr "i Inyuguti i indanga"
+
+#: info/echo-area.c:451
+#, fuzzy
+msgid "Cancel or quit operation"
+msgstr "Cyangwa Kuvamo"
+
+#: info/echo-area.c:466
+#, fuzzy
+msgid "Accept (or force completion of) this line"
+msgstr "Cyangwa Bya iyi Umurongo"
+
+#: info/echo-area.c:471
+#, fuzzy
+msgid "Insert next character verbatim"
+msgstr "Komeza>> Inyuguti"
+
+#: info/echo-area.c:479
+#, fuzzy
+msgid "Insert this character"
+msgstr "iyi Inyuguti"
+
+#: info/echo-area.c:497
+#, fuzzy
+msgid "Insert a TAB character"
+msgstr "a Inyuguti"
+
+#: info/echo-area.c:504
+#, fuzzy
+msgid "Transpose characters at point"
+msgstr "Inyuguti ku Akadomo"
+
+#: info/echo-area.c:555
+#, fuzzy
+msgid "Yank back the contents of the last kill"
+msgstr "Inyuma i Ibigize Bya i Iheruka"
+
+#: info/echo-area.c:562
+#, fuzzy
+msgid "Kill ring is empty"
+msgstr "Kuvuza Inzogera ni ubusa"
+
+#: info/echo-area.c:575
+#, fuzzy
+msgid "Yank back a previous kill"
+msgstr "Inyuma a Ibanjirije"
+
+#: info/echo-area.c:608
+#, fuzzy
+msgid "Kill to the end of the line"
+msgstr "Kuri i Impera Bya i Umurongo"
+
+#: info/echo-area.c:621
+#, fuzzy
+msgid "Kill to the beginning of the line"
+msgstr "Kuri i Itangiriro Bya i Umurongo"
+
+#: info/echo-area.c:633
+#, fuzzy
+msgid "Kill the word following the cursor"
+msgstr "i ijambo i indanga"
+
+#: info/echo-area.c:652
+#, fuzzy
+msgid "Kill the word preceding the cursor"
+msgstr "i ijambo i indanga"
+
+#: info/echo-area.c:867 info/echo-area.c:923
+msgid "No completions"
+msgstr ""
+
+#: info/echo-area.c:869
+#, fuzzy
+msgid "Not complete"
+msgstr "Byuzuye"
+
+#: info/echo-area.c:910
+msgid "List possible completions"
+msgstr ""
+
+#: info/echo-area.c:927
+msgid "Sole completion"
+msgstr ""
+
+#: info/echo-area.c:936
+msgid "One completion:\n"
+msgstr ""
+
+#: info/echo-area.c:937
+#, c-format
+msgid "%d completions:\n"
+msgstr ""
+
+#: info/echo-area.c:1084
+msgid "Insert completion"
+msgstr ""
+
+#: info/echo-area.c:1219
+msgid "Building completions..."
+msgstr ""
+
+#: info/echo-area.c:1339
+#, fuzzy
+msgid "Scroll the completions window"
+msgstr "i Idirishya"
+
+#: info/footnotes.c:212
+#, fuzzy
+msgid "Footnotes could not be displayed"
+msgstr "OYA"
+
+#: info/footnotes.c:238
+#, fuzzy
+msgid "Show the footnotes associated with this node in another window"
+msgstr "i Ubusobanuro mpezarupapuro Na: iyi in Idirishya"
+
+#: info/footnotes.h:26
+msgid "---------- Footnotes ----------"
+msgstr ""
+
+#: info/indices.c:171
+#, fuzzy
+msgid "Look up a string in the index for this file"
+msgstr "Hejuru a Ikurikiranyanyuguti in i Umubarendanga kugirango iyi IDOSIYE"
+
+#: info/indices.c:198
+#, fuzzy
+msgid "Finding index entries..."
+msgstr "Umubarendanga Ibyinjijwe"
+
+#: info/indices.c:206
+#, fuzzy
+msgid "No indices found."
+msgstr "ibimenyetso Byabonetse"
+
+# sw/source\ui\inc\swmn.hrc:_MN_EDIT.FN_EDIT_IDX_ENTRY_DLG.text
+#: info/indices.c:216
+#, fuzzy
+msgid "Index entry: "
+msgstr "Ikinjizwa mu mubarendanga...."
+
+#: info/indices.c:324
+#, fuzzy
+msgid ""
+"Go to the next matching index item from the last `\\[index-search]' command"
+msgstr ""
+"Kuri i Komeza>> Umubarendanga Ikintu Bivuye i Iheruka Umubarendanga Gushaka "
+"Komandi:"
+
+#: info/indices.c:334
+#, fuzzy
+msgid "No previous index search string."
+msgstr "Ibanjirije Umubarendanga Gushaka Ikurikiranyanyuguti"
+
+#: info/indices.c:341
+#, fuzzy
+msgid "No index entries."
+msgstr "Umubarendanga Ibyinjijwe"
+
+#: info/indices.c:374
+#, fuzzy, c-format
+msgid "No %sindex entries containing `%s'."
+msgstr "Ibyinjijwe"
+
+# framework/source\services\logindialog.src:RID_DLG_LOGIN.RID_PB_ADDITIONALSETTINGS.text
+#: info/indices.c:375
+#, fuzzy
+msgid "more "
+msgstr "Birenzeho"
+
+#: info/indices.c:385
+msgid "CAN'T SEE THIS"
+msgstr ""
+
+#: info/indices.c:421
+#, fuzzy, c-format
+msgid "Found `%s' in %s. (`\\[next-index-match]' tries to find next.)"
+msgstr "in Komeza>> Umubarendanga BIHUYE Kuri Gushaka Komeza>>"
+
+#: info/indices.c:549
+#, fuzzy, c-format
+msgid "Scanning indices of `%s'..."
+msgstr "ibimenyetso Bya"
+
+#: info/indices.c:604
+#, fuzzy, c-format
+msgid "No available info files have `%s' in their indices."
+msgstr "Bihari Ibisobanuro Idosiye in ibimenyetso"
+
+#: info/indices.c:630
+#, fuzzy
+msgid "Grovel all known info file's indices for a string and build a menu"
+msgstr ""
+"Byose Ibisobanuro ibimenyetso kugirango a Ikurikiranyanyuguti Na a "
+"Ibikubiyemo"
+
+#: info/indices.c:634
+msgid "Index apropos: "
+msgstr ""
+
+#: info/indices.c:662
+#, fuzzy, c-format
+msgid ""
+"\n"
+"* Menu: Nodes whose indices contain `%s':\n"
+msgstr "*bya ibimenyetso"
+
+#: info/info.c:273 info/infokey.c:899
+#, fuzzy, c-format
+msgid "Try --help for more information.\n"
+msgstr "Ifashayobora kugirango Birenzeho Ibisobanuro"
+
+#: info/info.c:292 info/infokey.c:145 install-info/install-info.c:2091
+#: makeinfo/makeinfo.c:783 util/texindex.c:295
+#, c-format
+msgid ""
+"Copyright (C) %s Free Software Foundation, Inc.\n"
+"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl."
+"html>\n"
+"This is free software: you are free to change and redistribute it.\n"
+"There is NO WARRANTY, to the extent permitted by law.\n"
+msgstr ""
+
+#: info/info.c:504
+#, fuzzy, c-format
+msgid "no index entries found for `%s'\n"
+msgstr "Oya Umubarendanga Ibyinjijwe Byabonetse kugirango"
+
+#: info/info.c:598
+#, c-format
+msgid ""
+"Usage: %s [OPTION]... [MENU-ITEM...]\n"
+"\n"
+"Read documentation in Info format.\n"
+msgstr ""
+
+#: info/info.c:604
+msgid ""
+"Options:\n"
+"  -k, --apropos=STRING         look up STRING in all indices of all "
+"manuals.\n"
+"  -d, --directory=DIR          add DIR to INFOPATH.\n"
+"      --dribble=FILENAME       remember user keystrokes in FILENAME.\n"
+"  -f, --file=FILENAME          specify Info file to visit."
+msgstr ""
+
+#: info/info.c:611
+msgid ""
+"  -h, --help                   display this help and exit.\n"
+"      --index-search=STRING    go to node pointed by index entry STRING.\n"
+"  -n, --node=NODENAME          specify nodes in first visited Info file.\n"
+"  -o, --output=FILENAME        output selected nodes to FILENAME."
+msgstr ""
+
+#: info/info.c:617
+msgid ""
+"  -R, --raw-escapes            output \"raw\" ANSI escapes (default).\n"
+"      --no-raw-escapes         output escapes as literal text.\n"
+"      --restore=FILENAME       read initial keystrokes from FILENAME.\n"
+"  -O, --show-options, --usage  go to command-line options node."
+msgstr ""
+
+#: info/info.c:624
+#, fuzzy
+msgid "  -b, --speech-friendly        be friendly to speech synthesizers."
+msgstr "-B Kuri"
+
+#: info/info.c:628
+msgid ""
+"      --subnodes               recursively output menu items.\n"
+"      --vi-keys                use vi-like and less-like key bindings.\n"
+"      --version                display version information and exit.\n"
+"  -w, --where, --location      print physical location of Info file."
+msgstr ""
+
+#: info/info.c:634
+msgid ""
+"\n"
+"The first non-option argument, if present, is the menu entry to start from;\n"
+"it is searched for in all `dir' files along INFOPATH.\n"
+"If it is not present, info merges all `dir' files and shows the result.\n"
+"Any remaining arguments are treated as the names of menu\n"
+"items relative to the initial node visited."
+msgstr ""
+
+#: info/info.c:641
+msgid ""
+"\n"
+"Examples:\n"
+"  info                       show top-level dir menu\n"
+"  info emacs                 start at emacs node from top-level dir\n"
+"  info emacs buffers         start at buffers node within emacs manual\n"
+"  info --show-options emacs  start at node with emacs' command line options\n"
+"  info --subnodes -o out.txt emacs  dump entire manual to out.txt\n"
+"  info -f ./foo.info         show file ./foo.info, not searching dir"
+msgstr ""
+
+#: info/info.c:650 info/infokey.c:918 makeinfo/makeinfo.c:474
+#: util/texindex.c:259
+#, fuzzy
+msgid ""
+"\n"
+"Email bug reports to bug-texinfo@gnu.org,\n"
+"general questions and discussion to help-texinfo@gnu.org.\n"
+"Texinfo home page: http://www.gnu.org/software/texinfo/"
+msgstr "org."
+
+#: info/info.c:684
+#, fuzzy, c-format
+msgid "Cannot find node `%s'."
+msgstr "Gushaka"
+
+#: info/info.c:685
+#, fuzzy, c-format
+msgid "Cannot find node `(%s)%s'."
+msgstr "Gushaka"
+
+#: info/info.c:686
+#, fuzzy
+msgid "Cannot find a window!"
+msgstr "Gushaka a Idirishya"
+
+#: info/info.c:687
+#, fuzzy
+msgid "Point doesn't appear within this window's node!"
+msgstr "Kugaragara muri iyi"
+
+#: info/info.c:688
+#, fuzzy
+msgid "Cannot delete the last window."
+msgstr "Gusiba i Iheruka Idirishya"
+
+#: info/info.c:689
+#, fuzzy
+msgid "No menu in this node."
+msgstr "Ibikubiyemo in iyi"
+
+#: info/info.c:690
+#, fuzzy
+msgid "No footnotes in this node."
+msgstr "Ubusobanuro mpezarupapuro in iyi"
+
+#: info/info.c:691
+#, fuzzy
+msgid "No cross references in this node."
+msgstr "Kwambukiranya Indango in iyi"
+
+#: info/info.c:692
+#, fuzzy, c-format
+msgid "No `%s' pointer for this node."
+msgstr "Mweretsi kugirango iyi"
+
+#: info/info.c:693
+#, fuzzy, c-format
+msgid "Unknown Info command `%c'; try `?' for help."
+msgstr "Komandi: kugirango Ifashayobora"
+
+#: info/info.c:694
+#, fuzzy, c-format
+msgid "Terminal type `%s' is not smart enough to run Info."
+msgstr "Ubwoko ni OYA Cyiza Kuri Gukoresha"
+
+#: info/info.c:695
+#, fuzzy
+msgid "You are already at the last page of this node."
+msgstr "ku i Iheruka Ipaji Bya iyi"
+
+#: info/info.c:696
+#, fuzzy
+msgid "You are already at the first page of this node."
+msgstr "ku i Itangira Ipaji Bya iyi"
+
+#: info/info.c:697
+#, fuzzy
+msgid "Only one window."
+msgstr "Idirishya"
+
+#: info/info.c:698
+#, fuzzy
+msgid "Resulting window would be too small."
+msgstr "Idirishya Gitoya"
+
+#: info/info.c:699
+#, fuzzy
+msgid "Not enough room for a help window, please delete a window."
+msgstr "kugirango a Ifashayobora Idirishya Gusiba a Idirishya"
+
+#: info/infodoc.c:45
+msgid "Basic Info command keys\n"
+msgstr ""
+
+#: info/infodoc.c:47
+#, fuzzy
+msgid "\\%-10[quit-help]  Close this help window.\n"
+msgstr "\\%-10 Kuvamo Ifashayobora iyi Ifashayobora"
+
+#: info/infodoc.c:48
+#, fuzzy
+msgid "\\%-10[quit]  Quit Info altogether.\n"
+msgstr "\\%-10 Kuvamo"
+
+#: info/infodoc.c:49
+#, fuzzy
+msgid "\\%-10[get-info-help-node]  Invoke the Info tutorial.\n"
+msgstr "\\%-10 Kubona Ibisobanuro Ifashayobora i"
+
+#: info/infodoc.c:51
+#, fuzzy
+msgid "\\%-10[prev-line]  Move up one line.\n"
+msgstr "\\%-10 Umurongo subira inyuma 1. Umurongo"
+
+#: info/infodoc.c:52
+#, fuzzy
+msgid "\\%-10[next-line]  Move down one line.\n"
+msgstr "\\%-10 Komeza>> Umurongo Imbere 1. Umurongo"
+
+#: info/infodoc.c:53
+#, fuzzy
+msgid "\\%-10[scroll-backward]  Scroll backward one screenful.\n"
+msgstr "\\%-10 subira inyuma subira inyuma a Ipaji"
+
+#: info/infodoc.c:54
+#, fuzzy
+msgid "\\%-10[scroll-forward]  Scroll forward one screenful.\n"
+msgstr "\\%-10 Imbere Imbere a Ipaji"
+
+#: info/infodoc.c:55
+#, fuzzy
+msgid "\\%-10[beginning-of-node]  Go to the beginning of this node.\n"
+msgstr "\\%-10 Itangiriro Bya Kuri i Itangiriro Bya iyi"
+
+#: info/infodoc.c:56
+#, fuzzy
+msgid "\\%-10[end-of-node]  Go to the end of this node.\n"
+msgstr "\\%-10 Impera Bya Kuri i Impera Bya iyi"
+
+#: info/infodoc.c:58
+#, fuzzy
+msgid "\\%-10[move-to-next-xref]  Skip to the next hypertext link.\n"
+msgstr ""
+"\\%-10 Kwimura Kuri Komeza>> X- Ngenderwaho Kuri Komeza>> Ihuza muri iyi"
+
+#: info/infodoc.c:59
+#, fuzzy
+msgid ""
+"\\%-10[select-reference-this-line]  Follow the hypertext link under the "
+"cursor.\n"
+msgstr "\\%-10 Guhitamo Indango iyi Umurongo i Ihuza indanga"
+
+#: info/infodoc.c:60
+#, fuzzy
+msgid "\\%-10[history-node]  Go back to the last node seen in this window.\n"
+msgstr "\\%-10 Urutonde Kuri i Iheruka in iyi Idirishya"
+
+#: info/infodoc.c:62
+#, fuzzy
+msgid "\\%-10[global-prev-node]  Go to the previous node in the document.\n"
+msgstr "\\%-10 Kuri i Ibanjirije Bya iyi"
+
+#: info/infodoc.c:63
+#, fuzzy
+msgid "\\%-10[global-next-node]  Go to the next node in the document.\n"
+msgstr "\\%-10 Komeza>> Kuri i Komeza>> Bya iyi"
+
+#: info/infodoc.c:64
+#, fuzzy
+msgid "\\%-10[prev-node]  Go to the previous node on this level.\n"
+msgstr "\\%-10 Kuri i Ibanjirije Bya iyi"
+
+#: info/infodoc.c:65
+#, fuzzy
+msgid "\\%-10[next-node]  Go to the next node on this level.\n"
+msgstr "\\%-10 Komeza>> Kuri i Komeza>> Bya iyi"
+
+#: info/infodoc.c:66
+#, fuzzy
+msgid "\\%-10[up-node]  Go up one level.\n"
+msgstr "\\%-10 Hejuru Hejuru Bivuye iyi"
+
+#: info/infodoc.c:67
+#, fuzzy
+msgid "\\%-10[top-node]  Go to the top node of this document.\n"
+msgstr "\\%-10 Impera Bya Kuri i Impera Bya iyi"
+
+#: info/infodoc.c:68
+#, fuzzy
+msgid "\\%-10[dir-node]  Go to the main `directory' node.\n"
+msgstr "\\%-10 Impera Bya Kuri i Impera Bya iyi"
+
+#: info/infodoc.c:70
+#, fuzzy
+msgid "1...9       Pick the first...ninth item in this node's menu.\n"
+msgstr "%-10sItangira Ikintu in Ibikubiyemo"
+
+#: info/infodoc.c:71
+#, fuzzy
+msgid "\\%-10[last-menu-item]  Pick the last item in this node's menu.\n"
+msgstr "\\%-10 Iheruka Ibikubiyemo Ikintu Iheruka Ikintu in Ibikubiyemo"
+
+#: info/infodoc.c:72
+#, fuzzy
+msgid "\\%-10[menu-item]  Pick a menu item specified by name.\n"
+msgstr "%-10sIbikubiyemo Ikintu ku Izina:"
+
+#: info/infodoc.c:73
+#, fuzzy
+msgid "\\%-10[xref-item]  Follow a cross reference specified by name.\n"
+msgstr ""
+"\\%-10 X- Ngenderwaho Ikintu a Kwambukiranya Indango Izina: Bya Indango"
+
+#: info/infodoc.c:74
+#, fuzzy
+msgid "\\%-10[goto-node]  Go to a node specified by name.\n"
+msgstr "%-10sKuri ku Izina:"
+
+#: info/infodoc.c:76
+#, fuzzy
+msgid "\\%-10[search]  Search forward for a specified string.\n"
+msgstr "%-10sImbere kugirango a Ikurikiranyanyuguti"
+
+#: info/infodoc.c:77
+#, fuzzy
+msgid "\\%-10[search-previous]  Search for previous occurrence.\n"
+msgstr "\\%-10 Kuri i Ibanjirije Bya iyi"
+
+#: info/infodoc.c:78
+#, fuzzy
+msgid "\\%-10[search-next]  Search for next occurrence.\n"
+msgstr ""
+"%-10skugirango a Ikurikiranyanyuguti in i Umubarendanga Ibyinjijwe Bya iyi"
+
+#: info/infodoc.c:79
+#, fuzzy
+msgid ""
+"\\%-10[index-search]  Search for a specified string in the index, and\n"
+"              select the node referenced by the first entry found.\n"
+msgstr ""
+"\\%-10 Umubarendanga Gushaka kugirango a Ikurikiranyanyuguti in i "
+"Umubarendanga Ibyinjijwe Bya iyi IDOSIYE Na Guhitamo i ku i Itangira "
+"Icyinjijwe Byabonetse"
+
+#: info/infodoc.c:81
+#, fuzzy
+msgid "\\%-10[abort-key]  Cancel the current operation.\n"
+msgstr "KIGEZWEHO"
+
+#: info/infodoc.c:89
+#, fuzzy
+msgid ""
+"Basic Commands in Info Windows\n"
+"******************************\n"
+msgstr "in"
+
+#: info/infodoc.c:92
+#, fuzzy, c-format
+msgid "  %-10s  Quit this help.\n"
+msgstr "%-10siyi Ifashayobora"
+
+#: info/infodoc.c:93
+#, c-format
+msgid "  %-10s  Quit Info altogether.\n"
+msgstr ""
+
+#: info/infodoc.c:94
+#, fuzzy, c-format
+msgid "  %-10s  Invoke the Info tutorial.\n"
+msgstr "%-10si"
+
+#: info/infodoc.c:98
+#, fuzzy, c-format
+msgid "  %-10s  Move to the `next' node of this node.\n"
+msgstr "%-10sKuri i Bya iyi"
+
+#: info/infodoc.c:99
+#, fuzzy, c-format
+msgid "  %-10s  Move to the `previous' node of this node.\n"
+msgstr "%-10sKuri i Bya iyi"
+
+#: info/infodoc.c:100
+#, fuzzy, c-format
+msgid "  %-10s  Move `up' from this node.\n"
+msgstr "%-10sBivuye iyi"
+
+#: info/infodoc.c:101
+#, fuzzy, c-format
+msgid ""
+"  %-10s  Pick menu item specified by name.\n"
+"              Picking a menu item causes another node to be selected.\n"
+msgstr ""
+"\\%-10 Ibikubiyemo Ikintu Ibikubiyemo Ikintu ku Izina: a Ibikubiyemo Ikintu "
+"Kuri Byahiswemo"
+
+#: info/infodoc.c:103
+#, fuzzy, c-format
+msgid "  %-10s  Follow a cross reference.  Reads name of reference.\n"
+msgstr "%-10sa Kwambukiranya Indango Izina: Bya Indango"
+
+#: info/infodoc.c:104
+#, fuzzy, c-format
+msgid "  %-10s  Move to the last node seen in this window.\n"
+msgstr "%-10sKuri i Iheruka in iyi Idirishya"
+
+#: info/infodoc.c:105
+#, fuzzy, c-format
+msgid "  %-10s  Skip to next hypertext link within this node.\n"
+msgstr "%-10sKuri Komeza>> Ihuza muri iyi"
+
+#: info/infodoc.c:106
+#, fuzzy, c-format
+msgid "  %-10s  Follow the hypertext link under cursor.\n"
+msgstr "%-10si Ihuza indanga"
+
+#: info/infodoc.c:107
+#, fuzzy, c-format
+msgid "  %-10s  Move to the `directory' node.  Equivalent to `g (DIR)'.\n"
+msgstr "%-10sKuri i Kuri g"
+
+#: info/infodoc.c:108
+#, fuzzy, c-format
+msgid "  %-10s  Move to the Top node.  Equivalent to `g Top'.\n"
+msgstr "%-10sKuri i Kuri g"
+
+#: info/infodoc.c:110
+#, fuzzy
+msgid ""
+"Moving within a node:\n"
+"---------------------\n"
+msgstr "muri a"
+
+#: info/infodoc.c:112
+#, fuzzy, c-format
+msgid "  %-10s  Scroll forward a page.\n"
+msgstr "%-10sImbere a Ipaji"
+
+#: info/infodoc.c:113
+#, fuzzy, c-format
+msgid "  %-10s  Scroll backward a page.\n"
+msgstr "%-10ssubira inyuma a Ipaji"
+
+#: info/infodoc.c:114
+#, fuzzy, c-format
+msgid "  %-10s  Go to the beginning of this node.\n"
+msgstr "%-10sKuri i Itangiriro Bya iyi"
+
+#: info/infodoc.c:115
+#, fuzzy, c-format
+msgid "  %-10s  Go to the end of this node.\n"
+msgstr "%-10sKuri i Impera Bya iyi"
+
+#: info/infodoc.c:116
+#, fuzzy, c-format
+msgid "  %-10s  Scroll forward 1 line.\n"
+msgstr "%-10sImbere 1. Umurongo"
+
+#: info/infodoc.c:117
+#, fuzzy, c-format
+msgid "  %-10s  Scroll backward 1 line.\n"
+msgstr "%-10ssubira inyuma 1. Umurongo"
+
+#: info/infodoc.c:119
+#, fuzzy
+msgid ""
+"Other commands:\n"
+"---------------\n"
+msgstr "Amabwiriza"
+
+#: info/infodoc.c:121
+#, fuzzy, c-format
+msgid "  %-10s  Pick first...ninth item in node's menu.\n"
+msgstr "%-10sItangira Ikintu in Ibikubiyemo"
+
+#: info/infodoc.c:122
+#, fuzzy, c-format
+msgid "  %-10s  Pick last item in node's menu.\n"
+msgstr "%-10sIheruka Ikintu in Ibikubiyemo"
+
+#: info/infodoc.c:125
+#, fuzzy, c-format
+msgid ""
+"  %-10s  Search for a specified string in the index entries of this Info\n"
+"              file, and select the node referenced by the first entry "
+"found.\n"
+msgstr ""
+"\\%-10 Umubarendanga Gushaka kugirango a Ikurikiranyanyuguti in i "
+"Umubarendanga Ibyinjijwe Bya iyi IDOSIYE Na Guhitamo i ku i Itangira "
+"Icyinjijwe Byabonetse"
+
+#: info/infodoc.c:127
+#, fuzzy, c-format
+msgid ""
+"  %-10s  Move to node specified by name.\n"
+"              You may include a filename as well, as in (FILENAME)NODENAME.\n"
+msgstr ""
+"\\%-10 Kuri ku Izina: Gicurasi Gushyiramo a Izina ry'idosiye: Nka Nka in"
+
+#: info/infodoc.c:129
+#, fuzzy, c-format
+msgid ""
+"  %-10s  Search forward for a specified string,\n"
+"              and select the node in which the next occurrence is found.\n"
+msgstr ""
+"\\%-10 Gushaka Imbere kugirango a Na Guhitamo i in i Komeza>> ukugaragara ni "
+"Byabonetse"
+
+#: info/infodoc.c:131
+#, fuzzy, c-format
+msgid ""
+"  %-10s  Search backward for a specified string,\n"
+"              and select the node in which the next occurrence is found.\n"
+msgstr ""
+"\\%-10 Gushaka Imbere kugirango a Na Guhitamo i in i Komeza>> ukugaragara ni "
+"Byabonetse"
+
+#: info/infodoc.c:312
+#, fuzzy
+msgid "The current search path is:\n"
+msgstr "KIGEZWEHO Gushaka Inzira ni"
+
+#: info/infodoc.c:316
+#, fuzzy
+msgid ""
+"Commands available in Info windows:\n"
+"\n"
+msgstr "Bihari in"
+
+#: info/infodoc.c:320
+#, fuzzy
+msgid ""
+"Commands available in the echo area:\n"
+"\n"
+msgstr "Bihari in i Ubuso"
+
+#: info/infodoc.c:343
+#, fuzzy, c-format
+msgid ""
+"The following commands can only be invoked via %s:\n"
+"\n"
+msgstr "Amabwiriza Biturutse"
+
+#: info/infodoc.c:347
+#, fuzzy
+msgid ""
+"The following commands cannot be invoked at all:\n"
+"\n"
+msgstr "Amabwiriza ku Byose"
+
+#: info/infodoc.c:477
+#, fuzzy
+msgid "Display help message"
+msgstr "Ifashayobora Ubutumwa"
+
+#: info/infodoc.c:495
+#, fuzzy
+msgid "Visit Info node `(info)Help'"
+msgstr "Ibisobanuro"
+
+#: info/infodoc.c:633
+#, fuzzy
+msgid "Print documentation for KEY"
+msgstr "kugirango"
+
+#: info/infodoc.c:645
+#, fuzzy, c-format
+msgid "Describe key: %s"
+msgstr "Urufunguzo"
+
+#: info/infodoc.c:656
+#, fuzzy, c-format
+msgid "ESC %s is undefined."
+msgstr "ni kidasobanuye"
+
+#: info/infodoc.c:672 info/infodoc.c:701
+#, fuzzy, c-format
+msgid "%s is undefined."
+msgstr "%sni kidasobanuye"
+
+#: info/infodoc.c:722
+#, fuzzy, c-format
+msgid "%s is defined to %s."
+msgstr "%sni Kuri"
+
+#: info/infodoc.c:1145
+#, fuzzy
+msgid "Show what to type to execute a given command"
+msgstr "Kuri Ubwoko Kuri Gukora a Komandi:"
+
+#: info/infodoc.c:1149
+#, fuzzy
+msgid "Where is command: "
+msgstr "ni Komandi:"
+
+#: info/infodoc.c:1171
+#, fuzzy, c-format
+msgid "`%s' is not on any keys"
+msgstr "`%s'ni OYA ku Utubuto"
+
+#: info/infodoc.c:1178
+#, fuzzy, c-format
+msgid "%s can only be invoked via %s."
+msgstr "%sBiturutse"
+
+#: info/infodoc.c:1182
+#, fuzzy, c-format
+msgid "%s can be invoked via %s."
+msgstr "%sBiturutse"
+
+#: info/infodoc.c:1187
+#, fuzzy, c-format
+msgid "There is no function named `%s'"
+msgstr "ni Oya Umumaro"
+
+#: info/infodoc.c:96
+#, fuzzy
+msgid ""
+"Selecting other nodes:\n"
+"----------------------\n"
+msgstr "Ikindi"
+
+#: info/infokey.c:170
+#, fuzzy
+msgid "incorrect number of arguments"
+msgstr "Umubare Bya ingingo"
+
+#: info/infokey.c:201
+#, fuzzy, c-format
+msgid "cannot open input file `%s'"
+msgstr "Gufungura Iyinjiza IDOSIYE"
+
+#: info/infokey.c:215
+#, fuzzy, c-format
+msgid "cannot create output file `%s'"
+msgstr "Kurema Ibisohoka IDOSIYE"
+
+#: info/infokey.c:226
+#, fuzzy, c-format
+msgid "error writing to `%s'"
+msgstr "Ikosa Kuri"
+
+#: info/infokey.c:232
+#, fuzzy, c-format
+msgid "error closing output file `%s'"
+msgstr "Ikosa Ibisohoka IDOSIYE"
+
+#: info/infokey.c:450
+#, fuzzy
+msgid "key sequence too long"
+msgstr "Urufunguzo"
+
+#: info/infokey.c:529
+#, fuzzy
+msgid "missing key sequence"
+msgstr "Ibuze Urufunguzo"
+
+#: info/infokey.c:610
+#, fuzzy
+msgid "NUL character (\\000) not permitted"
+msgstr "Inyuguti OYA"
+
+#: info/infokey.c:641
+#, fuzzy, c-format
+msgid "NUL character (^%c) not permitted"
+msgstr "Inyuguti OYA"
+
+#: info/infokey.c:665
+#, fuzzy
+msgid "missing action name"
+msgstr "Ibuze Igikorwa Izina:"
+
+#: info/infokey.c:681 info/infokey.c:756
+#, fuzzy
+msgid "section too long"
+msgstr "Icyiciro"
+
+#: info/infokey.c:688
+#, fuzzy, c-format
+msgid "unknown action `%s'"
+msgstr "Kitazwi Igikorwa"
+
+#: info/infokey.c:698
+#, fuzzy
+msgid "action name too long"
+msgstr "Igikorwa Izina:"
+
+#: info/infokey.c:712
+#, fuzzy, c-format
+msgid "extra characters following action `%s'"
+msgstr "Birenga Inyuguti Igikorwa"
+
+#: info/infokey.c:723
+#, fuzzy
+msgid "missing variable name"
+msgstr "Ibuze IMPINDURAGACIRO Izina:"
+
+#: info/infokey.c:733
+#, fuzzy
+msgid "missing `=' immediately after variable name"
+msgstr "Ibuze Ako kanya Nyuma IMPINDURAGACIRO Izina:"
+
+#: info/infokey.c:741
+#, fuzzy
+msgid "variable name too long"
+msgstr "IMPINDURAGACIRO Izina:"
+
+#: info/infokey.c:765
+#, fuzzy
+msgid "value too long"
+msgstr "Agaciro"
+
+#: info/infokey.c:890
+#, fuzzy, c-format
+msgid "\"%s\", line %u: "
+msgstr "\"%s\",Umurongo"
+
+#: info/infokey.c:906
+#, fuzzy, c-format
+msgid ""
+"Usage: %s [OPTION]... [INPUT-FILE]\n"
+"\n"
+"Compile infokey source file to infokey file.  Reads INPUT-FILE (default\n"
+"$HOME/.infokey) and writes compiled key file to (by default) $HOME/.info.\n"
+"\n"
+"Options:\n"
+"  --output FILE        output to FILE instead of $HOME/.info\n"
+"  --help               display this help and exit.\n"
+"  --version            display version information and exit.\n"
+msgstr "Ibisobanuro."
+
+#: info/infomap.c:955
+#, fuzzy, c-format
+msgid "Ignoring invalid infokey file `%s' - too small"
+msgstr "Kwirengagiza Sibyo IDOSIYE Gitoya"
+
+#: info/infomap.c:958
+#, fuzzy, c-format
+msgid "Ignoring invalid infokey file `%s' - too big"
+msgstr "Kwirengagiza Sibyo IDOSIYE"
+
+#: info/infomap.c:971
+#, fuzzy, c-format
+msgid "Error reading infokey file `%s' - short read"
+msgstr "IDOSIYE Gusoma"
+
+#: info/infomap.c:990
+#, fuzzy, c-format
+msgid ""
+"Invalid infokey file `%s' (bad magic numbers) -- run infokey to update it"
+msgstr "IDOSIYE Imibare Gukoresha Kuri Kuvugurura"
+
+#: info/infomap.c:999
+#, fuzzy, c-format
+msgid "Your infokey file `%s' is out of date -- run infokey to update it"
+msgstr "IDOSIYE ni Inyuma Bya Itariki Gukoresha Kuri Kuvugurura"
+
+#: info/infomap.c:1015
+#, fuzzy, c-format
+msgid ""
+"Invalid infokey file `%s' (bad section length) -- run infokey to update it"
+msgstr "IDOSIYE Icyiciro Uburebure Gukoresha Kuri Kuvugurura"
+
+#: info/infomap.c:1036
+#, fuzzy, c-format
+msgid ""
+"Invalid infokey file `%s' (bad section code) -- run infokey to update it"
+msgstr "IDOSIYE Icyiciro ITEGEKONGENGA Gukoresha Kuri Kuvugurura"
+
+#: info/infomap.c:1171
+#, fuzzy
+msgid "Bad data in infokey file -- some key bindings ignored"
+msgstr "Ibyatanzwe in IDOSIYE Urufunguzo Ibyafataranyijwe"
+
+#: info/infomap.c:1221
+#, fuzzy
+msgid "Bad data in infokey file -- some var settings ignored"
+msgstr "Ibyatanzwe in IDOSIYE VAR Amagenamiterere"
+
+#: info/m-x.c:68
+#, fuzzy
+msgid "Read the name of an Info command and describe it"
+msgstr "i Izina: Bya Komandi: Na"
+
+#: info/m-x.c:72
+#, fuzzy
+msgid "Describe command: "
+msgstr "Komandi:"
+
+#: info/m-x.c:95
+#, fuzzy
+msgid "Read a command name in the echo area and execute it"
+msgstr "a Komandi: Izina: in i Ubuso Na Gukora"
+
+#: info/m-x.c:139
+#, fuzzy
+msgid "Cannot execute an `echo-area' command here."
+msgstr "Gukora Komandi:"
+
+#: info/m-x.c:153
+#, fuzzy, c-format
+msgid "Undefined command: %s"
+msgstr "Komandi:"
+
+#: info/m-x.c:159
+#, fuzzy
+msgid "Set the height of the displayed window"
+msgstr "i Ubuhagarike Bya i Idirishya"
+
+#: info/m-x.c:172
+#, fuzzy, c-format
+msgid "Set screen height to (%d): "
+msgstr "Mugaragaza Ubuhagarike Kuri"
+
+#: info/makedoc.c:166 info/makedoc.c:174
+#, fuzzy, c-format
+msgid ""
+"   Source files groveled to make this file include:\n"
+"\n"
+msgstr "Idosiye Kuri Ubwoko iyi IDOSIYE Gushyiramo"
+
+#: info/makedoc.c:556
+#, fuzzy, c-format
+msgid "Couldn't manipulate the file %s.\n"
+msgstr "i IDOSIYE"
+
+#: info/nodemenu.c:30
+#, fuzzy
+msgid ""
+"\n"
+"* Menu:\n"
+"  (File)Node                        Lines   Size   Containing File\n"
+"  ----------                        -----   ----   ---------------"
+msgstr "*Idosiye"
+
+#: info/nodemenu.c:201
+#, fuzzy
+msgid ""
+"Here is the menu of nodes you have recently visited.\n"
+"Select one from this menu, or use `\\[history-node]' in another window.\n"
+msgstr ""
+"ni i Ibikubiyemo Bya Bivuye iyi Ibikubiyemo Cyangwa Gukoresha Urutonde in "
+"Idirishya"
+
+#: info/nodemenu.c:223
+#, fuzzy
+msgid "Make a window containing a menu of all of the currently visited nodes"
+msgstr "a Idirishya a Ibikubiyemo Bya Byose Bya i"
+
+#: info/nodemenu.c:303
+#, fuzzy
+msgid "Select a node which has been previously visited in a visible window"
+msgstr "a in a Kigaragara Idirishya"
+
+#: info/nodemenu.c:316
+msgid "Select visited node: "
+msgstr ""
+
+#: info/nodemenu.c:336 info/session.c:2443
+#, fuzzy, c-format
+msgid "The reference disappeared! (%s)."
+msgstr "Indango"
+
+#: info/search.c:161
+#, c-format
+msgid "regexp error: %s"
+msgstr ""
+
+#: info/session.c:164
+#, fuzzy, c-format
+msgid ""
+"Welcome to Info version %s. Type \\[get-help-window] for help, \\[menu-item] "
+"for menu item."
+msgstr ""
+"Kuri Verisiyo Kubona Ifashayobora Idirishya kugirango Ifashayobora "
+"Ibikubiyemo Ikintu kugirango Ibikubiyemo Ikintu"
+
+#: info/session.c:625
+#, fuzzy
+msgid "Move down to the next line"
+msgstr "Hasi Kuri i Komeza>> Umurongo"
+
+#: info/session.c:661
+#, fuzzy
+msgid "Move up to the previous line"
+msgstr "Hejuru Kuri i Ibanjirije Umurongo"
+
+#: info/session.c:696
+#, fuzzy
+msgid "Move to the end of the line"
+msgstr "Kuri i Impera Bya i Umurongo"
+
+#: info/session.c:716
+#, fuzzy
+msgid "Move to the start of the line"
+msgstr "Kuri i Gutangira Bya i Umurongo"
+
+#: info/session.c:1007
+msgid "Next"
+msgstr "Ikurikira"
+
+#: info/session.c:1023 info/session.c:1148
+#, fuzzy
+msgid "No more nodes within this document."
+msgstr "Birenzeho muri iyi Inyandiko"
+
+#: info/session.c:1174
+#, fuzzy
+msgid "No `Prev' for this node."
+msgstr "kugirango iyi"
+
+#: info/session.c:1194
+#, fuzzy
+msgid "No `Prev' or `Up' for this node within this document."
+msgstr "Cyangwa kugirango iyi muri iyi Inyandiko"
+
+#: info/session.c:1256
+#, fuzzy
+msgid "Move forwards or down through node structure"
+msgstr "Cyangwa Hasi Gihinguranya Imiterere"
+
+#: info/session.c:1272
+#, fuzzy
+msgid "Move backwards or up through node structure"
+msgstr "Inyuma Cyangwa Hejuru Gihinguranya Imiterere"
+
+#: info/session.c:1373
+#, fuzzy
+msgid "Scroll forward in this window"
+msgstr "Imbere in iyi Idirishya"
+
+#: info/session.c:1381
+#, fuzzy
+msgid "Scroll forward in this window and set default window size"
+msgstr "Imbere in iyi Idirishya Na Gushyiraho Mburabuzi Idirishya Ingano"
+
+#: info/session.c:1389
+#, fuzzy
+msgid "Scroll forward in this window staying within node"
+msgstr "Imbere in iyi Idirishya muri"
+
+#: info/session.c:1397
+#, fuzzy
+msgid ""
+"Scroll forward in this window staying within node and set default window size"
+msgstr "Imbere in iyi Idirishya muri Na Gushyiraho Mburabuzi Idirishya Ingano"
+
+#: info/session.c:1405
+#, fuzzy
+msgid "Scroll backward in this window"
+msgstr "subira inyuma in iyi Idirishya"
+
+#: info/session.c:1413
+#, fuzzy
+msgid "Scroll backward in this window and set default window size"
+msgstr ""
+"subira inyuma in iyi Idirishya Na Gushyiraho Mburabuzi Idirishya Ingano"
+
+#: info/session.c:1422
+#, fuzzy
+msgid "Scroll backward in this window staying within node"
+msgstr "subira inyuma in iyi Idirishya muri"
+
+#: info/session.c:1430
+#, fuzzy
+msgid ""
+"Scroll backward in this window staying within node and set default window "
+"size"
+msgstr ""
+"subira inyuma in iyi Idirishya muri Na Gushyiraho Mburabuzi Idirishya Ingano"
+
+#: info/session.c:1438
+#, fuzzy
+msgid "Move to the start of this node"
+msgstr "Kuri i Gutangira Bya iyi"
+
+#: info/session.c:1445
+#, fuzzy
+msgid "Move to the end of this node"
+msgstr "Kuri i Impera Bya iyi"
+
+#: info/session.c:1452
+#, fuzzy
+msgid "Scroll down by lines"
+msgstr "Hasi ku Imirongo"
+
+#: info/session.c:1469
+#, fuzzy
+msgid "Scroll up by lines"
+msgstr "Hejuru ku Imirongo"
+
+#: info/session.c:1487
+#, fuzzy
+msgid "Scroll down by half screen size"
+msgstr "Hasi ku Mugaragaza Ingano"
+
+#: info/session.c:1513
+#, fuzzy
+msgid "Scroll up by half screen size"
+msgstr "Hejuru ku Mugaragaza Ingano"
+
+#: info/session.c:1542
+#, fuzzy
+msgid "Select the next window"
+msgstr "i Komeza>> Idirishya"
+
+#: info/session.c:1581
+#, fuzzy
+msgid "Select the previous window"
+msgstr "i Ibanjirije Idirishya"
+
+#: info/session.c:1632
+#, fuzzy
+msgid "Split the current window"
+msgstr "i KIGEZWEHO Idirishya"
+
+#: info/session.c:1713
+#, fuzzy
+msgid "Delete the current window"
+msgstr "i KIGEZWEHO Idirishya"
+
+#: info/session.c:1721
+#, fuzzy
+msgid "Cannot delete a permanent window"
+msgstr "Gusiba a Idirishya"
+
+#: info/session.c:1753
+#, fuzzy
+msgid "Delete all other windows"
+msgstr "Byose Ikindi"
+
+#: info/session.c:1799
+#, fuzzy
+msgid "Scroll the other window"
+msgstr "i Ikindi Idirishya"
+
+#: info/session.c:1820
+#, fuzzy
+msgid "Scroll the other window backward"
+msgstr "i Ikindi Idirishya subira inyuma"
+
+#: info/session.c:1826
+#, fuzzy
+msgid "Grow (or shrink) this window"
+msgstr "Cyangwa Kugabanuka iyi Idirishya"
+
+#: info/session.c:1837
+#, fuzzy
+msgid "Divide the available screen space among the visible windows"
+msgstr "i Bihari Mugaragaza Umwanya i Kigaragara"
+
+#: info/session.c:1844
+#, fuzzy
+msgid "Toggle the state of line wrapping in the current window"
+msgstr "i Leta Bya Umurongo in i KIGEZWEHO Idirishya"
+
+#: info/session.c:1851
+msgid "Toggle the usage of regular expressions in searches"
+msgstr ""
+
+#: info/session.c:1855
+msgid "Using regular expressions for searches."
+msgstr ""
+
+#: info/session.c:1856
+msgid "Using literal strings for searches."
+msgstr ""
+
+#: info/session.c:2027
+#, fuzzy
+msgid "Select the Next node"
+msgstr "i"
+
+#: info/session.c:2035
+#, fuzzy
+msgid "Select the Prev node"
+msgstr "i"
+
+#: info/session.c:2043
+#, fuzzy
+msgid "Select the Up node"
+msgstr "i"
+
+#: info/session.c:2050
+#, fuzzy
+msgid "Select the last node in this file"
+msgstr "i Iheruka in iyi IDOSIYE"
+
+#: info/session.c:2077 info/session.c:2110
+#, fuzzy
+msgid "This window has no additional nodes"
+msgstr "Idirishya Oya"
+
+#: info/session.c:2083
+#, fuzzy
+msgid "Select the first node in this file"
+msgstr "i Itangira in iyi IDOSIYE"
+
+#: info/session.c:2117
+#, fuzzy
+msgid "Select the last item in this node's menu"
+msgstr "i Iheruka Ikintu in iyi Ibikubiyemo"
+
+#: info/session.c:2123
+#, fuzzy
+msgid "Select this menu item"
+msgstr "iyi Ibikubiyemo Ikintu"
+
+#: info/session.c:2156
+#, fuzzy, c-format
+msgid "There aren't %d items in this menu."
+msgstr "in iyi Ibikubiyemo"
+
+#: info/session.c:2350 info/session.c:2351
+#, fuzzy, c-format
+msgid "Menu item (%s): "
+msgstr "Ikintu"
+
+#: info/session.c:2354
+#, fuzzy
+msgid "Menu item: "
+msgstr "Ikintu"
+
+#: info/session.c:2361 info/session.c:2362
+#, fuzzy, c-format
+msgid "Follow xref (%s): "
+msgstr "X- Ngenderwaho"
+
+#: info/session.c:2365
+#, fuzzy
+msgid "Follow xref: "
+msgstr "X- Ngenderwaho"
+
+#: info/session.c:2494
+#, fuzzy
+msgid "Read a menu item and select its node"
+msgstr "a Ibikubiyemo Ikintu Na Guhitamo"
+
+#: info/session.c:2502
+#, fuzzy
+msgid "Read a footnote or cross reference and select its node"
+msgstr "a Ubusobanuro mpezarupapuro Cyangwa Kwambukiranya Indango Na Guhitamo"
+
+#: info/session.c:2508
+#, fuzzy
+msgid "Move to the start of this node's menu"
+msgstr "Kuri i Gutangira Bya iyi Ibikubiyemo"
+
+#: info/session.c:2532
+#, fuzzy
+msgid "Visit as many menu items at once as possible"
+msgstr "Nka Ibikubiyemo ku Rimwe Nka"
+
+#: info/session.c:2560
+#, fuzzy
+msgid "Read a node name and select it"
+msgstr "a Izina: Na Guhitamo"
+
+#: info/session.c:2615 info/session.c:2620
+msgid "Goto node: "
+msgstr ""
+
+#: info/session.c:2684
+#, fuzzy, c-format
+msgid "No menu in node `%s'."
+msgstr "Ibikubiyemo in"
+
+#: info/session.c:2730
+#, fuzzy, c-format
+msgid "No menu item `%s' in node `%s'."
+msgstr "Ibikubiyemo Ikintu in"
+
+#: info/session.c:2760
+#, fuzzy, c-format
+msgid "Unable to find node referenced by `%s' in `%s'."
+msgstr "Kuri Gushaka ku in"
+
+#: info/session.c:2810
+#, fuzzy
+msgid "Read a list of menus starting from dir and follow them"
+msgstr "a Urutonde Bya Ibikubiyemo Bivuye Na"
+
+#: info/session.c:2812
+#, fuzzy
+msgid "Follow menus: "
+msgstr "Ibikubiyemo"
+
+#: info/session.c:3005
+#, fuzzy
+msgid "Find the node describing program invocation"
+msgstr "i Porogaramu"
+
+#: info/session.c:3007
+#, fuzzy, c-format
+msgid "Find Invocation node of [%s]: "
+msgstr "Bya"
+
+#: info/session.c:3045
+#, fuzzy
+msgid "Read a manpage reference and select it"
+msgstr "a Indango Na Guhitamo"
+
+#: info/session.c:3049
+msgid "Get Manpage: "
+msgstr ""
+
+#: info/session.c:3079
+#, fuzzy
+msgid "Select the node `Top' in this file"
+msgstr "i in iyi IDOSIYE"
+
+#: info/session.c:3085
+#, fuzzy
+msgid "Select the node `(dir)'"
+msgstr "i"
+
+#: info/session.c:3102 info/session.c:3104
+#, c-format
+msgid "Kill node (%s): "
+msgstr ""
+
+#: info/session.c:3156
+#, c-format
+msgid "Cannot kill node `%s'"
+msgstr ""
+
+#: info/session.c:3166
+#, fuzzy
+msgid "Cannot kill the last node"
+msgstr "i Iheruka"
+
+#: info/session.c:3252
+#, fuzzy
+msgid "Select the most recently selected node"
+msgstr "i Byahiswemo"
+
+#: info/session.c:3258
+#, fuzzy
+msgid "Kill this node"
+msgstr "iyi"
+
+#: info/session.c:3266
+#, fuzzy
+msgid "Read the name of a file and select it"
+msgstr "i Izina: Bya a IDOSIYE Na Guhitamo"
+
+#: info/session.c:3270
+#, fuzzy
+msgid "Find file: "
+msgstr "IDOSIYE"
+
+#: info/session.c:3287
+#, fuzzy, c-format
+msgid "Cannot find `%s'."
+msgstr "Gushaka"
+
+#: info/session.c:3330 info/session.c:3448
+#, fuzzy, c-format
+msgid "Could not create output file `%s'."
+msgstr "OYA Kurema Ibisohoka IDOSIYE"
+
+#: info/session.c:3344 info/session.c:3466 info/session.c:3526
+msgid "Done."
+msgstr "Byakozwe."
+
+#: info/session.c:3399
+#, c-format
+msgid "Writing node %s..."
+msgstr ""
+
+#: info/session.c:3475
+#, fuzzy
+msgid "Pipe the contents of this node through INFO_PRINT_COMMAND"
+msgstr "i Ibigize Bya iyi Gihinguranya"
+
+#: info/session.c:3510
+#, fuzzy, c-format
+msgid "Cannot open pipe to `%s'."
+msgstr "Gufungura Kuri"
+
+#: info/session.c:3516
+#, c-format
+msgid "Printing node %s..."
+msgstr ""
+
+#: info/session.c:3733
+msgid "Search continued from the end of the document."
+msgstr ""
+
+#: info/session.c:3738
+#, fuzzy
+msgid "Search continued from the beginning of the document."
+msgstr "Kuri i Itangiriro Bya i Umurongo"
+
+#: info/session.c:3755
+#, c-format
+msgid "Searching subfile %s ..."
+msgstr ""
+
+#: info/session.c:3812
+#, fuzzy
+msgid "Read a string and search for it case-sensitively"
+msgstr "a Ikurikiranyanyuguti Na Gushaka kugirango"
+
+#: info/session.c:3819
+#, fuzzy
+msgid "Read a string and search for it"
+msgstr "a Ikurikiranyanyuguti Na Gushaka kugirango"
+
+#: info/session.c:3827
+#, fuzzy
+msgid "Read a string and search backward for it"
+msgstr "a Ikurikiranyanyuguti Na Gushaka subira inyuma kugirango"
+
+#: info/session.c:3863 info/session.c:3869
+#, fuzzy, c-format
+msgid "%s%s%s [%s]: "
+msgstr "%s%sforIkurikiranyanyuguti"
+
+#: info/session.c:3864 info/session.c:3870
+msgid "Regexp search"
+msgstr ""
+
+#: info/session.c:3865 info/session.c:3871
+msgid " case-sensitively"
+msgstr ""
+
+#: info/session.c:3866 info/session.c:3872
+#, fuzzy
+msgid " backward"
+msgstr "Gushaka usubira inyuma"
+
+#: info/session.c:3870
+msgid "Search"
+msgstr "Gushaka"
+
+#: info/session.c:3911
+#, fuzzy
+msgid "Search failed."
+msgstr "Byanze"
+
+#: info/session.c:3929
+#, fuzzy
+msgid "Repeat last search in the same direction"
+msgstr "Iheruka Gushaka in i Icyerekezo"
+
+#: info/session.c:3932 info/session.c:3942
+#, fuzzy
+msgid "No previous search string"
+msgstr "Ibanjirije Gushaka Ikurikiranyanyuguti"
+
+#: info/session.c:3939
+#, fuzzy
+msgid "Repeat last search in the reverse direction"
+msgstr "Iheruka Gushaka in i Ihindurakerekezo Icyerekezo"
+
+#: info/session.c:3958 info/session.c:3964
+#, fuzzy
+msgid "Search interactively for a string as you type it"
+msgstr "kugirango a Ikurikiranyanyuguti Nka Ubwoko"
+
+#: info/session.c:4044
+#, fuzzy
+msgid "Regexp I-search backward: "
+msgstr "Gushaka subira inyuma"
+
+#: info/session.c:4045
+#, fuzzy
+msgid "I-search backward: "
+msgstr "Gushaka subira inyuma"
+
+#: info/session.c:4047
+#, fuzzy
+msgid "Regexp I-search: "
+msgstr "Gushaka"
+
+#: info/session.c:4048
+#, fuzzy
+msgid "I-search: "
+msgstr "Gushaka"
+
+#: info/session.c:4073 info/session.c:4075
+msgid "Failing "
+msgstr ""
+
+#: info/session.c:4560
+#, fuzzy
+msgid "Move to the previous cross reference"
+msgstr "Kuri i Ibanjirije Kwambukiranya Indango"
+
+#: info/session.c:4578
+#, fuzzy
+msgid "Move to the next cross reference"
+msgstr "Kuri i Komeza>> Kwambukiranya Indango"
+
+#: info/session.c:4600
+#, fuzzy
+msgid "Select reference or menu item appearing on this line"
+msgstr "Indango Cyangwa Ibikubiyemo Ikintu ku iyi Umurongo"
+
+#: info/session.c:4623
+#, fuzzy
+msgid "Cancel current operation"
+msgstr "KIGEZWEHO"
+
+#: info/session.c:4630
+msgid "Quit"
+msgstr "Kuvamo"
+
+#: info/session.c:4639
+#, fuzzy
+msgid "Move the cursor to a specific line of the window"
+msgstr "i indanga Kuri a Umurongo Bya i Idirishya"
+
+#: info/session.c:4671
+#, fuzzy
+msgid "Redraw the display"
+msgstr "i Kugaragaza"
+
+#: info/session.c:4708
+#, fuzzy
+msgid "Quit using Info"
+msgstr "ikoresha"
+
+#: info/session.c:4721
+#, fuzzy
+msgid "Run command bound to this key's lowercase variant"
+msgstr "Komandi: Kuri iyi Inyuguti nto"
+
+#: info/session.c:4732
+#, fuzzy, c-format
+msgid "Unknown command (%s)."
+msgstr "Komandi:"
+
+#: info/session.c:4735
+#, fuzzy, c-format
+msgid "\"%s\" is invalid"
+msgstr "\"%s\"ni Sibyo"
+
+#: info/session.c:4736
+#, fuzzy, c-format
+msgid "`%s' is invalid"
+msgstr "`%s'ni Sibyo"
+
+#: info/session.c:4950
+#, fuzzy
+msgid "Add this digit to the current numeric argument"
+msgstr "iyi Kuri i KIGEZWEHO Bikurikije umubare"
+
+#: info/session.c:4959
+#, fuzzy
+msgid "Start (or multiply by 4) the current numeric argument"
+msgstr "Gutangira Cyangwa Gukuba ku 4. i KIGEZWEHO Bikurikije umubare"
+
+#: info/session.c:4974
+#, fuzzy
+msgid "Internally used by \\[universal-argument]"
+msgstr "ku Ky'isi yose"
+
+#: info/tilde.c:336
+#, fuzzy, c-format
+msgid "readline: Out of virtual memory!\n"
+msgstr "Bya Kitaboneka Ububiko"
+
+#: info/variables.c:37
+#, fuzzy
+msgid "When \"On\", footnotes appear and disappear automatically"
+msgstr "Ubusobanuro mpezarupapuro Kugaragara Na Kubura ku buryo bwikora"
+
+#: info/variables.c:41
+#, fuzzy
+msgid "When \"On\", creating or deleting a window resizes other windows"
+msgstr "Cyangwa a Idirishya Ikindi"
+
+#: info/variables.c:45
+#, fuzzy
+msgid "When \"On\", flash the screen instead of ringing the bell"
+msgstr "Umurabyo i Mugaragaza Bya i"
+
+#: info/variables.c:49
+#, fuzzy
+msgid "When \"On\", errors cause the bell to ring"
+msgstr "Amakosa i Kuri Kuvuza Inzogera"
+
+#: info/variables.c:53
+#, fuzzy
+msgid "When \"On\", Info garbage collects files which had to be uncompressed"
+msgstr "Idosiye Kuri"
+
+#: info/variables.c:56
+#, fuzzy
+msgid "When \"On\", the portion of the matched search string is highlighted"
+msgstr "i Bya i Gushaka Ikurikiranyanyuguti ni"
+
+#: info/variables.c:60
+#, fuzzy
+msgid "Controls what happens when scrolling is requested at the end of a node"
+msgstr "Ryari: ni ku i Impera Bya a"
+
+#: info/variables.c:65
+msgid "Same as scroll-behaviour"
+msgstr ""
+
+#: info/variables.c:69
+#, fuzzy
+msgid "The number lines to scroll when the cursor moves out of the window"
+msgstr "Umubare Imirongo Kuri Ryari: i indanga Inyuma Bya i Idirishya"
+
+#: info/variables.c:73
+msgid "Controls whether scroll-behavior affects cursor movement commands"
+msgstr ""
+
+#: info/variables.c:77
+#, fuzzy
+msgid "When \"On\", Info accepts and displays ISO Latin characters"
+msgstr "Na Inyuguti"
+
+#: info/variables.c:81
+#, fuzzy
+msgid ""
+"What to do when a scrolling command is issued at the end of the last node"
+msgstr "Ryari: ni ku i Impera Bya a"
+
+#: info/variables.c:88
+#, fuzzy
+msgid "Explain the use of a variable"
+msgstr "i Gukoresha Bya a IMPINDURAGACIRO"
+
+#: info/variables.c:94
+#, fuzzy
+msgid "Describe variable: "
+msgstr "IMPINDURAGACIRO"
+
+#: info/variables.c:113
+#, fuzzy
+msgid "Set the value of an Info variable"
+msgstr "i Agaciro Bya IMPINDURAGACIRO"
+
+# sw/source\ui\fldui\fldui.src:STR_SETFLD.text
+#: info/variables.c:119
+#, fuzzy
+msgid "Set variable: "
+msgstr "Gushyiraho igihinduka"
+
+#: info/variables.c:137
+#, fuzzy, c-format
+msgid "Set %s to value (%d): "
+msgstr "Kuri Agaciro"
+
+#: info/variables.c:178
+#, fuzzy, c-format
+msgid "Set %s to value (%s): "
+msgstr "Kuri Agaciro"
+
+#: info/window.c:1150
+#, fuzzy
+msgid "--*** Tags out of Date ***"
+msgstr "--***Inyuma Bya"
+
+#: info/window.c:1161
+#, fuzzy
+msgid "-----Info: (), lines ----, "
+msgstr "-----Imirongo"
+
+#: info/window.c:1168
+#, fuzzy, c-format
+msgid "-%s---Info: %s, %d lines --%s--"
+msgstr "-%s---Info:%s,%dImirongo"
+
+#: info/window.c:1172
+#, fuzzy, c-format
+msgid "-%s%s-Info: (%s)%s, %d lines --%s--"
+msgstr "-%s%s-Info:(%s)%s,%dImirongo"
+
+#: info/window.c:1179
+#, c-format
+msgid " Subfile: %s"
+msgstr ""
+
+#: install-info/install-info.c:221
+#, fuzzy, c-format
+msgid "%s: warning: "
+msgstr "%s:Iburira"
+
+#: install-info/install-info.c:270
+#, fuzzy, c-format
+msgid " for %s"
+msgstr "ya:"
+
+#: install-info/install-info.c:500
+#, fuzzy, c-format
+msgid "\tTry `%s --help' for a complete list of options.\n"
+msgstr "kugirango a Byuzuye Urutonde Bya Amahitamo"
+
+#: install-info/install-info.c:508
+#, c-format
+msgid "Usage: %s [OPTION]... [INFO-FILE [DIR-FILE]]\n"
+msgstr ""
+
+#: install-info/install-info.c:510
+msgid "Add or remove entries in INFO-FILE from the Info directory DIR-FILE."
+msgstr ""
+
+#: install-info/install-info.c:513
+msgid ""
+"Options:\n"
+" --debug             report what is being done.\n"
+" --delete            delete existing entries for INFO-FILE from DIR-FILE;\n"
+"                      don't insert any new entries.\n"
+" --description=TEXT  the description of the entry is TEXT; used with\n"
+"                      the --name option to become synonymous with the\n"
+"                      --entry option.\n"
+" --dir-file=NAME     specify file name of Info directory file;\n"
+"                      equivalent to using the DIR-FILE argument.\n"
+" --dry-run           same as --test."
+msgstr ""
+
+#: install-info/install-info.c:525
+msgid ""
+" --entry=TEXT        insert TEXT as an Info directory entry.\n"
+"                      TEXT is written as an Info menu item line followed\n"
+"                       by zero or more extra lines starting with "
+"whitespace.\n"
+"                      If you specify more than one entry, all are added.\n"
+"                      If you don't specify any entries, they are determined\n"
+"                       from information in the Info file itself.\n"
+"                      When removing, TEXT specifies the entry to remove.\n"
+"                      TEXT is only removed as a last resort, if the\n"
+"                      entry as determined from the Info file is not "
+"present,\n"
+"                      and the basename of the Info file isn't found either."
+msgstr ""
+
+#: install-info/install-info.c:537
+msgid ""
+" --help              display this help and exit.\n"
+" --info-dir=DIR      same as --dir-file=DIR/dir.\n"
+" --info-file=FILE    specify Info file to install in the directory;\n"
+"                      equivalent to using the INFO-FILE argument.\n"
+" --item=TEXT         same as --entry=TEXT.\n"
+" --keep-old          do not replace entries, or remove empty sections.\n"
+" --menuentry=TEXT    same as --name=TEXT.\n"
+" --name=TEXT         the name of the entry is TEXT; used with --description\n"
+"                      to become synonymous with the --entry option.\n"
+" --no-indent         do not format new entries in the DIR file.\n"
+" --quiet             suppress warnings."
+msgstr ""
+
+#: install-info/install-info.c:550
+msgid ""
+" --regex=R           put this file's entries in all sections that match the\n"
+"                      regular expression R (ignoring case).\n"
+" --remove            same as --delete.\n"
+" --remove-exactly    only remove if the info file name matches exactly;\n"
+"                      suffixes such as .info and .gz are not ignored.\n"
+" --section=SEC       put entries in section SEC of the directory.\n"
+"                      If you specify more than one section, all the entries\n"
+"                       are added in each of the sections.\n"
+"                      If you don't specify any sections, they are "
+"determined\n"
+"                       from information in the Info file itself.\n"
+" --section R SEC     equivalent to --regex=R --section=SEC --add-once."
+msgstr ""
+
+#: install-info/install-info.c:563
+msgid ""
+" --silent            suppress warnings.\n"
+" --test              suppress updating of DIR-FILE.\n"
+" --version           display version information and exit."
+msgstr ""
+
+#: install-info/install-info.c:570
+#, fuzzy
+msgid ""
+"Email bug reports to bug-texinfo@gnu.org,\n"
+"general questions and discussion to help-texinfo@gnu.org.\n"
+"Texinfo home page: http://www.gnu.org/software/texinfo/"
+msgstr "org."
+
+#: install-info/install-info.c:597
+#, fuzzy, c-format
+msgid ""
+"This is the file .../info/dir, which contains the\n"
+"topmost node of the Info hierarchy, called (dir)Top.\n"
+"The first time you invoke Info you start off looking at this node.\n"
+"\n"
+"%s\tThis is the top of the INFO tree\n"
+"\n"
+"  This (the Directory node) gives a menu of major topics.\n"
+"  Typing \"q\" exits, \"?\" lists all Info commands, \"d\" returns here,\n"
+"  \"h\" gives a primer for first-timers,\n"
+"  \"mEmacs<Return>\" visits the Emacs manual, etc.\n"
+"\n"
+"  In Emacs, you can click mouse button 2 on a menu item or cross reference\n"
+"  to select it.\n"
+"\n"
+"%s\n"
+msgstr ""
+"ni i IDOSIYE Ibisobanuro Kirimo Bya i Itangira Igihe Gutangira Bidakora ku "
+"iyi ni i Hejuru: Bya i i a Ibikubiyemo Bya Q Intonde Byose Amabwiriza D h a "
+"kugirango Itangira i Bikorwa Kanda Imbeba Akabuto 2. ku a Ibikubiyemo Ikintu "
+"Cyangwa Kwambukiranya Kuri Guhitamo"
+
+#: install-info/install-info.c:622
+#, fuzzy, c-format
+msgid "%s: could not read (%s) and could not create (%s)\n"
+msgstr "%s:OYA Gusoma Na OYA Kurema"
+
+#: install-info/install-info.c:715
+#, fuzzy, c-format
+msgid "%s: empty file"
+msgstr "%s:ubusa IDOSIYE"
+
+#: install-info/install-info.c:1046 install-info/install-info.c:1086
+msgid "START-INFO-DIR-ENTRY without matching END-INFO-DIR-ENTRY"
+msgstr ""
+
+#: install-info/install-info.c:1081
+msgid "END-INFO-DIR-ENTRY without matching START-INFO-DIR-ENTRY"
+msgstr ""
+
+#: install-info/install-info.c:1936 install-info/install-info.c:1946
+#, fuzzy, c-format
+msgid "%s: already have dir file: %s\n"
+msgstr "%s:IDOSIYE"
+
+#: install-info/install-info.c:2026
+#, fuzzy, c-format
+msgid "%s: Specify the Info file only once.\n"
+msgstr "%s:i IDOSIYE Rimwe"
+
+#: install-info/install-info.c:2059
+#, c-format
+msgid "Extra regular expression specified, ignoring `%s'"
+msgstr ""
+
+#: install-info/install-info.c:2071
+#, c-format
+msgid "Error in regular expression `%s': %s"
+msgstr ""
+
+#: install-info/install-info.c:2129
+#, fuzzy, c-format
+msgid "excess command line argument `%s'"
+msgstr "Komandi: Umurongo"
+
+#: install-info/install-info.c:2133
+#, fuzzy
+msgid "No input file specified; try --help for more information."
+msgstr "Iyinjiza IDOSIYE Ifashayobora kugirango Birenzeho Ibisobanuro"
+
+#: install-info/install-info.c:2136
+#, fuzzy
+msgid "No dir file specified; try --help for more information."
+msgstr "IDOSIYE Ifashayobora kugirango Birenzeho Ibisobanuro"
+
+#: install-info/install-info.c:2278
+#, fuzzy, c-format
+msgid "no info dir entry in `%s'"
+msgstr "Oya Ibisobanuro Icyinjijwe in"
+
+#: install-info/install-info.c:2526
+#, fuzzy, c-format
+msgid "no entries found for `%s'; nothing deleted"
+msgstr "Oya Ibyinjijwe Byabonetse kugirango Cyasibwe"
+
+#: lib/xexit.c:54
+msgid "ferror on stdout\n"
+msgstr ""
+
+#: lib/xexit.c:59
+msgid "fflush error on stdout\n"
+msgstr ""
+
+#: makeinfo/cmds.c:582 makeinfo/cmds.c:604
+#, fuzzy, c-format
+msgid "arguments to @%s ignored"
+msgstr "ingingo Kuri"
+
+#: makeinfo/cmds.c:779
+msgid "January"
+msgstr "Mutarama"
+
+#: makeinfo/cmds.c:779
+msgid "February"
+msgstr "Gashyantare"
+
+#: makeinfo/cmds.c:779
+msgid "March"
+msgstr "Werurwe"
+
+#: makeinfo/cmds.c:779
+msgid "April"
+msgstr "Mata"
+
+#: makeinfo/cmds.c:779
+msgid "May"
+msgstr "Gicurasi"
+
+#: makeinfo/cmds.c:780
+msgid "June"
+msgstr "Kamena"
+
+#: makeinfo/cmds.c:780
+msgid "July"
+msgstr "Nyakanga"
+
+#: makeinfo/cmds.c:780
+msgid "August"
+msgstr "Kanama"
+
+#: makeinfo/cmds.c:780
+msgid "September"
+msgstr "Nzeri"
+
+#: makeinfo/cmds.c:780
+msgid "October"
+msgstr "Ukwakira"
+
+#: makeinfo/cmds.c:781
+msgid "November"
+msgstr "Ugushyingo"
+
+#: makeinfo/cmds.c:781
+msgid "December"
+msgstr "Ukuboza"
+
+#: makeinfo/cmds.c:1131
+#, fuzzy, c-format
+msgid "unlikely character %c in @var"
+msgstr "Inyuguti in VAR"
+
+#: makeinfo/cmds.c:1174
+#, fuzzy
+msgid "@sc argument all uppercase, thus no effect"
+msgstr "@Byose Inyuguti nkuru Oya INGARUKA"
+
+#: makeinfo/cmds.c:1229
+#, fuzzy, c-format
+msgid "`{' expected, but saw `%c'"
+msgstr "`{'Ikitezwe:"
+
+#: makeinfo/cmds.c:1269
+#, fuzzy
+msgid "end of file inside verb block"
+msgstr "Impera Bya IDOSIYE Mo Imbere Ishinga Funga"
+
+#: makeinfo/cmds.c:1277
+#, fuzzy, c-format
+msgid "`}' expected, but saw `%c'"
+msgstr "`}'Ikitezwe:"
+
+#: makeinfo/cmds.c:1308
+#, fuzzy
+msgid ""
+"@strong{Note...} produces a spurious cross-reference in Info; reword to "
+"avoid that"
+msgstr "@a Kwambukiranya Indango in Kuri"
+
+#: makeinfo/cmds.c:1504
+#, fuzzy, c-format
+msgid "%c%s is obsolete"
+msgstr "%c%sni"
+
+#: makeinfo/cmds.c:1612
+#, fuzzy, c-format
+msgid "@sp requires a positive numeric argument, not `%s'"
+msgstr "@SP a Bikurikije umubare OYA"
+
+#: makeinfo/cmds.c:2023 makeinfo/footnote.c:81
+#, fuzzy, c-format
+msgid "Bad argument to %c%s"
+msgstr "Kuri"
+
+#: makeinfo/cmds.c:2033 makeinfo/makeinfo.c:4270
+msgid "asis"
+msgstr ""
+
+#: makeinfo/cmds.c:2035 makeinfo/cmds.c:2065 makeinfo/makeinfo.c:4272
+msgid "none"
+msgstr "ntacyo"
+
+#: makeinfo/cmds.c:2049
+#, fuzzy, c-format
+msgid "Bad argument to @%s"
+msgstr "Kuri"
+
+# basctl/source\basicide\basidesh.src:RID_POPUP_TABBAR.RID_INSERT.text
+#: makeinfo/cmds.c:2063
+#, fuzzy
+msgid "insert"
+msgstr "Kongeramo"
+
+#: makeinfo/cmds.c:2079
+#, fuzzy, c-format
+msgid "Bad argument to @%s: %s"
+msgstr "Kuri"
+
+#: makeinfo/cmds.c:2162
+#, c-format
+msgid "Expected @%s on or off, not `%s'"
+msgstr ""
+
+#: makeinfo/cmds.c:2182
+#, c-format
+msgid "Only @%s 10 or 11 is supported, not `%s'"
+msgstr ""
+
+#: makeinfo/defun.c:83
+#, fuzzy
+msgid "Missing `}' in @def arg"
+msgstr "in"
+
+#: makeinfo/defun.c:711
+#, fuzzy, c-format
+msgid "Must be in `@%s' environment to use `@%s'"
+msgstr "in Kuri Gukoresha"
+
+#: makeinfo/files.c:434
+#, c-format
+msgid "%s: getwd: %s, %s\n"
+msgstr ""
+
+#: makeinfo/files.c:637
+#, fuzzy, c-format
+msgid "`%s' omitted before output filename"
+msgstr "`%s'Mbere Ibisohoka Izina ry'idosiye:"
+
+#: makeinfo/files.c:645
+#, fuzzy, c-format
+msgid "`%s' omitted since writing to stdout"
+msgstr "`%s'guhera Kuri"
+
+#: makeinfo/files.c:693
+#, fuzzy
+msgid "Output buffer not empty."
+msgstr "OYA ubusa"
+
+#: makeinfo/float.c:181
+#, c-format
+msgid "Requested float type `%s' not previously used"
+msgstr ""
+
+#: makeinfo/float.c:376 makeinfo/float.c:382 makeinfo/index.c:948
+#: makeinfo/index.c:954
+msgid "See "
+msgstr ""
+
+#: makeinfo/footnote.c:149
+#, fuzzy, c-format
+msgid "`%c%s' needs an argument `{...}', not just `%s'"
+msgstr "`%c%s'OYA"
+
+#: makeinfo/footnote.c:164
+#, fuzzy, c-format
+msgid "No closing brace for footnote `%s'"
+msgstr "kugirango Ubusobanuro mpezarupapuro"
+
+#: makeinfo/footnote.c:197
+msgid "Footnote defined without parent node"
+msgstr ""
+
+#: makeinfo/footnote.c:209
+#, fuzzy
+msgid "Footnotes inside footnotes are not allowed"
+msgstr "Mo Imbere Ubusobanuro mpezarupapuro OYA"
+
+#: makeinfo/footnote.c:301 makeinfo/index.c:187
+msgid "Footnotes"
+msgstr "Ubusobanuro mpezarupapuro"
+
+#: makeinfo/html.c:86
+#, fuzzy, c-format
+msgid "%s: could not open --css-file: %s"
+msgstr "%s:OYA Gufungura IDOSIYE"
+
+#: makeinfo/html.c:175
+#, fuzzy, c-format
+msgid "%s:%d: --css-file ended in comment"
+msgstr "%s:%d:--IDOSIYE in Icyo wongeraho"
+
+#: makeinfo/html.c:421
+#, fuzzy
+msgid "[unexpected] no html tag to pop"
+msgstr "[Oya HTML Itagi: Kuri"
+
+#: makeinfo/html.c:764
+#, fuzzy, c-format
+msgid "[unexpected] invalid node name: `%s'"
+msgstr "[Sibyo Izina:"
+
+#: makeinfo/index.c:167
+#, fuzzy, c-format
+msgid "Unknown index `%s'"
+msgstr "Umubarendanga"
+
+#: makeinfo/index.c:232
+#, fuzzy, c-format
+msgid "Info cannot handle `:' in index entry `%s'"
+msgstr "in Umubarendanga Icyinjijwe"
+
+#: makeinfo/index.c:410
+#, c-format
+msgid "Index `%s' already exists"
+msgstr ""
+
+#: makeinfo/index.c:453
+#, fuzzy, c-format
+msgid "Unknown index `%s' and/or `%s' in @synindex"
+msgstr "Umubarendanga Na Cyangwa in"
+
+#: makeinfo/index.c:676
+#, fuzzy
+msgid "(line )"
+msgstr "(Umurongo"
+
+#: makeinfo/index.c:684
+#, fuzzy, c-format
+msgid "(line %*d)"
+msgstr "(Umurongo"
+
+#: makeinfo/index.c:764
+#, fuzzy, c-format
+msgid "Unknown index `%s' in @printindex"
+msgstr "Umubarendanga in"
+
+#: makeinfo/index.c:833
+#, fuzzy, c-format
+msgid "Entry for index `%s' outside of any node"
+msgstr "kugirango Umubarendanga Hanze Bya"
+
+#: makeinfo/index.c:836 makeinfo/index.c:872
+#, fuzzy
+msgid "(outside of any node)"
+msgstr "(Hanze Bya"
+
+#: makeinfo/insertion.c:161
+#, fuzzy
+msgid "@item not allowed in argument to @itemize"
+msgstr "@Ikintu OYA in Kuri"
+
+#: makeinfo/insertion.c:242
+#, fuzzy
+msgid "Broken-Type in insertion_type_pname"
+msgstr "in"
+
+#: makeinfo/insertion.c:338
+#, fuzzy
+msgid "Enumeration stack overflow"
+msgstr "Byarenze urugero"
+
+#: makeinfo/insertion.c:370
+#, fuzzy, c-format
+msgid "lettering overflow, restarting at %c"
+msgstr "Byarenze urugero ku"
+
+#: makeinfo/insertion.c:639
+#, fuzzy, c-format
+msgid "%s requires an argument: the formatter for %citem"
+msgstr "%si kugirango"
+
+#: makeinfo/insertion.c:727
+#, c-format
+msgid "%cfloat environments cannot be nested"
+msgstr ""
+
+#: makeinfo/insertion.c:981
+#, fuzzy, c-format
+msgid "`@end' expected `%s', but saw `%s'"
+msgstr "`@Ikitezwe:"
+
+#: makeinfo/insertion.c:1349
+#, c-format
+msgid "No matching `%cend %s'"
+msgstr ""
+
+#: makeinfo/insertion.c:1618
+#, fuzzy, c-format
+msgid "%s requires letter or digit"
+msgstr "%sIbaruwa... Cyangwa"
+
+#: makeinfo/insertion.c:1718
+#, fuzzy
+msgid "end of file inside verbatim block"
+msgstr "Impera Bya IDOSIYE Mo Imbere Funga"
+
+#: makeinfo/insertion.c:1942
+#, fuzzy, c-format
+msgid "@%s not meaningful outside `@float' environment"
+msgstr "@%sOYA Hanze"
+
+#: makeinfo/insertion.c:1978
+#, fuzzy
+msgid "@menu seen before first @node, creating `Top' node"
+msgstr "@Ibikubiyemo Mbere Itangira"
+
+#: makeinfo/insertion.c:1979
+#, fuzzy
+msgid ""
+"perhaps your @top node should be wrapped in @ifnottex rather than @ifinfo?"
+msgstr "Hejuru: in"
+
+#: makeinfo/insertion.c:1991
+#, fuzzy
+msgid "@detailmenu seen before first node, creating `Top' node"
+msgstr "@Mbere Itangira"
+
+#: makeinfo/insertion.c:2047
+#, fuzzy, c-format
+msgid "@%s not meaningful outside `@titlepage' and `@quotation' environments"
+msgstr "@%sOYA Hanze Na"
+
+#: makeinfo/insertion.c:2061
+#, fuzzy, c-format
+msgid "@%s not meaningful outside `@titlepage' environment"
+msgstr "@%sOYA Hanze"
+
+#: makeinfo/insertion.c:2092
+#, c-format
+msgid "Unmatched `%c%s'"
+msgstr ""
+
+#: makeinfo/insertion.c:2097
+#, fuzzy, c-format
+msgid "`%c%s' needs something after it"
+msgstr "`%c%s'Nyuma"
+
+#: makeinfo/insertion.c:2103
+#, fuzzy, c-format
+msgid "Bad argument `%s' to `@%s', using `%s'"
+msgstr "Kuri ikoresha"
+
+#: makeinfo/insertion.c:2200
+#, fuzzy, c-format
+msgid "@%s not meaningful inside `@%s' block"
+msgstr "@%sOYA Mo Imbere Funga"
+
+#: makeinfo/insertion.c:2209
+#, fuzzy, c-format
+msgid "@itemx not meaningful inside `%s' block"
+msgstr "@OYA Mo Imbere Funga"
+
+#: makeinfo/insertion.c:2383
+#, fuzzy, c-format
+msgid "%c%s found outside of an insertion block"
+msgstr "%c%sByabonetse Hanze Bya Iyinjizamo Funga"
+
+#: makeinfo/lang.c:1218
+#, c-format
+msgid "no default territory known for language `%s'"
+msgstr ""
+
+#: makeinfo/lang.c:1281
+#, fuzzy, c-format
+msgid "%s is not a valid ISO 639 language code"
+msgstr "%sni OYA a Byemewe Ururimi ITEGEKONGENGA"
+
+#: makeinfo/lang.c:1399
+#, fuzzy, c-format
+msgid "unrecognized encoding name `%s'"
+msgstr "Imisobekere: Izina:"
+
+#: makeinfo/lang.c:1407
+#, fuzzy, c-format
+msgid "sorry, encoding `%s' not supported"
+msgstr "Imisobekere: OYA"
+
+#: makeinfo/lang.c:1492
+#, fuzzy, c-format
+msgid "invalid encoded character `%s'"
+msgstr "Sibyo Inyuguti"
+
+#: makeinfo/lang.c:1800
+#, fuzzy, c-format
+msgid "%c%s expects `i' or `j' as argument, not `%c'"
+msgstr "%c%sCyangwa Nka OYA"
+
+#: makeinfo/lang.c:1804
+#, fuzzy, c-format
+msgid "%c%s expects a single character `i' or `j' as argument"
+msgstr "%c%sa UMWE Inyuguti Cyangwa Nka"
+
+#: makeinfo/macro.c:128
+#, fuzzy, c-format
+msgid "macro `%s' previously defined"
+msgstr "Makoro"
+
+#: makeinfo/macro.c:132
+#, fuzzy, c-format
+msgid "here is the previous definition of `%s'"
+msgstr "ni i Ibanjirije Insobanuro Bya"
+
+#: makeinfo/macro.c:359
+#, fuzzy, c-format
+msgid "\\ in macro expansion followed by `%s' instead of parameter name"
+msgstr "\\ in Makoro ku Bya Izina:"
+
+#: makeinfo/macro.c:401
+#, fuzzy, c-format
+msgid "Macro `%s' called on line %d with too many args"
+msgstr "ku Umurongo Na:"
+
+#: makeinfo/macro.c:580
+#, fuzzy, c-format
+msgid "%cend macro not found"
+msgstr "%cendMakoro OYA Byabonetse"
+
+#: makeinfo/macro.c:591
+msgid "@allow-recursion is deprecated; please use @rmacro instead"
+msgstr ""
+
+#: makeinfo/macro.c:606
+msgid "@quote-arg is deprecated; arguments are quoted by default"
+msgstr ""
+
+#: makeinfo/macro.c:649
+#, fuzzy, c-format
+msgid "mismatched @end %s with @%s"
+msgstr "Impera Na:"
+
+#: makeinfo/makeinfo.c:188
+#, fuzzy, c-format
+msgid "Too many errors!  Gave up.\n"
+msgstr "Amakosa Hejuru"
+
+#: makeinfo/makeinfo.c:306
+#, fuzzy, c-format
+msgid "%s:%d: warning: "
+msgstr "%s:%d:Iburira"
+
+#: makeinfo/makeinfo.c:325 makeinfo/makeinfo.c:2295
+#, c-format
+msgid "Misplaced %c"
+msgstr ""
+
+#: makeinfo/makeinfo.c:344
+#, fuzzy, c-format
+msgid "Try `%s --help' for more information.\n"
+msgstr "kugirango Birenzeho Ibisobanuro"
+
+#: makeinfo/makeinfo.c:347
+#, c-format
+msgid "Usage: %s [OPTION]... TEXINFO-FILE...\n"
+msgstr ""
+
+#: makeinfo/makeinfo.c:350
+#, fuzzy
+msgid ""
+"Translate Texinfo source documentation to various other formats, by default\n"
+"Info files suitable for reading online with Emacs or standalone GNU Info.\n"
+msgstr ""
+"Inkomoko Kuri Ikindi Imiterere ku Idosiye kugirango kiri kuri interineti Na: "
+"Cyangwa"
+
+#: makeinfo/makeinfo.c:354
+#, fuzzy, c-format
+msgid ""
+"General options:\n"
+"      --error-limit=NUM       quit after NUM errors (default %d).\n"
+"      --document-language=STR locale to use in translating Texinfo keywords\n"
+"                                for the output document (default C).\n"
+"      --force                 preserve output even if errors.\n"
+"      --help                  display this help and exit.\n"
+"      --no-validate           suppress node cross-reference validation.\n"
+"      --no-warn               suppress warnings (but not errors).\n"
+"  -v, --verbose               explain what is being done.\n"
+"      --version               display version information and exit.\n"
+msgstr ""
+"Amahitamo Ikosa Kuvamo Nyuma Amakosa Mburabuzi Ibisohoka ATARIIGIHARWE NIBA "
+"Amakosa Ifashayobora Kugaragaza iyi Ifashayobora Na Gusohoka Oya Kwemeza "
+"Kwambukiranya Indango Kwemeza Oya Iburira OYA Amakosa Indango Ibyerekeye ku "
+"Indango Mburabuzi v ni Byakozwe Verisiyo Kugaragaza Verisiyo Ibisobanuro Na "
+"Gusohoka"
+
+#: makeinfo/makeinfo.c:369
+#, fuzzy, no-wrap
+msgid ""
+"Output format selection (default is to produce Info):\n"
+"      --docbook               output Docbook XML rather than Info.\n"
+"      --html                  output HTML rather than Info.\n"
+"      --xml                   output Texinfo XML rather than Info.\n"
+"      --plaintext             output plain text rather than Info.\n"
+msgstr "Imiterere Ihitamo Mburabuzi ni Kuri InyandikoGitabo Ibisohoka HTML Ibisohoka xml Ibisohoka Ibisohoka Byuzuye Umwandiko"
+
+#: makeinfo/makeinfo.c:377
+#, fuzzy
+msgid ""
+"General output options:\n"
+"  -E, --macro-expand=FILE     output macro-expanded source to FILE,\n"
+"                                ignoring any @setfilename.\n"
+"      --no-headers            suppress node separators, Node: lines, and "
+"menus\n"
+"                                from Info output (thus producing plain "
+"text)\n"
+"                                or from HTML (thus producing shorter "
+"output);\n"
+"                                also, write to standard output by default.\n"
+"      --no-split              suppress the splitting of Info or HTML "
+"output,\n"
+"                                generate only one output file.\n"
+"      --number-sections       output chapter and sectioning numbers.\n"
+"  -o, --output=FILE           output to FILE (or directory if split HTML).\n"
+msgstr ""
+"Ibisohoka Amahitamo E Makoro Kwagura Ibisohoka Makoro Cyagutse Inkomoko Kuri "
+"Oya Imitwe Imirongo Na Bivuye Ibisohoka Byuzuye Umwandiko Cyangwa Bivuye "
+"Ibisohoka Kwandika Kuri Bisanzwe Ibisohoka ku Mburabuzi Oya Gutandukanya Bya "
+"Cyangwa Ibisohoka Ibisohoka IDOSIYE Umubare Ibyatoranyijwe Ibisohoka Umutwe "
+"Na Imibare o Ibisohoka Ibisohoka Kuri bushyinguro NIBA Gutandukanya"
+
+#: makeinfo/makeinfo.c:391
+#, fuzzy, c-format
+msgid ""
+"Options for Info and plain text:\n"
+"      --disable-encoding      do not output accented and special characters\n"
+"                                in Info output based on @documentencoding.\n"
+"      --enable-encoding       override --disable-encoding (default).\n"
+"      --fill-column=NUM       break Info lines at NUM characters (default %"
+"d).\n"
+"      --footnote-style=STYLE  output footnotes in Info according to STYLE:\n"
+"                                `separate' to put them in their own node;\n"
+"                                `end' to put them at the end of the node, "
+"in\n"
+"                                which they are defined (this is the "
+"default).\n"
+"      --paragraph-indent=VAL  indent Info paragraphs by VAL spaces (default %"
+"d).\n"
+"                                If VAL is `none', do not indent; if VAL is\n"
+"                                `asis', preserve existing indentation.\n"
+"      --split-size=NUM        split Info files at size NUM (default %d).\n"
+msgstr ""
+"kugirango Na Byuzuye Umwandiko Gushoboza Imisobekere: Ibisohoka Na "
+"Bidasanzwe Inyuguti Ibisohoka ku Kuzuza Inkingi itandukanya Imirongo ku "
+"Inyuguti Mburabuzi Ubusobanuro mpezarupapuro IMISUSIRE Ibisohoka Ubusobanuro "
+"mpezarupapuro in Kuri Kuri Gushyira in Kuri Gushyira ku i Impera Bya i in "
+"Mburabuzi Igika Ikurura Ikurura Ibika ku Imyanya Mburabuzi ni OYA Ikurura "
+"NIBA Gutandukanya Ingano Gutandukanya Idosiye ku Ingano Mburabuzi"
+
+#: makeinfo/makeinfo.c:409
+#, fuzzy
+msgid ""
+"Options for HTML:\n"
+"      --css-include=FILE      include FILE in HTML <style> output;\n"
+"                                read stdin if FILE is -.\n"
+"      --css-ref=URL           generate reference to a CSS file.\n"
+"      --transliterate-file-names\n"
+"                              produce file names in ASCII transliteration.\n"
+msgstr "kugirango Gushyiramo Gushyiramo in IMISUSIRE Ibisohoka Gusoma NIBA ni"
+
+#: makeinfo/makeinfo.c:418
+#, fuzzy, c-format
+msgid ""
+"Options for XML and Docbook:\n"
+"      --output-indent=VAL     indent XML elements by VAL spaces (default %"
+"d).\n"
+"                                If VAL is 0, ignorable whitespace is "
+"dropped.\n"
+msgstr ""
+"kugirango Na Ibisohoka Ikurura Ikurura Ibintu ku Imyanya Mburabuzi ni 0 ni"
+
+#: makeinfo/makeinfo.c:425
+#, fuzzy
+msgid ""
+"Input file options:\n"
+"      --commands-in-node-names  allow @ commands in node names.\n"
+"  -D VAR                        define the variable VAR, as with @set.\n"
+"  -I DIR                        append DIR to the @include search path.\n"
+"  -P DIR                        prepend DIR to the @include search path.\n"
+"  -U VAR                        undefine the variable VAR, as with @clear.\n"
+msgstr ""
+"IDOSIYE Amahitamo Amabwiriza in Amazina Kwemerera Amabwiriza in Amazina "
+"Kugaragaza... i IMPINDURAGACIRO Nka Na: Gushyiraho Kongeraho... Kuri i "
+"Gushyiramo Gushaka Inzira Kuri i Gushyiramo Gushaka Inzira U i "
+"IMPINDURAGACIRO Nka Na: Gusiba"
+
+#: makeinfo/makeinfo.c:434
+#, fuzzy
+msgid ""
+"Conditional processing in input:\n"
+"  --ifdocbook       process @ifdocbook and @docbook even if\n"
+"                      not generating Docbook.\n"
+"  --ifhtml          process @ifhtml and @html even if not generating HTML.\n"
+"  --ifinfo          process @ifinfo even if not generating Info.\n"
+"  --ifplaintext     process @ifplaintext even if not generating plain text.\n"
+"  --iftex           process @iftex and @tex; implies --no-split.\n"
+"  --ifxml           process @ifxml and @xml.\n"
+"  --no-ifdocbook    do not process @ifdocbook and @docbook text.\n"
+"  --no-ifhtml       do not process @ifhtml and @html text.\n"
+"  --no-ifinfo       do not process @ifinfo text.\n"
+"  --no-ifplaintext  do not process @ifplaintext text.\n"
+"  --no-iftex        do not process @iftex and @tex text.\n"
+"  --no-ifxml        do not process @ifxml and @xml text.\n"
+"\n"
+"  Also, for the --no-ifFORMAT options, do process @ifnotFORMAT text.\n"
+msgstr ""
+"Inonosora in Iyinjiza Na InyandikoGitabo ATARIIGIHARWE OYA Na HTML "
+"ATARIIGIHARWE NIBA OYA ATARIIGIHARWE NIBA OYA ATARIIGIHARWE NIBA OYA Byuzuye "
+"Umwandiko Na Oya Gutandukanya Na xml Oya OYA Na InyandikoGitabo Umwandiko "
+"Oya OYA Na HTML Umwandiko Oya OYA Umwandiko Oya OYA Umwandiko Oya OYA Na "
+"Umwandiko Oya OYA Na xml Umwandiko kugirango i Oya Amahitamo Umwandiko"
+
+#: makeinfo/makeinfo.c:453
+#, fuzzy
+msgid ""
+"  The defaults for the @if... conditionals depend on the output format:\n"
+"  if generating HTML, --ifhtml is on and the others are off;\n"
+"  if generating Info, --ifinfo is on and the others are off;\n"
+"  if generating plain text, --ifplaintext is on and the others are off;\n"
+"  if generating XML, --ifxml is on and the others are off.\n"
+msgstr ""
+"kugirango i NIBA ku i Ibisohoka Imiterere NIBA ni ku Na i Ibindi Bidakora "
+"NIBA ni ku Na i Ibindi Bidakora NIBA Byuzuye Umwandiko ni ku Na i Ibindi "
+"Bidakora NIBA ni ku Na i Ibindi Bidakora"
+
+#: makeinfo/makeinfo.c:461
+#, fuzzy
+msgid ""
+"Examples:\n"
+"  makeinfo foo.texi                      write Info to foo's @setfilename\n"
+"  makeinfo --html foo.texi               write HTML to @setfilename\n"
+"  makeinfo --xml foo.texi                write Texinfo XML to @setfilename\n"
+"  makeinfo --docbook foo.texi            write DocBook XML to @setfilename\n"
+"  makeinfo --no-headers foo.texi         write plain text to standard "
+"output\n"
+"\n"
+"  makeinfo --html --no-headers foo.texi  write html without node lines, "
+"menus\n"
+"  makeinfo --number-sections foo.texi    write Info with numbered sections\n"
+"  makeinfo --no-split foo.texi           write one Info file however big\n"
+msgstr ""
+"Kwandika Kuri HTML Kwandika Kuri xml Kwandika Kuri InyandikoGitabo Kwandika "
+"Kuri Oya Imitwe Kwandika Byuzuye Umwandiko Kuri Bisanzwe HTML Oya Imitwe "
+"Kwandika HTML Imirongo Umubare Ibyatoranyijwe Kwandika Na: Iriho Imibare Oya "
+"Gutandukanya Kwandika IDOSIYE"
+
+#: makeinfo/makeinfo.c:619
+#, fuzzy, c-format
+msgid "%s: Ignoring unrecognized TEXINFO_OUTPUT_FORMAT value `%s'.\n"
+msgstr "%s:Kwirengagiza Agaciro"
+
+#: makeinfo/makeinfo.c:667 makeinfo/makeinfo.c:693 makeinfo/makeinfo.c:717
+#: makeinfo/makeinfo.c:761
+#, fuzzy, c-format
+msgid "%s: %s arg must be numeric, not `%s'.\n"
+msgstr "%s:%sBikurikije umubare OYA"
+
+#: makeinfo/makeinfo.c:680
+#, fuzzy, c-format
+msgid "%s: could not open macro expansion output `%s'"
+msgstr "%s:OYA Gufungura Makoro Ibisohoka"
+
+#: makeinfo/makeinfo.c:685
+#, fuzzy, c-format
+msgid "%s: ignoring second macro expansion output `%s'.\n"
+msgstr "%s:ISEGONDA Makoro Ibisohoka"
+
+#: makeinfo/makeinfo.c:732
+#, fuzzy, c-format
+msgid "%s: --paragraph-indent arg must be numeric/`none'/`asis', not `%s'.\n"
+msgstr "%s:--Igika Ikurura Bikurikije umubare OYA"
+
+#: makeinfo/makeinfo.c:750
+#, fuzzy, c-format
+msgid "%s: --footnote-style arg must be `separate' or `end', not `%s'.\n"
+msgstr "%s:--Ubusobanuro mpezarupapuro IMISUSIRE Cyangwa OYA"
+
+#: makeinfo/makeinfo.c:825
+#, fuzzy, c-format
+msgid "%s: missing file argument.\n"
+msgstr "%s:Ibuze IDOSIYE"
+
+#: makeinfo/makeinfo.c:1016 makeinfo/makeinfo.c:4119
+#, fuzzy, c-format
+msgid "Multiline command %c%s used improperly"
+msgstr "Komandi:"
+
+#: makeinfo/makeinfo.c:1019
+#, fuzzy, c-format
+msgid "Expected `%s'"
+msgstr "Ikitezwe:"
+
+#: makeinfo/makeinfo.c:1496
+#, fuzzy, c-format
+msgid "Can't create directory `%s': %s"
+msgstr "Kurema bushyinguro"
+
+#: makeinfo/makeinfo.c:1542
+#, fuzzy, c-format
+msgid "No `%s' found in `%s'"
+msgstr "Byabonetse in"
+
+#: makeinfo/makeinfo.c:1622
+#, fuzzy, c-format
+msgid "%s: Skipping macro expansion to stdout as Info output is going there.\n"
+msgstr "%s:Makoro Kuri Nka Ibisohoka ni"
+
+#: makeinfo/makeinfo.c:1652
+#, fuzzy, c-format
+msgid "Making %s file `%s' from `%s'.\n"
+msgstr "IDOSIYE Bivuye"
+
+#: makeinfo/makeinfo.c:1719
+#, fuzzy, c-format
+msgid ""
+"%s: Removing macro output file `%s' due to errors; use --force to preserve.\n"
+msgstr "%s:Makoro Ibisohoka IDOSIYE Kuri Amakosa Gukoresha Kuri"
+
+#: makeinfo/makeinfo.c:1774
+#, fuzzy, c-format
+msgid "%s: Removing output file `%s' due to errors; use --force to preserve.\n"
+msgstr "%s:Ibisohoka IDOSIYE Kuri Amakosa Gukoresha Kuri"
+
+#: makeinfo/makeinfo.c:2068
+#, fuzzy, c-format
+msgid "Unknown command `%s'"
+msgstr "Komandi:"
+
+#: makeinfo/makeinfo.c:2090
+#, fuzzy, c-format
+msgid "Use braces to give a command as an argument to @%s"
+msgstr "Ingirwadusodeko Kuri a Komandi: Nka Kuri"
+
+#: makeinfo/makeinfo.c:2349
+#, fuzzy, c-format
+msgid "%c%s expected braces"
+msgstr "%c%sIkitezwe: Ingirwadusodeko"
+
+#: makeinfo/makeinfo.c:2362
+msgid "Unmatched }"
+msgstr ""
+
+# 4203
+#: makeinfo/makeinfo.c:2410
+#, fuzzy
+msgid "NO_NAME!"
+msgstr "nta zina"
+
+#: makeinfo/makeinfo.c:2431
+#, fuzzy, c-format
+msgid "%c%s missing close brace"
+msgstr "%c%sIbuze Gufunga"
+
+#: makeinfo/makeinfo.c:3434
+#, fuzzy, c-format
+msgid "@image file `%s' (for HTML) not readable: %s"
+msgstr "@Ishusho IDOSIYE kugirango OYA"
+
+#: makeinfo/makeinfo.c:3440
+#, fuzzy, c-format
+msgid "No such file `%s'"
+msgstr "IDOSIYE"
+
+#: makeinfo/makeinfo.c:3576
+#, fuzzy, c-format
+msgid "@image file `%s' (for text) unreadable: %s"
+msgstr "@Ishusho IDOSIYE kugirango Umwandiko"
+
+#: makeinfo/makeinfo.c:3585
+#, fuzzy
+msgid "@image missing filename argument"
+msgstr "@Ishusho Ibuze Izina ry'idosiye:"
+
+#: makeinfo/makeinfo.c:3803
+#, fuzzy, c-format
+msgid "undefined flag: %s"
+msgstr "kidasobanuye Ibendera"
+
+#: makeinfo/makeinfo.c:3804
+#, fuzzy, c-format
+msgid "{No value for `%s'}"
+msgstr "{Agaciro kugirango"
+
+#: makeinfo/makeinfo.c:3856
+#, fuzzy, c-format
+msgid "%c%s requires a name"
+msgstr "%c%sa Izina:"
+
+#: makeinfo/makeinfo.c:3962
+#, fuzzy, c-format
+msgid "Reached eof before matching @end %s"
+msgstr "Mbere Impera"
+
+#: makeinfo/makeinfo.c:4211
+#, fuzzy, c-format
+msgid "`%.40s...' is too long for expansion; not expanded"
+msgstr ""
+"`%.Project- Id- Version: basctl\n"
+"POT- Creation- Date: 2003- 12- 07 17: 13+ 02\n"
+"PO- Revision- Date: 2004- 11- 04 10: 13- 0700\n"
+"Last- Translator: Language- Team:< en@ li. org> MIME- Version: 1. 0\n"
+"Content- Type: text/ plain; charset= UTF- 8\n"
+"Content- Transfer- Encoding: 8bit\n"
+"X- Generator: KBabel 1. 0\n"
+"."
+
+#: makeinfo/multi.c:116
+#, fuzzy
+msgid "Missing } in @multitable template"
+msgstr "in Inyandikorugero"
+
+#: makeinfo/multi.c:260
+#, fuzzy, c-format
+msgid "ignoring stray text `%s' after @multitable"
+msgstr "Umwandiko Nyuma"
+
+#: makeinfo/multi.c:400
+#, fuzzy, c-format
+msgid "Too many columns in multitable item (max %d)"
+msgstr "Inkingi in Ikintu KININI"
+
+#: makeinfo/multi.c:563
+#, fuzzy, c-format
+msgid "[unexpected] cannot select column #%d in multitable"
+msgstr "[Guhitamo Inkingi in"
+
+#: makeinfo/multi.c:592
+#, fuzzy
+msgid "ignoring @tab outside of multitable"
+msgstr "Isunika Hanze Bya"
+
+#: makeinfo/multi.c:640
+#, fuzzy, c-format
+msgid "** Multicolumn output from last row:\n"
+msgstr "**Ibisohoka Bivuye Iheruka Urubariro"
+
+#: makeinfo/multi.c:643
+#, fuzzy, c-format
+msgid "* column #%d: output = %s\n"
+msgstr "*Inkingi Ibisohoka"
+
+#: makeinfo/node.c:279
+#, fuzzy, c-format
+msgid "Node `%s' previously defined at line %d"
+msgstr "ku Umurongo"
+
+#: makeinfo/node.c:647
+#, c-format
+msgid "Formatting node %s...\n"
+msgstr ""
+
+#: makeinfo/node.c:714
+#, fuzzy, c-format
+msgid "Node `%s' requires a sectioning command (e.g., %c%s)"
+msgstr "g."
+
+#: makeinfo/node.c:878
+#, fuzzy, c-format
+msgid "No node name specified for `%c%s' command"
+msgstr "Izina: kugirango Komandi:"
+
+#: makeinfo/node.c:919 makeinfo/node.c:1160
+#, fuzzy, c-format
+msgid "Anchor `%s' and node `%s' map to the same file name"
+msgstr "Na Kuri i IDOSIYE Izina:"
+
+#: makeinfo/node.c:922
+#, fuzzy
+msgid "This @anchor command ignored; references to it will not work"
+msgstr "Agafashi Komandi: Indango Kuri OYA Akazi"
+
+#: makeinfo/node.c:924 makeinfo/node.c:1163
+#, fuzzy
+msgid "Rename this anchor or use the `--no-split' option"
+msgstr "iyi Agafashi Cyangwa Gukoresha i Oya Ihitamo"
+
+#: makeinfo/node.c:954
+#, fuzzy, c-format
+msgid "Unexpected string at end of split-HTML file `%s'"
+msgstr "Ikurikiranyanyuguti ku Impera Bya Gutandukanya IDOSIYE"
+
+#: makeinfo/node.c:1157
+#, fuzzy, c-format
+msgid "Anchors `%s' and `%s' map to the same file name"
+msgstr "Na Kuri i IDOSIYE Izina:"
+
+#: makeinfo/node.c:1162
+#, fuzzy
+msgid "@anchor command ignored; references to it will not work"
+msgstr "@Agafashi Komandi: Indango Kuri OYA Akazi"
+
+#: makeinfo/node.c:1359
+#, fuzzy, c-format
+msgid "%s reference to nonexistent node `%s' (perhaps incorrect sectioning?)"
+msgstr "%sIndango Kuri"
+
+#: makeinfo/node.c:1459
+#, fuzzy, c-format
+msgid "Next field of node `%s' not pointed to (perhaps incorrect sectioning?)"
+msgstr "Umwanya Bya OYA Kuri"
+
+#: makeinfo/node.c:1462
+#, fuzzy, c-format
+msgid "This node (%s) has the bad Prev"
+msgstr "i"
+
+#: makeinfo/node.c:1517
+#, fuzzy, c-format
+msgid "Prev field of node `%s' not pointed to"
+msgstr "Umwanya Bya OYA Kuri"
+
+#: makeinfo/node.c:1521
+#, fuzzy, c-format
+msgid "This node (%s) has the bad Next"
+msgstr "i"
+
+#: makeinfo/node.c:1533
+#, fuzzy, c-format
+msgid "`%s' has no Up field (perhaps incorrect sectioning?)"
+msgstr "`%s'Oya Umwanya"
+
+#: makeinfo/node.c:1602
+#, fuzzy, c-format
+msgid "Node `%s' lacks menu item for `%s' despite being its Up target"
+msgstr "Ibikubiyemo Ikintu kugirango Intego"
+
+#: makeinfo/node.c:1634
+#, c-format
+msgid "unreferenced node `%s'"
+msgstr ""
+
+#: makeinfo/node.c:1724
+#, c-format
+msgid "Removing %s\n"
+msgstr ""
+
+#: makeinfo/node.c:1728
+#, fuzzy, c-format
+msgid "Can't remove file `%s': %s"
+msgstr "Gukuraho... IDOSIYE"
+
+#: makeinfo/sectioning.c:122
+#, c-format
+msgid "Appendix %c"
+msgstr ""
+
+#: makeinfo/sectioning.c:467
+#, fuzzy, c-format
+msgid "Internal error (search_sectioning) `%s'!"
+msgstr "Ikosa"
+
+#: makeinfo/sectioning.c:563
+#, fuzzy, c-format
+msgid "Internal error (search_sectioning) \"%s\"!"
+msgstr "Ikosa"
+
+#: makeinfo/sectioning.c:624
+#, fuzzy, c-format
+msgid "%c%s is obsolete; use %c%s instead"
+msgstr "%c%sni Gukoresha"
+
+#: makeinfo/sectioning.c:640
+#, fuzzy, c-format
+msgid "Node with %ctop as a section already exists"
+msgstr "Na: Nka a Icyiciro"
+
+#: makeinfo/sectioning.c:648
+#, fuzzy, c-format
+msgid "Here is the %ctop node"
+msgstr "ni i"
+
+#: makeinfo/sectioning.c:664
+#, fuzzy, c-format
+msgid "%ctop used before %cnode, defaulting to %s"
+msgstr "%ctopMbere Kuri"
+
+#: makeinfo/xml.c:1669
+#, fuzzy, c-format
+msgid "@image file `%s' unreadable: %s"
+msgstr "@Ishusho IDOSIYE"
+
+#: makeinfo/xml.c:2014
+#, fuzzy
+msgid ""
+"@headitem as the last item of @multitable produces invalid Docbook documents"
+msgstr "@Nka i Iheruka Ikintu Bya Sibyo Inyandiko"
+
+#: makeinfo/xml.c:2150
+msgid "of"
+msgstr "ya"
+
+#: makeinfo/xml.c:2155
+msgid "on"
+msgstr "kuri"
+
+#: makeinfo/xref.c:127
+msgid "First argument to cross-reference may not be empty"
+msgstr ""
+
+#: makeinfo/xref.c:252
+#, c-format
+msgid "Empty file name for HTML cross reference in `%s'"
+msgstr ""
+
+#: makeinfo/xref.c:387
+msgid "End of file reached while looking for `.' or `,'"
+msgstr ""
+
+#: makeinfo/xref.c:390
+#, c-format
+msgid "`.' or `,' must follow @%s, not `%c'"
+msgstr ""
+
+#: makeinfo/xref.c:392
+#, fuzzy
+msgid "for cross-references in parentheses, use @pxref"
+msgstr "Kwambukiranya Indango in iyi"
+
+#: makeinfo/xref.c:435
+msgid "First argument to @inforef may not be empty"
+msgstr ""
+
+#: util/texindex.c:223
+#, fuzzy
+msgid "display this help and exit"
+msgstr "Kugaragaza iyi Ifashayobora Na Gusohoka"
+
+#: util/texindex.c:225
+#, fuzzy
+msgid "send output to FILE"
+msgstr "Kohereza Ibisohoka Kuri"
+
+#: util/texindex.c:227
+#, fuzzy
+msgid "display version information and exit"
+msgstr "Kugaragaza Verisiyo Ibisobanuro Na Gusohoka"
+
+#: util/texindex.c:237
+#, c-format
+msgid "Usage: %s [OPTION]... FILE...\n"
+msgstr ""
+
+#: util/texindex.c:238
+#, fuzzy, c-format
+msgid "Generate a sorted index for each TeX output FILE.\n"
+msgstr "a bishunguwe Umubarendanga kugirango Ibisohoka"
+
+#: util/texindex.c:241
+#, fuzzy, c-format
+msgid "Usually FILE... is specified as `foo.%c%c' for a document `foo.texi'.\n"
+msgstr "ni Nka kugirango a Inyandiko"
+
+#: util/texindex.c:243
+#, c-format
+msgid ""
+"\n"
+"Options:\n"
+msgstr ""
+"\n"
+"Amahitamo:\n"
+
+#: util/texindex.c:743
+#, c-format
+msgid "failure reopening %s"
+msgstr ""
+
+#: util/texindex.c:758 util/texindex.c:786
+#, fuzzy, c-format
+msgid "%s: not a texinfo index file"
+msgstr "%s:OYA a Umubarendanga IDOSIYE"
+
+#: util/texindex.c:993
+#, fuzzy, c-format
+msgid "No page number in %s"
+msgstr "Ipaji Umubare in"
+
+#: util/texindex.c:1066
+#, fuzzy, c-format
+msgid "entry %s follows an entry with a secondary name"
+msgstr "Icyinjijwe Icyinjijwe Na: a Izina:"
+
+#, fuzzy
+#~ msgid ""
+#~ "\\%-10[search]  Search forward for a specified string\n"
+#~ "              and select the node in which the next occurrence is found.\n"
+#~ msgstr ""
+#~ "\\%-10 Gushaka Imbere kugirango a Na Guhitamo i in i Komeza>> ukugaragara "
+#~ "ni Byabonetse"
+
+#, fuzzy
+#~ msgid ""
+#~ "\\%-10[goto-node]  Move to node specified by name.\n"
+#~ "              You may include a filename as well, as in (FILENAME)"
+#~ "NODENAME.\n"
+#~ msgstr ""
+#~ "\\%-10 Kuri ku Izina: Gicurasi Gushyiramo a Izina ry'idosiye: Nka Nka in"
+
+#, fuzzy
+#~ msgid "\\%-10[next-node]  Move to the next node of current section.\n"
+#~ msgstr "\\%-10 Komeza>> Kuri i Komeza>> Bya iyi"
+
+#, fuzzy
+#~ msgid ""
+#~ "\\%-10[dir-node]  Move to the `directory' node.  Equivalent to `\\[goto-"
+#~ "node] (DIR)'.\n"
+#~ msgstr "\\%-10 Kuri i Kuri"
+
+#, fuzzy
+#~ msgid ""
+#~ "\\%-10[top-node]  Move to the Top node.  Equivalent to `\\[goto-node] "
+#~ "Top'.\n"
+#~ msgstr "\\%-10 Hejuru: Kuri i Kuri"
+
+#, fuzzy
+#~ msgid ""
+#~ "\\%-10[search-backward]  Search backward for a specified string\n"
+#~ "              and select the node in which the previous occurrence is "
+#~ "found.\n"
+#~ msgstr ""
+#~ "\\%-10 Gushaka subira inyuma subira inyuma kugirango a Na Guhitamo i in i "
+#~ "Ibanjirije ukugaragara ni Byabonetse"
+
+#, fuzzy
+#~ msgid "--- Use `\\[history-node]' or `\\[kill-node]' to exit ---\n"
+#~ msgstr "---Urutonde Cyangwa Kuri Gusohoka"
+
+#, fuzzy
+#~ msgid "\\%-10[move-to-prev-xref]  Skip to previous hypertext link [*].\n"
+#~ msgstr "\\%-10 Kwimura Kuri X- Ngenderwaho Kuri Ibanjirije Ihuza muri iyi"
+
+#, fuzzy
+#~ msgid ""
+#~ "Usage: %s [OPTION]... [MENU-ITEM...]\n"
+#~ "\n"
+#~ "Read documentation in Info format.\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "      --apropos=STRING         look up STRING in all indices of all "
+#~ "manuals.\n"
+#~ "  -d, --directory=DIR          add DIR to INFOPATH.\n"
+#~ "      --dribble=FILENAME       remember user keystrokes in FILENAME.\n"
+#~ "  -f, --file=FILENAME          specify Info file to visit.\n"
+#~ "  -h, --help                   display this help and exit.\n"
+#~ "      --index-search=STRING    go to node pointed by index entry STRING.\n"
+#~ "  -n, --node=NODENAME          specify nodes in first visited Info file.\n"
+#~ "  -o, --output=FILENAME        output selected nodes to FILENAME.\n"
+#~ "  -R, --raw-escapes            output \"raw\" ANSI escapes (default).\n"
+#~ "      --no-raw-escapes         output escapes as literal text.\n"
+#~ "      --restore=FILENAME       read initial keystrokes from FILENAME.\n"
+#~ "  -O, --show-options, --usage  go to command-line options node.\n"
+#~ "%s      --subnodes               recursively output menu items.\n"
+#~ "  -w, --where, --location      print physical location of Info file.\n"
+#~ "      --vi-keys                use vi-like and less-like key bindings.\n"
+#~ "      --version                display version information and exit.\n"
+#~ "\n"
+#~ "The first non-option argument, if present, is the menu entry to start "
+#~ "from;\n"
+#~ "it is searched for in all `dir' files along INFOPATH.\n"
+#~ "If it is not present, info merges all `dir' files and shows the result.\n"
+#~ "Any remaining arguments are treated as the names of menu\n"
+#~ "items relative to the initial node visited.\n"
+#~ "\n"
+#~ "Examples:\n"
+#~ "  info                       show top-level dir menu\n"
+#~ "  info emacs                 start at emacs node from top-level dir\n"
+#~ "  info emacs buffers         start at buffers node within emacs manual\n"
+#~ "  info --show-options emacs  start at node with emacs' command line "
+#~ "options\n"
+#~ "  info --subnodes -o out.txt emacs  dump entire manual to out.txt\n"
+#~ "  info -f ./foo.info         show file ./foo.info, not searching dir\n"
+#~ msgstr ""
+#~ "in Imiterere Hejuru in Byose ibimenyetso Bya Byose D bushyinguro "
+#~ "Kongeramo Kuri Ukoresha: in F IDOSIYE IDOSIYE Kuri h Ifashayobora "
+#~ "Kugaragaza iyi Ifashayobora Na Gusohoka Umubarendanga Gushaka Gyayo Kuri "
+#~ "ku Umubarendanga Icyinjijwe N in Itangira IDOSIYE o Ibisohoka Ibisohoka "
+#~ "Byahiswemo Kuri Ibisohoka Mburabuzi Oya Ibisohoka Nka Umwandiko Kugarura "
+#~ "Gusoma Bivuye Garagaza Amahitamo Ikoresha: Gyayo Kuri Komandi: Umurongo "
+#~ "Amahitamo Ibisohoka Ibikubiyemo W Ahantu Gucapa Ifatika Ahantu Bya "
+#~ "IDOSIYE Utubuto Gukoresha nka Na Birutwa nka Urufunguzo Ibyafataranyijwe "
+#~ "Verisiyo Kugaragaza Verisiyo Ibisobanuro Na Gusohoka Itangira Ihitamo "
+#~ "NIBA ni i Ibikubiyemo Icyinjijwe Kuri Gutangira Bivuye ni kugirango in "
+#~ "Byose Idosiye ni OYA Ibisobanuro Byose Idosiye Na i Igisubizo ingingo Nka "
+#~ "i Amazina Bya Bifitanye isano Kuri i Ibisobanuro Garagaza Hejuru: urwego "
+#~ "Ibisobanuro Gutangira ku Bivuye Hejuru: urwego Ibisobanuro Gutangira ku "
+#~ "muri Ibisobanuro Garagaza Amahitamo Gutangira ku Na: Komandi: Umurongo "
+#~ "Ibisobanuro F Ibisobanuro Garagaza IDOSIYE Ibisobanuro OYA Ishakisha"
+
+#, fuzzy
+#~ msgid ""
+#~ "              Picking a menu item causes another node to be selected.\n"
+#~ msgstr "a Ibikubiyemo Ikintu Kuri Byahiswemo"
+
+#, fuzzy
+#~ msgid ""
+#~ "              You may include a filename as well, as in (FILENAME)"
+#~ "NODENAME.\n"
+#~ msgstr "Gicurasi Gushyiramo a Izina ry'idosiye: Nka Nka in"
+
+#, fuzzy
+#~ msgid "  %-10s  Search backward for a specified string\n"
+#~ msgstr "%-10ssubira inyuma kugirango a"
+
+#, fuzzy
+#~ msgid ""
+#~ "              and select the node in which the next occurrence is found.\n"
+#~ msgstr "Na Guhitamo i in i Komeza>> ukugaragara ni Byabonetse"
+
+#, fuzzy
+#~ msgid "Selecting first menu item..."
+#~ msgstr "Itangira Ibikubiyemo Ikintu"
+
+#, fuzzy
+#~ msgid "Moving Up %d time(s), then Next."
+#~ msgstr "Igihe S Hanyuma"
+
+#, fuzzy
+#~ msgid "Moving Prev in this window."
+#~ msgstr "in iyi Idirishya"
+
+#, fuzzy
+#~ msgid "Moving Up in this window."
+#~ msgstr "in iyi Idirishya"
+
+#, fuzzy
+#~ msgid "Moving to `Prev's last menu item."
+#~ msgstr "Kuri Iheruka Ibikubiyemo Ikintu"
+
+#~ msgid " "
+#~ msgstr " "
+
+#~ msgid "Function"
+#~ msgstr "Umumaro"
+
+#~ msgid "Macro"
+#~ msgstr "Makoro"
+
+#~ msgid "Variable"
+#~ msgstr "Imburabuzi"
+
+#, fuzzy
+#~ msgid "Instance Variable"
+#~ msgstr "Imburabuzi"
+
+#~ msgid "Method"
+#~ msgstr "Uburyo"
+
+# filter/source\xsltdialog\xmlfilterdialogstrings.src:STR_DEFAULT_UI_NAME.text
+#~ msgid "Untitled"
+#~ msgstr "Nta mutwe"
+
+#, fuzzy
+#~ msgid "This is %s, produced by makeinfo version %s from %s.\n"
+#~ msgstr "ni ku Verisiyo Bivuye"
+
+#, fuzzy
+#~ msgid "Next:"
+#~ msgstr "Ibikurikira>"
+
+#, fuzzy
+#~ msgid "Previous:"
+#~ msgstr "Ibanjirije"
+
+# #-#-#-#-#  sc.pot (PACKAGE VERSION)  #-#-#-#-#
+# sc/source\ui\src\menue.src:SCCFG_PLUGINMENU.SUBMENU_EDIT.SUBMENU_FILL.FID_FILL_TO_TOP.text
+# #-#-#-#-#  sc.pot (PACKAGE VERSION)  #-#-#-#-#
+# sc/source\ui\src\menue.src:SCCFG_MENUBAR.SUBMENU_EDIT.SUBMENU_FILL.FID_FILL_TO_TOP.text
+# #-#-#-#-#  sc.pot (PACKAGE VERSION)  #-#-#-#-#
+# sc/source\ui\src\miscdlgs.src:RID_SCDLG_FILLSERIES.BTN_TOP.text
+#, fuzzy
+#~ msgid "Up:"
+#~ msgstr "Hejuru"
+
+#~ msgid "Menu"
+#~ msgstr "Ibikubiyemo"
+
+#~ msgid "Cross"
+#~ msgstr "Kwambukiranya"
+
+#, fuzzy
+#~ msgid "Prev"
+#~ msgstr "Ibanjirije"
+
+#~ msgid "Up"
+#~ msgstr "Hejuru"
+
+#, fuzzy
+#~ msgid ""
+#~ "Usage: %s [OPTION]... [INFO-FILE [DIR-FILE]]\n"
+#~ "\n"
+#~ "Add or remove entries in INFO-FILE from the Info directory DIR-FILE.\n"
+#~ "\n"
+#~ "Options:\n"
+#~ " --debug           report what is being done.\n"
+#~ " --delete          delete existing entries for INFO-FILE from DIR-FILE;\n"
+#~ "                     don't insert any new entries.\n"
+#~ " --dir-file=NAME   specify file name of Info directory file.\n"
+#~ "                     This is equivalent to using the DIR-FILE argument.\n"
+#~ " --entry=TEXT      insert TEXT as an Info directory entry.\n"
+#~ "                     TEXT should have the form of an Info menu item line\n"
+#~ "                     plus zero or more extra lines starting with "
+#~ "whitespace.\n"
+#~ "                     If you specify more than one entry, they are all "
+#~ "added.\n"
+#~ "                     If you don't specify any entries, they are "
+#~ "determined\n"
+#~ "                     from information in the Info file itself.\n"
+#~ " --help            display this help and exit.\n"
+#~ " --info-file=FILE  specify Info file to install in the directory.\n"
+#~ "                     This is equivalent to using the INFO-FILE argument.\n"
+#~ " --info-dir=DIR    same as --dir-file=DIR/dir.\n"
+#~ " --item=TEXT       same as --entry TEXT.\n"
+#~ "                     An Info directory entry is actually a menu item.\n"
+#~ " --quiet           suppress warnings.\n"
+#~ " --remove          same as --delete.\n"
+#~ " --remove-exactly  only remove if the info file name matches exactly;\n"
+#~ "                     .info and/or .gz suffixes are not ignored.\n"
+#~ " --section=SEC     put this file's entries in section SEC of the "
+#~ "directory.\n"
+#~ "                     If you specify more than one section, all the "
+#~ "entries\n"
+#~ "                     are added in each of the sections.\n"
+#~ "                     If you don't specify any sections, they are "
+#~ "determined\n"
+#~ "                     from information in the Info file itself.\n"
+#~ " --section-regex=R if an entry is added to a section that does not "
+#~ "exist,\n"
+#~ "                     look for a section matching basic regular expression "
+#~ "R\n"
+#~ "                     (and ignoring case) before starting a new section.\n"
+#~ " --test            suppress updating of DIR-FILE.\n"
+#~ " --silent          suppress warnings.\n"
+#~ " --version         display version information and exit.\n"
+#~ msgstr ""
+#~ "Cyangwa Gusiba Ibyinjijwe Bivuye in i bushyinguro Gusiba Gusiba "
+#~ "Ibyinjijwe kugirango Bivuye Kongeramo Gishya Ibyinjijwe IDOSIYE IDOSIYE "
+#~ "Izina: Bya bushyinguro IDOSIYE ni Kuri ikoresha i Icyinjijwe Kongeramo "
+#~ "Nka bushyinguro Icyinjijwe i Ifishi Bya Ibikubiyemo Ikintu Guteranya Zeru "
+#~ "Cyangwa Birenzeho Birenga Imirongo Na: Birenzeho Icyinjijwe Byose "
+#~ "Kyongewe Ibyinjijwe Bivuye Ibisobanuro in i IDOSIYE Ifashayobora "
+#~ "Kugaragaza iyi Ifashayobora Na Gusohoka Ibisobanuro IDOSIYE IDOSIYE Kuri "
+#~ "Kwinjiza porogaramu in i bushyinguro ni Kuri ikoresha i Ibisobanuro Nka "
+#~ "IDOSIYE Ikintu Nka Icyinjijwe bushyinguro Icyinjijwe ni a Ibikubiyemo "
+#~ "Ikintu Iburira Gukuraho... Nka Gusiba Icyiciro Gushyira iyi Ibyinjijwe in "
+#~ "Icyiciro Bya i bushyinguro Birenzeho Icyiciro Byose i Kyongewe in Bya i "
+#~ "Ibyatoranyijwe Ibyatoranyijwe Bivuye Ibisobanuro in i IDOSIYE Verisiyo "
+#~ "Kugaragaza Verisiyo Ibisobanuro Na Gusohoka"
+
+#, fuzzy
+#~ msgid "menu item `%s' already exists, for file `%s'"
+#~ msgstr "Ibikubiyemo Ikintu kugirango IDOSIYE"
+
+#, fuzzy
+#~ msgid "\\%-10[menu-digit]  Pick first ... ninth item in node's menu.\n"
+#~ msgstr "\\%-10 Ibikubiyemo Itangira Ikintu in Ibikubiyemo"
+
+#, fuzzy
+#~ msgid "node `%s' has been referenced %d times"
+#~ msgstr "Times"
+
+#, fuzzy
+#~ msgid ""
+#~ "Copyright (C) %s Free Software Foundation, Inc.\n"
+#~ "There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A\n"
+#~ "PARTICULAR PURPOSE.  You may redistribute copies of GNU %s\n"
+#~ "under the terms of the GNU General Public License.\n"
+#~ "For more information about these matters, see the file named COPYING.\n"
+#~ msgstr ""
+#~ "C ni Gicurasi iyi i Bya i Birenzeho Ibisobanuro Ibyerekeye i Idosiye"
+
+#, fuzzy
+#~ msgid "@quote-arg only useful for single-argument macros"
+#~ msgstr "@Gushyiraho akugarizo kugirango UMWE Makoro"
+
+#~ msgid "Table of Contents"
+#~ msgstr "Ishakiro"
+
+#, fuzzy
+#~ msgid "Short Contents"
+#~ msgstr "Ishakiro"
+
+#, fuzzy
+#~ msgid "keep temporary files around after processing"
+#~ msgstr "Gumana: By'igihe gito Idosiye Nyuma Inonosora"
+
+#, fuzzy
+#~ msgid "do not keep temporary files around after processing (default)"
+#~ msgstr "OYA Gumana: By'igihe gito Idosiye Nyuma Inonosora Mburabuzi"
+
+#, fuzzy
+#~ msgid ""
+#~ "              file, and select the node referenced by the first entry "
+#~ "found.\n"
+#~ msgstr "IDOSIYE Na Guhitamo i ku i Itangira Icyinjijwe Byabonetse"
+
+#, fuzzy
+#~ msgid ""
+#~ "There is NO warranty.  You may redistribute this software\n"
+#~ "under the terms of the GNU General Public License.\n"
+#~ "For more information about these matters, see the files named COPYING.\n"
+#~ msgstr "ni Gicurasi iyi i Bya i Birenzeho Ibisobanuro Ibyerekeye i Idosiye"

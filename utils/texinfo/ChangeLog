@@ -1,10 +1,2940 @@
-2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2008-04-19  Karl Berry  <karl@gnu.org>
 
-	* acinclude.m4: add quotes to DEFUN's first args.
+	* Version 4.12.
 
-2008-02-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2008-04-19  Per Øyvind Karlsen  <peroyvind@mandriva.org>  (tiny change)
 
-	* configure.ac: --enable-muliplatform modifies libdir.
+	* info/filesys.c (compress_suffices): decompress .lzma with unlzma.
+	* install-info/install-info.c: support lzma.
+
+2008-04-18  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\math): \let the Texinfo accent commands
+	(\" \' ... \dotaccent) to their plain TeX math equivalents
+	(\ddot \acute ... \dot), where possible.
+	Report from John Mandereau, 17 Apr 2008 17:53:28.
+
+2008-04-17  Karl Berry  <karl@gnu.org>
+
+	* util/texi2dvi: allow more characters special to plain TeX
+	in the directory name in tidy mode (but not the base file name).
+	
+	* util/texi2dvi: more quoting of file name args for the sake of
+	names containing whitespace.  A spurious message still results.
+
+	* install-info/tests/defs.in: new file.
+	* configure.ac: generate install-info/tests/defs.
+	* install-info/tests/ii-*-test: source it.
+	* install-info/tests/Makefile.am: do not use export,
+	which is only supported by GNU make.
+
+2008-04-13  Juan Manuel Guerrero  <juan.guerrero@gmx.de>
+
+	DJGPP specific issues.
+	* djgpp/config.sed: Fixes required to use configure scripts generated
+	by autoconf 2.62.
+
+2008-04-09  Karl Berry  <karl@gnu.org>
+
+	* pretest 4.11.96.
+
+	* doc/texinfo.txi (geq leq): New node to document new commands
+	@geq{} and @leq{}, suggested by Arnold Robbins.
+	* doc/texinfo.tex (\geq, \leq): new macros.
+	* makeinfo/cmds.c (cm_geq, cm_leq): new fns.
+	(cm_minus): make static.
+	* makeinfo/cmds.h (cm_minus): remove decl.
+
+	* makeinfo/insertion.c (handle_verbatim): ignore rest of @verbatim
+	line, including the newline.
+	Report from Thien-Thi Nguyen, 01 Apr 2008 11:14:48.
+
+2008-04-09  Reinhold Kainhofer  <reinhold@kainhofer.com>  (tiny change)
+
+	* makeinfo/insertion.c (begin_insertion): do not indent via
+	whitespace for html, since we already do <blockquote>.
+	Reported 30 Mar 2008 00:56:56.
+
+2008-04-02  Jim Meyering  <jim@meyering.net>  (tiny change)
+
+	* doc/texinfo.tex: fix typos in comments.
+
+2008-03-31  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\dopdfimage): try .PDF too.
+	(\imagexxx): reduce space around vmode image to \medskip from \bigskip.
+	Start \noindent paragraph for vmode image so that @quotation etc.
+	indentation will be respected.
+	Report from Reinhold Kainhofer, 28 Mar 2008 17:33:05.
+
+2008-03-28  Karl Berry  <karl@gnu.org>
+
+	* info/Makefile.am (funs.h): change target from all of
+	$(generated_sources) to avoid problems with parallel builds.
+	From Michael Haubenwallner, 20 Mar 2008 22:52:20.
+
+2008-03-26  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/makeinfo.c (search_forward): use const.
+	Also (from William Xu) fix typo in comment.
+	* makeinfo/makeinfo.h (search_forward): change decl.
+
+2008-03-25  Karl Berry  <karl@gnu.org>
+
+	* util/texi2dvi (TEX): only unset it if it was nonempty and a
+	directory.
+
+2008-03-25  Akim Demaille  <akim@epita.fr>
+
+	* doc/Makefile.am: Use util_srcdir (new var) where appropriate.
+	(man_MANS): Also install texi2pdf.1 and pdftexi2dvi.1.
+	(unset_envvars): New.
+	Use it.
+	* util/local.test: Check we don't use $().
+	Simplify sed usage: don't use \| which is not portable enough.
+	* util/Makefile.am: Re-enable tests, in maintainer mode.
+
+2008-03-23  Benno Schulenberg  <bensberg@justemail.net>  (tiny change)
+
+	* info/session.c (_scroll_backward): better cursor placement.
+
+2008-03-23  Karl Berry  <karl@gnu.org>
+
+	* util/texi2dvi (TEX): unset if it refers to a directory; I think
+	the University of Utah installation does this.
+
+2008-03-22  Karl Berry  <karl@gnu.org>
+
+	* info/session.c (info_move_to_xref): conditionalize "no xref"
+	message on cursor_movement_scrolls_p.  Proposed by
+	Benno, 22 Mar 2008 15:17:49.
+
+2008-03-21  Karl Berry  <karl@gnu.org>
+
+	* pretest 4.11.95.
+
+	* info/Makefile.am (funs.h): use this as the dependency
+
+2008-03-21  Karl Berry  <karl@gnu.org>
+
+	* info/session.c (_scroll_forward): leave cursor on last line.
+	(_scroll_backward): use info_beginning_of_node for consistency.
+	Changes proposed by Benno Schulenberg, 21 Mar 2008 16:31:27.
+
+2008-03-20  Karl Berry  <karl@gnu.org>
+
+	* info/info.c (main): avoid declaration after statement.
+
+2008-03-17  Karl Berry  <karl@gnu.org>
+
+	* texinfo.tex (\xrefX): avoid TeX expansions of _ etc.
+	in the info filename argument (#4).
+	Report from Ralf Wildenhues, 15 Mar 2008 11:23:38.
+
+2008-03-14  Karl Berry  <karl@gnu.org>
+
+	* pretest 4.11.94.
+
+	* install-info/install-info.c: portability fixes.
+	(parse_dir_file): declare void, since it is.
+	(split_entry): Remove unused variable ostream.
+	(add_missing_basenames, add_missing_descriptions): Avoid
+		declarations after statements.
+	(main): Do not use // comments.
+	(format_entry): avoid using isblank, linking fails on osf-alpha,
+	others.
+	* util/texi2dvi: use `...` instead of $(...).  Avoid
+	(...) as case labels.
+
+2008-03-12  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (exdent): typo in example.
+	Report from Jaakko Hollmen, 11 Mar 2008 19:25:01.
+
+2008-03-12  Sergey Poznyakoff  <gray@gnu.org.ua>
+
+	* info/session.c (_scroll_backward): Avoid wrapping to the end of
+	page when a backward scrolling is requested on the top node.
+	Patch proposed by Benno Schulenberg.
+
+2008-03-07  Karl Berry  <karl@gnu.org>
+
+	* pretest 4.11.93.
+
+	* info/infodoc.c (info_internal_help_text): reorder, regroup.
+	Suggestion from Benno Schulenberg, 06 Mar 2008 11:59:06.
+
+2008-03-07  Joseph Myers  <joseph@codesourcery.com>  (tiny change)
+
+	* doc/texinfo.tex (\includezzz): Use \turnoffactive before
+	expanding @value.
+
+2008-03-06  Sergey Poznyakoff  <gray@gnu.org.ua>
+
+	* info/session.c (info_search_internal): Reword wrap-around
+	messages.
+	* configure.ac (AM_INIT_AUTOMAKE): Finally remove dist-bzip2.
+
+2008-03-05  Sergey Poznyakoff  <gray@gnu.org.ua>
+
+	* util/gendocs.sh: Pass --node-files to texi2html only together
+	with the --split option.
+
+	* info/session.c (last_node_p): Remove unused variable.
+	(info_search_internal): Print a message if the search wraps over
+	the end or beginning of the document.
+
+	* configure.ac (AM_INIT_AUTOMAKE): Move all automake options here.
+	Add dist-bzip2 for completeness.
+	* Makefile.am (AUTOMAKE_OPTIONS): Remove in favor of
+	AM_INIT_AUTOMAKE.
+	* AUTHORS: Update the URL of Translation Project.
+
+2008-03-04  Sergey Poznyakoff  <gray@gnu.org.ua>
+
+	* info/session.c (_scroll_backward): Place cursor at the end of
+	node if cursor_movement_scrolls_p is on.
+
+	* Makefile.am (AUTOMAKE_OPTIONS): Raise version requirement to
+	1.10.1. This is needed for dist-lzma.
+
+	* system.h: Include <ctype.h>
+	* info/session.c (scroll_last_node_choices, scroll_last_node): New
+	variables.
+	(forward_move_node_structure): Special behavior when a scrolling
+	command is issued while on the last node.
+	* info/session.h (scroll_last_node_choices, scroll_last_node): New
+	variables.
+	(SLN_Stop,SLN_Scroll,SLN_Top): New defines.
+	* info/variables.c (info_variables): New variable
+	scroll-last-node.
+	* info/variables.h (scroll_last_node): New variable.
+	* doc/info-stnd.texi: Document scrolling behavior at the last node
+	and the scroll-last-node variable.
+	* NEWS: Document scrolling behavior at the last node.
+
+2008-03-02  Karl Berry  <karl@gnu.org>
+
+	* configure.ac (AM_INIT_AUTOMAKE): dist-lzma instead of dist-bzip2.
+
+2008-03-01  Juan Manuel Guerrero  <juan.guerrero@gmx.de>
+
+	DJGPP specific issues.
+	* system.h [O_BINARY]: Use HAVE_DRIVE in IS_ABSOLUTE.
+	* djgpp/config.sed: Fix regex pattern to handle version numbers that
+	looks like 4.NN.NN
+
+2008-02-29  Karl Berry  <karl@gnu.org>
+
+	* pretest 4.11.92.
+
+2008-02-28  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\includezzz): \edef the filename in order
+	to expand @value constructs (include-value).  This fix
+	from Joseph S. Myers, 1 Feb 2008 01:11:11.
+	Document that the \expandafter trickery is necessary in order to
+	read the file outside of a group (mac-incl).
+	This report from John Mandereau, 28 Feb 2008 22:12:34.
+
+	* info/infodoc.c (info_internal_help_text): more tweaks.
+	* info/infomap.c: move up/down to end, too.
+	Suggestions from Benno Schulenberg, 27 Feb 2008 23:44:17
+	and 28 Feb 2008 22:49:27.
+
+2008-02-28  Akim Demaille  <akim@epita.fr>
+
+	* util/texi2dvi (absolute): Add a missing "local".
+
+2008-02-28  Akim Demaille  <akim@epita.fr>
+
+	Let texi2dvi keep the trailing //.
+	* bin/texi2dvi ($space, $tab): New.
+	($IFS): Use them to be robust to zealous white space cleanups.
+	(absolute): Preserve the trailing slashes.
+	(tex_envvars): Add MPINPUTS, MFINPUTS, and TFMFONTS.
+
+2008-02-28  Akim Demaille  <akim@epita.fr>
+
+	* util/texi2dvi: Don't use "local foo=`cmd`", because in that case
+	failures of cmd, including with set -e, will go unnoticed.  So
+	always first declare with local, then run the assignment.
+	(index_file_p): Adjust to be usable with index.sty.
+	* util/local.test: Make the test more robust.
+
+2008-02-27  Karl Berry  <karl@gnu.org>
+
+	* pretest 4.11.91.
+
+	* info/infomap.c [!INFOKEY]: remove this whole block.  It is too
+	confusing having two sets of key bindings.
+
+	* info/infodoc.c (info_internal_help_text): more tweaks.
+	Suggestions from Benno Schulenberg, 26 Feb 2008 00:34:22.
+
+2008-02-26  Brendan O'Dea <bod@debian.org>  (tiny change)
+
+	* util/texi2dvi: slightly reformat usage message for help2man.
+	(sent by peb 26 Feb 2008 12:01:11)
+
+	* install-info/install-info.c (print_help): keep two spaces
+	between option name and description, or help2man can't do a good job.
+
+2008-02-26  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* info/doc.h, info/echo-area.c, info/echo-area.h,
+	info/footnotes.c, info/indices.c, info/info.c, info/info.h,
+	info/infodoc.c, info/infokey.c, info/infomap.c, info/m-x.c,
+	info/nodemenu.c, info/session.c, info/session.h,
+	info/variables.c, info/variables.h, info/window.c,
+	info/window.h:
+	declare constant strings as such and remove
+	many `(char *)' casts -- in particular for `_(...)'.
+	Avoid gcc warnings (for --disable-nls and maybe without).
+
+2008-02-25  Karl Berry  <karl@gnu.org>
+
+	* autogen.sh: run autoconf before autoheader, then automake
+        (per autoreconf).
+
+2008-02-24  Karl Berry  <karl@gnu.org>
+
+	* info/infomap.c (x): bind to delete_window.
+	* info/infodoc.c (info_internal_help_text): more rearrangements.
+	(create_internal_info_help_node: omit incorrect exiting suggestion
+		at end.
+	Suggestions from Benno Schulenberg, 24 Feb 2008 22:56:44.
+
+	* install-info/install-info.c (munge_old_style_debian_options):
+	avoid use of asprintf, just xmalloc ourselves.
+	In report from Juan Manuel Guerrero, 24 Feb 2008 22:06:35.
+
+	* install-info/install-info.c (spec_entry) <text_len>: declare
+	as size_t instead of int, to avoid warning.
+	In report from Juan Manuel Guerrero, 24 Feb 2008 22:06:35.
+
+2008-02-22  Karl Berry  <karl@gnu.org>
+
+	* pretest 4.11.90.
+
+2008-02-22  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* configure.ac (--enable-multiplatform): also set libdir.
+	* util/defs.in (PATH): include @abs_builddir@.
+	* util/texi2dvi (usage): consistently escape \$HOME.
+
+2008-02-21  Karl Berry  <karl@gnu.org>
+
+	* info/infodoc.c (info_internal_help_text): more simplifications.
+	Suggestions from Benno Schulenberg, 21 Feb 2008 23:35:38.
+
+	* install-info/tests/ii-0041-test,
+	* install-info/tests/ii-0041-test: ensure target dir file is rw.
+
+2008-02-19  Karl Berry  <karl@gnu.org>
+
+	* info/infodoc.c (info_internal_help_text): rearrangements.
+	* info/session.c (cursor_movement_scrolls_p): 1 by default.
+	* info/window.c (window_scroll_step): 1 by default.
+	* info/infomap.c <key bindings>: h to info_get_help_window,
+	H to info_get_info_help_node,
+	PgUp to info_scroll_backward, PgDown to info_scroll_forward,
+	move q to after C-x C-c .
+	Suggestions from Benno Schulenberg, 04 Jan 2008 23:20:46.
+
+2008-02-17  Karl Berry  <karl@gnu.org>
+
+	* util/texi2dvi (EGREP): need egrep early.
+
+	* util/texi2dvi: path_sep is : on djgpp too.  From Eli Z.
+
+	* makeinfo/makeinfo.c: typos in comments.
+
+	* makeinfo/cmds.c (cm_direntry): call close_single_paragraph,
+	instead of add_char('\n'), or the INFO-DIR-SECTION lines from two
+	consecutive @dircategory's are munged together.
+	Bug report from Ralf Angeli, 16 Feb 2008 18:59:42.
+
+2008-02-16  Karl Berry  <karl@gnu.org>
+
+	* util/texi2dvi: path_sep is : on mingw as well as cygwin.
+	Report from: FX Coudert, 16 Feb 2008 15:43:15.
+
+	* makeinfo/cmds.c (cm_cite): avoid double apostrophe in
+	Info output of, e.g., ... @cite{Foo}'s ...
+	Report from Bob Chassell.
+
+2008-02-15  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\tex): spurious space in redefinition of \top.
+
+	* makeinfo/cmds.c (handle_include): set in_fixed_width_font
+	for expanding the filename argument, so -- doesn't become -.
+	Bug report from Daniel Richard G., 13 Feb 2008 01:50:00.
+
+2008-02-11  Karl Berry  <karl@gnu.org>
+
+	* info/session.c (incremental_search): if a regex search,
+	search every time through the loop, not only if the search
+	succeeded.
+	Bug report from Ralf Wildenhues, 8 Feb 2008 23:30:51.
+
+2008-02-10  Karl Berry  <karl@gnu.org>
+
+	* info/session.c (show_isearch_prompt): Start with "Regexp" if
+	it's a regexp i-search.
+	Suggestion from Ralf Wildenhues, 8 Feb 2008 23:30:51.
+
+2008-02-04  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\includezzz): simply do the \input (instead of
+	trickily expanding it after the }) a la \verbatiminput; otherwise,
+	@value expansions are not done.  The trickery just seems unnecessary.
+	Report from Joseph S. Myers, 1 Feb 2008 01:11:11.
+
+2008-02-01  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\ptextop): save plain tex \top (a math symbol).
+	(tex env): restore plain text \top.
+
+2008-01-31  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (Click Sequences): new section to document new
+	commands @arrow, @clicksequence, @click, and @clickstyle.
+	* doc/texinfo.tex (\clicksequence, \click, \clickstyle): define them.
+	* makeinfo/cmds.h,
+	* makeinfo/cmds.c (cm_arrow, cm_click, cm_clicksequence,
+	cm_clickstyle): new fns.
+	* insertion.h,
+	* insertion.c (get_item_function): no longer static.
+	* xml.h,
+	* xml.c (CLICK, CLICKSEQUENCE): new elements.
+	* util/texinfo.dtd (Inline.misc): add click and clicksequence.
+	(rarr): new entity.
+
+	* makeinfo/xml.c (xml_insert_entity): only do XML checks if we are
+	actually outputting XML; this routine is also used for HTML output.
+
+	* makeinfo/makeinfo.c (convert_from_loaded_file): move
+	xml_begin_document to after we are sure the output file is open.
+
+2008-01-30  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi, doc/info-stnd.texi (Back-Cover Text): new
+	wording from rms.
+
+2008-01-24  Karl Berry  <karl@gnu.org>
+
+	* info/session.c (info_move_to_xref): must use fixed-string
+	searches for these Info keywords that contain *.
+	Report from Ben Asselstine, 29 Dec 2007 11:21:40 (et al.).
+
+	* doc/info-stnd.texi (What is Info): that's C-x C-c to exit, not
+	C-x C-x.  Report from Benno, 24 Jan 2008 00:40:04.
+
+2008-01-23  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/insertion.c (begin_insertion) <direntry>: ignore
+	whitespace beginning the first * line inside @direntry,
+	to work around the zsh manual.
+	Report from Norbert Preining, 14 Jan 2008 09:09:01.
+
+2008-01-21  Karl Berry  <karl@gnu.org>
+
+	* info/info.c (main): silently switch to info-stnd if given
+	-O (--usage) info.
+	Suggestion from Benno, 19 Jan 2008 19:58:47.
+
+2008-01-20  Karl Berry  <karl@gnu.org>
+
+	* install-info/install-info.c (print_help): split up big help string,
+	some rewording.
+
+2008-01-19  Karl Berry  <karl@gnu.org>
+
+	* util/texi2dvi (run_tex): use verbose, not echo, so -q is respected.
+	Report from Kurt Hornik, 19 Jan 2008 11:16:27.
+
+2008-01-18  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (Other Info Directories): mention starting at 0
+	and what-cursor-position when figuring column positions.
+
+2008-01-16  Karl Berry  <karl@gnu.org>
+
+	* util/texi2dvi (move_to_dest): compare with filenames, rather
+	than cmp -s, since the output file might not actually change.
+	Report from Ralf Wildenhues, 15 Jan 2008 07:20:34.
+
+	* doc/texinfo.txi (Invoking makeinfo): --document-language default
+	is @documentlanguage, as of 4.11.
+
+	* doc/texinfo.txi (Makeinfo Pointer Creation): mention the
+	need for @detailmenu here, too.
+
+2008-01-14  Karl Berry  <karl@gnu.org>
+
+	* NEWS: install-info NEWS details.
+
+2008-01-13  Bruno Haible  <bruno@clisp.org>
+
+	* util/gendocs.sh (curdate): Execute 'date' command in the locale
+	specified by SETLANG.
+
+2008-01-12  Bruno Haible  <bruno@clisp.org>
+
+	* doc/texinfo.txi (Cross Reference Parts): better description of arg2.
+	bug-texinfo mail of 12 Jan 2008 15:52:23 +0100.
+
+2008-01-02  Karl Berry  <karl@gnu.org>
+
+	* info/info.c (info_short_help) [__MSDOS__]: puts -b string directly.
+	Suggestion from Benno.
+
+2008-01-02  Karl Berry  <karl@tug.org>
+
+	* util/Makefile.am (TESTS): remove dvipdf.test, it is too
+	dependent on functional TeX installations.  Not our place to test that.
+
+2008-01-02  Karl Berry  <karl@tug.org>
+
+	* install-info/, install-info/tests/: new subdirectories.
+	* util/Makefile.am: move install-info stuff to its own dir, with tests.
+	* configure.ac,
+	* Makefile.am (SUBDIRS): take care of new dirs.
+	* doc/Makefile.am (install-info.1): new source location for man page.
+	* po/POTFILES.in: update source list.
+
+2008-01-02  Ben Asselstine  <benasselstine@gmail.com>
+
+	* install-info/install-info.c: much work toward Debian compatibility.
+	(line_data): new member num_sections to add; change type of
+	add_entries_before.
+	(spec_entry): new members missing_name, missing_description,
+	missing_basename.
+	(longopts): new options --name, --menuentry, --description,
+	--no-indent, --keep-old, --maxwidth, --max-width,
+	--section-regex, --dry-run.
+        (remove_empty_sections, add_entries_into_all_matching_sections,
+        keep_old_flag, indent_flag,
+        order_new_sections_alphabetically_flag): new globals.
+        (print_help): list new options.
+        (output_dirfile): count sections added, and possibly sort them.
+        (parse_input): handle delete_flag.
+        (parse_dir_file): write the end of the last node.
+        (mark_entry_for_deletion, adjust_column, format_entry,
+        split_entry, reformat_new_entries, add_missing_basenames,
+        add_missing_names, add_missing_descriptions,
+        munge_old_style_debian_options): new fns.
+        (main): new variables calign, align, maxwidth,
+        entries_to_add_from_file; munge per debian if needed; handle new
+        options.
+        (compare_entries_text): use mbsncasecmp.
+	* doc/texinfo.txi (Invoking install-info): mention the new options.
+
+2008-01-01  Karl Berry  <karl@gnu.org>
+
+	* info/info.c (info_short_help): break help string into smaller
+	pieces, to help translators.
+	Suggestion from Benno Schulenberg, 01 Jan 2008 12:22:31.
+
+2008-01-01  Ben Asselstine  <benasselstine@gmail.com>  (tiny change)
+
+	* doc/info-stnd.texi (Invoking Info): document this.
+	* info/info.c (long_options, short_options): use -k as an alias
+	for --apropos.
+	(main): recognize it.
+	(info_short_help): document it.
+	(APROPOS_OPTION): no longer needed.
+
+2007-12-23  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* configure.ac (AM_GNU_GETTEXT_VERSION): Bump to 0.17.
+
+2007-12-19  Norbert Preining  <preining@logic.at>  (tiny change)
+
+	* makeinfo/insertion.c (begin_insertion) <direntry>: use add_word
+	instead of insert_string, so that the "This is ..." line is
+	written before the START-INFO-DIR-ENTRY.
+
+2007-12-17  Karl Berry  <karl@gnu.org>
+
+	* doc/info-stnd.texi (Searching Commands): Document the new regex
+	search, a little.
+	(@copying): Update Back-Cover Text.
+	* doc/info.texi (@copying): Update Back-Cover Text.
+
+2007-12-17  Stephane Chazelas  <stephane_chazelas@yahoo.fr>
+
+	* info/infomap.c (R): new command info_toggle_regexp.
+	* info/session.c (use_regex): new static (true by default).
+	(info_toggle_regexp): new command.
+	* info/session.h (info_toggle_regexp): declare it.
+	* info/search.c (regexp_search): new fn.
+	* info/search.h (regexp_search): declare it.
+	Savannah bug 15572.
+
+2007-12-16  Karl Berry  <karl@gnu.org>
+
+	* info/session.c: remove more status messages.
+	Report from Benno Schulenberg, 16 Dec 2007 12:24:12.
+
+2007-12-15  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\pdffontattr): only do the cmaps if this pdftex
+	primitive is defined, for the sake of those running ancient versions.
+
+2007-12-13  Karl Berry  <karl@gnu.org>
+
+	* info/session.c: remove status report messages, said to be noise.
+	Report from Benno Schulenberg, 11 Dec 2007 00:19:57.
+
+2007-12-09  Benno Schulenberg  <bensberg@justemail.net>  (tiny change)
+
+	* makeinfo/makeinfo.c (usage): improve help message.
+	bug-texinfo mail of 02 Dec 2007 23:43:10 +0100.
+
+2007-12-09  Fabian Groffen  <grobian@gentoo.org>  (tiny change)
+
+	* info/makedoc.c (main): reorder calls following the Makefile
+	dependencies, for high-precision filesystems.
+	http://bugs.gentoo.org/show_bug.cgi?id=200662
+	bug-texinfo mail of 3 Dec 2007 17:59:13 +0100.
+
+2007-12-02  Karl Berry  <karl@gnu.org>
+
+	* info/info.c (main): undo change of 2006-08-13 in this file,
+	so info can be easily tested in multibyte locales.
+
+	* all files: use the multibyte case comparison functions
+	mbscasecmp and mbsncasecmp from gnulib, instead of simply
+	strcasecmp and strncasecmp.  (1) gnulib strcase is buggy,
+	declaring the str* functions in string.h instead of strings.h,
+	leading to build failure on AIX 4.3.3 (report from Gary E. Barnes,
+	21 Nov 2007 12:37:12).  (2) we want to support multibyte locales
+	better anyway.
+
+2007-11-30  Sergey Poznyakoff  <gray@gnu.org.ua>
+
+	* doc/Makeinfo.am: Rename txi-no.tex to txi-nb.tex (see
+	2007-10-31).
+
+2007-11-27  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (headings on off): clarify the meaning of
+	@headings on.  Report from Dilyan Palauzov, 25 Nov 2007 17:07:09.
+
+2007-11-25  Stephane Chazelas  <stephane_chazelas@yahoo.fr>
+
+	*  info/indices.c (info_next_index_match): use the line number
+	specified in the index entry, if available.
+
+2007-11-23  Benno Schulenberg <bensberg@justemail.net>  (tiny change)
+
+	* info/infodoc.c: keep help strings together for translation.
+
+2007-11-22  Ralf Wildenhues  <Ralf.Wildenhues@gmx.de>
+
+	* util/texi2dvi: Fix quoting for white space in file names.
+
+2007-11-21  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/lang.h (hz): #undef, since apparently it is defined on
+	AIX 4.3.3.
+	Report from: Gary E. Barnes, 21 Nov 2007 12:37:12.
+
+2007-11-16  Karl Berry  <karl@gnu.org>
+
+	* info/info.c (info_error): use puts instead of fprintf if we
+	don't actually have any arguments.  Else
+	info --file=".%x.%x." will try to print NULL.
+	Report from Cody Rester, 16 Nov 2007 08:59:48.
+
+2007-10-31  Karl Berry  <karl@gnu.org>
+
+	* doc/txi-no.tex: rename to txi-nb.tex.
+	* po/no.po: remove.
+	* po/LINGUAS: remove no.
+
+2007-10-24  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/node.c (cm_node),
+	* makeinfo/cmds.c (cm_settitle): no need to call xml_begin_document.
+	* makeinfo/makeinfo.c (convert_from_loaded_file): call
+	xml_begin_document in docbook case too, else some frontmatter
+	can be lost.
+	Bug report from Sam Varshavchik, 14 Oct 2007 12:10:04, for binutils.
+
+	* makeinfo/insertion.c: formatting.
+
+	* makeinfo/xml.c (xml_begin_document): arg can be const;
+	use basename of @setfilename instead of "book-root".
+	(xml_push_current_element, xml_pop_current_element): use
+	warning fn for consistent formatting.
+
+	* util/dir-example: binutils update, etc.
+
+2007-10-24  Sergey Poznyakoff  <gray@gnu.org.ua>
+
+	* util/gendocs.sh: New option --texi2html, to use texi2html for
+	creating HTML output.
+	Handle special conditional constructs in the template: %%IF
+	HTML_SECTION%% and %%IF HTML_CHAPTER%% (both closed with a
+	corresponding %%ENDIF) to conditionally enable parts of the output
+	depending on texi2html split outputs.
+	* util/gendocs_template: Conditionally enable section and chapter
+	split HTMLs.
+	* util/gendocs_template_min: Likewise.
+
+2007-10-19  Karl Berry  <karl@gnu.org>
+
+	* info/display.c (display_update_one_window): don't try to display
+	a window unless both width and height are >0.
+	* window/window.c (window_new_screen_size): try to ensure that
+	no window width/height ever becomes negative.
+	Bug report and ideas from Vitezslav Crhonek, 18 Oct 2007 15:15:51,
+	as well as https://bugzilla.redhat.com/show_bug.cgi?id=243971.
+
+2007-10-13  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/cmds.c (cm_dircategory): use add_word instead of
+	insert_string so that the info file header ("This is ...") comes
+	after the INFO-DIR-SECTION magic.
+	Bug report from Katsumi Yamaoka, emacs-devel 10 Oct 2007 11:17:10.
+
+2007-10-08  Bruno Haible  <bruno@clisp.org>
+
+	* makeinfo/lang.c (unicode_map): New variable.
+	(cm_search_iso_map): In case of UTF-8 encoding, return a Unicode code
+	point.
+	(add_encoded_char_from_code): New function.
+	(add_encoded_char, cm_accent_generic_no_headers): Use it.
+
+2007-10-03  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (math): @math{k_{75}} is allowed, despite bare
+	braces.
+
+2007-10-02  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (math): Make description more accurate.
+	Ideas by Patrice Dumas, 16 Sep 2007 12:02:46.
+
+2007-09-26  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/index.c (count_strn_chars): new fn.
+	(insert_index_output_line_no): call it.
+	(cm_printindex): call it.
+	This is to fix off-by-one width computation due to @tie{},
+	reported by Werner Lemberg, 16 Sep 2007 16:48:47.
+
+	* makeinfo/cmds.c,
+	* makeinfo/xref.c: #include "index.h", instead of explicit
+	extern printing_index.
+	* makeinfo/index.c (the_indices, index_element_compare): can be static.
+	* makeinfo/index.h: make order of decls match index.c.
+
+2007-09-25  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (Six Parts): End segment should not have toc anymore.
+
+2007-09-24  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/makeinfo.c (convert_from_file): free `input_filename' leak.
+	Reported by Stephen Compall, 21 Sep 2007 20:25:54.
+
+2007-09-21  Stephen Compall <s11@member.fsf.org>  (tiny change)
+
+	* makeinfo/makeinfo.c (convert_from_file): excise code testing
+	case in suffixes that doesn't arise.
+
+2007-09-21  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/makeinfo.c,
+	* info/info.c,
+	* util/texindex.c,
+	* util/install-info.c (main): unify declaration on char *argv[].
+
+2007-09-20  Greg Schafer <gschafer@zip.com.au>  (tiny change)
+
+	* util/dvipdf.test,
+	* util/texi2dvi.test (required): need tex, or the tests fail.
+
+2007-09-17  Karl Berry  <karl@gnu.org>
+
+	* util/defs.in (TEXI2DVI_run): try "type" instead of "which".
+	Report from Michael Deutschmann, 13 Sep 2007 01:29:39.
+
+	* util/defs.in (optionset_get): use `...`, not $(...).  Still too
+	newfangled.  Report from Bert Deknuydt.
+
+2007-09-16  Thien-Thi Nguyen  <ttn@gnuvola.org>  (tiny change)
+
+	* doc/texinfo.tex (w): Do s/indenting manual/manual indenting/.
+
+2007-09-15  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/makeinfo.h,
+	* makeinfo/makeinfo.c,
+	* makeinfo/defun.c,
+	* makeinfo/html.c,
+	* makeinfo/node.c,
+	* makeinfo/toc.c,
+	* makeinfo/xref.c (__): rename to gdt, since HP-UX uses it in
+	<stdsyms.h>.  (Report from Bert Deknuydt, 12 Sep 2007 12:17:34).
+
+2007-09-09  Karl Berry  <karl@gnu.org>
+
+	* Version 4.11.
+
+2007-09-05  Karl Berry  <karl@gnu.org>
+
+	* doc/info-stnd.texi (Variables): make an anchor for
+	scroll-behavior, and use it.  Idea from Benno Schulenberg,
+	04 Sep 2007 00:21:01.
+
+2007-09-03  Karl Berry  <karl@gnu.org>
+
+	* pretest 4.9.92.
+
+	* doc/texinfo.tex (\baselinefactor): new macro, 1 by default.
+	(\setleading): use it, to allow for poor man's double spacing.
+	(\afourpaper, \letterpaper): use absolute dimension for height,
+	instead of a multiple of \baselineskip.  (Otherwise things run off
+	the bottom when double-spacing.)
+
+2007-09-01  Juan Manuel Guerrero  <juan.guerrero@gmx.de>
+
+	* djgpp/config.bat: change file names arguments and configure.orig
+	to args and configure.org.
+	Remove the command line that deletes co*.tmp files.
+
+2007-08-31  Karl Berry  <karl@gnu.org>
+
+	* info/info.c (main) [LC_MESSAGES]: conditionalize setlocale on
+	LC_MESSAGES, since djgpp 2.04 doesn't have it.
+	Report from Juan Manuel Guerrero, 28 Aug 2007 21:38:18.
+	* info/man.c (get_manpage_contents) [LC_MESSAGES]: likewise.
+	* makeinfo/makeinfo.c (main): doc fix, likewise.
+
+2007-08-26  Karl Berry  <karl@gnu.org>
+
+	* info/infodoc.c (info_internal_help_text): hardwire
+	menu-digits help string; bug report from Benno.
+
+2007-08-16  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/lang.c (iso8859_2_map): include known HTML entities,
+	from the 88592.txt file in the GNU enscription distribution.
+
+2007-08-04  Juan Manuel Guerrero  <juan.guerrero@gmx.de>
+
+	* djgpp/config.bat: replace the string diffutil*.pot by
+	the correct one texinfo*.pot
+
+	* djgpp/config.sed: adjust for the use with autoconf 2.61
+
+	* djgpp/config.site: adjust for the use with autoconf 2.61
+
+2007-08-04  Sergey Poznyakoff  <gray@gnu.org.ua>
+
+	* doc/info-stnd.texi: Document cursor-movement-scrolls variable.
+	Document different spellings of scroll-behaviour variable.
+	* info/info-utils.c (info_references_internal): Initialize
+	line_number.
+	* info/infodoc.c (info_internal_help_text): Update docstrings
+	for move-to-next-xref and move-to-prev-xref.
+	* info/session.c (forward_move_node_structure)
+	(backward_move_node_structure): Return int
+	(cursor_movement_scrolls_p): New variable.
+	(info_next_line,info_prev_line,info_forward_char,info_backward_char)
+	(info_forward_word,info_backward_word): Scroll through the
+	entire document if cursor_movement_scrolls_p is set.
+	(info_move_to_xref,info_move_to_prev_xref): Return int
+	* info/session.h (cursor_movement_scrolls_p): New variable
+	* info/variables.h: Likewise
+	* info/variables.c (scroll-behavior): Alias for scroll-behaviour
+	(cursor-movement-scrolls): New variable.
+
+2007-07-30  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\badparencount, \badbrackcount): make these
+	just warnings, not \errmessage's.
+
+2007-07-29  Karl Berry  <karl@gnu.org>
+
+	* pretest 4.9.91.
+	* doc/texinfo.txi (Inserting Quotes): wording.
+
+	* util/Makefile.am (TESTS): remove local.test.  It fails and I
+	would prefer not to replace local with a shell function anyway.
+
+	* util/texi2dvi.test: with -o output, do not expect input.dvi
+	to remain.
+
+2007-07-26  Karl Berry  <karl@gnu.org>
+
+	* util/Makefile.am (pdftexi2dvi): copy texi2pdf, not texi2dvi.
+
+2007-07-24  Karl Berry  <karl@gnu.org>
+
+	* util/texi2dvi (move_to_dest): really move the file,
+	don't just copy it, else automake tests fail.
+	From Michael Deutschmann, 23 Jul 2007 20:55:32.
+
+2007-07-23  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (license notice): punctuation changes to
+	match recommendation.  From Paul Eggert.
+
+2007-07-23  Akim Demaille  <akim@epita.fr>
+
+	* util/texi2dvi: Update DVIPSHEADERS so that dvips finds its
+	special headers.
+	Don't rely on non-IFS splitting when using local.
+	Maybe we should just not use local at all.
+	Or never use it to assign at the same time: declare, then assign.
+	* util/local.test: Check that "local" is used properly with quotes.
+
+2007-07-23  Akim Demaille  <akim@epita.fr>
+
+	Use hevea more like we use tex itself, no longer as a tool
+	that does everything magically.
+	* util/texi2dvi (run_hevea): Remove trailing spaces in the
+	output.
+	(run_tex_suite): Change to the working directory here, no longer
+	in...
+	(run_core_conversion): here, so that even when running hevea where
+	are in the working directory.
+	No longer call cd_orig, do it...
+	(run_tex_suite): here.
+	(run_hevea): Pass verbose flags to it when --debug.
+	(run_tex_suite): Since we now want to run the whole suite of tools,
+	including bibtex, with hevea, use run_core_conversion, not
+	run_tex.
+	(run_core_conversion): Now call run_tex.
+
+2007-07-15  Karl Berry  <karl@gnu.org>
+
+	* doc/info-stnd.texi (@copying, GFDL): remove, since it's
+	not part of info.texi either.
+	(Invoking Info): mention customization here and elsewhere,
+	to make it a bit more prominent.
+
+2007-07-15  Oleg Katsitadze  <olegkat@gmail.com>
+
+	* doc/texinfo.tex (\quotedblleft, \quotedblright, \quoteleft,
+	\quoteright): aliases for the quotation marks from the CM fonts.
+	(\guillemetleft, \guillemotleft, \guillemetright, \guillemotright,
+	 \guilsinglleft, \guilsinglright, \quotedblbase, \quotesinglbase):
+	 new macros to borrow quotation marks from the EC fonts.  The
+	 following font macros support these glyphs.
+	(\ecfont): new macro to switch to a EC font as close as possible
+	 to the current style.
+	(\textecsize, \smallecsize, \smallerecsize, titleecsize, \chapecsize,
+	 \sececsize, \ssececsize, \reducedecsize): new macros to store EC
+	 font name sizes.
+	* makeinfo/cmds.c, makeinfo/cmds.h: added defs for the new
+	quotation marks.
+	* makeinfo/lang.c (cm_special_char): added guillemetleft,
+	guillemotleft, guillemetright, guillemotright.
+	* util/texinfo.dtd (lsquo, rsquo, sbquo, bdquo, laquo, raquo,
+	 lsaquo, rsaquo): entities for the new quotation marks.
+	* doc/texinfo.txi (Inserting Quotation Marks): new section.
+	(General Syntactic Conventions): moved quotation mark syntax to
+	Inserting Quotation Marks.
+	(Preparing for TeX): added info on installation of EC and Euro fonts.
+
+2007-07-14  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (@copying, GNU Sample Texts),
+	* doc/info-stnd.texi (@copying): update Back-Cover Text.
+
+2007-07-12  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/lang.c (default_country_for_lang): strcasecmp returns 0
+	when we find en.
+
+2007-07-10  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/makeinfo.h (enable_encoding): default to 1.
+	* makeinfo/makeinfo.c (long_options): new option --disable-encoding
+	to set to zero.
+	(usage): document --disable-encoding.
+	* makeinfo/lang.c (add_encoded_char): don't enable 8-bit unless we
+	have a document encoding.
+	* doc/texinfo.txi (makeinfo Options, documentencoding): document this.
+
+2007-07-09  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\xrefX): use \putwordSection for external
+	cross-references, too.
+	Report from Ludovic C, 09 Jul 2007 18:09:13.
+
+2007-07-09  Oleg Katsitadze  <olegkat@gmail.com>
+
+	* doc/texinfo.tex (\thissection): renamed to \lastsection.
+	(\thissectionname, \thissectionnum, \evenheadingmarks, \oddheadingmarks, \evenfootingmarks, \oddfootingmarks, \everyheadingmarks, \everyfootingmarks):
+	new macros.
+	(\thischapter, \thischaptername, \thischapternum, \thissection, \thissectionname, \thissectionnum):
+	defined these using marks.
+	(\chapoddpage): omit heading and footing on blank filler pages.
+	* doc/texinfo.txi (Page headings): documented
+	\thissection{,name,num} and \{even,odd,every}{head,foot}ingmarks.
+	* makeinfo/cmds.c (command_table): added
+	{even,odd,every}{head,foot}ingmarks.
+
+2007-07-08  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/node.c (validate_file): don't check for warning limit,
+	it was hit in gnulib.
+	* makeinfo/makeinfo.h (reference_warning_limit): remove.
+	* makeinfo/makeinfo.c (main): ignore the option (but leave it in
+	so any Makefiles or scripts that use it won't gratuitiously break).
+	* doc/texinfo.txi (Invoking makeinfo): remove documentation for
+	--reference-limit.
+
+2007-07-07  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (@copying): new Back-Cover Text.
+
+2007-07-06  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (Other Info Directories): recommend columns 32
+	and 48.  Suggestion from Antonio Diaz Diaz.
+
+2007-07-05  Karl Berry  <karl@gnu.org>
+
+	* texinfo.tex (\setnonasciicharscatcodenonglobal,
+	\setnonasciicharscatcode): no newline after #1, that counts as a space.
+	(\pagebody, \pagesizesyyy): likewise.
+
+2007-07-03  Oleg Katsitadze  <olegkat@gmail.com>
+
+	* doc/texinfo.tex: use \setcolor for color changes instead of
+	\pdfsetcolor, to preserve color changes across page breaks.  Use a
+	darker red (which comes out almost black in b&w print) for links
+	and urls.
+
+2007-07-02  Oleg Katsitadze  <olegkat@gmail.com>
+
+	* doc/pdfcolor.tex: removed (merged with doc/texinfo.tex).
+	* doc/texinfo.tex: merged doc/pdfcolor.tex, omitting unused colors.
+	* doc/Makefile.am, doc/README, doc/texinfo.txi, util/srclist.txt:
+	removed any mention of pdfcolor.tex.
+
+	* doc/texinfo.tex (\chapmacro):  avoid potential breakpoint at
+	interline glue between \pdfdest and the heading.
+	(\safewhatsit): typo.
+
+2007-07-01  Karl Berry  <karl@gnu.org>
+
+	* pretest version 4.9.90.
+
+	* COPYING, all source files: GPLv3.
+
+	* makeinfo/makeinfo.c,
+	* info/info.c,
+	* info/infokey.c,
+	* util/install-info.c,
+	* util/texindex.c: update --version output.
+
+	* Makefile.am (EXTRA_DIST): remove config.rpath, it's in build-aux now.
+	* lib/Makefile.am (libtxi_A_SOURCES): system.h at top level now.
+
+	* util/texi2dvi (move_to_dest): still more tweaks to try avoid
+	complaints from cp and cmp.
+
+	* makeinfo/tests/copying.txi: test with nonempty copying text.
+	* makeinfo/insertion.c (cm_insert_copying): call output_head.
+
+2007-06-29  Karl Berry  <karl@gnu.org>
+
+	* Version 4.9 (GPLv3, made from 4.8 branch).
+
+2007-06-29  Karl Berry  <karl@gnu.org>
+
+	* util/texi2dvi (move_to_dest): do not cmp a directory.
+
+2007-06-27  Karl Berry  <karl@gnu.org>
+
+	* util/texi2dvi (move_to_dest): do not copy a file onto itself,
+	GNU cp complains.
+
+2007-06-27  Oleg Katsitadze  <olegkat@gmail.com>
+
+	* doc/texinfo.tex (\setnonasciicharscatcodenonglobal): new macro.
+	(\scanctxt):  in case of non-ASCII encodings, un-activate 8-bit
+	chars to avoid their expansion.  Report from John Mandereau,
+	22 Jun 2007 17:26:09 +0200.
+
+2007-06-24  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\internalpagesizes): must reset \pdfhorigin and
+	\pdfvorigin after changing \pdfpageheight and \pdfpagewidth.
+
+2007-06-20  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\documentlanguagetrywithoutunderscore): new macro,
+	to try txi-de.tex if @documentlanguage de_DE.
+	(\documentlanguage): call it.
+
+	* lang.c (default_country_for_lang): just return country code, not
+	whole locale string.
+
+	* makeinfo.h (output_head_p): new global.
+	* makeinfo.c (info_output_head, output_head): new fns.
+	(add_char): call it.  This is so we can translate the file header
+	("produced by Makeinfo ...") in Info output as well as HTML.
+	* html.c,
+	* html.h,
+	* cmds.c: change usage of html_output_head_p to output_head_p, etc.
+
+2007-06-17  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/lang.c (default_country_for_lang): implement using the
+	same locales_with_principal_territory list as gettext's msginit.c.
+
+	* makeinfo/lang.c (language_table): update from current list,
+	write out update procedure for next time.
+	* makeinfo/lang.h (language_code_type): update enum.
+	* doc/texinfo.txi (documentlanguage): don't include the list of
+	language codes, change is too rapid.
+
+	* doc/texinfo.tex (\codequoteright, \codequoteleft): support
+	@set txicodequoteundirected and
+	@set txicodequotebacktick, respectively, as well as the non-txi names.
+	* doc/texinfo.txi (Inserting Quote Characters): new node.
+	* NEWS: mention both.
+
+2007-06-14  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/lang.c (cm_documentlanguage): add _CC part if necessary,
+	or split LL_CC if that's given.  Set document_language so that
+	getdocumenttext strings will be translated.
+	* doc/texinfo.txi (documentlanguage):
+	* NEWS: mention this.
+
+	* util/gendocs_template: mention possibility of buying manuals
+
+2007-06-13  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/xml.c (xml_insert_element_with_attribute): close
+	menu_entry and menu_entry_comment elements before handling the
+	detailmenu element (either start or end).
+	From Thien-Thi Nguyen, 04 Jun 2007 01:18:37.
+
+2007-06-03  Per Bothner  <per@bothner.com>
+
+	* xml.c (docbook_element_list): Map ANCHOR to "anchor".
+	* node.c (cm_anchor): Handle docbook.
+
+2007-05-22  Karl Berry  <karl@gnu.org>
+
+	* util/gendocs_template{,_min}: missing period on source link.
+
+2007-05-21  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/multi.c (select_output_environment): C is not Perl.
+
+	* util/install-info.c (--test, --debug): new options,
+	via new variable chicken_flag and debug_flag,
+	and (minimal) implementation thereof.
+	(--silent): synonym for --quiet.
+	* doc/texinfo.txi (Invoking install-info): document them.
+
+2007-05-18  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (Invoking install-info): document them.
+
+2007-05-18  Norbert Preining  <preining@logic.at>
+
+	* util/install-info.c (longopts): new options --remove-exactly,
+	--section-regex.
+	(main): handle them.
+
+2007-05-17  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (Image Syntax): findex entry should just be for
+	"-", not "@-".  (Which fails due to \initial{\} in texinfo.fns,
+	but that's a different story.)
+
+2007-05-04  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/node.c (cm_anchor): ignore following whitespace,
+	including newlines.  Reported by Kevin Ryde.
+	* doc/texinfo.txi (anchor): state this more clearly.
+
+	* doc/texinfo.tex (\tocreadfilename): allow override of
+	\jobname.toc for sake of 2-volume printed lispref.
+	(\finishentry): change test for no page number (and hence no
+	leaders) again, for "Volume N" in lispref.
+	(\smallbook): adjust margins to be more equal.
+
+2007-05-03  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\urlcolor, \linkcolor): define both as \BrickRed
+	by default.
+
+2007-04-29  Werner Koch  <wk@g10code.com>
+
+	* makeinfo/html.c (process_css_file): Don't omit copying the i
+	of @import.  (Reported on 27 Sep 06.)
+
+2007-04-29  Karl Berry  <karl@gnu.org>
+
+	* system.h [__CYGWIN__]: #define STRIP_DOT_EXE 0 (since gunzip.exe
+	may no longer exist), and PIPE_USE_FORK as 1.
+	From Christopher Faylor, 28 Apr 2007 20:25:56.
+
+	* makeinfo/cmds.c (cm_strong): doc fix.
+
+	* makeinfo/makeinfo.h (paragraph_buffer_len): move decl here ...
+	* makeinfo/makeinfo.c (paragraph_buffer_len): from here.
+	* makeinfo/multi.c (select_output_environment): save and restore
+	paragraph_buffer_len.  Otherwise, an exceptionally long multitable
+	entry (gcal.texi) might realloc output_paragraph, thus increasing
+	paragraph_buffer_len, and then we get back to the main text and
+	restore the old output_paragraph, we'll be out of sync.  Yikes.
+	(Thank you to Electric Fence and valgrind.)
+
+2007-04-26  Oleg Katsitadze  <olegkat@gmail.com>
+
+	* doc/texinfo.tex (cmapOT1, cmapOT1IT, cmapOT1TT): new definitions
+	for pdf so that searching and copying from pdf documents will find
+	text properly, e.g., the "fi" in "file".  Report from
+	Frank K on tex-live.
+
+2007-04-26  Karl Berry  <karl@gnu.org>
+
+	* util/gendocs_template: conform to new GNU style.  From Yavor.
+	* util/gendocs_template_min: previous version, without SSI.
+
+2007-04-21  Karl Berry  <karl@gnu.org>
+
+	* system.h (DMALLOC_FUNC_CHECK) [DMALLOC_DEBUG]: #define.
+
+2007-04-17  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi: findex set and clear.
+	From Kevin Ryde, 16 Apr 2007 11:15:00.
+
+2007-04-12  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi: improve @: usage and documentation throughout.
+
+2007-04-08  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/makeinfo.c (bs_escape_quote): new fn.
+	(cm_image) <Info output>: call it, to escape the alt string.
+	Also expand the alt string.
+	bug-texinfo mail from Kevin Ryde, 26 Mar 2007 07:06:14.
+
+	* doc/texinfo.tex (\printindex): set \plainfrenchspacing.
+
+2007-04-07  Oleg Katsitadze  <olegkat@gmail.com>
+
+	* doc/texinfo.tex (\defunpenalty): new register.
+	(\startdefun): use it to avoid page breaks between a defun and a
+	single defunx -- only allow breaks between multiple defunx's.
+
+2007-04-03  Oleg Katsitadze  <olegkat@gmail.com>
+
+	* doc/texinfo.tex (\whatsitskip, \whatsitpenalty): new registers.
+	(\safewhatsit): generalization of \dosubindsanitize.  Change call.
+	(\pdfmkdest, \dosubind, \setref): call it.  This avoids a page
+	break at an anchor (lispref/loading.texi/load-read-function).
+
+2007-04-02  Karl Berry  <karl@gnu.org>
+
+	* util/gendocs_template: "bytes" is more accurate than "characters".
+	* util/gendocs.sh: force English settings; improve --help.
+	From Bruno.
+
+2007-03-31  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/makeinfo.c (init_paragraph): only free output_paragraph
+	if it is non-null.
+
+2007-03-31  Roland Levillain  <roland@lrde.epita.fr>
+
+	* makeinfo/makeinfo.c (cm_image): Look for a JPEG image in the
+	include search path before giving up.
+	Fix inclusion of JPEG images (with non explicit extension)
+	not present in the current directory, but in the include search path.
+
+2007-03-28  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (Menus): missing word "text".
+	From Matt Kraai, 27 Mar 2007 10:26:28 -0700.
+
+2007-03-18  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/makeinfo.c (cm_image): malloc enough space for the .txt
+	when given an extension.
+
+2007-03-17  Karl Berry  <karl@gnu.org>
+
+	* util/dir-example: dmalloc, alignment.
+
+2007-03-13  Oleg Katsitadze  <olegkat@gmail.com>
+
+	* doc/texinfo.tex (\enddoublecolumns): add \penalty0 so the
+	recent contributions won't be spuriously added to an index page.
+
+2007-02-26  Karl Berry  <karl@gnu.org>
+
+	* info/info.c (info_short_example): example for dumping a whole
+	manual, suggested by Dan Jacobson, 21 Feb 2007 08:37:08.
+
+2007-02-24  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (The Top Node): no @insertcopying recommended,
+	per rms.
+
+2007-02-21  Karl Berry  <karl@gnu.org>
+
+	* system.h: simplify system header inclusion, following current
+	practice; that is, copied from GNU Hello.
+
+	* makeinfo/test/no-headers (nulldev): just always use /dev/null.
+	Also from Brian.
+
+	* system.h (strcase.h) [!HAVE_STRCASECMP...]: remove this
+	inclusion entirely, apparently with gnulib string.h suffices.
+	Report from Brian Dessent, 31 Oct 2006 15:50:34.
+
+2007-02-21  Brian Dessent  <brian@dessent.net>  (tiny change)
+
+	* info/info.c,
+	* info/infokey.c,
+	* info/makedoc.c,
+	* util/texindex.c (program_name): declare as non-static, for
+	non-glibc, e.g., Cygwin.  bug-texinfo mail from 31 Oct 2006 15:50:34.
+
+2007-02-14  Miloslav Trmac  <mitr@redhat.com>
+
+	* makeinfo/makeinfo.c (getdocumenttext): Correctly save and
+	restore the current locale configuration.
+	bug-texinfo mail of 14 Feb 2007 16:28:37 +0100.
+
+2007-02-11  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (HTML Xref Link Basics): manual is metasyntactic.
+
+	* doc/texinfo.txi (documentencoding, documentlanguage):
+	mention the UTF-8 is (sort of) supported, and that these commands
+	should be given after @setfilename.
+
+	* doc/texinfo.tex (\pdfmkdest): \makevalueexpandable,
+	so simple @value in @node names can work.
+	Report from Jorge Barros de Abreu, 14 Jan 2007 08:24:57 (+ff).
+
+2007-02-10  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* gnulib/m4/gettext.m4: Upgrade to gettext-0.16.
+	* gnulib/m4/lib-link.m4: Upgrade to gettext-0.16.
+	* configure.ac (AM_GNU_GETTEXT_VERSION): Bump to 0.16.
+
+2007-02-07  Miloslav Trmac  <mitr@redhat.com>
+
+	* configure.ac: Remove unnecessary wcwidth () test.  Add missing
+	setlocale () test.
+	* makeinfo/makeinfo.c (string_width): Remove.
+	* makeinfo/makeinfo.h (string_width): Remove declaration.
+
+	* makeinfo/cmds.c (cm_center)
+	* makeinfo/index.c (insert_index_output_line_no, cm_printindex):
+	* makeinfo/makeinfo.c (do_flush_right_indentation)
+	* makeinfo/multi.c (output_multitable_row): Use mbswidth () and
+	mbsnwidth () instead of string_width ().
+
+2007-01-25  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/float.c (cm_listoffloats): always use the short caption
+	in the list of floats if it is provided.  Report from
+	Jay Berkenbilt, 19 Jan 2007 11:58:00 -0500.
+
+2007-01-16  Akim Demaille  <akim@epita.fr>
+
+	* util/texi2dvi (insert_commands): Use fatal for errors.
+	(insert_commands): Actually, use "error", not "fatal".
+	White space changes.
+
+2007-01-16  Akim Demaille  <akim@epita.fr>
+
+	* util/texi2dvi (run_makeinfo): Instead of putting the whole
+	function in a "case", return if the language is not texinfo.
+
+2007-01-16  Akim Demaille  <akim@epita.fr>
+
+	* util/texi2dvi: White space changes.
+
+2007-01-08  Karl Berry  <karl@gnu.org>
+
+	* util/texinfo.dtd (rArr): define, per Per.
+
+2007-01-07  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/cmds.c (cm_result): use rArr for html or docbook.
+
+	* makeinfo/lang.c (encoding_table): include UTF-8, just passing
+	through everything as-is.
+	(asis_map): rename us_ascii_map (and change US-ASCII entry).
+
+2007-01-03  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/xml.c (xml_id): oops, whitespace should be replaced
+	too.  And probably more, but let's leave it at this for now.
+
+2007-01-02  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/xml.c (xml_id): do not use the SGML rules for id's,
+	which were very restrictive (no 8-bit chars).  Instead, just pass
+	along what we are given, more or less, per current XML.
+
+2006-12-30  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/xml.c (xml_insert_element_with_attribute): remove the
+	warning again, the html-docdesc test triggers it for no apparent
+	reason, and I don't want to debug it now.
+
+	* doc/texinfo.tex (\DeclareUnicodeCharacter, et al.): new macros
+	to support @documentencoding UTF-8 (as well as Computer Modern
+	can).  From Werner Lemberg.
+
+2006-12-28  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/xml.c (xml_insert_element_with_attribute): give a
+	warning if we need to ignore an insertion because the book hasn't
+	started.  Can this ever happen with acceptable Texinfo documents?
+	I saw it in a document without @settitle but with @copying.
+	(xml_add_char): ensure that we have an element stack before
+	testing xml_current_element and failing the assertion.
+	(xml_pop_current_element): do not try to print the value of the
+	current element on underflow, there isn't one.
+
+2006-12-23  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\xrdef, \xrefX, \pdfmkdest): sanitize the node
+	name, so accents (either 8-bit chars or cmds) can be used.
+
+2006-12-22  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\setnormaldispenv, \setsmalldispenv): do
+	\endgraf before changing fonts, to get leading of previous
+	paragraph right when there is no blank line.
+	From John Gabriele, 21 Dec 2006 18:00:24.
+
+2006-12-11  Miloslav Trmac  <mitr@redhat.com>
+
+	* configure.ac: Test wcwidth () availability.
+	* makeinfo/makeinfo.h (string_width, current_output_column): New
+	declarations.
+	(output_column): Remove.  All users replaced by
+	current_output_column (), all modifications dropped.
+	* makeinfo/makeinfo.c (output_paragraph_start_column): New
+	variable.
+	(string_width, current_output_column): New functions.
+	(get_char_len): Remove.
+	(init_paragraph): Initialize output_paragraph_start_column.
+	(flush_output): Update output_paragraph_start_column.
+
+	* makeinfo/cmds.c (cm_center)
+	* makeinfo/index.c (insert_index_output_line_no, cm_printindex):
+	* makeinfo/makeinfo.c (do_flush_right_indentation)
+	* makeinfo/multi.c (output_multitable_row):
+	Don't assume number of columns == number of bytes.
+
+2006-12-11  Miloslav Trmac  <mitr@redhat.com>
+
+	* makeinfo/makeinfo.h (NON_BREAKING_SPACE): New macro.
+	(control_character_bit, meta_character_bit, CTL, UNCTL, META)
+	(UNMETA): Remove.
+	* makeinfo/makeinfo.c (add_char, flush_output): Use
+	NON_BREAKING_SPACE instead of META (' ').
+	(get_char_len): NON_BREAKING_SPACE is only one column wide.
+
+2006-12-05  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (@documentencoding): mention that it is
+	(somewhat) supported in TeX now.
+
+2006-12-05  Paulo Sequeira  <psequeira@gawab.com>
+
+	* doc/texinfo.tex (\documentencoding): real implementation.
+	(\setnonasciicharscatcode): new macro.
+	(\missingcharmsg): new macro.
+	(\latonechardefs, latninechardefs, \lattwochardefs): new macros.
+
+2006-11-24  Karl Berry  <karl@gnu.org>
+
+	* Makefile.am (po-check): new utility target from coreutils.
+
+2006-11-08  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\dopdfimage): look for png, jpg/jpeg/JPG, and
+	  as well as pdf images, since they are supported in pdftex with
+	  no further ado.
+	* doc/texinfo.txi (Image Syntax): document it.
+
+2006-11-05  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (Image Syntax): don't mention GIF any more.
+
+2006-11-01  Miloslav Trmac  <mitr@redhat.com>
+
+	* util/texindex.c (main): Remove off-line sort implementation.
+	(tempdir, tempbase, tempcount, last_deleted_tempcount)
+	keep_tempfiles): Remove variables.
+	(sort_offline, initbuffer, readline, merge_files, merge_direct)
+	(gettempname, maketempname, flush_tempfiles):
+	Remove functions.
+	(texindex_options): Remove --keep and --no-keep documentation.
+	(decode_command): Ignore --keep.
+	(writelines): Fix comment.
+
+2006-10-24  Karl Berry  <karl@gnu.org>  (tiny change)
+
+	* util/texindex.c (readline): do the reallocation (more) correctly.
+	From Miloslav Trmac.
+
+2006-10-10  Karl Berry  <karl@gnu.org>
+
+	* TODO: would be nice if accent commands implicitly used
+	dotless i/j.
+
+2006-10-09  Miloslav Trmac  <mitr@redhat.com>  (tiny change)
+
+	* util/texindex.c (gettempname): new fn, split off from maketempname.
+	(maketempname): call it.  We weren't deleting temp files.
+	(sort_offline): check result from maketempname.
+
+2006-10-06  Ralf Wildenhues  <Ralf.Wildenhues@gmx.de>
+
+	* makeinfo/tests/quote-args: Add missing $srcdir.
+
+2006-10-04  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\singlequotechar): rename to \codequoteright.
+	(\quoteexpand): rename to \rquoteexpand.
+	(\codequoteleft): new def, to look for @set codequotebacktick.
+	(\lquoteexpand, \quoteexpand): new defs.
+	(\lquoteChar, \rquoteChar, \dashChar, \underChar): new \chardef's.
+	(\code): must use new \...Char values, since now ` is active.
+
+2006-10-01  Karl Berry  <karl@gnu.org>
+
+	* util/texi2dvi (run_bibtex): also run bibtex if "no .aux file" in
+	the .log, and "\bibdata" in the aux, for the first run of a btxmac
+	file.  Report from Oleg Katsitadze.
+
+2006-09-30  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (Inserting Braces): spurious ppp.
+
+2006-09-22  Stepan Kasal  <kasal@ucw.cz>
+
+	* configure.ac: Add a comment explaining `env -i PATH=$PATH'.
+
+2006-09-13  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (code): spurious "in the printed manual", from
+	Bob C.
+
+2006-09-01  Eli Zaretskii  <eliz@gnu.org>
+
+	* doc/texinfo.txi (Multitable Rows): Document the Info output of
+	@headitem.
+
+2006-08-26  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/cmds.c (command_table): new command @textdegree{}.
+	* makeinfo/lang.c (cm_special_char): handle textdegree.
+	* doc/texinfo.tex (\textdegree): define it.
+
+	* doc/texinfo.txi (Output Formats): update Beebe paper reference.
+	(Printed Books): update texinfo.tex reference.
+	Report from VAN VLIERBERGHE Stef, 22 Aug 2006 22:05:27 +0200.
+
+2006-08-23  Karl Berry  <karl@gnu.org>
+
+	* doc/Makefile.am (man_rule_bin): use help2man -o, instead of
+	redirection, so that `missing' can infer the output filename.
+
+2006-08-13  Alexander E. Patrakov  <patrakov@ums.usu.ru>  (tiny change)
+
+	* info/man.c (get_manpage_contents), info/info.c (main):
+	Info apparently assumes equivalence of bytes and characters,
+	leading to (for example) translated man output in multibyte
+	locales being broken within a character.  In lieu of a
+	real fix, if MB_CUR_MAX > 1, revert to C.  bug-texinfo mail,
+	07 Aug 2006 14:59:42 +0600.
+
+2006-08-12  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (error \box0): smaller font.
+
+2006-08-08  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (Invoking Macros): all commas inside macro calls
+	are quoted, it seems.  From Patrice.
+
+2006-07-25  Karl Berry  <karl@gnu.org>
+
+	* configure.ac (AC_MINIX): remove, as it seems there is nowhere to
+	call it, and is it really necessary these days?
+
+	* doc/info-stnd.texi (What is Info?): suggest the Emacs Info
+	reader for the nicest display.
+
+2006-07-16  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\onepageout): hardwire a 24pt space before
+	\footlinebox, instead of 2\baselineskip.  If the page break occurs
+	at a heading, for instance, \baselineskip might be larger, causing
+	the footer to jump.
+	(\oddfootingyyy): likewise (although doesn't really matter here).
+	Report from Werner Lemberg, 02 Jun 2006 07:44:36 +0200.
+
+	* doc/texinfo.txi: use @copyright{} in @copying, not (C).
+
+2006-07-15  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\code): make ' active.
+	(@lisp,@example): call \quoteexpand.
+	(\quoteexpand): new definition to make ' active.
+	(\singlequotechar): the active definition of '; if
+	the variable codequoteundirected is @set, use char"d from tt
+	instead of the regular directed quote.
+	This is all to make pasting of ' in examples work in more pdf
+	viewers, at least evince.
+	From: Han-Wen Nienhuys, 2 Jun 2006 01:22:44 +0000.
+
+2006-07-10  <Ralf.Wildenhues@gmx.de>
+
+	* makeinfo/html.c (insert_html_tag_with_attribute): Treat `samp'
+	special, to allow it to nest.
+	* makeinfo/cmds.c (cm_code): use insert_html_tag to add `samp'
+	instead of add_word, so that the roll-back of outer tags works
+	correctly.  (This fixes @option inside of @emph causing badly
+	nested tags in the HTML output, see 8 Jun 2006 00:12:55 +0200 mail.
+	The general problem still remains.)
+	* makeinfo/tests/emph-option: New test.
+	* makeinfo/tests/emph-option.txi: New file.
+	* makeinfo/tests/Makefile.am: Adjust.
+
+2006-07-09  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (makeinfo Pointer Creation, Writing a Menu):
+	mention that accesskey is used in the HTML output.
+
+2006-07-09  <Ralf.Wildenhues@gmx.de>
+
+	* doc/texinfo.txi: Fix some typos.
+
+2006-07-04  Sergey Poznyakoff  <gray@gnu.org.ua>
+
+	* makeinfo/macro.c (add_macro): Initialize def->argcount
+	(get_brace_args): Change argument type to enum quote_type.
+	(All callers updated.) Implement default argument quoting.
+	(expand_macro): Use def->argcount to control the number of passed
+	arguments.
+	(define_macro): Issue a warning if @allow-recursion or @quote-arg
+	is used.
+	* makeinfo/macro.h (MACRO_DEF): New member argcount
+	(enum quote_type): New data type.
+	(get_brace_args): Change argument type to enum quote_type
+	(ME_QUOTE_ARG): Remove the macro
+	* makeinfo/makeinfo.c (cm_ifeq): Update call to get_brace_args
+	* makeinfo/tests/Makefile.am (TESTS): New test quote-args
+	(EXTRA_DIST): New file quote-args.txi
+	* makeinfo/tests/quote-args: New test
+	* makeinfo/tests/quote-args.txi: New file
+	* doc/texinfo.txi: Document automatic argument quoting
+
+2006-07-03  Sergey Poznyakoff  <gray@gnu.org.ua>
+
+	* doc/txi-pl.tex: Do not use \prefixing and \notprefixing. They
+	were defined in PLaTeX, but are no longer global. Use ISO-8859-1
+	instead.
+
+2006-06-27  Akim Demaille  <akim@epita.fr>
+
+	* util/defs.in ($latex_paragraph): New.
+	* util/latex2html.test (input.tex): Make it big enough to trigger
+	the info file splitting.
+	* util/texi2dvi (move_to_dest): Accept several arguments.
+	(run_hevea): Use it to move the whole family.
+
+2006-06-27  Akim Demaille  <akim@epita.fr>
+
+	Fix the clean invocations to hevea.
+	Note that this breaks document using images (to be fixed).
+	* util/latex2html.test (run_hevea_check): Extend to support
+	various build modes.
+	Test them.
+	Force the creation of aux files (something the previous test
+	failed to do...).
+	* util/defs.in (title): New.
+	* util/texi2dvi: Fix incorrect "error" invocations.
+	(run_hevea): Don't pass -o to hevea.
+	Move the result to the expected destination.
+	Don't pass -noiso.
+
+2006-06-26  Akim Demaille  <akim@epita.fr>
+
+	* util/texi2dvi (generated_files_get): Call uniq.
+
+2006-06-07  <Ralf.Wildenhues@gmx.de>
+
+	* Makefile.am (AUTOMAKE_OPTIONS): Require Automake 1.9, since
+	non-direct subdirs in SUBDIRS (gnulib/lib) is a 1.9 feature.
+
+2006-06-24  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (anchor): pxref Node Line Requirements since the
+	same name restrictions apply.  Suggested by Eli.
+
+2006-06-21  Akim Demaille  <akim@epita.fr>
+
+	* util/texi2dvi (fatal): Rename as...
+	(error): this.
+	If the exit status is 0, don't exit.
+	(run): New.
+	Use it where appropriate.
+	(run_dvipdf): New.
+	Use it.
+
+2006-06-21  Akim Demaille  <akim@epita.fr>
+
+	* util/Makefile.am, info/Makefile.am, makeinfo/Makefile.am,
+	* lib/Makefile.am (DEFS): Remove, included in...
+	(AM_CPPFLAGS): this.
+	Add -I $(top_srcdir) to find system.h.
+
+2006-06-19  Karl Berry  <karl@gnu.org>
+
+	* system.h: move to top level.
+	* */Makefile.am (AM_CPPFLAGS): no longer need -I$(top_srcdir)/lib.
+
+	* makeinfo/makeinfo.c (getdocumenttext): replace with a modified
+	version of get_title from gettext, as suggested by Bruno Haible,
+	back on 2 Dec 2003.
+	* gnulib: import xsetenv module.
+
+	* doc/texinfo.tex (\indexdotfill): back to regular (non-italic)
+	periods, suggested by Werner Lemberg and others.
+
+2006-06-19  Akim Demaille  <akim@epita.fr>
+
+	Support dvips and dvipdf for sake of pstricks, and to
+	spare the use tweaking TEXINPUTS.
+	* util/defs.in (optionset_get, assert_and_remove_files): New.
+	* util/texi2dvi (out_lang_tex, out_lang_ext): New.
+	Use them.
+	($language): Rename as...
+	($in_lang): this for consistency.
+	Support --dvipdf and --ps.
+	Not documented yet.
+	* util/dvipdf.test: New.
+	* util/Makefile.am (TESTS): Adjust.
+	* util/texi2dvi.tests (one_run): New.
+
+2006-06-18  Karl Berry  <karl@gnu.org>
+
+	* gnulib: new subdirectory, managed by gnulib-tool.
+	* m4: delete entire subdirectory, now replaced by gnulib/m4.
+	* build-aux: new subdirectory.
+	* README.dev: doc.
+	* autogen.sh: aclocal needs -I gnulib/m4 now.
+	* Makefile.am, util/Makefile.am, lib/Makefile.am, info/Makefile.am,
+	  makeinfo/Makefile.am (AM_CPPFLAGS, LDADD): use new gnulib dirs.
+	* lib/alloca.c, lib/getopt*, lib/gettext.h, lib/mem*, lib/str*,
+	  etc.: delete, now using gnulib modules (as recorded in
+	  gnulib/m4/gnulib-cache.m4)
+
+2006-06-08  Karl Berry  <karl@gnu.org>
+
+	* po/Makevars (XGETTEXT_OPTIONS): add --keyword=__, so that the
+	gettext will mark the new __ strings (2006-05-29 change from
+	Norbert) for translation again.
+
+2006-06-07  <Ralf.Wildenhues@gmx.de>
+
+	* makeinfo/footnote.c (output_pending_notes): Use
+	add_html_block_elt instead of add_word for final part of
+	footnote, so no extra <p> is output.
+
+2006-06-05  Akim Demaille  <akim@epita.fr>
+
+	* util/bibtex.test: Add it for real.
+
+2006-06-03  Karl Berry  <karl@gnu.org>
+
+	* util/texi2dvi: always report tex command being used.
+
+2006-06-02  Karl Berry  <karl@gnu.org>
+
+	* util/texi2dvi (--src-specials): new option,
+	requested by Charlie Zender.
+
+2006-06-01  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\thischapternum): new macro for
+	headings/footings, requested by Werner.
+	* NEWS, doc/texinfo.txi (Command List, Custom Headings): document it.
+
+2006-06-01  Sergey Poznyakoff  <gray@gnu.org.ua>
+
+	* makeinfo/html.c (html_output_head): Insert external CSS
+	reference if css_ref is set.
+	(fix_filename): Attempt to transliterate the name before falling
+	back to numeric symbol representation.
+	* makeinfo/lang.c (iso8859_2_map): Add transliterations
+	(koi8_map): New map for koi8-u and koi8-r encodings.
+	(encoding_table): Add koi8-u and koi8-r
+	(cm_search_iso_map_char,lang_transliterate_char): New functions.
+	* makeinfo/lang.h (encoding_code_type): Add KOI8_R, KOI8_U
+	(struct iso_map_type): New member `translit'.
+	(lang_transliterate_char): New function prototype.
+	* makeinfo/makeinfo.c: New options --css-ref and
+	  --transliterate-file-names.
+	* makeinfo/makeinfo.h (css_ref, transliterate_file_names): New
+	variables.
+	(URL_SAFE_CHAR): Bugfix: Make sure argument is in isalnum() domain.
+
+	* doc/texinfo.txi: Document new options.
+
+2006-05-30  <Ralf.Wildenhues@gmx.de>
+
+	* configure.ac (sigblock): Fix underquoted macro usage.
+
+2006-05-30  Akim Demaille  <akim@epita.fr>
+
+	* util/texi2dvi (aux_file_p): Rename the second occurrence as...
+	(bibaux_file_p): this.
+	(run_bibtex): Use it.
+	(options processing, $usage): Support --dvi for symmetry and to
+	ease systematic tests.
+	* util/bibtex.test: New.
+
+2006-05-30  Akim Demaille  <akim@epita.fr>
+
+	* util/texi2dvi: Add support for latex to text and info using
+	hevea.
+	Don't document it yet, as it's preliminary and on some regards
+	incomplete.  It is usable though.
+	(IFS): Use a more robust definition, taken from Autoconf.
+	(bibaux_file_p): New, extracted from...
+	(run_html): Generalize and rename as...
+	(run_hevea): this.
+	(run_core_conversion): Adjust.
+	(option processing): Accept --text and --info.
+	* configure.ac: Check for TEX and HEVEA.
+	* util/defs.in: No longer create a texi file by default.
+	Handle hevea requests.
+	(create_input_tex, create_input_texi): New.
+	(assert_files, list_files): Rework to use diff instead of test.
+	And sort both lists of files before comparing them.
+	* util/latex2html.test: New.
+	* util/Makefile.am (TESTS): Update.
+
+2006-05-29  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/makeinfo.h (getdocumenttext, __): new definitions for
+	strings translated according to the document language, instead of
+	the interface language.
+	* makeinfo/makeinfo.c (getdocumenttext): new fn.
+	(usage): new option --document-language to specify.
+	* makeinfo/lang.h (document_language): new declaration.
+	* makeinfo/lang.c (document_language): define.
+	* makeinfo/defun.c, makeinfo/html.c, makeinfo/node.c,
+	makeinfo/toc.c, makeinfo/xref.c: use __ instead of _ for document
+		strings.
+	* doc/texinfo.txi (makeinfo options): minimal documentation.
+	From Norbert Preining, 10 Mar 2006 02:22:19 +0100.
+	Debian bugs 113988 and 355367.
+
+2006-05-28  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\indexdummies): \let\endinput=\empty, to
+	avoid premature end of processing when an index entry is generated
+	from a macro.
+	Report from Graham Percival to help-texinfo, 22 May 2006 12:03:12.
+
+	* doc/texinfo.tex (\dots): use width of three period characters if
+	that is wider than 1.5em.  Report from Steve Peter.
+
+	* system.h [__CYGWIN__] (NULL_DEVICE): define as /dev/null.
+	From Ralf W.
+
+2006-05-27  Karl Berry  <karl@gnu.org>
+
+	* texi2dvi (IFS): initialize, since otherwise when we save/restore
+	it may end up being set-but-empty, which may disable splitting.
+	Report from Ralf W.
+
+2006-05-20  Karl Berry  <karl@gnu.org>
+
+	* util/texi2dvi (run_makeinfo): use $TEX instead of hardwiring
+	tex, to maybe avoid running into some
+	misconfigured TeX installations, resulting in
+	 ---! /var/lib/texmf/web2c/etex.fmt was written by pdfetex
+	 (Fatal format file error; I'm stymied)
+	Original report from Ralf Wildenhues, 12 May 2006 11:19:13 +0200.
+
+2006-05-18  Ralf Wildenhues  <Ralf.Wildenhues@gmx.de>
+
+	* util/gendocs.sh: quoting, url fixes.
+
+2006-05-08  Karl Berry  <karl@gnu.org>
+
+	* autogen.sh: new name for bootstrap, and improve msg.  From Bruno
+	via hello.
+
+2006-05-07  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\dopdfimage): width and height args might have
+	whitespace.  Report from Bob Chassell.
+
+2006-05-05  Karl Berry  <karl@gnu.org>
+
+	* texinfo.tex (\definetextfonsizexi, \definetextfonsizex): new cmds.
+	(\fonttextsize): new user-level command @fonttextsize to change
+	text font size.  (To be used for the next Emacs edition.)
+	* makeinfo/cmds.c (cm_fonttextsize): new fn.
+	(command_table): include it.
+	* NEWS, doc/texinfo.txi (Fonts): document it.
+
+2006-05-04  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (Reporting Bugs): wording to match hello.
+
+2006-04-26  Karl Berry  <karl@gnu.org>
+
+	* doc/Makefile.am (TXI_XLATE): add txi-ru.tex and txi-uk.tex,
+	from Sergey Poznyakoff.
+	* doc/txi-ru.tex, doc/txi-uk.tex: new files.
+
+2006-04-13  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/insertion.c (end_insertion): kill_self_indent(-1) to
+	remove all indentation.  From Brian Gough, 11 Apr 2006 16:42:29 +0100.
+
+2006-04-11  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (GNU Sample Texts): GFDL is version 1.2 now.
+	Report from Claudio.
+
+2006-03-28  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (HTML Xref Command Expansion): use U+2605 for
+	@point{} and U+22A3 for @print{}.  From Patrice.
+
+2006-03-25  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (copying): warn not to indent lines within the
+	@copying.
+
+2006-03-24  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/html.c (escape_string): do not free the old string,
+	that is dangerous, only the caller should do it.
+	(add_link): escape the title string.
+	Report from Ralf Wildenhues, 17 Mar 2006 05:08:11 +0100.
+
+2006-03-21  Stepan Kasal  <kasal@ucw.cz>
+
+	* doc/texinfo.tex (\parseargusing, \finishparsearg): Use \argtorun
+	  instead of \next.
+	(\argcheckspacesY): Change the wording of the comment about \next.
+	(\braceorline, \braceorlinexxx): Do not suppose that \next is
+	  preserved during the run of \parsearg, anyway.
+
+2006-03-14  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (section, subsection, unnumberedsubsec,
+	subsubsection): make it clear that @section can be used within
+	any chapter unit.
+	Report from: Hynek Hanke, 11 Mar 2006 20:44:34 +0100.
+
+	* doc/texinfo.tex (\imagexxx): do not center the image by default.
+	The manual says we don't do that, and Lilypond needs
+	left-justification.
+	From: Han-Wen Nienhuys, 9 Mar 2006 21:08:26 +0000.
+
+2006-03-13  Miloslav Trmac  <mitr@redhat.com>  (tiny changes)
+
+	* info/Makefile.am (infokey_LDADD): don't link with curses.
+
+	* makeinfo/sectioning.c: cast arguments to substring, to placate
+	current gcc.
+
+2006-03-13  Karl Berry  <karl@gnu.org>
+
+	* util/texi2dvi: reindent --help message.
+
+2006-03-07  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (Writing a Node): show example of specifying
+	some pointers but not others.
+
+2006-02-28  Akim Demaille  <akim@epita.fr>
+
+	Be robust to spaces in directory names.
+	* util/texi2dvi (absolute): Be robust to non directories.
+	(run_tex): Quote in_input properly.
+	(compile): Quote args of eval properly.
+
+2006-02-25  Karl Berry  <karl@gnu.org>
+
+	* info/nodes.c (info_get_node_of_file_buffer): try to avoid
+	running man Top, which returns the top(1) man page on Debian.
+
+2006-02-14  Sergey Poznyakoff  <gray@gnu.org.ua>
+
+	* util/texi2dvi: New options --translate-file and --recode-from.
+
+2006-02-13  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/cmds.c (cm_enddots): output three dots, not four, for
+	consistency with texinfo.tex.
+
+	* doc/texinfo.tex (\doignore): move \obeylines here.
+	(\dodoignore): from here.  (just putting catcode changes together.)
+	(\doignoretextyyy): revert to previous code, no ##2^^M;
+	that caused blank lines in verbatim envs inside failing conditionals.
+	(\enddoignore): ignore any text after the @end #1 here, instead.
+	Bug report from Bob Wilson, 5 Oct 2005 21:22:33 -0700,
+	amended fix from Stepan, 13 Feb 2006 21:57:07 +0100.
+
+	* info/nodes.c (info_get_node): don't try man Top and man top and
+	man TOP.  Debian bug 234848.
+
+2006-02-11  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/makeinfo.c (write_trailer): new fn.
+	(convert_from_loaded_file) <finished>: call it *after* the
+	tag table has been written, else Emacs likely won't seeit.
+	Report from: Juri Linkov, 11 Feb 2006 03:11:33 +0200.
+
+2006-02-10  Karl Berry  <karl@gnu.org>
+
+	* util/texinfo.dtd (menucomment): more inclusive.
+	(enumerate): allow indexes.
+	From Torsten.
+
+2006-02-06  Karl Berry  <karl@gnu.org>
+
+	* util/texinfo.dtd: apparently we cannot have -- in an XML
+	comment.  Kludge.
+
+2006-02-05  Karl Berry  <karl@gnu.org>
+
+	* util/texi2dvi (run_makeinfo): eval $makeinfo, for gettext
+	0.14.5's complex $MAKEINFO definition.
+
+2006-01-30  Karl Berry  <karl@gnu.org>
+
+	* util/texinfo.dtd: many additions and fixes from
+	Torsten Bronger.
+
+2006-01-27  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\sectionheading): \nobreak before the \vbox
+	with the heading.
+	Report from: Norbert Preining, 2 Nov 2005 10:07:57 +0100,
+	Debian bug 276000.
+
+2006-01-25  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/lang.c (cm_accent_generic_no_headers): do nothing
+	if end == 0 (accent command in @menu with --no-headers).
+	Report from Akim Demaille, 23 Jan 2006 16:41:38 +0100.
+
+2006-01-18  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (key): more examples.
+
+2006-01-18  Akim Demaille  <akim@epita.fr>
+
+	Sometimes the temporary directory remains.
+	Reported by Wybo Dekker.
+	* util/defs.in (assert_files): New.
+	* util/texi2dvi.test: Use it.
+	Extend to check the local builds.
+	* util/texi2dvi (aux_file_p, index_file_p, xref_file_p): Check
+	that the file exists.
+	(generated_files_get): Simplify according to these changes.
+	(remove, cleanup): New.
+	Use the latter in the cleaning trap.
+	(mostly_clean): Use them.
+
+2006-01-17  Akim Demaille  <akim@epita.fr>
+
+	* util/texi2dvi (generated_files_get): Skip nonexistent files
+	earlier.
+
+2006-01-15  Karl Berry  <karl@gnu.org>
+
+	* info/infodoc.c (info_internal_help_text): combine messages
+	which are single sentences into one string.
+	Report from Clytie Siddall, via
+	http://sourceforge.net/tracker/index.php?func=detail&aid=1406541&group_id=40033&atid=426818.
+
+	* po/POTFILES.in: add missing makeinfo/xref.c, makeinfo/float.c.
+	Report from Torsten.
+
+2006-01-09  Akim Demaille  <akim@epita.fr>
+
+	* util/texi2dvi: set -e.
+	Stop using the idiom "test && action" in favor of "if test; then
+	action; fi".
+	(xref_files_save): Use tar instead of cp.
+	(run_makeinfo): Fix a "local" use.
+
+2006-01-08  Loic Minier  <lool@dooz.org>  (tiny change)
+
+	* info/display.c (display_update_one_window): systematize
+	check as to whether `entry' is non-null before referring to it.
+	Still some segfaults when resizing the window rapidly.
+
+2006-01-08  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\normalturnoffactive): restore setting of
+	active \ to \normalbackslash.
+	(\onepageout): restore call to \normalturnoffactive.
+	Otherwise, if a page break happens at the wrong time, the active
+	\ will result in writing an actual \ character,
+	instead of {\tt \backslashcurfont }.
+	Report from Kurt.Hornik@wu-wien.ac.at, 6 Jan 2006 14:38:38 +0100.
+	[test idxback-exts]
+
+2005-12-26  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (node, Node Names): pxref Node Line Requirements,
+	about restrictions on characters in node names.
+
+2005-12-25  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\pdfurl): make @/ a no-op.
+	Report from Kurt Hornik, 23 Dec 2005 13:17:56 +0100.
+
+	* util/texi2dvi (no_file_line_error): new control,
+	with option --no-line-error to set it.  Wybo Dekker's mk program
+	wants to parse TeX's original error messages.
+	(run_tex): obey it.
+
+2005-12-22  Akim Demaille  <akim@epita.fr>
+
+	Implement --mostly-clean, improve the detection of aux files.
+	* util/texi2dvi ($action): New.
+	(--mostly-clean): New.
+	(cd_orig): New.
+	(generated_files_get, aux_file_p, index_file_p, xref_files_p):
+	New.
+	(get_index_files): Remove, replaced by the previous functions.
+	(get_xref_files): Rename as...
+	(xref_files_get): this.
+	(run_index): Use generated_files_get.
+	(clean): Rename as...
+	(mostly_clean): this.
+	Strengthen.
+	($t2ddir): Try to have a `local' absolute file name, not a fully
+	absolute one to avoid very very long file names.
+	* util/texi2dvi.test: Exercise --mostly-clean.
+
+2005-12-20  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (key): DELETE, not DEL, per rms.
+
+2005-12-19  Akim Demaille  <akim@epita.fr>
+
+	* util/texi2dvi (run_conversion): Rename as...
+	(run_core_conversion): this.
+	(compile): New.
+	This is the former main program.
+	(clean): New.
+	Use it.
+	(language): Compute it in the main loop.
+
+2005-11-18  Akim Demaille  <akim@epita.fr>
+
+	Factor the handling of list of directories.
+	* util/texi2dvi (list_append, list_prefix, list_infix)
+	(list_dir_to_abs, absolute): New.
+	Use them.
+	($miincludes, $txincludes): Remove, replaced by...
+	($includes): this one.
+	(func_dirname): Don't use fd6 that might not be set up yet.
+	(run_to_html): Use $includes.
+
+2005-11-13  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (Top Node Example): missing @end iffnottex.
+	(The Top Node): @end ifnottex, not ifnottext.
+	From Steve Peter.
+
+2005-11-10  Akim Demaille  <akim@epita.fr>
+
+	Make the naming conventions more consistent and shorter.
+	* util/texi2dvi (oformat): Rename as...
+	(out_lang): this.
+	(filename_input, filename_src, filename_xtr, filename_rcd,
+	filename_noext, filename_dir, filename_dir_abs): Rename as...
+	(in_input, in_src, in_xtr, in_rcd, in_noext, in_dir, in_dir_abs)
+	this.
+	(in_base, out_name, out_dir, out_dir_abs, out_base, out_noext): New.
+	(output_base_name): New.
+	(move_to_dest): Use it.
+	(run_tex): Catch invalid calls.
+	Be robust to inclusion in subdirs.
+	(run_bibtex): Simplify when this is not a LaTeX file.
+	(run_tex_suite): cycle is local.
+	(input_file_name_decode): New, extracted from the main loop.
+	Some variables are now local.
+
+	Use the output file name as root for the t2d directory name.
+	* util/texi2dvi (t2ddir): Use $out_noext, no $in_noext.
+	* util/texi2dvi.test: Adjust.
+
+	Be robust to inclusion in subdirs.
+	* util/texi2dvi (run_tex): Look for \include of files in subdirs.
+	(run_bibtex): Citations might be in another aux file.
+
+	Support html.
+	* util/texi2dvi (run_to_html): New.
+	(run_conversion): New, extracted from the main loop.
+	Support --html.
+
+
+2005-11-10  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (Def Cmd Template): mismatched example and output.
+	Report from: Steve Peter, 09 Nov 2005 12:46:02 -0500.
+
+2005-10-23  Karl Berry  <karl@gnu.org>
+
+	* util/texi2dvi (insert_commands): missing $ in case statement;
+	from report by Simon Josefsson.
+
+2005-10-09  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\doignoretext): ignore characters after
+	ignored conditionals, e.g., @end ifset.  Otherwise the newline
+	following results in a blank line being output in verbatim
+	environments.
+	From: Bob Wilson, 5 Oct 2005 21:22:33 -0700.
+
+2005-10-05  Akim Demaille  <akim@epita.fr>
+
+	* util/texi2dvi.test: Make sure --build=clean passes.
+	* util/texi2dvi: Fix the handling of --build.
+
+2005-10-05  Karl Berry  <karl@gnu.org>
+
+	* util/texindex.c (maketempname): use mode 0600.
+
+2005-10-02  Karl Berry  <karl@gnu.org>
+
+	* util/texindex.c (maketempname): avoid race condition.
+	(concat): now take three args, so rename to concat3.
+	Debian bug 328365.
+
+2005-09-30  Karl Berry  <karl@gnu.org>
+
+	* configure.ac: reenable utils/defs generation, now that we have
+	the files below.
+
+2005-09-29  Akim Demaille  <akim@epita.fr>
+
+	* doc/texinfo.txi: Document pdftexi2dvi.
+	* doc/Makefile.am (common_texi2dvi_deps): New.
+	Handle texi2pdf and pdftexi2dvi.
+	* util/texi2dvi: Stop supporting shortened long options, as it's
+	causing troubles.  Short options are here anyway.
+	(local): Provide a default implementation if not supported by the
+	shell.
+	(findprog): Use return.
+	(get_xref_files): Rename as...
+	(xref_files_get): this.
+	(xref_files_changed, xref_files_save): New.
+	(run_tex_suite): New.
+	(move_to_dest): Use `local'.
+	($textra_cmd): Compute it in...
+	(insert_commands): here.
+
+	* tests/defs.in, tests/texi2dvi.test, tests/local.test: New.
+	* configure.ac, tests/Makefile.am: Adjust.
+
+2005-09-22  Akim Demaille  <akim@epita.fr>
+
+	* util/texi2dvi ($build_dir): New.
+	(--build-dir): New.
+	($usage): Adjust.
+	($line_error): New.
+	AUC-TeX wants regular TeX error messages, so don't require
+	GNU style error message when under AUC-TeX.
+	($filename_dir_abs): New.
+	($t2ddir): When the build-dir is specified, make sure to avoid
+	collisions between files with equal names, but in different
+	directories.
+	($command_line_filename): Decode possible TeX commands.
+	* util/Makefile.am (pdftexi2dvi): New.
+
+2005-09-20  Akim Demaille  <akim@epita.fr>
+
+	* util/texi2dvi: Be sure to return to the current directory even
+	after obeying --clean.
+
+2005-09-17  Sergey Poznyakoff  <gray@Mirddin.farlep.net>  (tiny change)
+
+	* makeinfo/cmds.c (handle_include): don't expand @verbatiminclude,
+	so that texi2dvi will pass it through to texinfo.tex.  Otherwise
+	the dvi/pdf output is wrong.
+
+2005-09-05  Stepan Kasal  <kasal@ucw.cz>
+
+	* doc/texinfo.tex: Fix typo in a comment.
+
+2005-09-05  Karl Berry  <karl@gnu.org>  (tiny change)
+
+	* util/texi2dvi: look for btxmac.tex's "Undefined citation" message.
+	Then texi2dvi works with (e)plain, too, by setting LATEX=tex.
+	Report from Oleg Katsitadze.
+
+2005-08-31  Akim Demaille  <akim@epita.fr>
+
+	* util/texi2dvi: Fix white space issues.
+	Quote uses of directory and file names.
+	Don't expect "export var=val" to work (e.g., SunOS 5.9): do it in
+	two steps.
+	($tex_help): Compute it where needed (run_tex), in particular so
+	that $tex is defined when used.
+	(func_dirname): New.
+	($quiet, $verb): Now regular true/false variables.
+	(verbose): Adjust.
+	(run_tex): When we introduced white space by making absolute file
+	names, circumvent TeX's phobia of space in file names by
+	introducing a symbolic link.
+	(filename_dir): Keep it relative when not $tidy.
+
+2005-08-30  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/xref.c (cm_xref): if the following wrong char is ),
+	suggest @pxref.  Suggested by Kevin Ryde, 30 Aug 2005 09:23:39 +1000.
+
+2005-08-17  Predrag Rakic  <pec@uns.ns.ac.yu>
+
+	* doc/txi-sr.tex: Serbian translation.
+
+2005-08-15  Stepan Kasal  <kasal@ucw.cz>
+
+	* doc/texinfo.tex (\normalturnoffactive): Now contains the body of
+	\turnoffactive.  Don't explicitly restore the original value of active \
+	---just let it be.
+	(\turnoffactive): Can now be redefined as \normalturnoffactive
+	  \otherbackslash.
+	(\atdummies): All calls were followed by \turnoffactive; remove that
+	  and add \otherbackslash to the definition, since it already calls
+	  \normalturnoffactive indirectly.
+	(\xrefX): One of the calls of \refx missed the second parameter;
+	  fix that.
+	(\commondummiesnofonts): No need to make ~ other for the definition;
+	  it contains only \~ now.
+	(\backChar, \plusChar, \underChar): Nuke.
+	(\colonChar, \commaChar, \dotChar, \exclamChar, \questChar, \semiChar):
+	  Move just before the definition of ...
+	(\plainfrenchspacing): ... since it's the only place where it's used.
+	(\activebackslash): Remove both definitions; the first one was shadowed
+	  by the second one; and the second one can easily be eliminated; it
+	  was used only on one place.
+	(\backslashlparen): No need for this; \realbackslash( is enough.
+	(\backslashrparen): Likewise.
+
+2005-08-14  Per Bothner  <per@bothner.com>
+
+	* makeinfo/index.c (cm_printindex): Don't defer index if docbook,
+	since we don't need it and it prevents output to a pipe.
+
+	* makeinfo/insertion.h (default_item_function): New declaration.
+	* makeinfo/insertion.c (default_item_function): New variable.
+	(begin_insertion): Use default_item_function for @bullet default.
+	(pop_insertion): Check if item_function is default_item_function.
+	* makeinfo/xml.c (xml_begin_table): Don't emit mark attribute
+	if the item_function was implied.
+
+2005-08-13  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\writetocentry, ...): restore calls to
+	\turnoffactive after \atdummies removed in the July 1 change (v.194).
+	\turnoffactive and \normalturnoffactive are not the same -- we need
+	actual backslash characters in the pdf destinations and .aux and
+	index files, not expansions.  (I'm not sure we ever need
+	\normalturnoffactive, actually.)
+
+2005-08-12  Karl Berry  <karl@gnu.org>
+
+	* doc/info.texi: merge changes from Emacs, by Juri.
+
+2005-08-06  Per Bothner  <per@bothner.com>
+
+	* makeinfo/index.c (cm_printindex): Don't xml_insert_indexentry if
+	docbook, since we'll let the doxbook processor generate the index.
+	* makeinfo/xml.h (xml_sort_index, xml_insert_indexentry): Remove.
+	* makeinfo/xml.c (xml_begin_index): Don't actually do any formatting.
+	(xml_end_index):  Don't do anything except close <index>.
+	(xml_insert_indexentry): Remove no-longer-used function.
+
+	* makeinfo/xml.c (element docbook_element_list): The docbook <index>
+	element should *not* be contained_in_para.
+
+	* makeinfo/xml.c (xml_begin_document): Add id attribute to top-level
+	book if emitting docbook.
+
+2005-08-05  Stepan Kasal  <kasal@ucw.cz>
+
+	* configure.ac: (auto)update.
+	* info/Makefile.am, makeinfo/Makefile.am, utils/Makefile.am: s/INCLUDES/AM_CPPFLAGS/
+	* lib/Makefile.am (INCLUDES): Remove.
+
+2005-08-05  Stepan Kasal  <kasal@ucw.cz>
+
+	* doc/texinfo.tex (\Efloat): Revert the previous change, ...
+	(\commondummiesnofonts): ... instead, add the three commands here.
+
+2005-08-04  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\Efloat): make \xref, \pxref, \ref no-ops.
+	Report from: Aaron S. Hawley, 3 Aug 2005 19:46:40 -0400.
+	(But what about all the other commands, don't we need to no-op
+	everything?)
+
+2005-07-31  Per Bothner  <per@bothner.com>
+
+	* makeinfo/cmds.c (cm_code): For html output use lsquo and rsquot
+	entities around @samp.
+
+2005-07-10  Stepan Kasal  <kasal@ucw.cz>
+
+	* doc/texinfo.tex (\texinfoversion): Update.
+
+2005-07-05  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (verbatim): mention @verbatim inside
+	@smallformat, now that it works.
+
+2005-07-04  Stepan Kasal  <kasal@ucw.cz>
+
+	* doc/texinfo.tex (\commondummies): Remove \unsepspaces, it's already
+	  called by \normalturnoffactive.  Move \normalturnoffactive near the
+	  end of the macro.
+
+2005-07-01  Stepan Kasal  <kasal@ucw.cz>
+
+	* doc/texinfo.tex: Remove all occurences of \normalturnoffactive or
+	  \turnoffactive attached to \indexdummies or \atdummies, since they
+	  are redundant; \indexdummies and \atdummies both call \commondummies,
+	  which calls \normalturnoffactive, which calls \turnoffactive.
+	(\indexdummies, \atdummies): Move the definitions of \definedummy* ...
+	(\commondummies): ... here; they now take a control sequence as their
+	  parameter; all callers fixed.
+	(\indexnofonts): Fixed the definitions of \definedummy* macros.
+	(\indexdummies): Define \escapechar = `\\ ...
+	(\onepageout): ... thus remove it from here.
+	(\macrolist): Now has the form of \definedummyword\macro1...  It also
+	  gathers user-defined aliases, so there is ...
+	(\addtomacrolist): ... a new macro ...
+	(\macroxxx, \aliasyyy): ... caled from these two.
+	(\unmacro, \unmacrodo): Adapted to the new form of \macrolist.
+	(\turnoffmacros, \emptyusermacros): Removed, mere \macrolist is enough
+	  now.
+
+2005-07-01  Stepan Kasal  <kasal@ucw.cz>
+
+	* doc/texinfo.tex (\nonarrowing): Update the description.
+	(\cartouche): Set \nonarrowing to "t", not \comment.
+	(\nonfillstart, \quotation): Reset \nonarrowing.
+
+2005-06-30  Stepan Kasal  <kasal@ucw.cz>
+
+	* doc/texinfo.tex (\setupverbatim): Use \nonarrowing to declare that
+	we don't want to narrow the environment.
+
+2005-06-24  Akim Demaille  <akim@epita.fr>
+
+	* util/texi2dvi: Move the computation of $makeinfo to...
+	(run_makeinfo): here.
+
+	* util/texi2dvi (tex, bibtex, texindex): Move their computation to...
+	(run_tex, run_bibtex, run_texindex): here, to clarify.
+	(move_to_dest): New.
+	(run_tex): Use it to copy the result back.
+	Don't bother exporting the log.
+
+2005-06-10  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\., \!, \?): include \space after setting
+	\spacefactor, else all space disappears.
+	Report from Jim Meyering, 09 Jun 2005 23:03:22 +0200.
+
+2005-06-10  Akim Demaille  <akim@epita.fr>
+
+	* util/texi2dvi (run_tex): Updating the output is also needed when
+	-o is used, not just when $tidy.
+
+2005-06-09  Akim Demaille  <akim@epita.fr>
+
+	* util/texi2dvi: Support --tidy, a new build mode which lets all the
+	compilations happen in a local directory.  This is
+	similar to using --clean, but the files are preserved.  The
+	benefits are:
+	- the output is updated when each tex compilation is completed:
+	  - to allow interactive viewing
+	  - to preserve the previous output is the compilation fails
+	- if the compilation fails, the previous state is preserved.
+	- a fixed set of files to clean in this end (this directory)
+	- complete independence between DVI and PDF compilations.
+
+	(comment_iftex_sed, uncomment_iftex_sed): No
+	longer external files, but simple strings named...
+	(comment_iftex, uncomment_iftex): like this.
+	(utildir): Remove.
+
+	Make the structure clearer by introducing auxiliary functions.
+	* util/texi2dvi (run_bibtex, run_index, insert_commands)
+	(run_recode, run_thumpdf): New.
+	Extracted from the main loop.
+
+	Simplify some variable handling.
+	* util/texi2dvi (clean, debug): Now true/false Booleans.
+	Adjust dependencies.
+
+	Introduce a cycle counter.
+	* util/texi2dvi (cycle): New, to inform the user about the number
+	of compilation cycles.  That's also a nice tool to help debugging:
+	look for "cycle" in the trace to go from cycle to cycle.
+
+	Introduce the work dir, and use it.
+	* util/texi2dvi (ensure_dir, workdir): New.
+	(tmpdir_src, tmpdir_xtr, tmpdir_rcd, tmpdir_bak): Replace with...
+	(work_src, work_xtr, work_rcd, work_bak): these.
+	Adjust dependencies.
+	(filename_src, filename_xtr, filename_rcd, filename_bak): these.
+	(run_tex): Update the output.
+	Remove this task from the core of the loop.
+	(get_xref_files): Simplify by considering all the files around,
+	instead of try to select only those that correspond to a given
+	pattern.
+	Also, there's no reason to build the string result and then echo
+	it, just directly echo all the components.
+	(get_index_files): New.
+	(build_mode): New.
+	Adjust all dependencies (tex_help, command line parsing, clean,
+	tidy).
+
+2005-06-05  Karl Berry  <karl@gnu.org>  (tiny change)
+
+	* doc/texinfo.txi: typos from Christian von Schultz,
+	5 Jun 2005 16:45:48 +0200.
+
+2005-06-03  Karl Berry  <karl@gnu.org>
+
+	* info/man.c (get_manpage_contents): pass -a to man if no explicit
+	section is found.  Suggestion from lacall@micron.com on
+	help-texinfo, 1 Jun 2005 16:44:20 -0600.
+
+2005-05-28  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* configure.ac (AM_GNU_GETTEXT_VERSION): Bump to 0.14.5.
+
+2005-05-25  Stepan Kasal  <kasal@ucw.cz>
+
+	* util/texi2dvi (findprog): Rewrite the test for an executable
+	again, per suggestion of Eric Blake.  Restore IFS earlier.
+
+2005-05-24  Stepan Kasal  <kasal@ucw.cz>
+
+	* util/texi2dvi (findprog): Rewrite the test for an executable and
+	the explanation above it.
+
+2005-05-20  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.texi (\allowcodebreaks, \kbdinputstyle): use \txiarg
+	instead of \arg; \arg already has a meaning in plain TeX (the
+	complex math function "arg").
+	Report from: Brian Gough, 19 May 2005 19:48:57 +0100.
+
+2005-05-19  Stepan Kasal  <kasal@ucw.cz>
+
+	* configure.ac (AM_GNU_GETTEXT): The comment should not recommend
+	calling gettextize with --intl.
+
+2005-05-13  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (First Node): ok for (dir) to be the prev node,
+	and fix missing example.
+	From from Christian von Schultz, 13 May 2005 10:37:26 +0200.
+
+2005-05-10  Matthias Kilian  <kili@outback.escape.de>
+
+	* makeinfo/cmds.c, makeinfo/defun.c, makeinfo/insertion.c,
+	makeinfo/lang.c, makeinfo/macro.c, makeinfo/multi.c,
+	makeinfo/node.c, makeinfo/xml.c: More bounds checking.
+
+2005-05-09  Andreas Vögele  <voegelas@gmx.net>  (tiny change)
+
+	* makeinfo/multi.c (output_multitable_row): don't look past
+		beginning of cell memory.  bug-texinfo mail,
+		1 May 2005 10:00:33 +0200.
+
+2005-05-09  Christian von Schultz  <admcvs@Skolwebben.tibro.se>  (tiny change)
+
+	* doc/texinfo.txi (Emacs chapter): wrong key bindings for
+		narrow-to-page, up-list, and texinfo-insert-braces.
+		bug-texinfo mail, 9 May 2005 10:01:06 +0200.
+
+2005-04-29  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi: remove ls(1) and rcsintro(1) references at rms'
+	request.  No (n) in GNU.
+
+2005-04-24  Karl Berry  <karl@gnu.org>
+
+	* configure.ac (AM_GNU_GETTEXT): switch to [external], since this
+	seems the most popular method nowadays.
+	(AC_CONFIG_FILES): remove intl/Makefile, also m4/Makefile.
+	* Makefile.am (SUBDIRS): remove intl and m4.
+	* intl/*: remove.
+	* m4/Makefile.am: no longer needed.
+	* lib/system.h (locale.h): unconditionally include, else syntax
+	error from system locale.h.
+
+	* gettext 0.14.4.
+
+2005-04-22  Per Bothner  <per@bothner.com>
+
+	* makeinfo/xml.c (docbook_element_list): Map EMAILADDARESS to "email".
+	* makeinfo/xref.c (cm_email): For docbook, if there is no name,
+	use <email> tag, rather than <ulink>.  If there is a name, we must use
+	<ulink>, but we need to explicitly escape expansion of addr.
+
+2005-04-22  Per Bothner  <per@bothner.com>
+
+	* makeinfo/xml.c (docbook_element_list, xml_begin_defterm): Improved
+	docbook translation of definition commands: Use <synopsis> for the
+	summary line, and don't include it (only the body) in a <blockquote>.
+	Wrap the whole definition in an <informalfigure>.
+
+2005-04-21  Karl Berry  <karl@gnu.org>
+
+	* util/texi2dvi: also accept .drv and .dtx as LaTeX.
+	Suggestion from Wybo Dekker.
+
+2005-04-18  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\smallerbook): new (test) definition for 6x9,
+		which is what lulu.com (print-on-demand) accepts.
+
+2005-04-05  Matthias Kilian  <kili@outback.escape.de>  (tiny changes)
+
+	* makeinfo/html.c (rollback_empty_tag): be sure to avoid negative
+	array indexing.
+	* makeinfo/multi.c (env): make static.
+	* makeinfo/tests/cond, html-extrali, include-value: use grep -c,
+	instead of piping to wc -l, since that avoids the output files
+	being treated as binary on BSD.
+
+2005-04-04  Stepan Kasal  <kasal@ucw.cz>
+
+	* makeinfo/makeinfo.c (usage): Add indentation to the examples and
+	  fix the indentation of the --footnote-style option, so that
+	  help2man can recognize these; also some cosmetic indentation fixes.
+	* doc/Makefile.am (makeinfo.1): Add a sed command to postprocess
+	  the generated manpage.
+	* doc/makefile.1: Refresh.
+	Thanks to Jim Razmus for the bug report.
+
+2005-04-04  Torsten Bronger  <bronger@physik.rwth-aachen.de>  (tiny changes)
+
+	* doc/texinfo.txi: Fix several typos.
+
+2005-04-04  Stepan Kasal  <kasal@ucw.cz>
+
+	* doc/Makefile.am: Fix my previous patch, so that the rules work; and
+	  don't modify $PATH, it's simpler to give help2man the full pathname.
+
+2005-03-31  Per Bothner  <per@bothner.com>
+
+	* makeinfo/makeinfo.c (maybe_escaped_expansion): Don't start a new
+	para during string expansion.
+
+	* makeinfo/xml.c (xml_element_dummy): Dummy variable so that enum
+	names get emitted in debug symbols, which helps debugging.
+
+2005-03-31  ezra peisach <epeisach@med-xtal.bu.edu>  (tiny change)
+
+	(bug-texinfo mail 30 Mar 2005 16:40:24 -0500.)
+	* defun.h (get_base_type): now takes an enum insertion_type.
+	  defun.c (get_base_type): use enum instead of int internally.
+	  (defun_internal): takes enum insertion_type instead of int and use
+			  enum internally.
+	 (cm_defun): ditto.
+	* insertion.c (do_enumeration, end_insertion, cm_end): ditto.
+
+2005-03-27  Karl Berry  <karl@gnu.org>
+
+	* util/texinfo.dtd: remove -- and ^L from inside comments, since
+	apparently XML cannot handle them.
+	Report from Torsten, bronger@physik.rwth-aachen.de.
+
+	* configure.ac (AC_INIT): quote address.
+	(AC_PREREQ): move to after AC_INIT, per current recommendation.
+
+2005-03-25  Stepan Kasal  <kasal@ucw.cz>
+
+	* doc/Makefile.am: help2man should use the native binaries in the
+	  build tree, not the one found on $PATH; thanks to Thomas Schwinge
+	  for reporting the problem.
+	  The rules also make sure the binaries are up-to-date, and generate
+	  the man pages in the source tree, not build tree.
+	  There is no need to depend on MAINTAINER_MODE, because help2man is
+	  handled by the `missing' script.
+	(INSTALL_INFO): Comment out; it's not used.
+	* Makefile.am (distcleancheck_listfiles): Removed this variable, it
+	  doesn't seem to be needed.
+	* configure.ac (AC_INIT): Add our bug report address.
+
+2005-03-21  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (allowcodebreaks): new node.
+	* makeinfo/cmds.c: define @allowcodebreaks (as a no-op).
+	* doc/texinfo.tex (\allowcodebreaks): new macro.
+	(\code): use it.
+	(\realunder, \keywordtrue, \keywordfalse, \ifallowcodebreaks):
+	helpers.
+
+2005-03-15  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* configure.ac (AM_GNU_GETTEXT_VERSION): Bump to 0.14.3.
+
+2005-03-12  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* configure.ac (AM_GNU_GETTEXT_VERSION): Bump to 0.14.2.
+
+2005-03-12  Karl Berry  <karl@gnu.org>
+
+	* process_css_file: fclose the file when we're through with it,
+	to avoid fd leaks.
+	From: Matthias Kilian <kili@outback.escape.de>,
+	11 Mar 2005 19:42:27 +0100.
+
+2005-03-08  Keith Marshall  <keith.d.marshall@ntlworld.com>
+
+	* makeinfo/tests/no-headers: ($nulldev): new variable.
+	  set it to `/dev/null' normally, but to `nul' on Win32,
+	  so Cygwin doesn't fail this test, in `make check'.
+
+2005-03-08  Karl Berry  <karl@gnu.org>
+
+	* info/filesys.h (DEFAULT_INFOPATH): make . first in the path,
+	instead of last.  That way info -f foo/bar finds foo/bar.info.
+	From: Bruno Haible <bruno@clisp.org>, 8 Mar 2005 13:45:28 +0100.
+
+2005-03-07  Akim Demaille  <akim@epita.fr>
+
+	* util/texi2dvi: Fix -o when -c is not passed.
+	Don't make thumbpdf failures fatal.
+
+2005-03-05  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (General Index): Rename from Concept Index.
+
+2005-02-28  Stepan Kasal  <kasal@ucw.cz>
+
+	* util/texi2dvi: When running bibtex, improve quoting and again,
+	  we can save a process by not running ls.  (Thanks, Akim.)
+
+2005-02-24  Stepan Kasal  <kasal@ucw.cz>
+
+	* util/texi2dvi (get_xref_files): No need to use ls, save a process.
+
+2005-02-22  Akim Demaille  <akim@epita.fr>
+
+	* util/texi2dvi (absolute_filenames): Skip nonexistent directories.
+	Factor its invocations for TeX envvars.
+	(fd6): Document and use more extensively.
+	(get_xref_files): Accept bu[0-9]#.aux files from the bibunits
+	package.
+	Also adjust the bibtex invocation.
+
+2005-02-19  Karl Berry  <karl@gnu.org>
+
+	The main user-visible change of all this is to make
+	section names with \ characters work in pdf outlines.  As a side
+	effect, .toc files now use @ instead of \ for the escape char.
+	* doc/texinfo.tex (\backChar, \plusChar): new \chardef's.
+	(\activebackslash): debugging macro.
+	(\activebackslashdouble): new macro.
+	(\HyPsdSubst): replace tokens.
+	(\HyReturnAfterFi): helper.
+	(\backslashparens): new macro, change () to \( and \) resp.
+	(\backslashlparen, \backslashrparen): new macros.
+	(\pdfmkdest): double backslashes, backslashparens, and @ for escape.
+	(\dopdfoutline): similarly.
+	(\pdfmakeoutlines): \readdatafile on the .toc the first time,
+	 instead of straight \input.
+	(\makelinks, \picknum, \pn, \ppn, \ppnn, \pdfmklink): rm.
+	(\writetocentry): now we use @ for escape in the .toc instead of \.
+	(\activecatcodes, \readtocfile): new macros.
+	(\startcontents): don't swap \ and @ catcodes from Texinfo.
+	(\setref, \dofloat): no need to call \otherbackslash.
+	(\xrefX): no need to call \otherbackslash, also double backslashes
+	and backslash parens for pdf output.
+	(\readauxfile): generalize and rename to \readdatafile.
+	(\doublebackslash): new macro.
+
+	* util/texi2dvi: do not have -o (used by Autoconf/make) imply
+	--clean.  That results in TeX always running at least twice, since
+	the aux files are stuck (and removed) in the temp directory for clean.
+
+2005-02-18  Karl Berry  <karl@gnu.org>
+
+	* util/texi2dvi: call absolute_filenames on BIBINPUTS and
+	BSTINPUTS, too.  te, 17 Feb 2005 20:10:23 +0100.
+
+2005-02-13  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.txi (frenchspacing): new code.
+	* makeinfo/cmds.c (command_table): add frenchspacing.
+	(cm_frenchspacing): new fn.
+	* util/texinfo.dtd (frenchspacing): new element.
+	(option.cmds): new entity; use in Inline.phrase, I guess.
+	* makeinfo/xml.h (xml_element): add FRENCHSPACING.
+	* makeinfo/xml.c (docbook_element_list, texinfoml_element_list): same.
+	* doc/texinfo.tex (\frenchspacing): new macro for new command.
+	(\onword, \offword): args to that command.
+	(\plainfrenchspacing, \plainnonfrenchspacing): the commands which
+		really do the work; change calls.
+	(\endofsentencespacefactor): set in \plain...frenchspacing to 3000
+		or 1000 as appropriate.
+	(\., \!, \?): use here, instead of hardwiring 3000.
+
+2005-02-10  Karl Berry  <karl@gnu.org>
+
+	* util/texi2dvi (findprog): also check for foo.exe, for Cygwin.
+
+2005-02-10  Karl Berry  <karl@gnu.org>
+
+	* info/dir.c (dir_file_list_entry_type): use dev_t and ino_t
+	instead of unsigned long.  (Breaks on cygwin.)  David Hunter
+	bug-texinfo mail, 08 Feb 2005 23:05:37 -0500.  Paul Eggert says
+	these types should were present in 7th Edition and consequently
+	should be portable to any Unixish system.
+
+2005-02-09  Akim Demaille  <akim@epita.fr>
+
+	* util/texi2dvi (report): New.  Use it.
+	(fatal): Take the exit status as argument.
+	Use report.
+	(run_tex): New function to factor the two tex invocations.
+	Move the handling of tex arguments in here to improve locallity.
+	Enforce the batch mode by branching /dev/null to its stdin.
+
+2005-02-05  Per Bothner  <per@bothner.com>
+
+	* makeinfo/xml.c (docbook_element_list): Add two missing entries.
+
+	* makeinfo/xml.c (xml_begin_document): Check for mismatch between
+	enum xml_element and texinfoml_element_list/docbook_element_list.
+
+	bug-texinfo-mail, 05 Feb 2005 00:13:44 -0800.
+
+2005-02-05  Per Bothner  <per@bothner.com>
+
+	* makeinfo/xref.c (cm_uref): Ulink urls in Docbook need to be
+		html-escaped.  bug-texinfo mail, 05 Feb 2005 00:57:55 -0800.
+
+2005-01-30  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.tex (\chapmacro) <Ynothingkeyword>: failed to
+	\gdef\thischapter inside the group, resulting in "Chapter 1:"
+	appearing in the headline of an @unnumbered.
+	help-texinfo bug report from: <tdovera@libero.it>,
+	27 Jan 2005 11:45:31 +0100.
+
+2005-01-28  Karl Berry  <karl@gnu.org>
+
+	* util/texi2dvi <verbose>: rename variable to verb, since
+		functions and variables apparently cannot have the same
+		name on Digital UNIX 4.0E, AIX 3.2.5 (325102), ULTRIX V4.5.
+		(and related releases, presumably).
+	<pgm>: simplify sed expression to avoid \| operator, which does
+	        not work on above platforms (and also be more correct).
+	<RUNNING_KSH>: switch to ksh under Ultrix.
+	All of this stuff reported by Bernhard Simon <simon@zid.tuwien.ac.at>
+	and te.
+
+2005-01-25  Karl Berry  <karl@gnu.org>
+
+	* doc/Makefile (texmf_dvips, texmf_pdftex_misc): new paths to
+	match teTeX.  tex-k mail from peb, 25 Jan 2005 15:45:37 +0100.
+
+2005-01-23  Karl Berry  <karl@gnu.org>
+
+	* util/texi2dvi (findprog): split $PATH at $path_sep, not spaces.
+	(path_sep): don't let ComSpec fool us under cygwin.
+	Report from: Eric Blake <ebb9@byu.net>, 19 Jan 2005 05:36:26 -0700.
+
+	* doc/texinfo.txi (euro): mention the font we use for the Euro
+	symbol and where to get it.  help-texinfo report from:
+	christoph.sobotka@utanet.at, 19 Jan 2005 21:29:20 +0100.
+
+	* doc/info-stnd.texi (Top): per rms, don't use @insertcopying here.
+	* doc/texinfo.txi (Top): Likewise.  Also, remove recommendations
+		to use it.
+
+2005-01-20  Akim Demaille  <akim@epita.fr>
+
+	* util/texi2dvi: Have a consistent function declaration style.
+	(verbose, absolute_filenames): New functions.
+	Use them.
+	Report TEXINPUTS and INDEXSTYLE when verbose.
+
+2005-01-20  Karl Berry  <karl@gnu.org>
+
+	* doc/texinfo.5, doc/info.5: define and use .EX/.EE instead of
+		.RS/RE, to placate esr.
+
+	* util/texi2dvi (findprog): make sure test -x isn't returning true
+	for a directory.  From Stepan and others, 20 Jan 2005 12:35:08 +0100.
+
+2005-01-16  Torsten Bronger  <bronger@physik.rwth-aachen.de>  (tiny change)
+
+	* makeinfo/insertion.c (handle_verbatim_environment): do HTML
+		conversions, to make ]]> work.
+	* makeinfo/xml.c (xml_add_char): also escape >.
+
+2005-01-16  Torsten Bronger  <bronger@physik.rwth-aachen.de>  (tiny change)
+
+	* makeinfo/cmds.c (cm_tie): use &nbsp; for HTML, &#xa0; for
+		XML/Docbook.
+
+2005-01-15  Karl Berry  <karl@gnu.org>
+
+	* makeinfo/xref.c (cm_xref): output *note for @ref, instead of
+		*Note.  @ref is always used in the middle of a sentence.
+	* doc/texinfo.txi (pxref): rewrite, since now it can be used at
+	the ends of sentences.
+	(ref): likewise rewrite.
+
+2005-01-11  Karl Berry  <karl@gnu.org>
+
+	* util/gendocs.sh: eval $cmd instead of just $cmd, so allow for
+		embedded quotes.
+	From: Sergey Poznyakoff <gray@Mirddin.farlep.net>,
+	11 Jan 2005 16:16:32 +0200.
 
 2004-12-31  Karl Berry  <karl@gnu.org>
 
@@ -112,7 +3042,7 @@
 	intptr_t is not defined with gcc 3.04 on Tru64 Unix V5.1
 	(This whole vararg stuff needs to be redone correctly.)
 	Report from: Svend Tollak Munkejord (via te)
-        8 Dec 2004 17:15:17 +0100.	
+	8 Dec 2004 17:15:17 +0100.
 
 	* doc/texinfo.txi (ref): rewrite last two redundant paragraphs.
 
@@ -127,7 +3057,7 @@
 	nodename begins with a nonletter.  Ugh.
 	* doc/texinfo.txi (HTML Xref Node Name Expansion): document this.
 	http://ff0.org/pipermail/texinfo-pretest/2004-December/000210.html
-	
+
 	* doc/texinfo.txi (HTML Xref 8-bit Character Expansion): define
 	behavior for Unicode code points above 0xfff.
 
@@ -152,7 +3082,7 @@
 
 	* doc/texinfo.txi (Quotations and Examples): @quotation does not
 	reduce interparagraph spacing.
-	
+
 	* makeinfo/node.c (cm_node) <html>: do not bother calling
 	add_html_nodes in the split case, the filename is wrong.
 
@@ -203,7 +3133,7 @@
 	(\textfonts .. \ssecfonts): define \curfontsize.
 	* makeinfo/cmds.c (command_table): add euro.
 	* makeinfo/lang.c (cm_special_char): handle euro.
-	(iso8859_15_map): new global.	
+	(iso8859_15_map): new global.
 
 2004-11-18  Stepan Kasal  <kasal@ucw.cz>
 
@@ -226,7 +3156,7 @@
 	* insertion.c (end_insertion): insert closing xml tag.
 
 	* makeinfo/makeinfo.c (insert_string): declare const char * arg.
-        * makeinfo/makeinfo.h: likewise.
+	* makeinfo/makeinfo.h: likewise.
 	Report from: Vincent Lefevre, 20 Oct 2004 15:40:39 +0200,
 	noting a spurious </para> after </dircategory>.
 
@@ -354,7 +3284,7 @@
 
 	* doc/*.texi: more consistent use of dashes.
 	From Stepan and Benno Schulenberg <benno@nietvergeten.nl>.
- 
+
 2004-10-04  Karl Berry  <karl@gnu.org>
 
 	* makeinfo/makeinfo.c (cm_value): increment and restore
@@ -422,7 +3352,7 @@
 	obsolete.  Reported by Stepan.
 
 	* doc/texinfo.txi (caption shortcaption): show an example for
-        @shortcaption, and remark that weird commands like @c and @verb
+	@shortcaption, and remark that weird commands like @c and @verb
 	are not allowed.  Suggested by Stepan.
 
 2004-08-27  Stepan Kasal  <kasal@ucw.cz>
@@ -473,7 +3403,7 @@
 2004-08-19  Stepan Kasal  <kasal@ucw.cz>
 
 	* doc/texinfo.tex (\scanmacro): Make backslash active, not other,
-	  as this is the default when processing texinfo files. 
+	  as this is the default when processing texinfo files.
 	  Otherwise, a \ inside @copying will eventually print as ``.
 
 2004-08-18  Stepan Kasal  <kasal@ucw.cz>
@@ -505,14 +3435,14 @@
 	* info/echo-area.c (inform_in_echo_area): avoid buffer overrun.
 	Report from: Roman Werpachowski <rwerp@gazeta.pl>,
 	7 Aug 2004 01:18:32 +0200.
-	
+
 	* info/echo-area.h (inform_in_echo_area): declare arg as const,
 	while we're at it.
 
 2004-08-02  Karl Berry  <karl@gnu.org>
 
 	* makeinfo/cmds.c (cm_acronym_or_abbr): use strchr, not index.
-	Report from: Prof Brian Ripley <ripley@stats.ox.ac.uk>, 
+	Report from: Prof Brian Ripley <ripley@stats.ox.ac.uk>,
 	2 Aug 2004 12:47:36 +0100 (BST)
 
 2004-07-31  Karl Berry  <karl@gnu.org>
@@ -530,7 +3460,7 @@
 
 2004-07-30  Maciej W. Rozycki  <macro@linux-mips.org>
 
-	* info/filesys.c (extract_colon_unit): Clean up handling of the 
+	* info/filesys.c (extract_colon_unit): Clean up handling of the
 	end of string.
 
 2004-07-27  Karl Berry  <karl@gnu.org>
@@ -557,13 +3487,13 @@
 
 2004-07-26  Karl Berry  <karl@gnu.org>
 
-        Avoid using the path for output files, since this led to problems
-        when incompatible files created by previous versions were found.
+	Avoid using the path for output files, since this led to problems
+	when incompatible files created by previous versions were found.
 	* makeinfo/files.c (find_and_load): introduce second parameter
 		use_path, set to 0 from the call in handle_delayed_writes,
 		1 in all cases.
-        * makeinfo/files.h: change decl.
-        * makeinfo/cmds.c, makeinfo.c, node.c: change calls.
+	* makeinfo/files.h: change decl.
+	* makeinfo/cmds.c, makeinfo.c, node.c: change calls.
 	From: Thomas Klausner <wiz@danbala.ifoer.tuwien.ac.at>,
 	14 Jul 2004 00:31:54 +0200.
 
@@ -635,22 +3565,22 @@
 		end of input_text.  (Had erroneously put that in the block
 		only if an error was given.)  The result was a null byte
 		after macro expansions.  Report from Werner,
-		10 Jul 2004 15:36:40 +0200.		
+		10 Jul 2004 15:36:40 +0200.
 
 	* makeinfo/node.c (split_file): fwrite Local Variables trailer so
 		it actually gets into the output of the top-level info
-		file; don't just insert_string.  
+		file; don't just insert_string.
 	Report from: Werner LEMBERG, 11 Jul 2004 08:58:13 +0200.
 
 2004-07-10  Karl Berry  <karl@gnu.org>
 
-        * util/texi2pdf: new script.
-        * util/Makefile.am: install it.
-        * doc/texinfo.txi: document it.
+	* util/texi2pdf: new script.
+	* util/Makefile.am: install it.
+	* doc/texinfo.txi: document it.
 
 2004-07-05  Karl Berry  <karl@gnu.org>
 
-	* makeinfo/xref.c (cm_email, cm_uref, et al.): 
+	* makeinfo/xref.c (cm_email, cm_uref, et al.):
 	* makeinfo/xml.c (xml_insert_indexentry, xml_insert_indexterm):
 	* makeinfo/sectioning.c (sectioning_underscore):
 	* makeinfo/makeinfo.c (cm_listoffloats): use %s, don't pass string to
@@ -711,7 +3641,7 @@
 	15 May 2004 21:50:52 +0200.
 
 	* util/gendocs.sh: force HTML output name, otherwise Emacs fails
-        with its "@setfilename ../...".
+	with its "@setfilename ../...".
 
 2004-05-04  Karl Berry  <karl@gnu.org>
 
@@ -770,7 +3700,7 @@
 	* makeinfo/cmds.c (cm_code): use <samp> for commands other than
 	@code, so we get typewriter output; and add `...'
 	for @samp.
-	Report from: John Blevin <blevin@lucent.com>, 
+	Report from: John Blevin <blevin@lucent.com>,
 	16 Apr 2004 11:40:01 -0400.
 
 	* makeinfo/html.c (html_output_head) [CSS_FONT_ROMAN,
@@ -828,10 +3758,10 @@
 2004-04-07  Karl Berry  <karl@gnu.org>
 
 	* pretest version 4.6.95.
-	
+
 	* doc/texinfo.tex (\dodonode): new macro to remove trailing comma.
 	(\donode): call it, after removing space-comma.
-	
+
 	* doc/texinfo.txi (indicateurl): new name for url.
 	(uref): url is now a synonym for uref.
 	* doc/texinfo.tex (\url, \indicateurl): implement.
@@ -946,9 +3876,9 @@
 
 	All these changes are because strncasecmp is only declared in
 	<strings.h> on IBM AIX 4.2.  (Report from Nelson Beebe.)
-	
+
 	* configure.ac (AC_CHECK_DECLS): add memchr; no need to check for
-	  	     strcasecmp.(gl_STRCASE): call this ... 
+	  	     strcasecmp.(gl_STRCASE): call this ...
 	(AC_REPLACE_FUNCS): ... replacing checks for
 	strcasecmp and strncasecmp here.
 	* lib/system.h (memchr) [!HAVE_DECL_MEMCHR]: add conditional
@@ -1308,7 +4238,7 @@
 	argument even if it's unknown.
 
 	* makeingo/html.c (html_output_head): call current_document_encoding
-	instead of checking document_encoding_code. 
+	instead of checking document_encoding_code.
 
 2004-02-28  Alper Ersoy  <dirt@gtk.org>
 
@@ -1591,7 +4521,7 @@
 	* makeinfo/xml.h:
 	* makeinfo/xml.c (xml_get_assoc_for_id, xml_associate_title_with_id):
 	removed these functions.
-	
+
 	* makeinfo/xref.c (cm_xref): do not call xml_get_assoc_for_id.
 
 	* makeinfo/sectioning.c (sectioning_underscore): added xreflabel
@@ -1893,7 +4823,7 @@
 2004-02-05  Alper Ersoy  <dirt@gtk.org>
 
 	* info/info-utils.c (info_parse_node): look for ``(line '' instead of
-	skipping any non-digit characters. 
+	skipping any non-digit characters.
 
 2004-02-05  Alper Ersoy  <dirt@gtk.org>
 
@@ -1994,7 +4924,7 @@
 	* makeinfo/makeinfo.c (convert_from_file): prepend the loaded file's
 	path to include_files_path in order to make relative include files to
 	be found, then remove afterwards.
-	(main): make use of new functions for -I and -P options. 
+	(main): make use of new functions for -I and -P options.
 
 2004-01-30  Alper Ersoy  <dirt@gtk.org>
 
@@ -2056,7 +4986,7 @@
 	* makeinfo/sectioning.c (sectioning_underscore): removed newline from
 	the end of titles.
 
-	* makeinfo/lang.c (cm_documentencoding): insert encoding attribute 
+	* makeinfo/lang.c (cm_documentencoding): insert encoding attribute
 	into XML and Docbook prologs when handling delayed writes.
 
 	* makeinfo/xml.c (xml_begin_document): register a delayed write for
@@ -2195,7 +5125,7 @@
 	(\tocindent): reduce to 15pt to match \defaultparindent.
 	(\setref): use XR as control sequence prefix
 	instead of just X; seems nicer.  Change calls.
-	
+
 	Finish implementing @listoffloats:
 	(\xrdef): keep lists of each float type.
 	(\dofloat): save the floattype in the aux file.
@@ -2209,7 +5139,7 @@
 	* doc/texinfo.tex (\doitemize): rename from \itemizey.
 	(\itemizeitem): do not set \parskip=0 if the last
 	thing was a \nobreak (e.g., from \sectionheading).
-	Report from: Jesper Harder <harder@ifa.au.dk>, 
+	Report from: Jesper Harder <harder@ifa.au.dk>,
 	17 Jan 2004 22:03:51 +0100.
 
 	* doc/texinfo.txi (email): no angle brackets in TeX output.
@@ -2219,7 +5149,7 @@
 2004-01-17  Alper Ersoy  <dirt@gtk.org>
 
 	* makeinfo/float.c (cm_listoffloats): Prefixed captions with
-	float_type.  For HTML, used an <ul> block.  
+	float_type.  For HTML, used an <ul> block.
 
 2004-01-17  Alper Ersoy  <dirt@gtk.org>
 
@@ -2308,7 +5238,7 @@
 
 2004-01-13  Alper Ersoy  <dirt@gtk.org>
 
-	* makeinfo/float.c (cm_listoffloats): 
+	* makeinfo/float.c (cm_listoffloats):
 	* makeinfo/index.c (cm_printindex): decrement line_number just after
 	get_rest_of_line to make messages refer to the correct line,
 	re-increment it just before returning.
@@ -2392,7 +5322,7 @@
 	* makeinfo/files.c (register_delayed_write): save line number in input
 	document that the calling command is in.
 	(handle_delayed_writes): adjust byte offsets in tag table and output
-	line numbers in all of the indices, 
+	line numbers in all of the indices,
 
 	* makeinfo/makeinfo.c (convert_from_loaded_file): when finished, write
 	the tag table after handling delayed writes.
@@ -2431,7 +5361,7 @@
 	* makeinfo/makeinfo.c (insert): use whitespace macro instead of
 	testing characters manually.
 	(convert_from_loaded_file): call handle_delayed_writes when finished.
-	
+
 	* makeinfo/toc.c (contents_update_html, contents_update_info)
 	(shortcontents_update_html, shortcontents_update_info): changed file
 	read/writes with insert and insert_string.
@@ -2953,7 +5883,7 @@
 	* doc/texinfo.txi (makeinfo options): document TEXINFO_OUTPUT.
 
 	* doc/texinfo.txi (tex): document @LaTeX.
-	
+
 	* doc/texinfo.tex (\loggingall): reduce \errorcontextlines for
 	sake of infinite loops.
 	(\setfontstyle): \def better than \edef?
@@ -3568,7 +6498,7 @@
 	* texinfo.tex (\putwordDeftypevar, \putwordDeftypefun): Remove.
 	* txi-cs.tex, txi-de.tex, txi-en.tex, txi-es.tex, txi-fr.tex,
 	  txi-it.tex. txi-nl.tex, txi-no.tex, txi-pl.tex, txi-pt.tex,
-	  txi-tr.tex: The same. 
+	  txi-tr.tex: The same.
 	[texinfo-20031120-deftype-del.patch]
 
 	* doc/texinfo.tex (\verbatim,\Everbatim): remove one extra level
@@ -3577,7 +6507,7 @@
 	(\doverbatiminclude): just call the new \setupverbatim.
 	(\setupverbatiminclude): remove.
 	[texinfo-20031121-verbatim2.patch]
-	
+
 	* doc/texinfo.tex (\math): no need for \mathcode, and we actually
 		can use $ not \implicitmath.
 	[texinfo-20031121-math.patch]
@@ -3586,46 +6516,46 @@
 	check for true zero skip.
 	(\dosubindsanitize): use it.
 	[texinfo-20031120-zeroskip.patch]
-	
+
 	* doc/texinfo.tex (\doignore): scan in verbatim mode.  Without this,
 	if the last line of ignored text ended with ``@'', the ``@end ifxxx''
 	tag was missed.
 	(\dodoignore): use \_STOP_ instead of \ST@P.
 	[texinfo-20031120-ignore-at.patch]
-	
+
 	* doc/texinfo.tex (\defparsearg): new macro, to simplify places
 	where the user macro just calls \parsearg.  Use it in many places.
 	[texinfo-20031121-defparsearg.patch]
-	
+
 	* doc/texinfo.tex (\begin): remove, this is undocumented
 	and unused.
 	[texinfo-20031121-begin.patch]
-	
+
 	* doc/texinfo.tex (\title,\subtitle,\author,...): move to outer
 	level (was inside \titlepage), it's more readable than nested
 	definitions.
 	[texinfo-20031116-titlepage1.patch]
-	
+
 	* doc/texinfo.tex (\evenheadingxxx,\oddfootingyyy): might as well
 		use \ and avoid changing catcode of @.
 	[texinfo-20031116-catofat.patch]
-	
+
 	* doc/texinfo.tex (\set): use new macros: \parseargusing and
 	\makecsname.
 	[texinfo-20031116-set.patch]
-	
+
 	* doc/texinfo.tex (\cartouche): avoid \par if we are already in
 	vertical mode, in case it has an effect, eg. in an @example;
 	avoid extra space from the @cartouche line itself.
 	(\Ecartouche): force vertical mode, so that the \kern has the desired
 	effect.
 	[texinfo-20031120-cart.patch]
-	
+
 	* doc/texinfo.tex (\ptexfootnote,\ptexinsert): save orig definitions.
 	(\startsavinginserts): new macro (with relatives), call from
 		\cartouche, \group, \table.
 	[texinfo-20031118-saveins.patch]
-	
+
 	* doc/texinfo.tex (\table, \ftable, \vtable, \tablex, \tabley,
 	\tablez): Cleaned up indentation, etc.
 	(\kitem, \kitemx, \xitem, \xtemx, \description): Removed; they
@@ -3637,11 +6567,11 @@
 	(\pushthisfilestack,etc.): implement our own stack of filenames
 	instead of reading the @include argument in a group.
 	[texinfo-20031109-include.patch]
-	
+
 	* doc/texinfo.tex (\indexbreaks): remove, and remove call.
 	(\entry): read arguments on the fly, to avoid fixing catcodes.
 	[texinfo-20031121-indexbreaks.patch]
-	
+
 	* doc/texinfo.tex (\makevalueexpandable): new macro.
 	Change occurrences of \let\value=\expandablevalue to use it,
 	to reduce code duplication.
@@ -3652,21 +6582,21 @@
 	(\parsedefunline): start them off.  This is to support continuations
 	lines for @defun headers.
 	[texinfo-20031108-defun-cont.patch]
-	
+
 	* doc/texinfo.tex (\defun and all related commands):
 	rewrite to use \parsearg and uniform command generation.
 	(\makecsname): New macro, to be used within \edef's only.
 	[texinfo-20031120-defun.patch]
-	
+
 	* doc/texinfo.tex (=, \equalChar): remove active definition of =
 	and hacks that printed = in \tt sometimes.  We want to print
 	everything in \tt anyway, ultimately.
 	[texinfo-20031120-defun-pres3.patch]
-	
+
 	* doc/texinfo.tex (\defopheader,\defcvarheader,defivarheader):
 	use \code for the class name.
 	[texinfo-defun-pres2.patch]
-	
+
 	* doc/texinfo.tex (\parsearg): Reset the catcode of space before
 		we scan the argument; so we don't have to worry about
 		obeyed spaces before and after the argument.
@@ -3943,7 +6873,7 @@
 	* makeinfo/multi.c (multitable_item, end_multitable):
 	* makeinfo/xml.c (xml_end_multitable_row, xml_end_multitable):
 	insert thead element if @headitem is used.
-	
+
 	* makeinfo/xml.h: new element THEAD.
 
 	* makeinfo/texinfo.dtd: updated multitable structure.
@@ -4167,7 +7097,7 @@
 	* makeinfo/node.c (cm_node): escape node names in HTML output.
 
 	* makeinfo/xml.c (xml_id): check to see if the character is allowed.
-	
+
 	* makeinfo/tests/accent-text.txi: new @dotless{j} lines.
 
 	* makeinfo/tests/accent: look for &acute;j instead of &acute;i.
@@ -4358,7 +7288,7 @@
 	* doc/Makefile.am (infokey.1): new target.
 	(man_MANS): include infokey.1.
 	Noticed this in Debian diff.
-	
+
 	* util/texi2dvi: check for tex up front; inspired by Debian diff.
 
 	* TODO: makeinfo -E should do simple macro expansion, not
@@ -4675,7 +7605,7 @@
 	(\doheading,\dosubheading,\dosubsubheading): call
 	\sectionheading directly instead of \plain*secheading.
 	(\chfplain, \sectionheading): take additional section type
-	argument; call \writetocentry and \donoderef.  
+	argument; call \writetocentry and \donoderef.
 	(\unnchfopen): mention this is deprecated.
 	(\writetocentry): handle "omit" case, and
 	\global\pdfmakepagedesttrue.
@@ -4719,7 +7649,7 @@
 
 	* makeinfo/tests/html-manuals: include -I../../doc for case when
 	version-stnd.texi is in build tree.
-	From: ezra peisach <epeisach@med-xtal.bu.edu>, 
+	From: ezra peisach <epeisach@med-xtal.bu.edu>,
 	12 Sep 2003 13:53:32 -0400.
 
 2003-09-11  Karl Berry  <karl@gnu.org>
@@ -4768,7 +7698,7 @@
 	* makeinfo/macro.c (define_macro): "end rmacro" is 10 chars long.
 
 2003-08-29 Reiner Steib <Reiner.Steib@gmx.de>
-	
+
 	* makeinfo/lang.c (encoding_table): Downcase coding system
 	names, since Emacs does not recognize the uppercase names.
 
@@ -4979,7 +7909,7 @@
 	From: Jesper Harder <harder@ifa.au.dk>.
 	(GNU Sample Texts): don't end the $Id index entries with a :.
 	Report from: Luc Teirlinck <teirllm@dms.auburn.edu>.
-	
+
 2003-06-20    <karl@gnu.org>
 
 	* makeinfo/defun.c (process_defun_args): only insert the HTML
@@ -5001,16 +7931,8 @@
 	* version 4.6.
 
 
-Copyright (C) 2003, 2004 Free Software Foundation, Inc.
+Copyright 2003, 2004, 2005, 2006, 2007, 2008 Free Software Foundation, Inc.
 
 Copying and distribution of this file, with or without modification,
 are permitted in any medium without royalty provided the copyright
 notice and this notice are preserved.
-
-
-Local Variables:
-mode: indented-text
-left-margin: 8
-fill-column: 76
-version-control: never
-End:

@@ -76,11 +76,11 @@ if not "%1" == "" goto arg_loop
 set SPECARG=
 
 Rem Create a response file for the configure script.
-echo --srcdir=%XSRC% > arguments
-if "%CACHE%" == "enabled"    echo --config-cache >>arguments
-if "%DEPTRAK%" == "enabled"  echo --enable-dependency-tracking >>arguments
-if "%DEPTRAK%" == "disabled" echo --disable-dependency-tracking >>arguments
-if not "%ARGS%" == ""        echo %ARGS% >>arguments
+echo --srcdir=%XSRC% > args
+if "%CACHE%" == "enabled"    echo --config-cache >> args
+if "%DEPTRAK%" == "enabled"  echo --enable-dependency-tracking >> args
+if "%DEPTRAK%" == "disabled" echo --disable-dependency-tracking >> args
+if not "%ARGS%" == ""        echo %ARGS% >> args
 set ARGS=
 set CACHE=
 set DEPTRAK=
@@ -88,16 +88,16 @@ set DEPTRAK=
 if "%XSRC%" == "." goto in_place
 
 :not_in_place
-redir -e /dev/null update %XSRC%/configure.orig ./configure
+redir -e /dev/null update %XSRC%/configure.org ./configure
 test -f ./configure
 if errorlevel 1 update %XSRC%/configure ./configure
 
 :in_place
 Rem Update configuration files
 echo Updating configuration scripts...
-test -f ./configure.orig
-if errorlevel 1 update configure configure.orig
-sed -f %XSRC%/djgpp/config.sed configure.orig > configure
+test -f ./configure.org
+if errorlevel 1 update configure configure.org
+sed -f %XSRC%/djgpp/config.sed configure.org > configure
 if errorlevel 1 goto sed_error
 
 Rem Make sure they have a config.site file
@@ -185,30 +185,27 @@ if not errorlevel 0 goto missing_NLS_tools
 
 Rem Recreate the files in the %XSRC%/po subdir with our ported tools.
 redir -e /dev/null rm %XSRC%/po/*.gmo
-redir -e /dev/null rm %XSRC%/po/diffutil*.pot
+redir -e /dev/null rm %XSRC%/po/texinfo*.pot
 redir -e /dev/null rm %XSRC%/po/cat-id-tbl.c
 redir -e /dev/null rm %XSRC%/po/stamp-cat-id
 
 Rem Update the arguments file for the configure script.
 Rem We prefer without-included-gettext because libintl.a from gettext package
 Rem is the only one that is guaranteed to have been ported to DJGPP.
-echo --enable-nls --without-included-gettext >> arguments
+echo --enable-nls --without-included-gettext >> args
 goto configure_package
 
 :missing_NLS_tools
 echo Needed libs/tools for NLS not found.  Configuring without NLS.
 :without_NLS
 Rem Update the arguments file for the configure script.
-echo --disable-nls >> arguments
+echo --disable-nls >> args
 
 :configure_package
 echo Running the ./configure script...
-sh ./configure @arguments
+sh ./configure @args
 if errorlevel 1 goto cfg_error
-rm arguments
-
-Rem Remove files created by the gl_FUNC_MKSTEMP test.
-rm co*.tmp
+rm args
 echo Done.
 goto End
 

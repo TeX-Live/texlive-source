@@ -1,13 +1,13 @@
 /* window.c -- windows in Info.
-   $Id: window.c,v 1.4 2004/04/11 17:56:46 karl Exp $
+   $Id: window.c,v 1.10 2008/02/26 16:51:06 karl Exp $
 
-   Copyright (C) 1993, 1997, 1998, 2001, 2002, 2003, 2004 Free Software
-   Foundation, Inc.
+   Copyright (C) 1993, 1997, 1998, 2001, 2002, 2003, 2004, 2007, 2008
+   Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,8 +15,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
    Written by Brian Fox (bfox@ai.mit.edu). */
 
@@ -250,8 +249,21 @@ window_new_screen_size (int width, int height)
               break;
             }
           else
-            win= win->next;
+            win = win->next;
         }
+    }
+
+  /* One more loop.  If any heights or widths have become negative,
+     set them to zero.  This can apparently happen with resizing down to
+     very small sizes.  Sadly, it is not apparent to me where in the
+     above calculations it goes wrong.  */
+  for (win = windows; win; win = win->next)
+    {
+      if (win->height < 0)
+        win->height = 0;
+
+      if (win->width < 0)
+        win->width = 0;
     }
 }
 
@@ -905,11 +917,11 @@ recalculate_line_starts (WINDOW *window)
   calculate_line_starts (window);
 }
 
-/* Global variable control redisplay of scrolled windows.  If non-zero, it
-   is the desired number of lines to scroll the window in order to make
-   point visible.  A user might set this to 1 for smooth scrolling.  If
-   set to zero, the line containing point is centered within the window. */
-int window_scroll_step = 0;
+/* Global variable control redisplay of scrolled windows.  If non-zero,
+   it is the desired number of lines to scroll the window in order to
+   make point visible.  A value of 1 produces smooth scrolling.  If set
+   to zero, the line containing point is centered within the window. */
+int window_scroll_step = 1;
 
 /* Adjust the pagetop of WINDOW such that the cursor point will be visible. */
 void
@@ -1257,7 +1269,7 @@ window_clear_echo_area (void)
    printf () hair is present.  The message appears immediately.  If there was
    already a message appearing in the echo area, it is removed. */
 void
-window_message_in_echo_area (char *format, void *arg1, void *arg2)
+window_message_in_echo_area (const char *format, void *arg1, void *arg2)
 {
   free_echo_area ();
   echo_area_node = build_message_node (format, arg1, arg2);
@@ -1274,7 +1286,7 @@ static int old_echo_area_nodes_index = 0;
 static int old_echo_area_nodes_slots = 0;
 
 void
-message_in_echo_area (char *format, void *arg1, void *arg2)
+message_in_echo_area (const char *format, void *arg1, void *arg2)
 {
   if (echo_area_node)
     {
@@ -1324,7 +1336,7 @@ message_buffer_resize (int length)
 /* Format MESSAGE_BUFFER with the results of printing FORMAT with ARG1 and
    ARG2. */
 static void
-build_message_buffer (char *format, void *arg1, void *arg2, void *arg3)
+build_message_buffer (const char *format, void *arg1, void *arg2, void *arg3)
 {
   register int i, len;
   void *args[3];
@@ -1348,7 +1360,7 @@ build_message_buffer (char *format, void *arg1, void *arg2, void *arg3)
       else
         {
           char c;
-          char *fmt_start = format + i;
+          const char *fmt_start = format + i;
           char *fmt;
           int fmt_len, formatted_len;
 	  int paramed = 0;
@@ -1471,7 +1483,7 @@ build_message_buffer (char *format, void *arg1, void *arg2, void *arg3)
 /* Build a new node which has FORMAT printed with ARG1 and ARG2 as the
    contents. */
 NODE *
-build_message_node (char *format, void *arg1, void *arg2)
+build_message_node (const char *format, void *arg1, void *arg2)
 {
   NODE *node;
 
@@ -1513,7 +1525,7 @@ initialize_message_buffer (void)
 
 /* Print FORMAT with ARG1,2 to the end of the current message buffer. */
 void
-printf_to_message_buffer (char *format, void *arg1, void *arg2, void *arg3)
+printf_to_message_buffer (const char *format, void *arg1, void *arg2, void *arg3)
 {
   build_message_buffer (format, arg1, arg2, arg3);
 }

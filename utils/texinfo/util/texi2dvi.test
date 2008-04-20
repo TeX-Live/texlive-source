@@ -1,0 +1,79 @@
+#! /bin/sh
+# Copyright (C) 2003, 2005, 2006, 2007 Free Software Foundation, Inc.
+#
+# This file is part of GNU Texinfo.
+#
+# GNU Texinfo is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License,
+# or (at your option) any later version.
+#
+# GNU Texinfo is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+required='tex'
+
+. ./defs || exit 1
+
+set -e
+
+# one_run ARGS -- FILES
+# ---------------------
+# Run texi2dvi with ARGS, expect the FILES to be left.  Remove them.
+one_run ()
+{
+  # Testing the local build mode.
+  create_input_texi </dev/null
+  TEXI2DVI_pass $(optionset_get 1 "$@") input.texi
+  # There should only be the expected FILES and the input file.
+  assert_and_remove_files $(optionset_get 2 "$@") input.texi
+}
+
+one_run --batch \
+   -- \
+   input.aux input.cp input.dvi input.fn input.ky input.log \
+   input.pg input.tp input.vr
+
+
+one_run --batch -o output.dvi \
+   -- \
+   input.aux input.cp input.fn input.ky input.log \
+   input.pg input.tp input.vr output.dvi
+
+
+# Testing the clean build mode.
+for mode in --clean --build=clean
+do
+  # There should only be the DVI and the TEXI file.
+  one_run $mode --batch -- input.dvi
+
+  # There should only be the DVI and the TEXI file.
+  one_run $mode --batch -o output.dvi -- output.dvi
+done
+
+
+# Testing the tidy build mode.
+one_run --build=tidy --batch -o output.dvi \
+   -- \
+   output.dvi output.t2d
+
+
+# mostly-clean should remove auxiliary files, but not the expected
+# output.
+touch output.dvi
+one_run --build=tidy --batch -o output.dvi --mostly-clean \
+   -- \
+   output.dvi
+
+
+# There should only be the DVI and the TEXI file.
+create_input_texi </dev/null
+cp input.texi input2.texi
+one_run --clean --batch input.texi input2.texi \
+   -- \
+   input2.dvi input2.texi input.dvi

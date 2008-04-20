@@ -1,0 +1,67 @@
+% Serbian-latin translation for texinfo.tex.
+%
+% Copyright (C) 2005, 2007 Free Software Foundation.
+%
+% This program is free software; you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation; either version 3 of the License, or
+% (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <http://www.gnu.org/licenses/>.
+% 
+% Created by Predrag Rakic.
+
+\gdef\putwordAppendix{Prilog}
+\gdef\putwordChapter{Glava}
+\gdef\putwordfile{datoteka}
+\gdef\putwordin{u}
+\gdef\putwordIndexIsEmpty{(Indeks je prazan)}
+\gdef\putwordIndexNonexistent{(Indeks ne postoji)}
+\gdef\putwordInfo{Info}
+\gdef\putwordInstanceVariableof{Atribut klase}
+\gdef\putwordMethodon{Metod klase}
+\gdef\putwordNoTitle{Bez naslova}
+\gdef\putwordof{}
+\gdef\putwordon{}
+\gdef\putwordpage{strana}
+\gdef\putwordsection{poglavlje}
+\gdef\putwordSection{Poglavlje}
+\gdef\putwordsee{vidi}
+\gdef\putwordSee{Vidi}
+\gdef\putwordShortTOC{Kratak sadr\v{z}aj}
+\gdef\putwordTOC{Sadr\v{z}aj}
+%
+\gdef\putwordMJan{Januar}
+\gdef\putwordMFeb{Februar}
+\gdef\putwordMMar{Mart}
+\gdef\putwordMApr{April}
+\gdef\putwordMMay{Maj}
+\gdef\putwordMJun{Jun}
+\gdef\putwordMJul{Jul}
+\gdef\putwordMAug{Avgust}
+\gdef\putwordMSep{Septembar}
+\gdef\putwordMOct{Oktobar}
+\gdef\putwordMNov{Novembar}
+\gdef\putwordMDec{Decembar}
+%
+\gdef\putwordDefmac{Makro}
+\gdef\putwordDefspec{Posebna forma}
+\gdef\putwordDefvar{Promenljiva}
+\gdef\putwordDefopt{Korisni\v{c}ka opcija}
+\gdef\putwordDeffunc{Funkcija}
+
+% Produces Day Month Year style of output.
+\def\today{%
+  \number\day\space
+  \ifcase\month
+  \or\putwordMJan\or\putwordMFeb\or\putwordMMar\or\putwordMApr
+  \or\putwordMMay\or\putwordMJun\or\putwordMJul\or\putwordMAug
+  \or\putwordMSep\or\putwordMOct\or\putwordMNov\or\putwordMDec
+  \fi
+  \space\number\year}

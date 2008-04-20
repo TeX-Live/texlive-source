@@ -1,4 +1,4 @@
-$Id: README,v 1.4 2004/04/11 17:56:45 karl Exp $
+$Id: README,v 1.5 2007/07/02 21:40:32 olegkat Exp $
 texinfo/doc/README
 
   Copyright (C) 2002 Free Software Foundation, Inc.
@@ -17,11 +17,11 @@ vary so widely.  Installing them in the wrong place would give a false
 sense of security.  So, you should simply cp *.tex to the appropriate
 place.  If your installation follows the TeX Directory Structure
 standard (http://tug.org/tds/), this will be the directory
-TEXMF/tex/texinfo/ for texinfo.tex, TEXMF/tex/generic/dvips/ for epsf.tex,
-and TEXMF/pdftex/plain/misc for pdfcolor.tex.  If you use the default
-installation paths, TEXMF will be /usr/local/share/texmf.  On systems
-with TeX preinstalled, as most GNU/Linux distributions offer, TEXMF
-will often be something like /usr/share/texmf.
+TEXMF/tex/texinfo/ for texinfo.tex, and TEXMF/tex/generic/dvips/ for
+epsf.tex.  If you use the default installation paths, TEXMF will be
+/usr/local/share/texmf.  On systems with TeX preinstalled, as most
+GNU/Linux distributions offer, TEXMF will often be something like
+/usr/share/texmf.
 
 It is also possible to put these .tex files in a `local' place instead
 of overwriting existing ones, but this is more complicated.  See your TeX

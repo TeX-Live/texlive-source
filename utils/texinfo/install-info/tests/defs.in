@@ -1,0 +1,48 @@
+# @configure_input@
+# $Id: defs.in,v 1.1 2008/04/17 17:54:17 karl Exp $
+# 
+# Copyright 2008 Free Software Foundation, Inc.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or (at
+# your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# (Some snippets copied from Autoconf and/or util/defs.in.)
+# Make sure we override the user shell.
+SHELL='@SHELL@'
+export SHELL
+
+unset CDPATH
+
+# Ensure we are running from the right directory.
+if test ! -f ./defs; then
+   echo "defs: not found in current directory" 1>&2
+   exit 1
+fi
+
+# If srcdir is not set, then we are not running from `make check'.
+if test -z "$srcdir"; then
+   VERBOSE=x
+   # compute $srcdir.
+   srcdir=`echo "$0" | sed -e 's,/[^\\/]*$,,'`
+   test $srcdir = $0 && srcdir=.
+fi
+
+# The two variables we use in the test scripts.
+
+top_builddir=@top_builddir@
+install_info=${top_builddir}/install-info/ginstall-info
+export install_info
+
+top_srcdir=@top_srcdir@
+testdir=${top_srcdir}/install-info/tests
+export testdir

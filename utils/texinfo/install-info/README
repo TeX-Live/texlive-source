@@ -1,0 +1,15 @@
+$Id: README,v 1.1 2008/01/02 01:36:16 karl Exp $
+texinfo/install-info/README
+
+  Copyright (C) 2008 Free Software Foundation, Inc.
+
+  Copying and distribution of this file, with or without modification,
+  are permitted in any medium without royalty provided the copyright
+  notice and this notice are preserved.
+
+install-info updates the top-level dir file in the Info tree.
+(It does not actually install files into the Info directory, oddly enough.)
+
+Debian has a completely different implementation (in Perl) of
+install-info.  This has been a point of great confusion.  We are trying
+to reconcile the two.  Bug reports and help are welcome, as always.

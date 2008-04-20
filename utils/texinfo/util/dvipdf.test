@@ -1,0 +1,66 @@
+#! /bin/sh
+# Copyright (C) 2006, 2007  Free Software Foundation, Inc.
+#
+# This file is part of GNU Texinfo.
+#
+# GNU Texinfo is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License,
+# or (at your option) any later version.
+#
+# GNU Texinfo is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+required='tex'
+
+. ./defs || exit 1
+
+set -e
+
+# one_run ARGS -- FILES
+# ---------------------
+# Run texi2dvi with ARGS, expect the FILES to be left.  Remove them.
+one_run ()
+{
+  # Use pstricks.
+  cat >input.tex <<EOF
+\documentclass[a4paper]{article}
+\usepackage{pst-node}
+\pagestyle{empty}
+\begin{document}
+\begin{psmatrix}
+  A & B & C & D & E & F
+\end{psmatrix}
+\psset{arrows=->}
+\nccircle{1,1}{0.5}
+\nccircle[angleA=30]{1,2}{0.4}
+\nccircle[arrows=-,nodesep=0.05]{1,3}{0.2}
+\ncloop[angleB=180]{1,4}{1,4}
+\ncloop[angleB=180,linearc=0.35,nodesep=0.1]{1,5}{1,5}
+\ncloop[angleB=180,linearc=0.15,loopsize=0.4]{1,6}{1,6}
+
+\vspace{1cm}
+\begin{psmatrix}
+  A & B & C & D
+\end{psmatrix}
+\psset{arrows=->,nodesep=0.05}
+\ncangles[armA=0.8,armB=0,angleA=70,angleB=110,linearc=0.22]{1,1}{1,1}
+\ncdiag[arm=0.9,angleA=70,angleB=110,linearc=0.3]{1,2}{1,2}
+\ncdiag[arm=0.8,angleA=50,angleB=130,linearc=0.25]{1,3}{1,3}
+\ncdiag[arm=0.8,angleA=50,angleB=130,linearc=0.28]{1,4}{1,4}
+\end{document}
+EOF
+
+  TEXI2DVI_pass $(optionset_get 1 "$@") input.tex
+  # There should only be the expected and input files.
+  assert_and_remove_files $(optionset_get 2 "$@") input.tex
+}
+
+one_run --dvipdf --batch --clean \
+   -- \
+   input.pdf

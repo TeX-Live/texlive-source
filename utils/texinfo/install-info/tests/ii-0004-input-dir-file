@@ -1,0 +1,26 @@
+This is the directory file `dir' a.k.a. `DIR', which contains the
+  topmost node of the Info hierarchy.
+
+
+File: dir,	Node: Top,	This is the top of the INFO tree.
+
+This is the Info main menu (aka directory node).
+A few useful Info commands:
+
+  `q' quits;
+  `?' lists all Info commands;
+  `h' starts the Info tutorial;
+  `mTexinfo RET' visits the Texinfo manual, etc.
+
+* Menu:
+
+Animals
+* Aardvark: (aardvark).         Medium-sized African mammal.
+* Baboon: (baboon).             A monkey from Africa.
+* Chameleon: (chameleon).       A lizard from Africa.
+* Deer: (deer).                 Ruminent antlered mammal.
+* Emu: (emu).                   A flightless bird from Australia.
+* Fisher: (fisher).             A marten from North America.
+
+Antlered Animals
+* Deer: (deer).                 Ruminent antlered mammal.

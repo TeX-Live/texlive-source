@@ -1,0 +1,8 @@
+\input texinfo
+@setfilename cond.info
+
+@node Top
+
+Foo @emph{emphasized and referring to @option{--some} option}.
+
+@bye

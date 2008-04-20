@@ -1,12 +1,13 @@
 /* display.c -- How to display Info windows.
-   $Id: display.c,v 1.7 2004/04/11 17:56:45 karl Exp $
+   $Id: display.c,v 1.12 2007/10/19 18:43:20 karl Exp $
 
-   Copyright (C) 1993, 1997, 2003, 2004 Free Software Foundation, Inc.
+   Copyright (C) 1993, 1997, 2003, 2004, 2006, 2007
+   Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -14,8 +15,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
    Originally written by Brian Fox (bfox@ai.mit.edu). */
 
@@ -136,8 +136,13 @@ display_update_one_window (WINDOW *win)
   if (display_inhibited)
     display_was_interrupted_p = 1;
 
-  /* If the window has no height, or display is inhibited, quit now. */
-  if (!win->height || display_inhibited)
+  /* If the window has no height, or display is inhibited, quit now.
+     Strictly speaking, it should only be necessary to test if the
+     values are equal to zero, since window_new_screen_size should
+     ensure that the window height/width never becomes negative, but
+     since historically this has often been the culprit for crashes, do
+     our best to be doubly safe.  */
+  if (win->height <= 0 || win->width <= 0 || display_inhibited)
     return;
 
   /* If the window's first row doesn't appear in the_screen, then it
@@ -294,62 +299,65 @@ display_update_one_window (WINDOW *win)
              on the screen. */
           entry = display[line_index + win->first_row];
 
-          /* If the screen line is inversed, then we have to clear
-             the line from the screen first.  Why, I don't know.
-             (But don't do this if we have no visible entries, as can
-             happen if the window is shrunk very small.)  */
-          if ((entry && entry->inverse)
-	      /* Need to erase the line if it has escape sequences.  */
-	      || (raw_escapes_p && strchr (entry->text, '\033') != 0))
-            {
-              terminal_goto_xy (0, line_index + win->first_row);
-              terminal_clear_to_eol ();
-              entry->inverse = 0;
-              entry->text[0] = '\0';
-              entry->textlen = 0;
-            }
+          /* If the window is very small, entry might be NULL. */
+          if (entry) {
+              /* If the screen line is inversed, then we have to clear
+                 the line from the screen first.  Why, I don't know.
+                 (But don't do this if we have no visible entries, as can
+                 happen if the window is shrunk very small.)  */
+              if (entry->inverse
+	          /* Need to erase the line if it has escape sequences.  */
+	          || (raw_escapes_p && strchr (entry->text, '\033') != 0))
+                {
+                  terminal_goto_xy (0, line_index + win->first_row);
+                  terminal_clear_to_eol ();
+                  entry->inverse = 0;
+                  entry->text[0] = '\0';
+                  entry->textlen = 0;
+                }
 
-          /* Find the offset where these lines differ. */
-          for (i = 0; i < pl_index; i++)
-            if (printed_line[i] != entry->text[i])
-              break;
+              /* Find the offset where these lines differ. */
+              for (i = 0; i < pl_index; i++)
+                if (printed_line[i] != entry->text[i])
+                  break;
 
-          /* If the lines are not the same length, or if they differed
-             at all, we must do some redrawing. */
-          if ((i != pl_index) || (pl_index != entry->textlen))
-            {
-              /* Move to the proper point on the terminal. */
-              terminal_goto_xy (i, line_index + win->first_row);
+              /* If the lines are not the same length, or if they differed
+                 at all, we must do some redrawing. */
+              if ((i != pl_index) || (pl_index != entry->textlen))
+                {
+                  /* Move to the proper point on the terminal. */
+                  terminal_goto_xy (i, line_index + win->first_row);
 
-              /* If there is any text to print, print it. */
-              if (i != pl_index)
-                terminal_put_text (printed_line + i);
+                  /* If there is any text to print, print it. */
+                  if (i != pl_index)
+                    terminal_put_text (printed_line + i);
 
-              /* If the printed text didn't extend all the way to the edge
-                 of the window, and text was appearing between here and the
-                 edge of the window, clear from here to the end of the line. */
-              if ((pl_index < win->width + pl_ignore
-		   && pl_index < entry->textlen)
-		  || (entry->inverse))
-                terminal_clear_to_eol ();
+                  /* If the printed text didn't extend all the way to the edge
+                     of the window, and text was appearing between here and the
+                     edge of the window, clear from here to the end of the line. */
+                  if ((pl_index < win->width + pl_ignore
+		       && pl_index < entry->textlen)
+		      || (entry->inverse))
+                    terminal_clear_to_eol ();
 
-              fflush (stdout);
+                  fflush (stdout);
 
-              /* Update the display text buffer. */
-	      if (strlen (printed_line) > (unsigned int) screenwidth)
-		/* printed_line[] can include more than screenwidth
-		   characters if we are under -R and there are escape
-		   sequences in it.  However, entry->text was
-		   allocated (in display_initialize_display) for
-		   screenwidth characters only.  */
-		entry->text = xrealloc (entry->text, strlen (printed_line)+1);
-              strcpy (entry->text + i, printed_line + i);
-              entry->textlen = pl_index;
+                  /* Update the display text buffer. */
+	          if (strlen (printed_line) > (unsigned int) screenwidth)
+		/*     printed_line[] can include more than screenwidth
+		       characters if we are under -R and there are escape
+		       sequences in it.  However, entry->text was
+		       allocated (in display_initialize_display) for
+		       screenwidth characters only.  */
+		entry->text     = xrealloc (entry->text, strlen (printed_line)+1);
+                  strcpy (entry->text + i, printed_line + i);
+                  entry->textlen = pl_index;
 
-              /* Lines showing node text are not in inverse.  Only modelines
-                 have that distinction. */
-              entry->inverse = 0;
-            }
+                  /* Lines showing node text are not in inverse.  Only modelines
+                     have that distinction. */
+                  entry->inverse = 0;
+                }
+          }
 
           /* We have done at least one line.  Increment our screen line
              index, and check against the bottom of the window. */

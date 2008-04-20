@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.8 2004/10/28 14:03:27 karl Exp $
+# $Id: Makefile.am,v 1.15 2008/03/28 23:39:20 karl Exp $
 # Makefile.am for texinfo/info.
 # Run automake in .. to produce Makefile.in from this.
 #
@@ -19,13 +19,17 @@ transform = s/ginfo/info/; $(program_transform_name)
 localedir = $(datadir)/locale
 infodir2 = $(datadir)/info
 
-# -I. for funs.h.
-# Automake puts -I.. and -I$(srcdir) into DEFS by default, but
-# we need to override it, so include them ourselves.
-INCLUDES = -I. -I$(top_srcdir)/lib -I../intl -I.. -I$(srcdir)
-DEFS += -DLOCALEDIR=\"$(localedir)\" -DINFODIR=\"$(infodir)\" \
-	-DINFODIR2=\"$(infodir2)\"
-LDADD = ../lib/libtxi.a $(TERMLIBS) $(LIBINTL)
+AM_CPPFLAGS = 					\
+  -I$(top_srcdir)				\
+  -I$(top_srcdir)/gnulib/lib			\
+  -I$(top_builddir)/gnulib/lib			\
+  -DLOCALEDIR=\"$(localedir)\" 			\
+  -DINFODIR=\"$(infodir)\"			\
+  -DINFODIR2=\"$(infodir2)\"
+
+LDADD = ../lib/libtxi.a $(top_builddir)/gnulib/lib/libgnu.a \
+        $(TERMLIBS) $(LIBINTL)
+infokey_LDADD = ../lib/libtxi.a $(top_builddir)/gnulib/lib/libgnu.a $(LIBINTL)
 
 EXTRA_DIST = README pcterm.c
 
@@ -50,6 +54,8 @@ generated_sources = doc.c key.c funs.h
 
 # We need a linear ordering to prevent race condition in parallel make.
 # See the node ``(automake)Multiple Outputs'' for an explanation.
+# Make sure this matches with order in which makedoc.c creates these
+# files.
 doc.c: key.c
 key.c: funs.h
 
@@ -64,8 +70,10 @@ cmd_sources = $(srcdir)/session.c $(srcdir)/echo-area.c $(srcdir)/infodoc.c \
   $(srcdir)/m-x.c $(srcdir)/indices.c $(srcdir)/nodemenu.c \
   $(srcdir)/footnotes.c $(srcdir)/variables.c
 
-# The $(EXEEXT) should be added by Automake, but isn't. Fine.
-$(generated_sources): makedoc$(EXEEXT) $(cmd_sources)
+# Make the target only funs.h even though we create all the
+# $(generated_sources) so that parallel makes won't do the rm && makedoc
+# more than once.
+funs.h: makedoc$(EXEEXT) $(cmd_sources)
 	rm -f $(generated_sources)
 	$(top_builddir)/$(native_tools)/info/makedoc $(cmd_sources)
 

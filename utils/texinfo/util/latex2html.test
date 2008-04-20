@@ -1,0 +1,79 @@
+#! /bin/sh
+# Copyright (C) 2006, 2007  Free Software Foundation, Inc.
+#
+# This file is part of GNU Texinfo.
+#
+# GNU Texinfo is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License,
+# or (at your option) any later version.
+#
+# GNU Texinfo is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+required='hevea'
+
+. ./defs || exit 1
+
+set -e
+
+# Force the creation of auxiliary files.
+# Force it to be big enough to trigger the info file splitting.
+{
+  echo "\tableofcontents"
+  for section in 1 2 3 4 5 6
+  do
+    echo "\section{$i}"
+    for subsection in 1 2 3 4 5 6
+    do
+      echo "\subsection{$i}"
+      echo "$latex_paragraph"
+    done
+  done
+} |
+create_input_tex
+
+
+# run_hevea_check FORMAT OPTIONS
+# ------------------------------
+run_hevea_check ()
+{
+  title "$@"
+
+  format="$1"
+  shift
+
+  # Testing the local build mode.
+  TEXI2DVI_pass --batch --$format "$@" input.tex
+
+  # Compute the expected output.
+  outfiles=input.$out
+  case $format in
+     info) outfiles="$outfiles input.info-1 input.info-2";;
+  esac
+
+  # Compute the aux files.
+  case $format:$@ in
+    *clean* ) auxfiles='';;
+     *tidy* ) auxfiles='input.t2d';;
+     html:*|text:* ) auxfiles='input.haux input.htoc';;
+      dvi:* ) auxfiles='input.aux input.log input.toc';;
+          * ) auxfiles='';;
+  esac
+  # There should only be the expected output and the source file.
+  assert_files input.tex $outfiles $auxfiles
+  rm -fr $outfiles $auxfiles
+}
+
+for opt in "" "--clean" "--tidy"
+do
+  for out in html info text
+    do
+    run_hevea_check $out $opt
+  done
+done

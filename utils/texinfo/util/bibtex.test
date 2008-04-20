@@ -1,0 +1,57 @@
+#! /bin/sh
+# Copyright (C) 2006, 2007  Free Software Foundation, Inc.
+#
+# This file is part of GNU Texinfo.
+#
+# GNU Texinfo is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License,
+# or (at your option) any later version.
+#
+# GNU Texinfo is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+required='hevea'
+
+. ./defs || exit 1
+
+set -e
+
+create_input_tex <<EOF
+\cite{texinfo.doc}
+\bibliographystyle{plain}
+\bibliography{sample}
+EOF
+
+cat >sample.bib <<EOF
+@misc{texinfo.doc,
+  title =	 "{GNU Texinfo}: The {GNU} documentation format",
+  author =	 "Robert J. Chassell and Richard M. Stallman",
+  year =	 "1988"
+}
+EOF
+
+
+# check HTML|INFO|TEXT|DVI|PDF
+# ----------------------------
+check ()
+{
+  out=$1
+  # Testing the local build mode.
+  TEXI2DVI_pass --$out --batch --tidy input.tex
+  # There should only be the DVI and the TEXI file.
+  assert_files input.$out input.tex sample.bib input.t2d
+  cp input.$out /tmp/foo
+  rm input.$out
+}
+
+# Currently we don't use bibtex with hevea.  This is to be fixed.
+for out in dvi pdf # html info text
+do
+  check $out
+done

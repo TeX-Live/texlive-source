@@ -1,13 +1,13 @@
 /* makedoc.c -- make doc.c and funs.h from input files.
-   $Id: makedoc.c,v 1.4 2004/04/11 17:56:46 karl Exp $
+   $Id: makedoc.c,v 1.9 2007/12/09 23:30:40 karl Exp $
 
-   Copyright (C) 1993, 1997, 1998, 1999, 2001, 2002, 2003, 2004 Free Software
-   Foundation, Inc.
+   Copyright (C) 1993, 1997, 1998, 1999, 2001, 2002, 2003, 2004, 2007
+   Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,8 +15,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
    Originally written by Brian Fox (bfox@ai.mit.edu). */
 
@@ -27,6 +26,8 @@
 
 #include "info.h"
 #include "infokey.h"
+
+char *program_name = "makedoc";
 
 static void fatal_file_error (char *filename);
 
@@ -143,9 +144,12 @@ main (int argc, char **argv)
       key_filename = NULL_DEVICE;
     }
 
+  /* The order of these calls depends exactly on the order in the
+     Makefile.{in,am}, or they might fail on filesystems with
+     high-precision times; see also the fclose calls below.  */
   funs_stream = must_fopen (funs_filename, "w");
-  doc_stream = must_fopen (doc_filename, "w");
   key_stream = must_fopen (key_filename, "w");
+  doc_stream = must_fopen (doc_filename, "w");
 
   fprintf (funs_stream,
       "/* %s -- Generated declarations for Info commands. */\n\n\
@@ -224,9 +228,11 @@ main (int argc, char **argv)
   fprintf (key_stream, "   { (char *)NULL, 0 }\n};\n");
   fprintf (funs_stream, "\n#define A_NCOMMANDS %u\n", next_func_key());
 
+  /* The order of these calls also depends exactly on the order in the
+   * Makefile.{in,am}; see the must_fopen calls above.  */
   fclose (funs_stream);
-  fclose (doc_stream);
   fclose (key_stream);
+  fclose (doc_stream);
 
   if (tags_only)
     maybe_dump_tags (stdout);

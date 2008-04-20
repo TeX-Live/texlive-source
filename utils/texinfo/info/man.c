@@ -1,13 +1,13 @@
 /*  man.c: How to read and format man files.
-    $Id: man.c,v 1.4 2004/04/11 17:56:46 karl Exp $
+    $Id: man.c,v 1.11 2007/12/03 01:38:42 karl Exp $
 
-   Copyright (C) 1995, 1997, 1998, 1999, 2000, 2002, 2003, 2004 Free Software
-   Foundation, Inc.
+   Copyright (C) 1995, 1997, 1998, 1999, 2000, 2002, 2003, 2004, 2005, 2007
+   Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,10 +15,9 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-   Written by Brian Fox Thu May  4 09:17:52 1995 (bfox@ai.mit.edu). */
+   Originally written by Brian Fox Thu May  4 09:17:52 1995. */
 
 #include "info.h"
 #include <sys/ioctl.h>
@@ -290,8 +289,10 @@ get_manpage_contents (char *pagename)
 
   get_page_and_section (pagename);
 
-  if (manpage_section != (char *)NULL)
+  if (manpage_section)
     formatter_args[arg_index++] = manpage_section;
+  else
+    formatter_args[arg_index++] = "-a";    
 
   formatter_args[arg_index++] = manpage_pagename;
   formatter_args[arg_index] = (char *)NULL;
@@ -324,6 +325,19 @@ get_manpage_contents (char *pagename)
       freopen (NULL_DEVICE, "w", stderr);
       freopen (NULL_DEVICE, "r", stdin);
       dup2 (pipes[1], fileno (stdout));
+
+      if (MB_CUR_MAX > 1)
+        {
+          /* Info has trouble wrapping man output if it contains
+             multibyte characters */
+          setenv("LANGUAGE", "C", 1);
+          setenv("LANG", "C", 1);
+#ifdef LC_MESSAGES
+          setenv("LC_MESSAGES", "C", 1);
+#endif
+          setenv("LC_CTYPE", "C", 1);
+          setenv("LC_ALL", "C", 1);
+        }
 
       execv (formatter_args[0], formatter_args);
 
@@ -440,7 +454,7 @@ manpage_node_of_file_buffer (FILE_BUFFER *file_buffer, char *pagename)
 
       for (i = 0; (tag = file_buffer->tags[i]); i++)
         {
-          if (strcasecmp (pagename, tag->nodename) == 0)
+          if (mbscasecmp (pagename, tag->nodename) == 0)
             break;
         }
     }

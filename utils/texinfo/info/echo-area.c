@@ -1,13 +1,13 @@
 /* echo-area.c -- how to read a line in the echo area.
-   $Id: echo-area.c,v 1.7 2004/12/14 00:15:36 karl Exp $
+   $Id: echo-area.c,v 1.12 2008/02/26 16:51:05 karl Exp $
 
-   Copyright (C) 1993, 1997, 1998, 1999, 2001, 2004 Free Software
-   Foundation, Inc.
+   Copyright (C) 1993, 1997, 1998, 1999, 2001, 2004, 2007
+   Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,8 +15,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
    Written by Brian Fox (bfox@ai.mit.edu). */
 
@@ -45,7 +44,7 @@ int echo_area_last_command_was_kill = 0;
 
 /* Variables which hold on to the current state of the input line. */
 static char input_line[1 + EA_MAX_INPUT];
-static char *input_line_prompt;
+static const char *input_line_prompt;
 static int input_line_point;
 static int input_line_beg;
 static int input_line_end;
@@ -160,7 +159,7 @@ restore_calling_window (void)
 
 /* Set up a new input line with PROMPT. */
 static void
-initialize_input_line (char *prompt)
+initialize_input_line (const char *prompt)
 {
   input_line_prompt = prompt;
   if (prompt)
@@ -201,7 +200,7 @@ echo_area_after_read (void)
    active window, so that we can restore it when we need to.  PROMPT, if
    non-null, is a prompt to print before reading the line. */
 char *
-info_read_in_echo_area (WINDOW *window, char *prompt)
+info_read_in_echo_area (WINDOW *window, const char *prompt)
 {
   char *line;
 
@@ -560,7 +559,7 @@ DECLARE_INFO_COMMAND (ea_yank, _("Yank back the contents of the last kill"))
 
   if (!kill_ring_index)
     {
-      inform_in_echo_area ((char *) _("Kill ring is empty"));
+      inform_in_echo_area (_("Kill ring is empty"));
       return;
     }
 
@@ -799,7 +798,7 @@ completions_window_p (WINDOW *window)
 /* Workhorse for completion readers.  If FORCE is non-zero, the user cannot
    exit unless the line read completes, or is empty. */
 char *
-info_read_completing_internal (WINDOW *window, char *prompt,
+info_read_completing_internal (WINDOW *window, const char *prompt,
     REFERENCE **completions, int force)
 {
   char *line;
@@ -854,7 +853,7 @@ info_read_completing_internal (WINDOW *window, char *prompt,
           /* If one of the completions matches exactly, then that is okay, so
              return the current line. */
           for (i = 0; i < completions_found_index; i++)
-            if (strcasecmp (completions_found[i]->label, line) == 0)
+            if (mbscasecmp (completions_found[i]->label, line) == 0)
               {
                 free (line);
                 line = xstrdup (completions_found[i]->label);
@@ -865,9 +864,9 @@ info_read_completing_internal (WINDOW *window, char *prompt,
           if (i == completions_found_index)
             {
               if (!completions_found_index)
-                inform_in_echo_area ((char *) _("No completions"));
+                inform_in_echo_area (_("No completions"));
               else
-                inform_in_echo_area ((char *) _("Not complete"));
+                inform_in_echo_area (_("Not complete"));
               continue;
             }
         }
@@ -894,7 +893,7 @@ info_read_completing_internal (WINDOW *window, char *prompt,
 /* Read a line in the echo area with completion over COMPLETIONS. */
 char *
 info_read_completing_in_echo_area (WINDOW *window,
-    char *prompt, REFERENCE **completions)
+    const char *prompt, REFERENCE **completions)
 {
   return (info_read_completing_internal (window, prompt, completions, 1));
 }
@@ -903,7 +902,7 @@ info_read_completing_in_echo_area (WINDOW *window,
    not requiring it. */
 char *
 info_read_maybe_completing (WINDOW *window,
-    char *prompt, REFERENCE **completions)
+    const char *prompt, REFERENCE **completions)
 {
   return (info_read_completing_internal (window, prompt, completions, 0));
 }
@@ -921,11 +920,11 @@ DECLARE_INFO_COMMAND (ea_possible_completions, _("List possible completions"))
   if (!completions_found_index)
     {
       terminal_ring_bell ();
-      inform_in_echo_area ((char *) _("No completions"));
+      inform_in_echo_area (_("No completions"));
     }
   else if ((completions_found_index == 1) && (key != '?'))
     {
-      inform_in_echo_area ((char *) _("Sole completion"));
+      inform_in_echo_area (_("Sole completion"));
     }
   else
     {
@@ -934,8 +933,8 @@ DECLARE_INFO_COMMAND (ea_possible_completions, _("List possible completions"))
 
       initialize_message_buffer ();
       printf_to_message_buffer (completions_found_index == 1
-                                ? (char *) _("One completion:\n")
-                                : (char *) _("%d completions:\n"),
+                                ? _("One completion:\n")
+                                : _("%d completions:\n"),
 				(void *) (long) completions_found_index,
 				NULL, NULL);
 
@@ -1209,7 +1208,7 @@ build_completions (void)
 
   for (i = 0; (entry = echo_area_completion_items[i]); i++)
     {
-      if (strncasecmp (request, entry->label, len) == 0)
+      if (mbsncasecmp (request, entry->label, len) == 0)
         add_pointer_to_array (entry, completions_found_index,
                               completions_found, completions_found_slots,
                               20, REFERENCE *);
@@ -1217,7 +1216,7 @@ build_completions (void)
       if (!informed_of_lengthy_job && completions_found_index > 100)
         {
           informed_of_lengthy_job = 1;
-          window_message_in_echo_area ((char *) _("Building completions..."),
+          window_message_in_echo_area (_("Building completions..."),
               NULL, NULL);
         }
     }
@@ -1292,7 +1291,7 @@ compare_references (const void *entry1, const void *entry2)
   REFERENCE **e1 = (REFERENCE **) entry1;
   REFERENCE **e2 = (REFERENCE **) entry2;
 
-  return (strcasecmp ((*e1)->label, (*e2)->label));
+  return (mbscasecmp ((*e1)->label, (*e2)->label));
 }
 
 /* Prune duplicate entries from COMPLETIONS_FOUND. */
@@ -1383,7 +1382,7 @@ echo_area_inform_of_deleted_window (WINDOW *window)
 /* Push and Pop the echo area. */
 typedef struct {
   char *line;
-  char *prompt;
+  const char *prompt;
   REFERENCE **comp_items;
   int point, beg, end;
   int must_complete;

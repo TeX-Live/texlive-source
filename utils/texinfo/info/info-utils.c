@@ -1,12 +1,12 @@
 /* info-utils.c -- miscellanous.
-   $Id: info-utils.c,v 1.4 2004/04/11 17:56:45 karl Exp $
+   $Id: info-utils.c,v 1.9 2007/12/03 01:38:42 karl Exp $
 
-   Copyright (C) 1993, 1998, 2003, 2004 Free Software Foundation, Inc.
+   Copyright (C) 1993, 1998, 2003, 2004, 2007 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -14,8 +14,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
    Originally written by Brian Fox (bfox@ai.mit.edu). */
 
@@ -250,7 +249,7 @@ info_references_internal (char *label, SEARCH_BINDING *binding)
   tmp_search.end = binding->end;
   tmp_search.flags = S_FoldCase | S_SkipDest;
 
-  searching_for_menu_items = (strcasecmp (label, INFO_MENU_ENTRY_LABEL) == 0);
+  searching_for_menu_items = (mbscasecmp (label, INFO_MENU_ENTRY_LABEL) == 0);
 
   while ((position = search_forward (label, &tmp_search)) != -1)
     {
@@ -290,7 +289,8 @@ info_references_internal (char *label, SEARCH_BINDING *binding)
       strncpy (entry->label, refdef, offset - 1);
       entry->label[offset - 1] = '\0';
       canonicalize_whitespace (entry->label);
-
+      entry->line_number = 0;
+      
       refdef += offset;
       entry->start = start;
       entry->end = refdef - binding->buffer;
@@ -396,6 +396,7 @@ info_copy_reference (REFERENCE *src)
   dest->nodename = src->nodename ? xstrdup (src->nodename) : NULL;
   dest->start = src->start;
   dest->end = src->end;
+  dest->line_number = 0;
   
   return dest;
 }

@@ -1,0 +1,71 @@
+% Russian translation for texinfo.tex. 
+%
+% Copyright (C) 2005, 2007 Free Software Foundation.
+%
+% Author:
+%  Sergey Poznyakoff
+%
+% This program is free software; you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation; either version 3 of the License, or
+% (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+%\include plainenc
+%
+\gdef\putwordAppendix{Приложение}
+\gdef\putwordChapter{Глава}
+\gdef\putwordfile{файл}
+\gdef\putwordin{в}
+\gdef\putwordIndexIsEmpty{(Индекс пуст)}
+\gdef\putwordIndexNonexistent{(Индекс не существует)}
+\gdef\putwordInfo{Info}
+\gdef\putwordInstanceVariableof{Переменная класса} % hmm ??
+\gdef\putwordMethodon{Метод}
+\gdef\putwordNoTitle{Без заглавия}
+\gdef\putwordof{для}  % (??) Категория X для класса Y 
+\gdef\putwordon{над}  % Операция над ...
+\gdef\putwordpage{страница}
+\gdef\putwordsection{раздел}
+\gdef\putwordSection{Раздел}
+\gdef\putwordsee{см.}
+\gdef\putwordSee{См.}
+\gdef\putwordShortTOC{Краткое оглавление}
+\gdef\putwordTOC{Оглавление}
+%
+%% Месяцы используются только в родительном падеже (см. ниже today) 
+\gdef\putwordMJan{января}
+\gdef\putwordMFeb{февраля}
+\gdef\putwordMMar{марта}
+\gdef\putwordMApr{апреля}
+\gdef\putwordMMay{мая}
+\gdef\putwordMJun{июнь}
+\gdef\putwordMJul{июля}
+\gdef\putwordMAug{августа}
+\gdef\putwordMSep{сентября}
+\gdef\putwordMOct{октября}
+\gdef\putwordMNov{ноября}
+\gdef\putwordMDec{декабря}
+%
+\gdef\putwordDefmac{Макроопределение}
+\gdef\putwordDefspec{Особая форма}
+\gdef\putwordDefvar{Переменная}
+\gdef\putwordDefopt{Опция пользователя}
+\gdef\putwordDeffunc{Функция}
+
+% Produces Day Month Year style of output.
+\def\today{%
+  \number\day\space
+  \ifcase\month
+  \or\putwordMJan\or\putwordMFeb\or\putwordMMar\or\putwordMApr
+  \or\putwordMMay\or\putwordMJun\or\putwordMJul\or\putwordMAug
+  \or\putwordMSep\or\putwordMOct\or\putwordMNov\or\putwordMDec
+  \fi
+  \space\number\year}

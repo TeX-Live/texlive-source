@@ -1,0 +1,31 @@
+#!/bin/sh
+# This file is free software; as a special exception the author gives
+# unlimited permission to copy and/or distribute it, with or without
+# modifications, as long as this notice is preserved.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+#This script requires `mktemp' and `diff' and is designed to be run from
+#a Makefile.
+
+. ./defs || exit 1
+
+outputdirfile=`mktemp`
+cp ${testdir}/ii-0017-input-dir-file $outputdirfile
+if [ "x$?" != "x0" ]; then
+  exit 1
+fi
+
+${install_info} ${testdir}/ii-0017-input-info-file $outputdirfile
+retval=$?
+if [ "x$retval" != "x0" ]; then
+  exit $retval
+fi
+
+diff ${testdir}/ii-0017-expected-dir-file $outputdirfile
+retval=$?
+
+rm -f $outputdirfile
+exit $retval

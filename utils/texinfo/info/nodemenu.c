@@ -1,13 +1,13 @@
 /* nodemenu.c -- produce a menu of all visited nodes.
-   $Id: nodemenu.c,v 1.5 2004/04/11 17:56:46 karl Exp $
+   $Id: nodemenu.c,v 1.10 2008/02/26 16:51:05 karl Exp $
 
-   Copyright (C) 1993, 1997, 1998, 2002, 2003, 2004 Free Software
-   Foundation, Inc.
+   Copyright (C) 1993, 1997, 1998, 2002, 2003, 2004, 2007
+   Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,8 +15,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
    Written by Brian Fox (bfox@ai.mit.edu). */
 
@@ -116,7 +115,7 @@ compare_strings (const void *entry1, const void *entry2)
   char **e1 = (char **) entry1;
   char **e2 = (char **) entry2;
 
-  return (strcasecmp (*e1, *e2));
+  return (mbscasecmp (*e1, *e2));
 }
 
 /* The name of the nodemenu node. */
@@ -199,7 +198,7 @@ get_visited_nodes (Function *filter_func)
 
   printf_to_message_buffer
     ("%s", replace_in_documentation
-     ((char *) _("Here is the menu of nodes you have recently visited.\n\
+     (_("Here is the menu of nodes you have recently visited.\n\
 Select one from this menu, or use `\\[history-node]' in another window.\n"), 0),
      NULL, NULL);
 
@@ -314,7 +313,7 @@ DECLARE_INFO_COMMAND (select_visited_node,
 
   line =
     info_read_completing_in_echo_area (window,
-        (char *) _("Select visited node: "), menu);
+        _("Select visited node: "), menu);
 
   window = active_window;
 
@@ -334,7 +333,7 @@ DECLARE_INFO_COMMAND (select_visited_node,
       entry = info_get_labeled_reference (line, menu);
 
       if (!entry)
-        info_error ((char *) _("The reference disappeared! (%s)."), line, NULL);
+        info_error (_("The reference disappeared! (%s)."), line, NULL);
       else
         info_select_reference (window, entry);
     }

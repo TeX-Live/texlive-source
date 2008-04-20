@@ -1,5 +1,5 @@
-\input texinfo.tex    @c -*-texinfo-*-
-@comment $Id: info-stnd.texi,v 1.9 2004/12/14 16:58:15 karl Exp $
+vb\input texinfo.tex    @c -*-texinfo-*-
+@comment $Id: info-stnd.texi,v 1.21 2008/03/04 09:45:52 gray Exp $
 @c We must \input texinfo.tex instead of texinfo, otherwise make
 @c distcheck in the Texinfo distribution fails, because the texinfo Info
 @c file is made first, and texi2dvi must include . first in the path.
@@ -18,21 +18,26 @@ a program for viewing documents in Info format (usually created from
 Texinfo source files).
 
 Copyright @copyright{} 1992, 1993, 1996, 1997, 1998, 1999, 2001, 2002,
-2003, 2004 Free Software Foundation, Inc.
+2003, 2004, 2005, 2006, 2007, 2008 Free Software Foundation, Inc.
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
-under the terms of the GNU Free Documentation License, Version 1.1 or
+under the terms of the GNU Free Documentation License, Version 1.2 or
 any later version published by the Free Software Foundation; with no
-Invariant Sections, with the Front-Cover texts being ``A GNU Manual,''
+Invariant Sections, with the Front-Cover texts being ``A GNU Manual'',
 and with the Back-Cover Texts as in (a) below.  A copy of the
 license is included in the section entitled ``GNU Free Documentation
-License.''
+License' in the Texinfo manual.
 
-(a) The FSF's Back-Cover Text is: ``You have freedom to copy and modify
-this GNU Manual, like GNU software.  Copies published by the Free
-Software Foundation raise funds for GNU development.''
+(a) The FSF's Back-Cover Text is: ``You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom.''
 @end quotation
+
+This document is part of a collection distributed under the GNU Free
+Documentation License.  If you want to distribute this document
+separately from the collection, you can do so by adding a copy of the
+license to the document, as described in section 6 of the license.
 @end copying
 
 @dircategory Texinfo documentation system
@@ -44,7 +49,7 @@ Software Foundation raise funds for GNU development.''
 @titlepage
 @title GNU Info
 @subtitle for version @value{VERSION}, @value{UPDATED}
-@author Brian J. Fox (bfox@@gnu.org)
+@author Brian J. Fox
 @page
 @vskip 0pt plus 1filll
 @insertcopying
@@ -56,12 +61,12 @@ Software Foundation raise funds for GNU development.''
 @node Top
 @top GNU Info
 
-@insertcopying
-
-This documentation is different from the documentation for the Info
-reader that is part of GNU Emacs.  If you do not know how to use Info,
-but have a working Info reader, you should read the Emacs documentation
-first, as it includes more background information and a thorough tutorial.
+If you do not know how to use Info, but have a working Info reader,
+you should read the Info manual before this one (@pxref{Top, Getting
+Started,,info, Info}), as it includes more background information and
+a thorough tutorial.  This documentation describes the standalone Info
+reader that is part of the Texinfo distribution, not the Info reader
+that is part of GNU Emacs.
 @end ifnottex
 
 @menu
@@ -77,23 +82,32 @@ first, as it includes more background information and a thorough tutorial.
 * Miscellaneous Commands::      A few commands that defy categories.
 * Variables::                   How to change the default behavior of Info.
 * Custom Key Bindings::         How to define your own key-to-command bindings.
-* Copying This Manual::         The GNU Free Documentation License.
-* Index::                       Global index containing keystrokes,
-                                  command names, variable names,
-                                  and general concepts.
+* Index::                       Global index with keystrokes, command names,
+                                  variable names, and general concepts.
 @end menu
 
 
 @node What is Info
 @chapter What is Info?
 
-@dfn{Info} is a program which is used to view Info files on an ASCII
-terminal.  @dfn{Info files} are the result of processing Texinfo files
-with the program @code{makeinfo} or with one of the Emacs commands, such
-as @code{M-x texinfo-format-buffer}.  Texinfo itself is a documentation
-system that uses a single source file to produce both on-line
-information and printed output.  You can typeset and print the files
-that you read in Info.
+The @dfn{Info} program is a standalone program, part of the Texinfo
+distribution, which is used to view Info files on an ASCII terminal.
+@dfn{Info files} are typically the result of processing Texinfo files
+with the program @code{makeinfo} (also in the Texinfo distribution)
+
+Texinfo itself is a documentation system that uses a single source
+file to produce both on-line information and printed output.  You can
+typeset and print the files that you read in Info.
+
+GNU Emacs also provides an Info reader (just type @kbd{M-x info} in
+Emacs).  Emacs Info and standalone Info have nearly identical user
+interfaces, although customization and other details are different
+(this manual explains the standalone Info reader).  The Emacs Info
+reader supports the X Window System and other such bitmapped
+interfaces, not just plain ASCII, so if you want the prettiest
+display for Info files, you should try it.  You can use Emacs Info
+without using Emacs for anything else.  (Type @kbd{C-x C-c} to exit;
+this also works in the standalone Info reader.)
 
 
 @node Invoking Info
@@ -118,15 +132,16 @@ The program accepts the following options:
 @table @code
 @anchor{--apropos}
 @item --apropos=@var{string}
+@itemx -k @var{string}
 @cindex Searching all indices
 @cindex Info files@r{, searching all indices}
 @cindex Apropos@r{, in Info files}
 Specify a string to search in every index of every Info file installed
-on your system.  Info looks up the named @var{string} in all the indices
-it can find, prints the results to standard output, and then exits.  If
-you are not sure which Info file explains certain issues, this option is
-your friend.  Note that if your system has a lot of Info files
-installed, searching all of them might take some time.
+on your system.  Info looks up the named @var{string} in all the
+indices it can find, prints the results to standard output, and then
+exits.  If you are not sure which Info file explains certain issues,
+this option is your friend.  (If your system has a lot of Info files
+installed, searching all of them might take some time!)
 
 You can invoke the apropos command from inside Info; see
 @ref{Searching Commands}.
@@ -339,6 +354,10 @@ index or the invocation node is the file where Info finds itself after
 following all the menu items given on the command line.  This is so
 @samp{info emacs --show-options} does what you'd expect.
 
+Finally, Info defines many default key bindings and variables.
+@xref{Custom Key Bindings}, for information on how to customize these
+settings.
+
 @c FIXME: the feature with lowercasing the file name isn't documented
 
 
@@ -354,7 +373,7 @@ the Emacs and standalone versions) have several commands which allow
 you to move the cursor about the screen.  The notation used in this
 manual to describe keystrokes is identical to the notation used within
 the Emacs manual, and the GNU Readline manual.  @xref{User Input,,,
-emacs, the GNU Emacs Manual}, if you are unfamiliar with the
+emacs, The GNU Emacs Manual}, if you are unfamiliar with the
 notation.@footnote{Here's a short summary.  @kbd{C-@var{x}} means
 press the @kbd{CTRL} key and the key @var{x}.  @kbd{M-@var{x}} means
 press the @kbd{META} key and the key @var{x}.  On many terminals th
@@ -366,7 +385,7 @@ The following table lists the basic cursor movement commands in Info.
 Each entry consists of the key sequence you should type to execute the
 cursor movement, the @code{M-x}@footnote{@code{M-x} is also a command; it
 invokes @code{execute-extended-command}.  @xref{M-x, , Executing an
-extended command, emacs, the GNU Emacs Manual}, for more detailed
+extended command, emacs, The GNU Emacs Manual}, for more detailed
 information.} command name (displayed in parentheses), and a short
 description of what the command does.  All of the cursor motion commands
 can take a @dfn{numeric} argument (see @ref{Miscellaneous Commands,
@@ -474,9 +493,11 @@ current paragraph you are reading is visible on the screen.  The
 commands detailed in this section are used to shift which part of the
 current node is visible on the screen.
 
-Scrolling commands are bound differently when @samp{--vi-keys} operation
-is in effect (@pxref{--vi-keys}).  These key bindings are designated
-with ``vi-like operation''.
+Scrolling commands are bound differently when @samp{--vi-keys}
+operation is in effect (@pxref{--vi-keys}).  These key bindings are
+designated with ``vi-like operation''.  @xref{Custom Key Bindings},
+for information on arbitrarily customizing key bindings and variable
+settings.
 
 @table @asis
 @item @key{SPC} (@code{scroll-forward})
@@ -614,8 +635,7 @@ The @code{scroll-forward} and @code{scroll-backward} commands can also
 move forward and backward through the node structure of the file.  If
 you press @key{SPC} while viewing the end of a node, or @key{DEL} while
 viewing the beginning of a node, what happens is controlled by the
-variable @code{scroll-behavior}.  @xref{Variables,
-@code{scroll-behavior}}, for more information.
+variable @code{scroll-behavior} (@pxref{scroll-behavior}).
 
 The @code{scroll-forward-page-only} and @code{scroll-backward-page-only}
 commands never scroll beyond the current node.
@@ -795,8 +815,7 @@ and if it has a menu, the last item in the menu is selected.
 
 You can get the same behavior as @code{global-next-node} and
 @code{global-prev-node} while simply scrolling through the file with
-@key{SPC} and @key{DEL}; @xref{Variables, @code{scroll-behavior}}, for
-more information.
+@key{SPC} and @key{DEL} (@pxref{scroll-behavior}).
 
 @table @asis
 @anchor{goto-node}
@@ -923,11 +942,13 @@ areas within an Info file which discuss a particular topic.
 @kindex s
 @kindex /
 @findex search
-Read a string in the echo area and search for it.  If the string
-includes upper-case characters, the Info file is searched
-case-sensitively; otherwise Info ignores the letter case.  With a
-numeric argument of @var{N}, search for @var{N}th occurrence of the
-string.  Negative arguments search backwards.
+@cindex regular expression search
+Read a string in the echo area and search for it, either as a regular
+expression (by default) or a literal string.  If the string includes
+upper-case characters, the Info file is searched case-sensitively;
+otherwise Info ignores the letter case.  With a numeric argument of
+@var{N}, search for @var{N}th occurrence of the string.  Negative
+arguments search backwards.
 
 @item @key{?} (@code{search-backward}, vi-like operation)
 @kindex ?, vi-like operation
@@ -937,6 +958,14 @@ for that string.  If the string includes upper-case characters, the Info
 file is searched case-sensitively; otherwise Info ignores the letter
 case.  With a numeric argument of @var{N}, search for @var{N}th
 occurrence of the string.  Negative arguments search forward.
+
+@item @key{R} (@code{toggle-regexp})
+@kindex R
+@findex toggle-regexp
+Toggle between using regular expressions and literal strings for
+searching.  Info uses so-called `extended' regular expression syntax,
+similar to Emacs (@pxref{Regexps, , Using Regular Expressions, emacs,
+The GNU Emacs Manual}).
 
 @item @key{S} (@code{search-case-sensitively}
 @kindex S
@@ -1841,6 +1870,13 @@ window.  There are exceptions to the automatic tiling; specifically, the
 windows @samp{*Completions*} and @samp{*Footnotes*} are @emph{not}
 resized through automatic tiling; they remain their original size.
 
+@anchor{cursor-movement-scrolls}
+@item cursor-movement-scrolls
+Normally, cursor movement commands (@pxref{Cursor Commands}) stop when
+top or bottom of a node is reached.  When this variable is set to
+@code{On}, cursor movement commands act as scrolling ones and their
+behavior is controlled by the @code{scroll-behavior} variable (see below).
+
 @item errors-ring-bell
 @vindex errors-ring-bell
 When set to @code{On}, errors cause the bell to ring.  The default
@@ -1870,12 +1906,15 @@ Info that it is running in an environment where the European standard
 character set is in use, and allows you to input such characters to
 Info, as well as display them.
 
+@anchor{scroll-behavior}
 @item scroll-behavior
+@itemx scroll-behaviour
 @vindex scroll-behavior
+@vindex scroll-behaviour
 Control what happens when forward scrolling is requested at the end of
 a node, or when backward scrolling is requested at the beginning of a
-node.  The default value for this variable is @code{Continuous}.  There
-are three possible values for this variable:
+node.  The default value for this variable is @code{Continuous}.
+There are three possible values for this variable:
 
 @table @code
 @item Continuous
@@ -1885,6 +1924,32 @@ This behavior is identical to using the @samp{]}
 (@code{global-next-node}) and @samp{[} (@code{global-prev-node})
 commands.
 
+@item scroll-last-node
+@vindex scroll-last-node
+Control what happens when a scrolling command is issued at the end of
+the last node. Possible values are:
+
+@table @code
+@item Stop
+Do not scroll. Display the @samp{No more nodes within this document.}
+message. This is the default.
+
+@item Scroll
+Scroll as usual. Since the last node is usually an index, this means
+that the very first node from the menu will be selected.
+
+@item Top
+Go to the top node of this document.
+@end table
+
+This variable is in effect only if @code{scroll-behaviour} is set to
+@code{Continuous}.
+
+Notice that the default behavior has changed in version 4.12. Previous
+versions behaved as if @code{scroll-last-node=Scroll} was set. This
+behavior was counter-intuitive, therefore since version 4.12 the
+default is to stop at the last node.
+
 @item Next Only
 Only try to get the @samp{Next} node.
 
@@ -1893,6 +1958,13 @@ Simply give up, changing nothing.  If @code{scroll-behavior} is
 @code{Page Only}, no scrolling command can change the node that is being
 viewed.
 @end table
+
+This variable normally affects only scrolling commands.
+@xref{cursor-movement-scrolls}, for information on how to widen its
+scope.
+
+The two names, @code{scroll-behavior} and @code{scroll-behaviour}, are
+a historical accident.  They are merely synonyms.
 
 @item scroll-step
 @vindex scroll-step
@@ -1942,10 +2014,10 @@ effect.  However, you can make Info perform quietly by setting the
 @cindex .infokey
 @cindex _info file (MS-DOS)
 
-For those whose editor/pager of choice is not Emacs and who are not
-entirely satisfied with the --vi-keys option (@pxref{--vi-keys}), GNU
-Info provides a way to define different key-to-command bindings and
-variable settings from the defaults described in this document.
+GNU Info provides a way to define arbitrary key-to-command bindings
+and variable settings, overriding the defaults described in this
+document.  (The @option{--vi-keys} option rebinds many keys at once;
+@pxref{--vi-keys}.)
 
 On startup, GNU Info looks for a configuration file in the invoker's
 HOME directory called @file{.info}@footnote{Due to the limitations of
@@ -2183,16 +2255,6 @@ Building DIR on the fly.
 
 Some common ways to organize Info files.
 @end ignore
-
-
-@node Copying This Manual
-@appendix Copying This Manual
-
-@menu
-* GNU Free Documentation License::  License for copying this manual.
-@end menu
-
-@include fdl.texi
 
 
 @node Index
