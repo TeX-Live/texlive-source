@@ -36,7 +36,7 @@ endif
 xindy.mem: defaults.xdy $(FAS) base.mem $(XINDY_RUN)
 	rm -f $@
 	$(RUN_XINDY) -x '(load "$(DUMP_XINDY)")'
-	test "$(host_os)" != "mingw32" && gzip -9n $@ && mv $@.gz $@
+	if test "$(host_os)" != "mingw32"; then gzip -9n $@; mv $@.gz $@; fi
 
 defaults.xdy:
 	@$(RM) $@
