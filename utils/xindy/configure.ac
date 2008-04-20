@@ -111,7 +111,7 @@ AC_SUBST(LISP_RUN)
 
 # Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS([stdlib.h string.h])
+AC_CHECK_HEADERS([stdlib.h string.h regex.h],[],[AC_MSG_ERROR([required C header file is missing])])
 
 dnl check system type
 AC_CANONICAL_HOST

@@ -4632,7 +4632,8 @@ done
 
 
 
-for ac_header in stdlib.h string.h
+
+for ac_header in stdlib.h string.h regex.h
 do
 as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
 if { as_var=$as_ac_Header; eval "test \"\${$as_var+set}\" = set"; }; then
@@ -4772,6 +4773,10 @@ if test `eval echo '${'$as_ac_Header'}'` = yes; then
 #define `echo "HAVE_$ac_header" | $as_tr_cpp` 1
 _ACEOF
 
+else
+  { { echo "$as_me:$LINENO: error: required C header file is missing" >&5
+echo "$as_me: error: required C header file is missing" >&2;}
+   { (exit 1); exit 1; }; }
 fi
 
 done
