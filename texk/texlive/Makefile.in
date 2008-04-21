@@ -10,8 +10,6 @@ LIVESCRIPTS = simpdftex \
               ebong getnonfreefonts giftopng \
               pdfthumb wordcount.sh
 
-TEXLUARUNNERS = 
-
 manpgs = getnonfreefonts getnonfreefonts-sys
 
 all:  $(LIVESCRIPTS)
@@ -33,10 +31,6 @@ install-exec:
 	done
 	rm -f $(scriptdir)/getnonfreefonts-sys
 	ln -s getnonfreefonts $(scriptdir)/getnonfreefonts-sys
-	for s in $(TEXLUARUNNERS); do \
-	  rm -f $(scriptdir)/$$s ; \
-	  ln -s texlua-perl-runner $(scriptdir)/$$s; \
-	done
 
 kpse_include ../make/clean.mk
 
