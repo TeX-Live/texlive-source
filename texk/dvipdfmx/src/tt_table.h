@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/tt_table.h,v 1.6 2004/09/11 14:50:29 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/tt_table.h,v 1.7 2007/02/14 05:56:43 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     This program is free software; you can redistribute it and/or modify
@@ -51,18 +51,20 @@ struct tt_head_table
 struct tt_hhea_table
 {
   Fixed  version;
-  FWord  Ascender;
-  FWord  Descender;
-  FWord  LineGap;
+  FWord  ascent;
+  FWord  descent;
+  FWord  lineGap;
   uFWord advanceWidthMax;
   FWord  minLeftSideBearing;
   FWord  minRightSideBearing;
   FWord  xMaxExtent;
   SHORT  caretSlopeRise;
   SHORT  caretSlopeRun;
-  SHORT  reserved[5]; /* set to 0 */
+  FWord  caretOffset;
+  SHORT  reserved[4]; /* set to 0 */
   SHORT  metricDataFormat;
-  USHORT numberOfHMetrics;
+  USHORT numOfLongHorMetrics;
+  USHORT numOfExSideBearings; /* extra information */
 };
 
 struct tt_vhea_table
@@ -78,8 +80,10 @@ struct tt_vhea_table
   SHORT  caretSlopeRise;
   SHORT  caretSlopeRun;
   SHORT  caretOffset;
-  SHORT  reserved[5]; /* set to 0 */
+  SHORT  reserved[4]; /* set to 0 */
+  SHORT  metricDataFormat;
   USHORT numOfLongVerMetrics;
+  USHORT numOfExSideBearings; /* extra information */
 };
 
 struct tt_maxp_table
@@ -179,7 +183,7 @@ extern struct tt_VORG_table *tt_read_VORG_table (sfnt *sfont);
 
 /* hmtx and vmtx */
 extern struct tt_longMetrics *tt_read_longMetrics (sfnt *sfont,
-						   USHORT numGlyphs, USHORT numLongMetrics);
+						   USHORT numGlyphs, USHORT numLongMetrics, USHORT numExSideBearings);
 
 /* OS/2 table */
 extern struct tt_os2__table *tt_read_os2__table (sfnt *sfont);

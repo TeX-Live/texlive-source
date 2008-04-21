@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.h,v 1.8 2005/07/30 11:44:18 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.h,v 1.10 2007/05/18 05:19:01 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -40,6 +40,8 @@ typedef struct {
   int  num_components;
 
   long min_dpi; /* NOT USED YET */
+
+  double xdensity, ydensity; /* scale factor for bp */
 } ximage_info;
 
 typedef struct {
@@ -80,4 +82,6 @@ pdf_ximage_scale_image (int            id,
                         transform_info *p  /* arg */
                        );
 
+/* from dvipdfmx.c */
+extern void pdf_ximage_disable_ebb (void);
 #endif /* _PDFXIMAGE_H_ */

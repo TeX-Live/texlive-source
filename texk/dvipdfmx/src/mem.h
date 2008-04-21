@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/mem.h,v 1.3 2002/10/30 02:27:11 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/mem.h,v 1.4 2007/11/14 03:36:01 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -25,26 +25,31 @@
 #ifndef _MEM_H_
 #define _MEM_H_
 
+#undef MEM_DEBUG
+
 #include <stdlib.h>
 
-extern void *new (size_t size, char *function, int line);
-extern void *renew (void *p, size_t size, char *function, int line);
-extern void release (void *mem, char *function, int line);
+extern void *new (size_t size, const char *file, const char *function, int line);
+extern void *renew (void *p, size_t size, const char *file, const char *function, int line);
+extern void release (void *mem, const char *file, const char *function, int line);
+
+extern void mem_debug_init(void);
+extern void mem_debug_check(void);
 
 #ifdef MEM_DEBUG
-extern void mem_debug_init(void);
-extern FILE *debugfile;
-#define NEW(n,type) (type *)(new (((size_t) (n))*sizeof(type),__FUNCTION__,__LINE__))
-#define RENEW(p,n,type) (type *)(renew ((p),(n)*sizeof(type),__FUNCTION__,__LINE__))
-#define RELEASE(p) release ((p),__FUNCTION__,__LINE__)
-#define MEM_START {mem_debug_init();fprintf (debugfile, "Entered %s\n", __FUNCTION__);}
-#define MEM_END fprintf (debugfile, "Leaving %s\n", __FUNCTION__);
+#include <stdio.h>
+extern long int mem_event;
+#define NEW(n,type) (type *)(new (((size_t) (n))*sizeof(type),__FILE__,__FUNCTION__,__LINE__))
+#define RENEW(p,n,type) (type *)(renew ((p),(n)*sizeof(type),__FILE__,__FUNCTION__,__LINE__))
+#define RELEASE(p) release ((p),__FILE__,__FUNCTION__,__LINE__)
+#define MEM_START {mem_debug_init();fprintf (stderr, "Entered %s\n", __FUNCTION__);}
+#define MEM_END fprintf (stderr, "Leaving %s\n", __FUNCTION__);
 #else /* MEM_DEBUG */
 #define MEM_START
 #define MEM_END
-#define NEW(n,type) (type *)(new (((size_t) (n))*sizeof(type),NULL,0))
-#define RENEW(p,n,type) (type *)(renew ((p),(n)*sizeof(type),NULL,0))
-#define RELEASE(p) release ((p),NULL,0)
+#define NEW(n,type) (type *)(new (((size_t) (n))*sizeof(type),NULL,NULL,0))
+#define RENEW(p,n,type) (type *)(renew ((p),(n)*sizeof(type),NULL,NULL,0))
+#define RELEASE(p) release ((p),NULL,NULL,0)
 #endif /* MEM_DEBUG */
 
 #endif /* _MEM_H_ */

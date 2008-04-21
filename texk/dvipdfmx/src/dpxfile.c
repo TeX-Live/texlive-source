@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dpxfile.c,v 1.14 2005/12/18 14:56:47 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dpxfile.c,v 1.16 2007/11/14 03:36:01 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -323,7 +323,7 @@ dpx_open_file (const char *filename, int type)
   }
   if (fqpn) {
     fp = MFOPEN(fqpn, FOPEN_RBIN_MODE);
-    RELEASE(fqpn);
+    free(fqpn);  /* no RELEASE because not allocated by NEW */
   }
 
   return  fp;
@@ -523,9 +523,9 @@ dpx_find_enc_file (const char *filename)
   }
 #else
 # if defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
-  fqpn = kpse_find_file(filename, kpse_enc_format, 0);
+  fqpn = kpse_find_file(q, kpse_enc_format, 0);
 # else
-  fqpn = kpse_find_file(filename, kpse_tex_ps_header_format, 0);
+  fqpn = kpse_find_file(q, kpse_tex_ps_header_format, 0);
 # endif
 #endif /* MIKTEX */
 

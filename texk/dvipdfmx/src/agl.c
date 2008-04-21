@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/agl.c,v 1.32 2005/07/20 10:41:54 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/agl.c,v 1.33 2007/11/14 02:07:14 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -70,6 +70,7 @@ agl_new_name (void)
   agln->suffix = NULL;
   agln->n_components = 0;
   agln->alternate = NULL;
+  agln->is_predef = 0;
 
   return agln;
 }
@@ -368,6 +369,9 @@ agl_init_map (void)
 {
   ht_init_table(&aglmap);
   agl_load_listfile(AGL_EXTRA_LISTFILE, 0);
+  if (agl_load_listfile(AGL_PREDEF_LISTFILE, 1) < 0) {
+    WARN("Failed to load AGL file \"%s\"...", AGL_PREDEF_LISTFILE);
+  }
   if (agl_load_listfile(AGL_DEFAULT_LISTFILE, 0) < 0) {
     WARN("Failed to load AGL file \"%s\"...", AGL_DEFAULT_LISTFILE);
   }
@@ -388,7 +392,7 @@ agl_close_map (void)
 #define WBUF_SIZE 1024
 
 int
-agl_load_listfile (const char *filename, int format) /* format unused. */
+agl_load_listfile (const char *filename, int is_predef)
 {
   int   count = 0;
   char *p, *endptr, *nextptr;
@@ -458,6 +462,7 @@ agl_load_listfile (const char *filename, int format) /* format unused. */
     }
 
     agln = agl_normalized_name(name);
+    agln->is_predef = is_predef;
     agln->n_components = n_unicodes;
     for (i = 0; i < n_unicodes; i++) {
       agln->unicodes[i] = unicodes[i];

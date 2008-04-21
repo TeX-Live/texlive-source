@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/subfont.h,v 1.8 2005/07/17 09:53:38 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/subfont.h,v 1.9 2007/11/14 03:36:01 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -24,6 +24,8 @@
 #define _SUBFONT_H_
 
 extern void   subfont_set_verbose (void);
+
+extern void   release_sfd_record  (void);
 
 extern unsigned short lookup_sfd_record(int rec_id, unsigned char code);
 

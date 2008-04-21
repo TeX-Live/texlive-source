@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.c,v 1.14 2005/07/30 11:44:18 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.c,v 1.16 2007/05/18 05:19:01 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -63,6 +63,7 @@ static int  ps_include_page (pdf_ximage *ximage, const char *file_name);
 struct attr_
 {
   long     width, height;
+  double   xdensity, ydensity;
   pdf_rect bbox;
 };
 
@@ -116,6 +117,7 @@ pdf_init_ximage_struct (pdf_ximage *I)
   I->resource  = NULL;
 
   I->attr.width = I->attr.height = 0;
+  I->attr.xdensity = I->attr.ydensity = 1.0;
   I->attr.bbox.llx = I->attr.bbox.lly = 0;
   I->attr.bbox.urx = I->attr.bbox.ury = 0;
 }
@@ -399,6 +401,20 @@ pdf_ximage_findresource (const char *ident)
   return  id;
 }
 
+/* Reference: PDF Reference 1.5 v6, pp.321--322
+ *
+ * TABLE 4.42 Additional entries specific to a type 1 form dictionary
+ *
+ * BBox rectangle (Required) An array of four numbers in the form coordinate
+ *                system, giving the coordinates of the left, bottom, right,
+ *                and top edges, respectively, of the form XObject's bounding
+ *                box. These boundaries are used to clip the form XObject and
+ *                to determine its size for caching.
+ *
+ * Matrix array   (Optional) An array of six numbers specifying the form
+ *                matrix, which maps form space into user space.
+ *                Default value: the identity matrix [1 0 0 1 0 0].
+ */
 void
 pdf_ximage_init_form_info (xform_info *info)
 {
@@ -415,6 +431,36 @@ pdf_ximage_init_form_info (xform_info *info)
   info->matrix.f = 0.0;
 }
 
+/* Reference: PDF Reference 1.5 v6, pp.303--306
+ *
+ * TABLE 4.42 Additional entries specific to an image dictionary
+ *
+ * Width integer  (Required) The width of the image, in samples.
+ *
+ * Height integer (Required) The height of the image, in samples.
+ *
+ * ColorSpace name or array
+ *                (Required for images, except those that use the JPXDecode
+ *                filter; not allowed for image masks) The color space in
+ *                which image samples are specified. This may be any type
+ *                of color space except Patter.
+ *
+ *                If the image uses the JPXDecode filter, this entry is
+ *                optional.
+ *
+ * BitsPerComponent integer
+ *                (Required except for image masks and images that use the
+ *                JPXDecode filter) The number of bits used to represent
+ *                each color component. Only a single value may be specified;
+ *                the number of bits is the same for all color components.
+ *                Valid values are 1,2,4,8, and (in PDF1.5) 16. If ImageMask
+ *                is true, this entry is optional, and if speficified, its
+ *                value must be 1.
+ *
+ *                If the image stream uses the JPXDecode filter, this entry
+ *                is optional and ignored if present. The bit depth is
+ *                determined in the process of decoding the JPEG2000 image.
+ */
 void
 pdf_ximage_init_image_info (ximage_info *info)
 {
@@ -424,6 +470,7 @@ pdf_ximage_init_image_info (ximage_info *info)
   info->bits_per_component = 0;
   info->num_components = 0;
   info->min_dpi = 0;
+  info->xdensity = info->ydensity = 1.0;
 }
 
 void
@@ -433,12 +480,14 @@ pdf_ximage_set_image (pdf_ximage *I, void *image_info, pdf_obj *resource)
   ximage_info *info = image_info;
 
   if (!PDF_OBJ_STREAMTYPE(resource))
-    ERROR("Image XObject must be stream type.");
+    ERROR("Image XObject must be of stream type.");
 
   I->subtype = PDF_XOBJECT_TYPE_IMAGE;
 
-  I->attr.width  = info->width;
-  I->attr.height = info->height;
+  I->attr.width  = info->width;  /* The width of the image, in samples */
+  I->attr.height = info->height; /* The height of the image, in samples */
+  I->attr.xdensity = info->xdensity;
+  I->attr.ydensity = info->ydensity;
 
   I->reference = pdf_ref_obj(resource);
 
@@ -455,17 +504,19 @@ pdf_ximage_set_image (pdf_ximage *I, void *image_info, pdf_obj *resource)
 }
 
 void
-pdf_ximage_set_form (pdf_ximage *I,  void *form_info, pdf_obj *resource)
+pdf_ximage_set_form (pdf_ximage *I, void *form_info, pdf_obj *resource)
 {
-  xform_info  *info = form_info;
+  xform_info *info = form_info;
 
   I->subtype   = PDF_XOBJECT_TYPE_FORM;
+
   I->attr.bbox.llx = info->bbox.llx;
   I->attr.bbox.lly = info->bbox.lly;
   I->attr.bbox.urx = info->bbox.urx;
   I->attr.bbox.ury = info->bbox.ury;
 
   I->reference = pdf_ref_obj(resource);
+
   pdf_release_obj(resource); /* Caller don't know we are using reference. */
   I->resource  = NULL;
 }
@@ -481,8 +532,8 @@ pdf_ximage_set_form (pdf_ximage *I,  void *form_info, pdf_obj *resource)
 pdf_obj *
 pdf_ximage_get_reference (int id)
 {
-  struct ic_  *ic = &_ic;
-  pdf_ximage  *I;
+  struct ic_ *ic = &_ic;
+  pdf_ximage *I;
 
   CHECK_ID(ic, id);
 
@@ -490,16 +541,17 @@ pdf_ximage_get_reference (int id)
   if (!I->reference)
     I->reference = pdf_ref_obj(I->resource);
 
-  return  pdf_link_obj(I->reference);
+  return pdf_link_obj(I->reference);
 }
 
+/* called from pdfdoc.c only for late binding */
 int
 pdf_ximage_defineresource (const char *ident,
 			   int subtype, void *info, pdf_obj *resource)
 {
-  struct ic_  *ic = &_ic;
-  int          id;
-  pdf_ximage  *I;
+  struct ic_ *ic = &_ic;
+  int         id;
+  pdf_ximage *I;
 
   id = ic->count;
   if (ic->count >= ic->capacity) {
@@ -518,12 +570,10 @@ pdf_ximage_defineresource (const char *ident,
   switch (subtype) {
   case PDF_XOBJECT_TYPE_IMAGE:
     pdf_ximage_set_image(I, info, resource);
-    I->subtype = PDF_XOBJECT_TYPE_IMAGE;
     sprintf(I->res_name, "Im%d", id);
     break;
   case PDF_XOBJECT_TYPE_FORM:
     pdf_ximage_set_form (I, info, resource);
-    I->subtype = PDF_XOBJECT_TYPE_FORM;
     sprintf(I->res_name, "Fm%d", id);
     break;
   default:
@@ -538,14 +588,14 @@ pdf_ximage_defineresource (const char *ident,
 char *
 pdf_ximage_get_resname (int id)
 {
-  struct ic_  *ic = &_ic;
-  pdf_ximage  *I;
+  struct ic_ *ic = &_ic;
+  pdf_ximage *I;
 
   CHECK_ID(ic, id);
 
   I = GET_IMAGE(ic, id);
 
-  return  I->res_name;
+  return I->res_name;
 }
 
 
@@ -554,47 +604,61 @@ pdf_ximage_get_resname (int id)
  * not as vertical dimension of scaled image. (And there are bugs.)
  * This part contains incompatibile behaviour than dvipdfm!
  */
-#define EBB_DPI 100
+#define EBB_DPI 72
+
 static void
 scale_to_fit_I (pdf_tmatrix    *T,
                 transform_info *p,
                 pdf_ximage     *I)
 {
-  double  s_x, s_y;
-  long    wdx = I->attr.width;
-  long    htx = I->attr.height;
-  double  ar, dp;
+  double  s_x, s_y, d_x, d_y;
+  double  wd0, ht0, dp, xscale, yscale;
 
-  if (htx == 0) {
-    WARN("Image height=0!");
-    htx = 1;
+  if (p->flags & INFO_HAS_USER_BBOX) {
+    wd0 =  p->bbox.urx - p->bbox.llx;
+    ht0 =  p->bbox.ury - p->bbox.lly;
+    xscale = I->attr.width * I->attr.xdensity / wd0;
+    yscale = I->attr.height * I->attr.ydensity / ht0;
+    d_x = -p->bbox.llx / wd0;
+    d_y = -p->bbox.lly / ht0;
+  } else {
+    wd0 = I->attr.width * I->attr.xdensity;
+    ht0 = I->attr.height * I->attr.ydensity;
+    xscale = yscale = 1.0;
+    d_x = 0.0;
+    d_y = 0.0; 
   }
 
-  ar = (double) wdx / htx;
+  if (wd0 == 0.0) {
+    WARN("Image width=0.0!");
+    wd0 = 1.0;
+  }
+  if (ht0 == 0.0) {
+    WARN("Image height=0.0!");
+    ht0 = 1.0;
+  }
 
-  /* only width/height --> uniform (keep aspect ratio)
-   * no width-height   --> uniform with 72dpi implied (?)
-   * both width-height --> non-uniform
-   */
   if ( (p->flags & INFO_HAS_WIDTH ) &&
        (p->flags & INFO_HAS_HEIGHT) ) {
-    s_x = p->width; s_y = p->height + p->depth;
-    dp  = p->depth;
-  } else if ( p->flags & INFO_HAS_WIDTH  ) {
-    s_x = p->width; s_y = s_x / ar;
+    s_x = p->width * xscale;
+    s_y = (p->height + p->depth) * yscale;
+    dp  = p->depth * yscale;
+  } else if ( p->flags & INFO_HAS_WIDTH ) {
+    s_x = p->width * xscale;
+    s_y = s_x * ((double)I->attr.height / I->attr.width);
     dp  = 0.0;
-  } else if ( p->flags & INFO_HAS_HEIGHT ) {
-    s_y = p->height + p->depth; s_x = s_y * ar;
-    dp  = p->depth;
+  } else if ( p->flags & INFO_HAS_HEIGHT) {
+    s_y = (p->height + p->depth) * yscale;
+    s_x = s_y * ((double)I->attr.width / I->attr.height);
+    dp  = p->depth * yscale;
   } else {
-    s_x = wdx * 72.0 / EBB_DPI;
-    s_y = htx * 72.0 / EBB_DPI;
+    s_x = wd0;
+    s_y = ht0;
     dp  = 0.0;
   }
-
-  T->a   = s_x;  T->c  = 0.0;
-  T->b   = 0.0;  T->d  = s_y;
-  T->e   = 0.0;  T->f  = -dp;
+  T->a = s_x; T->c = 0.0;
+  T->b = 0.0; T->d = s_y;
+  T->e = d_x * s_x / xscale; T->f = d_y * s_y / yscale - dp;
 
   return;
 }
@@ -655,15 +719,16 @@ scale_to_fit_F (pdf_tmatrix    *T,
 }
 
 
+/* called from pdfdev.c and spc_html.c */
 int
 pdf_ximage_scale_image (int            id,
-                        pdf_tmatrix    *M, /* ret */
-                        pdf_rect       *r, /* ret */
-                        transform_info *p  /* arg */
+                        pdf_tmatrix    *M, /* return value for trans matrix */
+                        pdf_rect       *r, /* return value for clipping */
+                        transform_info *p  /* argument from specials */
                        )
 {
-  struct ic_  *ic = &_ic;
-  pdf_ximage  *I;
+  struct ic_ *ic = &_ic;
+  pdf_ximage *I;
 
   CHECK_ID(ic, id);
 
@@ -672,13 +737,47 @@ pdf_ximage_scale_image (int            id,
   pdf_setmatrix(M, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0);
 
   switch (I->subtype) {
+  /* Reference: PDF Reference 1.5 v6, p.302
+   *
+   * An image can be placed on the output page in any desired position,
+   * orientation, and size by using the cm operator to modify the current
+   * transformation matrix (CTM) so as to map the unit square of user space
+   * to the rectangle or parallelogram in which the image is to be painted.
+   *
+   * There is neither BBox nor Matrix key in the image XObject.
+   * Everything must be controlled by the cm operator.
+   *
+   * The argument [p] contains the user-defined bounding box, the scailing
+   * factor of which is bp as EPS and PDF. On the other hand, I->attr
+   * contains the (sampling) width and the (sampling) height of the image.
+   *
+   * There is no problem if a bitmap image has density information.
+   * Otherwise, DVIPDFM's ebb generates bounding box as 100px = 72bp = 1in.
+   * In this case, screen captured images look bad. Moreover, DVIPDFM's ebb
+   * ignores all density information and use just 100px = 72bp = 1in.
+   *
+   * On the other hand, pdfTeX uses 100px = 100bp to get a better quality
+   * for screen captured images.
+   *
+   * DVIPDFMx's xbb generates bounding box as 100px = 100bp in the same
+   * way as pdfTeX. Furthermore, it takes care of density information too.
+   */
   case PDF_XOBJECT_TYPE_IMAGE:
     scale_to_fit_I(M, p, I);
-    r->llx = 0.0;
-    r->lly = 0.0;
-    r->urx = M->a;
-    r->ury = M->d;
+    if (p->flags & INFO_HAS_USER_BBOX) {
+      r->llx = p->bbox.llx / (I->attr.width * I->attr.xdensity);
+      r->lly = p->bbox.lly / (I->attr.height * I->attr.ydensity);
+      r->urx = p->bbox.urx / (I->attr.width * I->attr.xdensity);
+      r->ury = p->bbox.ury / (I->attr.height * I->attr.ydensity);
+    } else {
+      r->llx = 0.0;
+      r->lly = 0.0;
+      r->urx = 1.0;
+      r->ury = 1.0;
+    }
     break;
+  /* User-defined transformation and clipping are controlled by
+   * the cm operator and W operator, explicitly */
   case PDF_XOBJECT_TYPE_FORM:
     scale_to_fit_F(M, p, I);
     if (p->flags & INFO_HAS_USER_BBOX) {
@@ -686,7 +785,7 @@ pdf_ximage_scale_image (int            id,
       r->lly = p->bbox.lly;
       r->urx = p->bbox.urx;
       r->ury = p->bbox.ury;
-    } else {
+    } else { /* I->attr.bbox from the image bounding box */
       r->llx = I->attr.bbox.llx;
       r->lly = I->attr.bbox.lly;
       r->urx = I->attr.bbox.urx;
@@ -781,5 +880,3 @@ static int check_for_ps (FILE *image_file)
     return 1;
   return 0;
 }
-
-

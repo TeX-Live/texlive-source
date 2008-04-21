@@ -1,4 +1,4 @@
-bin_PROGRAMS = dvipdfmx
+bin_PROGRAMS = dvipdfmx xbb
 dvipdfmx_SOURCES = agl.c bmpimage.c cff.c cff_dict.c cid.c cidtype0.c cidtype2.c \
 cmap.c cmap_read.c cmap_write.c cs_type2.c \
 dpxconf.c dpxcrypt.c dpxfile.c dpxutil.c \
@@ -11,7 +11,7 @@ subfont.c tfm.c \
 tt_aux.c tt_cmap.c tt_glyf.c tt_gsub.c tt_post.c tt_table.c truetype.c \
 type0.c t1_char.c t1_load.c type1.c type1c.c \
 unicode.c vf.c \
-agl.h bmpimage.h asl_charset.h cff.h cff_dict.h cff_limits.h cff_stdstr.h cff_types.h \
+agl.h bmpimage.h cff.h cff_dict.h cff_limits.h cff_stdstr.h cff_types.h \
 cid.h cid_basefont.h cid_p.h cidtype0.h cidtype2.h cmap.h cmap_p.h cmap_read.h cmap_write.h \
 cs_type2.h dpxconf.h dpxcrypt.h dpxutil.h dpxfile.h dvi.h dvicodes.h epdf.h error.h fontmap.h \
 jpegimage.h mem.h mfileio.h mpost.h numbers.h otl_conf.h otl_opt.h pdfcolor.h pdfdev.h \
@@ -22,6 +22,8 @@ subfont.h system.h tfm.h \
 tt_aux.h tt_cmap.h tt_glyf.h tt_gsub.h tt_post.h tt_table.h truetype.h \
 type0.h t1_char.h t1_load.h type1.h type1c.h \
 unicode.h vf.h
+
+xbb_SOURCES = xbb.c pdfobj.c pdfparse.c dpxfile.c dpxutil.c error.c mem.c mfileio.c numbers.c pdfobj.h pdfparse.h dpxfile.h dpxutil.h error.h mem.h mfileio.h numbers.h
 
 LIBPNGDIR=$(top_builddir)/../../libs/libpng
 LIBPNGSRCDIR=$(srcdir)/$(LIBPNGDIR)
@@ -37,3 +39,8 @@ dvipdfmx_CPPFLAGS = @LIBPNGCPPFLAGS@ @ZLIBCPPFLAGS@
 dvipdfmx_LDADD = $(LDADD) $(LDLIBPNG) $(LDZLIB)
 dvipdfmx_DEPENDENCIES = $(ZLIBDEP) $(LIBPNGDEP)
 dvipdfmx_LDFLAGS = @dvipdfmx_LDFLAGS@
+
+xbb_CPPFLAGS = @LIBPNGCPPFLAGS@
+xbb_LDADD = $(LDADD) $(LDLIBPNG) $(LDZLIB)
+xbb_DEPENDENCIES = $(LIBPNGDEP) $(LDZLIB)
+xbb_LDFLAGS = @dvipdfmx_LDFLAGS@

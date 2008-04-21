@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/vf.c,v 1.16 2005/07/20 10:41:54 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/vf.c,v 1.18 2007/11/14 03:36:01 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -768,7 +768,8 @@ static void vf_xxx (SIGNED_QUAD len, unsigned char **start, unsigned char *end)
        * Warning message from virtual font.
        */
       if (!memcmp((char *)p, "Warning:", 8)) {
-	WARN("VF:%s", p+8);
+        if (verbose)
+	  WARN("VF:%s", p+8);
       } else {
 	dvi_do_special(buffer, len);
       }
@@ -1011,9 +1012,6 @@ void vf_close_all_fonts(void)
   unsigned long i;
   int j;
   struct font_def *one_font;
-#ifdef MEM_DEBUG
-MEM_START
-#endif
   for (i=0; i<num_vf_fonts; i++) {
     /* Release the packet for each character */
     if (vf_fonts[i].ch_pkt) {
@@ -1038,8 +1036,5 @@ MEM_START
   }
   if (vf_fonts != NULL)
     RELEASE (vf_fonts);
-#ifdef MEM_DEBUG
-MEM_END
-#endif
   return;
 }

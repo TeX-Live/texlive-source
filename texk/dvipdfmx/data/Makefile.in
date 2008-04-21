@@ -15,6 +15,7 @@
 @SET_MAKE@
 
 VPATH = @srcdir@
+pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
@@ -30,8 +31,9 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 subdir = data
-DIST_COMMON = $(dist_pkgdata_DATA) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in
+DIST_COMMON = $(dist_cmapdata_DATA) $(dist_configdata_DATA) \
+	$(dist_glyphlistdata_DATA) $(dist_mapdata_DATA) \
+	$(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/cho-kpse.m4 \
 	$(top_srcdir)/m4/cho-libs.m4 $(top_srcdir)/m4/maw-time.m4 \
@@ -53,11 +55,16 @@ am__vpath_adj = case $$p in \
     *) f=$$p;; \
   esac;
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
-am__installdirs = "$(DESTDIR)$(pkgdatadir)"
-dist_pkgdataDATA_INSTALL = $(INSTALL_DATA)
-DATA = $(dist_pkgdata_DATA)
+am__installdirs = "$(DESTDIR)$(cmapdatadir)" \
+	"$(DESTDIR)$(configdatadir)" "$(DESTDIR)$(glyphlistdatadir)" \
+	"$(DESTDIR)$(mapdatadir)"
+dist_cmapdataDATA_INSTALL = $(INSTALL_DATA)
+dist_configdataDATA_INSTALL = $(INSTALL_DATA)
+dist_glyphlistdataDATA_INSTALL = $(INSTALL_DATA)
+dist_mapdataDATA_INSTALL = $(INSTALL_DATA)
+DATA = $(dist_cmapdata_DATA) $(dist_configdata_DATA) \
+	$(dist_glyphlistdata_DATA) $(dist_mapdata_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-pkgdatadir = $(datadir)/texmf/dvipdfm
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AUTOCONF = @AUTOCONF@
@@ -149,15 +156,27 @@ sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
+top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-dist_pkgdata_DATA = \
-  $(srcdir)/CMap/EUC-UCS2 \
-  $(srcdir)/CMap/UniKSCms-UCS2-H \
-  $(srcdir)/CMap/UniKSCms-UCS2-V \
-  $(srcdir)/config/glyphlist.txt \
-  $(srcdir)/config/cid-x.map \
-  $(srcdir)/config/dvipdfmx.cfg
+configdatadir = $(datadir)/texmf/dvipdfm
+dist_configdata_DATA = \
+  $(srcdir)/dvipdfmx.cfg
+
+cmapdatadir = $(datadir)/texmf/fonts/cmap
+dist_cmapdata_DATA = \
+  $(srcdir)/EUC-UCS2 \
+  $(srcdir)/UniKSCms-UCS2-H \
+  $(srcdir)/UniKSCms-UCS2-V
+
+glyphlistdatadir = $(datadir)/texmf/fonts/map/glyphlist
+dist_glyphlistdata_DATA = \
+  $(srcdir)/glyphlist.txt \
+  $(srcdir)/pdfglyphlist.txt
+
+mapdatadir = $(datadir)/texmf/fonts/map/dvipdfmx
+dist_mapdata_DATA = \
+  $(srcdir)/cid-x.map
 
 all: all-am
 
@@ -191,22 +210,73 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-install-dist_pkgdataDATA: $(dist_pkgdata_DATA)
+install-dist_cmapdataDATA: $(dist_cmapdata_DATA)
 	@$(NORMAL_INSTALL)
-	test -z "$(pkgdatadir)" || $(MKDIR_P) "$(DESTDIR)$(pkgdatadir)"
-	@list='$(dist_pkgdata_DATA)'; for p in $$list; do \
+	test -z "$(cmapdatadir)" || $(MKDIR_P) "$(DESTDIR)$(cmapdatadir)"
+	@list='$(dist_cmapdata_DATA)'; for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  f=$(am__strip_dir) \
-	  echo " $(dist_pkgdataDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(pkgdatadir)/$$f'"; \
-	  $(dist_pkgdataDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(pkgdatadir)/$$f"; \
+	  echo " $(dist_cmapdataDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(cmapdatadir)/$$f'"; \
+	  $(dist_cmapdataDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(cmapdatadir)/$$f"; \
 	done
 
-uninstall-dist_pkgdataDATA:
+uninstall-dist_cmapdataDATA:
 	@$(NORMAL_UNINSTALL)
-	@list='$(dist_pkgdata_DATA)'; for p in $$list; do \
+	@list='$(dist_cmapdata_DATA)'; for p in $$list; do \
 	  f=$(am__strip_dir) \
-	  echo " rm -f '$(DESTDIR)$(pkgdatadir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(pkgdatadir)/$$f"; \
+	  echo " rm -f '$(DESTDIR)$(cmapdatadir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(cmapdatadir)/$$f"; \
+	done
+install-dist_configdataDATA: $(dist_configdata_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(configdatadir)" || $(MKDIR_P) "$(DESTDIR)$(configdatadir)"
+	@list='$(dist_configdata_DATA)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  f=$(am__strip_dir) \
+	  echo " $(dist_configdataDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(configdatadir)/$$f'"; \
+	  $(dist_configdataDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(configdatadir)/$$f"; \
+	done
+
+uninstall-dist_configdataDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_configdata_DATA)'; for p in $$list; do \
+	  f=$(am__strip_dir) \
+	  echo " rm -f '$(DESTDIR)$(configdatadir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(configdatadir)/$$f"; \
+	done
+install-dist_glyphlistdataDATA: $(dist_glyphlistdata_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(glyphlistdatadir)" || $(MKDIR_P) "$(DESTDIR)$(glyphlistdatadir)"
+	@list='$(dist_glyphlistdata_DATA)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  f=$(am__strip_dir) \
+	  echo " $(dist_glyphlistdataDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(glyphlistdatadir)/$$f'"; \
+	  $(dist_glyphlistdataDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(glyphlistdatadir)/$$f"; \
+	done
+
+uninstall-dist_glyphlistdataDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_glyphlistdata_DATA)'; for p in $$list; do \
+	  f=$(am__strip_dir) \
+	  echo " rm -f '$(DESTDIR)$(glyphlistdatadir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(glyphlistdatadir)/$$f"; \
+	done
+install-dist_mapdataDATA: $(dist_mapdata_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(mapdatadir)" || $(MKDIR_P) "$(DESTDIR)$(mapdatadir)"
+	@list='$(dist_mapdata_DATA)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  f=$(am__strip_dir) \
+	  echo " $(dist_mapdataDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(mapdatadir)/$$f'"; \
+	  $(dist_mapdataDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(mapdatadir)/$$f"; \
+	done
+
+uninstall-dist_mapdataDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_mapdata_DATA)'; for p in $$list; do \
+	  f=$(am__strip_dir) \
+	  echo " rm -f '$(DESTDIR)$(mapdatadir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(mapdatadir)/$$f"; \
 	done
 tags: TAGS
 TAGS:
@@ -245,7 +315,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(pkgdatadir)"; do \
+	for dir in "$(DESTDIR)$(cmapdatadir)" "$(DESTDIR)$(configdatadir)" "$(DESTDIR)$(glyphlistdatadir)" "$(DESTDIR)$(mapdatadir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -290,7 +360,8 @@ info: info-am
 
 info-am:
 
-install-data-am: install-dist_pkgdataDATA
+install-data-am: install-dist_cmapdataDATA install-dist_configdataDATA \
+	install-dist_glyphlistdataDATA install-dist_mapdataDATA
 
 install-dvi: install-dvi-am
 
@@ -324,21 +395,26 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-dist_pkgdataDATA
+uninstall-am: uninstall-dist_cmapdataDATA \
+	uninstall-dist_configdataDATA uninstall-dist_glyphlistdataDATA \
+	uninstall-dist_mapdataDATA
 
 .MAKE: install-am install-strip
 
 .PHONY: all all-am check check-am clean clean-generic distclean \
 	distclean-generic distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am \
-	install-dist_pkgdataDATA install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
-	pdf-am ps ps-am uninstall uninstall-am \
-	uninstall-dist_pkgdataDATA
+	install-dist_cmapdataDATA install-dist_configdataDATA \
+	install-dist_glyphlistdataDATA install-dist_mapdataDATA \
+	install-dvi install-dvi-am install-exec install-exec-am \
+	install-html install-html-am install-info install-info-am \
+	install-man install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am uninstall \
+	uninstall-am uninstall-dist_cmapdataDATA \
+	uninstall-dist_configdataDATA uninstall-dist_glyphlistdataDATA \
+	uninstall-dist_mapdataDATA
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

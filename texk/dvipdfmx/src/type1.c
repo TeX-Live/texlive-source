@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/type1.c,v 1.38 2005/07/17 09:53:38 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/type1.c,v 1.40 2007/11/14 03:12:21 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -268,7 +268,7 @@ get_font_attr (pdf_font *font, cff_font *cffont)
 }
 
 static void
-add_metrics (pdf_font *font, cff_font *cffont, double *widths, long num_glyphs)
+add_metrics (pdf_font *font, cff_font *cffont, char **enc_vec, double *widths, long num_glyphs)
 {
   pdf_obj *fontdict, *descriptor;
   pdf_obj *tmp_array;
@@ -321,7 +321,7 @@ add_metrics (pdf_font *font, cff_font *cffont, double *widths, long num_glyphs)
     }
     for (code = firstchar; code <= lastchar; code++) {
       if (usedchars[code]) {
-	gid = cff_encoding_lookup(cffont, code);
+	gid = cff_glyph_lookup(cffont, enc_vec[code]);
 	pdf_add_array(tmp_array,
 		      pdf_new_number(ROUND(widths[gid], 1.0)));
       } else {
@@ -414,6 +414,9 @@ write_fontfile (pdf_font *font, cff_font *cffont, long num_glyphs)
   offset += cff_pack_index(cffont->gsubr,
 			   stream_data_ptr + offset, stream_data_len - offset);
   /* Encoding */
+  /* TODO: don't write Encoding entry if the font is always used
+   * with PDF Encoding information. Applies to type1c.c as well.
+   */
   cff_dict_set(cffont->topdict, "Encoding", 0, offset);
   offset += cff_pack_encoding(cffont,
 			      stream_data_ptr + offset, stream_data_len - offset);
@@ -488,15 +491,6 @@ pdf_font_load_type1 (pdf_font *font)
   encoding_id = pdf_font_get_encoding  (font);
   fontdict    = pdf_font_get_resource  (font);
 
-  if (pdf_font_get_flag(font, PDF_FONT_FLAG_BASEFONT)) {
-    if (encoding_id >= 0) {
-      pdf_add_dict(fontdict,
-		   pdf_new_name("Encoding"),
-		   pdf_get_encoding_reference(encoding_id));
-    }
-    return 0;
-  }
-
   descriptor  = pdf_font_get_descriptor(font);
   usedchars   = pdf_font_get_usedchars (font);
   ident       = pdf_font_get_ident     (font);
@@ -536,22 +530,6 @@ pdf_font_load_type1 (pdf_font *font)
    * Encoding related things.
    */
   if (encoding_id >= 0) {
-    if (pdf_encoding_is_predefined(encoding_id)) {
-      pdf_add_dict(fontdict,
-		   pdf_new_name("Encoding"),
-		   pdf_new_name(pdf_encoding_get_name(encoding_id)));
-    } else {
-#if 0
-      /*
-       * Gs not working with this.
-       */
-      pdf_add_dict(fontdict,
-		   pdf_new_name("Encoding"),
-		   pdf_get_encoding_resource(enc));
-#endif
-      if (!pdf_lookup_dict(fontdict, "ToUnicode"))
-      pdf_attach_ToUnicode_CMap(fontdict, encoding_id, usedchars);
-    }
     enc_vec = pdf_encoding_get_encoding(encoding_id);
   } else {
     pdf_obj *tounicode;
@@ -781,7 +759,7 @@ pdf_font_load_type1 (pdf_font *font)
   if (verbose > 2)
     MESG("]");
 
-  add_metrics(font, cffont, widths, num_glyphs);
+  add_metrics(font, cffont, enc_vec, widths, num_glyphs);
 
   offset = write_fontfile(font, cffont, num_glyphs);
   if (verbose > 1)

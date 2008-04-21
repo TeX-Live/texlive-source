@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/jpegimage.c,v 1.8 2004/09/05 13:30:05 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/jpegimage.c,v 1.9 2007/05/18 05:19:01 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -330,6 +330,32 @@ jpeg_include_image (pdf_ximage *ximage, FILE *fp)
   info.height             = j_info.height;
   info.bits_per_component = j_info.bits_per_component;
   info.num_components     = j_info.num_components;
+
+#define IS_JFIF(j) ((j).flags & HAVE_APPn_JFIF)
+  if (IS_JFIF(j_info)) {
+    struct JPEG_APPn_JFIF *app_data;
+    int i;
+    for (i = 0; i < j_info.num_appn; i++) {
+      if (j_info.appn[i].marker  != JM_APP0 ||
+	  j_info.appn[i].app_sig != JS_APPn_JFIF)
+        continue;
+    }
+    if (i < j_info.num_appn) {
+      app_data = (struct JPEG_APPn_JFIF *)j_info.appn[i].app_data;
+      switch (app_data->units) {
+      case 1: /* pixels per inch */
+        info.xdensity = 72.0 / app_data->Xdensity;
+        info.ydensity = 72.0 / app_data->Ydensity;
+        break;
+      case 2: /* pixels per centimeter */
+        info.xdensity = 72.0 / 2.54 / app_data->Xdensity;
+        info.ydensity = 72.0 / 2.54 / app_data->Ydensity;
+        break;
+      default:
+        break;
+      }
+    }
+  }
 
   pdf_ximage_set_image(ximage, &info, stream);
   JPEG_info_clear(&j_info);

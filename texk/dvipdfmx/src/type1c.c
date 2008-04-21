@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/type1c.c,v 1.21 2005/07/17 09:53:38 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/type1c.c,v 1.22 2007/11/14 03:12:21 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -304,22 +304,6 @@ pdf_font_load_type1c (pdf_font *font)
    */
   enc_vec = NULL;
   if (encoding_id >= 0) {
-    if (pdf_encoding_is_predefined(encoding_id)) {
-      pdf_add_dict(fontdict,
-		   pdf_new_name("Encoding"),
-		   pdf_new_name(pdf_encoding_get_name(encoding_id)));
-    } else {
-#if 0
-      /*
-       * Gs not working with this.
-       */
-      pdf_add_dict(fontdict,
-		   pdf_new_name("Encoding"),
-		   pdf_get_encoding_reference(encoding_id));
-#endif
-      if (!pdf_lookup_dict(fontdict, "ToUnicode"))
-      pdf_attach_ToUnicode_CMap(fontdict, encoding_id, usedchars);
-    }
     enc_vec = pdf_encoding_get_encoding(encoding_id);
   } else {
     pdf_obj *tounicode;
@@ -340,15 +324,15 @@ pdf_font_load_type1c (pdf_font *font)
       }
     }
     if (!pdf_lookup_dict(fontdict, "ToUnicode")) {
-    tounicode = pdf_create_ToUnicode_CMap(fullname,
-					  enc_vec, usedchars);
-    if (tounicode) {
-      pdf_add_dict(fontdict,
+      tounicode = pdf_create_ToUnicode_CMap(fullname,
+					    enc_vec, usedchars);
+      if (tounicode) {
+	pdf_add_dict(fontdict,
                      pdf_new_name("ToUnicode"),
                      pdf_ref_obj (tounicode));
-      pdf_release_obj(tounicode);
+	pdf_release_obj(tounicode);
+      }
     }
-  }
   }
 
   /*

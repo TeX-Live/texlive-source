@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/tt_glyf.c,v 1.2 2005/06/09 14:31:11 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/tt_glyf.c,v 1.3 2007/02/14 05:56:43 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     This program is free software; you can redistribute it and/or modify
@@ -243,7 +243,7 @@ tt_build_tables (sfnt *sfont, struct tt_glyphs *g)
   g->emsize = head->unitsPerEm;
 
   sfnt_locate_table(sfont, "hmtx");
-  hmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, hhea->numberOfHMetrics);
+  hmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, hhea->numOfLongHorMetrics, hhea->numOfExSideBearings);
 
   os2 = tt_read_os2__table(sfont);
   g->default_advh = os2->sTypoAscender - os2->sTypoDescender;
@@ -253,7 +253,7 @@ tt_build_tables (sfnt *sfont, struct tt_glyphs *g)
     struct tt_vhea_table *vhea;
     vhea = tt_read_vhea_table(sfont);
     sfnt_locate_table(sfont, "vmtx");
-    vmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, vhea->numOfLongVerMetrics);
+    vmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, vhea->numOfLongVerMetrics, vhea->numOfExSideBearings);
     RELEASE(vhea);
   } else {
     vmtx = NULL;
@@ -417,15 +417,15 @@ tt_build_tables (sfnt *sfont, struct tt_glyphs *g)
       padlen = (g->gd[i].length % 4) ? (4 - (g->gd[i].length % 4)) : 0;
       glyf_table_size += g->gd[i].length + padlen;
       if (!num_hm_known && last_advw != g->gd[i].advw) {
-	hhea->numberOfHMetrics = g->gd[i].gid + 2;
+	hhea->numOfLongHorMetrics = g->gd[i].gid + 2;
 	num_hm_known = 1;
       }
     }
     /* All advance widths are same. */
     if (!num_hm_known) {
-      hhea->numberOfHMetrics = 1;
+      hhea->numOfLongHorMetrics = 1;
     }
-    hmtx_table_size = hhea->numberOfHMetrics * 2 + (g->last_gid + 1) * 2;
+    hmtx_table_size = hhea->numOfLongHorMetrics * 2 + (g->last_gid + 1) * 2;
 
     /*
      * Choosing short format does not always give good result
@@ -448,9 +448,9 @@ tt_build_tables (sfnt *sfont, struct tt_glyphs *g)
       long gap, j;
       gap = (long) g->gd[i].gid - prev - 1;
       for (j = 1; j <= gap; j++) {
-	if (prev + j == hhea->numberOfHMetrics - 1) {
+	if (prev + j == hhea->numOfLongHorMetrics - 1) {
 	  p += sfnt_put_ushort(p, last_advw);
-	} else if (prev + j < hhea->numberOfHMetrics) {
+	} else if (prev + j < hhea->numOfLongHorMetrics) {
 	  p += sfnt_put_ushort(p, 0);
 	}
 	p += sfnt_put_short (p, 0);
@@ -461,7 +461,7 @@ tt_build_tables (sfnt *sfont, struct tt_glyphs *g)
 	}
       }
       padlen = (g->gd[i].length % 4) ? (4 - (g->gd[i].length % 4)) : 0;
-      if (g->gd[i].gid < hhea->numberOfHMetrics) {
+      if (g->gd[i].gid < hhea->numOfLongHorMetrics) {
 	p += sfnt_put_ushort(p, g->gd[i].advw);
       }
       p += sfnt_put_short (p, g->gd[i].lsb);
@@ -544,7 +544,7 @@ tt_get_metrics (sfnt *sfont, struct tt_glyphs *g)
   g->emsize = head->unitsPerEm;
 
   sfnt_locate_table(sfont, "hmtx");
-  hmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, hhea->numberOfHMetrics);
+  hmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, hhea->numOfLongHorMetrics, hhea->numOfExSideBearings);
 
   os2 = tt_read_os2__table(sfont);
   g->default_advh = os2->sTypoAscender - os2->sTypoDescender;
@@ -554,7 +554,7 @@ tt_get_metrics (sfnt *sfont, struct tt_glyphs *g)
     struct tt_vhea_table *vhea;
     vhea = tt_read_vhea_table(sfont);
     sfnt_locate_table(sfont, "vmtx");
-    vmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, vhea->numOfLongVerMetrics);
+    vmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, vhea->numOfLongVerMetrics, vhea->numOfExSideBearings);
     RELEASE(vhea);
   } else {
     vmtx = NULL;

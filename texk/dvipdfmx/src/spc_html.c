@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_html.c,v 1.5 2005/08/14 15:50:36 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_html.c,v 1.6 2007/01/19 11:00:48 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>

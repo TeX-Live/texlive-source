@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cff_dict.h,v 1.6 2004/02/15 12:59:42 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cff_dict.h,v 1.7 2007/06/30 01:18:13 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,6 @@
 #include "cff_types.h"
 #include "cff.h"
 
-#define CFF_CIDCOUNT_DEFAULT      8720
 #define CFF_NOMINALWIDTHX_DEFAULT 0.0
 #define CFF_DEFAULTWIDTHX_DEFAULT 0.0
 

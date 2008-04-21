@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pkfont.c,v 1.16 2005/08/12 18:22:24 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pkfont.c,v 1.17 2007/11/14 03:12:21 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -127,6 +127,7 @@ pdf_font_open_pkfont (pdf_font *font)
   pdf_font_set_fontname(font, ident);
 
   if (encoding_id >= 0) {
+    pdf_encoding_used_by_type3(encoding_id);
     WARN("PK font is found for font \"%s\" but non built-in encoding \"%s\" is specified.",
          ident, pdf_encoding_get_name(encoding_id));
 #if  ENABLE_GLYPHENC
@@ -636,7 +637,7 @@ pdf_font_load_pkfont (pdf_font *font)
 #if  ENABLE_GLYPHENC
         if (encoding_id >= 0 && enc_vec) {
           charname = (char *) enc_vec[pkh.chrcode & 0xff];
-          if (!charname || !strcmp(charname, ".notdef")) {
+          if (!charname) {
             WARN("\".notdef\" glyph used in font (code=0x%02x): %s", pkh.chrcode, ident);
             charname = work_buffer;
             pk_char2name(charname, pkh.chrcode);
@@ -711,7 +712,7 @@ pdf_font_load_pkfont (pdf_font *font)
 #if  ENABLE_GLYPHENC
       if (encoding_id >= 0 && enc_vec) {
         charname = (char *) enc_vec[(unsigned char) code];
-        if (!charname || !strcmp(charname, ".notdef")) {
+        if (!charname) {
           charname = work_buffer;
           pk_char2name(charname, code);
         }
@@ -732,14 +733,20 @@ pdf_font_load_pkfont (pdf_font *font)
     pdf_release_obj(tmp_array);
     return  -1;
   }
-  encoding  = pdf_new_dict();
-  pdf_add_dict(encoding,
-               pdf_new_name("Type"), pdf_new_name("Encoding"));
-  pdf_add_dict(encoding,
-               pdf_new_name("Differences"), tmp_array);
-  pdf_add_dict(fontdict,
-               pdf_new_name("Encoding"),    pdf_ref_obj(encoding));
-  pdf_release_obj(encoding);
+#if  ENABLE_GLYPHENC
+  if (encoding_id < 0 || !enc_vec) {
+#else
+  if (1) {
+#endif /* ENABLE_GLYPHENC */
+    encoding  = pdf_new_dict();
+    pdf_add_dict(encoding,
+		 pdf_new_name("Type"), pdf_new_name("Encoding"));
+    pdf_add_dict(encoding,
+		 pdf_new_name("Differences"), tmp_array);
+    pdf_add_dict(fontdict,
+		 pdf_new_name("Encoding"),    pdf_ref_obj(encoding));
+    pdf_release_obj(encoding);
+  }
 
   /* FontBBox: Accurate value is important.
    */
@@ -782,10 +789,8 @@ pdf_font_load_pkfont (pdf_font *font)
                pdf_new_name("LastChar"),  pdf_new_number(lastchar));
 
 #if  ENABLE_GLYPHENC
-  /* ToUnicode */
   if (encoding_id >= 0) {
-    if (!pdf_lookup_dict(fontdict, "ToUnicode"))
-      pdf_attach_ToUnicode_CMap(fontdict, encoding_id, usedchars);
+    pdf_encoding_add_usedchars(encoding_id, usedchars);
   }
 #endif /* ENABLE_GLYPHENC */
 

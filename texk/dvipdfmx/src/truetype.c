@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/truetype.c,v 1.5 2005/12/29 04:07:04 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/truetype.c,v 1.6 2007/11/14 03:12:21 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     This program is free software; you can redistribute it and/or modify
@@ -126,7 +126,7 @@ pdf_font_open_truetype (pdf_font *font)
   if (!embedding) {
     if (encoding_id >= 0 &&
         !pdf_encoding_is_predefined(encoding_id)) {
-      ERROR("Custum encoding not allowed for non-embedded TrueType font.");
+      ERROR("Custom encoding not allowed for non-embedded TrueType font.");
       sfnt_close(sfont);
       return -1;
     } else {
@@ -183,19 +183,6 @@ pdf_font_open_truetype (pdf_font *font)
                pdf_new_name("Type"),    pdf_new_name("Font"));
   pdf_add_dict(fontdict,
                pdf_new_name("Subtype"), pdf_new_name("TrueType"));
-
-  /*
-   * We use MacRoman as "default" encoding.
-   */
-  if (encoding_id >= 0)
-    pdf_add_dict(fontdict,
-                 pdf_new_name("Encoding"),
-                 pdf_new_name(pdf_encoding_get_name(encoding_id)));
-  else {
-    pdf_add_dict(fontdict,
-                 pdf_new_name("Encoding"),
-                 pdf_new_name("MacRomanEncoding"));
-  }
 
   return  0;
 }
@@ -761,7 +748,7 @@ clean_glyph_mapper (struct glyph_mapper *gm)
 }
 
 static int
-do_custum_encoding (pdf_font *font,
+do_custom_encoding (pdf_font *font,
                     char **encoding, const char *usedchars, sfnt *sfont)
 {
   struct tt_glyphs      *glyphs;
@@ -881,13 +868,6 @@ pdf_font_load_truetype (pdf_font *font)
 
   verbose = pdf_font_get_verbose();
 
-  if (!pdf_lookup_dict(fontdict, "ToUnicode")) {
-    if (encoding_id >= 0)
-      pdf_attach_ToUnicode_CMap(fontdict,
-                                encoding_id, usedchars);
-     /* encoding_id < 0 means MacRoman here (but not really) */
-  }
-
   fp = DPXFOPEN(ident, DPX_RES_TYPE_TTFONT);
   if (!fp)
     ERROR("Unable to open TrueType font file: %s", ident); /* Should find *truetype* here */
@@ -924,7 +904,7 @@ pdf_font_load_truetype (pdf_font *font)
     error = do_builtin_encoding(font, usedchars, sfont);
   else {
     enc_vec  = pdf_encoding_get_encoding(encoding_id);
-    error = do_custum_encoding(font, enc_vec, usedchars, sfont);
+    error = do_custom_encoding(font, enc_vec, usedchars, sfont);
   }
   if (error) {
     ERROR("Error occured while creating font subfont for \"%s\"", ident);

@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/fontmap.c,v 1.33 2005/07/30 11:44:18 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/fontmap.c,v 1.36 2007/11/14 03:36:01 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -738,8 +738,11 @@ pdf_insert_fontmap_record (const char *kp, const fontmap_rec *vp)
     char **subfont_ids;
     int    n = 0;
     subfont_ids = sfd_get_subfont_ids(sfd_name, &n);
-    if (!subfont_ids)
+    if (!subfont_ids) {
+      RELEASE(fnt_name);
+      RELEASE(sfd_name);
       return  -1;
+    }
     if (verbose > 3)
       MESG("\nfontmap>> Expand @%s@:", sfd_name);
     while (n-- > 0) {
@@ -1039,6 +1042,8 @@ pdf_close_fontmaps (void)
     RELEASE(fontmap);
   }
   fontmap = NULL;
+
+  release_sfd_record();
 }
 
 void

@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/tt_table.c,v 1.7 2004/09/11 14:50:29 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/tt_table.c,v 1.8 2007/02/14 05:56:43 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     This program is free software; you can redistribute it and/or modify
@@ -33,7 +33,7 @@
 /*
   tables contains information refered by other tables
   maxp->numGlyphs, etc --> loca, etc
-  hhea->numberOfHMetrics --> hmtx
+  hhea->numOfLongHorMetrics --> hmtx
   head->indexToLocFormat --> loca
   head->glyphDataFormat --> glyf
 */
@@ -162,20 +162,21 @@ char *tt_pack_hhea_table (struct tt_hhea_table *table)
 
   p  = data = NEW(TT_HHEA_TABLE_SIZE, char);
   p += sfnt_put_ulong(p, table->version);
-  p += sfnt_put_short(p, table->Ascender);
-  p += sfnt_put_short(p, table->Descender);
-  p += sfnt_put_short(p, table->LineGap);
+  p += sfnt_put_short(p, table->ascent);
+  p += sfnt_put_short(p, table->descent);
+  p += sfnt_put_short(p, table->lineGap);
   p += sfnt_put_ushort(p, table->advanceWidthMax);
   p += sfnt_put_short(p, table->minLeftSideBearing);
   p += sfnt_put_short(p, table->minRightSideBearing);
   p += sfnt_put_short(p, table->xMaxExtent);
   p += sfnt_put_short(p, table->caretSlopeRise);
   p += sfnt_put_short(p, table->caretSlopeRun);
-  for (i = 0; i < 5; i++) {
+  p += sfnt_put_short(p, table->caretOffset);
+  for (i = 0; i < 4; i++) {
     p += sfnt_put_short(p, table->reserved[i]);
   }
   p += sfnt_put_short(p, table->metricDataFormat);
-  p += sfnt_put_ushort(p, table->numberOfHMetrics);
+  p += sfnt_put_ushort(p, table->numOfLongHorMetrics);
 
   return data;
 }
@@ -184,28 +185,32 @@ struct tt_hhea_table *
 tt_read_hhea_table (sfnt *sfont)
 {
   int    i;
+  ULONG  len;
   struct tt_hhea_table *table = NULL;
 
+  len = sfnt_find_table_len(sfont, "hhea");
   sfnt_locate_table(sfont, "hhea");
 
   table = NEW(1, struct tt_hhea_table);
-  table->version   = sfnt_get_ulong(sfont);
-  table->Ascender  = sfnt_get_short (sfont);
-  table->Descender = sfnt_get_short(sfont);
-  table->LineGap   = sfnt_get_short(sfont);
+  table->version = sfnt_get_ulong(sfont);
+  table->ascent  = sfnt_get_short (sfont);
+  table->descent = sfnt_get_short(sfont);
+  table->lineGap = sfnt_get_short(sfont);
   table->advanceWidthMax     = sfnt_get_ushort(sfont);
   table->minLeftSideBearing  = sfnt_get_short(sfont);
   table->minRightSideBearing = sfnt_get_short(sfont);
   table->xMaxExtent     = sfnt_get_short(sfont);
   table->caretSlopeRise = sfnt_get_short(sfont);
   table->caretSlopeRun  = sfnt_get_short(sfont);
-  for(i = 0; i < 5; i++) {
+  table->caretOffset    = sfnt_get_short(sfont);
+  for(i = 0; i < 4; i++) {
     table->reserved[i] = sfnt_get_short(sfont);
   }
   table->metricDataFormat = sfnt_get_short(sfont);
   if (table->metricDataFormat != 0)
     ERROR("unknown metricDaraFormat");
-  table->numberOfHMetrics = sfnt_get_ushort(sfont);
+  table->numOfLongHorMetrics = sfnt_get_ushort(sfont);
+  table->numOfExSideBearings = (USHORT)((len - table->numOfLongHorMetrics * 4) / 2);
 
   return table;
 }
@@ -229,9 +234,10 @@ tt_pack_vhea_table (struct tt_vhea_table *table)
   p += sfnt_put_short(p, table->caretSlopeRise);
   p += sfnt_put_short(p, table->caretSlopeRun);
   p += sfnt_put_short(p, table->caretOffset);
-  for(i = 0; i < 5; i++) {
+  for(i = 0; i < 4; i++) {
     p += sfnt_put_short(p, table->reserved[i]);
   }
+  p += sfnt_put_short(p, table->metricDataFormat);
   p += sfnt_put_ushort(p, table->numOfLongVerMetrics);
 
   return data;
@@ -239,9 +245,11 @@ tt_pack_vhea_table (struct tt_vhea_table *table)
 
 struct tt_vhea_table *tt_read_vhea_table (sfnt *sfont)
 {
-  int i;
+  int   i;
+  ULONG len;
   struct tt_vhea_table *table = NULL;
 
+  len = sfnt_find_table_len(sfont, "vhea");
   sfnt_locate_table(sfont, "vhea");
 
   table = NEW(1, struct tt_vhea_table);
@@ -256,10 +264,12 @@ struct tt_vhea_table *tt_read_vhea_table (sfnt *sfont)
   table->caretSlopeRise = sfnt_get_short(sfont);
   table->caretSlopeRun = sfnt_get_short(sfont);
   table->caretOffset = sfnt_get_short(sfont);
-  for(i=0;i<5;i++) {
+  for(i = 0; i < 4; i++) {
     (table->reserved)[i] = sfnt_get_short(sfont);
   }
+  table->metricDataFormat = sfnt_get_short(sfont);
   table->numOfLongVerMetrics = sfnt_get_ushort(sfont);
+  table->numOfExSideBearings = (USHORT)((len - table->numOfLongVerMetrics * 4) / 2);
 
   return table;
 }
@@ -309,17 +319,20 @@ tt_read_VORG_table (sfnt *sfont)
  */
 
 struct tt_longMetrics *
-tt_read_longMetrics (sfnt *sfont, USHORT numGlyphs, USHORT numLongMetrics)
+tt_read_longMetrics (sfnt *sfont, USHORT numGlyphs, USHORT numLongMetrics, USHORT numExSideBearings)
 {
   struct tt_longMetrics *m;
   USHORT gid, last_adv = 0;
+  SHORT  last_esb = 0;
 
   m = NEW(numGlyphs, struct tt_longMetrics);
   for (gid = 0; gid < numGlyphs; gid++) {
     if (gid < numLongMetrics)
       last_adv = sfnt_get_ushort(sfont);
-    m[gid].sideBearing = sfnt_get_short(sfont);
+    if (gid < numLongMetrics + numExSideBearings)
+      last_esb = sfnt_get_short(sfont);
     m[gid].advance     = last_adv;
+    m[gid].sideBearing = last_esb;
   }
 
   return m;

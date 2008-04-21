@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/tt_cmap.c,v 1.24 2005/07/08 14:18:05 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/tt_cmap.c,v 1.25 2007/04/13 06:48:03 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     This program is free software; you can redistribute it and/or modify
@@ -1088,20 +1088,27 @@ otf_create_ToUnicode_stream (const char *font_name,
   }
 
   CMap_set_silent(1); /* many warnings without this... */
-  ttcmap = tt_cmap_read(sfont, 3, 10); /* UCS4 */
+  ttcmap = tt_cmap_read(sfont, 3, 10); /* Microsoft UCS4 */
   if (ttcmap &&
       ttcmap->format == 12) {
     WARN("Format 12 cmap table ... untested");
     cmap_obj = create_ToUnicode_cmap12(ttcmap->map,
 				       cmap_name, cmap_add, used_glyphs);
   } else {
-    ttcmap = tt_cmap_read(sfont, 3, 1);
+    ttcmap = tt_cmap_read(sfont, 3, 1); /* Microsoft UCS2 */
     if (ttcmap &&
 	ttcmap->format == 4) {
       cmap_obj = create_ToUnicode_cmap4(ttcmap->map,
 					cmap_name, cmap_add, used_glyphs);
     } else {
-      ERROR("Unable to read TrueType Unicode cmap table.");
+      ttcmap = tt_cmap_read(sfont, 0, 3); /* Unicode 2.0 or later */
+      if (ttcmap &&
+	  ttcmap->format == 4) {
+        cmap_obj = create_ToUnicode_cmap4(ttcmap->map,
+					  cmap_name, cmap_add, used_glyphs);
+      } else {
+        ERROR("Unable to read OpenType/TrueType Unicode cmap table.");
+      }
     }
   }
   tt_cmap_release(ttcmap);
@@ -1617,7 +1624,7 @@ otf_load_Unicode_CMap (const char *map_name, int ttc_index, /* 0 for non-TTC fon
 
   sfont = sfnt_open(fp);
   if (!sfont) {
-    ERROR("Could not open TrueType font file \"%s\"", map_name);
+    ERROR("Could not open OpenType/TrueType font file \"%s\"", map_name);
   }
   switch (sfont->type) {
   case SFNT_TYPE_TTC:
@@ -1631,12 +1638,12 @@ otf_load_Unicode_CMap (const char *map_name, int ttc_index, /* 0 for non-TTC fon
     offset = 0;
     break;
   default:
-    ERROR("Not a TrueType/TTC font?: %s", map_name);
+    ERROR("Not a OpenType/TrueType/TTC font?: %s", map_name);
     break;
   }
 
   if (sfnt_read_table_directory(sfont, offset) < 0)
-    ERROR("Could not read TrueType table directory.");
+    ERROR("Could not read OpenType/TrueType table directory.");
 
   base_name = NEW(strlen(map_name)+strlen("-UCS4-H")+5, char);
   if (wmode)
@@ -1693,18 +1700,21 @@ otf_load_Unicode_CMap (const char *map_name, int ttc_index, /* 0 for non-TTC fon
     return cmap_id;
   }
 
-  ttcmap = tt_cmap_read(sfont, 3, 10);
+  ttcmap = tt_cmap_read(sfont, 3, 10); /* Microsoft UCS4 */
   if (!ttcmap) {
-    ttcmap = tt_cmap_read(sfont, 3, 1);
-  }
-  if (!ttcmap) {
-    ERROR("Unable to read TrueType Unicode cmap table.");
+    ttcmap = tt_cmap_read(sfont, 3, 1); /* Microsoft UCS2 */
+    if (!ttcmap) {
+      ttcmap = tt_cmap_read(sfont, 0, 3); /* Unicode 2.0 or later */
+      if (!ttcmap) {
+        ERROR("Unable to read OpenType/TrueType Unicode cmap table.");
+      }
+    }
   }
   cmap_id = load_base_CMap(base_name, wmode,
 			   (is_cidfont ? &csi : NULL),
 			   GIDToCIDMap, ttcmap);
   if (cmap_id < 0)
-    ERROR("Failed to read TrueType cmap table.");
+    ERROR("Failed to read OpenType/TrueType cmap table.");
 
   if (!otl_tags) {
     RELEASE(cmap_name);

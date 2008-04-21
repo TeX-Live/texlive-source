@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfparse.c,v 1.39 2005/07/21 05:05:14 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfparse.c,v 1.40 2007/04/03 05:11:39 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -952,7 +952,8 @@ parse_pdf_reference (char **start, char *end)
 static pdf_obj *
 try_pdf_reference (char *start, char *end, char **endptr)
 {
-  unsigned long id = 0, gen = 0;
+  unsigned long id = 0;
+  unsigned short gen = 0;
 
   if (endptr)
     *endptr = start;
@@ -989,7 +990,7 @@ try_pdf_reference (char *start, char *end, char **endptr)
   if (endptr)
     *endptr = start;
 
-  return pdf_new_ref(id, (int) gen);
+  return pdf_new_ref(id, gen);
 }
 
 pdf_obj *
