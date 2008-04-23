@@ -1,4 +1,4 @@
-This is TeX, Version 3.141592 (preloaded format=trip 2002.12.20)  20 DEC 2002 21:28
+This is TeX, Version 3.1415926 (preloaded format=trip 2008.3.15)  15 MAR 2008 02:23
 ** &trip  trip
 (trip.tex ##
 {vertical mode: \tracingrestores}
@@ -5350,6 +5350,16 @@ so that I will find a matching right brace soon.
 (If you're confused by all this, try typing `I}' now.)
 
 {\leaders}
+! Leaders not followed by proper glue.
+<to be read again> 
+                   \mskip 
+l.375 ^\leaders\vrule\mskip
+                           \shmip M\leaders\hrule\nonscript\h...
+You should say `\leaders <box or rule><hskip or vskip>'.
+I found the <box or rule>, but there's no suitable
+<hskip or vskip>, so I'm ignoring these leaders.
+
+{\mskip}
 {the letter M}
 {\leaders}
 ! Leaders not followed by proper glue.
@@ -6915,8 +6925,7 @@ spacefactor 1000
 .|hbox(0.0+0.0)x0.0
 .|mathon
 .|hbox(0.0+0.0)x3.99, shifted -8.2
-..|leaders 0.0 minus -0.00003fil
-...|rule(*+*)x0.4
+..|glue 0.0 minus -0.00003fil
 ..|smalltrip M
 ..|kern1.0
 ..|glue(|nonscript)
@@ -7285,11 +7294,11 @@ Memory usage before: 334&431; after: 292&418; still untouched: 175
 (end occurred when iftrue on line 413 was incomplete) 
 Here is how much of TeX's memory you used:
  47 strings out of 1674
- 251 string characters out of 8353
+ 253 string characters out of 8354
  2825 words of memory out of 3000
  372 multiletter control sequences out of 2100
  3041 words of font info for 4 fonts, out of 20000 for 75
  2 hyphenation exceptions out of 307
- 5i,7n,9p,113b,38s stack positions out of 200i,40n,60p,500b,600s
+ 7i,7n,9p,113b,38s stack positions out of 200i,40n,60p,500b,600s
 
 Output written on trip.dvi (16 pages, 2920 bytes).

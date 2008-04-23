@@ -1,4 +1,4 @@
-This is METAFONT, Version 2.71828 (preloaded base=trap 2002.12.23)  23 DEC 2002 11:57
+This is METAFONT, Version 2.718281 (preloaded base=trap 2008.3.15)  15 MAR 2008 02:23
 ** &trap  trap
 (trap.mf
 {if}
@@ -1822,7 +1822,7 @@ row -2: | -4+ -3- -2+ -1-
 
 {showstats}
 Memory usage 1084&202 (749 still untouched)
-String usage 24&92 (1863&21408 still untouched)
+String usage 24&92 (858&11309 still untouched)
 {addto}
 {(path)yscaled(0.01666)}
 Path at line 82, before subdivision into octants:
@@ -4232,7 +4232,7 @@ xpart '=-ypart '-0.66667
 {qq:=pen}
 {showstats}
 Memory usage 1476&588 (104 still untouched)
-String usage 42&168 (1818&17726 still untouched)
+String usage 41&161 (815&7634 still untouched)
 {[repeat the loop]}
 ! A group begun on line 163 never ended.
 <to be read again> 
@@ -4248,8 +4248,8 @@ by `endgroup'. So I've inserted `endgroup' now.
 (end occurred when if on line 36 was incomplete)
 (end occurred when elseif on line 21 was incomplete) 
 Here is how much of METAFONT's memory you used:
- 69 strings out of 1887
- 3759 string characters out of 21485
+ 68 strings out of 883
+ 3752 string characters out of 11386
  2897 words of memory out of 3001
  289 symbolic tokens out of 2100
  8i,43n,14r,8p,167b stack positions out of 30i,100n,300r,150p,500b

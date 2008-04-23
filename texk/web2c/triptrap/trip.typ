@@ -6,7 +6,7 @@ Options selected:
   Resolution =  72.27000000 pixels per inch
 numerator/denominator=25400000/473628672
 magnification=2000;       0.00003052 pixels per DVI unit
-' TeX output 2002.12.20:2128'
+' TeX output 2008.03.15:0223'
  
 42: beginning of page 0.0.0.0.11.0.0.0.0.0 
 87: down4 129105920 
@@ -1212,4 +1212,3 @@ Font 3: trip scaled 409600
 Font 2: trip scaled 4000 
 Font 1: trip 
 Font 0: trip scaled 2000 
- 

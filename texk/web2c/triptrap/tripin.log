@@ -1,4 +1,4 @@
-This is TeX, Version 3.141592 (INITEX)  20 DEC 2002 20:24
+This is TeX, Version 3.1415926 (INITEX)  15 MAR 2008 02:23
 **\input trip
 (trip.tex
 ! Bad character code (256).
@@ -447,8 +447,8 @@ l.79 ...terns{toolate}\showbox0}
 
  )
 Beginning to dump on file trip.fmt
- (preloaded format=trip 2002.12.20)
-1320 strings of total length 23539
+ (preloaded format=trip 2008.3.15)
+1326 strings of total length 23646
 471 memory locations dumped; current usage is 96&278
 341 multiletter control sequences
 \font\nullfont=nullfont
