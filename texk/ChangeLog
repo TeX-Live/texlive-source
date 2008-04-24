@@ -1,3 +1,8 @@
+2008-04-25  Karl Berry  <karl@tug.org>
+
+	* xdvik/Makefile.in (xdvizilla): skip (un)installing this.  debian
+	477160, tex-live 24 Apr 2008 02:03:57.
+
 2008-02-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* withenable.ac (kpse_texk_pkglist): m4_defined list of all
