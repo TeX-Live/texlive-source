@@ -131,9 +131,6 @@ install-exec: @final_exec_name@
 	$(INSTALL_SCRIPT) xdvi-sh $(scriptdir)/@wrapper_script@
 	rm -f $(scriptdir)/o@wrapper_script@
 	ln -s @wrapper_script@ $(scriptdir)/o@wrapper_script@
-### fix wrong CVS permissions for shell script
-	$(INSTALL_SCRIPT) $(srcdir)/xdvizilla $(scriptdir)/xdvizilla
-	chmod +x $(scriptdir)/xdvizilla
 
 uninstall-exec:
 	for p in @final_exec_name@; do rm -f $(bindir)/$$p; done
@@ -155,11 +152,9 @@ install-data: $(manpage).1 pixmaps/toolbar.xpm pixmaps/toolbar2.xpm
 	else \
 	    true; \
 	fi
-	$(INSTALL_DATA) $(srcdir)/xdvizilla.1 $(man1dir)/xdvizilla.$(manext)
 
 uninstall-data:
-	rm -f $(man1dir)/$(manpage).$(manext) $(man1dir)/xdvizilla.$(manext) \
-		$(scriptdir)/xdvizilla \
+	rm -f $(man1dir)/$(manpage).$(manext) \
 		$(texmf)/xdvi/pixmaps/toolbar.xpm $(texmf)/xdvi/pixmaps/toolbar2.xpm \
 		$(texmf)/xdvi/XDvi
 	if \
