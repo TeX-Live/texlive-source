@@ -261,13 +261,13 @@ TECkit_GetUnicodeValue(char* name)
 	return -1;
 }
 
-static inline UInt8
+inline UInt8
 READ(const UInt8 p)
 {
 	return p;
 }
 
-static inline UInt16
+inline UInt16
 READ(const UInt16 p)
 {
 #ifdef WORDS_BIGENDIAN
@@ -277,7 +277,7 @@ READ(const UInt16 p)
 #endif
 }
 
-static inline UInt32
+inline UInt32
 READ(const UInt32 p)
 {
 #ifdef WORDS_BIGENDIAN
@@ -288,7 +288,7 @@ READ(const UInt32 p)
 }
 
 template<class T>
-inline static void
+inline void
 WRITE(T& t, UInt32 v)
 {
 	t = READ(T(v));

@@ -76,13 +76,13 @@ int	traceLevel = 1;
 using namespace std;
 
 /* we apply READ to values read from the compiled table, to provide byte-swapping where needed */
-static inline UInt8
+inline UInt8
 READ(const UInt8 p)
 {
 	return p;
 }
 
-static inline UInt16
+inline UInt16
 READ(const UInt16 p)
 {
 #ifdef WORDS_BIGENDIAN
@@ -92,7 +92,7 @@ READ(const UInt16 p)
 #endif
 }
 
-static inline UInt32
+inline UInt32
 READ(const UInt32 p)
 {
 #ifdef WORDS_BIGENDIAN
