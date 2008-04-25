@@ -1,3 +1,4 @@
+# $Id$
 # @configure_input@
 # Makefile for teTeX's extra scripts - te@dbs.uni-hannover.de.
 # Public domain.
@@ -24,7 +25,7 @@ LINKED_SCRIPTS = \
   texmf/scripts/ps2eps/ps2eps.pl \
   texmf/scripts/tetex/e2pall.pl \
   texmf/scripts/tetex/texdoctk.pl \
-  texmf/scripts/texlive/tlmgr.texlua \
+  texmf/scripts/texlive/tlmgr.tlu \
   texmf/scripts/texlive/getnonfreefonts.pl \
   texmf/scripts/texlive/tl-package-manager.pl \
   texmf-dist/scripts/glossaries/makeglossaries \
