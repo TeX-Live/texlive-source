@@ -1,4 +1,3 @@
-{
 Copyright (c) 2008 jerome DOT laurens AT u-bourgogne DOT fr
 
 This file is part of the SyncTeX package.
@@ -33,29 +32,39 @@ authorization from the copyright holder.
 
 Notice:
 -------
-This file is an interface to the synctex system for web2c.
-It declares the public functions API of synctex.c.
-It is always embedded as common definitions when convert'ing
-from web to c (See the convert shell script).
-}
+This file contains TeX changes for SyncTeX support.
+It implements the memory management for XeTeX like engines.
+It must apply after synctex.ch0 and synctex-e.ch1
 
-{ functions from the synctex controller in synctex.c }
-@define procedure synctexstartinput;
-@define procedure synctexterminate;
-@define procedure synctexsheet();
-@define procedure synctexteehs;
-@define procedure synctexvlist();
-@define procedure synctextsilv();
-@define procedure synctexvoidvlist();
-@define procedure synctexhlist();
-@define procedure synctextsilh();
-@define procedure synctexvoidhlist();
-@define procedure synctexmath();
-@define procedure synctexkern();
-@define procedure synctexchar();
-@define procedure synctexnode();
-@define procedure synctexcurrent;
-@define procedure synctexhorizontalruleorglue();
+@x
+    MISSING IMPLEMENTATION: 0 synctag for medium sized node at mem[t]
+@y
+    mem[t+medium_node_size-synctex_field_size].hh.lh:=0; {{\sl Sync\TeX}: do nothing, it is too late}
+@z
 
-{ end of synctex.defines }
-{ vim: set syntax=web : }
+@x
+MISSING IMPLEMENTATION: 0 synctag for medium sized node at mem[p]
+@y
+mem[p+medium_node_size-synctex_field_size].hh.lh:=0; {{\sl Sync\TeX}: do nothing, it is too late}
+@z
+
+@x
+  MISSING IMPLEMENTATION: update the synctex information for node at mem[r] with size s
+@y
+  mem[r+s-synctex_field_size].hh.lh := synctex_tag;
+  mem[r+s-synctex_field_size].hh.rh := line;
+@z
+
+@x
+MISSING IMPLEMENTATION: copy the synctex information for box node at mem[r] from node at mem[p]
+@y
+mem[r+box_node_size-synctex_field_size].hh.lh:=mem[p+box_node_size-synctex_field_size].hh.lh;
+mem[r+box_node_size-synctex_field_size].hh.rh:=mem[p+box_node_size-synctex_field_size].hh.rh;
+@z
+
+@x
+MISSING IMPLEMENTATION: copy the synctex information for glue node at mem[r] from node at mem[p]
+@y
+mem[r+medium_node_size-synctex_field_size].hh.lh:=mem[p+medium_node_size-synctex_field_size].hh.lh;
+mem[r+medium_node_size-synctex_field_size].hh.rh:=mem[p+medium_node_size-synctex_field_size].hh.rh;
+@z

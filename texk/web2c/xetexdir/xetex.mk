@@ -128,7 +128,7 @@ xetexdir/etex.version: $(srcdir)/etexdir/etex.ch
 # The C sources.
 xetex_c = xetexini.c xetex0.c xetex1.c xetex2.c
 xetex_o = xetexini.o xetex0.o xetex1.o xetex2.o xetexextra.o
-xetex_add_o = trans.o XeTeX_ext.o xetex_pool.o xetex_synctex.o $(xetex_platform_o)
+xetex_add_o = trans.o XeTeX_ext.o xetex_pool.o $(xetex_platform_o) $(synctex-xetex_o)
 
 # these compilations require the path to TECkit headers;
 # just setting it in XCFLAGS doesn't seem to work when we're called
@@ -167,10 +167,6 @@ pdfimage.o: $(srcdir)/xetexdir/pdfimage.cpp $(srcdir)/xetexdir/pdfimage.h
 
 XeTeX_pic.o: $(srcdir)/xetexdir/XeTeX_pic.c $(srcdir)/xetexdir/XeTeX_ext.h $(XeTeXImageHdrs)
 	$(compile) $(TECKITFLAGS) $(FTFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
-
-# sync
-xetex_synctex.o: $(srcdir)/synctex/synctex.c
-	$(compile) $(ALL_CFLAGS) $(TECKITFLAGS) $(FTFLAGS) $(XETEX_DEFINES) -c $< -o $@
 
 # Layout library
 xetex_ot_layout_o = \
@@ -222,6 +218,10 @@ XeTeX_mac.o: $(srcdir)/xetexdir/XeTeX_mac.c xetexd.h
 trans.o: $(srcdir)/xetexdir/trans.c
 	$(compile) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
 
+# sync
+synctex-xe.o: synctex-xe.c
+	$(compile) $(ALL_CFLAGS) $(TECKITFLAGS) $(FTFLAGS) $(XETEX_DEFINES) -c $< -o $@
+
 # Making xetex.
 xetex: $(xetex_o) $(xetex_add_o) $(xetex_images_o) $(xetex_ot_layout_o) \
 		$(GRAPHITEDEP) $(TECKITDEP) $(FREETYPE2DEP) $(ICUDEP) $(EXTRADEPS)
@@ -232,6 +232,8 @@ xetex: $(xetex_o) $(xetex_add_o) $(xetex_images_o) $(xetex_ot_layout_o) \
 # C file dependencies
 $(xetex_c) xetexcoerce.h xetexd.h: xetex.p $(web2c_texmf)
 	$(web2c) xetex
+	$(synctex_xetexd)
+
 xetexextra.c: lib/texmfmp.c xetexdir/xetexextra.h
 	sed s/TEX-OR-MF-OR-MP/xetex/ $(srcdir)/lib/texmfmp.c >$@
 xetexdir/xetexextra.h: xetexdir/xetexextra.in xetexdir/xetex.version xetexdir/etex.version
@@ -251,13 +253,12 @@ xetex.p xetex.pool: ./otangle xetex.web
 #   Sources for xetex.web:
 xetex_web_srcs = $(srcdir)/tex.web \
   $(srcdir)/etexdir/etex.ch \
-  $(srcdir)/synctex/synctex.ch \
   $(srcdir)/etexdir/tex.ch0 \
   $(srcdir)/tex.ch \
   $(srcdir)/etexdir/tex.ch1 \
   $(srcdir)/etexdir/tex.ech \
-  $(srcdir)/xetexdir/xetex.ch \
-  $(srcdir)/xetexdir/sync-xetex.ch
+  $(synctex-xetex_ch_srcs) \
+  $(srcdir)/xetexdir/xetex.ch
 xetex.web: tie xetexdir/xetex.mk $(xetex_web_srcs)
 	$(TIE) -m xetex.web $(xetex_web_srcs)
 

@@ -1,4 +1,4 @@
-{
+/* 
 Copyright (c) 2008 jerome DOT laurens AT u-bourgogne DOT fr
 
 This file is part of the SyncTeX package.
@@ -31,31 +31,16 @@ shall not be used in advertising or otherwise to promote the sale,
 use or other dealings in this Software without prior written  
 authorization from the copyright holder.
 
-Notice:
--------
-This file is an interface to the synctex system for web2c.
-It declares the public functions API of synctex.c.
-It is always embedded as common definitions when convert'ing
-from web to c (See the convert shell script).
-}
+*/
 
-{ functions from the synctex controller in synctex.c }
-@define procedure synctexstartinput;
-@define procedure synctexterminate;
-@define procedure synctexsheet();
-@define procedure synctexteehs;
-@define procedure synctexvlist();
-@define procedure synctextsilv();
-@define procedure synctexvoidvlist();
-@define procedure synctexhlist();
-@define procedure synctextsilh();
-@define procedure synctexvoidhlist();
-@define procedure synctexmath();
-@define procedure synctexkern();
-@define procedure synctexchar();
-@define procedure synctexnode();
-@define procedure synctexcurrent;
-@define procedure synctexhorizontalruleorglue();
+#    include "pdftexd.h"
 
-{ end of synctex.defines }
-{ vim: set syntax=web : }
+/*   We observe pdfoutputvalue in order to determine whether output mode is
+ *   pdf or dvi.
+ *   We will assume that pdf_output_value equals pdf_output before entering
+ *   the synctex_sheet function below.  */
+#    undef  SYNCTEX_OFFSET_IS_PDF
+#    define SYNCTEX_OFFSET_IS_PDF (pdfoutputvalue>0)
+#    undef  SYNCTEX_OUTPUT
+#    define SYNCTEX_OUTPUT ((pdfoutputvalue>0)?"pdf":"dvi")
+

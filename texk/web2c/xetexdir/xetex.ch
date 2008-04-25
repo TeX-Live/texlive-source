@@ -106,7 +106,9 @@ authorization from SIL International.
 @d XeTeX_use_glyph_metrics_code = 3 {non-zero to use exact glyph height/depth}
 @d XeTeX_inter_char_tokens_code = 4 {non-zero to enable \\XeTeXinterchartokens insertion}
 @#
-@d XeTeX_default_input_mode_code    = 5 {input mode for newly opened files}
+@d XeTeX_input_normalization_code = 5 {normalization mode: 1 = NFC, 2 = NFD, else none}
+@#
+@d XeTeX_default_input_mode_code    = 6 {input mode for newly opened files}
 @d XeTeX_input_mode_auto    = 0
 @d XeTeX_input_mode_utf8    = 1
 @d XeTeX_input_mode_utf16be = 2
@@ -114,9 +116,9 @@ authorization from SIL International.
 @d XeTeX_input_mode_raw     = 4
 @d XeTeX_input_mode_icu_mapping = 5
 @#
-@d XeTeX_default_input_encoding_code = 6 {|str_number| of encoding name if mode = ICU}
+@d XeTeX_default_input_encoding_code = 7 {|str_number| of encoding name if mode = ICU}
 @#
-@d eTeX_states=7 {number of \eTeX\ state variables in |eqtb|}
+@d eTeX_states=8 {number of \eTeX\ state variables in |eqtb|}
 @z
 
 @x
@@ -3745,7 +3747,9 @@ g_sign:=glue_sign(this_box); p:=list_ptr(this_box);
 incr(cur_s);
 if cur_s>0 then dvi_out(push);
 if cur_s>max_push then max_push:=cur_s;
-save_loc:=dvi_offset+dvi_ptr; left_edge:=cur_h; cur_v:=cur_v-height(this_box);
+save_loc:=dvi_offset+dvi_ptr; left_edge:=cur_h;
+@<Start vlist {\sl Sync\TeX} information record@>;
+cur_v:=cur_v-height(this_box);
 @y
 @!cur_g:scaled; {rounded equivalent of |cur_glue| times the glue ratio}
 @!upwards:boolean; {whether we're stacking upwards}
@@ -3757,6 +3761,7 @@ incr(cur_s);
 if cur_s>0 then dvi_out(push);
 if cur_s>max_push then max_push:=cur_s;
 save_loc:=dvi_offset+dvi_ptr; left_edge:=cur_h;
+@<Start vlist {\sl Sync\TeX} information record@>;
 if upwards then cur_v:=cur_v+depth(this_box) else cur_v:=cur_v-height(this_box);
 @z
 
@@ -3774,7 +3779,16 @@ move_past: if upwards then cur_v:=cur_v-rule_ht else cur_v:=cur_v+rule_ht;
 
 @x
 @<Output a box in a vlist@>=
-if list_ptr(p)=null then cur_v:=cur_v+height(p)+depth(p)
+if list_ptr(p)=null then begin
+  cur_v:=cur_v+height(p);
+  if type(p)=vlist_node then begin
+	  @<Record void vlist {\sl Sync\TeX} information@>;
+    end
+  else begin
+      @<Record void hlist {\sl Sync\TeX} information@>;
+    end;
+  cur_v:=cur_v+depth(p);
+end
 else  begin cur_v:=cur_v+height(p); synch_v;
   save_h:=dvi_h; save_v:=dvi_v;
   if cur_dir=right_to_left then cur_h:=left_edge-shift_amount(p)
@@ -3786,9 +3800,16 @@ else  begin cur_v:=cur_v+height(p); synch_v;
   end
 @y
 @<Output a box in a vlist@>=
-if list_ptr(p)=null then
-  if upwards then cur_v:=cur_v-height(p)-depth(p)
-  else cur_v:=cur_v+height(p)+depth(p)
+if list_ptr(p)=null then begin
+  if upwards then cur_v:=cur_v-depth(p) else cur_v:=cur_v+height(p);
+  if type(p)=vlist_node then begin
+	  @<Record void vlist {\sl Sync\TeX} information@>;
+    end
+  else begin
+      @<Record void hlist {\sl Sync\TeX} information@>;
+    end;
+  if upwards then cur_v:=cur_v-height(p) else cur_v:=cur_v+depth(p);
+end
 else  begin if upwards then cur_v:=cur_v-depth(p) else cur_v:=cur_v+height(p); synch_v;
   save_h:=dvi_h; save_v:=dvi_v;
   if cur_dir=right_to_left then cur_h:=left_edge-shift_amount(p)
@@ -3807,13 +3828,10 @@ if upwards then cur_v:=cur_v-rule_ht else cur_v:=cur_v+rule_ht;
 @z
 
 @x
-begin
-@<Record sheet {\sl synctex} information@>
-if tracing_output>0 then
+begin if tracing_output>0 then
 @y
 begin
 if job_name=0 then open_log_file;
-@<Record sheet {\sl synctex} information@>
 if tracing_output>0 then
 @z
 
@@ -7080,8 +7098,11 @@ end else
     begin cur_lang:=what_lang(#); l_hyf:=what_lhm(#); r_hyf:=what_rhm(#);
     set_hyph_index;
     end
+
+@<Advance \(p)past a whatsit node in the \(l)|line_break| loop@>=@+
+adv_past(cur_p)
 @y
-@ @d adv_past(#)==@+if subtype(#)=language_node then
+@ @d adv_past_linebreak(#)==@+if subtype(#)=language_node then
     begin cur_lang:=what_lang(#); l_hyf:=what_lhm(#); r_hyf:=what_rhm(#);
     set_hyph_index;
     end
@@ -7091,6 +7112,22 @@ end else
   or (subtype(#)=pdf_node)
   then
     begin act_width:=act_width+width(#); end
+
+@<Advance \(p)past a whatsit node in the \(l)|line_break| loop@>=@+
+adv_past_linebreak(cur_p)
+@z
+
+@x
+@ @<Advance \(p)past a whatsit node in the \(p)pre-hyphenation loop@>=@+
+adv_past(s)
+@y
+@ @d adv_past_prehyph(#)==@+if subtype(#)=language_node then
+    begin cur_lang:=what_lang(#); l_hyf:=what_lhm(#); r_hyf:=what_rhm(#);
+    set_hyph_index;
+    end
+
+@<Advance \(p)past a whatsit node in the \(p)pre-hyphenation loop@>=@+
+adv_past_prehyph(s)
 @z
 
 @x
@@ -8212,6 +8249,8 @@ font_char_ic_code: begin scan_font_ident; q:=cur_val; scan_usv_num;
 @d XeTeX_dash_break_state == eTeX_state(XeTeX_dash_break_code)
 @d XeTeX_dash_break_en == (XeTeX_dash_break_state>0)
 
+@d XeTeX_input_normalization_state == eTeX_state(XeTeX_input_normalization_code)
+
 @d XeTeX_default_input_mode == eTeX_state(XeTeX_default_input_mode_code)
 @d XeTeX_default_input_encoding == eTeX_state(XeTeX_default_input_encoding_code)
 @z
@@ -8225,6 +8264,7 @@ eTeX_state_code+XeTeX_upwards_code:print_esc("XeTeXupwardsmode");
 eTeX_state_code+XeTeX_use_glyph_metrics_code:print_esc("XeTeXuseglyphmetrics");
 eTeX_state_code+XeTeX_inter_char_tokens_code:print_esc("XeTeXinterchartokenstate");
 eTeX_state_code+XeTeX_dash_break_code:print_esc("XeTeXdashbreakstate");
+eTeX_state_code+XeTeX_input_normalization_code:print_esc("XeTeXinputnormalization");
 @z
 
 @x
@@ -8243,6 +8283,9 @@ primitive("XeTeXinterchartokenstate",assign_int,eTeX_state_base+XeTeX_inter_char
 
 primitive("XeTeXdashbreakstate",assign_int,eTeX_state_base+XeTeX_dash_break_code);
 @!@:XeTeX_dash_break_state_}{\.{\\XeTeX_dash_break_state} primitive@>
+
+primitive("XeTeXinputnormalization",assign_int,eTeX_state_base+XeTeX_input_normalization_code);
+@!@:XeTeX_input_normalization_}{\.{\\XeTeX_input_normalization} primitive@>
 
 primitive("XeTeXinputencoding",extension,XeTeX_input_encoding_extension_code);
 primitive("XeTeXdefaultencoding",extension,XeTeX_default_encoding_extension_code);
@@ -8754,6 +8797,12 @@ begin
 	end;
 	print(" replaced by U+FFFD.");
 	end_diagnostic(false);
+end;
+
+function get_input_normalization_state: integer;
+begin
+	if eqtb=nil then get_input_normalization_state:=0
+	else get_input_normalization_state:=XeTeX_input_normalization_state;
 end;
 
 @z

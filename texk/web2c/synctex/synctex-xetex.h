@@ -1,4 +1,4 @@
-{
+/* 
 Copyright (c) 2008 jerome DOT laurens AT u-bourgogne DOT fr
 
 This file is part of the SyncTeX package.
@@ -30,32 +30,29 @@ Except as contained in this notice, the name of the copyright holder
 shall not be used in advertising or otherwise to promote the sale,  
 use or other dealings in this Software without prior written  
 authorization from the copyright holder.
+*/
 
-Notice:
--------
-This file is an interface to the synctex system for web2c.
-It declares the public functions API of synctex.c.
-It is always embedded as common definitions when convert'ing
-from web to c (See the convert shell script).
-}
+#  include "xetexd.h"
+/* this will define XeTeX, which we can use in later conditionals */
 
-{ functions from the synctex controller in synctex.c }
-@define procedure synctexstartinput;
-@define procedure synctexterminate;
-@define procedure synctexsheet();
-@define procedure synctexteehs;
-@define procedure synctexvlist();
-@define procedure synctextsilv();
-@define procedure synctexvoidvlist();
-@define procedure synctexhlist();
-@define procedure synctextsilh();
-@define procedure synctexvoidhlist();
-@define procedure synctexmath();
-@define procedure synctexkern();
-@define procedure synctexchar();
-@define procedure synctexnode();
-@define procedure synctexcurrent;
-@define procedure synctexhorizontalruleorglue();
+#  include <xetexdir/xetexextra.h>
 
-{ end of synctex.defines }
-{ vim: set syntax=web : }
+/* We observe nopdfoutput in order to determine whether output mode is
+ * pdf or xdv. */
+#  undef  SYNCTEX_OUTPUT
+#  define SYNCTEX_OUTPUT (nopdfoutput!=0?"xdv":"pdf")
+
+/*  WARNING:
+    The definition below must be in sync with their eponym declarations in synctex-xetex.ch1
+*/
+#  undef  synchronization_field_size
+#  define synchronization_field_size 1
+
+/* in XeTeX, "halfword" fields are at least 32 bits, so we'll use those for
+ * tag and line so that the sync field size is only one memory_word. */
+#  undef  SYNCTEX_TAG_MODEL
+#  define SYNCTEX_TAG_MODEL(NODE,SIZE)\
+                mem[NODE+SIZE-synchronization_field_size].hh.lhfield
+#  undef  SYNCTEX_LINE_MODEL
+#  define SYNCTEX_LINE_MODEL(NODE,SIZE)\
+                mem[NODE+SIZE-synchronization_field_size].hh.rh

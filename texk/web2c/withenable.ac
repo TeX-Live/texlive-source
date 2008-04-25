@@ -31,7 +31,7 @@ AC_ARG_WITH([pdfetex],
 dnl Do we compile luaTeX?
 dnl We default to yes if the sources are available.
 AC_ARG_WITH([luatex],
-[  --without-luatex           don't compile and install pdfTeX])
+[  --without-luatex           don't compile and install luaTeX])
 
 dnl Do we compile XeTeX?
 dnl We default to yes if the sources are available.

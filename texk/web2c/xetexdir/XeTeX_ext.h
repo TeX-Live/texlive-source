@@ -291,7 +291,8 @@ typedef void* ATSUStyle; /* dummy declaration just so the stubs can compile */
 	int atsufontgetnamed(int what, ATSUStyle style);
 	int atsufontgetnamed1(int what, ATSUStyle style, int param);
 	void atsuprintfontname(int what, ATSUStyle style, int param1, int param2);
-	void atsugetfontmetrics(ATSUStyle style, Fixed* ascent, Fixed* descent, Fixed* xheight, Fixed* capheight, Fixed* slant);
+	/* the metrics params here are really TeX 'scaled' (or MacOS 'Fixed') values, but that typedef isn't available every place this is included */
+	void atsugetfontmetrics(ATSUStyle style, integer* ascent, integer* descent, integer* xheight, integer* capheight, integer* slant);
 
 #ifdef XETEX_MAC
 /* functions in XeTeX_mac.c */

@@ -1,4 +1,4 @@
-{
+/* 
 Copyright (c) 2008 jerome DOT laurens AT u-bourgogne DOT fr
 
 This file is part of the SyncTeX package.
@@ -31,31 +31,8 @@ shall not be used in advertising or otherwise to promote the sale,
 use or other dealings in this Software without prior written  
 authorization from the copyright holder.
 
-Notice:
--------
-This file is an interface to the synctex system for web2c.
-It declares the public functions API of synctex.c.
-It is always embedded as common definitions when convert'ing
-from web to c (See the convert shell script).
-}
+*/
 
-{ functions from the synctex controller in synctex.c }
-@define procedure synctexstartinput;
-@define procedure synctexterminate;
-@define procedure synctexsheet();
-@define procedure synctexteehs;
-@define procedure synctexvlist();
-@define procedure synctextsilv();
-@define procedure synctexvoidvlist();
-@define procedure synctexhlist();
-@define procedure synctextsilh();
-@define procedure synctexvoidhlist();
-@define procedure synctexmath();
-@define procedure synctexkern();
-@define procedure synctexchar();
-@define procedure synctexnode();
-@define procedure synctexcurrent;
-@define procedure synctexhorizontalruleorglue();
+#  warning SyncTeX for TeX
 
-{ end of synctex.defines }
-{ vim: set syntax=web : }
+#  include "texd.h"

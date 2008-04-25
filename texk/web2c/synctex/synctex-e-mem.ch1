@@ -1,4 +1,3 @@
-{
 Copyright (c) 2008 jerome DOT laurens AT u-bourgogne DOT fr
 
 This file is part of the SyncTeX package.
@@ -33,29 +32,22 @@ authorization from the copyright holder.
 
 Notice:
 -------
-This file is an interface to the synctex system for web2c.
-It declares the public functions API of synctex.c.
-It is always embedded as common definitions when convert'ing
-from web to c (See the convert shell script).
-}
+This file contains TeX changes for core synctex support.
+It is missing some implementation details that are deferred to either
+sync-pdftex.ch or sync-xetex.ch
+synctex.ch is based on tex.web after the eTeX changes have been applied.
+So it might not apply as is to pdftex.web due to some typographical changes.
+In the building process, one may have to apply some suitable tex.ch0 first.
+See pdftexdir for details.
 
-{ functions from the synctex controller in synctex.c }
-@define procedure synctexstartinput;
-@define procedure synctexterminate;
-@define procedure synctexsheet();
-@define procedure synctexteehs;
-@define procedure synctexvlist();
-@define procedure synctextsilv();
-@define procedure synctexvoidvlist();
-@define procedure synctexhlist();
-@define procedure synctextsilh();
-@define procedure synctexvoidhlist();
-@define procedure synctexmath();
-@define procedure synctexkern();
-@define procedure synctexchar();
-@define procedure synctexnode();
-@define procedure synctexcurrent;
-@define procedure synctexhorizontalruleorglue();
+@x synctex-mem.ch0 l.147
+@d REMOVE ME IF synctex_code is properly defined
+@y
+@z
 
-{ end of synctex.defines }
-{ vim: set syntax=web : }
+@x etex.ch l.514
+@d int_pars=etex_int_pars {total number of integer parameters}
+@y
+@d synctex_code=etex_int_pars
+@d int_pars=synctex_code+1 {total number of integer parameters}
+@z

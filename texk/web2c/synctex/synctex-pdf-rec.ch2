@@ -1,0 +1,161 @@
+%
+% Copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
+%
+% This file is part of pdfTeX.
+%
+% pdfTeX is free software; you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation; either version 2 of the License, or
+% (at your option) any later version.
+%
+% pdfTeX is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License along with
+% pdfTeX; if not, write to the Free Software Foundation, Inc., 51 Franklin
+% Street, Fifth Floor, Boston, MA 02110-1301 USA.
+%
+% These are synctex specific additions to pdftex.
+% This change file is meant to override previous changes made by synctex.ch
+%
+
+Fix
+@x pdftex.web l.14497
+margin_kern_node,
+kern_node: begin
+  @<Record |kern_node| {\sl Sync\TeX} information@>;
+  cur_h:=cur_h+width(p);
+end;
+@y
+margin_kern_node:cur_h:=cur_h+width(p);
+kern_node: begin
+  @<Record |kern_node| {\sl Sync\TeX} information@>;
+  cur_h:=cur_h+width(p);
+end;
+@z
+
+@x pdftex.web l.18358
+while p<>null do
+    @<Output node |p| for |pdf_hlist_out| and move to the next node,
+    maintaining the condition |cur_v=base_line|@>;
+@y
+@<Start hlist {\sl Sync\TeX} information record@>;
+while p<>null do
+    @<Output node |p| for |pdf_hlist_out| and move to the next node,
+    maintaining the condition |cur_v=base_line|@>;
+@<Finish hlist {\sl Sync\TeX} information record@>;
+@z
+
+@x pdftex.web l.18382
+  p:=link(p);
+  until not is_char_node(p);
+@y
+  p:=link(p);
+  until not is_char_node(p);
+  @<Record current point {\sl Sync\TeX} information@>;
+@z
+
+@x pdftex.web l.18395
+margin_kern_node,
+kern_node:cur_h:=cur_h+width(p);
+math_node: @<Handle a math node in |hlist_out|@>;
+@y
+margin_kern_node:cur_h:=cur_h+width(p);
+kern_node: begin
+  @<Record |kern_node| {\sl Sync\TeX} information@>;
+  cur_h:=cur_h+width(p);
+end;
+math_node: begin
+  @<Record |math_node| {\sl Sync\TeX} information@>;
+  @<Handle a math node in |hlist_out|@>;
+end;
+@z
+
+@x pdftex.web l.18405
+move_past: cur_h:=cur_h+rule_wd;
+@y
+move_past: begin
+  cur_h:=cur_h+rule_wd;
+  @<Record horizontal |rule_node| or |glue_node| {\sl Sync\TeX} information@>;
+end;
+@z
+
+@x pdftex.web l.18409
+@ @<(\pdfTeX) Output a box in an hlist@>=
+if list_ptr(p)=null then cur_h:=cur_h+width(p)
+@y
+@ @<(\pdfTeX) Output a box in an hlist@>=
+if list_ptr(p)=null then
+  if type(p)=vlist_node then begin
+      @<Record void vlist {\sl Sync\TeX} information@>
+      cur_h:=cur_h+width(p)
+    end
+  else begin
+    @<Record void hlist {\sl Sync\TeX} information@>
+    cur_h:=cur_h+width(p);
+  end
+@z
+
+@x pdftex.web l.18509
+left_edge:=cur_h; cur_v:=cur_v-height(this_box); top_edge:=cur_v;
+@y
+left_edge:=cur_h;
+@<Start vlist {\sl Sync\TeX} information record@>;
+cur_v:=cur_v-height(this_box); top_edge:=cur_v;
+@z
+
+@x pdftex.web l.18511
+while p<>null do
+    @<Output node |p| for |pdf_vlist_out| and move to the next node,
+    maintaining the condition |cur_h=left_edge|@>;
+@y
+while p<>null do
+    @<Output node |p| for |pdf_vlist_out| and move to the next node,
+    maintaining the condition |cur_h=left_edge|@>;
+@<Finish vlist {\sl Sync\TeX} information record@>;
+@z
+
+@x pdftex.web l.18545
+@ @<(\pdfTeX) Output a box in a vlist@>=
+if list_ptr(p)=null then cur_v:=cur_v+height(p)+depth(p)
+@y
+@ @<(\pdfTeX) Output a box in a vlist@>=
+if list_ptr(p)=null then begin
+  cur_v:=cur_v+height(p);
+  if type(p)=vlist_node then begin
+      @<Record void vlist {\sl Sync\TeX} information@>;
+	end
+  else begin
+      @<Record void hlist {\sl Sync\TeX} information@>;
+    end;
+  cur_v:=cur_v+depth(p);
+end
+@z
+
+@x pdftex.web l.18668
+pdf_last_resources: integer; {pointer to most recently generated Resources object}
+begin if tracing_output>0 then
+@y
+pdf_last_resources: integer; {pointer to most recently generated Resources object}
+begin @<Start sheet {\sl Sync\TeX} information record@>;
+begin if tracing_output>0 then
+@z
+
+@x pdftex.web l.18699
+@<Flush the box from memory, showing statistics if requested@>;
+end;
+@y
+@<Flush the box from memory, showing statistics if requested@>;
+end;
+@<Finish sheet {\sl Sync\TeX} information record@>;
+end;
+@z
+
+@x
+synctex_sheet(mag);
+@y
+pdf_output_value:=pdf_output; {{\sl Sync\TeX}: we assume that |pdf_output| is properly set up}
+synctex_sheet(mag);
+@z
