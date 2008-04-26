@@ -1,0 +1,92 @@
+#! /usr/bin/env texlua
+--*-Lua-*-
+-- $Id$
+
+-- Copyright (C) 2007, 2008 Reinhard Kotucha, Norbert Preining.
+-- You may freely use, modify and/or distribute this file.
+
+-- Wrapper for scripts.
+
+function fixwin(args_unix)
+   if os.type == 'windows' then
+      local args_win={}  -- new table
+      args_win[0]=args_unix[1]
+      for i=1, #args_unix do  
+	 args_win[i]='"'..args_unix[i]..'"'
+      end
+      return args_win
+   else
+      return args_unix
+   end
+end
+
+if string.find(arg[0], '/') then -- UNIX path
+   filename=select(1, string.gsub(arg[0], '.*/', ''))
+elseif string.find(arg[0], '\\') then -- Windows path
+   filename=select(1, string.gsub(arg[0], '.*\\', ''))
+else -- no path
+   filename=arg[0]
+end
+
+basename=select(1, string.gsub(filename, '\.texlua$', ''))
+
+sys=false
+
+if string.find(basename, '-sys$') then
+   basename=select(1, string.gsub(basename, '-sys$', ''))
+   sys=true
+end
+
+kpse.set_program_name(filename, basename)
+TEXDIR=kpse.var_value('SELFAUTOPARENT')
+BINDIR=kpse.var_value('SELFAUTOLOC')
+
+perlbin=TEXDIR..'/tlpkg/tlperl/bin/perl.exe'
+
+os.setenv('PATH', TEXDIR..'/tlpkg/tlgs/bin;'..
+	          TEXDIR..'/tlpkg/installer;'..
+	          os.getenv('PATH'))
+
+os.setenv('WGETRC', TEXDIR..'/tlpkg/installer/wgetrc')
+os.setenv('PERL5LIB', TEXDIR..'/tlpkg/tlperl/lib')
+os.setenv('GS_LIB', TEXDIR..'/tlpkg/tlgs/lib;'..TEXDIR..'/tlpkg/tlgs/fonts')
+
+if sys then
+   os.setenv('TEXMFVAR', kpse.var_value('TEXMFSYSVAR'))
+   os.setenv('TEXMFCONFIG', kpse.var_value('TEXMFSYSCONFIG'))
+   os.setenv('TEX_SYS_PROG', 'true')
+end
+
+if sys and lfs.isfile(BINDIR..'/'..basename..'.exe') then
+   command={BINDIR..'/'..basename..'.exe'}
+elseif lfs.isfile(BINDIR..'/'..basename..'-bin.exe') then
+   command={BINDIR..'/'..basename..'-bin.exe'}
+elseif lfs.isfile(BINDIR..'/'..basename..'.pl') then
+   script=BINDIR..'/'..basename..'.pl'
+   command={perlbin, script}
+elseif kpse.find_file(basename..'.pl', 'texmfscripts') then
+   script=kpse.find_file(basename..'.pl', 'texmfscripts')
+   command={perlbin, script}
+elseif kpse.find_file(basename..'.tlu', 'texmfscripts') then
+   script=kpse.find_file(basename..'.tlu', 'texmfscripts')
+   command={'texlua', script}
+else
+   io.stderr:write(filename..'.texlua: '..basename..
+		   ': No appropriate script found.\n') 
+end
+
+for i=1, #arg do
+    command[#command+1]=arg[i]
+end
+
+command=fixwin(command)
+
+--[[ Prepend an additional hyphen to activate this code.
+for i=0, #command do
+   print (command[i])
+end
+os.exit(ret)
+--]]
+
+ret=os.spawn(command)
+os.exit(ret)
