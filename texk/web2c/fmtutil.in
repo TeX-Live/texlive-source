@@ -73,12 +73,16 @@ amstex	pdftex		-		-translate-file=cp227.tcx *amstex.ini
 #! cont-cz	xetex		cont-usr.tex	-8bit *cont-cz.ini
 #! cont-de	pdftex		cont-usr.tex	-8bit *cont-de.ini
 #! cont-de	xetex		cont-usr.tex	-8bit *cont-de.ini
-cont-en	pdftex		cont-usr.tex	-8bit *cont-en.ini
-cont-en	xetex		cont-usr.tex	-8bit *cont-en.ini
+#! cont-en	pdftex		cont-usr.tex	-8bit *cont-en.ini
+#! cont-en	xetex		cont-usr.tex	-8bit *cont-en.ini
 #! cont-nl	pdftex		cont-usr.tex	-8bit *cont-nl.ini
 #! cont-nl	xetex		cont-usr.tex	-8bit *cont-nl.ini
 #! cont-uk	pdftex		cont-usr.tex	-8bit *cont-uk.ini
 #! cont-uk	xetex		cont-usr.tex	-8bit *cont-uk.ini
+#
+# mptopdf utility
+mptopdf		pdftex		-		-translate-file=cp227.tcx mptopdf.tex
+metafun         mpost           -               -translate-file=cp227.tcx metafun.mp
 
 # language-specific things:
 
@@ -120,9 +124,6 @@ mllatex		pdftex	language.dat	-translate-file=cp227.tcx -mltex mllatex.ini
 
 # The TeX Live version of eplain.ini includes Babel support:
 eplain	pdftex		language.dat	-translate-file=cp227.tcx *eplain.ini
-
-# mptopdf utility
-mptopdf		pdftex	-		-translate-file=cp227.tcx mptopdf.tex
 
 # --- strange things
 texsis		pdftex	-		-translate-file=cp227.tcx texsis.ini
