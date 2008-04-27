@@ -35,7 +35,7 @@ extern void error_cleanup();
 #include <assert.h>
 #include <stdio.h>
 
-extern void shut_up (void);
+extern void shut_up (int quietness);
 
 extern void ERROR (const char *fmt, ...);
 extern void MESG  (const char *fmt, ...);

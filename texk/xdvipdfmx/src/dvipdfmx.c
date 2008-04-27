@@ -439,7 +439,7 @@ do_args (int argc, char *argv[])
         WARN("dvipdfm \"-e\" option not supported.");
         break;
       case 'q':
-        really_quiet = 1;
+        really_quiet++;
         break;
       case 'v':
         verbose++;
@@ -837,7 +837,7 @@ main (int argc, char *argv[])
   do_args (argc, argv);
 
   if (really_quiet)
-    shut_up();
+    shut_up(really_quiet);
 
 #ifndef MIKTEX
   kpse_init_prog("", font_dpi, NULL, NULL);

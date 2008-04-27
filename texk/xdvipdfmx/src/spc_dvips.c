@@ -470,7 +470,7 @@ check_next_obj(unsigned char * buffer)
       return 0;
   }
 
-  if (strncmp(buffer, "pst:", 4))
+  if (strncmp((char*)buffer, "pst:", 4))
     return 0;
   return 1;
 }
@@ -594,7 +594,7 @@ spc_handler_ps_tricks_render (struct spc_env *spe, struct spc_arg *args)
   fwrite(args->curptr, 1, args->endptr - args->curptr, fp);
   fprintf(fp, "\ncount 1 sub {pop} repeat restore\n");
 
-  if (check_next_obj(args->endptr)) {
+  if (check_next_obj((unsigned char*)args->endptr)) {
     fclose(fp);
   } else {
     char *distiller_template = get_distiller_template();

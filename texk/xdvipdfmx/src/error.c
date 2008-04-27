@@ -37,9 +37,9 @@ static int _mesg_type = DPX_MESG;
 static int  really_quiet = 0;
 
 void
-shut_up (void)
+shut_up (int quietness)
 {
-  really_quiet = 1;
+  really_quiet = quietness;
 }
 
 void
@@ -47,7 +47,7 @@ MESG (const char *fmt, ...)
 {
   va_list argp;
 
-  if (!really_quiet) {
+  if (really_quiet < 1) {
     va_start(argp, fmt);
     vfprintf(stderr, fmt, argp);
     va_end(argp);
@@ -60,7 +60,7 @@ WARN (const char *fmt, ...)
 {
   va_list argp;
 
-  if (!really_quiet) {
+  if (really_quiet < 2) {
     if (WANT_NEWLINE())
       fprintf(stderr, "\n");
     fprintf(stderr, "** WARNING ** ");
@@ -80,7 +80,7 @@ ERROR (const char *fmt, ...)
 {
   va_list argp;
 
-  if (!really_quiet) {
+  if (really_quiet < 3) {
     if (WANT_NEWLINE())
       fprintf(stderr, "\n");
     fprintf(stderr, "** ERROR ** ");
