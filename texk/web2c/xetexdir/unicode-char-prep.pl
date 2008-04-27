@@ -99,8 +99,8 @@ print << '__EOT__';
 \def\Supplementarytrue{\let\ifSupplementary=\iftrue}
 \ifnum\XeTeXversion>0 \Supplementarytrue
 \else
-  \def\getrevnumber.#1-#2\end{\count255=#1 }
-  \expandafter\getrevnumber\XeTeXrevision-\end
+  \def\getrevnumber.#1.#2-#3\end{\count255=#1 }
+  \expandafter\getrevnumber\XeTeXrevision.-\end
   \ifnum\count255>996 \Supplementarytrue \fi
 \fi
 % definitions for classes and case mappings based on UnicodeData.txt
