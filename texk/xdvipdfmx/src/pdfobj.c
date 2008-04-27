@@ -1888,8 +1888,8 @@ pdf_flush_objstm (pdf_objstm *objstm)
   unsigned char pos = objstm->pos;
   pdf_obj *stream_obj = objstm->stream, *dict;
   pdf_stream *stream;
-  unsigned char *old_buf;
-  unsigned long old_length, i;
+  unsigned char i, *old_buf;
+  unsigned long old_length;
   TYPECHECK(stream_obj, PDF_STREAM);
   stream = (pdf_stream *) stream_obj->data;
 
