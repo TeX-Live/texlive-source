@@ -1,3 +1,5 @@
+/*   $Id$  */
+
 /*   Public domain, originally written by Tom Rokicki.
  *   This program converts AFM files to TeX TFM files, and optionally
  *   to TeX VPL files that retain all kerning and ligature information.
@@ -59,12 +61,13 @@ extern char ascii2ebcdic[] ;
 #undef fopen
 #endif
 #define fopen cmsfopen
-#endif
+#endif /* VMCMS */
 
 #include "dvips.h"
-/* debug.h redefines fopen to my_real_fopen */
+/* debug.h redefines fopen to my_real_fopen, but it's still a FILE * */
 #ifdef fopen
 #undef fopen
+extern FILE *fopen ();
 #endif
 
 struct encoding {

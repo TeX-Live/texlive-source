@@ -1,4 +1,7 @@
-/*
+/*   $Id$
+ *   Copyright 1986-2008 Tomas Rokicki.
+ *   You may freely use, modify and/or distribute this program or any
+ *   portion thereof.
  *   This routine squeezes a PostScript file down to its
  *   minimum.  We parse and then output it.
  */
@@ -12,9 +15,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include "dvips.h" /* The copyright notice in that file is included too! */
-#endif
+#endif /* !KPATHSEA */
+
+/* debug.h redefines fopen to my_real_fopen, but it's still a FILE * */
 #ifdef fopen
 #undef fopen
+extern FILE *fopen ();
 #endif
 
 #define LINELENGTH (72)

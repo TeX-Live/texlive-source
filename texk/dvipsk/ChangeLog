@@ -1,3 +1,11 @@
+2008-04-28  Karl Berry  <karl@tug.org>
+
+	* dvips.h: id.
+	* squeeze.c [!KPATHSEA]: conditionalize #undef fopen,
+	and add decl with return type.
+	* afm2tfm.c: semi-prototype fopen if it got #undef'd.
+	Bug report from vvv, 27 Apr 2008 13:43:37.
+
 2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* acconfig.h: removed.
