@@ -263,10 +263,10 @@ Type1Font::read(Type1Reader &reader)
 	add_item(new Type1CopyItem(s));
 	x = s.data();
 
-	if (eexec_state == 0 && strncmp(x, "currentfile eexec", 17) == 0 && (isspace(x[17]) || !x[17])) {
+	if (eexec_state == 0 && strncmp(x, "currentfile eexec", 17) == 0 && (isspace((unsigned char) x[17]) || !x[17])) {
 	    // allow arbitrary whitespace after "currentfile eexec".
 	    // note: strlen("currentfile eexec") == 17
-	    for (x += 17; isspace(*x); x++)
+	    for (x += 17; isspace((unsigned char) *x); x++)
 		/* nada */;
 	    reader.switch_eexec(true, (unsigned char *)x, (s.data() + s.length()) - x);
 	    set_item(nitems() - 1, new Type1EexecItem(true));
@@ -315,7 +315,7 @@ Type1Font::ok() const
 void
 Type1Font::read_encoding(Type1Reader &reader, const char *first_line)
 {
-    while (isspace(*first_line))
+    while (isspace((unsigned char) *first_line))
 	first_line++;
     if (strncmp(first_line, "StandardEncoding", 16) == 0) {
 	add_type1_encoding(Type1Encoding::standard_encoding());
@@ -346,9 +346,9 @@ Type1Font::read_encoding(Type1Reader &reader, const char *first_line)
 	// parse as many `dup INDEX */CHARNAME put' as there are in the line
 	while (1) {
 	    // skip spaces, look for `dup '
-	    while (isspace(pos[0]))
+	    while (isspace((unsigned char) pos[0]))
 		pos++;
-	    if (pos[0] != 'd' || pos[1] != 'u' || pos[2] != 'p' || !isspace(pos[3]))
+	    if (pos[0] != 'd' || pos[1] != 'u' || pos[2] != 'p' || !isspace((unsigned char) pos[3]))
 		break;
       
 	    // look for `INDEX */'
@@ -400,7 +400,7 @@ read_synthetic_string(Type1Reader &reader, StringAccum &wrong_accum,
 	sscanf(accum.data(), format, value, &n);
     else
 	sscanf(accum.data(), format, &n);
-    return (n != 0 && (isspace(accum[n]) || accum[n] == '\0'));
+    return (n != 0 && (isspace((unsigned char) accum[n]) || accum[n] == '\0'));
 }
 
 bool
@@ -413,7 +413,7 @@ Type1Font::read_synthetic_font(Type1Reader &reader, const char *first_line,
 	char *x = new char[strlen(first_line) + 1];
 	int n = 0;
 	sscanf(first_line, "FontDirectory /%[^] \t\r\n[{}/] known {%n", x, &n);
-	if (n && (isspace(first_line[n]) || first_line[n] == 0))
+	if (n && (isspace((unsigned char) first_line[n]) || first_line[n] == 0))
 	    font_name = x;
 	delete[] x;
 	if (!font_name)
@@ -734,8 +734,8 @@ Type1Font::get_dict_size(int d) const
     } else if (Type1CopyItem *copy = item->cast_copy()) {
 	String value = copy->value();
 	int pos = value.find_left(" dict");
-	if (pos >= 1 && isdigit(value[pos - 1])) {
-	    while (pos >= 1 && isdigit(value[pos - 1]))
+	if (pos >= 1 && isdigit((unsigned char) value[pos - 1])) {
+	    while (pos >= 1 && isdigit((unsigned char) value[pos - 1]))
 		pos--;
 	    return strtol(value.data() + pos, 0, 10);
 	}
@@ -756,9 +756,9 @@ Type1Font::set_dict_size(int d, int size)
     } else if (Type1CopyItem *copy = item->cast_copy()) {
 	String value = copy->value();
 	int pos = value.find_left(" dict");
-	if (pos >= 1 && isdigit(value[pos - 1])) {
+	if (pos >= 1 && isdigit((unsigned char) value[pos - 1])) {
 	    int numpos = pos - 1;
-	    while (numpos >= 1 && isdigit(value[numpos - 1]))
+	    while (numpos >= 1 && isdigit((unsigned char) value[numpos - 1]))
 		numpos--;
 	    StringAccum accum;
 	    accum << value.substring(0, numpos) << size << value.substring(pos);

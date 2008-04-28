@@ -1,5 +1,11 @@
 LCDF Typetools NEWS
 
+Version 2.67   25.Apr.2008
+
+* otftotfm: Improve font name construction for base fonts.  Reported by
+  Ulrich Dirr.
+
+
 Version 2.66   3.Aug.2007
 
 * otftotfm: TrueType fonts had inappropriately large kerning pairs; fixed.

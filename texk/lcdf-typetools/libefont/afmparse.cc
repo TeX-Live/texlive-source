@@ -346,10 +346,10 @@ PermString
 AfmParser::keyword() const
 {
     const char *f = (const char *)_pos;
-    while (isspace(*f))
+    while (isspace((unsigned char) *f))
 	f++;
     const char *l = f;
-    while (isalnum(*l) || *l == '_')
+    while (isalnum((unsigned char) *l) || *l == '_')
 	l++;
     return PermString(f, l - f);
 }

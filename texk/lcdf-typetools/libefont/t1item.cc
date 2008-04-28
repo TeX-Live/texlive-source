@@ -149,7 +149,7 @@ Type1Definition::make(StringAccum &accum, Type1Reader *reader,
 		      bool force_definition)
 {
     char *s = accum.data();
-    while (isspace(*s))
+    while (isspace((unsigned char) *s))
 	s++;
     if (*s != '/')
 	return 0;
@@ -157,14 +157,14 @@ Type1Definition::make(StringAccum &accum, Type1Reader *reader,
     int name_start_pos = s - accum.data();
   
     // find NAME LENGTH
-    while (!isspace(*s) && *s != '[' && *s != '{' && *s != '('
+    while (!isspace((unsigned char) *s) && *s != '[' && *s != '{' && *s != '('
 	   && *s != ']' && *s != '}' && *s != ')' && *s)
 	s++;
     if (!*s)
 	return 0;
     int name_end_pos = s - accum.data();
   
-    while (isspace(*s))
+    while (isspace((unsigned char) *s))
 	s++;
     int val_pos = s - accum.data();
     int val_end_pos = -1;
@@ -191,7 +191,7 @@ Type1Definition::make(StringAccum &accum, Type1Reader *reader,
 	val_end_pos = s - accum.data();
     
     } else {
-	while (!isspace(*s) && *s)
+	while (!isspace((unsigned char) *s) && *s)
 	    s++;
 	val_end_pos = s - accum.data();
 	if (!force_definition) check_def = true;
@@ -200,7 +200,7 @@ Type1Definition::make(StringAccum &accum, Type1Reader *reader,
     if (val_end_pos < 0)
 	return 0;
     s = accum.data() + val_end_pos;
-    while (isspace(*s))
+    while (isspace((unsigned char) *s))
 	s++;
     if (check_def && (s[0] != 'd' || s[1] != 'e' || s[2] != 'f'))
 	if (strncmp(s, "dict def", 8) != 0)
@@ -321,7 +321,7 @@ Type1Definition::value_name(PermString &str) const
 	return false;
     int pos;
     for (pos = 1; pos < _val.length(); pos++)
-	if (isspace(_val[pos]) || _val[pos] == '/')
+	if (isspace((unsigned char) _val[pos]) || _val[pos] == '/')
 	    return false;
     str = PermString(_val.data() + 1, pos - 1);
     return true;
@@ -336,9 +336,9 @@ strtonumvec(const char *f, const char **endf, NumVector &v)
 	return false;
     s++;
     while (1) {
-	while (isspace(*s))
+	while (isspace((unsigned char) *s))
 	    s++;
-	if (isdigit(*s) || *s == '.' || *s == '-')
+	if (isdigit((unsigned char) *s) || *s == '.' || *s == '-')
 	    v.push_back( strtonumber(s, &s) );
 	else {
 	    if (endf)
@@ -363,7 +363,7 @@ strtonumvec_vec(const char *f, const char **endf, Vector<NumVector> &v)
 	return false;
     s++;
     while (1) {
-	while (isspace(*s))
+	while (isspace((unsigned char) *s))
 	    s++;
 	if (*s == '[' || *s == '{') {
 	    NumVector subv;
@@ -394,7 +394,7 @@ Type1Definition::value_normalize(Vector<NumVector> &in,
     if (*s++ != '[')
 	return false;
     while (1) {
-	while (isspace(*s))
+	while (isspace((unsigned char) *s))
 	    s++;
 	if (*s == '[') {
 	    Vector<NumVector> sub;
@@ -424,13 +424,13 @@ Type1Definition::value_namevec(Vector<PermString> &v) const
     if (*s++ != '[')
 	return false;
     while (1) {
-	while (isspace(*s))
+	while (isspace((unsigned char) *s))
 	    s++;
 	if (*s == '/')
 	    s++;
-	if (isalnum(*s)) {
+	if (isalnum((unsigned char) *s)) {
 	    const char *start = s;
-	    while (*s && !isspace(*s) && *s != ']' && *s != '/')
+	    while (*s && !isspace((unsigned char) *s) && *s != ']' && *s != '/')
 		s++;
 	    v.push_back(PermString(start, s - start));
 	} else
@@ -466,7 +466,7 @@ Type1Definition::set_string(const String &v)
     StringAccum sa;
     sa << '(';
     for (int pos = 0; pos < len; pos++)
-	if ((s[pos] < ' ' && !isspace(s[pos])) || ((unsigned char)s[pos]) > 0176 || s[pos] == '(' || s[pos] == ')' || s[pos] == '\\') {
+	if ((s[pos] < ' ' && !isspace((unsigned char) s[pos])) || ((unsigned char)s[pos]) > 0176 || s[pos] == '(' || s[pos] == ')' || s[pos] == '\\') {
 	    sa << v.substring(left, pos - left) << '\\';
 	    if (s[pos] == '(' || s[pos] == ')' || s[pos] == '\\')
 		sa << s[pos];
@@ -673,14 +673,14 @@ Type1Subr::make(const char *s_in, int s_len, int cs_pos, int cs_len, int lenIV)
     // Force literal spaces rather than isspace().
     if (*s == '/') {
 	const char *nstart = ++s;
-	while (!isspace(*s) && *s)
+	while (!isspace((unsigned char) *s) && *s)
 	    s++;
 	name = PermString(nstart, s - nstart);
     
     } else {
 	// dup [subrno] ...
 	s += 3;
-	while (isspace(*s))
+	while (isspace((unsigned char) *s))
 	    s++;
 	subrno = strtol(s, (char **)&s, 10);
     }
@@ -773,9 +773,9 @@ Type1SubrGroupItem::gen(Type1Writer &w)
     Type1Font *font = _font;
   
     int pos = _value.find_left(_is_subrs ? " array" : " dict");
-    if (pos >= 1 && isdigit(_value[pos - 1])) {
+    if (pos >= 1 && isdigit((unsigned char) _value[pos - 1])) {
 	int numpos = pos - 1;
-	while (numpos >= 1 && isdigit(_value[numpos - 1]))
+	while (numpos >= 1 && isdigit((unsigned char) _value[numpos - 1]))
 	    numpos--;
     
 	int n;

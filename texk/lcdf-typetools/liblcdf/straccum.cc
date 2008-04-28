@@ -181,10 +181,10 @@ StringAccum::append_break_lines(const String& text, int linelen, const String &l
     linelen -= leftmargin.length();
     for (const char* s = line; s < ends; s++) {
 	const char* start = s;
-	while (s < ends && isspace(*s))
+	while (s < ends && isspace((unsigned char) *s))
 	    s++;
 	const char* word = s;
-	while (s < ends && !isspace(*s))
+	while (s < ends && !isspace((unsigned char) *s))
 	    s++;
 	if (s - line > linelen && start > line) {
 	    *this << leftmargin;

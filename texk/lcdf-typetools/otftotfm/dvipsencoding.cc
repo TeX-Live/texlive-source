@@ -43,14 +43,14 @@ DvipsEncoding::add_glyphlist(String text)
     int pos = 0, len = text.length();
     while (1) {
 	// move to first nonblank
-	while (pos < len && isspace(data[pos]))
+	while (pos < len && isspace((unsigned char) data[pos]))
 	    pos++;
 	// parse line
 	if (pos >= len)
 	    return 0;
 	else if (data[pos] != '#') {
 	    int first = pos;
-	    for (; pos < len && !isspace(data[pos]) && data[pos] != ';'; pos++)
+	    for (; pos < len && !isspace((unsigned char) data[pos]) && data[pos] != ';'; pos++)
 		/* nada */;
 	    String glyph_name = text.substring(first, pos - first);
 	    int value;
@@ -59,9 +59,9 @@ DvipsEncoding::add_glyphlist(String text)
 	    if (first == pos
 		|| pos + 1 >= len
 		|| (data[pos] != ';' && data[pos] != ',')
-		|| !isxdigit(data[pos+1])
+		|| !isxdigit((unsigned char) data[pos+1])
 		|| ((value = strtol(data + pos + 1, &next, 16)),
-		    (!isspace(*next) && *next && *next != ';' && *next != ',')))
+		    (!isspace((unsigned char) *next) && *next && *next != ';' && *next != ',')))
 		return -1;
 	    while (*next == ' ' || *next == '\t')
 		next++;
@@ -182,7 +182,7 @@ tokenize(const String &s, int &pos_in, int &line)
     int pos = pos_in;
     while (1) {
 	// skip whitespace
-	while (pos < len && isspace(data[pos])) {
+	while (pos < len && isspace((unsigned char) data[pos])) {
 	    if (data[pos] == '\n')
 		line++;
 	    else if (data[pos] == '\r' && (pos + 1 == len || data[pos+1] != '\n'))
@@ -221,7 +221,7 @@ tokenize(const String &s, int &pos_in, int &line)
 	    int first = pos;
 	    while (pos < len && data[pos] == '/')
 		pos++;
-	    while (pos < len && data[pos] != '/' && !isspace(data[pos]) && data[pos] != '[' && data[pos] != ']' && data[pos] != '%' && data[pos] != '(' && data[pos] != '{' && data[pos] != '}')
+	    while (pos < len && data[pos] != '/' && !isspace((unsigned char) data[pos]) && data[pos] != '[' && data[pos] != ']' && data[pos] != '%' && data[pos] != '(' && data[pos] != '{' && data[pos] != '}')
 		pos++;
 	    pos_in = pos;
 	    return s.substring(first, pos - first);
@@ -528,10 +528,10 @@ DvipsEncoding::parse_words(const String &s, int override, int wt, ErrorHandler *
     const char *data = s.data();
     const char *end = s.end();
     while (data < end) {
-	while (data < end && isspace(*data))
+	while (data < end && isspace((unsigned char) *data))
 	    data++;
 	const char *first = data;
-	while (data < end && !isspace(*data) && *data != ';')
+	while (data < end && !isspace((unsigned char) *data) && *data != ';')
 	    data++;
 	if (data == first) {
 	    data++;		// step past semicolon (or harmlessly past EOS)
@@ -552,11 +552,11 @@ landmark(const String &filename, int line)
 static String
 trim_space(const String &s, int pos)
 {
-    while (pos < s.length() && isspace(s[pos]))
+    while (pos < s.length() && isspace((unsigned char) s[pos]))
 	pos++;
     int epos = s.length();
     for (int x = 0; x < 2; x++) {
-	while (epos > pos && isspace(s[epos - 1]))
+	while (epos > pos && isspace((unsigned char) s[epos - 1]))
 	    epos--;
 	if (epos == pos || s[epos - 1] != ';')
 	    break;
@@ -599,35 +599,35 @@ DvipsEncoding::parse(String filename, bool ignore_ligkern, bool ignore_other, Er
     while ((token = comment_tokenize(s, pos, line)))
 	if (token.length() >= 8
 	    && memcmp(token.data(), "LIGKERN", 7) == 0
-	    && isspace(token[7])
+	    && isspace((unsigned char) token[7])
 	    && !ignore_ligkern) {
 	    lerrh.set_landmark(landmark(filename, line));
 	    parse_words(token.substring(8), 1, WT_LIGKERN, &lerrh);
 	    
 	} else if (token.length() >= 9
 		   && memcmp(token.data(), "LIGKERNX", 8) == 0
-		   && isspace(token[8])
+		   && isspace((unsigned char) token[8])
 		   && !ignore_ligkern) {
 	    lerrh.set_landmark(landmark(filename, line));
 	    parse_words(token.substring(9), 1, WT_LIGKERN, &lerrh);
 	    
 	} else if (token.length() >= 10
 		   && memcmp(token.data(), "UNICODING", 9) == 0
-		   && isspace(token[9])
+		   && isspace((unsigned char) token[9])
 		   && !ignore_other) {
 	    lerrh.set_landmark(landmark(filename, line));
 	    parse_words(token.substring(10), 1, WT_UNICODING, &lerrh);
 	    
 	} else if (token.length() >= 9
 		   && memcmp(token.data(), "POSITION", 8) == 0
-		   && isspace(token[8])
+		   && isspace((unsigned char) token[8])
 		   && !ignore_other) {
 	    lerrh.set_landmark(landmark(filename, line));
 	    parse_words(token.substring(9), 1, WT_POSITION, &lerrh);
 	    
 	} else if (token.length() >= 13
 		   && memcmp(token.data(), "CODINGSCHEME", 12) == 0
-		   && isspace(token[12])
+		   && isspace((unsigned char) token[12])
 		   && !ignore_other) {
 	    _coding_scheme = trim_space(token, 13);
 	    if (_coding_scheme.length() > 39)
@@ -640,7 +640,7 @@ DvipsEncoding::parse(String filename, bool ignore_ligkern, bool ignore_other, Er
 
 	} else if (token.length() >= 11
 		   && memcmp(token.data(), "WARNMISSING", 11) == 0
-		   && (token.length() == 11 || isspace(token[11]))
+		   && (token.length() == 11 || isspace((unsigned char) token[11]))
 		   && !ignore_other) {
 	    String value = trim_space(token, 11);
 	    if (value == "1" || value == "yes" || value == "true" || !value)

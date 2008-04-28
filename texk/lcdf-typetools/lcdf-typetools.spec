@@ -1,7 +1,6 @@
 Summary: Programs to manipulate OpenType and multiple-master fonts
 Name: lcdf-typetools
-Version: 2.40
-Release: hmcmath.1
+Version: 2.67
 Copyright: GPL
 Vendor: Little Cambridgeport Design Factory <http://www.lcdf.org/>
 Group: Utilities/Printing
@@ -33,6 +32,9 @@ This package contains four tools for working with OpenType fonts:
 
  t1testpage creates a PostScript test page for a specified
             font file (preliminary)
+
+ ttftotype42 creates a Type 42 wrapper for a TrueType or TrueType-flavored 
+            OpenType font.
 
 The package now includes programs for working with multiple-master
 fonts formerly distributed as mminstance.  These tools allow you to
@@ -84,10 +86,14 @@ make DESTDIR=$RPM_BUILD_ROOT install
 %{_bindir}/t1lint
 %{_bindir}/t1reencode
 %{_bindir}/t1testpage
+%{_bindir}/ttftotype42
 %{_mandir}/man*/*
 %{_datadir}/lcdf-typetools/*
 
 %changelog
+
+* Fri Aug  3 2007 Eddie Kohler <kohler@cs.ucla.edu>
+- Updates.
 
 * Wed Sep  8 2004 Claire Connelly <cmc@math.hmc.edu> - 2.12-hmcmath.1
 - Initial packaging.

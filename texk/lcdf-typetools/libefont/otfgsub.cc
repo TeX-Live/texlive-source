@@ -646,31 +646,43 @@ GsubLookup::unparse_automatics(const Gsub &gsub, Vector<Substitution> &v) const
     int nlookup = _d.u16(4);
     switch (_type) {
       case L_SINGLE:
-	for (int i = 0; i < nlookup; i++)
-	    GsubSingle(subtable(i)).unparse(v);
+	for (int i = 0; i < nlookup; i++) {
+	    GsubSingle x(subtable(i)); // this pattern makes gcc-3.3.4 happier
+	    x.unparse(v);
+	}
 	return true;
       case L_MULTIPLE:
-	for (int i = 0; i < nlookup; i++)
-	    GsubMultiple(subtable(i)).unparse(v);
+	for (int i = 0; i < nlookup; i++) {
+	    GsubMultiple x(subtable(i));
+	    x.unparse(v);
+	}
 	return true;
       case L_ALTERNATE:
-	for (int i = 0; i < nlookup; i++)
-	    GsubMultiple(subtable(i)).unparse(v, true);
+	for (int i = 0; i < nlookup; i++) {
+	    GsubMultiple x(subtable(i));
+	    x.unparse(v, true);
+	}
 	return true;
       case L_LIGATURE:
-	for (int i = 0; i < nlookup; i++)
-	    GsubLigature(subtable(i)).unparse(v);
+	for (int i = 0; i < nlookup; i++) {
+	    GsubLigature x(subtable(i));
+	    x.unparse(v);
+	}
 	return true;
       case L_CONTEXT: {
 	  bool understood = true;
-	  for (int i = 0; i < nlookup; i++)
-	      understood &= GsubContext(subtable(i)).unparse(gsub, v);
+	  for (int i = 0; i < nlookup; i++) {
+	      GsubContext x(subtable(i));
+	      understood &= x.unparse(gsub, v);
+	  }
 	  return understood;
       }
       case L_CHAIN: {
 	  bool understood = true;
-	  for (int i = 0; i < nlookup; i++)
-	      understood &= GsubChainContext(subtable(i)).unparse(gsub, v);
+	  for (int i = 0; i < nlookup; i++) {
+	      GsubChainContext x(subtable(i));
+	      understood &= x.unparse(gsub, v);
+	  }
 	  return understood;
       }
       default:
@@ -684,24 +696,32 @@ GsubLookup::apply(const Glyph *g, int pos, int n, Substitution &s) const
     int nlookup = _d.u16(4);
     switch (_type) {
       case L_SINGLE:
-	for (int i = 0; i < nlookup; i++)
-	    if (GsubSingle(subtable(i)).apply(g, pos, n, s))
+	for (int i = 0; i < nlookup; i++) {
+	    GsubSingle x(subtable(i));
+	    if (x.apply(g, pos, n, s))
 		return true;
+	}
 	return false;
       case L_MULTIPLE:
-	for (int i = 0; i < nlookup; i++)
-	    if (GsubMultiple(subtable(i)).apply(g, pos, n, s))
+	for (int i = 0; i < nlookup; i++) {
+	    GsubMultiple x(subtable(i));
+	    if (x.apply(g, pos, n, s))
 		return true;
+	}
 	return false;
       case L_ALTERNATE:
-	for (int i = 0; i < nlookup; i++)
-	    if (GsubMultiple(subtable(i)).apply(g, pos, n, s, true))
+	for (int i = 0; i < nlookup; i++) {
+	    GsubMultiple x(subtable(i));
+	    if (x.apply(g, pos, n, s, true))
 		return true;
+	}
 	return false;
       case L_LIGATURE:
-	for (int i = 0; i < nlookup; i++)
-	    if (GsubLigature(subtable(i)).apply(g, pos, n, s))
+	for (int i = 0; i < nlookup; i++) {
+	    GsubLigature x(subtable(i));
+	    if (x.apply(g, pos, n, s))
 		return true;
+	}
 	return false;
       default:			// XXX
 	return false;

@@ -1,6 +1,6 @@
 /* otftotfm.cc -- driver for translating OpenType fonts to TeX metrics
  *
- * Copyright (c) 2003-2007 Eddie Kohler
+ * Copyright (c) 2003-2008 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -131,77 +131,77 @@ using namespace Efont;
 #define NO_UPDMAP_OPT		(NO_OUTPUT_OPTS + G_UPDMAP)
 #define NO_TRUETYPE_OPT		(NO_OUTPUT_OPTS + G_TRUETYPE)
 
-#define CHAR_OPTTYPE		(Clp_FirstUserType)
+#define CHAR_OPTTYPE		(Clp_ValFirstUser)
 
 static Clp_Option options[] = {
     
-    { "script", 's', SCRIPT_OPT, Clp_ArgString, 0 },
-    { "feature", 'f', FEATURE_OPT, Clp_ArgString, 0 },
-    { "letter-feature", 0, LETTER_FEATURE_OPT, Clp_ArgString, 0 },
-    { "lf", 0, LETTER_FEATURE_OPT, Clp_ArgString, 0 },
-    { "include-substitutions", 0, INCLUDE_SUBS_OPT, Clp_ArgString, 0 },
-    { "exclude-substitutions", 0, EXCLUDE_SUBS_OPT, Clp_ArgString, 0 },
+    { "script", 's', SCRIPT_OPT, Clp_ValString, 0 },
+    { "feature", 'f', FEATURE_OPT, Clp_ValString, 0 },
+    { "letter-feature", 0, LETTER_FEATURE_OPT, Clp_ValString, 0 },
+    { "lf", 0, LETTER_FEATURE_OPT, Clp_ValString, 0 },
+    { "include-substitutions", 0, INCLUDE_SUBS_OPT, Clp_ValString, 0 },
+    { "exclude-substitutions", 0, EXCLUDE_SUBS_OPT, Clp_ValString, 0 },
     { "clear-substitutions", 0, CLEAR_SUBS_OPT, 0, 0 },
-    { "substitution-filter", 0, SUBS_FILTER_OPT, Clp_ArgString, 0 },
-    { "subs-filter", 0, SUBS_FILTER_OPT, Clp_ArgString, 0 },
-    { "encoding", 'e', ENCODING_OPT, Clp_ArgString, 0 },
-    { "literal-encoding", 0, LITERAL_ENCODING_OPT, Clp_ArgString, 0 },
-    { "base-encodings", 0, BASE_ENCODINGS_OPT, Clp_ArgString, 0 },
-    { "extend", 'E', EXTEND_OPT, Clp_ArgDouble, 0 },
-    { "slant", 'S', SLANT_OPT, Clp_ArgDouble, 0 },
-    { "letterspacing", 'L', LETTERSPACE_OPT, Clp_ArgInt, 0 },
-    { "letterspace", 'L', LETTERSPACE_OPT, Clp_ArgInt, 0 },
-    { "min-kern", 'k', MINIMUM_KERN_OPT, Clp_ArgDouble, 0 },
-    { "minimum-kern", 'k', MINIMUM_KERN_OPT, Clp_ArgDouble, 0 },
-    { "kern-precision", 'k', MINIMUM_KERN_OPT, Clp_ArgDouble, 0 },
-    { "ligkern", 0, LIGKERN_OPT, Clp_ArgString, 0 },
-    { "position", 0, POSITION_OPT, Clp_ArgString, 0 },
+    { "substitution-filter", 0, SUBS_FILTER_OPT, Clp_ValString, 0 },
+    { "subs-filter", 0, SUBS_FILTER_OPT, Clp_ValString, 0 },
+    { "encoding", 'e', ENCODING_OPT, Clp_ValString, 0 },
+    { "literal-encoding", 0, LITERAL_ENCODING_OPT, Clp_ValString, 0 },
+    { "base-encodings", 0, BASE_ENCODINGS_OPT, Clp_ValString, 0 },
+    { "extend", 'E', EXTEND_OPT, Clp_ValDouble, 0 },
+    { "slant", 'S', SLANT_OPT, Clp_ValDouble, 0 },
+    { "letterspacing", 'L', LETTERSPACE_OPT, Clp_ValInt, 0 },
+    { "letterspace", 'L', LETTERSPACE_OPT, Clp_ValInt, 0 },
+    { "min-kern", 'k', MINIMUM_KERN_OPT, Clp_ValDouble, 0 },
+    { "minimum-kern", 'k', MINIMUM_KERN_OPT, Clp_ValDouble, 0 },
+    { "kern-precision", 'k', MINIMUM_KERN_OPT, Clp_ValDouble, 0 },
+    { "ligkern", 0, LIGKERN_OPT, Clp_ValString, 0 },
+    { "position", 0, POSITION_OPT, Clp_ValString, 0 },
     { "warn-missing", 0, WARN_MISSING_OPT, 0, Clp_Negate },
-    { "no-encoding-commands", 0, NO_ECOMMAND_OPT, 0, Clp_OnlyNegated },
+    { "no-encoding-commands", 0, NO_ECOMMAND_OPT, 0, 0 },
     { "default-ligkern", 0, DEFAULT_LIGKERN_OPT, 0, Clp_Negate },
-    { "unicoding", 0, UNICODING_OPT, Clp_ArgString, 0 },
-    { "coding-scheme", 0, CODINGSCHEME_OPT, Clp_ArgString, 0 },
+    { "unicoding", 0, UNICODING_OPT, Clp_ValString, 0 },
+    { "coding-scheme", 0, CODINGSCHEME_OPT, Clp_ValString, 0 },
     { "boundary-char", 0, BOUNDARY_CHAR_OPT, CHAR_OPTTYPE, 0 },
     { "altselector", 0, ALTSELECTOR_CHAR_OPT, CHAR_OPTTYPE, Clp_PreferredMatch },
     { "altselector-char", 0, ALTSELECTOR_CHAR_OPT, CHAR_OPTTYPE, 0 },
-    { "altselector-feature", 0, ALTSELECTOR_FEATURE_OPT, Clp_ArgString, 0 },
-    { "design-size", 0, DESIGN_SIZE_OPT, Clp_ArgDouble, 0 },
-    { "include-alternates", 0, INCLUDE_ALTERNATES_OPT, Clp_ArgString, 0 },
-    { "exclude-alternates", 0, EXCLUDE_ALTERNATES_OPT, Clp_ArgString, 0 },
+    { "altselector-feature", 0, ALTSELECTOR_FEATURE_OPT, Clp_ValString, 0 },
+    { "design-size", 0, DESIGN_SIZE_OPT, Clp_ValDouble, 0 },
+    { "include-alternates", 0, INCLUDE_ALTERNATES_OPT, Clp_ValString, 0 },
+    { "exclude-alternates", 0, EXCLUDE_ALTERNATES_OPT, Clp_ValString, 0 },
     { "clear-alternates", 0, CLEAR_ALTERNATES_OPT, 0, 0 },
-    { "alternates-filter", 0, ALTERNATES_FILTER_OPT, Clp_ArgString, 0 },
-    { "space-factor", 0, SPACE_FACTOR_OPT, Clp_ArgDouble, 0 },
+    { "alternates-filter", 0, ALTERNATES_FILTER_OPT, Clp_ValString, 0 },
+    { "space-factor", 0, SPACE_FACTOR_OPT, Clp_ValDouble, 0 },
     { "math-spacing", 0, MATH_SPACING_OPT, CHAR_OPTTYPE, Clp_Negate | Clp_Optional },
 
     { "pl", 'p', PL_OPT, 0, 0 },
     { "virtual", 0, VIRTUAL_OPT, 0, Clp_Negate },
-    { "no-encoding", 0, NO_ENCODING_OPT, 0, Clp_OnlyNegated },
-    { "no-type1", 0, NO_TYPE1_OPT, 0, Clp_OnlyNegated },
-    { "no-truetype", 0, NO_TRUETYPE_OPT, 0, Clp_OnlyNegated },
-    { "no-dotlessj", 0, NO_DOTLESSJ_OPT, 0, Clp_OnlyNegated },
-    { "no-updmap", 0, NO_UPDMAP_OPT, 0, Clp_OnlyNegated },
-    { "map-file", 0, MAP_FILE_OPT, Clp_ArgString, Clp_Negate },
-    { "output-encoding", 0, OUTPUT_ENCODING_OPT, Clp_ArgString, Clp_Optional },
+    { "no-encoding", 0, NO_ENCODING_OPT, 0, 0 },
+    { "no-type1", 0, NO_TYPE1_OPT, 0, 0 },
+    { "no-truetype", 0, NO_TRUETYPE_OPT, 0, 0 },
+    { "no-dotlessj", 0, NO_DOTLESSJ_OPT, 0, 0 },
+    { "no-updmap", 0, NO_UPDMAP_OPT, 0, 0 },
+    { "map-file", 0, MAP_FILE_OPT, Clp_ValString, Clp_Negate },
+    { "output-encoding", 0, OUTPUT_ENCODING_OPT, Clp_ValString, Clp_Optional },
     
     { "automatic", 'a', AUTOMATIC_OPT, 0, Clp_Negate },
-    { "name", 'n', FONT_NAME_OPT, Clp_ArgString, 0 },
-    { "vendor", 'v', VENDOR_OPT, Clp_ArgString, 0 },
-    { "typeface", 0, TYPEFACE_OPT, Clp_ArgString, 0 },
+    { "name", 'n', FONT_NAME_OPT, Clp_ValString, 0 },
+    { "vendor", 'v', VENDOR_OPT, Clp_ValString, 0 },
+    { "typeface", 0, TYPEFACE_OPT, Clp_ValString, 0 },
     
-    { "encoding-directory", 0, ENCODING_DIR_OPT, Clp_ArgString, 0 },
-    { "pl-directory", 0, PL_DIR_OPT, Clp_ArgString, 0 },
-    { "tfm-directory", 0, TFM_DIR_OPT, Clp_ArgString, 0 },
-    { "vpl-directory", 0, VPL_DIR_OPT, Clp_ArgString, 0 },
-    { "vf-directory", 0, VF_DIR_OPT, Clp_ArgString, 0 },
-    { "type1-directory", 0, TYPE1_DIR_OPT, Clp_ArgString, 0 },
-    { "truetype-directory", 0, TRUETYPE_DIR_OPT, Clp_ArgString, 0 },
+    { "encoding-directory", 0, ENCODING_DIR_OPT, Clp_ValString, 0 },
+    { "pl-directory", 0, PL_DIR_OPT, Clp_ValString, 0 },
+    { "tfm-directory", 0, TFM_DIR_OPT, Clp_ValString, 0 },
+    { "vpl-directory", 0, VPL_DIR_OPT, Clp_ValString, 0 },
+    { "vf-directory", 0, VF_DIR_OPT, Clp_ValString, 0 },
+    { "type1-directory", 0, TYPE1_DIR_OPT, Clp_ValString, 0 },
+    { "truetype-directory", 0, TRUETYPE_DIR_OPT, Clp_ValString, 0 },
 
     { "quiet", 'q', QUIET_OPT, 0, Clp_Negate },
-    { "glyphlist", 0, GLYPHLIST_OPT, Clp_ArgString, 0 },
-    { "no-create", 0, NOCREATE_OPT, 0, Clp_OnlyNegated },
+    { "glyphlist", 0, GLYPHLIST_OPT, Clp_ValString, 0 },
+    { "no-create", 0, NOCREATE_OPT, 0, 0 },
     { "force", 0, FORCE_OPT, 0, Clp_Negate },
     { "verbose", 'V', VERBOSE_OPT, 0, Clp_Negate },
-    { "kpathsea-debug", 0, KPATHSEA_DEBUG_OPT, Clp_ArgInt, 0 },
+    { "kpathsea-debug", 0, KPATHSEA_DEBUG_OPT, Clp_ValInt, 0 },
 
     { "help", 'h', HELP_OPT, 0, 0 },
     { "version", 0, VERSION_OPT, 0, 0 },
@@ -415,12 +415,17 @@ handle_sigchld()
 String
 suffix_font_name(const String &font_name, const String &suffix)
 {
-    int pos = font_name.length();
-    while (pos > 0 && (isdigit(font_name[pos-1]) || font_name[pos-1] == '-' || font_name[pos-1] == '+'))
-	pos--;
-    if (pos == 0)
-	pos = font_name.length();
-    return font_name.substring(0, pos) + suffix + font_name.substring(pos);
+    const char *begin = font_name.begin(), *end = font_name.end();
+    while (end > begin && isdigit((unsigned char) end[-1]))
+	--end;
+    if (end < font_name.end() && end > begin && end[-1] != '-' && end[-1] != '+')
+	end = font_name.end();
+    else
+	while (end > begin && (end[-1] == '-' || end[-1] == '+'))
+	    --end;
+    if (end == begin)
+	end = font_name.end();
+    return font_name.substring(begin, end) + suffix + font_name.substring(end, font_name.end());
 }
 
 static inline String
@@ -1407,7 +1412,7 @@ do_file(const String &otf_filename, const OpenType::Font &otf,
 	// make it reasonable for the shell
 	StringAccum sa;
 	for (int i = 0; i < typeface.length(); i++)
-	    if (isalnum(typeface[i]) || typeface[i] == '_' || typeface[i] == '-' || typeface[i] == '.' || typeface[i] == ',' || typeface[i] == '+')
+	    if (isalnum((unsigned char) typeface[i]) || typeface[i] == '_' || typeface[i] == '-' || typeface[i] == '.' || typeface[i] == ',' || typeface[i] == '+')
 		sa << typeface[i];
 
 	set_typeface(sa.length() ? sa.take_string() : font_name, false);
@@ -1562,10 +1567,10 @@ extern "C" {
 static int
 clp_parse_char(Clp_Parser *clp, const char *arg, int complain, void *)
 {
-    if (arg[0] && !arg[1] && !isdigit(arg[0])) {
+    if (arg[0] && !arg[1] && !isdigit((unsigned char) arg[0])) {
 	clp->val.i = (unsigned char)arg[0];
 	return 1;
-    } else if (arg[0] == '-' || isdigit(arg[0])) {
+    } else if (arg[0] == '-' || isdigit((unsigned char) arg[0])) {
 	char *end;
 	clp->val.i = strtol(arg, &end, 10);
 	if (clp->val.i <= 255 && !*end)
@@ -1586,26 +1591,26 @@ parse_base_encodings(const String &filename, ErrorHandler *errh)
     str.c_str();
     const char *s_end = str.end();
     for (const char *s = str.begin(); s != s_end; ) {
-	while (s != s_end && isspace(*s) && *s != '\n' && *s != '\r')
+	while (s != s_end && isspace((unsigned char) *s) && *s != '\n' && *s != '\r')
 	    s++;
 	// skip comments and blank lines
 	if (s != s_end && *s != '%' && *s != '#' && *s != '\n' && *s != '\r') {
 	    const char *w1 = s;
-	    while (s != s_end && !isspace(*s))
+	    while (s != s_end && !isspace((unsigned char) *s))
 		s++;
 	    BaseEncoding *be = new BaseEncoding;
 	    be->font_name = str.substring(w1, s);
-	    while (s != s_end && isspace(*s) && *s != '\n' && *s != '\r')
+	    while (s != s_end && isspace((unsigned char) *s) && *s != '\n' && *s != '\r')
 		s++;
 	    const char *w2 = s;
-	    while (s != s_end && !isspace(*s))
+	    while (s != s_end && !isspace((unsigned char) *s))
 		s++;
 	    String efile = str.substring(w2, s);
-	    while (s != s_end && isspace(*s) && *s != '\n' && *s != '\r')
+	    while (s != s_end && isspace((unsigned char) *s) && *s != '\n' && *s != '\r')
 		s++;
-	    if (s != s_end && !isspace(*s) && *s != '%' && *s != '#') {
+	    if (s != s_end && !isspace((unsigned char) *s) && *s != '%' && *s != '#') {
 		const char *w3 = s;
-		while (s != s_end && !isspace(*s))
+		while (s != s_end && !isspace((unsigned char) *s))
 		    s++;
 		be->secondary = str.substring(w3, s);
 	    }
@@ -1679,7 +1684,7 @@ main(int argc, char *argv[])
 	switch (opt) {
 
 	  case SCRIPT_OPT: {
-	      String arg = clp->arg;
+	      String arg = clp->vstr;
 	      int period = arg.find_left('.');
 	      OpenType::Tag scr(period <= 0 ? arg : arg.substring(0, period));
 	      if (scr.valid() && period > 0) {
@@ -1698,7 +1703,7 @@ main(int argc, char *argv[])
 	  }
 
 	  case FEATURE_OPT: {
-	      OpenType::Tag t(clp->arg);
+	      OpenType::Tag t(clp->vstr);
 	      if (!t.valid())
 		  usage_error(errh, "bad feature tag");
 	      else if (feature_filters[t])
@@ -1713,7 +1718,7 @@ main(int argc, char *argv[])
 	  }
       
 	  case LETTER_FEATURE_OPT: {
-	      OpenType::Tag t(clp->arg);
+	      OpenType::Tag t(clp->vstr);
 	      if (!t.valid())
 		  usage_error(errh, "bad feature tag");
 	      else if (feature_filters[t])
@@ -1733,7 +1738,7 @@ main(int argc, char *argv[])
 	    /* fallthru */
 	  case EXCLUDE_SUBS_OPT:
 	  case INCLUDE_SUBS_OPT:
-	    current_substitution_filter.add_substitution_filter(clp->arg, opt == EXCLUDE_SUBS_OPT, errh);
+	    current_substitution_filter.add_substitution_filter(clp->vstr, opt == EXCLUDE_SUBS_OPT, errh);
 	    current_filter_ptr = 0;
 	    break;
 
@@ -1745,18 +1750,18 @@ main(int argc, char *argv[])
 	  case ENCODING_OPT:
 	    if (encoding_file)
 		usage_error(errh, "encoding specified twice");
-	    encoding_file = clp->arg;
+	    encoding_file = clp->vstr;
 	    break;
 
 	  case LITERAL_ENCODING_OPT:
 	    if (encoding_file)
 		usage_error(errh, "encoding specified twice");
-	    encoding_file = clp->arg;
+	    encoding_file = clp->vstr;
 	    literal_encoding = true;
 	    break;
 
 	  case BASE_ENCODINGS_OPT:
-	    base_encoding_files.push_back(clp->arg);
+	    base_encoding_files.push_back(clp->vstr);
 	    break;
 	    
 	  case EXTEND_OPT:
@@ -1785,7 +1790,7 @@ main(int argc, char *argv[])
 
 	  case MATH_SPACING_OPT:
 	    math_spacing = !clp->negated;
-	    if (math_spacing && clp->have_arg) {
+	    if (math_spacing && clp->have_val) {
 		if (clp->val.i < 0 || clp->val.i > 255)
 		    usage_error(errh, "--math-spacing skew character must be between 0 and 255");
 		skew_char = clp->val.i;
@@ -1801,11 +1806,11 @@ main(int argc, char *argv[])
 	    break;
 
 	  case LIGKERN_OPT:
-	    ligkern.push_back(clp->arg);
+	    ligkern.push_back(clp->vstr);
 	    break;
 
 	  case POSITION_OPT:
-	    pos.push_back(clp->arg);
+	    pos.push_back(clp->vstr);
 	    break;
 
 	  case WARN_MISSING_OPT:
@@ -1829,7 +1834,7 @@ main(int argc, char *argv[])
 	    break;
 
 	  case ALTSELECTOR_FEATURE_OPT: {
-	      OpenType::Tag t(clp->arg);
+	      OpenType::Tag t(clp->vstr);
 	      if (!t.valid())
 		  usage_error(errh, "bad feature tag");
 	      else if (altselector_feature_filters[t])
@@ -1848,7 +1853,7 @@ main(int argc, char *argv[])
 	    /* fallthru */
 	  case EXCLUDE_ALTERNATES_OPT:
 	  case INCLUDE_ALTERNATES_OPT:
-	    current_alternate_filter.add_alternate_filter(clp->arg, opt == EXCLUDE_ALTERNATES_OPT, errh);
+	    current_alternate_filter.add_alternate_filter(clp->vstr, opt == EXCLUDE_ALTERNATES_OPT, errh);
 	    current_filter_ptr = 0;
 	    break;
 
@@ -1858,13 +1863,13 @@ main(int argc, char *argv[])
 	    break;
 	    
 	  case UNICODING_OPT:
-	    unicoding.push_back(clp->arg);
+	    unicoding.push_back(clp->vstr);
 	    break;
 	    
 	  case CODINGSCHEME_OPT:
 	    if (codingscheme)
 		usage_error(errh, "coding scheme specified twice");
-	    codingscheme = clp->arg;
+	    codingscheme = clp->vstr;
 	    if (codingscheme.length() > 39)
 		errh->warning("only first 39 characters of coding scheme are significant");
 	    if (codingscheme.find_left('(') >= 0 || codingscheme.find_left(')') >= 0)
@@ -1876,12 +1881,12 @@ main(int argc, char *argv[])
 	    break;
 
 	  case VENDOR_OPT:
-	    if (!set_vendor(clp->arg))
+	    if (!set_vendor(clp->vstr))
 		usage_error(errh, "vendor name specified twice");
 	    break;
 
 	  case TYPEFACE_OPT:
-	    if (!set_typeface(clp->arg, true))
+	    if (!set_typeface(clp->vstr, true))
 		usage_error(errh, "typeface name specified twice");
 	    break;
 
@@ -1903,7 +1908,7 @@ main(int argc, char *argv[])
 	  case OUTPUT_ENCODING_OPT:
 	    if (out_encoding_file)
 		usage_error(errh, "encoding output file specified twice");
-	    out_encoding_file = (clp->have_arg ? clp->arg : "-");
+	    out_encoding_file = (clp->have_val ? clp->vstr : "-");
 	    output_flags = G_ENCODING;
 	    break;
 
@@ -1916,7 +1921,7 @@ main(int argc, char *argv[])
 		output_flags &= ~G_PSFONTSMAP;
 	    else {
 		output_flags |= G_PSFONTSMAP;
-		if (!set_map_file(clp->arg))
+		if (!set_map_file(clp->vstr))
 		    usage_error(errh, "map file specified twice");
 	    }
 	    break;
@@ -1936,7 +1941,7 @@ main(int argc, char *argv[])
 	  case VPL_DIR_OPT:
 	  case TYPE1_DIR_OPT:
 	  case TRUETYPE_DIR_OPT:
-	    if (!setodir(opt - DIR_OPTS, clp->arg))
+	    if (!setodir(opt - DIR_OPTS, clp->vstr))
 		usage_error(errh, "%s directory specified twice", odirname(opt - DIR_OPTS));
 	    break;
 	    
@@ -1944,11 +1949,11 @@ main(int argc, char *argv[])
 	  font_name:
 	    if (font_name)
 		usage_error(errh, "font name specified twice");
-	    font_name = clp->arg;
+	    font_name = clp->vstr;
 	    break;
 
 	  case GLYPHLIST_OPT:
-	    glyphlist_files.push_back(clp->arg);
+	    glyphlist_files.push_back(clp->vstr);
 	    break;
 	    
 	  case QUERY_FEATURES_OPT:
@@ -1990,7 +1995,7 @@ main(int argc, char *argv[])
 
 	  case VERSION_OPT:
 	    printf("otftotfm (LCDF typetools) %s\n", VERSION);
-	    printf("Copyright (C) 2002-2007 Eddie Kohler\n\
+	    printf("Copyright (C) 2002-2008 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");
@@ -2008,7 +2013,7 @@ particular purpose.\n");
 	    else if (input_file)
 		goto font_name;
 	    else
-		input_file = clp->arg;
+		input_file = clp->vstr;
 	    break;
 
 	  case Clp_Done:

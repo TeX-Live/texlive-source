@@ -100,14 +100,14 @@ GlyphFilter::add_pattern(const String& pattern, int ptype, ErrorHandler* errh)
     
     const char* begin = pattern.begin();
     const char* end = pattern.end();
-    while (begin < end && isspace(*begin))
+    while (begin < end && isspace((unsigned char) *begin))
 	begin++;
     if (begin >= end)
 	errh->error("missing pattern");
 
     while (begin < end) {
 	const char* word = begin;
-	while (word < end && !isspace(*word))
+	while (word < end && !isspace((unsigned char) *word))
 	    word++;
 	bool negated = false;
 	if (begin < word && begin[0] == '!')
@@ -152,7 +152,7 @@ GlyphFilter::add_pattern(const String& pattern, int ptype, ErrorHandler* errh)
 	
 	// move to next clause
       next_clause:
-	for (begin = word; begin < end && isspace(*begin); begin++)
+	for (begin = word; begin < end && isspace((unsigned char) *begin); begin++)
 	    /* nada */;
     }
 }

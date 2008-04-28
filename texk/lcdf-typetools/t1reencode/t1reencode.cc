@@ -48,16 +48,16 @@ using namespace Efont;
 #define FONTNAME_OPT		308
 #define FULLNAME_OPT		309
 
-Clp_Option options[] = {
+const Clp_Option options[] = {
     { "help", 'h', HELP_OPT, 0, 0 },
-    { "output", 'o', OUTPUT_OPT, Clp_ArgString, 0 },
+    { "output", 'o', OUTPUT_OPT, Clp_ValString, 0 },
     { "pfa", 'a', PFA_OPT, 0, 0 },
     { "pfb", 'b', PFA_OPT, 0, 0 },
-    { "name", 'n', FONTNAME_OPT, Clp_ArgString, 0 },
-    { "fullname", 'N', FULLNAME_OPT, Clp_ArgString, 0 },
-    { "full-name", 'N', FULLNAME_OPT, Clp_ArgString, 0 },
-    { "encoding", 'e', ENCODING_OPT, Clp_ArgString, 0 },
-    { "encoding-text", 'E', ENCODING_TEXT_OPT, Clp_ArgString, 0 },
+    { "name", 'n', FONTNAME_OPT, Clp_ValString, 0 },
+    { "fullname", 'N', FULLNAME_OPT, Clp_ValString, 0 },
+    { "full-name", 'N', FULLNAME_OPT, Clp_ValString, 0 },
+    { "encoding", 'e', ENCODING_OPT, Clp_ValString, 0 },
+    { "encoding-text", 'E', ENCODING_TEXT_OPT, Clp_ValString, 0 },
     { "version", 0, VERSION_OPT, 0, 0 },
 };
 
@@ -785,7 +785,7 @@ tokenize(const String &s, int &pos_in, int &line)
     int pos = pos_in;
     while (1) {
 	// skip whitespace
-	while (pos < len && isspace(data[pos])) {
+	while (pos < len && isspace((unsigned char) data[pos])) {
 	    if (data[pos] == '\n')
 		line++;
 	    else if (data[pos] == '\r' && (pos + 1 == len || data[pos+1] != '\n'))
@@ -824,7 +824,7 @@ tokenize(const String &s, int &pos_in, int &line)
 	    int first = pos;
 	    while (pos < len && data[pos] == '/')
 		pos++;
-	    while (pos < len && data[pos] != '/' && !isspace(data[pos]) && data[pos] != '[' && data[pos] != ']' && data[pos] != '%' && data[pos] != '(' && data[pos] != '{' && data[pos] != '}')
+	    while (pos < len && data[pos] != '/' && !isspace((unsigned char) data[pos]) && data[pos] != '[' && data[pos] != ']' && data[pos] != '%' && data[pos] != '(' && data[pos] != '{' && data[pos] != '}')
 		pos++;
 	    pos_in = pos;
 	    return s.substring(first, pos - first);
@@ -945,31 +945,31 @@ main(int argc, char *argv[])
 	  case ENCODING_OPT:
 	    if (encoding_file || encoding_text)
 		errh->fatal("encoding already specified");
-	    encoding_file = clp->arg;
+	    encoding_file = clp->vstr;
 	    break;
 
 	  case ENCODING_TEXT_OPT:
 	    if (encoding_file || encoding_text)
 		errh->fatal("encoding already specified");
-	    encoding_text = clp->arg;
+	    encoding_text = clp->vstr;
 	    break;
 
 	  case FONTNAME_OPT:
 	    if (new_font_name)
 		errh->fatal("font name already specified");
-	    new_font_name = clp->arg;
+	    new_font_name = clp->vstr;
 	    break;
 
 	  case FULLNAME_OPT:
 	    if (new_full_name)
 		errh->fatal("full name already specified");
-	    new_full_name = clp->arg;
+	    new_full_name = clp->vstr;
 	    break;
 	    
 	  case OUTPUT_OPT:
 	    if (output_file)
 		errh->fatal("output file already specified");
-	    output_file = clp->arg;
+	    output_file = clp->vstr;
 	    break;
 
 	  case PFA_OPT:
@@ -998,9 +998,9 @@ particular purpose.\n");
 	    if (input_file && output_file)
 		errh->fatal("too many arguments");
 	    else if (input_file)
-		output_file = clp->arg;
+		output_file = clp->vstr;
 	    else
-		input_file = clp->arg;
+		input_file = clp->vstr;
 	    break;
       
 	  case Clp_Done:

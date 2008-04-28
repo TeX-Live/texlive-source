@@ -55,27 +55,27 @@
 #define SUBRS_OPT	316
 #define MINIMIZE_OPT	317
 
-Clp_Option options[] = {
-  { "1", '1', N1_OPT, Clp_ArgDouble, 0 },
-  { "2", '2', N2_OPT, Clp_ArgDouble, 0 },
-  { "3", '3', N3_OPT, Clp_ArgDouble, 0 },
-  { "4", '4', N4_OPT, Clp_ArgDouble, 0 },
+const Clp_Option options[] = {
+  { "1", '1', N1_OPT, Clp_ValDouble, 0 },
+  { "2", '2', N2_OPT, Clp_ValDouble, 0 },
+  { "3", '3', N3_OPT, Clp_ValDouble, 0 },
+  { "4", '4', N4_OPT, Clp_ValDouble, 0 },
   { "amcp-info", 0, AMCP_INFO_OPT, 0, 0 },
   { "help", 'h', HELP_OPT, 0, 0 },
   { "minimize", 'm', MINIMIZE_OPT, 0, Clp_Negate },
-  { "optical-size", 'O', OPSIZE_OPT, Clp_ArgDouble, 0 },
-  { "output", 'o', OUTPUT_OPT, Clp_ArgString, 0 },
+  { "optical-size", 'O', OPSIZE_OPT, Clp_ValDouble, 0 },
+  { "output", 'o', OUTPUT_OPT, Clp_ValString, 0 },
   { "pfa", 'a', PFA_OPT, 0, 0 },
   { "pfb", 'b', PFB_OPT, 0, 0 },
-  { "precision", 'p', PRECISION_OPT, Clp_ArgUnsigned, 0 },
+  { "precision", 'p', PRECISION_OPT, Clp_ValUnsigned, 0 },
   { "quiet", 'q', QUIET_OPT, 0, Clp_Negate },
-  { "style", 0, STYLE_OPT, Clp_ArgDouble, 0 },
-  { "subrs", 0, SUBRS_OPT, Clp_ArgInt, Clp_Negate },
+  { "style", 0, STYLE_OPT, Clp_ValDouble, 0 },
+  { "subrs", 0, SUBRS_OPT, Clp_ValInt, Clp_Negate },
   { "version", 'v', VERSION_OPT, 0, 0 },
-  { "wd", 0, WIDTH_OPT, Clp_ArgDouble, 0 },
-  { "weight", 'w', WEIGHT_OPT, Clp_ArgDouble, 0 },
-  { "width", 'W', WIDTH_OPT, Clp_ArgDouble, 0 },
-  { "wt", 0, WEIGHT_OPT, Clp_ArgDouble, 0 },
+  { "wd", 0, WIDTH_OPT, Clp_ValDouble, 0 },
+  { "weight", 'w', WEIGHT_OPT, Clp_ValDouble, 0 },
+  { "width", 'W', WIDTH_OPT, Clp_ValDouble, 0 },
+  { "wt", 0, WEIGHT_OPT, Clp_ValDouble, 0 },
 };
 
 using namespace Efont;
@@ -343,12 +343,12 @@ main(int argc, char *argv[])
 
      case OUTPUT_OPT:
       if (outfile) errh->fatal("output file already specified");
-      if (strcmp(clp->arg, "-") == 0)
+      if (strcmp(clp->vstr, "-") == 0)
 	outfile = stdout;
       else {
-	outfile = fopen(clp->arg, "wb");
+	outfile = fopen(clp->vstr, "wb");
 	if (!outfile)
-	    errh->fatal("%s: %s", clp->arg, strerror(errno));
+	    errh->fatal("%s: %s", clp->vstr, strerror(errno));
       }
       break;
       
@@ -367,7 +367,7 @@ particular purpose.\n");
       break;
       
      case Clp_NotOption:
-      do_file(clp->arg, psres);
+      do_file(clp->vstr, psres);
       break;
       
      case Clp_Done:

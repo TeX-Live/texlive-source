@@ -46,12 +46,12 @@ using namespace Efont;
 #define OUTPUT_OPT	306
 #define NAME_OPT	307
 
-Clp_Option options[] = {
+const Clp_Option options[] = {
     { "ascii", 'a', PFA_OPT, 0, 0 },
     { "binary", 'b', PFB_OPT, 0, 0 },
     { "help", 'h', HELP_OPT, 0, 0 },
-    { "name", 'n', NAME_OPT, Clp_ArgString, 0 },
-    { "output", 'o', OUTPUT_OPT, Clp_ArgString, 0 },
+    { "name", 'n', NAME_OPT, Clp_ValString, 0 },
+    { "output", 'o', OUTPUT_OPT, Clp_ValString, 0 },
     { "pfa", 'a', PFA_OPT, 0, 0 },
     { "pfb", 'b', PFB_OPT, 0, 0 },
     { "quiet", 'q', QUIET_OPT, 0, Clp_Negate },
@@ -197,7 +197,7 @@ main(int argc, char *argv[])
 	  case NAME_OPT:
 	    if (font_name)
 		usage_error(errh, "font name specified twice");
-	    font_name = clp->arg;
+	    font_name = clp->vstr;
 	    break;
 	    
 	  case QUIET_OPT:
@@ -225,7 +225,7 @@ particular purpose.\n");
 	  output_file:
 	    if (output_file)
 		usage_error(errh, "output file specified twice");
-	    output_file = clp->arg;
+	    output_file = clp->vstr;
 	    break;
 
 	  case Clp_NotOption:
@@ -234,7 +234,7 @@ particular purpose.\n");
 	    else if (input_file)
 		goto output_file;
 	    else
-		input_file = clp->arg;
+		input_file = clp->vstr;
 	    break;
       
 	  case Clp_Done:

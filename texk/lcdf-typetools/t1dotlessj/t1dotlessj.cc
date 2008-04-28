@@ -51,10 +51,10 @@ using namespace Efont;
 #define OUTPUT_OPT	306
 #define NAME_OPT	307
 
-Clp_Option options[] = {
+const Clp_Option options[] = {
     { "help", 'h', HELP_OPT, 0, 0 },
-    { "name", 'n', NAME_OPT, Clp_ArgString, 0 },
-    { "output", 'o', OUTPUT_OPT, Clp_ArgString, 0 },
+    { "name", 'n', NAME_OPT, Clp_ValString, 0 },
+    { "output", 'o', OUTPUT_OPT, Clp_ValString, 0 },
     { "pfa", 'a', PFA_OPT, 0, 0 },
     { "pfb", 'b', PFA_OPT, 0, 0 },
     { "quiet", 'q', QUIET_OPT, 0, Clp_Negate },
@@ -286,7 +286,7 @@ main(int argc, char *argv[])
 	    break;
 
 	  case NAME_OPT:
-	    font_name = clp->arg;
+	    font_name = clp->vstr;
 	    break;
 	    
 	  case PFA_OPT:
@@ -301,10 +301,10 @@ main(int argc, char *argv[])
 	  output_file:
 	    if (outputf)
 		usage_error(errh, "output file specified twice");
-	    if (strcmp(clp->arg, "-") == 0)
+	    if (strcmp(clp->vstr, "-") == 0)
 		outputf = stdout;
-	    else if (!(outputf = fopen(clp->arg, "wb")))
-		errh->fatal(EXIT_ERROR, "%s: %s", clp->arg, strerror(errno));
+	    else if (!(outputf = fopen(clp->vstr, "wb")))
+		errh->fatal(EXIT_ERROR, "%s: %s", clp->vstr, strerror(errno));
 	    break;
 	       
 	  case VERSION_OPT:
@@ -327,7 +327,7 @@ particular purpose.\n");
 	    else if (input_file)
 		goto output_file;
 	    else
-		input_file = clp->arg;
+		input_file = clp->vstr;
 	    break;
       
 	  case Clp_Done:

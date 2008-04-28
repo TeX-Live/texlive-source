@@ -55,9 +55,9 @@ using namespace Efont;
 #define QUERY_FAMILY_OPT	327
 #define INFO_OPT		328
 
-Clp_Option options[] = {
+const Clp_Option options[] = {
     
-    { "script", 0, SCRIPT_OPT, Clp_ArgString, 0 },
+    { "script", 0, SCRIPT_OPT, Clp_ValString, 0 },
     { "quiet", 'q', QUIET_OPT, 0, Clp_Negate },
     { "verbose", 'V', VERBOSE_OPT, 0, Clp_Negate },
     { "features", 'f', QUERY_FEATURES_OPT, 0, 0 },
@@ -464,7 +464,7 @@ main(int argc, char *argv[])
 	  case SCRIPT_OPT: {
 	      if (!script.null())
 		  usage_error(errh, "--script already specified");
-	      String arg = clp->arg;
+	      String arg = clp->vstr;
 	      int period = arg.find_left('.');
 	      OpenType::Tag scr(period <= 0 ? arg : arg.substring(0, period));
 	      if (scr.valid() && period > 0) {
@@ -521,7 +521,7 @@ particular purpose.\n");
 	    break;
 
 	  case Clp_NotOption:
-	    input_files.push_back(clp->arg);
+	    input_files.push_back(clp->vstr);
 	    break;
 
 	  case Clp_Done:

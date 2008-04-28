@@ -53,7 +53,7 @@ good_strtod(const char *nptr, char **endptr)
 {
   double d = strtod(nptr, endptr);
   if (endptr)
-    while (*endptr > nptr && isspace((*endptr)[-1]))
+    while (*endptr > nptr && isspace((unsigned char) (*endptr)[-1]))
       (*endptr)--;
   return d;
 }

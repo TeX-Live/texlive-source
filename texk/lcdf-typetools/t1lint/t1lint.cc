@@ -42,7 +42,7 @@ using namespace Efont;
 #define HELP_OPT	302
 #define QUIET_OPT	303
 
-Clp_Option options[] = {
+const Clp_Option options[] = {
   { "help", 'h', HELP_OPT, 0, 0 },
   { "quiet", 'q', QUIET_OPT, 0, Clp_Negate },
   { "version", 0, VERSION_OPT, 0, 0 },
@@ -412,7 +412,7 @@ particular purpose.\n");
       break;
       
      case Clp_NotOption:
-      do_file(clp->arg, psres, errh);
+      do_file(clp->vstr, psres, errh);
       nfiles++;
       break;
       

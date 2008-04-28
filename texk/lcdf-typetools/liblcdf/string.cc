@@ -375,7 +375,7 @@ hard_lower(const String &s, int pos)
     char *x = const_cast<char *>(new_s.data()); // know it's mutable
     int len = s.length();
     for (; pos < len; pos++)
-	x[pos] = tolower(x[pos]);
+	x[pos] = tolower((unsigned char) x[pos]);
     return new_s;
 }
 
@@ -396,7 +396,7 @@ hard_upper(const String &s, int pos)
     char *x = const_cast<char *>(new_s.data()); // know it's mutable
     int len = s.length();
     for (; pos < len; pos++)
-	x[pos] = toupper(x[pos]);
+	x[pos] = toupper((unsigned char) x[pos]);
     return new_s;
 }
 

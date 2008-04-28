@@ -1594,7 +1594,7 @@ Cff::CIDFont::glyph(int gid) const
 int
 Cff::CIDFont::glyphid(PermString name) const
 {
-    if (name.length() <= 1 || name[0] != '#' || !isdigit(name[1]))
+    if (name.length() <= 1 || name[0] != '#' || !isdigit((unsigned char) name[1]))
 	return -1;
     char *endptr;
     long cid = strtol(name.c_str() + 1, &endptr, 10);

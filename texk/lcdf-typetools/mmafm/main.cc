@@ -44,22 +44,22 @@
 #define PRECISION_OPT	311
 #define KERN_PREC_OPT	312
 
-Clp_Option options[] = {
-  { "1", '1', N1_OPT, Clp_ArgDouble, 0 },
-  { "2", '2', N2_OPT, Clp_ArgDouble, 0 },
-  { "3", '3', N3_OPT, Clp_ArgDouble, 0 },
-  { "4", '4', N4_OPT, Clp_ArgDouble, 0 },
-  { "weight", 'w', WEIGHT_OPT, Clp_ArgDouble, 0 },
-  { "width", 'W', WIDTH_OPT, Clp_ArgDouble, 0 },
-  { "optical-size", 'O', OPSIZE_OPT, Clp_ArgDouble, 0 },
-  { "style", 0, STYLE_OPT, Clp_ArgDouble, 0 },
-  { "wt", 0, WEIGHT_OPT, Clp_ArgDouble, 0 },
-  { "wd", 0, WIDTH_OPT, Clp_ArgDouble, 0 },
-  { "min-kern", 'k', KERN_PREC_OPT, Clp_ArgDouble, 0 },
-  { "minimum-kern", 'k', KERN_PREC_OPT, Clp_ArgDouble, 0 },
-  { "kern-precision", 'k', KERN_PREC_OPT, Clp_ArgDouble, 0 },
-  { "output", 'o', OUTPUT_OPT, Clp_ArgString, 0 },
-  { "precision", 'p', PRECISION_OPT, Clp_ArgInt, 0 },
+const Clp_Option options[] = {
+  { "1", '1', N1_OPT, Clp_ValDouble, 0 },
+  { "2", '2', N2_OPT, Clp_ValDouble, 0 },
+  { "3", '3', N3_OPT, Clp_ValDouble, 0 },
+  { "4", '4', N4_OPT, Clp_ValDouble, 0 },
+  { "weight", 'w', WEIGHT_OPT, Clp_ValDouble, 0 },
+  { "width", 'W', WIDTH_OPT, Clp_ValDouble, 0 },
+  { "optical-size", 'O', OPSIZE_OPT, Clp_ValDouble, 0 },
+  { "style", 0, STYLE_OPT, Clp_ValDouble, 0 },
+  { "wt", 0, WEIGHT_OPT, Clp_ValDouble, 0 },
+  { "wd", 0, WIDTH_OPT, Clp_ValDouble, 0 },
+  { "min-kern", 'k', KERN_PREC_OPT, Clp_ValDouble, 0 },
+  { "minimum-kern", 'k', KERN_PREC_OPT, Clp_ValDouble, 0 },
+  { "kern-precision", 'k', KERN_PREC_OPT, Clp_ValDouble, 0 },
+  { "output", 'o', OUTPUT_OPT, Clp_ValString, 0 },
+  { "precision", 'p', PRECISION_OPT, Clp_ValInt, 0 },
   { "version", 'v', VERSION_OPT, 0, 0 },
   { "help", 'h', HELP_OPT, 0, 0 },
 };
@@ -305,12 +305,12 @@ main(int argc, char *argv[])
       
      case OUTPUT_OPT:
       if (output_file) errh->fatal("output file already specified");
-      if (strcmp(clp->arg, "-") == 0)
+      if (strcmp(clp->vstr, "-") == 0)
 	output_file = stdout;
       else {
-	output_file = fopen(clp->arg, "wb");
+	output_file = fopen(clp->vstr, "wb");
 	if (!output_file)
-	    errh->fatal("%s: %s", clp->arg, strerror(errno));
+	    errh->fatal("%s: %s", clp->vstr, strerror(errno));
       }
       break;
       
@@ -329,7 +329,7 @@ particular purpose.\n");
       break;
       
      case Clp_NotOption:
-      read_file(clp->arg, finder);
+      read_file(clp->vstr, finder);
       break;
       
      case Clp_Done:

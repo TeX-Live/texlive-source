@@ -1,6 +1,5 @@
 $Id$
 Copyright 2006, 2007, 2008 TeX Users Group.
-(Originally written in 2006 by Karl Berry.)
 You may freely use, modify and/or distribute this file.
 
 This TeX Live directory contains the programs that use the kpathsea
@@ -13,14 +12,14 @@ configuring the whole tree.
 
 Sources for the programs as last checked:
 
-afm2pl 0.7.03 - ok 5dec06
+afm2pl 0.7.03 - ok 28apr08
   http://tex.aanhet.net/afm2pl/
 
 bibtex8 - ?
 
 chktex - ?
 
-cjkutils - from Werner Lemberg
+cjkutils - Werner Lemberg
 
 detex - ?
 
@@ -70,7 +69,7 @@ musixflx - ?
 
 ps2pkm - ?
 
-lcdf-typetools 2.66 - ok 17feb08
+lcdf-typetools 2.67 - ok 28apr08
   http://www.lcdf.org/type/
 
 tex4htk 
@@ -86,7 +85,7 @@ web2c - maintained here by Karl Berry, ... - core web2c, plain tex, omega.
 
 xdv2pdf - Jonathan Kew
 
-xdvik 22.84.10 - ok 4dec06
+xdvik 22.84.10 - ok 28apr08
   http://xdvi.sourceforge.net/
 
 xdvipdfmx - Jonathan Kew
