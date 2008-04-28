@@ -120,11 +120,10 @@ pdf_init_encoding_struct (pdf_encoding *encoding)
 static pdf_obj *
 create_encoding_resource (pdf_encoding *encoding, pdf_encoding *baseenc)
 {
+  pdf_obj *differences;
   ASSERT(encoding);
   ASSERT(!encoding->resource);
 
-  pdf_obj *differences;
- 
   differences = make_encoding_differences(encoding->glyphs,
 					  baseenc ? baseenc->glyphs : NULL,
 					  encoding->is_used);
