@@ -282,13 +282,14 @@ do_run_callback (int special, char *values, va_list vl) {
   }
   nres = -nres;
   while (*values) {
+    int b;
     switch (*values++) {
     case CALLBACK_BOOLEAN: 
       if (!lua_isboolean(L,nres)) {
 		fprintf(stderr,"Expected a boolean, not: %s\n", lua_typename(L,lua_type(L,nres)));
 		goto EXIT;
       }
-      int b = lua_toboolean(L,nres);
+      b = lua_toboolean(L,nres);
       *va_arg(vl, boolean *) = (boolean)b;
       break;
     case CALLBACK_INTEGER: 

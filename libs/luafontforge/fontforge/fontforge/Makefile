@@ -2,7 +2,7 @@
 top_srcdir = ../../../../libs/luafontforge/fontforge
 srcdir = $(top_srcdir)/fontforge
 
-CC = gcc
+#CC = gcc
 AR = ar cru
 RANLIB = ranlib
 
@@ -14,7 +14,7 @@ OBJECTS =autohint.o charview.o fontinfo.o \
  stemdb.o lookups.o featurefile.o \
  tottf.o tottfgpos.o tottfvar.o splinesave.o
 
-_CFLAGS = -I$(top_srcdir)/inc -I$(srcdir) -I. -Wall $(XCFLAGS) \
+_CFLAGS = -I$(top_srcdir)/inc -I$(srcdir) -I. $(XCFLAGS) \
  -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 \
  -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 \
  -DHAVE_INTTYPES_H=1 -DHAVE_UNISTD_H=1 -D_NO_PYTHON=1 -DHAVE_LANGINFO_H=1 \
@@ -22,7 +22,7 @@ _CFLAGS = -I$(top_srcdir)/inc -I$(srcdir) -I. -Wall $(XCFLAGS) \
  -DNODYNAMIC=1 -D_NO_FREETYPE=1 -D_NO_LIBUNINAMESLIST=1 \
  -DFONTFORGE_CONFIG_NO_WINDOWING_UI=1 -DLUA_FF_LIB=1 -UHAVE_LIBINTL_H
 
-CFLAGS = -g -O2
+#CFLAGS = -g -O2
 
 all: $(OBJECTS)
 

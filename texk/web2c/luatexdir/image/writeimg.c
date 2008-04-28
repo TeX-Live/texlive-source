@@ -328,8 +328,9 @@ void scale_img(image * img)
     integer x, y, xr, yr;       /* size and resolution of image */
     scaled w, h;                /* indeed size corresponds to image resolution */
     integer default_res;
+    image_dict *idict;
     assert(img != NULL);
-    image_dict *idict = img_dict(img);
+    idict = img_dict(img);
     assert(idict != NULL);
     x = img_xsize(idict);       /* dimensions, resolutions from image file */
     y = img_ysize(idict);
@@ -414,12 +415,14 @@ void out_img(image * img, scaled hpos, scaled vpos)
     float a[6];                 /* transformation matrix */
     float xoff, yoff, tmp;
     int r;                      /* number of digits after the decimal point */
+    image_dict *idict;
+    scaled wd, ht, dp;
     assert(img != 0);
-    image_dict *idict = img_dict(img);
+    idict = img_dict(img);
     assert(idict != 0);
-    scaled wd = img_width(img);
-    scaled ht = img_height(img);
-    scaled dp = img_depth(img);
+    wd = img_width(img);
+    ht = img_height(img);
+    dp = img_depth(img);
     if ((img_transform(img) & 1) == 1) {        /* 90 deg. or 270 deg. rotated */
         if (ht == -dp)
             pdftex_fail("image transform: division by zero (height == -depth)");
@@ -571,8 +574,9 @@ integer read_image(integer objnum, integer index, strnumber filename,
 {
     integer ref;
     image *a = new_image();
+    image_dict *idict;
     ref = img_to_array(a);
-    image_dict *idict = img_dict(a) = new_image_dict();
+    idict = img_dict(a) = new_image_dict();
     assert(idict != NULL);
     img_objnum(idict) = objnum;
     img_index(idict) = index;

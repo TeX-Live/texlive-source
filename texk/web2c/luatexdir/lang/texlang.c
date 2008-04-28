@@ -650,11 +650,12 @@ hnj_hyphenation (halfword head, halfword tail) {
   couple_nodes(tail, s);
 
   while (r!=null) { /* could be while(1), but let's be paranoid */
+    int clang, lhmin, rhmin;
     wordstart = r;
     assert (is_simple_character(wordstart));
-    int clang = char_lang(wordstart);
-    int lhmin = char_lhmin(wordstart);
-    int rhmin = char_rhmin(wordstart);
+    clang = char_lang(wordstart);
+    lhmin = char_lhmin(wordstart);
+    rhmin = char_rhmin(wordstart);
     langdata.pre_hyphen_char = get_pre_hyphen_char(clang);
     langdata.post_hyphen_char = get_post_hyphen_char(clang);
     while (r!=null && 

@@ -4,8 +4,8 @@ srcdir=../../../libs/luafontforge
 
 FF_LIB=ffdummies.o luafflib.o
 
-_CFLAGS=-Wall -DFONTFORGE_CONFIG_NO_WINDOWING_UI=1 -DLUA_FF_LIB=1 $(XCFLAGS)
-CFLAGS = -g -O2
+_CFLAGS=-DFONTFORGE_CONFIG_NO_WINDOWING_UI=1 -DLUA_FF_LIB=1 $(XCFLAGS)
+#CFLAGS = -g -O2
 
 .PHONY: newfile
 
@@ -17,7 +17,7 @@ fontforge: $(FF_LIB) newfile
 	ranlib libff.a
 
 %.o: $(srcdir)/src/%.c
-	gcc $(_CFLAGS) $(CFLAGS) -I$(srcdir)/../lua51 -I$(srcdir)/fontforge/inc -I$(srcdir)/fontforge/fontforge -c $< -o $@
+	$(CC) $(_CFLAGS) $(CFLAGS) -I$(srcdir)/../lua51 -I$(srcdir)/fontforge/inc -I$(srcdir)/fontforge/fontforge -c $< -o $@
 
 clean:
 	rm  -f libff.a $(FF_LIB)

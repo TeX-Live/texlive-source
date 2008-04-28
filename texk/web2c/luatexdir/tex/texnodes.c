@@ -569,12 +569,13 @@ static void do_free_error(halfword p)
         "but could also point to a bug in the executable. It should be safe to continue.",
         NULL
     };
+    halfword r;
 
     check_node_mem();
     if (free_error_seen)
         return;
 
-    halfword r = null;
+    r = null;
     free_error_seen = 1;
     if (type(p) == glyph_node) {
         snprintf(errstr, 255,

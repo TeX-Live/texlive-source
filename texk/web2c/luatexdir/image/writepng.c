@@ -433,13 +433,16 @@ static int spng_getint(FILE * fp)
 
 void copy_png(image_dict * idict)
 {
-    assert(idict != NULL);
-    png_structp png_p = img_png_png_ptr(idict);
-    png_infop info_p = img_png_info_ptr(idict);
-    FILE *fp = (FILE *) png_p->io_ptr;
+    png_structp png_p;
+    png_infop info_p;
+    FILE *fp;
     int i, len, type, streamlength = 0;
     boolean endflag = false;
     int idat = 0;               /* flag to check continuous IDAT chunks sequence */
+    assert(idict != NULL);
+    png_p = img_png_png_ptr(idict);
+    info_p = img_png_info_ptr(idict);
+    fp = (FILE *) png_p->io_ptr;
     /* 1st pass to find overall stream /Length */
     if (fseek(fp, 8, SEEK_SET) != 0)
         pdftex_fail("writepng: fseek in PNG file failed");
@@ -518,12 +521,14 @@ void write_png(image_dict * idict)
     double gamma, checked_gamma;
     int i;
     integer palette_objnum = 0;
+    png_structp png_p;
+    png_infop info_p;
     assert(idict != NULL);
     if (img_file(idict) == NULL)
         reopen_png(idict);
     assert(img_png_ptr(idict) != NULL);
-    png_structp png_p = img_png_png_ptr(idict);
-    png_infop info_p = img_png_info_ptr(idict);
+    png_p = img_png_png_ptr(idict);
+    info_p = img_png_info_ptr(idict);
     if (fixed_pdf_minor_version < 5)
         fixed_image_hicolor = 0;
     pdf_puts("/Type /XObject\n/Subtype /Image\n");

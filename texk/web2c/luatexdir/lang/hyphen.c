@@ -418,9 +418,9 @@ static const unsigned char* next_pattern(
   size_t* length,
   const unsigned char **buf
 ) {
-  const unsigned char *rover = *buf;
+  const unsigned char *rover = *buf, *here;
   while (*rover && isspace(*rover)) rover++;
-  const unsigned char *here = rover;
+  here = rover;
   while (*rover) {
     if (isspace(*rover)) {
       *length = rover-here;
@@ -437,8 +437,8 @@ static const unsigned char* next_pattern(
 static void init_hash(
   HashTab**h
 ) {
-  if (*h) return;
   int i;
+  if (*h) return;
   *h = hnj_malloc(sizeof(HashTab));
   for (i = 0; i < HASH_SIZE; i++) (*h)->entries[i] = NULL;
 }
@@ -447,8 +447,8 @@ static void init_hash(
 static void clear_state_hash(
   HashTab**h
 ) {
-  if (*h==NULL) return;
   int i;
+  if (*h==NULL) return;
   for (i = 0; i < HASH_SIZE; i++) {
     HashEntry *e, *next;
     for (e = (*h)->entries[i]; e; e = next) {
@@ -465,8 +465,8 @@ static void clear_state_hash(
 static void clear_hyppat_hash(
   HashTab**h
 ) {
-  if (*h==NULL) return;
   int i;
+  if (*h==NULL) return;
   for (i = 0; i < HASH_SIZE; i++) {
     HashEntry *e, *next;
     for (e = (*h)->entries[i]; e; e = next) {
@@ -600,6 +600,8 @@ void hnj_hyphen_load(
   const unsigned char* begin = f;
   while((format = next_pattern(&l,&f))!=NULL) {
     int i,j,e;
+    unsigned char *pat;
+    char *org;
     /*
     printf("%s\n",format);
     char* repl = strnchr(format, '/',l);
@@ -629,9 +631,9 @@ void hnj_hyphen_load(
     }
     /* l-e   => number of _characters_ not _bytes_*/
     /* l-e-j => number of pattern characters*/
-    unsigned char *pat = (unsigned char*) malloc(1+l-j);
-             char *org = (         char*) malloc(2+l-e-j);
-			 /* remove hyphenation encoders (digits) from pat*/
+    pat = (unsigned char*) malloc(1+l-j);
+    org = (         char*) malloc(2+l-e-j);
+    /* remove hyphenation encoders (digits) from pat*/
     org[0] = '0';
     for (i=0,j=0,e=0; (unsigned)i<l; i++) {
       unsigned char c = format[i];
@@ -658,16 +660,17 @@ void hnj_hyphen_load(
       if (is_utf8_follow(word[l])) continue; /* Do not clip an utf8 sequence*/
       for (j=1; j<=l; j++) {
         int i = l-j;
-        if (is_utf8_follow(word[i])) continue; /* Do not start halfway an utf8 sequence*/
         char *subpat_pat;
+        if (is_utf8_follow(word[i])) continue; /* Do not start halfway an utf8 sequence*/
         if ((subpat_pat = hyppat_lookup(dict->patterns,word+i,j))!=NULL) {
           char* newpat_pat;
           if ((newpat_pat = hyppat_lookup(dict->merged,word,l))==NULL) {
             unsigned char *newword=(unsigned char*)malloc(l+1);
-            strncpy((char*)newword, (char*)word,l); newword[l]=0;
             int e=0;
+            char *neworg;
+            strncpy((char*)newword, (char*)word,l); newword[l]=0;
             for (i=0; i<l; i++) if (is_utf8_follow(newword[i])) e++;
-            char *neworg = malloc(l+2-e);
+            neworg = malloc(l+2-e);
             sprintf(neworg,"%0*d",l+1-e,0); /* fill with right amount of '0'*/
             hyppat_insert(dict->merged,newword,combine(neworg,subpat_pat));
           } else {
@@ -697,10 +700,10 @@ void hnj_hyphen_load(
       last_state = state_num;
       ch = word[j];
       if (ch>=0x80) {
-        int i=1;
+        int i=1, m;
         while (is_utf8_follow(word[j-i])) i++;
         ch = word[j-i] & mask[i];
-        int m = j-i;
+        m = j-i;
         while (i--) {
           ch = (ch<<6)+(0x3F & word[j-i]);
         }
@@ -759,13 +762,15 @@ void hnj_hyphen_hyphenate(
   int hyphen_len   = ext_word_len+1;
   /*char *hyphens = hnj_malloc((hyphen_len*2)+1); */ /* LATER */
   char *hyphens = hnj_malloc(hyphen_len+1);
+  int char_num;
+  int state = 0;
+  halfword here;
 
   /* Add a '.' to beginning and end to facilitate matching*/
   set_vlink(begin_point,first);
   set_vlink(end_point,get_vlink(last));
   set_vlink(last,end_point);
 
-  int char_num;
   for (char_num = 0; char_num < hyphen_len; char_num++) {
 	/*  hyphens[char_num*2] = '0';    */ /* LATER */
 	/*  hyphens[char_num*2+1] = '0';    */ /* LATER */
@@ -775,8 +780,6 @@ void hnj_hyphen_hyphenate(
   hyphens[hyphen_len] = 0;
 
   /* now, run the finite state machine */
-  int state = 0;
-  halfword here;
   for (char_num=0, here=begin_point; here!=end_point; here=get_vlink(here)) {
 
     int ch = get_lc_code(get_character(here));
@@ -787,9 +790,10 @@ void hnj_hyphen_hyphenate(
       int k;
       for (k = 0; k < hstate->num_trans; k++) {
         if (hstate->trans[k].uni_ch == ch) {
+	  char *match;
           state = hstate->trans[k].new_state;
 		  /*       printf(" state %d\n",state);*/
-          char *match = dict->states[state].match;
+          match = dict->states[state].match;
           if (match) {
             /* +2 because:
 			 *  1 string length is one bigger than offset

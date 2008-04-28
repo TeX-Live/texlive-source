@@ -161,9 +161,9 @@ int get_command_id (char *s) {
 
 static int
 get_cur_cmd (lua_State *L) {
-  int r = 0;
+  int r = 0, len;
   cur_cs = 0;
-  int len = lua_objlen(L,-1);
+  len = lua_objlen(L,-1);
   if (len==3 || len==2) {
     r = 1;
     lua_rawgeti(L,-1,1);

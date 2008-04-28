@@ -1355,6 +1355,7 @@ handle_lig_word(halfword cur) {
         /* if  a{bx}{}{y} and a+b=>B convert to {Bx}{}{ay} */
         halfword pre = vlink_pre_break(fwd);
         halfword nob = vlink_no_break(fwd);
+	halfword next, tail;
         liginfo lig;
         assert_disc(fwd);
         /* Check on: a{b?}{?}{?} and a+b=>B : {B?}{?}{a?}*/
@@ -1373,7 +1374,7 @@ handle_lig_word(halfword cur) {
           cur = prev;
         } 
         /* Check on: a{?}{?}{}b and a+b=>B : {a?}{?b}{B}*/
-        halfword next = vlink(fwd);
+        next = vlink(fwd);
         if (nob==null && next != null && type(next)==glyph_node
           && test_ligature(&lig,cur,next)) {
           /* move cur from before disc to no_break part */
@@ -1386,7 +1387,7 @@ handle_lig_word(halfword cur) {
           /* now copy cur the pre_break */
           nesting_prepend(pre_break(fwd),copy_node(cur));
           /* move next from after disc to no_break part */
-          halfword tail = vlink(next);
+          tail = vlink(next);
           uncouple_node(next);
           try_couple_nodes(fwd,tail);
           couple_nodes(cur,next); /* we _know_ this works */
@@ -1428,7 +1429,8 @@ handle_lig_word(halfword cur) {
         while (1) {
           if ((fwd = vlink(cur))==null) return cur;
           if ( type(fwd)==glyph_node) {
-            for (i=0; i<max_depth; i++) {
+			halfword next;
+			for (i=0; i<max_depth; i++) {
               liginfo lig;
               halfword tail = tlink(lists[i]);
               if ( tail!=null && test_ligature(&lig,tail,fwd))
@@ -1444,7 +1446,7 @@ add_glyph_to_all:
               if (tail==null) continue; /* first character - never a ligature */
               handle_lig_nest(lists[i],tail);
             }
-            halfword next = vlink(fwd);
+            next = vlink(fwd);
             uncouple_node(fwd);
             try_couple_nodes(cur,next);
             flush_node(fwd);
@@ -1458,6 +1460,7 @@ add_glyph_to_all:
             for (i=0; i<m; i++) {
               halfword copy = copy_node(fwd);
               halfword tail = tlink(lists[i]);
+	      halfword next;
               if (tail!=null) {
                 halfword prev = alink(tail);
 				assert(alink(tail)!=null);
@@ -1477,7 +1480,7 @@ add_glyph_to_all:
               lists[max_depth++] = handle_lig_nest(no_break(copy),vlink_no_break(copy));
               lists[i]           = handle_lig_nest(post_break(copy),vlink_post_break(copy));
             }
-            halfword next = vlink(fwd);
+            next = vlink(fwd);
             uncouple_node(fwd);
             try_couple_nodes(cur,next);
             flush_node(fwd);

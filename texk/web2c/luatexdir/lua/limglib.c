@@ -392,6 +392,7 @@ void copy_image(lua_State * L, lua_Number scale)
 static int l_new_image(lua_State * L)
 {
     image *a, **aa;
+    image_dict **add;
     if (lua_gettop(L) > 1)
         luaL_error(L, "img.new() needs maximum 1 argument");
     if (lua_gettop(L) == 1 && !lua_istable(L, 1))
@@ -400,7 +401,7 @@ static int l_new_image(lua_State * L)
     luaL_getmetatable(L, TYPE_IMG);     /* m i (t) */
     lua_setmetatable(L, -2);    /* i (t) */
     a = *aa = new_image();
-    image_dict **add = (image_dict **) lua_newuserdata(L, sizeof(image_dict *));        /* ad i (t) */
+    add = (image_dict **) lua_newuserdata(L, sizeof(image_dict *));        /* ad i (t) */
     luaL_getmetatable(L, TYPE_IMG_DICT);        /* m ad i (t) */
     lua_setmetatable(L, -2);    /* ad i (t) */
     img_dict(a) = *add = new_image_dict();
@@ -431,13 +432,14 @@ static int l_copy_image(lua_State * L)
 static int l_scan_image(lua_State * L)
 {
     image *a, **aa;
+    image_dict *ad;
     if (lua_gettop(L) != 1)
         luaL_error(L, "img.scan() needs exactly 1 argument");
     if (lua_istable(L, 1))
         l_new_image(L);         /* image --- if everything worked well */
     aa = (image **) luaL_checkudata(L, 1, TYPE_IMG);    /* image */
     a = *aa;
-    image_dict *ad = img_dict(a);
+    ad = img_dict(a);
     if (img_state(ad) == DICT_NEW) {
         read_img(ad, get_pdf_minor_version(), get_pdf_inclusion_errorlevel());
         img_unset_scaled(a);
@@ -454,9 +456,10 @@ static int l_scan_image(lua_State * L)
 static halfword img_to_node(image * a, integer ref)
 {
     image_dict *ad = img_dict(a);
+    halfword n;
     assert(ad != NULL);
     assert(img_objnum(ad) != 0);
-    halfword n = new_node(whatsit_node, pdf_refximage_node);
+    n = new_node(whatsit_node, pdf_refximage_node);
     pdf_ximage_ref(n) = ref;
     pdf_width(n) = img_width(a);
     pdf_height(n) = img_height(a);
@@ -473,14 +476,16 @@ extern void lua_nodelib_push_fast(lua_State * L, halfword n);
 static void write_image_or_node(lua_State * L, wrtype_e writetype)
 {
     image *a, **aa;
+    image_dict *ad;
     halfword n;
+    integer ref;
     if (lua_gettop(L) != 1)
         luaL_error(L, "%s needs exactly 1 argument", wrtype_s[writetype]);
     if (lua_istable(L, 1))
         l_new_image(L);         /* image --- if everything worked well */
     aa = (image **) luaL_checkudata(L, 1, TYPE_IMG);    /* image */
     a = *aa;
-    image_dict *ad = img_dict(a);
+    ad = img_dict(a);
     assert(ad != NULL);
     if (img_state(ad) == DICT_NEW) {
         read_img(ad, get_pdf_minor_version(), get_pdf_inclusion_errorlevel());
@@ -489,7 +494,7 @@ static void write_image_or_node(lua_State * L, wrtype_e writetype)
     fix_image_size(L, a);
     check_pdfoutput(maketexstring(wrtype_s[writetype]), true);
     flush_str(last_tex_string);
-    integer ref = img_to_array(a);
+    ref = img_to_array(a);
     if (img_objnum(ad) == 0) {  /* not strictly needed here, could be delayed until out_image() */
         pdf_ximage_count++;
         pdf_create_obj(obj_type_ximage, pdf_ximage_count);

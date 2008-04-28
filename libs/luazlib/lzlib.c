@@ -199,9 +199,9 @@ static int lzstream_decompress(lua_State *L)
     s->avail_in = lua_strlen(L, 2);
 
     {
+        int r;
         luaL_Buffer b;
         luaL_buffinit(L, &b);
-        int r;
 
         do {
             s->next_out = luaL_prepbuffer(&b);
@@ -235,9 +235,9 @@ static int lzstream_compress(lua_State *L)
     s->avail_in = lua_strlen(L, 2);
 
     {
+        int r;
         luaL_Buffer b;
         luaL_buffinit(L, &b);
-        int r;
 
         do {
             s->next_out = luaL_prepbuffer(&b);
@@ -388,10 +388,9 @@ static int lzlib_compress(lua_State *L)
     int strategy = luaL_optint(L, 6, Z_DEFAULT_STRATEGY);
 
     int ret;
+    z_stream zs;
     luaL_Buffer b;
     luaL_buffinit(L, &b);
-
-    z_stream zs;
 
     zs.zalloc = Z_NULL;
     zs.zfree = Z_NULL;
@@ -450,10 +449,9 @@ static int lzlib_decompress(lua_State *L)
     int windowBits = luaL_optint(L, 2, 15);
 
     int ret;
+    z_stream zs;
     luaL_Buffer b;
     luaL_buffinit(L, &b);
-
-    z_stream zs;
 
     zs.zalloc = Z_NULL;
     zs.zfree = Z_NULL;
