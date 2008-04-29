@@ -23,7 +23,6 @@
 
 ************************************************************************/
 
-#include "dvipng.h"
 #ifdef HAVE_LIBGEN_H
 # include <libgen.h>
 #else
@@ -34,6 +33,9 @@
 #include <sys/mman.h>
 #endif
 #include <sys/stat.h>
+
+/* Include after mman.h, since on AIX mmap is a #define.  */
+#include "dvipng.h"
 
 static char *programname;
 

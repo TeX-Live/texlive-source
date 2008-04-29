@@ -1,4 +1,9 @@
+2008-04-29  Vladimir Volovich  <vvv@vsu.ru>
+
+	* misc.c: #include dvipng.h after sys/mman.h, for AIX.
+
 2008-04-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* configure.ac: respect library dependencies.
 
 2008-04-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
