@@ -19,6 +19,10 @@
 # endif
 #endif /* !O_BINARY */
 
+#if O_BINARY
+#define SET_BINARY(fd) _setmode((fd), O_BINARY)
+#endif
+
 #define LINELENGTH (72)
 #define BUFLENGTH (1000)
 
@@ -111,7 +115,7 @@ case '{' :
 case '}' :
 case '[' :
 case ']' :
-         specialout(c) ;
+         specialout((char) c) ;
          break ;
 case '<' :
 case '(' :

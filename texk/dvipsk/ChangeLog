@@ -1,3 +1,8 @@
+2008-04-30  Karl Berry  <karl@tug.org>
+
+	* squeeze.c (SET_BINARY) [O_BINARY]: conditionally #define.
+	Cast call to specialout.  (From Akira.)
+
 2008-04-29  Karl Berry  <karl@tug.org>
 
 	* Makefile.in (install-data): do not cd $(srcdir) in any rule,
