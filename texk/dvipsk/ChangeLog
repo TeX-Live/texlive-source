@@ -1,3 +1,8 @@
+2008-04-29  Karl Berry  <karl@tug.org>
+
+	* squeeze.c: avoid all old-sytem conditionals, linking with
+	kpathsea, etc.
+
 2008-04-28  Karl Berry  <karl@tug.org>
 
 	* dvips.h: id.

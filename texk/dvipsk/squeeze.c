@@ -6,30 +6,24 @@
  *   minimum.  We parse and then output it.
  */
 
-#ifdef KPATHSEA
-#include <kpathsea/config.h>
-#include <kpathsea/c-fopen.h>
-#include <c-auto.h>
-#else
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "dvips.h" /* The copyright notice in that file is included too! */
-#endif /* !KPATHSEA */
+#include <fcntl.h>
 
-/* debug.h redefines fopen to my_real_fopen, but it's still a FILE * */
-#ifdef fopen
-#undef fopen
-extern FILE *fopen ();
-#endif
+#ifndef O_BINARY
+# ifdef _O_BINARY
+#  define O_BINARY _O_BINARY
+# else
+#  define O_BINARY 0
+# endif
+#endif /* !O_BINARY */
 
 #define LINELENGTH (72)
 #define BUFLENGTH (1000)
-#ifdef putchar
-#undef putchar
-#endif
-#define putchar(a) (void)putc(a, out) ;
-FILE *in, *out ;
+
+static char buf[BUFLENGTH] ;
+static FILE *in, *out ;
 static int linepos = 0 ;
 static int lastspecial = 1 ;
 /*
@@ -37,7 +31,8 @@ static int lastspecial = 1 ;
  *   we simply put it out, since any special character terminates the
  *   preceding token.
  */
-void specialout P1C(char, c)
+void
+specialout (char c)
 {
    if (linepos + 1 > LINELENGTH) {
       putchar('\n') ;
@@ -47,7 +42,8 @@ void specialout P1C(char, c)
    linepos++ ;
    lastspecial = 1 ;
 }
-void strout P1C(char *, s)
+void
+strout (char *s)
 {
    if (linepos + strlen(s) > LINELENGTH) {
       putchar('\n') ;
@@ -58,7 +54,8 @@ void strout P1C(char *, s)
       putchar(*s++) ;
    lastspecial = 1 ;
 }
-void cmdout P1C(char *, s)
+void
+cmdout (char *s)
 {
    int l ;
 
@@ -78,8 +75,10 @@ void cmdout P1C(char *, s)
    linepos += l ;
    lastspecial = 0 ;
 }
-char buf[BUFLENGTH] ;
-int main P2C(int, argc, char **, argv)
+
+
+int
+main (int argc, char *argv[])
 {
    int c ;
    char *b ;
