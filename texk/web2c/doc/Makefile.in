@@ -50,8 +50,9 @@ install: install-exec install-data
 install-exec:
 install-data: web2c.info
 	$(SHELL) $(top_srcdir)/../mkinstalldirs $(infodir)
-	test -r ./web2c.info || cd $(srcdir) && for i in web2c.i*; do \
-	  $(INSTALL_DATA) $$i $(infodir)/$$i; done
+	test -r ./web2c.info \
+	  || $(INSTALL_DATA) $(srcdir)/web2c.i* $(infodir)/
+#
 	$(POST_INSTALL)
 	if $(SHELL) -c 'install-info --version' >/dev/null 2>&1; then \
 	  install-info --info-dir=$(infodir) $(infodir)/web2c.info; \

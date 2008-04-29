@@ -202,16 +202,17 @@ install-data: texmf.cnf kpathsea.info install-man
 	   || test ! -r $(web2cdir)/texmf.cnf; then \
 	  $(INSTALL_DATA) texmf.cnf $(web2cdir)/texmf.cnf; \
 	else true; fi
-	test -r ./kpathsea.info || cd $(srcdir) && for i in kpathsea.i*; do \
-	  $(INSTALL_DATA) $$i $(infodir)/$$i; done
+# Info files.
+	test -r ./kpathsea.info \
+	  || $(INSTALL_DATA) $(srcdir)/kpathsea.i* $(infodir)/
 # Should we install the headers?  They are not just system-dependent,
 # which is bad enough, but even compiler-dependent.
 	$(SHELL) $(top_srcdir)/../mkinstalldirs $(includedir)/kpathsea
 	for f in $(install_headers); do \
 	  $(INSTALL_DATA) $$f $(includedir)/kpathsea/; done
 	rm -f $(includedir)/kpathsea/acconfig.h
+# Post.
 	$(POST_INSTALL)
-	test -r $(infodir)/dir || $(INSTALL_DATA) $(top_srcdir)/../dir $(infodir)
 	if $(SHELL) -c 'install-info --version' >/dev/null 2>&1; then \
 	  install-info --info-dir=$(infodir) $(infodir)/kpathsea.info; \
 	else true; fi

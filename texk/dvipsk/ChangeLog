@@ -1,6 +1,9 @@
 2008-04-29  Karl Berry  <karl@tug.org>
 
-	* squeeze.c: avoid all old-sytem conditionals, linking with
+	* Makefile.in (install-data): do not cd $(srcdir) in any rule,
+	that fails when the install program is specified by a relative path.
+
+	* squeeze.c: avoid all old-system conditionals, linking with
 	kpathsea, etc.
 
 2008-04-28  Karl Berry  <karl@tug.org>

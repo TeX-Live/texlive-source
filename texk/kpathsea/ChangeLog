@@ -1,3 +1,8 @@
+2008-04-29  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (install-data): do not cd $(srcdir) in any rule,
+	that fails when the install program is specified by a relative path.
+
 2008-03-27  Karl Berry  <karl@tug.org>
 
 	* tex-make.c: start "running" on a new line, tweak other msgs.
