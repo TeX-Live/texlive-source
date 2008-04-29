@@ -104,8 +104,7 @@ install-data: $(program).info
 # PostScript prologues and encodings.
 	for h in $(prologues); do $(INSTALL_DATA) $$h $(psheaderdir)/base/$$h; done
 # Info files.
-	test -r ./$(program).info \
-	  || $(INSTALL_DATA) $(srcdir)/$(program).i* $(infodir)/
+	$(INSTALL_DATA) $(srcdir)/$(program).i* $(infodir)/
 # Man pages.
 	$(INSTALL_DATA) $(srcdir)/$(program).1 $(man1dir)/$(program).$(manext)
 	rm -f $(man1dir)/o$(program).$(manext)
