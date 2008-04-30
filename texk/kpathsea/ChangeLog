@@ -1,3 +1,18 @@
+2008-04-30  Karl Berry  <karl@tug.org>
+
+	* kpsewhich.c (read_command_line): leave two spaces before alt
+	suffixes, just so they can be distinguished.
+
+	* tex-file.c (ALT_TEX_SUFFIXES): define this (rather belatedly)
+	to check for .sty, .cls, etc.
+	Rename other *_SUFFIXES to ALT_*_SUFFIXES.
+	
+	* kpathsea.texi (File lookup): Document this.
+	* tex-file.c: (target_fontmaps, target_asis_name,
+	target_suffixed_names): new fns.
+	(kpse_find_file_generic): call them, respecting new cnf value
+	try_std_extension_first.
+
 2008-04-29  Karl Berry  <karl@tug.org>
 
 	* Makefile.in (install-data): do not cd $(srcdir) in any rule,

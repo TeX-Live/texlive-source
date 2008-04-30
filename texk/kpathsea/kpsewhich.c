@@ -404,6 +404,10 @@ read_command_line P2C(int, argc,  string *, argv)
           putchar (' ');
           fputs (*ext, stdout);
         }
+        if (kpse_format_info[f].alt_suffix) {
+          /* leave extra space between default and alt suffixes */
+          putchar (' ');
+        }
         for (ext = kpse_format_info[f].alt_suffix; ext && *ext; ext++) {
           putchar (' ');
           fputs (*ext, stdout);

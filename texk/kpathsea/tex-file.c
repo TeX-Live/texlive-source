@@ -543,23 +543,25 @@ kpse_init_format P1C(kpse_file_format_type, format)
       break;
     case kpse_pict_format:
       INIT_FORMAT ("graphic/figure", DEFAULT_TEXINPUTS, PICT_ENVS);
-#define PICT_SUFFIXES ".eps", ".epsi"
-      ALT_SUFFIXES (PICT_SUFFIXES);
+#define ALT_PICT_SUFFIXES ".eps", ".epsi"
+      ALT_SUFFIXES (ALT_PICT_SUFFIXES);
       FMT_INFO.binmode = true;
       break;
     case kpse_tex_format:
       init_maketex (format, "mktextex", NULL);
       INIT_FORMAT ("tex", DEFAULT_TEXINPUTS, TEX_ENVS);
       SUFFIXES (".tex");
-      /* We don't maintain a list of alternate TeX suffixes.  Such a list
-         could never be complete.  */
+      /* TeX files can have any obscure suffix in the world (or none at
+         all).  Only check for the most common ones.  */
+#define ALT_TEX_SUFFIXES ".sty", ".cls", ".fd", ".aux", ".bbl", ".def", ".clo", ".ldf"
+      ALT_SUFFIXES (ALT_TEX_SUFFIXES);
       break;
     case kpse_tex_ps_header_format:
       INIT_FORMAT ("PostScript header", DEFAULT_TEXPSHEADERS,
                    TEX_PS_HEADER_ENVS);
-/* Unfortunately, dvipsk uses this format for type1 fonts.  */
-#define TEXPSHEADER_SUFFIXES ".pro"
-      ALT_SUFFIXES (TEXPSHEADER_SUFFIXES);
+/* Unfortunately, at one time dvips used this format for type1 fonts.  */
+#define ALT_TEXPSHEADER_SUFFIXES ".pro"
+      ALT_SUFFIXES (ALT_TEXPSHEADER_SUFFIXES);
       FMT_INFO.binmode = true;
       break;
     case kpse_texdoc_format:
@@ -731,6 +733,79 @@ kpse_init_format P1C(kpse_file_format_type, format)
   return FMT_INFO.path;
 }
 
+/* These are subroutines called twice when finding file, to construct
+   the list of names to search for.  */
+   
+/* We don't even use fontmaps any more in practice, they were for things
+   like the lcircle10/lcirc10 name change many years ago, but let's keep
+   the support working nonetheless.  */
+
+static void
+target_fontmaps (const_string **target, unsigned *count, const_string name)
+{
+  string *mapped_names = kpse_fontmap_lookup (name);
+  
+  if (mapped_names != NULL) {
+    string mapped_name;
+    /* We leak mapped_names and its elements, some of the time.  */
+    while ((mapped_name = *mapped_names++) != NULL) {
+      (*target)[(*count)] = xstrdup (mapped_name);
+      (*count)++;
+      XRETALLOC ((*target), (*count)+1, const_string);
+    }
+  }
+}
+
+
+/* Possibly add NAME (and any fontmap equivalents) to the string list
+   in TARGET, depending on the various other parameters.  */
+
+static void
+target_asis_name (const_string **target, unsigned *count,
+    kpse_file_format_type format,
+    const_string name, boolean use_fontmaps, boolean has_potential_suffix,
+    string has_any_suffix)
+{
+  /* Look for the name we've been given, provided non-suffix
+     searches are allowed or the name already includes a suffix. */
+  if (has_potential_suffix || !FMT_INFO.suffix_search_only) {
+    (*target)[(*count)] = xstrdup (name);
+    (*count)++;
+    XRETALLOC ((*target), (*count)+1, const_string);
+
+    if (use_fontmaps) {
+      target_fontmaps (target, count, name);
+    }
+  }
+}
+
+
+/* Possibly add NAME (and any fontmap equivalents), with any suffixes
+   for this FORMAT appended, to TARGET -- if it doesn't already have one
+   of the potential suffixes for FORMAT.  */
+
+static void
+target_suffixed_names (const_string **target, unsigned *count,
+    kpse_file_format_type format,
+    const_string name, boolean use_fontmaps, boolean has_potential_suffix)
+{
+  const_string *ext;
+  if (has_potential_suffix || !FMT_INFO.suffix) {
+    return;
+  }
+  
+  for (ext = FMT_INFO.suffix; *ext; ext++) {
+    string name_with_suffix = concat (name, *ext);
+    (*target)[(*count)] = name_with_suffix;
+    (*count)++;
+    XRETALLOC ((*target), (*count)+1, const_string);
+    
+    if (use_fontmaps) {
+      target_fontmaps (target, count, name_with_suffix);
+    }    
+  }
+}
+
 /* Look up a file NAME of type FORMAT, and the given MUST_EXIST.  This
    initializes the path spec for FORMAT if it's the first lookup of that
    type.  Return the filename found, or NULL.  This is the most likely
@@ -753,13 +828,13 @@ string *
 kpse_find_file_generic P4C(const_string, name,  kpse_file_format_type, format,
                            boolean, must_exist,  boolean, all)
 {
-  const_string *ext;
-  string mapped_name;
-  string *mapped_names;
   const_string *target;
+  const_string *ext;
   unsigned count;
   unsigned name_len = 0;
-  boolean name_has_suffix_already = false;
+  boolean has_potential_suffix = false;
+  string has_any_suffix = NULL;
+  string try_std_extension_first = NULL;
   boolean use_fontmaps = (format == kpse_tfm_format
                           || format == kpse_gf_format
                           || format == kpse_pk_format
@@ -779,61 +854,58 @@ kpse_find_file_generic P4C(const_string, name,  kpse_file_format_type, format,
 
   /* Do variable and tilde expansion. */
   name = kpse_expand (name);
-  
+   
+  try_std_extension_first = kpse_var_value ("try_std_extension_first");
+  has_any_suffix = strrchr (name, '.');
+  if (has_any_suffix) {
+    string p = strchr (has_any_suffix, DIR_SEP);
+    if (p) {
+      has_any_suffix = NULL;
+    }
+  }
+
   /* Does NAME already end in a possible suffix?  */
   name_len = strlen (name);
   if (FMT_INFO.suffix) {
-    for (ext = FMT_INFO.suffix; !name_has_suffix_already && *ext; ext++) {
+    for (ext = FMT_INFO.suffix; !has_potential_suffix && *ext; ext++) {
       unsigned suffix_len = strlen (*ext);
-      name_has_suffix_already = (name_len >= suffix_len
+      has_potential_suffix = (name_len >= suffix_len
           && FILESTRCASEEQ (*ext, name + name_len - suffix_len));
     }
   }
-  if (!name_has_suffix_already && FMT_INFO.alt_suffix) {
-    for (ext = FMT_INFO.alt_suffix; !name_has_suffix_already && *ext; ext++) {
+  if (!has_potential_suffix && FMT_INFO.alt_suffix) {
+    for (ext = FMT_INFO.alt_suffix; !has_potential_suffix && *ext; ext++) {
       unsigned suffix_len = strlen (*ext);
-      name_has_suffix_already = (name_len >= suffix_len
+      has_potential_suffix = (name_len >= suffix_len
           && FILESTRCASEEQ (*ext, name + name_len - suffix_len));
     }
   }
 
-  /* Set up list of target names to search for. */
+  /* Set up list of target names to search for, the order depending on
+     try_std_extension_first.  */
   count = 0;
   target = XTALLOC1 (const_string);
-  /* Case #1: NAME doesn't have a suffix which is equal to a "standard"
-     suffix.  For example, foo.bar, but not foo.tex.  We look for the
-     name with the standard suffixes appended. */
-  if (!name_has_suffix_already && FMT_INFO.suffix) {
-    for (ext = FMT_INFO.suffix; *ext; ext++) {
-      string name_with_suffix = concat (name, *ext);
-      target[count++] = name_with_suffix;
-      XRETALLOC (target, count+1, const_string);
-      if (use_fontmaps
-          && (mapped_names = kpse_fontmap_lookup (name_with_suffix)) != NULL)
-      {
-        /* FIXME: we leak mapped_names and its elements, some of the time */
-        while ((mapped_name = *mapped_names++) != NULL) {
-          target[count++] = xstrdup (mapped_name);
-          XRETALLOC (target, count+1, const_string);
-        }
-      }
-    }
+
+  if (has_any_suffix
+      && (try_std_extension_first == NULL || *try_std_extension_first == 'f'
+          || *try_std_extension_first == '0')) {
+    target_asis_name (&target, &count, format, name, use_fontmaps,
+                           has_potential_suffix, has_any_suffix);
+    target_suffixed_names (&target, &count, format, name, use_fontmaps,
+                           has_potential_suffix);
+  } else {
+    target_suffixed_names (&target, &count, format, name, use_fontmaps,
+                           has_potential_suffix);
+    target_asis_name (&target, &count, format, name, use_fontmaps,
+                           has_potential_suffix, has_any_suffix );
   }
-  /* Case #2: Just look for the name we've been given, provided non-suffix
-     searches are allowed or the name already includes a suffix. */
-  if (name_has_suffix_already || !FMT_INFO.suffix_search_only) {
-    target[count++] = xstrdup (name);
-    XRETALLOC (target, count+1, const_string);
-    if (use_fontmaps && (mapped_names = kpse_fontmap_lookup (name)) != NULL) {
-      /* FIXME: we leak mapped_names and its elements, some of the time */
-      while ((mapped_name = *mapped_names++) != NULL) {
-        target[count++] = xstrdup (mapped_name);
-        XRETALLOC (target, count+1, const_string);
-      }
-    }
-  }
+
   /* Terminate list. */
   target[count] = NULL;
+
+  if (try_std_extension_first) {
+    free (try_std_extension_first);
+  }
 
   /* Search, trying to minimize disk-pounding.  */
   ret = kpse_path_search_list_generic (FMT_INFO.path, target, false, all);
@@ -845,11 +917,11 @@ kpse_find_file_generic P4C(const_string, name,  kpse_file_format_type, format,
     /* We look for a subset of the previous set of names, so the
        target array is large enough.  In particular, we don't pound
        the disk for alternate names from the fontmaps.  */
-    if (!name_has_suffix_already && FMT_INFO.suffix_search_only) {
+    if (!has_potential_suffix && FMT_INFO.suffix_search_only) {
       for (ext = FMT_INFO.suffix; *ext; ext++)
         target[count++] = concat (name, *ext);
     }
-    if (name_has_suffix_already || !FMT_INFO.suffix_search_only) {
+    if (has_potential_suffix || !FMT_INFO.suffix_search_only) {
       target[count++] = xstrdup (name);
     }
     target[count] = NULL;

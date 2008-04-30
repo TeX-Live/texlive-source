@@ -447,7 +447,38 @@ progname = unsetprogname
 engine = unsetengine
 
 
-%  Part 2: Non-path options.
+%  Part 2: Options.
+
+% If this is true, `tex a.b' will look first for a.b.tex (within each
+% path element), and then for a.b, i.e., we try standard extensions
+% first.  If this is false, we first look for a.b and then a.b.tex,
+% i.e., we try the name as-is first.
+% 
+% Both names are always tried; the difference is the order in which they
+% are tried.  The setting applies to all searches, not just .tex.
+% 
+% This setting only affects names being looked up which *already* have
+% an extension.  A name without an extension (e.g., `tex story') will
+% always have an extension added first.
+% 
+% The default is true, because we already avoid adding the standard
+% extension(s) in most common cases.  E.g., babel.sty will only look for
+% babel.sty, not babel.sty.tex, regardless of this setting.
+% 
+try_std_extension_first = t
+
+% Enable system commands via \write18{...}?  Obviously insecure, despite
+% being so useful.
+shell_escape = f
+
+% Allow TeX \openin, \openout, or \input on filenames starting with `.'
+% (e.g., .rhosts) or outside the current tree (e.g., /etc/passwd)?
+% a (any)        : any file can be opened.
+% r (restricted) : disallow opening "dotfiles".
+% p (paranoid)   : as `r' and disallow going to parent directories, and
+%                  restrict absolute paths to be under $TEXMFOUTPUT.
+openout_any = p
+openin_any = a
 
 % Write .log/.dvi/etc. files here, if the current directory is unwritable.
 % TEXMFOUTPUT = /tmp
@@ -462,18 +493,6 @@ MISSFONT_LOG = missfont.log
 % TEX_HUSH = checksum:lostchar:readable:special
 % To suppress nothing, use TEX_HUSH = none or do not set the variable at all.
 TEX_HUSH = none
-
-% Enable system commands via \write18{...}?
-shell_escape = f
-
-% Allow TeX \openin, \openout, or \input on filenames starting with `.'
-% (e.g., .rhosts) or outside the current tree (e.g., /etc/passwd)?
-% a (any)        : any file can be opened.
-% r (restricted) : disallow opening "dotfiles".
-% p (paranoid)   : as 'r' and disallow going to parent directories, and
-%                  restrict absolute paths to be under $TEXMFOUTPUT.
-openout_any = p
-openin_any = a
 
 % Allow TeX, MF, and MP to parse the first line of an input file for
 % the %&format construct.
@@ -606,7 +625,7 @@ gf_buf_size = 16384  % MF
 % 45 < error_line      < 255;
 % 30 < half_error_line < error_line - 15;
 % 60 <= max_print_line;
-% These apply to Metafont and MetaPost as well.
+% These apply to TeX, Metafont, and MetaPost.
 error_line = 79
 half_error_line = 50
 max_print_line = 79

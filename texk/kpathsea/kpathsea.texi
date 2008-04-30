@@ -3,34 +3,7 @@
 @settitle Kpathsea: A library for path searching
 
 @set version 3.5.6dev
-@set month-year March 2008
-
-@c Define new indices for commands, filenames, and options.
-@defcodeindex cm
-@defcodeindex fl
-@defcodeindex op
-
-@c Put everything in one index (arbitrarily chosen to be the concept index).
-@syncodeindex cm cp
-@syncodeindex fl cp
-@syncodeindex fn cp
-@syncodeindex ky cp
-@syncodeindex op cp
-@syncodeindex pg cp
-@syncodeindex tp cp
-@syncodeindex vr cp
-
-@dircategory TeX
-@direntry
-* Kpathsea: (kpathsea).                       File lookup along search paths.
-* kpsewhich: (kpathsea)Invoking kpsewhich.    TeX file searching.
-* mktexfmt: (kpathsea)mktex scripts.          Format (fmt/base/mem) generation.
-* mktexlsr: (kpathsea)Filename database.      Update ls-R.
-* mktexmf: (kpathsea)mktex scripts.           MF source generation.
-* mktexpk: (kpathsea)mktex scripts.           PK bitmap generation.
-* mktextex: (kpathsea)mktex scripts.          TeX source generation.
-* mktextfm: (kpathsea)mktex scripts.          TeX font metric generation.
-@end direntry
+@set month-year May 2008
 
 @copying
 This file documents the Kpathsea library for path searching.
@@ -60,9 +33,35 @@ except that this permission notice may be stated in a translation
 approved by the Free Software Foundation.
 @end copying
 
+@c Define new indices for commands, filenames, and options.
+@defcodeindex cm
+@defcodeindex fl
+@defcodeindex op
+
+@c Put everything in one index (arbitrarily chosen to be the concept index).
+@syncodeindex cm cp
+@syncodeindex fl cp
+@syncodeindex fn cp
+@syncodeindex ky cp
+@syncodeindex op cp
+@syncodeindex pg cp
+@syncodeindex tp cp
+@syncodeindex vr cp
+
+@dircategory TeX
+@direntry
+* Kpathsea: (kpathsea).                       File lookup along search paths.
+* kpsewhich: (kpathsea)Invoking kpsewhich.    TeX file searching.
+* mktexfmt: (kpathsea)mktex scripts.          Format (fmt/base/mem) generation.
+* mktexlsr: (kpathsea)Filename database.      Update ls-R.
+* mktexmf: (kpathsea)mktex scripts.           MF source generation.
+* mktexpk: (kpathsea)mktex scripts.           PK bitmap generation.
+* mktextex: (kpathsea)mktex scripts.          TeX source generation.
+* mktextfm: (kpathsea)mktex scripts.          TeX font metric generation.
+@end direntry
+
 
 @titlepage
-
 @title Kpathsea library
 @subtitle for version @value{version}
 @subtitle @value{month-year}
@@ -73,6 +72,9 @@ approved by the Free Software Foundation.
 @vskip 0pt plus 1filll
 @insertcopying
 @end titlepage
+
+
+@contents
 
 
 @ifnottex
@@ -330,10 +332,11 @@ top of the directory list.)
 @flindex cmr10.vf
 @findex \openin
 The ``file must exist'' condition comes into play with VF files and
-input files read by the @TeX{} @samp{\openin} command.  These files may
-not exist (consider @file{cmr10.vf}), and so it would be wrong to search
-the disk for them.  Therefore, if you fail to update @file{ls-R} when
-you install a new VF file, it will never be found.
+input files read by the @TeX{} @samp{\openin} command.  These files
+might very well not exist (consider @file{cmr10.vf}), and so it would
+be wrong to search the disk for them.  Therefore, if you fail to
+update @file{ls-R} when you install a new VF file, it will not be
+found.
 
 Each path element is checked in turn: first the database, then the disk.
 If a match is found, the search stops and the result is returned.  This
@@ -365,12 +368,12 @@ or @samp{../}, Kpathsea simply checks if that file exists.
 @cindex warnings, file access
 @flindex lost+found @r{directory}
 @vindex TEX_HUSH
-Ordinarily, if Kpathsea tries to access a file or directory that cannot
-be read, it gives a warning.  This is so you will be alerted to
-directories or files that accidentally lack read permission (for
-example, a @file{lost+found}).  If you prefer not to see these warnings,
-include the value @samp{readable} in the @code{TEX_HUSH} environment
-variable or config file value.
+Ordinarily, if Kpathsea tries to access a file or directory that
+cannot be read, it gives a warning.  This is so you will be alerted to
+directories or files that accidentally lack any read permission (for
+example, a @file{lost+found} directory).  If you prefer not to see
+these warnings, include the value @samp{readable} in the
+@code{TEX_HUSH} environment variable or config file value.
 
 This generic path searching algorithm is implemented in
 @file{kpathsea/pathsearch.c}.  It is employed by a higher-level
@@ -838,15 +841,12 @@ Subdirectory expansion is implemented in the source file
 @cindex externally-built filename database
 
 Kpathsea goes to some lengths to minimize disk accesses for searches
-(@pxref{Subdirectory expansion}).  Nevertheless, at installations with
-enough directories, searching each possible directory for a given file
-can take an excessively long time (depending on the speed of the disk,
-whether it's NFS-mounted, how patient you are, etc.).
+(@pxref{Subdirectory expansion}).  Nevertheless, in practice searching
+each possible directory in typical @TeX{} installations takes an
+excessively long time.
 
-In practice, a font tree containing the standard PostScript and PCL
-fonts is large enough for searching to be noticeably slow on typical
-systems these days.  Therefore, Kpathsea can use an externally-built
-``database'' file named @file{ls-R} that maps files to directories, thus
+Therefore, Kpathsea can use an externally-built @dfn{filename
+database} file named @file{ls-R} that maps files to directories, thus
 avoiding the need to exhaustively search the disk.
 
 A second database file @file{aliases} allows you to give additional
@@ -1843,26 +1843,40 @@ Here is the search strategy for a file @var{name}:
 @item
 If the file format defines default suffixes, and the suffix of
 @var{name} name is not already a known suffix for that format, try the
-name with each default appended, and use alternative names found in the
-fontmaps if necessary.  We postpone searching the disk as long as
-possible.  Example: given @samp{foo.sty}, look for @samp{foo.sty.tex}
-before @samp{foo.sty}.  This is unfortunate, but allows us to find
-@samp{foo.bar.tex} before @samp{foo.bar} if both exist and we were given
-@samp{foo.bar}.
+name with each default appended, and use alternative names found in
+the fontmaps if necessary.  Example: given @samp{foo.bar}, look for
+@samp{foo.bar.tex}.
 
 @item
 Search for @var{name}, and if necessary for alternative names found in
-the fontmaps.  Again we avoid searching the disk if possible.  Example:
-given @samp{foo}, we look for @samp{foo}.
+the fontmaps.  Example: given @samp{foo.bar}, we also look for
+@samp{foo.bar}.
 
 @item
 If the file format defines a program to invoke to create missing files,
 run it (@pxref{mktex scripts}).
 @end enumerate
 
+@cindex extensions, filename
+@cindex suffixes, filename
+@vindex try_std_extension_first
+The order in which we search for ``suffixed'' name (item@tie{}1) or
+the ``as-is'' name (item@tie{}2) is controlled by the
+@file{try_std_extension_first} configuration value.  The default set
+in @file{texmf.cnf} is true, since common suffixes are already
+recognized: @samp{babel.sty} will only look for @samp{babel.sty}, not
+@samp{babel.sty.tex}, regardless of this setting.
+
+When the suffix is unknown (e.g., @samp{foo.bar}), both names are
+always tried; the difference is the order in which they are tried.
+
+@file{try_std_extension_first} only affects names being looked up
+which *already* have an extension.  A name without an extension (e.g.,
+@samp{tex story}) will always have an extension added first.
+
 @flindex tex-file.c
 @findex kpse_find_file
-This is implemented in the routine @code{kpse_find_file} in
+This algorithm is implemented in the routine @code{kpse_find_file} in
 @file{kpathsea/tex-file.c}.  You can watch it in action with the
 debugging options (@pxref{Debugging}).
 
@@ -2366,7 +2380,5 @@ No initialization calls are needed.
 @unnumbered Index
 
 @printindex cp
-
-@contents
 
 @bye

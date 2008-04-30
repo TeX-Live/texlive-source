@@ -1,18 +1,7 @@
-INFO-DIR-SECTION TeX
-START-INFO-DIR-ENTRY
-This is kpathsea.info, produced by makeinfo version 4.11 from kpathsea.texi.
+This is kpathsea.info, produced by makeinfo version 4.12 from
+kpathsea.texi.
 
-* Kpathsea: (kpathsea).                       File lookup along search paths.
-* kpsewhich: (kpathsea)Invoking kpsewhich.    TeX file searching.
-* mktexfmt: (kpathsea)mktex scripts.          Format (fmt/base/mem) generation.
-* mktexlsr: (kpathsea)Filename database.      Update ls-R.
-* mktexmf: (kpathsea)mktex scripts.           MF source generation.
-* mktexpk: (kpathsea)mktex scripts.           PK bitmap generation.
-* mktextex: (kpathsea)mktex scripts.          TeX source generation.
-* mktextfm: (kpathsea)mktex scripts.          TeX font metric generation.
-END-INFO-DIR-ENTRY
-
-   This file documents the Kpathsea library for path searching.
+This file documents the Kpathsea library for path searching.
 
    Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004,
 2005, 2007, 2008 Karl Berry & Olaf Weber.
@@ -31,6 +20,18 @@ manual into another language, under the above conditions for modified
 versions, except that this permission notice may be stated in a
 translation approved by the Free Software Foundation.
 
+INFO-DIR-SECTION TeX
+START-INFO-DIR-ENTRY
+* Kpathsea: (kpathsea).                       File lookup along search paths.
+* kpsewhich: (kpathsea)Invoking kpsewhich.    TeX file searching.
+* mktexfmt: (kpathsea)mktex scripts.          Format (fmt/base/mem) generation.
+* mktexlsr: (kpathsea)Filename database.      Update ls-R.
+* mktexmf: (kpathsea)mktex scripts.           MF source generation.
+* mktexpk: (kpathsea)mktex scripts.           PK bitmap generation.
+* mktextex: (kpathsea)mktex scripts.          TeX source generation.
+* mktextfm: (kpathsea)mktex scripts.          TeX font metric generation.
+END-INFO-DIR-ENTRY
+
 
 File: kpathsea.info,  Node: Top,  Next: Introduction,  Up: (dir)
 
@@ -39,7 +40,7 @@ Kpathsea library
 
 This manual documents how to install and use the Kpathsea library for
 filename lookup.  It corresponds to version 3.5.6dev, released in
-March 2008.
+May 2008.
 
 * Menu:
 
@@ -60,7 +61,7 @@ File: kpathsea.info,  Node: Introduction,  Next: Installation,  Prev: Top,  Up: 
 **************
 
 This manual corresponds to version 3.5.6dev of the Kpathsea library,
-released in March 2008.
+released in May 2008.
 
    The library's fundamental purpose is to return a filename from a
 list of directories specified by the user, similar to what shells do
@@ -2074,10 +2075,10 @@ same directory, the directory in which a file is found is floated to the
 top of the directory list.)
 
    The "file must exist" condition comes into play with VF files and
-input files read by the TeX `\openin' command.  These files may not
-exist (consider `cmr10.vf'), and so it would be wrong to search the
-disk for them.  Therefore, if you fail to update `ls-R' when you
-install a new VF file, it will never be found.
+input files read by the TeX `\openin' command.  These files might very
+well not exist (consider `cmr10.vf'), and so it would be wrong to
+search the disk for them.  Therefore, if you fail to update `ls-R' when
+you install a new VF file, it will not be found.
 
    Each path element is checked in turn: first the database, then the
 disk.  If a match is found, the search stops and the result is
@@ -2100,10 +2101,10 @@ absolute or explicitly relative, i.e., starts with `/' or `./' or
 
    Ordinarily, if Kpathsea tries to access a file or directory that
 cannot be read, it gives a warning.  This is so you will be alerted to
-directories or files that accidentally lack read permission (for
-example, a `lost+found').  If you prefer not to see these warnings,
-include the value `readable' in the `TEX_HUSH' environment variable or
-config file value.
+directories or files that accidentally lack any read permission (for
+example, a `lost+found' directory).  If you prefer not to see these
+warnings, include the value `readable' in the `TEX_HUSH' environment
+variable or config file value.
 
    This generic path searching algorithm is implemented in
 `kpathsea/pathsearch.c'.  It is employed by a higher-level algorithm
@@ -2460,16 +2461,13 @@ File: kpathsea.info,  Node: Filename database,  Next: Invoking kpsewhich,  Prev:
 ==============================
 
 Kpathsea goes to some lengths to minimize disk accesses for searches
-(*note Subdirectory expansion::).  Nevertheless, at installations with
-enough directories, searching each possible directory for a given file
-can take an excessively long time (depending on the speed of the disk,
-whether it's NFS-mounted, how patient you are, etc.).
+(*note Subdirectory expansion::).  Nevertheless, in practice searching
+each possible directory in typical TeX installations takes an
+excessively long time.
 
-   In practice, a font tree containing the standard PostScript and PCL
-fonts is large enough for searching to be noticeably slow on typical
-systems these days.  Therefore, Kpathsea can use an externally-built
-"database" file named `ls-R' that maps files to directories, thus
-avoiding the need to exhaustively search the disk.
+   Therefore, Kpathsea can use an externally-built "filename database"
+file named `ls-R' that maps files to directories, thus avoiding the
+need to exhaustively search the disk.
 
    A second database file `aliases' allows you to give additional names
 to the files listed in `ls-R'.  This can be helpful to adapt to "8.3"
@@ -3171,21 +3169,31 @@ searches are the exception, as described in the next section).
    Here is the search strategy for a file NAME:
   1. If the file format defines default suffixes, and the suffix of
      NAME name is not already a known suffix for that format, try the
-     name with each default appended, and use alternative names found
-     in the fontmaps if necessary.  We postpone searching the disk as
-     long as possible.  Example: given `foo.sty', look for `foo.sty.tex'
-     before `foo.sty'.  This is unfortunate, but allows us to find
-     `foo.bar.tex' before `foo.bar' if both exist and we were given
-     `foo.bar'.
+     name with each default appended, and use alternative names found in
+     the fontmaps if necessary.  Example: given `foo.bar', look for
+     `foo.bar.tex'.
 
   2. Search for NAME, and if necessary for alternative names found in
-     the fontmaps.  Again we avoid searching the disk if possible.
-     Example: given `foo', we look for `foo'.
+     the fontmaps.  Example: given `foo.bar', we also look for
+     `foo.bar'.
 
   3. If the file format defines a program to invoke to create missing
      files, run it (*note mktex scripts::).
 
-   This is implemented in the routine `kpse_find_file' in
+   The order in which we search for "suffixed" name (item 1) or the
+"as-is" name (item 2) is controlled by the `try_std_extension_first'
+configuration value.  The default set in `texmf.cnf' is true, since
+common suffixes are already recognized: `babel.sty' will only look for
+`babel.sty', not `babel.sty.tex', regardless of this setting.
+
+   When the suffix is unknown (e.g., `foo.bar'), both names are always
+tried; the difference is the order in which they are tried.
+
+   `try_std_extension_first' only affects names being looked up which
+*already* have an extension.  A name without an extension (e.g., `tex
+story') will always have an extension added first.
+
+   This algorithm is implemented in the routine `kpse_find_file' in
 `kpathsea/tex-file.c'.  You can watch it in action with the debugging
 options (*note Debugging::).
 
@@ -3997,6 +4005,7 @@ Index
 * expansion, tilde:                      Tilde expansion.     (line   6)
 * expansion, variable:                   Variable expansion.  (line   6)
 * explicitly relative filenames:         Searching overview.  (line  52)
+* extensions, filename:                  File lookup.         (line  23)
 * externally-built filename database:    Filename database.   (line   6)
 * extra colons:                          Default expansion.   (line   6)
 * extraclean Make target:                Cleaning up.         (line  23)
@@ -4144,7 +4153,7 @@ Index
 * kpse_fallback_font:                    Fallback font.       (line  15)
 * kpse_find_*:                           Calling sequence.    (line  60)
 * kpse_find_file <1>:                    Calling sequence.    (line  60)
-* kpse_find_file:                        File lookup.         (line  26)
+* kpse_find_file:                        File lookup.         (line  36)
 * kpse_find_glyph_format:                Glyph lookup.        (line  26)
 * kpse_format_info:                      Calling sequence.    (line  45)
 * kpse_format_info_type:                 Debugging.           (line  61)
@@ -4474,6 +4483,7 @@ Index
 * striptypeface:                         mktex configuration. (line 105)
 * subdirectory searching:                Subdirectory expansion.
                                                               (line   6)
+* suffixes, filename:                    File lookup.         (line  23)
 * suggestions, making:                   Introduction.        (line  27)
 * Sun 2:                                 History.             (line  12)
 * Sun OpenWin patches:                   ShellWidgetClass.    (line  29)
@@ -4519,7 +4529,7 @@ Index
 * TeX support:                           TeX support.         (line   6)
 * TeX Users Group:                       Introduction.        (line  39)
 * tex-archive@math.utah.edu:             Mailing lists.       (line  25)
-* tex-file.c:                            File lookup.         (line  26)
+* tex-file.c:                            File lookup.         (line  36)
 * tex-file.h:                            Programming overview.
                                                               (line  16)
 * tex-glyph.c:                           Glyph lookup.        (line  26)
@@ -4601,6 +4611,7 @@ Index
 * trick for detecting leaf directories:  Subdirectory expansion.
                                                               (line  22)
 * trojan horse attack:                   Security.            (line  10)
+* try_std_extension_first:               File lookup.         (line  23)
 * TTFONTS:                               Supported file formats.
                                                               (line 181)
 * tug.org:                               unixtex.ftp.         (line   6)
@@ -4688,85 +4699,85 @@ Index
 
 
 Tag Table:
-Node: Top1555
-Node: Introduction2202
-Node: History4182
-Node: Installation8274
-Node: Simple installation9064
-Node: Custom installation12647
-Node: Disk space13821
-Node: Kpathsea application distributions14705
-Node: Changing search paths15820
-Node: Default path features17002
-Node: Default path generation19138
-Node: Running configure20581
-Node: configure shells21632
-Node: configure options22684
-Node: configure environment24191
-Node: configure scenarios25993
-Node: Shared library27579
-Node: Running make28593
-Node: Installing files30640
-Node: Cleaning up32587
-Node: Filename database generation33635
-Node: mktex scripts34202
-Node: mktex configuration35479
-Node: mktex script names41298
-Node: mktex script arguments42689
-Node: Installation testing43579
-Node: Security43943
-Node: TeX directory structure46510
-Node: unixtex.ftp50932
-Node: Electronic distribution52947
-Node: CD-ROM distribution55712
-Node: Other TeX packages56682
-Node: Reporting bugs57978
-Node: Bug checklist58718
-Node: Mailing lists62420
-Node: Debugging63779
-Node: Logging68851
-Node: Common problems70721
-Node: Unable to find files71552
-Node: Slow path searching73963
-Node: Unable to generate fonts75340
-Node: TeX or Metafont failing77849
-Node: Empty Makefiles79727
-Node: XtStrings80957
-Node: dlopen81793
-Node: ShellWidgetClass82611
-Node: Pointer combination warnings84243
-Node: Path searching84632
-Node: Searching overview85279
-Node: Path sources88651
-Node: Config files89722
-Node: Path expansion93367
-Node: Default expansion94316
-Node: Variable expansion96386
-Node: Tilde expansion97789
-Node: Brace expansion98769
-Node: KPSE_DOT expansion99874
-Node: Subdirectory expansion100387
-Node: Filename database102736
-Node: ls-R104050
-Node: Filename aliases106944
-Node: Database format108122
-Node: Invoking kpsewhich109135
-Node: Path searching options110012
-Node: Auxiliary tasks116661
-Node: Standard options118482
-Node: TeX support118802
-Node: Supported file formats120093
-Node: File lookup127241
-Node: Glyph lookup128532
-Node: Basic glyph lookup129659
-Node: Fontmap130538
-Node: Fallback font133155
-Node: Suppressing warnings134120
-Node: Programming135225
-Node: Programming overview135738
-Node: Calling sequence138014
-Node: Program-specific files143043
-Node: Programming with config files144081
-Node: Index145381
+Node: Top1552
+Node: Introduction2197
+Node: History4175
+Node: Installation8267
+Node: Simple installation9057
+Node: Custom installation12640
+Node: Disk space13814
+Node: Kpathsea application distributions14698
+Node: Changing search paths15813
+Node: Default path features16995
+Node: Default path generation19131
+Node: Running configure20574
+Node: configure shells21625
+Node: configure options22677
+Node: configure environment24184
+Node: configure scenarios25986
+Node: Shared library27572
+Node: Running make28586
+Node: Installing files30633
+Node: Cleaning up32580
+Node: Filename database generation33628
+Node: mktex scripts34195
+Node: mktex configuration35472
+Node: mktex script names41291
+Node: mktex script arguments42682
+Node: Installation testing43572
+Node: Security43936
+Node: TeX directory structure46503
+Node: unixtex.ftp50925
+Node: Electronic distribution52940
+Node: CD-ROM distribution55705
+Node: Other TeX packages56675
+Node: Reporting bugs57971
+Node: Bug checklist58711
+Node: Mailing lists62413
+Node: Debugging63772
+Node: Logging68844
+Node: Common problems70714
+Node: Unable to find files71545
+Node: Slow path searching73956
+Node: Unable to generate fonts75333
+Node: TeX or Metafont failing77842
+Node: Empty Makefiles79720
+Node: XtStrings80950
+Node: dlopen81786
+Node: ShellWidgetClass82604
+Node: Pointer combination warnings84236
+Node: Path searching84625
+Node: Searching overview85272
+Node: Path sources88668
+Node: Config files89739
+Node: Path expansion93384
+Node: Default expansion94333
+Node: Variable expansion96403
+Node: Tilde expansion97806
+Node: Brace expansion98786
+Node: KPSE_DOT expansion99891
+Node: Subdirectory expansion100404
+Node: Filename database102753
+Node: ls-R103807
+Node: Filename aliases106701
+Node: Database format107879
+Node: Invoking kpsewhich108892
+Node: Path searching options109769
+Node: Auxiliary tasks116418
+Node: Standard options118239
+Node: TeX support118559
+Node: Supported file formats119850
+Node: File lookup126998
+Node: Glyph lookup128725
+Node: Basic glyph lookup129852
+Node: Fontmap130731
+Node: Fallback font133348
+Node: Suppressing warnings134313
+Node: Programming135418
+Node: Programming overview135931
+Node: Calling sequence138207
+Node: Program-specific files143236
+Node: Programming with config files144274
+Node: Index145574
 
 End Tag Table
