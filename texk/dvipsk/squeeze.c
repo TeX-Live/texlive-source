@@ -95,11 +95,12 @@ main (int argc, char *argv[])
    }
    /* Binary output is safer (for those systems which care to know the
       difference) since PostScript can include non-printable characters.  */
-   if (O_BINARY && !isatty(fileno(in)))
+#if O_BINARY
+   if (!isatty(fileno(in)))
       SET_BINARY(fileno(in)) ;
-   if (O_BINARY && !isatty(fileno(out)))
+   if (!isatty(fileno(out)))
       SET_BINARY(fileno(out)) ;
-
+#endif
    (void)fprintf(out, "%%!\n") ;
    while (1) {
       c = getc(in) ;

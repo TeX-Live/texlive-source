@@ -1,6 +1,10 @@
+2008-05-01  Karl Berry  <karl@tug.org>
+
+	* squeeze.c [O_BINARY]: conditionalize calls to SET_BINARY.
+
 2008-04-30  Karl Berry  <karl@tug.org>
 
-	* squeeze.c (SET_BINARY) [O_BINARY]: conditionally #define.
+	* squeeze.c (SET_BINARY) [O_BINARY]: conditionalize #define.
 	Cast call to specialout.  (From Akira.)
 
 2008-04-29  Karl Berry  <karl@tug.org>
