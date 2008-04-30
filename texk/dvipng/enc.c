@@ -53,8 +53,8 @@ struct encoding* InitEncoding(char* encoding)
   }
   encp->name=(char*)encp+sizeof(struct encoding);
   strcpy(encp->name,encoding);
-  pos=fmmap.mmap;
-  max=fmmap.mmap+fmmap.size;
+  pos=fmmap.dp_mmap;
+  max=fmmap.dp_mmap+fmmap.size;
   buf=encp->name+strlen(encoding)+1;
 #define SKIPCOMMENT(x) if (*x=='%') while (x<max && *x!='\n') x++;
   while(pos<max && *pos!='/') {

@@ -42,8 +42,8 @@ struct subfont* ReadSubfont(char* sfdname, char *infix)
   }
   DEBUG_PRINT((DEBUG_FT|DEBUG_ENC),("\n  OPEN SUBFONT:\t'%s'", sfdfile));
   if (MmapFile(sfdfile,&fmmap)) return(NULL);
-  pos=fmmap.mmap;
-  max=fmmap.mmap+fmmap.size;
+  pos=fmmap.dp_mmap;
+  max=fmmap.dp_mmap+fmmap.size;
   while(pos<max && (*pos==' ' || *pos=='\n' || *pos=='\t')) pos++;
   while (pos<max && *pos=='#') {
     while(pos<max && *pos!='\n') pos++;

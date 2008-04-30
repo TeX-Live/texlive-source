@@ -214,7 +214,7 @@ struct filemmap {
 #else  /* MIKTEX */
   int fd;
 #endif	/* MIKTEX */
-  char* mmap;
+  char* dp_mmap;
   size_t size;
 };
 

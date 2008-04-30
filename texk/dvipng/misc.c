@@ -742,7 +742,7 @@ bool MmapFile (char *filename,struct filemmap *fmmap)
 #endif
 
   DEBUG_PRINT(DEBUG_DVI,("\n  OPEN FILE:\t'%s'", filename));
-  fmmap->mmap=NULL;
+  fmmap->dp_mmap=NULL;
 #ifndef MIKTEX
   if ((fmmap->fd = open(filename,O_RDONLY)) == -1) {
     Warning("cannot open file <%s>", filename);
@@ -751,19 +751,19 @@ bool MmapFile (char *filename,struct filemmap *fmmap)
   fstat(fmmap->fd,&stat);
   fmmap->size=stat.st_size;
 # ifdef HAVE_MMAP
-  fmmap->mmap = mmap(NULL,fmmap->size, PROT_READ, MAP_SHARED,fmmap->fd,0);
-  if (fmmap->mmap == (char*)-1) {
+  fmmap->dp_mmap = mmap(NULL,fmmap->size, PROT_READ, MAP_SHARED,fmmap->fd,0);
+  if (fmmap->dp_mmap == (char*)-1) {
     Warning("cannot mmap file <%s>",filename);
-    fmmap->mmap=NULL;
+    fmmap->dp_mmap=NULL;
     close(fmmap->fd);
     return(true);
   }
 # else /* HAVE_MMAP */
-  fmmap->mmap = malloc(fmmap->size);
-  if (read(fmmap->fd,fmmap->mmap,fmmap->size)<fmmap->size) {
+  fmmap->dp_mmap = malloc(fmmap->size);
+  if (read(fmmap->fd,fmmap->dp_mmap,fmmap->size)<fmmap->size) {
     Warning("too little data in <%s>",filename);
-    free(fmmap->mmap);
-    fmmap->mmap=NULL;
+    free(fmmap->dp_mmap);
+    fmmap->dp_mmap=NULL;
     close(fmmap->fd);
     return(true);
   }
@@ -783,8 +783,8 @@ bool MmapFile (char *filename,struct filemmap *fmmap)
     Warning("cannot CreateFileMapping() file <%s>", filename);
     return(true);
   }
-  fmmap->mmap = MapViewOfFile(fmmap->hMap, FILE_MAP_READ, 0, 0, 0);
-  if (fmmap->mmap == NULL) {
+  fmmap->dp_mmap = MapViewOfFile(fmmap->hMap, FILE_MAP_READ, 0, 0, 0);
+  if (fmmap->dp_mmap == NULL) {
     Warning("cannot MapViewOfFile() file <%s>", filename);
     CloseHandle (fmmap->hMap);
     CloseHandle (fmmap->hFile);
@@ -796,21 +796,21 @@ bool MmapFile (char *filename,struct filemmap *fmmap)
 
 void UnMmapFile(struct filemmap* fmmap)
 {
-  if (fmmap->mmap!=NULL) {
+  if (fmmap->dp_mmap!=NULL) {
 #ifndef MIKTEX
 # ifdef HAVE_MMAP
-    if (munmap(fmmap->mmap,fmmap->size))
-      Warning("cannot munmap file at 0x%X",fmmap->mmap);
+    if (munmap(fmmap->dp_mmap,fmmap->size))
+      Warning("cannot munmap file at 0x%X",fmmap->dp_mmap);
     if (close(fmmap->fd))
       Warning("cannot close file descriptor %d",fmmap->fd);
 # else /* HAVE_MMAP */
-    free(fmmap->mmap);
+    free(fmmap->dp_mmap);
 # endif /* HAVE_MMAP */
 #else  /* MIKTEX */
-    UnmapViewOfFile (fmmap->mmap);
+    UnmapViewOfFile (fmmap->dp_mmap);
     CloseHandle (fmmap->hMap);
     CloseHandle (fmmap->hFile);
 #endif	/* MIKTEX */
   }
-  fmmap->mmap=NULL;
+  fmmap->dp_mmap=NULL;
 }
