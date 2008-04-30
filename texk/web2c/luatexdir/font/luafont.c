@@ -1451,6 +1451,7 @@ add_glyph_to_all:
             try_couple_nodes(cur,next);
             flush_node(fwd);
           } else if ( type(fwd)==disc_node) {
+	    halfword next;
             /* MAGIC WARNING
              * A disc followed by a disc can have different kernings
              * depending on which path is choosen, and it is impossible to
@@ -1460,7 +1461,6 @@ add_glyph_to_all:
             for (i=0; i<m; i++) {
               halfword copy = copy_node(fwd);
               halfword tail = tlink(lists[i]);
-	      halfword next;
               if (tail!=null) {
                 halfword prev = alink(tail);
 				assert(alink(tail)!=null);
