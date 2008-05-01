@@ -97,8 +97,8 @@ undergoes any modifications, so that it will be clear which version of
 @^extensions to \MP@>
 @^system dependencies@>
 
-@d banner=='This is MetaPost, Version 1.003' {printed when \MP\ starts}
-@d metapost_version=="1.003"
+@d banner=='This is MetaPost, Version 1.004' {printed when \MP\ starts}
+@d metapost_version=="1.004"
 
 @ Different \PASCAL s have slightly different conventions, and the present
 @!@:PASCAL H}{\ph@>
@@ -16879,7 +16879,10 @@ end;
 @ 
 @d pict_color_type(#)==(link(dummy_loc(cur_exp))<>null) and
                        (has_color(link(dummy_loc(cur_exp)))) and
-                       (color_model(link(dummy_loc(cur_exp)))=#)
+                       ((color_model(link(dummy_loc(cur_exp)))=#)
+                         or
+                        (color_model(link(dummy_loc(cur_exp)))=uninitialized_model) and
+                        ((internal[default_color_model] div unity)=#))
 
 @<Additional cases of unary operators@>=
 x_part,y_part:if (cur_type=pair_type)or(cur_type=transform_type) then
@@ -16918,27 +16921,32 @@ make_exp_copy(p+sector_offset[c+x_part_sector-x_part]);
 recycle_value(temp_val);
 end;
 
-@ @<Declare unary action...@>=
+@ The manual states that asking for the \&{redpart} of a non-colored object
+is legal, so no error is given in that case.
+
+@<Declare unary action...@>=
 procedure bad_color_part(@!c:quarterword);
 var @!p:pointer; {the big node}
 begin
   p:=link(dummy_loc(cur_exp));
-  exp_err("Wrong picture color model: "); print_op(c);
+  if has_color(p) then begin 
+    exp_err("Wrong picture color model: "); print_op(c);
 @.Wrong picture color model...@>
-  if color_model(p)=grey_model then
-    print(" of grey object")
-  else if color_model(p)=cmyk_model then
-    print(" of cmyk object")
-  else if color_model(p)=rgb_model then
-    print(" of rgb object")
-  else if color_model(p)=no_model then
-    print(" of marking object")
-  else 
-    print(" of defaulted object");
-  help3("You can only ask for the redpart, greenpart, bluepart of a rgb object,")@/
-    ("the cyanpart, magentapart, yellowpart or blackpart of a cmyk object, ")@/
-    ("or the greypart of a grey object. No mixing and matching, please.");
-  error;
+    if color_model(p)=grey_model then
+      print(" of grey object")
+    else if color_model(p)=cmyk_model then
+      print(" of cmyk object")
+    else if color_model(p)=rgb_model then
+      print(" of rgb object")
+    else if color_model(p)=no_model then
+      print(" of marking object")
+    else 
+      print(" of defaulted object");
+    help3("You can only ask for the redpart, greenpart, bluepart of a rgb object,")@/
+      ("the cyanpart, magentapart, yellowpart or blackpart of a cmyk object, ")@/
+      ("or the greypart of a grey object. No mixing and matching, please.");
+    error;
+  end;
   if c=black_part then
     flush_cur_exp(unity)
   else
@@ -16969,8 +16977,8 @@ if p<>null then
       else goto not_found;
     cyan_part,magenta_part,yellow_part,black_part:
       if has_color(p) then
-        if color_model(p)=uninitialized_model then
-          flush_cur_exp(unity)
+        if (color_model(p)=uninitialized_model)and(c=black_part) then
+	      flush_cur_exp(unity)
         else
           flush_cur_exp(obj_color_part(p+c+(red_part-cyan_part)))
       else goto not_found;
