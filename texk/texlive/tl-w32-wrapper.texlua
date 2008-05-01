@@ -21,23 +21,23 @@ function fixwin(args_unix)
 end
 
 if string.find(arg[0], '/') then -- UNIX path
-   filename=select(1, string.gsub(arg[0], '.*/', ''))
+  progname = select(1, string.gsub(arg[1], '.*/', ''))
 elseif string.find(arg[0], '\\') then -- Windows path
-   filename=select(1, string.gsub(arg[0], '.*\\', ''))
+  progname = select(1, string.gsub(arg[1], '.*\\', ''))
 else -- no path
-   filename=arg[0]
+  progname = arg[1]
 end
-
-basename=select(1, string.gsub(filename, '\.texlua$', ''))
 
 sys=false
 
-if string.find(basename, '-sys$') then
-   basename=select(1, string.gsub(basename, '-sys$', ''))
+if string.find(progname, '-sys$') then
+   basename = select(1, string.gsub(progname, '-sys$', ''))
    sys=true
+else
+   basename = progname
 end
 
-kpse.set_program_name(filename, basename)
+kpse.set_program_name(progname..".bat", progname)
 TEXDIR=kpse.var_value('SELFAUTOPARENT')
 BINDIR=kpse.var_value('SELFAUTOLOC')
 
@@ -71,11 +71,11 @@ elseif kpse.find_file(basename..'.tlu', 'texmfscripts') then
    script=kpse.find_file(basename..'.tlu', 'texmfscripts')
    command={'texlua', script}
 else
-   io.stderr:write(filename..'.texlua: '..basename..
+   io.stderr:write(basename..'.bat: '..basename..
 		   ': No appropriate script found.\n') 
 end
 
-for i=1, #arg do
+for i=2, #arg do
     command[#command+1]=arg[i]
 end
 
