@@ -573,6 +573,8 @@ kpse_init_format P1C(kpse_file_format_type, format)
       break;
     case kpse_texsource_format:
       INIT_FORMAT ("TeX system sources", DEFAULT_TEXSOURCES, TEXSOURCE_ENVS);
+#define ALT_SOURCES_SUFFIXES ".dtx", ".ins"
+      ALT_SUFFIXES (ALT_SOURCES_SUFFIXES);
       break;
     case kpse_troff_font_format:
       INIT_FORMAT ("Troff fonts", DEFAULT_TRFONTS, TROFF_FONT_ENVS);

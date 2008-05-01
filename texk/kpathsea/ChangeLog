@@ -1,3 +1,8 @@
+2008-05-01  Karl Berry  <karl@tug.org>
+
+	* tex-file.c (ALT_SOURCES_SUFFIXES): new macro (.dtx, .ins).
+	(kpse_init_format) <kpse_texsource_format>: use it.
+
 2008-04-30  Karl Berry  <karl@tug.org>
 
 	* kpsewhich.c (read_command_line): leave two spaces before alt
