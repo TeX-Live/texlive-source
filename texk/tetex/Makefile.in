@@ -32,6 +32,7 @@ LINKED_SCRIPTS = \
   texmf-dist/scripts/mkjobtexmf/mkjobtexmf.pl \
   texmf-dist/scripts/perltex/perltex.pl \
   texmf-dist/scripts/pdfcrop/pdfcrop.pl \
+  texmf-dist/scripts/pst-pdf/ps4pdf \
   texmf-dist/scripts/texcount/TeXcount.pl \
   texmf-dist/scripts/thumbpdf/thumbpdf.pl \
   texmf-dist/scripts/ppower4/ppower4.texlua \
