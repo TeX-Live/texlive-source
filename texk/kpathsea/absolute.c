@@ -1,4 +1,4 @@
-/* absolute.c: Test if a filename is absolute or explicitly relative.
+/* absolute.c: test if a filename is absolute or explicitly relative.
 
    Copyright 1993, 1994, 1995, 2008 Karl Berry.
    Copyright 1997, 2002, 2005 Olaf Weber.

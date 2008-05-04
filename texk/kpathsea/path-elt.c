@@ -1,4 +1,4 @@
-/* path-elt.c: Return the stuff between colons.
+/* path-elt.c: return the stuff between colons.
 
    Copyright 1993, 1996 2008 Karl Berry.
    Copyright 1997, 2001, 2005 Olaf Weber.

@@ -1,4 +1,4 @@
-/* absolute.h: Declare absolute filename predicate.
+/* absolute.h: declare absolute filename predicate.
 
    Copyright 1993, 1994, 2008 Karl Berry.
    Copyright 1999, 2005 Olaf Weber.

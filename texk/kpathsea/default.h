@@ -1,4 +1,4 @@
-/* default.h: Declare default path expander.
+/* default.h: declare default path expander.
 
    Copyright 1993, 1994, 2008 Karl Berry.
 

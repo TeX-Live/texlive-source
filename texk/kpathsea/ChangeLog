@@ -1,3 +1,8 @@
+2008-05-04  Karl Berry  <karl@tug.org>
+
+	* finish changing license notices to use FSF url instead of
+	physical address, other minor consistency changes.
+
 2008-05-01  Karl Berry  <karl@tug.org>
 
 	* tex-file.c (ALT_SOURCES_SUFFIXES): new macro (.dtx, .ins).

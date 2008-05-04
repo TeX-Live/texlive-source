@@ -1,7 +1,7 @@
 /* strstr.c - search for a substring in string.
 
    Copyright 2008 Karl Berry.
-   Copyright (C) 1994, 1995 Free Software Foundation, Inc.
+   Copyright 1994, 1995 Free Software Foundation, Inc.
    This file was part of the GNU C Library.
    Modified for kpathsea by Karl Berry.
 

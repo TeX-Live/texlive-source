@@ -1,7 +1,7 @@
 /* c-std.h: the first header files.
 
    Copyright 1992, 1993, 1994, 1995, 1996, 1997, 2008 Karl Berry.
-   Copyright 1999, 2005 Olaf Weber
+   Copyright 1999, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public

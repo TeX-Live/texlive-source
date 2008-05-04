@@ -1,4 +1,4 @@
-/* elt-dirs.c: Translate a path element to its corresponding director{y,ies}.
+/* elt-dirs.C: Translate a path element to its corresponding director{y,ies}.
 
    Copyright 1993, 1994, 1995, 1996, 1997, 2008 Karl Berry.
    Copyright 1997, 1998, 1999, 2000, 2005 Olaf Weber.

@@ -1,4 +1,4 @@
-/* debug.h: Runtime tracing.
+/* debug.h: runtime tracing.
 
    Copyright 1993, 1994, 1995, 1996, 2008 Karl Berry.
    Copyright 1999, 2005 Olaf Weber.

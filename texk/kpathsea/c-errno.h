@@ -1,7 +1,7 @@
 /* c-errno.h: <errno.h> and the errno variable.
 
    Copyright 1992, 2008 Karl Berry.
-   Copyright 2005 Olaf Weber
+   Copyright 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public

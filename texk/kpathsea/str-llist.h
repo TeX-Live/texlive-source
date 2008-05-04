@@ -1,4 +1,4 @@
-/* str-llist.h: A linked list of strings,
+/* str-llist.h: a linked list of strings,
 
    It's pretty sad that both this and str-list exist; the reason is
    that C cannot express iterators very well, and I don't want to change

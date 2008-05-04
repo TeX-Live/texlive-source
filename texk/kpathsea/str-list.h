@@ -1,4 +1,4 @@
-/* str-list.h: Declarations for string lists.
+/* str-list.h: declarations for string lists.
 
    Copyright 1993, 1994, 2007, 2008 Karl Berry.
    Copyright 1999, 2005 Olaf Weber.

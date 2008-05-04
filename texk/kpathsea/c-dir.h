@@ -1,7 +1,7 @@
 /* c-dir.h: directory headers.
 
    Copyright 1992, 1993, 1994, 2008 Karl Berry.
-   Copyright 1998, 2005 Olaf Weber
+   Copyright 1998, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public

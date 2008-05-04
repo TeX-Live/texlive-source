@@ -1,4 +1,4 @@
-/* tilde.c: Expand user's home directories.
+/* tilde.c: expand user's home directories.
 
     Copyright 1997, 1998, 2005, Olaf Weber.
     Copyright 1993, 1995, 1996, 1997, 2008 Karl Berry.

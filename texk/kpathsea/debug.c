@@ -1,4 +1,4 @@
-/* debug.c: Help the user discover what's going on.
+/* debug.c: help the user discover what's going on.
 
    Copyright 1993, 1994, 2008 Karl Berry.
 

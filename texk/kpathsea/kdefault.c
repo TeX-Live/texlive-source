@@ -1,4 +1,4 @@
-/* kdefault.c: Expand extra colons.
+/* kdefault.c: expand extra colons.
    (This is not named default.c because then the OSF/1 make tries to
    make a program `default' from it, since we have a target `default';
    and OSF/1 make doesn't understand .PHONY.)

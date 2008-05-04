@@ -1,6 +1,6 @@
-/* str-llist.c: Implementation of a linked list of strings.
+/* str-llist.c: implementation of a linked list of strings.
 
-   Copyright (C) 1993, 2008 Karl Berry.
+   Copyright 1993, 2008 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public

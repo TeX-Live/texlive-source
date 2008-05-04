@@ -1,4 +1,4 @@
-/* readable.h: Is a file readable?
+/* readable.h: is a file readable?
 
    Copyright 1993, 2008 Karl Berry.
    Copyright 1999, 2005 Olaf Weber.

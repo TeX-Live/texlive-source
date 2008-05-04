@@ -1,4 +1,4 @@
-/* concatn.c: Concatenate an arbitrary number of strings.
+/* concatn.c: concatenate an arbitrary number of strings.
 
    Copyright 1999, 2005 Olaf Weber.
    Copyright 1993, 1995, 2008 Karl Berry.

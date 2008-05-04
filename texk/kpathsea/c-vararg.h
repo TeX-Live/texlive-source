@@ -1,4 +1,4 @@
-/* c-vararg.h: Top layer for stdarg and varargs.
+/* c-vararg.h: top layer for stdarg and varargs.
 
    Copyright 1993, 2008 Karl Berry.
    Copyright 1998, 2005 Olaf Weber.
