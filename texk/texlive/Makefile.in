@@ -1,3 +1,4 @@
+# $Id$
 # @configure_input@
 # Makefile for texlive's extra scripts.
 # Public domain.
@@ -9,6 +10,35 @@ kpse_include ../make/programs.mk
 LIVESCRIPTS = simpdftex \
               ebong getnonfreefonts giftopng \
               pdfthumb wordcount.sh
+
+# These scripts do not exist here in /source/ at all, the instances
+# in texmf are the masters (except when it is CTAN).
+LINKED_SCRIPTS = \
+  texmf/scripts/a2ping/a2ping.pl \
+  texmf/scripts/epstopdf/epstopdf.pl \
+  texmf/scripts/pkfix/pkfix.pl \
+  texmf/scripts/ps2eps/ps2eps.pl \
+  texmf/scripts/tetex/e2pall.pl \
+  texmf/scripts/tetex/texdoctk.pl \
+  texmf/scripts/texlive/tlmgr.tlu \
+  texmf/scripts/texlive/getnonfreefonts.pl \
+  texmf/scripts/texlive/tl-package-manager.pl \
+  texmf-dist/scripts/glossaries/makeglossaries \
+  texmf-dist/scripts/mkjobtexmf/mkjobtexmf.pl \
+  texmf-dist/scripts/perltex/perltex.pl \
+  texmf-dist/scripts/pdfcrop/pdfcrop.pl \
+  texmf-dist/scripts/pst-pdf/ps4pdf \
+  texmf-dist/scripts/texcount/TeXcount.pl \
+  texmf-dist/scripts/thumbpdf/thumbpdf.pl \
+  texmf-dist/scripts/ppower4/ppower4.texlua \
+  texmf-dist/scripts/ppower4/pdfthumb.texlua \
+  texmf-dist/scripts/vpe/vpe.pl
+
+LINKED_SYS_SCRIPTS = \
+  texmf/scripts/texlive/getnonfreefonts.pl
+
+# overridden in the recursive call below for the sys scripts.
+LINKSUFFIX =
 
 manpgs = getnonfreefonts getnonfreefonts-sys
 
@@ -23,7 +53,7 @@ install-data::
 	  $(INSTALL_DATA) $(srcdir)/$$p.man $(man1dir)/$$p.$(manext); \
 	done
 
-install-exec:
+install-exec: install-linked-scripts install-linked-sys-scripts
 	-$(SHELL) $(srcdir)/../mkinstalldirs $(scriptdir)
 	for s in $(LIVESCRIPTS); do \
 	  rm -f $(scriptdir)/$$s ; \
@@ -31,6 +61,36 @@ install-exec:
 	done
 	rm -f $(scriptdir)/getnonfreefonts-sys
 	ln -s getnonfreefonts $(scriptdir)/getnonfreefonts-sys
+
+# The idea here is to install the scripts themselves in texmf*/scripts,
+# and have bin/arch/foo be a symlink to, say,
+# ../../texmf/scripts/foo/foo.pl (for Perl).  That way we save a bit of
+# disk space, but more importantly omit duplication, and most
+# importantly, make it possible to invoke the same Perl script on
+# Windows (via a texlua wrapper).
+# 
+# The installation into texmf*/scripts is either done by hand; or via
+# ctan2tl.  The texlua wrapper for Windows is also done by hand, but
+# could/should also be done by ctan2tl.
+# 
+# By the way, $(scriptdir) here is the binary directory, e.g.,
+# bin/i386-linux, not the texmf*/scripts dir.
+# 
+install-linked-scripts:
+	-$(SHELL) $(srcdir)/../mkinstalldirs $(scriptdir)
+	# link to the basename, removing any extension, of the source.
+	# we downcase for the sake of TeXcount.pl -> texcount.
+	# LINKSUFFIX is for -sys, see next target.
+	for s in $(LINKED_SCRIPTS); do \
+	  target=$(scriptdir)/`basename $$s | sed 's,\.[^/]*$$,,' | tr A-Z a-z`; \
+	  target=$$target$(LINKSUFFIX); \
+	  rm -f $$target; \
+	  ln -s ../../$$s $$target; \
+	done
+
+install-linked-sys-scripts:
+	$(MAKE) LINKSUFFIX=-sys LINKED_SCRIPTS="$(LINKED_SYS_SCRIPTS)" \
+	  install-linked-scripts
 
 kpse_include ../make/clean.mk
 
@@ -40,5 +100,5 @@ config.status: $(srcdir)/configure
 Makefile: $(srcdir)/Makefile.in config.status
 	$(SHELL) config.status
 
+depend:
 check:
-
