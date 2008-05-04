@@ -2,7 +2,7 @@
 
 /* permstr.{cc,hh} -- permanent strings
  *
- * Copyright (c) 1998-2006 Eddie Kohler
+ * Copyright (c) 1998-2008 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -20,7 +20,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-
 
 static PermString::Initializer initializer;
 
@@ -125,7 +124,7 @@ PermString::initialize(const char* s, int length)
 	return;
     }
 
-    unsigned int hash;
+    unsigned hash;
     int l;
     for (hash = 0, l = length, mm = m; l; mm++, l--)
 	hash = (hash << 1) + scatter[*mm];
@@ -149,39 +148,9 @@ PermString::initialize(const char* s, int length)
     _rep = buck->data;
 }
 
-PermString::PermString(char c)
-{
-    unsigned char u = (unsigned char) c;
-    _rep = one_char_doodad[u].data;
-}
-
-
-
-bool
-operator==(PermString a, const char *b)
-{
-    if (!a || !b)
-	return !a && !b;
-    int l = strlen(b);
-    return a.length() == l && memcmp(a.c_str(), b, l) == 0;
-}
-
-
-char
-PermString::operator[](int e) const
-{
-    assert(e >= 0 && e <= length());
-    if (e >= 0 && e < length())
-	return c_str()[e];
-    else
-	return 0;
-}
-
-
 static int pspos;
 static int pscap = 64;
 static char *psc = (char *)malloc(pscap);
-
 
 static void
 append(const char *s, int len)
@@ -223,11 +192,11 @@ vpermprintf(const char *s, va_list val)
 	int iflag = -1;
 	while (1)
 	    switch (*++s) {
-	
+
 	      case '0':
 		/* zeroflag = 1; */
 		break;
-	
+
 	      case '1': case '2': case '3': case '4': case '5':
 	      case '6': case '7': case '8': case '9':
 		assert(iflag == -1 /* Too many decimal flags in permprintf */);
@@ -237,12 +206,12 @@ vpermprintf(const char *s, va_list val)
 		    s++;
 		}
 		break;
-	
+
 	      case '*':
 		assert(iflag == -1 /* iflag given */);
 		iflag = va_arg(val, int);
 		break;
-       
+
 	      case 's': {
 		  const char *x = va_arg(val, const char *);
 		  if (x) {
@@ -259,7 +228,7 @@ vpermprintf(const char *s, va_list val)
 		  append(&c, 1);
 		  goto pctdone;
 	      }
-       
+
 	      case 'p': {
 		  PermString::Capsule x = va_arg(val, PermString::Capsule);
 		  PermString px;
@@ -271,24 +240,24 @@ vpermprintf(const char *s, va_list val)
 		      append(px.c_str(), iflag);
 		  goto pctdone;
 	      }
-       
+
 	      case 'd': {
 		  // FIXME FIXME rewrite for sense
 		  int x = va_arg(val, int);
 		  if (pspos == pscap)
 		      extend(1);
-		  
+
 		  // FIXME -2^31
 		  unsigned int ux = x;
 		  if (x < 0) {
 		      psc[pspos++] = '-';
 		      ux = -x;
 		  }
-	 
+
 		  int numdigits = 0;
 		  for (unsigned digcountx = ux; digcountx > 9; digcountx /= 10)
 		      numdigits++;
-	 
+
 		  extend(numdigits + 1);
 		  int digit = numdigits;
 		  do {
@@ -297,10 +266,10 @@ vpermprintf(const char *s, va_list val)
 		      digit--;
 		  } while (ux);
 		  pspos += numdigits + 1;
-		  
+
 		  goto pctdone;
 	      }
-       
+
 	      case 'g': {
 		  // FIXME FIXME rewrite for sense
 		  double x = va_arg(val, double);
@@ -312,11 +281,11 @@ vpermprintf(const char *s, va_list val)
 		  pspos += len;
 		  goto pctdone;
 	      }
-       
+
 	      default:
 		assert(0 /* Bad % in permprintf */);
 		goto pctdone;
-	
+
 	    }
     
       pctdone:
@@ -326,9 +295,7 @@ vpermprintf(const char *s, va_list val)
     return PermString(psc, pspos);
 }
 
-
-PermString
-permprintf(const char *s, ...)
+PermString permprintf(const char *s, ...)
 {
     va_list val;
     va_start(val, s);
@@ -337,31 +304,16 @@ permprintf(const char *s, ...)
     return p;
 }
 
-
-PermString
-permcat(PermString p1, PermString p2)
+PermString permcat(PermString a, PermString b)
 {
-    unsigned l1 = p1.length();
-    unsigned l2 = p2.length();
-    char *s = new char[l1 + l2];
-    memcpy(s, p1.c_str(), l1);
-    memcpy(s + l1, p2.c_str(), l2);
-    PermString p(s, l1 + l2);
-    delete[] s;
-    return p;
-}
-
-PermString
-permcat(PermString p1, PermString p2, PermString p3)
-{
-    unsigned l1 = p1.length();
-    unsigned l2 = p2.length();
-    unsigned l3 = p3.length();
-    char *s = new char[l1 + l2 + l3];
-    memcpy(s, p1.c_str(), l1);
-    memcpy(s + l1, p2.c_str(), l2);
-    memcpy(s + l1 + l2, p3.c_str(), l3);
-    PermString p(s, l1 + l2 + l3);
+    if (!a || !b)
+	return a ? a : b;
+    unsigned al = a.length();
+    unsigned bl = b.length();
+    char *s = new char[al + bl];
+    memcpy(s, a.c_str(), al);
+    memcpy(s + al, b.c_str(), bl);
+    PermString p(s, al + bl);
     delete[] s;
     return p;
 }

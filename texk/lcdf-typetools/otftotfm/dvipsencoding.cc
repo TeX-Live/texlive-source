@@ -1,6 +1,6 @@
 /* dvipsencoding.{cc,hh} -- store a DVIPS encoding
  *
- * Copyright (c) 2003-2007 Eddie Kohler
+ * Copyright (c) 2003-2008 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -754,7 +754,23 @@ DvipsEncoding::make_metrics(Metrics &metrics, const FontInfo &finfo, Secondary *
 
 	// find named glyph, if any
 	Efont::OpenType::Glyph named_glyph = finfo.glyphid(chname);
-
+#if 0
+	// 2.May.2008: ff, fi, fl, ffi, and ffl might map to f_f, f_i, f_l,
+	// f_f_i, and f_f_l
+	if (!named_glyph && chname.length() > 0 && chname.length() <= 3
+	    && chname[0] == 'f') {
+	    if (chname.equals("ff", 2))
+		named_glyph = finfo.glyphid("f_f");
+	    else if (chname.equals("fi", 2))
+		named_glyph = finfo.glyphid("f_i");
+	    else if (chname.equals("fl", 2))
+		named_glyph = finfo.glyphid("f_l");
+	    else if (chname.equals("ffi", 2))
+		named_glyph = finfo.glyphid("f_f_i");
+	    else if (chname.equals("ffl", 2))
+		named_glyph = finfo.glyphid("f_f_l");
+	}
+#endif
 	// do not use a Unicode-mapped glyph if literal
 	if (literal)
 	    glyph = named_glyph;

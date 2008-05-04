@@ -1,6 +1,6 @@
 /* metrics.{cc,hh} -- an encoding during and after OpenType features
  *
- * Copyright (c) 2003-2007 Eddie Kohler
+ * Copyright (c) 2003-2008 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -1030,17 +1030,30 @@ Metrics::cut_encoding(int size)
 
 namespace {
 // preference-sorting extra characters
-enum { BASIC_LATIN_SCORE = 2, LATIN1_SUPPLEMENT_SCORE = 5,
-       LOW_16_SCORE = 6, OTHER_SCORE = 7, NOCHAR_SCORE = 100000,
-       CONTEXT_PENALTY = 4 };
+enum {
+    CONVENTIONAL_F_LIGATURE_SCORE = 1,
+    CONVENTIONAL_F_F_LIGATURE_SCORE = 2,
+    BASIC_LATIN_LOWER_SCORE = 3,
+    BASIC_LATIN_UPPER_SCORE = 4,
+    BASIC_LATIN_OTHER_SCORE = 5,
+    LATIN1_SUPPLEMENT_SCORE = 6,
+    LOW_16_SCORE = 7,
+    OTHER_SCORE = 8,
+    NOCHAR_SCORE = 100000,
+    CONTEXT_PENALTY = 4
+};
 
 static int
 unicode_score(uint32_t u)
 {
     if (u == 0)
 	return NOCHAR_SCORE;
+    else if (u >= 'a' && u <= 'z')
+	return BASIC_LATIN_LOWER_SCORE;
+    else if (u >= 'A' && u <= 'Z')
+	return BASIC_LATIN_UPPER_SCORE;
     else if (u < 0x0080)
-	return BASIC_LATIN_SCORE;
+	return BASIC_LATIN_OTHER_SCORE;
     else if (u < 0x0100)
 	return LATIN1_SUPPLEMENT_SCORE;
     else if (u < 0x8000)
@@ -1106,8 +1119,24 @@ Metrics::shrink_encoding(int size, const DvipsEncoding &dvipsenc, ErrorHandler *
 	changed = false;
 	for (Ligature3 *l = all_ligs.begin(); l != all_ligs.end(); l++) {
 	    int score = scores[l->in1] + scores[l->in2];
-	    if (score < scores[l->out])
+	    if (score < scores[l->out]) {
+		/* 2.May.2008: Prefer conventional f-ligatures. */
+		if (score == 2 * BASIC_LATIN_LOWER_SCORE
+		    && _encoding[l->in1].unicode == 'f'
+		    && (_encoding[l->in2].unicode == 'f'
+			|| _encoding[l->in2].unicode == 'i'
+			|| _encoding[l->in2].unicode == 'l'))
+		    score = CONVENTIONAL_F_LIGATURE_SCORE;
+		else if (score == CONVENTIONAL_F_LIGATURE_SCORE + BASIC_LATIN_LOWER_SCORE) {
+		    if (scores[l->in1] == CONVENTIONAL_F_LIGATURE_SCORE
+			&& (_encoding[l->in2].unicode == 'i'
+			    || _encoding[l->in2].unicode == 'l'))
+			score = CONVENTIONAL_F_F_LIGATURE_SCORE;
+		    else
+			score = 3 * BASIC_LATIN_LOWER_SCORE;
+		}
 		scores[l->out] = score;
+	    }
 	}
 
 	for (Code c = 0; c < _encoding.size(); c++)
@@ -1219,7 +1248,8 @@ Metrics::shrink_encoding(int size, const DvipsEncoding &dvipsenc, ErrorHandler *
 	errh->lwarning(" ", (unencoded.size() == 1 ? "not enough room in encoding, ignoring %d glyph" : "not enough room in encoding, ignoring %d glyphs"), unencoded.size());
 	errh->lmessage(" ", "(\
 This encoding doesn't have room for all the glyphs used by the\n\
-font, so I've ignored these:\n%s.)", sa.c_str());
+font, so these have been left out:\n%s.\n\
+To select specific glyphs, add them to the input encoding.)", sa.c_str());
     }
 
     /* Reencode changed slots. */
