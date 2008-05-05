@@ -21,7 +21,7 @@
 /* These variables are set by web2c and are used to record filenames for its
    filename -recorder option.  This way they can also be used for files
    opened by kpathsea, e.g., texmf.cnf */
-void (*kpse_record_input) (const_string);
-void (*kpse_record_output) (const_string);
+extern void (*kpse_record_input) (const_string);
+extern void (*kpse_record_output) (const_string);
 
 #endif /* not KPATHSEA_RECORDER_H */
