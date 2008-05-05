@@ -1,6 +1,7 @@
 2008-05-05  Karl Berry  <karl@tug.org>
 
 	* recorder.h: declare our fn variables extern as they should be.
+	* cnf.c: make the definitions here.
 
 2008-05-04  Karl Berry  <karl@tug.org>
 

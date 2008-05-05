@@ -31,6 +31,10 @@
 #include <kpathsea/tex-file.h>
 #include <kpathsea/variable.h>
 
+/* Declared in recorder.h, used in fontmap.c, web2c/lib/texmfmp.c.  */
+void (*kpse_record_input) (const_string);
+void (*kpse_record_output) (const_string);
+
 /* By using our own hash table, instead of the environment, we
    complicate variable expansion (because we have to look in two
    places), but we don't bang so much on the system.  DOS and System V
