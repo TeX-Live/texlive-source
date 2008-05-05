@@ -24,8 +24,7 @@ test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 progname=texconfig
 
 # the version string
-version=1203187848 # seconds since `00:00:00 1970-01-01 UTC'
-                   # date '+%s' (with GNU date)
+version=20080505.2038
 
 envVars="
   AFMFONTS BIBINPUTS BSTINPUTS CMAPFONTS CWEBINPUTS ENCFONTS GFFONTS
@@ -473,30 +472,6 @@ listDvipsPapers()
 }
 
 ###############################################################################
-# doGenerate(file args) - synthesize configuration FILE, passing ARGS
-# 
-doGenerate()
-{
-  if test -z "$1" || test "x$1" = xhelp; then
-    echo "Usage: $progname generate fmtutil [ARG]...
-       $progname generate language [ARG]...
-       $progname generate updmap [ARG]...
-
-Generate the given configuration file, by invoking the generate-FILE
-scripts found in texmf/scripts.  Any additional arguments, such as
--dest=/loc/ation, are passed to the script.  For more details, run
-$progname generate TYPE --help."
-    return
-  fi
-  file=$1; shift
-  script=`kpsewhich --format=texmfscripts generate-$file.pl`
-  test -n "$script" || abort "could not find script generate-$file.pl"
-  echo "$0: running $script..."
-  $script "$@"
-  echo "$0: $script done."  
-}
-
-###############################################################################
 # getFormatsForHyphen(void)
 #   list all formats which have customizable hyphenation
 #
@@ -588,7 +563,6 @@ Usage: $progname conf                  (show configuration information)
        $progname font ro
        $progname font rw
        $progname formats               (edit fmtutil.cnf)
-       $progname generate [FILE]       (synthesize configuration FILE)
        $progname help                  (or --help; show this help)
        $progname hyphen FORMAT         (edit hyphenation config for FORMAT)
        $progname init [FORMAT]...      (rebuild FORMATs, or all formats
@@ -605,7 +579,6 @@ Get more help with:
        $progname dvipdfm
        $progname dvips
        $progname font
-       $progname generate
        $progname hyphen
        $progname mode
        $progname paper
@@ -1049,11 +1022,6 @@ For more information about these \`features', consult the teTeX manual
         done
         texlinks --multiplatform || rc=1
       fi
-      ;;
-
-    generate)
-      shift  # omit the `generate'
-      doGenerate "$@"
       ;;
 
     help|--help|-h)

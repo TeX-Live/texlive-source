@@ -1,3 +1,7 @@
+2008-05-05  Karl Berry  <karl@tug.org>
+
+	* texconfig (generate): remove this, now done in tlmgr.
+
 2008-05-04  Karl Berry  <karl@tug.org>
 
 	* Makefile.in (LINKED_SCRIPTS): add ps4pdf.
