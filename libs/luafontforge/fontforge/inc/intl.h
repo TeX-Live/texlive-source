@@ -32,7 +32,7 @@
 # define P_(str1,str_non1,n)	((n)==1?str1:str_non1)
 # define U_(str)		(str)
 
-#ifndef __sun__
+#if ! defined(__sun__) && ! defined(__sun)
 # define bindtextdomain(domain,dir)
 # define bind_textdomain_codeset(domain,enc)
 # define textdomain(domain)
