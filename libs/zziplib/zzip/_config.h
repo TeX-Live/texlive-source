@@ -57,9 +57,10 @@
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 /* #undef ZZIP_HAVE_NDIR_H */
 
-#ifdef __sun__
+#if defined __sun__ || defined __sun
 /* Define to 1 if you have the <sys/int_types.h> header file. */
 #define ZZIP_HAVE_SYS_INT_TYPES_H 1
+#elif defined(_AIX)
 #else
 /* Define to 1 if you have the <stdint.h> header file. */
 #define ZZIP_HAVE_STDINT_H 1 

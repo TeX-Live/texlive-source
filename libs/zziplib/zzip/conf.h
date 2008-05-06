@@ -64,6 +64,9 @@
 #define _zzip_const const
 #endif
 #endif
+#ifdef _AIX
+#define _zzip_inline __inline
+#endif
 #ifndef _zzip_inline
 #ifdef   ZZIP_inline
 #define _zzip_inline ZZIP_inline

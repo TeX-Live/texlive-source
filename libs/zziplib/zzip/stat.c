@@ -20,6 +20,9 @@
 #include <zzip/lib.h>                                   /* exported...*/
 #include <zzip/file.h>
 #include <string.h>
+#ifdef ZZIP_HAVE_STRINGS_H
+#include <strings.h>
+#endif
 #include <sys/stat.h>
 
 #define ZZIP_USE_INTERNAL

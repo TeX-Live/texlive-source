@@ -15,6 +15,9 @@
 #include <zzip/file.h>
 
 #include <string.h>
+#ifdef ZZIP_HAVE_STRINGS_H
+#include <strings.h>
+#endif
 #include <sys/stat.h>
 #include <errno.h>
 #include <stdlib.h>
