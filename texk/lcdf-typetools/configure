@@ -2094,7 +2094,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE=lcdf-typetools
- VERSION=2.68
+ VERSION=2.69
 
 
 cat >>confdefs.h <<_ACEOF

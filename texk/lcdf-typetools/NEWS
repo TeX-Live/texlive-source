@@ -1,5 +1,10 @@
 LCDF Typetools NEWS
 
+Version 2.69   5.May.2008
+
+* Mini portability fix for problem reported by Vladimir Volovich.
+
+
 Version 2.68   2.May.2008
 
 * otftotfm: Tweak the ligature sorting algorithm.  Prefer lowercase
