@@ -65,6 +65,9 @@ To rerun dvipdfmx:
 
 
 Build information:
+  i386-linux: Debian sarge, gcc 3.3.5, libc 2.3.2, Linux 2.6.9-67.0.4.ELsmp
+      chroot /home/texlive/sarge && cd /tmp/source && Build
+    
   i386-darwin: i686-apple-darwin8.1.0 built by Gerben Wierda, from
     http://bloch.ling.yale.edu/i-packages/experimental/tex.ii2/tex.30.tar.bz2
 

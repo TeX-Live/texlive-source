@@ -46,7 +46,10 @@ cd $TL_WORKDIR || exit 1
 : ${TL_CONFIGURE=../configure}
 
 # allow override of xdvi toolkit, default to standard xaw.
-: ${TL_XDVI_TOOLKIT=--with-xdvi-x-toolkit=xaw}
+: ${TL_CONF_XDVI_TOOLKIT=--with-xdvi-x-toolkit=xaw}
+
+# avoid xindy by default, it requires clisp (see utils/README).
+: ${TL_CONF_XINDY=--without-xindy}
 
 # allow adding other configure args.
 : ${TL_CONFIGURE_ARGS=}
@@ -73,7 +76,8 @@ export GNUMAKE
   eval $TL_BUILD_ENV time $TL_CONFIGURE \
         --prefix=$TL_INSTALL_DEST \
         --datadir=$TL_INSTALL_DEST \
-        $TL_XDVI_TOOLKIT \
+        $TL_CONF_XDVI_TOOLKIT \
+        $TL_CONF_XINDY \
         $TL_CONFIGURE_ARGS \
         "$@" \
   && eval $TL_BUILD_ENV time $TL_MAKE $TL_TARGET
