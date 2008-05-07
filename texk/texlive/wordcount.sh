@@ -1,4 +1,4 @@
-#! /usr/bin/sh
+#!/bin/sh
 # wordcount.sh 1.2 Copyright 2000/02/21 Michael John Downes
 # This script has no restrictions on its use, distribution, or sale.
 #
