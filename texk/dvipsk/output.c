@@ -122,6 +122,8 @@ copyfile_general P2C(char *, s, struct header_list *, cur_header)
    unsigned long dosepsbegin, dosepsend = 0;
    int removingBytes = 0 ;
    char *scanForEnd = 0 ;
+   int scanningFont = 0;
+
    /* end DOS EPS code */
 #ifdef VMCMS
    register char *lastdirsep ;
@@ -349,13 +351,32 @@ msdosdone:
                   *dscLinePointer = 0 ; /* make sure we terminate!
                                          * might be a new empty line! */
                   if (strncmp(possibleDSCLine, "%%BeginBinary:", 14) == 0 ||
-                      strncmp(possibleDSCLine, "%%BeginData:", 12) == 0) {
+                      strncmp(possibleDSCLine, "%%BeginData:", 12) == 0 ||
+                      strncmp(possibleDSCLine, "%%BeginFont:", 12) == 0) {
                      integer size = 0 ;
                      char *p = possibleDSCLine ;
                      *dscLinePointer = 0 ;
                      *dscLineEnd = 0 ;
                      if (scanForEnd == 0 && removecomments)
                         (void)fputs(possibleDSCLine, bitfile) ;
+
+                     if (strncmp(possibleDSCLine, "%%BeginFont:", 12) == 0) {
+
+                       /* Theoretically, we could wait until we see
+                          the "currentfile eexec" and possibly even
+                          check that the following data really looks
+                          like binary before we begin verbatim
+                          copying, but that would complicate the code
+                          beyond our present needs.  If we were going
+                          to do that much work, this entire chunk of
+                          code should probably be
+                          rewritten. [dmj@ams.org, 2007/08/20] */ 
+
+                       scanForEnd = "%%EndFont";
+                       scanningFont = 1;
+                     } else {
+                       scanningFont = 0;
+
                      scanForEnd = 0 ;
                      while (*p != ':')
                         p++ ;
@@ -402,6 +423,7 @@ msdosdone:
                            scanForEnd = "%%EndBinary" ;
                         else
                            scanForEnd = "%%EndData" ;
+                     }
                      }
                      if (scanForEnd == 0) {
                         if (strncmp(p, "lines", 5) != 0 &&
@@ -539,6 +561,7 @@ msdosdone:
                   } else if (scanForEnd && strncmp(possibleDSCLine, scanForEnd,
                                                    strlen(scanForEnd))==0) {
                      scanForEnd = 0 ;
+                     scanningFont = 0;
                   }
                   dscLinePointer = possibleDSCLine ;
                } else if (dscLinePointer < dscLineEnd) {
@@ -555,12 +578,12 @@ msdosdone:
                   }
                }
 #ifdef VMCMS
-               if (c != 0x37 ) {
+               if (c != 0x37  || scanningFont) {
 #else
 #ifdef MVSXA
-               if (c != 0x37 ) {
+               if (c != 0x37  || scanningFont) {
 #else
-               if (c != 4) {
+               if (c != 4 || scanningFont) {
 #endif
 #endif
                   if (!removingBytes)
@@ -575,7 +598,7 @@ msdosdone:
                dosepsend-- ;
                if (c == EOF)
                   break ;
-               else if (c == '\r') {
+               else if (c == '\r' && ! scanningFont) {
 		  c = getc(f);
 		  if (c == '\n') { /* DOS-style text file? */
 		     if (!removingBytes) (void)putc('\r', bitfile);
