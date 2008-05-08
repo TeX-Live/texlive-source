@@ -289,7 +289,7 @@ known as `\eTeX'.
 @#
 @d pdftex_version==140 { \.{\\pdftexversion} }
 @d pdftex_revision=="8" { \.{\\pdftexrevision} }
-@d pdftex_version_string=='-1.40.8-alpha-20080323' {current \pdfTeX\ version}
+@d pdftex_version_string=='-1.40.8-beta-20080506' {current \pdfTeX\ version}
 @#
 @d pdfeTeX_banner=='This is pdfeTeX, Version 3.1415926',pdftex_version_string,eTeX_version_string
    {printed when \pdfeTeX\ starts}
@@ -11181,12 +11181,15 @@ pdf_insert_ht_code: begin
     print("pt");
 end;
 pdf_ximage_bbox_code: begin
-    case j of
-    1: print_scaled(epdf_orig_x(i));
-    2: print_scaled(epdf_orig_y(i));
-    3: print_scaled(epdf_orig_x(i) + image_width(i));
-    4: print_scaled(epdf_orig_y(i) + image_height(i));
-    endcases;
+    if is_pdf_image(i) then begin
+        case j of
+        1: print_scaled(epdf_orig_x(i));
+        2: print_scaled(epdf_orig_y(i));
+        3: print_scaled(epdf_orig_x(i) + image_width(i));
+        4: print_scaled(epdf_orig_y(i) + image_height(i));
+        endcases;
+    end else
+        print_scaled(0);
     print("pt");
 end;
 job_name_code: print(job_name);
@@ -35846,7 +35849,7 @@ begin
                                    image_width(image)));
         pdf_out(" ");
         pdf_print_bp(pdf_y(cur_v) -
-                     ext_xn_over_d(pdf_height(p), epdf_orig_y(image),
+                     ext_xn_over_d(pdf_height(p) + pdf_depth(p), epdf_orig_y(image),
                                    image_height(image)));
     end;
     pdf_print_ln(" cm");

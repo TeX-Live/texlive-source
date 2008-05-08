@@ -1,5 +1,5 @@
 /***********************************************************************
-Copyright (c) 2002-2007 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 2002-2008 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -75,11 +75,15 @@ object exists, reference it. Else create fresh one.
 
 09 Dec. 2002: JBIG2 seg. page numbers > 0 are now set to 1, see PDF Ref.
 
-$Id$
 ***********************************************************************/
 
 #include "writejbig2.h"
 #undef DEBUG
+
+/**********************************************************************/
+
+static const char _svn_version[] =
+    "$Id$ $URL: http://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/writejbig2.c $";
 
 /**********************************************************************/
 
@@ -292,7 +296,7 @@ void readfilehdr(FILEINFO * fip)
     fip->sequentialaccess = (fip->filehdrflags & 0x01) ? true : false;
     if (fip->sequentialaccess) {        /* Annex D.1 vs. Annex D.2 */
         xfseek(fip->file, 0, SEEK_END, fip->filename);
-        fip->filesize = xftell(fip->file, fip->filename);
+        fip->filesize = (long) xftello(fip->file, fip->filename);
         xfseek(fip->file, 9, SEEK_SET, fip->filename);
     }
     /* Annex D.4.3 Number of pages */
@@ -363,7 +367,7 @@ boolean readseghdr(FILEINFO * fip, SEGINFO * sip)
         sip->segpage = ygetc(fip->file);
     /* 7.2.7 Segment data length */
     sip->segdatalen = read4bytes(fip->file);
-    sip->hdrend = xftell(fip->file, fip->filename);
+    sip->hdrend = (long) xftello(fip->file, fip->filename);
     /* ---- at end of segment header ---- */
     return true;
 }
@@ -583,7 +587,7 @@ void rd_jbig2_info(FILEINFO * fip)
         sip->dataend = sip->datastart + sip->segdatalen;
         if (!fip->sequentialaccess
             && (sip->pageinfoflag || sip->endofstripeflag))
-            xfseek(fip->file, sip->datastart, SEEK_SET, fip->filename);
+            xfseeko(fip->file, (off_t) sip->datastart, SEEK_SET, fip->filename);
         seekdist = sip->segdatalen;
         /* 7.4.8 Page information segment syntax */
         if (sip->pageinfoflag) {
@@ -603,11 +607,11 @@ void rd_jbig2_info(FILEINFO * fip)
         }
         if (!fip->sequentialaccess
             && (sip->pageinfoflag || sip->endofstripeflag))
-            xfseek(fip->file, sip->hdrend, SEEK_SET, fip->filename);
+            xfseeko(fip->file, (off_t) sip->hdrend, SEEK_SET, fip->filename);
         if (!fip->sequentialaccess)
             streampos += sip->segdatalen;
         if (fip->sequentialaccess)
-            xfseek(fip->file, seekdist, SEEK_CUR, fip->filename);
+            xfseeko(fip->file, (off_t) seekdist, SEEK_CUR, fip->filename);
         if (sip->endofpageflag && currentpage && (pip->stripinginfo >> 15))
             pip->height = pip->stripedheight;
     }
@@ -656,10 +660,10 @@ void wr_jbig2(FILEINFO * fip, unsigned long page)
     for (slip = pip->segments.first; slip != NULL; slip = slip->next) { /* loop over page segments */
         sip = slip->d;
         if (sip->isrefered || page > 0) {
-            xfseek(fip->file, sip->hdrstart, SEEK_SET, fip->filename);
+            xfseeko(fip->file, (off_t) sip->hdrstart, SEEK_SET, fip->filename);
             /* mark refered-to page 0 segments, change segpages > 1 to 1 */
             writeseghdr(fip, sip);
-            xfseek(fip->file, sip->datastart, SEEK_SET, fip->filename);
+            xfseeko(fip->file, (off_t) sip->datastart, SEEK_SET, fip->filename);
             for (i = sip->datastart; i < sip->dataend; i++)
                 pdfout(ygetc(fip->file));
         }
@@ -704,6 +708,7 @@ void read_jbig2_info(integer img)
     if (pip == NULL)
         pdftex_fail("read_jbig2_info(): page %d not found in JBIG2 image file",
                     (int) jbig2_ptr(img)->selected_page);
+    img_pages(img) = fip->numofpages;
     img_width(img) = pip->width;
     img_height(img) = pip->height;
     img_xres(img) = (int) (pip->xres * 0.0254 + 0.5);

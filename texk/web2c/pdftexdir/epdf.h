@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 1996-2008 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -65,8 +65,8 @@ extern "C" {
     extern integer pdfboxspectrim;
     extern integer pdfboxspecart;
 
-    extern integer pdfstreamlength;
-    extern integer pdfptr;
+    extern longinteger pdfstreamlength;
+    extern longinteger pdfptr;
     extern integer poolptr;
     typedef unsigned char eightbits;
     extern eightbits *pdfbuf;

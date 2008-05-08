@@ -16,14 +16,15 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along
 with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
-$Id$
 */
 
 #include "ptexlib.h"
 #include <kpathsea/c-vararg.h>
 #include <kpathsea/c-proto.h>
 #include <string.h>
+
+static const char _svn_version[] =
+    "$Id$ $URL: http://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/writet1.c $";
 
 #define t1_log(s)        tex_printf("%s",s)
 #define get_length1()    t1_length1 = t1_offset() - t1_save_offset

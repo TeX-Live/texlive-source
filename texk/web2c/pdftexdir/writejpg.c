@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 1996-2008 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -16,12 +16,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along
 with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
-$Id$
 */
 
 #include "ptexlib.h"
 #include "image.h"
+
+static const char _svn_version[] =
+    "$Id$ $URL: http://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/writejpg.c $";
 
 #define JPG_GRAY  1             /* Gray color space, use /DeviceGray  */
 #define JPG_RGB   3             /* RGB color space, use /DeviceRGB    */
@@ -106,6 +107,7 @@ void read_jpg_info(integer img)
     unsigned char jpg_id[] = "JFIF";
     img_xres(img) = img_yres(img) = 0;
     jpg_ptr(img)->file = xfopen(img_name(img), FOPEN_RBIN_MODE);
+    /* no LFS needed, as JPEG is limited to <4GiB */
     xfseek(jpg_ptr(img)->file, 0, SEEK_END, cur_file_name);
     jpg_ptr(img)->length = xftell(jpg_ptr(img)->file, cur_file_name);
     xfseek(jpg_ptr(img)->file, 0, SEEK_SET, cur_file_name);

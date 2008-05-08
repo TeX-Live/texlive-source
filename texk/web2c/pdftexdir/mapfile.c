@@ -1,5 +1,5 @@
-/*
-Copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
+/* mapfile.c: handling of map files/lines
+Copyright (c) 1996-2008 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -16,8 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along
 with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
-$Id$
 */
 
 #include <math.h>
@@ -25,6 +23,9 @@ $Id$
 #include <kpathsea/c-auto.h>
 #include <kpathsea/c-memstr.h>
 #include <string.h>
+
+static const char _svn_version[] =
+    "$Id$ $URL: http://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/mapfile.c $";
 
 #define FM_BUF_SIZE     1024
 
@@ -371,11 +372,12 @@ int check_std_t1font(char *s)
         { -1, -1, -1, -1, -1, -1, 8, 0, -1, 4, 10, 9, -1, -1, 5, 2, 12, 6, -1,
         3, -1, 7
     };
-    assert(s != NULL);
-    const size_t n = strlen(s);
+    size_t n;
     int k = -1;
+    assert(s != NULL);
+    n = strlen(s);
     if (n > 21)
-        return false;
+        return -1;
     if (n == 12) {              /* three names have length 12 */
         switch (*s) {
         case 'C':
@@ -388,7 +390,7 @@ int check_std_t1font(char *s)
             k = 13;             /* ZapfDingbats */
             break;
         default:
-            return false;
+            return -1;
         }
     } else
         k = index[n];
