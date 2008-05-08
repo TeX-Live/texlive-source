@@ -1,3 +1,8 @@
+2008-05-08  Norbert Preining <preining@logic.at>
+
+	* updmap, tcfmgr: quote various calls containing env variables
+	  taken from texmf.cnf which could contain spaces
+
 2008-05-05  Karl Berry  <karl@tug.org>
 
 	* texconfig (generate): remove this, now done in tlmgr.

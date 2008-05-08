@@ -28,14 +28,14 @@ abort()
 mktexupd()
 {
   setupMktexupd
-  $TFC_MKTEXUPD "$@" >&2
+  "$TFC_MKTEXUPD" "$@" >&2
 }
 
 # call mktexdir script, disable all features (to prevent sticky directories)
 mktexdir()
 {
   setupMktexDir
-  MT_FEATURES=none $TFC_MKTEXDIR "$@" >&2
+  MT_FEATURES=none "$TFC_MKTEXDIR" "$@" >&2
 }
 
 setupMap()
