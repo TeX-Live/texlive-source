@@ -2172,8 +2172,8 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 			else {
 				int i;
 				OSStatus	status = 0;
+				float		maxRhs = 0.0;
 				nGlyphs = layoutChars(engine, (UniChar*)txtPtr, 0, txtLen, txtLen, (dir == UBIDI_RTL), 0.0, 0.0, &status);
-				float maxRhs = 0.0;
 /* NO -- this is not valid in some Indic split-vowel situations
    see http://sourceforge.net/tracker/index.php?func=detail&aid=1951292&group_id=194926&atid=951385 */
 #if 0
