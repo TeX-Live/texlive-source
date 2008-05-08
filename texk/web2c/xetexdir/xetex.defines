@@ -171,8 +171,9 @@ authorization from SIL International.
 @define function applymapping();
 
 { functions from the synctex controller in synctex.c }
+@define procedure synctexinitcommand;
 @define procedure synctexstartinput;
-@define procedure synctexterminate;
+@define procedure synctexterminate();
 @define procedure synctexsheet();
 @define procedure synctexteehs;
 @define procedure synctexvlist();

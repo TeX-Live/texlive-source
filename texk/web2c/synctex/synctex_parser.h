@@ -45,6 +45,10 @@ typedef struct _synctex_node * synctex_node_t;
 typedef struct __synctex_scanner_t _synctex_scanner_t;
 typedef _synctex_scanner_t * synctex_scanner_t;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* This is the designated method to create a new synctex scanner object.
  * name is the full path of the synctex file to be parsed.
  * NULL is returned in case of an error.
@@ -210,5 +214,9 @@ float synctex_node_box_visible_depth(synctex_node_t node);
 int synctex_display_query(synctex_scanner_t scanner,const char * name,int line,int column);
 int synctex_edit_query(synctex_scanner_t scanner,int page,float h,float v);
 synctex_node_t synctex_next_result(synctex_scanner_t scanner);
+
+#ifdef __cplusplus
+};
+#endif
 
 #endif

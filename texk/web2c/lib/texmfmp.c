@@ -225,8 +225,16 @@ maininit P2C(int, ac, string *, av)
   kpse_record_output = recorder_record_output;
 
 #if /*defined (pdfTeX) ||*/ defined(XeTeX) || defined(__syncTeX__)
-  /* 0 means don't use Synchronize TeXnology.  */
-  synctexoption = 0;
+# warning SyncTeX: -synctex command line option available
+  /* 0 means "disable Synchronize TeXnology".
+   * synctexoption is a *.web variable.
+   * We initialize it to a weird value to catch the -synctex command line flag
+   * At runtime, if synctexoption is not INT_MAX, then it contains the command line option provided,
+   * otherwise no such option was given by the user. */
+# define SYNCTEX_NO_OPTION INT_MAX
+  synctexoption = SYNCTEX_NO_OPTION;
+#else
+# warning SyncTeX: -synctex command line option NOT available
 #endif
 
 #if defined(pdfTeX) || defined(luaTeX)
@@ -1139,9 +1147,9 @@ parse_options P2C(int, argc,  string *, argv)
 
 #if /*defined (pdfTeX) ||*/ defined(XeTeX) || defined(__syncTeX__)
     } else if (ARGUMENT_IS ("synctex")) {
-		/* Synchronize TeXnology: catching the command line option as an unsigned long  */
-		synctexoption = (int) strtoul(optarg, NULL, 0);
- #endif
+		/* Synchronize TeXnology: catching the command line option as a long  */
+		synctexoption = (int) strtol(optarg, NULL, 0);
+#endif
 
     } else if (ARGUMENT_IS ("version")) {
         char *versions;

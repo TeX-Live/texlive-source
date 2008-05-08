@@ -228,18 +228,13 @@ temp_ptr:=lig_stack; lig_stack:=link(temp_ptr);
 free_node(temp_ptr,small_node_size); {{\sl Sync\TeX} watch point: proper size!}
 @z
 
-@x
-history:=spotless; {ready to go!}
-@y
-synctex:=synctexoption; {{\sl Sync\TeX}: read command-line option if given}
-history:=spotless; {ready to go!}
-@z
-
 @x tex.web l.24288
-begin @<Finish the extensions@>;
+if log_opened then
+  begin wlog_cr; a_close(log_file); selector:=selector-2;
 @y
-begin @<Finish the extensions@>;
-@<Terminate {\sl Sync\TeX} information recording@>
+@<Close {\sl Sync\TeX} file and write status@>;
+if log_opened then
+  begin wlog_cr; a_close(log_file); selector:=selector-2;
 @z
 
 @x tex.web + synctex-mem.ch0
@@ -318,8 +313,8 @@ synctex_start_input; {Give control to the {\sl Sync\TeX} controller}
 @ @<Prepare terminal input {\sl Sync\TeX} information@>=
 synctex_tag:=0;
 
-@ @<Terminate {\sl Sync\TeX} information recording@>=
-synctex_terminate; {Let the {\sl Sync\TeX} controller close its files.}
+@ @<Close {\sl Sync\TeX} file and write status@>=
+synctex_terminate(log_opened); {Let the {\sl Sync\TeX} controller close its files.}
 
 @ Synchronized nodes are boxes, math, kern and glue nodes.
 Other nodes should be synchronized too, in particular math noads.

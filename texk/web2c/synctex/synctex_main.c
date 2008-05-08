@@ -85,7 +85,7 @@ void synctex_usage(char * error,va_list ap) {
 	if(error) {
 		fprintf(stderr,"SyncTeX ERROR: ");
 		vfprintf(stderr,error,ap);
-		fprintf(stderr,"%s\n");
+		fprintf(stderr,"\n");
 	}
 	fprintf((error?stderr:stdout),
 		"usage: synctex <subcommand> [options] [args]\n"
@@ -120,7 +120,7 @@ void synctex_help_view(char * error,...) {
 	synctex_usage(error, v);
 	va_end(v);
 	fprintf((error?stderr:stdout),
-		"synctex view: forwards synchronization,\n"
+		"synctex view: forwards or direct synchronization,\n"
 		"command sent by the editor to view the output corresponding to the position under the mouse\n"
 		"\n"
 		"usage: synctex view -i line:column:input -o output [-x viewer-command] [-h before/offset:middle/after]\n"
@@ -140,21 +140,21 @@ void synctex_help_view(char * error,...) {
 		"-x viewer-command\n"
 		"       Normally the synctex tool outputs its result to the stdout.\n"
 		"       It is possible to launch an external tool with the result.\n"
-		"       The viewer-command is a printf like format string with numbered specifiers.\n"
-		"       %{output} is the name of the main document, without path extension.\n"
-		"       %{page} is the 0 based page number, %{page+1} is the 1 based page number.\n"
-		"       To synchronize by point, %{x} is the x coordinate, %{y} is the y coordinate,\n"
+		"       The viewer-command is a printf like format string with following specifiers.\n"
+		"       %{output} is the name specifier of the main document, without path extension.\n"
+		"       %{page} is the 0 based page number specifier, %{page+1} is the 1 based page number specifier.\n"
+		"       To synchronize by point, %{x} is the x coordinate specifier, %{y} is the y coordinate specifier,\n"
 		"       both in dots and relative to the top left corner of the page.\n"
 		"       To synchronize by box,\n"
-		"       %{h} is the horizontal coordinate of the origin of the enclosing box,\n"
-		"       %{v} is the vertical coordinate of the origin of the enclosing box,\n"
+		"       %{h} is the horizontal coordinate specifier of the origin of the enclosing box,\n"
+		"       %{v} is the vertical coordinate specifier of the origin of the enclosing box,\n"
 		"       both in dots and relative to the upper left corner of the page.\n"
 		"       They may be different from the preceding pair of coordinates.\n"
-		"       %{width} is the width, %{height} is the height of the enclosing box.\n"
+		"       %{width} is the width specifier, %{height} is the height specifier of the enclosing box.\n"
 		"       The latter dimension is naturally counted from bottom to top.\n"
 		"       There is no notion of depth for such a box.\n"
 		"       To synchronize by content, %{before} is the word before,\n"
-		"       %{offset} is the offset, %{middle} is the middle word, and %{after} is the word after.\n"
+		"       %{offset} is the offset specifier, %{middle} is the middle word, and %{after} is the word after.\n"
 		"\n"
 		"       If no viewer command is provided, the content of the SYNCTEX_VIEWER environment variable is used instead.\n"
 		"\n"
@@ -163,8 +163,8 @@ void synctex_help_view(char * error,...) {
 		"       Instead of giving a character offset in a line, you can give full words.\n"
 		"       A full word is a sequence of characters (excepting '/').\n"
 		"       You will choose full words in the source document that will certainly appear unaltered in the output.\n"
-		"       The middle word contains the character under the mouse at position offset.\n"
-		"       before is a full word preceding middle and after is following it.\n"
+		"       The \"middle\" word contains the character under the mouse at position offset.\n"
+		"       \"before\" is a full word preceding middle and \"after\" is following it.\n"
 		"       The before or after word can be missing, they are then considered as void strings.\n"
 		"       \n"
 	);
@@ -183,13 +183,22 @@ int synctex_view(int argc, char *argv[]) {
 	char * middle = NULL;
 	char * after = NULL;
 	char * output = NULL;
+	char * start = NULL;
+	char * end = NULL;
+	synctex_scanner_t scanner = NULL;
+	char * synctex = NULL;
+	size_t size = 0;
+	const char * suffix = ".synctex";
+	const char * suffix_gz = ".gz";
+	char * ptr = NULL;
+	char * where = NULL;
+	
 	/* required */
 	if((arg_index>=argc) || strcmp("-i",argv[arg_index]) || (++arg_index>=argc)) {
 		synctex_help_view("Missing -i required argument");
 		return -1;
 	}
-	char * start = argv[arg_index];
-	char * end = NULL;
+	start = argv[arg_index];
 	line = strtol(start,&end,10);
 	if(end>start && strlen(end)>0 && *end==':') {
 		start = end+1;
@@ -257,9 +266,6 @@ option_hint:
 		}
 	}
 	/* Now proceed, ignore any other argument */
-	synctex_scanner_t scanner = NULL;
-	char * synctex = NULL;
-	size_t size = 0;
 proceed:
 #if SYNCTEX_DEBUG
 	printf("line:%i\n",line);
@@ -273,7 +279,7 @@ proceed:
 	printf("output:%s\n",output);
 	printf("cwd:%s\n",getcwd(NULL,0));
 #endif
-	size = strlen(output)+9;
+	size = strlen(output)+strlen(suffix)+strlen(suffix_gz)+1;
 	synctex = (char *)malloc(size);
 	if(NULL == synctex) {
 		synctex_help_view("No more memory");
@@ -283,8 +289,7 @@ proceed:
 		synctex_help_view("Copy problem");
 		return -1;
 	}
-	char * ptr = synctex;
-	char * where = NULL;
+	ptr = synctex;
 	/* remove the path extension of the last path component. */
 #   define SYNCTEX_PATH_COMPONENTS_SEPARATOR "/"
 	if(where = strstr(ptr,SYNCTEX_PATH_COMPONENTS_SEPARATOR)) {
@@ -299,12 +304,23 @@ proceed:
 		} while(where = strstr(ptr+1,SYNCTEX_PATH_EXTENSION_SEPARATOR));
 		*ptr = '\0';
 	}
-	if(0 == strlcat(synctex,".synctex",size)){
-		synctex_help_view("Concatenation problem");
+	if(0 == strlcat(synctex,suffix,size)){
+		synctex_help_view("Concatenation problem (can't add suffix '%s')",suffix);
 		return -1;
 	}
-	size = 0;
 	scanner = synctex_scanner_new_with_contents_of_file(synctex);
+	if(!scanner) {
+		if(0 == strlcat(synctex,suffix_gz,size)){
+			synctex_help_view("Concatenation problem (can't add suffix '%s')",suffix_gz);
+			return -1;
+		}
+		scanner = synctex_scanner_new_with_contents_of_file(synctex);
+		if(!scanner) {
+			synctex_help_view("No SyncTeX available");
+			return -1;
+		}
+	}
+	size = 0;
 	free(synctex);
 	synctex = NULL;
 	if(scanner && synctex_display_query(scanner,input,line,column)) {
@@ -314,19 +330,6 @@ proceed:
 			if(viewer && strlen(viewer)) {
 				/* Replace %{ by &{, then remove all unescaped '%'*/
 				char * where = NULL;
-				while(where = strstr(viewer,"%{")) {
-					*where = '&';
-				}
-				where = viewer;
-				while(where = strstr(viewer,"%")) {
-					if(strlen(++where)) {
-						if(*where == '%') {
-							++where;
-						} else {
-							*(where-1)='&';
-						}
-					}
-				}
 				char * dictionary [] = {
 					"&{output}","%1$s",
 					"&{page}","%2$i",
@@ -342,6 +345,21 @@ proceed:
 					"&{middle}","%12$s",
 					"&{after}","%13$s"};
 				int i = 26;
+				char * buffer = NULL;
+				int status = 0;
+				while(where = strstr(viewer,"%{")) {
+					*where = '&';
+				}
+				where = viewer;
+				while(where = strstr(viewer,"%")) {
+					if(strlen(++where)) {
+						if(*where == '%') {
+							++where;
+						} else {
+							*(where-1)='&';
+						}
+					}
+				}
 				while(i>0) {
 					char * value = dictionary[--i];
 					char * key = dictionary[--i];
@@ -354,7 +372,7 @@ find_a_key:
 					}
 				}
 				size = strlen(viewer)+3*sizeof(int)+6*sizeof(float)+4*(65536)+1;
-				char * buffer = malloc(size);
+				buffer = malloc(size);
 				if(NULL == buffer) {
 					synctex_help_view("No memory available");
 					return -1;
@@ -380,7 +398,7 @@ find_a_key:
 					return -1;
 				}
 				printf("SyncTeX: Executing\n%s\n",buffer);
-				int status = system(buffer);
+				status = system(buffer);
 				free(buffer);
 				buffer = NULL;
 				return status;
@@ -426,7 +444,7 @@ void synctex_help_edit(char * error,...) {
 	synctex_usage(error, v);
 	va_end(v);
 	fputs(
-	"synctex edit: backwards synchronization,\n"
+	"synctex edit: backwards or reverse synchronization,\n"
 	"command sent by the viewer to edit the source corresponding to the position under the mouse\n\n"
 	"\n"
 	"usage: synctex edit -o page:x:y:file [-x editor-command] [-h offset:context]\n"
@@ -441,19 +459,19 @@ void synctex_help_edit(char * error,...) {
 	"       \n"
 	"-x editor-command\n"
 	"       Normally the synctex tool outputs its result to the stdout.\n"
-	"       It is possible to execute an external tool with the result.\n"
+	"       It is possible to execute an external tool with the result of the query.\n"
 	"       The editor-command is a printf like format string with following specifiers.\n"
 	"       They will be replaced by their value before the command is executed.\n"
-	"       %{output} is the full path of the output document, with no extension.\n"
-	"       %{input} is the name of the input document.\n"
-	"       %{line} is the 0 based line number. %{line+1} is the 1 based line number.\n"
-	"       %{column} is the 0 based column number or -1. %{column+1} is the 1 based column number or -1.\n"
-	"       %{offset} is the 0 based offset and %{context} is the context of the hint.\n"
+	"       %{output} is the full path specifier of the output document, with no extension.\n"
+	"       %{input} is the name specifier of the input document.\n"
+	"       %{line} is the 0 based line number specifier. %{line+1} is the 1 based line number specifier.\n"
+	"       %{column} is the 0 based column number specifier or -1. %{column+1} is the 1 based column number or -1.\n"
+	"       %{offset} is the 0 based offset specifier and %{context} is the context specifier of the hint.\n"
 	"       \n"
-	"       If no editor command is provided, the content of the SYNCTEX_EDITOR environment variable is used instead.\n"
+	"       If no editor-command is provided, the content of the SYNCTEX_EDITOR environment variable is used instead.\n"
 	"       \n"
 	"-h offset:context\n"
-	"       This hint allows a backwards synchronization by contents.\n"
+	"       This hint allows a backwards or reverse synchronization by contents.\n"
 	"       You give a context including the character at the mouse location, and\n"
 	"       the offset of this character relative to the beginning of this bunch of text.\n"
 	"       \n",
@@ -472,13 +490,19 @@ int synctex_edit(int argc, char *argv[]) {
 	char * editor = NULL;
 	int offset = 0;
 	char * context = NULL;
+	char * start = NULL;
+	char * end = NULL;
+	synctex_scanner_t scanner = NULL;
+	char * synctex = NULL;
+	size_t size = 0;
+	char * ptr = NULL;
+	char * where = NULL;
 	/* required */
 	if((arg_index>=argc) || strcmp("-o",argv[arg_index]) || (++arg_index>=argc)) {
 		synctex_help_view("Missing -o required argument");
 		return -1;
 	}
-	char * start = argv[arg_index];
-	char * end = NULL;
+	start = argv[arg_index];
 	page = strtol(start,&end,10);
 	if(end>start && strlen(end)>1 && *end==':') {
 		start = end+1;
@@ -530,9 +554,6 @@ option_hint:
 			return -1;
 		}
 	}
-	synctex_scanner_t scanner = NULL;
-	char * synctex = NULL;
-	size_t size = 0;
 proceed:
 #if SYNCTEX_DEBUG
 	printf("page:%i\n",page);
@@ -554,8 +575,7 @@ proceed:
 		synctex_help_edit("Copy problem");
 		return -1;
 	}
-	char * ptr = synctex;
-	char * where = NULL;
+	ptr = synctex;
 	/* remove the path extension of the last path component. */
 	if(where = strstr(ptr,SYNCTEX_PATH_COMPONENTS_SEPARATOR)) {
 		do {
@@ -583,6 +603,16 @@ proceed:
 				&& (input = (char *)synctex_scanner_get_name(scanner,synctex_node_tag(node)))) {
 			/* filtering the command */
 			if(strlen(editor)) {
+				char * buffer = NULL;
+				int status;
+				char * dictionary [] = {
+					"&{output}","%1$s",
+					"&{input}","%2$s",
+					"&{line}","%3$i",
+					"&{column}","%4$i",
+					"&{offset}","%5$i",
+					"&{context}","%6$s"};
+				int i = 12;
 				/* Replace %{ by &{, then remove all unescaped '%'*/
 				while(where = strstr(editor,"%{")) {
 					*where = '&';
@@ -597,14 +627,6 @@ proceed:
 						}
 					}
 				}
-				char * dictionary [] = {
-					"&{output}","%1$s",
-					"&{input}","%2$s",
-					"&{line}","%3$i",
-					"&{column}","%4$i",
-					"&{offset}","%5$i",
-					"&{context}","%6$s"};
-				int i = 12;
 				while(i>0) {
 					char * value = dictionary[--i];
 					char * key = dictionary[--i];
@@ -617,7 +639,7 @@ find_a_key:
 					}
 				}
 				size = strlen(editor)+3*sizeof(int)+6*sizeof(float)+4*(65536)+1;
-				char * buffer = malloc(size);
+				buffer = malloc(size);
 				if(NULL == buffer) {
 					printf("SyncTeX ERROR: No memory available\n",editor);
 					return -1;
@@ -636,7 +658,7 @@ find_a_key:
 					return -1;
 				}
 				printf("SyncTeX: Executing\n%s\n",buffer);
-				int status = system(buffer);
+				status = system(buffer);
 				free(buffer);
 				buffer = NULL;
 				return status;
@@ -688,14 +710,20 @@ void synctex_help_update(char * error,...) {
 /*		"usage: synctex update -o output [-m number] [-x dimension] [-y dim output\n"  */
 int synctex_update(int argc, char *argv[]) {
 	int arg_index = 0;
-	if(arg_index>=argc) {
-		synctex_help_update("Bad update command");
-		return -1;
-	}
 	char * magnification = NULL;
 	char * x = NULL;
 	char * y = NULL;
 	char * output = NULL;
+	size_t size = 0;
+	char * synctex = NULL;
+	char * ptr = NULL;
+	char * where = NULL;
+	FILE * F = NULL;
+	int len = 0;
+	if(arg_index>=argc) {
+		synctex_help_update("Bad update command");
+		return -1;
+	}
 	/* required */
 	if((arg_index>=argc) || strcmp("-o",argv[arg_index]) || (++arg_index>=argc)) {
 		synctex_help_update("Missing -o required argument");
@@ -732,8 +760,8 @@ prepare_next_argument:
 		goto prepare_next_argument;
 	}
 	/* Arguments parsed */
-	size_t size = strlen(output)+9;
-	char * synctex = (char *)malloc(size);
+	size = strlen(output)+9;
+	synctex = (char *)malloc(size);
 	if(NULL == synctex) {
 		synctex_help_update("No more memory");
 		return -1;
@@ -749,8 +777,7 @@ prepare_next_argument:
 		printf("SyncTeX: Nothing to update\n");
 		return 0;
 	}
-	char * ptr = synctex;
-	char * where = NULL;
+	ptr = synctex;
 	/* remove the path extension of the last path component. */
 	if(where = strstr(ptr,SYNCTEX_PATH_COMPONENTS_SEPARATOR)) {
 		do {
@@ -767,13 +794,12 @@ prepare_next_argument:
 		synctex_help_update("Concatenation problem");
 		return -1;
 	}
-	FILE * F = fopen(synctex,"a");
+	F = fopen(synctex,"a");
 	if(NULL == F) {
 		synctex_help_update("No file at: %s",synctex);
 		return -1;
 	}
 	printf("SyncTeX: updating %s...",synctex);
-	int len = 0;
 	if(magnification) {
 		len += fprintf(F,"Magnification:%s\n",magnification);
 	}

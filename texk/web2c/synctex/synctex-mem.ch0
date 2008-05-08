@@ -197,7 +197,14 @@ penalty_node: begin r:=get_node(small_node_size);
   end
 @z
 
-@x
+@x tex.web l. 24264
+history:=spotless; {ready to go!}
+@y
+history:=spotless; {ready to go!}
+@<Initialize synctex primitive@>
+@z
+
+@x tex.web l. 24945
 @* \[54] System-dependent changes.
 @y
 @* \[54/SyncTeX] The {\sl Synchronize \TeX nology}.
@@ -229,7 +236,7 @@ except the definitions.
 |synctexoption| is used for that purpose.
 This global integer variable is declared here but it is not used here.
 This is just a placeholder where the command line controller will put
-the {\sl {\sl Sync\TeX}} related options, and the {\sl Sync\TeX} controller will read them.
+the {\sl Sync\TeX} related options, and the {\sl Sync\TeX} controller will read them.
 
 @ @<Glob...@>=
 @!synctexoption:integer;
@@ -238,6 +245,11 @@ the {\sl {\sl Sync\TeX}} related options, and the {\sl Sync\TeX} controller will
 \.{\\synctex=1} in the input source file enables synchronization whereas
 \.{\\synctex=0} disables it.
 Its memory address is |synctex_code|.
+It is initialized by the {\sl Sync\TeX} controller to the command-line option if given.
+The controller may filter some reserved bits.
+
+@ @<Initialize synctex primitive@>=
+synctex_init_command;
 
 @ @<Put each...@>=
 primitive("synctex",assign_int,int_base+synctex_code);@/
@@ -245,7 +257,7 @@ primitive("synctex",assign_int,int_base+synctex_code);@/
 
 @ In order to give the {\sl Sync\TeX} controller read and write access to
 the contents of the \.{\\synctex} primitive, we declare |synctexoffset|,
-such that |mem[synctexoffset]| and \.{\\synctex} correpond to
+such that |mem[synctexoffset]| and \.{\\synctex} correspond to
 the same memory storage. |synctexoffset| is initialized to
 the correct value when quite everything is initialized.
 
