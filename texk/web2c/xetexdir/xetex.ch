@@ -64,8 +64,8 @@ authorization from SIL International.
 @d eTeX_version_string=='-2.2' {current \eTeX\ version}
 
 @d XeTeX_version=0
-@d XeTeX_revision==".998.1"
-@d XeTeX_version_string=='-0.998.1' {current \XeTeX\ version}
+@d XeTeX_revision==".998"
+@d XeTeX_version_string=='-0.998.2-dev' {current \XeTeX\ version}
 @z
 
 @x
@@ -3418,8 +3418,17 @@ file_opened:=false;
 if not b_open_in(tfm_file) then abort;
 file_opened:=true
 @y
+check_for_tfm_font_mapping;
 if b_open_in(tfm_file) then begin
   file_opened:=true
+@z
+
+@x
+fmem_ptr:=fmem_ptr+lf; font_ptr:=f; g:=f; goto done
+@y
+fmem_ptr:=fmem_ptr+lf; font_ptr:=f; g:=f;
+font_mapping[f]:=load_tfm_font_mapping;
+goto done
 @z
 
 @x
@@ -3553,6 +3562,13 @@ procedure dvi_font_def(@!f:internal_font_number);
 @z
 
 @x
+var k:pool_pointer; {index into |str_pool|}
+@y
+var k:pool_pointer; {index into |str_pool|}
+l:integer; {length of name without mapping option}
+@z
+
+@x
 begin if f<=256+font_base then
 @y
 begin if is_native_font(f) then dvi_native_font_def(f) else
@@ -3560,9 +3576,23 @@ begin if f<=256+font_base then
 @z
 
 @x
+dvi_out(length(font_name[f]));
 @<Output the font name whose internal number is |f|@>;
 @y
+if font_mapping[f]<>nil then begin
+  l:=0;
+  k:=str_start_macro(font_name[f]);
+  while (l=0) and (k<str_start_macro(font_name[f]+1)) do begin
+    if so(str_pool[k]) = ":" then l:=k-str_start_macro(font_name[f]);
+    incr(k);
+  end;
+  dvi_out(l);
+  for k:=str_start_macro(font_name[f]) to str_start_macro(font_name[f])+l-1 do
+    dvi_out(so(str_pool[k]));
+end else begin
+dvi_out(length(font_name[f]));
 @<Output the font name whose internal number is |f|@>;
+end;
 end;
 @z
 
@@ -3731,6 +3761,13 @@ while (q <> null) and (not is_char_node(q)) and (type(q) = disc_node) do
     q := link(q)
 
 @ We ought to give special care to the efficiency of one part of |hlist_out|,
+@z
+
+@x
+  repeat f:=font(p); c:=character(p);
+@y
+  repeat f:=font(p); c:=character(p);
+  if (p<>lig_trick) and (font_mapping[f]<>nil) then c:=apply_tfm_font_mapping(font_mapping[f],c);
 @z
 
 @x
@@ -3919,6 +3956,12 @@ label reswitch, common_ending, exit, restart;
 @!hd:eight_bits; {height and depth indices for a character}
 @!pp,@!ppp: pointer;
 @!total_chars, @!k: integer;
+@z
+
+@x
+p:=lig_trick; goto reswitch;
+@y
+p:=lig_trick; ligature_present:=true; goto reswitch;
 @z
 
 @x
@@ -4871,6 +4914,13 @@ label done,done1,done2,done3,done4,done5,done6,continue, restart;
 @z
 
 @x
+  ligature_node: begin f:=font(lig_char(v));@/
+@y
+  ligature_node: begin f:=font(lig_char(v));@/
+    ligature_present:=true;
+@z
+
+@x
   othercases confusion("disc1")
 @y
   whatsit_node:
@@ -4881,6 +4931,13 @@ label done,done1,done2,done3,done4,done5,done6,continue, restart;
     then break_width[1]:=break_width[1]-width(v)
 	else confusion("disc1a");
   othercases confusion("disc1")
+@z
+
+@x
+  ligature_node: begin f:=font(lig_char(s));
+@y
+  ligature_node: begin f:=font(lig_char(s));
+    ligature_present:=true;
 @z
 
 @x
@@ -4903,6 +4960,20 @@ label done,done1,done2,done3,done4,done5,done6,continue, restart;
 @z
 
 @x
+ligature_node: begin f:=font(lig_char(cur_p));
+@y
+ligature_node: begin f:=font(lig_char(cur_p));
+  ligature_present:=true;
+@z
+
+@x
+  ligature_node: begin f:=font(lig_char(s));
+@y
+  ligature_node: begin f:=font(lig_char(s));
+    ligature_present:=true;
+@z
+
+@x
   othercases confusion("disc3")
 @y
   whatsit_node:
@@ -4913,6 +4984,13 @@ label done,done1,done2,done3,done4,done5,done6,continue, restart;
     then disc_width:=disc_width+width(s)
 	else confusion("disc3a");
   othercases confusion("disc3")
+@z
+
+@x
+  ligature_node: begin f:=font(lig_char(s));
+@y
+  ligature_node: begin f:=font(lig_char(s));
+    ligature_present:=true;
 @z
 
 @x
@@ -8414,6 +8492,22 @@ end;
 @y
 @!mltex_enabled_p:boolean;  {enable character substitution}
 @!native_font_type_flag:integer; {used by XeTeX font loading code to record which font technology was used}
+@z
+
+@x
+begin result:=c;  {return |c| unless it does not exist in the font}
+@y
+begin if (not ligature_present) and (font_mapping[f]<>nil) then
+  c:=apply_tfm_font_mapping(font_mapping[f],c);
+result:=c;  {return |c| unless it does not exist in the font}
+@z
+
+@x
+begin if not mltex_enabled_p then
+@y
+begin if (not ligature_present) and (font_mapping[f]<>nil) then
+  c:=apply_tfm_font_mapping(font_mapping[f],c);
+if not mltex_enabled_p then
 @z
 
 @x

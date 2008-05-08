@@ -594,8 +594,14 @@ printchars(const unsigned short* str, int len)
 		printchar(*(str++));
 }
 
+#ifdef WORDS_BIGENDIAN
+#define UTF16_NATIVE kForm_UTF16BE
+#else
+#define UTF16_NATIVE kForm_UTF16LE
+#endif
+
 void*
-load_mapping_file(const char* s, const char* e)
+load_mapping_file(const char* s, const char* e, char byteMapping)
 {
 	char*	mapPath;
 	TECkit_Converter	cnv = 0;
@@ -618,13 +624,15 @@ load_mapping_file(const char* s, const char* e)
 			mapping = xmalloc(mappingSize);
 			fread(mapping, 1, mappingSize, mapFile);
 			fclose(mapFile);
-			status = TECkit_CreateConverter(mapping, mappingSize,
+			if (byteMapping != 0)
+				status = TECkit_CreateConverter(mapping, mappingSize,
+											false,
+											UTF16_NATIVE, kForm_Bytes,
+											&cnv);
+			else
+				status = TECkit_CreateConverter(mapping, mappingSize,
 											true,
-#ifdef WORDS_BIGENDIAN
-											kForm_UTF16BE, kForm_UTF16BE,
-#else
-											kForm_UTF16LE, kForm_UTF16LE,
-#endif
+											UTF16_NATIVE, UTF16_NATIVE,
 											&cnv);
 			free(mapping);
 		}
@@ -635,6 +643,52 @@ load_mapping_file(const char* s, const char* e)
 	free(buffer);
 
 	return cnv;
+}
+
+char *saved_mapping_name = NULL;
+void
+checkfortfmfontmapping()
+{
+	char* cp = strstr((char*)nameoffile + 1, ":mapping=");
+	if (saved_mapping_name != NULL) {
+		free(saved_mapping_name);
+		saved_mapping_name = NULL;
+	}
+	if (cp != NULL) {
+		*cp = 0;
+		cp += 9;
+		while (*cp && *cp <= ' ')
+			++cp;
+		if (*cp)
+			saved_mapping_name = xstrdup(cp);
+	}
+}
+
+void*
+loadtfmfontmapping()
+{
+	void* rval = NULL;
+	if (saved_mapping_name != NULL) {
+		rval = load_mapping_file(saved_mapping_name,
+				saved_mapping_name + strlen(saved_mapping_name), 1);
+		free(saved_mapping_name);
+		saved_mapping_name = NULL;
+	}
+	return rval;
+}
+
+int
+applytfmfontmapping(void* cnv, int c)
+{
+	UniChar in = c;
+	Byte	out[2];
+	UInt32	inUsed, outUsed;
+	TECkit_Status status = TECkit_ConvertBuffer((TECkit_Converter)cnv,
+			(const Byte*)&in, sizeof(in), &inUsed, out, sizeof(out), &outUsed, 1);
+	if (outUsed < 1)
+		return 0;
+	else
+		return out[0];
 }
 
 double
@@ -765,7 +819,7 @@ readCommonFeatures(const char* feat, const char* end, float* extend, float* slan
 		sep = feat + 7;
 		if (*sep != '=')
 			return -1;
-		loadedfontmapping = load_mapping_file(sep + 1, end);
+		loadedfontmapping = load_mapping_file(sep + 1, end, 0);
 		return 1;
 	}
 

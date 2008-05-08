@@ -64,6 +64,9 @@ authorization from SIL International.
 @define function initpool();
 @define type gzFile;
 @define function weof();
+@define procedure checkfortfmfontmapping;
+@define function loadtfmfontmapping;
+@define function applytfmfontmapping();
 
 @define procedure initGraphiteBreaking();
 @define function findNextGraphiteBreak();
