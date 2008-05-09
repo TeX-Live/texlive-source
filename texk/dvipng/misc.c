@@ -4,22 +4,21 @@
 
   Part of the dvipng distribution
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
 
   This program is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  General Public License for more details.
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  Lesser General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-  02110-1301 USA.
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program. If not, see
+  <http://www.gnu.org/licenses/>.
 
-  Copyright (C) 2002-2006 Jan-Åke Larsson
+  Copyright (C) 2002-2008 Jan-Åke Larsson
 
 ************************************************************************/
 
@@ -57,13 +56,13 @@ bool DecodeArgs(int argc, char ** argv)
     else
       programname=argv[0];
     if (strncmp(programname,"dvigif",6)==0)
-      flags |= GIF_OUTPUT;
+      option_flags |= GIF_OUTPUT;
 #endif
     programname=argv[0];
     Message(BE_NONQUIET,"This is %s",programname);
     if (strcmp(basename(programname),PACKAGE_NAME)!=0)
       Message(BE_NONQUIET," (%s)", PACKAGE_NAME);
-    Message(BE_NONQUIET," %s Copyright 2002-2006 Jan-Ake Larsson\n",
+    Message(BE_NONQUIET," %s Copyright 2002-2008 Jan-Ake Larsson\n",
 	    PACKAGE_VERSION);
   }
 
@@ -80,19 +79,19 @@ bool DecodeArgs(int argc, char ** argv)
 	if (*p>'9' && *p!='-') {
 	  if (strncmp(p,"vinum",5)==0) { 
 	    if (p[5] != '0') {
-	      flags |= DVI_PAGENUM;
+	      option_flags |= DVI_PAGENUM;
 	      Message(PARSE_STDIN,"DVI page number output on\n",p);
 	    } else {
-	      flags &= ~DVI_PAGENUM;
+	      option_flags &= ~DVI_PAGENUM;
 	      Message(PARSE_STDIN,"DVI page number output off\n");
 	    }
 	    break;
 	  } else if (strncmp(p,"epth",4)==0) { /* Depth reporting */ 
 	    if (p[4] != '0') {
-	      flags |= REPORT_DEPTH;
+	      option_flags |= REPORT_DEPTH;
 	      Message(PARSE_STDIN,"Depth reporting on\n",p);
 	    } else {
-	      flags &= ~REPORT_DEPTH;
+	      option_flags &= ~REPORT_DEPTH;
 	      Message(PARSE_STDIN,"Depth reporting off\n");
 	    }
 	    break;
@@ -151,10 +150,10 @@ bool DecodeArgs(int argc, char ** argv)
 	  break;
 	} else if (strncmp(p,"eight",5) == 0 ) { /* Height reporting */ 
 	  if (p[5] != '0') {
-	    flags |= REPORT_HEIGHT;
+	    option_flags |= REPORT_HEIGHT;
 	    Message(PARSE_STDIN,"Height reporting on\n",p);
 	  } else {
-	    flags &= ~REPORT_HEIGHT;
+	    option_flags &= ~REPORT_HEIGHT;
 	    Message(PARSE_STDIN,"Height reporting off\n");
 	  }
 	  break;
@@ -169,10 +168,10 @@ bool DecodeArgs(int argc, char ** argv)
       case 'e':
 	if (strncmp(p,"xpand-bbox",10) == 0 ) {	
 	  if (p[10] != '0') {
-	    flags |= EXPAND_BBOX;
+	    option_flags |= EXPAND_BBOX;
 	    Message(PARSE_STDIN,"BBox expansion on\n",p);
 	  } else {
-	    flags &= ~EXPAND_BBOX;
+	    option_flags &= ~EXPAND_BBOX;
 	    Message(PARSE_STDIN,"BBox expansion off\n");
 	  }
 	  break;
@@ -200,10 +199,10 @@ bool DecodeArgs(int argc, char ** argv)
 	/* Truecolor */
 	if (strncmp(p,"ruecolor",8)==0) { 
 	  if (p[8] != '0') {
-	    flags |= FORCE_TRUECOLOR; 
+	    option_flags |= FORCE_TRUECOLOR; 
 	    Message(PARSE_STDIN,"Truecolor mode on\n",p);
 	  } else { 
-	    flags &= ~FORCE_TRUECOLOR; 
+	    option_flags &= ~FORCE_TRUECOLOR; 
 	    Message(PARSE_STDIN,"Truecolor mode off\n");
 	  }
 	} else 
@@ -211,10 +210,10 @@ bool DecodeArgs(int argc, char ** argv)
 #ifdef HAVE_LIBT1
 	if ( strncmp(p,"1lib",4) == 0 ) { /* -t1lib activation */
 	  if (p[4] != '0') {
-	    flags |= USE_LIBT1;
+	    option_flags |= USE_LIBT1;
 	    Message(PARSE_STDIN,"t1lib rendering on\n",p);
 	  } else { 
-	    flags &= ~USE_LIBT1;
+	    option_flags &= ~USE_LIBT1;
 	    Message(PARSE_STDIN,"t1lib rendering off\n");
 	  } 
         } else
@@ -236,30 +235,30 @@ bool DecodeArgs(int argc, char ** argv)
 	    Message(PARSE_STDIN,"Papersize: %s\n",p);
 	  }
 	break;
-      case 'c':
-	if (strncmp(p,"acheimages",10)==0) { 
-	  if (p[10] != '0') {
-	    flags |= CACHE_IMAGES;
-	    Message(PARSE_STDIN,"Caching images\n",p);
-	  } else { 
-	    flags &= ~CACHE_IMAGES;
-	    Message(PARSE_STDIN,"Not caching images\n");
-	  }
-	  break;
-	}
-	goto DEFAULT;
+/*       case 'c': */
+/* 	if (strncmp(p,"acheimages",10)==0) {  */
+/* 	  if (p[10] != '0') { */
+/* 	    option_flags |= CACHE_IMAGES; */
+/* 	    Message(PARSE_STDIN,"Caching images\n",p); */
+/* 	  } else {  */
+/* 	    option_flags &= ~CACHE_IMAGES; */
+/* 	    Message(PARSE_STDIN,"Not caching images\n"); */
+/* 	  } */
+/* 	  break; */
+/* 	} */
+/* 	goto DEFAULT; */
       case 'b':
 	if ( *p == 'g' ) { /* -bg background color */
 	  p++;
 	  if (*p == 0 && argv[i+1])
 	    p = argv[++i] ;
 	  if (strncmp(p,"Transparent",11) == 0 ) 
-	    flags |= BG_TRANSPARENT_ALPHA;
+	    option_flags |= BG_TRANSPARENT_ALPHA;
 	  else if (strncmp(p,"transparent",11) == 0 ) 
-	    flags |= BG_TRANSPARENT;
+	    option_flags |= BG_TRANSPARENT;
 	  else
 	    background(p);
-	  if (flags & BG_TRANSPARENT) 
+	  if (option_flags & BG_TRANSPARENT) 
 	    Message(PARSE_STDIN,"Transp. background (fallback rgb %d,%d,%d)\n",
 		    cstack[0].red,cstack[0].green,cstack[0].blue);
 	  else 
@@ -314,10 +313,10 @@ bool DecodeArgs(int argc, char ** argv)
 #ifdef HAVE_FT2
 	} else if ( strncmp(p,"reetype",7) == 0 ) { /* -freetype activation */
 	  if (p[7] != '0') {
-	    flags |= USE_FREETYPE;
+	    option_flags |= USE_FREETYPE;
 	    Message(PARSE_STDIN,"FreeType rendering on\n",p);
 	  } else { 
-	    flags &= ~USE_FREETYPE;
+	    option_flags &= ~USE_FREETYPE;
 	    Message(PARSE_STDIN,"FreeType rendering off\n");
 	  }
 	  break;
@@ -360,7 +359,7 @@ bool DecodeArgs(int argc, char ** argv)
 	  break;
 #ifdef HAVE_GDIMAGEGIF
 	} else if (strncmp(p,"if",2)==0) { /* --gif output */ 
-	  flags |= GIF_OUTPUT;
+	  option_flags |= GIF_OUTPUT;
 	  Message(PARSE_STDIN,"GIF output\n");
 	  break;
 #endif
@@ -376,22 +375,22 @@ bool DecodeArgs(int argc, char ** argv)
 	  if (ParsePages(p))
 	    Fatal("bad page list specifier (-pp)");
 	} else if (strncmp(p,"ng",2)==0) { /* --png output */ 
-	  flags &= ~GIF_OUTPUT;
+	  option_flags &= ~GIF_OUTPUT;
 	  Message(PARSE_STDIN,"PNG output\n");
 	} else if (strncmp(p,"icky",4)==0) { 
 	  if (p[4] != '0') {
-	    flags |= MODE_PICKY;
+	    option_flags |= MODE_PICKY;
 	    Message(PARSE_STDIN,"No images output for pages with warnings\n",p);
 	  } else {
-	    flags &= ~MODE_PICKY;
+	    option_flags &= ~MODE_PICKY;
 	    Message(PARSE_STDIN,"Images output even for pages with warnings\n");
 	  }
 	} else if (strncmp(p,"alette",6)==0) { 
 	  if (p[6] != '0') {
-	    flags |= FORCE_PALETTE;
+	    option_flags |= FORCE_PALETTE;
 	    Message(PARSE_STDIN,"Forcing 256-color PNG output\n",p);
 	  } else {
-	    flags &= ~FORCE_PALETTE;
+	    option_flags &= ~FORCE_PALETTE;
 	    Message(PARSE_STDIN,"Allows truecolor PNG output\n");
 	  }
 	} else {   /* a -p specifier for first page */
@@ -415,10 +414,10 @@ bool DecodeArgs(int argc, char ** argv)
       case 's' :
 	if (strncmp(p,"trict",5)==0) { 
 	  if (p[5] != '0') {
-	    flags |= MODE_STRICT;
+	    option_flags |= MODE_STRICT;
 	    Message(PARSE_STDIN,"Warnings are fatal\n",p);
 	  } else {
-	    flags &= ~MODE_STRICT;
+	    option_flags &= ~MODE_STRICT;
 	    Message(PARSE_STDIN,"Warnings are not fatal\n");
 	  }
 	} else
@@ -427,18 +426,18 @@ bool DecodeArgs(int argc, char ** argv)
       case 'n' :
 	if (strncmp(p,"oghostscript",12)==0) { 
 	  if (p[12] != '0') {
-	    flags |= NO_GHOSTSCRIPT;
+	    option_flags |= NO_GHOSTSCRIPT;
 	    Message(PARSE_STDIN,"No GhostScript calls\n",p);
 	  } else {
-	    flags &= ~NO_GHOSTSCRIPT;
+	    option_flags &= ~NO_GHOSTSCRIPT;
 	    Message(PARSE_STDIN,"GhostScript calls made\n");
 	  }
 	} else if (strncmp(p,"ogssafer",8)==0) { 
 	  if (p[8] != '0') {
-	    flags |= NO_GSSAFER;
+	    option_flags |= NO_GSSAFER;
 	    Message(PARSE_STDIN,"GhostScript calls does not use -dSAFER\n",p);
 	  } else {
-	    flags &= ~NO_GSSAFER;
+	    option_flags &= ~NO_GSSAFER;
 	    Message(PARSE_STDIN,"GhostScript calls use -dSAFER\n");
 	  }
 	} else
@@ -465,9 +464,9 @@ bool DecodeArgs(int argc, char ** argv)
 	break ;
       case 'q':       /* quiet operation */
 	if (*p != '0')
-	  flags &= (~BE_NONQUIET & ~BE_VERBOSE);
+	  option_flags &= (~BE_NONQUIET & ~BE_VERBOSE);
         else
-	  flags |= BE_NONQUIET;
+	  option_flags |= BE_NONQUIET;
 	break;
       case 'r':       /* process pages in reverse order */
 	if (*p != '0') {
@@ -488,17 +487,35 @@ bool DecodeArgs(int argc, char ** argv)
 #ifdef HAVE_LIBKPATHSEA
 	  puts (KPSEVERSION);
 #endif
-	  puts ("Copyright (C) 2002-2005 Jan-Ake Larsson.\n\
+#ifdef HAVE_FT2
+	  printf("Compiled with Freetype %d.%d.%d\n",
+		 FREETYPE_MAJOR, FREETYPE_MINOR, FREETYPE_PATCH);
+#  ifdef HAVE_FT_LIBRARY_VERSION
+	  if (FT_Init_FreeType( &libfreetype ))
+	    Warning("the Freetype library seems unusable");
+	  else {
+	    FT_Int      amajor, aminor, apatch;
+	    
+	    FT_Library_Version( libfreetype, &amajor, &aminor, &apatch );
+	    printf("Using libft %d.%d.%d\n",amajor, aminor, apatch);
+	    FT_Done_FreeType(libfreetype);	    
+	  }
+#  endif
+#endif
+#ifdef HAVE_LIBT1
+	  printf("Using t1lib %s\n", T1_GetLibIdent());
+#endif
+	  puts ("Copyright (C) 2002-2008 Jan-Ake Larsson.\n\
 There is NO warranty.  You may redistribute this software\n\
-under the terms of the GNU General Public License.\n\
-For more information about these matters, see the files\n\
-named COPYING and dvipng.c.");
+under the terms of the GNU Lesser General Public License\n\
+version 3, see the COPYING file in the dvipng distribution\n\
+or <http://www.gnu.org/licenses/>.");
 	  exit (EXIT_SUCCESS); 
 	}
 	if (*p != '0')
-	  flags |= BE_NONQUIET | BE_VERBOSE;
+	  option_flags |= BE_NONQUIET | BE_VERBOSE;
 	else
-	  flags &= ~BE_VERBOSE;
+	  option_flags &= ~BE_VERBOSE;
         break;
       case 'D' :
 	if (*p == 0 && argv[i+1])
@@ -535,7 +552,7 @@ named COPYING and dvipng.c.");
 	break;
 #endif
       case '\0':
-	flags |= PARSE_STDIN;
+	option_flags |= PARSE_STDIN;
 	break;
       DEFAULT: default:
 	Warning("%s is not a valid option", argv[i]);
@@ -612,13 +629,13 @@ named COPYING and dvipng.c.");
       fputs (kpse_bug_address, stdout);
       }
       #endif*/
-    if ((flags & PARSE_STDIN) == 0) {
+    if ((option_flags & PARSE_STDIN) == 0) {
       exit(EXIT_SUCCESS);
     }
   }
-  if ((flags & PARSE_STDIN) == 0 && (!ppused)) 
+  if ((option_flags & PARSE_STDIN) == 0 && (!ppused)) 
     ParsePages("-");
-  return((flags & PARSE_STDIN) != 0);
+  return((option_flags & PARSE_STDIN) != 0);
 }
 
 void DecodeString(char *string)
@@ -708,13 +725,13 @@ void Warning(char *fmt, ...)
 
   va_start(args, fmt);
 
-  if ( flags & BE_NONQUIET ) {
+  if ( option_flags & BE_NONQUIET ) {
     fflush(stdout);
     fprintf(stderr, "%s warning: ", programname);
     vfprintf(stderr, fmt, args);
     fprintf(stderr, " ");
-    va_end(args);
   }
+  va_end(args);
 }
 
 /*-->Message*/
@@ -726,7 +743,7 @@ void Message(int activeflags, char *fmt, ...)
   va_list args;
 
   va_start(args, fmt);
-  if ( flags & activeflags ) {
+  if ( option_flags & activeflags ) {
     vfprintf(stdout, fmt, args);
   }
   va_end(args);
@@ -740,7 +757,7 @@ bool MmapFile (char *filename,struct filemmap *fmmap)
 #endif
 
   DEBUG_PRINT(DEBUG_DVI,("\n  OPEN FILE:\t'%s'", filename));
-  fmmap->dp_mmap=NULL;
+  fmmap->data=NULL;
 #ifndef MIKTEX
   if ((fmmap->fd = open(filename,O_RDONLY)) == -1) {
     Warning("cannot open file <%s>", filename);
@@ -749,19 +766,24 @@ bool MmapFile (char *filename,struct filemmap *fmmap)
   fstat(fmmap->fd,&stat);
   fmmap->size=stat.st_size;
 # ifdef HAVE_MMAP
-  fmmap->dp_mmap = mmap(NULL,fmmap->size, PROT_READ, MAP_SHARED,fmmap->fd,0);
-  if (fmmap->dp_mmap == (char*)-1) {
+  fmmap->data = mmap(NULL,fmmap->size, PROT_READ, MAP_SHARED,fmmap->fd,0);
+  if (fmmap->data == (char*)-1) {
     Warning("cannot mmap file <%s>",filename);
-    fmmap->dp_mmap=NULL;
+    fmmap->data=NULL;
     close(fmmap->fd);
     return(true);
   }
 # else /* HAVE_MMAP */
-  fmmap->dp_mmap = malloc(fmmap->size);
-  if (read(fmmap->fd,fmmap->dp_mmap,fmmap->size)<fmmap->size) {
+  fmmap->data = malloc(fmmap->size);
+  if (fmmap->data == NULL) {
+    Warning("cannot malloc space for <%s>",filename);
+    close(fmmap->fd);
+    return(true);
+  }
+  if (read(fmmap->fd,fmmap->mmap,fmmap->size)<fmmap->size) {
     Warning("too little data in <%s>",filename);
-    free(fmmap->dp_mmap);
-    fmmap->dp_mmap=NULL;
+    free(fmmap->data);
+    fmmap->data=NULL;
     close(fmmap->fd);
     return(true);
   }
@@ -781,8 +803,8 @@ bool MmapFile (char *filename,struct filemmap *fmmap)
     Warning("cannot CreateFileMapping() file <%s>", filename);
     return(true);
   }
-  fmmap->dp_mmap = MapViewOfFile(fmmap->hMap, FILE_MAP_READ, 0, 0, 0);
-  if (fmmap->dp_mmap == NULL) {
+  fmmap->data = MapViewOfFile(fmmap->hMap, FILE_MAP_READ, 0, 0, 0);
+  if (fmmap->data == NULL) {
     Warning("cannot MapViewOfFile() file <%s>", filename);
     CloseHandle (fmmap->hMap);
     CloseHandle (fmmap->hFile);
@@ -794,21 +816,21 @@ bool MmapFile (char *filename,struct filemmap *fmmap)
 
 void UnMmapFile(struct filemmap* fmmap)
 {
-  if (fmmap->dp_mmap!=NULL) {
+  if (fmmap->data!=NULL) {
 #ifndef MIKTEX
 # ifdef HAVE_MMAP
-    if (munmap(fmmap->dp_mmap,fmmap->size))
-      Warning("cannot munmap file at 0x%X",fmmap->dp_mmap);
+    if (munmap(fmmap->data,fmmap->size))
+      Warning("cannot munmap file at 0x%X",fmmap->data);
     if (close(fmmap->fd))
       Warning("cannot close file descriptor %d",fmmap->fd);
 # else /* HAVE_MMAP */
-    free(fmmap->dp_mmap);
+    free(fmmap->data);
 # endif /* HAVE_MMAP */
 #else  /* MIKTEX */
-    UnmapViewOfFile (fmmap->dp_mmap);
+    UnmapViewOfFile (fmmap->data);
     CloseHandle (fmmap->hMap);
     CloseHandle (fmmap->hFile);
 #endif	/* MIKTEX */
   }
-  fmmap->dp_mmap=NULL;
+  fmmap->data=NULL;
 }

@@ -25,25 +25,30 @@ Prerequisites
 
    * The font-rendering library FreeType 2
 
-     While not strictly necessary, FreeType 2 is recommended since
-     dvipng currently will produce better-quality images with this
-     library available. It will also enable direct support for
-     PostScript and TrueType fonts, and subfont support in dvipng. That
-     is, if you want to render CJK-LaTeX characters, you must have
-     FreeType 2 installed.  With FreeType 2, dvipng will not need to
-     generate bitmapped variants on disk of the TeX fonts since modern
-     TeX distributions include PostScript versions of them. Then, you
-     can render images at different (and unusual) resolutions without
-     cluttering the disk with lots of bitmapped fonts.
+     While not strictly necessary, a recent FreeType 2 is recommended
+     since dvipng currently will produce better-quality images when
+     this library is available. To take advantage of this, you should
+     have at least FreeType 2.1.9.
+
+     FreeType 2 will enable direct support for PostScript and TrueType
+     fonts, so that dvipng will not need to generate bitmapped variants
+     on disk of the TeX fonts since modern TeX distributions include
+     PostScript versions of them. Then, you can render images at
+     different (and unusual) resolutions without cluttering the disk
+     with lots of bitmapped fonts.
+
+     Finally, it will enable subfont support in dvipng. That is, if you
+     want to render CJK-LaTeX characters, you must have FreeType 2
+     installed.
 
    * The font-rendering library T1lib
 
      An alternative to FreeType 2 is T1lib, but this will enable only
-     PostScript fonts in dvipng, and will not include subfont support.
+     PostScript fonts in dvipng and will not include subfont support.
      Also here, you can render images at different (and unusual)
      resolutions without cluttering the disk with lots of bitmapped
      fonts. If both FreeType 2 and T1lib are present, FreeType will be
-     internally preferred by dvipng, but T1lib can be chosen at runtime.
+     internally preferred by dvipng but T1lib can be chosen at runtime.
 
    * libpng and libz
 
@@ -155,9 +160,9 @@ documentation.
 Copying
 =======
 
-This program is released under the GNU General Public License, see the
-COPYING file in the dvipng distribution or
-`http://www.gnu.org/licenses/gpl.html'.
+This program is released under the GNU Lesser General Public License
+version 3, see the COPYING file in the dvipng distribution or
+`http://www.gnu.org/licenses/'.
 
-   Copyright (C) 2002-2006 Jan-AAke Larsson
+   Copyright (C) 2002-2008 Jan-AAke Larsson
 

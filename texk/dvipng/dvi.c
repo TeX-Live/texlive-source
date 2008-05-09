@@ -4,22 +4,21 @@
 
   Part of the dvipng distribution
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
 
   This program is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  General Public License for more details.
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  Lesser General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-  02110-1301 USA.
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program. If not, see
+  <http://www.gnu.org/licenses/>.
 
-  Copyright (C) 2002-2006 Jan-Åke Larsson
+  Copyright (C) 2002-2008 Jan-Åke Larsson
 
 ************************************************************************/
 
@@ -94,6 +93,7 @@ void DVIInit(struct dvi_data* dvi)
   fstat(fileno(dvi->filep), &stat);
   dvi->mtime = stat.st_mtime;
   dvi->pagelistp=NULL;
+  dvi->flags = 0;
 }
 
 struct dvi_data* DVIOpen(char* dviname,char* outname)
@@ -169,12 +169,17 @@ unsigned char* DVIGetCommand(struct dvi_data* dvi)
      /* Mmap is not appropriate here, we may want to read from
 	half-written files. */
 { 
-  static unsigned char command[STRSIZE];
-  static unsigned char* lcommand = command;
+  static unsigned char* command=NULL;
+  static uint32_t commlen=0;
   unsigned char *current = command;
   int length;
   uint32_t strlength=0;
 
+  if (commlen==0) {
+    commlen=STRSIZE;
+    if ((current=command=malloc(commlen))==NULL)
+      Fatal("cannot allocate memory for DVI command");
+  }
   DEBUG_PRINT(DEBUG_DVI,("\n@%ld ", ftell(dvi->filep)));
   *(current++) = fgetc_follow(dvi->filep);
   length = dvi_commandlength[*command];
@@ -182,7 +187,7 @@ unsigned char* DVIGetCommand(struct dvi_data* dvi)
     Fatal("undefined DVI op-code %d",*command);
   while(current < command+length) 
     *(current++) = fgetc_follow(dvi->filep);
-  switch (*command)  {
+  switch (*command) {
   case XXX4:
     strlength =                   *(current - 4);
   case XXX3:
@@ -200,24 +205,57 @@ unsigned char* DVIGetCommand(struct dvi_data* dvi)
     break;
   }
   if (strlength > 0) { /* Read string */
-    if (lcommand!=command) {
-      free(lcommand);
-      lcommand=command;
-    }
-    if (strlength + (uint32_t)length >  (uint32_t)STRSIZE) {
+    if (strlength+1 + (uint32_t)length > commlen) {
       /* string + command length exceeds that of buffer */
-      if ((lcommand=malloc(length+strlength+1))==NULL) 
+      commlen=strlength+1 + (uint32_t)length;
+      if ((command=realloc(command,commlen))==NULL)
 	Fatal("cannot allocate memory for DVI command");
-      memcpy(lcommand,command,length);
-      current = lcommand + length;
+      current = command + length;
     }
-    while(current < lcommand+length+strlength) 
+    while(current < command+length+strlength) 
       *(current++) = fgetc_follow(dvi->filep);
-    return(lcommand);
-  } else
-    return(command);
+    *current='\0';
+  }
+  return(command);
 }
 
+bool DVIIsNextPSSpecial(struct dvi_data* dvi)
+     /* This function checks if the next dvi command is a raw PS
+	special */
+     /* Mmap is not appropriate here, we may want to read from
+	half-written files. */
+{ 
+  long fpos;
+  uint32_t strlength=0;
+  bool israwps=false;
+
+  DEBUG_PRINT(DEBUG_DVI,("\n  CHECKING NEXT DVI COMMAND "));
+  fpos=ftell(dvi->filep);
+  switch (fgetc_follow(dvi->filep)) {
+  case XXX4:
+    strlength =                   fgetc_follow(dvi->filep);
+  case XXX3:
+    strlength = strlength * 256 + fgetc_follow(dvi->filep);
+  case XXX2: 
+    strlength = strlength * 256 + fgetc_follow(dvi->filep);
+  case XXX1:
+    strlength = strlength * 256 + fgetc_follow(dvi->filep);
+  }
+  if (strlength > 0) { 
+    switch(fgetc_follow(dvi->filep)) {
+    case 'p':
+      if (strlength > 2 
+	  && fgetc_follow(dvi->filep)=='s'
+	  && fgetc_follow(dvi->filep)==':')
+	israwps=true;
+      break;
+    case '"':
+      israwps=true;
+    }
+  }
+  fseek(dvi->filep,fpos,SEEK_SET);
+  return(israwps);
+}
 
 uint32_t CommandLength(unsigned char* command)
 { 
@@ -254,9 +292,7 @@ void SkipPage(struct dvi_data* dvi)
     case XXX1: case XXX2: case XXX3: case XXX4:
       DEBUG_PRINT(DEBUG_DVI,("NOSKIP CMD:\t%s %d", dvi_commands[*command],
 			     UNumRead(command+1, dvi_commandlength[*command]-1)));
-      SetSpecial((char*)command + dvi_commandlength[*command], 
-		 UNumRead(command+1, dvi_commandlength[*command]-1),
-		 0,0);
+      SetSpecial((char*)command + dvi_commandlength[*command],0,0);
       break;
     case BOP: case PRE: case POST: case POST_POST:
       Fatal("%s occurs within page", dvi_commands[*command]);
@@ -294,7 +330,8 @@ struct page_list* InitPage(struct dvi_data* dvi)
     command=DVIGetCommand(dvi);
   }
   if ((tpagelistp = 
-       malloc(sizeof(struct page_list)+(csp+1-2)*sizeof(struct dvi_color)))==NULL)
+       malloc(sizeof(struct page_list)
+	      +(csp+1-2)*sizeof(struct dvi_color)))==NULL)
     Fatal("cannot allocate memory for new page entry");
   tpagelistp->next = NULL;
   if ( *command == BOP ) {  /*  Init page */
@@ -410,6 +447,7 @@ void DVIClose(struct dvi_data* dvi)
   if (dvi!=NULL) {
     fclose(dvi->filep);
     DelPageList(dvi);
+    ClearPSHeaders();
     free(dvi->outname);
     free(dvi->name);
     free(dvi);
@@ -424,6 +462,7 @@ bool DVIReOpen(struct dvi_data* dvi)
     fclose(dvi->filep);
     dvi->filep=NULL;
     DelPageList(dvi);
+    ClearPSHeaders();
     while(((dvi->filep = fopen(dvi->name,"rb")) == NULL) && followmode) {
       SLEEP;
     }

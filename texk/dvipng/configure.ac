@@ -2,7 +2,7 @@
 # the dvipng maintainers for it.
 
 # Process this file with autoconf to produce a configure script.
-AC_INIT([dvipng], [1.9], [dvipng@nongnu.org])
+AC_INIT([dvipng], [1.10], [dvipng@nongnu.org])
 AC_CONFIG_SRCDIR([dvipng.c])
 
 AC_ARG_ENABLE(debug, 
@@ -28,9 +28,12 @@ AC_ARG_WITH(gs,
     GS=no
   else
     AC_PATH_PROG(GS,["$withval"])
+    dnl --skip, karl GS_CHECK_DEVICES
   fi],
   [AC_CHECK_PROG(GS,gs,gs)
-  if test -z "$GS"; then
+  if test -n "$GS"; then
+    ; dnl --skip, karl GS_CHECK_DEVICES
+  else
     GS="gs"
     AC_MSG_WARN([Cannot find GhostScript in your PATH])
   fi
@@ -51,17 +54,6 @@ AC_DEFUN([AC_GS_HAS_DEVICE],
   fi
 ])
 
-GS_WARN=""
-AC_GS_HAS_DEVICE(pngalpha,
-   [GS_WARN="Your EPS inclusions will be cropped to the 
-             boundingbox, and rendered on an opaque background. 
-             Upgrade GhostScript to avoid this."
-   AC_GS_HAS_DEVICE(png16m,
-      [GS_WARN="Your EPS inclusions may not work.
-             Upgrade/install GhostScript to avoid this."])])
-if test -n "$GS_WARN"; then
-  AC_MSG_WARN([$GS_WARN])
-fi
 
 ac_cv_lib_t1_T1_InitLib=yes
 PSFONTS_O=""
@@ -182,7 +174,7 @@ fi
 if test "$with_system_gd" = yes; then
   OLD_LIBS=$LIBS
   LIBS="$LDGD $LIBS"
-  AC_CHECK_FUNCS([gdImageCreateTrueColor gdImagePngEx gdImageGif gdImageJpeg])
+  AC_CHECK_FUNCS([gdImageCreateTrueColor gdImageCreateFromJpeg gdImagePngEx gdImageCreateFromPngPtr gdImageGif FT_Library_Version])
   LIBS=$OLD_LIBS
 else
   AC_DEFINE([HAVE_GDIMAGECREATETRUECOLOR])
