@@ -17,7 +17,7 @@ skip_test_()
 uid_is_privileged_()
 {
   # Make sure id -u succeeds.
-  my_uid=$(id -u) \
+  my_uid=`id -u` \
     || { echo "$0: cannot run \`id -u'" 1>&2; return 1; }
 
   # Make sure it gives valid output.
@@ -53,17 +53,17 @@ skip_if_root_() { uid_is_privileged_ && skip_test_ "must be run as non-root"; }
 error_() { echo "$0: $@" 1>&2; (exit 1); exit 1; }
 framework_failure() { error_ 'failure in testing framework'; }
 
-test_dir_=$(pwd)
+test_dir_=`pwd`
 
 this_test_() { echo "./$0" | sed 's,.*/,,'; }
-this_test=$(this_test_)
+this_test=`this_test_`
 
 # This is a stub function that is run upon trap (upon regular exit and
 # interrupt).  Override it with a per-test function, e.g., to unmount
 # a partition, or to undo any other global state changes.
 cleanup_() { :; }
 
-t_=$($abs_top_srcdir/tests/mkdtemp $test_dir_ lzma-$this_test.XXXXXXXXXX) \
+t_=`$abs_top_srcdir/tests/mkdtemp $test_dir_ lzma-$this_test.XXXXXXXXXX` \
     || error_ "failed to create temporary directory in $test_dir_"
 
 # Run each test from within a temporary sub-directory named after the

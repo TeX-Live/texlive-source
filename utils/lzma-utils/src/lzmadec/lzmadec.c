@@ -9,14 +9,12 @@
 #include <lzmadec.h>
 #include "../lzma_version.h"
 
-#define CHUNKSIZE_IN 4096
-#define CHUNKSIZE_OUT (1024*512)
-
-
-/* for O_BINARY: */
 #ifdef WIN32
 #include <fcntl.h>
 #endif
+
+#define CHUNKSIZE_IN 4096
+#define CHUNKSIZE_OUT (1024*512)
 
 int main(int argc, char **argv)
 {
@@ -43,12 +41,11 @@ int main(int argc, char **argv)
 		return 0;
 	}
 
- /*
-  * Windows: set stdin/stdout to binary mode */
-        #ifdef WIN32
-        setmode(fileno(stdout), O_BINARY);
-        setmode(fileno(stdin), O_BINARY);
-        #endif
+#ifdef WIN32
+	setmode(fileno(stdout), O_BINARY);
+	setmode(fileno(stdin), O_BINARY);
+#endif
+
 	if (buffer_in == NULL || buffer_out == NULL) {
 		fprintf (stderr, "%s: Not enough memory.\n", argv[0]);
 		return 5;

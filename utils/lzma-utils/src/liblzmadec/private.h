@@ -153,7 +153,7 @@ typedef struct {
 	uint8_t *dictionary;
 
 	uint_fast64_t uncompressed_size;
-	int_fast8_t streamed; /* boolean */
+	uint_fast8_t streamed; /* boolean */
 
 	uint32_t pos_state_mask;
 	uint32_t literal_pos_mask;

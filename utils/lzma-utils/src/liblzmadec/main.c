@@ -55,7 +55,7 @@ static int_fast8_t lzmadec_header_dictionary (
 		const uint8_t *buffer);
 static void lzmadec_header_uncompressed (
 		uint_fast64_t *size,
-		int_fast8_t *is_streamed,
+		uint_fast8_t *is_streamed,
 		const uint8_t *buffer);
 
 
@@ -228,7 +228,7 @@ lzmadec_header_dictionary (uint_fast32_t *size, const uint8_t *buffer)
 
 /* Parse the uncompressed size field (8 bytes, little endian) */
 static void
-lzmadec_header_uncompressed (uint_fast64_t *size, int_fast8_t *is_streamed,
+lzmadec_header_uncompressed (uint_fast64_t *size, uint_fast8_t *is_streamed,
 	const uint8_t *buffer)
 {
 	/* Streamed files have all 64 bits set in the size field.

@@ -169,6 +169,13 @@ HRESULT CDecoder::CodeSpec(UInt32 curSize)
               rep0 += _posAlignDecoder.ReverseDecode(&_rangeDecoder);
               if (rep0 == 0xFFFFFFFF)
               {
+                // Quick 'n' dirty hack: Give an error if the special marker
+                // isn't end of stream marker. An updated version of the LZMA
+                // format allows flush marker too (len == 3). Newer LZMA
+                // Utils don't allow writing flush marker to LZMA_Alone
+                // format files, but it's still better safe than sorry.
+                if (len != 2)
+                  return S_FALSE;
                 _remainLen = kLenIdFinished;
                 return S_OK;
               }

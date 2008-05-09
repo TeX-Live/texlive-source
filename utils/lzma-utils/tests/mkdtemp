@@ -12,7 +12,7 @@
 #      the desired directory.
 #  - make only $MAX_TRIES attempts
 
-ME=$(basename "$0")
+ME=`basename "$0"`
 die() { echo >&2 "$ME: $@"; exit 1; }
 
 MAX_TRIES=4
@@ -31,15 +31,15 @@ rand_bytes()
   fi
 
   cmds='date; date +%N; free; who -a; w; ps auxww; ps ef; netstat -n'
-  data=$( (eval "$cmds") 2>&1 | gzip )
+  data=` (eval "$cmds") 2>&1 | gzip `
 
-  n_plus_50=$(expr $n + 50)
+  n_plus_50=`expr $n + 50`
 
   # Ensure that $data has length at least 50+$n
   while :; do
-    len=$(echo "$data"|wc -c)
+    len=`echo "$data"|wc -c`
     test $n_plus_50 -le $len && break;
-    data=$( (echo "$data"; eval "$cmds") 2>&1 | gzip )
+    data=` (echo "$data"; eval "$cmds") 2>&1 | gzip `
   done
 
   echo "$data" \
@@ -65,7 +65,7 @@ mkdtemp()
   fail=0
 
   # First, try to use mktemp.
-  d=$(env -u TMPDIR mktemp -d -t -p "$destdir" "$template" 2>/dev/null) \
+  d=`env -u TMPDIR mktemp -d -t -p "$destdir" "$template" 2>/dev/null` \
     || fail=1
 
   # The resulting name must be in the specified directory.
@@ -75,7 +75,7 @@ mkdtemp()
   test -d "$d" || fail=1
 
   # It must have 0700 permissions.
-  perms=$(ls -dgo "$d" 2>/dev/null) || fail=1
+  perms=`ls -dgo "$d" 2>/dev/null` || fail=1
   case $perms in drwx------*) ;; *) fail=1;; esac
 
   test $fail = 0 && {
@@ -86,20 +86,20 @@ mkdtemp()
   # If we reach this point, we'll have to create a directory manually.
 
   # Get a copy of the template without its suffix of X's.
-  base_template=$(echo "$template"|sed 's/XX*$//')
+  base_template=`echo "$template"|sed 's/XX*$//'`
 
   # Calculate how many X's we've just removed.
-  nx=$(expr length "$template" - length "$base_template")
+  nx=`expr length "$template" - length "$base_template"`
 
   err=
   i=1
   while :; do
-    X=$(rand_bytes $nx)
+    X=`rand_bytes $nx`
     candidate_dir="$destdir/$base_template$X"
-    err=$(mkdir -m 0700 "$candidate_dir" 2>&1) \
+    err=`mkdir -m 0700 "$candidate_dir" 2>&1` \
       && { echo "$candidate_dir"; return; }
     test $MAX_TRIES -le $i && break;
-    i=$(expr $i + 1)
+    i=`expr $i + 1`
   done
   die "$err"
 }

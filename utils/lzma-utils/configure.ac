@@ -5,7 +5,7 @@ AC_PREREQ(2.59)
 
 # [LZMA] instead of [LZMA utils] since I prefer to have lzma-version.tar.gz
 # instead of lzma-utils-version.tar.gz.
-AC_INIT([LZMA], [4.32.4], [lasse.collin@tukaani.org])
+AC_INIT([LZMA], [4.32.5], [lasse.collin@tukaani.org])
 
 AC_CONFIG_SRCDIR([src/sdk/7zip/ICoder.h])
 AC_CONFIG_HEADER([config.h])
