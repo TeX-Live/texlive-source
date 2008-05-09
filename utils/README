@@ -37,7 +37,7 @@ xindy 2.3 - ok 24mar08
   http://www.ctan.org/tex-archive/indexing/xindy/
 
 After building clisp as described below, run the TL
-  Build --with-clisp=$clisp_builddir/clisp
+  Build --with-xindy --with-clisp=$clisp_builddir/clisp
 to include xindy in the build.  It is disabled by default.
 
 mkdir clisp; cd clisp
@@ -65,6 +65,8 @@ cd $clisp_basedir
 wget http://ftp.gnu.org/gnu/clisp/release/2.44.1/clisp-2.44.1.tar.gz
 gzip -dc clisp-2.44.1.tar.gz | tar xf -
 cd clisp-2.44.1
-./configure --with-ffcall --with-libffcall-prefix=$clisp_toolsdir --with-libsigsegv-prefix=$clisp_toolsdir --without-readline $clisp_builddir
-cd $clisp_builddir
-make
+./configure --with-ffcall --with-libffcall-prefix=$clisp_toolsdir \
+  --with-libsigsegv-prefix=$clisp_toolsdir --without-readline \
+  $clisp_builddir \
+&& cd $clisp_builddir \
+&& make
