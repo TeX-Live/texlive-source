@@ -32,7 +32,8 @@ AC_ARG_WITH(gs,
   fi],
   [AC_CHECK_PROG(GS,gs,gs)
   if test -n "$GS"; then
-    ; dnl --skip, karl GS_CHECK_DEVICES
+    true
+    dnl --skip, karl GS_CHECK_DEVICES
   else
     GS="gs"
     AC_MSG_WARN([Cannot find GhostScript in your PATH])

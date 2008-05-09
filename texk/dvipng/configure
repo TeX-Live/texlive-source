@@ -2181,7 +2181,8 @@ fi
 
 
   if test -n "$GS"; then
-    ;   else
+    true
+      else
     GS="gs"
     { $as_echo "$as_me:$LINENO: WARNING: Cannot find GhostScript in your PATH" >&5
 $as_echo "$as_me: WARNING: Cannot find GhostScript in your PATH" >&2;}
