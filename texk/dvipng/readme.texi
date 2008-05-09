@@ -31,11 +31,6 @@ homework problems to students over the internet, giving students
 instant feedback as to whether or not their answers are correct, see
 @url{http://webwork.math.rochester.edu}.
 
-A more recent addition to the dvipng-using applications out there is
-MediaWiki, the software behind Wikipedia and many other wikis out
-there. Dvipng is used to render mathematical formulae from version
-1.8.0 of MediaWiki, see @url{http://www.mediawiki.org}.
-
 Other applications may also benefit, like web applications as latex2html
 and WYSIWYG editors like LyX.
 
@@ -110,7 +105,8 @@ anonymous CVS access can be found at
 
 @section Contacts
 
-Bug reports should be sent to @email{dvipng@@nongnu.org}.
+Bug reports should be sent to
+@email{dvipng@@nongnu.org}. 
 
 Questions, suggestions for new features, pleas for help, and/or praise
 should go to @email{dvipng@@nongnu.org}. For more information on this
@@ -123,23 +119,17 @@ access, ask on @email{dvipng@@nongnu.org}.
 
 @section Copying
 
-This program is released under the GNU Lesser General Public License
-version 3, see the COPYING file in the dvipng distribution or
-@url{http://www.gnu.org/licenses/}.
+This program is released under the GNU General Public License, see the
+COPYING file in the dvipng distribution or
+@url{http://www.gnu.org/licenses/gpl.html}.
 
-Copyright @copyright{} 2002-2008 Jan-@AA{}ke Larsson
+Copyright @copyright{} 2002-2006 Jan-@AA{}ke Larsson
 
 @section Todo
 
 @itemize @bullet
 @item
-Use gs interpreter library for speed and possibly for functionality.
-
-@item
 Fix T1lib and PK rendering so it is on par with Freetype.
-
-@item
-Enable a named pipe as DVI
 
 @item 
 Further speed improvements.
@@ -149,9 +139,6 @@ Other output specials and source specials.
 
 @item 
 Clean internal structures. Overhaul file handling.
-
-@item
-Fix the SELFAUTO stuff at runtime rather than at build time
 @end itemize
 
 

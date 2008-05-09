@@ -19,11 +19,6 @@ homework problems to students over the internet, giving students
 instant feedback as to whether or not their answers are correct, see
 `http://webwork.math.rochester.edu'.
 
-   A more recent addition to the dvipng-using applications out there is
-MediaWiki, the software behind Wikipedia and many other wikis out
-there. Dvipng is used to render mathematical formulae from version
-1.8.0 of MediaWiki, see `http://www.mediawiki.org'.
-
    Other applications may also benefit, like web applications as
 latex2html and WYSIWYG editors like LyX.
 
@@ -100,27 +95,20 @@ developer access, ask on <dvipng@nongnu.org>.
 Copying
 =======
 
-This program is released under the GNU Lesser General Public License
-version 3, see the COPYING file in the dvipng distribution or
-`http://www.gnu.org/licenses/'.
+This program is released under the GNU General Public License, see the
+COPYING file in the dvipng distribution or
+`http://www.gnu.org/licenses/gpl.html'.
 
-   Copyright (C) 2002-2008 Jan-AAke Larsson
+   Copyright (C) 2002-2006 Jan-AAke Larsson
 
 Todo
 ====
 
-   * Use gs interpreter library for speed and possibly for
-     functionality.
-
    * Fix T1lib and PK rendering so it is on par with Freetype.
-
-   * Enable a named pipe as DVI
 
    * Further speed improvements.
 
    * Other output specials and source specials.
 
    * Clean internal structures. Overhaul file handling.
-
-   * Fix the SELFAUTO stuff at runtime rather than at build time
 

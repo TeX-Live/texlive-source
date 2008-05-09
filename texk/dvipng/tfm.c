@@ -4,21 +4,22 @@
 
   Part of the dvipng distribution
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU Lesser General Public License as
-  published by the Free Software Foundation, either version 3 of the
-  License, or (at your option) any later version.
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
 
   This program is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-  Lesser General Public License for more details.
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  General Public License for more details.
 
-  You should have received a copy of the GNU Lesser General Public
-  License along with this program. If not, see
-  <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+  02110-1301 USA.
 
-  Copyright (C) 2002-2008 Jan-Åke Larsson
+  Copyright (C) 2002-2005 Jan-Åke Larsson
 
 ************************************************************************/
 
@@ -38,7 +39,7 @@ bool ReadTFM(struct font_entry * tfontp, char* tfmname)
   DEBUG_PRINT((DEBUG_DVI|DEBUG_FT|DEBUG_TFM),
 	      ("\n  OPEN METRICS:\t'%s'", tfmname));
   if (MmapFile(tfmname,&fmmap)) return(false);
-  position=(unsigned char*)fmmap.data;
+  position=(unsigned char*)fmmap.dp_mmap;
   lh = UNumRead(position+2,2);
   bc = UNumRead(position+4,2);
   ec = UNumRead(position+6,2);
@@ -55,10 +56,10 @@ bool ReadTFM(struct font_entry * tfontp, char* tfmname)
   
   /* Read char widths */
   c=bc;
-  position=(unsigned char*)fmmap.data+24+lh*4;
+  position=(unsigned char*)fmmap.dp_mmap+24+lh*4;
   while(c <= ec) {
     DEBUG_PRINT(DEBUG_TFM,("\n@%ld TFM METRICS:\t", 
-			   (long)position - (long)fmmap.data));
+			   (long)position - (long)fmmap.dp_mmap));
     tcharptr=xmalloc(sizeof(struct char_entry));
     tcharptr->data=NULL;
     tcharptr->tfmw=width[*position];
@@ -66,7 +67,7 @@ bool ReadTFM(struct font_entry * tfontp, char* tfmname)
     tcharptr->tfmw = (dviunits) 
       ((int64_t) tcharptr->tfmw * tfontp->s / (1 << 20));
     DEBUG_PRINT(DEBUG_TFM,(" (%d)",tcharptr->tfmw));
-    if (c >= NFNTCHARS) /* Only positive for now */
+    if (c > NFNTCHARS) /* Only positive for now */
       Fatal("tfm file %s exceeds char numbering limit",tfmname);
     tfontp->chr[c] = tcharptr;
     c++;

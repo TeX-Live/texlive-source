@@ -4,25 +4,39 @@
 
   Part of the dvipng distribution
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU Lesser General Public License as
-  published by the Free Software Foundation, either version 3 of the
-  License, or (at your option) any later version.
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
 
   This program is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-  Lesser General Public License for more details.
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  General Public License for more details.
 
-  You should have received a copy of the GNU Lesser General Public
-  License along with this program. If not, see
-  <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+  02110-1301 USA.
 
-  Copyright (C) 2002-2008 Jan-Åke Larsson
+  Copyright (C) 2002-2005 Jan-Åke Larsson
 
 ************************************************************************/
 
-/* This program translates TeX's DVI-Code into Portable Network Graphics. */
+/**********************************************************************
+ ****************************  Intro  *********************************
+ **********************************************************************
+ * This program translates TeX's DVI-Code into Portable Network Graphics.
+ *
+ * Recipe:
+ * Take a simple dvi2?? converter, dvilj was found suitable.
+ * Read and relish the code of xdvi and dvips
+ * Choose a png-drawing library with a simple interface and support
+ *  on many platforms: gd
+ * Stir, sprinkle with some insights of your own, and enjoy
+ *
+ **********************************************************************
+ */
 
 #define MAIN
 #include "dvipng.h"
@@ -59,14 +73,6 @@ int main(int argc, char ** argv)
    *
    * We adjust these things here
    */
-  /* char selfautodir[MAXPATHLEN];
-     FILE *self;
-     self = popen("kpsewhich -expand-var='$SELFAUTODIR'", "r");
-     if (!self)
-       ...
-     if (!fgets(selfautodir, MAXPATHLEN, self))
-       ...
-    fclose(self); */
 # ifdef ENV_SELFAUTOLOC
   putenv(ENV_SELFAUTOLOC);
 # endif
@@ -109,7 +115,8 @@ int main(int argc, char ** argv)
     while(!feof(stdin)) {
       DecodeString(line);
       if (dvi!=NULL) {
-	DVIReOpen(dvi);
+	if (DVIReOpen(dvi))
+	  flags &= ~PREVIEW_LATEX_TIGHTPAGE;
 	DrawPages();
       }
       printf("%s> ",dvi!=NULL?dvi->name:"");

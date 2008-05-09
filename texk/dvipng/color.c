@@ -4,21 +4,22 @@
 
   Part of the dvipng distribution
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU Lesser General Public License as
-  published by the Free Software Foundation, either version 3 of the
-  License, or (at your option) any later version.
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
 
   This program is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-  Lesser General Public License for more details.
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  General Public License for more details.
 
-  You should have received a copy of the GNU Lesser General Public
-  License along with this program. If not, see
-  <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+  02110-1301 USA.
 
-  Copyright (C) 2002-2008 Jan-Åke Larsson
+  Copyright (C) 2002-2006 Jan-Åke Larsson
 
 ************************************************************************/
 
@@ -101,8 +102,8 @@ struct colorname* LoadColornameFile(char* filename, bool should_exist)
   }
   DEBUG_PRINT(DEBUG_COLOR,("\n  OPEN COLOR NAMES:\t'%s'", filepath));
   if (MmapFile(filepath,&fmmap)) return NULL;
-  pos=fmmap.data;
-  max=fmmap.data+fmmap.size;
+  pos=fmmap.dp_mmap;
+  max=fmmap.dp_mmap+fmmap.size;
   while (pos<max && *pos!='\\') pos++;
   while(pos+9<max && strncmp(pos,"\\endinput",9)!=0) {
     if (pos+17<max && strncmp(pos,"\\DefineNamedColor",17)==0) {
@@ -175,7 +176,7 @@ void ClearColorNames(void)
 }
 
 #define FTO255(a) ((int) (255*a+0.5))
-#define WARN_IF_FAILED(a,b) if (a==b) { page_flags |= PAGE_GAVE_WARN; \
+#define WARN_IF_FAILED(a,b) if (a==b) { flags |= PAGE_GAVE_WARN; \
   Warning("missing color-specification value, treated as zero"); }
 
 #define SKIPSPACES(s) while(s && *s==' ' && *s!='\0') s++
@@ -299,7 +300,7 @@ void stringrgb(char* color,int *r,int *g,int *b)
       stringrgb(tmp->color,r,g,b);
     } else {
       /* Not found, warn */
-      page_flags |= PAGE_GAVE_WARN;
+      flags |= PAGE_GAVE_WARN;
       Warning("unimplemented color specification '%s'",color);
     }
   }

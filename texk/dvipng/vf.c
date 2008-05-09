@@ -4,21 +4,22 @@
 
   Part of the dvipng distribution
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU Lesser General Public License as
-  published by the Free Software Foundation, either version 3 of the
-  License, or (at your option) any later version.
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
 
   This program is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-  Lesser General Public License for more details.
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  General Public License for more details.
 
-  You should have received a copy of the GNU Lesser General Public
-  License along with this program. If not, see
-  <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+  02110-1301 USA.
 
-  Copyright (C) 2002-2008 Jan-Åke Larsson
+  Copyright (C) 2002-2005 Jan-Åke Larsson
 
 ************************************************************************/
 
@@ -61,7 +62,7 @@ void InitVF(struct font_entry * tfontp)
   Message(BE_VERBOSE,"<%s>", tfontp->name);
   if (MmapFile(tfontp->name,&(tfontp->fmmap)))
     Fatal("font file %s unusable", tfontp->name);
-  position=(unsigned char*)tfontp->fmmap.data;
+  position=(unsigned char*)tfontp->fmmap.dp_mmap;
   if (*(position) != PRE) 
     Fatal("unknown font format in file %s",tfontp->name);
   if (*(position+1) != VF_ID) 
@@ -81,7 +82,7 @@ void InitVF(struct font_entry * tfontp)
   position += 8;
   while(*position >= FNT_DEF1 && *position <= FNT_DEF4) {
     DEBUG_PRINT(DEBUG_VF,("\n  @%ld VF:\t%s", 
-			  (long)position - (long)tfontp->fmmap.data, 
+			  (long)position - (long)tfontp->fmmap.dp_mmap, 
 			  dvi_commands[*position]));
     FontDef(position,tfontp);	
     length = dvi_commandlength[*position];
@@ -97,7 +98,7 @@ void InitVF(struct font_entry * tfontp)
   /* Read char definitions */
   while(*position < FNT_DEF1) {
     DEBUG_PRINT(DEBUG_VF,("\n@%ld VF CHAR:\t", 
-			  (long)position - (long)tfontp->fmmap.data));
+			  (long)position - (long)tfontp->fmmap.dp_mmap));
     tcharptr=xmalloc(sizeof(struct char_entry));
     switch (*position) {
     case LONG_CHAR:
@@ -116,7 +117,7 @@ void InitVF(struct font_entry * tfontp)
     tcharptr->tfmw = (int32_t) 
       ((int64_t) tcharptr->tfmw * tfontp->s / (1 << 20));
     DEBUG_PRINT(DEBUG_VF,(" (%d)",tcharptr->tfmw));
-    if (c >= NFNTCHARS) /* Only positive for now */
+    if (c > NFNTCHARS) /* Only positive for now */
       Fatal("VF font %s exceeds char numbering limit",tfontp->name);
     tfontp->chr[c] = tcharptr;
     tcharptr->data=position;

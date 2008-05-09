@@ -4,32 +4,68 @@
 #
 #  Part of the dvipng distribution
 #
-#  This program is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU Lesser General Public License as
-#  published by the Free Software Foundation, either version 3 of the
-#  License, or (at your option) any later version.
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
 #
 #  This program is distributed in the hope that it will be useful, but
 #  WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-#  Lesser General Public License for more details.
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  General Public License for more details.
 #
-#  You should have received a copy of the GNU Lesser General Public
-#  License along with this program. If not, see
-#  <http://www.gnu.org/licenses/>.
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+#  02110-1301 USA.
 #
-#  Copyright (C) 2002-2008 Jan-Åke Larsson
+#  Copyright (C) 2002-2005 Jan-Åke Larsson
 #
 #************************************************************************
 
 PACKAGE_STRING="@PACKAGE_STRING@"
 
+FREETYPE2DIR = ../../libs/freetype2
+FREETYPE2SRCDIR = $(srcdir)/$(FREETYPE2DIR)
+FREETYPE2CPPFLAGS = @FREETYPE2CPPFLAGS@
+FREETYPE2DEP = @FREETYPE2DEP@
+LDFREETYPE2 = @LDFREETYPE2@
+
+GDDIR=../../libs/gd
+GDSRCDIR=$(srcdir)/$(GDDIR)
+GDCPPFLAGS = @GDCPPFLAGS@
+GDDEP = @GDDEP@
+LDGD = @LDGD@
+
+LIBT1DIR=../../libs/t1lib
+LIBT1SRCDIR=$(srcdir)/$(LIBT1DIR)
+LIBT1CPPFLAGS = @LIBT1CPPFLAGS@
+LIBT1DEP = @LIBT1DEP@
+LDLIBT1 = @LDLIBT1@
+
+LIBPNGDIR=../../libs/libpng
+LIBPNGSRCDIR=$(srcdir)/$(LIBPNGDIR)
+LIBPNGCPPFLAGS = @LIBPNGCPPFLAGS@
+LIBPNGDEP = @LIBPNGDEP@
+LDLIBPNG = @LDLIBPNG@
+
+ZLIBDIR=../../libs/zlib
+ZLIBSRCDIR=$(srcdir)/$(ZLIBDIR)
+ZLIBCPPFLAGS = @ZLIBCPPFLAGS@
+ZLIBDEP = @ZLIBDEP@
+LDZLIB = @LDZLIB@
+
+lib_cppflags = $(GDCPPFLAGS) $(FREETYPE2CPPFLAGS) $(LIBT1CPPFLAGS) \
+               $(LIBPNGCPPFLAGS) $(ZLIBCPPFLAGS) -I.. -I$(srcdir)/..
+lib_libs = $(LDGD) $(LDFREETYPE2) $(LDLIBT1) $(LDLIBPNG) $(LDZLIB)
+
 CC = @CC@
 CFLAGS = @CFLAGS@ -Wall
-CPPFLAGS = @CPPFLAGS@ -I.
+CPPFLAGS = @CPPFLAGS@ -I. $(lib_cppflags)
+# -I. must come first, or get gd/config.h.
 LN_S = @LN_S@
 
-LIBS = @LIBS@
+LIBS = $(lib_libs) @LIBS@
 LDFLAGS = @LDFLAGS@
 
 srcdir = @srcdir@
@@ -88,7 +124,7 @@ dvipng.ps: dvipng.dvi
 dvipng.info: $(TEXIFILES) dvipng.help
 	-$(MAKEINFO) -I$(srcdir) $(srcdir)/dvipng.texi
 
-dvipng.help: dvipng
+dvipng.help: misc.c
 	-./dvipng > dvipng.tmp
 	( test -r dvipng.help && diff dvipng.tmp dvipng.help ) \
 		|| cp dvipng.tmp dvipng.help
@@ -107,12 +143,29 @@ dvipng_mono.html: $(TEXIFILES) dvipng.help
 	texi2html --monolithic -nomenu -nosec_nav -o dvipng_mono.html \
 		 -I $(srcdir) $(srcdir)/dvipng.texi
 
+INSTALL: install.texi
+	-$(MAKEINFO) -D rawfile --no-headers --no-validate \
+		--no-number-sections \
+		-I$(srcdir) $(srcdir)/install.texi --output INSTALL
+
+README: readme.texi
+	-$(MAKEINFO) -D rawfile --no-headers --no-validate \
+		--no-number-sections \
+		-I$(srcdir) $(srcdir)/readme.texi --output README
+
+dvipng.1: dvipng.texi readme.texi
+	texi2pod.pl -D man $(srcdir)/dvipng.texi | \
+	sed -es/@//g -es/previewlatex/preview-latex/g -es/{}//g > dvipng.pod
+	pod2man --center="User commands" --release=$(PACKAGE_STRING)\
+		dvipng.pod > dvipng.1
+	rm dvipng.pod
+
 install-docs: docs
 	-$(MKINSTALLDIRS) $(DESTDIR)$(infodir)
-	for x in dvipng.info* ; do \
+	for x in $(srcdir)/dvipng.info* ; do \
 		$(INSTALL_DATA) $$x $(DESTDIR)$(infodir) ; \
 	done
-	-$(INSTALL_INFO) --info-dir=$(DESTDIR)$(infodir) dvipng.info
+	-$(INSTALL_INFO) --info-dir=$(DESTDIR)$(infodir) $(srcdir)/dvipng.info
 	-$(MKINSTALLDIRS) $(DESTDIR)$(mandir)/man1
 	$(INSTALL_DATA) $(srcdir)/dvipng.1 $(DESTDIR)$(mandir)/man1
 
@@ -141,25 +194,6 @@ clean:
 distclean: clean
 	rm -f Makefile
 	rm -f config.status config.log config.cache c-auto.h
-
-####################################### Maintainer targets
-
-INSTALL: install.texi
-	-$(MAKEINFO) -D rawfile --no-headers --no-validate \
-		--no-number-sections \
-		-I$(srcdir) $(srcdir)/install.texi --output INSTALL
-
-README: readme.texi
-	-$(MAKEINFO) -D rawfile --no-headers --no-validate \
-		--no-number-sections \
-		-I$(srcdir) $(srcdir)/readme.texi --output README
-
-dvipng.1: dvipng.texi readme.texi
-	texi2pod.pl -D man $(srcdir)/dvipng.texi | \
-	sed -es/@//g -es/previewlatex/preview-latex/g -es/{}//g > dvipng.pod
-	pod2man --center="User commands" --release=$(PACKAGE_STRING)\
-		dvipng.pod > dvipng.1
-	rm dvipng.pod
 
 dist: INSTALL README dvipng.1 distclean
 
