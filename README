@@ -2,6 +2,9 @@ $Id$
 Copyright 2004, 2006, 2007, 2008 TeX Users Group.
 You may freely use, modify and/or distribute this file.
 
+For a high-level overview of building TeX Live, see
+http://tug.org/texlive/build.html.
+
 To configure and make the source tree, run ./Build.
 To build (mostly) without optimization, run ./Build --debug.
 To make without configuring, run TL_CONFIGURE=true ./Build.
