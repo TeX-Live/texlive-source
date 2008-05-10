@@ -154,7 +154,9 @@ npgettext_aux (const char *domain,
 
 #include <string.h>
 
+#ifndef _LIBGETTEXT_HAVE_VARIABLE_SIZE_ARRAYS
 #define _LIBGETTEXT_HAVE_VARIABLE_SIZE_ARRAYS 1
+#endif
 
 #if !_LIBGETTEXT_HAVE_VARIABLE_SIZE_ARRAYS
 #include <stdlib.h>
