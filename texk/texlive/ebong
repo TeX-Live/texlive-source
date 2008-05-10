@@ -8,10 +8,8 @@ s='s'
 F='F'
 X='X'
 
-NCLINE = 0 
+NCLINE = 0
 global NCWORD,CWORD
-
-
 
 AKSAR={
         'k'   :[B,'k'],
@@ -39,7 +37,6 @@ AKSAR={
         '_dh' :[B,'dh'],
         'n'   :[B,'n'],
 
-
         'p'   :[B,'p'],
         'ph'  :[B,'ph'],
         'f'   :[B,'ph'],
@@ -49,15 +46,14 @@ AKSAR={
         'm'   :[B,'m'],
         'M'   :[F,'M'],
 
-
         '^j'  :[B,'J'],
         'J'   :[B,'J'],
         'r'   :[B,'r'],
         'R'   :[F,'R'],
         'l'   :[B,'l'],
-        'L'   :[F,'L'],    
+        'L'   :[F,'L'],
         'W'   :[F,'W'],
-        'V'   :[F,'W'], 
+        'V'   :[F,'W'],
         'h'   :[B,'H'],
         'kk'  :[B,'kK'],
         'kkm' :[B,'kK/N'],
@@ -78,8 +74,6 @@ AKSAR={
         '^'    :[F,'NN'],
         '_'    :[F,':/'],
 
-
-
         'A'    :[S,'A'],
         'AA'   :[S,'Aa'],
         'I'    :[S,'I'],
@@ -91,7 +85,6 @@ AKSAR={
         'OI'   :[S,'OI'],
         'O'    :[S,'O'],
         'OU'   :[S,'OU'],
-
 
         'a'    :[X,'o',1],
         'aa'   :[s,'a',1],
@@ -110,7 +103,6 @@ AKSAR={
         '..'   :[F,'..'],
         '...'  :[F,'...'],
         '|'    :[F,'|'],
-
 
         '~'    :[F,'~'],
         '`'    :[F,'`'],
@@ -151,13 +143,6 @@ AKSAR={
         '.'    :[F,'.'],
         '?'    :[F,'?'],
         '/'    :[F,'/']}
-        
-        
-        
-        
-        
-        
-        
 
 CATCODES = {'SS'  :[S,'','','',1],
             'SB'  :[B,'','','',1],
@@ -174,15 +159,14 @@ CATCODES = {'SS'  :[S,'','','',1],
             'Fs-2':[S,'\*','','*{oi}',0],
             'Fs11':[S,'\*','','*ea',0],
             'Fs12':[S,'\*','','*eou',0],
-            'FF'  :[F,'','','',1], 
+            'FF'  :[F,'','','',1],
             'AX'  :[F,'','','',1]}
-
 
 def blocked(line):
     #print '@ blocked', line , '->',
     m = sre.findall('@[^@]+@',line)
     outline = line
-    if not m :        
+    if not m :
         #print  outline
         return(outline)
     else:
@@ -193,7 +177,7 @@ def blocked(line):
         return(outline)
 
 def unblock(line):
-    #print '@unblock', line, '->',    
+    #print '@unblock', line, '->',
     m = sre.findall('@[^\s]+',line)
     outline = line
     if not m :
@@ -206,9 +190,8 @@ def unblock(line):
         #print outline
         return(outline)
 
-
 def printamp(line):
-    #print '@unblock', line, '->',    
+    #print '@unblock', line, '->',
     m = sre.findall('#AT',line)
     outline = line
     if not m :
@@ -239,7 +222,7 @@ def fuse(list1,list2):
     #print list1,list2
     Type1 = list1[0]
     Type2 = list2[0]
-    
+
     if Type2 == s:
        Type3 = str(list2[2])
     elif Type2 == X:
@@ -248,9 +231,6 @@ def fuse(list1,list2):
     else:
 	Type3 =''
 
-
-      
-     
     Type = Type1+Type2+Type3
 
     #print 'Type:', Type
@@ -264,7 +244,7 @@ def fuse(list1,list2):
         FLAG = CATCODE[4]
 
         #print 'TGT:', TARGET, PREFIX,MIDFIX,POSTFIX,FLAG
-        #print 'RAWC', AKSAR[list1[1]][1],AKSAR[list2[1]][1] 
+        #print 'RAWC', AKSAR[list1[1]][1],AKSAR[list2[1]][1]
 
         c1=list1[1]
         c2=list2[1]
@@ -280,10 +260,6 @@ def fuse(list1,list2):
     except KeyError:
         print '\n ERROR AT LINE:', NCLINE, 'WORD:',NCWORD, '(',CWORD,')'
         return(['ERROR','UNKNOWN CATCODE'])
-        
-    
-        
-    
 
 def fuseatoms(syll):
     slist=readsyll(syll);
@@ -293,7 +269,7 @@ def fuseatoms(syll):
     for i in range(1,lslist):
         nextitem = slist[i]
         l0=fuse(l0,nextitem)
-        
+
     return(l0[1])
 
 def fuseword(wrd):
@@ -308,7 +284,6 @@ def fuseword(wrd):
     #print 'FUSED WORD',w0
     return(w0)
 
-    
 def fuseline(line):
     global NCWORD,CWORD
     NCWORD = 0
@@ -322,9 +297,8 @@ def fuseline(line):
         theword=fuseword(word)
         #print 'XX',theword
         l0=l0+' '+theword
-    #print 'FUSED LINE', l0    
+    #print 'FUSED LINE', l0
     return(l0)
-
 
 # The main program
 import sys
@@ -337,7 +311,6 @@ fout = file(foutnam,'wt')
 
 textin = fin.readlines()
 nlines = len(textin)
-
 
 textout = []
 
@@ -355,7 +328,7 @@ for eachline in textin:
                     line1   = eachline.strip()
                     line2   = blocked(line1)
                     lineout = fuseline(line2) + '\n'
-                    lineout = lineout[1:]                    
+                    lineout = lineout[1:]
                     #print ':::', lineout
                 if lineout.find('UNKNOWN CATCODE') == -1 :
                     lineout = unblock(lineout)
@@ -364,28 +337,10 @@ for eachline in textin:
                 else :
                     OK = 0
                     fout.close()
-                   
-                  
 
-
-                        
-                
-             
-        
-        
-if OK == 1:        
+if OK == 1:
     fout.writelines(textout)
     fout.close()
     print 'done'
 else:
     print 'Unknown CATCODE, Fix The errors and try again'
-
-    
-    
-    
-    
-        
-           
-        
-        
-                
