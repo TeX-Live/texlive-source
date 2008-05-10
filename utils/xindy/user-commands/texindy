@@ -364,8 +364,8 @@ if ( -f "$cmd_dir/xindy" && -x _ ) {
     $xindy = "$cmd_dir/xindy";
 } elsif ( -f "$cmd_dir/xindy.pl" && -x _ ) {
     $xindy = "$cmd_dir/xindy.pl";
-} elsif ( -f "$ENV{SELFAUTOLOC}/xindy.texlua" ) { # woe32
-    $xindy = "$ENV{SELFAUTOLOC}/xindy.texlua";
+} elsif ( -f "$ENV{SELFAUTOLOC}/xindy.bat" ) { # woe32
+    $xindy = "$ENV{SELFAUTOLOC}/xindy.bat";
     $cmd_dir = $ENV{"SELFAUTOLOC"};
 } else {
     die "$cmd: cannot locate xindy\n";
@@ -392,8 +392,8 @@ unshift (@ARGV, '-I', $input_markup);
 
 print "Calling xindy as: $xindy @ARGV\n"  if (grep /^script$/, @debug);
 
-if ($xindy =~ m,\.texlua$,) {
-  system("texlua", $xindy, @ARGV);
+if ($xindy =~ m,\.bat$,) {
+  system($xindy, @ARGV);
   exit $? if $? != -1;
 } else {
   exec $xindy, @ARGV;
