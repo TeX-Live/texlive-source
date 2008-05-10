@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# mk4ht                                 2007-01-04-01:34 %
+# mk4ht                                 2007-11-14-18:40 %
 # Copyright (C) 2003--2007               Eitan M. Gurari %
 #                                                        %
 #                                                        %
@@ -30,38 +30,56 @@ my @options = (
  "ht",   "httex",     "tex",      "", "", "-cvalidatehtml",
  "ht",   "httexi",    "texi",     "", "", "-cvalidatehtml",
  "ht",   "htcontext", "context",  "", "", "-cvalidatehtml",
+ "ht",   "htxetex",   "xetex",    "", "", "-cvalidatehtml",
+ "ht",   "htxelatex", "xelatex",  "", "", "-cvalidatehtml",
  "xh", "xhlatex",  "latex",   "xhtml", "", "-cvalidate",
  "xh", "xhtex",    "tex",     "xhtml", "", "-cvalidate",
  "xh", "xhtexi",   "texi",    "xhtml", "", "-cvalidate",
- "xh", "xhcontext","context",  "xhtml", "", "-cvalidat",
+ "xh", "xhcontext","context", "xhtml", "", "-cvalidat",
+ "xh", "xhxelatex", "xelatex", "xhtml", "", "-cvalidate",
+ "xh", "xhxetex",  "xetex",   "xhtml", "", "-cvalidate",
  "uxh", "uxhlatex",  "latex",   "xhtml,uni-html4", " -cunihtf", "-cvalidate",
  "uxh", "uxhtex",    "tex",     "xhtml,uni-html4", " -cunihtf", "-cvalidate",
  "uxh", "uxhtexi",   "texi",    "xhtml,uni-html4", " -cunihtf", "-cvalidate",
  "uxh", "uxhcontext","context",  "xhtml,uni-html4", " -cunihtf", "-cvalidate",
+ "uxh", "uxhxelatex",  "xelatex",   "xhtml,uni-html4", " -cunihtf", "-cvalidate",
+ "uxh", "uxhxetex",    "xetex",     "xhtml,uni-html4", " -cunihtf", "-cvalidate",
  "xhm", "xhmlatex", "latex",  "xhtml,mathml", " -cunihtf", "-cvalidate",
  "xhm", "xhmtex",   "tex",    "xhtml,mathml", " -cunihtf", "-cvalidate",
  "xhm", "xhmtexi",  "texi",   "xhtml,mathml", " -cunihtf", "-cvalidate",
  "xhm", "xhmcontext","context", "xhtml,mathml", " -cunihtf", "-cvalidate",
+ "xhm", "xhmxelatex", "xelatex",  "xhtml,mathml", " -cunihtf", "-cvalidate",
+ "xhm", "xhmxetex",   "xetex",    "xhtml,mathml", " -cunihtf", "-cvalidate",
  "mz", "mzlatex",   "latex",   "xhtml,mozilla", " -cmozhtf",  "-cvalidate",
  "mz", "mztex",     "tex",     "xhtml,mozilla", " -cmozhtf",  "-cvalidate",
  "mz", "mztexi",    "texi",    "xhtml,mozilla", " -cmozhtf",  "-cvalidate",
  "mz", "mzcontext", "context", "xhtml,mozilla", " -cmozhtf",  "-cvalidate",
+ "mz", "mzxelatex", "xelatex",   "xhtml,mozilla", " -cmozhtf",  "-cvalidate",
+ "mz", "mzxetex",   "xetex",     "xhtml,mozilla", " -cmozhtf",  "-cvalidate",
  "oo", "oolatex",   "latex",   "xhtml,ooffice", "ooffice/\! -cmozhtf",  "-cooxtpipes -coo",
  "oo", "ootex",     "tex",     "xhtml,ooffice", "ooffice/\! -cmozhtf",  "-cooxtpipes -coo",
  "oo", "ootexi",    "texi",    "xhtml,ooffice", "ooffice/\! -cmozhtf",  "-cooxtpipes -coo",
  "oo", "oocontext", "context", "xhtml,ooffice", "ooffice/\! -cmozhtf",  "-cooxtpipes -coo",
+ "oo", "ooxelatex",   "xelatex",   "xhtml,ooffice", "ooffice/\! -cmozhtf",  "-cooxtpipes -coo",
+ "oo", "ooxetex",     "xetex",     "xhtml,ooffice", "ooffice/\! -cmozhtf",  "-cooxtpipes -coo",
  "es", "eslatex",   "latex",   "xhtml,emspk", " -cemspkhtf -s4es",  "-cemspk",
  "es", "estex",     "tex",     "xhtml,emspk", " -cemspkhtf -s4es",  "-cemspk",
  "es", "estexi",    "texi",    "xhtml,emspk", " -cemspkhtf -s4es",  "-cemspk",
  "es", "escontext", "context", "xhtml,emspk", " -cemspkhtf -s4es",  "-cemspk",
+ "es", "esxelatex",   "xelatex",   "xhtml,emspk", " -cemspkhtf -s4es",  "-cemspk",
+ "es", "esxetex",     "xetex",     "xhtml,emspk", " -cemspkhtf -s4es",  "-cemspk",
  "js", "jslatex",   "latex",   "xhtml,jsml", " -cjsmlhtf",  "-cjsml",
  "js", "jstex",     "tex",     "xhtml,jsml", " -cjsmlhtf",  "-cjsml",
  "js", "jstexi",    "texi",    "xhtml,jsml", " -cjsmlhtf",  "-cjsml",
  "js", "jscontext", "context", "xhtml,jsml", " -cjsmlhtf",  "-cjsml",
+ "js", "jsxelatex",   "xelatex",   "xhtml,jsml", " -cjsmlhtf",  "-cjsml",
+ "js", "jsxetex",     "xetex",     "xhtml,jsml", " -cjsmlhtf",  "-cjsml",
  "jm", "jmlatex",   "latex",   "xhtml,jsmath", " -cmozhtf", "",
  "jm", "jmtex",     "tex",     "xhtml,jsmath", " -cmozhtf", "",
  "jm", "jmtexi",    "texi",    "xhtml,jsmath", " -cmozhtf", "",
  "jm", "jmcontext", "context", "xhtml,jsmath", " -cmozhtf", "",
+ "jm", "jmxelatex",   "xelatex",   "xhtml,jsmath", " -cmozhtf", "",
+ "jm", "jmxetex",     "xetex",     "xhtml,jsmath", " -cmozhtf", "",
  "tei",  "teilatex",  "latex",   "xhtml,tei",    " -cunihtf",  "-cvalidate",
  "tei",  "teitex",    "tex",     "xhtml,tei",    " -cunihtf",  "-cvalidate",
  "tei",  "teitexi",   "texi",    "xhtml,tei",    " -cunihtf",  "-cvalidate",
@@ -70,6 +88,8 @@ my @options = (
  "teim", "teimtex",   "tex",     "xhtml,tei-mml"," -cunihtf",  "-cvalidate",
  "teim", "teimtexi",  "texi",    "xhtml,tei-mml"," -cunihtf",  "-cvalidate",
  "teim", "teimcontext","context","xhtml,tei-mml"," -cunihtf",  "-cvalidate",
+ "tei",  "teixelatex",  "xelatex",   "xhtml,tei",    " -cunihtf",  "-cvalidate",
+ "tei",  "teixetex",    "xetex",     "xhtml,tei",    " -cunihtf",  "-cvalidate",
  "db",  "dblatex",   "latex",   "xhtml,docbook",     " -cunihtf",  "-cvalidate -cdocbk",
  "db",  "dbtex",     "tex",     "xhtml,docbook",     " -cunihtf",  "-cvalidate -cdocbk",
  "db",  "dbtexi",    "texi",    "xhtml,docbook",     " -cunihtf",  "-cvalidate -cdocbk",
@@ -78,18 +98,26 @@ my @options = (
  "dbm", "dbmtex",    "tex",     "xhtml,docbook-mml", " -cunihtf",  "-cdocbk",
  "dbm", "dbmtexi",   "texi",    "xhtml,docbook-mml", " -cunihtf",  "-cdocbk",
  "dbm", "dbmcontext","context", "xhtml,docbook-mml", " -cunihtf",  "-cdocbk",
+ "db",  "dbxelatex",   "xelatex",   "xhtml,docbook",     " -cunihtf",  "-cvalidate -cdocbk",
+ "db",  "dbxetex",     "xetex",     "xhtml,docbook",     " -cunihtf",  "-cvalidate -cdocbk",
  "w", "wlatex",   "latex",   "xhtml,word", " -csymhtf", "",
  "w", "wtex",     "tex",     "xhtml,word", " -csymhtf", "",
  "w", "wtexi",    "texi",    "xhtml,word", " -csymhtf", "",
  "w", "wcontext", "context", "xhtml,word", " -csymhtf", "",
+ "w", "wxelatex",   "xelatex",   "xhtml,word", " -csymhtf", "",
+ "w", "wxetex",     "xetex",     "xhtml,word", " -csymhtf", "",
  "jh", "jhlatex",  "latex",  "html,javahelp,3.2,unicode", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp -cvalidatehtml",
  "jh", "jhtex",    "tex",    "html,javahelp,3.2,unicode", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp -cvalidatehtml",
  "jh", "jhtexi",   "texi",   "html,javahelp,3.2,unicode", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp -cvalidatehtml",
  "jh", "jhcontext","context", "html,javahelp,3.2,unicode", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp -cvalidatehtml",
+ "jh", "jhxelatex",  "xelatex",  "html,javahelp,3.2,unicode", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp -cvalidatehtml",
+ "jh", "jhxetex",    "xetex",    "html,javahelp,3.2,unicode", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp -cvalidatehtml",
  "jh1", "jh1latex",  "latex",  "html,javahelp,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp",
  "jh1", "jh1tex",    "tex",    "html,javahelp,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp",
  "jh1", "jh1texi",   "texi",   "html,javahelp,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp",
  "jh1", "jh1context","context", "html,javahelp,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp",
+ "jh1", "jh1xelatex",  "xelatex",  "html,javahelp,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp",
+ "jh1", "jh1xetex",    "xetex",    "html,javahelp,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp",
 
 );
 
@@ -100,10 +128,11 @@ sub showInstrucions(){
   print "        jhlatex, eslatex, teilatex, teimlatex, uxhlatex,  \n";
   print "        wlatex, xhmlatex\n";
   print " \n";
-  print "        also 'tex', 'texi', and 'context' instead of 'latex'\n";
+  print "        also 'tex', 'texi', 'context', 'xetex', and 'xelatex'\n";
+  print "        instead of 'latex'\n";
   print " \n";
   print "    #2: file name\n";
-  print "    #3: optional arguments for latex/tex/texi/context \n";
+  print "    #3: optional arguments for latex/tex/... \n";
   print "    #4: optional arguments for tex4ht.c\n";
   print "    #5: optional arguments for t4ht.c\n";
   print " \n";
@@ -134,7 +163,7 @@ print "    \n";
 print "   name = type\n";
 print "          Defines a ht*tex like command, and assocites to it the \n";
 print "          TeX compiler of the specified type. Examples of TeX \n";
-print "          types: latex, tex, texi, and context.\n";
+print "          types: latex, tex, texi, context, xetex, and xelatex.\n";
 print "    \n";
 print "   name.tex = options\n";
 print "          Command line options for the compilation under\n";
@@ -182,7 +211,7 @@ print "  clean.htlatex     lg tmp\n";
 
 }
 
-print "mk4ht (2007-01-04-01:34)\n";
+print "mk4ht (2007-11-14-18:40)\n";
 if(  !@ARGV  ){
   print "improper command\n";
   showInstrucions(); exit(1);
@@ -318,7 +347,16 @@ if( $t4ht   ){ $command[4] = $t4ht;   } else { $command[4] = ""; }
   }
   $i++;
 }
-my $commando = $command[0] . " "    . $command[1] . " \"".
+my $cmd;
+open (KPSEA, "kpsewhich " . $command[0] . " |");
+if ($cmd = <KPSEA>){
+  $cmd =~ s/\s+$//;
+} else {
+  $cmd = $command[0];
+}
+close KPSEA;
+
+my $commando = $cmd . " "    . $command[1] . " \"".
             $command[2] . "\" \"". $command[3] . "\" \"" .
             $command[4] . "\"";
 print "$commando\n";
@@ -341,6 +379,6 @@ while ($file = readdir(DIR) ){
 } } } } }
 closedir(DIR);
 
-   exit( !$rtrn );
 }
+exit( $rtrn );
 

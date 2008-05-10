@@ -1,7 +1,7 @@
 
 /**********************************************************/
-/* tex4ht.c                              2006-09-13-14:27 */
-/* Copyright (C) 1996--2006    Eitan M. Gurari            */
+/* tex4ht.c                              2007-11-07-16:08 */
+/* Copyright (C) 1996--2007    Eitan M. Gurari            */
 /*                                                        */
 /* This work may be distributed and/or modified under the */
 /* conditions of the LaTeX Project Public License, either */
@@ -357,9 +357,6 @@ struct halign_rec{
 #endif
 
 
-#define ignore_ch 0
-
-
 #define  HTF_ALIAS 10000000
 
 
@@ -626,6 +623,11 @@ unsigned int *accent_array, *accented_array, accent_N, accented_N;
 char *math, *math_closing;
 
 
+ 
+INTEGER layout_dir;
+unsigned long rgba_color;
+
+
 };
 
 
@@ -693,6 +695,9 @@ static FILE*  dot_file;
 static FILE* dvi_file;
 
 
+static U_CHAR *ext = NULL;
+
+
 static char* job_name;
 static int   job_name_n;
 
@@ -703,6 +708,9 @@ static U_CHAR *no_root_file;
 static FILE *out_file  = (FILE *) 0,
      *root_file = (FILE *) 0,
      *cur_o_file = (FILE *) 0;
+
+
+static int version_id;
 
 
 static int  stack_len;
@@ -807,6 +815,12 @@ static BOOL  dvi_flag = FALSE, dvi_page = FALSE;
 static FILE *idv_file;
 
 
+static int errCode = 0;
+
+
+static int id_version = -1;
+
+
 static FILE*  log_file;
 
 
@@ -861,6 +875,9 @@ static U_CHAR *lg_font_fmt = NULL;
 
 
 static double word_sp   = 999999.0, margin_sp;
+
+
+static int ignore_ch = 0;
 
 
 static unsigned  U_CHAR  null_str = '\0';    
@@ -1017,10 +1034,12 @@ static BOOL special_on = FALSE;
 
 static U_CHAR *warn_err_mssg[]={ 
 
-"improper command line\ntex4ht [-f<path-ch>]in-file[.dvi]\n"
+"improper command line\ntex4ht [-f<path-separator-ch>]in-file[.dvi]\n"
+"   [-.<ext>]            replacement to default file extension name .dvi\n"
 "   [-c<tag name>]       choose named segment in env file\n"
 "   [-e<env-file>]\n"
-"   [-f<path-ch>]        remove path from the file name\n"
+"   [-f<path-separator-ch>]        remove path from the file name\n"
+"   [-F<ch-code>]        replacement for missing font characters; 0--255; default 0\n"
 "   [-g<bitmap-file-ext>]\n"
 "   [-h(e|f|F|g|s|v|V)]  trace: e-errors/warnings, f-htf, F-htf search\n"
 "                            g-groups, s-specials, v-env, V-env search\n"
@@ -1032,6 +1051,7 @@ static U_CHAR *warn_err_mssg[]={
 "   [-t<tfm-font-dir>]\n"
 "   [-u10]               base 10 for unicode characters\n"
 "   [-utf8]              utf-8 encoding for unicode characters\n"
+"   [-v<idv version>]    replacement forthe given dvi version\n"
 "   [-xs]           ms-dos file names for automatically generated gifs\n"
 
 ,                            
@@ -1094,6 +1114,7 @@ static U_CHAR *warn_err_mssg[]={
 "Missing %s\n",                                       
 "Can't back from file `%s\n'",                        
 "\\special{t4ht%s}?\n",                               
+"Improper -v option\n",                               
 
  "" };
 
@@ -1213,6 +1234,9 @@ static struct send_back_entry *
 
 
 static double pos_dbl( ARG_I(long int *) );
+
+
+static void doGlyphArray( ARG_I(BOOL) );
 
 
 static int search_font_tbl( ARG_I(int) );
@@ -1389,6 +1413,10 @@ static BOOL  sigint_handler
 #undef SEP
 #endif
 {
+  
+if( dwCtrlType ){ (IGNORED) printf(" "); }
+
+
   err_i(32);
   return FALSE;      
 }
@@ -1498,8 +1526,8 @@ static void strct
 #undef SEP
 #endif
 {   U_CHAR * ch;
-   ch = str1 + (int) strlen(str1);
-   (IGNORED) strcpy( ch, str2 );
+   ch = str1 + (int) strlen((char *) str1);
+   (IGNORED) strcpy((char *)  ch, (char *) str2 );
 }
 
 
@@ -1537,8 +1565,8 @@ static FILE* open_html_file
 #endif
 {   FILE* file;
      char* str;
-  str = m_alloc(char, (int) strlen(name) +  1);
-  (IGNORED) strcpy(str, name);
+  str = m_alloc(char, (int) strlen((char *) name) +  1);
+  (IGNORED) strcpy((char *) str, (char *) name);
   (IGNORED) printf(" file %s\n", str);
   (IGNORED) fprintf(log_file, "File: %s\n", str);
   if( (file = fopen(str, WRITE_TEXT_FLAGS)) == NULL )  bad_in_file(str);
@@ -1714,7 +1742,7 @@ case
 case 
 243 
 : {
-  for( i=0; i<14; i++ )  ch = get_char();
+  for( i=0; i<14; i++ ){ ch = get_char(); }
   for( i=ch + get_char(); i>0; i--) (void) get_char();
   break;
 }
@@ -2715,6 +2743,34 @@ static double pos_dbl
 
 
 
+static void doGlyphArray
+#ifdef ANSI
+#define SEP ,
+(
+     BOOL yLocs
+)
+#undef SEP
+#else
+#define SEP ;
+(yLocs)
+     BOOL yLocs
+;
+#undef SEP
+#endif
+{         int i, glyphCount;
+   (void) get_unt(4);
+   glyphCount = (INTEGER) get_unt(2);
+   for( i = 0; i < glyphCount; ++i ){
+     (void) get_int(4);
+     if( yLocs ){  (void) get_int(4);   }
+   }
+   for (i = 0; i < glyphCount; ++i){
+     (void) get_unt(2);
+   }
+}
+
+
+
 static int search_font_tbl
 #ifdef ANSI
 #define SEP ,
@@ -2730,8 +2786,9 @@ static int search_font_tbl
 #undef SEP
 #endif
 {      int i;
-   for( i=0; i<font_tbl_size; i++)
-     if( font_tbl[i].num == cur_fnt )  return i;
+   for( i=0; i<font_tbl_size; i++){
+     if( font_tbl[i].num == cur_fnt ){ return i; }
+   }
    err_i_int( 6,cur_fnt );
    return 0;
 }
@@ -3005,7 +3062,7 @@ static void script
 #endif
 {    U_CHAR *ch, *p;
       U_CHAR fmt[256];
-   job[ (int) strlen(job) - 1 ] ='\0';
+   job[ (int) strlen((char *) job) - 1 ] ='\0';
    p = ch = templt;
    while( TRUE ){
      if( *ch == '%' ){
@@ -3016,7 +3073,7 @@ static void script
 
        
 p=fmt;  *(p++) = '%';
-if( *ch == '\0' ){ job[ (int) strlen(job) ] ='.';  return; }
+if( *ch == '\0' ){ job[ (int) strlen((char *) job) ] ='.';  return; }
 while( *ch != '%' ){  *(p++) = *(ch ++);  }
 *(p+1) = '\0';
 
@@ -3030,7 +3087,7 @@ while( *ch != '%' ){  *(p++) = *(ch ++);  }
                      (IGNORED) fprintf(log_file, fmt, font); break;}
           case '%':{ *p = 'c';
                      (IGNORED) fprintf(log_file, fmt, '%');  break;}
-           default:{ job[ (int) strlen(job) ] ='.';         return;}
+           default:{ job[ (int) strlen((char *) job) ] ='.';         return;}
        }
        p = ++ch;
      }else ch++;
@@ -3062,7 +3119,7 @@ static void  dos_gif_file
 {      int  n, m, i;
         struct gif_file_rec * p, * q;
         U_CHAR *ch;
-  m = n = (int) strlen(str);
+  m = n = (int) strlen((char *) str);
   if( n > 4 ){
     
 if( (p = gif_file) != NULL ){
@@ -3104,7 +3161,7 @@ if( gif_file ){
                  xeh[(int)(ch[2])], xeh[(int)(ch[3])]
                , gif);
 p->name = m_alloc(char,m+1);
-(IGNORED) strcpy( p->name, str );
+(IGNORED) strcpy((char *)  p->name, (char *) str );
 if( gif_file ){  p->next = gif_file->next;   gif_file->next = p;  }
           else   p->next = p;
 
@@ -3371,14 +3428,14 @@ char *get_env_dir
 {    int  i;
       U_CHAR *p;
   if(! progname || ! *progname)  return NULL;               
-  i = (int) strlen(progname);
+  i = (int) strlen((char *) progname);
   while( (progname[--i] != (int) dir_path_slash(progname) )
           && (i > 0) ) ;                              
   if(i == 0)  return NULL;                        
   p = (char *) malloc(i+12);
   if(p == NULL)  return NULL;      
   strncpy(p, progname, i+1);                        
-  (IGNORED) strcpy(&p[i+1],"tex4ht.env");       
+  (IGNORED) strcpy((char *) &p[i+1], (char *) "tex4ht.env");       
   return p;
 }
 
@@ -3427,9 +3484,9 @@ do{                                       int int_ch;
 *ch = '\0';
 
 
-      } else  {(IGNORED)  strcpy(str, inln); }
-      ch = m_alloc(char, (int) strlen(str)+2);
-      (IGNORED) strcpy(ch, str);
+      } else  {(IGNORED)  strcpy((char *) str, (char *) inln); }
+      ch = m_alloc(char, (int) strlen((char *) str)+2);
+      (IGNORED) strcpy((char *) ch, (char *) str);
       return ch;
    }else return name;
 }
@@ -3485,7 +3542,7 @@ if( envChoice == (struct env_c_rec*) 0  ){
      
                          U_CHAR cur_block[90];
                          BOOL status;
-(IGNORED) strcpy( cur_block, match);
+(IGNORED) strcpy((char *)  cur_block, (char *) match);
 status = FALSE;
 while( !status && (chr != EOF) ){
   chr = 'x';
@@ -3538,7 +3595,7 @@ static struct env_var_rec * get_env_var
    tfm_dirs = (struct  env_var_rec *) 0;
    TEX4HTTFM = getenv( env_var );
    if( TEX4HTTFM ){
-      env_var_len = (int) strlen(TEX4HTTFM);
+      env_var_len = (int) strlen((char *) TEX4HTTFM);
       if ( *TEX4HTTFM == *(TEX4HTTFM + env_var_len - 1 ) ){
          from = TEX4HTTFM + env_var_len - 1;
          *from = '\0';
@@ -3551,7 +3608,7 @@ static struct env_var_rec * get_env_var
 {                         U_CHAR *str;
   if( *(from+1) == '~' ){
      if( HOME_DIR ){
-         str = m_alloc(char, strlen(HOME_DIR)+strlen(base));
+         str = m_alloc(char, strlen((char *) HOME_DIR)+strlen((char *) base));
          (IGNORED) sprintf(str,"%s%s", HOME_DIR, base+1);
          if( access(str,F_OK) ) {
             warn_i_str2(49, env_var, str); base = NULL; }
@@ -3598,8 +3655,8 @@ static void com_dir
 #undef SEP
 #endif
 {   int i;   U_CHAR   str[256];
-  (IGNORED) strcpy( str, p+2 );
-  i = (int) strlen(str) - 1;
+  (IGNORED) strcpy((char *)  str, (char *) p+2 );
+  i = (int) strlen((char *) str) - 1;
   if( str[i] == '!' )  str[i] = '\0';
 }
 
@@ -3625,7 +3682,7 @@ static void export_htf
 {        int i;
           char* p;
           BOOL found;
-  i = (int) strlen(str) - 1;
+  i = (int) strlen((char *) str) - 1;
   while( (i>=0) && (str[i] == '\n') ){  str[i--] = '\0';  }
   while( (i>=0) && (str[i] == ' ') ) {  str[i--] = '\0';  }
   if( (i>=0) && (str[i] == '!') ){      str[i--] = '\0';  }
@@ -3647,11 +3704,11 @@ static void export_htf
   } }
   if( found ){
      *export_str = (char *) r_alloc((void *) *export_str,
-     (int) strlen(*export_str) + (int) strlen(str) +  2 );
-     if( (int) strlen(*export_str) > 0 ){
-        (IGNORED) strcat(*export_str,",");
+     (int) strlen((char *) *export_str) + (int) strlen((char *) str) +  2 );
+     if( (int) strlen((char *) *export_str) > 0 ){
+        (IGNORED) strcat((char *) *export_str, (char *) ",");
      }
-     (IGNORED) strcat(*export_str,str);
+     (IGNORED) strcat((char *) *export_str, (char *) str);
   }
 }
 #endif
@@ -3749,7 +3806,7 @@ while( search_dot_file( typ ) && !flag ){        U_CHAR *q, save_ch;
       - (*(q-1) == '/')
 #endif
    ) = '\0';
-  if( (n = strlen(dot_dir)) > (m = strlen(cache_dir)) ){ flag = FALSE; }
+  if( (n = strlen((char *) dot_dir)) > (m = strlen((char *) cache_dir)) ){ flag = FALSE; }
   else {
     save_ch = *(cache_dir + n);
     *(cache_dir + n) = '\0';
@@ -3760,10 +3817,10 @@ while( search_dot_file( typ ) && !flag ){        U_CHAR *q, save_ch;
 
 
        if( flag ){ 
-n = (int) strlen(cache_dir);
+n = (int) strlen((char *) cache_dir);
 cache_dir[n] = dir_path_slash(cache_dir);
 cache_dir[n+1] = '\0';
-(IGNORED) strcat(cache_dir,name);
+(IGNORED) strcat((char *) cache_dir, (char *) name);
 
  }
   } }
@@ -3854,9 +3911,9 @@ static char *  abs_addr
 #undef SEP
 #endif
 {                                         U_CHAR  *p;
-   p = m_alloc(char, (int) strlen( dir )            +
-                     (base? (int) strlen( base ):0) +
-                     (int) strlen( HOME_DIR  )      + 1 );
+   p = m_alloc(char, (int) strlen((char *)  dir )            +
+                     (base? (int) strlen((char *)  base ):0) +
+                     (int) strlen((char *)  HOME_DIR  )      + 1 );
    *p = '\0';
    if( (*(dir+1) == '~') && base ){
      if( *base == '~' ){
@@ -3904,8 +3961,8 @@ if( (file = f_open(name, flags)) != NULL ){
    return file; }
 
 
-      (IGNORED) strcpy(str, dir);
-      i = (int) strlen(str) - 1;
+      (IGNORED) strcpy((char *) str, (char *) dir);
+      i = (int) strlen((char *) str) - 1;
       subs = str[i] == '!';
       if( subs )  str[i] = '\0';  else i++;
       
@@ -3969,7 +4026,7 @@ cur_cache_font->cache_file = (struct cache_file_rec *) 0;
 
 
       cur_cache_font->dir = m_alloc(char, n+1);
-      (IGNORED) strcpy(cur_cache_font->dir, dir);
+      (IGNORED) strcpy((char *) cur_cache_font->dir, (char *) dir);
       if( !cache_font ){
          cur_cache_font->next = cache_font;
          cache_font = cur_cache_font;
@@ -4008,8 +4065,8 @@ cur_cache_font->cache_file = (struct cache_file_rec *) 0;
     if( flag ) {
       
 file_entry = m_alloc(struct cache_file_rec, 1);
-file_entry->file = m_alloc(char, strlen(name)+1);
-(IGNORED) strcpy(file_entry->file,name);
+file_entry->file = m_alloc(char, strlen((char *) name)+1);
+(IGNORED) strcpy((char *) file_entry->file, (char *) name);
 if( ! cur_cache_font->cache_file ){
   cur_cache_font->cache_file = file_entry;
  file_entry->next = (struct cache_file_rec *) 0;
@@ -4054,7 +4111,7 @@ static FILE* search_file_ext
 {  U_CHAR   str[256];
     FILE*  file;
     int    n;
-  n = (int) strlen(dir);
+  n = (int) strlen((char *) dir);
   (IGNORED) sprintf(str,
 #if defined(DOS_WIN32) || defined(__DJGPP__)
  (( dir[n-1] == '/') ||  ( dir[n-1] == '\\'))
@@ -4088,7 +4145,7 @@ static FILE* search_file_ext
     WIN32_FIND_DATA find_file_data;
     HANDLE hnd;
     int proceed;
-    (IGNORED) strcpy(dirname, str);
+    (IGNORED) strcpy((char *) dirname, (char *) str);
     strct(dirname, (is_forward_slash(dirname)?  "/" : "\\") );
     strct(dirname, "*.*");       
     hnd = FindFirstFile(dirname, &find_file_data);
@@ -4099,7 +4156,7 @@ while (proceed) {
   if( !eq_str(find_file_data.cFileName, ".")  &&
       !eq_str(find_file_data.cFileName, "..") )
     {
-      (IGNORED) strcpy( str+n, find_file_data.cFileName );
+      (IGNORED) strcpy((char *)  str+n, (char *) find_file_data.cFileName );
       str[n-1] = dir_path_slash(str);
       if (find_file_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
   if( (file = search_file_ext(name, str, flags)) != NULL ){
@@ -4134,7 +4191,7 @@ FindClose(hnd);
       if( !eq_str(dirp->d_name, ".")  &&
           !eq_str(dirp->d_name, "..") )
       { 
-(IGNORED) strcpy( str+n, dirp->d_name );
+(IGNORED) strcpy((char *)  str+n, (char *) dirp->d_name );
 str[n-1] = dir_path_slash(str);
 if( LSTAT(str, &buf) >= 0 )
    if( S_ISDIR( buf.st_mode ) )
@@ -4199,7 +4256,7 @@ static FILE* f_open_pathed_filename
   file = NULL;
   if( *name == '~' ){
      if( HOME_DIR ){
-         str = m_alloc(char, strlen(HOME_DIR)+strlen(name));
+         str = m_alloc(char, strlen((char *) HOME_DIR)+strlen((char *) name));
          (IGNORED) sprintf(str,"%s%s", HOME_DIR, name+1);
          file = f_open(str,flags);
          free((void *)  str);
@@ -4226,12 +4283,10 @@ static  INTEGER put_4ht_ch
                                  int c;
   c = ch;
   if( ch=='&' ){
-     if( !uni_code_p ){
-       
+     
 flush_uni();
 
 
-     }
      if( put_4ht_off ){
         c = putc( ch, htFile );
      } else {
@@ -4728,8 +4783,8 @@ gif_open[gif_flag] = m_alloc(char,
 29
 
 );
-(IGNORED) strcpy(gif_open[gif_flag],
-  
+(IGNORED) strcpy((char *) gif_open[gif_flag],
+(char *)   
 "<img src=\"+\" alt=\"+++++\" />+"
 
 );
@@ -4757,7 +4812,7 @@ gif_id[gif_flag] = gif_open[gif_flag]+28;
 p= gif_open[gif_flag];
 if( p )
 if( *p ){
-   print_f(p); (IGNORED) strcpy(str, font_tbl[cur_fnt].name);
+   print_f(p); (IGNORED) strcpy((char *) str, (char *) font_tbl[cur_fnt].name);
    mag = (int) ((double) font_tbl[cur_fnt].scale /
                 font_tbl[cur_fnt].design_sz  * 10 );
    
@@ -5025,8 +5080,8 @@ gif_open[gif_flag] = m_alloc(char,
 29
 
 );
-(IGNORED) strcpy(gif_open[gif_flag],
-  
+(IGNORED) strcpy((char *) gif_open[gif_flag],
+(char *)   
 "<img src=\"+\" alt=\"+++++\" />+"
 
 );
@@ -5054,7 +5109,7 @@ gif_id[gif_flag] = gif_open[gif_flag]+28;
 p= gif_open[gif_flag];
 if( p )
 if( *p ){
-   print_f(p); (IGNORED) strcpy(str, font_tbl[cur_fnt].name);
+   print_f(p); (IGNORED) strcpy((char *) str, (char *) font_tbl[cur_fnt].name);
    mag = (int) ((double) font_tbl[cur_fnt].scale /
                 font_tbl[cur_fnt].design_sz  * 10 );
    
@@ -5876,15 +5931,15 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 (IGNORED) printf("----------------------------\n");
 #ifndef KPATHSEA
 #ifdef PLATFORM
-   (IGNORED) printf("tex4ht.c (2006-09-13-14:27 %s)\n",PLATFORM);
+   (IGNORED) printf("tex4ht.c (2007-11-07-16:08 %s)\n",PLATFORM);
 #else
-   (IGNORED) printf("tex4ht.c (2006-09-13-14:27)\n");
+   (IGNORED) printf("tex4ht.c (2007-11-07-16:08)\n");
 #endif
 #else
 #ifdef PLATFORM
-   (IGNORED) printf("tex4ht.c (2006-09-13-14:27 %s kpathsea)\n",PLATFORM);
+   (IGNORED) printf("tex4ht.c (2007-11-07-16:08 %s kpathsea)\n",PLATFORM);
 #else
-   (IGNORED) printf("tex4ht.c (2006-09-13-14:27 kpathsea)\n");
+   (IGNORED) printf("tex4ht.c (2007-11-07-16:08 kpathsea)\n");
 #endif
 #endif
 for(i=0; i<argc; i++){
@@ -5936,7 +5991,7 @@ back_token->id = -1;
 
 pos_text = pos_line = end_pos_body = end_pos_text = pos_body =
                       m_alloc(char, (int) 1);
-(IGNORED) strcpy(pos_text, "" );
+(IGNORED) strcpy((char *) pos_text, (char *) "" );
 
 
 margin_sp = (double) MARGINSP;     
@@ -5989,7 +6044,7 @@ HOME_DIR = getenv("HOME");
   if( argc == 1 ){ bad_arg; }
   for(i=1; i<argc; i++) {
     if( *( p=argv[i] ) == '-' ){ 
-if( (int) strlen( argv[i] ) == 2 ){
+if( (int) strlen((char *)  argv[i] ) == 2 ){
    if( ++i == argc ) bad_arg;
 }
 switch( *(p+1) ){
@@ -6011,11 +6066,24 @@ tex4ht_env_file = p+2;
 break; }
   case 'f':{ 
 p = p + 2;
-in_name = p + (int) strlen( p );
+in_name = p + (int) strlen((char *)  p );
 while( *in_name != *p ){ in_name--; }
 in_name++;
 
 break; }
+  case 'F':{ 
+char *digit = p+2;
+ignore_ch = 0;
+while( *digit != '\0' ){
+  if( (*digit < '0') || (*digit > '9') ){
+    ignore_ch = 0; break;
+  }
+  ignore_ch = 10 * ignore_ch + (*digit - '0');
+  if( ignore_ch > 255 ){ ignore_ch = 0; break; }
+  digit++;
+}
+
+             break; }
   case 'g':{ 
 gif = p+2;
 
@@ -6047,19 +6115,19 @@ if( !(   *trace_dvi_del_P || *end_trace_dvi_del_P
    trace_dvi_del_P =
             (char *)  r_alloc((void *) trace_dvi_del_P,
                               (size_t) 4);
-   (IGNORED) strcpy(trace_dvi_del_P, "[G " );
+   (IGNORED) strcpy((char *) trace_dvi_del_P, (char *) "[G " );
    end_trace_dvi_del_P =
             (char *)  r_alloc((void *) end_trace_dvi_del_P,
                               (size_t) 2);
-   (IGNORED) strcpy(end_trace_dvi_del_P, "]" );
+   (IGNORED) strcpy((char *) end_trace_dvi_del_P, (char *) "]" );
    trace_dvi_del_p =
             (char *)  r_alloc((void *) trace_dvi_del_p,
                               (size_t) 5);
-   (IGNORED) strcpy(trace_dvi_del_p, "[/G " );
+   (IGNORED) strcpy((char *) trace_dvi_del_p, (char *) "[/G " );
    end_trace_dvi_del_p =
             (char *)  r_alloc((void *) end_trace_dvi_del_p,
                               (size_t) 2);
-   (IGNORED) strcpy(end_trace_dvi_del_p, "]" );
+   (IGNORED) strcpy((char *) end_trace_dvi_del_p, (char *) "]" );
 }
 
   break;}
@@ -6131,11 +6199,31 @@ else if( eq_str(p+2, "tf8") ){ utf8 = TRUE; }
 else{ bad_arg;}
 
   break; }
+  case 'v':{ 
+{          U_CHAR *q;
+   q = p + 2;
+   id_version = 0;
+   while( *q != '\0' ){
+     if( id_version != -1 ){
+        if( (*q < '0') || (*q > '9') ){
+           id_version = -1;
+           warn_i(53);
+        }
+        id_version =  id_version * 10 + *q - '0';
+     }
+     q++;
+}  }
+
+  break; }
   case 'x':{ 
 switch( *(p+2) ){
   case 's':{   dos_file_names = TRUE;  break; }
    default:{ bad_arg; }
 }
+
+  break; }
+  case '.':{ 
+ext = p+1;
 
   break; }
    default:{ bad_arg; }
@@ -6156,20 +6244,54 @@ if( css_ext == (struct css_ext_rec *) 0 ){
   
 if( *in_name != '\0' ){ 
       BOOL tag;
-job_name_n = (int) strlen( in_name );
+job_name_n = (int) strlen((char *)  in_name );
 job_name = m_alloc(char, job_name_n+6);
-(IGNORED) strcpy(job_name, in_name);
-tag = job_name_n < 5;
-if( !tag )  tag = !eq_str( job_name+job_name_n-4,".dvi");
-if( tag ){  job_name_n+=4; (IGNORED) strct(job_name, ".dvi");  }
+(IGNORED) strcpy((char *) job_name, (char *) in_name);
+tag = job_name_n < 3;
+if( !tag ){
+   tag = !eq_str( job_name+job_name_n-
+(
+  (ext==NULL)? 4 : (int) strlen((char *) ext)
+)
+
+,
+(
+  (ext==NULL)? ".dvi" : ext
+)
+
+);
+}
+if( tag ){
+   job_name_n+=
+(
+  (ext==NULL)? 4 : (int) strlen((char *) ext)
+)
+
+; (IGNORED) strct(job_name, 
+(
+  (ext==NULL)? ".dvi" : ext
+)
+
+);
+}
 if( (dvi_file = fopen(job_name, READ_BIN_FLAGS)) == NULL )
    { 
 {                             int i;
    for(i=job_name_n-5; i; i--){
      if( job_name[i] == '.' ){
        job_name[i] = '\0';
-       job_name_n = i + 4;
-       (IGNORED) strct(job_name, ".dvi");
+       job_name_n = i + 
+(
+  (ext==NULL)? 4 : (int) strlen((char *) ext)
+)
+
+;
+       (IGNORED) strct(job_name, 
+(
+  (ext==NULL)? ".dvi" : ext
+)
+
+);
        break;
    } }
    if( (dvi_file = fopen(job_name, READ_BIN_FLAGS)) == NULL ){
@@ -6203,9 +6325,9 @@ bad_arg;
 
  }
     else                  { 
-int n = (int) strlen( job_name );
+int n = (int) strlen((char *)  job_name );
 name = m_alloc(char, 6 + n);
-(IGNORED) strcpy(name,job_name);
+(IGNORED) strcpy((char *) name, (char *) job_name);
 n -= 4; *(name + n) = '\0';
 (IGNORED) strct(name,".html");
 #ifdef HTM
@@ -6216,9 +6338,9 @@ name[n+4] ='\0';
   }
 else{ 
    int tag = 1;
-   int n = (int) strlen( out_name );
+   int n = (int) strlen((char *)  out_name );
 name = m_alloc(char, 6 + n);
-(IGNORED) strcpy(name,out_name);
+(IGNORED) strcpy((char *) name, (char *) out_name);
 while( n-- )   tag = tag && (*(name+n) != '.') ;
 if( tag ) (IGNORED) strct(name,".html");
 #ifdef HTM
@@ -6420,8 +6542,8 @@ while ( search_dot_file( 'P' ) ){     struct sys_call_rec *q;
   while( (ch !='\n') && (ch != EOF) );
   p--;
   *p = '\0';
-  q->filter = m_alloc(char, (int) strlen(str)+1);
-  (IGNORED) strcpy(q->filter,str);
+  q->filter = m_alloc(char, (int) strlen((char *) str)+1);
+  (IGNORED) strcpy((char *) q->filter, (char *) str);
 }
 
 
@@ -6434,7 +6556,7 @@ class_fmt = (char *) get_script(class_fmt,LGCLS,'c');
 font_gif = (char *) get_script(font_gif,LGPIC,'s');
 
 {    int n;
-  n = (int) strlen(font_gif);
+  n = (int) strlen((char *) font_gif);
   if( font_gif[n-1] != '%' ){ font_gif[n] = '%'; font_gif[n+1] = '\0'; }
 }
 
@@ -6446,7 +6568,7 @@ begin_char_gif = (char *) get_script(begin_char_gif,LGSEP,'b');
 
 gif = (char *) get_script(gif,LGTYP,'g');
 {              int n;
-   n = (int) strlen(gif) - 1;
+   n = (int) strlen((char *) gif) - 1;
    if( gif[n] == '%' ){  gif[n] = '%'; }
    else if( gif[n] == '\n' ) {  gif[n] = '\0'; }
 }
@@ -6466,7 +6588,7 @@ gif = (char *) get_script(gif,LGTYP,'g');
 
   
 {      U_CHAR str[256];
-   (IGNORED) strcpy(str,job_name);
+   (IGNORED) strcpy((char *) str, (char *) job_name);
    str[job_name_n-1] = '\0';
    str[job_name_n-2] = 'g';
    str[job_name_n-3] = 'l';
@@ -6485,7 +6607,7 @@ gif = (char *) get_script(gif,LGTYP,'g');
       struct htf_com_rec *q;
   q = htf_font_dir;
   while( q != (struct htf_com_rec *) 0 ){
-    (IGNORED) strcpy(str,q->name);
+    (IGNORED) strcpy((char *) str, (char *) q->name);
     export_htf( &export_str, str );
     q = q->next;
 } }
@@ -6504,41 +6626,41 @@ while ( search_dot_file( 'i' ) ){
   export_htf( &export_str, str );
 }
 #ifdef HTFDIR
-  (IGNORED) strcpy(str, HTFDIR);
+  (IGNORED) strcpy((char *) str, (char *) HTFDIR);
     export_htf( &export_str, str );
 #endif
 
 {                    U_CHAR * q;
   q = (U_CHAR *) kpse_var_value( "TEX4HTFONTSET" );
   if( q ){
-    if( (int) strlen(q) > 0 ){
+    if( (int) strlen((char *) q) > 0 ){
         export_str = (char *) r_alloc((void *) export_str,
-            (int) strlen(export_str) + (int) strlen(q) +  2);
-        if( (int) strlen(export_str) > 0 ){
-             (IGNORED) strcat(export_str, ",");
+            (int) strlen((char *) export_str) + (int) strlen((char *) q) +  2);
+        if( (int) strlen((char *) export_str) > 0 ){
+             (IGNORED) strcat((char *) export_str, (char *)  ",");
         }
-        (IGNORED) strcat(export_str, q);
+        (IGNORED) strcat((char *) export_str, (char *)  q);
 } } }
 
 
 
 
-   if( (int) strlen(export_str) > 0 ){
-      (IGNORED) strcpy(str, "%%12");
+   if( (int) strlen((char *) export_str) > 0 ){
+      (IGNORED) strcpy((char *) str, (char *) "%%12");
       export_str = (char *) r_alloc((void *) export_str,
-          (int) strlen(export_str) + (int) strlen(str) +  1 );
+          (int) strlen((char *) export_str) + (int) strlen((char *) str) +  1 );
       postfix = str - 1;
       while( *(++postfix) != '\0' ){
         if( (*postfix=='%')     && (*(postfix+1)=='%') &&
             (*(postfix+2)=='1') && (*(postfix+3)=='2') ){
           *postfix='\0'; postfix += 4; break;
       } }
-      if( (int) strlen(export_str) != 0 ){
+      if( (int) strlen((char *) export_str) != 0 ){
         
 {                       char *from_ch;
                         int i, n, m;
-  n = (int) strlen(str);
-  m = (int) strlen(export_str);
+  n = (int) strlen((char *) str);
+  m = (int) strlen((char *) export_str);
   from_ch = export_str + m;
   for( i = 0; i<=m; i++){
     *(from_ch + n) = *(from_ch);
@@ -6547,7 +6669,7 @@ while ( search_dot_file( 'i' ) ){
   for( i = 0; i<n; i++){
     export_str[i] = str[i];
   }
-  (IGNORED) strcat(export_str,postfix);
+  (IGNORED) strcat((char *) export_str, (char *) postfix);
 }
 
 
@@ -6585,10 +6707,10 @@ if( !p && !q ){
    }
    
 {                                  int n;
-   n = (int) strlen(export_str);
+   n = (int) strlen((char *) export_str);
    if( n > 0 ){
       export_str_chars = m_alloc(char, n+1);
-      (IGNORED) strcpy(export_str_chars, export_str);
+      (IGNORED) strcpy((char *) export_str_chars, (char *) export_str);
 }  }
 
 
@@ -6632,9 +6754,16 @@ do{
 223 
  );
 eof_op_n = file_len;
-if( (i<4) || (ch != 
+if( (i<4)
+    ||
+    ((ch != 
 2 
-) )  bad_dvi;
+) && (ch != 
+5
+
+))
+  )  bad_dvi;
+version_id = ch;
 
 
 file_len -= 5;
@@ -6742,8 +6871,8 @@ U_CHAR files_cache[PATH_MAX];
            *(p++) = ch = (int) getc(dot_file);
         while( (ch !='\n') && (ch != EOF) );
         p--;       *p = '\0';
-      } else { (IGNORED) strcpy(p,
-          getenv("TEX4HTWR")?  "~~/tex4ht.fls" : "tex4ht.fls");
+      } else { (IGNORED) strcpy((char *) p,
+(char *)           getenv("TEX4HTWR")?  "~~/tex4ht.fls" : "tex4ht.fls");
       }
    }
    
@@ -6841,9 +6970,9 @@ if( export_str_chars ){
 {                    U_CHAR  * head, * tail, *p;
                      int n;
    
-n = (int) strlen(htfname);
+n = (int) strlen((char *) htfname);
 tail = head = m_alloc(char, n+1);
-(IGNORED) strcpy(head, htfname);
+(IGNORED) strcpy((char *) head, (char *) htfname);
 while( n>11 ){
   if( (*tail=='\\') || (*tail=='/') ){
      if( (*tail == *(tail+9)) && (*(tail+1) == 'h')
@@ -6865,12 +6994,12 @@ for( n = 0 ; (n < cardinality) && !htfname ; n++){
   p = tail;
   while( *p != '\0' ){
                                char * s, *nm;
-     s = m_alloc(char, (int) strlen( head )       +
-                       (int) strlen( fontset[n] ) +
-                       (int) strlen( p )          + 1);
-     (IGNORED) strcpy(s,head);
-     (IGNORED) strcat(s,fontset[n]);
-     (IGNORED) strcat(s,p);
+     s = m_alloc(char, (int) strlen((char *)  head )       +
+                       (int) strlen((char *)  fontset[n] ) +
+                       (int) strlen((char *)  p )          + 1);
+     (IGNORED) strcpy((char *) s, (char *) head);
+     (IGNORED) strcat((char *) s, (char *) fontset[n]);
+     (IGNORED) strcat((char *) s, (char *) p);
      nm = kpse_find_file (s, kpse_program_text_format, 0);
      free((void *) s);
      if ( nm ){
@@ -6973,7 +7102,7 @@ if( (charset_n+1) == max_charset_n){
 
 
 p = m_alloc(char, (int) (start[3] - start[2]) );
-(IGNORED) strcpy(p, start[2] );
+(IGNORED) strcpy((char *) p, (char *) start[2] );
 i = charset_n;
 while( i-- > 0 ){
   if( charset[i].ch == value ){
@@ -7007,7 +7136,7 @@ if( (htf_4hf_n+1) == max_htf_4hf_n){
 p = m_alloc(char, (int) (start[3] - start[2]) );
 
 
-(IGNORED) strcpy(p, start[2] );
+(IGNORED) strcpy((char *) p, (char *) start[2] );
 i = htf_4hf_n;
 while( i-- > 0 ){
   if( htf_4hf[i].ch == value ){
@@ -7094,7 +7223,7 @@ max_htf_4hf_n = 0;
    while( (ch =  get_char()) != 
 249 
  ){
-      
+     
 #ifdef MAXFONTS
 if( (font_tbl_size + 1) < MAXFONTS )
 #endif
@@ -7106,7 +7235,214 @@ if( (font_tbl_size + 1) < MAXFONTS )
                  (size_t) ((font_tbl_size+1)
                            * sizeof(struct font_entry)))
             : m_alloc(struct font_entry, 1);
+   if(       (version_id == 
+5
+
+)
+         &&  (ch == 
+252
+
+)
+   ){
+      
+   unsigned short flags;
+new_font.num       = (INTEGER) get_unt(4);
+new_font.scale     = (INTEGER) get_unt(4);
+new_font.design_sz = new_font.scale;
+flags = (INTEGER) get_unt(2);
+
+{    int  n, family_name_n, style_name_n;
+     U_CHAR *ch;
+
+  font_name_n =  (INTEGER) get_unt(1);
+  family_name_n = (INTEGER) get_unt(1);
+  style_name_n  = (INTEGER) get_unt(1);
+  n =  font_name_n + 1;
+  ch = new_font_name = m_alloc(char, n);
+  while( --n ){  *ch = (int) get_unt(1); ch++; }
+  *ch = '\0';
+  n =  family_name_n + 1;
+
+  while( --n ){  (void) get_unt(1); ch++; }
+  *ch = '\0';
+  n =  style_name_n + 1;
+
+  while( --n ){  (void) get_unt(1); ch++; }
+  *ch = '\0';
+}
+
+
+new_font.layout_dir = (flags & 
+0x0100
+
+) ? 1 : 0;
+new_font.rgba_color = (flags & 
+0x0200
+
+)?
+                                   (unsigned long) get_unt(4)
+                                   :
+                                   0xffffffff;
+if( flags & 
+0x0800
+
+ ){
+   int n =  (INTEGER) get_unt(2);  
+   int i;
+   for (i = 0; i < n; ++i) {       
+         (void) get_unt(4);
+   }
+   for (i = 0; i < n; ++i) {       
+      (void) get_int(4);
+}  }
+(IGNORED) printf("(--- xdv font = %s (not implemented) ---)\n", new_font_name);
+
+
+{        int i;
+   for( i=font_tbl_size-1; i>0;  i-- )
+     if( new_font.num == font_tbl[i].num )  warn_i(10);   }
+
+
+
+{    
    
+/*
+   if( font_file == NULL ){
+      dump_env();      err_i_str(1,file_name);
+      missing_fonts = TRUE;
+      new_font.char_f = 2;
+      new_font.char_l = 1;
+   } else {
+*/
+      
+{       
+   
+new_font.char_f = 0;
+new_font.char_l = 255;
+new_font.wtbl_n = 0;
+new_font.htbl_n = 0;
+new_font.dtbl_n = 0;
+
+
+   
+   
+{      U_CHAR *ch, *hidp;
+       int i;
+   ch = new_font.char_wi = m_alloc(char, new_font.char_l
+                                       - new_font.char_f + 1);
+   hidp = new_font.char_hidp = m_alloc(char, new_font.char_l
+                                       - new_font.char_f + 1);
+   for( i = new_font.char_f; i <= new_font.char_l; i++ ){
+      *(ch++) = 10;
+      *(hidp++) = 26;
+}  }
+
+
+   
+{       INTEGER *p;         
+            int  i;
+   p = new_font.wtbl = m_alloc( INTEGER, new_font.wtbl_n);
+   for( i = 0; i < new_font.wtbl_n; i++ ){
+      *(p++) = 600000;
+}  }
+
+
+   
+{       INTEGER *p;         
+            int  i;
+   p = new_font.htbl = m_alloc( INTEGER, new_font.htbl_n);
+   for( i = 0; i < new_font.htbl_n; i++ ){
+      *(p++) = 600000;
+}  }
+
+
+   
+   
+   
+   
+   
+   
+
+new_font.it = 0;
+
+             
+
+new_font.word_sp = 350000;
+
+if( new_font.word_sp == 0 ) {
+        int i;
+  for( i = new_font.char_f; i <= new_font.char_l; i++ ){
+    new_font.word_sp =
+      ( new_font.word_sp
+       +
+        *(new_font.wtbl + (int)(*(new_font.char_wi + i - new_font.char_f)))
+      )  / (new_font.char_f<i? 2:1);
+  } }
+if( new_font.word_sp == 0 )  new_font.word_sp = MARGINSP; 
+
+
+
+
+
+
+
+
+
+
+
+}
+
+
+/*
+      (IGNORED) fclose(font_file);
+   }
+*/
+}
+
+
+new_font_name[font_name_n] = '\0';
+new_font.name = m_alloc(char, font_name_n + 1);
+(IGNORED) strcpy((char *)  new_font.name, (char *) new_font_name );
+
+{    int n, i;
+   for( n=0; n<font_name_n; n++ ){
+     if(  ( '0' <= new_font_name[n] ) && ( new_font_name[n] <= '9' )){
+       break;
+     }
+   }
+   
+{                       int m;
+   for( m=n; m<font_name_n; m++ ){
+     if(  ( new_font_name[m] < '0' ) || ( new_font_name[m] > '9' )){
+       n=font_name_n;
+       break;
+}  } }
+
+
+   new_font.family_name = m_alloc(char, n + 2);
+   new_font.font_size  = m_alloc(char, font_name_n - n + 1 );
+   for( i=0; i<n; i++ ){
+     new_font.family_name[i] = new_font_name[i];
+   }
+   new_font.family_name[i] = '\0';   i = 0;
+   while(  n<font_name_n ){
+     new_font.font_size[i++] = new_font_name[n++];
+   }
+   new_font.font_size[i] = '\0';
+}
+
+
+
+new_font.mag = new_font.scale / (new_font.design_sz / 100);
+
+
+
+
+
+
+   } else {
+      
+
 switch( ch ){
   case 
 243 
@@ -7129,21 +7465,22 @@ switch( ch ){
 }
 
 
-   new_font_checksum  = (INTEGER) get_int(4);
-   new_font.scale     = (INTEGER) get_unt(4);
-   new_font.design_sz = (INTEGER) get_unt(4);
-   
+new_font_checksum  = (INTEGER) get_int(4);
+new_font.scale     = (INTEGER) get_unt(4);
+new_font.design_sz = (INTEGER) get_unt(4);
+
 {    int  n, area_ln;
      U_CHAR *ch;
   area_ln = (int) get_unt(1);
-  n =  area_ln + (font_name_n = (int) get_unt(1)) + 1;
+  font_name_n = (int) get_unt(1);
+  n =  area_ln + font_name_n + 1;
   ch = new_font_name = m_alloc(char, n);
   while( --n ){  *ch = (int) get_unt(1); ch++; }
   *ch = '\0';
 }
 
 
-   
+
 
 {        int i;
    for( i=font_tbl_size-1; i>0;  i-- )
@@ -7164,9 +7501,9 @@ switch( ch ){
   tfmfile = kpse_find_file (file_name, kpse_tfm_format, 0);
   if( !tfmfile ){ 
 char s [256];
-(IGNORED) strcpy(s, "kpsewhich ");
-(IGNORED) strcat(s,file_name);
-(IGNORED) strcat(s, " > tex4ht.tmp ");
+(IGNORED) strcpy((char *) s, (char *) "kpsewhich ");
+(IGNORED) strcat((char *) s, (char *) file_name);
+(IGNORED) strcat((char *) s, (char *)  " > tex4ht.tmp ");
 if( system(s) == 0 ){
    
 char fileaddr [256];
@@ -7264,7 +7601,7 @@ if( file_length != ( 6                + header_length
      + new_font.dtbl_n              + it_correction_table_length
      + lig_kern_table_length        + kern_table_length
      + extensible_char_table_length + num_font_parameters  )
-  ) err_i_str(15,file_name);
+  ){ err_i_str(15,file_name); }
 
 
    
@@ -7301,8 +7638,7 @@ new_font.design_pt = ( INTEGER) fget_int(font_file,4);
       (IGNORED) fseek(font_file, 2L, 
 1
 );
-   }
-}
+}  }
 
 
    
@@ -7397,6 +7733,9 @@ if( new_font.word_sp == 0 )  new_font.word_sp = MARGINSP;
 
 
 
+new_font.ex = 450000;
+
+
 new_font.ex = (INTEGER) fget_int(font_file,4);
 
 
@@ -7419,7 +7758,7 @@ new_font.ex = (INTEGER) fget_int(font_file,4);
 
 new_font_name[font_name_n] = '\0';
 new_font.name = m_alloc(char, font_name_n + 1);
-(IGNORED) strcpy( new_font.name, new_font_name );
+(IGNORED) strcpy((char *)  new_font.name, (char *) new_font_name );
 
 {    int n, i;
    for( n=0; n<font_name_n; n++ ){
@@ -7455,6 +7794,9 @@ new_font.mag = new_font.scale / (new_font.design_sz / 100);
 
 
 
+
+
+   }
    
 {      U_CHAR str[256];
        int i, design_n, n_gif;
@@ -7515,7 +7857,7 @@ for( i = new_font.char_f; i <= new_font.char_l ; i++ ){
    design_n = 0;
       
 {  char search_font_name [256];
-  (IGNORED) strcpy(search_font_name,new_font.name);
+  (IGNORED) strcpy((char *) search_font_name, (char *) new_font.name);
   while( 1 ){                         BOOL flag;
      
 if( eq_str( new_font_name, loopName) ){
@@ -7523,7 +7865,7 @@ if( eq_str( new_font_name, loopName) ){
    (IGNORED) sprintf(name, "%s.htf", new_font_name);
     err_i_str(1, name);
 } else {
-   (IGNORED) strcpy(loopName,new_font_name);
+   (IGNORED) strcpy((char *) loopName, (char *) new_font_name);
 }
 loopBound++;
 if( loopBound > 10 ){
@@ -7576,9 +7918,9 @@ if( loopBound > 10 ){
 {                    U_CHAR  * head, * tail, *p;
                      int n;
    
-n = (int) strlen(htfname);
+n = (int) strlen((char *) htfname);
 tail = head = m_alloc(char, n+1);
-(IGNORED) strcpy(head, htfname);
+(IGNORED) strcpy((char *) head, (char *) htfname);
 while( n>11 ){
   if( (*tail=='\\') || (*tail=='/') ){
      if( (*tail == *(tail+9)) && (*(tail+1) == 'h')
@@ -7600,12 +7942,12 @@ for( n = 0 ; (n < cardinality) && !htfname ; n++){
   p = tail;
   while( *p != '\0' ){
                                char * s, *nm;
-     s = m_alloc(char, (int) strlen( head )       +
-                       (int) strlen( fontset[n] ) +
-                       (int) strlen( p )          + 1);
-     (IGNORED) strcpy(s,head);
-     (IGNORED) strcat(s,fontset[n]);
-     (IGNORED) strcat(s,p);
+     s = m_alloc(char, (int) strlen((char *)  head )       +
+                       (int) strlen((char *)  fontset[n] ) +
+                       (int) strlen((char *)  p )          + 1);
+     (IGNORED) strcpy((char *) s, (char *) head);
+     (IGNORED) strcat((char *) s, (char *) fontset[n]);
+     (IGNORED) strcat((char *) s, (char *) p);
      nm = kpse_find_file (s, kpse_program_text_format, 0);
      free((void *) s);
      if ( nm ){
@@ -7631,11 +7973,11 @@ for( n = 0 ; (n < cardinality) && !htfname ; n++){
 
 
    if( file ){ 
-if( (strlen (new_font.family_name) +
-     strlen (new_font.font_size) + 4) == strlen (name) ){
+if( (strlen((char *) new_font.family_name) +
+     strlen((char *) new_font.font_size) + 4) == strlen((char *) name) ){
   new_font.family_name = (char *) r_alloc((void *) new_font.family_name,
-                         (size_t) (strlen (name)+1));
-  (IGNORED) strcat(new_font.family_name,new_font.font_size);
+                         (size_t) (strlen((char *) name)+1));
+  (IGNORED) strcat((char *) new_font.family_name, (char *) new_font.font_size);
   *(new_font.font_size)='\0';
 }
 
@@ -7669,8 +8011,8 @@ if( x_char_l != HTF_ALIAS) {
   htf_to_lg(html_font, new_font_name, fonts_n, file);
   new_font_name = (char *)  r_alloc((void *) new_font_name,
                                   (size_t) (font_name_n+1));
-  (IGNORED) strcpy(new_font_name,search_font_name);
-  font_name_n = strlen (new_font_name);
+  (IGNORED) strcpy((char *) new_font_name, (char *) search_font_name);
+  font_name_n = strlen((char *) new_font_name);
 }
 
 
@@ -7734,7 +8076,7 @@ if(
        (*str             == '&')
     && (*(str+1)         == '#')
     && ( (*(str+2)       == 'x') || (*(str+2) == 'X'))
-    && (*(str + strlen(str) - 1) == ';')
+    && (*(str + strlen((char *) str) - 1) == ';')
 ) {
         char* p;
         int   value = 0;
@@ -7758,7 +8100,7 @@ while( !found ){
       
 if( htf_4hf[mid].type1 == ch1  ){
    ch1 = htf_4hf[mid].type2;
-   (IGNORED) strcpy(str, htf_4hf[mid].str );
+   (IGNORED) strcpy((char *) str, (char *) htf_4hf[mid].str );
 }
 
 
@@ -7863,6 +8205,7 @@ if( dump_htf_files ){
      if( flag ){ break; }
   }
   if( font_name_n == 0 ){
+     if( errCode == 0 ){ errCode= 21; }
      warn_i_str(21,search_font_name);
      (IGNORED) fprintf(stderr,
                "%d--%d)\n", new_font.char_f, new_font.char_l);
@@ -7898,7 +8241,7 @@ html_font = fonts_n? (struct html_font_rec *) r_alloc((void *) html_font,
                  (size_t) ((fonts_n+1) * sizeof(struct html_font_rec) ))
                    :  m_alloc(struct html_font_rec, 1);
 html_font[fonts_n].name = m_alloc(char, font_name_n + 1);
-(IGNORED) strcpy(html_font[fonts_n].name, new_font_name);
+(IGNORED) strcpy((char *) html_font[fonts_n].name, (char *) new_font_name);
 html_font[fonts_n].i    = font_tbl_size;
 fonts_n++;
 
@@ -7913,9 +8256,9 @@ fonts_n++;
   for( search_css_ext = css_ext;
        search_css_ext != (struct css_ext_rec *) 0;
        search_css_ext = search_css_ext->next       ){
-     int css_name_n = (int) strlen( new_font.name );
+     int css_name_n = (int) strlen((char *)  new_font.name );
      char * css_file_name = m_alloc(char, css_name_n + 1);
-     (IGNORED) strcpy(css_file_name, new_font.name);
+     (IGNORED) strcpy((char *) css_file_name, (char *) new_font.name);
      for( ; css_name_n; css_name_n-- ){
                                                FILE* file;
        css_file_name[css_name_n] = '\0';
@@ -7959,9 +8302,9 @@ fonts_n++;
 {                    U_CHAR  * head, * tail, *p;
                      int n;
    
-n = (int) strlen(htfname);
+n = (int) strlen((char *) htfname);
 tail = head = m_alloc(char, n+1);
-(IGNORED) strcpy(head, htfname);
+(IGNORED) strcpy((char *) head, (char *) htfname);
 while( n>11 ){
   if( (*tail=='\\') || (*tail=='/') ){
      if( (*tail == *(tail+9)) && (*(tail+1) == 'h')
@@ -7983,12 +8326,12 @@ for( n = 0 ; (n < cardinality) && !htfname ; n++){
   p = tail;
   while( *p != '\0' ){
                                char * s, *nm;
-     s = m_alloc(char, (int) strlen( head )       +
-                       (int) strlen( fontset[n] ) +
-                       (int) strlen( p )          + 1);
-     (IGNORED) strcpy(s,head);
-     (IGNORED) strcat(s,fontset[n]);
-     (IGNORED) strcat(s,p);
+     s = m_alloc(char, (int) strlen((char *)  head )       +
+                       (int) strlen((char *)  fontset[n] ) +
+                       (int) strlen((char *)  p )          + 1);
+     (IGNORED) strcpy((char *) s, (char *) head);
+     (IGNORED) strcat((char *) s, (char *) fontset[n]);
+     (IGNORED) strcat((char *) s, (char *) p);
      nm = kpse_find_file (s, kpse_program_text_format, 0);
      free((void *) s);
      if ( nm ){
@@ -8029,8 +8372,8 @@ while( v != (struct visited_file_rec *) 0 ){
 if( !is_visited ){
   
 struct visited_file_rec * v =  m_alloc(struct visited_file_rec, 1);
-v->name = m_alloc(char,  (int) strlen( name ) + 1 );
-(IGNORED) strcpy(v->name, name);
+v->name = m_alloc(char,  (int) strlen((char *)  name ) + 1 );
+(IGNORED) strcpy((char *) v->name, (char *) name);
 v->next = visited_file;
 visited_file = v;
 
@@ -8103,7 +8446,7 @@ if( tex4ht_fls ){
                FILE *in_file, *out_file;
                U_CHAR temp_file[256];
    
-(IGNORED) strcpy(temp_file,job_name);
+(IGNORED) strcpy((char *) temp_file, (char *) job_name);
 temp_file[job_name_n] = '\0';
 temp_file[job_name_n-1] = 'p';
 temp_file[job_name_n-2] = 'm';
@@ -8155,7 +8498,7 @@ file_rec = cur_cache_font->cache_file;
 if( file_rec ){
    if( !eq_str( prev_dir, cur_cache_font->dir) ){
       (IGNORED) fprintf(out_file, " %s\n", cur_cache_font->dir);
-      (IGNORED) strcpy(prev_dir,dir);
+      (IGNORED) strcpy((char *) prev_dir, (char *) dir);
    }
    cur_cache_font->cache_file = (struct cache_file_rec *) 0;
    while( file_rec ) {
@@ -8173,7 +8516,7 @@ if( file_rec ){
 
 
       (IGNORED) fprintf(out_file," %s\n", dir);
-      (IGNORED) strcpy(prev_dir,dir);
+      (IGNORED) strcpy((char *) prev_dir, (char *) dir);
    } else if( !is_dir && (file[0] != '\0') ){
       
 if( cur_cache_font != (struct cache_font_rec *)0 ){
@@ -8203,7 +8546,7 @@ file_rec = cur_cache_font->cache_file;
 if( file_rec ){
    if( !eq_str( prev_dir, cur_cache_font->dir) ){
       (IGNORED) fprintf(out_file, " %s\n", cur_cache_font->dir);
-      (IGNORED) strcpy(prev_dir,dir);
+      (IGNORED) strcpy((char *) prev_dir, (char *) dir);
    }
    cur_cache_font->cache_file = (struct cache_file_rec *) 0;
    while( file_rec ) {
@@ -8254,9 +8597,7 @@ ch = get_noop();
 if( ch != 
 247 
  )   bad_dvi;
-if( get_char() != 
-2 
- ) bad_dvi;
+if( ((int) get_char()) != version_id ) bad_dvi;
 (void) get_unt(4);     
 (void) get_unt(4);     
  (void) get_unt(4);
@@ -8658,12 +8999,79 @@ case
 case 
 243 
 : {
-  for( i=0; i<14; i++ )  ch = get_char();
+  for( i=0; i<14; i++ ){ ch = get_char(); }
   for( i=ch + get_char(); i>0; i--) (void) get_char();
   break;
 }
 
 
+
+
+case 
+252
+
+:
+   if(  version_id == 
+5
+
+ ){
+     
+        unsigned short flags;
+for( i=0; i<8; i++ ){ ch = get_char(); }
+flags = (INTEGER) get_unt(2);
+for( i = (INTEGER) get_unt(1) 
+       + (INTEGER) get_unt(1) 
+       + (INTEGER) get_unt(1) 
+    ; i>0
+    ; i-- ){ ch = get_char(); }
+if( flags & 
+0x0200
+
+ ){ (INTEGER) get_unt(4); }
+if( flags & 
+0x0800
+
+ ){
+   int n =  (INTEGER) get_unt(2);
+   int i;
+   for (i = 0; i < n; ++i) {
+         (void) get_unt(4);
+   }
+   for (i = 0; i < n; ++i) {
+      (void) get_int(4);
+}  }
+
+
+      break;
+   }
+case 
+253
+
+:
+   if(  version_id == 
+5
+
+ ){
+     
+doGlyphArray(TRUE);
+
+
+      break;
+   }
+case 
+254
+
+:
+   if(  version_id == 
+5
+
+ ){
+     
+doGlyphArray(FALSE);
+
+
+      break;
+   }
 
 
 default: {
@@ -8853,9 +9261,9 @@ while(  special_n-- > 0 ){  name[i++] = get_char(); }
 flag = FALSE;
 p = system_calls;
 while( p ){
-  if( (n = (int) strlen(p->filter)) == 1 ) {
+  if( (n = (int) strlen((char *) p->filter)) == 1 ) {
       flag = flag || (*(p->filter) == '*');
-  } if(  strlen(name) >= (unsigned int) n ) {
+  } if(  strlen((char *) name) >= (unsigned int) n ) {
       ch = name[n]; name[n] = '\0';
       flag = flag || eq_str(p->filter,name);
       name[n] = ch;
@@ -9075,10 +9483,10 @@ p = post;
 while( special_n-- > 0 ) { *(p++)=get_char(); }    *p='\0';
 
 
-p = m_alloc(char, 1 + (int) strlen(pre));
-(IGNORED) strcpy(p, pre );
-q = m_alloc(char, 1 + (int) strlen(post));
-(IGNORED) strcpy(q, post );
+p = m_alloc(char, 1 + (int) strlen((char *) pre));
+(IGNORED) strcpy((char *) p, (char *) pre );
+q = m_alloc(char, 1 + (int) strlen((char *) post));
+(IGNORED) strcpy((char *) q, (char *) post );
 
 
 switch ( type ){
@@ -9749,7 +10157,7 @@ if( !q ){
   q->i = q->depth = 0;    q->max = 10;
   q->next = counter;  counter = q;
   q->str =  m_alloc(char, (int) n+1);
-  (IGNORED) strcpy( q->str, str );
+  (IGNORED) strcpy((char *)  q->str, (char *) str );
   q->stack =  m_alloc(int, q->max);
 }
 
@@ -9842,7 +10250,7 @@ if( font_tbl[cur_fnt].mag != 100 ){
 ], err_str[256];
 bad_str=
 7
-;   (IGNORED) strcpy(err_str,p);
+;   (IGNORED) strcpy((char *) err_str, (char *) p);
 if( n>
 10
  ){
@@ -10049,7 +10457,7 @@ if((
 }
 p->action = str[n]; str[n] = '\0';
 p->path = m_alloc(char,n+1);
-(IGNORED) strcpy(p->path,str);
+(IGNORED) strcpy((char *) p->path, (char *) str);
 
 
 
@@ -10635,10 +11043,10 @@ stack[stack_n-1].stack_id = -1;
 if( no_root_file ){
    U_CHAR *name;
    name = m_alloc(char, 256);
-   (IGNORED) strcpy( name, no_root_file );
+   (IGNORED) strcpy((char *)  name, (char *) no_root_file );
    free((void *)  no_root_file);
    no_root_file = name;
-   name += (size_t) strlen(name);  while( *(--name) != '.' ); name++;
+   name += (size_t) strlen((char *) name);  while( *(--name) != '.' ); name++;
    while( special_n-- ){
        if( (no_root_file+253) == name ) name--;
        *name++ = get_char();
@@ -10715,8 +11123,8 @@ stack[stack_n+1].temp_class_open
 )
                        : &(open_class[math_class]);
    *q = (char *)  r_alloc((void *) open_class[math_class],
-                                 1 + (size_t) strlen(str));
-   (IGNORED) strcpy(*q, str);
+                                 1 + (size_t) strlen((char *) str));
+   (IGNORED) strcpy((char *) *q, (char *) str);
    q = (math_class > 
 78
 
@@ -10878,7 +11286,7 @@ rule_ch_off
 while( p !=  (struct group_path *) 0 ){
    
 if( *(p->path ) == 'e' ) {
-  (IGNORED) strcpy(p->path,p->path+1);
+  (IGNORED) strcpy((char *) p->path, (char *) p->path+1);
   if( *(p->path) == '\0' ) {
      switch( p->action ){
        case '<':  print_f( p->info );
@@ -10909,7 +11317,7 @@ ignore_spaces++;
   }
 } else {
   if( *(p->path ) == 's' ) {
-     (IGNORED) strcpy(p->path,p->path+1);
+     (IGNORED) strcpy((char *) p->path, (char *) p->path+1);
   }
   place = 
 0 
@@ -10963,13 +11371,13 @@ free((void *)  q );
 while( p !=  (struct group_path *) 0 ){
    
 if( *(p->path ) == 'e' ) {
-  (IGNORED) strcpy(p->path,p->path+1);
+  (IGNORED) strcpy((char *) p->path, (char *) p->path+1);
   place = 
 3 
 ;
 } else {
   if( *(p->path ) == 's' ) {
-     (IGNORED) strcpy(p->path,p->path+1);
+     (IGNORED) strcpy((char *) p->path, (char *) p->path+1);
   }
   place = 
 1 
@@ -11093,7 +11501,7 @@ while( p !=  (struct group_path *) 0 ){
 if( *(p->path) != '\0' ) {
    
             char str[256];
-(IGNORED) strcpy(str,"...."); *(str+3) = p->action;
+(IGNORED) strcpy((char *) str, (char *) "...."); *(str+3) = p->action;
 (IGNORED) strct(str,p->info); warn_i_str(38,str);
 
 
@@ -11103,7 +11511,7 @@ if( *(p->path) != '\0' ) {
       default:  {
           
             char str[256];
-(IGNORED) strcpy(str,"...."); *(str+3) = p->action;
+(IGNORED) strcpy((char *) str, (char *) "...."); *(str+3) = p->action;
 (IGNORED) strct(str,p->info); warn_i_str(38,str);
 
 
@@ -11131,7 +11539,7 @@ while( p !=  (struct group_path *) 0 ){
 if( *(p->path) != '\0' ) {
    
             char str[256];
-(IGNORED) strcpy(str,"...."); *(str+3) = p->action;
+(IGNORED) strcpy((char *) str, (char *) "...."); *(str+3) = p->action;
 (IGNORED) strct(str,p->info); warn_i_str(38,str);
 
 
@@ -11141,7 +11549,7 @@ if( *(p->path) != '\0' ) {
       default:  {
           
             char str[256];
-(IGNORED) strcpy(str,"...."); *(str+3) = p->action;
+(IGNORED) strcpy((char *) str, (char *) "...."); *(str+3) = p->action;
 (IGNORED) strct(str,p->info); warn_i_str(38,str);
 
 
@@ -11245,7 +11653,8 @@ text_on = stack[stack_n].text_on;
    }
 }
 
-  }
+
+    }
     
 if( ch_map_flag ){
    warn_i(27);    init_ch_map(); }
@@ -11289,7 +11698,13 @@ do{  ch = get_char();
 }while( ch == 
 138 
  );
-for( i=13; i ; i-- )  idv_char( get_char() );
+
+ch = get_char();
+if( id_version != -1 ){ ch = id_version; }
+idv_char( ch );
+
+
+for( i=12; i ; i-- ){  idv_char( get_char() ); }
 i = get_char();
 idv_char( (int) i );  while( i-- ) idv_copy();
 
@@ -11681,7 +12096,125 @@ default: {
 171  
 ) || (ch > 
 234  
-)   )  err_i(23);
+)   ){
+     if( 
+(version_id == 
+5
+
+)
+&&
+(
+  (ch == 
+251
+
+)
+  ||
+  (ch == 
+252
+
+)
+  ||
+  (ch == 
+253
+
+)
+  ||
+  (ch == 
+254
+
+)
+)
+
+ ){
+        
+switch( ch ){
+  case 
+252
+
+:
+     
+{      int i, flags;
+
+(void) get_unt(4);  
+(void) get_unt(4);  
+
+    flags = (INTEGER) get_unt(2);
+
+
+
+if ((flags & 
+0x0002
+
+) || (flags & 
+0x0001
+
+)) {
+
+for (
+i =
+  (INTEGER) get_unt(1)   
++  (INTEGER) get_unt(1)     
+ + (INTEGER) get_unt(1)   
+;
+i>0;
+i--
+){ (void) get_unt(1); }
+
+
+
+
+
+        if( flags & 
+0x0200
+
+ ){
+           (void) get_unt(4);
+        }
+
+if( flags & 
+0x0800
+
+ ){
+   int n =  (INTEGER) get_unt(2);  
+   for (i = 0; i < n; ++i) {       
+         (void) get_unt(4);
+   }
+   for (i = 0; i < n; ++i) {       
+      (void) get_int(4);
+}  }
+
+}
+
+}
+
+
+     break;
+  case 
+254
+
+:
+     
+{
+           int i, glyphCount;
+   (void) get_unt(4);
+   glyphCount = (INTEGER) get_unt(2);
+   for( i = 0; i < glyphCount; ++i ){
+     (void) get_int(4);
+   }
+   for (i = 0; i < glyphCount; ++i){
+     (void) get_unt(2);
+   }
+}
+
+
+     break;
+  default:
+    printf(" ===> ---------- xdv's idv ------------ <====  %d\n" , ch);
+}
+
+
+     } else { err_i(23); }
+  }
   else {  idv_char( ch );  file_n++;
           cur_font[0] = 1;    cur_font[1] = ch;   }
   break;
@@ -11690,6 +12223,12 @@ default: {
  }
 
  }
+
+if( errCode > 0 ){
+   (IGNORED) fprintf(log_file, "tex4ht.c error: %d\n", errCode);
+}
+
+
 
 {                                               int   ch, i, mag;
                                                 U_CHAR  str[256];
@@ -11757,7 +12296,7 @@ if( !dos_file_names ){
 
 
 if( dos_file_names ){
-   (IGNORED) strcpy(str, font_tbl[cur_fnt].name);
+   (IGNORED) strcpy((char *) str, (char *) font_tbl[cur_fnt].name);
    dos_gif_file(str, mag, ch);
    strct(str,gif);
 }
@@ -11809,7 +12348,12 @@ idv_int(begin_postamble);
 (IGNORED) fseek(dvi_file, 4L, 
 1
 );  file_n += 4;
-idv_copy();                                         
+
+ch = get_char();
+if( id_version != -1 ){ ch = id_version; }
+idv_char( ch );
+
+
 for( i = 8 - file_n % 4;  i;  i-- ) idv_char( 
 223 
  );

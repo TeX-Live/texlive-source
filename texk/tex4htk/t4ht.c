@@ -1,7 +1,7 @@
 
 /**********************************************************/
-/* t4ht.c                                2007-01-05-03:17 */
-/* Copyright (C) 1998--2007    Eitan M. Gurari            */
+/* t4ht.c                                2008-02-25-18:56 */
+/* Copyright (C) 1998--2008    Eitan M. Gurari            */
 /*                                                        */
 /* This work may be distributed and/or modified under the */
 /* conditions of the LaTeX Project Public License, either */
@@ -381,6 +381,9 @@ struct script_struct{
 static int eoln_ch;
 
 
+static BOOL check_tex4ht_c_err = FALSE;
+
+
 static Q_CHAR *ch_mod = Q_NULL;
 static Q_CHAR *debug = Q_NULL;
 static Q_CHAR *Xfield = Q_NULL;
@@ -445,10 +448,12 @@ static C_CHAR *warn_err_mssg[]={
 "  -d...  directory for output files       (default:  current)\n"
 "  -e...  location of tex4ht.env\n"
 "  -i     debugging info\n"
+"  -g     ignore errors in system calls\n"
 "  -m...  chmod ... of new output files (reused bitmaps excluded)\n"
 "  -p     don't convert pictures           (default:  convert)\n"
 "  -r     replace bitmaps of all glyphs    (default:  reuse old ones)\n"
 "  -M...  chmod ... of all output files\n"
+"  -Q     quit, if tex4ht.c had problems\n"
 "  -S...  permission for system calls: *-always, filter\n"
 "  -X...  content for field %%3 in X scripts\n"
 "  -....  content for field %%2 in . scripts\n\n"
@@ -474,6 +479,9 @@ static int system_return;
 
 
 static BOOL system_yes;
+
+
+static BOOL always_call_sys = FALSE;
 
 
 static Q_CHAR* match[10];
@@ -608,9 +616,9 @@ static char *  abs_addr
 #undef SEP
 #endif
 {                                         U_CHAR  *p;
-   p = m_alloc(char, (int) strlen( dir ) +
-                     (base? (int) strlen( base ):0) +
-                     (int) strlen( HOME_DIR  ));
+   p = m_alloc(char, (int) strlen((char *)  dir ) +
+                     (base? (int) strlen((char *)  base ):0) +
+                     (int) strlen((char *)  HOME_DIR  ));
    *p = '\0';
    if( (*(dir+1) == '~') && base ){
      if( *base == '~' ){
@@ -850,7 +858,7 @@ static BOOL strpre
 #undef SEP
 #endif
 {                   int i;
-  for( i=0; i < (int) strlen(s1); i++){
+  for( i=0; i < (int) strlen((char *) s1); i++){
     if( *(s1+i) != *(s2+i) ){ return FALSE; }
   }
   return TRUE;
@@ -915,14 +923,15 @@ char *get_env_dir
 {    int  i;
       Q_CHAR *p;
   if(! progname || ! *progname)  return NULL;  
-  i = (int) strlen(progname);
+  i = (int) strlen((char *) progname);
   while( (progname[--i] != (int) dir_path_slash(progname) )
         && i > 0) ;                               
   if(i == 0)  return NULL;                        
   p = (Q_CHAR *) malloc(i+12);
   if(p == NULL)  return NULL;     
   strncpy(p, progname, i+1);                         
-  (IGNORED) strcpy(&p[i+1],"tex4ht.env");            
+  (IGNORED) strcpy((char *) &p[i+1],
+                   (char *) "tex4ht.env");            
   return p;
 }
 
@@ -976,7 +985,7 @@ static FILE* f_home_open
                           U_CHAR *str;
   if( *name == '~' ){
      if( HOME_DIR ){
-         str = m_alloc(char, strlen(HOME_DIR)+strlen(name));
+         str = m_alloc(char, strlen((char *) HOME_DIR)+strlen((char *) name));
          (IGNORED) sprintf(str,"%s%s", HOME_DIR, name+1);
          file = f_open(str,flags);
          free((void *)  str);
@@ -1004,14 +1013,14 @@ static FILE* open_file
 {                       FILE* file;
                          C_CHAR filename[255], *p;
    if( eq_str( ext,LG_EXT ) ) {
-      (IGNORED) strcpy(filename,job_name);
+      (IGNORED) strcpy((char *) filename, (char *) job_name);
       (IGNORED) strct(filename, ext);
    } else {
-      (IGNORED) strcpy( filename,name );
+      (IGNORED) strcpy((char *)  filename, (char *) name );
       p = filename;
       while( TRUE ){
         if( *p == '.' ){  break; }
-        if( *p == '\0' ){ (IGNORED) strcpy(p, ext); break; }
+        if( *p == '\0' ){ (IGNORED) strcpy((char *) p, (char *) ext); break; }
         p++;
       }
    }
@@ -1171,6 +1180,7 @@ static void call_sys
       system_return = system_yes?  (int) system(command) : -1;
       (IGNORED) printf("%sSystem return: %d\n",
             system_return? "--- Warning --- " : "", system_return );
+      if( always_call_sys ){ system_return = 0; }
    }
 }
 
@@ -1195,8 +1205,8 @@ static void strct
 #undef SEP
 #endif
 {   Q_CHAR * ch;
-   ch = str1 + (int) strlen(str1);
-   (IGNORED) strcpy( ch, str2 );
+   ch = str1 + (int) strlen((char *) str1);
+   (IGNORED) strcpy((char *)  ch, (char *) str2 );
 }
 
 
@@ -1303,7 +1313,7 @@ static BOOL  scan_until_end_str
      i++;
    }
    p[i] = '\0';
-   i -= (int) strlen(str);
+   i -= (int) strlen((char *) str);
    if( i>= 0 ){  return eq_str(p+i,str);   }
    return FALSE;
 }
@@ -1343,7 +1353,7 @@ static BOOL  scan_until_str
                      r_alloc((void *) match[n], (size_t) max_match[n]);
      }
      p[i++] = ch;
-     j =  i - (int) strlen(str);
+     j =  i - (int) strlen((char *) str);
      if( j>= 0 ){
        p[i] = '\0';
        if( eq_str(p+j,str) ) { return TRUE;  }
@@ -1448,15 +1458,15 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 (IGNORED) printf("----------------------------\n");
 #ifndef KPATHSEA
 #ifdef PLATFORM
-   (IGNORED) printf("t4ht.c (2007-01-05-03:17 %s)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2008-02-25-18:56 %s)\n",PLATFORM);
 #else
-   (IGNORED) printf("t4ht.c (2007-01-05-03:17)\n");
+   (IGNORED) printf("t4ht.c (2008-02-25-18:56)\n");
 #endif
 #else
 #ifdef PLATFORM
-   (IGNORED) printf("t4ht.c (2007-01-05-03:17 %s kpathsea)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2008-02-25-18:56 %s kpathsea)\n",PLATFORM);
 #else
-   (IGNORED) printf("t4ht.c (2007-01-05-03:17 kpathsea)\n");
+   (IGNORED) printf("t4ht.c (2008-02-25-18:56 kpathsea)\n");
 #endif
 #endif
 
@@ -1469,8 +1479,8 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
      int cnt;
      int len = 0;
      for( cnt=i; cnt < argc; cnt++ ){
-       len += (int) strlen(argv[cnt]);
-       if( *(argv[cnt] + (int) strlen(argv[cnt]) -1) == *p ){
+       len += (int) strlen((char *) argv[cnt]);
+       if( *(argv[cnt] + (int) strlen((char *) argv[cnt]) -1) == *p ){
            Q_CHAR * arg = m_alloc(char, len + cnt - i + 1);
            Q_CHAR * toArg = arg;
            Q_CHAR *pp;
@@ -1536,8 +1546,16 @@ system( yes ) != 0
   if( argc == 1 ){ bad_arg; }
   for(i=1; i<argc; i++){
     if( *( p=argv[i] ) == '-' ){ 
-if( (int) strlen( argv[i] ) == 2 ){
-   if( (*(p+1)!='i')  && (*(p+1) != 'p') && (*(p+1) != 'r') && (*(p+1) != 'b') )
+if( (int) strlen((char *)  argv[i] ) == 2 ){
+   if( 
+   (*(p+1) != 'i')
+&& (*(p+1) != 'p')
+&& (*(p+1) != 'r')
+&& (*(p+1) != 'b')
+&& (*(p+1) != 'g')
+&& (*(p+1) != 'Q')
+
+ )
      { if( ++i == argc ) bad_arg; }
    q = argv[i];
 } else q = p+2;
@@ -1569,14 +1587,16 @@ tex4ht_env_file = q;
  break; }
   case 'f':{ 
 p = p + 2;
-lg_name = p + (int) strlen( p );
+lg_name = p + (int) strlen((char *)  p );
 while( *lg_name != *p ){ lg_name--; }
 lg_name++;
 
  break; }
   case 'i':{ debug = q-1;  break;}
+  case 'g':{ always_call_sys = TRUE;  break;}
   case 'm':{ ch_mod = q;  break; }
   case 'p':{ nopict = q-1;  break;}
+  case 'Q':{ check_tex4ht_c_err = TRUE;  break;}
   case 'r':{ noreuse = q-1;  break;}
   case '.':{ Dotfield = q;  break;}
    default:{ bad_arg;  }
@@ -1590,8 +1610,8 @@ lg_name++;
   
 {                                 Q_CHAR   *p, *q;
                                   FILE*    file;
-   (IGNORED) strcpy( tmp_name, lg_name);
-   p = q = tmp_name + strlen( tmp_name );
+   (IGNORED) strcpy((char *) (char *) tmp_name, (char *) (char *) lg_name);
+   p = q = tmp_name + strlen((char *)  tmp_name );
    while( p != tmp_name ){
       if( *p == '.' ){
           if( eq_str( p+1,LG_EXT ) ) { *p = '\0'; }
@@ -1611,8 +1631,8 @@ lg_name++;
 
 
   
-(IGNORED) strcpy( job_name, tmp_name);
-*(job_name + strlen(job_name) - 4) = '\0';
+(IGNORED) strcpy((char *)  job_name, (char *) tmp_name);
+*(job_name + strlen((char *) job_name) - 4) = '\0';
 
 
 }
@@ -1636,7 +1656,7 @@ if( tex4ht_env_file ){
    file = NULL;
 }
 if( tex4ht_env_file ){
-    (IGNORED) strcpy(&env_loc[0],tex4ht_env_file);
+    (IGNORED) strcpy((char *) &env_loc[0], (char *) tex4ht_env_file);
 }
 if( debug && file ){
       (IGNORED) printf(".......Open: %s\n", tex4ht_env_file); }
@@ -1648,7 +1668,7 @@ if( !file ) {
       (IGNORED) printf("tex4ht.env?\n");
    }
    file = f_open("tex4ht.env", READ_TEXT_FLAGS);
-   (IGNORED) strcpy(&env_loc[0],"tex4ht.env");
+   (IGNORED) strcpy((char *) &env_loc[0], (char *) "tex4ht.env");
    if( debug && file ){
       (IGNORED) printf(".......Open: ./tex4ht.env\n"); }
 }
@@ -1661,7 +1681,7 @@ if( !file ) {
           (IGNORED) printf(".tex4ht?\n");
        }
        file = f_open(".tex4ht", READ_TEXT_FLAGS);
-       (IGNORED) strcpy(&env_loc[0],".tex4ht");
+       (IGNORED) strcpy((char *) &env_loc[0], (char *) ".tex4ht");
        if( debug && file ){
          (IGNORED) printf(".......Open: ./.tex4ht\n"); }
    }
@@ -1694,7 +1714,7 @@ if( !file ){
          (IGNORED) printf("%s?\n", str);
      }
      file = f_open(str,READ_TEXT_FLAGS);
-     (IGNORED) strcpy(&env_loc[0],str);
+     (IGNORED) strcpy((char *) &env_loc[0], (char *) str);
      if( debug && file ){
         (IGNORED) printf(".......Open: %s\n", str); }
   }
@@ -1707,7 +1727,7 @@ if( !file ){
              (IGNORED) printf("%s?\n", str);
           }
           file = f_open(str,READ_TEXT_FLAGS);
-          (IGNORED) strcpy(&env_loc[0],str);
+          (IGNORED) strcpy((char *) &env_loc[0], (char *) str);
           if( debug && file ){
              (IGNORED) printf(".......Open: %s\n", str); }
       }
@@ -1719,7 +1739,7 @@ if( !file ){
           (IGNORED) printf("C:/tex4ht.env?\n");
       }
       file = f_open("C:/tex4ht.env",READ_TEXT_FLAGS);
-       (IGNORED) strcpy(&env_loc[0],"C:/tex4ht.env");
+       (IGNORED) strcpy((char *) &env_loc[0], (char *) "C:/tex4ht.env");
       if( debug && file ){
         (IGNORED) printf(".......Open: C:/tex4ht.env\n"); }
    }
@@ -1733,7 +1753,7 @@ if( !file ){
           (IGNORED) printf("%s?\n", ENVFILE);
       }
       file = f_home_open( ENVFILE,READ_TEXT_FLAGS);
-       (IGNORED) strcpy(&env_loc[0],ENVFILE);
+       (IGNORED) strcpy((char *) &env_loc[0], (char *) ENVFILE);
        if( debug && file ){
          (IGNORED) printf(".......Open: %s\n", ENVFILE); }
    }
@@ -1746,7 +1766,7 @@ if( dos_env_file ){
        (IGNORED) printf("%s?\n", dos_env_file);
    }
    file =  f_open( dos_env_file, READ_TEXT_FLAGS ) ;
-   (IGNORED) strcpy(&env_loc[0],dos_env_file);
+   (IGNORED) strcpy((char *) &env_loc[0], (char *) dos_env_file);
    if( debug && file ){
       (IGNORED) printf(".......Open: %s\n", dos_env_file); }
 }
@@ -1952,14 +1972,14 @@ if( envChoice == (struct env_c_rec*) 0  ){
 if( debug ){
    (IGNORED) printf(".......   <%s>  skipping ...\n", match[1]);
 }
-(IGNORED) strcpy( cur_block, match[1]);
+(IGNORED) strcpy((char *)  cur_block, (char *) match[1]);
 status = FALSE;
 while( !status && (eoln_ch != EOF) ){
   status = scan_str("</", TRUE, file);
   status = scan_until_str(">", 1, status, file);
   status = scan_until_end_str("", 2, status, file);
   if( status ){
-      *(match[1] + strlen(match[1]) - 1) = '\0';
+      *(match[1] + strlen((char *) match[1]) - 1) = '\0';
       status = eq_str(match[1], cur_block);
       if( debug ){
          (IGNORED) printf(".......   </%s>\n", match[1]);
@@ -1988,6 +2008,26 @@ lg_file = open_file(lg_name,LG_EXT);
 if( lg_file ) {
    
 begin_lg_file = ftell(lg_file);
+
+
+   
+(IGNORED)  fseek(lg_file, begin_lg_file, 
+0
+);
+
+  
+if( check_tex4ht_c_err ){
+   eoln_ch = (int) 'x';
+   while( eoln_ch != EOF ) {
+      status = scan_str("tex4ht.c error: ", TRUE, lg_file);
+      if( status ){
+          (IGNORED) fprintf(stderr,
+              "--- Error --- tex4ht.c ran into problems\n"
+           );
+           exit(EXIT_FAILURE);
+      }
+      status = scan_until_end_str("", 1, status, lg_file);
+}  }
 
 
    
@@ -2044,8 +2084,8 @@ if( rec_op != No_op ){
          } else {
             
 file_name = match[1];
-*(file_name + (int) strlen(file_name) - 1) = '\0';
-strcpy(file_mode, WRITE_TEXT_FLAGS);
+*(file_name + (int) strlen((char *) file_name) - 1) = '\0';
+strcpy((char *) file_mode, (char *) WRITE_TEXT_FLAGS);
 for(i=1; i<=2; i++){
   
 for( p = opened_files; p != (struct files_rec*) 0;  p = p->right ){
@@ -2055,9 +2095,9 @@ if( p == (struct files_rec*) 0 ){
   p = m_alloc(struct files_rec, 1);
   p->right = opened_files;   opened_files = p;
   p->down =  (struct files_rec*) 0;
-  strcpy(p->file_mode,file_mode);
-  p->name = m_alloc(char, (int) strlen(file_name) + 1);
-  (IGNORED) strcpy( p->name, file_name );
+  strcpy((char *) p->file_mode, (char *) file_mode);
+  p->name = m_alloc(char, (int) strlen((char *) file_name) + 1);
+  (IGNORED) strcpy((char *)  p->name, (char *) file_name );
   if( (p->file = fopen(file_name, file_mode)) == NULL )
     { (IGNORED) warn_i_str(5,file_name); }
 }
@@ -2065,7 +2105,7 @@ to_rec = from_rec;  from_rec = p;
 
 
   file_name = match[5];
-  strcpy(file_mode, 
+  strcpy((char *) file_mode, (char *) 
 READ_BIN_FLAGS
 
 );
@@ -2119,8 +2159,8 @@ p->file = to_rec->file;
 p->from_rec = from_rec;
 p->loc = -1;
 p->op = No_op;
-p->group = m_alloc(char, (int) strlen(match[3]) + 1);
-(IGNORED) strcpy( p->group, match[3] );
+p->group = m_alloc(char, (int) strlen((char *) match[3]) + 1);
+(IGNORED) strcpy((char *)  p->group, (char *) match[3] );
 to_rec = p;
 
 
@@ -2140,8 +2180,8 @@ p->name = to_rec->name;
 p->file = to_rec->file;
 p->from_rec = from_rec;
 p->loc = -1;
-p->group = m_alloc(char, (int) strlen(match[3]) + 1);
-(IGNORED) strcpy( p->group, match[3] );
+p->group = m_alloc(char, (int) strlen((char *) match[3]) + 1);
+(IGNORED) strcpy((char *)  p->group, (char *) match[3] );
 to_rec = p;
 
 
@@ -2155,7 +2195,7 @@ p->up = to_rec;
 if( p->down != (struct files_rec*) 0 ){
   (p->down)->up = p;
 }
-*(match[4] + (int) strlen(match[4]) - 1) = '\0';
+*(match[4] + (int) strlen((char *) match[4]) - 1) = '\0';
 p->loc = (int) get_long_int(match[4]);
 p->op  = rec_op;
 p->label = addr;
@@ -2327,7 +2367,7 @@ if( status ){
 while( *body && (*body != ' ') ){ body++; }
 if( *body == ' ' ){ media = body; *(body++) = '\0'; }
 
-if( (int) strlen(body) > 6 ){
+if( (int) strlen((char *) body) > 6 ){
    if(     (*(body) == '@')
        &&  (*(body+1) == 'm')
        &&  (*(body+2) == 'e')
@@ -2348,12 +2388,12 @@ if( *body ){
   if( *key ){ 
 p = m_alloc(struct htf_struct, 1);
 p->next =  (struct htf_struct *) 0;
-p->key =   m_alloc(char, (int) strlen(key) + 1);
-(IGNORED) strcpy( p->key, key );
-p->media =   m_alloc(char, (int) strlen(media) + 1);
-(IGNORED) strcpy( p->media, media );
-p->body =   m_alloc(char, (int) strlen(body) + 1);
-(IGNORED) strcpy( p->body, body );
+p->key =   m_alloc(char, (int) strlen((char *) key) + 1);
+(IGNORED) strcpy((char *)  p->key, (char *) key );
+p->media =   m_alloc(char, (int) strlen((char *) media) + 1);
+(IGNORED) strcpy((char *)  p->media, (char *) media );
+p->body =   m_alloc(char, (int) strlen((char *) body) + 1);
+(IGNORED) strcpy((char *)  p->body, (char *) body );
 if( last_rec ){
    last_rec->next = p;  last_rec = p;
 } else {
@@ -2366,8 +2406,8 @@ if( debug ){
  }
   else if( last_rec ){ 
 last_rec->body = (Q_CHAR *)  r_alloc((void *) last_rec->body,
-      (size_t) strlen(last_rec->body)
-    + (size_t) strlen(body)
+      (size_t) strlen((char *) last_rec->body)
+    + (size_t) strlen((char *) body)
     + 2);
 (IGNORED) strct(last_rec->body,"\n");
 (IGNORED) strct(last_rec->body,body);
@@ -2396,17 +2436,17 @@ while( eoln_ch != EOF ) {
    status = scan_until_end_str("", 2, status, lg_file);
    if( status ){                          Q_CHAR *key;
       key = match[1];
-      *(key + (int) strlen(key) - 1) = '\0';
+      *(key + (int) strlen((char *) key) - 1) = '\0';
       
 if( (*key != '\0') && (*key != '\n') ) {
                             struct htf_struct *p;
    p = m_alloc(struct htf_struct, 1);
    p->next =  htf_rec;
    htf_rec = p;
-   p->key =   m_alloc(char, (int) strlen(key) + 1);
-   (IGNORED) strcpy( p->key, key );
-   p->body =   m_alloc(char, (int) strlen(match[2]) + 1);
-   (IGNORED) strcpy( p->body, match[2] );
+   p->key =   m_alloc(char, (int) strlen((char *) key) + 1);
+   (IGNORED) strcpy((char *)  p->key, (char *) key );
+   p->body =   m_alloc(char, (int) strlen((char *) match[2]) + 1);
+   (IGNORED) strcpy((char *)  p->body, (char *) match[2] );
    if( debug ){
       (IGNORED) printf(".......%s...%s\n", key, match[2]);
 } }
@@ -2478,7 +2518,7 @@ status = scan_until_str(".idv", 1, status, lg_file);
 status = scan_until_str("[", 2, status, lg_file);
 status = scan_until_str("] ==> ", 2, status, lg_file);
 status = scan_until_str(" ", 3, status, lg_file);
-   *(match[3] + (int) strlen(match[3]) - 1) = '\0';
+   *(match[3] + (int) strlen((char *) match[3]) - 1) = '\0';
 status = scan_until_end_str("---", 4, status, lg_file);
 if( status ) {
                
@@ -2490,12 +2530,12 @@ struct script_struct
                Q_CHAR *p;
    gif_i = get_long_int(match[2]);
    p = match[2];
-   *(p + (int) strlen(p) - 6) = '\0';
+   *(p + (int) strlen((char *) p) - 6) = '\0';
    if( characters ){
       
                   Q_CHAR filename[255];
                   FILE* file;
-(IGNORED) strcpy(filename, "");
+(IGNORED) strcpy((char *) filename, (char *) "");
 if( dir && !bitmaps_no_dm ){ (IGNORED) strct(filename, dir); }
 (IGNORED) strct(filename, match[3]);
 file  = fopen(filename, READ_TEXT_FLAGS);
@@ -2606,7 +2646,7 @@ if( status ){
                                FILE   *css_file, *tmp_file;
                                BOOL   css_sty;
    
-(IGNORED) strcpy( css_name, job_name);
+(IGNORED) strcpy((char *)  css_name, (char *) job_name);
 (IGNORED) strct(css_name, ".css");
 css_file = fopen(css_name, READ_TEXT_FLAGS);
 
@@ -2671,7 +2711,7 @@ while( eoln_ch != EOF ) {
    status = scan_until_end_str("", 2, status, lg_file);
    if( status ){
       Font_css_base = match[1];
-      *(Font_css_base + (int) strlen(Font_css_base) - 14) = '\0';
+      *(Font_css_base + (int) strlen((char *) Font_css_base) - 14) = '\0';
       match[1] = (Q_CHAR *) malloc(70);  max_match[1] = 70;
       Font_css_mag = match[2];
       match[2] = (Q_CHAR *) malloc(70);  max_match[2] = 70;
@@ -2711,13 +2751,13 @@ while( eoln_ch != EOF ) {
                       struct htf_struct *font_sty;
                       int second;
       p = match[1];
-      *(p + (int) strlen(p) - 3) = '\0';
+      *(p + (int) strlen((char *) p) - 3) = '\0';
       p = match[2];
-      *(p + (int) strlen(p) - 3) = '\0';
+      *(p + (int) strlen((char *) p) - 3) = '\0';
       p = match[3];
-      *(p + (int) strlen(p) - 3) = '\0';
+      *(p + (int) strlen((char *) p) - 3) = '\0';
       p = match[4];
-      *(p + (int) strlen(p) - 2) = '\0';
+      *(p + (int) strlen((char *) p) - 2) = '\0';
       
 {                                                  Q_CHAR *p;
    second =   (int)
@@ -2731,6 +2771,17 @@ while( eoln_ch != EOF ) {
      if( (*p < '0') || (*p > '9') ){ second = 100; break; }
      p++;
    }
+   
+if(  (int) (  (double) get_long_int(match[2])
+            / (int) get_long_int(match[4])
+            + 0.5
+           )
+      == base_font_size
+){
+   second = 100;
+};
+
+
 }
 
 
@@ -2913,7 +2964,7 @@ ext_script
                       struct script_struct *cur_script;
         ext = match[1];
         (IGNORED) strct( ext, match[2] );
-        ext += strlen(ext);
+        ext += strlen((char *) ext);
         while( *(--ext) != '.' ){ ; }
         *ext = '\0'; ext++;
         
@@ -2927,7 +2978,7 @@ ext_script
   add = cur_script = NULL_SCRIPT;
   while( cur ){
      
-(IGNORED) strcpy(extPlus, ext);
+(IGNORED) strcpy((char *) extPlus, (char *) ext);
 /*
    if ( envChoice ) {
       (IGNORED) strct ( extPlus, envChoice );
@@ -2940,9 +2991,10 @@ ext_script
         
 temp = (struct script_struct *)
             m_alloc(struct script_struct, (int) 1);
-temp->command = m_alloc(char, (int) strlen(cur->command) + 1);
+temp->command = m_alloc(char, (int) strlen((char *) cur->command) + 1);
 temp->next =  NULL_SCRIPT;
-(IGNORED) strcpy(temp->command, cur->command + (int) strlen(extPlus) );
+(IGNORED) strcpy((char *) temp->command,
+                 (char *) cur->command + (int) strlen((char *) extPlus) );
 
 
         if( cur_script == NULL_SCRIPT ){
@@ -2984,7 +3036,7 @@ file_script
       if( status ){                         Q_CHAR *p;
          p = match[1];
          (IGNORED) strct( p, match[2] );
-         p += strlen(p);
+         p += strlen((char *) p);
          while( *(--p) != '.' ){ ; }
          *p = '\0'; p++;
          (void) execute_script(file_script, match[1],
@@ -3038,17 +3090,17 @@ while( eoln_ch != EOF ) {              Q_CHAR *command, ch;
    status = scan_until_str("\" ---", 2, status, lg_file);
    if( status ){
       command = match[2];
-      *(command + (int) strlen(command) - 5) = '\0';
+      *(command + (int) strlen((char *) command) - 5) = '\0';
       
 flag = FALSE;
 p = system_calls;
 while( p ){
-  if( (n = (int) strlen(p->filter)) == 1 ) {
+  if( (n = (int) strlen((char *) p->filter)) == 1 ) {
      if( *(p->filter) == '*' ){
          flag = TRUE; break;
      }
   }
-  if( strlen(command) >= (unsigned int) n ) {
+  if( strlen((char *) command) >= (unsigned int) n ) {
       ch = command[n]; command[n] = '\0';
       flag = flag || eq_str(p->filter,command);
       command[n] = ch;

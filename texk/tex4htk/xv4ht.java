@@ -1,6 +1,6 @@
 /**********************************************************/
-/* xv4ht.java                            2005-02-23-01:05 */
-/* Copyright (C) 2005          Eitan M. Gurari            */
+/* xv4ht.java                            2006-07-03-21:41 */
+/* Copyright (C) 2005--2006    Eitan M. Gurari            */
 /*                                                        */
 /* This work may be distributed and/or modified under the */
 /* conditions of the LaTeX Project Public License, either */
