@@ -424,6 +424,7 @@ END {
 
 our $raw_index = File::Spec->devnull;
 unless ( $interactive ) {
+    for my $f (@ARGV) { die "$f does not exist" if ! -f $f }
     $raw_index = create_raw_index();	# processes @ARGV
     my $filter_cmd = '';
     if ( $input_markup eq 'latex' ) {
@@ -511,6 +512,8 @@ sub parse_options() {
 	}
 	my ($name, $path, $suffix) = fileparse ($ARGV[0], '\.[^\.]+');
 	$outfile = "$path$name.ind";
+	# FIXME opening "nul" multiple times causes a problem on woe32
+	$logfile = "$path$name.ilg" if $^O eq "MSWin32" && ! defined $logfile;
     }
 
     # FIXME: xindy wants a log file. Really?
@@ -670,7 +673,7 @@ sub xindy_expression () {
     }
 
     $style_file = quotify($style_file);
-    $outfile = quotify($outfile);
+    my $outfile_q = quotify($outfile);
     $raw_index = quotify($raw_index);
     $logging = ':logfile ' . quotify($logfile)  if $logfile;
     $tracing = ':markup-trace :on'  if $debug{markup};
@@ -683,7 +686,7 @@ sub xindy_expression () {
   (xindy:startup
     :idxstyle $style_file
     :rawindex $raw_index
-    :output $outfile
+    :output $outfile_q
     $logging
     $tracing
     $trace_level)
@@ -722,6 +725,7 @@ sub call_xindy ( $$ ) {
     if ( $quiet && ! $interactive ) {
 	open (STDOUT, '>', File::Spec->devnull);
     }
+    unlink($outfile) if $^O eq "MSWin32" && -f $outfile;
     system @command;
     if ( $? == -1 ) {
 	print STDERR "$cmd: Could not execute xindy kernel: $!\n";
