@@ -25,9 +25,17 @@ install-exec-hook: xindy
 	$(MKDIR_P) "$(prefix)/texmf/scripts/xindy"
 	-rm -f $(bindir)/xindy $(bindir)/texindy
 	$(INSTALL_SCRIPT) xindy $(prefix)/texmf/scripts/xindy/xindy.pl
-	ln -s ../../texmf/scripts/xindy/xindy.pl $(bindir)/xindy
 	$(INSTALL_SCRIPT) $(srcdir)/texindy $(prefix)/texmf/scripts/xindy/texindy.pl
-	ln -s ../../texmf/scripts/xindy/texindy.pl $(bindir)/texindy
+	if test -d "$(bindir)/../../texmf/scripts/xindy"; then \
+	  ln -s ../../texmf/scripts/xindy/xindy.pl $(bindir)/xindy; \
+	  ln -s ../../texmf/scripts/xindy/texindy.pl $(bindir)/texindy; \
+	elif test -d "$(bindir)/../texmf/scripts/xindy"; then \
+	  ln -s ../texmf/scripts/xindy/xindy.pl $(bindir)/xindy; \
+	  ln -s ../texmf/scripts/xindy/texindy.pl $(bindir)/texindy; \
+	else \
+	  echo "Error: texmf/scripts/xindy directory not found"; \
+	  false; \
+	fi
 else
     bin_SCRIPTS = xindy
     dist_bin_SCRIPTS = texindy

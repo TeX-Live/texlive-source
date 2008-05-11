@@ -426,9 +426,17 @@ uninstall-man: uninstall-man1
 @TETEX_BUILD_TRUE@	$(MKDIR_P) "$(prefix)/texmf/scripts/xindy"
 @TETEX_BUILD_TRUE@	-rm -f $(bindir)/xindy $(bindir)/texindy
 @TETEX_BUILD_TRUE@	$(INSTALL_SCRIPT) xindy $(prefix)/texmf/scripts/xindy/xindy.pl
-@TETEX_BUILD_TRUE@	ln -s ../../texmf/scripts/xindy/xindy.pl $(bindir)/xindy
 @TETEX_BUILD_TRUE@	$(INSTALL_SCRIPT) $(srcdir)/texindy $(prefix)/texmf/scripts/xindy/texindy.pl
-@TETEX_BUILD_TRUE@	ln -s ../../texmf/scripts/xindy/texindy.pl $(bindir)/texindy
+@TETEX_BUILD_TRUE@	if test -d "$(bindir)/../../texmf/scripts/xindy"; then \
+@TETEX_BUILD_TRUE@	  ln -s ../../texmf/scripts/xindy/xindy.pl $(bindir)/xindy; \
+@TETEX_BUILD_TRUE@	  ln -s ../../texmf/scripts/xindy/texindy.pl $(bindir)/texindy; \
+@TETEX_BUILD_TRUE@	elif test -d "$(bindir)/../texmf/scripts/xindy"; then \
+@TETEX_BUILD_TRUE@	  ln -s ../texmf/scripts/xindy/xindy.pl $(bindir)/xindy; \
+@TETEX_BUILD_TRUE@	  ln -s ../texmf/scripts/xindy/texindy.pl $(bindir)/texindy; \
+@TETEX_BUILD_TRUE@	else \
+@TETEX_BUILD_TRUE@	  echo "Error: texmf/scripts/xindy directory not found"; \
+@TETEX_BUILD_TRUE@	  false; \
+@TETEX_BUILD_TRUE@	fi
 
 xindy: xindy.in
 	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/xindy.in >xindy
