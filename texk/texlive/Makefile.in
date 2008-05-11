@@ -21,6 +21,7 @@ LINKED_SCRIPTS = \
   texmf/scripts/tetex/e2pall.pl \
   texmf/scripts/tetex/texdoctk.pl \
   texmf/scripts/texlive/tlmgr.pl \
+  texmf/scripts/texlive/texdoc.tlu \
   texmf/scripts/texlive/getnonfreefonts.pl \
   texmf-dist/scripts/glossaries/makeglossaries \
   texmf-dist/scripts/mkjobtexmf/mkjobtexmf.pl \
