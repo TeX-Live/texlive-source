@@ -12,7 +12,7 @@ man5dir = $(mandir)/man5
 SCRIPTS = \
   allcm allneeded dvi2fax dvired fmtutil fmtutil-sys fontinst \
   kpsetool kpsewhere ps2frag ps4pdf pslatex rubibtex rumakeindex \
-  texconfig texconfig-dialog texconfig-sys texdoc \
+  texconfig texconfig-dialog texconfig-sys \
   texlinks updmap updmap-sys
 
 CONTEXTSCRIPTS = \
@@ -29,7 +29,7 @@ contextmanpgs = \
 manpgs = \
   allcm allec allneeded dvi2fax dvired e2pall epstopdf fontinst \
   kpsetool kpsewhere mkjobtexmf mkocp mkofm ofm2opl opl2ofm otp2ocp outocp \
-  ovf2ovp ovp2ovf ps2frag pslatex rubibtex rumakeindex texconfig texdoc \
+  ovf2ovp ovp2ovf ps2frag pslatex rubibtex rumakeindex texconfig \
   texdoctk thumbpdf ttf2afm updmap
 
 all: $(SCRIPTS)

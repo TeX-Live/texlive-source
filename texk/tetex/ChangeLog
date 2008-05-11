@@ -1,3 +1,8 @@
+2008-05-11  Norbert Preining <preining@logic.at>
+
+	* Makefile.in: do not install texdoc(.man) since we will use the
+	  texlua version from Frank (to be found in ../texlive)
+
 2008-05-08  Norbert Preining <preining@logic.at>
 
 	* updmap, tcfmgr: quote various calls containing env variables
