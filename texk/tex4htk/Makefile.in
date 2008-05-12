@@ -12,7 +12,7 @@ prog_cflags = -DUNIX -DKPATHSEA -DNeedFunctionPrototypes
 objects = tex4ht.o t4ht.o
 
 programs = tex4ht t4ht 
-shell_scripts = htcontext htlatex htmex httex httexi htxelatex htxetex ht mk4ht
+shell_scripts = htcontext htlatex htmex httex httexi htxelatex htxetex ht
 perl_scripts = mk4ht
 
 default all: $(programs)  
