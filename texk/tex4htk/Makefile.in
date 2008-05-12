@@ -12,8 +12,8 @@ prog_cflags = -DUNIX -DKPATHSEA -DNeedFunctionPrototypes
 objects = tex4ht.o t4ht.o
 
 programs = tex4ht t4ht 
-scripts = htcontext htlatex htmex httex httexi htxelatex htxetex ht mk4ht
-
+shell_scripts = htcontext htlatex htmex httex httexi htxelatex htxetex ht mk4ht
+perl_scripts = mk4ht
 
 default all: $(programs)  
 
@@ -33,7 +33,8 @@ install-exec: all
 	$(SHELL) $(top_srcdir)/../mkinstalldirs $(bindir)
 	for p in $(programs); do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
 	$(INSTALL) -d "$(prefix)/texmf-dist/scripts/tex4ht"
-	for p in $(scripts); do $(INSTALL_SCRIPT) $(srcdir)/$$p "$(prefix)/texmf-dist/scripts/tex4ht/$$p"; done
+	for p in $(shell_scripts); do $(INSTALL_SCRIPT) $(srcdir)/$$p "$(prefix)/texmf-dist/scripts/tex4ht/$$p.sh"; done
+	for p in $(perl_scripts); do $(INSTALL_SCRIPT) $(srcdir)/$$p "$(prefix)/texmf-dist/scripts/tex4ht/$$p.pl"; done
 	if test -d "$(bindir)/../../texmf-dist/scripts/tex4ht"; then \
 	  d=../../texmf-dist/scripts/tex4ht; \
 	elif test -d "$(bindir)/../texmf-dist/scripts/tex4ht"; then \
@@ -42,7 +43,8 @@ install-exec: all
 	  echo "Error: texmf-dist/scripts/tex4ht directory not found"; \
 	  false; \
 	fi; \
-	for p in $(scripts); do rm -f $(bindir)/$$p; ln -s $$d/$$p $(bindir)/$$p; done
+	for p in $(shell_scripts); do rm -f $(bindir)/$$p; ln -s $$d/$$p.sh $(bindir)/$$p; done; \
+	for p in $(perl_scripts); do rm -f $(bindir)/$$p; ln -s $$d/$$p.pl $(bindir)/$$p; done
 
 uninstall-exec:
 	for p in $(programs) $(scripts); do rm -f $(bindir)/$$p; done
