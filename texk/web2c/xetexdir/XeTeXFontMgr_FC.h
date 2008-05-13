@@ -51,6 +51,8 @@ protected:
 	virtual void					searchForHostPlatformFonts(const std::string& name);
 	
 	virtual NameCollection*			readNames(FcPattern* pat);
+
+	std::string						getPlatformFontDesc(PlatformFontRef font) const;
 };
 
 #endif	/* __XETEX_FONT_MGR_FC_H */

@@ -83,10 +83,10 @@ XeTeXFontMgr_FC::readNames(FcPattern* pat)
 	NameCollection*	names = new NameCollection;
 
 	char*	pathname;
-	if (FcPatternGetString(pat, FC_FILE, 0, (FcChar8**)&pathname) == FcTrue)
+	if (FcPatternGetString(pat, FC_FILE, 0, (FcChar8**)&pathname) != FcResultMatch)
 		return names;
 	int index;
-	if (FcPatternGetInteger(pat, FC_INDEX, 0, &index) == FcTrue)
+	if (FcPatternGetInteger(pat, FC_INDEX, 0, &index) != FcResultMatch)
 		return names;
 
 	FT_Face face;
@@ -159,13 +159,13 @@ XeTeXFontMgr_FC::readNames(FcPattern* pat)
 	}
 	else {
 		index = 0;
-		while (FcPatternGetString(pat, FC_FULLNAME, index++, (FcChar8**)&name) == FcFalse)
+		while (FcPatternGetString(pat, FC_FULLNAME, index++, (FcChar8**)&name) == FcResultMatch)
 			appendToList(&names->fullNames, name);
 		index = 0;
-		while (FcPatternGetString(pat, FC_FAMILY, index++, (FcChar8**)&name) == FcFalse)
+		while (FcPatternGetString(pat, FC_FAMILY, index++, (FcChar8**)&name) == FcResultMatch)
 			appendToList(&names->familyNames, name);
 		index = 0;
-		while (FcPatternGetString(pat, FC_STYLE, index++, (FcChar8**)&name) == FcFalse)
+		while (FcPatternGetString(pat, FC_STYLE, index++, (FcChar8**)&name) == FcResultMatch)
 			appendToList(&names->styleNames, name);
 
 		if (names->fullNames.size() == 0) {
@@ -192,11 +192,11 @@ XeTeXFontMgr_FC::getOpSizeRecAndStyleFlags(Font* theFont)
 		// try to get values from FontConfig, as it apparently wasn't an sfnt
 		FcPattern*	pat = theFont->fontRef;
 		int			value;
-		if (FcPatternGetInteger(pat, FC_WEIGHT, 0, &value) == FcFalse)
+		if (FcPatternGetInteger(pat, FC_WEIGHT, 0, &value) == FcResultMatch)
 			theFont->weight = value;
-		if (FcPatternGetInteger(pat, FC_WIDTH, 0, &value) == FcFalse)
+		if (FcPatternGetInteger(pat, FC_WIDTH, 0, &value) == FcResultMatch)
 			theFont->width = value;
-		if (FcPatternGetInteger(pat, FC_SLANT, 0, &value) == FcFalse)
+		if (FcPatternGetInteger(pat, FC_SLANT, 0, &value) == FcResultMatch)
 			theFont->slant = value;
 	}
 }
@@ -246,7 +246,7 @@ XeTeXFontMgr_FC::searchForHostPlatformFonts(const std::string& name)
 
 			char*	s;
 			int	i;
-			for (i = 0; FcPatternGetString(pat, FC_FULLNAME, i, (FcChar8**)&s) == FcFalse; ++i) {
+			for (i = 0; FcPatternGetString(pat, FC_FULLNAME, i, (FcChar8**)&s) == FcResultMatch; ++i) {
 				if (name == s) {
 					NameCollection*	names = readNames(pat);
 					addToMaps(pat, names);
@@ -256,7 +256,7 @@ XeTeXFontMgr_FC::searchForHostPlatformFonts(const std::string& name)
 				}
 			}
 		
-			for (i = 0; FcPatternGetString(pat, FC_FAMILY, i, (FcChar8**)&s) == FcFalse; ++i) {
+			for (i = 0; FcPatternGetString(pat, FC_FAMILY, i, (FcChar8**)&s) == FcResultMatch; ++i) {
 				if (name == s || (hyph && famName == s)) {
 					NameCollection*	names = readNames(pat);
 					addToMaps(pat, names);
@@ -265,7 +265,7 @@ XeTeXFontMgr_FC::searchForHostPlatformFonts(const std::string& name)
 					goto next_font;
 				}
 				char*	t;
-				for (int j = 0; FcPatternGetString(pat, FC_STYLE, j, (FcChar8**)&t) == FcFalse; ++j) {
+				for (int j = 0; FcPatternGetString(pat, FC_STYLE, j, (FcChar8**)&t) == FcResultMatch; ++j) {
 					std::string full(s);
 					full += " ";
 					full += t;
@@ -322,3 +322,16 @@ XeTeXFontMgr_FC::terminate()
 	if (utf8Conv != NULL)
 		ucnv_close(utf8Conv);
 }
+
+std::string
+XeTeXFontMgr_FC::getPlatformFontDesc(PlatformFontRef font) const
+{
+	std::string path;
+	FcChar8* s;
+	if (FcPatternGetString(font, FC_FILE, 0, (FcChar8**)&s) == FcResultMatch)
+		path = (char*)s;
+	else
+		path = "[unknown]";
+	return path;
+}
+

@@ -103,6 +103,8 @@ protected:
 	virtual void					initialize() = 0;
 	virtual void					terminate();
 
+	virtual std::string				getPlatformFontDesc(PlatformFontRef font) const = 0;
+
 	class Font;
 	class Family;
 

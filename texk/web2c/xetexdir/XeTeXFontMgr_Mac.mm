@@ -277,4 +277,23 @@ XeTeXFontMgr_Mac::terminate()
 	}
 }
 
+std::string
+XeTeXFontMgr_Mac::getPlatformFontDesc(PlatformFontRef font) const
+{
+	FSSpec fileSpec;
+	std::string path;
+	if (ATSFontGetFileSpecification(font, &fileSpec) == noErr) {
+		FSRef fileRef;
+		if (FSpMakeFSRef(&fileSpec, &fileRef) == noErr) {
+			UInt8 posixPath[PATH_MAX];
+			if (FSRefMakePath(&fileRef, posixPath, PATH_MAX) == noErr) {
+				path = (char*)posixPath;
+			}
+		}
+	}
+	if (path.length() == 0)
+		path = "[unknown]";
+	return path;
+}
+
 #endif // XETEX_MAC

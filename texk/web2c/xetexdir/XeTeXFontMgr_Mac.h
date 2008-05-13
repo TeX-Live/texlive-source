@@ -53,6 +53,8 @@ protected:
 	
 	virtual NameCollection*			readNames(ATSUFontID fontID);
 
+	virtual std::string				getPlatformFontDesc(PlatformFontRef font) const;
+
 private:
 	void		addFontsToCaches(CFArrayRef fonts);
 

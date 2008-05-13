@@ -128,8 +128,8 @@ const mathConstantIndex TeX_sym_to_OT_map[] = {
 	subscriptShiftDown, // ??
 	superscriptBaselineDropMax, // ??
 	subscriptBaselineDropMin, // ??
-	stackDisplayStyleGapMin,
-	stackGapMin,
+	delimitedSubFormulaMinHeight,
+	unknown, // using quad instead for now
 	axisHeight
 };
 
@@ -138,7 +138,7 @@ getnativemathsyparam(int f, int n)
 {
 	int	rval = 0;
 
-	if (n == math_quad)
+	if (n == math_quad || n == delim2)
 		rval = fontsize[f];
 	else {
 		if (n < sizeof(TeX_sym_to_OT_map) / sizeof(mathConstantIndex)) {
