@@ -73,6 +73,7 @@ elseif kpse.find_file(basename..'.tlu', 'texmfscripts') then
 else
    io.stderr:write(basename..'.bat: '..basename..
 		   ': No appropriate script found.\n') 
+   os.exit(1)
 end
 
 for i=2, #arg do
