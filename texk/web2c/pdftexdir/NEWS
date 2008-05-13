@@ -2,6 +2,7 @@
 pdfTeX 3.1415926-1.40.8 was released on 2008-05-??
 --------------------------------------------------
 - Incorporated the new version of TeX: 3.1415926
+- The pool file is now compiled in
 - Bugfix:
   - Fonts from included PDFs for which maplines existed missed their /StemV
     values
