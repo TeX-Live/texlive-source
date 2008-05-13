@@ -1485,7 +1485,7 @@ Optional Packages:
   --without-aleph            don't compile and install Aleph
   --without-pdftex           don't compile and install pdfTeX
   --without-pdfetex          don't compile and install pdfeTeX
-  --without-luatex           don't compile and install pdfTeX
+  --without-luatex           don't compile and install luaTeX
   --without-xetex            don't compile and install XeTeX
   --with-cxx-runtime-hack    link C++ runtime statically
   --with-editor=CMD       invoke CMD from the e option vi +%d %s

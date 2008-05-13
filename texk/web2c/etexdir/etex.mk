@@ -52,8 +52,8 @@ etex.web: tie etexdir/etex.mk $(etex_web_srcs)
 etex.ch: $(etex_ch_srcs)
 	$(TIE) -c etex.ch $(etex_ch_srcs)
 
-etex-pool.c: etex.pool tex-mkcpool tmf-pool.h
-	./tex-mkcpool etex.pool tmf-pool.h >etex-pool.c
+etex-pool.c: etex.pool $(makecpool) tmf-pool.h
+	$(makecpool) tex.pool $(srcdir)/tmf-pool.h >$@ || rm -f $@
 
 # Tests...
 check: @ETEX@ etex-check

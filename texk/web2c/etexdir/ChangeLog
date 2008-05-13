@@ -1,3 +1,7 @@
+2008-05-13  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* etex-mk: Use $(makecpool) instead of ./tex-mkcpool.
+
 2008-03-24  Karl Berry  <karl@tug.org>
 
 	* tex.ch0,
