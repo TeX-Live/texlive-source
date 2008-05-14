@@ -38,7 +38,7 @@ install-exec: all
 	if test -d "$(bindir)/../../texmf-dist/scripts/tex4ht"; then \
 	  d=../../texmf-dist/scripts/tex4ht; \
 	elif test -d "$(bindir)/../texmf-dist/scripts/tex4ht"; then \
-	  d=../../texmf-dist/scripts/tex4ht; \
+	  d=../texmf-dist/scripts/tex4ht; \
 	else \
 	  echo "Error: texmf-dist/scripts/tex4ht directory not found"; \
 	  false; \
