@@ -4,22 +4,21 @@
 
   Part of the dvipng distribution
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
 
   This program is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  General Public License for more details.
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  Lesser General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-  02110-1301 USA.
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program. If not, see
+  <http://www.gnu.org/licenses/>.
 
-  Copyright (C) 2002-2006 Jan-Åke Larsson
+  Copyright (C) 2002-2008 Jan-Åke Larsson
 
 ************************************************************************/
 
@@ -83,22 +82,18 @@ typedef unsigned long long      uint64_t;
 #include <t1lib.h>
 #endif
 
-#ifdef HAVE_KPATHSEA_KPATHSEA_H
+#ifdef HAVE_STDBOOL_H
+# include <stdbool.h>
+#else
+# ifdef HAVE_KPATHSEA_KPATHSEA_H
 /* boolean is an enum type from kpathsea/types.h loaded in
    kpathsea/kpathsea.h, use it as fallback */
 #  define bool boolean
-#else
-# ifdef HAVE_STDBOOL_H
-#  include <stdbool.h>
 # else
 typedef int bool;
 #  define true (bool) 1
 #  define false (bool) 0
 # endif
-#endif
-
-#ifndef _TRUE
-#define _TRUE 1
 #endif
 
 #ifndef HAVE_VPRINTF
@@ -169,6 +164,9 @@ struct dvi_data {    /* dvi entry */
   time_t       mtime;           /* modification time                 */
   struct font_num  *fontnump;   /* DVI font numbering                */
   struct page_list *pagelistp;  /* DVI page list                     */
+#define DVI_PREVIEW_LATEX_TIGHTPAGE  1
+#define DVI_PREVIEW_BOP_HOOK         (1<<1)
+  uint32_t     flags;           /* Preview-latex flags               */
 };
 
 #define PAGE_POST      INT32_MAX
@@ -201,7 +199,9 @@ struct page_list*PrevPage(struct dvi_data*, struct page_list*);
 int              SeekPage(struct dvi_data*, struct page_list*);
 bool             DVIFollowToggle(void);
 unsigned char*   DVIGetCommand(struct dvi_data*);
+bool             DVIIsNextPSSpecial(struct dvi_data*);
 uint32_t         CommandLength(unsigned char*); 
+void             ClearPSHeaders(void);
 
 /********************************************************/
 /**********************  misc.h  ************************/
@@ -214,7 +214,7 @@ struct filemmap {
 #else  /* MIKTEX */
   int fd;
 #endif	/* MIKTEX */
-  char* dp_mmap;
+  char* data;
   size_t size;
 };
 
@@ -391,7 +391,7 @@ dviunits  SetGlyph(int32_t c, int32_t hh,int32_t vv);
 void      Gamma(double gamma);
 int32_t   SetVF(int32_t);
 int32_t   SetRule(int32_t, int32_t, int32_t, int32_t);
-void      SetSpecial(char *, int32_t, int32_t, int32_t);
+void      SetSpecial(char *, int32_t, int32_t);
 void      BeginVFMacro(struct font_entry*);
 void      EndVFMacro(void);
 
@@ -434,7 +434,7 @@ EXTERN struct internal_state {
 #define PARSE_STDIN                  (1<<2)
 #define EXPAND_BBOX                  (1<<3)
 #define TIGHT_BBOX                   (1<<4)
-#define CACHE_IMAGES                 (1<<5)
+/* #define CACHE_IMAGES                 (1<<5) */
 #define FORCE_TRUECOLOR              (1<<6)
 #define USE_FREETYPE                 (1<<7)
 #define USE_LIBT1                    (1<<8)
@@ -442,17 +442,20 @@ EXTERN struct internal_state {
 #define REPORT_DEPTH                 (1<<10)
 #define DVI_PAGENUM                  (1<<11)
 #define MODE_PICKY                   (1<<12)
-#define PAGE_GAVE_WARN               (1<<13)
-#define PREVIEW_LATEX_TIGHTPAGE      (1<<14)
 #define GIF_OUTPUT                   (1<<15)
 #define MODE_STRICT                  (1<<16)
 #define NO_GHOSTSCRIPT               (1<<17)
 #define NO_GSSAFER                   (1<<18)
 #define BG_TRANSPARENT               (1<<19)
 #define BG_TRANSPARENT_ALPHA         (1<<20)
-#define PAGE_TRUECOLOR               (1<<21)
 #define FORCE_PALETTE                (1<<22)
-EXTERN uint32_t flags INIT(BE_NONQUIET | USE_FREETYPE | USE_LIBT1);
+EXTERN uint32_t option_flags INIT(BE_NONQUIET | USE_FREETYPE | USE_LIBT1);
+
+#define PAGE_GAVE_WARN               1
+#define PAGE_PREVIEW_BOP             (1<<1)
+#define PAGE_TRUECOLOR               (1<<2)
+EXTERN uint32_t page_flags INIT(0);
+
 
 #ifdef DEBUG
 EXTERN unsigned int debug INIT(0);

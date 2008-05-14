@@ -1,4 +1,20 @@
-	Changes for TeXlive.
+	Changes for teTeX / TeX live.
+
+2008-05-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Imported release 1.10 from savannah.nongnu.org.
+
+	* Makefile.in-1.10, aclocal.m4-1.10, config.h.in-1.10,
+	configure.ac-1.10, configure-1.10 (all new): Original files
+	from release 1.10.
+
+	* acinclude.m4 (new): M4 macros extracted from aclocal.m4-1.10.
+
+	* Makefile.in, configure.ac: Adapted for TeX live.
+
+	* aclocal.m4, config.h.in, configure: Regenerated.
+
+	* dvipng.{dvi,help,info}: Updated generated files.
 
 2008-05-01  Vladimir Volovich  <vvv@vsu.ru>
 

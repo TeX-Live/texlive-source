@@ -4,28 +4,25 @@
 
   Part of the dvipng distribution
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
 
   This program is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  General Public License for more details.
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  Lesser General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-  02110-1301 USA.
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program. If not, see
+  <http://www.gnu.org/licenses/>.
 
-  Copyright (C) 2002-2006 Jan-Åke Larsson
+  Copyright (C) 2002-2008 Jan-Åke Larsson
 
 ************************************************************************/
 
 #include "dvipng.h"
-
-/* #define NO_DRIFT */
 
 #ifdef DEBUG
 #include <ctype.h> /* isprint */
@@ -33,73 +30,58 @@
 
 struct stack_entry {  
   dviunits    h, v, w, x, y, z; /* stack entry                           */
-#ifndef NO_DRIFT
-  subpixels    hh,vv;
-#endif
-} stack[STACK_SIZE];           /* stack                                 */
-int       sp = 0;              /* stack pointer                         */
+  subpixels   hh,vv;
+} stack[STACK_SIZE+1];          /* stack + space for current pos         */
+struct stack_entry* dvi_stack=stack;
 
-dviunits    h;                   /* current horizontal position     */
-dviunits    v;                   /* current vertical position       */
-dviunits    w=0;                 /* current horizontal spacing      */
-dviunits    x=0;                 /* current horizontal spacing      */
-dviunits    y=0;                 /* current vertical spacing        */
-dviunits    z=0;                 /* current vertical spacing        */
-#ifndef NO_DRIFT
-subpixels   hh;                  /* current rounded horizontal position     */
-subpixels   vv;                  /* current rounded vertical position       */
-#else
-# define hh PIXROUND(h,dvi->conv*shrinkfactor)
-# define vv PIXROUND(v,dvi->conv*shrinkfactor)
-#endif
-
-
-#ifndef NO_DRIFT
 #define MAXDRIFT 1
-#define CHECK_MAXDRIFT(x,xx) if ( xx-PIXROUND(x,dvi->conv*shrinkfactor) < -MAXDRIFT ) { \
-                               DEBUG_PRINT(DEBUG_DVI,(" add 1 to")); \
-			       xx += 1; \
-                             } \
-                             if ( xx-PIXROUND(x,dvi->conv*shrinkfactor) > MAXDRIFT ) { \
-                               DEBUG_PRINT(DEBUG_DVI,(" sub 1 to")); \
-			       xx -= 1; \
-                             } \
-                             if (PIXROUND(h,dvi->conv*shrinkfactor) != hh \
-                                 || PIXROUND(v,dvi->conv*shrinkfactor) != vv) \
-                                DEBUG_PRINT(DEBUG_DVI,(" drift (%d,%d)", \
-                                             hh-PIXROUND(h,dvi->conv*shrinkfactor), \
-                                             vv-PIXROUND(v,dvi->conv*shrinkfactor))); 
-#define MoveRight(x)  temp=x; h += temp; \
-                      if ( currentfont==NULL \
-                           || temp > currentfont->s/6 || temp < -currentfont->s/6*4 ) \
-                        hh = PIXROUND(h,dvi->conv*shrinkfactor); \
-                      else \
-                        hh += PIXROUND( temp,dvi->conv*shrinkfactor ); \
-                      CHECK_MAXDRIFT(h,hh)
-#define MoveDown(x)   temp=x; v += temp; \
-                      if ( currentfont==NULL \
-                           || temp > currentfont->s/6*5 || temp < currentfont->s/6*(-5) ) \
-                        vv = PIXROUND(v,dvi->conv*shrinkfactor); \
-                      else \
-		        vv += PIXROUND( temp,dvi->conv*shrinkfactor ); \
-                      CHECK_MAXDRIFT(v,vv)
-#else
-#define MoveRight(b)  h += (dviunits) b
-#define MoveDown(a)   v += (dviunits) a
-#endif
+#define CHECK_MAXDRIFT(x,xx) \
+  if ( xx-PIXROUND(x,dvi->conv*shrinkfactor) < -MAXDRIFT ) {            \
+    DEBUG_PRINT(DEBUG_DVI,(" add 1 to"));		                \
+    xx += 1;						                \
+  }									\
+  if ( xx-PIXROUND(x,dvi->conv*shrinkfactor) > MAXDRIFT ) {		\
+    DEBUG_PRINT(DEBUG_DVI,(" sub 1 to"));				\
+    xx -= 1;								\
+  }									\
+  if (PIXROUND(dvi_stack->h,dvi->conv*shrinkfactor) != dvi_stack->hh	\
+      || PIXROUND(dvi_stack->v,dvi->conv*shrinkfactor) != dvi_stack->vv)\
+    DEBUG_PRINT(DEBUG_DVI,                                              \
+                (" drift (%d,%d)",					\
+		 dvi_stack->hh-PIXROUND(dvi_stack->h,dvi->conv*shrinkfactor), \
+		 dvi_stack->vv-PIXROUND(dvi_stack->v,dvi->conv*shrinkfactor))); 
 
+#define MoveRight(x) \
+  temp=x; dvi_stack->h += temp;		                                \
+  if ( currentfont==NULL						\
+       || temp > currentfont->s/6 || temp < -currentfont->s/6*4 )	\
+    dvi_stack->hh = PIXROUND(dvi_stack->h,dvi->conv*shrinkfactor);	\
+  else									\
+    dvi_stack->hh += PIXROUND( temp,dvi->conv*shrinkfactor );		\
+  CHECK_MAXDRIFT(dvi_stack->h,dvi_stack->hh)
+
+#define MoveDown(x) \
+  temp=x; dvi_stack->v += temp;		                                \
+  if ( currentfont==NULL						\
+       || temp > currentfont->s/6*5 || temp < currentfont->s/6*(-5) )	\
+    dvi_stack->vv = PIXROUND(dvi_stack->v,dvi->conv*shrinkfactor);	\
+  else									\
+    dvi_stack->vv += PIXROUND( temp,dvi->conv*shrinkfactor );		\
+  CHECK_MAXDRIFT(dvi_stack->v,dvi_stack->vv)
 
 #define DO_VFCONV(a) ((((struct font_entry*) parent)->type==DVI_TYPE)?a:\
-    (dviunits)((int64_t) a *  ((struct font_entry*) parent)->s / (1 << 20)))
+  (dviunits)((int64_t) a * ((struct font_entry*) parent)->s / (1 << 20)))
 
 
 dviunits SetChar(int32_t c)
 {
-  struct char_entry* ptr;
+  struct char_entry* ptr=NULL;
 
   if (currentfont==NULL) 
     Fatal("faulty DVI, trying to set character from null font");
-  ptr = currentfont->chr[c];
+
+  if (c>=0 && c<=LASTFNTCHAR) 
+    ptr = currentfont->chr[c];
 #ifdef DEBUG
   switch (currentfont->type) {
   case FONT_TYPE_VF: DEBUG_PRINT(DEBUG_DVI,("\n  VF CHAR:\t")); break;
@@ -110,12 +92,13 @@ dviunits SetChar(int32_t c)
   }
   if (isprint(c))
     DEBUG_PRINT(DEBUG_DVI,("'%c' ",c));
-  DEBUG_PRINT(DEBUG_DVI,("%d at (%d,%d) tfmw %d", c,hh,vv,ptr?ptr->tfmw:0));
+  DEBUG_PRINT(DEBUG_DVI,("%d at (%d,%d) tfmw %d", c,
+			 dvi_stack->hh,dvi_stack->vv,ptr?ptr->tfmw:0));
 #endif
   if (currentfont->type==FONT_TYPE_VF) {
     return(SetVF(c));
-  } else if (ptr) {
-    if (ptr->data == NULL) 
+  } else {
+    if (ptr!=NULL && ptr->data == NULL) 
       switch(currentfont->type) {
       case FONT_TYPE_PK:	LoadPK(c, ptr); break;
 #ifdef HAVE_LIBT1
@@ -128,13 +111,13 @@ dviunits SetChar(int32_t c)
 	Fatal("undefined fonttype %d",currentfont->type);
       }
     if (page_imagep != NULL)
-      return(SetGlyph(c, hh, vv));
-    else {
+      return(SetGlyph(c, dvi_stack->hh, dvi_stack->vv));
+    else if (ptr!=NULL) {
       /* Expand bounding box if necessary */
-      min(x_min,hh - ptr->xOffset/shrinkfactor);
-      min(y_min,vv - ptr->yOffset/shrinkfactor);
-      max(x_max,hh - ptr->xOffset/shrinkfactor + ptr->w);
-      max(y_max,vv - ptr->yOffset/shrinkfactor + ptr->h);
+      min(x_min,dvi_stack->hh - ptr->xOffset/shrinkfactor);
+      min(y_min,dvi_stack->vv - ptr->yOffset/shrinkfactor);
+      max(x_max,dvi_stack->hh - ptr->xOffset/shrinkfactor + ptr->w);
+      max(y_max,dvi_stack->vv - ptr->yOffset/shrinkfactor + ptr->h);
       return(ptr->tfmw);
     }
   }
@@ -148,11 +131,9 @@ void DrawCommand(unsigned char* command, void* parent /* dvi/vf */)
 
   if (/*command >= SETC_000 &&*/ *command <= SETC_127) {
     temp = SetChar((int32_t)*command);
-    h += temp;
-#ifndef NO_DRIFT
-    hh += PIXROUND(temp,dvi->conv*shrinkfactor);
-    CHECK_MAXDRIFT(h,hh);
-#endif
+    dvi_stack->h += temp;
+    dvi_stack->hh += PIXROUND(temp,dvi->conv*shrinkfactor);
+    CHECK_MAXDRIFT(dvi_stack->h,dvi_stack->hh);
   } else if (*command >= FONT_00 && *command <= FONT_63) {
     SetFntNum((int32_t)*command - FONT_00,parent);
   } else switch (*command)  {
@@ -166,11 +147,9 @@ void DrawCommand(unsigned char* command, void* parent /* dvi/vf */)
 		 UNumRead(command+1, dvi_commandlength[*command]-1)));
     {
       temp = SetChar(UNumRead(command+1, dvi_commandlength[*command]-1));
-      h += temp;
-#ifndef NO_DRIFT
-      hh += PIXROUND(temp,dvi->conv*shrinkfactor);
-      CHECK_MAXDRIFT(h,hh);
-#endif
+      dvi_stack->h += temp;
+      dvi_stack->hh += PIXROUND(temp,dvi->conv*shrinkfactor);
+      CHECK_MAXDRIFT(dvi_stack->h,dvi_stack->hh);
     }    
     break;
   case SET_RULE:
@@ -178,19 +157,17 @@ void DrawCommand(unsigned char* command, void* parent /* dvi/vf */)
 		 UNumRead(command+1, 4), UNumRead(command+5, 4)));
     temp = SetRule(DO_VFCONV(UNumRead(command+1, 4)),
 		   DO_VFCONV(UNumRead(command+5, 4)),
-		   hh, vv);
-    h += temp;
-#ifndef NO_DRIFT
-    hh += PIXROUND(temp,dvi->conv*shrinkfactor);
-    CHECK_MAXDRIFT(h,hh);
-#endif
+		   dvi_stack->hh, dvi_stack->vv);
+    dvi_stack->h += temp;
+    dvi_stack->hh += PIXROUND(temp,dvi->conv*shrinkfactor);
+    CHECK_MAXDRIFT(dvi_stack->h,dvi_stack->hh);
     break;
   case PUT_RULE:
     DEBUG_PRINT(DEBUG_DVI,(" %d %d",
 		 UNumRead(command+1, 4), UNumRead(command+5, 4)));
     (void) SetRule(DO_VFCONV(UNumRead(command+1, 4)),
 		   DO_VFCONV(UNumRead(command+5, 4)),
-		   hh, vv);
+		   dvi_stack->hh, dvi_stack->vv);
     break;
   case BOP:
     Fatal("BOP occurs within page");
@@ -198,34 +175,26 @@ void DrawCommand(unsigned char* command, void* parent /* dvi/vf */)
   case EOP:
     break;
   case PUSH:
-    if (sp >= STACK_SIZE)
+    /* is next item on stack? */
+    if (dvi_stack == &stack[STACK_SIZE-1])
       Fatal("DVI stack overflow");
-    stack[sp].h = h;
-    stack[sp].v = v;
-    stack[sp].w = w;
-    stack[sp].x = x;
-    stack[sp].y = y;
-    stack[sp].z = z;
-#ifndef NO_DRIFT
-    stack[sp].hh = hh;
-    stack[sp].vv = vv;
-#endif
-    sp++;
+    {
+      struct stack_entry *next=dvi_stack+1;
+      next->h = dvi_stack->h;
+      next->v = dvi_stack->v;
+      next->w = dvi_stack->w;
+      next->x = dvi_stack->x;
+      next->y = dvi_stack->y;
+      next->z = dvi_stack->z;
+      next->hh = dvi_stack->hh;
+      next->vv = dvi_stack->vv;
+      dvi_stack=next;
+    }
     break;
   case POP:
-    --sp;
-    if (sp < 0)
+    if (dvi_stack == stack)
       Fatal("DVI stack underflow");
-    h = stack[sp].h;
-    v = stack[sp].v;
-    w = stack[sp].w;
-    x = stack[sp].x;
-    y = stack[sp].y;
-    z = stack[sp].z;
-#ifndef NO_DRIFT
-    hh = stack[sp].hh;
-    vv = stack[sp].vv;
-#endif
+    dvi_stack--;
     break;
   case RIGHT1: case RIGHT2: case RIGHT3: case RIGHT4:
     DEBUG_PRINT(DEBUG_DVI,(" %d",
@@ -233,16 +202,16 @@ void DrawCommand(unsigned char* command, void* parent /* dvi/vf */)
     MoveRight(DO_VFCONV(SNumRead(command+1, dvi_commandlength[*command]-1)));
     break;
   case W1: case W2: case W3: case W4:
-    w = SNumRead(command+1, dvi_commandlength[*command]-1);
-    DEBUG_PRINT(DEBUG_DVI,(" %d",w));
+    dvi_stack->w = SNumRead(command+1, dvi_commandlength[*command]-1);
+    DEBUG_PRINT(DEBUG_DVI,(" %d",dvi_stack->w));
   case W0:
-    MoveRight(DO_VFCONV(w));
+    MoveRight(DO_VFCONV(dvi_stack->w));
     break;
   case X1: case X2: case X3: case X4:
-    x = SNumRead(command+1, dvi_commandlength[*command]-1);
-    DEBUG_PRINT(DEBUG_DVI,(" %d",x));
+    dvi_stack->x = SNumRead(command+1, dvi_commandlength[*command]-1);
+    DEBUG_PRINT(DEBUG_DVI,(" %d",dvi_stack->x));
   case X0:
-    MoveRight(DO_VFCONV(x));
+    MoveRight(DO_VFCONV(dvi_stack->x));
     break;
   case DOWN1: case DOWN2: case DOWN3: case DOWN4:
     DEBUG_PRINT(DEBUG_DVI,(" %d",
@@ -250,16 +219,16 @@ void DrawCommand(unsigned char* command, void* parent /* dvi/vf */)
     MoveDown(DO_VFCONV(SNumRead(command+1, dvi_commandlength[*command]-1)));
     break;
   case Y1: case Y2: case Y3: case Y4:
-    y = SNumRead(command+1, dvi_commandlength[*command]-1);
-    DEBUG_PRINT(DEBUG_DVI,(" %d",y));
+    dvi_stack->y = SNumRead(command+1, dvi_commandlength[*command]-1);
+    DEBUG_PRINT(DEBUG_DVI,(" %d",dvi_stack->y));
   case Y0:
-    MoveDown(DO_VFCONV(y));
+    MoveDown(DO_VFCONV(dvi_stack->y));
     break;
   case Z1: case Z2: case Z3: case Z4:
-    z = SNumRead(command+1, dvi_commandlength[*command]-1);
-    DEBUG_PRINT(DEBUG_DVI,(" %d",z));
+    dvi_stack->z = SNumRead(command+1, dvi_commandlength[*command]-1);
+    DEBUG_PRINT(DEBUG_DVI,(" %d",dvi_stack->z));
   case Z0:
-    MoveDown(DO_VFCONV(z));
+    MoveDown(DO_VFCONV(dvi_stack->z));
     break;
   case FNT1: case FNT2: case FNT3: case FNT4:
     DEBUG_PRINT(DEBUG_DVI,(" %d",
@@ -269,9 +238,8 @@ void DrawCommand(unsigned char* command, void* parent /* dvi/vf */)
   case XXX1: case XXX2: case XXX3: case XXX4:
     DEBUG_PRINT(DEBUG_DVI,(" %d",
 		 UNumRead(command+1, dvi_commandlength[*command]-1)));
-    SetSpecial((char*)command + dvi_commandlength[*command], 
-	       UNumRead(command+1, dvi_commandlength[*command]-1),
-	       hh,vv);
+    SetSpecial((char*)command + dvi_commandlength[*command],
+	       dvi_stack->hh,dvi_stack->vv);
     break;
   case FNT_DEF1: case FNT_DEF2: case FNT_DEF3: case FNT_DEF4:
     if (((struct font_entry*)parent)->type==DVI_TYPE) {
@@ -294,39 +262,24 @@ void DrawCommand(unsigned char* command, void* parent /* dvi/vf */)
 
 void BeginVFMacro(struct font_entry* currentvf)
 {
-  if (sp >= STACK_SIZE)
-    Fatal("stack overflow");
-  stack[sp].h = h;
-  stack[sp].v = v;
-  stack[sp].w = w;
-  stack[sp].x = x;
-  stack[sp].y = y;
-  stack[sp].z = z;
-#ifndef NO_DRIFT
-  stack[sp].hh = hh;
-  stack[sp].vv = vv;
-#endif
-  sp++;
-  w = x = y = z = 0;
+  struct stack_entry *next=dvi_stack+1;
+  if (dvi_stack == &stack[STACK_SIZE-1])
+    Fatal("DVI stack overflow");
+  next->h = dvi_stack->h;
+  next->v = dvi_stack->v;
+  next->w = next->x = next->y = next->z = 0;
+  next->hh = dvi_stack->hh;
+  next->vv = dvi_stack->vv;
+  dvi_stack = next;
   DEBUG_PRINT(DEBUG_DVI,("\n  START VF:\tPUSH, W = X = Y = Z = 0"));
   SetFntNum(currentvf->defaultfont,currentvf);
 }
 
 void EndVFMacro(void)
 {
-  --sp;
-  if (sp < 0)
-    Fatal("stack underflow");
-  h = stack[sp].h;
-  v = stack[sp].v;
-  w = stack[sp].w;
-  x = stack[sp].x;
-  y = stack[sp].y;
-  z = stack[sp].z;
-#ifndef NO_DRIFT
-  hh = stack[sp].hh;
-  vv = stack[sp].vv;
-#endif
+  if (dvi_stack == stack)
+    Fatal("DVI stack underflow");
+  dvi_stack--;
   DEBUG_PRINT(DEBUG_DVI,("\n  END VF:\tPOP                                  "));
 }
 
@@ -338,13 +291,11 @@ void DrawPage(dviunits hoffset, dviunits voffset)
 {
   unsigned char*  command;  /* current command                  */
 
-  h = hoffset;
-  v = voffset;
-  w = x = y = z = 0;
-#ifndef NO_DRIFT
-  hh = PIXROUND( h , dvi->conv*shrinkfactor );
-  vv = PIXROUND( v , dvi->conv*shrinkfactor );
-#endif
+  dvi_stack->h = hoffset;
+  dvi_stack->v = voffset;
+  dvi_stack->w = dvi_stack->x = dvi_stack->y = dvi_stack->z = 0;
+  dvi_stack->hh = PIXROUND( dvi_stack->h , dvi->conv*shrinkfactor );
+  dvi_stack->vv = PIXROUND( dvi_stack->v , dvi->conv*shrinkfactor );
   currentfont = NULL;    /* No default font                  */
 
   command=DVIGetCommand(dvi);
@@ -360,13 +311,14 @@ void DrawPages(void)
 {
   struct page_list *dvi_pos;
   pixels x_width,y_width,x_offset,y_offset;
+  int pagecounter=(option_flags & DVI_PAGENUM)?0:10;
 
   dvi_pos=NextPPage(dvi,NULL);
   if (dvi_pos!=NULL) {
     while(dvi_pos!=NULL) {
       SeekPage(dvi,dvi_pos);
-      Message(BE_NONQUIET,"[%d", dvi_pos->count[(flags & DVI_PAGENUM)?0:10]);
-      if (dvi_pos->count[(flags & DVI_PAGENUM)?0:10]!=dvi_pos->count[0])
+      Message(BE_NONQUIET,"[%d", dvi_pos->count[pagecounter]);
+      if (dvi_pos->count[pagecounter]!=dvi_pos->count[0])
 	Message(BE_NONQUIET," (%d)", dvi_pos->count[0]);
       x_max = y_max = INT32_MIN;
       x_min = y_min = INT32_MAX;
@@ -375,7 +327,7 @@ void DrawPages(void)
 	 by the color at EOP rather than the color at BOP. */
       StoreBackgroundColor(dvi_pos);
       /* Store pagesize */
-      if (flags & PREVIEW_LATEX_TIGHTPAGE) {
+      if (dvi->flags & DVI_PREVIEW_LATEX_TIGHTPAGE) {
 	x_width_def=x_width_tightpage;
 	y_width_def=y_width_tightpage;
 	x_offset_def=x_offset_tightpage;
@@ -387,7 +339,7 @@ void DrawPages(void)
 	min(y_min,-y_offset_def);
 	max(y_max,y_min + y_width_def);
       }
-      if (x_width_def <= 0 || flags & EXPAND_BBOX) {
+      if (x_width_def <= 0 || option_flags & EXPAND_BBOX) {
 	x_width = x_max-x_min;
 	y_width = y_max-y_min;
 	x_offset = -x_min; /* offset by moving topleft corner */ 
@@ -412,10 +364,11 @@ void DrawPages(void)
 #endif
       Message(REPORT_DEPTH," depth=%d", y_width-y_offset-1);
       Message(REPORT_HEIGHT," height=%d", y_offset+1);
+      page_flags &= ~PAGE_PREVIEW_BOP;
       DrawPage(x_offset*dvi->conv*shrinkfactor,
 	       y_offset*dvi->conv*shrinkfactor);
-      if ( ! (flags & MODE_PICKY && flags & PAGE_GAVE_WARN )) {
-	WriteImage(dvi->outname,dvi_pos->count[(flags & DVI_PAGENUM)?0:10]);
+      if ( ! (option_flags & MODE_PICKY && page_flags & PAGE_GAVE_WARN )) {
+	WriteImage(dvi->outname,dvi_pos->count[pagecounter]);
 #ifdef TIMING
 	++ndone;
 #endif
@@ -426,7 +379,7 @@ void DrawPages(void)
       }
       Message(BE_NONQUIET,"] ");
       fflush(stdout);
-      flags &= ~(PAGE_GAVE_WARN | PAGE_TRUECOLOR);
+      page_flags = 0;
       dvi_pos=NextPPage(dvi,dvi_pos);
     }
     Message(BE_NONQUIET,"\n");

@@ -1,8 +1,33 @@
-# Thomas Esser, for teTeX. All settings here are my fault, don't blame
-# the dvipng maintainers for it.
+# configure.ac
+
+# Adapted for dvipng-1.9 / teTeX by Thomas Esser.
+# Adapted for dvipng-1.10 / TeX live by Peter Breitenlohner.
+# All settings here are our fault, don't blame the dvipng maintainers for it.
+
+#************************************************************************
+#
+#  Part of the dvipng distribution
+#
+#  This program is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU Lesser General Public License as
+#  published by the Free Software Foundation, either version 3 of the
+#  License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful, but
+#  WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+#  Lesser General Public License for more details.
+#
+#  You should have received a copy of the GNU Lesser General Public
+#  License along with this program. If not, see
+#  <http://www.gnu.org/licenses/>.
+#
+#  Copyright (C) 2002-2008 Jan-Åke Larsson
+#
+#************************************************************************
 
 # Process this file with autoconf to produce a configure script.
-AC_INIT([dvipng], [1.9], [dvipng@nongnu.org])
+AC_INIT([dvipng], [1.10], [dvipng@nongnu.org])
 AC_CONFIG_SRCDIR([dvipng.c])
 
 AC_ARG_ENABLE(debug, 
@@ -19,49 +44,27 @@ AC_ARG_ENABLE(timing,
      fi ])
 
 # Checks for programs.
-AC_SET_MAKE
 AC_PROG_MAKE_SET
+AC_PROG_CC
 AC_PROG_INSTALL
+AC_PROG_LN_S
 AC_ARG_WITH(gs,
   AC_HELP_STRING([--with-gs=/PATH/TO/gs],[Hard-wire the location of GhostScript]), 
   [if test "x$withval" = xno ; then
     GS=no
   else
     AC_PATH_PROG(GS,["$withval"])
+    GS_CHECK_DEVICES
   fi],
   [AC_CHECK_PROG(GS,gs,gs)
-  if test -z "$GS"; then
+  if test -n "$GS"; then
+    GS_CHECK_DEVICES
+  else
     GS="gs"
     AC_MSG_WARN([Cannot find GhostScript in your PATH])
   fi
 ])
 AC_DEFINE_UNQUOTED(GS_PATH, "$GS", [Define as the path to GhostScript.])
-
-
-dnl Check devices for GS
-dnl AC_GS_HAS_DEVICE(DEVICE,ACTION-IF-FAILED)
-dnl
-AC_DEFUN([AC_GS_HAS_DEVICE],
- [AC_MSG_CHECKING([whether $GS has the $1 device])
-  if $GS -h | grep $1 >/dev/null; then
-    AC_MSG_RESULT(yes)
-  else
-    AC_MSG_RESULT(no)
-    $2
-  fi
-])
-
-GS_WARN=""
-AC_GS_HAS_DEVICE(pngalpha,
-   [GS_WARN="Your EPS inclusions will be cropped to the 
-             boundingbox, and rendered on an opaque background. 
-             Upgrade GhostScript to avoid this."
-   AC_GS_HAS_DEVICE(png16m,
-      [GS_WARN="Your EPS inclusions may not work.
-             Upgrade/install GhostScript to avoid this."])])
-if test -n "$GS_WARN"; then
-  AC_MSG_WARN([$GS_WARN])
-fi
 
 ac_cv_lib_t1_T1_InitLib=yes
 PSFONTS_O=""
@@ -84,7 +87,8 @@ fi
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 AC_HEADER_TIME
-AC_CHECK_HEADERS([inttypes.h fcntl.h sys/time.h stdbool.h])
+AC_HEADER_STDBOOL
+AC_CHECK_HEADERS([inttypes.h fcntl.h sys/time.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -115,44 +119,6 @@ fi
 AC_SEARCH_LIBS([pow], [m])
 AC_SEARCH_LIBS([basename], [gen])
 
-# let's skip dvigif for the moment.
-INSTALL_BIN_TARGET="install-dvipng"
-AC_SUBST(INSTALL_BIN_TARGET)
-
-
-dnl
-dnl MAKEINFO_CHECK_MACRO( MACRO, [ACTION-IF-FOUND 
-dnl					[, ACTION-IF-NOT-FOUND]])
-dnl
-AC_DEFUN([MAKEINFO_CHECK_MACRO],
-[if test -n "$MAKEINFO" -a "$makeinfo" != ":"; then
-  AC_MSG_CHECKING([if $MAKEINFO understands @$1{}])
-  echo \\\\input texinfo > conftest.texi
-  echo @$1{test} >> conftest.texi
-  if $MAKEINFO conftest.texi > /dev/null 2> /dev/null; then
-    AC_MSG_RESULT(yes)	
-    ifelse([$2], , :, [$2])
-  else  
-    AC_MSG_RESULT(no)	
-    ifelse([$3], , :, [$3])
-  fi
-  rm -f conftest.texi conftest.info
-fi
-])
-
-dnl
-dnl MAKEINFO_CHECK_MACROS( MACRO ... [, ACTION-IF-FOUND 
-dnl					[, ACTION-IF-NOT-FOUND]])
-dnl
-AC_DEFUN([MAKEINFO_CHECK_MACROS],
-[for ac_macro in $1; do
-    MAKEINFO_CHECK_MACRO($ac_macro, $2, 
-	[MAKEINFO_MACROS="-D no-$ac_macro $MAKEINFO_MACROS"
-	$3])dnl
-  done
-AC_SUBST(MAKEINFO_MACROS)
-])
-
 # Documentation-related checks
 AC_PATH_PROG(MAKEINFO, makeinfo, :)
 MAKEINFO_CHECK_MACROS(acronym env option)
@@ -182,16 +148,25 @@ fi
 if test "$with_system_gd" = yes; then
   OLD_LIBS=$LIBS
   LIBS="$LDGD $LIBS"
-  AC_CHECK_FUNCS([gdImageCreateTrueColor gdImagePngEx gdImageGif gdImageJpeg])
+  AC_CHECK_FUNCS([gdImageCreateTrueColor gdImageCreateFromJpeg gdImagePngEx gdImageCreateFromPngPtr gdImageGif])
   LIBS=$OLD_LIBS
 else
   AC_DEFINE([HAVE_GDIMAGECREATETRUECOLOR])
   AC_DEFINE([HAVE_GDIMAGEPNGEX])
+  AC_DEFINE([HAVE_GDIMAGECREATEFROMPNGPTR])
+  ac_cv_func_gdImageGif=yes
   AC_DEFINE([HAVE_GDIMAGEGIF])
 fi
 
 AC_DEFINE([HAVE_GD_H])
 AC_DEFINE([HAVE_LIBGD])
+
+if test "$ac_cv_func_gdImageGif" = "yes"; then
+   INSTALL_BIN_TARGET="install-dvigif"
+else
+   INSTALL_BIN_TARGET="install-dvipng"
+fi
+AC_SUBST(INSTALL_BIN_TARGET)
 
 AC_DEFINE([HAVE_T1LIB_H], 1,
           [Define to 1 if you have the <t1lib.h> header file.])
@@ -237,5 +212,5 @@ ATSFontRef fontRef;
 AC_HAS_APP_SERVICES
 
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_FILES(Makefile)
+AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

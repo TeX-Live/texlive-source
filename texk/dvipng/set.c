@@ -4,22 +4,21 @@
 
   Part of the dvipng distribution
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
 
   This program is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  General Public License for more details.
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  Lesser General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-  02110-1301 USA.
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program. If not, see
+  <http://www.gnu.org/licenses/>.
 
-  Copyright (C) 2002-2006 Jan-Åke Larsson
+  Copyright (C) 2002-2008 Jan-Åke Larsson
 
 ************************************************************************/
 
@@ -36,7 +35,7 @@
 #define gdAlphaMax                      127
 #endif
 #ifndef HAVE_GDIMAGEPNGEX
-#define  gdImagePngEX(i,f,z)                 gdImagePng(i,f)
+#define  gdImagePngEx(i,f,z)                 gdImagePng(i,f)
 #endif
 
 /* Persistent color cache. Index is ink thickness, 
@@ -51,8 +50,10 @@ void CreateImage(pixels x_width,pixels y_width)
   if (y_width <= 0) y_width=1;
 #ifdef HAVE_GDIMAGECREATETRUECOLOR
   /* GIFs are 256-color */
-  if (flags & (FORCE_TRUECOLOR|PAGE_TRUECOLOR) && ~flags & GIF_OUTPUT
-      && ~flags & FORCE_PALETTE) 
+  if ((option_flags & FORCE_TRUECOLOR
+      || page_flags & PAGE_TRUECOLOR) 
+      && ~option_flags & GIF_OUTPUT
+      && ~option_flags & FORCE_PALETTE) 
     page_imagep=gdImageCreateTrueColor(x_width,y_width);
   else
 #endif
@@ -64,8 +65,8 @@ void CreateImage(pixels x_width,pixels y_width)
 				cstack[0].red,
 				cstack[0].green,
 				cstack[0].blue,
-				(flags & BG_TRANSPARENT_ALPHA 
-				 && ~flags & GIF_OUTPUT) ? 127 : 0);
+				(option_flags & BG_TRANSPARENT_ALPHA 
+				 && ~option_flags & GIF_OUTPUT) ? 127 : 0);
   ColorCache[gdAlphaMax]=-1; 
 #ifdef HAVE_GDIMAGECREATETRUECOLOR
   /* Alpha blending in libgd is only performed for truecolor images.
@@ -73,7 +74,7 @@ void CreateImage(pixels x_width,pixels y_width)
      and calculate color blending where needed. We turn it back on
      briefly for image inclusion. */
   gdImageAlphaBlending(page_imagep, 0);
-  if (flags & BG_TRANSPARENT_ALPHA)
+  if (option_flags & BG_TRANSPARENT_ALPHA)
     gdImageSaveAlpha(page_imagep, 1);
   if (page_imagep->trueColor) 
     /* Truecolor: there is no background color index, fill image instead. */
@@ -104,7 +105,7 @@ void WriteImage(char *pngname, int pagenum)
   /* Set transparent background. Maybe alpha is not available or
      perhaps we are producing GIFs, so test for BG_TRANSPARENT_ALPHA
      too */
-  if (flags & (BG_TRANSPARENT|BG_TRANSPARENT_ALPHA))
+  if (option_flags & (BG_TRANSPARENT|BG_TRANSPARENT_ALPHA))
     gdImageColorTransparent(page_imagep,ColorCache[0]);
   /* Transparent border */
   if (borderwidth>0) {
@@ -153,7 +154,7 @@ void WriteImage(char *pngname, int pagenum)
     }
   }
 #ifdef HAVE_GDIMAGEGIF
-  if (flags & GIF_OUTPUT && (pos=strrchr(pngname,'.')) != NULL 
+  if (option_flags & GIF_OUTPUT && (pos=strrchr(pngname,'.')) != NULL 
       && strcmp(pos,".png")==0) {
     *(pos+1)='g';
     *(pos+2)='i';
@@ -163,7 +164,7 @@ void WriteImage(char *pngname, int pagenum)
   if ((outfp = fopen(pngname,"wb")) == NULL)
       Fatal("cannot open output file %s",pngname);
 #ifdef HAVE_GDIMAGEGIF
-  if (flags & GIF_OUTPUT) 
+  if (option_flags & GIF_OUTPUT) 
     gdImageGif(page_imagep,outfp);
   else
 #endif
@@ -205,11 +206,20 @@ void Gamma(double gamma)
 dviunits SetGlyph(int32_t c, int32_t hh,int32_t vv)
 /* gdImageChar can only do monochrome glyphs */
 {
-  register struct char_entry *ptr = currentfont->chr[c];
+  register struct char_entry *ptr;
   int dst_alpha,dst_weight,tot_weight,alpha;
   int x,y,pos=0;
   int bgColor,pixelgrey,pixelcolor;
 
+  if (c<0 || c>LASTFNTCHAR) {
+    Warning("glyph index too large (%d), skipping",c);
+    return(0);
+  }
+  ptr=currentfont->chr[c];
+  if (ptr==NULL) {
+    Warning("unable to draw glyph %d, skipping",c);
+    return(0);
+  }
   hh -= ptr->xOffset/shrinkfactor;
   vv -= ptr->yOffset/shrinkfactor;
   /* Initialize persistent color cache. Perhaps this should be in

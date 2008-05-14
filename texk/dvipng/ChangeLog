@@ -1,3 +1,142 @@
+2008-05-09  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* RELEASE: Prepare for 1.10
+
+2008-05-08  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* special.c: Add warning about DVI code in PS environment 
+
+2008-05-07  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* README, readme.texi: Mention gs interpreter lib in TODO
+
+	* aclocal.m4, configure.ac: Move gs device check so that it can be
+	called from different points 
+
+2008-05-05  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* draw.c, dvi.c, dvipng.h: Revert creation of dvi command struct 
+
+	* draw.c, dvi.c: Init dvi command struct
+
+	* draw.c, dvi.c, dvipng.h: Create dvi command struct 
+
+	* special.c: Rearrange code
+
+	* color.c, dvipng.h, enc.c, fontmap.c, misc.c, pk.c, sfd.c,
+	special.c, tfm.c, vf.c: Change name of fmmap struct element
+
+2008-04-29  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* dvipng.1: Prepare for 1.10
+
+	* configure.ac: Prepare for 1.10, check for gdImageCreateJpeg
+
+	* aclocal.m4: Cosmetic changes
+
+	* special.c: Change to HAVE_...JPEG
+
+	* dvipng.h: Remove c++ comment
+
+	* dvipng.texi: Prepare for 1.10. Use 'active' in the 'preview'
+	package, remove unused text
+
+	* Makefile.in:
+	Install dvipng.1 from the tarball, mark maintainer targets
+
+2008-02-08  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* Makefile.in, INSTALL, README, color.c, commands.h, configure.ac,
+	* draw.c, dvi.c, dvipng.1, dvipng.c, dvipng.h, dvipng.texi, enc.c,
+	* font.c, fontmap.c, ft.c, install.texi, macros.texi, miktex.h, 
+	* misc.c, papersiz.c, pk.c, ppagelist.c, readme.texi, set.c, sfd.c,
+	* special.c, t1.c, test_dvipng.tex, tfm.c, vf.c, COPYING,
+	* COPYING.LESSER: Change to LGPLv3
+
+	* install.texi: 
+	* README: 
+	* dvipng.texi: Add blurb about MediaWiki, and cosmetic changes
+
+2008-01-10  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* set.c: Correct typo
+
+2007-12-12  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* special.c: Correct header test, add proper ps::[start] and
+	ps::[end] detection, add code to make tikz/pgf dvips (~PostScript)
+	specials work
+
+2007-10-26  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* draw.c:
+	* dvi.c:
+	* special.c: Change DVIGetCommand so that the command is
+	zero-terminated. This simplifies string operations on specials and
+	makes the length argument to SetSpecial unnecessary.  Handle
+	preview-bop-hook correctly
+
+	* special.c: Simplify PostScript header and multi-special
+	handling
+
+	* color.c: 
+	* draw.c:
+	* dvi.c:
+	* dvipng.h: 
+	* font.c: 
+	* ft.c: 
+	* misc.c: 
+	* set.c: 
+	* special.c:
+	* t1.c: Split the flags variable into page_flags, option_flags and 
+	dvi->flags
+
+	* dvi.c:
+	* dvipng.c: dvi->flags resets now when the dvi is reopened 
+
+2007-08-06  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* ft.c:
+	* misc.c:
+	* t1.c:
+	* tfm.c:
+	* vf.c: Memory fixes
+
+2007-07-24  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* special.c: Fix PostScript header usage
+
+2007-07-22  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* misc.c: Change version info slightly
+
+	* ft.c: Change debug info slightly
+
+2007-07-21  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* special.c: Rewrite to allow for raw PostScript specials, also
+	use PostScript headers
+
+	* dvipng.h: 
+	* dvi.c: Add read-ahead for PostScript specials
+
+	* config.h.in:
+	* configure.ac: Add test for gd pointer->image conversion
+
+2007-03-19  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* draw.c: Better handling of glyph index bounds
+
+	* set.c: Check bounds for glyph index
+
+2006-12-11  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* readme.texi: Fix TODO, mention MediaWiki
+
+	* dvipng.h: Fix for alloca under AIX
+
+	* Makefile.in: mkinstalldirs is in $(srcdir)
+
 2006-11-11  Jan-Ake Larsson  <jalar@mai.liu.se>
 
 	* Release 1.9

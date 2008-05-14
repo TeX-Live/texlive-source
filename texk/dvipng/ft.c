@@ -4,22 +4,21 @@
 
   Part of the dvipng distribution
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
 
   This program is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  General Public License for more details.
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  Lesser General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-  02110-1301 USA.
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program. If not, see
+  <http://www.gnu.org/licenses/>.
 
-  Copyright (C) 2002-2006 Jan-Åke Larsson
+  Copyright (C) 2002-2008 Jan-Åke Larsson
 
 ************************************************************************/
 
@@ -87,20 +86,20 @@ bool InitFT(struct font_entry * tfontp)
   if (libfreetype==NULL) {
     if (FT_Init_FreeType( &libfreetype )) {
       Warning("an error occured during freetype initialisation, disabling it"); 
-      flags &= ~USE_FREETYPE;
+      option_flags &= ~USE_FREETYPE;
       return(false);
     } 
 # ifdef DEBUG
     else {
-#  ifdef HAVE_FT_LIBRARY_VERSION
       FT_Int      amajor, aminor, apatch;
 
+      DEBUG_PRINT(DEBUG_FT,("\n  COMPILED WITH FREETYPE %d.%d.%d",
+		 FREETYPE_MAJOR, FREETYPE_MINOR, FREETYPE_PATCH));
+#  ifdef HAVE_FT_LIBRARY_VERSION	    
       FT_Library_Version( libfreetype, &amajor, &aminor, &apatch );
-      DEBUG_PRINT(DEBUG_FT,("\n  LIBFT VERSION: %d.%d.%d", 
+      DEBUG_PRINT(DEBUG_FT,("\n  USING LIBFT %d.%d.%d",
 			    amajor, aminor, apatch));
 #  endif
-      DEBUG_PRINT(DEBUG_FT,("\n  FREETYPE VERSION: %d.%d.%d",
-			    FREETYPE_MAJOR, FREETYPE_MINOR, FREETYPE_PATCH));
     }
 # endif
   }
@@ -161,7 +160,7 @@ void DoneFT(struct font_entry *tfontp)
   int error = FT_Done_Face( tfontp->face );
   if (error)
     Warning("font file %s could not be closed", tfontp->name);
-  while(c<NFNTCHARS-1) {
+  while(c<NFNTCHARS) {
     if (tfontp->chr[c]!=NULL) {
       UnLoadFT((struct char_entry*)tfontp->chr[c]);
       free(tfontp->chr[c]);

@@ -4,22 +4,21 @@
 
   Part of the dvipng distribution
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
 
   This program is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  General Public License for more details.
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  Lesser General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-  02110-1301 USA.
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program. If not, see
+  <http://www.gnu.org/licenses/>.
 
-  Copyright (C) 2002-2005 Jan-Åke Larsson
+  Copyright (C) 2002-2008 Jan-Åke Larsson
 
 ************************************************************************/
 
@@ -323,7 +322,7 @@ void InitPK(struct font_entry * tfontp)
   Message(BE_VERBOSE,"<%s>", tfontp->name);
   if (MmapFile(tfontp->name,&(tfontp->fmmap)))
     Fatal("font file %s unusable", tfontp->name);
-  position=(unsigned char*)tfontp->fmmap.dp_mmap;
+  position=(unsigned char*)tfontp->fmmap.data;
   if (tfontp->fmmap.size < 2 || tfontp->fmmap.size < 3+*(position+2)+16) 
     Fatal("PK file %s ends prematurely",tfontp->name);
   if (*position++ != PK_PRE) 
@@ -353,7 +352,7 @@ void InitPK(struct font_entry * tfontp)
   position = skip_specials(position);
   while (*position != PK_POST) {
     DEBUG_PRINT(DEBUG_PK,("\n  @%ld PK CHAR:\t%d",
-			  (long)position - (long)tfontp->fmmap.dp_mmap, *position));
+			  (long)position - (long)tfontp->fmmap.data, *position));
     if ((tcharptr = malloc(sizeof(struct char_entry))) == NULL)
       Fatal("cannot malloc space for char_entry");
     tcharptr->flag_byte = *position;
