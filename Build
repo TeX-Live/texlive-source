@@ -25,10 +25,13 @@ if test -z "$TL_INSTALL_DEST"; then
   TL_INSTALL_DEST=$H/inst
 fi
 
+# allow override of make program.
+: ${TL_MAKE=make}
+
 if test "x$1" = x--no-clean; then
   shift
 else
-  test -f Makefile && make clean 
+  test -f Makefile && $TL_MAKE clean 
   rm -rf $TL_WORKDIR $TL_INSTALL_DEST
 fi
 
@@ -56,9 +59,6 @@ cd $TL_WORKDIR || exit 1
 
 # allow override of make target.
 : ${TL_TARGET=world}
-
-# allow override of make program.
-: ${TL_MAKE=make}
 
 # and then also set GNUMAKE to that, for the sake of freetype2/configure.
 : ${GNUMAKE=${TL_MAKE}}
