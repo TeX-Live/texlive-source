@@ -24,6 +24,8 @@ if string.find(arg[0], '/') then -- UNIX path
   progname = select(1, string.gsub(arg[1], '.*/', ''))
 elseif string.find(arg[0], '\\') then -- Windows path
   progname = select(1, string.gsub(arg[1], '.*\\', ''))
+  -- we might have \ and / mixed together ...
+  progname = select(1, string.gsub(progname, '.*/', ''))
 else -- no path
   progname = arg[1]
 end
