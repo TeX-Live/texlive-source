@@ -13,8 +13,8 @@ dialog - seems to be a v1.0 in debian, asked te 5jun05; he said keep as-is
   http://hightek.org/dialog/
   http://packages.debian.org/cgi-bin/search_packages.pl?searchon=names&version=all&exact=1&keywords=dialog
 
-lzma-utils 4.32.5 - ok 10may08
-  we do not compile/install in normal build, here for installer;
+lzma 4.32.6 - ok 15may08
+  we do not compile/install in normal build, sources are here for installer;
     see http://tug.org/texlive/build.html for info.
   http://tukaani.org/lzma
   

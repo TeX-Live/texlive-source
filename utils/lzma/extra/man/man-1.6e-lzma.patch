@@ -1,0 +1,78 @@
+# This patch has been put into the public domain
+# by Per Øyvind Karlsen <pkarlsen@mandriva.com>.
+
+--- man-1.6e/configure~	2007-06-07 16:56:08.000000000 +0200
++++ man-1.6e/configure	2007-06-07 17:08:47.000000000 +0200
+@@ -1027,7 +1027,7 @@ then
+   then
+     DO_COMPRESSION=true
+     compress=
+-    for i in bzip2 gzip bzip tzip pack compress freeze yabba
++    for i in bzip2 gzip lzma bzip tzip pack compress freeze yabba
+     do
+       eval F$i=missing
+       for j in $DEFPATH
+@@ -1081,6 +1081,7 @@ then
+ 
+     case $compress in
+       *bzip2*) ext=".bz2" ;;
++      *lzma*) ext=".lzma" ;;
+       *gzip*) ext=".gz" ;;
+       *bzip*) ext=".bz" ;;
+       *tzip*) ext=".tz" ;;
+@@ -1122,7 +1123,7 @@ then
+ fi
+ 
+ # unconditionally handle uncompression
+-UNCOMPRESSORS="gunzip bzip2 pcat zcat fcat unyabba"
++UNCOMPRESSORS="gunzip bzip2 unlzma pcat zcat fcat unyabba"
+ for i in $UNCOMPRESSORS
+ do
+   eval F$i=missing
+@@ -1143,6 +1144,10 @@ bzip2=missing
+ if [ $Fbzip2 != missing ]; then
+   bzip2="$Fbzip2 -c -d"
+ fi
++unlzma=missing
++if [ $Funlzma != missing ]; then
++  unlzma="$Funlzma -c -d"
++fi
+ pcat="$Fpcat"
+ zcat="$Fzcat"
+ fcat="$Ffcat"
+@@ -1171,6 +1176,9 @@ if [ x$default = x ]; then
+ 	bzip2)
+ 	  echo "Command to use for .bz2 files (standard bzip2)"
+ 	  echo $n "[`eval echo \\$$filter`] $c" ;;
++	lzma)
++	  echo "Command to use for .lzma files (standard lzma)"
++	  echo $n "[`eval echo \\$$filter`] $c" ;;
+         pcat)
+           echo "Command to use for .z files (pack/unpack)"
+           echo $n "[`eval echo \\$$filter`] $c" ;;
+@@ -1232,6 +1240,7 @@ fi
+ case $compress_ext in
+   .gz) decompress=$gunzip ;;
+   .bz2) decompress=$bzip2 ;;
++  .lzma) decompress=$unlzma ;;
+   .z) decompress=$pcat ;;
+   .Z) decompress=$zcat ;;
+   .F) decompress=$fcat ;;
+@@ -1319,6 +1328,7 @@ s,@pcat@,$pcat,
+ s,@zcat@,$zcat,
+ s,@gunzip@,$gunzip,
+ s,@bzip2@,$bzip2,
++s,@unlzma@,$unlzma,
+ s,@unyabba@,$unyabba,
+ s,@compress@,$compress,
+ s,@compress_ext@,$compress_ext,
+--- man-1.6e/src/man.conf.in~	2007-06-07 16:56:08.000000000 +0200
++++ man-1.6e/src/man.conf.in	2007-06-07 17:32:53.000000000 +0200
+@@ -139,6 +139,7 @@ MANSECT		@sections@
+ #
+ .gz		@gunzip@
+ .bz2		@bzip2@
++.lzma		@unlzma@
+ .z		@pcat@
+ .Z		@zcat@
+ .F		@fcat@

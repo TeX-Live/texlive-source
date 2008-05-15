@@ -1,0 +1,33 @@
+#!/bin/sh
+# FIXME
+
+# Copyright (C) 2007, 2008 Free Software Foundation, Inc.
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+if test "$VERBOSE" = yes; then
+  set -x
+  lzma --version
+fi
+
+. $srcdir/test-lib.sh
+
+echo foo > in || framework_failure
+chmod 644 in || framework_failure
+fail=0
+lzma in || fail=1
+set - `ls -l in.lzma`
+test "x$1" = x-rw-r--r-- || fail=1
+
+(exit $fail); exit $fail

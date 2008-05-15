@@ -1,0 +1,228 @@
+.TH LZMA 1 "23 Dec 2005" "LZMA utils"
+
+.SH NAME
+lzma, unlzma, lzcat \- LZMA compression and decompression tool
+
+.SH SYNOPSIS
+.B lzma
+.RB [ \-123456789cdefhkLqtvV "] [" \-S
+.IR suffix "] [" "filenames ..." ]
+.br
+.B unlzma
+.RB [ \-cfhkLqtvV "] [" \-S
+.IR suffix "] [" "filenames ..." ]
+.br
+.B lzcat
+.RB [ \-fhLqV ]
+.RI [ "filenames ..." ]
+
+.SH DESCRIPTION
+LZMA (Lempel-Ziv-Markov chain-Algorithm) is an improved version of
+famous LZ77 compression algorithm. It was improved in way of maximum
+increasing of compression ratio, keeping high decompression speed and
+low memory requirements for decompressing.
+.PP
+.B lzma
+command line tool has a similar interface to
+.BR gzip (1)
+and
+.BR bzip2 (1)
+and is intended to make use of LZMA compression easy for the users who
+are already familiar with gzip and bzip2.
+.PP
+In this manual
+.B lzma
+is compared mostly to bzip2 because that is currently one of the most
+widely used free software to compress tar files made for distribution.
+Comparing lzma to gzip is not practical because neither lzma nor bzip2
+can compete with gzip in compression speed. On the other hand the
+compression ratio of gzip is worse than of lzma and bzip2.
+.PP
+.B lzma
+provides notably better compression ratio than bzip2 especially with
+files having other than plain text content. The other advantage of
+.B lzma
+is fast decompression which is many times quicker than bzip2. The major
+disadvantage is that achieving the highest compression ratios requires
+extensive amount of system resources, both CPU time and RAM. Also
+software to handle LZMA compressed files is not installed by default on
+most distributions.
+.PP
+When compressing or decompressing with
+.BR lzma ,
+the new file will have the same ownership information, permissions and
+timestamps as the original file. However the this information is not
+stored into the compressed file like gzip does.
+
+.SH STREAMED VS. NON-STREAMED
+LZMA files can be either streamed or non-streamed. Non-streamed files
+are created only when the size of the file being compressed is known. In
+practice this means that the source file must be a regular file. In
+other words, if compressing from the standard input or from a named pipe
+(fifo) the compressed file will always be streamed.
+.PP
+Both streamed and non-streamed files are compressed identically; the
+only differences are found from the beginnings and ends of LZMA
+compressed files: Non-streamed files contain the uncompressed size of
+the file in the LZMA file header; streamed files have uncompressed size
+marked as unknown. To know where to stop decoding, streamed files have a
+special End Of Stream marker at the end of the LZMA file. The EOS marker
+makes streamed files five or six bytes bigger than non-streamed.
+.PP
+So in practice creating non-streamed files has two advantages: 1) the
+compressed file is a few bytes smaller and 2) the uncompressed size of
+the file can be checked without decompressing the file. To view the data
+stored in the LZMA header use
+.BR lzmainfo (1).
+
+.SH OPTIONS
+Short options can be grouped like
+.BR \-cd.
+.TP
+.B \-c \-\-stdout \-\-to\-stdout
+The output is written to the standard output. The original files are kept
+unchanged. When compressing to the standard output there can be only one
+input file. This option is implied when input is read from the standard
+input or the script is invoked as
+.BR lzcat .
+.TP
+.B \-d \-\-decompress \-\-uncompress
+Force decompression regardless of the invocation name. This the default
+when called as
+.B unlzma
+or
+.BR lzcat .
+.TP
+.B \-f \-\-force
+Force compression or decompression even if source file is a symlink,
+target exists, or target is a terminal. In contrast to gzip and bzip2,
+if input data is not in LZMA format, \-\-force does not make lzma
+behave like
+.BR cat .
+.B lzma
+never prompts if target file should be overwritten; existing files are
+skipped or, in case of
+.BR \-\-force ,
+overwritten.
+.TP
+.B \-h \-\-help
+Show a summary of supported options and quit.
+.TP
+.B \-k \-\-keep
+Do not delete the input files after compression or decompression.
+.TP
+.B \-L \-\-license
+Show licensing information of
+.BR lzma .
+.TP
+.B \-q \-\-quiet
+Suppress all warnings. You can still check the exit status to detect if
+a warning had been shown.
+.TP
+.BI "\-S \-\-suffix " .suf
+Use
+.I .suf
+instead of the default
+.BR .lzma .
+A null suffix forces unlzma to decompress all the given files
+regardless of the filename suffix.
+.TP
+.B \-t \-\-test
+Check the integrity of the compressed file(s). Without
+.B \-\-verbose
+no output is produced if no errors are found.
+.TP
+.B \-v \-\-verbose
+Show the filename and percentage reduction of each processes file.
+.TP
+.B \-V \-\-version
+Show the version number of
+.BR lzma .
+.TP
+.B \-z \-\-compress
+Force compression regardless of the invocation name.
+.TP
+.BR \-1 " .. " \-9
+Set the compression ratio. See the next chapter for detailed
+information. These options have no effect when decompressing.
+.TP
+.B \-\-fast
+Alias to
+.BR \-1 .
+.TP
+.B \-\-best
+Alias to
+.BR \-9 .
+
+.SH COMPRESSION OPTIONS AND MEMORY USAGE
+The compression options of
+.B lzma
+are divided to two groups. The first two
+.RB ( \-1 " and " \-2 )
+are designed for fast compression speed.
+.BR \-3 " .. " \-9
+provide good to excellent compression ratio but require more CPU time
+and system memory.
+.PP
+For relatively fast compression with medium compression ratio
+.B \-1
+is the recommended setting. It's faster than 'bzip2 \-\-fast' and
+usually creates smaller files than 'bzip2 \-\-best'.
+.B \-2
+makes somewhat smaller files but doubles the compression time close to
+what 'bzip2 \-\-best' takes.
+.PP
+Generally for excellent compression ratio, acceptable compression time
+and memory requirements (about 83 MB for compression, 9 MB for
+decompression) you should use
+.B \-7
+which is also the default.
+.B \-8
+and
+.B \-9
+will give some gain especially with bigger files (>=tens of megabytes)
+but also increase the CPU and memory requirements dramatically. See the
+table below for memory requirements of different compression settings.
+.PP
+    Flag   Compress usage    Decompress usage
+     -1          2 MB               1 MB
+     -2         12 MB               2 MB
+     -3         12 MB               1 MB
+     -4         16 MB               2 MB
+     -5         26 MB               3 MB
+     -6         45 MB               5 MB
+     -7         83 MB               9 MB
+     -8        159 MB              17 MB
+     -9        311 MB              33 MB
+
+.SH DIAGNOSTICS
+Exit status:
+.br
+.B 0
+\- Everything OK.
+.br
+.B 1
+\- An error occurred.
+.br
+.B 2
+\- Something worth a warning happened but no errors.
+
+.SH AUTHORS
+The LZMA algorithm and the implementation used in LZMA utils was
+developed by Igor Pavlov. The original code is available in LZMA SDK
+which can be found from http://7-zip.org/sdk.html .
+.PP
+.B lzma
+command line tool was written by Ville Koskinen.
+http://tukaani.org/lzma/
+.PP
+This manual page is inspired by manual pages of
+.B gzip
+and
+.BR bzip2 .
+
+.SH SEE ALSO
+.BR lzmadec (1),
+.BR lzmainfo (1),
+.BR gzip (1),
+.BR bzip2 (1)

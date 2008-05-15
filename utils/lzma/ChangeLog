@@ -1,0 +1,75 @@
+
+2007-10-16  Lasse Collin <lasse.collin@tukaani.org>
+
+	* Moved to git. The repository is currently at
+	git://ctrl.tukaani.org/lzma-utils-legacy.git but it
+	may be moved in future. To see the detailed changelog,
+	use git-log. This ChangeLog file won't be updated anymore.
+
+2007-08-05  Lasse Collin <lasse.collin@tukaani.org>
+
+	* src/liblzmadec/lzmadec.h: Always include <sys/types.h>.
+	Otherwise we don't get definition of off_t on some systems.
+	Thanks to Phil Karn.
+
+	* src/lzma/lzma.1: Typofixes for `--license' and `--version'.
+	Thanks to Chris AtLee.
+	* src/lzma/lzma.1: Removed `ENVIRONMENT' section because reading
+	options from the environment was never supported. (One reason
+	why this branch will never be called `stable'.)
+	
+	* lzma.spec: Added. Thanks to Michael J. Baysek.
+	
+	* Released LZMA Utils 4.32.0beta5. This time also the version
+	number was updated.
+
+2007-07-24  Lasse Collin <lasse.collin@tukaani.org>
+
+	* src/lzma/lzmp.cpp (main): Make "lzma -dc symlink.lzma"
+	work as expected. Thanks to Per Øyvind Karlsen.
+	
+	* Released LZMA Utils 4.32.0beta4.
+
+2007-01-05  A. Costa <agcosta@gis.net>
+
+	* src/lzma/lzma.1: Some typo fixes
+
+2006-07-07  Lasse Collin <lasse.collin@tukaani.org>
+
+	* src/lzma/lzmp.cpp (parse_options): Changed type of c from
+	char to int.
+	* src/lzma/lzmp.cpp [!HAVE_FUTIMES]: Use futimesat() instead.
+	This fixes building on Solaris. I will make a real fix for
+	upcoming 4.42.x branch.
+	* src/lzma_version.h, src/liblzmadec/main.c:
+	Removed __attribute__ to increase portability. Again, a real
+	fix will be in 4.42.x (Autoconf check).
+
+	* Released LZMA Utils 4.32.0beta3.
+
+2006-07-06  Guido Ostkamp <lzma@ostkamp.fastmail.fm>
+
+	* src/sdk/Common/C_FileIO.h, src/sdk/Common/MyWindows.h:
+	Fixed #include order to get config.h before others.
+
+2006-06-30  Lasse Collin <lasse.collin@tukaani.org>
+
+	* Started some initial changelog, probably will stay incomplete
+	with LZMA Utils 4.32.x branch, so please don't report if
+	I have forgot to mention something in this changelog.
+	I'm focusing on 4.42.x, but 4.32.0betas are worth keeping
+	usable until 4.42.x is ready.
+
+	* Fixed `make uninstall' to remove created symlinks.
+
+	* Released LZMA Utils 4.32.0beta2
+
+2006-06-30  Vanger <faijeya@gmail.com>
+
+	* src/lzma/lzmp.cpp: Added signal handling.
+
+2006-06-30  Nuno Cruces <ncruces@gmail.com>
+
+	* src/lzma/lzmp.cpp (parse_options): Fix for path prefix
+	removal when detecting how we were called.
+

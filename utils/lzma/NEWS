@@ -1,0 +1,86 @@
+
+LZMA Utils user visible changes
+===============================
+
+Version 4.32.6
+
+  * Always use 32-bit integer to hold probability variables. Earlier,
+    these were 64-bit on 64-bit architectures, which hurt cache
+    efficiency in the CPU, and thus performance of LZMA. 32-bit
+    architectures are not affected by this change.
+
+  * Fix a theoretical data corruption bug in the LZMA encoder. It is
+    about overflowing a 32-bit integer, whose typical value stays below
+    five. I don't know if it is actually possible to construct to a file
+    that could make it overflow. Even if it were possible, it would "only"
+    make the output file corrupt so that it is 4 GiB too small; there
+    are no other security risks. Now the integer is 64-bit to be sure
+    it won't overflow.
+
+  * Add support for copying timestamps on operating systems that support
+    setting timestamps only by filename, not by file descriptor.
+
+  * Several portability fixes were made.
+
+Version 4.32.5
+
+  * The percentage shown when --verbose is used, works again. Also some
+    typos were fixed from the messages printed by --verbose.
+
+  * Several small portability fixes were made.
+
+Version 4.32.4
+
+  * Ignore command line switch --format=alone. This way current scripts
+    can be written so that they will produce LZMA_Alone format files
+    even with the new command line tool once it is finishes along with
+    liblzma.
+
+  * The command line tool now tells if the user tries to decode files
+    in the new .lzma format. The message recommends upgrading to newer
+    LZMA Utils.
+
+  * Added some internal consistency checks to liblzmadec, so that it
+    doesn't crash if given lzmadec_stream whose initialization failed.
+    Some applications using zlib and libbzip2 don't check if
+    initialization was successful, and expect that error gets caught
+    safely later.
+
+Version 4.32.3
+
+  Seems that everything started going wrong once I started calling
+  this "stable" instead of "beta".
+
+  * Copy ownership and permissions before closing the output file.
+    Fixes <http://qa.mandriva.com/show_bug.cgi?id=35309>.
+
+  * Copy permission bits with some additional sanity checks. It should
+    no longer be possible that someone gets access to the output file
+    if he/she didn't have access to the original input file. (Maybe
+    ACLs could make this more complex still, but currently lzma doesn't
+    care about ACLs.)
+
+  * Make "lzma -c foo.lzma" and "lzma -dc foo" work i.e. don't check
+    the filename suffix when writing to standard output.
+
+  * Added a copy of GNU GPLv3. It applies only to some files in the
+    "tests" directory. The rest of LZMA Utils will stay under the
+    older licenses.
+
+Version 4.32.2
+
+  * Doesn't fail with every file anymore.
+
+Version 4.32.1
+
+  * Explicitly check that closing the output file succeeds.
+    Fixes a rare but possible silent data loss.
+  
+  * Close stdout and stderr and check that those operations succeed.
+    Again, fixes a rare but possible silent data loss.
+  
+  * Some help message, documentation, and typo fixes to various places.
+
+  * Added replacement function for GNU getopt_long(). This should make
+    the command line tool build on a few more operating systems.
+

@@ -1,0 +1,70 @@
+# Description
+#
+#     This patch adds `-a' and a long option equivalent `--lzma'
+#     to GNU tar 1.15.1.
+#
+# Changes
+#
+#     2007-08-10 - Use `-a' instead of of `-Y'. BusyBox already uses `-a'
+#                  and that conflicts less with other tar implementations
+#                  than `-Y'.
+#
+#     2006-08-16 - Updated magic byte detection for the new .lzma format.
+#
+#     2005-12-23 - Updated to use the new lzma command line tool which
+#                  replaced the ugly lzmash wrapper script.
+#
+#     2005-05-06 - Initial version using lzmash wrapper script
+#
+# Copyright information
+#
+#     GNU tar is copyright by Free Software Foundation, Inc.
+#     This patch was written by Lasse Collin <lasse.collin@tukaani.org>.
+#
+#     GNU tar is distributed under the GNU GPL. However, the author of
+#     this patch puts the changes made by him into the public domain.
+
+diff -ru tar-1.15.1_orig/src/buffer.c tar-1.15.1/src/buffer.c
+--- tar-1.15.1_orig/src/buffer.c	2004-12-21 17:09:24.000000000 +0200
++++ tar-1.15.1/src/buffer.c	2005-05-06 00:04:23.000000000 +0300
+@@ -153,7 +153,8 @@
+   ct_none,
+   ct_compress,
+   ct_gzip,
+-  ct_bzip2
++  ct_bzip2,
++  ct_lzma
+ };
+
+ struct zip_magic
+@@ -170,6 +171,7 @@
+   { ct_compress, "\037\235", 2, "compress", "-Z" },
+   { ct_gzip,     "\037\213", 2, "gzip", "-z"  },
+   { ct_bzip2,    "BZh",      3, "bzip2", "-j" },
++  { ct_lzma,     "\xFFLZMA", 6, "lzma", "-a" },
+ };
+
+ #define NMAGIC (sizeof(magic)/sizeof(magic[0]))
+diff -ru tar-1.15.1_orig/src/tar.c tar-1.15.1/src/tar.c
+--- tar-1.15.1_orig/src/tar.c	2004-12-21 16:11:26.000000000 +0200
++++ tar-1.15.1/src/tar.c	2005-05-06 00:04:24.000000000 +0300
+@@ -429,6 +429,8 @@
+    N_("control pax keywords"), 68 },
+   {"label", 'V', N_("TEXT"), 0,
+    N_("create archive with volume name NAME. At list/extract time, use TEXT as a globbing pattern"), 68 },
++  {"lzma", 'a', 0, 0,
++   N_("filter the archive through lzma"), 68 },
+   {"bzip2", 'j', 0, 0,
+    N_("filter the archive through bzip2"), 68 },
+   {"gzip", 'z', 0, 0,
+@@ -906,6 +908,10 @@
+ 		      " perhaps you meant -j?")));
+       break;
+
++    case 'a':
++      set_use_compress_program_option ("lzma");
++      break;
++
+     case 'z':
+       set_use_compress_program_option ("gzip");
+       break;
