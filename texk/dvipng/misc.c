@@ -780,7 +780,7 @@ bool MmapFile (char *filename,struct filemmap *fmmap)
     close(fmmap->fd);
     return(true);
   }
-  if (read(fmmap->fd,fmmap->mmap,fmmap->size)<fmmap->size) {
+  if (read(fmmap->fd,fmmap->data,fmmap->size)<fmmap->size) {
     Warning("too little data in <%s>",filename);
     free(fmmap->data);
     fmmap->data=NULL;

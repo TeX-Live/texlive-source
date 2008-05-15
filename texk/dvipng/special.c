@@ -621,9 +621,9 @@ void SetSpecial(char * special, int32_t hh, int32_t vv)
 
   if (dvi->flags & DVI_PREVIEW_BOP_HOOK && ~page_flags & PAGE_PREVIEW_BOP 
       && strncmp(special,"ps::",4)==0) {
+    dviunits adj_llx,adj_lly,adj_urx,adj_ury,ht,dp,wd;
     page_flags |= PAGE_PREVIEW_BOP;
     /* Hokay, decode bounding box */
-    dviunits adj_llx,adj_lly,adj_urx,adj_ury,ht,dp,wd;
     adj_llx = strtol(special+4,&special,10);
     adj_lly = strtol(special,&special,10);
     adj_urx = strtol(special,&special,10);
