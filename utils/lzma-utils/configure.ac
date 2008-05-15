@@ -5,7 +5,7 @@ AC_PREREQ(2.59)
 
 # [LZMA] instead of [LZMA utils] since I prefer to have lzma-version.tar.gz
 # instead of lzma-utils-version.tar.gz.
-AC_INIT([LZMA], [4.32.5], [lasse.collin@tukaani.org])
+AC_INIT([LZMA], [4.32.6], [lasse.collin@tukaani.org])
 
 AC_CONFIG_SRCDIR([src/sdk/7zip/ICoder.h])
 AC_CONFIG_HEADER([config.h])
@@ -48,7 +48,7 @@ AC_PROG_LIBTOOL
 AC_HEADER_STDC
 # There is currently no workarounds in this package if some of
 # these headers are missing:
-AC_CHECK_HEADERS([fcntl.h inttypes.h stddef.h stdlib.h string.h sys/time.h unistd.h utime.h], [], AC_MSG_ERROR([Required header file(s) are missing.]))
+AC_CHECK_HEADERS([fcntl.h inttypes.h limits.h stddef.h stdlib.h string.h sys/time.h unistd.h utime.h], [], AC_MSG_ERROR([Required header file(s) are missing.]))
 # Missing errno.h should be handled:
 AC_CHECK_HEADERS([errno.h])
 
@@ -73,7 +73,7 @@ AC_CHECK_TYPE(uint_fast64_t,, [AC_DEFINE(uint_fast64_t, uint64_t, [Define to `ui
 AC_SYS_LARGEFILE
 
 # Checks for library functions.
-AC_CHECK_FUNCS([memmove strdup memset strerror strrchr strtol futimes futimesat])
+AC_CHECK_FUNCS([memmove strdup memset strerror strrchr strtol utime utimes futimes futimesat])
 
 gl_GETOPT
 

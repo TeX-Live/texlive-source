@@ -2,6 +2,26 @@
 LZMA Utils user visible changes
 ===============================
 
+Version 4.32.6
+
+  * Always use 32-bit integer to hold probability variables. Earlier,
+    these were 64-bit on 64-bit architectures, which hurt cache
+    efficiency in the CPU, and thus performance of LZMA. 32-bit
+    architectures are not affected by this change.
+
+  * Fix a theoretical data corruption bug in the LZMA encoder. It is
+    about overflowing a 32-bit integer, whose typical value stays below
+    five. I don't know if it is actually possible to construct to a file
+    that could make it overflow. Even if it were possible, it would "only"
+    make the output file corrupt so that it is 4 GiB too small; there
+    are no other security risks. Now the integer is 64-bit to be sure
+    it won't overflow.
+
+  * Add support for copying timestamps on operating systems that support
+    setting timestamps only by filename, not by file descriptor.
+
+  * Several portability fixes were made.
+
 Version 4.32.5
 
   * The percentage shown when --verbose is used, works again. Also some

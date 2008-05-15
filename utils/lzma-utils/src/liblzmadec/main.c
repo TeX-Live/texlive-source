@@ -232,6 +232,7 @@ lzmadec_header_uncompressed (uint_fast64_t *size, uint_fast8_t *is_streamed,
 	const uint8_t *buffer)
 {
 	uint_fast32_t i;
+
 	/* Streamed files have all 64 bits set in the size field.
 	   We don't know the uncompressed size beforehand. */
 	*is_streamed = 1; /* Assume streamed. */

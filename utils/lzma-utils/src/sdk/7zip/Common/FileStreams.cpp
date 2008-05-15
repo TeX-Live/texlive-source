@@ -250,8 +250,6 @@ STDMETHODIMP CStdOutFileStream::Write(const void *data, UInt32 size, UInt32 *pro
   if(processedSize != NULL)
     *processedSize = (UInt32)res;
   return S_OK;
-  
-  return S_OK;
   #endif
 }
 

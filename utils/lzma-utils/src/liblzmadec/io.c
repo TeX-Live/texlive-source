@@ -35,8 +35,9 @@
 extern int errno
 #endif
 
-#ifndef SIZE_MAX
-#define SIZE_MAX (~(size_t)0)
+/* Needed for pre-C99 systems that have SIZE_MAX in limits.h. */
+#ifdef HAVE_LIMITS_H
+#include <limits.h>
 #endif
 
 #define LZMADEC_NO_STDIO
@@ -44,6 +45,10 @@ extern int errno
 #undef LZMADEC_NO_STDIO
 
 #include "private.h"
+
+#ifndef SIZE_MAX
+#define SIZE_MAX (~(size_t)0)
+#endif
 
 #define LZMADEC_BUFSIZE (LZMA_IN_BUFFER_SIZE - LZMA_REQUIRED_IN_BUFFER_SIZE)
 

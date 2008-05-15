@@ -25,8 +25,11 @@
 /* uint16_t would be enough for CProb. uint_fast16_t will give a little
    extra speed but wastes memory. On 32-bit architechture the amount
    of wasted memory is usually only a few kilobytes but the theoretical
-   maximum is about 1.5 megabytes (4.5 on 64-bit). */
-#define CProb uint_fast16_t
+   maximum is about 1.5 megabytes (4.5 on 64-bit).
+   
+   Update: Now we always use uint32_t, since uint_fast16_t can be 64-bit
+   on 64-bit systems, which is bad for CPU's cache. */
+#define CProb uint32_t
 
 #define LZMA_BASE_SIZE 1846
 #define LZMA_LIT_SIZE 768
@@ -121,7 +124,9 @@
   Macros
  ********/
 
+#ifndef MIN
 #define MIN(x,y) ((x) < (y) ? (x) : (y))
+#endif
 
 
 /**********

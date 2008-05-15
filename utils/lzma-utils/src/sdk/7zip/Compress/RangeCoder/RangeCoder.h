@@ -14,7 +14,7 @@ const UInt32 kTopValue = (1 << kNumTopBits);
 
 class CEncoder
 {
-  UInt32 _ffNum;
+  UInt64 _ffNum;
   Byte _cache;
 public:
   UInt64 Low;

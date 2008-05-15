@@ -1,7 +1,7 @@
 #!/bin/sh
 # FIXME
 
-# Copyright (C) 2007 Free Software Foundation, Inc.
+# Copyright (C) 2007, 2008 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,6 +28,6 @@ chmod 644 in || framework_failure
 fail=0
 lzma in || fail=1
 set - `ls -l in.lzma`
-test "x$1" = x-rw-r--r-- || fail
+test "x$1" = x-rw-r--r-- || fail=1
 
 (exit $fail); exit $fail
