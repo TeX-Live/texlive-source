@@ -9,7 +9,7 @@ dvipng [options] [filename] -
 @c man end
 @end ifset
 
-@set version 1.10
+@set version 1.11
 @set month-year May 2008
 
 @c Put everything in one index (arbitrarily chosen to be the concept index).

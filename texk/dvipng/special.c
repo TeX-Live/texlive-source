@@ -436,6 +436,7 @@ void SetSpecial(char * special, int32_t hh, int32_t vv)
       FILE* psstream;
 #endif
 
+      PSCodeInit(&image, NULL);
       TEMPSTR(image.filename,kpse_find_file(psname,kpse_pict_format,0));
       if (MmapFile(image.filename,&(image.fmmap)) || image.fmmap.size==0) {
 	Warning("Image file %s unusable, image will be left blank",

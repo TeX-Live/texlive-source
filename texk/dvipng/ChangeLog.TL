@@ -1,8 +1,12 @@
 	Changes for teTeX / TeX live.
 
-2008-05-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2008-05-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Imported release 1.10 from savannah.nongnu.org.
+	* *-1.10 (removed), *-1.11 (new): Original files.
+	* configure.ac: Updated for release 1.10.
+
+2008-05-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.in-1.10, aclocal.m4-1.10, config.h.in-1.10,
 	configure.ac-1.10, configure-1.10 (all new): Original files

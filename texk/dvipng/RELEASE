@@ -1,8 +1,10 @@
-Release notes for version 1.10 of the dvipng package:
+Release notes for version 1.11 of the dvipng package:
 
 This program makes PNG graphics from DVI files as obtained from TeX
 and its relatives.
 
+
+The 1.11 release is a regression fix for v 1.10.
 
 From v 1.10, dvipng will be available under the LGPL rather than the
 GPL. This is because the GPL restricts inclusion in some rendering
@@ -12,14 +14,14 @@ b) dvipng has been available (pre-release and release) for five years
 now, which should be enough of a head start for the GNU community.
 
 
-The main code addition is limited support for literal PostScript
-specials, using gs. For example, most of the PSTricks package can now
-be rendered using dvipng. Unfortunately, dvipng can only handle
-drawing PostScript code at the moment, not PostScript code intended to
-make dvips + gs scale, rotate, or move DVI glyphs (characters).  This
-is because the graphics state cannot be communicated back to dvipng
-from gs. So no guarantees. Also, the performance in terms of runtime
-could be better.
+The main code addition in v 1.10 is limited support for literal
+PostScript specials, using gs. For example, most of the PSTricks
+package can now be rendered using dvipng. Unfortunately, dvipng can
+only handle drawing PostScript code at the moment, not PostScript code
+intended to make dvips + gs scale, rotate, or move DVI glyphs
+(characters).  This is because the graphics state cannot be
+communicated back to dvipng from gs. So no guarantees. Also, the
+performance in terms of runtime could be better.
 
 Other changes include internal changes to the DVI stack, DVI flags,
 some build issues on AIX and glyph-index-checking fixes.
