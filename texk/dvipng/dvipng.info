@@ -16,7 +16,7 @@ dvipng
 This manual documents dvipng, a program to translate a DVI (DeVice
 Independent) file into PNG (Portable Network Graphics).
 
-   This file documents dvipng version 1.10
+   This file documents dvipng version 1.11
 
    Corrections or perhaps rewrites of sections are _very welcome_.
 
@@ -327,7 +327,7 @@ File: dvipng.info,  Node: Option summary,  Next: Option details,  Up: Command-li
 Here is a handy summary of the options; it is printed out when you run
 dvipng with no arguments or with the standard `--help' option.
 
-     This is ./dvipng 1.9 Copyright 2002-2006 Jan-Ake Larsson
+     This is ./dvipng 1.10 Copyright 2002-2008 Jan-Ake Larsson
 
      Usage: ./dvipng [OPTION]... FILENAME[.dvi]
      Options are chosen to be similar to dvips' options where possible:
@@ -353,12 +353,16 @@ dvipng with no arguments or with the standard `--help' option.
        --follow*    Wait for data at end-of-file
        --freetype*  FreeType font rendering (default on)
        --gamma #    Control color interpolation
+       --gif        Output GIF images (dvigif default)
        --height*    Output the image height on stdout
        --noghostscript*  Don't use ghostscript for PostScript specials
        --nogssafer* Don't use -dSAFER in ghostscript calls
+       --palette*   Force palette output
        --picky      When a warning occurs, don't output image
+       --png        Output PNG images (dvipng default)
        --strict     When a warning occurs, exit
        --t1lib*     T1lib font rendering (default on)
+       --truecolor* Truecolor output
        -Q #         Quality (T1lib and PK subsampling)
        -z #         PNG compression level
 
@@ -1063,18 +1067,18 @@ Node: Advice for non-privileged users9515
 Node: Basic usage10523
 Node: Command-line options11650
 Node: Option summary12074
-Node: Option details14194
-Node: Graphics29573
-Node: Encapsulated PostScript30138
-Node: Bitmapped graphics31481
-Node: Color32681
-Node: Color specifications33069
-Node: Color specials34168
-Node: Diagnosing problems35580
-Node: Contact information36063
-Node: Debug options36804
-Node: Credits37839
-Node: Copying39001
-Node: Index39781
+Node: Option details14383
+Node: Graphics29762
+Node: Encapsulated PostScript30327
+Node: Bitmapped graphics31670
+Node: Color32870
+Node: Color specifications33258
+Node: Color specials34357
+Node: Diagnosing problems35769
+Node: Contact information36252
+Node: Debug options36993
+Node: Credits38028
+Node: Copying39190
+Node: Index39970
 
 End Tag Table
