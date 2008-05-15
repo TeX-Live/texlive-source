@@ -1,3 +1,7 @@
+2008-05-15  Karl Berry  <karl@tug.org>
+
+	* etex.mk (etex-pool.c): the input is etex.pool.  From Akira.
+
 2008-05-13  Peter Breitenlohner <peb@mppmu.mpg.de>
 
 	* etex-mk: Use $(makecpool) instead of ./tex-mkcpool.

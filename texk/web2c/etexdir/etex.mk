@@ -53,7 +53,7 @@ etex.ch: $(etex_ch_srcs)
 	$(TIE) -c etex.ch $(etex_ch_srcs)
 
 etex-pool.c: etex.pool $(makecpool) tmf-pool.h
-	$(makecpool) tex.pool $(srcdir)/tmf-pool.h >$@ || rm -f $@
+	$(makecpool) etex.pool $(srcdir)/tmf-pool.h >$@ || rm -f $@
 
 # Tests...
 check: @ETEX@ etex-check
