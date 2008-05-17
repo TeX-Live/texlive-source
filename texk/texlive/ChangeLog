@@ -1,3 +1,8 @@
+2008-05-18  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (install-linked-scripts): change from Peter M to
+	support non-multiplatform builds.
+
 2008-05-11  Norbert Preining <preining@logic.at>
 
 	* Makefile.in: add texdoc.tlu to the LINKED_SCRIPTS, it will

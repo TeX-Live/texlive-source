@@ -78,14 +78,22 @@ install-exec: install-linked-scripts install-linked-sys-scripts
 # 
 install-linked-scripts:
 	-$(SHELL) $(srcdir)/../mkinstalldirs $(scriptdir)
-	# link to the basename, removing any extension, of the source.
-	# we downcase for the sake of TeXcount.pl -> texcount.
-	# LINKSUFFIX is for -sys, see next target.
+# - link to the basename, removing any extension, of the source.
+# - we downcase for the sake of TeXcount.pl -> texcount.
+# - LINKSUFFIX is for -sys, see next target.
+# - the purpose of the case..esac is to support both multiplatform and
+#   non-multiplatform builds.
 	for s in $(LINKED_SCRIPTS); do \
 	  target=$(scriptdir)/`basename $$s | sed 's,\.[^/]*$$,,' | tr A-Z a-z`; \
 	  target=$$target$(LINKSUFFIX); \
 	  rm -f $$target; \
-	  ln -s ../../$$s $$target; \
+	  case "$(scriptdir)" in \
+	    */bin)   s=../$$s;; \
+	    */bin/*) s=../../$$s;; \
+	    *) echo "$(scriptdir): strange directory for linked scripts" >&2;\
+	      exit 1;; \
+	  esac; \
+	  ln -s $$s $$target; \
 	done
 
 install-linked-sys-scripts:
