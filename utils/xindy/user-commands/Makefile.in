@@ -434,8 +434,8 @@ uninstall-man: uninstall-man1
 @TETEX_BUILD_TRUE@	  ln -s ../texmf/scripts/xindy/xindy.pl $(bindir)/xindy; \
 @TETEX_BUILD_TRUE@	  ln -s ../texmf/scripts/xindy/texindy.pl $(bindir)/texindy; \
 @TETEX_BUILD_TRUE@	else \
-@TETEX_BUILD_TRUE@	  echo "Error: texmf/scripts/xindy directory not found"; \
-@TETEX_BUILD_TRUE@	  false; \
+@TETEX_BUILD_TRUE@	  echo "Error: texmf/scripts/xindy directory not found" >&2; \
+@TETEX_BUILD_TRUE@	  exit 1; \
 @TETEX_BUILD_TRUE@	fi
 
 xindy: xindy.in

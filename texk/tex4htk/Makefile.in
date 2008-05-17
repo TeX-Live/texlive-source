@@ -40,8 +40,8 @@ install-exec: all
 	elif test -d "$(bindir)/../texmf-dist/scripts/tex4ht"; then \
 	  d=../texmf-dist/scripts/tex4ht; \
 	else \
-	  echo "Error: texmf-dist/scripts/tex4ht directory not found"; \
-	  false; \
+	  echo "Error: texmf-dist/scripts/tex4ht directory not found" >&2; \
+	  exit 1; \
 	fi; \
 	for p in $(shell_scripts); do rm -f $(bindir)/$$p; ln -s $$d/$$p.sh $(bindir)/$$p; done; \
 	for p in $(perl_scripts); do rm -f $(bindir)/$$p; ln -s $$d/$$p.pl $(bindir)/$$p; done

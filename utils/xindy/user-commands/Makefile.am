@@ -33,8 +33,8 @@ install-exec-hook: xindy
 	  ln -s ../texmf/scripts/xindy/xindy.pl $(bindir)/xindy; \
 	  ln -s ../texmf/scripts/xindy/texindy.pl $(bindir)/texindy; \
 	else \
-	  echo "Error: texmf/scripts/xindy directory not found"; \
-	  false; \
+	  echo "Error: texmf/scripts/xindy directory not found" >&2; \
+	  exit 1; \
 	fi
 else
     bin_SCRIPTS = xindy
