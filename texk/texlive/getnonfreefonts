@@ -66,6 +66,7 @@ $^W=1 if $opt_debug;
 
 my $sys=($0=~/-sys$/)? 1:0;
 $sys=1 if $opt_sys;
+$sys=1 if (defined $ENV{'TEX_SYS_PROG'});
 
 @allpackages=@ARGV;
 
@@ -100,10 +101,10 @@ sub debug_msg {
 sub expand_var {
     my $var=shift;
 
-    if (-d "/usr/bin") {
-	open KPSEWHICH, 'kpsewhich --expand-var=\$' . "$var |";
-    } else {
+    if ($^O=~/^MSWin(32|64)/i) {
 	open KPSEWHICH, 'kpsewhich --expand-var=$'  . "$var |";
+    } else {
+	open KPSEWHICH, 'kpsewhich --expand-var=\$' . "$var |";
     }
     while (<KPSEWHICH>) {
 	chop;
@@ -111,7 +112,6 @@ sub expand_var {
     }
     close KPSEWHICH;
 }
-
 
 # get TMP|TEMP|TMPDIR environment variable
 
