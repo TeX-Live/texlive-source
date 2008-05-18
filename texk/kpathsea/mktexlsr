@@ -148,8 +148,8 @@ for TEXMFLS_R in "$@"; do
   echo "./:" >>"$db_file_tmp"
   vc_dirs='\.\(bzr\|git\|hg\|svn\)\|CVS\|RCS\|_darcs'
   (cd "$TEXMFLS_R" && \ls -LRa 2>/dev/null) \
-   | sed -e '/^$/{n;s%^\./%%;s%^%./%;}; /^\.$/d; /^\.\.$/d; /^\.svn$/d;' \
-        -e '/^[\.\/]*lsR[0-9]*\.tmp:*$/d' \
+   | sed -e '/^$/{n;s%^\./%%;s%^%./%;}; /^\.$/d; /^\.\.$/d; /^'$vc_dirs'$/d;' \
+         -e '/^[\.\/]*lsR[0-9]*\.tmp:*$/d' \
    | sed -e /$vc_dirs'.*:$/,/^$/d' \
    >>"$db_file_tmp"
 
