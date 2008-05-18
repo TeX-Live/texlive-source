@@ -1,3 +1,9 @@
+2008-05-18  Karl Berry  <karl@tug.org>
+
+	* mktexlsr (vc_dirs): ignore more than just .svn.
+	Original suggestion from Michael Schutte, Debian bug 481371,
+	16 May 2008 11:31:20.
+
 2008-05-05  Karl Berry  <karl@tug.org>
 
 	* recorder.h: declare our fn variables extern as they should be.
