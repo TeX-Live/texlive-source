@@ -39,8 +39,7 @@ AC_ARG_ENABLE(docs, AS_HELP_STRING([--enable-docs],[build and install documentat
 AC_ARG_ENABLE(tetex-build, AS_HELP_STRING([--enable-tetex-build],[Build as part of a TeX Live installation]))
 AC_ARG_WITH(clisp, AS_HELP_STRING([--with-clisp=...],[Use the specified location of the clisp executable (default is search in PATH)]))
 
-if test "x$enable_tetex_build" = xyes; then
-dnl we don't really care whether $srcdir/../../texk/kpathsea is found, so don't test for it.
+if test "x$enable_tetex_build" = xyes -a "x$datadir" = "x$prefix"; then
   AC_MSG_NOTICE([Using installation layout for TeX Live])
   datadir="$prefix/texmf"
   docdir="$prefix/texmf/doc/$PACKAGE_NAME"
@@ -53,6 +52,8 @@ dnl we don't really care whether $srcdir/../../texk/kpathsea is found, so don't 
     AC_MSG_NOTICE([Disabling make-rules building])
     enable_make_rules=no;
   fi
+else
+  enable_tetex_build=no
 fi
 AM_CONDITIONAL([TETEX_BUILD],[test "x$enable_tetex_build" = xyes])
 

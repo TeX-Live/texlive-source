@@ -3703,7 +3703,7 @@ if test "${with_clisp+set}" = set; then
 fi
 
 
-if test "x$enable_tetex_build" = xyes; then
+if test "x$enable_tetex_build" = xyes -a "x$datadir" = "x$prefix"; then
   { echo "$as_me:$LINENO: Using installation layout for TeX Live" >&5
 echo "$as_me: Using installation layout for TeX Live" >&6;}
   datadir="$prefix/texmf"
@@ -3719,6 +3719,8 @@ echo "$as_me: Disabling docs building" >&6;}
 echo "$as_me: Disabling make-rules building" >&6;}
     enable_make_rules=no;
   fi
+else
+  enable_tetex_build=no
 fi
  if test "x$enable_tetex_build" = xyes; then
   TETEX_BUILD_TRUE=
