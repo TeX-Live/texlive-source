@@ -7,7 +7,7 @@ kpse_include ../make/paths.mk
 kpse_include ../make/common.mk
 kpse_include ../make/programs.mk
 
-LIVESCRIPTS = simpdftex ebong giftopng wordcount.sh
+LIVESCRIPTS = simpdftex ebong giftopng
 
 # These scripts do not exist here in /source/ at all, the instances
 # in texmf are the masters (except when it is CTAN).

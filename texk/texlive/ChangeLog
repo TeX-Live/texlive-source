@@ -1,3 +1,9 @@
+2008-05-20  Karl Berry  <karl@tug.org>
+
+	* wordcount.sh: remove, since we have texcount (TeXcount.pl)
+	and the license of wordcount.sh is problematic.
+	* Makefile.in (LIVESCRIPTS): remove wordcount.sh
+
 2008-05-19  Karl Berry  <karl@tug.org>
 
 	* Makefile.in (LIVESCRIPTS): remove pdfthumb, we want the one in
