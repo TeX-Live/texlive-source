@@ -800,6 +800,12 @@ static const uint8_t groupProp[] =          /* dirProp regrouped */
 /*  L   R   EN  ES  ET  AN  CS  B   S   WS  ON  LRE LRO AL  RLE RLO PDF NSM BN  */
     0,  1,  2,  7,  8,  3,  9,  6,  5,  4,  4,  10, 10, 12, 10, 10, 10, 11, 10
 };
+
+/* #undef symbols that may have been defined by ctype.h on IRIX or HP-UX */
+#undef _L
+#undef _S
+#undef _B
+
 enum { _L=0, _R=1, _EN=2, _AN=3, _ON=4, _S=5, _B=6 }; /* reduced dirProp */
 
 /******************************************************************
