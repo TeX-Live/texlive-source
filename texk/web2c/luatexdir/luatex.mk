@@ -91,7 +91,7 @@ luatex.p luatex.pool: luatangle $(srcdir)/$(luatexdir)/luatex.web $(srcdir)/$(lu
 #luatex-all.pdf: luatex-all.tex
 #	$(luatex) luatex-all.tex
 
-check: @PETEX@ luatex-check
+check: @LTEX@ luatex-check
 luatex-check: luatex luatex.fmt
 
 clean:: luatex-clean

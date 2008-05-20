@@ -1,3 +1,10 @@
+2008-05-20  Karl Berry  <karl@tug.org>
+
+	(Found by peb.)
+	* luatexdir/luatangle.web: OTANGLE -> LUATANGLE.
+	* luatexdir/Makefile.in (check): PETEX -> LTEX.
+	* web2c/makecpool.c: update from luatex repo; cosmetic changes only.
+
 2008-04-29  Karl Berry  <karl@tug.org>
 
 	* doc/Makefile.in (install-data): do not cd $(srcdir) in any rule,

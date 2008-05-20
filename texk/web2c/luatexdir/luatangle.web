@@ -1,9 +1,10 @@
-% otangle.web: Omega version of file tangle.web
+% luatangle.web: LuaTeX version of file tangle.web
+% $Id$
 % 
-% This file is part of the Omega project, which
-% is based in the web2c distribution of TeX.
+% This file is part of LuaTeX.
 %
 % Copyright (c) 1994--1998 John Plaice and Yannis Haralambous
+% Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
 % applies only to the changes to the original tangle.web.
 %
 % This program by D. E. Knuth is not copyrighted and can be used freely.
@@ -37,12 +38,12 @@
 \mathchardef\BA="3224 % double arrow
 \def\({} % kludge for alphabetizing certain module names
 
-\def\title{OTANGLE}
+\def\title{LUATANGLE}
 \def\contentspagenumber{123} % should be odd
 \def\topofcontents{\null\vfill
   \titlefalse % include headline on the contents page
   \def\rheader{\mainfont Appendix E\hfil \contentspagenumber}
-  \centerline{\titlefont The {\ttitlefont OTANGLE} processor}
+  \centerline{\titlefont The {\ttitlefont LUATANGLE} processor}
   \vskip 15pt
   \centerline{(Version 4.4)}
   \vfill}
@@ -73,7 +74,7 @@ dependencies' in the index below.
 The ``banner line'' defined here should be changed whenever \.{TANGLE}
 is modified.
 
-@d banner=='This is OTANGLE, Version 4.4'
+@d banner=='This is LUATANGLE, Version 4.4'
 
 @ The program begins with a fairly normal header, made up of pieces that
 @^system dependencies@>
@@ -87,7 +88,7 @@ calls the `|jump_out|' procedure, which goes to the label |end_of_TANGLE|.
 @d end_of_TANGLE = 9999 {go here to wrap it up}
 
 @p @t\4@>@<Compiler directives@>@/
-program OTANGLE(@!web_file,@!change_file,@!Pascal_file,@!pool);
+program LUATANGLE(@!web_file,@!change_file,@!Pascal_file,@!pool);
 label end_of_TANGLE; {go here to finish}
 const @<Constants in the outer block@>@/
 type @<Types in the outer block@>@/
