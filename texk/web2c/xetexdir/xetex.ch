@@ -65,7 +65,7 @@ authorization from SIL International.
 
 @d XeTeX_version=0
 @d XeTeX_revision==".998"
-@d XeTeX_version_string=='-0.998.3' {current \XeTeX\ version}
+@d XeTeX_version_string=='-0.998.5-dev' {current \XeTeX\ version}
 @z
 
 @x
@@ -7610,9 +7610,9 @@ begin
 	{ access the picture file and check its size }
 	result := find_pic_file(address_of(pic_path), address_of(bounds), pdf_box_type, page);
 
-	setPoint(corners[0], xField(bounds) * 72.27 / 72.0, yField(bounds) * 72.27 / 72.0);
-	setPoint(corners[1], xField(corners[0]), (yField(bounds) + htField(bounds)) * 72.27 / 72.0);
-	setPoint(corners[2], (xField(bounds) + wdField(bounds)) * 72.27 / 72.0, yField(corners[1]));
+	setPoint(corners[0], xField(bounds), yField(bounds));
+	setPoint(corners[1], xField(corners[0]), yField(bounds) + htField(bounds));
+	setPoint(corners[2], xField(bounds) + wdField(bounds), yField(corners[1]));
 	setPoint(corners[3], xField(corners[2]), yField(corners[0]));
 
 	x_size_req := 0.0;
@@ -7686,7 +7686,7 @@ begin
 	if (x_size_req <> 0.0) or (y_size_req <> 0.0) then do_size_requests;
 
 	calc_min_and_max;
-	make_translation(address_of(t2), -xmin, -ymin);
+	make_translation(address_of(t2), -xmin * 72 / 72.27, -ymin * 72 / 72.27);
 	transform_concat(address_of(t), address_of(t2));
 
 	if result = 0 then begin
@@ -8662,12 +8662,15 @@ begin
 	end_diagnostic(false);
 end;
 
-procedure font_mapping_warning(mappingNameP:void_pointer; mappingNameLen:integer);
+procedure font_mapping_warning(mappingNameP:void_pointer;
+	mappingNameLen:integer;
+	warningType:integer); { 0: just logging; 1: file not found; 2: can't load }
 var
 	i: integer;
 begin
 	begin_diagnostic;
-	print_nl("Font mapping `");
+	if warningType=0 then print_nl("Loaded font mapping `")
+	else print_nl("Font mapping `");
 	print_utf8_str(mappingNameP, mappingNameLen);
 	print("' for font `");
 	i := 1;
@@ -8675,7 +8678,13 @@ begin
 		print_visible_char(name_of_file[i]); { this is already UTF-8 }
 		incr(i);
 	end;
-	print("' not found.");
+	case warningType of
+		1: print("' not found.");
+		2: begin print("' not usable;");
+		     print_nl("bad mapping file or incorrect mapping type.");
+		   end;
+		othercases print("'.")
+	endcases;
 	end_diagnostic(false);
 end;
 

@@ -925,6 +925,7 @@ countpdffilepages()
 
 int
 find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page)
+	/* returns bounds in TeX points */
 {
 	*path = NULL;
 
@@ -998,10 +999,10 @@ find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page)
 						r = CGPDFPageGetBoxRect(pageRef, boxType);
 					}
 
-					bounds->x = r.origin.x;
-					bounds->y = r.origin.y;
-					bounds->wd = r.size.width;
-					bounds->ht = r.size.height;
+					bounds->x = r.origin.x * 72.27 / 72.0;
+					bounds->y = r.origin.y * 72.27 / 72.0;
+					bounds->wd = r.size.width * 72.27 / 72.0;
+					bounds->ht = r.size.height * 72.27 / 72.0;
 					CGPDFDocumentRelease(document);
 					result = noErr;
 				}
@@ -1018,8 +1019,8 @@ find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page)
 						result = GraphicsImportGetImageDescription(ci, &desc);
 						bounds->x = 0;
 						bounds->y = 0;
-						bounds->wd = (*desc)->width * 72.0 / Fix2X((*desc)->hRes);
-						bounds->ht = (*desc)->height * 72.0 / Fix2X((*desc)->vRes);
+						bounds->wd = (*desc)->width * 72.27 / Fix2X((*desc)->hRes);
+						bounds->ht = (*desc)->height * 72.27 / Fix2X((*desc)->vRes);
 						DisposeHandle((Handle)desc);
 						(void)CloseComponent(ci);
 					}

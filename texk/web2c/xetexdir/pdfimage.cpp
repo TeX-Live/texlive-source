@@ -27,6 +27,7 @@ my_fmin(double x, double y)
 
 int
 pdf_get_rect(char* filename, int page_num, int pdf_box, realrect* box)
+	/* return the box converted to TeX points */
 {
 	GString*	name = new GString(filename);
 	PDFDoc*		doc = new PDFDoc(name);
@@ -73,10 +74,10 @@ pdf_get_rect(char* filename, int page_num, int pdf_box, realrect* box)
 			break;
 	}
 
-	box->x  = 72 / 72.27 * my_fmin(r->x1, r->x2);
-	box->y  = 72 / 72.27 * my_fmin(r->y1, r->y2);
-	box->wd = 72 / 72.27 * fabs(r->x2 - r->x1);
-	box->ht = 72 / 72.27 * fabs(r->y2 - r->y1);
+	box->x  = 72.27 / 72 * my_fmin(r->x1, r->x2);
+	box->y  = 72.27 / 72 * my_fmin(r->y1, r->y2);
+	box->wd = 72.27 / 72 * fabs(r->x2 - r->x1);
+	box->ht = 72.27 / 72 * fabs(r->y2 - r->y1);
 
 	delete doc;
 

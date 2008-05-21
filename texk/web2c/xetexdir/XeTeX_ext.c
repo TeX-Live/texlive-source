@@ -636,9 +636,13 @@ load_mapping_file(const char* s, const char* e, char byteMapping)
 											&cnv);
 			free(mapping);
 		}
+		if (cnv == NULL)
+			fontmappingwarning(buffer, strlen(buffer), 2); /* not loadable */
+		else if (gettracingfontsstate() > 1)
+			fontmappingwarning(buffer, strlen(buffer), 0); /* tracing */
 	}
 	else
-		fontmappingwarning(buffer, strlen(buffer));
+		fontmappingwarning(buffer, strlen(buffer), 1); /* not found */
 
 	free(buffer);
 
