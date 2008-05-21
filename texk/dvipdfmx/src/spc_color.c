@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_color.c,v 1.5 2005/07/30 11:44:18 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_color.c,v 1.6 2007/11/22 11:45:39 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -79,9 +79,7 @@ spc_handler_color_push (struct spc_env *spe, struct spc_arg *args)
 
   error = spc_util_read_colorspec(spe, &colorspec, args, 1);
   if (!error) {
-    pdf_color_push(); /* save currentcolor */
-    pdf_dev_setcolor(&colorspec, 0);
-    pdf_dev_setcolor(&colorspec, 1);
+    pdf_color_push(&colorspec, &colorspec);
   }
 
   return  error;
@@ -95,9 +93,8 @@ spc_handler_color_pop  (struct spc_env *spe, struct spc_arg *args)
   return  0;
 }
 
-/* _FIXME_ ... I don't understand this well.
- * Dvips's implementation is to clear color stack and then
- * push color?
+/* Invoked by the special command "color rgb .625 0 0".
+ * DVIPS clears the color stack, and then saves and sets the given color.
  */
 static int
 spc_handler_color_default (struct spc_env *spe, struct spc_arg *args)
@@ -107,10 +104,9 @@ spc_handler_color_default (struct spc_env *spe, struct spc_arg *args)
 
   error = spc_util_read_colorspec(spe, &colorspec, args, 1);
   if (!error) {
-    pdf_color_clear();
-    pdf_dev_setcolor(&colorspec, 0);
-    pdf_dev_setcolor(&colorspec, 1);
-    pdf_color_push(); /* save currentcolor */
+    pdf_color_set_default(&colorspec);
+    pdf_color_clear_stack(); /* the default color is saved on color_stack */
+    pdf_color_push(&colorspec, &colorspec);
   }
 
   return  error;

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cid.c,v 1.29 2005/07/30 11:44:18 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cid.c,v 1.31 2008/05/17 04:18:47 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -424,10 +424,10 @@ CIDFont_base_open (CIDFont *font, const char *name, CIDSysInfo *cmap_csi, cid_op
 
     start = cid_basefont[idx].fontdict;
     end   = start + strlen(start);
-    fontdict   = parse_pdf_dict((char **)&start, (char *)end);
+    fontdict   = parse_pdf_dict((char **)&start, (char *)end, NULL);
     start = cid_basefont[idx].descriptor;
     end   = start + strlen(start);
-    descriptor = parse_pdf_dict((char **)&start, (char *)end);
+    descriptor = parse_pdf_dict((char **)&start, (char *)end, NULL);
 
     ASSERT(fontdict && descriptor);
   }
@@ -562,6 +562,7 @@ CIDFont_cache_find (const char *map_name,
   opt->embed = (fmap_opt->flags & FONTMAP_OPT_NOEMBED) ? 0 : 1;
   opt->name  = NULL;
   opt->csi   = get_cidsysinfo(map_name, fmap_opt);
+  opt->stemv = fmap_opt->stemv;
 
   if (!opt->csi && cmap_csi) {
     /*

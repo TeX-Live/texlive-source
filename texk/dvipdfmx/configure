@@ -2198,7 +2198,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE=dvipdfmx
- VERSION=20071115
+ VERSION=20080520
 
 
 cat >>confdefs.h <<_ACEOF
@@ -3586,6 +3586,20 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
 fi
+
+# FIXME: we rely on the cache variable name because
+# there is no other way.
+set dummy $CC
+ac_cc=`echo $2 | sed 's/[^a-zA-Z0-9_]/_/g;s/^[0-9]/_/'`
+if eval "test \"`echo '$ac_cv_prog_cc_'${ac_cc}_c_o`\" != yes"; then
+   # Losing compiler, so override with the script.
+   # FIXME: It is wrong to rewrite CC.
+   # But if we don't then we get into trouble of one sort or another.
+   # A longer-term fix would be to have automake use am__CC in this case,
+   # and then we could set am__CC="\$(top_srcdir)/compile \$(CC)"
+   CC="$am_aux_dir/compile $CC"
+fi
+
 
 # FIXME: we rely on the cache variable name because
 # there is no other way.

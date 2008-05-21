@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dpxfile.c,v 1.16 2007/11/14 03:36:01 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dpxfile.c,v 1.23 2008/05/18 14:12:20 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -88,7 +88,7 @@ miktex_find_app_input_file (const char *progname, const char *filename, char *bu
 
   kpse_reset_program_name(progname);
   fqpn = kpse_find_file  (filename, kpse_program_text_format, false);
-  kpse_reset_program_name("dvipdfm");
+  kpse_reset_program_name(PACKAGE);
 
   if (!fqpn)
     return  0;
@@ -133,7 +133,8 @@ miktex_find_psheader_file (const char *filename, char *buf)
 static char  _tmpbuf[_MAX_PATH+1];
 #endif /* MIKTEX */
 
-#if  1
+
+/* ensuresuffix() returns a copy of basename if sfx is "". */
 static char *
 ensuresuffix (const char *basename, const char *sfx)
 {
@@ -147,7 +148,6 @@ ensuresuffix (const char *basename, const char *sfx)
 
   return  p;
 }
-#endif
 
 #ifdef  MIKTEX
 static char *
@@ -159,9 +159,9 @@ dpx_find__app__xyz (const char *filename,
   char  *q;
 
   q = ensuresuffix(filename, suffix);
-  r = miktex_find_app_input_file("dvipdfm", q, _tmpbuf);
+  r = miktex_find_app_input_file(PACKAGE, q, _tmpbuf);
   if (!r && strcmp(q, filename))
-    r = miktex_find_app_input_file("dvipdfm", filename, _tmpbuf);
+    r = miktex_find_app_input_file(PACKAGE, filename, _tmpbuf);
   if (r) {
     fqpn = NEW(strlen(_tmpbuf) + 1, char);
     strcpy(fqpn, _tmpbuf);
@@ -249,7 +249,7 @@ dpx_foolsearch (const char  *foolname,
                               kpse_program_text_format :
                               kpse_program_binary_format),
                           false);
-  kpse_reset_program_name("dvipdfm");
+  kpse_reset_program_name(PACKAGE);
 
   return  fqpn;
 }
@@ -264,22 +264,7 @@ static char *dpx_find_opentype_file (const char *filename);
 static char *dpx_find_truetype_file (const char *filename);
 static char *dpx_find_type1_file    (const char *filename);
 static char *dpx_find_iccp_file     (const char *filename);
-
-#if  0
-static char *dpx_find_fonts_map      (const char *filename);
-
-static char *dpx_find_fonts_enc      (const char *filename);
-static char *dpx_find_fonts_cmap     (const char *filename);
-
-static char *dpx_find_fonts_type1    (const char *filename);
-static char *dpx_find_fonts_truetype (const char *filename);
-static char *dpx_find_fonts_opentype (const char *filename);
-
-static char *dpx_find_unicode_agl    (const char *filename);
-static char *dpx_find_unicode_cmap   (const char *filename);
-
-static char *dpx_find_color_icc      (const char *filename);
-#endif
+static char *dpx_find_dfont_file    (const char *filename);
 
 FILE *
 dpx_open_file (const char *filename, int type)
@@ -317,19 +302,28 @@ dpx_open_file (const char *filename, int type)
   case DPX_RES_TYPE_ICCPROFILE:
     fqpn = dpx_find_iccp_file(filename);
     break;
+  case DPX_RES_TYPE_DFONT:
+    fqpn = dpx_find_dfont_file(filename);
+    break;
+  case DPX_RES_TYPE_BINARY:
+    fqpn = dpx_find__app__xyz(filename, "", 0);
+    break;
+  case DPX_RES_TYPE_TEXT:
+    fqpn = dpx_find__app__xyz(filename, "", 1);
+    break;
   default:
     ERROR("Unknown resource type: %d", type);
     break;
   }
   if (fqpn) {
     fp = MFOPEN(fqpn, FOPEN_RBIN_MODE);
-    free(fqpn);  /* no RELEASE because not allocated by NEW */
+    RELEASE(fqpn);
   }
 
   return  fp;
 }
 
-/* color/icc ? */
+
 static char *
 dpx_find_iccp_file (const char *filename)
 {
@@ -364,7 +358,7 @@ dpx_find_fontmap_file (const char *filename)
     fqpn = dpx_find__app__xyz(q, ".map", 1);
 #if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
     if (fqpn)
-      insistupdate(q, fqpn, "dvipdfm",
+      insistupdate(q, fqpn, PACKAGE,
                    kpse_program_text_format, kpse_fontmap_format); 
 #endif
   }
@@ -390,7 +384,7 @@ dpx_find_agl_file (const char *filename)
     fqpn = dpx_find__app__xyz(q, ".txt", 1);
 #if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
     if (fqpn)
-      insistupdate(q, fqpn, "dvipdfm",
+      insistupdate(q, fqpn, PACKAGE,
                    kpse_program_text_format, kpse_fontmap_format); 
 #endif
   }
@@ -407,7 +401,7 @@ dpx_find_cmap_file (const char *filename)
 {
   char  *fqpn = NULL;
   static const char *fools[] = {
-    "cmap", "dvipdfm", "tex", NULL
+    "cmap", "tex", NULL
   };
   int    i;
 
@@ -467,6 +461,7 @@ dpx_find_cmap_file (const char *filename)
   return  fqpn;
 }
 
+
 /* Search order:
  *   SFDFONTS (TDS 1.1)
  *   ttf2pk   (text file)
@@ -479,7 +474,7 @@ dpx_find_sfd_file (const char *filename)
   char  *fqpn = NULL;
   char  *q;
   static const char *fools[] = {
-    "ttf2pk", "ttf2tfm", "dvipdfm", NULL
+    "ttf2pk", "ttf2tfm", NULL
   };
   int    i;
 
@@ -505,13 +500,14 @@ dpx_find_sfd_file (const char *filename)
   return  fqpn;
 }
 
+
 static char *
 dpx_find_enc_file (const char *filename)
 {
   char  *fqpn = NULL;
   char  *q;
   static const char *fools[] = {
-    "dvips", "dvipdfm", NULL
+    "dvips", NULL
   };
   int    i;
 
@@ -544,6 +540,7 @@ dpx_find_enc_file (const char *filename)
   return  fqpn;
 }
 
+
 static char *
 dpx_find_type1_file (const char *filename)
 {
@@ -551,13 +548,13 @@ dpx_find_type1_file (const char *filename)
 
   fqpn = kpse_find_file(filename, kpse_type1_format, 0);
   if (fqpn && !qcheck_filetype(fqpn, DPX_RES_TYPE_T1FONT)) {
-    WARN("Found file \"%s\" for PFB font but it doesn't look like a PFB...", fqpn);
     RELEASE(fqpn);
     fqpn = NULL;
   }
 
   return  fqpn;
 }
+
 
 static char *
 dpx_find_truetype_file (const char *filename)
@@ -566,7 +563,6 @@ dpx_find_truetype_file (const char *filename)
 
   fqpn = kpse_find_file(filename, kpse_truetype_format, 0);
   if (fqpn && !qcheck_filetype(fqpn, DPX_RES_TYPE_TTFONT)) {
-    WARN("Found file \"%s\" for TrueType font but it doesn't look like a TrueType...", fqpn);
     RELEASE(fqpn);
     fqpn = NULL;
   }
@@ -580,35 +576,27 @@ dpx_find_opentype_file (const char *filename)
 {
   char  *fqpn = NULL;
   char  *q;
-  static const char *fools[] = {
-    "dvipdfm", NULL
-  };
-  int    i;
 
   q = ensuresuffix(filename, ".otf");
 #ifndef MIKTEX
 #if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
   fqpn = kpse_find_file(q, kpse_opentype_format, 0);
+  if (!fqpn) {
 #endif
 #endif
-
-  for (i = 0; !fqpn && fools[i]; i++) {
-    fqpn = dpx_foolsearch(fools[i], q, 0);
+    fqpn = dpx_foolsearch(PACKAGE, q, 0);
 #ifndef  MIKTEX
 #if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
     if (fqpn)
-      insistupdate(filename, fqpn, fools[i],
+      insistupdate(filename, fqpn, PACKAGE,
                    kpse_program_binary_format, kpse_opentype_format); 
-#endif
-#endif
   }
+#endif
+#endif
   RELEASE(q);
 
   /* *We* use "opentype" for ".otf" (CFF). */
   if (fqpn && !qcheck_filetype(fqpn, DPX_RES_TYPE_OTFONT)) {
-#if  0
-    WARN("Found file \"%s\" for OpenType font but it doesn't look like a .otf...", fqpn);
-#endif
     RELEASE(fqpn);
     fqpn = NULL;
   }
@@ -616,7 +604,28 @@ dpx_find_opentype_file (const char *filename)
   return  fqpn;
 }
 
+
+static char *
+dpx_find_dfont_file (const char *filename)
+{
+  char *fqpn = NULL;
+
+  fqpn = kpse_find_file(filename, kpse_truetype_format, 0);
+  if (fqpn) {
+    int len = strlen(fqpn);
+    if (len > 6 && strncmp(fqpn+len-6, ".dfont", 6)) {
+      RENEW(fqpn, len+6, char);
+      strcat(fqpn, "/rsrc");
+    }
+  }
+  if (!qcheck_filetype(fqpn, DPX_RES_TYPE_DFONT)) {
+    RELEASE(fqpn);
+    fqpn = NULL;
+  }
+  return fqpn;
+}
  
+
 #ifdef  HAVE_MKSTEMP
 #  include <stdlib.h>
 /* extern int mkstemp(const char *); */
@@ -634,7 +643,7 @@ dpx_create_temp_file (void)
 #if   defined(MIKTEX)
   {
     tmp = NEW(_MAX_PATH + 1, char);
-    miktex_create_temp_file(tmp); /* FIXME_FIXME */
+    miktex_create_temp_file_name(tmp); /* FIXME_FIXME */
   }
 #elif defined(HAVE_MKSTEMP)
 #  define __TMPDIR     "/tmp"
@@ -772,7 +781,6 @@ dpx_file_apply_filter (const char *cmdtmpl, const char *input, const char *outpu
 }
 #endif /* HAVE_SYSTEM */
 
-#if  1
 static char _sbuf[128];
 /*
  * SFNT type sigs:
@@ -867,6 +875,26 @@ ispscmap (FILE *fp)
   return  0;
 }
 
+static int
+isdfont (FILE *fp)
+{
+  int i, n;
+  unsigned long pos;
+
+  rewind(fp);
+
+  get_unsigned_quad(fp);
+  seek_absolute(fp, (pos = get_unsigned_quad(fp)) + 0x18);
+  seek_absolute(fp, pos + get_unsigned_pair(fp));
+  n = get_unsigned_pair(fp);
+  for (i = 0; i <= n; i++) {
+    if (get_unsigned_quad(fp) == 0x73666e74UL) /* "sfnt" */
+      return 1;
+    get_unsigned_quad(fp);
+  }
+  return 0;
+}
+      
 /* This actually opens files. */
 static int
 qcheck_filetype (const char *fqpn, int type)
@@ -895,11 +923,12 @@ qcheck_filetype (const char *fqpn, int type)
   case DPX_RES_TYPE_CMAP:
     r = ispscmap(fp);
     break;
+  case DPX_RES_TYPE_DFONT:
+    r = isdfont(fp);
+    break;
   }
   MFCLOSE(fp);
 
   return  r;
 }
-
-#endif  /* 1 */
 

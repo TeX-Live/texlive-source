@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencoding.c,v 1.6 2007/11/14 03:12:21 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencoding.c,v 1.9 2008/05/13 12:23:45 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2008 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -136,9 +136,18 @@ create_encoding_resource (pdf_encoding *encoding, pdf_encoding *baseenc)
     pdf_add_dict(resource, pdf_new_name("Differences"),  differences);
     return resource; 
   } else {
-    /* we must have a base encoding */
-    ASSERT(baseenc);
-    return pdf_link_obj(baseenc->resource);
+    /* Fix a bug with the MinionPro package using MnSymbol fonts
+     * in its virtual fonts:
+     *
+     * Some font may have font_id even if no character is used.
+     * For example, suppose that a virtual file A.vf uses two
+     * other fonts, B and C. Even if only characters of B are used
+     * in a DVI document, C will have font_id too.
+     * In this case, both baseenc and differences can be NULL.
+     *
+     * Actually these fonts will be ignored in pdffont.c.
+     */
+    return baseenc ? pdf_link_obj(baseenc->resource) : NULL;
   }
 }
 
@@ -312,7 +321,7 @@ load_encoding_file (const char *filename)
     enc_name = parse_pdf_name(&p, endptr);
 
   skip_white(&p, endptr);
-  encoding_array = parse_pdf_array(&p, endptr);
+  encoding_array = parse_pdf_array(&p, endptr, NULL);
   RELEASE(wbuf);
   if (!encoding_array) {
     if (enc_name)

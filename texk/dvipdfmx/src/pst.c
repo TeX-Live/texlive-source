@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pst.c,v 1.5 2004/07/27 12:08:47 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pst.c,v 1.6 2008/01/11 18:04:15 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -100,11 +100,14 @@ pst_parse_comment (unsigned char **inbuf, unsigned char *inbufend)
 }
 #endif
 
+/* NOTE: the input buffer must be null-terminated, i.e., *inbufend == 0 */
 pst_obj *
 pst_get_token (unsigned char **inbuf, unsigned char *inbufend)
 {
   pst_obj *obj = NULL;
   unsigned char c;
+
+  ASSERT(*inbuf <= inbufend && !*inbufend);
 
   skip_white_spaces(inbuf, inbufend);
   skip_comments(inbuf, inbufend);

@@ -1,12 +1,10 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_util.h,v 1.5 2008/02/13 20:22:21 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/xbb.h,v 1.1 2008/05/17 07:22:21 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2008 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
-    Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
-
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -22,21 +20,12 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-#ifndef _SPC_UTIL_H_
-#define _SPC_UTIL_H_
+#ifndef _XBB_H_
+#define _XBB_H_
 
-#include "pdfcolor.h"
-#include "pdfdev.h"
+#define EBB_OUTPUT 0
+#define XBB_OUTPUT 1
 
-#include "specials.h"
+extern int extractbb(int argc, char *argv[], int mode);
 
-/* syntax 1: ((rgb|cmyk|hsb|gray) colorvalues)|colorname
- * syntax 0: pdf_number|pdf_array
- *
- * This is for reading *single* color specification.
- */
-extern int  spc_util_read_colorspec (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *args, int syntax);
-extern int  spc_util_read_dimtrns   (struct spc_env *spe, transform_info *dimtrns, struct spc_arg *args, long *page, int syntax);
-extern int  spc_util_read_length    (struct spc_env *spe, double *length, struct spc_arg *ap);
-
-#endif /* _SPC_UTIL_H_ */
+#endif /* _XBB_H_ */

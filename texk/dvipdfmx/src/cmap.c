@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cmap.c,v 1.28 2004/09/05 13:30:05 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cmap.c,v 1.29 2007/12/03 03:10:43 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -616,7 +616,7 @@ CMap_add_bfrange (CMap *cmap,
   if (check_range(cmap, srclo, srchi, srcdim, base, dstdim) < 0)
     return -1;
 
-  if (cmap->mapTbl == NULL )
+  if (cmap->mapTbl == NULL)
     cmap->mapTbl = mapDef_new();
 
   cur = cmap->mapTbl;
@@ -624,12 +624,15 @@ CMap_add_bfrange (CMap *cmap,
     return -1;
 
   for (c = srclo[srcdim-1]; c <= srchi[srcdim-1]; c++) {
-    if (MAP_DEFINED(cur[c].flag)) {
-      if (!__silent)
-	WARN("Trying to redefine already defined code mapping. (ignored)");
-      continue;
+    /* According to 5014.CIDFont_Spec.pdf (p.52),
+     * Code mappings (unlike codespace ranges) may overlap,
+     * but succeeding maps superceded preceding maps.
+     * (reported and patched by Luo Jie on 2007/12/2)
+     */
+    if (!MAP_DEFINED(cur[c].flag) || cur[c].len < dstdim) {
+      cur[c].flag = (MAP_LOOKUP_END|MAP_IS_CODE);
+      cur[c].code = get_mem(cmap, dstdim);
     }
-
     /*
      * We assume restriction to code ranges also applied here.
      * Addition <00FF> + 1 is undefined.
@@ -638,9 +641,7 @@ CMap_add_bfrange (CMap *cmap,
      *
      *  Should be treated as <0100> in Acrobat's "ToUnicode" CMap.
      */
-    cur[c].flag = (MAP_LOOKUP_END|MAP_IS_CODE);
-    cur[c].code = get_mem(cmap, dstdim);
-    cur[c].len  = dstdim;
+    cur[c].len = dstdim;
     memcpy(cur[c].code, base, dstdim);
 
     last_byte = c - srclo[srcdim-1] + base[dstdim-1];

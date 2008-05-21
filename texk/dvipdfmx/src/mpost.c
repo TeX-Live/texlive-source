@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/mpost.c,v 1.37 2007/11/03 05:31:20 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/mpost.c,v 1.40 2008/05/17 01:17:27 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -348,6 +348,10 @@ skip_prolog (char **start, char *end)
 #define FSHOW		1001
 #define STEXFIG         1002
 #define ETEXFIG         1003
+#define HLW             1004
+#define VLW             1005
+#define RD              1006
+#define B               1007
 
 static struct operators 
 {
@@ -417,9 +421,34 @@ static struct operators
 };
 
 static struct operators mps_operators[] = {
-  {"fshow",       FSHOW},
+  {"fshow",       FSHOW}, /* exch findfont exch scalefont setfont show */
   {"startTexFig", STEXFIG},
-  {"endTexFig",   ETEXFIG}
+  {"endTexFig",   ETEXFIG},
+  {"hlw",         HLW}, /* 0 dtransform exch truncate exch idtransform pop setlinewidth */
+  {"vlw",         VLW}, /* 0 exch dtransform truncate idtransform pop setlinewidth pop */
+  {"l",           LINETO},
+  {"r",           RLINETO},
+  {"c",           CURVETO},
+  {"m",           MOVETO},
+  {"p",           CLOSEPATH},
+  {"n",           NEWPATH},
+  {"C",           SETCMYKCOLOR},
+  {"G",           SETGRAY},
+  {"R",           SETRGBCOLOR},
+  {"lj",          SETLINEJOIN},
+  {"ml",          SETMITERLIMIT},
+  {"lc",          SETLINECAP},
+  {"S",           STROKE},
+  {"F",           FILL},
+  {"q",           GSAVE},
+  {"Q",           GRESTORE},
+  {"s",           SCALE},
+  {"t",           CONCAT},
+  {"sd",          SETDASH},
+  {"rd",          RD}, /* [] 0 setdash */
+  {"P",           SHOWPAGE},
+  {"B",           B}, /* gsave fill grestore */
+  {"W",           CLIP}
 };
 
 #define NUM_PS_OPERATORS  (sizeof(ps_operators)/sizeof(ps_operators[0]))
@@ -800,19 +829,13 @@ do_show (void)
   return 0;
 }
 
-static const char *ps_code_fshow = "exch findfont exch scalefont setfont show";
-/*
- * string tfmname scale fshow -
- *
- * exch findfont exch scalefont setfont show
- */
 static int
-do_mpost_fshow (int opcode, double x_user, double y_user)
+do_mpost_bind_def (const char *ps_code, double x_user, double y_user)
 {
   int   error = 0;
   char *start, *end;
 
-  start = (char *) ps_code_fshow;
+  start = (char *) ps_code;
   end   = start + strlen(start);
 
   error = mp_parse_body(&start, end, x_user, y_user);
@@ -1190,8 +1213,7 @@ do_operator (const char *token, double x_user, double y_user)
       pdf_color_cmykcolor(&color,
 			  values[0], values[1],
 			  values[2], values[3]);
-      pdf_dev_setcolor(&color, 0);
-      pdf_dev_setcolor(&color, 1);
+      pdf_dev_set_color(&color);
     }
     break;
   case SETGRAY:
@@ -1199,8 +1221,7 @@ do_operator (const char *token, double x_user, double y_user)
     error = pop_get_numbers(values, 1);
     if (!error) {
       pdf_color_graycolor(&color, values[0]);
-      pdf_dev_setcolor(&color, 0);
-      pdf_dev_setcolor(&color, 1);
+      pdf_dev_set_color(&color);
     }
     break;
   case SETRGBCOLOR:
@@ -1208,8 +1229,7 @@ do_operator (const char *token, double x_user, double y_user)
     if (!error) {
       pdf_color_rgbcolor(&color,
 			 values[0], values[1], values[2]);
-      pdf_dev_setcolor(&color, 0);
-      pdf_dev_setcolor(&color, 1);
+      pdf_dev_set_color(&color);
     }
     break;
 
@@ -1331,12 +1351,23 @@ do_operator (const char *token, double x_user, double y_user)
 
     /* Extensions */
   case FSHOW:
-    error = do_mpost_fshow(opcode, x_user, y_user);
-    /* Treat fshow as a path terminator of sorts */
+    error = do_mpost_bind_def("exch findfont exch scalefont setfont show", x_user, y_user);
     break;
   case STEXFIG:
   case ETEXFIG:
     error = do_texfig_operator(opcode, x_user, y_user);
+    break;
+  case HLW:
+    error = do_mpost_bind_def("0 dtransform exch truncate exch idtransform pop setlinewidth", x_user, y_user);
+    break;
+  case VLW:
+    error = do_mpost_bind_def("0 exch dtransform truncate idtransform setlinewidth pop", x_user, y_user);
+    break;
+  case RD:
+    error = do_mpost_bind_def("[] 0 setdash", x_user, y_user);
+    break;
+  case B:
+    error = do_mpost_bind_def("gsave fill grestore", x_user, y_user);
     break;
 
   case DEF:
@@ -1391,33 +1422,19 @@ mp_parse_body (char **start, char *end, double x_user, double y_user)
        * This shouldn't use parse_pdf_array().
        */
     } else if (**start == '[' &&
-	       (obj = parse_pdf_array(start, end))) {
+	       (obj = parse_pdf_array(start, end, NULL))) {
       PUSH(obj);
       /* This cannot handle ASCII85 string. */
     } else if (*start < end - 1 &&
 	       (**start == '<' && *(*start+1) == '<') &&
-	       (obj = parse_pdf_dict(start, end))) {
+	       (obj = parse_pdf_dict(start, end, NULL))) {
       PUSH(obj);
     } else if ((**start == '(' || **start == '<') &&
 	       (obj = parse_pdf_string (start, end))) {
       PUSH(obj);
     } else if (**start == '/' &&
 	       (obj = parse_pdf_name(start, end))) {
-      /* Temporary implementation for mps files generated by mptopdf:
-       *   Just ignore the following command:
-       *   /fshow {exch findfont exch scalefont setfont show} bind def
-       */
-      if (strcmp(pdf_name_value(obj), "fshow") == 0) {
-        while (*start < end - 3) {
-          if (**start == 'd' && *(*start+1) == 'e' && *(*start+2) == 'f') {
-            *start += 3;
-            break;
-          }
-          (*start)++;
-        }
-      } else {
-        PUSH(obj);
-      }
+      PUSH(obj);
     } else {
       token = parse_ident(start, end);
       if (!token)
@@ -1463,7 +1480,7 @@ mps_exec_inline (char **p, char *endptr,
 
   autorotate = pdf_dev_get_param(PDF_DEV_PARAM_AUTOROTATE);
   pdf_dev_set_param(PDF_DEV_PARAM_AUTOROTATE, 0);
-  pdf_color_push(); /* ... */
+  //pdf_color_push(); /* ... */
 
   /* Comment in dvipdfm:
    * Remember that x_user and y_user are off by 0.02 %
@@ -1471,7 +1488,7 @@ mps_exec_inline (char **p, char *endptr,
   pdf_dev_moveto(x_user, y_user);
   error = mp_parse_body(p, endptr, x_user, y_user);
 
-  pdf_color_pop(); /* ... */
+  //pdf_color_pop(); /* ... */
   pdf_dev_set_param(PDF_DEV_PARAM_AUTOROTATE, autorotate);
   pdf_dev_set_dirmode(dirmode);
 
@@ -1536,7 +1553,7 @@ mps_include_page (const char *ident, FILE *fp)
   dirmode    = pdf_dev_get_dirmode();
   autorotate = pdf_dev_get_param(PDF_DEV_PARAM_AUTOROTATE);
   pdf_dev_set_param(PDF_DEV_PARAM_AUTOROTATE, 0);
-  pdf_color_push();
+  //pdf_color_push();
 
   form_id  = pdf_doc_begin_grabbing(ident, 0.0, 0.0, &(info.bbox));
 
@@ -1551,8 +1568,8 @@ mps_include_page (const char *ident, FILE *fp)
   RELEASE(buffer);
 
   if (error) {
-    WARN("Errors occured while interpreting PostScript file.");
-    WARN("Leaving garbage in output PDF file.");
+    WARN("Errors occured while interpreting MPS file.");
+    /* WARN("Leaving garbage in output PDF file."); */
     form_id = -1;
   }
 
@@ -1563,7 +1580,7 @@ mps_include_page (const char *ident, FILE *fp)
 
   pdf_doc_end_grabbing();
 
-  pdf_color_pop();
+  //pdf_color_pop();
   pdf_dev_set_param(PDF_DEV_PARAM_AUTOROTATE, autorotate);
   pdf_dev_set_dirmode(dirmode);
 

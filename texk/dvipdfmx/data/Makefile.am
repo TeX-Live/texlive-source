@@ -1,4 +1,4 @@
-configdatadir = $(datadir)/texmf/dvipdfm
+configdatadir = $(datadir)/texmf/dvipdfmx
 dist_configdata_DATA = \
   $(srcdir)/dvipdfmx.cfg
  

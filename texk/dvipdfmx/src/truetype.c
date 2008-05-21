@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/truetype.c,v 1.6 2007/11/14 03:12:21 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/truetype.c,v 1.9 2008/05/18 14:52:39 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -53,6 +53,8 @@
 
 #include "truetype.h"
 
+#include "tfm.h"
+
 /* Modifying this has no effect :P */
 #ifdef ENABLE_NOEMBED
 #  undef ENABLE_NOEMBED
@@ -62,7 +64,7 @@ int
 pdf_font_open_truetype (pdf_font *font)
 {
   char     *ident;
-  int       encoding_id;
+  int       index, encoding_id;
   pdf_obj  *fontdict, *descriptor;
   sfnt     *sfont;
   int       embedding = 1; /* Must be embedded. */
@@ -72,24 +74,34 @@ pdf_font_open_truetype (pdf_font *font)
   ASSERT( font );
 
   ident = pdf_font_get_ident(font);
+  index = pdf_font_get_index(font);
 
   ASSERT( ident );
 
   fp = DPXFOPEN(ident, DPX_RES_TYPE_TTFONT);
-  if (!fp)
-    return  -1;
+  if (!fp) {
+    fp = DPXFOPEN(ident, DPX_RES_TYPE_DFONT);
+    if (!fp) return  -1;
+    sfont = dfont_open(fp, index);
+  } else {
+    sfont = sfnt_open(fp);
+  }
 
-  sfont = sfnt_open(fp);
   if (!sfont) {
     WARN("Could not open TrueType font: %s", ident);
     DPXFCLOSE(fp);
     return  -1;
   }
 
-  if (sfont->type == SFNT_TYPE_TTC)
-    error = sfnt_read_table_directory(sfont, ttc_read_offset(sfont, 0));
-  else
-    error = sfnt_read_table_directory(sfont, 0);
+  if (sfont->type == SFNT_TYPE_TTC) {
+    unsigned long offset;
+    offset = ttc_read_offset(sfont, index);
+    if (offset == 0) ERROR("Invalid TTC index in %s.", ident);
+    error = sfnt_read_table_directory(sfont, offset);
+  } else {
+    error = sfnt_read_table_directory(sfont, sfont->offset);
+  }
+
   if (error) {
     sfnt_close(sfont);
     DPXFCLOSE(fp);
@@ -110,7 +122,7 @@ pdf_font_open_truetype (pdf_font *font)
 
   {
     pdf_obj  *tmp;
-    tmp  = tt_get_fontdesc(sfont, &embedding, 1);
+    tmp  = tt_get_fontdesc(sfont, &embedding, -1, 1);
     if (!tmp) {
       ERROR("Could not obtain neccesary font info.");
       sfnt_close(sfont);
@@ -205,7 +217,7 @@ static struct
   const char *name;
   int   must_exist;
 } required_table[] = {
-  {"OS/2", 1}, {"head", 1}, {"hhea", 1}, {"loca", 1}, {"maxp", 1},
+  {"OS/2", 0}, {"head", 1}, {"hhea", 1}, {"loca", 1}, {"maxp", 1},
   {"name", 1}, {"glyf", 1}, {"hmtx", 1}, {"fpgm", 0}, {"cvt ", 0},
   {"prep", 0}, {"cmap", 1}, {NULL, 0}
 };
@@ -213,13 +225,16 @@ static struct
 static void
 do_widths (pdf_font *font, double *widths)
 {
-  pdf_obj  *fontdict  = pdf_font_get_resource (font);
-  char     *usedchars = pdf_font_get_usedchars(font);
+  pdf_obj  *fontdict;
   pdf_obj  *tmparray;
-  int       code, firstchar, lastchar;
+  int       code, firstchar, lastchar, tfm_id;
+  char     *usedchars;
 
-  firstchar = 255; lastchar = 0;
-  for (code = 0; code < 256; code++) {
+  fontdict   = pdf_font_get_resource  (font);
+  usedchars  = pdf_font_get_usedchars (font);
+
+  tmparray = pdf_new_array();
+  for (firstchar = 255, lastchar = 0, code = 0; code < 256; code++) {
     if (usedchars[code]) {
       if (code < firstchar) firstchar = code;
       if (code > lastchar)  lastchar  = code;
@@ -227,23 +242,30 @@ do_widths (pdf_font *font, double *widths)
   }
   if (firstchar > lastchar) {
     WARN("No glyphs actually used???");
+    pdf_release_obj(tmparray);
     return;
   }
-
-  tmparray = pdf_new_array();
+  tfm_id = tfm_open(pdf_font_get_mapname(font), 0);
   for (code = firstchar; code <= lastchar; code++) {
-    if (usedchars[code])
+    if (usedchars[code]) {
+      double width;
+      if (tfm_id < 0) /* tfm is not found */
+        width = widths[code];
+      else
+        width = 1000. * tfm_get_width(tfm_id, code);
       pdf_add_array(tmparray,
-                    pdf_new_number(ROUND(widths[code], 1)));
-    else {
+                    pdf_new_number(ROUND(width, 1.0)));
+    } else {
       pdf_add_array(tmparray, pdf_new_number(0.0));
     }
   }
+
   if (pdf_array_length(tmparray) > 0) {
     pdf_add_dict(fontdict,
-                 pdf_new_name("Widths"), pdf_ref_obj(tmparray)); /* _FIXME_ */
+                 pdf_new_name("Widths"), pdf_ref_obj(tmparray));
   }
   pdf_release_obj(tmparray);
+
   pdf_add_dict(fontdict,
                pdf_new_name("FirstChar"), pdf_new_number(firstchar));
   pdf_add_dict(fontdict,
@@ -857,6 +879,7 @@ pdf_font_load_truetype (pdf_font *font)
 #ifdef  ENABLE_NOEMBED
   int        embedding   = pdf_font_get_flag(font, PDF_FONT_FLAG_NOEMBED) ? 0 : 1;
 #endif /* ENABLE_NOEMBED */
+  int        index       = pdf_font_get_index(font);
   char     **enc_vec;
   pdf_obj   *fontfile;
   FILE      *fp;
@@ -869,26 +892,35 @@ pdf_font_load_truetype (pdf_font *font)
   verbose = pdf_font_get_verbose();
 
   fp = DPXFOPEN(ident, DPX_RES_TYPE_TTFONT);
-  if (!fp)
-    ERROR("Unable to open TrueType font file: %s", ident); /* Should find *truetype* here */
+  if (!fp) {
+    fp = DPXFOPEN(ident, DPX_RES_TYPE_DFONT);
+    if (!fp) ERROR("Unable to open TrueType/dfont font file: %s", ident); /* Should find *truetype* here */
+    sfont = dfont_open(fp, index);
+  } else {
+    sfont = sfnt_open(fp);
+  }
 
-  sfont = sfnt_open(fp);
   if (!sfont) {
-    ERROR("Unable to open TrueType file: %s", ident);
+    ERROR("Unable to open TrueType/dfont file: %s", ident);
     DPXFCLOSE(fp);
     return  -1;
   } else if (sfont->type != SFNT_TYPE_TRUETYPE &&
-             sfont->type != SFNT_TYPE_TTC) { 
-    ERROR("Font \"%s\" not a TrueType font?", ident);
+             sfont->type != SFNT_TYPE_TTC &&
+             sfont->type != SFNT_TYPE_DFONT) { 
+    ERROR("Font \"%s\" not a TrueType/dfont font?", ident);
     sfnt_close(sfont);
     DPXFCLOSE(fp);
     return  -1;
   }
 
-  if (sfont->type == SFNT_TYPE_TTC)
-    error = sfnt_read_table_directory(sfont, ttc_read_offset(sfont, 0));
-  else
-    error = sfnt_read_table_directory(sfont, 0);
+  if (sfont->type == SFNT_TYPE_TTC) {
+    unsigned long offset;
+    offset = ttc_read_offset(sfont, index);
+    if (offset == 0) ERROR("Invalid TTC index in %s.", ident);
+    error = sfnt_read_table_directory(sfont, ttc_read_offset(sfont, offset));
+  } else {
+    error = sfnt_read_table_directory(sfont, sfont->offset);
+  }
 
   if (error) {
     ERROR("Reading SFND table dir failed for font-file=\"%s\"... Not a TrueType font?", ident);

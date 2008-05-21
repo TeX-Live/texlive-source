@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/otl_conf.c,v 1.6 2005/07/17 09:53:38 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/otl_conf.c,v 1.8 2008/05/18 12:05:22 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -460,31 +460,16 @@ otl_read_conf (const char *conf_name)
   pdf_obj *rule;
   pdf_obj *gclass;
   FILE    *fp;
-  char    *fullname, *filename;
-  char    *wbuf, *p, *endptr;
+  char    *filename, *wbuf, *p, *endptr;
   long     size, len;
 
   filename = NEW(strlen(conf_name)+strlen(".otl")+1, char);
   strcpy(filename, conf_name);
   strcat(filename, ".otl");
-#ifdef MIKTEX
-  if (!miktex_find_app_input_file("dvipdfm", filename, work_buffer))
-    fullname = NULL;
-  else {
-    fullname = work_buffer;
-  }
-#else /* !MIKTEX */
-  fullname = kpse_find_file(filename, kpse_program_text_format, 0);
-#endif
-  RELEASE(filename);
-  if (!fullname) {
-    WARN("Layout file %s not found.", conf_name);
-    return NULL;
-  }
 
-  fp = MFOPEN(fullname, FOPEN_RBIN_MODE);
+  fp = DPXFOPEN(filename, DPX_RES_TYPE_TEXT);
   if (!fp) {
-    RELEASE(fullname);
+    RELEASE(filename);
     return NULL;
   }
 
@@ -494,8 +479,9 @@ otl_read_conf (const char *conf_name)
   if (verbose > VERBOSE_LEVEL_MIN) {
     MESG("\n");
     MESG("otl_conf>> Layout config. \"%s\" found: file=\"%s\" (%ld bytes)\n",
-	 conf_name, fullname, size);
+	 conf_name, filename, size);
   }
+  RELEASE(filename);
   if (size < 1)
     return NULL;
 

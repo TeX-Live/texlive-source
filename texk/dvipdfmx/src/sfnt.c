@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/sfnt.c,v 1.12 2004/09/11 14:50:29 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/sfnt.c,v 1.13 2008/05/08 18:51:59 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -79,6 +79,64 @@ sfnt_open (FILE *fp)
   rewind(sfont->stream);
 
   sfont->directory = NULL;
+  sfont->offset = 0UL;
+
+  return sfont;
+}
+
+sfnt *
+dfont_open (FILE *fp, int index)
+{
+  sfnt  *sfont;
+  ULONG  rdata_pos, map_pos, tags_pos, types_pos, res_pos, tag, type;
+  USHORT tags_num, types_num, i;
+
+  ASSERT(fp);
+
+  rewind(fp);
+
+  sfont = NEW(1, sfnt);
+
+  sfont->stream = fp;
+
+  rdata_pos = sfnt_get_ulong(sfont);
+  map_pos   = sfnt_get_ulong(sfont);
+  sfnt_seek_set(sfont, map_pos + 0x18);
+  tags_pos = map_pos + sfnt_get_ushort(sfont);
+  sfnt_seek_set(sfont, tags_pos);
+  tags_num = sfnt_get_ushort(sfont);
+
+  for (i = 0; i <= tags_num; i++) {
+    tag = sfnt_get_ulong(sfont); /* tag name */
+    types_num = sfnt_get_ushort(sfont); /* typefaces number */
+    types_pos = tags_pos + sfnt_get_ushort(sfont); /* typefaces position */
+    if (tag == 0x73666e74UL) /* "sfnt" */
+      break;
+  }
+
+  if (i > tags_num) {
+    RELEASE(sfont);
+    return NULL;
+  }
+
+  sfnt_seek_set(sfont, types_pos);
+  if (index > types_num) {
+    ERROR("Invalid index %d for dfont.", index);
+  }
+
+  for (i = 0; i <= types_num; i++) {
+    sfnt_get_ushort(sfont); /* resource id */
+    sfnt_get_ushort(sfont); /* resource name position from name_list */
+    res_pos = sfnt_get_ulong(sfont);   /* resource flag (byte) + resource offset */
+    sfnt_get_ulong(sfont);  /* mbz */
+    if (i == index) break;
+  }
+
+  rewind(sfont->stream);
+
+  sfont->type = SFNT_TYPE_DFONT;
+  sfont->directory = NULL;
+  sfont->offset = (res_pos & 0x00ffffffUL) + rdata_pos + 4;
 
   return sfont;
 }
@@ -325,9 +383,10 @@ sfnt_read_table_directory (sfnt *sfont, ULONG offset)
 
     convert_tag(td->tables[i].tag, u_tag);
     td->tables[i].check_sum = sfnt_get_ulong(sfont);
-    td->tables[i].offset    = sfnt_get_ulong(sfont);
+    td->tables[i].offset    = sfnt_get_ulong(sfont) + sfont->offset;
     td->tables[i].length    = sfnt_get_ulong(sfont);
     td->tables[i].data      = NULL;
+//fprintf(stderr, "[%4s:%x]", td->tables[i].tag, td->tables[i].offset);
 
     td->flags[i] = 0;
   }

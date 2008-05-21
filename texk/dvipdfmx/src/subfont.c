@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/subfont.c,v 1.21 2007/11/14 03:36:01 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/subfont.c,v 1.22 2008/01/13 21:25:31 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -19,6 +19,8 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
+
+#include <errno.h>
 
 #if HAVE_CONFIG_H
 #include "config.h"

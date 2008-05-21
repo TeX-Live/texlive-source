@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/type1c.c,v 1.22 2007/11/14 03:12:21 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/type1c.c,v 1.26 2008/05/18 17:05:56 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2008 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -63,6 +63,8 @@
 #include "cs_type2.h"
 
 #include "type1c.h"
+
+#include "tfm.h"
 
 int
 pdf_font_open_type1c (pdf_font *font)
@@ -135,7 +137,7 @@ pdf_font_open_type1c (pdf_font *font)
    * Create font descriptor from OpenType tables.
    * We can also use CFF TOP DICT/Private DICT for this.
    */
-  tmp = tt_get_fontdesc(sfont, &embedding, 1);
+  tmp = tt_get_fontdesc(sfont, &embedding, -1, 1);
   if (!tmp) {
     ERROR("Could not obtain neccesary font info from OpenType table.");
     return -1;
@@ -153,15 +155,26 @@ pdf_font_open_type1c (pdf_font *font)
 }
 
 static void
-add_SimpleMetrics (pdf_font *font, double *widths, card16 num_glyphs)
+add_SimpleMetrics (pdf_font *font, cff_font *cffont,
+		   double *widths, card16 num_glyphs)
 {
   pdf_obj *fontdict;
-  int      code, firstchar, lastchar;
+  int      code, firstchar, lastchar, tfm_id;
   char    *usedchars;
   pdf_obj *tmp_array;
+  double   scaling;
 
   fontdict  = pdf_font_get_resource(font);
   usedchars = pdf_font_get_usedchars(font);
+
+  /* The widhts array in the font dictionary must be given relative
+   * to the default scaling of 1000:1, not relative to the scaling
+   * given by the font matrix.
+   */
+  if (cff_dict_known(cffont->topdict, "FontMatrix"))
+    scaling = 1000*cff_dict_get(cffont->topdict, "FontMatrix", 0);
+  else
+    scaling = 1;
 
   tmp_array = pdf_new_array();
   if (num_glyphs <= 1) {
@@ -181,15 +194,22 @@ add_SimpleMetrics (pdf_font *font, double *widths, card16 num_glyphs)
       pdf_release_obj(tmp_array);
       return;
     }
+    tfm_id = tfm_open(pdf_font_get_mapname(font), 0);
     for (code = firstchar; code <= lastchar; code++) {
       if (usedchars[code]) {
+        double width;
+        if (tfm_id < 0) /* tfm is not found */
+          width = scaling * widths[code];
+        else
+          width = 1000. * tfm_get_width(tfm_id, code);
 	pdf_add_array(tmp_array,
-		      pdf_new_number(ROUND(widths[code], 1.0)));
+		      pdf_new_number(ROUND(width, 1.0)));
       } else {
 	pdf_add_array(tmp_array, pdf_new_number(0.0));
       }
     }
   }
+
   if (pdf_array_length(tmp_array) > 0) {
     pdf_add_dict(fontdict,
 		 pdf_new_name("Widths"),  pdf_ref_obj(tmp_array));
@@ -687,7 +707,7 @@ pdf_font_load_type1c (pdf_font *font)
   }
 
   /* Handle Widths in fontdict. */
-  add_SimpleMetrics(font, widths, num_glyphs);
+  add_SimpleMetrics(font, cffont, widths, num_glyphs);
 
   /*
    * CharSet might be recommended for subsetted font, but it is meaningful

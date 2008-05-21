@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_util.c,v 1.8 2007/04/24 09:29:39 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_util.c,v 1.11 2008/03/01 09:00:31 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -396,9 +396,8 @@ spc_read_dimtrns_dvips (struct spc_env *spe, transform_info *t, struct spc_arg *
       spc_warn(spe, "Missing value for dimension/transformation: %s", kp);
       error = -1;
     }
-
+    RELEASE(kp);
     if (!vp || error) {
-      RELEASE(kp);
       break;
     }
 
@@ -461,7 +460,7 @@ spc_read_dimtrns_dvips (struct spc_env *spe, transform_info *t, struct spc_arg *
 
 
 static int
-spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *ap)
+spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *ap, long *page_no)
 {
   int     has_scale, has_xscale, has_yscale, has_rotate, has_matrix;
   const char *_dtkeys[] = {
@@ -478,6 +477,11 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
     "bbox", /* See "Dvipdfmx User's Manual", p.5 */
 #define  K_TRN__MATRIX 8
     "matrix",
+#undef  K__CLIP
+#define  K__CLIP       9
+    "clip",
+#define  K__PAGE       10
+    "page",
      NULL
   };
   double xscale, yscale, rotate;
@@ -485,6 +489,7 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
 
   has_xscale = has_yscale = has_scale = has_rotate = has_matrix = 0;
   xscale = yscale = 1.0; rotate = 0.0;
+  p->flags |= INFO_DO_CLIP;   /* default: do clipping */
 
   skip_blank(&ap->curptr, ap->endptr);
 
@@ -562,7 +567,6 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
           p->bbox.urx = v[2];
           p->bbox.ury = v[3];
           p->flags   |= INFO_HAS_USER_BBOX;
-          p->flags   |= INFO_DO_CLIP; /* always clip */
         }
       }
       break;
@@ -575,6 +579,27 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
           pdf_setmatrix(&(p->matrix), v[0], v[1], v[2], v[3], v[4], v[5]);
           has_matrix = 1;
         }
+      }
+      break;
+    case  K__CLIP:
+      vp = parse_float_decimal(&ap->curptr, ap->endptr);
+      if (!vp)
+        error = -1;
+      else {
+	if (atof(vp))
+	  p->flags |= INFO_DO_CLIP;
+	else
+	  p->flags &= ~INFO_DO_CLIP;
+	RELEASE(vp);
+      }
+      break;
+    case  K__PAGE:
+      {
+	double page;
+	if (page_no && spc_util_read_numbers(&page, 1, spe, ap) == 1)
+	  *page_no = (long) page;
+	else
+	  error = -1;
       }
       break;
     default:
@@ -611,18 +636,23 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
     make_transmatrix(&(p->matrix), 0.0, 0.0, xscale, yscale, rotate);
   }
 
+  if (!(p->flags & INFO_HAS_USER_BBOX)) {
+    p->flags &= ~INFO_DO_CLIP;    /* no clipping needed */
+  }
+
   return  error;
 }
 
 int
-spc_util_read_dimtrns (struct spc_env *spe, transform_info *ti, struct spc_arg *args, int syntax)
+spc_util_read_dimtrns (struct spc_env *spe, transform_info *ti, struct spc_arg *args, long *page_no, int syntax)
 {
   ASSERT(ti && spe && args);
 
   if (syntax) {
+    ASSERT(!page_no);
     return  spc_read_dimtrns_dvips(spe, ti, args);
   } else {
-    return  spc_read_dimtrns_pdfm (spe, ti, args);
+    return  spc_read_dimtrns_pdfm (spe, ti, args, page_no);
   }
 
   return  -1;

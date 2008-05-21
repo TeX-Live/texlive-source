@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/fontmap.h,v 1.19 2005/07/30 11:44:18 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/fontmap.h,v 1.22 2008/05/18 08:09:09 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -29,7 +29,6 @@
 #define FONTMAP_RMODE_APPEND  '+'
 #define FONTMAP_RMODE_REMOVE  '-'
 
-#define FONTMAP_OPT_REMAP   (1 << 0)
 #define FONTMAP_OPT_NOEMBED (1 << 1)
 #define FONTMAP_OPT_VERT    (1 << 2)
 
@@ -53,6 +52,7 @@ typedef struct fontmap_opt {
   char  *charcoll;    /* Adobe-Japan1-4, etc. */
   int    index;       /* TTC index */
   int    style;       /* ,Bold, etc. */
+  int    stemv;       /* StemV value especially for CJK fonts */
 } fontmap_opt;
 
 typedef struct fontmap_rec {
@@ -82,12 +82,13 @@ extern void         pdf_init_fontmap_record   (fontmap_rec *mrec);
 extern void         pdf_clear_fontmap_record  (fontmap_rec *mrec);
 
 extern int          pdf_load_fontmap_file     (const char  *filename, int mode);
-extern int          pdf_read_fontmap_line     (fontmap_rec *mrec,
-                                               const char  *mline, long mline_strlen);
+extern int          pdf_read_fontmap_line     (fontmap_rec *mrec, const char *mline, long mline_strlen, int format);
 
 extern int          pdf_append_fontmap_record (const char  *kp, const fontmap_rec *mrec);
 extern int          pdf_remove_fontmap_record (const char  *kp);
 extern int          pdf_insert_fontmap_record (const char  *kp, const fontmap_rec *mrec);
 extern fontmap_rec *pdf_lookup_fontmap_record (const char  *kp);
+
+extern int          is_pdfm_mapline           (const char  *mline);
 
 #endif /* _FONTMAP_H_ */

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_misc.c,v 1.6 2005/08/08 18:00:11 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_misc.c,v 1.7 2008/02/13 20:22:21 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -134,7 +134,7 @@ spc_handler_postscriptbox (struct spc_env *spe, struct spc_arg *ap)
   }
   MFCLOSE(fp);
 
-  form_id = pdf_ximage_findresource(filename);
+  form_id = pdf_ximage_findresource(filename, 0);
   if (form_id < 0) {
     spc_warn(spe, "Failed to load image file: %s", filename);
     return  -1;

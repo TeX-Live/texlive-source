@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/tt_table.c,v 1.8 2007/02/14 05:56:43 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/tt_table.c,v 1.9 2008/05/08 10:32:09 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -346,51 +346,67 @@ tt_read_os2__table (sfnt *sfont)
   struct tt_os2__table *table = NULL;
   int    i;
 
-  sfnt_locate_table(sfont, "OS/2");
-
   table = NEW(1, struct tt_os2__table);
-  table->version       = sfnt_get_ushort(sfont);
-  table->xAvgCharWidth = sfnt_get_short(sfont);
-  table->usWeightClass = sfnt_get_ushort(sfont);
-  table->usWidthClass  = sfnt_get_ushort(sfont);
-  table->fsType        = sfnt_get_short(sfont);
-  table->ySubscriptXSize   = sfnt_get_short(sfont);
-  table->ySubscriptYSize   = sfnt_get_short(sfont);
-  table->ySubscriptXOffset = sfnt_get_short(sfont);
-  table->ySubscriptYOffset = sfnt_get_short(sfont);
-  table->ySuperscriptXSize = sfnt_get_short(sfont);
-  table->ySuperscriptYSize = sfnt_get_short(sfont);
-  table->ySuperscriptXOffset = sfnt_get_short(sfont);
-  table->ySuperscriptYOffset = sfnt_get_short(sfont);
-  table->yStrikeoutSize      = sfnt_get_short(sfont);
-  table->yStrikeoutPosition  = sfnt_get_short(sfont);
-  table->sFamilyClass        = sfnt_get_short(sfont);
-  for (i = 0; i < 10; i++) {
-    table->panose[i] = sfnt_get_byte(sfont);
-  }
-  table->ulUnicodeRange1 = sfnt_get_ulong(sfont);
-  table->ulUnicodeRange2 = sfnt_get_ulong(sfont);
-  table->ulUnicodeRange3 = sfnt_get_ulong(sfont);
-  table->ulUnicodeRange4 = sfnt_get_ulong(sfont);
-  for (i = 0; i < 4; i++) {
-    table->achVendID[i] = sfnt_get_char(sfont);
-  }
-  table->fsSelection      = sfnt_get_ushort(sfont);
-  table->usFirstCharIndex = sfnt_get_ushort(sfont);
-  table->usLastCharIndex  = sfnt_get_ushort(sfont);
-  table->sTypoAscender    = sfnt_get_short(sfont);
-  table->sTypoDescender   = sfnt_get_short(sfont);
-  table->sTypoLineGap     = sfnt_get_short(sfont);
-  table->usWinAscent      = sfnt_get_ushort(sfont);
-  table->usWinDescent     = sfnt_get_ushort(sfont);
-  table->ulCodePageRange1 = sfnt_get_ulong(sfont);
-  table->ulCodePageRange2 = sfnt_get_ulong(sfont);
-  if (table->version == 0x0002) {
-    table->sxHeight      = sfnt_get_short(sfont);
-    table->sCapHeight    = sfnt_get_short(sfont);
-    table->usDefaultChar = sfnt_get_ushort(sfont);
-    table->usBreakChar   = sfnt_get_ushort(sfont);
-    table->usMaxContext  = sfnt_get_ushort(sfont);
+
+  if (sfnt_find_table_pos(sfont, "OS/2") > 0) {
+    sfnt_locate_table(sfont, "OS/2");
+    table->version       = sfnt_get_ushort(sfont);
+    table->xAvgCharWidth = sfnt_get_short(sfont);
+    table->usWeightClass = sfnt_get_ushort(sfont);
+    table->usWidthClass  = sfnt_get_ushort(sfont);
+    table->fsType        = sfnt_get_short(sfont);
+    table->ySubscriptXSize   = sfnt_get_short(sfont);
+    table->ySubscriptYSize   = sfnt_get_short(sfont);
+    table->ySubscriptXOffset = sfnt_get_short(sfont);
+    table->ySubscriptYOffset = sfnt_get_short(sfont);
+    table->ySuperscriptXSize = sfnt_get_short(sfont);
+    table->ySuperscriptYSize = sfnt_get_short(sfont);
+    table->ySuperscriptXOffset = sfnt_get_short(sfont);
+    table->ySuperscriptYOffset = sfnt_get_short(sfont);
+    table->yStrikeoutSize      = sfnt_get_short(sfont);
+    table->yStrikeoutPosition  = sfnt_get_short(sfont);
+    table->sFamilyClass        = sfnt_get_short(sfont);
+    for (i = 0; i < 10; i++) {
+      table->panose[i] = sfnt_get_byte(sfont);
+    }
+    table->ulUnicodeRange1 = sfnt_get_ulong(sfont);
+    table->ulUnicodeRange2 = sfnt_get_ulong(sfont);
+    table->ulUnicodeRange3 = sfnt_get_ulong(sfont);
+    table->ulUnicodeRange4 = sfnt_get_ulong(sfont);
+    for (i = 0; i < 4; i++) {
+      table->achVendID[i] = sfnt_get_char(sfont);
+    }
+    table->fsSelection      = sfnt_get_ushort(sfont);
+    table->usFirstCharIndex = sfnt_get_ushort(sfont);
+    table->usLastCharIndex  = sfnt_get_ushort(sfont);
+    table->sTypoAscender    = sfnt_get_short(sfont);
+    table->sTypoDescender   = sfnt_get_short(sfont);
+    table->sTypoLineGap     = sfnt_get_short(sfont);
+    table->usWinAscent      = sfnt_get_ushort(sfont);
+    table->usWinDescent     = sfnt_get_ushort(sfont);
+    table->ulCodePageRange1 = sfnt_get_ulong(sfont);
+    table->ulCodePageRange2 = sfnt_get_ulong(sfont);
+    if (table->version == 0x0002) {
+      table->sxHeight      = sfnt_get_short(sfont);
+      table->sCapHeight    = sfnt_get_short(sfont);
+      table->usDefaultChar = sfnt_get_ushort(sfont);
+      table->usBreakChar   = sfnt_get_ushort(sfont);
+      table->usMaxContext  = sfnt_get_ushort(sfont);
+    }
+  } else {
+    /* used in add_CIDVMetrics() of cidtype0.c */
+    table->sTypoAscender  = 880;
+    table->sTypoDescender = -120;
+    /* used in tt_get_fontdesc() of tt_aux.c */
+    table->usWeightClass = 400U; /* Normal(Regular) */
+    table->xAvgCharWidth = 0; /* ignore */
+    table->version = 0; /* TrueType rev 1.5 */
+    table->fsType = 0; /* Installable Embedding */
+    table->fsSelection = 0U; /* All undefined */
+    table->sFamilyClass = 0; /* No Classification */
+    for (i = 0; i < 10; i++) {
+      table->panose[i] = 0; /* All Any */
+    }
   }
 
   return table;

@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.47 2007/11/14 03:36:01 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.52 2008/05/20 13:05:14 matthias Exp $
  
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2008 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -55,10 +55,10 @@
 
 #include "pdflimits.h"
 
-#ifndef NO_THUMBNAIL
+#if HAVE_LIBPNG
 #include "pngimage.h"
+#endif
 #include "jpegimage.h"
-#endif /* !NO_THUMBNAIL */
 
 #include "pdfdoc.h"
 
@@ -68,87 +68,40 @@
 
 static int verbose = 0;
 
-#ifndef NO_THUMBNAIL
-static char  thumb_enabled  = 0;
+static char  manual_thumb_enabled  = 0;
 static char *thumb_basename = NULL;
-static char  thumb_remove   = 0;
 
 void
-pdf_doc_enable_thumbnails (int t_remove)
+pdf_doc_enable_manual_thumbnails (void)
 {
 #if HAVE_LIBPNG
-  thumb_enabled = 1;
-  thumb_remove  = t_remove;
+  manual_thumb_enabled = 1;
 #else
-  WARN("Thumbnail support not available without PNG support.");
+  WARN("Manual thumbnail is not supported without the libpng library.");
 #endif
 }
 
-#define DEFAULT_TMPDIR "/tmp"
-static char *
-guess_thumb_name (const char *thumb_filename)
-{
-  /* Build path name for anticipated thumbnail image */
-  char *tmpdir, *tmpname;
-
-  if (!(tmpdir = getenv("TMP")) &&
-      !(tmpdir = getenv("TEMP"))) 
-    tmpdir = (char *) DEFAULT_TMPDIR;
-  tmpname = NEW(strlen(tmpdir) +
-		strlen(thumb_filename) + strlen(DIR_SEP_STRING) + 1,
-		char);
-  strcpy(tmpname, tmpdir);
-  if (!IS_DIR_SEP(tmpname[strlen(tmpname)-1])) {
-    strcat(tmpname, DIR_SEP_STRING);
-  }
-  strcat(tmpname, thumb_filename);
-
-  return tmpname;
-}
-
-#ifndef HAVE_LIBPNG
-static pdf_obj *
-read_thumbnail (const char *thumb_filename) 
-{
-  WARN("Thumbnail support not available without PNG support.");
-}
-#else  /* HAVE_LIBPNG */
 static pdf_obj *
 read_thumbnail (const char *thumb_filename) 
 {
   pdf_obj *image_ref;
   int      xobj_id;
-  char    *guess_filename = NULL;
   int      found_in_cwd = 0;
   FILE    *fp;
 
-  guess_filename = guess_thumb_name(thumb_filename);
-  if ((fp = MFOPEN(thumb_filename, FOPEN_RBIN_MODE))) {
-    found_in_cwd = 1;
-  } else {
-    fp = MFOPEN(guess_filename, FOPEN_RBIN_MODE);
-  }
-
+  fp = MFOPEN(thumb_filename, FOPEN_RBIN_MODE);
   if (!fp) {
     WARN("Could not open thumbnail file \"%s\"", thumb_filename);
-    if (guess_filename)
-      RELEASE(guess_filename);
     return NULL;
-  } else if (!check_for_png(fp) && !check_for_jpeg(fp)) {
+  }
+  if (!check_for_png(fp) && !check_for_jpeg(fp)) {
     WARN("Thumbnail \"%s\" not a png/jpeg file!", thumb_filename);
     MFCLOSE(fp);
-    if (guess_filename)
-      RELEASE(guess_filename);
     return NULL;
   }
   MFCLOSE(fp);
 
-  if (found_in_cwd) {
-    xobj_id = pdf_ximage_findresource(thumb_filename);
-  } else {
-    xobj_id = pdf_ximage_findresource(guess_filename);
-  }
-
+  xobj_id = pdf_ximage_findresource(thumb_filename, 0);
   if (xobj_id < 0) {
     WARN("Could not read thumbnail file \"%s\".", thumb_filename);
     image_ref = NULL;
@@ -156,24 +109,8 @@ read_thumbnail (const char *thumb_filename)
     image_ref = pdf_ximage_get_reference(xobj_id);
   }
 
-  if (thumb_remove && found_in_cwd) {
-    if (verbose > 1)
-      MESG("\ndeleting thumbnail file \"%s\"...\n", thumb_filename);
-    remove(thumb_filename);
-  } else if (thumb_remove) {
-    if (verbose > 1)
-      MESG("\ndeleting thumbnail file \"%s\"...\n", guess_filename);
-    remove(guess_filename);
-  }
-
-  if (guess_filename)
-    RELEASE(guess_filename);
-
   return image_ref;
 }
-
-#endif /* HAVE_LIBPNG */
-#endif /* !NO_THUMBNAIL */
 
 void
 pdf_doc_set_verbose (void)
@@ -1335,10 +1272,10 @@ pdf_doc_add_annot (unsigned page_no, const pdf_rect *rect, pdf_obj *annot_dict)
 #endif
 
   rect_array = pdf_new_array();
-  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->llx - annot_grow, 0.01)));
-  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->lly - annot_grow, 0.01)));
-  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->urx + annot_grow, 0.01)));
-  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->ury + annot_grow, 0.01)));
+  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->llx - annot_grow, 0.001)));
+  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->lly - annot_grow, 0.001)));
+  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->urx + annot_grow, 0.001)));
+  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->ury + annot_grow, 0.001)));
   pdf_add_dict (annot_dict, pdf_new_name("Rect"), rect_array);
 
   pdf_add_array(page->annots, pdf_ref_obj(annot_dict));
@@ -1905,8 +1842,7 @@ pdf_doc_finish_page (pdf_doc *p)
     currentpage->resources = NULL;
   }
 
-#ifndef NO_THUMBNAIL
-  if (thumb_enabled) {
+  if (manual_thumb_enabled) {
     char    *thumb_filename;
     pdf_obj *thumb_ref;
 
@@ -1918,7 +1854,6 @@ pdf_doc_finish_page (pdf_doc *p)
     if (thumb_ref)
       pdf_add_dict(currentpage->page_obj, pdf_new_name("Thumb"), thumb_ref);
   }
-#endif /* !NO_THUMBNAIL */
 
   p->pages.num_entries++;
 
@@ -1962,10 +1897,10 @@ doc_fill_page_background (pdf_doc *p)
   currentpage->contents = currentpage->background;
 
   pdf_dev_gsave();
-  pdf_color_push();
-  pdf_dev_setcolor(&bgcolor, 1); /* is_fill */
+  //pdf_color_push();
+  pdf_dev_set_nonstrokingcolor(&bgcolor);
   pdf_dev_rectfill(r.llx, r.lly, r.urx - r.llx, r.ury - r.lly);
-  pdf_color_pop();
+  //pdf_color_pop();
   pdf_dev_grestore();
 
   currentpage->contents = saved_content;
@@ -2024,7 +1959,7 @@ static char *doccreator = NULL; /* Ugh */
 
 void
 pdf_open_document (const char *filename,
-		   int do_encryption, int do_objstm,
+		   int do_encryption,
                    double media_width, double media_height,
                    double annot_grow_amount, int bookmark_open_depth)
 {
@@ -2062,12 +1997,8 @@ pdf_open_document (const char *filename,
     pdf_release_obj(encrypt);
   }
 
-  if (do_objstm)
-    pdf_objstm_init();
-
-#ifndef NO_THUMBNAIL
   /* Create a default name for thumbnail image files */
-  if (thumb_enabled) {
+  if (manual_thumb_enabled) {
     if (strlen(filename) > 4 &&
         !strncmp(".pdf", filename + strlen(filename) - 4, 4)) {
       thumb_basename = NEW(strlen(filename)-4+1, char);
@@ -2078,7 +2009,6 @@ pdf_open_document (const char *filename,
       strcpy(thumb_basename, filename);
     }
   }
-#endif /* !NO_THUMBNAIL */
 
   p->pending_forms = NULL;
    
@@ -2121,13 +2051,8 @@ pdf_close_document (void)
 
   pdf_out_flush();
 
-#ifndef NO_THUMBNAIL
-  if (thumb_basename) {
+  if (thumb_basename)
     RELEASE(thumb_basename);
-  }
-#endif /* !NO_THUMBNAIL */
-
-  pdf_objstm_close();
 
   return;
 }

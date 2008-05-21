@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/tfm.c,v 1.21 2005/07/27 15:47:44 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/tfm.c,v 1.22 2007/11/17 18:08:58 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -905,6 +905,8 @@ tfm_open (const char *tfm_name, int must_exist)
     if (verbose > 1)
       MESG("[%s]", file_name);
   }
+
+  RELEASE(file_name);
 
   tfm_file_size = file_size(tfm_file);
   if (tfm_file_size < 24) {

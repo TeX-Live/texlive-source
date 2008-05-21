@@ -39,9 +39,8 @@ dviljk - Joachim Schrod
 dvipdfm - now moribund, but until dvipdfmx is a 100% replacement we
   cannot drop it.
 
-dvipdfmx 20070518 - ok 21apr08
+dvipdfmx 20080520 - ok 21may08
   http://project.ktug.or.kr/dvipdfmx/snapshot/current/
-  -> http://www.ctan.org/tex-archive/dviware/dvipdfmx/
   dvipdfmx@project.ktug.or.kr (ChoF, Hirata, Matthias)
 
 dvipng 1.11 - ok 15may08

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdev.c,v 1.61 2006/12/11 12:46:03 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdev.c,v 1.65 2008/05/18 08:09:09 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -449,7 +449,6 @@ struct dev_font {
   double   bold;  /* Boldness prameter */
 
   /* Compatibility */
-  int      remap; /* Obsolete */
   int      mapc;  /* Nasty workaround for Omega */
 
   /* There are no font metric format supporting four-bytes
@@ -861,33 +860,6 @@ static unsigned char sbuf0[FORMAT_BUF_SIZE];
 static unsigned char sbuf1[FORMAT_BUF_SIZE];
 
 static int
-handle_remap (unsigned char **str_ptr, int length)
-{
-  unsigned char *p;
-  int  i;
-
-  p = *str_ptr;
-
-#define twiddle(n) ( \
-    ( \
-     ((n) <= 9)  ? \
-        ((n) + 161) : \
-           (((n) <= 32)  ? \
-           ((n) + 163) : \
-           (((n) == 127) ? 196: (n)) \
-        ) \
-    ) \
-)
-
-  for (i = 0; i < length; i++) {
-    sbuf0[i] = twiddle(p[i]);
-  }
-
-  *str_ptr = sbuf0;
-  return 0;
-}
-
-static int
 handle_multibyte_string (struct dev_font *font,
                          unsigned char **str_ptr, int *str_len, int ctype)
 {
@@ -1026,8 +998,6 @@ pdf_dev_set_string (spt_t xpos, spt_t ypos,
                            (unsigned short) (str_ptr[i] << 8)|str_ptr[i+1]);
     }
   } else {
-    if (font->remap)
-      handle_remap(&str_ptr, length); /* length unchanged. */
     if (font->used_chars != NULL) {
       for (i = 0; i < length; i++)
         font->used_chars[str_ptr[i]] = 1;
@@ -1090,11 +1060,8 @@ pdf_dev_set_string (spt_t xpos, spt_t ypos,
      * Same issues as earlier. Use floating point for simplicity.
      * This routine needs to be fast, so we don't call sprintf() or strcpy().
      */
-#if 0
-    text_state.offset -=
+    text_state.offset -= 
       (spt_t) (kern * font->extend * (font->sptsize / 1000.0));
-#endif
-    text_state.offset   -= delh;
     format_buffer[len++] = text_state.is_mb ? '>' : ')';
     if (font->wmode)
       len += p_itoa(-kern, format_buffer + len);
@@ -1150,7 +1117,7 @@ pdf_init_device (double dvi2pts, int precision, int black_and_white)
   dev_param.colormode = (black_and_white ? 0 : 1);
 
   graphics_mode();
-  pdf_color_clear();
+  pdf_color_clear_stack();
   pdf_dev_init_gstates();
 
   num_dev_fonts = 0;
@@ -1178,7 +1145,7 @@ pdf_close_device (void)
   num_dev_fonts = 0;
   max_dev_fonts = 0;
 
-  pdf_dev_clean_gstates();
+  pdf_dev_clear_gstates();
 }
 
 /*
@@ -1204,6 +1171,148 @@ pdf_dev_reset_fonts (void)
   text_state.bold_param    = 0.0;
 
   text_state.is_mb         = 0;
+}
+
+void
+pdf_dev_reset_color(void)
+{
+  pdf_color *sc, *fc;
+
+  if (pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE)) {
+    pdf_color_get_current(&sc, &fc);
+    pdf_dev_set_strokingcolor(sc);
+    pdf_dev_set_nonstrokingcolor(fc);
+  }
+  return;
+}
+
+static int
+color_to_string (pdf_color *color, char *buffer)
+{
+  int i, len = 0;
+
+  for (i = 0; i < color->num_components; i++) {
+    len += sprintf(format_buffer+len, " %g", ROUND(color->values[i], 0.001));
+  }
+  return len;
+}
+
+void
+pdf_dev_set_color (pdf_color *color)
+{
+  int len;
+
+  if (!pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE)) {
+    WARN("Ignore color option was set. Just ignore.");
+    return;
+  } else if (!(color && pdf_color_is_valid(color))) {
+    WARN("No valid color is specified. Just ignore.");
+    return;
+  }
+
+  graphics_mode();
+  len = color_to_string(color, format_buffer);
+  format_buffer[len++] = ' ';
+  switch (color->num_components) {
+  case  3:
+    format_buffer[len++] = 'R';
+    format_buffer[len++] = 'G';
+    break;
+  case  4:
+    format_buffer[len++] = 'K';
+    break;
+  case  1:
+    format_buffer[len++] = 'G';
+    break;
+  default: /* already verified the given color */
+    break;
+  }
+  strncpy(format_buffer+len, format_buffer, len);
+  len = len << 1;
+  switch (color->num_components) {
+  case  3:
+    format_buffer[len-2] = 'r';
+    format_buffer[len-1] = 'g';
+    break;
+  case  4:
+    format_buffer[len-1] = 'k';
+    break;
+  case  1:
+    format_buffer[len-1] = 'g';
+  break;
+  default: /* already verified the given color */
+    break;
+  }
+  pdf_doc_add_page_content(format_buffer, len);
+  return;
+}
+
+void
+pdf_dev_set_strokingcolor (pdf_color *color)
+{
+  int len;
+
+  if (!pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE)) {
+    WARN("Ignore color option was set. Just ignore.");
+    return;
+  } else if (!(color && pdf_color_is_valid(color))) {
+    WARN("No valid color is specified. Just ignore.");
+    return;
+  }
+
+  graphics_mode();
+  len = color_to_string(color, format_buffer);
+  format_buffer[len++] = ' ';
+  switch (color->num_components) {
+  case  3:
+    format_buffer[len++] = 'R';
+    format_buffer[len++] = 'G';
+    break;
+  case  4:
+    format_buffer[len++] = 'K';
+    break;
+  case  1:
+    format_buffer[len++] = 'G';
+    break;
+  default: /* already verified the given color */
+    break;
+  }
+  pdf_doc_add_page_content(format_buffer, len);
+  return;
+}
+
+void
+pdf_dev_set_nonstrokingcolor (pdf_color *color)
+{
+  int len;
+
+  if (!pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE)) {
+    WARN("Ignore color option was set. Just ignore.");
+    return;
+  } else if (!(color && pdf_color_is_valid(color))) {
+    WARN("No valid color is specified. Just ignore.");
+    return;
+  }
+
+  graphics_mode();
+  len = color_to_string(color, format_buffer);
+  format_buffer[len++] = ' ';
+  switch (color->num_components) {
+  case  3:
+    format_buffer[len++] = 'r';
+    format_buffer[len++] = 'g';
+    break;
+  case  4:
+    format_buffer[len++] = 'k';
+    break;
+  case  1:
+    format_buffer[len++] = 'g';
+    break;
+  default: /* already verified the given color */
+    break;
+  }
+  pdf_doc_add_page_content(format_buffer, len);
+  return;
 }
 
 /* Not working */
@@ -1232,7 +1341,6 @@ pdf_dev_bop (const pdf_tmatrix *M)
   pdf_dev_concat(M);
 
   pdf_dev_reset_fonts();
-  pdf_dev_preserve_color(); /* preserve the last color in the previous page */
   pdf_dev_reset_color();
 }
 
@@ -1269,8 +1377,6 @@ print_fontmap (const char *font_name, fontmap_rec *mrec)
     MESG("[slant:%g]",  mrec->opt.slant);
   if (mrec->opt.bold   != 0.0) 
     MESG("[bold:%g]",   mrec->opt.bold);
-  if (mrec->opt.flags & FONTMAP_OPT_REMAP) 
-    MESG("[remap]");
   if (mrec->opt.flags & FONTMAP_OPT_NOEMBED)
     MESG("[noemb]");
   if (mrec->opt.mapc >= 0)
@@ -1374,7 +1480,6 @@ pdf_dev_locate_font (const char *font_name, spt_t ptsize)
   font->extend     = 1.0;
   font->slant      = 0.0;
   font->bold       = 0.0;
-  font->remap      = 0;
   font->mapc       = -1;
   font->is_unicode = 0;
   font->ucs_group  = 0;
@@ -1384,7 +1489,6 @@ pdf_dev_locate_font (const char *font_name, spt_t ptsize)
     font->extend = mrec->opt.extend;
     font->slant  = mrec->opt.slant;
     font->bold   = mrec->opt.bold;
-    font->remap  = (int) (mrec->opt.flags & FONTMAP_OPT_REMAP);
     if (mrec->opt.mapc >= 0)
       font->mapc = (mrec->opt.mapc >> 8) & 0xff;
     else {

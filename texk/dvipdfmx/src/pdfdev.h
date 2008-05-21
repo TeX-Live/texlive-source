@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdev.h,v 1.19 2006/12/11 12:46:03 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdev.h,v 1.20 2007/11/22 11:45:39 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -27,6 +27,7 @@
 
 #include "numbers.h"
 #include "pdfobj.h"
+#include "pdfcolor.h"
 
 typedef signed long spt_t;
 
@@ -202,7 +203,11 @@ extern void   pdf_dev_set_param (int param_type, int value);
  * XFrom (content grabbing) and Metapost support want them.
  */
 extern void   pdf_dev_reset_fonts (void);
-extern void   pdf_dev_reset_color (void); /* defined in pdfcolor.c */
+extern void   pdf_dev_reset_color (void);
+
+extern void   pdf_dev_set_color            (pdf_color *color);
+extern void   pdf_dev_set_strokingcolor    (pdf_color *color);
+extern void   pdf_dev_set_nonstrokingcolor (pdf_color *color);
 
 /* Initialization of transformation matrix with M and others.
  * They are called within pdf_doc_begin_page() and pdf_doc_end_page().

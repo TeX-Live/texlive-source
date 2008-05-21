@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdffont.c,v 1.17 2007/11/15 17:08:52 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdffont.c,v 1.23 2008/05/18 14:49:20 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2008 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -122,6 +122,7 @@ struct pdf_font
   int      font_id;
 
   /* For simple font */
+  int      index;
   char    *fontname;
   char     uniqueID[7];
 
@@ -154,6 +155,7 @@ pdf_init_font_struct (pdf_font *font)
   font->font_id  = -1; /* Type0 ID */
   font->fontname = NULL;
   memset(font->uniqueID, 0, 7);
+  font->index    = 0;
 
   font->encoding_id = -1;
 
@@ -531,9 +533,10 @@ pdf_close_fonts (void)
 
       /* Predefined encodings (and those simplified to them) are embedded
 	 as direct objects, but this is purely a matter of taste. */
-      pdf_add_dict(font->resource,
-		   pdf_new_name("Encoding"),
-		   PDF_OBJ_NAMETYPE(enc_obj) ? pdf_link_obj(enc_obj) : pdf_ref_obj(enc_obj));
+      if (enc_obj)
+        pdf_add_dict(font->resource,
+		     pdf_new_name("Encoding"),
+		     PDF_OBJ_NAMETYPE(enc_obj) ? pdf_link_obj(enc_obj) : pdf_ref_obj(enc_obj));
 
       if (!pdf_lookup_dict(font->resource, "ToUnicode")
 	  && (tounicode = pdf_encoding_get_tounicode(font->encoding_id)))
@@ -669,8 +672,6 @@ pdf_font_findresource (const char *tex_name,
       font->subtype     = PDF_FONT_FONTTYPE_TYPE0;
       font->encoding_id = cmap_id;
 
-      mrec->opt.flags  &= ~FONTMAP_OPT_REMAP; /* _FIXME_ */
-
       font_cache.count++;
 
       if (__verbose) {
@@ -701,7 +702,8 @@ pdf_font_findresource (const char *tex_name,
 	 */
 	if (!strcmp(fontname, font->ident)   &&
 	    encoding_id == font->encoding_id) {
-	  found = 1;
+          if (mrec && mrec->opt.index == font->index)
+            found = 1;
 	}
 	break;
       case PDF_FONT_FONTTYPE_TYPE3:
@@ -749,6 +751,7 @@ pdf_font_findresource (const char *tex_name,
       strcpy(font->ident, fontname);
       font->map_name    = NEW(strlen(tex_name) + 1, char);
       strcpy(font->map_name, tex_name);
+      font->index       = (mrec && mrec->opt.index) ? mrec->opt.index : 0;
 
       if (pdf_font_open_type1(font) >= 0) {
 	font->subtype = PDF_FONT_FONTTYPE_TYPE1;
@@ -785,12 +788,28 @@ pdf_font_is_in_use (pdf_font *font)
   return ((font->reference) ? 1 : 0);
 }
 
+int
+pdf_font_get_index (pdf_font *font)
+{
+  ASSERT(font);
+
+  return font->index;
+}
+
 char *
 pdf_font_get_ident (pdf_font *font)
 {
   ASSERT(font);
 
   return font->ident;
+}
+
+char *
+pdf_font_get_mapname (pdf_font *font)
+{
+  ASSERT(font);
+
+  return font->map_name;
 }
 
 char *

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/vf.c,v 1.18 2007/11/14 03:36:01 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/vf.c,v 1.19 2007/11/18 08:06:03 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -314,6 +314,8 @@ int vf_locate_font (const char *tex_name, spt_t ptsize)
 	fprintf (stderr, ")");
       MFCLOSE (vf_file);
     }
+    if (full_vf_file_name)
+      RELEASE(full_vf_file_name);
   }
   return thisfont;
 }

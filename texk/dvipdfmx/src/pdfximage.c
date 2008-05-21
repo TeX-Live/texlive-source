@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.c,v 1.16 2007/05/18 05:19:01 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.c,v 1.20 2008/05/17 01:16:53 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -71,6 +71,7 @@ struct pdf_ximage_
 {
   char        *ident;
   char         res_name[16];
+  long         page_no, page_count;
 
   int          subtype;
 
@@ -107,10 +108,19 @@ static struct ic_  _ic = {
 };
 
 static void
-pdf_init_ximage_struct (pdf_ximage *I)
+pdf_init_ximage_struct (pdf_ximage *I, const char *ident, const char *filename)
 {
-  I->ident    = NULL;
-  I->filename = NULL;
+  if (ident) {
+    I->ident = NEW(strlen(ident)+1, char);
+    strcpy(I->ident, ident);
+  } else
+    I ->ident = NULL;
+  I->page_no  = I->page_count = 0;
+  if (filename) {
+    I->filename = NEW(strlen(filename)+1, char);
+    strcpy(I->filename, filename);
+  } else
+    I->filename = NULL;
   I->subtype  = -1;
   memset(I->res_name, 0, 16);
   I->reference = NULL;
@@ -133,7 +143,7 @@ pdf_clean_ximage_struct (pdf_ximage *I)
     pdf_release_obj(I->reference);
   if (I->resource)
     pdf_release_obj(I->resource);
-  pdf_init_ximage_struct(I);
+  pdf_init_ximage_struct(I, NULL, NULL);
 }
 
 
@@ -253,7 +263,7 @@ filter_put_form_attr (pdf_obj *kp, pdf_obj *vp, void *dp)
 
 static int
 load_image (const char *ident,
-            const char *fullname, int format, FILE  *fp)
+            const char *fullname, int format, FILE  *fp, long page_no)
 {
   struct ic_ *ic = &_ic;
   int         id = -1; /* ret */
@@ -266,14 +276,15 @@ load_image (const char *ident,
   }
 
   I  = &ic->ximages[id];
-  pdf_init_ximage_struct(I);
+  pdf_init_ximage_struct(I, ident, ident);
+  pdf_ximage_set_page(I, page_no, 0);
 
   switch (format) {
   case  IMAGE_TYPE_JPEG:
     if (_opts.verbose)
       MESG("[JPEG]");
     if (jpeg_include_image(I, fp) < 0)
-      return  -1;
+      goto error;
     I->subtype  = PDF_XOBJECT_TYPE_IMAGE;
     break;
 #ifdef HAVE_LIBPNG
@@ -281,7 +292,7 @@ load_image (const char *ident,
     if (_opts.verbose)
       MESG("[PNG]");
     if (png_include_image(I, fp) < 0)
-      return  -1;
+      goto error;
     I->subtype  = PDF_XOBJECT_TYPE_IMAGE;
     break;
 #endif
@@ -289,35 +300,28 @@ load_image (const char *ident,
     if (_opts.verbose)
       MESG("[BMP]");
     if (bmp_include_image(I, fp) < 0)
-      return  -1;
+      goto error;
     I->subtype  = PDF_XOBJECT_TYPE_IMAGE;
     break;
   case  IMAGE_TYPE_PDF:
     if (_opts.verbose)
       MESG("[PDF]");
     if (pdf_include_page(I, fp) < 0)
-      return  -1;
-    I->subtype  = PDF_XOBJECT_TYPE_FORM;
-    break;
-  case  IMAGE_TYPE_EPS:
+      goto error;
     if (_opts.verbose)
-      MESG("[PS]");
-    if (ps_include_page(I, fullname) < 0)
-      return  -1;
+      MESG(",Page:%ld", I->page_no);
     I->subtype  = PDF_XOBJECT_TYPE_FORM;
     break;
+  // case  IMAGE_TYPE_EPS:
   default:
     if (_opts.verbose)
-      MESG("[UNKNOWN]");
+      MESG(format == IMAGE_TYPE_EPS ? "[PS]" : "[UNKNOWN]");
     if (ps_include_page(I, fullname) < 0)
-      return  -1;
+      goto error;
+    if (_opts.verbose)
+      MESG(",Page:%ld", I->page_no);
     I->subtype  = PDF_XOBJECT_TYPE_FORM;
   }
-
-  I->filename = NEW(strlen(ident)+1, char);
-  I->ident    = NEW(strlen(ident)+1, char);
-  strcpy(I->filename, ident);
-  strcpy(I->ident,    ident);
 
   switch (I->subtype) {
   case PDF_XOBJECT_TYPE_IMAGE:
@@ -328,12 +332,16 @@ load_image (const char *ident,
     break;
   default:
     ERROR("Unknown XObject subtype: %d", I->subtype);
-    return -1;
+    goto error;
   }
 
   ic->count++;
 
   return  id;
+
+ error:
+  pdf_clean_ximage_struct(I);
+  return -1;
 }
 
 
@@ -342,7 +350,7 @@ load_image (const char *ident,
 #define dpx_fclose(f)  (MFCLOSE((f)))
 
 int
-pdf_ximage_findresource (const char *ident)
+pdf_ximage_findresource (const char *ident, long page_no)
 {
   struct ic_ *ic = &_ic;
   int         id = -1;
@@ -353,7 +361,8 @@ pdf_ximage_findresource (const char *ident)
 
   for (id = 0; id < ic->count; id++) {
     I = &ic->ximages[id];
-    if (I->ident && !strcmp(ident, I->ident)) {
+    if (I->ident && !strcmp(ident, I->ident) &&
+	I->page_no == page_no + (page_no < 0 ? I->page_count+1 : 0)) {
       return  id;
     }
   }
@@ -383,9 +392,14 @@ pdf_ximage_findresource (const char *ident)
     if (_opts.verbose)
       MESG("[MPS]");
     id = mps_include_page(ident, fp);
-    break;
+    if (id < 0) {
+      WARN("Try again with the distiller.");
+      format = IMAGE_TYPE_EPS;
+      rewind(fp);
+    } else
+      break;
   default:
-    id = load_image(ident, fullname, format, fp);
+    id = load_image(ident, fullname, format, fp, page_no);
     break;
   }
   dpx_fclose(fp);
@@ -473,6 +487,12 @@ pdf_ximage_init_image_info (ximage_info *info)
   info->xdensity = info->ydensity = 1.0;
 }
 
+char *
+pdf_ximage_get_ident (pdf_ximage *I)
+{
+  return I->ident;
+}
+
 void
 pdf_ximage_set_image (pdf_ximage *I, void *image_info, pdf_obj *resource)
 {
@@ -521,6 +541,19 @@ pdf_ximage_set_form (pdf_ximage *I, void *form_info, pdf_obj *resource)
   I->resource  = NULL;
 }
 
+long
+pdf_ximage_get_page (pdf_ximage *I)
+{
+  return I->page_no;
+}
+
+void
+pdf_ximage_set_page (pdf_ximage *I, long page_no, long page_count)
+{
+  I->page_no    = page_no;
+  I->page_count = page_count;
+}
+
 
 #define CHECK_ID(c,n) do {\
   if ((n) < 0 || (n) >= (c)->count) {\
@@ -561,11 +594,7 @@ pdf_ximage_defineresource (const char *ident,
 
   I = &ic->ximages[id];
 
-  pdf_init_ximage_struct(I);
-  if (ident) {
-    I->ident = NEW(strlen(ident) + 1, char);
-    strcpy(I->ident, ident);
-  }
+  pdf_init_ximage_struct(I, ident, NULL);
 
   switch (subtype) {
   case PDF_XOBJECT_TYPE_IMAGE:

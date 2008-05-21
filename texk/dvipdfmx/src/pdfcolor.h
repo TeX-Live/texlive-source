@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfcolor.h,v 1.7 2006/12/11 12:46:03 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfcolor.h,v 1.8 2007/11/22 11:45:39 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -51,10 +51,6 @@ typedef struct
 
 extern void       pdf_color_set_verbose   (void);
 
-extern int        pdf_dev_setcolor        (const pdf_color *color, int is_fill);
-
-extern int        pdf_dev_currentcolor    (pdf_color *color, int is_fill);
-
 extern int        pdf_color_rgbcolor      (pdf_color *color,
                                            double r, double g, double b);
 extern int        pdf_color_cmykcolor     (pdf_color *color,
@@ -63,6 +59,7 @@ extern int        pdf_color_graycolor     (pdf_color *color, double g);
 extern void       pdf_color_copycolor     (pdf_color *color1, const pdf_color *color2);
 
 extern int        pdf_color_is_white      (pdf_color *color);
+extern int        pdf_color_is_valid      (pdf_color *color);
 
 /* Not check size */
 extern pdf_obj *iccp_get_rendering_intent (const void *profile, long proflen);
@@ -88,12 +85,15 @@ extern int      pdf_colorspace_load_ICCBased      (const char *ident,
  * See remark in spc_color.c.
  */
 extern void     pdf_color_set_default (const pdf_color *color);
-extern void     pdf_color_push  (void);
+extern void     pdf_color_push  (pdf_color *sc, pdf_color *fc);
 extern void     pdf_color_pop   (void);
-extern void     pdf_color_clear (void);
+
+/* Color stack
+ */
+extern void     pdf_color_clear_stack (void);
+extern void     pdf_color_get_current (pdf_color **sc, pdf_color **fc);
 
 /* Reinstall color */
 extern void     pdf_dev_preserve_color(void);
-extern void     pdf_dev_reset_color   (void);
 
 #endif /* _PDF_COLOR_H_ */
