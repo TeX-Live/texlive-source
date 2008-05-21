@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/fontmap.c,v 1.35 2007/01/21 15:17:53 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/fontmap.c,v 1.39 2008/05/18 08:09:09 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -89,6 +89,7 @@ pdf_init_fontmap_record (fontmap_rec *mrec)
   mrec->opt.index     = 0;
   mrec->opt.charcoll  = NULL;
   mrec->opt.style     = FONTMAP_STYLE_NONE;
+  mrec->opt.stemv     = -1; /* not given explicitly by an option */
 
 #ifdef XETEX
   mrec->opt.ft_face   = NULL;
@@ -158,6 +159,7 @@ pdf_copy_fontmap_record (fontmap_rec *dst, const fontmap_rec *src)
   dst->opt.index     = src->opt.index;
   dst->opt.charcoll  = mstrdup(src->opt.charcoll);
   dst->opt.style     = src->opt.style;
+  dst->opt.stemv     = src->opt.stemv;
 
 #ifdef XETEX
   dst->opt.ft_face   = src->opt.ft_face;
@@ -327,8 +329,8 @@ parse_integer_value (char **pp, char *endptr, int base)
 }
 
 static int
-fontmap_parse_mapdef (fontmap_rec *mrec,
-                      const char *mapdef, char *endptr)
+fontmap_parse_mapdef_dpm (fontmap_rec *mrec,
+                          const char *mapdef, char *endptr)
 {
   char  *p = (char *) mapdef;
 
@@ -388,6 +390,7 @@ fontmap_parse_mapdef (fontmap_rec *mrec,
       mrec->opt.slant = atof(q);
       RELEASE(q);
       break;
+
     case  'e': /* Extend option */
       q = parse_float_decimal(&p, endptr);
       if (!q) {
@@ -401,6 +404,7 @@ fontmap_parse_mapdef (fontmap_rec *mrec,
       }
       RELEASE(q);
       break;
+
     case  'b': /* Fake-bold option */
       q = parse_float_decimal(&p, endptr);
       if (!q) {
@@ -415,11 +419,9 @@ fontmap_parse_mapdef (fontmap_rec *mrec,
       RELEASE(q);
       break;
 
-    case  'r': /* Remap option */
-      mrec->opt.flags |= FONTMAP_OPT_REMAP;
+    case  'r': /* Remap option; obsolete; just ignore */
       break;
 
-#if  1
     case  'i':  /* TTC index */
       q = parse_integer_value(&p, endptr, 10);
       if (!q) {
@@ -458,7 +460,16 @@ fontmap_parse_mapdef (fontmap_rec *mrec,
         return  -1;
       }
       break;
-#endif
+
+    case  'v': /* StemV */
+      q = parse_integer_value(&p, endptr, 10);
+      if (!q) {
+        WARN("Missing a number for 'v' option.");
+        return  -1;
+      }
+      mrec->opt.stemv = strtol(q, NULL, 0);
+      RELEASE(q);
+      break;
 
     /* Omega uses both single-byte and double-byte set_char command
      * even for double-byte OFMs. This confuses CMap decoder.
@@ -526,7 +537,6 @@ fontmap_parse_mapdef (fontmap_rec *mrec,
       }
       break;
 
-#if  1
     case 'w': /* Writing mode (for unicode encoding) */
       if (!mrec->enc_name ||
            strcmp(mrec->enc_name, "unicode")) {
@@ -547,7 +557,6 @@ fontmap_parse_mapdef (fontmap_rec *mrec,
       }
       RELEASE(q);
       break;
-#endif
 
     default:
       WARN("Unrecognized font map option: '%c'", mopt);
@@ -565,6 +574,84 @@ fontmap_parse_mapdef (fontmap_rec *mrec,
   return  0;
 }
 
+
+/* Parse record line in map file of DVIPS/pdfTeX format. */
+static int
+fontmap_parse_mapdef_dps (fontmap_rec *mrec,
+                          const char *mapdef, char *endptr)
+{
+  char *p = (char *)mapdef, *q;
+
+  skip_blank(&p, endptr);
+
+  /* The first field (after TFM name) must be PostScript name. */
+  if (p < endptr) {
+    q = parse_string_value(&p, endptr);
+    if (q) RELEASE(q);
+    skip_blank(&p, endptr);
+  } else {
+    WARN("Missing a PostScript font name.");
+    return -1;
+  }
+
+  if (p >= endptr) return 0;
+
+  /* Parse any remaining arguments */
+  while (p < endptr && *p != '\r' && *p != '\n' && (*p == '<' || *p == '"')) {
+    switch (*p) {
+    case '<': /* encoding or fontfile field */
+      if (++p < endptr && *p == '[') p++; /*skip */
+      skip_blank(&p, endptr);
+      if (q = parse_string_value(&p, endptr)) {
+        int n = strlen(q);
+        if (n > 4 && strncmp(q+n-4, ".enc", 4) == 0)
+          mrec->enc_name = q;
+        else
+          mrec->font_name = q;
+      }
+      skip_blank(&p, endptr);
+      break;
+
+    case '"': /* Options */
+      if (q = parse_string_value(&p, endptr)) {
+        char *r = q, *e = q+strlen(q), *s, *t;
+        skip_blank(&r, e);
+        while (r < e) {
+          if (s = parse_float_decimal(&r, e)) {
+            skip_blank(&r, e);
+            if (t = parse_string_value(&r, e)) {
+              if (strcmp(t, "SlantFont") == 0)
+                mrec->opt.slant = atof(s);
+              else if (strcmp(r, "ExtendFont") == 0)
+                mrec->opt.extend = atof(s);
+              RELEASE(t);
+            }
+            RELEASE(s);
+          } else if (s = parse_string_value(&r, e)) { /* skip */
+            RELEASE(s);
+          }
+          skip_blank(&r, e);
+        }
+        RELEASE(q);
+      }
+      skip_blank(&p, endptr);
+      break;
+    
+    default:
+      WARN("Found an invalid entry: %s", p);
+      return -1;
+      break;
+    }
+    skip_blank(&p, endptr);
+  }
+
+  if (p < endptr && *p != '\r' && *p != '\n') {
+    WARN("Invalid char in fontmap line: %c", *p);
+    return -1;
+  }
+
+  return  0;
+}
 
 
 static struct ht_table *fontmap = NULL;
@@ -760,8 +847,11 @@ pdf_insert_fontmap_record (const char *kp, const fontmap_rec *vp)
     char **subfont_ids;
     int    n = 0;
     subfont_ids = sfd_get_subfont_ids(sfd_name, &n);
-    if (!subfont_ids)
+    if (!subfont_ids) {
+      RELEASE(fnt_name);
+      RELEASE(sfd_name);
       return  -1;
+    }
     if (verbose > 3)
       MESG("\nfontmap>> Expand @%s@:", sfd_name);
     while (n-- > 0) {
@@ -798,11 +888,10 @@ pdf_insert_fontmap_record (const char *kp, const fontmap_rec *vp)
 
 
 int
-pdf_read_fontmap_line (fontmap_rec *mrec, const char *mline, long mline_len)
+pdf_read_fontmap_line (fontmap_rec *mrec, const char *mline, long mline_len, int format)
 {
   int    error;
   char  *q, *p, *endptr;
-
 
   ASSERT(mrec);
 
@@ -817,7 +906,10 @@ pdf_read_fontmap_line (fontmap_rec *mrec, const char *mline, long mline_len)
   if (!q)
     return -1;
 
-  error = fontmap_parse_mapdef(mrec, p, endptr);
+  if (format > 0) /* DVIPDFM format */
+    error = fontmap_parse_mapdef_dpm(mrec, p, endptr);
+  else /* DVIPS/pdfTeX format */
+    error = fontmap_parse_mapdef_dps(mrec, p, endptr);
   if (!error) {
     char  *fnt_name, *sfd_name = NULL;
     fnt_name = chop_sfd_name(q, &sfd_name);
@@ -842,43 +934,38 @@ pdf_read_fontmap_line (fontmap_rec *mrec, const char *mline, long mline_len)
   return  error;
 }
 
-/* Dvips format:
- *  String enclosed by '"' --> PostScript code(!)
- *  '<' or '<<' followed by *.enc, *.pfb, or *.pfa
+/* DVIPS/pdfTeX fontmap line if one of the following three cases found:
+ *
+ * (1) any line including the character '"'
+ * (2) any line including the character '<'
+ * (3) if the line consists of two entries (tfmname and psname)
+ *
+ * DVIPDFM fontmap line otherwise.
  */
-static int
+int
 is_pdfm_mapline (const char *mline) /* NULL terminated. */
 {
-  int    r = 1;
-  char  *q, *p, *endptr;
+  int   n = 0;
+  char *p, *endptr;
+
+  if (strchr(mline, '"') || strchr(mline, '<'))
+    return -1; /* DVIPS/pdfTeX format */
 
   p      = (char *) mline;
   endptr = p + strlen(mline);
 
   skip_blank(&p, endptr);
-  /* Break if '-' preceeded by blanks is found. */
-  while (r && p < endptr && *p != '-') {
-    switch (p[0]) {
-    case  '"':
-      q = parse_c_string(&p, endptr); /* wrong */
-      if (q) {
-        if (strstr(q, "SlantFont")  ||
-            strstr(q, "ExtendFont") ||
-            strstr(q, "ReEncodeFont")) {
-          r = 0;
-        }
-        RELEASE(q);
-      }
-      break;
-    case  '<':
-      r = 0;
-      break;
-    }
-    for ( ; p < endptr && !ISBLANK(*p); p++);
+
+  while (p < endptr) {
+    /* Break if '-' preceeded by blanks is found. (DVIPDFM format) */
+    if (*p == '-') return 1;
+    for (n++; p < endptr && !ISBLANK(*p); p++);
     skip_blank(&p, endptr);
   }
 
-  return  r;
+  /* Two entries: TFM_NAME PS_NAME only (DVIPS format)
+   * Otherwise (DVIPDFM format) */
+  return (n == 2 ? 0 : 1);
 }
 
 static void
@@ -908,7 +995,7 @@ pdf_load_fontmap_file (const char *filename, int mode)
   FILE        *fp;
   char        *p = NULL, *endptr;
   long         llen, lpos  = 0;
-  int          error = 0;
+  int          error = 0, format = 0;
 
   ASSERT(filename);
   ASSERT(fontmap) ;
@@ -924,6 +1011,7 @@ pdf_load_fontmap_file (const char *filename, int mode)
 
   while (!error &&
          (p = readline(work_buffer, WORK_BUFFER_SIZE, fp)) != NULL) {
+    int m;
 
     lpos++;
     llen   = strlen(work_buffer);
@@ -933,26 +1021,26 @@ pdf_load_fontmap_file (const char *filename, int mode)
     if (p == endptr)
       continue;
 
-    if (!is_pdfm_mapline(p)) {
-      WARN("This .map file looks like a dvips format fontmap file.");
-      WARN("-- Current input buffer is: %s", p);
-      WARN("-- Reading fontmap file stopped at: file=\"%s\", line=%d.",
-           filename, lpos);
-      rewind(fp);
-      delete_records(fp, lpos - 1);
-      break;
-    }
+    m = is_pdfm_mapline(p);
+
+    if (format * m < 0) { /* mismatch */
+      WARN("Found a mismatched fontmap line %d from %s.", lpos, filename);
+      WARN("-- Ignore the current input buffer: %s", p);
+      continue;
+    } else
+      format += m;
 
     mrec  = NEW(1, fontmap_rec);
     pdf_init_fontmap_record(mrec);
-    error = pdf_read_fontmap_line(mrec, p, llen);
+
+    /* format > 0: DVIPDFM, format <= 0: DVIPS/pdfTeX */
+    error = pdf_read_fontmap_line(mrec, p, llen, format);
     if (error) {
-      WARN("Invalid map record in fontmap file.");
-      WARN("-- Current input buffer is: %s", p);
-      WARN("-- Reading fontmap file stopped at: file=\"%s\", line=%d.",
-           filename, lpos);
-      rewind(fp);
-      delete_records(fp, lpos - 1);
+      WARN("Invalid map record in fontmap line %d from %s.", lpos, filename);
+      WARN("-- Ignore the current input buffer: %s", p);
+      pdf_clear_fontmap_record(mrec);
+      RELEASE(mrec);
+      continue;
     } else {
       switch (mode) {
       case FONTMAP_RMODE_REPLACE:
@@ -1273,6 +1361,8 @@ pdf_close_fontmaps (void)
     RELEASE(fontmap);
   }
   fontmap = NULL;
+
+  release_sfd_record();
 }
 
 void
@@ -1415,8 +1505,6 @@ dump_fontmap_rec (const char *key, const fontmap_rec *mrec)
     fprintf(stdout, " tounicode=\"%s\"", opt->tounicode);
   if (opt->index != 0)
     fprintf(stdout, " ttc-index=\"%d\"", opt->index);
-  if (opt->flags & FONTMAP_OPT_REMAP)
-    fprintf(stdout, " remap=\"true\"");
   if (opt->flags & FONTMAP_OPT_NOEMBED)
     fprintf(stdout, " embedding=\"no\"");
   if (opt->mapc >= 0) {

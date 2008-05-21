@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.50 2008/02/13 20:22:21 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.53 2008/05/21 06:58:37 chofchof Exp $
  
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2008 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -55,10 +55,10 @@
 
 #include "pdflimits.h"
 
-#ifndef NO_THUMBNAIL
+#if HAVE_LIBPNG
 #include "pngimage.h"
+#endif
 #include "jpegimage.h"
-#endif /* !NO_THUMBNAIL */
 
 #include "pdfdoc.h"
 
@@ -68,87 +68,40 @@
 
 static int verbose = 0;
 
-#ifndef NO_THUMBNAIL
-static char  thumb_enabled  = 0;
+static char  manual_thumb_enabled  = 0;
 static char *thumb_basename = NULL;
-static char  thumb_remove   = 0;
 
 void
-pdf_doc_enable_thumbnails (int t_remove)
+pdf_doc_enable_manual_thumbnails (void)
 {
 #if HAVE_LIBPNG
-  thumb_enabled = 1;
-  thumb_remove  = t_remove;
+  manual_thumb_enabled = 1;
 #else
-  WARN("Thumbnail support not available without PNG support.");
+  WARN("Manual thumbnail is not supported without the libpng library.");
 #endif
 }
 
-#define DEFAULT_TMPDIR "/tmp"
-static char *
-guess_thumb_name (const char *thumb_filename)
-{
-  /* Build path name for anticipated thumbnail image */
-  char *tmpdir, *tmpname;
-
-  if (!(tmpdir = getenv("TMP")) &&
-      !(tmpdir = getenv("TEMP"))) 
-    tmpdir = (char *) DEFAULT_TMPDIR;
-  tmpname = NEW(strlen(tmpdir) +
-		strlen(thumb_filename) + strlen(DIR_SEP_STRING) + 1,
-		char);
-  strcpy(tmpname, tmpdir);
-  if (!IS_DIR_SEP(tmpname[strlen(tmpname)-1])) {
-    strcat(tmpname, DIR_SEP_STRING);
-  }
-  strcat(tmpname, thumb_filename);
-
-  return tmpname;
-}
-
-#ifndef HAVE_LIBPNG
-static pdf_obj *
-read_thumbnail (const char *thumb_filename) 
-{
-  WARN("Thumbnail support not available without PNG support.");
-}
-#else  /* HAVE_LIBPNG */
 static pdf_obj *
 read_thumbnail (const char *thumb_filename) 
 {
   pdf_obj *image_ref;
   int      xobj_id;
-  char    *guess_filename = NULL;
   int      found_in_cwd = 0;
   FILE    *fp;
 
-  guess_filename = guess_thumb_name(thumb_filename);
-  if ((fp = MFOPEN(thumb_filename, FOPEN_RBIN_MODE))) {
-    found_in_cwd = 1;
-  } else {
-    fp = MFOPEN(guess_filename, FOPEN_RBIN_MODE);
-  }
-
+  fp = MFOPEN(thumb_filename, FOPEN_RBIN_MODE);
   if (!fp) {
     WARN("Could not open thumbnail file \"%s\"", thumb_filename);
-    if (guess_filename)
-      RELEASE(guess_filename);
     return NULL;
-  } else if (!check_for_png(fp) && !check_for_jpeg(fp)) {
+  }
+  if (!check_for_png(fp) && !check_for_jpeg(fp)) {
     WARN("Thumbnail \"%s\" not a png/jpeg file!", thumb_filename);
     MFCLOSE(fp);
-    if (guess_filename)
-      RELEASE(guess_filename);
     return NULL;
   }
   MFCLOSE(fp);
 
-  if (found_in_cwd) {
-    xobj_id = pdf_ximage_findresource(thumb_filename, 0/*, 0*/);
-  } else {
-    xobj_id = pdf_ximage_findresource(guess_filename, 0/*, 0*/);
-  }
-
+  xobj_id = pdf_ximage_findresource(thumb_filename, 0);
   if (xobj_id < 0) {
     WARN("Could not read thumbnail file \"%s\".", thumb_filename);
     image_ref = NULL;
@@ -156,24 +109,8 @@ read_thumbnail (const char *thumb_filename)
     image_ref = pdf_ximage_get_reference(xobj_id);
   }
 
-  if (thumb_remove && found_in_cwd) {
-    if (verbose > 1)
-      MESG("\ndeleting thumbnail file \"%s\"...\n", thumb_filename);
-    remove(thumb_filename);
-  } else if (thumb_remove) {
-    if (verbose > 1)
-      MESG("\ndeleting thumbnail file \"%s\"...\n", guess_filename);
-    remove(guess_filename);
-  }
-
-  if (guess_filename)
-    RELEASE(guess_filename);
-
   return image_ref;
 }
-
-#endif /* HAVE_LIBPNG */
-#endif /* !NO_THUMBNAIL */
 
 void
 pdf_doc_set_verbose (void)
@@ -507,22 +444,28 @@ compute_timezone_offset()
 static long
 asn_date (char *date_string)
 {
-#ifndef HAVE_TIMEZONE
-# ifdef HAVE_TM_GMTOFF
-#  define timezone (-bd_time->tm_gmtoff)
-# else
-#  define timezone (-compute_timezone_offset())
-# endif /* not HAVE_TM_GMTOFF */
-#endif  /* not HAVE_TIMEZONE */
+  long        tz_offset;
   time_t      current_time;
   struct tm  *bd_time;
 
   time(&current_time);
   bd_time = localtime(&current_time);
-  sprintf(date_string, "D:%04d%02d%02d%02d%02d%02d%+03ld'%02ld'",
+
+#ifdef HAVE_TM_GMTOFF
+  tz_offset = bd_time->tm_gmtoff;
+#else
+#  ifdef HAVE_TIMEZONE
+  tz_offset = -timezone;
+#  else
+  tz_offset = compute_timezone_offset();
+#  endif /* HAVE_TIMEZONE */
+#endif /* HAVE_TM_GMTOFF */
+
+  sprintf(date_string, "D:%04d%02d%02d%02d%02d%02d%c%02ld'%02ld'",
 	  bd_time->tm_year + 1900, bd_time->tm_mon + 1, bd_time->tm_mday,
 	  bd_time->tm_hour, bd_time->tm_min, bd_time->tm_sec,
-	  (-timezone / 3600), (timezone % 3600) / 60);
+	  (tz_offset > 0) ? '+' : '-', labs(tz_offset) / 3600,
+                                      (labs(tz_offset) / 60) % 60);
 
   return strlen(date_string);
 }
@@ -1905,8 +1848,7 @@ pdf_doc_finish_page (pdf_doc *p)
     currentpage->resources = NULL;
   }
 
-#ifndef NO_THUMBNAIL
-  if (thumb_enabled) {
+  if (manual_thumb_enabled) {
     char    *thumb_filename;
     pdf_obj *thumb_ref;
 
@@ -1918,7 +1860,6 @@ pdf_doc_finish_page (pdf_doc *p)
     if (thumb_ref)
       pdf_add_dict(currentpage->page_obj, pdf_new_name("Thumb"), thumb_ref);
   }
-#endif /* !NO_THUMBNAIL */
 
   p->pages.num_entries++;
 
@@ -2024,7 +1965,7 @@ static char *doccreator = NULL; /* Ugh */
 
 void
 pdf_open_document (const char *filename,
-		   int do_encryption, int do_objstm,
+		   int do_encryption,
                    double media_width, double media_height,
                    double annot_grow_amount, int bookmark_open_depth)
 {
@@ -2062,12 +2003,8 @@ pdf_open_document (const char *filename,
     pdf_release_obj(encrypt);
   }
 
-  if (do_objstm)
-    pdf_objstm_init();
-
-#ifndef NO_THUMBNAIL
   /* Create a default name for thumbnail image files */
-  if (thumb_enabled) {
+  if (manual_thumb_enabled) {
     if (strlen(filename) > 4 &&
         !strncmp(".pdf", filename + strlen(filename) - 4, 4)) {
       thumb_basename = NEW(strlen(filename)-4+1, char);
@@ -2078,7 +2015,6 @@ pdf_open_document (const char *filename,
       strcpy(thumb_basename, filename);
     }
   }
-#endif /* !NO_THUMBNAIL */
 
   p->pending_forms = NULL;
    
@@ -2121,13 +2057,8 @@ pdf_close_document (void)
 
   pdf_out_flush();
 
-#ifndef NO_THUMBNAIL
-  if (thumb_basename) {
+  if (thumb_basename)
     RELEASE(thumb_basename);
-  }
-#endif /* !NO_THUMBNAIL */
-
-  pdf_objstm_close();
 
   return;
 }

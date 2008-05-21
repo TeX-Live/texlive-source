@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.h,v 1.11 2008/02/13 20:22:21 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.h,v 1.12 2008/05/13 12:23:45 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -69,6 +69,7 @@ extern int      pdf_ximage_defineresource (const char *ident,
 /* Called by pngimage, jpegimage, epdf, mpost, etc. */
 extern void pdf_ximage_init_image_info (ximage_info *info);
 extern void pdf_ximage_init_form_info  (xform_info  *info);
+extern char *pdf_ximage_get_ident (pdf_ximage *ximage);
 extern void pdf_ximage_set_image (pdf_ximage *ximage, void *info, pdf_obj *resource);
 extern void pdf_ximage_set_form  (pdf_ximage *ximage, void *info, pdf_obj *resource);
 extern void pdf_ximage_set_page  (pdf_ximage *ximage, long page_no, long page_count);

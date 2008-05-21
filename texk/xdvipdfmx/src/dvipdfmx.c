@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.52 2007/05/18 05:19:00 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.63 2008/05/20 13:05:14 matthias Exp $
     
 	This is xdvipdfmx, an extended version of...
 
@@ -7,7 +7,7 @@
 	Copyright (c) 2006 SIL International (Jonathan Kew) and Jin-Hwan Cho
 	(xdvipdfmx extensions for XeTeX support)
 
-    Copyright (C) 2002-2003 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2008 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the DVIPDFMx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -60,6 +60,8 @@
 #include "pdfximage.h"
 #include "cid.h"
 
+#include "xbb.h"
+
 extern void error_cleanup (void);
 
 static int verbose = 0;
@@ -67,10 +69,10 @@ static int verbose = 0;
 static int mp_mode = 0;
 
 static long opt_flags = 0;
+
 #define OPT_TPIC_TRANSPARENT_FILL (1 << 1)
 #define OPT_CIDFONT_FIXEDPITCH    (1 << 2)
 #define OPT_FONTMAP_FIRST_MATCH   (1 << 3)
-#define OPT_NO_OBJSTM             (1 << 4)
 
 static int    do_objstm;
 
@@ -147,11 +149,7 @@ usage (int exit_code)
   fprintf (stdout, "\nUsage: xdvipdfmx [options] xdvfile\n");
   fprintf (stdout, "-c \t\tIgnore color specials (for B&W printing)\n");
   fprintf (stdout, "-d number\tSet PDF decimal digits (0-5) [2]\n");
-#if 0
-  /* Not supported */
-  fprintf (stdout, "-e \t\tDisable partial font embedding [default is enabled]\n");
-#endif
-  fprintf (stdout, "-f filename\tSet font map file name [t1fonts.map]\n");
+  fprintf (stdout, "-f filename\tSet font map file name [cid-x.map]\n");
   fprintf (stdout, "-g dimension\tAnnotation \"grow\" amount [0.0in]\n");
   fprintf (stdout, "-h \t\tShow this help message\n");
   fprintf (stdout, "-l \t\tLandscape mode\n");
@@ -161,9 +159,7 @@ usage (int exit_code)
   fprintf (stdout, "-q \t\tBe quiet\n");
   fprintf (stdout, "-r resolution\tSet resolution (in DPI) for raster fonts [600]\n");
   fprintf (stdout, "-s pages\tSelect page ranges (-)\n");
-#ifndef NO_THUMBNAIL
-  fprintf (stdout, "-t \t\tEmbed thumbnail images\n");
-#endif /* !NO_THUMBNAIL */
+  fprintf (stdout, "-t \t\tEmbed thumbnail images of PNG format [dvifile.1] \n");
   fprintf (stdout, "-x dimension\tSet horizontal offset [1.0in]\n");
   fprintf (stdout, "-y dimension\tSet vertical offset [1.0in]\n");
   fprintf (stdout, "-z number  \tSet zlib compression level (0-9) [9]\n");
@@ -176,19 +172,14 @@ usage (int exit_code)
   fprintf (stdout, "\t\t\t instead of opaque gray color. (requires PDF 1.4)\n");
   fprintf (stdout, "\t\t  0x0004 Treat all CIDFont as fixed-pitch font.\n");
   fprintf (stdout, "\t\t  0x0008 Do not replace duplicate fontmap entries.\n");
-  fprintf (stdout, "\t\t  0x0010 Do not create object streams.\n");
   fprintf (stdout, "\t\tPositive values are always ORed with previously given flags.\n");
   fprintf (stdout, "\t\tAnd negative values replace old values.\n");
   fprintf (stdout, "-D template\tPS->PDF conversion command line template [none]\n");
   fprintf (stdout, "-E \t\tAlways try to embed fonts, regardless of licensing flags.\n");
   fprintf (stdout, "-K number\tEncryption key bits [40]\n");
-  fprintf (stdout, "-M \t\tExperimental mps-to-pdf mode\n");
   fprintf (stdout, "-O number\tSet maximum depth of open bookmark items [0]\n");
   fprintf (stdout, "-P number\tSet permission flags for PDF encryption [0x003C]\n");
   fprintf (stdout, "-S \t\tEnable PDF encryption\n");
-#ifndef NO_THUMBNAIL
-  fprintf (stdout, "-T \t\tEmbed thumbnail images. Remove images files when finished.\n");
-#endif /* !NO_THUMBNAIL */
   fprintf (stdout, "-V number\tSet PDF minor version [4]\n");
   fprintf (stdout, "\nAll dimensions entered on the command line are \"true\" TeX dimensions.\n");
   fprintf (stdout, "Argument of \"-s\" lists physical page ranges separated by commas, e.g., \"-s 1-3,5-6\"\n");
@@ -353,6 +344,37 @@ select_pages (const char *pagespec)
 }
 
 static void
+set_verbose (int argc, char *argv[])
+{
+  while (argc > 0 && *argv[0] == '-') {
+    char *flag, *nextptr;
+
+    for (flag = argv[0] + 1; *flag != 0; flag++) {
+      if (*flag == 'q')
+        really_quiet++;
+      if (*flag == 'v')
+        verbose++;
+    }
+    POP_ARG();
+  }
+
+  if (!really_quiet) {
+    int i;
+
+    for (i = 0; i < verbose; i++) {
+      dvi_set_verbose();
+      pdf_dev_set_verbose();
+      pdf_doc_set_verbose();
+      pdf_enc_set_verbose();
+      pdf_obj_set_verbose();
+      pdf_fontmap_set_verbose();
+      dpx_file_set_verbose();
+    }
+  }
+}
+
+
+static void
 do_args (int argc, char *argv[])
 {
   while (argc > 0 && *argv[0] == '-') {
@@ -408,14 +430,9 @@ do_args (int argc, char *argv[])
         select_pages(argv[1]);
         POP_ARG();
         break;
-#ifndef NO_THUMBNAIL
-      case 'T':
-        pdf_doc_enable_thumbnails(1); /* remove after... */
-        break;
       case 't':
-        pdf_doc_enable_thumbnails(0);
+        pdf_doc_enable_manual_thumbnails();
         break;
-#endif /* !NO_THUMBNAIL */
       case 'p':
         CHECK_ARG(1, "paper format/size");
         select_paper(argv[1]);
@@ -438,11 +455,7 @@ do_args (int argc, char *argv[])
       case 'e':
         WARN("dvipdfm \"-e\" option not supported.");
         break;
-      case 'q':
-        really_quiet++;
-        break;
-      case 'v':
-        verbose++;
+      case 'q': case 'v':
         break;
       case 'V':
       {
@@ -544,21 +557,6 @@ do_args (int argc, char *argv[])
     POP_ARG();
   }
 
-  if (!really_quiet) {
-    int i;
-
-    for (i = 0; i < verbose; i++) {
-      dvi_set_verbose();
-      pdf_fontmap_set_verbose();
-      pdf_dev_set_verbose();
-      pdf_doc_set_verbose();
-      pdf_enc_set_verbose();
-      pdf_obj_set_verbose();
-      dpx_file_set_verbose();
-      tt_aux_set_verbose();
-    }
-  }
-
   if (argc > 1) {
     fprintf(stderr, "Multiple dvi filenames?");
     usage(1);
@@ -584,29 +582,17 @@ cleanup (void)
     RELEASE(page_ranges);
 }
 
-static const char *default_config_file = "dvipdfmx.cfg";
-
 static void
 read_config_file (const char *config)
 {
-  char *fullname;
   char *start, *end, *option;
   FILE *fp;
 
-#ifdef MIKTEX
-  if (!miktex_find_app_input_file("dvipdfm", config, fullname = work_buffer))
-    return;
-#else
-  if ((fullname = kpse_find_file(config, kpse_program_text_format, 1)) == NULL)
-    return;
-#endif
-
-  if (!(fp = MFOPEN (fullname, FOPEN_R_MODE))) {
-    WARN("Could not open config file \"%s\".", fullname);
-    RELEASE(fullname);
+  fp = DPXFOPEN(config, DPX_RES_TYPE_TEXT);
+  if (!fp) {
+    WARN("Could not open config file \"%s\".", config);
     return;
   }
-  RELEASE(fullname);
   while ((start = mfgets (work_buffer, WORK_BUFFER_SIZE, fp)) != NULL) {
     char *argv[2];
     int   argc;
@@ -810,15 +796,25 @@ do_mps_pages (void)
 
 
 /* TODO: MetaPost mode */
+#if defined(MIKTEX)
+#  define main Main
+#endif
 int CDECL
 main (int argc, char *argv[]) 
 {
   double dvi2pts;
 
+  if (strcmp(argv[0], "ebb") == 0)
+    return extractbb(argc, argv, EBB_OUTPUT);
+  else if (strcmp(argv[0], "xbb") == 0 || strcmp(argv[0], "extractbb") == 0)
+    return extractbb(argc, argv, XBB_OUTPUT);
+
+  mem_debug_init();
+
 #ifdef MIKTEX
   miktex_initialize();
 #else
-  kpse_set_program_name(argv[0], "dvipdfm");
+  kpse_set_program_name(argv[0], "dvipdfmx"); /* we pretend to be dvipdfmx for kpse purposes */
 #endif
 
   paperinit();
@@ -827,12 +823,11 @@ main (int argc, char *argv[])
   argv+=1;
   argc-=1;
 
+  set_verbose(argc, argv);
+
   pdf_init_fontmaps(); /* This must come before parsing options... */
 
-  /* Process config file, if any */
-  if (default_config_file) {
-    read_config_file(default_config_file);
-  }
+  read_config_file(DPX_CONFIG_FILE);
 
   do_args (argc, argv);
 
@@ -862,8 +857,6 @@ main (int argc, char *argv[])
       pdf_set_version(4);
   }
 
-  do_objstm = !(opt_flags & OPT_NO_OBJSTM);
-
   if (mp_mode) {
     x_offset = 0.0;
     y_offset = 0.0;
@@ -885,11 +878,13 @@ main (int argc, char *argv[])
   MESG("%s -> %s\n", dvi_filename == NULL ? "stdin" : dvi_filename,
 		     pdf_filename == NULL ? "stdout" : pdf_filename);
 
+  pdf_files_init();
+
   /* Set default paper size here so that all page's can inherite it.
    * annot_grow:    Margin of annotation.
    * bookmark_open: Miximal depth of open bookmarks.
    */
-  pdf_open_document(pdf_filename, do_encryption, do_objstm,
+  pdf_open_document(pdf_filename, do_encryption,
                     paper_width, paper_height, annot_grow, bookmark_open);
 
   /* Ignore_colors placed here since
@@ -910,6 +905,8 @@ main (int argc, char *argv[])
     do_dvi_pages();
   }
 
+  pdf_files_close();
+
   /* Order of close... */
   pdf_close_device  ();
   /* pdf_close_document flushes XObject (image) and other resources. */
@@ -927,6 +924,9 @@ main (int argc, char *argv[])
 #ifdef MIKTEX
   miktex_uninitialize ();
 #endif
+
+  if (verbose)
+    mem_debug_check();
 
   return 0;
 }

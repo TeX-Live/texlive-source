@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/epdf.c,v 1.18 2008/02/13 20:22:21 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/epdf.c,v 1.22 2008/05/18 14:31:06 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -40,23 +40,21 @@
 #include "mfileio.h"
 #include "error.h"
 
-#if HAVE_ZLIB
-#include <zlib.h>
-#endif
-
 #include "pdfobj.h"
 #include "pdfdev.h"
-
-#include "pdfximage.h"
 #include "pdfdraw.h"
 #include "pdfparse.h"
+
+#include "pdfximage.h"
 
 #include "epdf.h"
 
 #if HAVE_ZLIB
+#include <zlib.h>
 static int  add_stream_flate (pdf_obj *dst, const void *data, long len);
 #endif
 static int  concat_stream    (pdf_obj *dst, pdf_obj *src);
+
 static void print_bbox_info  (pdf_obj *rect, const char *type, pdf_obj *crop_box);
 static int  rect_equal       (pdf_obj *rect1, pdf_obj *rect2);
 
@@ -81,30 +79,30 @@ static int  rect_equal       (pdf_obj *rect1, pdf_obj *rect2);
  * intended use; it merely imposes clipping on the page contents. However,
  * in the absence of additional information (such as imposition instructions
  * specified in a JDF or PJTF job ticket), the crop box will determine how
- * the page’s contents are to be positioned on the output medium. The default
- * value is the page’s media box. 
+ * the pageâ€™s contents are to be positioned on the output medium. The default
+ * value is the pageâ€™s media box. 
  *
  * BleedBox rectangle (Optional; PDF 1.3)
  *
  * The bleed box (PDF 1.3) defines the region to which the contents of the
  * page should be clipped when output in a production environment. This may
- * include any extra “bleed area” needed to accommodate the physical
+ * include any extra â€œbleed areaâ€ needed to accommodate the physical
  * limitations of cutting, folding, and trimming equipment. The actual printed
  * page may include printing marks that fall outside the bleed box.
- * The default value is the page’s crop box. 
+ * The default value is the pageâ€™s crop box. 
  *
  * TrimBox rectangle (Optional; PDF 1.3)
  *
  * The trim box (PDF 1.3) defines the intended dimensions of the finished page
  * after trimming. It may be smaller than the media box, to allow for
  * production-related content such as printing instructions, cut marks, or
- * color bars. The default value is the page’s crop box. 
+ * color bars. The default value is the pageâ€™s crop box. 
  *
  * ArtBox rectangle (Optional; PDF 1.3)
  *
- * The art box (PDF 1.3) defines the extent of the page’s meaningful content
- * (including potential white space) as intended by the page’s creator.
- * The default value is the page’s crop box.
+ * The art box (PDF 1.3) defines the extent of the pageâ€™s meaningful content
+ * (including potential white space) as intended by the pageâ€™s creator.
+ * The default value is the pageâ€™s crop box.
  *
  * Rotate integer (Optional; inheritable)
  *
@@ -145,10 +143,14 @@ print_bbox_info (pdf_obj *rect, const char *type, pdf_obj *crop_box)
 }
 
 static pdf_obj*
-pdf_get_page_obj (FILE *image_file, long page_no, pdf_obj **ret_bbox, pdf_obj **ret_resources)
+pdf_get_page_obj (pdf_file *pf, long page_no,
+                  pdf_obj **ret_bbox, pdf_obj **ret_resources)
 {
-  pdf_obj *page_tree, *resources = NULL, *rotate = NULL, *bbox = NULL;
-  long page_count, page_idx;
+  xform_info info;
+  pdf_obj *contents,  *contents_dict;
+  pdf_obj *page_tree;
+  pdf_obj *bbox = NULL, *resources = NULL, *rotate = NULL, *matrix;
+  long page_idx;
 
   /*
    * Get Page Tree.
@@ -158,11 +160,7 @@ pdf_get_page_obj (FILE *image_file, long page_no, pdf_obj **ret_bbox, pdf_obj **
     pdf_obj *trailer, *catalog;
     pdf_obj *markinfo, *tmp;
 
-    trailer = pdf_open(image_file);
-    if (!trailer) {
-      WARN("Trailer not found! Corrupt PDF file?");
-      return NULL;
-    }
+    trailer = pdf_file_get_trailer(pf);
 
     if (pdf_lookup_dict(trailer, "Encrypt")) {
       WARN("This PDF document is encrypted.");
@@ -183,12 +181,9 @@ pdf_get_page_obj (FILE *image_file, long page_no, pdf_obj **ret_bbox, pdf_obj **
     markinfo = pdf_deref_obj(pdf_lookup_dict(catalog, "MarkInfo"));
     if (markinfo) {
       tmp = pdf_lookup_dict(markinfo, "Marked");
+      if (PDF_OBJ_BOOLEANTYPE(tmp) && pdf_boolean_value(tmp))
+	WARN("File contains tagged PDF. Ignoring tags.");
       pdf_release_obj(markinfo);
-      if (tmp && pdf_boolean_value(tmp)) {
-	WARN("Tagged PDF not supported.");
-	pdf_release_obj(catalog);
-	return NULL;
-      }
     }
 
     page_tree = pdf_deref_obj(pdf_lookup_dict(catalog, "Pages"));
@@ -206,12 +201,13 @@ pdf_get_page_obj (FILE *image_file, long page_no, pdf_obj **ret_bbox, pdf_obj **
     long count = pdf_number_value(pdf_lookup_dict(page_tree, "Count"));
     page_idx = page_no + (page_no >= 0 ? -1 : count);
     if (page_idx < 0 || page_idx >= count) {
-      WARN("Page %ld does not exist.", page_no);
-      page_idx = page_idx < 0 ? 0 : count - 1;
-    }
-    page_no = page_idx + 1;
+	WARN("Page %ld does not exist.", page_no);
+	pdf_release_obj(page_tree);
+	return NULL;
+      }
+    page_no = page_idx+1;
   }
-  
+
   /*
    * Seek correct page. Get Media/Crop Box.
    * Media box and resources can be inherited.
@@ -237,21 +233,24 @@ pdf_get_page_obj (FILE *image_file, long page_no, pdf_obj **ret_bbox, pdf_obj **
 	  if (bbox)
 	    pdf_release_obj(bbox);
 	  bbox = tmp;
-        }
+        } else
+          pdf_release_obj(tmp);
       }
       if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "TrimBox")))) {
         if (!rect_equal(tmp, bbox)) {
 	  if (bbox)
 	    pdf_release_obj(bbox);
 	  bbox = tmp;
-        }
+        } else
+          pdf_release_obj(tmp);
       }
       if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "ArtBox")))) {
         if (!rect_equal(tmp, bbox)) {
 	  if (bbox)
 	    pdf_release_obj(bbox);
 	  bbox = tmp;
-        }
+        } else
+          pdf_release_obj(tmp);
       }
       if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "CropBox")))) {
 	if (crop_box)
@@ -328,20 +327,20 @@ pdf_get_page_obj (FILE *image_file, long page_no, pdf_obj **ret_bbox, pdf_obj **
       pdf_release_obj(rotate);
     return NULL;
   }
-  
+
   if (rotate) {
     if (pdf_number_value(rotate) != 0.0)
       WARN("<< /Rotate %d >> found. (Not supported yet)",  (int)pdf_number_value(rotate));
     pdf_release_obj(rotate);
     rotate = NULL;
   }
-
+  
   if (ret_bbox != NULL)
     *ret_bbox = bbox;
   if (ret_resources != NULL)
     *ret_resources = resources;
 
-  return page_tree;  
+  return page_tree;
 }
 
 static pdf_obj*
@@ -419,9 +418,15 @@ pdf_include_page (pdf_ximage *ximage, FILE *image_file)
   pdf_obj *matrix;
   pdf_obj *bbox = NULL, *resources = NULL;
   long page_no, page_idx;
+  pdf_file *pf;
+  char *ident = pdf_ximage_get_ident(ximage);
 
   pdf_ximage_init_form_info(&info);
 
+  pf = pdf_open(ident, image_file);
+  if (!pf)
+    return -1;
+  
   /*
    * Get Page Tree.
    */
@@ -429,9 +434,9 @@ pdf_include_page (pdf_ximage *ximage, FILE *image_file)
   if (page_no == 0)
     page_no = 1;
 
-  page_tree = pdf_get_page_obj(image_file, page_no, &bbox, &resources);
+  page_tree = pdf_get_page_obj(pf, page_no, &bbox, &resources);
   if (page_tree == NULL) {
-    pdf_close();
+    pdf_close(pf);
     return -1;
   }
 
@@ -452,10 +457,14 @@ pdf_include_page (pdf_ximage *ximage, FILE *image_file)
     pdf_release_obj(tmp);
   }
 
+  /*
+   * Handle page content stream.
+   * page_tree is now set to the correct page.
+   */
   contents = pdf_get_page_content(page_tree);
   pdf_release_obj(page_tree);
   if (contents == NULL) {
-    pdf_close();
+    pdf_close(pf);
     return -1;
   }
 
@@ -470,7 +479,7 @@ pdf_include_page (pdf_ximage *ximage, FILE *image_file)
     bbox = tmp;
   }
 
-  pdf_close();
+  pdf_close(pf);
 
   contents_dict = pdf_stream_dict(contents);
   pdf_add_dict(contents_dict,
@@ -578,20 +587,25 @@ pdf_copy_clip (FILE *image_file, int pageNo, double x_user, double y_user)
   double stack[6];
   pdf_coord   p0, p1, p2;
   pdf_rect    bbox;
+  pdf_file *pf;
+  
+  pf = pdf_open(NULL, image_file);
+  if (!pf)
+    return -1;
 
   pdf_dev_currentmatrix(&M);
   pdf_invertmatrix(&M);
   M.e += x_user; M.f += y_user;
-  page_tree = pdf_get_page_obj (image_file, pageNo, NULL, NULL);
+  page_tree = pdf_get_page_obj (pf, pageNo, NULL, NULL);
   if (!page_tree) {
-    pdf_close();
+    pdf_close(pf);
     return -1;
   }
 
   contents = pdf_get_page_content(page_tree);
   pdf_release_obj(page_tree);
   if (!contents) {
-    pdf_close();
+    pdf_close(pf);
     return -1;
   }
 
@@ -623,7 +637,7 @@ pdf_copy_clip (FILE *image_file, int pageNo, double x_user, double y_user)
       clip_path = temp;
     } else if (*clip_path == '[') {
       /* Ignore, but put a dummy value on the stack (in case of d operator) */
-      parse_pdf_array(&clip_path, end_path);
+      parse_pdf_array(&clip_path, end_path, pf);
       stack[++top] = 0;
     } else if (*clip_path == '/') {
       if  (strncmp("/DeviceGray",	clip_path, 11) == 0
@@ -806,7 +820,7 @@ pdf_copy_clip (FILE *image_file, int pageNo, double x_user, double y_user)
   free(clip_path);
 
   pdf_release_obj(contents);
-  pdf_close();
+  pdf_close(pf);
 
   return 0;
 }

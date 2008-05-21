@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/agl.c,v 1.32 2005/07/20 10:41:54 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/agl.c,v 1.33 2007/11/14 02:07:14 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -70,6 +70,7 @@ agl_new_name (void)
   agln->suffix = NULL;
   agln->n_components = 0;
   agln->alternate = NULL;
+  agln->is_predef = 0;
 
   return agln;
 }
@@ -368,7 +369,7 @@ agl_load_standard_names()
 {
   char** pline = &agl_standard_names[0];
   while (**pline != 0) {
-    agl_load_line(*pline, *pline + strlen(*pline));
+    agl_load_line(*pline, *pline + strlen(*pline), 1);
     ++pline;
   }
 }
@@ -379,6 +380,9 @@ agl_init_map (void)
   ht_init_table(&aglmap);
   agl_load_listfile(AGL_EXTRA_LISTFILE, 0);
 #if 0 /* JK: use built-in list of standard names rather than requiring separate file */
+  if (agl_load_listfile(AGL_PREDEF_LISTFILE, 1) < 0) {
+    WARN("Failed to load AGL file \"%s\"...", AGL_PREDEF_LISTFILE);
+  }
   if (agl_load_listfile(AGL_DEFAULT_LISTFILE, 0) < 0) {
     WARN("Failed to load AGL file \"%s\"...", AGL_DEFAULT_LISTFILE);
   }
@@ -400,7 +404,7 @@ agl_close_map (void)
 }
 
 int
-agl_load_line(char* p, char* endptr)
+agl_load_line(char* p, char* endptr, int is_predef)
 {
   char     *wbuf = p;
   agl_name *agln, *duplicate;
@@ -448,6 +452,7 @@ agl_load_line(char* p, char* endptr)
   }
 
   agln = agl_normalized_name(name);
+  agln->is_predef = is_predef;
   agln->n_components = n_unicodes;
   for (i = 0; i < n_unicodes; i++) {
     agln->unicodes[i] = unicodes[i];
@@ -485,7 +490,7 @@ agl_load_line(char* p, char* endptr)
 #define WBUF_SIZE 1024
 
 int
-agl_load_listfile (const char *filename, int format) /* format unused. */
+agl_load_listfile (const char *filename, int is_predef)
 {
   int   count = 0;
   char *p, *endptr;
@@ -511,7 +516,7 @@ agl_load_listfile (const char *filename, int format) /* format unused. */
     if (!p || p[0] == '#' || p >= endptr)
       continue;
 
-    count += agl_load_line(p, endptr);
+    count += agl_load_line(p, endptr, is_predef);
   }
   DPXFCLOSE(fp);
 

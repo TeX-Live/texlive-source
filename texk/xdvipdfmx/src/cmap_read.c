@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cmap_read.c,v 1.2 2005/06/08 11:18:37 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cmap_read.c,v 1.3 2008/01/11 18:04:15 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -66,12 +66,13 @@ ifreader_create (FILE *fp, long size, long bufsize)
   ifreader *reader;
 
   reader = NEW(1, ifreader);
-  reader->buf = NEW(bufsize, unsigned char);
+  reader->buf = NEW(bufsize+1, unsigned char);
   reader->max = bufsize;
   reader->fp  = fp;
   reader->unread = size;
 
   reader->cursor = reader->endptr = reader->buf;
+  *reader->endptr = 0;
 
   return reader;
 }
@@ -96,7 +97,7 @@ ifreader_read (ifreader *reader, long size)
   if (size > reader->max) {
     if (__verbose)
       MESG("\nExtending buffer (%ld bytes)...\n", size);
-    reader->buf = RENEW(reader->buf, size, unsigned char);
+    reader->buf = RENEW(reader->buf, size+1, unsigned char);
     reader->max = size;
   }
   if (reader->unread > 0 && bytesrem < size) {
@@ -111,6 +112,8 @@ ifreader_read (ifreader *reader, long size)
     if (__verbose)
       MESG("Reading more %ld bytes (%ld bytes remains in buffer)...\n", bytesread, bytesrem);
   }
+
+  *reader->endptr = 0;
 
   return bytesread + bytesrem;
 }
@@ -527,7 +530,7 @@ CMap_parse (CMap *cmap, FILE *fp)
 
   ASSERT(cmap && fp);
 
-  input = ifreader_create(fp, file_size(fp), INPUT_BUF_SIZE);
+  input = ifreader_create(fp, file_size(fp), INPUT_BUF_SIZE-1);
 
   while (status >= 0) {
     tok1 = tok2 = NULL;

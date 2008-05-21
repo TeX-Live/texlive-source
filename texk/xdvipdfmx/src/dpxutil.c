@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dpxutil.c,v 1.7 2005/07/17 09:53:38 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dpxutil.c,v 1.8 2007/11/14 03:36:01 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -235,9 +235,10 @@ ht_lookup_table (struct ht_table *ht, const void *key, int keylen)
   return NULL;
 }
 
-void
+int
 ht_remove_table (struct ht_table *ht,
 		 const void *key, int keylen, void (*hval_free_fn) (void *))
+/* returns 1 if the element was found and removed and 0 otherwise */
 {
   struct ht_entry *hent, *prev;
   unsigned int     hkey;
@@ -269,7 +270,9 @@ ht_remove_table (struct ht_table *ht,
     }
     RELEASE(hent);
     ht->count--;
-  }
+    return 1;
+  } else
+    return 0;
 }
 
 /* replace... */

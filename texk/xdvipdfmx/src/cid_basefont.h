@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cid_basefont.h,v 1.14 2005/06/27 11:54:50 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cid_basefont.h,v 1.15 2007/11/15 17:08:52 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -455,6 +455,32 @@ const struct {
   /Panose <000002020400000000000000> \
 >> \
      >>"
+  },
+
+  /* Addition in Adobe Reader 8 */
+  /*
+   * Font information of AdobeHeitiStd-Regular.otf may not be correct!
+   * Just copied the information of AdobeSongStd-Light.otf.
+   */
+  {
+    "AdobeHeitiStd-Regular",
+    "<< \
+/Subtype/CIDFontType0 \
+/CIDSystemInfo << /Registry (Adobe) /Ordering (GB1) /Supplement 4 >> \
+/DW 1000 \
+/W [\
+  814 939 500 \
+ 7716 [500] \
+22355 [500 500] \
+22357 [500] \
+]\
+>>",
+    "<< \
+/Ascent 880 /Descent -120 /StemV 66 /CapHeight 626 \
+/FontBBox [-134 -254 1001 905] \
+/ItalicAngle 0 /Flags 6 /XHeight 416 \
+/Style << /Panose <000002020300000000000000> >> \
+>>"
   },
   /* END */
   {NULL, NULL, NULL}

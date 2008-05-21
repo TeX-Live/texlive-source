@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/mem.h,v 1.3 2002/10/30 02:27:11 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/mem.h,v 1.5 2007/11/17 18:08:58 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -27,24 +27,40 @@
 
 #include <stdlib.h>
 
-extern void *new (size_t size, char *function, int line);
-extern void *renew (void *p, size_t size, char *function, int line);
-extern void release (void *mem, char *function, int line);
+extern void *new (size_t size);
+extern void *renew (void *p, size_t size);
+
+extern void mem_debug_init(void);
+extern void mem_debug_check(void);
+
+#undef MEM_DEBUG
 
 #ifdef MEM_DEBUG
-extern void mem_debug_init(void);
-extern FILE *debugfile;
-#define NEW(n,type) (type *)(new (((size_t) (n))*sizeof(type),__FUNCTION__,__LINE__))
-#define RENEW(p,n,type) (type *)(renew ((p),(n)*sizeof(type),__FUNCTION__,__LINE__))
-#define RELEASE(p) release ((p),__FUNCTION__,__LINE__)
-#define MEM_START {mem_debug_init();fprintf (debugfile, "Entered %s\n", __FUNCTION__);}
-#define MEM_END fprintf (debugfile, "Leaving %s\n", __FUNCTION__);
-#else /* MEM_DEBUG */
-#define MEM_START
-#define MEM_END
-#define NEW(n,type) (type *)(new (((size_t) (n))*sizeof(type),NULL,0))
-#define RENEW(p,n,type) (type *)(renew ((p),(n)*sizeof(type),NULL,0))
-#define RELEASE(p) release ((p),NULL,0)
+
+extern void *mem_add    (void *ptr,
+			 const char *file, const char *function, int line);
+extern void *mem_remove (void *ptr,
+			 const char *file, const char *function, int line);
+#define MEM_ADD(p)     mem_add(p, __FILE__, __FUNCTION__, __LINE__)
+#define MEM_REMOVE(p)  mem_remove(p, __FILE__, __FUNCTION__, __LINE__)
+
+#else /* ! MEM_DEBUG */
+
+extern void *mem_add    (void *ptr);
+extern void *mem_remove (void *ptr);
+#define MEM_ADD(p)     mem_add(p)
+#define MEM_REMOVE(p)  mem_remove(p)
+
 #endif /* MEM_DEBUG */
+
+
+#define NEW(n,type)     (type *) MEM_ADD(new(((size_t)(n))*sizeof(type)))
+#define RENEW(p,n,type) (type *) MEM_ADD(renew(MEM_REMOVE(p),(n)*sizeof(type)))
+#define RELEASE(p)      free(MEM_REMOVE(p))
+
+/* wrappers for functions from kpathsea */
+#define kpse_path_search(x,y,z)   (char *) MEM_ADD(kpse_path_search(x,y,z))
+#define kpse_find_file(x,y,z)     (char *) MEM_ADD(kpse_find_file(x,y,z))
+#define kpse_find_glyph(x,y,z,w)  (char *) MEM_ADD(kpse_find_glyph(x,y,z,w))
 
 #endif /* _MEM_H_ */

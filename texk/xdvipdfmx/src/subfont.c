@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/subfont.c,v 1.20 2005/07/28 13:19:00 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/subfont.c,v 1.22 2008/01/13 21:25:31 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -19,6 +19,8 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
+
+#include <errno.h>
 
 #if HAVE_CONFIG_H
 #include "config.h"
@@ -454,8 +456,7 @@ lookup_sfd_record (int rec_id, unsigned char c)
   return sfd_record[rec_id].vector[c];
 }
 
-#if  0
-static void
+void
 release_sfd_record (void)
 {
   int  i;
@@ -474,7 +475,6 @@ release_sfd_record (void)
   num_sfd_records = max_sfd_records = 0;
   num_sfd_files = max_sfd_files = 0;
 }
-#endif /* 0 */
 
 
 #if  DPXTEST

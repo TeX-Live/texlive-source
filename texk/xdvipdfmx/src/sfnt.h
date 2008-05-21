@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/sfnt.h,v 1.9 2004/09/11 14:50:29 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/sfnt.h,v 1.10 2008/05/08 18:51:59 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -79,6 +79,7 @@ struct sfnt_table_directory
 #define SFNT_TYPE_OPENTYPE   (1 << 1)
 #define SFNT_TYPE_POSTSCRIPT (1 << 2)
 #define SFNT_TYPE_TTC        (1 << 4)
+#define SFNT_TYPE_DFONT      (1 << 8)
 
 typedef struct
 {
@@ -90,6 +91,7 @@ typedef struct
 #else
   FILE  *stream;
 #endif
+  ULONG  offset;
 } sfnt;
 
 /* Convert sfnt "fixed" type to double */
@@ -139,6 +141,7 @@ extern sfnt *sfnt_open  (FT_Face face, int accept_types);
 extern sfnt *sfnt_open  (FILE *fp);
 #endif
 extern void  sfnt_close (sfnt *sfont);
+extern sfnt *dfont_open (FILE *fp, int index);
 
 /* table directory */
 extern int   sfnt_read_table_directory (sfnt *sfont, ULONG offset);

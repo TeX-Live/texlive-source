@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cidtype0.c,v 1.36 2007/06/30 01:18:13 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cidtype0.c,v 1.38 2008/05/17 04:18:47 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -163,7 +163,6 @@ add_CIDVMetrics (sfnt *sfont, pdf_obj *fontdict,
   pdf_obj *w2_array, *an_array = NULL;
   long cid, prev, start;
   struct tt_VORG_table *vorg;
-  struct tt_os2__table *os2;
   struct tt_vhea_table *vhea  = NULL;
   struct tt_longMetrics *vmtx = NULL;
   double defaultAdvanceHeight, defaultVertOriginY;
@@ -184,13 +183,18 @@ add_CIDVMetrics (sfnt *sfont, pdf_obj *fontdict,
     sfnt_locate_table(sfont, "vmtx");
     vmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, vhea->numOfLongVerMetrics, vhea->numOfExSideBearings);
   }
-  /*
-   * OpenType font must have OS/2 table.
-   */
-  os2 = tt_read_os2__table(sfont);
-  defaultVertOriginY   = PDFUNIT(os2->sTypoAscender);
-  defaultAdvanceHeight = PDFUNIT(os2->sTypoAscender - os2->sTypoDescender);
-  RELEASE(os2);
+
+  if (sfnt_find_table_pos(sfont, "OS/2") <= 0) {
+    struct tt_os2__table *os2;
+    /* OpenType font must have OS/2 table. */
+    os2 = tt_read_os2__table(sfont);
+    defaultVertOriginY   = PDFUNIT(os2->sTypoAscender);
+    defaultAdvanceHeight = PDFUNIT(os2->sTypoAscender - os2->sTypoDescender);
+    RELEASE(os2);
+  } else {
+    /* Some TrueType fonts used in Macintosh does not have OS/2 table. */
+    defaultAdvanceHeight = 1000;
+  }
 
   w2_array = pdf_new_array();
   start = prev = 0;
@@ -827,7 +831,7 @@ CIDFont_type0_open (CIDFont *font, const char *name,
 
   /* getting font info. from TrueType tables */
   if ((font->descriptor
-       = tt_get_fontdesc(sfont, &(opt->embed), 0, name)) == NULL)
+       = tt_get_fontdesc(sfont, &(opt->embed), opt->stemv, 0, name)) == NULL)
     ERROR("Could not obtain necessary font info.");
 
   if (opt->embed) {
@@ -1239,7 +1243,7 @@ CIDFont_type0_t1copen (CIDFont *font, const char *name,
 
   /* getting font info. from TrueType tables */
   if ((font->descriptor
-       = tt_get_fontdesc(sfont, &(opt->embed), 0, name)) == NULL)
+       = tt_get_fontdesc(sfont, &(opt->embed), opt->stemv, 0, name)) == NULL)
     ERROR("Could not obtain necessary font info.");
 
   if (opt->embed) {

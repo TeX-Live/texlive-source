@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdffont.c,v 1.15 2005/07/20 10:41:54 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdffont.c,v 1.23 2008/05/18 14:49:20 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2008 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -127,6 +127,7 @@ struct pdf_font
   int      font_id;
 
   /* For simple font */
+  int      index;
   char    *fontname;
   char     uniqueID[7];
 
@@ -163,6 +164,7 @@ pdf_init_font_struct (pdf_font *font)
   font->font_id  = -1; /* Type0 ID */
   font->fontname = NULL;
   memset(font->uniqueID, 0, 7);
+  font->index    = 0;
 
   font->encoding_id = -1;
 
@@ -493,12 +495,15 @@ pdf_close_fonts (void)
     case PDF_FONT_FONTTYPE_TYPE1:
       if (__verbose)
 	MESG("[Type1]");
-      retval = pdf_font_load_type1  (font);
+      if (!pdf_font_get_flag(font, PDF_FONT_FLAG_BASEFONT))
+	retval = pdf_font_load_type1(font);
+      else
+	retval = 0;
       break;
     case PDF_FONT_FONTTYPE_TYPE1C:
       if (__verbose)
 	MESG("[Type1C]");
-      retval = pdf_font_load_type1c (font);
+      retval = pdf_font_load_type1c(font);
       break;
     case PDF_FONT_FONTTYPE_TRUETYPE:
       if (__verbose)
@@ -517,9 +522,41 @@ pdf_close_fonts (void)
       break;
     }
 
+    if (font->encoding_id >= 0 && font->subtype != PDF_FONT_FONTTYPE_TYPE0)
+      pdf_encoding_add_usedchars(font->encoding_id, font->usedchars);
+
     if (__verbose) {
       if (font->subtype != PDF_FONT_FONTTYPE_TYPE0)
 	MESG(")");
+    }
+  }
+
+  pdf_encoding_complete();
+
+  for (font_id = 0; font_id < font_cache.count; font_id++) {
+    pdf_font *font = GET_FONT(font_id);
+
+    if (font->encoding_id >= 0 && font->subtype != PDF_FONT_FONTTYPE_TYPE0) {
+      pdf_obj *enc_obj = pdf_get_encoding_obj(font->encoding_id);
+      pdf_obj *tounicode;
+
+      /* Predefined encodings (and those simplified to them) are embedded
+	 as direct objects, but this is purely a matter of taste. */
+      if (enc_obj)
+        pdf_add_dict(font->resource,
+		     pdf_new_name("Encoding"),
+		     PDF_OBJ_NAMETYPE(enc_obj) ? pdf_link_obj(enc_obj) : pdf_ref_obj(enc_obj));
+
+      if (!pdf_lookup_dict(font->resource, "ToUnicode")
+	  && (tounicode = pdf_encoding_get_tounicode(font->encoding_id)))
+	pdf_add_dict(font->resource,
+		     pdf_new_name("ToUnicode"), pdf_ref_obj(tounicode));
+    } else if (font->subtype == PDF_FONT_FONTTYPE_TRUETYPE) {
+      /* encoding_id < 0 means MacRoman here (but not really)
+       * We use MacRoman as "default" encoding. */
+      pdf_add_dict(font->resource,
+                   pdf_new_name("Encoding"),
+		   pdf_new_name("MacRomanEncoding"));
     }
 
     pdf_flush_font(font);
@@ -649,8 +686,6 @@ pdf_font_findresource (const char *tex_name,
       font->subtype     = PDF_FONT_FONTTYPE_TYPE0;
       font->encoding_id = cmap_id;
 
-      mrec->opt.flags  &= ~FONTMAP_OPT_REMAP; /* _FIXME_ */
-
       font_cache.count++;
 
       if (__verbose) {
@@ -675,16 +710,22 @@ pdf_font_findresource (const char *tex_name,
       case PDF_FONT_FONTTYPE_TRUETYPE:
 	/* fontname here is font file name.
 	 * We must compare both font file name and encoding
+	 *
+	 * TODO: Embed a font only once if it is used
+	 *       with two different encodings
 	 */
 	if (!strcmp(fontname, font->ident)   &&
 	    encoding_id == font->encoding_id) {
-	  found = 1;
+          if (mrec && mrec->opt.index == font->index)
+            found = 1;
 	}
 	break;
       case PDF_FONT_FONTTYPE_TYPE3:
 	/* There shouldn't be any encoding specified for PK font.
 	 * It must be always font's build-in encoding.
-	 */
+	 *
+	 * TODO: a PK font with two encodings makes no sense. Change?
+         */
 	if (!strcmp(fontname, font->ident) &&
 	    font_scale == font->point_size) {
 	  found = 1;
@@ -728,6 +769,7 @@ pdf_font_findresource (const char *tex_name,
       strcpy(font->ident, fontname);
       font->map_name    = NEW(strlen(tex_name) + 1, char);
       strcpy(font->map_name, tex_name);
+      font->index       = (mrec && mrec->opt.index) ? mrec->opt.index : 0;
 
       if (pdf_font_open_type1(font) >= 0) {
 	font->subtype = PDF_FONT_FONTTYPE_TYPE1;
@@ -786,12 +828,28 @@ pdf_get_font_ft_to_gid (int font_id)
 }
 #endif
 
+int
+pdf_font_get_index (pdf_font *font)
+{
+  ASSERT(font);
+
+  return font->index;
+}
+
 char *
 pdf_font_get_ident (pdf_font *font)
 {
   ASSERT(font);
 
   return font->ident;
+}
+
+char *
+pdf_font_get_mapname (pdf_font *font)
+{
+  ASSERT(font);
+
+  return font->map_name;
 }
 
 char *

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/tt_aux.h,v 1.5 2004/09/11 14:50:29 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/tt_aux.h,v 1.6 2008/05/17 04:18:47 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -32,6 +32,6 @@ extern void tt_aux_set_verbose();
 extern ULONG    ttc_read_offset (sfnt *sfont, int ttc_idx);
 
 /* FontDescriptor */
-extern pdf_obj *tt_get_fontdesc (sfnt *sfont, int *embed, int type, const char* fontname);
+extern pdf_obj *tt_get_fontdesc (sfnt *sfont, int *embed, int stemv, int type, const char* fontname);
 
 #endif /* _TT_AUX_H_ */

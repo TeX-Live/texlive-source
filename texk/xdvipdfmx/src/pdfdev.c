@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdev.c,v 1.64 2007/11/27 02:44:29 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdev.c,v 1.65 2008/05/18 08:09:09 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -455,7 +455,6 @@ struct dev_font {
   double   bold;  /* Boldness prameter */
 
   /* Compatibility */
-  int      remap; /* Obsolete */
   int      mapc;  /* Nasty workaround for Omega */
 
   /* There are no font metric format supporting four-bytes
@@ -873,33 +872,6 @@ static unsigned char sbuf0[FORMAT_BUF_SIZE];
 static unsigned char sbuf1[FORMAT_BUF_SIZE];
 
 static int
-handle_remap (unsigned char **str_ptr, int length)
-{
-  unsigned char *p;
-  int  i;
-
-  p = *str_ptr;
-
-#define twiddle(n) ( \
-    ( \
-     ((n) <= 9)  ? \
-        ((n) + 161) : \
-           (((n) <= 32)  ? \
-           ((n) + 163) : \
-           (((n) == 127) ? 196: (n)) \
-        ) \
-    ) \
-)
-
-  for (i = 0; i < length; i++) {
-    sbuf0[i] = twiddle(p[i]);
-  }
-
-  *str_ptr = sbuf0;
-  return 0;
-}
-
-static int
 handle_multibyte_string (struct dev_font *font,
                          unsigned char **str_ptr, int *str_len, int ctype)
 {
@@ -1067,8 +1039,6 @@ pdf_dev_set_string (spt_t xpos, spt_t ypos,
                            (unsigned short) (str_ptr[i] << 8)|str_ptr[i+1]);
     }
   } else {
-    if (font->remap)
-      handle_remap(&str_ptr, length); /* length unchanged. */
     if (real_font->used_chars != NULL) {
       for (i = 0; i < length; i++)
         real_font->used_chars[str_ptr[i]] = 1;
@@ -1448,8 +1418,6 @@ print_fontmap (const char *font_name, fontmap_rec *mrec)
     MESG("[slant:%g]",  mrec->opt.slant);
   if (mrec->opt.bold   != 0.0) 
     MESG("[bold:%g]",   mrec->opt.bold);
-  if (mrec->opt.flags & FONTMAP_OPT_REMAP) 
-    MESG("[remap]");
   if (mrec->opt.flags & FONTMAP_OPT_NOEMBED)
     MESG("[noemb]");
   if (mrec->opt.mapc >= 0)
@@ -1567,7 +1535,6 @@ pdf_dev_locate_font (const char *font_name, spt_t ptsize)
   font->extend     = 1.0;
   font->slant      = 0.0;
   font->bold       = 0.0;
-  font->remap      = 0;
   font->mapc       = -1;
   font->is_unicode = 0;
   font->ucs_group  = 0;
@@ -1577,7 +1544,6 @@ pdf_dev_locate_font (const char *font_name, spt_t ptsize)
     font->extend = mrec->opt.extend;
     font->slant  = mrec->opt.slant;
     font->bold   = mrec->opt.bold;
-    font->remap  = (int) (mrec->opt.flags & FONTMAP_OPT_REMAP);
     if (mrec->opt.mapc >= 0)
       font->mapc = (mrec->opt.mapc >> 8) & 0xff;
     else {

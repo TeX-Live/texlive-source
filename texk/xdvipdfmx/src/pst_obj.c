@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pst_obj.c,v 1.5 2004/07/27 12:08:47 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pst_obj.c,v 1.7 2008/01/13 21:25:31 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -23,6 +23,9 @@
 */
 
 #include <string.h>
+#include <stdlib.h>
+#include <errno.h>
+
 #include "system.h"
 #include "mem.h"
 #include "error.h"
@@ -65,9 +68,6 @@ static long         pst_boolean_length  (pst_boolean *obj);
 static void        *pst_boolean_data_ptr(pst_boolean *obj);
 
 /* NUMBERS */
-static long   parse_long (unsigned char **inbuf, unsigned char *inbufend, unsigned char base, unsigned char *ndigits);
-static double cvtdbl     (long ipart, long dpart, unsigned char nddigits, long epart);
-
 static pst_integer *pst_integer_new     (long value)      ;
 static void         pst_integer_release (pst_integer *obj);
 static long         pst_integer_IV      (pst_integer *obj);
@@ -521,149 +521,43 @@ pst_real_length (pst_real *obj)
   return 0;
 }
 
-/*
- * Does not skip white spaces
- * base number must be greater than 1 and less than 33.
- * TODO: overflow and underflow
- */
-static long
-parse_long (unsigned char **inbuf, unsigned char *inbufend, unsigned char base, unsigned char *ndigits)
-{
-  long    val = 0, sign = 1;
-  unsigned char *cur = *inbuf, c;
-  int     count = 0;
-
-  if (*cur == '+') {
-    sign = 1;
-    cur++;
-  } else if (*cur == '-') {
-    sign = -1;
-    cur++;
-  }
-  while (cur < inbufend) {
-    c = *cur;
-    if (c >= '0' && c <= '0' + ((base <= 10) ? base-1 : 9)) {
-      c = c - '0';
-    } else if (base > 10) {
-      if (c >= 'a' && c <= 'a' + (base - 11)) {
-	c = c - 'a' + 10;
-      } else if (c >= 'A' && c <= 'A' + (base - 11)) {
-	c = c - 'A' + 10;
-      } else {
-	break;
-      }
-    } else {
-      break;
-    }
-    if (val < (LONG_MAX - c) / base) {
-      val = val * base + c;
-      count++;
-    }
-    cur++;
-  }
-
-  if (ndigits != NULL)
-    *ndigits = count;
-  *inbuf = cur;
-  return sign*val;
-}
-
-static double
-cvtdbl (long ipart, long dpart, unsigned char nddigits, long epart)
-{
-  double dval = 0.0;
-  int    i;
-
-  if (dpart > 0 && nddigits > 0) {
-    dval = dpart;
-    for (i = 0; i < nddigits; i++) {
-      dval *= 0.1;
-    }
-  }
-
-  if (ipart < 0)
-    dval = ipart - dval;
-  else
-    dval = ipart + dval;
-
-  if (epart > 0) {
-    for (i = 0; i < epart; i++)
-      dval *= 10.0;
-  } else if (epart < 0) {
-    for (i = 0; i < -epart; i++)
-      dval *= 0.1;
-  }
-
-  return dval;
-}
-
+/* NOTE: the input buffer must be null-terminated, i.e., *inbufend == 0 */
+/* leading white-space is ignored */
 pst_obj *
 pst_parse_number (unsigned char **inbuf, unsigned char *inbufend)
 {
-  pst_obj *obj = NULL;
-  unsigned char  *cur = *inbuf;
-  unsigned char  ndigits = 0, nddigits = 0;
-  int     type;
-  long    ipart = 0, dpart = 0, epart = 0;
+  unsigned char  *cur;
+  long    lval;
+  double  dval;
 
-  if (cur >= inbufend)
-    return NULL;
-
-  ipart = parse_long(&cur, inbufend, 10, &ndigits);
-  if (ndigits > 0 && PST_TOKEN_END(cur, inbufend)) {
-    type  = PST_TYPE_INTEGER;
-    dpart = epart = 0;
-  } else if (ndigits > 0 && *cur == '#' &&
-	     ipart >= 2 && ipart <= 36) { /* Radix */
-    cur++;
-    ipart = parse_long(&cur, inbufend, ipart, NULL);
-    if (ipart >= 0 && PST_TOKEN_END(cur, inbufend)) { /* non-negative only ? */
-      type  = PST_TYPE_INTEGER;
-      dpart = epart = 0;
-    } else
-      type  = -1;
-  } else if (*cur == '.') {
-    cur++;
-    dpart = parse_long(&cur, inbufend, 10, &nddigits);
-    ndigits += nddigits;
-    if (dpart < 0) {
-      type  = -1;
-    } else if (ndigits > 0 && PST_TOKEN_END(cur, inbufend)) {
-      type  = PST_TYPE_REAL;
-      epart = 0;
-    } else if (ndigits > 0 && (*cur == 'e' || *cur == 'E')) {
-      cur++;
-      epart = parse_long(&cur, inbufend, 10, &ndigits);
-      if (ndigits > 0 && PST_TOKEN_END(cur, inbufend))
-	type = PST_TYPE_REAL;
-      else
-	type = -1;
-    } else
-      type = -1;
-  } else if (ndigits > 0 && (*cur == 'e' || *cur == 'E')) {
-    cur++;
-    epart = parse_long(&cur, inbufend, 10, &ndigits);
-    if (ndigits > 0 && PST_TOKEN_END(cur, inbufend)) {
-      dpart  = 0; 
-      type   = PST_TYPE_REAL;
-    } else
-      type  =  -1;
-  } else {
-    type = -1;
+  errno = 0;
+  lval = strtol(*inbuf, (char **) &cur, 10);
+  if (errno || *cur == '.' || *cur == 'e' || *cur == 'E') {
+    /* real */
+    errno = 0;
+    dval = strtod(*inbuf, (char **) &cur);
+    if (!errno && PST_TOKEN_END(cur, inbufend)) {
+      *inbuf = cur;
+      return pst_new_obj(PST_TYPE_REAL, pst_real_new(dval));
+    }
+  } else if (cur != *inbuf && PST_TOKEN_END(cur, inbufend)) {
+    /* integer */
+    *inbuf = cur;
+    return pst_new_obj(PST_TYPE_INTEGER, pst_integer_new(lval));
+  } else if (lval >= 2 && lval <= 36 && *cur == '#' && isalnum(*++cur) &&
+	     /* strtod allows leading "0x" for hex numbers, but we don't */
+	     (lval != 16 || (cur[1] != 'x' && cur[1] != 'X'))) {
+    /* integer with radix */
+    /* Can the base have a (plus) sign? I think yes. */
+    errno = 0;
+    lval = strtol(cur, (char **) &cur, lval);
+    if (!errno && PST_TOKEN_END(cur, inbufend)) {
+      *inbuf = cur;
+      return pst_new_obj(PST_TYPE_INTEGER, pst_integer_new(lval));
+    }
   }
-
-  if (type < 0)
-    return NULL;
-
-  if (type == PST_TYPE_REAL)
-    obj = pst_new_obj(type, pst_real_new(cvtdbl(ipart, dpart, nddigits, epart)));
-  else if (type == PST_TYPE_INTEGER)
-    obj = pst_new_obj(type, pst_integer_new(ipart));
-  else
-    return NULL;
-
-  *inbuf = cur;
-  return obj;
+  /* error */
+  return NULL;
 }
 
 /* NAME */

@@ -269,7 +269,8 @@ spc_handler_xtx_fontmapline (struct spc_env *spe, struct spc_arg *ap)
   case  '+':
     mrec  = NEW(1, fontmap_rec);
     pdf_init_fontmap_record(mrec);
-    error = pdf_read_fontmap_line(mrec, ap->curptr, (long) (ap->endptr - ap->curptr));
+    error = pdf_read_fontmap_line(mrec, ap->curptr, (long) (ap->endptr - ap->curptr),
+                                  is_pdfm_mapline(ap->curptr));
     if (error)
       spc_warn(spe, "Invalid fontmap line.");
     else {
@@ -281,7 +282,8 @@ spc_handler_xtx_fontmapline (struct spc_env *spe, struct spc_arg *ap)
   default:
     mrec = NEW(1, fontmap_rec);
     pdf_init_fontmap_record(mrec);
-    error = pdf_read_fontmap_line(mrec, ap->curptr, (long) (ap->endptr - ap->curptr));
+    error = pdf_read_fontmap_line(mrec, ap->curptr, (long) (ap->endptr - ap->curptr),
+                                  is_pdfm_mapline(ap->curptr));
     if (error)
       spc_warn(spe, "Invalid fontmap line.");
     else {

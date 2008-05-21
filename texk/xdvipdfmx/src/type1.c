@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/type1.c,v 1.39 2007/04/17 10:06:30 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/type1.c,v 1.41 2008/01/06 09:12:06 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -277,6 +277,7 @@ add_metrics (pdf_font *font, cff_font *cffont, char **enc_vec, double *widths, l
   card16   gid;
   int      i;
   char    *usedchars;
+  double   scaling;
 
   fontdict   = pdf_font_get_resource  (font);
   descriptor = pdf_font_get_descriptor(font);
@@ -291,6 +292,15 @@ add_metrics (pdf_font *font, cff_font *cffont, char **enc_vec, double *widths, l
   if (!cff_dict_known(cffont->topdict, "FontBBox")) {
     ERROR("No FontBBox?");
   }
+
+  /* The widhts array in the font dictionary must be given relative
+   * to the default scaling of 1000:1, not relative to the scaling
+   * given by the font matrix.
+   */
+  if (cff_dict_known(cffont->topdict, "FontMatrix"))
+    scaling = 1000*cff_dict_get(cffont->topdict, "FontMatrix", 0);
+  else
+    scaling = 1;
 
   tmp_array = pdf_new_array();
   for (i = 0; i < 4; i++) {
@@ -323,7 +333,7 @@ add_metrics (pdf_font *font, cff_font *cffont, char **enc_vec, double *widths, l
       if (usedchars[code]) {
 	gid = cff_glyph_lookup(cffont, enc_vec[code]);
 	pdf_add_array(tmp_array,
-		      pdf_new_number(ROUND(widths[gid], 1.0)));
+		      pdf_new_number(ROUND(scaling*widths[gid], 1.0)));
       } else {
 	pdf_add_array(tmp_array, pdf_new_number(0.0));
       }
@@ -414,6 +424,9 @@ write_fontfile (pdf_font *font, cff_font *cffont, long num_glyphs)
   offset += cff_pack_index(cffont->gsubr,
 			   stream_data_ptr + offset, stream_data_len - offset);
   /* Encoding */
+  /* TODO: don't write Encoding entry if the font is always used
+   * with PDF Encoding information. Applies to type1c.c as well.
+   */
   cff_dict_set(cffont->topdict, "Encoding", 0, offset);
   offset += cff_pack_encoding(cffont,
 			      stream_data_ptr + offset, stream_data_len - offset);
@@ -488,15 +501,6 @@ pdf_font_load_type1 (pdf_font *font)
   encoding_id = pdf_font_get_encoding  (font);
   fontdict    = pdf_font_get_resource  (font);
 
-  if (pdf_font_get_flag(font, PDF_FONT_FLAG_BASEFONT)) {
-    if (encoding_id >= 0) {
-      pdf_add_dict(fontdict,
-		   pdf_new_name("Encoding"),
-		   pdf_get_encoding_reference(encoding_id));
-    }
-    return 0;
-  }
-
   descriptor  = pdf_font_get_descriptor(font);
   usedchars   = pdf_font_get_usedchars (font);
   ident       = pdf_font_get_ident     (font);
@@ -536,18 +540,6 @@ pdf_font_load_type1 (pdf_font *font)
    * Encoding related things.
    */
   if (encoding_id >= 0) {
-    if (pdf_encoding_is_predefined(encoding_id)) {
-      pdf_add_dict(fontdict,
-		   pdf_new_name("Encoding"),
-		   pdf_new_name(pdf_encoding_get_name(encoding_id)));
-    } else {
-      /* CAUTION: Ghostscript may not work with this. Which Ghostscript? */
-      pdf_add_dict(fontdict,
-		   pdf_new_name("Encoding"),
-		   pdf_get_encoding_reference(encoding_id));
-      if (!pdf_lookup_dict(fontdict, "ToUnicode"))
-        pdf_attach_ToUnicode_CMap(fontdict, encoding_id, usedchars);
-    }
     enc_vec = pdf_encoding_get_encoding(encoding_id);
   } else {
     pdf_obj *tounicode;

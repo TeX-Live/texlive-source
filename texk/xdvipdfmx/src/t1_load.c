@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/t1_load.c,v 1.10 2006/12/06 12:52:43 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/t1_load.c,v 1.11 2008/01/11 18:04:15 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -1070,6 +1070,9 @@ get_pfb_segment (FILE *fp, int expected_type, long *length)
   if (bytesread == 0) {
     ERROR("PFB segment length zero?");
   }
+
+  buffer = RENEW(buffer, bytesread+1, unsigned char);
+  buffer[bytesread] = 0;
 
   if (length)
     *length = bytesread;

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/tt_cmap.c,v 1.25 2007/04/13 06:48:03 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/tt_cmap.c,v 1.26 2008/05/08 18:51:59 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -1656,7 +1656,7 @@ otf_load_Unicode_CMap (const char *map_name, int ttc_index, /* 0 for non-TTC fon
   int    cmap_id = -1;
   int    tounicode_id = -1, is_cidfont = 0;
   sfnt  *sfont;
-  long   offset = 0;
+  unsigned long   offset = 0;
   char  *base_name = NULL, *cmap_name = NULL;
   char  *tounicode_name = NULL;
   FILE  *fp = NULL;
@@ -1681,13 +1681,16 @@ fprintf(stderr, "otf_load_Unicode_CMap(%s, %d)\n", map_name, ttc_index);
   if (!fp) {
     fp = DPXFOPEN(map_name, DPX_RES_TYPE_OTFONT);
   }
-  if (!fp)
-    return -1;
-
-  sfont = sfnt_open(fp, -1);
+  if (!fp) {
+    fp = DPXFOPEN(map_name, DPX_RES_TYPE_DFONT);
+    if (!fp) return -1;
+    sfont = dfont_open(fp, ttc_index);
+  } else {
+    sfont = sfnt_open(fp, -1);
+  }
 #endif
   if (!sfont) {
-    ERROR("Could not open OpenType/TrueType font file \"%s\"", map_name);
+    ERROR("Could not open OpenType/TrueType/dfont font file \"%s\"", map_name);
   }
   switch (sfont->type) {
   case SFNT_TYPE_TTC:
@@ -1699,6 +1702,9 @@ fprintf(stderr, "otf_load_Unicode_CMap(%s, %d)\n", map_name, ttc_index);
   case SFNT_TYPE_TRUETYPE:
   case SFNT_TYPE_POSTSCRIPT:
     offset = 0;
+    break;
+  case SFNT_TYPE_DFONT:
+    offset = sfont->offset;
     break;
   default:
     ERROR("Not a OpenType/TrueType/TTC font?: %s", map_name);

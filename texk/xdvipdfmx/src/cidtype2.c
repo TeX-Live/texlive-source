@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cidtype2.c,v 1.33 2005/07/17 09:53:38 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cidtype2.c,v 1.36 2008/05/17 04:18:47 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -159,7 +159,7 @@ validate_name (char *fontname, int len)
  */
 
 #define WIN_UCS_INDEX_MAX   1
-#define KNOWN_ENCODINGS_MAX 8
+#define KNOWN_ENCODINGS_MAX 9
 static struct
 {
   unsigned short  platform;
@@ -533,10 +533,13 @@ CIDFont_type2_dofont (CIDFont *font)
   sfont = sfnt_open(font->ft_face, SFNT_TYPE_TTC | SFNT_TYPE_TRUETYPE);
 #else
   fp = DPXFOPEN(font->ident, DPX_RES_TYPE_TTFONT);
-  if (!fp)
-    ERROR("Could not open TTF file: %s", font->ident);
-
-  sfont = sfnt_open(fp);
+  if (!fp) {
+    fp = DPXFOPEN(font->ident, DPX_RES_TYPE_DFONT);
+    if (!fp) ERROR("Could not open TTF/dfont file: %s", font->ident);
+    sfont = dfont_open(fp, font->options->index);
+  } else {
+    sfont = sfnt_open(fp);
+  }
 #endif
   if (!sfont) {
     ERROR("Could not open TTF file: %s", font->ident);
@@ -552,6 +555,9 @@ CIDFont_type2_dofont (CIDFont *font)
     if (font->options->index > 0)
       ERROR("Found TrueType font file while expecting TTC file (%s).", font->ident);
     offset = 0;
+    break;
+  case SFNT_TYPE_DFONT:
+    offset = sfont->offset;
     break;
   default:
     ERROR("Not a TrueType/TTC font (%s)?", font->ident);
@@ -854,7 +860,7 @@ CIDFont_type2_dofont (CIDFont *font)
     if (sfnt_require_table(sfont,
 			   required_table[i].name,
 			   required_table[i].must_exist) < 0) {
-      ERROR("Some required TrueType table does not exist.");
+      ERROR("Some required TrueType table (%s) does not exist.", required_table[i].name);
     }
   }
 
@@ -928,10 +934,14 @@ CIDFont_type2_open (CIDFont *font, const char *name,
     return -1;
 #else
   fp = DPXFOPEN(name, DPX_RES_TYPE_TTFONT);
-  if (!fp)
-    return -1;
+  if (!fp) {
+    fp = DPXFOPEN(name, DPX_RES_TYPE_DFONT);
+    if (!fp) return -1;
+    sfont = dfont_open(fp, opt->index);
+  } else {
+    sfont = sfnt_open(fp);
+  }
 
-  sfont = sfnt_open(fp);
   if (!sfont) {
     DPXFCLOSE(fp);
     return -1;
@@ -948,6 +958,9 @@ CIDFont_type2_open (CIDFont *font, const char *name,
     } else {
       offset = 0;
     }
+    break;
+  case SFNT_TYPE_DFONT:
+    offset = sfont->offset;
     break;
   default:
     sfnt_close(sfont);
@@ -1049,7 +1062,7 @@ CIDFont_type2_open (CIDFont *font, const char *name,
 	       pdf_new_name("Subtype"),
 	       pdf_new_name("CIDFontType2"));
 
-  font->descriptor = tt_get_fontdesc(sfont, &(opt->embed), 0, name);
+  font->descriptor = tt_get_fontdesc(sfont, &(opt->embed), opt->stemv, 0, name);
   if (!font->descriptor) {
     ERROR("Could not obtain necessary font info.");
   }

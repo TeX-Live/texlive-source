@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/vf.c,v 1.17 2007/04/17 10:12:04 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/vf.c,v 1.19 2007/11/18 08:06:03 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -314,6 +314,8 @@ int vf_locate_font (const char *tex_name, spt_t ptsize)
 	fprintf (stderr, ")");
       MFCLOSE (vf_file);
     }
+    if (full_vf_file_name)
+      RELEASE(full_vf_file_name);
   }
   return thisfont;
 }
@@ -1012,9 +1014,6 @@ void vf_close_all_fonts(void)
   unsigned long i;
   int j;
   struct font_def *one_font;
-#ifdef MEM_DEBUG
-MEM_START
-#endif
   for (i=0; i<num_vf_fonts; i++) {
     /* Release the packet for each character */
     if (vf_fonts[i].ch_pkt) {
@@ -1039,8 +1038,5 @@ MEM_START
   }
   if (vf_fonts != NULL)
     RELEASE (vf_fonts);
-#ifdef MEM_DEBUG
-MEM_END
-#endif
   return;
 }

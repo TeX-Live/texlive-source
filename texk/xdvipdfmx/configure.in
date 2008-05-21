@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(src/dvipdfmx.c)
-AM_INIT_AUTOMAKE(xdvipdfmx, 0.6)
+AM_INIT_AUTOMAKE(xdvipdfmx, 0.7)
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
 
@@ -109,6 +109,20 @@ dnl Check for additonal libraries.
 CHO_HAS_LIBFONTCONFIG
 JFK_HAS_APP_SERVICES
 
+# check that it's valid to define XETEX and possibly XETEX_MAC
+if test "x$have_app_services" = xyes; then
+  AC_DEFINE([XETEX], [], [Define if part of a teTeX/TeX live build.])
+  AC_DEFINE([XETEX_MAC], [], [Define if part of a teTeX/TeX live build for Mac OS X.])
+elif test "x$have_libfontconfig" = xyes; then
+  AC_DEFINE([XETEX])
+else
+  AC_MSG_ERROR([fontconfig library or ApplicationServices framework not found.
+This version of xdvipdfmx requires either ApplicationServices (on Mac OS X)
+or the fontconfig library (on other platforms) to be available, otherwise it
+cannot support XeTeX output using standard system-installed fonts.
+    ])
+fi
+
 if test "x$enable_tetex_build" = xyes; then
   # Get these common libraries from the sources, too.
   # Seems like it would be simpler to treat kpathsea this way too, but
@@ -131,14 +145,6 @@ if test "x$enable_tetex_build" = xyes; then
   # zlib compression level, but zlib.ac included above does not do this test.
   # We assume zlib always has compress2() here although that's not always true.
   AC_DEFINE([HAVE_ZLIB_COMPRESS2], 1)
-
-  # for tetex/tex live build we may need to define XETEX and XETEX_MAC
-  if test "x$have_app_services" = xyes; then
-    AC_DEFINE([XETEX], [], [Define if part of a teTeX/TeX live build.])
-    AC_DEFINE([XETEX_MAC], [], [Define if part of a teTeX/TeX live build for Mac OS X.])
-  elif test "x$have_libfontconfig" = xyes; then
-    AC_DEFINE([XETEX])
-  fi
 
   # tetex/tex live build; this always has kpathsea, xbasename, etc.,
   # as we're building from current sources.  Do this stuff at the end so

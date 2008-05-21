@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cid_p.h,v 1.8 2004/09/11 14:50:28 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cid_p.h,v 1.9 2008/05/17 04:18:47 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -43,6 +43,7 @@ typedef struct
   int         index;
   int         style;
   int         embed;
+  int         stemv;
 } cid_opt;
 
 struct CIDFont

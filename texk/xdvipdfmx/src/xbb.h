@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/subfont.h,v 1.9 2007/11/14 03:36:01 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/xbb.h,v 1.1 2008/05/17 07:22:21 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2008 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     This program is free software; you can redistribute it and/or modify
@@ -20,16 +20,12 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-#ifndef _SUBFONT_H_
-#define _SUBFONT_H_
+#ifndef _XBB_H_
+#define _XBB_H_
 
-extern void   subfont_set_verbose (void);
+#define EBB_OUTPUT 0
+#define XBB_OUTPUT 1
 
-extern void   release_sfd_record  (void);
+extern int extractbb(int argc, char *argv[], int mode);
 
-extern unsigned short lookup_sfd_record(int rec_id, unsigned char code);
-
-extern int    sfd_load_record     (const char *sfd_name, const char *subfont_id);
-extern char **sfd_get_subfont_ids (const char *sfd_name, int *num_subfonts);
-
-#endif /* _SUBFONT_H_ */
+#endif /* _XBB_H_ */

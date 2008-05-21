@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/agl.h,v 1.17 2005/07/07 08:00:31 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/agl.h,v 1.18 2007/11/14 02:07:14 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -26,6 +26,7 @@
 #define _AGL_H_
 
 #define AGL_DEFAULT_LISTFILE "glyphlist.txt"
+#define AGL_PREDEF_LISTFILE "pdfglyphlist.txt"
 #define AGL_EXTRA_LISTFILE "texglyphlist.txt"
 
 extern char* agl_standard_names[];
@@ -37,6 +38,7 @@ struct agl_name {
   int   n_components;
   long  unicodes[AGL_MAX_UNICODES];
   struct agl_name *alternate;
+  int   is_predef;
 };
 typedef struct agl_name agl_name;
 

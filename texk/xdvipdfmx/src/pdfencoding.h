@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencoding.h,v 1.3 2005/06/08 11:18:37 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencoding.h,v 1.4 2007/11/14 03:12:21 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -32,17 +32,22 @@ extern void      pdf_encoding_set_verbose    (void);
 extern void      pdf_init_encodings          (void);
 extern void      pdf_close_encodings         (void);
 
+/* Creates Encoding resource and ToUnicode CMap 
+ * for all non-predefined encodings.
+ */
+extern void      pdf_encoding_complete       (void);
+
 /* enc_name here is .enc file name or the name of predefined
  * encodings.
  */
-extern int       pdf_encoding_findresource   (const char *enc_name);
+extern int       pdf_encoding_findresource   (char *enc_name);
 
-/* Returns indirect reference to Encoding resource.
+/* Returns the Encoding resource object.
  */
-extern pdf_obj  *pdf_get_encoding_reference  (int enc_id);
+extern pdf_obj  *pdf_get_encoding_obj        (int enc_id);
 
-extern int       pdf_encoding_is_ASL_charset (int enc_id);
 extern int       pdf_encoding_is_predefined  (int enc_id);
+extern void      pdf_encoding_used_by_type3  (int enc_id);
 
 /* WARNING:
  * Pointer(s) may change after another encoding is loaded.
@@ -51,29 +56,21 @@ extern char     *pdf_encoding_get_name       (int enc_id);
 extern char    **pdf_encoding_get_encoding   (int enc_id);
 
 /* 
- * The last argument "is_used" is 256 char array, value 0
- * indicates glyph in that slot is not used in the document
- * (at least for that font). We need this to handle the
- * situation that the encoding contains, e.g., 30 rarely
- * used glyphs without Unicode mapping and 200+ glyphs with
- * Unicode mapping.
  * pdf_create_ToUnicode_CMap() returns stream object but not
  * reference. This need to be renamed to other name like
  * pdf_create_ToUnicode_stream().
  */
 extern pdf_obj  *pdf_create_ToUnicode_CMap   (const char *enc_name,
-					      char **enc_vec, char *is_used);
+					      char **enc_vec,
+					      const char *is_used);
 
-/* Add /ToUnicode entry with indirect reference to ToUnicode stream
- * to font dictionary "fontdict". This creates an empty stream object
- * if it has not already created. Generation of actual ToUnicode CMap
- * data is delayed until pdf_close_encodings(). This also check if
- * glyphs can be converted to (a sequence of) Unicode and returns -1
- * if more than 10% of glyphs can't be converted. ToUnicode CMap is
- * not attached in that case.
+/* pdf_encoding_copy_usedchars adds the given vector of used characters
+ * to the corresponding vector of the encoding.
  */
-extern int       pdf_attach_ToUnicode_CMap   (pdf_obj *fontdict,
-					      int encoding_id, char *is_used);
+extern void      pdf_encoding_add_usedchars (int encoding_id,
+					      const char *is_used);
+
+extern pdf_obj * pdf_encoding_get_tounicode  (int encoding_id);
 
 /* Just load CMap identified with 'ident'. (parsed)
  * PDF stream object (not reference) returned.

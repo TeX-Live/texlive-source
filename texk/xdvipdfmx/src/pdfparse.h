@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfparse.h,v 1.14 2005/07/17 09:53:38 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfparse.h,v 1.15 2008/05/13 12:23:45 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -46,9 +46,9 @@ extern pdf_obj *parse_pdf_boolean (char **pp, char *endptr);
 extern pdf_obj *parse_pdf_number  (char **pp, char *endptr);
 extern pdf_obj *parse_pdf_null    (char **pp, char *endptr);
 extern pdf_obj *parse_pdf_string  (char **pp, char *endptr);
-extern pdf_obj *parse_pdf_dict    (char **pp, char *endptr);
-extern pdf_obj *parse_pdf_array   (char **pp, char *endptr);
-extern pdf_obj *parse_pdf_object  (char **pp, char *endptr);
+extern pdf_obj *parse_pdf_dict    (char **pp, char *endptr, pdf_file *pf);
+extern pdf_obj *parse_pdf_array   (char **pp, char *endptr, pdf_file *pf);
+extern pdf_obj *parse_pdf_object  (char **pp, char *endptr, pdf_file *pf);
 
 extern pdf_obj *parse_pdf_tainted_dict (char **pp, char *endptr);
 

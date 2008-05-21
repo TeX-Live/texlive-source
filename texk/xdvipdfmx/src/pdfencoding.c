@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencoding.c,v 1.5 2005/07/21 08:23:46 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencoding.c,v 1.9 2008/05/13 12:23:45 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2008 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -39,12 +39,9 @@
 
 #include "pdfencoding.h"
 
-#define _ENCODINGS_C_
-#include "asl_charset.h"
-#undef  _ENCODINGS_C_
-
-static int      is_ASL_charset (char **encoding);
-static pdf_obj *make_encoding_differences (char **encoding, char **baseenc);
+static int      is_similar_charset (char **encoding, const char **encoding2);
+static pdf_obj *make_encoding_differences (char **encoding, char **baseenc,
+					   const char *is_used);
 
 static unsigned char verbose = 0;
 
@@ -68,12 +65,11 @@ pdf_encoding_set_verbose (void)
  *   IS_PREDEFINED:
  *     Encoding is one of the MacRomanEncoding, MacExpertEncoding, and
  *     WinAnsiEncoding.
- *   IS_ASL_CHARSET:
- *     Encoded glyphs are only form Adobe Standard Latin Character Set.
- *     Fonts only uses encodings of this flag set can be "nonsymbolic".
+ *   FLAG_USED_BY_TYPE3:
+ *     Encoding is used by a Type 3 font.
  */
 #define FLAG_IS_PREDEFINED  (1 << 0)
-#define FLAG_IS_ASL_CHARSET (1 << 1)
+#define FLAG_USED_BY_TYPE3  (1 << 1)
 
 typedef struct pdf_encoding
 {
@@ -81,17 +77,20 @@ typedef struct pdf_encoding
 
   char     *enc_name;
   int       flags;
-  char     *glyphs[256];
+  char     *glyphs[256];     /* ".notdef" must be represented as NULL */
   char      is_used[256];
 
+  struct pdf_encoding *baseenc;
   pdf_obj  *tounicode;
-  char      accessible[256]; /* Flag indicating if glyphs
-                              * are accessible in Unicode.
-                              */
 
   pdf_obj  *resource;
-  pdf_obj  *reference;
 } pdf_encoding;
+
+static int      pdf_encoding_new_encoding (const char *enc_name,
+					   const char *ident,
+					   const char **encoding_vec,
+					   char *baseenc_name,
+					   int flags);
 
 static void
 pdf_init_encoding_struct (pdf_encoding *encoding)
@@ -105,15 +104,51 @@ pdf_init_encoding_struct (pdf_encoding *encoding)
   memset(encoding->glyphs,  0, 256*sizeof(char *));
   memset(encoding->is_used, 0, 256);
 
-  memset(encoding->accessible, 0, 256);
   encoding->tounicode = NULL;
 
+  encoding->baseenc   = NULL;
   encoding->resource  = NULL;
-  encoding->reference = NULL;
 
   encoding->flags     = 0;
 
   return;
+}
+
+/* Creates the PDF Encoding entry for the encoding.
+ * If baseenc is non-null, it is used as BaseEncoding entry.
+ */
+static pdf_obj *
+create_encoding_resource (pdf_encoding *encoding, pdf_encoding *baseenc)
+{
+  pdf_obj *differences;
+  ASSERT(encoding);
+  ASSERT(!encoding->resource);
+
+  differences = make_encoding_differences(encoding->glyphs,
+					  baseenc ? baseenc->glyphs : NULL,
+					  encoding->is_used);
+  
+  if (differences) {
+    pdf_obj *resource = pdf_new_dict();
+    if (baseenc)
+      pdf_add_dict(resource, pdf_new_name("BaseEncoding"),
+		   pdf_link_obj(baseenc->resource));
+    pdf_add_dict(resource, pdf_new_name("Differences"),  differences);
+    return resource; 
+  } else {
+    /* Fix a bug with the MinionPro package using MnSymbol fonts
+     * in its virtual fonts:
+     *
+     * Some font may have font_id even if no character is used.
+     * For example, suppose that a virtual file A.vf uses two
+     * other fonts, B and C. Even if only characters of B are used
+     * in a DVI document, C will have font_id too.
+     * In this case, both baseenc and differences can be NULL.
+     *
+     * Actually these fonts will be ignored in pdffont.c.
+     */
+    return baseenc ? pdf_link_obj(baseenc->resource) : NULL;
+  }
 }
 
 static void
@@ -121,28 +156,14 @@ pdf_flush_encoding (pdf_encoding *encoding)
 {
   ASSERT(encoding);
 
-  if (encoding->resource)
+  if (encoding->resource) {
     pdf_release_obj(encoding->resource);
-  if (encoding->reference)
-    pdf_release_obj(encoding->reference);
+    encoding->resource  = NULL;
+  }
   if (encoding->tounicode) {
-    pdf_obj *tounicode;
-
-    tounicode = pdf_create_ToUnicode_CMap(encoding->enc_name,
-                                          encoding->glyphs,
-                                          encoding->is_used);
-    if (tounicode) {
-      pdf_add_stream(encoding->tounicode,
-                     pdf_stream_dataptr(tounicode),
-                     pdf_stream_length(tounicode));
-      pdf_release_obj(tounicode);
-    }
     pdf_release_obj(encoding->tounicode);
     encoding->tounicode = NULL;
   }
-
-  encoding->resource  = NULL;
-  encoding->reference = NULL;
 
   return;
 }
@@ -154,8 +175,6 @@ pdf_clean_encoding_struct (pdf_encoding *encoding)
 
   ASSERT(encoding);
 
-  if (encoding->reference)
-    ERROR("Object not flushed.");
   if (encoding->resource)
     ERROR("Object not flushed.");
 
@@ -180,88 +199,6 @@ pdf_clean_encoding_struct (pdf_encoding *encoding)
   return;
 }
 
-/*
- * The original dvipdfm describes as:
- *
- *  Some software doesn't like BaseEncoding key (e.g., FastLane) 
- *  so this code is commented out for the moment.  It may reemerge in the
- *  future
- *
- * and the line for BaseEncoding is commented out.
- *
- * I'm not sure why this happens. But maybe BaseEncoding key causes problems
- * when the font is Symbol font or TrueType font.
- */
-
-static void
-pdf_encoding_set_encoding (pdf_encoding *encoding,
-                           char **encoding_vec, const char *baseenc_name)
-{
-  char   **baseenc_vec = NULL;
-  pdf_obj *differences;
-  int      code;
-
-  ASSERT(encoding);
-  ASSERT(encoding_vec);
-
-  if (encoding->reference) {
-    WARN("Object already have a label... flushing");
-    pdf_flush_encoding(encoding);
-  }
-
-  encoding->flags = 0;
-  if (!encoding->resource) {
-    encoding->resource = pdf_new_dict();
-    pdf_add_dict(encoding->resource,
-                 pdf_new_name("Type"), pdf_new_name("Encoding"));
-  }
-
-  for (code = 0; code < 256; code++) {
-    if (encoding->glyphs[code])
-      RELEASE(encoding->glyphs[code]);
-    if (!encoding_vec[code] ||
-        !strcmp(encoding_vec[code], ".notdef"))
-      encoding->glyphs[code] = NULL;
-    else {
-      encoding->glyphs[code] = NEW(strlen(encoding_vec[code])+1, char);
-      strcpy(encoding->glyphs[code], encoding_vec[code]);
-    }
-  }
-
-  if (baseenc_name) {
-    if (!strcmp(baseenc_name, "WinAnsiEncoding"))
-      baseenc_vec = (char **) WinAnsiEncoding;
-    else if (!strcmp(baseenc_name, "MacRomanEncoding"))
-      baseenc_vec = (char **) MacRomanEncoding;
-    else if (!strcmp(baseenc_name, "MacExpertEncoding"))
-      baseenc_vec = (char **) MacExpertEncoding;
-    else
-      ERROR("Unknown encoding \"%s\".", baseenc_name);
-  } else {
-    baseenc_vec = NULL;
-  }
-
-  if (is_ASL_charset(encoding->glyphs)) {
-    encoding->flags |= FLAG_IS_ASL_CHARSET;
-    /* Dvipdfmx default setting. */
-    if (!baseenc_name) {
-      baseenc_vec  = (char **) WinAnsiEncoding; 
-      baseenc_name = (char *) "WinAnsiEncoding";
-    }
-  }
-
-  if (baseenc_name) {
-    pdf_add_dict(encoding->resource,
-                 pdf_new_name("BaseEncoding"), pdf_new_name(baseenc_name));
-  }
-  differences = make_encoding_differences(encoding->glyphs, baseenc_vec);
-  if (differences) {
-    pdf_add_dict(encoding->resource, pdf_new_name("Differences"),  differences);
-  }
-
-  return;
-}
-
 static int CDECL
 glycmp (const void *pv1, const void *pv2)
 {
@@ -274,23 +211,25 @@ glycmp (const void *pv1, const void *pv2)
 }
 
 static int
-is_ASL_charset (char **enc_vec)
+is_similar_charset (char **enc_vec, const char **enc_vec2)
 {
-  int   code;
+  int   code, same = 0;
 
-  for (code = 0; code < 256; code++) {
-    if (enc_vec[code] && strcmp(enc_vec[code], ".notdef")) {
-      if (!bsearch(enc_vec[code],
-                   ASL_Charset, ASL_CHARSET_MAX, sizeof(char *), glycmp))
-        return 0;
-    }
-  }
+  for (code = 0; code < 256; code++)
+    if (!(enc_vec[code] && strcmp(enc_vec[code], enc_vec2[code]))
+	&& ++same >= 64)
+      /* is 64 a good level? */
+      return 1;
 
-  return 1;
+  return 0; 
 }
 
+/* Creates a PDF Differences array for the encoding, based on the
+ * base encoding baseenc (if not NULL). Only character codes which
+ * are actually used in the document are considered.
+ */
 static pdf_obj *
-make_encoding_differences (char **enc_vec, char **baseenc)
+make_encoding_differences (char **enc_vec, char **baseenc, const char *is_used)
 {
   pdf_obj *differences = NULL;
   int      code, count = 0;
@@ -300,13 +239,14 @@ make_encoding_differences (char **enc_vec, char **baseenc)
 
   /*
    *  Write all entries (except .notdef) if baseenc is unknown.
+   *  If is_used is given, write only used entries.
    */
   differences = pdf_new_array();
   for (code = 0; code < 256; code++) {
-    /* We skip ".notdef". Any character code mapped to ".notdef"
+    /* We skip NULL (= ".notdef"). Any character code mapped to ".notdef"
      * glyph should not be used in the document.
      */
-    if (!enc_vec[code] || !strcmp(".notdef", enc_vec[code]))
+    if ((is_used && !is_used[code]) || !enc_vec[code])
       skipping = 1;
     else if (!baseenc || !baseenc[code] ||
              strcmp(baseenc[code], enc_vec[code]) != 0) {
@@ -335,16 +275,21 @@ make_encoding_differences (char **enc_vec, char **baseenc)
 }
 
 static int
-load_encoding_file (pdf_encoding *encoding, const char *filename)
+load_encoding_file (const char *filename)
 {
   FILE    *fp;
+  pdf_obj *enc_name = NULL;
   pdf_obj *encoding_array = NULL;
   char    *wbuf, *p, *endptr;
   char    *enc_vec[256];
-  int      code, fsize;
+  int      code, fsize, enc_id;
 
-  if (!encoding || !filename)
+  if (!filename)
     return -1;
+
+  if (verbose) {
+    MESG("(Encoding:%s", filename);
+  }
 
   fp = DPXFOPEN(filename, DPX_RES_TYPE_ENC);
   if (!fp)
@@ -372,30 +317,34 @@ load_encoding_file (pdf_encoding *encoding, const char *filename)
     skip_line (&p, endptr);
     skip_white(&p, endptr);
   }
-  if (p[0] == '/') {
-    pdf_obj *tmp;
-
-    tmp = parse_pdf_name(&p, endptr);
-
-    encoding->enc_name = NEW(strlen(pdf_name_value(tmp))+1, char);
-    strcpy(encoding->enc_name, pdf_name_value(tmp));
-    pdf_release_obj(tmp);
-  }
+  if (p[0] == '/')
+    enc_name = parse_pdf_name(&p, endptr);
 
   skip_white(&p, endptr);
-  encoding_array = parse_pdf_array(&p, endptr);
+  encoding_array = parse_pdf_array(&p, endptr, NULL);
   RELEASE(wbuf);
   if (!encoding_array) {
+    if (enc_name)
+      pdf_release_obj(enc_name);
     return -1;
   }
 
   for (code = 0; code < 256; code++) {
     enc_vec[code] = pdf_name_value(pdf_get_array(encoding_array, code));
   }
-  pdf_encoding_set_encoding(encoding, enc_vec, NULL);
+  enc_id = pdf_encoding_new_encoding(enc_name ? pdf_name_value(enc_name) : NULL,
+				     filename, (const char **) enc_vec, NULL, 0);
+
+  if (enc_name) {
+    if (verbose > 1)
+      MESG("[%s]", pdf_name_value(enc_name));
+    pdf_release_obj(enc_name);
+  }
   pdf_release_obj(encoding_array);
 
-  return 0;
+  if (verbose) MESG(")");
+
+  return enc_id;
 }
 
 #define CHECK_ID(n) do { \
@@ -427,63 +376,111 @@ pdf_init_encodings (void)
   /*
    * PDF Predefined Encodings
    */
-  encoding = &enc_cache.encodings[0];
-  pdf_init_encoding_struct(encoding);
-  encoding->ident = NEW(strlen("WinAnsiEncoding")+1, char);
-  strcpy(encoding->ident, "WinAnsiEncoding");
-  encoding->enc_name  = NEW(strlen("WinAnsiEncoding")+1, char);
-  strcpy(encoding->enc_name, "WinAnsiEncoding");
-  encoding->flags    = (FLAG_IS_PREDEFINED|FLAG_IS_ASL_CHARSET);
-  encoding->resource = pdf_new_name("WinAnsiEncoding");
-  for (code = 0; code < 256; code++) {
-    if (!WinAnsiEncoding[code] ||
-        !strcmp(WinAnsiEncoding[code], ".notdef"))
-      encoding->glyphs[code] = NULL;
-    else {
-      encoding->glyphs[code] = NEW(strlen(WinAnsiEncoding[code])+1, char);
-      strcpy(encoding->glyphs[code], WinAnsiEncoding[code]);
-    }
-  }
-
-  encoding = &enc_cache.encodings[1];
-  pdf_init_encoding_struct(encoding);
-  encoding->ident = NEW(strlen("MacRomanEncoding")+1, char);
-  strcpy(encoding->ident, "MacRomanEncoding");
-  encoding->enc_name  = NEW(strlen("MacRomanEncoding")+1, char);
-  strcpy(encoding->enc_name, "MacRomanEncoding");
-  encoding->flags    = (FLAG_IS_PREDEFINED|FLAG_IS_ASL_CHARSET);
-  encoding->resource = pdf_new_name("MacRomanEncoding");
-  for (code = 0; code < 256; code++) {
-    if (!MacRomanEncoding[code] ||
-        !strcmp(MacRomanEncoding[code], ".notdef"))
-      encoding->glyphs[code] = NULL;
-    else {
-      encoding->glyphs[code] = NEW(strlen(MacRomanEncoding[code])+1, char);
-      strcpy(encoding->glyphs[code], MacRomanEncoding[code]);
-    }
-  }
-
-  encoding = &enc_cache.encodings[2];
-  pdf_init_encoding_struct(encoding);
-  encoding->ident = NEW(strlen("MacExpertEncoding")+1, char);
-  strcpy(encoding->ident, "MacExpertEncoding");
-  encoding->enc_name  = NEW(strlen("MacExpertEncoding")+1, char);
-  strcpy(encoding->enc_name, "MacExpertEncoding");
-  encoding->flags    = FLAG_IS_PREDEFINED;
-  encoding->resource = pdf_new_name("MacExpertEncoding");
-  for (code = 0; code < 256; code++) {
-    if (!MacExpertEncoding[code] ||
-        !strcmp(MacExpertEncoding[code], ".notdef"))
-      encoding->glyphs[code] = NULL;
-    else {
-      encoding->glyphs[code] = NEW(strlen(MacExpertEncoding[code])+1, char);
-      strcpy(encoding->glyphs[code], MacExpertEncoding[code]);
-    }
-  }
-
-  enc_cache.count = 3;
+  pdf_encoding_new_encoding("WinAnsiEncoding", "WinAnsiEncoding",
+			    WinAnsiEncoding, NULL, FLAG_IS_PREDEFINED);
+  pdf_encoding_new_encoding("MacRomanEncoding", "MacRomanEncoding",
+			    MacRomanEncoding, NULL, FLAG_IS_PREDEFINED);
+  pdf_encoding_new_encoding("MacExpertEncoding", "MacExpertEncoding",
+			    MacExpertEncoding, NULL, FLAG_IS_PREDEFINED);
 
   return;
+}
+
+/*
+ * The original dvipdfm describes as:
+ *
+ *  Some software doesn't like BaseEncoding key (e.g., FastLane) 
+ *  so this code is commented out for the moment.  It may reemerge in the
+ *  future
+ *
+ * and the line for BaseEncoding is commented out.
+ *
+ * I'm not sure why this happens. But maybe BaseEncoding key causes problems
+ * when the font is Symbol font or TrueType font.
+ */
+
+static int
+pdf_encoding_new_encoding (const char *enc_name, const char *ident,
+			   const char **encoding_vec,
+			   char *baseenc_name, int flags)
+{
+  char   **baseenc_vec = NULL;
+  pdf_obj *differences;
+  int      enc_id, code;
+
+  pdf_encoding *encoding;
+
+  enc_id   = enc_cache.count;
+  if (enc_cache.count++ >= enc_cache.capacity) {
+    enc_cache.capacity += 16;
+    enc_cache.encodings = RENEW(enc_cache.encodings,
+                                enc_cache.capacity,  pdf_encoding);
+  }
+  encoding = &enc_cache.encodings[enc_id];
+
+  pdf_init_encoding_struct(encoding);
+
+  encoding->ident = NEW(strlen(ident)+1, char);
+  strcpy(encoding->ident, ident);
+  encoding->enc_name  = NEW(strlen(enc_name)+1, char);
+  strcpy(encoding->enc_name, enc_name);
+
+  encoding->flags = flags;
+
+  for (code = 0; code < 256; code++)
+    if (encoding_vec[code] && strcmp(encoding_vec[code], ".notdef")) {
+      encoding->glyphs[code] = NEW(strlen(encoding_vec[code])+1, char);
+      strcpy(encoding->glyphs[code], encoding_vec[code]);
+    }
+
+  if (!baseenc_name && !(flags & FLAG_IS_PREDEFINED)
+      && is_similar_charset(encoding->glyphs, WinAnsiEncoding)) {
+    /* Dvipdfmx default setting. */
+    baseenc_name = "WinAnsiEncoding";
+  }
+
+  /* TODO: make base encoding configurable */
+  if (baseenc_name) {
+    int baseenc_id = pdf_encoding_findresource(baseenc_name);
+    if (baseenc_id < 0 || !pdf_encoding_is_predefined(baseenc_id))
+      ERROR("Illegal base encoding %s for encoding %s\n",
+	    baseenc_name, encoding->enc_name);
+    encoding->baseenc = &enc_cache.encodings[baseenc_id];
+  }
+
+  if (flags & FLAG_IS_PREDEFINED)
+    encoding->resource = pdf_new_name(encoding->enc_name);
+
+  return enc_id;
+}
+
+/* Creates Encoding resource and ToUnicode CMap 
+ * for all non-predefined encodings.
+ */
+void pdf_encoding_complete ()
+{
+  int  enc_id;
+
+  for (enc_id = 0; enc_id < enc_cache.count; enc_id++) {
+    if (!pdf_encoding_is_predefined(enc_id)) {
+      pdf_encoding *encoding = &enc_cache.encodings[enc_id];
+      /* Section 5.5.4 of the PDF 1.5 reference says that the encoding
+       * of a Type 3 font must be completely described by a Differences
+       * array, but implementation note 56 explains that this is rather
+       * an incorrect implementation in Acrobat 4 and earlier. Hence,
+       * we do use a base encodings for PDF versions >= 1.3.
+       */
+      int with_base = !(encoding->flags & FLAG_USED_BY_TYPE3)
+	              || pdf_get_version() >= 4;
+      ASSERT(!encoding->resource);
+      encoding->resource = create_encoding_resource(encoding,
+						    with_base ? encoding->baseenc : NULL);
+      ASSERT(!encoding->tounicode);
+      encoding->tounicode = pdf_create_ToUnicode_CMap(encoding->enc_name,
+						      encoding->glyphs,
+						      encoding->is_used);
+    }
+  }
 }
 
 void
@@ -509,7 +506,7 @@ pdf_close_encodings (void)
 }
 
 int
-pdf_encoding_findresource (const char *enc_name)
+pdf_encoding_findresource (char *enc_name)
 {
   int           enc_id;
   pdf_encoding *encoding;
@@ -525,37 +522,7 @@ pdf_encoding_findresource (const char *enc_name)
       return enc_id;
   }
 
-  if (verbose) {
-    MESG("(Encoding:%s", enc_name);
-  }
-
-  enc_id   = enc_cache.count;
-  if (enc_cache.count >= enc_cache.capacity) {
-    enc_cache.capacity += 16;
-    enc_cache.encodings = RENEW(enc_cache.encodings,
-                                enc_cache.capacity,  pdf_encoding);
-  }
-  encoding = &enc_cache.encodings[enc_id];
-
-  pdf_init_encoding_struct(encoding);
-  encoding->ident = NEW(strlen(enc_name)+1, char);
-  strcpy(encoding->ident, enc_name);
-  if (load_encoding_file(encoding, enc_name) < 0) {
-    pdf_clean_encoding_struct(encoding);
-    return -1;
-  }
-
-  if (verbose > 1) {
-    if (encoding->enc_name) {
-      MESG("[%s]", encoding->enc_name);
-    }
-  }
-
-  if (verbose) MESG(")");
-
-  enc_cache.count++;
-
-  return enc_id;
+  return load_encoding_file(enc_name);
 }
 
 
@@ -576,7 +543,7 @@ pdf_encoding_get_encoding (int enc_id)
 }
 
 pdf_obj *
-pdf_get_encoding_reference (int enc_id)
+pdf_get_encoding_obj (int enc_id)
 {
   pdf_encoding *encoding;
 
@@ -584,10 +551,7 @@ pdf_get_encoding_reference (int enc_id)
 
   encoding = &enc_cache.encodings[enc_id];
 
-  if (!encoding->reference)
-    encoding->reference = pdf_ref_obj(encoding->resource);
-
-  return pdf_link_obj(encoding->reference);
+  return encoding->resource;
 }
 
 int
@@ -602,8 +566,8 @@ pdf_encoding_is_predefined (int enc_id)
   return (encoding->flags & FLAG_IS_PREDEFINED) ? 1 : 0;
 }
 
-int
-pdf_encoding_is_ASL_charset (int enc_id)
+void
+pdf_encoding_used_by_type3 (int enc_id)
 {
   pdf_encoding *encoding;
 
@@ -611,8 +575,9 @@ pdf_encoding_is_ASL_charset (int enc_id)
 
   encoding = &enc_cache.encodings[enc_id];
 
-  return (encoding->flags & FLAG_IS_ASL_CHARSET) ? 1 : 0;
+  encoding->flags |= FLAG_USED_BY_TYPE3;
 }
+
 
 char *
 pdf_encoding_get_name (int enc_id)
@@ -640,110 +605,49 @@ static unsigned char wbuf[WBUF_SIZE];
 static unsigned char range_min[1] = {0x00u};
 static unsigned char range_max[1] = {0xFFu};
 
-#define UNICODE_ACCESSIBLE     1
-#define UNICODE_INACCESSIBLE  -1
-#define UNICODE_UNKNOWN        0
-
-static int
-check_unicode_mappable (pdf_encoding *encoding,	char *is_used)
-{
-  int   code;
-  int   glyph_count, total_fail_count;
-
-  glyph_count = total_fail_count = 0;
-  for (code = 0; code <= 0xff; code++) {
-    if (is_used && !is_used[code])
-      continue;
-
-    switch (encoding->accessible[code]) {
-    case UNICODE_ACCESSIBLE:
-      break;
-    case UNICODE_INACCESSIBLE:
-      total_fail_count++;
-      break;
-    default: /* Unknown */
-      if (!encoding->glyphs[code] ||
-          !strcmp(encoding->glyphs[code], ".notdef"))
-         encoding->accessible[code] = UNICODE_INACCESSIBLE;
-      else {
-        long  len;
-        int   fail_count = 0;
-        unsigned char *p, *endptr;
-
-        p      = wbuf;
-        endptr = wbuf + WBUF_SIZE;
-        len = agl_sput_UTF16BE(encoding->glyphs[code],
-                               &p, endptr, &fail_count);
-        if (len < 1 || fail_count > 0) {
-          total_fail_count++;
-          encoding->accessible[code] = UNICODE_INACCESSIBLE;
-        } else {
-          encoding->accessible[code] = UNICODE_ACCESSIBLE;
-        }
-      }
-    }
-    glyph_count++;
-  }
-
-  if (glyph_count < 1)
-    return 0;
-
-  return (int) (100.0 * total_fail_count / glyph_count + 0.5);
-}
-
-int
-pdf_attach_ToUnicode_CMap (pdf_obj *fontdict,
-                           int encoding_id, char *is_used)
+void
+pdf_encoding_add_usedchars (int encoding_id, const char *is_used)
 {
   pdf_encoding *encoding;
-  int           inaccessibles, code;
-
-  ASSERT(fontdict);
+  int code;
 
   CHECK_ID(encoding_id);
 
-  if (pdf_encoding_is_predefined(encoding_id)) {
-    return 0;
-  }
+  if (!is_used || pdf_encoding_is_predefined(encoding_id))
+    return;
 
   encoding = &enc_cache.encodings[encoding_id];
-  
-  inaccessibles = check_unicode_mappable(encoding, is_used);
-  if (inaccessibles > 10) { /* 10 % */
-    if (verbose) {
-      WARN("%d%% of glyph in font (encoding: %s) could not converted to Unicode.",
-           inaccessibles, encoding->enc_name);
-      WARN("ToUnicode CMap not attached for this font.");
-    }
-    return -1;
-  }
 
-  for (code = 0; code <= 0xff; code++) {
-    if (is_used && !is_used[code])
-      continue;
-    encoding->is_used[code] = 1;
-  }
+  for (code = 0; code <= 0xff; code++)
+    encoding->is_used[code] |= is_used[code];
+}
 
-  if (!encoding->tounicode) {
-    encoding->tounicode = pdf_new_stream(STREAM_COMPRESS);
-  }
+pdf_obj *
+pdf_encoding_get_tounicode (int encoding_id)
+{
+  CHECK_ID(encoding_id);
 
-  pdf_add_dict(fontdict,
-               pdf_new_name("ToUnicode"),
-               pdf_ref_obj(encoding->tounicode));
-
-  return 0;
+  return enc_cache.encodings[encoding_id].tounicode;
 }
 
 
-
+/* Creates a ToUnicode CMap. An empty CMap is replaced by NULL.
+ *
+ * For PDF <= 1.4 a complete CMap is created unless all character codes
+ * are predefined in PDF. For PDF >= 1.5 only those character codes which
+ * are not predefined appear in the CMap.
+ *
+ * Note: The PDF 1.4 reference is not consistent: Section 5.9 describes
+ * the Unicode mapping of PDF 1.3 and Section 9.7.2 (in the context of
+ * Tagged PDF) the one of PDF 1.5.
+ */
 pdf_obj *
 pdf_create_ToUnicode_CMap (const char *enc_name,
-                           char **enc_vec, char *is_used)
+                           char **enc_vec, const char *is_used)
 {
   pdf_obj  *stream;
   CMap     *cmap;
-  int       code, glyph_count, total_fail_count;
+  int       code, all_predef;
   char     *cmap_name;
   unsigned char *p, *endptr;
 
@@ -761,38 +665,33 @@ pdf_create_ToUnicode_CMap (const char *enc_name,
 
   CMap_add_codespacerange(cmap, range_min, range_max, 1);
 
-  glyph_count = total_fail_count = 0;
+  all_predef = 1;
   for (code = 0; code <= 0xff; code++) {
     if (is_used && !is_used[code])
       continue;
 
-    if (enc_vec[code] && strcmp(enc_vec[code], ".notdef")) {
+    if (enc_vec[code]) {
       long   len;
       int    fail_count = 0;
-
-      wbuf[0] = (code & 0xff);
-      p      = wbuf + 1;
-      endptr = wbuf + WBUF_SIZE;
-      len = agl_sput_UTF16BE(enc_vec[code], &p, endptr, &fail_count);
-      if (len < 1 || fail_count > 0) {
-        total_fail_count++;
-      } else {
-        CMap_add_bfchar(cmap, wbuf, 1, wbuf + 1, len);
+      agl_name *agln = agl_lookup_list(enc_vec[code]);
+      /* Adobe glyph naming conventions are not used by viewers,
+       * hence even ligatures (e.g, "f_i") must be explicitly defined
+       */
+      if (pdf_get_version() < 5 || !agln || !agln->is_predef) {
+        wbuf[0] = (code & 0xff);
+        p      = wbuf + 1;
+        endptr = wbuf + WBUF_SIZE;
+        len = agl_sput_UTF16BE(enc_vec[code], &p, endptr, &fail_count);
+        if (len >= 1 && !fail_count) {
+          CMap_add_bfchar(cmap, wbuf, 1, wbuf + 1, len);
+	  all_predef &= agln && agln->is_predef;
+        }
       }
-      glyph_count++;
     }
   }
 
-  if (total_fail_count < (glyph_count + 9) / 10) {
-    stream = CMap_create_stream(cmap, 0);
-  } else {
-    if (verbose) {
-      WARN("%d (out of %d) glyphs in encoding \"%s\" missing Unicode mapping...",
-           total_fail_count, glyph_count, enc_name);
-      WARN("ToUnicode CMap \"%s\" removed.", cmap_name);
-    }
-    stream = NULL;
-  }
+  stream = all_predef ? NULL : CMap_create_stream(cmap, 0);
+
   CMap_release(cmap);
   RELEASE(cmap_name);
 
