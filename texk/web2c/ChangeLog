@@ -1,3 +1,10 @@
+2008-05-23  Karl Berry  <karl@tug.org>
+
+	* configure.in (fmtutil.cnf): no longer generate from fmtutil.in.
+	* Makefile.in (install, distclean): remove lines about fmtutil.cnf.
+	* fmtutil.in: note that this file is no longer used, the real
+	fmtutil.cnf is now generated at install time.
+
 2008-05-20  Karl Berry  <karl@tug.org>
 
 	(Found by peb.)

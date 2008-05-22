@@ -1,3 +1,8 @@
+2008-05-23  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (install-exec): no longer install ebb, since
+	dvipdfmx can serve as a compatible replacement.
+
 2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	The Makefile.in uses `kpse_include ../make/config.mk'; thus

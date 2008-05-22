@@ -11115,8 +11115,6 @@ ac_config_files="$ac_config_files web2c/Makefile:web2c/Makefile.aux"
 ac_config_files="$ac_config_files window/Makefile.aux:window/Makefile.in"
 ac_config_files="$ac_config_files window/Makefile:window/Makefile.aux"
 
-ac_config_files="$ac_config_files fmtutil.cnf:fmtutil.in"
-
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -11726,7 +11724,6 @@ do
     "web2c/Makefile") CONFIG_FILES="$CONFIG_FILES web2c/Makefile:web2c/Makefile.aux" ;;
     "window/Makefile.aux") CONFIG_FILES="$CONFIG_FILES window/Makefile.aux:window/Makefile.in" ;;
     "window/Makefile") CONFIG_FILES="$CONFIG_FILES window/Makefile:window/Makefile.aux" ;;
-    "fmtutil.cnf") CONFIG_FILES="$CONFIG_FILES fmtutil.cnf:fmtutil.in" ;;
 
   *) { { $as_echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 $as_echo "$as_me: error: invalid argument: $ac_config_target" >&2;}

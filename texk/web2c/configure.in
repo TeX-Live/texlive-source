@@ -486,5 +486,4 @@ AH_BOTTOM([#endif /* !WEB2C_C_AUTO_H */])
 dnl Generate `Makefile's, `config.status', and our header file.
 KPSE_CONFIG_FILES([Makefile doc/Makefile lib/Makefile man/Makefile mpware/Makefile 
           mpdir/Makefile web2c/Makefile window/Makefile])
-AC_CONFIG_FILES([fmtutil.cnf:fmtutil.in])
 AC_OUTPUT
