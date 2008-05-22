@@ -37,3 +37,7 @@ dvipdfmx_CPPFLAGS = @LIBPNGCPPFLAGS@ @ZLIBCPPFLAGS@
 dvipdfmx_LDADD = $(LDADD) $(LDLIBPNG) $(LDZLIB)
 dvipdfmx_DEPENDENCIES = $(ZLIBDEP) $(LIBPNGDEP)
 dvipdfmx_LDFLAGS = @dvipdfmx_LDFLAGS@
+
+install-exec-hook:
+	cd $(DESTDIR)$(bindir) && rm -f ebb && $(LN_S) dvipdfmx ebb
+	cd $(DESTDIR)$(bindir) && rm -f extractbb && $(LN_S) dvipdfmx extractbb
