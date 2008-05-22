@@ -104,8 +104,12 @@ find_format P2C(string, name, boolean, is_filename)
     ret = kpse_program_text_format;
   } else if (FILESTRCASEEQ (name, "fmtutil.cnf")) {
     ret = kpse_web2c_format;
+  } else if (FILESTRCASEEQ (name, "glyphlist.txt")) {
+    ret = kpse_fontmap_format;
   } else if (FILESTRCASEEQ (name, "mktex.cnf")) {
     ret = kpse_web2c_format;
+  } else if (FILESTRCASEEQ (name, "pdfglyphlist.txt")) {
+    ret = kpse_fontmap_format;
   } else if (FILESTRCASEEQ (name, "pdftex.cfg")) {
     ret = kpse_pdftex_config_format;
   } else if (FILESTRCASEEQ (name, "updmap.cfg")) {
