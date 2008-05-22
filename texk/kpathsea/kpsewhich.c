@@ -98,10 +98,18 @@ find_format P2C(string, name, boolean, is_filename)
   
   if (is_filename && user_format != kpse_last_format) {
     ret = user_format;
-  } else if (FILESTRCASEEQ (name, "pdftex.cfg")) {
-    ret = kpse_pdftex_config_format;
   } else if (FILESTRCASEEQ (name, "config.ps")) {
     ret = kpse_dvips_config_format;
+  } else if (FILESTRCASEEQ (name, "dvipdfmx.cfg")) {
+    ret = kpse_program_text_format;
+  } else if (FILESTRCASEEQ (name, "fmtutil.cnf")) {
+    ret = kpse_web2c_format;
+  } else if (FILESTRCASEEQ (name, "mktex.cnf")) {
+    ret = kpse_web2c_format;
+  } else if (FILESTRCASEEQ (name, "pdftex.cfg")) {
+    ret = kpse_pdftex_config_format;
+  } else if (FILESTRCASEEQ (name, "updmap.cfg")) {
+    ret = kpse_web2c_format;
   } else {
     int f;  /* kpse_file_format_type */
     unsigned name_len = strlen (name);
