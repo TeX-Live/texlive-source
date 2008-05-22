@@ -53,7 +53,9 @@ distclean::
 install-exec:
 	$(SHELL) $(top_srcdir)/../mkinstalldirs $(bindir)
 	$(INSTALL_LIBTOOL_PROG) $(program) $(bindir)
-	$(INSTALL_LIBTOOL_PROG) ebb $(bindir)
+# don't install ebb; we use the compatible version in dvipdfmx.
+# but i guess we may as well keep building it for now. --karl, 23may08.
+#	$(INSTALL_LIBTOOL_PROG) ebb $(bindir)
 	$(INSTALL_SCRIPT) $(srcdir)/dvipdft $(bindir)
 
 uninstall-exec:
