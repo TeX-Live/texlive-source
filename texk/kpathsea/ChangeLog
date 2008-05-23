@@ -1,6 +1,12 @@
 2008-05-23  Karl Berry  <karl@tug.org>
 
-	* kpsewhich.c (find_format): use the right formats for
+	* tex-file.c (init_path): do not free the translated env_value,
+	else raw_path ends up pointing to that freed memory.
+
+	* default.h: mention that result is always in new memory.
+	* kpsewhich.c: recognize texmf.cnf as kpse_cnf_format.
+
+	* kpsewhich.c (find_format): use the right formats for texmf.cnf,
 	dvipdfmx.cfg, fmtutil.cnf, mktex.cnf, and updmap.cfg (as well as
 	config.ps, earlier).  Same values as texmf/texconfig/tcfmgr.map.
 

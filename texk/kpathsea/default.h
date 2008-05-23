@@ -24,7 +24,7 @@
 
 /* Replace a leading or trailing or doubled : in PATH with DFLT.  If
    no extra colons, return PATH.  Only one extra colon is replaced.
-   DFLT may not be NULL.  */
+   DFLT may not be NULL.  The result is always in new memory.  */
 
 extern string kpse_expand_default P2H(const_string path, const_string dflt);
 

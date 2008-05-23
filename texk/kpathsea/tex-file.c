@@ -197,9 +197,9 @@ kpse_maketex_option P2C(const_string, fmtname,  boolean, value)
    present info->path.  */
 #define EXPAND_DEFAULT(try_path, source_string)			\
   if (try_path) {						\
-      info->raw_path = try_path;				\
-      info->path = kpse_expand_default (try_path, info->path);	\
-      info->path_source = source_string;			\
+    info->raw_path = try_path;					\
+    info->path = kpse_expand_default (try_path, info->path);	\
+    info->path_source = source_string;				\
   }
 
 /* Find the final search path to use for the format entry INFO, given
@@ -225,22 +225,19 @@ init_path PVAR2C(kpse_format_info_type *, info, const_string, default_path, ap)
   while ((env_name = va_arg (ap, string)) != NULL) {
     /* Since sh doesn't like envvar names with `.', check PATH_prog
        as well as PATH.prog.  */
-    if (!var) {
-      /* Try PATH.prog. */
+    if (!var) { /* Try PATH.prog. */
       string evar = concat3 (env_name, ".", kpse_program_name);
       env_value = getenv (evar);
       if (env_value && *env_value) {
         var = evar;
-      } else {
+      } else { /* Try PATH_prog. */
         free (evar);
-        /* Try PATH_prog. */
         evar = concat3 (env_name, "_", kpse_program_name);
         env_value = getenv (evar);
         if (env_value && *env_value) {
           var = evar;
-        } else {
+        } else { /* Try simply PATH.  */
           free (evar);
-          /* Try simply PATH.  */
           env_value = getenv (env_name);
           if (env_value && *env_value) {
             var = env_name;        
@@ -269,26 +266,26 @@ init_path PVAR2C(kpse_format_info_type *, info, const_string, default_path, ap)
   info->path = info->raw_path = info->default_path;
   info->path_source = "compile-time paths.h";
 
-  /* Translate ';' in the envvar into ':' if that's our ENV_SEP. */
-  if (IS_ENV_SEP(':') && env_value) {
-      string loc;
-      env_value = xstrdup(env_value);  /* Freed below. */
-      for (loc = env_value; *loc; loc++) {
-          if (*loc == ';')
-              *loc = ':';
-      }
-  }
-  
   EXPAND_DEFAULT (info->cnf_path, "texmf.cnf");
   EXPAND_DEFAULT (info->client_path, "program config file");
-  if (var)
+
+  if (var) {
+    /* Translate `;' in the envvar into `:' if that's our ENV_SEP. */
+    if (IS_ENV_SEP (':')) {
+      string loc;
+      env_value = xstrdup (env_value);  /* Freed below. */
+      for (loc = env_value; *loc; loc++) {
+        if (*loc == ';')
+          *loc = ':';
+      }
+    }
     EXPAND_DEFAULT (env_value, concat (var, " environment variable"));
+    /* Do not free the copied env_value, because EXPAND_DEFAULT set
+       raw_path to point to it.  If it gets overwritten again, tough.  */
+  }
+
   EXPAND_DEFAULT (info->override_path, "application override variable");
   info->path = kpse_brace_expand (info->path);
-
-  /* Free the copied env_value. */
-  if (IS_ENV_SEP(':') && env_value)
-      free(env_value);
 }}
 
 
@@ -316,7 +313,6 @@ kpse_set_suffixes PVAR2C(kpse_file_format_type, format,
   }
   va_end (ap);
   (*list)[count] = NULL;
-
 }}
 
 /* The path spec we are defining, one element of the global array.  */
