@@ -48,7 +48,7 @@ md5lib-clean:
 
 # obsdcompat
 LIBOBSDDIR=../../libs/obsdcompat
-LIBOBSDSRCDIR=$(srcdir)/$(LIBOBSDCOMPATDIR)
+LIBOBSDSRCDIR=$(srcdir)/$(LIBOBSDDIR)
 LIBOBSDDEP=@LIBOBSDDEP@
 LDLIBOBSD=@LDLIBOBSD@
 
