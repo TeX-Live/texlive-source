@@ -2636,11 +2636,12 @@ accepted.
 * Menu:
 
 * Path searching options::      Changing the mode, resolution, etc.
+* Specially-recognized files::  Default formats for texmf.cnf, etc.
 * Auxiliary tasks::             Path and variable expansion.
 * Standard options::            --help and --version.
 
 
-File: kpathsea.info,  Node: Path searching options,  Next: Auxiliary tasks,  Up: Invoking kpsewhich
+File: kpathsea.info,  Node: Path searching options,  Next: Specially-recognized files,  Up: Invoking kpsewhich
 
 3.5.1 Path searching options
 ----------------------------
@@ -2675,12 +2676,6 @@ filename, and returns the first file found.
      formats with no associated suffix.  For example, for Dvips
      configuration files you can use `--format="dvips config"'.  (The
      quotes are for the sake of the shell.)
-
-     When the filename being searched for is `config.ps', the format is
-     automatically switched to `dvips config'.  Similarly, when the
-     filename is `pdftex.cfg', the format is switched to `pdftex
-     config' (although `pdftex.cfg' is not used any more; look for
-     `pdftexconfig.tex' instead.)
 
      Here's the current list of recognized names and the associated
      suffixes.  *Note Supported file formats::, for more information on
@@ -2838,9 +2833,57 @@ filename, and returns the first file found.
 
 
 
-File: kpathsea.info,  Node: Auxiliary tasks,  Next: Standard options,  Prev: Path searching options,  Up: Invoking kpsewhich
+File: kpathsea.info,  Node: Specially-recognized files,  Next: Auxiliary tasks,  Prev: Path searching options,  Up: Invoking kpsewhich
 
-3.5.2 Auxiliary tasks
+3.5.2 Specially-recognized files for `kpsewhich'
+------------------------------------------------
+
+`kpsewhich' recognizes a few special filenames on the command line and
+defaults to using the `known' file formats for them, merely to save the
+time and trouble of specifying the format.  This is only a feature of
+`kpsewhich'; when using the Kpathsea library itself, none of these
+special filenames are recognized, and it's still up to the caller to
+specify the desired format.
+
+   Here is the list of special filenames to `kpsewhich', along with
+their corresponding format:
+
+`config.ps'
+     `dvips config'
+
+`dvipdfmx.cfg'
+     `other text files'
+
+`fmtutil.cnf'
+     `web2c files'
+
+`glyphlist.txt'
+     `map'
+
+`mktex.cnf'
+     `web2c files'
+
+`pdfglyphlist.txt'
+     `map'
+
+`pdftex.cfg'
+     `pdftex config' (although `pdftex.cfg' is not used any more; look
+     for the file `pdftexconfig.tex' instead.)
+
+`texmf.cnf'
+     `cnf'
+
+
+   A user-specified format will override the above defaults.
+
+   Another useful configuration file in this regard is `tcfmgr.map',
+found in `texmf/texconfig/tcfmgr.map', which records various
+information about the above configuration files (among others).
+
+
+File: kpathsea.info,  Node: Auxiliary tasks,  Next: Standard options,  Prev: Specially-recognized files,  Up: Invoking kpsewhich
+
+3.5.3 Auxiliary tasks
 ---------------------
 
 Kpsewhich provides some additional features not strictly related to path
@@ -2887,7 +2930,7 @@ lookup:
 
 File: kpathsea.info,  Node: Standard options,  Prev: Auxiliary tasks,  Up: Invoking kpsewhich
 
-3.5.3 Standard options
+3.5.4 Standard options
 ----------------------
 
 Kpsewhich accepts the standard GNU options:
@@ -3167,6 +3210,7 @@ This section describes how Kpathsea searches for most files (bitmap font
 searches are the exception, as described in the next section).
 
    Here is the search strategy for a file NAME:
+
   1. If the file format defines default suffixes, and the suffix of
      NAME name is not already a known suffix for that format, try the
      name with each default appended, and use alternative names found in
@@ -3622,20 +3666,20 @@ Index
                                                               (line  27)
 * --help:                                Standard options.    (line   8)
 * --interactive:                         Path searching options.
-                                                              (line 101)
+                                                              (line  95)
 * --mode=STRING:                         Path searching options.
-                                                              (line 112)
+                                                              (line 106)
 * --must-exist:                          Path searching options.
-                                                              (line 117)
+                                                              (line 111)
 * --path=STRING:                         Path searching options.
-                                                              (line 122)
+                                                              (line 116)
 * --progname=NAME:                       Path searching options.
-                                                              (line 131)
+                                                              (line 125)
 * --show-path=NAME:                      Auxiliary tasks.     (line  41)
 * --srcdir, for building multiple architectures: configure scenarios.
                                                               (line  18)
 * --subdir=STRING:                       Path searching options.
-                                                              (line 136)
+                                                              (line 130)
 * --var-value=VARIABLE:                  Auxiliary tasks.     (line  12)
 * --version:                             Standard options.    (line  10)
 * --with options:                        configure options.   (line  16)
@@ -3656,9 +3700,9 @@ Index
 * -g, compiling without:                 configure scenarios. (line  32)
 * -L option to ls:                       ls-R.                (line  38)
 * -mktex=FILETYPE:                       Path searching options.
-                                                              (line 106)
+                                                              (line 100)
 * -no-mktex=FILETYPE:                    Path searching options.
-                                                              (line 106)
+                                                              (line 100)
 * -O, compiling with:                    configure scenarios. (line  32)
 * -static:                               ShellWidgetClass.    (line  43)
 * . directories, ignored:                ls-R.                (line  33)
@@ -3877,8 +3921,8 @@ Index
 * config.h:                              Programming overview.
                                                               (line  25)
 * config.log:                            Bug checklist.       (line  28)
-* config.ps:                             Path searching options.
-                                                              (line  37)
+* config.ps:                             Specially-recognized files.
+                                                              (line  16)
 * config.ps, search path for:            Supported file formats.
                                                               (line  47)
 * config.status:                         Bug checklist.       (line  31)
@@ -3967,6 +4011,8 @@ Index
                                                               (line  12)
 * DVILJMAKEPK:                           mktex script names.  (line  32)
 * DVILJSIZES:                            Fallback font.       (line   6)
+* dvipdfmx.cfg:                          Specially-recognized files.
+                                                              (line  19)
 * DVIPSFONTS:                            Supported file formats.
                                                               (line 227)
 * DVIPSHEADERS:                          Supported file formats.
@@ -4005,7 +4051,7 @@ Index
 * expansion, tilde:                      Tilde expansion.     (line   6)
 * expansion, variable:                   Variable expansion.  (line   6)
 * explicitly relative filenames:         Searching overview.  (line  52)
-* extensions, filename:                  File lookup.         (line  23)
+* extensions, filename:                  File lookup.         (line  24)
 * externally-built filename database:    Filename database.   (line   6)
 * extra colons:                          Default expansion.   (line   6)
 * extraclean Make target:                Cleaning up.         (line  23)
@@ -4036,6 +4082,8 @@ Index
 * filesystem search:                     Searching overview.  (line  22)
 * floating directories:                  Searching overview.  (line  22)
 * fmtutil:                               mktex script names.  (line  10)
+* fmtutil.cnf:                           Specially-recognized files.
+                                                              (line  22)
 * fmtutils.cnf:                          mktex configuration. (line  24)
 * font alias files:                      Fontmap.             (line   6)
 * font generation failures:              Unable to generate fonts.
@@ -4075,6 +4123,8 @@ Index
 * glyph lookup bitmap tolerance:         Basic glyph lookup.  (line  15)
 * GLYPHFONTS:                            Supported file formats.
                                                               (line  58)
+* glyphlist.txt:                         Specially-recognized files.
+                                                              (line  25)
 * GNU C compiler bugs:                   TeX or Metafont failing.
                                                               (line  19)
 * GNU General Public License:            Introduction.        (line  31)
@@ -4114,7 +4164,7 @@ Index
 * installation, simple:                  Simple installation. (line   6)
 * installing files:                      Installing files.    (line   6)
 * interactive query:                     Path searching options.
-                                                              (line 101)
+                                                              (line  95)
 * interface, not frozen:                 Introduction.        (line  27)
 * introduction:                          Introduction.        (line   6)
 * kdebug::                               Debugging.           (line 105)
@@ -4153,7 +4203,7 @@ Index
 * kpse_fallback_font:                    Fallback font.       (line  15)
 * kpse_find_*:                           Calling sequence.    (line  60)
 * kpse_find_file <1>:                    Calling sequence.    (line  60)
-* kpse_find_file:                        File lookup.         (line  36)
+* kpse_find_file:                        File lookup.         (line  37)
 * kpse_find_glyph_format:                Glyph lookup.        (line  26)
 * kpse_format_info:                      Calling sequence.    (line  45)
 * kpse_format_info_type:                 Debugging.           (line  61)
@@ -4261,6 +4311,8 @@ Index
 * mktex script configuration:            mktex configuration. (line   6)
 * mktex script names:                    mktex script names.  (line   6)
 * mktex scripts:                         mktex scripts.       (line   6)
+* mktex.cnf <1>:                         Specially-recognized files.
+                                                              (line  28)
 * mktex.cnf:                             mktex configuration. (line  29)
 * mktex.opt:                             mktex configuration. (line  29)
 * mktexdir:                              mktex configuration. (line  62)
@@ -4364,12 +4416,14 @@ Index
                                                               (line  13)
 * PDF generation:                        Kpathsea application distributions.
                                                               (line  16)
-* pdftex.cfg:                            Path searching options.
-                                                              (line  37)
+* pdfglyphlist.txt:                      Specially-recognized files.
+                                                              (line  31)
+* pdftex.cfg:                            Specially-recognized files.
+                                                              (line  34)
 * PDFTEXCONFIG:                          Supported file formats.
                                                               (line 136)
-* pdftexconfig.tex:                      Path searching options.
-                                                              (line  37)
+* pdftexconfig.tex:                      Specially-recognized files.
+                                                              (line  34)
 * permission denied:                     Searching overview.  (line  56)
 * permissions, directory:                Security.            (line  51)
 * permissions, file:                     Security.            (line  47)
@@ -4483,7 +4537,7 @@ Index
 * striptypeface:                         mktex configuration. (line 105)
 * subdirectory searching:                Subdirectory expansion.
                                                               (line   6)
-* suffixes, filename:                    File lookup.         (line  23)
+* suffixes, filename:                    File lookup.         (line  24)
 * suggestions, making:                   Introduction.        (line  27)
 * Sun 2:                                 History.             (line  12)
 * Sun OpenWin patches:                   ShellWidgetClass.    (line  29)
@@ -4508,6 +4562,8 @@ Index
                                                               (line 184)
 * T42FONTS:                              Supported file formats.
                                                               (line 189)
+* tcfmgr.map:                            Specially-recognized files.
+                                                              (line  44)
 * TDS:                                   TeX directory structure.
                                                               (line   6)
 * testing, post-installation:            Installation testing.
@@ -4529,7 +4585,7 @@ Index
 * TeX support:                           TeX support.         (line   6)
 * TeX Users Group:                       Introduction.        (line  39)
 * tex-archive@math.utah.edu:             Mailing lists.       (line  25)
-* tex-file.c:                            File lookup.         (line  36)
+* tex-file.c:                            File lookup.         (line  37)
 * tex-file.h:                            Programming overview.
                                                               (line  16)
 * tex-glyph.c:                           Glyph lookup.        (line  26)
@@ -4559,6 +4615,8 @@ Index
                                                               (line  62)
 * TEXMF:                                 TeX directory structure.
                                                               (line   6)
+* texmf.cnf:                             Specially-recognized files.
+                                                              (line  38)
 * texmf.cnf missing, warning about:      Config files.        (line  18)
 * texmf.cnf, and variable expansion:     Variable expansion.  (line   6)
 * texmf.cnf, creating:                   Running make.        (line   6)
@@ -4611,7 +4669,7 @@ Index
 * trick for detecting leaf directories:  Subdirectory expansion.
                                                               (line  22)
 * trojan horse attack:                   Security.            (line  10)
-* try_std_extension_first:               File lookup.         (line  23)
+* try_std_extension_first:               File lookup.         (line  24)
 * TTFONTS:                               Supported file formats.
                                                               (line 181)
 * tug.org:                               unixtex.ftp.         (line   6)
@@ -4762,22 +4820,23 @@ Node: ls-R103807
 Node: Filename aliases106701
 Node: Database format107879
 Node: Invoking kpsewhich108892
-Node: Path searching options109769
-Node: Auxiliary tasks116418
-Node: Standard options118239
-Node: TeX support118559
-Node: Supported file formats119850
-Node: File lookup126998
-Node: Glyph lookup128725
-Node: Basic glyph lookup129852
-Node: Fontmap130731
-Node: Fallback font133348
-Node: Suppressing warnings134313
-Node: Programming135418
-Node: Programming overview135931
-Node: Calling sequence138207
-Node: Program-specific files143236
-Node: Programming with config files144274
-Node: Index145574
+Node: Path searching options109837
+Node: Specially-recognized files116190
+Node: Auxiliary tasks117514
+Node: Standard options119339
+Node: TeX support119659
+Node: Supported file formats120950
+Node: File lookup128098
+Node: Glyph lookup129826
+Node: Basic glyph lookup130953
+Node: Fontmap131832
+Node: Fallback font134449
+Node: Suppressing warnings135414
+Node: Programming136519
+Node: Programming overview137032
+Node: Calling sequence139308
+Node: Program-specific files144337
+Node: Programming with config files145375
+Node: Index146675
 
 End Tag Table

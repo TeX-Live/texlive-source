@@ -1,3 +1,8 @@
+2008-05-24  Karl Berry  <karl@tug.org>
+
+	* kpathsea.texi (Specially-recognized files): new node to
+	document the special filenames kpsewhich now knows about.
+
 2008-05-23  Karl Berry  <karl@tug.org>
 
 	* tex-file.c (init_path): do not free the translated env_value,

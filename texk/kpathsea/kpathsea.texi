@@ -1057,6 +1057,7 @@ abbreviation is accepted.
 
 @menu
 * Path searching options::      Changing the mode, resolution, etc.
+* Specially-recognized files::  Default formats for texmf.cnf, etc.
 * Auxiliary tasks::             Path and variable expansion.
 * Standard options::            --help and --version.
 @end menu
@@ -1105,15 +1106,6 @@ All formats also have a name, which is the only way to specify formats
 with no associated suffix.  For example, for Dvips configuration files
 you can use @samp{--format="dvips config"}.  (The quotes are for the
 sake of the shell.)
-
-@flindex config.ps
-@flindex pdftex.cfg
-@flindex pdftexconfig.tex
-When the filename being searched for is @file{config.ps}, the format
-is automatically switched to @samp{dvips config}.  Similarly, when the
-filename is @file{pdftex.cfg}, the format is switched to @samp{pdftex
-config} (although @file{pdftex.cfg} is not used any more; look for
-@file{pdftexconfig.tex} instead.)
 
 Here's the current list of recognized names and the associated suffixes.
 @xref{Supported file formats}, for more information on each of these.
@@ -1300,6 +1292,65 @@ in @file{/some/coincidental/pkg1/path/}, and we wouldn't want
 @samp{/pkg1}.
 
 @end table
+
+
+@node Specially-recognized files
+@subsection Specially-recognized files for @command{kpsewhich}
+
+@command{kpsewhich} recognizes a few special filenames on the command
+line and defaults to using the `known' file formats for them, merely
+to save the time and trouble of specifying the format.  This is only a
+feature of @command{kpsewhich}; when using the Kpathsea library
+itself, none of these special filenames are recognized, and it's still
+up to the caller to specify the desired format.
+
+Here is the list of special filenames to @command{kpsewhich}, along
+with their corresponding format:
+
+@table @file
+
+@flindex config.ps
+@item config.ps
+@code{dvips config}
+
+@flindex dvipdfmx.cfg
+@item dvipdfmx.cfg
+@samp{other text files}
+
+@flindex fmtutil.cnf
+@item fmtutil.cnf
+@samp{web2c files}
+
+@flindex glyphlist.txt
+@item glyphlist.txt
+@samp{map}
+
+@flindex mktex.cnf
+@item mktex.cnf
+@samp{web2c files}
+
+@flindex pdfglyphlist.txt
+@item pdfglyphlist.txt
+@samp{map}
+
+@flindex pdftex.cfg
+@flindex pdftexconfig.tex
+@item pdftex.cfg
+@samp{pdftex config} (although @file{pdftex.cfg} is not used any more;
+look for the file @file{pdftexconfig.tex} instead.)
+
+@flindex texmf.cnf
+@item texmf.cnf
+@samp{cnf}
+
+@end table
+
+A user-specified format will override the above defaults.
+
+@flindex tcfmgr.map
+Another useful configuration file in this regard is @file{tcfmgr.map},
+found in @file{texmf/texconfig/tcfmgr.map}, which records various
+information about the above configuration files (among others).
 
 
 @node Auxiliary tasks
@@ -1839,6 +1890,7 @@ This section describes how Kpathsea searches for most files (bitmap font
 searches are the exception, as described in the next section).
 
 Here is the search strategy for a file @var{name}:
+
 @enumerate
 @item
 If the file format defines default suffixes, and the suffix of
