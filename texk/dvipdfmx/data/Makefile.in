@@ -31,9 +31,9 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 subdir = data
-DIST_COMMON = $(dist_cmapdata_DATA) $(dist_configdata_DATA) \
-	$(dist_glyphlistdata_DATA) $(dist_mapdata_DATA) \
-	$(srcdir)/Makefile.am $(srcdir)/Makefile.in
+DIST_COMMON = $(dist_configdata_DATA) $(dist_glyphlistdata_DATA) \
+	$(dist_mapdata_DATA) $(srcdir)/Makefile.am \
+	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/cho-kpse.m4 \
 	$(top_srcdir)/m4/cho-libs.m4 $(top_srcdir)/m4/maw-time.m4 \
@@ -55,15 +55,13 @@ am__vpath_adj = case $$p in \
     *) f=$$p;; \
   esac;
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
-am__installdirs = "$(DESTDIR)$(cmapdatadir)" \
-	"$(DESTDIR)$(configdatadir)" "$(DESTDIR)$(glyphlistdatadir)" \
-	"$(DESTDIR)$(mapdatadir)"
-dist_cmapdataDATA_INSTALL = $(INSTALL_DATA)
+am__installdirs = "$(DESTDIR)$(configdatadir)" \
+	"$(DESTDIR)$(glyphlistdatadir)" "$(DESTDIR)$(mapdatadir)"
 dist_configdataDATA_INSTALL = $(INSTALL_DATA)
 dist_glyphlistdataDATA_INSTALL = $(INSTALL_DATA)
 dist_mapdataDATA_INSTALL = $(INSTALL_DATA)
-DATA = $(dist_cmapdata_DATA) $(dist_configdata_DATA) \
-	$(dist_glyphlistdata_DATA) $(dist_mapdata_DATA)
+DATA = $(dist_configdata_DATA) $(dist_glyphlistdata_DATA) \
+	$(dist_mapdata_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -163,12 +161,6 @@ configdatadir = $(datadir)/texmf/dvipdfmx
 dist_configdata_DATA = \
   $(srcdir)/dvipdfmx.cfg
 
-cmapdatadir = $(datadir)/texmf/fonts/cmap
-dist_cmapdata_DATA = \
-  $(srcdir)/EUC-UCS2 \
-  $(srcdir)/UniKSCms-UCS2-H \
-  $(srcdir)/UniKSCms-UCS2-V
-
 glyphlistdatadir = $(datadir)/texmf/fonts/map/glyphlist
 dist_glyphlistdata_DATA = \
   $(srcdir)/glyphlist.txt \
@@ -210,23 +202,6 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-install-dist_cmapdataDATA: $(dist_cmapdata_DATA)
-	@$(NORMAL_INSTALL)
-	test -z "$(cmapdatadir)" || $(MKDIR_P) "$(DESTDIR)$(cmapdatadir)"
-	@list='$(dist_cmapdata_DATA)'; for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  f=$(am__strip_dir) \
-	  echo " $(dist_cmapdataDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(cmapdatadir)/$$f'"; \
-	  $(dist_cmapdataDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(cmapdatadir)/$$f"; \
-	done
-
-uninstall-dist_cmapdataDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(dist_cmapdata_DATA)'; for p in $$list; do \
-	  f=$(am__strip_dir) \
-	  echo " rm -f '$(DESTDIR)$(cmapdatadir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(cmapdatadir)/$$f"; \
-	done
 install-dist_configdataDATA: $(dist_configdata_DATA)
 	@$(NORMAL_INSTALL)
 	test -z "$(configdatadir)" || $(MKDIR_P) "$(DESTDIR)$(configdatadir)"
@@ -315,7 +290,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(cmapdatadir)" "$(DESTDIR)$(configdatadir)" "$(DESTDIR)$(glyphlistdatadir)" "$(DESTDIR)$(mapdatadir)"; do \
+	for dir in "$(DESTDIR)$(configdatadir)" "$(DESTDIR)$(glyphlistdatadir)" "$(DESTDIR)$(mapdatadir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -360,7 +335,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-dist_cmapdataDATA install-dist_configdataDATA \
+install-data-am: install-dist_configdataDATA \
 	install-dist_glyphlistdataDATA install-dist_mapdataDATA
 
 install-dvi: install-dvi-am
@@ -395,24 +370,22 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-dist_cmapdataDATA \
-	uninstall-dist_configdataDATA uninstall-dist_glyphlistdataDATA \
-	uninstall-dist_mapdataDATA
+uninstall-am: uninstall-dist_configdataDATA \
+	uninstall-dist_glyphlistdataDATA uninstall-dist_mapdataDATA
 
 .MAKE: install-am install-strip
 
 .PHONY: all all-am check check-am clean clean-generic distclean \
 	distclean-generic distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am \
-	install-dist_cmapdataDATA install-dist_configdataDATA \
-	install-dist_glyphlistdataDATA install-dist_mapdataDATA \
-	install-dvi install-dvi-am install-exec install-exec-am \
-	install-html install-html-am install-info install-info-am \
-	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am uninstall \
-	uninstall-am uninstall-dist_cmapdataDATA \
+	install-dist_configdataDATA install-dist_glyphlistdataDATA \
+	install-dist_mapdataDATA install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
+	pdf-am ps ps-am uninstall uninstall-am \
 	uninstall-dist_configdataDATA uninstall-dist_glyphlistdataDATA \
 	uninstall-dist_mapdataDATA
 

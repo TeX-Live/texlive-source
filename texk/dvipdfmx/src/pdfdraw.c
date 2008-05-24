@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdraw.c,v 1.14 2007/11/22 17:10:12 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdraw.c,v 1.15 2008/05/22 11:03:09 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -500,6 +500,7 @@ pdf_path__curveto (pdf_path        *pa,
   return 0;
 }
 
+#if 0
 #define QB_TWO_THIRD (2.0/3.0)
 #define QB_ONE_THIRD (1.0/3.0)
 
@@ -520,6 +521,7 @@ pdf_path__curveto_QB (pdf_path        *pa,
  
   return pdf_path__curveto(pa, cp, &q0, &q1, p1);
 }
+#endif
 
 
 /* This isn't specified as cp to somewhere. */
@@ -1116,7 +1118,6 @@ int
 pdf_dev_grestore (void)
 {
   pdf_gstate *gs;
-  pdf_color   sc, fc;
 
   if (m_stack_depth(&gs_stack) <= 1) { /* Initial state at bottom */
     WARN("Too many grestores.");
@@ -1124,16 +1125,12 @@ pdf_dev_grestore (void)
   }
 
   gs = m_stack_pop(&gs_stack);
-//  pdf_color_copycolor(&sc, &gs->strokecolor);
-//  pdf_color_copycolor(&fc, &gs->fillcolor);
   clear_a_gstate(gs);
   RELEASE(gs);
 
   pdf_doc_add_page_content(" Q", 2);
 
   pdf_dev_reset_fonts();
-//  pdf_dev_set_strokingcolor(&sc);
-//  pdf_dev_set_nonstrokingcolor(&fc);
 
   return  0;
 }
@@ -1185,7 +1182,6 @@ pdf_dev_grestore_to (int depth)
 {
   m_stack    *gss = &gs_stack;
   pdf_gstate *gs;
-  pdf_color   sc, fc;
 
   ASSERT(depth >= 0);
 
@@ -1196,14 +1192,10 @@ pdf_dev_grestore_to (int depth)
   while (m_stack_depth(gss) > depth + 1) {
     pdf_doc_add_page_content(" Q", 2);
     gs = m_stack_pop(gss);
-//    pdf_color_copycolor(&sc, &gs->strokecolor);
-//    pdf_color_copycolor(&fc, &gs->fillcolor);
     clear_a_gstate(gs);
     RELEASE(gs);
   }
   pdf_dev_reset_fonts();
-//  pdf_dev_set_strokingcolor(&sc);
-//  pdf_dev_set_nonstrokingcolor(&fc);
 
   return;
 }

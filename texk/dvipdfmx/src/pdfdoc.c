@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.52 2008/05/20 13:05:14 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.55 2008/05/22 10:08:02 matthias Exp $
  
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -86,7 +86,6 @@ read_thumbnail (const char *thumb_filename)
 {
   pdf_obj *image_ref;
   int      xobj_id;
-  int      found_in_cwd = 0;
   FILE    *fp;
 
   fp = MFOPEN(thumb_filename, FOPEN_RBIN_MODE);
@@ -421,6 +420,9 @@ pdf_doc_set_eop_content (const char *content, unsigned length)
   return;
 }
 
+#ifndef HAVE_TM_GMTOFF
+#ifndef HAVE_TIMEZONE
+
 /* auxiliary function to compute timezone offset on
    systems that do not support the tm_gmtoff in struct tm,
    or have a timezone variable.  Such as i386-solaris.  */
@@ -438,28 +440,37 @@ compute_timezone_offset()
   return (mktime(&local) - mktime(&tm));
 }
 
+#endif /* HAVE_TIMEZONE */
+#endif /* HAVE_TM_GMTOFF */
+
 /*
  * Docinfo
  */
 static long
 asn_date (char *date_string)
 {
-#ifndef HAVE_TIMEZONE
-# ifdef HAVE_TM_GMTOFF
-#  define timezone (-bd_time->tm_gmtoff)
-# else
-#  define timezone (-compute_timezone_offset())
-# endif /* not HAVE_TM_GMTOFF */
-#endif  /* not HAVE_TIMEZONE */
+  long        tz_offset;
   time_t      current_time;
   struct tm  *bd_time;
 
   time(&current_time);
   bd_time = localtime(&current_time);
-  sprintf(date_string, "D:%04d%02d%02d%02d%02d%02d%+03ld'%02ld'",
+
+#ifdef HAVE_TM_GMTOFF
+  tz_offset = bd_time->tm_gmtoff;
+#else
+#  ifdef HAVE_TIMEZONE
+  tz_offset = -timezone;
+#  else
+  tz_offset = compute_timezone_offset();
+#  endif /* HAVE_TIMEZONE */
+#endif /* HAVE_TM_GMTOFF */
+
+  sprintf(date_string, "D:%04d%02d%02d%02d%02d%02d%c%02ld'%02ld'",
 	  bd_time->tm_year + 1900, bd_time->tm_mon + 1, bd_time->tm_mday,
 	  bd_time->tm_hour, bd_time->tm_min, bd_time->tm_sec,
-	  (-timezone / 3600), (timezone % 3600) / 60);
+	  (tz_offset > 0) ? '+' : '-', labs(tz_offset) / 3600,
+                                      (labs(tz_offset) / 60) % 60);
 
   return strlen(date_string);
 }

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.63 2008/05/20 13:05:14 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.64 2008/05/22 10:08:02 matthias Exp $
     
     This is DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
 
@@ -317,7 +317,7 @@ static void
 set_verbose (int argc, char *argv[])
 {
   while (argc > 0 && *argv[0] == '-') {
-    char *flag, *nextptr;
+    char *flag;
 
     for (flag = argv[0] + 1; *flag != 0; flag++) {
       if (*flag == 'q')

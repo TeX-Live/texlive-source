@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdraw.h,v 1.11 2006/12/11 12:46:03 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdraw.h,v 1.12 2008/05/22 10:08:02 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -32,7 +32,7 @@
 #define  PDF_GSAVE_MAX      256
 
 extern void  pdf_dev_init_gstates  (void);
-extern void  pdf_dev_clean_gstates (void);
+extern void  pdf_dev_clear_gstates (void);
 
 #define pdf_copymatrix(m,n) do {\
   (m)->a = (n)->a; (m)->b = (n)->b;\
