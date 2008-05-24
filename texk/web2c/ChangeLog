@@ -1,3 +1,7 @@
+2008-05-25  Karl Berry  <karl@tug.org>
+
+	* cpascal.h (loadpoolstrings): declare.
+
 2008-05-23  Karl Berry  <karl@tug.org>
 
 	* configure.in (fmtutil.cnf): no longer generate from fmtutil.in.

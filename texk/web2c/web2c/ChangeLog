@@ -1,3 +1,7 @@
+2008-05-25  Karl Berry  <karl@tug.org>
+
+	* texmf.defines (loadpoolstrings): formatting.
+
 2008-03-24  Karl Berry  <karl@tug.org>
 
 	* common.defines (printcstring): new procedure.
