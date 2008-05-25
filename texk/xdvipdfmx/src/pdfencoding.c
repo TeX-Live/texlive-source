@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencoding.c,v 1.9 2008/05/13 12:23:45 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencoding.c,v 1.11 2008/05/22 11:03:09 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -48,8 +48,10 @@ static unsigned char verbose = 0;
 static const char *MacRomanEncoding[256];
 static const char *MacExpertEncoding[256];
 static const char *WinAnsiEncoding[256];
+#if 0
 static const char *StandardEncoding[256];
 static const char *ISOLatin1Encoding[256];
+#endif
 
 void
 pdf_encoding_set_verbose (void)
@@ -199,6 +201,7 @@ pdf_clean_encoding_struct (pdf_encoding *encoding)
   return;
 }
 
+#if 0
 static int CDECL
 glycmp (const void *pv1, const void *pv2)
 {
@@ -209,6 +212,7 @@ glycmp (const void *pv1, const void *pv2)
 
   return strcmp(v1, v2);
 }
+#endif
 
 static int
 is_similar_charset (char **enc_vec, const char **enc_vec2)
@@ -366,9 +370,6 @@ struct {
 void
 pdf_init_encodings (void)
 {
-  pdf_encoding *encoding;
-  int           code;
-
   enc_cache.count     = 0;
   enc_cache.capacity  = 3;
   enc_cache.encodings = NEW(enc_cache.capacity, pdf_encoding);
@@ -404,8 +405,6 @@ pdf_encoding_new_encoding (const char *enc_name, const char *ident,
 			   const char **encoding_vec,
 			   char *baseenc_name, int flags)
 {
-  char   **baseenc_vec = NULL;
-  pdf_obj *differences;
   int      enc_id, code;
 
   pdf_encoding *encoding;
@@ -940,6 +939,7 @@ WinAnsiEncoding[256] = {
   "udieresis", "yacute", "thorn", "ydieresis"
 };
 
+#if 0
 static const char *
 StandardEncoding[256] = {
   ".notdef", ".notdef", ".notdef", ".notdef",
@@ -1075,3 +1075,4 @@ ISOLatin1Encoding[256] = {
   "oslash", "ugrave", "uacute", "ucircumflex",
   "udieresis", "yacute", "thorn", "ydieresis"
 };
+#endif

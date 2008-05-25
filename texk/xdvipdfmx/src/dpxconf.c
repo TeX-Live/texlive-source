@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dpxconf.c,v 1.1 2005/07/20 10:41:54 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dpxconf.c,v 1.2 2008/05/22 10:08:02 matthias Exp $
     
     This is DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
 
@@ -83,7 +83,8 @@ paperinfo (const char *ppformat)
 
   ppinfo = paperfirst();
   while (ppinfo && papername(ppinfo)) {
-    if (!strcmp(ppformat, papername(ppinfo)))
+    if (!strcmp(ppformat, ppinfo->name))
+      /* ppinfo->name == papername(ppinfo), but gcc doesn't like the latter */
       break;
     ppinfo = papernext(ppinfo);
   }

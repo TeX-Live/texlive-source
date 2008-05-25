@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_pdfm.c,v 1.34 2008/05/18 12:05:22 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_pdfm.c,v 1.35 2008/05/22 10:08:02 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -1379,7 +1379,6 @@ static int
 spc_handler_pdfm_literal (struct spc_env *spe, struct spc_arg *args)
 {
   int       direct = 0;
-  long      len;
 
   skip_white(&args->curptr, args->endptr);
   while (args->curptr < args->endptr) {

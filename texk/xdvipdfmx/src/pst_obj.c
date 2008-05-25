@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pst_obj.c,v 1.7 2008/01/13 21:25:31 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pst_obj.c,v 1.8 2008/05/22 10:08:02 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -531,11 +531,11 @@ pst_parse_number (unsigned char **inbuf, unsigned char *inbufend)
   double  dval;
 
   errno = 0;
-  lval = strtol(*inbuf, (char **) &cur, 10);
+  lval = strtol((char *) *inbuf, (char **) (void *) &cur, 10);
   if (errno || *cur == '.' || *cur == 'e' || *cur == 'E') {
     /* real */
     errno = 0;
-    dval = strtod(*inbuf, (char **) &cur);
+    dval = strtod((char *) *inbuf, (char **) (void *) &cur);
     if (!errno && PST_TOKEN_END(cur, inbufend)) {
       *inbuf = cur;
       return pst_new_obj(PST_TYPE_REAL, pst_real_new(dval));
@@ -550,7 +550,7 @@ pst_parse_number (unsigned char **inbuf, unsigned char *inbufend)
     /* integer with radix */
     /* Can the base have a (plus) sign? I think yes. */
     errno = 0;
-    lval = strtol(cur, (char **) &cur, lval);
+    lval = strtol((char *) cur, (char **) (void *) &cur, lval);
     if (!errno && PST_TOKEN_END(cur, inbufend)) {
       *inbuf = cur;
       return pst_new_obj(PST_TYPE_INTEGER, pst_integer_new(lval));

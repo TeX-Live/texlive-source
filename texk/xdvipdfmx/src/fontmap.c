@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/fontmap.c,v 1.39 2008/05/18 08:09:09 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/fontmap.c,v 1.40 2008/05/22 10:08:02 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -602,7 +602,7 @@ fontmap_parse_mapdef_dps (fontmap_rec *mrec,
     case '<': /* encoding or fontfile field */
       if (++p < endptr && *p == '[') p++; /*skip */
       skip_blank(&p, endptr);
-      if (q = parse_string_value(&p, endptr)) {
+      if ((q = parse_string_value(&p, endptr))) {
         int n = strlen(q);
         if (n > 4 && strncmp(q+n-4, ".enc", 4) == 0)
           mrec->enc_name = q;
@@ -613,13 +613,13 @@ fontmap_parse_mapdef_dps (fontmap_rec *mrec,
       break;
 
     case '"': /* Options */
-      if (q = parse_string_value(&p, endptr)) {
+      if ((q = parse_string_value(&p, endptr))) {
         char *r = q, *e = q+strlen(q), *s, *t;
         skip_blank(&r, e);
         while (r < e) {
-          if (s = parse_float_decimal(&r, e)) {
+          if ((s = parse_float_decimal(&r, e))) {
             skip_blank(&r, e);
-            if (t = parse_string_value(&r, e)) {
+            if ((t = parse_string_value(&r, e))) {
               if (strcmp(t, "SlantFont") == 0)
                 mrec->opt.slant = atof(s);
               else if (strcmp(r, "ExtendFont") == 0)
@@ -627,7 +627,7 @@ fontmap_parse_mapdef_dps (fontmap_rec *mrec,
               RELEASE(t);
             }
             RELEASE(s);
-          } else if (s = parse_string_value(&r, e)) { /* skip */
+          } else if ((s = parse_string_value(&r, e))) { /* skip */
             RELEASE(s);
           }
           skip_blank(&r, e);
@@ -966,26 +966,6 @@ is_pdfm_mapline (const char *mline) /* NULL terminated. */
   /* Two entries: TFM_NAME PS_NAME only (DVIPS format)
    * Otherwise (DVIPDFM format) */
   return (n == 2 ? 0 : 1);
-}
-
-static void
-delete_records (FILE *fp, long num_lines)
-{
-  char *q, *p;
-
-  while (num_lines-- > 0 &&
-         (p = readline(work_buffer, WORK_BUFFER_SIZE, fp)) != NULL) {
-    skip_blank(&p, p + strlen(p));
-    if (*p == 0)
-      continue;
-    q = parse_string_value(&p, p + strlen(p));
-    if (q) {
-      WARN("Deleting fontmap record for \"%s\"", q);
-      pdf_remove_fontmap_record(q);
-      RELEASE(q);
-    }
-  }
-  return;
 }
 
 int

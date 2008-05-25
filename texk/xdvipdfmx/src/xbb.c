@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/xbb.c,v 1.12 2008/05/18 14:31:06 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/xbb.c,v 1.13 2008/05/22 10:08:02 matthias Exp $
 
     This is extractbb, a bounding box extraction program.
 
@@ -23,6 +23,7 @@
 #include <string.h>
 #include "system.h"
 #include "mem.h"
+#include "error.h"
 #include "mfileio.h"
 #include "numbers.h"
 #include "pdfobj.h"
@@ -313,7 +314,7 @@ static int pdf_get_info (FILE *image_file, char *filename, int *llx, int *lly, i
 
   page_tree = NULL;
   {
-    pdf_obj *trailer, *catalog, *tmp;
+    pdf_obj *trailer, *catalog;
 
     pf = pdf_open(filename, image_file);
     if (!pf)
@@ -472,7 +473,7 @@ int extractbb (int argc, char *argv[], int mode)
     }
   }
   for (; argc > 0; argc--, argv++) {
-    FILE *infile;
+    FILE *infile = NULL;
     char *kpse_file_name;
     if (!(kpse_file_name = kpse_find_pict(argv[0])) ||
         (infile = MFOPEN(kpse_file_name, FOPEN_RBIN_MODE)) == NULL) {

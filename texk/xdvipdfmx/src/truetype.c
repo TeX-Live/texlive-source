@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/truetype.c,v 1.9 2008/05/18 14:52:39 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/truetype.c,v 1.10 2008/05/22 11:03:09 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -878,7 +878,6 @@ do_custom_encoding (pdf_font *font,
 int
 pdf_font_load_truetype (pdf_font *font)
 {
-  pdf_obj   *fontdict    = pdf_font_get_resource(font);
   pdf_obj   *descriptor  = pdf_font_get_descriptor(font);
   char      *ident       = pdf_font_get_ident(font);
   int        encoding_id = pdf_font_get_encoding(font);

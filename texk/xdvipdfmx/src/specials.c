@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/specials.c,v 1.9 2005/08/15 16:40:10 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/specials.c,v 1.10 2008/05/24 08:37:49 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -355,6 +355,7 @@ init_special (struct spc_handler *special,
   args->curptr = (char *) p;
   args->endptr = args->curptr + size;
   args->base   = args->curptr;
+  args->command = NULL;
 
   return;
 }
@@ -531,8 +532,10 @@ print_error (const char *name, struct spc_env *spe, struct spc_arg *ap)
   c.x = spe->x_user; c.y = spe->y_user;
   pdf_dev_transform(&c, NULL);
 
-  WARN("Interpreting special command %s (%s) failed.", ap->command, name);
-  WARN(">> at page=\"%ld\" position=\"(%g, %g)\" (in PDF)", pg, c.x, c.y);
+  if (ap->command && name) {
+    WARN("Interpreting special command %s (%s) failed.", ap->command, name);
+    WARN(">> at page=\"%ld\" position=\"(%g, %g)\" (in PDF)", pg, c.x, c.y);
+  }
   for (i = 0, p = ap->base; i < 63 && p < ap->endptr; p++) {
     if (isprint(*p))
       ebuf[i++] = *p;

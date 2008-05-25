@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.c,v 1.57 2008/05/20 13:05:14 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.c,v 1.58 2008/05/22 10:08:02 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -1521,7 +1521,7 @@ pdf_remove_dict (pdf_obj *dict, const char *name)
   TYPECHECK(dict, PDF_DICT);
 
   data   = dict->data;
-  data_p = (pdf_dict **) &(dict->data);
+  data_p = (pdf_dict **) (void *) &(dict->data);
   while (data->key != NULL) {
     if (pdf_match_name(data->key, name)) {
       pdf_release_obj(data->key);
@@ -1533,8 +1533,6 @@ pdf_remove_dict (pdf_obj *dict, const char *name)
     data_p = &(data->next);
     data   = data->next;
   }
-
-  return;
 }
 
 pdf_obj *
@@ -2543,7 +2541,7 @@ pdf_get_object (pdf_file *pf, unsigned long obj_num, unsigned short obj_gen)
 
  error:
   WARN("Could not read object from object stream.");
-  result = pdf_new_null();
+  return pdf_new_null();
 }
 
 #define OBJ_FILE(o) (((pdf_indirect *)((o)->data))->pf)

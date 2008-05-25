@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/sfnt.c,v 1.13 2008/05/08 18:51:59 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/sfnt.c,v 1.14 2008/05/22 10:08:02 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -199,7 +199,7 @@ sfnt *
 dfont_open (FILE *fp, int index)
 {
   sfnt  *sfont;
-  ULONG  rdata_pos, map_pos, tags_pos, types_pos, res_pos, tag, type;
+  ULONG  rdata_pos, map_pos, tags_pos, types_pos, res_pos, tag;
   USHORT tags_num, types_num, i;
 
   ASSERT(fp);
@@ -236,8 +236,8 @@ dfont_open (FILE *fp, int index)
   }
 
   for (i = 0; i <= types_num; i++) {
-    sfnt_get_ushort(sfont); /* resource id */
-    sfnt_get_ushort(sfont); /* resource name position from name_list */
+    (void) sfnt_get_ushort(sfont); /* resource id */
+    (void) sfnt_get_ushort(sfont); /* resource name position from name_list */
     res_pos = sfnt_get_ulong(sfont);   /* resource flag (byte) + resource offset */
     sfnt_get_ulong(sfont);  /* mbz */
     if (i == index) break;

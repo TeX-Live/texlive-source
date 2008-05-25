@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cff_dict.c,v 1.15 2007/07/05 05:45:06 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cff_dict.c,v 1.16 2008/05/22 10:08:02 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -435,7 +435,6 @@ static long pack_integer (card8 *dest, long destlen, long value)
 
 static long pack_real (card8 *dest, long destlen, double value)
 {
-  long e;
   int i = 0, pos = 2;
   char buffer[32];
 

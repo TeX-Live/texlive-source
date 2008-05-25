@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.53 2008/05/21 06:58:37 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.55 2008/05/22 10:08:02 matthias Exp $
  
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -86,7 +86,6 @@ read_thumbnail (const char *thumb_filename)
 {
   pdf_obj *image_ref;
   int      xobj_id;
-  int      found_in_cwd = 0;
   FILE    *fp;
 
   fp = MFOPEN(thumb_filename, FOPEN_RBIN_MODE);
@@ -421,6 +420,9 @@ pdf_doc_set_eop_content (const char *content, unsigned length)
   return;
 }
 
+#ifndef HAVE_TM_GMTOFF
+#ifndef HAVE_TIMEZONE
+
 /* auxiliary function to compute timezone offset on
    systems that do not support the tm_gmtoff in struct tm,
    or have a timezone variable.  Such as i386-solaris.  */
@@ -437,6 +439,9 @@ compute_timezone_offset()
   gmtime_r(&now, &tm);
   return (mktime(&local) - mktime(&tm));
 }
+
+#endif /* HAVE_TIMEZONE */
+#endif /* HAVE_TM_GMTOFF */
 
 /*
  * Docinfo

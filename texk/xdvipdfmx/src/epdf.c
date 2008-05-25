@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/epdf.c,v 1.22 2008/05/18 14:31:06 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/epdf.c,v 1.23 2008/05/22 10:08:02 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -55,7 +55,6 @@ static int  add_stream_flate (pdf_obj *dst, const void *data, long len);
 #endif
 static int  concat_stream    (pdf_obj *dst, pdf_obj *src);
 
-static void print_bbox_info  (pdf_obj *rect, const char *type, pdf_obj *crop_box);
 static int  rect_equal       (pdf_obj *rect1, pdf_obj *rect2);
 
 /*
@@ -124,22 +123,6 @@ rect_equal (pdf_obj *rect1, pdf_obj *rect2)
   }
 
   return 1;
-}
-
-static void
-print_bbox_info (pdf_obj *rect, const char *type, pdf_obj *crop_box)
-{
-  WARN("\"%s\" different from current CropBox found.", type);
-  WARN("%s (PDF): [ %g %g %g %g ]", type,
-       pdf_number_value(pdf_get_array(rect, 0)),
-       pdf_number_value(pdf_get_array(rect, 1)),
-       pdf_number_value(pdf_get_array(rect, 2)),
-       pdf_number_value(pdf_get_array(rect, 3)));
-  WARN("CropBox/MediaBox (PDF)   : [ %g %g %g %g ]",
-       pdf_number_value(pdf_get_array(crop_box, 0)),
-       pdf_number_value(pdf_get_array(crop_box, 1)),
-       pdf_number_value(pdf_get_array(crop_box, 2)),
-       pdf_number_value(pdf_get_array(crop_box, 3)));
 }
 
 static pdf_obj*
