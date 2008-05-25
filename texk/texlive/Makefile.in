@@ -21,6 +21,7 @@ LINKED_SCRIPTS = \
   texmf/scripts/texlive/tlmgr.pl \
   texmf/scripts/texlive/texdoc.tlu \
   texmf/scripts/texlive/getnonfreefonts.pl \
+  texmf-dist/scripts/dviasm/dviasm.py \
   texmf-dist/scripts/glossaries/makeglossaries \
   texmf-dist/scripts/mkjobtexmf/mkjobtexmf.pl \
   texmf-dist/scripts/perltex/perltex.pl \

@@ -1,3 +1,7 @@
+2008-05-25  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (LINKED_SCRIPTS): add dviasm.py
+
 2008-05-20  Karl Berry  <karl@tug.org>
 
 	* wordcount.sh: remove, since we have texcount (TeXcount.pl)
