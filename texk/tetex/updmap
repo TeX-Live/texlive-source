@@ -5,6 +5,8 @@
 
 ###############################################################################
 # program history:
+#   Sun May 25 21:05:32 CEST 2008 (Reinhard Kotucha)
+#      add function symlink_or_copy needed by tl-portable.
 #   Post-te retirement, now maintained in TeX Live; see
 #     Build/texk/tetex/ChangeLog for further changes.
 #   Fr Jul 22 07:22:38 CEST 2005
@@ -92,7 +94,7 @@ export PATH
 test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 
 # the version string
-version=1210234762 # seconds since `00:00:00 1970-01-01 UTC'
+version=1211742332 # seconds since `00:00:00 1970-01-01 UTC'
                    # date '+%s' (with GNU date)
 
 # 
@@ -211,6 +213,24 @@ cfgval()
 }
 
 ###############################################################################
+# symlink_or_copy()
+#   if --copy is not set, try to create a symlink.  If this fails, write 
+#   a message to stderr and copy the file instead.
+###############################################################################
+symlink_or_copy()
+{
+  if $copy; then
+    $copy_cmd "$1" "$2"
+  else
+    $link_cmd "$1" "$2" ||
+    {
+    echo "Creating symbolic link failed, the file is copied instead." 1>&2 &&
+    $copy_cmd "$1" "$2"
+    }
+  fi
+}
+
+###############################################################################
 # setupSymlinks()
 #   set symlink (or copy)
 #    for psfonts.map according to dvipsPreferOutline variable,
@@ -222,25 +242,25 @@ setupSymlinks()
   cd "$dvipsoutputdir" || exit 1
   rm -f psfonts.map
   if test "x$dvipsPreferOutline" = xtrue; then
-    $link_cmd psfonts_t1.map psfonts.map
+    symlink_or_copy psfonts_t1.map psfonts.map
   else
-    $link_cmd psfonts_pk.map psfonts.map
+    symlink_or_copy psfonts_pk.map psfonts.map
   fi
 
   cd "$pdftexoutputdir" || exit 1
   rm -f pdftex.map
   if test "x$pdftexDownloadBase14" = xtrue; then
-    $link_cmd pdftex_dl14.map pdftex.map
+    symlink_or_copy pdftex_dl14.map pdftex.map
   else
-    $link_cmd pdftex_ndl14.map pdftex.map
+    symlink_or_copy pdftex_ndl14.map pdftex.map
   fi
 
   cd "$dvipdfmoutputdir" || exit 1
   rm -f dvipdfm.map
   if test "x$dvipdfmDownloadBase14" = xtrue; then
-    $link_cmd dvipdfm_dl14.map dvipdfm.map
+    symlink_or_copy dvipdfm_dl14.map dvipdfm.map
   else
-    $link_cmd dvipdfm_ndl14.map dvipdfm.map
+    symlink_or_copy dvipdfm_ndl14.map dvipdfm.map
   fi
   )
 }
@@ -894,7 +914,7 @@ processOptions()
       --cnffile=*)
           cfgparam=1; cnfFile=`echo "$1" | sed 's/--cnffile=//'`;;
       --copy)
-          link_cmd="cp";;
+          copy=true;;
       --dry-run|-n)
           chicken_mode=true;;
       --dvipsoutputdir)
@@ -1301,7 +1321,9 @@ main()
   log=
   chicken_mode=false
   link_cmd="ln -s"
-  
+  copy_cmd="cp"
+  copy=false
+
   cfgparam=
   outputdirparam=
   cfgmaint=
