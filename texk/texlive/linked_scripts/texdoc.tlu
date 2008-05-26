@@ -1,0 +1,345 @@
+#!/usr/bin/env texlua
+-- $Id$
+--[[ Written in lua by Frank Küster (2007) based on the shell script by
+Thomas Esser, David Aspinall, and Simon Wilkinson.
+Public domain.]]
+--[[ Changelog
+ 0.3 2007-06-28
+ - added changelog
+ - better OS detection for default viewer settings
+ - removed some debugging code
+ - -s now works in dirs without ls-R, too
+
+ 0.2 2007-06-28
+ - implemented reading of configuration from texmf.cnf
+ - fixed "-s" option
+
+ 0.1
+ - initial public release 
+]]
+
+progname = 'texdoc';
+version = '0.3';
+usage = '      Usage: ' .. progname ..' [-h|--help] name\
+	 -h|--help\t\t Show this help\
+         -V|--version\t\t Print the version of the program\
+         -v|--verbose\t\t Show the command being used to display the documentation\
+         -l|--list\t\t List matching files, do not start a viewer.\
+         -s|--search\t\t search for name as a pattern';
+
+
+if not arg[1] then
+   print (usage);
+   return
+end
+
+mode = 'view';
+verbose = false;
+while table.maxn(arg) > 0 and string.match(arg[1],'^%-') do
+   curr_arg = table.remove(arg,1)
+   if string.match (curr_arg,'-h') or string.match (curr_arg,'--help') then
+      print (usage);
+      os.exit(0);
+   elseif string.match (curr_arg,'-V') or string.match (curr_arg,'--version') then
+      print (progname .. ' version: ' .. version );
+      os.exit(0);
+   elseif string.match (curr_arg,'-v') or string.match (curr_arg,'--verbose') then
+      verbose = true;
+   elseif string.match (curr_arg,'-l') or string.match (curr_arg,'--list'   ) then
+      mode = 'list';
+   elseif string.match (curr_arg,'-s') or string.match (curr_arg,'--search'   ) then
+      mode = 'search';
+   end
+end
+
+--[[ function definitions ]]
+function list_iter (t)
+   local i = 0
+   local n = table.getn(t)
+   return function ()
+	     i = i + 1
+	     if i <= n then return t[i] end
+	  end
+end
+
+
+-- [[ functions for the search option ]]
+no_lsr_doctrees = {};
+function get_lsr_files ()
+   local lsr_files = {};
+   local pathlist = kpse.expand_braces('$TEXDOCS');
+   for path in string.gmatch(pathlist, "[^:;]+") do
+      path = string.gsub(path,'//$','')
+      local tree_root
+      tree_root = string.gsub(path,'doc$','')
+      tree_root = string.gsub(tree_root,'^!!','')
+      if lfs.isfile(tree_root .. "ls-R") then
+	 table.insert(lsr_files,tree_root .. "ls-R")
+      else
+	 if not string.match(path,'^%.$') and lfs.isdir(path) then
+	    table.insert(no_lsr_doctrees,path)
+	 end
+      end -- does lsRfile exist?
+   end -- for path
+   local i = 0
+   local n = table.getn(lsr_files)
+   -- TODO: We completely ignore trees without ls-R files.  Since I
+   -- don't know how to get the output of "find" without resorting to
+   -- temporary files, anyway, I don't care.
+   return function ()
+	     i = i +1
+	     if i <= n then return lsr_files[i] end
+	  end
+	     
+end -- get_lsr_files()
+
+function deluaficate(oldpat)
+   local newpat
+   -- better use long strings here, no escaping of \ needed there.
+   newpat = string.gsub(oldpat,'([^\\])%-','%1%%%-')
+   newpat = string.gsub(newpat,'\\','')
+   return newpat
+end --deluaficate
+
+docdirs = {}
+docfiles = {}
+function pattern_search (pattern)
+   pattern = deluaficate(pattern)
+   -- populate docdirs and doclines list
+   for database in get_lsr_files() do
+      local texmf_tree = string.gsub(database,'ls%-R$','')
+      is_docline = false
+      local this_dir -- changed to each individual docdir
+      for line in io.lines(database) do
+	 if string.match(line,'^./') then
+	    -- a directory
+	    this_dir = string.gsub(line,'^./',texmf_tree)
+	    this_dir = string.gsub(this_dir,':$','/')
+	    if string.match(line,'^./doc') then
+	       -- the next file lines are in docdir "this_dir"
+	       is_docline = true
+	       -- save it in the docdirs table
+	       table.insert(docdirs,this_dir)
+	    else
+	       is_docline = false
+	    end -- docdir
+	 elseif string.match(line,'^%s*$') then
+	    -- empty line, do nothing
+	 -- now we have only file lines left, are they a docline?
+	 elseif is_docline then
+	    local fullpath = this_dir .. line
+-- 	    print(fullpath)
+	    table.insert(docfiles,fullpath)
+	 end -- line starting with ./
+      end -- for line
+   end -- for database
+   for no_lsr_dir in list_iter(no_lsr_doctrees) do
+      recurse_tree(no_lsr_dir)
+   end
+
+   print("Directories that match:")
+   for dir in list_iter(docdirs) do
+      if string.match(dir,pattern) then
+	 print (dir)
+      end
+   end -- for dir
+   print()
+   print("Files that match:")
+   for file in list_iter(docfiles) do
+      if string.match(file,pattern) then
+	 print (file)
+      end
+   end -- for file
+
+end -- function pattern_search()
+
+function recurse_tree (path)
+    for file in lfs.dir(path) do
+        if file ~= "." and file ~= ".." then
+            local f = path..'/'..file
+            local attr = lfs.attributes (f)
+	    if attr then -- else stale symlink
+	       if attr.mode == "directory" then
+		  table.insert(docdirs,f)
+		  recurse_tree (f)
+	       else
+		  table.insert(docfiles,f)
+	       end
+            end
+        end
+    end
+ end --function recurse_tree
+
+
+--[[ functions for parsing texmf.cnf ]]
+function set_var_from_texmf(oldvalue,texmfvar)
+   local newvalue
+   newvalue = kpse.var_value(texmfvar)
+   if newvalue then
+      return newvalue
+   else
+      return oldvalue
+   end
+end
+function set_listvar_from_texmf(oldvalue,texmfvar)
+   local list_as_string
+   local templist = {}
+   list_as_string = set_var_from_texmf('',texmfvar)
+   for element in string.gmatch(list_as_string,'[^,;:]+') do
+      table.insert(templist,element)
+   end
+   if table.maxn(templist) > 0 then
+      return templist
+   else
+      return oldvalue
+   end
+end -- set_listvar_from_texmf
+
+function set_listvar_from_expand_braces(oldvalue,texmfvar)
+   local list_as_string
+   local templist = {}
+   list_as_string = kpse.expand_braces(texmfvar)
+   for element in string.gmatch(list_as_string,'[^,;:]*:') do
+      element = string.gsub(element,':','')
+      table.insert(templist,element)
+   end
+   if table.maxn(templist) > 0 then
+      return templist
+   else
+      return oldvalue
+   end
+end -- set_listvar_from_expand_braces
+
+--[[ initialize kpathsea ]]
+kpse.set_program_name("texdoc")
+
+-- [[ initialize some variables ]]
+texdoc_formats = {'dvi','pdf','ps','txt','html'}
+
+-- can be done with: if (os.type == "windows") then
+if string.find(os.getenv("PATH"),";") then
+   -- probably Windows (or OS/2)
+   -- which commands should we use for unzipping?
+   texdoc_unzip = { 
+      gz = "gzip -d -c ",
+      bz2 = "bzip2 -d -c "
+   };
+   texdoc_viewer = {
+      dvi  = '(start /wait %s ) &',
+      html = '(start /wait %s) &',
+      pdf = '(start /wait %s) &',
+      ps = '(start /wait %s) &',
+      txt = '(start /wait %s) &',
+      tex = '(start /wait %s) &'
+   };
+   rmfile_command = 'del /F ';
+   rmdir_command = 'rmdir ';
+else
+   -- probably UNIX-like
+   texdoc_unzip = { 
+      gz = "gzip -d -c ",
+      bz2 = "bzip2 -d -c "
+   };
+   texdoc_viewer = { 
+      dvi  = '(xdvi %s ) &',
+      html = '(see %s) &',
+      pdf = '(xpdf %s) &',
+      ps = '(gv %s) &',
+      txt = '(less %s )',
+      tex = '(less %s )'
+   };
+   rmfile_command = 'rm -f ';
+   rmdir_command = 'rmdir ';
+end
+
+texdoc_zipformats = {'','gz','bz2'};
+texdoc_formats = {'','dvi','html','pdf','ps','txt','tex'};
+extlist = {'','.dvi', '.dvi.gz', '.dvi.bz2', '.pdf', '.pdf.gz', '.pdf.bz2', '.ps', '.ps.gz', '.ps.bz2', '.txt', '.txt.gz', '.txt.bz2', '.html'};
+
+-- [[ override hardcoded variables with values from texmf.cnf ]]
+rmfile_command = set_var_from_texmf(rmfile_command,'TEXDOC_RMFILE')
+rmdir_command = set_var_from_texmf(rmdir_command,'TEXDOC_RMDIR')
+texdoc_formats = set_listvar_from_texmf(texdoc_formats,'TEXDOC_FORMATS')
+for format in list_iter(texdoc_formats) do
+   viewer_var = 'TEXDOC_VIEWER_' .. string.upper(format)
+   texdoc_viewer[format] = set_var_from_texmf(texdoc_viewer[format],viewer_var)
+end
+texdoc_zipformats = set_listvar_from_texmf(texdoc_zipformats,'TEXDOC_ZIPFORMATS')
+for zipext in list_iter(texdoc_zipformats) do
+   viewer_var = 'TEXDOC_UNZIP_' .. string.upper(zipext)
+   texdoc_unzip[zipext] = set_var_from_texmf(texdoc_unzip[zipext],viewer_var)
+end
+extlist = set_listvar_from_expand_braces(extlist,'$TEXDOCEXT');
+-- we want an empty string for ext at the beginning, so that it works
+-- to specify the complete filename.  Doesn't matter when there's one
+-- more empty string, but we can easily avoid two in a row
+if not extlist[1] == '' then
+   insert(extlist,1,'')
+end
+
+
+for docname in list_iter (arg) do
+   if string.match(mode,'search') then
+      pattern_search(docname);
+   elseif string.match(mode,'view') or string.match(mode,'list') then
+      for ext in list_iter(extlist) do
+	 filename = kpse.find_file(docname .. ext , "TeX system documentation")
+
+	 if filename then
+	    if string.match (mode, 'list') then
+	       print(filename);
+	    else
+	       -- mode is view, is unzipping needed?
+	       zipext = string.match(ext,'%..*%.(.*)');
+	       if zipext then
+		  unzip_command = texdoc_unzip[zipext];
+		  viewext = string.match(ext,'%.(.*)%..*$');
+		  basebame_pattern = '.*/(.*%.' .. viewext .. ')';
+		  basename = string.match(filename,basebame_pattern);
+
+		  -- uncompress only once per file, in case it is given more
+		  -- than once (dvi besides ps or so)
+		  -- TODO: to be done
+
+		  tmpdir = os.tmpdir("/tmp/texdoc.XXXXXX");
+		  
+		  unzip_commandline = unzip_command .. filename .. " > " .. tmpdir .. "/" .. basename;
+		  if os.execute(unzip_commandline) then
+		     filename = tmpdir .. "/" .. basename;
+		  else
+		     print("Error executing \n" .. unzip_commandline);
+		  end
+		  viewer_replacement = filename .. ';' .. rmfile_command .. filename .. ';' .. rmdir_command .. tmpdir;
+	       else
+		  if ext == '' then
+		     -- fallback if complete filename has been specified
+		     ext = string.match(filename,'.*(%..*)$')
+		     if not ext then
+			-- still no extension for filenames like README
+			ext = 'txt';
+		     end
+		  end
+		  viewer_replacement = filename;
+		  viewext = string.match(ext,'%.(.*)$');
+		  if not viewext or not texdoc_viewer[viewext] then
+		     -- complete filename specified, unknown extension, use "txt"
+		     viewext = 'txt'
+		  end
+	       end -- zipped or not
+	       view_command = string.gsub(texdoc_viewer[viewext],'%%s',viewer_replacement)
+	       if verbose then
+		  print(view_command);
+	       end
+	       view_result = os.execute(view_command);
+	       if view_result then
+		  do break end;
+	       else
+		  print("Error executing \n" .. view_command);
+	       end
+	    end -- list or view
+	 end -- found a filename with that extension or not?
+      end -- for ext
+   end -- if construct "case mode in"
+end -- for docname
+
+-- cleanup_tmpdir();

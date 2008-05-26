@@ -9,7 +9,8 @@ kpse_include ../make/programs.mk
 
 LIVESCRIPTS = simpdftex ebong giftopng
 
-# These scripts do not exist here in /source/ at all, the instances
+# Copies of these scripts exist in /source/live_scripts/ for the sake
+# of avoiding dangling links produced by Build; the instances
 # in texmf are the masters (except when it is CTAN).
 LINKED_SCRIPTS = \
   texmf/scripts/a2ping/a2ping.pl \
@@ -87,12 +88,14 @@ install-linked-scripts:
 	  target=$$target$(LINKSUFFIX); \
 	  rm -f $$target; \
 	  case "$(scriptdir)" in \
-	    */bin)   s=../$$s;; \
-	    */bin/*) s=../../$$s;; \
+	    */bin)   d=..;; \
+	    */bin/*) d=../..;; \
 	    *) echo "$(scriptdir): strange directory for linked scripts" >&2;\
 	      exit 1;; \
 	  esac; \
-	  ln -s $$s $$target; \
+	  $(SHELL) $(srcdir)/../mkinstalldirs $(prefix)/`dirname $$s`; \
+	  $(INSTALL_SCRIPT) $(srcdir)/linked_scripts/`basename $$s` $(prefix)/$$s; \
+	  ln -s $$d/$$s $$target; \
 	done
 
 install-linked-sys-scripts:

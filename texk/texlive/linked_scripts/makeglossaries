@@ -1,0 +1,293 @@
+#!/usr/bin/env perl
+
+# File    : makeglossaries
+# Author  : Nicola Talbot
+# Version : 1.4 (2008/05/10)
+# Description: simple Perl script that calls makeindex.
+# Intended for use with "glossaries.sty" (saves having to remember
+# all the various switches)
+
+# This file is distributed as part of the glossaries LaTeX package.
+# Copyright 2007 Nicola L.C. Talbot
+# This work may be distributed and/or modified under the
+# conditions of the LaTeX Project Public License, either version 1.3
+# of this license of (at your option) any later version.
+# The latest version of this license is in
+#   http://www.latex-project.org/lppl.txt
+# and version 1.3 or later is part of all distributions of LaTeX
+# version 2005/12/01 or later.
+#
+# This work has the LPPL maintenance status `maintained'.
+#
+# The Current Maintainer of this work is Nicola Talbot.
+
+# This work consists of the files glossaries.dtx and glossaries.ins 
+# and the derived files glossaries.sty, mfirstuc.sty,
+# glossary-hypernav.sty, glossary-list.sty, glossary-long.sty,
+# glossary-super.sty, glossaries.perl.
+# Also makeglossaries and makeglossaries.
+#
+# History:
+# v1.4 (2008-05-10) :
+#   * added support for filenames with spaces.
+# v1.3 (2008-03-08) :
+#   * changed first line from /usr/bin/perl -w to /usr/bin/env perl
+#     (Thanks to Karl Berry for suggesting this.)
+# v1.2 (2008-03-02) :
+#   * added support for --help and --version
+#   * improved error handling
+# v1.1 (2008-02-13) :
+#   * added -w and strict
+#   * added check to ensure .tex file not passed to makeglossaries
+#
+# v1.0 (2007-05-10) : Initial release.
+
+use Getopt::Std;
+use strict;
+
+$Getopt::Std::STANDARD_HELP_VERSION = 1;
+
+my $version="1.3 (2008-03-08)";
+
+my($opt_q, $opt_t, $opt_o, $opt_s, $opt_p, $opt_g, $opt_c, $opt_r,
+   $opt_l, $opt_i)=("","","","","","","","","","");
+
+getopts('s:o:t:p:ilqrcg');
+
+unless ($#ARGV == 0)
+{
+   die "makeglossaries: Need exactly one file argument.\nUse `makeglossaries --help' for help.\n";
+}
+
+# define known extensions
+
+my %exttype = (
+   main => {in=>'glo', out=>'gls', 'log'=>'glg'},
+ );
+
+my $ext = '';
+my $name = $ARGV[0];
+
+# modified this to make sure users don't try passing the
+# tex file:
+if (length($ARGV[0]) > 3 and substr($ARGV[0],-4,1) eq ".")
+{
+  $name = substr($ARGV[0],0,length($ARGV[0])-4);
+
+  $ext = substr($ARGV[0],-3,3);
+
+  if (lc($ext) eq 'tex')
+  {
+     die("Don't pass the tex file to makeglossaries:\n"
+        ."either omit the extension to make all the glossaries, "
+        ."or specify one of the glossary files, e.g. $name.glo, to "
+        ."make just that glossary.\n")
+  }
+}
+
+my $istfile = "$name.ist";
+
+# check aux file for other glossary types
+# and for ist file name
+
+if (open AUXFILE, "$name.aux")
+{
+   while (<AUXFILE>)
+   {
+      if (m/\\\@newglossary\s*\{(.*)\}{(.*)}{(.*)}{(.*)}/
+        and ($1 ne 'main'))
+      {
+         $exttype{$1}{'log'} = $2;
+         $exttype{$1}{'out'} = $3;
+         $exttype{$1}{'in'}  = $4;
+
+         if (!$opt_q)
+         {
+            print "added glossary type '$1' ($2,$3,$4)\n";
+         }
+      }
+
+      if (m/\\\@istfilename\s*{([^}]*)}/)
+      {
+         $istfile = $1;
+
+         # check if double quotes were added to \jobname
+         $istfile=~s/^"(.*)"\.ist$/$1.ist/;
+      }
+   }
+
+   close AUXFILE;
+}
+else
+{
+   print STDERR "Unable to open $name.aux: $!\n";
+}
+
+# save all the general makeindex switches
+
+my $mkidxopts = '';
+
+if ($opt_i)
+{
+   $mkidxopts .= " -i";
+}
+
+if ($opt_l)
+{
+   $mkidxopts .= " -l";
+}
+
+if ($opt_q)
+{
+   $mkidxopts .= " -q";
+}
+
+if ($opt_r)
+{
+   $mkidxopts .= " -r";
+}
+
+if ($opt_c)
+{
+   $mkidxopts .= " -c";
+}
+
+if ($opt_g)
+{
+   $mkidxopts .= " -g";
+}
+
+unless ($opt_p eq "")
+{
+   $mkidxopts .= " -p $opt_p";
+}
+
+unless ($opt_s eq "")
+{
+   $istfile = $opt_s;
+}
+
+if ($ext ne '')
+{
+   my %thistype = %{$exttype{'main'}}; #default
+
+   foreach my $type (keys %exttype)
+   {
+      if ($exttype{$type}{'in'} eq $ext)
+      {
+         %thistype = %{$exttype{$type}};
+
+         last;
+      }
+   }
+
+   my $outfile;
+
+   if ($opt_o eq "")
+   {
+      $outfile = "$name.$thistype{out}";
+   }
+   else
+   {
+      $outfile = $opt_o;
+   }
+
+   my $transcript;
+
+   if ($opt_t eq "")
+   {
+      $transcript = "$name.$thistype{'log'}";
+   }
+   else
+   {
+      $transcript = $opt_t;
+   }
+
+   &makeindex("$name.$ext",$outfile,$transcript,$istfile,
+              $mkidxopts,$opt_q);
+}
+else
+{
+   foreach my $type (keys %exttype)
+   {
+      my %thistype = %{$exttype{$type}};
+
+      my $inputfile = "$name.$thistype{in}";
+
+      if (-r $inputfile)
+      {
+         my $outfile;
+
+         if ($opt_o eq "")
+         {
+            $outfile = "$name.$thistype{out}";
+         }
+         else
+         {
+            $outfile = $opt_o;
+         }
+
+         my $transcript;
+
+         if ($opt_t eq "")
+         {
+            $transcript = "$name.$thistype{'log'}";
+         }
+         else
+         {
+           $transcript = $opt_t;
+         }
+
+         &makeindex($inputfile,$outfile,$transcript,
+                    $istfile,$mkidxopts,$opt_q);
+      }
+      else
+      {
+         print STDERR "No read access for '$inputfile': $!\n";
+      }
+   }
+}
+
+sub makeindex{
+   my($in,$out,$trans,$ist,$rest,$quiet) = @_;
+   my($name,$cmdstr,$buffer,$n,$i,$j);
+   my(@stuff,@item);
+
+   $cmdstr = "$rest -s \"$ist\" -t \"$trans\" -o \"$out\" \"$in\"";
+
+   unless ($quiet)
+   {
+      print "makeindex $cmdstr\n";
+   }
+
+   `makeindex $cmdstr`;
+}
+
+sub HELP_MESSAGE{
+   print "\nSyntax : makeglossaries [options] <filename>\n\n";
+   print "For use with the glossaries package to pass relevant\n";
+   print "files to makeindex\n\n";
+   print "<filename>\tBase name of glossary file(s). This should\n";
+   print "\t\tbe the name of your main LaTeX document without any\n";
+   print "\t\textension.\n";
+   print "\nOptions:\n";
+   print "-c\t\tCompress intermediate blanks\n";
+   print "-g\t\tEmploy German word ordering\n";
+   print "-l\t\tLetter ordering\n";   
+   print "-o <gls>\tUse <gls> as the output file.\n";
+   print "-p <num>\tSet the starting page number to be <num>\n";
+   print "-q\t\tQuiet mode\n";
+   print "-r\t\tDisable implicit page range formation\n";
+   print "-s <sty>\tEmploy <sty> as the style file\n";
+   print "-t <log>\tEmploy <log> as the transcript file\n";
+   print "\nSee makeindex documentation for further details on these ";
+   print "options\n";
+}
+
+sub VERSION_MESSAGE{
+   print "Makeglossaries Version $version\n";
+   print "Copyright (C) 2007 Nicola L C Talbot\n";
+   print "This material is subject to the LaTeX Project Public License.\n";
+}
+
+1;
