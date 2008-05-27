@@ -2859,7 +2859,7 @@ we_are_done:
 		 * The glue, kern, math are more appropriate for synchronization. */
 		if(node = SYNCTEX_CHILD(*start)) {
 			synctex_node_t best_node = NULL;
-			best = INFINITY;
+			best = HUGE_VAL;
 			do {
 				switch((node->class)->type) {
 					default:
