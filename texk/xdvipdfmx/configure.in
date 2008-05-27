@@ -106,8 +106,10 @@ AC_CHECK_SIZEOF(long)
 
 dnl Check for additonal libraries.
 
-CHO_HAS_LIBFONTCONFIG
 JFK_HAS_APP_SERVICES
+if test "x$have_app_services" = xno; then
+  CHO_HAS_LIBFONTCONFIG
+fi
 
 # check that it's valid to define XETEX and possibly XETEX_MAC
 if test "x$have_app_services" = xyes; then
