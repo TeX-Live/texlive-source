@@ -51,6 +51,12 @@ cd $TL_WORKDIR || exit 1
 # allow override of xdvi toolkit, default to standard xaw.
 : ${TL_CONF_XDVI_TOOLKIT=--with-xdvi-x-toolkit=xaw}
 
+# default to building ICU without thread support (xetex doesn't need it).
+: ${TL_CONF_THREADS=--disable-threads}
+
+# default to include freetype2 support for old Mac font file formats.
+: ${TL_CONF_MAC_FONTS=--with-old-mac-fonts}
+
 # avoid xindy by default, it requires clisp (see utils/README).
 : ${TL_CONF_XINDY=--without-xindy}
 
@@ -77,6 +83,8 @@ export GNUMAKE
         --prefix=$TL_INSTALL_DEST \
         --datadir=$TL_INSTALL_DEST \
         $TL_CONF_XDVI_TOOLKIT \
+        $TL_CONF_THREADS \
+        $TL_CONF_MAC_FONTS \
         $TL_CONF_XINDY \
         $TL_CONFIGURE_ARGS \
         "$@" \
