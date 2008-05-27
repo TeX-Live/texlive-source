@@ -224,7 +224,7 @@ maininit P2C(int, ac, string *, av)
   kpse_record_input = recorder_record_input;
   kpse_record_output = recorder_record_output;
 
-#if /*defined (pdfTeX) ||*/ defined(XeTeX) || defined(__syncTeX__)
+#if defined(__SyncTeX__)
 # warning SyncTeX: -synctex command line option available
   /* 0 means "disable Synchronize TeXnology".
    * synctexoption is a *.web variable.
@@ -957,7 +957,7 @@ static struct option long_options[]
       { "no-shell-escape",           0, &shellenabledp, -1 },
       { "debug-format",              0, &debugformatfile, 1 },
       { "src-specials",              2, 0, 0 },
-#if /*defined(pdfTeX) ||*/ defined(XeTeX) || defined(__syncTeX__)
+#if defined(__SyncTeX__)
       /* Synchronization: just like "interaction" above */
       { "synctex",                   1, 0, 0 },
 #endif
@@ -1145,7 +1145,7 @@ parse_options P2C(int, argc,  string *, argv)
     } else if (ARGUMENT_IS ("help")) {
         usagehelp (PROGRAM_HELP, BUG_ADDRESS);
 
-#if /*defined (pdfTeX) ||*/ defined(XeTeX) || defined(__syncTeX__)
+#if defined(__SyncTeX__)
     } else if (ARGUMENT_IS ("synctex")) {
 		/* Synchronize TeXnology: catching the command line option as a long  */
 		synctexoption = (int) strtol(optarg, NULL, 0);

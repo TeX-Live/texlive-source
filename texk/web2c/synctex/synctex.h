@@ -28,15 +28,10 @@ OTHER DEALINGS IN THE SOFTWARE
 #  ifndef __SYNCTEX_HEADER__
 #    define __SYNCTEX_HEADER__
 
-/*  Send this message to init the synctex command value to the command line option.
- *  Sending this message too early will cause a bus error.  */
-extern void synctexinitcommand(void);
+#include "synctex-common.h"
 
 /*  Send this message when starting a new input.  */
 extern void synctexstartinput(void);
-
-/*  Send this message to clean memory.  */
-extern void synctexterminate(boolean log_opened);
 
 /*  Recording the "{..." line.  In *tex.web, use synctex_sheet(pdf_output) at
  *  the very beginning of the ship_out procedure.

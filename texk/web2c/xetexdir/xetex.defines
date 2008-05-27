@@ -172,22 +172,3 @@ authorization from SIL International.
 @define function wdField();
 @define function htField();
 @define function applymapping();
-
-{ functions from the synctex controller in synctex.c }
-@define procedure synctexinitcommand;
-@define procedure synctexstartinput;
-@define procedure synctexterminate();
-@define procedure synctexsheet();
-@define procedure synctexteehs;
-@define procedure synctexvlist();
-@define procedure synctextsilv();
-@define procedure synctexvoidvlist();
-@define procedure synctexhlist();
-@define procedure synctextsilh();
-@define procedure synctexvoidhlist();
-@define procedure synctexmath();
-@define procedure synctexkern();
-@define procedure synctexchar();
-@define procedure synctexnode();
-@define procedure synctexcurrent;
-@define procedure synctexhorizontalruleorglue();

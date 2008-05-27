@@ -64,8 +64,8 @@ authorization from SIL International.
 @d eTeX_version_string=='-2.2' {current \eTeX\ version}
 
 @d XeTeX_version=0
-@d XeTeX_revision==".998"
-@d XeTeX_version_string=='-0.998.5-dev' {current \XeTeX\ version}
+@d XeTeX_revision==".999"
+@d XeTeX_version_string=='-0.999.0-dev' {current \XeTeX\ version}
 @z
 
 @x
@@ -3783,9 +3783,7 @@ g_sign:=glue_sign(this_box); p:=list_ptr(this_box);
 incr(cur_s);
 if cur_s>0 then dvi_out(push);
 if cur_s>max_push then max_push:=cur_s;
-save_loc:=dvi_offset+dvi_ptr; left_edge:=cur_h;
-@<Start vlist {\sl Sync\TeX} information record@>;
-cur_v:=cur_v-height(this_box);
+save_loc:=dvi_offset+dvi_ptr; left_edge:=cur_h; cur_v:=cur_v-height(this_box);
 @y
 @!cur_g:scaled; {rounded equivalent of |cur_glue| times the glue ratio}
 @!upwards:boolean; {whether we're stacking upwards}
@@ -3797,7 +3795,6 @@ incr(cur_s);
 if cur_s>0 then dvi_out(push);
 if cur_s>max_push then max_push:=cur_s;
 save_loc:=dvi_offset+dvi_ptr; left_edge:=cur_h;
-@<Start vlist {\sl Sync\TeX} information record@>;
 if upwards then cur_v:=cur_v+depth(this_box) else cur_v:=cur_v-height(this_box);
 @z
 
@@ -3815,16 +3812,15 @@ move_past: if upwards then cur_v:=cur_v-rule_ht else cur_v:=cur_v+rule_ht;
 
 @x
 @<Output a box in a vlist@>=
+if list_ptr(p)=null then cur_v:=cur_v+height(p)+depth(p)
+@y
+@<Output a box in a vlist@>=
 if list_ptr(p)=null then begin
-  cur_v:=cur_v+height(p);
-  if type(p)=vlist_node then begin
-	  @<Record void vlist {\sl Sync\TeX} information@>;
-    end
-  else begin
-      @<Record void hlist {\sl Sync\TeX} information@>;
-    end;
-  cur_v:=cur_v+depth(p);
-end
+    if upwards then cur_v:=cur_v-depth(p)-height(p) else cur_v:=cur_v+height(p)+depth(p);
+  end
+@z
+
+@x
 else  begin cur_v:=cur_v+height(p); synch_v;
   save_h:=dvi_h; save_v:=dvi_v;
   if cur_dir=right_to_left then cur_h:=left_edge-shift_amount(p)
@@ -3835,17 +3831,6 @@ else  begin cur_v:=cur_v+height(p); synch_v;
   cur_v:=save_v+depth(p); cur_h:=left_edge;
   end
 @y
-@<Output a box in a vlist@>=
-if list_ptr(p)=null then begin
-  if upwards then cur_v:=cur_v-depth(p) else cur_v:=cur_v+height(p);
-  if type(p)=vlist_node then begin
-	  @<Record void vlist {\sl Sync\TeX} information@>;
-    end
-  else begin
-      @<Record void hlist {\sl Sync\TeX} information@>;
-    end;
-  if upwards then cur_v:=cur_v-height(p) else cur_v:=cur_v+depth(p);
-end
 else  begin if upwards then cur_v:=cur_v-depth(p) else cur_v:=cur_v+height(p); synch_v;
   save_h:=dvi_h; save_v:=dvi_v;
   if cur_dir=right_to_left then cur_h:=left_edge-shift_amount(p)

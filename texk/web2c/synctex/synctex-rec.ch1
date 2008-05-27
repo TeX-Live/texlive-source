@@ -34,7 +34,35 @@ Notice:
 -------
 This file contains TeX changes for synctex support.
 It implements the memory management for TeX like engines.
-It must apply after synctex-mem.ch0
+It must apply after synctex-rec.ch0
+
+@x
+@p procedure vlist_out; {output a |vlist_node| box}
+@y
+@p procedure vlist_out; {output a |vlist_node| box}
+@z
+
+@x tex.web l.12533
+save_loc:=dvi_offset+dvi_ptr; left_edge:=cur_h; cur_v:=cur_v-height(this_box);
+MISSING @<Start vlist {\sl Sync\TeX} information record@> before cur_v:=cur_v-height(this_box);
+@y
+save_loc:=dvi_offset+dvi_ptr; left_edge:=cur_h;
+@<Start vlist {\sl Sync\TeX} information record@>;
+cur_v:=cur_v-height(this_box);
+@z
+
+@x tex.web l.12569
+@<Output a box in a vlist@>=
+if list_ptr(p)=null then cur_v:=cur_v+height(p)+depth(p)
+MISSING @<Record void list {\sl Sync\TeX} information@>;
+@y
+@<Output a box in a vlist@>=
+if list_ptr(p)=null then begin
+  cur_v:=cur_v+height(p);
+  @<Record void list {\sl Sync\TeX} information@>;
+  cur_v:=cur_v+depth(p);
+end
+@z
 
 @x
     MISSING IMPLEMENTATION: 0 synctag for medium sized node at mem[t]

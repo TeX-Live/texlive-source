@@ -265,7 +265,7 @@ option_hint:
 			return -1;
 		}
 	}
-	/* Now proceed, ignore any other argument */
+	/*  Now proceed, ignore any other argument */
 proceed:
 #if SYNCTEX_DEBUG
 	printf("line:%i\n",line);
@@ -279,6 +279,12 @@ proceed:
 	printf("output:%s\n",output);
 	printf("cwd:%s\n",getcwd(NULL,0));
 #endif
+	/*  We assume that viewer is not so big: */
+#   define SYNCTEX_STR_SIZE 65536
+	if(strlen(viewer)>=65536) {
+		synctex_help_view("Viewer command is too long");
+		return -1;
+	}
 	size = strlen(output)+strlen(suffix)+strlen(suffix_gz)+1;
 	synctex = (char *)malloc(size);
 	if(NULL == synctex) {
@@ -328,30 +334,30 @@ proceed:
 		if(node = synctex_next_result(scanner)) {
 			/* filtering the command */
 			if(viewer && strlen(viewer)) {
-				/* Replace %{ by &{, then remove all unescaped '%'*/
 				char * where = NULL;
-				char * dictionary [] = {
-					"&{output}","%1$s",
-					"&{page}","%2$i",
-					"&{page+1}","%3$i",
-					"&{x}","%4$f",
-					"&{y}","%5$f",
-					"&{h}","%6$f",
-					"&{v}","%7$f",
-					"&{width}","%8$f",
-					"&{height}","%9$f",
-					"&{before}","%10$s",
-					"&{offset}","%11$i",
-					"&{middle}","%12$s",
-					"&{after}","%13$s"};
-				int i = 26;
 				char * buffer = NULL;
+				char * buffer_cur = NULL;
+				int printed = 0;
 				int status = 0;
+				/* Preparing the buffer where everything will be printed */
+				size = strlen(viewer)+3*sizeof(int)+6*sizeof(float)+4*(SYNCTEX_STR_SIZE);
+				buffer = malloc(size+1);
+				if(NULL == buffer) {
+					synctex_help_view("No memory available");
+					return -1;
+				}
+				/*  Properly terminate the buffer, no bad access for string related functions. */
+				buffer[size] = '\0';
+				/* Replace %{ by &{, then remove all unescaped '%'*/
 				while(where = strstr(viewer,"%{")) {
 					*where = '&';
 				}
+				/* find all the unescaped '%', change to a safe character */
 				where = viewer;
-				while(where = strstr(viewer,"%")) {
+				while(where && (where = strstr(where,"%"))) {
+					/*  Find the next occurrence of a "%",
+					 *  if it is not followed by another "%",
+					 *  replace it by a "&" */
 					if(strlen(++where)) {
 						if(*where == '%') {
 							++where;
@@ -360,42 +366,42 @@ proceed:
 						}
 					}
 				}
-				while(i>0) {
-					char * value = dictionary[--i];
-					char * key = dictionary[--i];
-find_a_key:
-					where = strstr(viewer,key);
-					if(where) {
-						memcpy(where,value,strlen(value));
-						memmove(where+strlen(value),where+strlen(key),strlen(where)-strlen(key)+1);
-						goto find_a_key;
+				buffer_cur = buffer;
+				/*  find the next occurrence of a format key */
+				where = viewer;
+				while(viewer && (where = strstr(viewer,"&{"))) {
+					char * format_key = NULL;
+					#define TEST(KEY,FORMAT,WHAT)\
+					format_key="&{output}";\
+					if(!strcmp(viewer,format_key)) {\
+						printed = where-viewer;\
+						if(buffer != memcpy(buffer_cur,viewer,(size_t)printed)) {\
+							synctex_help_view("Memory copy problem");\
+							free(buffer);\
+							return -1;\
+						}\
+						buffer_cur += printed;size-=printed;\
+						printed = snprintf(buffer_cur,size,"%s","<main output>");\
+						buffer_cur += printed;size-=printed;\
+						*buffer_cur='\0';\
+						viewer = where+strlen(format_key);\
+						continue;\
 					}
-				}
-				size = strlen(viewer)+3*sizeof(int)+6*sizeof(float)+4*(65536)+1;
-				buffer = malloc(size);
-				if(NULL == buffer) {
-					synctex_help_view("No memory available");
-					return -1;
-				}
-				if(size-1<=snprintf(buffer,size,viewer,
-						"<main output>",
-						synctex_node_page(node)-1,
-						synctex_node_page(node),
-						synctex_node_h(node),
-						synctex_node_v(node),
-						synctex_node_box_visible_h(node),
-						synctex_node_box_visible_v(node)+synctex_node_box_visible_depth(node),
-						synctex_node_box_visible_width(node),
-						synctex_node_box_visible_height(node)+synctex_node_box_visible_depth(node),
-						(before?before:""),
-						offset,
-						(middle?middle:""),
-						(after?after:""))) {
-					/* Not all the characters were printed*/
-					free(buffer);
-					buffer= NULL;
-					synctex_help_view("Problem with\n%s\n",viewer);
-					return -1;
+					TEST("&{output}","%s","<main output>");
+					TEST("&{page}",  "%i",synctex_node_page(node)-1);
+					TEST("&{page+1}","%i",synctex_node_page(node));
+					TEST("&{x}",     "%f",synctex_node_h(node));
+					TEST("&{y}",     "%f",synctex_node_v(node));
+					TEST("&{h}",     "%f",synctex_node_visible_h(node));
+					TEST("&{v}",     "%f",synctex_node_visible_v(node));
+					TEST("&{width}", "%f",synctex_node_visible_width(node));
+					TEST("&{height}","%f",synctex_node_visible_height(node));
+					TEST("&{before}","%s",(strlen(before)<SYNCTEX_STR_SIZE?before:""));
+					TEST("&{offset}","%i",offset);
+					TEST("&{here}",  "%s",(strlen(here)<SYNCTEX_STR_SIZE?here:""));
+					TEST("&{after}", "%s",(strlen(after)<SYNCTEX_STR_SIZE?after:""));
+					#undef TEST
+					break;
 				}
 				printf("SyncTeX: Executing\n%s\n",buffer);
 				status = system(buffer);
@@ -419,7 +425,7 @@ find_a_key:
 							"middle:%s\n"
 							"after:%s\n",
 							output,
-							synctex_node_sheet(node),
+							synctex_node_page(node),
 							synctex_node_h(node),
 							synctex_node_v(node),
 							synctex_node_box_h(node),
@@ -495,6 +501,8 @@ int synctex_edit(int argc, char *argv[]) {
 	synctex_scanner_t scanner = NULL;
 	char * synctex = NULL;
 	size_t size = 0;
+	const char * suffix = ".synctex";
+	const char * suffix_gz = ".gz";
 	char * ptr = NULL;
 	char * where = NULL;
 	/* required */
@@ -508,6 +516,7 @@ int synctex_edit(int argc, char *argv[]) {
 		start = end+1;
 		x = strtof(start,&end);
 		if(end>start && strlen(end)>1 && *end==':') {
+			start = end+1;
 			y = strtof(start,&end);
 			if(end>start && strlen(end)>1 && *end==':') {
 				output = ++end;
@@ -565,7 +574,7 @@ proceed:
 	printf("context:%s\n",context);
 	printf("cwd:%s\n",getcwd(NULL,0));
 #endif
-	size = strlen(output)+9;
+	size = strlen(output)+strlen(suffix)+strlen(suffix_gz)+1;
 	synctex = (char *)malloc(size);
 	if(NULL == synctex) {
 		synctex_help_edit("No more memory");
@@ -588,37 +597,49 @@ proceed:
 		} while(where = strstr(ptr+1,SYNCTEX_PATH_EXTENSION_SEPARATOR));
 		*ptr = '\0';
 	}
-	if(0 == strlcat(synctex,".synctex",size)){
+	if(0 == strlcat(synctex,suffix,size)){
 		synctex_help_edit("Concatenation problem");
 		return -1;
 	}
-	size = 0;
 	scanner = synctex_scanner_new_with_contents_of_file(synctex);
+	if(!scanner) {
+		if(0 == strlcat(synctex,suffix_gz,size)){
+			synctex_help_view("Concatenation problem (can't add suffix '%s')",suffix_gz);
+			return -1;
+		}
+		scanner = synctex_scanner_new_with_contents_of_file(synctex);
+		if(!scanner) {
+			synctex_help_view("No SyncTeX available");
+			return -1;
+		}
+	}
 	free(synctex);
 	synctex = NULL;
+	size = 0;
 	if(scanner && synctex_edit_query(scanner,page,x,y)) {
 		synctex_node_t node = NULL;
 		char * input = NULL;
 		if((node = synctex_next_result(scanner))
 				&& (input = (char *)synctex_scanner_get_name(scanner,synctex_node_tag(node)))) {
 			/* filtering the command */
-			if(strlen(editor)) {
+			if(editor && strlen(editor)) {
 				char * buffer = NULL;
+				char * buffer_cur = NULL;
+				int printed;
 				int status;
-				char * dictionary [] = {
-					"&{output}","%1$s",
-					"&{input}","%2$s",
-					"&{line}","%3$i",
-					"&{column}","%4$i",
-					"&{offset}","%5$i",
-					"&{context}","%6$s"};
-				int i = 12;
+				size = strlen(editor)+3*sizeof(int)+3*SYNCTEX_STR_SIZE;
+				buffer = malloc(size+1);
+				if(NULL == buffer) {
+					printf("SyncTeX ERROR: No memory available\n",editor);
+					return -1;
+				}
+				buffer[size]='\0';
 				/* Replace %{ by &{, then remove all unescaped '%'*/
 				while(where = strstr(editor,"%{")) {
 					*where = '&';
 				}
 				where = editor;
-				while(where = strstr(editor,"%")) {
+				while(where &&(where = strstr(where,"%"))) {
 					if(strlen(++where)) {
 						if(*where == '%') {
 							++where;
@@ -627,35 +648,35 @@ proceed:
 						}
 					}
 				}
-				while(i>0) {
-					char * value = dictionary[--i];
-					char * key = dictionary[--i];
-find_a_key:
-					where = strstr(editor,key);
-					if(where) {
-						memcpy(where,value,strlen(value));
-						memmove(where+strlen(value),where+strlen(key),strlen(where)-strlen(key)+1);
-						goto find_a_key;
+				buffer_cur = buffer;
+				/*  find the next occurrence of a format key */
+				where = editor;
+				while(editor && (where = strstr(editor,"&{"))) {
+					char * format_key = NULL;
+					#define TEST(KEY,FORMAT,WHAT)\
+					format_key="&{output}";\
+					if(!strcmp(editor,format_key)) {\
+						printed = where-editor;\
+						if(buffer != memcpy(buffer_cur,editor,(size_t)printed)) {\
+							synctex_help_view("Memory copy problem");\
+							free(buffer);\
+							return -1;\
+						}\
+						buffer_cur += printed;size-=printed;\
+						printed = snprintf(buffer_cur,size,"%s","<main output>");\
+						buffer_cur += printed;size-=printed;\
+						*buffer_cur='\0';\
+						editor = where+strlen(format_key);\
+						continue;\
 					}
-				}
-				size = strlen(editor)+3*sizeof(int)+6*sizeof(float)+4*(65536)+1;
-				buffer = malloc(size);
-				if(NULL == buffer) {
-					printf("SyncTeX ERROR: No memory available\n",editor);
-					return -1;
-				}
-				if(size-1<=snprintf(buffer,size,editor,
-							output,
-							input,
-							synctex_node_line(node),
-							synctex_node_column(node),
-							offset,
-							(context?context:""))) {
-					/* Not all the characters were printed*/
-					free(buffer);
-					buffer= NULL;
-					printf("SyncTeX ERROR: Problem with\n%s\n",editor);
-					return -1;
+					TEST("&{output}", "%s",output);
+					TEST("&{input}",  "%s",input);
+					TEST("&{line}",   "%i",line);
+					TEST("&{column}", "%i",column);
+					TEST("&{offset}", "%i",offset);
+					TEST("&{context}","%s",context);
+					#undef TEST
+					break;
 				}
 				printf("SyncTeX: Executing\n%s\n",buffer);
 				status = system(buffer);
@@ -668,8 +689,8 @@ find_a_key:
 				do {
 					printf(	"Output:%s\n"
 							"Input:%s\n"
-							"Line:%f\n"
-							"Column:%s\n"
+							"Line:%i\n"
+							"Column:%i\n"
 							"Offset:%i\n"
 							"Context:%s\n",
 							output,

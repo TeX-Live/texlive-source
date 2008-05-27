@@ -95,7 +95,7 @@ end
 @y
   kern_node,math_node: begin
       words:=medium_node_size; {{\sl Sync\TeX}: proper size for math and kern}
-  r:=get_node(words);
+      r:=get_node(words);
     end;
   glue_node: begin r:=get_node(medium_node_size); add_glue_ref(glue_ptr(p));
                                                  {{\sl Sync\TeX}: proper size for glue}

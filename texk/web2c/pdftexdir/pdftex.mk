@@ -26,7 +26,7 @@ $(pdftexdir)/pdftex.version: $(srcdir)/$(pdftexdir)/pdftex.web
 # The C sources.
 pdftex_c = pdftexini.c pdftex0.c pdftex1.c pdftex2.c pdftex3.c
 pdftex_o = pdftexini.o pdftex0.o pdftex1.o pdftex2.o pdftex3.o pdftexextra.o \
-pdftex-pool.o
+pdftex-pool.o $(pdftex_o-with_synctex)
 
 # Making pdftex
 pdftex: pdftexd.h $(pdftex_o) $(pdftexextra_o) $(pdftexlibsdep)
@@ -35,7 +35,8 @@ pdftex: pdftexd.h $(pdftex_o) $(pdftexextra_o) $(pdftexlibsdep)
 # C file dependencies.
 $(pdftex_c) pdftexcoerce.h pdftexd.h: pdftex.p $(web2c_texmf) $(srcdir)/$(pdftexdir)/pdftex.defines $(srcdir)/$(pdftexdir)/pdftex.h
 	$(web2c) pdftex
-pdftexextra.c: $(pdftexdir)/pdftexextra.h lib/texmfmp.c
+	$(pdftexd.h-with_synctex)
+pdftexextra.c: pdftexd.h $(pdftexdir)/pdftexextra.h lib/texmfmp.c
 	test -d $(pdftexdir) || mkdir $(pdftexdir)
 	sed s/TEX-OR-MF-OR-MP/pdftex/ $(srcdir)/lib/texmfmp.c >$@
 $(pdftexdir)/pdftexextra.h: $(pdftexdir)/pdftexextra.in $(pdftexdir)/pdftex.version etexdir/etex.version
@@ -54,6 +55,7 @@ pdftex.p pdftex.pool: tangle $(srcdir)/$(pdftexdir)/pdftex.web pdftex.ch
 pdftex_ch_srcs = $(srcdir)/$(pdftexdir)/pdftex.web \
   $(srcdir)/$(pdftexdir)/tex.ch0 \
   $(srcdir)/tex.ch \
+  $(pdftex_ch_srcs-with_synctex) \
   $(srcdir)/$(pdftexdir)/pdftex.ch
 #   Rules:
 pdftex.ch: $(TIE) $(pdftex_ch_srcs)

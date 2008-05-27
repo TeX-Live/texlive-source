@@ -32,18 +32,36 @@ authorization from the copyright holder.
 
 Notice:
 -------
-This file contains TeX changes for synctex support.
-It implements the memory management for TeX like engines.
-It must apply after synctex-mem.ch? and synctex-act.ch?
+This file contains TeX changes for SyncTeX support.
+It implements the memory management for XeTeX like engines.
+It must apply after synctex.ch0 and synctex-e.ch1
 
-@x tex.web l.4912 + synctex-mem.ch0
-@d REMOVE ME IF synctex_code is properly defined
+@x
+@p procedure vlist_out; {output a |vlist_node| box}
 @y
+@p procedure vlist_out; {output a |vlist_node| box}
 @z
 
-@x tex.web l.4960 + tex.ch
-@d int_pars=web2c_int_pars {total number of integer parameters}
+@x
+if upwards then cur_v:=cur_v+depth(this_box) else cur_v:=cur_v-height(this_box);
+MISSING @<Start vlist {\sl Sync\TeX} information record@> before cur_v:=cur_v-height(this_box);
 @y
-@d synctex_code=web2c_int_pars
-@d int_pars=synctex_code+1 {total number of integer parameters}
+@<Start vlist {\sl Sync\TeX} information record@>;
+if upwards then cur_v:=cur_v+depth(this_box) else cur_v:=cur_v-height(this_box);
 @z
+
+@x
+@<Output a box in a vlist@>=
+if list_ptr(p)=null then begin
+    if upwards then cur_v:=cur_v-depth(p)-height(p) else cur_v:=cur_v+height(p)+depth(p);
+  end
+MISSING @<Record void list {\sl Sync\TeX} information@>;
+@y
+@<Output a box in a vlist@>=
+if list_ptr(p)=null then begin
+  if upwards then cur_v:=cur_v-depth(p) else cur_v:=cur_v+height(p);
+  @<Record void list {\sl Sync\TeX} information@>;
+  if upwards then cur_v:=cur_v-height(p) else cur_v:=cur_v+depth(p);
+end
+@z
+

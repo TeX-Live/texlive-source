@@ -36,7 +36,7 @@ This file contains TeX changes for synctex support.
 It implements the memory management for TeX like engines.
 It must apply after synctex-mem.ch0
 
-@x tex.web l.2888 + synctex-mem.ch0
+@x tex.web l.2897 + synctex-mem.ch0
 @d synctex_field_size=MISSING IMPLEMENTATION
 @y
 @d synctex_field_size=2 {Declare the {\sl Sync\TeX} field size to store the {\sl Sync\TeX} information:

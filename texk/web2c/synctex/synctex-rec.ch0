@@ -33,76 +33,82 @@ authorization from the copyright holder.
 Notice:
 -------
 
-@x tex.web l.2707
-found: link(r):=null; {this node is now nonempty}
-@!stat var_used:=var_used+s; {maintain usage statistics}
-tats@;@/
-get_node:=r;
-exit:end;
+@x
+@p function get_node(@!s:integer):pointer; {variable-size node allocation}
 @y
-found: link(r):=null; {this node is now nonempty}
-@!stat var_used:=var_used+s; {maintain usage statistics}
-tats@;@/
-@<Initialize bigger nodes with {\sl Sync\TeX} information@>;
-get_node:=r;
-exit:end;
+@p function get_node(@!s:integer):pointer; {variable-size node allocation}
 @z
 
-@x tex.web l.3993: Copy
+@x tex.web l.2716
+get_node:=r;
+@y
+@<Initialize bigger nodes with {\sl Sync\TeX} information@>;
+get_node:=r;
+@z
+
+@x tex.web l.4002: Copy
 @ @<Case statement to copy...@>=
-case type(p) of
-hlist_node,vlist_node,unset_node: begin r:=get_node(box_node_size);
 @y
 @ @<Case statement to copy...@>=
-case type(p) of
+@z
+
+@x
+hlist_node,vlist_node,unset_node: begin r:=get_node(box_node_size);
+@y
 hlist_node,vlist_node,unset_node: begin r:=get_node(box_node_size);
   @<Copy the box {\sl Sync\TeX} information@>;
 @z
 
 @x tex.web l.4009: after synctex-mem.ch0
 glue_node: begin r:=get_node(medium_node_size); add_glue_ref(glue_ptr(p));
-  glue_ptr(r):=glue_ptr(p); leader_ptr(r):=copy_node_list(leader_ptr(p));
-  end;
-kern_node,math_node:
-begin
-  words:=medium_node_size;
-  r:=get_node(words);
-end;
-penalty_node: begin r:=get_node(small_node_size);
-  words:=small_node_size;
-  end;
 @y
 glue_node: begin r:=get_node(medium_node_size); add_glue_ref(glue_ptr(p));
   @<Copy the glue {\sl Sync\TeX} information@>;
-  glue_ptr(r):=glue_ptr(p); leader_ptr(r):=copy_node_list(leader_ptr(p));
+@z
+
+@x tex.web l.4009: after synctex-mem.ch0
+kern_node,math_node: begin r:=get_node(medium_node_size);
+  words:=medium_node_size;
   end;
-kern_node,math_node:
-begin
+@y
+kern_node,math_node: begin r:=get_node(medium_node_size);
   words:=medium_node_size; {{\sl Sync\TeX}: do not copy the {\sl Sync\TeX} information}
-  r:=get_node(words);
-end;
-penalty_node: begin r:=get_node(small_node_size);
-  words:=small_node_size;
   end;
 @z
 
-@x tex.web l.7045
+@x
+@p procedure begin_file_reading;
+@y
+@p procedure begin_file_reading;
+@z
+
+@x
 name:=0; {|terminal_input| is now |true|}
-end;
 @y
 name:=0; {|terminal_input| is now |true|}
 @<Prepare terminal input {\sl Sync\TeX} information@>;
-end;
 @z
 
-@x tex.web l.10375
+@x
+@p procedure start_input; {\TeX\ will \.{\\input} something}
+@y
+@p procedure start_input; {\TeX\ will \.{\\input} something}
+@z
+
+@x tex.web l.10380
 @<Read the first line of the new file@>;
 @y
 @<Prepare new file {\sl Sync\TeX} information@>;
 @<Read the first line of the new file@>;
 @z
 
-@x tex.web l.12332
+@x
+procedure hlist_out; {output an |hlist_node| box}
+@y
+procedure hlist_out; {output an |hlist_node| box}
+@z
+
+@x tex.web l.12338
 while p<>null do @<Output node |p| for |hlist_out| and move to the next node,
   maintaining the condition |cur_v=base_line|@>;
 @y
@@ -112,16 +118,26 @@ while p<>null do @<Output node |p| for |hlist_out| and move to the next node,
 @<Finish hlist {\sl Sync\TeX} information record@>;
 @z
 
-@x tex.web l.12354
+@x
+@<Output node |p| for |hlist_out|...@>=
+@y
+@<Output node |p| for |hlist_out|...@>=
+@z
+
+@x
   until not is_char_node(p);
-  dvi_h:=cur_h;
 @y
   until not is_char_node(p);
-  dvi_h:=cur_h;
   @<Record current point {\sl Sync\TeX} information@>;
 @z
 
-@x tex.web l.12384
+@x
+@ @<Output the non-|char_node| |p| for |hlist_out|...@>=
+@y
+@ @<Output the non-|char_node| |p| for |hlist_out|...@>=
+@z
+
+@x tex.web l.12390
 move_past: cur_h:=cur_h+rule_wd;
 @y
 move_past: begin
@@ -130,32 +146,31 @@ move_past: begin
 end;
 @z
 
-@x tex.web l.12388
+@x tex.web l.12394
 @ @<Output a box in an hlist@>=
 if list_ptr(p)=null then cur_h:=cur_h+width(p)
 @y
 @ @<Output a box in an hlist@>=
 if list_ptr(p)=null then begin
-  if type(p)=vlist_node then begin
-	  @<Record void vlist {\sl Sync\TeX} information@>
-      cur_h:=cur_h+width(p);
-    end
-  else begin
-    @<Record void hlist {\sl Sync\TeX} information@>
-  end;
+  @<Record void list {\sl Sync\TeX} information@>;
   cur_h:=cur_h+width(p);
 end
 @z
 
-@x tex.web l.12527
-save_loc:=dvi_offset+dvi_ptr; left_edge:=cur_h; cur_v:=cur_v-height(this_box);
+@x
+@p procedure vlist_out; {output a |vlist_node| box}
 @y
-save_loc:=dvi_offset+dvi_ptr; left_edge:=cur_h;
-@<Start vlist {\sl Sync\TeX} information record@>;
-cur_v:=cur_v-height(this_box);
+@p procedure vlist_out; {output a |vlist_node| box}
 @z
 
-@x tex.web l.12529
+@x tex.web l.12533
+save_loc:=dvi_offset+dvi_ptr; left_edge:=cur_h; cur_v:=cur_v-height(this_box);
+@y
+save_loc:=dvi_offset+dvi_ptr; left_edge:=cur_h; cur_v:=cur_v-height(this_box);
+MISSING @<Start vlist {\sl Sync\TeX} information record@> before cur_v:=cur_v-height(this_box);
+@z
+
+@x tex.web l.12535
 while p<>null do @<Output node |p| for |vlist_out| and move to the next node,
   maintaining the condition |cur_h=left_edge|@>;
 @y
@@ -164,33 +179,23 @@ while p<>null do @<Output node |p| for |vlist_out| and move to the next node,
 @<Finish vlist {\sl Sync\TeX} information record@>;
 @z
 
-@x tex.web l.12563
+@x tex.web l.12569
 @<Output a box in a vlist@>=
 if list_ptr(p)=null then cur_v:=cur_v+height(p)+depth(p)
 @y
 @<Output a box in a vlist@>=
-if list_ptr(p)=null then begin
-  cur_v:=cur_v+height(p);
-  if type(p)=vlist_node then begin
-	  @<Record void vlist {\sl Sync\TeX} information@>;
-    end
-  else begin
-      @<Record void hlist {\sl Sync\TeX} information@>;
-    end;
-  cur_v:=cur_v+depth(p);
-end
+if list_ptr(p)=null then cur_v:=cur_v+height(p)+depth(p)
+MISSING @<Record void list {\sl Sync\TeX} information@>;
 @z
 
-@x tex.web l.12663
+@x tex.web l.12669
 @!old_setting:0..max_selector; {saved |selector| setting}
-begin if tracing_output>0 then
 @y
 @!old_setting:0..max_selector; {saved |selector| setting}
-begin @<Start sheet {\sl Sync\TeX} information record@>
-begin if tracing_output>0 then
+begin @<Start sheet {\sl Sync\TeX} information record@>;
 @z
 
-@x tex.web l.12686
+@x tex.web l.12692
 @<Flush the box from memory, showing statistics if requested@>;
 end;
 @y
@@ -200,18 +205,22 @@ end;
 end;
 @z
 
-@x tex.web l.17880
+@x
+@<Append a ligature and/or kern to the translation...@>=
+@y
+@<Append a ligature and/or kern to the translation...@>=
+@z
+
+@x tex.web l.17887
 if w<>0 then
   begin link(t):=new_kern(w); t:=link(t); w:=0;
-  end;
 @y
 if w<>0 then
   begin link(t):=new_kern(w); t:=link(t); w:=0;
     MISSING IMPLEMENTATION: 0 synctag for medium sized node at mem[t]
-  end;
 @z
 
-@x tex.web l.19326
+@x tex.web l.19335
 @<Initialize the special list...@>=
 type(page_head):=glue_node; subtype(page_head):=normal;
 @y
@@ -220,21 +229,29 @@ type(page_head):=glue_node; subtype(page_head):=normal;
         {{\sl Sync\TeX} watch point: box(|page_head|) size >= |glue_node| size}
 @z
 
-@x tex.web l.20181
-temp_ptr:=lig_stack; lig_stack:=link(temp_ptr);
+@x
+@<Move the cursor past a pseudo-ligature...@>=
+@y
+@<Move the cursor past a pseudo-ligature...@>=
+@z
+
+@x tex.web l.20188
 free_node(temp_ptr,small_node_size);
 @y
-temp_ptr:=lig_stack; lig_stack:=link(temp_ptr);
 free_node(temp_ptr,small_node_size); {{\sl Sync\TeX} watch point: proper size!}
 @z
 
-@x tex.web l.24288
+@x
+procedure close_files_and_terminate;
+@y
+procedure close_files_and_terminate;
+@z
+
+@x tex.web l.24301
 if log_opened then
-  begin wlog_cr; a_close(log_file); selector:=selector-2;
 @y
 @<Close {\sl Sync\TeX} file and write status@>;
 if log_opened then
-  begin wlog_cr; a_close(log_file); selector:=selector-2;
 @z
 
 @x tex.web + synctex-mem.ch0
@@ -340,17 +357,19 @@ synctex_vlist(this_box);
 @ @<Finish vlist {\sl Sync\TeX} information record@>=
 synctex_tsilv(this_box);
 
-@ @<Record void vlist {\sl Sync\TeX} information@>=
-synctex_void_vlist(p,this_box);
-
 @ @<Start hlist {\sl Sync\TeX} information record@>=
 synctex_hlist(this_box);
 
 @ @<Finish hlist {\sl Sync\TeX} information record@>=
 synctex_tsilh(this_box);
 
-@ @<Record void hlist {\sl Sync\TeX} information@>=
-synctex_void_hlist(p,this_box);
+@ @<Record void list {\sl Sync\TeX} information@>=
+  if type(p)=vlist_node then begin
+      synctex_void_vlist(p,this_box);
+    end
+  else begin
+      synctex_void_hlist(p,this_box);
+    end;
 
 @ @<Record current point {\sl Sync\TeX} information@>=
 synctex_current;

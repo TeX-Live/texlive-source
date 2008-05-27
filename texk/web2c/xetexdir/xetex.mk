@@ -128,7 +128,7 @@ xetexdir/etex.version: $(srcdir)/etexdir/etex.ch
 # The C sources.
 xetex_c = xetexini.c xetex0.c xetex1.c xetex2.c
 xetex_o = xetexini.o xetex0.o xetex1.o xetex2.o xetexextra.o
-xetex_add_o = trans.o XeTeX_ext.o xetex_pool.o $(xetex_platform_o) $(synctex-xetex_o)
+xetex_add_o = trans.o XeTeX_ext.o xetex_pool.o $(xetex_platform_o) $(xetex_o-with_synctex)
 
 # these compilations require the path to TECkit headers;
 # just setting it in XCFLAGS doesn't seem to work when we're called
@@ -232,9 +232,9 @@ xetex: $(xetex_o) $(xetex_add_o) $(xetex_images_o) $(xetex_ot_layout_o) \
 # C file dependencies
 $(xetex_c) xetexcoerce.h xetexd.h: xetex.p $(web2c_texmf)
 	$(web2c) xetex
-	$(synctex_xetexd)
+	$(xetexd.h-with_synctex)
 
-xetexextra.c: lib/texmfmp.c xetexdir/xetexextra.h
+xetexextra.c: xetexd.h lib/texmfmp.c xetexdir/xetexextra.h
 	sed s/TEX-OR-MF-OR-MP/xetex/ $(srcdir)/lib/texmfmp.c >$@
 xetexdir/xetexextra.h: xetexdir/xetexextra.in xetexdir/xetex.version xetexdir/etex.version
 	test -d xetexdir || mkdir xetexdir
@@ -257,8 +257,9 @@ xetex_web_srcs = $(srcdir)/tex.web \
   $(srcdir)/tex.ch \
   $(srcdir)/etexdir/tex.ch1 \
   $(srcdir)/etexdir/tex.ech \
-  $(synctex-xetex_ch_srcs) \
-  $(srcdir)/xetexdir/xetex.ch
+  $(xetex_ch_srcs-with_synctex) \
+  $(srcdir)/xetexdir/xetex.ch \
+  $(xetex_post_ch_srcs-with_synctex)
 xetex.web: tie xetexdir/xetex.mk $(xetex_web_srcs)
 	$(TIE) -m xetex.web $(xetex_web_srcs)
 

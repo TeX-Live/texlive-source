@@ -98,17 +98,11 @@ link(prev_p):=p;
 @z
 
 @x etex.ch l.4459
-if tracing_scan_tokens>0 then
-  begin if term_offset>max_print_line-3 then print_ln
-  else if (term_offset>0)or(file_offset>0) then print_char(" ");
   name:=19; print("( "); incr(open_parens); update_terminal;
   end
 else name:=18
 @y
-if tracing_scan_tokens>0 then
-  begin if term_offset>max_print_line-3 then print_ln
-    else if (term_offset>0)or(file_offset>0) then print_char(" ");
-    name:=19; print("( "); incr(open_parens); update_terminal;
+  name:=19; print("( "); incr(open_parens); update_terminal;
   end
 else begin
     name:=18;
@@ -129,7 +123,7 @@ primitive("synctex",assign_int,int_base+synctex_code);@/
 synctex_code:    print_esc("synctex");
 @z
 
-@x synctex-act.ch0 l.267
+@x synctex-rec.ch0 l.267
 @ @<Prepare terminal input {\sl Sync\TeX} information@>=
 synctex_tag:=0;
 @y

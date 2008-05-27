@@ -1,9 +1,7 @@
-Copyright (c) 2008 jerome DOT laurens AT u-bourgogne DOT fr
+/* synctex.h
 
 This file is part of the SyncTeX package.
 
-License:
---------
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
 files (the "Software"), to deal in the Software without
@@ -25,25 +23,16 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE
 
-Except as contained in this notice, the name of the copyright holder  
-shall not be used in advertising or otherwise to promote the sale,  
-use or other dealings in this Software without prior written  
-authorization from the copyright holder.
+*/
 
-Notice:
--------
-This file contains TeX changes for synctex support.
-It implements the memory management for TeX like engines.
-It must apply after synctex-mem.ch? and synctex-act.ch?
+#  ifndef __SYNCTEX_COMMON_HEADER__
+#    define __SYNCTEX_COMMON_HEADER__
 
-@x tex.web l.4912 + synctex-mem.ch0
-@d REMOVE ME IF synctex_code is properly defined
-@y
-@z
+/*  Send this message to init the synctex command value to the command line option.
+ *  Sending this message too early will cause a bus error.  */
+extern void synctexinitcommand(void);
 
-@x tex.web l.4960 + tex.ch
-@d int_pars=web2c_int_pars {total number of integer parameters}
-@y
-@d synctex_code=web2c_int_pars
-@d int_pars=synctex_code+1 {total number of integer parameters}
-@z
+/*  Send this message to clean memory, and close the file.  */
+extern void synctexterminate(int log_opened);
+
+#  endif
