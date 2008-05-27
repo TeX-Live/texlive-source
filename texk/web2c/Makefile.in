@@ -596,7 +596,7 @@ kpse_include luatexdir/luatex.mk
 # non-engine programs.
 programs = bibtex ctangle ctie cweave dvicopy dvitomp dvitype gftodvi gftopk \
  gftype mft $(odvicopy) $(odvitype) $(otangle) patgen $(pdftosrc) \
- pktogf pktype pltotf pooltype tangle tftopl tie $(ttf2afm) \
+ pktogf pktype pltotf pooltype synctex tangle tftopl tie $(ttf2afm) \
  vftovp vptovf weave
 
 # include $(metapost) from metapost.mk even though it also includes

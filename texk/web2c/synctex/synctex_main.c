@@ -281,7 +281,7 @@ proceed:
 #endif
 	/*  We assume that viewer is not so big: */
 #   define SYNCTEX_STR_SIZE 65536
-	if(strlen(viewer)>=65536) {
+	if(viewer && strlen(viewer)>=65536) {
 		synctex_help_view("Viewer command is too long");
 		return -1;
 	}
