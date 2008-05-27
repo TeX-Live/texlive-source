@@ -2265,7 +2265,9 @@ synctex_scanner_t synctex_scanner_new_with_contents_of_file(const char * name) {
 	(scanner->class[synctex_node_type_input]).scanner = scanner;
 	SYNCTEX_FILE = gzopen(name,"r");
 	if(NULL == SYNCTEX_FILE) {
-		printf("SyncTeX: could not open %s, error %i\n",name,errno);
+		if(errno != ENOENT) {
+			printf("SyncTeX: could not open %s, error %i\n",name,errno);
+		}
 bail:
 		synctex_scanner_free(scanner);
 		return NULL;
