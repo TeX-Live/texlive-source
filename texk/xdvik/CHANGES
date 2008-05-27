@@ -9,22 +9,6 @@ Versions containing major changes are marked as `beta'; these
 may contain undetected bugs. Such versions shouldn't be used
 by distributors.
 
-   * 2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
-	* acinclude.m4: added quotes to DEFUN's first args, added
-	AC_DEFINES's third arg to provide autoheader templates ...
-	* configure.in, withenable.ac: added AC_DEFINES's third arg to provide
-	autoheader templates ...
-	* acconfig.h: ... removed.
-
-   * 2008-01-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
-	Convert from autoconf-2.13 to autoconf-2.59+:
-	* configure.in (AC_PREREQ): Require autoconf-2.59.
-	* Makefile.in, gui/Makefile.in: Add @configure_input@ lines.
-	* acinclude.m4 (new): Renamed from aclocal.m4.
-	* aclocal.m4 (new): Generated (aclocal -I ../m4).
-	* ../../libs/t1lib/t1lib.ac: Fixed a typo.
-	* configure: Regenerated (autoconf).
-
    * 22.84.10 (2005/04/28):
 	+ Fixed zero termination bug in t1lib version number check (t1lib.ac).
 	+ Render an empty character instead of terminating with failed assertion
