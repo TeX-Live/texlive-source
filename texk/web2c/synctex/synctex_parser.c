@@ -2712,7 +2712,7 @@ int synctex_display_query(synctex_scanner_t scanner,const char * name,int line,i
 				SYNCTEX_END = SYNCTEX_START + size*sizeof(synctex_node_t *);
 			}			
 			*(synctex_node_t *)SYNCTEX_CUR = node;
-			SYNCTEX_CUR += sizeof(int);
+			SYNCTEX_CUR += sizeof(synctex_node_t);
 		}
 		node = SYNCTEX_FRIEND(node);
 	}
