@@ -30,11 +30,13 @@ kpse_include make/programs.mk
 kpathsea_parent = .
 
 # Make the library before the programs.
+# Always make all, rather than $@, because automake-generated Makefiles,
+# among others, do not have a default target.
 # Use if ... rather than || or && because Ultrix sh exits for
 # no good reason with the latter.
 default all: do-kpathsea
 	for d in $(programs); do if test -f $$d/Makefile; then \
-	  (cd $$d && $(MAKE) $(makeargs) $@) || exit 1; else true; fi; done
+	  (cd $$d && $(MAKE) $(makeargs) all) || exit 1; else true; fi; done
 
 install install-data install-exec:
 	for d in kpathsea $(programs); do if test -f $$d/Makefile; then \

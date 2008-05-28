@@ -1,3 +1,7 @@
+2008-05-28  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (default all): always make all, rather than $@.
+
 2008-04-25  Karl Berry  <karl@tug.org>
 
 	* xdvik/Makefile.in (xdvizilla): skip (un)installing this.  debian
