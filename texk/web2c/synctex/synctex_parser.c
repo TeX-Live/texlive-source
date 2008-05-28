@@ -873,7 +873,7 @@ typedef int synctex_status_t;
 
 #include <stdarg.h>
 
-static int inline _synctex_error(char * reason,...) {
+inline static int _synctex_error(char * reason,...) {
 	va_list arg;
 	int result;
 	result = printf("SyncTeX ERROR: ");
@@ -895,12 +895,12 @@ static int inline _synctex_error(char * reason,...) {
  *  Negative values may returned in case of error, actually
  *  when there was an error reading the synctex file. */
 synctex_status_t _synctex_buffer_get_available_size(synctex_scanner_t scanner, size_t * size_ptr) {
-  	int available = 0;
+  	size_t available = 0;
 	if(NULL == scanner || NULL == size_ptr) {
 		return SYNCTEX_STATUS_BAD_ARGUMENT;
 	}
 #   define size (* size_ptr)
-	if((size<0) || (size>SYNCTEX_BUFFER_SIZE)){
+	if(size>SYNCTEX_BUFFER_SIZE){
 		size = SYNCTEX_BUFFER_SIZE;
 	}
 	available = SYNCTEX_END - SYNCTEX_CUR; /* available is the number of unparsed chars in the buffer */
@@ -1613,6 +1613,7 @@ synctex_status_t _synctex_setup_visible_box(synctex_node_t box) {
  *  With this method, one can enlarge the box to contain the given point (h,v).
  */
 synctex_status_t _synctex_horiz_box_setup_visible(synctex_node_t node,int h, int v) {
+#pragma unused(v)
 	INFO * itsINFO = NULL;
 	int itsBtm, itsTop;
 	if(NULL == node || node->class->type != synctex_node_type_hbox) {
@@ -2671,6 +2672,7 @@ int synctex_node_line(synctex_node_t node) {
 	return node?SYNCTEX_INFO(node)[SYNCTEX_LINE].INT:-1;
 }
 int synctex_node_column(synctex_node_t node) {
+#pragma unused(node)
 	return -1;
 }
 #pragma mark -
@@ -2690,6 +2692,7 @@ synctex_node_t synctex_sheet_content(synctex_scanner_t scanner,int page) {
 }
 
 int synctex_display_query(synctex_scanner_t scanner,const char * name,int line,int column) {
+#pragma unused(column)
 	int tag = synctex_scanner_get_tag(scanner,name);
 	size_t size = 0;
 	int friend_index = 0;
