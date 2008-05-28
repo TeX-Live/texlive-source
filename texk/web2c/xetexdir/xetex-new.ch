@@ -6075,6 +6075,7 @@ eTeX_state_code+XeTeX_dash_break_code:print_esc("XeTeXdashbreakstate");
 primitive("TeXXeTstate",assign_int,eTeX_state_base+TeXXeT_code);
 @!@:TeXXeT_state_}{\.{\\TeXXeT_state} primitive@>
 @y
+primitive("suppressfontnotfounderror",assign_int,int_base+suppress_fontnotfound_error_code);@/
 primitive("TeXXeTstate",assign_int,eTeX_state_base+TeXXeT_code);
 @!@:TeXXeT_state_}{\.{\\TeXXeT_state} primitive@>
 
