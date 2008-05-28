@@ -207,38 +207,17 @@ otps/outocp:
 	cd otps && $(MAKE) $(common_makeargs) outocp
 omegafonts/omfonts:
 	cd omegafonts && $(MAKE) $(common_makeargs) omfonts
+
 # 
 # Installation.
-install-omega: install-omega-exec install-omega-data
-install-omega-exec: install-omega-links
-install-omega-data: install-omega-pool @FMU@ install-omega-dumps
-install-omega-dumps: install-omega-fmts
-
-# The actual binary executables and pool files.
-install-programs: @OMEGA@ install-omega-programs
-install-omega-programs: $(omega_programs) $(bindir)
+install-omega: install-omega-exec
+install-programs: @OMEGA@ install-omega-exec
+install-omega-exec: $(omega_programs) $(bindir) install-omega-links
 	for p in omega; do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
 	cd otps && $(MAKE) $(install_makeargs) install-programs
 	cd omegafonts && $(MAKE) $(install_makeargs) install-programs
 
-install-links: @OMEGA@ install-omega-links
-install-omega-links: install-omega-programs
+install-omega-links:
 	cd omegafonts && $(MAKE) $(install_makeargs) install-links
-	#cd $(bindir) && (rm -f iniomega viromega; \
-	#  $(LN) omega iniomega; $(LN) omega viromega)
-
-# Always do plain.*, so examples from the TeXbook (etc.) will work.
-install-fmts: @OMEGA@ install-omega-fmts
-install-omega-fmts: ofmts $(ofmtdir)
-	ofmts="$(all_ofmts)"; \
-	  for f in $$ofmts; do $(INSTALL_DATA) $$f $(ofmtdir)/$$f; done
-	ofmts="$(ofmts)"; \
-	  for f in $$ofmts; do base=`basename $$f .fmt`; \
-	    (cd $(bindir) && (rm -f $$base; $(LN) omega $$base)); done
-
-# Auxiliary files.
-install-data:: @OMEGA@ install-omega-data
-install-omega-pool: omega.pool $(texpooldir)
-	$(INSTALL_DATA) omega.pool $(texpooldir)/omega.pool
 
 # end of omega.mk

@@ -157,32 +157,9 @@ lamed.fmt: aleph
 
 # 
 # Installation.
-install-aleph: install-aleph-exec install-aleph-data
-install-aleph-exec: install-aleph-programs install-aleph-links
-install-aleph-data: install-aleph-pool @FMU@ install-aleph-dumps
-install-aleph-dumps: install-aleph-fmts
-
-# The actual binary executables and pool files.
-install-programs: @ALEPH@ install-aleph-programs
-install-aleph-programs: aleph $(bindir)
+install-aleph: install-aleph-exec
+install-programs: @ALEPH@ install-aleph-exec
+install-aleph-exec: aleph $(bindir)
 	for p in aleph; do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
-
-install-links: @ALEPH@ install-aleph-links
-install-aleph-links: install-aleph-programs
-	#cd $(bindir) && (rm -f inialeph viraleph; \
-	#  $(LN) aleph inialeph; $(LN) aleph viraleph)
-
-install-fmts: @ALEPH@ install-aleph-fmts
-install-aleph-fmts: afmts $(afmtdir)
-	afmts="$(all_afmts)"; \
-	  for f in $$afmts; do $(INSTALL_DATA) $$f $(afmtdir)/$$f; done
-	afmts="$(afmts)"; \
-	  for f in $$afmts; do base=`basename $$f .fmt`; \
-	    (cd $(bindir) && (rm -f $$base; $(LN) aleph $$base)); done
-
-# Auxiliary files.
-install-data:: @ALEPH@ install-aleph-data
-install-aleph-pool: aleph.pool $(texpooldir)
-	$(INSTALL_DATA) aleph.pool $(texpooldir)/aleph.pool
 
 # end of aleph.mk

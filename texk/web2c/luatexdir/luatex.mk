@@ -119,25 +119,10 @@ luatex.fmt: luatex
 # 
 # Installation.
 install-luatex: install-luatex-exec
-install-luatex-exec: install-luatex-links
 
-# The actual binary executables and pool files.
-install-programs: @PETEX@ install-luatex-programs
-install-luatex-programs: $(luatex) $(bindir)
+install-programs: @LTEX@ install-luatex-exec
+install-luatex-exec: $(luatex) $(bindir)
 	for p in luatex; do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
-
-install-links: @PETEX@ install-luatex-links
-install-luatex-links: install-luatex-programs
-	#cd $(bindir) && (rm -f luainitex luavirtex; \
-	#  $(LN) luatex luainitex; $(LN) luatex luavirtex)
-
-install-fmts: @PETEX@ install-luatex-fmts
-install-luatex-fmts: luafmts $(luafmtdir)
-	luafmts="$(all_luafmts)"; \
-	  for f in $$luafmts; do $(INSTALL_DATA) $$f $(luafmtdir)/$$f; done
-	luafmts="$(luafmts)"; \
-	  for f in $$luafmts; do base=`basename $$f .fmt`; \
-	    (cd $(bindir) && (rm -f $$base; $(LN) luatex $$base)); done
 
 # 
 # luatex binaries archive

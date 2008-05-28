@@ -60,34 +60,13 @@ install: all
 	     (cd $$dir && PATH=$(scriptdir):$(bindir):$(PATH) \
                 $(MAKE) $@) || exit 1; \
 	done
-	if test -d $(texmf) && test -f $(srcdir)/release-tetex-src.txt; then \
-	  $(INSTALL_DATA) $(srcdir)/release-tetex-src.txt $(texmf); \
-	fi
 @FMU@
 @FMU@install-extra:
-# temporary fix for missing links
-	- if test -f texk/web2c/omegafonts/omfonts; then \
-	    cd texk/web2c/omegafonts && $(MAKE) install-links; \
-	else :; fi
 	$(srcdir)/selfautofix "$(bindir)" "$(texmf)/web2c"
-	- if test -f $(scriptdir)/mktexlsr; then \
-	  TEXMFMAIN=$(texmf) PATH=$(scriptdir):$(bindir):$(PATH) \
-	    $(scriptdir)/mktexlsr; \
-	else :; fi
-	- if test -f $(scriptdir)/fmtutil-sys; then \
-	  TEXMFMAIN=$(texmf) PATH=$(scriptdir):$(bindir):$(PATH) \
-	    $(scriptdir)/fmtutil-sys --all; \
-	else :; fi
 	- if test -f $(scriptdir)/texlinks; then \
+	  echo "$@: running texlinks (install-extra)"; \
 	  TEXMFMAIN=$(texmf) PATH=$(scriptdir):$(bindir):$(PATH) \
 	    $(scriptdir)/texlinks; \
-	else :; fi
-	- if test -f $(scriptdir)/updmap-sys \
-	  && TEXMFMAIN=$(texmf) PATH=$(scriptdir):$(bindir):$(PATH) \
-	       $(scriptdir)/kpsewhich --format='web2c files' updmap.cfg >/dev/null; \
-	then \
-	  TEXMFMAIN=$(texmf) PATH=$(scriptdir):$(bindir):$(PATH) \
-	    $(scriptdir)/updmap-sys; \
 	else :; fi
 
 install-exec:
@@ -98,11 +77,8 @@ install-exec:
 	done
 @FMU@
 @FMU@install-exec-extra:
-# temporary fix for missing links
-	- if test -f texk/web2c/omegafonts/omfonts; then \
-	    cd texk/web2c/omegafonts && $(MAKE) install-links; \
-	else :; fi
 	- if test -f $(scriptdir)/texlinks; then \
+	  echo "$@: running texlinks (install-exec-extra)"; \
 	  TEXMFMAIN=$(texmf) PATH=$(scriptdir):$(bindir):$(PATH) \
 	    $(scriptdir)/texlinks; \
 	else :; fi
@@ -128,6 +104,7 @@ all clean mostlyclean:
 	    echo making $@ in $$dir; \
 	    (if test -f $$dir/Makefile; then cd $$dir && $(MAKE) $@; else true; fi) || exit 1; \
 	  done
+	@echo "make $@ done."
 
 # to build libraries only, when working on drivers.
 lib: @LIBSDEP@
@@ -148,7 +125,9 @@ tags TAGS:
 
 
 realclean: distclean
-world: install strip
+world: strip
+	@echo "make $@ done."
+
 pdftex pdfetex:
 	cd texk/web2c; $(MAKE) $@
 	test -f texk/web2c/pdftex && ls -l texk/web2c/pdftex

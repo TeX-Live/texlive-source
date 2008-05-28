@@ -1,3 +1,18 @@
+2008-05-28  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (basic_engines): split off tex/mf[n]/mpost.
+	(install-programs): handle basic_engines here.
+	(install-tex, install-mf, install-mpost; -exec, -data, -dumps):
+	remove all these.  Never try to make the dumps.
+	* luatexdir/luatex.mk,
+	* omegadir/omega.mk,
+	* xetexdir/xetex.mk,
+	* alephdir/aleph.mk,
+	* pdftexdir/pdftex.mk,
+	* etex/etex.mk: omit installation of pool files and dumps,
+	with consequent simplifications.  For etex.mk, also omit
+	installation of the binary.
+
 2008-05-25  Karl Berry  <karl@tug.org>
 
 	* cpascal.h (loadpoolstrings): declare.

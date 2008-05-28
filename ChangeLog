@@ -1,4 +1,14 @@
+2008-05-28  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (install-extra): do not go to omfonts, the omega.mk
+	targets take care of that.
+	Do not try to install release-tetex-src.txt.
+	Do not try to run fmtutil, updmap, mktexlsr, texlinks or anything else.
+	(world): since strip already depends on install, omit install.
+	Add echo's for when targets are finished.	
+
 2008-04-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* configure.in: respect library dependencies.
 
 2008-03-25  Karl Berry  <karl@tug.org>

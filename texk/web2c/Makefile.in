@@ -9,9 +9,8 @@ version = @WEB2CVERSION@
 .NOTPARALLEL:
 
 # These lines define the memory dumps that fmts/bases/mems will make and
-# install-fmts/install-bases/install-mems will install. plain.* is
-# created automatically (as a link).  See the Formats node in
-# doc/web2c.texi for details on the fmts.
+# install-fmts/install-bases/install-mems will install.
+# See the Formats node in doc/web2c.texi for more details.
 fmts = olatex.fmt # amstex.fmt eplain.fmt texinfo.fmt
 efmts = latex.fmt
 pdffmts = pdfolatex.fmt
@@ -19,7 +18,7 @@ pdfefmts = pdflatex.fmt
 afmts = lamed.fmt
 ofmts = lambda.fmt
 eofmts = elambda.fmt
-bases = # I do not recommend building cmmf.base.
+bases = # no good reason to build cmmf.base.
 mems =  # mfplain.mem is probably not generally useful.
 
 # The name of the file that defines your local devices for Metafont.
@@ -599,9 +598,14 @@ programs = bibtex ctangle ctie cweave dvicopy dvitomp dvitype gftodvi gftopk \
  pktogf pktype pltotf pooltype synctex tangle tftopl tie $(ttf2afm) \
  vftovp vptovf weave
 
+# basic_engines are the binaries we build and install directly here in
+# the webdir/ directory.
 # include $(metapost) from metapost.mk even though it also includes
 # dvitomp.  Hopefully that doesn't hurt.
-engines = $(tex) $(etex) $(mf) $(mfn) $(metapost) \
+basic_engines = $(tex) $(mf) $(mfn) $(metapost)
+
+# engines includes the ones built in subdirectories.
+engines = $(basic_engines) $(etex) \
           $(omega) $(aleph) \
           $(pdftex) $(pdfetex) \
           $(xetex) $(luatex)
@@ -765,10 +769,6 @@ tex.fmt: tex
 	$(dumpenv) $(MAKE) progname=tex files="plain.tex cmr10.tfm" prereq-check
 	$(dumpenv) ./tex --progname=tex --jobname=tex --ini \\input plain \\dump </dev/null
 
-#latex.fmt: tex
-#	$(dumpenv) $(MAKE) progname=latex files="latex.ltx" prereq-check
-#	$(dumpenv) ./tex --progname=latex --jobname=latex --ini \\input latex.ltx </dev/null
-
 olatex.fmt: tex
 	$(dumpenv) $(MAKE) progname=olatex files="latex.ltx" prereq-check
 	$(dumpenv) ./tex --progname=olatex --jobname=olatex --ini \\input latex.ltx </dev/null
@@ -776,10 +776,6 @@ olatex.fmt: tex
 mltex.fmt: tex
 	$(dumpenv) $(MAKE) progname=mltex files="plain.tex cmr10.tfm" prereq-check
 	$(dumpenv) ./tex --mltex --progname=mltex --jobname=mltex --ini \\input plain \\dump </dev/null
-
-#mllatex.fmt: tex
-#	$(dumpenv) $(MAKE) progname=mllatex files="latex.ltx" prereq-check
-#	$(dumpenv) ./tex --mltex --progname=mllatex --jobname=mllatex --ini \\input latex.ltx </dev/null
 
 mf.base: mf
 	$(dumpenv) $(MAKE) progname=mf files="plain.mf cmr10.mf $(localmodes).mf" prereq-check
@@ -819,9 +815,7 @@ eplain.fmt: tex.fmt
 
 # 
 install: install-exec install-data
-install-exec:: install-programs @FMU@ install-links
-install-data:: install-tex-data install-mf-data install-mpost-data
-install-dumps: install-tex-dumps install-mf-dumps install-mpost-dumps
+install-exec:: install-programs
 
 # Installation directories.
 $(bindir)::
@@ -841,59 +835,18 @@ $(memdir)::
 $(web2cdir)::
 	$(SHELL) $(top_srcdir)/../mkinstalldirs $(web2cdir)
 
-# Installing the programs.
-install-programs: $(programs) $(bindir)
+# Installing the binaries.  Each of the *dir/*.mk files (except etex)
+# add to this target via a dependency-only rule, to install their
+# respective engines.
+install-programs: $(programs) $(basic_engines) $(bindir)
 	for p in $(programs); do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
 
-# Installation of the main engines.
-install-tex: install-tex-exec install-tex-data
-install-mf: install-mf-exec install-mf-data
-install-mpost: install-mpost-exec install-mpost-data
-
-install-tex-exec: @FMU@ install-tex-links
-install-mf-exec: @FMU@ install-mf-links
-install-mpost-exec: @FMU@ install-mpost-links
-
-install-tex-data: @FMU@ install-tex-dumps
-install-mf-data: @FMU@ install-mf-dumps
-install-mpost-data: @FMU@ install-mpost-dumps
-
-install-tex-dumps: install-tex-fmts
-install-mf-dumps: install-mf-bases
-install-mpost-dumps: install-mpost-mems
-
-# Actual binaries.
-install-programs: install-tex-programs
-install-tex-programs: tex $(bindir)
-	tex="tex"; \
-	  for p in $$tex; do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
-install-programs: install-mf-programs
-install-mf-programs: mf $(mfn) $(bindir)
-	mf="mf $(mfn)"; \
-	  for p in $$mf; do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
-install-programs: install-mpost-programs
-install-mpost-programs: mpost $(bindir)
-	mpost="mpost"; \
-	  for p in $$mpost; do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
-
-# The links to {mf,mp,tex} for each format and for {ini,vir}{mf,mp,tex},
-# plus the equivalents for e-TeX, Omega, and pdf[ex]TeX.
-install-links: install-tex-links
-install-tex-links: install-tex-programs
-	#cd $(bindir) && (rm -f initex virtex; \
-	#  $(LN) tex initex; $(LN) tex virtex)
-
-install-links: install-mf-links
-install-mf-links: install-mf-programs
-	#cd $(bindir) && (rm -f inimf virmf; \
-	#  $(LN) mf inimf; $(LN) mf virmf)
-
-install-links: install-mpost-links
-install-mpost-links: install-mpost-programs
-	#cd $(bindir) && (rm -f inimpost virmpost; \
-	#  $(LN) mpost inimpost; $(LN) mpost virmpost)
+# We do not attempt to install any of the per-format symlinks, leaving
+# that to a separate run of texlinks.
 
 # Always do plain.*, so examples from the TeXbook (etc.) will work.
+# This target is not called, since it depends on the whole texmf tree,
+# but we leave it for posterity.
 install-fmts: install-tex-fmts
 install-tex-fmts: fmts $(fmtdir)
 	fmts="$(all_fmts)"; \

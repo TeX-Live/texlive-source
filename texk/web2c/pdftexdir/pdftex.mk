@@ -109,33 +109,10 @@ pdflatex.fmt: pdftex
 
 # 
 # Installation.
-install-pdftex: install-pdftex-exec install-pdftex-data
-install-pdftex-exec: install-pdftex-links
-install-pdftex-data: install-pdftex-pool @FMU@ install-pdftex-dumps
-install-pdftex-dumps: install-pdftex-fmts
-
-# The actual binary executables and pool files.
-install-programs: @PETEX@ install-pdftex-programs
-install-pdftex-programs: $(pdftex) $(bindir)
+install-pdftex: install-pdftex-exec
+install-programs: @PETEX@ install-pdftex-exec
+install-pdftex-exec: $(pdftex) $(bindir)
 	for p in pdftex; do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
-
-install-links: @PETEX@ install-pdftex-links
-install-pdftex-links: install-pdftex-programs
-	#cd $(bindir) && (rm -f pdfeinitex pdfevirtex; \
-	#  $(LN) pdftex pdfeinitex; $(LN) pdftex pdfevirtex)
-
-install-fmts: @PETEX@ install-pdftex-fmts
-install-pdftex-fmts: pdfefmts $(pdfefmtdir)
-	pdfefmts="$(all_pdfefmts)"; \
-	  for f in $$pdfefmts; do $(INSTALL_DATA) $$f $(pdfefmtdir)/$$f; done
-	pdfefmts="$(pdfefmts)"; \
-	  for f in $$pdfefmts; do base=`basename $$f .fmt`; \
-	    (cd $(bindir) && (rm -f $$base; $(LN) pdftex $$base)); done
-
-# Auxiliary files.
-install-data:: @PETEX@ install-pdftex-data
-install-pdftex-pool: pdftex.pool $(texpooldir)
-	$(INSTALL_DATA) pdftex.pool $(texpooldir)/pdftex.pool
 
 # 
 # ttf2afm

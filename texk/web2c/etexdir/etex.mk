@@ -187,29 +187,14 @@ latex.fmt: etex
 #	$(dumpenv) $(MAKE) progname=olatex files="latex.ltx" prereq-check
 #	$(dumpenv) ./etex --progname=olatex --progname=olatex --ini \\input latex.ltx </dev/null
 
-# Install
-install-etex: install-etex-exec install-etex-data
-install-etex-exec: install-etex-programs install-etex-links
-install-etex-data: @FMU@ install-etex-dumps
-install-etex-dumps: install-etex-fmts
+# 
+# Installation -- nothing by default, that is, we omit the
+# install-programs target.  We want to make etex a symlink to pdftex,
+# via texlinks.  Leave this unused install-etex* targets just to show
+# that the real binary does get built and can be used if desired.
 
-install-programs: @ETEX@ install-etex-programs
-install-etex-programs: etex $(bindir)
+install-etex: install-etex-exec
+install-etex-exec: etex $(bindir)
 	for p in etex; do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
-
-install-links: @ETEX@ install-etex-links
-install-etex-links: install-etex-programs
-	#cd $(bindir) && (rm -f einitex evirtex; \
-	#  $(LN) etex einitex; $(LN) etex evirtex)
-
-install-fmts: @ETEX@ install-etex-fmts
-install-etex-fmts: efmts $(efmtdir)
-	efmts="$(all_efmts)"; \
-	  for f in $$efmts; do $(INSTALL_DATA) $$f $(efmtdir)/$$f; done
-	efmts="$(efmts)"; \
-	  for f in $$efmts; do base=`basename $$f .fmt`; \
-	    (cd $(bindir) && (rm -f $$base; $(LN) etex $$base)); done
-
-install-data:: @ETEX@ install-etex-data
 
 # end of etex.mk

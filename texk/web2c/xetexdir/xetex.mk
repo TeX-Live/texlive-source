@@ -319,30 +319,11 @@ xelatex.fmt: xetex
 	$(dumpenv) $(MAKE) progname=xelatex files="xelatex.ini unicode-letters.tex latex.ltx" prereq-check
 	$(dumpenv) ./xetex --progname=xelatex --jobname=xelatex --ini \*\\input xelatex.ini </dev/null
 
-
-# Install
-install-xetex: install-xetex-exec install-xetex-data
-install-xetex-exec: install-xetex-programs install-xetex-links
-install-xetex-data: @FMU@ install-xetex-dumps
-install-xetex-dumps: install-xetex-fmts
-
+# 
+# Installation.
+install-xetex: install-xetex-exec
 install-programs: @XETEX@ install-xetex-programs
 install-xetex-programs: xetex $(bindir)
 	for p in xetex; do $(INSTALL_LIBTOOL_PROG) $$p ${DESTDIR}$(bindir); done
-
-install-links: @XETEX@ install-xetex-links
-install-xetex-links: install-xetex-programs
-	#cd $(bindir) && (rm -f xeinitex xevirtex; \
-	#  $(LN) xetex xeinitex; $(LN) xetex xevirtex)
-
-install-fmts: @XETEX@ install-xetex-fmts
-install-xetex-fmts: xefmts $(xefmtdir)
-	xefmts="$(all_xefmts)"; \
-	  for f in $$xefmts; do $(INSTALL_DATA) $$f ${DESTDIR}$(xefmtdir)/$$f; done
-	xefmts="$(xefmts)"; \
-	  for f in $$xefmts; do base=`basename $$f .fmt`; \
-	    (cd ${DESTDIR}$(bindir) && (rm -f $$base; $(LN) xetex $$base)); done
-
-install-data:: @XETEX@ install-xetex-data
 
 # end of xetex.mk
