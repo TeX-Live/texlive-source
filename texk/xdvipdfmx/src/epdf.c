@@ -184,10 +184,8 @@ pdf_get_page_obj (FILE *image_file, long page_no, pdf_obj **ret_bbox, pdf_obj **
     if (markinfo) {
       tmp = pdf_lookup_dict(markinfo, "Marked");
       pdf_release_obj(markinfo);
-      if (tmp && pdf_boolean_value(tmp)) {
-	WARN("Tagged PDF not supported.");
-	pdf_release_obj(catalog);
-	return NULL;
+      if (PDF_OBJ_BOOLEANTYPE(tmp) && pdf_boolean_value(tmp)) {
+	WARN("File contains tagged PDF. Ignoring tags.");
       }
     }
 
