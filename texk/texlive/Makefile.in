@@ -34,12 +34,6 @@ LINKED_SCRIPTS = \
   texmf-dist/scripts/ppower4/pdfthumb.texlua \
   texmf-dist/scripts/vpe/vpe.pl
 
-LINKED_SYS_SCRIPTS = \
-  texmf/scripts/texlive/getnonfreefonts.pl
-
-# overridden in the recursive call below for the sys scripts.
-LINKSUFFIX =
-
 manpgs = getnonfreefonts getnonfreefonts-sys
 
 all:  $(LIVESCRIPTS)
@@ -53,7 +47,7 @@ install-data::
 	  $(INSTALL_DATA) $(srcdir)/$$p.man $(man1dir)/$$p.$(manext); \
 	done
 
-install-exec: install-linked-scripts install-linked-sys-scripts
+install-exec: install-linked-scripts
 	-$(SHELL) $(srcdir)/../mkinstalldirs $(scriptdir)
 	for s in $(LIVESCRIPTS); do \
 	  rm -f $(scriptdir)/$$s ; \
@@ -80,12 +74,11 @@ install-linked-scripts:
 	-$(SHELL) $(srcdir)/../mkinstalldirs $(scriptdir)
 # - link to the basename, removing any extension, of the source.
 # - we downcase for the sake of TeXcount.pl -> texcount.
-# - LINKSUFFIX is for -sys, see next target.
 # - the purpose of the case..esac is to support both multiplatform and
 #   non-multiplatform builds.
 	for s in $(LINKED_SCRIPTS); do \
 	  target=$(scriptdir)/`basename $$s | sed 's,\.[^/]*$$,,' | tr A-Z a-z`; \
-	  target=$$target$(LINKSUFFIX); \
+	  target=$$target; \
 	  rm -f $$target; \
 	  case "$(scriptdir)" in \
 	    */bin)   d=..;; \
@@ -97,10 +90,6 @@ install-linked-scripts:
 	  $(INSTALL_SCRIPT) $(srcdir)/linked_scripts/`basename $$s` $(prefix)/$$s; \
 	  ln -s $$d/$$s $$target; \
 	done
-
-install-linked-sys-scripts:
-	$(MAKE) LINKSUFFIX=-sys LINKED_SCRIPTS="$(LINKED_SYS_SCRIPTS)" \
-	  install-linked-scripts
 
 kpse_include ../make/clean.mk
 
