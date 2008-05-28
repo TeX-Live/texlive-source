@@ -1,6 +1,6 @@
 #!/usr/bin/env texlua
 --*-Lua-*-
--- $Id: thumbpdf.texlua 6969 2008-03-14 22:17:00Z reinhardk $
+-- $Id: pdfthumb.texlua 8373 2008-05-28 02:00:59Z vvv $
 
 -- Copyright (C) 2008 Reinhard Kotucha.
 -- You may freely use, modify and/or distribute this file.
