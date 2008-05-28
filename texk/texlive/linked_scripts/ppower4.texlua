@@ -1,6 +1,6 @@
 #!/usr/bin/env texlua
 --*-Lua-*-
--- $Id$
+-- $Id: ppower4.texlua 6969 2008-03-14 22:17:00Z reinhardk $
 
 -- Copyright (C) 2008 Reinhard Kotucha.
 -- You may freely use, modify and/or distribute this file.

@@ -1,5 +1,5 @@
 #!/usr/bin/env texlua
--- $Id$
+-- $Id: texdoc.tlu 8041 2008-05-11 08:58:09Z preining $
 --[[ Written in lua by Frank Küster (2007) based on the shell script by
 Thomas Esser, David Aspinall, and Simon Wilkinson.
 Public domain.]]
