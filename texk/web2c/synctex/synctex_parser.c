@@ -2764,7 +2764,7 @@ int synctex_edit_query(synctex_scanner_t scanner,int page,float h,float v) {
 	free(SYNCTEX_START);
 	SYNCTEX_START = SYNCTEX_END = SYNCTEX_CUR = NULL;
 	sheet = scanner->sheet;
-	while(SYNCTEX_INFO(sheet)[PAGE].INT != page) {
+	while(sheet != NULL && SYNCTEX_INFO(sheet)[PAGE].INT != page) {
 		sheet = SYNCTEX_SIBLING(sheet);
 	}
 	if(NULL == sheet) {
