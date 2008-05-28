@@ -37,6 +37,10 @@
 
 synctex_dir = $(srcdir)/synctex
 
+LIBOBSDCOMPATDIR=../../libs/obsdcompat
+LIBOBSDCOMPATSRCDIR=$(srcdir)/$(LIBOBSDCOMPATDIR)
+XCPPFLAGS=-I$(LIBOBSDCOMPATDIR) -I$(LIBOBSDCOMPATDIR)/.. -I$(LIBOBSDCOMPATSRCDIR) -I$(LIBOBSDCOMPATSRCDIR)/..
+
 Makefile: $(synctex_dir)/synctex.mk
 
 # for all the engines, this trick allows to enable or disable SyncTeX support from here.
@@ -208,8 +212,8 @@ synctex_parser.o: $(synctex_dir)/synctex_parser.c $(synctex_dir)/synctex_parser.
 synctex_main.o: $(synctex_dir)/synctex_main.c $(synctex_dir)/synctex_parser.h
 	$(compile) -c -I$(synctex_dir) $(ZLIBCPPFLAGS) -o $@ $<
 
-synctex:synctex_main.o synctex_parser.o $(ZLIBDEPS)
-	$(link_command) synctex_main.o synctex_parser.o $(LDZLIB)
+synctex:synctex_main.o synctex_parser.o $(ZLIBDEPS) $(LIBOBSDDEP)
+	$(link_command) synctex_main.o synctex_parser.o $(LDZLIB) $(LDLIBOBSD)
 
 # Cleaning up.
 clean:: synctex-clean

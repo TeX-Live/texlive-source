@@ -119,8 +119,7 @@ void synctex_help_view(char * error,...) {
 	va_start(v, error);
 	synctex_usage(error, v);
 	va_end(v);
-	fprintf((error?stderr:stdout),
-		"synctex view: forwards or direct synchronization,\n"
+	fputs("synctex view: forwards or direct synchronization,\n"
 		"command sent by the editor to view the output corresponding to the position under the mouse\n"
 		"\n"
 		"usage: synctex view -i line:column:input -o output [-x viewer-command] [-h before/offset:middle/after]\n"
@@ -166,7 +165,8 @@ void synctex_help_view(char * error,...) {
 		"       The \"middle\" word contains the character under the mouse at position offset.\n"
 		"       \"before\" is a full word preceding middle and \"after\" is following it.\n"
 		"       The before or after word can be missing, they are then considered as void strings.\n"
-		"       \n"
+		"       \n",
+		(error?stderr:stdout)
 	);
 	return;
 }
@@ -298,16 +298,16 @@ proceed:
 	ptr = synctex;
 	/* remove the path extension of the last path component. */
 #   define SYNCTEX_PATH_COMPONENTS_SEPARATOR "/"
-	if(where = strstr(ptr,SYNCTEX_PATH_COMPONENTS_SEPARATOR)) {
+	if((where = strstr(ptr,SYNCTEX_PATH_COMPONENTS_SEPARATOR)) != NULL) {
 		do {
 			ptr = where;
-		} while(where = strstr(ptr+1,SYNCTEX_PATH_COMPONENTS_SEPARATOR));
+		} while((where = strstr(ptr+1,SYNCTEX_PATH_COMPONENTS_SEPARATOR)) != NULL);
 	}
 #   define SYNCTEX_PATH_EXTENSION_SEPARATOR "."
-	if(where = strstr(ptr,SYNCTEX_PATH_EXTENSION_SEPARATOR)) {
+	if((where = strstr(ptr,SYNCTEX_PATH_EXTENSION_SEPARATOR)) != NULL) {
 		do {
 			ptr = where;
-		} while(where = strstr(ptr+1,SYNCTEX_PATH_EXTENSION_SEPARATOR));
+		} while((where = strstr(ptr+1,SYNCTEX_PATH_EXTENSION_SEPARATOR)) != NULL);
 		*ptr = '\0';
 	}
 	if(0 == strlcat(synctex,suffix,size)){
@@ -331,7 +331,7 @@ proceed:
 	synctex = NULL;
 	if(scanner && synctex_display_query(scanner,input,line,column)) {
 		synctex_node_t node = NULL;
-		if(node = synctex_next_result(scanner)) {
+		if((node = synctex_next_result(scanner)) != NULL) {
 			/* filtering the command */
 			if(viewer && strlen(viewer)) {
 				char * where = NULL;
@@ -349,7 +349,7 @@ proceed:
 				/*  Properly terminate the buffer, no bad access for string related functions. */
 				buffer[size] = '\0';
 				/* Replace %{ by &{, then remove all unescaped '%'*/
-				while(where = strstr(viewer,"%{")) {
+				while((where = strstr(viewer,"%{")) != NULL) {
 					*where = '&';
 				}
 				/* find all the unescaped '%', change to a safe character */
@@ -436,7 +436,7 @@ proceed:
 							offset,
 							(middle?middle:""),
 							(after?after:""));
-				} while(node = synctex_next_result(scanner));
+				} while((node = synctex_next_result(scanner)) != NULL);
 				puts("SyncTeX result end\n");
 			}
 		}
@@ -586,15 +586,15 @@ proceed:
 	}
 	ptr = synctex;
 	/* remove the path extension of the last path component. */
-	if(where = strstr(ptr,SYNCTEX_PATH_COMPONENTS_SEPARATOR)) {
+	if((where = strstr(ptr,SYNCTEX_PATH_COMPONENTS_SEPARATOR)) != NULL) {
 		do {
 			ptr = where;
-		} while(where = strstr(ptr+1,SYNCTEX_PATH_COMPONENTS_SEPARATOR));
+		} while((where = strstr(ptr+1,SYNCTEX_PATH_COMPONENTS_SEPARATOR)) != NULL);
 	}
-	if(where = strstr(ptr,SYNCTEX_PATH_EXTENSION_SEPARATOR)) {
+	if((where = strstr(ptr,SYNCTEX_PATH_EXTENSION_SEPARATOR)) != NULL) {
 		do {
 			ptr = where;
-		} while(where = strstr(ptr+1,SYNCTEX_PATH_EXTENSION_SEPARATOR));
+		} while((where = strstr(ptr+1,SYNCTEX_PATH_EXTENSION_SEPARATOR)) != NULL);
 		*ptr = '\0';
 	}
 	if(0 == strlcat(synctex,suffix,size)){
@@ -630,12 +630,12 @@ proceed:
 				size = strlen(editor)+3*sizeof(int)+3*SYNCTEX_STR_SIZE;
 				buffer = malloc(size+1);
 				if(NULL == buffer) {
-					printf("SyncTeX ERROR: No memory available\n",editor);
+					printf("SyncTeX ERROR: No memory available\n");
 					return -1;
 				}
 				buffer[size]='\0';
 				/* Replace %{ by &{, then remove all unescaped '%'*/
-				while(where = strstr(editor,"%{")) {
+				while((where = strstr(editor,"%{")) != NULL) {
 					*where = '&';
 				}
 				where = editor;
@@ -699,7 +699,7 @@ proceed:
 							synctex_node_column(node),
 							offset,
 							(context?context:""));
-				} while(node = synctex_next_result(scanner));
+				} while((node = synctex_next_result(scanner)) != NULL);
 				puts("SyncTeX result end\n");
 			}
 		}
@@ -800,15 +800,15 @@ prepare_next_argument:
 	}
 	ptr = synctex;
 	/* remove the path extension of the last path component. */
-	if(where = strstr(ptr,SYNCTEX_PATH_COMPONENTS_SEPARATOR)) {
+	if((where = strstr(ptr,SYNCTEX_PATH_COMPONENTS_SEPARATOR)) != NULL) {
 		do {
 			ptr = where;
-		} while(where = strstr(ptr+1,SYNCTEX_PATH_COMPONENTS_SEPARATOR));
+		} while((where = strstr(ptr+1,SYNCTEX_PATH_COMPONENTS_SEPARATOR)) != NULL);
 	}
-	if(where = strstr(ptr,SYNCTEX_PATH_EXTENSION_SEPARATOR)) {
+	if((where = strstr(ptr,SYNCTEX_PATH_EXTENSION_SEPARATOR)) != NULL) {
 		do {
 			ptr = where;
-		} while(where = strstr(ptr+1,SYNCTEX_PATH_EXTENSION_SEPARATOR));
+		} while((where = strstr(ptr+1,SYNCTEX_PATH_EXTENSION_SEPARATOR)) != NULL);
 		*ptr = '\0';
 	}
 	if(0 == strlcat(synctex,".synctex",size)){
