@@ -17,8 +17,9 @@ version='$Id$'
 progname=`echo $0 | sed 's%.*/%%'`
 usage="Usage: $progname [DIR]...
 
-Only options are --help, --version, and --verbose.  If standard input is
-a terminal, --verbose is on by default.
+The only options are --help, --version, --verbose, --quiet, and --silent.
+If standard input is a terminal, --verbose is on by default.
+--quiet and --silent are synonyms, and cancel --verbose.
 
 Rebuild all necessary ls-R filename databases completely. If one or
 more arguments DIRS are given, these are used as texmf directories to
@@ -55,17 +56,22 @@ if tty -s; then verbose=true; else verbose=false; fi
 
 # A copy of some stuff from mktex.opt, so we can run in the presence of
 # terminally damaged ls-R files.
-if test "x$1" = x--help || test "x$1" = x-help; then
-  echo "$usage"
-  exit 0
-elif test "x$1" = x--version || test "x$1" = x-version; then
-  echo "`basename $0` $version"
-  kpsewhich --version
-  exit 0
-elif test "x$1" = x--verbose || test "x$1" = x-verbose; then
-  verbose=true
+while test $# -gt 0; do
+  if test "x$1" = x--help || test "x$1" = x-help; then
+    echo "$usage"
+    exit 0
+  elif test "x$1" = x--version || test "x$1" = x-version; then
+    echo "`basename $0` $version"
+    kpsewhich --version
+    exit 0
+  elif test "x$1" = x--verbose || test "x$1" = x-verbose; then
+    verbose=true
+  elif test "x$1" = x--quiet || test "x$1" = x--silent \
+       || test "x$1" = x-quiet || test "x$1" = x-silent ; then
+    verbose=false
+  fi
   shift
-fi
+done
 
 # mktexupd and mktexlsr make sure they're coordinated via this.  A copy
 # is found mktex.opt.

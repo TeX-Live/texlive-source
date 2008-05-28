@@ -82,6 +82,7 @@ install-data::
 	$(INSTALL_DATA) $(srcdir)/texmf/texconfig/generic $(texmf)/texconfig
 	$(INSTALL_SCRIPT) $(srcdir)/tcfmgr $(texmf)/texconfig/tcfmgr
 	$(INSTALL_DATA) $(srcdir)/tcfmgr.map $(texmf)/texconfig/tcfmgr.map
+	$(INSTALL_DATA) $(srcdir)/fmtutil.cnf $(texmf)/web2c/fmtutil.cnf
 
 install-exec: 
 	-$(SHELL) $(srcdir)/../mkinstalldirs $(scriptdir)
@@ -97,6 +98,17 @@ install-exec:
 	  ln -s kpsetool kpsexpand; \
 	  ln -s mktexlsr texhash
 	cd $(scriptdir) && rm -f mktexfmt; ln -s fmtutil mktexfmt
+
+# 
+# This target is invoked by the top-level make,
+# to create the per-format engine symlinks in $(bindir),
+# after everything else is installed.
+# We have to create the ls-R file for kpsewhich (invoked by texlinks)
+# to find fmtutil.cnf.
+run_mktexlsr = (cd $(texmf)/web2c && $(bindir)/mktexlsr --quiet .)
+run_texlinks = $(bindir)/texlinks
+run-texlinks:
+	PATH=$(bindir):$(PATH); $(run_mktexlsr); $(run_texlinks)
 
 kpse_include ../make/clean.mk
 

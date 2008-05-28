@@ -54,46 +54,24 @@ LIBSDIRS = @LIBSDIRS@
 INSTDIRS = @INSTDIRS@
 
 default: all
-install: all 
+install install-exec install-data uninstall: all 
 	for dir in $(INSTDIRS); do \
-	   echo making $@ in $$dir; \
-	     (cd $$dir && PATH=$(scriptdir):$(bindir):$(PATH) \
-                $(MAKE) $@) || exit 1; \
+	  echo making $@ in $$dir; \
+	  (cd $$dir && $(MAKE) $@) || exit 1; \
 	done
-@FMU@
-@FMU@install-extra:
-	$(srcdir)/selfautofix "$(bindir)" "$(texmf)/web2c"
-	- if test -f $(scriptdir)/texlinks; then \
-	  echo "$@: running texlinks (install-extra)"; \
-	  TEXMFMAIN=$(texmf) PATH=$(scriptdir):$(bindir):$(PATH) \
-	    $(scriptdir)/texlinks; \
-	else :; fi
-
-install-exec:
-	for dir in $(INSTDIRS); do \
-	   echo making $@ in $$dir; \
-	   (cd $$dir && PATH=$(scriptdir):$(bindir):$(PATH) \
-              $(MAKE) $@) || exit 1; \
-	done
-@FMU@
-@FMU@install-exec-extra:
-	- if test -f $(scriptdir)/texlinks; then \
-	  echo "$@: running texlinks (install-exec-extra)"; \
-	  TEXMFMAIN=$(texmf) PATH=$(scriptdir):$(bindir):$(PATH) \
-	    $(scriptdir)/texlinks; \
-	else :; fi
+# only do this at make install, because the binaries won't be there with
+# just install-data, and fmtutil.cnf won't be there with just install-exec.
+	if test "$@" = install; then \
+	  echo "top-level make $@: running selfautofix and texlinks ..."; \
+	  $(srcdir)/selfautofix "$(bindir)" "$(texmf)/web2c"; \
+	  cd texk/tetex && $(MAKE) run-texlinks; \
+	fi
 
 strip: install 
 	cd $(bindir) && strip * >/dev/null 2>&1 || true
 
 check:
 	cd texk; TEXMF='{$(texmf),$(texmf)-dist}' TEXMFCNF=$(texmf)/web2c $(MAKE) $@
-
-uninstall:
-	for dir in $(INSTDIRS); do \
-	  echo making $@ in $$dir; \
-	  (cd $$dir && $(MAKE) $@) || exit 1; \
-	done
 
 Makefile: Makefile.in config.status
 	$(SHELL) ./config.status
@@ -118,18 +96,19 @@ distclean: clean
 	rm -f Makefile *.status *.cache *.log dialogconfig.h TAGS
 	rm -f libs/config.log libs/config.status libs/config.cache
 	rm -f utils/texinfo/info/funs.h utils/texinfo/info/doc.c utils/texinfo/info/key.c
+realclean: distclean
 
 tags TAGS:
 	rm -f TAGS
 	find . -name '*.[ch]' -print | xargs etags --append -o TAGS
 
-
-realclean: distclean
+# 
+# This is the default target for the Build script in TeX Live.
 world: strip
 	@echo "make $@ done."
 
 pdftex pdfetex:
-	cd texk/web2c; $(MAKE) $@
+	cd texk/web2c && $(MAKE) $@
 	test -f texk/web2c/pdftex && ls -l texk/web2c/pdftex
 	test -f texk/web2c/pdfetex && ls -l texk/web2c/pdfetex
 

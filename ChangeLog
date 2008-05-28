@@ -1,5 +1,8 @@
 2008-05-28  Karl Berry  <karl@tug.org>
 
+	* Makefile.in (world): invoke new run-texlinks target
+	in texk/tetex.
+
 	* Makefile.in (install-extra): do not go to omfonts, the omega.mk
 	targets take care of that.
 	Do not try to install release-tetex-src.txt.

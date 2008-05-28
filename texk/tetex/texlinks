@@ -6,6 +6,7 @@
 # the lines given in fmtutil.cnf.
 
 # History:
+#   (Further changes in ChangeLog.)
 #   Tue Oct  9 14:23:01 BST 2007
 #      Added unlink option (-u) to aid OpenBSD package uninstall
 #      Edd Barrett <vext01@gmail.com>
@@ -13,7 +14,7 @@
 #      remove special cases for csplain,cslatex,pdfcslatex,pdfcsplain
 #   Fr Apr  8 19:15:05 CEST 2005
 #      cleanup now has an argument for the return code
-#   So Mär 27 18:52:06 CEST 2005
+#   So Mar 27 18:52:06 CEST 2005
 #       honor $TMPDIR, $TEMP and $TMP, not just $TMP
 #   Mon May 10 20:52:48 CEST 2004
 #       kpseaccess instead of access
@@ -38,8 +39,7 @@ export PATH
 test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 
 cnf=fmtutil.cnf   # name of the config file
-version=1192147136 # seconds since `00:00:00 1970-01-01 UTC'
-                   # date '+%s' (with GNU date)
+version=20080528.1847 # utc timestamp 
 progname=texlinks
 
 usage='Usage: texlinks [OPTION]... [DIRECTORY]...
@@ -58,8 +58,9 @@ Mandatory arguments to long options are mandatory for short options too.
   -u, --unlink	       remove symlinks created by texlinks
 
 The DIRECTORY arguments are an optional list of directories in which to
-operate.  If no directories are specified the list of directories
-depends on the --multiplatform option.
+operate.  If no directories are specified and --multiplatform is
+likewise not specified, the directory of this script itself is used.
+With --multiplatform, all child dirs of an upper-level bin/ dir are used.
 
 Report bugs to tex-k@tug.org.'
 
@@ -149,6 +150,7 @@ install_link()
 
   case $src in
     */cont-??|*/metafun|*/mptopdf)
+      # context includes wrapper scripts that create/run these.
       verbose_echo "skipped ConTeXtish symlink $src -> $dest (special case)"
       ;;
     *)

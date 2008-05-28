@@ -1,3 +1,11 @@
+2008-05-28  Karl Berry  <karl@tug.org>
+
+	* fmtutil.cnf: new file, a slave of Master/texmf/web2c/fmtutil.cnf,
+	which we keep in sync via TL infrastructure scripts.
+	* Makefile.in (install-data): install fmtutil.cnf.
+	(run-texlinks): new target, invoked by top-level make.
+	* texlinks: doc fixes.
+
 2008-05-19  Karl Berry  <karl@tug.org>
 
 	* texdoc: remove, master is now the lua version in texmf/scripts.
