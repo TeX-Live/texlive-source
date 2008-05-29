@@ -3350,6 +3350,21 @@ if translate_filename then begin
 @y
 file_opened:=false;
 pack_file_name(nom,aire,cur_ext);
+if XeTeX_tracing_fonts_state>0 then begin
+  begin_diagnostic;
+  print_nl("Requested font """);
+  print_c_string(name_of_file+1);
+  print('"');
+  if s < 0 then begin
+    print(" scaled ");
+    print_int(-s);
+  end else begin
+    print(" at ");
+    print_scaled(s);
+    print("pt");
+  end;
+  end_diagnostic(false);
+end;
 if quoted_filename then begin
   { quoted name, so try for a native font }
   g:=load_native_font(u,nom,aire,s);
@@ -3373,6 +3388,24 @@ bad_tfm:
 if suppress_fontnotfound_error=0 then begin
   @<Report that the font won't be loaded@>;
   end;
+@z
+
+@x
+done: if file_opened then b_close(tfm_file);
+@y
+done: if file_opened then b_close(tfm_file);
+if XeTeX_tracing_fonts_state>0 then begin
+  if g=null_font then begin
+    begin_diagnostic;
+    print_nl(" -> font not found, using ""nullfont""");
+    end_diagnostic(false);
+  end else if file_opened then begin
+    begin_diagnostic;
+    print_nl(" -> ");
+    print_c_string(name_of_file+1);
+    end_diagnostic(false);
+  end;
+end;
 @z
 
 @x

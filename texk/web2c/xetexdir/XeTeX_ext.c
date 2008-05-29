@@ -1309,6 +1309,13 @@ findnativefont(unsigned char* uname, integer scaled_size)
 					rval = loadOTfont(0, font, scaled_size, featString);
 				if (rval == NULL)
 					deleteFont(font);
+				if (rval != NULL && gettracingfontsstate() > 0) {
+					begindiagnostic();
+					zprintnl(' ');
+					printcstring("-> ");
+					printcstring(path);
+					zenddiagnostic(0);
+				}
 			}
 		}
 	}
