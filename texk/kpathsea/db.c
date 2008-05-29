@@ -31,11 +31,8 @@
 #include <kpathsea/variable.h>
 
 static hash_table_type db; /* The hash table for all the ls-R's.  */
-/* SMALL: The old size of the hash table was 7603, with the assumption
-   that a minimal ls-R bas about 3500 entries.  But a typical ls-R will
-   be more like double that size.  */
 #ifndef DB_HASH_SIZE
-#define DB_HASH_SIZE 15991
+#define DB_HASH_SIZE 75079 /* Based on the size of 2008 texmf-dist/ls-R.  */
 #endif
 #ifndef DB_NAME
 #define DB_NAME "ls-R"
@@ -349,7 +346,7 @@ kpse_init_db P1H(void)
   string *db_files;
   string *orig_db_files;
 
-  assert(sizeof(DB_NAME) == sizeof(DB_NAME_LC));
+  assert (sizeof(DB_NAME) == sizeof(DB_NAME_LC));
 
   db_path = kpse_init_format (kpse_db_format);
   db_files = kpse_all_path_search_list (db_path, db_names);
