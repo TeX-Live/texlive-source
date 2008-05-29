@@ -43,7 +43,16 @@ This is the command line interface to the synctex_parser.c.
 #   include <stdarg.h>
 #   include "synctex_parser.h"
 
-#   include "openbsd-compat.h"
+/* The code below uses strlcat and strlcpy, which avoids security warnings with some compilers.
+   However, if these are not available we simply use the old, unchecked versions;
+   this is OK because all the uses in this code are working with a buffer that's been
+   allocated based on measuring the strings involved. */
+#ifndef HAVE_STRLCAT
+#define strlcat(dst, src, size) strcat((dst), (src))
+#endif
+#ifndef HAVE_STRLCPY
+#define strlcpy(dst, src, size) strcpy((dst), (src))
+#endif
 
 int main(int argc, char *argv[]);
 

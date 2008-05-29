@@ -40,8 +40,8 @@ case $LEX in
   *flex) $LEX --version >/dev/null 2>&1 && LEX="$LEX -l" ;;
 esac
 AC_PROG_RANLIB
-AC_CHECK_HEADERS(sys/time.h sys/timeb.h)
-AC_CHECK_FUNCS(strerror gettimeofday ftime mkstemp mktemp)
+AC_CHECK_HEADERS(sys/time.h sys/timeb.h locale.h)
+AC_CHECK_FUNCS(strerror gettimeofday ftime mkstemp mktemp setlocale strlcat strlcpy)
 
 AC_TYPE_SIGNAL
 

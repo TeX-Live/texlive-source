@@ -4078,7 +4078,8 @@ done
 
 
 
-for ac_header in sys/time.h sys/timeb.h
+
+for ac_header in sys/time.h sys/timeb.h locale.h
 do
 as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 if { as_var=$as_ac_Header; eval "test \"\${$as_var+set}\" = set"; }; then
@@ -4227,7 +4228,10 @@ done
 
 
 
-for ac_func in strerror gettimeofday ftime mkstemp mktemp
+
+
+
+for ac_func in strerror gettimeofday ftime mkstemp mktemp setlocale strlcat strlcpy
 do
 as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 { $as_echo "$as_me:$LINENO: checking for $ac_func" >&5

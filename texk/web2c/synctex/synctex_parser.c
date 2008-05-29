@@ -42,6 +42,10 @@ authorization from the copyright holder.
 #include "math.h"
 #include "errno.h"
 
+#ifdef HAVE_LOCALE_H
+#include "locale.h"
+#endif
+
 /*  This custom malloc functions initializes to 0 the newly allocated memory. */
 void *_synctex_malloc(size_t size) {
 	void * ptr = malloc(size);
@@ -1402,11 +1406,13 @@ synctex_status_t _synctex_scan_preamble(synctex_scanner_t scanner) {
 }
 
 /*  parse a float with a dimension */
-#include "xlocale.h"
 synctex_status_t _synctex_scan_float_and_dimension(synctex_scanner_t scanner, float * value_ref) {
 	synctex_status_t status = 0;
 	unsigned char * endptr = NULL;
 	float f = 0;
+#ifdef HAVE_SETLOCALE
+	char * loc = setlocale(LC_NUMERIC, NULL);
+#endif
 	size_t available = 0;
 	if(NULL == scanner || NULL == value_ref) {
 		return SYNCTEX_STATUS_BAD_ARGUMENT;
@@ -1417,7 +1423,13 @@ synctex_status_t _synctex_scan_float_and_dimension(synctex_scanner_t scanner, fl
 		_synctex_error("problem with float.");
 		return status;
 	}
-	f = strtof_l((char *)SYNCTEX_CUR,(char **)&endptr,NULL);
+#ifdef HAVE_SETLOCALE
+	setlocale(LC_NUMERIC, "C");
+#endif
+	f = strtof((char *)SYNCTEX_CUR,(char **)&endptr);
+#ifdef HAVE_SETLOCALE
+	setlocale(LC_NUMERIC, loc);
+#endif
 	if(endptr == SYNCTEX_CUR) {
 		_synctex_error("a float was expected.");
 		return SYNCTEX_STATUS_ERROR;
@@ -1480,6 +1492,9 @@ report_unit_error:
 synctex_status_t _synctex_scan_post_scriptum(synctex_scanner_t scanner) {
 	synctex_status_t status = 0;
 	unsigned char * endptr = NULL;
+#ifdef HAVE_SETLOCALE
+	char * loc = setlocale(LC_NUMERIC, NULL);
+#endif
 	if(NULL == scanner) {
 		return SYNCTEX_STATUS_BAD_ARGUMENT;
 	}
@@ -1507,11 +1522,16 @@ next_line:
 		return SYNCTEX_STATUS_OK;/* The EOF is found, we have properly scanned the file */
 	}
 	/* Scanning the information */
-	/* By default, all "*_l" functions are used with a C locale. */
 /*next_record:*/
 	status = _synctex_match_string(scanner,"Magnification:");
 	if(status == SYNCTEX_STATUS_OK ) {
-		scanner->unit = strtof_l((char *)SYNCTEX_CUR,(char **)&endptr,NULL);
+#ifdef HAVE_SETLOCALE
+		setlocale(LC_NUMERIC, "C");
+#endif
+		scanner->unit = strtof((char *)SYNCTEX_CUR,(char **)&endptr);
+#ifdef HAVE_SETLOCALE
+		setlocale(LC_NUMERIC, loc);
+#endif
 		if(endptr == SYNCTEX_CUR) {
 			_synctex_error("bad magnification in the post scriptum, a float was expected.");
 			return SYNCTEX_STATUS_ERROR;
