@@ -1426,7 +1426,7 @@ synctex_status_t _synctex_scan_float_and_dimension(synctex_scanner_t scanner, fl
 #ifdef HAVE_SETLOCALE
 	setlocale(LC_NUMERIC, "C");
 #endif
-	f = strtof((char *)SYNCTEX_CUR,(char **)&endptr);
+	f = strtod((char *)SYNCTEX_CUR,(char **)&endptr);
 #ifdef HAVE_SETLOCALE
 	setlocale(LC_NUMERIC, loc);
 #endif
@@ -1528,7 +1528,7 @@ next_line:
 #ifdef HAVE_SETLOCALE
 		setlocale(LC_NUMERIC, "C");
 #endif
-		scanner->unit = strtof((char *)SYNCTEX_CUR,(char **)&endptr);
+		scanner->unit = strtod((char *)SYNCTEX_CUR,(char **)&endptr);
 #ifdef HAVE_SETLOCALE
 		setlocale(LC_NUMERIC, loc);
 #endif
