@@ -1,3 +1,7 @@
+2008-05-29  Karl Berry  <karl@tug.org>
+
+	* tkpathsea.mk: no more texmf.in, use texmf.cnf instead.
+
 2008-03-05  Karl Berry  <karl@tug.org>
 
 	* makevars.mk: pass sysconfdir, localstatedir, libexecdir.

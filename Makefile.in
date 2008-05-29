@@ -62,8 +62,7 @@ install install-exec install-data uninstall: all
 # only do this at make install, because the binaries won't be there with
 # just install-data, and fmtutil.cnf won't be there with just install-exec.
 	if test "$@" = install; then \
-	  echo "top-level make $@: running selfautofix and texlinks ..."; \
-	  $(srcdir)/selfautofix "$(bindir)" "$(texmf)/web2c"; \
+	  echo "top-level make $@: running texlinks ..."; \
 	  cd texk/tetex && $(MAKE) run-texlinks; \
 	fi
 

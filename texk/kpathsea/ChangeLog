@@ -1,3 +1,17 @@
+2008-05-29  Karl Berry  <karl@tug.org>
+
+	* db.c (DB_HASH_SIZE): increase to 75000+, the actual size of
+	current ls-R.
+
+	* cnf.c: doc fixes.
+
+	* Makefile.in (stamp-paths): change var substitutions to use /nonesuch.
+	(texmf.sed, texmf.cnf): remove targets, we will juse use texmf.cnf.
+	(install-data): texmf.cnf is in srcdir now.
+
+	* texmf.in: remove.
+	* texmf.cnf: new file, slave to Master/texmf/web2c/texmf.cnf.
+
 2008-05-28  Karl Berry  <karl@tug.org>
 
 	* mktexlsr: support --quiet/--silent.

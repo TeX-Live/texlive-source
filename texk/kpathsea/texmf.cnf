@@ -1,20 +1,11 @@
 % original texmf.cnf -- runtime path configuration file for kpathsea.
-% (If you change or delete `original' on the previous line, the
-% distribution won't install its version over yours.)
 % Public domain.
 %
 % What follows is a super-summary of what this .cnf file can
 % contain. Please read the Kpathsea manual for more information.
 %
-% texmf.cnf is generated from texmf.in, by replacing @var@ with the
-% value of the Make variable `var', via a sed file texmf.sed, generated
-% (once) by kpathsea/Makefile (itself generated from kpathsea/Makefile.in
-% by configure).
-%
 % Any identifier (sticking to A-Za-z_ for names is safest) can be assigned.
 % The `=' (and surrounding spaces) is optional.
-% No % or @ in texmf.in, for the sake of autogeneration.
-% (However, %'s and @'s can be edited into texmf.cnf or put in envvar values.)
 % $foo (or ${foo}) in a value expands to the envvar or cnf value of foo.
 %
 % Earlier entries (in the same or another file) override later ones, and
@@ -53,15 +44,15 @@
 
 % The tree containing the runtime files closely related to the specific
 % program version used:
-TEXMFMAIN = @texmf@
+TEXMFMAIN = $SELFAUTOPARENT/texmf
 
 % The main distribution tree:
-TEXMFDIST = @texmf@-dist
+TEXMFDIST = $SELFAUTOPARENT/texmf-dist
 
 % A place for local additions to a "standard" texmf tree.
 % This tree is not used for local configuration maintained by
 % texconfig, it uses TEXMFCONFIG below.
-TEXMFLOCAL = @texmf@-local
+TEXMFLOCAL = $SELFAUTOPARENT/../texmf-local
 
 % TEXMFSYSVAR, where texconfig-sys stores variable runtime data.
 % With teTeX-3.0 or later, this must be set.
@@ -69,7 +60,7 @@ TEXMFLOCAL = @texmf@-local
 %   TEXMFSYSVAR = $TEXMFMAIN
 % For using a separate tree:
 %   TEXMFSYSVAR = $SELFAUTOPARENT/texmf-var
-TEXMFSYSVAR = @texmf@-var
+TEXMFSYSVAR = $SELFAUTOPARENT/texmf-var
 
 % TEXMFSYSCONFIG, where texconfig-sys stores configuration data.
 % With teTeX-3.0 or later, this must be set.
@@ -77,7 +68,7 @@ TEXMFSYSVAR = @texmf@-var
 %   TEXMFSYSCONFIG = $TEXMFMAIN
 % For using a separate tree:
 %   TEXMFSYSCONFIG = $SELFAUTOPARENT/texmf-config
-TEXMFSYSCONFIG = @texmf@-config
+TEXMFSYSCONFIG = $SELFAUTOPARENT/texmf-config
 
 % User texmf trees are allowed as follows.
 % This used to be HOMETEXMF.
@@ -119,7 +110,7 @@ SYSTEXMF = $TEXMFSYSVAR;$TEXMFLOCAL;$TEXMFMAIN;$TEXMFDIST
 % Where generated fonts may be written.  This tree is used when the sources
 % were found in a system tree and either that tree wasn't writable, or the
 % varfonts feature was enabled in MT_FEATURES in mktex.cnf.
-VARTEXFONTS = @vartexfonts@
+VARTEXFONTS = $TEXMFVAR/fonts
 
 % Where to look for ls-R files.  There need not be an ls-R in the
 % directories in this path, but if there is one, Kpathsea will use it.
@@ -372,8 +363,8 @@ MPSUPPORT = .;$TEXMF/metapost/support
 % For xdvi to find mime.types and .mailcap, if they do not exist in
 % ~.  These are single directories, not paths.
 % (But the default mime.types, at least, may well suffice.)
-MIMELIBDIR = @prefix@/etc
-MAILCAPLIBDIR = @prefix@/etc
+MIMELIBDIR = $SELFAUTOPARENT/etc
+MAILCAPLIBDIR = $SELFAUTOPARENT/etc
 
 % Default settings for fontconfig library, used by Win32 versions of  
 % xetex/xdvipdfmx (note that fontconfig on Linux/Unix-like systems 
@@ -402,7 +393,7 @@ OTPINPUTS = .;$TEXMF/omega/otp//
 OCPINPUTS = .;$TEXMF/omega/ocp//
 
 % Some additional input variables for several programs.  If you add
-% a program that uses the 'other text files' or 'other binary files'
+% a program that uses the `other text files' or `other binary files'
 % search formats, you'll want to add their variables here as well.
 T4HTINPUTS   = .;$TEXMF/tex4ht//
 
@@ -433,12 +424,9 @@ RUBYINPUTS   = .;$TEXMF/scripts/{$progname,$engine,}/ruby//
 % The SELFAUTO* variables are set automatically from the location of
 % argv[0], in kpse_set_progname.
 % 
-% The TETEXDIR stuff isn't likely to be relevant unless you're using
-% teTeX, but it doesn't hurt.
+% For security reasons, it is better not to include . in this path.
 %
-% For security reasons, it is better not to have . part of the path.
-%
-TEXMFCNF = {$SELFAUTOLOC,$SELFAUTODIR,$SELFAUTOPARENT}{,{/share,}/texmf{-local,}/web2c};/.$TETEXDIR;$TEXMF/web2c;@web2c@
+TEXMFCNF = {$SELFAUTOLOC,$SELFAUTODIR,$SELFAUTOPARENT}{,{/share,}/texmf{-local,}/web2c}
 
 # kpathsea 3.5.3 and later sets these at runtime. To avoid empty
 # expansions from binaries linked against an earlier version of the
@@ -452,6 +440,7 @@ engine = unsetengine
 % If this is true, `tex a.b' will look first for a.b.tex (within each
 % path element), and then for a.b, i.e., we try standard extensions
 % first.  If this is false, we first look for a.b and then a.b.tex,
+% first.  If this is false, we first look for a.b and then a.b.tex,
 % i.e., we try the name as-is first.
 % 
 % Both names are always tried; the difference is the order in which they
@@ -464,7 +453,6 @@ engine = unsetengine
 % The default is true, because we already avoid adding the standard
 % extension(s) in most common cases.  E.g., babel.sty will only look for
 % babel.sty, not babel.sty.tex, regardless of this setting.
-% 
 try_std_extension_first = t
 
 % Enable system commands via \write18{...}?  Obviously insecure, despite

@@ -392,28 +392,6 @@ kdefault.lo: kdefault.c \
   $(kpathsea_srcdir)/c-pathch.h \
   $(kpathsea_srcdir)/c-ctype.h \
   $(kpathsea_srcdir)/default.h
-kpsecheck.lo: kpsecheck.c \
-  $(kpathsea_srcdir)/config.h $(kpathsea_dir)/c-auto.h \
-  $(kpathsea_srcdir)/c-std.h \
-  $(kpathsea_srcdir)/c-unistd.h \
-  $(kpathsea_srcdir)/systypes.h \
-  getopt.h \
-  $(kpathsea_srcdir)/c-memstr.h \
-  $(kpathsea_srcdir)/c-errno.h \
-  $(kpathsea_srcdir)/c-minmax.h \
-  $(kpathsea_srcdir)/c-limits.h \
-  $(kpathsea_srcdir)/c-proto.h \
-  $(kpathsea_srcdir)/debug.h \
-  $(kpathsea_srcdir)/types.h \
-  $(kpathsea_srcdir)/lib.h \
-  $(kpathsea_srcdir)/progname.h \
-  $(kpathsea_srcdir)/hash.h \
-  $(kpathsea_srcdir)/getopt.h \
-  $(kpathsea_srcdir)/c-pathch.h \
-  $(kpathsea_srcdir)/c-ctype.h \
-  $(kpathsea_srcdir)/proginit.h \
-  $(kpathsea_srcdir)/tex-file.h \
-  $(kpathsea_srcdir)/c-vararg.h 
 kpsestat.o: kpsestat.c \
   $(kpathsea_srcdir)/config.h $(kpathsea_dir)/c-auto.h \
   $(kpathsea_srcdir)/c-std.h \
@@ -453,6 +431,7 @@ kpsewhich.o: kpsewhich.c \
   $(kpathsea_srcdir)/pathsearch.h \
   $(kpathsea_srcdir)/str-llist.h \
   $(kpathsea_srcdir)/proginit.h \
+  $(kpathsea_srcdir)/str-list.h \
   $(kpathsea_srcdir)/tex-file.h \
   $(kpathsea_srcdir)/c-vararg.h \
   $(kpathsea_srcdir)/tex-glyph.h \
@@ -885,27 +864,10 @@ variable.lo: variable.c \
   $(kpathsea_srcdir)/c-ctype.h \
   $(kpathsea_srcdir)/cnf.h \
   $(kpathsea_srcdir)/fn.h \
+  $(kpathsea_srcdir)/tilde.h \
   $(kpathsea_srcdir)/variable.h
 version.lo: version.c c-auto.h \
   $(kpathsea_srcdir)/c-proto.h
-win32hash.lo: win32hash.c \
-  $(kpathsea_srcdir)/config.h $(kpathsea_dir)/c-auto.h \
-  $(kpathsea_srcdir)/c-std.h \
-  $(kpathsea_srcdir)/c-unistd.h \
-  $(kpathsea_srcdir)/systypes.h \
-  getopt.h \
-  $(kpathsea_srcdir)/c-memstr.h \
-  $(kpathsea_srcdir)/c-errno.h \
-  $(kpathsea_srcdir)/c-minmax.h \
-  $(kpathsea_srcdir)/c-limits.h \
-  $(kpathsea_srcdir)/c-proto.h \
-  $(kpathsea_srcdir)/debug.h \
-  $(kpathsea_srcdir)/types.h \
-  $(kpathsea_srcdir)/lib.h \
-  $(kpathsea_srcdir)/progname.h \
-  $(kpathsea_srcdir)/c-ctype.h \
-  $(kpathsea_srcdir)/hash.h \
-  $(kpathsea_srcdir)/str-list.h
 xbasename.lo: xbasename.c \
   $(kpathsea_srcdir)/config.h $(kpathsea_dir)/c-auto.h \
   $(kpathsea_srcdir)/c-std.h \
@@ -985,7 +947,37 @@ xfseek.lo: xfseek.c \
   $(kpathsea_srcdir)/types.h \
   $(kpathsea_srcdir)/lib.h \
   $(kpathsea_srcdir)/progname.h
+xfseeko.lo: xfseeko.c \
+  $(kpathsea_srcdir)/config.h $(kpathsea_dir)/c-auto.h \
+  $(kpathsea_srcdir)/c-std.h \
+  $(kpathsea_srcdir)/c-unistd.h \
+  $(kpathsea_srcdir)/systypes.h \
+  getopt.h \
+  $(kpathsea_srcdir)/c-memstr.h \
+  $(kpathsea_srcdir)/c-errno.h \
+  $(kpathsea_srcdir)/c-minmax.h \
+  $(kpathsea_srcdir)/c-limits.h \
+  $(kpathsea_srcdir)/c-proto.h \
+  $(kpathsea_srcdir)/debug.h \
+  $(kpathsea_srcdir)/types.h \
+  $(kpathsea_srcdir)/lib.h \
+  $(kpathsea_srcdir)/progname.h
 xftell.lo: xftell.c \
+  $(kpathsea_srcdir)/config.h $(kpathsea_dir)/c-auto.h \
+  $(kpathsea_srcdir)/c-std.h \
+  $(kpathsea_srcdir)/c-unistd.h \
+  $(kpathsea_srcdir)/systypes.h \
+  getopt.h \
+  $(kpathsea_srcdir)/c-memstr.h \
+  $(kpathsea_srcdir)/c-errno.h \
+  $(kpathsea_srcdir)/c-minmax.h \
+  $(kpathsea_srcdir)/c-limits.h \
+  $(kpathsea_srcdir)/c-proto.h \
+  $(kpathsea_srcdir)/debug.h \
+  $(kpathsea_srcdir)/types.h \
+  $(kpathsea_srcdir)/lib.h \
+  $(kpathsea_srcdir)/progname.h
+xftello.lo: xftello.c \
   $(kpathsea_srcdir)/config.h $(kpathsea_dir)/c-auto.h \
   $(kpathsea_srcdir)/c-std.h \
   $(kpathsea_srcdir)/c-unistd.h \

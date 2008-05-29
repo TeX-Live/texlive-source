@@ -1,6 +1,12 @@
+2008-05-29  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (install): do not call selfautofix, we now keep
+	kpathsea/texmf.cnf as a slave copy of Master/texmf/web2c.
+	* selfautofix: remove file.
+
 2008-05-28  Karl Berry  <karl@tug.org>
 
-	* Makefile.in (world): invoke new run-texlinks target
+	* Makefile.in (install): invoke new run-texlinks target
 	in texk/tetex.
 
 	* Makefile.in (install-extra): do not go to omfonts, the omega.mk

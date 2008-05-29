@@ -222,19 +222,22 @@ kpse_cnf_get P1C(const_string, name)
 
   /* When we expand the compile-time value for DEFAULT_TEXMFCNF,
      we end up needing the value for TETEXDIR and other variables,
-     so kpse_var_expand ends up calling us again.  No good.  */
+     so kpse_var_expand ends up calling us again.  No good.  Except this
+     code is not sufficient, somehow the ls-R path needs to be
+     computed when initializing the cnf path.  Better to ensure that the
+     compile-time path does not contain variable references.  */
   if (doing_cnf_init)
     return NULL;
     
   if (cnf_hash.size == 0) {
+    /* Read configuration files and initialize databases.  */
     doing_cnf_init = true;
     read_all_cnf ();
     doing_cnf_init = false;
     
-    /* Here's a pleasant kludge: Since `kpse_init_dbs' recursively calls
-       us, we must call it from outside a `kpse_path_element' loop
-       (namely, the one in `read_all_cnf' above): `kpse_path_element' is
-       not reentrant.  */
+    /* Since `kpse_init_db' recursively calls us, we must call it from
+       outside a `kpse_path_element' loop (namely, the one in
+       `read_all_cnf' above): `kpse_path_element' is not reentrant.  */
     kpse_init_db ();
   }
   
