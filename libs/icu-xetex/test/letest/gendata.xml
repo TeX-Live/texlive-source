@@ -93,13 +93,23 @@
     <test-font name="BMIN00M.TTF"/>
     <test-text>中華人民共和國 臺灣</test-text>
   </test-case>
+
+  <test-case id="Sinhala Al-Lakuna Test" script="sinh">
+    <test-font name="lklug.hj.ttf"/>
+    <test-text>ක්‍රෙ ක්‍යෙ ක්‍ෂෙ ක්‍ෂ්‍යෙ ක්ෂෙ කර්‍මෙ ස්ට්‍රේ ස‍්සෙ ස්ස</test-text>
+  </test-case>
 </layout-tests>
   <test-case id="Not Language Specific" script="latn">
     <test-font name="fp9r8a.otf"/>
     <test-text>Ţhiş iş a ţeşţ.</test-text>
   </test-case>
 
-  <test-case id="Romaanian Language Specific" script="latn" lang="ROM">
+  <test-case id="Romanian Language Specific" script="latn" lang="ROM">
     <test-font name="fp9r8a.otf"/>
     <test-text>Ţhiş iş a ţeşţ.</test-text>
+  </test-case>
+
+  <test-case id="Malayalam Samvruthokaram Test" script="mlym">
+    <test-font name="lohit_ml.ttf"/>
+    <test-text>ണു്</test-text>
   </test-case>

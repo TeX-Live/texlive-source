@@ -96,8 +96,10 @@ OpenTypeLayoutEngine::OpenTypeLayoutEngine(const LEFontInstance *fontInstance, l
     setScriptAndLanguageTags();
 
     fGDEFTable = (const GlyphDefinitionTableHeader *) getFontTable(gdefTableTag);
-    
-    if (gposTable != NULL && gposTable->coversScriptAndLanguage(fScriptTag, fLangSysTag)) {
+   
+// JK patch, 2008-05-30 - see Sinhala bug report and LKLUG font
+//    if (gposTable != NULL && gposTable->coversScriptAndLanguage(fScriptTag, fLangSysTag)) {
+    if (gposTable != NULL && gposTable->coversScript(fScriptTag)) {
         fGPOSTable = gposTable;
     }
 }
