@@ -489,10 +489,10 @@ int synctex_edit(int argc, char *argv[]) {
 	page = strtol(start,&end,10);
 	if(end>start && strlen(end)>1 && *end==':') {
 		start = end+1;
-		x = strtof(start,&end);
+		x = strtod(start,&end);
 		if(end>start && strlen(end)>1 && *end==':') {
 			start = end+1;
-			y = strtof(start,&end);
+			y = strtod(start,&end);
 			if(end>start && strlen(end)>1 && *end==':') {
 				output = ++end;
 				goto scan_execute;
