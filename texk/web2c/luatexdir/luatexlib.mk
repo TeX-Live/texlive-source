@@ -78,14 +78,14 @@ ZZIPLIBDEP = $(ZZIPLIBDIR)/zzip/libzzip.a
 
 $(ZZIPLIBDEP): $(ZZIPLIBSRCDIR)
 	mkdir -p $(ZZIPLIBDIR)/zzip && cd $(ZZIPLIBDIR)/zzip && \
-	cp ../$(ZZIPLIBSRCDIR)/zzip/Makefile . && $(MAKE) $(common_makeargs)
+	cp $(ZZIPLIBSRCDIR)/zzip/Makefile . && $(MAKE) $(common_makeargs)
 
 # luazip
 
 LUAZIPDIR=../../libs/luazip
 LUAZIPSRCDIR=$(srcdir)/$(LUAZIPDIR)
 LUAZIPDEP=$(LUAZIPDIR)/src/luazip.o
-LUAZIPINC=-I../../lua51 -I../$(ZZIPLIBSRCDIR) -I../$(ZZIPLIBDIR)
+LUAZIPINC=-I../../lua51 -I$(ZZIPLIBSRCDIR) -I../$(ZZIPLIBDIR)
 
 $(LUAZIPDEP): $(LUAZIPDIR)/src/luazip.c
 	mkdir -p $(LUAZIPDIR) && cd $(LUAZIPDIR) && cp -R $(LUAZIPSRCDIR)/* . && \
