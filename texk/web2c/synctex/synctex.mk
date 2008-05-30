@@ -41,7 +41,7 @@ Makefile: $(synctex_dir)/synctex.mk
 
 # for all the engines, this trick allows to enable or disable SyncTeX support from here.
 # One of the synctex functions is called before the main_control routine
-# this is why we must include synctex.h header
+# this is why we must include synctex-common.h header
 synctex_common_texd = \
 	echo "Enabling SyncTeX Support.";\
 	echo "s|\#include \"texmfmp.h\"|&\\"> synctex_sed_command.txt;\
