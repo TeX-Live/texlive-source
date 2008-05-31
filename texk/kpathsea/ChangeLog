@@ -1,5 +1,8 @@
 2008-05-31  Karl Berry  <karl@tug.org>
 
+	* elt-dirs.c (kpse_normalize_path): only output debug line if
+	value is not 1.  Reformat.
+
 	* tex-file.c (INIT_FORMAT): construct human-formatted list of
 	envvars that are considered for each format, as requested by
 	Nelson Beebe and others over the years.
