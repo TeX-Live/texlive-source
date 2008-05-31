@@ -69,9 +69,7 @@ socketlibs = @socketlibs@
 
 common_makeargs = $(MFLAGS) CC='$(CC)' CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS)' $(XMAKEARGS)
 window_makeargs = x_cppflags='$(x_cppflags)' $(common_makeargs)
-install_makeargs = INSTALL='$(INSTALL)' INSTALL_DATA='$(INSTALL_DATA)' \
-  INSTALL_PROGRAM='$(INSTALL_PROGRAM)' \
-  $(makevars) $(common_makeargs)  
+install_makeargs = $(makevars) $(common_makeargs)
 
 proglib = lib/lib.a
 windowlib = window/window.a

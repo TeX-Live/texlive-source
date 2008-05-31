@@ -15,8 +15,7 @@ kpse_include make/makevars.mk
 # if we are to propagate changes at the top level.
 # XMAKEARGS is for the user to override.
 makeargs = $(MFLAGS) CC='$(CC)' CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS)' $(makevars) $(XMAKEARGS)
-installargs = INSTALL_DATA='$(INSTALL_DATA)' \
-  INSTALL_PROGRAM='$(INSTALL_PROGRAM)' $(makeargs)
+installargs = $(makeargs)
 
 # Not everything from common.mk is relevant to this top-level
 # Makefile, but most of it is, and it doesn't seem worth separating the
