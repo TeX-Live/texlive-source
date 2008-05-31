@@ -839,7 +839,8 @@ $(web2cdir)::
 # add to this target via a dependency-only rule, to install their
 # respective engines.
 install-programs: $(programs) $(basic_engines) $(bindir)
-	for p in $(programs); do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
+	for p in $(programs) $(basic_engines); do \
+	  $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
 
 # We do not attempt to install any of the per-format symlinks, leaving
 # that to a separate run of texlinks.
