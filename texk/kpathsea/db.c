@@ -32,7 +32,10 @@
 
 static hash_table_type db; /* The hash table for all the ls-R's.  */
 #ifndef DB_HASH_SIZE
-#define DB_HASH_SIZE 75079 /* Based on the size of 2008 texmf-dist/ls-R.  */
+/* Based on the size of 2008 texmf-dist/ls-R, about 62000 entries.  But
+   we don't want to make it too big, since texmf/ls-R only has about
+   1300 entries.  We should dynamically adapt the size.  */
+#define DB_HASH_SIZE 32003
 #endif
 #ifndef DB_NAME
 #define DB_NAME "ls-R"
