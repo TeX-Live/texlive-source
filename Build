@@ -15,14 +15,14 @@ LANG=C
 # cd to our source directory.
 mydir=`dirname $0`
 cd $mydir || exit 1
-mydir=`pwd`
 
 : ${TL_WORKDIR=Work}
 
 # allow override of install destination.
 if test -z "$TL_INSTALL_DEST"; then
+  H=`pwd`
   test -d inst || mkdir -p inst/texmf  # avoid configure warnings
-  TL_INSTALL_DEST=$mydir/inst
+  TL_INSTALL_DEST=$H/inst
 fi
 
 # allow override of make program.
@@ -46,7 +46,7 @@ test -d $TL_WORKDIR || mkdir $TL_WORKDIR
 cd $TL_WORKDIR || exit 1
 
 # allow override of configure location, just in case.
-: ${TL_CONFIGURE=$mydir/configure}
+: ${TL_CONFIGURE=../configure}
 
 # allow override of xdvi toolkit, default to standard xaw.
 : ${TL_CONF_XDVI_TOOLKIT=--with-xdvi-x-toolkit=xaw}
