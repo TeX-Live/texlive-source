@@ -1,5 +1,13 @@
 2008-05-31  Karl Berry  <karl@tug.org>
 
+	* tex-file.c (INIT_FORMAT): construct human-formatted list of
+	envvars that are considered for each format, as requested by
+	Nelson Beebe and others over the years.
+	(init_format) [KPSE_DEBUG]: include it in the debugging output.
+	(concatn_with_spaces): the function to make the list.
+
+	* tex-make.c: concatn.h unused, removed.
+
 	* db.c (DB_HASH_SIZE): 32003 seems a better compromise between the
 	tiny texmf (~1300 entries) and huge texmf-dist (~62000 entries).
 

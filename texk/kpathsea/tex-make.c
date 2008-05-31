@@ -20,7 +20,6 @@
 
 #include <kpathsea/c-fopen.h>
 #include <kpathsea/c-pathch.h>
-#include <kpathsea/concatn.h>
 #include <kpathsea/db.h>
 #include <kpathsea/fn.h>
 #include <kpathsea/magstep.h>

@@ -325,7 +325,8 @@ kpse_set_suffixes PVAR2C(kpse_file_format_type, format,
    list. Also initialize the fields not needed in setting the path.  */
 #define INIT_FORMAT(text, default_path, envs) \
   FMT_INFO.type = text; \
-  init_path (&FMT_INFO, default_path, envs, NULL)
+  init_path (&FMT_INFO, default_path, envs, NULL); \
+  envvar_list = concatn_with_spaces (envs, NULL);
 
 
 /* A few file types allow for runtime generation by an external program.
@@ -393,11 +394,39 @@ remove_dbonly P1C(const_string, path)
   return(ret);
 }
 
+/* Same as concatn but puts a space between each element.  All this just
+   for nice debugging output.  But it's useful.  */
+
+static string
+concatn_with_spaces PVAR1C(const_string, str1,  ap)
+{
+  string arg;
+  string ret;
+
+  if (!str1)
+    return NULL;
+  
+  ret = xstrdup (str1);
+  
+  while ((arg = va_arg (ap, string)) != NULL)
+    {
+      string temp = concat3 (ret, " ", arg);
+      free (ret);
+      ret = temp;
+    }
+  va_end (ap);
+  
+  return ret;
+}}
+
+
 /* Initialize everything for FORMAT.  */
 
 const_string
 kpse_init_format P1C(kpse_file_format_type, format)
 {
+  string envvar_list;  /* only for debug output, set in INIT_FORMAT */
+
   /* If we get called twice, don't redo all the work.  */
   if (FMT_INFO.path)
     return FMT_INFO.path;
@@ -690,6 +719,7 @@ kpse_init_format P1C(kpse_file_format_type, format)
       DEBUGF1 ("  application config file path = %s\n", MAYBE (client_path));
       DEBUGF1 ("  texmf.cnf path = %s\n", MAYBE (cnf_path));
       DEBUGF1 ("  compile-time path = %s\n", MAYBE (default_path));
+      DEBUGF1 ("  environment variables = %s\n", envvar_list);
       DEBUGF  ("  default suffixes =");
       if (FMT_INFO.suffix) {
         const_string *ext;
