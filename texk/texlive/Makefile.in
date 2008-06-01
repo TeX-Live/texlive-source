@@ -19,19 +19,20 @@ LINKED_SCRIPTS = \
   texmf/scripts/ps2eps/ps2eps.pl \
   texmf/scripts/tetex/e2pall.pl \
   texmf/scripts/tetex/texdoctk.pl \
-  texmf/scripts/texlive/tlmgr.pl \
-  texmf/scripts/texlive/texdoc.tlu \
   texmf/scripts/texlive/getnonfreefonts.pl \
+  texmf/scripts/texlive/rungs.tlu \
+  texmf/scripts/texlive/texdoc.tlu \
+  texmf/scripts/texlive/tlmgr.pl \
   texmf-dist/scripts/dviasm/dviasm.py \
   texmf-dist/scripts/glossaries/makeglossaries \
   texmf-dist/scripts/mkjobtexmf/mkjobtexmf.pl \
-  texmf-dist/scripts/perltex/perltex.pl \
   texmf-dist/scripts/pdfcrop/pdfcrop.pl \
+  texmf-dist/scripts/perltex/perltex.pl \
+  texmf-dist/scripts/ppower4/pdfthumb.texlua \
+  texmf-dist/scripts/ppower4/ppower4.texlua \
   texmf-dist/scripts/pst-pdf/ps4pdf \
   texmf-dist/scripts/texcount/TeXcount.pl \
   texmf-dist/scripts/thumbpdf/thumbpdf.pl \
-  texmf-dist/scripts/ppower4/ppower4.texlua \
-  texmf-dist/scripts/ppower4/pdfthumb.texlua \
   texmf-dist/scripts/vpe/vpe.pl
 
 manpgs = getnonfreefonts getnonfreefonts-sys

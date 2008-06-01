@@ -1,3 +1,7 @@
+2008-06-01  Karl Berry  <karl@tug.org>
+
+	* luatexdir/luatex.mk (install-exec): install texlua symlink.
+
 2008-05-31  Karl Berry  <karl@tug.org>
 
 	* Makefile.in (install-programs): stupidly forgot to install
