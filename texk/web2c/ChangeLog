@@ -1,3 +1,8 @@
+2008-06-03  Karl Berry  <karl@tug.org>
+
+	* tex.ch (sup_param_size): increase to 32767.
+	ntg-pdftex mail from martin, 2 Jun 2008 14:15:42.
+
 2008-06-01  Karl Berry  <karl@tug.org>
 
 	* luatexdir/luatex.mk (install-exec): install texlua symlink.
