@@ -124,6 +124,7 @@ install-programs: @LTEX@ install-luatex-exec
 install-luatex-exec: $(luatex) $(bindir)
 	for p in luatex; do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
 	cd $(DESTDIR)$(bindir) && rm -f texlua && $(LN) luatex texlua
+	cd $(DESTDIR)$(bindir) && rm -f texluac && $(LN) luatex texluac
 
 # 
 # luatex binaries archive
