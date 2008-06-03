@@ -870,6 +870,7 @@ with_gd_libdir
 with_gd_include
 with_icu_libdir
 with_icu_include
+with_graphite
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1595,7 +1596,7 @@ Optional Packages:
   --without-aleph            don't compile and install Aleph
   --without-pdftex           don't compile and install pdfTeX
   --without-pdfetex          don't compile and install pdfeTeX
-  --without-luatex           don't compile and install pdfTeX
+  --without-luatex           don't compile and install luaTeX
   --without-xetex            don't compile and install XeTeX
   --with-cxx-runtime-hack    link C++ runtime statically
   --with-editor=CMD       invoke CMD from the e option vi +%d %s
@@ -1656,6 +1657,7 @@ Optional Packages:
                           Specify directory where the ICU library resides.
   --with-icu-include=DIR
                           Specify the ICU header files location.
+  --without-graphite      build xetex without graphite support
 
 Some influential environment variables:
   CC          C compiler command
@@ -6781,6 +6783,15 @@ fi
 
 # we don't currently support use of an installed teckit lib
 
+# we don't currently support use of an installed graphite lib
+
+
+# Check whether --with-graphite was given.
+if test "${with_graphite+set}" = set; then
+  withval=$with_graphite;
+fi
+
+
 
 NCURSESDIR=libs/ncurses
 LIBT1DIR=libs/t1lib
@@ -6880,8 +6891,9 @@ test "$with_xetex" != no  && : ${needs_icu=yes}
 : ${needs_icu=no}
 export needs_icu
 
-# we need graphite for xetex
+# we need graphite for xetex, unless specifically disabled
 test ! -d $srcdir/$GRAPHITEDIR && : ${needs_graphite=no}
+test "$with_graphite" = no     && : ${needs_graphite=no}
 test "$with_xetex"   != no     && : ${needs_graphite=yes}
 : ${needs_graphite=no}
 export needs_graphite

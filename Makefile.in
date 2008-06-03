@@ -43,6 +43,7 @@ FREETYPE2DIR=libs/freetype2
 ICUDIR=libs/icu-xetex
 TECKITDIR=libs/teckit
 LIBOBSDCOMPATDIR=libs/obsdcompat
+GRAPHITEDIR=libs/graphite-engine
 
 # Subdirectories that have makefiles
 ESUBDIRS = @ESUBDIRS@ texk
@@ -139,6 +140,8 @@ $(TECKITDIR)/lib/.libs/libTECkit.a:
 	cd $(TECKITDIR); $(MAKE)
 $(LIBOBSDCOMPATDIR)/libopenbsd-compat.a:
 	cd $(LIBOBSDCOMPATDIR); $(MAKE) libopenbsd-compat.a
+$(GRAPHITEDIR)/src/.libs/libgraphite.a:
+	cd $(GRAPHITEDIR); $(MAKE)
 
 # Prevent GNU make v3 from overflowing arg limit on SysV.
 .NOEXPORT:

@@ -352,7 +352,15 @@ fontconfig is installed.
   fi
   AC_SUBST(XETEX_MACOSX)
   AC_SUBST(XETEX_GENERIC)
+
+  if test "x$with_graphite" = xno; then
+    XETEX_GRAPHITE='#! '
+  else
+    XETEX_GRAPHITE=
+  fi
+  AC_SUBST(XETEX_GRAPHITE)
 fi
+
 
 # For e-TeX, three choices: no, yes, and tex.  In the latter case, we
 # have to comment out the normal TeX build (TEX), as well as enable the

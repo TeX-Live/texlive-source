@@ -41,7 +41,9 @@ authorization from SIL International.
 
 #include "XeTeXswap.h"
 
+#ifdef XETEX_GRAPHITE
 #include "XeTeXGrLayout.h"
+#endif
 
 #include "Features.h"
 #include "ScriptAndLanguage.h"
@@ -67,9 +69,11 @@ struct XeTeXLayoutEngine_rec
 	float			extend;
 	float			slant;
 	float			embolden;
+#ifdef XETEX_GRAPHITE
 	gr::Segment*		grSegment;
 	XeTeXGrFont*		grFont;
 	XeTeXGrTextSource*	grSource;
+#endif
 };
 
 /*******************************************************************/
@@ -331,6 +335,7 @@ UInt32 getIndFeature(XeTeXFont font, UInt32 script, UInt32 language, UInt32 inde
 	return 0;
 }
 
+#ifdef XETEX_GRAPHITE
 UInt32 countGraphiteFeatures(XeTeXLayoutEngine engine)
 {
 	std::pair<gr::FeatureIterator, gr::FeatureIterator>	fi = engine->grFont->getFeatures();
@@ -429,10 +434,13 @@ void getGraphiteFeatureSettingLabel(XeTeXLayoutEngine engine, UInt32 feature, UI
 		}
 	}
 }
+#endif /* XETEX_GRAPHITE */
 
 long findGraphiteFeatureNamed(XeTeXLayoutEngine engine, const char* name, int namelength)
 {
 	long		rval = -1;
+
+#ifdef XETEX_GRAPHITE
 	UErrorCode	status = (UErrorCode)0;
 
 	std::pair<gr::FeatureIterator,gr::FeatureIterator>	features = engine->grFont->getFeatures();
@@ -457,6 +465,7 @@ long findGraphiteFeatureNamed(XeTeXLayoutEngine engine, const char* name, int na
 		}
 		++features.first;
 	}
+#endif
 
 	return rval;
 }
@@ -464,6 +473,8 @@ long findGraphiteFeatureNamed(XeTeXLayoutEngine engine, const char* name, int na
 long findGraphiteFeatureSettingNamed(XeTeXLayoutEngine engine, UInt32 feature, const char* name, int namelength)
 {
 	long		rval = -1;
+
+#ifdef XETEX_GRAPHITE
 	UErrorCode	status = (UErrorCode)0;
 
 	std::pair<gr::FeatureIterator,gr::FeatureIterator>	features = engine->grFont->getFeatures();
@@ -495,9 +506,9 @@ long findGraphiteFeatureSettingNamed(XeTeXLayoutEngine engine, UInt32 feature, c
 			break;
 		}
 	}
+#endif
 
 	return rval;
-
 }
 
 float getGlyphWidth(XeTeXFont font, UInt32 gid)
@@ -550,9 +561,11 @@ XeTeXLayoutEngine createLayoutEngine(PlatformFontRef fontRef, XeTeXFont font, UI
 	result->slant = slant;
 	result->embolden = embolden;
 
+#ifdef XETEX_GRAPHITE
 	result->grSegment = NULL;
 	result->grSource = NULL;
 	result->grFont = NULL;
+#endif
 
 	result->layoutEngine = XeTeXOTLayoutEngine::LayoutEngineFactory((XeTeXFontInst*)font, scriptTag, languageTag,
 						(LETag*)addFeatures, (le_int32*)addParams, (LETag*)removeFeatures, status);
@@ -568,9 +581,11 @@ void deleteLayoutEngine(XeTeXLayoutEngine engine)
 {
 	delete engine->layoutEngine;
 	delete engine->font;
+#ifdef XETEX_GRAPHITE
 	delete engine->grSegment;
 	delete engine->grSource;
 	delete engine->grFont;
+#endif
 }
 
 SInt32 layoutChars(XeTeXLayoutEngine engine, UInt16 chars[], SInt32 offset, SInt32 count, SInt32 max,
@@ -887,6 +902,8 @@ GetFontCharRange_AAT(ATSUStyle style, int reqFirst)
 }
 #endif
 
+#ifdef XETEX_GRAPHITE
+
 /* Graphite interface */
 
 gr::LayoutEnvironment	layoutEnv;
@@ -994,9 +1011,12 @@ static XeTeXGrTextSource*	lbSource = NULL;
 static gr::Segment*			lbSegment = NULL;
 static XeTeXLayoutEngine	lbEngine = NULL;
 
+#endif /* XETEX_GRAPHITE */
+
 void
 initGraphiteBreaking(XeTeXLayoutEngine engine, const UniChar* txtPtr, int txtLen)
 {
+#ifdef XETEX_GRAPHITE
 	if (lbSource == NULL)
 		lbSource = new XeTeXGrTextSource(0);
 
@@ -1023,11 +1043,13 @@ initGraphiteBreaking(XeTeXLayoutEngine engine, const UniChar* txtPtr, int txtLen
 	catch (...) {
 		fprintf(stderr, "*** initGraphiteBreaking: segment creation failed\n");
 	}
+#endif
 }
 
 int
 findNextGraphiteBreak(int iOffset, int iBrkVal)
 {
+#ifdef XETEX_GRAPHITE
 	if (lbSegment == NULL)
 		return -1;
 	if (iOffset < lbSource->getLength()) {
@@ -1044,18 +1066,22 @@ findNextGraphiteBreak(int iOffset, int iBrkVal)
 		return lbSource->getLength();
 	}
 	else
+#endif
 		return -1;
-}
-
-
-int usingOpenType(XeTeXLayoutEngine engine)
-{
-	return engine->layoutEngine != NULL;
 }
 
 int usingGraphite(XeTeXLayoutEngine engine)
 {
+#ifdef XETEX_GRAPHITE
 	return engine->grFont != NULL;
+#else
+	return 0;
+#endif
+}
+
+int usingOpenType(XeTeXLayoutEngine engine)
+{
+	return engine->layoutEngine != NULL;
 }
 
 #define kMATHTableTag	0x4D415448 /* 'MATH' */

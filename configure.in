@@ -103,6 +103,7 @@ sinclude(libs/freetype2/withenable.ac)
 sinclude(libs/gd/withenable.ac)
 sinclude(libs/icu-xetex/withenable.ac)
 sinclude(libs/teckit/withenable.ac)
+sinclude(libs/graphite-engine/withenable.ac)
 
 NCURSESDIR=libs/ncurses
 LIBT1DIR=libs/t1lib
@@ -202,8 +203,9 @@ test "$with_xetex" != no  && : ${needs_icu=yes}
 : ${needs_icu=no}
 export needs_icu
 
-# we need graphite for xetex
+# we need graphite for xetex, unless specifically disabled
 test ! -d $srcdir/$GRAPHITEDIR && : ${needs_graphite=no}
+test "$with_graphite" = no     && : ${needs_graphite=no}
 test "$with_xetex"   != no     && : ${needs_graphite=yes}
 : ${needs_graphite=no}
 export needs_graphite

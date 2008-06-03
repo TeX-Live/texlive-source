@@ -1,1 +1,4 @@
 # we don't currently support use of an installed graphite lib
+
+AC_ARG_WITH([graphite],
+	[  --without-graphite      build xetex without graphite support])

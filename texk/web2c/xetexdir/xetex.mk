@@ -37,6 +37,18 @@ xetex = @XETEX@ xetex
 
 @XETEX_GENERIC@ EXTRADEPS = @LIBXPDFDEP@ @LIBPNGDEP@
 
+### is Graphite support included?
+
+@XETEX_GRAPHITE@ xetex_graphite_layout_o = XeTeXGrLayout.o
+@XETEX_GRAPHITE@ XETEX_GRAPHITE = -DXETEX_GRAPHITE
+
+@XETEX_GRAPHITE@ GRAPHITEDIR = ../../libs/graphite-engine
+@XETEX_GRAPHITE@ GRAPHITESRCDIR = $(srcdir)/$(GRAPHITEDIR)
+
+@XETEX_GRAPHITE@ GRAPHITEFLAGS = @GRAPHITECPPFLAGS@
+@XETEX_GRAPHITE@ LDGRAPHITE = @LDGRAPHITE@
+@XETEX_GRAPHITE@ GRAPHITEDEP = @GRAPHITEDEP@
+
 ### end of platform-specific setup
 
 LDLIBXPDF=@LDLIBXPDF@
@@ -84,13 +96,6 @@ ZLIBSRCDIR = $(srcdir)/$(ZLIBDIR)
 
 FONTCONFIGCPPFLAGS = @FONTCONFIGCPPFLAGS@
 FONTCONFIGLDFLAGS  = @FONTCONFIGLDFLAGS@
-
-GRAPHITEDIR = ../../libs/graphite-engine
-GRAPHITESRCDIR = $(srcdir)/$(GRAPHITEDIR)
-
-GRAPHITEFLAGS = @GRAPHITECPPFLAGS@
-LDGRAPHITE = @LDGRAPHITE@
-GRAPHITEDEP = @GRAPHITEDEP@
 
 xetexlibs = $(LDICU) $(LDTECKIT) $(LDFREETYPE2) $(LDGRAPHITE) $(LDZLIB)
 
@@ -174,11 +179,11 @@ xetex_ot_layout_o = \
 		XeTeXLayoutInterface.o XeTeXOTLayoutEngine.o \
 		XeTeXFontInst.o cmaps.o FontTableCache.o \
 		XeTeXOTMath.o \
-		XeTeXGrLayout.o \
+		$(xetex_graphite_layout_o) \
 		$(xetex_platform_layout_o) 
 
 XeTeXLayoutInterface.o: $(srcdir)/xetexdir/XeTeXLayoutInterface.cpp $(XeTeXFontHdrs)
-	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(GRAPHITEFLAGS) $(FONTCONFIGCPPFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
+	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(GRAPHITEFLAGS) $(FONTCONFIGCPPFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) $(XETEX_GRAPHITE) -c $< -o $@
 XeTeXOTLayoutEngine.o: $(srcdir)/xetexdir/XeTeXOTLayoutEngine.cpp $(XeTeXFontHdrs)
 	$(CXX) $(ICUCFLAGS) $(FTFLAGS) $(FONTCONFIGCPPFLAGS) $(ALL_CXXFLAGS) $(XETEX_DEFINES) -c $< -o $@
 
@@ -211,7 +216,7 @@ XeTeXGrLayout.o: $(srcdir)/xetexdir/XeTeXGrLayout.cpp $(srcdir)/xetexdir/XeTeXGr
 
 # special rules for files that need the TECkit headers as well
 XeTeX_ext.o: $(srcdir)/xetexdir/XeTeX_ext.c xetexd.h
-	$(compile) $(ICUCFLAGS) $(FTFLAGS) $(TECKITFLAGS) $(LIBPNGCPPFLAGS) $(LIBXPDFCPPFLAGS) $(ZLIBCPPFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
+	$(compile) $(ICUCFLAGS) $(FTFLAGS) $(TECKITFLAGS) $(LIBPNGCPPFLAGS) $(LIBXPDFCPPFLAGS) $(ZLIBCPPFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) $(XETEX_GRAPHITE) -c $< -o $@
 XeTeX_mac.o: $(srcdir)/xetexdir/XeTeX_mac.c xetexd.h
 	$(compile) $(ICUCFLAGS) $(TECKITFLAGS) $(ALL_CFLAGS) $(XETEX_DEFINES) -c $< -o $@
 

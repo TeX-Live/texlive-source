@@ -754,6 +754,7 @@ FONTCONFIGLDFLAGS
 LDFONTCONFIG
 XETEX_MACOSX
 XETEX_GENERIC
+XETEX_GRAPHITE
 ETEX
 XMKMF
 X_CFLAGS
@@ -825,6 +826,7 @@ with_freetype2_libdir
 with_freetype2_include
 with_icu_libdir
 with_icu_include
+with_graphite
 with_fontconfig
 with_x
 '
@@ -1528,6 +1530,7 @@ Optional Packages:
                           Specify directory where the ICU library resides.
   --with-icu-include=DIR
                           Specify the ICU header files location.
+  --without-graphite      build xetex without graphite support
   --with-fontconfig=DIR   Specify dir prefix where fontconfig is installed
                            (e.g., /usr/X11R6).
   --with-fontconfig=DIR   use fontconfig include/library files from DIR
@@ -7227,6 +7230,13 @@ fi
 
 # we don't currently support use of an installed graphite lib
 
+
+# Check whether --with-graphite was given.
+if test "${with_graphite+set}" = set; then
+  withval=$with_graphite;
+fi
+
+
 if test "$needs_graphite" = no; then
   GRAPHITECPPFLAGS=
   LDGRAPHITE=
@@ -9100,7 +9110,15 @@ fontconfig is installed.
   fi
 
 
+
+  if test "x$with_graphite" = xno; then
+    XETEX_GRAPHITE='#! '
+  else
+    XETEX_GRAPHITE=
+  fi
+
 fi
+
 
 # For e-TeX, three choices: no, yes, and tex.  In the latter case, we
 # have to comment out the normal TeX build (TEX), as well as enable the

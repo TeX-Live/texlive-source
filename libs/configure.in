@@ -69,7 +69,7 @@ fi
 if test "x$needs_teckit" != xno; then
   AC_CONFIG_SUBDIRS([teckit])
 fi
-if test "x$needs_graphite_engine" != xno; then
+if test "x$needs_graphite" != xno; then
   AC_CONFIG_SUBDIRS([graphite-engine])
 fi
 if test "x$needs_obsdcompat" != xno; then
