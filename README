@@ -121,6 +121,6 @@ GNU Make 3.81
       ulimit -s 16384
     did suffice for me
   - compiling of texk/web2c/pdftexdir/writezip.c is broken and triggers a 
-    compiler error with the above gcc. Removing the -O2 for this file
-    did work out
+    compiler error with the above gcc. Disabling optimization -O2 using
+    Build --debug ... resolved this problem.
 
