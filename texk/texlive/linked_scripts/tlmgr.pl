@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 6381 2008-01-23 17:50:54Z preining $
+# $Id: tlmgr.pl 8478 2008-06-02 12:45:52Z preining $
 #
 # Copyright 2008 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
@@ -9,6 +9,10 @@
 # - ordering or collections removal (see below for details)
 # - (?) removal does not remove created format files from TEXMFSYSVAR
 # - other features: dependency check?, ...?
+
+my $svnrev = '$Revision: 8478 $';
+$svnrev =~ m/: ([0-9]+) /;
+my $tlmgrrevision = $1;
 
 my $Master;
 
@@ -47,9 +51,11 @@ my $location;
 # option handling
 my $opt_location;
 my $opt_help = 0;
+my $opt_version = 0;
 my $opt_netarchive;
 my $opt_diskarchive;
 my $opt_gui = 0;
+my $opt_gui_lang;
 
 TeXLive::TLUtils::process_logging_options();
 
@@ -57,9 +63,20 @@ GetOptions("location=s" => \$opt_location,
            "netarchive=s" => \$opt_netarchive,
            "diskarchive=s" => \$opt_diskarchive,
            "gui" => \$opt_gui,
+           "gui-lang=s" => \$opt_gui_lang,
+           "version" => \$opt_version,
            "h|help|?" => \$opt_help) or pod2usage(2);
 
 my $action = shift;
+
+if (!defined($action) && $opt_gui) {
+  $action = "gui";
+}
+
+if ($opt_version) {
+  print "tlmgr revision $tlmgrrevision\n";
+  exit(0);
+}
 
 if (!defined($action) && !$opt_help) {
   print "missing action\ntry 'tlmgr help' for more information.\n";
@@ -157,7 +174,7 @@ if (defined($ret{'format'})) {
   # system("texconfig-sys", "generate", "fmtutil");
   # running fmtutil-sys only in case that at installation time the
   # option for building formats was selected
-  if ($localtlpdb->option_formats) {
+  if ($localtlpdb->option_create_formats) {
     print "running fmtutil-sys --missing\n";
     system("fmtutil-sys", "--missing");
   }
@@ -575,10 +592,12 @@ sub action_update {
   }
   foreach my $pkg (@todo) {
     next if ($pkg =~ m/^00texlive/);
-    if (win32() && (($pkg eq "texlive-infra") || ($pkg eq "bin-texlive"))) {
-      info("We cannot upgrade $pkg on win32, since we are running it!\n");
-      next;
-    }
+    # it looks like that can actually be done!!!
+    # It gives several warnings but afterwards the files are changed. Strange
+    #if (win32() && (($pkg eq "texlive-infra") || ($pkg eq "bin-texlive"))) {
+    #  info("We cannot upgrade $pkg on win32, since we are running it!\n");
+    #  next;
+    #}
     my $tlp = $localtlpdb->get_package($pkg);
     if (!defined($tlp)) {
       printf STDERR "Strange, $pkg cannot be found!\n";
@@ -700,36 +719,36 @@ sub action_option {
     my $loc = shift @ARGV;
     if (defined($loc)) {
       print "Defaulting to", ($loc ? "" : " not"), " install documentation files!\n";
-      $localtlpdb->option_docfiles($loc);
+      $localtlpdb->option_install_docfiles($loc);
       $localtlpdb->save;
     } else {
-      print "Install documentation files: ", $localtlpdb->option_docfiles, "\n";
+      print "Install documentation files: ", $localtlpdb->option_install_docfiles, "\n";
     }
   } elsif ($what =~ m/^srcfiles$/i) {
     # changes the default srcfiles
     my $loc = shift @ARGV;
     if (defined($loc)) {
       print "Defaulting to", ($loc ? "" : " not"), " install source files!\n";
-      $localtlpdb->option_srcfiles($loc);
+      $localtlpdb->option_install_srcfiles($loc);
       $localtlpdb->save;
     } else {
-      print "Install source files: ", $localtlpdb->option_srcfiles, "\n";
+      print "Install source files: ", $localtlpdb->option_install_srcfiles, "\n";
     }
   } elsif ($what =~ m/^formats$/i) {
     # changes the default formats
     my $loc = shift @ARGV;
     if (defined($loc)) {
       print "Defaulting to", ($loc ? "" : " not"), " generate format files on installation!\n";
-      $localtlpdb->option_formats($loc);
+      $localtlpdb->option_create_formats($loc);
       $localtlpdb->save;
     } else {
-      print "Create formats on installation: ", $localtlpdb->option_formats, "\n";
+      print "Create formats on installation: ", $localtlpdb->option_create_formats, "\n";
     }
   } elsif ($what =~ m/^show$/i) {
     print "Default installation source:    ", $localtlpdb->option_location, "\n";
-    print "Create formats on installation: ", ($localtlpdb->option_formats ? "yes": "no"), "\n";
-    print "Install documentation files:    ", ($localtlpdb->option_docfiles ? "yes": "no"), "\n";
-    print "Install source files:           ", ($localtlpdb->option_srcfiles ? "yes": "no"), "\n";
+    print "Create formats on installation: ", ($localtlpdb->option_create_formats ? "yes": "no"), "\n";
+    print "Install documentation files:    ", ($localtlpdb->option_install_docfiles ? "yes": "no"), "\n";
+    print "Install source files:           ", ($localtlpdb->option_install_srcfiles ? "yes": "no"), "\n";
   } else {
     warn "Setting other options currently not supported, please edit texlive.tlpdb!";
   }
@@ -809,9 +828,9 @@ sub action_arch {
       merge_into (\%ret, $tlmediasrc->install_package("bin-tlpsv.win32", $localtlpdb, 1, 0));
     }
     # update the option_archs list of installed archs
-    my @larchs = $localtlpdb->option_archs;
+    my @larchs = $localtlpdb->option_available_archs;
     push @larchs, @todoarchs;
-    $localtlpdb->option_archs(@larchs);
+    $localtlpdb->option_available_archs(@larchs);
     $localtlpdb->save;
   } else {
     die "Unknown option for arch: $what";
@@ -826,24 +845,29 @@ sub action_generate {
   Getopt::Long::Configure(qw(no_pass_through));
   GetOptions("localcfg=s" => \$localconf, "dest=s" => \$dest,) or pod2usage(2);
   init_local_db();
+
   if ($what =~ m/^language$/i) {
     $dest || ($dest = kpsewhich ("TEXMFSYSVAR") . "/tex/generic/config/language.dat");
     $localconf || ($localconf = kpsewhich ("TEXMFLOCAL") . "/tex/generic/config/language-local.dat");
-    info("$0: writing language data to $dest\n");
+    debug("$0: writing language data to $dest\n");
     TeXLive::TLUtils::create_language ($localtlpdb, $dest, $localconf);
+
   } elsif ($what =~ m/^fmtutil$/i) {
     $dest || ($dest = kpsewhich("TEXMFSYSVAR") . "/web2c/fmtutil.cnf");
     $localconf || ($localconf = kpsewhich("TEXMFLOCAL") . "/web2c/fmtutil-local.cnf");
-    info("writing fmtutil.cnf data to $dest\n");
+    debug("$0: writing fmtutil.cnf data to $dest\n");
     TeXLive::TLUtils::create_fmtutil($localtlpdb, $dest, $localconf);
+
   } elsif ($what =~ m/^updmap$/i) {
     $dest || ($dest = kpsewhich("TEXMFSYSVAR") . "/web2c/updmap.cfg");
     $localconf || ($localconf = kpsewhich("TEXMFLOCAL") . "/web2c/updmap-local.cfg");
-    info("$0: writing new updmap.cfg to $dest\n");
+    debug("$0: writing new updmap.cfg to $dest\n");
     TeXLive::TLUtils::create_updmap ($localtlpdb, $dest, $localconf);
+
   } else {
-    die "Unknown option for generate: $what";
+    die "$0: Unknown option for generate: $what (try --help if you need it)\n";
   }
+
   return;
 }
 
@@ -881,6 +905,8 @@ sub action_gui {
   }
   my @cmdline;
   push @cmdline, $perlbinquote, $perlscript;
+  push @cmdline, "--lang", "$opt_gui_lang"
+    if (defined($opt_gui_lang));
   push @cmdline, "--location", "$opt_location"
     if (defined($opt_location));
   push @cmdline, "--netarchive", "$opt_netarchive"
@@ -924,7 +950,7 @@ sub action_uninstall {
     $sys_bin = $tlpdb->option_sys_bin;
     $sys_man = $tlpdb->option_sys_man;
     $sys_info= $tlpdb->option_sys_info;
-    $opt_symlinks = $tlpdb->option_symlinks;
+    $opt_symlinks = $tlpdb->option_create_symlinks;
     $texdir = $Master;
     $texmfhome = `kpsewhich -var-value=TEXMFHOME`; chomp($texmfhome);
     $texmfsysvar = `kpsewhich -var-value=TEXMFSYSVAR`; chomp($texmfsysvar);
@@ -1133,6 +1159,13 @@ into the respective screen of the GUI. So calling
 
 will bring you directly into the update screen.
 
+=item B<--gui-lang>
+
+Normally the GUI tries to deduce your language from the environment
+(on Windows via the registry, on Unix via LC_MESSAGES). If that fails 
+you can select a different language by giving this option a two-letter
+language code.
+
 =item B<--netarchive> I<dir>
 
 Overrides the default settings for netarchive. Should be used with care.
@@ -1140,6 +1173,10 @@ Overrides the default settings for netarchive. Should be used with care.
 =item B<--diskarchive> I<dir>
 
 Overrides the default settings for diskarchive. Should be used with care.
+
+=item B<--version>
+
+Echos the tlmgr.pl script's revision number and exits.
 
 =back
 
@@ -1155,7 +1192,7 @@ Gives this help page.
 
 =item B<gui>
 
-Run using a graphical interface.
+Start the graphical user interface.
 
 =item B<install [I<option>]... I<pkg>...>
 

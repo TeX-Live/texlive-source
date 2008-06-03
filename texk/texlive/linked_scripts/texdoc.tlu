@@ -1,5 +1,5 @@
 #!/usr/bin/env texlua
--- $Id: texdoc.tlu 8041 2008-05-11 08:58:09Z preining $
+-- $Id: texdoc.tlu 8423 2008-05-31 00:37:02Z mpg $
 --[[ Written in lua by Frank Küster (2007) based on the shell script by
 Thomas Esser, David Aspinall, and Simon Wilkinson.
 Public domain.]]
@@ -51,6 +51,18 @@ while table.maxn(arg) > 0 and string.match(arg[1],'^%-') do
       mode = 'search';
    end
 end
+
+--[[ aliases ]]
+function alias_subs (name)
+    if name == "eg-live" or name == "eg-texlive" then
+        return "eg-texlive-en"
+    else
+        return name
+    end
+end
+for i, name in ipairs(arg) do
+    arg[i] = alias_subs(name)
+end 
 
 --[[ function definitions ]]
 function list_iter (t)
