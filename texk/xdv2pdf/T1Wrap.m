@@ -33,7 +33,7 @@ IN THE SOFTWARE.
 
 #import <unistd.h> // for getopt()
 
-#include "config.h"
+#include "c-auto.h"
 
 static inline UInt16
 SWAP16(UInt16 v)
@@ -204,7 +204,7 @@ NSData *digestPfbForSfnt(NSString *pfbPath, typ1Header *t1h)
 	if (pfbBytes[1] == 0x01)
 	{
 	  // read the ASCII chunk (before and after binary chunks)
-	  chunkSize = getPfbLong(pfbBytes+2);
+	  chunkSize = getPfbLong((unsigned char*)pfbBytes+2);
 	  
 	  const char * p0 = pfbBytes+6;
 	  char * p1, *p2;
@@ -233,8 +233,8 @@ NSData *digestPfbForSfnt(NSString *pfbPath, typ1Header *t1h)
 	else if (pfbBytes[1] == 0x02)
 	{
 	  // read the binary chunk
-	  chunkSize = getPfbLong(pfbBytes+2);
-	  NSData *decryptedData = decrypt(pfbBytes+6,chunkSize);
+	  chunkSize = getPfbLong((unsigned char*)pfbBytes+2);
+	  NSData *decryptedData = decrypt((unsigned char*)pfbBytes+6,chunkSize);
 	  const char *p0 = [decryptedData bytes];
 	  const char *p1 = p0+chunkSize-(int)strlen(target3)-1;
 	  if (strncmp(target3,p1,strlen(target3))!=0)

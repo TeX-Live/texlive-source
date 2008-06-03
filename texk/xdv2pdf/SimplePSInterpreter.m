@@ -503,7 +503,7 @@ static NSString *NullPSObject = @"[NIL]";
 
 NSString *decryptString(NSString *inString)
 {
-  unsigned const char *inbuf = [inString cString];
+  unsigned const char *inbuf = (unsigned const char *)[inString cString];
   unsigned long insize = [inString cStringLength];
   NSMutableData *result = [NSMutableData dataWithLength:insize];
   unsigned char *outbuf = [result mutableBytes];

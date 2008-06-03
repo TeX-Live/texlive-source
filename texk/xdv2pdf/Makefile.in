@@ -24,7 +24,7 @@ FRAMEWORKS = \
 	-framework QuickTime
 
 FRAMEWORKS_t1w = -framework Cocoa
-LIBS_t1w = -lm
+LIBS_t1w = # -lm
 
 program = xdv2pdf
 t1wrap = T1Wrap
@@ -42,7 +42,7 @@ $(program): $(objects) $(kpathsea) $(ALL_LIBS_DEP)
 	$(kpathsea_cxx_link) $(objects) $(FRAMEWORKS) $(LOADLIBES)
 
 $(t1wrap): $(objects_t1w)
-	$(CC) -o $@ $(objects_t1w) $(FRAMEWORKS_t1w) $(LIBS_t1w)
+	$(kpathsea_cxx_link) $(objects_t1w) $(FRAMEWORKS_t1w) $(LOADLIBES)
 
 T1Wrap.o: $(srcdir)/T1Wrap.m
 	$(OBJC) $(ALL_OBJCFLAGS) -c $<
@@ -56,7 +56,7 @@ install: install-exec install-data
 uninstall: uninstall-exec uninstall-data
 
 distclean::
-	$(RM) config.h
+	$(RM) c-auto.h
 
 install-exec:
 	$(SHELL) $(top_srcdir)/../mkinstalldirs $(bindir)

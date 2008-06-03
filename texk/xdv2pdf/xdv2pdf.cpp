@@ -62,7 +62,7 @@ authorization from SIL International.
 #define MAC_OS_X_VERSION_MIN_REQUIRED	MAC_OS_X_VERSION_10_4
 #endif
 
-#include "config.h"
+#include "c-auto.h"
 
 #include <ApplicationServices/ApplicationServices.h>
 #include <QuickTime/QuickTime.h>
@@ -87,6 +87,7 @@ authorization from SIL International.
 #define XDV_FLAG_VARIATIONS		0x0800
 #define XDV_FLAG_EXTEND			0x1000
 #define XDV_FLAG_SLANT			0x2000
+#define XDV_FLAG_EMBOLDEN		0x4000
 
 #define pdfbox_crop	1
 #define pdfbox_media	2
@@ -178,6 +179,7 @@ struct nativeFont {
 	Fixed				size;
 	CGColorRef			color;
 	CGAffineTransform	matrix;
+	float				embolden;
 	bool				isColored;
 	bool				isVertical;
 };
@@ -328,8 +330,10 @@ readUnsigned(FILE* f, int k)
 void
 setColor(CGColorRef color, bool force = false)
 {
-	if (force || !gCurrentColor || !CGColorEqualToColor(color, gCurrentColor))
+	if (force || !gCurrentColor || !CGColorEqualToColor(color, gCurrentColor)) {
 		CGContextSetFillColorWithColor(gCtx, color);
+		CGContextSetStrokeColorWithColor(gCtx, color);
+	}
 	gCurrentColor = color;
 }
 
@@ -459,6 +463,7 @@ setChar(UInt32 c, bool adv)
         CGContextSetFont(gCtx, gTeXFonts[f].cgFont);
         CGContextSetFontSize(gCtx, Fix2X(gTeXFonts[f].size) * gMagScale);
 		CGContextSetTextMatrix(gCtx, kHorizontalMatrix);
+		CGContextSetTextDrawingMode(gCtx, kCGTextFill);
         cur_cgFont = f;
 	}
 
@@ -550,6 +555,13 @@ doGlyphArray(FILE* xdv, bool yLocs)
 		CGContextSetFont(gCtx, sNativeFonts[f].cgFont);
 		CGContextSetFontSize(gCtx, Fix2X(sNativeFonts[f].size));
 		CGContextSetTextMatrix(gCtx, sNativeFonts[f].matrix);
+		if (sNativeFonts[f].embolden == 0.0) {
+			CGContextSetTextDrawingMode(gCtx, kCGTextFill);
+		}
+		else {
+			CGContextSetTextDrawingMode(gCtx, kCGTextFillStroke);
+			CGContextSetLineWidth(gCtx, sNativeFonts[f].embolden);
+		}
 		cur_cgFont = f;
 	}
 
@@ -1810,6 +1822,12 @@ doNativeFontDef(FILE* xdv)
 		else
 			fontRec.matrix.c = Fix2X(s);
 	}
+	if (flags & XDV_FLAG_EMBOLDEN) {
+		Fixed	s = readSigned(xdv, 4);
+		fontRec.embolden = Fix2X(s);
+	}
+	else
+		fontRec.embolden = 0;
 
 	sNativeFonts.insert(std::pair<const UInt32,nativeFont>(f, fontRec));
 }
@@ -2204,6 +2222,16 @@ usage()
 	fprintf(stderr, "wd,ht [in 'big' points or with explicit units]\n");
 }
 
+static void
+version()
+{
+    fprintf(stderr, "%s version %s\n", PACKAGE, VERSION);
+    fprintf(stderr, "Written by Jonathan Kew\n"
+					"Copyright (c) 2008 SIL International\n"
+    				"This program is part of the XeTeX typesetting system;\n"
+    				"see the XeTeX license for details.\n\n");
+}
+
 int
 xdv2pdf(int argc, char** argv)
 {
@@ -2246,6 +2274,7 @@ xdv2pdf(int argc, char** argv)
             	break;
             
             case 'v':
+            	version();
             	sVerbose = true;
             	break;
             
