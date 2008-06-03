@@ -33,6 +33,8 @@ authorization from the copyright holder.
 
 */
 
+#include "web2c/c-auto.h" /* for inline && HAVE_xxx */
+
 #include "stddef.h"
 #include "stdio.h"
 #include "stdlib.h"
@@ -43,7 +45,7 @@ authorization from the copyright holder.
 #include "errno.h"
 
 #ifdef HAVE_LOCALE_H
-#include "locale.h"
+#include <locale.h>
 #endif
 
 /*  This custom malloc functions initializes to 0 the newly allocated memory. */
@@ -3031,7 +3033,7 @@ we_are_done:
 			do {
 				switch((node->class)->type) {
 					default:
-						candidate = fabsf(synctex_node_visible_h(node)-h);
+						candidate = fabs(synctex_node_visible_h(node)-h);
 						if(candidate<best) {
 							best = candidate;
 							best_node = node;

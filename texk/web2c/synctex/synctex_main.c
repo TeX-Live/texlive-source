@@ -37,6 +37,8 @@ This file is named "synctex_main.c".
 This is the command line interface to the synctex_parser.c.
 */
 
+#   include "web2c/c-auto.h" /* for inline && HAVE_xxx */
+
 #   include <stdlib.h>
 #   include <stdio.h>
 #   include <string.h>
@@ -53,6 +55,10 @@ This is the command line interface to the synctex_parser.c.
 #endif
 #ifndef HAVE_STRLCPY
 #define strlcpy(dst, src, size) strcpy((dst), (src))
+#endif
+#ifndef HAVE_FMAX
+#define fmax my_fmax
+inline static double my_fmax(double x, double y) { return (x < y) ? y : x; }
 #endif
 
 #define SYNCTEX_DEBUG 0
@@ -357,7 +363,6 @@ proceed:
 						viewer = where+strlen(KEY);\
 						continue;\
 					}
-					#define SYNCTEX_MAX(A,B)	({ __typeof__(A) __a = (A); __typeof__(B) __b = (B); __a < __b ? __b : __a; })
 					TEST("&{output}","%s",synctex_scanner_get_output(scanner));
 					TEST("&{page}",  "%i",synctex_node_page(node)-1);
 					TEST("&{page+1}","%i",synctex_node_page(node));
@@ -365,8 +370,8 @@ proceed:
 					TEST("&{y}",     "%f",synctex_node_visible_v(node));
 					TEST("&{h}",     "%f",synctex_node_box_visible_h(node));
 					TEST("&{v}",     "%f",synctex_node_box_visible_v(node)+synctex_node_box_visible_depth(node));
-					TEST("&{width}", "%f",fabsf(synctex_node_box_visible_width(node)));
-					TEST("&{height}","%f",SYNCTEX_MAX((synctex_node_box_visible_height(node)+synctex_node_box_visible_depth(node)),1));
+					TEST("&{width}", "%f",fabs(synctex_node_box_visible_width(node)));
+					TEST("&{height}","%f",fmax(synctex_node_box_visible_height(node)+synctex_node_box_visible_depth(node),1));
 					TEST("&{before}","%s",(before && strlen(before)<SYNCTEX_STR_SIZE?before:""));
 					TEST("&{offset}","%i",offset);
 					TEST("&{middle}","%s",(middle && strlen(middle)<SYNCTEX_STR_SIZE?middle:""));
@@ -379,7 +384,7 @@ proceed:
 					synctex_help_view("Memory copy problem");
 					free(buffer);
 					return -1;
-				}\
+				}
 				printf("SyncTeX: Executing\n%s\n",buffer);
 				status = system(buffer);
 				free(buffer);

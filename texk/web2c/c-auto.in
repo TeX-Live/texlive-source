@@ -40,6 +40,9 @@
 /* Define if you have Carbon */
 #undef HAVE_CARBON
 
+/* Define to 1 if you have the `fmax' function. */
+#undef HAVE_FMAX
+
 /* Define to 1 if you have the <ft2build.h> header file. */
 #undef HAVE_FT2BUILD_H
 

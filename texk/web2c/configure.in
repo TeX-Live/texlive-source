@@ -41,7 +41,7 @@ case $LEX in
 esac
 AC_PROG_RANLIB
 AC_CHECK_HEADERS(sys/time.h sys/timeb.h locale.h)
-AC_CHECK_FUNCS(strerror gettimeofday ftime mkstemp mktemp setlocale strlcat strlcpy)
+AC_CHECK_FUNCS(strerror gettimeofday ftime mkstemp mktemp setlocale strlcat strlcpy fmax)
 
 AC_TYPE_SIGNAL
 

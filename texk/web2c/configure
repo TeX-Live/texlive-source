@@ -4231,7 +4231,8 @@ done
 
 
 
-for ac_func in strerror gettimeofday ftime mkstemp mktemp setlocale strlcat strlcpy
+
+for ac_func in strerror gettimeofday ftime mkstemp mktemp setlocale strlcat strlcpy fmax
 do
 as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 { $as_echo "$as_me:$LINENO: checking for $ac_func" >&5
