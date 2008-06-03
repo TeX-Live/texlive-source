@@ -78,7 +78,7 @@ install-linked-scripts:
 # - the purpose of the case..esac is to support both multiplatform and
 #   non-multiplatform builds.
 	for s in $(LINKED_SCRIPTS); do \
-	  target=$(scriptdir)/`basename $$s | sed 's,\.[^/]*$$,,' | tr A-Z a-z`; \
+	  target=$(scriptdir)/`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
 	  target=$$target; \
 	  rm -f $$target; \
 	  case "$(scriptdir)" in \
