@@ -45,37 +45,24 @@ dealing with them is the TeX Live (plain text) database,
 Master/tlpkg/texlive.tlpdb, and/or our installer.  More information is
 under Master/tlpkg.  See also http://tug.org/texlive/distro.html.
 
-P.S. If your C++ needs to find the standard library in, say, /usr/local/lib,
+For unusual situations:
+
+- If your C++ needs to find the standard library in, say, /usr/local/lib,
 (i.e., configure fails saying the compiler doesn't work), try:
 env LD_OPTIONS=-R/usr/local/lib ./Build
 
-
-More details and random notes:
-
-Running ./reautoconf here reruns autoconf as needed.  Use --help for more.
-
-Automadness:
-should be oldest > newest in this order (often used alternate names
-in parentheses):
-    Makefile.am  >  configure.ac (configure.in)
-    Makefile.in  >  config.h.in (config.hin)      > configure
-        
-To rerun dvipdfmx:
-  until integration, insert our configure.in, data/Makefile.am,
-    src/Makefile.am changes, copy compile script.
-  aclocal; autoheader; automake; autoconf
-  touch config.h.in; sleep 1; touch Makefile.in  # shouldn't be needed, but ...
+- Running ./reautoconf here reruns autoconf as needed.  Use --help for more.
 
 
 Build information:
   i386-linux: Debian sarge, gcc 3.3.5, libc 2.3.2, Linux 2.6.9-67.0.4.ELsmp
-      chroot /home/texlive/sarge && cd /tmp/source && Build
+    chroot /home/texlive/sarge && cd /tmp/source && Build
     
-  i386-darwin: i686-apple-darwin8.1.0 built by Gerben Wierda, from
-    http://bloch.ling.yale.edu/i-packages/experimental/tex.ii2/tex.30.tar.bz2
-
-  powerpc-darwin: powerpc-apple-darwin6.8 built by Gerben Wierda, from
-    http://bloch.ling.yale.edu/i-packages/experimental/tex.ii2/tex.26.tar.bz2
+  i386-darwin: built on MacOSX 10.4
+  powerpc-darwin: built on MacOSX 10.4
+  
+  amd64-freebsd: built on Freebsd 7.0-RELEASE amd64,
+    --with-fontconfig=/usr/local
 
   sparc-solaris
 OS: Sun Solaris 8
