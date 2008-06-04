@@ -875,7 +875,17 @@ ps_include_page (pdf_ximage *ximage, const char *filename)
     MESG("pdf_image>>   %s\n", distiller_template);
     MESG("pdf_image>> ...");
   }
-
+#ifdef MIKTEX
+  {
+    char *p;
+    for (p = (char *)filename; *p; p++) {
+      if (*p == '\\') *p = '/';
+    }
+    for (p = (char *)temp; *p; p++) {
+      if (*p == '\\') *p = '/';
+    }
+  }
+#endif
   error = dpx_file_apply_filter(distiller_template, filename, temp);
   if (error) {
     WARN("Image format conversion for \"%s\" failed...", filename);
