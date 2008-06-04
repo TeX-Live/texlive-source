@@ -209,7 +209,7 @@ synctex_main.o: $(synctex_dir)/synctex_main.c $(synctex_dir)/synctex_parser.h
 	$(compile) -c -I$(synctex_dir) $(ZLIBCPPFLAGS) -o $@ $<
 
 synctex:synctex_main.o synctex_parser.o $(ZLIBDEPS)
-	$(link_command) synctex_main.o synctex_parser.o $(LDZLIB)
+	$(link_command) synctex_main.o synctex_parser.o $(LDZLIB) $(LIBS)
 
 # Cleaning up.
 clean:: synctex-clean
