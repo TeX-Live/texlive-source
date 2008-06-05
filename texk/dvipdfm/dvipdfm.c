@@ -1,7 +1,7 @@
 /*  $Header$
 
     This is dvipdfm, a DVI to PDF translator.
-    Copyright (C) 1998, 1999 by Mark A. Wicks
+    Copyright (C) 1998, 1999, 2007 by Mark A. Wicks
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ static void set_default_pdf_filename(void)
 }
 static void usage (void)
 {
-   fprintf (stdout, "\n%s, version %s, Copyright (C) 1998, 1999 by Mark A. Wicks\n", PACKAGE, VERSION);
+   fprintf (stdout, "\n%s, version %s, Copyright (C) 1998, 1999, 2007 by Mark A. Wicks\n", PACKAGE, VERSION);
    fprintf (stdout, "dvipdfm comes with ABSOLUTELY NO WARRANTY.\n");
    fprintf (stdout, "This is free software, and you are welcome to redistribute it\n");
    fprintf (stdout, "under certain conditions.  Details are distributed with the software.\n");

@@ -232,13 +232,7 @@ static void start_name_tree (void)
 
 static char *asn_date (void)
 {
-#ifndef HAVE_TIMEZONE
-  #ifdef TM_GM_TOFF
-     #define timezone (bdtime->gm_toff)
-  #else
-     #define timezone 0l
-#endif /* TM_GM_TOFF */
-#endif /* HAVE_TIMEZONE */
+  long tz_offset;
   static char date_string[24];
   time_t current_time;
   struct tm *bd_time;
@@ -247,10 +241,28 @@ static char *asn_date (void)
   }
   time(&current_time);
   bd_time = localtime(&current_time);
-  sprintf (date_string, "D:%04d%02d%02d%02d%02d%02d%+03ld'%02ld'",
-	   bd_time -> tm_year+1900, bd_time -> tm_mon+1, bd_time -> tm_mday,
-	   bd_time -> tm_hour, bd_time -> tm_min, bd_time -> tm_sec,
-	   -timezone/3600, timezone%3600);
+
+#ifdef HAVE_TM_GMTOFF  /* Preferred way to get time zone offset */
+  tz_offset = bd_time->tm_gmtoff;
+#else
+#ifdef HAVE_TIMEZONE   /* Plan B --- use external variable 'timezone'
+                       /* (may not provide correct offset for daylight savings time) */
+  tz_offset = - timezone;
+#else                  /* Last resort --- without more information, set offset to zero */
+  tz_offset = 0l;
+#endif /* HAVE_TIMEZONE */
+#endif /* HAVE_TM_GMTOFF */
+
+  if (tz_offset == 0l) {
+    sprintf (date_string, "D:%04d%02d%02d%02d%02d%02dZ00'00'",
+	     bd_time -> tm_year+1900, bd_time -> tm_mon+1, bd_time -> tm_mday,
+	     bd_time -> tm_hour, bd_time -> tm_min, bd_time -> tm_sec);
+  } else {
+    sprintf (date_string, "D:%04d%02d%02d%02d%02d%02d%c%02ld'%02ld'",
+             bd_time -> tm_year+1900, bd_time -> tm_mon+1, bd_time -> tm_mday,
+             bd_time -> tm_hour, bd_time -> tm_min, bd_time -> tm_sec,
+	     (tz_offset>0)? '+':'-', labs(tz_offset)/3600, (labs(tz_offset)/60)%60);
+  }
   return date_string;
 }
 

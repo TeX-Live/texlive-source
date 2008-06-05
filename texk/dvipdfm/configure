@@ -1715,11 +1715,11 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-VERSION="0.13.2c"
+VERSION="0.13.2d"
 
 
 cat >>confdefs.h <<\_ACEOF
-#define VERSION "0.13.2c"
+#define VERSION "0.13.2d"
 _ACEOF
 
 

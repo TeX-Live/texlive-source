@@ -1,3 +1,8 @@
+2008-06-05  Karl Berry  <karl@tug.org>
+
+	* Update to 0.13.2d (with the timezone fix we already had, but
+	also finding fontmaps along the new path).
+
 2000-07-25  Mark A. Wicks  <mwicks@betelgeuse.localdomain>
 
         * Changed version to 0.13
