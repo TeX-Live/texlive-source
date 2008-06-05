@@ -35,7 +35,7 @@
 # Makefile fragment for synctex.
 # It is included in web2c/Makefile.in
 
-synctex_dir = $(srcdir)/synctex
+synctex_dir = $(srcdir)/synctexdir
 
 Makefile: $(synctex_dir)/synctex.mk
 
