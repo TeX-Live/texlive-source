@@ -65,7 +65,7 @@ authorization from SIL International.
 
 @d XeTeX_version=0
 @d XeTeX_revision==".999"
-@d XeTeX_version_string=='-0.999.0' {current \XeTeX\ version}
+@d XeTeX_version_string=='-0.999.1' {current \XeTeX\ version}
 @z
 
 @x
@@ -5720,7 +5720,24 @@ collected:
 
 	end else begin
 		{ must be restricted hmode, so no need for line-breaking or discretionaries }
-		if (not is_char_node(main_pp)) and (type(main_pp)=whatsit_node) and (subtype(main_pp)=native_word_node) and (native_font(main_pp)=main_f) then begin
+		{ but there might already be explicit |disc_node|s in the list }
+		main_ppp := head;
+		if main_ppp<>main_pp then	{ find node preceding tail, skipping discretionaries }
+			while (link(main_ppp)<>main_pp) do begin
+				if (not is_char_node(main_ppp)) and (type(main_ppp=disc_node)) then begin
+					temp_ptr:=main_ppp;
+					for main_p:=1 to replace_count(temp_ptr) do main_ppp:=link(main_ppp);
+				end;
+				if main_ppp<>main_pp then main_ppp:=link(main_ppp);
+			end;
+		if      (not is_char_node(main_pp))
+			and (type(main_pp)=whatsit_node)
+			and (subtype(main_pp)=native_word_node)
+			and (native_font(main_pp)=main_f)
+			and (main_ppp<>main_pp)
+			and (not is_char_node(main_ppp))
+			and (type(main_ppp)<>disc_node)
+		then begin
 			{ total string length for the new merged whatsit }
 			link(main_pp) := new_native_word_node(main_f, main_k + native_length(main_pp));
 			tail := link(main_pp);
@@ -7088,10 +7105,15 @@ begin
 	native_word_node:
 		begin
 			{ merge with any following word fragments in same font, discarding discretionary breaks }
-			while (link(q) <> p) do q := link(q); { bring q up in preparation for deletion of nodes starting at p }
+			if type(q) = disc_node then k:=replace_count(q) else k:=0;
+			while (link(q) <> p) do begin
+			  decr(k);
+			  q := link(q); { bring q up in preparation for deletion of nodes starting at p }
+			  if type(q) = disc_node then k:=replace_count(q);
+			  end;
 			pp := link(p);
 		restart:
-			if (pp <> null) and (not is_char_node(pp)) then begin
+			if (k <= 0) and (pp <> null) and (not is_char_node(pp)) then begin
 				if (type(pp) = whatsit_node)
 					and (subtype(pp) = native_word_node)
 					and (native_font(pp) = native_font(p)) then begin
