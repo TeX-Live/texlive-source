@@ -581,7 +581,7 @@ kpse_include pdftexdir/pdftexlib.mk
 kpse_include luatexdir/luatexlib.mk
 # 
 # Makefile fragments:
-kpse_include synctex/synctex.mk
+kpse_include synctexdir/synctex.mk
 kpse_include etexdir/etex.mk
 kpse_include omegadir/omega.mk
 kpse_include alephdir/aleph.mk
