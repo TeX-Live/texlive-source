@@ -63,6 +63,13 @@ mem[r+box_node_size-synctex_field_size].hh.rh:=mem[p+box_node_size-synctex_field
 @z
 
 @x
+MISSING IMPLEMENTATION: copy the synctex information for rule node at mem[r] from node at mem[p]
+@y
+{mem[r+rule_node_size-synctex_field_size].hh.lh:=mem[p+rule_node_size-synctex_field_size].hh.lh;
+mem[r+rule_node_size-synctex_field_size].hh.rh:=mem[p+rule_node_size-synctex_field_size].hh.rh;}
+@z
+
+@x
 MISSING IMPLEMENTATION: copy the synctex information for glue node at mem[r] from node at mem[p]
 @y
 mem[r+medium_node_size-synctex_field_size].hh.lh:=mem[p+medium_node_size-synctex_field_size].hh.lh;
