@@ -97,7 +97,7 @@ ${basefile}coerce.h"
     ;;
 
   tex|eomega|etex|pdftex|pdfetex|omega|aleph|xetex)
-    more_defines="$srcdir/web2c/texmf.defines $srcdir/synctex/synctex.defines"
+    more_defines="$srcdir/web2c/texmf.defines $srcdir/synctexdir/synctex.defines"
     prog_defines="$srcdir/${basefile}dir/$basefile.defines"
     if test -f $prog_defines; then
       more_defines="$more_defines $prog_defines"
