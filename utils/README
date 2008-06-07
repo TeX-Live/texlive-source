@@ -45,6 +45,9 @@ After building clisp as described below, run the TL
   Build --with-xindy --with-clisp=$clisp_builddir/clisp
 to include xindy in the build.  It is disabled by default.
 
+Note: do NOT redirect the output of clisp build messages (while
+running "make") to a file, as this may cause weird build problems.
+
 mkdir clisp; cd clisp
 clisp_basedir=`pwd`
 clisp_toolsdir=$clisp_basedir/clisp-tools
