@@ -98,7 +98,7 @@ export GNUMAKE
 
 # report the number of binaries built.
 bindir=$TL_INSTALL_DEST/bin
-count=`ls $bindir/*/* | wc -l`
+count=`find $bindir \! -type d -print | wc -l`
 if test "$count" -gt 0; then
   echo
   echo "$0: $count binaries in $bindir."
