@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.c,v 1.20 2008/05/17 01:16:53 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.c,v 1.21 2008/05/29 13:43:51 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -80,6 +80,7 @@ struct pdf_ximage_
   char        *filename;
   pdf_obj     *reference;
   pdf_obj     *resource;
+  pdf_obj     *attr_dict;
 };
 
 
@@ -108,7 +109,7 @@ static struct ic_  _ic = {
 };
 
 static void
-pdf_init_ximage_struct (pdf_ximage *I, const char *ident, const char *filename)
+pdf_init_ximage_struct (pdf_ximage *I, const char *ident, const char *filename, pdf_obj *dict)
 {
   if (ident) {
     I->ident = NEW(strlen(ident)+1, char);
@@ -125,6 +126,7 @@ pdf_init_ximage_struct (pdf_ximage *I, const char *ident, const char *filename)
   memset(I->res_name, 0, 16);
   I->reference = NULL;
   I->resource  = NULL;
+  I->attr_dict = dict;
 
   I->attr.width = I->attr.height = 0;
   I->attr.xdensity = I->attr.ydensity = 1.0;
@@ -143,7 +145,9 @@ pdf_clean_ximage_struct (pdf_ximage *I)
     pdf_release_obj(I->reference);
   if (I->resource)
     pdf_release_obj(I->resource);
-  pdf_init_ximage_struct(I, NULL, NULL);
+  if (I->attr_dict)
+    pdf_release_obj(I->attr_dict);
+  pdf_init_ximage_struct(I, NULL, NULL, NULL);
 }
 
 
@@ -212,58 +216,9 @@ source_image_type (FILE *fp)
   return  format;
 }
 
-#if  0
-#define KEYCMP(k,s) (strcmp(pdf_name_value((k)),(s)))
 static int
-filter_put_image_attr (pdf_obj *kp, pdf_obj *vp, void *dp)
-{
-  struct attr_ *attr = dp;
-
-  if (KEYCMP(kp, "Width")) {
-    if (pdf_obj_typeof(vp) != PDF_NUMBER)
-      return  -1;
-    attr->width  = (long) pdf_number_value(vp);
-  } else if (KEYCMP(kp, "Height")) {
-    if (pdf_obj_typeof(vp) != PDF_NUMBER)
-      return  -1;
-    attr->height = (long) pdf_number_value(vp);
-  }
-
-  return  0;
-}
-
-static int
-filter_put_form_attr (pdf_obj *kp, pdf_obj *vp, void *dp)
-{
-  struct attr_ *attr = dp;
-
-  if (KEYCMP(kp, "BBox")) {
-    if (pdf_array_length(vp) != 4)
-      return  -1;
-    else {
-      int     i;
-      double  v[4];
-      for (i = 0; i < 4; i++) {
-        pdf_obj *obj = pdf_get_array(vp, i);
-        if (pdf_obj_typeof(vp) != PDF_NUMBER)
-          return  -1;
-        else {
-          v = pdf_number_value(obj);
-        }
-      }
-      attr->bbox.llx = v[0]; attr->bbox.lly = v[1];
-      attr->bbox.urx = v[2]; attr->bbox.ury = v[3];
-    }
-  }
-
-  return  0;
-}
-#endif
-
-
-static int
-load_image (const char *ident,
-            const char *fullname, int format, FILE  *fp, long page_no)
+load_image (const char *ident, const char *fullname, int format, FILE  *fp,
+            long page_no, pdf_obj *dict)
 {
   struct ic_ *ic = &_ic;
   int         id = -1; /* ret */
@@ -276,7 +231,7 @@ load_image (const char *ident,
   }
 
   I  = &ic->ximages[id];
-  pdf_init_ximage_struct(I, ident, ident);
+  pdf_init_ximage_struct(I, ident, ident, dict);
   pdf_ximage_set_page(I, page_no, 0);
 
   switch (format) {
@@ -350,7 +305,7 @@ load_image (const char *ident,
 #define dpx_fclose(f)  (MFCLOSE((f)))
 
 int
-pdf_ximage_findresource (const char *ident, long page_no)
+pdf_ximage_findresource (const char *ident, long page_no, pdf_obj *dict)
 {
   struct ic_ *ic = &_ic;
   int         id = -1;
@@ -362,7 +317,8 @@ pdf_ximage_findresource (const char *ident, long page_no)
   for (id = 0; id < ic->count; id++) {
     I = &ic->ximages[id];
     if (I->ident && !strcmp(ident, I->ident) &&
-	I->page_no == page_no + (page_no < 0 ? I->page_count+1 : 0)) {
+	I->page_no == page_no + (page_no < 0 ? I->page_count+1 : 0) &&
+        I->attr_dict == dict) {
       return  id;
     }
   }
@@ -399,7 +355,7 @@ pdf_ximage_findresource (const char *ident, long page_no)
     } else
       break;
   default:
-    id = load_image(ident, fullname, format, fp, page_no);
+    id = load_image(ident, fullname, format, fp, page_no, dict);
     break;
   }
   dpx_fclose(fp);
@@ -518,6 +474,8 @@ pdf_ximage_set_image (pdf_ximage *I, void *image_info, pdf_obj *resource)
   pdf_add_dict(dict, pdf_new_name("Height"),  pdf_new_number(info->height));
   pdf_add_dict(dict, pdf_new_name("BitsPerComponent"),
                pdf_new_number(info->bits_per_component));
+  if (I->attr_dict)
+    pdf_merge_dict(dict, I->attr_dict);
 
   pdf_release_obj(resource); /* Caller don't know we are using reference. */
   I->resource  = NULL;
@@ -594,7 +552,7 @@ pdf_ximage_defineresource (const char *ident,
 
   I = &ic->ximages[id];
 
-  pdf_init_ximage_struct(I, ident, NULL);
+  pdf_init_ximage_struct(I, ident, NULL, NULL);
 
   switch (subtype) {
   case PDF_XOBJECT_TYPE_IMAGE:

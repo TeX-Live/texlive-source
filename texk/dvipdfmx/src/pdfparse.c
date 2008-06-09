@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfparse.c,v 1.42 2008/05/16 10:51:25 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfparse.c,v 1.43 2008/06/07 09:54:38 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -283,7 +283,7 @@ parse_pdf_number (char **pp, char *endptr)
       }
     } else if (isdigit(p[0])) {
       if (has_dot) {
-	if (nddigits == DDIGITS_MAX) {
+	if (nddigits == DDIGITS_MAX && pdf_obj_get_verbose() > 1) {
 	  WARN("Number with more than %d fractional digits.", DDIGITS_MAX);
 	} else if (nddigits < DDIGITS_MAX) {
 	  dpart = dpart * 10 + p[0] - '0';

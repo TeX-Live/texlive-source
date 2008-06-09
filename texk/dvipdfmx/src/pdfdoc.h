@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.h,v 1.23 2008/05/20 13:05:14 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.h,v 1.24 2008/06/05 06:27:42 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -99,17 +99,11 @@ extern void     pdf_doc_bookmarks_add   (pdf_obj *dict, int is_open);
 extern int      pdf_doc_bookmarks_depth (void);
 
 
-/* Form XObject */
-extern void     pdf_doc_make_xform (pdf_obj     *xform,
-				    pdf_rect    *bbox,         /* const */
-				    pdf_tmatrix *matrix,       /* const */
-				    pdf_obj     *resources_ref);
-
 /* Returns xobj_id of started xform. */
 extern int      pdf_doc_begin_grabbing (const char *ident,
 					double ref_x, double ref_y,
 					const pdf_rect *cropbox);
-extern void     pdf_doc_end_grabbing   (void);
+extern void     pdf_doc_end_grabbing   (pdf_obj *attrib);
 
 
 /* Annotation */

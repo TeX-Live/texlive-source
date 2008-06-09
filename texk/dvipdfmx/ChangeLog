@@ -1,7 +1,63 @@
-$Header: /home/cvsroot/dvipdfmx/ChangeLog,v 1.206 2008/05/23 00:08:21 chofchof Exp $
+$Header: /home/cvsroot/dvipdfmx/ChangeLog,v 1.213 2008/06/07 09:59:38 chofchof Exp $
 
 ChangeLog: Changes for DVIPDFMx
 ===============================
+
+2008-06-07  Jin-Hwan Cho
+
+	* contrib/latex/movie15.sty.sample:
+          Support movie15.sty, version 2008/01/16.
+
+	* pdfobj.c, pdfobj.h, pdfparse.c, spc_pdfm.c, pdfnames.c:
+          Allow PDF stream of length zero and suppress some warning messages.
+
+2008-06-06  Jin-Hwan Cho
+
+	* contrib/latex/animate.sty.sample:
+          Support animate.sty, version 2008/06/03.
+
+2008-06-05  Jin-Hwan Cho
+
+	* mpost.c, pdfdev.c, pdfdev.h, pdfdoc.c, pdfdoc.h, spc_pdfm.c:
+          DVIPDFMx supports PGF version 2.00.
+          New specials "pdf:bcontent", "pdf:econtent", and "pdf:code".
+          Moreover, "pdf:exobj << additional_dict >>" merges additional
+          dictionaries into the XObject dictionary, not resources.
+
+	* pgfsys-dvipdfmx.def.version2, pgfsys-dvipdfmx-patch.tex.version2:
+          A sample DVIPDFMx driver for PGF version 2.00. Note that
+          pgfsys-dvipdfmx-patch.tex must be loaded after loading the 
+          basiclayers of PGF. Otherwise image mask and transparency
+          group do not work.
+
+2008-06-01  Jin-Hwan Cho
+
+	* pdfdev.h, spc_pdfm.c, spc_util.c, dvipdfmx.def.sample:
+          Changed the option "mask" to "hide" in "pdf:image" special.
+          New "pdf:stream" special for a string given externally.
+
+	* pgf-generic.diff, pgfsys-dvipdfmx.def, xcolor.sty.sample:
+          Renamed and moved pgf patches for version 1 to contrib/generic.
+          Removed "xcolor.sty.sample".
+
+2008-05-29  Jin-Hwan Cho
+
+	* spc_dvips.c, pdfdoc.c, spc_html.c, spc_misc.c, pdfximage.c, pdfximage.h, spc_pdfm.c, spc_util.c, pdfdev.h:
+          Support PGF image masking; support additional attribute dictionary
+          for included images as pdfTeX.
+
+	* xcolor.sty.sample, pgf-generic.diff, pgfsys-dvipdfmx.def, sample-imagemask.tex, dvipdfmx.def.sample:
+          Sample files for image masking and xcolor, pgf patches.
+
+2008-05-28  Jin-Hwan Cho
+
+	* spc_pdfm.c:
+          Remove an warning message which occurs with the PGF
+          transparent model.
+
+	* spc_util.c:
+          Support dvips color names defined in dvipsname.def with
+          "pdf:bcolor" special, e.g. "pdf: bcolor JungleGreen".
 
 2008-05-23  Jin-Hwan Cho
 

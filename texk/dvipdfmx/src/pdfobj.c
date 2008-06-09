@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.c,v 1.58 2008/05/22 10:08:02 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.c,v 1.59 2008/06/07 09:54:38 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -255,6 +255,12 @@ unsigned
 pdf_get_version (void)
 {
   return pdf_version;
+}
+
+int
+pdf_obj_get_verbose(void)
+{
+  return verbose;
 }
 
 void

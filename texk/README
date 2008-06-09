@@ -40,7 +40,7 @@ dvipdfm 0.13.2d - ok 5jun08
   http://gaspra.kettering.edu/dvipdfm/dvipdfm-0.13.2d.tar.gz
   until dvipdfmx is a 100% replacement we cannot drop it.
 
-dvipdfmx 20080524 - ok 24may08
+dvipdfmx 20080607 - ok 9jun08
   http://project.ktug.or.kr/dvipdfmx/snapshot/latest/
   dvipdfmx@project.ktug.or.kr (ChoF, Hirata, Matthias)
 
