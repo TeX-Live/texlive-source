@@ -1,3 +1,12 @@
+2008-06-09  Karl Berry  <karl@tug.org>
+
+	* Build: try using find instead of ls, to avoid short param list
+	on hp (Tim tlbuild mail, 6 Jun 2008 10:24:41).
+
+2008-06-08  Karl Berry  <karl@tug.org>
+
+	* utils/README: warn about nohup specifically.
+
 2008-05-29  Karl Berry  <karl@tug.org>
 
 	* Makefile.in (install): do not call selfautofix, we now keep
