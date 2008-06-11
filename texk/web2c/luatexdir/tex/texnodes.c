@@ -17,7 +17,7 @@ halfword rover = 0;
 
 halfword free_chain[MAX_CHAIN_SIZE] = { null };
 
-static int prealloc = 0;
+static int my_prealloc = 0;
 
 int fix_node_lists = 1;
 
@@ -547,7 +547,7 @@ halfword copy_node(const halfword p)
 
 int valid_node(halfword p)
 {
-    if (p > prealloc) {
+    if (p > my_prealloc) {
         if (p < var_mem_max) {
             if (varmem_sizes[p] > 0)
                 return 1;
@@ -586,13 +586,13 @@ static void do_free_error(halfword p)
                  get_node_name(type(p), subtype(p)), (int) p);
     }
     tex_error(errstr, errhlp);
-    for (r = prealloc + 1; r < var_mem_max; r++) {
+    for (r = my_prealloc + 1; r < var_mem_max; r++) {
         if (vlink(r) == p) {
             halfword s = r;
-            while (s > prealloc && varmem_sizes[s] == 0)
+            while (s > my_prealloc && varmem_sizes[s] == 0)
                 s--;
             if (s != null
-                && s != prealloc
+                && s != my_prealloc
                 && s != var_mem_max
                 && (r - s) < get_node_size(type(s), subtype(s))
                 && alink(s) != p) {
@@ -650,7 +650,7 @@ static void do_free_error(halfword p)
 
 int free_error(halfword p)
 {
-    assert(p > prealloc);
+    assert(p > my_prealloc);
     assert(p < var_mem_max);
     if (varmem_sizes[p] == 0) {
         do_free_error(p);
@@ -692,7 +692,7 @@ int copy_error(halfword p)
 {
     assert(p >= 0);
     assert(p < var_mem_max);
-    if (p > prealloc && varmem_sizes[p] == 0) {
+    if (p > my_prealloc && varmem_sizes[p] == 0) {
         do_copy_error(p);
         return 1;               /* copy free node */
     }
@@ -1166,7 +1166,7 @@ void check_node_mem(void)
     int i;
     check_static_node_mem();
 
-    for (i = (prealloc + 1); i < var_mem_max; i++) {
+    for (i = (my_prealloc + 1); i < var_mem_max; i++) {
         if (varmem_sizes[i] > 0) {
             check_node(i);
         }
@@ -1223,7 +1223,7 @@ void print_free_chain(int c)
 void free_node(halfword p, integer s)
 {
 
-    if (p <= prealloc) {
+    if (p <= my_prealloc) {
         fprintf(stdout, "node %d (type %d) should not be freed!\n", (int) p,
                 type(p));
         return;
@@ -1267,7 +1267,7 @@ void free_node_chain(halfword q, integer s)
 
 void init_node_mem(halfword prealloced, halfword t)
 {
-    prealloc = prealloced;
+    my_prealloc = prealloced;
     assert(whatsit_node_data[user_defined_node].id == user_defined_node);
     assert(node_data[passive_node].id == passive_node);
 
@@ -1301,7 +1301,7 @@ void dump_node_mem(void)
 #endif
     dump_things(free_chain[0], MAX_CHAIN_SIZE);
     dump_int(var_used);
-    dump_int(prealloc);
+    dump_int(my_prealloc);
 }
 
 /* it makes sense to enlarge the varmem array immediately */
@@ -1322,7 +1322,7 @@ void undump_node_mem(void)
 #endif
     undump_things(free_chain[0], MAX_CHAIN_SIZE);
     undump_int(var_used);
-    undump_int(prealloc);
+    undump_int(my_prealloc);
     if (var_mem_max > x) {
         /* todo ? it is perhaps possible to merge the new node with an existing rover */
         vlink(x) = rover;
@@ -1451,7 +1451,7 @@ char *sprint_node_mem_usage(void)
     char msg[256];
     int node_counts[last_normal_node + last_whatsit_node + 2] = { 0 };
 
-    for (i = (var_mem_max - 1); i > prealloc; i--) {
+    for (i = (var_mem_max - 1); i > my_prealloc; i--) {
         if (varmem_sizes[i] > 0) {
             if (type(i) > last_normal_node + last_whatsit_node) {
                 node_counts[last_normal_node + last_whatsit_node + 1]++;
@@ -1486,7 +1486,7 @@ halfword list_node_mem_usage(void)
     halfword p = null, q = null;
     char *saved_varmem_sizes = xmallocarray(char, var_mem_max);
     memcpy(saved_varmem_sizes, varmem_sizes, var_mem_max);
-    for (i = prealloc + 1; i < (var_mem_max - 1); i++) {
+    for (i = my_prealloc + 1; i < (var_mem_max - 1); i++) {
         if (saved_varmem_sizes[i] > 0) {
             j = copy_node(i);
             if (p == null) {
@@ -1510,7 +1510,7 @@ void print_node_mem_stats(int num, int online)
     integer free_chain_counts[MAX_CHAIN_SIZE] = { 0 };
 
     snprintf(msg, 255, "node memory in use: %d words out of %d",
-             (int) (var_used + prealloc), (int) var_mem_max);
+             (int) (var_used + my_prealloc), (int) var_mem_max);
     tprint_nl(msg);
     tprint_nl("rapidly available: ");
     b = 0;
