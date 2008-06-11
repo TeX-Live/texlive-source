@@ -1,3 +1,8 @@
+2008-06-12  Karl Berry  <karl@tug.org>
+
+	* luatexdir/tex/texnodes.c: avoid identifier `prealloc', (wrongly)
+	defined in HP-UX <unistd.h>.
+
 2008-06-03  Karl Berry  <karl@tug.org>
 
 	* tex.ch (sup_param_size): increase to 32767.
