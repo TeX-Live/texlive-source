@@ -674,7 +674,6 @@ kpse_init_format P1C(kpse_file_format_type, format)
       break;
     case kpse_cmap_format:
       INIT_FORMAT ("cmap files", DEFAULT_CMAPFONTS, CMAP_ENVS);
-      SUFFIXES (".cmap");      
       break;
     case kpse_sfd_format:
       INIT_FORMAT ("subfont definition files", DEFAULT_SFDFONTS, SFD_ENVS);

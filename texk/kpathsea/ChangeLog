@@ -1,3 +1,9 @@
+2008-06-12  Karl Berry  <karl@tug.org>
+
+	* tex-file.c () <kpse_cmap_format>: cmap files (texmf/fonts/cmap)
+	do not have the .cmap suffix.  (t1.cmap, et al., are TeX files,
+	not cmap files.) So remove the SUFFIXES definition.
+
 2008-05-31  Karl Berry  <karl@tug.org>
 
 	* elt-dirs.c (kpse_normalize_path): only output debug line if
