@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 8478 2008-06-02 12:45:52Z preining $
+# $Id: tlmgr.pl 8708 2008-06-13 11:56:01Z preining $
 #
 # Copyright 2008 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
@@ -10,7 +10,7 @@
 # - (?) removal does not remove created format files from TEXMFSYSVAR
 # - other features: dependency check?, ...?
 
-my $svnrev = '$Revision: 8478 $';
+my $svnrev = '$Revision: 8708 $';
 $svnrev =~ m/: ([0-9]+) /;
 my $tlmgrrevision = $1;
 
@@ -217,6 +217,10 @@ sub remove_package {
         return;
       }
     }
+    if ($pkg eq "texlive.infra") {
+      log("Not removing texlive.infra, it is essential!\n");
+      return;
+    }
     print "remove: $pkg\n";
     # we have to chdir to $localtlpdb->root
     my $Master = $localtlpdb->root;
@@ -240,6 +244,7 @@ sub remove_package {
     }
     $localtlpdb->remove_package($pkg);
     merge_into(\%ret, $tlp->make_return_hash_from_executes("disable"));
+    $ret{'mktexlsr'} = 1;
     # remove those bin dependencies .ARCH
     foreach my $d ($tlp->depends) {
       if ($d eq "$pkg.ARCH") {
@@ -594,7 +599,7 @@ sub action_update {
     next if ($pkg =~ m/^00texlive/);
     # it looks like that can actually be done!!!
     # It gives several warnings but afterwards the files are changed. Strange
-    #if (win32() && (($pkg eq "texlive-infra") || ($pkg eq "bin-texlive"))) {
+    #if (win32() && (($pkg eq "texlive.infra") || ($pkg eq "bin-texlive"))) {
     #  info("We cannot upgrade $pkg on win32, since we are running it!\n");
     #  next;
     #}
@@ -828,9 +833,9 @@ sub action_arch {
       merge_into (\%ret, $tlmediasrc->install_package("bin-tlpsv.win32", $localtlpdb, 1, 0));
     }
     # update the option_archs list of installed archs
-    my @larchs = $localtlpdb->option_available_archs;
+    my @larchs = $localtlpdb->option_available_architectures;
     push @larchs, @todoarchs;
-    $localtlpdb->option_available_archs(@larchs);
+    $localtlpdb->option_available_architectures(@larchs);
     $localtlpdb->save;
   } else {
     die "Unknown option for arch: $what";
