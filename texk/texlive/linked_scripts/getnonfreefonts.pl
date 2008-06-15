@@ -184,6 +184,8 @@ $INSTALLROOT=~s/\\/\//g if ($^O=~/^MSWin(32|64)/i);
 debug_msg "Internal variable INSTALLROOT converted to '$INSTALLROOT'";
 
 sub check_installroot {
+    mkdir "$INSTALLROOT" unless (-d "$INSTALLROOT");
+
     die "! ERROR: The variable $INSTALLROOTNAME is not set.\n"
 	unless length ("$INSTALLROOT") > 0;
 
