@@ -1,3 +1,7 @@
+2008-06-15  Karl Berry  <karl@tug.org>
+
+	* mktexlsr: once again respect dir names given on cmd line.
+
 2008-06-12  Karl Berry  <karl@tug.org>
 
 	* tex-file.c () <kpse_cmap_format>: cmap files (texmf/fonts/cmap)

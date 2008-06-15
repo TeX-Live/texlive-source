@@ -5,9 +5,7 @@
 # installation won't write this script over yours.)
 #
 # Suitable for calling from cron, as in:
-# 0 * * * * cd /your/texmf/root && /usr/local/bin/mktexlsr
-# unless the scripts live in a different directory than the 'kpseaccess',
-# 'kpsestat', 'kpsereadlink', and 'kpsewhich' binaries.
+# 0 * * * * cd /your/texmf/root && /usr/local/texlive/bin/mktexlsr
 # 
 # Originally written as `texhash' by Thomas Esser
 # <te@dbs.uni-hannover.de>, Okt., 1994.
@@ -17,14 +15,22 @@ version='$Id$'
 progname=`echo $0 | sed 's%.*/%%'`
 usage="Usage: $progname [DIR]...
 
-The only options are --help, --version, --verbose, --quiet, and --silent.
-If standard input is a terminal, --verbose is on by default.
---quiet and --silent are synonyms, and cancel --verbose.
+Rebuild ls-R filename databases.  If one or more arguments DIRS are
+given, these are used as the directories in which to build ls-R. Else
+all directories in the search path for ls-R files (\$TEXMFDBS) are used.
 
-Rebuild all necessary ls-R filename databases completely. If one or
-more arguments DIRS are given, these are used as texmf directories to
-build ls-R for. Else all directories in the search path for ls-R files
-(\$TEXMFDBS) are used."
+Options:
+  --dry-run  do not actually update anything
+  --help     display this help and exit 
+  --quiet    cancel --verbose
+  --silent   same as --quiet
+  --verbose  explain what is being done
+  --version  output version information and exit
+  
+If standard input is a terminal, --verbose is on by default.
+
+Report bugs to tex-k@tug.org.
+"
 
 # MS-DOS and MS-Windows define $COMSPEC or $ComSpec and use `;' to separate
 # directories in path lists whereas Unix uses `:'.  Make an exception for
@@ -53,6 +59,8 @@ case $dirname in
 esac
 
 if tty -s; then verbose=true; else verbose=false; fi
+dry_run=false
+trees=
 
 # A copy of some stuff from mktex.opt, so we can run in the presence of
 # terminally damaged ls-R files.
@@ -66,9 +74,19 @@ while test $# -gt 0; do
     exit 0
   elif test "x$1" = x--verbose || test "x$1" = x-verbose; then
     verbose=true
+  elif test "x$1" = x--dry-run || test "x$1" = x-n; then
+    dry_run=true
   elif test "x$1" = x--quiet || test "x$1" = x--silent \
        || test "x$1" = x-quiet || test "x$1" = x-silent ; then
     verbose=false
+  elif test "x$1" = x--; then
+    :
+  elif echo "x$1" | grep '^x-' >/dev/null; then
+    echo "$progname: unknown option $1, try --help if you need it." >&2
+    exit 1
+  else
+    test -d "$1" || echo "$progname: $1 not a directory." >&2
+    trees="$trees $1"  # don't want to update update system dirs
   fi
   shift
 done
@@ -79,16 +97,21 @@ ls_R_magic='% ls-R -- filename database for kpathsea; do not change this line.'
 # The old string, which should continue to work.
 old_ls_R_magic='% ls-R -- maintained by MakeTeXls-R; do not change this line.'
 
-trap 'cd / ; test -z "$db_dir_tmp" || rm -rf "$db_dir_tmp"; exit' 0 1 2 3 7 13 15
+trap 'cd /; test -z "$db_dir_tmp" || rm -rf "$db_dir_tmp"; exit' 0 1 2 3 7 13 15
 
 # Get list of directories from $TEXMFDBS; eliminate duplicates.
-test $# = 0 && {
-  OIFS=$IFS
-  IFS='
+{
+  if test -n "$trees"; then
+    set x $trees
+  else
+    OIFS=$IFS  # want just a newline
+    IFS='
 '
-  set x `kpsewhich --show-path=ls-R | tr : '
-' | sort | uniq`; shift
-  IFS=$OIFS
+    set x `kpsewhich --show-path=ls-R | tr : '
+' | sort | uniq`
+    IFS=$OIFS
+  fi
+  shift
 }
 
 for TEXMFLS_R in "$@"; do
@@ -98,8 +121,8 @@ for TEXMFLS_R in "$@"; do
   /* | [A-z]:/*) ;;
   *)  TEXMFLS_R="`pwd`/$TEXMFLS_R"
   esac
-  # Allow for ls-R and ls-r to exist.  But create ls-R if we're working
-  # from scratch.
+  # Allow for either ls-R and ls-r to exist.  But create ls-R if we're
+  # working from scratch.
   if test -f "$TEXMFLS_R/ls-R"; then
     db_file="$TEXMFLS_R/ls-R"
   elif test -f "$TEXMFLS_R/ls-r"; then
@@ -117,6 +140,8 @@ for TEXMFLS_R in "$@"; do
   esac
   db_dir=`echo "$db_file" | sed 's%/[^/][^/]*$%%'` # can't rely on dirname
 
+  # want to be silent if the directory doesn't exist, since the ls-R
+  # path ordinarily contains many nonexistent directories.
   test -d "$db_dir" || continue
   test -w "$db_dir" || { echo "$progname: $db_dir: directory not writable. Skipping..." >&2; continue; }
 
@@ -141,6 +166,8 @@ for TEXMFLS_R in "$@"; do
   rm -f "$db_file_tmp"
 
   $verbose && echo "$progname: Updating $db_file... " >&2
+  $dry_run && continue
+  
   echo "$ls_R_magic" >"$db_file_tmp"
 
   # The main task. We put ./: in the output, so top-level files can be

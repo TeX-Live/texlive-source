@@ -105,7 +105,7 @@ install-exec:
 # after everything else is installed.
 # We have to create the ls-R file for kpsewhich (invoked by texlinks)
 # to find fmtutil.cnf.
-run_mktexlsr = (TEXMFDBS=$(texmf); export TEXMFDBS; $(bindir)/mktexlsr $(texmf))
+run_mktexlsr = $(bindir)/mktexlsr $(texmf)
 run_texlinks = $(bindir)/texlinks
 run-texlinks:
 	PATH=$(bindir):$(PATH); export PATH; $(run_mktexlsr); $(run_texlinks)
