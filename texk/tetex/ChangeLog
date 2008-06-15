@@ -2,6 +2,7 @@
 
 	* Makefile.in (run_mktexlsr): no need to set TEXMFDBS, cmdline
 	dir is respected again.
+	(CONTEXTSCRIPTS): remove texexec, the version here was old.
 
 2008-05-28  Karl Berry  <karl@tug.org>
 

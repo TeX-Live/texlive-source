@@ -17,7 +17,7 @@ SCRIPTS = \
 
 CONTEXTSCRIPTS = \
   ctxtools exatools luatools makempy mpstools mptopdf mtxtools \
-  pdftools pstopdf rlxtools runtools texexec texfont texmfstart \
+  pdftools pstopdf rlxtools runtools texfont texmfstart \
   textools texutil tmftools xmltools
 
 contextmanpgs = \
