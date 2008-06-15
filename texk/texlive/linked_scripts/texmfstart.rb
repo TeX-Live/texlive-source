@@ -36,6 +36,8 @@ $: << File.expand_path(File.dirname($0)) ; $: << File.join($:.last,'lib') ; $:.u
 require "rbconfig"
 require "md5"
 
+# funny, selfmergs was suddenly broken to case problems
+
 # kpse_merge_done: require 'base/kpseremote'
 # kpse_merge_done: require 'base/kpsedirect'
 # kpse_merge_done: require 'base/kpsefast'
@@ -43,127 +45,7 @@ require "md5"
 
 # kpse_merge_start
 
-# kpse_merge_file: 'C:/data/develop/context/ruby/base/kpseremote.rb'
-
-# kpse_merge_done: require 'base/kpsefast'
-
-case ENV['KPSEMETHOD']
-    when /soap/o then # kpse_merge_done: require 'base/kpse/soap'
-    when /drb/o  then # kpse_merge_done: require 'base/kpse/drb'
-    else              # kpse_merge_done: require 'base/kpse/drb'
-end
-
-class KpseRemote
-
-    @@port   = ENV['KPSEPORT']   || 7000
-    @@method = ENV['KPSEMETHOD'] || 'drb'
-
-    def KpseRemote::available?
-        @@method && @@port
-    end
-
-    def KpseRemote::start_server(port=nil)
-        kpse = KpseServer.new(port || @@port)
-        kpse.start
-    end
-
-    def KpseRemote::start_client(port=nil) # keeps object in server
-        kpseclient = KpseClient.new(port || @@port)
-        kpseclient.start
-        kpse = kpseclient.object
-        tree = kpse.choose(KpseUtil::identify, KpseUtil::environment)
-        [kpse, tree]
-    end
-
-    def KpseRemote::fetch(port=nil) # no need for defining methods but slower, send whole object
-        kpseclient = KpseClient.new(port || @@port)
-        kpseclient.start
-        kpseclient.object.fetch(KpseUtil::identify, KpseUtil::environment) rescue nil
-    end
-
-    def initialize(port=nil)
-        if KpseRemote::available? then
-            begin
-                @kpse, @tree = KpseRemote::start_client(port)
-            rescue
-                @kpse, @tree = nil, nil
-            end
-        else
-            @kpse, @tree = nil, nil
-        end
-    end
-
-    def progname=(value)
-        @kpse.set(@tree,'progname',value)
-    end
-    def format=(value)
-        @kpse.set(@tree,'format',value)
-    end
-    def engine=(value)
-        @kpse.set(@tree,'engine',value)
-    end
-
-    def progname
-        @kpse.get(@tree,'progname')
-    end
-    def format
-        @kpse.get(@tree,'format')
-    end
-    def engine
-        @kpse.get(@tree,'engine')
-    end
-
-    def load
-        @kpse.load(KpseUtil::identify, KpseUtil::environment)
-    end
-    def okay?
-        @kpse && @tree
-    end
-    def set(key,value)
-        @kpse.set(@tree,key,value)
-    end
-    def load_cnf
-        @kpse.load_cnf(@tree)
-    end
-    def load_lsr
-        @kpse.load_lsr(@tree)
-    end
-    def expand_variables
-        @kpse.expand_variables(@tree)
-    end
-    def expand_braces(str)
-        clean_name(@kpse.expand_braces(@tree,str))
-    end
-    def expand_path(str)
-        clean_name(@kpse.expand_path(@tree,str))
-    end
-    def expand_var(str)
-        clean_name(@kpse.expand_var(@tree,str))
-    end
-    def show_path(str)
-        clean_name(@kpse.show_path(@tree,str))
-    end
-    def var_value(str)
-        clean_name(@kpse.var_value(@tree,str))
-    end
-    def find_file(filename)
-        clean_name(@kpse.find_file(@tree,filename))
-    end
-    def find_files(filename,first=false)
-        # dodo: each filename
-        @kpse.find_files(@tree,filename,first)
-    end
-
-    private
-
-    def clean_name(str)
-        str.gsub(/\\/,'/')
-    end
-
-end
-
-
-# kpse_merge_file: 'C:/data/develop/context/ruby/base/kpsefast.rb'
+# kpse_merge_file: 't:/ruby/base/kpsefast.rb'
 
 # module    : base/kpsefast
 # copyright : PRAGMA Advanced Document Engineering
@@ -1097,67 +979,7 @@ end
 
 
 
-# kpse_merge_file: 'C:/data/develop/context/ruby/base/kpse/drb.rb'
-
-require 'drb'
-# kpse_merge_done: require 'base/kpse/trees'
-
-class KpseServer
-
-    attr_accessor :port
-
-    def initialize(port=7000)
-        @port = port
-    end
-
-    def start
-        puts "starting drb service at port #{@port}"
-        DRb.start_service("druby://localhost:#{@port}", KpseTrees.new)
-        trap(:INT) do
-            DRb.stop_service
-        end
-        DRb.thread.join
-    end
-
-    def stop
-        # todo
-    end
-
-end
-
-class KpseClient
-
-    attr_accessor :port
-
-    def initialize(port=7000)
-        @port = port
-        @kpse = nil
-    end
-
-    def start
-        # only needed when callbacks are used / slow, due to Socket::getaddrinfo
-        # DRb.start_service
-    end
-
-    def object
-        @kpse = DRbObject.new(nil,"druby://localhost:#{@port}")
-    end
-
-end
-
-
-# SERVER_URI="druby://localhost:8787"
-#
-#   # Start a local DRbServer to handle callbacks.
-#   #
-#   # Not necessary for this small example, but will be required
-#   # as soon as we pass a non-marshallable object as an argument
-#   # to a dRuby call.
-#   DRb.start_service
-#
-
-
-# kpse_merge_file: 'C:/data/develop/context/ruby/base/kpse/trees.rb'
+# kpse_merge_file: 't:/ruby/base/kpse/trees.rb'
 
 require 'monitor'
 # kpse_merge_done: require 'base/kpsefast'
@@ -1245,7 +1067,187 @@ class KpseTrees < Monitor
 end
 
 
-# kpse_merge_file: 'C:/data/develop/context/ruby/base/kpsedirect.rb'
+# kpse_merge_file: 't:/ruby/base/kpse/drb.rb'
+
+require 'drb'
+# kpse_merge_done: require 'base/kpse/trees'
+
+class KpseServer
+
+    attr_accessor :port
+
+    def initialize(port=7000)
+        @port = port
+    end
+
+    def start
+        puts "starting drb service at port #{@port}"
+        DRb.start_service("druby://localhost:#{@port}", KpseTrees.new)
+        trap(:INT) do
+            DRb.stop_service
+        end
+        DRb.thread.join
+    end
+
+    def stop
+        # todo
+    end
+
+end
+
+class KpseClient
+
+    attr_accessor :port
+
+    def initialize(port=7000)
+        @port = port
+        @kpse = nil
+    end
+
+    def start
+        # only needed when callbacks are used / slow, due to Socket::getaddrinfo
+        # DRb.start_service
+    end
+
+    def object
+        @kpse = DRbObject.new(nil,"druby://localhost:#{@port}")
+    end
+
+end
+
+
+# SERVER_URI="druby://localhost:8787"
+#
+#   # Start a local DRbServer to handle callbacks.
+#   #
+#   # Not necessary for this small example, but will be required
+#   # as soon as we pass a non-marshallable object as an argument
+#   # to a dRuby call.
+#   DRb.start_service
+#
+
+
+# kpse_merge_file: 't:/ruby/base/kpseremote.rb'
+
+# kpse_merge_done: require 'base/kpsefast'
+
+case ENV['KPSEMETHOD']
+    when /soap/o then # kpse_merge_done: require 'base/kpse/soap'
+    when /drb/o  then # kpse_merge_done: require 'base/kpse/drb'
+    else              # kpse_merge_done: require 'base/kpse/drb'
+end
+
+class KpseRemote
+
+    @@port   = ENV['KPSEPORT']   || 7000
+    @@method = ENV['KPSEMETHOD'] || 'drb'
+
+    def KpseRemote::available?
+        @@method && @@port
+    end
+
+    def KpseRemote::start_server(port=nil)
+        kpse = KpseServer.new(port || @@port)
+        kpse.start
+    end
+
+    def KpseRemote::start_client(port=nil) # keeps object in server
+        kpseclient = KpseClient.new(port || @@port)
+        kpseclient.start
+        kpse = kpseclient.object
+        tree = kpse.choose(KpseUtil::identify, KpseUtil::environment)
+        [kpse, tree]
+    end
+
+    def KpseRemote::fetch(port=nil) # no need for defining methods but slower, send whole object
+        kpseclient = KpseClient.new(port || @@port)
+        kpseclient.start
+        kpseclient.object.fetch(KpseUtil::identify, KpseUtil::environment) rescue nil
+    end
+
+    def initialize(port=nil)
+        if KpseRemote::available? then
+            begin
+                @kpse, @tree = KpseRemote::start_client(port)
+            rescue
+                @kpse, @tree = nil, nil
+            end
+        else
+            @kpse, @tree = nil, nil
+        end
+    end
+
+    def progname=(value)
+        @kpse.set(@tree,'progname',value)
+    end
+    def format=(value)
+        @kpse.set(@tree,'format',value)
+    end
+    def engine=(value)
+        @kpse.set(@tree,'engine',value)
+    end
+
+    def progname
+        @kpse.get(@tree,'progname')
+    end
+    def format
+        @kpse.get(@tree,'format')
+    end
+    def engine
+        @kpse.get(@tree,'engine')
+    end
+
+    def load
+        @kpse.load(KpseUtil::identify, KpseUtil::environment)
+    end
+    def okay?
+        @kpse && @tree
+    end
+    def set(key,value)
+        @kpse.set(@tree,key,value)
+    end
+    def load_cnf
+        @kpse.load_cnf(@tree)
+    end
+    def load_lsr
+        @kpse.load_lsr(@tree)
+    end
+    def expand_variables
+        @kpse.expand_variables(@tree)
+    end
+    def expand_braces(str)
+        clean_name(@kpse.expand_braces(@tree,str))
+    end
+    def expand_path(str)
+        clean_name(@kpse.expand_path(@tree,str))
+    end
+    def expand_var(str)
+        clean_name(@kpse.expand_var(@tree,str))
+    end
+    def show_path(str)
+        clean_name(@kpse.show_path(@tree,str))
+    end
+    def var_value(str)
+        clean_name(@kpse.var_value(@tree,str))
+    end
+    def find_file(filename)
+        clean_name(@kpse.find_file(@tree,filename))
+    end
+    def find_files(filename,first=false)
+        # dodo: each filename
+        @kpse.find_files(@tree,filename,first)
+    end
+
+    private
+
+    def clean_name(str)
+        str.gsub(/\\/,'/')
+    end
+
+end
+
+
+# kpse_merge_file: 't:/ruby/base/kpsedirect.rb'
 
 class KpseDirect
 
@@ -1283,146 +1285,6 @@ class KpseDirect
 end
 
 
-# kpse_merge_file: 'C:/data/develop/context/ruby/base/merge.rb'
-
-# module    : base/merge
-# copyright : PRAGMA Advanced Document Engineering
-# version   : 2006
-# author    : Hans Hagen
-#
-# project   : ConTeXt / eXaMpLe
-# concept   : Hans Hagen
-# info      : j.hagen@xs4all.nl
-
-
-# this module will package all the used modules in the file itself
-# so that we can relocate the file at wish, usage:
-#
-# merge:
-#
-# unless SelfMerge::ok? && SelfMerge::merge then
-#     puts("merging should happen on the path were the base inserts reside")
-# end
-#
-# cleanup:
-#
-# unless SelfMerge::cleanup then
-#     puts("merging should happen on the path were the base inserts reside")
-
-module SelfMerge
-
-    @@kpsemergestart = "\# kpse_merge_start"
-    @@kpsemergestop  = "\# kpse_merge_stop"
-    @@kpsemergefile  = "\# kpse_merge_file: "
-    @@kpsemergedone  = "\# kpse_merge_done: "
-
-    @@filename = File.basename($0)
-    @@ownpath  = File.expand_path(File.dirname($0))
-    @@modroot  = '(base|graphics|rslb|www)' # needed in regex in order not to mess up SelfMerge
-    @@modules  = $".collect do |file| File.expand_path(file) end
-
-    @@modules.delete_if do |file|
-        file !~ /^#{@@ownpath}\/#{@@modroot}.*$/
-    end
-
-    def SelfMerge::ok?
-        begin
-            @@modules.each do |file|
-                return false unless FileTest.file?(file)
-            end
-        rescue
-            return false
-        else
-            return true
-        end
-    end
-
-    def SelfMerge::merge
-        begin
-            if SelfMerge::ok? && rbfile = IO.read(@@filename) then
-                begin
-                    inserts = "#{@@kpsemergestart}\n\n"
-                    @@modules.each do |file|
-                        inserts << "#{@@kpsemergefile}'#{file}'\n\n"
-                        inserts << IO.read(file).gsub(/^#.*?\n$/,'')
-                        inserts << "\n\n"
-                    end
-                    inserts << "#{@@kpsemergestop}\n\n"
-                    # no gsub! else we end up in SelfMerge
-                    rbfile.sub!(/#{@@kpsemergestart}\s*#{@@kpsemergestop}/mois) do
-                        inserts
-                    end
-                    rbfile.gsub!(/^(.*)(require [\"\'].*?#{@@modroot}.*)$/) do
-                        pre, post = $1, $2
-                        if pre =~ /#{@@kpsemergedone}/ then
-                            "#{pre}#{post}"
-                        else
-                            "#{pre}#{@@kpsemergedone}#{post}"
-                        end
-                    end
-                rescue
-                    return false
-                else
-                    begin
-                        File.open(@@filename,'w') do |f|
-                            f << rbfile
-                        end
-                    rescue
-                        return false
-                    end
-                end
-            end
-        rescue
-            return false
-        else
-            return true
-        end
-    end
-
-    def SelfMerge::cleanup
-        begin
-            if rbfile = IO.read(@@filename) then
-                begin
-                    rbfile.sub!(/#{@@kpsemergestart}(.*)#{@@kpsemergestop}\s*/mois) do
-                        "#{@@kpsemergestart}\n\n#{@@kpsemergestop}\n\n"
-                    end
-                    rbfile.gsub!(/^(.*#{@@kpsemergedone}.*)$/) do
-                        str = $1
-                        if str =~ /require [\"\']/ then
-                            str.gsub(/#{@@kpsemergedone}/, '')
-                        else
-                            str
-                        end
-                    end
-                rescue
-                    return false
-                else
-                    begin
-                        File.open(@@filename,'w') do |f|
-                            f << rbfile
-                        end
-                    rescue
-                        return false
-                    end
-                end
-            end
-        rescue
-            return false
-        else
-            return true
-        end
-    end
-
-    def SelfMerge::replace
-        if SelfMerge::ok? then
-            SelfMerge::cleanup
-            SelfMerge::merge
-        end
-    end
-
-end
-
-
 # kpse_merge_stop
 
 
@@ -1445,6 +1307,7 @@ $stderr.sync = true
 $applications = Hash.new
 $suffixinputs = Hash.new
 $predefined   = Hash.new
+$runners      = Hash.new
 
 $suffixinputs['pl']  = 'PERLINPUTS'
 $suffixinputs['rb']  = 'RUBYINPUTS'
@@ -1474,8 +1337,8 @@ $predefined['pdftools'] = 'pdftools.rb'
 $predefined['mpstools'] = 'mpstools.rb'
 $predefined['exatools'] = 'exatools.rb'
 $predefined['xmltools'] = 'xmltools.rb'
-$predefined['luatools'] = 'luatools.lua'
-$predefined['mtxtools'] = 'mtxtools.rb'
+# $predefined['luatools'] = 'luatools.lua'
+# $predefined['mtxtools'] = 'mtxtools.rb'
 
 $predefined['newpstopdf']   = 'pstopdf.rb'
 $predefined['newtexexec']   = 'texexec.rb'
@@ -1500,9 +1363,12 @@ $makelist = [
     'exatools',
     'runtools',
     'rlxtools',
-    'luatools',
-    'mtxtools',
+    'pdftrimwhite',
+    'texfind',
+    'texshow'
     #
+    # no 'luatools',
+    # no 'mtxtools',
     # no, 'texmfstart'
 ]
 
@@ -1517,10 +1383,10 @@ $kpse         = nil
 def set_applications(page=1)
 
     $applications['unknown']  = ''
-    $applications['perl']     = $applications['pl']  = 'perl'
     $applications['ruby']     = $applications['rb']  = 'ruby'
+    $applications['lua']      = $applications['lua'] = 'lua'
+    $applications['perl']     = $applications['pl']  = 'perl'
     $applications['python']   = $applications['py']  = 'python'
-    $applications['lua']      = $applications['lua'] = 'luatex --luaonly'
     $applications['java']     = $applications['jar'] = 'java'
 
     if $mswindows then
@@ -1535,6 +1401,8 @@ def set_applications(page=1)
 
     $applications['htm']      = $applications['html']
     $applications['eps']      = $applications['ps']
+
+    $runners['lua']           = "texlua"
 
 end
 
@@ -1675,6 +1543,33 @@ class File
 
 end
 
+# def hashed (arr=[])
+    # arg = if arr.class == String then arr.split(' ') else arr.dup end
+    # hsh = Hash.new
+    # if arg.length > 0
+        # hsh['arguments'] = ''
+        # done = false
+        # arg.each do |s|
+            # if done then
+                # if s =~ / / then
+                   # hsh['arguments'] += " \"#{s}\"" # maybe split on =
+                # else
+                   # hsh['arguments'] += " #{s}"
+                # end
+            # else
+                # kvl = s.split('=')
+                # if kvl[0].sub!(/^\-+/,'') then
+                    # hsh[kvl[0]] = if kvl.length > 1 then kvl[1] else true end
+                # else
+                    # hsh['file'] = s
+                    # done = true
+                # end
+            # end
+        # end
+    # end
+    # return hsh
+# end
+
 def hashed (arr=[])
     arg = if arr.class == String then arr.split(' ') else arr.dup end
     hsh = Hash.new
@@ -1683,7 +1578,18 @@ def hashed (arr=[])
         done = false
         arg.each do |s|
             if done then
-                hsh['arguments'] += ' ' + s
+                if s =~ /\s/ then
+                    kvl = s.split('=')
+                    if kvl[1] and kvl[1] !~ /^[\"\']/ then
+                        hsh['arguments'] += ' ' + kvl[0] + "=" + '"' + kvl[1] + '"'
+                    elsif s =~ /\s/ then
+                        hsh['arguments'] += ' "' + s + '"'
+                    else
+                        hsh['arguments'] += ' ' + s
+                    end
+                else
+                    hsh['arguments'] += ' ' + s
+                end
             else
                 kvl = s.split('=')
                 if kvl[0].sub!(/^\-+/,'') then
@@ -1697,6 +1603,7 @@ def hashed (arr=[])
     end
     return hsh
 end
+
 
 def launch(filename)
     if $browser && $mswindows then
@@ -1717,15 +1624,25 @@ end
 # rel|relative
 # loc|locate|kpse|path|file
 
+def quoted(str)
+    if str =~ /^\"/ then
+        return str
+    elsif str =~ / / then
+        return "\"#{str}\""
+    else
+        return str
+    end
+end
+
 def expanded(arg) # no "other text files", too restricted
     arg.gsub(/(env|environment)\:([a-zA-Z\-\_\.0-9]+)/o) do
         method, original, resolved = $1, $2, ''
         if resolved = ENV[original] then
             report("environment variable #{original} expands to #{resolved}") unless $report
-            resolved
+            quoted(resolved)
         else
             report("environment variable #{original} cannot be resolved") unless $report
-            original
+            quoted(original)
         end
     end . gsub(/(rel|relative)\:([a-zA-Z\-\_\.0-9]+)/o) do
         method, original, resolved = $1, $2, ''
@@ -1736,9 +1653,9 @@ def expanded(arg) # no "other text files", too restricted
             end
         end
         if resolved.empty? then
-            original
+            quoted(original)
         else
-            resolved
+            quoted(resolved)
         end
     end . gsub(/(kpse|loc|locate|file|path)\:([a-zA-Z\-\_\.0-9]+)/o) do
         method, original, resolved = $1, $2, ''
@@ -1753,7 +1670,7 @@ def expanded(arg) # no "other text files", too restricted
         if ENV["_CTX_K_V_#{original}_"] then
             resolved = ENV["_CTX_K_V_#{original}_"]
             report("environment provides #{original} as #{resolved}") unless $report
-            resolved
+            quoted(resolved)
         else
             check_kpse
             pstrings.each do |pstr|
@@ -1789,12 +1706,12 @@ def expanded(arg) # no "other text files", too restricted
                 original = File.dirname(original) if method =~ /path/
                 report("#{original} is not resolved") unless $report
                 ENV["_CTX_K_V_#{original}_"] = original if $crossover
-                original
+                quoted(original)
             else
                 resolved = File.dirname(resolved) if method =~ /path/
                 report("#{original} is resolved to #{resolved}") unless $report
                 ENV["_CTX_K_V_#{original}_"] = resolved if $crossover
-                resolved
+                quoted(resolved)
             end
         end
     end
@@ -1839,10 +1756,16 @@ def runcommand(command)
     end
 end
 
+def join_command(args)
+    args[0] = $runners[args[0]] || args[0]
+    [args].join(' ')
+end
+
 def runoneof(application,fullname,browserpermitted)
     if browserpermitted && launch(fullname) then
         return true
     else
+        fullname = quoted(fullname) # added because MM ran into problems
         report("starting #{$filename}") unless $report
         output("\n") if $report && $verbose
         applications = $applications[application.downcase]
@@ -1851,26 +1774,26 @@ def runoneof(application,fullname,browserpermitted)
             return true
         elsif applications.class == Array then
             if $report then
-                output([fullname,expanded($arguments)].join(' '))
+                output(join_command([fullname,expanded($arguments)]))
                 return true
             else
                 applications.each do |a|
-                    return true if runcommand([a,fullname,expanded($arguments)].join(' '))
+                    return true if runcommand(join_command([a,fullname,expanded($arguments)]))
                 end
             end
         elsif applications.empty? then
             if $report then
-                output([fullname,expanded($arguments)].join(' '))
+                output(join_command([fullname,expanded($arguments)]))
                 return true
             else
-                return runcommand([fullname,expanded($arguments)].join(' '))
+                return runcommand(join_command([fullname,expanded($arguments)]))
             end
         else
             if $report then
-                output([applications,fullname,expanded($arguments)].join(' '))
+                output(join_command([applications,fullname,expanded($arguments)]))
                 return true
             else
-                return runcommand([applications,fullname,expanded($arguments)].join(' '))
+                return runcommand(join_command([applications,fullname,expanded($arguments)]))
             end
         end
         return false
@@ -1920,6 +1843,7 @@ def usage
 end
 
 # somehow registration does not work out (at least not under windows)
+# the . is also not accepted by unix as seperator
 
 def tag(name)
     if $crossover then "_CTX_K_S_#{name}_" else "TEXMFSTART.#{name}" end
@@ -2410,10 +2334,9 @@ def show_environment
     end
 end
 
-def execute(arguments)
+def execute(arguments) # br global
 
     arguments = arguments.split(/\s+/) if arguments.class == String
-
     $directives = hashed(arguments)
 
     $help        = $directives['help']        || false
@@ -2576,5 +2499,3 @@ else
     report("\nexecution failed") if $verbose
     exit(1)
 end
-
-# exit (if ($?.to_i rescue 0) > 0 then 1 else 0 end)

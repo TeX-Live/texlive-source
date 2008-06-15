@@ -15,17 +15,12 @@ SCRIPTS = \
   texconfig texconfig-dialog texconfig-sys \
   texlinks updmap updmap-sys
 
-CONTEXTSCRIPTS = \
-  ctxtools exatools luatools makempy mpstools mptopdf mtxtools \
-  pdftools pstopdf rlxtools runtools texfont texmfstart \
-  textools texutil tmftools xmltools
-
 contextmanpgs = \
   ctxtools makempy mptopdf pstopdf texfind texmfstart \
-  fdf2tex pdftools texexec texfont textools texutil
+  pdftools texexec texfont textools texutil
 
 # The man pages for script packages such as thumbpdf and mkjobtexmf are
-# copied here by hand; ctan2tl doesn't know how to handle this case, help.
+# copied here by hand; ctan2tl doesn't know how to handle this case.  Help.
 manpgs = \
   allcm allec allneeded dvi2fax dvired e2pall epstopdf fontinst \
   kpsetool kpsewhere mkjobtexmf mkocp mkofm ofm2opl opl2ofm otp2ocp outocp \
@@ -88,9 +83,6 @@ install-exec:
 	-$(SHELL) $(srcdir)/../mkinstalldirs $(scriptdir)
 	for s in $(SCRIPTS); do \
 	  $(INSTALL_SCRIPT) $(srcdir)/$$s $(scriptdir)/$$s; \
-	done
-	for s in $(CONTEXTSCRIPTS); do \
-	  $(INSTALL_SCRIPT) $(srcdir)/context/$$s $(scriptdir)/$$s; \
 	done
 	cd $(scriptdir) && rm -f allec kpsepath kpsexpand texhash; \
 	  ln -s allcm allec; \

@@ -34,7 +34,30 @@ LINKED_SCRIPTS = \
   texmf-dist/scripts/pst-pdf/ps4pdf \
   texmf-dist/scripts/texcount/TeXcount.pl \
   texmf-dist/scripts/thumbpdf/thumbpdf.pl \
-  texmf-dist/scripts/vpe/vpe.pl
+  texmf-dist/scripts/vpe/vpe.pl \
+  texmf-dist/scripts/context/ruby/texmfstart.rb \
+  texmf-dist/scripts/context/stubs/unix/context \
+  texmf-dist/scripts/context/stubs/unix/ctxtools \
+  texmf-dist/scripts/context/stubs/unix/exatools \
+  texmf-dist/scripts/context/stubs/unix/luatools \
+  texmf-dist/scripts/context/stubs/unix/makempy \
+  texmf-dist/scripts/context/stubs/unix/mpstools \
+  texmf-dist/scripts/context/stubs/unix/mptopdf \
+  texmf-dist/scripts/context/stubs/unix/mtxrun \
+  texmf-dist/scripts/context/stubs/unix/mtxtools \
+  texmf-dist/scripts/context/stubs/unix/pdftools \
+  texmf-dist/scripts/context/stubs/unix/pdftrimwhite \
+  texmf-dist/scripts/context/stubs/unix/pstopdf \
+  texmf-dist/scripts/context/stubs/unix/rlxtools \
+  texmf-dist/scripts/context/stubs/unix/runtools \
+  texmf-dist/scripts/context/stubs/unix/texexec \
+  texmf-dist/scripts/context/stubs/unix/texfind \
+  texmf-dist/scripts/context/stubs/unix/texfont \
+  texmf-dist/scripts/context/stubs/unix/texshow \
+  texmf-dist/scripts/context/stubs/unix/textools \
+  texmf-dist/scripts/context/stubs/unix/texutil \
+  texmf-dist/scripts/context/stubs/unix/tmftools \
+  texmf-dist/scripts/context/stubs/unix/xmltools \
 
 manpgs = getnonfreefonts getnonfreefonts-sys
 
@@ -49,16 +72,24 @@ install-data::
 	  $(INSTALL_DATA) $(srcdir)/$$p.man $(man1dir)/$$p.$(manext); \
 	done
 
-# The idea here is to install the scripts themselves in texmf*/scripts,
-# and have bin/arch/foo be a symlink to, say,
-# ../../texmf/scripts/foo/foo.pl (for Perl).  That way we save a bit of
-# disk space, but more importantly omit duplication, and most
-# importantly, make it possible to invoke the same Perl script on
-# Windows (via a texlua wrapper).
+# The idea is to install the scripts themselves in texmf*/scripts, and
+# have bin/arch/foo be a symlink to, say,
+# ../../texmf/scripts/foo/foo.pl.  That way we save a bit of disk space,
+# but more importantly omit duplication, and most importantly make it
+# possible to invoke the same Perl script on Windows (via
+# tl-w32-wrapper.texlua).
 # 
-# The installation into texmf*/scripts is either done by hand; or via
-# ctan2tl.  The texlua wrapper for Windows is also done by hand, but
-# could/should also be done by ctan2tl.
+# The installation into texmf*/scripts is ideally done with ctan2tl.
+# The copy of the texlua wrapper for Windows is also done by hand, but
+# could/should also be done by ctan2tl.  The check-wrapper-consistency
+# script at least checks after the fact for problems.
+# 
+# We also keep a copy of all the scripts here, in the linked_scripts
+# subdirectory, and install from there into the runtime.  This is purely
+# for other distro builders, so symlinks are not dangling in the
+# inst/bin dir (it is meaningless in native TL).  We have not yet
+# written the auto-update to ensure linked_scripts is actually up to
+# date with the masters in Master/texmf*/script, but it will happen.
 # 
 # By the way, $(scriptdir) here is the binary directory, e.g.,
 # bin/i386-linux, not the texmf*/scripts dir.
