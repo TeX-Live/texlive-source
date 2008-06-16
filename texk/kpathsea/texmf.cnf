@@ -49,6 +49,9 @@ TEXMFMAIN = $SELFAUTOPARENT/texmf
 % The main distribution tree:
 TEXMFDIST = $SELFAUTOPARENT/texmf-dist
 
+% Our documentation-only tree, arranged by language:
+TEXMFDOC = $SELFAUTOPARENT/texmf-doc
+
 % A place for local additions to a "standard" texmf tree.
 % This tree is not used for local configuration maintained by
 % texconfig, it uses TEXMFCONFIG below.
@@ -114,13 +117,13 @@ VARTEXFONTS = $TEXMFVAR/fonts
 
 % Where to look for ls-R files.  There need not be an ls-R in the
 % directories in this path, but if there is one, Kpathsea will use it.
+% By default, this is only the !! elements of TEXMF, plus texmf-doc, so
+% that mktexlsr does not create ls-R files in the non-!! elements --
+% because if an ls-R is present, it will be used, and the disk will not
+% be searched.  This is arguably a bug in kpathsea, but we will not
+% think about it now.
 %
-% By default, this is only the !! elements of TEXMF, so that mktexlsr
-% does not create ls-R files in the non-!! elements -- because if an
-% ls-R is present, it will be used, and the disk will not be searched.
-% This is arguably a bug in kpathsea, but we will not think about it now.
-% 
-TEXMFDBS = {!!$TEXMFSYSCONFIG,!!$TEXMFSYSVAR,!!$TEXMFMAIN,!!$TEXMFLOCAL,!!$TEXMFDIST}
+TEXMFDBS = {!!$TEXMFSYSCONFIG,!!$TEXMFSYSVAR,!!$TEXMFMAIN,!!$TEXMFLOCAL,!!$TEXMFDIST,!!$TEXMFDOC}
 
 % It may be convenient to define TEXMF like this:
 %   TEXMF = {$TEXMFHOME,!!$TEXMFLOCAL,!!$TEXMFMAIN,~}
@@ -168,6 +171,7 @@ TEXINPUTS.ftex          = .;$TEXMF/tex/{formate,plain,generic,}//
 TEXINPUTS.jadetex       = .;$TEXMF/tex/{jadetex,plain,generic,}//
 TEXINPUTS.mex           = .;$TEXMF/tex/{mex,plain,generic,}//
 TEXINPUTS.texinfo       = .;$TEXMF/tex/{texinfo,plain,generic,}//
+TEXINPUTS.xetex         = .;$TEXMF/tex/{plain,generic,}//
 
 % LaTeX 2e specific macros are stored in latex/, macros that can only be
 % used with 2.09 in latex209/.  In addition, we look in the directory
@@ -177,6 +181,7 @@ TEXINPUTS.cslatex       = .;$TEXMF/tex/{cslatex,csplain,latex,generic,}//
 TEXINPUTS.latex         = .;$TEXMF/tex/{latex,generic,}//
 TEXINPUTS.olatex        = .;$TEXMF/tex/{latex,generic,}//
 TEXINPUTS.latex209      = .;$TEXMF/tex/{latex209,generic,latex,}//
+TEXINPUTS.xelatex       = .;$TEXMF/tex/{xelatex,latex,generic,}//
 
 % Fontinst needs to read afm files.
 TEXINPUTS.fontinst      = .;$TEXMF/{tex,fonts/afm}//
@@ -366,17 +371,19 @@ MPSUPPORT = .;$TEXMF/metapost/support
 MIMELIBDIR = $SELFAUTOPARENT/etc
 MAILCAPLIBDIR = $SELFAUTOPARENT/etc
 
-% Default settings for fontconfig library, used by Win32 versions of  
-% xetex/xdvipdfmx (note that fontconfig on Linux/Unix-like systems 
+% Default settings for fontconfig library, used by Win32 versions of
+% xetex/xdvipdfmx (note that fontconfig on Linux/Unix-like systems
 % will ignore settings in this file)
 FONTCONFIG_FILE=fonts.conf
-FONTCONFIG_PATH=$SELFAUTOLOC/conf
-FC_CACHEDIR=$SELFAUTOLOC/cache
+FONTCONFIG_PATH=$TEXMFSYSVAR/fonts/conf
+FC_CACHEDIR=$TEXMFSYSVAR/fonts/cache
 
 % TeX documentation and source files, for use with kpsewhich.
 % TeX Live has a separate hierarchy with just documentation, texmf-doc,
 % in addition to the doc files in the other hierarchies.
-TEXMFDOCDIR = $SELFAUTOPARENT/texmf-doc/doc
+% Also, find the English documentation first -- better than random, when
+% there are name collisions.
+TEXMFDOCDIR = $TEXMFDOC/doc{/english,}
 TEXDOCS = .;$TEXMF/doc//;$TEXMFDOCDIR//
 TEXSOURCES = .;$TEXMF/source//
 
@@ -423,7 +430,7 @@ RUBYINPUTS   = .;$TEXMF/scripts/{$progname,$engine,}/ruby//
 % paradoxical), but the compile-time default in paths.h is built from it.
 % The SELFAUTO* variables are set automatically from the location of
 % argv[0], in kpse_set_progname.
-% 
+%
 % For security reasons, it is better not to include . in this path.
 %
 TEXMFCNF = {$SELFAUTOLOC,$SELFAUTODIR,$SELFAUTOPARENT}{,{/share,}/texmf{-local,}/web2c}
@@ -442,14 +449,14 @@ engine = unsetengine
 % first.  If this is false, we first look for a.b and then a.b.tex,
 % first.  If this is false, we first look for a.b and then a.b.tex,
 % i.e., we try the name as-is first.
-% 
+%
 % Both names are always tried; the difference is the order in which they
 % are tried.  The setting applies to all searches, not just .tex.
-% 
+%
 % This setting only affects names being looked up which *already* have
 % an extension.  A name without an extension (e.g., `tex story') will
 % always have an extension added first.
-% 
+%
 % The default is true, because we already avoid adding the standard
 % extension(s) in most common cases.  E.g., babel.sty will only look for
 % babel.sty, not babel.sty.tex, regardless of this setting.

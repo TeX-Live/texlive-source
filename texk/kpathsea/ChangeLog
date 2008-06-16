@@ -1,3 +1,11 @@
+2008-06-16  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TEXMFDOC): new var.
+	(TEXMFDBS): use it, so ls-R gets created there.
+	(TEXMFDOCDIR): use it.
+	[Reminder: the texmf.cnf here in Build/ is slaved to the one in
+	 Master/.]
+
 2008-06-15  Karl Berry  <karl@tug.org>
 
 	* mktexlsr: once again respect dir names given on cmd line.
