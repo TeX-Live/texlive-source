@@ -682,10 +682,10 @@ run_initex()
 
   # Check for infinite recursion before running the iniTeX:
   case :$mktexfmt_loop: in
-  *:"$format":*)
+  *:"$format/$engine":*)
     abort "Infinite recursion detected, giving up!" ;;
   esac
-  mktexfmt_loop=$mktexfmt_loop:$format
+  mktexfmt_loop=$mktexfmt_loop:$format/$engine
   export mktexfmt_loop
 
   verboseMsg "$progname: running \`$engine -ini  $tcxflag $jobswitch $prgswitch $texargs' ..."
