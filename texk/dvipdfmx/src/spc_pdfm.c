@@ -577,7 +577,7 @@ spc_handler_pdfm_annot (struct spc_env *spe, struct spc_arg *args)
     rect.llx = cp.x;
     rect.lly = cp.y - spe->mag * ti.depth;
     rect.urx = rect.llx + spe->mag * ti.width;
-    rect.ury = rect.lly + spe->mag * ti.height;
+    rect.ury = cp.lly + spe->mag * ti.height;
   }
 
   /* Order is important... */
