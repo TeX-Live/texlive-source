@@ -149,7 +149,7 @@ install_link()
   esac
 
   case $src in
-    */cont-??|*/metafun|*/mptopdf)
+    */cont-??|*/mptopdf)
       # context includes wrapper scripts that create/run these.
       verbose_echo "skipped ConTeXtish symlink $src -> $dest (special case)"
       ;;

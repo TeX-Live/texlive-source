@@ -1,3 +1,8 @@
+2008-06-18  Karl Berry  <karl@tug.org>
+
+	* texlinks: metafun is not created specially by ConTeXt, so we'll
+	create it here.
+
 2008-06-17  Norbert Preining  <preining@logic.at>
 
 	* fmtutil: add the engine setting to the infinite-loop-detection
