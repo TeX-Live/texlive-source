@@ -97,6 +97,19 @@ sub debug_msg {
     }
 }
 
+sub which {
+    my $prog=shift;
+    my @PATH;
+    my $PATH=$ENV{'PATH'};
+    @PATH=split ':', $PATH;
+    for my $dir (@PATH) {
+	if (-x "$dir/$prog") {
+	    return "$dir/$prog";
+	}
+    }
+    return 0;
+}
+
 
 sub expand_var {
     my $var=shift;
@@ -248,7 +261,7 @@ if ($^O=~/^MSWin(32|64)$/i) {
     @signals=(@common_signals, @signals_UNIX);
 }
 
-debug_msg "Supported signals: @signals\n";
+debug_msg "Supported signals: @signals";
 
 foreach my $signal (@signals) {
     $SIG{"$signal"}=\&remove_tmpdir;
@@ -256,9 +269,25 @@ foreach my $signal (@signals) {
 
 # Download the script from tug.org.
 
-debug_msg "Running 'wget $getfont_url'";
+my $has_wget=0;
 
-system ('wget', "$getfont_url") == 0 or die "! Error: Can't execute wget.\n";
+if ($^O=~/^MSWin(32|64)$/i) {
+    $has_wget=1; ## shipped with TL.
+} elsif (which "wget") {
+    $has_wget=1;
+}
+
+debug_msg "No wget binary found on your system, trying curl" unless ($has_wget);
+
+if ($has_wget) {
+    debug_msg "Running 'wget $getfont_url'";
+    system ('wget', "$getfont_url") == 0 
+	or die "! Error: Can't execute wget.\n";
+} else {
+    debug_msg "Running 'curl -O $getfont_url'";
+    system ('curl', '-O', "$getfont_url") == 0 
+	or die "! Error: Can't execute curl.\n";
+}
 
 # Download the fonts.
 
@@ -270,6 +299,7 @@ push @getfont, '--debug' if $opt_debug;
 push @getfont, '--verbose' if $opt_verbose;
 push @getfont, '--sys' if $sys;
 push @getfont, '--all' if $opt_all;
+push @getfont, '--use_curl' unless ($has_wget);
 push @getfont, @allpackages;
 
 debug_msg "Running '@getfont'";

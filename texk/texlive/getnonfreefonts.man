@@ -113,9 +113,11 @@ will be used if none of the variables is defined.
 
 .SH REQUIREMENTS
 Though this program is supposed to be used with 
-.B TeXLive
+.B TeX Live
 it might work with other TeX distributions too.  The programs
-.BR "wget" ,
+.BR "wget"
+or 
+.BR "curl" ,
 .BR "unzip" , 
 and
 .B kpsewhich
