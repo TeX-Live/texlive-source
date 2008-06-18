@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_html.c,v 1.6 2007/01/19 11:00:48 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_html.c,v 1.8 2008/05/29 13:43:51 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -635,7 +635,7 @@ spc_html__img_empty (struct spc_env *spe, pdf_obj *attr, struct spc_html_ *sd)
     return  error;
   }
 
-  id = pdf_ximage_findresource(pdf_string_value(src), 0/*, 0*/);
+  id = pdf_ximage_findresource(pdf_string_value(src), 0, NULL);
   if (id < 0) {
     spc_warn(spe, "Could not find/load image: %s", pdf_string_value(src)); 
     error = -1;

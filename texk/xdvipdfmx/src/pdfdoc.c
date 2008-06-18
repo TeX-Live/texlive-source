@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.55 2008/05/22 10:08:02 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.57 2008/06/05 06:27:42 chofchof Exp $
  
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -100,7 +100,7 @@ read_thumbnail (const char *thumb_filename)
   }
   MFCLOSE(fp);
 
-  xobj_id = pdf_ximage_findresource(thumb_filename, 0);
+  xobj_id = pdf_ximage_findresource(thumb_filename, 0, NULL);
   if (xobj_id < 0) {
     WARN("Could not read thumbnail file \"%s\".", thumb_filename);
     image_ref = NULL;
@@ -2072,11 +2072,12 @@ pdf_close_document (void)
  * All this routine does is give the form a name and add a unity scaling matrix.
  * It fills in required fields.  The caller must initialize the stream.
  */
-void
+static void
 pdf_doc_make_xform (pdf_obj     *xform,
                     pdf_rect    *bbox,
                     pdf_tmatrix *matrix,
-                    pdf_obj     *resources)
+                    pdf_obj     *resources,
+                    pdf_obj     *attrib)
 {
   pdf_obj *xform_dict;
   pdf_obj *tmp;
@@ -2108,6 +2109,10 @@ pdf_doc_make_xform (pdf_obj     *xform,
     pdf_add_array(tmp, pdf_new_number(ROUND(matrix->e, .001  )));
     pdf_add_array(tmp, pdf_new_number(ROUND(matrix->f, .001  )));
     pdf_add_dict(xform_dict, pdf_new_name("Matrix"), tmp);
+  }
+
+  if (attrib) {
+    pdf_merge_dict(xform_dict, attrib);
   }
 
   pdf_add_dict(xform_dict, pdf_new_name("Resources"), resources);
@@ -2186,7 +2191,7 @@ pdf_doc_begin_grabbing (const char *ident,
 }
 
 void
-pdf_doc_end_grabbing (void)
+pdf_doc_end_grabbing (pdf_obj *attrib)
 {
   pdf_form *form;
   pdf_obj  *procset;
@@ -2216,9 +2221,10 @@ pdf_doc_end_grabbing (void)
 
   pdf_doc_make_xform(form->contents,
                      &form->cropbox, &form->matrix,
-                     pdf_ref_obj(form->resources));
+                     pdf_ref_obj(form->resources), attrib);
   pdf_release_obj(form->resources);
   pdf_release_obj(form->contents);
+  if (attrib) pdf_release_obj(attrib);
 
   p->pending_forms = fnode->prev;
 

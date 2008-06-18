@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.h,v 1.27 2008/05/20 13:05:14 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.h,v 1.28 2008/06/07 09:54:38 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -49,6 +49,7 @@ typedef struct pdf_file pdf_file;
 
 /* External interface to pdf routines */
 
+extern int      pdf_obj_get_verbose (void);
 extern void     pdf_obj_set_verbose (void);
 extern void     pdf_error_cleanup   (void);
 

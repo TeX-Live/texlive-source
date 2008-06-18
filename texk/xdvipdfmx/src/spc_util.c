@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_util.c,v 1.11 2008/03/01 09:00:31 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_util.c,v 1.14 2008/06/01 01:38:32 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -181,6 +181,7 @@ spc_read_color_pdf (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *a
   double  cv[4]; /* at most four */
   int     nc, isarry = 0;
   int     error = 0;
+  char   *q;
 
   skip_blank(&ap->curptr, ap->endptr);
 
@@ -201,8 +202,16 @@ spc_read_color_pdf (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *a
     pdf_color_cmykcolor(colorspec, cv[0], cv[1], cv[2], cv[3]);
     break;
   default:
-    spc_warn(spe, "Expecting either gray level or RGB/CMYK color array: %d", nc);
-    error = -1;
+    /* Try to read the color names defined in dvipsname.def */
+    q = parse_c_ident(&ap->curptr, ap->endptr);
+    if (!q) {
+      spc_warn(spe, "No valid color specified?");
+      return  -1;
+    }
+    error = pdf_color_namedcolor(colorspec, q);
+    if (error)
+      spc_warn(spe, "Unrecognized color name: %s", q);
+    RELEASE(q);
     break;
   }
 
@@ -497,6 +506,8 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
     "clip",
 #define  K__PAGE       10
     "page",
+#define  K__HIDE       11
+    "hide",
      NULL
   };
   double xscale, yscale, rotate;
@@ -505,6 +516,7 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
   has_xscale = has_yscale = has_scale = has_rotate = has_matrix = 0;
   xscale = yscale = 1.0; rotate = 0.0;
   p->flags |= INFO_DO_CLIP;   /* default: do clipping */
+  p->flags &= ~INFO_DO_HIDE;   /* default: do clipping */
 
   skip_blank(&ap->curptr, ap->endptr);
 
@@ -616,6 +628,9 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
 	else
 	  error = -1;
       }
+      break;
+    case  K__HIDE:
+      p->flags |= INFO_DO_HIDE;
       break;
     default:
       error = -1;

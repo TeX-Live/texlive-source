@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfnames.c,v 1.1 2004/09/02 12:23:07 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfnames.c,v 1.2 2008/06/07 09:54:38 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -174,8 +174,9 @@ pdf_names_add_object (struct ht_table *names,
       pdf_release_obj(object); /* PLEASE FIX THIS!!! */
     } else {
       if (value->object || value->object_ref) {
-	WARN("Object reference with key \"%s\" is in use.",
-	     printable_key(key, keylen));
+        if (pdf_obj_get_verbose()) {
+	  WARN("Object reference with key \"%s\" is in use.", printable_key(key, keylen));
+        }
 	return -1;
       } else {
 	value->object = object;

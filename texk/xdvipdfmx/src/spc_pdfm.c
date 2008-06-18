@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_pdfm.c,v 1.35 2008/05/22 10:08:02 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_pdfm.c,v 1.41 2008/06/16 01:47:13 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -280,21 +280,12 @@ safeputresdict (pdf_obj *kp, pdf_obj *vp, void *dp)
   dict = pdf_lookup_dict(dp, key);
 
   if (pdf_obj_isaref(vp)) {
-    if (dict) {
-#if  0
-      return  E_INVALID_ACCESS;
-#endif
-      WARN("Replacing whole page/form resource dict entry \"%s\"...", key);
-      WARN("You might be creating a broken PDF document.");
-    }
-    pdf_add_dict(dp,
-                 pdf_new_name(key), pdf_link_obj(vp));
+    pdf_add_dict(dp, pdf_new_name(key), pdf_link_obj(vp));
   } else if (pdf_obj_typeof(vp) == PDF_DICT) {
     if (dict)
       pdf_foreach_dict(vp, safeputresdent, dict);
     else {
-      pdf_add_dict(dp,
-                   pdf_new_name(key), pdf_link_obj(vp));
+      pdf_add_dict(dp, pdf_new_name(key), pdf_link_obj(vp));
     }
   } else {
     WARN("Invalid type (not DICT) for page/form resource dict entry: key=\"%s\"", key);
@@ -683,8 +674,8 @@ spc_handler_pdfm_annot (struct spc_env *spe, struct spc_arg *args)
   } else {
     rect.llx = cp.x;
     rect.lly = cp.y - spe->mag * ti.depth;
-    rect.urx = rect.llx + spe->mag * ti.width;
-    rect.ury = rect.lly + spe->mag * ti.height;
+    rect.urx = cp.x + spe->mag * ti.width;
+    rect.ury = cp.y + spe->mag * ti.height;
   }
 
   /* Order is important... */
@@ -1064,7 +1055,7 @@ spc_handler_pdfm_image (struct spc_env *spe, struct spc_arg *args)
   struct spc_pdf_ *sd = &_pdf_stat;
   int              xobj_id;
   char            *ident = NULL;
-  pdf_obj         *fspec;
+  pdf_obj         *fspec, *attr = NULL;
   transform_info   ti;
   long             page_no;
 
@@ -1102,7 +1093,16 @@ spc_handler_pdfm_image (struct spc_env *spe, struct spc_arg *args)
     return  -1;
   }
 
-  xobj_id = pdf_ximage_findresource(pdf_string_value(fspec), page_no);
+  skip_white(&args->curptr, args->endptr);
+  if (args->curptr < args->endptr) {
+    attr = parse_pdf_object(&args->curptr, args->endptr, NULL);
+    if (!attr || !PDF_OBJ_DICTTYPE(attr)) {
+      spc_warn(spe, "Ignore invalid attribute dictionary.");
+      if (attr) pdf_release_obj(attr);
+    }
+  }
+
+  xobj_id = pdf_ximage_findresource(pdf_string_value(fspec), page_no, attr);
   if (xobj_id < 0) {
     spc_warn(spe, "Could not find image resource...");
     pdf_release_obj(fspec);
@@ -1111,7 +1111,8 @@ spc_handler_pdfm_image (struct spc_env *spe, struct spc_arg *args)
     return  -1;
   }
 
-  pdf_dev_put_image(xobj_id, &ti, spe->x_user, spe->y_user);
+  if (!(ti.flags & INFO_DO_HIDE))
+    pdf_dev_put_image(xobj_id, &ti, spe->x_user, spe->y_user);
 
   if (ident) {
     addresource(sd, ident, xobj_id);
@@ -1137,7 +1138,7 @@ spc_handler_pdfm_dest (struct spc_env *spe, struct spc_arg *args)
     spc_warn(spe, "PDF string expected for destination name but not found.");
     return  -1;
   } else if (!PDF_OBJ_STRINGTYPE(name)) {
-    spc_warn(spe, "PDF string expected for destination name but not found.");
+    spc_warn(spe, "PDF string expected for destination name but invalid type.");
     pdf_release_obj(name);
     return  -1;
   }
@@ -1147,7 +1148,7 @@ spc_handler_pdfm_dest (struct spc_env *spe, struct spc_arg *args)
     spc_warn(spe, "No destination not specified for pdf:dest.");
     pdf_release_obj(name);
     return  -1;
-  }  else if (!PDF_OBJ_ARRAYTYPE(array)) {
+  } else if (!PDF_OBJ_ARRAYTYPE(array)) {
     spc_warn(spe, "Destination not specified as an array object!");
     pdf_release_obj(name);
     pdf_release_obj(array);
@@ -1158,10 +1159,8 @@ spc_handler_pdfm_dest (struct spc_env *spe, struct spc_arg *args)
                             pdf_string_value (name),
                             pdf_string_length(name),
                             array);
+  if (error) pdf_release_obj(array);
   pdf_release_obj(name);
-
-  if (error)
-    spc_warn(spe, "Could not add Dests name tree entry...");
 
   return  0;
 }
@@ -1398,8 +1397,8 @@ spc_handler_pdfm_literal (struct spc_env *spe, struct spc_arg *args)
 
   if (args->curptr < args->endptr) {
     pdf_tmatrix M;
-    M.a = M.d = 1.0; M.b = M.c = 0.0;
     if (!direct) {
+      M.a = M.d = 1.0; M.b = M.c = 0.0;
       M.e = spe->x_user; M.f = spe->y_user;
       pdf_dev_concat(&M);
     }
@@ -1416,17 +1415,51 @@ spc_handler_pdfm_literal (struct spc_env *spe, struct spc_arg *args)
   return  0;
 }
 
-/*
- * FSTREAM: Create a PDF stream object from an existing file.
- *
- *  pdf: fstream @objname (filename) [PDF_DICT]
- */
 static int
-spc_handler_pdfm_fstream (struct spc_env *spe, struct spc_arg *args)
+spc_handler_pdfm_bcontent (struct spc_env *spe, struct spc_arg *args)
+{
+  pdf_tmatrix M;
+  double xpos, ypos;
+
+  pdf_dev_gsave();
+  pdf_dev_get_coord(&xpos, &ypos);
+  pdf_setmatrix(&M, 1.0, 0.0, 0.0, 1.0, spe->x_user - xpos, spe->y_user - ypos);
+  pdf_dev_concat(&M);
+  pdf_dev_push_coord(spe->x_user, spe->y_user);
+  return  0;
+}
+
+static int
+spc_handler_pdfm_econtent (struct spc_env *spe, struct spc_arg *args)
+{
+  pdf_dev_pop_coord();
+  pdf_dev_grestore();
+  return  0;
+}
+
+static int
+spc_handler_pdfm_code (struct spc_env *spe, struct spc_arg *args)
+{
+  skip_white(&args->curptr, args->endptr);
+
+  if (args->curptr < args->endptr) {
+    pdf_doc_add_page_content(" ", 1);
+    pdf_doc_add_page_content(args->curptr, (long) (args->endptr - args->curptr));
+    args->curptr = args->endptr;
+  }
+
+  return  0;
+}
+
+#define STRING_STREAM 0
+#define FILE_STREAM   1
+
+static int
+spc_handler_pdfm_stream_with_type (struct spc_env *spe, struct spc_arg *args, int type)
 {
   pdf_obj *fstream;
-  long     stream_len, nb_read;
-  char    *ident, *filename;
+  long     nb_read;
+  char    *ident, *instring;
   pdf_obj *tmp;
   FILE    *fp;
 
@@ -1434,7 +1467,7 @@ spc_handler_pdfm_fstream (struct spc_env *spe, struct spc_arg *args)
 
   ident = parse_opt_ident(&args->curptr, args->endptr);
   if (!ident) {
-    spc_warn(spe, "Missing objname string for pdf:fstream.");
+    spc_warn(spe, "Missing objname for pdf:(f)stream.");
     return  -1;
   }
 
@@ -1442,44 +1475,50 @@ spc_handler_pdfm_fstream (struct spc_env *spe, struct spc_arg *args)
 
   tmp = parse_pdf_object(&args->curptr, args->endptr, NULL);
   if (!tmp) {
-    spc_warn(spe, "Missing filename string for pdf:fstream.");
+    spc_warn(spe, "Missing input string for pdf:(f)stream.");
     RELEASE(ident);
     return  -1;
   } else if (!PDF_OBJ_STRINGTYPE(tmp)) {
-    spc_warn(spe, "Missing filename string for pdf:fstream.");
+    spc_warn(spe, "Invalid type of input string for pdf:(f)stream.");
     pdf_release_obj(tmp);
     RELEASE(ident);
     return  -1;
   }
 
-  filename = pdf_string_value(tmp);
-  if (!filename) {
-    spc_warn(spe, "Missing filename string for pdf:fstream.");
-    pdf_release_obj(tmp);
-    RELEASE(ident);
-    return  -1;
-  }
+  instring = pdf_string_value(tmp);
 
-  fstream = pdf_new_stream(STREAM_COMPRESS);
-
-  fp = DPXFOPEN(filename, DPX_RES_TYPE_BINARY);
-  if (!fp) {
-    spc_warn(spe, "Could not open file: %s", filename);
-    pdf_release_obj(fstream);
+  switch (type) {
+  case FILE_STREAM:
+    if (!instring) {
+      spc_warn(spe, "Missing filename for pdf:fstream.");
+      pdf_release_obj(tmp);
+      RELEASE(ident);
+      return  -1;
+    }
+    fp = DPXFOPEN(instring, DPX_RES_TYPE_BINARY);
+    if (!fp) {
+      spc_warn(spe, "Could not open file: %s", instring);
+      pdf_release_obj(tmp);
+      RELEASE(ident);
+      return -1;
+    }
+    fstream = pdf_new_stream(STREAM_COMPRESS);
+    while ((nb_read =
+	    fread(work_buffer, sizeof(char), WORK_BUFFER_SIZE, fp)) > 0)
+      pdf_add_stream(fstream, work_buffer, nb_read);
+    MFCLOSE(fp);
+    break;
+  case STRING_STREAM:
+    fstream = pdf_new_stream(STREAM_COMPRESS);
+    if (instring)
+      pdf_add_stream(fstream, instring, strlen(instring));
+    break;
+  default:
     pdf_release_obj(tmp);
     RELEASE(ident);
     return -1;
   }
   pdf_release_obj(tmp);
-
-  stream_len = 0;
-  while ((nb_read =
-	  fread(work_buffer, sizeof(char), WORK_BUFFER_SIZE, fp)) > 0) {
-    pdf_add_stream(fstream, work_buffer, nb_read);
-    stream_len += nb_read;
-  }
-
-  MFCLOSE(fp);
 
   /*
    * Optional dict.
@@ -1514,6 +1553,28 @@ spc_handler_pdfm_fstream (struct spc_env *spe, struct spc_arg *args)
   RELEASE(ident);
 
   return  0;
+}
+
+/*
+ * STREAM: Create a PDF stream object from an input string.
+ *
+ *  pdf: stream @objname (input_string) [PDF_DICT]
+ */
+static int
+spc_handler_pdfm_stream (struct spc_env *spe, struct spc_arg *args)
+{
+  return spc_handler_pdfm_stream_with_type (spe, args, STRING_STREAM);
+}
+
+/*
+ * FSTREAM: Create a PDF stream object from an existing file.
+ *
+ *  pdf: fstream @objname (filename) [PDF_DICT]
+ */
+static int
+spc_handler_pdfm_fstream (struct spc_env *spe, struct spc_arg *args)
+{
+  return spc_handler_pdfm_stream_with_type (spe, args, FILE_STREAM);
 }
 
 /* Grab page content as follows:
@@ -1597,27 +1658,25 @@ spc_handler_pdfm_bform (struct spc_env *spe, struct spc_arg *args)
   return  0;
 }
 
+/* An extra dictionary after exobj must be merged to the form dictionary,
+ * not resource dictionary.
+ * Please use pdf:put @resources (before pdf:exobj) instead.
+ */
 static int
 spc_handler_pdfm_eform (struct spc_env *spe, struct spc_arg *args)
 {
-  pdf_obj   *garbage;
-  pdf_obj   *resource;
+  pdf_obj   *attrib = NULL;
 
   skip_white(&args->curptr, args->endptr);
 
   if (args->curptr < args->endptr) {
-    /* An extra dictionary after exobj must be merged to /Resources.
-     * Please use pdf:put @resources (before pdf:exobj) instead.
-     */
-    garbage = parse_pdf_dict(&args->curptr, args->endptr, NULL);
-    if (garbage) {
-      resource = pdf_doc_current_page_resources();
-      pdf_merge_dict(resource, garbage);
-      spc_warn(spe, "Garbage after special pdf:exobj.");
-      pdf_release_obj(garbage);
+    attrib = parse_pdf_dict(&args->curptr, args->endptr, NULL);
+    if (attrib && !PDF_OBJ_DICTTYPE(attrib)) {
+      pdf_release_obj(attrib);
+      attrib = NULL;
     }
   }
-  pdf_doc_end_grabbing();
+  pdf_doc_end_grabbing(attrib);
 
   return  0;
 }
@@ -1674,7 +1733,7 @@ spc_handler_pdfm_uxobj (struct spc_env *spe, struct spc_arg *args)
    */
   xobj_id = findresource(sd, ident);
   if (xobj_id < 0) {
-    xobj_id = pdf_ximage_findresource(ident, 0);
+    xobj_id = pdf_ximage_findresource(ident, 0, NULL);
     if (xobj_id < 0) {
       spc_warn(spe, "Specified (image) object doesn't exist: %s", ident);
       RELEASE(ident);
@@ -1978,10 +2037,15 @@ static struct spc_handler pdfm_handlers[] = {
   {"tounicode",  spc_handler_pdfm_tounicode},
 #endif /* ENABLE_TOUNICODE */
   {"literal",    spc_handler_pdfm_literal},
+  {"stream",     spc_handler_pdfm_stream},
   {"fstream",    spc_handler_pdfm_fstream},
   {"names",      spc_handler_pdfm_names},
   {"mapline",    spc_handler_pdfm_mapline},
   {"mapfile",    spc_handler_pdfm_mapfile},
+
+  {"bcontent",   spc_handler_pdfm_bcontent},
+  {"econtent",   spc_handler_pdfm_econtent},
+  {"code",       spc_handler_pdfm_code},
 };
 
 int

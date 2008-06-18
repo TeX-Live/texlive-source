@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/mpost.c,v 1.40 2008/05/17 01:17:27 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/mpost.c,v 1.41 2008/06/05 06:27:42 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -883,7 +883,7 @@ do_texfig_operator (int opcode, double x_user, double y_user)
     if (!in_tfig)
       ERROR("endTexFig without valid startTexFig!.");
 
-    pdf_doc_end_grabbing();
+    pdf_doc_end_grabbing(NULL);
     pdf_dev_put_image(xobj_id, &fig_p, x_user, y_user);
     in_tfig = 0;
     break;
@@ -1578,7 +1578,7 @@ mps_include_page (const char *ident, FILE *fp)
   mps_stack_clear_to (st_depth);
   pdf_dev_grestore_to(gs_depth);
 
-  pdf_doc_end_grabbing();
+  pdf_doc_end_grabbing(NULL);
 
   //pdf_color_pop();
   pdf_dev_set_param(PDF_DEV_PARAM_AUTOROTATE, autorotate);

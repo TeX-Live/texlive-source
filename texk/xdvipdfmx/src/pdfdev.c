@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdev.c,v 1.65 2008/05/18 08:09:09 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdev.c,v 1.66 2008/06/05 06:27:42 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -976,6 +976,37 @@ handle_multibyte_string (struct dev_font *font,
   return 0;
 }
 
+
+static pdf_coord *dev_coords = NULL;
+static int num_dev_coords = 0;
+static int max_dev_coords = 0;
+
+void pdf_dev_get_coord(double *xpos, double *ypos)
+{
+  if (num_dev_coords > 0) {
+    *xpos = dev_coords[num_dev_coords-1].x;
+    *ypos = dev_coords[num_dev_coords-1].y;
+  } else {
+    *xpos = *ypos = 0.0;
+  }
+}
+
+void pdf_dev_push_coord(double xpos, double ypos)
+{
+  if (num_dev_coords >= max_dev_coords) {
+    max_dev_coords += 4;
+    dev_coords = RENEW(dev_coords, max_dev_coords, pdf_coord);
+  }
+  dev_coords[num_dev_coords].x = xpos;
+  dev_coords[num_dev_coords].y = ypos;
+  num_dev_coords++;
+}
+
+void pdf_dev_pop_coord(void)
+{
+  if (num_dev_coords > 0) num_dev_coords--;
+}
+
 /*
  * ctype:
 #ifdef XETEX
@@ -1043,6 +1074,11 @@ pdf_dev_set_string (spt_t xpos, spt_t ypos,
       for (i = 0; i < length; i++)
         real_font->used_chars[str_ptr[i]] = 1;
     }
+  }
+
+  if (num_dev_coords > 0) {
+    xpos -= bpt2spt(dev_coords[num_dev_coords-1].x);
+    ypos -= bpt2spt(dev_coords[num_dev_coords-1].y);
   }
 
   /*
@@ -1161,9 +1197,10 @@ pdf_init_device (double dvi2pts, int precision, int black_and_white)
   pdf_color_clear_stack();
   pdf_dev_init_gstates();
 
-  num_dev_fonts = 0;
-  max_dev_fonts = 0;
-  dev_fonts     = NULL;
+  num_dev_fonts  = max_dev_fonts = 0;
+  dev_fonts      = NULL;
+  num_dev_coords = max_dev_coords = 0;
+  dev_coords     = NULL;
 }
 
 void
@@ -1182,10 +1219,7 @@ pdf_close_device (void)
     }
     RELEASE(dev_fonts);
   }
-  dev_fonts     = NULL;
-  num_dev_fonts = 0;
-  max_dev_fonts = 0;
-
+  if (dev_coords) RELEASE(dev_coords);
   pdf_dev_clear_gstates();
 }
 
@@ -1607,6 +1641,11 @@ pdf_dev_set_rule (spt_t xpos, spt_t ypos, spt_t width, spt_t height)
   int    len = 0;
   double width_in_bp;
 
+  if (num_dev_coords > 0) {
+    xpos -= bpt2spt(dev_coords[num_dev_coords-1].x);
+    ypos -= bpt2spt(dev_coords[num_dev_coords-1].y);
+  }
+
   graphics_mode();
 
   format_buffer[len++] = ' ';
@@ -1826,6 +1865,11 @@ pdf_dev_put_image (int             id,
   pdf_tmatrix  M;
   pdf_rect     r;
   int          len = 0;
+
+  if (num_dev_coords > 0) {
+    ref_x -= dev_coords[num_dev_coords-1].x;
+    ref_y -= dev_coords[num_dev_coords-1].y;
+  }
 
   pdf_copymatrix(&M, &(p->matrix));
   M.e += ref_x; M.f += ref_y;

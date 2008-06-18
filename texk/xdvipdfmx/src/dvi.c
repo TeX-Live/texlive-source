@@ -2048,7 +2048,7 @@ do_pic_file()
     transform is a 3x2 affine transform matrix expressed in fixed-point values
   */
   
-  xobj_id = pdf_ximage_findresource(path, page_no/*, pdf_box*/);
+  xobj_id = pdf_ximage_findresource(path, page_no, NULL);
   if (xobj_id >= 0) {
       /* FIXME: this seems to work for 72dpi JPEGs, but isn't right for others;
          need to take the actual image resolution into account in pdf_dev_put_image,
