@@ -46,20 +46,20 @@ This is the command line interface to the synctex_parser.c.
 #   include <math.h>
 #   include "synctex_parser.h"
 
-/* The code below uses strlcat and strlcpy, which avoids security warnings with some compilers.
-   However, if these are not available we simply use the old, unchecked versions;
-   this is OK because all the uses in this code are working with a buffer that's been
-   allocated based on measuring the strings involved. */
-#ifndef HAVE_STRLCAT
-#define strlcat(dst, src, size) strcat((dst), (src))
-#endif
-#ifndef HAVE_STRLCPY
-#define strlcpy(dst, src, size) strcpy((dst), (src))
-#endif
-#ifndef HAVE_FMAX
-#define fmax my_fmax
+/*  The code below uses strlcat and strlcpy, which avoids security warnings with some compilers.
+    However, if these are not available we simply use the old, unchecked versions;
+    this is OK because all the uses in this code are working with a buffer that's been
+    allocated based on measuring the strings involved. */
+#   ifndef HAVE_STRLCAT
+#       define strlcat(dst, src, size) strcat((dst), (src))
+#   endif
+#   ifndef HAVE_STRLCPY
+#       define strlcpy(dst, src, size) strcpy((dst), (src))
+#   endif
+#   ifndef HAVE_FMAX
+#       define fmax my_fmax
 inline static double my_fmax(double x, double y) { return (x < y) ? y : x; }
-#endif
+#   endif
 
 #define SYNCTEX_DEBUG 0
 
@@ -114,7 +114,7 @@ void synctex_usage(char * error,va_list ap) {
 	}
 	fprintf((error?stderr:stdout),
 		"usage: synctex <subcommand> [options] [args]\n"
-		"Synchronize TeXnology command-line client, version 0.1\n\n"
+		"Synchronize TeXnology command-line client, version 1.0\n\n"
 		"The Synchronization TeXnology by Jérôme Laurens is a new feature of recent TeX engines.\n"
 		"It allows to synchronize between input and output, which means to\n"
 		"navigate from the source document to the typeset material and vice versa.\n\n"

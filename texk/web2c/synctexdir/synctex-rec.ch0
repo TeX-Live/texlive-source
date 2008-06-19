@@ -74,16 +74,6 @@ glue_node: begin r:=get_node(medium_node_size); add_glue_ref(glue_ptr(p));
 @z
 
 @x
-kern_node,math_node: begin r:=get_node(medium_node_size);
-  words:=medium_node_size;
-  end;
-@y
-kern_node,math_node: begin r:=get_node(medium_node_size);
-  words:=medium_node_size-synctex_field_size; {{\sl Sync\TeX}: do not let \TeX\ copy the {\sl Sync\TeX} information}
-  end;
-@z
-
-@x
 @p procedure begin_file_reading;
 @y
 @p procedure begin_file_reading;

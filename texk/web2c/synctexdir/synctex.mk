@@ -201,9 +201,9 @@ xetexd.h-with_synctex = if test -z "`grep __SyncTeX__ xetexd.h`";\
 	fi
 xetexd.h-without_synctex = echo "warning: SyncTeX is NOT enabled"
 
-# the synctex tool, this is not yet implemented
+# the synctex tool
 synctex_parser.o: $(synctex_dir)/synctex_parser.c $(synctex_dir)/synctex_parser.h
-	$(compile) -c -I$(synctex_dir) $(ZLIBCPPFLAGS) -o $@ $<
+	$(compile) -c -DSYNCTEX_USE_LOCAL_HEADER -I$(synctex_dir) $(ZLIBCPPFLAGS) -o $@ $<
 
 synctex_main.o: $(synctex_dir)/synctex_main.c $(synctex_dir)/synctex_parser.h
 	$(compile) -c -I$(synctex_dir) $(ZLIBCPPFLAGS) -o $@ $<

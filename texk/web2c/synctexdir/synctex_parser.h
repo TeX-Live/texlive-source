@@ -52,7 +52,7 @@ extern "C" {
 /* This is the designated method to create a new synctex scanner object.
  * name can be the tex file that originated the synctex file.
  * The ".tex" file extension is removed and replaced by the proper extension.
- * Then the synctex_scanner_new_with_contents_of_file is called.
+ * Then the private method synctex_scanner_new_with_contents_of_file is called.
  * NULL is returned in case of an error or non existent file.
  */
 synctex_scanner_t synctex_scanner_new_with_output_file(const char * output);
@@ -83,14 +83,17 @@ float synctex_scanner_magnification(synctex_scanner_t scanner);
  * Finally, synctex_scanner_input is the first input node of the scanner.
  * To browse all the input node, use a loop like
  *
- *     while(input_node=synctex_node_sibling(input_node)) {
- *         blah
+ *     if(input_node = synctex_scanner_input(scanner)){
+ *         do {
+ *             blah
+ *         } while(input_node=synctex_node_sibling(input_node));
  *     }
  */
 const char * synctex_scanner_get_name(synctex_scanner_t scanner,int tag);
 int synctex_scanner_get_tag(synctex_scanner_t scanner,const char * name);
 synctex_node_t synctex_scanner_input(synctex_scanner_t scanner);
 const char * synctex_scanner_get_output(synctex_scanner_t scanner);
+const char * synctex_scanner_get_synctex(synctex_scanner_t scanner);
 
 /* Browsing the nodes
  * parent, child and sibling are standard names for tree nodes.
@@ -128,11 +131,12 @@ typedef enum {
 	synctex_node_type_void_vbox,
 	synctex_node_type_hbox,
 	synctex_node_type_void_hbox,
+	synctex_node_type_hbox_non_void,
 	synctex_node_type_kern,
 	synctex_node_type_glue,
 	synctex_node_type_math,
 	synctex_node_type_input,
-	synctex_node_type_last
+	synctex_node_number_of_types
 } synctex_node_type_t;
 
 /* synctex_node_type gives the type of a given node,
@@ -142,16 +146,19 @@ const char * synctex_node_isa(synctex_node_t node);
 
 /* This is primarily used for debugging purpose */
 void synctex_node_log(synctex_node_t node);
+void synctex_node_display(synctex_node_t node);
 
 /* Given a node, access to its tag, line and column.
+ * The line and column numbers are 1 based.
  * The latter is not yet fully supported.
+ * When the tag is known, the scanner of the node will give the name.
  */
 int synctex_node_tag(synctex_node_t node);
 int synctex_node_line(synctex_node_t node);
 int synctex_node_column(synctex_node_t node);
 
 /* This is the page where the node appears.
- * This is a 1 based indes as given by TeX.
+ * This is a 1 based index as given by TeX.
  */
 int synctex_node_page(synctex_node_t node);
 
