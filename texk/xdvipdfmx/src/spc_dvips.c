@@ -958,6 +958,14 @@ int calculate_PS (char *string, int length, double *res1, double *res2) {
     fprintf(fp, "(%s) run\n", temporary_defs);
   fwrite(string, 1, length, fp);
   fclose(fp);
+#ifdef MIKTEX
+  {
+    char *p;
+    for (p = formula; *p; p++)
+      if (*p == '\\')
+        *p = '/';
+  }
+#endif
   k = strlen(GS_CALCULATOR) + strlen(formula) + 2;
   cmd = malloc(k);
   strcpy(cmd, GS_CALCULATOR);
