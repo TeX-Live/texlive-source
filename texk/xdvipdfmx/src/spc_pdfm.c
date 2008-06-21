@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_pdfm.c,v 1.41 2008/06/16 01:47:13 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_pdfm.c,v 1.43 2008/06/20 23:18:45 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -1013,8 +1013,8 @@ spc_handler_pdfm_bead (struct spc_env *spe, struct spc_arg *args)
   } else {
     rect.llx = cp.x;
     rect.lly = cp.y - spe->mag * ti.depth;
-    rect.urx = rect.llx + spe->mag * ti.width;
-    rect.ury = rect.lly + spe->mag * ti.height;
+    rect.urx = cp.x + spe->mag * ti.width;
+    rect.ury = cp.y + spe->mag * ti.height;
   }
 
   skip_white(&args->curptr, args->endptr);
@@ -1159,7 +1159,6 @@ spc_handler_pdfm_dest (struct spc_env *spe, struct spc_arg *args)
                             pdf_string_value (name),
                             pdf_string_length(name),
                             array);
-  if (error) pdf_release_obj(array);
   pdf_release_obj(name);
 
   return  0;
