@@ -31,6 +31,19 @@ shall not be used in advertising or otherwise to promote the sale,
 use or other dealings in this Software without prior written  
 authorization from the copyright holder.
 
+Acknowledgments:
+----------------
+The author received useful remarks from the pdfTeX developers, especially Hahn The Thanh,
+and significant help from XeTeX developer Jonathan Kew
+
+Nota Bene:
+----------
+If you include or use a significant part of the synctex package into a software,
+I would appreciate to be listed as contributor and see "SyncTeX" highlighted.
+
+Version 1
+Thu Jun 19 09:39:21 UTC 2008
+
 */
 
 /*  We assume that high level application like pdf viewers will want
@@ -211,8 +224,8 @@ struct __synctex_class_t {
 /*  Next box getter and setter
  */
 #   define SYNCTEX_NEXT_BOX(NODE) SYNCTEX_GET(NODE,next_box)
-#   define SYNCTEX_SET_NEXT_BOX(NODE,NEW_FRIEND) if(NODE && NEW_FRIEND){\
-		SYNCTEX_GETTER(NODE,next_box)[0]=NEW_FRIEND;\
+#   define SYNCTEX_SET_NEXT_BOX(NODE,NEXT_BOX) if(NODE && NEXT_BOX){\
+		SYNCTEX_GETTER(NODE,next_box)[0]=NEXT_BOX;\
 	}
 
 void _synctex_free_node(synctex_node_t node);
@@ -3084,6 +3097,15 @@ synctex_node_t synctex_sheet_content(synctex_scanner_t scanner,int page) {
 	return NULL;
 }
 
+#	ifdef SYNCTEX_NOTHING
+#       pragma mark -
+#       pragma mark Query
+#   endif
+
+int synctex_display_query(synctex_scanner_t scanner,const char * name,int line,int column);
+int synctex_edit_query(synctex_scanner_t scanner,int page,float h,float v);
+synctex_node_t synctex_next_result(synctex_scanner_t scanner);
+
 int synctex_display_query(synctex_scanner_t scanner,const char * name,int line,int column) {
 #	ifdef __DARWIN_UNIX03
 #       pragma unused(column)
@@ -3119,111 +3141,132 @@ int synctex_display_query(synctex_scanner_t scanner,const char * name,int line,i
 	return SYNCTEX_END-SYNCTEX_START;
 }
 
-int _synctex_node_is_box(synctex_node_t node) {
-	switch(synctex_node_type(node)) {
-		case synctex_node_type_hbox:
-		case synctex_node_type_hbox_non_void:
-		case synctex_node_type_void_hbox:
-		case synctex_node_type_vbox:
-		case synctex_node_type_void_vbox:
-			return -1;
-		default:
-			return 0;
-	}
-}
-
-int _synctex_point_in_box(int h, int v, synctex_node_t node);
-int _synctex_point_in_box(int h, int v, synctex_node_t node) {
-#if 0
-	if(_synctex_node_is_box(node)) {
-		v -= synctex_node_box_visible_v(node);
-		if((v<=-synctex_node_box_visible_height(node)
-					&& v>=synctex_node_box_visible_depth(node))
-				|| (v>=-synctex_node_box_visible_height(node)
-					&& v<= synctex_node_box_visible_depth(node))) {
-			h -= synctex_node_box_visible_h(node);
-			if((h<=0 && h>=synctex_node_box_visible_width(node))
-					|| (h>=0 && h<=synctex_node_box_visible_width(node))) {
-				return -1;
-			}
-		}
-	}
-#endif
-	return 0;
-}
-
-inline static synctex_node_t _synctex_inner_containing_node(synctex_node_t node,int H,int V);
-inline static synctex_node_t _synctex_inner_containing_node(synctex_node_t node,int H,int V) {
-	if(_synctex_point_in_box(H,V,node) || (node->class->type == synctex_node_type_vbox)) {
-		synctex_node_t child = SYNCTEX_CHILD(node);
-		if(NULL != child) {
-			synctex_node_t result = NULL;
-			do {
-				if((result = _synctex_inner_containing_node(child,H,V))
-						&& (result->class->type != synctex_node_type_vbox)) {
-					return result;
-				}
-			} while((child = SYNCTEX_SIBLING(child)));
-		}
-		if(node->class->type != synctex_node_type_vbox) {
-			return node;
-		}
-	}
-	return NULL;
-}
 inline static synctex_node_t _synctex_best_child_node(synctex_node_t node,int H,int V, int * distanceRef);
 inline static synctex_node_t _synctex_best_child_node(synctex_node_t node,int H,int V, int * distanceRef) {
 	if(NULL != distanceRef) {
 		synctex_node_t child = NULL;
-		if((child = SYNCTEX_CHILD(node))) {
-			synctex_node_t result = NULL;
-			do {
-				synctex_node_t candidate = NULL;
-				if((candidate = _synctex_best_child_node(child,H,V,distanceRef))) {
-					result = candidate;
+		switch((node->class)->type) {
+			case synctex_node_type_hbox_non_void:
+				if((child = SYNCTEX_CHILD(node))) {
+					synctex_node_t result = NULL;
+					do {
+						synctex_node_t candidate = NULL;
+						if((candidate = _synctex_best_child_node(child,H,V,distanceRef))) {
+							if(0 == *distanceRef) {
+								/* We can't do better */
+								return candidate;
+							}
+							result = candidate;
+						}
+					} while((child = SYNCTEX_SIBLING(child)));
+					return result;
+				} else {
+					/* this is an error if this box does not contain children. */
+					fprintf(stderr,
+	"SyncTeX internal inconsistency: we should not get there (synctex_best_child_node:%i), please report bug to the SyncTeX maintainer\n",
+						(node->class)->type);
+					return NULL;
 				}
-			} while((child = SYNCTEX_SIBLING(child)));
-			return result;
-		} else {
-			int distance,i;
-			switch((node->class)->type) {
-				default:
-					i = SYNCTEX_HORIZ(node);
-					if(H<i) {
-						distance = i-H;
-					} else {
-						distance = H-i;
+			case synctex_node_type_hbox:
+			case synctex_node_type_vbox:
+				/* This is a box that contains children but no kern, math or glue nodes. */
+				if((child = SYNCTEX_CHILD(node))) {
+					synctex_node_t result = NULL;
+					do {
+						synctex_node_t candidate = NULL;
+						if((candidate = _synctex_best_child_node(child,H,V,distanceRef))) {
+							if(0 == *distanceRef) {
+								/* We can't do better */
+								return candidate;
+							}
+							result = candidate;
+						}
+					} while((child = SYNCTEX_SIBLING(child)));
+					return result;
+				} else {
+					/* If the hit point is inside the box, we must return a node inside the box */
+					int min = SYNCTEX_HORIZ_V(node);
+					int max = min+SYNCTEX_WIDTH_V(node);
+					if(min<=H && H<=max) {
+						min = SYNCTEX_VERT_V(node);
+						max = min + SYNCTEX_DEPTH_V(node);
+						min -= SYNCTEX_HEIGHT_V(node);
+						if(min<=V && V<=max) {
+							/* The hit point and the result are in the same box, we can't do better */
+							*distanceRef = 0;/* no one else will ever try to do better */
+							return node;
+						}
 					}
-					i = SYNCTEX_VERT(node);
-					if(V<i) {
-						distance += i-V;
-					} else {
-						distance += V-i;
-					}
-					if(distance<*distanceRef) {
-						*distanceRef = distance;
-						return node;
-					}
-					break;
-				case synctex_node_type_hbox:
-				case synctex_node_type_void_hbox:
-				case synctex_node_type_hbox_non_void:
-				case synctex_node_type_vbox:
-				case synctex_node_type_void_vbox:
-					break;
-			}			
-		}
+					return NULL;
+				}
+			case synctex_node_type_void_hbox:
+			case synctex_node_type_void_vbox:
+				/* Both boxes does not contain any material, they only contribute to SyncTeX by their line number. */
+				return NULL;
+			default:
+			{
+				int i = SYNCTEX_HORIZ(node);
+				int distance = i>H?i-H:H-i;
+				i = SYNCTEX_VERT(node);
+				distance += i>V?i-V:V-i;
+				if(distance<*distanceRef) {
+					*distanceRef = distance;
+					return node;
+				}
+				return NULL;
+			}
+		}			
 	}
 	return NULL;
 }
+
+/*  The best container is the deeper box that contains the given point.
+ *  We traverse the node tree in a deep first manner and stop as soon as a resutl is found. */
+inline static synctex_node_t _synctex_best_container(synctex_node_t node,int H,int V);
+inline static synctex_node_t _synctex_best_container(synctex_node_t node,int H,int V) {
+	int min, max;
+	synctex_node_t child = NULL;
+	synctex_node_t result = NULL;
+	switch(node->class->type) {
+		case synctex_node_type_hbox:
+		case synctex_node_type_vbox:
+		case synctex_node_type_hbox_non_void:
+			max = SYNCTEX_WIDTH_V(node);
+			if(max<0) {
+				min = max;
+				max = SYNCTEX_HORIZ_V(node);
+				min += max;
+			} else {
+				min = SYNCTEX_HORIZ_V(node);
+				max += min;
+			}
+			if(min<=H && H<=max) {
+				child = node;
+				while((child = SYNCTEX_CHILD(child))) {
+					if((result = _synctex_best_container(child,H,V))) {
+						return result;
+					}
+				}
+				min = SYNCTEX_VERT_V(node);
+				max = min + SYNCTEX_DEPTH_V(node);
+				min -= SYNCTEX_HEIGHT_V(node);
+				if(min<=V && V<=max) {
+					/* The hit point and the result are in the same box, we can't do better */
+					return node;
+				}
+			}
+	}
+	return NULL;
+}
+
 int synctex_edit_query(synctex_scanner_t scanner,int page,float h,float v) {
 	synctex_node_t sheet = NULL;
 	synctex_node_t node = NULL;
 	synctex_node_t best_node = NULL;
+	synctex_node_t best_container = NULL;
 	int H,V;
 	int minH,maxH,minV,maxV;
-	int distance;
-	int best_distance,best_height;
+	int best_distance,distance;
 	if(NULL == scanner || 0 == scanner->unit) {
 		return 0;
 	}
@@ -3246,6 +3289,8 @@ int synctex_edit_query(synctex_scanner_t scanner,int page,float h,float v) {
 	/* We initialize the values with the next box of the sheet. */
 	node = SYNCTEX_NEXT_BOX(sheet);
 	if(NULL == node) {
+		/* This is a very weird situation where there are no kern, math or glue nodes.
+		 * Ignore this, for the moment. */
 		return 0;
 	}
 	/* The distance between a point and a box is special.
@@ -3257,14 +3302,19 @@ int synctex_edit_query(synctex_scanner_t scanner,int page,float h,float v) {
 	 * we also give names to the vertices of the box.
 	 *
 	 *  1 | 2 | 3
-	 * ---A---B---
+	 * ---A---B--->
 	 *  4 | 5 | 6
-	 * ---C---D---
+	 * ---C---D--->
 	 *  7 | 8 | 9
-	 *
+	 *    v   v
 	 * In each region, there is a different formula.
 	 * In the end we have a continuous distance which may not be a mathematical distance but who cares. */
+	/* In order to gain speed, we have made a linked list of all the box nodes that contain either kern, glue or math node.
+	 * These kind of boxes are expected to represent the vast majority of boxes.
+	 * It was created while parsing the sheet content, and the boxes are ordered from deeper to lower. */
 	/* min? and max? are the coordinates of the box. */
+next_box:
+	/* getting the box bounds, taking into account negative widths. */
 	maxH = SYNCTEX_WIDTH_V(node);
 	if(maxH<0) {
 		minH = maxH;
@@ -3277,7 +3327,6 @@ int synctex_edit_query(synctex_scanner_t scanner,int page,float h,float v) {
 	minV = SYNCTEX_VERT_V(node);
 	maxV = minV + SYNCTEX_DEPTH_V(node);
 	minV -= SYNCTEX_HEIGHT_V(node);
-	best_height = maxV - minV;
 	/* In what region is the point P=(H,V) ? */
 	if(V<minV) {
 		if(H<minH) {
@@ -3314,8 +3363,48 @@ int synctex_edit_query(synctex_scanner_t scanner,int page,float h,float v) {
 		}
 	}
 	best_node = node;
-	/* Then browse the list of boxes until we find one with a 0 best_distance, or finish the list. */
-	while(best_distance>0  && (node = SYNCTEX_NEXT_BOX(node))) {
+	/* Is best_node a box containing the hit point? */
+	if(best_distance==0) {
+		if((best_container = _synctex_best_container(best_node,H,V)) && (best_container != best_node)) {
+			/* We have found a box that contains the hit point, as a descendant of best_node.
+			 * best_container is a box that contains no kern, math and glue nodes,
+			 * otherwise, it would be located in the linked list of such boxes, before its ancestor best_node
+			 * and it would have been laready caught.
+			 * In mathematical formulas, there are such boxes because there is not enough material to add glue or kern. */
+			if((SYNCTEX_START = malloc(sizeof(synctex_node_t)))) {
+				* (synctex_node_t *)SYNCTEX_START = best_container;
+				SYNCTEX_END = SYNCTEX_START + sizeof(synctex_node_t);
+				SYNCTEX_CUR = NULL;
+				return (SYNCTEX_END-SYNCTEX_START)/sizeof(synctex_node_t);
+			} else {
+				return SYNCTEX_STATUS_ERROR;
+			}
+		}
+		/* Then we try to find what is the best child node inside the box best_node,
+		 * which means the node closest to the hit point.*/
+		distance = INT_MAX;
+		if(node = _synctex_best_child_node(best_node,H,V,&distance)) {
+			if((SYNCTEX_START = malloc(sizeof(synctex_node_t)))) {
+				* (synctex_node_t *)SYNCTEX_START = node;
+				SYNCTEX_END = SYNCTEX_START + sizeof(synctex_node_t);
+				SYNCTEX_CUR = NULL;
+				return (SYNCTEX_END-SYNCTEX_START)/sizeof(synctex_node_t);
+			} else {
+				return SYNCTEX_STATUS_ERROR;
+			}
+		}
+		/* We could not find a best node closest to the hit point.
+		 * This is unreachable code because all the boxes here are non void boxes. */
+		if((node = SYNCTEX_NEXT_BOX(best_node))) {
+			goto next_box;
+		} else {
+			return 0;
+		}
+	}
+	node = best_node;
+	/* Now we have best_distance>0
+	 * We continue through the non void box list until we find the box closest to the hit point */
+	while(node = SYNCTEX_NEXT_BOX(node)) {
 		maxH = SYNCTEX_WIDTH_V(node);
 		if(maxH<0) {
 			minH = maxH;
@@ -3362,18 +3451,72 @@ int synctex_edit_query(synctex_scanner_t scanner,int page,float h,float v) {
 				distance = V - maxV + H - maxH;
 			}
 		}
-		if(distance<best_distance) {
-			best_distance = distance;
+		if(distance>0) {
+			/* This box does not contain the hit point */
+			if(distance<best_distance) {
+				/* but it is closer */
+				best_distance = distance;
+				best_node = node;
+			}
+		} else {
+			/* This box contains the hit point */
 			best_node = node;
+			/* Is ther a better container, that was not a non void box?*/
+			if((best_container = _synctex_best_container(node,H,V)) && (best_container != best_node)) {
+				/* the answer is yes */
+				if((SYNCTEX_START = malloc(sizeof(synctex_node_t)))) {
+					* (synctex_node_t *)SYNCTEX_START = best_container;
+					SYNCTEX_END = SYNCTEX_START + sizeof(synctex_node_t);
+					SYNCTEX_CUR = NULL;
+					return (SYNCTEX_END-SYNCTEX_START)/sizeof(synctex_node_t);
+				} else {
+					return SYNCTEX_STATUS_ERROR;
+				}
+			}
+			/* the best_node is also the best_container, just find the closest child node. */
+			distance = INT_MAX;
+			if(best_node = _synctex_best_child_node(best_node,H,V,&distance)) {
+				if((SYNCTEX_START = malloc(sizeof(synctex_node_t)))) {
+					* (synctex_node_t *)SYNCTEX_START = best_node;
+					SYNCTEX_END = SYNCTEX_START + sizeof(synctex_node_t);
+					SYNCTEX_CUR = NULL;
+					return (SYNCTEX_END-SYNCTEX_START)/sizeof(synctex_node_t);
+				} else {
+					return SYNCTEX_STATUS_ERROR;
+				}
+			}
+			/* We should have stopped here because _synctex_best_child_node always returns something for non void boxes. */
 		}
 	}
-	best_distance = INT_MAX;
-	if((best_node = _synctex_best_child_node(best_node,H,V,&best_distance))
-			&& (SYNCTEX_START = malloc(sizeof(synctex_node_t)))) {
-		* (synctex_node_t *)SYNCTEX_START = best_node;
-		SYNCTEX_END = SYNCTEX_START + sizeof(synctex_node_t);
-		SYNCTEX_CUR = NULL;
-		return (SYNCTEX_END-SYNCTEX_START)/sizeof(synctex_node_t);
+	/* Bad luck, no non void box does contain the hit point, we have to work harder.
+	 * We start from the top (the sheet's child) and try to find a box that contains the hit point.
+	 * It is a bit long but it should occur only seldomly. */
+	if((node = SYNCTEX_CHILD(sheet)) && (best_container = _synctex_best_container(node,H,V)) && (best_container != best_node)) {
+		/* in fact, we always have best_container != best_node, because the former contains the hit point, but not the latter.
+		 * At that point, we are sure that the distance between the hit point and the best_node is positive. */
+		if((SYNCTEX_START = malloc(sizeof(synctex_node_t)))) {
+			* (synctex_node_t *)SYNCTEX_START = best_container;
+			SYNCTEX_END = SYNCTEX_START + sizeof(synctex_node_t);
+			SYNCTEX_CUR = NULL;
+			return (SYNCTEX_END-SYNCTEX_START)/sizeof(synctex_node_t);
+		} else {
+			return SYNCTEX_STATUS_ERROR;
+		}
+	}
+	/* Last chance, return the best_node or its best child. */
+	if(best_node) {
+		distance = INT_MAX;
+		if((node = _synctex_best_child_node(best_node,H,V,&distance))) {
+			best_node = node;
+		}
+		if((SYNCTEX_START = malloc(sizeof(synctex_node_t)))) {
+			* (synctex_node_t *)SYNCTEX_START = best_node;
+			SYNCTEX_END = SYNCTEX_START + sizeof(synctex_node_t);
+			SYNCTEX_CUR = NULL;
+			return (SYNCTEX_END-SYNCTEX_START)/sizeof(synctex_node_t);
+		} else {
+			return SYNCTEX_STATUS_ERROR;
+		}
 	}
 	return 0;
 }

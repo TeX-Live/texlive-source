@@ -70,6 +70,19 @@ For .synctex file format, the actual version is SYNCTEX_VERSION below
 
 Please, do not remove these explanations.
 
+Acknowledgments:
+----------------
+The author received useful remarks from the pdfTeX developers, especially Hahn The Thanh,
+and significant help from XeTeX developer Jonathan Kew
+
+Nota Bene:
+----------
+If you include or use a significant part of the synctex package into a software,
+I would appreciate to be listed as contributor and see "SyncTeX" highlighted.
+
+Version 1
+Thu Jun 19 09:39:21 UTC 2008
+
 */
 
 #   define SYNCTEX_VERSION 1
@@ -466,7 +479,7 @@ void synctexstartinput(void)
         /*  this is the first file TeX ever opens, in general \jobname.tex we
          *  do not know yet if synchronization will ever be enabled so we have
          *  to store the file name, because we will need it later.
-		 *  This is certainly not necessary due to \jobname  */
+		 *  This is necessary because \jobname can be different */
         synctex_ctxt.root_name = gettexstring(curinput.namefield);
 		/* we could initialize the unit field to 1 to avoid floating point exception
 		 * when accidentaly dividing by the unit.

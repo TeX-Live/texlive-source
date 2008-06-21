@@ -23,6 +23,19 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE
 
+Acknowledgments:
+----------------
+The author received useful remarks from the pdfTeX developers, especially Hahn The Thanh,
+and significant help from XeTeX developer Jonathan Kew
+
+Nota Bene:
+----------
+If you include or use a significant part of the synctex package into a software,
+I would appreciate to be listed as contributor and see "SyncTeX" highlighted.
+
+Version 1
+Thu Jun 19 09:39:21 UTC 2008
+
 */
 
 #  ifndef __SYNCTEX_HEADER__
@@ -49,9 +62,9 @@ extern void synctexteehs(void);
  *  address of the vlist We assume that p is really a vlist node! */
 extern void synctexvlist(halfword this_box);
 
-/*  Recording a "f" line ending a vbox: this message is sent whenever a vlist
+/*  Recording a "}" line ending a vbox: this message is sent whenever a vlist
  *  has been shipped out. It is used to close the vlist nesting level. It is
- *  sent at the end of the vlist_out procedure in *TeX.web to balance a former
+ *  sent at the end of each vlist_out procedure in *TeX.web to balance a former
  *  synctex_vlist sent at the beginning of that procedure.    */
 extern void synctextsilv(halfword this_box);
 
@@ -65,7 +78,7 @@ extern void synctexvoidvlist(halfword p, halfword this_box);
  *  address of the hlist. */
 extern void synctexhlist(halfword this_box);
 
-/*  Sent this message at the end of the hlist_out procedure in *TeX.web
+/*  Send this message at the end of the various hlist_out procedure in *TeX.web
  *  to balance a former synctex_hlist.    */
 extern void synctextsilh(halfword this_box);
 

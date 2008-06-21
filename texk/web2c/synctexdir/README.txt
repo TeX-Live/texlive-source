@@ -30,6 +30,19 @@
 # use or other dealings in this Software without prior written  
 # authorization from the copyright holder.
 #
+# Acknowledgments:
+# ----------------
+# The author received useful remarks from the pdfTeX developers, especially Hahn The Thanh,
+# and significant help from XeTeX developer Jonathan Kew
+# 
+# Nota Bene:
+# ----------
+# If you include or use a significant part of the synctex package into a software,
+# I would appreciate to be listed as contributor and see "SyncTeX" highlighted.
+# 
+# Version 1
+# Thu Jun 19 09:39:21 UTC 2008
+
 
 This file gives the .synctex file specifications.
 
