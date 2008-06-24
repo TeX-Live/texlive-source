@@ -339,7 +339,7 @@ spc_handler_ps_tricks_tdef (struct spc_env *spe, struct spc_arg *args)
   return 0;
 }
 
-static int calculate_PS (char *string, int length, double *res1, double *res2);
+static int calculate_PS (char *string, int length, double *res1, double *res2, double *res3, double *res4, double *res5, double *res6);
 
 static int
 spc_handler_ps_tricks_bput (struct spc_env *spe, struct spc_arg *args, int must_def, int pre_def)
@@ -373,7 +373,7 @@ spc_handler_ps_tricks_bput (struct spc_env *spe, struct spc_arg *args, int must_
   PutBegin = strstr(formula, "PutBegin");
   strcpy(PutBegin, "exch = =");
   *(PutBegin + 8) = 0;
-  if (calculate_PS(formula, strlen(formula), &tr.x, &tr.y) == 0) {
+  if (calculate_PS(formula, strlen(formula), &tr.x, &tr.y, 0, 0, 0, 0) == 0) {
     if (!(++put_stack_depth & 0x0f))
       put_stack = realloc(put_stack, (put_stack_depth + 16) * sizeof(pdf_coord));
     put_stack[put_stack_depth] = tr;
@@ -433,11 +433,14 @@ spc_handler_ps_tricks_brotate (struct spc_env *spe, struct spc_arg *args)
   strncat(cmd, args->curptr, l);
   RotBegin = strstr(cmd, "RotBegin");
   strcpy(RotBegin, post);
-  if (calculate_PS(cmd, strlen(cmd), &value, 0) != 0)
+  if (calculate_PS(cmd, strlen(cmd), &value, 0, 0, 0, 0, 0) != 0)
     return -1;
   RAngles[RAngleCount] = value;
 
-  return  spc_handler_xtx_do_rotate (spe->x_user, spe->y_user, value);
+  return  spc_handler_xtx_do_transform (spe->x_user, spe->y_user,
+      cos(value * M_PI / 180), sin(value * M_PI / 180),
+      -sin(value * M_PI / 180), cos(value * M_PI / 180),
+      0, 0);
 }
 
 static int
@@ -445,7 +448,37 @@ spc_handler_ps_tricks_erotate (struct spc_env *spe, struct spc_arg *args)
 {
   double value = RAngles[RAngleCount--];
 
-  return  spc_handler_xtx_do_rotate (spe->x_user, spe->y_user, (-1.0) * value);
+  return  spc_handler_xtx_do_transform (spe->x_user, spe->y_user,
+      cos(value * M_PI / 180), -sin(value * M_PI / 180),
+      sin(value * M_PI / 180), cos(value * M_PI / 180),
+      0, 0);
+}
+
+static int
+spc_handler_ps_tricks_transform (struct spc_env *spe, struct spc_arg *args)
+{
+  double d1, d2, d3, d4, d5, d6;
+  char *cmd, *concat;
+  int l = args->endptr - args->curptr;
+
+  static char *post = "concat matrix currentmatrix ==";
+
+  cmd = calloc(l + 41, 1);
+  strncpy(cmd, "matrix setmatrix ", 17);
+  strncpy(cmd + 17, args->curptr, l);
+  concat = strstr(cmd, "concat");
+  if (concat != 0) {
+    strcpy(concat, post);
+    concat[strlen(post)] = 0;
+    concat = strstr(cmd, "{");
+    *concat = ' ';
+    if (calculate_PS(cmd, strlen(cmd), &d1, &d2, &d3, &d4, &d5, &d6) != 0)
+      return -1;
+    if (spc_handler_xtx_gsave (0, 0) != 0)
+      return -1;
+    return spc_handler_xtx_do_transform (spe->x_user, spe->y_user, d1, d2, d3, d4, d5, d6);
+  }
+  return  spc_handler_xtx_grestore (0, 0);
 }
 
 static int
@@ -672,7 +705,8 @@ typedef enum {
   begin_rotate	= 1 << 7,
   end_rotate	= 1 << 8,
   parse		= 1 << 9,
-  req_ref	= 1 << 10
+  req_ref	= 1 << 10,
+  transform	= 1 << 11
 } Operation;
 
 /*	ToDo: all the substring search must be centralized so that	*
@@ -692,6 +726,7 @@ struct pstricks_key_ {
   {"InitNC",	render | new_temp},
   {"/Glbx",	add_temp},
   {"NewtonSolving",	add_temp},
+  {"tx@LightThreeDDict",	page_def},
   {"PutEnd",	end_put},
   {"RotEnd",	end_rotate},
   {"mtrxc",	parse},
@@ -701,7 +736,8 @@ struct pstricks_key_ {
   {" Glbx", req_ref},
   {"TextPathShow", parse},
   {"/rotAngle", page_def},
-  {"NAngle", req_ref}
+  {"NAngle", req_ref},
+  {"TMatrix", transform}
 };
 
 static int
@@ -740,6 +776,8 @@ spc_handler_ps_trickscmd (struct spc_env *spe, struct spc_arg *args)
     error |= spc_handler_ps_tricks_brotate(spe, args);
   if (f_exec & end_rotate)
     error |= spc_handler_ps_tricks_erotate(spe, args);
+  if (f_exec & transform)
+    error |= spc_handler_ps_tricks_transform(spe, args);
   if (f_exec & page_def)
     error |= spc_handler_ps_tricks_pdef (spe, args);
   if (f_exec == 0)
@@ -939,7 +977,7 @@ spc_dvips_setup_handler (struct spc_handler *handle,
 #endif
 
 static
-int calculate_PS (char *string, int length, double *res1, double *res2) {
+int calculate_PS (char *string, int length, double *res1, double *res2, double *res3, double *res4, double *res5, double *res6) {
   char *formula, *cmd;
   FILE *fp, *coord;
   int k;
@@ -978,8 +1016,10 @@ int calculate_PS (char *string, int length, double *res1, double *res2) {
       fscanf(coord, " %lf ", res2);
     else if (res2 == 0)
       fscanf(coord, " %lf ", res1);
-    else
+    else if (res3 == 0)
       fscanf(coord, " %lf %lf ", res1, res2);
+    else
+      fscanf(coord, " [%lf %lf %lf %lf %lf %lf] ", res1, res2, res3, res4, res5, res6);
   } else
     return -1;
 

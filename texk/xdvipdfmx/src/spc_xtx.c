@@ -84,18 +84,19 @@ spc_xtx_at_end_page (void)
   return  0;
 }
 
-static int
-spc_handler_xtx_do_scale (double x_user, double y_user, double valueX, double valueY)
+int
+spc_handler_xtx_do_transform (double x_user, double y_user, double a, double b, double c, double d, double e, double f)
 {
   pdf_tmatrix     M = { 0, 0, 0, 0, 0, 0 };
   pdf_coord       pt;
 
-
   /* Create transformation matrix */
-  M.a = valueX;
-  M.d = valueY;
-  M.e = ((1.0 - M.a) * x_user - M.c * y_user);
-  M.f = ((1.0 - M.d) * y_user - M.b * x_user);
+  M.a = a;
+  M.b = b;
+  M.c = c;
+  M.d = d;
+  M.e = ((1.0 - M.a) * x_user - M.c * y_user) + e;
+  M.f = ((1.0 - M.d) * y_user - M.b * x_user) + f;
 
   pdf_dev_concat(&M);
   pdf_dev_get_fixed_point(&pt);
@@ -103,6 +104,7 @@ spc_handler_xtx_do_scale (double x_user, double y_user, double valueX, double va
 
   return  0;
 }
+
 static int
 spc_handler_xtx_scale (struct spc_env *spe, struct spc_arg *args)
 {
@@ -113,7 +115,7 @@ spc_handler_xtx_scale (struct spc_env *spe, struct spc_arg *args)
   }
   args->curptr = args->endptr;
 
-  return spc_handler_xtx_do_scale(spe->x_user, spe->y_user, values[0], values[1]);
+  return spc_handler_xtx_do_transform(spe->x_user, spe->y_user, values[0], 0, 0, values[1], 0, 0);
 }
 
 /* Scaling without gsave/grestore. */
@@ -137,7 +139,7 @@ spc_handler_xtx_bscale (struct spc_env *spe, struct spc_arg *args)
   scaleFactors[scaleFactorCount].y = 1 / values[1];
   args->curptr = args->endptr;
 
-  return  spc_handler_xtx_do_scale (spe->x_user, spe->y_user, values[0], values[1]);
+  return  spc_handler_xtx_do_transform (spe->x_user, spe->y_user, values[0], 0, 0, values[1], 0, 0);
 }
 
 static int
@@ -147,28 +149,7 @@ spc_handler_xtx_escale (struct spc_env *spe, struct spc_arg *args)
 
   args->curptr = args->endptr;
 
-  return  spc_handler_xtx_do_scale (spe->x_user, spe->y_user, factor.x, factor.y);
-}
-
-int
-spc_handler_xtx_do_rotate (double x_user, double y_user, double value)
-{
-  pdf_tmatrix     M = { 0, 0, 0, 0, 0, 0 };
-  pdf_coord       pt;
-
-  /* Create transformation matrix */
-  M.a = cos(value * M_PI / 180);
-  M.b = sin(value * M_PI / 180);
-  M.c = -M.b;
-  M.d = M.a;
-  M.e = ((1.0 - M.a) * x_user - M.c * y_user);
-  M.f = ((1.0 - M.d) * y_user - M.b * x_user);
-
-  pdf_dev_concat(&M);
-  pdf_dev_get_fixed_point(&pt);
-  pdf_dev_set_fixed_point(x_user - pt.x, y_user - pt.y);
-
-  return  0;
+  return  spc_handler_xtx_do_transform (spe->x_user, spe->y_user, factor.x, 0, 0, factor.y, 0, 0);
 }
 
 static int
@@ -181,10 +162,13 @@ spc_handler_xtx_rotate (struct spc_env *spe, struct spc_arg *args)
   }
   args->curptr = args->endptr;
 
-  return  spc_handler_xtx_do_rotate (spe->x_user, spe->y_user, value);
+  return  spc_handler_xtx_do_transform (spe->x_user, spe->y_user,
+      cos(value * M_PI / 180), sin(value * M_PI / 180),
+      -sin(value * M_PI / 180), cos(value * M_PI / 180),
+      0, 0);
 }
 
-static int
+int
 spc_handler_xtx_gsave (struct spc_env *spe, struct spc_arg *args)
 {
   pdf_dev_gsave();
@@ -192,7 +176,7 @@ spc_handler_xtx_gsave (struct spc_env *spe, struct spc_arg *args)
   return  0;
 }
 
-static int
+int
 spc_handler_xtx_grestore (struct spc_env *spe, struct spc_arg *args)
 {
   pdf_dev_grestore();
