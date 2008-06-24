@@ -108,7 +108,7 @@ TEXMF = {$TEXMFCONFIG,$TEXMFVAR,$TEXMFHOME,!!$TEXMFSYSCONFIG,!!$TEXMFSYSVAR,!!$T
 % If a tree appears in this list, the mktex* scripts will use
 % VARTEXFONTS for generated files, if the original tree isn't writable;
 % otherwise the current working directory is used.
-SYSTEXMF = $TEXMFSYSVAR;$TEXMFLOCAL;$TEXMFMAIN;$TEXMFDIST
+SYSTEXMF = $TEXMFSYSVAR;$TEXMFMAIN;$TEXMFLOCAL;$TEXMFDIST
 
 % Where generated fonts may be written.  This tree is used when the sources
 % were found in a system tree and either that tree wasn't writable, or the
@@ -125,18 +125,6 @@ VARTEXFONTS = $TEXMFVAR/fonts
 %
 TEXMFDBS = {!!$TEXMFSYSCONFIG,!!$TEXMFSYSVAR,!!$TEXMFMAIN,!!$TEXMFLOCAL,!!$TEXMFDIST,!!$TEXMFDOC}
 
-% It may be convenient to define TEXMF like this:
-%   TEXMF = {$TEXMFHOME,!!$TEXMFLOCAL,!!$TEXMFMAIN,~}
-% which allows users to set up entire texmf trees, and tells TeX to
-% look in places like ~/tex and ~/bibtex.  If you do this, define TEXMFDBS
-% like this:
-%   TEXMFDBS = $TEXMFHOME;$TEXMFLOCAL;$TEXMFMAIN;$VARTEXFONTS
-% or mktexlsr will generate an ls-R file for ~ when called, which is
-% rarely desirable.  If you do this you'll want to define SYSTEXMF like
-% this:
-%   SYSTEXMF = $TEXMFLOCAL;$TEXMFMAIN;$TEXMFDIST
-% so that fonts from a user's tree won't escape into the global trees.
-%
 % On some systems, there will be a system tree which contains all the font
 % files that may be created as well as the formats.  For example
 %   TEXMFVAR = /var/lib/texmf
@@ -171,7 +159,7 @@ TEXINPUTS.ftex          = .;$TEXMF/tex/{formate,plain,generic,}//
 TEXINPUTS.jadetex       = .;$TEXMF/tex/{jadetex,plain,generic,}//
 TEXINPUTS.mex           = .;$TEXMF/tex/{mex,plain,generic,}//
 TEXINPUTS.texinfo       = .;$TEXMF/tex/{texinfo,plain,generic,}//
-TEXINPUTS.xetex         = .;$TEXMF/tex/{plain,generic,}//
+TEXINPUTS.xetex         = .;$TEXMF/tex/{xetex,plain,generic,}//
 
 % LaTeX 2e specific macros are stored in latex/, macros that can only be
 % used with 2.09 in latex209/.  In addition, we look in the directory
@@ -591,7 +579,7 @@ buf_size = 200000
 % for all known free hyphenation patterns to be loaded simultaneously
 % (as TeX Live does).
 %
-trie_size = 400000
+trie_size = 450000
 
 hyph_size = 8191        % prime number of hyphenation exceptions, >610, <32767.
                         % http://primes.utm.edu/curios/page.php/8191.html
