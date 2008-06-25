@@ -48,7 +48,7 @@ const_string BIBTEXHELP[] = {
 
 #ifdef CWEB
 const_string CWEAVEHELP[] = {
-    "Usage: cweave [OPTIONS] WEBFILE[.w] [{CHANGEFILE[.ch]|-}] [OUTFILE[.tex]]",
+    "Usage: cweave [OPTIONS] WEBFILE[.w] [{CHANGEFILE[.ch]|-} [OUTFILE[.tex]]]",
     "  Weave WEBFILE with CHANGEFILE into a TeX document.",
     "  Default CHANGEFILE is /dev/null;",
     "  TeX output goes to the basename of WEBFILE extended with `.tex'",
@@ -68,7 +68,7 @@ const_string CWEAVEHELP[] = {
 };
 
 const_string CTANGLEHELP[] = {
-    "Usage: ctangle [OPTIONS] WEBFILE[.w] [{CHANGEFILE[.ch]|-}] [OUTFILE[.c]]",
+    "Usage: ctangle [OPTIONS] WEBFILE[.w] [{CHANGEFILE[.ch]|-} [OUTFILE[.c]]]",
     "  Tangle WEBFILE with CHANGEFILE into a C/C++ program.",
     "  Default CHANGEFILE is /dev/null;",
     "  C output goes to the basename of WEBFILE extended with `.c'",

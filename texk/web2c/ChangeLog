@@ -1,3 +1,8 @@
+2008-06-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* help.h (CTANGLEHELP): Correct syntax for ctangle usage.
+	* (CWEAVEHELP): Correct syntax for cweave usage.
+
 2008-06-12  Karl Berry  <karl@tug.org>
 
 	* luatexdir/tex/texnodes.c: avoid identifier `prealloc', (wrongly)
