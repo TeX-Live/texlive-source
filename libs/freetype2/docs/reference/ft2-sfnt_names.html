@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>FreeType-2.3.5 API Reference</title>
+<title>FreeType-2.3.6 API Reference</title>
 <style type="text/css">
   body { font-family: Verdana, Geneva, Arial, Helvetica, serif;
          color: #000000;
@@ -12,7 +12,9 @@
   p { text-align: justify; }
   h1 { text-align: center; }
   li { text-align: justify; }
-  td { padding: 0 0.5em 0 0.5em }
+  td { padding: 0 0.5em 0 0.5em; }
+  td.left { padding: 0 0.5em 0 0.5em;
+            text-align: left; }
 
   a:link { color: #0000EF; }
   a:visited { color: #51188E; }
@@ -29,7 +31,7 @@
 </style>
 </head>
 <body>
-<center><h1>FreeType-2.3.5 API Reference</h1></center>
+<center><h1>FreeType-2.3.6 API Reference</h1></center>
 
 <center><h1>
 SFNT Names
@@ -46,6 +48,9 @@ SFNT Names
 </td></tr></table><br>
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_SfntName">FT_SfntName</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_SFNT_NAMES_H (freetype/ftsnames.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">struct</span>  FT_SfntName_
@@ -65,6 +70,7 @@ SFNT Names
 <p>A structure used to model an SFNT &lsquo;name&rsquo; table entry.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>fields</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>platform_id</b></td><td>
 <p>The platform ID for &lsquo;string&rsquo;.</p>
@@ -89,18 +95,19 @@ SFNT Names
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>note</b></em></td></tr><tr><td>
 <p>Possible values for &lsquo;platform_id&rsquo;, &lsquo;encoding_id&rsquo;, &lsquo;language_id&rsquo;, and &lsquo;name_id&rsquo; are given in the file &lsquo;ttnameid.h&rsquo;. For details please refer to the TrueType or OpenType specification.</p>
-<p>See also <a href="ft2-type1_tables.html#TT_PLATFORM_XXX">TT_PLATFORM_XXX</a>, <a href="ft2-type1_tables.html#TT_APPLE_ID_XXX">TT_APPLE_ID_XXX</a>, <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_XXX</a>, <a href="ft2-type1_tables.html#TT_ISO_ID_XXX">TT_ISO_ID_XXX</a>, and <a href="ft2-type1_tables.html#TT_MS_ID_XXX">TT_MS_ID_XXX</a>.</p>
+<p>See also <a href="ft2-truetype_tables.html#TT_PLATFORM_XXX">TT_PLATFORM_XXX</a>, <a href="ft2-truetype_tables.html#TT_APPLE_ID_XXX">TT_APPLE_ID_XXX</a>, <a href="ft2-truetype_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_XXX</a>, <a href="ft2-truetype_tables.html#TT_ISO_ID_XXX">TT_ISO_ID_XXX</a>, and <a href="ft2-truetype_tables.html#TT_MS_ID_XXX">TT_MS_ID_XXX</a>.</p>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Get_Sfnt_Name_Count">FT_Get_Sfnt_Name_Count</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_SFNT_NAMES_H (freetype/ftsnames.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_UInt">FT_UInt</a> )
@@ -111,6 +118,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Retrieves the number of name strings in the SFNT &lsquo;name&rsquo; table.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>face</b></td><td>
 <p>A handle to the source face.</p>
@@ -122,14 +130,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Get_Sfnt_Name">FT_Get_Sfnt_Name</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_SFNT_NAMES_H (freetype/ftsnames.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
@@ -142,6 +151,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Retrieves a string of the SFNT &lsquo;name&rsquo; table for a given index.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>face</b></td><td>
 <p>A handle to the source face.</p>
@@ -152,6 +162,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>output</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>aname</b></td><td>
 <p>The indexed <a href="ft2-sfnt_names.html#FT_SfntName">FT_SfntName</a> structure.</p>
@@ -167,11 +178,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 </body>
 </html>

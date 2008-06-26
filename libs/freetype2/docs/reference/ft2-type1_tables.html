@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>FreeType-2.3.5 API Reference</title>
+<title>FreeType-2.3.6 API Reference</title>
 <style type="text/css">
   body { font-family: Verdana, Geneva, Arial, Helvetica, serif;
          color: #000000;
@@ -12,7 +12,9 @@
   p { text-align: justify; }
   h1 { text-align: center; }
   li { text-align: justify; }
-  td { padding: 0 0.5em 0 0.5em }
+  td { padding: 0 0.5em 0 0.5em; }
+  td.left { padding: 0 0.5em 0 0.5em;
+            text-align: left; }
 
   a:link { color: #0000EF; }
   a:visited { color: #51188E; }
@@ -29,19 +31,18 @@
 </style>
 </head>
 <body>
-<center><h1>FreeType-2.3.5 API Reference</h1></center>
+<center><h1>FreeType-2.3.6 API Reference</h1></center>
 
 <center><h1>
 Type 1 Tables
 </h1></center>
 <h2>Synopsis</h2>
 <table align=center cellspacing=5 cellpadding=0 border=0>
-<tr><td></td><td><a href="#PS_FontInfoRec">PS_FontInfoRec</a></td><td></td><td><a href="#CID_Info">CID_Info</a></td><td></td><td><a href="#TT_MAC_ID_XXX">TT_MAC_ID_XXX</a></td></tr>
-<tr><td></td><td><a href="#T1_FontInfo">T1_FontInfo</a></td><td></td><td><a href="#FT_Has_PS_Glyph_Names">FT_Has_PS_Glyph_Names</a></td><td></td><td><a href="#TT_ISO_ID_XXX">TT_ISO_ID_XXX</a></td></tr>
-<tr><td></td><td><a href="#PS_PrivateRec">PS_PrivateRec</a></td><td></td><td><a href="#FT_Get_PS_Font_Info">FT_Get_PS_Font_Info</a></td><td></td><td><a href="#TT_MS_ID_XXX">TT_MS_ID_XXX</a></td></tr>
-<tr><td></td><td><a href="#T1_Private">T1_Private</a></td><td></td><td><a href="#FT_Get_PS_Font_Private">FT_Get_PS_Font_Private</a></td><td></td><td><a href="#TT_ADOBE_ID_XXX">TT_ADOBE_ID_XXX</a></td></tr>
-<tr><td></td><td><a href="#T1_Blend_Flags">T1_Blend_Flags</a></td><td></td><td><a href="#TT_PLATFORM_XXX">TT_PLATFORM_XXX</a></td><td></td><td></td></tr>
-<tr><td></td><td><a href="#CID_FaceInfoRec">CID_FaceInfoRec</a></td><td></td><td><a href="#TT_APPLE_ID_XXX">TT_APPLE_ID_XXX</a></td><td></td><td></td></tr>
+<tr><td></td><td><a href="#PS_FontInfoRec">PS_FontInfoRec</a></td><td></td><td><a href="#T1_Private">T1_Private</a></td><td></td><td><a href="#CID_FaceInfo">CID_FaceInfo</a></td></tr>
+<tr><td></td><td><a href="#PS_FontInfo">PS_FontInfo</a></td><td></td><td><a href="#T1_Blend_Flags">T1_Blend_Flags</a></td><td></td><td><a href="#CID_Info">CID_Info</a></td></tr>
+<tr><td></td><td><a href="#T1_FontInfo">T1_FontInfo</a></td><td></td><td><a href="#CID_FaceDictRec">CID_FaceDictRec</a></td><td></td><td><a href="#FT_Has_PS_Glyph_Names">FT_Has_PS_Glyph_Names</a></td></tr>
+<tr><td></td><td><a href="#PS_PrivateRec">PS_PrivateRec</a></td><td></td><td><a href="#CID_FaceDict">CID_FaceDict</a></td><td></td><td><a href="#FT_Get_PS_Font_Info">FT_Get_PS_Font_Info</a></td></tr>
+<tr><td></td><td><a href="#PS_Private">PS_Private</a></td><td></td><td><a href="#CID_FaceInfoRec">CID_FaceInfoRec</a></td><td></td><td><a href="#FT_Get_PS_Font_Private">FT_Get_PS_Font_Private</a></td></tr>
 </table><br><br>
 
 <table align=center width="87%"><tr><td>
@@ -49,9 +50,12 @@ Type 1 Tables
 </td></tr></table><br>
 <table align=center width="75%"><tr><td>
 <h4><a name="PS_FontInfoRec">PS_FontInfoRec</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_TYPE1_TABLES_H (freetype/t1tables.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
-  <span class="keyword">typedef</span> <span class="keyword">struct</span>  <b>PS_FontInfoRec</b>
+  <span class="keyword">typedef</span> <span class="keyword">struct</span>  PS_FontInfoRec_
   {
     <a href="ft2-basic_types.html#FT_String">FT_String</a>*  version;
     <a href="ft2-basic_types.html#FT_String">FT_String</a>*  notice;
@@ -63,7 +67,7 @@ Type 1 Tables
     <a href="ft2-basic_types.html#FT_Short">FT_Short</a>    underline_position;
     <a href="ft2-basic_types.html#FT_UShort">FT_UShort</a>   underline_thickness;
 
-  } <b>PS_FontInfoRec</b>, *PS_FontInfo;
+  } <b>PS_FontInfoRec</b>;
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
@@ -71,14 +75,34 @@ Type 1 Tables
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
+
+<table align=center width="75%"><tr><td>
+<h4><a name="PS_FontInfo">PS_FontInfo</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_TYPE1_TABLES_H (freetype/t1tables.h).
+</td></tr></table><br>
+<table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
+
+  <span class="keyword">typedef</span> <span class="keyword">struct</span> PS_FontInfoRec_*  <b>PS_FontInfo</b>;
+
+</pre></table><br>
+<table align=center width="87%"><tr><td>
+<p>A handle to a <a href="ft2-type1_tables.html#PS_FontInfoRec">PS_FontInfoRec</a> structure.</p>
+</td></tr></table><br>
+</td></tr></table>
+<hr width="75%">
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
+<td width="100%"></td>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="T1_FontInfo">T1_FontInfo</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_TYPE1_TABLES_H (freetype/t1tables.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <a href="ft2-type1_tables.html#PS_FontInfoRec">PS_FontInfoRec</a>  <b>T1_FontInfo</b>;
@@ -89,14 +113,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="PS_PrivateRec">PS_PrivateRec</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_TYPE1_TABLES_H (freetype/t1tables.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">struct</span>  PS_PrivateRec_
@@ -137,7 +162,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 
     <a href="ft2-basic_types.html#FT_Short">FT_Short</a>   min_feature[2];
 
-  } <b>PS_PrivateRec</b>, *PS_Private;
+  } <b>PS_PrivateRec</b>;
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
@@ -145,14 +170,34 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
+
+<table align=center width="75%"><tr><td>
+<h4><a name="PS_Private">PS_Private</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_TYPE1_TABLES_H (freetype/t1tables.h).
+</td></tr></table><br>
+<table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
+
+  <span class="keyword">typedef</span> <span class="keyword">struct</span> PS_PrivateRec_*  <b>PS_Private</b>;
+
+</pre></table><br>
+<table align=center width="87%"><tr><td>
+<p>A handle to a <a href="ft2-type1_tables.html#PS_PrivateRec">PS_PrivateRec</a> structure.</p>
+</td></tr></table><br>
+</td></tr></table>
+<hr width="75%">
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
+<td width="100%"></td>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="T1_Private">T1_Private</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_TYPE1_TABLES_H (freetype/t1tables.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <a href="ft2-type1_tables.html#PS_PrivateRec">PS_PrivateRec</a>  <b>T1_Private</b>;
@@ -163,17 +208,18 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="T1_Blend_Flags">T1_Blend_Flags</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_TYPE1_TABLES_H (freetype/t1tables.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
-  <span class="keyword">typedef</span> <span class="keyword">enum</span>
+  <span class="keyword">typedef</span> <span class="keyword">enum</span>  T1_Blend_Flags_
   {
     /*# required fields in a FontInfo blend dictionary */
     T1_BLEND_UNDERLINE_POSITION = 0,
@@ -204,14 +250,71 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
+
+<table align=center width="75%"><tr><td>
+<h4><a name="CID_FaceDictRec">CID_FaceDictRec</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_TYPE1_TABLES_H (freetype/t1tables.h).
+</td></tr></table><br>
+<table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
+
+  <span class="keyword">typedef</span> <span class="keyword">struct</span>  CID_FaceDictRec_
+  {
+    <a href="ft2-type1_tables.html#PS_PrivateRec">PS_PrivateRec</a>  private_dict;
+
+    <a href="ft2-basic_types.html#FT_UInt">FT_UInt</a>        len_buildchar;
+    <a href="ft2-basic_types.html#FT_Fixed">FT_Fixed</a>       forcebold_threshold;
+    <a href="ft2-basic_types.html#FT_Pos">FT_Pos</a>         stroke_width;
+    <a href="ft2-basic_types.html#FT_Fixed">FT_Fixed</a>       expansion_factor;
+
+    <a href="ft2-basic_types.html#FT_Byte">FT_Byte</a>        paint_type;
+    <a href="ft2-basic_types.html#FT_Byte">FT_Byte</a>        font_type;
+    <a href="ft2-basic_types.html#FT_Matrix">FT_Matrix</a>      font_matrix;
+    <a href="ft2-basic_types.html#FT_Vector">FT_Vector</a>      font_offset;
+
+    <a href="ft2-basic_types.html#FT_UInt">FT_UInt</a>        num_subrs;
+    <a href="ft2-basic_types.html#FT_ULong">FT_ULong</a>       subrmap_offset;
+    <a href="ft2-basic_types.html#FT_Int">FT_Int</a>         sd_bytes;
+
+  } <b>CID_FaceDictRec</b>;
+
+</pre></table><br>
+<table align=center width="87%"><tr><td>
+<p>A structure used to represent data in a CID top-level dictionary.</p>
+</td></tr></table><br>
+</td></tr></table>
+<hr width="75%">
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
+<td width="100%"></td>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
+
+<table align=center width="75%"><tr><td>
+<h4><a name="CID_FaceDict">CID_FaceDict</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_TYPE1_TABLES_H (freetype/t1tables.h).
+</td></tr></table><br>
+<table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
+
+  <span class="keyword">typedef</span> <span class="keyword">struct</span> CID_FaceDictRec_*  <b>CID_FaceDict</b>;
+
+</pre></table><br>
+<table align=center width="87%"><tr><td>
+<p>A handle to a <a href="ft2-type1_tables.html#CID_FaceDictRec">CID_FaceDictRec</a> structure.</p>
+</td></tr></table><br>
+</td></tr></table>
+<hr width="75%">
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
+<td width="100%"></td>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="CID_FaceInfoRec">CID_FaceInfoRec</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_TYPE1_TABLES_H (freetype/t1tables.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">struct</span>  CID_FaceInfoRec_
@@ -237,11 +340,11 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
     <a href="ft2-basic_types.html#FT_ULong">FT_ULong</a>        cid_count;
 
     <a href="ft2-basic_types.html#FT_Int">FT_Int</a>          num_dicts;
-    CID_FaceDict    font_dicts;
+    <a href="ft2-type1_tables.html#CID_FaceDict">CID_FaceDict</a>    font_dicts;
 
     <a href="ft2-basic_types.html#FT_ULong">FT_ULong</a>        data_offset;
 
-  } <b>CID_FaceInfoRec</b>, *CID_FaceInfo;
+  } <b>CID_FaceInfoRec</b>;
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
@@ -249,14 +352,34 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
+
+<table align=center width="75%"><tr><td>
+<h4><a name="CID_FaceInfo">CID_FaceInfo</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_TYPE1_TABLES_H (freetype/t1tables.h).
+</td></tr></table><br>
+<table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
+
+  <span class="keyword">typedef</span> <span class="keyword">struct</span> CID_FaceInfoRec_*  <b>CID_FaceInfo</b>;
+
+</pre></table><br>
+<table align=center width="87%"><tr><td>
+<p>A handle to a <a href="ft2-type1_tables.html#CID_FaceInfoRec">CID_FaceInfoRec</a> structure.</p>
+</td></tr></table><br>
+</td></tr></table>
+<hr width="75%">
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
+<td width="100%"></td>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="CID_Info">CID_Info</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_TYPE1_TABLES_H (freetype/t1tables.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <a href="ft2-type1_tables.html#CID_FaceInfoRec">CID_FaceInfoRec</a>  <b>CID_Info</b>;
@@ -267,14 +390,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Has_PS_Glyph_Names">FT_Has_PS_Glyph_Names</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_TYPE1_TABLES_H (freetype/t1tables.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Int">FT_Int</a> )
@@ -286,6 +410,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>When this function returns true, the caller is sure that the glyph names returned by <a href="ft2-base_interface.html#FT_Get_Glyph_Name">FT_Get_Glyph_Name</a> are reliable.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>face</b></td><td>
 <p>face handle</p>
@@ -297,25 +422,27 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Get_PS_Font_Info">FT_Get_PS_Font_Info</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_TYPE1_TABLES_H (freetype/t1tables.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
-  <b>FT_Get_PS_Font_Info</b>( <a href="ft2-base_interface.html#FT_Face">FT_Face</a>          face,
-                       <a href="ft2-type1_tables.html#PS_FontInfoRec">PS_FontInfoRec</a>  *afont_info );
+  <b>FT_Get_PS_Font_Info</b>( <a href="ft2-base_interface.html#FT_Face">FT_Face</a>      face,
+                       <a href="ft2-type1_tables.html#PS_FontInfo">PS_FontInfo</a>  afont_info );
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
 <p>Retrieve the <a href="ft2-type1_tables.html#PS_FontInfoRec">PS_FontInfoRec</a> structure corresponding to a given Postscript font.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>face</b></td><td>
 <p>Postscript face handle.</p>
@@ -323,6 +450,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>output</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>afont_info</b></td><td>
 <p>Output font info structure pointer.</p>
@@ -338,25 +466,27 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Get_PS_Font_Private">FT_Get_PS_Font_Private</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_TYPE1_TABLES_H (freetype/t1tables.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
-  <b>FT_Get_PS_Font_Private</b>( <a href="ft2-base_interface.html#FT_Face">FT_Face</a>         face,
-                          <a href="ft2-type1_tables.html#PS_PrivateRec">PS_PrivateRec</a>  *afont_private );
+  <b>FT_Get_PS_Font_Private</b>( <a href="ft2-base_interface.html#FT_Face">FT_Face</a>     face,
+                          <a href="ft2-type1_tables.html#PS_Private">PS_Private</a>  afont_private );
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
 <p>Retrieve the <a href="ft2-type1_tables.html#PS_PrivateRec">PS_PrivateRec</a> structure corresponding to a given Postscript font.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>face</b></td><td>
 <p>Postscript face handle.</p>
@@ -364,6 +494,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>output</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>afont_private</b></td><td>
 <p>Output private dictionary structure pointer.</p>
@@ -379,380 +510,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
-
-<table align=center width="75%"><tr><td>
-<h4><a name="TT_PLATFORM_XXX">TT_PLATFORM_XXX</a></h4>
-<table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
-
-#define <a href="ft2-type1_tables.html#TT_PLATFORM_XXX">TT_PLATFORM_APPLE_UNICODE</a>  0
-#define <a href="ft2-type1_tables.html#TT_PLATFORM_XXX">TT_PLATFORM_MACINTOSH</a>      1
-#define <a href="ft2-type1_tables.html#TT_PLATFORM_XXX">TT_PLATFORM_ISO</a>            2 /* deprecated */
-#define <a href="ft2-type1_tables.html#TT_PLATFORM_XXX">TT_PLATFORM_MICROSOFT</a>      3
-#define <a href="ft2-type1_tables.html#TT_PLATFORM_XXX">TT_PLATFORM_CUSTOM</a>         4
-#define <a href="ft2-type1_tables.html#TT_PLATFORM_XXX">TT_PLATFORM_ADOBE</a>          7 /* artificial */
-
-</pre></table><br>
-<table align=center width="87%"><tr><td>
-<p>A list of valid values for the &lsquo;platform_id&rsquo; identifier code in <a href="ft2-base_interface.html#FT_CharMapRec">FT_CharMapRec</a> and <a href="ft2-sfnt_names.html#FT_SfntName">FT_SfntName</a> structures.</p>
-</td></tr></table><br>
-<table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>values</b></em></td></tr><tr><td>
-<table cellpadding=3 border=0>
-<tr valign=top><td colspan=0><b>TT_PLATFORM_APPLE_UNICODE</b></td></tr>
-<tr valign=top><td></td><td>
-<p>Used by Apple to indicate a Unicode character map and/or name entry. See <a href="ft2-type1_tables.html#TT_APPLE_ID_XXX">TT_APPLE_ID_XXX</a> for corresponding &lsquo;encoding_id&rsquo; values. Note that name entries in this format are coded as big-endian UCS-2 character codes <i>only</i>.</p>
-</td></tr>
-<tr valign=top><td><b>TT_PLATFORM_MACINTOSH</b></td><td>
-<p>Used by Apple to indicate a MacOS-specific charmap and/or name entry. See <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_XXX</a> for corresponding &lsquo;encoding_id&rsquo; values. Note that most TrueType fonts contain an Apple roman charmap to be usable on MacOS systems (even if they contain a Microsoft charmap as well).</p>
-</td></tr>
-<tr valign=top><td><b>TT_PLATFORM_ISO</b></td><td>
-<p>This value was used to specify Unicode charmaps. It is however now deprecated. See <a href="ft2-type1_tables.html#TT_ISO_ID_XXX">TT_ISO_ID_XXX</a> for a list of corresponding &lsquo;encoding_id&rsquo; values.</p>
-</td></tr>
-<tr valign=top><td><b>TT_PLATFORM_MICROSOFT</b></td><td>
-<p>Used by Microsoft to indicate Windows-specific charmaps. See <a href="ft2-type1_tables.html#TT_MS_ID_XXX">TT_MS_ID_XXX</a> for a list of corresponding &lsquo;encoding_id&rsquo; values. Note that most fonts contain a Unicode charmap using (TT_PLATFORM_MICROSOFT, <a href="ft2-type1_tables.html#TT_MS_ID_XXX">TT_MS_ID_UNICODE_CS</a>).</p>
-</td></tr>
-<tr valign=top><td><b>TT_PLATFORM_CUSTOM</b></td><td>
-<p>Used to indicate application-specific charmaps.</p>
-</td></tr>
-<tr valign=top><td><b>TT_PLATFORM_ADOBE</b></td><td>
-<p>This value isn't part of any font format specification, but is used by FreeType to report Adobe-specific charmaps in an <a href="ft2-base_interface.html#FT_CharMapRec">FT_CharMapRec</a> structure. See <a href="ft2-type1_tables.html#TT_ADOBE_ID_XXX">TT_ADOBE_ID_XXX</a>.</p>
-</td></tr>
-</table>
-</td></tr></table>
-</td></tr></table>
-<hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
-<td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
-
-<table align=center width="75%"><tr><td>
-<h4><a name="TT_APPLE_ID_XXX">TT_APPLE_ID_XXX</a></h4>
-<table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
-
-#define <a href="ft2-type1_tables.html#TT_APPLE_ID_XXX">TT_APPLE_ID_DEFAULT</a>      0 /* Unicode 1.0 */
-#define <a href="ft2-type1_tables.html#TT_APPLE_ID_XXX">TT_APPLE_ID_UNICODE_1_1</a>  1 /* specify Hangul at U+34xx */
-#define <a href="ft2-type1_tables.html#TT_APPLE_ID_XXX">TT_APPLE_ID_ISO_10646</a>    2 /* deprecated */
-#define <a href="ft2-type1_tables.html#TT_APPLE_ID_XXX">TT_APPLE_ID_UNICODE_2_0</a>  3 /* or later */
-#define <a href="ft2-type1_tables.html#TT_APPLE_ID_XXX">TT_APPLE_ID_UNICODE_32</a>   4 /* 2.0 or later, full repertoire */
-
-</pre></table><br>
-<table align=center width="87%"><tr><td>
-<p>A list of valid values for the &lsquo;encoding_id&rsquo; for <a href="ft2-type1_tables.html#TT_PLATFORM_XXX">TT_PLATFORM_APPLE_UNICODE</a> charmaps and name entries.</p>
-</td></tr></table><br>
-<table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>values</b></em></td></tr><tr><td>
-<table cellpadding=3 border=0>
-<tr valign=top><td><b>TT_APPLE_ID_DEFAULT</b></td><td>
-<p>Unicode version 1.0.</p>
-</td></tr>
-<tr valign=top><td colspan=0><b>TT_APPLE_ID_UNICODE_1_1</b></td></tr>
-<tr valign=top><td></td><td>
-<p>Unicode 1.1; specifies Hangul characters starting at U+34xx.</p>
-</td></tr>
-<tr valign=top><td><b>TT_APPLE_ID_ISO_10646</b></td><td>
-<p>Deprecated (identical to preceding).</p>
-</td></tr>
-<tr valign=top><td colspan=0><b>TT_APPLE_ID_UNICODE_2_0</b></td></tr>
-<tr valign=top><td></td><td>
-<p>Unicode 2.0 and beyond (UTF-16 BMP only).</p>
-</td></tr>
-<tr valign=top><td><b>TT_APPLE_ID_UNICODE_32</b></td><td>
-<p>Unicode 3.1 and beyond, using UTF-32.</p>
-</td></tr>
-</table>
-</td></tr></table>
-</td></tr></table>
-<hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
-<td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
-
-<table align=center width="75%"><tr><td>
-<h4><a name="TT_MAC_ID_XXX">TT_MAC_ID_XXX</a></h4>
-<table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
-
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_ROMAN</a>                 0
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_JAPANESE</a>              1
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_TRADITIONAL_CHINESE</a>   2
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_KOREAN</a>                3
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_ARABIC</a>                4
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_HEBREW</a>                5
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_GREEK</a>                 6
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_RUSSIAN</a>               7
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_RSYMBOL</a>               8
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_DEVANAGARI</a>            9
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_GURMUKHI</a>             10
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_GUJARATI</a>             11
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_ORIYA</a>                12
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_BENGALI</a>              13
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_TAMIL</a>                14
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_TELUGU</a>               15
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_KANNADA</a>              16
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_MALAYALAM</a>            17
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_SINHALESE</a>            18
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_BURMESE</a>              19
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_KHMER</a>                20
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_THAI</a>                 21
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_LAOTIAN</a>              22
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_GEORGIAN</a>             23
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_ARMENIAN</a>             24
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_MALDIVIAN</a>            25
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_SIMPLIFIED_CHINESE</a>   25
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_TIBETAN</a>              26
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_MONGOLIAN</a>            27
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_GEEZ</a>                 28
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_SLAVIC</a>               29
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_VIETNAMESE</a>           30
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_SINDHI</a>               31
-#define <a href="ft2-type1_tables.html#TT_MAC_ID_XXX">TT_MAC_ID_UNINTERP</a>             32
-
-</pre></table><br>
-<table align=center width="87%"><tr><td>
-<p>A list of valid values for the &lsquo;encoding_id&rsquo; for <a href="ft2-type1_tables.html#TT_PLATFORM_XXX">TT_PLATFORM_MACINTOSH</a> charmaps and name entries.</p>
-</td></tr></table><br>
-<table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>values</b></em></td></tr><tr><td>
-<table cellpadding=3 border=0>
-<tr valign=top><td><b>TT_MAC_ID_ROMAN</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_JAPANESE</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td colspan=0><b>TT_MAC_ID_TRADITIONAL_CHINESE</b></td></tr>
-<tr valign=top><td></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_KOREAN</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_ARABIC</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_HEBREW</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_GREEK</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_RUSSIAN</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_RSYMBOL</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_DEVANAGARI</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_GURMUKHI</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_GUJARATI</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_ORIYA</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_BENGALI</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_TAMIL</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_TELUGU</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_KANNADA</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_MALAYALAM</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_SINHALESE</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_BURMESE</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_KHMER</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_THAI</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_LAOTIAN</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_GEORGIAN</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_ARMENIAN</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_MALDIVIAN</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td colspan=0><b>TT_MAC_ID_SIMPLIFIED_CHINESE</b></td></tr>
-<tr valign=top><td></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_TIBETAN</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_MONGOLIAN</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_GEEZ</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_SLAVIC</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_VIETNAMESE</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_SINDHI</b></td><td>
-<p></p>
-</td></tr>
-<tr valign=top><td><b>TT_MAC_ID_UNINTERP</b></td><td>
-<p></p>
-</td></tr>
-</table>
-</td></tr></table>
-</td></tr></table>
-<hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
-<td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
-
-<table align=center width="75%"><tr><td>
-<h4><a name="TT_ISO_ID_XXX">TT_ISO_ID_XXX</a></h4>
-<table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
-
-#define <a href="ft2-type1_tables.html#TT_ISO_ID_XXX">TT_ISO_ID_7BIT_ASCII</a>  0
-#define <a href="ft2-type1_tables.html#TT_ISO_ID_XXX">TT_ISO_ID_10646</a>       1
-#define <a href="ft2-type1_tables.html#TT_ISO_ID_XXX">TT_ISO_ID_8859_1</a>      2
-
-</pre></table><br>
-<table align=center width="87%"><tr><td>
-<p>A list of valid values for the &lsquo;encoding_id&rsquo; for <a href="ft2-type1_tables.html#TT_PLATFORM_XXX">TT_PLATFORM_ISO</a> charmaps and name entries.</p>
-<p>Their use is now deprecated.</p>
-</td></tr></table><br>
-<table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>values</b></em></td></tr><tr><td>
-<table cellpadding=3 border=0>
-<tr valign=top><td><b>TT_ISO_ID_7BIT_ASCII</b></td><td>
-<p>ASCII.</p>
-</td></tr>
-<tr valign=top><td><b>TT_ISO_ID_10646</b></td><td>
-<p>ISO/10646.</p>
-</td></tr>
-<tr valign=top><td><b>TT_ISO_ID_8859_1</b></td><td>
-<p>Also known as Latin-1.</p>
-</td></tr>
-</table>
-</td></tr></table>
-</td></tr></table>
-<hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
-<td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
-
-<table align=center width="75%"><tr><td>
-<h4><a name="TT_MS_ID_XXX">TT_MS_ID_XXX</a></h4>
-<table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
-
-#define <a href="ft2-type1_tables.html#TT_MS_ID_XXX">TT_MS_ID_SYMBOL_CS</a>    0
-#define <a href="ft2-type1_tables.html#TT_MS_ID_XXX">TT_MS_ID_UNICODE_CS</a>   1
-#define <a href="ft2-type1_tables.html#TT_MS_ID_XXX">TT_MS_ID_SJIS</a>         2
-#define <a href="ft2-type1_tables.html#TT_MS_ID_XXX">TT_MS_ID_GB2312</a>       3
-#define <a href="ft2-type1_tables.html#TT_MS_ID_XXX">TT_MS_ID_BIG_5</a>        4
-#define <a href="ft2-type1_tables.html#TT_MS_ID_XXX">TT_MS_ID_WANSUNG</a>      5
-#define <a href="ft2-type1_tables.html#TT_MS_ID_XXX">TT_MS_ID_JOHAB</a>        6
-#define <a href="ft2-type1_tables.html#TT_MS_ID_XXX">TT_MS_ID_UCS_4</a>       10
-
-</pre></table><br>
-<table align=center width="87%"><tr><td>
-<p>A list of valid values for the &lsquo;encoding_id&rsquo; for <a href="ft2-type1_tables.html#TT_PLATFORM_XXX">TT_PLATFORM_MICROSOFT</a> charmaps and name entries.</p>
-</td></tr></table><br>
-<table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>values</b></em></td></tr><tr><td>
-<table cellpadding=3 border=0>
-<tr valign=top><td><b>TT_MS_ID_SYMBOL_CS</b></td><td>
-<p>Corresponds to Microsoft symbol encoding. See <a href="ft2-base_interface.html#FT_Encoding">FT_ENCODING_MS_SYMBOL</a>.</p>
-</td></tr>
-<tr valign=top><td><b>TT_MS_ID_UNICODE_CS</b></td><td>
-<p>Corresponds to a Microsoft WGL4 charmap, matching Unicode. See <a href="ft2-base_interface.html#FT_Encoding">FT_ENCODING_UNICODE</a>.</p>
-</td></tr>
-<tr valign=top><td><b>TT_MS_ID_SJIS</b></td><td>
-<p>Corresponds to SJIS Japanese encoding. See <a href="ft2-base_interface.html#FT_Encoding">FT_ENCODING_SJIS</a>.</p>
-</td></tr>
-<tr valign=top><td><b>TT_MS_ID_GB2312</b></td><td>
-<p>Corresponds to Simplified Chinese as used in Mainland China. See <a href="ft2-base_interface.html#FT_Encoding">FT_ENCODING_GB2312</a>.</p>
-</td></tr>
-<tr valign=top><td><b>TT_MS_ID_BIG_5</b></td><td>
-<p>Corresponds to Traditional Chinese as used in Taiwan and Hong Kong. See <a href="ft2-base_interface.html#FT_Encoding">FT_ENCODING_BIG5</a>.</p>
-</td></tr>
-<tr valign=top><td><b>TT_MS_ID_WANSUNG</b></td><td>
-<p>Corresponds to Korean Wansung encoding. See <a href="ft2-base_interface.html#FT_Encoding">FT_ENCODING_WANSUNG</a>.</p>
-</td></tr>
-<tr valign=top><td><b>TT_MS_ID_JOHAB</b></td><td>
-<p>Corresponds to Johab encoding. See <a href="ft2-base_interface.html#FT_Encoding">FT_ENCODING_JOHAB</a>.</p>
-</td></tr>
-<tr valign=top><td><b>TT_MS_ID_UCS_4</b></td><td>
-<p>Corresponds to UCS-4 or UTF-32 charmaps. This has been added to the OpenType specification version 1.4 (mid-2001.)</p>
-</td></tr>
-</table>
-</td></tr></table>
-</td></tr></table>
-<hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
-<td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
-
-<table align=center width="75%"><tr><td>
-<h4><a name="TT_ADOBE_ID_XXX">TT_ADOBE_ID_XXX</a></h4>
-<table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
-
-#define <a href="ft2-type1_tables.html#TT_ADOBE_ID_XXX">TT_ADOBE_ID_STANDARD</a>  0
-#define <a href="ft2-type1_tables.html#TT_ADOBE_ID_XXX">TT_ADOBE_ID_EXPERT</a>    1
-#define <a href="ft2-type1_tables.html#TT_ADOBE_ID_XXX">TT_ADOBE_ID_CUSTOM</a>    2
-#define TT_ADOBE_ID_LATIN_1   3
-
-</pre></table><br>
-<table align=center width="87%"><tr><td>
-<p>A list of valid values for the &lsquo;encoding_id&rsquo; for <a href="ft2-type1_tables.html#TT_PLATFORM_XXX">TT_PLATFORM_ADOBE</a> charmaps. This is a FreeType-specific extension!</p>
-</td></tr></table><br>
-<table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>values</b></em></td></tr><tr><td>
-<table cellpadding=3 border=0>
-<tr valign=top><td><b>TT_ADOBE_ID_STANDARD</b></td><td>
-<p>Adobe standard encoding.</p>
-</td></tr>
-<tr valign=top><td><b>TT_ADOBE_ID_EXPERT</b></td><td>
-<p>Adobe expert encoding.</p>
-</td></tr>
-<tr valign=top><td><b>TT_ADOBE_ID_CUSTOM</b></td><td>
-<p>Adobe custom encoding.</p>
-</td></tr>
-</table>
-</td></tr></table>
-</td></tr></table>
-<hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
-<td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 </body>
 </html>

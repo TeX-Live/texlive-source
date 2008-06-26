@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>FreeType-2.3.5 API Reference</title>
+<title>FreeType-2.3.6 API Reference</title>
 <style type="text/css">
   body { font-family: Verdana, Geneva, Arial, Helvetica, serif;
          color: #000000;
@@ -12,7 +12,9 @@
   p { text-align: justify; }
   h1 { text-align: center; }
   li { text-align: justify; }
-  td { padding: 0 0.5em 0 0.5em }
+  td { padding: 0 0.5em 0 0.5em; }
+  td.left { padding: 0 0.5em 0 0.5em;
+            text-align: left; }
 
   a:link { color: #0000EF; }
   a:visited { color: #51188E; }
@@ -29,7 +31,7 @@
 </style>
 </head>
 <body>
-<center><h1>FreeType-2.3.5 API Reference</h1></center>
+<center><h1>FreeType-2.3.6 API Reference</h1></center>
 
 <center><h1>
 Scanline Converter
@@ -48,6 +50,9 @@ Scanline Converter
 </td></tr></table><br>
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Raster">FT_Raster</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_IMAGE_H (freetype/ftimage.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">struct</span> FT_RasterRec_*  <b>FT_Raster</b>;
@@ -58,14 +63,15 @@ Scanline Converter
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Span">FT_Span</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_IMAGE_H (freetype/ftimage.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">struct</span>  FT_Span_
@@ -81,6 +87,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>A structure used to model a single span of gray (or black) pixels when rendering a monochrome or anti-aliased bitmap.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>fields</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>x</b></td><td>
 <p>The span's horizontal start position.</p>
@@ -99,14 +106,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_SpanFunc">FT_SpanFunc</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_IMAGE_H (freetype/ftimage.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">void</span>
@@ -115,13 +123,14 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
                   <span class="keyword">const</span> <a href="ft2-raster.html#FT_Span">FT_Span</a>*  spans,
                   <span class="keyword">void</span>*           user );
 
-#define FT_Raster_Span_Func   <b>FT_SpanFunc</b>
+#define FT_Raster_Span_Func  <b>FT_SpanFunc</b>
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
 <p>A function used as a call-back by the anti-aliased renderer in order to let client applications draw themselves the gray pixel spans on each scan line.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>y</b></td><td>
 <p>The scanline's y-coordinate.</p>
@@ -145,14 +154,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Raster_BitTest_Func">FT_Raster_BitTest_Func</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_IMAGE_H (freetype/ftimage.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">int</span>
@@ -166,6 +176,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>A function used as a call-back by the monochrome scan-converter to test whether a given target pixel is already set to the drawing &lsquo;color&rsquo;. These tests are crucial to implement drop-out control per-se the TrueType spec.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>y</b></td><td>
 <p>The pixel's y-coordinate.</p>
@@ -183,14 +194,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Raster_BitSet_Func">FT_Raster_BitSet_Func</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_IMAGE_H (freetype/ftimage.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">void</span>
@@ -204,6 +216,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>A function used as a call-back by the monochrome scan-converter to set an individual target pixel. This is crucial to implement drop-out control according to the TrueType specification.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>y</b></td><td>
 <p>The pixel's y-coordinate.</p>
@@ -221,14 +234,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_RASTER_FLAG_XXX">FT_RASTER_FLAG_XXX</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_IMAGE_H (freetype/ftimage.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
 #define <a href="ft2-raster.html#FT_RASTER_FLAG_XXX">FT_RASTER_FLAG_DEFAULT</a>  0x0
@@ -247,6 +261,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>A list of bit flag constants as used in the &lsquo;flags&rsquo; field of a <a href="ft2-raster.html#FT_Raster_Params">FT_Raster_Params</a> structure.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>values</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>FT_RASTER_FLAG_DEFAULT</b></td><td>
 <p>This value is 0.</p>
@@ -266,14 +281,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Raster_Params">FT_Raster_Params</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_IMAGE_H (freetype/ftimage.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">struct</span>  FT_Raster_Params_
@@ -295,6 +311,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>A structure to hold the arguments used by a raster's render function.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>fields</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>target</b></td><td>
 <p>The target bitmap.</p>
@@ -332,27 +349,29 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Raster_NewFunc">FT_Raster_NewFunc</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_IMAGE_H (freetype/ftimage.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">int</span>
   (*<b>FT_Raster_NewFunc</b>)( <span class="keyword">void</span>*       memory,
                         <a href="ft2-raster.html#FT_Raster">FT_Raster</a>*  raster );
 
-#define  FT_Raster_New_Func    <b>FT_Raster_NewFunc</b>
+#define FT_Raster_New_Func  <b>FT_Raster_NewFunc</b>
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
 <p>A function used to create a new raster object.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>memory</b></td><td>
 <p>A handle to the memory allocator.</p>
@@ -360,6 +379,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>output</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>raster</b></td><td>
 <p>A handle to the new raster object.</p>
@@ -374,26 +394,28 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Raster_DoneFunc">FT_Raster_DoneFunc</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_IMAGE_H (freetype/ftimage.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">void</span>
   (*<b>FT_Raster_DoneFunc</b>)( <a href="ft2-raster.html#FT_Raster">FT_Raster</a>  raster );
 
-#define  FT_Raster_Done_Func   <b>FT_Raster_DoneFunc</b>
+#define FT_Raster_Done_Func  <b>FT_Raster_DoneFunc</b>
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
 <p>A function used to destroy a given raster object.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>raster</b></td><td>
 <p>A handle to the raster object.</p>
@@ -402,14 +424,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Raster_ResetFunc">FT_Raster_ResetFunc</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_IMAGE_H (freetype/ftimage.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">void</span>
@@ -417,7 +440,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
                           <span class="keyword">unsigned</span> <span class="keyword">char</span>*  pool_base,
                           <span class="keyword">unsigned</span> <span class="keyword">long</span>   pool_size );
 
-#define  FT_Raster_Reset_Func   <b>FT_Raster_ResetFunc</b>
+#define FT_Raster_Reset_Func  <b>FT_Raster_ResetFunc</b>
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
@@ -425,6 +448,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>This function is called each time the render pool changes, or just after a new raster object is created.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>raster</b></td><td>
 <p>A handle to the new raster object.</p>
@@ -442,14 +466,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Raster_SetModeFunc">FT_Raster_SetModeFunc</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_IMAGE_H (freetype/ftimage.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">int</span>
@@ -457,13 +482,14 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
                             <span class="keyword">unsigned</span> <span class="keyword">long</span>  mode,
                             <span class="keyword">void</span>*          args );
 
-#define  FT_Raster_Set_Mode_Func  <b>FT_Raster_SetModeFunc</b>
+#define FT_Raster_Set_Mode_Func  <b>FT_Raster_SetModeFunc</b>
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
 <p>This function is a generic facility to change modes or attributes in a given raster. This can be used for debugging purposes, or simply to allow implementation-specific &lsquo;features&rsquo; in a given raster module.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>raster</b></td><td>
 <p>A handle to the new raster object.</p>
@@ -478,27 +504,29 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Raster_RenderFunc">FT_Raster_RenderFunc</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_IMAGE_H (freetype/ftimage.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">int</span>
   (*<b>FT_Raster_RenderFunc</b>)( <a href="ft2-raster.html#FT_Raster">FT_Raster</a>                raster,
                            <span class="keyword">const</span> <a href="ft2-raster.html#FT_Raster_Params">FT_Raster_Params</a>*  params );
 
-#define  FT_Raster_Render_Func    <b>FT_Raster_RenderFunc</b>
+#define FT_Raster_Render_Func  <b>FT_Raster_RenderFunc</b>
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
 <p>Invokes a given raster to scan-convert a given glyph image into a target bitmap.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>raster</b></td><td>
 <p>A handle to the raster object.</p>
@@ -518,24 +546,25 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Raster_Funcs">FT_Raster_Funcs</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_IMAGE_H (freetype/ftimage.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">struct</span>  FT_Raster_Funcs_
   {
-    <a href="ft2-basic_types.html#FT_Glyph_Format">FT_Glyph_Format</a>         glyph_format;
-    <a href="ft2-raster.html#FT_Raster_NewFunc">FT_Raster_NewFunc</a>       raster_new;
-    <a href="ft2-raster.html#FT_Raster_ResetFunc">FT_Raster_ResetFunc</a>     raster_reset;
-    <a href="ft2-raster.html#FT_Raster_SetModeFunc">FT_Raster_SetModeFunc</a>   raster_set_mode;
-    <a href="ft2-raster.html#FT_Raster_RenderFunc">FT_Raster_RenderFunc</a>    raster_render;
-    <a href="ft2-raster.html#FT_Raster_DoneFunc">FT_Raster_DoneFunc</a>      raster_done;
+    <a href="ft2-basic_types.html#FT_Glyph_Format">FT_Glyph_Format</a>        glyph_format;
+    <a href="ft2-raster.html#FT_Raster_NewFunc">FT_Raster_NewFunc</a>      raster_new;
+    <a href="ft2-raster.html#FT_Raster_ResetFunc">FT_Raster_ResetFunc</a>    raster_reset;
+    <a href="ft2-raster.html#FT_Raster_SetModeFunc">FT_Raster_SetModeFunc</a>  raster_set_mode;
+    <a href="ft2-raster.html#FT_Raster_RenderFunc">FT_Raster_RenderFunc</a>   raster_render;
+    <a href="ft2-raster.html#FT_Raster_DoneFunc">FT_Raster_DoneFunc</a>     raster_done;
 
   } <b>FT_Raster_Funcs</b>;
 
@@ -544,6 +573,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>A structure used to describe a given raster class to the library.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>fields</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>glyph_format</b></td><td>
 <p>The supported glyph format for this raster.</p>
@@ -564,11 +594,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 </body>
 </html>

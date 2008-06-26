@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>FreeType-2.3.5 API Reference</title>
+<title>FreeType-2.3.6 API Reference</title>
 <style type="text/css">
   body { font-family: Verdana, Geneva, Arial, Helvetica, serif;
          color: #000000;
@@ -12,7 +12,9 @@
   p { text-align: justify; }
   h1 { text-align: center; }
   li { text-align: justify; }
-  td { padding: 0 0.5em 0 0.5em }
+  td { padding: 0 0.5em 0 0.5em; }
+  td.left { padding: 0 0.5em 0 0.5em;
+            text-align: left; }
 
   a:link { color: #0000EF; }
   a:visited { color: #51188E; }
@@ -29,27 +31,27 @@
 </style>
 </head>
 <body>
-<center><h1>FreeType-2.3.5 API Reference</h1></center>
+<center><h1>FreeType-2.3.6 API Reference</h1></center>
 
 <center><h1>
 Cache Sub-System
 </h1></center>
 <h2>Synopsis</h2>
 <table align=center cellspacing=5 cellpadding=0 border=0>
-<tr><td></td><td><a href="#FTC_Manager">FTC_Manager</a></td><td></td><td><a href="#FTC_CMapCache_Lookup">FTC_CMapCache_Lookup</a></td></tr>
-<tr><td></td><td><a href="#FTC_FaceID">FTC_FaceID</a></td><td></td><td><a href="#FTC_ImageTypeRec">FTC_ImageTypeRec</a></td></tr>
-<tr><td></td><td><a href="#FTC_Face_Requester">FTC_Face_Requester</a></td><td></td><td><a href="#FTC_ImageType">FTC_ImageType</a></td></tr>
-<tr><td></td><td><a href="#FTC_Node">FTC_Node</a></td><td></td><td><a href="#FTC_ImageCache">FTC_ImageCache</a></td></tr>
-<tr><td></td><td><a href="#FTC_Manager_New">FTC_Manager_New</a></td><td></td><td><a href="#FTC_ImageCache_New">FTC_ImageCache_New</a></td></tr>
-<tr><td></td><td><a href="#FTC_Manager_Reset">FTC_Manager_Reset</a></td><td></td><td><a href="#FTC_ImageCache_Lookup">FTC_ImageCache_Lookup</a></td></tr>
-<tr><td></td><td><a href="#FTC_Manager_Done">FTC_Manager_Done</a></td><td></td><td><a href="#FTC_ImageCache_LookupScaler">FTC_ImageCache_LookupScaler</a></td></tr>
-<tr><td></td><td><a href="#FTC_Manager_LookupFace">FTC_Manager_LookupFace</a></td><td></td><td><a href="#FTC_SBit">FTC_SBit</a></td></tr>
-<tr><td></td><td><a href="#FTC_ScalerRec">FTC_ScalerRec</a></td><td></td><td><a href="#FTC_SBitRec">FTC_SBitRec</a></td></tr>
+<tr><td></td><td><a href="#FTC_Manager">FTC_Manager</a></td><td></td><td><a href="#FTC_CMapCache_New">FTC_CMapCache_New</a></td></tr>
+<tr><td></td><td><a href="#FTC_FaceID">FTC_FaceID</a></td><td></td><td><a href="#FTC_CMapCache_Lookup">FTC_CMapCache_Lookup</a></td></tr>
+<tr><td></td><td><a href="#FTC_Face_Requester">FTC_Face_Requester</a></td><td></td><td><a href="#FTC_ImageTypeRec">FTC_ImageTypeRec</a></td></tr>
+<tr><td></td><td><a href="#FTC_Node">FTC_Node</a></td><td></td><td><a href="#FTC_ImageType">FTC_ImageType</a></td></tr>
+<tr><td></td><td><a href="#FTC_Manager_New">FTC_Manager_New</a></td><td></td><td><a href="#FTC_ImageCache">FTC_ImageCache</a></td></tr>
+<tr><td></td><td><a href="#FTC_Manager_Reset">FTC_Manager_Reset</a></td><td></td><td><a href="#FTC_ImageCache_New">FTC_ImageCache_New</a></td></tr>
+<tr><td></td><td><a href="#FTC_Manager_Done">FTC_Manager_Done</a></td><td></td><td><a href="#FTC_ImageCache_Lookup">FTC_ImageCache_Lookup</a></td></tr>
+<tr><td></td><td><a href="#FTC_Manager_LookupFace">FTC_Manager_LookupFace</a></td><td></td><td><a href="#FTC_ImageCache_LookupScaler">FTC_ImageCache_LookupScaler</a></td></tr>
+<tr><td></td><td><a href="#FTC_ScalerRec">FTC_ScalerRec</a></td><td></td><td><a href="#FTC_SBit">FTC_SBit</a></td></tr>
+<tr><td></td><td><a href="#FTC_Scaler">FTC_Scaler</a></td><td></td><td><a href="#FTC_SBitRec">FTC_SBitRec</a></td></tr>
 <tr><td></td><td><a href="#FTC_Manager_LookupSize">FTC_Manager_LookupSize</a></td><td></td><td><a href="#FTC_SBitCache">FTC_SBitCache</a></td></tr>
 <tr><td></td><td><a href="#FTC_Node_Unref">FTC_Node_Unref</a></td><td></td><td><a href="#FTC_SBitCache_New">FTC_SBitCache_New</a></td></tr>
 <tr><td></td><td><a href="#FTC_Manager_RemoveFaceID">FTC_Manager_RemoveFaceID</a></td><td></td><td><a href="#FTC_SBitCache_Lookup">FTC_SBitCache_Lookup</a></td></tr>
 <tr><td></td><td><a href="#FTC_CMapCache">FTC_CMapCache</a></td><td></td><td><a href="#FTC_SBitCache_LookupScaler">FTC_SBitCache_LookupScaler</a></td></tr>
-<tr><td></td><td><a href="#FTC_CMapCache_New">FTC_CMapCache_New</a></td><td></td><td></td></tr>
 </table><br><br>
 
 <table align=center width="87%"><tr><td>
@@ -69,6 +71,9 @@ Cache Sub-System
 </td></tr></table><br>
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_Manager">FTC_Manager</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">struct</span> FTC_ManagerRec_*  <b>FTC_Manager</b>;
@@ -82,17 +87,18 @@ Cache Sub-System
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_FaceID">FTC_FaceID</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
-  <span class="keyword">typedef</span> <span class="keyword">struct</span> FTC_FaceIDRec_*  <b>FTC_FaceID</b>;
+  <span class="keyword">typedef</span> <a href="ft2-basic_types.html#FT_Pointer">FT_Pointer</a>  <b>FTC_FaceID</b>;
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
@@ -107,14 +113,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_Face_Requester">FTC_Face_Requester</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <a href="ft2-basic_types.html#FT_Error">FT_Error</a>
@@ -128,6 +135,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>A callback function provided by client applications. It is used by the cache manager to translate a given <a href="ft2-cache_subsystem.html#FTC_FaceID">FTC_FaceID</a> into a new valid <a href="ft2-base_interface.html#FT_Face">FT_Face</a> object, on demand.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>face_id</b></td><td>
 <p>The face ID to resolve.</p>
@@ -141,6 +149,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>output</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>aface</b></td><td>
 <p>A new <a href="ft2-base_interface.html#FT_Face">FT_Face</a> handle.</p>
@@ -156,14 +165,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_Node">FTC_Node</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">struct</span> FTC_NodeRec_*  <b>FTC_Node</b>;
@@ -176,14 +186,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_Manager_New">FTC_Manager_New</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
@@ -200,6 +211,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Creates a new cache manager.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>library</b></td><td>
 <p>The parent FreeType library handle to use.</p>
@@ -222,6 +234,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>output</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>amanager</b></td><td>
 <p>A handle to a new manager object. 0 in case of failure.</p>
@@ -233,14 +246,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_Manager_Reset">FTC_Manager_Reset</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <span class="keyword">void</span> )
@@ -251,6 +265,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Empties a given cache manager. This simply gets rid of all the currently cached <a href="ft2-base_interface.html#FT_Face">FT_Face</a> and <a href="ft2-base_interface.html#FT_Size">FT_Size</a> objects within the manager.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>inout</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>manager</b></td><td>
 <p>A handle to the manager.</p>
@@ -259,14 +274,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_Manager_Done">FTC_Manager_Done</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <span class="keyword">void</span> )
@@ -277,6 +293,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Destroys a given manager after emptying it.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>manager</b></td><td>
 <p>A handle to the target cache manager object.</p>
@@ -285,14 +302,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_Manager_LookupFace">FTC_Manager_LookupFace</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
@@ -305,6 +323,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Retrieves the <a href="ft2-base_interface.html#FT_Face">FT_Face</a> object that corresponds to a given face ID through a cache manager.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>manager</b></td><td>
 <p>A handle to the cache manager.</p>
@@ -315,6 +334,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>output</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>aface</b></td><td>
 <p>A handle to the face object.</p>
@@ -333,14 +353,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_ScalerRec">FTC_ScalerRec</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">struct</span>  FTC_ScalerRec_
@@ -352,13 +373,14 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
     <a href="ft2-basic_types.html#FT_UInt">FT_UInt</a>     x_res;
     <a href="ft2-basic_types.html#FT_UInt">FT_UInt</a>     y_res;
 
-  } <b>FTC_ScalerRec</b>, *FTC_Scaler;
+  } <b>FTC_ScalerRec</b>;
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
 <p>A structure used to describe a given character size in either pixels or points to the cache manager. See <a href="ft2-cache_subsystem.html#FTC_Manager_LookupSize">FTC_Manager_LookupSize</a>.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>fields</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>face_id</b></td><td>
 <p>The source face ID.</p>
@@ -385,19 +407,39 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
+
+<table align=center width="75%"><tr><td>
+<h4><a name="FTC_Scaler">FTC_Scaler</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
+<table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
+
+  <span class="keyword">typedef</span> <span class="keyword">struct</span> FTC_ScalerRec_*  <b>FTC_Scaler</b>;
+
+</pre></table><br>
+<table align=center width="87%"><tr><td>
+<p>A handle to an <a href="ft2-cache_subsystem.html#FTC_ScalerRec">FTC_ScalerRec</a> structure.</p>
+</td></tr></table><br>
+</td></tr></table>
+<hr width="75%">
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
+<td width="100%"></td>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_Manager_LookupSize">FTC_Manager_LookupSize</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
   <b>FTC_Manager_LookupSize</b>( <a href="ft2-cache_subsystem.html#FTC_Manager">FTC_Manager</a>  manager,
-                          FTC_Scaler   scaler,
+                          <a href="ft2-cache_subsystem.html#FTC_Scaler">FTC_Scaler</a>   scaler,
                           <a href="ft2-base_interface.html#FT_Size">FT_Size</a>     *asize );
 
 </pre></table><br>
@@ -405,6 +447,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Retrieve the <a href="ft2-base_interface.html#FT_Size">FT_Size</a> object that corresponds to a given <a href="ft2-cache_subsystem.html#FTC_ScalerRec">FTC_ScalerRec</a> pointer through a cache manager.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>manager</b></td><td>
 <p>A handle to the cache manager.</p>
@@ -415,6 +458,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>output</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>asize</b></td><td>
 <p>A handle to the size object.</p>
@@ -434,14 +478,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_Node_Unref">FTC_Node_Unref</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <span class="keyword">void</span> )
@@ -453,6 +498,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Decrement a cache node's internal reference count. When the count reaches 0, it is not destroyed but becomes eligible for subsequent cache flushes.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>node</b></td><td>
 <p>The cache node handle.</p>
@@ -464,14 +510,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_Manager_RemoveFaceID">FTC_Manager_RemoveFaceID</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <span class="keyword">void</span> )
@@ -483,6 +530,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>A special function used to indicate to the cache manager that a given <a href="ft2-cache_subsystem.html#FTC_FaceID">FTC_FaceID</a> is no longer valid, either because its content changed, or because it was deallocated or uninstalled.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>manager</b></td><td>
 <p>The cache manager handle.</p>
@@ -498,14 +546,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_CMapCache">FTC_CMapCache</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">struct</span> FTC_CMapCacheRec_*  <b>FTC_CMapCache</b>;
@@ -516,14 +565,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_CMapCache_New">FTC_CMapCache_New</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
@@ -535,6 +585,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Create a new charmap cache.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>manager</b></td><td>
 <p>A handle to the cache manager.</p>
@@ -542,6 +593,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>output</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>acache</b></td><td>
 <p>A new cache handle. NULL in case of error.</p>
@@ -556,27 +608,29 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_CMapCache_Lookup">FTC_CMapCache_Lookup</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_UInt">FT_UInt</a> )
   <b>FTC_CMapCache_Lookup</b>( <a href="ft2-cache_subsystem.html#FTC_CMapCache">FTC_CMapCache</a>  cache,
                         <a href="ft2-cache_subsystem.html#FTC_FaceID">FTC_FaceID</a>     face_id,
                         <a href="ft2-basic_types.html#FT_Int">FT_Int</a>         cmap_index,
-                        FT_UInt32      char_code );
+                        <a href="ft2-basic_types.html#FT_UInt32">FT_UInt32</a>      char_code );
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
 <p>Translate a character code into a glyph index, using the charmap cache.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>cache</b></td><td>
 <p>A charmap cache handle.</p>
@@ -597,14 +651,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_ImageTypeRec">FTC_ImageTypeRec</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">struct</span>  FTC_ImageTypeRec_
@@ -612,7 +667,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
     <a href="ft2-cache_subsystem.html#FTC_FaceID">FTC_FaceID</a>  face_id;
     <a href="ft2-basic_types.html#FT_Int">FT_Int</a>      width;
     <a href="ft2-basic_types.html#FT_Int">FT_Int</a>      height;
-    FT_Int32    flags;
+    <a href="ft2-basic_types.html#FT_Int32">FT_Int32</a>    flags;
 
   } <b>FTC_ImageTypeRec</b>;
 
@@ -621,6 +676,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>A structure used to model the type of images in a glyph cache.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>fields</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>face_id</b></td><td>
 <p>The face ID.</p>
@@ -638,14 +694,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_ImageType">FTC_ImageType</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">struct</span> FTC_ImageTypeRec_*  <b>FTC_ImageType</b>;
@@ -656,14 +713,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_ImageCache">FTC_ImageCache</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">struct</span> FTC_ImageCacheRec_*  <b>FTC_ImageCache</b>;
@@ -674,14 +732,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_ImageCache_New">FTC_ImageCache_New</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
@@ -693,6 +752,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Creates a new glyph image cache.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>manager</b></td><td>
 <p>The parent manager for the image cache.</p>
@@ -700,6 +760,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>output</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>acache</b></td><td>
 <p>A handle to the new glyph image cache object.</p>
@@ -711,14 +772,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_ImageCache_Lookup">FTC_ImageCache_Lookup</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
@@ -733,6 +795,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Retrieves a given glyph image from a glyph image cache.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>cache</b></td><td>
 <p>A handle to the source glyph image cache.</p>
@@ -746,6 +809,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>output</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>aglyph</b></td><td>
 <p>The corresponding <a href="ft2-glyph_management.html#FT_Glyph">FT_Glyph</a> object. 0 in case of failure.</p>
@@ -765,19 +829,20 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_ImageCache_LookupScaler">FTC_ImageCache_LookupScaler</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
   <b>FTC_ImageCache_LookupScaler</b>( <a href="ft2-cache_subsystem.html#FTC_ImageCache">FTC_ImageCache</a>  cache,
-                               FTC_Scaler      scaler,
+                               <a href="ft2-cache_subsystem.html#FTC_Scaler">FTC_Scaler</a>      scaler,
                                <a href="ft2-basic_types.html#FT_ULong">FT_ULong</a>        load_flags,
                                <a href="ft2-basic_types.html#FT_UInt">FT_UInt</a>         gindex,
                                <a href="ft2-glyph_management.html#FT_Glyph">FT_Glyph</a>       *aglyph,
@@ -788,6 +853,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>A variant of <a href="ft2-cache_subsystem.html#FTC_ImageCache_Lookup">FTC_ImageCache_Lookup</a> that uses an <a href="ft2-cache_subsystem.html#FTC_ScalerRec">FTC_ScalerRec</a> to specify the face ID and its size.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>cache</b></td><td>
 <p>A handle to the source glyph image cache.</p>
@@ -804,6 +870,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>output</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>aglyph</b></td><td>
 <p>The corresponding <a href="ft2-glyph_management.html#FT_Glyph">FT_Glyph</a> object. 0 in case of failure.</p>
@@ -823,14 +890,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_SBit">FTC_SBit</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">struct</span> FTC_SBitRec_*  <b>FTC_SBit</b>;
@@ -841,14 +909,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_SBitRec">FTC_SBitRec</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">struct</span>  FTC_SBitRec_
@@ -873,6 +942,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>A very compact structure used to describe a small glyph bitmap.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>fields</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>width</b></td><td>
 <p>The bitmap width in pixels.</p>
@@ -908,14 +978,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_SBitCache">FTC_SBitCache</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">struct</span> FTC_SBitCacheRec_*  <b>FTC_SBitCache</b>;
@@ -926,14 +997,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_SBitCache_New">FTC_SBitCache_New</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
@@ -945,6 +1017,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Creates a new cache to store small glyph bitmaps.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>manager</b></td><td>
 <p>A handle to the source cache manager.</p>
@@ -952,6 +1025,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>output</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>acache</b></td><td>
 <p>A handle to the new sbit cache. NULL in case of error.</p>
@@ -963,14 +1037,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_SBitCache_Lookup">FTC_SBitCache_Lookup</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
@@ -985,6 +1060,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Looks up a given small glyph bitmap in a given sbit cache and &lsquo;lock&rsquo; it to prevent its flushing from the cache until needed.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>cache</b></td><td>
 <p>A handle to the source sbit cache.</p>
@@ -998,6 +1074,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>output</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>sbit</b></td><td>
 <p>A handle to a small bitmap descriptor.</p>
@@ -1018,19 +1095,20 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FTC_SBitCache_LookupScaler">FTC_SBitCache_LookupScaler</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_CACHE_H (freetype/ftcache.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
   <b>FTC_SBitCache_LookupScaler</b>( <a href="ft2-cache_subsystem.html#FTC_SBitCache">FTC_SBitCache</a>  cache,
-                              FTC_Scaler     scaler,
+                              <a href="ft2-cache_subsystem.html#FTC_Scaler">FTC_Scaler</a>     scaler,
                               <a href="ft2-basic_types.html#FT_ULong">FT_ULong</a>       load_flags,
                               <a href="ft2-basic_types.html#FT_UInt">FT_UInt</a>        gindex,
                               <a href="ft2-cache_subsystem.html#FTC_SBit">FTC_SBit</a>      *sbit,
@@ -1041,6 +1119,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>A variant of <a href="ft2-cache_subsystem.html#FTC_SBitCache_Lookup">FTC_SBitCache_Lookup</a> that uses an <a href="ft2-cache_subsystem.html#FTC_ScalerRec">FTC_ScalerRec</a> to specify the face ID and its size.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>cache</b></td><td>
 <p>A handle to the source sbit cache.</p>
@@ -1057,6 +1136,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>output</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>sbit</b></td><td>
 <p>A handle to a small bitmap descriptor.</p>
@@ -1077,11 +1157,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 </body>
 </html>

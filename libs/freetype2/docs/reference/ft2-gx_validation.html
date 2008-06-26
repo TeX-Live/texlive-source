@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>FreeType-2.3.5 API Reference</title>
+<title>FreeType-2.3.6 API Reference</title>
 <style type="text/css">
   body { font-family: Verdana, Geneva, Arial, Helvetica, serif;
          color: #000000;
@@ -12,7 +12,9 @@
   p { text-align: justify; }
   h1 { text-align: center; }
   li { text-align: justify; }
-  td { padding: 0 0.5em 0 0.5em }
+  td { padding: 0 0.5em 0 0.5em; }
+  td.left { padding: 0 0.5em 0 0.5em;
+            text-align: left; }
 
   a:link { color: #0000EF; }
   a:visited { color: #51188E; }
@@ -29,7 +31,7 @@
 </style>
 </head>
 <body>
-<center><h1>FreeType-2.3.5 API Reference</h1></center>
+<center><h1>FreeType-2.3.6 API Reference</h1></center>
 
 <center><h1>
 TrueTypeGX/AAT Validation
@@ -46,6 +48,9 @@ TrueTypeGX/AAT Validation
 </td></tr></table><br>
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_VALIDATE_GX_LENGTH">FT_VALIDATE_GX_LENGTH</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_GX_VALIDATE_H (freetype/ftgxval.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
 #define <b>FT_VALIDATE_GX_LENGTH</b>     (FT_VALIDATE_GX_LAST_INDEX + 1)
@@ -56,14 +61,15 @@ TrueTypeGX/AAT Validation
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_VALIDATE_GXXXX">FT_VALIDATE_GXXXX</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_GX_VALIDATE_H (freetype/ftgxval.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
 #define <a href="ft2-gx_validation.html#FT_VALIDATE_GXXXX">FT_VALIDATE_feat</a>  FT_VALIDATE_GX_BITFIELD( feat )
@@ -93,6 +99,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>A list of bit-field constants used with <a href="ft2-gx_validation.html#FT_TrueTypeGX_Validate">FT_TrueTypeGX_Validate</a> to indicate which TrueTypeGX/AAT Type tables should be validated.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>values</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>FT_VALIDATE_feat</b></td><td>
 <p>Validate &lsquo;feat&rsquo; table.</p>
@@ -131,14 +138,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_TrueTypeGX_Validate">FT_TrueTypeGX_Validate</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_GX_VALIDATE_H (freetype/ftgxval.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
@@ -152,6 +160,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Validate various TrueTypeGX tables to assure that all offsets and indices are valid. The idea is that a higher-level library which actually does the text layout can access those tables without error checking (which can be quite time consuming).</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>face</b></td><td>
 <p>A handle to the input face.</p>
@@ -165,6 +174,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>output</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>tables</b></td><td>
 <p>The array where all validated sfnt tables are stored. The array itself must be allocated by a client.</p>
@@ -180,14 +190,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_TrueTypeGX_Free">FT_TrueTypeGX_Free</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_GX_VALIDATE_H (freetype/ftgxval.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <span class="keyword">void</span> )
@@ -199,6 +210,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Free the buffer allocated by TrueTypeGX validator.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>face</b></td><td>
 <p>A handle to the input face.</p>
@@ -213,14 +225,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_VALIDATE_CKERNXXX">FT_VALIDATE_CKERNXXX</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_GX_VALIDATE_H (freetype/ftgxval.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
 #define <a href="ft2-gx_validation.html#FT_VALIDATE_CKERNXXX">FT_VALIDATE_MS</a>     ( FT_VALIDATE_GX_START &lt;&lt; 0 )
@@ -233,6 +246,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>A list of bit-field constants used with <a href="ft2-gx_validation.html#FT_ClassicKern_Validate">FT_ClassicKern_Validate</a> to indicate the classic kern dialect or dialects. If the selected type doesn't fit, <a href="ft2-gx_validation.html#FT_ClassicKern_Validate">FT_ClassicKern_Validate</a> regards the table as invalid.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>values</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>FT_VALIDATE_MS</b></td><td>
 <p>Handle the &lsquo;kern&rsquo; table as a classic Microsoft kern table.</p>
@@ -247,14 +261,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_ClassicKern_Validate">FT_ClassicKern_Validate</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_GX_VALIDATE_H (freetype/ftgxval.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
@@ -268,6 +283,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>The &lsquo;kern&rsquo; table validator in <a href="ft2-gx_validation.html#FT_TrueTypeGX_Validate">FT_TrueTypeGX_Validate</a> deals with both the new 32bit format and the classic 16bit format, while FT_ClassicKern_Validate only supports the classic 16bit format.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>face</b></td><td>
 <p>A handle to the input face.</p>
@@ -278,6 +294,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>output</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>ckern_table</b></td><td>
 <p>A pointer to the kern table.</p>
@@ -292,14 +309,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_ClassicKern_Free">FT_ClassicKern_Free</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_GX_VALIDATE_H (freetype/ftgxval.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <span class="keyword">void</span> )
@@ -311,6 +329,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Free the buffer allocated by classic Kern validator.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>face</b></td><td>
 <p>A handle to the input face.</p>
@@ -325,11 +344,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 </body>
 </html>

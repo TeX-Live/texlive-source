@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>FreeType-2.3.5 API Reference</title>
+<title>FreeType-2.3.6 API Reference</title>
 <style type="text/css">
   body { font-family: Verdana, Geneva, Arial, Helvetica, serif;
          color: #000000;
@@ -12,7 +12,9 @@
   p { text-align: justify; }
   h1 { text-align: center; }
   li { text-align: justify; }
-  td { padding: 0 0.5em 0 0.5em }
+  td { padding: 0 0.5em 0 0.5em; }
+  td.left { padding: 0 0.5em 0 0.5em;
+            text-align: left; }
 
   a:link { color: #0000EF; }
   a:visited { color: #51188E; }
@@ -29,34 +31,36 @@
 </style>
 </head>
 <body>
-<center><h1>FreeType-2.3.5 API Reference</h1></center>
+<center><h1>FreeType-2.3.6 API Reference</h1></center>
 
 <center><h1>
 Header File Macros
 </h1></center>
 <h2>Synopsis</h2>
 <table align=center cellspacing=5 cellpadding=0 border=0>
-<tr><td></td><td><a href="#FT_CONFIG_CONFIG_H">FT_CONFIG_CONFIG_H</a></td><td></td><td><a href="#FT_LZW_H">FT_LZW_H</a></td></tr>
-<tr><td></td><td><a href="#FT_CONFIG_STANDARD_LIBRARY_H">FT_CONFIG_STANDARD_LIBRARY_H</a></td><td></td><td><a href="#FT_WINFONTS_H">FT_WINFONTS_H</a></td></tr>
-<tr><td></td><td><a href="#FT_CONFIG_OPTIONS_H">FT_CONFIG_OPTIONS_H</a></td><td></td><td><a href="#FT_GLYPH_H">FT_GLYPH_H</a></td></tr>
-<tr><td></td><td><a href="#FT_CONFIG_MODULES_H">FT_CONFIG_MODULES_H</a></td><td></td><td><a href="#FT_BITMAP_H">FT_BITMAP_H</a></td></tr>
-<tr><td></td><td><a href="#FT_FREETYPE_H">FT_FREETYPE_H</a></td><td></td><td><a href="#FT_BBOX_H">FT_BBOX_H</a></td></tr>
-<tr><td></td><td><a href="#FT_ERRORS_H">FT_ERRORS_H</a></td><td></td><td><a href="#FT_CACHE_H">FT_CACHE_H</a></td></tr>
-<tr><td></td><td><a href="#FT_MODULE_ERRORS_H">FT_MODULE_ERRORS_H</a></td><td></td><td><a href="#FT_CACHE_IMAGE_H">FT_CACHE_IMAGE_H</a></td></tr>
-<tr><td></td><td><a href="#FT_SYSTEM_H">FT_SYSTEM_H</a></td><td></td><td><a href="#FT_CACHE_SMALL_BITMAPS_H">FT_CACHE_SMALL_BITMAPS_H</a></td></tr>
-<tr><td></td><td><a href="#FT_IMAGE_H">FT_IMAGE_H</a></td><td></td><td><a href="#FT_CACHE_CHARMAP_H">FT_CACHE_CHARMAP_H</a></td></tr>
-<tr><td></td><td><a href="#FT_TYPES_H">FT_TYPES_H</a></td><td></td><td><a href="#FT_MAC_H">FT_MAC_H</a></td></tr>
-<tr><td></td><td><a href="#FT_LIST_H">FT_LIST_H</a></td><td></td><td><a href="#FT_MULTIPLE_MASTERS_H">FT_MULTIPLE_MASTERS_H</a></td></tr>
-<tr><td></td><td><a href="#FT_OUTLINE_H">FT_OUTLINE_H</a></td><td></td><td><a href="#FT_SFNT_NAMES_H">FT_SFNT_NAMES_H</a></td></tr>
-<tr><td></td><td><a href="#FT_SIZES_H">FT_SIZES_H</a></td><td></td><td><a href="#FT_OPENTYPE_VALIDATE_H">FT_OPENTYPE_VALIDATE_H</a></td></tr>
-<tr><td></td><td><a href="#FT_MODULE_H">FT_MODULE_H</a></td><td></td><td><a href="#FT_GX_VALIDATE_H">FT_GX_VALIDATE_H</a></td></tr>
-<tr><td></td><td><a href="#FT_RENDER_H">FT_RENDER_H</a></td><td></td><td><a href="#FT_PFR_H">FT_PFR_H</a></td></tr>
-<tr><td></td><td><a href="#FT_TYPE1_TABLES_H">FT_TYPE1_TABLES_H</a></td><td></td><td><a href="#FT_STROKER_H">FT_STROKER_H</a></td></tr>
-<tr><td></td><td><a href="#FT_TRUETYPE_IDS_H">FT_TRUETYPE_IDS_H</a></td><td></td><td><a href="#FT_SYNTHESIS_H">FT_SYNTHESIS_H</a></td></tr>
-<tr><td></td><td><a href="#FT_TRUETYPE_TABLES_H">FT_TRUETYPE_TABLES_H</a></td><td></td><td><a href="#FT_XFREE86_H">FT_XFREE86_H</a></td></tr>
-<tr><td></td><td><a href="#FT_TRUETYPE_TAGS_H">FT_TRUETYPE_TAGS_H</a></td><td></td><td><a href="#FT_TRIGONOMETRY_H">FT_TRIGONOMETRY_H</a></td></tr>
-<tr><td></td><td><a href="#FT_BDF_H">FT_BDF_H</a></td><td></td><td><a href="#FT_LCD_FILTER_H">FT_LCD_FILTER_H</a></td></tr>
+<tr><td></td><td><a href="#FT_CONFIG_CONFIG_H">FT_CONFIG_CONFIG_H</a></td><td></td><td><a href="#FT_WINFONTS_H">FT_WINFONTS_H</a></td></tr>
+<tr><td></td><td><a href="#FT_CONFIG_STANDARD_LIBRARY_H">FT_CONFIG_STANDARD_LIBRARY_H</a></td><td></td><td><a href="#FT_GLYPH_H">FT_GLYPH_H</a></td></tr>
+<tr><td></td><td><a href="#FT_CONFIG_OPTIONS_H">FT_CONFIG_OPTIONS_H</a></td><td></td><td><a href="#FT_BITMAP_H">FT_BITMAP_H</a></td></tr>
+<tr><td></td><td><a href="#FT_CONFIG_MODULES_H">FT_CONFIG_MODULES_H</a></td><td></td><td><a href="#FT_BBOX_H">FT_BBOX_H</a></td></tr>
+<tr><td></td><td><a href="#FT_FREETYPE_H">FT_FREETYPE_H</a></td><td></td><td><a href="#FT_CACHE_H">FT_CACHE_H</a></td></tr>
+<tr><td></td><td><a href="#FT_ERRORS_H">FT_ERRORS_H</a></td><td></td><td><a href="#FT_CACHE_IMAGE_H">FT_CACHE_IMAGE_H</a></td></tr>
+<tr><td></td><td><a href="#FT_MODULE_ERRORS_H">FT_MODULE_ERRORS_H</a></td><td></td><td><a href="#FT_CACHE_SMALL_BITMAPS_H">FT_CACHE_SMALL_BITMAPS_H</a></td></tr>
+<tr><td></td><td><a href="#FT_SYSTEM_H">FT_SYSTEM_H</a></td><td></td><td><a href="#FT_CACHE_CHARMAP_H">FT_CACHE_CHARMAP_H</a></td></tr>
+<tr><td></td><td><a href="#FT_IMAGE_H">FT_IMAGE_H</a></td><td></td><td><a href="#FT_MAC_H">FT_MAC_H</a></td></tr>
+<tr><td></td><td><a href="#FT_TYPES_H">FT_TYPES_H</a></td><td></td><td><a href="#FT_MULTIPLE_MASTERS_H">FT_MULTIPLE_MASTERS_H</a></td></tr>
+<tr><td></td><td><a href="#FT_LIST_H">FT_LIST_H</a></td><td></td><td><a href="#FT_SFNT_NAMES_H">FT_SFNT_NAMES_H</a></td></tr>
+<tr><td></td><td><a href="#FT_OUTLINE_H">FT_OUTLINE_H</a></td><td></td><td><a href="#FT_OPENTYPE_VALIDATE_H">FT_OPENTYPE_VALIDATE_H</a></td></tr>
+<tr><td></td><td><a href="#FT_SIZES_H">FT_SIZES_H</a></td><td></td><td><a href="#FT_GX_VALIDATE_H">FT_GX_VALIDATE_H</a></td></tr>
+<tr><td></td><td><a href="#FT_MODULE_H">FT_MODULE_H</a></td><td></td><td><a href="#FT_PFR_H">FT_PFR_H</a></td></tr>
+<tr><td></td><td><a href="#FT_RENDER_H">FT_RENDER_H</a></td><td></td><td><a href="#FT_STROKER_H">FT_STROKER_H</a></td></tr>
+<tr><td></td><td><a href="#FT_TYPE1_TABLES_H">FT_TYPE1_TABLES_H</a></td><td></td><td><a href="#FT_SYNTHESIS_H">FT_SYNTHESIS_H</a></td></tr>
+<tr><td></td><td><a href="#FT_TRUETYPE_IDS_H">FT_TRUETYPE_IDS_H</a></td><td></td><td><a href="#FT_XFREE86_H">FT_XFREE86_H</a></td></tr>
+<tr><td></td><td><a href="#FT_TRUETYPE_TABLES_H">FT_TRUETYPE_TABLES_H</a></td><td></td><td><a href="#FT_TRIGONOMETRY_H">FT_TRIGONOMETRY_H</a></td></tr>
+<tr><td></td><td><a href="#FT_TRUETYPE_TAGS_H">FT_TRUETYPE_TAGS_H</a></td><td></td><td><a href="#FT_LCD_FILTER_H">FT_LCD_FILTER_H</a></td></tr>
+<tr><td></td><td><a href="#FT_BDF_H">FT_BDF_H</a></td><td></td><td><a href="#FT_UNPATENTED_HINTING_H">FT_UNPATENTED_HINTING_H</a></td></tr>
+<tr><td></td><td><a href="#FT_CID_H">FT_CID_H</a></td><td></td><td><a href="#FT_INCREMENTAL_H">FT_INCREMENTAL_H</a></td></tr>
 <tr><td></td><td><a href="#FT_GZIP_H">FT_GZIP_H</a></td><td></td><td><a href="#FT_GASP_H">FT_GASP_H</a></td></tr>
+<tr><td></td><td><a href="#FT_LZW_H">FT_LZW_H</a></td><td></td><td></td></tr>
 </table><br><br>
 
 <table align=center width="87%"><tr><td>
@@ -83,11 +87,9 @@ Header File Macros
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_CONFIG_STANDARD_LIBRARY_H">FT_CONFIG_STANDARD_LIBRARY_H</a></h4>
@@ -103,11 +105,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_CONFIG_OPTIONS_H">FT_CONFIG_OPTIONS_H</a></h4>
@@ -123,11 +123,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_CONFIG_MODULES_H">FT_CONFIG_MODULES_H</a></h4>
@@ -137,20 +135,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 #define <b>FT_CONFIG_MODULES_H</b>  &lt;freetype/config/ftmodule.h&gt;
 #endif
 
-
-  /* public headers */
-
 </pre></table><br>
 <table align=center width="87%"><tr><td>
 <p>A macro used in #include statements to name the file containing the list of FreeType 2 modules that are statically linked to new library instances in <a href="ft2-base_interface.html#FT_Init_FreeType">FT_Init_FreeType</a>.</p>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_FREETYPE_H">FT_FREETYPE_H</a></h4>
@@ -164,11 +157,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_ERRORS_H">FT_ERRORS_H</a></h4>
@@ -183,11 +174,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_MODULE_ERRORS_H">FT_MODULE_ERRORS_H</a></h4>
@@ -201,11 +190,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_SYSTEM_H">FT_SYSTEM_H</a></h4>
@@ -220,11 +207,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_IMAGE_H">FT_IMAGE_H</a></h4>
@@ -239,11 +224,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_TYPES_H">FT_TYPES_H</a></h4>
@@ -258,11 +241,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_LIST_H">FT_LIST_H</a></h4>
@@ -277,11 +258,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_OUTLINE_H">FT_OUTLINE_H</a></h4>
@@ -295,11 +274,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_SIZES_H">FT_SIZES_H</a></h4>
@@ -313,11 +290,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_MODULE_H">FT_MODULE_H</a></h4>
@@ -331,11 +306,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_RENDER_H">FT_RENDER_H</a></h4>
@@ -349,11 +322,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_TYPE1_TABLES_H">FT_TYPE1_TABLES_H</a></h4>
@@ -367,11 +338,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_TRUETYPE_IDS_H">FT_TRUETYPE_IDS_H</a></h4>
@@ -385,11 +354,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_TRUETYPE_TABLES_H">FT_TRUETYPE_TABLES_H</a></h4>
@@ -403,11 +370,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_TRUETYPE_TAGS_H">FT_TRUETYPE_TAGS_H</a></h4>
@@ -421,11 +386,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_BDF_H">FT_BDF_H</a></h4>
@@ -439,11 +402,25 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
+
+<table align=center width="75%"><tr><td>
+<h4><a name="FT_CID_H">FT_CID_H</a></h4>
+<table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
+
+#define <b>FT_CID_H</b>  &lt;freetype/ftcid.h&gt;
+
+</pre></table><br>
+<table align=center width="87%"><tr><td>
+<p>A macro used in #include statements to name the file containing the definitions of an API which access CID font information from a face.</p>
+</td></tr></table><br>
+</td></tr></table>
+<hr width="75%">
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
+<td width="100%"></td>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_GZIP_H">FT_GZIP_H</a></h4>
@@ -457,11 +434,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_LZW_H">FT_LZW_H</a></h4>
@@ -475,11 +450,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_WINFONTS_H">FT_WINFONTS_H</a></h4>
@@ -493,11 +466,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_GLYPH_H">FT_GLYPH_H</a></h4>
@@ -511,11 +482,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_BITMAP_H">FT_BITMAP_H</a></h4>
@@ -529,11 +498,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_BBOX_H">FT_BBOX_H</a></h4>
@@ -547,11 +514,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_CACHE_H">FT_CACHE_H</a></h4>
@@ -565,11 +530,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_CACHE_IMAGE_H">FT_CACHE_IMAGE_H</a></h4>
@@ -585,11 +548,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_CACHE_SMALL_BITMAPS_H">FT_CACHE_SMALL_BITMAPS_H</a></h4>
@@ -605,11 +566,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_CACHE_CHARMAP_H">FT_CACHE_CHARMAP_H</a></h4>
@@ -624,11 +583,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_MAC_H">FT_MAC_H</a></h4>
@@ -643,11 +600,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_MULTIPLE_MASTERS_H">FT_MULTIPLE_MASTERS_H</a></h4>
@@ -661,11 +616,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_SFNT_NAMES_H">FT_SFNT_NAMES_H</a></h4>
@@ -679,11 +632,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_OPENTYPE_VALIDATE_H">FT_OPENTYPE_VALIDATE_H</a></h4>
@@ -697,11 +648,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_GX_VALIDATE_H">FT_GX_VALIDATE_H</a></h4>
@@ -715,11 +664,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_PFR_H">FT_PFR_H</a></h4>
@@ -733,11 +680,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_STROKER_H">FT_STROKER_H</a></h4>
@@ -751,11 +696,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_SYNTHESIS_H">FT_SYNTHESIS_H</a></h4>
@@ -769,11 +712,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_XFREE86_H">FT_XFREE86_H</a></h4>
@@ -787,11 +728,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_TRIGONOMETRY_H">FT_TRIGONOMETRY_H</a></h4>
@@ -805,11 +744,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_LCD_FILTER_H">FT_LCD_FILTER_H</a></h4>
@@ -823,11 +760,41 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
+
+<table align=center width="75%"><tr><td>
+<h4><a name="FT_UNPATENTED_HINTING_H">FT_UNPATENTED_HINTING_H</a></h4>
+<table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
+
+#define <b>FT_UNPATENTED_HINTING_H</b>  &lt;freetype/ttunpat.h&gt;
+
+</pre></table><br>
+<table align=center width="87%"><tr><td>
+<p>A macro used in #include statements to name the file containing the FreeType 2 API which performs color filtering for subpixel rendering.</p>
+</td></tr></table><br>
+</td></tr></table>
+<hr width="75%">
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
+<td width="100%"></td>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
+
+<table align=center width="75%"><tr><td>
+<h4><a name="FT_INCREMENTAL_H">FT_INCREMENTAL_H</a></h4>
+<table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
+
+#define <b>FT_INCREMENTAL_H</b>  &lt;freetype/ftincrem.h&gt;
+
+</pre></table><br>
+<table align=center width="87%"><tr><td>
+<p>A macro used in #include statements to name the file containing the FreeType 2 API which performs color filtering for subpixel rendering.</p>
+</td></tr></table><br>
+</td></tr></table>
+<hr width="75%">
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
+<td width="100%"></td>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_GASP_H">FT_GASP_H</a></h4>
@@ -841,11 +808,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 </body>
 </html>

@@ -22,9 +22,9 @@ Modifications:
     add AM_DISABLE_SHARED
 
 ==> freetype2 <==
-The freetype2 directory contains Freetype 2.3.5 sources from:
+The freetype2 directory contains Freetype 2.3.6 sources from:
 
-  http://download.savannah.gnu.org/releases/freetype/freetype-2.3.5.tar.bz2
+  http://downloads.sourceforge.net/freetype/freetype-2.3.6.tar.bz2
 
 The following files have been added:
 

@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>FreeType-2.3.5 API Reference</title>
+<title>FreeType-2.3.6 API Reference</title>
 <style type="text/css">
   body { font-family: Verdana, Geneva, Arial, Helvetica, serif;
          color: #000000;
@@ -12,7 +12,9 @@
   p { text-align: justify; }
   h1 { text-align: center; }
   li { text-align: justify; }
-  td { padding: 0 0.5em 0 0.5em }
+  td { padding: 0 0.5em 0 0.5em; }
+  td.left { padding: 0 0.5em 0 0.5em;
+            text-align: left; }
 
   a:link { color: #0000EF; }
   a:visited { color: #51188E; }
@@ -29,7 +31,7 @@
 </style>
 </head>
 <body>
-<center><h1>FreeType-2.3.5 API Reference</h1></center>
+<center><h1>FreeType-2.3.6 API Reference</h1></center>
 
 <center><h1>
 Outline Processing
@@ -55,6 +57,9 @@ Outline Processing
 </td></tr></table><br>
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Outline">FT_Outline</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_IMAGE_H (freetype/ftimage.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">struct</span>  FT_Outline_
@@ -75,6 +80,7 @@ Outline Processing
 <p>This structure is used to describe an outline to the scan-line converter.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>fields</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>n_contours</b></td><td>
 <p>The number of contours in the outline.</p>
@@ -99,14 +105,15 @@ Outline Processing
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_OUTLINE_FLAGS">FT_OUTLINE_FLAGS</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_IMAGE_H (freetype/ftimage.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
 #define <a href="ft2-outline_processing.html#FT_OUTLINE_FLAGS">FT_OUTLINE_NONE</a>             0x0
@@ -123,6 +130,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>A list of bit-field constants use for the flags in an outline's &lsquo;flags&rsquo; field.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>values</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>FT_OUTLINE_NONE</b></td><td>
 <p>Value 0 is reserved.</p>
@@ -153,14 +161,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Outline_New">FT_Outline_New</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_OUTLINE_H (freetype/ftoutln.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
@@ -181,6 +190,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Creates a new outline of a given size.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>library</b></td><td>
 <p>A handle to the library object from where the outline is allocated. Note however that the new outline will <b>not</b> necessarily be <b>freed</b>, when destroying the library, by <a href="ft2-base_interface.html#FT_Done_FreeType">FT_Done_FreeType</a>.</p>
@@ -194,6 +204,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>output</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>anoutline</b></td><td>
 <p>A handle to the new outline. NULL in case of error.</p>
@@ -208,14 +219,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Outline_Done">FT_Outline_Done</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_OUTLINE_H (freetype/ftoutln.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
@@ -232,6 +244,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Destroys an outline created with <a href="ft2-outline_processing.html#FT_Outline_New">FT_Outline_New</a>.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>library</b></td><td>
 <p>A handle of the library object used to allocate the outline.</p>
@@ -250,14 +263,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Outline_Copy">FT_Outline_Copy</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_OUTLINE_H (freetype/ftoutln.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
@@ -269,6 +283,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Copies an outline into another one. Both objects must have the same sizes (number of points &amp; number of contours) when this function is called.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>source</b></td><td>
 <p>A handle to the source outline.</p>
@@ -276,6 +291,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>output</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>target</b></td><td>
 <p>A handle to the target outline.</p>
@@ -287,14 +303,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Outline_Translate">FT_Outline_Translate</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_OUTLINE_H (freetype/ftoutln.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <span class="keyword">void</span> )
@@ -307,6 +324,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Applies a simple translation to the points of an outline.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>inout</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>outline</b></td><td>
 <p>A pointer to the target outline descriptor.</p>
@@ -314,6 +332,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>xOffset</b></td><td>
 <p>The horizontal offset.</p>
@@ -325,14 +344,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Outline_Transform">FT_Outline_Transform</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_OUTLINE_H (freetype/ftoutln.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <span class="keyword">void</span> )
@@ -344,6 +364,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Applies a simple 2x2 matrix to all of an outline's points. Useful for applying rotations, slanting, flipping, etc.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>inout</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>outline</b></td><td>
 <p>A pointer to the target outline descriptor.</p>
@@ -351,6 +372,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>matrix</b></td><td>
 <p>A pointer to the transformation matrix.</p>
@@ -362,14 +384,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Outline_Embolden">FT_Outline_Embolden</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_OUTLINE_H (freetype/ftoutln.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
@@ -382,6 +405,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Negative &lsquo;strength&rsquo; values to reduce the outline thickness are possible also.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>inout</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>outline</b></td><td>
 <p>A handle to the target outline.</p>
@@ -389,6 +413,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>strength</b></td><td>
 <p>How strong the glyph is emboldened. Expressed in 26.6 pixel format.</p>
@@ -409,14 +434,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Outline_Reverse">FT_Outline_Reverse</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_OUTLINE_H (freetype/ftoutln.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <span class="keyword">void</span> )
@@ -427,6 +453,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Reverses the drawing direction of an outline. This is used to ensure consistent fill conventions for mirrored glyphs.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>inout</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>outline</b></td><td>
 <p>A pointer to the target outline descriptor.</p>
@@ -439,14 +466,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Outline_Check">FT_Outline_Check</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_OUTLINE_H (freetype/ftoutln.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
@@ -457,6 +485,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Check the contents of an outline descriptor.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>outline</b></td><td>
 <p>A handle to a source outline.</p>
@@ -468,14 +497,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Outline_Get_BBox">FT_Outline_Get_BBox</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_BBOX_H (freetype/ftbbox.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
@@ -484,9 +514,10 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>Computes the exact bounding box of an outline. This is slower than computing the control box. However, it uses an advanced algorithm which returns <i>very</i> quickly when the two boxes coincide. Otherwise, the outline Bézier arcs are walked over to extract their extrema.</p>
+<p>Computes the exact bounding box of an outline. This is slower than computing the control box. However, it uses an advanced algorithm which returns <i>very</i> quickly when the two boxes coincide. Otherwise, the outline Bézier arcs are traversed to extract their extrema.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>outline</b></td><td>
 <p>A pointer to the source outline.</p>
@@ -494,6 +525,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>output</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>abbox</b></td><td>
 <p>The outline's exact bounding box.</p>
@@ -505,14 +537,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="ft_outline_flags">ft_outline_flags</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_IMAGE_H (freetype/ftimage.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
 #define <a href="ft2-outline_processing.html#ft_outline_flags">ft_outline_none</a>             <a href="ft2-outline_processing.html#FT_OUTLINE_FLAGS">FT_OUTLINE_NONE</a>
@@ -528,6 +561,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>These constants are deprecated. Please use the corresponding <a href="ft2-outline_processing.html#FT_OUTLINE_FLAGS">FT_OUTLINE_FLAGS</a> values.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>values</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>ft_outline_none</b></td><td>
 <p>See <a href="ft2-outline_processing.html#FT_OUTLINE_FLAGS">FT_OUTLINE_NONE</a>.</p>
@@ -558,14 +592,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Outline_MoveToFunc">FT_Outline_MoveToFunc</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_IMAGE_H (freetype/ftimage.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">int</span>
@@ -580,6 +615,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>A &lsquo;move to&rsquo; is emitted to start a new contour in an outline.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>to</b></td><td>
 <p>A pointer to the target point of the &lsquo;move to&rsquo;.</p>
@@ -594,21 +630,22 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Outline_LineToFunc">FT_Outline_LineToFunc</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_IMAGE_H (freetype/ftimage.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">int</span>
   (*<b>FT_Outline_LineToFunc</b>)( <span class="keyword">const</span> <a href="ft2-basic_types.html#FT_Vector">FT_Vector</a>*  to,
                             <span class="keyword">void</span>*             user );
 
-#define  FT_Outline_LineTo_Func  <b>FT_Outline_LineToFunc</b>
+#define FT_Outline_LineTo_Func  <b>FT_Outline_LineToFunc</b>
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
@@ -616,6 +653,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>A &lsquo;line to&rsquo; is emitted to indicate a segment in the outline.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>to</b></td><td>
 <p>A pointer to the target point of the &lsquo;line to&rsquo;.</p>
@@ -630,14 +668,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Outline_ConicToFunc">FT_Outline_ConicToFunc</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_IMAGE_H (freetype/ftimage.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">int</span>
@@ -645,7 +684,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
                              <span class="keyword">const</span> <a href="ft2-basic_types.html#FT_Vector">FT_Vector</a>*  to,
                              <span class="keyword">void</span>*             user );
 
-#define  FT_Outline_ConicTo_Func  <b>FT_Outline_ConicToFunc</b>
+#define FT_Outline_ConicTo_Func  <b>FT_Outline_ConicToFunc</b>
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
@@ -653,6 +692,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>A &lsquo;conic to&rsquo; is emitted to indicate a second-order Bézier arc in the outline.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>control</b></td><td>
 <p>An intermediate control point between the last position and the new target in &lsquo;to&rsquo;.</p>
@@ -670,14 +710,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Outline_CubicToFunc">FT_Outline_CubicToFunc</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_IMAGE_H (freetype/ftimage.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">int</span>
@@ -686,7 +727,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
                              <span class="keyword">const</span> <a href="ft2-basic_types.html#FT_Vector">FT_Vector</a>*  to,
                              <span class="keyword">void</span>*             user );
 
-#define  FT_Outline_CubicTo_Func  <b>FT_Outline_CubicToFunc</b>
+#define FT_Outline_CubicTo_Func  <b>FT_Outline_CubicToFunc</b>
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
@@ -694,6 +735,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>A &lsquo;cubic to&rsquo; is emitted to indicate a third-order Bézier arc.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>control1</b></td><td>
 <p>A pointer to the first Bézier control point.</p>
@@ -714,14 +756,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Outline_Funcs">FT_Outline_Funcs</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_IMAGE_H (freetype/ftimage.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">struct</span>  FT_Outline_Funcs_
@@ -741,6 +784,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>A structure to hold various function pointers used during outline decomposition in order to emit segments, conic, and cubic Béziers, as well as &lsquo;move to&rsquo; and &lsquo;close to&rsquo; operations.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>fields</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>move_to</b></td><td>
 <p>The &lsquo;move to&rsquo; emitter.</p>
@@ -772,14 +816,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Outline_Decompose">FT_Outline_Decompose</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_OUTLINE_H (freetype/ftoutln.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
@@ -792,6 +837,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Walks over an outline's structure to decompose it into individual segments and Bézier arcs. This function is also able to emit &lsquo;move to&rsquo; and &lsquo;close to&rsquo; operations to indicate the start and end of new contours in the outline.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>outline</b></td><td>
 <p>A pointer to the source target.</p>
@@ -802,6 +848,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>inout</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>user</b></td><td>
 <p>A typeless pointer which is passed to each emitter during the decomposition. It can be used to store the state during the decomposition.</p>
@@ -813,14 +860,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Outline_Get_CBox">FT_Outline_Get_CBox</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_OUTLINE_H (freetype/ftoutln.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <span class="keyword">void</span> )
@@ -833,6 +881,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Computing the control box is very fast, while getting the bounding box can take much more time as it needs to walk over all segments and arcs in the outline. To get the latter, you can use the &lsquo;ftbbox&rsquo; component which is dedicated to this single task.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>outline</b></td><td>
 <p>A pointer to the source outline descriptor.</p>
@@ -840,6 +889,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>output</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>acbox</b></td><td>
 <p>The outline's control box.</p>
@@ -848,14 +898,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Outline_Get_Bitmap">FT_Outline_Get_Bitmap</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_OUTLINE_H (freetype/ftoutln.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
@@ -868,6 +919,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Renders an outline within a bitmap. The outline's image is simply OR-ed to the target bitmap.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>library</b></td><td>
 <p>A handle to a FreeType library object.</p>
@@ -878,6 +930,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>inout</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>abitmap</b></td><td>
 <p>A pointer to the target bitmap descriptor.</p>
@@ -893,14 +946,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Outline_Render">FT_Outline_Render</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_OUTLINE_H (freetype/ftoutln.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
@@ -913,6 +967,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Renders an outline within a bitmap using the current scan-convert. This functions uses an <a href="ft2-raster.html#FT_Raster_Params">FT_Raster_Params</a> structure as an argument, allowing advanced features like direct composition, translucency, etc.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>library</b></td><td>
 <p>A handle to a FreeType library object.</p>
@@ -923,6 +978,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>inout</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>params</b></td><td>
 <p>A pointer to an <a href="ft2-raster.html#FT_Raster_Params">FT_Raster_Params</a> structure used to describe the rendering operation.</p>
@@ -938,17 +994,18 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Orientation">FT_Orientation</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_OUTLINE_H (freetype/ftoutln.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
-  <span class="keyword">typedef</span> <span class="keyword">enum</span>
+  <span class="keyword">typedef</span> <span class="keyword">enum</span>  FT_Orientation_
   {
     <a href="ft2-outline_processing.html#FT_Orientation">FT_ORIENTATION_TRUETYPE</a>   = 0,
     <a href="ft2-outline_processing.html#FT_Orientation">FT_ORIENTATION_POSTSCRIPT</a> = 1,
@@ -964,6 +1021,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>The TrueType and Postscript specifications use different conventions to determine whether outline contours should be filled or unfilled.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>values</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td colspan=0><b>FT_ORIENTATION_TRUETYPE</b></td></tr>
 <tr valign=top><td></td><td>
@@ -988,14 +1046,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Outline_Get_Orientation">FT_Outline_Get_Orientation</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_OUTLINE_H (freetype/ftoutln.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-outline_processing.html#FT_Orientation">FT_Orientation</a> )
@@ -1007,6 +1066,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Note that this will return <a href="ft2-outline_processing.html#FT_Orientation">FT_ORIENTATION_TRUETYPE</a> for empty outlines.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>outline</b></td><td>
 <p>A handle to the source outline.</p>
@@ -1018,11 +1078,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 </body>
 </html>

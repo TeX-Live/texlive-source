@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>FreeType-2.3.5 API Reference</title>
+<title>FreeType-2.3.6 API Reference</title>
 <style type="text/css">
   body { font-family: Verdana, Geneva, Arial, Helvetica, serif;
          color: #000000;
@@ -12,7 +12,9 @@
   p { text-align: justify; }
   h1 { text-align: center; }
   li { text-align: justify; }
-  td { padding: 0 0.5em 0 0.5em }
+  td { padding: 0 0.5em 0 0.5em; }
+  td.left { padding: 0 0.5em 0 0.5em;
+            text-align: left; }
 
   a:link { color: #0000EF; }
   a:visited { color: #51188E; }
@@ -29,7 +31,7 @@
 </style>
 </head>
 <body>
-<center><h1>FreeType-2.3.5 API Reference</h1></center>
+<center><h1>FreeType-2.3.6 API Reference</h1></center>
 
 <center><h1>
 Gasp Table
@@ -44,6 +46,9 @@ Gasp Table
 </td></tr></table><br>
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_GASP_XXX">FT_GASP_XXX</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_GASP_H (freetype/ftgasp.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
 #define <a href="ft2-gasp_table.html#FT_GASP_XXX">FT_GASP_NO_TABLE</a>               -1
@@ -57,6 +62,7 @@ Gasp Table
 <p>A list of values and/or bit-flags returned by the <a href="ft2-gasp_table.html#FT_Get_Gasp">FT_Get_Gasp</a> function.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>values</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>FT_GASP_NO_TABLE</b></td><td>
 <p>This special value means that there is no GASP table in this face. It is up to the client to decide what to do.</p>
@@ -85,14 +91,15 @@ Gasp Table
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Get_Gasp">FT_Get_Gasp</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_GASP_H (freetype/ftgasp.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Int">FT_Int</a> )
@@ -104,6 +111,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Read the &lsquo;gasp&rsquo; table from a TrueType or OpenType font file and return the entry corresponding to a given character pixel size.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>face</b></td><td>
 <p>The source face handle.</p>
@@ -114,18 +122,16 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>return</b></em></td></tr><tr><td>
-<p>Bit flags (see <a href="ft2-gasp_table.html#FT_GASP_XXX">FT_GASP_XXX</a>), or <a href="ft2-gasp_table.html#FT_GASP_XXX">FT_GASP_NO_TABLE</a> is there is no &lsquo;gasp&rsquo; table in the face.</p>
+<p>Bit flags (see <a href="ft2-gasp_table.html#FT_GASP_XXX">FT_GASP_XXX</a>), or <a href="ft2-gasp_table.html#FT_GASP_XXX">FT_GASP_NO_TABLE</a> if there is no &lsquo;gasp&rsquo; table in the face.</p>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>since</b></em></td></tr><tr><td>
 <p>2.3.0</p>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 </body>
 </html>

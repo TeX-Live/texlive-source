@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>FreeType-2.3.5 API Reference</title>
+<title>FreeType-2.3.6 API Reference</title>
 <style type="text/css">
   body { font-family: Verdana, Geneva, Arial, Helvetica, serif;
          color: #000000;
@@ -12,7 +12,9 @@
   p { text-align: justify; }
   h1 { text-align: center; }
   li { text-align: justify; }
-  td { padding: 0 0.5em 0 0.5em }
+  td { padding: 0 0.5em 0 0.5em; }
+  td.left { padding: 0 0.5em 0 0.5em;
+            text-align: left; }
 
   a:link { color: #0000EF; }
   a:visited { color: #51188E; }
@@ -29,24 +31,116 @@
 </style>
 </head>
 <body>
-<center><h1>FreeType-2.3.5 API Reference</h1></center>
+<center><h1>FreeType-2.3.6 API Reference</h1></center>
 
 <center><h1>
 Module Management
 </h1></center>
 <h2>Synopsis</h2>
 <table align=center cellspacing=5 cellpadding=0 border=0>
-<tr><td></td><td><a href="#FT_Module_Class">FT_Module_Class</a></td><td></td><td><a href="#FT_New_Library">FT_New_Library</a></td><td></td><td><a href="#FT_Renderer_Class">FT_Renderer_Class</a></td></tr>
-<tr><td></td><td><a href="#FT_Add_Module">FT_Add_Module</a></td><td></td><td><a href="#FT_Done_Library">FT_Done_Library</a></td><td></td><td><a href="#FT_Get_Renderer">FT_Get_Renderer</a></td></tr>
-<tr><td></td><td><a href="#FT_Get_Module">FT_Get_Module</a></td><td></td><td><a href="#FT_Set_Debug_Hook">FT_Set_Debug_Hook</a></td><td></td><td><a href="#FT_Set_Renderer">FT_Set_Renderer</a></td></tr>
-<tr><td></td><td><a href="#FT_Remove_Module">FT_Remove_Module</a></td><td></td><td><a href="#FT_Add_Default_Modules">FT_Add_Default_Modules</a></td><td></td><td></td></tr>
+<tr><td></td><td><a href="#FT_Module_Constructor">FT_Module_Constructor</a></td><td></td><td><a href="#FT_Get_Module">FT_Get_Module</a></td><td></td><td><a href="#FT_Add_Default_Modules">FT_Add_Default_Modules</a></td></tr>
+<tr><td></td><td><a href="#FT_Module_Destructor">FT_Module_Destructor</a></td><td></td><td><a href="#FT_Remove_Module">FT_Remove_Module</a></td><td></td><td><a href="#FT_Renderer_Class">FT_Renderer_Class</a></td></tr>
+<tr><td></td><td><a href="#FT_Module_Requester">FT_Module_Requester</a></td><td></td><td><a href="#FT_New_Library">FT_New_Library</a></td><td></td><td><a href="#FT_Get_Renderer">FT_Get_Renderer</a></td></tr>
+<tr><td></td><td><a href="#FT_Module_Class">FT_Module_Class</a></td><td></td><td><a href="#FT_Done_Library">FT_Done_Library</a></td><td></td><td><a href="#FT_Set_Renderer">FT_Set_Renderer</a></td></tr>
+<tr><td></td><td><a href="#FT_Add_Module">FT_Add_Module</a></td><td></td><td><a href="#FT_Set_Debug_Hook">FT_Set_Debug_Hook</a></td><td></td><td></td></tr>
 </table><br><br>
 
 <table align=center width="87%"><tr><td>
 <p>The definitions below are used to manage modules within FreeType. Modules can be added, upgraded, and removed at runtime.</p>
 </td></tr></table><br>
 <table align=center width="75%"><tr><td>
+<h4><a name="FT_Module_Constructor">FT_Module_Constructor</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_MODULE_H (freetype/ftmodapi.h).
+</td></tr></table><br>
+<table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
+
+  <span class="keyword">typedef</span> <a href="ft2-basic_types.html#FT_Error">FT_Error</a>
+  (*<b>FT_Module_Constructor</b>)( <a href="ft2-base_interface.html#FT_Module">FT_Module</a>  module );
+
+</pre></table><br>
+<table align=center width="87%"><tr><td>
+<p>A function used to initialize (not create) a new module object.</p>
+</td></tr></table><br>
+<table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
+<table cellpadding=3 border=0>
+<tr valign=top><td><b>module</b></td><td>
+<p>The module to initialize.</p>
+</td></tr>
+</table>
+</td></tr></table>
+</td></tr></table>
+<hr width="75%">
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
+<td width="100%"></td>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
+
+<table align=center width="75%"><tr><td>
+<h4><a name="FT_Module_Destructor">FT_Module_Destructor</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_MODULE_H (freetype/ftmodapi.h).
+</td></tr></table><br>
+<table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
+
+  <span class="keyword">typedef</span> <span class="keyword">void</span>
+  (*<b>FT_Module_Destructor</b>)( <a href="ft2-base_interface.html#FT_Module">FT_Module</a>  module );
+
+</pre></table><br>
+<table align=center width="87%"><tr><td>
+<p>A function used to finalize (not destroy) a given module object.</p>
+</td></tr></table><br>
+<table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
+<table cellpadding=3 border=0>
+<tr valign=top><td><b>module</b></td><td>
+<p>The module to finalize.</p>
+</td></tr>
+</table>
+</td></tr></table>
+</td></tr></table>
+<hr width="75%">
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
+<td width="100%"></td>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
+
+<table align=center width="75%"><tr><td>
+<h4><a name="FT_Module_Requester">FT_Module_Requester</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_MODULE_H (freetype/ftmodapi.h).
+</td></tr></table><br>
+<table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
+
+  <span class="keyword">typedef</span> FT_Module_Interface
+  (*<b>FT_Module_Requester</b>)( <a href="ft2-base_interface.html#FT_Module">FT_Module</a>    module,
+                          <span class="keyword">const</span> <span class="keyword">char</span>*  name );
+
+</pre></table><br>
+<table align=center width="87%"><tr><td>
+<p>A function used to query a given module for a specific interface.</p>
+</td></tr></table><br>
+<table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
+<table cellpadding=3 border=0>
+<tr valign=top><td><b>module</b></td><td>
+<p>The module to finalize.</p>
+</td></tr>
+<tr valign=top><td><b>name</b></td><td>
+<p>The name of the interface in the module.</p>
+</td></tr>
+</table>
+</td></tr></table>
+</td></tr></table>
+<hr width="75%">
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
+<td width="100%"></td>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
+
+<table align=center width="75%"><tr><td>
 <h4><a name="FT_Module_Class">FT_Module_Class</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_MODULE_H (freetype/ftmodapi.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">struct</span>  FT_Module_Class_
@@ -59,9 +153,9 @@ Module Management
 
     <span class="keyword">const</span> <span class="keyword">void</span>*            module_interface;
 
-    FT_Module_Constructor  module_init;
-    FT_Module_Destructor   module_done;
-    FT_Module_Requester    get_interface;
+    <a href="ft2-module_management.html#FT_Module_Constructor">FT_Module_Constructor</a>  module_init;
+    <a href="ft2-module_management.html#FT_Module_Destructor">FT_Module_Destructor</a>   module_done;
+    <a href="ft2-module_management.html#FT_Module_Requester">FT_Module_Requester</a>    get_interface;
 
   } <b>FT_Module_Class</b>;
 
@@ -70,6 +164,7 @@ Module Management
 <p>The module class descriptor.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>fields</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>module_flags</b></td><td>
 <p>Bit flags describing the module.</p>
@@ -87,26 +182,27 @@ Module Management
 <p>The version of FreeType this module requires, as a 16.16 fixed number (major.minor). Starts at version 2.0, i.e., 0x20000.</p>
 </td></tr>
 <tr valign=top><td><b>module_init</b></td><td>
-<p>A function used to initialize (not create) a new module object.</p>
+<p>The initializing function.</p>
 </td></tr>
 <tr valign=top><td><b>module_done</b></td><td>
-<p>A function used to finalize (not destroy) a given module object</p>
+<p>The finalizing function.</p>
 </td></tr>
 <tr valign=top><td><b>get_interface</b></td><td>
-<p>Queries a given module for a specific interface by name.</p>
+<p>The interface requesting function.</p>
 </td></tr>
 </table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Add_Module">FT_Add_Module</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_MODULE_H (freetype/ftmodapi.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
@@ -118,6 +214,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Adds a new module to a given library instance.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>inout</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>library</b></td><td>
 <p>A handle to the library object.</p>
@@ -125,6 +222,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>clazz</b></td><td>
 <p>A pointer to class descriptor for the module.</p>
@@ -139,14 +237,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Get_Module">FT_Get_Module</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_MODULE_H (freetype/ftmodapi.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-base_interface.html#FT_Module">FT_Module</a> )
@@ -158,6 +257,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Finds a module by its name.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>library</b></td><td>
 <p>A handle to the library object.</p>
@@ -175,14 +275,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Remove_Module">FT_Remove_Module</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_MODULE_H (freetype/ftmodapi.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
@@ -194,6 +295,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Removes a given module from a library instance.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>inout</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>library</b></td><td>
 <p>A handle to a library object.</p>
@@ -201,6 +303,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>module</b></td><td>
 <p>A handle to a module object.</p>
@@ -215,14 +318,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_New_Library">FT_New_Library</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_MODULE_H (freetype/ftmodapi.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
@@ -234,6 +338,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>This function is used to create a new FreeType library instance from a given memory object. It is thus possible to use libraries with distinct memory allocators within the same program.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>memory</b></td><td>
 <p>A handle to the original memory object.</p>
@@ -241,6 +346,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>output</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>alibrary</b></td><td>
 <p>A pointer to handle of a new library object.</p>
@@ -252,14 +358,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Done_Library">FT_Done_Library</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_MODULE_H (freetype/ftmodapi.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
@@ -270,6 +377,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Discards a given library object. This closes all drivers and discards all resource objects.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>library</b></td><td>
 <p>A handle to the target library.</p>
@@ -281,14 +389,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Set_Debug_Hook">FT_Set_Debug_Hook</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_MODULE_H (freetype/ftmodapi.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <span class="keyword">void</span> )
@@ -301,6 +410,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Sets a debug hook function for debugging the interpreter of a font format.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>inout</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>library</b></td><td>
 <p>A handle to the library object.</p>
@@ -308,6 +418,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>hook_index</b></td><td>
 <p>The index of the debug hook. You should use the values defined in &lsquo;ftobjs.h&rsquo;, e.g., &lsquo;FT_DEBUG_HOOK_TRUETYPE&rsquo;.</p>
@@ -323,14 +434,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Add_Default_Modules">FT_Add_Default_Modules</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_MODULE_H (freetype/ftmodapi.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <span class="keyword">void</span> )
@@ -341,6 +453,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Adds the set of default drivers to a given library object. This is only useful when you create a library object with <a href="ft2-module_management.html#FT_New_Library">FT_New_Library</a> (usually to plug a custom memory manager).</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>inout</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>library</b></td><td>
 <p>A handle to a new library object.</p>
@@ -349,21 +462,22 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Renderer_Class">FT_Renderer_Class</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_RENDER_H (freetype/ftrender.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   <span class="keyword">typedef</span> <span class="keyword">struct</span>  FT_Renderer_Class_
   {
-    <a href="ft2-module_management.html#FT_Module_Class">FT_Module_Class</a>       root;
+    <a href="ft2-module_management.html#FT_Module_Class">FT_Module_Class</a>            root;
 
-    <a href="ft2-basic_types.html#FT_Glyph_Format">FT_Glyph_Format</a>       glyph_format;
+    <a href="ft2-basic_types.html#FT_Glyph_Format">FT_Glyph_Format</a>            glyph_format;
 
     FT_Renderer_RenderFunc     render_glyph;
     FT_Renderer_TransformFunc  transform_glyph;
@@ -379,6 +493,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>The renderer module class descriptor.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>fields</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>root</b></td><td>
 <p>The root <a href="ft2-module_management.html#FT_Module_Class">FT_Module_Class</a> fields.</p>
@@ -388,6 +503,12 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr>
 <tr valign=top><td><b>render_glyph</b></td><td>
 <p>A method used to render the image that is in a given glyph slot into a bitmap.</p>
+</td></tr>
+<tr valign=top><td><b>transform_glyph</b></td><td>
+<p>A method used to transform the image that is in a given glyph slot.</p>
+</td></tr>
+<tr valign=top><td><b>get_glyph_cbox</b></td><td>
+<p>A method used to access the glyph's cbox.</p>
 </td></tr>
 <tr valign=top><td><b>set_mode</b></td><td>
 <p>A method used to pass additional parameters.</p>
@@ -402,14 +523,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Get_Renderer">FT_Get_Renderer</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_RENDER_H (freetype/ftrender.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-base_interface.html#FT_Renderer">FT_Renderer</a> )
@@ -421,6 +543,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Retrieves the current renderer for a given glyph format.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>library</b></td><td>
 <p>A handle to the library object.</p>
@@ -439,14 +562,15 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Set_Renderer">FT_Set_Renderer</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_RENDER_H (freetype/ftrender.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
@@ -460,6 +584,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>Sets the current renderer to use, and set additional mode.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>inout</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>library</b></td><td>
 <p>A handle to the library object.</p>
@@ -467,6 +592,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>renderer</b></td><td>
 <p>A handle to the renderer object.</p>
@@ -488,11 +614,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 </body>
 </html>

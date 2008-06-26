@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>FreeType-2.3.5 API Reference</title>
+<title>FreeType-2.3.6 API Reference</title>
 <style type="text/css">
   body { font-family: Verdana, Geneva, Arial, Helvetica, serif;
          color: #000000;
@@ -12,7 +12,9 @@
   p { text-align: justify; }
   h1 { text-align: center; }
   li { text-align: justify; }
-  td { padding: 0 0.5em 0 0.5em }
+  td { padding: 0 0.5em 0 0.5em; }
+  td.left { padding: 0 0.5em 0 0.5em;
+            text-align: left; }
 
   a:link { color: #0000EF; }
   a:visited { color: #51188E; }
@@ -29,7 +31,7 @@
 </style>
 </head>
 <body>
-<center><h1>FreeType-2.3.5 API Reference</h1></center>
+<center><h1>FreeType-2.3.6 API Reference</h1></center>
 
 <center><h1>
 LCD Filtering
@@ -45,9 +47,12 @@ LCD Filtering
 </td></tr></table><br>
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_LcdFilter">FT_LcdFilter</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_LCD_FILTER_H (freetype/ftlcdfil.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
-  <span class="keyword">typedef</span> <span class="keyword">enum</span>
+  <span class="keyword">typedef</span> <span class="keyword">enum</span>  FT_LcdFilter_
   {
     <a href="ft2-lcd_filtering.html#FT_LcdFilter">FT_LCD_FILTER_NONE</a>    = 0,
     <a href="ft2-lcd_filtering.html#FT_LcdFilter">FT_LCD_FILTER_DEFAULT</a> = 1,
@@ -63,6 +68,7 @@ LCD Filtering
 <p>A list of values to identify various types of LCD filters.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>values</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>FT_LCD_FILTER_NONE</b></td><td>
 <p>Do not perform filtering. When used with subpixel rendering, this results in sometimes severe color fringes.</p>
@@ -84,14 +90,15 @@ LCD Filtering
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_Library_SetLcdFilter">FT_Library_SetLcdFilter</a></h4>
+<table align=center width="87%"><tr><td>
+Defined in FT_LCD_FILTER_H (freetype/ftlcdfil.h).
+</td></tr></table><br>
 <table align=center width="87%"><tr bgcolor="#D6E8FF"><td><pre>
 
   FT_EXPORT( <a href="ft2-basic_types.html#FT_Error">FT_Error</a> )
@@ -103,6 +110,7 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 <p>This function is used to apply color filtering to LCD decimated bitmaps, like the ones used when calling <a href="ft2-base_interface.html#FT_Render_Glyph">FT_Render_Glyph</a> with <a href="ft2-base_interface.html#FT_Render_Mode">FT_RENDER_MODE_LCD</a> or <a href="ft2-base_interface.html#FT_Render_Mode">FT_RENDER_MODE_LCD_V</a>.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
+<p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>library</b></td><td>
 <p>A handle to the target library instance.</p>
@@ -129,11 +137,9 @@ ft2-toc.html">TOC</a>]</font></td></tr></table>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
-<table align=center width="75%"><tr><td><font size=-2>[<a href="
-ft2-index.html">Index</a>]</font></td>
+<table align=center width="75%"><tr><td><font size=-2>[<a href="ft2-index.html">Index</a>]</font></td>
 <td width="100%"></td>
-<td><font size=-2>[<a href="
-ft2-toc.html">TOC</a>]</font></td></tr></table>
+<td><font size=-2>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
 
 </body>
 </html>
