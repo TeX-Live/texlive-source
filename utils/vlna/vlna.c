@@ -21,33 +21,33 @@
 #define DISPLAYMODE 2
 #define VERBMODE 3
 /*1:*/
-#line 19 "vlna.w"
+#line 19 "../vlna-1.3/vlna.w"
 
 /*3:*/
-#line 39 "vlna.w"
+#line 39 "../vlna-1.3/vlna.w"
 
 #include <stdio.h> 
 #include <string.h> 
 #include <stdlib.h> 
 
 /*:3*/
-#line 20 "vlna.w"
+#line 20 "../vlna-1.3/vlna.w"
 
 /*4:*/
-#line 56 "vlna.w"
+#line 56 "../vlna-1.3/vlna.w"
 
 char*prog_name;
 int status;
 
 /*:4*//*7:*/
-#line 133 "vlna.w"
+#line 133 "../vlna-1.3/vlna.w"
 
 int isfilter= 0,silent= 0,rmbackup= 0,nomath= 0,noverb= 0,web= 0,latex= 0;
 char charsetdefault[]= "KkSsVvZzOoUuAI";
 char*charset= charsetdefault;
 
 /*:7*//*15:*/
-#line 291 "vlna.w"
+#line 292 "../vlna-1.3/vlna.w"
 
 typedef struct PATITEM{
 char*str;
@@ -61,7 +61,7 @@ struct PATTERN*next;
 }PATTERN;
 
 /*:15*//*16:*/
-#line 343 "vlna.w"
+#line 344 "../vlna-1.3/vlna.w"
 
 PATITEM*lapi[MAXPATT];
 PATTERN*lapt[MAXPATT];
@@ -72,20 +72,20 @@ char buff[MAXBUFF];
 int ind;
 
 /*:16*//*20:*/
-#line 417 "vlna.w"
+#line 418 "../vlna-1.3/vlna.w"
 
 char strings[512];
 int i;
 
 /*:20*//*25:*/
-#line 505 "vlna.w"
+#line 506 "../vlna-1.3/vlna.w"
 
 char*filename;
 long int numline,numchanges;
 int mode;
 
 /*:25*//*33:*/
-#line 636 "vlna.w"
+#line 637 "../vlna-1.3/vlna.w"
 
 char tblanks[]= " ~\t";
 char blanks[]= " \t";
@@ -101,10 +101,10 @@ char letters[]= "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 PATTERN*vlnkalist,*mathlist,*parcheck,*verblist;
 
 /*:33*/
-#line 21 "vlna.w"
+#line 21 "../vlna-1.3/vlna.w"
 
 /*6:*/
-#line 110 "vlna.w"
+#line 110 "../vlna-1.3/vlna.w"
 
 void printusage()
 {
@@ -124,7 +124,7 @@ fprintf(stderr,
 }
 
 /*:6*//*10:*/
-#line 167 "vlna.w"
+#line 168 "../vlna-1.3/vlna.w"
 
 void ioerr(f)
 char*f;
@@ -133,7 +133,7 @@ fprintf(stderr,"%s: cannot open file %s\n",prog_name,f);
 }
 
 /*:10*//*17:*/
-#line 356 "vlna.w"
+#line 357 "../vlna-1.3/vlna.w"
 
 void*myalloc(size)
 int size;
@@ -149,7 +149,7 @@ return p;
 }
 
 /*:17*//*18:*/
-#line 374 "vlna.w"
+#line 375 "../vlna-1.3/vlna.w"
 
 PATTERN*setpattern(proc)
 void(*proc)();
@@ -166,7 +166,7 @@ return pp;
 }
 
 /*:18*//*19:*/
-#line 393 "vlna.w"
+#line 394 "../vlna-1.3/vlna.w"
 
 void setpi(str,flag)
 char*str;
@@ -182,7 +182,7 @@ lastpi= p;
 }
 
 /*:19*//*22:*/
-#line 428 "vlna.w"
+#line 429 "../vlna-1.3/vlna.w"
 
 PATTERN*normalpattern(proc,str)
 void(*proc)();
@@ -206,7 +206,7 @@ return pp;
 }
 
 /*:22*//*23:*/
-#line 466 "vlna.w"
+#line 467 "../vlna-1.3/vlna.w"
 
 int match(p)
 PATITEM*p;
@@ -220,7 +220,7 @@ case ONE:if(p->next==NULL)return FOUND;
 return 1;
 case ONE_NOT:return NOFOUND;
 case ANY_NOT:/*24:*/
-#line 485 "vlna.w"
+#line 486 "../vlna-1.3/vlna.w"
 
 switch(m= match(p->next)){
 case NOFOUND:return NOFOUND;
@@ -229,14 +229,14 @@ default:return 1+m;
 }
 
 /*:24*/
-#line 478 "vlna.w"
+#line 479 "../vlna-1.3/vlna.w"
 ;
 }
 return 0;
 }
 
 /*:23*//*36:*/
-#line 669 "vlna.w"
+#line 670 "../vlna-1.3/vlna.w"
 
 void vlnkain()
 {
@@ -251,7 +251,7 @@ numchanges++;
 }
 
 /*:36*//*38:*/
-#line 708 "vlna.w"
+#line 709 "../vlna-1.3/vlna.w"
 
 void vlnkacr()
 {
@@ -274,7 +274,7 @@ numchanges++;
 }
 
 /*:38*//*41:*/
-#line 774 "vlna.w"
+#line 775 "../vlna-1.3/vlna.w"
 
 void tielock()
 {
@@ -282,7 +282,7 @@ c= 1;
 }
 
 /*:41*//*42:*/
-#line 783 "vlna.w"
+#line 784 "../vlna-1.3/vlna.w"
 
 void printwarning()
 {
@@ -294,7 +294,7 @@ status= WARNING;
 }
 
 /*:42*//*44:*/
-#line 808 "vlna.w"
+#line 809 "../vlna-1.3/vlna.w"
 
 void mathin()
 {
@@ -310,7 +310,7 @@ normallist= listpatt= vlnkalist;
 }
 
 /*:44*//*45:*/
-#line 826 "vlna.w"
+#line 827 "../vlna-1.3/vlna.w"
 
 void onedollar()
 {
@@ -323,7 +323,7 @@ else mathout();
 }
 
 /*:45*//*47:*/
-#line 845 "vlna.w"
+#line 846 "../vlna-1.3/vlna.w"
 
 void checkmode()
 {
@@ -335,7 +335,7 @@ normallist= listpatt= vlnkalist;
 }
 
 /*:47*//*49:*/
-#line 871 "vlna.w"
+#line 872 "../vlna-1.3/vlna.w"
 
 void displayin()
 {
@@ -355,7 +355,7 @@ else displayin();
 }
 
 /*:49*//*51:*/
-#line 920 "vlna.w"
+#line 921 "../vlna-1.3/vlna.w"
 
 int prevmode;
 PATTERN*prevlist,*verboutlist[4];
@@ -372,7 +372,7 @@ mode= VERBMODE;
 }
 
 /*:51*//*52:*/
-#line 941 "vlna.w"
+#line 942 "../vlna-1.3/vlna.w"
 
 void verbin()
 {
@@ -394,7 +394,7 @@ mode= VERBMODE;
 }
 
 /*:52*//*53:*/
-#line 961 "vlna.w"
+#line 962 "../vlna-1.3/vlna.w"
 
 void verbout()
 {
@@ -410,7 +410,7 @@ case TEXTMODE:normallist= listpatt= vlnkalist;break;
 }
 
 /*:53*//*55:*/
-#line 983 "vlna.w"
+#line 984 "../vlna-1.3/vlna.w"
 
 void tieoff()
 {
@@ -422,10 +422,10 @@ normallist= vlnkalist;
 }
 
 /*:55*/
-#line 22 "vlna.w"
+#line 22 "../vlna-1.3/vlna.w"
 
 /*26:*/
-#line 514 "vlna.w"
+#line 515 "../vlna-1.3/vlna.w"
 
 void tie(input,output)
 FILE*input,*output;
@@ -437,7 +437,7 @@ PATTERN*pp;
 PATITEM*pi;
 
 /*27:*/
-#line 545 "vlna.w"
+#line 546 "../vlna-1.3/vlna.w"
 
 for(k= 0;k<MAXPATT;k++)lapi[k]= NULL;
 c= '\n';
@@ -446,17 +446,17 @@ numline= 1;numchanges= 0;
 mode= TEXTMODE;
 
 /*:27*//*35:*/
-#line 666 "vlna.w"
+#line 667 "../vlna-1.3/vlna.w"
 
 listpatt= normallist= vlnkalist;
 
 /*:35*/
-#line 524 "vlna.w"
+#line 525 "../vlna-1.3/vlna.w"
 ;
 
 while(!feof(input)){
 /*30:*/
-#line 590 "vlna.w"
+#line 591 "../vlna-1.3/vlna.w"
 
 pp= listpatt;
 while(pp!=NULL){
@@ -464,7 +464,7 @@ switch(m= match(pp->patt)){
 case FOUND:(*pp->proc)();
 case NOFOUND:break;
 default:/*31:*/
-#line 605 "vlna.w"
+#line 606 "../vlna-1.3/vlna.w"
 
 pi= pp->patt;
 while(m--)pi= pi->next;
@@ -484,17 +484,17 @@ lapt[k]= pp;lapi[k]= pi;ap++;
 }
 
 /*:31*/
-#line 596 "vlna.w"
+#line 597 "../vlna-1.3/vlna.w"
 ;
 }
 pp= pp->next;
 }
 
 /*:30*/
-#line 527 "vlna.w"
+#line 528 "../vlna-1.3/vlna.w"
 ;
 if(ap==0&&ind> BUFI&&c!='\\')/*28:*/
-#line 560 "vlna.w"
+#line 561 "../vlna-1.3/vlna.w"
 
 {
 buff[ind]= 0;
@@ -503,7 +503,7 @@ ind= 1;
 }
 
 /*:28*/
-#line 528 "vlna.w"
+#line 529 "../vlna-1.3/vlna.w"
 ;
 if(ind>=MAXBUFF){
 fprintf(stderr,"Operating buffer overflow, is anything wrong?\n");
@@ -515,7 +515,7 @@ buff[ind++]= c= ic;
 if(c=='\n')numline++,listpatt= normallist;
 if(c=='%'&&mode!=VERBMODE&&buff[ind-2]!='\\')listpatt= commentlist;
 /*29:*/
-#line 573 "vlna.w"
+#line 574 "../vlna-1.3/vlna.w"
 
 n= ap;k= 0;
 while(n){
@@ -530,11 +530,11 @@ k++;n--;
 }
 
 /*:29*/
-#line 538 "vlna.w"
+#line 539 "../vlna-1.3/vlna.w"
 ;
 }
 /*28:*/
-#line 560 "vlna.w"
+#line 561 "../vlna-1.3/vlna.w"
 
 {
 buff[ind]= 0;
@@ -543,43 +543,43 @@ ind= 1;
 }
 
 /*:28*/
-#line 540 "vlna.w"
+#line 541 "../vlna-1.3/vlna.w"
 ;
 if(!web)checkmode();
 if(!silent)/*32:*/
-#line 624 "vlna.w"
+#line 625 "../vlna-1.3/vlna.w"
 
 fprintf(stderr,"~~~ file: %s\t  lines: %ld, changes: %ld\n",
 filename,numline,numchanges);
 
 /*:32*/
-#line 542 "vlna.w"
+#line 543 "../vlna-1.3/vlna.w"
 ;
 }
 
 /*:26*/
-#line 23 "vlna.w"
+#line 23 "../vlna-1.3/vlna.w"
 
 /*5:*/
-#line 61 "vlna.w"
+#line 61 "../vlna-1.3/vlna.w"
 
 int main(argc,argv)
 int argc;
 char**argv;
 {
 /*9:*/
-#line 160 "vlna.w"
+#line 161 "../vlna-1.3/vlna.w"
 
 FILE*infile,*outfile;
 char backup[MAXLEN];
 int j;
 
 /*:9*/
-#line 66 "vlna.w"
+#line 66 "../vlna-1.3/vlna.w"
 ;
 prog_name= argv[0];status= OK;
 /*8:*/
-#line 138 "vlna.w"
+#line 138 "../vlna-1.3/vlna.w"
 
 while(argc> 1&&argv[1][0]=='-'){
 if(argv[1][2]!=0)printusage(),exit(BAD_OPTIONS);
@@ -587,7 +587,8 @@ switch(argv[1][1]){
 case'f':isfilter= 1;break;
 case's':silent= 1;break;
 case'r':rmbackup= 1;break;
-case'v':argv++;argc--;charset= argv[1];break;
+case'v':if(argc<2)printusage(),exit(BAD_OPTIONS);
+argv++;argc--;charset= argv[1];break;
 case'm':nomath= 1;break;
 case'n':noverb= 1;break;
 case'l':latex= 1;break;
@@ -599,18 +600,18 @@ argc--;argv++;
 }
 
 /*:8*/
-#line 68 "vlna.w"
+#line 68 "../vlna-1.3/vlna.w"
 ;
 if(!silent)fprintf(stderr,BANNER);
 /*21:*/
-#line 422 "vlna.w"
+#line 423 "../vlna-1.3/vlna.w"
 
 for(i= 0;i<256;i++){
 strings[2*i]= (char)i;strings[2*i+1]= 0;
 }
 
 /*:21*//*34:*/
-#line 656 "vlna.w"
+#line 657 "../vlna-1.3/vlna.w"
 
 vlnkalist= setpattern(vlnkain);
 setpi(tblankscr,ONE);
@@ -622,7 +623,7 @@ setpi(blanks,ANY);
 setpi(nochar,ONE_NOT);
 
 /*:34*//*37:*/
-#line 684 "vlna.w"
+#line 685 "../vlna-1.3/vlna.w"
 
 setpattern(vlnkacr);
 setpi(tblankscr,ONE);
@@ -635,7 +636,7 @@ setpi(blanks,ANY);
 setpi(nochar,ONE_NOT);
 
 /*:37*//*39:*/
-#line 730 "vlna.w"
+#line 731 "../vlna-1.3/vlna.w"
 
 setpattern(vlnkain);
 setpi(tblankscr,ONE);
@@ -665,7 +666,7 @@ setpi(nochar,ONE_NOT);
 
 
 /*:39*//*40:*/
-#line 763 "vlna.w"
+#line 764 "../vlna-1.3/vlna.w"
 
 normalpattern(tielock,"\\TeX");
 setpi(blankscr,ONE);
@@ -673,7 +674,7 @@ normalpattern(tielock,"\\LaTeX");
 setpi(blankscr,ONE);
 
 /*:40*//*43:*/
-#line 797 "vlna.w"
+#line 798 "../vlna-1.3/vlna.w"
 
 if(!nomath){
 mathlist= setpattern(onedollar);
@@ -686,7 +687,7 @@ normalpattern(mathout,"\\end.{math}");
 }
 
 /*:43*//*46:*/
-#line 839 "vlna.w"
+#line 840 "../vlna-1.3/vlna.w"
 
 parcheck= setpattern(checkmode);
 setpi(cr,ONE);
@@ -694,7 +695,7 @@ setpi(blanks,ANY);
 setpi(cr,ONE);
 
 /*:46*//*48:*/
-#line 860 "vlna.w"
+#line 861 "../vlna-1.3/vlna.w"
 
 if(!nomath){
 normalpattern(twodollars,"$$");
@@ -707,7 +708,7 @@ normalpattern(displayout,"\\end.{equation");
 }
 
 /*:48*//*50:*/
-#line 892 "vlna.w"
+#line 893 "../vlna-1.3/vlna.w"
 
 if(!noverb){
 verblist= normalpattern(verbinchar,"\\verb");
@@ -734,20 +735,20 @@ normalpattern(verbout,"@>|");
 
 
 /*:50*//*54:*/
-#line 978 "vlna.w"
+#line 979 "../vlna-1.3/vlna.w"
 
 lastpt= 0;
 commentlist= normalpattern(tieoff,"%.~.-");
 normalpattern(tieon,"%.~.+");
 
 /*:54*/
-#line 70 "vlna.w"
+#line 70 "../vlna-1.3/vlna.w"
 ;
 /*11:*/
-#line 175 "vlna.w"
+#line 176 "../vlna-1.3/vlna.w"
 
 if(isfilter)/*12:*/
-#line 187 "vlna.w"
+#line 188 "../vlna-1.3/vlna.w"
 
 {
 if(argc> 3)printusage(),exit(BAD_OPTIONS);
@@ -764,17 +765,17 @@ if(infile!=stdin)fclose(infile);
 }
 
 /*:12*/
-#line 176 "vlna.w"
+#line 177 "../vlna-1.3/vlna.w"
 
 else/*13:*/
-#line 210 "vlna.w"
+#line 211 "../vlna-1.3/vlna.w"
 
 {
 if(argc==1)printusage(),exit(BAD_OPTIONS);
 while(argc> 1){
 argc--;argv++;
 /*14:*/
-#line 241 "vlna.w"
+#line 242 "../vlna-1.3/vlna.w"
 
 infile= NULL;
 j= strlen(argv[0])-1;
@@ -791,7 +792,7 @@ if(j==0)infile= fopen(backup,"r");
 }
 
 /*:14*/
-#line 215 "vlna.w"
+#line 216 "../vlna-1.3/vlna.w"
 ;
 if(infile==NULL){
 ioerr(argv[0]);continue;
@@ -811,17 +812,17 @@ if(rmbackup)remove(backup);
 }
 
 /*:13*/
-#line 177 "vlna.w"
+#line 178 "../vlna-1.3/vlna.w"
 
 
 /*:11*/
-#line 71 "vlna.w"
+#line 71 "../vlna-1.3/vlna.w"
 ;
 return status;
 }
 
 /*:5*/
-#line 24 "vlna.w"
+#line 24 "../vlna-1.3/vlna.w"
 
 
 /*:1*/

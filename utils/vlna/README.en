@@ -49,10 +49,10 @@ of the program.
 Acknowledgement:
 ----------------
 
-The author thanks to Rudolf Cejka for creation of the many an the man page
-as well es for fixing small bugs that ocurred in version 1.0.
+The author thanks to Rudolf Cejka for creation of the man page
+as well as for fixing small bugs that ocurred in version 1.0.
 
-28. 2. 1995       Petr Olšák
+28. 2. 1995       Petr Olsak
 
 version 1.2 (20. 5. 2002): 
           bug fix "v<space><cr>lese" -> "v~~lese"

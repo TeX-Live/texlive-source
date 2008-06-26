@@ -1,0 +1,9 @@
+2008-06-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* README.en (new): from Zdenek Wagner, fixed a few typos.
+	* vlna.w: Ensure charset parameter for '-v'.
+
+2008-06-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Autoconfiscated vlna-1.2, imported from
+	ftp://math.feld.cvut.cz/pub/olsak/vlna.

@@ -142,7 +142,8 @@ while (argc>1 && argv[1][0] == '-') {
   case 'f': isfilter = 1; break;
   case 's': silent = 1; break;
   case 'r': rmbackup = 1; break;
-  case 'v': argv++; argc--; charset = argv[1]; break;
+  case 'v': if (argc<2) printusage (), exit (BAD_OPTIONS);
+    argv++; argc--; charset = argv[1]; break;
   case 'm': nomath = 1; break;
   case 'n': noverb = 1; break;
   case 'l': latex = 1; break;

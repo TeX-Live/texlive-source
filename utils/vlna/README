@@ -47,7 +47,6 @@ Instalace v UNIXu:
 Program poskytuji k veøejnému pou¾ití. Pokud nìkdo udìlá u¾iteèné
 zmìny ve zdrojovém textu CWEB, chtìl bych být o tom informován. Bez
 souhlasu autora nemù¾e být zmìnìný program ¹íøen pod stejným názvem.
-Program ani jeho modifikace se nesmí prodávat.
 
 Nedávám ¾ádnou záruku, ¾e program nepo¹kodí mnohahodinovou práci,
 kterou u¾ivatelé editovali. Program sice vytváøí zálohové soubory, ale
@@ -65,4 +64,6 @@ se vyskytly ve verzi 1.0.
 verze 1.2 (20. 5. 2002): 
           oprava chyby "v<space><cr>lese" -> "v~~lese"
           a pøidání patternu pro "\uv{v lese}" -> "\uv{v~lese}".
-
+(23. 2. 2004):
+          v README v odstavci "©íøení programu" zru¹ena vìta
+          "Program ani jeho modifikace se nesmí prodávat".

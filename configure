@@ -775,6 +775,7 @@ with_psutils
 with_t1utils
 with_texinfo
 with_tpic2pdftex
+with_vlna
 with_xindy
 with_afm2pl
 with_bibtex8
@@ -895,6 +896,7 @@ utils/psutils
 utils/t1utils
 utils/texinfo
 utils/tpic2pdftex
+utils/vlna
 utils/xindy
 texk'
 
@@ -1552,6 +1554,7 @@ Optional Packages:
   --without-t1utils       do not build the t1utils package
   --without-texinfo       do not build the texinfo package
   --without-tpic2pdftex   do not build the tpic2pdftex package
+  --without-vlna          do not build the vlna package
   --without-xindy         do not build the xindy package
   --without-afm2pl        do not build the afm2pl package
   --without-bibtex8       do not build the bibtex8 package
@@ -5614,6 +5617,11 @@ fi
 # Check whether --with-tpic2pdftex was given.
 if test "${with_tpic2pdftex+set}" = set; then
   withval=$with_tpic2pdftex;
+fi
+
+# Check whether --with-vlna was given.
+if test "${with_vlna+set}" = set; then
+  withval=$with_vlna;
 fi
 
 # Check whether --with-xindy was given.
@@ -9710,6 +9718,12 @@ if test -d $srcdir/utils/tpic2pdftex; then
   if test "x$with_tpic2pdftex" != xno; then
     ESUBDIRS="$ESUBDIRS utils/tpic2pdftex"
     subdirs="$subdirs utils/tpic2pdftex"
+  fi
+fi
+if test -d $srcdir/utils/vlna; then
+  if test "x$with_vlna" != xno; then
+    ESUBDIRS="$ESUBDIRS utils/vlna"
+    subdirs="$subdirs utils/vlna"
   fi
 fi
 if test -d $srcdir/utils/xindy; then

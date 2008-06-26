@@ -1,3 +1,7 @@
+2008-06-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* withenable.ac (kpse_utils_pkglist): add vlna.
+
 2008-06-09  Karl Berry  <karl@tug.org>
 
 	* Build: try using find instead of ls, to avoid short param list
