@@ -65,7 +65,7 @@ authorization from SIL International.
 
 @d XeTeX_version=0
 @d XeTeX_revision==".999"
-@d XeTeX_version_string=='-0.999.1' {current \XeTeX\ version}
+@d XeTeX_version_string=='-0.999.2' {current \XeTeX\ version}
 @z
 
 @x
@@ -3978,7 +3978,7 @@ label reswitch, common_ending, exit, restart;
 @x
 p:=lig_trick; goto reswitch;
 @y
-p:=lig_trick; ligature_present:=true; goto reswitch;
+p:=lig_trick; xtx_ligature_present:=true; goto reswitch;
 @z
 
 @x
@@ -4934,7 +4934,7 @@ label done,done1,done2,done3,done4,done5,done6,continue, restart;
   ligature_node: begin f:=font(lig_char(v));@/
 @y
   ligature_node: begin f:=font(lig_char(v));@/
-    ligature_present:=true;
+    xtx_ligature_present:=true;
 @z
 
 @x
@@ -4954,7 +4954,7 @@ label done,done1,done2,done3,done4,done5,done6,continue, restart;
   ligature_node: begin f:=font(lig_char(s));
 @y
   ligature_node: begin f:=font(lig_char(s));
-    ligature_present:=true;
+    xtx_ligature_present:=true;
 @z
 
 @x
@@ -4980,14 +4980,14 @@ label done,done1,done2,done3,done4,done5,done6,continue, restart;
 ligature_node: begin f:=font(lig_char(cur_p));
 @y
 ligature_node: begin f:=font(lig_char(cur_p));
-  ligature_present:=true;
+  xtx_ligature_present:=true;
 @z
 
 @x
   ligature_node: begin f:=font(lig_char(s));
 @y
   ligature_node: begin f:=font(lig_char(s));
-    ligature_present:=true;
+    xtx_ligature_present:=true;
 @z
 
 @x
@@ -5007,7 +5007,7 @@ ligature_node: begin f:=font(lig_char(cur_p));
   ligature_node: begin f:=font(lig_char(s));
 @y
   ligature_node: begin f:=font(lig_char(s));
-    ligature_present:=true;
+    xtx_ligature_present:=true;
 @z
 
 @x
@@ -8482,6 +8482,14 @@ for i:=int_val to tok_val do sa_root[i]:=null;
 for i:=int_val to inter_char_val do sa_root[i]:=null;
 @z
 
+@x {hyphenation code is only saved for chars 0..255}
+@d set_lc_code(#)== {set |hc[0]| to hyphenation or lc code for |#|}
+  if hyph_index=0 then hc[0]:=lc_code(#)
+@y
+@d set_lc_code(#)== {set |hc[0]| to hyphenation or lc code for |#|}
+  if (hyph_index=0) or ((#)>255) then hc[0]:=lc_code(#)
+@z
+
 @x
       for c := str_start[text(h)] to str_start[text(h) + 1] - 1
 @y
@@ -8535,21 +8543,24 @@ end;
 @y
 @!mltex_enabled_p:boolean;  {enable character substitution}
 @!native_font_type_flag:integer; {used by XeTeX font loading code to record which font technology was used}
+@!xtx_ligature_present:boolean; {to suppress tfm font mapping of char codes from ligature nodes (already mapped)}
 @z
 
 @x
 begin result:=c;  {return |c| unless it does not exist in the font}
 @y
-begin if (not ligature_present) and (font_mapping[f]<>nil) then
+begin if (not xtx_ligature_present) and (font_mapping[f]<>nil) then
   c:=apply_tfm_font_mapping(font_mapping[f],c);
+xtx_ligature_present:=false;
 result:=c;  {return |c| unless it does not exist in the font}
 @z
 
 @x
 begin if not mltex_enabled_p then
 @y
-begin if (not ligature_present) and (font_mapping[f]<>nil) then
+begin if (not xtx_ligature_present) and (font_mapping[f]<>nil) then
   c:=apply_tfm_font_mapping(font_mapping[f],c);
+xtx_ligature_present:=false;
 if not mltex_enabled_p then
 @z
 
