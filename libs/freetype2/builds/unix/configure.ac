@@ -11,13 +11,13 @@
 # indicate that you have read the license and understand and accept it
 # fully.
 
-AC_INIT([FreeType], [2.3.6], [freetype@nongnu.org], [freetype])
+AC_INIT([FreeType], [2.3.7], [freetype@nongnu.org], [freetype])
 AC_CONFIG_SRCDIR([ftconfig.in])
 
 
 # Don't forget to update docs/VERSION.DLL!
 
-version_info='9:17:3'
+version_info='9:18:3'
 AC_SUBST([version_info])
 ft_version=`echo $version_info | tr : .`
 AC_SUBST([ft_version])
@@ -155,7 +155,7 @@ AC_SUBST([FTSYS_SRC])
 AC_CHECK_FUNCS([memcpy memmove])
 
 
-# Check for system zlib
+# check for system zlib
 
 # don't quote AS_HELP_STRING!
 AC_ARG_WITH([zlib],
@@ -169,6 +169,32 @@ if test x$with_zlib != xno && test -n "$LIBZ"; then
   LDFLAGS="$LDFLAGS $LIBZ"
   SYSTEM_ZLIB=yes
 fi
+
+
+# check Apple's `-isysroot' option and duplicate it to LDFLAGS if required --
+# Apple TechNote 2137 recommends to include it in CFLAGS but not in LDFLAGS
+
+AC_MSG_CHECKING([whether CFLAGS includes -isysroot option])
+case "$CFLAGS" in
+*sysroot* )
+  AC_MSG_RESULT([yes])
+  AC_MSG_CHECKING([whether LDFLAGS includes -isysroot option])
+  case "$LDFLAGS" in
+  *sysroot* )
+    AC_MSG_RESULT([yes])
+    ;;
+  *)
+    AC_MSG_RESULT([no])
+    isysroot_dir=`echo ${CFLAGS} | tr '\t' ' ' | sed 's/^.*-isysroot *//;s/ .*//'`
+    AC_MSG_WARN(-isysroot ${isysroot_dir} is added to LDFLAGS)
+    LDFLAGS="-isysroot ${isysroot_dir} ${LDFLAGS}"
+    ;;
+  esac
+  ;;
+*)
+  AC_MSG_RESULT([no])
+  ;;
+esac
 
 
 # Whether to use Mac OS resource-based fonts.
@@ -233,6 +259,35 @@ if test x$with_old_mac_fonts = xyes; then
         CFLAGS="$CFLAGS -DHAVE_ANSI_OS_INLINE=1"
        ],
        [AC_MSG_RESULT([no, ANSI incompatible])
+        CFLAGS="$orig_CFLAGS"
+       ])
+     AC_MSG_CHECKING([type ResourceIndex])
+     orig_CFLAGS="$CFLAGS"
+     CFLAGS="$CFLAGS $XX_CFLAGS $XX_ANSIFLAGS"
+     AC_COMPILE_IFELSE([
+       AC_LANG_PROGRAM([
+
+#if defined(__GNUC__) && defined(__APPLE_CC__)
+# include <Carbon/Carbon.h>
+# include <ApplicationServices/ApplicationServices.h>
+#else
+# include <ConditionalMacros.h>
+# include <Files.h>
+# include <Resources.h>
+#endif
+
+         ],
+         [
+
+           ResourceIndex i = 0;
+           return i;
+
+         ])],
+       [AC_MSG_RESULT([ok])
+        CFLAGS="$orig_CFLAGS"
+        CFLAGS="$CFLAGS -DHAVE_TYPE_RESOURCE_INDEX"
+       ],
+       [AC_MSG_RESULT([no])
         CFLAGS="$orig_CFLAGS"
        ])],
     [AC_MSG_RESULT([not found])

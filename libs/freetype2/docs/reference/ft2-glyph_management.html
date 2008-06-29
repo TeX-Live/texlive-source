@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>FreeType-2.3.6 API Reference</title>
+<title>FreeType-2.3.7 API Reference</title>
 <style type="text/css">
   body { font-family: Verdana, Geneva, Arial, Helvetica, serif;
          color: #000000;
@@ -31,7 +31,11 @@
 </style>
 </head>
 <body>
-<center><h1>FreeType-2.3.6 API Reference</h1></center>
+
+<table align=center><tr><td><font size=-1>[<a href="ft2-index.html">Index</a>]</font></td>
+<td width="100%"></td>
+<td><font size=-1>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
+<center><h1>FreeType-2.3.7 API Reference</h1></center>
 
 <center><h1>
 Glyph Management
@@ -162,7 +166,7 @@ Defined in FT_GLYPH_H (freetype/ftglyph.h).
 <p>The left-side bearing, i.e., the horizontal distance from the current pen position to the left border of the glyph bitmap.</p>
 </td></tr>
 <tr valign=top><td><b>top</b></td><td>
-<p>The top-side bearing, i.e., the vertical distance from the current pen position to the top border of the glyph bitmap. This distance is positive for upwards-y!</p>
+<p>The top-side bearing, i.e., the vertical distance from the current pen position to the top border of the glyph bitmap. This distance is positive for upwards&nbsp;y!</p>
 </td></tr>
 <tr valign=top><td><b>bitmap</b></td><td>
 <p>A descriptor for the bitmap.</p>
@@ -270,7 +274,7 @@ Defined in FT_GLYPH_H (freetype/ftglyph.h).
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>return</b></em></td></tr><tr><td>
-<p>FreeType error code. 0 means success.</p>
+<p>FreeType error code. 0&nbsp;means success.</p>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
@@ -305,12 +309,12 @@ Defined in FT_GLYPH_H (freetype/ftglyph.h).
 <p></p>
 <table cellpadding=3 border=0>
 <tr valign=top><td><b>target</b></td><td>
-<p>A handle to the target glyph object. 0 in case of error.</p>
+<p>A handle to the target glyph object. 0&nbsp;in case of error.</p>
 </td></tr>
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>return</b></em></td></tr><tr><td>
-<p>FreeType error code. 0 means success.</p>
+<p>FreeType error code. 0&nbsp;means success.</p>
 </td></tr></table>
 </td></tr></table>
 <hr width="75%">
@@ -332,7 +336,7 @@ Defined in FT_GLYPH_H (freetype/ftglyph.h).
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>Transforms a glyph image if its format is scalable.</p>
+<p>Transform a glyph image if its format is scalable.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>inout</b></em></td></tr><tr><td>
 <p></p>
@@ -494,7 +498,7 @@ Defined in FT_GLYPH_H (freetype/ftglyph.h).
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>note</b></em></td></tr><tr><td>
-<p>Coordinates are relative to the glyph origin, using the Y-upwards convention.</p>
+<p>Coordinates are relative to the glyph origin, using the y&nbsp;upwards convention.</p>
 <p>If the glyph has been loaded with <a href="ft2-base_interface.html#FT_LOAD_XXX">FT_LOAD_NO_SCALE</a>, &lsquo;bbox_mode&rsquo; must be set to <a href="ft2-glyph_management.html#FT_Glyph_BBox_Mode">FT_GLYPH_BBOX_UNSCALED</a> to get unscaled font units in 26.6 pixel format. The value <a href="ft2-glyph_management.html#FT_Glyph_BBox_Mode">FT_GLYPH_BBOX_SUBPIXELS</a> is another name for this constant.</p>
 <p>Note that the maximum coordinates are exclusive, which means that one can compute the width and height of the glyph image (be it in integer or 26.6 pixels) as:</p>
 <pre class="colored">
@@ -532,7 +536,7 @@ Defined in FT_GLYPH_H (freetype/ftglyph.h).
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>Converts a given glyph object to a bitmap glyph object.</p>
+<p>Convert a given glyph object to a bitmap glyph object.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>inout</b></em></td></tr><tr><td>
 <p></p>
@@ -549,7 +553,7 @@ Defined in FT_GLYPH_H (freetype/ftglyph.h).
 <p>An enumeration that describe how the data is rendered.</p>
 </td></tr>
 <tr valign=top><td><b>origin</b></td><td>
-<p>A pointer to a vector used to translate the glyph image before rendering. Can be 0 (if no translation). The origin is expressed in 26.6 pixels.</p>
+<p>A pointer to a vector used to translate the glyph image before rendering. Can be&nbsp;0 (if no translation). The origin is expressed in 26.6 pixels.</p>
 </td></tr>
 <tr valign=top><td><b>destroy</b></td><td>
 <p>A boolean that indicates that the original glyph image should be destroyed by this function. It is never destroyed in case of error.</p>
@@ -557,7 +561,7 @@ Defined in FT_GLYPH_H (freetype/ftglyph.h).
 </table>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>return</b></em></td></tr><tr><td>
-<p>FreeType error code. 0 means success.</p>
+<p>FreeType error code. 0&nbsp;means success.</p>
 </td></tr></table>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>note</b></em></td></tr><tr><td>
 <p>The glyph image is translated with the &lsquo;origin&rsquo; vector before rendering.</p>
@@ -613,7 +617,7 @@ Defined in FT_GLYPH_H (freetype/ftglyph.h).
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>Destroys a given glyph.</p>
+<p>Destroy a given glyph.</p>
 </td></tr></table><br>
 <table align=center width="87%" cellpadding=5><tr bgcolor="#EEEEFF"><td><em><b>input</b></em></td></tr><tr><td>
 <p></p>

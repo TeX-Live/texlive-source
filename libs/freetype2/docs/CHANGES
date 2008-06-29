@@ -1,3 +1,40 @@
+CHANGES BETWEEN 2.3.7 and 2.3.6
+
+  I. IMPORTANT BUG FIXES
+
+    - If the library  was compiled on an i386  platform using gcc, and
+      compiler  option -O3 was  given, `FT_MulFix'  sometimes returned
+      incorrect  results   which  could  have   caused  problems  with
+      `FT_Request_Metrics'   and  `FT_Select_Metrics',   returning  an
+      incorrect descender size.
+
+    - Pure CFFs without  subfonts were scaled incorrectly  if the font
+      matrix  was  non-standard.  This  bug  has  been  introduced  in
+      version 2.3.6.
+
+    - The  `style_name'  field  in  the  `FT_FaceRec'  structure often
+      contained  a wrong  value for  Type 1  fonts.  This misbehaviour
+      has been  introduced  in  version  2.3.6  while  trying  to  fix
+      another   problem.   [Note,  however,   that   this   value   is
+      informative only  since  the  used  algorithm to  extract  it is
+      very simplistic.]
+
+
+  II. IMPORTANT CHANGES
+
+    - Two      new      macros,      FT_OUTLINE_SMART_DROPOUTS     and
+      FT_OUTLINE_EXCLUDE_STUBS,  have been introduced.   Together with
+      FT_OUTLINE_IGNORE_DROPOUTS (which  was ignored previously) it is
+      now possible to control the dropout mode  of the `raster' module
+      (for B&W rasterization),   using  the   `flags'  field   in  the
+      `FT_Outline' structure.
+
+    - The TrueType bytecode interpreter now passes the dropout mode to
+      the B&W rasterizer.  This greatly increases the output for small
+      ppem values of many fonts like `pala.ttf'.
+
+
+======================================================================
 
 CHANGES BETWEEN 2.3.6 and 2.3.5
 

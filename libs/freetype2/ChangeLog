@@ -1,3 +1,163 @@
+2008-06-29  Werner Lemberg  <wl@gnu.org>
+
+	* Version 2.3.7 released.
+	=========================
+
+
+	Tag sources with `VER-2-3-7'.
+
+	* docs/CHANGES, docs/VERSION.DLL: Update documentation and bump
+	version number to 2.3.7.
+
+	* README, Jamfile (RefDoc), builds/win32/visualc/index.html,
+	builds/win32/visualc/freetype.dsp,
+	builds/win32/visualc/freetype.vcproj,
+	builds/win32/visualce/index.html,
+	builds/win32/visualce/freetype.dsp,
+	builds/win32/visualce/freetype.vcproj: s/2.3.6/2.3.7/, s/236/237/.
+
+	* include/freetype/freetype.h (FREETYPE_PATCH): Set to 7.
+
+	* builds/unix/configure.raw (version_info): Set to 9:18:3.
+
+	* docs/release: Updated.
+
+2008-06-28  Werner Lemberg  <wl@gnu.org>
+
+	* src/ftglyph.c (FT_Matrix_Multiply, FT_Matrix_Invert): Move to...
+	* src/ftcalc.c: Here.  This fixes Savannah bug #23729.
+
+2008-06-27  Werner Lemberg  <wl@gnu.org>
+
+	* src/raster/ftraster.c (Vertical_Sweep_Drop, Horizontal_Sweep_Drop,
+	Horizontal_Gray_Sweep_Drop): Test for intersections which
+	degenerate to a single point can be ignored; this has been confirmed
+	by Greg Hitchcock from Microsoft.  (This was commented out code.)
+
+2008-06-26  Werner Lemberg  <wl@gnu.org>
+
+	Improve navigation in API reference.
+
+	* src/tools/docmaker/tohtml.py (html_header_3): Renamed to...
+	(html_header_6): This.
+	(html_header_3, html_header_3i, html_header_4, html_header_5,
+	html_header_5t): New strings.
+	(toc_footer_start, toc_footer_end): New strings.
+	(HtmlFormatter::html_header): Updated.
+	(HtmlFormatter::html_index_header, HtmlFormatter::html_toc_header):
+	New strings.
+	(HtmlFormatter::index_enter): Use `html_index_header'.
+	(HtmlFormatter::index_exit): Print `html_footer'.
+	(HtmlFormatter::toc_enter): Use `html_toc_header'.
+	(HtmlFormatter::toc_exit): Print proper footer.
+
+	Convert ~ to non-breakable space.
+
+	* src/tools/docmaker/tohtml.py (make_html_para): Implement it.
+	Update header files accordingly.
+
+2008-06-24  suzuki toshiya <mpsuzuki@hiroshima-u.ac.jp>
+
+	* builds/unix/configure.raw: Check type `ResourceIndex' explicitly
+	and define HAVE_TYPE_RESOURCE_INDEX if it is defined.  Mac OS X 10.5
+	bundles 10.4u SDK with MAC_OS_X_VERSION_10_5 macro but without
+	ResourceIndex type definition.  The macro does not inform the type
+	availability.
+	* src/base/ftmac.c: More parentheses are inserted to clarify the
+	conditionals to disable legacy APIs in `10.5 and later' cases.  If
+	HAVE_TYPE_RESOURCE_INDEX is not defined, ResourceIndex is defined.
+
+2008-06-24  Werner Lemberg  <wl@gnu.org>
+
+	* src/truetype/ttinterp. (Ins_SCANTYPE): Don't check rendering mode.
+
+	* src/raster/ftraster.c (Render_Glyph, Render_Gray_Glyph,
+	Draw_Sweep): No-dropout mode is value 2, not value 0.
+	(Draw_Sweep): Really skip dropout handling for no-dropout mode.
+
+2008-06-24  Werner Lemberg  <wl@gnu.org>
+
+	* src/psaux/psobjs.c (t1_builder_close_contour): Don't add contour
+	if it consists of one point only.  Based on a patch from Savannah
+	bug #23683 (from John Tytgat).
+
+2008-06-22  Werner Lemberg  <wl@gnu.org>
+
+	* src/truetype/ttgload.c (TT_Load_Glyph): Protect bytecode stuff
+	with IS_HINTED.
+
+	* docs/CHANGES: Updated.
+
+2008-06-22  suzuki toshiya <mpsuzuki@hiroshima-u.ac.jp>
+
+	* builds/unix/configure.raw: If CFLAGS has `-isysroot XXX' option
+	but LDFLAGS does not, import it to LDFLAGS.  The option is used to
+	specify non-default SDK on Mac OS X (e.g., universal binary SDK for
+	Mac OS X 10.4 on PowerPC platform).  Although Apple TechNote 2137
+	recommends to add the option only to CFLAGS, LDFLAGS should include
+	it because libfreetype.la is built with -no-undefined.  This fixes a
+	bug reported by Ryan Schmidt in MacPorts,
+	http://trac.macports.org/ticket/15331.
+
+2008-06-21  Werner Lemberg  <wl@gnu.org>
+
+	Enable access to the various dropout rules of the B&W rasterizer.
+	Pass dropout rules from the TT bytecode interpreter to the
+	rasterizer.
+
+	* include/freetype/ftimage.h (FT_OUTLINE_SMART_DROPOUTS,
+	FT_OUTLINE_EXCLUDE_STUBS): New flags for for FT_Outline.
+
+	* src/raster/ftraster.c (Vertical_Sweep_Drop, Horizontal_Sweep_Drop,
+	Horizontal_Gray_Sweep_Drop): Use same mode numbers as given in the
+	OpenType specification.
+	Fix mode 4 computation.
+	(Render_Glyph, Render_Gray_Glyph): Handle new outline flags.
+
+	* src/truetype/ttgload.c (TT_Load_Glyph) Convert scan conversion
+	mode to FT_OUTLINE_XXX flags.
+
+	* src/truetype/ttinterp.c (Ins_SCANCTRL): Enable ppem check.
+
+2008-06-19  Werner Lemberg  <wl@gnu.org>
+
+	* src/cff/cffobjs.c (cff_face_init): Compute final
+	`dict->units_per_em' value before assigning it to
+	`cffface->units_per_EM'.  Otherwise, CFFs without subfonts are
+	scaled incorrectly if the font matrix is non-standard.  This fixes
+	Savannah bug #23630.
+
+	* docs/CHANGES: Updated.
+
+2008-06-19  Werner Lemberg  <wl@gnu.org>
+
+	* src/type/t1objs.c (T1_Face_Init): Slightly improve algorithm fix
+	from 2008-06-19.
+
+2008-06-18  Werner Lemberg  <wl@gnu.org>
+
+	* src/type/t1objs.c (T1_Face_Init): Fix change from 2008-03-21.
+	Reported by Peter Weilbacher <mozilla@weilbacher.org>.
+
+	* docs/CHANGES: Updated.
+
+2008-06-15  George Williams  <gww@silcom.com>
+
+	* src/otvalid/otvgpos.c (otv_MarkBasePos_validate): Set
+	`valid->extra2' to 1.  This is undocumented in the OpenType 1.5
+	specification.
+
+2008-06-15  Werner Lemberg  <wl@gnu.org>
+
+	* src/base/ftcalc.c (FT_MulFix) <asm>: Protect registers correctly
+	from clobbering.  Patch from Savannah bug report #23556.
+
+	* docs/CHANGES: Document it.
+
+2008-06-10  Werner Lemberg  <wl@gnu.org>
+
+	* autogen.sh: Add option `--install' to libtoolize.
+
 2008-06-10  Werner Lemberg  <wl@gnu.org>
 
 	* Version 2.3.6 released.

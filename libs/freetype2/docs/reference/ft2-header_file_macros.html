@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>FreeType-2.3.6 API Reference</title>
+<title>FreeType-2.3.7 API Reference</title>
 <style type="text/css">
   body { font-family: Verdana, Geneva, Arial, Helvetica, serif;
          color: #000000;
@@ -31,7 +31,11 @@
 </style>
 </head>
 <body>
-<center><h1>FreeType-2.3.6 API Reference</h1></center>
+
+<table align=center><tr><td><font size=-1>[<a href="ft2-index.html">Index</a>]</font></td>
+<td width="100%"></td>
+<td><font size=-1>[<a href="ft2-toc.html">TOC</a>]</font></td></tr></table>
+<center><h1>FreeType-2.3.7 API Reference</h1></center>
 
 <center><h1>
 Header File Macros
@@ -64,14 +68,14 @@ Header File Macros
 </table><br><br>
 
 <table align=center width="87%"><tr><td>
-<p>The following macros are defined to the name of specific FreeType 2 header files. They can be used directly in #include statements as in:</p>
+<p>The following macros are defined to the name of specific FreeType&nbsp;2 header files. They can be used directly in #include statements as in:</p>
 <pre class="colored">
   #include FT_FREETYPE_H                                           
   #include FT_MULTIPLE_MASTERS_H                                   
   #include FT_GLYPH_H                                              
 </pre>
-<p>There are several reasons why we are now using macros to name public header files. The first one is that such macros are not limited to the infamous 8.3 naming rule required by DOS (and &lsquo;FT_MULTIPLE_MASTERS_H&rsquo; is a lot more meaningful than &lsquo;ftmm.h&rsquo;).</p>
-<p>The second reason is that it allows for more flexibility in the way FreeType 2 is installed on a given system.</p>
+<p>There are several reasons why we are now using macros to name public header files. The first one is that such macros are not limited to the infamous 8.3&nbsp;naming rule required by DOS (and &lsquo;FT_MULTIPLE_MASTERS_H&rsquo; is a lot more meaningful than &lsquo;ftmm.h&rsquo;).</p>
+<p>The second reason is that it allows for more flexibility in the way FreeType&nbsp;2 is installed on a given system.</p>
 </td></tr></table><br>
 <table align=center width="75%"><tr><td>
 <h4><a name="FT_CONFIG_CONFIG_H">FT_CONFIG_CONFIG_H</a></h4>
@@ -83,7 +87,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing FreeType 2 configuration data.</p>
+<p>A macro used in #include statements to name the file containing FreeType&nbsp;2 configuration data.</p>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
@@ -101,7 +105,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing FreeType 2 interface to the standard C library functions.</p>
+<p>A macro used in #include statements to name the file containing FreeType&nbsp;2 interface to the standard C library functions.</p>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
@@ -119,7 +123,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing FreeType 2 project-specific configuration options.</p>
+<p>A macro used in #include statements to name the file containing FreeType&nbsp;2 project-specific configuration options.</p>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
@@ -137,7 +141,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the list of FreeType 2 modules that are statically linked to new library instances in <a href="ft2-base_interface.html#FT_Init_FreeType">FT_Init_FreeType</a>.</p>
+<p>A macro used in #include statements to name the file containing the list of FreeType&nbsp;2 modules that are statically linked to new library instances in <a href="ft2-base_interface.html#FT_Init_FreeType">FT_Init_FreeType</a>.</p>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
@@ -153,7 +157,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the base FreeType 2 API.</p>
+<p>A macro used in #include statements to name the file containing the base FreeType&nbsp;2 API.</p>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
@@ -169,7 +173,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the list of FreeType 2 error codes (and messages).</p>
+<p>A macro used in #include statements to name the file containing the list of FreeType&nbsp;2 error codes (and messages).</p>
 <p>It is included by <a href="ft2-header_file_macros.html#FT_FREETYPE_H">FT_FREETYPE_H</a>.</p>
 </td></tr></table><br>
 </td></tr></table>
@@ -186,7 +190,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the list of FreeType 2 module error offsets (and messages).</p>
+<p>A macro used in #include statements to name the file containing the list of FreeType&nbsp;2 module error offsets (and messages).</p>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
@@ -202,7 +206,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the FreeType 2 interface to low-level operations (i.e., memory management and stream i/o).</p>
+<p>A macro used in #include statements to name the file containing the FreeType&nbsp;2 interface to low-level operations (i.e., memory management and stream i/o).</p>
 <p>It is included by <a href="ft2-header_file_macros.html#FT_FREETYPE_H">FT_FREETYPE_H</a>.</p>
 </td></tr></table><br>
 </td></tr></table>
@@ -236,7 +240,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the basic data types defined by FreeType 2.</p>
+<p>A macro used in #include statements to name the file containing the basic data types defined by FreeType&nbsp;2.</p>
 <p>It is included by <a href="ft2-header_file_macros.html#FT_FREETYPE_H">FT_FREETYPE_H</a>.</p>
 </td></tr></table><br>
 </td></tr></table>
@@ -253,7 +257,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the list management API of FreeType 2.</p>
+<p>A macro used in #include statements to name the file containing the list management API of FreeType&nbsp;2.</p>
 <p>(Most applications will never need to include this file.)</p>
 </td></tr></table><br>
 </td></tr></table>
@@ -270,7 +274,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the scalable outline management API of FreeType 2.</p>
+<p>A macro used in #include statements to name the file containing the scalable outline management API of FreeType&nbsp;2.</p>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
@@ -302,7 +306,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the module management API of FreeType 2.</p>
+<p>A macro used in #include statements to name the file containing the module management API of FreeType&nbsp;2.</p>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
@@ -318,7 +322,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the renderer module management API of FreeType 2.</p>
+<p>A macro used in #include statements to name the file containing the renderer module management API of FreeType&nbsp;2.</p>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
@@ -334,7 +338,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the types and API specific to the Type 1 format.</p>
+<p>A macro used in #include statements to name the file containing the types and API specific to the Type&nbsp;1 format.</p>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
@@ -526,7 +530,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the API of the optional FreeType 2 cache sub-system.</p>
+<p>A macro used in #include statements to name the file containing the API of the optional FreeType&nbsp;2 cache sub-system.</p>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
@@ -542,7 +546,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the &lsquo;glyph image&rsquo; API of the FreeType 2 cache sub-system.</p>
+<p>A macro used in #include statements to name the file containing the &lsquo;glyph image&rsquo; API of the FreeType&nbsp;2 cache sub-system.</p>
 <p>It is used to define a cache for <a href="ft2-glyph_management.html#FT_Glyph">FT_Glyph</a> elements. You can also use the API defined in <a href="ft2-header_file_macros.html#FT_CACHE_SMALL_BITMAPS_H">FT_CACHE_SMALL_BITMAPS_H</a> if you only need to store small glyph bitmaps, as it will use less memory.</p>
 <p>This macro is deprecated. Simply include <a href="ft2-header_file_macros.html#FT_CACHE_H">FT_CACHE_H</a> to have all glyph image-related cache declarations.</p>
 </td></tr></table><br>
@@ -560,7 +564,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the &lsquo;small bitmaps&rsquo; API of the FreeType 2 cache sub-system.</p>
+<p>A macro used in #include statements to name the file containing the &lsquo;small bitmaps&rsquo; API of the FreeType&nbsp;2 cache sub-system.</p>
 <p>It is used to define a cache for small glyph bitmaps in a relatively memory-efficient way. You can also use the API defined in <a href="ft2-header_file_macros.html#FT_CACHE_IMAGE_H">FT_CACHE_IMAGE_H</a> if you want to cache arbitrary glyph images, including scalable outlines.</p>
 <p>This macro is deprecated. Simply include <a href="ft2-header_file_macros.html#FT_CACHE_H">FT_CACHE_H</a> to have all small bitmaps-related cache declarations.</p>
 </td></tr></table><br>
@@ -578,7 +582,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the &lsquo;charmap&rsquo; API of the FreeType 2 cache sub-system.</p>
+<p>A macro used in #include statements to name the file containing the &lsquo;charmap&rsquo; API of the FreeType&nbsp;2 cache sub-system.</p>
 <p>This macro is deprecated. Simply include <a href="ft2-header_file_macros.html#FT_CACHE_H">FT_CACHE_H</a> to have all charmap-based cache declarations.</p>
 </td></tr></table><br>
 </td></tr></table>
@@ -595,7 +599,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the Macintosh-specific FreeType 2 API. The latter is used to access fonts embedded in resource forks.</p>
+<p>A macro used in #include statements to name the file containing the Macintosh-specific FreeType&nbsp;2 API. The latter is used to access fonts embedded in resource forks.</p>
 <p>This header file must be explicitly included by client applications compiled on the Mac (note that the base API still works though).</p>
 </td></tr></table><br>
 </td></tr></table>
@@ -612,7 +616,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the optional multiple-masters management API of FreeType 2.</p>
+<p>A macro used in #include statements to name the file containing the optional multiple-masters management API of FreeType&nbsp;2.</p>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
@@ -628,7 +632,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the optional FreeType 2 API which accesses embedded &lsquo;name&rsquo; strings in SFNT-based font formats (i.e., TrueType and OpenType).</p>
+<p>A macro used in #include statements to name the file containing the optional FreeType&nbsp;2 API which accesses embedded &lsquo;name&rsquo; strings in SFNT-based font formats (i.e., TrueType and OpenType).</p>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
@@ -644,7 +648,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the optional FreeType 2 API which validates OpenType tables (BASE, GDEF, GPOS, GSUB, JSTF).</p>
+<p>A macro used in #include statements to name the file containing the optional FreeType&nbsp;2 API which validates OpenType tables (BASE, GDEF, GPOS, GSUB, JSTF).</p>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
@@ -660,7 +664,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the optional FreeType 2 API which validates TrueTypeGX/AAT tables (feat, mort, morx, bsln, just, kern, opbd, trak, prop).</p>
+<p>A macro used in #include statements to name the file containing the optional FreeType&nbsp;2 API which validates TrueTypeGX/AAT tables (feat, mort, morx, bsln, just, kern, opbd, trak, prop).</p>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
@@ -676,7 +680,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the FreeType 2 API which accesses PFR-specific data.</p>
+<p>A macro used in #include statements to name the file containing the FreeType&nbsp;2 API which accesses PFR-specific data.</p>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
@@ -692,7 +696,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the FreeType 2 API which provides functions to stroke outline paths.</p>
+<p>A macro used in #include statements to name the file containing the FreeType&nbsp;2 API which provides functions to stroke outline paths.</p>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
@@ -708,7 +712,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the FreeType 2 API which performs artificial obliquing and emboldening.</p>
+<p>A macro used in #include statements to name the file containing the FreeType&nbsp;2 API which performs artificial obliquing and emboldening.</p>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
@@ -724,7 +728,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the FreeType 2 API which provides functions specific to the XFree86 and X.Org X11 servers.</p>
+<p>A macro used in #include statements to name the file containing the FreeType&nbsp;2 API which provides functions specific to the XFree86 and X.Org X11 servers.</p>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
@@ -740,7 +744,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the FreeType 2 API which performs trigonometric computations (e.g., cosines and arc tangents).</p>
+<p>A macro used in #include statements to name the file containing the FreeType&nbsp;2 API which performs trigonometric computations (e.g., cosines and arc tangents).</p>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
@@ -756,7 +760,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the FreeType 2 API which performs color filtering for subpixel rendering.</p>
+<p>A macro used in #include statements to name the file containing the FreeType&nbsp;2 API which performs color filtering for subpixel rendering.</p>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
@@ -772,7 +776,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the FreeType 2 API which performs color filtering for subpixel rendering.</p>
+<p>A macro used in #include statements to name the file containing the FreeType&nbsp;2 API which performs color filtering for subpixel rendering.</p>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
@@ -788,7 +792,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the FreeType 2 API which performs color filtering for subpixel rendering.</p>
+<p>A macro used in #include statements to name the file containing the FreeType&nbsp;2 API which performs color filtering for subpixel rendering.</p>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
@@ -804,7 +808,7 @@ Header File Macros
 
 </pre></table><br>
 <table align=center width="87%"><tr><td>
-<p>A macro used in #include statements to name the file containing the FreeType 2 API which returns entries from the TrueType GASP table.</p>
+<p>A macro used in #include statements to name the file containing the FreeType&nbsp;2 API which returns entries from the TrueType GASP table.</p>
 </td></tr></table><br>
 </td></tr></table>
 <hr width="75%">
