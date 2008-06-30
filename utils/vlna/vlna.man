@@ -117,14 +117,5 @@ Vlnkovani vsech souboru s priponou \fBtex\fP.
 .B vlna \-f soubor > /dev/null
 Test konzistence matematickeho a verbatim rezimu bez provedeni zmen.
 (Pouze na UNIXu.)
-.SH SOUBORY
-.PD 0
-.TP
-.I @BINDIR@/vlna
-spustitelny program
-.TP
-.I @MANDIR@/vlna.@MANEXT@
-manualova stranka
-.PD
 .SH AUTOR
 Petr Olsak <olsak@math.feld.cvut.cz>. Manualovou stranku a Makefile vytvoril Rulolf Cejka

@@ -33,12 +33,10 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 bin_PROGRAMS = vlna$(EXEEXT)
-# Ensure vlna.dvi is up to date
-@MAINTAINER_MODE_TRUE@am__append_1 = $(CWEB_DVI)
 subdir = .
-DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in $(top_srcdir)/configure ChangeLog \
-	depcomp install-sh missing
+DIST_COMMON = README $(am__configure_deps) $(dist_man1_MANS) \
+	$(srcdir)/Makefile.am $(srcdir)/Makefile.in \
+	$(top_srcdir)/configure ChangeLog depcomp install-sh missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -64,7 +62,7 @@ SOURCES = vlna.c
 DIST_SOURCES = vlna.c
 man1dir = $(mandir)/man1
 NROFF = nroff
-MANS = $(nodist_man1_MANS)
+MANS = $(dist_man1_MANS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -164,20 +162,13 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-MAN_DEP = $(am__append_1)
-nodist_man1_MANS = vlna.1
-MAN_SRC = vlna.man
-DOCS = Makefile.orig README README.en vlna.txt
+dist_man1_MANS = vlna.man
 CWEB_SRC = vlna.w
 CWEB_TEX = vlna.tex csmac.tex
 CWEB_DVI = vlna.dvi
-CWEB_EXE = vlna.exe
-EXTRA_DIST = $(DOCS) $(MAN_SRC) $(CWEB_SRC) $(CWEB_TEX) $(CWEB_DVI) $(CWEB_EXE)
+DOCS = README README.en vlna.txt
+EXTRA_DIST = $(CWEB_SRC) $(CWEB_TEX) $(CWEB_DVI) $(DOCS)
 TMP_FILES = vlna.idx vlna.scn
-@TETEX_BUILD_FALSE@BIN_DIR = $(bindir)
-@TETEX_BUILD_TRUE@BIN_DIR = BINDIR
-@TETEX_BUILD_FALSE@MAN_DIR = $(man1dir)
-@TETEX_BUILD_TRUE@MAN_DIR = MANDIR/man1
 all: all-am
 
 .SUFFIXES:
@@ -263,10 +254,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
-install-man1: $(nodist_man1_MANS)
+install-man1: $(dist_man1_MANS)
 	@$(NORMAL_INSTALL)
 	test -z "$(man1dir)" || $(MKDIR_P) "$(DESTDIR)$(man1dir)"
-	@list='$(nodist_man1_MANS)'; \
+	@list='$(dist_man1_MANS)'; \
 	for i in $$list; do \
 	  if test -f $$i; then file=$$i; \
 	  else file=$(srcdir)/$$i; fi; \
@@ -283,7 +274,7 @@ install-man1: $(nodist_man1_MANS)
 	done
 uninstall-man1:
 	@$(NORMAL_UNINSTALL)
-	@list='$(nodist_man1_MANS)'; \
+	@list='$(dist_man1_MANS)'; \
 	for i in $$list; do \
 	  ext=`echo $$i | sed -e 's/^.*\\.//'`; \
 	  case "$$ext" in \
@@ -477,7 +468,7 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 check: check-am
-all-am: Makefile $(PROGRAMS) $(MANS)
+all-am: Makefile $(PROGRAMS) $(MANS) all-local
 installdirs:
 	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
@@ -570,36 +561,31 @@ uninstall-man: uninstall-man1
 
 .MAKE: install-am install-strip
 
-.PHONY: CTAGS GTAGS all all-am am--refresh check check-am clean \
-	clean-binPROGRAMS clean-generic ctags dist dist-all dist-bzip2 \
-	dist-gzip dist-lzma dist-shar dist-tarZ dist-zip distcheck \
-	distclean distclean-compile distclean-generic distclean-tags \
-	distcleancheck distdir distuninstallcheck dvi dvi-am html \
-	html-am info info-am install install-am install-binPROGRAMS \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-man1 \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-binPROGRAMS \
+.PHONY: CTAGS GTAGS all all-am all-local am--refresh check check-am \
+	clean clean-binPROGRAMS clean-generic ctags dist dist-all \
+	dist-bzip2 dist-gzip dist-lzma dist-shar dist-tarZ dist-zip \
+	distcheck distclean distclean-compile distclean-generic \
+	distclean-tags distcleancheck distdir distuninstallcheck dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-binPROGRAMS install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-man1 install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic pdf pdf-am \
+	ps ps-am tags uninstall uninstall-am uninstall-binPROGRAMS \
 	uninstall-man uninstall-man1
 
 
-vlna.1: vlna.man $(MAN_DEP)
-	sed -e "s|@BINDIR@|$(BIN_DIR)|;\
-		s|@MANDIR@|$(MAN_DIR)|;\
-		s|@MANEXT@|1|" $< > $@
-
+@MAINTAINER_MODE_TRUE@all-local: vlna.dvi
 @MAINTAINER_MODE_TRUE@vlna.c: vlna.w
 @MAINTAINER_MODE_TRUE@	$(CTANGLE) $<
-
 @MAINTAINER_MODE_TRUE@vlna.tex: vlna.w
 @MAINTAINER_MODE_TRUE@	$(CWEAVE) $< && rm -f $(TMP_FILES)
-
 @MAINTAINER_MODE_TRUE@vlna.dvi: vlna.tex
 @MAINTAINER_MODE_TRUE@	TEXINPUTS=.:$(srcdir):$$TEXINPUTS $(CSPLAIN) vlna.tex
+@MAINTAINER_MODE_FALSE@all-local:
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
