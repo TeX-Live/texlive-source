@@ -13,14 +13,15 @@ EXTRA_DIST = $(CWEB_SRC) $(CWEB_TEX) $(CWEB_DVI) $(DOCS)
 
 TMP_FILES = vlna.idx vlna.scn
 
-if MAINTAINER_MODE
-all-local: vlna.dvi
-vlna.c: vlna.w
-	$(CTANGLE) $<
 vlna.tex: vlna.w
 	$(CWEAVE) $< && rm -f $(TMP_FILES)
 vlna.dvi: vlna.tex
 	TEXINPUTS=.:$(srcdir):$$TEXINPUTS $(CSPLAIN) vlna.tex
+
+if MAINTAINER_MODE
+all-local: vlna.dvi
+vlna.c: vlna.w
+	$(CTANGLE) $<
 else
 all-local:
 endif

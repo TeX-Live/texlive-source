@@ -578,13 +578,14 @@ uninstall-man: uninstall-man1
 	uninstall-man uninstall-man1
 
 
+vlna.tex: vlna.w
+	$(CWEAVE) $< && rm -f $(TMP_FILES)
+vlna.dvi: vlna.tex
+	TEXINPUTS=.:$(srcdir):$$TEXINPUTS $(CSPLAIN) vlna.tex
+
 @MAINTAINER_MODE_TRUE@all-local: vlna.dvi
 @MAINTAINER_MODE_TRUE@vlna.c: vlna.w
 @MAINTAINER_MODE_TRUE@	$(CTANGLE) $<
-@MAINTAINER_MODE_TRUE@vlna.tex: vlna.w
-@MAINTAINER_MODE_TRUE@	$(CWEAVE) $< && rm -f $(TMP_FILES)
-@MAINTAINER_MODE_TRUE@vlna.dvi: vlna.tex
-@MAINTAINER_MODE_TRUE@	TEXINPUTS=.:$(srcdir):$$TEXINPUTS $(CSPLAIN) vlna.tex
 @MAINTAINER_MODE_FALSE@all-local:
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
