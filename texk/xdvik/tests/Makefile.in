@@ -1,0 +1,120 @@
+# @configure_input@
+# Makefile for xdvik 
+#
+# - 1999/05/08: janl: Removed submakes for libwww and kpathsea.  That's what
+#   the top makefile is for!
+#
+
+
+### NOTE: kpse_include paths must be relative to texk/xdvik, since that
+### is from where the configure is run!
+kpse_include ../make/paths.mk
+kpse_include ../make/library.mk
+kpse_include ../make/common.mk
+kpse_include ../make/programs.mk
+kpse_include xdvi_objects.mk
+
+kpathsea_parent = ../..
+
+x_cppflags=@X_CFLAGS@ @iconv_includes@
+x_ldflags=@X_LIBS@ @x_linker_options@ @iconv_libpath@
+x_pre_libs=@X_PRE_LIBS@
+x_extra_libs=@X_EXTRA_LIBS@ @iconv_libs@
+x_tool_libs=@x_tool_libs@
+x_xmu_lib=@x_xmu_lib@
+x_xpm_libs=@x_xpm_libs@
+x_ext_lib=@x_ext_lib@
+
+x_link = $(LDLIBT1) $(x_ldflags) $(x_tool_libs) $(x_xmu_lib) -lXt $(x_pre_libs) $(x_ext_lib) $(x_xpm_libs) -lX11 $(x_extra_libs)
+
+LDLIBT1=@LDLIBT1@
+LIBT1CPPFLAGS=@LIBT1CPPFLAGS@
+LIBT1DEP=@LIBT1DEP@
+LIBT1DIR = ../../../libs/t1lib
+LIBTYPE1DIR = $(LIBT1DIR)/../type1
+LIBT1SRCDIR = $(srcdir)/$(LIBT1DIR)
+
+LIBGUI=../gui/libgui.a
+LIBGUIDEP=$(LIBGUI)
+
+CPP = @CPP@
+RANLIB = @RANLIB@
+
+# Make `#include <X11/...>' and `-lX...' work.
+# This matches web2c (needed only for Metafont).
+x_cppflags = @X_CFLAGS@
+
+# Extra xdvi-specific compiler options.
+ps_def = @PS_DEF@ -DXSERVER_INFO
+prog_cflags = @XTRA_WARN_CFLAGS@ -I.. -I$(srcdir)/.. $(x_cppflags) $(ps_def)
+
+# Note: to be able to use one depend.mk file for both Motif/Xaw (which
+# is needed since only maintainers are supposed to invoke `make depend')
+# we include *all* object files and have tests for #ifdef MOTIF/XAW inside
+# the files.
+objects = \
+    test_dl_list.o \
+    test_string_list.o \
+    test_string_utils.o \
+    test_util.o \
+    run_tests.o
+
+
+# This are the files from xdvi needed to link the tests
+xdvi_objects = \
+    ../browser.o \
+    ../dvi-draw.o \
+    ../dvi-init.o \
+    ../dvisel.o \
+    ../encodings.o \
+    ../events.o \
+    ../exit-handlers.o \
+    ../filehist.o \
+    ../font-open.o \
+    ../gf.o \
+    ../hypertex.o \
+    ../image-magick.o \
+    ../mime.o \
+    ../my-snprintf.o \
+    ../my-vsnprintf.o \
+    ../pagehist.o \
+    ../pk.o \
+    ../print-internal.o \
+    ../psdps.o \
+    ../psgs.o \
+    ../psheader.o \
+    ../psnews.o \
+    ../read-mapfile.o \
+    ../search-internal.o \
+    ../special.o \
+    ../string-utils.o \
+    ../string_list.o \
+    ../tfmload.o \
+    ../util.o \
+    ../dl_list.o \
+    ../vf.o \
+    ../xdvi.o \
+    ../xserver-info.o \
+    ../x_util.o
+
+default all: run_tests
+
+run_tests: $(objects) $(xdvi_objects) $(LIBT1DEP) $(LIBGUIDEP)
+	$(kpathsea_link) $(objects) $(xdvi_objects) $(LIBGUI) $(x_link) $(LOADLIBES)
+
+test: run_tests
+	./run_tests
+
+test_verbose: run_tests
+	./run_tests -v
+
+kpse_include ../make/dist.mk
+kpse_include ../make/clean.mk
+
+clean::
+	rm -f *.o *.a
+
+c_auto_h_dir = ..
+kpse_include ../make/rdepend.mk
+kpse_include ./gui/depend.mk
+kpse_include ./tests/depend.mk

@@ -24,39 +24,29 @@
 #ifndef XAW_MENU_H_
 #define XAW_MENU_H_
 
-#ifdef NEW_MENU_CREATION
 #include "menu.h"
-#endif /* NEW_MENU_CREATION */
 
 #ifndef MOTIF
 
-#ifdef NEW_MENU_CREATION
 extern void xaw_set_button_state(struct button_elems *elems, Boolean on);
 extern void xaw_initialize_menu_bitmaps(void);
 extern Widget xaw_create_menu_widgets(Widget parent);
 extern void xaw_create_menu(struct button_info *items, Widget parent, int *ret_width);
-extern void xaw_set_button_state(struct button_elems *elems, Boolean on);
-
-extern Pixmap menu_check_bitmap;
-extern Pixmap menu_uncheck_bitmap;
-#else
-extern void create_menu_buttons(Widget menu_bar, int *ret_panel_width);
-extern void toggle_menu(int val, XtActionProc proc);
-#endif /* NEW_MENU_CREATION */
 
 extern void SubMenuHandleEvent(XtAppContext app, XEvent *event);
 extern void filehist_menu_add_entry(const char *filename);
 extern int get_panel_width(void);
 
-extern void toggle_tick(Boolean val, Widget w);
-extern void set_button_panel_height(XtArgVal);
+extern void realize_button_panel(XtArgVal height);
 extern void filehist_menu_refresh(void);
 
 extern void xaw_create_pagelist(void);
 extern void toggle_scrollbars(void);
 extern void toggle_buttons(void);
+#ifdef USE_PANNER
 extern void scroll_y_panner(int y);
 extern void scroll_x_panner(int x);
+#endif
 #endif /* not MOTIF */
 
 #endif /* XAW_MENU_H_ */

@@ -65,19 +65,25 @@ static Boolean initialized = False;
  */
 static char g_string_savebuf[MAX_LEN + 2];
 
-int global_statusline_h = 20;
+static int m_statusline_h = 20;
+
+/* access method */
+int get_statusline_height(void)
+{
+    return m_statusline_h;
+}
 
 #if MOTIF
 static void
 handle_statusline_event(Widget w, XtPointer client_data,
 			XEvent *ev, Boolean *cont)
 {
-/*      const char *text = (const char *)client_data; */
+    /*      const char *text = (const char *)client_data; */
     UNUSED(w);
     UNUSED(client_data);
     UNUSED(cont);
 
-/*      fprintf(stderr, "text: |%s|; event: %p\n", text, ev); */
+    /*      fprintf(stderr, "text: |%s|; event: %p\n", text, ev); */
     /* only used to do this if page history was already active, but it's probably
        nicer to be able to get the history by clicking on the statusline ...
     */
@@ -85,7 +91,7 @@ handle_statusline_event(Widget w, XtPointer client_data,
 	XmTextPosition pos = XmTextGetCursorPosition(statusline);
 	char *ptr1, *ptr2;
 	int diff = 0;
-/*  	fprintf(stderr, "pos: %d\n", pos); */
+	/*  	fprintf(stderr, "pos: %d\n", pos); */
 	if (pos == 0) { /* just display the page history */
 	    page_history_move(0);
 	    return;
@@ -96,7 +102,7 @@ handle_statusline_event(Widget w, XtPointer client_data,
 	    page_history_move(0);
 	    return;
 	}
-/* 	fprintf(stderr, "ptr1: |%s|; ptr2: |%s|\n", ptr1, ptr2); */
+	/* 	fprintf(stderr, "ptr1: |%s|; ptr2: |%s|\n", ptr1, ptr2); */
 	while (ptr1 < ptr2) {
 	    if (*ptr1 == ' ' && *(ptr1 + 1) != '-') /* separator */
 		diff--;
@@ -108,7 +114,7 @@ handle_statusline_event(Widget w, XtPointer client_data,
 		diff++;
 	    ptr1--;
 	}
-/* 	fprintf(stderr, "diff: %d\n", diff); */
+	/* 	fprintf(stderr, "diff: %d\n", diff); */
 	page_history_move(diff);
     }
 }
@@ -119,7 +125,7 @@ handle_statusline_event(Widget w, XtPointer client_data,
  * of the program, and when expert mode is switched off.
  *
  *  Side effects:
- *	sets <global_statusline_h> to the height of the statusline in pixels.
+ *	sets <m_statusline_h> to the height of the statusline in pixels.
  */
 
 Widget
@@ -156,7 +162,7 @@ create_statusline(
 				      XtNlabel, (XtArgVal) "test",
 				      NULL);
 	XtVaGetValues(statusline, XtNheight, &my_h, NULL);
-	global_statusline_h = my_h;
+	m_statusline_h = my_h;
 	XtDestroyWidget(statusline);
 #endif
 	initialized = True;
@@ -245,11 +251,7 @@ toggle_statusline(void)
     else
 	XtManageChild(statusline);
 
-#if defined(NEW_MENU_CREATION) || defined(MOTIF)
     set_menu(&resource.expert_mode, Act_set_expert_mode, check_resource_expert);
-#else
-    set_show_statusline_option();
-#endif
 #else
     static Boolean initialized = False;
     static Boolean statusline_mapped = False;
@@ -329,29 +331,29 @@ handle_statusline_resize(void)
 
 #if 0
     /*
-    BROKEN  Position vport_h, clip_x, clip_w;
-    BROKEN  static Position my_h = 0;
-    BROKEN
-    BROKEN  XtVaGetValues(globals.widgets.clip_widget,
-    BROKEN                XtNx, &clip_x,
-    BROKEN                XtNwidth, &clip_w,
-    BROKEN                NULL);
-    BROKEN  XtVaGetValues(globals.widgets.vport_widget,
-    BROKEN                XtNheight, &vport_h,
-    BROKEN                NULL);
-    BROKEN
-    BROKEN  XtUnmanageChild(statusline);
-    BROKEN  XtVaSetValues(statusline,
-    BROKEN                             XtNlabel, (XtArgVal) "",
-    BROKEN                XtNwidth, clip_w,
-    BROKEN                XtNx, clip_x - 1,
-    BROKEN                XtNy, vport_h - my_h,
-    BROKEN                XtNborderWidth, 1,
-    BROKEN                XtNjustify, XtJustifyLeft,
-    BROKEN                XtNborder, (XtArgVal) resource.fore_Pixel,
-    BROKEN                NULL);
-    BROKEN  XtManageChild(statusline);
-    BROKEN  XFlush(DISP);
+      BROKEN  Position vport_h, clip_x, clip_w;
+      BROKEN  static Position my_h = 0;
+      BROKEN
+      BROKEN  XtVaGetValues(globals.widgets.clip_widget,
+      BROKEN                XtNx, &clip_x,
+      BROKEN                XtNwidth, &clip_w,
+      BROKEN                NULL);
+      BROKEN  XtVaGetValues(globals.widgets.vport_widget,
+      BROKEN                XtNheight, &vport_h,
+      BROKEN                NULL);
+      BROKEN
+      BROKEN  XtUnmanageChild(statusline);
+      BROKEN  XtVaSetValues(statusline,
+      BROKEN                             XtNlabel, (XtArgVal) "",
+      BROKEN                XtNwidth, clip_w,
+      BROKEN                XtNx, clip_x - 1,
+      BROKEN                XtNy, vport_h - my_h,
+      BROKEN                XtNborderWidth, 1,
+      BROKEN                XtNjustify, XtJustifyLeft,
+      BROKEN                XtNborder, (XtArgVal) resource.fore_Pixel,
+      BROKEN                NULL);
+      BROKEN  XtManageChild(statusline);
+      BROKEN  XFlush(DISP);
     */
 #endif
 
@@ -425,9 +427,20 @@ clear_statusline_timer_proc(XtPointer client_data, XtIntervalId *id)
 }
 
 static void
-internal_print_statusline(statusTimerT timeout, const char *old_content, const char *fmt, va_list argp)
+internal_print_statusline(Boolean error,
+			  statusTimerT timeout,
+			  const char *old_content,
+			  const char *fmt,
+			  va_list argp)
 {
-    if (!XtIsRealized(globals.widgets.top_level) || !initialized || (resource.expert_mode & XPRT_SHOW_STATUSLINE) == 0) {
+    if (!XtIsRealized(globals.widgets.top_level)
+	|| !initialized
+	|| (resource.expert_mode & XPRT_SHOW_STATUSLINE) == 0) {
+
+	/* only print errors to stdout */
+	if (!error)
+	    return;
+	
 	if (!resource.hush_stdout && strlen(fmt) > 0) { /* check for strlen since sometimes we clear the statusline
 							   by printing "" to it, and we don't want that on stdout */
 	    fprintf(stdout, "xdvi: ");
@@ -463,17 +476,17 @@ internal_print_statusline(statusTimerT timeout, const char *old_content, const c
 #else
 	XtVaSetValues(statusline, XtNlabel, buf, NULL);
 #endif
-/* 	fprintf(stderr, "timeout: %d, id: %ld\n", timeout, clear_timeout_id); */
+	/* 	fprintf(stderr, "timeout: %d, id: %ld\n", timeout, clear_timeout_id); */
 	if (timeout > 0) {
 	    timeout *= 1000;	/* convert to miliseconds */
 
 	    if (clear_timeout_id) {
-/* 		fprintf(stderr, "clearing!\n"); */
+		/* 		fprintf(stderr, "clearing!\n"); */
 		if (globals.debug & DBG_EVENT)
 		    fprintf(stderr, "%s:%d: removing timeout %ld\n", __FILE__, __LINE__, clear_timeout_id);
 		XtRemoveTimeOut(clear_timeout_id);
 	    }
-	    clear_timeout_id = XtAppAddTimeOut(app, timeout,
+	    clear_timeout_id = XtAppAddTimeOut(globals.app, timeout,
 					       clear_statusline_timer_proc, (XtPointer) NULL);
 	}
     }
@@ -506,7 +519,7 @@ statusline_append(statusTimerT timeout, const char *pattern, const char *fmt, ..
     if (buf != NULL && memcmp(buf, pattern, strlen(pattern)) == 0) {
 	buf = NULL;
     }
-    internal_print_statusline(timeout, buf, fmt, argp);
+    internal_print_statusline(false, timeout, buf, fmt, argp);
     va_end(argp);
 }
 
@@ -516,16 +529,52 @@ statusline_append(statusTimerT timeout, const char *pattern, const char *fmt, ..
  */
 
 void
-statusline_print(statusTimerT timeout, const char *fmt, ...)
+statusline_info(statusTimerT timeout, const char *fmt, ...)
 {
     va_list argp;
     va_start(argp, fmt);
-    internal_print_statusline(timeout, NULL, fmt, argp);
+    /* for the time being, we don't differentiate between info/error
+     * wrt. printing to stdout/stderr. We could probably at some point
+     * remove the printing to stdout altogether (it's a bit un-GUIsh),
+     * but then there's already an option 'hushstdout' to suppress it ...
+     */
+    internal_print_statusline(True, timeout, NULL, fmt, argp);
+    va_end(argp);
+}
+
+void
+statusline_error(statusTimerT timeout, const char *fmt, ...)
+{
+    va_list argp;
+    va_start(argp, fmt);
+    internal_print_statusline(True, timeout, NULL, fmt, argp);
     va_end(argp);
 }
 
 void
 statusline_clear(void)
 {
-    statusline_print(STATUS_SHORT, "");
+    statusline_info(STATUS_SHORT, "");
 }
+
+/*
+ * Erase the contents of the statusline if it starts with 'pattern'.
+ */
+void
+statusline_erase(const char *pattern)
+{
+    const char *buf = NULL;
+    if (XtIsRealized(globals.widgets.top_level) && initialized && (resource.expert_mode & XPRT_SHOW_STATUSLINE) != 0) {
+	/* get current statusline contents */
+#ifdef MOTIF
+	XtVaGetValues(statusline, XmNvalue, &buf, NULL);
+#else
+	XtVaGetValues(statusline, XtNlabel, &buf, NULL);
+#endif
+
+	if (strncmp(buf, pattern, strlen(pattern)) == 0) {
+	    statusline_clear();
+	}
+    }
+}
+

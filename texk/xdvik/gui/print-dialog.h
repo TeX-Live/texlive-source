@@ -23,22 +23,10 @@
 #ifndef PRINT_DIALOG_H_
 #define PRINT_DIALOG_H_
 
-#define Xdvi_SAVE_SHELL_NAME	"save_popup"
-#define Xdvi_PRINT_SHELL_NAME	"print_popup"
-
-typedef enum { FILE_PRINT = 0, FILE_SAVE = 1, FILE_ALL = 2 } printOrSaveActionT;
-
-struct save_or_print_info {
-    printOrSaveActionT act;
-    Widget message_popup;
-    struct select_pages_info *pinfo;
-};
+#include "print-internal.h"
 
 extern void save_or_print_callback(struct save_or_print_info *info);
 extern void cancel_saving(struct save_or_print_info *info);
-extern const char *get_printer_options(void);
-extern char *get_dvips_options(printOrSaveActionT act);
-
-extern void notify_print_dialog_have_marked(Boolean flag);
+extern void notify_print_dialog_have_marked(void);
 
 #endif /* PRINT_DIALOG_H_ */

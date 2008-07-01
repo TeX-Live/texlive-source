@@ -1,25 +1,25 @@
 /*------------------------------------------------------------
-message-window.c: message popups for xdvi.
+  message-window.c: message popups for xdvi.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to
-deal in the Software without restriction, including without limitation the
-rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-sell copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL PAUL VOJTA OR ANY OTHER AUTHOR OF THIS SOFTWARE BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+  IN NO EVENT SHALL PAUL VOJTA OR ANY OTHER AUTHOR OF THIS SOFTWARE BE
+  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-------------------------------------------------------------*/
+  ------------------------------------------------------------*/
 
 
 
@@ -30,22 +30,22 @@ Suggested Policy for using the GUI messages:
 ============================================
 
 - Use the statusline for shorter messages, a message window for more
-  important messages or such where you'd like to give further help info
-  (see the `helptext' argument of popup_message()). When in doubt,
-  prefer the statusline (excessive use of popup windows is a nuisance
-  for the user).
+important messages or such where you'd like to give further help info
+(see the `helptext' argument of popup_message()). When in doubt,
+prefer the statusline (excessive use of popup windows is a nuisance
+for the user).
 
 - Don't use any of the GUI messages to report internal workings of
-  the program; for important internal information, there should be a
-  debugging setting to print it to stderr. Use the GUI messages
-  only in situations such as the following:
+the program; for important internal information, there should be a
+debugging setting to print it to stderr. Use the GUI messages
+only in situations such as the following:
 
-  - to give the user feedback on actions that (s)he initiated
+- to give the user feedback on actions that (s)he initiated
 
-  - to indicate that an internal action causes a delay perceptible
-    by the user (as a rough guide: a delay of more than half a second)
+- to indicate that an internal action causes a delay perceptible
+by the user (as a rough guide: a delay of more than half a second)
 
-  - to report situations that might require new actions by the user.
+- to report situations that might require new actions by the user.
 
 */
 
@@ -55,7 +55,7 @@ Suggested Policy for using the GUI messages:
 #include "xdvi.h"
 #include "string-utils.h"
 
-/* Xaw specific stuff */
+    /* Xaw specific stuff */
 #include <X11/Intrinsic.h>
 #include <X11/StringDefs.h>
 #ifdef MOTIF
@@ -85,19 +85,19 @@ Suggested Policy for using the GUI messages:
 #include "x_util.h"
 #include "message-window.h"
 
-/* have no more than MAX_POPUPS open simultaneously */
+    /* have no more than MAX_POPUPS open simultaneously */
 #define MAX_POPUPS 10
 
-/* offset for cascading popups */
+    /* offset for cascading popups */
 #define POPUP_OFFSET ((my_popup_num * 20))
 
 #ifdef MOTIF
-/* wrap messages after MSG_WRAP_LEN characters at whitespace */
+    /* wrap messages after MSG_WRAP_LEN characters at whitespace */
 #define MSG_WRAP_LEN 60
 #endif
 
-/* array of active popups: */
-static int g_popup_array[MAX_POPUPS];
+    /* array of active popups: */
+    static int g_popup_array[MAX_POPUPS];
 
 static Atom WM_DELETE_WINDOW;
 
@@ -123,27 +123,27 @@ static struct message_map {
 #ifdef MOTIF
       , XmDIALOG_QUESTION
 #endif
-    }, /* MSG_QUESTION */
+    },
     { "Xdvi Help"
 #ifdef MOTIF
       , XmDIALOG_INFORMATION
 #endif
-    }, /* MSG_HELP */
+    },
     { "Xdvi Info"
 #ifdef MOTIF
       , XmDIALOG_INFORMATION
 #endif
-    }, /* MSG_INFO */
+    },
     { "Xdvi Warning"
 #ifdef MOTIF
       , XmDIALOG_WARNING
 #endif
-    }, /* MSG_WARN */
+    },
     { "Xdvi Error"
 #ifdef MOTIF
       , XmDIALOG_ERROR
 #endif
-    }, /* MSG_ERR */
+    },
 };
 
 struct ok_or_cancel_cb {
@@ -304,7 +304,7 @@ help_action(Widget w, XtPointer client_data, XtPointer call_data)
 
 /*
  * Callback for cancel button in choice_dialog.
-*/
+ */
 static void
 cancel_action(Widget w, XtPointer client_data, XtPointer call_data)
 {
@@ -487,13 +487,13 @@ create_dialogs(popupMessageSizeHintT size,
     /* We also need to override the default ESC binding to use our internal
        housekeeping functions */
     translations_str = get_string_va("#override\n<Key>osfCancel:close-popup-cancel(%d)", cnt);
-/*      { */
-/*  	XtTranslations xlats; */
-/*  	char *translation_str = get_string_va("<Key>osfCancel:close-popup-cancel(%d)", cnt); */
-/*  	xlats = XtParseTranslationTable(translation_str); */
-/*  	free(translation_str); */
-/*  	XtOverrideTranslations(new_dialog, xlats); */
-/*      } */
+    /*      { */
+    /*  	XtTranslations xlats; */
+    /*  	char *translation_str = get_string_va("<Key>osfCancel:close-popup-cancel(%d)", cnt); */
+    /*  	xlats = XtParseTranslationTable(translation_str); */
+    /*  	free(translation_str); */
+    /*  	XtOverrideTranslations(new_dialog, xlats); */
+    /*      } */
 
     new_dialog = XtVaCreateWidget(Xdvi_MESSAGE_DIALOG_NAME, xmMessageBoxWidgetClass, new_popup_window,
 				  XmNdialogType, XmDIALOG_WARNING, /* default */
@@ -568,8 +568,8 @@ create_dialogs(popupMessageSizeHintT size,
 						NULL);
 
     new_message_text = XtVaCreateManagedWidget("message_text", asciiTextWidgetClass, new_message_paned,
-/* 					       XtNheight, 100, */
-/* 					       XtNwidth, 400, */
+					       /* 					       XtNheight, 100, */
+					       /* 					       XtNwidth, 400, */
 					       XtNwidth, msg_w,
 					       XtNheight, msg_h,
 					       /* wrap horizontally instead of scrolling
@@ -647,21 +647,8 @@ create_dialogs(popupMessageSizeHintT size,
 	ASSERT(0, "third button not yet implemented in Xaw!!!");
     }
 
+    adjust_width_to_max(new_message_ok, new_message_help, new_message_not_ok, NULL);
     
-    { /* set all buttons to same size */
-	Dimension w1, w2, w3, max;
-	XtVaGetValues(new_message_ok, XtNwidth, &w1, NULL);
-	XtVaGetValues(new_message_help, XtNwidth, &w2, NULL);
-	XtVaGetValues(new_message_not_ok, XtNwidth, &w3, NULL);
-	max = w1;
-	if (w2 > max)
-	    max = w2;
-	if (w3 > max)
-	    max = w3;
-	XtVaSetValues(new_message_ok, XtNwidth, max, NULL);
-	XtVaSetValues(new_message_help, XtNwidth, max, NULL);
-	XtVaSetValues(new_message_not_ok, XtNwidth, max, NULL);
-    }
     /* if helptext argument is not-NULL, add help_action callback,
        else unmanage help button */
     if (helptext != NULL) {
@@ -744,8 +731,9 @@ internal_popup_window(Widget parent,
     }
     if (my_popup_num == MAX_POPUPS) {
 	/* already enough popups on screen, just dump it to stderr */
-	fprintf(stderr, "%s:\n", win_title);
+	fprintf(stderr, "%s: ", win_title);
 	fprintf(stderr, msg_buf);
+	fputc('\n', stderr);
 	/* Note: If a mad function continues to open popups, this will
 	 * stop after MAX_POPUPS, but open a new window for each
 	 * window the user pops down. Maybe we ought to do something
@@ -789,7 +777,7 @@ internal_popup_window(Widget parent,
 		before_ptr = after_ptr = testwrap;
 		/* try to find shortest sequence before or after point to wrap at;
 		   this seems to give the most pleasing results.
-		 */
+		*/
 		while (before_ptr > msg_buf && !isspace((int)*--before_ptr)) {
 		    before_len++;
 		}
@@ -829,7 +817,7 @@ internal_popup_window(Widget parent,
     }
     
     XtPopup(XtParent(dialog[my_popup_num]), XtGrabNone);
-/*      XtPopup(XtParent(dialog[my_popup_num]), XtGrabExclusive); */
+    /*      XtPopup(XtParent(dialog[my_popup_num]), XtGrabExclusive); */
 
 #else /* MOTIF */
 
@@ -877,7 +865,7 @@ internal_popup_window(Widget parent,
 
     }
     XtPopup(popup_window[my_popup_num], XtGrabNone);
-/*      XtPopup(XtParent(popup_window[my_popup_num]), XtGrabExclusive); */
+    /*      XtPopup(XtParent(popup_window[my_popup_num]), XtGrabExclusive); */
     if (XtIsManaged(message_not_ok[my_popup_num]) && XtIsManaged(message_help[my_popup_num])) {
 	/* center the help button. This is something of a sham, since it won't
 	   survive resizing; but in general most users won't resize dialogs ;-) */

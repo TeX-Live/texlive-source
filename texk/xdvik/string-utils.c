@@ -20,7 +20,7 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 /*  #define MYDEBUG 1 */
 
@@ -104,28 +104,28 @@ str_is_suffix(const char *str1, const char *str2, Boolean case_sensitive)
 char *
 my_stristr(const char *haystack, const char *needle)
 {
-  const char *curr;
+    const char *curr;
 
-  for (curr = haystack; *curr != '\0'; curr++) {
-      const char *ptr1, *ptr2;
-      /* search for first character */
-      for (; ((*curr != '\0') && (tolower((int)*curr) != *needle)); curr++) { ; }
+    for (curr = haystack; *curr != '\0'; curr++) {
+	const char *ptr1, *ptr2;
+	/* search for first character */
+	for (; ((*curr != '\0') && (tolower((int)*curr) != *needle)); curr++) { ; }
 
-      if (*curr == '\0') /* not found */
-	return NULL;
+	if (*curr == '\0') /* not found */
+	    return NULL;
 
-      /* now compare other characters */
-      ptr1 = needle;
-      ptr2 = curr;
-      while (tolower((int)*ptr2) == *ptr1) {
-	  ptr2++;
-	  ptr1++;
-	  /* success if at end of needle */
-	  if (*ptr1 == '\0')
-	      return (char *)curr;
-      }
-  }
-  return NULL;
+	/* now compare other characters */
+	ptr1 = needle;
+	ptr2 = curr;
+	while (tolower((int)*ptr2) == *ptr1) {
+	    ptr2++;
+	    ptr1++;
+	    /* success if at end of needle */
+	    if (*ptr1 == '\0')
+		return (char *)curr;
+	}
+    }
+    return NULL;
 }
 
 /*
@@ -193,7 +193,7 @@ filename_append_dvi(const char *filename)
     /* skip over `file:' prefix if present */
     if (str_is_prefix("file:", filename, True)) {
 	filename += strlen("file:");
-	if (str_is_prefix("//", filename + strlen("file:"), True)) { /* is there a hostname following? */
+	if (str_is_prefix("//", filename, True)) { /* is there a hostname following? */
 	    char *tmp = strchr(filename+2, '/'); /* skip over host name */
 	    if (tmp == NULL) {
 		XDVI_WARNING((stderr, "Malformed hostname part in filename `%s'; not expanding file name",
@@ -224,7 +224,7 @@ filename_append_dvi(const char *filename)
 
     /* Append ".dvi" extension if no extension is present.
        Only look at the filename part when trying to find a `.'.
-     */
+    */
     if ((p = strrchr(expanded_filename, '/')) == NULL) {
 	p = expanded_filename;
     }
@@ -263,6 +263,7 @@ format_arg(const char *fmt, const char *arg, int *match)
     }
     else {
 	strcpy(tmp, fmt);
+	/* NOTE: don't reset *match to 0, leave that to caller */
     }
     return tmp;
 }
@@ -278,8 +279,8 @@ escape_format_arg(const char *arg)
     ptr = ret;
     while (*arg != '\0') {
 	/* need to escape? */
-	if (*arg == '%' && (ptr == ret
-			    || (ptr > ret && *(arg - 1) != '%'))) {
+	if (*arg == '%') { /* && (ptr == ret
+			    || (ptr > ret && *(arg - 1) != '%'))) { */
 	    *ptr++ = '%';
 	}
 	*ptr++ = *arg++;
@@ -319,8 +320,9 @@ unquote_arg(const char *fmt, const char *arg, int *match, int *len)
  * least 1 element). The caller is responsible for free()ing the returned
  * list.
  *
- * If `do_unquote' is True, separators inside the quotes will not be
- * treated as boundaries; instead, the quotes surrounding the chunk are removed.
+ * If `do_unquote' is True, separators inside single or double quotation marks will not be
+ * treated as boundaries. The quotation marks surrounding the chunk will be removed
+ * as well in that case.
  */
 char **
 get_separated_list(const char *source, const char *sep, Boolean do_unquote)
@@ -496,7 +498,7 @@ src_compare(const char *src, int src_len, const char *target, const char *dvi_pa
 
     while (i >= 0 && j >= 0) {
 	int skip_dirs = 0;
-/*  	fprintf(stderr, "check: %d[%c]\n", i, src[i]); */
+	/*  	fprintf(stderr, "check: %d[%c]\n", i, src[i]); */
 	while (src[i] == '.' && src[i + 1] == '/') { /* normalize `../' and `./' */
 	    MYTRACE((stderr, "check2: %d[%c]", i, src[i]));
 
@@ -661,6 +663,34 @@ shell_escape_string(const char *str)
     }
     *target_ptr = '\0'; /* terminate */
     return new_str;
+}
+
+/* Get a pointer to the extension of the filename 'fname'
+   (ie. into the existing string),
+   or NULL if fname doens't have an extension.
+ */
+const char *
+get_extension(const char *fname)
+{
+    char *sep, *tmp;
+    /* does filename have a directory component?
+       If so, be careful with dots within this component.
+    */
+    if ((sep = strrchr(fname, '/')) != NULL) {
+	tmp = sep;
+	if ((sep = strrchr(tmp, '.')) != NULL) {
+	    return sep;
+	}
+	else {
+	    return NULL;
+	}
+    }
+    else if ((sep = strrchr(fname, '.')) != NULL) {
+	return sep;
+    }
+    else {
+	return NULL;
+    }
 }
 
 void

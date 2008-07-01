@@ -140,59 +140,59 @@ static XtResource resources[] = {
 
 TipClassRec tipClassRec = {
     {
-     /* superclass           */ (WidgetClass) & overrideShellClassRec,
-     /* class_name           */ "Tip",
-     /* widget size          */ (Cardinal) sizeof(TipRec),
-     /* class_init           */ NULL,
-     /* class_part_init      */ (XtWidgetClassProc) NULL,
-     /* class_inited         */ (XtEnum) FALSE,
-     /* initialize           */ (XtInitProc) initialize,
-     /* init_hook            */ (XtArgsProc) NULL,
-     /* realize              */ XtInheritRealize,
-     /* actions              */ (XtActionList) 0,
-     /* num_actions          */ (Cardinal) 0,
-     /* resources            */ (XtResourceList) resources,
-     /* num_resources        */ (Cardinal) XtNumber(resources),
-     /* xrm_class            */ NULLQUARK,
-     /* compress_motion      */ TRUE,
-     /* compress_exposur     */ (XtEnum) FALSE,
-     /* compress enterleave  */ TRUE,
-     /* visibility_interest  */ FALSE,
-     /* destroy              */ destroy,
-     /* resize               */ XtInheritResize,
-     /* expose,              */ XtInheritExpose,
-     /* set_values           */ (XtSetValuesFunc) set_values,
-     /* set_values_hook      */ (XtArgsFunc) NULL,
-     /* set_values_almost    */ XtInheritSetValuesAlmost,
-     /* get_values_hook      */ (XtArgsProc) NULL,
-     /* accept_focus         */ XtInheritAcceptFocus,
-     /* version              */ XtVersion,
-     /* callback_private     */ (XtPointer) NULL,
-     /* translations         */ XtInheritTranslations,
-     /* query_geometry       */ XtInheritQueryGeometry,
-     /* display_accelerator  */ XtInheritDisplayAccelerator,
-     /* extension            */ (XtPointer) 0,
-     },
+	/* superclass           */ (WidgetClass) & overrideShellClassRec,
+	/* class_name           */ "Tip",
+	/* widget size          */ (Cardinal) sizeof(TipRec),
+	/* class_init           */ NULL,
+	/* class_part_init      */ (XtWidgetClassProc) NULL,
+	/* class_inited         */ (XtEnum) FALSE,
+	/* initialize           */ (XtInitProc) initialize,
+	/* init_hook            */ (XtArgsProc) NULL,
+	/* realize              */ XtInheritRealize,
+	/* actions              */ (XtActionList) 0,
+	/* num_actions          */ (Cardinal) 0,
+	/* resources            */ (XtResourceList) resources,
+	/* num_resources        */ (Cardinal) XtNumber(resources),
+	/* xrm_class            */ NULLQUARK,
+	/* compress_motion      */ TRUE,
+	/* compress_exposur     */ (XtEnum) FALSE,
+	/* compress enterleave  */ TRUE,
+	/* visibility_interest  */ FALSE,
+	/* destroy              */ destroy,
+	/* resize               */ XtInheritResize,
+	/* expose,              */ XtInheritExpose,
+	/* set_values           */ (XtSetValuesFunc) set_values,
+	/* set_values_hook      */ (XtArgsFunc) NULL,
+	/* set_values_almost    */ XtInheritSetValuesAlmost,
+	/* get_values_hook      */ (XtArgsProc) NULL,
+	/* accept_focus         */ XtInheritAcceptFocus,
+	/* version              */ XtVersion,
+	/* callback_private     */ (XtPointer) NULL,
+	/* translations         */ XtInheritTranslations,
+	/* query_geometry       */ XtInheritQueryGeometry,
+	/* display_accelerator  */ XtInheritDisplayAccelerator,
+	/* extension            */ (XtPointer) 0,
+    },
     /* composite part */
     {
-     /* geometry_manager     */ XtInheritGeometryManager,
-     /* change_managed       */ XtInheritChangeManaged,
-     /* insert_child         */ XtInheritInsertChild,
-     /* delete_child         */ XtInheritDeleteChild,
-     /* extension            */ NULL
-     },
+	/* geometry_manager     */ XtInheritGeometryManager,
+	/* change_managed       */ XtInheritChangeManaged,
+	/* insert_child         */ XtInheritInsertChild,
+	/* delete_child         */ XtInheritDeleteChild,
+	/* extension            */ NULL
+    },
     /* Shell */
     {
-     (XtPointer) NULL,
-     },
+	(XtPointer) NULL,
+    },
     /* Override Shell */
     {
-     0,
-     },
+	0,
+    },
     /* tip */
     {
-     0,
-     }
+	0,
+    }
 };
 
 WidgetClass tipWidgetClass = (WidgetClass) & tipClassRec;
@@ -372,7 +372,7 @@ static void timeout_event(XtPointer client_data, XtIntervalId *id)
 	 event before (for some reason, not all Enters are followed by Leaves).
 	 This is especially apparent when running xdvi from a remote display over
 	 a slow connection.
-       */
+      */
 	Window root, child;
 	int root_x, root_y;
 	unsigned int keys_buttons;
@@ -399,8 +399,8 @@ static void timeout_event(XtPointer client_data, XtIntervalId *id)
      * (NOT the widget, in case the widget is large!)
      */
     ptr_y += 20;
-/*     abs_x += w_width / 2; */
-/*     abs_y += w_height; */
+    /*     abs_x += w_width / 2; */
+    /*     abs_y += w_height; */
     
     XmbTextExtents(tw->tip.fontset, obj->text, obj->size, &ink, &logical);
 
@@ -460,12 +460,12 @@ static void enter(struct tip_context *obj, XEvent * xevent,
     /* it seems that this makes the tooltips somewhat unpredictable (they
        don't show when hovering fast over several buttons, then staying on
        one button); disabled this for the time being. */
-/*     if ((event->time - tw->tip.HelpPopDownTime) > tw->tip.cwp) */
-/* 	current_waitPeriod = tw->tip.waitPeriod; */
-/*     else */
-/* 	current_waitPeriod = 0; */
+    /*     if ((event->time - tw->tip.HelpPopDownTime) > tw->tip.cwp) */
+    /* 	current_waitPeriod = tw->tip.waitPeriod; */
+    /*     else */
+    /* 	current_waitPeriod = 0; */
 
-/*     current_waitPeriod = tw->tip.waitPeriod; */
+    /*     current_waitPeriod = tw->tip.waitPeriod; */
     current_waitPeriod =  resource.tooltips_wait_period;
     if (current_waitPeriod >= 0) {
 	tw->tip.tid = XtAppAddTimeOut(app, current_waitPeriod, timeout_event,

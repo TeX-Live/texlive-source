@@ -33,6 +33,7 @@
 #include "topic-window.h"
 #include "util.h"
 #include "string-utils.h"
+#include "string_list.h"
 #include "message-window.h"
 #include "events.h"
 #include "xm_menu.h"
@@ -73,73 +74,15 @@ struct choice_dialog_info {
 static char **m_browser_list = NULL;
 static char **m_editor_list = NULL;
 
-/*     "mozilla -remote 'openURL(%s,new-window)'", */
-/*     "netscape -raise -remote 'openURL(%s,new-window)'", */
-/*     "xterm -e lynx %s", */
-/*     Xdvi_ADD_COMMAND_STR, */
-/*     NULL /\* terminate *\/ */
-/* }; */
-
-/* static const char *editor_list[] = { */
-/*     "gnuclient -q +%l %f", */
-/*     "emacsclient --no-wait +%l %f", */
-/*     "gvim --servername xdvi --remote +%l %f", */
-/*     "nc -noask +%l %f", */
-/*     "xterm -e vi +%l %f", */
-/*     Xdvi_ADD_COMMAND_STR, */
-/*     NULL /\* terminate *\/ */
-/* }; */
-
-/* combo box only available with Motif 2.0;
- * the lesstif version is incomplete
- */
-#if XmVersion >= 2000 && !defined(LESSTIF_VERSION)
+#if USE_COMBOBOX
 #include <Xm/ComboBox.h>
 #include <Xm/List.h>
-#define USE_COMBOBOX 1
 #else
 #include <Xm/CascadeBG.h>
-#define USE_COMBOBOX 0
 #endif
 
 static void select_browser_cb(Widget w, XtPointer client_data, XtPointer call_data);
 static void select_editor_cb(Widget w, XtPointer client_data, XtPointer call_data);
-
-/*
- * Helper functions
- */
-static char *
-flatten_list(char **list, const char *sep)
-{
-    char *result = xstrdup("");
-    int i;
-    
-    for (i = 0; list[i] != NULL; i++) {
-	result = xstrcat(result, list[i]);
-	result = xstrcat(result, sep);
-    }
-    return result;
-}
-
-static char **
-add_to_list(char **list, const char *str)
-{
-    int i, k;
-    /* reallocate with larger capacity */
-    for (i = 0; list[i] != NULL; i++) { ; }
-    i++;
-    list = xrealloc(list, (i + 1) * sizeof *list);
-
-    /* shift old contents down */
-    for (k = i; k > 0; k--) {
-	list[k] = list[k - 1];
-    }
-    /* add new element at beginning */
-    list[0] = xstrdup(str);
-
-    return list;
-}
-
 
 /*
  * User clicked on `Help' in browser text input prompt
@@ -190,7 +133,7 @@ help_editor_dialog_cb(Widget w, XtPointer client_data, XtPointer call_data)
 static void
 destroy_dialog_cb(Widget w, XtPointer client_data, XtPointer call_data)
 {
-/*     Widget browser_combo = (Widget)client_data; */
+    /*     Widget browser_combo = (Widget)client_data; */
     struct choice_dialog_info *info = (struct choice_dialog_info *)client_data;
     Widget browser_combo = NULL;
     Widget help_popup;
@@ -251,7 +194,7 @@ destroy_dialog_cb(Widget w, XtPointer client_data, XtPointer call_data)
      * Since `help_popup' is the top-level xmDialogShellWidget, we need to get its
      * xmMessageBoxWidget child (by name ...). Don't report an error if it doesn't
      * exist in case the help window has already been closed.
-    */
+     */
     if (help_popup != NULL) {
 	static Widget message;
 	if (get_widget_by_name(&message, help_popup, Xdvi_MESSAGE_DIALOG_NAME, False))
@@ -272,7 +215,7 @@ static void
 h_get_input_wrapper(const char *listbox_name,
 		    Widget w, XtPointer client_data, XtPointer call_data)
 {
-/*     Widget combobox = (Widget)client_data; */
+    /*     Widget combobox = (Widget)client_data; */
     struct choice_dialog_info *info = (struct choice_dialog_info *)client_data;
     struct topic_info *tinfo = info->tinfo;
     struct prefs_choice *prefs = (struct prefs_choice *)tinfo->data;
@@ -321,13 +264,13 @@ h_get_input_wrapper(const char *listbox_name,
 	    fprintf(stderr, "list %d: |%s|\n", i, m_browser_list[i]);
 	}
 #endif
-	m_browser_list = add_to_list(m_browser_list, ptr);
+	m_browser_list = string_list_prepend(m_browser_list, ptr);
 #if 0
 	for (i = 0; m_browser_list[i] != NULL; i++) {
 	    fprintf(stderr, "NEW list %d: |%s|\n", i, m_browser_list[i]);
 	}
 #endif
-	tmp_list = flatten_list(m_browser_list, "\n");
+	tmp_list = string_list_to_str(m_browser_list, "\n");
 #if 0
 	fprintf(stderr, "TMP LIST: |%s|\n", tmp_list);
 #endif /* 0 */
@@ -344,8 +287,8 @@ h_get_input_wrapper(const char *listbox_name,
 	editor_choice = xstrdup(ptr);
 	resource.editor = editor_choice;
 
-	m_editor_list = add_to_list(m_editor_list, ptr);
-	tmp_list = flatten_list(m_editor_list, "\n");
+	m_editor_list = string_list_prepend(m_editor_list, ptr);
+	tmp_list = string_list_to_str(m_editor_list, "\n");
 	store_preference(&(prefs->db), "prefsEditorList", "%s", tmp_list);
 	free(tmp_list);
 	
@@ -362,6 +305,11 @@ h_get_input_wrapper(const char *listbox_name,
     /* add user input to the combo box list, and make it current */
     XmComboBoxAddItem(combobox, cbs->value, 1, True);
     XmComboBoxSelectItem(combobox, cbs->value);
+    {   /* if more than 9 items, add scrollbar */
+	size_t n;
+	XtVaGetValues(combobox, XmNitemCount, &n, NULL);
+	XtVaSetValues(combobox, XmNvisibleItemCount, n > 10 ? 10 : n, NULL);
+    }
 #else
     {
 	Widget new_menu, parent, grandparent, rowcol;
@@ -461,7 +409,7 @@ h_selector(const char *prompt_name,
 					     XtParent(w),
 #endif
 					     (char *)prompt_name, args, n);
-/* 	XmStringFree(label); */
+	/* 	XmStringFree(label); */
 	
 	add_to_deplist(prefs, prompt_widget);
 	
@@ -551,7 +499,7 @@ static void
 select_browser_cb(Widget w, XtPointer client_data, XtPointer call_data)
 {
     h_selector(Xdvi_BROWSER_POPUP_NAME,
-	       "Xdvi: Add Browser Command",
+	       "xdvik: Add Browser Command",
 	       "Browser Command (optional `%s' is replaced by URL): ",
 	       get_browser_text_cb, destroy_dialog_cb, help_browser_dialog_cb,
 	       w, client_data, call_data);
@@ -565,7 +513,7 @@ select_editor_cb(Widget w, XtPointer client_data, XtPointer call_data)
 {
     UNUSED(client_data);
     h_selector(Xdvi_EDITOR_POPUP_NAME,
-	       "Xdvi: Add Editor Command",
+	       "xdvik: Add Editor Command",
 	       "Editor Command (optional: `%l' = line number, `%f' = file name): ",
 	       get_editor_text_cb, destroy_dialog_cb, help_editor_dialog_cb,
 	       w, client_data, call_data);
@@ -667,7 +615,7 @@ update_preferences_helpers(void)
 		
 		XtVaGetValues(buttons[i], XmNlabelString, &str, NULL);
 		XmStringGetLtoR(str, G_charset, &ptr);
-/* 		fprintf(stderr, "kid %d: %s\n", i, ptr); */
+		/* 		fprintf(stderr, "kid %d: %s\n", i, ptr); */
 		if (globals.curr_browser != NULL) { /* if this is set, ignore browser setting */
 		    if (strcmp(globals.curr_browser, ptr) == 0) {
 			break;
@@ -693,7 +641,7 @@ update_preferences_helpers(void)
 		
 		XtVaGetValues(buttons[i], XmNlabelString, &str, NULL);
 		XmStringGetLtoR(str, G_charset, &ptr);
-/* 		fprintf(stderr, "kid %d: %s\n", i, ptr); */
+		/* 		fprintf(stderr, "kid %d: %s\n", i, ptr); */
 		if (globals.curr_editor != NULL) { /* if this is set, ignore editor setting */
 		    if (strcmp(globals.curr_editor, ptr) == 0) {
 			break;
@@ -713,16 +661,16 @@ update_preferences_helpers(void)
 #endif
         /* for browser/editor, try:
 
-       Widget      menu;
-       int         num_buttons;
-       WidgetList  buttons;
+	Widget      menu;
+	int         num_buttons;
+	WidgetList  buttons;
        
-       XtVaGetValues( simple_option_widget, XmNsubMenuId, &menu, NULL);
+	XtVaGetValues( simple_option_widget, XmNsubMenuId, &menu, NULL);
        
-       XtVaGetValues( menu, XmNnumChildren, &num_buttons,
-       XmNchildren, &buttons, NULL ) ;
+	XtVaGetValues( menu, XmNnumChildren, &num_buttons,
+	XmNchildren, &buttons, NULL ) ;
 	
-     */
+	*/
     }
 }
 
@@ -767,7 +715,7 @@ h_create_command(const char *name,
 		  XmNtopAttachment, XmATTACH_WIDGET,
 		  XmNtopWidget, top,
 		  XmNleftAttachment, XmATTACH_FORM,
-/* 		  XmNrightAttachment, XmATTACH_FORM, */
+		  /* 		  XmNrightAttachment, XmATTACH_FORM, */
 		  NULL);
 
     /* count elements in command_list */
@@ -794,14 +742,16 @@ h_create_command(const char *name,
     combo_box = XtVaCreateWidget(name, xmComboBoxWidgetClass,
 				 parent,
 				 XmNtopAttachment, XmATTACH_WIDGET,
-				 XmNtopWidget, top, /* if top == NULL, this used XmATTACH_FORM */
+				 XmNtopWidget, top, /* if top == NULL, this uses XmATTACH_FORM */
 				 XmNleftAttachment, XmATTACH_WIDGET,
 				 XmNleftWidget, text_label,
 				 XmNrightAttachment, XmATTACH_FORM,
 				 XmNcomboBoxType, XmDROP_DOWN_LIST,
 				 XmNitems, str_list,
 				 XmNitemCount, num,
+				 XmNvisibleItemCount, num > 10 ? 10 : num,
 				 XmNuserData, curr_index,
+				 XmNarrowSize, Xdvi_COMBO_BOX_ARROW_SIZE,
 				 NULL);
     if (top != NULL) /* FIXME: This assumes we only have 2 items ... */
 	XtVaSetValues(combo_box,
@@ -836,12 +786,12 @@ h_create_command(const char *name,
     return combo_box;
 #else
     menu = XmCreatePulldownMenu(parent, (char *)menu_name, NULL, 0);
-/*     XtVaSetValues(menu, */
-/* 		  XmNtopAttachment, XmATTACH_WIDGET, */
-/* 		  XmNtopWidget, top, */
-/* 		  XmNleftAttachment, XmATTACH_FORM, */
-/* 		  XmNrightAttachment, XmATTACH_FORM, */
-/* 		  NULL); */
+    /*     XtVaSetValues(menu, */
+    /* 		  XmNtopAttachment, XmATTACH_WIDGET, */
+    /* 		  XmNtopWidget, top, */
+    /* 		  XmNleftAttachment, XmATTACH_FORM, */
+    /* 		  XmNrightAttachment, XmATTACH_FORM, */
+    /* 		  NULL); */
 
     str = XmStringCreateLocalized((char *)label);
     n = 0;
@@ -871,8 +821,8 @@ h_create_command(const char *name,
     
     for (i = 0; command_list[i] != NULL; i++) {
 	item = XtVaCreateManagedWidget(command_list[i], xmPushButtonGadgetClass, menu,
-				    XmNuserData, tinfo,
-				    NULL);
+				       XmNuserData, tinfo,
+				       NULL);
 	XtAddCallback(item, XmNactivateCallback, select_cb, menu); 
     }
     XtManageChild(cascade);
@@ -883,13 +833,13 @@ h_create_command(const char *name,
 Widget
 prefs_helpers(struct topic_info *tinfo)
 {
-/*     struct prefs_choice *prefs = (struct prefs_choice *)info->data; */
+    /*     struct prefs_choice *prefs = (struct prefs_choice *)info->data; */
     Widget form, /* frame, */ form1;
     Widget browser_command, editor_command;
 
     form = XmCreateForm(tinfo->right_form, "helpers_form", NULL, 0);
 
-/*     frame = XmCreateFrame(form, "commands_frame", NULL, 0); */
+    /*     frame = XmCreateFrame(form, "commands_frame", NULL, 0); */
 
     form1 = XtVaCreateWidget("commands_form", xmFormWidgetClass,
 			     form,
@@ -919,22 +869,22 @@ prefs_helpers(struct topic_info *tinfo)
 				      m_editor_list,
 				      select_editor_cb, tinfo);
     
-/* #if PS_GS */
-/*     Widget b2 = XmCreateLabelGadget(rowcol, "[x] Use Ghostscript to interpret PS specials", NULL, 0); */
+    /* #if PS_GS */
+    /*     Widget b2 = XmCreateLabelGadget(rowcol, "[x] Use Ghostscript to interpret PS specials", NULL, 0); */
 
     /* TODO: don't need this??? Similar: ps2pdf, dvips conversion?? */
     /*     Widget b3 = XmCreateLabelGadget(rowcol, "Path to Ghostscript: ____________", NULL, 0); */
     
-/* #endif */
-/*     Widget b4 = XmCreateLabelGadget(rowcol, "Editor for source specials: <pulldown> [Other ...]", NULL, 0); */
-/*     XtManageChild(b1); */
-/*     XtManageChild(b2); */
-/*     XtManageChild(b3); */
-/*     XtManageChild(b4); */
-/*     XtManageChild(rowcol); */
+    /* #endif */
+    /*     Widget b4 = XmCreateLabelGadget(rowcol, "Editor for source specials: <pulldown> [Other ...]", NULL, 0); */
+    /*     XtManageChild(b1); */
+    /*     XtManageChild(b2); */
+    /*     XtManageChild(b3); */
+    /*     XtManageChild(b4); */
+    /*     XtManageChild(rowcol); */
 
     XtManageChild(form1);
-/*     XtManageChild(frame); */
+    /*     XtManageChild(frame); */
 
     return form;
 }

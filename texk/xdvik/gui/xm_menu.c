@@ -107,7 +107,7 @@ update_menu_labels(Widget menu)
 		  XmNchildren, &children,
 		  NULL);
 
-/*      for (i = 0; i < num_children; i++) { */
+    /*      for (i = 0; i < num_children; i++) { */
     for (i = 0; i < (int)file_history_size(); i++) {
 	int dummy_page;
 	char *filename;
@@ -152,7 +152,7 @@ filehist_select_cb(Widget w, XtPointer client_data, XtPointer call_data)
     char *fname;
     int idx;
     
-/*     UNUSED(w); */
+    /*     UNUSED(w); */
     UNUSED(call_data);
     UNUSED(client_data);
     
@@ -172,7 +172,7 @@ filehist_select_cb(Widget w, XtPointer client_data, XtPointer call_data)
 	return;
     }
     if ((fname = file_history_get_elem(idx, &pageno)) == NULL) {
-	statusline_print(STATUS_MEDIUM, "Error accessing file %d of history", idx);
+	statusline_error(STATUS_MEDIUM, "Error accessing file %d of history", idx);
 	return;
     }
 
@@ -242,7 +242,7 @@ filehist_submenu(int idx, const char *filename, int pageno, void *data)
     sprintf(buf, "%d %s", idx + 1, filename);
     TRACE_GUI((stderr, "Creating menu `%s'", buf));
     w = XtVaCreateManagedWidget(buf, xmPushButtonGadgetClass, menu,
-/*  				XmNmnemonic, buf[0], */
+				/*  				XmNmnemonic, buf[0], */
 				XmNuserData, menu,
 				NULL);
     if (idx + 1 < 10) {

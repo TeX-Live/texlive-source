@@ -18,7 +18,7 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 /*
   Very simple page history (i.e. stack of visited pages) for xdvik
@@ -27,6 +27,7 @@
 #include "xdvi-config.h"
 #include "xdvi.h"
 #include "util.h"
+#include "dl_list.h"
 #include "string-utils.h"
 #include "events.h"
 #include "dvi-init.h"
@@ -118,6 +119,11 @@ page_history_show_statusline(struct dl_list *head,
 #if DEBUG
     fprintf(stderr, "tot_len: %d, curr_pos: %d\n", tot_len, curr_pos);
 #endif
+
+    if (!(resource.expert_mode & XPRT_SHOW_STATUSLINE)) {
+	/* too distracting for stdout */
+	return;
+    }
     
     if (head == NULL){
 	strcpy(ptr, "Page history empty.");
@@ -133,7 +139,7 @@ page_history_show_statusline(struct dl_list *head,
 	/* need to truncate, try to make first and second chunk around current position of same length */
 	int good_pos = HISTORY_MAX_CONTEXT / 2.0 + 0.5;
 	while (curr_pos > good_pos /*  && */
-/*  	       m_page_history_length - m_page_history_currpos > good_pos */) {
+	       /*  	       m_page_history_length - m_page_history_currpos > good_pos */) {
 #if DEBUG
 	    fprintf(stderr, "%d > %d; %d > %d\n", curr_pos, good_pos,
 		    m_page_history_length - m_page_history_currpos, good_pos);
@@ -198,7 +204,9 @@ page_history_show_statusline(struct dl_list *head,
 	}
 	
 	if (head == curr) {
-	    ASSERT(m_page_history_currpos == n + 1, "Consistency check for pagelist position failed!");
+	    xdvi_assert(XDVI_VERSION_INFO, __FILE__, __LINE__,
+			m_page_history_currpos == n + 1,
+			"%d == %d + 1", m_page_history_currpos, n);
 	    sprintf(ptr, " [%d]", item->pageno + 1);
 	    ptr += 3 + length_of_int(item->pageno + 1);
 	}
@@ -210,15 +218,15 @@ page_history_show_statusline(struct dl_list *head,
 #if DEBUG
     fprintf(stderr, "Statusline string: |%s|; printed len: %d\n", history, printed_len);
 #endif
-    statusline_print(STATUS_LONG, "%s %s", history, msg ? msg : "");
+    statusline_info(STATUS_MEDIUM, "%s %s", history, msg ? msg : "");
 #undef HIST_LEN
 }
 
 static void
-goto_location(const char *filename, int pageno)
+goto_location(const char *filename)
 {
 #if DEBUG
-    fprintf(stderr, "going to page %d of file %s\n", pageno, filename);
+    fprintf(stderr, "going to file %s\n", filename);
 #endif
     if (strcmp(globals.dvi_name, filename) != 0) { /* it's a different file */
 	Boolean tried_dvi_ext = True;
@@ -239,10 +247,15 @@ goto_location(const char *filename, int pageno)
 	}
 	else {
 	    dviErrFlagT errflag;
-	    if (load_dvi_file(True, &errflag)) {
+	    if (load_dvi_file(
+#if !DELAYED_MKTEXPK
+			      True,
+#endif
+			      &errflag)) {
 		set_dvi_name(new_dvi_name);
 
 		globals.ev.flags |= EV_NEWDOC;
+		globals.ev.flags |= EV_PAGEHIST_GOTO_PAGE;
 #if DEBUG
 		fprintf(stderr, "Back to file: \"%s\"\n", globals.dvi_name);
 #endif
@@ -255,7 +268,11 @@ goto_location(const char *filename, int pageno)
 			      /* "Removing this file from the history." */,
 			      globals.dvi_name, get_dvi_error(errflag));
 
-		if (!internal_open_dvi(globals.dvi_name, &errflag, True)) {
+		if (!internal_open_dvi(globals.dvi_name, &errflag, True
+#if DELAYED_MKTEXPK
+				       , True
+#endif
+				       )) {
 		    popup_message(globals.widgets.top_level,
 				  MSG_ERR,
 				  NULL,
@@ -270,15 +287,8 @@ goto_location(const char *filename, int pageno)
 	    }
 	}
     }
-    if (pageno != current_page) {
-	if (pageno < total_pages) {
-	    goto_page(pageno, resource.keep_flag ? NULL : home, False);
-	}
-	else {
-	    XDVI_WARNING((stderr, "Could not go to page %d (file has shrunken)", pageno));
-	    statusline_print(STATUS_MEDIUM,
-			     "Could not go to page %d (file has shrunken)", pageno);
-	}
+    else {
+	globals.ev.flags |= EV_PAGEHIST_GOTO_PAGE;
     }
 }
 
@@ -311,7 +321,7 @@ void page_history_move(int n)
 	    if (m_page_history != NULL)
 		pos = m_page_history->prev;
 	    if (pos == NULL) {
-		XBell(DISP, 0);
+		xdvi_bell();
 		msg = " - at begin of page history.";
 		break;
 	    }
@@ -326,7 +336,7 @@ void page_history_move(int n)
 	    if (m_page_history != NULL)
 		pos = m_page_history->next;
 	    if (pos == NULL) {
-		XBell(DISP, 0);
+		xdvi_bell();
 		msg = " - at end of page history.";
 		break;
 	    }
@@ -340,7 +350,7 @@ void page_history_move(int n)
 #if DEBUG
     fprintf(stderr, "going to page %d\n", item->pageno);
 #endif
-    goto_location(m_filename_list[item->file_idx], item->pageno);
+    goto_location(m_filename_list[item->file_idx]);
 
 #if defined(MOTIF) && HAVE_XPM
     tb_set_pagehist_back_sensitivity(m_page_history->prev != NULL);
@@ -350,6 +360,12 @@ void page_history_move(int n)
     page_history_show(m_page_history_head, m_page_history);
     page_history_show_statusline(m_page_history_head, m_page_history, msg);
     page_history_update_toolbar_navigation();
+}
+
+int
+page_history_get_page(void)
+{
+    return ((struct page_history *)m_page_history->item)->pageno;
 }
 
 /* add page n to the page history */
@@ -451,13 +467,13 @@ page_history_clear()
 	page_history_show_statusline(m_page_history_head, m_page_history, NULL);
     }
 
-/*     for (curr = m_page_history; curr != NULL && curr->next != NULL; curr = pos) { */
-/* 	pos = curr->next; */
-/* 	free(curr->item); */
-/* 	(void)dl_list_remove_item(&curr); */
-/* 	m_page_history_length--; */
-/* 	page_history_show(m_page_history_head, m_page_history); */
-/*     } */
+    /*     for (curr = m_page_history; curr != NULL && curr->next != NULL; curr = pos) { */
+    /* 	pos = curr->next; */
+    /* 	free(curr->item); */
+    /* 	(void)dl_list_remove_item(&curr); */
+    /* 	m_page_history_length--; */
+    /* 	page_history_show(m_page_history_head, m_page_history); */
+    /*     } */
     
 
 }
@@ -498,7 +514,7 @@ void page_history_delete(int n)
 	    if (m_page_history != NULL)
 		pos = m_page_history->prev;
 	    if (pos == NULL) {
-		XBell(DISP, 0);
+		xdvi_bell();
 		msg = " - at begin of page history.";
 		break;
 	    }
@@ -517,7 +533,7 @@ void page_history_delete(int n)
 	    if (m_page_history != NULL)
 		pos = m_page_history->next;
 	    if (pos == NULL) {
-		XBell(DISP, 0);
+		xdvi_bell();
 		msg = " - at end of page history.";
 		break;
 	    }
@@ -540,7 +556,7 @@ void page_history_delete(int n)
 #if DEBUG
     fprintf(stderr, "going to page %d\n", item->pageno);
 #endif
-    goto_location(m_filename_list[item->file_idx], item->pageno);
+    goto_location(m_filename_list[item->file_idx]);
     page_history_show(m_page_history_head, m_page_history);
     page_history_show_statusline(m_page_history_head, m_page_history, msg);
 }

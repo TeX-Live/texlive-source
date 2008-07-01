@@ -35,8 +35,8 @@
 #include "print-internal.h"
 
 /* callbacks */
-Boolean check_pagerange(struct select_pages_info *pinfo, int pageno);
-Boolean check_marked(struct select_pages_info *pinfo, int pageno);
-void select_pages(struct select_pages_info *pinfo);
+Boolean check_pagerange(struct save_or_print_info *info, int pageno);
+Boolean check_marked(struct save_or_print_info *info, int pageno);
+void select_pages(struct save_or_print_info *info);
 
 #endif /* DVISEL_H_ */

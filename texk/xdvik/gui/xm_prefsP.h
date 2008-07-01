@@ -96,9 +96,14 @@
 #define Xdvi_APPLY_STR				"Apply"
 
 #define Xdvi_PREFS_BROWSER_DEFAULTS \
-	"mozilla -remote 'openURL(%s,new-window)'\n" \
-	"netscape -raise -remote 'openURL(%s,new-window)'\n" \
+	"xdg-open %s\n" \
+	"htmlview %s\n" \
+	"firefox -remote \"openURL(%s,new-window)\"\n" \
+	"mozilla -remote \"openURL(%s,new-window)\"\n" \
+	"netscape -raise -remote \"openURL(%s,new-window)\"\n" \
+	"xterm -e w3m %s\n" \
 	"xterm -e lynx %s\n" \
+	"xterm -e wget %s\n" \
 	Xdvi_ADD_COMMAND_STR
 #define Xdvi_PREFS_EDITOR_DEFAULTS \
 	"gnuclient -q +%l %f\n" \

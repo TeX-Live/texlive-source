@@ -26,6 +26,15 @@
 !!! This should be the best choice for modern displays with large color depth.
 *thorough: true
 
+!!! Add some useful translations for the mouse wheel (bug #1422928)
+*wheelTranslations:\
+Shift<Btn4Down>:left(.08)\n\
+Shift<Btn5Down>:right(.08)\n\
+Ctrl<Btn4Down>:set-shrink-factor(+)\n\
+Ctrl<Btn5Down>:set-shrink-factor(-)\n\
+<Btn4Down>:wheel(-.7)\n\
+<Btn5Down>:wheel(.7)
+
 !!!------------------------------------------------------------------------------
 !!!------------------------------ Motif toolbar ---------------------------------
 !!!------------------------------------------------------------------------------
@@ -76,18 +85,9 @@
 *textColumns: 50
 
 !!! make all text/entry fields white, for better contrasts:
-*file_text.background: white
-*searchbox_input.background: white
-*print_text.background: white
-*dvips_options_text.background: white
-*from_page.background: white
-*to_page.background: white
-*topics_list.background: white
-*help_text.background: white
-*FilterText.background: white
-*DirList.background: white
-*ItemsList.background: white
-*file.Text.background: white
+*XmDialogShell*XmTextField.background: white
+*XmDialogShell*XmText.background: white
+*XmDialogShell*XmList.background: white
 
 !!! adjust position of header in help window
 *help_window*right_form.topOffset: 10

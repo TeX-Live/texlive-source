@@ -9,6 +9,100 @@ Versions containing major changes are marked as `beta'; these
 may contain undetected bugs. Such versions shouldn't be used
 by distributors.
 
+   * 22.84.14:
+	+ Added action "mouse-modes()" to allow customization of
+	  mode specific mouse bindings.
+	+ Fixed #1953028 (typo in events.c that broke fullscreen mode)
+	+ Fixed #1953023 (unsigned char vs. signed char problem in
+	  window ID computation that broke -unique and -sourceposition
+	  on 64bit systems)
+	+ Fixed #1953026 (security issue with temp file naming in xdvizilla)
+	+ Don't distribute xdvizilla as binary since it's no longer needed
+	  for current browsers (see discussion here:
+	  http://www.tug.org/pipermail/tex-live/2008-April/015697.html)
+	  The source is kept for compatibility.
+	+ Updated to kpathsea version 3.4.5 (same as in texlive 2007)
+	+ Fixed #1875314 (--with-system-t1lib still used headers from
+	  distribution's t1lib subdir)
+	+ Fixed #1888187 (Typo in help window)
+	+ Fixed #1875311 (Space and backspace now keep horizontal position
+	  when -keep is specified)
+	+ Fixed #1875321 (Numlock key is not properly handled by translations)
+	+ Fixed #1875309: Added xdg-open to browser commands
+	+ Improved fix for #1819017
+	+ Implemented feature request #1577926 (make mouse pointer invisible
+	  in magnifier window)
+	+ Merged STABLE with main branch by #ifdef'ing experimental
+	  DELAYED_MKTEXPK code
+
+   * 22.84.13:
+	+ Fixed #1819017 (uint32_t conflicts with XeTeX configure)
+	+ Fixed #1044891 (xdvi -unique didn't insert page into page history)
+	+ Fixed #1586240 (memory corruption with full TMPDIR)
+	+ Fixed #1143508/#1283438 (wrong window sizes at startup)
+	+ Fixed margin flags (didn't work for the first page of a document)
+	+ Fixed #1553432 (failed assertion with hyperref and html:<font> specials)
+	+ Fixed #1796818 (don't use 'empty' argument for %c when no column number
+	  info is available)
+	+ Fixed 1815476 (use = instead of == in shell wrapper)
+
+
+   * 22.84.12:
+	+ Fixed a segfault bug if the default replacement font (cmr10)
+  	  had fewer characters than the font being replaced.
+ 	+ Fixed a segfault with strcmp() when the statusline was disabled.
+
+   * 22.84.11:
+	+ IMPORTANT: The binary is now called xdvi-<toolkit> instead of
+	  xdvi-<toolkit>.bin, e.g. 'xdvi-motif' instead of 'xdvi-motif.bin'.
+ 	  For more information on the reasons for this change, please see:
+	  http://sourceforge.net/tracker/index.php?func=detail&aid=1222202&group_id=23164&atid=377580
+	+ Implemented a search term history for the search window.
+	+ Install signal handler for SIGUSR1 early (#1094615).
+	+ Fixed a crash in htex_prescan_carry_over() (#1344956, #1188866).
+	+ Fixed a crash when printing a DVI file that was read from a FIFO, as
+	  was the case with Debian's xdvi.pl wrapper script (#1466262).
+	+ Added more font encodings (missing encodings reported by several people).
+	+ Fixed issue with translations not being installed on main window on Motif
+	  (problem reported by Joost Kremers to xdvi-core).
+	+ Fix for bug 1611508 (segfault with -nogrey/grey).
+	+ Fix for bug 1526447 (searching for EPS files in included subdirectories).
+	+ Fix for bug 1376354 (make -hush also trigger -hushstdout, add -hushbell).
+	+ Fix bug with whitespace chars in Chinese fonts reported as .notdef
+	  (see http://tug.org/mail-archives/tex-k/2006-October/001608.html).
+	+ Fix for #1572806 (xdvi-search.el: cd into directory of .tex file
+	  before invoking xdvi).
+	+ Bugfix for #1530667 (hyperlinks containing parentheses don't work
+	  correctly with 'hdvips' driver) contributed by  Matthias Habl.
+	+ Fixed xdvizilla bug #1508963 (Solaris "file" utility doesn't
+	  recognize DVI files).
+	+ Fixed bug #1499566 (force focus for text input field in search
+	  dialog for Xaw).
+	+ Fixed bugs #1475921 and #1484561 (type errors and a case of
+	  uninitialized memory); thanks to Nobuyuki Tsuchimura for
+	  reporting them and providing a patch.
+	+ Fix for bug #1454648: restore old behaviour of '-s 0' option
+	  which was accidentally lost in rev. 1.249.2.80
+	+ Resurrected 'grid mode' which had been removed in 22.73-beta1
+	  (toggled via 'D'; feature request #1375576)
+	+ Fixed bug #1428583 (problems with GS_DPS, reported by Ben Stern)
+	+ Fixed bug #1428482 (problem with building on sparcv9, also found
+          by Ben Stern)
+	+ Added Ctrl/Shift bindings to the mouse wheel for zooming and
+	  scrolling horizontally
+	+ Fixed a bug with PK fonts not being used after loading a Type1
+	  font had failed, reported by Ralf Stubner (#1363644)
+	+ Fixed a crash on Solaris 10 (SPARC and AMD64) with WORD64/LONG64
+	  reported by Peter Bray.
+	+ Fixed a bug with reencoding reported by Staszek Wawrykiewicz
+	  (#1295829): If plr10 is missing from ps2pk.map, xdvik will use
+	  plr10.pfb without reencoding it instead of calling mktexpk for
+	  plr10.mf which would yield the correct encoding.
+	+ Replaced a failed assertion with a warning when a graphics file
+ 	  included by a PS special isn't readable by user.
+	+ Fix for library inclusion order problem contributed by K. Berry
+ 	  (see http://tug.org/mailman/htdig/tex-live/2005-August/008609.html)
+
    * 22.84.10 (2005/04/28):
 	+ Fixed zero termination bug in t1lib version number check (t1lib.ac).
 	+ Render an empty character instead of terminating with failed assertion
@@ -521,7 +615,7 @@ by distributors.
 	+ Added resources `dvipsHangTime' and `dvipsFailHangTime' for
 	  customizing the time the dvips print log remains open
 	  (#684620).
-	+ Implemented simple but hopefully efficient `ruler mode'
+	+ Implemented simple but hopefully effective `ruler mode'
 	  (feature request #525129).
 	+ Removed the old `grid' mode, which didn't have any real
 	  purpose at all.

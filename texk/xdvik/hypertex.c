@@ -1,3 +1,4 @@
+
 /*
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -16,7 +17,7 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 /*
  * Original copyright:
@@ -52,16 +53,16 @@
 
 /* TODO:
    
-   - implement popup with list of visited links, as specified in
-     http://xdvi.sourceforge.net/gui.html#navigation-openLinks
-     (maybe this should be a simple menu list, not a popup window).
- */
+- implement popup with list of visited links, as specified in
+http://xdvi.sourceforge.net/gui.html#navigation-openLinks
+(maybe this should be a simple menu list, not a popup window).
+*/
 
 #define COPY_TMP_FILE 0 /* see comments below */
 
-/* #define DEBUG */
+    /* #define DEBUG */
 
-/*  #define DEBUG_MEMORY_HANDLING */
+    /*  #define DEBUG_MEMORY_HANDLING */
 #include "alloc-debug.h"
 
 #include "xdvi-config.h"
@@ -78,6 +79,7 @@
 #include "dvi-init.h"
 #include "message-window.h"
 #include "util.h"
+#include "dl_list.h"
 #include "x_util.h"
 #include "mime.h"
 #include "mag.h"
@@ -91,9 +93,9 @@
 #include "my-snprintf.h"
 #include "pagehist.h"
 
-/* globals */
-/* rgb specifications to translate resource.{visited_}link_color into */
-char *g_link_color_rgb = NULL;
+    /* globals */
+    /* rgb specifications to translate resource.{visited_}link_color into */
+    char *g_link_color_rgb = NULL;
 char *g_visited_link_color_rgb = NULL;
 char *g_anchor_pos = NULL;
 size_t g_anchor_len = 0;
@@ -343,8 +345,8 @@ htex_prescan_special(const char *cp, int cp_len, struct htex_prescan_data *data)
 		    m_prescan_info.pagelist[data->pageno] = anchor;
 		}
 		else if ((ptr = strstr(cp1 + 2, "/URI")) != NULL /* external file */
-		    && (ptr = strchr(ptr, '(')) != NULL
-		    && (pptr = strchr(ptr + 1, '(')) != NULL) {
+			 && (ptr = strchr(ptr, '(')) != NULL
+			 && (pptr = strchr(ptr + 1, '(')) != NULL) {
 		    anchor = xmalloc(pptr - ptr);
 		    memcpy(anchor, ptr + 1, pptr - ptr - 1);
 		    anchor[pptr - ptr - 1] = '\0';
@@ -439,7 +441,12 @@ htex_prescan_carry_over(int old_page, int new_page)
     }
     free(m_prescan_info.pagelist[new_page]);
     /* don't share pointers here */
-    m_prescan_info.pagelist[new_page] = xstrdup(m_prescan_info.pagelist[old_page]);
+    if (m_prescan_info.pagelist[old_page] != NULL) {
+	m_prescan_info.pagelist[new_page] = xstrdup(m_prescan_info.pagelist[old_page]);
+    }
+    else {
+	m_prescan_info.pagelist[new_page] = NULL;
+    }
 }
 
 size_t
@@ -477,8 +484,8 @@ struct anchor_info {
     /* bounding box info for this anchor */
     int lrx, lry;	/* lower-right corner */
     int ulx, uly;	/* upper-left corner */
-/*     int refpage;	/\* page in DVI file for stack of visited anchors *\/ */
-/*     char *filename;		/\* name of file in which this anchor is located, for visited anchors *\/ */
+    /*     int refpage;	/\* page in DVI file for stack of visited anchors *\/ */
+    /*     char *filename;		/\* name of file in which this anchor is located, for visited anchors *\/ */
     int prev_wrapped;	/* index of prev elem, for wrapped hrefs, or -1 */
     int next_wrapped;	/* index of next elem, for wrapped hrefs, or -1 */
 };
@@ -500,7 +507,7 @@ static struct htex_page_info htex_page_info = { NULL, 0, 0, -1, -1 };
 
 /*
   double linked list with history of clicked links, for htex_forward/htex_back
- */
+*/
 static struct dl_list *htex_history = NULL;	/* current list insertion point */
 
 struct htex_anchor_stack_elem {
@@ -597,10 +604,10 @@ resize_info_if_needed(struct htex_page_info *info)
 	}
 	info->anchors = XREALLOC(info->anchors, info->tot_cnt * sizeof *(info->anchors));
 	for (i = info->curr_cnt; i < info->tot_cnt; i++) {
-/*  	    fprintf(stderr, "initializing info at index %d\n", i); */
+	    /*  	    fprintf(stderr, "initializing info at index %d\n", i); */
 	    info->anchors[i].a_href = NULL;
 	    info->anchors[i].a_name = NULL;
-/* 	    info->anchors[i].filename = NULL; */
+	    /* 	    info->anchors[i].filename = NULL; */
 	    info->anchors[i].ulx = INT_MAX;
 	    info->anchors[i].uly = INT_MAX;
 	    info->anchors[i].lrx = 0;
@@ -825,7 +832,7 @@ is_local_file(const char *filename)
 	      absolute path starts with `//' (as required by RFC2396,
 	      but in the past most browsers/applications didn't support
 	      this).
-	     */
+	    */
 	    if (memicmp(filename, "//localhost", strlen("//localhost")) == 0) {
 		filename += strlen("//localhost");
 	    }
@@ -986,7 +993,7 @@ enlarge_anchor_size(struct htex_page_info *info, int index,
     ASSERT(info->anchors != NULL, "info->anchors should have been allocated before");
     ASSERT(index < info->curr_cnt, "info too small");
 
-/*     fprintf(stderr, "enlarging anchor at index %d; %s\n", index, info->anchors[index].a_href); */
+    /*     fprintf(stderr, "enlarging anchor at index %d; %s\n", index, info->anchors[index].a_href); */
     anchor = &(info->anchors[index]);
 
     if (ulx < anchor->ulx) {
@@ -1000,7 +1007,7 @@ enlarge_anchor_size(struct htex_page_info *info, int index,
     }
     /* set lry only for first character, since this will be used
        to position underline */
-/*      if (lry > anchor->lry && anchor->lry == 0) { */
+    /*      if (lry > anchor->lry && anchor->lry == 0) { */
     if (lry > anchor->lry) {
 	anchor->lry = lry;
     }
@@ -1071,7 +1078,7 @@ htex_initpage(Boolean new_dvi_file, Boolean size_changed, int pageno)
 		   pageno, NULL);
 	htex_page_info.curr_cnt++;
 	MYTRACE((stderr, "++++++++++ mismatched anchor text (at %d): |%s|",
-		htex_page_info.curr_cnt - 1, m_prescan_info.pagelist[pageno - 1]));
+		 htex_page_info.curr_cnt - 1, m_prescan_info.pagelist[pageno - 1]));
 	/*  	x_pos_bak = y_pos_bak = INT_MAX; */
 	x_pos_bak = y_pos_bak = INT_MAX;
 	set_anchor_size(&htex_page_info, htex_page_info.curr_cnt - 1, 0, 0, 1, 1);
@@ -1079,18 +1086,88 @@ htex_initpage(Boolean new_dvi_file, Boolean size_changed, int pageno)
 	if (bg_current != NULL) { /* only if it has been initialized by redraw_page in events.c */
 	    push_colorspecial();
 	}
-/* 	else { */
-/* 	    fprintf(stderr, "----------------------- NOT pushing color, waiting ...\n"); */
-/* 	} */
+	/* 	else { */
+	/* 	    fprintf(stderr, "----------------------- NOT pushing color, waiting ...\n"); */
+	/* 	} */
 	push_stack(&stack, A_HREF, htex_page_info.curr_cnt - 1);
     }
+}
+
+/* Returns a PostScript literal text string inside parentheses.  The
+   scanner works according to "PostScript language reference, third
+   edition" - Sec. 3.2.2. The specification is implemented completely:
+   balanced parentheses and all escape sequences are considered.
+
+   The argument STR is expected to be a pointer to the first character
+   after the opening parenthesis. The function returns NULL if the
+   text string is malformed. Otherwise the return value points to
+   an allocated string which should be freed by the calling function.
+*/
+static char *
+scan_ps_literal_text_string(const char *str)
+{
+    const char *s;
+    char *cp, *c;
+    int count = 1;
+   
+    /* Search end of string by considering balanced parentheses. */
+    for (s = str; *s; s++)
+	if (*s == '\\' && *(s+1))
+	    s++;
+	else if (*s == '(')
+	    count++;
+	else if (*s == ')')
+	    if (! --count)
+		break;
+
+    if (!*s)
+	return NULL;
+   
+
+    if ((cp = malloc((s - str + 1) * sizeof(*cp))) == NULL) {
+	XDVI_ERROR((stderr, "Not enough memory"));
+	return NULL;
+    }
+
+    /* copy string while translating escape sequences */
+    for (c = cp; str < s; str++) {
+	if (*str == '\\') {
+	    switch (*++str) {
+	    case 'n': *c++ = '\n';  break;
+	    case 'r': *c++ = '\r';  break;
+	    case 't': *c++ = '\t';  break;
+	    case 'b': *c++ = '\b';  break;
+	    case 'f': *c++ = '\f';  break;
+	    case '\n': break;
+	    case '\r': if (*(str + 1) == '\n') str++; break;
+	    default:
+		if (isdigit(*str)) {
+		    char number[] = "xxx";
+		    char *end;
+		    strncpy(number, str, 3);
+		    *c++ = strtoul(number, &end, 8);
+		    str += end - number - 1;
+		}
+		else {
+		    *c++ = *str; /* ignore \ if followed by another char,
+				    including ( and ) and \ */
+		}
+	    }
+	}
+	else {
+	    *c++ = *str;
+	}
+    }
+    *c = '\0';
+   
+    return cp;
 }
 
 static void
 hdvips_add_anchor(struct htex_page_info *info, htexAnchorT type, const char *str)
 {
     char *ptr;
-    if ((ptr = strchr(str, ')')) != NULL) {
+    if ((ptr = scan_ps_literal_text_string(str)) != NULL) {
 	int curr_cnt_bak = info->curr_cnt;
 	/* overwrite previously created dummy/wrapped anchors */
 	ASSERT(info->curr_cnt > 0, "hdvips_add_anchor must be called after add_anchor()!");
@@ -1103,9 +1180,10 @@ hdvips_add_anchor(struct htex_page_info *info, htexAnchorT type, const char *str
 	    free(info->anchors[info->curr_cnt].a_href);
 	    free(info->anchors[info->curr_cnt].a_name);
 	    info->anchors[info->curr_cnt].a_href = info->anchors[info->curr_cnt].a_name = NULL;
-	    add_anchor(info, type, str, ptr - str, 0, NULL);
+	    add_anchor(info, type, ptr, strlen(ptr), 0, NULL);
 	}
 	info->curr_cnt = curr_cnt_bak;
+	free(ptr);
     }
     else {
 	MYTRACE((stderr, "Xdvi warning: skipping malformed hdvips link `%s'", str));
@@ -1161,7 +1239,7 @@ htex_scan_anchor(const char *cp, size_t len)
 	    push_colorspecial();
 	    x_pos_bak = PXL_H;
 	    y_pos_bak = PXL_V;
-/* 	    set_anchor_size(&htex_page_info, htex_page_info.curr_cnt - 1, PXL_H, PXL_V, PXL_H + 10, PXL_V + 10); */
+	    /* 	    set_anchor_size(&htex_page_info, htex_page_info.curr_cnt - 1, PXL_H, PXL_V, PXL_H + 10, PXL_V + 10); */
 	}
 	else {
 	    XDVI_WARNING((stderr, "Skipping unimplemented htex special `%s'", cp));
@@ -1197,7 +1275,7 @@ htex_scan_anchor(const char *cp, size_t len)
     }
     /* add anchor texts for hdvips links */
     else if (memcmp(cp, "/A", 2) == 0) { /* possibly an hdvips external link */
-/* 	fprintf(stderr, "+++++ EXT: |%s|\n", cp); */
+	/* 	fprintf(stderr, "+++++ EXT: |%s|\n", cp); */
 	if ((ptr = strstr(cp + 2, "/GoToR")) != NULL /* external file */
 	    && (ptr = strchr(ptr, '(')) != NULL) {
 	    hdvips_add_anchor(&htex_page_info, A_HREF_FILE, ptr + 1);
@@ -1222,8 +1300,11 @@ htex_scan_anchor(const char *cp, size_t len)
 	}
 	return False;
     }
-    else { /* not a start tag */
-	MYTRACE((stderr, "Xdvi warning: skipping malformed hyperref special `%s'", cp));
+    else { /* unrecognized tag */
+	if (globals.warn_spec_now) {
+	    XDVI_WARNING((stderr, "Ignoring unknown hyperref special `%s'", cp));
+	}
+	return False;
     }
     return get_href_depth(&stack);
 }
@@ -1250,11 +1331,11 @@ htex_record_position(int ulx, int uly, int w, int h)
 	int idx, prev, curr;
 	/* get anchor index of topmost stack item, to find the matching open tag */
 	if ((type = peek_stack(&stack, &idx)) == A_NONE) {
-/* 	    fprintf(stderr, "!!!!!!!!!!!! couldn't find opening tag for this wrapped link!"); */
+	    /* 	    fprintf(stderr, "!!!!!!!!!!!! couldn't find opening tag for this wrapped link!"); */
 	    return;
 	}
 	ASSERT(idx >= 0, "Index out of range");
-/* 	fprintf(stderr, "wrapped link: index %d, type %d\n", idx, type); */
+	/* 	fprintf(stderr, "wrapped link: index %d, type %d\n", idx, type); */
 	/* get correct idx */
 	if (m_href_type == HYPERTEX_LINK) {
 	    while (htex_page_info.anchors[idx].a_href == NULL && idx > 0) {
@@ -1286,7 +1367,7 @@ htex_record_position(int ulx, int uly, int w, int h)
 	curr = htex_page_info.curr_cnt - 1;
 	ASSERT(prev >= 0, "Index out of range");
 
-/* 	fprintf(stderr, "setting prev to %d, curr to %d\n", prev, curr); */
+	/* 	fprintf(stderr, "setting prev to %d, curr to %d\n", prev, curr); */
 	htex_page_info.anchors[prev].next_wrapped = curr;
 	htex_page_info.anchors[curr].prev_wrapped = prev;
 	/* initialize it to cover current character */
@@ -1327,7 +1408,7 @@ show_history(void)
 /* check for names like foo/bar.dvi#link, return copy of
    link truncated at the `#' if found (NULL else), and
    save `link' into resource.anchor_pos for later use.
- */
+*/
 static char *
 check_relative_name(const char *link)
 {
@@ -1369,15 +1450,15 @@ htex_back(void)
     struct history_info *info;
 
     if (htex_history == NULL) {
-	XBell(DISP, 0);
-	statusline_print(STATUS_SHORT, "Hyperref history is empty");
+	xdvi_bell();
+	statusline_info(STATUS_SHORT, "Hyperref history is empty");
 	return;
     }
     info = htex_history->item;
 
     if (htex_history->prev == NULL) {
-	XBell(DISP, 0);
-	statusline_print(STATUS_SHORT, "At begin of history");
+	xdvi_bell();
+/* 	statusline_info(STATUS_SHORT, "At begin of history"); */
 	htex_update_toolbar_navigation();
 	return;
     }
@@ -1390,14 +1471,14 @@ htex_back(void)
 						  &tried_dvi_ext, False))
 	    == NULL) {
 	    
-	    statusline_print(STATUS_MEDIUM, "Re-opening file \"%s\" failed!\n", info->filename);
+	    statusline_error(STATUS_MEDIUM, "Re-opening file \"%s\" failed!\n", info->filename);
 	    return;
 	}
 	else {
 	    set_dvi_name(new_dvi_name);
 	    globals.ev.flags |= EV_NEWDOC;
 	    globals.ev.flags |= EV_PAGEHIST_INSERT;
-/*  	    statusline_print(STATUS_MEDIUM, "Back to file: \"%s\"", globals.dvi_name); */
+	    /*  	    statusline_info(STATUS_MEDIUM, "Back to file: \"%s\"", globals.dvi_name); */
 	}
     }
     else {
@@ -1433,13 +1514,13 @@ htex_forward(void)
     char *link;
     
     if (htex_history == NULL) {
-	XBell(DISP, 0);
-	statusline_print(STATUS_SHORT, "Hyperref history is empty");
+	xdvi_bell();
+	statusline_info(STATUS_SHORT, "Hyperref history is empty");
 	return;
     }
     if (htex_history->next == NULL) {
-	XBell(DISP, 0);
-	statusline_print(STATUS_SHORT, "At end of history");
+	xdvi_bell();
+/* 	statusline_info(STATUS_SHORT, "At end of history"); */
 	return;
     }
     
@@ -1464,7 +1545,7 @@ htex_forward(void)
 
 	if ((new_dvi_name = open_dvi_file_wrapper(link, False, False,
 						  &tried_dvi_ext, False)) == NULL) {
-	    statusline_print(STATUS_MEDIUM, "Re-opening file \"%s\" failed!\n", info->filename);
+	    statusline_error(STATUS_MEDIUM, "Re-opening file \"%s\" failed!\n", info->filename);
 	    free(new_linkname);
 	    return;
 	}
@@ -1478,7 +1559,7 @@ htex_forward(void)
 	    if (g_anchor_pos != NULL)
 		globals.ev.flags |= EV_ANCHOR;
 
-/*  	    statusline_print(STATUS_MEDIUM, "Loaded file: \"%s\"", globals.dvi_name); */
+	    /*  	    statusline_info(STATUS_MEDIUM, "Loaded file: \"%s\"", globals.dvi_name); */
 	    free(new_linkname);
 	}
     }
@@ -1524,7 +1605,7 @@ history_save_anchor(const char *anchor, int current_page, const char *dvi_name)
 /*
  * Return anchor string at coordinates x, y, and anchor count in 3rd argument,
  * or NULL if there's no anchor at these coordinates.
-*/
+ */
 static char *
 get_anchor_at_index(int x, int y, int *count)
 {
@@ -1532,7 +1613,7 @@ get_anchor_at_index(int x, int y, int *count)
 
     for (i = 0; i < htex_page_info.curr_cnt; i++) {
 	struct anchor_info anchor = htex_page_info.anchors[i];
-/*  	fprintf(stderr, "getting anchor at index %d; %s\n", i, anchor.a_href); */
+	/*  	fprintf(stderr, "getting anchor at index %d; %s\n", i, anchor.a_href); */
 	if (anchor.a_href == NULL) {
 	    continue;
 	}
@@ -1566,7 +1647,7 @@ redraw_anchors(int idx)
        wouldn't be set correctly. Redrawing the entire page ensures this (but it's ugly).
        Currently this hack overrides the algorithm below for all anchors that have a
        `prev_wrapped' pointer.
-     */
+    */
     if (htex_page_info.anchors[i].prev_wrapped != -1) {
 	globals.ev.flags |= EV_NEWPAGE;
 	XSync(DISP, False);
@@ -1606,7 +1687,7 @@ htex_handleref(int x, int y, Boolean newwindow)
     char *link;
     int link_num;
 
-/*      fprintf(stderr, "---------- htex_handleref!\n"); */
+    /*      fprintf(stderr, "---------- htex_handleref!\n"); */
     if (!(globals.cursor.flags & CURSOR_LINK))
 	/* When no link cursor is shown, clicking shouldn't jump to link */
 	return False;
@@ -1655,7 +1736,7 @@ htex_handleref(int x, int y, Boolean newwindow)
 		    MYTRACE((stderr, "NEW FILE: |%s|", globals.dvi_name));
 		    if (g_anchor_pos != NULL)
 			globals.ev.flags |= EV_ANCHOR;
-/*  		    statusline_print(STATUS_MEDIUM, "Loaded file: \"%s\"", dvi_name); */
+		    /*  		    statusline_info(STATUS_MEDIUM, "Loaded file: \"%s\"", dvi_name); */
 		}
 		else {
 		    redraw_anchors(link_num);
@@ -1681,7 +1762,7 @@ htex_displayanchor(int x, int y)
     anchor_text = get_anchor_at_index(x, y, &id_curr);
 
     if (anchor_text != NULL) { /* found an anchor */
-	if (!(globals.cursor.flags & CURSOR_LINK) && !dragging_text_selection()) {
+	if (!(globals.cursor.flags & CURSOR_LINK) && !(globals.cursor.flags & CURSOR_TEXT)) {
 	    globals.cursor.flags |= CURSOR_LINK;
 	    globals.ev.flags |= EV_CURSOR;
 	}
@@ -1689,7 +1770,7 @@ htex_displayanchor(int x, int y)
 	   i.e. when it either has a different ID or is on a different page: */
 	if ((resource.expert_mode & XPRT_SHOW_STATUSLINE) != 0
 	    && (id_curr != id_bak || current_page != pageno_bak)) {
-	    statusline_print(STATUS_FOREVER, "%s", anchor_text);
+	    statusline_info(STATUS_FOREVER, "%s", anchor_text);
 	    id_bak = id_curr;
 	    pageno_bak = current_page;
 	}
@@ -1710,7 +1791,7 @@ htex_displayanchor(int x, int y)
 /*
  * Invoked from all commands that change the shrink factor;
  * forces re-computation of the anchor markers.
-*/
+ */
 void
 htex_resize_page(void)
 {
@@ -1721,7 +1802,7 @@ htex_resize_page(void)
  * Invoked from all commands that reread the DVI file;
  * resets all link infos.
  * Note: visited_links and anchor stack data
- * are preserved over files, so we don't need to free() them.
+ * are preserved across multiple files, so we don't need to free() them.
  */
 void
 htex_reinit(void)
@@ -1735,7 +1816,7 @@ htex_reinit(void)
   Since this is done after the entire page is parsed, we can't use
   the checks for fg_current and do_color_change(), but need to
   use a separate GC instead.
- */
+*/
 void
 htex_draw_anchormarkers(void)
 {
@@ -1786,7 +1867,7 @@ htex_draw_anchormarkers(void)
 	     */
 	    MYTRACE((stderr, "UNDERLINE: checking if %d is visited: %d!", i, visited));
 
-/* 	    if (clip_region_to_rect(&rect)) { */
+	    /* 	    if (clip_region_to_rect(&rect)) { */
 	    if (anchor.object_type == HTEX_IMG) {
 		rect.x = anchor.ulx - 1;
 		rect.y = anchor.uly - 1;
@@ -1820,7 +1901,7 @@ launch_xdvi(const char *filename, const char *anchor_name)
 {
 #define ARG_LEN 32
     int i = 0;
-    char *argv[ARG_LEN];
+    const char *argv[ARG_LEN];
     char *shrink_arg = NULL;
 
     ASSERT(filename != NULL, "filename argument to launch_xdvi() mustn't be NULL");
@@ -1843,15 +1924,13 @@ launch_xdvi(const char *filename, const char *anchor_name)
 
     /* start the new instance with the same debug flags as the current instance */
     if (globals.debug != 0) {
-	char debug_flag[128];
-	SNPRINTF(debug_flag, 128, "%lu", globals.debug);
 	argv[i++] = "-debug";
-	argv[i++] = debug_flag;
+	argv[i++] = resource.debug_arg;
     }
     
     if (anchor_name != NULL) {
 	argv[i++] = "-anchorposition";
-	argv[i++] = (char *)anchor_name;
+	argv[i++] = anchor_name;
     }
 
     argv[i++] = "-s";
@@ -1859,7 +1938,7 @@ launch_xdvi(const char *filename, const char *anchor_name)
     sprintf(shrink_arg, "%d", currwin.shrinkfactor);
     argv[i++] = shrink_arg;
 
-    argv[i++] = (char *)filename; /* FIXME */
+    argv[i++] = filename; /* FIXME */
     
     argv[i++] = NULL;
     ASSERT(i <= ARG_LEN, "Too few elements in argv[]");
@@ -1884,8 +1963,8 @@ launch_xdvi(const char *filename, const char *anchor_name)
 	case -1:
 	    perror("fork");
 	case 0:
-	    execvp(argv[0], argv);
-	    MYTRACE((stderr, "%s: Execution of %s failed.", globals.program_name, argv[0]));
+	    execvp(argv[0], (char **)argv);
+	    XDVI_ERROR((stderr, "%s: Execution of %s failed.", globals.program_name, argv[0]));
 	    _exit(EXIT_FAILURE);
 	default:
 	    FREE(shrink_arg);
@@ -1984,7 +2063,7 @@ launch_program(const char *filename)
 	char *errmsg = xstrdup("Please assign an application to the MIME type `");
 	errmsg = xstrcat(errmsg, content_type);
 	errmsg = xstrcat(errmsg, "' in your ~/.mailcap file. "
-			       "E.g. if you want to view the file with netscape, add the following line to your ~/.mailcap:\n");
+			 "E.g. if you want to view the file with netscape, add the following line to your ~/.mailcap:\n");
 	errmsg = xstrcat(errmsg, content_type);
 	errmsg = xstrcat(errmsg, "; netscape -raise  -remote 'openURL(%%s,new-window)'\n\n");
 #endif
@@ -2055,7 +2134,7 @@ launch_program(const char *filename)
       
       - xdvi doesn't hang if the process doesn't return;
       - we can still catch the return value if `sh -c' exits with an error
-        (e.g. if the viewer command is not found).
+      (e.g. if the viewer command is not found).
 
       Note however that this doesn't mimick most of POSIX's system() semantics.
     */
@@ -2089,14 +2168,14 @@ htex_set_anchormarker(int y)
 	XtRemoveTimeOut(m_href_timeout_id);
     htex_erase_anchormarker(NULL, NULL);
     XFlush(DISP);
-    
+
     XtVaGetValues(globals.widgets.draw_widget, XtNx, &drawing_x, NULL);
     g_anchormarker.page = current_page;
     free(g_anchormarker.filename);
     g_anchormarker.filename = xstrdup(globals.dvi_name);
     g_anchormarker.y_pos = y;
     g_anchormarker.x_pos = DEFAULT_MARKER_X_OFFSET + -drawing_x;
-    m_href_timeout_id = XtAppAddTimeOut(app, STATUS_SHORT * 1000, htex_erase_anchormarker, (XtPointer)NULL);
+    m_href_timeout_id = XtAppAddTimeOut(globals.app, STATUS_SHORT * 1000, htex_erase_anchormarker, (XtPointer)NULL);
 }
 
 static void
@@ -2131,7 +2210,7 @@ htex_draw_anchormarker(int y)
     /* -1 indicates that no horizontal scrolling is wanted, since the
        anchormarker will always be horizontally positioned inside the
        visible area.
-     */
+    */
     scroll_page_if_needed(-1, -1, y + 3, y - 3);
 }
 

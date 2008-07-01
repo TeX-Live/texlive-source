@@ -51,7 +51,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *------------------------------------------------------------*/
 
 int
-my_vsnprintf(char *buf, int len, const char *format, va_list argp)
+my_vsnprintf(char *buf, size_t len, const char *format, va_list argp)
 {
     int pipe_fd[2];
     FILE *fd;
@@ -59,7 +59,9 @@ my_vsnprintf(char *buf, int len, const char *format, va_list argp)
 #ifdef DEBUG
     printf("=============my_vsnprintf called!\n");
 #endif
-    len--;	/* for the trailing '\0' */
+    if (len > 0) {
+	len--;	/* for the trailing '\0' */
+    }
     
     /* create a pipe for reading/writing */
     if (xpipe(pipe_fd) == -1) {
@@ -70,17 +72,23 @@ my_vsnprintf(char *buf, int len, const char *format, va_list argp)
 	perror("my_vsnprintf: fdopen");
 	xdvi_exit(EXIT_FAILURE);
     }
-    /* instead of setting fd to non-buffering, flush it explicitly: */
-    /*  setvbuf(fd, NULL, _IONBF, BUFSIZ); */
+    /* instead of setting fd to non-buffering:
+       setvbuf(fd, NULL, _IONBF, BUFSIZ);
+       flush it explicitly: */
     size = vfprintf(fd, format, argp);
     fflush(fd);
 
-    /* wrote less characters than len -> adjust len for the subsequent read */
-    if (size < len) {
-	len = size;
+    /* according to C99, buf may be NULL, in which case
+       just return correct number of chars. Also, don't
+       write anything if there had been an output error. */
+    if (buf != NULL && size >= 0) {
+	/* wrote less characters than len -> adjust len for the subsequent read */
+	if ((size_t)size < len) {
+	    len = size;
+	}
+	read(pipe_fd[0], buf, len);
+	buf[len] = '\0';     /* always null-terminate */
     }
-    read(pipe_fd[0], buf, len);
-    buf[len] = '\0';     /* always null-terminate */
 
     fclose(fd);
     close(pipe_fd[0]);

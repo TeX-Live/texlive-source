@@ -23,10 +23,20 @@
 #ifndef FONT_OPEN_H_
 #define FONT_OPEN_H_
 
-extern FILE *font_open(char * font, char ** font_ret, double dpi, int * dpi_ret, char ** filename_ret
-#ifdef T1LIB
-	  , int * t1id
+extern FILE *font_open(
+#if DELAYED_MKTEXPK
+		       Boolean load_font_now,
 #endif
-	  );
+		       struct font *fontp,
+		       char **font_ret,
+		       int *dpi_ret,
+#ifdef T1LIB
+		       int *t1id,
+#endif
+		       Boolean use_t1lib);
+
+#if DELAYED_MKTEXPK
+void reset_missing_font_count(void);
+#endif
 
 #endif /* FONT_OPEN_H_ */

@@ -37,7 +37,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <unistd.h> /* for pipe() */
 #include "util.h" /* for xpipe() etc. */
-extern int my_vsnprintf(char *, int, const char *, va_list);
+extern int my_vsnprintf(char *, size_t, const char *, va_list);
 #define VSNPRINTF(buf, len, format, args) my_vsnprintf(buf, len, format, args)
 
 #endif /* HAVE_VSNPRINTF && HAVE_GOOD_VSNPRINTF */

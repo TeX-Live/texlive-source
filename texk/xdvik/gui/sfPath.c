@@ -206,12 +206,12 @@ SFreplaceText(SFDir *dir, char *str)
     else {
 	(void)strncat(SFcurrentPath, str, len - 1);
     }
-/*     if (strncmp(SFcurrentPath, SFstartDir, strlen(SFstartDir))) { */
-/* 	SFsetText(SFcurrentPath); */
-/*     } */
-/*     else { */
-/* 	SFsetText(&(SFcurrentPath[strlen(SFstartDir)])); */
-/*     } */
+    /*     if (strncmp(SFcurrentPath, SFstartDir, strlen(SFstartDir))) { */
+    /* 	SFsetText(SFcurrentPath); */
+    /*     } */
+    /*     else { */
+    /* 	SFsetText(&(SFcurrentPath[strlen(SFstartDir)])); */
+    /*     } */
     SFsetText(SFcurrentPath);
 
     SFtextChanged();
@@ -433,7 +433,7 @@ SFgetHomeDirs(void)
 	    SFlogins =
 		(SFLogin *) XtRealloc((char *)SFlogins,
 				      (unsigned)(alloc * sizeof(SFLogin))
-		);
+				      );
 	}
 	len = strlen(pw->pw_name);
 	entries[i].real = XtMalloc((unsigned)(len + 3));
@@ -599,7 +599,7 @@ SFupdatePath(void)
 						 (char *)SFdirs,
 						 (unsigned)((alloc *= 2) *
 							    sizeof(SFDir))
-			);
+						 );
 		    for (j = alloc / 2; j < alloc; j++) {
 			SFdirs[j].dir = NULL;
 		    }
@@ -844,8 +844,6 @@ SFdirModTimer(XtPointer cl, XtIntervalId *id)
     UNUSED(cl);
     UNUSED(id);
 
-    fprintf(stderr, "sfdirmodtimer called!\n");
-    
     if ((!SFtwiddle) && (SFdirPtr < SFdirEnd)) {
 	n++;
 	if ((n > 2) || (SFdirPtr + n >= SFdirEnd)) {

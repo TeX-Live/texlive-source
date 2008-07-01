@@ -80,7 +80,7 @@ static struct specials_stack href_stack = { 0, NULL};
 /*
   stacks saved from the previous page (i.e. active at the
   beginning of the page)
- */
+*/
 static struct specials_stack color_save_stack = { 0, NULL };
 static struct specials_stack href_save_stack = { 0, NULL };
 
@@ -170,8 +170,8 @@ FontWrite(FILE *fout, struct fontinfo *fontp, long *fout_pos)
 	putc(FNTDEF1, fout);
     }
     putc(fontp->TeXnumber & 0xff, fout);
-    fwrite(fontp->info, sizeof(char), 14, fout);
-    fwrite(fontp->fontname, sizeof(char), fontp->info[12] + fontp->info[13], fout);
+    (void)fwrite(fontp->info, sizeof(char), 14, fout);
+    (void)fwrite(fontp->fontname, sizeof(char), fontp->info[12] + fontp->info[13], fout);
     (*fout_pos) += 2 + 14 + fontp->info[12] + fontp->info[13];
 }
 
@@ -576,28 +576,29 @@ WriteDVI(FILE *fin, FILE *fout, long *fout_pos, int c)
 
 /* callback functions for selecting pages */
 Boolean
-check_pagerange(struct select_pages_info *info, int page)
+check_pagerange(struct save_or_print_info *info, int page)
 {
-    return (page >= info->from && page <= info->to);
+    return (page >= info->pinfo->from && page <= info->pinfo->to);
 }
 
 Boolean
-check_marked(struct select_pages_info *info, int page)
+check_marked(struct save_or_print_info *info, int page)
 {
     UNUSED(info);
     return pageinfo_is_marked(page);
 }
 
 void
-select_pages(struct select_pages_info *pinfo)
+select_pages(struct save_or_print_info *info)
 {
+    struct select_pages_info *pinfo = info->pinfo;
     int c, n, page, pagecnt;
     long fout_pos = 0L;
     unsigned long curr_page_offset = 0xffffffff; /* pattern to be overwritten later */
     unsigned long post_cmd_offset = 0xffffffff; /* pattern to be overwritten later */
     struct fontinfo *fontp;
-    FILE *in_fp = pinfo->finfo->dvi_in.fp;
-    FILE *out_fp = pinfo->finfo->dvi_tmp.fp;
+    FILE *in_fp = info->finfo->in_fp;
+    FILE *out_fp = info->finfo->tmp_dvi_fp;
     
     Boolean headers_dumped = False;
     free(dvips_papersize_special); /* re-initialize */
@@ -618,10 +619,10 @@ select_pages(struct select_pages_info *pinfo)
 	    break;
 	fontp = (struct fontinfo *) xmalloc(sizeof(struct fontinfo));
 	fontp->TeXnumber = get_bytes(in_fp, c - FNTDEF1 + 1);
-	fread(fontp->info, sizeof(char), 14, in_fp);
+	(void)fread(fontp->info, sizeof(char), 14, in_fp);
 	n = fontp->info[12] + fontp->info[13];
 	fontp->fontname = xmalloc(n);
-	fread(fontp->fontname, sizeof(char), n, in_fp);
+	(void)fread(fontp->fontname, sizeof(char), n, in_fp);
 	fontp->next = fontinfo_head;
 	fontinfo_head = fontp;
 	fontp->used = False;
@@ -638,7 +639,7 @@ select_pages(struct select_pages_info *pinfo)
 	scan_page_for_specials(in_fp, page, True, stack_save, NULL);
 
 	/* should the current page be selected? */
-	if (pinfo->callback == NULL || pinfo->callback(pinfo, page)) {
+	if (pinfo->callback == NULL || pinfo->callback(info, page)) {
 	    scan_page_for_specials(in_fp, page, False, scan_for_included_files, pinfo);
 
 	    /* read BOP except for p[4] */
@@ -659,8 +660,8 @@ select_pages(struct select_pages_info *pinfo)
 
 	    /*  	    if (!written_pre_cmds) { */
 	    stack_dump_open_commands(out_fp, &fout_pos);
-/*  		written_pre_cmds = True; */
-/*  	    } */
+	    /*  		written_pre_cmds = True; */
+	    /*  	    } */
 
 	    while ((c = getc(in_fp)) != EOF) {
 		if ((c & 0x80) == 0) { /* ordinary character */
@@ -668,20 +669,20 @@ select_pages(struct select_pages_info *pinfo)
 		    fout_pos++;
 		}
 		else if (c == EOP) { /* End Of Page */
-/* 		    fprintf(stderr, "EOP at %ld\n", ftell(fin)); */
+		    /* 		    fprintf(stderr, "EOP at %ld\n", ftell(fin)); */
 
-/*  		    if (page == to) {  */ /* print close stack for last page */
+		    /*  		    if (page == to) {  */ /* print close stack for last page */
 		    stack_dump_close_commands(out_fp, &fout_pos);
-/*  		    } */
+		    /*  		    } */
 
 		    putc(c, out_fp);
 		    fout_pos++;
 		    break;
 		}
 		else {
-/* 		    fprintf(stderr, "WRITE_DVI before: %ld, in_fp before: %ld\n", fout_pos, ftell(in_fp)); */
+		    /* 		    fprintf(stderr, "WRITE_DVI before: %ld, in_fp before: %ld\n", fout_pos, ftell(in_fp)); */
 		    WriteDVI(in_fp, out_fp, &fout_pos, c);
-/* 		    fprintf(stderr, "WRITE_DVI after: %ld; in_fp after: %ld\n", fout_pos, ftell(in_fp)); */
+		    /* 		    fprintf(stderr, "WRITE_DVI after: %ld; in_fp after: %ld\n", fout_pos, ftell(in_fp)); */
 		}
 		/* HACK alert: force synchronization - why is this neccessary?
 		   Seems to have something do with the fact that two FILE *'s on the same
@@ -689,7 +690,7 @@ select_pages(struct select_pages_info *pinfo)
 		   `Interaction of File Descriptors and Standard I/O Streams' seems to
 		   say the seek()s on one of them also affect the other, but I'm not sure
 		   about this.
-		 */
+		*/
 		fseek(in_fp, 0L, SEEK_CUR);
 	    }
 	    pagecnt++;
@@ -753,7 +754,7 @@ select_pages(struct select_pages_info *pinfo)
 	putc(TRAILER, out_fp);
     }
 
-/*      fclose(in_fp); */
+    /*      fclose(in_fp); */
     fflush(out_fp);
 }
 

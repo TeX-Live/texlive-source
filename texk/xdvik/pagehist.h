@@ -28,6 +28,7 @@ extern void page_history_insert(int n);
 extern void page_history_delete(int n);
 extern void page_history_update_toolbar_navigation(void);
 extern void page_history_clear(void);
+extern int page_history_get_page(void);
 
 #endif /* PAGEHIST_H_ */
 

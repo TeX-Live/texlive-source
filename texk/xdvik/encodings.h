@@ -52,7 +52,6 @@ extern void iso_8859_1_to_utf8(unsigned char iso_8859_1, char *utf8, size_t *len
 extern int str_iso_8859_1_to_utf8(const char *latin1, char *utf8, size_t len);
 extern Boolean is_hyphenchar(uint32_t unicode);
 extern Boolean is_ideograph(uint32_t unicode);
-extern void close_iconv(void);
 
 #endif /* ENCODINGS_H_ */
 

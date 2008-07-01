@@ -44,23 +44,23 @@
 
 /* The rest of the file is Copyright (c) 2003-2004 the xdvik development team
 
-   Permission is hereby granted, free of charge, to any person obtaining a copy
-   of this software and associated documentation files (the "Software"), to
-   deal in the Software without restriction, including without limitation the
-   rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-   sell copies of the Software, and to permit persons to whom the Software is
-   furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to
+deal in the Software without restriction, including without limitation the
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+sell copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-   The above copyright notice and this permission notice shall be included in
-   all copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
 
-   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-   PAUL VOJTA OR ANY OTHER AUTHOR OF THIS SOFTWARE BE LIABLE FOR ANY CLAIM,
-   DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-   ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-   OTHER DEALINGS IN THE SOFTWARE.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+PAUL VOJTA OR ANY OTHER AUTHOR OF THIS SOFTWARE BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
 */
 
 #include "xdvi-config.h"
@@ -77,8 +77,11 @@ static iconv_t m_iconv_gb_ucs4 = (iconv_t)(-1);
 #include "encodings.h"
 #include "my-snprintf.h"
 #include "message-window.h"
+#include "exit-handlers.h"
 
 #define MY_DEBUG 0
+
+#define HAS_PREFIX(src,dst) (memcmp(src, dst, strlen(dst)) == 0)
 
 #if MY_DEBUG
 # define TRACE_FIND_VERBOSE(x) TRACE_FIND(x)
@@ -143,6 +146,57 @@ static uint32_t m_cm_symbol_encoding[256] = {
     0, 0, 0, 0, 0, 0, 0, 0
 };
 
+/* cbgreek, greek encoding */
+static uint32_t m_cb_greek_encoding[256] = {
+    0x2013, 0x20032f, 0x10144, 0x10145, 0x10146, 0x10147, 0x03db, 0x03db,
+    0x1fbe, 0x1fbc, 0x1fcc, 0x1ffc, 0x0391, 0x03ab, 0x03b1, 0x03cb,
+    /* 0x10 */
+    0x02cf, 0x02ce, 0x03df, 0x03d9, 0x20032e, 0x03d8, 0x03da, 0x03e0,
+    0x20ac, 0x2030, 0x0259, 0x03e1, 0x2018, 0x2019, 0x02d8, 0x00af,
+    /* 0x20 */
+    0x1fc1, 0x0021, 0x00a8, 0x0385, 0x1fed, 0x0025, 0x00b7, 0x0384,
+    0x0028, 0x0029, 0x002a, 0x002b, 0x002c, 0x002d, 0x002e, 0x002f,
+    /* 0x30 */
+    0x0030, 0x0031, 0x0032, 0x0033, 0x0034, 0x0035, 0x0036, 0x0037,
+    0x0038, 0x0039, 0x003a, 0x0387, 0x1ffe, 0x003d, 0x1fbf, 0x003b,
+    /* 0x40 */
+    0x1fdf, 0x0391, 0x0392, 0x1fdd, 0x0394, 0x0395, 0x03a6, 0x0393,
+    0x0397, 0x0399, 0x0398, 0x039a, 0x039b, 0x039c, 0x039d, 0x039f,
+    /* 0x50 */
+    0x03a0, 0x03a7, 0x03a1, 0x03a3, 0x03a4, 0x03d2, 0x1fde, 0x03a9,
+    0x039e, 0x03a8, 0x0396, 0x005b, 0x1fcf, 0x005d, 0x1fce, 0x1fcd,
+    /* 0x60 */
+    0x1fef, 0x03b1, 0x03b2, 0x03c2, 0x03b4, 0x03b5, 0x03c6, 0x03b3,
+    0x03b7, 0x03b9, 0x03b8, 0x03ba, 0x03bb, 0x03bc, 0x03bd, 0x03bf,
+    /* 0x70 */
+    0x03c0, 0x03c7, 0x03c1, 0x03c3, 0x03c4, 0x03c5, 0, 0x03c9, 
+    0x03be, 0x03c8, 0x03b6, 0x00ab, 0x037a, 0x00bb, 0x1fc0, 0x2014,
+    /* 0x80 */
+    0x1f70, 0x1f01, 0x1f00, 0x1f03, 0x1fb2, 0x1f81, 0x1f80, 0x1f83,
+    0x03ac, 0x1f05, 0x1f04, 0x1f02, 0x1fb4, 0x1f85, 0x1f84, 0x1f82,
+    /* 0x90 */
+    0x1fb6, 0x1f07, 0x1f06, 0x03dd, 0x1fb7, 0x1f87, 0x1f86, 0,
+    0x1f74, 0x1f21, 0x1f20, 0, 0x1fc2, 0x1f91, 0x1f90, 0,
+    /* 0xa0 */
+    0x03ae, 0x1f25, 0x1f24, 0x1f23, 0x1fc4, 0x1f95, 0x1f94, 0x1f93,
+    0x1fc6, 0x1f27, 0x1f26, 0x1f22, 0x1fc7, 0x1f97, 0x1f96, 0x1f92,
+    /* 0b0 */
+    0x1f7c, 0x1f61, 0x1f60, 0x1f63, 0x1ff2, 0x1fa1, 0x1fa0, 0x1fa3,
+    0x03ce, 0x1f65, 0x1f64, 0x1f62, 0x1ff4, 0x1fa5, 0x1fa4, 0x1fa2,
+    /* 0xc0 */
+    0x1ff6, 0x1f67, 0x1f66, 0x03dc, 0x1ff7, 0x1fa7, 0x1fa6, 0,
+    0x1f76, 0x1f31, 0x1f30, 0x1f33, 0x1f7a, 0x1f51, 0x1f50, 0x1f53,
+    /* 0xd0 */
+    0x03af, 0x1f35, 0x1f34, 0x1f32, 0x03cd, 0x1f55, 0x1f54, 0x1f52,
+    0x1fd6, 0x1f37, 0x1f36, 0x03aa, 0x1fe6, 0x1f57, 0x1f56, 0x03ab,
+    /* 0xe0 */
+    0x1f72, 0x1f11, 0x1f10, 0x1f13, 0x1f78, 0x1f41, 0x1f40, 0x1f43,
+    0x03ad, 0x1f15, 0x1f14, 0x1f12, 0x03cc, 0x1f45, 0x1f44, 0x1f42,
+    /* 0xf0 */
+    0x03ca, 0x1fd2, 0x0390, 0x1fd7, 0x03cb, 0x1fe2, 0x03b0, 0x1fe7,
+    0x1fb3, 0x1fc3, 0x1ff3, 0x1fe5, 0x1fe4, 0, 0x0374, 0x0375
+};
+
 /* from enc/texmital.h */
 static uint32_t m_cm_math_italics_encoding[256] = {
     /* 0x00 */
@@ -169,6 +223,58 @@ static uint32_t m_cm_math_italics_encoding[256] = {
     /* 0x70 */
     0x0070, 0x0071, 0x0072, 0x0073, 0x0074, 0x0075, 0x0076, 0x0077,
     0x0078, 0x0079, 0x007a, 0x0131, 0xf6be, 0x2118, 0x10fffb, 0x2040,
+    /* 0x80 */
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    /* 0x90 */
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    /* 0xa0 */
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    /* 0xb0 */
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    /* 0xc0 */
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    /* 0xd0 */
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    /* 0xe0 */
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    /* 0xf0 */
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0
+};
+
+
+static uint32_t m_bbold_encoding[256] = {
+    /* 0x00 */
+    0x0393, 0x0394, 0x0398, 0x039b, 0x039e, 0x03a0, 0x03a3, 0x03a5,
+    0x03a6, 0x03a8, 0x03a9, 0x03b1, 0x03b2, 0x03b3, 0x03b4, 0x03f5,
+    /* 0x10 */
+    0x03b6, 0x03b7, 0x03b8, 0x03b9, 0x03ba, 0x03bb, 0x03bc, 0x03bd,
+    0x03be, 0x03c0, 0x03c1, 0x03c3, 0x03c4, 0x03c5, 0x03d5, 0x03c7,
+    /* 0x20 */
+    0x03c8, 0x0021, 0x201c, 0x0023, 0x0024, 0x0025, 0x0026, 0x2019,
+    0x0028, 0x0029, 0x002a, 0x002b, 0x002c, 0x002d, 0x002e, 0x002f,
+    /* 0x30 */
+    0x0030, 0x0031, 0x0032, 0x0033, 0x0034, 0x0035, 0x0036, 0x0037,
+    0x0038, 0x0039, 0x003a, 0x003b, 0x00a1, 0x003d, 0x00bf, 0x003f,
+    /* 0x40 */
+    0x0040, 0x0041, 0x0042, 0x0043, 0x0044, 0x0045, 0x0046, 0x0047,
+    0x0048, 0x0049, 0x004a, 0x004b, 0x004c, 0x004d, 0x004e, 0x004f,
+    /* 0x50 */
+    0x0050, 0x0051, 0x0052, 0x0053, 0x0054, 0x0055, 0x0056, 0x0057,
+    0x0058, 0x0059, 0x005a, 0x005b, 0x005c, 0x005d, 0x0028, 0x0029,
+    /* 0x60 */
+    0x2018, 0x0061, 0x0062, 0x0063, 0x0064, 0x0065, 0x0066, 0x0067,
+    0x0068, 0x0069, 0x006a, 0x006b, 0x006c, 0x006d, 0x006e, 0x006f,
+    /* 0x70 */
+    0x0070, 0x0071, 0x0072, 0x0073, 0x0074, 0x0075, 0x0076, 0x0077,
+    0x0078, 0x0079, 0x007a, 0x002d, 0x007c, 0x2013, 0x201d, 0x03c9,
     /* 0x80 */
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
@@ -459,7 +565,7 @@ static uint32_t m_cork_encoding[256] = {
    This only gets the accents and stuff from iso-latin1 right; lots of
    the special characters aren't defined in the Adobe lookup list
    used by catdvi's `pse2unic'.
- */
+*/
 static uint32_t m_ts1_encoding[256] = {
     /* 0x00 */
     0x0060, 0x00b4, 0x02c6, 0x02dc, 0x00a8, 0x02dd, 0x02da, 0x02c7,
@@ -1302,7 +1408,7 @@ static struct adobe2unicode adobe2unicode_table[] = {
     { "circle", 0x25CB }, /* WHITE CIRCLE */
     { "circlemultiply", 0x2297 }, /* CIRCLED TIMES */
     { "circleplus", 0x2295 }, /* CIRCLED PLUS */
-/*     { "circumflex", 0x02C6 }, /\* MODIFIER LETTER CIRCUMFLEX ACCENT *\/ */
+    /*     { "circumflex", 0x02C6 }, /\* MODIFIER LETTER CIRCUMFLEX ACCENT *\/ */
     { "circumflex", 0x005E }, /* MODIFIER LETTER CIRCUMFLEX ACCENT */
     { "club", 0x2663 }, /* BLACK CLUB SUIT */
     { "colon", 0x003A }, /* COLON */
@@ -1680,7 +1786,7 @@ static struct adobe2unicode adobe2unicode_table[] = {
     { "threequarters", 0x00BE }, /* VULGAR FRACTION THREE QUARTERS */
     { "threequartersemdash", 0xF6DE }, /* THREE QUARTERS EM DASH */
     { "threesuperior", 0x00B3 }, /* SUPERSCRIPT THREE */
-/*     { "tilde", 0x02DC }, /\* SMALL TILDE *\/ */
+    /*     { "tilde", 0x02DC }, /\* SMALL TILDE *\/ */
     { "tilde", 0x007E }, /* ASCII TILDE */
     { "tildecomb", 0x0303 }, /* COMBINING TILDE */
     { "tonos", 0x0384 }, /* GREEK TONOS */
@@ -2906,9 +3012,10 @@ unicode_id_cmp(const void *s1, const void *s2)
 }
 #endif /* 0 */
 
-void
-close_iconv(void)
+static void
+close_iconv(void *dummy)
 {
+    UNUSED(dummy);
 #if HAVE_ICONV_H
     if (m_iconv_gb_ucs4 != (iconv_t)(-1)) {
 	iconv_close(m_iconv_gb_ucs4);
@@ -2945,6 +3052,9 @@ cjk2unicode(const unsigned char *cjk)
 	    XDVI_ERROR((stderr, "cjk2unicode: iconv_open() failed: %s", strerror(errno)));
 	    return 0;
 	}
+
+	register_exit_handler(close_iconv, NULL);
+	
     }
     if (iconv(m_iconv_gb_ucs4, (iconv_char_pptrT)&from_ptr, &from, &to_ptr, &to) == (size_t)(-1)) {
 	XDVI_ERROR((stderr, "cjk2unicode: can't convert GBK to unicode: %s", strerror(errno)));
@@ -2975,7 +3085,7 @@ adobe2unicode_name(const char *adobe_name)
     struct adobe2unicode search_item;
     struct adobe2unicode *match_item;
 
-    if (memcmp(adobe_name, "cjk", 3) == 0) {
+    if (HAS_PREFIX(adobe_name, "cjk")) {
 	/* Special case for CJK fonts (Chinese) - ZLB: the Adobe names in
 	 * the Chinese T1 fonts are of the form 'cjkXXXX' where 'XXXX' are
 	 * the hex number of the GBK/GB18030 encoding */
@@ -3040,7 +3150,7 @@ ucs4_lowercase(uint32_t c)
       if [ -n "$res" ]; then echo "RES: $a $b -> $res"; fi; fi; done | grep 'RES' > uni2adobe-map
 
       And then, some Emacs keyboard macros.
-     */
+    */
     switch (c) {
     case 0x0041: /* A */                return 0x0061; /* a */
     case 0x0042: /* B */                return 0x0062; /* b */
@@ -3473,9 +3583,10 @@ guess_encoding(wide_ubyte ch, const char *fontname, char *retbuf)
 	return 0;
     }
 
-    if (memcmp(fontname, "gbk", 3) == 0
-		&& isdigit((int)fontname[(i=strlen(fontname))-1])
-		&& isdigit((int)fontname[i-2])) {
+    if (HAS_PREFIX(fontname, "gbk")
+	&& isdigit((int)fontname[(i=strlen(fontname))-1])
+	&& isdigit((int)fontname[i-2]))
+    {
 	unsigned char cjk[2];
 	TRACE_FIND_VERBOSE((stderr, "guess_encoding: CJK fonts (GBK encoding)"));
 	i = atoi(fontname + i - 2);		/* font no */
@@ -3487,57 +3598,66 @@ guess_encoding(wide_ubyte ch, const char *fontname, char *retbuf)
 	return cjk2unicode(cjk);
     }
 
-    if (memcmp(fontname, "cmsy", 4) == 0) {
+    if (HAS_PREFIX(fontname, "cmsy") ||
+	HAS_PREFIX(fontname, "xccsy")
+	) {
 	TRACE_FIND_VERBOSE((stderr, "guess_encoding: %s => m_cm_symbol", fontname));
 	return m_cm_symbol_encoding[ch];
     }
-    if (memcmp(fontname, "cmmi", 4) == 0) {
+    if (HAS_PREFIX(fontname, "cmmi") ||
+	HAS_PREFIX(fontname, "xccmi")
+	) {
 	TRACE_FIND_VERBOSE((stderr, "guess_encoding: %s => m_cm_math_italics", fontname));
 	return m_cm_math_italics_encoding[ch];
     }
-    if (memcmp(fontname, "cmex", 4) == 0) {
+    if (HAS_PREFIX(fontname, "cmex") ||
+	HAS_PREFIX(fontname, "xccex")
+	) {
 	TRACE_FIND_VERBOSE((stderr, "guess_encoding: %s => m_cm_math_extended", fontname));
 	return m_cm_math_extended_encoding[ch];
     }
-    if (memcmp(fontname, "cmtt", 4) == 0) {
+    if (HAS_PREFIX(fontname, "cmtt")) {
 	TRACE_FIND_VERBOSE((stderr, "guess_encoding: %s => m_cm_typewriter", fontname));
 	return m_cm_typewriter_encoding[ch];
     }
     /* following to cover cmsl, cmb, cmbx, cmti, cmdunghill, whatever ...
        hope it doesn't overgenerate ;-) */
-    if (memcmp(fontname, "cm", 2) == 0
-	|| memcmp(fontname, "lcmss", strlen("lcmss")) == 0 /* lcmss8 etc. */
-	|| memcmp(fontname, "ygoth", strlen("ygoth")) == 0
-	|| memcmp(fontname, "yinit", strlen("yinit")) == 0
-	|| memcmp(fontname, "logo", strlen("logo")) == 0
-	|| memcmp(fontname, "rsfs", strlen("rsfs")) == 0
+    if (HAS_PREFIX(fontname, "cm")
+	|| HAS_PREFIX(fontname, "ccr")
+	|| HAS_PREFIX(fontname, "lcmss") /* lcmss8 etc. */
+	|| HAS_PREFIX(fontname, "ygoth")
+	|| HAS_PREFIX(fontname, "yinit")
+	|| HAS_PREFIX(fontname, "logo")
+	|| HAS_PREFIX(fontname, "rsfs")
+	|| HAS_PREFIX(fontname, "bbm")
 	) {
 	TRACE_FIND_VERBOSE((stderr, "guess_encoding: %s => m_ot1", fontname));
 	return m_ot1_encoding[ch];
     }
     /* cyrillic fonts */
-    if (memcmp(fontname, "la", 2) == 0) {
+    if (HAS_PREFIX(fontname, "la")) {
 	TRACE_FIND_VERBOSE((stderr, "guess_encoding: %s => m_t2", fontname));
 	return m_t2_encoding[ch];
     }
-    if (memcmp(fontname, "ec", 2) == 0
-	|| memcmp(fontname, "eb", 2) == 0) {
+    if (HAS_PREFIX(fontname, "ec")
+	|| HAS_PREFIX(fontname, "eo")
+	|| HAS_PREFIX(fontname, "eb")) {
 	TRACE_FIND_VERBOSE((stderr, "guess_encoding: %s => m_cork", fontname));
-	/* FIXME: why cork and not EC? What font actually uses EC?
+	/* FIXME: why cork and not EC? Are there fonts that actually use EC?
 	   The only difference seems that dvips' EC.enc has `ldot' at 0xb8,
 	   whereas cork.enc has `ydieresis' there. A document with
 	   \usepackage[T1]{fontenc}
 	   also produces a ydieresis.
-	 */
+	*/
 	return m_cork_encoding[ch];
     }
-    if (memcmp(fontname, "tc", 2) == 0) {
+    if (HAS_PREFIX(fontname, "tc")) {
 	TRACE_FIND_VERBOSE((stderr, "guess_encoding: %s => m_ts1", fontname));
 	return m_ts1_encoding[ch];
     }
     /* blackletter fonts with funny encoding */
-    if (memcmp(fontname, "ysmfrak", 7) == 0
-	|| memcmp(fontname, "yswab", 5) == 0) {
+    if (HAS_PREFIX(fontname, "ysmfrak")
+	|| HAS_PREFIX(fontname, "yswab")) {
 	TRACE_FIND_VERBOSE((stderr, "guess_encoding: %s => m_yfrak", fontname));
 	/* special cases for ligatures */
 	switch (ch) {
@@ -3547,11 +3667,9 @@ guess_encoding(wide_ubyte ch, const char *fontname, char *retbuf)
 	default: return m_yfrak_encoding[ch];
 	}
     }
-
     /* euler mathematical */
-    if (memcmp(fontname, "eufm", strlen("eufm")) == 0
-	|| memcmp(fontname, "eusm", strlen("eufm")) == 0
-	) {
+    if (HAS_PREFIX(fontname, "eufm")
+	|| HAS_PREFIX(fontname, "eusm")) {
 	switch (ch) {
 	case 0x0: case 0x1: return 'd'; break;
 	case 0x2: case 0x3: return 'f'; break;
@@ -3562,21 +3680,55 @@ guess_encoding(wide_ubyte ch, const char *fontname, char *retbuf)
 	default: return m_ot1_encoding[ch];
 	}
     }
-	       
-    
     /* stuff that doesn't have a good ASCII representation */
-    if (memcmp(fontname, "lcircle", strlen("lcircle")) == 0
-	|| memcmp(fontname, "line", strlen("line")) == 0
-	|| memcmp(fontname, "fmvr8x", strlen("fmvr8x")) == 0
-	|| memcmp(fontname, "feymr", strlen("feymr")) == 0
-	|| memcmp(fontname, "msbm", strlen("msbm")) == 0
-	|| memcmp(fontname, "msam", strlen("msam")) == 0
-	|| memcmp(fontname, "wasy", strlen("wasy")) == 0
-	|| memcmp(fontname, "txsy", strlen("txsy")) == 0
+    if (HAS_PREFIX(fontname, "lcircle")
+	|| HAS_PREFIX(fontname, "line")
+	|| HAS_PREFIX(fontname, "fmvr8x")
+	|| HAS_PREFIX(fontname, "feymr")
+	|| HAS_PREFIX(fontname, "msbm")
+	|| HAS_PREFIX(fontname, "msam")
+	|| HAS_PREFIX(fontname, "wasy")
+	|| HAS_PREFIX(fontname, "txsy")
 	) {
 	return 0;
     }
-
+    if (HAS_PREFIX(fontname, "bbold")) {
+	return m_bbold_encoding[ch];
+    }
+    if (HAS_PREFIX(fontname, "gli")
+	|| HAS_PREFIX(fontname, "glj")
+	|| HAS_PREFIX(fontname, "glm")
+	|| HAS_PREFIX(fontname, "glt")
+	|| HAS_PREFIX(fontname, "glw")
+	|| HAS_PREFIX(fontname, "glx")
+	|| HAS_PREFIX(fontname, "gmm")
+	|| HAS_PREFIX(fontname, "gmt")
+	|| HAS_PREFIX(fontname, "gmx")
+	|| HAS_PREFIX(fontname, "gom")
+	|| HAS_PREFIX(fontname, "gox")
+	|| HAS_PREFIX(fontname, "grb")
+	|| HAS_PREFIX(fontname, "grm")
+	|| HAS_PREFIX(fontname, "grx")
+	|| HAS_PREFIX(fontname, "gsm")
+	|| HAS_PREFIX(fontname, "gsx")
+	|| HAS_PREFIX(fontname, "gtt")
+	) {
+	TRACE_FIND_VERBOSE((stderr, "guess_encoding: %s => m_cb_greek_encoding", fontname));
+	return m_cb_greek_encoding[ch];
+    }
+    if (HAS_PREFIX(fontname, "wasy")) {
+	/* these are all special symbols */
+	return 0;
+    }
+    if (HAS_PREFIX(fontname, "to")) {
+	if (ch >= '0' && ch <= '9') {
+	    return ch;
+	}
+	else { /* special symbols */
+	    return 0;
+	}
+    }
+    
     /* TODO:
        txfonts
     */
@@ -3587,10 +3739,17 @@ guess_encoding(wide_ubyte ch, const char *fontname, char *retbuf)
 	hash_initialized = True;
     }
     if (!find_str_int_hash(&unknown_font_hash, fontname, &dummy)) {
-	XDVI_WARNING((stderr,
-		      "guess_encoding(): nothing suitable for \"%s\", assuming Cork encoding.\n"
-		      "(Please tell us about this at "
-		      "http://sourceforge.net/tracker/?group_id=23164&atid=377580)", fontname));
+	if (resource.t1lib) {
+	    XDVI_WARNING((stderr,
+			  "guess_encoding(): nothing suitable for \"%s\", assuming Cork encoding.\n"
+			  "(Please tell us about this at "
+			  "http://sourceforge.net/tracker/?group_id=23164&atid=377580)", fontname));
+	}
+	else {
+	    XDVI_INFO((stderr,
+		       "T1lib not enabled, assuming Cork encoding for font \"%s\".\n",
+		       fontname));
+	}
 	put_str_int_hash(&unknown_font_hash, fontname, dummy);
     }
     return m_cork_encoding[ch];
@@ -3794,8 +3953,13 @@ utf8_to_ucs4(const char *utf8, uint32_t *ucs4, size_t len)
 void
 ucs4_to_utf8(uint32_t ucs4, char *utf8, size_t *len, Boolean do_lowercase)
 {
-    if (do_lowercase)
+    if (do_lowercase) {
 	ucs4 = ucs4_lowercase(ucs4);
+	TRACE_FIND_VERBOSE((stderr, "Lowercasing of 0x%lx --> 0x%lx\n", ucs4_bak, ucs4));
+    }
+    else {
+	TRACE_FIND_VERBOSE((stderr, "NOT lowercasing 0x%lx\n", ucs4));
+    }
     
     if (ucs4 < 0x80)
 	*len = 1;

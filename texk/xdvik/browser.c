@@ -19,7 +19,7 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 #include "xdvi-config.h"
 #include "xdvi.h"
@@ -39,9 +39,14 @@
 #include "statusline.h"
 
 static const char *const default_browser_cmd =
-	"netscape -raise -remote \"openURL(%s,new-window)\""
-	":xterm -e lynx %s"
-	":xterm -e wget %s";
+"xdg-open %s"
+":htmlview %s"
+":firefox -remote \"openURL(%s,new-window)\""
+":mozilla -remote \"openURL(%s,new-window)\""
+":netscape -remote \"openURL(%s,new-window)\""
+":xterm -e w3m %s"
+":xterm -e lynx %s"
+":xterm -e wget %s";
 
 static Boolean
 do_fork_browser(char *argv[])
@@ -191,7 +196,7 @@ launch_browser(const char *filename)
        it would be better to have this in one function. */
     my_child = xmalloc(sizeof *my_child);
     my_io = xmalloc(sizeof *my_io);
-    statusline_print(STATUS_MEDIUM, "Trying to launch browser ...");
+    statusline_info(STATUS_MEDIUM, "Trying to launch browser ...");
     /* flush output buffers to avoid double buffering (i.e. data
        waiting in the output buffer being written twice, by the parent
        and the child) */
@@ -257,6 +262,7 @@ launch_browser(const char *filename)
 #endif
 	my_io->read_proc = read_child_error;
 	my_io->write_proc = NULL;
+	my_io->data = NULL;
 	    
 	my_child->next = NULL;
 	my_child->pid = pid;
@@ -266,7 +272,7 @@ launch_browser(const char *filename)
 	my_child->io = my_io;
 	    
 	set_chld(my_child);
-	statusline_print(STATUS_MEDIUM, "Trying to launch browser ... done.");
+	statusline_info(STATUS_MEDIUM, "Trying to launch browser ... done.");
     }
 }
 

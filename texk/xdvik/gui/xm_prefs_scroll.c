@@ -345,7 +345,7 @@ h_create_scrolling(Widget parent, struct topic_info *info)
 					 XmNleftWidget, x_off_label,
 					 XmNbottomAttachment, XmATTACH_FORM,
 					 XmNvalue, x_buf,
-/* 					 XmNvalue, buf, */
+					 /* 					 XmNvalue, buf, */
 					 NULL);
     y_off_label = XmCreateLabelGadget(form1, Xdvi_HOME_POSITION_Y_STR, NULL, 0);
     XtVaSetValues(y_off_label,

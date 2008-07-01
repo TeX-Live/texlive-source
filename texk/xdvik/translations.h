@@ -8,6 +8,16 @@ static const char base_key_translations[] =
    (i.e. `alt ctrl' before `ctrl' before unmodified)
    `:' at start of description means that case matters
 */
+    "<Key>1:		digit(1)\n"
+    "<Key>2:		digit(2)\n"
+    "<Key>3:		digit(3)\n"
+    "<Key>4:		digit(4)\n"
+    "<Key>5:		digit(5)\n"
+    "<Key>6:		digit(6)\n"
+    "<Key>7:		digit(7)\n"
+    "<Key>8:		digit(8)\n"
+    "<Key>9:		digit(9)\n"
+    "<Motion>:		motion()\n"
     "Ctrl<Key>]:	pagehistory-delete-forward()\n"
     "Ctrl<Key>[:	pagehistory-delete-backward()\n"
 /* it seems the following is needed for compatibility with german, french,
@@ -24,6 +34,7 @@ static const char base_key_translations[] =
     ":Ctrl<Key>-:	set-shrink-factor(-)\n"
     ":<Key>-:		minus()\n"
     ":<Key>?:		help()\n"
+/*     ":<Key>/:		incremental-find()\n" */
     ":<Key>>:		goto-page()\n"
     ":<Key><:		goto-page(1)\n"
     ":<Key>^:		home()\n"
@@ -38,6 +49,7 @@ static const char base_key_translations[] =
     ":<Key>c:		center()\n"
 /* removed, redundant and gets in the way
     ":Ctrl<Key>d:	quit()\n" */
+    ":<Key>D:		toggle-grid-mode()\n"
     ":<Key>d:		down()\n"
     "Ctrl<Key>f:	find()\n"
     ":<Key>F:		htex-forward()\n"
@@ -119,34 +131,46 @@ static const char base_key_translations[] =
     "<Key>Escape:	discard-number()\n"
 #endif
 #ifdef XK_KP_Left
-    "<Key>KP_Home:	home()\n"
-    "<Key>KP_Left:	left()\n"
-    "<Key>KP_Up:	up()\n"
-    "<Key>KP_Right:	right()\n"
-    "<Key>KP_Down:	down()\n"
-    "<Key>KP_Prior:	back-page()\n"
-    "<Key>KP_Next:	forward-page()\n"
-    "<Key>KP_Delete:	up-or-previous()\n"
-    "<Key>KP_Enter:	forward-page()\n"
+    "~@Num_Lock<Key>KP_Home:home()\n"
+    "~@Num_Lock<Key>KP_Left:left(0.015)\n"
+    "~@Num_Lock<Key>KP_Begin:center()\n"
+    "~@Num_Lock<Key>KP_Up:up(0.015)\n"
+    "~@Num_Lock<Key>KP_Right:right(0.015)\n"
+    "~@Num_Lock<Key>KP_Down:down(0.015)\n"
+    "~@Num_Lock<Key>KP_Prior:back-page()\n"
+    "~@Num_Lock<Key>KP_Next:forward-page()\n"
+    "<Key>KP_Enter:forward-page()\n"
+    "<Key>KP_Delete:up-or-previous()\n"
+    "<Key>KP_1:digit(1)\n"
+    "<Key>KP_2:digit(2)\n"
+    "<Key>KP_3:digit(3)\n"
+    "<Key>KP_4:digit(4)\n"
+    "<Key>KP_5:digit(5)\n"
+    "<Key>KP_6:digit(6)\n"
+    "<Key>KP_7:digit(7)\n"
+    "<Key>KP_8:digit(8)\n"
+    "<Key>KP_9:digit(9)\n"
+    "<Key>KP_0:digit(0)\n"
 #endif
     "";
 
 
 static const char base_mouse_translations[] =
-    "Shift<Btn1Down>:	drag(+)\n"
-    "Shift<Btn2Down>:	drag(|)\n"
-    "Shift<Btn3Down>:	drag(-)\n"
-    "Ctrl<Btn1Down>:	source-special()\n"
-    "<Btn1Down>:	do-href()magnifier(*1)\n"
-    "<Btn2Down>:	do-href-newwindow()magnifier(*2)\n"
-    "<Btn3Down>:	magnifier(*3)\n"
-    "<Btn4Down>:	magnifier(*4)\n"
-    "<Btn5Down>:	magnifier(*5)\n"
+    "<BtnUp>:release()\n"
+    "Shift<Btn1Down>:	mouse-modes(\"drag(+)\")\n"
+    "Shift<Btn2Down>:	mouse-modes(\"drag(|)\")\n"
+    "Shift<Btn3Down>:	mouse-modes(\"drag(-)\")\n"
+    "Ctrl<Btn1Down>:	mouse-modes(\"source-special()\", \"source-special()\", \"source-special()\")\n"
+    "<Btn1Down>:	mouse-modes(\"do-href()magnifier(*2)\", \"text-selection()\", \"ruler()\")\n"
+    "<Btn2Down>:	mouse-modes(\"do-href-newwindow()magnifier(*2)\", \"text-selection()\", \"ruler()\")\n"
+    "<Btn3Down>:	mouse-modes(\"magnifier(*3)\")\n"
+    "<Btn4Down>:	mouse-modes(\"wheel(-0.2)\")\n"
+    "<Btn5Down>:	mouse-modes(\"wheel(0.2)\")\n"
     "";
 
 
-#if defined(NEW_MENU_CREATION) || defined(MOTIF)
-static const char default_menu_config[] =
+/*  #if defined(NEW_MENU_CREATION) || defined(MOTIF) */
+
 /*
   BNF-like Syntax of the entries:
 
@@ -162,21 +186,25 @@ static const char default_menu_config[] =
   button-type ::= `PUSH' | `RADIO' | `CHECK' | `SEP'
 
   Notes:
-     - In entry-line, every occurrence of `:' that's not a separator needs to be escaped
-       like this: `\:'; similar for `>' in menu-spec and `|' in menu-title.
+     - In entry-line, every occurrence of `:' that's not a separator has to be
+       escaped like this: `\:'; similar for `>' in menu-spec and `|' in menu-title.
      - Every `>' in menu-spec creates a submenu for the corresponding menu.
      - mnemonic is the key binding for the action, displayed as mnemonic string in
        the Motif menus (not yet in the Xaw version, since Xaw doesn't provide for
-       such mnemonics by default).
+       such mnemonics).
      - accelerator is the Motif menu accelerator key.
  */
+static const char default_menu_config[] =
     "File|F > Open ...|O		:PUSH	:Ctrl-o	:select-dvi-file()\n"
-    "File|F > Open Recent |R		:PUSH	:	:recent-files()\n"
-    "File|F > Reload|R			:PUSH	:R	:reread-dvi-file()\n"
+    "File|F > Open Recent|R		:PUSH	:	:recent-files()\n"
+    "File|F > Reload|l			:PUSH	:R	:reread-dvi-file()\n"
+    "File|F				:SEP	::\n"
     "File|F > Find ...|F		:PUSH	:Ctrl-f :find()\n"
-    "File|F > Find next ...|N		:PUSH	:Ctrl-g :find-next()\n"
+    "File|F > Find Next ...|N		:PUSH	:Ctrl-g :find-next()\n"
+    "File|F				:SEP	::\n"
     "File|F > Print ...|P		:PUSH	:Ctrl-p :print()\n"
-    "File|F > Save as ...|S		:PUSH	:Ctrl-s	:save()\n"
+    "File|F > Save As ...|S		:PUSH	:Ctrl-s	:save()\n"
+    "File|F				:SEP	::\n"
     "File|F > Quit|Q			:PUSH	:q	:quit()\n"
 /* ========== */			
     "Navigate|N > Page-10|		:PUSH	:10 p	:back-page(10)\n"
@@ -197,6 +225,7 @@ static const char default_menu_config[] =
     "Navigate|N > Back Hyperlink|B	:PUSH	:B	:htex-back()\n"
     "Navigate|N > Forward Hyperlink|F	:PUSH	:F	:htex-forward()\n"
 /* ========== */
+#ifdef MOTIF /* Motif zoom buttons are more verbose to emphasise the accelerator */
     "Zoom|Z > Shrink by 1|1		:RADIO	:1 s	:set-shrink-factor(1)\n"
     "Zoom|Z > Shrink by 2|2		:RADIO	:2 s	:set-shrink-factor(2)\n"
     "Zoom|Z > Shrink by 3|3		:RADIO	:3 s	:set-shrink-factor(3)\n"
@@ -206,6 +235,17 @@ static const char default_menu_config[] =
     "Zoom|Z > Shrink by 7|7		:RADIO	:7 s	:set-shrink-factor(7)\n"
     "Zoom|Z > Shrink by 8|8		:RADIO	:8 s	:set-shrink-factor(8)\n"
     "Zoom|Z > Shrink by 9|9		:RADIO	:9 s	:set-shrink-factor(9)\n"
+#else
+    "Zoom|Z > 1|1			:RADIO	:1 s	:set-shrink-factor(1)\n"
+    "Zoom|Z > 2|2			:RADIO	:2 s	:set-shrink-factor(2)\n"
+    "Zoom|Z > 3|3			:RADIO	:3 s	:set-shrink-factor(3)\n"
+    "Zoom|Z > 4|4			:RADIO	:4 s	:set-shrink-factor(4)\n"
+    "Zoom|Z > 5|5			:RADIO	:5 s	:set-shrink-factor(5)\n"
+    "Zoom|Z > 6|6			:RADIO	:6 s	:set-shrink-factor(6)\n"
+    "Zoom|Z > 7|7			:RADIO	:7 s	:set-shrink-factor(7)\n"
+    "Zoom|Z > 8|8			:RADIO	:8 s	:set-shrink-factor(8)\n"
+    "Zoom|Z > 9|9			:RADIO	:9 s	:set-shrink-factor(9)\n"
+#endif
     "Zoom|Z				:SEP	::\n"
     "Zoom|Z > Fit in Window|F		:PUSH	:s	:set-shrink-factor(a)\n"
     "Zoom|Z				:SEP	::\n"
@@ -218,17 +258,20 @@ static const char default_menu_config[] =
     "Mark|M > Toggle Odd Pages|O	:PUSH	:1 m	:toggle-mark(1)\n"
     "Mark|M > Toggle Even Pages|E	:PUSH	:2 m	:toggle-mark(2)\n"
     "Mark|M > Toggle Current Page|C	:PUSH	:m	:toggle-mark()\n"
+#ifndef MOTIF /* special `Modes' menu for Xaw */
+    "Modes|M > Magnifier|M		:RADIO	:Ctrl-m	:switch-mode(0)\n"
+    "Modes|M > Text Selection|T		:RADIO	:Ctrl-m	:switch-mode(1)\n"
+    "Modes|M > Ruler|R			:RADIO	:Ctrl-m	:switch-mode(2)\n"
+#endif
 /* ========== */
     "Options|O > Keep Position|K		:CHECK	:k	:set-keep-flag(toggle)\n"
     "Options|O > Use TeX Page Numbers|T	:CHECK	:T	:use-tex-pages(toggle)\n"
     "Options|O				:SEP	::\n"
-/* removed this one, since it only duplicates the toolbar and is too awkward to use */
-/*     "Options|O > Fonts|F > Fonts Darker|D		:PUSH	:Alt-Ctrl-+	:change-density(5)\n" */
-/*     "Options|O > Fonts|F > Fonts Lighter|L		:PUSH	:Alt-Ctrl--	:change-density(-5)\n" */
 /* ---------- */
+#ifdef MOTIF /* nested menus are used in Motif only */
 #if 0
 /* TODO: implement setting paper size at runtime */
-    "Options|O > Paper|a > US|U		:RADIO	:	:set-papersize(us)\n"
+    "Options|O > Paper|a > US letter|U  :RADIO	:	:set-papersize(us)\n"
     "Options|O > Paper|a > Legal|L	:RADIO	:	:set-papersize(legal)\n"
     "Options|O > Paper|a > Foolscap|F	:RADIO	:	:set-papersize(foolscap)\n"
     "Options|O > Paper|a > A1|1		:RADIO	:	:set-papersize(a1)\n"
@@ -248,23 +291,27 @@ static const char default_menu_config[] =
     "Options|O > Postscript|o > Show PS|S			:RADIO	:1 v	:set-ps(1)\n"
     "Options|O > Postscript|o > Show PS and Bounding Boxes|B	:RADIO	:2 v	:set-ps(2)\n"
     "Options|O > Postscript|o > Show Bounding Boxes Only|O	:RADIO	:0 v	:set-ps(0)\n"
+#  ifdef GS_PS
     "Options|O > Postscript|o					:SEP	::\n"
     "Options|O > Postscript|o > Use PS Anti-Aliasing|A		:CHECK	:V	:set-gs-alpha(toggle)\n"
+#  endif
 # endif
-/* ---------- */
-/* removed, since it was redundant to Preferences */
-/* # ifdef MOTIF */
-/*     "Options|O > Window Configuration|W > Show Statusline|S	:CHECK	:1x	:set-expert-mode(1)\n" */
-/*     "Options|O > Window Configuration|W > Show Scrollbars|c	:CHECK	:2x	:set-expert-mode(2)\n" */
-/*     "Options|O > Window Configuration|W > Show Pagelist|P	:CHECK	:3x	:set-expert-mode(3)\n" */
-/*     "Options|O > Window Configuration|W > Show Toolbar|T	:CHECK	:4x	:set-expert-mode(4)\n" */
-/* # endif */
 /* ---------- */
     "Options|O > Mouse Mode|M > Magnifier|M			:RADIO	:0 Ctrl-m	:switch-mode(0)\n"
     "Options|O > Mouse Mode|M > Text Selection|T		:RADIO	:1 Ctrl-m	:switch-mode(1)\n"
     "Options|O > Mouse Mode|M > Ruler|R				:RADIO	:2 Ctrl-m	:switch-mode(2)\n"
     "Options|O				:SEP	::\n"
     "Options|O > Preferences ...|P 	:PUSH	:		:prefs-dialog()\n"
+#else
+    "Options|O > Show PS|S			:RADIO	:1 v	:set-ps(1)\n"
+    "Options|O > Show PS and Bounding Boxes|B	:RADIO	:2 v	:set-ps(2)\n"
+    "Options|O > Show Bounding Boxes Only|O	:RADIO	:0 v	:set-ps(0)\n"
+    "Options|O					:SEP	::\n"
+    "Options|O > Use PS Anti-Aliasing|A		:CHECK	:V	:set-gs-alpha(toggle)\n"
+    "Options|O					:SEP	::\n"
+    "Options|O > Fonts Darker|D			:PUSH	:Alt-Ctrl-+:change-density(5)\n"
+    "Options|O > Fonts Lighter|L		:PUSH	:Alt-Ctrl--:change-density(-5)\n"
+#endif /* MOTIF */
 /* ========== */
     "Help|H > Introduction ...|I	:PUSH	:		:help(Introduction)\n"
     "Help|H > Page Motion ...|P		:PUSH	:		:help(Page Motion)\n"
@@ -279,92 +326,7 @@ static const char default_menu_config[] =
     "Help|H > New Features in this Version|F:PUSH::load-url(http\\://xdvi.sourceforge.net/releases.html#" XDVI_VERSION ")\n"
     "Help|H > Submit a Bug Report|B	:PUSH	::load-url(http\\://sourceforge.net/tracker/?func=add&group_id=23164&atid=377580)\n"
     "";
-#else /* NEW_MENU_CREATION */
-/* TODO:
-   - describe this in manpage
-   - use in the Motif version as well
-*/
-static const char default_menu_config[] =
-/*  menu:	submenu:		accelerator:	action */
-    "File:	Open ...:		Ctrl-o:	select-dvi-file()\n"
-    "File:	Open Recent:		:	recent-files()\n"
-    "File:	Find ...:		Ctrl-f:	find()\n"
-    "File:	Find next ...:		Ctrl-g:	find-next()\n"
-    "File:	Reload:			R:	reread-dvi-file()\n"
-    "File:	Save as ...:		Ctrl-s:	save()\n"
-    "File:	Print ...:		Ctrl-p:	print()\n"
-    "File:	Quit:			q:	quit()\n"
-    "Navigate:	First:			1 g:	goto-page(1)\n"
-    "Navigate:	Page-10:		10 p:	back-page(10)\n"
-    "Navigate:	Page-5:			5 p:	back-page(10)\n"
-    "Navigate:	Prev:			p:	back-page(1)\n"
-    "Navigate:	SEP\n"
-    "Navigate:	Next:			n:	forward-page(1)\n"
-    "Navigate:	Page+5:			5 n:	forward-page(5)\n"
-    "Navigate:	Page+10:		10 n:	forward-page(10)\n"
-    "Navigate:	Last:			g:	goto-page()\n"
-    "Navigate:	SEP\n"
-    "Navigate:	Back Hyperlink:		B:	htex-back()\n"
-    "Navigate:	Forward Hyperlink:	F:	htex-forward()\n"
-    "Zoom:	Zoom In:		Ctrl-+:	set-shrink-factor(+)\n"
-    "Zoom:	Zoom Out:		Ctrl--:	set-shrink-factor(-)\n"
-    "Zoom:	SEP\n"
-/*      "Zoom:Full size (1 s):set-shrink-factor(1)\n" */
-    "Zoom:	Fit in Window:		s:	set-shrink-factor(a)\n"
-    "Zoom:	SEP\n"
-    "Zoom:	$#:			1 s:	set-shrink-factor(1)\n"
-    "Zoom:	$#:			2 s:	set-shrink-factor(2)\n"
-    "Zoom:	$#:			3 s:	set-shrink-factor(3)\n"
-    "Zoom:	$#:			4 s:	set-shrink-factor(4)\n"
-    "Zoom:	$#:			5 s:	set-shrink-factor(5)\n"
-    "Zoom:	$#:			6 s:	set-shrink-factor(6)\n"
-    "Zoom:	$#:			7 s:	set-shrink-factor(7)\n"
-    "Zoom:	$#:			8 s:	set-shrink-factor(8)\n"
-    "Zoom:	$#:			9 s:	set-shrink-factor(9)\n"
-/*     "Zoom:$%%:shrink-to-dpi(150)\n" */
-/*     "Zoom:$%%:shrink-to-dpi(100)\n" */
-/*     "Zoom:$%%:shrink-to-dpi(50)\n" */
-    "Mark:	Mark All Pages:			-1 m:	toggle-mark(-1)\n"
-    "Mark:	Unmark All Pages:		0 m:	toggle-mark(0)\n"
-    "Mark:	SEP\n"
-    "Mark:	Toggle Odd Pages:		1 m:	toggle-mark(1)\n"
-    "Mark:	Toggle Even Pages:		2 m:	toggle-mark(2)\n"
-    "Mark:	Toggle Current Page:		m:	toggle-mark()\n"
-    "Modes:	Magnifier:			Ctrl-m:	switch-mode(0)\n"
-    "Modes:	Text Selection:			Ctrl-m:	switch-mode(1)\n"
-    "Modes:	Ruler:				Ctrl-m:	switch-mode(2)\n"
-# if PS
-    "Options:	Show PS:			1 v:	set-ps(1)\n"
-    "Options:	Show PS and Bounding Boxes:	2 v:	set-ps(2)\n"
-    "Options:	Show Bounding Boxes Only:	0 v:	set-ps(0)\n"
-    "Options:	SEP\n"
-    "Options:	Use PS Anti-Aliasing:	V:	set-gs-alpha(toggle)\n"
-# endif
-    "Options:	SEP\n"
-/*     "Options:Keep position:set-keep-flag(1)\n" */
-/*     "Options:Don't keep position:set-keep-flag(0)\n" */
-    "Options:	Keep Position:			k:	set-keep-flag(toggle)\n"
-    "Options:	Use TeX Pages:			T:	use-tex-pages(toggle)\n"
-/* hmm, this probably is better kept in a `preferences' window: */
-/*     "Options:SEP\n" */
-/*     "Options:Show statusline:1 x:set-expert-mode(1)\n" */
-    "Options:	SEP\n"
-    "Options:	Fonts Darker:		Alt-Ctrl-+:	change-density(5)\n"
-    "Options:	Fonts Lighter:		Alt-Ctrl--:	change-density(-5)\n"
-    "Help:	Introduction ...:	:		help(Introduction)\n"
-    "Help:	Page Motion ...:	:		help(Page Motion)\n"
-    "Help:	Other Commands ...:	:		help(Other Commands)\n"
-    "Help:	Hyperlinks ...:		:		help(Hyperlinks)\n"
-    "Help:	Mouse Buttons ...:	:		help(Mouse Buttons)\n"
-    "Help:	Mouse Modes ...:	:		help(Mouse Modes)\n"
-    "Help:	String Search ...:	:		help(String Search)\n"
-    "Help:	Printing and Saving ...::		help(Printing and Saving)\n"
-    "Help:	Source Specials ...:	:		help(Source Specials)\n"
-    "Help:SEP\n"
-    "Help:	New Features in this Version::	load-url(http\\://xdvi.sourceforge.net/releases.html#" XDVI_VERSION ")\n"
-    "Help:	Send a Bug Report:	:		load-url(http\\://sourceforge.net/tracker/?func=add&group_id=23164&atid=377580)\n"
-    "";
-#endif /* NEW_MENU_CREATION */
+
 
 static const char default_toolbar_translations[] =
 /*  index	statusline-text					tooltip		action */

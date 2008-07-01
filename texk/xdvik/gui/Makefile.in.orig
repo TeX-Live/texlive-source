@@ -1,0 +1,83 @@
+# Makefile for xdvik 
+#
+# - 1999/05/08: janl: Removed submakes for libwww and kpathsea.  That's what
+#   the top makefile is for!
+#
+
+
+### NOTE: ac_include paths must be relative to texk/xdvik, since that
+### is from where the configure is run!
+ac_include ../make/paths.mk
+ac_include ../make/library.mk
+ac_include ../make/common.mk
+ac_include ../make/programs.mk
+
+kpathsea_parent = ../..
+
+# additional flags for kpathsea
+LIBKPATHSEACPPFLAGS=@LIBKPATHSEACPPFLAGS@
+
+CPP = @CPP@
+RANLIB = @RANLIB@
+
+# Make `#include <X11/...>' and `-lX...' work.
+# This matches web2c (needed only for Metafont).
+x_cppflags = @X_CFLAGS@
+
+# Extra xdvi-specific compiler options.
+ps_def = @PS_DEF@ -DXSERVER_INFO
+prog_cflags = @XTRA_WARN_CFLAGS@ $(LIBKPATHSEACPPFLAGS) -I.. -I$(srcdir)/.. $(x_cppflags) $(ps_def)
+
+# Note: to be able to use one depend.mk file for both Motif/Xaw (which
+# is needed since only maintainers are supposed to invoke `make depend')
+# we include *all* object files and have tests for #ifdef MOTIF/XAW inside
+# the files.
+objects = \
+    help-window.o \
+    message-window.o \
+    mag.o \
+    menu.o \
+    Panner.o \
+    pagesel.o \
+    print-dialog.o \
+    print-log.o \
+    search-dialog.o \
+    selection.o \
+    sfDir.o \
+    sfDraw.o \
+    sfPath.o \
+    sfSelFile.o \
+    statusline.o \
+    Tip.o \
+    topic-window.o \
+    xaw_bitmaps.o \
+    xaw_menu.o \
+    xicon.o \
+    xlwradio.o \
+    xm_colorsel.o \
+    xm_filesel.o \
+    xm_menu.o \
+    xm_prefs.o \
+    xm_prefs_appearance.o \
+    xm_prefs_fonts.o \
+    xm_prefs_page.o \
+    xm_prefs_scroll.o \
+    xm_prefs_helpers.o \
+    xm_toolbar.o
+
+libgui.a: $(objects)
+### hmm, I don't understand ar ... sometimes objects were NOT replaced.
+### Play it safe and always remove the archive before creating new one.
+	rm -f $@
+	$(AR) $(ARFLAGS) $@ $(objects)
+	$(RANLIB) $@
+
+ac_include ../make/dist.mk
+ac_include ../make/clean.mk
+
+clean::
+	rm -f *.o *.a
+
+c_auto_h_dir = ..
+ac_include ../make/rdepend.mk
+ac_include ./gui/depend.mk

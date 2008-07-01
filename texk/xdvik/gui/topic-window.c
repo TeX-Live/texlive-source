@@ -270,7 +270,7 @@ select_topic(struct topic_info *info, size_t idx)
     }
     else {
 	/* Note: doesn't matter if not managed yet */
-/* 	XtUnmanageChild(info->items[0].widget); */
+	/* 	XtUnmanageChild(info->items[0].widget); */
     }
 
     XtManageChild(info->items[idx].widget);

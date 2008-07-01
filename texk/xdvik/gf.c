@@ -180,7 +180,7 @@ read_GF_char(struct font *fontp,
 	    case SKIP2:
 	    case SKIP3:
 		basep += get_bytes(GF_file, (int)(cmnd - SKIP0)) * bytes_wide / sizeof(bmUnitT);
-/* 		*((char **)&basep) += get_bytes(GF_file, WIDENINT cmnd - SKIP0) * bytes_wide; */
+		/* 		*((char **)&basep) += get_bytes(GF_file, WIDENINT cmnd - SKIP0) * bytes_wide; */
 	    case SKIP0:
 		new_row = True;
 		paint_switch = White;
@@ -201,7 +201,7 @@ read_GF_char(struct font *fontp,
 	    }	/* end switch */
 	if (new_row) {
 	    basep += bytes_wide / sizeof(bmUnitT);
-/* 	    *((char **)&basep) += bytes_wide; */
+	    /* 	    *((char **)&basep) += bytes_wide; */
 	    if (basep >= maxp || cp >= basep)
 		too_many_bits(ch);
 	    cp = basep;
@@ -256,7 +256,7 @@ read_GF_index(struct font *fontp, wide_bool hushcs)
      */
     fseek(GF_file, (long)-4, SEEK_END);
     while (get_bytes(GF_file, 4) != ((unsigned long)TRAILER << 24 | TRAILER << 16
-			     | TRAILER << 8 | TRAILER))
+				     | TRAILER << 8 | TRAILER))
 	fseek(GF_file, (long)-5, SEEK_CUR);
     fseek(GF_file, (long)-5, SEEK_CUR);
     for (;;) {

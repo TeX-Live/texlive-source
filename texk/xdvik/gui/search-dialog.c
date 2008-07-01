@@ -30,9 +30,11 @@
 #include "xlwradio.h"
 #include "statusline.h"
 #include "string-utils.h"
+#include "string_list.h"
 #include "util.h"
 #include "message-window.h"
 #include "x_util.h"
+#include "xm_menu.h" /* for popdown_callback() */
 
 #include <X11/Xatom.h>
 #include <X11/StringDefs.h>
@@ -51,6 +53,10 @@
 #  include <Xm/PushB.h>
 #  include <Xm/Protocols.h>
 #  include <Xm/AtomMgr.h>
+#  if USE_COMBOBOX
+#    include <Xm/ComboBox.h>
+#    include <Xm/List.h>
+#  endif /* USE_COMBOBOX */
 #else /* MOTIF */
 #  include <X11/Shell.h>
 #  include <X11/Xaw/Paned.h>
@@ -91,6 +97,172 @@
 #  define ACTIVATE_CALLBACK_NAME XtNcallback
 #endif /* MOTIF */
 
+#if defined(MOTIF) && USE_COMBOBOX
+struct search_history {
+    char **char_items;
+    size_t item_cnt;
+    Boolean empty;
+};
+
+#define Xdvi_HISTORY_EMPTY_MARKER "<History empty>"
+
+static void
+search_history_init(struct search_history *hist)
+{
+    if (resource.search_history == NULL) {
+	hist->empty = True;
+	hist->char_items = xmalloc(1 * sizeof *(hist->char_items));
+	hist->char_items[0] = NULL;
+	hist->item_cnt = 0;
+    }
+    else {
+	hist->char_items = get_separated_list(resource.search_history, "\n", False);
+	hist->empty = False;
+	/* count number of items and save to hist->item_cnt */
+	for (hist->item_cnt = 0; hist->char_items[hist->item_cnt] != NULL; hist->item_cnt++) { ; }
+    }
+}
+
+
+static void
+search_history_update(struct search_history *hist, Widget w, const char *str)
+{
+    size_t i;
+    char *tmp;
+    XmString tmp_str = XmStringCreateLocalized((char *)str);
+    Boolean found = False;
+    Widget textfield = NULL;
+    
+    TRACE_FIND((stderr, "search_history_update for: |%s|\n", str));
+
+    /* special case if Xdvi_HISTORY_EMPTY_MARKER is present: Replace it with `str' */
+    if (hist->empty) {
+	XmComboBoxDeletePos(w, 0);
+	hist->empty = False;
+	hist->char_items = string_list_prepend(hist->char_items, str);
+	XmComboBoxAddItem(w, tmp_str, 0, True);
+	hist->item_cnt++;
+	XmStringFree(tmp_str);
+	return;
+    }
+
+    XtVaGetValues(w, XmNtextField, &textfield, NULL);
+    if (textfield == NULL) {
+	XDVI_ERROR((stderr, "Could not get text field from combo box!"));
+	XmStringFree(tmp_str);
+	return;
+    }
+
+    /* if str is already in the history, just move it to the first position */
+    for (i = 0; hist->char_items[i] != NULL; i++) {
+	if (strcmp(hist->char_items[i], str) == 0) {
+	    found = True;
+	    break;
+	}
+    }
+    if (found) {
+	hist->char_items = string_list_move_to_start(hist->char_items, i);
+	XmComboBoxDeletePos(w, i + 1);
+	XmComboBoxAddItem(w, tmp_str, 1, True);
+	XmComboBoxSelectItem(w, tmp_str);
+	XtVaSetValues(textfield, XmNcursorPosition, strlen(hist->char_items[0]), NULL);
+	XmStringFree(tmp_str);
+	return;
+    }
+    
+    if ((int)hist->item_cnt >= resource.search_history_size) {
+	/* history has reached its max size, delete the oldest element and
+	   put the new element at the beginning */
+	
+	XmComboBoxDeletePos(w, hist->item_cnt);
+	
+	free(hist->char_items[hist->item_cnt - 1]);
+	hist->char_items[hist->item_cnt - 1] = xstrdup(str);
+	hist->char_items = string_list_rotate_up(hist->char_items);
+	
+	XmComboBoxAddItem(w, tmp_str, 1, False);
+	XmComboBoxSelectItem(w, tmp_str);
+	XtVaSetValues(textfield, XmNcursorPosition, strlen(str), NULL);
+    }
+    else { /* add item */
+	hist->char_items = string_list_prepend(hist->char_items, str);
+	XmComboBoxAddItem(w, tmp_str, 1, False);
+	XmComboBoxSelectItem(w, tmp_str);
+	XtVaSetValues(textfield, XmNcursorPosition, strlen(str), NULL);
+	
+	hist->item_cnt++;
+    }
+
+    tmp = string_list_to_str(hist->char_items, "\n");
+    TRACE_FIND((stderr, "Saving search history: |%s|\n", tmp));
+    store_preference(NULL, "searchHistory", "%s", tmp);
+    free(tmp);
+
+    
+    XmStringFree(tmp_str);
+}
+
+
+/*
+ * User selected an item from seach history list
+ */
+static void
+cb_search_history_select(Widget w, XtPointer client_data, XtPointer call_data)
+{
+    XmComboBoxCallbackStruct *cb = (XmComboBoxCallbackStruct *)call_data;
+    struct search_history *hist = NULL;
+    Widget textfield;
+    int pos;
+    int idx;
+    
+    UNUSED(client_data);
+    
+    if (cb->event == NULL) /* only browsing, no selection */
+	return;
+
+    pos = cb->item_position;
+    TRACE_FIND((stderr, "POS: %d; reason: %d, event type: %d\n", pos, cb->reason, cb->event->type));
+
+    /* Return if user didn't select from menu, but entered text directly.
+       Strangely, `pos == 0' doesn't indicate this, contrary to what the docs say
+       about XmONE_BASED. */
+    if (pos == 0 || cb->event->type != ButtonRelease)
+	return;
+
+    
+    XtVaGetValues(w,
+		  XmNuserData, &hist,
+		  XmNtextField, &textfield,
+		  NULL);
+    
+    if (hist == NULL || textfield == NULL) {
+	XDVI_ERROR((stderr, "Couldn't get XmNuserData or XmNtextField from combo box widget!\n"));
+	return;
+    }
+    
+    idx = pos - 1;
+    
+    if (idx == 0 && hist->char_items[0] == NULL) { /* Xdvi_HISTORY_EMPTY_MARKER selected, do nothing */
+	XtVaSetValues(textfield, XmNvalue, "", NULL);
+    }
+    else {
+	XmString tmp_str;
+
+	TRACE_FIND((stderr, "moving item %d, %s to pos 0\n", idx, hist->char_items[idx]));
+	hist->char_items = string_list_move_to_start(hist->char_items, idx);
+
+	/* same for list in combo box */
+	tmp_str = XmStringCreateLocalized(hist->char_items[0]);
+	XmComboBoxDeletePos(w, pos);
+	XmComboBoxAddItem(w, tmp_str, 1, True);
+  	XmComboBoxSelectItem(w, tmp_str);
+	XtVaSetValues(textfield, XmNcursorPosition, strlen(hist->char_items[0]), NULL);
+	XmStringFree(tmp_str);
+    }
+}
+
+#endif /* defined(MOTIF) && USE_COMBOBOX */
+
 static Boolean m_find_popup_active = False;
 
 /* flags for setting single bits in resource.search_window_defaults */
@@ -98,6 +270,7 @@ static const int SETTINGS_USE_REGEXP_FLAG = 1;
 static const int SETTINGS_CASE_SENSITIVE_FLAG = 2;
 static const int SETTINGS_BACKWARDS_FLAG = 4;
 static const int SETTINGS_IGNORE_LINEBREAKS_FLAG = 8;
+static const int SETTINGS_WRAP_FLAG = 16;
 	
 
 static void
@@ -110,24 +283,21 @@ cb_search_go(Widget w, XtPointer client_data, XtPointer call_data)
     ASSERT(settings != NULL, "client_data cb_search_go mustn't be NULL!");
     UNUSED(call_data);
 
-    TRACE_FIND((stderr, "cb_search_go: settings: searchterm=|%s|, down = %d, re = %d, case = %d",
-		settings->term, settings->direction, settings->use_regexp, settings->case_sensitive));
+    TRACE_FIND((stderr, "cb_search_go: settings: searchterm=|%s|, down = %d, re = %d, case = %d, wrap = %d",
+		settings->term, settings->direction, settings->use_regexp, settings->case_sensitive, settings->wrap));
 
-    /* retrieve the find popup window */
-    if ((find_popup = XtNameToWidget(globals.widgets.top_level, "*find_popup")) == 0) {
-	XDVI_WARNING((stderr, "Couldn't find \"find_popup\" widget!"));
-	x = y = 0;
-    }
-    else {
-	XtVaGetValues(find_popup, XtNx, &x, XtNy, &y, NULL);
-	/* add some offsets */
-	settings->x_pos = x + 10;
-	settings->y_pos = y + 10;
-	TRACE_GUI((stderr, "SHELL: %ld; x: %d, y: %d", (unsigned long)w, x, y));
-    }
+    if (!get_widget_by_name(&find_popup, globals.widgets.top_level, "find_popup", True))
+	return;
+
+    XtVaGetValues(find_popup, XtNx, &x, XtNy, &y, NULL);
+    /* add some offsets */
+    settings->x_pos = x + 10;
+    settings->y_pos = y + 10;
+    TRACE_GUI((stderr, "SHELL: %ld; x: %d, y: %d", (unsigned long)w, x, y));
 
     settings->from_page = current_page;
     settings->message_window = 0;
+    settings->wrapcnt = 0;
     TRACE_FIND((stderr, "starting search from page: %d", settings->from_page));
     search_dvi((XtPointer)settings);
 }
@@ -136,14 +306,15 @@ static void
 show_settings(const char *func_name, struct search_settings *settings)
 {
     TRACE_FIND((stderr, "%s: settings: str=|%s|, down = %d, re = %d, "
-		"case = %d, ignore_hyphens = %d, ignore_linebreaks = %d\n",
+		"case = %d, ignore_hyphens = %d, ignore_linebreaks = %d, wrap = %d\n",
 		func_name,
 		settings->term,
 		settings->direction,
 		settings->use_regexp,
 		settings->case_sensitive,
 		settings->ignore_hyphens,
-		settings->ignore_linebreaks));
+		settings->ignore_linebreaks,
+		settings->wrap));
 
 }
 
@@ -222,6 +393,26 @@ cb_backwards_search(Widget w, XtPointer client_data, XtPointer call_data)
 }
 
 static void
+cb_wrap_search(Widget w, XtPointer client_data, XtPointer call_data)
+{
+    struct search_settings *settings = (struct search_settings *)client_data;
+    ASSERT(settings != NULL, "client_data cb_search_go mustn't be NULL!");
+    UNUSED(w);
+    UNUSED(call_data);
+
+    settings->wrap = !settings->wrap;
+
+    show_settings("cb_wrap_search", settings);
+
+    if (settings->wrap)
+	resource.search_window_defaults |= SETTINGS_WRAP_FLAG;
+    else
+	resource.search_window_defaults &= ~SETTINGS_WRAP_FLAG;
+    
+    store_preference(NULL, "searchWindowDefaults", "%u", resource.search_window_defaults);
+}
+
+static void
 cb_match_case(Widget w, XtPointer client_data, XtPointer call_data)
 {
     struct search_settings *settings = (struct search_settings *)client_data;
@@ -260,6 +451,7 @@ cb_linebreaks(Widget w, XtPointer client_data, XtPointer call_data)
     store_preference(NULL, "searchWindowDefaults", "%u", resource.search_window_defaults);
 }
 
+
 static void
 cb_search_cancel(Widget w, XtPointer client_data, XtPointer call_data)
 {
@@ -268,12 +460,9 @@ cb_search_cancel(Widget w, XtPointer client_data, XtPointer call_data)
     
     UNUSED(w);
     UNUSED(call_data);
-
-    /* retrieve the find popup window */
-    if ((find_popup = XtNameToWidget(globals.widgets.top_level, "*find_popup")) == 0) {
-	XDVI_WARNING((stderr, "Couldn't find \"find_popup\" widget!"));
+    
+    if (!get_widget_by_name(&find_popup, globals.widgets.top_level, "find_popup", True))
 	return;
-    }
 
     /* This flag is checked in the scanning routines, and
        will be eventually reset by do_pages() in events.c.
@@ -297,6 +486,10 @@ cb_search_get_term_button(Widget w, XtPointer client_data, XtPointer call_data)
     struct search_settings *settings = (struct search_settings *)client_data;
     char *searchterm = NULL;
 
+#if defined(MOTIF) && USE_COMBOBOX
+    struct search_history *hist = NULL;
+#endif
+    
     Widget searchbox_input, paned, box;
     UNUSED(call_data);
 
@@ -305,13 +498,26 @@ cb_search_get_term_button(Widget w, XtPointer client_data, XtPointer call_data)
     paned = XtParent(box);
     ASSERT(paned != 0, "Parent of box widget mustn't be NULL!");
 
-    if ((searchbox_input = XtNameToWidget(paned, "*searchbox_input")) == 0) {
-	XDVI_WARNING((stderr, "Couldn't find \"searchbox_input\" widget!"));
+    if (!get_widget_by_name(&searchbox_input, paned, Xdvi_SEARCHBOX_INPUT_NAME, True))
 	return;
-    }
     
 #ifdef MOTIF
+#  if USE_COMBOBOX
+    {
+	Widget textfield = NULL;
+	XtVaGetValues(searchbox_input,
+		      XmNtextField, &textfield,
+		      XmNuserData, &hist,
+		      NULL);
+	if (textfield == NULL || hist == NULL) {
+	    XDVI_ERROR((stderr, "Couldn't get XmNtextField or XmNuserData from combo box widget!\n"));
+	    return;
+	}
+	XtVaGetValues(textfield, XmNvalue, &searchterm, NULL);
+    }
+#  else
     XtVaGetValues(searchbox_input, XmNvalue, &searchterm, NULL);
+#  endif
 #else
     XtVaGetValues(searchbox_input, XtNstring, &searchterm, NULL);
 #endif
@@ -321,6 +527,10 @@ cb_search_get_term_button(Widget w, XtPointer client_data, XtPointer call_data)
     }
     TRACE_FIND((stderr, "searchterm1: |%s|", searchterm));
     settings->term = searchterm;
+    
+#if defined(MOTIF) && USE_COMBOBOX
+    search_history_update(hist, searchbox_input, searchterm);
+#endif
     
     cb_search_go(w, settings, NULL);
 }
@@ -355,26 +565,32 @@ cb_search_get_term(Widget w, XtPointer client_data, XtPointer call_data)
 {
     struct search_settings *settings = (struct search_settings *)client_data;
     char *searchterm = NULL;
-    Widget form, paned, searchbox_form;
-    Widget button;
+    Widget popup, button, textfield;
     XEvent ev;
     UNUSED(call_data);
 
-    /* retrieve the `Find' button widget */
-    searchbox_form = XtParent(w);
-    ASSERT(searchbox_form != 0, "Parent of button widget mustn't be NULL!");
-    form = XtParent(searchbox_form);
-    ASSERT(form != 0, "Parent of searchbox_form widget mustn't be NULL!");
-    paned = XtParent(form);
-    ASSERT(paned != 0, "Parent of form widget mustn't be NULL!");
-    if ((button = XtNameToWidget(paned, "*find_button")) == 0) {
-	XDVI_WARNING((stderr, "Couldn't find \"find_button\" widget!"));
-	return;
+    TRACE_FIND((stderr, "cb_search_get_term!\n"));
+    
+#if USE_COMBOBOX
+    UNUSED(w);
+    {
+	Widget combobox;
+	if (!get_widget_by_name(&combobox, globals.widgets.top_level, Xdvi_SEARCHBOX_INPUT_NAME, True)
+	    || !get_widget_by_name(&textfield, globals.widgets.top_level, "Text", True))
+	    return;
     }
+#else
+    textfield = w;
+#endif
+    
+    /* retrieve the `Find' button widget */
+    if (!get_widget_by_name(&popup, globals.widgets.top_level, Xdvi_SEARCH_POPUP_NAME, True)
+	|| !get_widget_by_name(&button, popup, "find_button", True))
+	return;
 
     if (settings != NULL) {
 	/* retrieve search term from text input field */
-	XtVaGetValues(w, XmNvalue, &searchterm, NULL);
+	XtVaGetValues(textfield, XmNvalue, &searchterm, NULL);
 	if (searchterm == NULL) {
 	    XDVI_WARNING((stderr, "Searchterm in cb_search_get_term callback shouldn't be NULL!"));
 	    return;
@@ -385,8 +601,8 @@ cb_search_get_term(Widget w, XtPointer client_data, XtPointer call_data)
     }
 
     /* make the `Find' button think it got pushed.
-       Also synthetisize an event, just to be sure ... */
-    synthetisize_event(&ev, button);
+       Also synthesize an event, just to be sure ... */
+    synthesize_event(&ev, button);
     
     XtCallActionProc(button, "ArmAndActivate", &ev, NULL, 0);
     /* the following don't make the button appear visually pressed: */
@@ -407,7 +623,7 @@ xm_search_go(Widget w, XEvent *event, String *params, Cardinal *num_params)
     if (params != NULL) { /* re-initialize search term */
 	ASSERT(*num_params == 1, "num_params in xm_search_go should be 1 if *params != NULL");
 	/*
-	 * the *params char pointer contains the pointer value (address) of `settings';
+	 * the *params char pointer contains the pointer value (address) of `settings' as a string;
 	 * convert it back to a pointer:
 	 */
 	TRACE_GUI((stderr, "Pointer string value: |%s|", *params));
@@ -417,11 +633,9 @@ xm_search_go(Widget w, XEvent *event, String *params, Cardinal *num_params)
 	ASSERT(settings != NULL, "Shouldn't happen: Couldn't get string representation of argument pointer.");
     }	
 
-    if ((input = XtNameToWidget(globals.widgets.top_level, "*searchbox_input")) == 0) {
-	XDVI_WARNING((stderr, "Couldn't find \"searchbox_input\" widget!"));
-	return;
+    if (get_widget_by_name(&input, globals.widgets.top_level, "searchbox_input", True)) {
+	cb_search_get_term(input, settings, NULL);
     }
-    cb_search_get_term(input, settings, NULL);    
 }
 
 #else /* MOTIF */
@@ -434,7 +648,7 @@ xaw_unset_button(XtPointer client_data, XtIntervalId *id)
 
     UNUSED(id);
     
-    synthetisize_event(&ev, button);
+    synthesize_event(&ev, button);
     XtCallActionProc(button, "unset", &ev, NULL, 0);
 }
 
@@ -449,15 +663,9 @@ xaw_search_go(Widget w, XEvent *event, String *params, Cardinal *num_params)
     
     UNUSED(w);
 
-    /* retrieve the `Find' button widget */
-    if ((button = XtNameToWidget(globals.widgets.top_level, "*find_button")) == 0) {
-	XDVI_WARNING((stderr, "Couldn't find \"find_button\" widget!"));
+    if (!get_widget_by_name(&button, globals.widgets.top_level, "find_button", True)
+	|| !get_widget_by_name(&input, globals.widgets.top_level, "searchbox_input", True))
 	return;
-    }
-    if ((input = XtNameToWidget(globals.widgets.top_level, "*searchbox_input")) == 0) {
-	XDVI_WARNING((stderr, "Couldn't find \"searchbox_input\" widget!"));
-	return;
-    }
 
     XtVaGetValues(input, XtNstring, &searchterm, NULL);
     if (searchterm == NULL) {
@@ -488,7 +696,7 @@ xaw_search_go(Widget w, XEvent *event, String *params, Cardinal *num_params)
     XtCallActionProc(button, "set", event, NULL, 0);
     XtCallActionProc(button, "notify", event, NULL, 0);
     XSync(DISP, False);
-    timeout = XtAppAddTimeOut(app, 150, xaw_unset_button, (XtPointer)button);
+    timeout = XtAppAddTimeOut(globals.app, 150, xaw_unset_button, (XtPointer)button);
 }
 
 
@@ -531,6 +739,8 @@ static XtActionsRec search_actions[] = {
     { "cancel-search", search_cancel },
 };
 
+
+
 static Widget
 create_search_window(struct search_settings *settings)
 {
@@ -539,11 +749,15 @@ create_search_window(struct search_settings *settings)
     Widget form, find_paned, box;
     unsigned char curr_state;
 
+#if defined(MOTIF) && USE_COMBOBOX
+    static struct search_history hist = { NULL, 0, True };
+#endif
+    
     Widget searchbox_form, searchbox_label, searchbox_input;
     /* left and right column */
     Widget options_left_form, options_right_form;
     /* checkboxes in left column */
-    Widget regexp_checkbox, matchcase_checkbox, backwards_checkbox;
+    Widget regexp_checkbox, matchcase_checkbox, backwards_checkbox, wrap_checkbox;
     /* checkboxes in right column */
     Widget linebreaks_checkbox;
     Widget find_button, cancel_button;
@@ -579,10 +793,23 @@ create_search_window(struct search_settings *settings)
     translation_str = NULL;
 #endif /* not MOTIF */
     
+    translation_str = get_string_va(
+#ifdef MOTIF
+				    "<Key>osfCancel:cancel-search(%p)\n"
+#else
+				    "<Key>Escape:cancel-search(%p)\n"
+#endif
+				    "<Key>Return:do-search(%p)\n"
+				    "Ctrl<Key>g:find-next()",
+				    (void *)settings, (void *)settings);
+    
+    xlats = XtParseTranslationTable(translation_str);
+    free(translation_str);
+
     top_level_shell = XtVaCreatePopupShell("find_popup",
 					   SHELL_WIDGET,
 					   globals.widgets.top_level,
-					   XtNtitle, "xdvik: Find in DVI file",
+					   XtNtitle, "xdvik: Find in File",
 					   XtNmappedWhenManaged, False, /* so that we can center it first */
 					   XtNtransientFor, globals.widgets.top_level,
 					   XtNallowShellResize, True,
@@ -659,7 +886,83 @@ create_search_window(struct search_settings *settings)
 #endif
 					      NULL);
     
-    searchbox_input = XtVaCreateManagedWidget("searchbox_input",
+#if defined(MOTIF) && USE_COMBOBOX
+
+    {
+	Widget textfield = NULL;
+	Widget grab_shell = NULL;
+	size_t n;
+	XmStringTable items;
+	
+	search_history_init(&hist);
+
+	/* initialize Motif string list */
+	n = hist.item_cnt == 0 ? 1 : hist.item_cnt;
+	items = (XmStringTable)XtMalloc(n * sizeof(XmString *));
+
+	if (hist.item_cnt == 0)
+	    items[0] = XmStringCreateLocalized(Xdvi_HISTORY_EMPTY_MARKER);
+	else {
+	    for (n = 0; hist.char_items[n] != NULL; n++)
+		items[n] = XmStringCreateLocalized(hist.char_items[n]);
+	}	
+
+	searchbox_input = XtVaCreateManagedWidget(Xdvi_SEARCHBOX_INPUT_NAME, xmComboBoxWidgetClass,
+						  searchbox_form,
+						  XmNtopAttachment, XmATTACH_FORM,
+						  XmNrightAttachment, XmATTACH_FORM,
+						  XmNleftAttachment, XmATTACH_WIDGET,
+						  XmNleftWidget, searchbox_label,
+						  XmNbottomAttachment, XmATTACH_FORM,
+						  XmNcomboBoxType, XmDROP_DOWN_COMBO_BOX,
+						  XmNitems, items,
+						  XmNitemCount, n,
+						  /* XmONE_BASED so that we can distinguish between
+						     keyboard entry and selection from popdown list */
+						  XmNpositionMode, XmONE_BASED,
+						  /*  					      XmNitemCount, hist.item_cnt, */
+						  /*  					      XmNvisibleItemCount, hist.item_cnt, */
+						  XmNuserData, &hist,
+						  XmNarrowSize, Xdvi_COMBO_BOX_ARROW_SIZE,
+						  NULL);
+	if (resource.search_history_size < 10) {
+	    /* usually the dropdown list shows 10 entries */
+	    XtVaSetValues(searchbox_input, XmNvisibleItemCount, resource.search_history_size);
+	}
+	    
+	/* free Motif strings */
+	if (hist.item_cnt == 0)
+	    XmStringFree(items[0]);
+	else {
+	    for (n = 0; hist.char_items[n] != NULL; n++)
+		XmStringFree(items[n]);
+	}
+	XtFree((XtPointer)items);
+	
+	/* start with empty search field */
+	XtVaGetValues(searchbox_input, XmNtextField, &textfield, NULL);
+	if (textfield == NULL)
+	    XDVI_ERROR((stderr, "Couldn't get textfield from combo box widget!\n"));
+
+	if (settings->term != NULL) {
+	    XtVaSetValues(textfield, XmNvalue, settings->term, NULL);
+	}
+	else {
+	    XtVaSetValues(textfield, XmNvalue, "", NULL);
+	}
+	XtAddCallback(textfield, XmNactivateCallback, cb_search_get_term, settings);
+	XtAddCallback(searchbox_input, XmNselectionCallback, cb_search_history_select, (XtPointer)settings);
+
+	XtOverrideTranslations(textfield, xlats);
+	/* workaround for pointer grabbing bug (see xm_menu.c) */
+	if (get_widget_by_name(&grab_shell, searchbox_input, "GrabShell", True)) {
+	    XtAddCallback(grab_shell, XtNpopdownCallback, popdown_callback, NULL);
+	}
+	
+    }
+#else /* defined(MOTIF) && USE_COMBOBOX */
+    
+    searchbox_input = XtVaCreateManagedWidget(Xdvi_SEARCHBOX_INPUT_NAME,
 					      TEXT_WIDGET,
 					      searchbox_form,
 #ifdef MOTIF
@@ -677,7 +980,9 @@ create_search_window(struct search_settings *settings)
 					      VERTICAL_RESIZING_NO,
 #endif
 					      NULL);
-
+#ifdef MOTIF
+    XtAddCallback(searchbox_input, XmNactivateCallback, cb_search_get_term, settings);
+#endif
 
     if (settings->term != NULL) {
 	XtVaSetValues(searchbox_input,
@@ -688,11 +993,15 @@ create_search_window(struct search_settings *settings)
 #endif
 		      settings->term, NULL);
     }
+
+#endif /* defined(MOTIF) && USE_COMBOBOX */
+
     
     XtManageChild(searchbox_form);
     
-#ifdef MOTIF
-    XtAddCallback(searchbox_input, XmNactivateCallback, cb_search_get_term, settings);
+    /* Fix for #1499566: Force input focus for text input field */
+#ifndef MOTIF
+    XtSetKeyboardFocus(find_paned, searchbox_input);
 #endif
     
     /*
@@ -708,8 +1017,8 @@ create_search_window(struct search_settings *settings)
 						XmNtopAttachment, XmATTACH_WIDGET,
 						XmNtopWidget, searchbox_form,
 						XmNleftAttachment, XmATTACH_FORM,
-/* 						XmNrightAttachment, XmATTACH_FORM, */
-/*  						XmNbottomAttachment, XmATTACH_FORM, */
+						/* 						XmNrightAttachment, XmATTACH_FORM, */
+						/*  						XmNbottomAttachment, XmATTACH_FORM, */
 #else
 						XtNborderWidth, 0,
 						XtNfromVert, searchbox_form,
@@ -731,7 +1040,7 @@ create_search_window(struct search_settings *settings)
 						 XmNleftAttachment, XmATTACH_WIDGET,
 						 XmNleftWidget, options_left_form,
 						 XmNrightAttachment, XmATTACH_FORM,
-/*  						 XmNbottomAttachment, XmATTACH_FORM, */
+						 /*  						 XmNbottomAttachment, XmATTACH_FORM, */
 #else
 						 XtNborderWidth, 0,
 						 XtNfromVert, searchbox_form,
@@ -778,7 +1087,6 @@ create_search_window(struct search_settings *settings)
 						 XmNtopAttachment, XmATTACH_WIDGET,
 						 XmNtopWidget, regexp_checkbox,
 						 XmNleftAttachment, XmATTACH_FORM,
-						 XmNbottomAttachment, XmATTACH_FORM,
 #else
 						 XtNlabel, "Find backwards",
 						 XtNfromVert, regexp_checkbox,
@@ -791,6 +1099,34 @@ create_search_window(struct search_settings *settings)
 						 NULL);
 
     XtAddCallback(backwards_checkbox, VALUE_CALLBACK_NAME, cb_backwards_search, settings);
+
+#ifdef MOTIF
+    XmStringFree(str);
+    str = XmStringCreateLocalized("Wrap search");
+#endif
+
+    wrap_checkbox = XtVaCreateManagedWidget("backwards_checkbox",
+					    CHECKBOX_WIDGET,
+					    options_left_form,
+#ifdef MOTIF
+					    XmNlabelString, str,
+					    XmNindicatorType, XmN_OF_MANY,
+					    XmNtopAttachment, XmATTACH_WIDGET,
+					    XmNtopWidget, backwards_checkbox,
+					    XmNleftAttachment, XmATTACH_FORM,
+					    XmNbottomAttachment, XmATTACH_FORM,
+#else
+					    XtNlabel, "Wrap search",
+					    XtNfromVert, backwards_checkbox,
+					    XtNborderWidth, 0,
+					    XtNisRadio, False,
+					    XtNhighlightThickness, 1,
+					    HORIZONTAL_RESIZING_NO,
+					    VERTICAL_RESIZING_NO,
+#endif
+					    NULL);
+
+    XtAddCallback(wrap_checkbox, VALUE_CALLBACK_NAME, cb_wrap_search, settings);
 
 #ifdef MOTIF
     XmStringFree(str);
@@ -930,19 +1266,6 @@ create_search_window(struct search_settings *settings)
     XtAddCallback(cancel_button, ACTIVATE_CALLBACK_NAME, cb_search_cancel, settings);
     XtAddCallback(find_button, ACTIVATE_CALLBACK_NAME, cb_search_get_term_button, settings);
 
-    translation_str = get_string_va(
-#ifdef MOTIF
-				    "<Key>osfCancel:cancel-search(%p)\n"
-#else
-				    "<Key>Escape:cancel-search(%p)\n"
-#endif
-				    "<Key>Return:do-search(%p)\n"
-				    "Ctrl<Key>g:find-next()",
-				    (void *)settings, (void *)settings);
-    
-    xlats = XtParseTranslationTable(translation_str);
-    free(translation_str);
-
     XtOverrideTranslations(searchbox_form, xlats);
     XtOverrideTranslations(options_left_form, xlats);
     XtOverrideTranslations(options_right_form, xlats);
@@ -978,7 +1301,7 @@ create_search_window(struct search_settings *settings)
     
 #ifdef MOTIF
     XmProcessTraversal(searchbox_input, XmTRAVERSE_CURRENT);
-/*     XmProcessTraversal(find_button, XmTRAVERSE_CURRENT); */
+    /*     XmProcessTraversal(find_button, XmTRAVERSE_CURRENT); */
 #endif
     XSetWMProtocols(XtDisplay(top_level_shell), XtWindow(top_level_shell), &WM_DELETE_WINDOW, 1);
 
@@ -991,6 +1314,8 @@ create_search_window(struct search_settings *settings)
 	XtVaSetValues(backwards_checkbox, CHECKBUTTON_IS_SET, True, NULL);
     if (resource.search_window_defaults & SETTINGS_IGNORE_LINEBREAKS_FLAG)
 	XtVaSetValues(linebreaks_checkbox, CHECKBUTTON_IS_SET, True, NULL);
+    if (resource.search_window_defaults & SETTINGS_WRAP_FLAG)
+	XtVaSetValues(wrap_checkbox, CHECKBUTTON_IS_SET, True, NULL);
 	
     /* initialize `settings' values according to the checkbox states
        (in case user has assigned values via X defaults): */
@@ -998,6 +1323,8 @@ create_search_window(struct search_settings *settings)
     settings->use_regexp = curr_state;
     XtVaGetValues(matchcase_checkbox, CHECKBUTTON_IS_SET, &curr_state, NULL);
     settings->case_sensitive = curr_state;
+    XtVaGetValues(wrap_checkbox, CHECKBUTTON_IS_SET, &curr_state, NULL);
+    settings->wrap = curr_state;
     XtVaGetValues(backwards_checkbox, CHECKBUTTON_IS_SET, &curr_state, NULL);
     settings->direction = curr_state ? SEARCH_UP : SEARCH_DOWN;
     XtVaGetValues(linebreaks_checkbox, CHECKBUTTON_IS_SET, &curr_state, NULL);
@@ -1020,15 +1347,18 @@ dvi_find_string(const char *str, Boolean find_next)
      * Also pops up the find dialog, to make it easier for user to
      * edit options, change direction etc. */
     Widget find_popup;
-    if ((find_popup = XtNameToWidget(globals.widgets.top_level, "*find_popup")) == 0) {
+    if (!get_widget_by_name(&find_popup, globals.widgets.top_level, "find_popup", False)) {
 	static struct search_settings settings;
-	static struct search_info searchinfo = { False, False, False, 0, 0, 0, 0 };
+    	static struct search_info searchinfo = { False, False, False, 0, 0, 0, 0 };
 	settings.term = str;
 	settings.use_regexp = False;
 	settings.case_sensitive = False;
 	settings.direction = SEARCH_DOWN;
 	settings.ignore_hyphens = False;
 	settings.ignore_linebreaks = False;
+	settings.wrap = False;
+	settings.isearchterm = NULL;
+	settings.wrapcnt = 0;
 	settings.x_pos = -1;
 	settings.y_pos = -1;
 	settings.searchinfo = &searchinfo;
@@ -1041,10 +1371,8 @@ dvi_find_string(const char *str, Boolean find_next)
     }
     else if (str != NULL) { /* change the search term */
 	Widget searchbox_input;
-	if ((searchbox_input = XtNameToWidget(find_popup, "*searchbox_input")) == 0) {
-	    XDVI_WARNING((stderr, "Couldn't find \"searchbox_input\" widget!"));
+	if (!get_widget_by_name(&searchbox_input, find_popup, "searchbox_input", True))
 	    return;
-	}
 	XtVaSetValues(searchbox_input,
 #ifdef MOTIF
 		      XmNvalue,

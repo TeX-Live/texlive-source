@@ -31,8 +31,6 @@
 #include "menu.h"
 #include "util.h"
 
-#if defined(NEW_MENU_CREATION) || defined(MOTIF)
-
 #ifdef MOTIF
 #  include <Xm/RowColumn.h>
 #  include <Xm/ToggleB.h>
@@ -74,24 +72,18 @@ set_menu_info(void *val, XtActionProc proc, Boolean (*cmp)(), struct button_info
 	    && item->elems[i].action->proc != NULL
 	    && item->elems[i].action->proc == proc
 	    && item->elems[i].action->param != NULL) {
-	    Boolean on;
+	    Boolean state;
 	    ASSERT(cmp != NULL, "comparison function musn't be NULL!");
-	    on = cmp(val, item->elems[i].action->param);
+	    state = cmp(val, item->elems[i].action->param);
 #ifdef MOTIF
 	    ASSERT(item->elems[i].widget != 0, "Widget musn't be NULL!");
-	    XmToggleButtonSetState(item->elems[i].widget, on, False);
+	    XmToggleButtonSetState(item->elems[i].widget, state, False);
 #else
-#ifdef NEW_MENU_CREATION
-	    ASSERT(item->elems[i].widget != 0, "Widget musn't be NULL!");
-	    xaw_set_button_state(item->elems + i, on);
-#else
-	    static Arg args = { XtNleftBitmap, (XtArgVal) 0 };
-	    if (on)
-		args.value = (XtArgVal) menu_check_bitmap;
-	    else
-		args.value = (XtArgVal) menu_uncheck_bitmap;
-	    XtSetValues(item->elems[i].widget, &args, 1);
-#endif /* NEW_MENU_CREATION */
+	    if (item->elems[i].widget == 0) {
+		XDVI_WARNING((stderr, "Widget for menu `%s' is null!", item->elems[i].title));
+		continue;
+	    }
+	    xaw_set_button_state(item->elems + i, state);
 #endif
 	}
 	if (item->elems[i].submenu != NULL) { /* invoke it recursively */
@@ -105,7 +97,7 @@ set_menu_info(void *val, XtActionProc proc, Boolean (*cmp)(), struct button_info
 void
 set_menu(void *val, XtActionProc proc, Boolean (*cmp)())
 {
-    /* non-standard cast function ptr -> void ptr */
+    /* removed following since cast from function pointer to void pointer is not supported by ANSI C */
     /* TRACE_GUI((stderr, "set_menu_info: %d, %p, %p", *(int *)val, (void *)proc, (void *)cmp)); */
     set_menu_info(val, proc, cmp, m_button_info);
 }
@@ -124,14 +116,18 @@ initialize_menus(void)
 #endif
 
     set_menu(&use_gs, Act_set_ps, check_int);
+#ifdef PS_GS
     set_menu(&resource.gs_alpha, Act_set_gs_alpha, check_toggle);
+#endif
     set_menu(&resource.keep_flag, Act_set_keep_flag, check_toggle);
     shrinkval = resource.pixels_per_inch / mane.shrinkfactor;
     set_menu(&shrinkval, Act_shrink_to_dpi, check_int);
     set_menu(&mane.shrinkfactor, Act_set_shrink_factor, check_int);
     set_menu(&resource.use_tex_pages, Act_use_tex_pages, check_toggle);
+#if 0
     set_menu((char *)resource.paper,  Act_set_paper_landscape, check_paper_landscape);
     set_menu((char *)resource.paper, Act_set_papersize, check_papersize);
+#endif /* 0 */
     set_menu(&resource.mouse_mode, Act_switch_mode, check_int);
     set_menu(&resource.expert_mode, Act_set_expert_mode, check_resource_expert);
 }
@@ -162,7 +158,6 @@ add_info(struct button_info **info, buttonTypeT bt_type,
 	 char mnemonic, const char *title,
 	 const char *accelerator, struct xdvi_action *action)
 {
-/*      fprintf(stderr, "creating new item for info %p: |%s|\n", *info, title); */
     size_t idx = (*info)->size++;
     (*info)->elems = xrealloc((*info)->elems, (*info)->size * sizeof *((*info)->elems));
     (*info)->elems[idx].title = xstrdup(title);
@@ -191,8 +186,6 @@ insert_items(struct button_info **info, char **items, size_t num_items,
     Boolean found = False;
     Boolean have_error = False;
 
-/*      fprintf(stderr, "------ insert_items called for |%s|, %p, |%s|\n", *items, *info, action); */
-
     if (*items == NULL) {
 	/* should be a separator, which is treated as a special case since
 	   there's no menu title: */
@@ -207,7 +200,7 @@ insert_items(struct button_info **info, char **items, size_t num_items,
     entry_items = split_line(items[0], ENTRY_SEP, 0, entry_len, &entry_count);
 
     if (entry_count < 2) {
-	XDVI_WARNING((stderr, "Missing Mnemonic in button info `%s'\n", items[0]));
+	XDVI_WARNING((stderr, "Missing Mnemonic in button info `%s'", items[0]));
 	entry_count++;
 	entry_items = xrealloc(entry_items, entry_count * sizeof *entry_items);
 	entry_items[1] = xstrdup("");
@@ -229,8 +222,6 @@ insert_items(struct button_info **info, char **items, size_t num_items,
 
 	/* if it's a `leaf' in the menu hierarchy, compile the action and set the button type */
 	if (num_items == 1) {
-/*  	    fprintf(stderr, "button_type: |%s|\n", button_type); */
-
 	    char *fmt = strchr(entry_items[0], '$');
 	    if (fmt != NULL
 		&& (fmt == entry_items[0] || (fmt > entry_items[0] && *(fmt - 1) != '\\'))
@@ -261,7 +252,6 @@ insert_items(struct button_info **info, char **items, size_t num_items,
     free_items(entry_items, entry_count);
 
     if (num_items > 1 || (num_items == 1 && strcmp(button_type, "SEP") == 0)) { /* not a leaf, invoke recursivly for next level */
-/*  	fprintf(stderr, "invoking recursively for %d, %p\n", idx, (*info)->elems[idx].submenu); */
 	if ((*info)->elems[idx].submenu == NULL) { /* submenu didn't exist yet, create it */
 	    struct button_info *new_submenu = xmalloc(sizeof *new_submenu);
 	    new_submenu->elems = NULL;
@@ -309,8 +299,8 @@ parse_button_translations(struct button_info **info)
 	    size_t line_count = 0;
 	    char **line_items;
 	    line_items = split_line(curr_p, LINE_SEP, 0, line_len, &line_count);
-/*  	    fprintf(stderr, "length of line: %d; %d items\n", line_len, line_count); */
-/*  	    show_items("LINE", line_items, line_count); */
+	    /*  	    fprintf(stderr, "length of line: %d; %d items\n", line_len, line_count); */
+	    /*  	    show_items("LINE", line_items, line_count); */
 	    if (line_count != 4) { /* error */
 		XDVI_WARNING((stderr, "Wrong number of items (%lu) in translations line:\n\"%.*s\" "
 			      "(skipping this line).\n",
@@ -323,14 +313,14 @@ parse_button_translations(struct button_info **info)
 		size_t menu_count = 0;
 		char **menu_items;
 		if (menu_len == 0) { /* error */
-		    XDVI_WARNING((stderr, "Menu description (1st item) mustn't be empty:\n\"%.*s\" "
+		    XDVI_WARNING((stderr, "Menu description (first item) mustn't be empty:\n\"%.*s\" "
 				  "(skipping this line).\n",
 				  (int)line_len, curr_p));
 		    free_items(line_items, line_count);
 		    continue;
 		}
 		menu_items = split_line(line_items[0], MENU_SEP, 0, menu_len, &menu_count);
-/*  		show_items("   MENU", menu_items, menu_count); */
+		/*  		show_items("   MENU", menu_items, menu_count); */
 
 		insert_items(info, menu_items, menu_count, line_items[1], line_items[2], line_items[3]);
 		free_items(menu_items, menu_count);
@@ -343,7 +333,7 @@ parse_button_translations(struct button_info **info)
 
 /*
   Top-level routine: creates the pulldown menu buttons for Motif and Xaw.
-  For Motif, sets *globals.widgets.menu_bar to the address of the new widget created,
+  For Motif, sets `*menu_bar' to the address of the new widget created,
   for Xaw, sets *width to the width of the button panel created.
 */
 void
@@ -357,12 +347,10 @@ create_menu_buttons(Widget parent,
 {
 #ifdef MOTIF
     Widget menu = 0;
+    size_t i;
 #else /* MOTIF */
     Widget panel = 0;
-    Boolean first_time = True;
-    int menu_depth = 0;
 #endif
-    size_t i;
     
     m_button_info = xmalloc(sizeof *m_button_info);
     m_button_info->elems = NULL;
@@ -371,7 +359,7 @@ create_menu_buttons(Widget parent,
 #ifdef MOTIF
     *menu_bar = XmCreateMenuBar(parent, "menuBar", NULL, 0);
     parse_button_translations(&m_button_info);
-/*      menu = xm_create_menu(*menu_bar, m_button_info); */
+
     for (i = 0; i < m_button_info->size; i++) {
 	menu = xm_create_menu(*menu_bar,
 			      m_button_info->elems[i].title,
@@ -382,14 +370,11 @@ create_menu_buttons(Widget parent,
 	XtVaSetValues(*menu_bar, XmNmenuHelpWidget, menu, NULL);
     }
 #else /* MOTIF */
-    if (first_time) {
-	first_time = False;
-	xaw_initialize_menu_bitmaps();
-	panel = xaw_create_menu_widgets(parent);
-	parse_button_translations(&m_button_info);
-    }
-    xaw_create_menu(m_button_info, panel, menu_depth, width);
+    xaw_initialize_menu_bitmaps();
+    panel = xaw_create_menu_widgets(parent);
+    parse_button_translations(&m_button_info);
+    xaw_create_menu(m_button_info, panel, width);
 #endif /* MOTIF */
     initialize_menus();
 }
-#endif /* NEW_MENU_CREATION || MOTIF */
+

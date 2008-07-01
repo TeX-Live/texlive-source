@@ -31,13 +31,17 @@
  */
 typedef enum statusTimerT_ {
     STATUS_FOREVER = 0,
+    STATUS_VERYSHORT = 1,
     STATUS_SHORT = 5,
     STATUS_MEDIUM = 10,
     STATUS_LONG = 30
 } statusTimerT;
 
+extern int get_statusline_height(void);
 extern void statusline_clear(void);
-extern void statusline_print(statusTimerT timeout, const char *fmt, ...);
+extern void statusline_erase(const char *pattern);
+extern void statusline_info(statusTimerT timeout, const char *fmt, ...);
+extern void statusline_error(statusTimerT timeout, const char *fmt, ...);
 extern void statusline_append(statusTimerT timeout, const char *pattern, const char *fmt, ...);
 #ifdef MOTIF
 extern Widget create_statusline(Widget parent);

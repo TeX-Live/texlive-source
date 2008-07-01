@@ -1,4 +1,4 @@
-;;; (X)Emacs frontend to forward search with xdvi(k).
+;;; xdvi-search.el --- (X)Emacs frontend for forward search with xdvi(k)
 ;;; Requires xdvi(k) >= 22.38.
 ;;;
 ;;; See http://xdvi.sourceforge.net/inverse-search.html and the section
@@ -6,7 +6,9 @@
 ;;;
 ;;; This file is available from: http://xdvi.sourceforge.net/xdvi-search.el
 ;;;
-;;; $Revision: 1.15.2.43 $, tested with Emacs 20.4 to 21.2 and Xemacs 21.1 to 21.5
+;;; Copyright (C) 2004 - 2006 Stefan Ulrich
+;;; Copyright (C) 2006, Chris Stucchio (minor modifications)
+;;; $Revision: 1.37 $, tested with Emacs 20.4 to 21.2 and Xemacs 21.1 to 21.5
 ;;;
 ;;; This program is free software; you can redistribute it and/or
 ;;; modify it under the terms of the GNU General Public License
@@ -23,55 +25,67 @@
 ;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ;;;
 ;;;
-;;; Usage:
-;;;
-;;; - Add this file to some place where emacs can find it
-;;;   (e.g. put it into a directory ~/emacs/, which you add to your
-;;;   load path by putting the following line into your .emacs file:
-;;;   
-;;;      (add-to-list 'load-path (expand-file-name "~/emacs/"))
-;;;   
-;;;   Then, add the following line to your .emacs file:
-;;;   
-;;;      (require 'xdvi-search)
-;;;   
-;;;   After compiling your .tex file with source specials activated, you should
-;;;   be able to use
-;;;      M-x xdvi-jump-to-line
-;;;   to make xdvi jump to the current location of the cursor.
-;;;   
-;;;   You could also bind this command to a key, e.g. by adding
-;;;   a binding to tex-mode-hook:
-;;;   
-;;;      (add-hook 'tex-mode-hook (lambda ()
-;;;                                 (local-set-key "\C-c\C-j" 'xdvi-jump-to-line)))
-;;;
-;;;   (without AucTeX; use LaTeX-mode-hook instead of tex-mode-hook with AucTeX.
-;;;   Note that with AucTeX, C-c C-j is already bound to LaTeX-insert-item, so
-;;;   you might want to use a different key combination instead.)
-;;;
-;;; - Note that with xdvik < 22.74.2, you may need to use one of the
-;;;   functions xdvi-jump-to-line-fullpath() or xdvi-jump-to-line-relpath()
-;;;   instead of xdvi-jump-to-line(), depending on the type of paths contained
-;;;   in your \include{} commands. See the docstring of xdvi-jump-to-line()
-;;;   for more information.
-;;;
-;;; Please send bug reports, improvements etc. to
-;;; <stefanulrich@users.sourceforge.net>.
-;;;
+;;; Commentary:
+;; 
+;; Usage:
+;;
+;; - Add this file to some place where Emacs can find it
+;;   (e.g. put it into a directory ~/emacs/, which you add to your
+;;   load path by putting the following line into your .emacs file:
+;;   
+;;      (add-to-list 'load-path (expand-file-name "~/emacs/"))
+;;   
+;;   Then, add the following line to your .emacs file:
+;;   
+;;      (require 'xdvi-search)
+;;   
+;;   After compiling your .tex file with source specials activated, you should
+;;   be able to use
+;;      M-x xdvi-jump-to-line
+;;   to make xdvi jump to the current location of the cursor.
+;;   
+;;   You could also bind this command to a key, e.g. by adding
+;;   a binding to tex-mode-hook:
+;;   
+;;      (add-hook 'tex-mode-hook (lambda ()
+;;                                 (local-set-key "\C-c\C-j" 'xdvi-jump-to-line)))
+;;
+;;   
+;;   (without AucTeX; use LaTeX-mode-hook instead of tex-mode-hook with AucTeX.
+;;   Note that with AucTeX, C-c C-j is already bound to LaTeX-insert-item, so
+;;   you might want to use a different key combination instead.)
+;;
+;; - Note that with xdvik < 22.74.2, you may need to use one of the
+;;   functions xdvi-jump-to-line-fullpath() or xdvi-jump-to-line-relpath()
+;;   instead of xdvi-jump-to-line(), depending on the type of paths contained
+;;   in your \include{} commands.  See the docstring of xdvi-jump-to-line()
+;;   for more information.
+;;
+;; Please send bug reports, improvements etc.  to
+;; <stefanulrich@users.sourceforge.net>.
+;;
 
+
+;;; Code:
 
 ;;;
 ;;; Customizable stuff
 ;;;
+
 (defgroup xdvi-search nil
-      "Support for inverse search with (La)TeX and DVI previewers."
-      :group 'languages)
+  "Support for inverse search with (La)TeX and DVI previewers."
+  :group 'languages)
 
 (defcustom explicit-shell-file-name nil
   "*If non-nil, file name to use for explicitly requested inferior shell."
   :type '(choice (const :tag "nil" nil) file)
   :group 'xdvi-search)
+
+(defcustom xdvi-shell-buffer-name nil
+  "*If non-nil, file name to use for explicitly requested inferior shell."
+  :type '(choice (const :tag "nil" nil) file)
+  :group 'xdvi-search)
+
 
 (defcustom xdvi-bin "xdvi"
   "*Name of the xdvi executable."
@@ -88,8 +102,8 @@
 ;;; global variables/constants
 ;;;
 (defvar xdvi-version-number 0
-  "*Version of xdvi(k) you're using; only set this to override the built-in
-version recognition if that fails.
+  "*Version of xdvi(k) you're using.
+Only set this to override the built-in version recognition if that fails.
 The version number is computed as: major * 1000000 + minor * 1000 + patchlevel,
 where alphabetic characters are ignored; e.g. 22040000 equals version 22.40c;
  22077002 equals version 22.77.2.")
@@ -97,27 +111,28 @@ where alphabetic characters are ignored; e.g. 22040000 equals version 22.40c;
 (defvar xdvi-is-xdvik nil
   "Whether we're really using xdvik instead of xdvi.")
 
-(defconst xdvik-new-search-version 22074001
-  "First version of xdvik to implement new search algorithm that ignores .tex suffixes and
-has a -nofork option.")
-
-
 ;;;
 ;;; exported functions
 ;;;
+;;;###autoload
 (defun xdvi-jump-to-line-fullpath ()
-  (interactive)
   "See `xdvi-jump-to-line' for documentation."
+  (interactive)
   (xdvi-jump-to-line 3))
 
+;;;###autoload
 (defun xdvi-jump-to-line-relpath ()
-  (interactive)
   "See `xdvi-jump-to-line' for documentation."
+  (interactive)
   (xdvi-jump-to-line 2))
 
+;;;###autoload
 (defun xdvi-jump-to-line (flag)
   "Call xdvi to perform a `forward search' for current file and line number.
-Xdvi needs three pieces of information for this:
+The optional argument FLAG controls the path searching behaviour; see also
+'xdvi-jump-to-line-fullpath' and 'xdvi-jump-to-line-relpath'.
+
+Xdvi needs three pieces of information for forward search:
 
 - the current line number
 - the name of the current input file
@@ -133,7 +148,7 @@ For the current input file name, we need to rely on the DVI viewer to
 make a smart matching of path suffixes with the file names that
 actually occur in the specials, since specials inserted by TeX's
 `-src' option may contain absolute or relative paths, depending on
-whether TeX is called with a relative or absolute filename. (Similarly
+whether TeX is called with a relative or absolute filename.  (Similarly
 for srcltx.sty, which can't expand paths.)
 
 Note to users of older versions of xdvik (< 22.74.2), or non-k xdvi:
@@ -148,8 +163,7 @@ There are various ways of specifying an input file path for LaTeX's
 Versions of xdvik < 22.74.2 and plain xdvi will not match pathname suffixes.
 With these versions, `xdvi-jump-to-line' will only work with variant (1);
 for (2) or (3) you will need to use one of `xdvi-jump-to-line-relpath' (for 2)
-or `xdvi-jump-to-line-fullpath' (for 3) instead.
-"
+or `xdvi-jump-to-line-fullpath' (for 3) instead."
   (interactive "P")
   (save-excursion
     (save-restriction
@@ -163,6 +177,7 @@ or `xdvi-jump-to-line-fullpath' (for 3) instead.
              ;;; then adding 1
 	     (curr-line (+ 1 (count-lines (point-min) (point))))
 	     ;;; name of master .tex file, to be used as DVI basename:
+	     (abspath (file-name-directory buffer-file-name))
 	     (master-file (if (fboundp 'TeX-master-file)
 			      (TeX-master-file t)
 			    (xdvi-get-masterfile (xdvi-master-file-name))))
@@ -170,9 +185,9 @@ or `xdvi-jump-to-line-fullpath' (for 3) instead.
 	     ;;; DVI file name:
 	     (dvi-file (concat (file-name-sans-extension master-file) ".dvi"))
 	     ;;; Current source filename
-	     (filename (get-source-filename (buffer-file-name) (car xdvi-version-info) flag)))
-	(if (xdvi-has-no-inverse-search (car xdvi-version-info))
-	    (error "Your xdvi version is too old; see http://xdvi.sourceforge.net/inverse-search.html for more information."))
+	     (filename (get-source-filename (buffer-file-name) flag)))
+	(if (not (xdvi-has-inverse-search (car xdvi-version-info)))
+	    (error "Your xdvi version is too old; see http://xdvi.sourceforge.net/inverse-search.html for more information"))
 	(if (not (file-exists-p dvi-file))
 	    (message "File %s does not exist; maybe you need to run latex first?" dvi-file)
 	  (save-window-excursion
@@ -206,11 +221,12 @@ or `xdvi-jump-to-line-fullpath' (for 3) instead.
 			    ;; bash/ksh/sh
 			    ((list ">" "2>&1")))))
 		(cond ((string-match "XEmacs" emacs-version)
-		       (shell))
+		       (xdvi-shell))
 		      ((< emacs-major-version 21)
-		       (shell))
-		      ((shell "*xdvi-shell*")))
+		       (xdvi-shell))
+		      ((shell (or xdvi-shell-buffer-name "*xdvi-shell*"))))
 		(comint-send-input)
+		(insert (concat "cd " abspath ";") )
 		(insert xdvi-bin
 			" -sourceposition '" (int-to-string curr-line) " " filename "' "
 			dvi-file
@@ -237,35 +253,70 @@ or `xdvi-jump-to-line-fullpath' (for 3) instead.
 ;;;
 ;;; internal functions
 ;;;
-(defun xdvi-has-no-inverse-search (version)
-  (< version 22038000))
+(defun shell-with-name (name)
+  "This function opens a shell in a buffer with name given by the argument, and switches to that buffer. If the buffer already exists, we simply switch to it."
+  (let ((buffer-of-name (get-buffer name)) 
+	(tempname (generate-new-buffer-name "*tempshell*") ) )
+    (cond ((bufferp buffer-of-name) ;If the buffer exists, switch to it (assume it is a shell)
+	   (switch-to-buffer name))
+	  ( (bufferp (get-buffer "*shell*"))
+	  (progn
+	    (shell)
+	    (rename-buffer tempname)
+	    (shell)
+	    (rename-buffer name)
+	    (switch-to-buffer tempname)
+	    (rename-buffer "*shell*")
+	    (switch-to-buffer name)))
+	  ( t
+	    (progn
+	      (shell)
+	      (rename-buffer name)
+	      )
+	    )
+	  )
+    )
+  )
+
+(defun xdvi-shell () 
+  "Behaves just like function shell, but creates the shell in buffer named *xdvi-shell* (unless of course the user chooses to modify the xdvi-shell-buffer-name variable.)"
+  (shell-with-name (or xdvi-shell-buffer-name "*xdvi-shell*") )
+  )
+
+(defun xdvi-has-inverse-search (version)
+  "Return True if inverse search is available for this VERSION of xdvi(k)."
+  (>= version 22038000))
 
 (defun xdvi-has-nofork (version is-xdvik)
+  "Return True if the '-nofork' option is available for this VERSION of xdvi(k).
+This option was implemented in version 22.74.1 of xdvik, and 22.61 of plain xdvi.
+Argument IS-XDVIK controls whether we're running xdvik or plain xdvi."
   (if is-xdvik
-      ; xdvik got -nofork in version 22.74.1
       (>= version 22074001)
     (>= version 22061000)))
 
-(defun get-source-filename (fname version flag)
+(defun get-source-filename (fname flag)
+  "Helper function to extract the file name from the file name FNAME.
+FLAG controls whether to use the full path or a relative path."
   (if (> flag 1)
       (if (> flag 2)
 	  ;;; full path name, for use with TeX patch and when using the
 	  ;;; full path in \input or \include with srcltx.sty:
-	  (expand-file-name (buffer-file-name))
+	  (expand-file-name fname)
 	  ;;; relative path name: if current path and path of master file match partly,
 	  ;;; use the rest of this path; else use buffer name. This can treat both the
 	  ;;; cases when a relative path is used in \input{}, or when just the filename
 	  ;;; is used and the file is located in the current directory (suggested by
 	  ;;; frisk@isy.liu.se).
 	(if (string-match (concat "^" (regexp-quote (file-name-directory master-file)))
-			  (buffer-file-name))
-	    (substring (buffer-file-name) (match-end 0))
-	  (buffer-file-name)))
+			  fname)
+	    (substring fname (match-end 0))
+	  fname))
     ;;; buffer file name without path:
-    (file-name-nondirectory (buffer-file-name))))
+    (file-name-nondirectory fname)))
 
 (defun xdvi-get-version-number (default)
-  "Return a tuple of (version-number xdvi-is-xdvik), or (default nil) if default != 0."
+  "Return a tuple of (version-number xdvi-is-xdvik), or (DEFAULT nil) if DEFAULT != 0."
   (if (not (= default 0))
       (list default nil)
     (save-window-excursion
@@ -274,7 +325,7 @@ or `xdvi-jump-to-line-fullpath' (for 3) instead.
       (call-process xdvi-bin nil "*xdvi-version*" nil "-version")
       (goto-char (point-min))
       (if (not (re-search-forward "xdvi\\((?k)?\\)? version \\([0-9]+\\)\\.\\([0-9]+\\)\\(\\.\\([0-9]+\\)\\)?" nil t))
-	  (error "Unable to get xdvi version number - please check value of `xdvi-bin', or set it manually via `xdvi-version-number'.")
+	  (error "Unable to get xdvi version number - please check value of `xdvi-bin', or set it manually via `xdvi-version-number'")
 	(let* ((major (string-to-int (buffer-substring (match-beginning 2) (match-end 2))))
 	       (minor (string-to-int (buffer-substring (match-beginning 3) (match-end 3))))
 	       (patchlevel (if (match-beginning 5)
@@ -288,6 +339,7 @@ or `xdvi-jump-to-line-fullpath' (for 3) instead.
 	  )))))
 
 (defun xdvi-process-sentinel (process signal)
+  "Return a readable error message for subprocess PROCESS which has terminated with SIGNAL."
   (let ((retmsg (substring signal 0 -1)))
     (if (string-match "abnormally" retmsg)
 	(progn
@@ -297,7 +349,7 @@ or `xdvi-jump-to-line-fullpath' (for 3) instead.
 
 (defun xdvi-get-masterfile (file)
   "Small helper function for AucTeX compatibility.
-Converts the special value t that TeX-master might be set to
+Converts the special value t that TeX-master might be set to (Argument FILE)
 into a real file name."
   (if (eq file t)
       (buffer-file-name)

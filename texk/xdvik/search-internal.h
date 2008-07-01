@@ -62,9 +62,12 @@ struct word_info {
     Boolean text_selection_pass; /* whether we're scanning for text selection */
 };
 
+struct save_or_print_info; /* forward declaration */
+
+extern void isearch_start(void);
 extern void search_dvi(XtPointer settings);
 extern void search_restart(XtPointer settings);
-extern Boolean search_extract_text(outputFormatT fmt, struct select_pages_info *pinfo);
+extern Boolean search_extract_text(struct save_or_print_info *info);
 extern Boolean search_have_match(int pageno);
 extern int search_inside_bbox_match(int x, int y);
 extern void search_draw_inverted_regions(void);

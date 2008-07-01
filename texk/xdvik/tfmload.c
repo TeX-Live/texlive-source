@@ -37,9 +37,9 @@ tfmload(const char *name, long *design, long *widths, long *fontdimen2)
     filename = kpse_find_tfm(name);
 
     if (filename == NULL) {
-      filename = kpse_find_tfm("cmr10.tfm");
-      if (fallbacktfm == 0)
-	  fallbacktfm = 1;
+	filename = kpse_find_tfm("cmr10.tfm");
+	if (fallbacktfm == 0)
+	    fallbacktfm = 1;
     }
 
     if (filename == NULL)
@@ -68,7 +68,7 @@ tfmload(const char *name, long *design, long *widths, long *fontdimen2)
     f_param_num = get_bytes(curfnt, 2);	/* np = number of font parameter words */
 
     /* Header, 32 bit signed quantities */
-    get_bytes(curfnt, 4);	/* header[0]: checksum */
+    (void)get_bytes(curfnt, 4);	/* header[0]: checksum */
     *design = get_bytes(curfnt, 4);	/* header[1]: design size */
 
     /* Skip the rest: header[2..(hd-1)] */
@@ -84,8 +84,8 @@ tfmload(const char *name, long *design, long *widths, long *fontdimen2)
     /* The charinfo array: */
     for (i = bc; i <= ec; i++) {
 	chardat[i] = get_byte(curfnt);	/* 8 bits of width index */
-	get_byte(curfnt);	/* skip */
-	get_bytes(curfnt, 2);	/* skip, jump */
+	(void)get_byte(curfnt);	/* skip */
+	(void)get_bytes(curfnt, 2);	/* skip, jump */
     }
 
     /* The (compressed!) width table */
@@ -94,7 +94,7 @@ tfmload(const char *name, long *design, long *widths, long *fontdimen2)
 
     /* skip to font parameter words */
     for (i = 0; i < f_param_off; i++)
-	get_bytes(curfnt, 4);
+	(void)get_bytes(curfnt, 4);
 
     /* read fontdimen2 (width of space) */
     for (i = 0; i < f_param_num; i++) {

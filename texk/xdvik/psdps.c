@@ -21,11 +21,11 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
 NOTES:
-	This code was originally written by Ricardo Telichevesky
-	(ricardo@rle-vlsi-mit.edu) and Luis Miguel Silveira
-	(lms@rle-vlsi-mit.edu).
-	It was largely influenced by similar code in the SeeTeX/XTeX
-	package by Dirk Grunwald (grunwald@colorado.edu).
+This code was originally written by Ricardo Telichevesky
+(ricardo@rle-vlsi-mit.edu) and Luis Miguel Silveira
+(lms@rle-vlsi-mit.edu).
+It was largely influenced by similar code in the SeeTeX/XTeX
+package by Dirk Grunwald (grunwald@colorado.edu).
 
 \*========================================================================*/
 
@@ -42,10 +42,12 @@ NOTES:
 #include <DPS/dpsclient.h>
 
 #include "xdvi-config.h"
+#include "special.h"
+#include "util.h"
 #include "xdvi.h"
 
 #ifdef	X_NOT_STDC_ENV
-extern	int	errno;
+    extern	int	errno;
 #endif
 
 #if defined(sun) || defined(__sun)
@@ -68,43 +70,43 @@ extern	int	errno;
  */
 #if !SUNHACK
 static char preamble[] =
-    "/xdvi$line 81 string def "
-    "/xdvi$run {{$error null ne {$error /newerror false put}if "
-    " currentfile cvx stopped "
-    " $error null eq {false} {$error /newerror get} ifelse and "
-    " {handleerror} if} stopped pop} def "
-    "/xdvi$dslen countdictstack def "
-    "{currentfile read not {exit} if 72 eq "
-    " {xdvi$run} "
-    " {/xdvi$sav save def xdvi$run "
-    "  clear countdictstack xdvi$dslen sub {end} repeat xdvi$sav restore} "
-    " ifelse "
-    " {(%%xdvimark) currentfile xdvi$line {readline} stopped "
-    "  {clear} {pop eq {exit} if} ifelse }loop "
-    " (xdvi$Ack\n) print flush "
-    "}loop\nH";
+"/xdvi$line 81 string def "
+"/xdvi$run {{$error null ne {$error /newerror false put}if "
+" currentfile cvx stopped "
+" $error null eq {false} {$error /newerror get} ifelse and "
+" {handleerror} if} stopped pop} def "
+"/xdvi$dslen countdictstack def "
+"{currentfile read not {exit} if 72 eq "
+" {xdvi$run} "
+" {/xdvi$sav save def xdvi$run "
+"  clear countdictstack xdvi$dslen sub {end} repeat xdvi$sav restore} "
+" ifelse "
+" {(%%xdvimark) currentfile xdvi$line {readline} stopped "
+"  {clear} {pop eq {exit} if} ifelse }loop "
+" (xdvi$Ack\n) print flush "
+"}loop\nH";
 #else /* SUNHACK */
 static char preamble[] =
-    "/xdvi$line 81 string def "
-    "/xdvi$run {{$error null ne {$error /newerror false put}if "
-    "currentfile cvx stopped "
-    "$error null eq {false} {$error /newerror get} ifelse and "
-    "{handleerror} if} stopped pop} def "
-    "/xdvi$dslen countdictstack def "
-    "/xdvi$ack {{(%%xdvimark) currentfile xdvi$line {readline} stopped "
-    "  {clear} {pop eq {exit} if} ifelse }loop "
-    "  (xdvi$Ack\n) print flush} bind def "
-    "errordict begin /interrupt{(xdvi$Int\n) print flush stop}bind def "
-    "end "
-    "{{currentfile read not {exit} if 72 eq "
-    "   {xdvi$run} "
-    "   {/xdvi$sav save def xdvi$run "
-    "    clear countdictstack xdvi$dslen sub {end} repeat xdvi$sav restore} "
-    "  ifelse "
-    " xdvi$ack "
-    " }loop "
-    "xdvi$ack "
-    "}loop\nH";
+"/xdvi$line 81 string def "
+"/xdvi$run {{$error null ne {$error /newerror false put}if "
+"currentfile cvx stopped "
+"$error null eq {false} {$error /newerror get} ifelse and "
+"{handleerror} if} stopped pop} def "
+"/xdvi$dslen countdictstack def "
+"/xdvi$ack {{(%%xdvimark) currentfile xdvi$line {readline} stopped "
+"  {clear} {pop eq {exit} if} ifelse }loop "
+"  (xdvi$Ack\n) print flush} bind def "
+"errordict begin /interrupt{(xdvi$Int\n) print flush stop}bind def "
+"end "
+"{{currentfile read not {exit} if 72 eq "
+"   {xdvi$run} "
+"   {/xdvi$sav save def xdvi$run "
+"    clear countdictstack xdvi$dslen sub {end} repeat xdvi$sav restore} "
+"  ifelse "
+" xdvi$ack "
+" }loop "
+"xdvi$ack "
+"}loop\nH";
 #endif /* SUNHACK */
 
 extern const char psheader[];
@@ -146,7 +148,7 @@ static struct psprocs dps_procs = {
 
 static DPSContext DPS_ctx = NULL;
 static DPSSpace DPS_space = NULL;
-static int DPS_mag;	/* magnification currently in use */
+static unsigned long DPS_mag;	/* magnification currently in use */
 static int DPS_shrink;	/* shrink factor currently in use */
 static Boolean DPS_active;	/* if we've started a page */
 static int DPS_pending;	/* number of ack's we're expecting */
@@ -177,10 +179,12 @@ static char *linepos = line;
 static void
 TextProc(DPSContext ctxt, char *buf, unsigned long count)
 {
-    int i;
+    unsigned long i;
     char *p;
     char *p0;
 
+    UNUSED(ctxt);
+    
     while (count > 0) {
 	i = line + BUFLEN - linepos;
 	if (i > count)
@@ -264,16 +268,23 @@ TextProc(DPSContext ctxt, char *buf, unsigned long count)
   Waits until the requisite number of acknowledgements has been received from
   the context.
 
-+----------------------------------------------------------------------------*/
+  +----------------------------------------------------------------------------*/
 
 #if SUNHACK
-static	void	DPS_alarm ARGS((struct xtimer *));
+static void DPS_alarm(struct xtimer *this, void *data);
 
-static	struct xtimer	DPS_timer	= {NULL, {0, 0}, DPS_alarm};
-static	Boolean		DPS_timer_set;
+static struct xtimer DPS_timer = {NULL, {0, 0}, XTM_DEFAULT, DPS_alarm, NULL
+#if XDVI_XT_TIMER_HACK
+				  , NULL, NULL
+#endif
+};
 
-static void DPS_alarm(struct xtimer *arg)
+static Boolean DPS_timer_set;
+
+static void DPS_alarm(struct xtimer *this, void *data)
 {
+    UNUSED(this);
+    UNUSED(data);
     if (globals.debug & DBG_PS)
 	puts("Received DPS alarm");
 
@@ -296,7 +307,7 @@ waitack(void)
 
     if (globals.debug & DBG_PS)
 	printf("Interrupting DPS in waitack(); code is now %d %x\n",
-		XDPSGetContextStatus(DPS_ctx), globals.ev.flags);
+	       XDPSGetContextStatus(DPS_ctx), globals.ev.flags);
 
     DPS_active = DPS_in_header = DPS_in_doc = False;
     DPS_ev_mask = DPS_MASK_NORMAL;
@@ -369,7 +380,7 @@ waitack(void)
   Initializes variables from the application main loop.  Checks to see if
   a connection to the DPS server can be opened.
 
-+----------------------------------------------------------------------------*/
+  +----------------------------------------------------------------------------*/
 
 static int
 get_shift(Pixel mask)
@@ -472,13 +483,13 @@ Boolean initDPS(void)
   Used to toggle the rendering of PostScript by the DPS server
   This routine may be called from within read_events().
 
-+----------------------------------------------------------------------------*/
+  +----------------------------------------------------------------------------*/
 
 static void
 toggleDPS(int flag)
 {
     if (globals.debug & DBG_PS)
-	Puts("Toggling DPS to %d", flag);
+	fprintf(stderr, "Toggling DPS to %d", flag);
 
     switch (flag) {
     case 0:
@@ -505,7 +516,7 @@ toggleDPS(int flag)
   Close the connection to the DPS server; used when rendering is terminated
   in any way.
 
-+----------------------------------------------------------------------------*/
+  +----------------------------------------------------------------------------*/
 
 static void
 destroyDPS(void)
@@ -534,7 +545,7 @@ destroyDPS(void)
   Close the connection to the DPS server; used when rendering is terminated
   because of an interruption in the viewing of the current page.
 
-+----------------------------------------------------------------------------*/
+  +----------------------------------------------------------------------------*/
 
 static	void
 interruptDPS(void)
@@ -564,7 +575,7 @@ interruptDPS(void)
   Description:
   Should be called at the end of a page to end this chunk for the DPS server.
 
-+----------------------------------------------------------------------------*/
+  +----------------------------------------------------------------------------*/
 
 static void
 endpageDPS(void)
@@ -592,7 +603,7 @@ checkDPS(void)
 
     if (DPS_ctx == NULL) {
 	DPS_ctx = XDPSCreateSimpleContext(DISP, mane.win, globals.gc.copy, 0, 0,
-		TextProc, DPSErrorProcHandler, DPS_space);
+					  TextProc, DPSErrorProcHandler, DPS_space);
 	if (DPS_ctx == NULL) {
 	    psp = no_ps_procs;
 	    draw_bbox();
@@ -614,10 +625,10 @@ checkDPS(void)
   drawbeginDPS  ()
 
   Arguments: xul, yul - coordinates of the upper left corner of the figure
-             cp - string with the bounding box line data
+  cp - string with the bounding box line data
   Returns: (void)
   Side-Effects: DPS_ctx is set is set and connection to DPS server is
-                opened.
+  opened.
 
   Description:
   Opens a connection to the DPS server and send in the preamble and the
@@ -625,7 +636,7 @@ checkDPS(void)
   In case no rendering is to be done, outlines the figure.
   An outline is also generated whenever the a context cannot be allocated
 
-+----------------------------------------------------------------------------*/
+  +----------------------------------------------------------------------------*/
 
 static void
 drawbeginDPS(int xul, int yul, const char *cp)
@@ -663,21 +674,21 @@ drawbeginDPS(int xul, int yul, const char *cp)
 static void
 drawbeginDPS_box(int xul, int yul, const char *cp)
 {
-    drawbeginDPS(int xul, int yul, const char *cp);
+    drawbeginDPS(xul, yul, cp);
     draw_bbox();
 }
 
 /*---------------------------------------------------------------------------*
 
-  drawrawDPS()
+drawrawDPS()
 
-  Arguments: cp - the raw string to be sent to the postscript interpreter
-  Returns: (void)
-  Side-Effects: (none)
+Arguments: cp - the raw string to be sent to the postscript interpreter
+Returns: (void)
+Side-Effects: (none)
 
-  Description:
-  If there is a valid postscript context, just send the string to the
-  interpreter, else leave.
+Description:
+If there is a valid postscript context, just send the string to the
+interpreter, else leave.
 
 +----------------------------------------------------------------------------*/
 
@@ -698,14 +709,14 @@ drawrawDPS(const char *cp)
   drawfileDPS()
 
   Arguments: cp - string with the postscript file pathname
-	     psfile - opened file pointer
+  psfile - opened file pointer
   Returns: (void)
   Side-Effects: none
 
   Description:
   Postscript file containing the figure is opened and sent to the DPS server.
 
-+----------------------------------------------------------------------------*/
+  +----------------------------------------------------------------------------*/
 
 static void
 drawfileDPS(const char *cp, FILE *psfile)
@@ -746,7 +757,7 @@ drawfileDPS(const char *cp, FILE *psfile)
   Description:
   Sends the indication of end of the figure PostScript code.
 
-+----------------------------------------------------------------------------*/
+  +----------------------------------------------------------------------------*/
 
 static void
 drawendDPS(const char *cp)
@@ -769,7 +780,7 @@ drawendDPS(const char *cp)
   Description:
   Prepares the PostScript interpreter for receipt of header code.
 
-+----------------------------------------------------------------------------*/
+  +----------------------------------------------------------------------------*/
 
 static void
 beginheaderDPS(void)
@@ -809,7 +820,7 @@ beginheaderDPS(void)
   Description:
   Prepares the PostScript interpreter for receipt of header code.
 
-+----------------------------------------------------------------------------*/
+  +----------------------------------------------------------------------------*/
 
 static void
 endheaderDPS(void)
@@ -836,7 +847,7 @@ endheaderDPS(void)
   Description:
   Clears out headers stored from the previous document.
 
-+----------------------------------------------------------------------------*/
+  +----------------------------------------------------------------------------*/
 
 static void
 newdocDPS(void)

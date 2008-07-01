@@ -17,15 +17,22 @@ test -f /bin/bsh && test -z "$RUNNING_BSH" \
   && { RUNNING_BSH=true; export RUNNING_BSH; exec /bin/bsh $0 ${1+"$@"}; }
 RUNNING_BSH=
 
-# -help and -version only work if they are the only options. Therefore,
-# we cannot give the "-name xdvi" parameter in that case.
-# SU: Actually, with current xdvik, they should work in any position; but
-# we may keep this for compatibility with older versions and non-k xdvi.
+# -help and -version only used to work if they were the only options,
+# so the "-name xdvi" parameter wasn't used in that case. With current
+# xdvik, it should work in any case, but we keep this logic for compatibility
+# with older xdvik and plain xdvi versions.
+have_basename=`basename foo/bar 2>&1 | grep -i 'not found'`
+if [ "$have_basename"xxx = "xxx" ]; then
+    BASE_NAME=`basename $0`
+else
+    BASE_NAME=`echo $0 | sed 's!.*/!!'`
+fi
+
 case "$#:$1" in
   1:-help|1:-version)
     NAMEOPT=;;
   *)
-    NAMEOPT='-name xdvi';;
+    NAMEOPT="-name $BASE_NAME";;
 esac
 
 xdviappfile=`kpsewhich -progname=xdvi --format='other text files' XDvi`

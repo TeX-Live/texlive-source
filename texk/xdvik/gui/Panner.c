@@ -1,28 +1,28 @@
 /*
  * $XConsortium: Panner.c,v 1.52 95/01/10 14:31:26 kaleb Exp $
  *
-Copyright (c) 1989, 1994  X Consortium
+ Copyright (c) 1989, 1994  X Consortium
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
-X CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
-AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+ X CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+ AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-Except as contained in this notice, the name of the X Consortium shall not be
-used in advertising or otherwise to promote the sale, use or other dealings
-in this Software without prior written authorization from the X Consortium.
+ Except as contained in this notice, the name of the X Consortium shall not be
+ used in advertising or otherwise to promote the sale, use or other dealings
+ in this Software without prior written authorization from the X Consortium.
  *
  * Author:  Jim Fulton, MIT X Consortium
  */
@@ -57,17 +57,17 @@ extern Bool XmuDistinguishablePixels(); /* not defined in any Xmu headers */
 #define offset(field) XtOffsetOf(SimpleRec, simple.field)
 
 static XtResource resources[] = {
-  {XtNcursor, XtCCursor, XtRCursor, sizeof(Cursor),
+    {XtNcursor, XtCCursor, XtRCursor, sizeof(Cursor),
      offset(cursor), XtRImmediate, (XtPointer) None},
-  {XtNinsensitiveBorder, XtCInsensitive, XtRPixmap, sizeof(Pixmap),
+    {XtNinsensitiveBorder, XtCInsensitive, XtRPixmap, sizeof(Pixmap),
      offset(insensitive_border), XtRImmediate, (XtPointer) NULL},
-  {XtNpointerColor, XtCForeground, XtRPixel, sizeof(Pixel),
+    {XtNpointerColor, XtCForeground, XtRPixel, sizeof(Pixel),
      offset(pointer_fg), XtRString, XtDefaultForeground},
-  {XtNpointerColorBackground, XtCBackground, XtRPixel, sizeof(Pixel),
+    {XtNpointerColorBackground, XtCBackground, XtRPixel, sizeof(Pixel),
      offset(pointer_bg), XtRString, XtDefaultBackground},
-  {XtNcursorName, XtCCursor, XtRString, sizeof(String),
+    {XtNcursorName, XtCCursor, XtRString, sizeof(String),
      offset(cursor_name), XtRString, NULL},
-  {XtNinternational, XtCInternational, XtRBoolean, sizeof(Boolean),
+    {XtNinternational, XtCInternational, XtRBoolean, sizeof(Boolean),
      offset(international), XtRImmediate, (XtPointer) FALSE},
 #undef offset
 };
@@ -77,47 +77,47 @@ static Bool SetValues(Widget current, Widget request, Widget new, ArgList args, 
 static Bool ChangeSensitive(Widget w);
 
 SimpleClassRec simpleClassRec = {
-  { /* core fields */
-    /* superclass		*/	(WidgetClass) &widgetClassRec,
-    /* class_name		*/	"Simple",
-    /* widget_size		*/	sizeof(SimpleRec),
-    /* class_initialize		*/	ClassInitialize,
-    /* class_part_initialize	*/	ClassPartInitialize,
-    /* class_inited		*/	FALSE,
-    /* initialize		*/	NULL,
-    /* initialize_hook		*/	NULL,
-    /* realize			*/	Realize,
-    /* actions			*/	NULL,
-    /* num_actions		*/	0,
-    /* resources		*/	resources,
-    /* num_resources		*/	XtNumber(resources),
-    /* xrm_class		*/	NULLQUARK,
-    /* compress_motion		*/	TRUE,
-    /* compress_exposure	*/	TRUE,
-    /* compress_enterleave	*/	TRUE,
-    /* visible_interest		*/	FALSE,
-    /* destroy			*/	NULL,
-    /* resize			*/	NULL,
-    /* expose			*/	NULL,
+    { /* core fields */
+	/* superclass		*/	(WidgetClass) &widgetClassRec,
+	/* class_name		*/	"Simple",
+	/* widget_size		*/	sizeof(SimpleRec),
+	/* class_initialize		*/	ClassInitialize,
+	/* class_part_initialize	*/	ClassPartInitialize,
+	/* class_inited		*/	FALSE,
+	/* initialize		*/	NULL,
+	/* initialize_hook		*/	NULL,
+	/* realize			*/	Realize,
+	/* actions			*/	NULL,
+	/* num_actions		*/	0,
+	/* resources		*/	resources,
+	/* num_resources		*/	XtNumber(resources),
+	/* xrm_class		*/	NULLQUARK,
+	/* compress_motion		*/	TRUE,
+	/* compress_exposure	*/	TRUE,
+	/* compress_enterleave	*/	TRUE,
+	/* visible_interest		*/	FALSE,
+	/* destroy			*/	NULL,
+	/* resize			*/	NULL,
+	/* expose			*/	NULL,
 #warning FIXME: incompatible pointer type    
-    /* set_values		*/	SetValues,
-    /* set_values_hook		*/	NULL,
-    /* set_values_almost	*/	XtInheritSetValuesAlmost,
-    /* get_values_hook		*/	NULL,
-    /* accept_focus		*/	NULL,
-    /* version			*/	XtVersion,
-    /* callback_private		*/	NULL,
-    /* tm_table			*/	NULL,
-    /* query_geometry		*/	XtInheritQueryGeometry,
-    /* display_accelerator	*/	XtInheritDisplayAccelerator,
-    /* extension		*/	NULL
-  },
-  { /* simple fields */
-    /* change_sensitive		*/	ChangeSensitive
+	/* set_values		*/	SetValues,
+	/* set_values_hook		*/	NULL,
+	/* set_values_almost	*/	XtInheritSetValuesAlmost,
+	/* get_values_hook		*/	NULL,
+	/* accept_focus		*/	NULL,
+	/* version			*/	XtVersion,
+	/* callback_private		*/	NULL,
+	/* tm_table			*/	NULL,
+	/* query_geometry		*/	XtInheritQueryGeometry,
+	/* display_accelerator	*/	XtInheritDisplayAccelerator,
+	/* extension		*/	NULL
+    },
+    { /* simple fields */
+	/* change_sensitive		*/	ChangeSensitive
 #ifndef HAVE_OLD_XAW
-    , NULL
+	, NULL
 #endif
-  }
+    }
 };
 
 WidgetClass simpleWidgetClass = (WidgetClass)&simpleClassRec;
@@ -126,18 +126,18 @@ static void ClassInitialize()
 {
     static XtConvertArgRec convertArg[] = {
         {XtWidgetBaseOffset, (XtPointer) XtOffsetOf(WidgetRec, core.screen),
-	     sizeof(Screen *)},
+	 sizeof(Screen *)},
         {XtResourceString, (XtPointer) XtNpointerColor, sizeof(Pixel)},
         {XtResourceString, (XtPointer) XtNpointerColorBackground, 
-	     sizeof(Pixel)},
+	 sizeof(Pixel)},
         {XtWidgetBaseOffset, (XtPointer) XtOffsetOf(WidgetRec, core.colormap),
-	     sizeof(Colormap)}
+	 sizeof(Colormap)}
     };
 
     XawInitializeWidgetSet();
     XtSetTypeConverter( XtRString, XtRColorCursor, XmuCvtStringToColorCursor,
-		       convertArg, XtNumber(convertArg), 
-		       XtCacheByDisplay, (XtDestructor)NULL);
+			convertArg, XtNumber(convertArg), 
+			XtCacheByDisplay, (XtDestructor)NULL);
 }
 
 static void ClassPartInitialize(class)
@@ -145,14 +145,14 @@ static void ClassPartInitialize(class)
 {
     SimpleWidgetClass c     = (SimpleWidgetClass) class;
     SimpleWidgetClass super = (SimpleWidgetClass)
-      c->core_class.superclass;
+	c->core_class.superclass;
 
     if (c->simple_class.change_sensitive == NULL) {
 	char buf[BUFSIZ];
 
 	(void) sprintf(buf,
-		"%s Widget: The Simple Widget class method 'change_sensitive' is undefined.\nA function must be defined or inherited.",
-		c->core_class.class_name);
+		       "%s Widget: The Simple Widget class method 'change_sensitive' is undefined.\nA function must be defined or inherited.",
+		       c->core_class.class_name);
 	XtWarning(buf);
 	c->simple_class.change_sensitive = ChangeSensitive;
     }
@@ -178,7 +178,7 @@ static void Realize(w, valueMask, attributes)
 					w->core.depth);
         border_pixmap = w->core.border_pixmap;
 	attributes->border_pixmap =
-	  w->core.border_pixmap = ((SimpleWidget)w)->simple.insensitive_border;
+	    w->core.border_pixmap = ((SimpleWidget)w)->simple.insensitive_border;
 
 	*valueMask |= CWBorderPixmap;
 	*valueMask &= ~CWBorderPixel;
@@ -204,7 +204,7 @@ static void Realize(w, valueMask, attributes)
 
 static void
 ConvertCursor(w)
-Widget w;
+    Widget w;
 {
     SimpleWidget simple = (SimpleWidget) w;
     XrmValue from, to;
@@ -248,19 +248,19 @@ SetValues(Widget current, Widget request, Widget new, ArgList args, Cardinal *nu
 
     if ( XtIsSensitive(current) != XtIsSensitive(new) )
 	(*((SimpleWidgetClass)XtClass(new))->
-	     simple_class.change_sensitive) ( new );
+	 simple_class.change_sensitive) ( new );
 
     if (s_old->simple.cursor != s_new->simple.cursor) {
 	new_cursor = TRUE;
     }
 	
-/*
- * We are not handling the string cursor_name correctly here.
- */
+    /*
+     * We are not handling the string cursor_name correctly here.
+     */
 
     if ( (s_old->simple.pointer_fg != s_new->simple.pointer_fg) ||
-	(s_old->simple.pointer_bg != s_new->simple.pointer_bg) ||
-	(s_old->simple.cursor_name != s_new->simple.cursor_name) ) {
+	 (s_old->simple.pointer_bg != s_new->simple.pointer_bg) ||
+	 (s_old->simple.cursor_name != s_new->simple.cursor_name) ) {
 	ConvertCursor(new);
 	new_cursor = TRUE;
     }
@@ -291,7 +291,7 @@ static Bool ChangeSensitive(Widget w)
 					    w->core.depth);
 	    XSetWindowBorderPixmap( XtDisplay(w), XtWindow(w),
 				    ((SimpleWidget)w)->
-				        simple.insensitive_border );
+				    simple.insensitive_border );
 	}
     }
     return False;
@@ -316,7 +316,7 @@ void XawInitializeWidgetSet ()
 }
 
 static char defaultTranslations[] = 
-  "<Btn1Down>:    start() \n\
+"<Btn1Down>:    start() \n\
    <Btn1Motion>:  move() \n\
    <Btn1Up>:      notify() stop() \n\
    <Btn2Down>:    abort() \n\
@@ -357,39 +357,39 @@ static XtActionsRec actions[] = {
 static XtResource panner_resources[] = {
 #define poff(field) XtOffsetOf(PannerRec, panner.field)
     { XtNallowOff, XtCAllowOff, XtRBoolean, sizeof(Boolean),
-	poff(allow_off), XtRImmediate, (XtPointer) FALSE },
+      poff(allow_off), XtRImmediate, (XtPointer) FALSE },
     { XtNresize, XtCResize, XtRBoolean, sizeof(Boolean),
-	poff(resize_to_pref), XtRImmediate, (XtPointer) TRUE },
+      poff(resize_to_pref), XtRImmediate, (XtPointer) TRUE },
     { XtNreportCallback, XtCReportCallback, XtRCallback, sizeof(XtPointer),
-	poff(report_callbacks), XtRCallback, (XtPointer) NULL },
+      poff(report_callbacks), XtRCallback, (XtPointer) NULL },
     { XtNdefaultScale, XtCDefaultScale, XtRDimension, sizeof(Dimension),
-	poff(default_scale), XtRImmediate, (XtPointer) PANNER_DEFAULT_SCALE },
+      poff(default_scale), XtRImmediate, (XtPointer) PANNER_DEFAULT_SCALE },
     { XtNrubberBand, XtCRubberBand, XtRBoolean, sizeof(Boolean),
-	poff(rubber_band), XtRImmediate, (XtPointer) FALSE },
+      poff(rubber_band), XtRImmediate, (XtPointer) FALSE },
     { XtNforeground, XtCForeground, XtRPixel, sizeof(Pixel), 
-	poff(foreground), XtRString, (XtPointer) XtDefaultBackground },
+      poff(foreground), XtRString, (XtPointer) XtDefaultBackground },
     { XtNinternalSpace, XtCInternalSpace, XtRDimension, sizeof(Dimension),
-	poff(internal_border), XtRImmediate, (XtPointer) 4 },
+      poff(internal_border), XtRImmediate, (XtPointer) 4 },
     { XtNlineWidth, XtCLineWidth, XtRDimension, sizeof(Dimension),
-	poff(line_width), XtRImmediate, (XtPointer) 0 },
+      poff(line_width), XtRImmediate, (XtPointer) 0 },
     { XtNcanvasWidth, XtCCanvasWidth, XtRDimension, sizeof(Dimension),
-	poff(canvas_width), XtRImmediate, (XtPointer) 0 },
+      poff(canvas_width), XtRImmediate, (XtPointer) 0 },
     { XtNcanvasHeight, XtCCanvasHeight, XtRDimension, sizeof(Dimension),
-	poff(canvas_height), XtRImmediate, (XtPointer) 0 },
+      poff(canvas_height), XtRImmediate, (XtPointer) 0 },
     { XtNsliderX, XtCSliderX, XtRPosition, sizeof(Position),
-	poff(slider_x), XtRImmediate, (XtPointer) 0 },
+      poff(slider_x), XtRImmediate, (XtPointer) 0 },
     { XtNsliderY, XtCSliderY, XtRPosition, sizeof(Position),
-	poff(slider_y), XtRImmediate, (XtPointer) 0 },
+      poff(slider_y), XtRImmediate, (XtPointer) 0 },
     { XtNsliderWidth, XtCSliderWidth, XtRDimension, sizeof(Dimension),
-	poff(slider_width), XtRImmediate, (XtPointer) 0 },
+      poff(slider_width), XtRImmediate, (XtPointer) 0 },
     { XtNsliderHeight, XtCSliderHeight, XtRDimension, sizeof(Dimension),
-	poff(slider_height), XtRImmediate, (XtPointer) 0 },
+      poff(slider_height), XtRImmediate, (XtPointer) 0 },
     { XtNshadowColor, XtCShadowColor, XtRPixel, sizeof(Pixel),
-	poff(shadow_color), XtRString, (XtPointer) XtDefaultForeground },
+      poff(shadow_color), XtRString, (XtPointer) XtDefaultForeground },
     { XtNshadowThickness, XtCShadowThickness, XtRDimension, sizeof(Dimension),
-	poff(shadow_thickness), XtRImmediate, (XtPointer) 2 },
+      poff(shadow_thickness), XtRImmediate, (XtPointer) 2 },
     { XtNbackgroundStipple, XtCBackgroundStipple, XtRString, sizeof(String),
-	poff(stipple_name), XtRImmediate, (XtPointer) NULL },
+      poff(stipple_name), XtRImmediate, (XtPointer) NULL },
 #undef poff
 };
 
@@ -407,49 +407,49 @@ static void SetValuesAlmost();		/* deal with failed setval geom req */
 static XtGeometryResult QueryGeometry();  /* say how big we would like to be */
 
 PannerClassRec pannerClassRec = {
-  { /* core fields */
-    /* superclass		*/	(WidgetClass) &simpleClassRec,
-    /* class_name		*/	"Panner",
-    /* widget_size		*/	sizeof(PannerRec),
-    /* class_initialize		*/	XawInitializeWidgetSet,
-    /* class_part_initialize	*/	NULL,
-    /* class_inited		*/	FALSE,
-    /* initialize		*/	Initialize,
-    /* initialize_hook		*/	NULL,
-    /* realize			*/	PannerRealize,
-    /* actions			*/	actions,
-    /* num_actions		*/	XtNumber(actions),
-    /* resources		*/	panner_resources,
-    /* num_resources		*/	XtNumber(panner_resources),
-    /* xrm_class		*/	NULLQUARK,
-    /* compress_motion		*/	TRUE,
-    /* compress_exposure	*/	TRUE,
-    /* compress_enterleave	*/	TRUE,
-    /* visible_interest		*/	FALSE,
-    /* destroy			*/	Destroy,
-    /* resize			*/	Resize,
-    /* expose			*/	Redisplay,
-    /* set_values		*/	PannerSetValues,
-    /* set_values_hook		*/	NULL,
-    /* set_values_almost	*/	SetValuesAlmost,
-    /* get_values_hook		*/	NULL,
-    /* accept_focus		*/	NULL,
-    /* version			*/	XtVersion,
-    /* callback_private		*/	NULL,
-    /* tm_table			*/	defaultTranslations,
-    /* query_geometry		*/	QueryGeometry,
-    /* display_accelerator	*/	XtInheritDisplayAccelerator,
-    /* extension		*/	NULL
-  },
-  { /* simple fields */
-    /* change_sensitive		*/	XtInheritChangeSensitive
+    { /* core fields */
+	/* superclass		*/	(WidgetClass) &simpleClassRec,
+	/* class_name		*/	"Panner",
+	/* widget_size		*/	sizeof(PannerRec),
+	/* class_initialize		*/	XawInitializeWidgetSet,
+	/* class_part_initialize	*/	NULL,
+	/* class_inited		*/	FALSE,
+	/* initialize		*/	Initialize,
+	/* initialize_hook		*/	NULL,
+	/* realize			*/	PannerRealize,
+	/* actions			*/	actions,
+	/* num_actions		*/	XtNumber(actions),
+	/* resources		*/	panner_resources,
+	/* num_resources		*/	XtNumber(panner_resources),
+	/* xrm_class		*/	NULLQUARK,
+	/* compress_motion		*/	TRUE,
+	/* compress_exposure	*/	TRUE,
+	/* compress_enterleave	*/	TRUE,
+	/* visible_interest		*/	FALSE,
+	/* destroy			*/	Destroy,
+	/* resize			*/	Resize,
+	/* expose			*/	Redisplay,
+	/* set_values		*/	PannerSetValues,
+	/* set_values_hook		*/	NULL,
+	/* set_values_almost	*/	SetValuesAlmost,
+	/* get_values_hook		*/	NULL,
+	/* accept_focus		*/	NULL,
+	/* version			*/	XtVersion,
+	/* callback_private		*/	NULL,
+	/* tm_table			*/	defaultTranslations,
+	/* query_geometry		*/	QueryGeometry,
+	/* display_accelerator	*/	XtInheritDisplayAccelerator,
+	/* extension		*/	NULL
+    },
+    { /* simple fields */
+	/* change_sensitive		*/	XtInheritChangeSensitive
 #ifndef HAVE_OLD_XAW
-    , NULL
+	, NULL
 #endif
-  },
-  { /* panner fields */
-    /* ignore                   */	0
-  }
+    },
+    { /* panner fields */
+	/* ignore                   */	0
+    }
 };
 
 WidgetClass pannerWidgetClass = (WidgetClass) &pannerClassRec;
@@ -475,9 +475,9 @@ static void reset_shadow_gc (pw)	/* used when resources change */
     pixels[2] = pw->panner.shadow_color;
     if (!pw->panner.stipple_name &&
 	!XmuDistinguishablePixels (XtDisplay (pw), pw->core.colormap,
-				    pixels, 3) &&
+				   pixels, 3) &&
 	XmuDistinguishablePixels (XtDisplay (pw), pw->core.colormap,
-				    pixels, 2))
+				  pixels, 2))
     {
 	valuemask = GCTile | GCFillStyle;
 	values.fill_style = FillTiled;
@@ -633,17 +633,17 @@ static void rescale (pw)
     int vpad = hpad;
 
     if (pw->panner.canvas_width < 1)
-      pw->panner.canvas_width = pw->core.width;
+	pw->panner.canvas_width = pw->core.width;
     if (pw->panner.canvas_height < 1)
-      pw->panner.canvas_height = pw->core.height;
+	pw->panner.canvas_height = pw->core.height;
 
     if ((int)pw->core.width <= hpad) hpad = 0;
     if ((int)pw->core.height <= vpad) vpad = 0;
 
     pw->panner.haspect = ((double) pw->core.width - hpad) /
-			  (double) pw->panner.canvas_width;
+	(double) pw->panner.canvas_width;
     pw->panner.vaspect = ((double) pw->core.height - vpad) /
-			  (double) pw->panner.canvas_height;
+	(double) pw->panner.canvas_height;
     scale_knob (pw, TRUE, TRUE);
 }
 
@@ -665,25 +665,25 @@ static Boolean get_event_xy (pw, event, x, y)
     int pad = pw->panner.internal_border;
 
     switch (event->type) {
-      case ButtonPress:
-      case ButtonRelease:
+    case ButtonPress:
+    case ButtonRelease:
 	*x = event->xbutton.x - pad;
 	*y = event->xbutton.y - pad;
 	return TRUE;
 
-      case KeyPress:
-      case KeyRelease:
+    case KeyPress:
+    case KeyRelease:
 	*x = event->xkey.x - pad;
 	*y = event->xkey.y - pad;
 	return TRUE;
 
-      case EnterNotify:
-      case LeaveNotify:
+    case EnterNotify:
+    case LeaveNotify:
 	*x = event->xcrossing.x - pad;
 	*y = event->xcrossing.y - pad;
 	return TRUE;
 
-      case MotionNotify:
+    case MotionNotify:
 	*x = event->xmotion.x - pad;
 	*y = event->xmotion.y - pad;
 	return TRUE;
@@ -717,20 +717,20 @@ static int parse_page_string (s, pagesize, canvassize, relative)
 	return 0;
     }
 
-					/* skip over numbers */
+    /* skip over numbers */
     for (cp = s; isascii(*s) && (isdigit(*s) || *s == '.'); s++) ;
     val *= atof(cp);
 
-					/* skip blanks */
+    /* skip blanks */
     for (; isascii(*s) && isspace(*s); s++) ;
 
     if (*s) {				/* if units */
 	switch (s[0]) {
-	  case 'p': case 'P':
+	case 'p': case 'P':
 	    val *= (double) pagesize;
 	    break;
 
-	  case 'c': case 'C':
+	case 'c': case 'C':
 	    val *= (double) canvassize;
 	    break;
 	}
@@ -786,7 +786,7 @@ static void Initialize (greq, gnew, args, num_args)
     if (req->panner.canvas_width < 1) new->panner.canvas_width = 1;
     if (req->panner.canvas_height < 1) new->panner.canvas_height = 1;
     if (req->panner.default_scale < 1)
-      new->panner.default_scale = PANNER_DEFAULT_SCALE;
+	new->panner.default_scale = PANNER_DEFAULT_SCALE;
 
     get_default_size (req, &defwidth, &defheight);
     if (req->core.width < 1) new->core.width = defwidth;
@@ -826,7 +826,7 @@ static void PannerRealize (gw, valuemaskp, attr)
 	}
     }
     (*pannerWidgetClass->core_class.superclass->core_class.realize)
-      (gw, valuemaskp, attr);
+	(gw, valuemaskp, attr);
 
     if (gotpm) XFreePixmap (XtDisplay(gw), pm);
 }
@@ -906,7 +906,7 @@ static Boolean PannerSetValues (Widget gcur, Widget greq, Widget gnew, ArgList a
     if (cur->panner.foreground != new->panner.foreground) {
 	reset_slider_gc (new);
 	if (cur->panner.foreground != cur->core.background_pixel)
-	  reset_xor_gc (new);
+	    reset_xor_gc (new);
 	redisplay = TRUE;
     } else if (cur->panner.line_width != new->panner.line_width ||
 	       cur->core.background_pixel != new->core.background_pixel) {
@@ -916,7 +916,7 @@ static Boolean PannerSetValues (Widget gcur, Widget greq, Widget gnew, ArgList a
     if (cur->panner.shadow_color != new->panner.shadow_color) {
 	reset_shadow_gc (new);
 	if (cur->panner.foreground == cur->core.background_pixel)
-	  reset_xor_gc (new);
+	    reset_xor_gc (new);
 	redisplay = TRUE;
     }
     if (cur->panner.shadow_thickness != new->panner.shadow_thickness) {
@@ -952,8 +952,8 @@ static Boolean PannerSetValues (Widget gcur, Widget greq, Widget gnew, ArgList a
 	get_default_size (new, &new->core.width, &new->core.height);
 	redisplay = TRUE;
     } else if (cur->panner.canvas_width != new->panner.canvas_width ||
-	cur->panner.canvas_height != new->panner.canvas_height ||
-	cur->panner.internal_border != new->panner.internal_border) {
+	       cur->panner.canvas_height != new->panner.canvas_height ||
+	       cur->panner.internal_border != new->panner.internal_border) {
 	rescale (new);			/* does a scale_knob as well */
 	redisplay = TRUE;
     } else {
@@ -996,11 +996,11 @@ static XtGeometryResult QueryGeometry (gw, intended, pref)
 	 (CWWidth | CWHeight)) &&
 	intended->width == pref->width &&
 	intended->height == pref->height)
-      return XtGeometryYes;
+	return XtGeometryYes;
     else if (pref->width == pw->core.width && pref->height == pw->core.height)
-      return XtGeometryNo;
+	return XtGeometryNo;
     else
-      return XtGeometryAlmost;
+	return XtGeometryAlmost;
 }
 
 
@@ -1170,12 +1170,12 @@ static void ActionNotify (Widget gw, XEvent *event, String *params, Cardinal *nu
 	if (pw->panner.slider_x >
 	    (tmp = (((Position) pw->panner.canvas_width) - 
 		    ((Position) pw->panner.slider_width))))
-	  pw->panner.slider_x = tmp;
+	    pw->panner.slider_x = tmp;
 	if (pw->panner.slider_x < 0) pw->panner.slider_x = 0;
 	if (pw->panner.slider_y >
 	    (tmp = (((Position) pw->panner.canvas_height) - 
 		    ((Position) pw->panner.slider_height))))
-	  pw->panner.slider_y = tmp;
+	    pw->panner.slider_y = tmp;
 	if (pw->panner.slider_y < 0) pw->panner.slider_y = 0;
     }
 

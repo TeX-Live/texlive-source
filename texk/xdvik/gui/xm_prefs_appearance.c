@@ -215,31 +215,31 @@ void update_preferences_expert(void)
 
 void update_preferences_tooltips(void)
 {
-     Widget shell;
-     Widget statusline_b, popup_b, label1, text, label2;
+    Widget shell;
+    Widget statusline_b, popup_b, label1, text, label2;
 
-     if (resource.toolbar_unusable)
-	 return;
+    if (resource.toolbar_unusable)
+	return;
      
-     if (get_widget_by_name(&shell, globals.widgets.top_level, Xdvi_PREFS_DIALOG_NAME, True)
-	 && get_widget_by_name(&statusline_b, shell, Xdvi_TIPS_STATUSLINE, True)
-	 && get_widget_by_name(&popup_b, shell, Xdvi_TIPS_POPUPS, True)
-	 && get_widget_by_name(&label1, shell, Xdvi_TIPS_DELAY_LABEL1, True)
-	 && get_widget_by_name(&text, shell, Xdvi_TIPS_DELAY_TEXT, True)
-	 && get_widget_by_name(&label2, shell, Xdvi_TIPS_DELAY_LABEL2, True)) {
+    if (get_widget_by_name(&shell, globals.widgets.top_level, Xdvi_PREFS_DIALOG_NAME, True)
+	&& get_widget_by_name(&statusline_b, shell, Xdvi_TIPS_STATUSLINE, True)
+	&& get_widget_by_name(&popup_b, shell, Xdvi_TIPS_POPUPS, True)
+	&& get_widget_by_name(&label1, shell, Xdvi_TIPS_DELAY_LABEL1, True)
+	&& get_widget_by_name(&text, shell, Xdvi_TIPS_DELAY_TEXT, True)
+	&& get_widget_by_name(&label2, shell, Xdvi_TIPS_DELAY_LABEL2, True)) {
 
-	 char buf[LENGTH_OF_INT];
+	char buf[LENGTH_OF_INT];
 
-	 SNPRINTF(buf, LENGTH_OF_INT, "%d", ABS(resource.tooltips_wait_period));
-	 XtVaSetValues(text, XmNvalue, buf, NULL);
+	SNPRINTF(buf, LENGTH_OF_INT, "%d", ABS(resource.tooltips_wait_period));
+	XtVaSetValues(text, XmNvalue, buf, NULL);
 	 
-	 XmToggleButtonGadgetSetState(statusline_b, resource.tooltips_in_statusline, False);
-	 XmToggleButtonGadgetSetState(popup_b, resource.show_tooltips, False);
+	XmToggleButtonGadgetSetState(statusline_b, resource.tooltips_in_statusline, False);
+	XmToggleButtonGadgetSetState(popup_b, resource.show_tooltips, False);
 
-	 XtSetSensitive(label1, resource.show_tooltips);
-	 XtSetSensitive(text, resource.show_tooltips);
-	 XtSetSensitive(label2, resource.show_tooltips);
-     }
+	XtSetSensitive(label1, resource.show_tooltips);
+	XtSetSensitive(text, resource.show_tooltips);
+	XtSetSensitive(label2, resource.show_tooltips);
+    }
 }
 
 void update_preferences_search(void)

@@ -16,7 +16,7 @@ typedef enum { USE_DVI_PATH, USE_CWD_PATH } expandPathTypeT;
 /* remove `file:[//localhost/]' prefix from filename, and append `.dvi'
    extension if no extension is present */
 extern char *filename_append_dvi(const char *fname);
-/* prepend a path of type `type' (either CVW, or directory of dvi file)
+/* prepend a path of type `type' (either CWD, or directory of dvi file)
    to `fname' */
 extern char *expand_filename(const char *fname, expandPathTypeT type);
 
@@ -35,6 +35,7 @@ extern const char *find_format_str(const char *input, const char *fmt);
 extern Boolean src_compare(const char *src, int src_len, const char *target, const char *path, size_t path_len);
 extern char *shell_escape_string(const char *str);
 extern void replace_extension(const char *fname, const char *extension, char *buf, size_t name_len);
+extern const char *get_extension(const char *fname);
 extern int length_of_int(int n);
 
 extern char *get_string_va(const char *fmt, ...);

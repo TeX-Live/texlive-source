@@ -21,8 +21,8 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
 NOTE:
-	xdvi is based on prior work, as noted in the modification history
-	in xdvi.c.
+xdvi is based on prior work, as noted in the modification history
+in xdvi.c.
 
 \*========================================================================*/
 
@@ -79,7 +79,7 @@ NOTE:
 #define TRACE_AA3 0
 #endif
 
-#define MY_DEBUG 1
+#define MY_DEBUG 0
 
 #if MY_DEBUG
 # define TRACE_FIND_VERBOSE(x) TRACE_FIND(x)
@@ -117,7 +117,7 @@ NOTE:
 static hashTableT t1fonts_hash;
 static hashTableT tfminfo_hash;
 static hashTableT fontmaps_hash;
-static hashTableT font_warn_hash;
+/* static hashTableT font_warn_hash; */
 
 typedef enum { FAILURE_BLANK = -2, FAILURE_PK = -1, SUCCESS = 0 } t1FontLoadStatusT;
 #endif
@@ -144,11 +144,11 @@ Boolean	drawing_mag = False;
 
 /* Datastructures:
 
-   encodings[n]: Loaded from map file
-   [0] = 8r,	<vector>
-   [1] = 8c,	<vector>
+encodings[n]: Loaded from map file
+[0] = 8r,	<vector>
+[1] = 8c,	<vector>
 
-   The vectors are demand-loaded in 'load_encoded_font'
+The vectors are demand-loaded in 'load_encoded_font'
 */
 
 struct encoding {
@@ -162,30 +162,29 @@ static struct encoding *encodings = NULL;	/* Dynamic array = realloc when it get
 static size_t enclidx = 0;			/* global, for communication with find_T1_font */
 
 /*
-
-   t1fonts[n]: Built as xdvi loads t1 fonts
-   idx	 file			short	t1id	loaded
-   [0] = /path/cmr10.pfb,	cmr10	0	1
-   [1] = /path/prmr.pfa,	prmr	1	0
-   [2] = /path/pcrr8a.pfa,	pcrr8a	2	0
-
-   This array enumerates the loaded t1 fonts by full path name.
-   The integer `t1id' is the t1lib font id.  The font will not be
-   extended/slanted/encoded.  The `loaded' field indicates if
-   T1_LoadFont has been called for the font yet.  Texfonts that need a
-   modified version of the t1 font must use T1_CopyFont to copy the
-   raw font and obtain the id of a new t1 font which can then be
-   modified.  As described in the t1 docs a font must be loaded before
-   it can be copied.
-
-   Fonts that are copies of other fonts have NULL filenames.  If any
-   font files are to be reused based on the file name, the raw font
-   must be reused, not a copy.
-
-   The `short' field contains the font as it was identified in the
-   fontmap.  This is used to save searching; if two fonts are
-   identified the same way in the fontmap, they are the same font.
-
+  t1fonts[n]: Built as xdvi loads t1 fonts
+  idx	 file			short	t1id	loaded
+  [0] = /path/cmr10.pfb,	cmr10	0	1
+  [1] = /path/prmr.pfa,	prmr	1	0
+  [2] = /path/pcrr8a.pfa,	pcrr8a	2	0
+  
+  This array enumerates the loaded t1 fonts by full path name.
+  The integer `t1id' is the t1lib font id.  The font will not be
+  extended/slanted/encoded.  The `loaded' field indicates if
+  T1_LoadFont has been called for the font yet.  Texfonts that need a
+  modified version of the t1 font must use T1_CopyFont to copy the
+  raw font and obtain the id of a new t1 font which can then be
+  modified.  As described in the t1 docs a font must be loaded before
+  it can be copied.
+  
+  Fonts that are copies of other fonts have NULL filenames.  If any
+  font files are to be reused based on the file name, the raw font
+  must be reused, not a copy.
+  
+  The `short' field contains the font as it was identified in the
+  fontmap.  This is used to save searching; if two fonts are
+  identified the same way in the fontmap, they are the same font.
+  
 */
 
 struct t1font_info {
@@ -198,30 +197,30 @@ struct t1font_info {
 static struct t1font_info *t1fonts = NULL;	/* Dynamic array */
 
 /*
-   fontmaps[n]: Loaded from map file, and extended with 'implied'
-	fonts as needed.
-   idx	 texname enc	exten.	slant	filena.	t1libid	pathn.	tfmidx
-   [0] = pcrr8rn 0	750	0	pcrr8a	2	...	2
-   [1] = putro8r 0	0	0	putro8r 3	...	3
+  fontmaps[n]: Loaded from map file, and extended with 'implied'
+  fonts as needed.
+  idx	 texname enc	exten.	slant	filena.	t1libid	pathn.	tfmidx
+  [0] = pcrr8rn 0	750	0	pcrr8a	2	...	2
+  [1] = putro8r 0	0	0	putro8r 3	...	3
 
-   The first 5 fields of this table are loaded from the font map
-   files, or filled out with default values when implied fonts are
-   set-up.  The t1libid is -1 until the font is loaded or copied as
-   described under t1fonts.  Once the dvi file reveals that the font
-   is needed, it is located on disk to ensure it exists, and the
-   pathname field is filled out.  The t1 font is not loaded or
-   copied before it's needed because set_t1_char has been called to
-   draw a glyph from the font.  The late loading is necessiated by the
-   high cost of loading fonts.  If the font loading is concentrated at
-   startup of the program the startup-time becomes ecessively high due
-   to the high number of fonts used by the average LaTeX document.
+  The first 5 fields of this table are loaded from the font map
+  files, or filled out with default values when implied fonts are
+  set-up.  The t1libid is -1 until the font is loaded or copied as
+  described under t1fonts.  Once the dvi file reveals that the font
+  is needed, it is located on disk to ensure it exists, and the
+  pathname field is filled out.  The t1 font is not loaded or
+  copied before it's needed because set_t1_char has been called to
+  draw a glyph from the font.  The late loading is necessiated by the
+  high cost of loading fonts.  If the font loading is concentrated at
+  startup of the program the startup-time becomes ecessively high due
+  to the high number of fonts used by the average LaTeX document.
 
-   A value of 0 for `extension'/`slant' means no extension/slant.  If
-   the input values are decimal (less than 10) they're multiplied by
-   1000 and 10000 respectively to obtain fixed-point integer values.
-   (This means that xdvi will translate entries like `0.81' to 810.)
-   Integer values have the advantage that they can be tested for
-   exact equality on all architectures.
+  A value of 0 for `extension'/`slant' means no extension/slant.  If
+  the input values are decimal (less than 10) they're multiplied by
+  1000 and 10000 respectively to obtain fixed-point integer values.
+  (This means that xdvi will translate entries like `0.81' to 810.)
+  Integer values have the advantage that they can be tested for
+  exact equality on all architectures.
 */
 
 struct fontmap {
@@ -253,19 +252,19 @@ static struct fontmap *fontmaps = NULL;
 static size_t g_maplidx = 0; /* global, for communication with find_texfont */
 
 /*
-   widthinfo[n]: TFM width info, loaded on demand as the fonts are used.
-   idx	 texname	widths
-   [0] = cmr10		...
-   [1] = ptmr8r		...
-   [2] = pcrr8rn	...
-   [3] = putro8r	...
+  widthinfo[n]: TFM width info, loaded on demand as the fonts are used.
+  idx	 texname	widths
+  [0] = cmr10		...
+  [1] = ptmr8r		...
+  [2] = pcrr8rn	...
+  [3] = putro8r	...
 
-   The widthinfo is loaded from the font tfm file because the type1
-   width information isn't precise enough to avoid accumulating
-   rounding errors that make things visibly misaligned.  This is
-   esp. noticeable in tables (for the lines separating the columns).
+  The widthinfo is loaded from the font tfm file because the type1
+  width information isn't precise enough to avoid accumulating
+  rounding errors that make things visibly misaligned.  This is
+  esp. noticeable in tables (for the lines separating the columns).
 
-   For other than "design" sizes the widths are scaled up or down.
+  For other than "design" sizes the widths are scaled up or down.
 
 */
 
@@ -667,7 +666,7 @@ put_rule(int x, int y, unsigned int w, unsigned int h)
     if (x < globals.win_expose.max_x && x + (int)w >= globals.win_expose.min_x && y < globals.win_expose.max_y && y + (int)h >= globals.win_expose.min_y) {
 	if (--globals.ev.ctr == 0) {
 	    if (read_events(EV_NOWAIT) & EV_GE_MAG_GONE) {
-/* 		fprintf(stderr, "longjmp1!\n"); */
+		/* 		fprintf(stderr, "longjmp1!\n"); */
 		longjmp(globals.ev.canit, 1);
 	    }
 	}
@@ -695,7 +694,7 @@ put_bitmap(struct bitmap *bitmap, int x, int y)
 	y < globals.win_expose.max_y && y + (int)bitmap->h >= globals.win_expose.min_y) {
 	if (--globals.ev.ctr == 0)
 	    if (read_events(EV_NOWAIT) & EV_GE_MAG_GONE) {
-/* 		fprintf(stderr, "longjmp2!\n"); */
+		/* 		fprintf(stderr, "longjmp2!\n"); */
 		longjmp(globals.ev.canit, 1);
 	    }
 #if COLOR
@@ -751,7 +750,7 @@ put_image(struct glyph *g, int x, int y)
 	y < globals.win_expose.max_y && y + img->height >= globals.win_expose.min_y) {
 	if (--globals.ev.ctr == 0)
 	    if (read_events(EV_NOWAIT) & EV_GE_MAG_GONE) {
-/* 		fprintf(stderr, "longjmp3!\n"); */
+		/* 		fprintf(stderr, "longjmp3!\n"); */
 		longjmp(globals.ev.canit, 1);
 	    }
 
@@ -763,11 +762,11 @@ put_image(struct glyph *g, int x, int y)
 #endif
 	/* TODO: Can we increase gamma locally to make the inverted text more readable?
 	   
-	   and to draw the background, so something like this:
-	   XFillRectangle(DISP, currwin.win, globals.gc.fore, x - currwin.base_x, y - currwin.base_y,
-	   (unsigned int)img->width * 2, (unsigned int)img->height * 2);
+	and to draw the background, so something like this:
+	XFillRectangle(DISP, currwin.win, globals.gc.fore, x - currwin.base_x, y - currwin.base_y,
+	(unsigned int)img->width * 2, (unsigned int)img->height * 2);
 	   
-	   test this with color changes!!
+	test this with color changes!!
 	*/
 	/*TEST_DELAY("check point 1 ...")*/
 	XPutImage(DISP, currwin.win, globals.gc.fore, img,
@@ -802,6 +801,53 @@ draw_border(int x, int y, unsigned int width, unsigned int height, GC ourGC)
     XDrawRectangle(DISP, currwin.win, ourGC, x, y, width, height);
 }
 
+/* draw the grid */
+static void
+put_grid(int x, int y,
+	 unsigned int width, unsigned int height, unsigned int unit,
+	 GC gc)
+{
+    int i;
+    float sep;
+    unsigned int tmp;
+    
+    --width;
+    --height;
+    
+    
+    /* draw vertial grid */
+#define DRAWGRID_VER(gc) for (i = 1; \
+			      (tmp = x + (int)(i * sep)) < x + width; \
+			      i++) \
+			  XFillRectangle(DISP, currwin.win, (gc), \
+				   tmp, y, 1, height)
+    /* draw horizontal grid */
+#define DRAWGRID_HOR(gc) for (i = 1; \
+			      (tmp = y + (int)(i * sep)) < y + height; \
+			      i++) \
+		          XFillRectangle(DISP, currwin.win, (gc), \
+				   x, tmp, width, 1)
+
+    if (resource.grid_mode > 2) {	/* third level grid */
+	sep = (float)unit / 4.0;
+	DRAWGRID_VER(gc);
+	DRAWGRID_HOR(gc);
+    }
+
+    if (resource.grid_mode > 1) {	/* second level grid */
+	sep = (float)unit / 2.0;
+	DRAWGRID_VER(gc);
+	DRAWGRID_HOR(gc);
+    }
+
+    if (resource.grid_mode > 0) {	/* first level grid */
+	sep = (float)unit;
+	DRAWGRID_VER(gc);
+	DRAWGRID_HOR(gc);
+    }
+}
+#undef DRAWGRID_VER
+#undef DRAWGRID_HOR
 
 /*
  *	Byte reading routines for dvi file.
@@ -1140,8 +1186,8 @@ shrink_glyph(struct glyph *g)
 	}
 	shrunk_ptr += shrunk_bytes_wide / sizeof(bmUnitT);
 	unshrunk_ptr += rows * g->bitmap.bytes_wide / sizeof(bmUnitT);
-/* 	*((char **)&shrunk_ptr) += shrunk_bytes_wide; */
-/* 	*((char **)&unshrunk_ptr) += rows * g->bitmap.bytes_wide; */
+	/* 	*((char **)&shrunk_ptr) += shrunk_bytes_wide; */
+	/* 	*((char **)&unshrunk_ptr) += rows * g->bitmap.bytes_wide; */
 	rows_left -= rows;
 	rows = currwin.shrinkfactor;
     }
@@ -1243,7 +1289,7 @@ shrink_glyph_grey(struct glyph *g)
     int cols;
     int x, y;
     long thesample;
-/*     int min_sample = currwin.shrinkfactor * currwin.shrinkfactor * resource.density / 100; */
+    /*     int min_sample = currwin.shrinkfactor * currwin.shrinkfactor * resource.density / 100; */
     Pixel onoff, onoff2;
     bmUnitT *unshrunk_ptr;
     unsigned int size;
@@ -1255,26 +1301,29 @@ shrink_glyph_grey(struct glyph *g)
 	do_color_change();
     }
 #endif
+    if (pixeltbl == NULL) { /* fix #1611508 (segfault when starting with -nogrey) */
+	do_color_change();
+    }
 
     /* TODO: rounding errors causing color fringing (see HACK comment below):
        
-       \documentclass{article}
-       \pagestyle{empty}
+    \documentclass{article}
+    \pagestyle{empty}
 
-       \begin{document}
-       l
-       \end{document}
+    \begin{document}
+    l
+    \end{document}
 
-       With ./xdvi-xaw.bin -name xdvi -subpixel rgb -s 4 ./test.dvi:
+    With ./xdvi-xaw.bin -name xdvi -subpixel rgb -s 4 ./test.dvi:
 
-       subpixel order: rgb = 1
-       g->x2: 0, init_cols: -2
-       AFTER: g->x2: 0, init_cols: 2
+    subpixel order: rgb = 1
+    g->x2: 0, init_cols: -2
+    AFTER: g->x2: 0, init_cols: 2
 
-       but with ./xdvi-xaw.bin -name xdvi -s 4 ./test.dvi:
+    but with ./xdvi-xaw.bin -name xdvi -s 4 ./test.dvi:
 
-       g->x2: 0, init_cols: -3
-       AFTER: g->x2: 0, init_cols: 1
+    g->x2: 0, init_cols: -3
+    AFTER: g->x2: 0, init_cols: 1
     */
     
     /* These machinations ensure that the character is shrunk according to
@@ -1314,13 +1363,13 @@ shrink_glyph_grey(struct glyph *g)
 	g->bitmap2.w = g->x2 + ROUNDUP((int)g->bitmap.w - g->x, currwin.shrinkfactor);
     else {
 	fprintf(stderr, "AFTER: g->x2: %d, init_cols: %d\n", g->x2, init_cols);
-/* 	fprintf(stderr, "g->bitmap.w / 3.0 + 0.5: %d; g->x / 3.0: %d; all: %d, %d\n", */
-/* 		(int)(g->bitmap.w / 3.0 + 0.5), */
-/* 		(int)(g->x / 3.0), */
-/* 		(int)((g->bitmap.w / 3.0 + 0.5) - g->x / 3.0), */
-/* 		g->x2 + (int)((((g->bitmap.w / 3.0 + 0.5) - g->x / 3.0) + currwin.shrinkfactor - 1) / currwin.shrinkfactor)); */
+	/* 	fprintf(stderr, "g->bitmap.w / 3.0 + 0.5: %d; g->x / 3.0: %d; all: %d, %d\n", */
+	/* 		(int)(g->bitmap.w / 3.0 + 0.5), */
+	/* 		(int)(g->x / 3.0), */
+	/* 		(int)((g->bitmap.w / 3.0 + 0.5) - g->x / 3.0), */
+	/* 		g->x2 + (int)((((g->bitmap.w / 3.0 + 0.5) - g->x / 3.0) + currwin.shrinkfactor - 1) / currwin.shrinkfactor)); */
 	g->bitmap2.w = g->x2 + ROUNDUP((int)((g->bitmap.w / 3.0 + 0.5) - g->x / 3.0), currwin.shrinkfactor);
-/* 	fprintf(stderr, "g->bitmap.w: %d\n", g->bitmap2.w); */
+	/* 	fprintf(stderr, "g->bitmap.w: %d\n", g->bitmap2.w); */
     }
 #else
     g->bitmap2.w = g->x2 + ROUNDUP((int)g->bitmap.w - g->x, currwin.shrinkfactor);
@@ -1389,7 +1438,7 @@ shrink_glyph_grey(struct glyph *g)
 	if (rows > rows_left) /* why - extra safety? */
 	    rows = rows_left;
 	cols_left = g->bitmap.w;
-/*  	fprintf(stderr, "init_cols: %d\n", init_cols); */
+	/*  	fprintf(stderr, "init_cols: %d\n", init_cols); */
 	cols = init_cols;
 	while (cols_left) {
 	    if (cols > cols_left) /* why - extra safety? */
@@ -1398,15 +1447,15 @@ shrink_glyph_grey(struct glyph *g)
 	    thesample = sample(unshrunk_ptr, g->bitmap.bytes_wide,
 			       (int)g->bitmap.w - cols_left, cols, rows);
 	    
-/* 	    if (resource.subpixel_order != SUBPIXEL_NONE && resource.subpixel_energy[2] != 0) */
-/* 		onoff = thesample >= min_sample ? 0xffffff : 0; */
-/* 	    else */
+	    /* 	    if (resource.subpixel_order != SUBPIXEL_NONE && resource.subpixel_energy[2] != 0) */
+	    /* 		onoff = thesample >= min_sample ? 0xffffff : 0; */
+	    /* 	    else */
 	    onoff = pixeltbl[thesample];
 
 #ifdef XSERVER_INFO
 	    if (globals.debug & DBG_PK) {
 		int c;
-/* 		fprintf(stderr, "onoff: %d\n", onoff); */
+		/* 		fprintf(stderr, "onoff: %d\n", onoff); */
 		if (onoff > 65536)
 		    c = onoff / 65536;
 		else if (onoff > 256)
@@ -1478,7 +1527,7 @@ shrink_glyph_grey(struct glyph *g)
 			else if (rest == 1)
 			    pixel2 |= onoff2 & G_visual->green_mask;
 			else
-			pixel2 |= onoff2 & G_visual->blue_mask;
+			    pixel2 |= onoff2 & G_visual->blue_mask;
 		    }
 		    else { /* SUBPIXEL_BGR */
 			if (rest == 0)
@@ -1515,9 +1564,9 @@ shrink_glyph_grey(struct glyph *g)
 	    x++;
 	}
 	/* advance pointer by the number of rows covered */
-/* 	fprintf(stderr, "++: %d; %d, %d\n", rows * g->bitmap.bytes_wide, g->bitmap.bytes_wide, sizeof(bmUnitT)); */
+	/* 	fprintf(stderr, "++: %d; %d, %d\n", rows * g->bitmap.bytes_wide, g->bitmap.bytes_wide, sizeof(bmUnitT)); */
 	unshrunk_ptr += rows * g->bitmap.bytes_wide / sizeof(bmUnitT);
-/* 	*((char **)&unshrunk_ptr) += rows * g->bitmap.bytes_wide; */
+	/* 	*((char **)&unshrunk_ptr) += rows * g->bitmap.bytes_wide; */
 	rows_left -= rows;
 	rows = currwin.shrinkfactor;
 	y++;
@@ -1538,15 +1587,15 @@ shrink_glyph_grey(struct glyph *g)
     /* fill remaining rows not covered before (how?) */
     while (y < (int)g->bitmap2.h) {
 	for (x = 0; x < (int)g->bitmap2.w; x++) {
-/*  	    int c = *pixeltbl; */
+	    /*  	    int c = *pixeltbl; */
 #if TRACE_AA1
 	    fprintf(stderr, "Remaining at %d, %d: 0x%.6lx\n", x, y, *pixeltbl);
 #endif
 	    XPutPixel(g->image2, x, y, *pixeltbl);
-/*  	    if (c == 0) */
-/*  		fprintf(stdout, ",.."); */
-/*  	    else */
-/*  		fprintf(stdout, ",%.2x", c); */
+	    /*  	    if (c == 0) */
+	    /*  		fprintf(stdout, ",.."); */
+	    /*  	    else */
+	    /*  		fprintf(stdout, ",%.2x", c); */
 	    if (globals.gc.fore2 != NULL) {
 		g->image2->data = g->pixmap2_gc2;
 #if TRACE_AA1
@@ -1705,7 +1754,7 @@ spcl_scan(Boolean (*spcl_proc)(char *str, int str_len, void *data), void *data, 
 
     for (;;) {
 	ch = xone(fp);
-/*  	print_dvi(ch); */
+	/*  	print_dvi(ch); */
 	n = scantable[ch];
 	if (n < MM)
 	    while (n-- != 0)
@@ -1910,7 +1959,7 @@ set_char(
 #ifdef DBG_AA
 		    fprintf(stderr, "shinking the bitmap!\n");
 #endif /* DBG_AA */
-/*  		    print_bitmap(&g->bitmap); */
+		    /*  		    print_bitmap(&g->bitmap); */
 		    shrink_glyph_grey(g);
 		}
 		put_image(g, PXL_H - g->x2, PXL_V - g->y2);
@@ -1969,7 +2018,11 @@ load_n_set_char(
 #endif
 		wide_ubyte ch)
 {
-    if (!load_font(currinf.fontp, resource.t1lib)) {	/* if not found */
+    if (!load_font(currinf.fontp, resource.t1lib
+#if DELAYED_MKTEXPK
+		   , True
+#endif
+		   )) {	/* if not found */
 	if (globals.ev.flags & EV_GE_NEWDOC) {	/* if abort */
 	    longjmp(globals.ev.canit, 1);
 	}
@@ -2111,7 +2164,7 @@ draw_part(FILE *fp, struct frame *minframe, double current_dimconv)
     ubyte ch = 0;
 #ifdef TEXXET
     struct drawinf oldinfo;
-    ubyte oldmaxchar = 0;
+    wide_ubyte oldmaxchar = 0;
     off_t file_pos = 0;
     int refl_count = 0;
 #endif
@@ -2427,7 +2480,7 @@ warn_raw_postscript(void)
 	}
 	
 	/* too likely to overdraw important information */
-	/* 	statusline_print(STATUS_MEDIUM, */
+	/* 	statusline_info(STATUS_MEDIUM, */
 	/* 			 "Warning: Postscript commands on this page may not display correctly."); */
     }
 #endif /* PS */
@@ -2472,6 +2525,16 @@ draw_page(void)
 		ROUNDUP(pageinfo_get_page_height(current_page), currwin.shrinkfactor) + 2, globals.gc.high);
 #endif /* MOTIF */
 
+    if (resource.grid_mode > 0)	{ /* grid is wanted */
+	put_grid(-currwin.base_x, -currwin.base_y,
+		 /* 		 ROUNDUP(globals.page.unshrunk_w, currwin.shrinkfactor) + 2, */
+		 /* 		 ROUNDUP(globals.page.unshrunk_h, currwin.shrinkfactor) + 2, */
+		 ROUNDUP(pageinfo_get_page_width(current_page), currwin.shrinkfactor) + 2,
+		 ROUNDUP(pageinfo_get_page_height(current_page), currwin.shrinkfactor) + 2,
+		 ROUNDUP(globals.grid_paper_unit, currwin.shrinkfactor),
+		 globals.gc.high);
+    }
+    
     (void) lseek(fileno(globals.dvi_file.bak_fp), pageinfo_get_offset(current_page), SEEK_SET);
 
     memset((char *)&currinf.data, '\0', sizeof currinf.data);
@@ -2492,11 +2555,11 @@ draw_page(void)
 	rect.y = globals.win_expose.min_y;
 	rect.width = globals.win_expose.max_x - globals.win_expose.min_x;
 	rect.height = globals.win_expose.max_y - globals.win_expose.min_y;
-/*  	fprintf(stderr, "clip: %d, %d, %d, %d\n", */
-/* 		globals.win_expose.min_x, */
-/* 		globals.win_expose.min_y, */
-/* 		globals.win_expose.max_x - globals.win_expose.min_x, */
-/* 		globals.win_expose.max_y - globals.win_expose.min_y); */
+	/*  	fprintf(stderr, "clip: %d, %d, %d, %d\n", */
+	/* 		globals.win_expose.min_x, */
+	/* 		globals.win_expose.min_y, */
+	/* 		globals.win_expose.max_x - globals.win_expose.min_x, */
+	/* 		globals.win_expose.max_y - globals.win_expose.min_y); */
 #define SET_CLIP(gc)	if (gc != NULL) XSetClipRectangles(DISP, gc, 0, 0, &rect, 1, Unsorted)
 #define CLEAR_CLIP(gc)  if (gc != NULL) XSetClipMask(DISP, gc, None)
 	/* Set clip masks for all GC's */
@@ -2513,22 +2576,22 @@ draw_page(void)
     if (!setjmp(globals.ev.canit)) {
 	/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! BUG ALERT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-	   ALL GLYPH DRAWING/RULE SETTING COMMANDS THAT MIGHT INVOKE
-	   longjmp(globals.ev.canit)
-	   MUST GO INSIDE THIS IF CASE, AND MUST NOT BE INVOKED FROM
-	   SOMEWHERE ELSE!
+	ALL GLYPH DRAWING/RULE SETTING COMMANDS THAT MIGHT INVOKE
+	longjmp(globals.ev.canit)
+	MUST GO INSIDE THIS IF CASE, AND MUST NOT BE INVOKED FROM
+	SOMEWHERE ELSE!
 	   
-	   Failure to check whether a command could (indirectly) invoke
-	   such a drawing routine (like e.g. put_rule()) will result
-	   in *really* strange bugs (see e.g. #616920, and probably also #471021).
+	Failure to check whether a command could (indirectly) invoke
+	such a drawing routine (like e.g. put_rule()) will result
+	in *really* strange bugs (see e.g. #616920, and probably also #471021).
 	   
-	   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! BUG ALERT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! BUG ALERT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	*/
 	/* generate an expose event */
 	if (search_have_match(current_page)) {
 	    search_erase_highlighting(False);
 	}
-	if (resource.mouse_mode == MOUSE_TEXT_MODE) {
+	if (globals.curr_mode == TEXT_MODE_ACTIVE) {
 	    text_change_region(TEXT_SEL_ERASE, NULL);
 	}
 	draw_part(globals.dvi_file.bak_fp, current_frame = &frame0, dimconv);
@@ -2550,9 +2613,9 @@ draw_page(void)
 #ifdef PS
 	psp.interrupt();
 	/* reset this flag too, just to make sure ... */
-#if GS_PIXMAP_CLEARING_HACK
+# if defined(PS_GS) && GS_PIXMAP_CLEARING_HACK
 	had_ps_specials = False;
-#endif
+# endif
 #endif
 	globals.ev.flags &= ~EV_MAG_GONE;
 #if 0
@@ -2582,11 +2645,11 @@ draw_page(void)
 	/* highlight search match */
 	search_draw_inverted_regions();
     }
-    if (currwin.win == mane.win && resource.mouse_mode == MOUSE_TEXT_MODE) {
+    if (currwin.win == mane.win && (globals.curr_mode == TEXT_MODE_ACTIVE)) {
 	/* highlight selection */
 	text_change_region(TEXT_SEL_REDRAW, NULL);
     }
-    if (resource.mouse_mode == MOUSE_RULER_MODE) {
+    if (globals.curr_mode == RULER_MODE_ACTIVE) {
 	redraw_ruler();
     }
 
@@ -2611,7 +2674,7 @@ draw_page(void)
 /* this sets the file-scope htex_anchor_type to the type of the anchor just scanned,
    which is used by the drawing routines to determine whether current position is inside
    an anchor. Called from special.c.
- */
+*/
 void
 htex_do_special(const char *str, size_t len)
 {
@@ -2712,8 +2775,8 @@ delete_last_bbox(struct word_info *info)
 static void
 finish_bbox(struct word_info *info)
 {
-/*     if (info->bboxes_idx == 0) /\* nothing to do *\/ */
-/* 	return; */
+    /*     if (info->bboxes_idx == 0) /\* nothing to do *\/ */
+    /* 	return; */
     
     info->bboxes_idx++;
     while (info->bboxes_idx + 1 > info->bboxes_size) {
@@ -2919,7 +2982,7 @@ do_char(wide_ubyte ch,
     /* default min space between words, in DVI units */
     /* TODO: for T1 fonts, should we look at fontdimen2 / fontdimen4?
        (e.g. tfminfo[fontmaps[currinf.fontp->t1id].tfmidx].fontdimen2)
-     */
+    */
     long min_delta = (int)(1.5 * fsize + 0.5) << 16;
 
     size_t buf_offset = w_info->buffer_offset;
@@ -2958,13 +3021,13 @@ do_char(wide_ubyte ch,
 	last_u_glyph = 0;
 	w_info->bboxes_idx = 0;
 	reset_bboxes(w_info);
-/* 	w_info->curr_buf_idx  = 0; */
+	/* 	w_info->curr_buf_idx  = 0; */
 	reinit_scan = False;
 	had_newline = False;
 	had_chars_in_line = False;
     }
     
-/*      TRACE_FIND((stderr, "\n--------- POSITIONS: %ld, %ld, %ld, %ld", x1, pxl_v2, x2, y2)); */
+    /*      TRACE_FIND((stderr, "\n--------- POSITIONS: %ld, %ld, %ld, %ld", x1, pxl_v2, x2, y2)); */
 
     if ((u_glyph = get_unicode_char(ch, currinf, retbuf)) == 0) {
 	if (retbuf[0] == '\0') {
@@ -2990,7 +3053,7 @@ do_char(wide_ubyte ch,
        if we have more text, this '\0' will be overwritten in the next call. */
 
     /* apply accent/linebreak heuristics */
-/*     fprintf(stderr, "Checking: %ld > 0, %ld > 0\n", last_dvi_h1, last_pxl_v); */
+    /*     fprintf(stderr, "Checking: %ld > 0, %ld > 0\n", last_dvi_h1, last_pxl_v); */
     if (last_dvi_h1 > 0 && last_pxl_v > 0) { /* had at least 1 character */
 	TRACE_FIND_VERBOSE((stderr, "++++ dvi_h: %ld, last_dvi_h1: %ld, w_info->curr_buf_idx: %ld",
 			    DVI_H, last_dvi_h1, (unsigned long)w_info->curr_buf_idx));
@@ -3118,7 +3181,7 @@ do_char(wide_ubyte ch,
 	    || (w_info->text_selection_pass && inside_bbox(x1, pxl_v2, x2 - x1, g->bitmap.h,
 							   w_info->bboxes))) {
 
-/* 	    fprintf(stderr, "inserting1 %s\n", expanded_lig); */
+	    /* 	    fprintf(stderr, "inserting1 %s\n", expanded_lig); */
 	    if (had_newline) {
 		w_info->txt_buf[w_info->curr_buf_idx++] = '\n';
 		had_newline = False;
@@ -3127,7 +3190,7 @@ do_char(wide_ubyte ch,
 	    had_chars_in_line = True;
 	    for (i = 0; i < len; i++) {
 		w_info->curr_buf_idx++;
-/* 		fprintf(stderr, "setting index to: %d\n", w_info->curr_buf_idx); */
+		/* 		fprintf(stderr, "setting index to: %d\n", w_info->curr_buf_idx); */
 		if (w_info->bbox_pass) {
 		    int from, to;
 		    map_index_positions(settings->searchinfo, page_mapping, &from, &to);
@@ -3140,13 +3203,13 @@ do_char(wide_ubyte ch,
 	}
     }
     else if (!w_info->text_selection_pass
-	  || (w_info->text_selection_pass && inside_bbox(x1, pxl_v2, x2 - x1, g->bitmap.h, w_info->bboxes))) {
+	     || (w_info->text_selection_pass && inside_bbox(x1, pxl_v2, x2 - x1, g->bitmap.h, w_info->bboxes))) {
 	/* convert to utf8 */
 	char utf8_buf[MAX_CHARS]; /* ample ... */
 	size_t len;
 	/* convert to utf8, eventually lowercasing */
 	ucs4_to_utf8(u_glyph, utf8_buf, &len, convert_to_lowercase);
-/* 	fprintf(stderr, "inserting2 %lu\n", u_glyph); */
+	/* 	fprintf(stderr, "inserting2 %lu\n", u_glyph); */
 	if (had_newline) {
 	    w_info->txt_buf[w_info->curr_buf_idx++] = '\n';
 	    had_newline = False;
@@ -3155,7 +3218,7 @@ do_char(wide_ubyte ch,
 	had_chars_in_line = True;
 	for (i = 0; i < len; i++) {
 	    w_info->curr_buf_idx++;
-/* 	    fprintf(stderr, "setting index2 to: %d\n", w_info->curr_buf_idx); */
+	    /* 	    fprintf(stderr, "setting index2 to: %d\n", w_info->curr_buf_idx); */
 	    if (w_info->bbox_pass) {
 		int from, to;
 #if 0
@@ -3165,7 +3228,7 @@ do_char(wide_ubyte ch,
 		    fprintf(stderr, "%d: %d\n", j, page_mapping[j]);
 		}
 #endif /* 0 */
-/* 		fprintf(stderr, "mapping!\n"); */
+		/* 		fprintf(stderr, "mapping!\n"); */
 		map_index_positions(settings->searchinfo, page_mapping, &from, &to);
 		if (inside_text_match((int)w_info->curr_buf_idx, from, to)) {
 		    create_bbox(w_info, x1, pxl_v2, x2 - x1, g->bitmap.h);
@@ -3200,7 +3263,11 @@ text_do_char(FILE *fp, struct scan_info *info, wide_ubyte ch)
     if (currinf.set_char_p == load_n_set_char) {
 	if (globals.ev.flags & EV_GE_NEWDOC)	/* if abort */
 	    return 0;
-	if (!load_font(currinf.fontp, resource.t1lib)) {	/* if not found */
+	if (!load_font(currinf.fontp, resource.t1lib
+#if DELAYED_MKTEXPK
+		       , True
+#endif
+		       )) {	/* if not found */
 	    if (globals.ev.flags & EV_GE_NEWDOC)	/* if abort */
 		return 0;
 
@@ -3249,7 +3316,7 @@ text_do_char(FILE *fp, struct scan_info *info, wide_ubyte ch)
     else if (currinf.set_char_p == set_vf_char) {
 	struct macro *m;
 	struct drawinf oldinfo;
-	ubyte oldmaxchar;
+	wide_ubyte oldmaxchar;
 #ifdef TEXXET
 	long dvi_h_sav;
 #endif
@@ -3342,7 +3409,11 @@ geom_do_char(FILE *fp, struct scan_info *info, wide_ubyte ch)
     if (currinf.set_char_p == load_n_set_char) {
 	if (globals.ev.flags & EV_GE_NEWDOC)	/* if abort */
 	    return 0;
-	if (!load_font(currinf.fontp, resource.t1lib)) {	/* if not found */
+	if (!load_font(currinf.fontp, resource.t1lib
+#if DELAYED_MKTEXPK
+		       , True
+#endif
+		       )) {	/* if not found */
 	    if (globals.ev.flags & EV_GE_NEWDOC)	/* if abort */
 		return 0;
 
@@ -3393,7 +3464,7 @@ geom_do_char(FILE *fp, struct scan_info *info, wide_ubyte ch)
     else if (currinf.set_char_p == set_vf_char) {
 	struct macro *m;
 	struct drawinf oldinfo;
-	ubyte oldmaxchar;
+	wide_ubyte oldmaxchar;
 #ifdef TEXXET
 	long dvi_h_sav;
 #endif
@@ -3503,7 +3574,7 @@ geom_scan_part(long(*char_proc)(FILE *, struct scan_info *, wide_ubyte),
     ubyte ch;
 #ifdef TEXXET
     struct drawinf oldinfo;
-    ubyte oldmaxchar = 0;
+    wide_ubyte oldmaxchar = 0;
     off_t file_pos = 0;
     int refl_count = 0;
 #endif
@@ -4006,96 +4077,6 @@ scan_last_src_spcl(char *str, int str_len, void *data)
 }
 
 
-/* Replace (pseudo-)format arguments in NULL-terminated argv list as follows:
- * %f -> filename, %l -> linenumber, %c -> column number.
- * If %f or %l are not specified, they are appended as %f and +%l.
- * If colno == 0, no %c argument is provided.
- */
-static char **
-src_format_arguments(char **argv, const char *filename, int lineno, int colno)
-{
-    size_t i;
-    Boolean found_filename = False;
-    Boolean found_lineno = False;
-    /* index of argv elem that contained a deleted column number specifier */
-    int colno_deleted = -1;
-    
-    for (i = 0; argv[i] != NULL; i++) {
-	char *ptr, *curr = argv[i];
-	while ((ptr = strchr(curr, '%')) != NULL) {
-	    char *p1;
-	    if ((p1 = strchr("flc", ptr[1])) != NULL) { /* we have a formatting char */
-		char digit_arg[LENGTH_OF_INT];
-		const char *new_elem = NULL;
-		/* remember offsets and lengths */
-		size_t l_init = ptr - argv[i];
-		size_t l_rest = strlen(ptr + 2) + 1;
-		size_t l_mid;
-		
-		if (*p1 == 'f') {
-		    found_filename = True;
-		    new_elem = filename;
-		}
-		else if (*p1 == 'l') {
-		    found_lineno = True;
-		    sprintf(digit_arg, "%d", lineno);
-		    new_elem = digit_arg;
-		}
-		else if (*p1 == 'c') {
-		    if (colno == 0) { /* if we have no column information, don't provide this argument */
-			memmove(ptr, ptr + 2, l_rest);
-			curr = ptr;
-			colno_deleted = i;
-			continue;
-		    }
-		    sprintf(digit_arg, "%d", colno);
-		    new_elem = digit_arg;
-		}
-		
-		l_mid = strlen(new_elem);
-		
-		argv[i] = xrealloc(argv[i], strlen(argv[i]) + l_mid + 1);
-		curr = argv[i] + l_init; /* need to reinitialize it because of realloc */
-		memmove(curr + l_mid, curr + 2, l_rest);
-		memcpy(curr, new_elem, l_mid);
-		curr += l_mid;
-	    }
-	    else if (ptr[1] == '%') { /* escaped %, skip both */
-		curr = ptr + 2;
-	    }
-	    else {
-		curr = ptr + 1;
-	    }
-	}
-    }
-
-    /* append line number and file name arguments if they were not specified */
-    if (!found_lineno) {
-	i++;
-	argv = xrealloc(argv, (i + 1) * sizeof *argv);
-	argv[i - 1] = xmalloc(LENGTH_OF_INT + 2);
-	sprintf(argv[i - 1], "+%d", lineno);
-	argv[i] = NULL;
-    }
-    
-    if (!found_filename) {
-	i++;
-	argv = xrealloc(argv, (i + 1) * sizeof *argv);
-	argv[i - 1] = xstrdup(filename);
-	argv[i] = NULL;
-    }
-
-    /* if we deleted %c, remove from argv if it's empty now */
-    if (colno_deleted > -1 && strlen(argv[colno_deleted]) == 0) {
-	for (i = colno_deleted; argv[i] != NULL; i++) {
-	    argv[i] = argv[i + 1];
-	    
-	}
-    }
-    return argv;
-}
-
-
 static void
 src_spawn_editor(const struct src_parsed_special *parsed)
 {
@@ -4149,7 +4130,7 @@ src_spawn_editor(const struct src_parsed_special *parsed)
     else {
 	TRACE_SRC((stderr, "source file \"%s\" expanded to \"%s\"\n", parsed->filename, expanded_filename));
 	if (buf.st_mtime > globals.dvi_file.time) {
-	    statusline_print(STATUS_FOREVER,
+	    statusline_info(STATUS_FOREVER,
 			     "Warning: TeX file is newer than dvi file - "
 			     "source special information might be wrong.");
 	}
@@ -4271,12 +4252,12 @@ source_reverse_search(int x, int y, wide_bool call_editor)
 	}
 
 	if (found.filename_len != 0)
-	    statusline_print(STATUS_MEDIUM,
+	    statusline_info(STATUS_MEDIUM,
 			     "No source specials on this page - nearest on page %d",
 			     lower + globals.pageno_correct);
 	else {
 	    /* nothing found at all; complain */
-	    XBell(DISP, 0);
+	    xdvi_bell();
 	    popup_message(globals.widgets.top_level,
 			  MSG_ERR,
 			  /* helptext */
@@ -4299,7 +4280,7 @@ source_reverse_search(int x, int y, wide_bool call_editor)
 	    src_spawn_editor(foundp);
 	}
 	else {
-	    statusline_print(STATUS_MEDIUM, "nearest special at (%d,%d): \"%s:%d\"",
+	    statusline_info(STATUS_MEDIUM, "nearest special at (%d,%d): \"%s:%d\"",
 			     x / currwin.shrinkfactor, y / currwin.shrinkfactor, foundp->filename, foundp->line);
 	}
 	free(foundp->filename);
@@ -4990,12 +4971,14 @@ anchor_search(const char *str)
     /* Start search over pages */
     for (test_page = 0; test_page < total_pages; test_page++) {
 	if (spcl_scan(htex_scan_special, NULL, True, globals.dvi_file.bak_fp)) {
+	    TRACE_HTEX((stderr, "Found anchor on page %d", test_page));
 	    found_anchor = True;
 	    break;
 	}
     }
 
     if (!found_anchor) {
+	TRACE_HTEX((stderr, "Anchor not found"));
 	/* Restore file position.  */
 	maxchar = maxchar_save;
 	currinf = currinf_save;
@@ -5004,8 +4987,8 @@ anchor_search(const char *str)
 	    (void)lseek(fileno(globals.dvi_file.bak_fp), pos_save, SEEK_SET);
 	    dvi_pointer_frame->pos = dvi_pointer_frame->end = dvi_buffer;
 	}
-	XBell(DISP, 0);
-	statusline_print(STATUS_MEDIUM, "Error: Anchor \"%s\" not found.", str);
+	xdvi_bell();
+	statusline_error(STATUS_MEDIUM, "Error: Anchor \"%s\" not found.", str);
 	return;
     }
 
@@ -5039,6 +5022,7 @@ anchor_search(const char *str)
 	goto_page(test_page, resource.keep_flag ? NULL : home, False);
 	page_history_insert(test_page);
 	do_autoscroll = True;
+	TRACE_HTEX((stderr, "Found anchor on position %d", y_pos));
 	htex_set_anchormarker(y_pos);
     }
     /* reset info */
@@ -5281,38 +5265,38 @@ setup_encoded_T1_font(const char *mapfile,
 {
     /* xdvi T1 Font loading is done in two steps:
 
-       1. At xdvi startup two things happen:
+    1. At xdvi startup two things happen:
 
-       a. The fontmaps are read.
+    a. The fontmaps are read.
 
-       b. the dvi file is (partialy) scanned, and fonts are set up.
-       In the case of t1 fonts we only set up the data structures,
-       they are not actually loaded until they are used.
+    b. the dvi file is (partialy) scanned, and fonts are set up.
+    In the case of t1 fonts we only set up the data structures,
+    they are not actually loaded until they are used.
 
-       2. At the time a T1 font is used it is loaded, encoded, extended
-       and slanted as prescribed.
+    2. At the time a T1 font is used it is loaded, encoded, extended
+    and slanted as prescribed.
 
-       This procedure takes care of step 1a.  It locates the font and
-       sets up the data-structures so it may be assumed, by xdvi, to be
-       loaded.  Return the fontmaps array index.
+    This procedure takes care of step 1a.  It locates the font and
+    sets up the data-structures so it may be assumed, by xdvi, to be
+    loaded.  Return the fontmaps array index.
 
-       The 'texname' param should be the texname of the font, such as
-       ptmr8r or cmr10.
+    The 'texname' param should be the texname of the font, such as
+    ptmr8r or cmr10.
 
-       The 'alias' param should be the file name of the font if it is
-       different from the texname.  This is often the case with fonts
-       defined in fontmaps.
+    The 'alias' param should be the file name of the font if it is
+    different from the texname.  This is often the case with fonts
+    defined in fontmaps.
 
-       If, for some reason, the full filename of the font has already
-       been looked up before we get here it is passed in the filename
-       param so we don't have to look it up again.
+    If, for some reason, the full filename of the font has already
+    been looked up before we get here it is passed in the filename
+    param so we don't have to look it up again.
 
-       Implied encodings are not handled here.
+    Implied encodings are not handled here.
 
-       REMEMBER: THIS PROC IS CALLED FOR EACH FONT IN THE FONTMAPS, WE
-       CANNOT DO ANY EXPENSIVE OPERATIONS HERE!!!
+    REMEMBER: THIS PROC IS CALLED FOR EACH FONT IN THE FONTMAPS, WE
+    CANNOT DO ANY EXPENSIVE OPERATIONS HERE!!!
 
-     */
+    */
 
     int test_idx;
     size_t curr_idx;
@@ -5391,7 +5375,11 @@ try_pk_fallback(int idx, struct font *fontp)
 {
     Boolean success;
 
-    success = load_font(fontp, False); /* loading non-t1 version of font */
+    success = load_font(fontp, False
+#if DELAYED_MKTEXPK
+			, True
+#endif
+			); /* loading non-t1 version of font */
     fontmaps[idx].force_pk = True;
     TRACE_T1((stderr,
 	      "setting force_pk for %d to true; success for PK fallback: %d\n",
@@ -5438,7 +5426,7 @@ load_font_now(int idx, struct font *fontp)
     int cid;	/* The id of the copied font */
     int enc, sl, ext;
 
-/*      statusline_print(STATUS_SHORT, "Loading T1 font %s", fontmaps[idx].filename); */
+    /*      statusline_info(STATUS_SHORT, "Loading T1 font %s", fontmaps[idx].filename); */
     TRACE_T1((stderr, "adding %s %s",
 	      fontmaps[idx].filename, fontmaps[idx].pathname));
 
@@ -5559,6 +5547,11 @@ find_T1_font(const char *texname)
     }
 
 #if 0
+    /* SU: Fix for #1295829: If eg. plr10 is missing from ps2pk.map, xdvi
+       will use plr10.pfb without reencoding it instead of calling mktexpk
+       for plr10.mf which will use the correct encoding.
+    */
+    
     /* Second: the bare name */
     filename = kpse_find_file(texname, kpse_type1_format, 0);
 
@@ -5568,7 +5561,7 @@ find_T1_font(const char *texname)
 	return idx;
     }
 #endif
-
+    
     /* Third: Implied encoding? */
     fl = strlen(texname);
 
@@ -5741,7 +5734,7 @@ read_cfg_file(const char *file)
     
     filename = kpse_find_file(file, kpse_program_text_format, 1);
     if (filename == NULL) {
-	statusline_print(STATUS_MEDIUM, "Warning: Unable to find \"%s\"!", file);
+	statusline_error(STATUS_MEDIUM, "Warning: Unable to find \"%s\"!", file);
 	return;
     }
 
@@ -5909,6 +5902,12 @@ get_t1_glyph(
 	      size, currwin.shrinkfactor));
 
     /* Check if the glyph already has been rendered */
+    if (ch > currinf.fontp->maxchar) {
+	/* in this case, the replacement font is 'smaller' than the requested one.
+	   This will later lead to a warning: "Character 9561 not defined in font cmr10".
+	*/
+	return NULL;
+    }
     if ((g = &currinf.fontp->glyph[ch])->bitmap.bits == NULL) {
 	int bitmapbytes;
 	int h;
@@ -5931,7 +5930,7 @@ get_t1_glyph(
 	    /* This can happen e.g. if font is too small; example with plain TeX:
 	       \magnification=50 Hello, world!\end
 	    */
-	    statusline_print(STATUS_FOREVER,
+	    statusline_info(STATUS_FOREVER,
 			     "Error rendering character 0x%x `%c' - replacing by whitespace",
 			     ch,
 			     isprint(ch) ? ch : '?');
@@ -5952,19 +5951,53 @@ get_t1_glyph(
 	}
 
 	if (G->bits == NULL) {
+#if 0
+	    /* in this case the glyph can either be a whitespace or .notdef.
+	       We would like to warn about the latter, but I haven't found a way
+	       to distinguish between the two cases that works reliably.
+
+	       If the font has built-in encoding, we can't use the following
+	       test to check for the name, since the index i doesn't correspond to "ch":
+	    */
+	    char **glyph_names = T1_GetAllCharNames(t1libid);
+	    for (i = 0; glyph_names[i] != NULL; i++) {
+		fprintf(stderr, "CHAR %d: %s\n", i, glyph_names[i]);
+	    }
+	    free(glyph_names); // not sure about this ...
+
+	    /*
+	      For ~/projects/xdvik/bugs/cjk-notdef-problem, this prints:
+	      
+	      CHAR 0: .notdef
+	      CHAR 1: uni3000
+	      
+	      even though the character at point 0 is uni3000.
+	      
+	      For external encodings, it should be possible to look at the encoding
+	      vector:
+	    */
+
+	    int enc = fontmaps[id].enc;
+	    if (enc != -1) {
+		if (encodings[enc].vector == NULL) {
+		    fprintf(stderr, "Unexpected: vector is NULL!\n");
+		}
+		else {
+		    fprintf(stderr, "GOT CHAR: %s\n", encodings[enc].vector[ch]);
+		}
+	    }
+
+	    /*
+	      Also checking for the font dimens doesn't help in this case - the
+	      results are identical for .notdef and uni3000:
+	    */
+	    
+	    fprintf(stderr, "DIMENS: %d,%d,%d,%d\n",
+		    G->metrics.rightSideBearing, G->metrics.leftSideBearing,
+		    G->metrics.advanceX, G->metrics.advanceY);
+
+	    /* the following simple test for whitespace doesn't work for Chinese fonts either: */
 	    if (ch != ' ') {
-		/* -- janl:
-		   Blank glyph != .notdef (e.g., it could be a space char).
-		   Drop message until I find out how .notdef can be detected.
-		   -- SU 2003/02/24:
-		   I changed this, since dropped characters is an important
-		   thing to warn users about. We try to catch the space char
-		   case by checking for space above (rather lame, since it won't
-		   catch all fonts, but ...)
-		   The only case in which TeX actually uses a space character seems
-		   to be the output of `tex testfont', or in some CJK fonts
-		   (e.g. gbksong25).
-		*/
 		char index[128];
 		char *fontname = xstrdup(currinf.fontp->fontname);
 		size_t dummy = 0;
@@ -5987,7 +6020,7 @@ get_t1_glyph(
 		if (!find_str_int_hash(&font_warn_hash, fontname, &dummy)) {
 		    if (!resource.hush_chars)
 			XDVI_WARNING((stderr, "Character %d is mapped to .notdef in font %s (page %d), "
-				      "replacing by whitespace.",
+				      "replaced by whitespace.",
 				      ch, currinf.fontp->fontname, current_page + 1));
 		    put_str_int_hash(&font_warn_hash, fontname, dummy);
 		}
@@ -5995,6 +6028,7 @@ get_t1_glyph(
 		    free(fontname);
 		}
 	    }
+#endif
 	    /* *flag = FAILURE_BLANK; */
 	    /* g->addr = -1; */
 	    /* return NULL; */
@@ -6003,7 +6037,7 @@ get_t1_glyph(
 	       set_empty_char(), and the former apparently needs a valid bitmap.
 	       Check how this is done without t1lib.
 	    */
-	    TRACE_T1((stderr, "replacing .notdef char 0x%02x by space.\n", ch));
+	    TRACE_T1((stderr, "replaced .notdef or whitespace char 0x%02x by space.\n", ch));
 	    g->bitmap.w = 1;
 	    g->bitmap.h = 1;
 	    g->bitmap.bytes_wide = T1PAD(g->bitmap.w, archpad) / 8;
@@ -6116,13 +6150,13 @@ void init_t1(void)
     void *success;
     /* Attempt to set needed padding.
 
-       FIXME: This is not really the required alignment/padding.  On
-       ix86 the requirement for int * is 8 bits, on sparc on the other
-       hand it's 32 bits.  Even so, some operations will be faster if
-       the bitmaps lines are alligned "better".  But on the other hand
-       this requires a more complex glyph copying operation...
+    FIXME: This is not really the required alignment/padding.  On
+    ix86 the requirement for int * is 8 bits, on sparc on the other
+    hand it's 32 bits.  Even so, some operations will be faster if
+    the bitmaps lines are alligned "better".  But on the other hand
+    this requires a more complex glyph copying operation...
 
-       - janl 16/5/2001
+    - janl 16/5/2001
     */
     archpad = BMBYTES * 8;
     i = T1_SetBitmapPad(archpad);
@@ -6361,12 +6395,12 @@ do_color_change(void)
 		    globals.gc.fore = set_or_make_gc(globals.gc.fore, GXor, fg_current->pixel & set_bits, 0);
 		    if (clr_bits) {
 			globals.gc.fore2 = globals.gc.fore2_bak = set_or_make_gc(globals.gc.fore2_bak, GXandInverted,
-							       ~fg_current->pixel & clr_bits, 0);
+										 ~fg_current->pixel & clr_bits, 0);
 		    }
 		}
 		else {
 		    globals.gc.fore = set_or_make_gc(globals.gc.fore, GXandInverted,
-					    ~fg_current->pixel & clr_bits, 0);
+						     ~fg_current->pixel & clr_bits, 0);
 		}
 	    }
 
@@ -6409,7 +6443,7 @@ do_color_change(void)
 		    unsigned int red, green, blue;
 		    Pixel pixel;
 		    /*  		    fprintf(stderr, "frac: %f\n", frac); */
-/* 		    fprintf(stderr, "fg_current: %d, bg_current: %d\n", fg_current->color.r, bg_current->color.r); */
+		    /* 		    fprintf(stderr, "fg_current: %d, bg_current: %d\n", fg_current->color.r, bg_current->color.r); */
 		    red = frac
 			* ((double) fg_current->color.r - bg_current->color.r)
 			+ bg_current->color.r;
@@ -6497,7 +6531,7 @@ do_color_change(void)
 
 		if (using_planes && bg_current->pixel != resource.back_Pixel) {
 		    bg_current->pixel = resource.back_Pixel;
-/* 		    XSetWindowBackground(DISP, mane.win, bg_current->pixel); */
+		    /* 		    XSetWindowBackground(DISP, mane.win, bg_current->pixel); */
 #if MOTIF
 		    fprintf(stderr, "setting window background!\n");
 		    XSetWindowBackground(DISP, XtWindow(globals.widgets.main_window), bg_current->pixel);
@@ -6517,15 +6551,15 @@ do_color_change(void)
 
 	    if (using_planes) {
 		globals.gc.rule = set_or_make_gc(globals.gc.rule, GXor, fg_current->palette[15],
-					bg_current->pixel);
+						 bg_current->pixel);
 		globals.gc.fore = set_or_make_gc(globals.gc.fore, GXor, fg_current->palette[15],
-					bg_current->pixel);
+						 bg_current->pixel);
 	    }
 	    else {
 		globals.gc.rule = set_or_make_gc(globals.gc.rule, GXcopy, fg_current->palette[15],
-					bg_current->pixel);
+						 bg_current->pixel);
 		globals.gc.fore = set_or_make_gc(globals.gc.fore, GXcopy, fg_current->palette[15],
-					bg_current->pixel);
+						 bg_current->pixel);
 	    }
 
 	    globals.gc.fore2 = NULL;
@@ -6541,52 +6575,52 @@ do_color_change(void)
 
 		for (i = 0; i <= mane.shrinkfactor * mane.shrinkfactor; ++i) {
 		    pixeltbl[i] = fg_current->palette[(i * 30 + mane.shrinkfactor * mane.shrinkfactor)
-						     / (2 * mane.shrinkfactor * mane.shrinkfactor)];
+						      / (2 * mane.shrinkfactor * mane.shrinkfactor)];
 		}
 	    }
 	}
     }	/* end if resource.use_grey */
     else
 #endif /* GREY */
-	{
-	    if (!fg_current->pixel_good) {
-		fg_current->pixel = alloc_color(&fg_current->color,
-						color_data[0].pixel);
-		fg_current->pixel_good = True;
-	    }
-
-	    if (globals.debug & DBG_DVI)
-		printf("do_color_change: fg = %lx, bg = %lx\n",
-		       fg_current->pixel, bg_current->pixel);
-
-	    globals.gc.rule = set_or_make_gc(globals.gc.rule, GXcopy, fg_current->pixel, bg_current->pixel);
-
-	    set_bits = (Pixel) (fg_current->pixel & ~bg_current->pixel);
-	    clr_bits = (Pixel) (bg_current->pixel & ~fg_current->pixel);
-	    globals.gc.fore2 = NULL;
-
-	    if (resource.copy
-		|| (set_bits && clr_bits && !resource.thorough)) {
-		if (!resource.copy) {
-		    /* I used to get a warning here which I didn't get for
-		       xdvi-22.64/events.c, l.1330, but I can't reproduce
-		       it any more ...
-		    */
-		    warn_overstrike();
-		}
-		globals.gc.fore = set_or_make_gc(globals.gc.fore, GXcopy, fg_current->pixel, bg_current->pixel);
-	    }
-	    else {
-		if (set_bits) {
-		    globals.gc.fore = set_or_make_gc(globals.gc.fore, GXor, set_bits, 0);
-		    if (clr_bits) {
-			globals.gc.fore2 = globals.gc.fore2_bak1 = set_or_make_gc(globals.gc.fore2_bak1, GXandInverted, clr_bits, 0);
-		    }
-		}
-		else
-		    globals.gc.fore = set_or_make_gc(globals.gc.fore, GXandInverted, clr_bits, 0);
-	    }
+    {
+	if (!fg_current->pixel_good) {
+	    fg_current->pixel = alloc_color(&fg_current->color,
+					    color_data[0].pixel);
+	    fg_current->pixel_good = True;
 	}
+
+	if (globals.debug & DBG_DVI)
+	    printf("do_color_change: fg = %lx, bg = %lx\n",
+		   fg_current->pixel, bg_current->pixel);
+
+	globals.gc.rule = set_or_make_gc(globals.gc.rule, GXcopy, fg_current->pixel, bg_current->pixel);
+
+	set_bits = (Pixel) (fg_current->pixel & ~bg_current->pixel);
+	clr_bits = (Pixel) (bg_current->pixel & ~fg_current->pixel);
+	globals.gc.fore2 = NULL;
+
+	if (resource.copy
+	    || (set_bits && clr_bits && !resource.thorough)) {
+	    if (!resource.copy) {
+		/* I used to get a warning here which I didn't get for
+		   xdvi-22.64/events.c, l.1330, but I can't reproduce
+		   it any more ...
+		*/
+		warn_overstrike();
+	    }
+	    globals.gc.fore = set_or_make_gc(globals.gc.fore, GXcopy, fg_current->pixel, bg_current->pixel);
+	}
+	else {
+	    if (set_bits) {
+		globals.gc.fore = set_or_make_gc(globals.gc.fore, GXor, set_bits, 0);
+		if (clr_bits) {
+		    globals.gc.fore2 = globals.gc.fore2_bak1 = set_or_make_gc(globals.gc.fore2_bak1, GXandInverted, clr_bits, 0);
+		}
+	    }
+	    else
+		globals.gc.fore = set_or_make_gc(globals.gc.fore, GXandInverted, clr_bits, 0);
+	}
+    }
 
     fg_active = fg_current;
 }
@@ -6652,7 +6686,7 @@ init_pix(void)
 		    globals.gc.fore = set_or_make_gc(NULL, GXor, set_bits & color_data[0].pixel, 0);
 		}
 		if (clr_bits || !set_bits) {
-/* 		    fprintf(stderr, "using GXandInverted!\n"); */
+		    /* 		    fprintf(stderr, "using GXandInverted!\n"); */
 		    *(globals.gc.fore ? &globals.gc.fore2 : &globals.gc.fore) =
 			set_or_make_gc(NULL, GXandInverted, clr_bits & ~(color_data[0].pixel), 0);
 		}
@@ -6787,7 +6821,7 @@ init_pix(void)
 
     for (i = 0; i <= mane.shrinkfactor * mane.shrinkfactor; ++i) {
 	pixeltbl[i] = palette[(i * 30 + mane.shrinkfactor * mane.shrinkfactor)
-			     / (2 * mane.shrinkfactor * mane.shrinkfactor)];
+			      / (2 * mane.shrinkfactor * mane.shrinkfactor)];
     }
 }
 

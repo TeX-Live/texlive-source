@@ -117,10 +117,24 @@ popdown_cb(Widget widget, XtPointer client_data, XtPointer call_data)
 
     ASSERT(prefs != NULL, "user_data in popdown_cb musn't be NULL!");
     if (get_widget_by_name(&dialog, widget, Xdvi_COLOR_DIALOG_NAME, True)) {
-/* 	fprintf(stderr, "popdown!\n"); */
+	/* 	fprintf(stderr, "popdown!\n"); */
 	remove_from_deplist(prefs, dialog);
 	XtUnmanageChild(dialog);
     }
+}
+
+static void
+h_update_sliders(struct color_info *cinfo)
+{
+    unsigned r, g, b;
+
+    r = cinfo->new_color.red >> 8;
+    g = cinfo->new_color.green >> 8;
+    b = cinfo->new_color.blue >> 8;
+
+    XtVaSetValues(cinfo->r_scale, XmNvalue, r, NULL);
+    XtVaSetValues(cinfo->g_scale, XmNvalue, g, NULL);
+    XtVaSetValues(cinfo->b_scale, XmNvalue, b, NULL);
 }
 
 static void
@@ -199,14 +213,14 @@ popdown_cancel_cb(Widget widget, XtPointer client_data, XtPointer call_data)
 {
     struct prefs_choice *prefs = (struct prefs_choice *)client_data;
     
-/*     fprintf(stderr, "popdown cancel; call_data: %p!\n", call_data); */
+    /*     fprintf(stderr, "popdown cancel; call_data: %p!\n", call_data); */
     if (call_data != NULL) {
-/* 	fprintf(stderr, "removing from deplist: %p!!!\n", prefs); */
+	/* 	fprintf(stderr, "removing from deplist: %p!!!\n", prefs); */
 	remove_from_deplist(prefs, widget);
     }
     
     XtUnmanageChild(widget);
-/*     XtPopdown(XtParent(widget)); */
+    /*     XtPopdown(XtParent(widget)); */
 }
 
 static void
@@ -214,7 +228,6 @@ revert_color_cb(Widget widget, XtPointer client_data, XtPointer call_data)
 {
     struct color_info *cinfo = (struct color_info *)client_data;
     Pixel pix;
-    unsigned r, g, b;
 
     UNUSED(call_data);
     
@@ -233,16 +246,7 @@ revert_color_cb(Widget widget, XtPointer client_data, XtPointer call_data)
     /* update sliders */
     XFreeColors(DISP, G_colormap, &(cinfo->new_color.pixel), 1, 0);
     pixel_to_color(pix, &(cinfo->new_color), DISP, G_colormap);
-
-    r = cinfo->new_color.red >> 8;
-    g = cinfo->new_color.green >> 8;
-    b = cinfo->new_color.blue >> 8;
-    
-/*      fprintf(stderr, "Pixel: 0x%.6lx\n", cinfo->new_color.pixel); */
-
-    XtVaSetValues(cinfo->r_scale, XmNvalue, r, NULL);
-    XtVaSetValues(cinfo->g_scale, XmNvalue, g, NULL);
-    XtVaSetValues(cinfo->b_scale, XmNvalue, b, NULL);
+    h_update_sliders(cinfo);
 }
 
 static void
@@ -250,11 +254,10 @@ show_color_cb(Widget widget, XtPointer client_data, XtPointer call_data)
 {
     struct color_info *cinfo = (struct color_info *)client_data;
     Pixel pix;
-    unsigned r, g, b;
     
     UNUSED(call_data);
     XtVaGetValues(widget, XmNbackground, &pix, NULL);
-/*      fprintf(stderr, "Color: 0x%.6lx\n", pix); */
+    /*      fprintf(stderr, "Color: 0x%.6lx\n", pix); */
 
     /* use this instead of XtVaSetValues on XmNbackground so that
        the foreground color gets also changed appropriately. */
@@ -267,16 +270,7 @@ show_color_cb(Widget widget, XtPointer client_data, XtPointer call_data)
     /* update sliders */
     XFreeColors(DISP, G_colormap, &(cinfo->new_color.pixel), 1, 0);
     pixel_to_color(pix, &(cinfo->new_color), DISP, G_colormap);
-
-    r = cinfo->new_color.red >> 8;
-    g = cinfo->new_color.green >> 8;
-    b = cinfo->new_color.blue >> 8;
-    
-/*      fprintf(stderr, "Pixel: 0x%.6lx\n", cinfo->new_color.pixel); */
-
-    XtVaSetValues(cinfo->r_scale, XmNvalue, r, NULL);
-    XtVaSetValues(cinfo->g_scale, XmNvalue, g, NULL);
-    XtVaSetValues(cinfo->b_scale, XmNvalue, b, NULL);
+    h_update_sliders(cinfo);
 }
 
 static void
@@ -285,7 +279,7 @@ slider_cb(Widget widget, XtPointer client_data, XtPointer call_data)
     struct color_info *cinfo = (struct color_info *)client_data;
     XmScaleCallbackStruct *cbs = (XmScaleCallbackStruct *)call_data;
 
-/*      fprintf(stderr, "Pixel1 : 0x%.6lx\n", cinfo->new_color.pixel); */
+    /*      fprintf(stderr, "Pixel1 : 0x%.6lx\n", cinfo->new_color.pixel); */
     /* reuse cinfo->new_color */
     XFreeColors(DISP, G_colormap, &(cinfo->new_color.pixel), 1, 0);
     
@@ -303,7 +297,7 @@ slider_cb(Widget widget, XtPointer client_data, XtPointer call_data)
 	XDVI_ERROR((stderr, "Couldn't XAllocColor\n"));
 	return;
     }
-/*      fprintf(stderr, "Pixel: 0x%.6lx\n", cinfo->new_color.pixel); */
+    /*      fprintf(stderr, "Pixel: 0x%.6lx\n", cinfo->new_color.pixel); */
 
 #if XmVersion >= 1002
     /* if avaliable, use this so that the foreground color also
@@ -312,20 +306,6 @@ slider_cb(Widget widget, XtPointer client_data, XtPointer call_data)
 #else
     XtVaSetValues(cinfo->new_sample, XmNbackground, cinfo->new_color.pixel, NULL);
 #endif
-}
-
-static void
-h_init_sliders(struct color_info *cinfo)
-{
-    unsigned r, g, b;
-
-    r = cinfo->new_color.red >> 8;
-    g = cinfo->new_color.green >> 8;
-    b = cinfo->new_color.blue >> 8;
-
-    XtVaSetValues(cinfo->r_scale, XmNvalue, r, NULL);
-    XtVaSetValues(cinfo->g_scale, XmNvalue, g, NULL);
-    XtVaSetValues(cinfo->b_scale, XmNvalue, b, NULL);
 }
 
 static Widget
@@ -486,7 +466,7 @@ h_create_sliders(Widget parent, Widget top, struct color_info *cinfo)
     XtManageChild(g_scale);
     XtManageChild(b_scale);
 
-    h_init_sliders(cinfo);
+    h_update_sliders(cinfo);
     
 }
 
@@ -510,15 +490,15 @@ h_create_shell(Widget parent, struct color_info *cinfo)
     struct color_button_info *binfo = cinfo->button_info;
     struct topic_info *tinfo = binfo->tinfo;
     struct prefs_choice *prefs = (struct prefs_choice *)tinfo->data;
-/*     struct prefs_choice *prefs; */
+    /*     struct prefs_choice *prefs; */
     
     n = 0;
     XtSetArg(args[n], XmNuserData, cinfo); n++;
 
-/*     XtSetArg(args[n], XmNdeleteResponse, XmDO_NOTHING); n++; */
-/*     XtSetArg(args[n], XmNnoResize, True); n++; */
-/*     XtSetArg(args[n], XmNmwmFunctions, functions); n++; */
-/*     XtSetArg(args[n], XmNmwmDecorations, decoration); n++; */
+    /*     XtSetArg(args[n], XmNdeleteResponse, XmDO_NOTHING); n++; */
+    /*     XtSetArg(args[n], XmNnoResize, True); n++; */
+    /*     XtSetArg(args[n], XmNmwmFunctions, functions); n++; */
+    /*     XtSetArg(args[n], XmNmwmDecorations, decoration); n++; */
     XtSetArg(args[n], XtNtitle, "Xdvik: Select Color"); n++;
     
     dialog = XmCreatePromptDialog(parent, Xdvi_COLOR_DIALOG_NAME, args, n);
@@ -586,11 +566,10 @@ h_create_shell(Widget parent, struct color_info *cinfo)
 					 XmNshadowThickness, 1,
 					 NULL);
     XmStringFree(str);
+    /* disable clicking on the new_sample button */
     XtInsertEventHandler(new_sample,
 			 KeyPressMask | KeyReleaseMask |
-			 ButtonPressMask | ButtonReleaseMask |
-			 PointerMotionMask| PointerMotionHintMask |
-			 ButtonMotionMask | FocusChangeMask,
+			 ButtonPressMask | ButtonReleaseMask,
 			 True, block_event_callback,
 			 (XtPointer)0, 0);
     cinfo->new_sample = new_sample;
@@ -608,13 +587,8 @@ h_create_shell(Widget parent, struct color_info *cinfo)
 
     add_to_deplist(prefs, dialog);
 
-/*     h_create_commands(shell, color_globals.widgets.paned, "OK", "Cancel", cinfo); */
-
-/*     XtManageChild(color_globals.widgets.paned); */
-    
-/*     XtRealizeWidget(shell); */
-
     TipAddWidget(tip_shell, old_sample, "Click to revert to old color");
+    TipAddWidget(tip_shell, new_sample, "Preview of new color");
     /*  TipAddWidget(tip_shell, color_matrix, "Select color"); */
 
     WM_DELETE_WINDOW = XmInternAtom(DISP, "WM_DELETE_WINDOW", False);

@@ -21,8 +21,8 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
 NOTE:
-	xdvi is based on prior work, as noted in the modification history
-	in xdvi.c.
+xdvi is based on prior work, as noted in the modification history
+in xdvi.c.
 
 \*========================================================================*/
 

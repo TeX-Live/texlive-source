@@ -47,22 +47,22 @@
 /*
   BUGS:
 
-   - with Xaw, the highlighting for the selected page (XawListHighlight)
-     vanishes when mouse is dragged outside the widget and then released
-     (but the respective page is selected, which is IMHO the desired behaviour).
+  - with Xaw, the highlighting for the selected page (XawListHighlight)
+  vanishes when mouse is dragged outside the widget and then released
+  (but the respective page is selected, which is IMHO the desired behaviour).
      
-   - with Xaw, scrolling the list with PgUp/PgDown until the current page
-     gets `out of focus' should un-highlight the current page number
+  - with Xaw, scrolling the list with PgUp/PgDown until the current page
+  gets `out of focus' should un-highlight the current page number
      
-   - The ASCII-based marks are *ugly*. Pixmaps (for the marked state)
-     would be better. The viewer gv has one (but it's Xaw only). Some
-     file directory widgets like
-     e.g. http://ftp.xfree86.org/pub/X.Org/contrib/widgets/ListTree-3.0b3.tar.gz
-     also have facilities for that, but most suffer from other
-     inadequacies (e.g. no such ting as browseSelection) and all kinds
-     of bitrot ...  Another alternative would be using XmContainer
-     (see e.g. the `filemanager' example in demos/programs/filemanagers
-     in the openmotif distribution), but that's available for Motif >= 2.1 only.
+  - The ASCII-based marks are *ugly*. Pixmaps (for the marked state)
+  would be better. The viewer gv has one (but it's Xaw only). Some
+  file directory widgets like
+  e.g. http://ftp.xfree86.org/pub/X.Org/contrib/widgets/ListTree-3.0b3.tar.gz
+  also have facilities for that, but most suffer from other
+  inadequacies (e.g. no such ting as browseSelection) and all kinds
+  of bitrot ...  Another alternative would be using XmContainer
+  (see e.g. the `filemanager' example in demos/programs/filemanagers
+  in the openmotif distribution), but that's available for Motif >= 2.1 only.
 
 */
 
@@ -142,11 +142,11 @@ static XtActionsRec CustomListActions[] = {
     { "ListDragMark",		xm_list_drag_mark	},
 };
 static char *motif_custom_translations =
-    "#override \n"
-    "s <Btn2Down>:                   ListDragMark(ListButtonMotion)\n"
-    "<Btn2Motion>:                   ListSetMark(ListButtonMotion)\n"
-    "<Btn2Up>:                       ListSetMark(ListButtonMotion)\n"
-    "<Btn2Down>:                     ListSetMark(ListButtonMotion)\n"
+"#override \n"
+"s <Btn2Down>:                   ListDragMark(ListButtonMotion)\n"
+"<Btn2Motion>:                   ListSetMark(ListButtonMotion)\n"
+"<Btn2Up>:                       ListSetMark(ListButtonMotion)\n"
+"<Btn2Down>:                     ListSetMark(ListButtonMotion)\n"
 /* /\*     "s ~m ~a <Btn2Down>:             ListMyProcessBtn2(ListBeginExtend)\n" *\/ */
 /* /\*     "s ~m ~a <Btn2Up>:               ListMyProcessBtn2(ListEndExtend)\n" *\/ */
 /* /\*     "~c ~s ~m ~a <Btn2Down>:         ListMyProcessBtn2(ListBeginSelect)\n" *\/ */
@@ -181,12 +181,12 @@ static int xaw_maybe_scroll_pagelist(int new_page, Boolean force_recenter, int o
   self-made page highlighting marker:
   
   - the marker overlaps with the ordinary XawListHighlight marker;
-    when un-highlighting a page, 1 pixel (vertically) at the edge of
-    the ordinary marker is overdrawn.
+  when un-highlighting a page, 1 pixel (vertically) at the edge of
+  the ordinary marker is overdrawn.
 
   - When the XawListHighlight crosses the self-drawn rectangle,
-    the vertical bars remain visible, but the horizontal bars
-    are erased.
+  the vertical bars remain visible, but the horizontal bars
+  are erased.
 
   The hack just redraws the appropriate items whenever one of
   the above can happen, i.e. when the two markers are 2 or less
@@ -223,8 +223,8 @@ xaw_maybe_redraw_current_marker(int idx)
     Position x, y;
     Dimension w, h;
 
-/*     fprintf(stderr, "idx: %d, high: %d; diff: %d\n", idx + MOTIF_IDX_OFFSET, g_current_highlighted, */
-/* 	    abs(idx + MOTIF_IDX_OFFSET - g_current_highlighted)); */
+    /*     fprintf(stderr, "idx: %d, high: %d; diff: %d\n", idx + MOTIF_IDX_OFFSET, g_current_highlighted, */
+    /* 	    abs(idx + MOTIF_IDX_OFFSET - g_current_highlighted)); */
     if (abs((idx + MOTIF_IDX_OFFSET) - g_current_highlighted) <= 2
 	&& my_list_pos_to_bounds(LIST_WIDGET, g_current_highlighted, &x, &y, &w, &h)) {
 	refresh_highlight_marker(LIST_WIDGET, m_page_gc.fore, x, y, w, h);
@@ -260,7 +260,7 @@ long
 pageinfo_get_offset(int page)
 {
     ASSERT(page >= 0 && page < (int)page_info.index_size, "Page number out of range");
-/*      fprintf(stderr, "offset for page %d is %ld\n", page, page_info.index[page].offset); */
+    /*      fprintf(stderr, "offset for page %d is %ld\n", page, page_info.index[page].offset); */
     return page_info.index[page].offset;
 }
 
@@ -416,11 +416,7 @@ toggle_pagelist(void)
 		      NULL);
     }
 
-#if defined(NEW_MENU_CREATION) || defined(MOTIF)
     set_menu(&resource.expert_mode, Act_set_expert_mode, check_resource_expert);
-#else
-    set_show_pagelist_option();
-#endif
 }
 #endif
 
@@ -490,14 +486,14 @@ get_page_size(void)
 	 max_page /= 10, max_pageno_len++);
 
     return MAX(min_pageno_len, max_pageno_len);
-  /* Plus 1 for minus symbol */
+    /* Plus 1 for minus symbol */
 }
 
 #if !defined(LESSTIF_VERSION)
 /* draw or erase highlight marker at position x, y with widht w an height h,
    using suitable offsets (for sake of consistency of the latter, and because
    of the differences Xaw/Motif, this is a separate function).
- */
+*/
 static void
 refresh_highlight_marker(Widget widget, GC gc,
 			 Position x, Position y, Dimension w, Dimension h)
@@ -618,12 +614,12 @@ xaw_drag_page_callback(Widget widget, XtPointer data, XEvent *event, Boolean *co
     actual_idx = xaw_maybe_scroll_pagelist(idx, False, actual_idx);
     XawListHighlight(LIST_WIDGET, idx - MOTIF_IDX_OFFSET);
 
-/*      if (event->xany.type == ButtonRelease) { */
-/*  	fprintf(stderr, "1\n"); */
-/*  	page_history_insert(idx - MOTIF_IDX_OFFSET); */
-/*  	goto_page(idx - MOTIF_IDX_OFFSET, resource.keep_flag ? NULL : home); */
-/*  	search_signal_page_changed(); */
-/*      } */
+    /*      if (event->xany.type == ButtonRelease) { */
+    /*  	fprintf(stderr, "1\n"); */
+    /*  	page_history_insert(idx - MOTIF_IDX_OFFSET); */
+    /*  	goto_page(idx - MOTIF_IDX_OFFSET, resource.keep_flag ? NULL : home); */
+    /*  	search_signal_page_changed(); */
+    /*      } */
 }
 
 static void
@@ -698,7 +694,7 @@ my_list_pos_to_bounds(Widget widget, int idx, Position *x, Position *y, Dimensio
 
 /* it seems that in order to support scrolling of the page list with wheel mice,
    we need to program this explicitly.
- */
+*/
 static void
 wheel_scroll_list_callback(Widget widget, XtPointer data, XEvent *event, Boolean *cont)
 {
@@ -733,7 +729,7 @@ wheel_scroll_list_callback(Widget widget, XtPointer data, XEvent *event, Boolean
 	if (button == 5) {
 	    if (current_page >= total_pages - 1) {
 		XBell(DISP, 0);
-		statusline_print(STATUS_SHORT, "Last page of DVI file");
+/* 		statusline_info(STATUS_SHORT, "Last page of DVI file"); */
 		return;
 	    }
 	    pageno++;
@@ -741,22 +737,23 @@ wheel_scroll_list_callback(Widget widget, XtPointer data, XEvent *event, Boolean
 	else {
 	    if (current_page == 0) {
 		XBell(DISP, 0);
-		statusline_print(STATUS_SHORT, "First page of DVI file");
+/* 		statusline_info(STATUS_SHORT, "First page of DVI file"); */
 		return;
 	    }
 	    pageno--;
 	}
-	goto_page(check_goto_page(pageno), resource.keep_flag ? NULL : home, False);
+	goto_page(check_goto_page(pageno, True), resource.keep_flag ? NULL : home, False);
 	search_signal_page_changed();
 #endif
     }
+    statusline_erase("Page history:");
 }
 	
 
 #if !defined(LESSTIF_VERSION)
 /* draw a hightlight rectangle around the page the mouse is currently over, to
    make e.g. marking easier.
- */
+*/
 static void
 highlight_page_callback(Widget widget, XtPointer data, XEvent *event, Boolean *cont)
 {
@@ -775,7 +772,7 @@ highlight_page_callback(Widget widget, XtPointer data, XEvent *event, Boolean *c
 	/* might need to un-highlight previous one */
 	if (idx_bak >= 0 && idx_bak != curr_idx
 	    && my_list_pos_to_bounds(widget, idx_bak, &x, &y, &w, &h)) {
-/* 	    fprintf(stderr, "index: %d, %d, h: %d, w: %d\n", x, y, h, w); */
+	    /* 	    fprintf(stderr, "index: %d, %d, h: %d, w: %d\n", x, y, h, w); */
 	    refresh_highlight_marker(widget, m_page_gc.back, x, y, w, h);
 #if REDRAW_CURRENT_MARKER_HACK
 	    xaw_maybe_redraw_highlight(curr_idx);
@@ -840,6 +837,7 @@ select_page_callback(Widget w, XtPointer closure, XtPointer call_data)
     maybe_scroll_pagelist(new, False);
     page_history_insert(new);
     goto_page(new, resource.keep_flag ? NULL : home, False);
+    statusline_erase("Page history:");
 #endif
     search_signal_page_changed();
 }
@@ -896,7 +894,7 @@ xm_get_bottom_visible(int start)
    bot_visible.  List is always scrolled so that 1 element is still
    visible below or above pointer, to make it possible to flip through
    document by repeatedly clicking on first/last.
- */
+*/
 static void
 xm_maybe_scroll_pagelist(int current, saveCmdT curr_cmd, int *top_visible, int *bot_visible)
 {
@@ -957,7 +955,7 @@ xm_toggle_label(Widget widget, int idx, Boolean update)
     
     UNUSED(update);
 
-/*     ensure_labelinfo_size(idx); */
+    /*     ensure_labelinfo_size(idx); */
     ASSERT(idx < (int)page_info.index_size, "");
     if (!page_info.index[idx].marked) {
 	sprintf(buf, pageno_format, '*', page_info.page_labels[idx]);
@@ -969,7 +967,7 @@ xm_toggle_label(Widget widget, int idx, Boolean update)
 	mark_font = "UNMARKED";
 	page_info.index[idx].marked = False;
     }
-/*     str = XmStringCreateLocalized(buf); */
+    /*     str = XmStringCreateLocalized(buf); */
     str = XmStringCreateLtoR(buf, mark_font);
     XmListReplaceItemsPos(widget, &str, 1, idx + MOTIF_IDX_OFFSET);
     XmStringFree(str);
@@ -988,13 +986,8 @@ mark_page_callback(Widget w, XtPointer data, XEvent *event, Boolean *cont)
     if (event->type == MotionNotify || event->xbutton.button == Button2)
 	internal_process_button2(w, event);
 
-    if (pageinfo_have_marked_pages()) {
-	notify_print_dialog_have_marked(True);
-    }
-    else {
-	notify_print_dialog_have_marked(False);
-    }
-
+    if (event->type != ButtonPress)
+	notify_print_dialog_have_marked();
 }
 
 void
@@ -1060,10 +1053,10 @@ xaw_toggle_label(Widget w, int idx, Boolean update)
     if (w == NULL)
 	return;
 
-/*     ensure_labelinfo_size(idx); */
+    /*     ensure_labelinfo_size(idx); */
     ASSERT(idx < (int)page_info.index_size, "");
     if (!page_info.index[idx].marked) {
-/* 	sprintf(toc[idx], "* %*d  ", get_page_size(), page_index[idx].number);  */
+	/* 	sprintf(toc[idx], "* %*d  ", get_page_size(), page_index[idx].number);  */
 	sprintf(page_info.page_labels[idx], pageno_format, '*', get_page_size(),
 		resource.use_tex_pages ? page_info.index[idx].number : idx + 1);
 	page_info.index[idx].marked = True;
@@ -1071,7 +1064,7 @@ xaw_toggle_label(Widget w, int idx, Boolean update)
     else {
 	sprintf(page_info.page_labels[idx], pageno_format, ' ', get_page_size(),
 		resource.use_tex_pages ? page_info.index[idx].number : idx + 1);
-/* 	sprintf(toc[idx], "  %*d  ", get_page_size(), page_index[idx].number);  */
+	/* 	sprintf(toc[idx], "  %*d  ", get_page_size(), page_index[idx].number);  */
 	page_info.index[idx].marked = False;
     }
     
@@ -1091,14 +1084,14 @@ xaw_maybe_scroll_pagelist(int new_page, Boolean force_recenter, int idx_bak)
     if (LIST_WIDGET == NULL || (resource.expert_mode & XPRT_SHOW_BUTTONS) == 0)
 	return idx_bak;
 
-/*     if (list_clip == 0) { */
-/* 	list_clip = XtNameToWidget(viewport, "clip"); */
-/*     } */
-/*     if (XtIsRealized(list_clip)) */
-/* 	XtVaGetValues(list_clip, XtNheight, &clip_height, XtNx, &cx, XtNy, &y1, NULL); */
+    /*     if (list_clip == 0) { */
+    /* 	list_clip = XtNameToWidget(viewport, "clip"); */
+    /*     } */
+    /*     if (XtIsRealized(list_clip)) */
+    /* 	XtVaGetValues(list_clip, XtNheight, &clip_height, XtNx, &cx, XtNy, &y1, NULL); */
     if (viewport != NULL && XtIsRealized(viewport))
 	XtVaGetValues(viewport, XtNheight, &view_height, XtNx, &x, NULL);
-/*     fprintf(stderr, "diff: %d, %d, %d, %d, %d\n", cx - x, clip_height, view_height, y1, (int)y2); */
+    /*     fprintf(stderr, "diff: %d, %d, %d, %d, %d\n", cx - x, clip_height, view_height, y1, (int)y2); */
     xaw_get_row_height(LIST_WIDGET, &row_height, &internal_height);
     y = row_height * new_page;
 
@@ -1150,13 +1143,12 @@ toggle_label(Widget widget, int idx, Boolean update)
 void
 list_toggle_marks(int arg)
 {
-    
     int i;
 
     if (arg < 0) { /* mark all */
 	for (i = 0; i < total_pages; i++) {
 	    ASSERT(i < (int)page_info.index_size, "");
-/* 	    ensure_labelinfo_size(i); */
+	    /* 	    ensure_labelinfo_size(i); */
 	    if (!page_info.index[i].marked) {
 		toggle_label(LIST_WIDGET, i, False);
 	    }
@@ -1165,7 +1157,7 @@ list_toggle_marks(int arg)
     else if (arg == 0) { /* unmark all */
 	for (i = 0; i < total_pages; i++) {
 	    ASSERT(i < (int)page_info.index_size, "");
-/* 	    ensure_labelinfo_size(i); */
+	    /* 	    ensure_labelinfo_size(i); */
 	    if (page_info.index[i].marked) {
 		toggle_label(LIST_WIDGET, i, False);
 	    }
@@ -1184,6 +1176,7 @@ list_toggle_marks(int arg)
 #ifndef MOTIF
     xaw_update_list();
 #endif
+    notify_print_dialog_have_marked();
 }
 
 static Boolean PagelistInitialized = False;
@@ -1194,20 +1187,20 @@ handle_pagelist_resize(void)
 {
     /* TODO: the following will mess up the geometry of the list
        (doesn't increase height, and incrementally decreases width):
-    if (list_widget) {
-	Dimension height;
-	--- without the (un)manage, I get an X Error:
-	XtMakeGeometryRequest - parent has no geometry manager
-	---
-	XtUnmanageChild(viewport);
-	XtUnmanageChild(LIST_WIDGET);
-	XtVaGetValues(globals.widgets.clip_widget, XtNheight, &height, NULL);
-	height -= resource.btn_top_spacing + resource.btn_border_width + global_y_pos;
-	XtVaSetValues(viewport, XtNheight, height, NULL);
-	XtManageChild(LIST_WIDGET);
-        XtManageChild(viewport);
-    }
-    ... so we use brute force instead: */
+       if (list_widget) {
+       Dimension height;
+       --- without the (un)manage, I get an X Error:
+       XtMakeGeometryRequest - parent has no geometry manager
+       ---
+       XtUnmanageChild(viewport);
+       XtUnmanageChild(LIST_WIDGET);
+       XtVaGetValues(globals.widgets.clip_widget, XtNheight, &height, NULL);
+       height -= resource.btn_top_spacing + resource.btn_border_width + global_y_pos;
+       XtVaSetValues(viewport, XtNheight, height, NULL);
+       XtManageChild(LIST_WIDGET);
+       XtManageChild(viewport);
+       }
+       ... so we use brute force instead: */
     handle_destroy_pagelist(LIST_WIDGET, NULL, NULL);
     create_pagelist();
 }
@@ -1234,7 +1227,7 @@ create_pagelist(void)
     Pixel background, foreground;
 #ifdef MOTIF
     
-/*     items = xrealloc(items, sizeof *items * (total_pages + 2)); */
+    /*     items = xrealloc(items, sizeof *items * (total_pages + 2)); */
     init_pagelabels(0, total_pages);
     xm_set_page_labels();
     if (!PagelistInitialized) {
@@ -1251,7 +1244,7 @@ create_pagelist(void)
 	  Don't use the highlighting hack with LessTif, since its XmListPosToBounds()
 	  is too broken to be usable (as of 0.93.36):
 	  - it returns generally too low values, apparently it doesn't take
-	    XmNlistSpacing into account;
+	  XmNlistSpacing into account;
 	  - it doesn't take scrollbar position into account.
 	*/
 	if (resource.pagelist_highlight_current)
@@ -1317,7 +1310,7 @@ refresh_pagelist(int newsize, int newpage)
     fprintf(stderr, "=== refresh_pagelist: newsize %d, newpage %d\n", newsize, newpage);
 #endif
 #ifdef MOTIF
-/*     items = xrealloc(items, sizeof *items * (newsize + 2)); */
+    /*     items = xrealloc(items, sizeof *items * (newsize + 2)); */
     init_pagelabels(0, newsize);
     xm_set_page_labels();
 #else /* MOTIF */
@@ -1325,7 +1318,7 @@ refresh_pagelist(int newsize, int newpage)
 	return;
 
     /* FIXME - is this really neccessary?? The alternative:
-          XawListChange(LIST_WIDGET, page_info.page_labels, newsize, 0, True);
+       XawListChange(LIST_WIDGET, page_info.page_labels, newsize, 0, True);
        has problems when freeing the page labels afterwards.
     */
     handle_destroy_pagelist(LIST_WIDGET, NULL, NULL);
@@ -1377,7 +1370,7 @@ maybe_scroll_pagelist(int newpage, Boolean force_recenter)
        last highlighted with our home-made `current selected'
        rectangle, it might overdraw that rectangle. In this case,
        restore it:
-     */
+    */
     xaw_maybe_redraw_current_marker(newpage);
 #endif
 #endif
@@ -1389,7 +1382,7 @@ set_all_marks(int from, int to)
 {
     int i;
     for (i = from; i < to; i++) {
-/* 	ensure_labelinfo_size(i); */
+	/* 	ensure_labelinfo_size(i); */
 	page_info.index[i].marked = True;
 	toggle_label(LIST_WIDGET, i, False);
     }
@@ -1402,12 +1395,12 @@ internal_process_button2_drag(Widget widget, XEvent *event)
     idx = get_item_index(widget, event->xbutton.y);
 
     for (i = 0; i < total_pages; i++) {
-/* 	ensure_labelinfo_size(i); */
+	/* 	ensure_labelinfo_size(i); */
 	if (page_info.index[i].marked && i > max)
 	    max = i;
     }
     for (i = total_pages; i > 0; i--) {
-/* 	ensure_labelinfo_size(i); */
+	/* 	ensure_labelinfo_size(i); */
 	if (page_info.index[i].marked && i < min)
 	    min = i;
     }
@@ -1536,21 +1529,16 @@ list_toggle_current(int arg)
 {
     toggle_label(LIST_WIDGET, arg, True);
 
-    if (pageinfo_have_marked_pages()) {
-	notify_print_dialog_have_marked(True);
-    }
-    else {
-	notify_print_dialog_have_marked(False);
-    }
+    notify_print_dialog_have_marked();
 }
 
 #ifdef MOTIF
 
 static void
 xm_list_set_mark(Widget widget,
-		     XEvent *event,
-		     String *params,
-		     Cardinal *num_params)
+		 XEvent *event,
+		 String *params,
+		 Cardinal *num_params)
 {
     UNUSED(params);
     
@@ -1559,12 +1547,8 @@ xm_list_set_mark(Widget widget,
 
     internal_process_button2(widget, event);
 
-    if (pageinfo_have_marked_pages()) {
-	notify_print_dialog_have_marked(True);
-    }
-    else {
-	notify_print_dialog_have_marked(False);
-    }
+    if (event->type != ButtonPress)
+	notify_print_dialog_have_marked();
 }
 
 static void
@@ -1580,12 +1564,8 @@ xm_list_drag_mark(Widget widget,
 
     internal_process_button2_drag(widget, event);
 
-    if (pageinfo_have_marked_pages()) {
-	notify_print_dialog_have_marked(True);
-    }
-    else {
-	notify_print_dialog_have_marked(False);
-    }
+    if (event->type != ButtonPress)
+	notify_print_dialog_have_marked();
 }
 
 #endif /* MOTIF */

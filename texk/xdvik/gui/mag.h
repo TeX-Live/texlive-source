@@ -29,6 +29,13 @@
 
 #define	MAGBORD	1	/* border size for magnifier */
 
+
+extern size_t get_magglass_items(void);
+extern int get_magglass_width(int idx);
+extern int get_magglass_height(int idx);
+extern void set_magglass_widht(int idx, int w);
+extern void set_magglass_height(int idx, int h);
+
 extern void show_distance_from_ruler(XEvent *event, Boolean to_stdout);
 extern void drag_ruler_motion(XEvent *event);
 extern void drag_ruler_release(XEvent *event);
@@ -37,6 +44,7 @@ extern void show_ruler(XEvent *event);
 extern void redraw_ruler(void);
 extern void ruler_snap_origin(XEvent *event);
 
+extern void magnifier_move(String params, XEvent *event);
 extern void mag_release(XEvent * event);
 extern void move_magnifier(void);
 extern void create_magnifier(void);

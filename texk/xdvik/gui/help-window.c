@@ -89,8 +89,8 @@ create_help_text(Widget parent, const char *name, const char *value)
     XtSetArg(args[n], XmNeditMode, XmMULTI_LINE_EDIT);		n++;
     XtSetArg(args[n], XmNwordWrap, True);			n++;
     XtSetArg(args[n], XmNtopAttachment, XmATTACH_FORM);		n++;
-/*     XtSetArg(args[n], XmNtopWidget, top_widget);		n++; */
-/*     XtSetArg(args[n], XmNtopOffset, 10);			n++; */
+    /*     XtSetArg(args[n], XmNtopWidget, top_widget);		n++; */
+    /*     XtSetArg(args[n], XmNtopOffset, 10);			n++; */
     XtSetArg(args[n], XmNleftAttachment, XmATTACH_FORM);	n++;
     XtSetArg(args[n], XmNrightAttachment, XmATTACH_FORM);	n++;
     XtSetArg(args[n], XmNbottomAttachment, XmATTACH_FORM);	n++;
@@ -356,19 +356,9 @@ initialize_items(struct topic_info *info)
 	"	Open a new xdvi window displaying the link\n",
         "	at the cursor position if the link is a DVI file;\n",
 	"	else, try to launch an application to view the file.\n",
-        "B",
-#if MOTIF
-	", toolbar button 9\n",
-#else
-	"\n",
-#endif	
+        "B\n",
         "	Go back to the previous hyperlink in the history.\n",
-        "F",
-#if MOTIF
-	", toolbar button 10\n",
-#else
-	"\n",
-#endif	
+        "F\n",
 	"	Go forward to the next hyperlink in the history.\n",
 	"\n",
 	"By default, the hyperlinks are displayed in the colors \n",
@@ -385,7 +375,12 @@ initialize_items(struct topic_info *info)
 
     static const char *default_help_othercommands[] = {
 	"Other Commands\tMiscellaneous other commands\n",
-	"Ctrl-f\n",
+	"Ctrl-f",
+#if MOTIF
+	", toolbar button 12\n",
+#else
+	"\n",
+#endif	
 	"     Opens a dialog window to search for a text string\n",
 	"     in the DVI file.\n",
 	"\n",
@@ -504,15 +499,15 @@ initialize_items(struct topic_info *info)
 	"\n",
 	"Ctrl-+",
 #if MOTIF
-	", toolbar button 7\n",
+	", toolbar button 9\n",
 #else
 	"\n",
 #endif
 	"     Makes the display of the page larger (zooms in).\n",
 	"\n",
-	"Ctrl-+",
+	"Ctrl--",
 #if MOTIF
-	", toolbar button 8\n",
+	", toolbar button 10\n",
 #else
 	"\n",
 #endif
@@ -520,7 +515,7 @@ initialize_items(struct topic_info *info)
 	"\n",
 	"Alt-Ctrl-+",
 #if MOTIF
-	", toolbar button 16\n",
+	", toolbar button 17\n",
 #else
 	"\n",
 #endif
@@ -528,11 +523,11 @@ initialize_items(struct topic_info *info)
 	"\n",
 	"Alt-Ctrl--",
 #if MOTIF
-	", toolbar button 17\n",
+	", toolbar button 18\n",
 #else
 	"\n",
 #endif
-	"     Makes the fonts lighter (by substracting from the gamma\n",
+	"     Makes the fonts lighter (by subtracting from the gamma\n",
 	"     value).\n",
 	"\n",
 	NULL
@@ -560,7 +555,7 @@ initialize_items(struct topic_info *info)
 	"     Ctrl-n: toggle mark of current page, then move one page forward,\n",
 	"     Ctrl-u: move one page back, then toggle mark of that page.\n",
 #if MOTIF
-        "- Use one of the toobar buttons 12 to 15 to toggle the marks\n",
+        "- Use the toobar buttons 13 to 16 to toggle the marks\n",
         "  of odd pages, toggle the marks of even pages, toggle the mark\n",
 	"  of the current page, or unmark all pages, respectively.\n",
 #endif
@@ -579,11 +574,21 @@ initialize_items(struct topic_info *info)
     static const char *default_help_pagemotion[] = {
 	"Page Motion\tMoving around in the document\n",
 	"\n",
-        "[\n",
+        "[",
+#if MOTIF
+	", toolbar button 7\n",
+#else
+	"\n",
+#endif
 	"     Moves back one item in the page history. With a prefix\n",
 	"     argument n, move back n history items.\n"
 	"\n",
-        "]\n",
+        "]",
+#if MOTIF
+	", toolbar button 8\n",
+#else
+	"\n",
+#endif
 	"     Moves forward one item in the page history. With a prefix\n",
 	"     argument n, move forward n history items.\n"
 	"\n",
@@ -597,7 +602,7 @@ initialize_items(struct topic_info *info)
 	"     to the history item after the deleted one. With a prefix\n",
 	"     argument n, delete n next history items.\n",
 	"\n",
-	"n or f or Space or Return or LineFeed or PgDn",
+	"n or f or Return or LineFeed or PgDn",
 #if MOTIF
 	", toolbar button 5\n",
 #else
@@ -606,13 +611,19 @@ initialize_items(struct topic_info *info)
 	"     Moves to the next page (or to the nth next page if a\n",
 	"     number is given).\n",
 	"\n",
-	"p or b or Ctrl-h or BackSpace or Del or PgUp",
+	"Space key\n",
+	"     Moves down or to the next page.",
+	"\n",
+	"p or b or Ctrl-h or BackSpace or PgUp",
 #if MOTIF
 	", toolbar button 4\n",
 #else
 	"\n",
 #endif
 	"     Moves to the previous page (or back n pages).\n",
+	"\n",
+	"Del key\n",
+	"     Moves up on the page or to the previous page.",
 	"\n",
 	"Up-arrow\n",
 	"     Scrolls page up.\n",
@@ -1039,7 +1050,7 @@ show_help(Widget toplevel, const char *topic)
 	info.ok_callback = NULL;
 	info.cancel_callback = NULL;
 	info.items = items;
-/* 	info.items_size = NUM_HELP_TOPICS; */
+	/* 	info.items_size = NUM_HELP_TOPICS; */
 	    
 	help_shell = create_topic_window(toplevel,
 					 "xdvik: Help",

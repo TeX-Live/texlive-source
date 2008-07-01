@@ -74,8 +74,6 @@ NOTE: xdvi is based on prior work as noted in the modification history, below.
 #include "xdvi.h"
 #include "version.h"
 
-#include <locale.h>
-
 /* Xlib and Xutil are already included */
 #include <X11/cursorfont.h>
 #include <X11/keysym.h>
@@ -152,14 +150,12 @@ XmStringCharSet G_charset = XmFONTLIST_DEFAULT_TAG;
 #include "kpathsea/c-fopen.h"
 #include "kpathsea/c-pathch.h"
 #include "kpathsea/c-stat.h"
-#include "kpathsea/proginit.h"
 #include "kpathsea/progname.h"
 #include "kpathsea/tex-file.h"
 #include "kpathsea/tex-hush.h"
 #include "kpathsea/tex-make.h"
 #include "string-utils.h"
 #include "kpathsea/c-errno.h"
-#include "kpathsea/expand.h"
 
 #include "translations.h"
 #include "dvi-init.h"
@@ -173,30 +169,21 @@ XmStringCharSet G_charset = XmFONTLIST_DEFAULT_TAG;
 #include "dvi-draw.h"
 #include "statusline.h"
 #include "util.h"
-#include "my-snprintf.h"
 #include "hypertex.h"
 #include "xaw_menu.h"
 #include "xdvi-debug.h"
 #include "pagehist.h"
 #include "filehist.h"
-#include "sfSelFile.h"
 #include "print-internal.h"
+#include "exit-handlers.h"
 #include "xm_prefsP.h" /* for Xdvi_PREFS_BROWSER_DEFAULTS and Xdvi_PREFS_EDITOR_DEFAULTS */
 
-#include "pixmaps/time16.xbm"
-#include "pixmaps/time16_mask.xbm"
 #ifdef VMS 
 #  include "pixmaps/hand.xbm"
 #  include "pixmaps/hand_mask.xbm"
 #endif
 #include "pixmaps/magglass.xbm"
 #include "pixmaps/magglass_mask.xbm"
-#include "pixmaps/drag_vert.xbm"
-#include "pixmaps/drag_vert_mask.xbm"
-#include "pixmaps/drag_horiz.xbm"
-#include "pixmaps/drag_horiz_mask.xbm"
-#include "pixmaps/drag_omni.xbm"
-#include "pixmaps/drag_omni_mask.xbm"
 
 #ifdef DEBUG
 #include<asm/msr.h>
@@ -317,17 +304,6 @@ Boolean ignore_papersize_specials = False;
 # define GS_PATH "gs"
 #endif
 
-#if A4
-# define DEFAULT_PAPER		"a4"
-#else
-# define DEFAULT_PAPER		"us"
-#endif
-
-/*
- * Main application context, used for Xt event processing.
- */
-XtAppContext app = NULL;
-
 static Dimension bwidth = 2;
 
 struct x_resources resource;
@@ -337,192 +313,11 @@ struct program_globals globals;
 /* color of cursor */
 static XColor m_cursor_color;
 
-/* default magnifier dimensions */
-static struct mg_size_rec {
-    int w;
-    int h;
-} mg_size[] = {
-    {200, 150}, {400, 250}, {700, 500}, {1000, 800}, {1200, 1200}
-};
-
-size_t get_magglass_items(void) {
-    return XtNumber(mg_size);
-}
-
-int get_magglass_width(int idx) {
-    return mg_size[idx].w;
-}
-
-int get_magglass_height(int idx) {
-    return mg_size[idx].h;
-}
 
 struct WindowRec mane = { (Window) 0, 1, 0, 0, 0, 0, MAXDIM, 0, MAXDIM, 0 };
 
 /* currwin is temporary storage except for within redraw() */
 struct WindowRec currwin = { (Window) 0, 1, 0, 0, 0, 0, MAXDIM, 0, MAXDIM, 0 };
-
-/*
- * Data for options processing.
- */
-static const char SILENT[] = " ";	/* flag value for usage() */
-
-static const char SUBST[] = "x";	/* another flag value */
-
-static const char USAGESTR_END_MARKER[] = "__USAGE_END_MARKER__"; /* end marker */
-
-static const char *SUBST_VAL[] = { "-mgs[n] <size>" };
-
-static XrmOptionDescRec options[] = {
-    {"-q",		".noInitFile",		XrmoptionNoArg,		(XPointer)"on"	},
-    {"+q",		".noInitFile",		XrmoptionNoArg,		(XPointer)"off"	},
-    {"-geometry",       ".geometry",	        XrmoptionSepArg,	(XPointer)NULL	},
-#ifdef MOTIF
-    /* to make `-font' and `-fn' options work, make them an alias for `fontList' */
-    { "-font",		"*fontList",		XrmoptionSepArg,	(XPointer)NULL	},
-    { "-fn",		"*fontList",		XrmoptionSepArg,	(XPointer)NULL	},
-#endif
-    {"-s",		".shrinkFactor",	XrmoptionSepArg,	(XPointer)NULL	},
-#ifndef	VMS
-    {"-S",		".densityPercent",	XrmoptionSepArg,	(XPointer)NULL	},
-#endif
-    {"-density",	".densityPercent",	XrmoptionSepArg,	(XPointer)NULL	},
-    {"-noomega",	".omega",		XrmoptionNoArg,		(XPointer)"off"	},
-    {"+noomega",	".omega",		XrmoptionNoArg,		(XPointer)"on"	},
-#if COLOR
-    {"-nocolor",	".color",		XrmoptionNoArg,		(XPointer)"off"	},
-    {"+nocolor",	".color",		XrmoptionNoArg,		(XPointer)"on"	},
-#endif
-#ifdef GREY
-    {"-nogrey",		".grey",		XrmoptionNoArg,		(XPointer)"off"	},
-    {"+nogrey",		".grey",		XrmoptionNoArg,		(XPointer)"on"	},
-    {"-gamma",		".gamma",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-nomatchinverted",".matchInverted",	XrmoptionNoArg,	(XPointer)"off"	},
-    {"+nomatchinverted",".matchInverted",	XrmoptionNoArg,	(XPointer)"on"	},	
-/*     {"-invertedfactor", ".invertedFactor",	XrmoptionSepArg,	(XPointer)NULL	}, */
-    {"-install",	".install",		XrmoptionNoArg,		(XPointer)"on"	},
-    {"-noinstall",	".install",		XrmoptionNoArg,		(XPointer)"off"	},
-#endif
-    {"-rulecolor",	".ruleColor",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-p",		".pixelsPerInch",	XrmoptionSepArg,	(XPointer)NULL	},
-    {"-margins",	".Margin",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-sidemargin",	".sideMargin",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-topmargin",	".topMargin",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-offsets",	".Offset",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-xoffset",	".xOffset",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-yoffset",	".yOffset",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-paper",		".paper",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-altfont",	".altFont",		XrmoptionSepArg,	(XPointer)NULL	},
-#ifdef MKTEXPK
-    {"-nomakepk",	".makePk",		XrmoptionNoArg,		(XPointer)"off"	},
-    {"+nomakepk",	".makePk",		XrmoptionNoArg,		(XPointer)"on"	},
-#endif
-    {"-mfmode",		".mfMode",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-editor",		".editor",		XrmoptionSepArg,	(XPointer)NULL	},
-#ifdef T1LIB
-    {"-not1lib",	".t1lib",		XrmoptionNoArg,		(XPointer)"off"	},
-    {"+not1lib",	".t1lib",		XrmoptionNoArg,		(XPointer)"on"	},
-#endif
-    {"-sourceposition",	".sourcePosition",	XrmoptionSepArg,	(XPointer)NULL	},
-    {"-findstring",	".findString",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-text-encoding",	".textEncoding",	XrmoptionSepArg,	(XPointer)NULL	},
-    {"-unique",		".unique",		XrmoptionNoArg,		(XPointer)"on"	},
-    {"+unique",		".unique",		XrmoptionNoArg,		(XPointer)"off"	},
-    {"-nofork",		".fork",		XrmoptionNoArg,		(XPointer)"off" },
-    {"+nofork",		".fork",		XrmoptionNoArg,		(XPointer)"on"  },
-#ifdef RGB_ANTI_ALIASING
-    {"-subpixels",	".subPixels",		XrmoptionSepArg,	(XPointer)NULL	},
-#endif
-    {"-l",		".listFonts",		XrmoptionNoArg,		(XPointer)"on"	},
-    {"+l",		".listFonts",		XrmoptionNoArg,		(XPointer)"off"	},
-    {"-watchfile",	".watchFile",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-expertmode",	".expertMode",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-expert",		".expert",		XrmoptionNoArg,		(XPointer)"on"	},
-    {"+expert",		".expert",		XrmoptionNoArg,		(XPointer)"off"	},
-    {"+statusline",	".statusline",		XrmoptionNoArg,		(XPointer)"off"	},
-    {"-statusline",	".statusline",		XrmoptionNoArg,		(XPointer)"on"	},
-    {"+useTeXpages",	".useTeXPages",		XrmoptionNoArg,		(XPointer)"off"	},
-    {"-useTeXpages",	".useTeXPages",		XrmoptionNoArg,		(XPointer)"on"	},
-    {"-mgs",		".magnifierSize1",	XrmoptionSepArg,	(XPointer)NULL	},
-    {"-mgs1",		".magnifierSize1",	XrmoptionSepArg,	(XPointer)NULL	},
-    {"-mgs2",		".magnifierSize2",	XrmoptionSepArg,	(XPointer)NULL	},
-    {"-mgs3",		".magnifierSize3",	XrmoptionSepArg,	(XPointer)NULL	},
-    {"-mgs4",		".magnifierSize4",	XrmoptionSepArg,	(XPointer)NULL	},
-    {"-mgs5",		".magnifierSize5",	XrmoptionSepArg,	(XPointer)NULL	},
-    {"-warnspecials",	".warnSpecials",	XrmoptionNoArg,		(XPointer)"on"	},
-    {"+warnspecials",	".warnSpecials",	XrmoptionNoArg,		(XPointer)"off"	},
-    {"-hush",		".Hush",		XrmoptionNoArg,		(XPointer)"on"	},
-    {"+hush",		".Hush",		XrmoptionNoArg,		(XPointer)"off"	},
-    {"-hushchars",	".hushLostChars",	XrmoptionNoArg,		(XPointer)"on"	},
-    {"+hushchars",	".hushLostChars",	XrmoptionNoArg,		(XPointer)"off"	},
-    {"-hushchecksums",	".hushChecksums",	XrmoptionNoArg,		(XPointer)"on"	},
-    {"+hushchecksums",	".hushChecksums",	XrmoptionNoArg,		(XPointer)"off"	},
-    {"-hushstdout",	".hushStdout",		XrmoptionNoArg,		(XPointer)"on"	},
-    {"+hushstdout",	".hushStdout",		XrmoptionNoArg,		(XPointer)"off"	},
-    {"-safer",		".safer",		XrmoptionNoArg,		(XPointer)"on"	},
-    {"+safer",		".safer",		XrmoptionNoArg,		(XPointer)"off"	},
-    {"-fg",		".foreground",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-foreground",	".foreground",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-bg",		".background",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-background",	".background",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-hl",		".highlight",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-cr",		".cursorColor",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-icongeometry",	".iconGeometry",	XrmoptionSepArg,	(XPointer)NULL	},
-    {"-keep",		".keepPosition",	XrmoptionNoArg,		(XPointer)"on"	},
-    {"+keep",		".keepPosition",	XrmoptionNoArg,		(XPointer)"off"	},
-    {"-copy",		".copy",		XrmoptionNoArg,		(XPointer)"on"	},
-    {"+copy",		".copy",		XrmoptionNoArg,		(XPointer)"off"	},
-    {"-thorough",	".thorough",		XrmoptionNoArg,		(XPointer)"on"	},
-    {"+thorough",	".thorough",		XrmoptionNoArg,		(XPointer)"off"	},
-    {"-fullscreen",	".fullscreen",		XrmoptionNoArg,		(XPointer)"on"	},
-    {"+fullscreen",	".fullscreen",		XrmoptionNoArg,		(XPointer)"off"	},
-    {"-pause",		".pause",		XrmoptionNoArg,		(XPointer)"on"	},
-    {"+pause",		".pause",		XrmoptionNoArg,		(XPointer)"off"	},
-    {"-pausespecial",	".pauseSpecial",	XrmoptionSepArg,	(XPointer)NULL	},
-    {"-wheelunit",	".wheelUnit",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-mousemode",	".mouseMode",		XrmoptionSepArg,	(XPointer)NULL	},
-#ifdef PS
-    {"-postscript",	".postscript",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-allowshell",	".allowShell",		XrmoptionNoArg,		(XPointer)"on"	},
-    {"+allowshell",	".allowShell",		XrmoptionNoArg,		(XPointer)"off"	},
-# ifdef	PS_DPS
-    {"-nodps",		".dps",			XrmoptionNoArg,		(XPointer)"off"	},
-    {"+nodps",		".dps",			XrmoptionNoArg,		(XPointer)"on"	},
-# endif
-# ifdef	PS_NEWS
-    {"-nonews",		".news",		XrmoptionNoArg,		(XPointer)"off"	},
-    {"+nonews",		".news",		XrmoptionNoArg,		(XPointer)"on"	},
-# endif
-# ifdef	PS_GS
-    {"-noghostscript",	".ghostscript",		XrmoptionNoArg,		(XPointer)"off"	},
-    {"+noghostscript",	".ghostscript",		XrmoptionNoArg,		(XPointer)"on"	},
-    {"-nogssafer",	".gsSafer",		XrmoptionNoArg,		(XPointer)"off"	},
-    {"+nogssafer",	".gsSafer",		XrmoptionNoArg,		(XPointer)"on"	},
-    {"-gsalpha",	".gsAlpha",		XrmoptionNoArg,		(XPointer)"on"	},
-    {"+gsalpha",	".gsAlpha",		XrmoptionNoArg,		(XPointer)"off"	},
-    {"-interpreter",	".interpreter",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-gspalette",	".palette",		XrmoptionSepArg,	(XPointer)NULL	},
-# endif
-# ifdef	MAGICK
-    {"-magick",		".ImageMagick",		XrmoptionNoArg,		(XPointer)"on"  },
-    {"+magick",		".ImageMagick",		XrmoptionNoArg,		(XPointer)"off" },
-    {"-magick_cache",	".MagickCache",		XrmoptionSepArg,	(XPointer)NULL	},
-# endif
-#endif /* PS */
-    {"-noscan",		".prescan",		XrmoptionNoArg,		(XPointer)"off"	},
-    {"+noscan",		".prescan",		XrmoptionNoArg,		(XPointer)"on"	},
-    {"-notempfile",	".tempFile",		XrmoptionNoArg,		(XPointer)"off"	},
-    {"+notempfile",	".tempFile",		XrmoptionNoArg,		(XPointer)"on"	},
-    {"-dvipspath",	".dvipsPath",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-ps2pdfpath",	".ps2pdfPath",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-debug",		".debugLevel",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-linkstyle",	".linkStyle",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-linkcolor",	".linkColor",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-visitedlinkcolor",".visitedLinkColor",	XrmoptionSepArg,	(XPointer)NULL	},
-    {"-browser",	".wwwBrowser",		XrmoptionSepArg,	(XPointer)NULL	},
-    {"-anchorposition",	".anchorPosition",	XrmoptionSepArg,	(XPointer)NULL	},
-};
-
 
 #define	offset(field)	XtOffsetOf(struct x_resources, field)
 static int base_tick_length = 4;
@@ -554,24 +349,42 @@ static XtResource application_resources[] = {
      offset(omega), XtRString, "true"},
     {"mainTranslations", "MainTranslations", XtRString, sizeof(char *),
      offset(main_translations), XtRString, (XtPointer) NULL},
-    {"wheelTranslations", "WheelTranslations", XtRString, sizeof(char *),
-     offset(wheel_translations), XtRString, (XtPointer) "<Btn4Down>:wheel(-0.2)\n<Btn5Down>:wheel(0.2)"},
+    {"mouseTranslations", "MouseTranslations", XtRString, sizeof(char *),
+     offset(mouse_translations), XtRString, (XtPointer) NULL },
     {"wheelUnit", "WheelUnit", XtRInt, sizeof(int),
      offset(wheel_unit), XtRImmediate, (XtPointer) 80},
     {"mouseMode", "MouseMode", XtRInt, sizeof(int),
-     offset(mouse_mode), XtRImmediate, (XtPointer)MOUSE_MAGNIFIER_MODE},
+     offset(mouse_mode), XtRImmediate, (XtPointer) MOUSE_MODE1 },
+    {"mouseMode1Name", "MouseMode1Name", XtRString, sizeof(char *),
+     offset(mouse_mode1_name), XtRString, (XtPointer) "Magnifier"},
+    {"mouseMode1Description", "MouseMode1Description", XtRString, sizeof(char *),
+     offset(mouse_mode1_description), XtRString, (XtPointer) "click to enlarge text"},
+    {"mouseMode1Cursor", "MouseMode1Cursor", XtRInt, sizeof(int),
+     offset(mouse_mode1_cursor), XtRImmediate, (XtPointer) -1},
+    {"mouseMode2Name", "MouseMode2Name", XtRString, sizeof(char *),
+     offset(mouse_mode2_name), XtRString, (XtPointer) "Text Selection"},
+    {"mouseMode2Description", "MouseMode2Description", XtRString, sizeof(char *),
+     offset(mouse_mode2_description), XtRString, (XtPointer) "click and drag to select a region of text"},
+    {"mouseMode2Cursor", "MouseMode2Cursor", XtRInt, sizeof(int),
+     offset(mouse_mode2_cursor), XtRImmediate, (XtPointer) XC_cross },
+    {"mouseMode3Name", "MouseMode3Name", XtRString, sizeof(char *),
+     offset(mouse_mode3_name), XtRString, (XtPointer) "Ruler"},
+    {"mouseMode3Description", "MouseMode3Description", XtRString, sizeof(char *),
+     offset(mouse_mode3_description), XtRString, (XtPointer) "click and drag to set/move ruler"},
+    {"mouseMode3Cursor", "MouseMode3Cursor", XtRInt, sizeof(int),
+     offset(mouse_mode3_cursor), XtRImmediate, (XtPointer) XC_crosshair },
 #ifdef GREY
     {"gamma", "Gamma", XtRFloat, sizeof(float),
      offset(gamma), XtRString, "1"},
-/*     {"invertedFactor", "InvertedFactor", XtRFloat, sizeof(float), */
-/*      offset(inverted_factor), XtRString, "3.0"}, */
+    /*     {"invertedFactor", "InvertedFactor", XtRFloat, sizeof(float), */
+    /*      offset(inverted_factor), XtRString, "3.0"}, */
 #endif
     {"pixelsPerInch", "PixelsPerInch", XtRInt, sizeof(int),
      offset(pixels_per_inch), XtRImmediate, (XtPointer) BDPI},
     {"sideMargin", "Margin", XtRString, sizeof(char *),
      offset(sidemargin), XtRString, (XtPointer) NULL},
     {"tickLength", "TickLength", XtRInt, sizeof(int),
-     offset(tick_length), XtRInt, (XtPointer) & base_tick_length},
+     offset(tick_length), XtRInt, (XtPointer) &base_tick_length},
     {"tickUnits", "TickUnits", XtRString, sizeof(char *),
      offset(tick_units), XtRString, "mm"},
     {"topMargin", "Margin", XtRString, sizeof(char *),
@@ -595,7 +408,7 @@ static XtResource application_resources[] = {
 #else
      "false"
 #endif
-     },
+    },
     {"mfMode", "MfMode", XtRString, sizeof(char *),
      offset(mfmode), XtRString, MFMODE},
     {"editor", "Editor", XtRString, sizeof(char *),
@@ -630,12 +443,16 @@ static XtResource application_resources[] = {
      offset(reverse), XtRString, "false"},
     {"warnSpecials", "WarnSpecials", XtRBoolean, sizeof(Boolean),
      offset(warn_spec), XtRString, "false"},
-    {"hushLostChars", "Hush", XtRBoolean, sizeof(Boolean),
+    {"hush", "Hush", XtRBoolean, sizeof(Boolean),
+     offset(hush), XtRString, "false"},
+    {"hushLostChars", "HushLostChars", XtRBoolean, sizeof(Boolean),
      offset(hush_chars), XtRString, "false"},
-    {"hushChecksums", "Hush", XtRBoolean, sizeof(Boolean),
+    {"hushChecksums", "HushChecksums", XtRBoolean, sizeof(Boolean),
      offset(hush_chk), XtRString, "false"},
     {"hushStdout", "HushStdout", XtRBoolean, sizeof(Boolean),
      offset(hush_stdout), XtRString, "false"},
+    {"hushBell", "HushBell", XtRBoolean, sizeof(Boolean),
+     offset(hush_bell), XtRString, "false"},
     {"safer", "Safer", XtRBoolean, sizeof(Boolean),
      offset(safer), XtRString, "false"},
 #ifdef VMS
@@ -713,9 +530,9 @@ static XtResource application_resources[] = {
      offset(btn_top_spacing), XtRImmediate, (XtPointer) 16},
     {"buttonBetweenSpacing", "ButtonSpacing", XtRDimension, sizeof(Dimension),
      offset(btn_between_spacing), XtRImmediate, (XtPointer) 8},
-    /* ignored; only for backwards compatibility */
+    /* only used if menus consist of buttons only */
     {"buttonBetweenExtra", "ButtonSpacing", XtRDimension, sizeof(Dimension),
-     offset(btn_between_extra), XtRImmediate, (XtPointer)0},
+     offset(btn_between_extra), XtRImmediate, (XtPointer)16},
     {"buttonBorderWidth", "BorderWidth", XtRDimension, sizeof(Dimension),
      offset(btn_border_width), XtRImmediate, (XtPointer) 1},
 #endif /* MOTIF */
@@ -799,6 +616,12 @@ static XtResource application_resources[] = {
      offset(prefs_browser_list), XtRString, (XtPointer)Xdvi_PREFS_BROWSER_DEFAULTS },
     {"prefsEditorList", "PrefsEditorList", XtRString, sizeof(char *),
      offset(prefs_editor_list), XtRString, (XtPointer)Xdvi_PREFS_EDITOR_DEFAULTS },
+#  if USE_COMBOBOX
+    {"searchHistory", "SearchHistory", XtRString, sizeof(char *),
+     offset(search_history), XtRString, (XtPointer)NULL },
+    {"searchHistorySize", "SearchHistorySize", XtRInt, sizeof(int),
+     offset(search_history_size), XtRImmediate, (XtPointer)20},
+#  endif
 #endif
     /* defaults for unknown mime types */
     {"unknownMimeSuffix", "UnknownMimeSuffix", XtRString, sizeof(char *),
@@ -810,6 +633,9 @@ static XtResource application_resources[] = {
     /* bitmask for current search window settings; only used internally! */
     {"searchWindowDefaults", "SearchWindowDefaults", XtRInt, sizeof(int),
      offset(search_window_defaults), XtRImmediate, (XtPointer)0},
+    /* whether to open file in new window from file selector (only for DVI files) */
+    {"fileselOpenNewWindow", "FileselOpenNewWindow", XtRBoolean, sizeof(Boolean),
+     offset(filesel_open_new_window), XtRString, "False"},
     /* resources for help text */
     {"helpGeneral", "HelpGeneral", XtRString, sizeof(char *),
      offset(help_general), XtRString, NULL},
@@ -834,20 +660,14 @@ static XtResource application_resources[] = {
      offset(page_history_size), XtRImmediate, (XtPointer)1000},
 };
 
-/* get these before setting `application_resources' */
-static XtResource xdvirc_resources[] = {
-    {"noInitFile", "NoInitFile", XtRBoolean, sizeof(Boolean),
-     offset(no_init_file), XtRString, "false"},
-};
-
 static XtResource app_pixel_resources[] = {	/* get these later */
 #endif /* GREY */
     {"foreground", "Foreground", XtRPixel, sizeof(Pixel),
      offset(fore_Pixel), XtRString, XtDefaultForeground},
     {"background", "Background", XtRPixel, sizeof(Pixel),
      offset(back_Pixel), XtRString, XtDefaultBackground},
-/*     {"borderColor", "BorderColor", XtRPixel, sizeof(Pixel), */
-/*      offset(brdr_Pixel), XtRPixel, (XtPointer) &resource.fore_Pixel}, */
+    /*     {"borderColor", "BorderColor", XtRPixel, sizeof(Pixel), */
+    /*      offset(brdr_Pixel), XtRPixel, (XtPointer) &resource.fore_Pixel}, */
     {"highlight", "Highlight", XtRPixel, sizeof(Pixel),
      offset(hl_Pixel), XtRPixel, (XtPointer) &resource.fore_Pixel},
     {"cursorColor", "CursorColor", XtRPixel, sizeof(Pixel),
@@ -855,90 +675,6 @@ static XtResource app_pixel_resources[] = {	/* get these later */
 };
 #undef offset
 
-/* Here, list usage values for options that have `XrmoptionSepArg' set.
-   TODO: what does the `^' stand for?
- */
-static const char *usagestr[] = {
-    /* geometry		*/ SILENT,
-#ifdef MOTIF
-    /* font		*/ SILENT,
-    /* f		*/ SILENT,
-#endif
-    /* shrinkFactor	*/ "shrink",
-#ifndef	VMS
-    /* S		*/ "density",
-    /* density		*/ SILENT,
-#else
-    /* density		*/ "density",
-#endif
-#ifdef	GREY
-    /* gamma		*/ "float",
-#endif
-    /* rulecolor	*/ "color",
-    /* p		*/ "pixels",
-    /* margins		*/ "dimen",
-    /* sidemargin	*/ "dimen",
-    /* topmargin	*/ "dimen",
-    /* offsets		*/ "dimen",
-    /* xoffset		*/ "dimen",
-    /* yoffset		*/ "dimen",
-    /* paper		*/ "papertype",
-    /* altfont		*/ "font",
-    /* mfmode		*/ "mode-def",
-    /* editor		*/ "editor",
-    /* sourceposition	*/ "linenumber[ ]*filename",
-    /* findstring	*/ "string",
-    /* textencoding	*/ "charset",
-#ifdef RGB_ANTI_ALIASING
-    /* subpixels	*/ "{rgb,bgr}[ i1 i2 i3]",
-#endif
-    /* rv		*/ "^-l", "-rv",
-    /* watchfile	*/ "secs",
-    /* expertmode	*/ "flag",
-    /* mgs		*/ SUBST,
-    /* mgs1		*/ SILENT,
-    /* mgs2		*/ SILENT,
-    /* mgs3		*/ SILENT,
-    /* mgs4		*/ SILENT,
-    /* mgs5		*/ SILENT,
-    /* fg		*/ "color",
-    /* foreground	*/ SILENT,
-    /* bg		*/ "color",
-    /* background	*/ SILENT,
-    /* hl		*/ "color",
-    /* cr		*/ "color",
-#ifndef VMS
-    /* display		*/ "^-cr", "-display <host:display>",
-#else
-    /* display		*/ "^-cr", "-display <host::display>",
-#endif
-    /* geometry		*/ "^-cr", "-geometry <geometry>",
-    /* icongeometry	*/ "geometry",
-    /* iconic		*/ "^-icongeometry", "-iconic",
-    /* font		*/ "^-icongeometry", "-font <font>",
-    /* pausespecial	*/ "string",
-    /* wheelunit	*/ "pixels",
-    /* mousemode	*/ "0|1|2",
-#ifdef PS
-    /* postscript	*/ "0|1|2",
-# ifdef PS_GS
-    /* interpreter	*/ "path",
-    /* gspalette	*/ "monochrome|grayscale|color",
-# endif
-# ifdef MAGICK
-    /* magick_cache	*/ "size[k|K|m|M|g|G]",
-# endif
-#endif
-    /* dvipspath	*/ "path",
-    /* ps2pdfpath	*/ "path",
-    /* debug		*/ "bitmask|string[,string ...]",
-    /* linkstyle	*/ "0|1|2|3",
-    /* linkcolor	*/ "color",
-    /* visitedlinkcolor	*/ "color",
-    /* browser		*/ "WWWbrowser",
-    /* anchorposition	*/ "anchor",
-    /* [end marker]	*/ USAGESTR_END_MARKER
-};
 
 #ifndef MOTIF
 
@@ -955,7 +691,7 @@ QueryGeometry(Widget w,
     UNUSED(constraints);
     reply->request_mode = CWWidth | CWHeight;
     reply->width = globals.page.w;
-    reply->height = globals.page.h + global_statusline_h;
+    reply->height = globals.page.h;
 
     return XtGeometryAlmost;
 }
@@ -966,39 +702,39 @@ QueryGeometry(Widget w,
 /* if the following gives you trouble, just compile with -DNOQUERY */
 static WidgetClassRec drawingWidgetClass = {
     {
-     /* superclass		*/ &widgetClassRec,
-     /* class_name		*/ "Draw",
-     /* widget_size		*/ sizeof(WidgetRec),
-     /* class_initialize	*/ NULL,
-     /* class_part_initialize	*/ NULL,
-     /* class_inited		*/ FALSE,
-     /* initialize		*/ NULL,
-     /* initialize_hook		*/ NULL,
-     /* realize			*/ XtInheritRealize,
-     /* actions			*/ NULL,
-     /* num_actions		*/ 0,
-     /* resources		*/ NULL,
-     /* num_resources		*/ 0,
-     /* xrm_class		*/ NULLQUARK,
-     /* compress_motion		*/ FALSE,
-     /* compress_exposure	*/ TRUE,
-     /* compress_enterleave	*/ FALSE,
-     /* visible_interest	*/ FALSE,
-     /* destroy			*/ NULL,
-     /* resize			*/ XtInheritResize,
-     /* expose			*/ XtInheritExpose,
-     /* set_values		*/ NULL,
-     /* set_values_hook		*/ NULL,
-     /* set_values_almost	*/ XtInheritSetValuesAlmost,
-     /* get_values_hook		*/ NULL,
-     /* accept_focus		*/ XtInheritAcceptFocus,
-     /* version			*/ XtVersion,
-     /* callback_offsets	*/ NULL,
-     /* tm_table		*/ XtInheritTranslations,
-     /* query_geometry		*/ QueryGeometry,
-     /* display_accelerator	*/ XtInheritDisplayAccelerator,
-     /* extension		*/ NULL
-     }
+	/* superclass		*/ &widgetClassRec,
+	/* class_name		*/ "Draw",
+	/* widget_size		*/ sizeof(WidgetRec),
+	/* class_initialize	*/ NULL,
+	/* class_part_initialize	*/ NULL,
+	/* class_inited		*/ FALSE,
+	/* initialize		*/ NULL,
+	/* initialize_hook		*/ NULL,
+	/* realize			*/ XtInheritRealize,
+	/* actions			*/ NULL,
+	/* num_actions		*/ 0,
+	/* resources		*/ NULL,
+	/* num_resources		*/ 0,
+	/* xrm_class		*/ NULLQUARK,
+	/* compress_motion		*/ FALSE,
+	/* compress_exposure	*/ TRUE,
+	/* compress_enterleave	*/ FALSE,
+	/* visible_interest	*/ FALSE,
+	/* destroy			*/ NULL,
+	/* resize			*/ XtInheritResize,
+	/* expose			*/ XtInheritExpose,
+	/* set_values		*/ NULL,
+	/* set_values_hook		*/ NULL,
+	/* set_values_almost	*/ XtInheritSetValuesAlmost,
+	/* get_values_hook		*/ NULL,
+	/* accept_focus		*/ XtInheritAcceptFocus,
+	/* version			*/ XtVersion,
+	/* callback_offsets	*/ NULL,
+	/* tm_table		*/ XtInheritTranslations,
+	/* query_geometry		*/ QueryGeometry,
+	/* display_accelerator	*/ XtInheritDisplayAccelerator,
+	/* extension		*/ NULL
+    }
 };
 
 #  define drawWidgetClass &drawingWidgetClass
@@ -1006,101 +742,6 @@ static WidgetClassRec drawingWidgetClass = {
 # endif /* NOQUERY */
 #endif /* not MOTIF */
 
-static int
-compare_strings(const void *s, const void *t)
-{
-    const char **ss = (const char**)s;
-    const char **tt = (const char**)t;
-
-    return memicmp(*ss, *tt, strlen(*tt) + 1); /* also check for final 0 */
-}
-
-static void
-usage(int exitval)
-{
-    XrmOptionDescRec *opt;
-    const char **usageptr = usagestr;
-    const char **sv = SUBST_VAL;
-    const char *str1;
-    const char *str2;
-    const char *sorted_options[XtNumber(options)];
-    char buf[256];
-    char *s;
-    int col, n;
-    size_t nopt = 0, k;
-    
-    for (opt = options; opt < options + XtNumber(options); ++opt) {
-	str1 = opt->option;
-	if (*str1 != '-')
-	    continue;
-
-	ASSERT(*usageptr != USAGESTR_END_MARKER, "Too few elements in usageptr[]");
-
-	str2 = NULL;
-	if (opt->argKind != XrmoptionNoArg) {
-	    str2 = *usageptr++;
-	    if (str2 == SILENT)
-		continue;
-	    if (str2 == SUBST) {
-		str1 = *sv++;
-		str2 = NULL;
-	    }
-	}
-#if 0
-	fprintf(stderr, "str1: %s, str2: %s\n", str1, str2);
-#endif
-	for (;;) {
-	    if (str2 == NULL)
-		sprintf(buf, "[%.80s]", str1);
-	    else
-		sprintf(buf, "[%.80s <%.80s>]", str1, str2);
-
-/* 	    fprintf(stderr, "number of options: %d; len of usagestr: %d\n", */
-/* 		    XtNumber(options), XtNumber(usagestr)); */
-	    ASSERT(nopt < XtNumber(options), "index out of range");
-/* 	    fprintf(stderr, "sorted: %d=%s\n", nopt, buf); */
-	    sorted_options[nopt++] = xstrdup(buf);
-	    
-	    if (**usageptr != '^' || strcmp(*usageptr + 1, opt->option) != 0)
-		break;
-	    ++usageptr;
-	    str1 = *usageptr++;
-	    str2 = NULL;
-	}
-    }
-
-    ASSERT(*usageptr == USAGESTR_END_MARKER, "Too many elements in usageptr[]");
-
-/*     fprintf(stderr, "elems in sorted options: %d\n", nopt); */
-    qsort((void*)sorted_options,
-	  nopt,
-	  sizeof(sorted_options[0]),
-	  compare_strings);
-    
-    s = xstrdup("Usage: ");
-    s = xstrcat(s, XDVI_PROGNAME); /* use `xdvi' here, not `xdvik' or `xdvi-xaw.bin' or ... */
-    s = xstrcat(s, " [+[<page>]]");
-
-    col = strlen(s);
-    fputs(s, stdout);
-    
-    for (k = 0; k < nopt; ++k) {
-	n = strlen(sorted_options[k]);
-	if (col + n < 80)
-	    putc(' ', stdout);
-	else {
-	    fputs("\n\t", stdout);
-	    col = 8 - 1;
-	}
-	fputs(sorted_options[k], stdout);
-	col += n + 1;
-    }
-
-    /* put this in an extra line, to emphasize that it must come last */
-    fputs("\n\t[dvi_file]\n", stdout);
-
-    xdvi_exit(exitval);
-}
 
 int
 atopix(const char *arg, Boolean allow_minus)
@@ -1190,31 +831,6 @@ check_app_defaults_fileversion(void)
 #endif
 
 
-static void
-warn_about_prerelease_versions(void)
-{
-    int unstable_version = 0;
-    if (strstr(XDVI_VERSION_INFO, "-cvs") != NULL)
-	unstable_version = 1;
-    else if (strstr(XDVI_VERSION_INFO, "-beta") != NULL)
-	unstable_version = 2;
-
-    if (unstable_version > 0) {
-	printf("\n**********************************************************************\n");
-	printf("%s version %s,\n%s version.\n\n", XDVIK_PROGNAME, XDVI_VERSION_INFO,
-	       unstable_version == 1 ? "an unstable development" : "a beta testing");
-	printf("Want a stable version instead?\n"
-	       " -> please visit one of:\n"
-	       "    http://xdvi.sourceforge.net/cvs-upgrade.html\n"
-	       "    http://sourceforge.net/project/showfiles.php?group_id=23164\n\n"
-	       "Found a bug?\n"
-	       " -> please report it to:\n"
-	       "    http://sourceforge.net/tracker/?group_id=23164&atid=377580\n\n"
-	       "Thanks for your support!\n");
-	printf("**********************************************************************\n");
-    }
-}
-
 
 #ifdef GREY
 static Arg temp_args1[] = {
@@ -1249,55 +865,6 @@ XdviCvtStringToPixel(Display *dpy,
     }
 
     return XtCvtStringToPixel(dpy, args, num_args, fromVal, toVal, closure_ret);
-}
-
-/*
- * Convert string to yes/no/maybe.  Adapted from the X toolkit.
- */
-
-static Boolean
-XdviCvtStringToBool3(Display *dpy,
-		     XrmValuePtr args, Cardinal *num_args,
-		     XrmValuePtr fromVal, XrmValuePtr toVal,
-		     XtPointer *closure_ret)
-{
-    String str = (String) fromVal->addr;
-    static Bool3 value;
-
-    UNUSED(args);
-    UNUSED(num_args);
-    UNUSED(closure_ret);
-    
-    if (memicmp(str, "true", 5) == 0
-	|| memicmp(str, "yes", 4) == 0
-	|| memicmp(str, "on", 3) == 0 || memicmp(str, "1", 2) == 0)
-	value = True;
-
-    else if (memicmp(str, "false", 6) == 0
-	     || memicmp(str, "no", 3) == 0
-	     || memicmp(str, "off", 4) == 0 || memicmp(str, "0", 2) == 0)
-	value = False;
-
-    else if (memicmp(str, "maybe", 6) == 0)
-	value = Maybe;
-
-    else {
-	XtDisplayStringConversionWarning(dpy, str, XtRBoolean);
-	return False;
-    }
-
-    if (toVal->addr != NULL) {
-	if (toVal->size < sizeof(Bool3)) {
-	    toVal->size = sizeof(Bool3);
-	    return False;
-	}
-	*(Bool3 *) (toVal->addr) = value;
-    }
-    else
-	toVal->addr = (XPointer) & value;
-
-    toVal->size = sizeof(Bool3);
-    return True;
 }
 
 #endif
@@ -1548,74 +1115,26 @@ set_icon_and_title(const char *icon_name, const char *title_name)
 }
 
 static void
-display_version_info(void)
-{
-    printf("%s version %s ", XDVIK_PROGNAME, XDVI_VERSION);
-#ifdef MOTIF
-    printf("(%s, runtime version %d.%d)\n",
-	   /* 	   XmVERSION, XmREVISION, XmUPDATE_LEVEL, */
-	   XmVERSION_STRING,
-	   xmUseVersion / 1000, xmUseVersion % 1000);
-#else
-    printf("%s\n", XDVI_GUI);
-#endif
-    printf("Libraries: %s, T1lib version %s\n", kpathsea_version_string, T1LIB_VERSIONSTRING);
-}
-
-static void
-display_bug_reporting_info(void)
-{
-    printf("Please send bug reports, feature requests etc. to one of:\n"
-	   "   http://sourceforge.net/tracker/?group_id=23164&atid=377580\n"
-	   "   tex-k@tug.org (http://tug.org/mailman/listinfo/tex-k)\n\n"
-	   "\n");
-}
-
-static void
-display_licensing_info(void)
-{
-    fputs("Licenses: X Consortium license, GNU Library General Public\n"
-	  "License, GNU General Public License (use option `-license'\n"
-	  "for more details). There is NO WARRANTY of anything.\n\n", stdout);
-}
-
-static void
-display_long_licensing_info(void)
-{
-    fputs("The major parts of Xdvik are licensed under the X Consortium license.\n"
-	  "Parts (encoding.c) are licensed under the GNU General Public License.\n"
-	  "Xdvik uses the following libraries:\n"
-	  "- The kpathsea library, licensed in part under the GNU General Public\n"
-	  "  License, in part under the GNU Library General Public License.\n"
-	  "- t1lib, licensed in parts under the GNU Library General Public License,\n"
-	  "  in parts under the X Consortium license.\n"
-	  "There is NO WARRANTY of anything.\n\n", stdout);
-}
-
-static void
 get_window_constraints(XtWidgetGeometry *reply,
 		       Dimension screen_w, Dimension screen_h,
-		       int add_h)
+		       int *add_h)
 {
     XtWidgetGeometry constraints;
 
     constraints.request_mode = reply->request_mode = 0;
 
-    /* 		fprintf(stderr, "setting constraints.width to %d\n", globals.page.w); */
+    /* fprintf(stderr, "setting constraints.width to %d\n", globals.page.w); */
     constraints.width = globals.page.w;
     if (globals.page.w > screen_w) {
-	/*  		fprintf(stderr, "setting CWWidth constraint\n"); */
 	constraints.request_mode |= CWWidth;
 	constraints.width = screen_w;
     }
 
-    /*  	    fprintf(stderr, "setting constraints.height to %d\n", globals.page.h + global_statusline_h); */
-    constraints.height = globals.page.h + global_statusline_h;
+/*     fprintf(stderr, "setting constraints.height to %d; screen_h = %d\n", globals.page.h, screen_h); */
+    constraints.height = globals.page.h;
     if (constraints.height > screen_h) {
-	/*  		fprintf(stderr, "setting CWHeight constraint\n"); */
 	constraints.request_mode |= CWHeight;
-	/* if window too large, need to subtract height of toolbar etc. again */
-	constraints.height = screen_h - add_h;
+	constraints.height = screen_h;
     }
 
     if (constraints.request_mode != 0
@@ -1626,16 +1145,24 @@ get_window_constraints(XtWidgetGeometry *reply,
 	(void)XtQueryGeometry(globals.widgets.vport_widget, &constraints, reply);
 #endif
     }
+/*     fprintf(stderr, "reply height: %d; screen_h: %d; add_h: %d\n", reply->height, screen_h, *add_h); */
     if (!(reply->request_mode & CWWidth))
 	reply->width = constraints.width;
     if (reply->width >= screen_w)
 	reply->width = screen_w;
-    if (!(reply->request_mode & CWHeight))
-	reply->height = constraints.height;
-    if (reply->height >= screen_h)
-	reply->height = screen_h;
-    /* 		fprintf(stderr, "width now: %d\n", reply.width); */
+    if (!(reply->request_mode & CWHeight)) {
+	reply->height = constraints.height - 2 * bwidth;
+    }
 
+    if (reply->height + *add_h >= screen_h) {
+	reply->height = screen_h
+#ifdef MOTIF
+	    - 1.5
+#else
+	    - 2
+#endif
+	    * *add_h - 2 * bwidth;
+    }
 }
 
 void
@@ -1657,10 +1184,10 @@ set_windowsize(Dimension *ret_w, Dimension *ret_h, int add_w, int add_h, Boolean
 	    currwin.shrinkfactor = ROUNDUP(globals.page.unshrunk_w, w);
 	    if (height_factor >= currwin.shrinkfactor)
 		currwin.shrinkfactor = height_factor;
-/*  	    fprintf(stderr, "factor was 0, using %d\n", currwin.shrinkfactor); */
+	    /*  	    fprintf(stderr, "factor was 0, using %d\n", currwin.shrinkfactor); */
 	}
-/*  	else */
-/*  	    fprintf(stderr, "factor != 0, using %d\n", currwin.shrinkfactor); */
+	/*  	else */
+	/*  	    fprintf(stderr, "factor != 0, using %d\n", currwin.shrinkfactor); */
 
 	mane.shrinkfactor = currwin.shrinkfactor;
 	init_page();
@@ -1689,7 +1216,8 @@ set_windowsize(Dimension *ret_w, Dimension *ret_h, int add_w, int add_h, Boolean
 	screen_w = WidthOfScreen(SCRN) - 2 * bwidth;
 
 	screen_w -= add_w;
-	screen_h = HeightOfScreen(SCRN) - 2 * bwidth - global_statusline_h - 6;
+	/* screen_h = HeightOfScreen(SCRN) - 2 * bwidth - get_statusline_height() - 6; */
+	screen_h = HeightOfScreen(SCRN) - 2 * bwidth;
 	for (;;) {	/* actually, at most two passes */
 	    Dimension height_factor;
 
@@ -1700,7 +1228,9 @@ set_windowsize(Dimension *ret_w, Dimension *ret_h, int add_w, int add_h, Boolean
 	    
 	    if (resource.geometry == NULL && !resource.remember_windowsize) {
 		/* geometry not set by user, try to find geometry that fits the shrink factor */
-		get_window_constraints(&reply, screen_w, screen_h, add_h);
+		get_window_constraints(&reply, screen_w, screen_h, &add_h);
+		TRACE_GUI((stderr, "w: %d, h: %d, add_h: %d, reply: %d x %d",
+			   screen_w, screen_h, add_h, reply.width, reply.height));
 	    }
 	    else {
 		int x, y;
@@ -1715,14 +1245,14 @@ set_windowsize(Dimension *ret_w, Dimension *ret_h, int add_w, int add_h, Boolean
 
 		if (!(flags & WidthValue) || !(flags & HeightValue)) {
 		    /* no geometry specified, use fallback */
-		    get_window_constraints(&reply, screen_w, screen_h, add_h);
+		    get_window_constraints(&reply, screen_w, screen_h, &add_h);
 		}
 
 		/* warn about bad values */
 		if (flags & WidthValue) {
 		    if (width > (unsigned int)(2 * bwidth + add_w)) {
-			TRACE_FILES((stderr, "width: %hu, bwidth: %hu, add_w: %d",
-				     width, bwidth, add_w));
+			TRACE_GUI((stderr, "width: %hu, bwidth: %hu, add_w: %d",
+				   width, bwidth, add_w));
 			reply.width = width - 2 * bwidth - add_w;
 		    }
 		    else {
@@ -1731,38 +1261,38 @@ set_windowsize(Dimension *ret_w, Dimension *ret_h, int add_w, int add_h, Boolean
 		}
 		if (flags & HeightValue) {
 		    if (height > (unsigned int)(2 * bwidth + add_h)) {
-			TRACE_FILES((stderr, "height: %hu, bwidth: %hu, add_h: %d",
-				     height, bwidth, add_h));
+			TRACE_GUI((stderr, "height: %hu, bwidth: %hu, add_h: %d",
+				   height, bwidth, add_h));
 			reply.height = height - 2 * bwidth - add_h;
 		    }
 		    else {
 			reply.height = height;
 		    }
 		}
-		TRACE_FILES((stderr, "setting geometry: %dx%d", (int)reply.width, (int)reply.height));
+		TRACE_GUI((stderr, "setting geometry: %dx%d", (int)reply.width, (int)reply.height));
 	    }
 	    
 	    /* now reply.{width,height} contain max. usable window size */
 
 	    /* User didn't use `-s 0', use either default or other user-specified value */
 	    if (currwin.shrinkfactor != 0) {
-/*  		fprintf(stderr, "factor != 0, using %d\n", currwin.shrinkfactor); */
+		/*  		fprintf(stderr, "factor != 0, using %d\n", currwin.shrinkfactor); */
 		break;
 	    }
-/*  	    else { */
-/*  		fprintf(stderr, "factor was 0, using %d\n", currwin.shrinkfactor); */
-/*  	    } */
+	    /*  	    else { */
+	    /*  		fprintf(stderr, "factor was 0, using %d\n", currwin.shrinkfactor); */
+	    /*  	    } */
 
 	    /* else, try to find a suitable shrink factor: */
 	    currwin.shrinkfactor = ROUNDUP(globals.page.unshrunk_w, reply.width - 2);
-/*  	    fprintf(stderr, "factor w: %d\n", currwin.shrinkfactor); */
+	    /*  	    fprintf(stderr, "factor w: %d\n", currwin.shrinkfactor); */
 	    
 	    height_factor = ROUNDUP(globals.page.unshrunk_h, reply.height - 2);
-/*  	    fprintf(stderr, "factor h: %d\n", height_factor); */
+	    /*  	    fprintf(stderr, "factor h: %d\n", height_factor); */
 	    if (height_factor >= currwin.shrinkfactor)
 		currwin.shrinkfactor = height_factor;
 
-/*  	    fprintf(stderr, "factor now is: %d\n", currwin.shrinkfactor); */
+	    /*  	    fprintf(stderr, "factor now is: %d\n", currwin.shrinkfactor); */
 	    
 	    mane.shrinkfactor = currwin.shrinkfactor;
 	    init_page();
@@ -1785,18 +1315,18 @@ set_windowsize(Dimension *ret_w, Dimension *ret_h, int add_w, int add_h, Boolean
 	*/
 	/* HACK ALERT: 4 for window decoration borders - FIXME: get actual values?? */
 	set_wh_args[0].value = reply.width + add_w + (test_geometry == NULL ? 4 : 0);
-	set_wh_args[1].value = reply.height + add_h - (test_geometry == NULL ? 4 : 0);
+	set_wh_args[1].value = reply.height + add_h + (test_geometry == NULL ? 4 : 0);
 	XtSetValues(globals.widgets.top_level, set_wh_args, XtNumber(set_wh_args));
 
 #else /* MOTIF */
 
-	set_wh_args[0].value = reply.width + add_w + (test_geometry == NULL ? 15 : (2 * bwidth));
+	set_wh_args[0].value = reply.width + add_w + 2 * bwidth; /*  + (test_geometry == NULL ? 15 : (2 * bwidth)); */
 	/*
 	  FIXME: use real height of statusline here
 	  Somehow I didn't manage to use XtVaCreateWidget in a call to
 	  create_statusline() above, and XtManageChild() below.
-	  In that case, we could do without global_statusline_h.
-	 */
+	  In that case, we could do without get_statusline_height().
+	*/
 	set_wh_args[1].value = reply.height + (test_geometry == NULL ? (2 * bwidth + add_h) : 0);
 	XtSetValues(globals.widgets.top_level, set_wh_args, XtNumber(set_wh_args));
 	set_wh_args[0].value -= add_w;
@@ -1805,7 +1335,7 @@ set_windowsize(Dimension *ret_w, Dimension *ret_h, int add_w, int add_h, Boolean
 #endif /* MOTIF */
 	*ret_w = set_wh_args[0].value;
 	*ret_h = set_wh_args[1].value;
-	TRACE_FILES((stderr, "returning: w=%d, h=%d", *ret_w, *ret_h));
+	TRACE_GUI((stderr, "returning: w=%d, h=%d", *ret_w, *ret_h));
     }
 }
 
@@ -1818,7 +1348,7 @@ net_wm_toggle_fullscreen(int flag)
 	XEvent ev;
 	Atom NET_WM_STATE = XInternAtom(DISP, "_NET_WM_STATE", False);
 
-/* 	XDVI_INFO((stdout, "trying _NET_WM_STATE_FULLSCREEN ...")); */
+	/* 	XDVI_INFO((stdout, "trying _NET_WM_STATE_FULLSCREEN ...")); */
 
 	ev.type = ClientMessage;
 	ev.xclient.serial = 0;
@@ -1841,7 +1371,7 @@ net_wm_toggle_fullscreen(int flag)
 
 void
 reconfigure_window(Boolean fullscreen, Dimension width, Dimension height,
-		    Boolean save_position)
+		   Boolean save_position)
 {
     static int x_old = 5, y_old = 15;
 #ifdef SIZECONFIGURE_WORKS
@@ -1888,7 +1418,7 @@ reconfigure_window(Boolean fullscreen, Dimension width, Dimension height,
 	   already mapped). */
 
         if (save_position) {
-	   /* save current window coordinates so that we can change them back */
+	    /* save current window coordinates so that we can change them back */
 	    (void)XTranslateCoordinates(DISP, XtWindow(globals.widgets.top_level),
 					RootWindowOfScreen(SCRN),
 					0, 0,
@@ -1901,9 +1431,9 @@ reconfigure_window(Boolean fullscreen, Dimension width, Dimension height,
 		XMoveWindow(DISP, XtWindow(globals.widgets.top_level), 0, 0);
 		XSync(DISP, False);
 		(void)XTranslateCoordinates(DISP, XtWindow(globals.widgets.top_level),
-					RootWindowOfScreen(SCRN),
-					0, 0, &wm_x_offset, &wm_y_offset,
-					&dummy);
+					    RootWindowOfScreen(SCRN),
+					    0, 0, &wm_x_offset, &wm_y_offset,
+					    &dummy);
 		fprintf(stderr, "wm offset = (%d,%d)\n",
 			wm_x_offset, wm_y_offset);
 	    }
@@ -1975,15 +1505,15 @@ reconfigure_window(Boolean fullscreen, Dimension width, Dimension height,
 #endif
 
     /* Note ZLB: Placing XResizeWindow before XUnmapWindow or after XMapWindow
-	makes the fullscreen window size smaller than the screen size when
-	using `mwm' of Lesstif */
+       makes the fullscreen window size smaller than the screen size when
+       using `mwm' of Lesstif */
     XSetWindowBorderWidth(DISP, XtWindow(globals.widgets.top_level), 0);
     XResizeWindow(DISP, XtWindow(globals.widgets.top_level), width, height);
 
     XMapRaised(DISP, XtWindow(globals.widgets.top_level));
 
     /* Note ZLB: XMapWindow might change the window position with some WMs
-	(like Sawfish), so we place the window position after it's mapped. */
+       (like Sawfish), so we place the window position after it's mapped. */
     XMoveWindow(DISP, XtWindow(globals.widgets.top_level), x, y);
 #endif /* 0 */
 
@@ -1992,91 +1522,11 @@ reconfigure_window(Boolean fullscreen, Dimension width, Dimension height,
     XFlush(DISP);
 }
 
-/*
-  a custom error handler that makes it easier to catch X errors in the debugger
-  (by setting a breakpoint to this function, plus using the -sync option).
-  There was an X error reported by Svend Tollak Munkejord when running remotly
-  on OSF1/V5.1 alpha with display on SuSE 9.1, after selecting some text with the
-  mouse and releasing the mouse button, which I couldn't track down:
-
-  X Error of failed request:  BadValue (integer parameter out of range for operation)
-    Major opcode of failed request:  18 (X_ChangeProperty)
-    Value in failed request:  0x40
-    Serial number of failed request:  518
-    Current serial number in output stream:  519
-
-  From the trace:
-    
-  signal IOT/Abort trap at >*[__kill, 0x3ff800e8908]      beq     a3, 0x3ff800e8920
-  (dbx) where
-  >  0 __kill(0x0, 0x5, 0x3ff00000000, 0x11fffb188, 0x3ff801a9c14) [0x3ff800e8908]
-     1 (unknown)() [0x3ff801ee108]
-     2 __tis_raise(0x3ff801a9c14, 0x11fffb620, 0x3ff801229d8, 0x3ff00000006, 0x3ff801869b4) [0x3ff801229d4]
-     3 raise(0x3ff801229d8, 0x3ff00000006, 0x3ff801869b4, 0x0, 0x3ff801a9c44) [0x3ff801869b0]
-     4 abort(0x12006f858, 0x406f28ae75776627, 0x0, 0x0, 0x100000000) [0x3ff801a9c40]
-     5 do_abort() ["util.c":442, 0x12006f854]
-     6 x_error_handler(display = 0x140088800, error = 0x11fffb620) ["xdvi.c":1972, 0x1200764c8]
-     7 (unknown)() [0x3ff8086caf0]
-     8 _XError(0x11fffb758, 0x0, 0x36c, 0x24, 0x20) [0x3ff8044f7f0]
-     9 _XReply(0x0, 0x3, 0x0, 0x11fffba40, 0x100000000) [0x3ff8044cec8]
-    10 XSync(0x14019ea40, 0x40036b0200, 0x19170b000120000, 0x12, 0x43197900000000) [0x3ff80444910]
-    11 _XSyncFunction(0x19170b000120000, 0x12, 0x43197900000000, 0x0, 0x3ff80408994) [0x3ff804449f0]
-    12 XChangeProperty(0x3ff8086c9c0, 0x0, 0x2c, 0xb6, 0x4) [0x3ff80408990]
-    13 (unknown)() [0x3ff8086d2d0]
-    14 (unknown)() [0x3ff8086d654]
-    15 XtDispatchEventToWidget(0x3ff80852834, 0x11fffbde8, 0x3ff80852974, 0x11fffbde8, 0x0) [0x3ff80852060]
-    16 (unknown)() [0x3ff80852990]
-    17 XtDispatchEvent(0x801, 0x4, 0x11fffc018, 0x0, 0x100000000) [0x3ff80852fb0]
-    18 read_events(ret_mask = 131070) ["events.c":5048, 0x120046fa4]
-    19 do_pages() ["events.c":5290, 0x120047e58]
-    20 run_dvi_file(filename = 0x14005f370 = "/auto/home/vsl175/a/svendm/latex/a.dvi", data = 0x14005f778)
-       ["xdvi.c":3852, 0x12007a5e8]
-    21 main(argc = 2, argv = 0x11fffc018) ["xdvi.c":4231, 0x12007b780]
-
-    Since it seemed to work regardless of this error, I decided to enable the custom
-    error handler by default, at least until we've figured this problem out.
-*/ 
-static int
-x_error_handler(Display *display, XErrorEvent *error)
-{
-    char buf[1024], req_buf[1024];
-
-    if (error->request_code < 128) {
-	char num[LENGTH_OF_INT];
-	sprintf(num, "%d", error->request_code);
-	XGetErrorDatabaseText(display, "XRequest", num, "", req_buf, 1024);
-    }
-    else {
-	req_buf[0] = '\0';
-    }
-    
-    XGetErrorText(display, error->error_code, buf, sizeof buf);
-    /*     XtCloseDisplay(DISP); */
-    if (error->error_code == BadWindow
-	|| error->error_code == BadPixmap
-	|| error->error_code == BadCursor
-	|| error->error_code == BadFont
-	|| error->error_code == BadDrawable
-	|| error->error_code == BadColor
-	|| error->error_code == BadGC
-	|| error->error_code == BadIDChoice
-	|| error->error_code == BadValue
-	|| error->error_code == BadAtom) {
-	XDVI_WARNING((stderr, "X protocol error: %s\n    X Request %d (%s), Value=0x%x.",
-		  buf, error->request_code, req_buf, (unsigned int)error->resourceid));
-    }
-    else {
-	XDVI_WARNING((stderr, "X protocol error: %s\n    X Request %d (%s).",
-		      buf, error->request_code, req_buf));
-    }
-    return 0;
-}
-
 
 /*
  * Parse colors from resource.{visited_}link_color, saving them
  * to g_{visited_}link_color and {visited_}link_pix.
-*/
+ */
 static void
 get_link_colors(Pixel *link_pix, Pixel *visited_link_pix)
 {
@@ -2202,201 +1652,33 @@ motif_translations_hack(void)
 }
 #endif /* MOTIF */
 
-
-/*
-  Initialize internal data (most of them global ...) according to the values
-  of resources/command-line arguments, warning user about illegal values
-  etc.
-*/
-static void
-init_check_resources(void)
+/* return an empty cursor. Lifted from unclutter.c */
+static Cursor
+h_get_empty_cursor(Display *display, Window root)
 {
-    size_t i;
-    
-    if (resource.mfmode != NULL) {
-	char *p;
+    Pixmap cursormask;
+    XGCValues xgc;
+    GC gc;
+    XColor dummycolour;
+    Cursor cursor;
 
-	p = strrchr(resource.mfmode, ':');
-	if (p != NULL) {
-	    unsigned int len;
-	    char *p1;
-
-	    ++p;
-	    len = p - resource.mfmode;
-	    p1 = xmalloc(len);
-	    memcpy(p1, resource.mfmode, len - 1);
-	    p1[len - 1] = '\0';
-	    resource.mfmode = p1;
-	    resource.pixels_per_inch = atoi(p);
-	}
-    }
-    if (currwin.shrinkfactor < 0) {
-	XDVI_ERROR((stderr, "Invalid shrink factor: %d.", currwin.shrinkfactor));
-	usage(EXIT_FAILURE);
-    }
-    if (resource.density <= 0) {
-	XDVI_ERROR((stderr, "Invalid shrink density: %d.", resource.density));
-	usage(EXIT_FAILURE);
-    }
-    if (resource.pixels_per_inch <= 0) {
-	XDVI_ERROR((stderr, "Invalid dpi value: %d.", resource.pixels_per_inch));
-	usage(EXIT_FAILURE);
-    }
-    if (resource.link_style < 0 || resource.link_style > 3) {
-	XDVI_ERROR((stderr, "Unrecognized value %d for resource \"linkstyle\" (valid range is 0 - 3); assuming 3.",
-		    resource.link_style));
-	resource.link_style = 3;
-    }
-    if (currwin.shrinkfactor > 1) {
-	mane.shrinkfactor = currwin.shrinkfactor;	/* otherwise it's 1 */
-    }
-
-#ifdef RGB_ANTI_ALIASING
-#warning Note: RGB Anti-aliasing enabled
-    /* subpixel rendering */
-    resource.subpixel_order = SUBPIXEL_NONE;
-    if (resource.sub_pixels != NULL) {
-	int sum;
-	
-	if (memicmp(resource.sub_pixels, "rgb", 3) == 0)
-	    resource.subpixel_order = SUBPIXEL_RGB;
-	else if (memicmp(resource.sub_pixels, "bgr", 3) == 0)
-	    resource.subpixel_order = SUBPIXEL_BGR;
-	else if (memicmp(resource.sub_pixels, "none", 3) == 0)
-	    resource.subpixel_order = SUBPIXEL_NONE;
-	else {
-	    XDVI_ERROR((stderr,
-			"Unrecognized value \"%s\" for resource subpixels\n"
-			"(possible values are: \"rgb\" or \"bgr\").",
-			resource.sub_pixels));
-	    xdvi_exit(EXIT_FAILURE);
-	}
-	/* get the energy distribution */
-	if (resource.subpixel_order == SUBPIXEL_RGB || resource.subpixel_order == SUBPIXEL_BGR) {
-	    const char *ptr = resource.sub_pixels + 3;
-	    while (isspace(*ptr))
-		ptr++;
-	    fprintf(stderr, "ptr: |%s|\n", ptr);
-	    resource.subpixel_energy[0] = 33.333;
-	    resource.subpixel_energy[1] = 33.333;
-	    resource.subpixel_energy[2] = 0.0;
-	    if (*ptr != '\0') {
-		if (sscanf(ptr, "%f %f %f",
-			   &(resource.subpixel_energy[0]),
-			   &(resource.subpixel_energy[1]),
-			   &(resource.subpixel_energy[2]))
-		    != 3) {
-		    XDVI_ERROR((stderr,
-				"Illegal color mask `%s' for resource subpixels (should be: `n n n')\n",
-				ptr));
-		}
-	    }
-
-	    sum = (int)(resource.subpixel_energy[0] +
-			2 * resource.subpixel_energy[1] +
-			2 * resource.subpixel_energy[2]);
-	    if (sum < 99 || sum > 100) {
-		XDVI_WARNING((stderr, "energy values %f + 2 * %f + 2 * %f don't sum up to 100%%!\n",
-			      resource.subpixel_energy[0], resource.subpixel_energy[1], resource.subpixel_energy[2]));
-		exit(1);
-	    }
-	    
-	    resource.subpixel_energy[0] /= 100.0;
-	    resource.subpixel_energy[1] /= 100.0;
-	    resource.subpixel_energy[2] /= 100.0;
-	    fprintf(stderr, "subpixel order: %s = %d; [%f %f %f]\n",
-		    resource.sub_pixels, resource.subpixel_order,
-		    resource.subpixel_energy[0], resource.subpixel_energy[1], resource.subpixel_energy[2]);
-	}
-    }
-#endif
-
-    /* margins */
-    if (resource.sidemargin)
-	resource.sidemargin_int = atopix(resource.sidemargin, False);
-    if (resource.topmargin)
-	resource.topmargin_int = atopix(resource.topmargin, False);
-    resource.xoffset_int = resource.xoffset ? atopix(resource.xoffset, True)
-	: resource.pixels_per_inch;
-    resource.yoffset_int = resource.yoffset ? atopix(resource.yoffset, True)
-	: resource.pixels_per_inch;
-
-    /* paper type */
-    if (!set_paper_type(resource.paper)) {
-	const char **p;
-	char *helpmsg = xstrdup("Possible paper types are:\n    ");
-	for (p = paper_types; p < paper_types + XtNumber(paper_types); p += 2) {
-	    if (**p == '\0') { /* next line of list */
-		helpmsg = xstrcat(helpmsg, "\n    ");
-	    }
-	    else {
-		helpmsg = xstrcat(helpmsg, *p);
-		helpmsg = xstrcat(helpmsg, " ");
-	    }
-	}
-	helpmsg = xstrcat(helpmsg,
-			 "\n(the names ending with `r' are `rotated' or `landscape' variants).\n"
-			 "Alternatively, you can specify the dimensions as `WIDTHxHEIGHT', followed "
-			 "by a dimension unit (one of: pt pc in bp cm mm dd cc sp).");
-	/* also dump it to stderr ... */
-	fprintf(stderr,
-		"Unrecognized value `%s' for paper type option; using a4 instead.\n%s\n",
-		resource.paper, helpmsg);
-	
-	popup_message(globals.widgets.top_level,
-		      MSG_WARN, helpmsg,
-		      "Unrecognized value `%s' for paper type option; using a4 instead.", resource.paper);
-	set_paper_type("a4");
-    }
-
-    /* magnifier sizes */
-    for (i = 0; i < get_magglass_items(); ++i) {
-	if (resource.mg_arg[i] != NULL) {
-	    char *s;
-
-	    mg_size[i].w = mg_size[i].h = atoi(resource.mg_arg[i]);
-	    s = strchr(resource.mg_arg[i], 'x');
-	    if (s != NULL) {
-		mg_size[i].h = atoi(s + 1);
-		if (mg_size[i].h <= 0)
-		    mg_size[i].w = 0;
-	    }
-	}
-    }
-
-#ifdef PS
-    if (resource.safer) {
-	resource.allow_shell = False;
-# ifdef PS_GS
-	resource.gs_safer = True;
-# endif /* PS_GS */
-    }
-# ifdef	PS_GS
-    {
-	const char *CGMcgm = "CGMcgm";
-	const char *cgmp;
-
-	cgmp = strchr(CGMcgm, resource.gs_palette[0]);
-	if (cgmp == NULL)
-	    XDVI_FATAL((stderr, "Invalid value %s for gs palette option", resource.gs_palette));
-	if (cgmp >= CGMcgm + 3) {
-	    static char gsp[] = "x";
-
-	    gsp[0] = *(cgmp - 3);
-	    resource.gs_palette = gsp;
-	}
-    }
-# endif /* PS_GS */
-#endif /* PS */
-
-    /* The old `-expert' flag overrides resource.expert_mode, `+expert' (or not
-       setting it) just uses expert_mode.
-     */
-    if (resource.expert)
-	resource.expert_mode = XPRT_SHOW_NONE;
-/*      fprintf(stderr, "++++++++ initializing resource.expert_mode: %d\n", resource.expert_mode); */
-    update_expert_mode();
+    cursormask = XCreatePixmap(display, root, 1, 1, 1/*depth*/);
+    xgc.function = GXclear;
+    gc =  XCreateGC(display, cursormask, GCFunction, &xgc);
+    XFillRectangle(display, cursormask, gc, 0, 0, 1, 1);
+    dummycolour.pixel = 0;
+    dummycolour.red = 0;
+    dummycolour.flags = 04;
+    cursor = XCreatePixmapCursor(display,
+				 cursormask, cursormask,
+				 &dummycolour, &dummycolour,
+				 0, 0);
+    XFreePixmap(display, cursormask);
+    XFreeGC(display, gc);
+    return cursor;
 }
+
+
 
 static void
 create_cursors(void)
@@ -2424,45 +1706,31 @@ create_cursors(void)
     }
 
     /* wait cursor */
-#if 0 /* this makes no big difference for #804294 */
-    temp = XCreatePixmapFromBitmapData(DISP, RootWindowOfScreen(SCRN),
-				       (char *)time16_bits,
-				       time16_width, time16_height,
-				       1, 0, 1);
-    mask = XCreatePixmapFromBitmapData(DISP, RootWindowOfScreen(SCRN),
-				       (char *)time16_mask_bits,
-				       time16_mask_width, time16_mask_height,
-				       1, 0, 1);
-#else
-    temp = XCreateBitmapFromData(DISP, RootWindowOfScreen(SCRN),
-				 (char *)time16_bits,
-				 time16_width, time16_height);
-    mask = XCreateBitmapFromData(DISP, RootWindowOfScreen(SCRN),
-				 (char *)time16_mask_bits,
-				 time16_mask_width, time16_mask_height);
-#endif
-    globals.cursor.wait = XCreatePixmapCursor(DISP, temp, mask,
-				      &m_cursor_color, &bg_Color,
-				      time16_width / 2, time16_height / 2);
-    XFreePixmap(DISP, temp);
-    XFreePixmap(DISP, mask);
+    globals.cursor.wait = XCreateFontCursor(DISP, XC_watch);
 
-    /* ready cursor, magnifier by default */
-    temp = XCreateBitmapFromData(DISP, RootWindowOfScreen(SCRN),
-				 (char *)magglass_bits,
-				 magglass_width, magglass_height);
-    mask = XCreateBitmapFromData(DISP, RootWindowOfScreen(SCRN),
-				 (char *)magglass_mask_bits,
-				 magglass_mask_width, magglass_mask_height);
-
-    globals.cursor.ready = XCreatePixmapCursor(DISP, temp, mask,
-				       &m_cursor_color, &bg_Color,
-				       magglass_x_hot, magglass_y_hot);
-    XFreePixmap(DISP, temp);
-    XFreePixmap(DISP, mask);
+    if (resource.mouse_mode1_cursor == -1) { /* Use default ready cursor (custom bitmap) */
+	temp = XCreateBitmapFromData(DISP, RootWindowOfScreen(SCRN),
+				     (char *)magglass_bits,
+				     magglass_width, magglass_height);
+	mask = XCreateBitmapFromData(DISP, RootWindowOfScreen(SCRN),
+				     (char *)magglass_mask_bits,
+				     magglass_mask_width, magglass_mask_height);
+	
+	globals.cursor.mode1 = XCreatePixmapCursor(DISP, temp, mask,
+						   &m_cursor_color, &bg_Color,
+						   magglass_x_hot, magglass_y_hot);
+	XFreePixmap(DISP, temp);
+	XFreePixmap(DISP, mask);
+    }
+    else {
+	globals.cursor.mode1 = XCreateFontCursor(DISP, resource.mouse_mode1_cursor);
+    }
 
     globals.cursor.corrupted = XCreateFontCursor(DISP, XC_watch);
 
+    /* empty cursor */
+    globals.cursor.empty = h_get_empty_cursor(DISP, RootWindowOfScreen(SCRN));
+    
 #if !COLOR
     XRecolorCursor(DISP, globals.cursor.ready, &m_cursor_color, &bg_Color);
     XRecolorCursor(DISP, globals.cursor.wait, &m_cursor_color, &bg_Color);
@@ -2474,7 +1742,7 @@ create_cursors(void)
     mask = XCreateBitmapFromData(DISP, RootWindowOfScreen(SCRN),
 				 (char *)hand_mask_bits, hand_mask_width, hand_mask_height);
     globals.cursor.pause = XCreatePixmapCursor(DISP, temp, mask,
-				       &m_cursor_color, &bg_Color, 6, 6);
+					       &m_cursor_color, &bg_Color, 6, 6);
     XFreePixmap(DISP, temp);
     XFreePixmap(DISP, mask);
 #else
@@ -2482,54 +1750,21 @@ create_cursors(void)
 #endif
 
     /* cursors indicating dragging direction */
-    temp = XCreateBitmapFromData(DISP, RootWindowOfScreen(SCRN),
-				 (char *)drag_vert_bits,
-				 drag_vert_width, drag_vert_height);
-    mask = XCreateBitmapFromData(DISP, RootWindowOfScreen(SCRN),
-				 (char *)drag_vert_mask_bits,
-				 drag_vert_mask_width, drag_vert_mask_height);
-    globals.cursor.drag_v = XCreatePixmapCursor(DISP, temp, mask,
-					&m_cursor_color, &bg_Color,
-					drag_vert_x_hot, drag_vert_y_hot);
-    XFreePixmap(DISP, temp);
-    XFreePixmap(DISP, mask);
+    globals.cursor.drag_v = XCreateFontCursor(DISP, XC_sb_v_double_arrow);
 
-    temp = XCreateBitmapFromData(DISP, RootWindowOfScreen(SCRN),
-				 (char *)drag_horiz_bits,
-				 drag_horiz_width, drag_horiz_height);
-    mask = XCreateBitmapFromData(DISP, RootWindowOfScreen(SCRN),
-				 (char *)drag_horiz_mask_bits,
-				 drag_horiz_width, drag_horiz_height);
-    globals.cursor.drag_h = XCreatePixmapCursor(DISP, temp, mask,
-					&m_cursor_color, &bg_Color,
-					drag_horiz_x_hot, drag_horiz_y_hot);
-    XFreePixmap(DISP, temp);
-    XFreePixmap(DISP, mask);
+    globals.cursor.drag_h = XCreateFontCursor(DISP, XC_sb_h_double_arrow);
 
-    temp = XCreateBitmapFromData(DISP, RootWindowOfScreen(SCRN),
-				 (char *)drag_omni_bits,
-				 drag_omni_width, drag_omni_height);
-    mask = XCreateBitmapFromData(DISP, RootWindowOfScreen(SCRN),
-				 (char *)drag_omni_mask_bits,
-				 drag_omni_mask_width, drag_omni_mask_height);
-    globals.cursor.drag_a = XCreatePixmapCursor(DISP, temp, mask,
-				       &m_cursor_color, &bg_Color,
-				       drag_omni_x_hot, drag_omni_y_hot);
-    XFreePixmap(DISP, temp);
-    XFreePixmap(DISP, mask);
+    globals.cursor.drag_a = XCreateFontCursor(DISP, XC_fleur);
 
 #ifdef VMS
     globals.cursor.link = globals.cursor.ready;
-    globals.cursor.rule = globals.cursor.ready;
-    globals.cursor.mag = globals.cursor.ready;
-    globals.cursor.text = globals.cursor.ready;
+    globals.cursor.mode2 = globals.cursor.ready;
+    globals.cursor.mode3 = globals.cursor.ready;
 #else
     globals.cursor.link = XCreateFontCursor(DISP, XC_hand2);
-    globals.cursor.rule = XCreateFontCursor(DISP, XC_crosshair);
-    globals.cursor.mag = XCreateFontCursor(DISP, XC_crosshair);
-    globals.cursor.text = XCreateFontCursor(DISP, XC_cross);
+    globals.cursor.mode2 = XCreateFontCursor(DISP, resource.mouse_mode2_cursor);
+    globals.cursor.mode3 = XCreateFontCursor(DISP, resource.mouse_mode3_cursor);
     /*  globals.cursor.text = XCreateFontCursor(DISP, XC_tcross); */
-    XRecolorCursor(DISP, globals.cursor.mag, &m_cursor_color, &bg_Color);
 #endif
 }
 
@@ -2589,51 +1824,6 @@ do_forward_search(const char *source_position)
     }
 }
 
-static void
-check_early_arguments(int argc, char **argv)
-{
-    /* This checks arguments that need to work before the X machinery is
-     * started (e.g. if no display is available, or for information that is
-     * needed before the X defaults are evaluated), so the `options' structure
-     * can't be used for them.
-     *
-     * We need to loop through all arguments in case xdvi is aliased,
-     * or called via a shell script (like in teTeX) that adds things
-     * like `-name' at the beginning of the arglist.
-     */
-    int i;
-    Boolean install_err_handler = True;
-    
-    for (i = 1; i < argc; i++) {
-	if (strcmp(argv[i], "-help") == 0
-	    || strcmp(argv[i], "-h") == 0
-	    || strcmp(argv[i], "+help") == 0
-	    || strcmp(argv[i], "--help") == 0) {
-	    printf("%s version %s\n", XDVIK_PROGNAME, XDVI_VERSION_INFO);
-	    printf("A DVI file previewer for the X window system.\n\n");
-	    display_licensing_info();
-	    display_bug_reporting_info();
-	    usage(0);
-	}
-	else if (strcmp(argv[i], "-license") == 0) {
-	    display_long_licensing_info();
-	    xdvi_exit(EXIT_SUCCESS);
-	}
-	else if (strcmp(argv[i], "--version") == 0
-		 || strcmp(argv[i], "-version") == 0
-		 || strcmp(argv[i], "-v") == 0) {
-	    display_version_info();
-	    xdvi_exit(EXIT_SUCCESS);
-	}
-	else if (strcmp(argv[i], "--default-xerr-handler") == 0) { /* hook to disable custom handler */
-	    install_err_handler = False;
-	}
-    }
-
-    if (install_err_handler) {
-	(void)XSetErrorHandler(x_error_handler);
-    }
-}
 
 static void
 create_colormaps(void)
@@ -2694,8 +1884,8 @@ create_colormaps(void)
 		G_depth = best->depth;
 		G_visual = best->visual;
 		G_colormap = XCreateColormap(DISP,
-					       RootWindowOfScreen(SCRN),
-					       G_visual, AllocNone);
+					     RootWindowOfScreen(SCRN),
+					     G_visual, AllocNone);
 		XInstallColormap(DISP, G_colormap);
 		temp_args1[0].value = (XtArgVal) G_depth;
 		temp_args1[1].value = (XtArgVal) G_visual;
@@ -2820,67 +2010,51 @@ create_widgets(
 #endif
 	       int *add_w, int *add_h)
 {
-    static const char default_key_translations[] =
-	"\"0\":digit(0)\n"
-	"\"1\":digit(1)\n"
-	"\"2\":digit(2)\n"
-	"\"3\":digit(3)\n"
-	"\"4\":digit(4)\n"
-	"\"5\":digit(5)\n"
-	"\"6\":digit(6)\n"
-	"\"7\":digit(7)\n"
-	"\"8\":digit(8)\n"
-	"\"9\":digit(9)\n"
-	/* 		"\"-\":minus()\n" */
-	"<Motion>:motion()\n";
-    
-    static const char default_mouse_translations[] =
-	"<BtnUp>:release()";
 
 #ifdef MOTIF
     Widget status_line;
 
 #if 0
- {
-     int i, n, longest_page = 0;
-     Dimension width, height;
-     char tmpbuf[1024];
-     char *fontname;
-     XmString tmpstring;
-     Widget dummy_list;
-     XmRendition rendition;
-     XmRenderTable rtable;
-     Arg args[10];
-    /*
-     * Try to determine width of longest page string:
-     */
-    for (i = 0; i < total_pages; i++) {
-	int curr = abs(pageinfo_get_number(i));
-	if (curr > longest_page)
-	    longest_page = curr;
-    }
-    fprintf(stderr, "longest page number: %d\n", longest_page);
-    sprintf(tmpbuf, "* %d", longest_page);
-    tmpstring = XmStringCreateLocalized(tmpbuf);
-    dummy_list = XtCreateWidget("PageList", xmListWidgetClass, form, NULL, 0);
-    fprintf(stderr, "rendition table\n");
-    n = 0;
-/*     XtVaGetValues(globals.widgets.top_level, XmNfontList, &fontname, NULL); */
-/*     fprintf(stderr, "fontname: |%s|\n", fontname); */
-    XtSetArg(args[n], XmNfontName, "8x16"); n++;
-    XtSetArg(args[n], XmNfontType, XmFONT_IS_FONT); n++;
-    rendition = XmRenditionCreate(dummy_list, XmFONTLIST_DEFAULT_TAG, args, n);
-    rtable = XmRenderTableAddRenditions(NULL, &rendition, 1, XmMERGE_REPLACE);
-    XtVaSetValues(dummy_list, XmNrenderTable, rtable, NULL);
+    {
+	int i, n, longest_page = 0;
+	Dimension width, height;
+	char tmpbuf[1024];
+	char *fontname;
+	XmString tmpstring;
+	Widget dummy_list;
+	XmRendition rendition;
+	XmRenderTable rtable;
+	Arg args[10];
+	/*
+	 * Try to determine width of longest page string:
+	 */
+	for (i = 0; i < total_pages; i++) {
+	    int curr = abs(pageinfo_get_number(i));
+	    if (curr > longest_page)
+		longest_page = curr;
+	}
+	fprintf(stderr, "longest page number: %d\n", longest_page);
+	sprintf(tmpbuf, "* %d", longest_page);
+	tmpstring = XmStringCreateLocalized(tmpbuf);
+	dummy_list = XtCreateWidget("PageList", xmListWidgetClass, form, NULL, 0);
+	fprintf(stderr, "rendition table\n");
+	n = 0;
+	/*     XtVaGetValues(globals.widgets.top_level, XmNfontList, &fontname, NULL); */
+	/*     fprintf(stderr, "fontname: |%s|\n", fontname); */
+	XtSetArg(args[n], XmNfontName, "8x16"); n++;
+	XtSetArg(args[n], XmNfontType, XmFONT_IS_FONT); n++;
+	rendition = XmRenditionCreate(dummy_list, XmFONTLIST_DEFAULT_TAG, args, n);
+	rtable = XmRenderTableAddRenditions(NULL, &rendition, 1, XmMERGE_REPLACE);
+	XtVaSetValues(dummy_list, XmNrenderTable, rtable, NULL);
     
-    /* 	rendition = XmRenditionCreate(globals.widgets.top_level, XmFONTLIST_DEFAULT_TAG, NULL, 0); */
-    fprintf(stderr, "extent\n");
-    XmStringExtent(rtable, tmpstring, &width, &height);
-    fprintf(stderr, "string %s has width %d, height %d\n", tmpbuf, width, height);
-    XtDestroyWidget(dummy_list);
-    XmRenditionFree(rendition);
-    XmStringFree(tmpstring);
- }
+	/* 	rendition = XmRenditionCreate(globals.widgets.top_level, XmFONTLIST_DEFAULT_TAG, NULL, 0); */
+	fprintf(stderr, "extent\n");
+	XmStringExtent(rtable, tmpstring, &width, &height);
+	fprintf(stderr, "string %s has width %d, height %d\n", tmpbuf, width, height);
+	XtDestroyWidget(dummy_list);
+	XmRenditionFree(rendition);
+	XmStringFree(tmpstring);
+    }
 #endif
     {
 #define ARG_LEN 20
@@ -2894,7 +2068,7 @@ create_widgets(
 #else
 	XtSetArg(list_args[n], XmNheight, globals.page.h);			n++;
 #endif
-/* 	XtSetArg(list_args[n], XmNspacing, 10);					n++; */
+	/* 	XtSetArg(list_args[n], XmNspacing, 10);					n++; */
 #if defined(USE_PANNER) && USE_XAW_PANNER
 	XtSetArg(list_args[n], XmNtopAttachment, XmATTACH_WIDGET);		n++;
 	XtSetArg(list_args[n], XmNtopWidget, panner);				n++;
@@ -2922,21 +2096,21 @@ create_widgets(
     }
     
     globals.widgets.main_window = XtVaCreateManagedWidget("mainWindow",
-					  xmScrolledWindowWidgetClass, form,
-					  XmNscrollingPolicy, XmAUTOMATIC,
-					  XmNleftAttachment, XmATTACH_WIDGET,
-					  /* lesstif balks if we just use page_list, so use its parent,
-					     the xmScrolledWindow, for alignment: */
-					  XmNleftWidget, XtParent(page_list),
-					  XmNallowResize, True,
-/* 					  XmNtopOffset, 2, */
-					  XmNtopAttachment, XmATTACH_FORM,
-					  XmNbottomAttachment, XmATTACH_FORM,
-					  XmNrightAttachment, XmATTACH_FORM,
-					  /* 					      XmNleftOffset, 10, */
-					  XmNresizable, True,
-					  XmNborderWidth, 0,
-					  NULL);
+							  xmScrolledWindowWidgetClass, form,
+							  XmNscrollingPolicy, XmAUTOMATIC,
+							  XmNleftAttachment, XmATTACH_WIDGET,
+							  /* lesstif balks if we just use page_list, so use its parent,
+							     the xmScrolledWindow, for alignment: */
+							  XmNleftWidget, XtParent(page_list),
+							  XmNallowResize, True,
+							  /* 					  XmNtopOffset, 2, */
+							  XmNtopAttachment, XmATTACH_FORM,
+							  XmNbottomAttachment, XmATTACH_FORM,
+							  XmNrightAttachment, XmATTACH_FORM,
+							  /* 					      XmNleftOffset, 10, */
+							  XmNresizable, True,
+							  XmNborderWidth, 0,
+							  NULL);
     XtManageChild(form);
 
     globals.widgets.x_bar = XtNameToWidget(globals.widgets.main_window, "HorScrollBar");
@@ -2947,31 +2121,31 @@ create_widgets(
     /* TODO: try the following to prevent `flashing' effect - still breaks
        scrolling in its current form though */
     globals.widgets.draw_background = XtVaCreateManagedWidget("drawing_bg",
-					      xmFormWidgetClass, globals.widgets.main_window,
-					      XmNwidth, globals.page.w,
-					      XmNheight, globals.page.h,
-					      XmNtopAttachment, XmATTACH_FORM,
-					      XmNbottomAttachment, XmATTACH_FORM,
-					      XmNrightAttachment, XmATTACH_FORM,
-					      XmNleftAttachment, XmATTACH_FORM,
-					      XmNhighlightThickness, 0,
-					      XmNbackground, resource.back_Pixel,
-					      XmNrubberPositioning, True,
-					      NULL);
+							      xmFormWidgetClass, globals.widgets.main_window,
+							      XmNwidth, globals.page.w,
+							      XmNheight, globals.page.h,
+							      XmNtopAttachment, XmATTACH_FORM,
+							      XmNbottomAttachment, XmATTACH_FORM,
+							      XmNrightAttachment, XmATTACH_FORM,
+							      XmNleftAttachment, XmATTACH_FORM,
+							      XmNhighlightThickness, 0,
+							      XmNbackground, resource.back_Pixel,
+							      XmNrubberPositioning, True,
+							      NULL);
 #endif
     globals.widgets.draw_widget = XtVaCreateWidget("drawing",
-				   xmDrawingAreaWidgetClass,
+						   xmDrawingAreaWidgetClass,
 #ifdef TEST_SCROLLING
-				   globals.widgets.draw_background,
+						   globals.widgets.draw_background,
 #else
-				   globals.widgets.main_window,
+						   globals.widgets.main_window,
 #endif
-				   XmNwidth, globals.page.w,
-				   XmNheight, globals.page.h,
-				   XmNhighlightThickness, 0,
-				   XmNrubberPositioning, True,
-				   XtNbackground, resource.back_Pixel,
-				   NULL);
+						   XmNwidth, globals.page.w,
+						   XmNheight, globals.page.h,
+						   XmNhighlightThickness, 0,
+						   XmNrubberPositioning, True,
+						   XtNbackground, resource.back_Pixel,
+						   NULL);
 
 #if !FIXED_FLUSHING_PAGING
     ASSERT(XtParent(globals.widgets.draw_widget) != NULL, "");
@@ -3007,7 +2181,7 @@ create_widgets(
 
     if ((resource.expert_mode & XPRT_SHOW_TOOLBAR) != 0) {
 	if (resource.toolbar_unusable)
-	    statusline_print(STATUS_LONG,
+	    statusline_error(STATUS_LONG,
 			     "Error creating the toolbar pixmaps - toolbar is disabled!");
 	else
 	    XtManageChild(XtParent(tool_bar));
@@ -3017,7 +2191,7 @@ create_widgets(
 	XtManageChild(globals.widgets.menu_bar);
     
     XmAddTabGroup(globals.widgets.draw_widget);
-    
+
     /*
       note: a few more custom translations for page_list are defined in
       pagesel.c, since the actions are only known there.
@@ -3028,7 +2202,7 @@ create_widgets(
 	Widget widgets[WIDGETS_SIZE];
 
 	widgets[k++] = globals.widgets.main_row;
-/* 	widgets[k++] = globals.widgets.menu_bar; */
+	/* 	widgets[k++] = globals.widgets.menu_bar; */
 	widgets[k++] = tool_bar;
 	widgets[k++] = page_list;
 	widgets[k++] = globals.widgets.main_window;
@@ -3039,28 +2213,30 @@ create_widgets(
 #undef WIDGETS_SIZE
 	for (i = 0; i < k; i++) {
 	    XtOverrideTranslations(widgets[i], XtParseTranslationTable(base_key_translations));
-	    XtOverrideTranslations(widgets[i], XtParseTranslationTable(default_key_translations));
 	    if (i > 3) { /* widgets for which we want to use our own mouse translations */
 		XtOverrideTranslations(widgets[i], XtParseTranslationTable(base_mouse_translations));
-		XtOverrideTranslations(widgets[i], XtParseTranslationTable(default_mouse_translations));
+		if (resource.mouse_translations != NULL) {
+		    XtOverrideTranslations(widgets[i], XtParseTranslationTable(resource.mouse_translations));
+		}
 	    }
 	}
     }
     
+    if (resource.mouse_translations != NULL) {
+ 	TRACE_GUI((stderr, "merging in mouse translations |%s|", resource.mouse_translations));
+	XtOverrideTranslations(globals.widgets.clip_widget, XtParseTranslationTable(resource.mouse_translations));
+    }
+    
     if (resource.main_translations != NULL) {
-	XtOverrideTranslations(globals.widgets.draw_widget, XtParseTranslationTable(resource.main_translations));
-	XtOverrideTranslations(globals.widgets.clip_widget, XtParseTranslationTable(resource.main_translations));
+	XtTranslations xlats = XtParseTranslationTable(resource.main_translations);
+	XtOverrideTranslations(globals.widgets.draw_widget, xlats);
+	XtOverrideTranslations(globals.widgets.clip_widget, xlats);
+	XtOverrideTranslations(globals.widgets.main_row, xlats);
+	XtOverrideTranslations(globals.widgets.menu_bar, xlats);
+	XtOverrideTranslations(globals.widgets.main_window, xlats);
 	/* don't do it for the page list, otherwise mouse customizations will break
 	   the default list bindings too. */
-	/* XtOverrideTranslations(page_list, XtParseTranslationTable(resource.main_translations)); */
-    }
-    /* widgets for which wheel mouse should scroll the drawing area */
-    if (resource.wheel_unit != 0 && resource.wheel_translations != NULL) {
-	XtOverrideTranslations(globals.widgets.main_row, XtParseTranslationTable(resource.wheel_translations));
-	XtOverrideTranslations(tool_bar, XtParseTranslationTable(resource.wheel_translations));
-	XtOverrideTranslations(globals.widgets.main_window, XtParseTranslationTable(resource.wheel_translations));
-	XtOverrideTranslations(globals.widgets.draw_widget, XtParseTranslationTable(resource.wheel_translations));
-/*  	XtOverrideTranslations(globals.widgets.draw_background, XtParseTranslationTable(resource.wheel_translations)); */
+	/* XtOverrideTranslations(page_list, xlats); */
     }
     
 #else /* MOTIF */
@@ -3090,12 +2266,12 @@ create_widgets(
     
     XtOverrideTranslations(globals.widgets.form_widget, XtParseTranslationTable(base_key_translations));
     XtOverrideTranslations(globals.widgets.form_widget, XtParseTranslationTable(base_mouse_translations));
-    XtOverrideTranslations(globals.widgets.form_widget, XtParseTranslationTable(default_key_translations));
-    XtOverrideTranslations(globals.widgets.form_widget, XtParseTranslationTable(default_mouse_translations));
     
-    if (resource.wheel_unit != 0 && resource.wheel_translations != NULL)
-	XtOverrideTranslations(globals.widgets.form_widget, XtParseTranslationTable(resource.wheel_translations));
-
+    if (resource.mouse_translations != NULL) {
+ 	TRACE_GUI((stderr, "merging in mouse translations |%s|", resource.mouse_translations));
+	XtOverrideTranslations(globals.widgets.form_widget, XtParseTranslationTable(resource.mouse_translations));
+    }
+    
     if (resource.main_translations != NULL) {
 	XtOverrideTranslations(globals.widgets.form_widget, XtParseTranslationTable(resource.main_translations));
     }
@@ -3109,10 +2285,8 @@ create_widgets(
 #endif
 
     /* initialize add_w with width of button panel */
-    if ((resource.expert_mode & XPRT_SHOW_BUTTONS) != 0)
-	create_menu_buttons(globals.widgets.form_widget, add_w);
-    else
-	*add_w = 0;
+    create_menu_buttons(globals.widgets.form_widget, add_w);
+
 #endif /* MOTIF */
 
     /* activate expert mode and related settings */
@@ -3123,27 +2297,37 @@ create_widgets(
     toggle_toolbar();
     toggle_menubar();
 #else
-    toggle_buttons();
+    if ((resource.expert_mode & XPRT_SHOW_BUTTONS) == 0)
+	toggle_buttons();
 #endif
 
+    *add_h = 0;
 #ifdef MOTIF
     *add_w = 0;
     if (resource.expert_mode & XPRT_SHOW_PAGELIST)
 	*add_w += xm_get_width(page_list);
-/*      if (globals.widgets.y_bar != NULL) */
-/*  	add_w += xm_get_width(globals.widgets.y_bar); */
-    *add_h = 0;
+/*     if (globals.widgets.y_bar != NULL) */
+/*      	add_w += xm_get_width(globals.widgets.y_bar); */
+/*     if (globals.widgets.x_bar != NULL) */
+/*      	add_h += xm_get_width(globals.widgets.x_bar); */
     if (resource.expert_mode & XPRT_SHOW_MENUBAR)
 	*add_h += xm_get_height(globals.widgets.menu_bar);
     if (resource.expert_mode & XPRT_SHOW_TOOLBAR)
 	*add_h += xm_get_height(tool_bar);
     if (resource.expert_mode & XPRT_SHOW_STATUSLINE)
 	*add_h += xm_get_height(status_line);
-/*      if (globals.widgets.x_bar != NULL) */
-/*  	add_h += xm_get_width(globals.widgets.x_bar); */
 #else
-    /* add_w has been initialized by create_menu_buttons() call above */
-    *add_h = 0;
+    /* add_w has been initialized by create_menu_buttons() call above.
+       Reset to 0 if we're in expert mode. */
+    if (!(resource.expert_mode & XPRT_SHOW_BUTTONS)) {
+	*add_w = 0;
+    }
+    if (resource.expert_mode & XPRT_SHOW_STATUSLINE) {
+	/* FIXME: Unfortunately the statusline hasn't been created at this point for Xaw,
+	   so the value is still the built-in default.
+	*/
+	*add_h += get_statusline_height();
+    }
 #endif
 }
 
@@ -3156,10 +2340,9 @@ realize_widgets(Dimension main_win_w, Dimension main_win_h, int add_w)
      */
 
 #ifndef MOTIF
-    if ((resource.expert_mode & XPRT_SHOW_BUTTONS) != 0) {
-	set_button_panel_height(main_win_h);
-    }
+    realize_button_panel(main_win_h);
 #endif
+    
     XtAddEventHandler(
 #ifdef MOTIF
 		      globals.widgets.clip_widget,
@@ -3181,8 +2364,10 @@ realize_widgets(Dimension main_win_w, Dimension main_win_h, int add_w)
     /* for Xaw, event handlers for scrollbars are added inside get_geom(), events.c */
     ASSERT(globals.widgets.x_bar != NULL, "");
     ASSERT(globals.widgets.y_bar != NULL, "");
+#ifdef USE_PANNER
     XtAddEventHandler(globals.widgets.x_bar, ButtonPressMask | ButtonReleaseMask, False, handle_x_scroll, NULL);
     XtAddEventHandler(globals.widgets.y_bar, ButtonPressMask | ButtonReleaseMask, False, handle_y_scroll, NULL);
+#endif
     XmAddWMProtocolCallback(globals.widgets.top_level, mainDeleteWindow, xdvi_exit_callback, NULL);
 #else
     wmProtocols = XInternAtom(DISP, "WM_PROTOCOLS", False);
@@ -3248,34 +2433,34 @@ create_gcs(void)
 	init_pix();
     else
 #endif
-	{ /* not #defined GREY, or not resource.use_grey */
-	    XGCValues values;
-	    Pixel set_bits = (Pixel) (resource.fore_Pixel & ~resource.back_Pixel);
-	    Pixel clr_bits = (Pixel) (resource.back_Pixel & ~resource.fore_Pixel);
-	    Boolean copy_tmp = resource.copy;
+    { /* not #defined GREY, or not resource.use_grey */
+	XGCValues values;
+	Pixel set_bits = (Pixel) (resource.fore_Pixel & ~resource.back_Pixel);
+	Pixel clr_bits = (Pixel) (resource.back_Pixel & ~resource.fore_Pixel);
+	Boolean copy_tmp = resource.copy;
 	    
-	    globals.gc.copy = set_or_make_gc(NULL, GXcopy, resource.fore_Pixel, resource.back_Pixel);
-	    if (copy_tmp || (set_bits && clr_bits)) {
-		globals.gc.rule = globals.gc.copy;
-		if (!resource.thorough)
-		    copy_tmp = True;
-	    }
-	    if (copy_tmp) {
-		globals.gc.fore = globals.gc.rule;
-		if (!resource.copy) {
-		    warn_overstrike();
-		}
-	    }
-	    else {
-		if (set_bits) {
-		    globals.gc.fore = set_or_make_gc(NULL, GXor, set_bits, 0);
-		}
-		if (clr_bits || !set_bits)
-		    *(globals.gc.fore ? &globals.gc.fore2 : &globals.gc.fore) = set_or_make_gc(NULL, GXandInverted, clr_bits, 0);
-		if (!globals.gc.rule)
-		    globals.gc.rule = globals.gc.fore;
+	globals.gc.copy = set_or_make_gc(NULL, GXcopy, resource.fore_Pixel, resource.back_Pixel);
+	if (copy_tmp || (set_bits && clr_bits)) {
+	    globals.gc.rule = globals.gc.copy;
+	    if (!resource.thorough)
+		copy_tmp = True;
+	}
+	if (copy_tmp) {
+	    globals.gc.fore = globals.gc.rule;
+	    if (!resource.copy) {
+		warn_overstrike();
 	    }
 	}
+	else {
+	    if (set_bits) {
+		globals.gc.fore = set_or_make_gc(NULL, GXor, set_bits, 0);
+	    }
+	    if (clr_bits || !set_bits)
+		*(globals.gc.fore ? &globals.gc.fore2 : &globals.gc.fore) = set_or_make_gc(NULL, GXandInverted, clr_bits, 0);
+	    if (!globals.gc.rule)
+		globals.gc.rule = globals.gc.fore;
+	}
+    }
 #endif /* !COLOR */
     
     {
@@ -3330,6 +2515,7 @@ panner_cb(Widget widget, XtPointer closure, XtPointer report_ptr)
 }
 #endif
 
+#if !DELAYED_MKTEXPK
 
 static XtIntervalId m_font_popup_id = 0;
 static Widget m_font_popup = 0;
@@ -3361,10 +2547,12 @@ create_font_popup(XtPointer client_data, XtIntervalId *id)
     UNUSED(client_data);
     UNUSED(id);
     
+/*     fprintf(stderr, "+++++++++++++++ create_font_popup\n"); */
+    
     if (m_font_popup_id) {
 	if (*curr_timeout > 0) {
 	    XtRemoveTimeOut(m_font_popup_id);
-	    m_font_popup_id = XtAppAddTimeOut(app, *curr_timeout, create_font_popup, (XtPointer)&new_timeout);
+	    m_font_popup_id = XtAppAddTimeOut(globals.app, *curr_timeout, create_font_popup, (XtPointer)&new_timeout);
 	}
 	else {
 	    m_font_popup = choice_dialog(globals.widgets.top_level,
@@ -3381,7 +2569,7 @@ create_font_popup(XtPointer client_data, XtIntervalId *id)
     }
 }
 
-static void
+void
 register_font_popup(void)
 {
     /* Use a two-step process, so that when the timeout is removed by unregister_font_popup(),
@@ -3389,147 +2577,61 @@ register_font_popup(void)
        with new_timeout = 0.
     */
     static int new_timeout = 50;
-    m_font_popup_id = XtAppAddTimeOut(app, 700, create_font_popup, (XtPointer)&new_timeout);
+/*     fprintf(stderr, "+++++++++++++++ registered font popup\n"); */
+    m_font_popup_id = XtAppAddTimeOut(globals.app, 100, create_font_popup, (XtPointer)&new_timeout);
 }
 
-static void
+void
 unregister_font_popup(void)
 {
+/*     fprintf(stderr, "+++++++++++++++ unregister_font_popup\n"); */
     if (m_font_popup_id) {
 	XtRemoveTimeOut(m_font_popup_id);
 	m_font_popup_id = 0;
 	/* FIXME: calling this directly crashes xdvi?? */
-	/*  	m_font_popup_id = XtAppAddTimeOut(app, 1, remove_font_popup, (XtPointer)NULL); */
+	/*  	m_font_popup_id = XtAppAddTimeOut(globals.app, 1, remove_font_popup, (XtPointer)NULL); */
 	remove_font_popup(NULL, NULL);
     }    
 }
-
-/* initialize global variables with default values. */
-static void
-init_globals(void) {
-    globals.program_name = NULL;
-    globals.dvi_name = NULL;
-    globals.xdvi_dir = xgetcwd();
-    globals.orig_locale = NULL;
-    globals.debug = 0L;
-    globals.pageno_correct = 1;
-
-    globals.curr_paper = NULL;
-    globals.curr_editor = NULL;
-    globals.curr_browser = NULL;
-    
-    globals.ev.flags = EV_IDLE;
-    globals.ev.ctr = 0;
-    
-    globals.pausing.num = 0;
-    globals.pausing.num_save = NULL;
-    globals.pausing.flag = False;
-
-    globals.win_expose.min_x = 0;
-    globals.win_expose.max_x = 0;
-    globals.win_expose.min_y = 0;
-    globals.win_expose.max_y = 0;
-
-    globals.gc.rule = NULL;
-    globals.gc.fore = NULL;
-    globals.gc.inverted = NULL;
-    globals.gc.high = NULL;
-    globals.gc.linkcolor = NULL;
-    globals.gc.visited_linkcolor = NULL;
-    globals.gc.fore2 = NULL;
-    globals.gc.fore2_bak = NULL;
-    globals.gc.fore2_bak1 = NULL;
-    globals.gc.copy = NULL;
-    globals.gc.ruler = NULL;
-    
-    globals.gc.do_copy = False;
-    
-    globals.cursor.flags = 0;
-
-    globals.src.fwd_box_page = -1; /* -1 means no box */
-    globals.src.fwd_string = NULL;
-
-    globals.widgets.top_level = 0;
-    globals.widgets.draw_widget = 0;
-    globals.widgets.draw_background = 0;
-    globals.widgets.clip_widget = 0;
-    globals.widgets.x_bar = 0;
-    globals.widgets.y_bar = 0;
-#ifdef MOTIF
-    globals.widgets.main_window = 0;
-    globals.widgets.main_row = 0;
-    globals.widgets.tool_bar = 0;
-    globals.widgets.top_row = 0;
-    globals.widgets.menu_bar = 0;
-#else
-    globals.widgets.vport_widget = 0;
-    globals.widgets.form_widget = 0;
-    globals.widgets.paned = 0;
-#endif
-
-    globals.page.w = 0;
-    globals.page.h = 0;
-    globals.page.unshrunk_w = 0;
-    globals.page.unshrunk_h = 0;
-    
-    globals.dvi_file.dirname = NULL;
-    globals.dvi_file.dirlen = 0;
-    globals.dvi_file.bak_fp = NULL;
-    globals.dvi_file.time = 0;
-
-#if defined(LESSTIF_VERSION)
-    globals.broken_motif_event_handling = True;
-#elif defined(MOTIF) /* was: && XmVersion <= 1002 - better use runtime information:*/
-    if (xmUseVersion <= 1002)
-	globals.broken_motif_event_handling = True;
-    else
-	globals.broken_motif_event_handling = False;
-#else
-    globals.broken_motif_event_handling = False;
-#endif
-    
-}
+#endif /* !DELAYED_MKTEXPK */
 
 /* revert resources */
 void
-reload_app_resources(void)
+load_app_resources(Boolean also_pixels)
 {
-/*     /\* reset some resources to built-in defaults *\/ */
-/*     resource.browser = NULL; */
-/*     resource.editor = NULL; */
-/*     resource.gamma = 1; */
-/*     resource.link_style = 3; */
-/*     resource.link_color = LINK_COLOR_FALLBACK; */
-/*     resource.visited_link_color = VISITED_LINK_COLOR_FALLBACK; */
-/*     resource.expert_mode = 31; */
-/*     resource.use_color = True; */
-/*     resource.match_highlight_inverted = True; */
+    /*     /\* reset some resources to built-in defaults *\/ */
+    /*     resource.browser = NULL; */
+    /*     resource.editor = NULL; */
+    /*     resource.gamma = 1; */
+    /*     resource.link_style = 3; */
+    /*     resource.link_color = LINK_COLOR_FALLBACK; */
+    /*     resource.visited_link_color = VISITED_LINK_COLOR_FALLBACK; */
+    /*     resource.expert_mode = 31; */
+    /*     resource.use_color = True; */
+    /*     resource.match_highlight_inverted = True; */
     
     XtGetApplicationResources(globals.widgets.top_level, (XtPointer)&resource,
 			      application_resources, XtNumber(application_resources),
 			      (ArgList)NULL, 0);
-    XtGetApplicationResources(globals.widgets.top_level, (XtPointer)&resource,
-			      app_pixel_resources, XtNumber(app_pixel_resources),
-			      (ArgList)NULL, 0);
-/*      fprintf(stderr, "gamma: %f\n", resource.gamma); */
+
+    if (also_pixels) {
+	XtGetApplicationResources(globals.widgets.top_level, (XtPointer)&resource,
+				  app_pixel_resources, XtNumber(app_pixel_resources),
+				  (ArgList)NULL, 0);
+    }
+    /*      fprintf(stderr, "gamma: %f\n", resource.gamma); */
 }
-
-struct filehist_info {
-    int file_idx;
-    char *page_arg;
-};
-
 
 /*
  * Unfortunately this must be a callback, for the file selector ...
  * This is the second part of Main: Create all widgets, initialize the DVI file,
  * and enter the main event loop.
  */
-static void
+void
 run_dvi_file(const char *filename, void *data)
 {
     Boolean tried_dvi_ext = False;
-    struct filehist_info *cb = (struct filehist_info *)data;
+    struct startup_info *cb = (struct startup_info *)data;
     
 #ifdef MOTIF
     Widget tool_bar = 0;
@@ -3540,7 +2642,7 @@ run_dvi_file(const char *filename, void *data)
     char *icon_name = NULL;
     dviErrFlagT errflag = NO_ERROR;
     
-    int add_w, add_h;
+    int add_w = 0, add_h = 0;
     Dimension main_win_w, main_win_h;
     
     UNUSED(data);
@@ -3552,34 +2654,42 @@ run_dvi_file(const char *filename, void *data)
     TRACE_FILES((stderr, "globals.dvi_name is: |%s| %p\n", globals.dvi_name, globals.dvi_name));
 
     globals.dvi_file.dirname = get_dir_component(globals.dvi_name);
-    ASSERT(globals.dvi_file.dirname != NULL, "dvi_name must contain a dir component");
+    xdvi_assert(XDVI_VERSION_INFO, __FILE__, __LINE__,
+		globals.dvi_file.dirname != NULL,
+		"globals.dvi_name (%s) must contain a dir component",
+		globals.dvi_name);
     globals.dvi_file.dirlen = strlen(globals.dvi_file.dirname);
 
     form_dvi_property();
     
     /*
-      If `unique' is active, we may need to pass the file
-      to a different instance of xdvi:
+      If `unique' is active, we may need to pass the file to a different instance of xdvi:
     */
     if (resource.unique) {
 	Window w1 = 0, w2 = 0;
 	if ((w1 = get_xdvi_window_id(True, NULL)) != 0 || (w2 = get_xdvi_window_id(False, NULL)) != 0) {
-	    if (w1 != 0) { /* another xdvi, and same file: reload and raise */
+	    if (w1 != 0) { /* another xdvi instance, same file: reload */
 		w2 = w1;
 		set_string_property("", atom_reload(), w2);
-		set_string_property("", atom_raise(), w2);
 	    }
-	    else { /* another xdvi, and different file: load new file and raise */
+	    else { /* another xdvi instance, different file: load new file */
 		set_string_property(globals.dvi_name, atom_newdoc(), w2);
-		set_string_property("", atom_raise(), w2);
 	    }
-	    if (cb->page_arg != NULL) { /* switch to different page and raise */
-		if (strlen(cb->page_arg) == 0) /* special case: treat `+' as last page */
+	    if (cb->page_arg != NULL) { /* switch to different page */
+		if (strlen(cb->page_arg) == 0) { /* special case: treat `+' as last page */
 		    set_string_property("+", atom_newpage(), w2);
-		else
+		}
+		else {
 		    set_string_property(cb->page_arg, atom_newpage(), w2);
-		set_string_property("", atom_raise(), w2);
+		}
 	    }
+	    else {
+		/* if page_arg is empty, go to 1st page so that this page is
+		   inserted into the page history (fix for #1044891) */
+		set_string_property("1", atom_newpage(), w2);
+	    }
+	    /* in all cases, raise the window of the other instance */
+	    set_string_property("", atom_raise(), w2);
 	    xdvi_exit(EXIT_SUCCESS);
 	}
 	else if (resource.src_fork) {
@@ -3589,7 +2699,7 @@ run_dvi_file(const char *filename, void *data)
 
     /*
       Similar for forward search or string search:
-     */
+    */
     if (resource.src_pos != NULL || resource.find_string != NULL) {
 	Window w;
 	if ((w = get_xdvi_window_id(True, NULL)) != 0) {
@@ -3672,7 +2782,7 @@ run_dvi_file(const char *filename, void *data)
 
     /* toolbar code may open files, but we have no check close_a_file() in
        the toolbar code; so do this before prescan() possibly opens lots of files.
-     */
+    */
 #ifdef MOTIF
     globals.widgets.main_row = XmCreateMainWindow(globals.widgets.top_level, "main", NULL, 0);
     
@@ -3685,6 +2795,12 @@ run_dvi_file(const char *filename, void *data)
     form = XtVaCreateWidget("form", xmFormWidgetClass, globals.widgets.main_row,
 			    XmNshadowThickness, 0,
 			    NULL);
+
+    if (resource.main_translations != NULL) {
+	XtOverrideTranslations(form, XtParseTranslationTable(resource.main_translations));
+    }
+
+    
 #if defined(USE_PANNER) && USE_XAW_PANNER
     panner = XtVaCreateWidget("panner", pannerWidgetClass, form,
 			      XmNtopAttachment, XmATTACH_FORM,
@@ -3724,38 +2840,64 @@ run_dvi_file(const char *filename, void *data)
     */
 
     if (resource.t1lib) {
-       init_t1();
+	init_t1();
     }
 #endif /* T1LIB */
 
+#if DELAYED_MKTEXPK
+    /* Open and initialize the DVI file. First, disable creation of PK fonts
+     * so that we can count the missing fonts that are to be generated. */
+    kpse_set_program_enabled(kpse_any_glyph_format, False, kpse_src_compile);
+#endif
+    
+    setup_signal_handlers(False);
 
-    setup_signal_handlers();
-
+#if !DELAYED_MKTEXPK
     /* Notify users that fonts are being created. This is just a hack
-       and no replacement for true asynchronous font creation (see
-       EXPERIMENTAL_DELAYED_MTKEXPK in font-open.c for that approach)
-       since it doesn't give details (is just invoked if startup takes
-       somewhat longer) and freezes during font creation.
+       and no replacement for true asynchronous font creation since it
+       doesn't give details (is just invoked if startup takes somewhat
+       longer) and freezes during font creation.
     */
     register_font_popup();
+#endif
     
     /* open and initialize the DVI file, but don't read the fonts yet */
-    if (!internal_open_dvi(globals.dvi_name, &errflag,
-#ifdef EXPERIMENTAL_DELAYED_MTKEXPK
-			   False
-#else
-			   True
+    if (!internal_open_dvi(globals.dvi_name, &errflag, True
+#if DELAYED_MKTEXPK
+			   , False /* read fonts, but don't initialize data structures */
 #endif
 			   )) {
-	if (tried_dvi_ext)
+	if (tried_dvi_ext) {
 	    XDVI_FATAL((stderr, "Could not open %s: %s, and %s.dvi doesn't exist either - exiting.",
 			globals.dvi_name, get_dvi_error(errflag), globals.dvi_name));
-	else
+	}
+	else {
 	    XDVI_FATAL((stderr, "Could not open %s: %s.",
 			globals.dvi_name, get_dvi_error(errflag)));
+	}
     }
-    
+
+#if DELAYED_MKTEXPK
+    fprintf(stderr, "after opening ...\n");
+    /* Now re-enable PK creation and read the postamble for a second time.
+     * FIXME: Actually we don't need this re-reading, could as well read the
+     * entire thing in the first run, not quit early and correctly initialize
+     * the fonts without creating them. */
+    kpse_set_program_enabled(kpse_any_glyph_format, resource.makepk, kpse_src_compile);
+
+    if (!internal_open_dvi(globals.dvi_name, &errflag, True, True)) {
+	if (tried_dvi_ext) {
+	    XDVI_FATAL((stderr, "Could not open %s: %s, and %s.dvi doesn't exist either - exiting.",
+			globals.dvi_name, get_dvi_error(errflag), globals.dvi_name));
+	}
+	else {
+	    XDVI_FATAL((stderr, "Could not open %s: %s.",
+			globals.dvi_name, get_dvi_error(errflag)));
+	}
+    }
+#else
     unregister_font_popup();
+#endif
     
     if (cb->page_arg != NULL) {
 	if (cb->page_arg[0] == '\0') { /* empty page_arg -> goto last page */
@@ -3768,10 +2910,12 @@ run_dvi_file(const char *filename, void *data)
 	    if (*testptr != '\0') {
 		XDVI_FATAL((stderr, "Invalid page number: `%s'.", cb->page_arg));
 	    }
-	    current_page = check_goto_page(current_page);
+	    current_page = check_goto_page(current_page, True);
 	}
     }
-
+    else {
+	page_history_insert(current_page);
+    }
     file_history_set_page(current_page);
     
     ASSERT(globals.dvi_file.bak_fp != NULL, "Backup file pointer must have been initialized here");
@@ -3781,10 +2925,10 @@ run_dvi_file(const char *filename, void *data)
 
     globals.page.unshrunk_w = pageinfo_get_page_width(current_page);
     globals.page.unshrunk_h = pageinfo_get_page_height(current_page);
-    TRACE_FILES((stderr, "globals.page.unshrunk_w: %d, h: %d; window: %d, %d",
-		 globals.page.unshrunk_w, globals.page.unshrunk_h,
-		 pageinfo_get_window_width(current_page),
-		 pageinfo_get_window_height(current_page)));
+    TRACE_GUI((stderr, "globals.page.unshrunk_w: %d, h: %d; window: %d, %d",
+	       globals.page.unshrunk_w, globals.page.unshrunk_h,
+	       pageinfo_get_window_width(current_page),
+	       pageinfo_get_window_height(current_page)));
     
     init_page();
 
@@ -3802,10 +2946,13 @@ run_dvi_file(const char *filename, void *data)
 	resource.expert_mode |= XPRT_SHOW_STATUSLINE;
     }
 
-/*      XtRealizeWidget(globals.widgets.top_level); */
+    /*      XtRealizeWidget(globals.widgets.top_level); */
 
 #ifdef MOTIF
     tool_bar = create_toolbar(globals.widgets.main_row, globals.widgets.menu_bar);
+    if (resource.main_translations != NULL) {
+	XtOverrideTranslations(tool_bar, XtParseTranslationTable(resource.main_translations));
+    }
 #endif
 
     create_widgets(
@@ -3814,9 +2961,9 @@ run_dvi_file(const char *filename, void *data)
 #endif
 		   &add_w, &add_h);
 
+    TRACE_GUI((stderr, "add_w = %d, add_h = %d\n", add_w, add_h));
     /*  fprintf(stderr, "geometry xdvirc: |%s|, orig: |%s|\n", resource.xdvirc_geometry, resource.geometry); */
     
-
     /*
      *	Set initial window size.
      *	This needs to be done before colors are assigned because if
@@ -3852,7 +2999,7 @@ run_dvi_file(const char *filename, void *data)
 
     /* Store window id for use by src_client_check().  */
     {
-#ifndef WORD64
+#if !(defined(WORD64) || defined(LONG64))
 	xuint32 data = XtWindow(globals.widgets.top_level);
 	XChangeProperty(DISP, DefaultRootWindow(DISP),
 			atom_xdvi_windows(), atom_xdvi_windows(), 32,
@@ -3876,18 +3023,6 @@ run_dvi_file(const char *filename, void *data)
 
     create_cursors();
 
-#ifdef EXPERIMENTAL_DELAYED_MTKEXPK
-    /* Only now, we initialize the fonts. First update the window: */
-    force_statusline_update();
-    printlog_create("test", "Close", NULL, NULL, NULL, NULL);
-    printlog_popup();
-    
-    printlog_append_str("\nTrying to create font(s)\n");
-    if (!find_postamble(globals.dvi_file.bak_fp, &errflag) || !read_postamble(globals.dvi_file.bak_fp, &errflag, True)) {
-	XDVI_ERROR((stderr, "Couldn't read fonts from postamble: %s\n", get_dvi_error(errflag)));
-    }
-#endif /* EXPERIMENTAL_DELAYED_MTKEXPK */
-    
 #ifdef MOTIF
 #if defined(USE_PANNER) && USE_XAW_PANNER
     XtVaSetValues(panner, XtNsliderWidth, globals.page.w / 2,
@@ -3941,402 +3076,18 @@ run_dvi_file(const char *filename, void *data)
     /* raise `early' message windows */
     raise_message_windows();
 
-    if (resource.mouse_mode == MOUSE_RULER_MODE) {
-	show_ruler(NULL);
+    {    
+	String args[1];
+	char mmode[LENGTH_OF_INT];
+	snprintf(mmode, LENGTH_OF_INT, "%d", resource.mouse_mode);
+	args[0] = mmode;
+	XtCallActionProc(globals.widgets.top_level, "switch-mode", NULL, args, 1);
     }
-    
-    /* insert this page into the history */
-    globals.ev.flags |= EV_PAGEHIST_INSERT;
-    
+
+    /* go to home position on first page to honor -(side|top)margin flags */
+    if (!resource.keep_flag)
+    	home(False);
+
     do_pages();
 }
-
-static char *
-is_good_dvi_file(const char *filename, Boolean from_history)
-{
-    static char canonical_path[MAXPATHLEN + 1];
-    Boolean tried_dvi_extension = False;
-    /* following allocates real_filename */
-    char *real_filename = find_dvi_file(filename, &tried_dvi_extension, from_history);
-    char *ret;
-    FILE *f = NULL;
-    dviErrFlagT errflag;
-	
-    if (real_filename == NULL)
-	return NULL;
-
-    if ((ret = REALPATH(real_filename, canonical_path)) == NULL) {
-	/* REALPATH failed, use real_filename */
-	strncpy(canonical_path, real_filename, MAXPATHLEN);
-	canonical_path[MAXPATHLEN] = '\0';
-	ret = canonical_path;
-    }
-    free(real_filename);
-
-    /* check for correct DVI files */
-    if ((f = XFOPEN(ret, OPEN_MODE)) != NULL) {
-	TRACE_EVENTS((stderr, "watching: new file opened successfully."));
-	if (process_preamble(f, &errflag)
-	    && find_postamble(f, &errflag)
-	    && read_postamble(f, &errflag, False)) {
-	    fclose(f);
-	    return ret;
-	}
-	fclose(f);
-	if (!from_history)
-	    XDVI_FATAL((stderr, "%s: %s.", filename, get_dvi_error(errflag)));
-	return NULL;
-    }
-    else {
-	if (!from_history)
-	    XDVI_FATAL((stderr, "Could not open `%s': %s.", filename, strerror(errno)));
-	return NULL;
-    }
-}
-
-static char *
-get_filename_from_history(int *pageno)
-{
-    size_t i;
-    /* loop through history, trying to get a good file */
-    for (i = 0; i < file_history_size(); i++) {
-	char *ret, *test;
-	
-	if ((test = file_history_get_elem(i, pageno)) == NULL)
-	    return NULL;
-	TRACE_FILES((stderr, "HISTORY %lu: |%s|", (unsigned long)i, test));
-	if ((ret = is_good_dvi_file(test, True)) != NULL) {
-	    TRACE_FILES((stderr, "SUCCESS: |%s|", test));
-	    return ret;
-	}
-    }
-    return NULL;
-}
-
-
-/*
-  ************************************************************
-  ************************************************************
-			main routine
-  ************************************************************
-  ************************************************************
-*/
-
-int
-main(int argc, char **argv)
-{
-    int i;
-    static struct filehist_info info;
-    const char *file_name = NULL;
-    const char *file_name2 = NULL;
-    
-    /* Hack to have command-line options override ~/.xdvirc stuff:
-     * Parse and merge them again from argv_bak, a copy of the command-line options,
-     * via XrmParseCommand(). I think the only alternative would be to merge in all
-     * resources manually instead of using XtInitialize(), similar to what's done in gv,
-     * but that looks like too much trouble.
-     */
-#define COMMANDLINE_OVERRIDE_HACK 1
-    
-#if COMMANDLINE_OVERRIDE_HACK
-    int argc_bak;
-    char **argv_bak;
-#endif
-
-    info.file_idx = 0;
-    info.page_arg = NULL;
-    
-    /* BEGIN_TIMER_LOOP; */
-    
-    init_globals();
-    
-    /*
-     *      Step 1:  Process command-line options and resources.
-     */
-
-    globals.program_name = xstrdup(argv[0]);
-    {   /* get filename from program_name if it contains a path */
-	char sep;
-	char *ptr;
-#ifdef	VMS
-	sep = ']';
-#else
-	sep = '/';
-#endif
-	if ((ptr = strrchr(globals.program_name, sep)) != NULL) {
-	    globals.program_name = ++ptr;
-	}
-#ifdef	VMS
-	if ((ptr = strchr(globals.program_name, '.')) != NULL)
-	    *ptr = '\0';
-#endif
-    }
-
-#if COMMANDLINE_OVERRIDE_HACK
-    /* create a copy of argv[] */
-    argc_bak = argc;
-    argv_bak = xmalloc((1 + argc_bak) * sizeof *argv_bak);
-    for (i = 0; i < argc_bak; i++) {
-	argv_bak[i] = xstrdup(argv[i]);
-    }
-    argv_bak[i] = NULL;
-#endif
-
-    /*
-      Arguments that need to be checked early, like `help', `version' and `sync'.
-      The former don't even require an X connection.
-    */
-    check_early_arguments(argc, argv);
-    
-    warn_about_prerelease_versions();
-
-    /* We need to set up SIGALRM before calling XtAppAddTimeOut() (inside sfSelFile, or
-       called from XtInitialize() in Motif), else and we'll die with the error message
-       `Alarm clock'. However, we mustn't install SIGPOLL before the forking is done
-       below, else xdvi may hang forever waiting for input. So the signal handler setup
-       is split in 2 parts: setup_sigalarm(), and setup_signal_handlers() below.
-    */
-    setup_sigalarm();
-
-    /* get the debug value (if any) from the environment
-       (it's too early to get it from the command line) */
-    globals.debug = parse_debugging_option(getenv("XDVIDEBUG"));
-
-    /* to make input of non-latin characters work */
-    XtSetLanguageProc(NULL, (XtLanguageProc)NULL, NULL);
-    globals.widgets.top_level = XtInitialize(globals.program_name, "XDvi", options, XtNumber(options),
-					     &argc, argv);
-
-    app = XtWidgetToApplicationContext(globals.widgets.top_level);
-    
-    XtAppAddActions(app, get_actions(), get_num_actions());
-
-    create_magnifier();
-
-    if ((globals.orig_locale = setlocale(LC_ALL, "")) != NULL)
-	globals.orig_locale = xstrdup(globals.orig_locale); /* note: never free'd */
-    else /* fallback */
-	globals.orig_locale = xstrdup(setlocale(LC_ALL, NULL));
-    
-    /* Override LC_NUMERIC, else sscanf(), strtod() etc. will stop working on floats
-       inside specials for locales like LANG=de_DE which uses `,' not `.'
-       as fractional part separator. (Strangely, using
-	  LC_CTYPE | LC_COLLATE 
-       above doesn't work?)
-       Regression:
-       xdvik/regression/special-pics/pictest.dvi
-    */
-    setlocale(LC_NUMERIC, "C");
-
-    /* at this point, all known options will have been consumed; so the
-       only ones remaining should be: +pageno, and the dvi name. Exit with
-       usage message if this is not the case. The following rather complicated
-       looping logic ensures that the first unknown option is regarded as dvi_name,
-       unless it's followed by another option, in which case it will result in an
-       `Unrecognized option' error.
-    */
-    for (i = 0; i < argc - 1; i++) { /* argc - 1 because we're going to look at
-					argv[i + 1] to skip argv[0] */
-	if (*(argv[i + 1]) == '+') {
-	    if (info.page_arg != NULL) {
-		XDVI_ERROR((stderr, "Unrecognized option `%s'.", argv[i + 1]));
-		usage(EXIT_FAILURE);
-	    }
-	    else {
-		info.page_arg = argv[i + 1] + 1;
-	    }
-	}
-	else if (file_name == NULL) {
-	    file_name = xstrdup(argv[i + 1]); /* LEAK */
-	}
-	else {
-	    XDVI_ERROR((stderr, "Unrecognized option `%s'.", argv[i]));
-	    usage(EXIT_FAILURE);
-	}
-    }
-
-    DISP = XtDisplay(globals.widgets.top_level);
-    SCRN = XtScreen(globals.widgets.top_level);
-
-#ifdef GREY
-    XtSetTypeConverter(XtRString, XtRBool3, XdviCvtStringToBool3,
-		       NULL, 0, XtCacheNone, NULL);
-#endif
-
-#ifdef MOTIF
-    /* we'll take care of that ourselves */
-    XtVaSetValues(globals.widgets.top_level, XmNdeleteResponse, XmDO_NOTHING, NULL);
-    
-    {
-	/* Hack to work around #884290 (drag&drop freezes file selector, see comment
-	   in xm_filesel.c): Disable drag&drop altogether (we don't need it).
-	   Could also be done via Xdefaults as follows:
-	   XDvi*dragInitiatorProtocolStyle: XmDRAG_NONE
-	   XDvi*dragReceiverProtocolStyle:  XmDRAG_NONE
-	*/
-	Widget display = XmGetXmDisplay(DISP);
-	XtVaSetValues(display,
-		      XmNdragInitiatorProtocolStyle, XmDRAG_NONE,
-		      XmNdragReceiverProtocolStyle,  XmDRAG_NONE,
-		      NULL);
-    }
-#else
-    G_accels_cr = XtParseAcceleratorTable("<Key>Return:set()notify()unset()\n"
-					  "<Key>q:set()notify()unset()\n"
-					  "<Key>Escape: set()notify()unset()");
-#endif
-
-    /* get the no_init_file resource first: This needs to be done
-     * before the call to XtGetApplicationResources() below, which populates
-     * the `resource' struct with the actual application resources (which
-     * may be merged from ~/.xdvirc). */
-    XtGetApplicationResources(globals.widgets.top_level, (XtPointer)&resource,
-			      xdvirc_resources, XtNumber(xdvirc_resources),
-			      (ArgList)NULL, 0);
-
-    if (!resource.no_init_file) { /* Read user preferences from ~/.xdvirc. */
-	read_user_preferences(globals.widgets.top_level, ".xdvirc");
-    }
-
-#if COMMANDLINE_OVERRIDE_HACK /* see above */
-    {
-	XrmDatabase cmdline_db = XrmGetDatabase(DISP);
-	XrmParseCommand(&cmdline_db, options, XtNumber(options),
-			"xdvi", &argc_bak, argv_bak);
-
-	for (i = 0; i < argc_bak; i++) {
-	    free(argv_bak[i]);
-	}
-	free(argv_bak);
-	argc_bak = 0;
-    }
-#endif /* COMMANDLINE_OVERRIDE_HACK */
-    
-    XtGetApplicationResources(globals.widgets.top_level, (XtPointer)&resource,
-			      application_resources, XtNumber(application_resources),
-			      (ArgList)NULL, 0);
-
-    if (resource.shrinkfactor == 0) /* protect against division by 0 */
-	resource.shrinkfactor = 1;
-    currwin.shrinkfactor = resource.shrinkfactor;
-    globals.curr_use_color = resource.use_color;
-    globals.curr_gamma = resource.gamma;
-    globals.curr_paper = xstrdup(resource.paper); /* never free()d */
-    globals.curr_editor = NULL;
-    globals.curr_browser = NULL;
-    
-    /* Initialize `globals.debug' as early as possible.  Note: earlier
-     * calls to TRACE_* or tests for `if (globals.debug)' will only work if the
-     * XDVIDEBUG environment variable is set!
-     */
-    globals.debug |= parse_debugging_option(resource.debug_arg);
-    kpathsea_debug = globals.debug / DBG_STAT;
-
-    if (globals.debug)
-	fprintf(stderr, "KPATHSEA_DEBUG = %d\n", kpathsea_debug);
-
-    kpse_init_prog("XDVI", resource.pixels_per_inch, resource.mfmode, resource.alt_font);
-    
-    kpse_set_program_name(argv[0], "xdvi");
-
-    
-    if (globals.debug & DBG_EXPAND) {
-	const char *texmfcnf = kpse_path_expand("$TEXMFCNF");
-	const char *texmfmain = kpse_path_expand("$TEXMFMAIN");
-	fprintf(stderr, "\n%s:%d: KPATHSEA variables:\n", __FILE__, __LINE__);
-	fprintf(stderr, "%s:%d: SELFAUTOLOC=\"%s\"\n", __FILE__, __LINE__, getenv("SELFAUTOLOC"));
-	fprintf(stderr, "%s:%d: SELFAUTODIR=\"%s\"\n", __FILE__, __LINE__, getenv("SELFAUTODIR"));
-	fprintf(stderr, "%s:%d: SELFAUTOPARENT=\"%s\"\n", __FILE__, __LINE__, getenv("SELFAUTOPARENT"));
- 	fprintf(stderr, "%s:%d: TEXMFCNF=\"%s\"\n", __FILE__, __LINE__, texmfcnf);
- 	fprintf(stderr, "%s:%d: TEXMFMAIN=\"%s\"\n\n", __FILE__, __LINE__, texmfmain);
-    }
-    
-    if (resource.regression) {
-	/* currently it just turns on everything; what we'd like here is
-	   output that's usable for automatic diffs (e.g. independent
-	   of window manager state) */
-	globals.debug = DBG_ALL;
-    }
-
-    /* Check early for whether to pass off to a different xdvi process
-     * (-sourceposition argument for reverse source special lookup).
-     */
-    property_initialize();
-
-#if 0 /*  def RGB_ANTI_ALIASING */
-    /* error checking and setting of resources according to command line arguments */
-    if (resource.sub_pixels != NULL && memicmp(resource.sub_pixels, "unknown", 4) == 0) {
-#ifdef __GNUC__
-#warning TODO: implement callbacks
-#endif
-	choice_dialog_sized(globals.widgets.top_level,
-			    MSG_QUESTION,
-			    SIZE_MEDIUM,
-			    NULL,
-#ifndef MOTIF
-			    NULL, /* TODO: xaw ret_action_str */
-#endif
-			    NULL, NULL, /* pre callback */
-			    "Enable", NULL, NULL,
-			    "Disable", NULL, NULL,
-			    "This version of xdvi can optimize the anti-aliased font display "
-			    "when running on an LCD monitor, such as a notebook screen or a TFT flat screen."
-			    "\n\n"
-			    "If you are using such a monitor, click `Enable' to enable optimized display; otherwise click `Disable'."
-			    "\n\n"
-			    "You can change this setting later via the Menu `Options -> Anti-Aliasing'.");
-	/* enter event loop */
-	do_pages();
-    }
-    else {
-#endif
-	init_check_resources();
-
-	TRACE_FILES((stderr, "file history: |%s|", resource.file_history));
-	file_history_init();
-
-	if (file_name == NULL) { /* no filename argument */
-
-	    if (resource.no_file_arg_use_history) {
-		static char buf[LENGTH_OF_INT]; /* so that we can pass its address */
-		int pageno;
-		if ((file_name = get_filename_from_history(&pageno)) != NULL) {
-		    SNPRINTF(buf, LENGTH_OF_INT, "%d", pageno + 1); /* pageno is 0-based */
-		    info.page_arg = buf;
-		}
-	    }
-
-	    TRACE_FILES((stderr, "got from history: |%s|", file_name));
-	
-	    if (file_name != NULL) {
-		run_dvi_file(file_name, &info);
-	    }
-	    else { /* get filename from file selector */
-		static struct filesel_callback cb; /* static so that we can pass its address */
-		cb.title = "Xdvi: Open file";
-		cb.prompt = "Open file:";
-		cb.ok = "OK";
-		cb.cancel = "Cancel";
-		cb.init_path = NULL;
-		cb.filemask = "*.dvi";
-		cb.must_exist = True;
-		cb.exit_on_cancel = True;
-		cb.func_ptr = run_dvi_file;
-		cb.data = &info;
-
-		XsraSelFile(globals.widgets.top_level, &cb);
-		/* enter event loop */
-		do_pages();
-	    }
-	}
-	else if ((file_name2 = is_good_dvi_file(file_name, False)) != NULL) {
-	    run_dvi_file(file_name2, &info);
-	}
-#if 0 /*  def RGB_ANTI_ALIASING */
-    }
-#endif
-    /* notreached */
-    return 0;
-}
-
 

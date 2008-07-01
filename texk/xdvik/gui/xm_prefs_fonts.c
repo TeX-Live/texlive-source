@@ -58,12 +58,8 @@
 #include <Xm/Text.h>
 #include <Xm/TextF.h>
 
-#if XmVersion >= 2000 && !defined(LESSTIF_VERSION)
-/* spinbox only available with Motif 2.0; the lesstif version (as of 0.93) looks like shit */
+#if USE_SPINBOX
 #include <Xm/SpinB.h>
-#define USE_SPINBOX 1
-#else
-#define USE_SPINBOX 0
 #endif
 
 /*
@@ -106,7 +102,7 @@ colorspecial_toggle_cb(Widget w, XtPointer client_data, XtPointer call_data)
     struct prefs_choice *prefs;
 
     UNUSED(w);
-/*     UNUSED(client_data); */
+    /*     UNUSED(client_data); */
     UNUSED(call_data);
 
     ASSERT(tinfo != NULL, "struct topic_info * in colorspecial_toggle_cb mustn't be NULL!");
@@ -416,7 +412,7 @@ h_create_fonts_frame(Widget top, struct topic_info *info)
 #endif
     }
     
-/*     XtManageChild(darkness_form); */
+    /*     XtManageChild(darkness_form); */
 
     return darkness_form;
 }
@@ -566,7 +562,7 @@ h_create_colors_form(Widget top, struct topic_info *info)
 		  NULL);
     XtManageChild(underline_toggle);
 
-/*     if (res->link_style & 1) */
+    /*     if (res->link_style & 1) */
     if (resource.link_style & 1)
 	XmToggleButtonGadgetSetState(underline_toggle, True, False);
     else

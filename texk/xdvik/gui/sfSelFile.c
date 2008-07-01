@@ -39,13 +39,14 @@
 #include "sfDraw.h"
 #include "sfSelFile.h"
 #include "util.h"
+#include "xlwradio.h"
+#include "x_util.h"
 
 #include <ctype.h>
 #include "kpathsea/c-fopen.h"
 #include "kpathsea/c-stat.h"
 
 #if !defined(MOTIF) /* entire file */
-
 
 #include <errno.h>
 
@@ -130,8 +131,8 @@ static char fileMask[MASKWIDTH + 2] = "*.dvi";
 static Atom SFwmDeleteWindow;
 
 static char *oneLineTextEditTranslations =
-    "<Key>Return: redraw-display()\n"
-    "Ctrl<Key>M: redraw-display()\n";
+"<Key>Return: redraw-display()\n"
+"Ctrl<Key>M: redraw-display()\n";
 
 #if !defined (HAVE_STRERROR) && !defined (strerror)
 static char *
@@ -145,8 +146,10 @@ strerror(int errnum)
 void
 raise_file_selector(void)
 {
-    if (selFile != 0) {
+    if (selFile != NULL && XtIsManaged(selFile)) {
+	XBell(DISP, 10);
 	XRaiseWindow(DISP, XtWindow(selFile));
+	return;
     }
 }
 
@@ -161,6 +164,24 @@ SFexposeList(Widget w, XtPointer n, XEvent *event, Boolean *cont)
     }
 
     SFdrawList((int)n, SF_DO_NOT_SCROLL);
+}
+
+
+static void
+cb_open_new_window(Widget w, XtPointer client_data, XtPointer call_data)
+{
+    Boolean set;
+    
+    UNUSED(client_data);
+    UNUSED(call_data);
+
+    XtVaGetValues(w, XtNstate, &set, NULL);
+
+    if (set)
+	resource.filesel_open_new_window = True;
+    else
+	resource.filesel_open_new_window = False;
+    store_preference(NULL, "fileselOpenNewWindow", "%d", resource.filesel_open_new_window);
 }
 
 static void
@@ -329,8 +350,9 @@ hideFiles(Widget w, XtPointer client_data, XtPointer call_data)
 
 
 static Widget
-SFcreateWidgets(Widget parent, const char *title, const char *prompt, const char *ok, const char *cancel)
+SFcreateWidgets(Widget parent, struct filesel_callback *callback)
 {
+    Widget open_menu = NULL;
     Cardinal i, n;
     int listWidth, listHeight;
     int listSpacing = 10;
@@ -342,9 +364,8 @@ SFcreateWidgets(Widget parent, const char *title, const char *prompt, const char
     Widget paned, box;
     
     i = 0;
-    XtSetArg(arglist[i], XtNtransientFor, parent);
-    XtSetArg(arglist[i], XtNtitle, title);
-    i++;
+    XtSetArg(arglist[i], XtNtransientFor, parent); i++;
+    XtSetArg(arglist[i], XtNtitle, callback->title);	   i++;
 
     selFile = XtAppCreateShell("xdviSelFile", "XdviSelFile",
 			       transientShellWidgetClass, SFdisplay,
@@ -357,39 +378,31 @@ SFcreateWidgets(Widget parent, const char *title, const char *prompt, const char
 			   XtParseTranslationTable(wmDeleteWindowTranslation));
 
     paned = XtVaCreateManagedWidget("paned", panedWidgetClass, selFile, NULL);
+
     i = 0;
-    XtSetArg(arglist[i], XtNdefaultDistance, 6);
-    i++;
+    XtSetArg(arglist[i], XtNdefaultDistance, 6);	i++;
+    
     selFileForm = XtCreateManagedWidget("selFileForm",
 					formWidgetClass, paned, arglist, i);
 
     i = 0;
-    XtSetArg(arglist[i], XtNlabel, prompt);
-    i++;
-    XtSetArg(arglist[i], XtNresizable, True);
-    i++;
-    XtSetArg(arglist[i], XtNtop, XtChainTop);
-    i++;
-    XtSetArg(arglist[i], XtNbottom, XtChainTop);
-    i++;
-    XtSetArg(arglist[i], XtNleft, XtChainLeft);
-    i++;
-    XtSetArg(arglist[i], XtNright, XtChainLeft);
-    i++;
-    XtSetArg(arglist[i], XtNborderWidth, 0);
-    i++;
-    XtSetArg(arglist[i], XtNvertDistance, 20);
-    i++;
+    XtSetArg(arglist[i], XtNlabel, callback->prompt);	i++;
+    XtSetArg(arglist[i], XtNresizable, True);		i++;
+    XtSetArg(arglist[i], XtNtop, XtChainTop);		i++;
+    XtSetArg(arglist[i], XtNbottom, XtChainTop);	i++;
+    XtSetArg(arglist[i], XtNleft, XtChainLeft);		i++;
+    XtSetArg(arglist[i], XtNright, XtChainLeft);	i++;
+    XtSetArg(arglist[i], XtNborderWidth, 0);		i++;
+    XtSetArg(arglist[i], XtNvertDistance, 20);		i++;
+    
     selFilePrompt = XtCreateManagedWidget("selFilePrompt",
 					  labelWidgetClass, selFileForm,
 					  arglist, i);
 
 #if 1
     i = 0;
-    XtSetArg(arglist[i], XtNforeground, &SFfore);
-    i++;
-    XtSetArg(arglist[i], XtNbackground, &SFback);
-    i++;
+    XtSetArg(arglist[i], XtNforeground, &SFfore);		i++;
+    XtSetArg(arglist[i], XtNbackground, &SFback);		i++;
     XtGetValues(selFilePrompt, arglist, i);
 #endif
 
@@ -439,74 +452,43 @@ SFcreateWidgets(Widget parent, const char *title, const char *prompt, const char
 	SFlineToTextH + SFentryWidth - 1;
 
     i = 0;
-/*     XtSetArg(arglist[i], XtNwidth, 3 * listWidth + 2 * listSpacing + 4 - w - 10); */
-    XtSetArg(arglist[i], XtNwidth, 3 * listWidth + 2 * listSpacing + 4);
-    i++;
-/*      XtSetArg(arglist[i], XtNborderColor, SFfore); */
-/*      i++; */
-
-/*     XtSetArg(arglist[i], XtNfromHoriz, selFilePrompt); */
-/*     i++; */
-/*     XtSetArg(arglist[i], XtNhorizDistance, 10); */
-    XtSetArg(arglist[i], XtNfromVert, selFilePrompt);
-    i++;
-/*      XtSetArg(arglist[i], XtNvertDistance, 0); */
-/*      i++; */
-    XtSetArg(arglist[i], XtNresizable, True);
-    i++;
-    XtSetArg(arglist[i], XtNtop, XtChainTop);
-    i++;
-    XtSetArg(arglist[i], XtNbottom, XtChainTop);
-    i++;
-    XtSetArg(arglist[i], XtNleft, XtChainLeft);
-    i++;
-    XtSetArg(arglist[i], XtNright, XtChainLeft);
-    i++;
-    XtSetArg(arglist[i], XtNstring, SFtextBuffer);
-    i++;
-    XtSetArg(arglist[i], XtNlength, MAXPATHLEN);
-    i++;
-    XtSetArg(arglist[i], XtNeditType, XawtextEdit);
-    i++;
-    XtSetArg(arglist[i], XtNwrap, XawtextWrapWord);
-    i++;
-    XtSetArg(arglist[i], XtNresize, XawtextResizeHeight);
-    i++;
-    XtSetArg(arglist[i], XtNuseStringInPlace, True);
-    i++;
-    XtSetArg(arglist[i], XtNvertDistance, 5);
-    i++;
+    XtSetArg(arglist[i], XtNwidth,
+	     3 * listWidth + 2 * listSpacing + 4);		i++;
+    XtSetArg(arglist[i], XtNfromVert, selFilePrompt);		i++;
+    XtSetArg(arglist[i], XtNresizable, True);			i++;
+    XtSetArg(arglist[i], XtNtop, XtChainTop);			i++;
+    XtSetArg(arglist[i], XtNbottom, XtChainTop);		i++;
+    XtSetArg(arglist[i], XtNleft, XtChainLeft);			i++;
+    XtSetArg(arglist[i], XtNright, XtChainLeft);		i++;
+    XtSetArg(arglist[i], XtNstring, SFtextBuffer);		i++;
+    XtSetArg(arglist[i], XtNlength, MAXPATHLEN);		i++;
+    XtSetArg(arglist[i], XtNeditType, XawtextEdit);		i++;
+    XtSetArg(arglist[i], XtNwrap, XawtextWrapWord);		i++;
+    XtSetArg(arglist[i], XtNresize, XawtextResizeHeight);	i++;
+    XtSetArg(arglist[i], XtNuseStringInPlace, True);		i++;
+    XtSetArg(arglist[i], XtNvertDistance, 5);			i++;
+    
     selFileField = XtCreateManagedWidget("selFileField",
-					   asciiTextWidgetClass, selFileForm,
-					   arglist, i);
+					 asciiTextWidgetClass, selFileForm,
+					 arglist, i);
 
     XtOverrideTranslations(selFileField,
 			   XtParseTranslationTable
 			   (oneLineTextEditTranslations));
-/*	XtSetKeyboardFocus(selFileForm, selFileField);
+    /*	XtSetKeyboardFocus(selFileForm, selFileField);
 	need focus for selFileMask widget to set the filter */
 
     i = 0;
-    XtSetArg(arglist[i], XtNorientation, XtorientHorizontal);
-    i++;
-    XtSetArg(arglist[i], XtNwidth, SFpathScrollWidth);
-    i++;
-    XtSetArg(arglist[i], XtNheight, scrollThickness);
-    i++;
-/*      XtSetArg(arglist[i], XtNborderColor, SFfore); */
-/*      i++; */
-    XtSetArg(arglist[i], XtNfromVert, selFileField);
-    i++;
-    XtSetArg(arglist[i], XtNvertDistance, 30);
-    i++;
-    XtSetArg(arglist[i], XtNtop, XtChainTop);
-    i++;
-    XtSetArg(arglist[i], XtNbottom, XtChainTop);
-    i++;
-    XtSetArg(arglist[i], XtNleft, XtChainLeft);
-    i++;
-    XtSetArg(arglist[i], XtNright, XtChainLeft);
-    i++;
+    XtSetArg(arglist[i], XtNorientation, XtorientHorizontal);	i++;
+    XtSetArg(arglist[i], XtNwidth, SFpathScrollWidth);		i++;
+    XtSetArg(arglist[i], XtNheight, scrollThickness);		i++;
+    XtSetArg(arglist[i], XtNfromVert, selFileField);		i++;
+    XtSetArg(arglist[i], XtNvertDistance, 30);			i++;
+    XtSetArg(arglist[i], XtNtop, XtChainTop);			i++;
+    XtSetArg(arglist[i], XtNbottom, XtChainTop);		i++;
+    XtSetArg(arglist[i], XtNleft, XtChainLeft);			i++;
+    XtSetArg(arglist[i], XtNright, XtChainLeft);		i++;
+    
     selFileHScroll = XtCreateManagedWidget("selFileHScroll",
 					   scrollbarWidgetClass, selFileForm,
 					   arglist, i);
@@ -517,78 +499,47 @@ SFcreateWidgets(Widget parent, const char *title, const char *prompt, const char
 		  (XtCallbackProc)SFpathAreaSelectedCallback, (XtPointer) NULL);
 
     i = 0;
-    XtSetArg(arglist[i], XtNwidth, listWidth);
-    i++;
-    XtSetArg(arglist[i], XtNheight, listHeight);
-    i++;
-/*      XtSetArg(arglist[i], XtNborderColor, SFfore); */
-/*      i++; */
-    XtSetArg(arglist[i], XtNfromVert, selFileHScroll);
-    i++;
-    XtSetArg(arglist[i], XtNvertDistance, 10);
-    i++;
-    XtSetArg(arglist[i], XtNtop, XtChainTop);
-    i++;
-    XtSetArg(arglist[i], XtNbottom, XtChainTop);
-    i++;
-    XtSetArg(arglist[i], XtNleft, XtChainLeft);
-    i++;
-    XtSetArg(arglist[i], XtNright, XtChainLeft);
-    i++;
+    XtSetArg(arglist[i], XtNwidth, listWidth);		i++;
+    XtSetArg(arglist[i], XtNheight, listHeight);	i++;
+    XtSetArg(arglist[i], XtNfromVert, selFileHScroll);	i++;
+    XtSetArg(arglist[i], XtNvertDistance, 10);		i++;
+    XtSetArg(arglist[i], XtNtop, XtChainTop);		i++;
+    XtSetArg(arglist[i], XtNbottom, XtChainTop);	i++;
+    XtSetArg(arglist[i], XtNleft, XtChainLeft);		i++;
+    XtSetArg(arglist[i], XtNright, XtChainLeft);	i++;
+    
     selFileLists[0] = XtCreateManagedWidget("selFileList1",
 					    compositeWidgetClass, selFileForm,
 					    arglist, i);
 
     i = 0;
-    XtSetArg(arglist[i], XtNwidth, listWidth);
-    i++;
-    XtSetArg(arglist[i], XtNheight, listHeight);
-    i++;
-/*      XtSetArg(arglist[i], XtNborderColor, SFfore); */
-/*      i++; */
-    XtSetArg(arglist[i], XtNfromHoriz, selFileLists[0]);
-    i++;
-    XtSetArg(arglist[i], XtNfromVert, selFileHScroll);
-    i++;
-    XtSetArg(arglist[i], XtNhorizDistance, listSpacing);
-    i++;
-    XtSetArg(arglist[i], XtNvertDistance, 10);
-    i++;
-    XtSetArg(arglist[i], XtNtop, XtChainTop);
-    i++;
-    XtSetArg(arglist[i], XtNbottom, XtChainTop);
-    i++;
-    XtSetArg(arglist[i], XtNleft, XtChainLeft);
-    i++;
-    XtSetArg(arglist[i], XtNright, XtChainLeft);
-    i++;
+    XtSetArg(arglist[i], XtNwidth, listWidth);			i++;
+    XtSetArg(arglist[i], XtNheight, listHeight);		i++;
+    XtSetArg(arglist[i], XtNfromHoriz, selFileLists[0]);	i++;
+    XtSetArg(arglist[i], XtNfromVert, selFileHScroll);		i++;
+    XtSetArg(arglist[i], XtNhorizDistance, listSpacing);	i++;
+    XtSetArg(arglist[i], XtNvertDistance, 10);			i++;
+    XtSetArg(arglist[i], XtNtop, XtChainTop);			i++;
+    XtSetArg(arglist[i], XtNbottom, XtChainTop);		i++;
+    XtSetArg(arglist[i], XtNleft, XtChainLeft);			i++;
+    XtSetArg(arglist[i], XtNright, XtChainLeft);		i++;
+    
     selFileLists[1] = XtCreateManagedWidget("selFileList2",
 					    compositeWidgetClass, selFileForm,
 					    arglist, i);
 
     i = 0;
-    XtSetArg(arglist[i], XtNwidth, listWidth);
-    i++;
-    XtSetArg(arglist[i], XtNheight, listHeight);
-    i++;
-/*      XtSetArg(arglist[i], XtNborderColor, SFfore); */
-/*      i++; */
-    XtSetArg(arglist[i], XtNfromHoriz, selFileLists[1]);
-    i++;
-    XtSetArg(arglist[i], XtNfromVert, selFileHScroll);
-    i++;
-    XtSetArg(arglist[i], XtNhorizDistance, listSpacing);
-    i++;
-    XtSetArg(arglist[i], XtNvertDistance, 10);
-    i++;
-    XtSetArg(arglist[i], XtNtop, XtChainTop);
-    i++;
-    XtSetArg(arglist[i], XtNbottom, XtChainTop);
-    i++;
-    XtSetArg(arglist[i], XtNleft, XtChainLeft);
-    i++;
-    XtSetArg(arglist[i], XtNright, XtChainLeft);
-    i++;
+    XtSetArg(arglist[i], XtNwidth, listWidth);			i++;
+    XtSetArg(arglist[i], XtNheight, listHeight);		i++;
+    XtSetArg(arglist[i], XtNfromHoriz, selFileLists[1]);	i++;
+    XtSetArg(arglist[i], XtNfromVert, selFileHScroll);		i++;
+    XtSetArg(arglist[i], XtNhorizDistance, listSpacing);	i++;
+    XtSetArg(arglist[i], XtNvertDistance, 10);			i++;
+    XtSetArg(arglist[i], XtNtop, XtChainTop);			i++;
+    XtSetArg(arglist[i], XtNbottom, XtChainTop);		i++;
+    XtSetArg(arglist[i], XtNleft, XtChainLeft);			i++;
+    XtSetArg(arglist[i], XtNright, XtChainLeft);		i++;
+    
     selFileLists[2] = XtCreateManagedWidget("selFileList3",
 					    compositeWidgetClass, selFileForm,
 					    arglist, i);
@@ -596,16 +547,11 @@ SFcreateWidgets(Widget parent, const char *title, const char *prompt, const char
     for (n = 0; n < 3; n++) {
 
 	i = 0;
-	XtSetArg(arglist[i], XtNx, vScrollX);
-	i++;
-	XtSetArg(arglist[i], XtNy, vScrollY);
-	i++;
-	XtSetArg(arglist[i], XtNwidth, scrollThickness);
-	i++;
-	XtSetArg(arglist[i], XtNheight, SFvScrollHeight);
-	i++;
-/*  	XtSetArg(arglist[i], XtNborderColor, SFfore); */
-/*  	i++; */
+	XtSetArg(arglist[i], XtNx, vScrollX);			i++;
+	XtSetArg(arglist[i], XtNy, vScrollY);			i++;
+	XtSetArg(arglist[i], XtNwidth, scrollThickness);	i++;
+	XtSetArg(arglist[i], XtNheight, SFvScrollHeight);	i++;
+
 	selFileVScrolls[n] = XtCreateManagedWidget("selFileVScroll",
 						   scrollbarWidgetClass,
 						   selFileLists[n], arglist, i);
@@ -616,19 +562,12 @@ SFcreateWidgets(Widget parent, const char *title, const char *prompt, const char
 		      (XtCallbackProc)SFvAreaSelectedCallback, (XtPointer) n);
 
 	i = 0;
+	XtSetArg(arglist[i], XtNorientation, XtorientHorizontal);	i++;
+	XtSetArg(arglist[i], XtNx, hScrollX);				i++;
+	XtSetArg(arglist[i], XtNy, hScrollY);				i++;
+	XtSetArg(arglist[i], XtNwidth, SFhScrollWidth);			i++;
+	XtSetArg(arglist[i], XtNheight, scrollThickness);		i++;
 
-	XtSetArg(arglist[i], XtNorientation, XtorientHorizontal);
-	i++;
-	XtSetArg(arglist[i], XtNx, hScrollX);
-	i++;
-	XtSetArg(arglist[i], XtNy, hScrollY);
-	i++;
-	XtSetArg(arglist[i], XtNwidth, SFhScrollWidth);
-	i++;
-	XtSetArg(arglist[i], XtNheight, scrollThickness);
-	i++;
-/*  	XtSetArg(arglist[i], XtNborderColor, SFfore); */
-/*  	i++; */
 	selFileHScrolls[n] = XtCreateManagedWidget("selFileHScroll",
 						   scrollbarWidgetClass,
 						   selFileLists[n], arglist, i);
@@ -639,13 +578,35 @@ SFcreateWidgets(Widget parent, const char *title, const char *prompt, const char
 		      (XtCallbackProc)SFhAreaSelectedCallback, (XtPointer) n);
     }
 
+    /* When opening a DVI file, offer to open in new window */
+    if (callback->must_exist) {
+	open_menu = XtVaCreateManagedWidget(Xdvi_NEW_WINDOW_RADIO_NAME,
+#ifdef XAW
+					    radioWidgetClass,
+#else
+					    toggleWidgetClass,
+#endif
+					    selFileForm,
+#ifdef XAW
+					    XtNisRadio, False,
+#endif
+					    XtNfromVert, selFileLists[0],
+					    XtNvertDistance, 30,
+					    XtNhighlightThickness, 1,
+					    XtNborderWidth, 0,
+					    XtNlabel, "Open file in new window",
+					    XtNstate, resource.filesel_open_new_window,
+					    NULL);
+	XtAddCallback(open_menu, XtNcallback, cb_open_new_window, (XtPointer)NULL);
+    }
+
     /* Do the file filter stuff.  */
     selFileLabel = XtVaCreateManagedWidget("selFileLabel",
 					   labelWidgetClass, selFileForm,
-					   XtNfromVert, selFileLists[0],
-					   XtNvertDistance, 30,
-/* 					   XtNfromHoriz, selFileCancel, */
-/* 					   XtNhorizDistance, 60, */
+					   XtNfromVert, callback->must_exist ? open_menu : selFileLists[0],
+					   XtNvertDistance, callback->must_exist ? 10 : 30,
+					   /* 					   XtNfromHoriz, selFileCancel, */
+					   /* 					   XtNhorizDistance, 60, */
 					   XtNlabel, "File Mask:",
 					   XtNborderWidth, 0,
 					   XtNtop, XtChainTop,
@@ -654,8 +615,8 @@ SFcreateWidgets(Widget parent, const char *title, const char *prompt, const char
     selFileMask = XtVaCreateManagedWidget("selFileMask",
 					  asciiTextWidgetClass, selFileForm,
 					  XtNwidth, MASKWIDTH / 2 * SFcharWidth,
-					  XtNfromVert, selFileLists[0],
-					  XtNvertDistance, 30,
+					  XtNfromVert, callback->must_exist ? open_menu : selFileLists[0],
+					  XtNvertDistance, callback->must_exist ? 10 : 30,
 					  XtNfromHoriz, selFileLabel,
 					  XtNhorizDistance, 0,
 					  XtNtop, XtChainTop,
@@ -678,8 +639,8 @@ SFcreateWidgets(Widget parent, const char *title, const char *prompt, const char
 
     selFileLabel = XtVaCreateManagedWidget("selFileLabel",
 					   labelWidgetClass, selFileForm,
-					   XtNfromVert, selFileLists[0],
-					   XtNvertDistance, 30,
+					   XtNfromVert, callback->must_exist ? open_menu : selFileLists[0],
+					   XtNvertDistance, callback->must_exist ? 10 : 30,
 					   XtNfromHoriz, selFileMask,
 					   XtNhorizDistance, 40,
 					   XtNlabel, "Dot files are:",
@@ -689,15 +650,15 @@ SFcreateWidgets(Widget parent, const char *title, const char *prompt, const char
 
     selFileHide = XtVaCreateManagedWidget("selFileHide",
 					  commandWidgetClass, selFileForm,
-/*  					  XtNwidth, 7 * SFcharWidth, */
-					  XtNfromVert, selFileLists[0],
-					  XtNvertDistance, 30,
+					  /*  					  XtNwidth, 7 * SFcharWidth, */
+					  XtNfromVert, callback->must_exist ? open_menu : selFileLists[0],
+					  XtNvertDistance, callback->must_exist ? 10 : 30,
 					  XtNfromHoriz, selFileLabel,
 					  XtNhorizDistance, 2,
 					  XtNlabel, hideFlag ? "hidden" : "shown",
-/*  					  XtNborderWidth, 1, */
+					  /*  					  XtNborderWidth, 1, */
 					  XtNtop, XtChainTop,
-/*  					  XtNjustify, XtJustifyLeft, */
+					  /*  					  XtNjustify, XtJustifyLeft, */
 					  XtNbottom, XtChainTop,
 					  NULL);
     XtAddCallback(selFileHide, XtNcallback, (XtCallbackProc)hideFiles, NULL);
@@ -710,19 +671,19 @@ SFcreateWidgets(Widget parent, const char *title, const char *prompt, const char
 				  XtNaccelerators, G_accels_cr,
 				  NULL);
     selFileOK = XtVaCreateManagedWidget("selFileOK", commandWidgetClass,
-				      box,
-				      XtNlabel, ok,
-				      XtNcallback, SFokSelect,
-				      XtNtop, XtChainTop,
-				      XtNbottom, XtChainBottom,
-				      XtNleft, XtChainLeft,
-				      XtNright, XtChainLeft,
-				      NULL);
+					box,
+					XtNlabel, callback->ok,
+					XtNcallback, SFokSelect,
+					XtNtop, XtChainTop,
+					XtNbottom, XtChainBottom,
+					XtNleft, XtChainLeft,
+					XtNright, XtChainLeft,
+					NULL);
     selFileCancel = XtVaCreateManagedWidget("selFileCancel", commandWidgetClass,
 					    box,
-					    XtNlabel, cancel,
+					    XtNlabel, callback->cancel,
 					    XtNcallback, SFcancelSelect,
-/*  					    XtNborderColor, SFfore, */
+					    /*  					    XtNborderColor, SFfore, */
 					    XtNfromHoriz, selFileOK,
 					    XtNbottom, XtChainBottom,
 					    XtNleft, XtChainRight,
@@ -878,58 +839,57 @@ SFprepareToReturn(void)
     }
 }
 
-void
+Widget
 XsraSelFile(Widget parent, struct filesel_callback *callback)
-/*  	    const char *title, const char *prompt, */
-/*  	    const char *ok, const char *cancel, */
-/*  	    const char *init_path, */
-/*  	    const char *mask, */
-/*  	    Boolean must_exist, */
-/*  	    Widget *ret_widget */
 {
-    static Boolean firstTime = True;
-    Widget w;
+    SFdisplay = XtDisplay(parent);
+    return SFcreateWidgets(parent, callback);
+}
+
+void
+XsraSelFilePopup(struct filesel_callback *callback)
+{
     Cardinal i;
     Arg arglist[20];
     XEvent event;
     
-    if (!callback->prompt) {
+    if (XtIsManaged(callback->shell)) {
+	XBell(DISP, 10);
+	XRaiseWindow(DISP, XtWindow(callback->shell));
+	return;
+    }
+
+    if (!callback->prompt)
 	callback->prompt = "Pathname:";
-    }
 
-    if (!callback->title) {
-	callback->title = "Xdvi: select filename";
-    }
+    if (!callback->title)
+	callback->title = "xdvik: select filename";
 
-    if (!callback->ok) {
+    if (!callback->ok)
 	callback->ok = "OK";
-    }
 
-    if (!callback->cancel) {
+    if (!callback->cancel)
 	callback->cancel = "Cancel";
-    }
 
-    if (firstTime) {
-	firstTime = False;
-	SFdisplay = XtDisplay(parent);
-	w = SFcreateWidgets(parent, callback->title, callback->prompt, callback->ok, callback->cancel);
-    }
-    else {
-	i = 0;
-	XtSetArg(arglist[i], XtNlabel, callback->prompt);
-	i++;
-	XtSetValues(selFilePrompt, arglist, i);
+    /*     if (!callback->browse_fname) */
+    /* 	callback->browse_fname = xt_strdup(xgetcwd()); */
+    
+    i = 0;
+    XtSetArg(arglist[i], XtNlabel, callback->prompt); i++;
+    XtSetValues(selFilePrompt, arglist, i);
 
-	i = 0;
-	XtSetArg(arglist[i], XtNlabel, callback->ok);
-	i++;
-	XtSetValues(selFileOK, arglist, i);
+    i = 0;
+    XtSetArg(arglist[i], XtNlabel, callback->ok); i++;
+    XtSetValues(selFileOK, arglist, i);
 
-	i = 0;
-	XtSetArg(arglist[i], XtNlabel, callback->cancel);
-	i++;
-	XtSetValues(selFileCancel, arglist, i);
-    }
+    i = 0;
+    XtSetArg(arglist[i], XtNtitle, callback->title); i++;
+    XtSetValues(selFile, arglist, i);
+
+    i = 0;
+    XtSetArg(arglist[i], XtNlabel, callback->cancel); i++;
+    XtSetValues(selFileCancel, arglist, i);
+    
 
     SFpositionWidget(selFile);
     XtMapWidget(selFile);
@@ -988,8 +948,8 @@ XsraSelFile(Widget parent, struct filesel_callback *callback)
 	XtAppNextEvent(SFapp, &event);
 	switch (event.type) {
 	    Widget w;
-#if 0 /* don't do this, it may send the X server into a busy loop if the File selector
-	 is positioned over a window that is `on top' by default */
+#if 0  /* DON'T do this, it may send the X server into a busy loop if the File selector
+	  is positioned over a window that is `on top' by default */
 	case Expose:
 	    if (!raise_message_windows())
 		raise_file_selector();
@@ -997,7 +957,7 @@ XsraSelFile(Widget parent, struct filesel_callback *callback)
 #endif
 	case KeyPress:
 	case ButtonPress:
-	    /* beep if keypress was inside main window */
+	    /* ignore keypress inside the main window (and beep to warn) */
 	    w = XtWindowToWidget(DISP, event.xany.window);
 	    while ((w != NULL) && (w != selFile)) {
 		/* exception: message windows */
@@ -1007,6 +967,7 @@ XsraSelFile(Widget parent, struct filesel_callback *callback)
 	    }
 	    if (w == NULL || w == globals.widgets.top_level) {
 		XBell(DISP, 0);
+		continue;
 	    }
 	    break;
 	}
@@ -1044,21 +1005,21 @@ XsraSelFile(Widget parent, struct filesel_callback *callback)
 		    SFprepareToReturn();
 		    callback->func_ptr(SFtextBuffer, callback->data);
 		    return;
-/*  		    return xstrdup(SFtextBuffer); */
+		    /*  		    return xstrdup(SFtextBuffer); */
 		}
 	    }
 	    else {
 		SFprepareToReturn();
 		callback->func_ptr(SFtextBuffer, callback->data);
 		return;
-/*  		return xstrdup(SFtextBuffer); */
+		/*  		return xstrdup(SFtextBuffer); */
 	    }
 	case SEL_FILE_CANCEL:
 	    SFprepareToReturn();
 	    if (callback->exit_on_cancel)
 		exit(0);
 	    return;
-/*  	    return NULL; */
+	    /*  	    return NULL; */
 	case SEL_FILE_NULL:
 	    break;
 	}

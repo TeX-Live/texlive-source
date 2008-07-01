@@ -111,24 +111,4 @@ extern Boolean raise_message_windows(void);
 extern Boolean is_message_window(Widget w);
 extern Boolean kill_message_window(Widget w);
 
-/* XawtextScrollWhenNeeded has been ditched in Xaw7
-   (e.g. Xfree >= 4.x); from the man page:
-   
-   The value XawtextScrollWhenNeeded (and whenNeeded, recognized by
-   the converter), is accepted for backwards compatibilty with
-   resource specifications written for the Xaw6 Text widget, but
-   ignored (effectively treated as XawtextScrollNever).
-
-   So we're forced to use `scrollAlways' here.
-*/
-#define XAW_SCROLL_ALWAYS XawtextScrollAlways
-
-/* the reconfig stuff has been fixed
-   in XFree 4.1.0, vendor release 6510 (Slackware 8.0) */
-#define BROKEN_RECONFIG ((				\
-	(strstr(ServerVendor(DISP), "XFree") != NULL)	\
-	&& VendorRelease(DISP) >= 4000			\
-	&& VendorRelease(DISP) < 4002			\
-	))
-
 #endif /* MESSAGE_WINDOW_H_ */

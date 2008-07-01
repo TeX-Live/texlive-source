@@ -18,7 +18,7 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 /*
   List of recently visited files, initialized from X resource
@@ -30,6 +30,7 @@
 #include "xdvi-config.h"
 #include "xdvi.h"
 #include "util.h"
+#include "dl_list.h"
 #include "my-snprintf.h"
 #include "string-utils.h"
 #include "dvi-init.h"
@@ -352,13 +353,16 @@ file_history_open(const char *fname)
     }
     else {
 	dviErrFlagT errflag;
-	if (load_dvi_file(True, &errflag)) {
+	if (load_dvi_file(
+#if !DELAYED_MKTEXPK
+			  True,
+#endif
+			  &errflag)) {
 	    /* page_history_insert(pageno); */
 	    set_dvi_name(new_dvi_name);
 	    
 	    globals.ev.flags |= EV_NEWDOC;
 	    globals.ev.flags |= EV_FILEHIST_GOTO_PAGE;
-	    globals.ev.flags |= EV_PAGEHIST_INSERT;
 	}
 	else { /* re-open old file */
 	    popup_message(globals.widgets.top_level,
@@ -374,8 +378,11 @@ file_history_open(const char *fname)
 	    m_file_history_length--;
 	    filehist_menu_refresh();
 	    
-	    if (!internal_open_dvi(globals.dvi_name, &errflag, True)) {
-/*  		|| !internal_init_dvi(&errflag, True)) { */
+	    if (!internal_open_dvi(globals.dvi_name, &errflag, True
+#if DELAYED_MKTEXPK
+				   , True
+#endif
+				   )) {
 		popup_message(globals.widgets.top_level,
 			      MSG_ERR,
 			      NULL,

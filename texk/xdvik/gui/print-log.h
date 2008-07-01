@@ -23,24 +23,19 @@
 #ifndef PRINT_LOG_H_
 #define PRINT_LOG_H_
 
-/* printlog access functions */
+struct save_or_print_info *info; /* forward declaration */
 
-extern void printlog_create(const char *title,
-			    const char *close_label,
-			    /* callback for `close' button */
-			    void (*close_callback)(Widget w, XtPointer client_data, XtPointer call_data),
-			    /* callback for `cancel' button */
-			    void (*cancel_callback)(Widget w, XtPointer client_data, XtPointer call_data),
-			    /* callback for destroying window via window manager */
-			    void (*destroy_callback)(Widget w, XtPointer client_data, XtPointer call_data),
-			    /* callback for `close automatically' checkbox */
-			    void (*unkeep_callback)(Widget w, XtPointer client_data, XtPointer call_data));
-extern Boolean printlog_raise_active(void);
-extern void printlog_popup(void);
-extern void printlog_reset(void);
-extern void printlog_append(const char *str, size_t len);
-extern void printlog_append_str(const char *str);
-extern void printlog_enable_closebutton(void);
-extern void printlog_popdown(Boolean override_timer);
+/* printlog access functions */
+extern void printlog_create(struct save_or_print_info *info,
+			    const char *title,
+			    const char *close_label);
+extern Boolean printlog_raise_active(struct save_or_print_info *info);
+extern void printlog_popup(struct save_or_print_info *info);
+extern void printlog_reset(struct save_or_print_info *info);
+extern void printlog_append(struct save_or_print_info *info, const char *str, size_t len);
+extern void printlog_append_str(struct save_or_print_info *info, const char *str);
+extern void printlog_enable_closebutton(struct save_or_print_info *info);
+extern void printlog_enable_cancelbutton(struct save_or_print_info *info);
+extern void printlog_popdown(struct save_or_print_info *info, Boolean override_timer);
 
 #endif /* PRINT_LOG_H_ */

@@ -100,7 +100,7 @@ Atom atom_raise(void);
 /* instruct the current instance to reread preferences from ~/.xdvirc.tmp */
 Atom atom_reread_prefs(void);
 
-extern void synthetisize_event(XEvent *ev, Widget button);
+extern void synthesize_event(XEvent *ev, Widget button);
 
 #ifdef MOTIF
 extern int xm_get_height(Widget w);
@@ -110,6 +110,7 @@ extern void pixel_to_str(Widget w, Pixel pix, char *str, size_t len);
 extern void pixel_to_color(Pixel pix, XColor *color, Display *display, Colormap colormap);
 #endif
 
+extern void adjust_width_to_max(Widget w, ...);
 extern Widget get_matching_parent(Widget w, Widget p, const char *fmt, ...);
 extern Boolean widget_is_parent(Widget w, Widget p, Widget s);
 
@@ -137,5 +138,7 @@ extern void set_string_property(const char *str, Atom prop, Window win);
 
 extern Boolean clip_region(int *x, int *y, int *w, int *h);
 extern Boolean clip_region_to_rect(XRectangle *rect);
+
+extern Boolean window_is_mapped(Window w, Display *dpy);
 
 #endif

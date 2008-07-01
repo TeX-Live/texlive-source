@@ -36,6 +36,7 @@ progname=xdvizilla
 
 do_cleanup()
 {
+exit 0
     exitval=$?
     if [ -z "$NO_RM" -a -n "$IN_FILE" ] ; then
 	rm -f "$IN_FILE"
@@ -58,11 +59,48 @@ usage()
     exit 1
 }
 
+
+# Solaris' file command fails to identify DVI files (bug #1508963),
+# so add an extra check for these; otherwise, output result of 'file' command.
+get_filetype()
+{
+    f="$1"
+    have_solaris=`uname -a | grep -i sunos`
+    if [ "$have_solaris"xxx = "xxx" ]
+    then
+	ret=`file "$f"`
+    else
+        # we're on solaris, get first 2 bytes of file
+	magic=`od -N 2 -x "$f" | cut -d ' ' -f 2 | sed 1q | tr 'ABCDEF' 'abcdef'`
+        case "$magic" in
+        "f702" | "02f7")
+            ret="TeX DVI file"
+            ;;
+        *)
+            ret=`file "$f"`
+            ;;
+        esac
+    fi
+    echo "$ret"
+}
+
 trap 'do_cleanup' 1 2 3 7 13 15
 
 ### create a temporary directory only read/writable by user
-TMP_DIR=${TMPDIR-${TEMP-${TMP-/tmp}}}/$progname.$$
-(umask 077; mkdir "$TMP_DIR") || do_abort "Could not create directory \`$TMP_DIR'"
+### try mktemp if it's available
+TMP_DIR=${TMPDIR-${TEMP-${TMP-/tmp}}}/${progname}.XXXXXX
+TMP_DIR=`mktemp -d "$TMP_DIR" 2> /dev/null`
+if [ $? -ne 0 ]; then
+    ### fall back to unsafe creation
+    TMP_DIR=${TMPDIR-${TEMP-${TMP-/tmp}}}/${progname}.$$
+    (umask 077; mkdir "$TMP_DIR") || do_abort "Could not create directory \`$TMP_DIR'"
+fi
+
+### we hard-wire the magic for DVI files here since some "file" implementations
+### (e.g. on Solaris 9) don't recognize DVI files (bug #1508963)
+TMP_MAGIC_FILE="$TMP_DIR"/tmp-magic
+### Note: 3 tabs in the following line!
+echo '0	string	\367\002	TeX DVI file' > "$TMP_MAGIC_FILE"
 
 if [ $# -gt 1 -a "x$1" = "x-no-rm" ]; then
   NO_RM=y
@@ -83,13 +121,16 @@ else
   DIR=
 fi
 
+# set -x
+
 # need to preserve IN_FILE for eventual deletion
 IN_FILE="$1"
 TMP_FILE="$IN_FILE"
 
 while [ 1 ]; do
     [ -f "$TMP_FILE" ] || do_abort "$TMP_FILE: File not found."    
-    FILETYPE=`file "$TMP_FILE"`
+    #FILETYPE=`file -m "$TMP_MAGIC_FILE" "$TMP_FILE"`
+    FILETYPE=`get_filetype "$TMP_FILE"`
     case "$FILETYPE" in
     *"gzip compressed data"*)
         out="$TMP_DIR"/tmp-gz

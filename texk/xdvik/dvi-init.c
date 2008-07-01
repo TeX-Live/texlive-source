@@ -21,8 +21,8 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
 NOTE:
-	xdvi is based on prior work, as noted in the modification history
-	in xdvi.c.
+xdvi is based on prior work, as noted in the modification history
+in xdvi.c.
 
 \*========================================================================*/
 
@@ -33,6 +33,7 @@ NOTE:
 #include "dvi-draw.h"
 #include "util.h"
 #include "x_util.h"
+#include "exit-handlers.h"
 #include "mime.h"
 #include "pagesel.h"
 #include "special.h"
@@ -47,6 +48,12 @@ NOTE:
 #include "sfSelFile.h"
 #include "xm_toolbar.h"
 #include "pagehist.h"
+
+#if DELAYED_MKTEXPK
+#include "font-open.h" /* for reinit_missing_font_count() */    
+#endif
+
+
 
 #ifdef T1LIB
 #include "t1lib.h"
@@ -131,6 +138,21 @@ const char *
 get_dvi_error(dviErrFlagT flag) {
     ASSERT(flag < XtNumber(dvi_err_list), "Flag out of range");
     return dvi_err_list[flag];
+}
+
+
+/*
+ * Extract the unit used in paper size specification.  This information is used
+ * to decide the initial grid separation.
+ */
+static int
+atopixunit(const char *arg)
+{
+    int len = strlen(arg);
+
+    /* check if the unit 'mm' or 'cm' occurs in the arg string */
+    return (len > 2 && (arg[len - 2] == 'c' || arg[len - 2] == 'm') && arg[len - 1] == 'm' ?
+	    1.0 / 2.54 : 1.0) * resource.pixels_per_inch + 0.5;
 }
 
 /*
@@ -222,7 +244,7 @@ free_unused_fonts(void)
 
 		    for (m = fontp->macro;
 			 m <= fontp->macro + fontp->maxchar; ++m)
-			    if (m->free_me) free((char *)m->pos);
+			if (m->free_me) free((char *)m->pos);
 		    free((char *)fontp->macro);
 		    free((char *)fontp->vf_table);
 		    free_vf_chain(fontp->vf_chain);
@@ -327,7 +349,7 @@ realloc_font(struct font *fontp, wide_ubyte newsize)
 				    (unsigned int)(newsize + 1) * sizeof(struct glyph));
     if (newsize > fontp->maxchar)
 	memset((char *)(glyph + fontp->maxchar + 1), 0,
-	      (int)(newsize - fontp->maxchar) * sizeof(struct glyph));
+	       (int)(newsize - fontp->maxchar) * sizeof(struct glyph));
     maxchar = fontp->maxchar = newsize;
 }
 
@@ -345,7 +367,7 @@ realloc_virtual_font(struct font *fontp, wide_ubyte newsize)
 				    (unsigned int)(newsize + 1) * sizeof(struct macro));
     if (newsize > fontp->maxchar)
 	memset((char *)(macro + fontp->maxchar + 1), 0,
-	      (int)(newsize - fontp->maxchar) * sizeof(struct macro));
+	       (int)(newsize - fontp->maxchar) * sizeof(struct macro));
     maxchar = fontp->maxchar = newsize;
 }
 
@@ -359,7 +381,11 @@ realloc_virtual_font(struct font *fontp, wide_ubyte newsize)
  */
 
 Boolean
-load_font(struct font *fontp, Boolean use_t1lib)
+load_font(struct font *fontp, Boolean use_t1lib
+#if DELAYED_MKTEXPK
+	  , Boolean load_font_now
+#endif
+	  )
 {
     double fsize = fontp->fsize;
     int dpi = fsize + 0.5;
@@ -389,16 +415,23 @@ load_font(struct font *fontp, Boolean use_t1lib)
      * appear before the main window comes up ...
      */
 
+    fontp->file = font_open(
+#if DELAYED_MKTEXPK
+			    load_font_now,
+#endif
+			    fontp,
+			    &font_found,
+			    &size_found,
 #ifdef T1LIB
-    fontp->file = font_open(fontp->fontname, &font_found,
-			    fsize, &size_found,
-			    &fontp->filename, &fontp->t1id);
-#else
-    fontp->file = font_open(fontp->fontname, &font_found,
-			    fsize, &size_found,
-			    &fontp->filename);
-#endif /* T1LIB */
+			    &fontp->t1id,
+#endif
+			    use_t1lib);
 
+#if DELAYED_MKTEXPK
+    if (!load_font_now)
+	return True;
+#endif
+    
 #ifdef T1LIB
     if (fontp->t1id >= 0 && use_t1lib) {
 	/* It's a type1 font */
@@ -412,7 +445,7 @@ load_font(struct font *fontp, Boolean use_t1lib)
 	memset((char *) fontp->glyph, 0, 256 * sizeof (struct glyph));
 	fontp->flags |= FONT_LOADED;
 	if (font_found != NULL) {
-	    statusline_print(STATUS_MEDIUM,
+	    statusline_error(STATUS_MEDIUM,
 			     "Error: Can't find font %s; using %s instead. Expect ugly output.",
 			     fontp->fontname, font_found);
 	    force_statusline_update();
@@ -432,9 +465,9 @@ load_font(struct font *fontp, Boolean use_t1lib)
     }
     fontp->flags |= FONT_LOADED;
 
-    if (font_found != NULL  && strcmp(fontp->fontname, font_found) != 0) {
+    if (font_found != NULL && strcmp(fontp->fontname, font_found) != 0) {
 	/* some other font used - FIXME: is there a more efficient way than strcmp() for checking this? */
-	statusline_print(STATUS_MEDIUM,
+	statusline_error(STATUS_MEDIUM,
 			 "Can't find pixel font %s; using %s instead at %d dpi.",
 			 fontp->fontname, font_found, dpi);
 	force_statusline_update();
@@ -443,7 +476,7 @@ load_font(struct font *fontp, Boolean use_t1lib)
 	hushcs = True;
     }
     else if (!kpse_bitmap_tolerance((double)size_found, fsize)) { /* a different size used */
-	statusline_print(STATUS_MEDIUM,
+	statusline_error(STATUS_MEDIUM,
 			 "Can't find pixel font %s at %d dpi; using %d dpi instead.",
 			 fontp->fontname, dpi, size_found);
 	force_statusline_update();
@@ -489,8 +522,9 @@ load_font(struct font *fontp, Boolean use_t1lib)
     else {
 	while (maxchar > 0 && fontp->glyph[maxchar].addr == 0)
 	    --maxchar;
-	if (maxchar < 255)
+	if (maxchar < 255) {
 	    realloc_font(fontp, (wide_ubyte)maxchar);
+	}
     }
     return True;
 }
@@ -571,8 +605,15 @@ reuse_font(struct font *fontp)
  *      all of the fonts used in the job.
  */
 struct font *
-define_font(Boolean load_font_now,	/* only scanning, or also loading the font? */
-	    FILE *file, wide_ubyte cmnd,
+define_font(
+#if DELAYED_MKTEXPK
+	    Boolean read_fonts,		/* reading font definitions */
+	    Boolean initialize_fonts,	/* also initializing internal data structures for fonts */
+#else
+	    Boolean load_font_now,	/* only scanning, or also loading the font? */
+#endif
+	    FILE *file,
+	    wide_ubyte cmnd,
 	    struct font *vfparent,	/* vf parent of this font, or NULL */
 	    struct font **tntable,	/* table for low TeXnumbers */
 	    unsigned int tn_table_len,	/* length of table for TeXnumbers */
@@ -598,12 +639,20 @@ define_font(Boolean load_font_now,	/* only scanning, or also loading the font? *
     len = get_byte(file);
     len += get_byte(file);	/* sequence point in the middle */
 
+#if DELAYED_MKTEXPK
+    if (!read_fonts) {
+	get_bytes(file, len);
+	return NULL;
+    }
+#else
     if (!load_font_now)
 	return NULL;
+#endif
     
     fontname = xmalloc((unsigned)len + 1);
-    fread(fontname, sizeof(char), len, file);
+    (void)fread(fontname, sizeof(char), len, file);
     fontname[len] = '\0';
+    
     if (globals.debug & DBG_PK)
 	printf("xdvi: Define font \"%s\" scale=%d design=%d number=%d\n",
 	       fontname, scale, design, TeXnumber);
@@ -645,7 +694,11 @@ define_font(Boolean load_font_now,	/* only scanning, or also loading the font? *
 	    fontp->set_char_p = load_n_set_char;
 	    fontp->scale = scale;
 	    if (vfparent == NULL)
-		if (!load_font(fontp, resource.t1lib)) {
+		if (!load_font(fontp, resource.t1lib
+#if DELAYED_MKTEXPK
+			       , initialize_fonts
+#endif
+			       )) {
 		    if (globals.ev.flags & EV_GE_NEWDOC) {	/* if aborting */
 			free(fontname);
 			free(fontp);
@@ -711,7 +764,7 @@ process_preamble(FILE *fp, dviErrFlagT *errflag)
     dimconv = dimconv * (((long)resource.pixels_per_inch) << 16) / 254000;
     tpic_conv = resource.pixels_per_inch * magnification / 1000000.0;
     k = get_byte(fp);
-    fread(job_id, sizeof(char), (int)k, fp);
+    (void)fread(job_id, sizeof(char), (int)k, fp);
     job_id[k] = '\0';
 
     TRACE_FILES((stderr, "process_preamble: fp = %p, errflag = %d, returning True", (void *)fp, *errflag));
@@ -812,6 +865,8 @@ set_paper_type(const char *arg)
     m_paper_unshrunk_w = atopix(arg, False);
     m_paper_unshrunk_h = atopix(arg1 + 1, False);
 
+    globals.grid_paper_unit = atopixunit(arg);
+    
     return (m_paper_unshrunk_w != 0 && m_paper_unshrunk_h != 0);
 }
 
@@ -825,12 +880,37 @@ set_paper_type(const char *arg)
  *	and allow to open window on first page) if the font loading was done on-demand later!
  */
 Boolean
-read_postamble(FILE *fp, dviErrFlagT *errflag, Boolean load_fonts)
+read_postamble(FILE *fp, dviErrFlagT *errflag,
+#if DELAYED_MKTEXPK
+	       Boolean read_fonts, Boolean initialize_fonts
+#else
+	       Boolean load_fonts
+#endif
+	       )
 {
     ubyte cmnd;
     Boolean font_not_found = False;
     struct font	*fontp;
 
+#if DELAYED_MKTEXPK
+    int tmp_total_pages;
+    unsigned long tmp_numerator = numerator;
+    unsigned long tmp_denominator = denominator;
+    unsigned long tmp_magnification = magnification;
+    unsigned int tmp_dvi_unshrunk_page_w, tmp_dvi_unshrunk_page_h;
+    long tmp_last_page_offset;
+    
+    TRACE_FILES((stderr, "read_postamble: reading %p (%d, %d)", (void *)fp, read_fonts, initialize_fonts));
+
+    if (read_fonts && initialize_fonts) {
+	/* clear existing font table */
+	memset((char *)tn_table, 0, (int)sizeof tn_table);
+	free_vf_chain(tn_head);
+	tn_head = NULL;
+	for (fontp = font_head; fontp != NULL; fontp = fontp->next)
+	    fontp->flags &= ~FONT_IN_USE;
+    }
+#else /* DELAYED_MKTEXPK */    
     TRACE_FILES((stderr, "read_postamble: reading %p (%d)", (void *)fp, load_fonts));
 
     /* clear existing font table */
@@ -839,13 +919,47 @@ read_postamble(FILE *fp, dviErrFlagT *errflag, Boolean load_fonts)
     tn_head = NULL;
     for (fontp = font_head; fontp != NULL; fontp = fontp->next)
 	fontp->flags &= ~FONT_IN_USE;
-
+#endif /* DELAYED_MKTEXPK */
     
     if (get_byte(fp) != POST) {
 	*errflag = POSTAMBLE_NO_POST;
 	TRACE_FILES((stderr, "read_postamble: returning FALSE"));
 	return False;
     }
+#if DELAYED_MKTEXPK
+    tmp_last_page_offset = get_bytes(fp, 4);
+    if (read_fonts && initialize_fonts)
+	m_last_page_offset = tmp_last_page_offset;
+
+    if (tmp_numerator != get_bytes(fp, 4)
+	|| tmp_denominator != get_bytes(fp, 4)
+	|| tmp_magnification != get_bytes(fp, 4)) {
+	*errflag = POSTAMBLE_NO_MATCH;
+	TRACE_FILES((stderr, "read_postamble: returning FALSE"));
+	return False;
+    }
+    else if (read_fonts && initialize_fonts) {
+	numerator = tmp_numerator;
+	denominator = tmp_denominator;
+	magnification = tmp_magnification;
+    }
+    
+    /* read largest box height and width */
+    tmp_dvi_unshrunk_page_h = (spell_conv(get_lbytes(fp, 4)) >> 16) + resource.yoffset_int;
+    tmp_dvi_unshrunk_page_w = (spell_conv(get_lbytes(fp, 4)) >> 16) + resource.xoffset_int;
+    (void)get_bytes(fp, 2);	/* max stack size */
+    tmp_total_pages = get_bytes(fp, 2);
+
+    if (read_fonts && initialize_fonts) {
+	dvi_unshrunk_page_h = tmp_dvi_unshrunk_page_h;
+	if (dvi_unshrunk_page_h < m_paper_unshrunk_h)
+	    dvi_unshrunk_page_h = m_paper_unshrunk_h;
+	dvi_unshrunk_page_w = tmp_dvi_unshrunk_page_w;
+	if (dvi_unshrunk_page_w < m_paper_unshrunk_w)
+	    dvi_unshrunk_page_w = m_paper_unshrunk_w;
+	total_pages = tmp_total_pages;
+    }
+#else /* DELAYED_MKTEXPK */
     m_last_page_offset = get_bytes(fp, 4);
     if (numerator != get_bytes(fp, 4)
 	|| denominator != get_bytes(fp, 4)
@@ -864,31 +978,56 @@ read_postamble(FILE *fp, dviErrFlagT *errflag, Boolean load_fonts)
 	dvi_unshrunk_page_w = m_paper_unshrunk_w;
     (void)get_bytes(fp, 2);	/* max stack size */
     total_pages = get_bytes(fp, 2);
+#endif /* DELAYED_MKTEXPK */
 
     /* read font definitions */
     while ((cmnd = get_byte(fp)) >= FNTDEF1 && cmnd <= FNTDEF4) {
-	struct font *f = define_font(load_fonts, fp, cmnd, (struct font *)NULL, tn_table,
+	struct font *f = define_font(
+#if DELAYED_MKTEXPK
+				     read_fonts, initialize_fonts,
+#else
+				     load_fonts,
+#endif
+				     fp, cmnd, (struct font *)NULL, tn_table,
 				     TNTABLELEN, &tn_head, &font_not_found);
-	if (load_fonts && f == NULL) {
+	if (
+#if DELAYED_MKTEXPK
+	    read_fonts && initialize_fonts
+#else
+	    load_fonts
+#endif
+	    && f == NULL) {
 	    TRACE_FILES((stderr, "read_postamble: returning FALSE"));
 	    return False;
 	}
+#if !DELAYED_MKTEXPK
 	else if (!load_fonts) { /* return early */
 	    TRACE_FILES((stderr, "read_postamble: returning TRUE"));
 	    return True;
 	}
+#endif
     }
+
     if (cmnd != POSTPOST) {
 	*errflag = POSTAMBLE_NON_FNTDEF;
 	TRACE_FILES((stderr, "read_postamble: returning FALSE"));
 	return False;
     }
-    if (font_not_found) {
+    if (
+#if DELAYED_MKTEXPK
+	read_fonts && initialize_fonts &&
+#endif
+	font_not_found) {
 	*errflag = NOT_ALL_PIXEL_FILES_FOUND;
 	TRACE_FILES((stderr, "read_postamble: returning FALSE"));
 	return False;
     }
+#if DELAYED_MKTEXPK
+    if (read_fonts && initialize_fonts)
+	free_unused_fonts();
+#else
     free_unused_fonts();
+#endif
 
     TRACE_FILES((stderr, "read_postamble: returning TRUE"));
     return True;
@@ -960,18 +1099,22 @@ init_page(void)
 #define	S_ISDIR(m)	(((m) & S_IFMT) == S_IFDIR)
 #endif
 
-static char *tmp_dvi_name = NULL; /* name of backup file for useTempFp */
+static char *m_tmp_dvi_name = NULL; /* name of backup file for useTempFp */
 
 /* access function for backup file name */
 char *get_tmp_dvi_name() {
-    return tmp_dvi_name;
+    return m_tmp_dvi_name;
 }
 
-void
-remove_tmp_dvi_file(void)
+static void
+remove_tmp_dvi_file(void *dummy)
 {
-    if (tmp_dvi_name != NULL)
-	unlink(tmp_dvi_name);
+    UNUSED(dummy);
+    if (m_tmp_dvi_name != NULL) {
+	unlink(m_tmp_dvi_name);
+	free(m_tmp_dvi_name);
+    }
+    m_tmp_dvi_name = NULL;
 }
 
 
@@ -984,26 +1127,27 @@ make_backup_fp(FILE *source_fp, FILE *target_fp)
 #if !HAVE_FTRUNCATE
     /* in this case, we can't use ftruncate() on the existing temp file -
        just close the existing one, and set flag to open a new one */
-    if (tmp_dvi_name != NULL)
-	unlink(tmp_dvi_name);
+    remove_tmp_dvi_file(NULL);
     if (target_fp != NULL)
 	fclose(target_fp);
     /* make sure we use a new temp file, else we'd have a race condition
        after closing it */
-    free(tmp_dvi_name);
-    tmp_dvi_name = NULL;
     first_time = True;
 #endif
     
     if (first_time) { /* doesn't exist yet, create it */
-	if ((tmp_fd = xdvi_temp_fd(&tmp_dvi_name)) == -1) {
+	if ((tmp_fd = xdvi_temp_fd(&m_tmp_dvi_name)) == -1) {
 	    XDVI_ERROR((stderr, "error creating temporary file - disabling `useTempFp'."));
+	    resource.use_temp_fp = False;
+	    remove_tmp_dvi_file(NULL);
 	    return NULL;
 	}
-/* 	fprintf(stderr, "temporary file name: |%s|, %d\n", tmp_dvi_name, tmp_fd); */
-	TRACE_EVENTS((stderr, "Created temp file: |%s|\n", tmp_dvi_name));
+	/* 	fprintf(stderr, "temporary file name: |%s|, %d\n", m_tmp_dvi_name, tmp_fd); */
+	TRACE_EVENTS((stderr, "Created temp file: |%s|\n", m_tmp_dvi_name));
 	if ((target_fp = try_fdopen(tmp_fd, "wb+")) == NULL) {
 	    XDVI_ERROR((stderr, "error opening temporary file (%s) - disabling `useTempFp'.", strerror(errno)));
+	    resource.use_temp_fp = False;
+	    remove_tmp_dvi_file(NULL);
 	    return NULL;
 	}
 	first_time = False;
@@ -1012,12 +1156,14 @@ make_backup_fp(FILE *source_fp, FILE *target_fp)
 	      and position both files at beginning */
 	ASSERT(target_fp != NULL, "");
 	ASSERT(source_fp != NULL, "");
-	
+
 #if HAVE_FTRUNCATE
 	if (ftruncate(tmp_fd, 0) < 0) {
-	    XDVI_ERROR((stderr, "Couldn't truncate file %s: %s - disabling `useTempFp'.",
-			tmp_dvi_name, strerror(errno)));
-	    unlink(tmp_dvi_name);
+		
+	    XDVI_ERROR((stderr, "Couldn't truncate file %s: %s - disabling `useTempFp'; target_fp: %p.",
+			m_tmp_dvi_name, strerror(errno), target_fp));
+	    resource.use_temp_fp = False;
+	    remove_tmp_dvi_file(NULL);
 	    fclose(target_fp);
 	    return NULL;
 	}
@@ -1032,12 +1178,16 @@ make_backup_fp(FILE *source_fp, FILE *target_fp)
 		    "Error creating temporary file: %s\n"
 		    "- disabling `useTempFp'.",
 		    strerror(errno)));
+	remove_tmp_dvi_file(NULL);
+	resource.use_temp_fp = False;
 	fclose(target_fp);
 	target_fp = NULL;
     }
     
     /* rewind both files, else DVI parsing will fail! */
-    fflush(target_fp);
+    if (target_fp != NULL) {
+	fflush(target_fp);
+    }
     fseek(source_fp, 0L, SEEK_SET);
     if (target_fp != NULL) {
 	fseek(target_fp, 0L, SEEK_SET);
@@ -1052,12 +1202,12 @@ file_exists_p(const char *path, dviErrFlagT *errflag)
     TRACE_FILES((stderr, "file_exists_p for |%s|", path));
     *errflag = UNKNOWN_ERROR;
     if ((m_dvi_fp = XFOPEN(path, OPEN_MODE)) == NULL) {
-/*  	fprintf(stderr, "after internal_open_dvi1: xfopen\n"); */
+	/*  	fprintf(stderr, "after internal_open_dvi1: xfopen\n"); */
 	*errflag = FILE_DOESNT_EXIST;
 	return False;
     }
     TRACE_FILES((stderr, "m_dvi_fp for |%s| = %p", path, (void *)m_dvi_fp));
-/*      fprintf(stderr, "after internal_open_dvi2: xfopen\n"); */
+    /*      fprintf(stderr, "after internal_open_dvi2: xfopen\n"); */
     
     /* shouldn't happen */
     if (fstat(fileno(m_dvi_fp), &fstatbuf) != 0 || S_ISDIR(fstatbuf.st_mode)) {	/* if it's a directory */
@@ -1089,7 +1239,13 @@ file_exists_p(const char *path, dviErrFlagT *errflag)
  */
 
 static Boolean
-internal_init_dvi(dviErrFlagT *errflag, Boolean load_fonts)
+internal_init_dvi(dviErrFlagT *errflag,
+#if DELAYED_MKTEXPK
+		  Boolean read_fonts, Boolean initialize_fonts
+#else
+		  Boolean load_fonts
+#endif
+		  )
 {
     char *icon_name = NULL, *title_name = NULL;
 
@@ -1099,10 +1255,23 @@ internal_init_dvi(dviErrFlagT *errflag, Boolean load_fonts)
     
     if (!process_preamble(globals.dvi_file.bak_fp, errflag)
 	|| !find_postamble(globals.dvi_file.bak_fp, errflag)
+#if DELAYED_MKTEXPK
+	|| !read_postamble(globals.dvi_file.bak_fp, errflag, read_fonts, initialize_fonts)
+#else
 	|| !read_postamble(globals.dvi_file.bak_fp, errflag, load_fonts)
-	|| !prepare_pages(errflag))
+	|| !prepare_pages(errflag)
+#endif
+	) {
 	return False;
-
+    }
+#if DELAYED_MKTEXPK
+    if (!read_fonts || !initialize_fonts) /* return early */
+	return True;
+    
+    if (!prepare_pages(errflag))
+	return False;
+#endif
+    
     if (current_page >= total_pages)
 	current_page = total_pages - 1;
 
@@ -1141,13 +1310,23 @@ internal_init_dvi(dviErrFlagT *errflag, Boolean load_fonts)
  */
 
 Boolean
-internal_open_dvi(const char *path, dviErrFlagT *errflag, Boolean load_fonts)
+internal_open_dvi(const char *path, dviErrFlagT *errflag,
+#if DELAYED_MKTEXPK
+		  Boolean read_fonts, Boolean initialize_fonts
+#else
+		  Boolean load_fonts
+#endif
+		  )
 {
-/*     FILE *tmp_fp = NULL; */
-/*     static FILE *bak_fp = NULL; /\* re-use the temporary backup fp *\/ */
-/*      fprintf(stderr, "------------ opening: |%s|\n", path); */
+    /*     FILE *tmp_fp = NULL; */
+    /*     static FILE *bak_fp = NULL; /\* re-use the temporary backup fp *\/ */
+    /*      fprintf(stderr, "------------ opening: |%s|\n", path); */
 
+#if DELAYED_MKTEXPK
+    TRACE_FILES((stderr, "internal_open_dvi for |%s|; loading fonts: %d, %d", path, read_fonts, initialize_fonts));
+#else
     TRACE_FILES((stderr, "internal_open_dvi for |%s|", path));
+#endif
     close_old_filep();
 
     if (!file_exists_p(path, errflag)) { /* this should set fstatbuf.st_mtime */
@@ -1157,9 +1336,18 @@ internal_open_dvi(const char *path, dviErrFlagT *errflag, Boolean load_fonts)
     if (!resource.use_temp_fp || (globals.dvi_file.bak_fp = make_backup_fp(m_dvi_fp, globals.dvi_file.bak_fp)) == NULL) {
 	globals.dvi_file.bak_fp = m_dvi_fp;
     }
-    globals.dvi_file.time = fstatbuf.st_mtime;
+
+    register_exit_handler(remove_tmp_dvi_file, NULL);
     
-    if (!internal_init_dvi(errflag, load_fonts)) {
+    globals.dvi_file.time = fstatbuf.st_mtime;
+
+    if (!internal_init_dvi(errflag,
+#if DELAYED_MKTEXPK
+			   read_fonts, initialize_fonts
+#else
+			   load_fonts
+#endif
+			   )) {
 	return False;
     }
     
@@ -1346,7 +1534,7 @@ open_dvi_file_wrapper(const char *filename,
 	  people, who meant to launch *xdvi*). `find_dvi_file' tries to locate the
 	  file and does all error handling; on success, it returns a fully expanded
 	  filename.
-	 */
+	*/
 	real_filename = find_dvi_file(filename, tried_dvi_ext, from_file_history); /* this allocates real_filename */
 	if (real_filename == NULL)
 	    return False;
@@ -1363,7 +1551,7 @@ open_dvi_file_wrapper(const char *filename,
 	  if it's not from the command line (e.g. result of clicking Mouse-1 on a link);
 	  in this case we might fall back to using the browser.
 	  Check whether it's a local file:
-	 */
+	*/
 	const char *filename_no_prefix;
 	char *expanded_filename;
 	TRACE_HTEX((stderr, "filename NOT from commandline"));
@@ -1416,8 +1604,11 @@ open_dvi_file(const char *filename, Boolean open_new_instance)
     else {
 	dviErrFlagT errflag = NO_ERROR;
 	TRACE_HTEX((stderr, "internal_open_dvi: |%s|", filename));
-	if (!internal_open_dvi(filename, &errflag, True)) {
-/*  	    || !internal_init_dvi(&errflag, True)) { */
+	if (!internal_open_dvi(filename, &errflag, True
+#if DELAYED_MKTEXPK
+			       , TRUE
+#endif
+			       )) {
 	    report_open_error("Cannot open DVI file", filename, errflag);
 	    retval = False;
 	}
@@ -1478,28 +1669,37 @@ dvi_file_changed(void)
 {
     TRACE_FILES((stderr, "dvi_file_changed: fp = %p?", (void *)m_dvi_fp));
 
-/*     fprintf(stderr, "m_dvi_fp3: %p (%s)\n", m_dvi_fp, globals.dvi_name); */
+    /*     fprintf(stderr, "m_dvi_fp3: %p (%s)\n", m_dvi_fp, globals.dvi_name); */
     if (m_dvi_fp == NULL) {
 	TRACE_FILES((stderr, "m_dvi_fp == NULL"));
 	if (stat(globals.dvi_name, &fstatbuf) == 0 && fstatbuf.st_mtime != globals.dvi_file.time) {
 	    TRACE_FILES((stderr, "file changed"));
 	    if (resource.use_temp_fp) {
 		dviErrFlagT errflag = NO_ERROR;
-
+#if !DELAYED_MKTEXPK
 		if (resource.watch_file == 0.0)
-		    statusline_print(STATUS_MEDIUM, "File changed ...");
+		    statusline_info(STATUS_MEDIUM, "File changed ...");
 		TRACE_FILES((stderr, "returning FALSE"));
-
+#endif
 		if (file_exists_p(globals.dvi_name, &errflag)
 		    && process_preamble(m_dvi_fp, &errflag)
 		    && find_postamble(m_dvi_fp, &errflag)
-		    && read_postamble(m_dvi_fp, &errflag, False)) {
+		    && read_postamble(m_dvi_fp, &errflag, False
+#if DELAYED_MKTEXPK
+				      , False
+#endif
+				      )) {
 		    TRACE_FILES((stderr, "File OK, reloading ..."));
 		    
 		    globals.ev.flags |= EV_RELOAD;
 		    return True;
 		}
 		else {
+#if DELAYED_MKTEXPK
+		    if (resource.watch_file == 0.0)
+			statusline_info(STATUS_MEDIUM, "File corrupted (click on window to reload) ...");
+		    TRACE_FILES((stderr, "returning FALSE"));
+#endif
 		    return False;
 		}
 	    }
@@ -1509,9 +1709,9 @@ dvi_file_changed(void)
 	       on the canvas.
 	    */
 	    /*
-	    else {
-		globals.ev.flags |= EV_RELOAD;
-	    }
+	      else {
+	      globals.ev.flags |= EV_RELOAD;
+	      }
 	    */
 	    TRACE_FILES((stderr, "returning TRUE"));
 	    return True;
@@ -1531,18 +1731,22 @@ dvi_file_changed(void)
 	
 	if (resource.use_temp_fp) { /* in this case, reload only if file has been written completely */
 	    if (resource.watch_file == 0.0) {
-		statusline_print(STATUS_MEDIUM, "File corrupted (click on window to reload) ...");
+		statusline_info(STATUS_MEDIUM, "File corrupted (click on window to reload) ...");
 		globals.cursor.flags |= CURSOR_CORRUPTED;
 		globals.ev.flags |= EV_CURSOR;
 	    }
 	    else {
-		statusline_print(STATUS_MEDIUM, "File corrupted (will try to reload) ...");
+		statusline_info(STATUS_MEDIUM, "File corrupted (will try to reload) ...");
 	    }
 	    close_old_filep();
 	    if (file_exists_p(globals.dvi_name, &errflag)
 		&& process_preamble(m_dvi_fp, &errflag)
 		&& find_postamble(m_dvi_fp, &errflag)
-		&& read_postamble(m_dvi_fp, &errflag, False)) {
+		&& read_postamble(m_dvi_fp, &errflag, False
+#if DELAYED_MKTEXPK
+				  , False
+#endif
+				  )) {
 		TRACE_FILES((stderr, "File OK, reloading ..."));
 		
 		globals.ev.flags |= EV_RELOAD;
@@ -1550,7 +1754,7 @@ dvi_file_changed(void)
 	    }
 	    else {
 		TRACE_FILES((stderr, "NO successful load: %s", get_dvi_error(errflag)));
-/*  		fprintf(stderr, "=========== NO successful load: %s\n", get_dvi_error(errflag)); */
+		/*  		fprintf(stderr, "=========== NO successful load: %s\n", get_dvi_error(errflag)); */
 		return False;
 	    }
 	}
@@ -1568,7 +1772,11 @@ dvi_file_changed(void)
  **/
 
 Boolean
-load_dvi_file(Boolean load_fonts, dviErrFlagT *errflag)
+load_dvi_file(
+#if !DELAYED_MKTEXPK
+	      Boolean load_fonts,
+#endif
+	      dviErrFlagT *errflag)
 {
     unsigned int old_page_w, old_page_h;
     static ino_t dvi_inode = 0;
@@ -1581,7 +1789,13 @@ load_dvi_file(Boolean load_fonts, dviErrFlagT *errflag)
 	fseek(m_dvi_fp, 0L, SEEK_SET);
 	if (!process_preamble(m_dvi_fp, errflag)
 	    || !find_postamble(m_dvi_fp, errflag)
-	    || !read_postamble(m_dvi_fp, errflag, True)) {
+	    || !read_postamble(m_dvi_fp, errflag,
+#if DELAYED_MKTEXPK
+			       False, False
+#else
+			       True
+#endif
+			       )) {
 	    TRACE_FILES((stderr, "reading of %p failed: %s!",
 			 (void *)m_dvi_fp,
 			 get_dvi_error(*errflag)));
@@ -1593,16 +1807,42 @@ load_dvi_file(Boolean load_fonts, dviErrFlagT *errflag)
     old_page_h = globals.page.h;
 
     *errflag = NO_ERROR;
-    if (!internal_open_dvi(globals.dvi_name, errflag, load_fonts)) {
-/*  	|| !internal_init_dvi(errflag, load_fonts)) { */
+
+#if DELAYED_MKTEXPK
+    /* use same trick with reading postamble twice to first find names of PK fonts
+       that need to be created. */
+    reset_missing_font_count();
+    kpse_set_program_enabled(kpse_any_glyph_format, False, kpse_src_compile);
+#endif
+    
+    if (!internal_open_dvi(globals.dvi_name, errflag,
+#if DELAYED_MKTEXPK
+			   True, False
+#else
+			   load_fonts
+#endif
+			   )) {
 	XClearWindow(DISP, mane.win);
-	XBell(DISP, 0);
-	statusline_print(STATUS_MEDIUM, "%s: %s%s", globals.dvi_name, get_dvi_error(*errflag),
+	xdvi_bell();
+	statusline_info(STATUS_MEDIUM, "%s: %s%s", globals.dvi_name, get_dvi_error(*errflag),
 			 resource.watch_file > 0.0 ? "; will try to reload ..." : " (click on window to reload)");
 	close_old_filep();
 
 	return False;
     }
+#if DELAYED_MKTEXPK
+    /* second time */
+    kpse_set_program_enabled(kpse_any_glyph_format, True, kpse_src_compile);
+    
+    if (!internal_open_dvi(globals.dvi_name, errflag, True, True)) {
+	XClearWindow(DISP, mane.win);
+	xdvi_bell();
+	statusline_info(STATUS_MEDIUM, "%s: %s%s", globals.dvi_name, get_dvi_error(*errflag),
+			 resource.watch_file > 0.0 ? "; will try to reload ..." : " (click on window to reload)");
+	close_old_filep();
+	return False;
+    }
+#endif
     else { /* success */
 	if (fstatbuf.st_ino != dvi_inode) {
 	    dvi_inode = fstatbuf.st_ino;

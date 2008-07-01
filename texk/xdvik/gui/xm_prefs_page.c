@@ -60,12 +60,8 @@
 #include <Xm/TextF.h>
 #include <Xm/CascadeBG.h>
 
-#if XmVersion >= 2000 && !defined(LESSTIF_VERSION)
-/* spinbox only available with Motif 2.0; the lesstif version (as of 0.93) looks like shit */
+#if USE_SPINBOX
 #include <Xm/SpinB.h>
-#define USE_SPINBOX 1
-#else
-#define USE_SPINBOX 0
 #endif
 
 /*
@@ -180,9 +176,9 @@ landscape_cb(Widget w, XtPointer client_data, XtPointer call_data)
 	    landscape = is_set;
 	}
 
-/* 	fprintf(stderr, "++++++++ CALLBACK: setting portrait to %s, landscape to %s\n", */
-/* 		landscape ? "False" : "True", */
-/* 		landscape ? "True" : "False"); */
+	/* 	fprintf(stderr, "++++++++ CALLBACK: setting portrait to %s, landscape to %s\n", */
+	/* 		landscape ? "False" : "True", */
+	/* 		landscape ? "True" : "False"); */
 	
 	XmToggleButtonGadgetSetState(portrait_b, !landscape, False);
 	XmToggleButtonGadgetSetState(landscape_b, landscape, False);
@@ -274,22 +270,22 @@ update_preferences_paper(void)
 #endif /* 0 */
 
 	/*
-	   Apparently there's a bug in Motif (OpenMotif 2.1) in that the button
-	   is not properly updated in all cases.
+	  Apparently there's a bug in Motif (OpenMotif 2.1) in that the button
+	  is not properly updated in all cases.
 
-	   To reproduce:
+	  To reproduce:
 
-	   Open Preferences dialog, change `landscape' option, click
-	   `OK'.  Now open the dialog again, change the option again,
-	   but click `Cancel'.  This correctly reverts the visible
-	   state of the buttons, but when opening the dialog again,
-	   the button's internal state is not consistent with the
-	   visual appearance: when clicking on the unset button, its
-	   ValueChanged callback is not invoked, so nothing happens;
-	   but after clicking on another(!)  button in the preferences
-	   dialog, it works again.
+	  Open Preferences dialog, change `landscape' option, click
+	  `OK'.  Now open the dialog again, change the option again,
+	  but click `Cancel'.  This correctly reverts the visible
+	  state of the buttons, but when opening the dialog again,
+	  the button's internal state is not consistent with the
+	  visual appearance: when clicking on the unset button, its
+	  ValueChanged callback is not invoked, so nothing happens;
+	  but after clicking on another(!)  button in the preferences
+	  dialog, it works again.
 
-	   As a workaround, we destroy the buttons and re-create them from scratch - yuck!
+	  As a workaround, we destroy the buttons and re-create them from scratch - yuck!
 	*/
 	{
 	    Widget form = XtParent(portrait_button);
@@ -353,7 +349,7 @@ static void
 shrinkfactor_spinbox_cb(Widget w, XtPointer client_data, XtPointer call_data)
 {
     int val;
-/*      static Boolean first_time = True; */
+    /*      static Boolean first_time = True; */
     struct topic_info *info = (struct topic_info *)client_data;
     struct prefs_choice *prefs = (struct prefs_choice *)(info->data);
     UNUSED(call_data);
@@ -363,9 +359,9 @@ shrinkfactor_spinbox_cb(Widget w, XtPointer client_data, XtPointer call_data)
     /* return if value not changed yet; else the first invocation of the
        window may actually reset the shrink factor to the default.
     */
-/*      if (val != resource.shrinkfactor) { */
-/*  	first_time = False; */
-/*      } */
+    /*      if (val != resource.shrinkfactor) { */
+    /*  	first_time = False; */
+    /*      } */
 
     if (XtIsRealized(w)) {
 	/* don't set the resource.shrinkfactor here so that we can revert it from there if needed */
@@ -395,7 +391,7 @@ set_shrinkfactor_cb(Widget w, XtPointer client_data, XtPointer call_data)
     ASSERT(text_field != 0, "Expected text field in XmNuserData, set_shrinkfactor_cb()");
     XtVaGetValues(text_field, XmNvalue, &text, NULL);
     val = strtol(text, (char **)NULL, 10);
-/*     fprintf(stderr, "spinbox value: |%s|\n", text); */
+    /*     fprintf(stderr, "spinbox value: |%s|\n", text); */
 #endif
 
     if (!XtIsRealized(w))
@@ -404,9 +400,9 @@ set_shrinkfactor_cb(Widget w, XtPointer client_data, XtPointer call_data)
     /* verify values in case of direct text input */
     if (val > 100 || val <= 0) {
 	if (val > 100)
-	    statusline_print(STATUS_MEDIUM, "Shrink factor larger than maximum 100");
+	    statusline_info(STATUS_MEDIUM, "Shrink factor larger than maximum 100");
 	else if (val <= 0)
-	    statusline_print(STATUS_MEDIUM, "Shrink factor smaller than minimum 1");
+	    statusline_info(STATUS_MEDIUM, "Shrink factor smaller than minimum 1");
 	return;
     }
 #if USE_SPINBOX
@@ -431,8 +427,8 @@ h_create_shrink_frame(Widget top, struct topic_info *info)
     
     shrink_form = XmCreateForm(top, "shrink_form", NULL, 0);
     XtVaSetValues(shrink_form,
-/*  		  XmNverticalSpacing, 10, */
-/*  		  XmNhorizontalSpacing, 10, */
+		  /*  		  XmNverticalSpacing, 10, */
+		  /*  		  XmNhorizontalSpacing, 10, */
 		  NULL);
 
     
@@ -506,7 +502,7 @@ h_create_shrink_frame(Widget top, struct topic_info *info)
 #endif
     }
     
-/*     XtManageChild(shrink_form); */
+    /*     XtManageChild(shrink_form); */
 
     return shrink_form;
 }
@@ -581,11 +577,11 @@ h_create_papersize_form(Widget parent, struct topic_info *info)
 		  XmNleftOffset, 10,
 		  XmNuserData, (XtPointer)info,
 		  NULL);
-/*     adjust_heights(landscape_option, menu, cascade, NULL); */
+    /*     adjust_heights(landscape_option, menu, cascade, NULL); */
     XtAddCallback(portrait_option, XmNvalueChangedCallback, landscape_cb, (XtPointer)info);
     XtAddCallback(landscape_option, XmNvalueChangedCallback, landscape_cb, (XtPointer)info);
-/*      XtAddCallback(portrait_option, XmNarmCallback, test_cb, (XtPointer)info); */
-/*      XtAddCallback(landscape_option, XmNarmCallback, test_cb, (XtPointer)info); */
+    /*      XtAddCallback(portrait_option, XmNarmCallback, test_cb, (XtPointer)info); */
+    /*      XtAddCallback(landscape_option, XmNarmCallback, test_cb, (XtPointer)info); */
     
     XtManageChild(portrait_option);
     XtManageChild(landscape_option);
@@ -594,7 +590,7 @@ h_create_papersize_form(Widget parent, struct topic_info *info)
 	Widget w = XtVaCreateManagedWidget(papersizes[i].format, xmPushButtonGadgetClass, menu,
 					   XmNuserData, landscape_option,
 					   NULL);
-/*  	fprintf(stderr, "Created button: %p for %s\n", w, papersizes[i].format); */
+	/*  	fprintf(stderr, "Created button: %p for %s\n", w, papersizes[i].format); */
 
 	/* select default value */
 	if (strncmp(resource.paper,

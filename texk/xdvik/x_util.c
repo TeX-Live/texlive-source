@@ -86,7 +86,7 @@ scroll_page_if_needed(int x_min, int x_max, int y_min, int y_max)
     /* check if we need to scroll vertically; first, down for y_min */
     test_scroll = y_min + drawing_y - clip_h;
     if ((resource.expert_mode & XPRT_SHOW_STATUSLINE) != 0)
-	test_scroll += global_statusline_h;
+	test_scroll += get_statusline_height();
 
     TRACE_SRC((stderr, "test_scroll vertically: %d", test_scroll));
 #if DEBUG_SCROLL_IF_NEEDED
@@ -200,20 +200,22 @@ Window
 get_window_id(char *window_p)
 {
     Window w;
+    unsigned char *tmp;
+    tmp = (unsigned char *)window_p;
     
-#ifndef WORD64
+#if !(defined(WORD64) || defined(LONG64))
     w = (*((xuint32 *) window_p));
 #else
 # if WORDS_BIGENDIAN
-    w = ((unsigned long)wp[0] << 24) |
-	((unsigned long)wp[1] << 16) |
-	((unsigned long)wp[2] << 8)  |
-	(unsigned long)wp[3];
+    w = ((unsigned long)tmp[0] << 24) |
+	((unsigned long)tmp[1] << 16) |
+	((unsigned long)tmp[2] << 8)  |
+	(unsigned long)tmp[3];
 # else
-    w = ((unsigned long)wp[3] << 24) |
-	((unsigned long)wp[2] << 16) |
-	((unsigned long)wp[1] << 8)  |
-	(unsigned long)wp[0];
+    w = ((unsigned long)tmp[3] << 24) |
+	((unsigned long)tmp[2] << 16) |
+	((unsigned long)tmp[1] << 8)  |
+	(unsigned long)tmp[0];
 # endif
 #endif
     return w;
@@ -360,7 +362,7 @@ update_window_property(Window w, Boolean prepend)
     }
     
     if (prepend) { /* add our ID again to front */
-#ifdef WORD64
+#if (defined(WORD64) || defined(LONG64))
 	unsigned char data[4];
 	set_window_id(w, data);
 #else
@@ -454,30 +456,35 @@ Atom atom_reread_prefs(void)
 }
 
 /*
- * Syntetisize a button press object for the `button' passed as
- * the second argument.
+ * Syntesize a mouse-1 down event for the Widget w passed as second argument.
+ * This can be, e.g. a dialog button, or some other window.
  */
 void
-synthetisize_event(XEvent *ev, Widget button)
+synthesize_event(XEvent *ev, Widget w)
 {
     memset(ev, 0, sizeof(XButtonPressedEvent));
     ev->type = ButtonPress;
     ev->xbutton.serial = 1;
     ev->xbutton.send_event = True;
     ev->xbutton.button = 1;
-    ev->xbutton.display = XtDisplayOfObject(button);
-    ev->xbutton.window = XtWindowOfObject(button);
+    ev->xbutton.display = XtDisplayOfObject(w);
+    ev->xbutton.window = XtWindowOfObject(w);
 }
 
 #ifdef MOTIF
 int xm_get_height(Widget w)
 {
     int ret_h = 0;
-    static Arg args = { XtNheight, (XtArgVal)0 };
+    static Dimension h0, h1, h2;
+    static Arg args[] = {
+	{XmNheight, (XtArgVal) &h0},
+	{XmNmarginHeight, (XtArgVal) &h1},
+	{XmNshadowThickness, (XtArgVal) &h2},
+    };
     ASSERT(w != NULL, "widget in xm_get_width mustn't be NULL!");
 
-    args.value = (XtArgVal)&ret_h;
-    XtGetValues(w, &args, 1);
+    XtGetValues(w, args, XtNumber(args));
+    ret_h = h0 + 2 * h1 + 2 * h2;
     TRACE_GUI((stderr, "xm_get_height: %d", ret_h));
     return ret_h;
 }
@@ -497,7 +504,7 @@ int xm_get_width(Widget w)
 /*
  * Get pixel from color `colorname'. We try to keep this as
  * high-level as possible, with simple black as fallback.
-*/
+ */
 void
 str_to_pixel(Widget w, const char *colorname, Pixel *ret)
 {
@@ -521,7 +528,7 @@ str_to_pixel(Widget w, const char *colorname, Pixel *ret)
  * Convert pixel value `pix' to color name passed as str,
  * of length len, or `black' if conversion failed.
  * -- FIXME: This is broken!!!
-*/
+ */
 void
 pixel_to_str(Widget w, Pixel pix, char *str, size_t len)
 {
@@ -600,6 +607,35 @@ get_matching_parent(Widget w, Widget d, const char *fmt, ...)
     va_end(argp);
 
     return parent;
+}
+
+void
+adjust_width_to_max(Widget w, ...)
+{
+    Dimension max = 0;
+    Widget w1 = w;
+    
+    va_list argp;
+    va_start(argp, w);
+
+    /* get maximum width */
+    while (w1 != NULL) {
+	Dimension curr;
+	XtVaGetValues(w1, XtNwidth, &curr, NULL);
+	if (curr > max)
+	    max = curr;
+	w1 = va_arg(argp, Widget);
+    }
+    va_end(argp);
+
+    /* set maximum width */
+    va_start(argp, w);
+    w1 = w;
+    while (w1 != NULL) {
+	XtVaSetValues(w1, XtNwidth, max, NULL);
+	w1 = va_arg(argp, Widget);
+    }
+    va_end(argp);
 }
 
 /* Return True if p is a parent of widget w, stopping (and returning FALSE)
@@ -752,10 +788,10 @@ get_widget_by_name(Widget *ret, Widget parent, const char *name, Boolean report_
     char buf[1024];
     Widget test;
 
-/*      if (parent == 0 || !XtIsManaged(parent)) { */
-/*  	fprintf(stderr, "Widget %p not managed!\n", parent); */
-/*  	return False; */
-/*      } */
+    /*      if (parent == 0 || !XtIsManaged(parent)) { */
+    /*  	fprintf(stderr, "Widget %p not managed!\n", parent); */
+    /*  	return False; */
+    /*      } */
     
     if (strlen(name) > 1023) {
 	popup_message(globals.widgets.top_level,
@@ -833,15 +869,15 @@ merge_into_user_db(XrmDatabase db)
 const char *const xdvirc_filename = ".xdvirc";
 const char *const xdvirc_signature_line = "!!! ~/.xdvirc, used by xdvi(1) to save user preferences.\n";
 const char *const xdvirc_header = ""
-	"!!!\n"
-	"!!! Do not edit this file, it will be overwritten by xdvi.\n"
-	"!!! This file contains resources that have been set via the\n"
-	"!!! menus/dialogs. The contents of this file will override\n"
-	"!!! the entries in your ~/.Xdefaults file (but not the command\n"
-	"!!! line arguments passed to xdvi). Remove this file\n"
-	"!!! if you want to get rid of all these customizations,\n"
-        "!!! or start xdvi with the `-q' option to ignore this file.\n"
-	"!!!\n";
+"!!!\n"
+"!!! Do not edit this file, it will be overwritten by xdvi.\n"
+"!!! This file contains resources that have been set via the\n"
+"!!! menus/dialogs. The contents of this file will override\n"
+"!!! the entries in your ~/.Xdefaults file (but not the command\n"
+"!!! line arguments passed to xdvi). Remove this file\n"
+"!!! if you want to get rid of all these customizations,\n"
+"!!! or start xdvi with the `-q' option to ignore this file.\n"
+"!!!\n";
 
 static char *
 get_xdvirc_path(const char *basename)
@@ -867,7 +903,7 @@ save_geometry(void)
     int x_off, y_off;
     Dimension w, h;
     Window dummy;
-/*     char *geom_str; */
+    /*     char *geom_str; */
     
     (void)XTranslateCoordinates(DISP, XtWindow(globals.widgets.top_level),
 				RootWindowOfScreen(SCRN),
@@ -878,7 +914,7 @@ save_geometry(void)
 		  XtNwidth, &w,
 		  XtNheight, &h,
 #ifdef MOTIF
-/* 		  XmNgeometry, &geom_str, */
+		  /* 		  XmNgeometry, &geom_str, */
 #endif
 		  NULL);
     TRACE_GUI((stderr, "geometry: %dx%d+%d+%d", w, h, x_off, y_off));
@@ -1083,8 +1119,7 @@ get_xdvi_window_id(Boolean same_file, property_cbT callback)
     Window ret_window = 0;
 
     /*
-     * Get window list.  Copy it over (we'll be calling property_get_data()
-     * again).
+     * Get window list.  Copy it over (we'll be calling property_get_data() again).
      */
     if ((window_list_len = property_get_window_list(&p)) == 0)
 	return 0;
@@ -1219,3 +1254,8 @@ clip_region_to_rect(XRectangle *rect)
     return ret;
 }
 
+Boolean window_is_mapped(Window w, Display *dpy)
+{
+    XWindowAttributes xwa;
+    return XGetWindowAttributes(dpy, w, &xwa) && xwa.map_state == IsViewable;
+}

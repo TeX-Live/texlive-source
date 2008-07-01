@@ -47,7 +47,13 @@ typedef enum {
 
 extern const char *get_dvi_error(dviErrFlagT flag);
 
-extern Boolean internal_open_dvi(const char *path, dviErrFlagT *errmsg, Boolean load_fonts);
+extern Boolean internal_open_dvi(const char *path, dviErrFlagT *errmsg,
+#if DELAYED_MKTEXPK
+				 Boolean read_fonts, Boolean initialize_fonts
+#else
+				 Boolean load_fonts
+#endif
+				 );
 extern char *open_dvi_file_wrapper(const char *filename,
 				   Boolean from_command_line,
 				   Boolean open_new_instance,
@@ -167,16 +173,35 @@ extern void full_reset_colors(void);
 #endif
 extern void realloc_font(struct font *, wide_ubyte);
 extern void realloc_virtual_font(struct font *, wide_ubyte);
-extern Boolean load_font(struct font *, Boolean use_t1lib);
-extern struct font *define_font(Boolean load_font_now,
-				FILE *, wide_ubyte,
-				struct font *, struct font **, unsigned int,
-				struct tn **, Boolean *not_found_flag);
+extern Boolean load_font(struct font *,
+			 Boolean use_t1lib
+#if DELAYED_MKTEXPK
+			 , Boolean load_font_now
+#endif
+			 );
+
+extern struct font *define_font(
+#if DELAYED_MKTEXPK
+				Boolean read_fonts,
+				Boolean initialize_fonts,
+#else
+				Boolean load_font_now,
+#endif			
+				FILE *,
+				wide_ubyte,
+				struct font *,
+				struct font **,
+				unsigned int,
+				struct tn **,
+				Boolean *not_found_flag);
 extern void init_page(void);
 extern void form_dvi_property(void);
 extern Boolean dvi_file_changed(void);
-extern void remove_tmp_dvi_file(void);
-extern Boolean load_dvi_file(Boolean load_fonts, dviErrFlagT *errflag);
+extern Boolean load_dvi_file(
+#if !DELAYED_MKTEXPK
+			     Boolean load_fonts,
+#endif
+			     dviErrFlagT *errflag);
 extern void read_PK_index(struct font *, wide_bool);
 extern void read_GF_index(struct font *, wide_bool);
 extern unsigned long read_VF_index(struct font *, wide_bool);
@@ -184,7 +209,13 @@ extern unsigned long read_VF_index(struct font *, wide_bool);
 extern Boolean set_paper_type(const char *arg);
 
 extern Boolean find_postamble(FILE *fp, dviErrFlagT *errflag);
-extern Boolean read_postamble(FILE *fp, dviErrFlagT *errflag, Boolean load_fonts);
+extern Boolean read_postamble(FILE *fp, dviErrFlagT *errflag,
+#if DELAYED_MKTEXPK
+			      Boolean read_fonts, Boolean initialize_fonts
+#else
+			      Boolean load_fonts
+#endif
+			      );
 extern void close_old_filep(void);
 extern Boolean process_preamble(FILE *fp, dviErrFlagT *errflag);
 

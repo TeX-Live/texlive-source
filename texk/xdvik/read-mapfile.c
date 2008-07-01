@@ -55,6 +55,8 @@ read_map_file(char *name)
 	return False;
     }
 
+    TRACE_T1((stderr, "Map file: %s\n", fullname));
+    
     while (fgets(inline_buf, INLINE_SIZE, fp) != NULL) {
 	char *TeXname = NULL;
 	char *PSname = NULL;

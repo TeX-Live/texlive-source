@@ -64,7 +64,7 @@ read_VF_index(struct font *fontp, wide_bool hushcs)
     long checksum;
     struct macro *newmacro;
     unsigned long maxcc = 0;
-    Boolean dummy = False;
+    Boolean dummy_success = False;
     
     fontp->read_char = NULL;
     fontp->flags |= FONT_VIRTUAL;
@@ -90,10 +90,13 @@ read_VF_index(struct font *fontp, wide_bool hushcs)
     fontp->first_font = NULL;
     while ((cmnd = get_byte(VF_file)) >= FNTDEF1 && cmnd <= FNTDEF4) {
 	struct font *newfontp = define_font(True,
+#if DELAYED_MKTEXPK
+					    True,
+#endif
 					    VF_file, cmnd, fontp,
 					    fontp->vf_table, VFTABLELEN,
 					    &fontp->vf_chain,
-					    &dummy);
+					    &dummy_success);
 	if (fontp->first_font == NULL)
 	    fontp->first_font = newfontp;
     }
@@ -156,12 +159,12 @@ read_VF_index(struct font *fontp, wide_bool hushcs)
 		else
 		    m->pos = xmalloc((unsigned)len);
 	    }
-	    fread((char *)m->pos, 1, len, VF_file);
+	    (void)fread((char *)m->pos, 1, len, VF_file);
 	    m->end = m->pos + len;
 	}
 	if (globals.debug & DBG_PK)
-	     printf("Read VF macro for character %lu; dy = %ld, length = %d\n",
-		    cc, m->dvi_adv, len);
+	    printf("Read VF macro for character %lu; dy = %ld, length = %d\n",
+		   cc, m->dvi_adv, len);
     }
     if (cmnd != POST)
 	XDVI_FATAL((stderr, "Wrong command byte found in VF macro list:  %d", cmnd));

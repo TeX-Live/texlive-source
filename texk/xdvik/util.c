@@ -21,8 +21,8 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
 NOTE:
-	xdvi is based on prior work, as noted in the modification history
-	in xdvi.c.
+xdvi is based on prior work, as noted in the modification history
+in xdvi.c.
 
 \*========================================================================*/
 
@@ -49,6 +49,7 @@ NOTE:
 #include "search-internal.h"
 #include "encodings.h"
 #include "filehist.h"
+#include "exit-handlers.h"
 #include "xm_prefs.h" /* for preferences_changed() */
 
 #include <errno.h>
@@ -141,151 +142,50 @@ extern void *realloc();
 
 #define BUF_SIZE 1024
 
-/*
-  Insert item to the list and return the result.
-*/
-struct dl_list *
-dl_list_insert(struct dl_list *list, void *item)
+void
+xdvi_assert(const char *version,
+	    const char *filename,
+	    int lineno,
+	    Boolean condition,
+	    const char *fmt, ...)
 {
-    struct dl_list *new_elem = xmalloc(sizeof *new_elem);
-    new_elem->item = item;
-    new_elem->next = NULL;
-    new_elem->prev = NULL;
-    
-    if (list == NULL) {
-	list = new_elem;
+    if (!(condition)) {
+	fprintf(stderr,
+		"\n************************************************************\n"
+		"XDvi %s: Failed assertion:\n%s:%d: ",
+		version, filename, lineno);
+	va_list argp;
+	va_start(argp, fmt);
+	(void)vfprintf(stderr, fmt, argp);
+	va_end(argp);
+#ifdef NDEBUG
+	fprintf(stderr,
+		"\nAborting now. Please report this as a bug to:\n"
+		"http://sourceforge.net/tracker/?group_id=23164&atid=377580\n"
+		"If a core dump has been produced, please invoke:\n"
+		"gdb %s core\nThen type \"bt\", "
+		"and include the resulting output in your bug report.\n"
+ 		"************************************************************\n",
+		globals.program_name);
+	do_abort();
+#else
+	fprintf(stderr,
+		"\nPlease report this as a bug to:\n"
+		"http://sourceforge.net/tracker/?group_id=23164&atid=377580\n"
+ 		"************************************************************\n");
+#endif
     }
-    else {
-	/* append after current position */
-	struct dl_list *ptr = list;
-	
-	new_elem->next = ptr->next;
-	new_elem->prev = ptr;
-	
-	if (ptr->next != NULL)
-	    ptr->next->prev = new_elem;
-	
-	ptr->next = new_elem;
+}
+
+
+void
+xdvi_bell(void)
+{
+    if (!resource.hush_bell) {
+	XBell(DISP, 0);
     }
-    return new_elem;
 }
 
-/*
-  Return head of the list.
-*/
-struct dl_list *
-dl_list_head(struct dl_list *list)
-{
-    for (; list != NULL && list->prev != NULL; list = list->prev) { ; }
-    return list;
-}
-
-/*
-  Put a new item at the front of the list (current front is passed in first argument)
-  and return its position.
-*/
-struct dl_list *
-dl_list_push_front(struct dl_list *list, void *item)
-{
-    struct dl_list *new_elem = xmalloc(sizeof *new_elem);
-    new_elem->item = item;
-    new_elem->next = NULL;
-    new_elem->prev = NULL;
-    
-    if (list != NULL) { /* prepend to current position */
-	new_elem->next = list;
-	list->prev = new_elem;
-    }
-    return new_elem;
-}
-
-/*
-  Truncate list so that current pointer is the last element.
-*/
-struct dl_list *
-dl_list_truncate(struct dl_list *list)
-{
-    struct dl_list *ptr = list->next;
-    struct dl_list *save;
-
-    list->next = NULL;
-    
-    while (ptr != NULL) {
-	save = ptr->next;
-	free(ptr);
-	ptr = save;
-    }
-    return list;
-}
-
-/*
-  Truncate list at the head (i.e. remove the first element from it - head must be passed to this list),
-  and return the result.
-*/
-struct dl_list *
-dl_list_truncate_head(struct dl_list *list)
-{
-    struct dl_list *ptr = list->next;
-    if (list->next != NULL)
-	list->next->prev = NULL;
-    free(list);
-    return ptr;
-}
-
-/*
-  If the item pointed to by *list isn't the head of the list, remove it,
-  set *list to the previous item, and return True. Else return False.
-*/
-Boolean
-dl_list_remove_item(struct dl_list **list)
-{
-    struct dl_list *ptr = *list; /* item to remove */
-    if (ptr->prev == NULL)
-	return False;
-    ptr->prev->next = ptr->next;
-    if (ptr->next != NULL)
-	ptr->next->prev = ptr->prev;
-    /* update list */
-    *list = (*list)->prev;
-    /* remove item */
-    free(ptr);
-    
-    return True;
-}
-
-/*
-  Remove all items matching compare_func() from list. Must be called
-  with a pointer to the head of the list, which is also returned.
-  Returns the number of removed items in `count'.
-*/
-struct dl_list *
-dl_list_remove(struct dl_list *list, const void *item,
-	       int *count,
-	       void **removed_item,
-	       Boolean (*compare_func)(const void *item1, const void *item2))
-{
-    struct dl_list *ptr = list;
-    while (ptr != NULL) {
-	struct dl_list *next = ptr->next;
-	if (compare_func(ptr->item, item)) { /* match */
-	    *removed_item = ptr->item;
-	    (*count)++;
-	    if (ptr->prev != NULL) {
-		ptr->prev->next = ptr->next;
-	    }
-	    else { /* removed first element */
-		list = list->next;
-	    }
-
-	    if (ptr->next != NULL)
-		ptr->next->prev = ptr->prev;
-	    free(ptr);
-	    ptr = NULL;
-	}
-	ptr = next;
-    }
-    return list;
-}
 
 
 /* NOTE: keep this table in sync with the #defines in xdvi-debug.h! */
@@ -294,7 +194,7 @@ struct debug_string_options debug_options[] = {
     {  DBG_DVI,		"dvi",		", " },
     {  DBG_PK,		"pk",		", " },
     {  DBG_BATCH,	"batch",	", " },
-    {  DBG_EVENT,	"event",	", " },
+    {  DBG_EVENT,	"events",	", " },
     {  DBG_PS,		"ps",		",\n"},
     {  DBG_STAT,	"stat",		", " },
     {  DBG_HASH,	"hash",		", " },
@@ -402,12 +302,12 @@ xdvi_exit(int status)
 	if (preferences_changed()) {
 	    return;
 	}
-/*      else { */
-/*  	fprintf(stderr, "Preferences not changed.\n"); */
-/*      } */
+	/*      else { */
+	/*  	fprintf(stderr, "Preferences not changed.\n"); */
+	/*      } */
 #endif
 	/* try to save user preferences, unless we're exiting with an error */
-	if (status == 0 && !save_user_preferences(True))
+	if (status == EXIT_SUCCESS && !save_user_preferences(True))
 	    return;
     
 	/* Clean up the "xdvi windows" property in the root window.  */
@@ -417,9 +317,8 @@ xdvi_exit(int status)
 #if PS
     ps_destroy();
 #endif
-    remove_tmp_dvi_file();
 
-    close_iconv();
+    call_exit_handlers();
 
     exit(status);
 }
@@ -679,7 +578,7 @@ my_realpath(const char *path, char *resolved)
 
 	/* go back to where we came from */
 #ifdef HAVE_FCHDIR
-	fchdir(fd);
+	(void)fchdir(fd);
 	close(fd);
 #else
 	chdir(cwd);
@@ -689,7 +588,7 @@ my_realpath(const char *path, char *resolved)
 
     /* arrive here in case of error: go back to where we came from, and return NULL */
 #ifdef HAVE_FCHDIR
-    fchdir(fd);
+    (void)fchdir(fd);
     close(fd);
 #else
     chdir(cwd);
@@ -760,6 +659,14 @@ xmemdup(const char *str, size_t len)
 }
 
 #endif /* not KPATHSEA */
+
+/* like xstrdup(), but with XtMalloc() */
+char *
+xt_strdup(const char *ptr)
+{
+    char *ret = XtMalloc(strlen(ptr) + 1);
+    return strcpy(ret, ptr);
+}
 
 
 /*
@@ -1026,7 +933,7 @@ handle_child_exit(int status, struct xchild *this)
     if (this->io != NULL
 	&& (WIFEXITED(status) != 0)
 	&& (WEXITSTATUS(status) != 0)
-	&& (err_msg = (this->io->read_proc)(this->io->fd)) != NULL) {
+	&& (err_msg = (this->io->read_proc)(this->io->fd, NULL)) != NULL) {
 
 	if (this->name == NULL) {
 	    popup_message(globals.widgets.top_level,
@@ -1053,9 +960,11 @@ handle_child_exit(int status, struct xchild *this)
 }
 
 static void
-dummy_write_proc(int fd)
+dummy_write_proc(int fd, void *data)
 {
     UNUSED(fd);
+    UNUSED(data);
+    
     fprintf(stderr, "============== dummy_write_proc called for fd %d\n", fd);
 }
 
@@ -1065,12 +974,14 @@ dummy_write_proc(int fd)
  * afterwards.
  */
 char *
-read_child_error(int fd)
+read_child_error(int fd, void *data)
 {
     int bytes = 0, buf_old_size = 0, buf_new_size = 0;
     char tmp_buf[BUF_SIZE];
     char *err_buf = xstrdup("");
     char *ret;
+    UNUSED(data);
+    
     /* collect stderr messages into err_buf */
     while ((bytes = read(fd, tmp_buf, BUF_SIZE - 1)) > 0) {
 	buf_old_size = buf_new_size;
@@ -1136,10 +1047,10 @@ fork_process(const char *proc_name, Boolean redirect_stdout,
 	return False;
     case 0:	/* child */
 	if (dirname != NULL)
-	    chdir(dirname);
+	    (void)chdir(dirname);
 	if (globals.debug & DBG_FILES) {
 	    char path[MAXPATHLEN];
-	    getcwd(path, MAXPATHLEN);
+	    (void)getcwd(path, MAXPATHLEN);
 	    fprintf(stderr, "Directory of running `%s': `%s'\n",
 		    proc_name, path);
 	}
@@ -1148,7 +1059,7 @@ fork_process(const char *proc_name, Boolean redirect_stdout,
 	   this will hang the child forever. Closing all other file
 	   descriptors, as in the #if TRY_FIX regions, seems to fix
 	   this, but it also loses all output ...
-	 */
+	*/
 #if TRY_FIX
 	close(0);
 	close(1);
@@ -1196,6 +1107,7 @@ fork_process(const char *proc_name, Boolean redirect_stdout,
 #endif
 	my_io->read_proc = read_child_error;
 	my_io->write_proc = dummy_write_proc;
+	my_io->data = data;
 	
 	my_child->next = NULL;
 	my_child->pid = pid;
@@ -1238,24 +1150,24 @@ prep_fd(int fd, wide_bool noblock)
     }
     else
 # endif
-	{
+    {
 # ifdef FASYNC
-	    if (fcntl(fd, F_SETOWN, getpid()) == -1)
-		perror("xdvi: fcntl F_SETOWN");
-	    if (fcntl(fd, F_SETFL, fcntl(fd, F_GETFL, 0) | FASYNC) == -1)
-		perror("xdvi: fcntl F_SETFL");
+	if (fcntl(fd, F_SETOWN, getpid()) == -1)
+	    perror("xdvi: fcntl F_SETOWN");
+	if (fcntl(fd, F_SETFL, fcntl(fd, F_GETFL, 0) | FASYNC) == -1)
+	    perror("xdvi: fcntl F_SETFL");
 # elif defined SIOCSPGRP && defined FIOASYNC
-	    /* For HP-UX B.10.10 and maybe others.  See "man 7 socket".  */
-	    int arg;
+	/* For HP-UX B.10.10 and maybe others.  See "man 7 socket".  */
+	int arg;
 	    
-	    arg = getpid();
-	    if (ioctl(fd, SIOCSPGRP, &arg) == -1)
-		perror("xdvi: ioctl SIOCSPGRP");
-	    arg = 1;
-	    if (ioctl(fd, FIOASYNC, &arg) == -1)
-		perror("xdvi: ioctl FIOASYNC");
+	arg = getpid();
+	if (ioctl(fd, SIOCSPGRP, &arg) == -1)
+	    perror("xdvi: ioctl SIOCSPGRP");
+	arg = 1;
+	if (ioctl(fd, FIOASYNC, &arg) == -1)
+	    perror("xdvi: ioctl FIOASYNC");
 # endif
-	}
+    }
 #endif /* not FLAKY_SIGPOLL */
 }
 
@@ -1291,13 +1203,14 @@ parse_debugging_string(const char *arg)
 	while (isspace((int)*curr))
 	    curr++;
 	for (i = 0; debug_options[i].description != NULL; i++) {
-	    /* match on length of passed argument, to allow for abbreviations */
+	    size_t curr_opt_len = strlen(debug_options[i].description);
+	    /* Should we match on length of passed argument, to allow for abbreviations? */
 	    if (memicmp(curr,
 			debug_options[i].description,
-			strlen(debug_options[i].description)) == 0
-		&& (curr[strlen(debug_options[i].description)] == '\0'
-		    || curr[strlen(debug_options[i].description)] == ','
-		    || isspace((int)curr[strlen(debug_options[i].description)]))) {
+			curr_opt_len) == 0
+		&& (curr[curr_opt_len] == '\0'
+		    || curr[curr_opt_len] == ','
+		    || isspace((int)curr[curr_opt_len]))) {
 		matched = True;
 		retval |= debug_options[i].bitmap;
 		fprintf(stderr, "Debugging option: \"%s\" = \"%s\", debug: %d\n",
@@ -1496,14 +1409,13 @@ find_file(const char *filename, struct stat *statbuf, kpse_file_format_type path
      * /absolute/path/ + relative/path/filename
      */
     ASSERT(globals.dvi_file.dirname != NULL, "globals.dvi_file.dirname should have been initialized");
-    {
-	pathname = xstrdup(globals.dvi_file.dirname);
-	pathname = xstrcat(pathname, filename);
 
-	TRACE_SRC((stderr, "Trying globals.dvi_file.dirname: \"%s\"", pathname));
-	if (stat(pathname, statbuf) == 0) {
-	    return pathname;
-	}
+    pathname = xstrdup(globals.dvi_file.dirname);
+    pathname = xstrcat(pathname, filename);
+
+    TRACE_SRC((stderr, "Trying globals.dvi_file.dirname: \"%s\"", pathname));
+    if (stat(pathname, statbuf) == 0) {
+	return pathname;
     }
 
     /*
@@ -1517,20 +1429,75 @@ find_file(const char *filename, struct stat *statbuf, kpse_file_format_type path
     }
 
     /*
-     * case 4:
-     * try a kpathsea search for filename
+     * case 4a:
+     * try a kpathsea search for filename, from globals.dvi_file.dirname
      */
-    TRACE_SRC((stderr,
-	       "trying kpathsearch for filename \"%s\"",
-	       filename));
-    tmp = kpse_find_file(filename, pathinfo, True);
+    {
+#ifdef HAVE_FCHDIR
+	int fd;
+#else
+	char cwd[MAXPATHLEN];
+#endif
 
-    if (tmp != NULL && stat(tmp, statbuf) == 0) {
-	TRACE_SRC((stderr, "Found file: `%s'", tmp));
-	free(pathname);
-	return tmp;
+	/* Save cwd for going back later */
+	if (
+#ifdef HAVE_FCHDIR
+	    (fd = try_open(".", O_RDONLY)) >= 0
+#else /* HAVE_FCHDIR */
+# ifdef HAVE_GETCWD
+	    getcwd(cwd, MAXPATHLEN)
+# else
+	    getwd(cwd)
+# endif
+	    != NULL
+#endif /* HAVE_FCHDIR */
+	    ) {
+	    if (chdir(globals.dvi_file.dirname) == 0) {
+	    
+		TRACE_SRC((stderr,
+			   "trying kpathsearch for filename \"%s\" from %s",
+			   filename, globals.dvi_file.dirname));
+		tmp = kpse_find_file(filename, pathinfo, True);
+
+		if (tmp != NULL && stat(tmp, statbuf) == 0) {
+		    free(pathname);
+		    /* go back to where we came from */
+#ifdef HAVE_FCHDIR
+		    (void)fchdir(fd);
+		    close(fd);
+#else
+		    chdir(cwd);
+#endif
+		    if (tmp[0] == '/') { /* is it an absolute path? */
+			pathname = xstrdup(tmp);
+		    }
+		    else {
+			pathname = xstrdup(globals.dvi_file.dirname);
+			pathname = xstrcat(pathname, tmp);
+		    }
+		    TRACE_SRC((stderr, "Found file: `%s'", pathname));
+		    free(tmp);
+		    return pathname;
+		}
+	    }
+	    else {
+		/*
+		 * case 4b:
+		 * couldn't change to globals.dvi_file.dirname - try a kpathsea search from CWD
+		 */
+		TRACE_SRC((stderr,
+			   "trying kpathsearch for filename \"%s\" from CWD",
+			   filename));
+		tmp = kpse_find_file(filename, pathinfo, True);
+
+		if (tmp != NULL && stat(tmp, statbuf) == 0) {
+		    TRACE_SRC((stderr, "Found file: `%s'", tmp));
+		    free(pathname);
+		    return tmp;
+		}
+	    }
+	}
     }
-
     /*
      * case 5:
      * try a kpathsea search for pathname
@@ -1560,6 +1527,13 @@ find_file(const char *filename, struct stat *statbuf, kpse_file_format_type path
   functions that can be used to store 2 type of values: char *, and
   long, where the latter is interpreted as char *. (See kpathsea/dir.c
   for an example of where this is used).
+
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  BUG ALERT: Note however that a long value may never be removed from
+  the hash table with hash_delete(), since it would do a strcmp() on
+  the long interpreted as a pointer!
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
   We can't use a different approach (like using a void *) since
   the debugging ouput of kpathsea relies on printing the value
   either as char * or long (depending on the value of the global flag
@@ -1595,7 +1569,7 @@ find_str_int_hash(hashTableT *hashtable, const char *key, size_t *val)
   Insert key-value pair into hashtable. Note that the key is
   *not* copied (i.e. it is expected that is had been allocated
   somewhere else, and persists throughout the program).
- */
+*/
 void
 put_str_int_hash(hashTableT *hashtable, const char *key, size_t val)
 {
@@ -1620,7 +1594,7 @@ set_dvi_name_expand(const char *new_filename)
 
 /* set globals.dvi_name, globals.dvi_file.dirname and globals.dvi_file.dirlen
    In contrast to previous function, input filename is not copied.
- */
+*/
 void
 set_dvi_name(char *new_filename)
 {
@@ -1654,7 +1628,7 @@ copy_fp(FILE *in, FILE *out)
 	if (bytes_in < TMP_BUF_SIZE && !feof(in))
 	    return False;
 	bytes_out = fwrite(buf, 1, bytes_in, out);
-/* 	fprintf(stderr, "read %d, wrote %d bytes\n", bytes_in, bytes_out); */
+	/* 	fprintf(stderr, "read %d, wrote %d bytes\n", bytes_in, bytes_out); */
 	if (bytes_out < bytes_in)
 	    return False;
     }
@@ -1662,6 +1636,7 @@ copy_fp(FILE *in, FILE *out)
 
 #undef TMP_BUF_SIZE
 }
+
 
 /*
  * Copy a file from `from_path' to `to'. Return True if successful, False else
@@ -1802,6 +1777,90 @@ iconv_convert_string(const char *from_enc, const char *to_enc, const char *str)
     return NULL;
     
 #endif /* HAVE_ICONV_H */
+}
+
+
+/* Replace (pseudo-)format arguments in NULL-terminated argv list as follows:
+ * %f -> filename, %l -> linenumber, %c -> column number.
+ * If %f or %l are not specified, they are appended as %f and +%l.
+ * If colno == 0, no %c argument is provided.
+ */
+char **
+src_format_arguments(char **argv, const char *filename, int lineno, int colno)
+{
+    size_t i;
+    Boolean found_filename = False;
+    Boolean found_lineno = False;
+    
+    for (i = 0; argv[i] != NULL; i++) {
+	char *ptr, *curr = argv[i];
+	while ((ptr = strchr(curr, '%')) != NULL) {
+	    char *p1;
+	    if ((p1 = strchr("flc", ptr[1])) != NULL) { /* we have a formatting char */
+		char digit_arg[LENGTH_OF_INT];
+		const char *new_elem = NULL;
+		/* remember offsets and lengths */
+		size_t l_init = ptr - argv[i];
+		size_t l_rest = strlen(ptr + 2) + 1;
+		size_t l_mid;
+		
+		if (*p1 == 'f') {
+		    found_filename = True;
+		    new_elem = filename;
+		}
+		else if (*p1 == 'l') {
+		    found_lineno = True;
+		    sprintf(digit_arg, "%d", lineno);
+		    new_elem = digit_arg;
+		}
+		else if (*p1 == 'c') {
+		    sprintf(digit_arg, "%d", colno);
+		    new_elem = digit_arg;
+		}
+		
+		l_mid = strlen(new_elem);
+		
+		argv[i] = xrealloc(argv[i], strlen(argv[i]) + l_mid + 1);
+		curr = argv[i] + l_init; /* need to reinitialize it because of realloc */
+		memmove(curr + l_mid, curr + 2, l_rest);
+		memcpy(curr, new_elem, l_mid);
+		curr += l_mid;
+	    }
+	    else if (ptr[1] == '%') { /* escaped %, skip both */
+		curr = ptr + 2;
+	    }
+	    else {
+		curr = ptr + 1;
+	    }
+	}
+    }
+
+    /* append line number and file name arguments if they were not specified */
+    if (!found_lineno) {
+	i++;
+	argv = xrealloc(argv, (i + 1) * sizeof *argv);
+	argv[i - 1] = xmalloc(LENGTH_OF_INT + 2);
+	sprintf(argv[i - 1], "+%d", lineno);
+	argv[i] = NULL;
+    }
+    
+    if (!found_filename) {
+	i++;
+	argv = xrealloc(argv, (i + 1) * sizeof *argv);
+	argv[i - 1] = xstrdup(filename);
+	argv[i] = NULL;
+    }
+
+    return argv;
+}
+
+char *
+xstrndup(const char *str, size_t len)
+{
+    char *new_str = xmalloc(len + 1);
+    memcpy(new_str, str, len);
+    new_str[len] = '\0';
+    return new_str;
 }
 
 #if 0

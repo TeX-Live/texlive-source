@@ -52,12 +52,15 @@ struct search_settings {
     Boolean case_sensitive;
     Boolean ignore_hyphens;
     Boolean ignore_linebreaks;
+    Boolean wrap;
+    int wrapcnt;	/* > 0 if search has wrapped */
+    char *isearchterm;  /* non-NULL when doing isearch */
     searchDirectionT direction;
     struct search_info *searchinfo;
     /* internal state management */
     int x_pos, y_pos;	/* position of the search popup window */
     int from_page;	/* page to start search from */
-    int curr_page;	/* current page of search search from */
+    int curr_page;	/* current page of search */
     int to_page;	/* highest page already scanned */
     int hyphen_delta;	/* difference in offsets when hyphenation is removed */
     Widget message_window; /* warning popup, or NULL if it doesn't exist */

@@ -83,6 +83,36 @@ static int mag_conv_y = 0;
 static Position new_mag_x = 0;
 static Position new_mag_y = 0;
 
+
+/* default magnifier dimensions */
+static struct mg_size_rec {
+    int w;
+    int h;
+} mg_size[] = {
+    {200, 150}, {400, 250}, {700, 500}, {1000, 800}, {1200, 1200}
+};
+
+size_t get_magglass_items(void) {
+    return XtNumber(mg_size);
+}
+
+int get_magglass_width(int idx) {
+    return mg_size[idx].w;
+}
+
+int get_magglass_height(int idx) {
+    return mg_size[idx].h;
+}
+
+void set_magglass_widht(int idx, int w) {
+    mg_size[idx].w = w;
+}
+
+void set_magglass_height(int idx, int h) {
+    mg_size[idx].h = h;
+}
+
+
 static void
 can_exposures(struct WindowRec *windowrec)
 {
@@ -134,20 +164,20 @@ mag_release(XEvent * event)
 	      over a hyperlink).
 
 	      Forcing a redraw with
-	         redraw(&mane);
+	      redraw(&mane);
 	      may cause a `BadDrawable' X error with color material (e.g. from #702288),
 	      or a `draw_part: shouldn't happen: POST encountered' error. Neither do
 	      the following work:
-	         globals.ev.flags |= EV_EXPOSE;		(doesn't fix the bug)
-		 draw_page();			(same effect as redraw(&mane))
-		 globals.ev.flags |= EV_NEWPAGE;	(works, but is crude and causes flicker)
+	      globals.ev.flags |= EV_EXPOSE;		(doesn't fix the bug)
+	      draw_page();			(same effect as redraw(&mane))
+	      globals.ev.flags |= EV_NEWPAGE;	(works, but is crude and causes flicker)
 		 
 	      So I decided to use expose() for the time being, which 
 	      sets mane.min_x to the current x point (which doesn't happen
 	      with EV_EXPOSE; this causes the test for `mane.min_x < MAXDIM'
 	      to fail in events.c; look for `see comment in mag.c').
 	    */
-/*  	    fprintf(stderr, "========triggering expose!\n"); */
+	    /*  	    fprintf(stderr, "========triggering expose!\n"); */
 	    expose(&mane, event->xbutton.x_root, event->xbutton.y_root, 10, 10);
 	}
     }
@@ -220,10 +250,8 @@ draw_ticks(unsigned int width, unsigned int height, GC ourGC)
        The user can select the units via a resource (e.g. XDvi*tickUnits: bp),
        or a command-line option (e.g. -xrm '*tickUnits: cm').  The length of
        the ticks can be controlled by a resource (e.g. XDvi*tickLength: 10), or
-       a command-line option (e.g. -xrm '*tickLength: 10000').  If the tick
-       length exceeds the popup window size, then a graph-paper grid is drawn
-       over the whole window.  Zero, or negative, tick length completely
-       suppresses rulers. */
+       a command-line option (e.g. -xrm '*tickLength: 10000').  Zero, or negative,
+       tick length completely suppresses rulers. */
 
     pixels_per_tick = (double)resource.pixels_per_inch;
     if (strcmp(resource.tick_units, "pt") == 0)
@@ -395,8 +423,8 @@ do_movemag(int x, int y)
     compute_mag_pos(&xx, &yy);
     XMoveWindow(DISP, magnifier.win, xx, yy);
     scroll_window(&magnifier,
-		 (x + mane_base_x) * mane.shrinkfactor - (int)magnifier.width / 2,
-		 (y + mane_base_y) * mane.shrinkfactor - (int)magnifier.height / 2);
+		  (x + mane_base_x) * mane.shrinkfactor - (int)magnifier.width / 2,
+		  (y + mane_base_y) * mane.shrinkfactor - (int)magnifier.height / 2);
     draw_ticks(magnifier.width, magnifier.height, globals.gc.ruler);
 }
 
@@ -479,7 +507,7 @@ show_distance_from_ruler(XEvent *event, Boolean to_stdout)
 		       precision, 0.000, resource.tick_units));
 	}
 	else {
-	    statusline_print(STATUS_FOREVER,
+	    statusline_info(STATUS_FOREVER,
 			     "Ruler/Point: %d,%d, dx: %.*f %s, dy: %.*f %s, dt: %.*f %s",
 			     loc_x, loc_y,
 			     precision, 0.000, resource.tick_units,
@@ -502,7 +530,7 @@ show_distance_from_ruler(XEvent *event, Boolean to_stdout)
 		       precision, unit_z, resource.tick_units));
 	}
 	else {
-	    statusline_print(STATUS_FOREVER,
+	    statusline_info(STATUS_FOREVER,
 			     "Ruler: %d,%d, Point: %d,%d, dx: %.*f %s, dy: %.*f %s, dr: %.*f %s",
 			     g_ruler_pos_x, g_ruler_pos_y, loc_x, loc_y,
 			     precision, unit_x, resource.tick_units,
@@ -525,47 +553,6 @@ move_magnifier(void)
 	do_movemag(new_mag_x, new_mag_y);
 }
 
-static void
-Act_href(Widget w, XEvent *event,
-	 String *params, Cardinal *num_params)
-{
-    int x, y;
-    Window dummy;
-    
-    UNUSED(w);
-    UNUSED(num_params);
-    UNUSED(params);
-
-    if (resource.mouse_mode == MOUSE_RULER_MODE)
-	return;
-
-    (void)XTranslateCoordinates(DISP, event->xkey.window, mane.win,
-				event->xkey.x, event->xkey.y, &x, &y, &dummy);
-    if (htex_handleref(x, y, False)) {
-	block_next_mouse_event();
-    }
-}
-
-static void
-Act_href_newwindow(Widget w, XEvent *event,
-		   String *params, Cardinal *num_params)
-{
-    int x, y;
-    Window dummy;
-    
-    UNUSED(w);
-    UNUSED(num_params);
-    UNUSED(params);
-    
-    if (resource.mouse_mode == MOUSE_RULER_MODE)
-	return;
-    
-    (void)XTranslateCoordinates(DISP, event->xkey.window, mane.win,
-				event->xkey.x, event->xkey.y, &x, &y, &dummy);
-    if (htex_handleref(x, y, True)) {
-	block_next_mouse_event();
-    }
-}
 
 void
 clear_ruler(void)
@@ -627,6 +614,91 @@ redraw_ruler(void)
     draw_ruler(g_ruler_pos_x, g_ruler_pos_y);
 }
 
+void magnifier_move(String params, XEvent *event)
+{
+    int x, y;
+    XSetWindowAttributes attr;
+#ifndef MOTIF
+    Window throwaway;
+#endif
+    const char *p = params;
+    
+    if (*p == '*') {
+	int n = atoi(p + 1) - 1;
+
+	if (n < 0 || n >= (int)get_magglass_items() || get_magglass_width(n) <= 0) {
+	    XBell(DISP, 0);
+	    return;
+	}
+	magnifier.width = get_magglass_width(n);
+	magnifier.height = get_magglass_height(n);
+    }
+    else {
+	magnifier.width = magnifier.height = atoi(p);
+	p = strchr(p, 'x');
+	if (p != NULL) {
+	    magnifier.height = atoi(p + 1);
+	    if (magnifier.height == 0)
+		magnifier.width = 0;
+	}
+	if (magnifier.width == 0) {
+	    XBell(DISP, 0);
+	    return;
+	}
+    }
+#ifndef MOTIF
+    XTranslateCoordinates(DISP, event->xbutton.window, mane.win,
+			  0, 0, &mag_conv_x, &mag_conv_y, &throwaway);
+#endif
+
+    mag_x = event->xbutton.x + mag_conv_x;
+    mag_y = event->xbutton.y + mag_conv_y;
+    main_x = event->xbutton.x_root - mag_x;
+    main_y = event->xbutton.y_root - mag_y;
+    compute_mag_pos(&x, &y);
+    magnifier.base_x = (mag_x + mane_base_x) * mane.shrinkfactor - magnifier.width / 2;
+    magnifier.base_y = (mag_y + mane_base_y) * mane.shrinkfactor - magnifier.height / 2;
+    attr.save_under = True;
+    attr.border_pixel = resource.rule_pixel;
+#if COLOR
+    attr.background_pixel = bg_current->pixel;
+#else
+    attr.background_pixel = resource.back_Pixel;
+#endif
+    attr.override_redirect = True;
+#ifdef GREY
+    attr.colormap = G_colormap;
+#endif
+    magnifier.win = XCreateWindow(DISP, RootWindowOfScreen(SCRN),
+				  x, y, magnifier.width, magnifier.height, MAGBORD,
+				  G_depth, InputOutput, G_visual,
+				  CWSaveUnder | CWBorderPixel | CWBackPixel |
+#ifdef GREY
+				  CWColormap |
+#endif
+				  CWOverrideRedirect, &attr);
+    XSelectInput(DISP, magnifier.win, ExposureMask);
+    XMapWindow(DISP, magnifier.win);
+
+    /*
+     * This call will draw the point rulers when the magnifier first pops up,
+     * if the XDvi*delayRulers resource is false.  Some users may prefer rulers
+     * to remain invisible until the magnifier is moved, so the default is
+     * true.  Rulers can be suppressed entirely by setting the XDvi*tickLength
+     * resource to zero or negative.
+     */
+
+    if (!resource.delay_rulers)
+	draw_ticks(magnifier.width, magnifier.height, globals.gc.ruler);
+
+    globals.cursor.flags |= CURSOR_MAG;
+    globals.ev.flags |= EV_CURSOR;
+    
+    magnifier_stat = 1;	/* waiting for exposure */
+    mouse_motion = mag_motion;
+    mouse_release = mag_release;
+}
+
 void
 drag_ruler_motion(XEvent *event)
 {
@@ -671,181 +743,12 @@ drag_ruler_release(XEvent *event)
     mouse_motion = mouse_release = null_mouse;
 }
 
-/****************************************************************************
- * Actions specific to the handling of the magnifier
- */
-
-static void
-Act_magnifier(Widget w, XEvent *event,
-	      String *params, Cardinal *num_params)
-{
-    const char *p;
-    int x, y;
-    XSetWindowAttributes attr;
-#ifndef MOTIF
-    Window throwaway;
-#endif
-    UNUSED(w);
-
-    MYTRACE((stderr, "magnifier!\n"));
-    
-    if (block_this_mouse_event())
-	return;
-    else if (dvi_file_changed()) {
-	globals.ev.flags |= EV_RELOAD;
-	return;
-    }
-
-#ifdef MOTIF
-    /* see xm_menu.c for an explanation of this */
-    if (pulldown_menu_active(event->xany.serial)) {
-	return;
-    }
-#endif
-    
-    if (bg_current == NULL) {
-	/*
-	  HACK ALERT: we can arrive here after loading a new file via the file selector
-	  for which not all fonts have been generated. In that case, dereferencing
-	  bg_current would bomb. Try to recover by simply returning here.
-	 */
-	return;
-    }
-
-    if (resource.mouse_mode == MOUSE_RULER_MODE && event->xbutton.button == 1) {
-	show_ruler(event);
-	XDefineCursor(DISP, CURSORWIN, globals.cursor.rule);
-	show_distance_from_ruler(event, False);
-	return;
-    }
-    else if (resource.mouse_mode == MOUSE_TEXT_MODE && event->xbutton.button == 1) {
-	text_selection_start(event);
-	text_motion(event);
-	return;
-    }
-    
-    if (event->type != ButtonPress || mouse_release != null_mouse
-	|| magnifier.win != (Window)0 || mane.shrinkfactor == 1 || *num_params != 1) {
-	XBell(DISP, 0);
-	if (mane.shrinkfactor == 1) {
-	    statusline_print(STATUS_SHORT,
-			     "No magnification available at shrink factor 1");
-	}
-	return;
-    }
-
-    p = *params;
-    if (*p == '*') {
-	int n = atoi(p + 1) - 1;
-
-	if (n < 0 || n >= (int)get_magglass_items() || get_magglass_width(n) <= 0) {
-	    XBell(DISP, 0);
-	    return;
-	}
-	magnifier.width = get_magglass_width(n);
-	magnifier.height = get_magglass_height(n);
-    }
-    else {
-	magnifier.width = magnifier.height = atoi(p);
-	p = strchr(p, 'x');
-	if (p != NULL) {
-	    magnifier.height = atoi(p + 1);
-	    if (magnifier.height == 0)
-		magnifier.width = 0;
-	}
-	if (magnifier.width == 0) {
-	    XBell(DISP, 0);
-	    return;
-	}
-    }
-#ifndef MOTIF
-    XTranslateCoordinates(DISP, event->xbutton.window, mane.win,
-			  0, 0, &mag_conv_x, &mag_conv_y, &throwaway);
-#endif
-
-    globals.cursor.flags |= CURSOR_MAG;
-    globals.ev.flags |= EV_CURSOR;
-    
-    mag_x = event->xbutton.x + mag_conv_x;
-    mag_y = event->xbutton.y + mag_conv_y;
-    main_x = event->xbutton.x_root - mag_x;
-    main_y = event->xbutton.y_root - mag_y;
-    compute_mag_pos(&x, &y);
-    magnifier.base_x = (mag_x + mane_base_x) * mane.shrinkfactor - magnifier.width / 2;
-    magnifier.base_y = (mag_y + mane_base_y) * mane.shrinkfactor - magnifier.height / 2;
-    attr.save_under = True;
-    attr.border_pixel = resource.rule_pixel;
-#if COLOR
-    attr.background_pixel = bg_current->pixel;
-#else
-    attr.background_pixel = resource.back_Pixel;
-#endif
-    attr.override_redirect = True;
-#ifdef GREY
-    attr.colormap = G_colormap;
-#endif
-    magnifier.win = XCreateWindow(DISP, RootWindowOfScreen(SCRN),
-				  x, y, magnifier.width, magnifier.height, MAGBORD,
-				  G_depth, InputOutput, G_visual,
-				  CWSaveUnder | CWBorderPixel | CWBackPixel |
-#ifdef GREY
-				  CWColormap |
-#endif
-				  CWOverrideRedirect, &attr);
-    XSelectInput(DISP, magnifier.win, ExposureMask);
-    XMapWindow(DISP, magnifier.win);
-
-    /*
-     * This call will draw the point rulers when the magnifier first pops up,
-     * if the XDvi*delayRulers resource is false.  Some users may prefer rulers
-     * to remain invisible until the magnifier is moved, so the default is
-     * true.  Rulers can be suppressed entirely by setting the XDvi*tickLength
-     * resource to zero or negative.
-     */
-
-    if (!resource.delay_rulers)
-	draw_ticks(magnifier.width, magnifier.height, globals.gc.ruler);
-
-    magnifier_stat = 1;	/* waiting for exposure */
-    mouse_motion = mag_motion;
-    mouse_release = mag_release;
-}
-
-static void
-Act_switch_magnifier_units(Widget w, XEvent *event,
-			   String *params, Cardinal *num_params)
-{
-    size_t k = 0;
-    static char *TeX_units[] = {
-	"mm", "pt", "in", "sp", "bp", "cc", "dd", "pc", "px",
-    };
-
-    UNUSED(w);
-    UNUSED(event);
-    UNUSED(params);
-    UNUSED(num_params);
-    
-    for (k = 0; k < XtNumber(TeX_units); ++k)
-	if (strcmp(resource.tick_units, TeX_units[k]) == 0)
-	    break;
-    k++;
-    if (k >= XtNumber(TeX_units))
-	k = 0;
-    resource.tick_units = TeX_units[k];
-    if (resource.mouse_mode != MOUSE_RULER_MODE) {
-	statusline_print(STATUS_SHORT, "Ruler units: %s\n", resource.tick_units);
-    }
-    else {
-	show_distance_from_ruler(event, False);
-    }
-}
-
-XtActionsRec mag_actions[] = {
-    {"magnifier", Act_magnifier},
-    {"do-href", Act_href},
-    {"do-href-newwindow", Act_href_newwindow},
-    {"switch-magnifier-units", Act_switch_magnifier_units},
-};
+/* XtActionsRec mag_actions[] = { */
+/*     {"magnifier", Act_magnifier}, */
+/*     {"do-href", Act_href}, */
+/*     {"do-href-newwindow", Act_href_newwindow}, */
+/*     {"switch-magnifier-units", Act_switch_magnifier_units}, */
+/* }; */
 
 /*
  * This isn't creating the actual magnifier. It is created lazily on demand
@@ -854,8 +757,8 @@ XtActionsRec mag_actions[] = {
  * application.
  */
 
-void
-create_magnifier(void)
-{
-    XtAppAddActions(app, mag_actions, XtNumber(mag_actions));
-}
+/* void */
+/* create_magnifier(void) */
+/* { */
+/*     XtAppAddActions(globals.app, mag_actions, XtNumber(mag_actions)); */
+/* } */

@@ -1,0 +1,310 @@
+dnl Process this file with autoconf to produce a configure script.
+dnl e.g.:
+dnl /usr/bin/autoconf --macrodir=../etc/autoconf configure.in > configure        
+dnl the macrodir argument is neccessary to make the non-standard `ac_include'
+dnl extension (acsite.m4) available to autoconf.        
+AC_INIT(xdvi.c)
+AC_PREREQ(2.13)
+
+AC_CONFIG_HEADER(c-auto.h:c-auto.in)
+AC_PROG_CC
+AC_PROG_INSTALL
+AC_PROG_MAKE_SET
+AC_PROG_LN_S
+AC_PROG_RANLIB
+
+dnl allow for  --program-suffix
+AC_ARG_PROGRAM
+
+sinclude(../kpathsea/withenable.ac)
+sinclude(../../withenable.ac)
+sinclude(kpathsea.ac)
+
+if test "x$with_mktexpk_default" = "xno"; then
+    AC_MSG_WARN(Xdvik doesn't implement the --without-mktexpk-default option!)
+fi
+
+if test "x$with_mktexmf_default" = "xno"; then
+    AC_MSG_WARN(Xdvik doesn't implement the --without-mktexmf-default option!)
+fi
+
+if test "x$with_mktextfm_default" = "xno"; then
+    AC_MSG_WARN(Xdvik doesn't implement the --without-mktextfm-default option!)
+fi
+
+if test "x$with_mkocp_default" = "xno"; then
+    AC_MSG_WARN(Xdvik doesn't implement the --without-mkocp-default option!)
+fi
+
+if test "x$with_mkofm_default" = "xno"; then
+    AC_MSG_WARN(Xdvik doesn't implement the --without-mkofm-default option!)
+fi
+
+AC_FUNC_VFORK
+AC_FUNC_VPRINTF
+dnl begin additions SU, 2000/03/07
+dnl AC_FUNC_VSNPRINTF
+XDVI_FUNC_WORKING_VSNPRINTF
+AC_FUNC_MEMICMP
+dnl AC_FUNC_REALPATH
+AC_FUNC_ALLOCA
+AC_C_STRINGIZE
+dnl end additions SU
+AC_FUNC_MEMCMP
+AC_HEADER_SYS_WAIT
+AC_TYPE_SIGNAL
+AC_C_BIGENDIAN
+dnl Put here by Thomas Esser for teTeX.  This causes some tests to be run
+dnl twice by the kps version.
+AC_PATH_XTRA
+AC_TYPE_SIZE_T
+
+dnl XDVI checks by Paul Vojta
+XDVI_FUNC_SETSID_IN_VFORK
+XDVI_CC_CONCAT
+XDVI_C_BITMAP_TYPE
+XDVI_SYS_STREAMS
+XDVI_SYS_SUNOS_4
+XDVI_SYS_OLD_LINUX
+XDVI_FUNC_POLL
+	
+dnl SU: added flags to turn on gcc warnings, taken from gnome/compiler-flags.m4 and put into aclocal.m4
+COMPILER_WARNINGS
+
+dnl SU: for `--allow-multiple-definition' linker flag on Cygwin	
+XDVI_LINKER_MULTIPLE_DEFNS
+
+AC_CHECK_HEADERS(stdint.h inttypes.h)
+AC_CHECK_TYPE(uint32_t, unsigned long)
+
+dnl These were probably missing from the test-set?
+dnl On the other hand, they are not used already, why start now? -janl
+dnl AC_TYPE_OFF_T
+dnl AC_HEADER_TIME
+
+AC_CHECK_FUNCS(mkstemp memcpy strerror waitpid sigaction strchr setenv ulltostr \
+		fchdir getcwd getpwnam getuid getpwuid \
+		iconv nl_langinfo \
+		lstat ftruncate snprintf vsnprintf realpath)
+
+dnl <sys/bsdtypes.h> is for ISC 4.0, to define fd_set in psgs.c.
+dnl regex.h is needed for regexp support in DVI search.    
+AC_CHECK_HEADERS(netdb.h sys/bsdtypes.h sys/param.h unistd.h sys/fcntl.h regex.h iconv.h langinfo.h)
+			 
+cppflags_save=$CPPFLAGS
+CPPFLAGS="$CPPFLAGS $X_CFLAGS"
+AC_CHECK_HEADERS(X11/Intrinsic.h X11/Xosdefs.h X11/xpm.h Xm/XpmP.h)
+CPPFLAGS=$cppflags_save
+
+dnl For editres, we need to check both the header and define a linker option.
+cppflags_save=$CPPFLAGS
+CPPFLAGS="$CPPFLAGS $X_CFLAGS"
+AC_CHECK_HEADERS(X11/Xmu/Editres.h X11/Xmu/Xmu.h, x_xmu_lib=-lXmu, x_xmu_lib=,
+[[
+#ifdef HAVE_X11_INTRINSIC_H	  
+# include <X11/Intrinsic.h>
+#endif
+]])
+AC_SUBST(x_xmu_lib)
+CPPFLAGS=$cppflags_save
+
+dnl For the bitmap size. -- I think this is in XDVI_C_BITMAP_TYPE now -janl
+dnl AC_CHECK_SIZEOF(long)
+
+sinclude(../kpathsea/xt.ac)
+sinclude(withenable.ac)
+sinclude(../../libs/t1lib/withenable.ac)
+sinclude(../../libs/t1lib/t1lib.ac)
+
+dnl check for Xaw version
+XDVI_OLD_XAW
+
+dnl nl_langinfo checks
+AC_MSG_CHECKING(if nl_langinfo(CODESET) is working)
+AC_TRY_LINK([#include <langinfo.h>], [char* cs = nl_langinfo(CODESET);],
+ AC_DEFINE(HAVE_WORKING_NL_LANGINFO_CODESET) AC_MSG_RESULT(yes),
+ AC_MSG_RESULT(no)
+)
+
+dnl First, check for libXp and libXext:
+if test -z "$x_ext_lib"; then # allow envvar override
+  if test -n "$x_libraries"; then
+    XLFLAG="-L$x_libraries"
+  else
+    XLFLAG=
+  fi
+  AC_CHECK_LIB(Xp, XpQueryVersion,
+               x_ext_lib="-lXp -lXext", :, -lXext -lX11 $X_EXTRA_LIBS $XLFLAG)
+fi
+dnl
+dnl If libXp not found, try libXext only:
+dnl
+if test -z "$x_ext_lib"; then # previous test unsuccessful, or envvar override
+  if test -n "$x_libraries"; then
+    XLFLAG="-L$x_libraries"
+  else
+    XLFLAG=
+  fi
+  AC_CHECK_LIB(Xext, XextCreateExtension,
+               x_ext_lib=-lXext, :, -lX11 $X_EXTRA_LIBS $XLFLAG)
+fi
+AC_SUBST(x_ext_lib)
+
+dnl For --with-x-toolkit. Must be Xaw at least. If no --with-x-toolkit is given,
+dnl we try to check if Motif is available, and if yes, use it; else,
+dnl we use Xaw (--with-x-toolkit=xaw can be used to override this default).
+
+dnl Check whether -lXpm can be used	
+XDVI_FIND_XPM
+
+dnl Check which X toolkit to use
+prog_extension="xaw"
+motif_include=
+motif_libdir=
+AC_ARG_WITH(motif-include,
+[  --with-motif-include=DIR
+                          Specify the location of Motif include files],
+motif_include="$withval")
+AC_ARG_WITH(motif-libdir,
+[  --with-motif-libdir=DIR
+                          Specify the location of Motif libraries],
+motif_libdir="$withval")
+
+if test "x$with_xdvi_x_toolkit" = xxaw3d; then
+   prog_extension="xaw3d"
+   x_tool_libs="-lXaw3d"
+elif test "x$with_xdvi_x_toolkit" = xneXtaw; then
+   prog_extension="nextaw"
+   x_tool_libs="-lneXtaw"
+elif test "x$with_xdvi_x_toolkit" = xmotif; then
+dnl Motif with no fallback
+dnl XDVI_FIND_MOTIF also defines $prog_extension, AC_DEFINE(toolkit) and $x_tool_libs
+   XDVI_FIND_MOTIF(none, "$motif_include", "$motif_libdir")
+elif test "x$with_xdvi_x_toolkit" = xxaw; then
+   prog_extension="xaw"
+   AC_DEFINE(XAW)
+   x_tool_libs="-lXaw"
+else
+dnl Motif with xaw as fallback
+dnl XDVI_FIND_MOTIF also defines $prog_extension, AC_DEFINE(toolkit) and $x_tool_libs
+   XDVI_FIND_MOTIF(Xaw, "$motif_include", "$motif_libdir")
+fi
+AC_SUBST(x_tool_libs)
+
+AC_ARG_WITH(iconv-libdir,
+[  --with-iconv-libdir=DIR
+                          Specify the location of iconv library (librecode.so)],
+[if test XXX"$withval" != "XXX"; then
+    iconv_libpath="-L$withval"
+    iconv_libs="-lrecode"
+else
+    iconv_libpath=
+    iconv_libs=	    
+fi], [
+dnl On non-Linux systems, -liconv is needed. Check for both iconv_open and libiconv_open.
+iconv_libpath=
+iconv_libs=	
+AC_CHECK_LIB(iconv, iconv_open, iconv_libs=-liconv,
+		    AC_CHECK_LIB(iconv, libiconv_open, iconv_libs=-liconv,iconv_libs=,)
+		    ,)     
+])
+if test XXX"$iconv_libs" != "XXX"; then
+   AC_DEFINE(HAVE_ICONV)
+fi    	
+AC_SUBST(iconv_libpath)
+AC_SUBST(iconv_libs)
+
+AC_ARG_WITH(iconv-include,
+[  --with-iconv-include=DIR
+                          Specify the location of iconv header (iconv.h)],
+[if test XXX"$withval" != "XXX"; then
+    iconv_includes="-I$withval"
+fi],[
+iconv_includes=
+])
+AC_SUBST(iconv_includes)
+
+XDVI_ICONV_CHAR_PPTR_TYPE
+
+dnl We try to perform the $program_transform_name replacement already
+dnl here, and AC_SUBST the final names into the Makefile; this makes
+dnl the compilation commands more readable and causes less problems with
+dnl backtick magic inside other commands.
+dnl
+dnl For some reason, the doubling of $$ and \\ must be reverted here:
+my_program_transform_name=`echo $program_transform_name | sed 's,\\$\\$,$,g' | sed 's,\\\\\\\\,\\\\,g'`
+exec_name="xdvi-$prog_extension"
+final_exec_name=`echo $exec_name | sed "$my_program_transform_name"`
+dnl OBSOLETE?? exec_link=`echo xdvi.bin | sed "$my_program_transform_name"`		
+wrapper_script=`echo xdvi | sed "$my_program_transform_name"`		
+AC_SUBST(exec_name)
+AC_SUBST(final_exec_name)
+AC_SUBST(exec_link)
+AC_SUBST(wrapper_script)
+
+dnl
+dnl Tests for different application setup features follow.
+dnl
+
+dnl For --with-ps.
+test -z "$PS_DEF" && PS_DEF=-DPS_GS
+test "$PS_DEF" = no && PS_DEF=
+AC_SUBST(PS_DEF)dnl
+dnl
+dnl If we're on Solaris and we want DPS, then add the extra compilation stuff
+dnl to get it.
+if echo "$PS_DEF" | grep PS_DPS >/dev/null; then
+   if test "`(uname) 2>/dev/null`" = SunOS \
+      && uname -r | grep '^5' >/dev/null; then
+    AC_MSG_RESULT(adding DPS includes and libraries for Solaris)
+    X_CFLAGS="$X_CFLAGS -I/usr/openwin/include/X11"
+    AC_CHECK_LIB(sunmath, isinf, ac_sunmath=-lsunmath, ac_sunmath="")
+    X_LIBS="$X_LIBS -R/usr/openwin/lib /usr/openwin/lib/libdps.so $ac_sunmath"
+    dnl We only need isinf and ieeefp.h to work around a Solaris bug in
+    dnl -ldps; see psdps.c.  isinf is in -lsunmath.
+    AC_CHECK_FUNCS(isinf)
+    AC_CHECK_HEADERS(ieeefp.h)
+  else
+    dnl SunOS 4.x is simpler.
+    AC_MSG_RESULT(adding DPS includes and libraries for SunOS 4.x)
+    X_LIBS="$X_LIBS -ldps"
+  fi
+elif echo "$PS_DEF" | grep PS_NEWS >/dev/null; then
+    AC_MSG_RESULT(adding NeWS libraries)
+    X_LIBS="$X_LIBS -lxview -lcps -lolgx -lxvps"
+fi
+
+XDVI_ARG_STRING(default-dvips-path,
+[  --with-default-dvips-path=CMD
+                          Use CMD as default DVI to PS converter],
+DEFAULT_DVIPS_PATH, "dvips")
+
+XDVI_ARG_STRING(default-ps2pdf-path,
+[  --with-default-ps2pdf-path=CMD
+                          Use CMD as default PS to PDF converter],
+DEFAULT_PS2PDF_PATH, "ps2pdf")
+
+dnl ImageMagick support
+PS_DEF="$PS_DEF $MAGICK_DEF"
+if echo "$PS_DEF" | grep MAGICK >/dev/null; then
+    AC_MSG_RESULT(adding ImageMagick libraries)
+    X_EXTRA_LIBS="$X_EXTRA_LIBS `Magick-config --libs`"
+fi
+
+# needed for web2c later than 7.3.4:
+AC_CHECK_LIB(m, main)
+AC_C_CONST()
+
+# If you're cross-compiling, these macros set up the variables in
+# ../make/cross.mk: BUILDCC, BUILDCFLAGS, BUILDCCLD etc.  These are
+# near the end so people have some chance of seeing them.
+KPSE_CROSS_BUILD_VAR(CC, cc)
+KPSE_CROSS_BUILD_VAR(CFLAGS, $(BUILDXCFLAGS))
+KPSE_CROSS_BUILD_VAR(CPPFLAGS, $(BUILDXCPPFLAGS))
+KPSE_CROSS_BUILD_VAR(LDFLAGS, $(BUILDXLDFLAGS))
+KPSE_CROSS_BUILD_VAR(CCLD, $(BUILDCC))
+
+AC_OUTPUT(Makefile gui/Makefile tests/Makefile xdvi-sh)
+
+dnl update `stamp-auto' since we just remade `c-auto.h'
+date >stamp-auto

@@ -689,7 +689,7 @@ static size_t g_bbox_info_max_size = 0;
 /*
   Append the current coordinates to g_bbox_info, unless it already
   contains these coordinates.
- */
+*/
 
 static void
 append_bbox_info(int x, int y, int w, int h, int angle)
@@ -775,7 +775,7 @@ draw_bbox0(int xcorner, int ycorner)
 /*
   Display the items in bbox_info.
   Invoked from draw_page() in dvi-draw.c.
- */
+*/
 void
 display_bboxes(void)
 {
@@ -1068,7 +1068,7 @@ enable_specials_send_ps_file(XtPointer data)
     const char *filename = (const char *)data;
     resource.allow_shell = True;
     redraw_page(); /* to erase the bounding box */
-    statusline_print(STATUS_MEDIUM,
+    statusline_info(STATUS_MEDIUM,
 		     "Shell specials enabled for this session.",
 		     filename);
     send_ps_file(filename, kpse_pict_format);
@@ -1092,7 +1092,7 @@ try_open_tempname(int status, struct xchild *this)
 	    else {
 		fprintf(stderr, "sending file: %s, %p\n", tikp->tempname, (void *)f);
 		/* There's no point in invoking
-		      psp.drawfile(tikp->tempname, f);
+		   psp.drawfile(tikp->tempname, f);
 		   here, since usually it will be already too late (draw_part() which
 		   had called us via applicationDoSpecial() will already have terminated).
 		   So instead, we just close the file and force a redraw of the entire page.
@@ -1177,7 +1177,7 @@ send_ps_file(const char *filename, kpse_file_format_type pathinfo)
 		warned_about_shellescape = True;
 	    }
 	    else {
-		statusline_print(STATUS_MEDIUM,
+		statusline_error(STATUS_MEDIUM,
 				 "Info: Shell special \"%s\" disabled.",
 				 filename);
 	    }
@@ -1218,6 +1218,7 @@ send_ps_file(const char *filename, kpse_file_format_type pathinfo)
 	char *expanded_filename = NULL;
 	struct stat statbuf;
 	expanded_filename = find_file(filename, &statbuf, pathinfo);
+
 	if (expanded_filename == NULL &&
 	    (pathinfo == kpse_enc_format || pathinfo == kpse_type1_format)) {
 	    /* in this case, we also kpathsea-search in the `old' place for
@@ -1225,12 +1226,15 @@ send_ps_file(const char *filename, kpse_file_format_type pathinfo)
 	       for load_vector(), dvi-draw.c for details) */
 	    expanded_filename = kpse_find_file(filename, kpse_tex_ps_header_format, True);
 	}
+	if (expanded_filename == NULL) {
+	    expanded_filename = kpse_find_file(filename, kpse_program_text_format, True);
+	}
 	if (expanded_filename == NULL) { /* still no success, complain */
 	    /* FIXME: this warning may be overwritten by warning about raw PS specials,
 	       so additinally dump to stderr. TODO: make statusline printing respect
 	       more important messages. */
 	    XDVI_WARNING((stderr, "Could not find graphics file \"%s\"", filename));
-	    statusline_print(STATUS_MEDIUM, "Warning: Could not find graphics file \"%s\"",
+	    statusline_info(STATUS_MEDIUM, "Warning: Could not find graphics file \"%s\"",
 			     filename);
 	    draw_bbox();
 	    return;
@@ -1246,8 +1250,15 @@ send_ps_file(const char *filename, kpse_file_format_type pathinfo)
 	strcpy(ffline, expanded_filename);
 	bufp = ffline;
 	f = XFOPEN(expanded_filename, OPEN_MODE);
+	if (f == NULL) {
+	    XDVI_WARNING((stderr, "Could not open graphics file \"%s\": %s", expanded_filename, strerror(errno)));
+	    statusline_info(STATUS_MEDIUM, "Warning: Could not open graphics file \"%s\": %s",
+			     expanded_filename, strerror(errno));
+	    free(expanded_filename);
+	    draw_bbox();
+	    return;
+	}
 	free(expanded_filename);
-	ASSERT(f != NULL, "Internal error opening file");
 
 	/* check for compressed files */
 	len = strlen(filename);
@@ -1486,19 +1497,19 @@ psfig_special(char *cp)
 /*	Keys for epsf specials */
 
 static const char *keytab[] = { "clip",
-				  "llx",
-				  "lly",
-				  "urx",
-				  "ury",
-				  "rwi",
-				  "rhi",
-				  "hsize",
-				  "vsize",
-				  "hoffset",
-				  "voffset",
-				  "hscale",
-				  "vscale",
-				  "angle"
+				"llx",
+				"lly",
+				"urx",
+				"ury",
+				"rwi",
+				"rhi",
+				"hsize",
+				"vsize",
+				"hoffset",
+				"voffset",
+				"hscale",
+				"vscale",
+				"angle"
 };
 
 #define	KEY_LLX	keyval[0]
@@ -1739,7 +1750,7 @@ parse_color(const char *cp0, const char *cp,
       Use a prime close to sizof colornames / sizeof colornames[0].
       You might want to update this when extending the colornames array,
       and to check the filling factor and average chain length by uncommenting the
-         hash_print(colornames_hash, True);
+      hash_print(colornames_hash, True);
       below. I usually go for filling > 50% and avg. chain len < 2.
       
       The 68-elem array below results in:
@@ -2205,13 +2216,13 @@ color_special(const char *cp)
 #if PS
 		scanned_page_ps = scanned_page;
 #endif
-/* 		fprintf(stderr, "forcing redraw!!!\n"); */
+		/* 		fprintf(stderr, "forcing redraw!!!\n"); */
 		globals.ev.flags |= EV_NEWPAGE;		/* force a redraw */
 		longjmp(globals.ev.canit, 1);
 	    }
 	    return;
 	}
-/* 	fprintf(stderr, "bot_size: %d\n", color_bot_size); */
+	/* 	fprintf(stderr, "bot_size: %d\n", color_bot_size); */
 	set_fg_color(rcs_top != NULL ? &rcs_top->color
 		     : &color_bottom[color_bot_size - 1]);
     }
@@ -2449,7 +2460,7 @@ applicationDoSpecial(char *cp, size_t len)
 
 #if COLOR
     if (memicmp(cp, "color ", 6) == 0) {
-/* 	fprintf(stderr, "------------- color special\n"); */
+	/* 	fprintf(stderr, "------------- color special\n"); */
 	if (resource.use_color)
 	    color_special(cp + 6);
 	return;
@@ -2481,7 +2492,7 @@ applicationDoSpecial(char *cp, size_t len)
 # if PS
 	    scanned_page_ps = scanned_page;
 # endif
-/* 	    fprintf(stderr, "forcing redraw!\n"); */
+	    /* 	    fprintf(stderr, "forcing redraw!\n"); */
 	    globals.ev.flags |= EV_NEWPAGE;		/* force a redraw */
 	    longjmp(globals.ev.canit, 1);
 	}
@@ -2631,32 +2642,32 @@ scan_special(char *cp, int cp_len, void *data)
 # if COLOR
 	if (scanned_page_ps <= scanned_page)
 # endif
-	    {
-		if (*cp == '!') {
-		    scan_bang(cp);
-		    return dummy_ret;
-		}
-		else if (memicmp(cp, "header", 6) == 0 && (p = endofcommand(cp + 6)) != NULL) {
-		    scan_header(p);
-		    return dummy_ret;
-		}
+	{
+	    if (*cp == '!') {
+		scan_bang(cp);
+		return dummy_ret;
 	    }
+	    else if (memicmp(cp, "header", 6) == 0 && (p = endofcommand(cp + 6)) != NULL) {
+		scan_header(p);
+		return dummy_ret;
+	    }
+	}
 #endif /* PS */
 	
 #if COLOR
 # if PS
 	if (scanned_page_color <= scanned_page)
 # endif
-	    {
-		if (memicmp(cp, "background ", 11) == 0) {
-		    scan_bg_color(cp);
-		    return dummy_ret;
-		}
-		else if (memicmp(cp, "color ", 6) == 0) {
-		    scan_color(cp);
-		    return dummy_ret;
-		}
+	{
+	    if (memicmp(cp, "background ", 11) == 0) {
+		scan_bg_color(cp);
+		return dummy_ret;
 	    }
+	    else if (memicmp(cp, "color ", 6) == 0) {
+		scan_color(cp);
+		return dummy_ret;
+	    }
+	}
 #endif /* COLOR */
 	if (memcmp(cp, "papersize", 9) == 0 && (p = endofcommand(cp + 9)) != NULL) {
 	    m_have_papersize_special = True;

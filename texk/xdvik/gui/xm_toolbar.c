@@ -117,11 +117,11 @@ void
 toggle_toolbar(void)
 {
 #if !HAVE_XPM
-    statusline_print(STATUS_LONG,
+    statusline_error(STATUS_LONG,
 		     "Compiled without XPM support; no toolbar available.");
 #else
     if (resource.toolbar_unusable) {
-	statusline_print(STATUS_LONG,
+	statusline_error(STATUS_LONG,
 			 "Toolbar pixmap file not found; toolbar is disabled.");
 	return;
     }
@@ -626,7 +626,7 @@ enter_leave(Widget w, XtPointer closure, XEvent *event, Boolean *cont)
 	}
 	entered = True;
 	if (resource.tooltips_in_statusline) {
-	    statusline_print(STATUS_SHORT, tooltip);
+	    statusline_info(STATUS_SHORT, tooltip);
 	}
     }
     else if (ev->type == LeaveNotify && !resource.toolbar_buttons_raised) {
@@ -748,6 +748,7 @@ create_toolbar(Widget parent, Widget menu_bar)
 	}
 	else if (item_count == 4) {
 	    Pixmap sens, insens;
+	    sens = insens = 0; /* make compiler happy ... */
 	    int idx = strtoul(line_items[0], (char **)NULL, 10);
 	    struct xdvi_action *action;
 

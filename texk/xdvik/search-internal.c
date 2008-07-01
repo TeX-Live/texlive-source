@@ -24,42 +24,42 @@
   How dvi search works:
 
   (1) Map the search string passed by the user from resource.text_encoding
-      to UTF-8 (currently only maps ISO_8859-1), and create a regexp from
-      the string if needed.
+  to UTF-8 (currently only maps ISO_8859-1), and create a regexp from
+  the string if needed.
 
-      If case-insensitive matching is activated and regexp search is not
-      active, the search string is converted to lowercase. For regexp
-      searches, the flag available with regcomp to ignore case is used.
+  If case-insensitive matching is activated and regexp search is not
+  active, the search string is converted to lowercase. For regexp
+  searches, the flag available with regcomp to ignore case is used.
   
   (2) Scan 2 adjacent pages (so that we can also find matches across page
-      boundaries), collecting the text into a char *buffer.
-      This involves the following steps:
+  boundaries), collecting the text into a char *buffer.
+  This involves the following steps:
 
-      - Map characters from wide_ubyte to uint32_t encoding (ucs-4),
-        using and Adobe names lookup table (for Postscript Type1
-        fonts) or font-specific character info (for Metafont fonts).
+  - Map characters from wide_ubyte to uint32_t encoding (ucs-4),
+  using and Adobe names lookup table (for Postscript Type1
+  fonts) or font-specific character info (for Metafont fonts).
 	
-        This step also maps accented glyphs to composite glyphs,
-	expands ligatures to separate characters (e.g. `ffi' to
-	`f'`f'`i'), and tries to detect word boundaries and line
-	breaks.
+  This step also maps accented glyphs to composite glyphs,
+  expands ligatures to separate characters (e.g. `ffi' to
+  `f'`f'`i'), and tries to detect word boundaries and line
+  breaks.
 
-	If case-insensitive matching is activated, the characters are
-	also lowercased in this step.
+  If case-insensitive matching is activated, the characters are
+  also lowercased in this step.
 	
-	Optionally, hyphenation can be removed in this step.
+  Optionally, hyphenation can be removed in this step.
 	
-	Routine: do_char() in dvi-draw.c (must be in dvi_draw.c since
-	we need access to drawing-related stuff like `currinf' to get
-	information about the current font, position in the DVI file
-	etc.).
+  Routine: do_char() in dvi-draw.c (must be in dvi_draw.c since
+  we need access to drawing-related stuff like `currinf' to get
+  information about the current font, position in the DVI file
+  etc.).
 
-      - Save the uint32_t characters into a char *buffer, mapping to
-        utf-8.
+  - Save the uint32_t characters into a char *buffer, mapping to
+  utf-8.
       
   (3) Search the buffer from (2) for the string from (1). If a match
-      has been found, the page is scanned again to store the bounding
-      box information of the matched text for highlighting it.
+  has been found, the page is scanned again to store the bounding
+  box information of the matched text for highlighting it.
 */
 
 
@@ -85,6 +85,8 @@
 
 #include <ctype.h>
 
+#include <X11/keysym.h>
+
 #include "dvi-init.h" /* for total_pages */
 #include "dvi-draw.h"
 #include "search-internal.h"
@@ -101,6 +103,7 @@
 #include "string-utils.h"
 #include "mag.h"
 #include "pagehist.h"
+#include "translations.h"
 
 #define DEBUG_SEARCH 0
 /* #define MATCH_HIGHLIGHT_INVERTED 1 */
@@ -226,8 +229,8 @@ draw_bboxes(const struct word_info *info)
 	    }
 	    else {
 		values.foreground = WhitePixelOfScreen(SCRN) ^ BlackPixelOfScreen(SCRN);
-/* 		fprintf(stderr, "foreground: 0x%lx, white pixel: 0x%lx, black pixel: 0x%lx\n", */
-/* 			values.foreground, WhitePixelOfScreen(SCRN), BlackPixelOfScreen(SCRN)); */
+		/* 		fprintf(stderr, "foreground: 0x%lx, white pixel: 0x%lx, black pixel: 0x%lx\n", */
+		/* 			values.foreground, WhitePixelOfScreen(SCRN), BlackPixelOfScreen(SCRN)); */
 		valuemask = GCFunction | GCForeground;
 	    }
 	    bboxGC = XCreateGC(DISP, XtWindow(globals.widgets.top_level), valuemask, &values);
@@ -300,8 +303,8 @@ draw_bboxes(const struct word_info *info)
 Boolean
 search_have_match(int pageno)
 {
-/*     fprintf(stderr, "pageno: %d --- m_info: %p\n", pageno, m_info); */
-/*     fprintf(stderr, "m_match_page: %d\n", m_match_page); */
+    /*     fprintf(stderr, "pageno: %d --- m_info: %p\n", pageno, m_info); */
+    /*     fprintf(stderr, "m_match_page: %d\n", m_match_page); */
     return m_info != NULL && m_match_page == pageno;
 }
 
@@ -624,7 +627,7 @@ report_regexp_error(int errcode, regex_t *regex, const char *term, int flag)
     size_t n = regerror(errcode, regex, NULL, 0);
     char *err_buf = xmalloc(n);
     regerror(errcode, regex, err_buf, n);
-    XBell(DISP, 0);
+    xdvi_bell();
     popup_message(XtNameToWidget(globals.widgets.top_level, "*find_popup"),
 		  MSG_ERR,
 		  NULL,
@@ -637,11 +640,11 @@ report_regexp_error(int errcode, regex_t *regex, const char *term, int flag)
 
 static void
 try_match(const struct word_info *info,
-	  const struct search_settings *settings,
-	  struct search_info *searchinfo)
+	  const struct search_settings *settings)
 {
     char *res = NULL;
     size_t from_pos = 0;
+    struct search_info *searchinfo = settings->searchinfo;
     
     ASSERT(info->curr_buf_idx == strlen(info->txt_buf), "");
     TRACE_FIND((stderr, "buffer index: %lu, len: %lu; from: %lu",
@@ -693,14 +696,15 @@ try_match(const struct word_info *info,
 static Boolean
 try_regexp_match(regex_t *regex,
 		 const struct word_info *info,
-		 const struct search_settings *settings,
-		 struct search_info *searchinfo)
+		 const struct search_settings *settings)
 {
     int have_match;
     regmatch_t re_match;
     size_t from_pos = 0;
     Boolean retval = True;
 
+    struct search_info *searchinfo = settings->searchinfo;
+    
 #if SWITCH_TO_UTF8
     /* switch to UTF-8 encoding, as for regcomp() */
     char *utf8_locale = locale_to_utf8(globals.orig_locale);
@@ -720,7 +724,7 @@ try_regexp_match(regex_t *regex,
 	    searchinfo->have_match = False;
 	    search_again = False;
 
-/* 	    TRACE_FIND((stderr, "search string: |%s|, from_pos: %d", info->txt_buf + from_pos, from_pos)); */
+	    /* 	    TRACE_FIND((stderr, "search string: |%s|, from_pos: %d", info->txt_buf + from_pos, from_pos)); */
 	    have_match = regexec(regex, info->txt_buf + from_pos, 1, &re_match, 0);
 
 	    if (have_match == 0) { /* match */
@@ -887,17 +891,25 @@ highlight_match(struct search_settings *settings,
 	}
     }
     else {
+	if (searchinfo->from_pos >= page_mapping[1].offset) {
+	    XDVI_ERROR((stderr, "to_pos (%d) should be smaller than page_mapping[1].offset (%d)!",
+			searchinfo->from_pos, page_mapping[1].offset));
+	}
 	ASSERT(searchinfo->from_pos < page_mapping[1].offset, "to_pos should be smaller than page_mapping[1].offset!");
 	match_page = page_mapping[1].pageno;
 	if (searchinfo->to_pos > page_mapping[1].offset) {
 	    match_wrapped = True;
 	}
     }
-    if (match_wrapped)
-	statusline_print(STATUS_MEDIUM, "Match from page %d to %d", match_page + 1,  match_page + 2);
-    else
-	statusline_print(STATUS_MEDIUM, "Match on page %d", match_page + 1);
+    if (!settings->isearchterm) {
+	if (match_wrapped)
+	    statusline_info(STATUS_MEDIUM, "Match from page %d to %d", match_page + 1,  match_page + 2);
+	else
+	    statusline_info(STATUS_MEDIUM, "Match on page %d", match_page + 1);
     
+	if (settings->wrapcnt > 0)
+	    statusline_append(STATUS_MEDIUM, " (wrapped)", " (wrapped)");
+    }
     if (globals.debug & DBG_FIND) {
 	fprintf(stderr, "*** match_page: %d, adding: %d\n", match_page, searchinfo->page_offset);
     
@@ -926,7 +938,7 @@ highlight_match(struct search_settings *settings,
     if (match_page != current_page) {
 	goto_page(match_page, resource.keep_flag ? NULL : home, False);
 	page_history_insert(match_page);
-/* 	globals.ev.flags |= EV_NEWPAGE; */
+	/* 	globals.ev.flags |= EV_NEWPAGE; */
     }
     /* don't raise the window - this can obscure the search popup */
     /*     XMapRaised(DISP, XtWindow(globals.widgets.top_level)); */
@@ -1063,27 +1075,26 @@ get_text_selection(int *len, int ulx, int uly, int lrx, int lry)
 }
 
 Boolean
-search_extract_text(outputFormatT fmt, struct select_pages_info *pinfo)
+search_extract_text(struct save_or_print_info *info)
 {
     int i;
     FILE *fp;
-    struct file_info *finfo = pinfo->finfo;
     
-    if ((fp = XFOPEN(finfo->txt_out.fname, "wb")) == NULL) {
+    if ((fp = XFOPEN(info->finfo->out_file, "wb")) == NULL) {
 	popup_message(globals.widgets.top_level,
 		      MSG_ERR,
 		      NULL, "Could not open %s for writing: %s.",
-		      finfo->txt_out.fname,
+		      info->finfo->out_file,
 		      strerror(errno));
 	return False;
     }
 
     for (i = 0; i < total_pages; i++) {
-	if (pinfo->callback == NULL || pinfo->callback(pinfo, i)) {
+	if (info->pinfo->callback == NULL || info->pinfo->callback(info, i)) {
 	    struct word_info txt_info = { NULL, 0, 0, NULL, 0, 0, NULL, NULL, 0, False, False, False };
 	    scan_page(globals.dvi_file.bak_fp, i, &txt_info);
 
-	    dump_buffer(&txt_info, 0, fp, fmt);
+	    dump_buffer(&txt_info, 0, fp, info->fmt);
 
 	    free(txt_info.txt_buf);
 	    
@@ -1112,7 +1123,8 @@ message_search_ended(XtPointer arg)
     search_signal_page_changed();
     settings->message_window = 0;
     /*     statusline_append(STATUS_SHORT, " stopped."); */
-    statusline_print(STATUS_SHORT, "Search stopped.");
+    if (!settings->isearchterm)
+	statusline_info(STATUS_SHORT, "Search stopped.");
 }
 
 
@@ -1122,6 +1134,7 @@ search_restart(XtPointer arg)
     struct search_settings *settings = (struct search_settings *)arg;
     Widget popup, textfield;
     char *searchterm = NULL;
+    char *textfield_name = NULL;
     
     TRACE_FIND((stderr, "restart search!"));
 
@@ -1130,8 +1143,14 @@ search_restart(XtPointer arg)
        from the toplevel widget since this method may be called
        from a different window (e.g. confirmation popup).
     */
-    if (get_widget_by_name(&popup, globals.widgets.top_level, Xdvi_SEARCH_POPUP_NAME, True)
-	&& get_widget_by_name(&textfield, popup, Xdvi_SEARCHBOX_INPUT_NAME, True)) {
+#if defined(MOTIF) && USE_COMBOBOX
+    textfield_name = "Text";
+#else
+    textfield_name = Xdvi_SEARCHBOX_INPUT_NAME;
+#endif /* defined(MOTIF) && USE_COMBOBOX */
+    if (!settings->isearchterm
+	&& get_widget_by_name(&popup, globals.widgets.top_level, Xdvi_SEARCH_POPUP_NAME, True)
+	&& get_widget_by_name(&textfield, popup, textfield_name, True)) {
 	XtVaGetValues(textfield,
 #ifdef MOTIF
 		      XmNvalue,
@@ -1161,7 +1180,6 @@ search_restart(XtPointer arg)
     search_signal_page_changed();
     search_dvi((XtPointer)settings);
 }
-
 
 static void
 normalize_newline(char *str)
@@ -1200,7 +1218,7 @@ reinit_searchterm(struct search_settings *settings, const char *encoding)
 	int ret_len;
 	char *ptr = xmalloc(conv_len);
 	if ((ret_len = str_iso_8859_1_to_utf8(settings->term, ptr, conv_len)) < 0) {
-	    XBell(DISP, 0);
+	    xdvi_bell();
 	    popup_message(XtNameToWidget(globals.widgets.top_level, "*find_popup"),
 			  MSG_ERR,
 			  NULL,
@@ -1336,7 +1354,7 @@ do_recompile_regexp(struct search_settings *settings,
 static void
 warn_no_regex(void)
 {
-    XBell(DISP, 0);
+    xdvi_bell();
     popup_message(XtNameToWidget(globals.widgets.top_level, "*find_popup"),
 		  MSG_WARN,
 		  NULL,
@@ -1426,6 +1444,199 @@ scan_two_pages(struct search_settings *settings,
     return !cancelled;
 }
 
+static void
+search_over_pages(struct search_settings *settings,
+		  struct page_mapping *page_mapping,
+		  struct word_info *w_info,
+		  int *from_pos_bak,
+		  Boolean adjust_hyphen_offset
+#if HAVE_REGEX_H
+		  , regex_t *regex
+#endif
+		  )
+{
+    int curr_page = settings->from_page; /* page on which we're currently on */
+    
+    for (;;) {	/* scan pages, try to match */
+	if (settings->isearchterm) {
+	    const char *prefix = "";
+	    if (settings->wrapcnt > 0)
+		prefix = "Wrapped ";
+	    statusline_info(STATUS_FOREVER, "%sI-search (ESC to exit): %s", prefix, settings->isearchterm);
+	}
+	else {
+	    if (resource.expert_mode & XPRT_SHOW_STATUSLINE) /* too distracting for stdout */
+		statusline_info(STATUS_MEDIUM, "Searching on page %d", curr_page);
+	}
+	TRACE_FIND((stderr, "curr_page: %d, pageno 0: %d, pageno1: %d",
+		    curr_page, page_mapping[0].pageno, page_mapping[1].pageno));
+
+	settings->hyphen_delta = 0;
+	/* scan_two_pages will return False if user cancelled */
+	if (!scan_two_pages(settings, w_info, page_mapping, curr_page)
+	    || (read_events(EV_NOWAIT) & EV_GE_FIND_CANCEL)) {
+	    if (!settings->isearchterm) {
+		if (resource.expert_mode & XPRT_SHOW_STATUSLINE) /* too distracting for stdout */
+		    statusline_append(STATUS_SHORT,
+				      "- cancelled.",
+				      "- cancelled.");
+	    }
+	    settings->searchinfo->locked = False;
+	    return;
+	
+	}
+
+	TRACE_FIND((stderr, "page mapping:\n%d: %d\n%d: %d",
+		    page_mapping[0].pageno, page_mapping[0].offset,
+		    page_mapping[1].pageno, page_mapping[1].offset));
+	
+	/*  	dump_buffer(w_info, 0, stderr, FMT_ISO_8859_1); */
+
+	/* If ignore_hyphens has changed (in which case adjust_hyphen_offset
+	   is true), the buffer will contain settings->hyphen_delta fewer
+	   or more characters than in the previous pass due to the removal
+	   or addition of hyphens; adjust from_pos and to_pos accordingly:
+	*/
+	if (adjust_hyphen_offset) {
+	    TRACE_FIND((stderr, "adjusting offset by %d", settings->hyphen_delta));
+	    if (settings->ignore_hyphens) { /* fewer characters */
+		settings->searchinfo->from_pos -= settings->hyphen_delta;
+		settings->searchinfo->to_pos -= settings->hyphen_delta;
+	    }
+	    else { /* more characters */
+		settings->searchinfo->from_pos += settings->hyphen_delta;
+		settings->searchinfo->to_pos += settings->hyphen_delta;
+	    }
+	    TRACE_FIND((stderr, "NEW from_pos: %d; to_pos: %d",
+			settings->searchinfo->from_pos, settings->searchinfo->to_pos));
+	}
+
+    	
+	/* match the searchstring */
+#if HAVE_REGEX_H
+	if (settings->use_regexp) {
+	    if (!try_regexp_match(regex, w_info, settings)) /* regexp error */
+		return;
+	    
+	}
+	else {
+#endif
+	    try_match(w_info, settings);
+#if HAVE_REGEX_H
+	}
+#endif
+
+	/* again, check if user cancelled */
+	if (read_events(EV_NOWAIT) & EV_GE_FIND_CANCEL) { /* user cancelled */
+	    if (!settings->isearchterm)
+		statusline_append(STATUS_SHORT,
+				  "- cancelled.",
+				  "- cancelled.");
+	    settings->searchinfo->locked = False;
+	    return;
+	
+	}
+	
+	if (settings->searchinfo->have_match) { /* match, highlight it */
+	    highlight_match(settings, w_info, page_mapping);
+	    settings->searchinfo->locked = False;
+	    if (settings->direction == SEARCH_DOWN && !settings->isearchterm) {
+		*from_pos_bak = settings->searchinfo->from_pos;
+		settings->searchinfo->from_pos = settings->searchinfo->to_pos;
+	    }
+	    break;
+	}
+	else if ((settings->direction == SEARCH_DOWN && curr_page + 1 < total_pages)
+		 || (settings->direction == SEARCH_UP && curr_page > 0)) {
+	    if (settings->direction == SEARCH_DOWN)
+		curr_page++;
+	    else
+		curr_page--;
+	    TRACE_FIND((stderr, "continuing on page %d", curr_page));
+	    erase_match_highlighting(m_info, True);
+	    /* no match, and we have more pages; continue scanning */
+	    continue;
+	}
+	else { /* reached end of file */
+	    Widget find_popup;
+
+	    if (settings->isearchterm) {
+		const char *prefix = "Failed";
+		fprintf(stderr, "reached end with wrapcnt: %d\n", settings->wrapcnt);
+		if (settings->wrapcnt > 0)
+		    prefix = "Failed wrapped";
+		xdvi_bell();
+		statusline_info(STATUS_FOREVER, "%s I-search (ESC to exit, RET to restart): %s", prefix, settings->term);
+		settings->searchinfo->locked = False;
+		erase_match_highlighting(m_info, True);
+		settings->wrapcnt++;
+		return;
+	    }
+	    
+	    if (settings->wrap) {
+		if (settings->wrapcnt > 0) {
+		    positioned_popup_message(XtNameToWidget(globals.widgets.top_level, "*find_popup"),
+					     MSG_INFO,
+					     settings->x_pos, settings->y_pos,
+					     NULL, "Pattern `%s' not found.", settings->term);
+		    /* 		    positioned_choice_dialog(XtNameToWidget(globals.widgets.top_level, "*find_popup"), */
+		    /* 					     MSG_INFO, */
+		    /* 					     settings->x_pos, settings->y_pos, */
+		    /* 					     NULL, */
+		    /* #ifndef MOTIF */
+		    /* 					     NULL, */
+		    /* #endif */
+		    /* 					     NULL, NULL, /\* pre callback *\/ */
+		    /* 					     "OK", message_search_ended, (XtPointer)settings, */
+		    /* 					     NULL, NULL, NULL, */
+		    /* 					     "Pattern `%s' not found.", settings->term); */
+		    settings->searchinfo->locked = False;
+		    message_search_ended((XtPointer)settings);
+		    return;
+		}
+		settings->wrapcnt++;
+		erase_match_highlighting(m_info, True);
+		settings->searchinfo->locked = False;
+		search_restart((XtPointer)settings);
+		return;
+	    }
+	    
+	    if ((find_popup = XtNameToWidget(globals.widgets.top_level, "*find_popup")) == 0) {
+		XDVI_WARNING((stderr, "Couldn't find \"find_popup\" widget!"));
+		find_popup = globals.widgets.top_level;
+	    }
+
+	    if (!settings->isearchterm)
+		statusline_append(STATUS_MEDIUM,
+				  "... searched to end of file.",
+				  "... searched to end of file.");
+	    erase_match_highlighting(m_info, True);
+	    settings->searchinfo->locked = False;
+	    
+	    settings->message_window =
+		positioned_choice_dialog(find_popup,
+					 MSG_QUESTION,
+					 settings->x_pos, settings->y_pos,
+					 NULL,
+#ifndef MOTIF
+					 "do-search-restart",
+#endif
+					 NULL, NULL, /* no pre_callbacks */
+					 "Yes", search_restart, (XtPointer)settings,
+					 "Cancel", message_search_ended, (XtPointer)settings,
+					 "Searched %s of file without finding the pattern.\n"
+					 "Start again from the %s of the file?",
+					 settings->direction == SEARCH_DOWN
+					 ? "to end" : "to beginning",
+					 settings->direction == SEARCH_DOWN
+					 ? "beginning" : "end");
+	    TRACE_GUI((stderr, "message_window: %p\n", (void *)settings->message_window));
+	    /* notreached */
+	    break;
+	}
+    } /* for(;;) */
+}
+
 void
 search_dvi(XtPointer arg)
 {
@@ -1456,7 +1667,7 @@ search_dvi(XtPointer arg)
        so we need the start of the current match again (and down search sets
        searchinfo->from_pos = searchinfo->to_pos) */
     static int from_pos_bak = -1;
-    int curr_page = settings->from_page;
+    /*      int curr_page; */
 
     Boolean reinit = False;
     Boolean recompile_regexp = False;
@@ -1490,6 +1701,11 @@ search_dvi(XtPointer arg)
 
     ASSERT(settings->term != NULL, "settings->term mustn't be NULL!");
     if (strlen(settings->term) == 0) {
+	if (settings->isearchterm) {
+	    settings->searchinfo->locked = False;
+	    return;
+	}
+	
 	positioned_popup_message(XtNameToWidget(globals.widgets.top_level, "*find_popup"),
 				 MSG_ERR,
 				 settings->x_pos, settings->y_pos,
@@ -1608,127 +1824,253 @@ search_dvi(XtPointer arg)
 #endif /* HAVE_REGEX_H */
     }
 
-    for (;;) {	/* scan pages, try to match */
-	statusline_print(STATUS_MEDIUM, "Searching on page %d", curr_page);
-	TRACE_FIND((stderr, "curr_page: %d, pageno 0: %d, pageno1: %d",
-		    curr_page, page_mapping[0].pageno, page_mapping[1].pageno));
-
-	settings->hyphen_delta = 0;
-	/* scan_two_pages will return False if user cancelled */
-	if (!scan_two_pages(settings, &w_info, page_mapping, curr_page)
-	    || (read_events(EV_NOWAIT) & EV_GE_FIND_CANCEL)) {
-	    statusline_append(STATUS_SHORT,
-			      "- cancelled.",
-			      "- cancelled.");
-	    settings->searchinfo->locked = False;
-	    return;
-	
-	}
-
-	TRACE_FIND((stderr, "page mapping:\n%d: %d\n%d: %d",
-		    page_mapping[0].pageno, page_mapping[0].offset,
-		    page_mapping[1].pageno, page_mapping[1].offset));
-	
-/*  	dump_buffer(&w_info, 0, stderr, FMT_ISO_8859_1); */
-
-	/* If ignore_hyphens has changed (in which case adjust_hyphen_offset
-	   is true), the buffer will contain settings->hyphen_delta fewer
-	   or more characters than in the previous pass due to the removal
-	   or addition of hyphens; adjust from_pos and to_pos accordingly:
-	*/
-	if (adjust_hyphen_offset) {
-	    TRACE_FIND((stderr, "adjusting offset by %d", settings->hyphen_delta));
-	    if (settings->ignore_hyphens) { /* fewer characters */
-		settings->searchinfo->from_pos -= settings->hyphen_delta;
-		settings->searchinfo->to_pos -= settings->hyphen_delta;
-	    }
-	    else { /* more characters */
-		settings->searchinfo->from_pos += settings->hyphen_delta;
-		settings->searchinfo->to_pos += settings->hyphen_delta;
-	    }
-	    TRACE_FIND((stderr, "NEW from_pos: %d; to_pos: %d",
-			settings->searchinfo->from_pos, settings->searchinfo->to_pos));
-	}
-
-    	
-	/* match the searchstring */
+    /* do it */
+    search_over_pages(settings, page_mapping, &w_info, &from_pos_bak, adjust_hyphen_offset
 #if HAVE_REGEX_H
-	if (settings->use_regexp) {
-	    if (!try_regexp_match(&regex, &w_info, settings, searchinfo)) /* regexp error */
-		return;
+		      , &regex
+#endif
+		      );
+}
+
+static void cb_isearch(Widget w, XtPointer closure, XEvent *event, Boolean *cont);
+	
+static void
+do_isearch_cancel(struct search_settings *settings)
+{
+    static const char default_key_translations[] =
+	"\"0\":digit(0)\n"
+	"\"1\":digit(1)\n"
+	"\"2\":digit(2)\n"
+	"\"3\":digit(3)\n"
+	"\"4\":digit(4)\n"
+	"\"5\":digit(5)\n"
+	"\"6\":digit(6)\n"
+	"\"7\":digit(7)\n"
+	"\"8\":digit(8)\n"
+	"\"9\":digit(9)\n"
+	/* 		"\"-\":minus()\n" */
+	"<Motion>:motion()\n";
+    
+    static const char default_mouse_translations[] =
+	"<BtnUp>:release()";
+
+    
+    statusline_info(STATUS_SHORT, "I-search stopped.");
+
+    free(settings->isearchterm);
+    settings->isearchterm = NULL;
+    settings->searchinfo->from_pos = settings->searchinfo->to_pos = 0;
+    settings->from_page = current_page;
+    erase_match_highlighting(m_info, True);
+
+	
+
+    /* restore translations */
+    XtOverrideTranslations(globals.widgets.top_level, XtParseTranslationTable(base_key_translations));
+    XtOverrideTranslations(globals.widgets.top_level, XtParseTranslationTable(default_key_translations));
+    XtOverrideTranslations(globals.widgets.top_level, XtParseTranslationTable(base_mouse_translations));
+    XtOverrideTranslations(globals.widgets.top_level, XtParseTranslationTable(default_mouse_translations));
+
+    XtOverrideTranslations(globals.widgets.draw_widget, XtParseTranslationTable(base_key_translations));
+    XtOverrideTranslations(globals.widgets.draw_widget, XtParseTranslationTable(default_key_translations));
+    XtOverrideTranslations(globals.widgets.draw_widget, XtParseTranslationTable(base_mouse_translations));
+    XtOverrideTranslations(globals.widgets.draw_widget, XtParseTranslationTable(default_mouse_translations));
+
+    XtOverrideTranslations(globals.widgets.clip_widget, XtParseTranslationTable(base_key_translations));
+    XtOverrideTranslations(globals.widgets.clip_widget, XtParseTranslationTable(default_key_translations));
+    XtOverrideTranslations(globals.widgets.clip_widget, XtParseTranslationTable(base_mouse_translations));
+    XtOverrideTranslations(globals.widgets.clip_widget, XtParseTranslationTable(default_mouse_translations));
+
+    if (resource.main_translations != NULL) {
+	XtOverrideTranslations(globals.widgets.draw_widget, XtParseTranslationTable(resource.main_translations));
+	XtOverrideTranslations(globals.widgets.clip_widget, XtParseTranslationTable(resource.main_translations));
+    }
+
+    XtRemoveEventHandler(globals.widgets.top_level, KeyPressMask|KeyReleaseMask, False,
+			 cb_isearch, (XtPointer)settings);
+    XtRemoveEventHandler(globals.widgets.draw_widget, KeyPressMask|KeyReleaseMask, False,
+			 cb_isearch, (XtPointer)settings);
+    XtRemoveEventHandler(globals.widgets.clip_widget, KeyPressMask|KeyReleaseMask, False,
+			 cb_isearch, (XtPointer)settings);
+}
+
+static void
+cb_isearch(Widget w, XtPointer closure, XEvent *event, Boolean *cont)
+{
+    struct search_settings *settings = (struct search_settings *)closure;
+    	
+    UNUSED(w);
+    UNUSED(cont);
 	    
+    if (settings->isearchterm == NULL)
+	settings->isearchterm = xstrdup("");
+    
+    if (event->type == KeyPress) {
+	char buf[48];
+	KeySym keysym;
+	int count;
+	/* temporarily disable control mask; this gives better results with XLookupString() */
+	const unsigned int save_state = event->xkey.state;
+	/* 	event->xkey.state &= ~ControlMask; */
+	count = XLookupString(&(event->xkey), buf, 48, &keysym, NULL);
+	event->xkey.state = save_state;
+	if (count > 0) {
+	    /* Ctrl-g and Ctrl-f continue isearch and
+	       switch to the search window, respectively */
+	    if (event->xkey.state & ControlMask) {
+		if (keysym == XK_g) {
+		    settings->term = settings->isearchterm;
+		    isearch_start(); /* restart search */
+		    return;
+		}
+		else if (keysym == XK_f) {
+		    static char *str = NULL;
+		    if (str != NULL) {
+			free(str);
+		    }
+		    str = xstrdup(settings->isearchterm);
+		    do_isearch_cancel(settings);
+		    TRACE_FIND((stderr, "restarting search: %s", str));
+		    dvi_find_string(str, False);
+		    return;
+		}
+	    }
+	    if (keysym == XK_Escape) {
+		do_isearch_cancel(settings);
+		return;
+	    }
+	    if (keysym == XK_BackSpace || keysym == XK_Delete) {
+		size_t len = strlen(settings->isearchterm);
+		if (len > 0) {
+		    settings->isearchterm = xrealloc(settings->isearchterm, len);
+		    settings->isearchterm[len - 1] = '\0';
+		    /* statusline_info(STATUS_FOREVER, "I-search (ESC to exit): %s", settings->posix_term); */
+		}
+		else {
+		    xdvi_bell();
+		}
+	    }
+            else if (keysym >= XK_Shift_L && keysym <= XK_Hyper_R) {
+		fprintf(stderr, "keysym %ld: Modifier %s\n", keysym, XKeysymToString(keysym));
+	    }
+	    else if (keysym == XK_Return || keysym == XK_KP_Enter || keysym == XK_Linefeed) { /* TODO */
+		settings->term = settings->isearchterm;
+		isearch_start(); /* restart search */
+		return;
+		/* statusline_info(STATUS_FOREVER, "I-search (ESC to exit): %s (next match)", settings->isearchterm); */
+	    }
+	    else if ((keysym >= XK_KP_Space && keysym <= XK_KP_9)
+		     || (keysym >= XK_space && keysym <= XK_asciitilde)
+		     || (keysym >= XK_exclamdown && keysym <= XK_ydiaeresis)
+		     || (keysym >= XK_F1 && keysym <= XK_F35)) {
+		settings->isearchterm = xstrcat(settings->isearchterm, buf);
+		/* statusline_info(STATUS_FOREVER, "I-search (ESC to exit): %s", settings->posix_term); */
+            }
+	    else { /* TODO: abort search? */
+		xdvi_bell();
+		TRACE_FIND((stderr, "keysym %ld: %s is not handled", keysym, XKeysymToString(keysym)));
+	    }
+	
+	    if (settings->isearchterm[0] != '\0') {
+		/* 		const char *prefix = ""; */
+		/* 		fprintf(stderr, "cb_isearch called!\n"); */
+		/* 		if (settings->wrapcnt > 0) */
+		/* 		    prefix = "Wrapped "; */
+		/* 		statusline_info(STATUS_FOREVER, "%sI-search (ESC to exit): %s", prefix, settings->isearchterm); */
+		settings->from_page = current_page;
+		settings->message_window = 0;
+		/* 	settings->wrapcnt = 0; */
+		settings->term = settings->isearchterm;
+		search_dvi((XtPointer)settings);
+	    }
+	}
+    }
+
+}
+	    
+#ifdef MOTIF
+#define XTranslations XmNtranslations
+#else
+#define XTranslations XtNtranslations
+#endif
+    
+/* static void */
+/* isearch_cancel(Widget w, XEvent *event, String *params, Cardinal *num_params) */
+/* { */
+/*     struct search_settings *settings = NULL; */
+/*     void *ptr; */
+    
+/*     UNUSED(w); */
+/*     UNUSED(event); */
+    
+/*     if (*num_params < 1) { */
+/* 	XDVI_WARNING((stderr, "Wrong argument number (%d) in callback!", *num_params)); */
+/* 	return; */
+/*     } */
+/*     sscanf(*params, "%p", &ptr); */
+/*     settings = (struct search_settings *)ptr; */
+/*     do_isearch_cancel(settings); */
+/* } */
+
+
+/* static XtActionsRec isearch_actions[] = { */
+/*     {"CancelIsearch",		isearch_cancel }, */
+/* }; */
+
+void isearch_start(void)
+{
+    /*     char *ptr = NULL; */
+    XtTranslations empty_trans;
+    static struct search_settings settings = {
+	NULL, NULL, NULL,
+	False, False, False, False,
+	False, 0,
+	NULL, /* isearchterm */
+	SEARCH_DOWN, NULL,
+	0, 0,
+	0, 0, 0,
+	0, NULL
+    };
+    static struct search_info searchinfo = {
+	False, False, False,
+	0, 0, 0, 0
+    };
+    static int wrapcnt_bak = 0;
+    
+    settings.searchinfo = &searchinfo;
+
+    if (settings.isearchterm) { /* already running a search, jump to next match */
+	settings.searchinfo->from_pos = settings.searchinfo->to_pos;
+	if (settings.wrapcnt > wrapcnt_bak) { /* search wrapped */
+	    wrapcnt_bak = settings.wrapcnt;
+	    search_restart((XtPointer)&settings);
 	}
 	else {
-#endif
-	    try_match(&w_info, settings, searchinfo);
-#if HAVE_REGEX_H
+	    wrapcnt_bak = settings.wrapcnt;
+	    search_dvi((XtPointer)&settings);
 	}
-#endif
+	return;
+    }
+    
+    settings.wrapcnt = 0;
+    
+    /*     ptr = get_string_va("<Key>osfCancel:CancelIsearch(%p)", (void *)&settings); */
+    /*     empty_trans = XtParseTranslationTable(ptr); */
+    empty_trans = XtParseTranslationTable("");
+    /*     free(ptr); */
+    /*     XtAddActions(isearch_actions, XtNumber(isearch_actions)); */
 
-	/* again, check if user cancelled */
-	if (read_events(EV_NOWAIT) & EV_GE_FIND_CANCEL) { /* user cancelled */
-	    statusline_append(STATUS_SHORT,
-			      "- cancelled.",
-			      "- cancelled.");
-	    settings->searchinfo->locked = False;
-	    return;
-	
-	}
-	
-	if (searchinfo->have_match) { /* match, highlight it */
-	    highlight_match(settings, &w_info, page_mapping);
-	    settings->searchinfo->locked = False;
-	    if (settings->direction == SEARCH_DOWN) {
-		from_pos_bak = searchinfo->from_pos;
-		searchinfo->from_pos = searchinfo->to_pos;
-	    }
-	    break;
-	}
-	else if ((settings->direction == SEARCH_DOWN && curr_page + 1 < total_pages)
-		 || (settings->direction == SEARCH_UP && curr_page > 0)) {
-	    if (settings->direction == SEARCH_DOWN)
-		curr_page++;
-	    else
-		curr_page--;
-	    TRACE_FIND((stderr, "continuing on page %d", curr_page));
-	    erase_match_highlighting(m_info, True);
-	    /* no match, and we have more pages; continue scanning */
-	    continue;
-	}
-	else { /* reached end of file */
-	    Widget find_popup;
-
-	    if ((find_popup = XtNameToWidget(globals.widgets.top_level, "*find_popup")) == 0) {
-		XDVI_WARNING((stderr, "Couldn't find \"find_popup\" widget!"));
-		find_popup = globals.widgets.top_level;
-	    }
-	    
-	    statusline_append(STATUS_MEDIUM,
-			      "... searched to end of file.",
-			      "... searched to end of file.");
-	    erase_match_highlighting(m_info, True);
-	    settings->searchinfo->locked = False;
-	    
-	    settings->message_window =
-		positioned_choice_dialog(find_popup,
-					 MSG_QUESTION,
-					 settings->x_pos, settings->y_pos,
-					 NULL,
-#ifndef MOTIF
-					 "do-search-restart",
-#endif
-					 NULL, NULL, /* no pre_callbacks */
-					 "Yes", search_restart, (XtPointer)settings,
-					 "Cancel", message_search_ended, (XtPointer)settings,
-					 "Searched %s of file without finding the pattern.\n"
-					 "Start again from the %s of the file?",
-					 settings->direction == SEARCH_DOWN
-					 ? "forward to end" : "backward to beginning",
-					 settings->direction == SEARCH_DOWN
-					 ? "beginning" : "end");
-	    TRACE_GUI((stderr, "message_window: %p\n", (void *)settings->message_window));
-	    /* notreached */
-	    break;
-	}
-    } /* for(;;) */
+    statusline_info(STATUS_FOREVER, "I-search (ESC to exit): ");
+    XtVaSetValues(globals.widgets.top_level, XTranslations, empty_trans, NULL);
+    XtAddEventHandler(globals.widgets.top_level, KeyPressMask|KeyReleaseMask, False,
+		      cb_isearch, (XtPointer)&settings);
+    
+    XtVaSetValues(globals.widgets.draw_widget, XTranslations, empty_trans, NULL);
+    XtAddEventHandler(globals.widgets.draw_widget, KeyPressMask|KeyReleaseMask, False,
+		      cb_isearch, (XtPointer)&settings);
+    
+    XtVaSetValues(globals.widgets.clip_widget, XTranslations, empty_trans, NULL);
+    XtAddEventHandler(globals.widgets.clip_widget, KeyPressMask|KeyReleaseMask, False,
+		      cb_isearch, (XtPointer)&settings);
 }
+

@@ -24,28 +24,28 @@
   TODO:
   
   1. Specials other than 'psfile=' and 'em:graph' which include
-     image files.
+  image files.
 
-     [ NOTE SU: I consider this more or less done now with the backtick
-       parsing ;-) ]
+  [ NOTE SU: I consider this more or less done now with the backtick
+  parsing ;-) ]
 
   2. Use an XtWorkProc or similar to do some background pre-processing
-     of image files before they are displayed.
+  of image files before they are displayed.
 
   3. Replace popen() by fork and explicit pipes, and make the
-     use of xdvi_temp_fd safer.
+  use of xdvi_temp_fd safer.
      
   4. PS figs are always clipped to the bbox defined in the special
-     string, which is not what we want when clip=false.
-     The problem can be partly solved by increasing the value of
-     the PSBW macro, or we may get the correct bbox by reading the
-     '%%BoundingBox' or '%%HiresBoundingBox' lines in the PS file
-     and set the image geometry accordingly.
+  string, which is not what we want when clip=false.
+  The problem can be partly solved by increasing the value of
+  the PSBW macro, or we may get the correct bbox by reading the
+  '%%BoundingBox' or '%%HiresBoundingBox' lines in the PS file
+  and set the image geometry accordingly.
   
   5. The code only(?) works with true color displays.
   
   6. There's also work to do to respond to window events in 
-     load_image() and display_image() functions.
+  load_image() and display_image() functions.
 */
 #include <ctype.h>
 
@@ -59,6 +59,10 @@
 #include "image-magick.h"
 
 #ifdef MAGICK	/* entire file */
+
+#ifndef MAGICK_RENDER_PS
+#  define MAGICK_RENDER_PS 0
+#endif
 
 #include "magick/api.h"
 #if MAGICK_VER_MAJOR > 5 || MAGICK_VER_MINOR >= 4
@@ -554,19 +558,18 @@ load_image(XDviImageInfo *info)
 {
     static ExceptionInfo exception;
     static ImageInfo *image_info;
-    static XResourceInfo resource_info;
     static XVisualInfo visual_info;
     static XStandardColormap map_info;
-    static XPixelInfo pixel_info;
-    static XWindowInfo window_info;
     static Boolean initialized = False;
     static Boolean disabled = False;
 
     static XDviImage img = { {False, 0, 0, 0, 0, 0, 0, 0, ""}, NULL, 0, 0, 0 };
 
     Image *image, *tmp_image;
+    PixelPacket *pp;
     double xscale, yscale, xdpi, ydpi;
     int n;
+    unsigned int x, y;
     unsigned long columns, rows;
     char density[40];
     size_t size;
@@ -633,17 +636,12 @@ load_image(XDviImageInfo *info)
 	GetExceptionInfo(&exception);
 	image_info = CloneImageInfo((ImageInfo *) NULL);
 	
-	XGetResourceInfo(XrmGetStringDatabase(""), "xdvi", &resource_info);
-	/* resource_info.debug = 1; */
 	if (!XMatchVisualInfo(DISP, XScreenNumberOfScreen(SCRN),
 			      G_depth, G_visual->class, &visual_info)) {
 	    fprintf(stderr, "Magick: can't get visual info, image disabled.\n");
 	    disabled = True;
 	    return NULL;
 	}
-	XGetMapInfo(&visual_info, G_colormap, &map_info);
-	XGetWindowInfo(DISP, &visual_info, &map_info, &pixel_info,
-		       (XFontStruct *) NULL, &resource_info, &window_info);
 
 	if (resource.magick_cache != NULL) {
 	    cache_limit = parse_cache_setting(resource.magick_cache);
@@ -663,7 +661,7 @@ load_image(XDviImageInfo *info)
     rows = ROUND(DPI * info->rhi * 0.1 / 72);
     if (globals.debug & DBG_PS)
 	fprintf(stderr, "\tscale=%0.2fx%0.2f, dpi=%0.2fx%0.2f, size=%ldx%ld\n",
-	       xscale, yscale, xdpi, ydpi, columns, rows);
+		xscale, yscale, xdpi, ydpi, columns, rows);
 
     /* expand and canonicalize path name */
     path = find_file(fn, &statbuf, kpse_pict_format);
@@ -720,11 +718,11 @@ load_image(XDviImageInfo *info)
     if (globals.debug & DBG_PS) {
 	int i = image->units;
 	fprintf(stderr, "\t    image size = %ldx%ld\n", 
-			image->columns, image->rows);
+		image->columns, image->rows);
 	fprintf(stderr, "\t    image resolution = %0.2fx%0.2f (units=%s)\n",
-	       image->x_resolution, image->y_resolution,
-	       i == UndefinedResolution ? "???" :
-	       i == PixelsPerInchResolution ? "PPI" : "PPCM");
+		image->x_resolution, image->y_resolution,
+		i == UndefinedResolution ? "???" :
+		i == PixelsPerInchResolution ? "PPI" : "PPCM");
     }
 
     if (fullpath != magick_tmp) {	/* non PS image */
@@ -746,7 +744,7 @@ load_image(XDviImageInfo *info)
 	    /* Scale image */
 	    if (globals.debug & DBG_PS) {
 		fprintf(stderr, "\t    scaling image %ldx%ld -> %ldx%ld\n",
-		       image->columns, image->rows, columns, rows);
+			image->columns, image->rows, columns, rows);
 	    }
 	    showtime("ScaleImage:");
 	    tmp_image = ScaleImage(image, columns, rows, &exception);
@@ -774,43 +772,18 @@ load_image(XDviImageInfo *info)
   (((color).blue  * map.blue_max  + (1L << (dx - 1L))) / ((1L << dx) - 1L)) * map.blue_mult)
 
     img.bgpixel = XStandardPixel(map_info, image->background_color, 16);
+#undef XStandardPixel
     if (img.ximage != NULL) {
 	free_ximage(img.ximage);
 	img.ximage = NULL;
     }
-#undef XStandardPixel
 
     /* Transform to XImage */
-    window_info.id = mane.win;
-    window_info.annotate_context = globals.gc.copy;
-    /*
-      FIXME: If this isn't set to false, running on a remote display may
-      lead to `Badaccess (no permission to access private resource)' X
-      errors (only with ImageMagick >= 5.4 - zlb has emailed the
-      developers about this).
-      Setting it to false always might slightly hurt performance - how
-      to check for remoteness? Parse the DISPLAY variable?
-    */
-    window_info.shared_memory = False;
-    showtime("XMakeImage:");
-    XGetPixelPacket(DISP, &visual_info, &map_info,
-		    &resource_info, image, &pixel_info);
-    n = XMakeImage(DISP, &resource_info, &window_info, image,
-		   image->columns, image->rows);
-
-    /* Since XDestroyImage doesn't know how to free window_info.ximage->data,
-     * we simply copy window_info.ximage. The next call of XMakeImage
-     * will free both window_info.ximage->data and window_info.ximage.
-     */
-    DestroyImage(image);
-    if (!n)
-	return NULL;
+    pp = GetImagePixels(image, 0, 0, image->columns, image->rows);
     img.ximage = XCreateImage(DISP, G_visual, G_depth, ZPixmap, 0, NULL,
-			      window_info.ximage->width,
-			      window_info.ximage->height, BMBITS, 0);
+			      image->columns, image->rows, BMBITS, 0);
     if (img.ximage == NULL)
 	return NULL;
-    *img.ximage = *(window_info.ximage);
     size = img.ximage->bytes_per_line * img.ximage->height;
     img.ximage->data = malloc(size ? size : 1); /* NOTE: no xmalloc! */
     if (img.ximage->data == NULL) {
@@ -819,8 +792,16 @@ load_image(XDviImageInfo *info)
 	img.ximage = NULL;
 	return NULL;
     }
-    if (size)
-	memcpy(img.ximage->data, window_info.ximage->data, size);
+    for (y = 0; y < image->rows; y++) {
+	for (x = 0; x < image->columns; x++, pp++) {
+	    struct rgb color;
+            color.r = USHRT_MAX * pp->red / MaxRGB;
+            color.g = USHRT_MAX * pp->green / MaxRGB;
+            color.b = USHRT_MAX * pp->blue / MaxRGB;
+	    XPutPixel(img.ximage, x, y, alloc_color(&color, img.bgpixel));
+	}
+    }
+    DestroyImage(image);
 
     size += sizeof(XDviImage) + sizeof(XImage);
     if (cache_size + size > cache_limit) {
@@ -843,7 +824,7 @@ load_image(XDviImageInfo *info)
 
     if (globals.debug & DBG_PS)
 	fprintf(stderr, "    image cached (cache_size=%uKB, limit=%uKB).\n",
-	       cache_size / 1024, cache_limit / 1024);
+		cache_size / 1024, cache_limit / 1024);
 #if 0
     DestroyImageInfo(image_info);
     DestroyExceptionInfo(&exception);
@@ -867,7 +848,7 @@ display_image(XDviImage * img, int xul, int yul,
 #if 0
     XPutImage(DISP, mane.win, globals.gc.copy, img->ximage, 0, 0,
 	      xul, yul - img->ximage.height + 1,
-	      img->ximage.width, img->ximage.height);
+	      img->ximage->width, img->ximage->height);
 #else
     /* Try to make background pixels transparent */
     {
@@ -1009,7 +990,7 @@ render_image_file(XDviImageInfo *info, int x, int y)
 
     if (globals.debug & DBG_PS)
 	fprintf(stderr, "Magick: render_image_file: box=%dx%d+%d+%d\n",
-			w, h, x, y - h + 1);
+		w, h, x, y - h + 1);
 
     if (!info->angle) {
 	XDrawRectangle(DISP, currwin.win, globals.gc.high, x, y - h + 1, w, h);
@@ -1034,18 +1015,43 @@ render_image_file(XDviImageInfo *info, int x, int y)
 	d = -cos_a * (h-1);
 
 	XDrawLine(DISP, currwin.win, globals.gc.high,
-		      x, y, x + ROUND(a), y + ROUND(b));
+		  x, y, x + ROUND(a), y + ROUND(b));
 	XDrawLine(DISP, currwin.win, globals.gc.high,
-		      x + ROUND(a), y + ROUND(b),
-		      x + ROUND(a + c), y + ROUND(b + d));
+		  x + ROUND(a), y + ROUND(b),
+		  x + ROUND(a + c), y + ROUND(b + d));
 	XDrawLine(DISP, currwin.win, globals.gc.high,
-		      x + ROUND(a + c), y + ROUND(b + d),
-		      x + ROUND(c), y + ROUND(d));
+		  x + ROUND(a + c), y + ROUND(b + d),
+		  x + ROUND(c), y + ROUND(d));
 	XDrawLine(DISP, currwin.win, globals.gc.high,
-		      x + ROUND(c), y + ROUND(d), x, y);
+		  x + ROUND(c), y + ROUND(d), x, y);
 #endif
     }
 }
+
+#if !MAGICK_RENDER_PS
+static Boolean
+is_ps(char *fn)
+{
+    int l;
+    char *p;
+    
+    if (strchr(fn, '`') != NULL)
+	return False;
+
+    l = strlen(fn);
+    p = fn + l - 1;
+    while (p > fn && *p != '.' && *p != '/')
+	p--;
+    l -= p - fn;
+    if (*p == '.' && ((l >= 3 && !memicmp(p, ".ps", 3)) ||
+		      (l >= 4 && !memicmp(p, ".eps", 4)))) {
+	if (globals.debug & DBG_PS)
+	    fprintf(stderr, "Magick: passing PS/EPS file to psgs.c\n");
+	return True;
+    }
+    return False;
+}
+#endif
 
 /* Process EPSF specials */
 
@@ -1059,12 +1065,12 @@ epsf_special(char *cp)
     unsigned long flags = 0, u;
     double rwi, rhi;
     enum { LLX, LLY,
-	URX, URY,
-	RWI, RHI,
-	HSIZE, VSIZE,
-	HOFFSET, VOFFSET,
-	HSCALE, VSCALE,
-	ANGLE
+	   URX, URY,
+	   RWI, RHI,
+	   HSIZE, VSIZE,
+	   HOFFSET, VOFFSET,
+	   HSCALE, VSCALE,
+	   ANGLE
     };
     XDviImageInfo info;
 
@@ -1116,7 +1122,12 @@ epsf_special(char *cp)
 
     if (globals.debug & DBG_PS)
 	fprintf(stderr, "Magick: epsf_special: filename = '%s'\n",
-			info.filename);
+		info.filename);
+
+#if !MAGICK_RENDER_PS
+    if (is_ps(info.filename))
+	return False;
+#endif
 
     /* Scan for EPSF keywords */
     while (*cp != '\0') {
@@ -1185,9 +1196,9 @@ epsf_special(char *cp)
 		 key_info[HOFFSET].mask | key_info[VOFFSET].mask |
 		 key_info[HSCALE].mask | key_info[VSCALE].mask |
 		 key_info[ANGLE].mask))
-	    fprintf(stderr, "Magick: warning: EPSF keywords '[hv]size', "
-		    "'[hv]offset', '[hv]scale', and 'angle' are not "
-		    "implemented.\n");
+	fprintf(stderr, "Magick: warning: EPSF keywords '[hv]size', "
+		"'[hv]offset', '[hv]scale', and 'angle' are not "
+		"implemented.\n");
 
     info.urx = key_info[URX].val;
     info.ury = key_info[URY].val;
@@ -1198,7 +1209,7 @@ epsf_special(char *cp)
 
     if (globals.debug & DBG_PS)
 	fprintf(stderr, "Magick: epsf_special: llx=%0.2f, lly=%0.2f, "
-			"urx=%0.2f, ury=%0.2f\n",
+		"urx=%0.2f, ury=%0.2f\n",
 		info.llx, info.lly, info.urx, info.ury);
 
     if (info.urx - info.llx < 1 || info.ury - info.lly < 1)
@@ -1336,6 +1347,15 @@ emgraph_special(char *cp)
     }
     memcpy(info.filename, cp, p - cp); /* no need to terminate because of memset(...) above */
 
+    if (globals.debug & DBG_PS)
+	fprintf(stderr, "Magick: emgraph_special: filename = '%s'\n",
+		info.filename);
+
+#if !MAGICK_RENDER_PS
+    if (is_ps(info.filename))
+	return False;
+#endif
+
     cp = p;
 
     /* get width */
@@ -1358,7 +1378,7 @@ emgraph_special(char *cp)
 
     if (globals.debug & DBG_PS)
 	fprintf(stderr, "Magick: filename=\"%s\", width=%0.2f, height=%0.2f\n",
-			info.filename, w, h);
+		info.filename, w, h);
 
     info.llx = info.lly = 0;
     info.urx = w;

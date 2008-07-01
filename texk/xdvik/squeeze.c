@@ -21,10 +21,10 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
 NOTE:
-	This routine is adapted from the squeeze.c that comes with dvips;
-	it bears the message:
-	    This software is Copyright 1988 by Radical Eye Software.
-	Used with permission.
+This routine is adapted from the squeeze.c that comes with dvips;
+it bears the message:
+This software is Copyright 1988 by Radical Eye Software.
+Used with permission.
 
 \*========================================================================*/
 

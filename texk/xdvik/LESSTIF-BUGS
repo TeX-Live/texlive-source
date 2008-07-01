@@ -7,13 +7,15 @@ lesstif-0.93.18 (in decreasing severity).
 
 Some of them may be bugs in xdvik, others bugs with LessTif. Currently
 I don't have time and/or deeper knowledge of X to look into them.
-People who want a working verion should use either OpenMotif, or
+People who are annoyed by these bugs should use either OpenMotif, or
 the Xaw version of xdvik instead. Ideas and tips are welcome ...
 -- S.U.
 
 - Page list: Toggling expert mode or the page list produces strange
   results when page list is switched on again: List appears too wide
-  (hides part of horizontal scrollbar) and too short.
+  (hides part of horizontal scrollbar) and too short. When the page
+  list preference is set to 'Off', the pagelist is displayed
+  nevertheless (#1493853).
 
 - Main window layout: window is too narrow when starting in expert
   mode (e.g. 80x900) and too wide (entire screen) in non-expert mode.

@@ -6,7 +6,7 @@
 #
 
 
-### NOTE: ac_include paths must be relative to texk/xdvik, since that
+### NOTE: kpse_include paths must be relative to texk/xdvik, since that
 ### is from where the configure is run!
 kpse_include ../make/paths.mk
 kpse_include ../make/library.mk
@@ -14,6 +14,9 @@ kpse_include ../make/common.mk
 kpse_include ../make/programs.mk
 
 kpathsea_parent = ../..
+
+# additional flags for kpathsea
+LIBKPATHSEACPPFLAGS=@LIBKPATHSEACPPFLAGS@
 
 CPP = @CPP@
 RANLIB = @RANLIB@
@@ -24,7 +27,7 @@ x_cppflags = @X_CFLAGS@
 
 # Extra xdvi-specific compiler options.
 ps_def = @PS_DEF@ -DXSERVER_INFO
-prog_cflags = @XTRA_WARN_CFLAGS@ -I.. -I$(srcdir)/.. $(x_cppflags) $(ps_def)
+prog_cflags = @XTRA_WARN_CFLAGS@ $(LIBKPATHSEACPPFLAGS) -I.. -I$(srcdir)/.. $(x_cppflags) $(ps_def)
 
 # Note: to be able to use one depend.mk file for both Motif/Xaw (which
 # is needed since only maintainers are supposed to invoke `make depend')

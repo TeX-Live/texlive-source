@@ -81,7 +81,7 @@ h_attach_below(Widget x, Widget y) {
 		      XmNtopAttachment, XmATTACH_WIDGET,
 		      XmNtopWidget, y,
 		      XmNleftAttachment, XmATTACH_FORM,
-		  XmNrightAttachment, XmATTACH_FORM,
+		      XmNrightAttachment, XmATTACH_FORM,
 		      NULL);
     }
 }
@@ -268,7 +268,7 @@ revert_resources(void)
     /* save some old values */
     int save_shrink  = resource.shrinkfactor;
         
-    reload_app_resources();
+    load_app_resources(True);
 
     /* revert from saved values */
     resource.use_color = globals.curr_use_color;
@@ -327,7 +327,7 @@ revert_resources(void)
     
     need_redraw |= revert_colors(curr_fg, curr_bg, curr_hl);
 
-/*     if (need_redraw) */
+    /*     if (need_redraw) */
     /* just reload it always, there's too many exceptions ...
        redraw isn't always sufficient if file has colors. */
     globals.ev.flags |= EV_RELOAD;
@@ -413,10 +413,10 @@ apply_prefs_cb(XtPointer arg)
     
     free(globals.curr_browser);
     if (resource.browser != NULL)
-    globals.curr_browser = xstrdup(resource.browser);
+	globals.curr_browser = xstrdup(resource.browser);
 
-/*     fprintf(stderr, "set curr_browser to: |%s|\n", globals.curr_browser); */
-/*     fprintf(stderr, "set curr_editor to: |%s|\n", globals.curr_editor); */
+    /*     fprintf(stderr, "set curr_browser to: |%s|\n", globals.curr_browser); */
+    /*     fprintf(stderr, "set curr_editor to: |%s|\n", globals.curr_editor); */
     
     if (get_xdvi_window_id(False, NULL) && save_user_preferences(False)) {
 	/* if other instances of xdvi are running, make them reread the
@@ -487,11 +487,11 @@ close_prefs_exit(Widget w, XtPointer arg)
 {
     struct topic_info *info = (struct topic_info *)arg;
     struct prefs_choice *prefs = (struct prefs_choice *)info->data;
-/*      Widget dialog; */
-/*      if (get_widget_by_name(&dialog, w, Xdvi_MESSAGE_DIALOG_NAME, True)) { */
-/*  	fprintf(stderr, "!!!!!!!!! removing window from deplist!\n"); */
-/*  	remove_from_deplist(prefs, dialog); */
-/*      } */
+    /*      Widget dialog; */
+    /*      if (get_widget_by_name(&dialog, w, Xdvi_MESSAGE_DIALOG_NAME, True)) { */
+    /*  	fprintf(stderr, "!!!!!!!!! removing window from deplist!\n"); */
+    /*  	remove_from_deplist(prefs, dialog); */
+    /*      } */
 
     remove_from_deplist(prefs, w);
     
@@ -545,17 +545,17 @@ popup_preferences_dialog(Widget parent, int arg)
 	info.ok_callback = apply_prefs_cb;
 	info.cancel_callback = revert_prefs_cb;
 	info.items = items;
-/* 	info.items_size = NUM_PREFS_TOPICS; */
+	/* 	info.items_size = NUM_PREFS_TOPICS; */
 
 	prefs = xmalloc(sizeof *prefs);
 	prefs->depwin_cnt = 0;
 	prefs->depwin = NULL;
-/* 	prefs->orig = orig_prefs; */
+	/* 	prefs->orig = orig_prefs; */
 	/* apply_prefs_cb/revert_prefs_cb are responsible for copying
 	   the changed preferences into the current preferences as
 	   appropriate, and free()ing prefs.changed */
-/* 	prefs->changed = xmalloc(sizeof *(prefs->changed)); */
-/* 	copy_resources(orig_prefs, prefs->changed); */
+	/* 	prefs->changed = xmalloc(sizeof *(prefs->changed)); */
+	/* 	copy_resources(orig_prefs, prefs->changed); */
 	prefs->db = NULL; /*  XrmGetStringDatabase(""); */
 	info.data = prefs;
 	

@@ -108,10 +108,10 @@ SFcreateGC(void)
     XGCValues gcValues;
     XRectangle rectangles[1];
 
-/*     XtVaGetValues(selFileLists[0], */
-/* 		  XtNforeground, &(gcValues.foreground), */
-/* 		  XtNbackground, &(gcValues.background), */
-/* 		  NULL); */
+    /*     XtVaGetValues(selFileLists[0], */
+    /* 		  XtNforeground, &(gcValues.foreground), */
+    /* 		  XtNbackground, &(gcValues.background), */
+    /* 		  NULL); */
     gcValues.foreground = SFfore;
 
     SFlineGC = XtGetGC(selFileLists[0], (XtGCMask)
@@ -121,7 +121,7 @@ SFcreateGC(void)
 			 0, &gcValues);
 
     gcValues.function = GXinvert;
-/*     gcValues.plane_mask = (gcValues.foreground ^ gcValues.background); */
+    /*     gcValues.plane_mask = (gcValues.foreground ^ gcValues.background); */
     gcValues.plane_mask = (SFfore ^ SFback);
 
     SFinvertGC = XtGetGC(selFileLists[0], (XtGCMask)
@@ -264,7 +264,7 @@ SFstatAndCheck(SFDir *dir, SFEntry *entry)
 
 			len = strlen(shown);
 			entry->shown = XtMalloc((unsigned)(len + 2)
-			    );
+						);
 			(void)strcpy(entry->shown, shown);
 			SFwriteStatChar(entry->shown, len, &statBuf);
 			entry->shown[len + 1] = 0;
@@ -364,7 +364,7 @@ SFdrawList(int n, int doScroll)
 			 SFtextX - dir->hOrigin * SFcharWidth,
 			 SFlineToTextV + SFaboveAndBelowText + SFcharAscent,
 			 dir->dir, strlen(dir->dir)
-	    );
+			 );
 	SFdrawStrings(w, dir, 0, SFlistSize - 1);
     }
 }
@@ -480,7 +480,7 @@ SFnewInvertEntry(int n, XMotionEvent *event)
 	return -1;
     }
     else if ((x >= 0) && (x <= SFupperX) && (y >= SFlowerY) && (y <= SFupperY)
-	) {
+	     ) {
 	SFDir *dir = &(SFdirs[SFdirPtr + n]);
 
 	if (SFscrollTimerAdded) {

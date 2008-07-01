@@ -35,13 +35,16 @@
 #include "events.h"
 #include "message-window.h"
 #include "dvi-init.h" /* for dviErrFlagT */
+#include "x_util.h"
 
 #if defined(MOTIF) /* entire file */
 
 #include <Xm/FileSB.h>
+#include <Xm/Form.h>
+#include <Xm/ToggleBG.h>
 
-static Widget dialog = NULL;
-static char *browse_fname = NULL;
+/* static Widget dialog = NULL; */
+/* static char *browse_fname = NULL; */
 
 /*
  * Process callback from Dialog cancel actions.
@@ -58,14 +61,14 @@ cancel_callback(Widget w,
 #if 0
     /* DON'T reset browse_fname, so that user gets the current
        value as default next time when he cancels now */
-    if (browse_fname != NULL)
+    if (callback->browse_fname != NULL)
     {
-	XtFree(browse_fname);
-	browse_fname = NULL;
+	XtFree(callback->browse_fname);
+	callback->browse_fname = NULL;
     }
 #endif
 
-    XtUnmanageChild(dialog);
+    XtUnmanageChild(callback->shell);
     if (callback->exit_on_cancel) {
 	exit(0);
     }
@@ -88,31 +91,34 @@ accept_callback(Widget w,
     ASSERT(client_data != NULL, "struct filesel_callback pointer expected in client data");
     callback = (struct filesel_callback *)client_data;
 
-    if (browse_fname != NULL) {
-	XtFree(browse_fname);
-	browse_fname = NULL;
-    }
-    fcb = (XmFileSelectionBoxCallbackStruct *)call_data;
-
     /* get the filename from the file selection box */
-    XmStringGetLtoR(fcb->value, G_charset, &browse_fname);
+    fcb = (XmFileSelectionBoxCallbackStruct *)call_data;
+    if (callback->browse_fname != NULL) {
+	XtFree(callback->browse_fname);
+	callback->browse_fname = NULL;
+    }
+    XmStringGetLtoR(fcb->value, G_charset, &callback->browse_fname);
 
-    if (callback->must_exist) {
-	FILE *tmp_fp = XFOPEN(browse_fname, "r");
+    if (0 && callback->must_exist) {
+	FILE *tmp_fp = XFOPEN(callback->browse_fname, "r");
 	dviErrFlagT errflag = NO_ERROR;
 	if (tmp_fp == NULL) {
-	    popup_message(XtParent(dialog),
+	    popup_message(XtParent(callback->shell),
 			  MSG_ERR, NULL, "Could not open %s: %s.\n",
-			  browse_fname, strerror(errno));
+			  callback->browse_fname, strerror(errno));
 	    /* leave file selection box open */
 	    return;
 	}
 	else if (!process_preamble(tmp_fp, &errflag)
 		 || !find_postamble(tmp_fp, &errflag)
-		 || !read_postamble(tmp_fp, &errflag, True)) {
-	    popup_message(XtParent(dialog),
+		 || !read_postamble(tmp_fp, &errflag, True
+#if DELAYED_MKTEXPK
+				    , False
+#endif
+				    )) {
+	    popup_message(XtParent(callback->shell),
 			  MSG_ERR, NULL, "Error opening %s:\n%s.",
-			  browse_fname, get_dvi_error(errflag));
+			  callback->browse_fname, get_dvi_error(errflag));
 	    fclose(tmp_fp);
 	    /* leave file selection box open */
 	    return;
@@ -123,8 +129,21 @@ accept_callback(Widget w,
     }
 
     /* success; close dialog, and call our callback */
-    XtUnmanageChild(dialog);
-    callback->func_ptr(browse_fname, callback->data);
+    XtUnmanageChild(callback->shell);
+    callback->func_ptr(callback->browse_fname, callback->data);
+}
+
+static void
+cb_open_new_window(Widget w, XtPointer client_data, XtPointer call_data)
+{
+    UNUSED(client_data);
+    UNUSED(call_data);
+    
+    if (XmToggleButtonGadgetGetState(w))
+	resource.filesel_open_new_window = True;
+    else
+	resource.filesel_open_new_window = False;
+    store_preference(NULL, "fileselOpenNewWindow", "%d", resource.filesel_open_new_window);
 }
 
 void raise_file_selector(void)
@@ -134,59 +153,80 @@ void raise_file_selector(void)
 }
 
 void
-XsraSelFile(Widget parent, struct filesel_callback *callback)
+XsraSelFilePopup(struct filesel_callback *callback)
 {
-#define ARG_CNT 4
-    XmString filemask = NULL;
-    XmString directory = NULL;
-    Arg args[ARG_CNT];
-    int i = 0;
-
-    if (dialog == NULL) {
-	dialog = XmCreateFileSelectionDialog(parent, "file", NULL, 0);
-	/* Set ret_dialog to the DialogShell parent, not the command widget
-	   returned by the Motif routines.  We need the DialogShell, otherwise
-	   Motif will crash if ret_dialog is used as parent for popup_message()
-	   windows!!!
-	*/
-	XtVaSetValues(XtParent(dialog), XmNtitle, callback->title, NULL);
-	
-	/*      my_must_exist = must_exist; */
-	/*      XtAddCallback(dialog, XmNokCallback, accept_callback, (XtPointer)&my_must_exist); */
-	XtAddCallback(dialog, XmNokCallback, accept_callback, (XtPointer)callback);
-	XtAddCallback(dialog, XmNcancelCallback, cancel_callback, (XtPointer)callback);
-	/* We have no help in this window, so hide help button */
-	XtUnmanageChild(XmFileSelectionBoxGetChild(dialog, (unsigned char)XmDIALOG_HELP_BUTTON));
-    }
-    else if (XtIsManaged(dialog)) {
+    if (XtIsManaged(callback->shell)) {
 	XBell(DISP, 10);
-	XRaiseWindow(DISP, XtWindow(dialog));
+	XRaiseWindow(DISP, XtWindow(callback->shell));
 	return;
     }
+    else {
+#define ARG_CNT 4
+	XmString filemask = NULL;
+	XmString directory = NULL;
+	Arg args[ARG_CNT];
+	int i = 0;
+	char *path, *ptr;
 
-    /* only show files matching our mask */
-    filemask = XmStringCreateLtoR((char *)callback->filemask, G_charset);
-    XtSetArg(args[i], XmNpattern, filemask); i++;
-    
-    /* set directory to last directory used */
-    if (browse_fname != NULL) {
-	char *path = xstrdup(browse_fname);
-	char *ptr = strrchr(path, '/');
+	/* only show files matching our mask */
+	filemask = XmStringCreateLtoR((char *)callback->filemask, G_charset);
+	XtSetArg(args[i], XmNpattern, filemask); i++;
+
+	/* set directory to last directory used */
+	if (callback->browse_fname == NULL) {
+	    ASSERT(callback->init_path != NULL, "callback->init_path mustn't be NULL!");
+	    callback->browse_fname = xt_strdup(callback->init_path);
+	}
+	path = xstrdup(callback->browse_fname);
+	ptr = strrchr(path, '/');
 	if (ptr != NULL)
 	    *ptr = '\0';
 	directory = XmStringCreateLtoR(path, G_charset);
 	XtSetArg(args[i], XmNdirectory, directory); i++;
 	free(path);
-    }
+	
     
-    ASSERT(i < ARG_CNT, "args list too short");
-    XtSetValues(dialog, args, (Cardinal)i);
+	ASSERT(i < ARG_CNT, "args list too short");
+	XtSetValues(callback->shell, args, (Cardinal)i);
 
-    free(filemask);
-    free(directory);
+	free(filemask);
+	free(directory);
     
-    XtManageChild(dialog);
+	XtManageChild(callback->shell);
 #undef ARG_CNT
+    }
+}
+
+Widget
+XsraSelFile(Widget parent, struct filesel_callback *callback)
+{
+    Widget dialog = XmCreateFileSelectionDialog(parent, "file", NULL, 0);
+    
+    XtVaSetValues(XtParent(dialog), XmNtitle, callback->title, NULL);
+    
+    XtAddCallback(dialog, XmNokCallback, accept_callback, (XtPointer)callback);
+    XtAddCallback(dialog, XmNcancelCallback, cancel_callback, (XtPointer)callback);
+
+    /* When opening a DVI file, offer to open in new window */
+    if (callback->must_exist) {
+	Widget form, button;
+	XmString test;
+	form = XtVaCreateManagedWidget("new_window_form", xmFormWidgetClass, dialog, NULL);
+	test = XmStringCreateLocalized("Open file in new window");
+	button = XtVaCreateManagedWidget(Xdvi_NEW_WINDOW_RADIO_NAME, xmToggleButtonGadgetClass, form,
+					 XmNlabelString, test,
+					 XmNindicatorType, XmN_OF_MANY,
+					 XmNset, resource.filesel_open_new_window,
+					 NULL);
+	XmStringFree(test);
+	XtAddCallback(button, XmNvalueChangedCallback, cb_open_new_window, (XtPointer)NULL);
+    }
+
+    
+    /* We have no help in this window, so hide help button */
+    XtUnmanageChild(XmFileSelectionBoxGetChild(dialog, (unsigned char)XmDIALOG_HELP_BUTTON));
+
+    return dialog;
 }
 
 #else

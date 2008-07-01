@@ -25,24 +25,17 @@
 #define PRINT_INTERNAL_H_
 
 #include "dvi-init.h"
-#include "print-dialog.h"
 
 typedef enum { FMT_PS, FMT_PS2PDF, FMT_DVI, FMT_ISO_8859_1, FMT_UTF8, FMT_NONE } outputFormatT;
 
-/* file IO help struct */
-struct file_IO {
-    FILE *fp;
-    char *fname;
-};
-
 /* collection of all file IOs used in printing/saving */
 struct file_info {
-    struct file_IO dvi_in;
-    struct file_IO dvi_tmp;
-    struct file_IO dvi_out;
-    struct file_IO ps_out;
-    struct file_IO pdf_out;
-    struct file_IO txt_out;
+    char *tmp_dvi_file;		/* temporary DVI file */
+    FILE *tmp_dvi_fp;		/* FILE * for temporary DVI file */
+    char *tmp_ps_file;		/* temporary PS file */
+    char *out_file;		/* final output file */
+    /*      FILE *out_fp; */		/* FILE * for final output file */
+    FILE *in_fp;		/* FILE * for input file */
 };
 
 /* stacks for communication with selection routines */
@@ -55,24 +48,64 @@ struct specials_stack {
     struct specials_stack_elem *items;
 };
 
+typedef enum printRadioT_ {
+    NO_PRINT_VAL = -1,
+    TO_PRINTER = 1,
+    TO_FILE
+} printRadioT;
 
-/* wrapper struct for all kinds of information about selected pages. */
+
+typedef enum pageRadioT_ {
+    NO_PAGE_VAL = -1,
+    PAGE_ALL = 1,
+    PAGE_MARKED,
+    PAGE_RANGE
+} pageRadioT;
+
+struct save_or_print_info; /* forward declaration */
+
+/* wrapper struct which stores information about values the user has
+   selected in the dialog.
+*/
 struct select_pages_info {
-    printOrSaveActionT act;	/* whether we're printing or saving */
     int from;			/* lower bound of page range to be selected */
     int to;			/* upper bound of page range to be selected */
-    struct file_info *finfo;	/* additional file info pointer */
+/*      struct file_info *finfo;	\/\* additional file info pointer \*\/ */
     /* callback function that says whether a page should be selected or not;
-       will be passed a pointer to the current struct select_pages_info,
+       will be passed a pointer to the current struct save_or_print_info,
        and the current page */
-    Boolean (*callback)(struct select_pages_info *info, int page);
+    Boolean (*callback)(struct save_or_print_info *info, int page);
     struct specials_stack warn_files;	/* collect warnings about included files */
     dviErrFlagT errflag;	/* collect all kinds of errors that can happen while copying */
 };
 
-extern void internal_print(struct select_pages_info *pinfo);
-extern void internal_save(struct select_pages_info *pinfo,
-			  outputFormatT output_format);
+typedef enum { FILE_PRINT = 0, FILE_SAVE = 1 } printOrSaveActionT;
+
+
+struct callback_info {
+    XtCallbackProc cb_close;
+    XtCallbackProc cb_cancel;
+    XtCallbackProc cb_destroy;
+    XtCallbackProc cb_keep;
+};
+
+struct save_or_print_info {
+    printOrSaveActionT act;	/* whether we're printing or saving */
+    outputFormatT fmt;		/* DVI/PS/... */
+    printRadioT print_target;	/* to printer or to file */
+    pageRadioT page_selection;	/* which pages: all/marked/range */
+    char *printer_options;	/* printer name + options from text field */
+    char *dvips_options;	/* dvips options from text field */
+    Widget shell;
+    Widget message_popup;
+    Widget printlog;
+    struct select_pages_info *pinfo;
+    struct callback_info *callbacks;
+    struct file_info *finfo;
+};
+
+extern void internal_print(struct save_or_print_info *info);
+extern void internal_save(struct save_or_print_info *info);
 
 #endif /* PRINT_INTERNAL_H_ */
 

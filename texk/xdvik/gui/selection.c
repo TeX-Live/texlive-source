@@ -124,13 +124,13 @@ deliver_selection_cb(Widget w,
     if (*target == targets) {
 	/* TARGETS handling copied from xclipboard.c */
 	Atom* targetP;
-	Atom* std_targets;
+	XPointer std_targets; /* was: Atom* */
 	unsigned long std_length;
 	XSelectionRequestEvent* req = XtGetSelectionRequest(w, *selection, (XtRequestId)NULL);
 
 	TRACE_GUI((stderr, "Selection type: targets"));
 	XmuConvertStandardSelection(w, req->time, selection,
-				    target, type, (XPointer*)&std_targets, &std_length, format);
+				    target, type, &std_targets, &std_length, format);
 	*value = XtMalloc(sizeof(Atom)*(std_length + 2));
 	targetP = *(Atom**)value;
 	*length = std_length + 2;
@@ -144,74 +144,76 @@ deliver_selection_cb(Widget w,
     }
     else
 #endif
-    if (*target == utf8_string) {
-	TRACE_GUI((stderr, "Selection type: UTF8_STRING"));
-	*type = *target;
-	*value = (XtPointer)XtNewString(m_selection_text);
-	/* *value = (XtPointer)m_selection_text; */
-	*length = strlen(m_selection_text);
-	*format = 8;
-	return True;
-    }
-    else if (*target == XA_STRING) {
-	char *ptr = utf8_to_native_encoding(m_selection_text);
-	TRACE_GUI((stderr, "Selection type: XA_STRING"));
-	strncpy(m_cvt_selection_text, ptr, m_selection_size);
-	m_cvt_selection_text[m_selection_size - 1] = '\0'; /* ensure termination */
-	free(ptr);
-	*type = *target;
-	*value = (XtPointer)XtNewString(m_cvt_selection_text);
-	/* *value = (XtPointer)m_selection_text; */
-	*length = strlen(m_cvt_selection_text);
-	*format = 8;
-	return True;
-    }
-#if HAVE_X11_XMU_XMU_H
-    else if (*target == XA_COMPOUND_TEXT(DISP) || *target == XA_TEXT(DISP)) {
-	const char *cl[1];
-	char *ptr;
-	int retval;
-	
-	XTextProperty ct;
-	XICCEncodingStyle style = XStdICCTextStyle;
-	
-	TRACE_GUI((stderr, "Selection type: XA_COMPOUND_TEXT"));
-	ptr = utf8_to_native_encoding(m_selection_text);
-	strncpy(m_cvt_selection_text, ptr, m_selection_size);
-	m_cvt_selection_text[m_selection_size - 1] = '\0'; /* ensure termination */
-	cl[0] = m_cvt_selection_text;
-	
-	*type = *target;
-	retval = XmbTextListToTextProperty(DISP, (char **)cl, 1, style, &ct);
-
-	if (retval == XNoMemory || retval == XLocaleNotSupported || retval == XConverterNotFound) {
-	    statusline_print(STATUS_MEDIUM, "XmbTextListToTextProperty failed: %d", retval);
-	    return False;
-	}		
-	
-	*value = ct.value;
-	*length = ct.nitems;
-	*format = 8;
-	return True;
-    }
-#endif
-    else {
-#if HAVE_X11_XMU_XMU_H
-	TRACE_GUI((stderr, "Selection type: standard selection"));
-	if (XmuConvertStandardSelection(w, CurrentTime, selection,
-					target, type, (XPointer *)value, length, format))
+    {
+	if (*target == utf8_string) {
+	    TRACE_GUI((stderr, "Selection type: UTF8_STRING"));
+	    *type = *target;
+	    *value = (XtPointer)XtNewString(m_selection_text);
+	    /* *value = (XtPointer)m_selection_text; */
+	    *length = strlen(m_selection_text);
+	    *format = 8;
 	    return True;
-	else {
-#endif
-	    TRACE_GUI((stderr, "Selection type unsupported: %lu (%s)",
-		       (unsigned long)*target, XGetAtomName(DISP, *target)));
-	    statusline_print(STATUS_MEDIUM,
-			     "X client asked for an unsupported selection target type: %lu (%s)",
-			     (unsigned long)*target, XGetAtomName(DISP, *target));
-	    return False ;
+	}
+	else if (*target == XA_STRING) {
+	    char *ptr = utf8_to_native_encoding(m_selection_text);
+	    TRACE_GUI((stderr, "Selection type: XA_STRING"));
+	    strncpy(m_cvt_selection_text, ptr, m_selection_size);
+	    m_cvt_selection_text[m_selection_size - 1] = '\0'; /* ensure termination */
+	    free(ptr);
+	    *type = *target;
+	    *value = (XtPointer)XtNewString(m_cvt_selection_text);
+	    /* *value = (XtPointer)m_selection_text; */
+	    *length = strlen(m_cvt_selection_text);
+	    *format = 8;
+	    return True;
+	}
 #if HAVE_X11_XMU_XMU_H
+	else if (*target == XA_COMPOUND_TEXT(DISP) || *target == XA_TEXT(DISP)) {
+	    const char *cl[1];
+	    char *ptr;
+	    int retval;
+	
+	    XTextProperty ct;
+	    XICCEncodingStyle style = XStdICCTextStyle;
+	
+	    TRACE_GUI((stderr, "Selection type: XA_COMPOUND_TEXT"));
+	    ptr = utf8_to_native_encoding(m_selection_text);
+	    strncpy(m_cvt_selection_text, ptr, m_selection_size);
+	    m_cvt_selection_text[m_selection_size - 1] = '\0'; /* ensure termination */
+	    cl[0] = m_cvt_selection_text;
+	
+	    *type = *target;
+	    retval = XmbTextListToTextProperty(DISP, (char **)cl, 1, style, &ct);
+
+	    if (retval == XNoMemory || retval == XLocaleNotSupported || retval == XConverterNotFound) {
+		statusline_info(STATUS_MEDIUM, "XmbTextListToTextProperty failed: %d", retval);
+		return False;
+	    }		
+	
+	    *value = ct.value;
+	    *length = ct.nitems;
+	    *format = 8;
+	    return True;
 	}
 #endif
+	else {
+#if HAVE_X11_XMU_XMU_H
+	    TRACE_GUI((stderr, "Selection type: standard selection"));
+	    if (XmuConvertStandardSelection(w, CurrentTime, selection,
+					    target, type, (XPointer *)value, length, format))
+		return True;
+	    else {
+#endif
+		TRACE_GUI((stderr, "Selection type unsupported: %lu (%s)",
+			   (unsigned long)*target, XGetAtomName(DISP, *target)));
+		statusline_error(STATUS_MEDIUM,
+				 "X client asked for an unsupported selection target type: %lu (%s)",
+				 (unsigned long)*target, XGetAtomName(DISP, *target));
+		return False ;
+#if HAVE_X11_XMU_XMU_H
+	    }
+#endif
+	}
     }
 }
 

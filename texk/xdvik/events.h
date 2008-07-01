@@ -40,12 +40,13 @@
 #define	EV_FIND_CANCEL		(1<<9)	/*    512 - string search cancelled */
 #define	EV_FILEHIST_GOTO_PAGE	(1<<10)	/*   1024 - get page from file history */
 #define	EV_PAGEHIST_INSERT	(1<<11)	/*   2048 - get page from file history */
-#define	EV_NEWPAGE		(1<<12)	/*   4096 - new page requested */
-#define	EV_PS_TOGGLE		(1<<13)	/*   8192 - PostScript toggled on or off */
-#define	EV_RELOAD		(1<<14)	/*  16384 - reload dvi file */
-#define	EV_NEWDOC		(1<<15)	/*  32768 - new dvi file requested */
-#define	EV_TERM			(1<<16)	/*  65536 - quit */
-#define	EV_MAXPLUS1		(1<<17) /* 131072 - marker for highest element */
+#define	EV_PAGEHIST_GOTO_PAGE	(1<<12)	/*   4096 - go to page from file history */
+#define	EV_NEWPAGE		(1<<13)	/*   8192 - new page requested */
+#define	EV_PS_TOGGLE		(1<<14)	/*  16384 - PostScript toggled on or off */
+#define	EV_RELOAD		(1<<15)	/*  32768 - reload dvi file */
+#define	EV_NEWDOC		(1<<16)	/*  65536 - new dvi file requested */
+#define	EV_TERM			(1<<17)	/* 131072 - quit */
+#define	EV_MAXPLUS1		(1<<18) /* 262144 - marker for highest element */
 
 #define	EV_GE_IDLE		(EV_MAXPLUS1 - EV_IDLE)
 #define	EV_GT_IDLE		(EV_MAXPLUS1 - EV_CURSOR)
@@ -74,8 +75,9 @@ struct xio {
 #if HAVE_POLL
     struct pollfd *pfd;
 #endif
-    char *(*read_proc) (int);	/* call to read from fd, or NULL */
-    void (*write_proc) (int);	/* call to write to fd, or NULL */
+    char *(*read_proc) (int, void *);	/* call to read from fd, or NULL */
+    void (*write_proc) (int, void *);	/* call to write to fd, or NULL */
+    void *data; /* data passed as second argument to read_proc()/write_proc() */
 };
 
 struct xchild; /* forward declaration */
@@ -109,7 +111,8 @@ struct xtimer {
     struct xtimer *next;	/* link to next in chain */
     struct timeval when;	/* when to call the routine */
     xtimerT type;		/* timer type */
-    void (*proc) (struct xtimer *);	/* procedure to call */
+    void (*proc) (struct xtimer *this, void *data);	/* procedure to call */
+    void *data;
 #if XDVI_XT_TIMER_HACK
     XtTimerCallbackProc xt_proc;	/* additional data for Xt callbacks */
     XtPointer closure;
@@ -124,7 +127,7 @@ extern XtActionsRec *get_actions(void);
 
 extern int atopix(const char *, Boolean);
 
-extern int check_goto_page(int pageno);
+extern int check_goto_page(int pageno, Boolean insert_into_pagehist);
 extern Boolean get_int_arg(String * param, Cardinal *num_params, int *res);
 extern Boolean toggle_arg(int arg, String * param, Cardinal *num_params);
 
@@ -153,11 +156,13 @@ typedef void (*home_proc) (wide_bool);
 extern void goto_page(int page, home_proc proc, Boolean force);
 
 extern void setup_sigalarm(void);
-extern void setup_signal_handlers(void);
+extern void setup_signal_handlers(Boolean early);
 extern int shrink_to_fit(void);
 extern void do_pages(void);
 extern void do_set_density(double newgamma, Boolean force, Boolean update_resource);
 extern void do_toggle_color(Boolean update_resource);
+
+extern void Act_mouse_modes(Widget w, XEvent *event, String *params, Cardinal *num_params);
 
 #ifdef PS
 extern void Act_set_ps(Widget w, XEvent *event, String *params, Cardinal *num_params);
@@ -193,12 +198,15 @@ extern void Act_pagehistory_back(Widget w, XEvent *event, String *params, Cardin
 extern void Act_pagehistory_forward(Widget w, XEvent *event, String *params, Cardinal *num_params);
 extern void Act_pagehistory_delete_backward(Widget w, XEvent *event, String *params, Cardinal *num_params);
 extern void Act_pagehistory_delete_forward(Widget w, XEvent *event, String *params, Cardinal *num_params);
+extern void Act_magnifier(Widget w, XEvent *event, String *params, Cardinal *num_params);
+extern void Act_ruler(Widget w, XEvent *event, String *params, Cardinal *num_params);
+extern void Act_text_selection(Widget w, XEvent *event, String *params, Cardinal *num_params);
+extern void Act_switch_magnifier_units(Widget w, XEvent *event, String *params, Cardinal *num_params);
+extern void Act_href(Widget w, XEvent *event, String *params, Cardinal *num_params);
+extern void Act_href_newwindow(Widget w, XEvent *event, String *params, Cardinal *num_params);
 
 extern void null_mouse(XEvent *ignored);
-extern void block_next_mouse_event(void);
-extern Boolean block_this_mouse_event(void);
 extern void text_motion(XEvent *event);
-extern Boolean dragging_text_selection(void);
 
 typedef enum { TEXT_SEL_MOVE, TEXT_SEL_CLEAR, TEXT_SEL_REDRAW, TEXT_SEL_ERASE } textSelectionT;
 extern void text_change_region(textSelectionT mode, XEvent *event);
@@ -221,6 +229,7 @@ extern Boolean check_int(void *val, const char *param);
 struct xdvi_action {
     XtActionProc proc;
     Cardinal num_params;
+    String command;
     String param;
     struct xdvi_action *next;
 };
@@ -229,8 +238,10 @@ extern struct xdvi_action *compile_action(const char *str);
 extern void watch_file_cb(XtPointer client_data, XtIntervalId * id);
 extern void redraw_page(void);
 
+#ifdef USE_PANNER
 extern void handle_x_scroll(Widget w, XtPointer closure, XEvent *ev, Boolean *cont);
 extern void handle_y_scroll(Widget w, XtPointer closure, XEvent *ev, Boolean *cont);
+#endif
 extern void xdvi_exit_callback(Widget w, XtPointer client_data, XtPointer call_data);
 
 #endif /* EVENTS_H_ */

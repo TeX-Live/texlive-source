@@ -68,21 +68,19 @@ xdvi \- DVI Previewer for the X Window System
 [\fB\-allowshell\fP]
 #endif
 [\fB\-altfont\fP \fIfont\fP]
-[\fB\-base\fP \fIbase URL\fP]
-.\" [\fB\-bd\fP \fIcolor\fP]
 [\fB\-bg\fP \fIcolor\fP]
 [\fB\-browser\fP \fIWWWbrowser\fP]
-[\fB\-bw\fP \fIwidth\fP]
-[\fB\-bw\fP \fIwidth\fP]
 [\fB\-copy\fP]
 [\fB\-cr\fP \fIcolor\fP]
 [\fB\-debug\fP \fIbitmask\fP|\fIstring[,string ...]\fP]
 [\fB\-display\fP \fIhost:display\fP]
 [\fB\-dvipspath\fP \fIpath\fP]
 [\fB\-editor\fP \fIcommand\fP]
+[\fB\-expert\fP]
 [\fB\-expertmode\fP \fIflag\fP]
 [\fB\-fg\fP \fIcolor\fP]
 [\fB\-findstring\fP \fIstring\fP]
+[\fB\-text-encoding\fP \fIencoding\fP]
 [\fB\-font\fP \fIfont\fP]
 [\fB\-fullscreen \fP]
 #ifgrey
@@ -98,12 +96,13 @@ xdvi \- DVI Previewer for the X Window System
 [\fB\-h\fP]
 [\fB\-help\fP]
 [\fB\-hl\fP \fIcolor\fP]
-[\fB\-href\fP \fIanchor\fP]
+[\fB\-anchorposition\fP \fIanchor\fP]
 [\fB\-hush\fP]
 [\fB\-hushchars\fP]
 [\fB\-hushchecksums\fP]
-[\fB\-hushspecials\fP]
+[\fB\-warnpecials\fP]
 [\fB\-hushstdout\fP]
+[\fB\-hushbell\fP]
 [\fB\-icongeometry\fP \fIgeometry\fP]
 [\fB\-iconic\fP]
 #ifgrey
@@ -114,6 +113,7 @@ xdvi \- DVI Previewer for the X Window System
 #endif
 [\fB\-keep\fP]
 [\fB\-l\fP]
+[\fB\-license\fP]
 [\fB\-linkcolor\fP \fIcolor\fP]
 [\fB\-linkstyle\fP \fI0|1|2|3\fP]
 [\fB\-margins\fP \fIdimen\fP]
@@ -328,26 +328,10 @@ file cannot be found.  This is useful, for example, with PostScript <tm> fonts.
 Determines the color of the background.  Same as
 .BR -bg .
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-.\" .TP
-.\" .BI \-bd " color"
-.\" .RB ( .borderColor )
-.\" Determines the color of the window border.
-.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
 .BI \-bg " color"
 .RB ( .background )
 Determines the color of the background.
-.\" .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-.\" .TP
-.\" .BI \-bordercolor " color"
-.\" Same as
-.\" .BR -bd .
-.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-.TP
-.BI \-borderwidth " width"
-.RB ( .borderWidth )
-Specifies the width of the border of the window.  Same as
-.BR -bw .
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
 .BI \-browser " browser"
@@ -365,12 +349,7 @@ and
 .B WWWBROWSER
 (in that order) are used to determine the browser command. If these are
 not set either, the following default value is used:
-.SB netscape -raise -remote "openURL(%s,new-window)":xterm -e lynx %s:xterm -e wget %s
-.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-.TP
-.BI \-bw " width"
-.RB ( .borderWidth )
-Specifies the width of the border of the window.
+\fBxdg-open %s:htmlview %s:firefox -remote -remote "openURL(%s,new-window)":mozilla -remote "openURL(%s,new-window)":netscape -raise -remote "openURL(%s,new-window)":xterm -e w3m %s:xterm -e lynx %s:xterm -e wget %s\fP
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 #ifgrey
 .TP
@@ -620,6 +599,14 @@ option is used.
 Determines the color of the text (foreground).
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
+.BI \-text-encoding " encoding"
+.RB ( .textEncoding )
+Use
+.I encoding
+as text encoding of the string in the "Find" window. Usually,
+this shouldn't be needed since the encoding is determined from the locale settings.
+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.TP
 .B \-findstring\fP \fIstring\fP
 This option triggers a search for
 .I string
@@ -746,7 +733,7 @@ and of the highlighting markers in forward search and string search.
 The default is the foreground color.
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
-.BI \-href " anchor"
+.BI \-anchorposition " anchor"
 Jump to
 .I anchor
 after opening the DVI file. This is only useful when invoking
@@ -779,13 +766,13 @@ file and the font file.
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 #ifkpathsea
 .TP
-.B \-hushspecials
-.RB ( .hushSpecials )
+.B \-warnspecials
+.RB ( .warnSpecials )
 Causes
 .B xdvi
-to suppress warnings about
+to print warnings about
 .B \especial
-strings that it cannot process.
+strings that it cannot process to stderr. These warnings are suppressed by default.
 #endif
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
@@ -796,6 +783,11 @@ Suppresses printing of status messages to
 Note that errors or warnings will still be printed to
 .I stderr
 even if this option is used.
+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.TP
+.B \-hushbell
+.RB ( .hushBell )
+Don't sound the X bell when an error occurs.
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
 .BI \-icongeometry " geometry"
@@ -859,19 +851,21 @@ Sets a flag to indicate that
 .B xdvi
 should not move to the home position when moving to a new page.  See also the
 .RB ` k '
-keystroke. This flag is only honoured by the
-.B up()
-and
-.B down()
-actions, not by
-.B up-or-previous()
-and
-.BR down-or-next() .
+keystroke. This flag is honored by all page switching actions and by
+.B up-or-previous() /
+.BR down-or-next() ,
+although the latter only honor the horizontal postion, not the vertical one.
+This allows for a "continuous" scrolling back an forth through a document with
+a display window narrower than a page width.
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
 .B \-l
 .RB ( .listFonts )
 List the names of all fonts used.
+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.TP
+.B \-license
+Prints licensing information.
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
 .BI \-linkcolor
@@ -1667,7 +1661,7 @@ currently ignored.
 .BI \-useTeXpages
 Use logical \*(Te\& pages (the values of the
 .I \ecount0
-register) instead of physical pages for the pagelist tables and
+register) instead of physical pages for the pagelist labels and
 when jumping to a page in a document with the `g' keystroke (or the
 .B goto-page()
 action).
@@ -1720,7 +1714,10 @@ until the DVI file can be read entirely.
 .BI \-wheelunit " pixels"
 .RB ( .wheelUnit )
 Sets the number of pixels that a motion of a wheel mouse will move the
-image up or down.  If set to zero, the wheel mouse functionality is disabled.
+image up or down. (See the
+.B wheel
+action, below, for more information on this.)
+If set to zero, the wheel mouse functionality is disabled.
 The default value is 80.
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
@@ -1773,17 +1770,30 @@ The escape key discards the numerical prefix for all actions
 (useful when you mistyped a number).
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
+.BR Return " key"
+.RB [ forward-page() ]
+Moves to the next page (or to the
+.IR n th
+next page if a number is given).  Synonyms are
+.RB ` n ',
+.RB ` f '
+and Line Feed.
+.TP
+.BR Backspace " key"
+.RB [ back-pagee() ]
+Moves to the previous page (or back
+.I n
+pages).  Synonyms are
+.RB ` p ',
+.RB ` b '
+and
+.BR Ctrl-h .
+.TP
 .BR Delete " key"
 .RB [ up-or-previous() ]
-Moves down two-thirds of a window-full, or to the top of the previous page
-if already at the bottom of the page. With a float argument, moves down the
-corresponding fraction of a window-full. By default, the
-.I Space
-key is bound to the action
-.B unpause-or-next()
-which does a similar thing; see there.
-.br
-The `keep' flag is ignored by these actions.
+Moves up two-thirds of a window-full, or to the top of the previous page
+if already at the top of the page. With a float argument, moves up the
+corresponding fraction of a window-full.
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
 .BR Space " key"
@@ -1798,7 +1808,10 @@ display the next portion of the page until the next
 .I special-string
 or the end of the page is encountered.  See the description of the
 .B \-pause
-option for details.
+option for details. The action
+.RB [ down-or-next() ]
+does a similar thing, but without pausing; it is not bound to a key
+by default.
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
 .BR Ctrl-Home " (Xaw), " Ctrl-osfBeginLine " (Motif)"
@@ -1964,9 +1977,10 @@ for more information on navigating the links.
 Moves to the previous page (or back
 .I n
 pages).  Synonyms are
-.RB ` p '
+.RB ` p ',
+.B Ctrl-h
 and
-.BR Ctrl-h .
+.BR Backspace .
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 #ifcolor
 .TP
@@ -1987,6 +2001,15 @@ option.
 .RB [ center() ]
 Moves the page so that the point currently beneath the mouse cursor is moved to
 the middle of the window, and warps the mouse cursor to the same place.
+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.TP
+.B D
+.RB [ toggle-grid-mode() ]
+This key toggles the use of a grid on the displayed page.
+If no number is given, the grid mode is switched on or off.
+By prepending a number from 1 to 3, 3 different grid levels can be set.
+The units of the grid are inches or centimeters, depending
+on whether the paper format is letter (in) or a4 (cm).
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
 .B d
@@ -2201,9 +2224,10 @@ the default behaviour.
 Moves to the previous page (or back
 .I n
 pages).  Synonyms are
-.RB ` b '
+.RB ` b ',
+.B Ctrl-h
 and
-.BR Ctrl-h .
+.BR Backspace .
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
 .B q
@@ -2407,13 +2431,44 @@ See also the option
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .SH MOUSE ACTIONS IN THE MAIN WINDOW
-.TP
-.B Mouse-1
-.RB [ do-href()magnifier(*1) ]
+The mouse actions can be customized by setting the X resource
+.BR mouseTranslations .
+Since there are three different mouse modes (see the section
+.B MODES
+below), there is a special action
+.B mouse-modes
+which lists the actions for each of the three modes:
+\fBmouse-modes("ACTIONS-FOR-MODE1", "ACTIONS-FOR-MODE2", "ACTIONS-FOR-MODE3")\fR.
+If only one argument is specified, this action is used for all modes.
+The default bindings are as follows:
+.RS 5
+.nf
+.ft 3
+.sp 1n
+xdvi.mouseTranslations: \e
+Shift<Btn1Down>:mouse-modes("drag(+)")\en\e
+Shift<Btn2Down>:mouse-modes("drag(|)")\en\e
+Shift<Btn3Down>:mouse-modes("drag(-)")\en\e
+Ctrl<Btn1Down>:mouse-modes("source-special()")\en\e
+<Btn1Down>: mouse-modes("do-href()magnifier(*2)", "text-selection()", "ruler()")\en\e
+<Btn2Down>: mouse-modes("do-href-newwindow()magnifier(*2)", "text-selection()", "ruler()")\en\e
+<Btn3Down>: mouse-modes("magnifier(*3)")\en\e
+<Btn4Down>: mouse-modes("wheel(-0.2)")\en\e
+<Btn5Down>: mouse-modes("wheel(0.2)")\en\e
+.sp 1n
+.ft
+.fi
+.RE
+All of these actions are described in more detail below.
+Note the use of quote symbols around the action strings, which are neccessary
+to group them into one argument.
+The buttons 4 and 5 refer to wheel movements (wheel up/down) on wheel mice.
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
-.B Mouse-2
-.RB [ do-href-newwindow()magnifier(*2) ]
+.B do-href()
+.TP
+.B do-href-newwindow()
+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 Usually, if a binding specifies more then one action, all actions
 are executed in a sequence. The hyperlink bindings
 .B do-href()
@@ -2424,10 +2479,8 @@ are special in that they are used as an
 to other actions that might follow them
 .I if
 the mouse is currently located on a hyperlink.
-In this case, none of the other actions will be executed.
-Otherwise,
-.I only
-the other actions are executed.
+In this case, none of the other actions will be executed;
+otherwise, only the other actions are executed.
 .br
 The action
 .B do-href()
@@ -2439,20 +2492,16 @@ In both cases, the location of the target is
 indicated by a small arrow drawn in the same color
 as a visited link
 in the left corner of the window.
+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
-.B Mouse-3
-.RB [ magnifier(*3) ]
-The actions
-.B magnifier(n)
-will pop up a ``magnifying glass'' which shows the unshrunk
+.B magnifier(n x m)
+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.TP
+.B magnifier(*n)
+This action will pop up a ``magnifying glass'' which shows the unshrunk
 image of the region around the mouse pointer.  The magnifier disappears when
 the mouse button is released. Moving the mouse cursor while holding the button down will move the
 magnifier.
-.br
-In \fB`Ruler Mode'\fR, the first button moves or sets a ruler cross instead;
-see the section
-.BR MODES ,
-below, for details.
 .br
 Different mouse buttons produce different sized
 windows, as indicated by the
@@ -2468,47 +2517,64 @@ through
 .BR *5 ,
 referring to the value specified by the corresponding
 .BI \-mgs n
-option. Note that in order to assign magnifier actions to
-the buttons 4 or 5, you need to use the resource
-.B wheelTranslations
-(more about this resource below), e.g.:
-.sp
-xdvi.wheelTranslations: <Btn4Down>: magnifier(*4)\en\e
-    <Btn5Down>:	magnifier(*5)\en
-.sp
+option.
+.\" Note that in order to assign magnifier actions to
+.\" the buttons 4 or 5, you need to use the resource
+.\" .B wheelTranslations
+.\" (more about this resource below), e.g.:
+.\" .sp
+.\" xdvi.wheelTranslations: <Btn4Down>: magnifier(*4)\en\e
+.\"     <Btn5Down>:	magnifier(*5)\en
+.\" .sp
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
-.B Shift-Mouse-1
-.RB [ drag(+) ]
+.B drag(+)
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
-.B Shift-Mouse-2
-.RB [ drag(|) ]
+.B drag(|)
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
-.B Shift-Mouse-3
-.RB [ drag(-) ]
-Drags the page with the mouse. Shift-Mouse 1 allows dragging in all directions,
-Shift-Mouse 2 allows vertical dragging only, and Shift-Mouse 3 allows
-horizontal dragging only. To access these actions via customization, use the
-.B drag
-action.  This action should have one parameter, the character
+.B drag(-)
+Drags the page with the mouse. This action should have one parameter, the character
 .RB `` | '',
 .RB `` - '',
 or
 .RB `` + '',
-indicating vertical dragging, horizontal dragging, or dragging in both
+indicating vertical dragging only, horizontal dragging only, or dragging in all
 directions.
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
-.B Ctrl-Mouse-1
-.RB [ source-special() ]
-Holding down the
-.I Ctrl
-key and clicking mouse button 1 starts a ``reverse search'',
+.B source-special()
+This action starts a ``reverse search'',
 opening the editor at the location in the \*(Te\& file corresponding
 to the pointer location in the DVI file.
 See the section on SOURCE SPECIALS, below, for more information on this.
+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.TP
+.B wheel()
+This action can be used to scroll the image with a wheel mouse, where it
+is usually bound to mouse button 4 (wheel up) or 5 (wheel down).
+The action takes one parameter, giving the distance to scroll the
+image.  If the parameter contains a decimal point, the distance is
+given in wheel units; otherwise, pixels.  A negative value scrolls up,
+a positive value scrolls down.
+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.TP
+.B text-selection()
+This action allows you to mark a rectangular region of text in the DVI file.
+The text is put into the X selection buffer and can be pasted into other
+applictions (e.g. text editors). This works similar to the Plain text option
+in the
+.B Save
+dialog; see the discussion there for more information on encoding issues.
+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.TP
+.B ruler()
+This action creates a cross-shaped ruler. Moving the mouse and holding
+the button down drags the ruler and lets you measure distances on the page.
+See the section
+.B Ruler Mode
+for more information on this.
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .SH UNBOUND ACTIONS
@@ -2611,18 +2677,13 @@ keys should come first, for example:
 .ft 3
 .sp 1n
 xdvi.mainTranslations: #override \e
-Ctrl<Btn1Down>: magnifier(*3)\en\e
-Shift<Btn1Down>: magnifier(*2)\en\e
-<Btn1Down>: magnifier(*1)\en
+Shift<Key>s: select-dvi-file()\en\e
+Ctrl<Key>s: save()\en\e
+<Key>s: find()\en
 .sp 1n
 .ft
 .fi
 .RE
-.PP
-Note: The additional `Modes' for Mouse-1 (Ruler Mode, Text Mode - see
-the section
-.BR MODES )
-only work if Mouse-1 has the magnifier() action bound to it.
 .PP
 Because
 .B xdvi
@@ -2647,123 +2708,6 @@ will cause the key
 .RB ` z '
 to quit
 .BR xdvi .
-.PP
-Support of wheel mice is controlled by the
-.B wheelTranslations
-resource.  Generally the only action routine called by this resource should be
-.BR wheel .
-The default value is
-``\fB<Btn4Down>:wheel(-1.)\en<Btn5Down>:wheel(1.)\fR''.
-Because this resource is implemented differently from the others, it should
-not begin with
-.RB ``#override '';
-when specifying a value for this resource, all wheel actions should be
-included.
-.\" #ifxaw
-.\" NOTE: following is different with Motif, and will change for Xaw too ...
-.\" removed for the time being.
-.\"
-.\" .PP
-.\" The menu entries and actions may also be customized, in a similar manner.
-.\" In this case the resource
-.\" .B menuTranslations
-.\" should consist of a string describing the pulldown menu names, submenu entries
-.\" and the associated actions. Currently, only one level of submenus is provided for.
-.\" The description consists of lines (substrings separated by the newline character
-.\" `\fB\\n\fP'),
-.\" where each line describes one menu entry. Each line consists of a colon-separated
-.\" list containing the following elements:
-.\" .RS 2
-.\" .TP 2
-.\" -
-.\" the name of the menu;
-.\" .TP
-.\" -
-.\" the name of the submenu;
-.\" .TP
-.\" -
-.\" an accelerator for the action (the accelerator is currently not displayed in the menu, but it might be in future versions);
-.\" .TP
-.\" -
-.\" one of the actions mentioned in the sections on KEYSTROKES above.
-.\" .RE
-.\" .PP
-.\" Instead of a submenu and an action, an entry may also contain the string
-.\" .RB `` SEP '' ;
-.\" in this case, a separator line is inserted after the preceding menu entry.
-.\" .PP
-.\" The default value of this resource is as follows:
-.\" .RS 5
-.\" .nf
-.\" .ft 3
-.\" .sp 1n
-.\" xdvi.menuTranslations: \e
-.\"    File:Open ...:Ctrl-o:select-dvi-file()\en\e
-.\"    File:Find ...:Ctrl-f:find()\en\e
-.\"    File:Reload:R:reread-dvi-file()\en\e
-.\"    File:Print ...:Ctrl-p:print()\en\e
-.\"    File:Save as ...::save()\en\e
-.\"    File:Quit:q:quit()\en\e
-.\"    Navigate:First:1 g:goto-page(1)\en\e
-.\"    Navigate:Page-10:10 p:back-page(10)\en\e
-.\"    Navigate:Page-5:5 p:back-page(10)\en\e
-.\"    Navigate:Prev:p:back-page(1)\en\e
-.\"    Navigate:SEP:\en\e
-.\"    Navigate:Next:n:forward-page(1)\en\e
-.\"    Navigate:Page+5:5 n:forward-page(5)\en\e
-.\"    Navigate:Page+10:10 n:forward-page(10)\en\e
-.\"    Navigate:Last:g:goto-page()\en\e
-.\"    Navigate:SEP:\en\e
-.\"    Navigate:Back Hyperlink:B:htex-back()\en\e
-.\"    Mark:Mark all:-1 m:toggle-mark(-1)\en\e
-.\"    Mark:Unmark all:0 m:toggle-mark(0)\en\e
-.\"    Mark:SEP:\en\e
-.\"    Mark:Toggle odd:1 m:toggle-mark(1)\en\e
-.\"    Mark:Toggle even:2 m:toggle-mark(2)\en\e
-.\"    Mark:Toggle current:m:toggle-mark()\en\e
-.\"    Zoom:Zoom in:Ctrl-+:set-shrink-factor(+)\en\e
-.\"    Zoom:Zoom out:Ctrl--:set-shrink-factor(-)\en\e
-.\"    Zoom:SEP:\en\e
-.\"    Zoom:Fit in window:s:set-shrink-factor(a)\en\e
-.\"    Zoom:SEP:\en\e
-.\"    Zoom:$#:1 s:set-shrink-factor(1)\en\e
-.\"    Zoom:$#:2 s:set-shrink-factor(2)\en\e
-.\"    Zoom:$#:3 s:set-shrink-factor(3)\en\e
-.\"    Zoom:$#:4 s:set-shrink-factor(4)\en\e
-.\"    Zoom:$#:5 s:set-shrink-factor(5)\en\e
-.\"    Zoom:$#:6 s:set-shrink-factor(6)\en\e
-.\"    Zoom:$#:7 s:set-shrink-factor(7)\en\e
-.\"    Zoom:$#:8 s:set-shrink-factor(8)\en\e
-.\"    Zoom:$#:9 s:set-shrink-factor(9)\en\e
-.\"    Options:View PS:1 v:set-ps(1)\en\e
-.\"    Options:View PS + bbox:2 v:set-ps(2)\en\e
-.\"    Options:No PS, bbox only:0 v:set-ps(0)\en\e
-.\"    Options:SEP:\en\e
-.\"    Options:Keep position:k:set-keep-flag(toggle)\en\e
-.\"    Options:SEP:\en\e
-.\"    Options:Fonts darker:Alt-Ctrl-+:change-density(25)\en\e
-.\"    Options:Fonts lighter:Alt-Ctrl--:change-density(-25)\en\e
-.\"    Help:About ...::help(helpGeneral)\en\e
-.\"    Help:Page Motion ...::help(helpPagemotion)\en\e
-.\"    Help:Other Commands ...::help(helpOthercommands)\en\e
-.\"    Help:Mouse Buttons ...::help(helpMousebuttons)\en\e
-.\"    Help:HyperTeX commands ...::help(helpHypertex)\en\e
-.\"    Help:Source specials ...::help(helpSourcespecials)\en
-.\" .sp 1n
-.\" .ft
-.\" .fi
-.\" .RE
-.\" .PP
-.\" The label string may contain a colon if it is escaped by a backslash
-.\" (`\fB\\\fP'). (Note: Since the internal handling of menus requires
-.\" every menu label to be unique, xdvi's special strings for customizing
-.\" shrink factors in the buttons --
-.\" .RB ` $# ',
-.\" .RB ` $% '
-.\" and
-.\" .RB ' $_ '
-.\" -- are not supported by xdvik).
-.\" endif
 .PP
 Some resources are provided to allow customization of the geometry of
 the Xaw command buttons.  Again, they are not changeable via command-line
@@ -2823,15 +2767,6 @@ Button 3 moves the image down or left by the same amount.
 The scrollbars can be removed via the
 .I -expertmode
 flag/keystroke (which see).
-.PP
-Wheel mice are supported:  motion of the wheel on such a mouse moves the
-image up or down by the number of pixels indicated by the
-.B \-wheelunit
-option.  To access this option via customization, use the
-.B wheel
-action.  This action takes one parameter, giving the distance to scroll
-the image.  If the parameter contains a decimal point, the distance is given
-in wheel units; otherwise, pixels.
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .SH MAGNIFIER
@@ -3271,16 +3206,13 @@ to convert the DVI file to a Postscript file, then uses
 to convert the Postscript file to PDF).
 .TP
 -
-Plain text in ISO-8859-1 or UTF-8 encoding (the latter will preserve more
-of the special LaTeX characters e.g. from mathematical mode).
+Plain text in ISO-8859-1 or UTF-8 encoding. The latter will preserve more
+of the special LaTeX characters e.g. from mathematical mode. Note however
+that e.g. only few of LaTeX's mathematical symbols can be rendered correctly
+as text; so this funcionality works best for plain text documents.
 If a character cannot be displayed in the selected
 charset, it is replaced by `\e' followed by the hexadecimal character code.
 If a character is not recognized at all, it is replaced by `?'.
-If you think that xdvi should recognize a character but doesn't,
-please send a feature request to the address given in
-.B AUTHORS
-below. Likewise, if you observe spurious spaces or unwanted linebreaks in
-the output, please report this as a bug.
 .RE
 .PP
 The programs for Postscript and PDF conversion can be customized via
@@ -3295,8 +3227,7 @@ respectively; see the explanation of these options above for more details.
 The keystroke
 .B Ctrl-m
 [\fBswitch-mode()\fR]
-switches between three different bindings for
-.BR Mouse-1 ,
+switches between three different mouse bindings,
 which can also be activated via the
 .B Modes
 menu (in Motif, this is a submenu of the
@@ -4220,7 +4151,7 @@ macros;  this is not likely to change in the near future. This also
 means that  e.g. colored tables (as created by the
 .I colortbl
 package) may render incorrectly: Text in colors different from the
-default foreground color may not not be displayed. When the page is
+default foreground color may not be displayed. When the page is
 redrawn (e.g. after using the magnifier), the background color of the
 cells may overdraw the text.
 #endif

@@ -52,35 +52,46 @@ in xdvi.c.
 
 /* in case stdlib.h doesn't define these ... */
 #ifndef EXIT_SUCCESS
-#define EXIT_SUCCESS 0
+#  define EXIT_SUCCESS 0
 #endif
+
 #ifndef EXIT_FAILURE
-#define EXIT_FAILURE 1
+#  define EXIT_FAILURE 1
 #endif
 
 #ifdef HAVE_WORKING_NL_LANGINFO_CODESET
-# define USE_LANGINFO 1
+#  define USE_LANGINFO 1
 #else
-# define USE_LANGINFO 0
+#  define USE_LANGINFO 0
 #endif
 
 #if HAVE_SYS_WAIT_H
-# include <sys/wait.h>
+#  include <sys/wait.h>
 #endif
+
 #ifndef WIFEXITED
-# define WIFEXITED(status)	(((status) & 255) == 0)
+#  define WIFEXITED(status)	(((status) & 255) == 0)
 #endif
+
 #ifndef WEXITSTATUS
-# define WEXITSTATUS(status)	((unsigned)(status) >> 8)
+#  define WEXITSTATUS(status)	((unsigned)(status) >> 8)
 #endif
+
 #ifndef WIFSIGNALED
-# ifndef WIFSTOPPED
-#  define WIFSTOPPED(status)	(((status) & 0xff) == 0x7f)
-# endif
-# define WIFSIGNALED(status)	(!WIFSTOPPED(status) && !WIFEXITED(status))
+#  ifndef WIFSTOPPED
+#    define WIFSTOPPED(status)	(((status) & 0xff) == 0x7f)
+#  endif
+#  define WIFSIGNALED(status)	(!WIFSTOPPED(status) && !WIFEXITED(status))
 #endif
+
 #ifndef WTERMSIG
-# define WTERMSIG(status)	((status) & 0x7f)
+#  define WTERMSIG(status)	((status) & 0x7f)
+#endif
+
+#if A4
+# define DEFAULT_PAPER		"a4"
+#else
+# define DEFAULT_PAPER		"us"
 #endif
 
 /*
@@ -95,56 +106,58 @@ in xdvi.c.
  */
 #define GS_PIXMAP_CLEARING_HACK 1
 
+/*
+ * Define to 1 if you want to use the experimental font creation code
+ */
+#define DELAYED_MKTEXPK 0
+
 #ifdef __hpux
 /* On HP-UX 10.10 B and 20.10, compiling with _XOPEN_SOURCE + ..._EXTENDED
  * leads to poll() not realizing that a file descriptor is writable in psgs.c.
  */
-# define _HPUX_SOURCE	1
+#  define _HPUX_SOURCE	1
 #else
-# ifndef _XOPEN_SOURCE
-# define _XOPEN_SOURCE	600
-# endif
-# define _XOPEN_SOURCE_EXTENDED	1
-# define __EXTENSIONS__	1	/* needed to get struct timeval on SunOS 5.5 */
-# define _SVID_SOURCE	1	/* needed to get S_IFLNK in glibc */
-# define _BSD_SOURCE	1	/* needed to get F_SETOWN in glibc-2.1.3 */
+#  ifndef _XOPEN_SOURCE
+#    define _XOPEN_SOURCE 600
+#  endif
+#  define _XOPEN_SOURCE_EXTENDED 1
+#  define __EXTENSIONS__ 1	/* needed to get struct timeval on SunOS 5.5 */
+#  define _SVID_SOURCE 1	/* needed to get S_IFLNK in glibc */
+#  define _BSD_SOURCE 1		/* needed to get F_SETOWN in glibc-2.1.3 */
 #endif
 
 /* Some O/S dependent kludges. */
 #ifdef _AIX
-# define _ALL_SOURCE 1
+#  define _ALL_SOURCE 1
 #endif
 
 /* just a kludge, no real portability here ... */
 #define DIR_SEPARATOR '/'
 
 #if STDC_HEADERS
-# include <stddef.h>
-# include <stdlib.h>
+#  include <stddef.h>
+#  include <stdlib.h>
 /* the following works around the wchar_t problem */
-# include <X11/X.h>
-# if HAVE_X11_XOSDEFS_H
-#  include <X11/Xosdefs.h>
-# endif
-# ifdef X_NOT_STDC_ENV
-#  undef X_NOT_STDC_ENV
-#  undef X_WCHAR
-#  include <X11/Xlib.h>
-#  define X_NOT_STDC_ENV
-# endif
+#  include <X11/X.h>
+#  if HAVE_X11_XOSDEFS_H
+#    include <X11/Xosdefs.h>
+#  endif
+#  ifdef X_NOT_STDC_ENV
+#    undef X_NOT_STDC_ENV
+#    undef X_WCHAR
+#    include <X11/Xlib.h>
+#    define X_NOT_STDC_ENV
+#  endif
 #endif /* STDC_HEADERS */
-
-#ifdef HAVE_STDINT_H
-# include <stdint.h>
-#endif
 
 /* For wchar_t et al., that the X files might want. */
 #include "kpathsea/systypes.h"
 #include "kpathsea/c-memstr.h"
 
 #ifdef HAVE_SYS_PARAM_H
-#include <sys/param.h> /* this should define MAXPATHLEN */
+#  include <sys/param.h> /* this should define MAXPATHLEN */
 #endif
+
 #include "kpathsea/c-pathmx.h" /* get fallback for PATH_MAX if all else fails */
 
 #include <X11/Xlib.h>	/* include Xfuncs.h, if available */
@@ -155,75 +168,72 @@ in xdvi.c.
 #include <X11/Intrinsic.h>
 
 #ifndef MAXPATHLEN
-# ifdef PATH_MAX
-#  define MAXPATHLEN PATH_MAX
-# else
-#  define MAXPATHLEN 1024
-# endif
+#  ifdef PATH_MAX
+#    define MAXPATHLEN PATH_MAX
+#  else
+#    define MAXPATHLEN 1024
+#  endif
 #endif
 
-#if defined(CFG2RES) && !defined(SELFAUTO)
-# define SELFAUTO 1
-#endif
-
-#if defined(SELFAUTO) && !defined(DEFAULT_CONFIG_PATH)
-# define DEFAULT_CONFIG_PATH "$SELFAUTODIR:$SELFAUTOPARENT"
-#endif
-
-/* NOTE: we don't use CFGFILE */
-
-typedef	char		Bool3;		/* Yes/No/Maybe */
-
+typedef	char Bool3; /* Yes/No/Maybe */
 #define	True	1
 #define	False	0
 #define	Maybe	2
 
 
 #ifdef DEBUG
-#include<asm/msr.h>
+#  include<asm/msr.h>
 extern unsigned long time_start, time_end;
 #endif
 
 #include <X11/Xmd.h>	/* get WORD64 and LONG64 */
 
 #ifndef WORD64
-# ifdef LONG64
+#  ifdef LONG64
 typedef unsigned int xuint32;
-# else
+#  else
 typedef unsigned long xuint32;
-# endif
+#  endif
+#endif
+
+#if defined(HAVE_STDINT_H)
+#include <stdint.h>
+#elif defined(HAVE_INTTYPES_H)
+#include <inttypes.h>
 #endif
 
 /* for unused parameters */
 #ifndef UNUSED
-#define UNUSED(x) ((void)(x))
+#  define UNUSED(x) ((void)(x))
 #endif
 
 #include <string.h>
 
 #ifdef	VMS
-#define	index	strchr
-#define	rindex	strrchr
-#define	bzero(a, b)	(void) memset ((void *) (a), 0, (size_t) (b))
-#define bcopy(a, b, c)  (void) memmove ((void *) (b), (void *) (a), (size_t) (c))
+#  define index	strchr
+#  define rindex strrchr
+#  define bzero(a, b) (void) memset ((void *) (a), 0, (size_t) (b))
+#  define bcopy(a, b, c)  (void) memmove ((void *) (b), (void *) (a), (size_t) (c))
 #endif
 
 #include <stdio.h>
 #include <setjmp.h>
 
 #if HAVE_UNISTD_H
-# include <unistd.h>
+#  include <unistd.h>
 #endif
 
 /* all of these are POSIX and should have been defined by unistd.h: */
 #ifndef STDIN_FILENO
-#define STDIN_FILENO 0
+#  define STDIN_FILENO 0
 #endif
+
 #ifndef STDOUT_FILENO
-#define STDOUT_FILENO 1
+#  define STDOUT_FILENO 1
 #endif
+
 #ifndef STDERR_FILENO
-#define STDERR_FILENO 2
+#  define STDERR_FILENO 2
 #endif
 
 /* see C FAQ; additional +1 for '\0' */
@@ -236,26 +246,27 @@ typedef unsigned long xuint32;
 extern KPSEDLL char *kpathsea_version_string;
 
 #ifndef	NeedFunctionPrototypes
-# if	__STDC__
-#  define   NeedFunctionPrototypes	1
-# else
-#  define   NeedFunctionPrototypes	0
-# endif
+#  if	__STDC__
+#    define   NeedFunctionPrototypes	1
+#  else
+#    define   NeedFunctionPrototypes	0
+#  endif
 #endif
 
 #ifndef	NeedWidePrototypes
-# define NeedWidePrototypes	NeedFunctionPrototypes
+#  define NeedWidePrototypes	NeedFunctionPrototypes
 #endif
 
 #ifndef	NeedVarargsPrototypes
-# define NeedVarargsPrototypes	NeedFunctionPrototypes
+#  define NeedVarargsPrototypes	NeedFunctionPrototypes
 #endif
 
 #include "kpathsea/c-vararg.h"
+#include "kpathsea/c-fopen.h"
 
 #ifndef	_XFUNCPROTOBEGIN
-# define _XFUNCPROTOBEGIN
-# define _XFUNCPROTOEND
+#  define _XFUNCPROTOBEGIN
+#  define _XFUNCPROTOEND
 #endif
 
 
@@ -270,27 +281,15 @@ extern KPSEDLL char *kpathsea_version_string;
 /* FUNCPROTO is a bitmask specifying ANSI conformance (see Xfuncproto.h).
    The single bits specify varargs, const availability, prototypes etc.;
    we enable everything here. */
-# define FUNCPROTO (-1)
+#  define FUNCPROTO (-1)
 #endif
 
 #ifndef	VOLATILE
-# if __STDC__ || (defined(__stdc__) && defined(__convex__))
-#  define VOLATILE	volatile
-# else
-#  define VOLATILE	/* as nothing */
-# endif
-#endif
-
-#ifndef	NORETURN
-# ifdef	__GNUC__
-#  ifndef __STRICT_ANSI__
-#   define	NORETURN	volatile
+#  if __STDC__ || (defined(__stdc__) && defined(__convex__))
+#    define VOLATILE	volatile
 #  else
-#   define	NORETURN	/* as nothing */
+#    define VOLATILE	/* as nothing */
 #  endif
-# else
-#  define	NORETURN	/* as nothing */
-# endif
 #endif
 
 #ifndef	OPEN_MODE
@@ -298,49 +297,49 @@ extern KPSEDLL char *kpathsea_version_string;
  * SU, 2001/01/07: xdvi defines OPEN_MODE as "r" or as "r", "ctx=stm" (for VMS),
  * but we use the definition of FOPEN_R_MODE from kpathsea/c-fopen.h instead:
  */
-# define OPEN_MODE FOPEN_R_MODE
+#  define OPEN_MODE FOPEN_R_MODE
 #endif	/* OPEN_MODE */
 
 #ifndef	VMS
-# define OPEN_MODE_ARGS	const char *
+#  define OPEN_MODE_ARGS const char *
 #else
-# define OPEN_MODE_ARGS	const char *, const char *
+#  define OPEN_MODE_ARGS const char *, const char *
 #endif
 
 #ifndef __LINE__
-# define __LINE__ 0
+#  define __LINE__ 0
 #endif
 
 #ifndef __FILE__
-# define __FILE__ "?"
+#  define __FILE__ "?"
 #endif
 
 #define	MAXDIM 32767
 
 typedef	unsigned char	ubyte;
 
-#if NeedWidePrototypes
+/* #if NeedWidePrototypes */ /* bug #1570481 */
 typedef	unsigned int	wide_ubyte;
 typedef	int		wide_bool;
-#else
-typedef	ubyte		wide_ubyte;
-typedef	Boolean		wide_bool;
-#endif
+/* #else */
+/* typedef	ubyte		wide_ubyte; */
+/* typedef	Boolean		wide_bool; */
+/* #endif */
 
 #if defined(MAKEPK) && !defined(MKTEXPK)
-# define MKTEXPK 1
+#  define MKTEXPK 1
 #endif
 
-#define	spell_conv0(n, f)   ((long) (n * f))
-#define	spell_conv(n)	    spell_conv0(n, dimconv)
+#define	spell_conv0(n, f) ((long) (n * f))
+#define	spell_conv(n) spell_conv0(n, dimconv)
 
 typedef BMTYPE bmTypeT;
 typedef unsigned BMTYPE bmUnitT;
 /* #define	BMUNIT		    unsigned BMTYPE */
-#define	BMBITS		    (8 * BMBYTES) /* number of bits in a bmTypeT */
+#define	BMBITS (8 * BMBYTES) /* number of bits in a bmTypeT */
 
-#define	ADD(a, b)	((bmUnitT *) (((char *) a) + b))
-#define	SUB(a, b)	((bmUnitT *) (((char *) a) - b))
+#define	ADD(a, b) ((bmUnitT *) (((char *) a) + b))
+#define	SUB(a, b) ((bmUnitT *) (((char *) a) - b))
 
 extern bmUnitT bit_masks[BMBITS + 1];
 
@@ -349,6 +348,7 @@ extern bmUnitT bit_masks[BMBITS + 1];
 
 #define INSIDE_MANE_WIN ((currwin.win == mane.win))
 #define MAGNIFIER_ACTIVE ((magnifier.win != 0))
+/* #define MAGNIFIER_ACTIVE ((globals.cursor.flags & CURSOR_MAG)) */
 
 #define	mane_base_x 0
 #define	mane_base_y 0
@@ -380,18 +380,53 @@ typedef	setcharRetvalT (*set_char_proc) (
 #define ROUNDUP(x,y) (((x)+(y)-1)/(y))
 
 #ifndef	BDPI
-#define	BDPI	600
+#  define BDPI 600
 #endif
 
 #if defined(GS_PATH) && !defined(PS_GS)
-# define PS_GS	1
+#  define PS_GS 1
 #endif
 
 #if defined(PS_DPS) || defined(PS_NEWS) || defined(PS_GS)
-# define PS	1
+#  define PS 1
 #else
-# define PS	0
+#  define PS 0
 #endif
+
+#ifdef MOTIF
+#  include <Xm/Xm.h>
+
+/* Note: non-k xdvi has MOTIF_TIMERS here, we use XDVI_XT_TIMER_HACK instead (see above) */
+
+#  ifndef DDIST
+#    define DDIST 4
+#  endif
+#  ifndef DDIST_MAJOR
+#    define DDIST_MAJOR 10
+#  endif
+#  ifndef DDIST_MINOR
+#    define DDIST_MINOR 5
+#  endif
+
+extern  XmStringCharSet G_charset;
+
+/*
+ * Whether to use some widgets which are only available with Motif 2.0.
+ * In these cases, the LessTif versions are either buggy or visually
+ * inferior (as of lesstif-0.93.18), in which case suitable replacements
+ * should be used; e.g. cascade button or a textfield plus button for
+ * a combobox, or a textfield plus button for a spinbox.
+ */
+#  if XmVersion >= 2000 && !defined(LESSTIF_VERSION)
+#    define USE_COMBOBOX 1
+#    define Xdvi_COMBO_BOX_ARROW_SIZE 15 /* the default arrows are *way* too big */
+#    define USE_SPINBOX 1
+#  else
+#    define USE_COMBOBOX 0
+#    define USE_SPINBOX 0
+#  endif
+
+#endif /* MOTIF */
 
 typedef enum {
     XPRT_SHOW_NONE = 0U,
@@ -405,15 +440,21 @@ typedef enum {
 #else
     XPRT_SHOW_BUTTONS = 4,
     XPRT_SHOW_ALL = 7
-#endif
+#endif /* MOTIF */
 } expertFlagT;
 
 typedef enum {
-    MOUSE_MAGNIFIER_MODE,
-    MOUSE_TEXT_MODE,
-    MOUSE_RULER_MODE,
-    MOUSE_MAX_MODE
+    MOUSE_MODE1,
+    MOUSE_MODE2,
+    MOUSE_MODE3,
+    MOUSE_MODE_MAX
 } mouseModeT;
+
+typedef enum {
+    NO_MODE_ACTIVE,
+    RULER_MODE_ACTIVE,
+    TEXT_MODE_ACTIVE
+} modeFlagT;
 
 /* SUBPIXEL_NONE for no subpixel rendering, otherwise order of subpixels
    (from option/resource subPixels) */
@@ -430,14 +471,24 @@ extern struct x_resources {
     const char *windowsize;
     Boolean	remember_windowsize;
     int		app_defaults_fileversion;
-    int		mouse_mode;
+    mouseModeT	mouse_mode;
     Boolean	use_tex_pages;
     int		shrinkfactor;
     const char *main_translations;
-    const char *wheel_translations;
+    const char *mouse_translations;
+/*     const char *wheel_translations; */
     int		wheel_unit;
     int		density;
     Boolean     omega;
+    const char *mouse_mode1_name;
+    const char *mouse_mode1_description;
+    int		mouse_mode1_cursor;
+    const char *mouse_mode2_name;
+    const char *mouse_mode2_description;
+    int		mouse_mode2_cursor;
+    const char *mouse_mode3_name;
+    const char *mouse_mode3_description;
+    int		mouse_mode3_cursor;
 #ifdef	GREY
     float	gamma;
 /*     float	    inverted_factor; */
@@ -481,9 +532,11 @@ extern struct x_resources {
     Boolean	list_fonts;
     Boolean	reverse;
     Boolean	warn_spec;
+    Boolean	hush;
     Boolean	hush_chars;
     Boolean	hush_chk;
     Boolean	hush_stdout;
+    Boolean	hush_bell;
     Boolean	safer;
 #ifdef VMS
     const char *fore_color;
@@ -504,24 +557,24 @@ extern struct x_resources {
 #ifdef PS
     int		postscript;
     Boolean	allow_shell;
-# ifdef	PS_DPS
+#  ifdef PS_DPS
     Boolean	useDPS;
-# endif
-# ifdef	PS_NEWS
+#  endif
+#  ifdef PS_NEWS
     Boolean	useNeWS;
-# endif
-# ifdef	PS_GS
+#  endif
+#  ifdef PS_GS
     Boolean	useGS;
     Boolean	gs_safer;
     Boolean	gs_alpha;
     const char *gs_path;
     const char *gs_palette;
     int		gs_timeout;
-# endif
-# ifdef	MAGICK
+#  endif
+#  ifdef MAGICK
     Boolean	useMAGICK;
     const char *magick_cache;
-# endif
+#  endif
 #endif	/* PS */
     Boolean     prescan;
     Boolean     use_temp_fp;
@@ -551,7 +604,7 @@ extern struct x_resources {
     int		tooltips_wait_period; /* used for communication with Tip.c */
     int		tooltips_wait_period_bak; /* uncustomized value */
     Boolean	show_tooltips;
-#endif
+#endif /* MOTIF */
     Boolean	pagelist_highlight_current;
     Dimension	pagelist_width;
     const char *mg_arg[5];
@@ -571,6 +624,7 @@ extern struct x_resources {
     const char *dvips_options_str;
     int		default_saving_format;
     int		default_printing_target;
+    int         grid_mode;
     char       *rule_color;
     Pixel	rule_pixel;
     int		link_style;
@@ -579,10 +633,16 @@ extern struct x_resources {
     char       *browser;
 #ifdef MOTIF
     char       *prefs_browser_list;
-#endif
+#  if USE_COMBOBOX
+    char       *search_history;
+    int		search_history_size;
+#  endif
+#endif /* MOTIF */
     char       *unknown_mime_suffix;
     char       *no_mime_suffix;
     char       *anchor_pos;
+    /* whether to open file in new window from file selector (only for DVI files) */
+    Boolean    filesel_open_new_window;
     /* bitmask of current search window settings */
     unsigned int    search_window_defaults;
     /*     char *    _scroll_pages; */
@@ -598,7 +658,7 @@ extern struct x_resources {
     int         page_history_size;
 } resource;
 
-extern void reload_app_resources(void);
+extern void load_app_resources(Boolean also_pixels);
 
 
 struct WindowRec {
@@ -643,31 +703,34 @@ struct gc_info {
     Boolean do_copy;
 };
 
-/* values of cursor flags */
-#define CURSOR_LINK 1
-#define CURSOR_MAG 2
-/* flags for drag cursors */
-#define CURSOR_DRAG_V 4
-#define CURSOR_DRAG_H 8
-#define CURSOR_DRAG_A 16
-#define CURSOR_CORRUPTED 32	/* if file is corrupted */
-#define CURSOR_TEXT 64
+/* flags for special cursor states */
+#define CURSOR_LINK 1		/* hyperlink */
+#define CURSOR_MAG 2		/* magnifier is mapped */
+#define CURSOR_DRAG_V 4		/* vertical dragging */
+#define CURSOR_DRAG_H 8		/* horizontal dragging */
+#define CURSOR_DRAG_A 16	/* dragging in any direction */
+#define CURSOR_CORRUPTED 32	/* DVI file corrupted */
+#define CURSOR_TEXT 64		/* DVI file corrupted */
+#define CURSOR_RULER 128	/* DVI file corrupted */
 
+/* cursors for all states */
 struct cursor_info {
+    Cursor mode1;
+    Cursor mode2;
+    Cursor mode3;
+
     Cursor wait;
-    Cursor ready;
     Cursor corrupted;
+    /* hyperlink */
     Cursor link;
-    Cursor rule;
-    Cursor mag;
     /* horizontal/vertical/all directions drag */
     Cursor drag_h;
     Cursor drag_v;
     Cursor drag_a;
     /* support for `pause' feature */
     Cursor pause;
-    /* text selection */
-    Cursor text;
+    /* empty cursor */
+    Cursor empty;
     
     /* one of the flags defined above */
     unsigned long flags;
@@ -710,8 +773,9 @@ struct dvi_file_info {
  * as a replacement for global variables:
  */
 extern struct program_globals {
+    XtAppContext app;
     const char *program_name;	/* argv[0] without the directory part */
-    const char *xdvi_dir;	/* directory where xdvi is running in (for childs who need to change back to it) */
+    const char *cwd;		/* directory where xdvi is running in (for childs who need to change back to it) */
     char *dvi_name;		/* dvi file name, fully expanded with REALPATH */
     Boolean load_init_file;	/* whether to read/save ~/.xdvirc */
     char *orig_locale;		/* original locale we are running in */
@@ -725,6 +789,9 @@ extern struct program_globals {
        also contains the offset that user has set via Act_declare_page_number() */
     int pageno_correct;
 
+    /* paper unit used for grid mode */
+    unsigned int grid_paper_unit;
+    
     /* whether we warn about unrecognized specials. Copy of resource.warn_spec value,
        set to False in the drawing routine to reduce the amount of warnings given.
        Better maybe replace with hash lookup similar to fonts warnings? */
@@ -737,6 +804,7 @@ extern struct program_globals {
     float curr_gamma;
     Boolean curr_use_color;
 
+    modeFlagT curr_mode;
     
     /* forward search info */
     struct src_info src;
@@ -772,10 +840,6 @@ extern struct WindowRec mane;
 extern struct WindowRec currwin;
 extern struct WindowRec magnifier;
 
-#ifdef MOTIF
-#include <Xm/Xm.h>
-extern  XmStringCharSet G_charset;
-#endif
 
 extern XtAppContext app;
 extern	char		*dvi_property;		/* for setting in window */
@@ -793,9 +857,9 @@ extern	Visual		*G_visual;
 extern	unsigned int	G_depth;
 extern	Colormap	G_colormap;
 #else
-# define G_depth	(unsigned int) DefaultDepthOfScreen(SCRN)
-# define G_visual	DefaultVisualOfScreen(SCRN)
-# define G_colormap	DefaultColormapOfScreen(SCRN)
+#  define G_depth	(unsigned int) DefaultDepthOfScreen(SCRN)
+#  define G_visual	DefaultVisualOfScreen(SCRN)
+#  define G_colormap	DefaultColormapOfScreen(SCRN)
 #endif
 
 
@@ -888,10 +952,10 @@ struct fgrec {
     struct rgb color;
     Boolean pixel_good;		/* if the pixel entry is valid */
     Pixel pixel;
-#if GREY
+#  if GREY
     Boolean palette_good;	/* if the palette entry is valid */
     Pixel palette[16];		/* non-TrueColor only */
-#endif
+#  endif
 };
 
 extern struct rgb fg_initial;	/* Initial fg (from command line) */
@@ -913,6 +977,8 @@ extern Boolean color_warned;
 extern Boolean dvi_file_corrupted;
 
 extern short magnifier_stat;	/* 1 = wait for expose, -1 = destroy upon expose */
+
+extern void run_dvi_file(const char *filename, void *data);
 
 /*
   ================================================================================
@@ -965,9 +1031,9 @@ extern Boolean ignore_papersize_specials;
 extern Boolean have_raw_postscript;
 #if PS
 extern struct psprocs psp, no_ps_procs;
-#ifdef PS_GS
+#  ifdef PS_GS
 extern Boolean had_ps_specials;
-#endif
+#  endif
 #endif
 
 #ifdef MAGICK
@@ -980,7 +1046,6 @@ extern int bbox_voffset;
 #endif
 
 /* globals from statusline.h */
-extern int global_statusline_h; /* height of statusline, or 0 */
 extern Widget statusline;
 
 
@@ -990,10 +1055,10 @@ extern Widget statusline;
  * under XAW, it's the parent of mane.win.
  */
 #ifdef MOTIF
-# define CURSORWIN	mane.win
+#  define CURSORWIN	mane.win
 #else
 /* # define CURSORWIN	XtWindow(globals.widgets.form_widget) */
-# define CURSORWIN	mane.win
+#  define CURSORWIN	mane.win
 #endif
 
 
@@ -1003,38 +1068,25 @@ extern Widget statusline;
  * See the comment in events.c for further explanations.
  */
 #if LD_ALLOWS_MULTIPLE_DEFINITIONS
-# define XDVI_XT_TIMER_HACK 1
+#  define XDVI_XT_TIMER_HACK 1
 #else
-# define XDVI_XT_TIMER_HACK 0
-#endif
-
-/* globally used GUI stuff */
-#ifdef MOTIF
-#include <Xm/Xm.h>
-/* Note: non-k xdvi has MOTIF_TIMERS here, we use XDVI_XT_TIMER_HACK instead (see above) */
-
-# ifndef DDIST
-#  define DDIST 4
-# endif
-# ifndef DDIST_MAJOR
-#  define DDIST_MAJOR 10
-# endif
-# ifndef DDIST_MINOR
-#  define DDIST_MINOR 5
-# endif
+#  define XDVI_XT_TIMER_HACK 0
 #endif
 
 extern const char **get_paper_types(void);
 extern size_t get_paper_types_size(void);
 
-extern size_t get_magglass_items(void);
-extern int get_magglass_width(int idx);
-extern int get_magglass_height(int idx);
+extern void register_font_popup(void);
+extern void unregister_font_popup(void);
 
+struct startup_info {
+    int file_idx;
+    char *page_arg;
+};
 
 #ifdef STATUSLINE
 /* this is only for the initialization; the statusline will reset it to a more adequate value: */
-# define XTRA_H	17
+#  define XTRA_H 17
 #endif
 
 /*
@@ -1057,14 +1109,6 @@ struct geom_info {
     void (*geom_box)(struct scan_info *, long, long, long, long);
     void *geom_data;
 };
-
-#ifdef	CFG2RES
-struct cfg2res {
-    const char *cfgname;	/* name in config file */
-    const char *resname;	/* name of resource */
-    Boolean numeric;	/* if numeric */
-};
-#endif
 
 #define get_byte(fp)	((unsigned char)getc(fp))
 #define get_lbyte(fp)	((long)get_byte(fp))
@@ -1095,25 +1139,45 @@ extern void motif_translations_hack(void);
    http://sourceforge.net/tracker/?group_id=23164&atid=377580\n"
 
 #if HAVE_ICONV && HAVE_ICONV_H
-#undef HAVE_ICONV_H
-#define HAVE_ICONV_H 1
+#  undef HAVE_ICONV_H
+#  define HAVE_ICONV_H 1
 #else
-#undef HAVE_ICONV_H
-#define HAVE_ICONV_H 0
+#  undef HAVE_ICONV_H
+#  define HAVE_ICONV_H 0
 #endif
 
 
 #if HAVE_GOOD_SETSID_VFORK
-# if HAVE_VFORK_H
-#  include <vfork.h>
-# endif
+#  if HAVE_VFORK_H
+#    include <vfork.h>
+#  endif
 #else /* HAVE_GOOD_SETSID_VFORK */
 /* Mac OS X 10.3 (Panther) (11/2003) doesn't allow setsid() within vfork() */
-# undef vfork
-# define vfork fork
+#  undef vfork
+#  define vfork fork
 #endif /* HAVE_GOOD_SETSID_VFORK */
 
-/* enable following if you get unresolved messages about `iconv_open' etc.: */
+
+/* XawtextScrollWhenNeeded has been ditched in Xaw7
+   (e.g. Xfree >= 4.x); from the man page:
+   
+   The value XawtextScrollWhenNeeded (and whenNeeded, recognized by
+   the converter), is accepted for backwards compatibilty with
+   resource specifications written for the Xaw6 Text widget, but
+   ignored (effectively treated as XawtextScrollNever).
+
+   So we're forced to use `scrollAlways' here.
+*/
+#define XAW_SCROLL_ALWAYS XawtextScrollAlways
+
+/* the reconfig stuff has been fixed in XFree 4.1.0, vendor release 6510 (Slackware 8.0) */
+#define BROKEN_RECONFIG ((				\
+	(strstr(ServerVendor(DISP), "XFree") != NULL)	\
+	&& VendorRelease(DISP) >= 4000			\
+	&& VendorRelease(DISP) < 4002			\
+	))
+
+/* enable the following if you're getting unresolved messages about `iconv_open' etc.: */
 #if 0
 #define LIBICONV_PLUG
 #define iconv_open libiconv_open

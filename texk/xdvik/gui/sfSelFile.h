@@ -25,6 +25,8 @@
 #define SFSELFILE_H_
 
 struct filesel_callback {
+    Widget shell;
+    char *browse_fname;
     const char *title;
     const char *prompt;
     const char *ok;
@@ -37,10 +39,13 @@ struct filesel_callback {
     void *data;
 };
 
+#define Xdvi_NEW_WINDOW_RADIO_NAME "new_window_radio"
+
 extern void SFpositionWidget(Widget w);
 extern FILE *SFopenFile(const char *name, const char *mode, const char *prompt, const char *failed);
 extern void SFtextChanged(void);
-extern void XsraSelFile(Widget parent, struct filesel_callback *callback);
+extern Widget XsraSelFile(Widget parent, struct filesel_callback *callback);
+extern void XsraSelFilePopup(struct filesel_callback *callback);
 void raise_file_selector(void);
 
 #endif /* SF_SEL_FILE_H_ */

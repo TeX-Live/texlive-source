@@ -1,0 +1,242 @@
+# Makefile for xdvik 
+#
+
+ac_include ../make/paths.mk
+ac_include ../make/common.mk
+### hack to prevent linking with kpathsea by default
+kpathsea=
+ac_include ../make/programs.mk
+ac_include ../make/cross.mk
+
+all_subdirs = gui tests
+
+CPP = @CPP@
+
+# Make `#include <X11/...>' and `-lX...' work.
+# This matches web2c (needed only for Metafont).
+x_cppflags=@X_CFLAGS@ @iconv_includes@
+x_ldflags=@X_LIBS@ @x_linker_options@ @iconv_libpath@
+x_pre_libs=@X_PRE_LIBS@
+x_extra_libs=@X_EXTRA_LIBS@ @iconv_libs@
+x_tool_libs=@x_tool_libs@
+x_xmu_lib=@x_xmu_lib@
+x_xpm_libs=@x_xpm_libs@
+# -lXp and -lXext
+x_ext_lib=@x_ext_lib@
+
+LDLIBT1=@LDLIBT1@
+LIBT1CPPFLAGS=@LIBT1CPPFLAGS@
+LIBT1DEP=@LIBT1DEP@
+LIBT1DIR=../../libs/t1lib
+LIBTYPE1DIR=$(LIBT1DIR)/../type1
+LIBT1SRCDIR=$(srcdir)/$(LIBT1DIR)
+
+# additional flags for kpathsea
+LDLIBKPATHSEA=@LDLIBKPATHSEA@
+LIBKPATHSEACPPFLAGS=@LIBKPATHSEACPPFLAGS@
+LIBKPATHSEADEP=@LIBKPATHSEADEP@
+
+# Follow the library order used in X11R6 itself.
+# It seems that on Cygwin, libXaw needs _XpmReadFileToPixmap, so we put
+# x_xpm_libs after the tool_libs -- but before -lX11, since on MacOSX it
+# uses XGrabServer and XUngrabServer, which would otherwise be
+# unresolved with static libraries.
+# Xmu needs to come before Xt and after the toolkit libs.
+x_link = $(LDLIBT1) $(LDLIBKPATHSEA) $(x_ldflags) $(x_tool_libs) $(x_xmu_lib) -lXt $(x_pre_libs) $(x_ext_lib) $(x_xpm_libs) -lX11 $(x_extra_libs)
+
+TESTS=./tests/run_tests
+TESTS_DEP=$(TESTS)
+
+# various xdvik GUI elements
+LIBGUI=./gui/libgui.a
+LIBGUIDEP=$(LIBGUI)
+
+
+# Extra xdvi-specific compiler options.
+# ps_def = @PS_DEF@ -DXSERVER_INFO -DNEW_MENU_CREATION
+# ps_def = @PS_DEF@ -DRGB_ANTI_ALIASING
+ps_def = @PS_DEF@
+prog_cflags = @XTRA_WARN_CFLAGS@ $(LIBT1CPPFLAGS) $(LIBKPATHSEACPPFLAGS) $(ps_def) \
+-I$(srcdir)/gui $(x_cppflags)
+
+# Note: to be able to use one depend.mk file for both Motif/Xaw (which
+# is needed since only maintainers are supposed to invoke `make depend')
+# we include *all* object files and have tests for #ifdef MOTIF/XAW inside
+# the files.
+objects = \
+    browser.o \
+    dl_list.o \
+    dvi-draw.o \
+    dvi-init.o \
+    dvisel.o \
+    encodings.o \
+    events.o \
+    exit-handlers.o \
+    filehist.o \
+    font-open.o \
+    gf.o \
+    string_list.o \
+    hypertex.o \
+    image-magick.o \
+    main.o \
+    mime.o \
+    my-snprintf.o \
+    my-vsnprintf.o \
+    pagehist.o \
+    pk.o \
+    print-internal.o \
+    psdps.o \
+    psgs.o \
+    psheader.o \
+    psnews.o \
+    read-mapfile.o \
+    search-internal.o \
+    special.o \
+    string-utils.o \
+    tfmload.o \
+    util.o \
+    vf.o \
+    xdvi.o \
+    xserver-info.o \
+    x_util.o
+
+# t1mapper or its man page are currently not being installed, since they
+# aren't needed on most current (teTeX) systems
+perlprog = t1mapper
+manpage = xdvi
+
+default all: libguibuild @final_exec_name@ $(manpage).1
+
+$(LIBGUI):
+	cd gui; $(MAKE) $(makeargs) libgui.a
+
+$(TESTS):
+	cd tests; $(MAKE) $(makeargs)
+
+### we need this additional target so that libgui is always checked to be up-to-date ...
+libguibuild:
+	cd gui; $(MAKE) $(makeargs) libgui.a
+
+test:
+	cd tests; $(MAKE) $(makeargs) test
+
+test_verbose:
+	cd tests; $(MAKE) $(makeargs) test_verbose
+
+@final_exec_name@: $(LIBKPATHSEADEP) $(objects) $(LIBT1DEP) $(LIBGUIDEP)
+	$(kpathsea_link) $(objects) $(LIBGUI) $(x_link) $(LOADLIBES)
+
+squeeze.o: squeeze.c
+	$(build_compile) -c $<
+squeeze: squeeze.o
+	$(build_link_command) squeeze.o
+
+psheader.c: psheader.txt squeeze
+	./squeeze $(srcdir)/psheader.txt $@
+
+$(manpage).1: xdvi.1.in sedscript
+	sed -f sedscript <$(srcdir)/xdvi.1.in >$@
+
+sedscript: mksedscript c-auto.h
+	$(SHELL) $(srcdir)/mksedscript $(srcdir) pkpath sizes vfpath \
+	figpath headerpath $(DEFS) $(prog_cflags) >$@
+
+install: install-exec install-data
+uninstall: uninstall-exec uninstall-data
+
+install-exec: @final_exec_name@
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(bindir)
+	$(INSTALL_LIBTOOL_PROG) @final_exec_name@ $(bindir)
+	$(INSTALL_SCRIPT) xdvi-sh $(scriptdir)/@wrapper_script@
+	rm -f $(scriptdir)/o@wrapper_script@
+	ln -s @wrapper_script@ $(scriptdir)/o@wrapper_script@
+
+uninstall-exec:
+	for p in @final_exec_name@; do rm -f $(bindir)/$$p; done
+	for p in @wrapper_script@ o@wrapper_script@; do rm -f $(scriptdir)/$$p; done
+
+install-data: $(manpage).1 pixmaps/toolbar.xpm pixmaps/toolbar2.xpm
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(man1dir) 
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(texmf)/xdvi/pixmaps
+	$(INSTALL_DATA) $(manpage).1 $(man1dir)/$(manpage).$(manext)
+	rm -f $(man1dir)/o$(manpage).$(manext)
+	ln -s $(manpage).$(manext) $(man1dir)/o$(manpage).$(manext)
+	$(INSTALL_DATA) $(srcdir)/texmf/XDvi $(texmf)/xdvi/XDvi
+	$(INSTALL_DATA) $(srcdir)/pixmaps/toolbar.xpm $(srcdir)/pixmaps/toolbar2.xpm $(texmf)/xdvi/pixmaps
+	if \
+	    grep 'original xdvi.cfg --' $(texmf)/xdvi/xdvi.cfg >/dev/null 2>&1 \
+	    || test ! -r $(texmf)/xdvi/xdvi.cfg; \
+	then \
+	    $(INSTALL_DATA) $(srcdir)/texmf/xdvi.cfg $(texmf)/xdvi/xdvi.cfg; \
+	else \
+	    true; \
+	fi
+
+uninstall-data:
+	rm -f $(man1dir)/$(manpage).$(manext) \
+		$(texmf)/xdvi/pixmaps/toolbar.xpm $(texmf)/xdvi/pixmaps/toolbar2.xpm \
+		$(texmf)/xdvi/XDvi
+	if \
+	    head -n 1 $(texmf)/xdvi/xdvi.cfg | grep 'original xdvi.cfg --' >/dev/null 2>&1 \
+	    || test ! -r $(texmf)/xdvi/xdvi.cfg; \
+	then \
+	    rm -f $(texmf)/xdvi/xdvi.cfg; \
+		else \
+	    true; \
+	fi
+	rmdir $(texmf)/xdvi/pixmaps
+
+distname = xdvik
+program_files = *.1.in *.ac xdvi.icon xdvi.FAQ psheader.txt mksedscript \
+  MOTIF
+version_files = xdvi.c
+
+pre-dist-$(distname):
+post-dist-$(distname):
+	cd $(top_distdir); rm -f xdvik/psheader.c
+
+ac_include ../make/dist.mk
+ac_include ../make/config.mk
+
+info dvi check:
+
+ac_include ../make/clean.mk
+
+mostlyclean::
+	test ! -r gui/Makefile || test ! -r tests/Makefile \
+	  || for d in $(all_subdirs); do (cd $$d && $(MAKE) $@); done
+clean::
+	test ! -r gui/Makefile || test ! -r tests/Makefile \
+	  || for d in $(all_subdirs); do (cd $$d && $(MAKE) $@); done
+distclean::
+	test ! -r gui/Makefile || test ! -r tests/Makefile \
+	  || for d in $(all_subdirs); do (cd $$d && $(MAKE) $@); done
+extraclean::
+	test ! -r gui/Makefile || test ! -r tests/Makefile \
+	  || for d in $(all_subdirs); do (cd $$d && $(MAKE) $@); done
+maintainer-clean::
+	test ! -r gui/Makefile || test ! -r tests/Makefile \
+	  || for d in $(all_subdirs); do (cd $$d && $(MAKE) $@); done
+
+depend::
+	test ! -r gui/Makefile || test ! -r tests/Makefile \
+	  || for d in $(all_subdirs); do (cd $$d && $(MAKE) $@); done
+
+clean::
+	rm -f $(manpage).1 *.flc @final_exec_name@
+
+distclean::
+	rm -f psheader.c sedscript $(manpage).1 *.flc *~ @final_exec_name@ xdvi-sh
+	test -f $(LIBTYPE1DIR)/Makefile && { cd $(LIBTYPE1DIR); $(MAKE) distclean; } || true
+	test -f $(LIBT1DIR)/Makefile && { cd $(LIBT1DIR); $(MAKE) distclean; } || true
+
+$(LIBT1DIR)/libt1.a:
+	cd $(LIBT1DIR); $(MAKE) $(makeargs) libt1.a
+
+$(LIBTYPE1DIR)/libtype1.a:
+	cd $(LIBTYPE1DIR); $(MAKE) $(makeargs) libtype1.a
+
+
+ac_include ../make/tkpathsea.mk
+ac_include ../make/rdepend.mk
+ac_include depend.mk

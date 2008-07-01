@@ -33,6 +33,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 /* Condition for retrying a write */
 #include <errno.h>
+#include <strings.h>
 
 #include "xdvi-config.h"
 #include "xdvi.h"
@@ -115,7 +116,7 @@ Pixmap bpixmap;
 
 #define	GS_fd	(std_io[0])
 
-		/* some arguments are filled in later */
+/* some arguments are filled in later */
 static char arg4[] = "-dDEVICEWIDTH=xxxxxxxxxx";
 static char arg5[] = "-dDEVICEHEIGHT=xxxxxxxxxx";
 
@@ -162,14 +163,15 @@ static char oldstr[] = "\347\310\375";
 
 static void gs_died(int, struct xchild *);
 
-static char *read_from_gs(int);
-static void write_to_gs(int);
+static char *read_from_gs(int, void *);
+static void write_to_gs(int, void *);
 
 static	struct xio	gs_xio		= {NULL, 0, XIO_IN,
 #if HAVE_POLL
-    NULL,
+					   NULL,
 #endif
-    read_from_gs, write_to_gs
+					   read_from_gs, write_to_gs,
+					   NULL /* data */
 };
 
 static struct xchild gs_child = { NULL, 0, True, NULL, NULL, NULL, gs_died };
@@ -183,12 +185,17 @@ static struct xchild gs_child = { NULL, 0, True, NULL, NULL, NULL, gs_died };
 #if TIMER_PROBLEM_FIXED
 static XtIntervalId gs_timeout_id = 0;
 static void gs_timer_proc(XtPointer client_data, XtIntervalId * id);
-static	struct xtimer	gs_timer	= {NULL, {0, 0}, gs_timer_proc};
-#else
-static void gs_alarm(struct xtimer *timer);
-static struct xtimer gs_timer = {NULL, {0, 0}, XTM_DEFAULT, gs_alarm
+static struct xtimer gs_timer = {NULL, {0, 0}, gs_timer_proc, NULL
 #if XDVI_XT_TIMER_HACK
-				    , NULL, NULL
+				 , NULL, NULL
+#endif
+};
+
+#else
+static void gs_alarm(struct xtimer *this, void *data);
+static struct xtimer gs_timer = {NULL, {0, 0}, XTM_DEFAULT, gs_alarm, NULL
+#if XDVI_XT_TIMER_HACK
+				 , NULL, NULL
 #endif
 };
 #endif
@@ -211,12 +218,14 @@ showto(char *q)
 }
 
 static char *
-read_from_gs(int fd)
+read_from_gs(int fd, void *data)
 {
     int bytes;
     char *line_end = NULL;
     char *p;
 
+    UNUSED(data);
+    
     for (;;) {
 
 	bytes = read(fd, linepos, line + LINELEN - linepos);
@@ -275,8 +284,8 @@ read_from_gs(int fd)
 	if (linepos >= line + LINELEN) {
 	    p = line + LINELEN;
 	    if ((*--p != '\347' && *--p != '\347' && *--p != '\347')
-		    || (memcmp(p, ackstr, line + LINELEN - p) != 0
-			&& memcmp(p, oldstr, line + LINELEN - p) != 0))
+		|| (memcmp(p, ackstr, line + LINELEN - p) != 0
+		    && memcmp(p, oldstr, line + LINELEN - p) != 0))
 		p = line + LINELEN;
 	    *p = '\0';
 	    printf("gs: %s\n", line);
@@ -290,12 +299,13 @@ read_from_gs(int fd)
 }
 
 static void
-write_to_gs(int fd)
+write_to_gs(int fd, void *data)
 {
     char *send_end;
     int	bytes;
 
     UNUSED(fd);
+    UNUSED(data);
     
     for (;;) {
 	send_end = GS_outb_in;
@@ -377,7 +387,7 @@ gs_send(const char *cp, size_t len)
 	    if (gs_xio.pfd != NULL)
 		gs_xio.pfd->events = POLLIN | POLLOUT;
 #endif
-	    write_to_gs(GS_fd);
+	    write_to_gs(GS_fd, NULL);
 	    if (GS_outb_out != old_out) {
 		if (cp == cp_end)
 		    break;
@@ -438,10 +448,11 @@ static void
 #if TIMER_PROBLEM_FIXED
 gs_timer_proc(XtPointer client_data, XtIntervalId * id)
 #else
-gs_alarm(struct xtimer *timer)
+    gs_alarm(struct xtimer *this, void *data)
 #endif
 {
-    UNUSED(timer);
+    UNUSED(this);
+    UNUSED(data);
     
     if (globals.debug & DBG_PS)
 	puts("GS timeout expired");
@@ -468,7 +479,7 @@ waitack(void)
     GS_die_ack = EV_ACK;
     
     for (;;) {	/* loop because there might be stray ACKs. */
-/*  	fprintf(stderr, "looping for stray ACKs, page %d\n", current_page); */
+	/*  	fprintf(stderr, "looping for stray ACKs, page %d\n", current_page); */
 	(void) read_events(EV_GE_ACK);
 	globals.ev.flags &= ~EV_ACK;
 
@@ -486,7 +497,7 @@ waitack(void)
 #if TIMER_PROBLEM_FIXED
     if (gs_timeout_id)
 	XtRemoveTimeOut(gs_timeout_id);
-    gs_timeout_id = XtAppAddTimeOut(app, resource.gs_timeout,
+    gs_timeout_id = XtAppAddTimeOut(globals.app, resource.gs_timeout,
 				    gs_timer_proc, (XtPointer) NULL);
 #else
     set_timer(&gs_timer, resource.gs_timeout);
@@ -570,9 +581,9 @@ initGS(void)
 	"stop\n%%xdvimark\n";
     
     /*
-      * If we're prescanning *before* setting up the widgets (to get the
-      * page size, for example), then postpone starting up ghostscript.
-      */
+     * If we're prescanning *before* setting up the widgets (to get the
+     * page size, for example), then postpone starting up ghostscript.
+     */
     if (mane.win == (Window)0) {
 	if (globals.debug & DBG_PS)
 	    puts("Hit PS header in early prescan; postponing.");
@@ -735,7 +746,7 @@ gs_died(int status, struct xchild *child)
     if (globals.debug & DBG_PS)
 	fprintf(stderr, "process %s died\n", child->name);
     GS_pid = 0;
-    (child->io->read_proc)(child->io->fd);
+    (child->io->read_proc)(child->io->fd, NULL);
     if (linepos > line) {
 	*linepos = '\0';
 	printf("%s: %s\n", child->name, line);
@@ -760,7 +771,7 @@ destroy_gs(void)
 	    perror("xdvik: destroy_gs");
 	GS_pid = 0;
 	clear_chld(&gs_child);
-	read_from_gs(GS_fd);
+	read_from_gs(GS_fd, NULL);
 	if (linepos > line) {
 	    *linepos = '\0';
 	    printf("gs: %s\n", line);
@@ -800,12 +811,12 @@ interrupt_gs(void)
       a file that should be reloaded.
     */
     if (GS_pending == 0) {
-/*  	fprintf(stderr, "+++++++++ 1st case; waitack: %d\n", globals.ev.flags & EV_ACK); */
+	/*  	fprintf(stderr, "+++++++++ 1st case; waitack: %d\n", globals.ev.flags & EV_ACK); */
 	globals.ev.flags &= ~EV_ACK;
 	return;
     }
     else if (GS_pending < 0) {
-/*  	fprintf(stderr, "GS_pending: %d; waitack: %d\n", GS_pending, globals.ev.flags & EV_ACK); */
+	/*  	fprintf(stderr, "GS_pending: %d; waitack: %d\n", GS_pending, globals.ev.flags & EV_ACK); */
 	return;	/* nothing to do */
     }
 
@@ -916,7 +927,7 @@ drawbegin_gs(int xul, int yul, const char *cp)
 
     sprintf(buf, "%d %d moveto\n", xul, yul);
     gs_send(buf, strlen(buf));
-/*     gs_send(clear_bg, strlen(clear_bg)); */
+    /*     gs_send(clear_bg, strlen(clear_bg)); */
     if (globals.debug & DBG_PS)
 	printf("drawbegin at %d,%d:  sending `%s'\n", xul, yul, cp);
 
@@ -928,7 +939,7 @@ drawbegin_gs(int xul, int yul, const char *cp)
     if (strstr(cp, "rotate") != NULL	/* used by graphics.sty */
 	|| strstr(cp, "RotBegin") != NULL	/* used by pstricks */
 	) {
-	statusline_print(STATUS_SHORT,
+	statusline_error(STATUS_SHORT,
 			 "Warning: PS code on page %d may contain rotation, "
 			 "which is not supported by xdvi", current_page + 1);
     }
@@ -967,7 +978,7 @@ drawfile_gs(const char *cp, FILE *f)
 
     if (globals.debug & DBG_PS)
 	printf("original path: |%s|\n", cp);
-/*     drawraw_gs("newpath 0 0 moveto 0 1000 rlineto 1000 0 rlineto 0 -1000 rlineto closepath 1 setgray fill"); */
+    /*     drawraw_gs("newpath 0 0 moveto 0 1000 rlineto 1000 0 rlineto 0 -1000 rlineto closepath 1 setgray fill"); */
 #if 0
     /* if expand_symlinks or remove_dots from kpathsea were public,
        we could use the following: */
@@ -987,10 +998,10 @@ drawfile_gs(const char *cp, FILE *f)
     gs_send("(", 1);
     gs_send(cp, strlen(cp));
     gs_send(")run\n", 5);
-/*     { */
-/* 	char *clear_bg = "newpath 0 0 moveto 0 1000 rlineto 1000 0 rlineto 0 -1000 rlineto closepath .4 setgray fill\n"; */
-/* 	gs_send(clear_bg, strlen(clear_bg)); */
-/*     } */
+    /*     { */
+    /* 	char *clear_bg = "newpath 0 0 moveto 0 1000 rlineto 1000 0 rlineto 0 -1000 rlineto closepath .4 setgray fill\n"; */
+    /* 	gs_send(clear_bg, strlen(clear_bg)); */
+    /*     } */
 }
 
 static void
@@ -1022,7 +1033,7 @@ beginheader_gs(void)
     }
 
     if (globals.ev.flags & GS_ev_mask) {
-/* 	fprintf(stderr, "longjmp!"); */
+	/* 	fprintf(stderr, "longjmp!"); */
 	longjmp(globals.ev.canit, 1);
     }
 

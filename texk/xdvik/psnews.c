@@ -21,20 +21,20 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
 NOTES:
-	This code was originally written by Ricardo Telichevesky
-	(ricardo@rle-vlsi-mit.edu) and Luis Miguel Silveira
-	(lms@rle-vlsi-mit.edu).
-	It was largely influenced by similar code in the SeeTeX/XTeX
-	package by Dirk Grunwald (grunwald@colorado.edu).
+This code was originally written by Ricardo Telichevesky
+(ricardo@rle-vlsi-mit.edu) and Luis Miguel Silveira
+(lms@rle-vlsi-mit.edu).
+It was largely influenced by similar code in the SeeTeX/XTeX
+package by Dirk Grunwald (grunwald@colorado.edu).
 
 \*========================================================================*/
 
-/* ||| To do:
- *	ALWAYS_CLOSE_SERVER_CONNECTION?
- *	Is there some way of interrupting a process?
- *	fork
- *	extra bytes on input
- */
+    /* ||| To do:
+     *	ALWAYS_CLOSE_SERVER_CONNECTION?
+     *	Is there some way of interrupting a process?
+     *	fork
+     *	extra bytes on input
+     */
 
 #ifdef PS_NEWS	/* whole file */
 
@@ -46,7 +46,7 @@ NOTES:
 #include <NeWS/psio.h>
 #include <xvps/pscanvas.h>
 
-/* Condition for retrying a write */
+    /* Condition for retrying a write */
 #include <errno.h>
 #include <setjmp.h>
 
@@ -56,13 +56,13 @@ NOTES:
 #include "dvi-init.h"
 #include "dvi-draw.h"
 
-/* if POSIX O_NONBLOCK is not available, use O_NDELAY */
+    /* if POSIX O_NONBLOCK is not available, use O_NDELAY */
 #if !defined(O_NONBLOCK) && defined(O_NDELAY)
 #define	O_NONBLOCK O_NDELAY
 #endif
 
 #ifdef	X_NOT_STDC_ENV
-extern int errno;
+    extern int errno;
 #endif
 
 #ifdef	EWOULDBLOCK
@@ -102,18 +102,18 @@ char *strtok(char *, const char *);
  * Some setup code.
  */
 static const char str0[] =
-    "/OW2? version cvi 2 eq def "
-    "OW2? "
-    "{ /setlinewidth { pop } def} "
-    "{ /NeWS 3 0 findpackage beginpackage "
-    "  /X11 3 0 findpackage beginpackage} "
-    "ifelse "
-    "currentcanvas /Color get "
-    "currentcanvas /Colormap get getcubedescription null eq and "
-    "   {8 {{currentcanvas /Colormap get 1 index dup dup dup newcube} stopped "
-    "    {pop pop pop pop pop} {exit} ifelse "
-    "    2 div cvi dup 1 eq {exit} if} loop pop} "
-    "if\n";
+"/OW2? version cvi 2 eq def "
+"OW2? "
+"{ /setlinewidth { pop } def} "
+"{ /NeWS 3 0 findpackage beginpackage "
+"  /X11 3 0 findpackage beginpackage} "
+"ifelse "
+"currentcanvas /Color get "
+"currentcanvas /Colormap get getcubedescription null eq and "
+"   {8 {{currentcanvas /Colormap get 1 index dup dup dup newcube} stopped "
+"    {pop pop pop pop pop} {exit} ifelse "
+"    2 div cvi dup 1 eq {exit} if} loop pop} "
+"if\n";
 /*
  * This string reads chunks (delimited by %%xdvimark).
  * The first character of a chunk tells whether a given chunk
@@ -122,21 +122,21 @@ static const char str0[] =
  * header; i.e., no save/restore.
  */
 static const char preamble[] =
-    "/xdvi$line 81 string def "
-    "/xdvi$run {$error null ne {$error /newerror false put} if "
-    " {currentfile cvx stopped "
-    " $error null eq {false} {$error /newerror get} ifelse and "
-    " {handleerror} if} stopped pop} def "
-    "/xdvi$dslen countdictstack def "
-    "{currentfile read not {exit} if 72 eq "
-    "    {xdvi$run} "
-    "    {/xdvi$sav save def xdvi$run "
-    "      clear countdictstack xdvi$dslen sub {end} repeat xdvi$sav restore} "
-    "  ifelse "
-    "  {(%%xdvimark) currentfile xdvi$line {readline} stopped "
-    "    {clear} {{eq {false exit} if} {true exit} ifelse} ifelse }loop {exit} if "
-    "  58 tagprint flush "
-    "}loop\nH";
+"/xdvi$line 81 string def "
+"/xdvi$run {$error null ne {$error /newerror false put} if "
+" {currentfile cvx stopped "
+" $error null eq {false} {$error /newerror get} ifelse and "
+" {handleerror} if} stopped pop} def "
+"/xdvi$dslen countdictstack def "
+"{currentfile read not {exit} if 72 eq "
+"    {xdvi$run} "
+"    {/xdvi$sav save def xdvi$run "
+"      clear countdictstack xdvi$dslen sub {end} repeat xdvi$sav restore} "
+"  ifelse "
+"  {(%%xdvimark) currentfile xdvi$line {readline} stopped "
+"    {clear} {{eq {false exit} if} {true exit} ifelse} ifelse }loop {exit} if "
+"  58 tagprint flush "
+"}loop\nH";
 
 extern const char psheader[];
 extern int psheaderlen;
@@ -204,15 +204,15 @@ static void write_to_NeWS(void);
 
 static	struct xio	NeWS_xout	= {NULL, 0, XIO_IN,
 #if HAVE_POLL
-    NULL,
+					   NULL,
 #endif
-    read_from_NeWS, write_to_NeWS};
+					   read_from_NeWS, write_to_NeWS, NULL};
 
 static	struct xio	NeWS_xin	= {NULL, 0, XIO_IN,
 #if HAVE_POLL
-    NULL,
+					   NULL,
 #endif
-    read_from_NeWS, NULL};
+					   read_from_NeWS, NULL, NULL};
 
 
 /*---------------------------------------------------------------------------*
@@ -227,12 +227,12 @@ static	struct xio	NeWS_xin	= {NULL, 0, XIO_IN,
   to the NeWS server; this may be duer to some abnormal condition, or some
   hairy PostScript code containing commands not implemented by the server.
 
-+----------------------------------------------------------------------------*/
+  +----------------------------------------------------------------------------*/
 
 static Boolean sigpipe_error = False;
 
 static struct sigaction psio_sigpipe_handler_struct;
-	/* initialized to {psio_sigpipe_handler, (sigset_t) 0, 0} in initNeWS */
+/* initialized to {psio_sigpipe_handler, (sigset_t) 0, 0} in initNeWS */
 
 static RETSIGTYPE
 psio_sigpipe_handler(int sig, int code, struct sigcontext *scp, char *addr)
@@ -287,7 +287,7 @@ write_to_NeWS(void)
 
     for (;;) {
 	bytes = write(PostScript->file, NeWS_send_byte,
-		NeWS_send_end - NeWS_send_byte);
+		      NeWS_send_end - NeWS_send_byte);
 	if (bytes < 0) {
 	    if (AGAIN_CONDITION)
 		break;
@@ -400,7 +400,7 @@ waitack(void)
   Description:
   Initializes variables for the application main loop.
 
-+----------------------------------------------------------------------------*/
+  +----------------------------------------------------------------------------*/
 
 Boolean initNeWS()
 {
@@ -417,7 +417,7 @@ Boolean initNeWS()
     if (fcntl(PostScript->file, F_SETOWN, getpid()) == -1)
 	perror("xdvi: fcntl F_SETOWN");
     if (fcntl(PostScript->file, F_SETFL,
-		fcntl(PostScript->file, F_GETFL, 0) | FASYNC) == -1)
+	      fcntl(PostScript->file, F_GETFL, 0) | FASYNC) == -1)
 	perror("xdvi: fcntl F_SETFL");
 #endif /* not FLAKY_SIGPOLL */
     if (PostScriptInput->file != PostScript->file) {
@@ -425,7 +425,7 @@ Boolean initNeWS()
 	if (fcntl(PostScriptInput->file, F_SETOWN, getpid()) == -1)
 	    perror("xdvi: fcntl F_SETOWN");
 	if (fcntl(PostScriptInput->file, F_SETFL,
-		    fcntl(PostScriptInput->file, F_GETFL, 0) | FASYNC) == -1)
+		  fcntl(PostScriptInput->file, F_GETFL, 0) | FASYNC) == -1)
 	    perror("xdvi: fcntl F_SETFL");
 #endif /* not FLAKY_SIGPOLL */
 	NeWS_xout.xio_events &= ~XIO_IN;
@@ -484,7 +484,7 @@ Boolean initNeWS()
   Used to toggle the rendering of PostScript by the NeWS server
   Callable from within read_events().
 
-+----------------------------------------------------------------------------*/
+  +----------------------------------------------------------------------------*/
 
 static void
 toggleNeWS(int flag)
@@ -517,7 +517,7 @@ toggleNeWS(int flag)
   Close the connection to the NeWS server; used when rendering is terminated
   in any way.
 
-+----------------------------------------------------------------------------*/
+  +----------------------------------------------------------------------------*/
 
 static void
 destroyNeWS(void)
@@ -541,7 +541,7 @@ destroyNeWS(void)
   (preferably by sending something along the X socket); then we could do
   better than just to wait.
 
-+----------------------------------------------------------------------------*/
+  +----------------------------------------------------------------------------*/
 
 static void
 interruptNeWS(void)
@@ -573,7 +573,7 @@ interruptNeWS(void)
   Description:
   Should be called at the end of a page to end this chunk for the NeWS server.
 
-+----------------------------------------------------------------------------*/
+  +----------------------------------------------------------------------------*/
 
 static void
 endpageNeWS(void)
@@ -592,7 +592,7 @@ endpageNeWS(void)
   drawbeginNeWS  ()
 
   Arguments: xul, yul - coordinates of the upper left corner of the figure
-	     cp - string with the bounding box line data
+  cp - string with the bounding box line data
   Returns: (void)
 
   Description:
@@ -602,7 +602,7 @@ endpageNeWS(void)
   also generated whenever the PostScript code is too hairy and generates
   a SIGPIPE signal.
 
-+----------------------------------------------------------------------------*/
+  +----------------------------------------------------------------------------*/
 
 static void
 drawbeginNeWS(int xul, int yul, const char *cp)
@@ -680,7 +680,7 @@ drawbeginNeWS_box(int xul, int yul, const char *cp)
   If there is a valid connection to the NeWS server, just send the string to
   the interpreter, else leave.
 
-+----------------------------------------------------------------------------*/
+  +----------------------------------------------------------------------------*/
 
 static void
 drawrawNeWS(const char *origcp)
@@ -781,7 +781,7 @@ drawrawNeWS(const char *origcp)
   drawfileNeWS()
 
   Arguments: cp - string with the postscript file pathname
-	     psfile - file, already opened
+  psfile - file, already opened
   Returns: (void)
   Side-Effects: none
 
@@ -789,7 +789,7 @@ drawrawNeWS(const char *origcp)
   Postscript file containing the figure is opened and sent to the NeWS server.
   Figure is outlined in case hairy code produces a SIGPIPE signal.
 
-+----------------------------------------------------------------------------*/
+  +----------------------------------------------------------------------------*/
 
 static void
 drawfileNeWS(const char *cp, FILE *psfile)
@@ -833,7 +833,7 @@ drawfileNeWS(const char *cp, FILE *psfile)
   Description:
   Sends the indication of end of the figure PostScript code.
 
-+----------------------------------------------------------------------------*/
+  +----------------------------------------------------------------------------*/
 
 static void
 drawendNeWS(const char *cp)
@@ -857,7 +857,7 @@ drawendNeWS(const char *cp)
   Description:
   Prepares the PostScript interpreter for receipt of header code.
 
-+----------------------------------------------------------------------------*/
+  +----------------------------------------------------------------------------*/
 
 static void
 beginheaderNeWS(void)
@@ -898,7 +898,7 @@ beginheaderNeWS(void)
   Description:
   Prepares the PostScript interpreter for receipt of header code.
 
-+----------------------------------------------------------------------------*/
+  +----------------------------------------------------------------------------*/
 
 static void
 endheaderNeWS(void)
@@ -928,7 +928,7 @@ endheaderNeWS(void)
   Description:
   Clears out headers stored from the previous document.
 
-+----------------------------------------------------------------------------*/
+  +----------------------------------------------------------------------------*/
 
 static void
 newdocNeWS(void)

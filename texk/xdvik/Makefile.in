@@ -1,16 +1,15 @@
 # @configure_input@
 # Makefile for xdvik 
 #
-# - 1999/05/08: janl: Removed submakes for libwww and kpathsea.  That's what
-#   the top makefile is for!
-#
 
 kpse_include ../make/paths.mk
 kpse_include ../make/common.mk
+### hack to prevent linking with kpathsea by default
+kpathsea=
 kpse_include ../make/programs.mk
 kpse_include ../make/cross.mk
 
-all_subdirs = gui
+all_subdirs = gui tests
 
 CPP = @CPP@
 
@@ -26,20 +25,28 @@ x_xpm_libs=@x_xpm_libs@
 # -lXp and -lXext
 x_ext_lib=@x_ext_lib@
 
+LDLIBT1=@LDLIBT1@
+LIBT1CPPFLAGS=@LIBT1CPPFLAGS@
+LIBT1DEP=@LIBT1DEP@
+LIBT1DIR=../../libs/t1lib
+LIBTYPE1DIR=$(LIBT1DIR)/../type1
+LIBT1SRCDIR=$(srcdir)/$(LIBT1DIR)
+
+# additional flags for kpathsea
+LDLIBKPATHSEA=@LDLIBKPATHSEA@
+LIBKPATHSEACPPFLAGS=@LIBKPATHSEACPPFLAGS@
+LIBKPATHSEADEP=@LIBKPATHSEADEP@
+
 # Follow the library order used in X11R6 itself.
 # It seems that on Cygwin, libXaw needs _XpmReadFileToPixmap, so we put
 # x_xpm_libs after the tool_libs -- but before -lX11, since on MacOSX it
 # uses XGrabServer and XUngrabServer, which would otherwise be
 # unresolved with static libraries.
 # Xmu needs to come before Xt and after the toolkit libs.
-x_link = $(LDLIBT1) $(x_ldflags) $(x_tool_libs) $(x_xmu_lib) -lXt $(x_pre_libs) $(x_ext_lib) $(x_xpm_libs) -lX11 $(x_extra_libs)
+x_link = $(LDLIBT1) $(LDLIBKPATHSEA) $(x_ldflags) $(x_tool_libs) $(x_xmu_lib) -lXt $(x_pre_libs) $(x_ext_lib) $(x_xpm_libs) -lX11 $(x_extra_libs)
 
-LDLIBT1=@LDLIBT1@
-LIBT1CPPFLAGS=@LIBT1CPPFLAGS@
-LIBT1DEP=@LIBT1DEP@
-LIBT1DIR = ../../libs/t1lib
-LIBTYPE1DIR = $(LIBT1DIR)/../type1
-LIBT1SRCDIR = $(srcdir)/$(LIBT1DIR)
+TESTS=./tests/run_tests
+TESTS_DEP=$(TESTS)
 
 # various xdvik GUI elements
 LIBGUI=./gui/libgui.a
@@ -50,8 +57,8 @@ LIBGUIDEP=$(LIBGUI)
 # ps_def = @PS_DEF@ -DXSERVER_INFO -DNEW_MENU_CREATION
 # ps_def = @PS_DEF@ -DRGB_ANTI_ALIASING
 ps_def = @PS_DEF@
-prog_cflags = @XTRA_WARN_CFLAGS@ $(LIBT1CPPFLAGS) $(ps_def) \
--I$(srcdir)/gui -I../../libs/t1lib/lib/t1lib -I../kpathsea $(x_cppflags)
+prog_cflags = @XTRA_WARN_CFLAGS@ $(LIBT1CPPFLAGS) $(LIBKPATHSEACPPFLAGS) $(ps_def) \
+-I$(srcdir)/gui $(x_cppflags)
 
 # Note: to be able to use one depend.mk file for both Motif/Xaw (which
 # is needed since only maintainers are supposed to invoke `make depend')
@@ -59,16 +66,20 @@ prog_cflags = @XTRA_WARN_CFLAGS@ $(LIBT1CPPFLAGS) $(ps_def) \
 # the files.
 objects = \
     browser.o \
+    dl_list.o \
     dvi-draw.o \
     dvi-init.o \
     dvisel.o \
     encodings.o \
     events.o \
+    exit-handlers.o \
     filehist.o \
     font-open.o \
     gf.o \
+    string_list.o \
     hypertex.o \
     image-magick.o \
+    main.o \
     mime.o \
     my-snprintf.o \
     my-vsnprintf.o \
@@ -100,11 +111,20 @@ default all: libguibuild @final_exec_name@ $(manpage).1
 $(LIBGUI):
 	cd gui; $(MAKE) $(makeargs) libgui.a
 
+$(TESTS):
+	cd tests; $(MAKE) $(makeargs)
+
 ### we need this additional target so that libgui is always checked to be up-to-date ...
 libguibuild:
 	cd gui; $(MAKE) $(makeargs) libgui.a
 
-@final_exec_name@: $(kpathsea) $(objects) $(LIBT1DEP) $(LIBGUIDEP)
+test:
+	cd tests; $(MAKE) $(makeargs) test
+
+test_verbose:
+	cd tests; $(MAKE) $(makeargs) test_verbose
+
+@final_exec_name@: $(LIBKPATHSEADEP) $(objects) $(LIBT1DEP) $(LIBGUIDEP)
 	$(kpathsea_link) $(objects) $(LIBGUI) $(x_link) $(LOADLIBES)
 
 squeeze.o: squeeze.c
@@ -184,30 +204,30 @@ info dvi check:
 kpse_include ../make/clean.mk
 
 mostlyclean::
-	test ! -r gui/Makefile \
+	test ! -r gui/Makefile || test ! -r tests/Makefile \
 	  || for d in $(all_subdirs); do (cd $$d && $(MAKE) $@); done
 clean::
-	test ! -r gui/Makefile \
+	test ! -r gui/Makefile || test ! -r tests/Makefile \
 	  || for d in $(all_subdirs); do (cd $$d && $(MAKE) $@); done
 distclean::
-	test ! -r gui/Makefile \
+	test ! -r gui/Makefile || test ! -r tests/Makefile \
 	  || for d in $(all_subdirs); do (cd $$d && $(MAKE) $@); done
 extraclean::
-	test ! -r gui/Makefile \
+	test ! -r gui/Makefile || test ! -r tests/Makefile \
 	  || for d in $(all_subdirs); do (cd $$d && $(MAKE) $@); done
 maintainer-clean::
-	test ! -r gui/Makefile \
+	test ! -r gui/Makefile || test ! -r tests/Makefile \
 	  || for d in $(all_subdirs); do (cd $$d && $(MAKE) $@); done
 
 depend::
-	test ! -r gui/Makefile \
+	test ! -r gui/Makefile || test ! -r tests/Makefile \
 	  || for d in $(all_subdirs); do (cd $$d && $(MAKE) $@); done
 
 clean::
 	rm -f $(manpage).1 *.flc @final_exec_name@
 
 distclean::
-	rm -f psheader.c krheader.h sedscript $(manpage).1 *.flc *~ @final_exec_name@ xdvi-sh
+	rm -f psheader.c sedscript $(manpage).1 *.flc *~ @final_exec_name@ xdvi-sh
 	test -f $(LIBTYPE1DIR)/Makefile && { cd $(LIBTYPE1DIR); $(MAKE) distclean; } || true
 	test -f $(LIBT1DIR)/Makefile && { cd $(LIBT1DIR); $(MAKE) distclean; } || true
 

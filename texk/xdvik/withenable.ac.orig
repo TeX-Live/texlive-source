@@ -1,0 +1,149 @@
+dnl withenable.ac: --with and --enable options.
+
+# Check for toolkit options. This used to be --with-x-toolkit, but was changed
+# to remove clashes with metafont which accepts different values.
+# We allow `yes' as synonym for the default toolkit, for easier communication
+# with ../kpathsea/xt.ac.
+AC_ARG_WITH(xdvi-x-toolkit,
+[  --with-xdvi-x-toolkit=KIT
+			  Use toolkit KIT for xdvi (KIT=motif/xaw/xaw3d/neXtaw).
+			  If no --with-xdvi-x-toolkit option is used, use Motif
+                          if available, else Xaw.],
+[	  case "${withval}" in
+            next | nextaw | neXtaw )      val=neXtaw  ;;
+            xaw3d )                       val=xaw3d  ;;
+            x | xa | xaw )		  val=xaw ;;
+	    y | ye | yes )		  val=yes ;;
+            m | mo | mot | moti | motif ) val=motif ;;
+	    * )
+AC_MSG_WARN([unknown --with-xdvi-x-toolkit argument \`$withval'; using xaw.])
+              val=xaw;;
+	  esac
+	  with_xdvi_x_toolkit=$val
+])
+
+
+# Check if the user wants to use Ghostscript, DPS or NeWS to
+# display PostScript.
+AC_ARG_WITH(ps,
+[  --with-ps=PS            Use PostScript (PS=no/yes/gs/dps/news, default gs)],
+[case $withval in
+  yes|gs) PS_DEF="$PS_DEF -DPS_GS";;
+      no) PS_DEF=no;;
+     dps) PS_DEF="$PS_DEF -DPS_DPS";;
+    news) PS_DEF="$PS_DEF -DPS_NEWS";;
+       *)] AC_MSG_WARN(Unknown --with-ps argument \`$withval'; using gs.);;
+ esac)
+
+AC_ARG_ENABLE(grey,
+[  --disable-grey          Disable greyscale anti-aliasing for shrunken bitmaps]
+,
+[if test "$enableval" = yes; then
+  AC_DEFINE(GREY)
+ else
+  echo DISABLED grey
+fi],
+AC_DEFINE(GREY))
+
+AC_ARG_ENABLE(color,
+[  --disable-color         Disable support for color specials],
+[if test "$enableval" = yes; then
+  AC_DEFINE(COLOR)
+ else
+  echo DISABLED color
+fi],
+AC_DEFINE(COLOR))
+
+dnl OBSOLETE AC_ARG_ENABLE(buttons,
+dnl OBSOLETE [  --disable-buttons       Disable buttons on the side of the window],
+dnl OBSOLETE [if test "$enableval" = yes; then
+dnl OBSOLETE   AC_DEFINE(BUTTONS)
+dnl OBSOLETE  else
+dnl OBSOLETE   echo DISABLED buttons
+dnl OBSOLETE fi],
+dnl OBSOLETE AC_DEFINE(BUTTONS))
+
+dnl OBSOLETE AC_ARG_ENABLE(statusline,
+dnl OBSOLETE [  --disable-statusline    Disable statusline at bottom of window],
+dnl OBSOLETE [if test "$enableval" = yes; then
+dnl OBSOLETE   AC_DEFINE(STATUSLINE)
+dnl OBSOLETE  else
+dnl OBSOLETE   echo DISABLED statusline
+dnl OBSOLETE fi],
+dnl OBSOLETE AC_DEFINE(STATUSLINE))
+
+AC_ARG_ENABLE(t1lib,
+[  --disable-t1lib         Do not use T1lib (direct rendering of Type1 fonts)],
+[if test "$enableval" = yes; then
+  T1LIB=1
+  LDT1LIB=../../libs/t1lib/lib/.libs/libt1.a
+  AC_DEFINE(LDT1LIB)
+  AC_DEFINE(T1LIB)
+else
+  T1LIB=
+  LDT1LIB=
+  echo DISABLED t1lib
+fi],
+T1LIB=1
+LDT1LIB=../../libs/t1lib/lib/.libs/libt1.a
+AC_DEFINE(LDT1LIB)
+AC_DEFINE(T1LIB))
+
+AC_ARG_ENABLE(gf,
+[  --enable-gf             Enable gf format pixel files (in addition to pk)],
+[if test "$enableval" != no; then
+  AC_DEFINE(USE_GF)
+  OPT_SRCS="$OPT_SRCS gf.c"
+  OPT_OBJS="$OPT_OBJS gf.o"
+fi])
+
+AC_ARG_ENABLE(a4,
+[  --disable-a4            Set default paper size to letter and default unit to inch],
+[if test "$enableval" = yes; then
+  AC_DEFINE(A4)
+ else
+  echo Disabled a4/cm, using letter/in instead
+fi],
+AC_DEFINE(A4))
+
+AC_ARG_ENABLE(magick,
+[  --enable-magick         Use ImageMagick to load/render image files.
+                          EXPERIMENTAL - DO NOT USE!],
+[if test "$enableval" != no; then
+  echo -n "checking for ImageMagick >= 5.3 ... "
+  if MAGICK_VER=`Magick-config --version 2>/dev/null`; then
+    echo $MAGICK_VER
+    set -- `echo $MAGICK_VER | sed -e 's/\./ /g'`
+    MAGICK_VER_MAJOR=$1
+    MAGICK_VER_MINOR=$2
+    if expr $MAGICK_VER_MAJOR \> 4 >/dev/null && \
+      (expr $MAGICK_VER_MAJOR \> 5 >/dev/null || \
+	expr $MAGICK_VER_MINOR \> 2 >/dev/null); then
+      MAGICK_CPP="-DMAGICK_VER_MAJOR=$MAGICK_VER_MAJOR -DMAGICK_VER_MINOR=$MAGICK_VER_MINOR `Magick-config --cppflags`"
+      # echo "CPP: $MAGICK_CPP"
+      MAGICK_LD="`Magick-config --libs`"
+      # echo "LD: $MAGICK_LD"
+      echo "ImageMagick support enabled"
+      MAGICK_INCLUDE=
+      MAGICK_LIBDIR=
+
+      if test "x$with_magick_include" != x; then
+          MAGIC_INCLUDE="-I$with_magick_include"
+      fi
+      if test "x$with_magick_libdir" != x; then
+          MAGIC_LIBDIR="-L$with_magick_libdir"
+      fi
+
+      X_EXTRA_LIBS="$X_EXTRA_LIBS $MAGIC_LIBDIR $MAGICK_LD"
+      X_CFLAGS="$X_CFLAGS $MAGIC_INCLUDE $MAGICK_CPP"
+      AC_DEFINE(MAGICK)
+      #echo MAGICK_DEF=\"$MAGICK_DEF\"
+    else
+      echo "ImageMagick version too old - ImageMagick support disabled"
+    fi
+  else
+    echo "Can't run 'Magick-config' - ImageMagick support disabled"
+  fi
+fi])
+
+AC_SUBST(LDT1LIB)

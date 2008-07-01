@@ -1,5 +1,5 @@
 dnl ### Check whether iconv takes a 'const char **' or a 'char **' input argument.
-dnl ### According to EEE 1003.1, `char **' is correct, but e.g. librecode
+dnl ### According to IEEE 1003.1, `char **' is correct, but e.g. librecode
 dnl ### uses `const char **'.
 dnl ### We use C++'s built-in function overloading to distinguish between the two.
 AC_DEFUN([XDVI_ICONV_CHAR_PPTR_TYPE],
@@ -16,7 +16,7 @@ CXXFLAGS="$CXXFLAGS $iconv_includes"
 LDFLAGS="$LDFLAGS $iconv_libpath"
 #
 AC_MSG_CHECKING([for iconv input type])
-AC_CACHE_VAL(xdvi_iconv_char_pptr_type,
+AC_CACHE_VAL(xdvi_cv_iconv_char_pptr_type,
 [AC_TRY_RUN(
 [
 /* iconv() definitions may differ depending on following macros ... */
@@ -76,16 +76,16 @@ AC_CACHE_VAL(xdvi_iconv_char_pptr_type,
     		  	    (char**)&ptr2, &len2);
     }
 ],
-xdvi_iconv_char_pptr_type="char_pptr",
-xdvi_iconv_char_pptr_type="const_char_pptr",
+[xdvi_cv_iconv_char_pptr_type="char_pptr"],
+[xdvi_cv_iconv_char_pptr_type="const_char_pptr"],
 # `correct' default for cross-compiling ...
-xdvi_iconv_char_pptr_type="char_pptr")])
+[xdvi_cv_iconv_char_pptr_type="char_pptr"])])
 #
 LIBS="$xdvi_iconv_save_libs"
 CXXFLAGS="$xdvi_iconv_save_cxxflags"
 LDFLAGS="$xdvi_iconv_save_ldflags"
 #
-if test $xdvi_iconv_char_pptr_type = "const_char_pptr"; then
+if test $xdvi_cv_iconv_char_pptr_type = "const_char_pptr"; then
   AC_DEFINE([ICONV_CHAR_PPTR_TYPE], [const char **],
             [Define the type of the iconv input string (char ** or const char **)])
   AC_MSG_RESULT([const char **])
@@ -158,7 +158,7 @@ dnl ### and if it doesn't, don't define LD_ALLOWS_MULTIPLE_DEFINITIONS.
 
 AC_DEFUN([XDVI_LINKER_MULTIPLE_DEFNS],
 [AC_CACHE_CHECK([whether linker supports the --allow-multiple-definition flag],
-xdvi_linker_multiple_defns,
+xdvi_cv_linker_multiple_defns,
 xdvi_save_LDFLAGS="$LDFLAGS"
 LDFLAGS="-Xlinker --allow-multiple-definition"
 x_linker_options=""
@@ -167,10 +167,10 @@ x_linker_options=""
    ],
    [void foo(void);
    ],
-   xdvi_linker_multiple_defns=yes, xdvi_linker_multiple_defns=no
+   [xdvi_cv_linker_multiple_defns=yes], [xdvi_cv_linker_multiple_defns=no]
 )]
 )
-if test $xdvi_linker_multiple_defns = yes; then
+if test $xdvi_cv_linker_multiple_defns = yes; then
     x_linker_options="-Xlinker --allow-multiple-definition"
     LDFLAGS="$xdvi_save_LDFLAGS"
     AC_DEFINE([LD_ALLOWS_MULTIPLE_DEFINITIONS], 1,
@@ -205,12 +205,12 @@ else
 	XtIntervalId i = 0;
 	XtRemoveTimeOut(i);
     ],
-    xdvi_linker_multiple_defns=yes, xdvi_linker_multiple_defns=no
+    [xdvi_cv_linker_multiple_defns=yes], [xdvi_cv_linker_multiple_defns=no]
     )
 
-    if test $xdvi_linker_multiple_defns = yes; then
+    if test $xdvi_cv_linker_multiple_defns = yes; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE([LD_ALLOWS_MULTIPLE_DEFINITIONS])
+        AC_DEFINE([LD_ALLOWS_MULTIPLE_DEFINITIONS], 1)
     else
         AC_MSG_RESULT(no)
  	AC_MSG_WARN([Linker does not allow multiple definitions.
@@ -264,12 +264,12 @@ AC_MSG_RESULT([unsigned $BMTYPE, size = $BMBYTES])])
 dnl ### Check for whether the C compiler does string concatenation
 
 AC_DEFUN([XDVI_CC_CONCAT],
-[AC_CACHE_CHECK([whether C compiler supports string concatenation], xdvi_cc_concat,
+[AC_CACHE_CHECK([whether C compiler supports string concatenation], xdvi_cv_cc_concat,
 [AC_TRY_COMPILE(
 [#include <stdio.h>
 ], [puts("Testing" " string" " concatenation");
-], xdvi_cc_concat=yes, xdvi_cc_concat=no)])
-if test $xdvi_cc_concat = yes; then
+], [xdvi_cv_cc_concat=yes], [xdvi_cv_cc_concat=no])])
+if test $xdvi_cv_cc_concat = yes; then
   AC_DEFINE([HAVE_CC_CONCAT], 1, [Define if your C compiler can do string concatenation])
 fi])
 
@@ -349,7 +349,7 @@ dnl [#include <stdio.h>
 dnl ], [(void)vsnprintf((char *)NULL, 0, (char *)NULL, NULL);],
 dnl xdvi_cv_vsnprintf=yes, xdvi_cv_vsnprintf=no)])
 dnl if test $xdvi_cv_vsnprintf = yes; then
-dnl   AC_DEFINE(HAVE_VSNPRINTF)
+dnl   AC_DEFINE([HAVE_VSNPRINTF], 1, [Define if you have the vsnprintf() function.])
 dnl fi])
 
 dnl ### Check for a working implementation of (v)snprintf()
@@ -399,7 +399,7 @@ dnl [#include <stdlib.h>
 dnl ], [(void)realpath((const char *)NULL, NULL);],
 dnl xdvi_cv_realpath=yes, xdvi_cv_realpath=no)])
 dnl if test $xdvi_cv_realpath = yes; then
-dnl   AC_DEFINE(HAVE_REALPATH)
+dnl   AC_DEFINE([HAVE_REALPATH], 1 [Define if you have the realpath() function.])
 dnl fi])
 
 
@@ -413,7 +413,7 @@ AC_DEFUN([XDVI_FIND_XPM],
 AC_REQUIRE([AC_PATH_XTRA])
 xpm_includes=
 xpm_libraries=
-AC_ARG_WITH(xpm,
+AC_ARG_WITH([xpm],
 [  --without-xpm           Do not use the Xpm library (will disable the toolbar)])
 dnl Treat --without-xpm like
 dnl --without-xpm-includes --without-xpm-libraries.
@@ -422,14 +422,14 @@ then
 xpm_includes=no
 xpm_libraries=no
 fi
-AC_ARG_WITH(xpm-includes,
+AC_ARG_WITH([xpm-includes],
 [  --with-xpm-include=DIR
                           Specify the location of Xpm include files],
-xpm_includes="$withval")
-AC_ARG_WITH(xpm-libraries,
+[xpm_includes="$withval"])
+AC_ARG_WITH([xpm-libraries],
 [  --with-xpm-libdir=DIR
                           Specify the location of Xpm libraries],
-xpm_libraries="$withval")
+[xpm_libraries="$withval"])
 AC_MSG_CHECKING(for Xpm)
 #
 #
@@ -602,7 +602,7 @@ if test "x$xpm_libraries_result" = "xdefault" ; then
   xpm_libraries_result="in default path"
 elif test "$xpm_libraries_result" = no || test "x$xpm_libraries_result" = "x"; then
   xpm_libraries_result="(none)"
-  AC_DEFINE(USE_XPM, 0)
+  AC_DEFINE([USE_XPM], 0)
   x_xpm_libs=""
 fi
 
@@ -790,8 +790,35 @@ fi
 if test "$motif_include_result" != "" && test "$motif_libdir_result" != ""; then
     AC_MSG_RESULT([libraries $motif_libdir_result, headers $motif_include_result])
     prog_extension="motif"
-    AC_DEFINE(MOTIF)
+    AC_DEFINE([MOTIF], 1)
     x_tool_libs="-lXm"
+    # now warn if we're using LessTif (see LESSTIF-BUGS for why ...)
+    AC_MSG_CHECKING(for LessTif)
+    save_CPPFLAGS="$CPPFLAGS"
+    CPPFLAGS="$CPPFLAGS $X_CFLAGS"
+    AC_TRY_COMPILE([
+    #include <X11/X.h>
+    #include <X11/Xlib.h>
+    #include <X11/Xutil.h>
+    #include <X11/Xos.h>
+    #include <X11/Intrinsic.h>
+    #include <Xm/Xm.h>],[const char *p = LesstifVERSION_STRING;
+    ],[
+    # yes, we're running LessTif
+    AC_MSG_RESULT(yes)
+    AC_MSG_WARN([LessTif header detected.
+  *****************************************************************
+  * Warning: You are using LessTif instead of OpenMotif.          *
+  * Some GUI elements might be broken; please see the file        *
+  *                                                               *
+  * texk/xdvik/LESSTIF-BUGS                                       *
+  *                                                               *
+  * for more information.                                         *
+  *****************************************************************])
+    ],[
+    # no, not running LessTif
+    AC_MSG_RESULT([no])
+    ])
 else
     AC_MSG_RESULT([not found, using Xaw])
     prog_extension="xaw"

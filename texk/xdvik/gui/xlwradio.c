@@ -11,11 +11,11 @@
 
    myWidget = XtVaCreateManagedWidget("foo",
    #ifdef XAW
-                                      radioWidgetClass,
+   radioWidgetClass,
    #else
-                                      toggleWidgetClass,
+   toggleWidgetClass,
    #endif
-                                      ... arglist ...);
+   ... arglist ...);
 
    Feel free to submit patches if you want this implemented.
    
@@ -25,22 +25,22 @@
 /* Radio Widget for XEmacs.
    Copyright (C) 1999 Edward A. Falk
 
-This file is part of XEmacs.
+   This file is part of XEmacs.
 
-XEmacs is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by the
-Free Software Foundation; either version 2, or (at your option) any
-later version.
+   XEmacs is free software; you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by the
+   Free Software Foundation; either version 2, or (at your option) any
+   later version.
 
-XEmacs is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-for more details.
+   XEmacs is distributed in the hope that it will be useful, but WITHOUT
+   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+   for more details.
 
-You should have received a copy of the GNU General Public License
-along with XEmacs; see the file COPYING.  If not, write to
-the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-Boston, MA 02111-1307, USA.  */
+   You should have received a copy of the GNU General Public License
+   along with XEmacs; see the file COPYING.  If not, write to
+   the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+   Boston, MA 02111-1307, USA.  */
 
 /* Synched up with: Radio.c 1.1 */
 
@@ -154,90 +154,90 @@ static void RadioSize (RadioWidget, Dimension *, Dimension *);
  */
 
 static XtActionsRec actionsList[] =
-{
-  {"highlight",		RadioHighlight},
-  {"unhighlight",	RadioUnhighlight},
-};
+    {
+	{"highlight",		RadioHighlight},
+	{"unhighlight",	RadioUnhighlight},
+    };
 
 #define offset(field) XtOffset(RadioWidget, radio.field)
 
 static XtResource resources[] = {
-  {XtNisRadio,  XtCIsRadio, XtRBoolean, sizeof(Boolean),
-   offset(isRadio), XtRImmediate, (XtPointer)True },
+    {XtNisRadio,  XtCIsRadio, XtRBoolean, sizeof(Boolean),
+     offset(isRadio), XtRImmediate, (XtPointer)True },
 };
 #undef offset
 
 #define SuperClass ((ToggleWidgetClass)&toggleClassRec)
 
 RadioClassRec radioClassRec = {
-  {
-    (WidgetClass) SuperClass,		/* superclass		*/
-    "Radio",				/* class_name		*/
-    sizeof(RadioRec),			/* size			*/
-    RadioClassInit,			/* class_initialize	*/
-    RadioClassPartInit,			/* class_part_initialize  */
-    FALSE,				/* class_inited		*/
-    RadioInit,				/* initialize		*/
-    NULL,				/* initialize_hook	*/
-    XtInheritRealize,			/* realize		*/
-    actionsList,			/* actions		*/
-    XtNumber(actionsList),		/* num_actions		*/
-    resources,				/* resources		*/
-    XtNumber(resources),		/* resource_count	*/
-    NULLQUARK,				/* xrm_class		*/
-    TRUE,				/* compress_motion	*/
-    TRUE,				/* compress_exposure	*/
-    TRUE,				/* compress_enterleave	*/
-    FALSE,				/* visible_interest	*/
-    RadioDestroy,			/* destroy		*/
-    RadioResize,			/* resize		*/
-    RadioExpose,			/* expose		*/
-    RadioSetValues,			/* set_values		*/
-    NULL,				/* set_values_hook	*/
-    XtInheritSetValuesAlmost,		/* set_values_almost	*/
-    NULL,				/* get_values_hook	*/
-    NULL,				/* accept_focus		*/
-    XtVersion,				/* version		*/
-    NULL,				/* callback_private	*/
-    XtInheritTranslations,		/* tm_table		*/
-    RadioQueryGeometry,			/* query_geometry	*/
-    XtInheritDisplayAccelerator,	/* display_accelerator	*/
-    NULL				/* extension		*/
-  },  /* CoreClass fields initialization */
-  {
-    XtInheritChangeSensitive		/* change_sensitive	*/
+    {
+	(WidgetClass) SuperClass,		/* superclass		*/
+	"Radio",				/* class_name		*/
+	sizeof(RadioRec),			/* size			*/
+	RadioClassInit,			/* class_initialize	*/
+	RadioClassPartInit,			/* class_part_initialize  */
+	FALSE,				/* class_inited		*/
+	RadioInit,				/* initialize		*/
+	NULL,				/* initialize_hook	*/
+	XtInheritRealize,			/* realize		*/
+	actionsList,			/* actions		*/
+	XtNumber(actionsList),		/* num_actions		*/
+	resources,				/* resources		*/
+	XtNumber(resources),		/* resource_count	*/
+	NULLQUARK,				/* xrm_class		*/
+	TRUE,				/* compress_motion	*/
+	TRUE,				/* compress_exposure	*/
+	TRUE,				/* compress_enterleave	*/
+	FALSE,				/* visible_interest	*/
+	RadioDestroy,			/* destroy		*/
+	RadioResize,			/* resize		*/
+	RadioExpose,			/* expose		*/
+	RadioSetValues,			/* set_values		*/
+	NULL,				/* set_values_hook	*/
+	XtInheritSetValuesAlmost,		/* set_values_almost	*/
+	NULL,				/* get_values_hook	*/
+	NULL,				/* accept_focus		*/
+	XtVersion,				/* version		*/
+	NULL,				/* callback_private	*/
+	XtInheritTranslations,		/* tm_table		*/
+	RadioQueryGeometry,			/* query_geometry	*/
+	XtInheritDisplayAccelerator,	/* display_accelerator	*/
+	NULL				/* extension		*/
+    },  /* CoreClass fields initialization */
+    {
+	XtInheritChangeSensitive		/* change_sensitive	*/
 #ifndef HAVE_OLD_XAW
-     , NULL  
+	, NULL  
 #endif
-  },  /* SimpleClass fields initialization */
+    },  /* SimpleClass fields initialization */
 #ifdef _ThreeDP_h
-  {
-    XtInheritXaw3dShadowDraw		/* field not used	*/
-  },  /* ThreeDClass fields initialization */
+    {
+	XtInheritXaw3dShadowDraw		/* field not used	*/
+    },  /* ThreeDClass fields initialization */
 #endif
-  {
-    0					  /* field not used	*/
-  },  /* LabelClass fields initialization */
-  {
-    0					  /* field not used	*/
-  },  /* CommandClass fields initialization */
-  {
-      RadioSet,				/* Set Procedure.	*/
-      RadioUnset,			/* Unset Procedure.	*/
-      NULL				/* extension.		*/
-  },  /* ToggleClass fields initialization */
-  {
-      BOX_SIZE,
-      DrawDiamond,			/* draw procedure */
-      None,				/* selected radiobutton */
-      None,				/* unselected radiobutton */
-      None,				/* selected menubutton */
-      None,				/* unselected menubutton */
-      NULL				/* extension. */
-  }  /* RadioClass fields initialization */
+    {
+	0					  /* field not used	*/
+    },  /* LabelClass fields initialization */
+    {
+	0					  /* field not used	*/
+    },  /* CommandClass fields initialization */
+    {
+	RadioSet,				/* Set Procedure.	*/
+	RadioUnset,			/* Unset Procedure.	*/
+	NULL				/* extension.		*/
+    },  /* ToggleClass fields initialization */
+    {
+	BOX_SIZE,
+	DrawDiamond,			/* draw procedure */
+	None,				/* selected radiobutton */
+	None,				/* unselected radiobutton */
+	None,				/* selected menubutton */
+	None,				/* unselected menubutton */
+	NULL				/* extension. */
+    }  /* RadioClass fields initialization */
 };
 
-  /* for public consumption */
+/* for public consumption */
 WidgetClass radioWidgetClass = (WidgetClass) &radioClassRec;
 
 
@@ -254,20 +254,20 @@ WidgetClass radioWidgetClass = (WidgetClass) &radioClassRec;
 static void
 RadioClassInit (void)
 {
-  XawInitializeWidgetSet();
+    XawInitializeWidgetSet();
 }
 
 static	void
 RadioClassPartInit (WidgetClass class)
 {
-  RadioWidgetClass c     = (RadioWidgetClass) class;
-  RadioWidgetClass super = (RadioWidgetClass)c->core_class.superclass;
+    RadioWidgetClass c     = (RadioWidgetClass) class;
+    RadioWidgetClass super = (RadioWidgetClass)c->core_class.superclass;
 
-  if( c->radio_class.drawDiamond == NULL  ||
-      c->radio_class.drawDiamond == XtInheritDrawDiamond )
-  {
-    c->radio_class.drawDiamond = super->radio_class.drawDiamond;
-  }
+    if( c->radio_class.drawDiamond == NULL  ||
+	c->radio_class.drawDiamond == XtInheritDrawDiamond )
+    {
+	c->radio_class.drawDiamond = super->radio_class.drawDiamond;
+    }
 
 }
 
@@ -351,13 +351,13 @@ RadioResize (Widget w)
     /* override label offset */
 
     switch( rw->label.justify ) {
-      case XtJustifyLeft:
+    case XtJustifyLeft:
 	rw->label.label_x += (bs(rw) + rw->label.internal_width);
 	break;
-      case XtJustifyRight:
+    case XtJustifyRight:
 	break;
-      case XtJustifyCenter:
-      default:
+    case XtJustifyCenter:
+    default:
 	rw->label.label_x += (bs(rw) + rw->label.internal_width)/2;
 	break;
     }
@@ -373,49 +373,49 @@ RadioExpose (Widget w,
 	     XEvent *event,
 	     Region region)
 {
-	RadioWidget	rw = (RadioWidget) w;
-	Display		*dpy = XtDisplay(w);
-	Window		win = XtWindow(w);
-	GC		gc;
-	Pixmap		left_bitmap;
-	extern WidgetClass labelWidgetClass;
+    RadioWidget	rw = (RadioWidget) w;
+    Display		*dpy = XtDisplay(w);
+    Window		win = XtWindow(w);
+    GC		gc;
+    Pixmap		left_bitmap;
+    extern WidgetClass labelWidgetClass;
 
-	/* Note: the Label widget examines the region to decide if anything
-	 * needs to be drawn.  I'm not sure that this is worth the effort,
-	 * but it bears thinking on.
-	 */
+    /* Note: the Label widget examines the region to decide if anything
+     * needs to be drawn.  I'm not sure that this is worth the effort,
+     * but it bears thinking on.
+     */
 
-	/* Command widget may sometimes override the label GC in order
-	 * to draw inverse video.  We don't use inverse video, so we need
-	 * to restore the label's normal GC.
-	 */
-	rw->label.normal_GC = rw->command.normal_GC;
+    /* Command widget may sometimes override the label GC in order
+     * to draw inverse video.  We don't use inverse video, so we need
+     * to restore the label's normal GC.
+     */
+    rw->label.normal_GC = rw->command.normal_GC;
 
 
-	/* Let label widget draw the label.  If there was an lbm_x
-	 * field, we could let Label draw the bitmap too.  But there
-	 * isn't, so we need to temporarily remove the bitmap and
-	 * draw it ourself later.
-	 */
-	left_bitmap = rw->label.left_bitmap;
-	rw->label.left_bitmap = None;
-	labelWidgetClass->core_class.expose(w,event,region);
-	rw->label.left_bitmap = left_bitmap;
+    /* Let label widget draw the label.  If there was an lbm_x
+     * field, we could let Label draw the bitmap too.  But there
+     * isn't, so we need to temporarily remove the bitmap and
+     * draw it ourself later.
+     */
+    left_bitmap = rw->label.left_bitmap;
+    rw->label.left_bitmap = None;
+    labelWidgetClass->core_class.expose(w,event,region);
+    rw->label.left_bitmap = left_bitmap;
 
-	/* now manually draw the left bitmap.  TODO: 3-d look, xaw-xpm */
-	gc = XtIsSensitive(w) ? rw->label.normal_GC : rw->label.gray_GC;
-	if( left_bitmap != None && rw->label.lbm_width > 0 )
-	{
-	  /* TODO: handle pixmaps */
-	  XCopyPlane(dpy, left_bitmap, win, gc,
-		     0,0, rw->label.lbm_width, rw->label.lbm_height,
-		     (int) rw->label.internal_width*2 + bs(rw),
-		     (int) rw->label.internal_height + rw->label.lbm_y,
-		     1UL);
-	}
-	DrawDiamond(w);
-	/* Finally, the button itself */
-	((RadioWidgetClass)(w->core.widget_class))->radio_class.drawDiamond(w);
+    /* now manually draw the left bitmap.  TODO: 3-d look, xaw-xpm */
+    gc = XtIsSensitive(w) ? rw->label.normal_GC : rw->label.gray_GC;
+    if( left_bitmap != None && rw->label.lbm_width > 0 )
+    {
+	/* TODO: handle pixmaps */
+	XCopyPlane(dpy, left_bitmap, win, gc,
+		   0,0, rw->label.lbm_width, rw->label.lbm_height,
+		   (int) rw->label.internal_width*2 + bs(rw),
+		   (int) rw->label.internal_height + rw->label.lbm_y,
+		   1UL);
+    }
+    DrawDiamond(w);
+    /* Finally, the button itself */
+    ((RadioWidgetClass)(w->core.widget_class))->radio_class.drawDiamond(w);
 }
 
 
@@ -456,7 +456,7 @@ RadioSetValues (Widget   current,
 	  newrw->core.height != oldrw->core.height ||
 	  newrw->core.border_width != oldrw->core.border_width ) )
     {
-      RadioSize(newrw, &newrw->core.width, &newrw->core.height);
+	RadioSize(newrw, &newrw->core.width, &newrw->core.height);
     }
 
     /* The label set values routine can resize the widget. We need to
@@ -464,7 +464,7 @@ RadioSetValues (Widget   current,
      */
     if (newrw->label.label_x != oldrw->label.label_x)
     {
-      RadioResize (new);
+	RadioResize (new);
     }
     return FALSE;
 }
@@ -480,7 +480,7 @@ RadioQueryGeometry (Widget w,
     RadioSize(rw, &preferred->width, &preferred->height);
 
     if (  ((intended->request_mode & (CWWidth | CWHeight))
-	   	== (CWWidth | CWHeight)) &&
+	   == (CWWidth | CWHeight)) &&
 	  intended->width == preferred->width &&
 	  intended->height == preferred->height)
 	return XtGeometryYes;
@@ -511,27 +511,27 @@ static void
 DrawHighlight (Widget w,
 	       GC gc)
 {
-	RadioWidget	rw = (RadioWidget)w;
-	XRectangle	rects[4];
-	Dimension	ht = rw->command.highlight_thickness;
+    RadioWidget	rw = (RadioWidget)w;
+    XRectangle	rects[4];
+    Dimension	ht = rw->command.highlight_thickness;
 
-	if( ht <= 0 ||
-	    ht > rw->core.width/2  ||
-	    ht > rw->core.height/2 )
-	  return;
+    if( ht <= 0 ||
+	ht > rw->core.width/2  ||
+	ht > rw->core.height/2 )
+	return;
 
-	if( ! XtIsRealized(w) )
-	  return;
+    if( ! XtIsRealized(w) )
+	return;
 
-	rects[0].x = 0; rects[0].y = 0;
-	rects[0].width = rw->core.width; rects[0].height = ht;
-	rects[1].x = 0; rects[1].y = rw->core.height - ht;
-	rects[1].width = rw->core.width; rects[1].height = ht;
-	rects[2].x = 0; rects[2].y = ht;
-	rects[2].width = ht; rects[2].height = rw->core.height - ht*2;
-	rects[3].x = rw->core.width - ht; rects[3].y = ht;
-	rects[3].width = ht; rects[3].height = rw->core.height - ht*2;
-	XFillRectangles( XtDisplay(w), XtWindow(w), gc, rects, 4);
+    rects[0].x = 0; rects[0].y = 0;
+    rects[0].width = rw->core.width; rects[0].height = ht;
+    rects[1].x = 0; rects[1].y = rw->core.height - ht;
+    rects[1].width = rw->core.width; rects[1].height = ht;
+    rects[2].x = 0; rects[2].y = ht;
+    rects[2].width = ht; rects[2].height = rw->core.height - ht*2;
+    rects[3].x = rw->core.width - ht; rects[3].y = ht;
+    rects[3].width = ht; rects[3].height = rw->core.height - ht*2;
+    XFillRectangles( XtDisplay(w), XtWindow(w), gc, rects, 4);
 }
 
 static	void
@@ -578,11 +578,11 @@ RadioSet (Widget   w,
     UNUSED(num_params);
     
     if( rw->command.set )
-      return;
+	return;
 
     rw->command.set = TRUE;
     if( XtIsRealized(w) )
-      class->radio_class.drawDiamond(w);
+	class->radio_class.drawDiamond(w);
 }
 
 
@@ -600,11 +600,11 @@ RadioUnset (Widget   w,
     UNUSED(num_params);
     
     if( ! rw->command.set )
-      return;
+	return;
 
     rw->command.set = FALSE;
     if( XtIsRealized(w) )
-      class->radio_class.drawDiamond(w);
+	class->radio_class.drawDiamond(w);
 }
 
 
@@ -627,10 +627,10 @@ RadioSize (RadioWidget rw,
 	   Dimension   *w,
 	   Dimension   *h)
 {
-	*w = rw->label.label_width + bs(rw) + LEFT_OFFSET(rw) + 
-		3 * rw->label.internal_width;
-	*h = MAX( rw->label.label_height, bs(rw) ) +
-		2 * rw->label.internal_width;
+    *w = rw->label.label_width + bs(rw) + LEFT_OFFSET(rw) + 
+	3 * rw->label.internal_width;
+    *h = MAX( rw->label.label_height, bs(rw) ) +
+	2 * rw->label.internal_width;
 }
 
 

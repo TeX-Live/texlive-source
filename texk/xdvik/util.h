@@ -48,36 +48,23 @@
 
 #include "events.h" /* for child proc stuff */
 
-/* double linked list */
-struct dl_list {
-    void *item;
-    struct dl_list *prev;
-    struct dl_list *next;
-};
-
-struct dl_list *dl_list_head(struct dl_list *list);
-struct dl_list *dl_list_push_front(struct dl_list *list, void *item);
-struct dl_list *dl_list_insert(struct dl_list *list, void *item);
-struct dl_list *dl_list_truncate(struct dl_list *list);
-struct dl_list *dl_list_truncate_head(struct dl_list *list);
-struct dl_list *dl_list_remove(struct dl_list *list,
-			       const void *elem,
-			       int *count,
-			       void **item,
-			       Boolean (*compare_func)(const void *item1, const void *item2));
-Boolean dl_list_remove_item(struct dl_list **list);
 FILE *try_fopen(const char *fname, const char *mode);
 FILE *try_fdopen(int fd, const char *mode);
 int try_open(const char *fname, int flags);
 int try_open_mode(const char *fname, int flags, mode_t mode);
 
 extern int xdvi_temp_fd(char **tempfilename);
-
+extern void xdvi_assert(const char *version,
+			const char *filename,
+			int lineno,
+			Boolean condition,
+			const char *fmt,
+			...);
 
 typedef void (*child_exited_proc)(int status, struct xchild *this);
 
 extern void handle_child_exit(int status, struct xchild *this);
-extern char *read_child_error(int fd);
+extern char *read_child_error(int fd, void *data);
 extern Boolean fork_process(const char *file, Boolean redirect_stdout,
 			    const char *dirname,
 			    childProcT exit_proc, void *data,
@@ -112,6 +99,11 @@ extern int memicmp(const char *, const char *, size_t);
 /*  extern char *xmemdump(const char *, size_t); */
 /*  extern void xputenv(const char *, const char *); */
 
+/* like xstrdup, but only copy len characters and zero-terminate at next index (allocates len+1 characters) */
+extern char *xstrndup(const char *str, size_t len);
+
+extern char *xt_strdup(const char *); /* like xstrdup, but with XtMalloc() */
+
 extern char *xstrcat(char *str1, const char *str2);
 extern int xpipe(int *);
 extern void close_a_file(void);
@@ -135,6 +127,7 @@ extern unsigned long parse_debugging_option(const char *ptr);
 extern int get_avg_font_width(XFontStruct *font);
 extern char **split_line(const char *line, char sep, size_t begin, size_t end, size_t *ret_items);
 extern char *find_file(const char *filename, struct stat *statbuf, kpse_file_format_type pathinfo);
+extern char **src_format_arguments(char **argv, const char *filename, int lineno, int colno);
 
 /*
   hashtable wrapper functions, mostly used by dvi-draw.c to
@@ -154,14 +147,15 @@ struct str_int_hash_item {
 
 typedef hash_table_type hashTableT; /* from kpathsea */
 extern Boolean find_str_int_hash(hashTableT *hashtable, const char *key, size_t *val);
-void put_str_int_hash(hashTableT *hashtable, const char *key, size_t val);
+extern void put_str_int_hash(hashTableT *hashtable, const char *key, size_t val);
 
-Boolean copy_file(const char *from, const char *to);
-Boolean copy_fp(FILE *in, FILE *out);
+extern Boolean copy_file(const char *from, const char *to);
+extern Boolean copy_fp(FILE *in, FILE *out);
 
 extern const char *get_text_encoding(void);
 extern char *iconv_convert_string(const char *from_enc, const char *to_enc, const char *str);
 
+extern void xdvi_bell(void);
 
 /* Various error reporting macros.
    The reasons why these are macros are:

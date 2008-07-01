@@ -21,8 +21,8 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
 NOTE:
-	xdvi is based on prior work, as noted in the modification history
-	in xdvi.c.
+xdvi is based on prior work, as noted in the modification history
+in xdvi.c.
 
 \*========================================================================*/
 
@@ -168,6 +168,11 @@ extern int errno;
 # define XIO_OUT 2
 #endif /* HAVE_POLL */
 
+/* cannot be const since Stings in Action routines arent either */
+static char *Act_true_retval = "true";
+static char *Act_false_retval = "false";
+    
+
 static sigset_t all_signals;
 
 /*
@@ -218,11 +223,11 @@ static void do_sigsegv(void);
    Example: flag := SF_TERM | SF_CHLD = 24
    
    flags_to_sigproc[24] =>
-       do_sigterm, which sets flag to 24 & ~SF_TERM == 8
+   do_sigterm, which sets flag to 24 & ~SF_TERM == 8
    then, in next check:       
    flags_to_sigproc[8] =>
-       do_sigchld, which sets flag 8 & ~SF_CHLD == 0.
- */
+   do_sigchld, which sets flag 8 & ~SF_CHLD == 0.
+*/
 #define	SP0	do_sigusr
 #define	SP1	do_sigalrm
 #define	SP2	do_sigpoll
@@ -290,36 +295,6 @@ Pixel *color_list;			/* list of colors */
 unsigned int color_list_len = 0;	/* current len of list*/
 unsigned int color_list_max = 0;	/* allocated size */
 Boolean color_warned = False;
-/*
-  FIXME: the following file-static flag is used to control whether
-  a mouse-related Act_* should block further actions that have
-  been registered for the same event.
-  
-  It is used for the Act_href_* routines.
-  
-  This used to be a
-     longjmp(somewehre_in_the_event_loop);
-  but that was pretty dreadful as well. Surely there must
-  be some other (X(t)-specific?) way to do this?? (Apart from
-  de-registering the action and re-registering it again.)
-*/
-static Boolean m_block_mouse_event = False; 
-
-/* for calling it from mag.c */
-void
-block_next_mouse_event(void) {
-    m_block_mouse_event = True;
-}
-
-Boolean
-block_this_mouse_event(void) {
-    if (m_block_mouse_event == True) {
-	m_block_mouse_event = False;
-	return True;
-    }
-    return False;
-}
-
 
 void null_mouse(XEvent *event)
 {
@@ -331,6 +306,7 @@ mouse_proc mouse_release = null_mouse;
 
 static void Act_digit(Widget, XEvent *, String *, Cardinal *);
 static void Act_find(Widget, XEvent *, String *, Cardinal *);
+static void Act_incremental_find(Widget, XEvent *, String *, Cardinal *);
 static void Act_find_next(Widget, XEvent *, String *, Cardinal *);
 static void Act_minus(Widget, XEvent *, String *, Cardinal *);
 static void Act_quit(Widget, XEvent *, String *, Cardinal *);
@@ -372,12 +348,12 @@ static void Act_drag(Widget, XEvent *, String *, Cardinal *);
 static void Act_wheel(Widget, XEvent *, String *, Cardinal *);
 static void Act_motion(Widget, XEvent *, String *, Cardinal *);
 static void Act_release(Widget, XEvent *, String *, Cardinal *);
+static void Act_toggle_grid_mode(Widget, XEvent *, String *, Cardinal *);
 static void Act_source_special(Widget, XEvent *, String *, Cardinal *);
 static void Act_show_source_specials(Widget, XEvent *, String *, Cardinal *);
 static void Act_source_what_special(Widget, XEvent *, String *, Cardinal *);
 static void Act_unpause_or_next(Widget, XEvent *, String *, Cardinal *);
 static void Act_ruler_snap_origin(Widget w, XEvent *event, String *params, Cardinal *num_params);
-static void Act_text_mode(Widget w, XEvent *event, String *params, Cardinal *num_params);
 static void Act_load_url(Widget w, XEvent *event, String *params, Cardinal *num_params);
 #ifdef MOTIF
 static void Act_prefs_dialog(Widget w, XEvent *event, String *params, Cardinal *num_params);
@@ -385,9 +361,8 @@ static void Act_prefs_dialog(Widget w, XEvent *event, String *params, Cardinal *
 
 static XtActionsRec m_actions[] = {
     {"digit", Act_digit},
+    {"mouse-modes", Act_mouse_modes},
     {"switch-mode", Act_switch_mode},
-    {"ruler-mode", Act_ruler_mode},
-    {"text-mode", Act_text_mode},
     {"minus", Act_minus},
     {"recent-files", Act_recent_files},
     {"quit", Act_quit},
@@ -395,6 +370,7 @@ static XtActionsRec m_actions[] = {
     {"print", Act_print},
     {"save", Act_save},
     {"find", Act_find},
+    {"incremental-find", Act_incremental_find},
     {"find-next", Act_find_next},
     {"help", Act_help},
     {"goto-page", Act_goto_page},
@@ -408,7 +384,6 @@ static XtActionsRec m_actions[] = {
     {"end-or-bottom", Act_end_or_bottom},
     {"center", Act_center},
     {"set-keep-flag", Act_set_keep_flag},
-    {"ruler-snap-origin", Act_ruler_snap_origin},
     {"left", Act_left},
     {"right", Act_right},
     {"up", Act_up},
@@ -445,14 +420,15 @@ static XtActionsRec m_actions[] = {
     {"wheel", Act_wheel},
     {"motion", Act_motion},
     {"release", Act_release},
+    {"toggle-grid-mode", Act_toggle_grid_mode},
     {"source-special", Act_source_special},
     {"show-source-specials", Act_show_source_specials},
     {"source-what-special", Act_source_what_special},
     {"unpause-or-next", Act_unpause_or_next},
-#if defined(NEW_MENU_CREATION) || defined(MOTIF)
+#if 0 /* not implemented yet */
     {"set-papersize", Act_set_papersize},
     {"set-paper-landscape", Act_set_paper_landscape},
-#endif /* NEW_MENU_CREATION */
+#endif
     {"load-url", Act_load_url},
     {"pagehistory-clear", Act_pagehistory_clear},
     {"pagehistory-back", Act_pagehistory_back},
@@ -462,6 +438,13 @@ static XtActionsRec m_actions[] = {
 #ifdef MOTIF
     {"prefs-dialog", Act_prefs_dialog},    
 #endif
+    {"magnifier", Act_magnifier},
+    {"ruler", Act_ruler},
+    {"ruler-snap-origin", Act_ruler_snap_origin},
+    {"text-selection", Act_text_selection},
+    {"do-href", Act_href},
+    {"do-href-newwindow", Act_href_newwindow},
+    {"switch-magnifier-units", Act_switch_magnifier_units},
 };
 
 /*
@@ -554,10 +537,10 @@ clearexpose(struct WindowRec *windowrec,
  *	Routines for X11 toolkit.
  */
 
-static Position window_x, window_y;
+static Position m_window_x, m_window_y;
 static Arg arg_xy[] = {
-    {XtNx, (XtArgVal) &window_x},
-    {XtNy, (XtArgVal) &window_y},
+    {XtNx, (XtArgVal) &m_window_x},
+    {XtNy, (XtArgVal) &m_window_y},
 };
 
 #define	get_xy() XtGetValues(globals.widgets.draw_widget, arg_xy, XtNumber(arg_xy))
@@ -576,7 +559,7 @@ warn_num_params(const char *act_name, String *params, int num_params, int max_pa
 struct xdvi_action *
 compile_action(const char *str)
 {
-    const char *p, *p1, *p2;
+    const char *p, *p1, *p2, *end_cmd;
     XtActionsRec *actp;
     struct xdvi_action *ap;
 
@@ -591,7 +574,9 @@ compile_action(const char *str)
     /* find end of command name */
     while (isalnum((int)*p) || *p == '-' || *p == '_')
 	++p;
-
+    
+    end_cmd = p;
+    
     for (actp = m_actions; ; ++actp) {
 	if (actp >= m_actions + XtNumber(m_actions)) {
 	    const char *tmp = strchr(str, '\0');
@@ -629,6 +614,8 @@ compile_action(const char *str)
 
     ap = xmalloc(sizeof *ap);
     ap->proc = actp->proc;
+    ap->command = xstrndup(str, end_cmd - str);
+
     for (p2 = p1;; --p2) {
 	if (p2 <= p) {	/* if no args */
 	    ap->num_params = 0;
@@ -636,6 +623,7 @@ compile_action(const char *str)
 	    break;
 	}
 	else if (p2[-1] != ' ' && p2[-1] != '\t') {
+	    /* we only deal with one arg here */
 	    char *arg;
 
 	    arg = xmalloc(p2 - p + 1);
@@ -646,7 +634,8 @@ compile_action(const char *str)
 	    break;
 	}
     }
-    
+
+    /* call recursivly; next will be either next parsed action, or NULL */
     ap->next = compile_action(p1 + 1);
 
     return ap;
@@ -663,7 +652,7 @@ handle_command(Widget widget, XtPointer client_data, XtPointer call_data)
     for (actp = (struct xdvi_action *)client_data; actp != NULL; actp = actp->next) {
 	if (globals.debug & DBG_EVENT)
 	    fprintf(stderr, "calling action with param: %s\n", actp->param);
-	(actp->proc) (widget, NULL, &actp->param, &actp->num_params);
+	(actp->proc)(widget, NULL, &actp->param, &actp->num_params);
     }
 }
 
@@ -696,10 +685,12 @@ home(wide_bool scrl)
     {
 	int value;
 
-	value = (globals.page.w - mane.width) / 2;
-	if (value > resource.sidemargin_int / mane.shrinkfactor)
-	    value = resource.sidemargin_int / mane.shrinkfactor;
-	(void)set_bar_value(globals.widgets.x_bar, value, (int)(globals.page.w - mane.width));
+	if (!resource.keep_flag) {
+	    value = (globals.page.w - mane.width) / 2;
+	    if (value > resource.sidemargin_int / mane.shrinkfactor)
+		value = resource.sidemargin_int / mane.shrinkfactor;
+	    (void)set_bar_value(globals.widgets.x_bar, value, (int)(globals.page.w - mane.width));
+	}
 
 	value = (globals.page.h - mane.height) / 2;
 	if (value > resource.topmargin_int / mane.shrinkfactor)
@@ -708,19 +699,19 @@ home(wide_bool scrl)
     }
 # else
     get_xy();
-    if (globals.widgets.x_bar != NULL) {
+    if (!resource.keep_flag && globals.widgets.x_bar != NULL) {
 	int coord = (globals.page.w - mane.width) / 2;
 
 	if (coord > resource.sidemargin_int / mane.shrinkfactor)
 	    coord = resource.sidemargin_int / mane.shrinkfactor;
-	XtCallCallbacks(globals.widgets.x_bar, XtNscrollProc, (XtPointer) (window_x + coord));
+	XtCallCallbacks(globals.widgets.x_bar, XtNscrollProc, (XtPointer) (m_window_x + coord));
     }
     if (globals.widgets.y_bar != NULL) {
 	int coord = (globals.page.h - mane.height) / 2;
 
 	if (coord > resource.topmargin_int / mane.shrinkfactor)
 	    coord = resource.topmargin_int / mane.shrinkfactor;
-	XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc, (XtPointer) (window_y + coord));
+	XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc, (XtPointer) (m_window_y + coord));
     }
 # endif /* MOTIF */
     if (!scrl) {
@@ -728,8 +719,10 @@ home(wide_bool scrl)
 	/* Wait for the server to catch up---this eliminates flicker. */
 	XSync(DISP, False);
     }
+#ifdef USE_PANNER
     handle_x_scroll(NULL, NULL, NULL, NULL);
     handle_y_scroll(NULL, NULL, NULL, NULL);
+#endif
 }
 
 /*
@@ -745,31 +738,35 @@ home_bottom(wide_bool scrl)
     {
 	int value;
 
-	value = (globals.page.w - mane.width) / 2;
-	if (value > resource.sidemargin_int / mane.shrinkfactor)
-	    value = resource.sidemargin_int / mane.shrinkfactor;
-	(void)set_bar_value(globals.widgets.x_bar, value, (int)(globals.page.w - mane.width));
+	if (!resource.keep_flag) {
+	    value = (globals.page.w - mane.width) / 2;
+	    if (value > resource.sidemargin_int / mane.shrinkfactor)
+		value = resource.sidemargin_int / mane.shrinkfactor;
+	    (void)set_bar_value(globals.widgets.x_bar, value, (int)(globals.page.w - mane.width));
+	}
 
 	(void)set_bar_value(globals.widgets.y_bar, (int)(globals.page.h - mane.height), (int)(globals.page.h - mane.height));
     }
 #else /* MOTIF */
     get_xy();
-    if (globals.widgets.x_bar != NULL) {
+    if (!resource.keep_flag && globals.widgets.x_bar != NULL) {
 	int coord = (globals.page.w - mane.width) / 2;
 
 	if (coord > resource.sidemargin_int / mane.shrinkfactor)
 	    coord = resource.sidemargin_int / mane.shrinkfactor;
-	XtCallCallbacks(globals.widgets.x_bar, XtNscrollProc, (XtPointer) (window_x + coord));
+	XtCallCallbacks(globals.widgets.x_bar, XtNscrollProc, (XtPointer) (m_window_x + coord));
     }
     if (globals.widgets.y_bar != NULL)
-	XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc, (XtPointer)(window_y + (globals.page.h - mane.height)));
+	XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc, (XtPointer)(m_window_y + (globals.page.h - mane.height)));
 #endif /* MOTIF */
     XMapWindow(DISP, mane.win);
     /* Wait for the server to catch up---this eliminates flicker. */
     XSync(DISP, False);
 
+#ifdef USE_PANNER
     handle_x_scroll(NULL, NULL, NULL, NULL);
     handle_y_scroll(NULL, NULL, NULL, NULL);
+#endif
 }
 
 
@@ -817,8 +814,10 @@ get_geom(void)
 	if (globals.widgets.x_bar != NULL) {
 	    XtAddCallback(globals.widgets.x_bar, XtNdestroyCallback, handle_destroy_bar,
 			  (XtPointer)&globals.widgets.x_bar);
+#ifdef USE_PANNER
 	    XtAddEventHandler(globals.widgets.x_bar, ButtonMotionMask | ButtonPressMask | ButtonReleaseMask,
 			      False, handle_x_scroll, NULL);
+#endif
 	}
     }
     if (globals.widgets.y_bar == NULL) {
@@ -826,8 +825,10 @@ get_geom(void)
 	if (globals.widgets.y_bar != NULL) {
 	    XtAddCallback(globals.widgets.y_bar, XtNdestroyCallback, handle_destroy_bar,
 			  (XtPointer)&globals.widgets.y_bar);
+#ifdef USE_PANNER
 	    XtAddEventHandler(globals.widgets.y_bar, ButtonMotionMask | ButtonPressMask | ButtonReleaseMask,
 			      False, handle_y_scroll, NULL);
+#endif
 	}
     }
 #endif
@@ -858,7 +859,7 @@ get_geom(void)
 		(void)set_bar_value(globals.widgets.x_bar, m_x_scroll, (int)(globals.page.w - mane.width));
 #else
 	    XtVaGetValues(globals.widgets.clip_widget, XtNy, &d, NULL);
-	    curr_scroll = d - window_x;
+	    curr_scroll = d - m_window_x;
 	    if (m_x_scroll > curr_scroll) {
 		TRACE_GUI((stderr, "======== diff: %d", m_x_scroll - curr_scroll));
 		XtCallCallbacks(globals.widgets.x_bar, XtNscrollProc, (XtPointer)(m_x_scroll - curr_scroll));
@@ -871,7 +872,7 @@ get_geom(void)
 		(void)set_bar_value(globals.widgets.y_bar, m_y_scroll, (int)(globals.page.h - mane.height));
 #else
 	    XtVaGetValues(globals.widgets.clip_widget, XtNy, &d, NULL);
-	    curr_scroll = d - window_y;
+	    curr_scroll = d - m_window_y;
 	    if (m_y_scroll > curr_scroll) {
 		TRACE_GUI((stderr, "======== diff: %d", m_y_scroll - curr_scroll));
 		XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc, (XtPointer)(m_y_scroll - curr_scroll));
@@ -905,7 +906,7 @@ handle_resize(Widget widget, XtPointer junk, XEvent *event, Boolean *cont)
 void
 reconfig(void)
 {
-/*      Dimension x, y; */
+    /*      Dimension x, y; */
 
     if (globals.dvi_file.bak_fp == NULL)
 	return;
@@ -917,7 +918,7 @@ reconfig(void)
     XtVaSetValues(globals.widgets.draw_widget, XtNwidth, (XtArgVal)globals.page.w, XtNheight, (XtArgVal)globals.page.h, NULL);
     
 #ifdef TEST_SCROLLING
-/*     XtVaSetValues(globals.widgets.draw_background, XtNwidth, (XtArgVal)globals.page.w, XtNheight, (XtArgVal)globals.page.h, NULL); */
+    /*     XtVaSetValues(globals.widgets.draw_background, XtNwidth, (XtArgVal)globals.page.w, XtNheight, (XtArgVal)globals.page.h, NULL); */
 #endif
     
 #ifndef MOTIF
@@ -928,37 +929,39 @@ reconfig(void)
     
     get_geom();
 
-/*     set_windowsize(&x, &y */
-/* #ifndef MOTIF */
-/* 		   , get_panel_width() */
-/* #endif */
-/* 		   ); */
-/*     XResizeWindow(DISP, XtWindow(globals.widgets.top_level), x, y); */
-/*      reconfigure_window(False, x, y, True); */
-/*      reconfig_window(); */
+    /*     set_windowsize(&x, &y */
+    /* #ifndef MOTIF */
+    /* 		   , get_panel_width() */
+    /* #endif */
+    /* 		   ); */
+    /*     XResizeWindow(DISP, XtWindow(globals.widgets.top_level), x, y); */
+    /*      reconfigure_window(False, x, y, True); */
+    /*      reconfig_window(); */
 }
 
 
 int
-check_goto_page(int pageno)
+check_goto_page(int pageno, Boolean insert_into_pagehist)
 {
     int retval;
     if (pageno < 0) {
-	XBell(DISP, 0);
-	statusline_print(STATUS_SHORT, "Can't go to page %d, going to first page instead", pageno + 1);
+	xdvi_bell();
+/* 	statusline_info(STATUS_SHORT, "Can't go to page %d, going to first page instead", pageno + 1); */
 	retval = 0;
     }
     else if (pageno >= total_pages) {
-	XBell(DISP, 0);
-	statusline_print(STATUS_SHORT,
-			 "Can't go to page %d, going to last page (%d) instead",
-			 pageno + 1, total_pages);
+	xdvi_bell();
+/* 	statusline_info(STATUS_SHORT, */
+/* 			 "Can't go to page %d, going to last page (%d) instead", */
+/* 			 pageno + 1, total_pages); */
 	retval = total_pages - 1;
     }
     else
 	retval = pageno;
 
-    page_history_insert(retval);
+    if (insert_into_pagehist) {
+	page_history_insert(retval);
+    }
     return retval;
 }
 
@@ -977,23 +980,23 @@ check_goto_tex_page(int pageno)
 	if (res >= 0)
 	    retval = res;
 	else {
-	    XBell(DISP, 0);
+	    xdvi_bell();
 	    if (pageno < 1) {
-		statusline_print(STATUS_SHORT, "Can't go to page %d, going to first page instead", pageno + 1);
+/* 		statusline_info(STATUS_SHORT, "Can't go to page %d, going to first page instead", pageno + 1); */
 		retval = 0;
 	    }
 	    else {
 		/* there is no quick way to determine the last page number in the TeX page index */
-		statusline_print(STATUS_SHORT,
-				 "Can't go to page %d, going to last page instead",
-				 pageno + 1);
+/* 		statusline_info(STATUS_SHORT, */
+/* 				 "Can't go to page %d, going to last page instead", */
+/* 				 pageno + 1); */
 		retval = total_pages - 1;
 	    }
 	}
 	page_history_insert(retval);
     }
     else {
-	retval = check_goto_page(pageno);
+	retval = check_goto_page(pageno, True);
     }
     return retval;
 }
@@ -1061,7 +1064,6 @@ toggle_arg(int arg, String *param, Cardinal *num_params)
     return True;
 }
 
-#if defined(NEW_MENU_CREATION) || defined(MOTIF)
 Boolean
 check_resource_expert(void *val, const char *param)
 {
@@ -1106,8 +1108,199 @@ check_int(void *val, const char *param)
     int i = strtol(param, (char **)NULL, 10);
     return i == *(int *)val;
 }
-#endif /* NEW_MENU_CREATION */
 
+void
+Act_ruler(Widget w, XEvent *event,
+	  String *params, Cardinal *num_params)
+{
+    UNUSED(w);
+    UNUSED(params);
+    UNUSED(num_params);
+
+    MYTRACE((stderr, "ruler!\n"));
+    
+    if (dvi_file_changed()) {
+	globals.ev.flags |= EV_RELOAD;
+	return;
+    }
+
+#ifdef MOTIF
+    /* see xm_menu.c for an explanation of this */
+    if (event && pulldown_menu_active(event->xany.serial)) {
+	return;
+    }
+#endif
+    
+    if (bg_current == NULL) {
+	/*
+	  HACK ALERT: we can arrive here after loading a new file via the file selector
+	  for which not all fonts have been generated. In that case, dereferencing
+	  bg_current would bomb. Try to recover by simply returning here.
+	*/
+	return;
+    }
+
+    show_ruler(event);
+    globals.curr_mode = RULER_MODE_ACTIVE;
+    globals.ev.flags |= EV_CURSOR;
+    XFlush(DISP);
+    show_distance_from_ruler(event, False);
+}
+
+void
+Act_text_selection(Widget w, XEvent *event,
+		   String *params, Cardinal *num_params)
+{
+    UNUSED(w);
+    UNUSED(params);
+    UNUSED(num_params);
+
+    MYTRACE((stderr, "text selection!\n"));
+    
+    if (dvi_file_changed()) {
+	globals.ev.flags |= EV_RELOAD;
+	return;
+    }
+
+#ifdef MOTIF
+    /* see xm_menu.c for an explanation of this */
+    if (pulldown_menu_active(event->xany.serial)) {
+	return;
+    }
+#endif
+    
+    if (bg_current == NULL) {
+	/*
+	  HACK ALERT: we can arrive here after loading a new file via the file selector
+	  for which not all fonts have been generated. In that case, dereferencing
+	  bg_current would bomb. Try to recover by simply returning here.
+	*/
+	return;
+    }
+
+    globals.curr_mode = TEXT_MODE_ACTIVE;
+    globals.ev.flags |= EV_CURSOR;
+    XFlush(DISP);
+    text_selection_start(event);
+    text_motion(event);
+}
+
+/****************************************************************************
+ * Actions specific to the handling of the magnifier
+ */
+
+void
+Act_magnifier(Widget w, XEvent *event,
+	      String *params, Cardinal *num_params)
+{
+    UNUSED(w);
+
+    MYTRACE((stderr, "magnifier!\n"));
+    
+    if (dvi_file_changed()) {
+	globals.ev.flags |= EV_RELOAD;
+	return;
+    }
+
+#ifdef MOTIF
+    /* see xm_menu.c for an explanation of this */
+    if (pulldown_menu_active(event->xany.serial)) {
+	return;
+    }
+#endif
+    
+    if (bg_current == NULL) {
+	/*
+	  HACK ALERT: we can arrive here after loading a new file via the file selector
+	  for which not all fonts have been generated. In that case, dereferencing
+	  bg_current would bomb. Try to recover by simply returning here.
+	*/
+	return;
+    }
+
+    if (event->type != ButtonPress || mouse_release != null_mouse
+	|| MAGNIFIER_ACTIVE || mane.shrinkfactor == 1 || *num_params != 1) {
+	XBell(DISP, 0);
+	if (mane.shrinkfactor == 1) {
+	    statusline_info(STATUS_SHORT,
+			     "No magnification available at shrink factor 1");
+	}
+	return;
+    }
+    
+    magnifier_move(*params, event);
+}
+
+void
+Act_switch_magnifier_units(Widget w, XEvent *event,
+			   String *params, Cardinal *num_params)
+{
+    size_t k = 0;
+    static char *TeX_units[] = {
+	"mm", "pt", "in", "sp", "bp", "cc", "dd", "pc", "px",
+    };
+
+    UNUSED(w);
+    UNUSED(event);
+    UNUSED(params);
+    UNUSED(num_params);
+    
+    for (k = 0; k < XtNumber(TeX_units); ++k)
+	if (strcmp(resource.tick_units, TeX_units[k]) == 0)
+	    break;
+    k++;
+    if (k >= XtNumber(TeX_units))
+	k = 0;
+    resource.tick_units = TeX_units[k];
+    if (globals.curr_mode == RULER_MODE_ACTIVE) {
+	show_distance_from_ruler(event, False);
+    }
+    else {
+	statusline_info(STATUS_SHORT, "Ruler units: %s\n", resource.tick_units);
+    }
+}
+
+void
+Act_href(Widget w, XEvent *event,
+	 String *params, Cardinal *num_params)
+{
+    int x, y;
+    Window dummy;
+
+    UNUSED(w);
+    UNUSED(num_params);
+
+    (void)XTranslateCoordinates(DISP, event->xkey.window, mane.win,
+				event->xkey.x, event->xkey.y, &x, &y, &dummy);
+
+    if (params) {
+	if (htex_handleref(x, y, False))
+	    *params = Act_true_retval;
+	else
+	    *params = Act_false_retval;
+    }
+}
+
+void
+Act_href_newwindow(Widget w, XEvent *event,
+		   String *params, Cardinal *num_params)
+{
+    int x, y;
+    Window dummy;
+    
+    UNUSED(w);
+    UNUSED(num_params);
+    
+    (void)XTranslateCoordinates(DISP, event->xkey.window, mane.win,
+				event->xkey.x, event->xkey.y, &x, &y, &dummy);
+
+    if (params) {
+	if (htex_handleref(x, y, True))
+	    *params = Act_true_retval;
+	else
+	    *params = Act_false_retval;
+    }
+}
 
 static void
 Act_digit(Widget w, XEvent *event,
@@ -1123,7 +1316,7 @@ Act_digit(Widget w, XEvent *event,
     UNUSED(event);
 
     if (*num_params != 1 || (digit = **params - '0') > 9) {
-	XBell(DISP, 0);
+	xdvi_bell();
 	return;
     }
     m_have_arg = True;
@@ -1132,11 +1325,11 @@ Act_digit(Widget w, XEvent *event,
     if (m_number < MAXINT_QUOT || (m_number == MAXINT_QUOT && digit <= MAXINT_MOD)) {
 	m_number = m_number * 10 + digit;
 	if (resource.expert_mode & XPRT_SHOW_STATUSLINE) /* too distracting for stdout */
-	    statusline_print(STATUS_SHORT, "numerical prefix: %s%d", m_sign < 0 ? "-" : "", m_number);
+	    statusline_info(STATUS_SHORT, "numerical prefix: %s%d", m_sign < 0 ? "-" : "", m_number);
     }
     else {
-	XBell(DISP, 0);
-	statusline_print(STATUS_SHORT, "numerical prefix: %s%d: no larger value possible", m_sign < 0 ? "-" : "", m_number);
+	xdvi_bell();
+	statusline_info(STATUS_SHORT, "numerical prefix: %s%d: no larger value possible", m_sign < 0 ? "-" : "", m_number);
     }
 }
 
@@ -1153,11 +1346,11 @@ Act_minus(Widget w, XEvent *event,
     m_sign = -m_sign;
     if (m_number > 0) {
 	if (resource.expert_mode & XPRT_SHOW_STATUSLINE) /* too distracting for stdout */
-	    statusline_print(STATUS_SHORT, "numerical prefix: %s%d", m_sign < 0 ? "-" : "", m_number);
+	    statusline_info(STATUS_SHORT, "numerical prefix: %s%d", m_sign < 0 ? "-" : "", m_number);
     }
     else {
 	if (resource.expert_mode & XPRT_SHOW_STATUSLINE) /* too distracting for stdout */
-	    statusline_print(STATUS_SHORT, "numerical prefix: %s", m_sign < 0 ? "-" : "");
+	    statusline_info(STATUS_SHORT, "numerical prefix: %s", m_sign < 0 ? "-" : "");
     }
 }
 
@@ -1165,9 +1358,6 @@ static void
 Act_quit(Widget w, XEvent *event,
 	 String *params, Cardinal *num_params)
 {
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
     UNUSED(params);
@@ -1188,9 +1378,6 @@ Act_quit_confirm(Widget w, XEvent *event,
 {
     static Widget dialog = 0;
     
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
     UNUSED(params);
@@ -1209,7 +1396,7 @@ Act_quit_confirm(Widget w, XEvent *event,
 	   or XtIsMapped() don't work?? Grabbing the server apparently
 	   has problems with Xaw, and it's not a nice solution anyway ... */
 	if (kill_message_window(dialog))
-	    XBell(DISP, 0);
+	    xdvi_bell();
     }
 
     dialog = choice_dialog_sized(globals.widgets.top_level,
@@ -1228,9 +1415,6 @@ Act_quit_confirm(Widget w, XEvent *event,
 static void
 Act_load_url(Widget w, XEvent *event, String *params, Cardinal *num_params)
 {
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
     UNUSED(num_params);
@@ -1240,45 +1424,68 @@ Act_load_url(Widget w, XEvent *event, String *params, Cardinal *num_params)
 static void
 Act_print(Widget w, XEvent *event, String *params, Cardinal *num_params)
 {
+    /* static so that we can pass them around to callbacks etc. */
     static struct save_or_print_info info;
+    static struct select_pages_info pinfo = {
+	0, 0, check_marked, { 0, NULL }, NO_ERROR
+    };
+    static struct file_info finfo = {
+	NULL, NULL,
+	NULL, NULL,
+	NULL
+    };
+    static Boolean first_time = True;
 
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
     UNUSED(params);
     UNUSED(num_params);
     
-    info.act = FILE_PRINT;
-    
+    if (first_time) {
+	info.shell = info.printlog = NULL;
+	info.act = FILE_PRINT;
+	info.pinfo = &pinfo;
+	info.finfo = &finfo;
+	info.callbacks = NULL;
+	first_time = False;
+    }
     save_or_print_callback(&info);
 }
 
 static void
 Act_save(Widget w, XEvent *event, String *params, Cardinal *num_params)
 {
+    /* static so that we can pass them around to callbacks etc. */
     static struct save_or_print_info info;
+    static struct select_pages_info pinfo = {
+	0, 0, check_marked, { 0, NULL }, NO_ERROR
+    };
+    static struct file_info finfo = {
+	NULL, NULL,
+	NULL, NULL,
+	NULL
+    };
+    static Boolean first_time = True;
 
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
     UNUSED(params);
     UNUSED(num_params);
     
-    info.act = FILE_SAVE;
-    
+    if (first_time) {
+	info.shell = info.printlog = NULL;
+	info.act = FILE_SAVE;
+	info.pinfo = &pinfo;
+	info.finfo = &finfo;
+	info.callbacks = NULL;
+	first_time = False;
+    }
     save_or_print_callback(&info);
 }
 
 static void
 Act_find(Widget w, XEvent *event, String *params, Cardinal *num_params)
 {
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
     UNUSED(params);
@@ -1287,11 +1494,18 @@ Act_find(Widget w, XEvent *event, String *params, Cardinal *num_params)
 }
 
 static void
+Act_incremental_find(Widget w, XEvent *event, String *params, Cardinal *num_params)
+{
+    UNUSED(w);
+    UNUSED(event);
+    UNUSED(params);
+    UNUSED(num_params);
+    isearch_start();
+}
+
+static void
 Act_find_next(Widget w, XEvent *event, String *params, Cardinal *num_params)
 {
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
     UNUSED(params);
@@ -1305,9 +1519,6 @@ Act_help(Widget w, XEvent *event,
 {
     char *arg = NULL;
 
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
     
@@ -1322,9 +1533,9 @@ static home_proc home_action = NULL;
 void
 goto_page(int new_page, home_proc proc, Boolean force)
 {
-    /* SU: added clearing the window here, else old window content
+    /* SU: added clearing the window here, otherwise old window content
        will survive switching pages as long as globals.pausing.flag is active
-       (i.e. when inadvertedly changing page instead of unpausing)
+       (i.e. when accidentally changing page instead of unpausing)
     */
     if (globals.pausing.flag) {
 	XClearWindow(DISP, mane.win);
@@ -1334,20 +1545,23 @@ goto_page(int new_page, home_proc proc, Boolean force)
 	current_page = new_page; /* so that xdvi gets the page change */
 	return;
     }
-
-    ASSERT(new_page >= 0 && new_page < total_pages, "new_page in goto_page() out of range");   
+    
+    xdvi_assert(XDVI_VERSION_INFO, __FILE__, __LINE__,
+		new_page >= 0 && new_page < total_pages,
+		"%d >= 0 && %d < %d", new_page, new_page, total_pages);
+    
     if (current_page != new_page || force) {
 	globals.cursor.flags &= ~CURSOR_LINK; /* disable link cursor if needed */
 
 	current_page = new_page;
 	home_action = proc;
 	globals.warn_spec_now = resource.warn_spec;
-    /* this seems unneccessary */
-/* 	if (!resource.keep_flag) */
-/* 	    home(False); */
+	/* this seems unneccessary */
+	/* 	if (!resource.keep_flag) */
+	/* 	    home(False); */
 #if defined(MOTIF) && HAVE_XPM
 	tb_check_navigation_sensitivity(current_page);
-/*  	page_history_update_toolbar_navigation(); */
+	/*  	page_history_update_toolbar_navigation(); */
 #endif
 	maybe_scroll_pagelist(current_page, False);
 
@@ -1371,9 +1585,6 @@ Act_goto_page(Widget w, XEvent *event,
     int arg;
     Boolean clear_statusline = False;
 
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
 
@@ -1398,7 +1609,7 @@ Act_goto_page(Widget w, XEvent *event,
     if (arg == total_pages - 1) {
 	/* with TeX numbers, total_pages - 1 might not be found in the page list,
 	   so don't use check_goto_tex_page() in this case */
-	goto_page(check_goto_page(arg), resource.keep_flag ? NULL : home, False);
+	goto_page(check_goto_page(arg, True), resource.keep_flag ? NULL : home, False);
     }
     else {
 	goto_page(check_goto_tex_page(arg), resource.keep_flag ? NULL : home, False);
@@ -1406,6 +1617,7 @@ Act_goto_page(Widget w, XEvent *event,
     search_signal_page_changed();
     if (clear_statusline)
 	statusline_clear();
+    statusline_erase("Page history:");
 }
 
 void
@@ -1425,8 +1637,6 @@ Act_use_tex_pages(Widget w, XEvent *event,
     UNUSED(w);
     UNUSED(event);
 
-    if (block_this_mouse_event())
-	return;
     
     if (*num_params == 0) {
 	if (m_have_arg) {
@@ -1443,23 +1653,16 @@ Act_use_tex_pages(Widget w, XEvent *event,
 	resource.use_tex_pages = (**params == 't' ? !resource.use_tex_pages : atoi(*params));
     
     if (resource.use_tex_pages) {
-	statusline_print(STATUS_SHORT, "Using TeX page numbers for \"g\", goto-page()");
+	statusline_info(STATUS_SHORT, "Using TeX page numbers for \"g\", goto-page()");
     }
     else {
-	statusline_print(STATUS_SHORT, "Using physical page numbers for \"g\", goto-page()");
+	statusline_info(STATUS_SHORT, "Using physical page numbers for \"g\", goto-page()");
     }
 
     store_preference(NULL, "useTeXPages", "%s", resource.use_tex_pages ? "True" : "False");
     
-#if defined(NEW_MENU_CREATION) || defined(MOTIF)
     set_menu(&resource.use_tex_pages, Act_use_tex_pages, check_toggle);
-#else
-#ifdef MOTIF
-   set_use_tex_option();
-#else
-    toggle_menu(resource.use_tex_pages,  Act_use_tex_pages);
-#endif
-#endif /* NEW_MENU_CREATION */
+
     refresh_pagelist(total_pages, current_page);
 }
 
@@ -1470,9 +1673,6 @@ Act_forward_page(Widget w, XEvent *event,
     int arg;
     Boolean clear_statusline = False;
 
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
 
@@ -1488,18 +1688,19 @@ Act_forward_page(Widget w, XEvent *event,
 	search_reset_info();
 	globals.ev.flags |= EV_NEWPAGE;
 	XFlush(DISP);
-	statusline_print(STATUS_SHORT, "Page redrawn.");
+	statusline_info(STATUS_SHORT, "Page redrawn.");
 	return;
     }
     else if (current_page >= total_pages - 1) {
-	XBell(DISP, 0);
-	statusline_print(STATUS_SHORT, "Last page of DVI file");
+	xdvi_bell();
+/* 	statusline_info(STATUS_SHORT, "Last page of DVI file"); */
 	return;
     }
     
-    goto_page(check_goto_page(arg), resource.keep_flag ? NULL : home, False);
+    goto_page(check_goto_page(arg, True), resource.keep_flag ? NULL : home, False);
     if (clear_statusline)
 	statusline_clear();
+    statusline_erase("Page history:");
     search_signal_page_changed();
 }
 
@@ -1509,9 +1710,6 @@ Act_back_page(Widget w, XEvent *event,
 {
     int arg;
     Boolean clear_statusline = False;
-    
-    if (block_this_mouse_event())
-	return;
     
     UNUSED(w);
     UNUSED(event);
@@ -1524,14 +1722,15 @@ Act_back_page(Widget w, XEvent *event,
     arg = current_page - arg;
 
     if (current_page == 0) {
-	XBell(DISP, 0);
-	statusline_print(STATUS_SHORT, "First page of DVI file");
+	xdvi_bell();
+/* 	statusline_info(STATUS_SHORT, "First page of DVI file"); */
 	return;
     }
 
-    goto_page(check_goto_page(arg), resource.keep_flag ? NULL : home, False);
+    goto_page(check_goto_page(arg, True), resource.keep_flag ? NULL : home, False);
     if (clear_statusline)
 	statusline_clear();
+    statusline_erase("Page history:");
     search_signal_page_changed();
 }
 
@@ -1541,13 +1740,10 @@ Act_declare_page_number(Widget w, XEvent *event,
 {
     int arg;
 
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
-
-    if (resource.mouse_mode == MOUSE_RULER_MODE) {
+    
+    if (globals.curr_mode == RULER_MODE_ACTIVE) {
 	show_distance_from_ruler(event, True);
 	return;
     }
@@ -1556,7 +1752,7 @@ Act_declare_page_number(Widget w, XEvent *event,
 	arg = 0;
     }
     globals.pageno_correct = arg - current_page;
-    statusline_print(STATUS_SHORT, "Current page number set to %d", arg);
+    statusline_info(STATUS_SHORT, "Current page number set to %d", arg);
 }
 
 static void
@@ -1565,9 +1761,6 @@ Act_toggle_mark(Widget w, XEvent *event,
 {
     int arg;
 
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
 
@@ -1580,14 +1773,18 @@ Act_toggle_mark(Widget w, XEvent *event,
 #else
 	(resource.expert_mode & XPRT_SHOW_BUTTONS) == 0
 #endif
-	)
+	) {
+	xdvi_bell();
+	statusline_info(STATUS_SHORT,
+			 "Expert mode: Page list not available.");
 	return;
+    }
     
     if (*num_params > 0) {
 	arg = atoi(*params);
 	if (arg < -1 || arg > 2) {
-	    XBell(DISP, 0);
-	    statusline_print(STATUS_SHORT,
+	    xdvi_bell();
+	    statusline_error(STATUS_SHORT,
 			     "Possible arguments: none (toggle current), "
 			     "-1 (mark all), 0 (unmark all), 1 (toggle odd), 2 (toggle even)");
 	}
@@ -1612,9 +1809,6 @@ Act_home(Widget w, XEvent *event,
     UNUSED(params);
     UNUSED(num_params);
 
-    if (block_this_mouse_event())
-	return;
-    
     home(True);
 }
 
@@ -1626,9 +1820,6 @@ Act_home_or_top(Widget w, XEvent *event,
     UNUSED(event);
     UNUSED(params);
     UNUSED(num_params);
-    
-    if (block_this_mouse_event())
-	return;
     
     if (resource.keep_flag) {
 	String args[1];
@@ -1642,13 +1833,10 @@ Act_home_or_top(Widget w, XEvent *event,
 
 static void
 Act_end_or_bottom(Widget w, XEvent *event,
-		String *params, Cardinal *num_params)
+		  String *params, Cardinal *num_params)
 {
     String args[1];
 
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
     UNUSED(params);
@@ -1672,9 +1860,6 @@ Act_center(Widget w, XEvent *event,
 {
     int x, y;
 
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(params);
     UNUSED(num_params);
@@ -1687,7 +1872,7 @@ Act_center(Widget w, XEvent *event,
     x = set_bar_value(globals.widgets.x_bar, x, (int)(globals.page.w - mane.width));
     y = set_bar_value(globals.widgets.y_bar, y, (int)(globals.page.h - mane.height));
     get_xy();
-    XWarpPointer(DISP, None, None, 0, 0, 0, 0, -x - window_x, -y - window_y);
+    XWarpPointer(DISP, None, None, 0, 0, 0, 0, -x - m_window_x, -y - m_window_y);
 #else
 
     if (event == NULL)
@@ -1702,33 +1887,29 @@ Act_center(Widget w, XEvent *event,
 	XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc, (XtPointer) y);
     XWarpPointer(DISP, None, None, 0, 0, 0, 0, -x, -y);
 #endif
+#ifdef USE_PANNER
     handle_x_scroll(NULL, NULL, NULL, NULL);
     handle_y_scroll(NULL, NULL, NULL, NULL);
+#endif
 }
 
 void
 Act_ruler_snap_origin(Widget w, XEvent *event,
 		      String *params, Cardinal *num_params)
 {
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(params);
     UNUSED(num_params);
 
-    if (resource.mouse_mode == MOUSE_RULER_MODE)
+    if (globals.curr_mode == RULER_MODE_ACTIVE)
 	ruler_snap_origin(event);
 }
 
-#if defined(NEW_MENU_CREATION) || defined(MOTIF)
+#if 0
 void
 Act_set_papersize(Widget w, XEvent *event,
 		  String *params, Cardinal *num_params)
 {
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
     UNUSED(num_params);
@@ -1742,9 +1923,6 @@ void
 Act_set_paper_landscape(Widget w, XEvent *event,
 			String *params, Cardinal *num_params)
 {
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
     UNUSED(num_params);
@@ -1754,15 +1932,13 @@ Act_set_paper_landscape(Widget w, XEvent *event,
 
     set_menu((char *)resource.paper,  Act_set_paper_landscape, check_paper_landscape);
 }
-#endif /* NEW_MENU_CREATION */
+#endif /* 0 */
+
 
 void
 Act_set_keep_flag(Widget w, XEvent *event,
 		  String *params, Cardinal *num_params)
 {
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(event);
     UNUSED(w);
     
@@ -1781,29 +1957,22 @@ Act_set_keep_flag(Widget w, XEvent *event,
 	resource.keep_flag = (**params == 't'
 			      ? !resource.keep_flag : atoi(*params));
     if (resource.keep_flag) {
-	statusline_print(STATUS_SHORT, "Keeping position when switching pages");
+	statusline_info(STATUS_SHORT, "Keeping position when switching pages");
     }
     else {
-	statusline_print(STATUS_SHORT,
+	statusline_info(STATUS_SHORT,
 			 "Not keeping position when switching pages");
     }
 
     store_preference(NULL, "keepPosition", "%s", resource.keep_flag ? "True" : "False");
     
-#if defined(NEW_MENU_CREATION) || defined(MOTIF)
     set_menu(&resource.keep_flag, Act_set_keep_flag, check_toggle);
-#else
-    toggle_menu(resource.keep_flag,  Act_set_keep_flag);
-#endif /* NEW_MENU_CREATION */
 }
 
 static void
 Act_left(Widget w, XEvent *event,
 	 String *params, Cardinal *num_params)
 {
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
 
@@ -1815,11 +1984,11 @@ Act_left(Widget w, XEvent *event,
     get_xy();
 #ifdef TEST_SCROLLING
     fprintf(stderr, "left for %p\n", (void *)w);
-    fprintf(stderr, "window x: %d, y: %d\n", window_x, window_y);
+    fprintf(stderr, "window x: %d, y: %d\n", m_window_x, m_window_y);
 #endif
 
     (void)set_bar_value(globals.widgets.x_bar, (*num_params == 0 ? (-2 * (int)mane.width / 3)
-				: (int)(-my_atof(*params) * mane.width)) - window_x,
+						: (int)(-my_atof(*params) * mane.width)) - m_window_x,
 			(int)(globals.page.w - mane.width));
 #else
     if (globals.widgets.x_bar != NULL)
@@ -1827,20 +1996,19 @@ Act_left(Widget w, XEvent *event,
 			(XtPointer) (*num_params == 0 ? (-2 * (int)mane.width / 3)
 				     : (int)(-my_atof(*params) * mane.width)));
     else {
-	XBell(DISP, 0);
-	statusline_print(STATUS_SHORT, "Horizontal scrolling not possible");
+	xdvi_bell();
+/* 	statusline_info(STATUS_SHORT, "Horizontal scrolling not possible"); */
     }
 #endif
+#ifdef USE_PANNER
     handle_x_scroll(NULL, NULL, NULL, NULL);
+#endif
 }
 
 static void
 Act_right(Widget w, XEvent *event,
 	  String *params, Cardinal *num_params)
 {
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
 
@@ -1852,11 +2020,11 @@ Act_right(Widget w, XEvent *event,
     get_xy();
 #ifdef TEST_SCROLLING
     fprintf(stderr, "right for %p\n", (void *)w);
-    fprintf(stderr, "window x: %d, y: %d\n", window_x, window_y);
+    fprintf(stderr, "window x: %d, y: %d\n", m_window_x, m_window_y);
 #endif
 
     (void)set_bar_value(globals.widgets.x_bar, (*num_params == 0 ? (2 * (int)mane.width / 3)
-				: (int)(my_atof(*params) * mane.width)) - window_x,
+						: (int)(my_atof(*params) * mane.width)) - m_window_x,
 			(int)(globals.page.w - mane.width));
 #else
     if (globals.widgets.x_bar != NULL)
@@ -1864,20 +2032,19 @@ Act_right(Widget w, XEvent *event,
 			(XtPointer) (*num_params == 0 ? (2 * (int)mane.width / 3)
 				     : (int)(my_atof(*params) * mane.width)));
     else {
-	XBell(DISP, 0);
-	statusline_print(STATUS_SHORT, "Horizontal scrolling not possible");
+	xdvi_bell();
+/* 	statusline_info(STATUS_SHORT, "Horizontal scrolling not possible"); */
     }
 #endif
+#ifdef USE_PANNER
     handle_x_scroll(NULL, NULL, NULL, NULL);
+#endif
 }
 
 static void
 Act_up(Widget w, XEvent *event,
        String *params, Cardinal *num_params)
 {
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
 
@@ -1891,7 +2058,7 @@ Act_up(Widget w, XEvent *event,
 #endif
     get_xy();
     (void)set_bar_value(globals.widgets.y_bar, (*num_params == 0 ? (-2 * (int)mane.height / 3)
-				: (int)(-my_atof(*params) * mane.height)) - window_y,
+						: (int)(-my_atof(*params) * mane.height)) - m_window_y,
 			(int)(globals.page.h - mane.height));
 #else
     if (globals.widgets.y_bar != NULL)
@@ -1899,20 +2066,19 @@ Act_up(Widget w, XEvent *event,
 			(XtPointer) (*num_params == 0 ? (-2 * (int)mane.height / 3)
 				     : (int)(-my_atof(*params) * mane.height)));
     else {
-	XBell(DISP, 0);
-	statusline_print(STATUS_SHORT, "Vertical scrolling not possible");
+	xdvi_bell();
+/* 	statusline_info(STATUS_SHORT, "Vertical scrolling not possible"); */
     }
 #endif
+#ifdef USE_PANNER
     handle_y_scroll(NULL, NULL, NULL, NULL);
+#endif
 }
 
 static void
 Act_down(Widget w, XEvent *event,
 	 String *params, Cardinal *num_params)
 {
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
 
@@ -1926,7 +2092,7 @@ Act_down(Widget w, XEvent *event,
 #endif
     get_xy();
     (void)set_bar_value(globals.widgets.y_bar, (*num_params == 0 ? (2 * (int)mane.height / 3)
-				: (int)(my_atof(*params) * mane.height)) - window_y,
+						: (int)(my_atof(*params) * mane.height)) - m_window_y,
 			(int)(globals.page.h - mane.height));
 #else
     if (globals.widgets.y_bar != NULL)
@@ -1934,20 +2100,19 @@ Act_down(Widget w, XEvent *event,
 			(XtPointer) (*num_params == 0 ? (2 * (int)mane.height / 3)
 				     : (int)(my_atof(*params) * mane.height)));
     else {
-	XBell(DISP, 0);
-	statusline_print(STATUS_SHORT, "Vertical scrolling not possible");
+	xdvi_bell();
+/* 	statusline_info(STATUS_SHORT, "Vertical scrolling not possible"); */
     }
 #endif
+#ifdef USE_PANNER
     handle_y_scroll(NULL, NULL, NULL, NULL);
+#endif
 }
 
 static void
 Act_down_or_next(Widget w, XEvent *event,
 		 String *params, Cardinal *num_params)
 {
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
 
@@ -1961,16 +2126,16 @@ Act_down_or_next(Widget w, XEvent *event,
 
 #ifdef MOTIF
     get_xy();
-    if (window_y > (int)mane.height - (int)globals.page.h) {
+    if (m_window_y > (int)mane.height - (int)globals.page.h) {
 	(void)set_bar_value(globals.widgets.y_bar, (*num_params == 0 ? (2 * (int)mane.height / 3)
-				    : (int)(my_atof(*params) * mane.height)) -
-			    window_y, (int)(globals.page.h - mane.height));
+						    : (int)(my_atof(*params) * mane.height)) -
+			    m_window_y, (int)(globals.page.h - mane.height));
 	return;
     }
 #else
     if (globals.widgets.y_bar != NULL) {
 	get_xy();
-	if (window_y > (int)mane.height - (int)globals.page.h) {
+	if (m_window_y > (int)mane.height - (int)globals.page.h) {
 	    XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc,
 			    (XtPointer) (*num_params ==
 					 0 ? (2 * (int)mane.height / 3)
@@ -1985,10 +2150,13 @@ Act_down_or_next(Widget w, XEvent *event,
 	search_signal_page_changed();
     }
     else {
-	XBell(DISP, 0);
-	statusline_print(STATUS_SHORT, "At bottom of last page");
+	xdvi_bell();
+/* 	statusline_info(STATUS_SHORT, "At bottom of last page"); */
     }
+#ifdef USE_PANNER
     handle_y_scroll(NULL, NULL, NULL, NULL);
+#endif
+    statusline_erase("Page history:");
 }
 
 
@@ -1996,9 +2164,6 @@ static void
 Act_up_or_previous(Widget w, XEvent *event,
 		   String *params, Cardinal *num_params)
 {
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
 
@@ -2011,17 +2176,17 @@ Act_up_or_previous(Widget w, XEvent *event,
 #endif
 #ifdef MOTIF
     get_xy();
-    if (window_y < 0) {
+    if (m_window_y < 0) {
 	(void)set_bar_value(globals.widgets.y_bar,
 			    (*num_params == 0 ? (-2 * (int)mane.height / 3)
-			     : (int)(-my_atof(*params) * mane.height)) - window_y,
+			     : (int)(-my_atof(*params) * mane.height)) - m_window_y,
 			    (int)(globals.page.h - mane.height));
 	return;
     }
 #else
     if (globals.widgets.y_bar != NULL) {
 	get_xy();
-	if (window_y < 0) {
+	if (m_window_y < 0) {
 	    XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc,
 			    (XtPointer) (*num_params ==
 					 0 ? (-2 * (int)mane.height / 3)
@@ -2036,10 +2201,13 @@ Act_up_or_previous(Widget w, XEvent *event,
 	search_signal_page_changed();
     }
     else {
-	XBell(DISP, 0);
-	statusline_print(STATUS_SHORT, "At top of first page");
+	xdvi_bell();
+/* 	statusline_info(STATUS_SHORT, "At top of first page"); */
     }
+    statusline_erase("Page history:");
+#ifdef USE_PANNER
     handle_y_scroll(NULL, NULL, NULL, NULL);
+#endif
 }
 
 
@@ -2049,9 +2217,6 @@ Act_set_margins(Widget w, XEvent *event,
 {
     Window dummy;
 
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(params);
     UNUSED(num_params);
@@ -2063,7 +2228,7 @@ Act_set_margins(Widget w, XEvent *event,
 
     (void)XTranslateCoordinates(DISP, event->xkey.window, mane.win,
 				event->xkey.x, event->xkey.y, &resource.sidemargin_int, &resource.topmargin_int, &dummy);	/* throw away last argument */
-    statusline_print(STATUS_SHORT, "Margins set to cursor position (%d, %d)", resource.sidemargin_int, resource.topmargin_int);
+    statusline_info(STATUS_SHORT, "Margins set to cursor position (%d, %d)", resource.sidemargin_int, resource.topmargin_int);
     resource.sidemargin_int *= mane.shrinkfactor;
     resource.topmargin_int *= mane.shrinkfactor;
 }
@@ -2072,15 +2237,12 @@ static void
 Act_show_display_attributes(Widget w, XEvent *event,
 			    String *params, Cardinal *num_params)
 {
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
     UNUSED(params);
     UNUSED(num_params);
 
-    statusline_print(STATUS_SHORT, "Unit = %d, bitord = %d, byteord = %d",
+    statusline_error(STATUS_SHORT, "Unit = %d, bitord = %d, byteord = %d",
 		     BitmapUnit(DISP), BitmapBitOrder(DISP),
 		     ImageByteOrder(DISP));
 }
@@ -2136,7 +2298,7 @@ do_set_shrinkfactor(int arg, Boolean set_resource)
     /* We don't store this as preference since it may affect initial window geometry. */
     /*  store_preference(NULL, "shrinkFactor", "%d", arg); */
     
-    if (resource.mouse_mode == MOUSE_TEXT_MODE) {
+    if (globals.curr_mode == TEXT_MODE_ACTIVE) {
 	text_change_region(TEXT_SEL_CLEAR, NULL);
     }
     
@@ -2144,14 +2306,11 @@ do_set_shrinkfactor(int arg, Boolean set_resource)
     if (set_resource)
 	resource.shrinkfactor = mane.shrinkfactor;
     
-#if defined(NEW_MENU_CREATION) || defined(MOTIF)
     set_menu(&arg, Act_set_shrink_factor, check_int);
 #if HAVE_XMP
     tb_set_zoom_sensitivity(arg != 1);
 #endif
-#else
-    toggle_menu(arg, Act_set_shrink_factor);
-#endif /* NEW_MENU_CREATION */
+
     if (arg != 1 && arg != shrink_bak) {
 	shrink_bak = arg;
 #if GREY
@@ -2171,12 +2330,65 @@ do_set_shrinkfactor(int arg, Boolean set_resource)
     htex_resize_page();
 
     /* this seems unneccessary */
-/*     if (!resource.keep_flag) */
-/* 	home(False); */
+    /*     if (!resource.keep_flag) */
+    /* 	home(False); */
 
     globals.ev.flags |= EV_NEWPAGE;
     XFlush(DISP);
 }
+
+
+/* A 'meta' action that is bound to mouse buttons and invokes actions depending on current mouse mode */
+void
+Act_mouse_modes(Widget w, XEvent *event,
+		String *params, Cardinal *num_params)
+{
+    int i;
+    size_t mode_idx = 0; /* default: one action for all modes */
+    struct xdvi_action *my_action = NULL, *ap = NULL;
+
+    if (*num_params > 1) { /* different actions */
+	if (resource.mouse_mode >= *num_params) {
+	    size_t k;
+	    XDVI_WARNING((stderr, "Only %d parameters in X resource 'mouse-modes', should be %d",
+			  *num_params, resource.mouse_mode + 1));
+	    for (k = 0; k < *num_params; k++) {
+		XDVI_WARNING((stderr, "Param %d: `%s'", k + 1, params[k]));
+	    }
+	    return;
+	}
+	mode_idx = resource.mouse_mode;
+    }
+
+    my_action = compile_action(params[mode_idx]);
+    for (i = 0, ap = my_action; ap; ap = ap->next, i++) {
+	TRACE_EVENTS((stderr, "Action %d for mode %d: '%s', %d args |%s| maps to proc |%p|",
+		      i, mode_idx, ap->command, ap->num_params, ap->param, ap->proc));
+	String args[1];
+	args[0] = ap->param;
+
+	/* now call the action proc directly */
+	XtCallActionProc(w, ap->command, event, args, ap->num_params);
+	
+	if (args[0] == Act_true_retval) { /* we may compare the pointers here */
+	    /* Special case: Only invoke first action, not subsequent ones, e.g. if mouse is over
+	     * a link and action is Act_href (currently the only case where this is used).
+	     */
+	    break;
+	}
+    }
+
+    /* free all allocated action info. TODO: should we save it for later calls? */
+    ap = my_action;
+    while (ap) {
+	struct xdvi_action *tmp_ap = ap;
+	free(ap->param);
+	free(ap->command);
+	ap = tmp_ap->next;
+	free(tmp_ap);
+    }
+}
+
 
 void
 Act_set_shrink_factor(Widget w, XEvent *event,
@@ -2192,9 +2404,6 @@ Act_set_shrink_factor(Widget w, XEvent *event,
        very large shrink factors ... */
     static const int SHRINK_MAX = 999;
      
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
 
@@ -2215,15 +2424,15 @@ Act_set_shrink_factor(Widget w, XEvent *event,
     }
 
     if (arg <= 0) {
-	XBell(DISP, 0);
-	statusline_print(STATUS_SHORT,
-			 "No more enlarging possible");
+	xdvi_bell();
+/* 	statusline_info(STATUS_SHORT, */
+/* 			 "No more enlarging possible"); */
 	return;
     }
     
     if (arg > SHRINK_MAX) {
-	XBell(DISP, 0);
-	statusline_print(STATUS_SHORT,
+	xdvi_bell();
+	statusline_info(STATUS_SHORT,
 			 "Shrink factor %d too large (maximum: %d)", arg, SHRINK_MAX);
 	return;
     }
@@ -2235,7 +2444,7 @@ Act_set_shrink_factor(Widget w, XEvent *event,
 	XClearWindow(DISP, mane.win);
     }
     
-    statusline_print(STATUS_SHORT, "shrink factor: %d", arg);
+    statusline_info(STATUS_SHORT, "shrink factor: %d", arg);
 #if 0
     /* Uncommented this, otherwise selecting `shrink to fit' with same value as
        current mane.shrinkfactor will clear the canvas (only fixed by changing shrink
@@ -2261,9 +2470,6 @@ Act_shrink_to_dpi(Widget w, XEvent *event,
     int arg, arg_bak;
     Boolean clear_statusline = False;
     
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
 
@@ -2280,8 +2486,8 @@ Act_shrink_to_dpi(Widget w, XEvent *event,
 	arg = (double)resource.pixels_per_inch / arg + 0.5;
 
     if (arg <= 0) {
-	XBell(DISP, 0);
-	statusline_print(STATUS_SHORT,
+	xdvi_bell();
+	statusline_info(STATUS_SHORT,
 			 "shrink-to-dpi requires a positive argument");
 	return;
     }
@@ -2318,7 +2524,7 @@ do_set_density(double newgamma, Boolean force, Boolean update_resource)
 #ifdef GREY
     if (resource.use_grey) {
 	if (newgamma == resource.gamma && !force) {
-	    statusline_print(STATUS_SHORT, "density value: %.3f", newgamma);
+	    statusline_info(STATUS_SHORT, "density value: %.3f", newgamma);
 	    return;
 	}
 	resource.gamma = newgamma;
@@ -2335,17 +2541,17 @@ do_set_density(double newgamma, Boolean force, Boolean update_resource)
 	}
 	reset_fonts();
 #endif /* COLOR */
-	statusline_print(STATUS_SHORT, "density value: %.3f", newgamma);
+	statusline_info(STATUS_SHORT, "density value: %.3f", newgamma);
     } else
 #endif /* GREY */
     {
 	reset_fonts();
 	if (mane.shrinkfactor == 1) {
-	    statusline_print(STATUS_SHORT,
-		    "set-density ignored at magnification 1");
+	    statusline_info(STATUS_SHORT,
+			     "set-density ignored at magnification 1");
 	    return;
 	}
-	statusline_print(STATUS_SHORT, "density value: %.3f", newgamma);
+	statusline_info(STATUS_SHORT, "density value: %.3f", newgamma);
     }
 
     store_preference(NULL, "gamma", "%f", resource.gamma);
@@ -2360,24 +2566,21 @@ Act_set_density(Widget w, XEvent *event,
 {
     int arg;
 
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
 
     warn_num_params("set-density()", params, *num_params, 1);
     
     if (!get_int_arg(params, num_params, &arg)) {
-	XBell(DISP, 0);
+	xdvi_bell();
 	return;
     }
-/*     if (arg < 0) { */
-/* 	XBell(DISP, 0); */
-/* 	statusline_print(STATUS_SHORT, */
-/* 			 "set-density requires a positive value"); */
-/* 	return; */
-/*     } */
+    /*     if (arg < 0) { */
+    /* 	XBell(DISP, 0); */
+    /* 	statusline_info(STATUS_SHORT, */
+    /* 			 "set-density requires a positive value"); */
+    /* 	return; */
+    /*     } */
     do_set_density(arg != 0 ? arg / 100.0 : 1.0, False, True);
 #if MOTIF
     update_preferences_darkness();
@@ -2397,13 +2600,10 @@ Act_change_density(Widget w, XEvent *event,
     UNUSED(w);
     UNUSED(event);
 
-    if (block_this_mouse_event())
-	return;
-    
     warn_num_params("change-density()", params, *num_params, 1);
     
     if (!get_int_arg(params, num_params, &arg)) {
-	XBell(DISP, 0);
+	xdvi_bell();
 	return;
     }
     diff = oldgamma / arg;
@@ -2415,6 +2615,30 @@ Act_change_density(Widget w, XEvent *event,
 #if MOTIF
     update_preferences_darkness();
 #endif
+}
+
+static void h_restore_scroll_position(int orig_pos,
+#ifndef MOTIF
+				      Dimension *get_pos,
+#endif
+				      Widget scrollbar)
+{
+    if (resource.keep_flag && orig_pos != 0 && scrollbar != NULL) {
+#ifdef MOTIF
+	if (!resource.fullscreen) {
+	    /* only scroll back in non-fullscreen mode */
+	    (void)set_bar_value(scrollbar, orig_pos, INT_MAX);
+	}
+#else
+	int curr_pos;
+	get_xy();
+	XtVaGetValues(globals.widgets.clip_widget, XtNx, get_pos, NULL);
+	curr_pos = -((*get_pos) - m_window_x);
+	if (curr_pos - orig_pos > 0) {
+	    XtCallCallbacks(scrollbar, XtNscrollProc, (XtPointer)(curr_pos - orig_pos));
+	}
+#endif /* MOTIF */
+    }
 }
 
 static void
@@ -2431,9 +2655,6 @@ Act_fullscreen(Widget w, XEvent *event,
 #if 0
     static Dimension w_old = 0, h_old = 0;
 #endif
-
-    if (block_this_mouse_event())
-	return;
 
     UNUSED(w);
     UNUSED(event);
@@ -2464,31 +2685,11 @@ Act_fullscreen(Widget w, XEvent *event,
 	    XtVaGetValues(globals.widgets.clip_widget, XtNx, &get_x, NULL);
 	if (globals.widgets.y_bar != NULL)
 	    XtVaGetValues(globals.widgets.clip_widget, XtNy, &get_y, NULL);
-	orig_x = -(get_x - window_x);
-	orig_y = -(get_y - window_y);
+	orig_x = -(get_x - m_window_x);
+	orig_y = -(get_y - m_window_y);
 #endif /* MOTIF */
-	/*  	fprintf(stderr, "Current offsets: %d, %d, %d, %d\n", orig_x, window_x, orig_y, window_y); */
+	/*  	fprintf(stderr, "Current offsets: %d, %d, %d, %d\n", orig_x, m_window_x, orig_y, m_window_y); */
     }
-#if 0 /* TODO: don't hardcode w/h values -
-	 what's wrong with the set_windowsize() call below? */    
-    if (resource.fullscreen) {
-	XWindowAttributes attr;
-	if (XGetWindowAttributes(DISP, XtWindow(globals.widgets.top_level), &attr)) {
-	    w_old = attr.width;
-	    h_old = attr.height;
-	}
-	main_win_w = WidthOfScreen(SCRN);
-	main_win_h = HeightOfScreen(SCRN);
-    }
-    else if (w_old > 0 && h_old > 0) {
-	main_win_w = w_old;
-	main_win_h = h_old;
-    }
-    else {
-	main_win_w = 800;
-	main_win_h = 600;
-    }
-#else
     if (resource.fullscreen) {
 	set_windowsize(&main_win_w, &main_win_h, panel_width, 0, False);
     }
@@ -2498,61 +2699,30 @@ Act_fullscreen(Widget w, XEvent *event,
 	else
 	    set_windowsize(&old_w, &old_h, panel_width, 0, True);
     }
-#endif
 
-/*      fprintf(stderr, "reconfigure window!\n"); */
+    /*      fprintf(stderr, "reconfigure window!\n"); */
     if (resource.fullscreen)
 	reconfigure_window(resource.fullscreen, main_win_w, main_win_h, True);
     else {
 	reconfigure_window(resource.fullscreen, old_w, old_h, True);
     }
 
-    /*      fprintf(stderr, "orig values: %d, %d\n", orig_x, orig_y); */
-    /* restore horizontal scroll position */
-    if (resource.keep_flag && orig_x != 0 && globals.widgets.x_bar != NULL) {
-#ifdef MOTIF
-	if (!resource.fullscreen) {
-	    /* only scroll back in non-fullscreen mode. This was:
-	       if (resource.fullscreen)
-	           (void)set_bar_value(globals.widgets.y_bar, orig_y, (int)(globals.page.h - mane.height));
-	       else ...
-	       but that was broken (bogus values in globals.page.h - mane.height).
-	    */
-	    (void)set_bar_value(globals.widgets.x_bar, orig_x, INT_MAX);
-	}
-#else
-	int curr_x;
-	get_xy();
-	XtVaGetValues(globals.widgets.clip_widget, XtNx, &get_x, NULL);
-	curr_x = -(get_x - window_x);
-	if (curr_x - orig_x > 0)
-	    XtCallCallbacks(globals.widgets.x_bar, XtNscrollProc, (XtPointer)(curr_x - orig_x));
-#endif /* MOTIF */
-    }
-
-    /* restore vertical scroll position */
-    if (resource.keep_flag && orig_y != 0 && globals.widgets.y_bar != NULL) {
-#ifdef MOTIF
-	if (!resource.fullscreen) {
-	    /* only scroll back in non-fullscreen mode. This was:
-	       if (resource.fullscreen)
-	           (void)set_bar_value(globals.widgets.y_bar, orig_y, (int)(globals.page.h - mane.height));
-	       else ...
-	       but that was broken (bogus values in globals.page.h - mane.height).
-	    */
-	    (void)set_bar_value(globals.widgets.y_bar, orig_y, INT_MAX);
-	}
-#else
-	int curr_y;
-	get_xy();
-	XtVaGetValues(globals.widgets.clip_widget, XtNy, &get_y, NULL);
-	curr_y = -(get_y - window_y);
-	if (curr_y - orig_y > 0)
-	    XtCallCallbacks(globals.widgets.x_bar, XtNscrollProc, (XtPointer)(curr_y - orig_y));
-#endif /* MOTIF */
-    }
+    /* restore horizontal/vertical scroll positions */
+    h_restore_scroll_position(orig_x,
+#ifndef MOTIF
+			      &get_x,
+#endif
+			      globals.widgets.x_bar);
+    h_restore_scroll_position(orig_y,
+#ifndef MOTIF			      
+			      &get_y,
+#endif
+			      globals.widgets.y_bar);
+    
+#ifdef USE_PANNER
     handle_x_scroll(NULL, NULL, NULL, NULL);
     handle_y_scroll(NULL, NULL, NULL, NULL);
+#endif
 }
 
 #ifdef GREY
@@ -2563,9 +2733,6 @@ Act_set_greyscaling(Widget w, XEvent *event,
 {
     int arg;
 
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
 
@@ -2577,10 +2744,10 @@ Act_set_greyscaling(Widget w, XEvent *event,
 	}
 	resource.use_grey = !resource.use_grey;
 	if (resource.use_grey) {
-	    statusline_print(STATUS_SHORT, "greyscaling on");
+	    statusline_info(STATUS_SHORT, "greyscaling on");
 	}
 	else {
-	    statusline_print(STATUS_SHORT, "greyscaling off");
+	    statusline_info(STATUS_SHORT, "greyscaling off");
 	}
 	globals.ev.flags |= EV_NEWPAGE;
 	XFlush(DISP);
@@ -2590,17 +2757,17 @@ Act_set_greyscaling(Widget w, XEvent *event,
     switch (arg) {
     case 0:
 	resource.use_grey = False;
-	statusline_print(STATUS_SHORT, "greyscaling off");
+	statusline_info(STATUS_SHORT, "greyscaling off");
 	break;
     case 1:
 	resource.use_grey = True;
-	statusline_print(STATUS_SHORT, "greyscaling on");
+	statusline_info(STATUS_SHORT, "greyscaling on");
 	break;
     default:
 	{
 	    float newgamma = arg != 0 ? arg / 100.0 : 1.0;
 	    resource.use_grey = newgamma;
-	    statusline_print(STATUS_SHORT, "greyscale value: %.1f", newgamma);
+	    statusline_info(STATUS_SHORT, "greyscale value: %.1f", newgamma);
 	}
     }
 
@@ -2639,12 +2806,12 @@ do_toggle_color(Boolean update_resource)
 	    scanned_page = scanned_page_ps;
 	}
 #endif
-	statusline_print(STATUS_SHORT, "color specials off");
+	statusline_info(STATUS_SHORT, "color specials off");
     }
     else {
 	resource.use_color = True;
 	scanned_page = scanned_page_color = scanned_page_reset;
-	statusline_print(STATUS_SHORT, "color specials on");
+	statusline_info(STATUS_SHORT, "color specials on");
     }
     if (update_resource)
 	globals.curr_use_color = resource.use_color;
@@ -2662,9 +2829,6 @@ Act_set_color(Widget w, XEvent *event,
     UNUSED(w);
     UNUSED(event);
 
-    if (block_this_mouse_event())
-	return;
-    
     if (!toggle_arg(resource.use_color, params, num_params)) {
 	return;
     };
@@ -2687,9 +2851,6 @@ Act_set_ps(Widget w, XEvent *event,
 {
     int arg;
 
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(event);
     UNUSED(w);
     
@@ -2721,10 +2882,10 @@ Act_set_ps(Widget w, XEvent *event,
 	if (scanned_page > scanned_page_ps)
 	    scanned_page = scanned_page_ps;
 	if (resource.postscript == 1) {
-	    statusline_print(STATUS_SHORT, "Postscript rendering on");
+	    statusline_info(STATUS_SHORT, "Postscript rendering on");
 	}
 	else {
-	    statusline_print(STATUS_SHORT, "Postscript rendering on (with bounding box)");
+	    statusline_info(STATUS_SHORT, "Postscript rendering on (with bounding box)");
 	}
     }
     else {
@@ -2735,17 +2896,15 @@ Act_set_ps(Widget w, XEvent *event,
 	    scanned_page = scanned_page_color;
 	}
 #endif
-	statusline_print(STATUS_SHORT, "Postscript rendering off; displaying bounding box instead");
+	statusline_info(STATUS_SHORT, "Postscript rendering off; displaying bounding box instead");
     }
 
     store_preference(NULL, "postscript", "%d", resource.postscript);
     
     psp.toggle(resource.postscript);
-#if defined(NEW_MENU_CREATION) || defined(MOTIF)
+
     set_menu(&resource.postscript, Act_set_ps, check_int);
-#else
-    toggle_menu(resource.postscript, Act_set_ps);
-#endif /* NEW_MENU_CREATION */
+
     /* like elsewhere */
     if (globals.pausing.flag) {
 	XClearWindow(DISP, mane.win);
@@ -2766,9 +2925,6 @@ Act_htex_back(Widget w, XEvent *event,
     UNUSED(params);
     UNUSED(num_params);
 
-    if (block_this_mouse_event())
-	return;
-    
     htex_back();
 }
 
@@ -2781,9 +2937,6 @@ Act_htex_forward(Widget w, XEvent *event,
     UNUSED(params);
     UNUSED(num_params);
 
-    if (block_this_mouse_event())
-	return;
-    
     htex_forward();
 }
 
@@ -2794,9 +2947,6 @@ Act_htex_anchorinfo(Widget w, XEvent *event,
     int x, y;
     Window dummy;
 
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(params);
     UNUSED(num_params);
@@ -2814,28 +2964,22 @@ Act_set_gs_alpha(Widget w, XEvent *event,
     UNUSED(w);
     UNUSED(event);
 
-    if (block_this_mouse_event())
-	return;
-    
     if (!toggle_arg(resource.gs_alpha, params, num_params)) {
 	return;
     }
     resource.gs_alpha = !resource.gs_alpha;
 
     if (resource.gs_alpha) {
-	statusline_print(STATUS_SHORT, "ghostscript alpha active");
+	statusline_info(STATUS_SHORT, "ghostscript alpha active");
     }
     else {
-	statusline_print(STATUS_SHORT, "ghostscript alpha inactive");
+	statusline_info(STATUS_SHORT, "ghostscript alpha inactive");
     }
 
     store_preference(NULL, "gsAlpha", "%s", resource.gs_alpha ? "True" : "False");
     
-#if defined(NEW_MENU_CREATION) || defined(MOTIF)
     set_menu(&resource.gs_alpha, Act_set_gs_alpha, check_toggle);
-#else
-    toggle_menu(resource.gs_alpha, Act_set_gs_alpha);
-#endif /* NEW_MENU_CREATION */
+
 #if GS_PIXMAP_CLEARING_HACK
     had_ps_specials = False; /* else infinite loop and/or crash in redraw! */
 #endif
@@ -2858,10 +3002,7 @@ Act_reread_dvi_file(Widget w, XEvent *event,
     UNUSED(params);
     UNUSED(num_params);
 
-    if (block_this_mouse_event())
-	return;
-    
-/*      fprintf(stderr, "reread file!\n"); */
+    /*      fprintf(stderr, "reread file!\n"); */
     globals.ev.flags |= EV_RELOAD;
 }
 
@@ -2874,14 +3015,11 @@ Act_discard_number(Widget w, XEvent *event,
     UNUSED(params);
     UNUSED(num_params);
 
-    if (block_this_mouse_event())
-	return;
-    
     m_have_arg = False;
     m_number = 0;
     m_sign = 1;
-    if (resource.expert_mode & XPRT_SHOW_STATUSLINE) /* too distracting for stdout */
-	statusline_print(STATUS_SHORT, "numerical prefix discarded");
+
+    statusline_info(STATUS_SHORT, "numerical prefix discarded");
 }
 
 /*
@@ -2897,13 +3035,6 @@ static int text_last_page = -1;
 static void drag_motion(XEvent *);
 static void drag_release(XEvent *);
 
-/* access for hyperref.c */
-Boolean dragging_text_selection(void)
-{
-    MYTRACE((stderr, "dragging selection? %d", mouse_motion == text_motion));
-    return mouse_motion == text_motion;
-}
-
 static void
 text_release(XEvent * event)
 {
@@ -2913,7 +3044,7 @@ text_release(XEvent * event)
     
     UNUSED(event);
 
-    MYTRACE((stderr, "text_release!"));
+    MYTRACE((stderr, "text_release!\n"));
     
     if (mouse_motion == null_mouse)
 	return;
@@ -2958,28 +3089,23 @@ text_release(XEvent * event)
     TRACE_GUI((stderr, "Selected `%s'", text));
 
     if (text_len > 4 * XMaxRequestSize(DISP) - 32) {
-	MYTRACE((stderr, "selection too large: %d bytes", text_len));
-	XBell(DISP, 10);
-	statusline_print(STATUS_MEDIUM, "Selection too large (%d bytes, maximum %d bytes)",
+	xdvi_bell();
+	statusline_error(STATUS_MEDIUM, "Selection too large (%d bytes, maximum %d bytes)",
 			 text_len, 4 * XMaxRequestSize(DISP) - 32);
-	MYTRACE((stderr, "after statusline_print1"));
 	return;
     }
     
     if (!set_selection(text, globals.widgets.top_level)) {
-	MYTRACE((stderr, "setting selection failed"));
-	XBell(DISP, 10);
-	statusline_print(STATUS_MEDIUM, "Could not set primary selection!");
-	MYTRACE((stderr, "after statusline_print2"));
+	xdvi_bell();
+	statusline_error(STATUS_MEDIUM, "Could not set primary selection!");
 	text_change_region(TEXT_SEL_CLEAR, NULL);
-	MYTRACE((stderr, "after text_change_region"));
     }
-    MYTRACE((stderr, "End of text_release"));
 }
 
 void
 text_motion(XEvent *event)
 {
+    MYTRACE((stderr, "motion!\n"));
     text_change_region(TEXT_SEL_MOVE, event);
 }
 
@@ -3012,8 +3138,6 @@ text_change_region(textSelectionT mode, XEvent *event)
     static GC bboxGC = 0;
     static GC redrawGC = 0; /* needed since bboxGC is clipped to diff of old and new region */
 
-    MYTRACE((stderr, "text_change_region: %d", mode));
-    
     if (bboxGC == 0) {
 	XGCValues values;
 	unsigned long valuemask;
@@ -3034,7 +3158,7 @@ text_change_region(textSelectionT mode, XEvent *event)
 	redrawGC = XCreateGC(DISP, XtWindow(globals.widgets.top_level), valuemask, &values);
     }
 
-    MYTRACE((stderr, "text_change_region: after bboxGC"));
+    MYTRACE((stderr, "mode: %d\n", mode));
     switch (mode) {
     case TEXT_SEL_MOVE:
 	{
@@ -3132,7 +3256,6 @@ text_change_region(textSelectionT mode, XEvent *event)
 	}
 	break;
     }
-    MYTRACE((stderr, "text_change_region: done"));
 }
 
 void
@@ -3156,76 +3279,37 @@ text_selection_start(XEvent *event)
 
     text_last_x = text_last_y = -1;
 
-    MYTRACE((stderr, "selection start; mouse_release: %p; null: %p!",
-	     (void *)mouse_release, (void *)null_mouse));
+    MYTRACE((stderr, "selection start; mouse_release: %p; null: %p!\n", mouse_release, null_mouse));
     if (mouse_release == null_mouse) {
-	MYTRACE((stderr, "init text_motion!"));
+	MYTRACE((stderr, "init text_motion!\n"));
 	mouse_motion = text_motion;
 	mouse_release = text_release;
     }
-}
-
-/*
- * If action list for <Btn1Down> does NOT contain a magnifier() binding,
- * return that action list; else return NULL.
- */
-static char *
-btn1_no_magnifier_binding(void)
-{
-    static Boolean initialized = False;
-    static char *btn1_binding = NULL;
-
-    if (!initialized) { /* cache value of previous calls */
-	if (resource.main_translations != NULL) {
-	    if ((btn1_binding = strstr(resource.main_translations, "<Btn1Down>")) != NULL) {
-		char *eol, *test;
-		btn1_binding = strchr(btn1_binding, ':');
-		if (btn1_binding != NULL)
-		    btn1_binding++;
-		while (isspace((int)*btn1_binding))
-		    btn1_binding++;
-		eol = strchr(btn1_binding, '\n');
-		if (eol == NULL)
-		    eol = btn1_binding + strlen(btn1_binding);
-		if ((test = strstr(btn1_binding, "magnifier(")) == NULL || test > eol) {
-		    /* binding not found */
-		    return btn1_binding;
-		}
-	    }
-	}
-/* 	fprintf(stderr, "MAG: %d\n", btn1_has_magnifier); */
-	initialized = True;
-    }
-    return btn1_binding;
+/*     resource.mouse_mode_text_selection_active = True; */
 }
 
 void
 Act_switch_mode(Widget w, XEvent *event,
 		String *params, Cardinal *num_params)
 {
-    mouseModeT prev_mode = resource.mouse_mode;
+/*     mouseModeT prev_mode = resource.mouse_mode; */
     int arg = -1;
-    char *ptr;
-    
-    if (block_this_mouse_event())
-	return;
-    
-    UNUSED(w);
+/*     char *ptr; */
+    const char *mode_name = NULL;
+    const char *mode_description = NULL;
+/*     XEvent ev; */
 
-    if ((ptr = btn1_no_magnifier_binding()) != NULL) {
-	XBell(DISP, 0);
-	statusline_print(STATUS_MEDIUM,
-			 "Cannot switch modes: Action list for Btn1Down (%s) "
-			 "does not contain magnifier() action.", ptr);
-	return;
-    }
+    /* if called the first time from main(), this is only used
+     * to initialize the menu according to the mode.
+     */
+    Boolean initialization = (w == globals.widgets.top_level);
     
-/*      fprintf(stderr, "prev mode: %d\n", prev_mode); */
-    
+    UNUSED(event);
+
     if (get_int_arg(params, num_params, &arg)) {
-	if (arg < MOUSE_MAGNIFIER_MODE || arg >= MOUSE_MAX_MODE) {
-	    statusline_print(STATUS_SHORT, "Argument for Act_switch_mode outside of range from %d to %d",
-			     MOUSE_MAGNIFIER_MODE, MOUSE_MAX_MODE - 1);
+	if (arg < MOUSE_MODE1 || arg >= MOUSE_MODE_MAX) {
+	    statusline_info(STATUS_SHORT, "Argument for Act_switch_mode outside of range from %d to %d",
+			     MOUSE_MODE1, MOUSE_MODE_MAX - 1);
 	    resource.mouse_mode++;
 	}
 	else
@@ -3235,99 +3319,52 @@ Act_switch_mode(Widget w, XEvent *event,
 	resource.mouse_mode++;
 
     /* check if wrapped */
-    if (resource.mouse_mode >= MOUSE_MAX_MODE)
-	resource.mouse_mode = MOUSE_MAGNIFIER_MODE;
+    if (resource.mouse_mode >= MOUSE_MODE_MAX)
+	resource.mouse_mode = MOUSE_MODE1;
 
-    /* undo effects of previous mode */
-    switch (prev_mode) {
-    case MOUSE_RULER_MODE:
+    if (globals.curr_mode == RULER_MODE_ACTIVE) {
 	clear_ruler();
 	mouse_motion = mouse_release = null_mouse;
-	break;
-    case MOUSE_TEXT_MODE:
+    }
+    else if (globals.curr_mode == TEXT_MODE_ACTIVE) {
 	text_change_region(TEXT_SEL_CLEAR, NULL);
 	mouse_motion = mouse_release = null_mouse;
+    }
+    globals.curr_mode = NO_MODE_ACTIVE;
+    
+    switch(resource.mouse_mode) {
+    case MOUSE_MODE1:
+	mode_name = resource.mouse_mode1_name;
+	mode_description = resource.mouse_mode1_description;
 	break;
-    default: /* magnifier, nothing to do */
-	    break;
+    case MOUSE_MODE2:
+	mode_name = resource.mouse_mode2_name;
+	mode_description = resource.mouse_mode2_description;
+/* 	globals.cursor.flags |= CURSOR_TEXT; /\*XXX FIXME: don't hardcode flag here; instead, have Act_text_selection set it *\/ */
+	break;
+    case MOUSE_MODE3:
+	mode_name = resource.mouse_mode3_name;
+	mode_description = resource.mouse_mode3_description;
+/* 	globals.cursor.flags |= CURSOR_RULER; */
+	break;
+    default: /* can't happen */
+	XDVI_WARNING((stderr, "resource.mouse_mode larger than %d!", resource.mouse_mode));
+	break;
     }
-    
-    if (resource.mouse_mode == MOUSE_RULER_MODE) {
-	XDefineCursor(DISP, CURSORWIN, globals.cursor.rule);
-	statusline_print(STATUS_SHORT, "Ruler mode; click Mouse-1 to set ruler");
-	show_ruler(event);
-	show_distance_from_ruler(event, False);
-    }
-    else if (resource.mouse_mode == MOUSE_TEXT_MODE) {
-	statusline_print(STATUS_SHORT, "Text selection mode; click and drag Mouse-1 to select a region");
-    }
-    else { /* default: MOUSE_MAGNIFIER_MODE */
-	statusline_print(STATUS_SHORT, "Magnifier mode; click Mouse-1 to magnify text");
-	mouse_motion = mouse_release = null_mouse;
-    }
-    
+
     globals.ev.flags |= EV_CURSOR;
     XFlush(DISP);
-    
-#if defined(NEW_MENU_CREATION) || defined(MOTIF)
+
+    if (!initialization) {
+	statusline_info(STATUS_SHORT, "%s mode; %s", mode_name, mode_description);
+	store_preference(NULL, "mouseMode", "%d", resource.mouse_mode);
+    }
     set_menu(&resource.mouse_mode, Act_switch_mode, check_int);
-#else
-    toggle_menu(resource.mouse_mode, Act_switch_mode);
-#endif /* NEW_MENU_CREATION */
-    store_preference(NULL, "mouseMode", "%d", resource.mouse_mode);
-}
 
-static void
-Act_text_mode(Widget w, XEvent *event,
-	      String *params, Cardinal *num_params)
-{
-    char *ptr;
     
-    UNUSED(w);
-    UNUSED(event);
-    UNUSED(params);
-    UNUSED(num_params);
-
-    if (block_this_mouse_event())
-	return;
-
-    if ((ptr = btn1_no_magnifier_binding()) != NULL) {
-	XBell(DISP, 0);
-	statusline_print(STATUS_MEDIUM,
-			 "Cannot switch modes: Action list for Btn1Down (%s) "
-			 "does not contain magnifier() action.", ptr);
-	return;
-    }
-    
-    if (resource.mouse_mode == MOUSE_TEXT_MODE) {
-	resource.mouse_mode++;
-	if (resource.mouse_mode >= MOUSE_MAX_MODE)
-	    resource.mouse_mode = MOUSE_MAGNIFIER_MODE;
-    }
-    else
-	resource.mouse_mode = MOUSE_TEXT_MODE;
-
-    if (resource.mouse_mode == MOUSE_TEXT_MODE) {
-	if (mouse_release != null_mouse && mouse_release != text_release)
-	    return;
-	
-	globals.ev.flags |= EV_CURSOR;
-	
-        XFlush(DISP);
-    }
-    else {
-	mouse_motion = mouse_release = null_mouse;
-	globals.ev.flags |= EV_CURSOR;
-
-	text_change_region(TEXT_SEL_CLEAR, NULL);
-	
-	XFlush(DISP);
-    }
-#if defined(NEW_MENU_CREATION) || defined(MOTIF)
-    set_menu(&resource.mouse_mode, Act_switch_mode, check_int);
-#else
-    toggle_menu(resource.mouse_mode, Act_switch_mode);
-#endif /* NEW_MENU_CREATION || MOTIF */
+    /*XXX FIXME: Activate mode by synthesizing a mouse event??? */
+/*     synthesize_event(&ev, globals.widgets.draw_widget); */
+/*     Act_mouse_modes(w, event, params, num_params); */
 }
 
 static void
@@ -3336,19 +3373,16 @@ Act_drag(Widget w, XEvent *event,
 {
     UNUSED(w);
 
-    if (block_this_mouse_event())
-	return;
-    
     if (mouse_release != null_mouse && mouse_release != drag_release)
 	return;
 
-    if (resource.mouse_mode == MOUSE_TEXT_MODE && text_last_page != -1
+    if ((globals.curr_mode == TEXT_MODE_ACTIVE) && text_last_page != -1
 	/* this was:
 	   && (text_last_x != drag_last_x || text_last_y != drag_last_y)
 	   but that isn't restrictive enough */
 	) { /* dragging would mess up region drawing */
-	XBell(DISP, 0);
-	statusline_print(STATUS_SHORT, "Dragging page not possible while selection is active");
+	xdvi_bell();
+	statusline_info(STATUS_SHORT, "Cannot drag page when selection is active");
 	return;
     }
     
@@ -3395,7 +3429,7 @@ drag_motion(XEvent * event)
     if (globals.cursor.flags & (CURSOR_DRAG_H | CURSOR_DRAG_A)) { /* horizontal motion */
 #ifdef MOTIF
 	(void)set_bar_value(globals.widgets.x_bar,
-			    drag_last_x - event->xbutton.x_root - window_x,
+			    drag_last_x - event->xbutton.x_root - m_window_x,
 			    (int)(globals.page.w - mane.width));
 #else
 	if (globals.widgets.x_bar != NULL) {
@@ -3409,7 +3443,7 @@ drag_motion(XEvent * event)
     if (globals.cursor.flags & (CURSOR_DRAG_V | CURSOR_DRAG_A)) { /* vertical motion */
 #ifdef MOTIF
 	(void)set_bar_value(globals.widgets.y_bar,
-			    drag_last_y - event->xbutton.y_root - window_y,
+			    drag_last_y - event->xbutton.y_root - m_window_y,
 			    (int)(globals.page.h - mane.height));
 #else
 	if (globals.widgets.y_bar != NULL) {
@@ -3419,8 +3453,10 @@ drag_motion(XEvent * event)
 #endif
 	drag_last_y = event->xbutton.y_root;
     }
+#ifdef USE_PANNER
     handle_x_scroll(NULL, NULL, NULL, NULL);
     handle_y_scroll(NULL, NULL, NULL, NULL);
+#endif
 }
 
 
@@ -3449,9 +3485,6 @@ Act_wheel(Widget w, XEvent *event,
 
     UNUSED(w);
 
-    if (block_this_mouse_event())
-	return;
-
     if (*num_params != 1) {
 	XDVI_WARNING((stderr, "wheel() requires 1 argument (got %d)", *num_params));
 	return;
@@ -3460,7 +3493,7 @@ Act_wheel(Widget w, XEvent *event,
 	: (int)(my_atof(*params) * resource.wheel_unit);
 #ifdef MOTIF
     get_xy();
-    set_bar_value(globals.widgets.y_bar, dist - window_y, (int)(globals.page.h - mane.height));
+    set_bar_value(globals.widgets.y_bar, dist - m_window_y, (int)(globals.page.h - mane.height));
 #else
     if (globals.widgets.y_bar != NULL)
 	XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc, (XtPointer) dist);
@@ -3468,7 +3501,9 @@ Act_wheel(Widget w, XEvent *event,
 
     wheel_button = event->xbutton.button;
 
+#ifdef USE_PANNER
     handle_y_scroll(NULL, NULL, NULL, NULL);
+#endif
 }
 
 
@@ -3486,19 +3521,16 @@ Act_motion(Widget w, XEvent *event,
     UNUSED(params);
     UNUSED(num_params);
 
-    if (block_this_mouse_event()) {
-	MYTRACE((stderr, "returning!"));
-	return;
-    }
-
-    if (resource.mouse_mode == MOUSE_RULER_MODE) {
+    MYTRACE((stderr, "act_motion!\n"));
+    
+    if (globals.curr_mode == RULER_MODE_ACTIVE) {
 	show_distance_from_ruler(event, False);
     }
     /* This used to be:
-          (abs(x - old_x) > x_threshold || abs(y - old_y) > y_threshold))
+       (abs(x - old_x) > x_threshold || abs(y - old_y) > y_threshold))
        but that didn't work too well either. Just change it whenever user
        moves the mouse. */       
-    if (!MAGNIFIER_ACTIVE && resource.mouse_mode != MOUSE_RULER_MODE
+    if (!MAGNIFIER_ACTIVE && !(globals.curr_mode == RULER_MODE_ACTIVE)
 	&& pointerlocate(&x, &y) && (x != old_x || y != old_y)) {
 	htex_displayanchor(x, y);
 	old_x = x;
@@ -3506,6 +3538,7 @@ Act_motion(Widget w, XEvent *event,
     }
 
     if ((int)(event->xbutton.button) != wheel_button) {
+	MYTRACE((stderr, "mouse_motion!\n"));
 	mouse_motion(event);
     }
 }
@@ -3519,9 +3552,6 @@ Act_release(Widget w, XEvent *event,
     UNUSED(params);
     UNUSED(num_params);
 
-    if (block_this_mouse_event())
-	return;
-    
     if ((int)(event->xbutton.button) == wheel_button) {
 	wheel_button = -1;
 	return;
@@ -3530,57 +3560,44 @@ Act_release(Widget w, XEvent *event,
     mouse_release(event);
 }
 
-void
-Act_ruler_mode(Widget w, XEvent *event,
-	       String *params, Cardinal *num_params)
+static void
+Act_toggle_grid_mode(Widget w, XEvent *event,
+		     String *params, Cardinal *num_params)
 {
-    char *ptr;
-    
+    int arg;
+
     UNUSED(w);
-    UNUSED(params);
-    UNUSED(num_params);
+    UNUSED(event);
 
-    if (block_this_mouse_event())
-	return;
-
-    if ((ptr = btn1_no_magnifier_binding()) != NULL) {
-	XBell(DISP, 0);
-	statusline_print(STATUS_MEDIUM,
-			 "Cannot switch modes: Action list for Btn1Down (%s) "
-			 "does not contain magnifier() action.", ptr);
-	return;
+    if (!get_int_arg(params, num_params, &arg)) {
+	arg = -1;
     }
-    
-    if (resource.mouse_mode == MOUSE_RULER_MODE) {
-	resource.mouse_mode++;
-	if (resource.mouse_mode >= MOUSE_MAX_MODE)
-	    resource.mouse_mode = MOUSE_MAGNIFIER_MODE;
-    }
-    else
-	resource.mouse_mode = MOUSE_RULER_MODE;
-    
-    if (resource.mouse_mode == MOUSE_RULER_MODE) {
-	XDefineCursor(DISP, CURSORWIN, globals.cursor.rule);
-	statusline_print(STATUS_SHORT, "Ruler mode on; use Mouse-1 to set/drag ruler");
-	show_ruler(event);
-	show_distance_from_ruler(event, False);
-    }
-    else {
-	if (globals.cursor.flags & CURSOR_LINK) {
-	    XDefineCursor(DISP, CURSORWIN, globals.cursor.link);
+    switch (arg) {
+    case -1:
+	resource.grid_mode = !resource.grid_mode;
+	if (resource.grid_mode) {
+	    statusline_info(STATUS_SHORT, "Grid mode on");
 	}
 	else {
-	    XDefineCursor(DISP, CURSORWIN, globals.cursor.ready);
+	    statusline_info(STATUS_SHORT, "Grid mode off");
 	}
-	statusline_print(STATUS_SHORT, "Ruler mode off");
-	clear_ruler();
-	mouse_motion = mouse_release = null_mouse;
+	break;
+    case 1: /* fall through */
+    case 2: /* fall through */
+    case 3:
+	resource.grid_mode = arg;
+	statusline_info(STATUS_SHORT, "Grid mode %d", arg);
+	break;
+    default:
+	xdvi_bell();
+	statusline_info(STATUS_SHORT,
+			 "Valid arguments for grid mode are: none (toggles), 1, 2, 3");
+	return;
     }
-#if defined(NEW_MENU_CREATION) || defined(MOTIF)
-    set_menu(&resource.mouse_mode, Act_switch_mode, check_int);
-#else
-    toggle_menu(resource.mouse_mode, Act_switch_mode);
-#endif /* NEW_MENU_CREATION || MOTIF */
+    init_page();
+    reconfig();
+    globals.ev.flags |= EV_NEWPAGE;
+    XFlush(DISP);
 }
 
 
@@ -3596,12 +3613,9 @@ Act_source_special(Widget w, XEvent *event,
     UNUSED(params);
     UNUSED(num_params);
 
-    if (block_this_mouse_event())
-	return;
-    
     if ((event->type == ButtonPress && mouse_release != null_mouse)
 	|| MAGNIFIER_ACTIVE) {
-	XBell(DISP, 0);
+	xdvi_bell();
 	return;
     }
 
@@ -3629,9 +3643,6 @@ Act_show_source_specials(Widget w, XEvent *event,
     int arg;
     Boolean clear_statusline = False;
     
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
 
     if (!get_int_arg(params, num_params, &arg))
@@ -3640,8 +3651,8 @@ Act_show_source_specials(Widget w, XEvent *event,
 	clear_statusline = True;
 
     if ((event->type == ButtonPress && mouse_release != null_mouse)
-	|| magnifier.win != (Window) 0) {
-	XBell(DISP, 0);
+	|| !MAGNIFIER_ACTIVE) {
+	xdvi_bell();
 	return;
     }
 
@@ -3666,9 +3677,6 @@ Act_source_what_special(Widget w, XEvent *event,
     UNUSED(params);
     UNUSED(num_params);
 
-    if (block_this_mouse_event())
-	return;
-    
     (void)XTranslateCoordinates(DISP, event->xkey.window, mane.win,
 				event->xkey.x, event->xkey.y, &my_x, &my_y, &dummy);	/* throw away last argument */
     my_x = (my_x + mane_base_x) * mane.shrinkfactor;
@@ -3683,11 +3691,17 @@ select_cb(const char *filename, void *data)
     if (filename != NULL) {
 	TRACE_FILES((stderr, "new filename: |%s|", filename));
 		
-	set_dvi_name_expand(filename);
-	current_page = 0; /* switch to first page */
-	close_old_filep();
-	globals.ev.flags |= EV_NEWDOC;
-	globals.ev.flags |= EV_PAGEHIST_INSERT;
+	if (resource.filesel_open_new_window) {
+	    /*  	    char *fname = expand_filename_append_dvi(filename); */
+	    launch_xdvi(filename, NULL);
+	}
+	else {
+	    set_dvi_name_expand(filename);
+	    current_page = 0; /* switch to first page */
+	    close_old_filep();
+	    globals.ev.flags |= EV_NEWDOC;
+	    globals.ev.flags |= EV_PAGEHIST_INSERT;
+	}
     }
 }
 
@@ -3695,25 +3709,26 @@ static void
 Act_select_dvi_file(Widget w, XEvent *event,
 		    String *params, Cardinal *num_params)
 {
-    static struct filesel_callback cb; /* static so that we can pass its address */
+    /* static so that we can pass its address */
+    static struct filesel_callback cb = {
+	NULL, NULL, "xdvik: Open File", "Open file:", "OK", "Cancel",
+	NULL, "*.dvi", True, False, NULL, NULL
+    };
     int arg = -1;
     
     UNUSED(w);
     UNUSED(event);
-
-    if (block_this_mouse_event())
-	return;
 
     if (get_int_arg(params, num_params, &arg)) { /* try item from file history */
 	char *fname;
 	int dummy_page;
 
 	if (arg < 1) {
-	    XBell(DISP, 0);
-	    statusline_print(STATUS_MEDIUM, "Error: File history number must be >= 1");
+	    xdvi_bell();
+	    statusline_info(STATUS_MEDIUM, "Error: File history number must be >= 1");
 	}
 	else if ((fname = file_history_get_elem(arg - 1, &dummy_page)) == NULL) {
-	    statusline_print(STATUS_MEDIUM, "No file number %d in history (history size: %lu)",
+	    statusline_info(STATUS_MEDIUM, "No file number %d in history (history size: %lu)",
 			     arg, (unsigned long)file_history_size());
 	}
 	else {
@@ -3722,20 +3737,13 @@ Act_select_dvi_file(Widget w, XEvent *event,
 	return;
     }
     
-    cb.title = "Xdvi: Open file";
-    cb.prompt = "Open file:";
-    cb.ok = "OK";
-    cb.cancel = "Cancel";
-    cb.init_path = NULL;
-    cb.filemask = "*.dvi";
-    cb.must_exist = True;
-    cb.exit_on_cancel = False;
-    cb.func_ptr = select_cb;
-    cb.data = NULL;
-
     file_history_set_page(current_page);
     
-    XsraSelFile(globals.widgets.top_level, &cb);
+    cb.func_ptr = select_cb;
+    cb.init_path = globals.dvi_file.dirname;
+    if (cb.shell == NULL)
+	cb.shell = XsraSelFile(globals.widgets.top_level, &cb);
+    XsraSelFilePopup(&cb);
 }
 
 /*
@@ -3774,9 +3782,6 @@ Act_set_expert_mode(Widget w, XEvent *event,
     int arg;
     Boolean clear_statusline = False;
 
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
 
@@ -3832,7 +3837,7 @@ Act_set_expert_mode(Widget w, XEvent *event,
 	break;
 #else
     case 3:
-/*  	fprintf(stderr, "sidebar\n"); */
+	/*  	fprintf(stderr, "sidebar\n"); */
 	resource.expert_mode ^= XPRT_SHOW_BUTTONS;
 	toggle_buttons();
 	update_expert_mode();
@@ -3847,7 +3852,7 @@ Act_set_expert_mode(Widget w, XEvent *event,
 	    arg > 3
 #endif
 	    ) {
-	    statusline_print(STATUS_SHORT, "Number %d too large for `set-expert-mode', using 0 (= toggle) instead.",
+	    statusline_info(STATUS_SHORT, "Number %d too large for `set-expert-mode', using 0 (= toggle) instead.",
 			     arg);
 	}
 	/* toggle all items */
@@ -3887,10 +3892,11 @@ Act_set_expert_mode(Widget w, XEvent *event,
 Boolean have_src_specials = False;
 static Boolean do_update_property = False;
 
+#ifdef USE_PANNER
 void
 handle_x_scroll(Widget w, XtPointer closure, XEvent *ev, Boolean *cont)
 {
-#ifndef MOTIF
+#if !defined(MOTIF)
     Dimension get_x = 0;
 #endif
 
@@ -3907,15 +3913,15 @@ handle_x_scroll(Widget w, XtPointer closure, XEvent *ev, Boolean *cont)
 #else
     get_xy();
     XtVaGetValues(globals.widgets.clip_widget, XtNx, &get_x, NULL);
-    m_x_scroll = get_x - window_x;
+    m_x_scroll = get_x - m_window_x;
     scroll_x_panner(m_x_scroll);
-#endif
+#endif /* MOTIF */
 }
 
 void
 handle_y_scroll(Widget w, XtPointer closure, XEvent *ev, Boolean *cont)
 {
-#ifndef MOTIF
+#if !defined(MOTIF)
     Dimension get_y = 0;
 #endif
     
@@ -3932,10 +3938,11 @@ handle_y_scroll(Widget w, XtPointer closure, XEvent *ev, Boolean *cont)
 #else
     get_xy();
     XtVaGetValues(globals.widgets.clip_widget, XtNy, &get_y, NULL);
-    m_y_scroll = get_y - window_y;
+    m_y_scroll = get_y - m_window_y;
     scroll_y_panner(m_y_scroll);
-#endif
+#endif /* MOTIF */
 }
+#endif /* USE_PANNER */
 
 void
 handle_expose(Widget w, XtPointer closure, XEvent *ev, Boolean *cont)
@@ -3961,7 +3968,6 @@ handle_expose(Widget w, XtPointer closure, XEvent *ev, Boolean *cont)
 	do_update_property = True;
     }
 
-    MYTRACE((stderr, "Expose!"));
     expose(windowrec, (&(ev->xexpose))->x, (&(ev->xexpose))->y,
 	   (unsigned int)(&(ev->xexpose))->width, (unsigned int)(&(ev->xexpose))->height);
 }
@@ -4030,18 +4036,7 @@ handle_property_change(Widget w, XtPointer junk,
 	    return;
 	}
 	set_dvi_name_expand(prop_ret);
-	/*FIXME: Here we would like to insert the first page of the new file
-	  into the page history:
-	  
-	  page_history_insert(0);
-	  
-	  However, if the commandline had been:
-	  xdvi -unique +5 file.dvi
-	  then the following property change will change to page 5 and insert
-	  page 5, so in this case two pages will be inserted by the xdvi invocation.
-	  I guess to fix this we'd need a bitmask instead of 2 atoms to set both
-	  features at the same time ...
-	*/
+
 	globals.ev.flags |= EV_NEWDOC;
     }
     else if ((&(ev->xproperty))->atom == atom_newpage()) {
@@ -4066,7 +4061,7 @@ handle_property_change(Widget w, XtPointer junk,
 	}
 
 	if (newpage == total_pages - 1) { /* as in Act_goto_page() */
-	    goto_page(check_goto_page(newpage), resource.keep_flag ? NULL : home, False);
+	    goto_page(check_goto_page(newpage, True), resource.keep_flag ? NULL : home, False);
 	    search_signal_page_changed();
 	}
 	else {
@@ -4128,6 +4123,13 @@ handle_sigalrm(int signo)
 }
 
 static RETSIGTYPE
+ignore_sigusr(int signo)
+{
+    UNUSED(signo);
+    fprintf(stderr, "IGNORE SIGUSR1!\n");
+}
+
+static RETSIGTYPE
 handle_sigusr(int signo)
 {
     UNUSED(signo);
@@ -4168,14 +4170,41 @@ setup_sigalarm(void)
  * Called from main to set up the signal handlers.
  */
 void
-setup_signal_handlers(void)
+setup_signal_handlers(Boolean early)
 {
 #ifndef FLAKY_SIGPOLL
-    int	sock_fd	= ConnectionNumber(DISP);
+    int	sock_fd	= 0;
 #endif
 #if HAVE_SIGACTION
     struct sigaction a;
 #endif
+
+    if (early) {
+#if HAVE_SIGACTION
+	a.sa_handler = ignore_sigusr;
+	(void) sigemptyset(&a.sa_mask);
+	(void) sigaddset(&a.sa_mask, SIGUSR1);
+	a.sa_flags = 0;
+	sigaction(SIGUSR1, &a, NULL);
+#else /* not HAVE_SIGACTION */
+	(void) signal(SIGUSR1, ignore_sigusr);
+#endif /* not HAVE_SIGACTION */
+
+	(void)sigemptyset(&all_signals);
+	(void)sigaddset(&all_signals, SIGUSR1);
+	return;
+    }
+
+    
+#if HAVE_SIGACTION
+    a.sa_handler = handle_sigusr;
+    (void) sigemptyset(&a.sa_mask);
+    (void) sigaddset(&a.sa_mask, SIGUSR1);
+    a.sa_flags = 0;
+    sigaction(SIGUSR1, &a, NULL);
+#else /* not HAVE_SIGACTION */
+    (void) signal(SIGUSR1, handle_sigusr);
+#endif /* not HAVE_SIGACTION */
 
 #ifndef FLAKY_SIGPOLL
 #if HAVE_SIGACTION
@@ -4192,6 +4221,7 @@ setup_signal_handlers(void)
     (void) signal(SIGPOLL, handle_sigpoll);
 #endif /* not HAVE_SIGACTION */
 
+    sock_fd = ConnectionNumber(DISP);
     prep_fd(sock_fd, False);
 #endif	/* not FLAKY_SIGPOLL */
 
@@ -4228,16 +4258,6 @@ setup_signal_handlers(void)
     sigaction(SIGCHLD, &a, NULL);
 #else /* not HAVE_SIGACTION */
     (void) signal(SIGCHLD, handle_sigchld);
-#endif /* not HAVE_SIGACTION */
-
-#if HAVE_SIGACTION
-    a.sa_handler = handle_sigusr;
-    (void) sigemptyset(&a.sa_mask);
-    (void) sigaddset(&a.sa_mask, SIGUSR1);
-    a.sa_flags = 0;
-    sigaction(SIGUSR1, &a, NULL);
-#else /* not HAVE_SIGACTION */
-    (void) signal(SIGUSR1, handle_sigusr);
 #endif /* not HAVE_SIGACTION */
 
     (void)sigemptyset(&all_signals);
@@ -4302,7 +4322,7 @@ clear_chld(struct xchild *cp)
 static void
 do_sigchld(void)
 {
-    pid_t	pid;
+    pid_t pid;
     int	status;
 
     sig_flags &= ~SF_CHLD;
@@ -4448,6 +4468,7 @@ do_sigpoll(void)
 	if (num_fds > max_fds) {
 	    if (fds != NULL) free(fds);
 	    fds = xmalloc(num_fds * sizeof *fds);
+	    memset(fds, 0, num_fds * sizeof *fds);
 	    max_fds = num_fds;
 	    fds->fd = ConnectionNumber(DISP);
 	    fds->events = POLLIN;
@@ -4475,9 +4496,9 @@ do_sigpoll(void)
     for (ip = iorecs; ip != NULL; ip = ip->next) {
 	int revents = ip->pfd->revents;
 	if (revents & POLLIN && ip->read_proc != NULL)
-	    (void)(ip->read_proc)(ip->fd);
+	    (void)(ip->read_proc)(ip->fd, ip->data);
 	if (revents & POLLOUT && ip->write_proc != NULL)
-	    (ip->write_proc)(ip->fd);
+	    (ip->write_proc)(ip->fd, ip->data);
     }
 
 # else
@@ -4506,9 +4527,9 @@ do_sigpoll(void)
 
     for (ip = iorecs; ip != NULL; ip = ip->next) {
 	if (FD_ISSET(ip->fd, &readfds) && ip->read_proc != NULL)
-	    (void)(ip->read_proc)(ip->fd);
+	    (void)(ip->read_proc)(ip->fd, ip->data);
 	if (FD_ISSET(ip->fd, &writefds) && ip->write_proc != NULL)
-	    (ip->write_proc)(ip->fd);
+	    (ip->write_proc)(ip->fd, ip->data);
     }
 
 # endif
@@ -4525,9 +4546,9 @@ do_sigpoll(void)
  */
 
 
-static	struct xtimer		*timers	= NULL;	/* head of timer list */
+static struct xtimer *timers = NULL;	/* head of timer list */
 
-static	struct itimerval	itv	= {{0, 0}, {0, 0}};
+static struct itimerval itv = {{0, 0}, {0, 0}};
 
 #ifndef	timercmp
 #define	timercmp(a, b, OP)	(((a)->tv_sec OP (b)->tv_sec || \
@@ -4586,7 +4607,7 @@ set_timer(struct xtimer *tp, int ms)
 void
 cancel_timer(struct xtimer *tp)
 {
-    struct xtimer	**tpp;
+    struct xtimer **tpp;
 
     if (globals.debug & DBG_EVENT)
 	show_timers("beginning of cancel_timer");
@@ -4601,7 +4622,6 @@ cancel_timer(struct xtimer *tp)
 
     ASSERT(timers != NULL, "timers in cancel_timer() mustn't be NULL");
     for (tpp = &timers; ; ) {		/* remove from list */
-	
 	if (*tpp == tp)
 	    break;
 	tpp = &(*tpp)->next;
@@ -4633,7 +4653,7 @@ cancel_timer(struct xtimer *tp)
  *
  */
 
-static void xt_alarm (struct xtimer *);
+static void xt_alarm(struct xtimer *this, void *data);
 
 static struct xtimer *xt_free_timers = NULL;
 
@@ -4654,12 +4674,12 @@ XtAppAddTimeOut(XtAppContext app, unsigned long interval, XtTimerCallbackProc pr
        The following doesn't work, even after
        sigaddset(&all_signals, SIGALRM);
        
-          static sigset_t sig_set;
-          (void)sigprocmask(0, NULL, &sig_set);
-	  if (sigismember(&sig_set, SIGALRM))
-	      ... OK ...
-	  else
-	      ... NOT OK ...
+       static sigset_t sig_set;
+       (void)sigprocmask(0, NULL, &sig_set);
+       if (sigismember(&sig_set, SIGALRM))
+       ... OK ...
+       else
+       ... NOT OK ...
     */
     ASSERT(sigalarm_initialized, "Shouldn't invoke XtAppAddTimeOut() before setup_sigalarm()");
     
@@ -4674,6 +4694,7 @@ XtAppAddTimeOut(XtAppContext app, unsigned long interval, XtTimerCallbackProc pr
     }
 
     tp->proc = xt_alarm;
+    tp->data = closure;
     tp->xt_proc = proc;
     tp->closure = closure;
     
@@ -4709,12 +4730,13 @@ XtRemoveTimeOut(XtIntervalId id)
 }
 
 void
-xt_alarm(struct xtimer *tp)
+xt_alarm(struct xtimer *tp, void *data)
 {
     XtIntervalId id;
+    UNUSED(data);
 
     tp->proc = NULL;	/* flag timer as used-up */
-    id = (XtIntervalId) tp;
+    id = (XtIntervalId)tp;
     (tp->xt_proc)(tp->closure, &id);
     
     tp->next = xt_free_timers;
@@ -4728,7 +4750,7 @@ xt_alarm(struct xtimer *tp)
 static	void
 do_sigalrm(void)
 {
-    struct timeval	now;
+    struct timeval now;
 
     sig_flags &= ~SF_ALRM;
 #ifndef HAVE_SIGACTION
@@ -4740,7 +4762,7 @@ do_sigalrm(void)
     while (timers != NULL && timercmp(&timers->when, &now, <=)) {
 	struct xtimer *tp = timers;
 	timers = timers->next;	/* unlink it _first_ */
-	(tp->proc)(tp);
+	(tp->proc)(tp, tp->data);
     }
 
     if (timers != NULL) {		/* set next timer */
@@ -4806,15 +4828,15 @@ do_sigterm(void)
 	    kill(cp->pid, SIGKILL);
     }
 
-     /* SU: Unlike non-k xdvi, we don't care about whether all children have been
-	killed, since processes forked via fork_process() (e.g. the web browser)
-	may still continue running. So we just exit here.
-     */
+    /* SU: Unlike non-k xdvi, we don't care about whether all children have been
+       killed, since processes forked via fork_process() (e.g. the web browser)
+       may still continue running. So we just exit here.
+    */
     xdvi_exit(EXIT_SUCCESS);
 
-    /* since xdvi_exit() may return, we mustn't do the following which
-       is in non-k xdvi, else we'll end up in a busy loop! I don't know
-       what's meant by `caller' here anyway ...
+    /* BUG ALERT: since xdvi_exit() may return (checks before writing to ~/.xdvirc),
+       we mustn't do the following which is in non-k xdvi, else we'll end up in a busy loop.
+       I don't know who the `caller' is anyway ...
 
        globals.ev.flags |= EV_TERM; /\* otherwise, let the caller handle it *\/
     */
@@ -4897,129 +4919,129 @@ read_events(unsigned int ret_mask)
 
 #endif /* not FLAKY_SIGPOLL */
 
-	    {
-		for (;;) {
-		    struct xio	*ip;
+	{
+	    for (;;) {
+		struct xio	*ip;
 
-		    if (globals.debug & DBG_EVENT)
-			fprintf(stderr, "%s:%d: (flaky) sig_flags = %d\n",
-				__FILE__, __LINE__, sig_flags);
+		if (globals.debug & DBG_EVENT)
+		    fprintf(stderr, "%s:%d: (flaky) sig_flags = %d\n",
+			    __FILE__, __LINE__, sig_flags);
+		while (sig_flags) {
+		    sigset_t oldsig;
+
+		    (void) sigprocmask(SIG_BLOCK, &all_signals, &oldsig);
+
 		    while (sig_flags) {
-			sigset_t oldsig;
-
-			(void) sigprocmask(SIG_BLOCK, &all_signals, &oldsig);
-
-			while (sig_flags) {
-			    flags_to_sigproc[sig_flags]();
-			}
-
-			(void) sigprocmask(SIG_SETMASK, &oldsig,
-					   (sigset_t *) NULL);
+			flags_to_sigproc[sig_flags]();
 		    }
 
-		    if (XtPending())
-			break;
+		    (void) sigprocmask(SIG_SETMASK, &oldsig,
+				       (sigset_t *) NULL);
+		}
 
-		    if (globals.ev.flags & ret_mask)
-			return globals.ev.flags;
+		if (XtPending())
+		    break;
 
-		    /* If a SIGUSR1 signal comes right now, then it will wait
-		       until an X event or another SIGUSR1 signal arrives. */
+		if (globals.ev.flags & ret_mask)
+		    return globals.ev.flags;
+
+		/* If a SIGUSR1 signal comes right now, then it will wait
+		   until an X event or another SIGUSR1 signal arrives. */
 
 #if HAVE_POLL
-		    if (globals.debug & DBG_EVENT)
-			fprintf(stderr, "%s:%d: have_poll!\n",
-				__FILE__, __LINE__);
-		    if (io_dirty) {
-			struct pollfd *fp;
+		if (globals.debug & DBG_EVENT)
+		    fprintf(stderr, "%s:%d: have_poll!\n",
+			    __FILE__, __LINE__);
+		if (io_dirty) {
+		    struct pollfd *fp;
 
-			if (num_fds > max_fds) {
-			    if (fds != NULL) free(fds);
-			    fds = xmalloc(num_fds * sizeof *fds);
-			    max_fds = num_fds;
-			    fds->fd = ConnectionNumber(DISP);
-			    fds->events = POLLIN;
-			}
-			fp = fds + 1;
-			for (ip = iorecs; ip != NULL; ip = ip->next) {
-			    fp->fd = ip->fd;
-			    fp->events = ip->xio_events;
-			    ip->pfd = fp;
-			    ++fp;
-			}
-			io_dirty = False;
+		    if (num_fds > max_fds) {
+			if (fds != NULL) free(fds);
+			fds = xmalloc(num_fds * sizeof *fds);
+			max_fds = num_fds;
+			fds->fd = ConnectionNumber(DISP);
+			fds->events = POLLIN;
 		    }
-
-		    for (;;) {
-			if (poll(fds, num_fds, -1) >= 0) {
-			    for (ip = iorecs; ip != NULL; ip = ip->next) {
-				int revents = ip->pfd->revents;
-
-				if (revents & POLLIN && ip->read_proc != NULL)
-				    (ip->read_proc)(ip->fd);
-				if (revents & POLLOUT && ip->write_proc != NULL)
-				    (ip->write_proc)(ip->fd);
-			    }
-			    break;
-			}
-
-			if (errno == EINTR)
-			    break;
-
-			if (errno != EAGAIN) {
-			    perror("xdvi: poll");
-			    break;
-			}
-		    }
-#else /* HAVE_POLL */
-		    if (globals.debug & DBG_EVENT)
-			fprintf(stderr, "%s:%d: NOT have_poll!\n",
-				__FILE__, __LINE__);
-		    FD_ZERO(&readfds);
-		    FD_ZERO(&writefds);
-		    FD_SET(ConnectionNumber(DISP), &readfds);
+		    fp = fds + 1;
 		    for (ip = iorecs; ip != NULL; ip = ip->next) {
-			if (ip->xio_events & XIO_IN)
-			    FD_SET(ip->fd, &readfds);
-			if (ip->xio_events & XIO_OUT)
-			    FD_SET(ip->fd, &writefds);
+			fp->fd = ip->fd;
+			fp->events = ip->xio_events;
+			ip->pfd = fp;
+			++fp;
 		    }
-
-		    for (;;) {
-			if (select(numfds, &readfds, &writefds, (fd_set *) NULL,
-				   (struct timeval *) NULL) >= 0) {
-			    for (ip = iorecs; ip != NULL; ip = ip->next) {
-				if (FD_ISSET(ip->fd, &readfds) && ip->read_proc != NULL) {
-				    if (globals.debug & DBG_EVENT)
-					fprintf(stderr, "%s:%d: reading from %d\n",
-						__FILE__, __LINE__, ip->fd);
-				    (ip->read_proc)(ip->fd);
-				}
-				if (FD_ISSET(ip->fd, &writefds) && ip->write_proc != NULL) {
-				    if (globals.debug & DBG_EVENT)
-					fprintf(stderr, "%s:%d: writing to %d\n",
-						__FILE__, __LINE__, ip->fd);
-				    (ip->write_proc)(ip->fd);
-				}
-			    }
-			    break;
-			}
-
-			if (errno == EINTR)
-			    break;
-
-			if (errno != EAGAIN) {
-			    perror("xdvi: select");
-			    break;
-			}
-		    }
-#endif /* HAVE_POLL */
+		    io_dirty = False;
 		}
+
+		for (;;) {
+		    if (poll(fds, num_fds, -1) >= 0) {
+			for (ip = iorecs; ip != NULL; ip = ip->next) {
+			    int revents = ip->pfd->revents;
+
+			    if (revents & POLLIN && ip->read_proc != NULL)
+				(ip->read_proc)(ip->fd, ip->data);
+			    if (revents & POLLOUT && ip->write_proc != NULL)
+				(ip->write_proc)(ip->fd, ip->data);
+			}
+			break;
+		    }
+
+		    if (errno == EINTR)
+			break;
+
+		    if (errno != EAGAIN) {
+			perror("xdvi: poll");
+			break;
+		    }
+		}
+#else /* HAVE_POLL */
+		if (globals.debug & DBG_EVENT)
+		    fprintf(stderr, "%s:%d: NOT have_poll!\n",
+			    __FILE__, __LINE__);
+		FD_ZERO(&readfds);
+		FD_ZERO(&writefds);
+		FD_SET(ConnectionNumber(DISP), &readfds);
+		for (ip = iorecs; ip != NULL; ip = ip->next) {
+		    if (ip->xio_events & XIO_IN)
+			FD_SET(ip->fd, &readfds);
+		    if (ip->xio_events & XIO_OUT)
+			FD_SET(ip->fd, &writefds);
+		}
+
+		for (;;) {
+		    if (select(numfds, &readfds, &writefds, (fd_set *) NULL,
+			       (struct timeval *) NULL) >= 0) {
+			for (ip = iorecs; ip != NULL; ip = ip->next) {
+			    if (FD_ISSET(ip->fd, &readfds) && ip->read_proc != NULL) {
+				if (globals.debug & DBG_EVENT)
+				    fprintf(stderr, "%s:%d: reading from %d\n",
+					    __FILE__, __LINE__, ip->fd);
+				(ip->read_proc)(ip->fd, ip->data);
+			    }
+			    if (FD_ISSET(ip->fd, &writefds) && ip->write_proc != NULL) {
+				if (globals.debug & DBG_EVENT)
+				    fprintf(stderr, "%s:%d: writing to %d\n",
+					    __FILE__, __LINE__, ip->fd);
+				(ip->write_proc)(ip->fd, ip->data);
+			    }
+			}
+			break;
+		    }
+
+		    if (errno == EINTR)
+			break;
+
+		    if (errno != EAGAIN) {
+			perror("xdvi: select");
+			break;
+		    }
+		}
+#endif /* HAVE_POLL */
 	    }
-	XtAppNextEvent(app, &event);
+	}
+	XtAppNextEvent(globals.app, &event);
 #ifdef MOTIF
 	if ((resource.expert_mode & XPRT_SHOW_TOOLBAR) != 0)
-	    TipAppHandle(app, &event);
+	    TipAppHandle(globals.app, &event);
 #endif
 
 	if (resized)
@@ -5031,8 +5053,7 @@ read_events(unsigned int ret_mask)
 	    continue;
 	}
 	else if (globals.broken_motif_event_handling &&
-		 (resource.mouse_mode == MOUSE_RULER_MODE ||
-		  resource.mouse_mode == MOUSE_TEXT_MODE)) {
+		 (globals.cursor.flags & (CURSOR_RULER | CURSOR_TEXT))) {
 	    /* In this case, Act_motion() and Act_release() are not called properly
 	     * for updating the ruler/text selection (it works with the magnifier though),
 	     * so we need to invoke them ourselves here: */
@@ -5050,7 +5071,7 @@ read_events(unsigned int ret_mask)
 	}
 #else
 	if (resource.expert_mode & XPRT_SHOW_BUTTONS)
-	    SubMenuHandleEvent(app, &event);
+	    SubMenuHandleEvent(globals.app, &event);
 #endif
 	XtDispatchEvent(&event);
     }
@@ -5098,9 +5119,9 @@ redraw(struct WindowRec *windowrec)
     /* can't use ev_cursor here, since the event loop might not see this change quick enough */
     if (!(globals.ev.flags & EV_CURSOR)) {
 	TRACE_EVENTS((stderr, "Cursor: %ld", globals.cursor.flags));
-	if (!(globals.cursor.flags & (CURSOR_DRAG_H | CURSOR_DRAG_V | CURSOR_DRAG_A))) {
-	    if (resource.mouse_mode == MOUSE_RULER_MODE)
-		XDefineCursor(DISP, CURSORWIN, globals.cursor.rule);
+	if (!(globals.cursor.flags & (CURSOR_MAG | CURSOR_DRAG_H | CURSOR_DRAG_V | CURSOR_DRAG_A))) {
+	    if (resource.mouse_mode == MOUSE_MODE3)
+		XDefineCursor(DISP, CURSORWIN, globals.cursor.mode3);
 	    else
 		XDefineCursor(DISP, CURSORWIN, globals.cursor.wait);
 	    XFlush(DISP);
@@ -5227,8 +5248,8 @@ redraw_page(void)
 #if MOTIF && !FIXED_FLUSHING_PAGING
 	XtVaSetValues(XtParent(globals.widgets.draw_widget), XtNbackground, bg_current->pixel, NULL);
 #endif
-/* 	XSetWindowBackground(DISP, mane.win, bg_current->pixel); */
-/*  	XClearWindow(DISP, mane.win); */
+	/* 	XSetWindowBackground(DISP, mane.win, bg_current->pixel); */
+	/*  	XClearWindow(DISP, mane.win); */
 #if 0 /* don't recolor the cursor - gives too low contrast on color backgrounds,
 	 and bad appearance when part of the background is white and cursor mask
 	 is colored */
@@ -5254,13 +5275,13 @@ redraw_page(void)
     }
     else {
 	get_xy();
-	mane.min_x = -window_x;
-	mane.max_x = -window_x + mane.width;
-	mane.min_y = -window_y;
-	mane.max_y = -window_y + mane.height;
+	mane.min_x = -m_window_x;
+	mane.max_x = -m_window_x + mane.width;
+	mane.min_y = -m_window_y;
+	mane.max_y = -m_window_y + mane.height;
     }
 
-/*      update_TOC(); */
+    /*      update_TOC(); */
     redraw(&mane);
 }
 
@@ -5305,7 +5326,11 @@ do_pages(void)
 		    dviErrFlagT errflag;
 
 		    globals.ev.flags &= ~EV_RELOAD;
-		    if (load_dvi_file(True, &errflag)) {
+		    if (load_dvi_file(
+#if !DELAYED_MKTEXPK
+				      True,
+#endif
+				      &errflag)) {
 #if PS
 			ps_clear_cache();
 #if PS_GS
@@ -5316,22 +5341,26 @@ do_pages(void)
 			}
 #endif
 #endif
-			statusline_print(STATUS_SHORT, "File reloaded.");
+			statusline_info(STATUS_SHORT, "File reloaded.");
 		    }
-/* 		    else { */
-/* 			statusline_print(STATUS_MEDIUM, "File corrupted, not reloading."); */
-/* 		    } */
+		    /* 		    else { */
+		    /* 			statusline_info(STATUS_MEDIUM, "File corrupted, not reloading."); */
+		    /* 		    } */
 		}
 		if (globals.ev.flags & EV_NEWDOC) {
 		    dviErrFlagT errflag;
 		    TRACE_EVENTS((stderr, "EV_NEWDOC!"));
-/*  		    fprintf(stderr, "newdoc!\n"); */
+		    /*  		    fprintf(stderr, "newdoc!\n"); */
 		    TRACE_FILES((stderr, "current page: %d", current_page));
-/*  		    file_history_set_page(current_page); */
+		    /*  		    file_history_set_page(current_page); */
 		    globals.ev.flags &= ~EV_NEWDOC;
-		    if (load_dvi_file(True, &errflag)) {
+		    if (load_dvi_file(
+#if !DELAYED_MKTEXPK
+				      True,
+#endif
+				      &errflag)) {
 			statusline_append(STATUS_SHORT, "Opened ", "Opened \"%s\"", globals.dvi_name);
-/* 			statusline_print(STATUS_SHORT, "Opened \"%s\"", globals.dvi_name); */
+			/* 			statusline_info(STATUS_SHORT, "Opened \"%s\"", globals.dvi_name); */
 			TRACE_FILES((stderr, "Adding to history: |%s|\n", globals.dvi_name));
 			if (file_history_push(globals.dvi_name)) { /* it's a new file, add to history */
 			    TRACE_FILES((stderr, "New entry!"));
@@ -5363,10 +5392,17 @@ do_pages(void)
 		    (void)dvi_file_changed();
 		}
 	    }
+	    else if (globals.ev.flags & EV_PAGEHIST_GOTO_PAGE) {
+		int pageno;
+		globals.ev.flags &= ~EV_PAGEHIST_GOTO_PAGE;
+		pageno = check_goto_page(page_history_get_page(), False);
+		goto_page(pageno, resource.keep_flag ? NULL : home, False);
+		TRACE_FILES((stderr, "got page: %d", pageno));
+	    }
 	    else if (globals.ev.flags & EV_FILEHIST_GOTO_PAGE) {
 		int pageno;
 		globals.ev.flags &= ~EV_FILEHIST_GOTO_PAGE;
-		pageno = check_goto_page(file_history_get_page());
+		pageno = check_goto_page(file_history_get_page(), True);
 		goto_page(pageno, resource.keep_flag ? NULL : home, False);
 		TRACE_FILES((stderr, "got page: %d", pageno));
 	    }
@@ -5394,6 +5430,16 @@ do_pages(void)
 		    continue;
 		
 		anchor_search(g_anchor_pos);
+		
+		/* added, otherwise anchors on same page may not be drawn */
+		/* NOTE: This caused a crash when clicking on link "Langer" on p3 of diss.dvi
+		   since the color stack wasn't allocated for the target pages. Removed for the
+		   time being, since I can't reproduce the problem for which it was introduced.
+		   CVS commit message was:
+		   "fix anchor drawing for other window"
+		*/
+		/* redraw(&mane);  */
+		
 		globals.ev.flags &= ~EV_ANCHOR;
 	    }
 	    else if (globals.ev.flags & EV_SRC) {
@@ -5444,14 +5490,14 @@ do_pages(void)
 		globals.ev.flags &= ~EV_FIND;
 	    }
 	    else if (globals.ev.flags & EV_MAG_MOVE) {
-		MYTRACE((stderr, "moving mag!"));
+		MYTRACE((stderr, "moving mag!\n"));
 		move_magnifier();
 	    }
 	    else if (globals.ev.flags & EV_EXPOSE) {
 		if (magnifier.min_x < MAXDIM) {
-/*  		    fprintf(stderr, "magnifier < maxdim!\n"); */
+		    /*  		    fprintf(stderr, "magnifier < maxdim!\n"); */
 		    if (mane.min_x >= MAXDIM) {
-/*  			fprintf(stderr, "mane >= maxdim!\n"); */
+			/*  			fprintf(stderr, "mane >= maxdim!\n"); */
 			globals.ev.flags &= ~EV_EXPOSE;
 		    }
 		    redraw(&magnifier);
@@ -5480,20 +5526,20 @@ do_pages(void)
 			curr = globals.cursor.drag_h;
 		    else if (globals.cursor.flags & CURSOR_DRAG_A)
 			curr = globals.cursor.drag_a;
-		    else if (resource.mouse_mode == MOUSE_RULER_MODE)
-			curr = globals.cursor.rule;
-		    else if (resource.mouse_mode == MOUSE_TEXT_MODE && !(globals.cursor.flags & CURSOR_LINK))
-			curr = globals.cursor.text;
+		    else if (resource.mouse_mode == MOUSE_MODE3)
+			curr = globals.cursor.mode3;
+		    else if (resource.mouse_mode == MOUSE_MODE2)
+			curr = globals.cursor.mode2;
 		    else if (globals.cursor.flags & CURSOR_LINK)
 			curr = globals.cursor.link;
 		    else if (globals.cursor.flags & CURSOR_MAG)
-			curr = globals.cursor.mag;
+			curr = globals.cursor.empty;
 		    else if (globals.cursor.flags & CURSOR_CORRUPTED)
 			curr = globals.cursor.corrupted;
 		    else if (globals.pausing.flag)
 			curr = globals.cursor.pause;
 		    else
-			curr = globals.cursor.ready;
+			curr = globals.cursor.mode1;
 		    XDefineCursor(DISP, CURSORWIN, curr);
 		    globals.ev.flags &= ~EV_CURSOR;
 		}
@@ -5507,9 +5553,6 @@ static void
 Act_unpause_or_next(Widget w, XEvent *event,
 		    String *params, Cardinal *num_params)
 {
-    if (block_this_mouse_event())
-	return;
-    
     if (globals.pausing.flag) {
         globals.pausing.num++;
 	if (globals.pausing.num_save)
@@ -5543,7 +5586,7 @@ watch_file_cb(XtPointer client_data, XtIntervalId *id)
 	}
 
 	watch_time_ms = (unsigned long)(resource.watch_file * 1000);
-	timer = XtAppAddTimeOut(app, watch_time_ms, watch_file_cb, (XtPointer)NULL);
+	timer = XtAppAddTimeOut(globals.app, watch_time_ms, watch_file_cb, (XtPointer)NULL);
     }
 }
 
@@ -5551,9 +5594,6 @@ void Act_pagehistory_back(Widget w, XEvent *event, String *params, Cardinal *num
 {
     int arg;
 
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
 
@@ -5567,9 +5607,6 @@ void Act_pagehistory_forward(Widget w, XEvent *event, String *params, Cardinal *
 {
     int arg;
 
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
 
@@ -5586,9 +5623,6 @@ void Act_pagehistory_clear(Widget w, XEvent *event, String *params, Cardinal *nu
     UNUSED(params);
     UNUSED(num_params);
 
-    if (block_this_mouse_event())
-	return;
-    
     page_history_clear();
 }
 
@@ -5596,9 +5630,6 @@ void Act_pagehistory_delete_backward(Widget w, XEvent *event, String *params, Ca
 {
     int arg;
 
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
 
@@ -5612,9 +5643,6 @@ void Act_pagehistory_delete_forward(Widget w, XEvent *event, String *params, Car
 {
     int arg;
 
-    if (block_this_mouse_event())
-	return;
-    
     UNUSED(w);
     UNUSED(event);
 
@@ -5628,9 +5656,6 @@ void Act_pagehistory_delete_forward(Widget w, XEvent *event, String *params, Car
 void Act_prefs_dialog(Widget w, XEvent *event, String *params, Cardinal *num_params)
 {
     int arg;
-    
-    if (block_this_mouse_event())
-	return;
     
     UNUSED(w);
     UNUSED(event);
