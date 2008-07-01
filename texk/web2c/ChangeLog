@@ -1,3 +1,8 @@
+2008-07-01  Karl Berry  <karl@tug.org>
+
+	* texmfmp-help.h [MP] (MPHELP): mpost is usually named mpost,
+	not mp.
+
 2008-06-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* help.h (CTANGLEHELP): Correct syntax for ctangle usage.

@@ -249,7 +249,7 @@ const_string MPHELP[] = {
     "  after MPNAME is read.",
     "  If the first line of MPNAME is %&MEM, and MEM is an existing .mem file,",
     "  use it.  Else use `NAME.mem', where NAME is the program invocation name,",
-    "  most commonly `mp'.",
+    "  most commonly `mpost'.",
     "",
     "  Alternatively, if the first non-option argument begins with a backslash,",
     "  interpret all non-option arguments as a line of MetaPost input.",
