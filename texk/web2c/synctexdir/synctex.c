@@ -81,7 +81,7 @@ If you include or use a significant part of the synctex package into a software,
 I would appreciate to be listed as contributor and see "SyncTeX" highlighted.
 
 Version 1
-Thu Jun 19 09:39:21 UTC 2008
+Tue Jul 1 15:23:00 UTC 2008
 
 */
 
@@ -302,8 +302,7 @@ void synctexinitcommand(void)
 }
 
 /*  Free all memory used and close the file,
- *  sent by close_files_and_terminate in tex.web
- *  It is also sent locally when there is a problem with synctex output. */
+ *  It is sent locally when there is a problem with synctex output. */
 void synctex_abort(void)
 {
 	SYNCTEX_RETURN_IF_DISABLED;
@@ -544,6 +543,10 @@ void synctexterminate(boolean log_opened)
 		remove(the_real_syncname);
 		strcat(the_real_syncname, synctex_suffix_gz);
 	}
+	/* allways remove the synctex output file before renaming it, windows requires it. */
+	if(0 != remove(the_real_syncname) && errno == EACCES) {
+		fprintf(stderr,"SyncTeX: Can't remove %s (file is open or read only)\n",the_real_syncname);		
+	}
     if (SYNCTEX_FILE) {
 		if (SYNCTEX_NOT_VOID) {
 			synctex_record_postamble();
@@ -554,8 +557,13 @@ void synctexterminate(boolean log_opened)
 				gzclose((gzFile)SYNCTEX_FILE);
 			}
 			/*  renaming the working synctex file */
-			if((0 == rename(synctex_ctxt.busy_name,the_real_syncname)) && log_opened) {
-				printf("\nSyncTeX written on %s",the_real_syncname); /* SyncTeX also refers to the contents */
+			if(0 == rename(synctex_ctxt.busy_name,the_real_syncname)) {
+				if(log_opened) {
+					printf("\nSyncTeX written on %s",the_real_syncname); /* SyncTeX also refers to the contents */
+				}
+			} else {
+				fprintf(stderr,"SyncTeX: Can't rename %s to %s\n",synctex_ctxt.busy_name,the_real_syncname);
+				remove(synctex_ctxt.busy_name);
 			}
 		} else {
 			/* close and remove the synctex file because there are no pages of output */
@@ -565,11 +573,8 @@ void synctexterminate(boolean log_opened)
 				gzclose((gzFile)SYNCTEX_FILE);
 			}
 			remove(synctex_ctxt.busy_name);
-			remove(the_real_syncname);
 		}
 		SYNCTEX_FILE = NULL;
-	} else {
-		remove(the_real_syncname);
 	}
 	if (SYNCTEX_NO_GZ) {
 		/*  Remove any compressed synctex file, from a previous build. */
