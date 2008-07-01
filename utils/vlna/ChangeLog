@@ -1,4 +1,9 @@
-2008-06-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2008-07-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* vlna.dvi: new version from Zdenek, keep it here because it is
+	required for 'make dist (copy in Master/texmf/doc/vlna/).
+
+2008-06-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* README.en (new): from Zdenek Wagner, fixed a few typos.
 	* vlna.w: Ensure charset parameter for '-v'.
