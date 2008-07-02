@@ -1,5 +1,7 @@
 2008-07-02  Karl Berry  <karl@tug.org>
 
+	* mktexlsr: doc fix.
+
 	* kpathsea.texi (Path searching options): mention --engine=/ trick.
 
 2008-06-16  Karl Berry  <karl@tug.org>

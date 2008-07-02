@@ -86,7 +86,7 @@ while test $# -gt 0; do
     exit 1
   else
     test -d "$1" || echo "$progname: $1 not a directory." >&2
-    trees="$trees $1"  # don't want to update update system dirs
+    trees="$trees $1"  # don't want to update system dirs
   fi
   shift
 done
