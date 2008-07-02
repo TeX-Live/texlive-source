@@ -247,16 +247,20 @@ TEXDOCSSUFFIX   = ;.pdf;.ps;.dvi;.html;.txt;.tex
 TEXDOCSCOMPRESS = ;.gz;.bz2;.zip;.Z
 TEXDOCEXT       = {$TEXDOCSSUFFIX}{$TEXDOCSCOMPRESS}
 
-% Dump files (fmt/base/mem) for vir{tex,mf,mp} to read (see
-% web2c/INSTALL), and string pools (.pool) for ini{tex,mf,mp}.  It is
-% painful that we have six paths and directories here (they all resolve
-% to a single place by default), but historically ...
+% Dump files (fmt/base/mem) for vir{tex,mf,mp} to read.
+% We want to find the engine-specific file, e.g., cont-en.fmt can
+% exist under both pdftex/ and xetex/.  But just in case some formats
+% end up without an engine directory, look directly in web2c/ too.
 TEXFORMATS = .;$TEXMF/web2c{/$engine,}
-MFBASES = .;$TEXMF/web2c{/$engine,}
-MPMEMS = .;$TEXMF/web2c{/$engine,}
+MFBASES = ${TEXFORMATS}
+MPMEMS = ${TEXFORMATS}
+%
+% As of 2008, pool files don't exist any more (the strings are compiled
+% into the binaries), but just in case something expects to find these
+% settings.
 TEXPOOL = .;$TEXMF/web2c
-MFPOOL = .;$TEXMF/web2c
-MPPOOL = .;$TEXMF/web2c
+MFPOOL = ${TEXPOOL}
+MPPOOL = ${TEXPOOL}
 
 % support the original xdvi.  Must come before the generic settings.
 PKFONTS.XDvi   = .;$TEXMF/%s;$VARTEXFONTS/pk/{%m,modeless}//
