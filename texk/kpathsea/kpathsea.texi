@@ -1093,7 +1093,12 @@ Dvips.  Default is 600.
 @cindex engine name
 Set the engine name to @var{name}.  By default it is not set.  The
 engine name is used in some search paths to allow files with the same
-name but used by different engines to coexist.
+name but used by different engines to coexist.  In particular, since
+the memory dump files (@file{.fmt}/@file{.base}/@file{.mem}) are now
+stored in subdirectories named for the engine (@file{tex},
+@file{pdftex}, @file{xetex}, etc.), you must specify an engine name in
+order to find them.  You can use @samp{--engine=/} if you are a format
+exists for only one engine and you don't care what it is.
 
 @item --format=@var{name}
 @opindex --format=@var{name}

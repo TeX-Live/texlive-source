@@ -1,3 +1,7 @@
+2008-07-02  Karl Berry  <karl@tug.org>
+
+	* kpathsea.texi (Path searching options): mention --engine=/ trick.
+
 2008-06-16  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXMFDOC): new var.
