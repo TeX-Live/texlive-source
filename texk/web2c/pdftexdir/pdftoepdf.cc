@@ -958,9 +958,37 @@ void write_epdf(void)
     // write the page contents
     page->getContents(&contents);
     if (contents->isStream()) {
-        initDictFromDict(obj1, contents->streamGetDict());
-        contents->streamGetDict()->incRef();
-        copyDict(&obj1);
+
+        // Variant A: get stream and recompress under control
+        // of \pdfcompresslevel
+        //
+        // pdfbeginstream();
+        // copyStream(contents->getStream());
+        // pdfendstream();
+
+        // Variant B: copy stream without recompressing
+        //
+        contents->streamGetDict()->lookup("F", &obj1);
+        if (!obj1->isNull()) {
+            pdftex_fail("PDF inclusion: Unsupported external stream");
+        }
+        contents->streamGetDict()->lookup("Length", &obj1);
+        assert(!obj1->isNull());
+        pdf_puts("/Length ");
+        copyObject(&obj1);
+        pdf_puts("\n");
+        contents->streamGetDict()->lookup("Filter", &obj1);
+        if (!obj1->isNull()) {
+            pdf_puts("/Filter ");
+            copyObject(&obj1);
+            pdf_puts("\n");
+            contents->streamGetDict()->lookup("DecodeParms", &obj1);
+            if (!obj1->isNull()) {
+                pdf_puts("/DecodeParms ");
+                copyObject(&obj1);
+                pdf_puts("\n");
+            }
+        }
         pdf_puts(">>\nstream\n");
         copyStream(contents->getStream()->getUndecodedStream());
         pdfendstream();

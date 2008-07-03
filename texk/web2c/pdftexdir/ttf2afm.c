@@ -117,7 +117,7 @@ TTF_USHORT ntabs;
 int nhmtx;
 int post_format;
 int loca_format;
-int nglyphs;
+long nglyphs;
 int nkernpairs = 0;
 int names_count = 0;
 char *ps_glyphs_buf = NULL;
@@ -533,8 +533,13 @@ void read_font()
         ttf_fail("unsupported format (%.8X) of `post' table", post_format);
     }
     ttf_seek_tab("loca", 0);
-    for (pm = mtx_tab; pm - mtx_tab < nglyphs + 1; pm++)
-        pm->offset = (loca_format == 1 ? get_ulong() : get_ushort() << 1);
+    if (loca_format == 1) {
+        for (pm = mtx_tab; pm - mtx_tab < nglyphs + 1; pm++)
+            pm->offset = get_ulong();
+    } else {
+        for (pm = mtx_tab; pm - mtx_tab < nglyphs + 1; pm++)
+            pm->offset = get_ushort() << 1;
+    }
     if ((pd = name_lookup("glyf")) == NULL)
         ttf_fail("can't find table `glyf'");
     for (n = pd->offset, pm = mtx_tab; pm - mtx_tab < nglyphs; pm++) {
@@ -748,7 +753,7 @@ void print_afm(char *date, char *fontname)
 {
     int ncharmetrics;
     mtx_entry *pm;
-    short mtx_index[256], *idx;
+    long mtx_index[256], *idx;
     unsigned int index;
     char **pe;
     kern_entry *pk, *qk;
@@ -804,7 +809,7 @@ void print_afm(char *date, char *fontname)
             }
             /* scan form `index123' */
             if (sscanf(*pe, GLYPH_PREFIX_INDEX "%u", &index) == 1) {
-                if (index >= nglyphs)
+                if (index >= (unsigned int) nglyphs)
                     ttf_fail("`%s' out of valid range [0..%i)", *pe, nglyphs);
                 pm = mtx_tab + index;
                 mtx_index[pe - enc_names] = pm - mtx_tab;
