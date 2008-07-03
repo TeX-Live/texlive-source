@@ -1,5 +1,5 @@
-/*  $Id: devnag.c,v 1.12 2006/06/08 12:51:59 icebearsoft Exp $
-    Version 2.14
+/*  $Id: devnag.c,v 1.15 2008-03-09 15:57:59 icebearsoft Exp $
+    Version 2.15
 
  *
  Preprocessor for Devanagari for TeX package
@@ -8,7 +8,7 @@
  Author   : Frans J. Velthuis <velthuis@rc.rug.nl>
  Date     : 09 May 1991
  *
- The maintainer of this program is now Zdenek Wagner <wagner@cesnet.cz>.
+ The maintainer of this program is now Zdenek Wagner <zdenek.wagner@gmail.com>.
  *
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -150,7 +150,7 @@
  \3XXw because it is more robust. It puts a definition
  of \DevnagVersion at the beginning of the output file so
  that the new preprocessed files can be automatically recognized
- (Z. Wagner, wagner@cesnet.cz, http://icebearsoft.euweb.cz).
+ (Z. Wagner, zdenek.wagner@gmail.com, http://icebearsoft.euweb.cz).
  This version also defines a new preprodessor directive
  @modernhindi, which functions in the same way as @hindi but
  uses far fewer Sanskrit-style ligatures, preferring conjuncts
@@ -267,7 +267,17 @@
  preprocessor runs.
 */
 
-char *version = "2.14";
+/*
+ Modifications in version 2.15:
+
+ \def\DevnagVersion is inserted at the beginning of the second line
+ if the first line starts with %&
+
+ Error and warning messages written to stderr instead of stdout
+ (requested by Karl Berry)
+*/
+
+char *version = "2.15";
 
 #include <stdio.h>
 #include <ctype.h>
@@ -348,7 +358,7 @@ char *banner =
 "Preprocessor for Devanagari for TeX package\n\
 Copyright (C) 1991-1998  University of Groningen, The Netherlands\n\
 Author     : Frans J. Velthuis <velthuis@rc.rug.nl>\n\
-Maintainer : Zdenek Wagner <wagner@cesnet.cz>";
+Maintainer : Zdenek Wagner <zdenek.wagner@gmail.com>";
 
 /* Function declarations */
 int main(int argc, char **argv);
@@ -1256,7 +1266,7 @@ char ignore(void) {
 int main(int argc, char **argv) {
    char *s_ptr;
    int i;
-   unsigned char dn_yes;
+   unsigned char dn_yes, start_file;
 
    /* if invoked with "-v", print banner and exit */
 
@@ -1290,7 +1300,7 @@ int main(int argc, char **argv) {
    }
    /* Check the source file extension */
    if (strcasecmp(infil+strlen(infil)-strlen(DEFAULT_DEST_EXT), DEFAULT_DEST_EXT) == 0) {
-      printf("source file extension %s is forbidden\n", DEFAULT_DEST_EXT);
+      fprintf(stderr, "source file extension %s is forbidden\n", DEFAULT_DEST_EXT);
       exit(1);
    }
    s_ptr = infil+strlen(infil)-strlen(DEFAULT_SRC_EXT);
@@ -1305,8 +1315,8 @@ int main(int argc, char **argv) {
       f_in = fopen(infil, "rb");
    }
    if (!f_in) {
-      if (s_ptr) printf("cannot open file %s\n", infil);
-      else printf("cannot open either %s or %s%s\n", infil, infil, DEFAULT_SRC_EXT);
+      if (s_ptr) fprintf(stderr, "cannot open file %s\n", infil);
+      else fprintf(stderr, "cannot open either %s or %s%s\n", infil, infil, DEFAULT_SRC_EXT);
       exit(1);
    }
 
@@ -1320,14 +1330,14 @@ int main(int argc, char **argv) {
    } else {
       if (strcasecmp(outfil+strlen(outfil)-strlen(DEFAULT_SRC_EXT), DEFAULT_SRC_EXT) == 0) {
          fclose(f_in);
-         printf("destination file extension %s is forbidden\n", DEFAULT_SRC_EXT);
+         fprintf(stderr, "destination file extension %s is forbidden\n", DEFAULT_SRC_EXT);
          exit(1);
       }
       if (strcasecmp(infil, outfil) == 0) strcat(outfil, DEFAULT_DEST_EXT);
    }
    if ((f_out = fopen(outfil, "w")) == NULL) {
       fclose(f_in);
-      printf("cannot open %s for output\n", outfil);
+      fprintf(stderr, "cannot open %s for output\n", outfil);
       exit(1);
    }
 
@@ -1346,6 +1356,7 @@ int main(int argc, char **argv) {
    do_vconjuncts = FALSE;
    tabs_mode = FALSE;                      /* Marc Csernel */
    lig_block = FALSE;                      /* Kevin Carmody */
+   start_file = TRUE;
 
    chr_idx = 0;
    n_halves = 0;                           /* Kevin Carmody */
@@ -1354,12 +1365,17 @@ int main(int argc, char **argv) {
    *outbuf = '\0';
    linenumber = 1;
 
-   fprintf(f_out, "\\def\\DevnagVersion{%s}", version);
 
    /* main loop */
 
    do {
       p_in = fgetline(inbuf, MAXBUF, f_in);
+      if (start_file) {
+         if (inbuf[0] != '%' || inbuf[1] != '&') {
+            fprintf(f_out, "\\def\\DevnagVersion{%s}", version);
+            start_file = FALSE;
+          }
+      }
 
       /* read preprocessor commands */
 
@@ -1499,8 +1515,8 @@ int main(int argc, char **argv) {
 	       break;
 	    }
 
-	    printf("Warning: possible illegal preprocessor command at line ");
-	    printf("%d:\n%s", linenumber, inbuf);
+	    fprintf(stderr, "Warning: possible illegal preprocessor command at line ");
+	    fprintf(stderr, "%d:\n%s", linenumber, inbuf);
 	    fprintf(f_out, "%s", inbuf);
 	    linenumber++;
 	    break;
@@ -1776,7 +1792,7 @@ void dnproc(void) {
 	 err_ill('\0');
 	 break;
        case end_of_file:
-	 puts("Error: missing }");
+	 fputs("Error: missing }", stderr);
 	 exit(1);
        default:
     if (symbol < 0) err_ill('\0');  /* accented character inside dn mode */
@@ -2109,7 +2125,7 @@ void put_ch(short code) {
 		     if (code == '&') {
 			if(!tabs_mode) {
 			   if  (!cons_seen) {
-			      printf("Error: tabs_mode not selected\n");
+			      fprintf(stderr, "Error: tabs_mode not selected\n");
 			      err_ill("&");
 			   }
 			   else {
@@ -2226,7 +2242,7 @@ void put_ch(short code) {
  */
 void sendchar(char c) {
    int i = strlen(word);
-   word[i] = c;
+   word[i] = c == end_of_line ? '\n' : c;
    word[i+1] = '\0';
    if (isspace(c)) put_word();
 }
@@ -2378,9 +2394,9 @@ void put_macro(short macro) {
  * Exit with error message in the case of illegal input.
  */
 void err_ill(char *str) {
-   printf("Error: illegal character(s) \"%s\" detected at line %d:\n",
+   fprintf(stderr, "Error: illegal character(s) \"%s\" detected at line %d:\n",
 	  str, linenumber);
-   printf(inbuf);
+   fprintf(stderr, inbuf);
    exit(1);
 }
 
