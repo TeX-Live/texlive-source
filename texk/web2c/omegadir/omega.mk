@@ -5,9 +5,9 @@
 Makefile: omegadir/omega.mk
 
 omegafonts_programs = @OMEGA@ omegafonts/omfonts
-otps_programs = otps/otp2ocp otps/outocp
+otps_programs = @OMEGA@ otps/otp2ocp otps/outocp
 omegafonts = @OMEGA@ omegafonts
-otps = otps
+otps = @OMEGA@ otps
 
 odvicopy = odvicopy
 odvitype = odvitype
