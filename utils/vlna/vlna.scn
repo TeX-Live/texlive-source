@@ -1,0 +1,42 @@
+\I\X4, 7, 15, 16, 20, 25, 33:Globální deklarace\X
+\U1.
+\I\X3:Hlavièkové soubory k naètení\X
+\U1.
+\I\X5:Hlavní program\X
+\U1.
+\I\X21, 34, 37, 39, 40, 43, 46, 48, 50, 54:Inicializace datových struktur\X
+\U5.
+\I\X27, 35:Inicializace promìnných pøi startu funkce \PB{\\{tie}}\X
+\U26.
+\I\X9:Lokální promìnné funkce \PB{\\{main}}\X
+\U5.
+\I\X8:Naètení parametrù pøíkazového øádku\X
+\U5.
+\I\X30:Otevøi nové patterny\X
+\U26.
+\I\X14:Pøejmenuj vstup \PB{\\{argv}[\T{0}]} na \PB{\\{backup}} a otevøi jej
+jako \PB{\\{infile}}\X
+\U13.
+\I\X6, 10, 17, 18, 19, 22, 23, 36, 38, 41, 42, 44, 45, 47, 49, 51, 52, 53,
+55:Pomocné funkce\X
+\U1.
+\I\X29:Projdi otevøené patterny\X
+\U26.
+\I\X32:Tiskni závìreènou zprávu\X
+\U26.
+\I\X26:Vlnkovací funkce \PB{\\{tie}}\X
+\U1.
+\I\X24:Vra» hodnotu podle následující pozice patternu\X
+\U23.
+\I\X28:Vyprázdni buffer\X
+\U26.
+\I\X31:Vytvoø ukazatel na nový pattern a \PB{\&{break}}\X
+\U30.
+\I\X11:Zpracování souborù\X
+\Q6.
+\U5.
+\I\X13:Zpracování v¹ech souborù pøíkazové øádky\X
+\U11.
+\I\X12:Zpracování v re¾imu filter\X
+\U11.
+

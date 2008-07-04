@@ -1,3 +1,9 @@
+2008-07-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* vlna.idx, vlna.scn (new): Add these files required to build
+	  vlna.dvi.
+	* Makefile.am: Rules to (re-)build vlna.idx and vlna.scn.
+
 2008-07-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* vlna.dvi: new version from Zdenek, keep it here because it is
