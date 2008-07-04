@@ -12,7 +12,7 @@ DOCS = README README.en vlna.txt
 
 EXTRA_DIST = $(CWEB_SRC) $(CSMAC) $(CWEB_TEX) $(CWEB_DVI) $(DOCS)
 
-CLEANFILES = vlna.loc vlna.toc
+CLEANFILES = vlna.log vlna.toc
 
 vlna.dvi: vlna.tex vlna.idx vlna.scn
 	TEXINPUTS=.:$(srcdir):$$TEXINPUTS $(CSPLAIN) vlna.tex
