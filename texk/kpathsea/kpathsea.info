@@ -2664,12 +2664,16 @@ filename, and returns the first file found.
 `--engine=NAME'
      Set the engine name to NAME.  By default it is not set.  The
      engine name is used in some search paths to allow files with the
-     same name but used by different engines to coexist.  In
-     particular, since the memory dump files (`.fmt'/`.base'/`.mem')
+     same name but used by different engines to coexist.
+
+     In particular, since the memory dump files (`.fmt'/`.base'/`.mem')
      are now stored in subdirectories named for the engine (`tex',
      `pdftex', `xetex', etc.), you must specify an engine name in order
-     to find them.  You can use `--engine=/' if you are a format exists
-     for only one engine and you don't care what it is.
+     to find them.  For example, `cont-en.fmt' typically exists for both
+     `pdftex' and `xetex'.  You can use `--engine=/' to look for any
+     dump file, regardless of engine; if a dump file exists for more
+     than one engine, it's indeterminate which one is returned.  (The
+     `/' ends up specifying a normal recursive search in `texmf/web2c'.)
 
 `--format=NAME'
      Set the format for lookup to NAME.  By default, the format is
@@ -3668,23 +3672,23 @@ Index
 * --expand-path=STRING:                  Auxiliary tasks.     (line  24)
 * --expand-var=STRING:                   Auxiliary tasks.     (line  19)
 * --format=NAME:                         Path searching options.
-                                                              (line  32)
+                                                              (line  36)
 * --help:                                Standard options.    (line   8)
 * --interactive:                         Path searching options.
-                                                              (line 100)
+                                                              (line 104)
 * --mode=STRING:                         Path searching options.
-                                                              (line 111)
+                                                              (line 115)
 * --must-exist:                          Path searching options.
-                                                              (line 116)
+                                                              (line 120)
 * --path=STRING:                         Path searching options.
-                                                              (line 121)
+                                                              (line 125)
 * --progname=NAME:                       Path searching options.
-                                                              (line 130)
+                                                              (line 134)
 * --show-path=NAME:                      Auxiliary tasks.     (line  41)
 * --srcdir, for building multiple architectures: configure scenarios.
                                                               (line  18)
 * --subdir=STRING:                       Path searching options.
-                                                              (line 135)
+                                                              (line 139)
 * --var-value=VARIABLE:                  Auxiliary tasks.     (line  12)
 * --version:                             Standard options.    (line  10)
 * --with options:                        configure options.   (line  16)
@@ -3705,9 +3709,9 @@ Index
 * -g, compiling without:                 configure scenarios. (line  32)
 * -L option to ls:                       ls-R.                (line  38)
 * -mktex=FILETYPE:                       Path searching options.
-                                                              (line 105)
+                                                              (line 109)
 * -no-mktex=FILETYPE:                    Path searching options.
-                                                              (line 105)
+                                                              (line 109)
 * -O, compiling with:                    configure scenarios. (line  32)
 * -static:                               ShellWidgetClass.    (line  43)
 * . directories, ignored:                ls-R.                (line  33)
@@ -4169,7 +4173,7 @@ Index
 * installation, simple:                  Simple installation. (line   6)
 * installing files:                      Installing files.    (line   6)
 * interactive query:                     Path searching options.
-                                                              (line 100)
+                                                              (line 104)
 * interface, not frozen:                 Introduction.        (line  27)
 * introduction:                          Introduction.        (line   6)
 * kdebug::                               Debugging.           (line 105)
@@ -4826,22 +4830,22 @@ Node: Filename aliases106701
 Node: Database format107879
 Node: Invoking kpsewhich108892
 Node: Path searching options109837
-Node: Specially-recognized files116530
-Node: Auxiliary tasks117854
-Node: Standard options119679
-Node: TeX support119999
-Node: Supported file formats121290
-Node: File lookup128438
-Node: Glyph lookup130166
-Node: Basic glyph lookup131293
-Node: Fontmap132172
-Node: Fallback font134789
-Node: Suppressing warnings135754
-Node: Programming136859
-Node: Programming overview137372
-Node: Calling sequence139648
-Node: Program-specific files144677
-Node: Programming with config files145715
-Node: Index147015
+Node: Specially-recognized files116756
+Node: Auxiliary tasks118080
+Node: Standard options119905
+Node: TeX support120225
+Node: Supported file formats121516
+Node: File lookup128664
+Node: Glyph lookup130392
+Node: Basic glyph lookup131519
+Node: Fontmap132398
+Node: Fallback font135015
+Node: Suppressing warnings135980
+Node: Programming137085
+Node: Programming overview137598
+Node: Calling sequence139874
+Node: Program-specific files144903
+Node: Programming with config files145941
+Node: Index147241
 
 End Tag Table
