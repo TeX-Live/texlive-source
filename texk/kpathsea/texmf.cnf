@@ -568,7 +568,7 @@ pool_size = 1250000
 % 25000 less than pool_size, but doesn't need to be nearly that large.
 string_vacancies = 90000
 % Maximum number of strings.
-max_strings = 100000
+max_strings = 500000
 % min pool space left after loading .fmt
 pool_free = 47500
 

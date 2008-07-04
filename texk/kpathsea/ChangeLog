@@ -1,5 +1,8 @@
 2008-07-04  Karl Berry  <karl@tug.org>
 
+	* texmf.cnf (max_strings): increase to 500000.
+	ctt posting from Benno Puetz, http://groups.google.com/group/comp.text.tex/browse_thread/thread/2c3aa2d09b4625e3 
+
 	* progname.c [HAVE_PROGRAM_INVOCATION_NAME]: remove all #ifdef's
 	except around the declaration, so that we always use our own code
 	to compute them.  This avoids painful system dependencies.
