@@ -1100,10 +1100,12 @@ In particular, since the memory dump files
 subdirectories named for the engine (@file{tex}, @file{pdftex},
 @file{xetex}, etc.), you must specify an engine name in order to find
 them.  For example, @file{cont-en.fmt} typically exists for both
-@file{pdftex} and @file{xetex}.  You can use @samp{--engine=/} to look
-for any dump file, regardless of engine; if a dump file exists for
-more than one engine, it's indeterminate which one is returned.  (The
-@samp{/} ends up specifying a normal recursive search in @file{texmf/web2c}.)
+@file{pdftex} and @file{xetex}.  With the default path settings, you
+can use @samp{--engine=/} to look for any dump file, regardless of
+engine; if a dump file exists for more than one engine, it's
+indeterminate which one is returned.  (The @samp{/} ends up specifying
+a normal recursive search along the path where the dumps are stored,
+namely @samp{$TEXMF/web2c@{/$engine,@}}.)
 
 @item --format=@var{name}
 @opindex --format=@var{name}
