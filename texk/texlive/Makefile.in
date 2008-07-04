@@ -32,6 +32,7 @@ LINKED_SCRIPTS = \
   texmf-dist/scripts/ppower4/pdfthumb.texlua \
   texmf-dist/scripts/ppower4/ppower4.texlua \
   texmf-dist/scripts/pst-pdf/ps4pdf \
+  texmf-dist/scripts/pst2pdf/pst2pdf.pl \
   texmf-dist/scripts/texcount/TeXcount.pl \
   texmf-dist/scripts/thumbpdf/thumbpdf.pl \
   texmf-dist/scripts/vpe/vpe.pl \
