@@ -69,10 +69,21 @@
 #endif
 
 #ifndef HAVE_PROGRAM_INVOCATION_NAME
-/* Don't redefine the variables if glibc already has.  */
+/* Don't redefine the variables if glibc already has.  However, we do
+   not check for HAVE_PROGRAM_INVOCATION_NAME anywhere else in this
+   file; rather, we always use our own code to compute them, overwriting
+   anything that glibc may have provided.  This avoids
+   difficult-to-debug system-dependent behavior, and also universally
+   supports the second (`progname') argument for dotted texmf.cnf values.
+   
+   It would have been better to simply use our own variable names (and
+   computations) in the first place, but it's not worth losing backward
+   compatibility to rename them now.  */
+
 string program_invocation_name = NULL;
 string program_invocation_short_name = NULL;
 #endif
+
 /* And the variable for the program we pretend to be. */
 string kpse_program_name = NULL;
 
@@ -430,7 +441,6 @@ kpse_set_program_name P2C(const_string, argv0, const_string, progname)
     kpathsea_debug |= atoi (s);
   }
 
-#ifndef HAVE_PROGRAM_INVOCATION_NAME
 #if defined(WIN32)
   /* Set various info about user. Among many things,
      ensure that HOME is set. If debug_paths is on, 
@@ -551,11 +561,8 @@ kpse_set_program_name P2C(const_string, argv0, const_string, progname)
     program_invocation_name = xstrdup (argv0);
 
 #else /* !WIN32 && !__DJGPP__ */
-
   program_invocation_name = xstrdup (argv0);
-
 #endif
-#endif /* not HAVE_PROGRAM_INVOCATION_NAME */
 
   /* We need to find SELFAUTOLOC *before* removing the ".exe" suffix from
      the program_name, otherwise the PATH search inside selfdir will fail,
@@ -575,9 +582,7 @@ kpse_set_program_name P2C(const_string, argv0, const_string, progname)
   free (sdir_parent);
   free (sdir_grandparent);
 
-#ifndef HAVE_PROGRAM_INVOCATION_NAME
   program_invocation_short_name = (string)xbasename (program_invocation_name);
-#endif
 
   if (progname) {
     kpse_program_name = xstrdup (progname);
@@ -594,7 +599,7 @@ kpse_set_program_name P2C(const_string, argv0, const_string, progname)
     }
   }
 
-  xputenv("progname", kpse_program_name);
+  xputenv ("progname", kpse_program_name);
 }
 
 /* This function is deprecated, because when we pretend to have a different

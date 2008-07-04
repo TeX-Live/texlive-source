@@ -1,3 +1,9 @@
+2008-07-04  Karl Berry  <karl@tug.org>
+
+	* progname.c [HAVE_PROGRAM_INVOCATION_NAME]: remove all #ifdef's
+	except around the declaration, so that we always use our own code
+	to compute them.  This avoids painful system dependencies.
+
 2008-07-02  Karl Berry  <karl@tug.org>
 
 	* mktexlsr: doc fix.

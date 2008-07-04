@@ -3514,19 +3514,22 @@ this:
      `NULL', the value of the first argument is used.  This function
      must be called before any other use of the Kpathsea library.
 
-     If necessary, `kpse_set_program_name' sets the global variables
+     `kpse_set_program_name' always sets the global variables
      `program_invocation_name' and `program_invocation_short_name'.
      These variables are used in the error message macros defined in
      `kpathsea/lib.h'.  It sets the global variable `kpse_program_name'
-     to the program name it uses.  It also initializes debugging
-     options based on the environment variable `KPATHSEA_DEBUG' (if
-     that is set).  Finally, it sets the variables `SELFAUTOLOC',
-     `SELFAUTODIR' and `SELFAUTOPARENT' to the location, parent and
-     grandparent directory of the executable, removing `.' and `..'
-     path elements and resolving symbolic links.  These are used in the
-     default configuration file to allow people to invoke TeX from
-     anywhere, specifically from a mounted CD-ROM.  (You can use
-     `--expand-var=\$SELFAUTOLOC', etc., to see the values finds.)
+     to the program name it uses.
+
+     It also initializes debugging options based on the environment
+     variable `KPATHSEA_DEBUG' (if that is set).
+
+     Finally, it sets the variables `SELFAUTOLOC', `SELFAUTODIR' and
+     `SELFAUTOPARENT' to the location, parent and grandparent directory
+     of the executable, removing `.' and `..' path elements and
+     resolving symbolic links.  These are used in the default
+     configuration file to allow people to invoke TeX from anywhere.
+     You can use `kpsewhich --expand-var=\$SELFAUTOLOC', etc., to see
+     the values.
 
   2. The `kpse_set_progname' is deprecated.  A call to
      `kpse_set_progname' with `argv[0]' is equivalent to a call of
@@ -3845,7 +3848,7 @@ Index
                                                               (line   6)
 * argv[0]:                               Calling sequence.    (line   9)
 * ash, losing with configure:            configure shells.    (line  19)
-* autoconf, recommended:                 Calling sequence.    (line  90)
+* autoconf, recommended:                 Calling sequence.    (line  93)
 * automounter, and configuration:        configure scenarios. (line  29)
 * automounter, and ls-R:                 ls-R.                (line  40)
 * auxiliary tasks:                       Auxiliary tasks.     (line   6)
@@ -3873,7 +3876,7 @@ Index
 * bug checklist:                         Bug checklist.       (line   6)
 * bug mailing list:                      Mailing lists.       (line   6)
 * bugs, reporting:                       Reporting bugs.      (line   6)
-* c-*.h:                                 Calling sequence.    (line  90)
+* c-*.h:                                 Calling sequence.    (line  93)
 * c-auto.h:                              Programming overview.
                                                               (line  25)
 * c-auto.in:                             Running configure.   (line   6)
@@ -3894,7 +3897,7 @@ Index
                                                               (line  16)
 * circle fonts:                          Fontmap.             (line  19)
 * clean Make target:                     Cleaning up.         (line  15)
-* client_path in kpse_format_info:       Calling sequence.    (line  45)
+* client_path in kpse_format_info:       Calling sequence.    (line  48)
 * CMAPFONTS:                             Supported file formats.
                                                               (line  36)
 * cmr10, as fallback font:               Fallback font.       (line  15)
@@ -3926,7 +3929,7 @@ Index
 * conditions for use:                    Introduction.        (line  31)
 * config files:                          Config files.        (line   6)
 * config files, for Kpathsea-using programs: Calling sequence.
-                                                              (line  45)
+                                                              (line  48)
 * config files, programming with:        Programming with config files.
                                                               (line   6)
 * config.h:                              Programming overview.
@@ -3969,7 +3972,7 @@ Index
 * debugger:                              Bug checklist.       (line  62)
 * debugging:                             Debugging.           (line   6)
 * debugging options, in Kpathsea-using program: Calling sequence.
-                                                              (line  37)
+                                                              (line  40)
 * debugging output:                      Debugging.           (line  27)
 * debugging with -g, disabling:          configure scenarios. (line  32)
 * DEC shells and configure:              configure shells.    (line  25)
@@ -4053,7 +4056,7 @@ Index
 * error message macros:                  Calling sequence.    (line  16)
 * excessive startup time:                Slow path searching. (line   6)
 * expand.c:                              Brace expansion.     (line  26)
-* expanding symlinks:                    Calling sequence.    (line  16)
+* expanding symlinks:                    Calling sequence.    (line  25)
 * expansion, default:                    Default expansion.   (line   6)
 * expansion, path element:               Searching overview.  (line  43)
 * expansion, search path:                Path expansion.      (line   6)
@@ -4142,7 +4145,7 @@ Index
 * group-writable directories:            Security.            (line  40)
 * GSFTOPK_DEBUG (128):                   Debugging.           (line  88)
 * hash table buckets, printing:          Debugging.           (line 105)
-* hash table routines:                   Calling sequence.    (line  83)
+* hash table routines:                   Calling sequence.    (line  86)
 * hash_summary_only variable for debugging: Debugging.        (line 105)
 * help, mailing list for general TeX:    Mailing lists.       (line  29)
 * HIER:                                  Default path features.
@@ -4159,7 +4162,7 @@ Index
 * INDEXSTYLE:                            Supported file formats.
                                                               (line  67)
 * info-tex@shsu.edu:                     Mailing lists.       (line  29)
-* input lines, reading:                  Calling sequence.    (line  83)
+* input lines, reading:                  Calling sequence.    (line  86)
 * install-data Make target:              Installing files.    (line  28)
 * install-exec Make target:              Installing files.    (line  23)
 * installation:                          Installation.        (line   6)
@@ -4194,11 +4197,11 @@ Index
 * kpathsea/HIER:                         Default path features.
                                                               (line  41)
 * kpathsea/README.CONFIGURE:             Running configure.   (line  15)
-* KPATHSEA_DEBUG:                        Calling sequence.    (line  16)
+* KPATHSEA_DEBUG:                        Calling sequence.    (line  22)
 * kpathsea_debug:                        Debugging.           (line  18)
 * KPATHSEA_DEBUG:                        Debugging.           (line  18)
 * kpathsea_debug:                        Debugging.           (line   6)
-* kpathsea_debug variable:               Calling sequence.    (line  37)
+* kpathsea_debug variable:               Calling sequence.    (line  40)
 * KPATHSEA_WARNING:                      Config files.        (line  18)
 * KPSE_BITMAP_TOLERANCE:                 Basic glyph lookup.  (line  15)
 * kpse_cnf_get:                          Programming with config files.
@@ -4212,18 +4215,18 @@ Index
 * KPSE_DEBUG_VARS (64):                  Debugging.           (line  83)
 * KPSE_DOT expansion:                    KPSE_DOT expansion.  (line   6)
 * kpse_fallback_font:                    Fallback font.       (line  15)
-* kpse_find_*:                           Calling sequence.    (line  60)
-* kpse_find_file <1>:                    Calling sequence.    (line  60)
+* kpse_find_*:                           Calling sequence.    (line  63)
+* kpse_find_file <1>:                    Calling sequence.    (line  63)
 * kpse_find_file:                        File lookup.         (line  37)
 * kpse_find_glyph_format:                Glyph lookup.        (line  26)
-* kpse_format_info:                      Calling sequence.    (line  45)
+* kpse_format_info:                      Calling sequence.    (line  48)
 * kpse_format_info_type:                 Debugging.           (line  61)
-* kpse_init_prog:                        Calling sequence.    (line  51)
+* kpse_init_prog:                        Calling sequence.    (line  54)
 * kpse_init_prog, and MAKETEX_MODE:      Default path features.
                                                               (line  25)
-* kpse_open_file:                        Calling sequence.    (line  74)
+* kpse_open_file:                        Calling sequence.    (line  77)
 * kpse_program_name:                     Calling sequence.    (line  16)
-* kpse_set_progname:                     Calling sequence.    (line  30)
+* kpse_set_progname:                     Calling sequence.    (line  33)
 * kpse_set_program_name:                 Calling sequence.    (line   9)
 * kpse_var_value:                        Programming with config files.
                                                               (line  10)
@@ -4253,7 +4256,7 @@ Index
 * license for using the library:         Introduction.        (line  31)
 * LIGFONTS:                              Supported file formats.
                                                               (line  71)
-* lines, reading arbitrary-length:       Calling sequence.    (line  83)
+* lines, reading arbitrary-length:       Calling sequence.    (line  86)
 * Linux File System Standard:            mktex configuration. (line 114)
 * Linux shells and configure:            configure shells.    (line  19)
 * Linux, using Web2c:                    CD-ROM distribution. (line  16)
@@ -4289,7 +4292,7 @@ Index
 * MAKETEX_FINE_DEBUG (1024):             Debugging.           (line 100)
 * MAKETEX_MODE:                          Default path features.
                                                               (line  19)
-* memory allocation routines:            Calling sequence.    (line  83)
+* memory allocation routines:            Calling sequence.    (line  86)
 * metafont driver files:                 mktex configuration. (line  94)
 * Metafont failures:                     TeX or Metafont failing.
                                                               (line   6)
@@ -4458,7 +4461,7 @@ Index
 * problems, common:                      Common problems.     (line   6)
 * proginit.c:                            Default path features.
                                                               (line  25)
-* proginit.h:                            Calling sequence.    (line  51)
+* proginit.h:                            Calling sequence.    (line  54)
 * program-varying paths:                 Supported file formats.
                                                               (line  12)
 * program_invocation_name:               Calling sequence.    (line  16)
@@ -4477,7 +4480,7 @@ Index
 * quoting variable values:               Variable expansion.  (line  17)
 * readable:                              Suppressing warnings.
                                                               (line  26)
-* reading arbitrary-length lines:        Calling sequence.    (line  83)
+* reading arbitrary-length lines:        Calling sequence.    (line  86)
 * README.CONFIGURE:                      Running configure.   (line  15)
 * README.mirrors:                        Electronic distribution.
                                                               (line  13)
@@ -4485,7 +4488,7 @@ Index
 * relative filenames:                    Searching overview.  (line  52)
 * relative filenames in ls-R:            Installing files.    (line  40)
 * reporting bugs:                        Reporting bugs.      (line   6)
-* resident.c:                            Calling sequence.    (line  45)
+* resident.c:                            Calling sequence.    (line  48)
 * resolution, setting:                   Path searching options.
                                                               (line  17)
 * resolutions, last-resort:              Fallback font.       (line   6)
@@ -4507,9 +4510,9 @@ Index
 * searching the disk:                    Searching overview.  (line  22)
 * security considerations:               Security.            (line   6)
 * sed error from configure:              Empty Makefiles.     (line   6)
-* SELFAUTODIR:                           Calling sequence.    (line  16)
-* SELFAUTOLOC:                           Calling sequence.    (line  16)
-* SELFAUTOPARENT:                        Calling sequence.    (line  16)
+* SELFAUTODIR:                           Calling sequence.    (line  25)
+* SELFAUTOLOC:                           Calling sequence.    (line  25)
+* SELFAUTOPARENT:                        Calling sequence.    (line  25)
 * sending patches:                       Bug checklist.       (line  56)
 * setgid scripts:                        Security.            (line  40)
 * SFDFONTS:                              Supported file formats.
@@ -4542,7 +4545,7 @@ Index
 * startup time, excessive:               Slow path searching. (line   6)
 * static linking:                        ShellWidgetClass.    (line  39)
 * static linking and dlsym:              dlopen.              (line   6)
-* string routines:                       Calling sequence.    (line  83)
+* string routines:                       Calling sequence.    (line  86)
 * strip:                                 mktex configuration. (line 108)
 * stripsupplier:                         mktex configuration. (line 102)
 * striptypeface:                         mktex configuration. (line 105)
@@ -4562,7 +4565,7 @@ Index
 * symbolic links not found:              Unable to find files.
                                                               (line  21)
 * symbolic links, and ls-R:              ls-R.                (line  38)
-* symlinks, resolving:                   Calling sequence.    (line  16)
+* symlinks, resolving:                   Calling sequence.    (line  25)
 * system C compiler bugs:                TeX or Metafont failing.
                                                               (line  19)
 * system dependencies:                   Running configure.   (line   6)
@@ -4846,8 +4849,8 @@ Node: Suppressing warnings136081
 Node: Programming137186
 Node: Programming overview137699
 Node: Calling sequence139975
-Node: Program-specific files145004
-Node: Programming with config files146042
-Node: Index147342
+Node: Program-specific files144967
+Node: Programming with config files146005
+Node: Index147305
 
 End Tag Table

@@ -2266,26 +2266,29 @@ Kpathsea library.
 @vindex program_invocation_name
 @vindex program_invocation_short_name
 @vindex kpse_program_name
-@vindex KPATHSEA_DEBUG
-@cindex SELFAUTOLOC
-@cindex SELFAUTODIR
-@cindex SELFAUTOPARENT
 @cindex error message macros
-@cindex symlinks, resolving
-@cindex expanding symlinks
-If necessary, @code{kpse_set_program_name} sets the global variables
+@code{kpse_set_program_name} always sets the global variables
 @code{program_invocation_name} and @code{program_invocation_short_name}.
 These variables are used in the error message macros defined in
 @file{kpathsea/lib.h}.  It sets the global variable
-@code{kpse_program_name} to the program name it uses.  It also
-initializes debugging options based on the environment variable
-@code{KPATHSEA_DEBUG} (if that is set).  Finally, it sets the variables
-@code{SELFAUTOLOC}, @code{SELFAUTODIR} and @code{SELFAUTOPARENT} to the
-location, parent and grandparent directory of the executable, removing
-@file{.} and @file{..} path elements and resolving symbolic links.
-These are used in the default configuration file to allow people to
-invoke TeX from anywhere, specifically from a mounted CD-ROM.  (You can
-use @samp{--expand-var=\$SELFAUTOLOC}, etc., to see the values finds.)
+@code{kpse_program_name} to the program name it uses.
+
+@vindex KPATHSEA_DEBUG
+It also initializes debugging options based on the environment
+variable @code{KPATHSEA_DEBUG} (if that is set).
+
+@cindex SELFAUTOLOC
+@cindex SELFAUTODIR
+@cindex SELFAUTOPARENT
+@cindex symlinks, resolving
+@cindex expanding symlinks
+Finally, it sets the variables @code{SELFAUTOLOC}, @code{SELFAUTODIR}
+and @code{SELFAUTOPARENT} to the location, parent and grandparent
+directory of the executable, removing @file{.} and @file{..} path
+elements and resolving symbolic links.  These are used in the default
+configuration file to allow people to invoke TeX from anywhere.  You
+can use @samp{kpsewhich --expand-var=\$SELFAUTOLOC}, etc., to see the
+values.
 
 @item
 @findex kpse_set_progname
