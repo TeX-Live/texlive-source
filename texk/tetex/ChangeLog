@@ -1,3 +1,9 @@
+2008-07-05  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (run_texlinks): use -f $(web2cdir)/fmtutil.cnf.
+	(run_mktexlsr): no longer needed.
+	From Francois Charette, tldistro 04 Jul 2008 09:22:42.
+
 2008-06-18  Karl Berry  <karl@tug.org>
 
 	* texlinks: metafun is not created specially by ConTeXt, so we'll

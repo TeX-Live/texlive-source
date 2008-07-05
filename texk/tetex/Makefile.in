@@ -94,13 +94,12 @@ install-exec:
 # 
 # This target is invoked by the top-level make,
 # to create the per-format engine symlinks in $(bindir),
-# after everything else is installed.
-# We have to create the ls-R file for kpsewhich (invoked by texlinks)
-# to find fmtutil.cnf.
-run_mktexlsr = $(bindir)/mktexlsr $(texmf)
-run_texlinks = $(bindir)/texlinks
+# after everything else is installed.  We explicitly specify the
+# fmtutil.cnf file to use for the sake of distro builds.  Also, that way
+# we don't have to run mktexlsr also.
+run_texlinks = $(bindir)/texlinks -f $(web2cdir)/fmtutil.cnf
 run-texlinks:
-	PATH=$(bindir):$(PATH); export PATH; $(run_mktexlsr); $(run_texlinks)
+	PATH=$(bindir):$(PATH); export PATH; $(run_texlinks)
 
 kpse_include ../make/clean.mk
 
