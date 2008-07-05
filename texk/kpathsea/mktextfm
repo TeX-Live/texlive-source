@@ -48,7 +48,7 @@ esac
 (
 
 NAME=`basename "$1" .tfm`
-MAG=1
+MAG=0
 #DEST="$2"
 DPI=$BDPI
 

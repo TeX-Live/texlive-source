@@ -1,3 +1,8 @@
+2008-07-05  Karl Berry  <karl@tug.org>
+
+	* mktextfm (MAG): set to 0; why were we using MAG=1?  Left
+	over from when we included pregenerated pk's in the distribution?
+
 2008-07-04  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (max_strings): increase to 500000.
