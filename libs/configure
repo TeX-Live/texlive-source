@@ -4421,24 +4421,7 @@ if test "x$datadir" != 'x${prefix}/share'; then
     { $as_echo "$as_me:$LINENO: result: \"$texmfmain\"" >&5
 $as_echo "\"$texmfmain\"" >&6; }
   else
-    { $as_echo "$as_me:$LINENO: result: not found" >&5
-$as_echo "not found" >&6; }
-    { $as_echo "$as_me:$LINENO: WARNING: No texmf tree found at $texmfmain.
-  *****************************************************************
-  * Error: The main texmf tree was not found.                     *
-  * If you do not have the files, you should be able to them from *
-  * the same place you got these sources from, or from one of the *
-  * CTAN hosts.                                                   *
-  *****************************************************************
-  Winging it." >&5
-$as_echo "$as_me: WARNING: No texmf tree found at $texmfmain.
-  *****************************************************************
-  * Error: The main texmf tree was not found.                     *
-  * If you do not have the files, you should be able to them from *
-  * the same place you got these sources from, or from one of the *
-  * CTAN hosts.                                                   *
-  *****************************************************************
-  Winging it." >&2;}
+    true # be silent dnl AC_MSG_RESULT([not found])
   fi
 else
   # Second case, datadir is default...
@@ -4464,26 +4447,7 @@ else
 $as_echo "\"$texmfmain\"" >&6; }
   else
     eval texmfmain="$datadir/texmf"
-    { $as_echo "$as_me:$LINENO: result: not found" >&5
-$as_echo "not found" >&6; }
-    { $as_echo "$as_me:$LINENO: WARNING: The main texmf tree was not found at $texmfmain.
-  *****************************************************************
-  * Error: The main texmf tree was not found.                     *
-  * Use the --datadir option to specify its parent directory.     *
-  * If you do not have the files, you should be able to them from *
-  * the same place you got these sources from, or from one of the *
-  * CTAN hosts.                                                   *
-  *****************************************************************
-  Winging it by pretending $texmfmain is correct." >&5
-$as_echo "$as_me: WARNING: The main texmf tree was not found at $texmfmain.
-  *****************************************************************
-  * Error: The main texmf tree was not found.                     *
-  * Use the --datadir option to specify its parent directory.     *
-  * If you do not have the files, you should be able to them from *
-  * the same place you got these sources from, or from one of the *
-  * CTAN hosts.                                                   *
-  *****************************************************************
-  Winging it by pretending $texmfmain is correct." >&2;}
+    # (be silent) dnl AC_MSG_RESULT([not found])
   fi
 fi
 

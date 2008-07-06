@@ -55,15 +55,7 @@ if test "x$datadir" != 'x${prefix}/share'; then
   if test -d "$texmfmain"; then
     AC_MSG_RESULT("$texmfmain")
   else
-    AC_MSG_RESULT([not found])
-    AC_MSG_WARN([No texmf tree found at $texmfmain.
-  *****************************************************************
-  * Error: The main texmf tree was not found.                     *
-  * If you do not have the files, you should be able to them from *
-  * the same place you got these sources from, or from one of the *
-  * CTAN hosts.                                                   *
-  *****************************************************************
-  Winging it.])
+    true # be silent dnl AC_MSG_RESULT([not found])
   fi
 else
   # Second case, datadir is default...
@@ -88,16 +80,7 @@ else
     AC_MSG_RESULT("$texmfmain")
   else
     eval texmfmain="$datadir/texmf"
-    AC_MSG_RESULT([not found])
-    AC_MSG_WARN([The main texmf tree was not found at $texmfmain.
-  *****************************************************************
-  * Error: The main texmf tree was not found.                     *
-  * Use the --datadir option to specify its parent directory.     *
-  * If you do not have the files, you should be able to them from *
-  * the same place you got these sources from, or from one of the *
-  * CTAN hosts.                                                   *
-  *****************************************************************
-  Winging it by pretending $texmfmain is correct.])
+    # (be silent) dnl AC_MSG_RESULT([not found])
   fi
 fi
 AC_SUBST(texmfmain)

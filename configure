@@ -840,6 +840,7 @@ with_x11win
 with_x11
 with_mf_x_toolkit
 with_fontconfig
+with_xdvi_x_toolkit
 with_ps
 enable_grey
 enable_color
@@ -847,7 +848,6 @@ enable_t1lib
 enable_gf
 enable_a4
 enable_magick
-with_xdvi_x_toolkit
 with_system_ncurses
 with_ncurses_libdir
 with_ncurses_include
@@ -1617,11 +1617,11 @@ Optional Packages:
   --with-mf-x-toolkit    Use X toolkit for mf.
   --with-fontconfig=DIR   Specify dir prefix where fontconfig is installed
                            (e.g., /usr/X11R6).
-  --with-ps=PS            Use PostScript (PS=no/yes/gs/dps/news, default gs)
   --with-xdvi-x-toolkit=KIT
 			  Use toolkit KIT for xdvi (KIT=motif/xaw/xaw3d/neXtaw).
 			  If no --with-xdvi-x-toolkit option is used, use Motif
                           if available, else Xaw.
+  --with-ps=PS            Use PostScript (PS=no/yes/gs/dps/news, default gs)
   --with-system-ncurses   check for installed ncurses
   --with-ncurses-libdir=DIR
                           Specify directory where the ncurses library resides.
@@ -5570,7 +5570,7 @@ export with_cxx_runtime_hack
 
 
 # withenable.ac - Written long ago by Thomas Esser and Sebastian Rahtz.
-# $Id: withenable.ac 7263 2008-03-31 18:52:26Z karl $
+# $Id: withenable.ac 9056 2008-06-26 10:30:34Z peter $
 
 # Public domain.
 
@@ -5930,24 +5930,7 @@ if test "x$datadir" != 'x${prefix}/share'; then
     { $as_echo "$as_me:$LINENO: result: \"$texmfmain\"" >&5
 $as_echo "\"$texmfmain\"" >&6; }
   else
-    { $as_echo "$as_me:$LINENO: result: not found" >&5
-$as_echo "not found" >&6; }
-    { $as_echo "$as_me:$LINENO: WARNING: No texmf tree found at $texmfmain.
-  *****************************************************************
-  * Error: The main texmf tree was not found.                     *
-  * If you do not have the files, you should be able to them from *
-  * the same place you got these sources from, or from one of the *
-  * CTAN hosts.                                                   *
-  *****************************************************************
-  Winging it." >&5
-$as_echo "$as_me: WARNING: No texmf tree found at $texmfmain.
-  *****************************************************************
-  * Error: The main texmf tree was not found.                     *
-  * If you do not have the files, you should be able to them from *
-  * the same place you got these sources from, or from one of the *
-  * CTAN hosts.                                                   *
-  *****************************************************************
-  Winging it." >&2;}
+    true # be silent dnl AC_MSG_RESULT([not found])
   fi
 else
   # Second case, datadir is default...
@@ -5973,26 +5956,7 @@ else
 $as_echo "\"$texmfmain\"" >&6; }
   else
     eval texmfmain="$datadir/texmf"
-    { $as_echo "$as_me:$LINENO: result: not found" >&5
-$as_echo "not found" >&6; }
-    { $as_echo "$as_me:$LINENO: WARNING: The main texmf tree was not found at $texmfmain.
-  *****************************************************************
-  * Error: The main texmf tree was not found.                     *
-  * Use the --datadir option to specify its parent directory.     *
-  * If you do not have the files, you should be able to them from *
-  * the same place you got these sources from, or from one of the *
-  * CTAN hosts.                                                   *
-  *****************************************************************
-  Winging it by pretending $texmfmain is correct." >&5
-$as_echo "$as_me: WARNING: The main texmf tree was not found at $texmfmain.
-  *****************************************************************
-  * Error: The main texmf tree was not found.                     *
-  * Use the --datadir option to specify its parent directory.     *
-  * If you do not have the files, you should be able to them from *
-  * the same place you got these sources from, or from one of the *
-  * CTAN hosts.                                                   *
-  *****************************************************************
-  Winging it by pretending $texmfmain is correct." >&2;}
+    # (be silent) dnl AC_MSG_RESULT([not found])
   fi
 fi
 
@@ -6427,6 +6391,30 @@ fi
 
 
 
+# Check for toolkit options. This used to be --with-x-toolkit, but was changed
+# to remove clashes with metafont which accepts different values.
+# We allow `yes' as synonym for the default toolkit, for easier communication
+# with ../kpathsea/xt.ac.
+
+# Check whether --with-xdvi-x-toolkit was given.
+if test "${with_xdvi_x_toolkit+set}" = set; then
+  withval=$with_xdvi_x_toolkit; 	  case "${withval}" in
+            next | nextaw | neXtaw )      val=neXtaw  ;;
+            xaw3d )                       val=xaw3d  ;;
+            x | xa | xaw )		  val=xaw ;;
+	    y | ye | yes )		  val=yes ;;
+            m | mo | mot | moti | motif ) val=motif ;;
+	    * )
+{ $as_echo "$as_me:$LINENO: WARNING: unknown --with-xdvi-x-toolkit argument \`$withval'; using xaw." >&5
+$as_echo "$as_me: WARNING: unknown --with-xdvi-x-toolkit argument \`$withval'; using xaw." >&2;}
+              val=xaw;;
+	  esac
+	  with_xdvi_x_toolkit=$val
+
+fi
+
+
+
 # Check if the user wants to use Ghostscript, DPS or NeWS to
 # display PostScript.
 
@@ -6595,26 +6583,6 @@ fi
 fi
 
 
-
-
-
-
-
-# Check whether --with-xdvi-x-toolkit was given.
-if test "${with_xdvi_x_toolkit+set}" = set; then
-  withval=$with_xdvi_x_toolkit; 	  case "${withval}" in
-	    next | nextaw | neXtaw )	val=neXtaw  ;;
-	    xaw3d )		val=xaw3d  ;;
-	    x | xa | xaw )	val=xaw ;;
-	    m | mo | mot | moti | motif ) val=motif ;;
-	    * )
-{ $as_echo "$as_me:$LINENO: WARNING: unknown --with-xdvi-x-toolkit argument \`$withval'; using xaw." >&5
-$as_echo "$as_me: WARNING: unknown --with-xdvi-x-toolkit argument \`$withval'; using xaw." >&2;}
-              val=xaw;;
-	  esac
-	  with_xdvi_x_toolkit=$val
-
-fi
 
 
 try_ncurses=no
