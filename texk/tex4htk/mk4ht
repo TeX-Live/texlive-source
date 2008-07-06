@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# mk4ht                                 2007-11-14-18:40 %
-# Copyright (C) 2003--2007               Eitan M. Gurari %
+# mk4ht                                 2008-06-28-19:09 %
+# Copyright (C) 2003--2008               Eitan M. Gurari %
 #                                                        %
 #                                                        %
 # This work may be distributed and/or modified under the %
@@ -24,6 +24,11 @@
 
 use strict;
 $^W=1; # turn warning on
+my $texFile = '';
+if( @ARGV  ){
+  my(@array) = split('\.',@ARGV[1]);
+  $texFile = @array[0];
+}
 my @options = (
  "",     "ht",        "",         "", "", "-cvalidatehtml",
  "ht",   "htlatex",   "latex",    "", "", "-cvalidatehtml",
@@ -106,18 +111,18 @@ my @options = (
  "w", "wcontext", "context", "xhtml,word", " -csymhtf", "",
  "w", "wxelatex",   "xelatex",   "xhtml,word", " -csymhtf", "",
  "w", "wxetex",     "xetex",     "xhtml,word", " -csymhtf", "",
- "jh", "jhlatex",  "latex",  "html,javahelp,3.2,unicode", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp -cvalidatehtml",
- "jh", "jhtex",    "tex",    "html,javahelp,3.2,unicode", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp -cvalidatehtml",
- "jh", "jhtexi",   "texi",   "html,javahelp,3.2,unicode", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp -cvalidatehtml",
- "jh", "jhcontext","context", "html,javahelp,3.2,unicode", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp -cvalidatehtml",
- "jh", "jhxelatex",  "xelatex",  "html,javahelp,3.2,unicode", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp -cvalidatehtml",
- "jh", "jhxetex",    "xetex",    "html,javahelp,3.2,unicode", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp -cvalidatehtml",
- "jh1", "jh1latex",  "latex",  "html,javahelp,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp",
- "jh1", "jh1tex",    "tex",    "html,javahelp,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp",
- "jh1", "jh1texi",   "texi",   "html,javahelp,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp",
- "jh1", "jh1context","context", "html,javahelp,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp",
- "jh1", "jh1xelatex",  "xelatex",  "html,javahelp,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp",
- "jh1", "jh1xetex",    "xetex",    "html,javahelp,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d%1-doc/ -cjavahelp",
+ "jh", "jhlatex",  "latex",  "html,javahelp,xml,3.2,unicode", " -cmozhtf -u10", " -d$texFile-doc/ -cjavahelp -cvalidatehtml",
+ "jh", "jhtex",    "tex",    "html,javahelp,xml,3.2,unicode", " -cmozhtf -u10", " -d$texFile-doc/ -cjavahelp -cvalidatehtml",
+ "jh", "jhtexi",   "texi",   "html,javahelp,xml,3.2,unicode", " -cmozhtf -u10", " -d$texFile-doc/ -cjavahelp -cvalidatehtml",
+ "jh", "jhcontext","context", "html,javahelp,xml,3.2,unicode", " -cmozhtf -u10", " -d$texFile-doc/ -cjavahelp -cvalidatehtml",
+ "jh", "jhxelatex",  "xelatex",  "html,javahelp,xml,3.2,unicode", " -cmozhtf -u10", " -d$texFile-doc/ -cjavahelp -cvalidatehtml",
+ "jh", "jhxetex",    "xetex",    "html,javahelp,xml,3.2,unicode", " -cmozhtf -u10", " -d$texFile-doc/ -cjavahelp -cvalidatehtml",
+ "jh1", "jh1latex",  "latex",  "html,javahelp,xml,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d$texFile-doc/ -cjavahelp",
+ "jh1", "jh1tex",    "tex",    "html,javahelp,xml,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d$texFile-doc/ -cjavahelp",
+ "jh1", "jh1texi",   "texi",   "html,javahelp,xml,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d$texFile-doc/ -cjavahelp",
+ "jh1", "jh1context","context", "html,javahelp,xml,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d$texFile-doc/ -cjavahelp",
+ "jh1", "jh1xelatex",  "xelatex",  "html,javahelp,xml,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d$texFile-doc/ -cjavahelp",
+ "jh1", "jh1xetex",    "xetex",    "html,javahelp,xml,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d$texFile-doc/ -cjavahelp",
 
 );
 
@@ -211,7 +216,7 @@ print "  clean.htlatex     lg tmp\n";
 
 }
 
-print "mk4ht (2007-11-14-18:40)\n";
+print "mk4ht (2008-06-28-19:09)\n";
 if(  !@ARGV  ){
   print "improper command\n";
   showInstrucions(); exit(1);
@@ -366,8 +371,6 @@ if( $rtrn = system($commando) ){
 } else {
    my $file;
 my $ext;
-my(@array) = split('\.',@ARGV[1]);
-my $texFile = @array[0];
 opendir(DIR,".") ;
 while ($file = readdir(DIR) ){
   if(index($file,$texFile) == 0 ){
