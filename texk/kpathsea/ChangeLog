@@ -1,3 +1,8 @@
+2008-07-06  Karl Berry  <karl@tug.org>
+
+	* withenable.ac (texmfmain): do not bother with long verbose
+	complaint when the tree can't be found, since this is normal in TL. 
+
 2008-07-05  Karl Berry  <karl@tug.org>
 
 	* mktextfm (MAG): set to 0; why were we using MAG=1?  Left
