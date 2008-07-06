@@ -421,8 +421,15 @@ RUBYINPUTS   = .;$TEXMF/scripts/{$progname,$engine,}/ruby//
 % This definition isn't used from this .cnf file itself (that would be
 % paradoxical), but the compile-time default in paths.h is built from it.
 % The SELFAUTO* variables are set automatically from the location of
-% argv[0], in kpse_set_progname.
-%
+% argv[0], in kpse_set_program_name.
+% 
+% This main texmf.cnf file is installed, for a release YYYY, in a
+% directory such as /usr/local/texlive/YYYY/texmf/web2c/texmf.cnf.
+% Since this file is subject to future updates, the TeX Live installer
+% or human administrator may also create a file
+% /usr/local/texlive/YYYY/texmf.cnf; any settings in this latter file
+% will take precedence over the distributed one under texmf/web2c.
+% 
 % For security reasons, it is better not to include . in this path.
 %
 TEXMFCNF = {$SELFAUTOLOC,$SELFAUTODIR,$SELFAUTOPARENT}{,{/share,}/texmf{-local,}/web2c}
