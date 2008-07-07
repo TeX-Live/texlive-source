@@ -257,7 +257,7 @@ MPMEMS = ${TEXFORMATS}
 %
 % As of 2008, pool files don't exist any more (the strings are compiled
 % into the binaries), but just in case something expects to find these
-% settings.
+% settings:
 TEXPOOL = .;$TEXMF/web2c
 MFPOOL = ${TEXPOOL}
 MPPOOL = ${TEXPOOL}
@@ -526,6 +526,13 @@ MPXCOMMAND = makempx
 % expecting DVI, and not "tex" because we want first line parsing.
 TEX = etex
 
+% These variables specify the external program called for the
+% interactive `e' option.  %d is replaced by the line number and %s by
+% the current filename.  The default is specified at compile-time, and
+% we let that stay in place since different platforms like different values.
+%TEXEDIT = vi +%d "%s"
+%MFEDIT = ${TEXEDIT}
+%MPEDIT = ${TEXEDIT}
 
 %  Part 3: Array and other sizes for TeX (and Metafont and MetaPost).
 %
