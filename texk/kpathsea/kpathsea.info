@@ -39,8 +39,8 @@ Kpathsea library
 ****************
 
 This manual documents how to install and use the Kpathsea library for
-filename lookup.  It corresponds to version 3.5.6dev, released in
-May 2008.
+filename lookup.  It corresponds to version 3.5.7, released in
+July 2008.
 
 * Menu:
 
@@ -60,8 +60,8 @@ File: kpathsea.info,  Node: Introduction,  Next: Installation,  Prev: Top,  Up: 
 1 Introduction
 **************
 
-This manual corresponds to version 3.5.6dev of the Kpathsea library,
-released in May 2008.
+This manual corresponds to version 3.5.7 of the Kpathsea library,
+released in July 2008.
 
    The library's fundamental purpose is to return a filename from a
 list of directories specified by the user, similar to what shells do
@@ -4772,85 +4772,85 @@ Index
 
 Tag Table:
 Node: Top1552
-Node: Introduction2197
-Node: History4175
-Node: Installation8267
-Node: Simple installation9057
-Node: Custom installation12640
-Node: Disk space13814
-Node: Kpathsea application distributions14698
-Node: Changing search paths15813
-Node: Default path features16995
-Node: Default path generation19131
-Node: Running configure20574
-Node: configure shells21625
-Node: configure options22677
-Node: configure environment24184
-Node: configure scenarios25986
-Node: Shared library27572
-Node: Running make28586
-Node: Installing files30633
-Node: Cleaning up32580
-Node: Filename database generation33628
-Node: mktex scripts34195
-Node: mktex configuration35472
-Node: mktex script names41291
-Node: mktex script arguments42682
-Node: Installation testing43572
-Node: Security43936
-Node: TeX directory structure46503
-Node: unixtex.ftp50925
-Node: Electronic distribution52940
-Node: CD-ROM distribution55705
-Node: Other TeX packages56675
-Node: Reporting bugs57971
-Node: Bug checklist58711
-Node: Mailing lists62413
-Node: Debugging63772
-Node: Logging68844
-Node: Common problems70714
-Node: Unable to find files71545
-Node: Slow path searching73956
-Node: Unable to generate fonts75333
-Node: TeX or Metafont failing77842
-Node: Empty Makefiles79720
-Node: XtStrings80950
-Node: dlopen81786
-Node: ShellWidgetClass82604
-Node: Pointer combination warnings84236
-Node: Path searching84625
-Node: Searching overview85272
-Node: Path sources88668
-Node: Config files89739
-Node: Path expansion93384
-Node: Default expansion94333
-Node: Variable expansion96403
-Node: Tilde expansion97806
-Node: Brace expansion98786
-Node: KPSE_DOT expansion99891
-Node: Subdirectory expansion100404
-Node: Filename database102753
-Node: ls-R103807
-Node: Filename aliases106701
-Node: Database format107879
-Node: Invoking kpsewhich108892
-Node: Path searching options109837
-Node: Specially-recognized files116857
-Node: Auxiliary tasks118181
-Node: Standard options120006
-Node: TeX support120326
-Node: Supported file formats121617
-Node: File lookup128765
-Node: Glyph lookup130493
-Node: Basic glyph lookup131620
-Node: Fontmap132499
-Node: Fallback font135116
-Node: Suppressing warnings136081
-Node: Programming137186
-Node: Programming overview137699
-Node: Calling sequence139975
-Node: Program-specific files144967
-Node: Programming with config files146005
-Node: Index147305
+Node: Introduction2195
+Node: History4171
+Node: Installation8263
+Node: Simple installation9053
+Node: Custom installation12636
+Node: Disk space13810
+Node: Kpathsea application distributions14694
+Node: Changing search paths15809
+Node: Default path features16991
+Node: Default path generation19127
+Node: Running configure20570
+Node: configure shells21621
+Node: configure options22673
+Node: configure environment24180
+Node: configure scenarios25982
+Node: Shared library27568
+Node: Running make28582
+Node: Installing files30629
+Node: Cleaning up32576
+Node: Filename database generation33624
+Node: mktex scripts34191
+Node: mktex configuration35468
+Node: mktex script names41287
+Node: mktex script arguments42678
+Node: Installation testing43568
+Node: Security43932
+Node: TeX directory structure46499
+Node: unixtex.ftp50921
+Node: Electronic distribution52936
+Node: CD-ROM distribution55701
+Node: Other TeX packages56671
+Node: Reporting bugs57967
+Node: Bug checklist58707
+Node: Mailing lists62409
+Node: Debugging63768
+Node: Logging68840
+Node: Common problems70710
+Node: Unable to find files71541
+Node: Slow path searching73952
+Node: Unable to generate fonts75329
+Node: TeX or Metafont failing77838
+Node: Empty Makefiles79716
+Node: XtStrings80946
+Node: dlopen81782
+Node: ShellWidgetClass82600
+Node: Pointer combination warnings84232
+Node: Path searching84621
+Node: Searching overview85268
+Node: Path sources88664
+Node: Config files89735
+Node: Path expansion93380
+Node: Default expansion94329
+Node: Variable expansion96399
+Node: Tilde expansion97802
+Node: Brace expansion98782
+Node: KPSE_DOT expansion99887
+Node: Subdirectory expansion100400
+Node: Filename database102749
+Node: ls-R103803
+Node: Filename aliases106697
+Node: Database format107875
+Node: Invoking kpsewhich108888
+Node: Path searching options109833
+Node: Specially-recognized files116853
+Node: Auxiliary tasks118177
+Node: Standard options120002
+Node: TeX support120322
+Node: Supported file formats121613
+Node: File lookup128761
+Node: Glyph lookup130489
+Node: Basic glyph lookup131616
+Node: Fontmap132495
+Node: Fallback font135112
+Node: Suppressing warnings136077
+Node: Programming137182
+Node: Programming overview137695
+Node: Calling sequence139971
+Node: Program-specific files144963
+Node: Programming with config files146001
+Node: Index147301
 
 End Tag Table

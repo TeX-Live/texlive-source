@@ -1992,7 +1992,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-WEB2CVERSION=7.5.6
+WEB2CVERSION=7.5.7
 
 cat >>confdefs.h <<_ACEOF
 #define WEB2CVERSION " (Web2C $WEB2CVERSION)"

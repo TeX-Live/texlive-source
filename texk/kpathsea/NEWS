@@ -1,10 +1,19 @@
 This file records noteworthy changes.
-3.5.6 (for TeX Collection 2006-07)
+3.5.7 (for TeX Collection 2008, 8 July 2008)
+* kpsewhich has new options --all (to report all matches) and --subdir
+  (to limit matches).
+* more file suffixes (.dtx, et al.) and special files (updmap.cfg, et al.)
+  found automatically.
+* add basic Lua support.
+* add 64-bit functions for pdftex.
+* autoconf support finally modernized.
+
+3.5.6 (for TeX Collection 2006-07, 30 December 2006)
 * longstanding minor portability/warnings problems.
 
 3.5.5
 * Copyrights of some source files were erroneously attributed to FSF.
-* On UNIX, accept the semicolon as well as the colon in environment
+* On Unix, accept the semicolon as well as the colon in environment
   variables like TEXINPUTS.
 * Keep metafont from choking on large literals (> 4000) when calling
   mktexpk.

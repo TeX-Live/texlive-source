@@ -1,10 +1,18 @@
 This file records noteworthy changes.
 
-7.5.6 (for TeX Collection 2006-07)
+7.5.7 (for TeX Collection 2008, 7 July 2008)
+* Include Knuth's 2008 updates.
+* Include LuaTeX.
+* Include SyncTeX.
+* Plenty of pdfTeX and MetaPost updates.
+* Pool strings now compiled into the binaries instead of .pool files.
+* autoconf support finally modernized.
+
+7.5.6 (for TeX Collection 2006-07, 30 December 2006)
 * Include XeTeX.
 * pdfTeX and MetaPost updates.
 
-7.5.5
+7.5.5 (26 June 2005)
 * BibTeX: dynamically resize the buffer (and related arrays).
 * MP: Version 0.9
 * mpware: Brought to the equivalent of version 0.9.

@@ -1,3 +1,7 @@
+2008-07-08  Karl Berry  <karl@tug.org>
+
+	* configure.in: version 3.5.7.
+
 2008-07-06  Karl Berry  <karl@tug.org>
 
 	* withenable.ac (texmfmain): do not bother with long verbose
@@ -193,12 +197,15 @@
 	* acconfig.h: ... removed.
 
 2008-02-24  Martin Schröder <martin@pdftex.org>
+
         * lib.h: systypes.h instead of c-std.h
 
 2008-02-23  Martin Schröder <martin@pdftex.org>
+
         * lib.h: include c-std.h to get off_t from stdio.h
 
 2008-02-21  Martin Schröder <martin@pdftex.org>
+
         * lib.h, xfseek.c, xftell.c: LFS support: use off_t instead of long
         and fseeko instead of fseek
 
