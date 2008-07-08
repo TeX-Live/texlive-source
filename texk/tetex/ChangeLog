@@ -1,3 +1,9 @@
+2008-07-08  Karl Berry  <karl@tug.org>
+
+	* texconfig (hyphen, formats): disable these functions,
+	fmtutil.cnf and language.dat/def must not be manually edited,
+	since they are now automatically regenerated, as tlmgr regenerates.
+
 2008-07-05  Karl Berry  <karl@tug.org>
 
 	* Makefile.in (run_texlinks): use -f $(web2cdir)/fmtutil.cnf.

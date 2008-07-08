@@ -1,7 +1,8 @@
 #!/bin/sh
 
 # TeXConfig version 3.0
-# Thomas Esser, te@dbs.uni-hannover.de. Public domain.
+# Originally written by Thomas Esser. Public domain.
+# Now maintained as part of TeX Live; correspondence to tex-live@tug.org.
 
 # invoke the right shell:
 
@@ -24,7 +25,7 @@ test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 progname=texconfig
 
 # the version string
-version=20080505.2038
+version=20080708.1050
 
 envVars="
   AFMFONTS BIBINPUTS BSTINPUTS CMAPFONTS CWEBINPUTS ENCFONTS GFFONTS
@@ -562,9 +563,7 @@ Usage: $progname conf                  (show configuration information)
        $progname font vardir DIR
        $progname font ro
        $progname font rw
-       $progname formats               (edit fmtutil.cnf)
        $progname help                  (or --help; show this help)
-       $progname hyphen FORMAT         (edit hyphenation config for FORMAT)
        $progname init [FORMAT]...      (rebuild FORMATs, or all formats
                                         plus run texlinks and updmap)
        $progname mode MODE             (set Metafont MODE)
@@ -1005,6 +1004,21 @@ For more information about these \`features', consult the teTeX manual
       ;;
 
     formats)
+      cat >&2 <<EOM
+texconfig formats is no longer supported, because manual edits of
+fmtutil.cnf will be overwritten by the new TeX Live package manager,
+tlmgr, which regenerates that file as needed upon package changes.
+Thus, to add or remove formats, the recommended method is to use tlmgr
+to add or remove the appropriate package.
+
+If you need to make manual additions, you can edit the file
+fmtutil-local.cnf under TEXMFLOCAL.  Further information with
+tlmgr --help and at http://tug.org/texlive/tlmgr.html.
+
+Exiting.
+EOM
+      exit 1  # but leave the real code for posterity
+
       setupTmpDir
       echo "$progname: analyzing old configuration..." >&2
       fmtutil --catcfg > $tmpdir/pre
@@ -1030,6 +1044,22 @@ For more information about these \`features', consult the teTeX manual
 
     # "hyphen FORMAT"
     hyphen)
+      cat >&2 <<EOM
+texconfig hyphen is no longer supported, because manual edits of
+language.dat (or language.def) will be overwritten by the new TeX Live
+package manager, tlmgr, which regenerates those configuration files as
+needed upon package changes.  Thus, to add or remove hyphenation
+patterns, the recommended method is to use tlmgr to add or remove the
+appropriate package.
+
+If you need to make manual additions, you can edit the files
+language-local.dat and language-local.def under TEXMFLOCAL.  Further
+information with tlmgr --help and at http://tug.org/texlive/tlmgr.html.
+
+Exiting.
+EOM
+      exit 1  # but leave the real code for posterity
+
       tcBatchHyphenFormat=$2
       formatsForHyphen=`getFormatsForHyphen`
       formatsForHyphenFmt=`echo "$formatsForHyphen" | myFmt | sed 's@^@  @'`
