@@ -190,6 +190,7 @@ struct  JPEG_info
 #define HAVE_APPn_JFIF  (1 << 0)
 #define HAVE_APPn_ADOBE (1 << 1)
 #define HAVE_APPn_ICC   (1 << 2)
+#define HAVE_APPn_Exif  (1 << 3)
 
 static int      JPEG_scan_file   (struct JPEG_info *j_info, FILE *fp);
 static int      JPEG_copy_stream (struct JPEG_info *j_info,
@@ -335,8 +336,15 @@ jpeg_include_image (pdf_ximage *ximage, FILE *fp)
   info.bits_per_component = j_info.bits_per_component;
   info.num_components     = j_info.num_components;
 
+#define IS_Exif(j) ((j).flags & HAVE_APPn_Exif)
 #define IS_JFIF(j) ((j).flags & HAVE_APPn_JFIF)
-  if (IS_JFIF(j_info)) {
+
+  if (IS_Exif(j_info)) { /* resolution data from EXIF is handled here,
+			    takes precedence over JFIF */
+    info.xdensity = 72.0 / j_info.xdpi;
+    info.ydensity = 72.0 / j_info.ydpi;
+  }
+  else if (IS_JFIF(j_info)) {
     int i;
     for (i = 0; i < j_info.num_appn; i++) {
       if (j_info.appn[i].marker == JM_APP0 && j_info.appn[i].app_sig == JS_APPn_JFIF)
@@ -357,10 +365,6 @@ jpeg_include_image (pdf_ximage *ximage, FILE *fp)
         break;
       }
     }
-  }
-  else { /* resolution data from EXIF is handled here */
-    info.xdensity = 72.0 / j_info.xdpi;
-    info.ydensity = 72.0 / j_info.ydpi;
   }
 
   pdf_ximage_set_image(ximage, &info, stream);
@@ -860,6 +864,7 @@ JPEG_scan_file (struct JPEG_info *j_info, FILE *fp)
 	  return -1;
 	length -= 5;
 	if (!memcmp(app_sig, "Exif\000", 5)) {
+	  j_info->flags |= HAVE_APPn_Exif;
 	  length -= read_APP1_Exif(j_info, fp, length);
 	}
       }
