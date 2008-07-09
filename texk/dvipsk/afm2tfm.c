@@ -1492,9 +1492,9 @@ writevpl P1H(void)
 void version P1C(FILE *, f)
 {
   extern KPSEDLL char *kpathsea_version_string;
-  fputs ("afm2tfm(k) (dvips(k) 5.96dev) 8.1\n", f);
+  fputs ("afm2tfm(k) (dvips(k) 5.97) 8.1\n", f);
   fprintf (f, "%s\n", kpathsea_version_string);
-  fputs ("Copyright (C) 2007 Radical Eye Software.\n\
+  fputs ("Copyright (C) 2008 Radical Eye Software.\n\
 There is NO warranty.  You may redistribute this software\n\
 under the terms of the GNU General Public License\n\
 and the Dvips copyright.\n\

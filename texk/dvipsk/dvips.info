@@ -1,7 +1,7 @@
-This is dvips.info, produced by makeinfo version 4.11 from dvips.texi.
+This is dvips.info, produced by makeinfo version 4.12 from dvips.texi.
 
-This manual documents Dvips version 5.96dev (February 2008), a program
-to translate a DVI file into PostScript.  You may freely use, modify
+This manual documents Dvips version 5.97 (July 2008), a program to
+translate a DVI file into PostScript.  You may freely use, modify
 and/or distribute this file.
 
 INFO-DIR-SECTION TeX
@@ -17,8 +17,8 @@ File: dvips.info,  Node: Top,  Next: Why Dvips,  Up: (dir)
 Dvips
 *****
 
-This manual documents Dvips version 5.96dev (February 2008), a program
-to translate a DVI file into PostScript.  You may freely use, modify
+This manual documents Dvips version 5.97 (July 2008), a program to
+translate a DVI file into PostScript.  You may freely use, modify
 and/or distribute this file.
 
 * Menu:
@@ -4682,82 +4682,82 @@ Index
 
 
 Tag Table:
-Node: Top524
-Node: Why Dvips1275
-Node: Installation4723
-Node: config.ps installation5861
-Node: PostScript font installation8403
-Node: Ghostscript installation11277
-Node: Diagnosing problems12374
-Node: Debug options13469
-Node: No output14672
-Node: Small or inverted16140
-Node: Printer errors16859
-Node: Long documents fail18191
-Node: Including graphics fails18532
-Node: Invoking Dvips19770
-Node: Basic usage20361
-Node: Command-line options21345
-Node: Option summary21794
-Node: Option details23956
-Node: Environment variables42589
-Node: Config files45548
-Node: Configuration file searching46231
-Node: Configuration file commands49531
-Node: Paper size and landscape56548
-Node: papersize special58146
-Node: Config file paper sizes59555
-Node: Paper trays63627
-Node: Interaction with PostScript64961
-Node: PostScript figures65614
-Node: Bounding box66340
-Node: \includegraphics69711
-Node: EPSF macros72002
-Node: EPSF scaling73972
-Node: EPSF clipping76542
-Node: psfile special77184
-Node: Dynamic creation of graphics79577
-Node: Fonts in figures80895
-Node: Header files82555
-Node: Including headers from TeX83761
-Node: Including headers from the command line85795
-Node: Headers and memory usage86895
-Node: Literal PS87605
-Node: " special88187
-Node: ps special88928
-Node: Literal headers90426
-Node: PostScript hooks91141
-Node: Literal examples93231
-Node: Hypertext94683
-Node: Hypertext caveats96241
-Node: Hypertext specials100638
-Node: PostScript fonts103272
-Node: Font concepts104388
-Node: Metric files105555
-Node: Glyph files108381
-Node: Virtual fonts110737
-Node: Encodings112627
-Node: PostScript typesetting115009
-Node: Making a font available118091
-Node: Invoking afm2tfm123121
-Node: Changing font encodings124091
-Node: Changing TeX encodings124881
-Node: Changing PostScript encodings125981
-Node: Changing both encodings127325
-Node: Reencoding with Afm2tfm127998
-Node: Encoding file format131102
-Node: Special font effects135305
-Node: Afm2tfm options137568
-Node: psfonts.map140553
-Node: Color145277
-Node: Color macro files146321
-Node: User-definable colors149519
-Node: Color subtleties150794
-Node: Ted Turner152445
-Node: Color device configuration153670
-Node: Color support details156112
-Node: Color specifications156490
-Node: Color specials157893
-Node: Index160022
+Node: Top517
+Node: Why Dvips1261
+Node: Installation4709
+Node: config.ps installation5847
+Node: PostScript font installation8389
+Node: Ghostscript installation11263
+Node: Diagnosing problems12360
+Node: Debug options13455
+Node: No output14658
+Node: Small or inverted16126
+Node: Printer errors16845
+Node: Long documents fail18177
+Node: Including graphics fails18518
+Node: Invoking Dvips19756
+Node: Basic usage20347
+Node: Command-line options21331
+Node: Option summary21780
+Node: Option details23942
+Node: Environment variables42575
+Node: Config files45534
+Node: Configuration file searching46217
+Node: Configuration file commands49517
+Node: Paper size and landscape56534
+Node: papersize special58132
+Node: Config file paper sizes59541
+Node: Paper trays63613
+Node: Interaction with PostScript64947
+Node: PostScript figures65600
+Node: Bounding box66326
+Node: \includegraphics69697
+Node: EPSF macros71988
+Node: EPSF scaling73958
+Node: EPSF clipping76528
+Node: psfile special77170
+Node: Dynamic creation of graphics79563
+Node: Fonts in figures80881
+Node: Header files82541
+Node: Including headers from TeX83747
+Node: Including headers from the command line85781
+Node: Headers and memory usage86881
+Node: Literal PS87591
+Node: " special88173
+Node: ps special88914
+Node: Literal headers90412
+Node: PostScript hooks91127
+Node: Literal examples93217
+Node: Hypertext94669
+Node: Hypertext caveats96227
+Node: Hypertext specials100624
+Node: PostScript fonts103258
+Node: Font concepts104374
+Node: Metric files105541
+Node: Glyph files108367
+Node: Virtual fonts110723
+Node: Encodings112613
+Node: PostScript typesetting114995
+Node: Making a font available118077
+Node: Invoking afm2tfm123107
+Node: Changing font encodings124077
+Node: Changing TeX encodings124867
+Node: Changing PostScript encodings125967
+Node: Changing both encodings127311
+Node: Reencoding with Afm2tfm127984
+Node: Encoding file format131088
+Node: Special font effects135291
+Node: Afm2tfm options137554
+Node: psfonts.map140539
+Node: Color145263
+Node: Color macro files146307
+Node: User-definable colors149505
+Node: Color subtleties150780
+Node: Ted Turner152431
+Node: Color device configuration153656
+Node: Color support details156098
+Node: Color specifications156476
+Node: Color specials157879
+Node: Index160008
 
 End Tag Table

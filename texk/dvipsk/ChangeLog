@@ -1,3 +1,10 @@
+2008-07-10  Karl Berry  <karl@tug.org>
+
+	* dvips.h (BANNER): 5.97, 2008.
+	* dvips.c (main): use BANNER.
+	* afm2tfm.c: 5.97.
+	* dvips.texi (version): 5.97.
+	
 2008-05-07  David M. Jones  <dmj@ams.org>
 
 	* output.c (copyfile_general): pass through binary characters such
