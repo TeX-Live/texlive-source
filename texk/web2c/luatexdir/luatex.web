@@ -243,8 +243,8 @@ known as `\eTeX'.
 @d pdftex_version_string=='-2.00.0' {current \pdfTeX\ version}
 @#
 @d luatex_version==25 { \.{\\luatexversion} }
-@d luatex_revision=="3" { \.{\\luatexrevision} }
-@d luatex_version_string=='snapshot-0.25.3' {current \LuaTeX\ version}
+@d luatex_revision=="4" { \.{\\luatexrevision} }
+@d luatex_version_string=='snapshot-0.25.4' {current \LuaTeX\ version}
 @d luatex_date_info==-extra_version_info { the compile date is negated }
 @#
 @d luaTeX_banner=='This is LuaTeX, Version ',luatex_version_string,extra_version_info
@@ -16700,8 +16700,9 @@ end;
 procedure literal(s: str_number; literal_mode: integer; warn: boolean);
 var j: pool_pointer; {current character code position}
 begin
-    j:=str_start_macro(s);
-    if literal_mode = scan_special then begin
+    if s>string_offset then begin { needed for |out_save| }
+      j:=str_start_macro(s);
+      if literal_mode = scan_special then begin
         if not (str_in_str(s, "PDF:", 0) or str_in_str(s, "pdf:", 0)) then begin
             if warn and not (str_in_str(s, "SRC:", 0)
                 or str_in_str(s, "src:", 0)
@@ -16718,6 +16719,7 @@ begin
             literal_mode := direct_page; end
         else
             literal_mode := set_origin;
+      end;
     end;
     case literal_mode of
     set_origin: begin
@@ -16730,10 +16732,13 @@ begin
         pdf_end_string_nl;
     othercases confusion("literal1")
     endcases;
-    while j<str_start_macro(s+1) do begin
-       pdf_out(str_pool[j]);
-       incr(j);
-    end;
+    if s>string_offset then
+      while j<str_start_macro(s+1) do begin
+         pdf_out(str_pool[j]);
+         incr(j);
+      end
+    else
+      pdf_out(s);
     pdf_print_nl;
 end;
 
