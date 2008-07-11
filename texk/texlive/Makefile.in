@@ -24,8 +24,8 @@ LINKED_SCRIPTS = \
   texmf/scripts/texlive/tlmgr.pl \
   texmf-dist/scripts/bengali/ebong.py \
   texmf-dist/scripts/dviasm/dviasm.py \
-  texmf-dist/scripts/epspdf/epsfpdf \
-  texmf-dist/scripts/epspdf/epsfpdftk \
+  texmf-dist/scripts/epspdf/epspdf \
+  texmf-dist/scripts/epspdf/epspdftk \
   texmf-dist/scripts/glossaries/makeglossaries \
   texmf-dist/scripts/mkjobtexmf/mkjobtexmf.pl \
   texmf-dist/scripts/oberdiek/pdfatfi.pl \
