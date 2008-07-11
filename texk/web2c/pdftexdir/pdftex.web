@@ -289,7 +289,7 @@ known as `\eTeX'.
 @#
 @d pdftex_version==140 { \.{\\pdftexversion} }
 @d pdftex_revision=="8" { \.{\\pdftexrevision} }
-@d pdftex_version_string=='-1.40.8-beta-20080513' {current \pdfTeX\ version}
+@d pdftex_version_string=='-1.40.8' {current \pdfTeX\ version}
 @#
 @d pdfeTeX_banner=='This is pdfeTeX, Version 3.1415926',pdftex_version_string,eTeX_version_string
    {printed when \pdfeTeX\ starts}
@@ -19794,20 +19794,14 @@ end
 
 @ @<Output the cross-reference stream dictionary@>=
 pdf_new_dict(obj_type_others, 0, 0);
-if (obj_offset(sys_obj_ptr) > 16777215) 
-        and (obj_offset(sys_obj_ptr) > ((16777216 * 256) - 1)) then
-    {this obviously works only on platforms with more than 32 bits; the
-expression is not a constant because otherwise tangle would scream number too
-large}
+if ((obj_offset(sys_obj_ptr)/256) > 16777215) then
     xref_offset_width := 5
 else if obj_offset(sys_obj_ptr) > 16777215 then
     xref_offset_width := 4
 else if obj_offset(sys_obj_ptr) > 65535 then
     xref_offset_width := 3
-else if obj_offset(sys_obj_ptr) > 255 then
-    xref_offset_width := 2
 else
-    xref_offset_width := 1;
+    xref_offset_width := 2;
 @<Build a linked list of free objects@>;
 pdf_print_ln("/Type /XRef");
 pdf_print("/Index [0 ");

@@ -1,9 +1,12 @@
 --------------------------------------------------
-pdfTeX 3.1415926-1.40.8 was released on 2008-05-??
+pdfTeX 3.1415926-1.40.8 was released on 2008-07-10
 --------------------------------------------------
+- Incorporated synctex
 - Incorporated the new version of TeX: 3.1415926
 - The pool file is now compiled in
 - Bugfix:
+  - some large TrueType fonts caused pdftex to segfault (1866)
+  - fix for copying contents streams of included pdf (1751)
   - Fonts from included PDFs for which maplines existed missed their /StemV
     values
   - \pdflastximagepages was broken for JBIG2 images 
