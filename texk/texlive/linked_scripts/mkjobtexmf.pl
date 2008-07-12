@@ -10,8 +10,8 @@ use strict;
 $^W=1;
 
 my $prj = 'mkjobtexmf';
-my $version = '0.6';
-my $date = '2008/04/05';
+my $version = '0.7';
+my $date = '2008/06/28';
 my $author = 'Heiko Oberdiek';
 my $copyright = "Copyright 2007, 2008 $author";
 
@@ -87,6 +87,7 @@ GetOptions(
     'cmd-tex=s'       => \$cmd_tex,
     'cmd-kpsewhich=s' => \$cmd_kpsewhich,
     'cmd-texhash=s'   => \$cmd_texhash,
+    'cmd-strace=s'    => \$cmd_strace,
     'strace'          => \$strace,
     'copy'            => \$copy,
     'flat'            => \$flat,
@@ -798,6 +799,11 @@ modify it under the same terms as Perl itself
 
 * Tiny fix in target `uninstall' in file `Makefile.in'.
   (Thanks to Karl Berry)
+
+=item 2008/06/28 v0.7
+
+* Fix for unknown option `--cmd-strace'.
+  (Thanks to Juho Niemel"a)
 
 =back
 

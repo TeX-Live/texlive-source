@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 8708 2008-06-13 11:56:01Z preining $
+# $Id: tlmgr.pl 9427 2008-07-10 10:27:48Z preining $
 #
 # Copyright 2008 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
@@ -10,7 +10,7 @@
 # - (?) removal does not remove created format files from TEXMFSYSVAR
 # - other features: dependency check?, ...?
 
-my $svnrev = '$Revision: 8708 $';
+my $svnrev = '$Revision: 9427 $';
 $svnrev =~ m/: ([0-9]+) /;
 my $tlmgrrevision = $1;
 
@@ -30,7 +30,7 @@ use TeXLive::TLMedia;
 use TeXLive::TLUtils;
 use TeXLive::TLWinGoo;
 use TeXLive::TLPostActions;
-TeXLive::TLUtils->import( qw(kpsewhich member win32 merge_into) );
+TeXLive::TLUtils->import( qw(kpsewhich member win32 merge_into copy log) );
 use Cwd qw/abs_path/;
 use Pod::Usage;
 use Getopt::Long qw(:config no_autoabbrev require_order);
@@ -52,16 +52,11 @@ my $location;
 my $opt_location;
 my $opt_help = 0;
 my $opt_version = 0;
-my $opt_netarchive;
-my $opt_diskarchive;
 my $opt_gui = 0;
 my $opt_gui_lang;
 
 TeXLive::TLUtils::process_logging_options();
-
 GetOptions("location=s" => \$opt_location,
-           "netarchive=s" => \$opt_netarchive,
-           "diskarchive=s" => \$opt_diskarchive,
            "gui" => \$opt_gui,
            "gui-lang=s" => \$opt_gui_lang,
            "version" => \$opt_version,
@@ -75,31 +70,35 @@ if (!defined($action) && $opt_gui) {
 
 if ($opt_version) {
   print "tlmgr revision $tlmgrrevision\n";
-  exit(0);
-}
-
-if (!defined($action) && !$opt_help) {
-  print "missing action\ntry 'tlmgr help' for more information.\n";
-  exit 1;
+  exit 0;
 }
 
 if (defined($action) && ($action =~ m/^help/i)) {
   $opt_help = 1;
 }
 
-$NetArchive = $opt_netarchive if (defined($opt_netarchive));
-$DiskArchive = $opt_diskarchive if (defined($opt_diskarchive));
+if (!defined($action) && !$opt_help) {
+  die "$0: missing action; try --help if you need it.\n";
+}
 
-if ($^O=~/^MSWin(32|64)$/i) {
+if ($^O =~ /^MSWin(32|64)$/i) {
   pod2usage(-exitstatus => 0, -verbose => 2, -noperldoc => 1) if $opt_help;
 } else {
   pod2usage(-exitstatus => 0, -verbose => 2) if $opt_help;
 }
 
-my $loadmediasrcerror = "Cannot load TeX Live Database from ";
+my $loadmediasrcerror = "Cannot load TeX Live database from ";
 my %ret;
 
-if ($action =~ m/^generate$/i) {
+if ($action =~ m/^_include_tlpobj$/) {
+  # this is an internal function that should not be used outside
+  init_local_db();
+  my $tlpobj = TeXLive::TLPOBJ->new;
+  $tlpobj->from_file($ARGV[0]);
+  $localtlpdb->add_tlpobj($tlpobj);
+  $localtlpdb->save;
+  exit(0);
+} elsif ($action =~ m/^generate$/i) {
   merge_into(\%ret, action_generate());
 } elsif ($action =~ m/^gui$/i) {
   action_gui();
@@ -131,7 +130,7 @@ if ($action =~ m/^generate$/i) {
   merge_into(\%ret, action_remove());
 } elsif (($action eq "paper") || ($action eq "dvips") || ($action eq "xdvi") ||
          ($action eq "pdftex") || ($action eq "dvipdfm") ||
-         ($action eq "dvipdfmx")) {
+         ($action eq "dvipdfmx") || ($action eq "context")) {
   if ($opt_gui) {
     action_gui("config");
   }
@@ -181,18 +180,26 @@ if (defined($ret{'format'})) {
 }
 if (defined($ret{'language'})) {
   print "regenerating language.dat\n";
-  TeXLive::TLUtils::create_language($localtlpdb,
+  TeXLive::TLUtils::create_language_dat($localtlpdb,
     "$TEXMFSYSVAR/tex/generic/config/language.dat",
     "$TEXMFLOCAL/tex/generic/config/language-local.dat");
+  print "regenerating language.def\n";
+  TeXLive::TLUtils::create_language_def($localtlpdb,
+    "$TEXMFSYSVAR/tex/generic/config/language.def",
+    "$TEXMFLOCAL/tex/generic/config/language-local.def");
   # system("texconfig-sys", "generate", "language");
   #
   # win32 fmtutil needs language.dat WITHOUT full specification
   if (TeXLive::TLUtils::win32()) {
     print "running fmtutil-sys --byhyphen language.dat\n";
     system("fmtutil-sys", "--byhyphen", "language.dat");
+    print "running fmtutil-sys --byhyphen language.def\n";
+    system("fmtutil-sys", "--byhyphen", "language.def");
   } else {
     print "running fmtutil-sys --byhyphen $TEXMFSYSVAR/tex/generic/config/language.dat\n";
     system("fmtutil-sys", "--byhyphen", "$TEXMFSYSVAR/tex/generic/config/language.dat");
+    print "running fmtutil-sys --byhyphen $TEXMFSYSVAR/tex/generic/config/language.def\n";
+    system("fmtutil-sys", "--byhyphen", "$TEXMFSYSVAR/tex/generic/config/language.def");
   }
 }
 
@@ -217,8 +224,8 @@ sub remove_package {
         return;
       }
     }
-    if ($pkg eq "texlive.infra") {
-      log("Not removing texlive.infra, it is essential!\n");
+    if ($pkg =~ m/^texlive\.infra/) {
+      log("Not removing $pkg, it is essential!\n");
       return;
     }
     print "remove: $pkg\n";
@@ -595,14 +602,9 @@ sub action_update {
   if (!@todo) {
     printf "tlmgr update takes either a list of packages or --all\n";
   }
+  my $updater_started = 0;
   foreach my $pkg (@todo) {
     next if ($pkg =~ m/^00texlive/);
-    # it looks like that can actually be done!!!
-    # It gives several warnings but afterwards the files are changed. Strange
-    #if (win32() && (($pkg eq "texlive.infra") || ($pkg eq "bin-texlive"))) {
-    #  info("We cannot upgrade $pkg on win32, since we are running it!\n");
-    #  next;
-    #}
     my $tlp = $localtlpdb->get_package($pkg);
     if (!defined($tlp)) {
       printf STDERR "Strange, $pkg cannot be found!\n";
@@ -634,15 +636,76 @@ sub action_update {
                                  $opt_backupdir, "${pkg}.r" . $tlp->revision);
           }
         }
-        print "update: $pkg (first remove old, then install new)\n";
-        merge_into(\%ret, &remove_package($pkg, $localtlpdb, 1));
-        merge_into(\%ret, $tlmediasrc->install_package($pkg, $localtlpdb, $opt_nodepends, 0));
-        print "update: $pkg done\n";
+        if (win32() && ($pkg =~ m/$WinSpecialUpdatePackagesRegexp/)) {
+          if (!$updater_started) {
+            open UPDATER, ">" . $localtlpdb->root . "/tlpkg/installer/updater.bat"
+              or die "Cannot create updater.bat: $!";
+            print UPDATER <<'EOF';
+rem update program, can savely removed after it has been done
+set tlupdate=%~dp0
+set tldrive=%~d0
+
+%tldrive%
+cd %tlupdate%
+rem now we are in .../tlpkg/installer
+rem create tar.exe backup
+copy tar.exe tarsave.exe
+cd ..
+cd ..
+rem now we are in the root
+
+EOF
+;
+            $updater_started = 1;
+          }
+          # these packages cannot be upgrade on win32
+          # so we have to create a update program
+          my $media = $tlmediasrc->media;
+          my $remoteroot = $mediatlpdb->root;
+          my $root = $localtlpdb->root;
+          my $temp = "$root/temp";
+          TeXLive::TLUtils::mkdirhier($temp);
+          if ($media eq 'DVD') {
+            tlwarn ("Creating updater from DVD currently not implemented!\n");
+          } else {
+            if ($media eq 'CD') {
+              copy("$remoteroot/$Archive/$pkg.tar.lzma", "$temp");
+            } else { # net
+              TeXLive::TLUtils::download_file("$remoteroot/$Archive/$pkg.tar.lzma", "$temp/$pkg.tar.lzma");
+            }
+            # now we should have the file present
+            if (! -r "$temp/$pkg.tar.lzma") {
+              tlwarn ("Couldn't get $pkg.tar.lzma, that is bad\n");
+            } else {
+              # add lines to the un-archiver
+              print UPDATER <<EOF;
+tlpkg\\installer\\lzma\\lzmadec.win32.exe  < temp\\$pkg.tar.lzma > temp\\$pkg.tar
+tlpkg\\installer\\tarsave.exe -x -f temp\\$pkg.tar
+call tlmgr _include_tlpobj tlpkg\\tlpobj\\$pkg.tlpobj
+rem for now disable the removal of the downloads, we could need it for testing
+rem del temp\\$pkg.tar.lzma
+EOF
+;
+            }
+          }
+        } else {
+          print "update: $pkg (first remove old, then install new)\n";
+          merge_into(\%ret, &remove_package($pkg, $localtlpdb, 1));
+          merge_into(\%ret, $tlmediasrc->install_package($pkg, $localtlpdb, $opt_nodepends, 0));
+          print "update: $pkg done\n";
+        }
       }
     } elsif ($rev > $mediarev) {
       print "$pkg: revision in $location is less then local revision, not updating!\n";
       next;
     }
+  }
+  if ($updater_started) {
+    print UPDATER "del tlpkg\\installer\\tarsave.exe\n";
+    print UPDATER "rem del /s /q temp\n";
+    print UPDATER "rem rmdir temp\n";
+    close (UPDATER);
+    tlwarn("UPDATER has been created, please execute tlpkg\\installer\\updater.bat\n");
   }
   return(\%ret);
 }
@@ -851,26 +914,38 @@ sub action_generate {
   GetOptions("localcfg=s" => \$localconf, "dest=s" => \$dest,) or pod2usage(2);
   init_local_db();
 
-  if ($what =~ m/^language$/i) {
-    $dest || ($dest = kpsewhich ("TEXMFSYSVAR") . "/tex/generic/config/language.dat");
-    $localconf || ($localconf = kpsewhich ("TEXMFLOCAL") . "/tex/generic/config/language-local.dat");
-    debug("$0: writing language data to $dest\n");
-    TeXLive::TLUtils::create_language ($localtlpdb, $dest, $localconf);
+  my $TEXMFSYSVAR = kpsewhich("TEXMFSYSVAR");
+  my $TEXMFLOCAL = kpsewhich("TEXMFLOCAL");
+  
+  if ($what =~ m/^language(\.dat|\.def)?$/i) {
+    if ($what =~ m/^language(\.dat)?$/i) {
+      $dest ||= "$TEXMFSYSVAR/tex/generic/config/language.dat";
+      $localconf ||= "$TEXMFLOCAL/tex/generic/config/language-local.dat";
+      debug ("$0: writing language.dat data to $dest\n");
+      TeXLive::TLUtils::create_language_dat($localtlpdb, $dest, $localconf);
+      $dest .= ".def";
+    } 
+    if ($what =~ m/^language(\.def)?$/i) {
+      $dest ||= "$TEXMFSYSVAR/tex/generic/config/language.def";
+      $localconf ||= "$TEXMFLOCAL/tex/generic/config/language-local.def";
+      debug("$0: writing language.def data to $dest\n");
+      TeXLive::TLUtils::create_language_def($localtlpdb, $dest, $localconf);
+    } 
 
   } elsif ($what =~ m/^fmtutil$/i) {
-    $dest || ($dest = kpsewhich("TEXMFSYSVAR") . "/web2c/fmtutil.cnf");
-    $localconf || ($localconf = kpsewhich("TEXMFLOCAL") . "/web2c/fmtutil-local.cnf");
-    debug("$0: writing fmtutil.cnf data to $dest\n");
+    $dest ||= "$TEXMFSYSVAR/web2c/fmtutil.cnf";
+    $localconf ||= "$TEXMFLOCAL/web2c/fmtutil-local.cnf";
+    debug("$0: writing new fmtutil.cnf to $dest\n");
     TeXLive::TLUtils::create_fmtutil($localtlpdb, $dest, $localconf);
 
   } elsif ($what =~ m/^updmap$/i) {
-    $dest || ($dest = kpsewhich("TEXMFSYSVAR") . "/web2c/updmap.cfg");
-    $localconf || ($localconf = kpsewhich("TEXMFLOCAL") . "/web2c/updmap-local.cfg");
+    $dest ||= "$TEXMFSYSVAR/web2c/updmap.cfg";
+    $localconf ||= "$TEXMFLOCAL/web2c/updmap-local.cfg";
     debug("$0: writing new updmap.cfg to $dest\n");
-    TeXLive::TLUtils::create_updmap ($localtlpdb, $dest, $localconf);
+    TeXLive::TLUtils::create_updmap($localtlpdb, $dest, $localconf);
 
   } else {
-    die "$0: Unknown option for generate: $what (try --help if you need it)\n";
+    die "$0: Unknown option for generate: $what; try --help if you need it.\n";
   }
 
   return;
@@ -914,11 +989,15 @@ sub action_gui {
     if (defined($opt_gui_lang));
   push @cmdline, "--location", "$opt_location"
     if (defined($opt_location));
-  push @cmdline, "--netarchive", "$opt_netarchive"
-    if (defined($opt_netarchive));
-  push @cmdline, "--diskarchive", "$opt_diskarchive"
-    if (defined($opt_diskarchive));
+  push @cmdline, "--logfile", "$::LOGFILENAME"
+    if (defined($::LOGFILE));
+  push @cmdline, "-v" if ($::opt_verbosity > 0);
+  push @cmdline, "-v" if ($::opt_verbosity > 1);
+  push @cmdline, "-q" if ($::opt_quiet > 0);
   if (defined($screen)) {
+    if (($screen eq "install") || ($screen eq "update")) {
+      push @cmdline, "--load";
+    }
     push @cmdline, "--screen", $screen;
   }
   exec $perlbin @cmdline;
@@ -1136,12 +1215,12 @@ tlmgr - the TeX Live Manager
 
 =head1 SYNOPSIS
 
-tlmgr [I<options>] I<action> [I<option>]... [I<operand>]...
+tlmgr [I<option>]... I<action> [I<option>]... [I<operand>]...
 
 =head1 DESCRIPTION
 
 B<tlmgr> manages an existing TeX Live installation, both packages and
-options.
+configurations options.
 
 =head1 OPTIONS
 
@@ -1171,21 +1250,12 @@ Normally the GUI tries to deduce your language from the environment
 you can select a different language by giving this option a two-letter
 language code.
 
-=item B<--netarchive> I<dir>
-
-Overrides the default settings for netarchive. Should be used with care.
-
-=item B<--diskarchive> I<dir>
-
-Overrides the default settings for diskarchive. Should be used with care.
-
-=item B<--version>
-
-Echos the tlmgr.pl script's revision number and exits.
-
 =back
 
-The standard options B<--help/-h/-?> and B<--debug> are also accepted.
+The standard options are also accepted: B<--help/-h/-?>, B<--version>,
+B<-q> (no informational messages), B<-v> (debugging messages, can be
+repeated).  For more information about the latter, see the
+TeXLive::TLUtils documentation.
 
 =head1 ACTIONS
 
@@ -1355,7 +1425,7 @@ C<srcfiles> (install source files).
 
 =item B<paper letter>
 
-=item B<[xdvi|dvips|pdftex|dvipdfm|dvipdfmx] paper [help|papersize]>
+=item B<[xdvi|dvips|pdftex|dvipdfm|dvipdfmx|context] paper [help|papersize]>
 
 Configures the system wide paper settings, either for all programs in
 one go, or just for the specified program.
@@ -1428,24 +1498,42 @@ Do not ask for confirmation, remove immediately.
 
 =item B<generate language>
 
+=item B<generate language.dat>
+
+=item B<generate language.def>
+
 =item B<generate fmtutil>
 
 =item B<generate updmap>
 
-B<WARNING:> This action overwrites any user changes made in
-the respective files, by regenerating them from scratch.
+The I<generate> action overwrites any manual changes made in the
+respective files: it recreates them from scratch.
 
-This is especially questionable with updmap, because the result will be
-to disable all maps which have been manually installed (via C<updmap-sys
---enable>), e.g., for proprietary or local fonts.  Be sure that's what
-you want to do.
+For fmtutil and the language files, this is normal, and both the TeX
+Live installer and C<tlmgr> routinely call I<generate> for them.
 
-This action regenerates any of the three config files C<language.dat>,
-C<fmtutil.cnf>, and C<updmap.cfg> from the information present in the
-local TLPDB. If the files C<language-local.dat>, C<fmtutil-local.cnf>,
-or C<updmap-local.cfg> are present under C<TEXMFLOCAL> in the respective
+For updmap, however, neither the installer nor C<tlmgr> use I<generate>,
+because the result would be to disable all maps which have been manually
+installed via C<updmap-sys --enable>, e.g., for proprietary or local
+fonts.  Only the changes in the C<--localcfg> file mentioned below are
+incorporated by I<generate>.
+
+On the other hand, if you only use the fonts and font packages within
+TeX Live, there is nothing wrong with using I<generate updmap>.  Indeed,
+we use it to generate the C<updmap.cfg> file that is maintained in the
+live source repository.
+
+In more detail: I<generate> remakes any of the four config files
+C<language.dat>, C<language.def>, C<fmtutil.cnf>, and C<updmap.cfg> from
+the information present in the local TLPDB. If the files
+C<language-local.dat>, C<language-local.def>, C<fmtutil-local.cnf>, or
+C<updmap-local.cfg> are present under C<TEXMFLOCAL> in the respective
 directories, their contents will be simply merged into the final files,
 with no error checking of any kind.
+
+The form C<generate language> recreates both the C<language.dat> and the
+C<language.def> files, while the forms with extension only recreates
+the given file.
 
 Options:
 
@@ -1454,7 +1542,11 @@ Options:
 =item B<--dest> I<output file>
 
 specifies the output file (defaults to the respective location in
-C<TEXMFSYSVAR>).
+C<TEXMFSYSVAR>).  If B<--dest> is given to C<generate language>, its
+value will be used for the C<language.dat> output, and C<.def> will be
+appended to the value for the name of the C<language.def> output file.
+(This is just to avoid overwriting; if you really want a specific name
+for each output file, we recommend invoking C<tlmgr> twice.)
 
 =item B<--localcfg> I<local conf file>
 
@@ -1462,6 +1554,12 @@ specifies the (optional) local additions (defaults to the respective
 location in C<TEXMFSYSVAR>).
 
 =back
+
+The respective locations are as follows:
+  C<tex/generic/config/language.dat> (and C<language-local.dat>)
+  C<tex/generic/config/language.def> (and C<language-local.def>)
+  C<web2c/fmtutil.cnf> (and C<fmtutil-local.cnf>)
+  C<web2c/updmap.cfg> (and C<updmap-local.cnf>)
 
 =back
 
