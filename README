@@ -71,6 +71,15 @@ Build information:
 
   powerpc-darwin: like i386-darwin
   
+  powerpc-linux
+OS: gentoo GNU/Linux
+kernel 2.6.23
+gcc (GCC) 4.2.3 (Gentoo 4.2.3 p1.0)))
+bison (GNU Bison) 2.3)
+flex 2.5.35
+m4 (GNU M4) 1.4.11)
+GNU Make 3.81
+
   sparc-solaris
 OS: Sun Solaris 8
 compiler: Sun Studio 11
