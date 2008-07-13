@@ -5,8 +5,6 @@ Extra utilities we (optionally) compile for TeX Live.
 
 gzip - (old) only for Windows 
 
-jpeg2ps - (old) only for Windows
-
 dialog - seems to be a v1.0 in debian, asked te 5jun05; he said keep as-is
     or else go through testing.  Perhaps best would be for dialog to use
     a system ncurses (as texinfo does); then we could remove ncurses.
