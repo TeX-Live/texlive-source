@@ -24,12 +24,16 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include <kpathsea/c-memstr.h>
 
 static const char _svn_version[] =
-    "$Id$ $URL: http://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/writeimg.c $";
+    "$Id$ $URL: svn://192.168.0.1/svnroot/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/writeimg.c $";
 
 #define bp2int(p)    round(p*(onehundredbp/100.0))
 
 /* define image_ptr, image_array & image_limit */
-define_array(image);
+/* define_array(image); */
+
+/* avoid use of size_t */
+image_entry      *image_ptr, *image_array = NULL;
+integer          image_limit;
 
 float epdf_width;
 float epdf_height;
@@ -429,10 +433,10 @@ void img_free()
  * does not matter. 
  */
 
-#define dumpsizet   generic_dump
+/* #define dumpsizet   generic_dump */
 #define dumpinteger generic_dump
 
-#define undumpsizet   generic_undump
+/* #define undumpsizet   generic_undump */
 #define undumpinteger generic_undump
 
 /* (un)dumping a string means dumping the allocation size, followed
@@ -469,7 +473,7 @@ void dumpimagemeta()
 {
     int cur_image, img;
 
-    dumpsizet(image_limit);
+    dumpinteger(image_limit);
     cur_image = (image_ptr - image_array);
     dumpinteger(cur_image);
 
@@ -503,7 +507,7 @@ void undumpimagemeta(integer pdfversion, integer pdfinclusionerrorlevel)
 {
     int cur_image, img;
 
-    undumpsizet(image_limit);
+    undumpinteger(image_limit);
 
     image_array = xtalloc(image_limit, image_entry);
     undumpinteger(cur_image);

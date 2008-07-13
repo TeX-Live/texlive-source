@@ -288,8 +288,8 @@ known as `\eTeX'.
   {printed when \eTeX\ starts}
 @#
 @d pdftex_version==140 { \.{\\pdftexversion} }
-@d pdftex_revision=="8" { \.{\\pdftexrevision} }
-@d pdftex_version_string=='-1.40.8' {current \pdfTeX\ version}
+@d pdftex_revision=="9" { \.{\\pdftexrevision} }
+@d pdftex_version_string=='-1.40.9-rc1' {current \pdfTeX\ version}
 @#
 @d pdfeTeX_banner=='This is pdfeTeX, Version 3.1415926',pdftex_version_string,eTeX_version_string
    {printed when \pdfeTeX\ starts}
@@ -32559,7 +32559,7 @@ already in an earlier module.
 @<Undump pdftex data@>=
 begin
 undumpimagemeta(pdf_minor_version,pdf_inclusion_errorlevel);  {the image information array }
-undump_int(pdf_mem_size); 
+undump_int(pdf_mem_size);
 pdf_mem := xrealloc_array(pdf_mem, integer, pdf_mem_size);
 undump_int(pdf_mem_ptr);
 for k:=1 to pdf_mem_ptr-1 do begin

@@ -48,7 +48,7 @@ $Id$
 
 #  define objinfo(n) objtab[n].int0
 
-#  define pdfroom(n) do {                                      \
+#  define pdfroom(n) do {                                    \
     if ((unsigned)(n + pdfptr) > (unsigned)pdfbufsize) {     \
         if (pdfosmode)                                       \
             zpdfosgetosbuf(n);                               \
@@ -62,8 +62,8 @@ $Id$
 } while (0)
 
 #  define pdfout(c)  do {   \
-    pdfroom(1);           \
-    pdfbuf[pdfptr++] = c; \
+    pdfroom(1);             \
+    pdfbuf[pdfptr++] = c;   \
 } while (0)
 
 #  define pdfoffset()     (pdfgone + pdfptr)
@@ -79,63 +79,63 @@ $Id$
 
 #  define pdftex_debug    tex_printf
 
-#  define check_buf(size, buf_size)                          \
-    if ((unsigned)(size) > (unsigned)(buf_size))                               \
+#  define check_buf(size, buf_size)                         \
+    if ((unsigned)(size) > (unsigned)(buf_size))            \
         pdftex_fail("buffer overflow at file %s, line %d", __FILE__,  __LINE__ )
 
-#  define append_char_to_buf(c, p, buf, buf_size) do {       \
-    if (c == 9)                                            \
-        c = 32;                                            \
-    if (c == 13 || c == EOF)                               \
-        c = 10;                                            \
-    if (c != ' ' || (p > buf && p[-1] != 32)) {            \
-        check_buf(p - buf + 1, (buf_size));                \
-        *p++ = c;                                          \
-    }                                                      \
+#  define append_char_to_buf(c, p, buf, buf_size) do {      \
+    if (c == 9)                                             \
+        c = 32;                                             \
+    if (c == 13 || c == EOF)                                \
+        c = 10;                                             \
+    if (c != ' ' || (p > buf && p[-1] != 32)) {             \
+        check_buf(p - buf + 1, (buf_size));                 \
+        *p++ = c;                                           \
+    }                                                       \
 } while (0)
 
-#  define append_eol(p, buf, buf_size) do {                  \
-    check_buf(p - buf + 2, (buf_size));                    \
-    if (p - buf > 1 && p[-1] != 10)                        \
-        *p++ = 10;                                         \
-    if (p - buf > 2 && p[-2] == 32) {                      \
-        p[-2] = 10;                                        \
-        p--;                                               \
-    }                                                      \
-    *p = 0;                                                \
+#  define append_eol(p, buf, buf_size) do {                 \
+    check_buf(p - buf + 2, (buf_size));                     \
+    if (p - buf > 1 && p[-1] != 10)                         \
+        *p++ = 10;                                          \
+    if (p - buf > 2 && p[-2] == 32) {                       \
+        p[-2] = 10;                                         \
+        p--;                                                \
+    }                                                       \
+    *p = 0;                                                 \
 } while (0)
 
-#  define remove_eol(p, buf) do {                            \
-    p = strend(buf) - 1;                                   \
-    if (*p == 10)                                          \
-        *p = 0;                                            \
+#  define remove_eol(p, buf) do {                           \
+    p = strend(buf) - 1;                                    \
+    if (*p == 10)                                           \
+        *p = 0;                                             \
 } while (0)
 
 #  define skip(p, c)   if (*p == c)  p++
 
-#  define alloc_array(T, n, s) do {                           \
+#  define alloc_array(T, n, s) do {                         \
     if (T##_array == NULL) {                                \
         T##_limit = (s);                                    \
-        if ((unsigned)(n) > T##_limit)                      \
+        if ((unsigned)(n) > (unsigned)(T##_limit))          \
             T##_limit = (n);                                \
         T##_array = xtalloc(T##_limit, T##_entry);          \
         T##_ptr = T##_array;                                \
     }                                                       \
-    else if ((unsigned)(T##_ptr - T##_array + (n)) > T##_limit) {       \
+    else if ((unsigned)(T##_ptr - T##_array + (n)) > (unsigned)(T##_limit)) {   \
         last_ptr_index = T##_ptr - T##_array;               \
         T##_limit *= 2;                                     \
-        if ((unsigned)(T##_ptr - T##_array + (n)) > T##_limit)          \
+        if ((unsigned)(T##_ptr - T##_array + (n)) > (unsigned)(T##_limit))      \
             T##_limit = T##_ptr - T##_array + (n);          \
         xretalloc(T##_array, T##_limit, T##_entry);         \
         T##_ptr = T##_array + last_ptr_index;               \
     }                                                       \
 } while (0)
 
-#  define is_cfg_comment(c) \
+#  define is_cfg_comment(c)                                 \
     (c == 10 || c == '*' || c == '#' || c == ';' || c == '%')
 
-#  define define_array(T)                     \
-T##_entry      *T##_ptr, *T##_array = NULL;    \
+#  define define_array(T)                                   \
+T##_entry      *T##_ptr, *T##_array = NULL;                 \
 size_t          T##_limit
 
 #  define xfree(p)            do { if (p != NULL) free(p); p = NULL; } while (0)
