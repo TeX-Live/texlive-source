@@ -65,7 +65,7 @@ authorization from SIL International.
 
 @d XeTeX_version=0
 @d XeTeX_revision==".999"
-@d XeTeX_version_string=='-0.999.2' {current \XeTeX\ version}
+@d XeTeX_version_string=='-0.999.3' {current \XeTeX\ version}
 @z
 
 @x
@@ -8720,7 +8720,7 @@ var
 	i: integer;
 begin
 	begin_diagnostic;
-	if warningType=0 then print_nl("Loaded font mapping `")
+	if warningType=0 then print_nl("Loaded mapping `")
 	else print_nl("Font mapping `");
 	print_utf8_str(mappingNameP, mappingNameLen);
 	print("' for font `");

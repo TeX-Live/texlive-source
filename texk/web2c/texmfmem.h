@@ -141,8 +141,7 @@ typedef union
 
 
 /* fmemory_word for font_list; needs to be only four bytes.  This saves
-   significant space in the .fmt files. */
-
+   significant space in the .fmt files. (Not true in XeTeX, actually!) */
 typedef union
 {
 #ifdef WORDS_BIGENDIAN
@@ -151,6 +150,9 @@ typedef union
 #else /* not WORDS_BIGENDIAN */
   struct
   {
+#ifdef XeTeX
+    halfword junk; /* quarterword is really 16 bits in XeTeX, so integer does not fill the union */
+#endif
     integer CINT;
   } u;
 
