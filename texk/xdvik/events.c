@@ -2362,9 +2362,9 @@ Act_mouse_modes(Widget w, XEvent *event,
 
     my_action = compile_action(params[mode_idx]);
     for (i = 0, ap = my_action; ap; ap = ap->next, i++) {
+	String args[1];
 	TRACE_EVENTS((stderr, "Action %d for mode %d: '%s', %d args |%s| maps to proc |%p|",
 		      i, mode_idx, ap->command, ap->num_params, ap->param, ap->proc));
-	String args[1];
 	args[0] = ap->param;
 
 	/* now call the action proc directly */

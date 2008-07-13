@@ -150,11 +150,11 @@ xdvi_assert(const char *version,
 	    const char *fmt, ...)
 {
     if (!(condition)) {
+	va_list argp;
 	fprintf(stderr,
 		"\n************************************************************\n"
 		"XDvi %s: Failed assertion:\n%s:%d: ",
 		version, filename, lineno);
-	va_list argp;
 	va_start(argp, fmt);
 	(void)vfprintf(stderr, fmt, argp);
 	va_end(argp);
