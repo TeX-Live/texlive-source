@@ -854,7 +854,7 @@ le_int32 ParagraphLayout::getLanguageCode(const Locale *locale)
 
     return nullLanguageCode;
 }
-#elif
+#else
 
 // TODO - dummy implementation for right now...
 le_int32 ParagraphLayout::getLanguageCode(const Locale *locale)
