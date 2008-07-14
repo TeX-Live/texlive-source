@@ -106,6 +106,8 @@ done
 kpse_substs=`echo "$kpse_substs" | sed -e 's,%,\\\/,g' \
   -e 's/kpse_include /kpse_include[[ 	]]*/g'`
 dnl The parens around the eval prevent an "illegal io" in Ultrix sh.
-(eval $kpse_substs -e '/^kpse_include/d' "$kpse_input") > $1
+dnl The double quotes prevent the ^ from being interpreted as a pipe
+dnl symbol on i386-solaris (Solaris 10).
+(eval $kpse_substs -e '"/^kpse_include/d"' "$kpse_input") > $1
 ])
 

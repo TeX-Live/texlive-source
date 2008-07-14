@@ -1,3 +1,9 @@
+2008-07-14  Karl Berry  <karl@tug.org>
+
+	* kpse_inc.m4 (kpse_substs): double quote to avoid ^ being
+	interpreted as a pipe on i386-solaris 10.  Bug report from
+	A. Syropoulos.
+
 2008-02-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse_mtim.m4 (KPSE_STRUCT_ST_MTIM): removed, use instead

@@ -13903,7 +13903,7 @@ done
 # ... and fix the whitespace and escaped slashes.
 kpse_substs=`echo "$kpse_substs" | sed -e 's,%,\\\/,g' \
   -e 's/kpse_include /kpse_include[ 	]*/g'`
-(eval $kpse_substs -e '/^kpse_include/d' "$kpse_input") > Makefile.aux
+(eval $kpse_substs -e '"/^kpse_include/d"' "$kpse_input") > Makefile.aux
  ;;
     "gui/Makefile.aux":F) # Discard the file just generated and first resolve kpse_include's
   kpse_input=`case gui/Makefile.in in
@@ -13973,7 +13973,7 @@ done
 # ... and fix the whitespace and escaped slashes.
 kpse_substs=`echo "$kpse_substs" | sed -e 's,%,\\\/,g' \
   -e 's/kpse_include /kpse_include[ 	]*/g'`
-(eval $kpse_substs -e '/^kpse_include/d' "$kpse_input") > gui/Makefile.aux
+(eval $kpse_substs -e '"/^kpse_include/d"' "$kpse_input") > gui/Makefile.aux
  ;;
     "tests/Makefile.aux":F) # Discard the file just generated and first resolve kpse_include's
   kpse_input=`case tests/Makefile.in in
@@ -14043,7 +14043,7 @@ done
 # ... and fix the whitespace and escaped slashes.
 kpse_substs=`echo "$kpse_substs" | sed -e 's,%,\\\/,g' \
   -e 's/kpse_include /kpse_include[ 	]*/g'`
-(eval $kpse_substs -e '/^kpse_include/d' "$kpse_input") > tests/Makefile.aux
+(eval $kpse_substs -e '"/^kpse_include/d"' "$kpse_input") > tests/Makefile.aux
  ;;
 
   esac
