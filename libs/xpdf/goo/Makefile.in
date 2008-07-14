@@ -10,8 +10,13 @@
 
 # ------------------------------------------------------------------------
 # Changed by Martin Schröder <martin@pdftex.org>
-# $Id: Makefile.in 421 2008-04-26 21:59:55Z oneiros $
+# $Id: Makefile.in 494 2008-07-14 21:35:09Z oneiros $
 # Changelog:
+# ------------------------------------------------------------------------
+# r493 | oneiros | 2008-07-14 23:32:04 +0200 (Mo, 14 Jul 2008) | 2 lines
+#
+# Also set -DDISABLE_OUTLINE (pdftoepdf.cc had conflicting options)
+#
 # ------------------------------------------------------------------------
 # r390 | oneiros | 2008-03-23 16:51:58 +0100 (So, 23 Mär 2008) | 2 lines
 #
@@ -73,7 +78,7 @@ kpathsea_include_dir = -I../../../texk -I$(srcdir)/../../../texk
 ALLCFLAGS = $(CFLAGS) @DEFS@ -I.. -I$(srcdir)/.. -I. -I$(srcdir) $(kpathsea_include_dir)
 ALLCXXFLAGS = $(CXXFLAGS) @DEFS@ \
   -I.. -I$(srcdir)/.. -I. -I$(srcdir) $(kpathsea_include_dir) \
-  -DPDF_PARSER_ONLY
+  -DPDF_PARSER_ONLY -DDISABLE_OUTLINE
 CXXFLAGS = @CXXFLAGS@
 CC = @CC@
 CXX = @CXX@

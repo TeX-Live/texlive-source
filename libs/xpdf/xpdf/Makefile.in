@@ -8,13 +8,18 @@
 #
 # Heavily modified for pdftex by Thomas Esser, 1998, 1999
 #
-# $Id: Makefile.in 421 2008-04-26 21:59:55Z oneiros $
+# $Id: Makefile.in 494 2008-07-14 21:35:09Z oneiros $
 #========================================================================
 
 # ------------------------------------------------------------------------
 # Changed by Martin Schröder <martin@pdftex.org>
-# $Id: Makefile.in 421 2008-04-26 21:59:55Z oneiros $
+# $Id: Makefile.in 494 2008-07-14 21:35:09Z oneiros $
 # Changelog:
+# ------------------------------------------------------------------------
+# r493 | oneiros | 2008-07-14 23:32:04 +0200 (Mo, 14 Jul 2008) | 2 lines
+#
+# Also set -DDISABLE_OUTLINE (pdftoepdf.cc had conflicting options)
+#
 # ------------------------------------------------------------------------
 # r390 | oneiros | 2008-03-23 16:51:58 +0100 (So, 23 Mär 2008) | 2 lines
 # 
@@ -72,7 +77,7 @@ CXXFLAGS = @CXXFLAGS@
 CXX = @CXX@
 ALLCXXFLAGS = $(CXXFLAGS) -DHAVE_CONFIG_H $(XCFLAGS) \
   -I.. -I$(srcdirparent) -I$(goodir) -I$(fofidir) -I. -I$(srcdir) \
-  -DPDF_PARSER_ONLY
+  -DPDF_PARSER_ONLY -DDISABLE_OUTLINE
 
 kpse_include ../../texk/make/library.mk
 
