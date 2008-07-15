@@ -1,10 +1,10 @@
 pdfTeX
 ======
 
-README for version 3.1415926-1.40.8
+README for version 3.1415926-1.40.9
 ===================================
 
-This directory contains the version 1.40.8 of pdfTeX, an extended version
+This directory contains the version 1.40.9 of pdfTeX, an extended version
 of eTeX that can create PDF directly from TeX source files and enhance the
 result of TeX typesetting with the help of PDF. When PDF output is not
 selected, pdfTeX produces normal DVI output, otherwise it produces PDF

@@ -32,8 +32,8 @@ static const char _svn_version[] =
 /* define_array(image); */
 
 /* avoid use of size_t */
-image_entry      *image_ptr, *image_array = NULL;
-integer          image_limit;
+image_entry *image_ptr, *image_array = NULL;
+integer image_limit;
 
 float epdf_width;
 float epdf_height;

@@ -289,7 +289,7 @@ known as `\eTeX'.
 @#
 @d pdftex_version==140 { \.{\\pdftexversion} }
 @d pdftex_revision=="9" { \.{\\pdftexrevision} }
-@d pdftex_version_string=='-1.40.9-rc1' {current \pdfTeX\ version}
+@d pdftex_version_string=='-1.40.9' {current \pdfTeX\ version}
 @#
 @d pdfeTeX_banner=='This is pdfeTeX, Version 3.1415926',pdftex_version_string,eTeX_version_string
    {printed when \pdfeTeX\ starts}

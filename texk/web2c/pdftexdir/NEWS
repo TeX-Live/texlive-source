@@ -1,4 +1,10 @@
 --------------------------------------------------
+pdfTeX 3.1415926-1.40.9 was released on 2008-07-15
+--------------------------------------------------
+- a bugfix for cross-platform format dumping/undumping (r492)
+- a bugfix for pdf inclusion (r493)
+
+--------------------------------------------------
 pdfTeX 3.1415926-1.40.8 was released on 2008-07-10
 --------------------------------------------------
 - Incorporated synctex
