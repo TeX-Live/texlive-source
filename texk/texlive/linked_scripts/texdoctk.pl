@@ -48,11 +48,11 @@ my $CmdConsole="xterm -e ";
 
 if ($IsWin32) {
   $qq = "\"";
-  $HomeEnv = &GetHomeDir;
+  $HomeEnv = $ENV{'USERPROFILE'};
   chomp $HomeEnv;
   $TeXDocRcDefaults = "texdocrc-win32.defaults";
   $TempDir = &GetTempPath;
-  $CmdConsole = "command /c ";
+  $CmdConsole = "cmd /c ";
 }
 
 my $myrc="${HomeEnv}/.texdocrc"; # optional personal settings file
@@ -370,13 +370,13 @@ sub viewslc {
       ($dummy[-1] =~ /ps/) && do { $viewer=$ps_viewer; last DOC_FORMAT; };
       ($dummy[-1] =~ /pdf/) && do { $viewer=$pdf_viewer; last DOC_FORMAT; };
       ($dummy[-1] =~ /txt/ || $dummy[-1] =~ /faq$/) && do {
-	  $viewer=($txt_viewer eq "TDK_OWN" || 
+	  $viewer=($txt_viewer eq "TDK_OWN" ||
 		   $txt_viewer =~ /xterm/) ?
 		       $txt_viewer : "${CmdConsole} $txt_viewer";
 	  last DOC_FORMAT;
       };
       ($dummy[-1] =~ /README/i || $dummy[-2] =~ /\/README$/i) && do {
-	  $viewer=($txt_viewer eq "TDK_OWN" || 
+	  $viewer=($txt_viewer eq "TDK_OWN" ||
 		   $txt_viewer =~ /xterm/) ?
 		       $txt_viewer : "${CmdConsole} $txt_viewer";
 	  last DOC_FORMAT;
@@ -395,7 +395,7 @@ sub viewslc {
       };
 #     some packages have no normal documentation but useful info in the .sty
       ($dummy[-1] =~ /sty$/) && do {
-	  $viewer=($txt_viewer eq "TDK_OWN" || 
+	  $viewer=($txt_viewer eq "TDK_OWN" ||
 		   $txt_viewer =~ /xterm/) ?
 		       $txt_viewer : "${CmdConsole} $txt_viewer";
 	  $slc="../tex/$slc"; # .sty files are in ${tex,local}docpath/../tex/
@@ -411,7 +411,7 @@ sub viewslc {
     if ($viewer eq "") {
       if ($xfmt_viewer == 1) {
 	    &popmsg(-1,'Unknown format; assuming plain text.',$parframe);
-	    $viewer=($txt_viewer eq "TDK_OWN" || 
+	    $viewer=($txt_viewer eq "TDK_OWN" ||
 		     $txt_viewer =~ /xterm/) ?
 		       $txt_viewer : "${CmdConsole} $txt_viewer";
       } else {
@@ -1204,7 +1204,7 @@ sub settings {
 				    $_->configure(%butcol);
 				}
 			    }
-			    if ($txt_viewer eq "" && 
+			    if ($txt_viewer eq "" &&
 				defined $ENV{PAGER}) {
 				$txt_viewer=$ENV{PAGER};
 			    }

@@ -1,5 +1,5 @@
 #!/usr/bin/env texlua
--- $Id: texdoc.tlu 9448 2008-07-11 12:55:06Z mpg $
+-- $Id: texdoc.tlu 9524 2008-07-13 18:17:02Z mpg $
 --[[ Written in lua by Frank Küster (2007) based on the shell script by
 Thomas Esser, David Aspinall, and Simon Wilkinson.
 Public domain.]]
@@ -30,6 +30,7 @@ Usage:  texdoc  -h, --help | -v, --version | [option] name
 notfound_msg = [[
 Sorry, I'm not smart enough to find documentation for PKGNAME.  Please see
 http://tug.org/pkginfo/PKGNAME for information about the package.]]
+place_holder = '%%s' -- used for viewer commands
 
 -- [[ for our eyes only ]]
 opt_debug = false
@@ -70,18 +71,6 @@ while table.maxn(arg) > 0 and string.match(arg[1],'^%-') do
         mode = 'search'
     end
 end
-
---[[ aliases ]]
-function alias_subs (name)
-    if name == "eg-live" or name == "eg-texlive" then
-        return "eg-texlive-en"
-    else
-        return name
-    end
-end
-for i, name in ipairs(arg) do
-    arg[i] = alias_subs(name)
-end 
 
 --[[ function definitions ]]
 function list_iter (t)
@@ -201,8 +190,10 @@ end --function recurse_tree
 
 
 -- [[ set values from config files or defaults ]]
+-- also set aliases from config files while we're at it
 
-config = {} -- everything is stored in this table 
+config = {} -- everything is stored in this table ...
+alias = {} -- ... except aliases
 -- newer values don't override older ones
 function set_config_element (key, value)
     if config[key] == nil then
@@ -215,6 +206,22 @@ function set_config_list (conf)
         set_config_element (key, value)
     end
 end
+-- set an alias
+function set_alias (key, value)
+    if alias[key] == nil then
+        alias[key] = value
+    end
+end
+
+-- first, we shall make use of some environment variables
+set_config_list {
+    viewer_pdf  = os.getenv ("PDFVIEWER"),
+    viewer_ps   = os.getenv ("PSVIEWER"),
+    viewer_dvi  = os.getenv ("DVIVIEWER"),
+    viewer_html = os.getenv ("BROWSER"),
+    viewer_tex  = os.getenv ("PAGER"),
+    viewer_txt  = os.getenv ("PAGER")
+}
 
 -- initialize kpathsea
 kpse.set_program_name(arg[-1], "texdoc")
@@ -229,60 +236,53 @@ function read_config_file(configfile)
             if line == nil then break end  -- EOF
             line=string.gsub(line, '%s*#.*$', '')   -- comments begin with #.
             line=string.gsub(line, '%s*$', '')      -- remove trailing spaces.
-            if (string.match(line, '[%a_]+%s*=%s*.+')) then 
-                key, val=string.match(line, '([%a_]+)%s*=%s*(.+)')
+            line=string.gsub(line, '^%s*', '')      -- remove leading spaces.
+            key, val=string.match(line, '^([%a_]+)%s*=%s*(.+)')
+            if key and val then 
                 set_config_element(key, val)
             else
-                if (not string.match (line, '^%s*$')) then
-                    debug (configfile..': Syntax error: '..line)
+                key, val = string.match(line, '^alias%s+([%a_]+)%s*=%s*(.+)')
+                if key and val then
+                    set_alias(key, val)
+                else
+                    if (not string.match (line, '^%s*$')) then
+                        print_debug (configfile..': Syntax error: '..line)
+                    end
                 end
             end
         end
         cnf:close()
     else
-        debug ('config file "'..configfile..'" not found')
+        print_debug ('config file "'..configfile..'" not found')
     end
 end
 
 -- read all config files.
 function setup_config ()
-    local TEXMFHOME, TEXMFLOCAL
+    local TEXMFHOME, TEXMFLOCAL, TEXMFMAIN
     local platform, configfile, configfiles
     local ext, command, default_viewer
-
+    --
     platform=string.match(kpse.var_value('SELFAUTOLOC'), '.*/(.*)$')
     TEXMFHOME=kpse.var_value('TEXMFHOME')
     TEXMFLOCAL=kpse.var_value('TEXMFLOCAL')
-
+    TEXMFMAIN=kpse.var_value('TEXMFMAIN')
+    --
     -- the following config files are read if they exist.
     configfiles={
         TEXMFHOME ..'/texdoc/texdoc-'..platform..'.cnf',
         TEXMFHOME ..'/texdoc/texdoc.cnf',
         TEXMFLOCAL..'/texdoc/texdoc-'..platform..'.cnf',
-        TEXMFLOCAL..'/texdoc/texdoc.cnf'
+        TEXMFLOCAL..'/texdoc/texdoc.cnf',
+        TEXMFMAIN..'/texdoc/texdoc.cnf'
     }
-
+    --
     for i, configfile in ipairs(configfiles) do -- process all config files
-        debug ('processing "'..configfile..'"')
+        print_debug ('processing "'..configfile..'"')
         read_config_file(configfile)
     end
 end
-
-function get_viewer_from_env (variable)
-    local viewer = os.getenv(variable)
-    if viewer then
-        return "("..viewer.." %s)"
-    else
-        return nil
-    end
-end
-
--- with intermediate priority, we shall make use of some environment variables
-set_config_list {
-    viewer_html = get_viewer_from_env ("BROWSER"),
-    viewer_tex  = get_viewer_from_env ("PAGER"),
-    viewer_txt  = get_viewer_from_env ("PAGER")
-}
+setup_config ()
 
 -- for default viewer on general Unix, we use a list
 -- and check in the path in order to find a suitable program
@@ -312,8 +312,6 @@ if (os.type == "windows") then
     set_config_list {
         unzip_gz      = "gzip -d -c ",
         unzip_bz2     = "bzip2 -d -c ",
-        rm_file       = 'del /F ',
-        rm_dir        = 'rmdir ',
         viewer_dvi    = '(start /wait %s) &',
         viewer_html   = '(start /wait %s) &',
         viewer_pdf    = '(start /wait %s) &',
@@ -325,8 +323,6 @@ else -- since we don't support msdos, if os.type is not windows, it's unix
     set_config_list {
         unzip_gz      = "gzip -d -c ",
         unzip_bz2     = "bzip2 -d -c ",
-        rm_file       = 'rm -f ',
-        rm_dir        = 'rmdir '
     }
     if (os.name == 'macosx') then
         set_config_list {
@@ -406,8 +402,8 @@ function unzip_if_needed (ext)
     if zipext then
         unzip_command = config['unzip_'..zipext]
         viewext = string.match(ext,'%.(.*)%..*$')
-        basebame_pattern = '.*/(.*%.' .. viewext .. ')'
-        basename = string.match(filename,basebame_pattern)
+        basename_pattern = '.*/(.*%.' .. viewext .. ')'
+        basename = string.match(filename,basename_pattern)
         -- uncompress only once per file, in case it is given
         -- more than once (dvi besides ps or so)
         -- TODO: to be done
@@ -415,12 +411,13 @@ function unzip_if_needed (ext)
         unzip_commandline = unzip_command .. filename .. " > " 
         .. tmpdir .. "/" .. basename
         if os.execute(unzip_commandline) then
+            os.execute ("ls "..tmpdir)
+            print ("unzipped to tmpdir")
             filename = tmpdir .. "/" .. basename
         else
             print("Error executing \n" .. unzip_commandline)
         end
-        viewer_replacement = filename .. ';' .. config.rm_file
-        .. filename .. ';' .. config.rm_dir .. tmpdir
+        -- shall_cleanup = true
     else
         if ext == '' then
             -- fallback if complete filename has been specified
@@ -430,7 +427,6 @@ function unzip_if_needed (ext)
                 ext = 'txt'
             end
         end
-        viewer_replacement = filename
         viewext = string.match(ext,'%.(.*)$')
         if not viewext or not config['viewer_'..viewext] then
             -- complete filename specified, unknown extension, use "txt"
@@ -442,27 +438,38 @@ end
 -- view a file, if possible
 function try_viewing ()
     if config['viewer_'..viewext] == nil then
-        print ("Sorry, no "..viewext.."viewer found.  You can choose one\n"..
+        print ("Sorry, no "..viewext.." viewer found.  You can choose one\n"..
         "with the viewer_"..viewext" variable in texdoc.cnf.\n"..
         "Please report the problem so we can add your viewer as a default.\n")
     else
-        view_command = string.gsub(
-        config['viewer_'..viewext], '%%s',viewer_replacement)
+        view_command = config['viewer_'..viewext]
+        if string.match (view_command, place_holder) then
+            view_command = string.gsub(
+            view_command, place_holder, '"'..filename..'"')
+        else
+            view_command = view_command..' "'..filename..'"'
+        end
         if verbose then
             print(view_command)
         end
         view_result = os.execute(view_command)
-        if view_result then
-            return true
-        else
+        if not view_result then
             print("Error executing \n" .. view_command)
         end
     end
-    return false
+    if shall_cleanup then
+        os.remove (filename)
+        os.remove (tmpdir)
+    end
+    return view_result
 end
 
 -- [[ the main loop ]]
 for docname in list_iter (arg) do
+    if alias[docname] then
+        print ("texdoc info: "..docname.." aliased to "..alias[docname])
+        docname = alias[docname]
+    end
     local docfound = false
     if string.match(mode,'search') then
         docfound = true
@@ -476,6 +483,7 @@ for docname in list_iter (arg) do
                 if string.match (mode, 'list') then
                     print(filename)
                 else -- mode is view, is unzipping needed?
+                    local tmpdir, filename, viewext, shall_cleanup
                     unzip_if_needed(ext)
                     local ok = try_viewing()
                     if ok then break end

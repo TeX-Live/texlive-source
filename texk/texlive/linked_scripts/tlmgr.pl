@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 9427 2008-07-10 10:27:48Z preining $
+# $Id: tlmgr.pl 9503 2008-07-13 05:27:18Z preining $
 #
 # Copyright 2008 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
@@ -10,7 +10,7 @@
 # - (?) removal does not remove created format files from TEXMFSYSVAR
 # - other features: dependency check?, ...?
 
-my $svnrev = '$Revision: 9427 $';
+my $svnrev = '$Revision: 9503 $';
 $svnrev =~ m/: ([0-9]+) /;
 my $tlmgrrevision = $1;
 
@@ -990,7 +990,7 @@ sub action_gui {
   push @cmdline, "--location", "$opt_location"
     if (defined($opt_location));
   push @cmdline, "--logfile", "$::LOGFILENAME"
-    if (defined($::LOGFILE));
+    if (defined($::LOGFILENAME));
   push @cmdline, "-v" if ($::opt_verbosity > 0);
   push @cmdline, "-v" if ($::opt_verbosity > 1);
   push @cmdline, "-q" if ($::opt_quiet > 0);
