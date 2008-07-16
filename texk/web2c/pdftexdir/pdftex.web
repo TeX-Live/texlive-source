@@ -15261,6 +15261,7 @@ begin
     pdf_seek_write_length := true; {fill in length at |pdf_end_stream| call}
     pdf_stream_length_offset := pdf_offset - 11;
     pdf_stream_length := 0;
+    pdf_last_byte := 0;
     if pdf_compress_level > 0 then begin
         pdf_print_ln("/Filter /FlateDecode");
         pdf_print_ln(">>");

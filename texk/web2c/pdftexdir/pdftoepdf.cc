@@ -46,7 +46,7 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include "epdf.h"
 
 static const char _svn_version[] =
-    "$Id$ $URL: http://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/pdftoepdf.cc $";
+    "$Id$ $URL: svn://192.168.0.1/svnroot/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/pdftoepdf.cc $";
 
 // This file is mostly C and not very much C++; it's just used to interface
 // the functions of xpdf, which happens to be written in C++.
@@ -339,11 +339,13 @@ static void copyFontDict(Object * obj, InObj * r)
 
 static void copyStream(Stream * str)
 {
-    int c;
+    int c, c2;
     str->reset();
-    while ((c = str->getChar()) != EOF)
+    while ((c = str->getChar()) != EOF) {
         pdfout(c);
-    pdflastbyte = pdfbuf[pdfptr - 1];
+        c2 = c;
+    }
+    pdflastbyte = c2;
 }
 
 static void copyProcSet(Object * obj)
