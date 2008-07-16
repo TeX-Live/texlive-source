@@ -291,7 +291,7 @@ GNU General Public License for more details.
 
 =cut
 
-
+use 5.006;
 use strict;
 
 BEGIN {
@@ -352,6 +352,9 @@ sub usage ()
     print STDERR $usage_msg;
     exit 1;
 }
+
+sub parse_options();
+sub output_version();
 
 our ($output_version, $quiet, $verbose, $stdin, @debug,
      $outfile, $logfile, $language, $codepage, @modules, $input_markup);

@@ -271,7 +271,7 @@ GNU General Public License for more details.
 
 =cut
 
-
+use 5.006;
 use strict;
 
 BEGIN {
@@ -384,6 +384,13 @@ sub usage ()
     print STDERR $usage_msg;
     exit 1;
 }
+
+sub parse_options();
+sub handle_signals();
+sub create_raw_index();
+sub filter_index($$);
+sub xindy_expression();
+sub call_xindy($$);
 
 our ($quiet, $verbose, %debug,
      $outfile, $logfile, $language, @codepages, @modules, $input_markup,
