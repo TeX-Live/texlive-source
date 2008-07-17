@@ -563,7 +563,9 @@ Usage: $progname conf                  (show configuration information)
        $progname font vardir DIR
        $progname font ro
        $progname font rw
+       $progname formats               (edit fmtutil.cnf)
        $progname help                  (or --help; show this help)
+       $progname hyphen FORMAT         (edit hyphenation config for FORMAT)
        $progname init [FORMAT]...      (rebuild FORMATs, or all formats
                                         plus run texlinks and updmap)
        $progname mode MODE             (set Metafont MODE)
