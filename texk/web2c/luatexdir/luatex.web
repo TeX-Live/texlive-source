@@ -11184,7 +11184,7 @@ The extra temp string |u| is needed because |pdf_scan_ext_toks| incorporates
 any pending string in its output. In order to save such a pending string,
 we have to create a temporary string that is destroyed immediately after.
 
-@d save_cur_string==if str_start[str_ptr]<pool_ptr then u:=make_string
+@d save_cur_string==if str_start_macro(str_ptr)<pool_ptr then u:=make_string
 @d restore_cur_string==if u<>0 then begin decr(str_ptr); u:=0; end
 
 @p procedure conv_toks;
@@ -17790,7 +17790,7 @@ begin
     selector:=old_setting;
     str_room(7);
     str_pool[pool_ptr] := 0; { make C string for pdfsetmatrix }
-    pdfsetmatrix(str_start[str_ptr], cur_h, cur_page_height - cur_v);
+    pdfsetmatrix(str_start_macro(str_ptr), cur_h, cur_page_height - cur_v);
     str_room(7);
     append_char(" ");
     append_char("0");
