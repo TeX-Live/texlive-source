@@ -64,7 +64,7 @@ Build information:
   i386-darwin: MacOSX 10.4 with support for 10.3, 10.4, and 10.5
 
   i386-linux: Debian sarge, gcc 3.3.5, libc 2.3.2, Linux 2.6.9-67.0.4.ELsmp
-    chroot /home/texlive/sarge && cd /tmp/source && Build
+    chroot /home/texlive/sarge; Build --with-xindy --with-clisp=...
     
   i386-solaris: Solaris 10 11/06 s10x_u3wos_10 X86
     system gcc (GCC) 3.4.3 (csl-sol210-3_4-branch+sol_rpath)
