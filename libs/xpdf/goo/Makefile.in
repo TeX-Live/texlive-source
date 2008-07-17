@@ -78,7 +78,7 @@ kpathsea_include_dir = -I../../../texk -I$(srcdir)/../../../texk
 ALLCFLAGS = $(CFLAGS) @DEFS@ -I.. -I$(srcdir)/.. -I. -I$(srcdir) $(kpathsea_include_dir)
 ALLCXXFLAGS = $(CXXFLAGS) @DEFS@ \
   -I.. -I$(srcdir)/.. -I. -I$(srcdir) $(kpathsea_include_dir) \
-  -DPDF_PARSER_ONLY -DDISABLE_OUTLINE
+  -DPDF_PARSER_ONLY
 CXXFLAGS = @CXXFLAGS@
 CC = @CC@
 CXX = @CXX@
