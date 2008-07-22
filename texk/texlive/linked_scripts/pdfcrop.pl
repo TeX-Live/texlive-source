@@ -22,27 +22,29 @@ $^W=1; # turn warning on
 #
 my $file        = "pdfcrop.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
-my $version     = "1.9";
-my $date        = "2008/04/05";
+my $version     = "1.11";
+my $date        = "2008/07/22";
 my $author      = "Heiko Oberdiek";
 my $copyright   = "Copyright (c) 2002-2008 by $author.";
 #
 # Reqirements: Perl5, Ghostscript
 # History:
-#   2002/10/30 v1.0: First release.
-#   2002/10/30 v1.1: Option --hires added.
-#   2002/11/04 v1.2: "nul" instead of "/dev/null" for windows.
-#   2002/11/23 v1.3: Use of File::Spec module's "devnull" call.
-#   2002/11/29 v1.4: Option --papersize added.
-#   2004/06/24 v1.5: Clear map file entries so that pdfTeX
-#                    does not touch the fonts.
-#   2004/06/26 v1.6: Use mgs.exe instead of gswin32c.exe for MIKTEX.
-#   2005/03/11 v1.7: Support of spaces in file names
-#                    (open("-|") is used for ghostscript call).
-#   2008/01/09 v1.8: Fix for moving the temporary file to the output
-#                    file across file system boundaries.
-#   2008/04/05 v1.9: Options --resolution and --bbox added.
-#
+#   2002/10/30 v1.0:  First release.
+#   2002/10/30 v1.1:  Option --hires added.
+#   2002/11/04 v1.2:  "nul" instead of "/dev/null" for windows.
+#   2002/11/23 v1.3:  Use of File::Spec module's "devnull" call.
+#   2002/11/29 v1.4:  Option --papersize added.
+#   2004/06/24 v1.5:  Clear map file entries so that pdfTeX
+#                     does not touch the fonts.
+#   2004/06/26 v1.6:  Use mgs.exe instead of gswin32c.exe for MIKTEX.
+#   2005/03/11 v1.7:  Support of spaces in file names
+#                     (open("-|") is used for ghostscript call).
+#   2008/01/09 v1.8:  Fix for moving the temporary file to the output
+#                     file across file system boundaries.
+#   2008/04/05 v1.9:  Options --resolution and --bbox added.
+#   2008/07/16 v1.10: Support for XeTeX added with new options
+#                     --pdftex, --xetex, and --xetexcmd.
+#   2008/07/22 v1.11: Workaround for open("-|").
 
 ### program identification
 my $title = "$program $version, $date - $copyright\n";
@@ -81,6 +83,8 @@ $::opt_debug      = 0;
 $::opt_verbose    = 0;
 $::opt_gscmd      = $GS;
 $::opt_pdftexcmd  = "pdftex";
+$::opt_xetexcmd   = "xetex";
+$::opt_tex        = "pdftex";
 $::opt_margins    = "0 0 0 0";
 $::opt_clip       = 0;
 $::opt_hires      = 0;
@@ -96,12 +100,15 @@ Options:                                                    (defaults:)
   --(no)verbose       verbose printing                      ($bool[$::opt_verbose])
   --(no)debug         debug informations                    ($bool[$::opt_debug])
   --gscmd <name>      call of ghostscript                   ($::opt_gscmd)
+  --pdftex | --xetex  use pdfTeX | use XeTeX                ($::opt_tex)
   --pdftexcmd <name>  call of pdfTeX                        ($::opt_pdftexcmd)
+  --xetexcmd <name>   call of XeTeX                         ($::opt_xetexcmd)
   --margins "<left> <top> <right> <bottom>"                 ($::opt_margins)
                       add extra margins, unit is bp. If only one number is
                       given, then it is used for all margins, in the case
                       of two numbers they are also used for right and bottom.
   --(no)clip          clipping support, if margins are set  ($bool[$::opt_clip])
+                      (not available for --xetex)
   --(no)hires         using `%%HiResBoundingBox'            ($bool[$::opt_hires])
                       instead of `%%BoundingBox'
 Expert options:
@@ -126,6 +133,9 @@ GetOptions(
   "verbose!",
   "gscmd=s",
   "pdftexcmd=s",
+  "xetexcmd=s",
+  "pdftex" => sub { $::opt_tex = 'pdftex'; },
+  "xetex"  => sub { $::opt_tex = 'xetex'; },
   "margins=s",
   "clip!",
   "hires!",
@@ -180,6 +190,10 @@ else {
 }
 
 print "* Output file: $outputfile\n" if $::opt_debug;
+
+if (($::opt_tex eq 'xetex') && $::opt_clip) {
+    die "$Error No clipping support for XeTeX!\n";
+}
 
 ### margins
 my ($llx, $lly, $urx, $ury) = (0, 0, 0, 0);
@@ -245,7 +259,8 @@ push @unlink_files, $tmpfile;
 open(TMP, ">$tmpfile") or
     die "$Error Cannot write tmp file `$tmpfile'!\n";
 print TMP "\\def\\pdffile{$inputfile}\n";
-print TMP <<'END_TMP_HEAD';
+if ($::opt_tex eq 'pdftex') {
+    print TMP <<'END_TMP_HEAD';
 \csname pdfmapfile\endcsname{}
 \def\page #1 [#2 #3 #4 #5]{%
   \count0=#1\relax
@@ -288,6 +303,38 @@ print TMP <<'END_TMP_HEAD';
   \shipout\hbox{\pdfrefxform\pdflastxform}%
 }%
 END_TMP_HEAD
+}
+else { # XeTeX
+    print TMP <<'END_TMP_HEAD';
+\expandafter\ifx\csname XeTeXpdffile\endcsname\relax
+  \expandafter\ifx\csname pdffile\endcsname\relax
+    \errmessage{XeTeX not found!}%
+  \else
+    \errmessage{XeTeX is too old!}%
+  \fi
+\fi
+\def\page #1 [#2 #3 #4 #5]{%
+  \count0=#1\relax
+  \setbox0=\hbox{%
+    \XeTeXpdffile "\pdffile" page #1%
+  }%
+  \pdfpagewidth=#4bp\relax
+  \advance\pdfpagewidth by -#2bp\relax
+  \pdfpageheight=#5bp\relax
+  \advance\pdfpageheight by -#3bp\relax
+  \shipout\hbox{%
+    \kern-1in%
+    \kern-#2bp%
+    \vbox{%
+      \kern-1in%
+      \kern#3bp%
+      \ht0=\pdfpageheight
+      \box0 %
+    }%
+  }%
+}
+END_TMP_HEAD
+}
 
 print "* Running ghostscript for BoundingBox calculation ...\n"
     if $::opt_verbose;
@@ -299,8 +346,26 @@ if ($::opt_bbox) {
      @bbox = ($1, $2, $3, $4);
 }
 my $page = 0;
-my $pid = open(KID_TO_READ, "-|");
-if ($pid) { # parent
+# simulate open(FOO, "-|")
+# code from http://perldoc.perl.org/perlfork.html
+sub pipe_from_fork ($) {
+    my $parent = shift;
+    pipe $parent, my $child or die "!!! Error: Cannot open pi;e!\n";
+    my $pid = fork();
+    die "!!! Error: fork() failed: $!" unless defined $pid;
+    if ($pid) {
+        close $child;
+    }
+    else {
+        close $parent;
+        open(STDOUT, ">&=" . fileno($child))
+                or die "!!! Error: Redirecting STDOUT failed!\n";
+    }
+    $pid;
+}
+# my $pid = open(KID_TO_READ, "-|");
+# if ($pid) { # parent
+if (pipe_from_fork(*KID_TO_READ)) {
     while (<KID_TO_READ>) {
         my $bb = ($::opt_hires) ? "%%HiResBoundingBox" : "%%BoundingBox";
         next unless
@@ -331,18 +396,27 @@ else { # child
 print TMP "\\csname \@\@end\\endcsname\n\\end\n";
 close(TMP);
 
-### Run pdfTeX
+### Run pdfTeX/XeTeX
 
 push @unlink_files, "$tmp.log";
 my $cmd;
-if ($::opt_verbose) {
-    $cmd = "$::opt_pdftexcmd -interaction=nonstopmode $tmp";
+my $texname;
+if ($::opt_tex eq 'pdftex') {
+    $cmd = $::opt_pdftexcmd;
+    $texname = 'pdfTeX';
 }
 else {
-    $cmd = "$::opt_pdftexcmd -interaction=batchmode $tmp";
+    $cmd = $::opt_xetexcmd;
+    $texname = 'XeTeX';
 }
-print "* Running pdfTeX ...\n" if $::opt_verbose;
-print "* pdfTeX call: $cmd\n" if $::opt_debug;
+if ($::opt_verbose) {
+    $cmd .= " -interaction=nonstopmode $tmp";
+}
+else {
+    $cmd .= " -interaction=batchmode $tmp";
+}
+print "* Running $texname ...\n" if $::opt_verbose;
+print "* $texname call: $cmd\n" if $::opt_debug;
 if ($::opt_verbose) {
     system($cmd);
 }
@@ -350,7 +424,7 @@ else {
     `$cmd`;
 }
 if ($?) {
-    die "$Error pdfTeX run failed!\n";
+    die "$Error $texname run failed!\n";
 }
 
 ### Move temp file to output
