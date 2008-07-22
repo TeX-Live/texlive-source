@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 9503 2008-07-13 05:27:18Z preining $
+# $Id: tlmgr.pl 9706 2008-07-22 18:30:02Z preining $
 #
 # Copyright 2008 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
@@ -10,7 +10,7 @@
 # - (?) removal does not remove created format files from TEXMFSYSVAR
 # - other features: dependency check?, ...?
 
-my $svnrev = '$Revision: 9503 $';
+my $svnrev = '$Revision: 9706 $';
 $svnrev =~ m/: ([0-9]+) /;
 my $tlmgrrevision = $1;
 
@@ -134,9 +134,15 @@ if ($action =~ m/^_include_tlpobj$/) {
   if ($opt_gui) {
     action_gui("config");
   }
+  init_local_db();
   my $TEXMFMAIN = `kpsewhich -var-value=TEXMFMAIN`;
   chomp $TEXMFMAIN;
-  system("texlua", "$TEXMFMAIN/scripts/texlive/texconf.tlu", "--prog", "tlmgr", "--sys", $action, @ARGV);
+  my @cmdline = ("texlua", "$TEXMFMAIN/scripts/texlive/texconf.tlu", "--prog", "tlmgr","--sys");
+  if (!$localtlpdb->option_create_formats) {
+    push @cmdline, "--noformat";
+  }
+  push @cmdline, $action, @ARGV;
+  system(@cmdline);
 } elsif ($action =~ m/^uninstall$/i) {
   merge_into(\%ret, action_uninstall());
   exit(0);
@@ -705,6 +711,15 @@ EOF
     print UPDATER "rem del /s /q temp\n";
     print UPDATER "rem rmdir temp\n";
     close (UPDATER);
+    # create a desktop shortcut
+    add_desktop_shortcut(
+      $localtlpdb->root,
+      'TeX Live Updater Final Step',
+      '', # $vars{'TEXDIR'}.'/tlpkg/doc/notes.ico', # the icon
+      $localtlpdb->root.'/tlpkg/installer/updater.bat',
+      '', # no args
+      '', # any non-null value to hide command-prompt
+    );
     tlwarn("UPDATER has been created, please execute tlpkg\\installer\\updater.bat\n");
   }
   return(\%ret);
@@ -1344,7 +1359,7 @@ Make a backup of all packages in the texlive.tlpdb
 
 =item B<restore --backupdir dir [pkg [rev]]>
 
-If no B<pkg> and B[rev] is given list all packages the available 
+If no B<pkg> and B<rev> is given list all packages the available 
 backup revisions.
 
 With B<pkg> given but without B<rev> lists all available backup revisions
@@ -1425,10 +1440,11 @@ C<srcfiles> (install source files).
 
 =item B<paper letter>
 
-=item B<[xdvi|dvips|pdftex|dvipdfm|dvipdfmx|context] paper [help|papersize]>
+=item B<[xdvi|dvips|pdftex|dvipdfm|dvipdfmx|context] paper [help|papersize|--list]>
 
 Configures the system wide paper settings, either for all programs in
-one go, or just for the specified program.
+one go, or just for the specified program. The last form with B<--list>
+outputs all known papersizes for the specified program.
 
 
 =item B<arch list>
