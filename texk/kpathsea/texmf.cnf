@@ -242,18 +242,23 @@ TTF2TFMINPUTS =                 .;$TEXMF/ttf2pk//
 MFINPUTS = .;$TEXMF/metafont//;{$TEXMF/fonts,$VARTEXFONTS}/source//
 MPINPUTS = .;$TEXMF/metapost//
 
-% allow for compressed files, and various extensions.
-TEXDOCSSUFFIX   = ;.pdf;.ps;.dvi;.html;.txt;.tex
-TEXDOCSCOMPRESS = ;.gz;.bz2;.zip;.Z
-TEXDOCEXT       = {$TEXDOCSSUFFIX}{$TEXDOCSCOMPRESS}
+% The following are not needed any more here. 
+% Moved to texdoc.cnf (and hard-coded default), see the texdoc manual.
+% See texdoc's source too if you need to allow compressed documentation.
+% TEXDOCSSUFFIX   = ;.pdf;.ps;.dvi;.html;.txt;.tex
+% TEXDOCSCOMPRESS = ;.gz;.bz2;.zip;.Z
+% TEXDOCEXT       = {$TEXDOCSSUFFIX}{$TEXDOCSCOMPRESS}
 
 % Dump files (fmt/base/mem) for vir{tex,mf,mp} to read.
 % We want to find the engine-specific file, e.g., cont-en.fmt can
 % exist under both pdftex/ and xetex/.  But just in case some formats
 % end up without an engine directory, look directly in web2c/ too.
+% We repeat the same definition three times because of the way fmtutil
+% is implemented; if we use ${TEXFORMATS}, the mpost/mf/etc. formats
+% will not be found.
 TEXFORMATS = .;$TEXMF/web2c{/$engine,}
-MFBASES = ${TEXFORMATS}
-MPMEMS = ${TEXFORMATS}
+MFBASES = .;$TEXMF/web2c{/$engine,}
+MPMEMS = .;$TEXMF/web2c{/$engine,}
 %
 % As of 2008, pool files don't exist any more (the strings are compiled
 % into the binaries), but just in case something expects to find these
@@ -375,8 +380,9 @@ FC_CACHEDIR=$TEXMFSYSVAR/fonts/cache
 % in addition to the doc files in the other hierarchies.
 % Also, find the English documentation first -- better than random, when
 % there are name collisions.
+% Also, find things from man pages first, same reason.
 TEXMFDOCDIR = $TEXMFDOC/doc{/english,}
-TEXDOCS = .;$TEXMF/doc//;$TEXMFDOCDIR//
+TEXDOCS = .;$TEXMF/doc{/man,}//;$TEXMFDOCDIR//
 TEXSOURCES = .;$TEXMF/source//
 
 % Web and CWeb input paths.
