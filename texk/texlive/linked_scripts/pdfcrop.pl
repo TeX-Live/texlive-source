@@ -22,8 +22,8 @@ $^W=1; # turn warning on
 #
 my $file        = "pdfcrop.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
-my $version     = "1.11";
-my $date        = "2008/07/22";
+my $version     = "1.13";
+my $date        = "2008/07/24";
 my $author      = "Heiko Oberdiek";
 my $copyright   = "Copyright (c) 2002-2008 by $author.";
 #
@@ -45,6 +45,10 @@ my $copyright   = "Copyright (c) 2002-2008 by $author.";
 #   2008/07/16 v1.10: Support for XeTeX added with new options
 #                     --pdftex, --xetex, and --xetexcmd.
 #   2008/07/22 v1.11: Workaround for open("-|").
+#   2008/07/23 v1.12: Workarounds for the workaround (error detection, ...).
+#   2008/07/24 v1.13: open("-|")/workaround removed.
+#                     Input files with unsafe file names are linked/copied
+#                     to temporary file with safe file name.
 
 ### program identification
 my $title = "$program $version, $date - $copyright\n";
@@ -122,6 +126,10 @@ Expert options:
 Examples:
   \L$program\E --margins 10 input.pdf output.pdf
   \L$program\E --margins '5 10 5 20' --clip input.pdf output.pdf
+In case of errors:
+  Try option --verbose first to get more information.
+In case of bugs:
+  Please, use option --debug for bug reports.
 END_OF_USAGE
 
 ### process options
@@ -239,10 +247,34 @@ $SIG{'__DIE__'} = \&clean;
 
 ### Calculation of BoundingBoxes
 
+# use safe file name for use within cmd line of gs (unknown shell: space, ...)
+# and pdfTeX (dollar, ...)
+my $inputfilesafe = $inputfile;
+if ($inputfile =~ /[\s\$~'"]/) {
+    $inputfilesafe = "$tmp-img.pdf";
+    push @unlink_files, $inputfilesafe;
+    my $symlink_exists = eval { symlink("", ""); 1 };
+    print "* Input file name `$inputfile' contains special characters.\n"
+          . "* " . ($symlink_exists ? "Link" : "Copy")
+          . " input file to temporary file `$inputfilesafe'.\n"
+            if $::opt_verbose;
+    if ($symlink_exists) {
+        symlink($inputfile, $inputfilesafe)
+            or die "$Error Link from `$inputfile' to"
+                   . " `$inputfilesafe' failed: $!\n";
+    }
+    else {
+        use File::Copy;
+        copy($inputfile, $inputfilesafe)
+                or die "$Error Copy from `$inputfile' to"
+                       . " `$inputfilesafe' failed: $!\n";
+    }
+}
+
 my @gsargs = (
     "-sDEVICE=bbox",
     "-dBATCH",
-    "-dNOPAUSE",
+    "-dNOPAUSE"
 );
 push @gsargs, "-sPAPERSIZE=$::opt_papersize" if $::opt_papersize;
 push @gsargs, "-r$::opt_resolution" if $::opt_resolution;
@@ -251,14 +283,14 @@ push @gsargs,
     "save",
     "pop",
     "-f",
-    $inputfile
+    $inputfilesafe
 ;
 
 my $tmpfile = "$tmp.tex";
 push @unlink_files, $tmpfile;
 open(TMP, ">$tmpfile") or
     die "$Error Cannot write tmp file `$tmpfile'!\n";
-print TMP "\\def\\pdffile{$inputfile}\n";
+print TMP "\\def\\pdffile{$inputfilesafe}\n";
 if ($::opt_tex eq 'pdftex') {
     print TMP <<'END_TMP_HEAD';
 \csname pdfmapfile\endcsname{}
@@ -346,55 +378,46 @@ if ($::opt_bbox) {
      @bbox = ($1, $2, $3, $4);
 }
 my $page = 0;
-# simulate open(FOO, "-|")
-# code from http://perldoc.perl.org/perlfork.html
-sub pipe_from_fork ($) {
-    my $parent = shift;
-    pipe $parent, my $child or die "!!! Error: Cannot open pi;e!\n";
-    my $pid = fork();
-    die "!!! Error: fork() failed: $!" unless defined $pid;
-    if ($pid) {
-        close $child;
+my $gs_pipe = "$::opt_gscmd @gsargs 2>&1";
+$gs_pipe .= " 1>$null" unless $::opt_verbose;
+$gs_pipe .= "|";
+
+open(GS, $gs_pipe) or
+        die "$Error Cannot call ghostscript ($::opt_gscmd)!\n";
+my $bb = ($::opt_hires) ? "%%HiResBoundingBox" : "%%BoundingBox";
+while (<GS>) {
+    print $_ if $::opt_verbose;
+    next unless
+        /^$bb:\s*([\.\d]+) ([\.\d]+) ([\.\d]+) ([\.\d]+)/o;
+    @bbox = ($1, $2, $3, $4) unless $::opt_bbox;
+    $page++;
+    print "* Page $page: @bbox\n" if $::opt_verbose;
+    if ($::opt_clip) {
+        print TMP "\\pageclip $page [@bbox][$llx $lly $urx $ury]\n";
     }
     else {
-        close $parent;
-        open(STDOUT, ">&=" . fileno($child))
-                or die "!!! Error: Redirecting STDOUT failed!\n";
+        my @bb = ($bbox[0] - $llx, $bbox[1] - $ury,
+                 $bbox[2] + $urx, $bbox[3] + $lly);
+        print TMP "\\page $page [@bb]\n";
     }
-    $pid;
 }
-# my $pid = open(KID_TO_READ, "-|");
-# if ($pid) { # parent
-if (pipe_from_fork(*KID_TO_READ)) {
-    while (<KID_TO_READ>) {
-        my $bb = ($::opt_hires) ? "%%HiResBoundingBox" : "%%BoundingBox";
-        next unless
-            /^$bb:\s*([\.\d]+) ([\.\d]+) ([\.\d]+) ([\.\d]+)/o;
-        @bbox = ($1, $2, $3, $4) unless $::opt_bbox;
-        $page++;
-        print "* Page $page: @bbox\n" if $::opt_verbose;
-        if ($::opt_clip) {
-            print TMP "\\pageclip $page [@bbox][$llx $lly $urx $ury]\n";
-        }
-        else {
-            my @bb = ($bbox[0] - $llx, $bbox[1] - $ury,
-                     $bbox[2] + $urx, $bbox[3] + $lly);
-            print TMP "\\page $page [@bb]\n";
-        }
-    }
-    close(KID_TO_READ)
-            || die "!!! Error: Execution of ghostscript failed: $?\n";
+close(GS);
+
+if ($? & 127) {
+    die sprintf  "!!! Error: Ghostscript died with signal %d!\n",
+                 ($? & 127);
 }
-else { # child
-    open STDERR, '>&STDOUT' or die "!!! Error: Cannot redirect stderr: $!\n";
-    open STDOUT, ">$null" or die "!!! Error: Cannot write to $null!\n";
-    exec($::opt_gscmd, @gsargs)
-            || die "!!! Error: Ghostscript run failed: $!\n";
-    # NOT REACHED
+elsif ($? != 0) {
+    die sprintf "!!! Error: Ghostscript exited with error code %d!\n",
+                $? >> 8;
 }
 
 print TMP "\\csname \@\@end\\endcsname\n\\end\n";
 close(TMP);
+
+if ($page == 0) {
+    die "!!! Error: Ghostscript does not report bounding boxes!\n";
+}
 
 ### Run pdfTeX/XeTeX
 

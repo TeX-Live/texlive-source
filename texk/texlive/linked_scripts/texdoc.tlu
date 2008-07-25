@@ -1,43 +1,55 @@
 #!/usr/bin/env texlua
--- $Id: texdoc.tlu 9665 2008-07-19 07:02:18Z mpg $
---[[ Written in lua by Frank Küster (2007) based on the shell script by
+-- $Id: texdoc.tlu 9756 2008-07-24 22:53:55Z mpg $
+--[[ Revised by Manuel Pégourié-Gonnard and Reinhard Kotucha, 2008.
+First texlua version by Frank Küster (2007) based on the shell script by
 Thomas Esser, David Aspinall, and Simon Wilkinson.
 Public domain.]]
 --[[ Changelog
- 0.3 2007-06-28
- - added changelog
- - better OS detection for default viewer settings
- - removed some debugging code
- - -s now works in dirs without ls-R, too
+  0.4 2008-07
+  - moved configuration from texmf.cnf to texdoc.cnf
+  - added an 'alias' feature
+  - new 'mixed' mode (view or list)
+  - file lists are now menus (press a key to view results)
+  - changed the search modes to get only the more relevant results (hopefully)
+  - /!\ zip support disabled by default (see comments below), not portable
 
- 0.2 2007-06-28
- - implemented reading of configuration from texmf.cnf
- - fixed "-s" option
-
- 0.1
- - initial public release 
+  0.3 2007-06-28
+  - added changelog
+  - better OS detection for default viewer settings
+  - removed some debugging code
+  - -s now works in dirs without ls-R, too
+  
+  0.2 2007-06-28
+  - implemented reading of configuration from texmf.cnf
+  - fixed "-s" option
+  
+  0.1
+  - initial public release 
 ]]
 
---[[ some constants ]]
+-- some constants 
 progname = 'texdoc'
-version = '0.31'
+version = '0.4beta'
 usage_msg = [[
-Usage:  texdoc  -h, --help | -v, --version | [option] name(s)
+Usage:  texdoc  -h, --help | -V, --version | [option] name(s)
     -h|--help       Show this help.
     -V|--version    Print the version of the program.
     -v|--verbose    Show the command being used to display the documentation.
     -a|--alias      Use the alias table.
     -A|--noalias    Don't use the alias table.
-    -t|--type       Search only for files of given type (extension).
-    -l|--list       List matching files, do not start a viewer.
-    -s|--search     Search for name as a pattern.]]
+    -e|--extension  Search only for files of given type (extension).
+    -w|--view       Use view mode: start a viewer.
+    -m|--mixed      Use mixed mode (view or list).
+    -l|--list       Use list mode: don't start a viewer.
+    -s|--search     Search for name as a lua regex.]]
 notfound_msg = [[
 Sorry, no documentation found for PKGNAME.
-Please try `texdoc -s PKGNAME' and make sure the package is installed,
-or search the TeX Catalogue at http://ctan.org/search.html#byDescription.]]
+Perhap's you'll be more lucky with the CTAN catalogue's search tool at 
+http://ctan.org/search.html#byDescription.]]
 place_holder = '%%s' -- used for viewer commands
 
---[[ zip/gz support ]]
+-- zip/gz support
+--
 -- optionally, texdoc can support compressed documentation, but this is
 -- system-dependant (commands for unzipping, temporary files, etc).
 -- Since TeX Live doesn't ship compressed doc, downstream distributors who
@@ -48,38 +60,27 @@ place_holder = '%%s' -- used for viewer commands
 support_zipped = false
 
 
--- [[ for our eyes only ]]
-opt_debug = false
--- print debugging messages to stderr 
-function print_debug (message)
-    if opt_debug then
-        io.stderr:write(arg[0]..': '..message..'\n')
-    end
-end
-
-
---[[ BEGIN function definitions (till the 'END' mark) ]]
+-- BEGIN function definitions (till the 'END' mark)
+---=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 -- a general-use function
-function list_iter (t)
+function list (t)
     local i = 0
-    local n = table.getn(t)
+    local n = table.getn(t) -- can be slow: is it really usefull?
     return function ()
         i = i + 1
         if i <= n then return t[i] end
     end
 end
 
--- add a dot to ext except if it's empty
-function dotted(ext)
-    if (ext == '') then 
-        return ext
-    else
-        return '.'..ext
-    end
-end
 
--- [[ functions for the search option ]]
+-- functions for the search options
+-----------------------------------
+
+-- full tree exploration with or without ls-R file
+
+-- check which texmf roots have a ls-R file (returns an iterator for those)
+-- and which don't (put them in the global no_lsr_trees) (bad)
 no_lsr_doctrees = {}
 function get_lsr_files ()
     local lsr_files = {}
@@ -103,8 +104,9 @@ function get_lsr_files ()
         i = i +1
         if i <= n then return lsr_files[i] end
     end
-end -- get_lsr_files()
+end
 
+-- protect - in patterns instead of trusting the user to do that 
 function deluaficate(oldpat)
     local newpat
     -- better use long strings here, no escaping of \ needed there.
@@ -113,8 +115,9 @@ function deluaficate(oldpat)
     return newpat
 end --deluaficate
 
+-- return files in the TEXDOCS tree whose full path matches against pattern
 function pattern_search (pattern)
-    docdirs, docfiles = {}, {} -- should not be local (used in recurse_tree)
+    docfiles = {} -- should not be local (used in recurse_tree)
     pattern = deluaficate(pattern)
     -- populate docdirs and doclines list
     for database in get_lsr_files() do
@@ -129,10 +132,6 @@ function pattern_search (pattern)
                 if string.match(line,'^./doc') then
                     -- the next file lines are in docdir "this_dir"
                     is_docline = true
-                    -- save it in the docdirs table
-                    if string.match(this_dir, pattern) then
-                        table.insert(docdirs,this_dir)
-                    end
                 else
                     is_docline = false
                 end -- docdir
@@ -142,36 +141,20 @@ function pattern_search (pattern)
             elseif is_docline then
                 local fullpath = this_dir .. line
                 if string.match(fullpath, pattern) then
-                    if lfs.isfile(fullpath) then -- cannot know form ls-R
+                    if lfs.isfile(fullpath) then -- cannot know from ls-R
                         table.insert(docfiles,fullpath)
                     end
                 end
             end -- line starting with ./
         end -- for line
     end -- for database
-    for no_lsr_dir in list_iter(no_lsr_doctrees) do
+    for no_lsr_dir in list(no_lsr_doctrees) do
         recurse_tree(no_lsr_dir, pattern)
     end
-    --
-    print("\tDirectories that match:")
-    for dir in list_iter(docdirs) do
-        print (dir)
-    end 
-    print("\tFiles that match:")
-    for _, ext in ipairs (config.ext_list) do
-        if ext == '' then 
-            ext_pattern = '/[^.]*$'
-        elseif ext == '*' then
-            ext_pattern = ''
-        else
-            ext_pattern = '%.'..ext..'$'
-        end
-        for file in list_iter(docfiles) do
-            if string.match (file, ext_pattern) then print (file) end
-        end 
-    end
-end -- function pattern_search()
+    return docfiles
+end
 
+-- recursively explore a tree and put the file matching pattern in docfiles
 function recurse_tree (path, pattern)
     for file in lfs.dir(path) do
         if file ~= "." and file ~= ".." then
@@ -191,43 +174,78 @@ function recurse_tree (path, pattern)
             end
         end
     end
-end --function recurse_tree
+end
 
 
--- [[ function set config values from env, files, and defaults ]]
--- same functions are used to set aliases from the conf files
+-- filename and mixed search modes
 
-config = {} -- everything is stored in this table ...
-alias = {} -- ... except aliases
--- newer values don't override older ones
+-- add a dot to ext except if it's empty
+function dotted(ext)
+    if (ext == '') then 
+        return ext
+    else
+        return '.'..ext
+    end
+end
+
+-- simple search on filename using kpse
+function filename_search (filename)
+    files = {}
+    for ext in list(config.ext_list) do
+        found = kpse.find_file(filename .. dotted(ext),
+        "TeX system documentation")
+        if found then table.insert(files, found) end
+    end
+    return files
+end
+
+-- do a filename search and try a full search if unsuccessfull
+function mixed_search (filename)
+    results = filename_search (filename)
+    if not results[1] then 
+        print ("texdoc info: No result with simple search, "..
+        "trying full search mode.")
+        results = pattern_search (filename)
+    end
+    return results
+end
+
+
+-- functions to set config values and aliases
+---------------------------------------------
+
+-- set a value without overwriting if already set
 function set_config_element (key, value)
     if config[key] == nil then
         if string.match(key, '_list$') then
-            local list = string.explode(value, ',')
-            for i, j in ipairs(list) do
-                list[i] = string.gsub(j, '%s*$', '')
-                list[i] = string.gsub(j, '^%s*', '')
+            -- this is actually a coma-separeted list of values
+            local values = string.explode(value, ',')
+            for i, j in ipairs(values) do
+                values[i] = string.gsub(j, '%s*$', '')
+                values[i] = string.gsub(j, '^%s*', '')
             end
-            config[key] = list
+            config[key] = values
         else
             config[key] = value
         end
     end
 end
--- set a whole list
+
+-- set a whole list, also whithout overwriting
 function set_config_list (conf)
     for key, value in pairs(conf) do
         set_config_element (key, value)
     end
 end
--- set an alias
+
+-- set an alias (w/o overwriting)
 function set_alias (key, value)
     if alias[key] == nil then
         alias[key] = value
     end
 end
 
--- use environment variables if available
+-- set config from environment if available
 function setup_config_from_env ()
     set_config_list {
         viewer_pdf  = os.getenv ("PDFVIEWER"),
@@ -238,20 +256,19 @@ function setup_config_from_env ()
     }
 end
 
--- read a particular config file if it exists.
--- Used by setup_config_from_files () only.
+-- set config+aliases from a particular config file if it exists
 function read_config_file(configfile)
     if (lfs.isfile(configfile)) then -- configfile exists
-        local cnf=assert(io.open(configfile, 'r')) 
+        local cnf = assert(io.open(configfile, 'r')) 
         local lineno = 0
         while true do
             local key, val
             local line=cnf:read('*line')
             lineno = lineno + 1
             if line == nil then break end  -- EOF
-            line=string.gsub(line, '%s*#.*$', '')   -- comments begin with #.
-            line=string.gsub(line, '%s*$', '')      -- remove trailing spaces.
-            line=string.gsub(line, '^%s*', '')      -- remove leading spaces.
+            line = string.gsub(line, '%s*#.*$', '') -- comments begin with #
+            line = string.gsub(line, '%s*$', '')    -- remove trailing spaces
+            line = string.gsub(line, '^%s*', '')    -- remove leading spaces
             key, val=string.match(line, '^([%a%d_]+)%s*=%s*(.+)')
             if key and val then 
                 set_config_element(key, val)
@@ -268,12 +285,10 @@ function read_config_file(configfile)
             end
         end
         cnf:close()
-    else
-        print_debug ('config file "'..configfile..'" not found')
     end
 end
 
--- read all config files.
+-- set config/aliases from all config files 
 function setup_config_from_files ()
     local TEXMFHOME, TEXMFLOCAL, TEXMFMAIN
     local platform, configfile, configfiles
@@ -294,16 +309,15 @@ function setup_config_from_files ()
     }
     --
     for i, configfile in ipairs(configfiles) do -- process all config files
-        print_debug ('processing "'..configfile..'"')
         read_config_file(configfile)
     end
 end
 
--- for default viewer on general Unix, we use a list
--- and check in the path in order to find a suitable program
+-- for default viewer on general Unix, we have a list; the following two
+-- functions are used to check in the path which program is available
 
 -- check if "name" is the name of a file in the path
--- Warning: to be used only on Unix (hard-coded separators)
+-- Warning: to be used only on Unix! (separators, and PATH irrelevant on win32)
 function is_in_path(name)
     local path_list = string.explode(os.getenv("PATH"), ':')
     for _, path in ipairs(path_list) do
@@ -312,26 +326,25 @@ function is_in_path(name)
     return false
 end
 
--- return the first element of "list" whos name is found in path, or nil
-function first_in_path(list)
-    for _, cmd in ipairs(list) do
+-- return the first element of "list" whose name is found in path, or nil
+function first_in_path(cmds)
+    for _, cmd in ipairs(cmds) do
         if is_in_path(cmd[1]) then return cmd[2] end
     end
     return nil
 end
 
--- some fall-back default values
+-- set some fall-back default values if no previous value is set
 function setup_config_from_defaults()
     if (os.type == "windows") then
         -- probably Windows (or OS/2)
         -- which commands should we use for unzipping?
         set_config_list {
-            viewer_dvi    = 'start %s',
-            viewer_html   = 'start %s',
-            viewer_pdf    = 'start %s',
-            viewer_ps     = 'start %s',
-            viewer_txt    = 'start %s',
-            viewer_fallback='start %s'
+            viewer_dvi    = 'start',
+            viewer_html   = 'start',
+            viewer_pdf    = 'start',
+            viewer_ps     = 'start',
+            viewer_txt    = 'start',
         }
     else -- since we don't support msdos, if os.type is not windows, it's unix
         if (os.name == 'macosx') then
@@ -341,7 +354,6 @@ function setup_config_from_defaults()
                 viewer_pdf    = '(open %s)',
                 viewer_ps     = '(open %s)',
                 viewer_txt    = '(less %s)',
-                viewer_fallback='(open %s)'
             }
         else
             set_config_list {
@@ -381,16 +393,12 @@ function setup_config_from_defaults()
                     {'most',    '(most %s)'},
                     {'less',    '(less %s)'},
                     {'more',    '(more %s)'}
-                },
-                viewer_fallback  = first_in_path {
-                    {'see',     '(see %s) &'},
-                    {'less',    '(less %s)'},
-                    {'more',    '(more %s)'}
                 }
             }
         end
     end
     -- now a particular case for config.ext_list and zip-related stuff
+    -- Note: removed texdoc_formats/zip_formats, gives simpler & generic code
     if support_zipped then
         set_config_element('ext_list', 
         'pdf,pdf.gz,pdf.bz2, html,html.gz,html.bz2, txt,txt.gz,txt.bz2,'..
@@ -406,13 +414,16 @@ function setup_config_from_defaults()
     end
 end
 
--- [[ functions for viewing ]]
 
--- prepare for viewing: set viewer_replacement and viwer_ext
+-- functions for viewing/displaying the results
+-----------------------------------------------
+
+-- prepare for viewing: set viewer_replacement and viewer_ext
 -- may uncompress if support_zipped is set (giving the complete filename on the
 -- command line is unsupported for compressed files by the way)
-function prepare_viewing (ext)
+function how_to_view (filename)
     if support_zipped then
+        ext = string.match(filename,'.*%.(.*)$')
         zipext = string.match(ext,'^.*%.(.*)')
         if zipext then
             unzip_command = config['unzip_'..zipext]
@@ -431,33 +442,31 @@ function prepare_viewing (ext)
             .. filename .. ';' .. config.rm_dir .. tmpdir
         end
     else
-        if ext == '' then -- fallback if complete filename has been specified
-            ext = string.match(filename,'.*%.(.*)$')
-        end
+        ext = string.match(filename,'.*%.(.*)$')
         viewer_replacement = filename
         viewext = ext
         if not viewext then
             print ("texdoc warning: cannot determine file type for\n"..
-            filename..", using fallback viewer.")
-            viewext = 'fallback'
+            filename..", assuming text.")
+            viewext = 'txt'
         else
             if not config['viewer_'..viewext] then
                 print ("texdoc warning: no "..viewext.." viewer found, "..
-                "using fallback viewer.\nYou can select you preffered"..
+                "using text viewer instead.\nYou can select you preffered"..
                 "with the viewer_"..viewext.." variable in texdoc.cnf.")
                 viewext = 'fallback'
                 if not config['viewer_'..viewext] then
-                    print ("texdoc error: fallback viewer not found. "..
+                    print ("texdoc error: text viewer not found. "..
                     "Skipping file "..filename..".")
-                end -- no fallback
+                end
             end -- viewer for ext
         end -- no ext
     end -- zipped or not
-    return config['viewer_'..viewext]
+    return config['viewer_'..viewext], viewer_replacement
 end
 
 -- view a file, if possible
-function try_viewing (view_command)
+function try_viewing (view_command, viewer_replacement)
     if not view_command then
         view_result = false
     else
@@ -479,9 +488,49 @@ function try_viewing (view_command)
     return view_result
 end
 
---[[ END functions definition -- execution starts below ]]
+-- display the results of a search and let user choose
+function print_ordered_byext (files_list)
+    for _, ext in ipairs (config.ext_list) do
+        if ext == '' then 
+            ext_pattern = '/[^.]*$'
+        elseif ext == '*' then
+            ext_pattern = ''
+        else
+            ext_pattern = '%.'..ext..'$'
+        end
+        for file in list(files_list) do
+            if string.match (file, ext_pattern) then print (file) end
+        end 
+    end
+end
 
---[[ exit codes ]]
+-- padd number with space in order to get a string of length two
+function padd_two (number)
+    return (number < 10) or number..' ' and number
+end
+
+-- print a list of files wit numbers the user can use
+function print_menu (files)
+end
+
+-- apologize/complain if something went wrong
+function apologize (reason, name)
+    if reason == 'notfound' then
+        exit_code = 2
+        msg = string.gsub (notfound_msg, 'PKGNAME', name)
+        print (msg) -- to get rid of gsub's 2nd value
+    else
+        exit_code = 255
+        print ('texdoc error: Oops, this should not happen'..
+        ' (unknown error code).  Sorry.')
+    end
+end
+
+
+-- END of function definitions: here starts the execution
+--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+-- exit codes (probably make sense only with a single argument)
 -- 0    OK
 -- 1    Usage
 -- 2    No doc found for at least one arg
@@ -493,7 +542,9 @@ if not arg[1] then
     os.exit(1)
 end
 
---[[ options from command line ]]
+-- options from command line
+----------------------------
+
 -- there is one boolean switch: verbose
 -- and config options using the config table, which means the default comes last
 -- config options are: 
@@ -501,6 +552,8 @@ end
 --      enable_alias ('true'* or 'false' (string, not boolean))
 --      ext_list via the -t option
 verbose = false
+config = {} -- everything is stored in this table ...
+alias = {}  -- ... except aliases
 while table.maxn(arg) > 0 and string.match(arg[1],'^%-') do
     curr_arg = table.remove(arg,1)
     if (curr_arg == '-h') or (curr_arg == '--help') then
@@ -511,6 +564,10 @@ while table.maxn(arg) > 0 and string.match(arg[1],'^%-') do
         os.exit(0)
     elseif (curr_arg == '-v') or (curr_arg == '--verbose') then
         verbose = true
+    elseif (curr_arg == '-w') or (curr_arg == '--view') then
+        set_config_element('mode', 'view')
+    elseif (curr_arg == '-m') or (curr_arg == '--mixed') then
+        set_config_element('mode', 'mixed')
     elseif (curr_arg == '-l') or (curr_arg == '--list') then
         set_config_element('mode', 'list')
     elseif (curr_arg == '-s') or (curr_arg == '--search') then
@@ -523,8 +580,11 @@ while table.maxn(arg) > 0 and string.match(arg[1],'^%-') do
         set_config_element('ext_list', string.gsub(curr_arg, '^-t=?', ''))
     elseif string.match(curr_arg, '^--type') then
         set_config_element('ext_list', string.gsub(curr_arg, '^--type=?', ''))
+    else
+        print ("texdoc error: unknow option: "..curr_arg)
     end
 end
+
 -- defaults using the config table (ext_list comes later)
 set_config_list {
     enable_alias    = 'true', -- string, not boolean
@@ -537,6 +597,10 @@ if not arg[1] then
     os.exit(1)
 end
 
+
+-- initialisations
+------------------
+
 -- initialize kpathsea
 kpse.set_program_name(arg[-1], "texdoc")
 
@@ -548,6 +612,7 @@ setup_config_from_defaults ()
 -- we want an empty string for ext at the beginning, so that it works to specify
 -- the complete filename (at least in list or view mode).  Doesn't matter when
 -- there's one more empty string, but we can easily avoid two in a row
+-- TODO: should be dealt with another way
 if (config.mode ==  'view' or config.mode == 'list') then
     if not (config.ext_list[1] == '') then
         table.insert(config.ext_list,1,'')
@@ -556,35 +621,40 @@ end
 
 -- the main loop over the args
 exit_code = 0
-for docname in list_iter (arg) do
+for docname in list (arg) do
     if (alias[docname] and (config.enable_alias == 'true')) then
         print ("texdoc info: "..docname.." aliased to "..alias[docname])
-        docname = alias[docname]
+        original_docname = docname
+        docname = alias[original_docname]
     end
     local docfound = false
     if (config.mode == 'search') then
-        docfound = true
-        pattern_search(docname)
-    elseif (config.mode == 'view') or (config.mode == 'list') then
-        for ext in list_iter(config.ext_list) do
-            filename = kpse.find_file(docname .. dotted(ext),
-            "TeX system documentation")
-            if filename then
-                docfound = true
-                if (config.mode == 'list') then
-                    print(filename)
-                else -- config.mode is view, is unzipping needed?
-                    local ok = try_viewing(prepare_viewing(ext))
-                    if ok then break end
-                end -- list or view
-            end -- found a filename with that extension or not?
-        end -- for ext
+        results = pattern_search (docname)
+        print_ordered_byext (results)
+    elseif (config.mode == 'list') then
+        results = mixed_search (docname)
+        if results[1] then
+            print_ordered_byext (results)
+        else
+            apologize ('notfound', docname)
+        end
+    elseif (config.mode == 'view') then
+        results = mixed_search (docname)
+        if results[1] then 
+            try_viewing (how_to_view(results[1]))
+        else
+            apologize ('notfound', docname)
+        end
+    elseif (config.mode == 'mixed') then
+        results = mixed_search (docname)
+        if (not results[1]) then        -- no results
+            apologize ('notfound', docname)
+        elseif (not results[2]) then    -- 1 result (faster than table.maxn)
+            try_viewing (how_to_view(results[1]))
+        else                            -- 2 or more results
+            print_ordered_byext (results)
+        end
     end -- if construct "case config.mode in"
-    if not docfound then -- apologize if we didn't succeed
-        exit_code = 2
-        msg = string.gsub(notfound_msg, 'PKGNAME', docname)
-        print (msg) -- to get rid of gsub's 2nd value
-    end
 end -- for docname in arg
 
 os.exit(exit_code)
