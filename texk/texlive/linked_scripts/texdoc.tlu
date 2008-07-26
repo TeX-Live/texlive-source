@@ -1,5 +1,5 @@
 #!/usr/bin/env texlua
--- $Id: texdoc.tlu 9756 2008-07-24 22:53:55Z mpg $
+-- $Id: texdoc.tlu 9776 2008-07-25 23:58:05Z mpg $
 --[[ Revised by Manuel Pégourié-Gonnard and Reinhard Kotucha, 2008.
 First texlua version by Frank Küster (2007) based on the shell script by
 Thomas Esser, David Aspinall, and Simon Wilkinson.
@@ -66,13 +66,15 @@ support_zipped = false
 -- a general-use function
 function list (t)
     local i = 0
-    local n = table.getn(t) -- can be slow: is it really usefull?
     return function ()
         i = i + 1
-        if i <= n then return t[i] end
+        return t[i]
     end
 end
 
+-- Remark: we always assume our tables have no hole (that is, no nil value
+-- followed by a non-nil value). So we use the simple iterator above, and 
+-- the # operator sometimes (bit faster than table.getn).
 
 -- functions for the search options
 -----------------------------------
@@ -119,7 +121,7 @@ end --deluaficate
 function pattern_search (pattern)
     docfiles = {} -- should not be local (used in recurse_tree)
     pattern = deluaficate(pattern)
-    -- populate docdirs and doclines list
+    -- populate docfiles list
     for database in get_lsr_files() do
         local texmf_tree = string.gsub(database,'ls%-R$','')
         is_docline = false
@@ -162,9 +164,6 @@ function recurse_tree (path, pattern)
             local attr = lfs.attributes (f)
             if attr then -- else stale symlink
                 if attr.mode == "directory" then
-                    if string.match (f, pattern) then
-                        table.insert(docdirs,f)
-                    end
                     recurse_tree (f, pattern)
                 else
                     if string.match (f, pattern) then
@@ -200,12 +199,12 @@ function filename_search (filename)
 end
 
 -- do a filename search and try a full search if unsuccessfull
-function mixed_search (filename)
+function mixed_search (filename, alternative)
     results = filename_search (filename)
     if not results[1] then 
         print ("texdoc info: No result with simple search, "..
         "trying full search mode.")
-        results = pattern_search (filename)
+        results = pattern_search (alternative)
     end
     return results
 end
@@ -353,46 +352,46 @@ function setup_config_from_defaults()
                 viewer_html   = '(open %s)',
                 viewer_pdf    = '(open %s)',
                 viewer_ps     = '(open %s)',
-                viewer_txt    = '(less %s)',
+                viewer_txt    = 'less',
             }
         else
             set_config_list {
                 viewer_dvi      = first_in_path {
-                    {'see',     '(see %s) &'},
                     {'evince',  '(evince %s) &'},
                     {'okular',  '(okular %s) &'},
                     {'kdvi',    '(kdvi %s) &'},
-                    {'xdvi',    '(xdvi %s) &'}
+                    {'xdvi',    '(xdvi %s) &'},
+                    {'see',     '(see %s) &'}
                 },
                 viewer_html     = first_in_path {
-                    {'see',         '(see %s) &'},
                     {'firefox',     '(firefox %s) &'},
                     {'mozilla',     '(mozilla %s) &'},
                     {'konqueror',   '(konqueror %s) &'},
                     {'epiphany',    '(epiphany %s) &'},
                     {'opera',       '(opera %s) &'},
-                    {'w3m',         '(w3m %s) &'},
-                    {'links',       '(links %s) &'},
-                    {'lynx',        '(lynx %s) &'}
+                    {'w3m',         'w3m'},
+                    {'links',       'links'},
+                    {'lynx',        'lynx'},
+                    {'see',         'see'}
                 },
                 viewer_pdf      = first_in_path {
-                    {'see',     '(see %s) &'},
                     {'evince',  '(evince %s) &'},
                     {'okular',  '(okular %s) &'},
                     {'kpdf',    '(kpdf %s) &'},
-                    {'xpdf',    '(xpdf %s) &'}
+                    {'xpdf',    '(xpdf %s) &'},
+                    {'see',     '(see %s) &'}
                 },
                 viewer_ps       = first_in_path {
-                    {'see',     '(see %s) &'},
                     {'evince',  '(evince %s) &'},
                     {'okular',  '(okular %s) &'},
                     {'kghostview', '(kghostview %s) &'},
-                    {'gv',      '(gv %s) &'}
+                    {'gv',      '(gv %s) &'},
+                    {'see',     '(see %s) &'}
                 },
                 viewer_txt      = first_in_path {
-                    {'most',    '(most %s)'},
-                    {'less',    '(less %s)'},
-                    {'more',    '(more %s)'}
+                    {'most',    'most'},
+                    {'less',    'less'},
+                    {'more',    'more'}
                 }
             }
         end
@@ -504,13 +503,55 @@ function print_ordered_byext (files_list)
     end
 end
 
--- padd number with space in order to get a string of length two
-function padd_two (number)
-    return (number < 10) or number..' ' and number
+-- compare two files with the following rule:
+-- 1. extensions are ordered as in ext_list first,
+-- 2. then filenames lexicograhpicaly.
+function file_order (a, b)
+    local ext_a = string.match (a, '^.*%.(.*)$')
+    local ext_b = string.match (b, '^.*%.(.*)$')
+    if ext_pos(ext_a) < ext_pos(ext_b) then
+        return true
+    elseif ext_pos(ext_a) > ext_pos(ext_b) then
+        return false
+    else
+        return (a < b)
+    end
 end
 
--- print a list of files wit numbers the user can use
+-- return the position of ext in ext_list, and greater value if not in ext_list
+-- magic inside: compute ext_reverse only once
+function ext_pos (ext)
+    local ext_rev = {}
+    local max
+    for i, ext in ipairs (config.ext_list) do
+        ext_rev[ext] = i
+        max = i
+    end
+    ext_pos = function (e)
+        return ext_rev[e] or (max + 1)
+    end
+    return ext_pos (ext)
+end
+
+-- print a list of files as a menu
 function print_menu (files)
+    local n = #files
+    if n > 20 then 
+        io.write (n, " files found.  Display the complete list? (y/N) ")
+        local ans = io.read(1)
+       if not ((ans == 'y') or (ans == 'Y')) then return end
+    end
+    -- table.sort(results, file_order)
+    for i, file in ipairs (files) do
+        print (i, file)
+    end
+    io.write ("Please enter the number of the file to view, or 0 to exit: ")
+    local num = io.read('*number')
+    if num and files[num] then
+        print ("Viewing file '"..files[num].."'.")
+    elseif num ~= 0 then
+        print ("Incorrect input, skipping.")
+    end
 end
 
 -- apologize/complain if something went wrong
@@ -622,37 +663,42 @@ end
 -- the main loop over the args
 exit_code = 0
 for docname in list (arg) do
+    original_docname = docname
     if (alias[docname] and (config.enable_alias == 'true')) then
         print ("texdoc info: "..docname.." aliased to "..alias[docname])
-        original_docname = docname
-        docname = alias[original_docname]
+        docname = alias[docname]
     end
     local docfound = false
     if (config.mode == 'search') then
         results = pattern_search (docname)
-        print_ordered_byext (results)
-    elseif (config.mode == 'list') then
-        results = mixed_search (docname)
         if results[1] then
-            print_ordered_byext (results)
+            print_menu (results)
+        else
+            apologize ('notfound', docname)
+        end
+    elseif (config.mode == 'list') then
+        results = mixed_search (docname, original_docname)
+        if results[1] then
+            print_menu (results)
         else
             apologize ('notfound', docname)
         end
     elseif (config.mode == 'view') then
-        results = mixed_search (docname)
+        results = mixed_search (docname, original_docname)
         if results[1] then 
             try_viewing (how_to_view(results[1]))
         else
             apologize ('notfound', docname)
         end
     elseif (config.mode == 'mixed') then
-        results = mixed_search (docname)
+        results = mixed_search (docname, original_docname)
         if (not results[1]) then        -- no results
             apologize ('notfound', docname)
         elseif (not results[2]) then    -- 1 result (faster than table.maxn)
-            try_viewing (how_to_view(results[1]))
+            local ok = try_viewing (how_to_view(results[1]))
+            if not ok then apologize ('oops') end
         else                            -- 2 or more results
-            print_ordered_byext (results)
+            print_menu (results)
         end
     end -- if construct "case config.mode in"
 end -- for docname in arg
