@@ -1,5 +1,5 @@
 # file			rel dir			search path		progname
-dvipdfmx.cfg		dvipdfm/config		other text files	dvipdfm
+dvipdfmx.cfg		dvipdfmx		other text files	dvipdfmx
 config			dvipdfm/config		other text files	dvipdfm
 config.ps		dvips/config		dvips config		-
 modes.mf		metafont/misc		.mf			-
