@@ -102,6 +102,15 @@ TEXMFCONFIG = ~/.texlive2008/texmf-config
 %
 % For texconfig to work properly, TEXMFCONFIG and TEXMFVAR should be named
 % explicitly and before all other trees.
+% 
+% TEXMFLOCAL follows TEXMFMAIN (and precedes TEXMFDIST) because the only
+% files in TEXMFMAIN are tightly coupled with the particular version of
+% the distribution, such as format files.  Overriding them would be more
+% likely to cause trouble than help.  On the other hand, all the
+% standard packages and fonts are in TEXMFDIST, and locally-installed
+% versions should take precedence over those (although it is generally a
+% source of confusion to have different versions of a package installed,
+% whatever the trees, so try to avoid it).
 TEXMF = {$TEXMFCONFIG,$TEXMFVAR,$TEXMFHOME,!!$TEXMFSYSCONFIG,!!$TEXMFSYSVAR,!!$TEXMFMAIN,!!$TEXMFLOCAL,!!$TEXMFDIST}
 
 % The system trees.  These are the trees that are shared by all the users.
