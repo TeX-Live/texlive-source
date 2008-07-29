@@ -345,7 +345,7 @@ BEGIN {
 use Getopt::Long qw(:config bundling);
 use File::Temp qw(tempfile tmpnam);
 use File::Spec;
-
+use POSIX qw(uname);
 
 # Check arguments, store them in proper variables.
 #
@@ -396,7 +396,18 @@ our ($quiet, $verbose, %debug,
      $outfile, $logfile, $language, @codepages, @modules, $input_markup,
      $interactive, $mem_file);
 $input_markup = 'latex';
+
 $mem_file = "$lib_dir/xindy.mem";
+if ($^O eq 'darwin' && ! -e $mem_file) {
+  # support universal binary on mac
+  my @uname = POSIX::uname();
+  if ($uname[4] eq 'Power Macintosh') {
+    $mem_file = "$lib_dir/xindy-powerpc.mem";
+  } else {
+    $mem_file = "$lib_dir/xindy-i386.mem";
+  }
+}
+die "$cmd: Cannot locate $mem_file" if ! -e $mem_file;
 
 parse_options();
 
