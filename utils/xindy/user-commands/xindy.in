@@ -402,7 +402,7 @@ if ($^O eq 'darwin' && ! -e $mem_file) {
   # support universal binary on mac
   my @uname = POSIX::uname();
   if ($uname[4] eq 'Power Macintosh') {
-    $mem_file = "$lib_dir/xindy-powerpc.mem";
+    $mem_file = "$lib_dir/xindy-ppc.mem";
   } else {
     $mem_file = "$lib_dir/xindy-i386.mem";
   }
