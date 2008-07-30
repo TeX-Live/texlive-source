@@ -286,6 +286,7 @@ BEGIN {
 # Determine environment. Where is our library directory, and our modules?
 
 use File::Basename;
+use Cwd;
 our ($cmd_dir, $cmd, $xindy_run, $lib_dir, $modules_dir, $path_sep);
 BEGIN {
     $cmd_dir = dirname($0);
@@ -337,6 +338,9 @@ BEGIN {
     } else {
 	die "$cmd: Cannot locate xindy modules directory";
     }
+    # if $cmd_dir or $lib_dir is a symlink, clisp may get confused
+    # because of relative paths above, so we resolve the path
+    $modules_dir = Cwd::realpath($modules_dir);
 }
 
 
