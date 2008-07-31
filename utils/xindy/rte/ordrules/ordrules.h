@@ -9,7 +9,9 @@
 #ifndef _ORDRULES_H
 #define _ORDRULES_H
 
-#include "clisp.h"
+/* for regex functions on platforms w/o regex; but this causes segfaults
+   on some other platforms; to be investigated */
+/* #include "clisp.h" */
 #include <stdio.h>
 #include "mkind.h"
 #undef debug
