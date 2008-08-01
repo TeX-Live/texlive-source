@@ -374,7 +374,7 @@ static UInt32 *utf32Buf = NULL;
 			while (bytesRead < bufsize && (i = getc(f->f)) != EOF && i != '\n' && i != '\r')
 				byteBuffer[bytesRead++] = i;
 		
-		if (i == EOF && errno != EINTR && last == first)
+		if (i == EOF && errno != EINTR && bytesRead == 0)
 			return false;
 	
 		if (i != EOF && i != '\n' && i != '\r')
@@ -432,7 +432,7 @@ static UInt32 *utf32Buf = NULL;
 					while (tmpLen < bufsize && (i = get_uni_c(f)) != EOF && i != '\n' && i != '\r')
 						utf32Buf[tmpLen++] = i;
 				
-				if (i == EOF && errno != EINTR && last == first)
+				if (i == EOF && errno != EINTR && tmpLen == 0)
 					return false;
 				
 				/* We didn't get the whole line because our buffer was too small.  */
