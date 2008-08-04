@@ -48,7 +48,7 @@ esac
 (
 
 NAME=`basename "$1" .tfm`
-MAG=0
+MAG=1  # mag=0 fails with larm1000.mf
 #DEST="$2"
 DPI=$BDPI
 
