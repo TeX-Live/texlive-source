@@ -8847,6 +8847,7 @@ begin
 	font_letter_space[font_ptr] := loaded_font_letter_space;
 
 	{measure the width of the space character and set up font parameters}
+	font_mapping[font_ptr] := nil;
 	p := new_native_character(font_ptr, " ");
 	s := width(p) + loaded_font_letter_space;
 	free_node(p, native_size(p));
