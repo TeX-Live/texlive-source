@@ -540,7 +540,7 @@ print_error (const char *name, struct spc_env *spe, struct spc_arg *ap)
     if (isprint(*p))
       ebuf[i++] = *p;
     else if (i + 4 < 63)
-      i += sprintf(ebuf + i, "\\x%02x", *p);
+      i += sprintf(ebuf + i, "\\x%02x", (unsigned char)*p);
     else
       break;
   }
@@ -556,7 +556,7 @@ print_error (const char *name, struct spc_env *spe, struct spc_arg *ap)
       if (isprint(*p))
         ebuf[i++] = *p;
       else if (i + 4 < 63)
-        i += sprintf(ebuf + i, "\\x%02x", *p);
+        i += sprintf(ebuf + i, "\\x%02x", (unsigned char)*p);
       else
         break;
     }
