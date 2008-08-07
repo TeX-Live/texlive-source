@@ -6734,11 +6734,12 @@ if eTeX_ex then for k:=int_val to inter_char_val do
 @x
   print_file_name(font_name[k],font_area[k],"");
 @y
-  if is_native_font(k) then
+  if is_native_font(k) or (font_mapping[k]<>0) then
     begin print_file_name(font_name[k],"","");
-    print_err("Can't \dump a format with preloaded native fonts");
-    help2("You really, really don't want to do this.")
-    ("It won't work, and only confuses me.");
+    print_err("Can't \dump a format with native fonts or font-mappings");
+    help3("You really, really don't want to do this.")
+    ("It won't work, and only confuses me.")
+    ("(Load them at runtime, not as part of the format file.)");
     error;
     end
   else print_file_name(font_name[k],font_area[k],"");
@@ -6760,6 +6761,13 @@ font_ec:=xmalloc_array(eight_bits, font_max);
 @y
 font_bc:=xmalloc_array(UTF16_code, font_max);
 font_ec:=xmalloc_array(UTF16_code, font_max);
+@z
+
+@x
+undump_things(font_check[null_font], font_ptr+1-null_font);
+@y
+for k:=null_font to font_ptr do font_mapping[k]:=0;
+undump_things(font_check[null_font], font_ptr+1-null_font);
 @z
 
 @x
@@ -8847,7 +8855,6 @@ begin
 	font_letter_space[font_ptr] := loaded_font_letter_space;
 
 	{measure the width of the space character and set up font parameters}
-	font_mapping[font_ptr] := nil;
 	p := new_native_character(font_ptr, " ");
 	s := width(p) + loaded_font_letter_space;
 	free_node(p, native_size(p));
