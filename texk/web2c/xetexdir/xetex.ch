@@ -6867,6 +6867,13 @@ if enctex_enabled_p then
 @z
 
 @x
+  param_base[null_font]:=-1;
+@y
+  font_mapping[null_font]:=0;
+  param_base[null_font]:=-1;
+@z
+
+@x
 @* \[53] Extensions.
 @y
 @* \[53] Extensions.
