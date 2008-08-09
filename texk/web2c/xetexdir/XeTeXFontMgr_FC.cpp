@@ -1,6 +1,6 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
- copyright (c) 1994-2006 by SIL International
+ copyright (c) 1994-2008 by SIL International
  written by Jonathan Kew
 
 Permission is hereby granted, free of charge, to any person obtaining  
@@ -202,25 +202,36 @@ XeTeXFontMgr_FC::getOpSizeRecAndStyleFlags(Font* theFont)
 }
 
 void
+XeTeXFontMgr_FC::cacheFamilyMembers(const std::list<std::string>& familyNames)
+{
+	if (familyNames.size() == 0)
+		return;
+	for (int f = 0; f < allFonts->nfont; ++f) {
+		FcPattern*	pat = allFonts->fonts[f];
+		if (platformRefToFont.find(pat) != platformRefToFont.end())
+			continue;
+		char*	s;
+		for (int i = 0; FcPatternGetString(pat, FC_FAMILY, i, (FcChar8**)&s) == FcResultMatch; ++i) {
+			for (std::list<std::string>::const_iterator j = familyNames.begin(); j != familyNames.end(); ++j) {
+				if (*j == s) {
+					NameCollection*	names = readNames(pat);
+					addToMaps(pat, names);
+					delete names;
+					goto cached;
+				}
+			}
+		}
+	cached:
+		;
+	}
+}
+
+void
 XeTeXFontMgr_FC::searchForHostPlatformFonts(const std::string& name)
 {
-	static bool	cacheAll = false;
-	static	FcFontSet*	allFonts = NULL;
-	
-	if (cacheAll) // we've already loaded everything on an earlier search
+	if (cachedAll) // we've already loaded everything on an earlier search
 		return;
 
-	if (allFonts == NULL) {
-		FcPattern*		pat = FcNameParse((const FcChar8*)":outline=true");
-		FcObjectSet*	os = FcObjectSetBuild(FC_FAMILY, FC_STYLE, FC_FILE, FC_INDEX,
-												FC_FULLNAME, FC_WEIGHT, FC_WIDTH, FC_SLANT, NULL);
-	
-		allFonts = FcFontList(FcConfigGetCurrent(), pat, os);
-	
-		FcObjectSetDestroy(os);
-		FcPatternDestroy(pat);
-	}
-	
 	std::string	famName;
 	int	hyph = name.find('-');
 	if (hyph > 0 && hyph < name.length() - 1)
@@ -236,7 +247,7 @@ XeTeXFontMgr_FC::searchForHostPlatformFonts(const std::string& name)
 			if (platformRefToFont.find(pat) != platformRefToFont.end())
 				continue;
 
-			if (cacheAll) {
+			if (cachedAll) {
 				// failed to find it via FC; add everything to our maps (potentially slow) as a last resort
 				NameCollection*	names = readNames(pat);
 				addToMaps(pat, names);
@@ -250,6 +261,7 @@ XeTeXFontMgr_FC::searchForHostPlatformFonts(const std::string& name)
 				if (name == s) {
 					NameCollection*	names = readNames(pat);
 					addToMaps(pat, names);
+					cacheFamilyMembers(names->familyNames);
 					delete names;
 					found = true;
 					goto next_font;
@@ -260,6 +272,7 @@ XeTeXFontMgr_FC::searchForHostPlatformFonts(const std::string& name)
 				if (name == s || (hyph && famName == s)) {
 					NameCollection*	names = readNames(pat);
 					addToMaps(pat, names);
+					cacheFamilyMembers(names->familyNames);
 					delete names;
 					found = true;
 					goto next_font;
@@ -270,11 +283,12 @@ XeTeXFontMgr_FC::searchForHostPlatformFonts(const std::string& name)
 					full += " ";
 					full += t;
 					if (name == full) {
-						// need to ensure we'll pick up the whole family
-						famName = s;
-						hyph = 1;
-						f = 0;
-						goto restart;
+						NameCollection*	names = readNames(pat);
+						addToMaps(pat, names);
+						cacheFamilyMembers(names->familyNames);
+						delete names;
+						found = true;
+						goto next_font;
 					}
 				}
 			}
@@ -283,9 +297,9 @@ XeTeXFontMgr_FC::searchForHostPlatformFonts(const std::string& name)
 			;
 		}
 
-		if (found || cacheAll)
+		if (found || cachedAll)
 			break;
-		cacheAll = true;
+		cachedAll = true;
 	}
 }
 
@@ -310,6 +324,15 @@ XeTeXFontMgr_FC::initialize()
 		fprintf(stderr, "internal error; cannot read font names\n");
 		exit(3);
 	}
+
+	FcPattern*		pat = FcNameParse((const FcChar8*)":outline=true");
+	FcObjectSet*	os = FcObjectSetBuild(FC_FAMILY, FC_STYLE, FC_FILE, FC_INDEX,
+											FC_FULLNAME, FC_WEIGHT, FC_WIDTH, FC_SLANT, NULL);
+	allFonts = FcFontList(FcConfigGetCurrent(), pat, os);
+	FcObjectSetDestroy(os);
+	FcPatternDestroy(pat);
+	
+	cachedAll = false;
 }
 
 void

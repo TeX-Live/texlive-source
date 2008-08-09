@@ -1,6 +1,6 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
- copyright (c) 1994-2006 by SIL International
+ copyright (c) 1994-2008 by SIL International
  written by Jonathan Kew
 
 Permission is hereby granted, free of charge, to any person obtaining  
@@ -53,6 +53,11 @@ protected:
 	virtual NameCollection*			readNames(FcPattern* pat);
 
 	std::string						getPlatformFontDesc(PlatformFontRef font) const;
+	
+	void							cacheFamilyMembers(const std::list<std::string>& familyNames);
+
+	FcFontSet*	allFonts;
+	bool		cachedAll;
 };
 
 #endif	/* __XETEX_FONT_MGR_FC_H */

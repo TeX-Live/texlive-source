@@ -615,6 +615,9 @@ XeTeXFontMgr::prependToList(std::list<std::string>* list, const char* str)
 void
 XeTeXFontMgr::addToMaps(PlatformFontRef platformFont, const NameCollection* names)
 {
+	if (platformRefToFont.find(platformFont) != platformRefToFont.end())
+		return; // this font has already been cached
+
 	if (names->psName.length() == 0)
 		return;	// can't use a font that lacks a PostScript name
 
