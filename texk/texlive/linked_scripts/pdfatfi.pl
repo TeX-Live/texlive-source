@@ -26,8 +26,8 @@ $^W=1; # turn warning on
 #
 my $file        = "pdfatfi.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
-my $version     = "2.3";
-my $date        = "2007/04/11";
+my $version     = "2.4";
+my $date        = "2008/07/29";
 my $author      = "Heiko Oberdiek";
 my $copyright   = "Copyright (c) 2005, 2006 by $author.";
 #

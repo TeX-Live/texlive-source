@@ -8,6 +8,7 @@
 #             as suggested by Niall Murphy.
 # 2006-07-14: Better temp dir handling (suggested by Karl Berry) (RN).
 # 2006-07-23: New option --Xps2pdf and code cleanup (thanks to Karl Berry) (RN).
+# 2008-08-04: Remove the parameter "-Ppdf" from the dvips call (RN).
 
 # First, work around bugs/limitations in some shells on some systems:
 test -f /bin/sh5 && test -z "$RUNNING_SH5" \
@@ -119,7 +120,7 @@ job=`echo "x$1" | sed 's@x@@; s@.*/@@; s@\.[^.]*$@@'`
 setupTmpDir
 myexec latex \
     "\AtBeginDocument{\RequirePackage{pst-pdf}} \input{$file}"
-test -f "$job.dvi" && myexec dvips -Ppdf -o "$job-pics.ps" "$job.dvi"
+test -f "$job.dvi" && myexec dvips -o "$job-pics.ps" "$job.dvi"
 test -f "$job-pics.ps" && myexec ps2pdf \
   "$ps2pdf_opts" "$job-pics.ps" "$job-pics.pdf"
 if $crop; then

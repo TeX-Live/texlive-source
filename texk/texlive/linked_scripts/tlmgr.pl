@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 9706 2008-07-22 18:30:02Z preining $
+# $Id: tlmgr.pl 10205 2008-08-09 08:10:20Z preining $
 #
 # Copyright 2008 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
@@ -9,8 +9,15 @@
 # - ordering or collections removal (see below for details)
 # - (?) removal does not remove created format files from TEXMFSYSVAR
 # - other features: dependency check?, ...?
+# - after install/update show the number of bytes transfered 
+#   (email Rolf Niepraschk)
+# - merge tlmgrgui into tlmgr to reduce re-loading of tlpdb again and again
+#   and reuse the install function
+# - move the remove_package function into TLPDB.pm, so that the remove_package
+#   from TLPDB actually removes the files, too. Maybe some better names
+#   are necessary.
 
-my $svnrev = '$Revision: 9706 $';
+my $svnrev = '$Revision: 10205 $';
 $svnrev =~ m/: ([0-9]+) /;
 my $tlmgrrevision = $1;
 
@@ -68,8 +75,15 @@ if (!defined($action) && $opt_gui) {
   $action = "gui";
 }
 
-if ($opt_version) {
+if ($opt_version || (defined $action && $action eq "version")) {
   print "tlmgr revision $tlmgrrevision\n";
+  if (open (REL_TL, "$Master/release-texlive.txt")) {
+    # print first and last lines, which have the TL version info.
+    my @rel_tl = <REL_TL>;
+    print $rel_tl[0];
+    print $rel_tl[$#rel_tl];
+    close (REL_TL);
+  }
   exit 0;
 }
 
@@ -147,7 +161,7 @@ if ($action =~ m/^_include_tlpobj$/) {
   merge_into(\%ret, action_uninstall());
   exit(0);
 } else {
-  die "Unknown action: $action";
+  die "$0: unknown action: $action\n";
 }
 
 
@@ -262,8 +276,10 @@ sub remove_package {
     foreach my $d ($tlp->depends) {
       if ($d eq "$pkg.ARCH") {
         foreach my $a ($localtlpdb->available_architectures) {
-          merge_into(\%ret,
-                     &remove_package("$pkg.$a", $localtlpdb, $force));
+          if (defined($localtlpdb->get_package("$pkg.$a"))) {
+            merge_into(\%ret,
+                       &remove_package("$pkg.$a", $localtlpdb, $force));
+          }
         }
       }
     }
@@ -523,7 +539,7 @@ sub action_restore {
     }
     print "Restoring $pkg, $rev from $opt_backupdir/${pkg}_r${rev}.tar.lzma\n";
     if (!$opt_dry) {
-      init_local_db();
+      init_local_db(1);
       # first remove the package, then reinstall it
       # this way we get rid of useless files
       # force the deinstallation since we will reinstall it
@@ -544,7 +560,7 @@ sub action_restore {
 }
 
 sub action_backup {
-  init_local_db();
+  init_local_db(1);
   my $opt_dry = 0;
   my $opt_all = 0;
   my $opt_backupdir;
@@ -582,7 +598,7 @@ sub action_update {
   if ($opt_gui) {
     action_gui("update");
   }
-  init_local_db();
+  init_local_db(1);
   # initialize the TLMedia from $location
   my $opt_nodepends = 0;
   my $opt_dry = 0;
@@ -609,6 +625,7 @@ sub action_update {
     printf "tlmgr update takes either a list of packages or --all\n";
   }
   my $updater_started = 0;
+  my $nrupdated = 0;
   foreach my $pkg (@todo) {
     next if ($pkg =~ m/^00texlive/);
     my $tlp = $localtlpdb->get_package($pkg);
@@ -624,6 +641,7 @@ sub action_update {
     }
     my $mediarev = $mediatlp->revision;
     if ($rev < $mediarev) {
+      $nrupdated++;
       if ($opt_list) {
         print "$pkg: local: $rev, source: $mediarev\n";
       } elsif ($opt_dry) {
@@ -722,6 +740,14 @@ EOF
     );
     tlwarn("UPDATER has been created, please execute tlpkg\\installer\\updater.bat\n");
   }
+  if (($nrupdated == 0) && ($tlmediasrc->media ne "NET") && $opt_all) {
+    # for all but net updates we warn if nothing is updated
+    tlwarn("\nYour installation is set up to look on the disk for updates.\n");
+    tlwarn("If you want to install from the Internet for this one time only, run\n");
+    tlwarn("  tlmgr -location $TeXLiveURL\n");
+    tlwarn("\nIf you want to change the default for all future updates, run\n");
+    tlwarn("   tlmgr option location $TeXLiveURL\n\n");
+  }
   return(\%ret);
 }
 
@@ -729,7 +755,7 @@ sub action_install {
   if ($opt_gui) {
     action_gui("install");
   }
-  init_local_db();
+  init_local_db(1);
   # initialize the TLMedia from $location
   my $opt_nodepends = 0;
   my $opt_dry = 0;
@@ -850,7 +876,7 @@ sub action_arch {
   my $opt_dry = 0;
   Getopt::Long::Configure(qw(no_pass_through));
   GetOptions("dry-run" => \$opt_dry) or pod2usage(2);
-  init_local_db();
+  init_local_db(1);
   $what || ($what = "list");
   if ($what =~ m/^list$/i) {
     # list the available architectures
@@ -967,11 +993,19 @@ sub action_generate {
 }
 
 sub init_local_db {
+  my ($should_i_die) = @_;
   $localtlpdb = TeXLive::TLPDB->new ("root" => "$Master");
   die("cannot find tlpdb!") unless (defined($localtlpdb));
   # setup the programs, for win32 we need the shipped wget/lzma etc, so we
   # pass the location of these files to setup_programs.
-  setup_programs("$Master/tlpkg/installer", $localtlpdb->option_platform);
+  if (!setup_programs("$Master/tlpkg/installer", $localtlpdb->option_platform)) {
+    tlwarn("Couldn't set up the necessary programs.\nInstallation of packages is not supported.\nPlease report to texlive\@tug.org.\n");
+    if (defined($should_i_die) && $should_i_die) {
+      exit 1;
+    } else {
+      tlwarn("Continuing anyway ...\n");
+    }
+  }
   # let cmd line options override the settings in localtlpdb
   my $loc = $localtlpdb->option_location;
   if (defined($loc)) {
@@ -1235,7 +1269,12 @@ tlmgr [I<option>]... I<action> [I<option>]... [I<operand>]...
 =head1 DESCRIPTION
 
 B<tlmgr> manages an existing TeX Live installation, both packages and
-configurations options.
+configuration options.  It performs many of the same actions as
+B<texconfig>(1), and more besides.  (texconfig continues to be included
+and supported, but tlmgr is now preferred.)
+
+The most up-to-date version of this documentation is on the Internet at
+L<http://tug.org/texlive/tlmgr.html>.
 
 =head1 OPTIONS
 
@@ -1246,19 +1285,19 @@ The following options have to be given I<before> you specify the action.
 =item B<--location> I<location>
 
 Specifies the location from which packages should be installed or
-updated, overriding the location found in the installation's TLPDB.
+updated, overriding the location found in the installation's TeX Live
+Package Database (TLPDB).
 
-=item B<--gui>
+=item B<--gui> [I<action>]
 
-Instead of starting the GUI via the B<gui> action, you can also give this
-option together with an action from above and will be brought directly
-into the respective screen of the GUI. So calling
+You can give this option together with an action to be brought directly
+into the respective screen of the GUI.  For example, running
 
   tlmgr --gui update
 
-will bring you directly into the update screen.
+starts you directly at the update screen.
 
-=item B<--gui-lang>
+=item B<--gui-lang> I<llcode>
 
 Normally the GUI tries to deduce your language from the environment
 (on Windows via the registry, on Unix via LC_MESSAGES). If that fails 
@@ -1269,8 +1308,11 @@ language code.
 
 The standard options are also accepted: B<--help/-h/-?>, B<--version>,
 B<-q> (no informational messages), B<-v> (debugging messages, can be
-repeated).  For more information about the latter, see the
+repeated).  For the details about the latter, see the
 TeXLive::TLUtils documentation.
+
+The B<--version> option shows version information about the TeX Live
+release as well as the B<tlmgr> script itself.
 
 =head1 ACTIONS
 
@@ -1278,22 +1320,26 @@ TeXLive::TLUtils documentation.
 
 =item B<help>
 
-Gives this help page.
+Gives this help information (same as B<--help>).
+
+=item B<version>
+
+Gives version information (same as B<--version>).
 
 =item B<gui>
 
 Start the graphical user interface.
 
-=item B<install [I<option>]... I<pkg>...>
+=item B<install> [I<option>]... I<pkg>...
 
 Install all I<pkg>s given on the command line. By default this installs
 all packages that the given I<pkg>s are dependent on, also.  Options:
 
-=over 8
+=over 16
 
 =item B<--no-depends>
 
-Do not install dependencies.  Bydefault, installing a package ensures
+Do not install dependencies.  By default, installing a package ensures
 that all dependencies of this package are fulfilled.
 
 =item B<--dry-run>
@@ -1304,7 +1350,7 @@ written to the terminal.
 =back
 
 
-=item B<update [I<option>] [pkg [pkg ...]]>
+=item B<update> [I<option>] [I<pkg>...]
 
 Updates the packages given as arguments to the latest version available
 at the installation source. Options:
@@ -1324,7 +1370,7 @@ Update all package.
 Nothing is actually installed; instead, the actions to be performed are
 written to the terminal.
 
-=item B<--backupdir directory>
+=item B<--backupdir> I<directory>
 
 If this option is given it must specify an existing directory where a 
 snapshot of the current package as installed will be saved before 
@@ -1333,7 +1379,7 @@ turned out as not working. See the action B<restore> for details.
 
 =back
 
-=item B<backup --backupdir dir [--all] [pkg [pkg]]>
+=item B<backup> --backupdir I<dir> [B<--all>] [I<pkg>...]
 
 Makes a backup of the given packages (or all packages with B<--all>) to
 the directory specified with B<--backupdir> (must exist and be a writable).
@@ -1345,31 +1391,31 @@ Options:
 
 =over 8
 
-=item B<--backupdir directory>
+=item B<--backupdir> I<directory>
 
-This is an obligatory argument and has to specify a directory where
-backups are to be found.
+The I<directory> is an obligatory argument and has to specify a
+directory where backups are to be found.
 
 =item B<--all>
 
-Make a backup of all packages in the texlive.tlpdb
+Make a backup of all packages in the TeX Live installation.
 
 =back
 
 
-=item B<restore --backupdir dir [pkg [rev]]>
+=item B<restore --backupdir> I<dir> [I<pkg> [I<rev>]]
 
-If no B<pkg> and B<rev> is given list all packages the available 
-backup revisions.
+If no I<pkg> and I<rev> is given, list the available 
+backup revisions for all packages.
 
-With B<pkg> given but without B<rev> lists all available backup revisions
-of B<pkg>.
+With I<pkg> given but no I<rev>, list all available backup revisions of
+I<pkg>.
 
-With both B<pkg> an B<rev> given tries to restore the package from its
-backup.
+With both I<pkg> and I<rev>, tries to restore the package from the
+specified backup.
 
-The option B<--backupdir dir> is obligatory and has to specify a directory
-with backups.
+The option B<--backupdir> I<dir> is obligatory and has to specify a
+directory with backups.
 
 Options:
 
@@ -1435,6 +1481,14 @@ C<location> (default installation source),
 C<formats> (create formats at installation time),
 C<docfiles> (install documentation files),
 C<srcfiles> (install source files).
+
+Perhaps the most common use for this is if you originally installed from
+DVD, and want to permanently change the installation to get further
+updates from the Internet.  To do this, you can run
+
+  tlmgr option location http://mirror.ctan.org/systems/texlive/tlnet/YYYY
+
+(where YYYY is the TeX Live release year).
 
 =item B<paper a4>
 
