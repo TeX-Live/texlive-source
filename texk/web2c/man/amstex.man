@@ -1,4 +1,4 @@
-.TH AMSTEX 1 "27 December 1992" "Web2C @VERSION@"
+.TH AMSTEX 1 "12 August 2008" "Web2C @VERSION@"
 .\"=====================================================================
 .if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
 .if n .ds TX TeX
@@ -41,15 +41,9 @@ have no formatting commands (like \(lqswitch to italic\(rq or \(lqskip 2
 picas\(rq) in the document at all; instead, everything is done
 by specific markup instructions: \(lqemphasize\(rq, \(lqstart a section\(rq.
 .PP
-\*(AX is the official typesetting system of the American Mathematical
-Society, and nearly all of its publications are typeset using \*(AX.  The
-online version of AMS Math Reviews uses \*(AX input syntax for display of
-mathematical material.  AMS authors can provide editors with
-computer-readable \*(AX files.
-.PP
 For authors more familiar with \*(LX, an AMS-supported package called
 .I amsmath.sty
-is available.
+is available, among others.
 .\"=====================================================================
 .SH FILES
 .TP
