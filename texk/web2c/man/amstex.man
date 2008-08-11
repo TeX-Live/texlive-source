@@ -66,4 +66,4 @@ Documentation for AMS fonts, typesettable by \*(TX.
 .br
 Michael Spivak,
 .IR "The Joy of \*(OX" ,
-2nd edition, Addison-Wesley, 1990, ISBN 0-8218-2997-1.
+2nd edition, American Mathematical Society, 1990, ISBN 0-8218-2997-1.
