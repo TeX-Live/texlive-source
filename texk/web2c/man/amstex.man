@@ -49,7 +49,7 @@ computer-readable \*(AX files.
 .PP
 For authors more familiar with \*(LX, an AMS-supported package called
 .I amsmath.sty
-is is available.
+is available.
 .\"=====================================================================
 .SH FILES
 .TP
