@@ -81,7 +81,7 @@ fd_entry *new_fd_entry(void)
     fd->fn_objnum = 0;
     fd->all_glyphs = false;
     fd->write_ttf_glyph_names = false;
-    for (i = 0; i < INT_KEYS_NUM; i++) {
+    for (i = 0; i < FONT_KEYS_NUM; i++) {
         fd->font_dim[i].val = 0;
         fd->font_dim[i].set = false;
     }

@@ -1,8 +1,11 @@
 --------------------------------------------------
-pdfTeX 3.1415926-1.40.9 was released on 2008-07-15
+pdfTeX 3.1415926-1.40.9 was released on 2008-08-??
 --------------------------------------------------
-- a bugfix for cross-platform format dumping/undumping (r492)
-- a bugfix for pdf inclusion (r493)
+- bugfixes:
+  - pdf inclusion (inconsistent use of -DDISABLE_OUTLINE)
+  - bug #2068 (cross-platform format dumping/undumping)
+  - bug #2082 (font_dim[FONTNAME_CODE] not initialized)
+  - bug #2083 (unchecked assignment)
 
 --------------------------------------------------
 pdfTeX 3.1415926-1.40.8 was released on 2008-07-10

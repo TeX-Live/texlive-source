@@ -339,7 +339,7 @@ static void copyFontDict(Object * obj, InObj * r)
 
 static void copyStream(Stream * str)
 {
-    int c, c2;
+    int c, c2 = 0;
     str->reset();
     while ((c = str->getChar()) != EOF) {
         pdfout(c);
