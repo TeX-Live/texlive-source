@@ -32,6 +32,7 @@ infodir = @infodir@
 manext = 1
 mandir = @mandir@
 man1dir = $(mandir)/man$(manext)
+man5dir = $(mandir)/man5
 
 # modifiable single-machine data.
 localstatedir = @localstatedir@

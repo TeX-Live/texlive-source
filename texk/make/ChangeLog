@@ -1,3 +1,7 @@
+2008-08-13  Karl Berry  <karl@tug.org>
+
+	* paths.mk (man5dir): new defn for synctex.5.
+
 2008-05-29  Karl Berry  <karl@tug.org>
 
 	* tkpathsea.mk: no more texmf.in, use texmf.cnf instead.

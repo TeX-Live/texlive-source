@@ -1,3 +1,8 @@
+2008-08-13  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (install-data): Also install synctex.[15].
+	Report from Adam Maxwell on mactex.
+
 2008-07-08  Karl Berry  <karl@tug.org>
 
 	* configure.in (WEB2CVERSION): 7.5.7.

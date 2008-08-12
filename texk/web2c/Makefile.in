@@ -879,6 +879,8 @@ install-data:: $(web2cdir)
 	cd man && $(MAKE) $(install_makeargs) install-data
 	$(INSTALL_DATA) $(srcdir)/tiedir/tie.1 $(man1dir)/tie.$(manext)
 	$(INSTALL_DATA) $(srcdir)/ctiedir/ctie.1 $(man1dir)/ctie.$(manext)
+	$(INSTALL_DATA) $(srcdir)/synctexdir/man1/synctex.1 $(man1dir)/synctex.$(manext)
+	$(INSTALL_DATA) $(srcdir)/synctexdir/man5/synctex.5 $(man5dir)/synctex.5
 
 # Dummy target.
 uninstall uninstall-exec uninstall-data:
