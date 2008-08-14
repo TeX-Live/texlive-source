@@ -191,7 +191,8 @@ my $deffont=$Qbut->cget(-font);
 # ensure readability on high-res screens (suggested by R.Kotucha)
 $deffont='Helvetica -16 bold' if &x_resolution > 1200;
 $Qbut->configure(-font=>$deffont);
-$tlwins{'mainwindow'}{'buttons'}[1]=$cmdframe->Button(-text=>'Search',
+$tlwins{'mainwindow'}{'buttons'}[1]=$cmdframe->Button(
+                              -text=>'Search texdoctk\'s database',
 						      -font=>$deffont,%butcol,
 						      -command=>\&mksrch
 						      )->pack(-side=>'left');
@@ -809,7 +810,8 @@ sub srchstr {
     destroy $srchentry;
     $srchflag=0;
     if (scalar @results == 0) {
-	&popmsg(0,"Search for $string: no matches found.",$cmdframe);
+	&popmsg(0,"Search for $string: no matches found.\n".
+        "Try `texdoc $string' in a command line.",$cmdframe);
     } else {
 #       cancel multiple entries
 	my ($omit,$pack1,$pack2);

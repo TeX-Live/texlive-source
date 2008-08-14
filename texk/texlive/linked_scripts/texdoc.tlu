@@ -1,5 +1,5 @@
 #!/usr/bin/env texlua
--- $Id: texdoc.tlu 10142 2008-08-07 16:06:44Z mpg $ -*-Lua-*-
+-- $Id: texdoc.tlu 10337 2008-08-14 11:40:50Z mpg $ -*-Lua-*-
 --[[Revised 2008 by Manuel Pégourié-Gonnard 
     with contributions from Reinhard Kotucha.
     First texlua versions by Frank Küster (2007). 
@@ -807,7 +807,6 @@ setup_config_from_defaults ()
 -- initialising and saving a few values
 exit_code = 0
 no_regex = true
-real_ext_list = config.ext_list
 real_populate_docfiles = populate_docfiles
 real_mixed_populate_docfiles = mixed_populate_docfiles
 real_real_path = real_path
@@ -831,9 +830,6 @@ for docname in list (arg) do
             populate_docfiles = populate_docfiles_sty
             mixed_populate_docfiles = populate_docfiles_sty
             real_path = function (arg) return arg end
-        elseif docname_ext then 
-            config.ext_list = { docname_ext } 
-            docname = docname_base
         end
     end
     -- main "ifcase mode" construct
@@ -879,7 +875,6 @@ for docname in list (arg) do
         end
     end 
     -- restoring possibly diverted values
-    config.ext_list = real_ext_list
     populate_docfiles = real_populate_docfiles
     mixed_populate_docfiles = real_mixed_populate_docfiles
     real_path = real_real_path
