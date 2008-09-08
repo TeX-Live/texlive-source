@@ -18,7 +18,7 @@ use strict;
 # construction should work with most shells.
 
 # A script to transform an EPS file so that:
-#   a) it is guarenteed to start at the 0,0 coordinate
+#   a) it is guaranteed to start at the 0,0 coordinate
 #   b) it sets a page size exactly corresponding to the BoundingBox
 # This means that when Ghostscript renders it, the result needs no
 # cropping, and the PDF MediaBox is correct.
@@ -80,12 +80,17 @@ use strict;
 #  2007/05/18 v.2.9.7gw (Gerben Wierda)
 #    * Merged both supplied 2.9.6 versions
 #  2007/07/18 v.2.9.8gw
+#  2008/08/26 v.2.9.9gw
+#    * Switch to embed fonts (default=yes) (J.P. Chretien)
+#    * turned no AutoRotatePages into an option (D. Kreil) (default = None)
+#    * Added resolution switch (D. Kreil)
+#    * Added BSD-style license
 
 ### program identification
 my $program = "epstopdf";
-my $filedate="2007/05/18";
-my $fileversion="2.9.8gw";
-my $copyright = "Copyright 1998-2001 by Sebastian Rahtz et al., 2002-2007 by Gerben Wierda et al. Free software under a BSD-style license.";
+my $filedate="2008/08/26";
+my $fileversion="2.9.9gw";
+my $copyright = "Copyright 1998-2001 by Sebastian Rahtz et al., 2002-2008 by Gerben Wierda et al. Free software under a BSD-style license.";
 my $title = "\U$program\E $fileversion, $filedate - $copyright\n";
 
 ### ghostscript command name
@@ -98,24 +103,35 @@ $::opt_help=0;
 $::opt_debug=0;
 $::opt_compress=1;
 $::opt_gs=1;
+$::opt_embed=1;
 $::opt_hires=0;
 $::opt_exact=0;
 $::opt_filter=0;
 $::opt_outfile="";
+$::opt_res=0;
+$::opt_autorotate="None";
 
 ### usage
 my @bool = ("false", "true");
+my $resmsg=$::opt_res? $::opt_res:"[use gs default]";
+my $rotmsg=$::opt_autorotate? $::opt_autorotate:"[use gs default]";
 my $usage = <<"END_OF_USAGE";
 ${title}Syntax:  $program [options] <eps file>
 Options:
-  --help:           print usage
-  --outfile=<file>: write result to <file>
-  --(no)filter:     read standard input   (default: $bool[$::opt_filter])
-  --(no)gs:         run ghostscript       (default: $bool[$::opt_gs])
-  --(no)compress:   use compression       (default: $bool[$::opt_compress])
-  --(no)hires:      scan HiResBoundingBox (default: $bool[$::opt_hires])
-  --(no)exact:      scan ExactBoundingBox (default: $bool[$::opt_exact])
-  --(no)debug:      debug informations    (default: $bool[$::opt_debug])
+  --help:             print usage
+  --outfile=<file>:   write result to <file>
+  --res=<dpi>:        set image resolution  (default: $resmsg);
+  --(no)filter:       read standard input   (default: $bool[$::opt_filter])
+  --(no)gs:           run ghostscript       (default: $bool[$::opt_gs])
+  --(no)compress:     use compression       (default: $bool[$::opt_compress])
+  --(no)embed:        embed fonts           (default: $bool[$::opt_embed])
+  --(no)hires:        scan HiResBoundingBox (default: $bool[$::opt_hires])
+  --(no)exact:        scan ExactBoundingBox (default: $bool[$::opt_exact])
+  --(no)debug:        debug informations    (default: $bool[$::opt_debug])
+  --autorotate=<val>: set AutoRotatePages   (default: $rotmsg)
+                      Recognized values: None, All, PageByPage
+                      For EPS files, PageByPage is equivalent to All
+
 Examples for producing 'test.pdf':
   * $program test.eps
   * produce postscript | $program --filter >test.pdf
@@ -132,9 +148,12 @@ GetOptions (
   "filter!",
   "compress!",
   "gs!",
+  "embed!",
   "hires!",
   "exact!",
   "outfile=s",
+  "autorotate=s",
+  "res=i",
 ) or die $usage;
 
 ### help functions
@@ -170,9 +189,16 @@ else {
   debug "Input filename:", $InputFilename;
 }
 
-### option compress
+### option compress & embed
 my $GSOPTS = "";
-$GSOPTS = "-dUseFlateCompression=false " unless $::opt_compress;
+$GSOPTS .= " -dPDFSETTINGS=/prepress -dMaxSubsetPct=100 -dSubsetFonts=true -dEmbedAllFonts=true " if $::opt_embed;
+$GSOPTS .= "-dUseFlateCompression=false " unless $::opt_compress;
+$GSOPTS .= "-r$::opt_res " if $::opt_res;
+$resmsg=$::opt_res? $::opt_res:"[use gs default]";
+$GSOPTS .= "-dAutoRotatePages=/$::opt_autorotate " if $::opt_autorotate;
+die "Invalid value for autorotate: '$::opt_autorotate' (use 'All', 'None' or 'PageByPage').\n"
+    if ($::opt_autorotate and not $::opt_autorotate =~ /^(None|All|PageByPage)$/);
+$rotmsg=$::opt_autorotate? $::opt_autorotate:"[use gs default]";
 
 ### option BoundingBox types
 my $BBName = "%%BoundingBox:";
@@ -207,6 +233,9 @@ else {
 if ($::opt_gs) {
   debug "Ghostscript command:", $GS;
   debug "Compression:", ($::opt_compress) ? "on" : "off";
+  debug "Embedding:", ($::opt_embed) ? "on" : "off";
+  debug("Rotation: $rotmsg");
+  debug("Resolution: $resmsg");
 }
 
 ### open input file
@@ -216,7 +245,7 @@ binmode IN;
 
 ### open output file
 if ($::opt_gs) {
-  my $pipe = "$GS -q -sDEVICE=pdfwrite $GSOPTS -dAutoRotatePages=/None" .
+  my $pipe = "$GS -q -sDEVICE=pdfwrite $GSOPTS" .
           " -sOutputFile=\"$OutputFilename\" - -c quit";
   debug "Ghostscript pipe:", $pipe;
   open(OUT,"|$pipe") or error "Cannot open Ghostscript for piped input";
@@ -393,4 +422,3 @@ print OUT "\ngrestore\n" if $BBCorrected;
 close(OUT);
 warning "BoundingBox not found" unless $BBCorrected;
 debug "Ready.";
-;
