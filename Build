@@ -82,6 +82,7 @@ export GNUMAKE
   eval $TL_BUILD_ENV time $TL_CONFIGURE \
         --prefix=$TL_INSTALL_DEST \
         --datadir=$TL_INSTALL_DEST \
+        --disable-largefile \
         $TL_CONF_XDVI_TOOLKIT \
         $TL_CONF_THREADS \
         $TL_CONF_MAC_FONTS \
