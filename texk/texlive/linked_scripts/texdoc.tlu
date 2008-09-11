@@ -1,5 +1,5 @@
 #!/usr/bin/env texlua
--- $Id: texdoc.tlu 10337 2008-08-14 11:40:50Z mpg $ -*-Lua-*-
+-- $Id: texdoc.tlu 10558 2008-09-11 21:05:34Z mpg $ -*-Lua-*-
 --[[Revised 2008 by Manuel Pégourié-Gonnard 
     with contributions from Reinhard Kotucha.
     First texlua versions by Frank Küster (2007). 
@@ -49,8 +49,13 @@ Usage:  texdoc  -h, --help | -v, --version | -f, --files | [option(s)] name(s)
     -i, --interact          Use interactive menus.
     -I, --nointeract        Use plain lists, no interaction required.
     -n, --noise-level=N     Set verbosity level to N.
-The command `texdoc texdoc' gives you the full user guide in pdf.
-Please report bugs and request features at texlive AT tug.org.]]
+Environment: 
+    PAGER, BROWSER, PDFVIEWER, PSVIEWER, DVIVIEWER.
+Files: 
+    <texmf>/texdoc/texdoc.cnf files, see the -f option.
+Homepage: 
+    http://tug.org/texdoc/
+The full manual is accessed via `texdoc texdoc'.]]
 notfound_msg = [[
 Sorry, no documentation found for PKGNAME.
 If you are unsure about the name, try searching CTAN's TeX catalogue at

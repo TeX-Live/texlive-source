@@ -1,11 +1,14 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 10205 2008-08-09 08:10:20Z preining $
+# $Id: tlmgr.pl 10562 2008-09-11 22:09:33Z karl $
 #
 # Copyright 2008 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 # TODO:
+# - check of consistency: all files mentioned are actually present
+# - reinstall a package: assume that i want to donwgrade from a different
+#   mirror or I want to fix an accidentally removed file
 # - ordering or collections removal (see below for details)
 # - (?) removal does not remove created format files from TEXMFSYSVAR
 # - other features: dependency check?, ...?
@@ -17,7 +20,7 @@
 #   from TLPDB actually removes the files, too. Maybe some better names
 #   are necessary.
 
-my $svnrev = '$Revision: 10205 $';
+my $svnrev = '$Revision: 10562 $';
 $svnrev =~ m/: ([0-9]+) /;
 my $tlmgrrevision = $1;
 
@@ -37,7 +40,7 @@ use TeXLive::TLMedia;
 use TeXLive::TLUtils;
 use TeXLive::TLWinGoo;
 use TeXLive::TLPostActions;
-TeXLive::TLUtils->import( qw(kpsewhich member win32 merge_into copy log) );
+TeXLive::TLUtils->import( qw(kpsewhich member info give_ctan_mirror win32 merge_into copy log debug) );
 use Cwd qw/abs_path/;
 use Pod::Usage;
 use Getopt::Long qw(:config no_autoabbrev require_order);
@@ -416,8 +419,7 @@ sub action_show {
     my $installed = 0;
     if (!$tlp) {
       if (!$tlmediatlpdb) {
-        $tlmediasrc = TeXLive::TLMedia->new($location);
-        die($loadmediasrcerror . $location) unless defined($tlmediasrc);
+        init_tlmedia();
         $tlmediatlpdb = $tlmediasrc->tlpdb;
       }
       $tlp = $tlmediatlpdb->get_package($pkg);
@@ -449,8 +451,7 @@ sub action_search {
   my $tlpdb;
   init_local_db();
   if ($opt_global) {
-    $tlmediasrc =  TeXLive::TLMedia->new($location);
-    die($loadmediasrcerror . $location) unless defined($tlmediasrc);
+    init_tlmedia();
     $tlpdb = $tlmediasrc->tlpdb;
   } else {
     $tlpdb = $localtlpdb;
@@ -537,7 +538,7 @@ sub action_restore {
         exit(0);
       }
     }
-    print "Restoring $pkg, $rev from $opt_backupdir/${pkg}_r${rev}.tar.lzma\n";
+    print "Restoring $pkg, $rev from $opt_backupdir/${pkg}.r${rev}.tar.lzma\n";
     if (!$opt_dry) {
       init_local_db(1);
       # first remove the package, then reinstall it
@@ -545,7 +546,7 @@ sub action_restore {
       # force the deinstallation since we will reinstall it
       $opt_backupdir = abs_path($opt_backupdir);
       merge_into(\%ret, &remove_package($pkg, $localtlpdb, 1));
-      TeXLive::TLMedia->_install_package("$opt_backupdir/${pkg}_r${rev}.tar.lzma" , [] ,$localtlpdb);
+      TeXLive::TLMedia->_install_package("$opt_backupdir/${pkg}.r${rev}.tar.lzma" , [] ,$localtlpdb);
       # now we have to read the .tlpobj file and add it to the DB
       my $tlpobj = TeXLive::TLPOBJ->new;
       $tlpobj->from_file($localtlpdb->root . "/tlpkg/tlpobj/$pkg.tlpobj");
@@ -612,8 +613,7 @@ sub action_update {
              "backupdir=s" => \$opt_backupdir,
              "dry-run" => \$opt_dry) or pod2usage(2);
   my %ret;
-  $tlmediasrc = TeXLive::TLMedia->new($location);
-  die($loadmediasrcerror . $location) unless defined($tlmediasrc);
+  init_tlmedia();
   my $mediatlpdb = $tlmediasrc->tlpdb;
   my @todo;
   if ($opt_all || $opt_list) {
@@ -621,8 +621,30 @@ sub action_update {
   } else {
     @todo = @ARGV;
   }
+  if ($opt_list) {
+    # we check for new packages
+    # loop over all installed collections
+    for my $c ($localtlpdb->collections) {
+      my $tlc = $mediatlpdb->get_package($c);
+      if (!defined($tlc)) {
+        debug("collection $c has disappeared from the network!\n");
+      } else {
+        # take all the dependencies of the installed collection 
+        # *as*found* in the network tlpdb
+        for my $d ($tlc->depends) {
+          my $tlp = $localtlpdb->get_package($d);
+          if (!defined($tlp)) {
+            # there is a dep that is either new or has been forcibly
+            # removed by the user.  report it as new, if the user does
+            # forcible removals it is their own problem.
+            info("$d ($c): new package\n");
+          }
+        }
+      }
+    }
+  }
   if (!@todo) {
-    printf "tlmgr update takes either a list of packages or --all\n";
+    printf "tlmgr update: please specify  list of packages or --all\n";
   }
   my $updater_started = 0;
   my $nrupdated = 0;
@@ -630,13 +652,13 @@ sub action_update {
     next if ($pkg =~ m/^00texlive/);
     my $tlp = $localtlpdb->get_package($pkg);
     if (!defined($tlp)) {
-      printf STDERR "Strange, $pkg cannot be found!\n";
+      printf STDERR "$0: cannot find package $pkg\n";
       next;
     }
     my $rev = $tlp->revision;
     my $mediatlp = $mediatlpdb->get_package($pkg);
     if (!defined($mediatlp)) {
-      print "$pkg cannot be found in $location\n";
+      debug("$pkg cannot be found in $location\n");
       next;
     }
     my $mediarev = $mediatlp->revision;
@@ -763,8 +785,7 @@ sub action_install {
   GetOptions("no-depends" => \$opt_nodepends,
              "dry-run" => \$opt_dry) or pod2usage(2);
   my %ret;
-  $tlmediasrc = TeXLive::TLMedia->new($location);
-  die($loadmediasrcerror . $location) unless defined($tlmediasrc);
+  init_tlmedia();
   foreach my $pkg (@ARGV) {
     if ($opt_dry) {
       print "install: $pkg\n";
@@ -784,8 +805,7 @@ sub action_list {
   init_local_db();
   my $what = shift @ARGV;
   $what || ($what = "");
-  $tlmediasrc = TeXLive::TLMedia->new($location);
-  die($loadmediasrcerror . $location) unless defined($tlmediasrc);
+  init_tlmedia();
   my @whattolist;
   if ($what =~ m/^collection/i) {
     @whattolist = $tlmediasrc->tlpdb->collections;
@@ -817,11 +837,13 @@ sub action_option {
     # changes the default location
     my $loc = shift @ARGV;
     if ($loc) {
-      print "Setting default installation source to $loc!\n";
+      # normalize the path
+      $loc = abs_path($loc);
+      print "Setting default installation location to $loc!\n";
       $localtlpdb->option_location($loc);
       $localtlpdb->save;
     } else {
-      print "Default installation source: ", $localtlpdb->option_location, "\n";
+      print "Default installation location: ", $localtlpdb->option_location, "\n";
     }
   } elsif ($what =~ m/^docfiles$/i) {
     # changes the default docfiles
@@ -854,7 +876,7 @@ sub action_option {
       print "Create formats on installation: ", $localtlpdb->option_create_formats, "\n";
     }
   } elsif ($what =~ m/^show$/i) {
-    print "Default installation source:    ", $localtlpdb->option_location, "\n";
+    print "Default installation location:  ", $localtlpdb->option_location, "\n";
     print "Create formats on installation: ", ($localtlpdb->option_create_formats ? "yes": "no"), "\n";
     print "Install documentation files:    ", ($localtlpdb->option_install_docfiles ? "yes": "no"), "\n";
     print "Install source files:           ", ($localtlpdb->option_install_srcfiles ? "yes": "no"), "\n";
@@ -881,8 +903,7 @@ sub action_arch {
   if ($what =~ m/^list$/i) {
     # list the available architectures
     # initialize the TLMedia from $location
-    $tlmediasrc = TeXLive::TLMedia->new($location);
-    die($loadmediasrcerror . $location) unless defined($tlmediasrc);
+    init_tlmedia();
     my $mediatlpdb = $tlmediasrc->tlpdb;
     my @already_installed_arch = $localtlpdb->available_architectures;
     print "Available architectures:\n";
@@ -897,8 +918,7 @@ sub action_arch {
     print "You can add new architectures with tlmgr arch add arch1 arch2\n";
     exit(0);
   } elsif ($what =~ m/^add$/i) {
-    $tlmediasrc = TeXLive::TLMedia->new($location);
-    die($loadmediasrcerror . $location) unless defined($tlmediasrc);
+    init_tlmedia();
     my $mediatlpdb = $tlmediasrc->tlpdb;
     my @already_installed_arch = $localtlpdb->available_architectures;
     my @available_arch = $mediatlpdb->available_architectures;
@@ -992,10 +1012,13 @@ sub action_generate {
   return;
 }
 
+# set global $location variable.
+# if we cannot read tlpdb, die if arg SHOULD_I_DIE is true.
+# 
 sub init_local_db {
   my ($should_i_die) = @_;
-  $localtlpdb = TeXLive::TLPDB->new ("root" => "$Master");
-  die("cannot find tlpdb!") unless (defined($localtlpdb));
+  $localtlpdb = TeXLive::TLPDB->new ("root" => $Master);
+  die("cannot find tlpdb at $Master!") unless (defined($localtlpdb));
   # setup the programs, for win32 we need the shipped wget/lzma etc, so we
   # pass the location of these files to setup_programs.
   if (!setup_programs("$Master/tlpkg/installer", $localtlpdb->option_platform)) {
@@ -1017,6 +1040,12 @@ sub init_local_db {
   if (!defined($location)) {
     die("No installation source found, nor in the texlive.tlpdb nor on the cmd line.\nPlease specify one!");
   }
+  # normalize the location
+  my $abs_location = abs_path($location);
+
+  # however, if we were given a url, that will get "normalized" to the
+  # empty string, it not being a path.  Restore the original value if so.  
+  $location = $abs_location if $abs_location;
 }
 
 sub action_gui {
@@ -1183,6 +1212,21 @@ sub action_uninstall {
   system("rmdir", "--ignore-fail-on-non-empty", "$texdir");
 }
 
+#
+# initialize the global $tlmediasrc object, or die.
+# uses the global $location.
+#
+sub init_tlmedia {
+  if (($location =~ m/$TeXLiveServerURL/) ||
+      ($location =~ m/^ctan$/i)) {
+    $location = give_ctan_mirror();
+  }
+  info("tlmgr: installation location $location\n");
+  # $tlmediasrc is a global variable
+  $tlmediasrc = TeXLive::TLMedia->new($location);
+  die($loadmediasrcerror . $location) unless defined($tlmediasrc);
+}
+
 
 #
 # return all the directories from which all content will be removed
@@ -1280,7 +1324,7 @@ L<http://tug.org/texlive/tlmgr.html>.
 
 The following options have to be given I<before> you specify the action.
 
-=over 8
+=over 4
 
 =item B<--location> I<location>
 
@@ -1316,7 +1360,7 @@ release as well as the B<tlmgr> script itself.
 
 =head1 ACTIONS
 
-=over 8
+=over 4
 
 =item B<help>
 
@@ -1335,7 +1379,7 @@ Start the graphical user interface.
 Install all I<pkg>s given on the command line. By default this installs
 all packages that the given I<pkg>s are dependent on, also.  Options:
 
-=over 16
+=over 8
 
 =item B<--no-depends>
 
@@ -1355,20 +1399,20 @@ written to the terminal.
 Updates the packages given as arguments to the latest version available
 at the installation source. Options:
 
-=over 8
+=over 4
 
 =item B<--list>
 
-List only which packages could be updated.
+List the packages which would be updated or newly installed.
 
 =item B<--all>
 
-Update all package.
+Update all packages.
 
 =item B<--dry-run>
 
 Nothing is actually installed; instead, the actions to be performed are
-written to the terminal.
+written to the terminal.  (A more verbose report than C<--list>.)
 
 =item B<--backupdir> I<directory>
 
@@ -1389,7 +1433,7 @@ time.
 
 Options:
 
-=over 8
+=over 4
 
 =item B<--backupdir> I<directory>
 
@@ -1419,7 +1463,7 @@ directory with backups.
 
 Options:
 
-=over 8
+=over 4
 
 =item B<--dry-run>
 
@@ -1446,7 +1490,7 @@ collection or scheme is disallowed, unless C<--force> is specified.
 
 Options:
 
-=over 8
+=over 4
 
 =item B<--no-depends>
 
@@ -1477,7 +1521,7 @@ In the second form, if I<value> is missing the setting for I<key> is
 displayed.  If I<value> is present, I<key> is set to I<value>.
 
 Possible values for I<key> are:
-C<location> (default installation source),
+C<location> (default installation location),
 C<formats> (create formats at installation time),
 C<docfiles> (install documentation files),
 C<srcfiles> (install source files).
@@ -1486,9 +1530,9 @@ Perhaps the most common use for this is if you originally installed from
 DVD, and want to permanently change the installation to get further
 updates from the Internet.  To do this, you can run
 
-  tlmgr option location http://mirror.ctan.org/systems/texlive/tlnet/YYYY
+ tlmgr option location http://mirror.ctan.org/systems/texlive/tlnet/YYYY
 
-(where YYYY is the TeX Live release year).
+where YYYY is the TeX Live release year.
 
 =item B<paper a4>
 
@@ -1503,14 +1547,15 @@ outputs all known papersizes for the specified program.
 
 =item B<arch list>
 
-Prints the names of the systems available at the default install location.
+Prints the names of the architectures (C<i386-linux>, ...) available at
+the default install location.
 
 =item B<arch add I<arch>...>
 
-Add executables for the specified I<arch>es to the installation.
+Add executables for each given architecture I<arch> to the installation.
 Options:
 
-=over 8
+=over 4
 
 =item B<--dry-run>
 
@@ -1526,7 +1571,7 @@ By default searches the names, short and long descriptions of all
 locally installed packages for the given argument (interpreted as
 regexp).  Options:
 
-=over 8
+=over 4
 
 =item B<--file>
 
@@ -1557,7 +1602,7 @@ With an argument lists only collections or schemes, as requested.
 
 Uninstalls the entire TeX Live installation.  Options:
 
-=over 8
+=over 4
 
 =item B<--force>
 
@@ -1607,7 +1652,7 @@ the given file.
 
 Options:
 
-=over 8
+=over 4
 
 =item B<--dest> I<output file>
 
