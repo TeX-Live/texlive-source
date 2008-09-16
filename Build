@@ -28,6 +28,10 @@ fi
 # allow override of make program.
 : ${TL_MAKE=make}
 
+# and then also set GNUMAKE to that, for the sake of freetype2/configure.
+: ${GNUMAKE=${TL_MAKE}}
+export GNUMAKE
+
 if test "x$1" = x--no-clean; then
   shift
 else
@@ -48,27 +52,27 @@ cd $TL_WORKDIR || exit 1
 # allow override of configure location, just in case.
 : ${TL_CONFIGURE=../configure}
 
+# longinteger and off_t declarations are still inconsistent, do not
+# enable this unless you are testing.
+: ${TL_CONF_LARGEFILE=--disable-largefile}
+
 # allow override of xdvi toolkit, default to standard xaw.
 : ${TL_CONF_XDVI_TOOLKIT=--with-xdvi-x-toolkit=xaw}
 
-# default to building ICU without thread support (xetex doesn't need it).
+# default to building ICU without thread support, since xetex doesn't need it.
 : ${TL_CONF_THREADS=--disable-threads}
 
 # default to include freetype2 support for old Mac font file formats.
 : ${TL_CONF_MAC_FONTS=--with-old-mac-fonts}
 
-# avoid xindy by default, it requires clisp (see utils/README).
+# skip xindy by default, it requires clisp (see utils/README).
 : ${TL_CONF_XINDY=--without-xindy}
 
-# allow adding other configure args.
+# allow adding arbitrary other configure args.
 : ${TL_CONFIGURE_ARGS=}
 
 # allow override of make target.
 : ${TL_TARGET=world}
-
-# and then also set GNUMAKE to that, for the sake of freetype2/configure.
-: ${GNUMAKE=${TL_MAKE}}
-export GNUMAKE
 
 # Kpathsea is not going to be able to find its cnf files during the
 # build, so omit the warning about it.
@@ -82,7 +86,7 @@ export GNUMAKE
   eval $TL_BUILD_ENV time $TL_CONFIGURE \
         --prefix=$TL_INSTALL_DEST \
         --datadir=$TL_INSTALL_DEST \
-        --disable-largefile \
+        $TL_CONF_LARGEFILE \
         $TL_CONF_XDVI_TOOLKIT \
         $TL_CONF_THREADS \
         $TL_CONF_MAC_FONTS \
