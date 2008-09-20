@@ -22,7 +22,7 @@ end
 
 kpse.set_program_name('pdfannotextractor.texlua', 'pdfannotextractor')
 
-jarfile=kpse.find_file(pax.jar', 'texmfscripts')
+jarfile=kpse.find_file('pax.jar', 'texmfscripts')
 
 command={'java', '-jar', jarfile}
 
