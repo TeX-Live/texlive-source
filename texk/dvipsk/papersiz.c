@@ -40,7 +40,9 @@ static long myatol P1C(char **, s)
          error("! arithmetic overflow in parameter") ;
       result = 10 * result + *p++ - '0' ;
    }
-   if (p == *s) {
+   if (p == *s && *p == '.') {
+      return 0;
+   } else if (p == *s) {
 #ifdef KPATHSEA
       error(concat3 ("expected number in ", *s, ", returning 10")) ;
 #else
