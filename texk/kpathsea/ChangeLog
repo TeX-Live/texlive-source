@@ -1,3 +1,8 @@
+2008-09-20  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf: strongly warn that customizations in this file will
+	be lost by later updates.
+
 2008-08-05  Karl Berry  <karl@tug.org>
 
 	* mktextfm (MAG): set back to 1.  mag=0 fails with larm1000.mf,
