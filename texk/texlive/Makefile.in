@@ -29,6 +29,8 @@ LINKED_SCRIPTS = \
   texmf-dist/scripts/glossaries/makeglossaries \
   texmf-dist/scripts/mkjobtexmf/mkjobtexmf.pl \
   texmf-dist/scripts/oberdiek/pdfatfi.pl \
+  texmf-dist/scripts/pax/pdfannotextractor.texlua \
+  texmf-dist/scripts/ppower4/ppower4.texlua \
   texmf-dist/scripts/pdfcrop/pdfcrop.pl \
   texmf-dist/scripts/perltex/perltex.pl \
   texmf-dist/scripts/ppower4/pdfthumb.texlua \
