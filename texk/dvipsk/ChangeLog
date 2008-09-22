@@ -1,6 +1,14 @@
+2008-09-22  Karl Berry  <karl@tug.org>
+
+	* hps.c (do_html): get scale factors right.
+	(hoff, voff): remove, hh and vv are already calculated by using
+	hoff and voff in dopage.c.
+	From Akira.  Report from John Frampton through tex-eplain;
+	using -O made -z fail.
+
 2008-09-20  Karl Berry  <karl@tug.org>
 
-	* papersiz.c (myatol): accept a leading zero, to match the doc.
+	* papersiz.c (myatol): do not require a leading zero, to match the doc.
 	From Akira.  Report from John Frampton through tex-eplain.
 
 2008-07-10  Karl Berry  <karl@tug.org>

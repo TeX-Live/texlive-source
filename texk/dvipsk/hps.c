@@ -114,7 +114,6 @@ extern char *oname  ;
 extern integer pagenum ;
 extern integer hh ;
 extern integer vv ;
-extern integer hoff, voff ;
 
 char *hs = NULL ; /* html string to be handled */
 char *url_name = NULL ; /* url between double quotes */
@@ -157,16 +156,16 @@ void do_html P1C(char *, s)
     }
        if (current_type == HREF && current_name[0] != '#') {
 	 if ((nl = lookup_link(current_name, current_type)->defn)) { 
-	   nl->rect.urx = dvi_to_hps_conv(hh + hoff,HORIZONTAL) ;
-	   nl->rect.ury = dvi_to_hps_conv(vv + voff, VERTICAL)-FUDGE+12.0 ; 
+	   nl->rect.urx = dvi_to_hps_conv(hh, HORIZONTAL) ;
+	   nl->rect.ury = dvi_to_hps_conv(vv, VERTICAL)-FUDGE+12.0 ; 
 	   stamp_external(current_name,nl); /* Broken lines ? */
 	 } else {
 	   error("!Null lookup");
 	 }
        } else {
 	 if ((nl = lookup_link(current_name, current_type)->defn)) { 
-	   nl->rect.urx = dvi_to_hps_conv(hh + hoff,HORIZONTAL) ;
-	   nl->rect.ury = dvi_to_hps_conv(vv + voff, VERTICAL)-FUDGE+12.0 ; 
+	   nl->rect.urx = dvi_to_hps_conv(hh, HORIZONTAL) ;
+	   nl->rect.ury = dvi_to_hps_conv(vv, VERTICAL)-FUDGE+12.0 ; 
 	   if (current_type) {
 	     stamp_hps(nl) ; /* Put link info right where special is */
 	     print_rect_list() ; /* print out rectangles */
@@ -256,8 +255,8 @@ int do_link P2C(char *, s, int, type)
   p->title = (char *)malloc(strlen(s)+1) ;
   p->title = s ;
   p->srcpg = pagecounter ;
-  p->rect.llx = dvi_to_hps_conv(hh + hoff,HORIZONTAL) ; 
-  p->rect.lly = dvi_to_hps_conv(vv + voff,VERTICAL)-FUDGE ;
+  p->rect.llx = dvi_to_hps_conv(hh, HORIZONTAL) ; 
+  p->rect.lly = dvi_to_hps_conv(vv, VERTICAL)-FUDGE ;
   p->rect.urx = -1.0 ;
   p->rect.ury = -1.0 ;
   p->vert_dest = -1 ; 
@@ -538,8 +537,8 @@ void vertical_in_hps P1H(void) {
     rl->next = current_rect_list ;
     current_rect_list = rl ;
   }
-  current_rect_list->rect.llx = dvi_to_hps_conv(hh + hoff,HORIZONTAL) ; 
-  current_rect_list->rect.lly = dvi_to_hps_conv(vv + voff,VERTICAL)-FUDGE ;
+  current_rect_list->rect.llx = dvi_to_hps_conv(hh, HORIZONTAL) ; 
+  current_rect_list->rect.lly = dvi_to_hps_conv(vv, VERTICAL)-FUDGE ;
   current_rect_list->rect.urx = dvi_to_hps_conv(hhmem, HORIZONTAL) ;
   current_rect_list->rect.ury = dvi_to_hps_conv(vvmem, VERTICAL)-FUDGE ; 
   
@@ -564,16 +563,16 @@ void end_current_box P1H(void) {
   HREF_COUNT-- ;
   if (current_type == HREF && current_name[0] != '#') {
     if ((nl = lookup_link(current_name, current_type)->defn)) { 
-      nl->rect.urx = dvi_to_hps_conv(hhmem + hoff,HORIZONTAL) ;
-      nl->rect.ury = dvi_to_hps_conv(vvmem + voff, VERTICAL)-FUDGE+12.0 ; 
+      nl->rect.urx = dvi_to_hps_conv(hhmem, HORIZONTAL) ;
+      nl->rect.ury = dvi_to_hps_conv(vvmem, VERTICAL)-FUDGE+12.0 ; 
       stamp_external(current_name,nl); /* Broken lines ? */
     } else {
       error("!Null lookup");
     }
   } else {
     if ((nl = lookup_link(current_name, current_type)->defn)) { 
-      nl->rect.urx = dvi_to_hps_conv(hhmem + hoff,HORIZONTAL) ;
-      nl->rect.ury = dvi_to_hps_conv(vvmem + voff, VERTICAL)-FUDGE+12.0 ; 
+      nl->rect.urx = dvi_to_hps_conv(hhmem, HORIZONTAL) ;
+      nl->rect.ury = dvi_to_hps_conv(vvmem, VERTICAL)-FUDGE+12.0 ; 
       if (current_type) {
 	stamp_hps(nl) ; /* Put link info right where special is */
       }
