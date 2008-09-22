@@ -611,9 +611,9 @@ parse_line()
   inifile=`echo $lastarg | sed 's%^\*%%'`
 
   case "$engine" in
-    mpost)  fmtfile="$format.mem";  kpsefmt=mpost; texengine=metapost;;
+    mpost)           fmtfile="$format.mem";  kpsefmt=mp; texengine=metapost;;
     mf|mfw|mf-nowin) fmtfile="$format.base"; kpsefmt=mf; texengine=metafont;;
-    *)      fmtfile="$format.fmt";  kpsefmt=tex; texengine=$engine;;
+    *)               fmtfile="$format.fmt";  kpsefmt=tex; texengine=$engine;;
   esac
 
   # See if we can find $inifile for return code:
@@ -673,9 +673,9 @@ run_initex()
 
   jobswitch="-jobname=$format"
   case "$format" in
-    metafun) prgswitch=-progname=mpost;;
+    metafun)         prgswitch=-progname=mpost;;
     mptopdf|cont-??) prgswitch=-progname=context;;
-    *)       prgswitch=-progname=$format;;
+    *)               prgswitch=-progname=$format;;
   esac
 
   rm -f $fmtfile

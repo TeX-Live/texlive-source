@@ -1,3 +1,8 @@
+2008-09-22  Karl Berry  <karl@tug.org>
+
+	* fmtutil (parse_line): pass --format=mp to kpsewhich when
+	engine=mpost, instead of --format=mpost.
+
 2008-07-08  Karl Berry  <karl@tug.org>
 
 	* texconfig (hyphen, formats): disable these functions,
