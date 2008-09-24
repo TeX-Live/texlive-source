@@ -1,3 +1,8 @@
+2008-09-24  Karl Berry  <karl@tug.org>
+
+	* hps.c, hps.lpro: Mark (doyle/aps/org) does not want to be
+	notified of changes any longer (or for the past decade or so :).
+
 2008-09-22  Karl Berry  <karl@tug.org>
 
 	* hps.c (do_html): get scale factors right.
