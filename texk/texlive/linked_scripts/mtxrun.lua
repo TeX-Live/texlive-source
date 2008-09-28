@@ -5815,7 +5815,10 @@ function input.expand_variables(instance)
         end
         if not busy then break end
     end
+    local homedir = 
+       instance.environment[(os.type == "windows" and 'USERPROFILE') or 'HOME'] or '~'
     for k,v in pairs(instance.expansions) do
+        v = v:gsub("^~", homedir) 
         instance.expansions[k] = v:gsub("\\", '/')
     end
 end

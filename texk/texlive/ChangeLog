@@ -1,3 +1,9 @@
+2008-09-28  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (LINKED_SCRIPTS): mtxrun and luatools now link to
+	the .lua files instead of stubs.  tldev mail from mojca,
+	25 Sep 2008 11:38:14.
+
 2008-07-11  Karl Berry  <karl@tug.org>
 
 	* Makefile.in (LINKED_SCRIPTS): mistyped epsf for eps.

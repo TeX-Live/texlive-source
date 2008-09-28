@@ -41,14 +41,14 @@ LINKED_SCRIPTS = \
   texmf-dist/scripts/thumbpdf/thumbpdf.pl \
   texmf-dist/scripts/vpe/vpe.pl \
   texmf-dist/scripts/context/ruby/texmfstart.rb \
+  texmf-dist/scripts/context/lua/luatools.lua \
+  texmf-dist/scripts/context/lua/mtxrun.lua \
   texmf-dist/scripts/context/stubs/unix/context \
   texmf-dist/scripts/context/stubs/unix/ctxtools \
   texmf-dist/scripts/context/stubs/unix/exatools \
-  texmf-dist/scripts/context/stubs/unix/luatools \
   texmf-dist/scripts/context/stubs/unix/makempy \
   texmf-dist/scripts/context/stubs/unix/mpstools \
   texmf-dist/scripts/context/stubs/unix/mptopdf \
-  texmf-dist/scripts/context/stubs/unix/mtxrun \
   texmf-dist/scripts/context/stubs/unix/mtxtools \
   texmf-dist/scripts/context/stubs/unix/pdftools \
   texmf-dist/scripts/context/stubs/unix/pdftrimwhite \
