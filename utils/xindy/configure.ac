@@ -38,6 +38,17 @@ AC_ARG_ENABLE(make-rules, AS_HELP_STRING([--enable-make-rules],[build and instal
 AC_ARG_ENABLE(docs, AS_HELP_STRING([--enable-docs],[build and install documentation (default is YES)]))
 AC_ARG_ENABLE(tetex-build, AS_HELP_STRING([--enable-tetex-build],[Build as part of a TeX Live installation]))
 AC_ARG_WITH(clisp, AS_HELP_STRING([--with-clisp=...],[Use the specified location of the clisp executable (default is search in PATH)]))
+AC_ARG_WITH(xindy-recode, AS_HELP_STRING([--with-xindy-recode],[Use `recode' instead of `iconv' (default is NO)]))
+
+if test "x$with_xindy_recode" = xno; then
+  CONVERT_FROM_UTF8="iconv -f UTF-8 -t "
+else
+  AC_CHECK_PROG(CONVERT_FROM_UTF8, recode, [recode UTF-8..])
+  if test "x$CONVERT_FROM_UTF8" != "xrecode UTF-8.."; then
+    AC_MSG_ERROR([--with-xindy-recode specified, but `recode' not found])
+  fi
+fi
+AC_SUBST(CONVERT_FROM_UTF8)
 
 if test "x$enable_tetex_build" = xyes -a "x$datadir" = "x$prefix"; then
   AC_MSG_NOTICE([Using installation layout for TeX Live])

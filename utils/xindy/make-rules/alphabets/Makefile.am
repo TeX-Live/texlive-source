@@ -741,75 +741,75 @@ nodist_noinst_DATA = \
 
 %latin1.pl : %utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;s/@9{\([^}]*\)}//g;' <$< | \
-	iconv -f UTF-8 -t ISO-8859-1 >$@
+	@CONVERT_FROM_UTF8@ISO-8859-1 >$@
 
 %cp850.pl : %utf8.pl.in
 	sed -e 's/@.{\([^}]*\)}//g;' <$< | \
-	iconv -f UTF-8 -t CP850 >$@
+	@CONVERT_FROM_UTF8@CP850 >$@
 
 romanian/latin2.pl : romanian/utf8.pl
 	sed -e 's/@u{\([^}]*\)}//g;' -f $(srcdir)/rom-comma-kludge.sed <$< | \
-	iconv -f UTF-8 -t ISO-8859-2 >$@
+	@CONVERT_FROM_UTF8@ISO-8859-2 >$@
 
 %latin2.pl : %utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
-	iconv -f UTF-8 -t ISO-8859-2 >$@
+	@CONVERT_FROM_UTF8@ISO-8859-2 >$@
 
 %latin3.pl : %utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
-	iconv -f UTF-8 -t ISO-8859-3 >$@
+	@CONVERT_FROM_UTF8@ISO-8859-3 >$@
 
 %latin4.pl : %utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
-	iconv -f UTF-8 -t ISO-8859-4 >$@
+	@CONVERT_FROM_UTF8@ISO-8859-4 >$@
 
 %iso88595.pl : %utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
-	iconv -f UTF-8 -t ISO-8859-5 >$@
+	@CONVERT_FROM_UTF8@ISO-8859-5 >$@
 
 %iso88597.pl : %utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
-	iconv -f UTF-8 -t ISO-8859-7 >$@
+	@CONVERT_FROM_UTF8@ISO-8859-7 >$@
 
 %iso88598.pl : %utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
-	iconv -f UTF-8 -t ISO-8859-8 >$@
+	@CONVERT_FROM_UTF8@ISO-8859-8 >$@
 
 %latin5.pl : %utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
-	iconv -f UTF-8 -t ISO-8859-9 >$@
+	@CONVERT_FROM_UTF8@ISO-8859-9 >$@
 
 %latin9.pl : %utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;s/@9{\([^}]*\)}/\1/g;' <$< | \
-	iconv -f UTF-8 -t ISO-8859-15 >$@
+	@CONVERT_FROM_UTF8@ISO-8859-15 >$@
 
 romanian/cp1250.pl : romanian/utf8.pl
 	sed -e 's/@u{\([^}]*\)}//g;' -f $(srcdir)/rom-comma-kludge.sed <$< | \
-	iconv -f UTF-8 -t CP1250 >$@
+	@CONVERT_FROM_UTF8@CP1250 >$@
 
 %cp1250.pl : %utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
-	iconv -f UTF-8 -t CP1250 >$@
+	@CONVERT_FROM_UTF8@CP1250 >$@
 
 %cp1251.pl : %utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
-	iconv -f UTF-8 -t CP1251 >$@
+	@CONVERT_FROM_UTF8@CP1251 >$@
 
 %cp1252.pl : %utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;s/@9{\([^}]*\)}/\1/g;' <$< | \
-	iconv -f UTF-8 -t CP1252 >$@
+	@CONVERT_FROM_UTF8@CP1252 >$@
 
 %isoir111.pl : %utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
-	iconv -f UTF-8 -t ISO-IR-111 >$@
+	@CONVERT_FROM_UTF8@ISO-IR-111 >$@
 
 %koi8-r.pl : %utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
-	iconv -f UTF-8 -t KOI8-R >$@
+	@CONVERT_FROM_UTF8@KOI8-R >$@
 
 %koi8-u.pl : %utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
-	iconv -f UTF-8 -t KOI8-U >$@
+	@CONVERT_FROM_UTF8@KOI8-U >$@
 
 %tex.pl : %utf8.pl $(srcdir)/utf8-to-tex.sed
 	sed -f $(srcdir)/utf8-to-tex.sed <$< >$@
