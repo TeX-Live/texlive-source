@@ -13,11 +13,10 @@
 
 my $TL_version='2008';
 
-my $getfont_url="ftp://tug.org/tex/getnonfreefonts/getfont$TL_version";
-
 use File::Copy;
 use Getopt::Long;
 $Getopt::Long::autoabbrev=0;
+Getopt::Long::Configure ("bundling");
 
 $opt_lsfonts=0;
 $opt_force=0;
@@ -26,7 +25,8 @@ sub usage {
     print <<'EOF';
 Usage:
     getnonfreefonts[-sys] [-a|--all] [-d|--debug] [-f|--force]
-        [-l|--lsfonts] [-v|--verbose] [--version] [font1] [font2] ...
+        [-l|--lsfonts] [-v|--verbose] [--version] [-H|--http]
+	[font1] [font2] ...
 
     getnonfreefonts installs fonts in $TEXMFHOME.
     getnonfreefonts-sys installs fonts in $TEXMFLOCAL.
@@ -44,6 +44,8 @@ Usage:
 
         -v|--verbose  Be more verbose.
 
+	-H|--http     Use http instead of ftp (see manual).
+
         --version     Print version number.
 
 EOF
@@ -57,6 +59,7 @@ GetOptions
     "debug|d",
     "force|f",
     "help|h",
+    "http|H",
     "lsfonts|l",
     "verbose|v",
     "version",
@@ -80,6 +83,15 @@ if ($opt_help or !@ARGS) {
 }
 
 
+sub win32 {
+    if ($^O=~/^MSWin(32|64)/i) {
+	return 1;
+    } else {
+	return 0;
+    }
+}
+
+
 sub message {
     my $message=shift;
     if ($message=~/^\[/) {
@@ -97,14 +109,29 @@ sub debug_msg {
     }
 }
 
+
 sub which {
     my $prog=shift;
     my @PATH;
     my $PATH=$ENV{'PATH'};
-    @PATH=split ':', $PATH;
-    for my $dir (@PATH) {
-	if (-x "$dir/$prog") {
-	    return "$dir/$prog";
+    if (&win32) {
+	my @PATHEXT=split ';', $ENV{'PATHEXT'};
+	push @PATHEXT, '';  # if argument contains an extension
+	@PATH=split ';', $PATH;
+	for my $dir (@PATH) {
+	    $dir=~s/\\/\//g;
+	    for my $ext (@PATHEXT) {
+		if (-f "$dir/$prog$ext") {
+		    return "$dir/$prog$ext";
+		}
+	    }
+	}
+    } else {
+	@PATH=split ':', $PATH;
+	for my $dir (@PATH) {
+	    if (-x "$dir/$prog") {
+		return "$dir/$prog";
+	    }
 	}
     }
     return 0;
@@ -114,7 +141,7 @@ sub which {
 sub expand_var {
     my $var=shift;
 
-    if ($^O=~/^MSWin(32|64)/i) {
+    if (win32) {
 	open KPSEWHICH, 'kpsewhich --expand-var=$'  . "$var |";
     } else {
 	open KPSEWHICH, 'kpsewhich --expand-var=\$' . "$var |";
@@ -155,10 +182,12 @@ debug_msg "Internal variable SYSTMP set to '$SYSTMP'";
 # allowed.  Perl always needs forward slashes.
 
 # We convert backslashes to forward slashes on Windows.
-$SYSTMP=~s/\\/\//g if ($^O=~/^MSWin(32|64)/i);
 
+if (win32) {
+    $SYSTMP=~s/\\/\//g;
+    debug_msg "Internal variable SYSTMP converted to '$SYSTMP'";
+}
 
-debug_msg "Internal variable SYSTMP converted to '$SYSTMP'";
 
 sub check_tmpdir{
 die "! ERROR: The temporary directory '$SYSTMP' doesn't exist.\n"
@@ -168,21 +197,15 @@ die "! ERROR: The temporary directory '$SYSTMP' is not writable.\n"
     unless (-w "$SYSTMP");
 }
 
-# Determine INSTALLROOT.
 
 if ($opt_debug) {
-    my @path=split ':', $ENV{PATH};
-    for my $dir (@path) {
-	debug_msg "Search for kpsewhich in '$dir'";
-	opendir DIR, "$dir";
-	my @kpsewichs=grep /^kpsewhich/, readdir DIR;
-	closedir DIR;
-	for (@kpsewichs) {
-	    debug_msg "Found $dir/$_" if /^kpsewhich/;
-	}
-    }
+    debug_msg "Search for kpsewhich in PATH";
+    my $kpsewhich=which "kpsewhich";
+    debug_msg "Found $kpsewhich";
 }
 
+
+# Determine INSTALLROOT.
 
 $INSTALLROOTNAME=($sys)? 'TEXMFLOCAL':'TEXMFHOME';
 
@@ -192,7 +215,7 @@ $INSTALLROOT=expand_var "$INSTALLROOTNAME";
 
 debug_msg "INSTALLROOT='$INSTALLROOT'";
 
-$INSTALLROOT=~s/\\/\//g if ($^O=~/^MSWin(32|64)/i);
+$INSTALLROOT=~s/\\/\//g if (win32);
 
 debug_msg "Internal variable INSTALLROOT converted to '$INSTALLROOT'";
 
@@ -255,7 +278,7 @@ my @signals_UNIX=qw(QUIT BUS PIPE);
 my @signals_Win32=qw(BREAK);
 
 
-if ($^O=~/^MSWin(32|64)$/i) {
+if (win32) {
     @signals=(@common_signals, @signals_Win32);
 } else {
     @signals=(@common_signals, @signals_UNIX);
@@ -269,12 +292,33 @@ foreach my $signal (@signals) {
 
 # Download the script from tug.org.
 
+my $getfont_url;
+
+if ($opt_http) {
+    $getfont_url="http://tug.org/~kotucha/getnonfreefonts/getfont$TL_version";
+} else {
+    $getfont_url="ftp://tug.org/tex/getnonfreefonts/getfont$TL_version";
+}
+
 my $has_wget=0;
 
-if ($^O=~/^MSWin(32|64)$/i) {
+if (win32) {
     $has_wget=1; ## shipped with TL.
 } elsif (which "wget") {
-    $has_wget=1;
+    $has_wget=1; ## wget is in PATH.
+}
+
+
+if ($opt_debug) {
+    my @PATH;
+    if (win32) {
+	@PATH=split ';', $ENV{'PATH'};
+    } else {
+	@PATH=split ':', $ENV{'PATH'};
+    }
+    foreach my $dir (@PATH) {
+	debug_msg "PATH: '$dir'";
+    }
 }
 
 debug_msg "No wget binary found on your system, trying curl" unless ($has_wget);
@@ -299,6 +343,7 @@ push @getfont, '--debug' if $opt_debug;
 push @getfont, '--verbose' if $opt_verbose;
 push @getfont, '--sys' if $sys;
 push @getfont, '--all' if $opt_all;
+push @getfont, '--http' if $opt_http;
 push @getfont, '--use_curl' unless ($has_wget);
 push @getfont, @allpackages;
 
