@@ -1,3 +1,9 @@
+2008-10-22  Karl Berry  <karl@tug.org>
+
+	* updmap.pl (cfgval): only consider falsish strings to be 0, else
+	leave the value as-is, for the sake of LW35, which does not take a
+	boolean.  Report and patch from Aaron Chen, 17 Oct 2008 01:22:24.
+
 2008-09-22  Karl Berry  <karl@tug.org>
 
 	* fmtutil (parse_line): pass --format=mp to kpsewhich when

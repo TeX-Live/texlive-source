@@ -1,3 +1,4 @@
+#!/usr/bin/env perl
 ###############################################################################
 # updmap: utility to maintain map files for outline fonts.
 #
@@ -16,13 +17,10 @@
 #   --outputdir directory      specify output directory (for all files)
 #  --quiet                    reduce verbosity
 ###############################################################################
+#$^W=1;
 
 require "newgetopt.pl";
-use Cwd;
-use Strict;
-use File::Copy;
-use File::Compare;
-use File::Path;
+use strict;
 
 #  my $IsWin32 = ($^O =~ /MSWin32/i);
 
@@ -30,6 +28,7 @@ use File::Path;
 #    use Win32::Registry;
 #    use Win32::API;
 #  }
+
 
 my $progname;
 my $cnfFile;
@@ -222,23 +221,6 @@ my @fileADOBE = (
 	's/\buzdr.pfb\b/zd______.pfb/x'
 		);
 
-my %base14RemovePSName = (
-	'/^[^\s]*\sCourier\s/' => 's/\s[^\s]*//',
-	'/^[^\s]*\sCourier-Bold\s/' => 's/\s[^\s]*//',
-	'/^[^\s]*\sCourier-Oblique\s/' => 's/\s[^\s]*//',
-	'/^[^\s]*\sCourier-BoldOblique\s/' => 's/\s[^\s]*//',
-	'/^[^\s]*\sHelvetica\s/' => 's/\s[^\s]*//',
-	'/^[^\s]*\sHelvetica-Bold\s/' => 's/\s[^\s]*//',
-	'/^[^\s]*\sHelvetica-Oblique\s/' => 's/\s[^\s]*//',
-	'/^[^\s]*\sHelvetica-BoldOblique\s/' => 's/\s[^\s]*//',
-	'/^[^\s]*\sSymbol\s/' => 's/\s[^\s]*//',
-	'/^[^\s]*\sTimes-Roman\s/' => 's/\s[^\s]*//',
-	'/^[^\s]*\sTimes-Bold\s/' => 's/\s[^\s]*//',
-	'/^[^\s]*\sTimes-Italic\s/' => 's/\s[^\s]*//',
-	'/^[^\s]*\sTimes-BoldItalic\s/' => 's/\s[^\s]*//',
-	'/^[^\s]*\sZapfDingbats\s/' => 's/\s[^\s]*//'
-);
-
 &main;
 
 exit 0;
@@ -270,6 +252,82 @@ exit 0;
 #      return $home;
 #    }
 #  }
+
+
+###############################################################################
+# mkdirhier(directory)
+#   create a directory and parent directories as needed
+###############################################################################
+sub mkdirhier {
+  my $tree=shift;
+  my $mode=shift;
+  my $subdir;
+
+  return if (-d $tree);
+  my @dirs=split /\//, $tree;
+  foreach my $dir (@dirs) {
+    $subdir .= ("$dir" . "/");
+    unless (-d $subdir)  {
+      if (defined $mode) {
+        mkdir ("$subdir", $mode) or die "Can't mkdir '$subdir': $!.\n";
+      } else {
+        mkdir "$subdir" or die "Can't mkdir '$subdir': $!.\n";
+      }
+    }
+  }
+}
+
+###############################################################################
+# equalize_file(filename[, comment_char])
+#   read a file and return its processed content as a string.
+#   look into the source code for more details.
+###############################################################################
+sub equalize_file {
+  my $file=shift;
+  my $comment=shift;
+  my @temp;
+
+  open IN, "$file";
+  my @lines=(<IN>);
+  close IN;
+  chomp(@lines);
+
+  for (@lines) {
+    s/\s*${comment}.*// if (defined $comment); # remove comments
+    next if /^\s*$/;                           # remove empty lines
+    s/\s+/ /g;     # replace multiple whitespace chars by a single one
+    push @temp, $_;
+  }
+  return join('X', sort(@temp));
+}
+
+
+###############################################################################
+# files_are_different(file_A, file_B[, comment_char])
+#   compare two equalized files.
+###############################################################################
+sub files_are_different {
+  my $file_A=shift;
+  my $file_B=shift;
+  my $comment=shift;
+  my $retval=0;
+
+  my $A=equalize_file("$file_A", $comment);
+  my $B=equalize_file("$file_B", $comment);
+  $retval=1 unless ($A eq $B);
+  return $retval;
+}
+
+
+###############################################################################
+# files_are_equal(file_A, file_B[, comment_char])
+#   compare two equalized files.  Same as files_are_different() with
+#   return value inverted.
+###############################################################################
+sub files_are_equal {
+  return (&files_are_different (@_))? 0:1;
+}
+
 
 ###############################################################################
 # getLines()
@@ -371,7 +429,7 @@ sub help {
   print "  --edit                       edit updmap.cfg file\n";
   print "  --help                       show this message\n";
   print "  --showoptions item           show alternatives for options\n";
-  print "  --setoption option value     set option where option is one\n";
+  print "  --setoption option=value     set option where option is one\n";
   print "                               of dvipsPreferOutline, LW35, dvipsDownloadBase35\n";
   print "                               or pdftexDownloadBase14\n";
   print "  --enable maptype=mapfile     add or enable a Map or MixedMap\n";
@@ -409,10 +467,10 @@ sub cfgval {
       if ($value =~ m/^(true|yes|t|y|1)$/) {
 	$value = 1;
       }
-      else {
+      elsif ($value =~ m/^(false|no|f|n|0)$/) {
 	$value = 0;
       }
-      break;
+      last;
     }
   }
   print "$variable => " . ($value ? "true\n" : "false\n");
@@ -454,7 +512,8 @@ sub setupSymlinks {
 ###############################################################################
 # transLW35(args ...)
 #   transform fontname and filenames according to transformation specified
-#   by mode
+#   by mode.  Possible values:
+#      URW|URWkb|ADOBE|ADOBEkb
 ###############################################################################
 sub transLW35 {
   my ($name) = @_;
@@ -474,14 +533,6 @@ sub transLW35 {
     for my $r (@filemode) {
       map { eval($r); } @lines;
     }
-  }
-  return @lines;
-}
-
-sub base14RemovePSName {
-  my @lines = @_;
-  foreach my $r (keys %base14RemovePSName) {
-    map { eval $base14RemovePSName{$r} if (eval($r)) ; } @lines;
   }
   return @lines;
 }
@@ -513,9 +564,11 @@ sub locateWeb2c {
 sub locateMap {
   my @files = @_;
 
+  chomp @files;
   return @files if ($#files < 0);
 
   @files = `kpsewhich --format=map @files`;
+  chomp @files;
   if (wantarray) {
     return @files;
   }
@@ -703,20 +756,24 @@ sub setupOutputDir {
 
   if (!$od) {
     my $rel = "fonts/map/$driver/updmap";
-    
+    my $tf;
     # Try TEXMFVAR tree. Use it if variable is set and $rel can
     # be written. Copy config file if it does not exist there.
-    my $tf = `kpsewhich -expand-var="\$TEXMFVAR"`;
+    if ($^O=~/^MSWin(32|64)$/) {
+	$tf = `kpsewhich --expand-var="\$TEXMFVAR"`;
+    } else {
+	$tf = `kpsewhich --expand-var="\\\$TEXMFVAR"`;
+    }
     chomp($tf);
     if ($tf) {
-      mkpath("$tf/$rel");
+      &mkdirhier("$tf/$rel");
       # system("$TEXMFMAIN/web2c/mktexdir \"$tf/$rel\"");
       if (! -d "$tf/$rel" || ! -w "$tf/$rel") {
         # forget about TEXMFVAR tree...
 	$tf = "";
       }
     }
-    
+
     # Try something relative to config file, fall back to $TEXMFMAIN.
     if (! $tf) {
       $tf = $cnfFile;
@@ -728,13 +785,13 @@ sub setupOutputDir {
       }
       $tf = $TEXMFMAIN if (! $tf);
     }
-    
+
     $od = "$tf/$rel";
   }
 
   # No need to call mktexdir !
   # system("$TEXMFMAIN/bin/win32/mktexdir \"$od\"");
-  mkpath($od);
+  &mkdirhier($od);
   &abort("output directory `$od' does not exist\n") if (! -d $od);
   &abort("output directory `$od' is not writable\n") if (! -w $od);
   print "using $driver output directory `$od'\n";
@@ -760,7 +817,7 @@ sub setupCfgFile {
     my $tf = `kpsewhich -expand-var="\$TEXMFVAR"`;
     chomp($tf);
     if ($tf && ! -f "$tf/web2c/$cnfFileShort") {
-      mkpath("$tf/web2c") if (! -d "$tf/web2c");
+      &mkdirhier("$tf/web2c") if (! -d "$tf/web2c");
 #	&start_redirection("nul");
 #	system("mktexdir $tf/web2c");
 #	&stop_redirection;
@@ -772,7 +829,7 @@ sub setupCfgFile {
 	&stop_redirection;
       }
     }
-      
+
     $cnfFile = &locateWeb2c("updmap.cfg");
     if ($cnfFile) {
       print "using config file $cnfFile\n" if (! $quiet);
@@ -853,11 +910,13 @@ sub normalizeLines {
   my @lines = @_;
   my %count = ();
 
-  @lines = grep { $_ !~ m/^%/ } @lines;
+  @lines = grep { $_ !~ m/^[*#;%]/ } @lines;
   map {$_ =~ s/\s+/ /gx } @lines;
   @lines = grep { $_ !~ m/^\s*$/x } @lines;
   map { $_ =~ s/\s$//x ;
-	$_ =~ s/\s*\"\s*/ \" /gx } @lines;
+	$_ =~ s/\s*\"\s*/ \" /gx;
+	$_ =~ s/\" ([^\"]*) \"/\"\1\"/gx;
+      } @lines;
 
   @lines = grep {++$count{$_} < 2 } (sort @lines);
 
@@ -909,22 +968,23 @@ sub dvips2dvipdfm {
 #   the main task of this script: create the output files
 ###############################################################################
 sub mkMaps {
+  my @lines;
 
   $mode = &cfgval("LW35");
-  $mode = "URWkb" if ! $mode;
-  
+  $mode = "URWkb" unless (defined $mode);
+
   $dvipsPreferOutline = &cfgval("dvipsPreferOutline");
-  $dvipsPreferOutline = 1 if ! $dvipsPreferOutline;
-  
+  $dvipsPreferOutline = 1 unless (defined $dvipsPreferOutline);
+
   $dvipsDownloadBase35 = &cfgval("dvipsDownloadBase35");
-  $dvipsDownloadBase35 = 0 if ! $dvipsDownloadBase35;
-  
+  $dvipsDownloadBase35 = 0 unless (defined $dvipsDownloadBase35);
+
   $pdftexDownloadBase14 = &cfgval("pdftexDownloadBase14");
-  $pdftexDownloadBase14 = 0 if ! $pdftexDownloadBase14;
-  
+  $pdftexDownloadBase14 = 0 unless (defined $pdftexDownloadBase14);
+
   $dvipdfmDownloadBase14 = &cfgval("dvipdfmDownloadBase14");
-  $dvipdfmDownloadBase14 = 0 if ! $dvipdfmDownloadBase14;
-  
+  $dvipdfmDownloadBase14 = 0 unless (defined $dvipdfmDownloadBase14);
+
   if (! $quiet) {
     print "\
 updmap is creating new map files using the following configuration:\
@@ -950,13 +1010,13 @@ updmap is creating new map files using the following configuration:\
   my @tmp2 = &catMaps('^Map');
 
   # Create psfonts_t1.map, psfonts_pk.map, ps2pk.map and pdftex.map:
-  for my $file ("$dvipsoutputdir/download35.map", 
-		"$dvipsoutputdir/builtin35.map", 
-		"$dvipsoutputdir/psfonts_t1.map", 
-		"$dvipsoutputdir/psfonts_pk.map", 
-		"$pdftexoutputdir/pdftex_dl14.map", 
-		"$pdftexoutputdir/pdftex_ndl14.map", 
-		"$dvipdfmoutputdir/dvipdfm_dl14.map", 
+  for my $file ("$dvipsoutputdir/download35.map",
+		"$dvipsoutputdir/builtin35.map",
+		"$dvipsoutputdir/psfonts_t1.map",
+		"$dvipsoutputdir/psfonts_pk.map",
+		"$pdftexoutputdir/pdftex_dl14.map",
+		"$pdftexoutputdir/pdftex_ndl14.map",
+		"$dvipdfmoutputdir/dvipdfm_dl14.map",
 		"$dvipdfmoutputdir/dvipdfm_ndl14.map",
 		"$dvipsoutputdir/ps2pk.map") {
     open FILE, ">$file";
@@ -1006,24 +1066,12 @@ updmap is creating new map files using the following configuration:\
   push @tmp7, &getLines(@tmp2);
   @tmp7 = grep { $_ !~ m/(^%|PaintType)/ } @tmp7;
 
-  # remove PS-Fontname from ExtendFont / SlantFont lines (works around a
-  # pdftex bug)
   my @pdftex_ndl14_map = @tmp3;
-  map { 
-    if (m/\".*\b(Slant|Extend)Font\b.*\"/x) {
-      $_ =~ s/\s[^\s]*//;
-    }
-  } @pdftex_ndl14_map;
   @pdftex_ndl14_map = &normalizeLines(@pdftex_ndl14_map);
   &writeLines(">$pdftexoutputdir/pdftex_ndl14.map", @pdftex_ndl14_map);
 
   my @pdftex_dl14_map = @tmp7;
-  map { 
-    if (m/\".*\b(Slant|Extend)Font\b.*\"/x) {
-      $_ =~ s/\s[^\s]*//;
-    }
-  } @pdftex_dl14_map;
-  @pdftex_dl14_map = &normalizeLines(&base14RemovePSName(@pdftex_dl14_map));
+  @pdftex_dl14_map = &normalizeLines(@pdftex_dl14_map);
   &writeLines(">$pdftexoutputdir/pdftex_dl14.map", @pdftex_dl14_map);
 
   my @dvipdfm_dl14_map = @tmp7;
@@ -1054,8 +1102,12 @@ updmap is creating new map files using the following configuration:\
 		  "$dvipdfmoutputdir/dvipdfm_dl14.map",
 		  "$dvipdfmoutputdir/dvipdfm_ndl14.map",
 		  "$dvipsoutputdir/ps2pk.map") {
-      $f =~ s@/@\\@g; $f = "\"$f\"" if ($f =~ m/\s/);
-      my @lines = `dir $f`;
+      if ($^O=~/^MSWin(32|64)$/) {
+	  $f =~ s@/@\\@g; $f = "\"$f\"" if ($f =~ m/\s/);
+	  @lines = `$ENV{'COMSPEC'} /c dir /b /s $f`; # rk. Suppress header and footer from dir output.
+      } else {
+	  @lines = `ls -l $f`;
+      }
       chomp @lines;
       my $rx = "(^ |dvipdfm.map|dvipdfm_dl14.map|dvipdfm_ndl14.map|pdftex.map|pdftex_dl14.map|pdftex_ndl14.map|ps2pk.map|psfonts.map|psfonts_pk.map|psfonts_t1.map|builtin35.map|download35.map)";
       @lines = grep /$rx/, @lines;
@@ -1090,7 +1142,7 @@ sub main {
   my $bakFile = $cnfFile;
   $bakFile =~ s/\.cfg$/.bak/;
   &copyFile($cnfFile, $bakFile);
-  
+
   my $cmd = '';
 
   if ($opt_edit) {
@@ -1121,7 +1173,7 @@ sub main {
     }
   }
 
-  if ($cmd && ! compare($bakFile, $cnfFile)) {
+  if ($cmd and &files_are_equal($bakFile, $cnfFile)) {
     print "$cnfFile unchanged. Map files not recreated.\n" unless ($quiet);
   }
   else {
@@ -1134,3 +1186,11 @@ sub main {
   }
 
 }
+__END__
+
+### Local Variables:
+### perl-indent-level: 2
+### tab-width: 2
+### indent-tabs-mode: nil
+### End:
+# vim:set tabstop=2 expandtab: #
