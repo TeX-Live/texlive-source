@@ -99,7 +99,7 @@ install-exec:
 # we don't have to run mktexlsr also.
 run_texlinks = $(bindir)/texlinks -f $(web2cdir)/fmtutil.cnf
 run-texlinks:
-	PATH=$(bindir):$(PATH); export PATH; $(run_texlinks)
+	PATH="$(bindir):$(PATH)"; export PATH; $(run_texlinks)
 
 kpse_include ../make/clean.mk
 
