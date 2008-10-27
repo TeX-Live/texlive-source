@@ -1,3 +1,8 @@
+2008-10-27  Karl Berry  <karl@tug.org>
+
+	* updmap.pl: also adjust printed output.
+	From Aaron Chen, 25 Oct 2008 16:40:59.
+
 2008-10-24  Karl Berry  <karl@tug.org>
 
 	* Makefile.in (run-texlinks): quote the PATH

@@ -464,6 +464,7 @@ sub cfgval {
   for my $line (@cfg) {
     if ($line =~ m/^\s*${variable}[\s=]+(.*)\s*$/) {
       $value = $1;
+      print "$variable => " . $value . "\n";
       if ($value =~ m/^(true|yes|t|y|1)$/) {
 	$value = 1;
       }
@@ -473,7 +474,6 @@ sub cfgval {
       last;
     }
   }
-  print "$variable => " . ($value ? "true\n" : "false\n");
   return $value;
 }
 
