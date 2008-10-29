@@ -607,14 +607,15 @@ parse_line()
 
   texargs="$@"
 
-  eval lastarg=\$$#
-  inifile=`echo $lastarg | sed 's%^\*%%'`
-
   case "$engine" in
     mpost)           fmtfile="$format.mem";  kpsefmt=mp; texengine=metapost;;
     mf|mfw|mf-nowin) fmtfile="$format.base"; kpsefmt=mf; texengine=metafont;;
     *)               fmtfile="$format.fmt";  kpsefmt=tex; texengine=$engine;;
   esac
+
+  # remove any * for the sake of the kpsewhich lookup.
+  eval lastarg=\$$#
+  inifile=`echo $lastarg | sed 's%^\*%%'`
 
   # See if we can find $inifile for return code:
   kpsewhich -progname=$format -format=$kpsefmt $inifile >/dev/null 2>&1
