@@ -1,6 +1,5 @@
 #! /usr/bin/env texlua
 --*-Lua-*-
--- $Id$
 
 -- Copyright (C) 2007, 2008 Reinhard Kotucha, Norbert Preining.
 -- You may freely use, modify and/or distribute this file.
@@ -46,7 +45,9 @@ BINDIR=kpse.var_value('SELFAUTOLOC')
 perlbin=TEXDIR..'/tlpkg/tlperl/bin/perl.exe'
 
 os.setenv('PATH', TEXDIR..'/tlpkg/tlgs/bin;'..
+	          TEXDIR..'/tlpkg/tlperl/bin;'..
 	          TEXDIR..'/tlpkg/installer;'..
+	          TEXDIR..'/tlpkg/installer/wget;'..
 	          os.getenv('PATH'))
 
 os.setenv('WGETRC', TEXDIR..'/tlpkg/installer/wgetrc')
