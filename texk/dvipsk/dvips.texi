@@ -4169,32 +4169,11 @@ For example, the line
 rpstrn StoneInformal <StoneInformal.pfb
 @end example
 @noindent
-causes Dvips to download @file{StoneInformal.pfb} if your document (just
-as if it were a header file, @pxref{Header files}) uses the font
-@samp{StoneInformal}.
-
-@cindex partial font downloading
-@cindex downloading fonts partially
-If the @samp{j} config file or command-line option is enabled,
-@file{StoneInformal.pfb} will be @dfn{partially downloaded}---only those
-characters your document actually uses will be extracted and downloaded,
-and the remainder discarded.  @xref{Option details}.
-
-Filenames of fonts that are partially downloaded are surrounded by curly
-braces (@samp{@{@dots{}@}}) in the progress report Dvips writes to
-standard output.  Wholly-downloaded fonts appear inside angle brackets
-(@samp{<@dots{}>}), like other downloaded files.
-
-@cindex whole font downloading
-@cindex multiple master fonts
-@cindex Minion typeface family
-@kindex << @r{whole font downloading}
-Adobe Multiple Master fonts, such as Minion, cannot be partially
-downloaded.  To partially download in general, but avoid partial
-downloading for individual fonts, use @samp{<<} instead @samp{<}:
-@example
-pmnr8r Minion <<Minion.pfb
-@end example
+causes Dvips to download @file{StoneInformal.pfb} (just as if it were
+a header file, @pxref{Header files}) if the DVI file (or a virtual
+font, @pxref{Virtual fonts}) references the TFM file @samp{rpstrn}.
+The PostScript @code{/Name} of the font defined inside the @samp{pfb}
+file should be @code{StoneInformal}.
 
 @cindex transforming downloaded fonts
 @cindex expanded fonts
@@ -4252,6 +4231,25 @@ conversion yourself.  In addition, Dvips scans the font to determine its
 memory usage, just as it does for other header files (@pxref{Header
 files}).
 
+@cindex partial font downloading
+@cindex downloading fonts partially
+If the @samp{j} config file or command-line option is enabled (as it
+is by default), @file{StoneInformal.pfb} will be @dfn{partially
+downloaded}---only those characters your document actually uses will
+be extracted and downloaded, and the remainder discarded.
+@xref{Option details}.
+
+@cindex whole font downloading
+@cindex multiple master fonts
+@cindex Minion typeface family
+@kindex << @r{whole font downloading}
+Adobe Multiple Master fonts, such as Minion, cannot be partially
+downloaded.  To partially download in general, but avoid partial
+downloading for individual fonts, use @samp{<<} instead @samp{<}:
+@example
+pmnr8r Minion <<Minion.pfb
+@end example
+
 Here is a brief summary of how @file{psfonts.map} is read:
 
 @enumerate
@@ -4282,10 +4280,11 @@ code used in generating that font, and is inserted into the output
 verbatim at the appropriate point.  (And the double quotes beginning and
 ending the word are removed.)
 
-@item Otherwise the word is a name. The first such name is the TFM file that
-a virtual font file can refer to.  If there is a second name, it is used
-as the PostScript name; if there is only one name, it is used for both
-the @TeX{} name and the PostScript name.
+@item Otherwise the word is a name. The first such name is the TFM
+file, that either a DVI file or a virtual font file can refer to.  If
+there is a second name, it is used as the PostScript name and should
+match what is defined in the downloaded file; if there is only one
+name, it is used for both the @TeX{} name and the PostScript name.
 
 @end enumerate
 

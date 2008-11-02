@@ -1,3 +1,8 @@
+2008-11-02  Karl Berry  <karl@tug.org>
+
+	* dvips.texi (psfonts.map): apparently {somefile.pfb} was never
+	used to report partial downloading; also mention vf's a bit more.
+
 2008-09-24  Karl Berry  <karl@tug.org>
 
 	* hps.c, hps.lpro: Mark (doyle/aps/org) does not want to be
