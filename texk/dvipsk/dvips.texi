@@ -3,7 +3,7 @@
 @settitle Dvips: A DVI-to-PostScript translator
 
 @set version 5.97
-@set month-year July 2008
+@set month-year October 2008
 
 @copying
 This manual documents Dvips version @value{version}
@@ -4172,7 +4172,7 @@ rpstrn StoneInformal <StoneInformal.pfb
 causes Dvips to download @file{StoneInformal.pfb} (just as if it were
 a header file, @pxref{Header files}) if the DVI file (or a virtual
 font, @pxref{Virtual fonts}) references the TFM file @samp{rpstrn}.
-The PostScript @code{/Name} of the font defined inside the @samp{pfb}
+The PostScript @code{/FontName} of the font defined inside the @samp{pfb}
 file should be @code{StoneInformal}.
 
 @cindex transforming downloaded fonts
