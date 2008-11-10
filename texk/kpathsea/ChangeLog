@@ -1,3 +1,8 @@
+2008-11-10  Karl Berry  <karl@tug.org>
+
+	* kpsewhich.c (USAGE): mention need for -engine when looking up
+	format files.  Some reformatting.
+
 2008-09-20  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf: strongly warn that customizations in this file will

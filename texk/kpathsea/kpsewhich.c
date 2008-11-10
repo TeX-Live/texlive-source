@@ -306,8 +306,14 @@ lookup P1C(string, name)
 
 #define USAGE "\n\
 Standalone path lookup and expansion for Kpathsea.\n\
+The default is to look up each FILENAME in turn and report its\n\
+first match (if any) to standard output.\n\
 \n\
--all                   output all matches (one per line), not just the first.\n\
+When looking up format (.fmt/.base/.mem) files, it is usually necessary\n\
+to also use -engine, or nothing will be returned; in particular, -engine=/\n\
+will return matching format files for any engine.\n\
+\n\
+-all                   output all matches, one per line.\n\
 -debug=NUM             set debugging flags.\n\
 -D, -dpi=NUM           use a base resolution of NUM; default 600.\n\
 -engine=STRING         set engine name to STRING.\n\
@@ -322,8 +328,8 @@ Standalone path lookup and expansion for Kpathsea.\n\
 -must-exist            search the disk as well as ls-R if necessary.\n\
 -path=STRING           search in the path STRING.\n\
 -progname=STRING       set program name to STRING.\n\
--show-path=NAME        output search path for file type NAME (see list below).\n\
--subdir=STRING         only output matches whose directory part ends with STRING.\n\
+-show-path=NAME        output search path for file type NAME (list below).\n\
+-subdir=STRING         only output matches whose directory ends with STRING.\n\
 -var-value=STRING      output the value of variable $STRING.\n\
 -version               print version number and exit.\n \
 "
