@@ -27,6 +27,7 @@ LINKED_SCRIPTS = \
   texmf-dist/scripts/epspdf/epspdf \
   texmf-dist/scripts/epspdf/epspdftk \
   texmf-dist/scripts/glossaries/makeglossaries \
+  texmf-dist/scripts/latex2man/latex2man \
   texmf-dist/scripts/latexmk/latexmk.pl \
   texmf-dist/scripts/mkjobtexmf/mkjobtexmf.pl \
   texmf-dist/scripts/oberdiek/pdfatfi.pl \

@@ -1,3 +1,7 @@
+2008-11-13  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (LINKED_SCRIPTS): add latex2man.
+
 2008-10-12  Karl Berry  <karl@tug.org>
 
 	* Makefile.in (LINKED_SCRIPTS): add latexmk.pl.
