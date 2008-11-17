@@ -505,6 +505,7 @@ long findGraphiteFeatureSettingNamed(XeTeXLayoutEngine engine, UInt32 feature, c
 			}
 			break;
 		}
+		++features.first;
 	}
 #endif
 
