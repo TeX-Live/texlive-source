@@ -13,6 +13,7 @@ Description:
 -------------------------------------------------------------------------*/
 
 /*
+	2008-11-17	jk			include <cstdio> (Debian bug 505693)
 	2006-06-19	jk			added new APIs to look up Unicode names
 	2006-01-12	jk			removed multi-char constants, use FOUR_CHAR_CODE to define UInt32 values instead
 							(no functional change, just to avoid compiler warnings)
@@ -29,6 +30,7 @@ Description:
 
 #include "Compiler.h"
 
+#include <cstdio>
 #include <iostream>
 #include <iomanip>
 #include <algorithm>
