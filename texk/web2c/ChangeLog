@@ -1,3 +1,8 @@
+2008-11-18  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (install-data): mkinstalldirs man1dir man5dir.
+	Report from Angelo Graziosi, tlbuild 17 Nov 2008 01:03:51.
+
 2008-08-13  Karl Berry  <karl@tug.org>
 
 	* Makefile.in (install-data): Also install synctex.[15].

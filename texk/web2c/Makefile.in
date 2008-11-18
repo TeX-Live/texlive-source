@@ -877,6 +877,7 @@ install-mpost-mems: mems $(memdir)
 install-data:: $(web2cdir)
 	cd doc && $(MAKE) $(install_makeargs) install-data
 	cd man && $(MAKE) $(install_makeargs) install-data
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(man1dir) $(man5dir)
 	$(INSTALL_DATA) $(srcdir)/tiedir/tie.1 $(man1dir)/tie.$(manext)
 	$(INSTALL_DATA) $(srcdir)/ctiedir/ctie.1 $(man1dir)/ctie.$(manext)
 	$(INSTALL_DATA) $(srcdir)/synctexdir/man1/synctex.1 $(man1dir)/synctex.$(manext)
