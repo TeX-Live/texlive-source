@@ -1,5 +1,11 @@
 /* dt2dv - convert human-readable "DTL" file to DVI format
          - this is intended to invert dv2dt version 0.6.0
+   
+   This file is public domain.
+   Originally written 1995, Geoffrey Tobin.
+   The author has expressed the hope that any modification will retain enough content to remain useful. He would also appreciate being acknowledged as the original author in the documentation.
+   This declaration added 2008/11/14 by Clea F. Rees with the permission of Geoffrey Tobin.
+
    - version 0.6.1 - 14:38 GMT +11  Thu 9 March 1995
    - Geoffrey Tobin    G.Tobin@ee.latrobe.edu.au
    - fixes:  Michal Tomczak-Jaegermann    ntomczak@vm.ucs.ualberta.ca
