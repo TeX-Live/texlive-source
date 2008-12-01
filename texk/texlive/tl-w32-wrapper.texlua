@@ -50,7 +50,9 @@ os.setenv('PATH', TEXDIR..'/tlpkg/tlgs/bin;'..
 	          TEXDIR..'/tlpkg/installer/wget;'..
 	          os.getenv('PATH'))
 
-os.setenv('WGETRC', TEXDIR..'/tlpkg/installer/wgetrc')
+-- we don't ship the wgetrc anymore, and if it is not present, wget 
+-- will just die, that is bad!!!
+-- os.setenv('WGETRC', TEXDIR..'/tlpkg/installer/wgetrc')
 os.setenv('PERL5LIB', TEXDIR..'/tlpkg/tlperl/lib')
 os.setenv('GS_LIB', TEXDIR..'/tlpkg/tlgs/lib;'..TEXDIR..'/tlpkg/tlgs/fonts')
 
