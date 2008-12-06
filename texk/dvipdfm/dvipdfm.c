@@ -1,7 +1,7 @@
 /*  $Header$
 
     This is dvipdfm, a DVI to PDF translator.
-    Copyright (C) 1998, 1999, 2007 by Mark A. Wicks
+    Copyright (C) 1998, 1999, 2007, 2008 by Mark A. Wicks
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -428,7 +428,7 @@ static void do_args (int argc, char *argv[])
 	    }
 	    pop_arg();
 	  }
-	  if (level >= 2 && level <= 3) {
+	  if (level >= 2) {
 	    pdf_set_version(level);
 	  } else {
 	    fprintf (stderr, "\nNumber following version specification is out of range\n\n");

@@ -1,3 +1,8 @@
+2008-12-06  Karl Berry  <karl@tug.org>
+
+	* dvipdfm.c (do_args): omit check of upper bound for minor
+	pdf version.  (Per mail from Akira, 05 Dec 2008 15:39:14.)
+
 2008-06-05  Karl Berry  <karl@tug.org>
 
 	* Update to 0.13.2d (with the timezone fix we already had, but
