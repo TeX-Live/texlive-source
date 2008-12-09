@@ -113,10 +113,10 @@ void pdf_obj_set_compression (int level)
   return;
 }
 
-static unsigned pdf_version = 3;
+static unsigned pdf_version = 4;
 void pdf_set_version (unsigned version)
 {
-  if (version >= 2 && version <= 3) {
+  if (version >= 2 && version <= 7) {
     pdf_version = version;
   }
 }
@@ -150,6 +150,7 @@ MEM_START
   v = '0'+pdf_version;
   pdf_out (pdf_output_file, &v, 1);
   pdf_out (pdf_output_file, "\n", 1);
+  pdf_out (pdf_output_file, "\045\360\344\346\355\n", 6);
 #ifdef MEM_DEBUG
 MEM_END
 #endif

@@ -411,7 +411,7 @@ static void do_args (int argc, char *argv[])
 	  } else {
 	    char *result, *end, *start = argv[1];
 	    if (argc < 2) {
-	      fprintf (stderr, "\nVersion specification missing number (2 or 3)\n\n");
+	      fprintf (stderr, "\nVersion specification missing number (2, 3, ...)\n\n");
 	      usage();
 	    }
 	    end = start + strlen(argv[1]);
