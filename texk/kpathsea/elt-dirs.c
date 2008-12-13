@@ -280,14 +280,13 @@ do_subdir P4C(str_llist_type *, str_list_ptr,  const_string, elt,
                  some such, we can still find subdirectories, even if it
                  is much slower.  */
 #ifdef ST_NLINK_TRICK
-#ifdef AMIGA
-              /* With SAS/C++ 6.55 on the Amiga, `stat' sets the `st_nlink'
-                 field to -1 for a file, or to 1 for a directory.  */
-              if (links == 1)
-#else
-              if (links > 2)
-#endif /* not AMIGA */
-#endif /* not ST_NLINK_TRICK */
+              /* With SAS/C++ 6.55 on the Amiga, stat sets the st_nlink
+                 field to -1 for a file, or to 1 for a directory.
+                 Cygwin 1.7 also leaves st_nlink as 1:
+                 http://cygwin.com/ml/cygwin-developers/2008-04/msg00110.html
+                 */
+              if (links != 2)
+#endif /* ST_NLINK_TRICK */
                 /* All criteria are met; find subdirectories.  */
                 do_subdir (str_list_ptr, FN_STRING (name),
                            potential_len, post);

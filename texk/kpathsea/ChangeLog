@@ -1,3 +1,12 @@
+2008-12-13  Karl Berry  <karl@tug.org>
+
+	* elt-dirs.c (do_subdir): only do the st_nlink trick if st_nlink
+	is exactly 2; Cygwin sets st_nlink to 1 now.  Remove special case
+	for the Amiga.
+	* kpathsea.texi (Subdirectory expansion): correct preprocessor
+	name to ST_NLINK_TRIC.
+	Report from Ken Brown, tlbuild mail 12 Dec 2008 13:42:19.
+
 2008-11-10  Karl Berry  <karl@tug.org>
 
 	* kpsewhich.c (USAGE): mention need for -engine when looking up

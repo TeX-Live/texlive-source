@@ -814,8 +814,8 @@ But if you have a directory that contains a single subdirectory and 500
 regular files, @code{st_nlink} will be 3, and Kpathsea has to stat every
 one of those 501 entries.  Therein lies slowness.
 
-@vindex UNIX_ST_LINK
-You can disable the trick by undefining @code{UNIX_ST_LINK} in
+@vindex ST_NLINK_TRICK
+You can disable the trick by undefining @code{ST_NLINK_TRICK} in
 @file{kpathsea/config.h}. (It is undefined by default except under Unix.)
 
 @flindex elt-dirs.c
