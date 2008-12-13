@@ -1,7 +1,7 @@
 /*  $Header$
 
     This is dvipdfm, a DVI to PDF translator.
-    Copyright (C) 1998, 1999 by Mark A. Wicks
+    Copyright (C) 1998, 1999, 2008 by Mark A. Wicks
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -150,6 +150,10 @@ MEM_START
   v = '0'+pdf_version;
   pdf_out (pdf_output_file, &v, 1);
   pdf_out (pdf_output_file, "\n", 1);
+  /* Adobe recommends writing % and four non-ASCII bytes in the second
+     line of a PDF, so that programs have a better chance of realizing
+     it is not a text file.  The string here is "%" followed by "pdfm"
+     with the 8th bit set on each letter.  */
   pdf_out (pdf_output_file, "\045\360\344\346\355\n", 6);
 #ifdef MEM_DEBUG
 MEM_END

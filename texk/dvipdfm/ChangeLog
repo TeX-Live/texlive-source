@@ -1,3 +1,7 @@
+2008-12-11  Karl Berry  <karl@tug.org>
+
+	* pdfobj.c: doc fix.
+
 2008-12-09  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdfobj.c (pdf_version): change default to 4.
