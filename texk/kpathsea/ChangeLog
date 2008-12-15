@@ -1,3 +1,8 @@
+2008-12-15  Karl Berry  <karl@tug.org>
+
+	* kpsewhich.c (main): warn if the explicit --user-format string
+	is not recognized.  
+
 2008-12-13  Karl Berry  <karl@tug.org>
 
 	* elt-dirs.c (do_subdir): only do the st_nlink trick if st_nlink
