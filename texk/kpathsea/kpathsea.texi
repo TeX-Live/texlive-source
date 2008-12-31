@@ -1355,6 +1355,10 @@ look for the file @file{pdftexconfig.tex} instead.)
 @item texmf.cnf
 @samp{cnf}
 
+@flindex XDvi
+@item XDvi
+@samp{other text files}
+
 @end table
 
 A user-specified format will override the above defaults.

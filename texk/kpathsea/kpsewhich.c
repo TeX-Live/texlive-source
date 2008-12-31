@@ -117,6 +117,8 @@ find_format P2C(string, name, boolean, is_filename)
     ret = kpse_cnf_format;
   } else if (FILESTRCASEEQ (name, "updmap.cfg")) {
     ret = kpse_web2c_format;
+  } else if (FILESTRCASEEQ (name, "XDvi")) {
+    ret = kpse_program_text_format;
   } else {
     int f = 0;  /* kpse_file_format_type */
     unsigned name_len = strlen (name);

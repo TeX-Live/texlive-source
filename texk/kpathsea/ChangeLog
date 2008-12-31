@@ -1,3 +1,8 @@
+2008-12-31  Karl Berry  <karl@tug.org>
+
+	* kpsewhich.c (find_format): special-case XDvi to
+	kpse_program_text_file ("other text files").
+
 2008-12-15  Karl Berry  <karl@tug.org>
 
 	* kpsewhich.c (main): warn if the explicit --user-format string
