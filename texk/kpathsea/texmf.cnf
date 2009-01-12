@@ -464,11 +464,10 @@ engine = unsetengine
 
 %  Part 2: Options.
 
-% If this is true, `tex a.b' will look first for a.b.tex (within each
-% path element), and then for a.b, i.e., we try standard extensions
-% first.  If this is false, we first look for a.b and then a.b.tex,
-% first.  If this is false, we first look for a.b and then a.b.tex,
-% i.e., we try the name as-is first.
+% If this option is set to true, `tex a.b' will look first for a.b.tex
+% (within each path element), and then for a.b, i.e., we try standard
+% extensions first.  If this is false, we first look for a.b and then
+% a.b.tex, i.e., we try the name as-is first.
 %
 % Both names are always tried; the difference is the order in which they
 % are tried.  The setting applies to all searches, not just .tex.
@@ -478,7 +477,7 @@ engine = unsetengine
 % always have an extension added first.
 %
 % The default is true, because we already avoid adding the standard
-% extension(s) in most common cases.  E.g., babel.sty will only look for
+% extension(s) in the usual cases.  E.g., babel.sty will only look for
 % babel.sty, not babel.sty.tex, regardless of this setting.
 try_std_extension_first = t
 
