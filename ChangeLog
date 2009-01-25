@@ -1,3 +1,16 @@
+2009-01-24  Karl Berry  <karl@tug.org>
+
+	* utils/texinfo: remove, we will no longer include Texinfo in TeX Live
+	(except for texinfo.tex).
+	In practice it is more easily available separately,
+	and the (n)curses build dependency is a useless pain.
+	* utils/README,
+	* configure.in,
+	* Makefile.in,
+	* README,
+	* tetex.ac,
+	* withenable.ac: remove traces of texinfo.
+
 2008-06-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* withenable.ac (kpse_utils_pkglist): add vlna.

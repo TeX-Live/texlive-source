@@ -1,8 +1,0 @@
-\input texinfo   @c -*-texinfo-*-
-@copying
-Public domain.
-@end copying
-
-@insertcopying
-
-@bye

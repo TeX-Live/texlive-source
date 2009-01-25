@@ -1,8 +1,5 @@
+# $Id$
 # tetex.ac -- public domain.  Created by Thomas Esser.
-
-# for texinfo
-: ${enable_install_warnings=no}
-export enable_install_warnings
 
 # e.g. for lcdf-typetools
 # With --enable-maintainer-mode, just exporting enable_tetex_build=yes
