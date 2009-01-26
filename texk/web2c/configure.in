@@ -221,11 +221,12 @@ then
 }
 fi
 
-# Check if we can link the C++ runlime lib statically. Only check, if we are
-# going to build pdf[ex]tex. And, only try the magic hack, if C++ is
-# GNU C++ (i.e. if $ac_cv_prog_gxx=yes). The reason for using a static C++
-# runtime is that binaries are more portable. That's only important if you are
-# planning to distribute binaries, so all the neat stuff is disabled by default:
+# Check if we can link the C++ runtime lib statically, if we're building
+# some binary that will need it. And, only try the magic hack, if C++ is
+# GNU C++ (i.e. if $ac_cv_prog_gxx=yes). The reason for using a static
+# C++ runtime is that binaries are more portable. That's important only
+# if you are distributing binaries, so it is disabled by default.
+# 
 flags_try1='-nodefaultlibs -Wl,-Bstatic -lstdc++ -Wl,-Bdynamic -lm -lgcc_eh -lgcc -lc -lgcc_eh -lgcc'
 flags_try2='-nodefaultlibs -Wl,-Bstatic -lstdc++ -Wl,-Bdynamic -lm -lgcc -lc -lgcc'
 CXXLDEXTRA=
@@ -245,15 +246,19 @@ then
   old_ac_link=$ac_link
   if test "$ac_cv_prog_gxx" = yes; then
 
+    # New C++ compilers choke on <iostream.h>, thanks to the
+    # backward-incompatible standard.  At this point, our code is
+    # using the new-style <iostream>, and so our test should follow suit.
+    # 
     ac_ext=C
     cat > conftest.$ac_ext << EOF
-#include <iostream.h>
+#include <iostream>
+  using namespace std;
 int main()
 {
   cout <<"worksok\n";
 }
 EOF
-
     for flags in "$flags_try1" "$flags_try2"; do
       ac_link='${CXX-g++} -o conftest${ac_exeext} $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS $flags 1>&5'
       if { (eval echo configure: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then

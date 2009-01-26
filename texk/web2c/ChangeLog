@@ -1,3 +1,11 @@
+2009-01-26  Karl Berry  <karl@tug.org>
+
+	* configure.in (with_cxx_runtime_hack): use
+	#include <iostream>
+	  using namespace std;
+	for the hello,world test, to placate the backward-incompatible
+	standard.
+
 2008-11-18  Karl Berry  <karl@tug.org>
 
 	* Makefile.in (install-data): mkinstalldirs man1dir man5dir.
