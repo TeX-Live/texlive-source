@@ -8,9 +8,8 @@
 # overridden with environment variables.
 
 # clean up environment
-unset TEXMFCNF
-export TEXMFCNF
-LANG=C
+unset TEXMFCNF; export TEXMFCNF
+LANG=C; export LANG
 
 # cd to our source directory.
 mydir=`dirname $0`
