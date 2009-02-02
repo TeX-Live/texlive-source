@@ -139,18 +139,10 @@ for dir in $list; do
     continue
   fi
   case $dir in
-    .)
-      rdir=texk/m4
-    ;;
-    texk)
-      rdir=m4
-    ;;
-    texk/*)
-      rdir=`echo $dir | sed -e 's,^texk/,,' -e 's,[^/]*,..,g'`/m4
-    ;;
-    *)
-      rdir=`echo $dir | sed 's,[^/]*,..,g'`/texk/m4
-    ;;
+    .)      rdir=texk/m4 ;;
+    texk)   rdir=m4 ;;
+    texk/*) rdir=`echo $dir | sed -e 's,^texk/,,' -e 's,[^/]*,..,g'`/m4 ;;
+    *)      rdir=`echo $dir | sed 's,[^/]*,..,g'`/texk/m4 ;;
   esac
   (cd $dir; do_one)
 done
