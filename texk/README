@@ -1,16 +1,23 @@
 $Id$
-Copyright 2006, 2007, 2008 TeX Users Group.
+Copyright 2006, 2007, 2008, 2009 TeX Users Group.
 You may freely use, modify and/or distribute this file.
 
 This TeX Live directory contains the programs that use the kpathsea
 library for configuration and path searching, and the library itself.
 
 Some programs can be built on their own, but others, including kpathsea
-itself, cannot.  Instead, try configure --enable-tetex-build in .., or
+itself, cannot.  Instead, try configure --enable-tetex-build in ../, or
 using the Build script there.  In general, for TeX Live we only test
 configuring the whole tree.
 
-Sources for the programs as last checked:
+Upstream sources and last-checked versions follow.  If a url is given,
+that is the upstream, although this does not mean the program is
+actively maintained.  Programs marked with a "?" are not (knowingly)
+maintained here, but the upstream is unknown.  If a program is knowingly
+maintained here in the TL repo, that is explicitly stated.
+
+Anyone -- please research and update any of this information.
+
 
 afm2pl 0.7.03 - ok 28apr08
   http://tex.aanhet.net/afm2pl/
@@ -34,7 +41,7 @@ dvi2tty 5.3.1 - needs update 18may07
 
 dvidvi - ?
 
-dviljk - Joachim Schrod
+dviljk - maintained here, by Joachim Schrod
 
 dvipdfm 0.13.2d - ok 5jun08
   http://gaspra.kettering.edu/dvipdfm/dvipdfm-0.13.2d.tar.gz
@@ -53,11 +60,14 @@ dvipsk - maintained here by Tom Rokicki, Karl Berry, Akira Kakuto, ...
 
 etc - random additional files
 
-gsftopk - from Paul Vojta?
+gsftopk - from Paul Vojta's xdvi?
 
 kpathsea - maintained here by Karl Berry, Akira Kakuto, ...
 
 lacheck - ?
+
+lcdf-typetools 2.69 - ok 6may08
+  http://www.lcdf.org/type/
 
 m4 - maintained here, part of our build
 
@@ -69,17 +79,19 @@ musixflx - ?
 
 ps2pkm - ?
 
-lcdf-typetools 2.69 - ok 6may08
-  http://www.lcdf.org/type/
+seetexk - ?
 
 tex4htk 
   http://www.cse.ohio-state.edu/~gurari/TeX4ht/
 
 texlive - maintained here, scripts
 
-ttf2pk - ?
+ttf2pk - 
+  http://ctan.org/fonts/utilities/ttf2pk
 
-web2c - maintained here by Karl Berry, ... - core web2c, plain tex, omega.
+ttfdump - ?
+
+web2c - maintained here by Karl Berry et al. - core web2c, plain tex, omega.
         The TeX variant dirs (pdftexdir, xetexdir, etc.)
         updated here by their respective maintainers.
 

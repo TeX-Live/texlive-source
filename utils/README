@@ -1,15 +1,17 @@
+$Id$
 Copyright 2005, 2006, 2007, 2008, 2009 TeX Users Group.
 You may freely use, modify and/or distribute this file.
 
 Extra utilities we (optionally) compile for TeX Live.
-
-gzip - (old) only for Windows 
+See comments in ../texk/README.
 
 dialog - seems to be a v1.0 in debian, asked te 5jun05; he said keep as-is
-    or else go through testing.  Perhaps best would be for dialog to use
-    a system ncurses; then we could remove ncurses.
+    or else go through testing.
   http://hightek.org/dialog/
   http://packages.debian.org/cgi-bin/search_packages.pl?searchon=names&version=all&exact=1&keywords=dialog
+
+gzip - (old, not built) only here so we have the sources for the Windows
+  binaries we distribute.
 
 lzma 4.32.6 - ok 15may08
   we do not compile/install in normal build, sources are here for installer;

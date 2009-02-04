@@ -1,16 +1,57 @@
+$Id$
 Public domain.  Originally created by Karl Berry, 2005.
 
 Libraries we compile for TeX Live.
+See comments in ../texk/README.
 
-libpng 1.2.8 - http://www.libpng.org
+expat - ?
+
+freetype - ?
+
+freetype2 - ?
+
+gd - ?
+
+graphite-engine - used by xetex, maintained here+upstream by Jonathan Kew
+
+icu-xetex - as with graphite-engine
+
+jpeg - ?
+
+libpng 1.2.8 - http://www.libpng.org - used by many
+
+libttf - ?
+
+lua* - used by luatex, maintained upstream+here by Taco Hoekwater
 
 md5 - used by pdftex, provenance unknown
 
-zlib 1.2.3 - http://www.zlib.net/
+ncurses - used only by dialog.  So if dialog were changed to use a system
+  ncurses (surely universally available now), we could remove ncurses
+  from our sources, which would be very nice.
+    
+obsdcompat - used by pdftex
+
+slnunicode - ?
+
+t1lib - ?
+
+teckit - as with graphite-engine
+
+type1 - ?
+
+unzip - ?
+
+xpdf - used by pdftex
+
+zlib 1.2.3 - http://www.zlib.net/ - used by many
+
+zziplib - used by luatex
 
 
+
 This info used to be in a howto/ subdirectory; it was written a long
-time ago, by Sebastian and/or Thomas Esser, I think.
+time ago, by Sebastian Rahtz and/or Thomas Esser, maybe?
 
 ==> freetype <==
 The following files have been added:
