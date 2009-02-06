@@ -227,14 +227,18 @@ maininit P2C(int, ac, string *, av)
 #if defined(__SyncTeX__)
 # warning SyncTeX: -synctex command line option available
   /* 0 means "disable Synchronize TeXnology".
-   * synctexoption is a *.web variable.
-   * We initialize it to a weird value to catch the -synctex command line flag
-   * At runtime, if synctexoption is not INT_MAX, then it contains the command line option provided,
-   * otherwise no such option was given by the user. */
+     synctexoption is a *.web variable.
+     We initialize it to a weird value to catch the -synctex command line flag.
+     At runtime, if synctexoption is not INT_MAX, then it contains the
+     command line option provided; otherwise, no such option was given
+     by the user.  */
 # define SYNCTEX_NO_OPTION INT_MAX
   synctexoption = SYNCTEX_NO_OPTION;
 #else
-# warning SyncTeX: -synctex command line option NOT available
+# /* Omit warning for Omega and non-TeX.  */
+# if defined(TeX) && !defined(Omega) && !defined(eOmega) && !defined(Aleph)
+#  warning SyncTeX: -synctex command line option NOT available
+# endif
 #endif
 
 #if defined(pdfTeX) || defined(luaTeX)
