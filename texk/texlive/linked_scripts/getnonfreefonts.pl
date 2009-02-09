@@ -11,9 +11,9 @@
 # 
 # The current maintainer is Reinhard Kotucha.
 
-my $TL_version='2008';
+my $TL_version='2008';  
+my $revision='2009-01-29';
 
-use File::Copy;
 use Getopt::Long;
 $Getopt::Long::autoabbrev=0;
 Getopt::Long::Configure ("bundling");
@@ -105,10 +105,9 @@ sub message {
 sub debug_msg {
     my $message=shift;
     if ($opt_debug) {
-	print STDERR "DEBUG: $message.\n";
+	print STDERR "DEBUG: $message\n";
     }
 }
-
 
 sub which {
     my $prog=shift;
@@ -153,18 +152,64 @@ sub expand_var {
     close KPSEWHICH;
 }
 
-# get TMP|TEMP|TMPDIR environment variable
+
+sub expand_braces {
+    my $var=shift;
+    my $pathsep;
+    my $retstring;
+    my @retlist;
+    if (win32) {
+	open KPSEWHICH, 'kpsewhich --expand-braces=$'  . "$var |";
+	$pathsep=';';
+    } else {
+	open KPSEWHICH, 'kpsewhich --expand-braces=\$' . "$var |";
+	$pathsep=':';
+    }
+    $retstring=(<KPSEWHICH>);
+    close KPSEWHICH;
+    chop $retstring;
+    @retlist=split $pathsep, $retstring;
+    if ($opt_debug) {
+	my $index=0;
+	foreach my $entry (@retlist) {
+	    debug_msg "$var\[$index\]: '$entry'.";
+	    ++$index;
+	}
+	debug_msg "Extracting the first element of the list ($var\[0\]):";
+	debug_msg "$var\[0\]='$retlist[0]'.";
+    }
+    return "$retlist[0]";
+}
+
+debug_msg "getnonfreefonts rev. $revision (TL $TL_version).";
+
+# Determine the URL.
+
+my $getfont_url;
+
+if ($opt_http) {
+    $getfont_url="http://tug.org/~kotucha/getnonfreefonts/getfont$TL_version";
+} else {
+    $getfont_url="ftp://tug.org/tex/getnonfreefonts/getfont$TL_version";
+}
+($opt_http)? 
+    debug_msg 'Download method: HTTP.':debug_msg 'Download method: FTP.';
+
+debug_msg "Note that not all fonts are accessible via HTTP." if $opt_http;
+debug_msg "Try --html if your firewall blocks FTP." unless $opt_http;
+debug_msg "Using script '$getfont_url'.";
 
 if ($opt_debug) {
-    for my $var ("TMP","TEMP","TMPDIR") {
+    for my $var qw(TMP TEMP TMPDIR) {
 	if (defined $ENV{$var}) {
-	    debug_msg "Environment variable $var='$ENV{$var}'";
+	    debug_msg "Environment variable $var='$ENV{$var}'.";
 	} else {
-	    debug_msg "Environment variable $var not set";
+	    debug_msg "Environment variable $var not set.";
 	}
     }
 }
 
+# get TMP|TEMP|TMPDIR environment variable
 
 if (defined $ENV{'TMP'}) {
     $SYSTMP="$ENV{'TMP'}";
@@ -176,7 +221,7 @@ if (defined $ENV{'TMP'}) {
     $SYSTMP="/tmp";
 }
 
-debug_msg "Internal variable SYSTMP set to '$SYSTMP'";
+debug_msg "Internal variable SYSTMP set to '$SYSTMP'.";
 
 # Windows usually uses backslashes though forward slashes are probably
 # allowed.  Perl always needs forward slashes.
@@ -185,7 +230,7 @@ debug_msg "Internal variable SYSTMP set to '$SYSTMP'";
 
 if (win32) {
     $SYSTMP=~s/\\/\//g;
-    debug_msg "Internal variable SYSTMP converted to '$SYSTMP'";
+    debug_msg "Internal variable SYSTMP converted to '$SYSTMP'.";
 }
 
 
@@ -199,25 +244,31 @@ die "! ERROR: The temporary directory '$SYSTMP' is not writable.\n"
 
 
 if ($opt_debug) {
-    debug_msg "Search for kpsewhich in PATH";
+    debug_msg "Search for kpsewhich in PATH:";
     my $kpsewhich=which "kpsewhich";
-    debug_msg "Found $kpsewhich";
+    debug_msg "Found '$kpsewhich'.";
 }
-
 
 # Determine INSTALLROOT.
 
 $INSTALLROOTNAME=($sys)? 'TEXMFLOCAL':'TEXMFHOME';
 
-$INSTALLROOT=expand_var "$INSTALLROOTNAME";
+$INSTALLROOT=expand_braces "$INSTALLROOTNAME";
 
-($sys)? debug_msg "sys=true":debug_msg "sys=false";
+# Remove trailing exclamation marks and double slashes.
 
-debug_msg "INSTALLROOT='$INSTALLROOT'";
+debug_msg "Removing leading \"!!\" and trailing \"//\"and set INSTALLROOT:";
+
+$INSTALLROOT=~s/^!!//;
+$INSTALLROOT=~s/\/\/$//;
+
+debug_msg "INSTALLROOT='$INSTALLROOT'.";
+
+($sys)? debug_msg "sys=true.":debug_msg "sys=false.";
 
 $INSTALLROOT=~s/\\/\//g if (win32);
 
-debug_msg "Internal variable INSTALLROOT converted to '$INSTALLROOT'";
+debug_msg "Internal variable INSTALLROOT converted to '$INSTALLROOT'.";
 
 sub check_installroot {
     mkdir "$INSTALLROOT" unless (-d "$INSTALLROOT");
@@ -251,7 +302,7 @@ check_tmpdir;
 check_installroot;
 
 my $tmpdir="$SYSTMP/getfont-$$";
-debug_msg "Internal variable tmpdir set to '$tmpdir'";
+debug_msg "Internal variable tmpdir set to '$tmpdir'.";
 
 mkdir "$tmpdir" or die "! ERROR: Can't mkdir '$tmpdir'.";
 chdir "$tmpdir" or die "! ERROR: Can't cd '$tmpdir'.";
@@ -284,21 +335,12 @@ if (win32) {
     @signals=(@common_signals, @signals_UNIX);
 }
 
-debug_msg "Supported signals: @signals";
+debug_msg "Supported signals: @signals.";
 
 foreach my $signal (@signals) {
     $SIG{"$signal"}=\&remove_tmpdir;
 }
 
-# Download the script from tug.org.
-
-my $getfont_url;
-
-if ($opt_http) {
-    $getfont_url="http://tug.org/~kotucha/getnonfreefonts/getfont$TL_version";
-} else {
-    $getfont_url="ftp://tug.org/tex/getnonfreefonts/getfont$TL_version";
-}
 
 my $has_wget=0;
 
@@ -316,19 +358,23 @@ if ($opt_debug) {
     } else {
 	@PATH=split ':', $ENV{'PATH'};
     }
+    my $index=0;
+
     foreach my $dir (@PATH) {
-	debug_msg "PATH: '$dir'";
+	debug_msg "PATH\[$index\]: '$dir'.";
+	++$index;
     }
 }
 
-debug_msg "No wget binary found on your system, trying curl" unless ($has_wget);
+debug_msg "No wget binary found on your system, trying curl." 
+    unless ($has_wget);
 
 if ($has_wget) {
-    debug_msg "Running 'wget $getfont_url'";
+    debug_msg "Running 'wget $getfont_url'.";
     system ('wget', "$getfont_url") == 0 
 	or die "! Error: Can't execute wget.\n";
 } else {
-    debug_msg "Running 'curl -O $getfont_url'";
+    debug_msg "Running 'curl -O $getfont_url'.";
     system ('curl', '-O', "$getfont_url") == 0 
 	or die "! Error: Can't execute curl.\n";
 }
@@ -347,7 +393,7 @@ push @getfont, '--http' if $opt_http;
 push @getfont, '--use_curl' unless ($has_wget);
 push @getfont, @allpackages;
 
-debug_msg "Running '@getfont'";
+debug_msg "Running '@getfont'.";
 
 system @getfont;
 
@@ -358,12 +404,12 @@ my $exit_code=$?;
 my $exit_status=int($exit_code/256);
 
 if ($sys) {		     
-    debug_msg "Info: Execute updmap-sys if exit status is 2";
+    debug_msg "Info: Execute updmap-sys if exit status is 2.";
 } else {
-    debug_msg "Info: Execute updmap if exit status is 2";
+    debug_msg "Info: Execute updmap if exit status is 2.";
 }
 
-debug_msg "Exit status of getfont$TL_version is $exit_status";
+debug_msg "Exit status of getfont$TL_version is $exit_status.";
 
 if ($exit_status==2) {
     print "\n";
