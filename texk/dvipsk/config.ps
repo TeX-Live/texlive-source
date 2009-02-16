@@ -1,3 +1,4 @@
+% $Id$
 % config.ps - configuration file for dvips.
 % Tomas Rokicki, Thomas Esser, Karl Berry, et al., 1986ff, public domain.
 
@@ -51,18 +52,18 @@ j
 % Remove the comment and adjust the name:
 % p +myfonts.map
 
-% If we have setpagedevice, use that.
-% else if we have the a4 resp. letter operator, use that.
-% else do nothing to set the page size.
-% 
 % In the past, the a4size and letterSize definitions did not set the
-% page size, but we want to set it if we can so that ps2pdf can work
-% properly.  Here, a4 and a4size, and letter and letterSize, are
-% identical, and we prefer the a4/letter names -- texconfig uses them.
- 
-% 0 0 595 842 is the right bounding box that applications expect
-% for A4.  Since dvips always rounds up, choose something slightly
-% smaller for our paper size.
+% paper size, but we want to set it if we can so that ps2pdf can work
+% properly.  So, a4 and a4size, and letter and letterSize, are made
+% identical here, and we prefer the a4/letter names -- texconfig uses them.
+%
+% In the definitions below, if we have setpagedevice, use that.
+% Else if we have the a4 resp. letter operator, use that.
+% Else do nothing to set the page size.
+% 
+% If you need to have no paper size stuff in the output at all, e.g., if
+% you are producing a multi-page document for further processing, use
+% -tnopaper (defined at end).  (With a single-page document, you can use -E.)
 
 @ a4 210mm 297mm
 @+ ! %%DocumentPaperSizes: a4
@@ -582,6 +583,10 @@ j
 @+  { pop << /PageSize [2448 3168] >> setpagedevice }
 @+ if
 @+ %%EndPaperSize
+
+% use -t nopaper to get no paper size stuff in the output at all.
+@ nopaper 0in 0in
+@+ % nopaper
 
 % use -t unknown with a \special{papersize=...} for a nonstandard page size.
 @ unknown 0in 0in

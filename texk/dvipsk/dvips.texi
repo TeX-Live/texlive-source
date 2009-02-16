@@ -3,7 +3,7 @@
 @settitle Dvips: A DVI-to-PostScript translator
 
 @set version 5.97
-@set month-year October 2008
+@set month-year February 2009
 
 @copying
 This manual documents Dvips version @value{version}
@@ -1086,11 +1086,15 @@ which rotates a document by 90 degrees.
 can use the @samp{-t} option twice, once for the paper type, and once
 for @samp{landscape}.
 @item In general, you should not use any @samp{-t} option when
-using a @samp{papersize} special, as some @LaTeX{} packages do, e.g.,
-@samp{hyperref.sty}.
-@item The exception is when using a nonstandard paper size that is not
+using a @samp{papersize} special, which some @LaTeX{} packages (e.g.,
+@samp{hyperref}) insert.
+@item One exception is when using a nonstandard paper size that is not
 already defined in @file{config.ps}; in this case, you need to specify
 @samp{-t@tie{}unknown}.
+@item Another exception is when producing multi-page files for further
+processing; use @samp{-t@tie{}nopaper} to omit any paper size
+information in the output.  (If you just have a single page document,
+you can use @samp{-E} to get pure EPSF output.)
 @end itemize
 
 @item -T @var{hsize},@var{vsize}
@@ -1789,11 +1793,18 @@ comment or two would be okay).  Also, some printers want
 setting the paper size.  There is no solution I could find that works
 for both (except maybe specifying both).
 
+@findex unknown@r{, paper format for @samp{-t}}
 When using a paper size that is not already defined in
 @file{config.ps}, you probably want to say @samp{-t@tie{}unknown} on
 the command line; the @code{unknown} paper size definition in
 @file{config.ps} has the requisite PostScript incantation to set the
 PostScript page size, as just described.
+
+@findex nopaper@r{, paper format for @samp{-t}}
+If you want no paper size information in the output at all, use
+@samp{-t@tie{}nopaper}.  This is useful with multi-page output that
+will be processed further.  If you just have a single page document,
+you can use @samp{-E} to get pure EPSF output.
 
 @flindex mkdvipspapers
 The Perl 5 script @file{contrib/configs/mkdvipspapers} in the

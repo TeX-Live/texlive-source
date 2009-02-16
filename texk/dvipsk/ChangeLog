@@ -1,3 +1,10 @@
+2009-02-16  Karl Berry  <karl@tug.org>
+
+	* dvips.texi (Config file paper sizes): document.
+	* config.ps (nopaper): new paper size to put no paper size
+	commands in the output, e.g., for multi-page EPS.
+	Report from John Bowman for Asymptote.
+
 2008-11-02  Karl Berry  <karl@tug.org>
 
 	* dvips.texi (psfonts.map): apparently {somefile.pfb} was never
