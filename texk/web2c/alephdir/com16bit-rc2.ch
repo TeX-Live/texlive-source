@@ -43,7 +43,7 @@
 @d banner=='This is Aleph, Version 3.1415926-',Omega_version_banner,'-',eTeX_version_banner,'-',Aleph_version_banner {printed when \TeX\ starts}
 @y
 @d banner=='This is Aleph, Version 3.1415926-',Omega_version_banner,'-',eTeX_version_banner,'-',Aleph_version_banner {printed when \TeX\ starts}
-@d banner_k=='This is Alephk, Version 3.1415926-',Omega_version_banner,'-',eTeX_version_banner,'-',Aleph_version_banner {printed when \TeX\ starts}
+@d banner_k==banner {Web2C announces itself}
 @z
 
 @x [1.4] l.233 - program header

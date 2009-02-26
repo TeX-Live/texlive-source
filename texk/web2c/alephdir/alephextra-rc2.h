@@ -23,11 +23,11 @@ along with Aleph; if not, write to the Free Software Foundation, Inc.,
 
 */
 
-#define BANNER "This is Aleph, Version 3.1415926-1.15-2.1-rc4"
-#define COPYRIGHT_HOLDER "the Aleph task force"
+#define BANNER "This is Aleph, Version 3.1415926-1.15-2.1-0.0-rc4"
+#define COPYRIGHT_HOLDER "Aleph task force"
 #define AUTHOR NULL
 #define PROGRAM_HELP ALEPHHELP
-#define BUG_ADDRESS "tex-k@mail.tug.org"
+#define BUG_ADDRESS "tex-k@tug.org"
 #define DUMP_VAR TEXformatdefault
 #define DUMP_LENGTH_VAR formatdefaultlength
 #define DUMP_OPTION "fmt"

@@ -1,5 +1,12 @@
 2009-02-26  Karl Berry  <karl@tug.org>
 
+	* alephextra-rc2.h (BANNER, COPYRIGHT_HOLDER, BUG_ADDRESS):
+	make consistent.
+	* eocprt.ch: do not announce copyright on the terminal,
+	but do include full copyright notices in the .log.
+	* com16bit-rc2.ch (banner_k): just make equivalent to banner,
+	since Web2C announces itself.
+
 	* comsrcspec.ch, com16bit-rc2.ch:
 	Use runsystem() instead of system(), etc.  See tex.ch entry in
 	../ChangeLog
