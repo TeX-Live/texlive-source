@@ -1,3 +1,7 @@
+2009-02-21  Karl Berry  <karl@tug.org>
+
+	* tex-file.c: doc fixes.
+
 2009-02-06  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXINPUTS.lua*): add definitions for

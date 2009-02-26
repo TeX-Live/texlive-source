@@ -1,6 +1,6 @@
 /* tex-file.c: high-level file searching by format.
 
-   Copyright 1993, 1994, 1995, 1996, 1997, 2007, 2008 Karl Berry.
+   Copyright 1993, 1994, 1995, 1996, 1997, 2007, 2008, 2009 Karl Berry.
    Copyright 1998-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -219,9 +219,9 @@ init_path PVAR2C(kpse_format_info_type *, info, const_string, default_path, ap)
 
   /* First envvar that's set to a nonempty value will exit the loop.  If
      none are set, we want the first cnf entry that matches.  Find the
-     cnf entries simultaneously, to avoid having to go through envvar
-     list twice -- because of the PVAR?C macro, that would mean having
-     to create a str_list and then use it twice.  Yuck.  */
+     cnf value simultaneously with the envvar value, to avoid having to
+     go through the envvar list twice -- because of the PVAR?C macro,
+     that would mean having to create a str_list and use it twice.  */
   while ((env_name = va_arg (ap, string)) != NULL) {
     /* Since sh doesn't like envvar names with `.', check PATH_prog
        as well as PATH.prog.  */
