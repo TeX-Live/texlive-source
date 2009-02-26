@@ -63,7 +63,7 @@ $(SLNUNICODEDEP): $(SLNUNICODEDIR)/slnunico.c $(SLNUNICODEDIR)/slnudata.c
 # because the zlib path is relative and can't be found otherwise.
 #
 # final trickyness: configure writes a Makefile in the source
-# directory. it is needed by anything, so I delete it right away
+# directory. it is not needed by anything, so I delete it right away
 
 zzipretarget=
 

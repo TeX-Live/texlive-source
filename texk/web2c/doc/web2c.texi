@@ -12,7 +12,7 @@ The latest version is available from ftp://ftp.tug.org/tex/texinfo.tex.}
 @end tex
 
 @set version 7.5.7
-@set month-year July 2008
+@set month-year February 2009
 
 @c Define new indices for commands in auxiliary files, filenames, and options.
 @defcodeindex cm
@@ -907,6 +907,7 @@ otherwise, are available.
 * Initial TeX::                 Making format files.
 * Formats::                     Major TeX macro packages.
 * Languages and hyphenation::   TeX supports many human languages.
+* Shell escapes::               DVI output to a socket.
 * IPC and TeX::                 DVI output to a socket.
 * TeX extensions::              Changes to the TeX language.
 @end menu
@@ -1078,29 +1079,11 @@ config file value @samp{output_comment}.
 @opindex -shell-escape
 @itemx -no-shell-escape
 @opindex -no-shell-escape
-@cindex shell commands in @TeX{}
-@cindex Bourne shell commands in @TeX{}
-@vindex shell_escape @r{enabling in @TeX{}}
-@findex \immediate\write18
-@findex \write18 @r{shell escape extension}
-@findex system @r{C library function}
-@cindex security, and shell escapes
-Enable (or disable) the @samp{\write18@{@var{shell-command}@}}
-feature.  This is also enabled if the environment variable or config
-file value @samp{shell_escape} is set to @samp{t} (but the
-@samp{-no-shell-escape} command line option overrides this).  (For
-backwards compatibility, @samp{y} and @samp{1} are accepted as
-synonyms of @samp{t}).  It is disabled by default to avoid security
-problems.  When enabled, the @var{shell-command} string (which first
-undergoes the usual @TeX{} expansions, just as in @samp{\special}) is
-passed to the command shell (via the C library function
-@samp{system}).  The output of @var{shell-command} is not diverted
-anywhere, so it will not appear in the log file.  The system call
-either happens at @samp{\output} time or right away, according to the
-absence or presence of the @samp{\immediate} prefix, as usual for
-@code{\write}.  (If you as a @TeX{} administrator wish to implement
-more stringent rules on what can be executed, you will need to modify
-@file{tex.ch}.)
+@itemx -shell-restricted
+@opindex -shell-restricted
+Enable, or disable, or enable with restrictions the
+@samp{\write18@{@var{shell-command}@}} feature for external executing
+shell commands.  @xref{Shell escapes}.
 
 @item -src-specials
 @itemx -src-specials=@var{string}
@@ -1612,13 +1595,119 @@ The only options are @samp{-help} and @samp{-version} (@pxref{Common
 options}).
 
 
+@node Shell escapes
+@section Shell escapes
+
+@cindex shell commands in @TeX{}
+@cindex security, and shell escapes
+@cindex restricted shell escapes
+@cindex system command
+@vindex shell_escape @r{enabling in @TeX{}}
+@findex \immediate\write18
+@findex \write18 @r{shell escape extension}
+@findex system @r{C library function}
+
+@TeX{} can execute @dfn{shell escapes}, that is, arbitrary shell
+commands.  Although tremendously useful, this also has obvious
+security implications.  Therefore, as of @TeX{} Live 2009, a
+@dfn{restricted} mode for shell escapes is the default mode of
+operation, which allows executing only certain commands, as specified
+in the @file{texmf.cnf} configuration file.
+
+@itemize @bullet
+@item
+Unrestricted shell escapes are allowed if the option
+@option{--shell-escape} is specified, or if the environment variable
+or config file value @code{shell_escape} is set to @samp{t} or
+@samp{y} and @samp{1}.
+
+@item
+Restricted shell escapes are allowed if @code{shell_escape} is set to
+@samp{p}.  This is the default.
+
+@item
+Shell escapes are completely disabled if @option{--no-shell-escape} is
+specified, or if @code{shell_escape} is set to anything else.
+@end itemize
+
+When enabled, the @TeX{} construct to execute a system command is
+@code{\write18@{@var{shell-command}@}}; for example:
+
+@example
+\write18@{echo "hello, world"@}
+@end example
+
+@findex \output @r{routine, and @code{\write}}
+From @TeX{}'s point of view, this is a normal @code{\write} command,
+and is therefore subject to the usual @TeX{} expansions.  Also, the
+system call either happens during the @samp{\output} routine or right
+away, according to the absence or presence of the @code{\immediate}
+prefix, as usual for @code{\write}.
+
+@cindex exit status, of shell escape
+The @var{shell-command} string is passed to the command shell (via the
+C library function @code{system}).  The output of @var{shell-command}
+is not diverted anywhere, so it will not appear in the log file, or
+anywhere but the terminal output.  The exit status of the system call
+is also not available to @TeX{}.
+
+In unrestricted mode, the argument is simply passed straight to
+@code{system} unaltered.
+
+In restricted mode, ASCII double quote characters (@verb{|"|}) should
+always be used in the argument to @code{\write18} where quoting of
+arguments is needed, as in the example above.  This is to achieve some
+measure of system independence.  On Unix systems, these are replaced
+with single quote (@verb{|'|}) characters to avoid insecure further
+expansion.  Care is also taken on Windows to avoid additional
+expansions (from, e.g., @verb{|`...`|}).  Mismatched quotation marks
+in the command string result in a diagnostic message in the log file;
+no execution is performed.
+
+@findex shell_escape_commands
+After quotation processing, if the first word (delimited by a space or
+tab) of the command is in the list specified by the
+@code{shell_escape_commands} configuration value, the command is
+executed.  Otherwise it is not.  In any case, a message is written to
+the log file.
+
+The @code{shell_escape_commands} value is a comma-separated list of
+words.  Whitespace is significant, and typically should not be
+present.  The default definition looks like this, but with more
+commands included:
+
+@example
+shell_escape_commands = bibtex,dvips,epstopdf,...,tex
+@end example
+
+@cindex pipes, reading and writing
+@findex \openin@r{, and pipes}
+@findex \input@r{, and pipes}
+@findex \openout@r{, and pipes}
+@findex \pdfshellescape
+pdf@TeX{} and lua@TeX{} support reading (via @code{\input} and
+@code{\openin}) and writing (via @code{\openout}) from pipes if the
+first character is @samp{|}.  The following command is then treated
+exactly the same as the argument to @code{\write18}.  In these
+engines, the primitive variable @code{\pdfshellescape} is set to 0 if
+shell escapes are disabled, 1 if they are enabled, and 2 if they are
+enabled with restrictions.
+
+@cindex web environments, and security
+The purpose of this feature is to make it possible for @TeX{}
+documents to perform useful external actions in the common case of an
+individual user running a known document on his or her own machine.
+In such environments as CGI scripts or wikis where the input has to be
+considered untrustworthy, shell escapes should be completely disabled.
+
+
 @node IPC and TeX
 @section IPC and @TeX{}
 
 @cindex IPC
 @cindex sockets
-(Sorry, but I'm not going to write this unless someone actually uses
-this feature. Let me know.)
+(If anyone uses this feature and needs documentation, write
+@email{tex-k@@tug.org}.)
 
 This functionality is available only if the @samp{--enable-ipc} option
 was specified to @code{configure} during installation of Web2c
@@ -1638,47 +1727,40 @@ debugging.
 @cindex @TeX{}, extensions to
 
 The base @TeX{} program has been extended in many ways.  Here's a
-partial list.  Please send information on extensions not listed here to
-the address in @ref{Reporting bugs,,, kpathsea, Kpathsea}.
+partial list.
 
 @table @asis
 @item e-@TeX{}
 @cindex e-@TeX{}
 @cindex primitives, new
-Adds many new primitives, including right-to-left typesetting.
-Available from @url{http://www.vms.rhbnc.ac.uk/e-TeX/} and
-@file{@var{CTAN:}/systems/e-tex}.
+Adds many new primitives, including right-to-left typesetting and more
+registers.  Now frozen.
 
 @item Omega
+@itemx Aleph
 @cindex Omega
 @cindex Unicode
-Adds Unicode support, right-to-left typesetting, and more.  Available
-from @url{http://www.ens.fr/omega} and @file{@var{CTAN:}/systems/omega}.
+These add Unicode support, right-to-left typesetting, and more.  Omega
+was the original program.  Aleph is an updated version with a variety
+of bug fixes, and includes e-@TeX{}.  Neither is actively maintained.
 
 @item pdf@TeX{}
 @cindex pdf@TeX{}
 @cindex PDF
-A variant of @TeX{} that produces PDF instead of DVI files.  It also
-includes primitives for hypertext and micro-typography.  Available from
-@file{@var{CTAN:}/systems/pdftex}.
+@cindex micro-typography
+@cindex hypertext
+Can produce PDF as well as DVI files.  It also incorporates the
+e-@TeX{} extensions, new primitives for hypertext and
+micro-typography, reading/writing from pipes, and much more.  Home
+page: @url{http://pdftex.org}.
 
-@item @samp{TeX--XeT}
-@pindex TeX--XeT
-@cindex Arabic typesetting
-@cindex right-to-left typesetting
-Adds primitives and DVI opcodes for right-to-left typesetting (as used
-in Arabic, for example).  An old version for @TeX{} 3.1415 is available
-from @file{@var{CTAN:}/systems/knuth/tex--xet}.  A newer version is
-included in e-@TeX{}.
+@item lua@TeX{}
+@cindex lua@TeX{}
+@cindex Lua
+Based on pdf@TeX{}, this also embeds the Lua programming language
+(@url{http://lua.org}) and opens up the @TeX{} typesetting engine to
+control from Lua.  Home page: @url{http://luatex.org}.
 
-@item File-handling @TeX{}
-@cindex File-handling @TeX{}
-@cindex DVI files, creating multiple
-@cindex multiple DVI files, creating
-Adds primitives for creating multiple DVI files in a single run; and
-appending to output files as well as overwriting.  Web2c implementation
-available in the distribution file
-@file{web2c/contrib/file-handling-tex}.
 @end table
 
 

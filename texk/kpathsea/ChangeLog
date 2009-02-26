@@ -1,3 +1,8 @@
+2009-02-26  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (shell_escape): set to new possibility p.
+	(shell_escape_commands): first cut at allow list.
+
 2009-02-21  Karl Berry  <karl@tug.org>
 
 	* tex-file.c: doc fixes.

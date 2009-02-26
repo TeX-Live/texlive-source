@@ -1,3 +1,9 @@
+2009-02-26  Karl Berry  <karl@tug.org>
+
+	* comsrcspec.ch, com16bit-rc2.ch:
+	Use runsystem() instead of system(), etc.  See tex.ch entry in
+	../ChangeLog
+
 2008-03-23  Karl Berry  <karl@freefriends.org>
 
 	* Update to TeX 3.1415926; compile in pool files.

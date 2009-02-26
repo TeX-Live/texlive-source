@@ -1,3 +1,11 @@
+2009-02-26  Karl Berry  <karl@tug.org>
+
+	* texmfmp-help.h: mention --shell-restricted.
+	* tex.ch (c_int_type, shell_enabled_p, address_of): remove _'s
+	to reduce differences with luatex.
+	(restrictedshell): new global.
+	(system): replace with runsystem, for restricted mode.
+
 2009-01-26  Karl Berry  <karl@tug.org>
 
 	* configure.in (with_cxx_runtime_hack): use

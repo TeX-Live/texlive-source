@@ -105,6 +105,402 @@
 #define edit_var "MPEDIT"
 #endif /* MP */
 
+/* Shell escape.
+
+   If shellenabledp == 0, all shell escapes are forbidden.
+   If (shellenabledp == 1 && restrictedshell == 0), any command
+     is allowed for a shell escape.
+   If (shellenabledp == 1 && restrictedshell == 1), only commands
+     given in the configuration file as
+   shell_escape_commands = kpsewhich,ebb,extractbb,mpost,metafun,...
+     (no spaces between commands) in texmf.cnf are allowed for a shell
+     escape in a restricted form: command name and arguments should be
+     separated by a white space. The first word should be a command
+     name. The quotation character for an argument with spaces,
+     including a pathname, should be ".  ' should not be used.
+
+     Internally, all arguments are quoted by ' (Unix) or " (Windows)
+     before calling the system() function in order to forbid execution
+     of any embedded command.  In addition, on Windows, special
+     characters of cmd.exe are escaped by using (^).
+
+   If the --shell-escape option is given, we set
+     shellenabledp = 1 and restrictedshell = 0, i.e., any command is allowed.
+   If the --shell-restricted option is given, we set
+     shellenabledp = 1 and restrictedshell = 1, i.e., only given cmds allowed.
+   If the --no-shell-escape option is given, we set
+     shellenabledp = -1 (and restrictedshell is irrelevant).
+   If none of these option are given, there are three cases:
+   (1) In the case where
+       shell_escape = y or
+       shell_escape = t or
+       shell_escape = 1
+       it becomes shellenabledp = 1 and restrictedshell = 0,
+       that is, any command is allowed.
+   (2) In the case where
+       shell_escape = p
+       it becomes shellenabledp = 1 and restrictedshell = 1,
+       that is, restricted shell escape is allowed.
+   (3) In all other cases, shellenabledp = 0, that is, shell
+       escape is forbidden. The value of restrictedshell is
+       irrelevant if shellenabledp == 0.
+*/
+
+#ifdef TeX
+
+/* cmdlist is a list of allowed commands which are given like this:
+   shell_escape_commands = kpsewhich,ebb,extractbb,mpost,metafun
+   in texmf.cnf. */
+
+static char **cmdlist = NULL;
+
+static void 
+mk_shellcmdlist (char *v)
+{
+  char **p;
+  char *q, *r;
+  int  n;
+
+  q = v;
+  n = 0;
+
+/* analyze the variable shell_escape_commands = foo,bar,...
+   spaces before and after (,) are not allowed. */
+
+  while ((r = strchr (q, ',')) != 0) {
+    n++;
+    r++;
+    q = r;
+  }
+  if (*q)
+    n++;
+  cmdlist = (char **) xmalloc ((n + 1) * sizeof (char *));
+  p = cmdlist;
+  q = v;
+  while ((r = strchr (q, ',')) != 0) {
+    *r = '\0';
+    *p = (char *) xmalloc (strlen (q) + 1);
+    strcpy (*p, q);
+    *r = ',';
+    r++;
+    q = r;
+    p++;
+  }
+  if (*q) {
+    *p = (char *) xmalloc (strlen (q) + 1);
+    strcpy (*p, q);
+    p++;
+    *p = NULL;
+  } else
+    *p = NULL;
+}
+
+/* Called from maininit.  Not static because also called from
+   luatexdir/lua/luainit.c.  */
+
+void
+init_shell_escape (void)
+{
+  if (shellenabledp < 0) {  /* --no-shell-escape on cmd line */
+    shellenabledp = 0;
+
+  } else {
+    if (shellenabledp == 0) {  /* no shell options on cmd line, check cnf */
+      char *v1 = kpse_var_value ("shell_escape");
+      if (v1) {
+        if (*v1 == 't' || *v1 == 'y' || *v1 == '1') {
+          shellenabledp = 1;
+        } else if (*v1 == 'p') {
+          shellenabledp = 1;
+          restrictedshell = 1;
+        }
+        free (v1);
+      }
+    }
+
+    /* If shell escapes are restricted, get allowed cmds from cnf.  */   
+    if (shellenabledp && restrictedshell == 1) {
+      char *v2 = kpse_var_value ("shell_escape_commands");
+      if (v2) {
+        mk_shellcmdlist (v2);
+        free (v2);
+      }
+    }
+  }
+}
+
+#ifdef WIN32
+#define QUOTE '"'
+#else
+#define QUOTE '\''
+#endif
+
+#ifdef WIN32
+static int
+char_needs_quote (int c)
+{
+/* special characters of cmd.exe */
+
+  return (c == '&' || c == '|' || c == '%' || c == '<' ||
+          c == '>' || c == ';' || c == ',' || c == '(' ||
+          c == ')');
+}
+#endif
+
+static int
+Isspace (char c)
+{
+  return (c == ' ' || c == '\t');
+}
+
+#if 0
+/* We could call this at the end of the main program, but does it matter?
+   The process is about to exit anyway.  */
+static void
+free_shellcmdlist (void)
+{
+  char **p;
+
+  if (cmdlist) {
+    p = cmdlist;
+    while (*p) {
+      free (*p);
+      p++;
+    }
+    free (cmdlist);
+  }
+}
+#endif
+
+/* return values:
+  -1 : invalid quotation of an argument
+   0 : command is not allowed
+   2 : restricted shell escape, CMD is allowed.
+   
+   We set *SAFECMD to a safely-quoted version of *CMD; this is what
+   should get executed.  And we set CMDNAME to its first word; this is
+   what is checked against the shell_escape_commands list.  */
+
+static int
+shell_cmd_is_allowed (char **cmd, char **safecmd, char **cmdname)
+{
+  char **p;
+  char *buf;
+  char *s, *d;
+  int  pre, spaces;
+  int  allow = 0;
+
+  /* pre == 1 means that the previous character is a white space
+     pre == 0 means that the previous character is not a white space */
+  buf = (char *) xmalloc (strlen (*cmd) + 1);
+  strcpy (buf, *cmd);
+  s = buf;
+  while (Isspace (*s))
+    s++;
+  d = s;
+  while (!Isspace(*d) && *d)
+    d++;
+  *d = '\0';
+
+  /* *cmdname is the first word of the command line.  For example,
+     *cmdname == "kpsewhich" for
+     \write18{kpsewhich --progname=dvipdfm --format="other text files" config}
+  */
+  *cmdname = xstrdup (s);
+  free (buf);
+
+  /* Is *cmdname listed in a texmf.cnf vriable as
+     shell_escape_commands = foo,bar,... ? */
+  p = cmdlist;
+  if (p) {
+    while (*p) {
+      if (strcmp (*p, *cmdname) == 0) {
+      /* *cmdname is found in the list, so restricted shell escape
+          is allowed */
+        allow = 2;
+        break;
+      }
+      p++;
+    }
+  }
+  if (allow == 2) {
+    spaces = 0;
+    for (s = *cmd; *s; s++) {
+      if (Isspace (*s))
+        spaces++;
+    }
+
+    /* allocate enough memory (too much?) */
+#ifdef WIN32
+    *safecmd = (char *) xmalloc (2 * strlen (*cmd) + 3 + 2 * spaces);
+#else
+    *safecmd = (char *) xmalloc (strlen (*cmd) + 3 + 2 * spaces);
+#endif
+
+    /* make a safe command line *safecmd */
+    s = *cmd;
+    while (Isspace (*s))
+      s++;
+    d = *safecmd;
+    while (!Isspace (*s) && *s)
+      *d++ = *s++;
+
+    pre = 1;
+    while (*s) {
+      /* Quotation given by a user.  " should always be used; we
+         transform it below.  On Unix, if ' is used, simply immediately
+         return a quotation error.  */
+      if (*s == '\'') {
+        return -1;
+      }
+         
+      if (*s == '"') {
+        /* All arguments are quoted as 'foo' (Unix) or "foo" (Windows)
+           before calling system(). Therefore closing QUOTE is necessary
+           if the previous character is not a white space.
+           example:
+           --format="other text files" becomes
+           '--format=''other text files' (Unix)
+           "--format=""other test files" (Windows) */
+
+        if (pre == 0)
+          *d++ = QUOTE;
+
+        pre = 0;
+        /* output the quotation mark for the quoted argument */
+        *d++ = QUOTE;
+        s++;
+
+        while (*s != '"') {
+          /* Closing quotation mark is missing */
+          if (*s == '\0')
+            return -1;
+#ifdef WIN32
+          if (char_needs_quote (*s))
+            *d++ = '^';
+#endif
+          *d++ = *s++;
+        }
+
+        /* Closing quotation mark will be output afterwards, so
+           we do nothing here */
+        s++;
+
+        /* The character after the closing quotation mark
+           should be a white space or NULL */
+        if (!Isspace (*s) && *s)
+          return -1;
+
+      /* Beginning of a usual argument */
+      } else if (pre == 1 && !Isspace (*s)) {
+        pre = 0;
+        *d++ = QUOTE;
+#ifdef WIN32
+        if (char_needs_quote (*s))
+          *d++ = '^';
+#endif
+        *d++ = *s++;
+        /* Ending of a usual argument */
+
+      } else if (pre == 0 && Isspace (*s)) {
+        pre = 1;
+        /* Closing quotation mark */
+        *d++ = QUOTE;
+        *d++ = *s++;
+      } else {
+        /* Copy a character from *cmd to *safecmd. */
+#ifdef WIN32
+        if (char_needs_quote (*s))
+          *d++ = '^';
+#endif
+        *d++ = *s++;
+      }
+    }
+    /* End of the command line */
+    if (pre == 0) {
+      *d++ = QUOTE;
+    }
+    *d = '\0';
+  }
+
+  return allow;
+}
+
+/* We should only be called with shellenabledp == 1.
+   Return value:
+   -1 if a quotation syntax error.
+   0 if CMD is not allowed; given shellenabledp==1, this is because
+      shell escapes are restricted and CMD is not allowed.
+   1 if shell escapes are not restricted, hence any command is allowed.
+   2 if shell escapes are restricted and CMD is allowed.  */
+   
+int
+runsystem (char *cmd)
+{
+  int allow = 0;
+  char *safecmd = NULL;
+  char *cmdname = NULL;
+
+  if (shellenabledp <= 0) {
+    return 0;
+  }
+  
+  /* If restrictedshell == 0, any command is allowed. */
+  if (restrictedshell == 0)
+    allow = 1;
+  else
+    allow = shell_cmd_is_allowed (&cmd, &safecmd, &cmdname);
+
+  if (allow == 1)
+    (void) system (cmd);
+  else if (allow == 2)
+    (void) system (safecmd);
+
+  if (safecmd)
+    free (safecmd);
+  if (cmdname)
+    free (cmdname);
+
+  return allow;
+}
+
+/* Like runsystem(), the runpopen() function is called only when
+   shellenabledp == 1.   Unlike runsystem(), here we write errors to
+   stderr, since we have nowhere better to use; and of course we return
+   a file handle (or NULL) instead of a status indicator.  */
+
+static FILE *
+runpopen (char *cmd, char *mode)
+{
+  FILE *f = NULL;
+  char *safecmd = NULL;
+  char *cmdname = NULL;
+  int allow;
+
+  /* If restrictedshell == 0, any command is allowed. */
+  if (restrictedshell == 0)
+    allow = 1;
+  else
+    allow = shell_cmd_is_allowed (&cmd, &safecmd, &cmdname);
+
+  if (allow == 1)
+    f = popen (cmd, mode);
+  else if (allow == 2)
+    f = popen (safecmd, mode);
+  else if (allow == -1)
+    fprintf (stderr, "\nrunpopen quotation error in command line: %s\n",
+             cmd);
+  else
+    fprintf (stderr, "\nrunpopen command not allowed: %s\n", cmdname);
+
+  if (safecmd)
+    free (safecmd);
+  if (cmdname)
+    free (cmdname);
+  return f;
+}
+#endif
+
 /* The main program, etc.  */
 
 #ifdef XeTeX
@@ -389,11 +785,8 @@ maininit P2C(int, ac, string *, av)
   kpse_set_program_enabled (kpse_fmt_format, MAKE_TEX_FMT_BY_DEFAULT,
                             kpse_src_compile);
 
-  if (shellenabledp < 0) {
-    shellenabledp = 0;
-  } else if (!shellenabledp) {
-    shellenabledp = texmf_yesno ("shell_escape");
-  }
+  init_shell_escape ();
+
   if (!outputcomment) {
     outputcomment = kpse_var_value ("output_comment");
   }
@@ -420,14 +813,16 @@ main P2C(int, ac,  string *, av)
   lua_initialize (ac, av);
 #else
   maininit (ac, av);
-#endif
+#endif /* not luaTeX */
 
   /* Call the real main program.  */
   mainbody ();
+  
   return EXIT_SUCCESS;
 } 
 #endif /* !(WIN32 || __MINGW32__) */
 
+
 /* This is supposed to ``open the terminal for input'', but what we
    really do is copy command line arguments into TeX's or Metafont's
    buffer, so they can handle them.  If nothing is available, or we've
@@ -506,7 +901,6 @@ topenin P1H(void)
     buffer[i] = xord[buffer[i]];
 #endif
 }
-
 
 /* IPC for TeX.  By Tom Rokicki for the NeXT; it makes TeX ship out the
    DVI file in a pipe to TeXView so that the output can be displayed
@@ -959,6 +1353,7 @@ static struct option long_options[]
 #endif /* pdfTeX */
       { "shell-escape",              0, &shellenabledp, 1 },
       { "no-shell-escape",           0, &shellenabledp, -1 },
+      { "shell-restricted",          0, 0, 0 },
       { "debug-format",              0, &debugformatfile, 1 },
       { "src-specials",              2, 0, 0 },
 #if defined(__SyncTeX__)
@@ -1064,7 +1459,7 @@ parse_options P2C(int, argc,  string *, argv)
       } else {
         WARNING2 ("Comment truncated to 255 characters from %d. (%s)",
                   len, optarg);
-        outputcomment = (string)xmalloc (256);
+        outputcomment = (string) xmalloc (256);
         strncpy (outputcomment, optarg, 255);
         outputcomment[255] = 0;
       }
@@ -1083,6 +1478,11 @@ parse_options P2C(int, argc,  string *, argv)
         }
       }
 #endif /* IPC */
+
+    } else if (ARGUMENT_IS ("shell-restricted")) {
+      shellenabledp = 1;
+      restrictedshell = 1;
+      
     } else if (ARGUMENT_IS ("src-specials")) {
        last_source_name = xstrdup("");
        /* Option `--src" without any value means `auto' mode. */
@@ -1442,7 +1842,7 @@ open_in_or_pipe P3C(FILE **, f_ptr,  int, filefmt,  const_string, fopen_mode)
       fullnameoffile = xstrdup (fname);
 #endif
       recorder_record_input (fname + 1);
-      *f_ptr = popen(fname+1,"r");
+      *f_ptr = runpopen(fname+1,"r");
       free(fname);
       for (i=0; i<=15; i++) {
         if (pipes[i]==NULL) {
@@ -1481,10 +1881,10 @@ open_out_or_pipe P2C(FILE **, f_ptr,  const_string, fopen_mode)
            is better to be prepared */
         if (STREQ((fname+strlen(fname)-3),"tex"))
           *(fname+strlen(fname)-4) = 0;
-        *f_ptr = popen(fname+1,"w");
+        *f_ptr = runpopen(fname+1,"w");
         *(fname+strlen(fname)) = '.';
       } else {
-        *f_ptr = popen(fname+1,"w");
+        *f_ptr = runpopen(fname+1,"w");
       }
       recorder_record_output (fname + 1);
       free(fname);
@@ -1515,7 +1915,8 @@ close_file_or_pipe P1C(FILE *, f)
     /* if this file was a pipe, pclose() it and return */    
     for (i=0; i<=15; i++) {
       if (pipes[i] == f) {
-        pclose (f);
+        if (f)
+          pclose (f);
         pipes[i] = NULL;
         return;
       }

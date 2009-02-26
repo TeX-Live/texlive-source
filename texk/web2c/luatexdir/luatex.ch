@@ -1441,6 +1441,10 @@ end
 @y
 if shellenabledp then begin
   wlog_cr;
+  wlog(' ');
+  if restrictedshell then begin
+    wlog('restricted ');
+  end;
   wlog('\write18 enabled.')
   end;
 if srcspecialsp then begin
@@ -2212,7 +2216,11 @@ end {|main_body|};
   if format_ident>0 then slow_print(format_ident);
   print_ln;
   if shellenabledp then begin
-    wterm_ln(' \write18 enabled.')
+    wterm(' ');
+    if restrictedshell then begin
+      wterm('restricted ');
+    end;
+    wterm_ln('\write18 enabled.');
   end;
   if srcspecialsp then begin
     wterm_ln(' Source specials enabled.')
@@ -2310,6 +2318,7 @@ begin @<Expand macros in the token list
 @y
 @!d:integer; {number of characters in incomplete current string}
 @!clobbered:boolean; {system string is ok?}
+@!runsystem_ret:integer; {return value from |runsystem|}
 begin @<Expand macros in the token list
 @z
 
@@ -2331,29 +2340,35 @@ if j=18 then
   {If the log file isn't open yet, we can only send output to the terminal.
    Calling |open_log_file| from here seems to result in bad data in the log.}
   if not log_opened then selector:=term_only;
-  print_nl("system(");
+  print_nl("runsystem(");
   for d:=0 to cur_length-1 do
     begin {|print| gives up if passed |str_ptr|, so do it by hand.}
     print(so(str_pool[str_start_macro(str_ptr)+d])); {N.B.: not |print_char|}
     end;
   print(")...");
-  if shellenabledp then
-    begin str_room(1); append_char(0); {Append a null byte to the expansion.}
+  if shellenabledp then begin
+    str_room(1); append_char(0); {Append a null byte to the expansion.}
     clobbered:=false;
     for d:=0 to cur_length-1 do {Convert to external character set.}
-      begin str_pool[str_start_macro(str_ptr)+d]:=xchr[str_pool[str_start_macro(str_ptr)+d]];
-      if (str_pool[str_start_macro(str_ptr)+d]=null_code)
-         and (d<cur_length-1) then clobbered:=true;
+      begin
+        str_pool[str_start_macro(str_ptr)+d]:=xchr[str_pool[str_start_macro(str_ptr)+d]];
+        if (str_pool[str_start_macro(str_ptr)+d]=null_code)
+           and (d<cur_length-1) then clobbered:=true;
         {minimal checking: NUL not allowed in argument string of |system|()}
       end;
     if clobbered then print("clobbered")
-    else begin {We have the string; run system(3). We don't have anything
-            reasonable to do with the return status, unfortunately discard it.}
-      system(stringcast(addressof(str_pool[str_start_macro(str_ptr)])));
-      print("executed");
-      end;
-    end
-  else begin print("disabled");
+    else begin {We have the command.  See if we're allowed to execute it,
+         and report in the log.  We don't check the actual exit status of
+         the command, or do anything with the output.}
+      runsystem_ret := runsystem(stringcast(addressof(
+                                         str_pool[str_start_macro(str_ptr)])));
+      if runsystem_ret = -1 then print("quotation error in system command")
+      else if runsystem_ret = 0 then print("disabled (restricted)")
+      else if runsystem_ret = 1 then print("executed")
+      else if runsystem_ret = 2 then print("executed (allowed)")
+    end;
+  end else begin
+    print("disabled"); {|shellenabledp| false}
   end;
   print_char("."); print_nl(""); print_ln;
   pool_ptr:=str_start_macro(str_ptr);  {erase the string}
@@ -2449,6 +2464,7 @@ strings.
 @!save_str_ptr: str_number;
 @!save_pool_ptr: pool_pointer;
 @!shellenabledp: cinttype;
+@!restrictedshell: cinttype;
 @!output_comment: ^char;
 @!k,l: 0..255; {used by `Make the first 256 strings', etc.}
 

@@ -36,6 +36,7 @@
 @define function openoutnameok ();
 @define function roundfraction ();
 @define function roundunscaled ();
+@define function runsystem ();
 @define function wopenin ();
 @define function wopenout ();
 
@@ -59,7 +60,6 @@
 @define procedure readtcxfile;
 @define procedure remembersourceinfo ();
 @define procedure setupboundvariable ();
-@define procedure system ();
 @define procedure topenin;
 @define procedure undumphh ();
 @define procedure undumpint ();

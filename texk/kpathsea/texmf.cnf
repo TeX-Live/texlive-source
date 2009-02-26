@@ -13,6 +13,7 @@
 % Any identifier (sticking to A-Za-z_ for names is safest) can be assigned.
 % The `=' (and surrounding spaces) is optional.
 % $foo (or ${foo}) in a value expands to the envvar or cnf value of foo.
+% Long lines can be continued with a \.
 %
 % Earlier entries (in the same or another file) override later ones, and
 % an environment variable foo overrides any texmf.cnf definition of foo.
@@ -26,18 +27,18 @@
 % right-hand side. For environment variables, use FOO_PROGRAM.
 %
 % Which file formats use which paths for searches is described in the
-% various programs' and the kpathsea documentation.
+% various programs' and the Kpathsea documentation.
 %
 % // means to search subdirectories (recursively).
 % A leading !! means to look only in the ls-R db, never on the disk.
 % In this file, either ; or : can be used to separate path components.
 % A leading/trailing/doubled path separator in the paths will be
 %   expanded into the compile-time default. Probably not what you want.
-%
-% You can use brace notation, for example: /usr/local/{mytex,othertex}
-% expands to /usr/local/mytex:/usr/local/othertex.  Instead of the comma
-% you can use the path separator: /usr/local/{mytex:othertex} also expands
-% to /usr/local/mytex:/usr/local/othertex.
+%   
+% Brace notation is supported, for example: /usr/local/{mytex,othertex}
+% expands to /usr/local/mytex:/usr/local/othertex.  You can use the path
+% separator as well as the comma for this: /usr/local/{mytex:othertex}
+% also expands to /usr/local/mytex:/usr/local/othertex.
 
 %  Part 1: Search paths and directories.
 
@@ -484,9 +485,22 @@ engine = unsetengine
 % babel.sty, not babel.sty.tex, regardless of this setting.
 try_std_extension_first = t
 
-% Enable system commands via \write18{...}?  Obviously insecure, despite
-% being so useful.
-shell_escape = f
+% Enable system commands via \write18{...}.  When enabled fully (set to
+% 1), obviously insecure.  When enabled partially (set to p), only the
+% commands listed in shell_escape_commands are allowed.  Although this
+% is not fully secure either, it is much better, and so useful that we
+% enable it for everything but bare tex.
+shell_escape = p
+
+% No spaces in this command list.
+shell_escape_commands = \
+bibtex,dvips,epstopdf,epspdf,etex,gnuplot,kpsewhich,\
+latex,luatex,lualatex,makeindex,mpost,\
+pdfcrop,pdflatex,pdfluatex,ps2pdf,pygmentize,\
+tex,texexec,texmfstart\
+
+% plain TeX should remain unenhanced.
+shell_escape.tex = f
 
 % Allow TeX \openin, \openout, or \input on filenames starting with `.'
 % (e.g., .rhosts) or outside the current tree (e.g., /etc/passwd)?

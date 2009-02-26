@@ -9818,7 +9818,10 @@ if m>=input_line_no_code then
   random_seed_code:  cur_val := random_seed;
   pdf_shell_escape_code:
     begin
-    if shell_enabled_p then cur_val := 1
+    if shellenabledp then begin
+      if restrictedshell then cur_val :=2
+      else cur_val := 1;
+    end
     else cur_val := 0;
     end;
   pdf_last_link_code:   cur_val := pdf_last_link;

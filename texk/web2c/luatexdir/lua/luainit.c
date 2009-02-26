@@ -359,6 +359,9 @@ init_kpse (void) {
 
   kpse_set_program_name(argv[0], user_progname);
   program_name_set=1;
+
+  /* Needs program_name set.  */
+  init_shell_escape ();
 }
 
 void

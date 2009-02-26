@@ -44,6 +44,8 @@
 % (2) if you do make changes, you name it to something other than
 %     "mltex.ch", "char_sub.ch", or "charsub.ch".
 %
+% Except for MLTeX, the new code in this file is in the public domain.
+% 
 % The module numbers in this change file refer to TEX.WEB 3.14159 as
 % of March, 1995 (published as Donald E. Knuth, TeX: The Program,
 % Volume B of Computers & Typesetting).
@@ -600,10 +602,10 @@ tini@/
   at most |max_halfword|}
 @!dvi_buf_size:integer; {size of the output buffer; must be a multiple of 8}
 @!expand_depth:integer; {limits recursive calls to the |expand| procedure}
-@!parse_first_line_p:c_int_type; {parse the first line for options}
-@!file_line_error_style_p:c_int_type; {format messages as file:line:error}
-@!eight_bit_p:c_int_type; {make all characters printable by default}
-@!halt_on_error_p:c_int_type; {stop at first error}
+@!parse_first_line_p:cinttype; {parse the first line for options}
+@!file_line_error_style_p:cinttype; {format messages as file:line:error}
+@!eight_bit_p:cinttype; {make all characters printable by default}
+@!halt_on_error_p:cinttype; {stop at first error}
 @!quoted_filename:boolean; {current filename is quoted}
 {Variables for source specials}
 @!src_specials_p : boolean;{Whether |src_specials| are enabled at all}
@@ -824,8 +826,12 @@ else  begin slow_print(format_ident); print_ln;
 wterm(version_string);
 if format_ident>0 then slow_print(format_ident);
 print_ln;
-if shell_enabled_p then begin
-  wterm_ln(' \write18 enabled.')
+if shellenabledp then begin
+  wterm(' ');
+  if restrictedshell then begin
+    wterm('restricted ');
+  end;
+  wterm_ln('\write18 enabled.');
 end;
 if src_specials_p then begin
   wterm_ln(' Source specials enabled.')
@@ -1882,7 +1888,7 @@ if_eof_code: begin scan_four_bit_int; b:=(read_open[cur_val]=closed);
   end;
 @y
 if_eof_code: begin scan_four_bit_int_or_18;
-  if cur_val=18 then b:=not shell_enabled_p
+  if cur_val=18 then b:=not shellenabledp
   else b:=(read_open[cur_val]=closed);
   end;
 @z
@@ -2372,13 +2378,17 @@ months:='JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC';
 months := ' JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC';
 @z
 
-% Print whether we're using src-specials.
+% Print whether we're using src-specials and other such features.
 % Print TCX name if one's given.
 @x [29/536] l.10331
 end
 @y
-if shell_enabled_p then begin
+if shellenabledp then begin
   wlog_cr;
+  wlog(' ');
+  if restrictedshell then begin
+    wlog('restricted ');
+  end;
   wlog('\write18 enabled.')
   end;
 if src_specials_p then begin
@@ -4599,7 +4609,7 @@ print(" (format="); print(job_name); print_char(" ");
 @d setup_bound_var(#)==bound_default:=#; setup_bound_var_end
 @d setup_bound_var_end(#)==bound_name:=#; setup_bound_var_end_end
 @d setup_bound_var_end_end(#)==
-  setup_bound_variable(address_of(#), bound_name, bound_default);
+  setup_bound_variable(addressof(#), bound_name, bound_default);
 
 @p procedure main_body;
 begin @!{|start_here|}
@@ -4990,6 +5000,7 @@ begin @<Expand macros in the token list
 @y
 @!d:integer; {number of characters in incomplete current string}
 @!clobbered:boolean; {system string is ok?}
+@!runsystem_ret:integer; {return value from |runsystem|}
 begin
 mubyte_sout := mubyte_out;  mubyte_out := write_mubyte(p) - mubyte_zero;
 if (mubyte_out > 2) or (mubyte_out = -1) or (mubyte_out = -2) then
@@ -5030,29 +5041,35 @@ if j=18 then
   {If the log file isn't open yet, we can only send output to the terminal.
    Calling |open_log_file| from here seems to result in bad data in the log.}
   if not log_opened then selector:=term_only;
-  print_nl("system(");
+  print_nl("runsystem(");
   for d:=0 to cur_length-1 do
     begin {|print| gives up if passed |str_ptr|, so do it by hand.}
     print(so(str_pool[str_start[str_ptr]+d])); {N.B.: not |print_char|}
     end;
   print(")...");
-  if shell_enabled_p then
-    begin str_room(1); append_char(0); {Append a null byte to the expansion.}
+  if shellenabledp then begin
+    str_room(1); append_char(0); {Append a null byte to the expansion.}
     clobbered:=false;
     for d:=0 to cur_length-1 do {Convert to external character set.}
-      begin str_pool[str_start[str_ptr]+d]:=xchr[str_pool[str_start[str_ptr]+d]];
-      if (str_pool[str_start[str_ptr]+d]=null_code)
-         and (d<cur_length-1) then clobbered:=true;
+      begin
+        str_pool[str_start[str_ptr]+d]:=xchr[str_pool[str_start[str_ptr]+d]];
+        if (str_pool[str_start[str_ptr]+d]=null_code)
+           and (d<cur_length-1) then clobbered:=true;
         {minimal checking: NUL not allowed in argument string of |system|()}
       end;
     if clobbered then print("clobbered")
-    else begin {We have the string; run system(3). We don't have anything
-            reasonable to do with the return status, unfortunately discard it.}
-      system(conststringcast(address_of(str_pool[str_start[str_ptr]])));
-      print("executed");
-      end;
-    end
-  else begin print("disabled");
+    else begin {We have the command.  See if we're allowed to execute it,
+         and report in the log.  We don't check the actual exit status of
+         the command, or do anything with the output.}
+      runsystem_ret := runsystem(conststringcast(addressof(
+                                              str_pool[str_start[str_ptr]])));
+      if runsystem_ret = -1 then print("quotation error in system command")
+      else if runsystem_ret = 0 then print("disabled (restricted)")
+      else if runsystem_ret = 1 then print("executed")
+      else if runsystem_ret = 2 then print("executed (allowed)")
+    end;
+  end else begin
+    print("disabled"); {|shellenabledp| false}
   end;
   print_char("."); print_nl(""); print_ln;
   pool_ptr:=str_start[str_ptr];  {erase the string}
@@ -5104,7 +5121,7 @@ system-dependent section allows easy integration of Web2c and e-\TeX, etc.)
 @<Glob...@>=
 @!edit_name_start: pool_pointer; {where the filename to switch to starts}
 @!edit_name_length,@!edit_line: integer; {what line to start editing at}
-@!ipc_on: c_int_type; {level of IPC action, 0 for none [default]}
+@!ipc_on: cinttype; {level of IPC action, 0 for none [default]}
 @!stop_at_space: boolean; {whether |more_name| returns false for space}
 
 @ The |edit_name_start| will be set to point into |str_pool| somewhere after
@@ -5120,7 +5137,8 @@ strings.
 @<Global...@> =
 @!save_str_ptr: str_number;
 @!save_pool_ptr: pool_pointer;
-@!shell_enabled_p: c_int_type;
+@!shellenabledp: cinttype;
+@!restrictedshell: cinttype;
 @!output_comment: ^char;
 @!k,l: 0..255; {used by `Make the first 256 strings', etc.}
 

@@ -1,7 +1,7 @@
 /* The help messages for TeX & MF family of programs.
 
+Copyright 1995, 1996, 2008, 2009 Karl Berry.
 Copyright 2001-05 Olaf Weber.
-Copyright 1995, 96 Karl Berry.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -64,6 +64,7 @@ const_string ALEPHHELP[] = {
     "-progname=STRING        set program (and fmt) name to STRING",
     "-recorder               enable filename recorder (always on)",
     "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
+    "-shell-restricted       enable restricted \\write18",
     "-src-specials           insert source specials into the DVI file",
     "-src-specials=WHERE     insert source specials in certain places of",
     "                          the DVI file. WHERE is a comma-separated value",
@@ -122,6 +123,7 @@ const_string LUATEXHELP[] = {
     "-progname=STRING        set program (and fmt) name to STRING",
     "-recorder               enable filename recorder",
     "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
+    "-shell-restricted       enable restricted \\write18",
     "-src-specials           insert source specials into the DVI file",
     "-src-specials=WHERE     insert source specials in certain places of",
     "                          the DVI file. WHERE is a comma-separated value",
@@ -180,6 +182,7 @@ const_string ETEXHELP[] = {
     "-progname=STRING        set program (and fmt) name to STRING",
     "-recorder               enable filename recorder",
     "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
+    "-shell-restricted       enable restricted \\write18",
     "-src-specials           insert source specials into the DVI file",
     "-src-specials=WHERE     insert source specials in certain places of",
     "                          the DVI file. WHERE is a comma-separated value",
@@ -328,6 +331,7 @@ const_string OMEGAHELP[] = {
     "-progname=STRING        set program (and fmt) name to STRING",
     "-recorder               enable filename recorder (always on)",
     "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
+    "-shell-restricted       enable restricted \\write18",
     "-src-specials           insert source specials into the DVI file",
     "-src-specials=WHERE     insert source specials in certain places of",
     "                          the DVI file. WHERE is a comma-separated value",
@@ -381,6 +385,7 @@ const_string EOMEGAHELP[] = {
     "-progname=STRING        set program (and fmt) name to STRING",
     "-recorder               enable filename recorder (always on)",
     "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
+    "-shell-restricted       enable restricted \\write18",
     "-src-specials           insert source specials into the DVI file",
     "-src-specials=WHERE     insert source specials in certain places of",
     "                          the DVI file. WHERE is a comma-separated value",
@@ -440,6 +445,7 @@ const_string PDFTEXHELP[] = {
     "-progname=STRING        set program (and fmt) name to STRING",
     "-recorder               enable filename recorder",
     "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
+    "-shell-restricted       enable restricted \\write18",
     "-src-specials           insert source specials into the DVI file",
     "-src-specials=WHERE     insert source specials in certain places of",
     "                          the DVI file. WHERE is a comma-separated value",
@@ -498,6 +504,7 @@ const_string XETEXHELP[] = {
     "-progname=STRING        set program (and fmt) name to STRING",
     "-recorder               enable filename recorder",
     "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
+    "-shell-restricted       enable restricted \\write18",
     "-src-specials           insert source specials into the XDV file",
     "-src-specials=WHERE     insert source specials in certain places of",
     "                          the XDV file. WHERE is a comma-separated value",
@@ -558,6 +565,7 @@ const_string TEXHELP[] = {
     "-progname=STRING        set program (and fmt) name to STRING",
     "-recorder               enable filename recorder",
     "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
+    "-shell-restricted       enable restricted \\write18",
     "-src-specials           insert source specials into the DVI file",
     "-src-specials=WHERE     insert source specials in certain places of",
     "                          the DVI file. WHERE is a comma-separated value",

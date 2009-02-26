@@ -1,3 +1,8 @@
+2009-02-26  Karl Berry  <karl@tug.org>
+
+	* texmf.defines (runsystem): new fn.
+	(system): remove procedure.
+
 2008-05-25  Karl Berry  <karl@tug.org>
 
 	* texmf.defines (loadpoolstrings): formatting.

@@ -1008,7 +1008,7 @@ if_eof_code: begin scan_four_bit_int; b:=(read_open[cur_val]=closed);
   end;
 @y
 if_eof_code: begin scan_four_bit_int_or_18;
-  if cur_val=18 then b:=not shell_enabled_p
+  if cur_val=18 then b:=not shellenabledp
   else b:=(read_open[cur_val]=closed);
   end;
 @z
@@ -2361,7 +2361,7 @@ print(" (format="); print(job_name); print_char(" ");
 @d setup_bound_var(#)==bound_default:=#; setup_bound_var_end
 @d setup_bound_var_end(#)==bound_name:=#; setup_bound_var_end_end
 @d setup_bound_var_end_end(#)==
-  setup_bound_variable(address_of(#), bound_name, bound_default);
+  setup_bound_variable(addressof(#), bound_name, bound_default);
 
 @p procedure main_body;
 begin @!{|start_here|}
@@ -2581,6 +2581,7 @@ begin @<Expand macros in the token list
 @y
 @!d:integer; {number of characters in incomplete current string}
 @!clobbered:boolean; {system string is ok?}
+@!runsystem_ret:integer; {return value from |runsystem|}
 begin @<Expand macros in the token list
 @z
 
@@ -2603,34 +2604,39 @@ if j=18 then
   {If the log file isn't open yet, we can only send output to the terminal.
    Calling |open_log_file| from here seems to result in bad data in the log.}
   if not log_opened then selector:=term_only;
-  print_nl("system(");
+  print_nl("runsystem(");
   for d:=0 to cur_length-1 do
     begin {|print| gives up if passed |str_ptr|, so do it by hand.}
     print(so(str_pool[str_start(str_ptr)+d])); {N.B.: not |print_char|}
     end;
   print(")...");
-  if shell_enabled_p then
-    begin str_room(1); append_char(0); {Append a null byte to the expansion.}
+  if shellenabledp then begin
+    str_room(1); append_char(0); {Append a null byte to the expansion.}
     clobbered:=false;
     for d:=0 to cur_length-1 do {Convert to external character set.}
-      begin str_pool[str_start(str_ptr)+d]:=xchr[str_pool[str_start(str_ptr)+d]];
-      if (str_pool[str_start(str_ptr)+d]=null_code)
-         and (d<cur_length-1) then clobbered:=true;
+      begin
+        str_pool[str_start(str_ptr)+d]:=xchr[str_pool[str_start(str_ptr)+d]];
+        if (str_pool[str_start(str_ptr)+d]=null_code)
+           and (d<cur_length-1) then clobbered:=true;
         {minimal checking: NUL not allowed in argument string of |system|()}
       end;
     if clobbered then print("clobbered")
-    else begin {We have the string; run system(3). We don't have anything
-            reasonable to do with the return status, unfortunately discard it.}
+    else begin {We have the command.  See if we're allowed to execute it,
+         and report in the log.  We don't check the actual exit status of
+         the command, or do anything with the output.}
       for d:=0 to cur_length-1 do {Convert to external character set.}
         begin
         outside_string_array[d]:=xchr[str_pool[str_start(str_ptr)+d]];
         end;
       outside_string_array[cur_length]:=null_code;
-      system(outside_string_array);
-      print("executed");
-      end;
-    end
-  else begin print("disabled");
+      runsystem_ret := runsystem(outside_string_array);
+      if runsystem_ret = -1 then print("quotation error in system command")
+      else if runsystem_ret = 0 then print("disabled (restricted)")
+      else if runsystem_ret = 1 then print("executed")
+      else if runsystem_ret = 2 then print("executed (allowed)")
+    end;
+  end else begin
+    print("disabled"); {|shellenabledp| false}
   end;
   print_char("."); print_nl(""); print_ln;
   pool_ptr:=str_start(str_ptr);  {erase the string}
@@ -2682,7 +2688,7 @@ system-dependent section allows easy integration of Web2c and e-\TeX, etc.)
 @<Glob...@>=
 @!edit_name_start: pool_pointer; {where the filename to switch to starts}
 @!edit_name_length,@!edit_line: integer; {what line to start editing at}
-@!ipc_on: c_int_type; {level of IPC action, 0 for none [default]}
+@!ipc_on: cinttype; {level of IPC action, 0 for none [default]}
 @!stop_at_space: boolean; {whether |more_name| returns false for space}
 
 @ The |edit_name_start| will be set to point into |str_pool| somewhere after
@@ -2698,7 +2704,8 @@ strings.
 @<Global...@> =
 @!save_str_ptr: str_number;
 @!save_pool_ptr: pool_pointer;
-@!shell_enabled_p: c_int_type;
+@!shellenabledp: cinttype;
+@!restrictedshell: cinttype;
 @!output_comment: ^char;
 @!k,l: 0..65535; {used by `Make the first 256 strings', etc.}
 

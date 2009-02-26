@@ -1,3 +1,12 @@
+2009-02-26  Karl Berry  <karl@tug.org>
+
+	* texmfmp.c: Implementation of restricted shell escapes from Akira.
+	(mk_shellcmdlist, init_shell_escape, char_needs_quote, Isspace,
+	shell_cmd_is_allowed, runsystem, runpopen): new fns.
+	(long_options, parse_cmd_line): new option --shell-restricted.
+	(main): call init_shell_escape.
+	(open_in_or_pipe, open_out_or_pipe): call runpopen.
+
 2009-02-06  Karl Berry  <karl@tug.org>
 
 	* texmfmp.c (maininit) [__SyncTeX__]: omit warning about no

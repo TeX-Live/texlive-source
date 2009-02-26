@@ -4452,7 +4452,7 @@ if is_ot_font(g) then begin
   free_node(b, native_size(b));
   f:=g; c:=x; w:=0; n:=0;
   repeat
-    y:=get_ot_math_variant(g, x, n, address_of(u), 0);
+    y:=get_ot_math_variant(g, x, n, addressof(u), 0);
     if u>w then begin
       c:=y; w:=u;
       if u>=v then goto found;
@@ -4657,7 +4657,7 @@ if x<>null then begin
   c:=native_glyph(p);
   a:=0;
   repeat
-    g:=get_ot_math_variant(f, c, a, address_of(w2), 1);
+    g:=get_ot_math_variant(f, c, a, addressof(w2), 1);
     if (w2>0) and (w2<=wa) then begin
       native_glyph(p):=g;
       set_native_glyph_metrics(p, 1);
@@ -4788,7 +4788,7 @@ if math_type(nucleus(q))=math_char then
         c:=native_glyph(p);
         n:=0;
         repeat
-          g:=get_ot_math_variant(cur_f, c, n, address_of(h2), 0);
+          g:=get_ot_math_variant(cur_f, c, n, addressof(h2), 0);
           if h2>0 then native_glyph(p):=g;
           incr(n);
         until (h2<0) or (h2>=h1);
@@ -5867,7 +5867,7 @@ begin if tail<>head then
 @y
   if is_native_font(f) then
     begin a:=width(p);
-    if a=0 then get_native_char_sidebearings(f, cur_val, address_of(lsb), address_of(rsb))
+    if a=0 then get_native_char_sidebearings(f, cur_val, addressof(lsb), addressof(rsb))
     end
   else a:=char_width(f)(char_info(f)(character(p)));@/
 @z
@@ -5887,7 +5887,7 @@ w:=char_width(f)(i); h:=char_height(f)(height_depth(i));
 @y
 if is_native_font(f) then begin
   w:=width(q);
-  get_native_char_height_depth(f, cur_val, address_of(h), address_of(delta))
+  get_native_char_height_depth(f, cur_val, addressof(h), addressof(delta))
     {using delta as scratch space for the unneeded depth value}
 end else begin
   i:=char_info(f)(character(q));
@@ -7496,22 +7496,23 @@ token_show(def_ref); print_ln;
 @z
 
 @x
-      begin str_pool[str_start[str_ptr]+d]:=xchr[str_pool[str_start[str_ptr]+d]];
-      if (str_pool[str_start[str_ptr]+d]=null_code)
+        str_pool[str_start[str_ptr]+d]:=xchr[str_pool[str_start[str_ptr]+d]];
+        if (str_pool[str_start[str_ptr]+d]=null_code)
 @y
-      begin
       if (str_pool[str_start_macro(str_ptr)+d]=null_code)
 @z
 
-@x
-      system(conststringcast(address_of(str_pool[str_start[str_ptr]])));
+@x convert from UTF-16 to UTF-8 for system(3).
+      runsystem_ret := runsystem(conststringcast(addressof(
+                                              str_pool[str_start[str_ptr]])));
 @y
       if name_of_file then libc_free(name_of_file);
       name_of_file := xmalloc(cur_length * 3 + 2);
       k := 0;
-      for d:=0 to cur_length-1 do append_to_name(str_pool[str_start_macro(str_ptr)+d]);
+      for d:=0 to cur_length-1 do
+        append_to_name(str_pool[str_start_macro(str_ptr)+d]);
       name_of_file[k+1] := 0;
-      system(conststringcast(name_of_file+1));
+      runsystem_ret := runsystem(conststringcast(name_of_file+1));
 @z
 
 @x
@@ -7610,22 +7611,22 @@ end
 
 @d update_corners==
 	for i := 0 to 3 do
-		transform_point(address_of(corners[i]), address_of(t2))
+		transform_point(addressof(corners[i]), addressof(t2))
 
 @d do_size_requests==begin
 	{ calculate current width and height }
 	calc_min_and_max;
 	if x_size_req = 0.0 then begin
-		make_scale(address_of(t2), y_size_req / (ymax - ymin), y_size_req / (ymax - ymin));
+		make_scale(addressof(t2), y_size_req / (ymax - ymin), y_size_req / (ymax - ymin));
 	end else if y_size_req = 0.0 then begin
-		make_scale(address_of(t2), x_size_req / (xmax - xmin), x_size_req / (xmax - xmin));
+		make_scale(addressof(t2), x_size_req / (xmax - xmin), x_size_req / (xmax - xmin));
 	end else begin
-		make_scale(address_of(t2), x_size_req / (xmax - xmin), y_size_req / (ymax - ymin));
+		make_scale(addressof(t2), x_size_req / (xmax - xmin), y_size_req / (ymax - ymin));
 	end;
 	update_corners;
 	x_size_req := 0.0;
 	y_size_req := 0.0;
-	transform_concat(address_of(t), address_of(t2));
+	transform_concat(addressof(t), addressof(t2));
 end
 
 @<Declare procedures needed in |do_extension|@>=
@@ -7663,7 +7664,7 @@ begin
 	end;
 
 	{ access the picture file and check its size }
-	result := find_pic_file(address_of(pic_path), address_of(bounds), pdf_box_type, page);
+	result := find_pic_file(addressof(pic_path), addressof(bounds), pdf_box_type, page);
 
 	setPoint(corners[0], xField(bounds), yField(bounds));
 	setPoint(corners[1], xField(corners[0]), yField(bounds) + htField(bounds));
@@ -7674,30 +7675,30 @@ begin
 	y_size_req := 0.0;
 
 	{ look for any scaling requests for this picture }
-	make_identity(address_of(t));
+	make_identity(addressof(t));
 
 	check_keywords := true;
 	while check_keywords do begin
 		if scan_keyword("scaled") then begin
 			scan_int;
 			if (x_size_req = 0.0) and (y_size_req = 0.0) then begin
-				make_scale(address_of(t2), float(cur_val) / 1000.0, float(cur_val) / 1000.0);
+				make_scale(addressof(t2), float(cur_val) / 1000.0, float(cur_val) / 1000.0);
 				update_corners;
-				transform_concat(address_of(t), address_of(t2));
+				transform_concat(addressof(t), addressof(t2));
 			end
 		end else if scan_keyword("xscaled") then begin
 			scan_int;
 			if (x_size_req = 0.0) and (y_size_req = 0.0) then begin
-				make_scale(address_of(t2), float(cur_val) / 1000.0, 1.0);
+				make_scale(addressof(t2), float(cur_val) / 1000.0, 1.0);
 				update_corners;
-				transform_concat(address_of(t), address_of(t2));
+				transform_concat(addressof(t), addressof(t2));
 			end
 		end else if scan_keyword("yscaled") then begin
 			scan_int;
 			if (x_size_req = 0.0) and (y_size_req = 0.0) then begin
-				make_scale(address_of(t2), 1.0, float(cur_val) / 1000.0);
+				make_scale(addressof(t2), 1.0, float(cur_val) / 1000.0);
 				update_corners;
-				transform_concat(address_of(t), address_of(t2));
+				transform_concat(addressof(t), addressof(t2));
 			end
 		end else if scan_keyword("width") then begin
 			scan_normal_dimen;
@@ -7726,14 +7727,14 @@ begin
 		end else if scan_keyword("rotated") then begin
 			scan_decimal;
 			if (x_size_req <> 0.0) or (y_size_req <> 0.0) then do_size_requests;
-			make_rotation(address_of(t2), Fix2X(cur_val) * 3.141592653589793 / 180.0);
+			make_rotation(addressof(t2), Fix2X(cur_val) * 3.141592653589793 / 180.0);
 			update_corners;
 			calc_min_and_max;
 			setPoint(corners[0], xmin, ymin);
 			setPoint(corners[1], xmin, ymax);
 			setPoint(corners[2], xmax, ymax);
 			setPoint(corners[3], xmax, ymin);
-			transform_concat(address_of(t), address_of(t2));
+			transform_concat(addressof(t), addressof(t2));
 		end else
 			check_keywords := false;
 	end;
@@ -7741,8 +7742,8 @@ begin
 	if (x_size_req <> 0.0) or (y_size_req <> 0.0) then do_size_requests;
 
 	calc_min_and_max;
-	make_translation(address_of(t2), -xmin * 72 / 72.27, -ymin * 72 / 72.27);
-	transform_concat(address_of(t), address_of(t2));
+	make_translation(addressof(t2), -xmin * 72 / 72.27, -ymin * 72 / 72.27);
+	transform_concat(addressof(t), addressof(t2));
 
 	if result = 0 then begin
 
@@ -7765,7 +7766,7 @@ begin
 		pic_transform5(tail) := X2Fix(txField(t));
 		pic_transform6(tail) := X2Fix(tyField(t));
 
-		memcpy(address_of(mem[tail + pic_node_size]), pic_path, strlen(pic_path));
+		memcpy(addressof(mem[tail + pic_node_size]), pic_path, strlen(pic_path));
 		libc_free(pic_path);
 
 	end else begin
@@ -7792,7 +7793,7 @@ begin
 	scan_and_pack_name;
 
 	{ convert it to "mode" and "encoding" values, and apply to the current input file }
-	i := get_encoding_mode_and_info(address_of(j));
+	i := get_encoding_mode_and_info(addressof(j));
 	if i = XeTeX_input_mode_auto then begin
 	  print_err("Encoding mode `auto' is not valid for \XeTeXinputencoding.");
       help2("You can't use `auto' encoding here, only for \XeTeXdefaultencoding. ")
@@ -7807,7 +7808,7 @@ begin
 	scan_and_pack_name;
 
 	{ convert it to "mode" and "encoding" values, and store them as defaults for new input files }
-	XeTeX_default_input_mode := get_encoding_mode_and_info(address_of(j));
+	XeTeX_default_input_mode := get_encoding_mode_and_info(addressof(j));
 	XeTeX_default_input_encoding := j;
 end
 
@@ -8648,7 +8649,7 @@ begin
 			str_room(1);
 			append_char(c);
 		end;
-		len := apply_mapping(font_mapping[f], address_of(str_pool[str_start_macro(str_ptr)]), cur_length);
+		len := apply_mapping(font_mapping[f], addressof(str_pool[str_start_macro(str_ptr)]), cur_length);
 		pool_ptr := str_start_macro(str_ptr); { flush the string, as we'll be using the mapped text instead }
 
 		i := 0;
@@ -8838,11 +8839,11 @@ begin
 	font_size[font_ptr] := actual_size;
 
 	if (native_font_type_flag = aat_font_flag) then begin
-		atsu_get_font_metrics(font_engine, address_of(ascent), address_of(descent),
-								address_of(x_ht), address_of(cap_ht), address_of(font_slant))
+		atsu_get_font_metrics(font_engine, addressof(ascent), addressof(descent),
+								addressof(x_ht), addressof(cap_ht), addressof(font_slant))
 	end else begin
-		ot_get_font_metrics(font_engine, address_of(ascent), address_of(descent),
-								address_of(x_ht), address_of(cap_ht), address_of(font_slant));
+		ot_get_font_metrics(font_engine, addressof(ascent), addressof(descent),
+								addressof(x_ht), addressof(cap_ht), addressof(font_slant));
 	end;
 
 	height_base[font_ptr] := ascent;
