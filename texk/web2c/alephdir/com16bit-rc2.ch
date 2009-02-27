@@ -2610,8 +2610,8 @@ if j=18 then
     print(so(str_pool[str_start(str_ptr)+d])); {N.B.: not |print_char|}
     end;
   print(")...");
-  if shellenabledp then begin
-    str_room(1); append_char(0); {Append a null byte to the expansion.}
+  if shellenabledp then
+    begin str_room(1); append_char(0); {Append a null byte to the expansion.}
     clobbered:=false;
     for d:=0 to cur_length-1 do {Convert to external character set.}
       begin

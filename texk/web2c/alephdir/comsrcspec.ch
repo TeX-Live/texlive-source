@@ -107,7 +107,7 @@ if shellenabledp then begin
     wlog('restricted ');
   end;
   wlog('\write18 enabled.')
-  end;
+end;
 if src_specials_p then begin
   wlog_cr;
   wlog(' Source specials enabled.')
