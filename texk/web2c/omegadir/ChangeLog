@@ -1,3 +1,17 @@
+2009-02-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Backport of changes for Aleph
+
+	* omegaextra.h (BUG_ADDRESS): make consistent.
+	* omcprt.ch (new): do not announce copyright on the terminal.
+	* omage.mk: include omcprt.ch in sources for omega.web.
+	* com16bit.ch (banner_k): just make equivalent to banner,
+	since Web2C announces itself.
+
+	* comsrcspec.ch, com16bit.ch:
+	Use runsystem() instead of system(), etc.  See tex.ch entry in
+	../ChangeLog
+
 2008-07-04  Karl Berry  <karl@tug.org>
 
 	* omega.mk (otps): use @OMEGA@ for otps_programs and otps.

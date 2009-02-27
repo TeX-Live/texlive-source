@@ -121,6 +121,7 @@ omega.web: omegadir/omocp.ch
 omega.web: omegadir/omfilter.ch
 omega.web: omegadir/omtrans.ch
 omega.web: omegadir/omdir.ch
+omega.web: omegadir/omcprt.ch
 omega.web: omegadir/omxml.ch
 	$(TIE) -m omega.web $(srcdir)/tex.web \
 	 $(srcdir)/omegadir/omnode.ch \
@@ -134,6 +135,7 @@ omega.web: omegadir/omxml.ch
 	 $(srcdir)/omegadir/omfilter.ch \
 	 $(srcdir)/omegadir/omtrans.ch \
 	 $(srcdir)/omegadir/omdir.ch \
+	 $(srcdir)/omegadir/omcprt.ch \
 	 $(srcdir)/omegadir/omxml.ch
 omega.ch: tie omega.web omegadir/omega.mk
 omega.ch: omegadir/comnode.ch

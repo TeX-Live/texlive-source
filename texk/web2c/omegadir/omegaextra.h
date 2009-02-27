@@ -28,7 +28,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 #define COPYRIGHT_HOLDER "J. Plaice and Y. Haralambous"
 #define AUTHOR NULL
 #define PROGRAM_HELP OMEGAHELP
-#define BUG_ADDRESS "tex-k@mail.tug.org"
+#define BUG_ADDRESS "tex-k@tug.org"
 #define DUMP_VAR TEXformatdefault
 #define DUMP_LENGTH_VAR formatdefaultlength
 #define DUMP_OPTION "fmt"

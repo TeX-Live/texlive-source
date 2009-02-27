@@ -7,8 +7,8 @@
 @!special_loc:pointer;
 @!special_token:halfword;
 
-@!parse_first_line_p:c_int_type; {parse the first line for options}
-@!file_line_error_style_p:c_int_type; {format messages as file:line:error}
+@!parse_first_line_p:cinttype; {parse the first line for options}
+@!file_line_error_style_p:cinttype; {format messages as file:line:error}
 @!halt_on_error_p:boolean; {stop at first error}
 
 @!src_specials_p : boolean;
@@ -35,8 +35,12 @@ else
 wterm(version_string);
 if format_ident>0 then slow_print(format_ident);
 print_ln;
-if shell_enabled_p then begin
-  wterm_ln(' \write18 enabled.')
+if shellenabledp then begin
+  wterm(' ');
+  if restrictedshell then begin
+    wterm('restricted ');
+  end;
+  wterm_ln('\write18 enabled.');
 end;
 if src_specials_p then begin
   wterm_ln(' Source specials enabled.')
@@ -96,8 +100,12 @@ then
 else
   wlog(banner);
 wlog(version_string);
-if shell_enabled_p then begin
+if shellenabledp then begin
   wlog_cr;
+  wlog(' ');
+  if restrictedshell then begin
+    wlog('restricted ');
+  end;
   wlog('\write18 enabled.')
 end;
 if src_specials_p then begin
