@@ -22,7 +22,7 @@ AC_HEADER_STDC
 AC_FUNC_CLOSEDIR_VOID
 AC_CHECK_HEADERS([assert.h float.h limits.h memory.h pwd.h stdlib.h \
                   string.h strings.h sys/param.h unistd.h])
-AC_CHECK_DECLS([strstr])
+AC_CHECK_DECLS([putenv, strstr])
 
 dnl Libtool supporting objects that may be required on ancient broken system.
 AC_CHECK_FUNCS(putenv,, LTLIBOBJS="$LTLIBOBJS putenv.lo")

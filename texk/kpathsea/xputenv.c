@@ -22,9 +22,9 @@
 #ifdef WIN32
 #include <stdlib.h>
 #else
-/* Avoid implicit declaration warning.  But since some systems do
-   declare it, don't use a prototype, for fear of conflicts.  */
-extern int putenv ();
+#if !HAVE_DECL_PUTENV
+extern int putenv P1H(char* entry);
+#endif
 #endif /* not WIN32 */
 
 /* These record the strings we've set and have to keep around.
