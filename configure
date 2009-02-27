@@ -5476,7 +5476,7 @@ $as_echo "libraries $x_libraries, headers $x_includes" >&6; }
 fi
 
 
-# $Id$
+# $Id: tetex.ac 11963 2009-01-25 01:57:18Z karl $
 # tetex.ac -- public domain.  Created by Thomas Esser.
 
 # e.g. for lcdf-typetools
@@ -5564,7 +5564,7 @@ export with_cxx_runtime_hack
 
 
 # withenable.ac - Written long ago by Thomas Esser and Sebastian Rahtz.
-# $Id: withenable.ac 9056 2008-06-26 10:30:34Z peter $
+# $Id: withenable.ac 11963 2009-01-25 01:57:18Z karl $
 # Public domain.
 
 # Check whether --enable-multiplatform was given.

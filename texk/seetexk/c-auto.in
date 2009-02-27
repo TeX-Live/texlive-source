@@ -19,6 +19,10 @@
 /* Define to 1 if you have the `bzero' function. */
 #undef HAVE_BZERO
 
+/* Define to 1 if you have the declaration of `putenv', and to 0 if you don't.
+   */
+#undef HAVE_DECL_PUTENV
+
 /* Define to 1 if you have the declaration of `strstr', and to 0 if you don't.
    */
 #undef HAVE_DECL_STRSTR
