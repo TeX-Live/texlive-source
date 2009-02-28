@@ -494,9 +494,9 @@ shell_escape = p
 
 % No spaces in this command list.
 shell_escape_commands = \
-bibtex,dvips,epstopdf,epspdf,etex,gnuplot,kpsewhich,\
+bibtex,convert,dvips,epstopdf,epspdf,etex,gnuplot,kpsewhich,\
 latex,luatex,lualatex,makeindex,mpost,\
-pdfcrop,pdflatex,pdfluatex,ps2pdf,pygmentize,\
+pdfcrop,pdflatex,pdfluatex,ps2pdf,pstopdf,pygmentize,\
 tex,texexec,texmfstart\
 
 % plain TeX should remain unenhanced.
