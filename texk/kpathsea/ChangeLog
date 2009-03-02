@@ -1,3 +1,8 @@
+2009-02-28  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (shell_escape_commands): add pstopdf and convert per
+	Dick Koch.
+
 2009-02-26  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (shell_escape): set to new possibility p.
