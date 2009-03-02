@@ -12,7 +12,7 @@ The latest version is available from ftp://ftp.tug.org/tex/texinfo.tex.}
 @end tex
 
 @set version 7.5.7
-@set month-year February 2009
+@set month-year March 2009
 
 @c Define new indices for commands in auxiliary files, filenames, and options.
 @defcodeindex cm
@@ -1082,8 +1082,16 @@ config file value @samp{output_comment}.
 @itemx -shell-restricted
 @opindex -shell-restricted
 Enable, or disable, or enable with restrictions the
-@samp{\write18@{@var{shell-command}@}} feature for external executing
+@code{\write18@{@var{shell-command}@}} feature for external executing
 shell commands.  @xref{Shell escapes}.
+
+@item -enable-write18
+@opindex -enable-write18
+@itemx -disable-write18
+@opindex -disable-write18
+Synonyms for @option{-shell-escape} and @option{-no-shell-escape}, for
+compatibility with MiK@TeX{}.  (MiK@TeX{} also accepts both pairs of
+options.)  @xref{Shell escapes}.
 
 @item -src-specials
 @itemx -src-specials=@var{string}

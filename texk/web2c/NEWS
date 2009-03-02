@@ -1,6 +1,8 @@
 This file records noteworthy changes.  (Public domain.)
 
 * --shell-restricted aka shell_escape=p for restricted shell access.
+  --enable-write18 and --disable-write18 accepted as synonyms for
+  --shell-escape and --no-shell-escape, for compatibility with MiKTeX.
 
 7.5.7 (for TeX Collection 2008, 7 July 2008)
 * Include Knuth's 2008 updates.

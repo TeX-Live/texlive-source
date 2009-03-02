@@ -62,7 +62,7 @@ Web2c
 
 This document describes how to install and use the programs in the Web2c
 implementation of the TeX system, especially for Unix systems.  It
-corresponds to Web2c version 7.5.7, released in February 2009.
+corresponds to Web2c version 7.5.7, released in March 2009.
 
 * Menu:
 
@@ -87,7 +87,7 @@ File: web2c.info,  Node: Introduction,  Next: Installation,  Prev: Top,  Up: Top
 **************
 
 This manual corresponds to version 7.5.7 of Web2c, released in
-February 2009.
+March 2009.
 
    "Web2c" is the name of a TeX implementation, originally for Unix,
 but now also running under DOS, Amiga, and other operating systems. By
@@ -1070,6 +1070,12 @@ suffice.)
      Enable, or disable, or enable with restrictions the
      `\write18{SHELL-COMMAND}' feature for external executing shell
      commands.  *Note Shell escapes::.
+
+`-enable-write18'
+`-disable-write18'
+     Synonyms for `-shell-escape' and `-no-shell-escape', for
+     compatibility with MiKTeX.  (MiKTeX also accepts both pairs of
+     options.)  *Note Shell escapes::.
 
 `-src-specials'
 `-src-specials=STRING'
@@ -3789,7 +3795,9 @@ Index
 * -charcode-format=TYPE:                 tftopl invocation.   (line  28)
 * -D compiler options:                   Compile-time options.
                                                               (line   6)
+* -disable-write18:                      tex invocation.      (line 135)
 * -dpi=REAL:                             dvitype invocation.  (line  24)
+* -enable-write18:                       tex invocation.      (line 134)
 * -enc:                                  tex invocation.      (line  95)
 * -file-line-error:                      Common options.      (line  25)
 * -file-line-error-style:                Common options.      (line  26)
@@ -4172,7 +4180,7 @@ Index
 * Free Software Foundation documentation system: Formats.     (line  47)
 * freedom of Web2c:                      Introduction.        (line  23)
 * ftp.math.utah.edu:                     bibtex invocation.   (line  54)
-* generating source specials:            tex invocation.      (line 135)
+* generating source specials:            tex invocation.      (line 141)
 * geometric designs:                     Metafont.            (line   6)
 * geometric font scaling:                Font file formats.   (line  22)
 * geometry for Metafont:                 Online Metafont graphics.
@@ -4760,78 +4768,78 @@ Index
 
 Tag Table:
 Node: Top3053
-Node: Introduction4052
-Node: Installation7233
-Node: configure options9397
-Node: Compile-time options11479
-Node: Additional targets12605
-Node: Triptrap13886
-Node: Runtime options15415
-Node: Commonalities17187
-Node: Option conventions17792
-Node: Common options19016
-Node: Path searching23528
-Node: Output file location24550
-Node: Three programs25590
-Node: Initial and virgin26349
-Node: Memory dumps27449
-Node: Creating memory dumps27916
-Node: Determining the memory dump to use29177
-Node: Hardware and memory dumps30801
-Node: Editor invocation33270
-Node: \input filenames34000
-Node: TeX36993
-Node: tex invocation38139
-Node: Initial TeX45264
-Node: Formats46753
-Node: Languages and hyphenation49692
-Node: MLTeX50122
-Node: \charsubdef51617
-Node: \tracingcharsubdef53943
-Node: TCX files54518
-Node: patgen invocation59942
-Node: Shell escapes60659
-Node: IPC and TeX64223
-Node: TeX extensions64793
-Node: Metafont65772
-Node: mf invocation67060
-Node: Initial Metafont70943
-Node: Modes72696
-Node: Online Metafont graphics74951
-Node: gftodvi invocation78224
-Node: mft invocation81046
-Node: MetaPost85101
-Node: mpost invocation86122
-Node: Initial MetaPost91307
-Node: makempx invocation93118
-Node: dvitomp invocation97123
-Node: dmp invocation97894
-Node: mpto invocation101915
-Node: newer invocation102897
-Node: BibTeX103834
-Node: bibtex invocation104195
-Node: Basic BibTeX style files106520
-Node: WEB107862
-Node: tangle invocation109145
-Node: weave invocation111268
-Node: pooltype invocation112676
-Node: DVI utilities113806
-Node: dvicopy invocation114750
-Node: dvitype invocation116048
-Node: dvitype output example118403
-Node: Font utilities121454
-Node: Font file formats122634
-Node: gftopk invocation125933
-Node: pktogf invocation127137
-Node: pktype invocation128316
-Node: gftype invocation131151
-Node: tftopl invocation135667
-Node: pltotf invocation140301
-Node: vftovp invocation141366
-Node: vptovf invocation143650
-Node: Font utilities available elsewhere144704
-Node: Legalisms147112
-Node: References149283
-Node: Index153668
+Node: Introduction4049
+Node: Installation7227
+Node: configure options9391
+Node: Compile-time options11473
+Node: Additional targets12599
+Node: Triptrap13880
+Node: Runtime options15409
+Node: Commonalities17181
+Node: Option conventions17786
+Node: Common options19010
+Node: Path searching23522
+Node: Output file location24544
+Node: Three programs25584
+Node: Initial and virgin26343
+Node: Memory dumps27443
+Node: Creating memory dumps27910
+Node: Determining the memory dump to use29171
+Node: Hardware and memory dumps30795
+Node: Editor invocation33264
+Node: \input filenames33994
+Node: TeX36987
+Node: tex invocation38133
+Node: Initial TeX45465
+Node: Formats46954
+Node: Languages and hyphenation49893
+Node: MLTeX50323
+Node: \charsubdef51818
+Node: \tracingcharsubdef54144
+Node: TCX files54719
+Node: patgen invocation60143
+Node: Shell escapes60860
+Node: IPC and TeX64424
+Node: TeX extensions64994
+Node: Metafont65973
+Node: mf invocation67261
+Node: Initial Metafont71144
+Node: Modes72897
+Node: Online Metafont graphics75152
+Node: gftodvi invocation78425
+Node: mft invocation81247
+Node: MetaPost85302
+Node: mpost invocation86323
+Node: Initial MetaPost91508
+Node: makempx invocation93319
+Node: dvitomp invocation97324
+Node: dmp invocation98095
+Node: mpto invocation102116
+Node: newer invocation103098
+Node: BibTeX104035
+Node: bibtex invocation104396
+Node: Basic BibTeX style files106721
+Node: WEB108063
+Node: tangle invocation109346
+Node: weave invocation111469
+Node: pooltype invocation112877
+Node: DVI utilities114007
+Node: dvicopy invocation114951
+Node: dvitype invocation116249
+Node: dvitype output example118604
+Node: Font utilities121655
+Node: Font file formats122835
+Node: gftopk invocation126134
+Node: pktogf invocation127338
+Node: pktype invocation128517
+Node: gftype invocation131352
+Node: tftopl invocation135868
+Node: pltotf invocation140502
+Node: vftovp invocation141567
+Node: vptovf invocation143851
+Node: Font utilities available elsewhere144905
+Node: Legalisms147313
+Node: References149484
+Node: Index153869
 
 End Tag Table

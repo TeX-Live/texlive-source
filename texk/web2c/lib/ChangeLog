@@ -1,3 +1,8 @@
+2009-03-02  Karl Berry  <karl@tug.org>
+
+	* texmfmp.c (long_options): make -enable-write18 and -disable-write18
+	synonyms for -shell-escape and -no-shell-escape.
+
 2009-02-26  Karl Berry  <karl@tug.org>
 
 	* texmfmp.c: Implementation of restricted shell escapes from Akira.
