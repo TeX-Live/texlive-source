@@ -1053,8 +1053,8 @@ specified to @code{configure} during installation of Web2c.
 @opindex -mktex=@var{filetype}
 @opindex -no-mktex=@var{filetype}
 Turn on or off the @samp{mktex} script associated with @var{filetype}.
-The only values that make sense for @var{filetype} are @samp{tex} and
-@samp{tfm}.
+For @TeX{} proper, @var{filetype} can only be @samp{tex} and
+@samp{tfm}, but for pdf@TeX{} and lua@TeX{}, it can also be @samp{pk}.
 
 @item -mltex
 @opindex -mltex

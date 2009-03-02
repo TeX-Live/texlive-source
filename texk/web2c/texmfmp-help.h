@@ -434,7 +434,7 @@ const_string PDFTEXHELP[] = {
     "-jobname=STRING         set the job name to STRING",
     "-kpathsea-debug=NUMBER  set path searching debugging flags according to",
     "                          the bits of NUMBER",
-    "[-no]-mktex=FMT         disable/enable mktexFMT generation (FMT=tex/tfm)",
+    "[-no]-mktex=FMT         disable/enable mktexFMT generation (FMT=tex/tfm/pk)",
     "-mltex                  enable MLTeX extensions such as \\charsubdef",
     "-output-comment=STRING  use STRING for DVI file comment instead of date",
     "                          (no effect for PDF)",

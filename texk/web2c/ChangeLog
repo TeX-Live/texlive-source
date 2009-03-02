@@ -1,3 +1,8 @@
+2009-03-02  Karl Berry  <karl@tug.org>
+
+	* texmfmp-help.h (PDFTEXHELP): --no-mktex can now apply to pk
+	files too.
+
 2009-02-26  Karl Berry  <karl@tug.org>
 
 	* texmfmp-help.h: mention --shell-restricted.
