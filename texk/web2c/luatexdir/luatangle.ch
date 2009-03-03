@@ -151,8 +151,8 @@ certain file will appear on the user's terminal.
 @x [24] open input files
 begin reset(web_file); reset(change_file);
 @y
-begin reset(web_file, web_name);
-if chg_name then reset(change_file, chg_name);
+begin web_file := kpse_open_file(web_name, kpse_web_format);
+if chg_name then change_file := kpse_open_file(chg_name, kpse_web_format);
 @z
 
 @x [26] Open output files (except for the pool file).
