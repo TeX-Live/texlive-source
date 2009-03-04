@@ -23,7 +23,9 @@
 
 /* Be sure we have `isascii'.  */
 #ifdef WIN32
+#ifndef __MINGW32__
 #include <oldnames.h>
+#endif
 #else
 #ifndef isascii
 #define isascii(c) 1

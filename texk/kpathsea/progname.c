@@ -28,6 +28,10 @@
 #include <kpathsea/c-pathmx.h>
 #endif
 
+#ifdef __MINGW32__
+#include <kpathsea/mingw32.h>
+#endif
+
 #if defined(__i386_pc_gnu__)
 #ifndef _S_ISUID
 #define _S_ISUID    04000  /* Set user ID on execution.  */
@@ -351,8 +355,8 @@ remove_dots P1C(string, dir)
 /* Return directory ARGV0 comes from.  Check PATH if ARGV0 is not
    absolute.  */
 
-static string
-selfdir P1C(const_string, argv0)
+string
+kpse_selfdir P1C(const_string, argv0)
 {
   string ret = NULL;
   string self = NULL;
@@ -483,8 +487,8 @@ kpse_set_program_name P2C(const_string, argv0, const_string, progname)
     }
   }
   /* Win95 always gives the short filename for argv0, not the long one.
-     There is only this way to catch it. It makes all the selfdir stuff
-     useless for win32. */
+     There is only this way to catch it. It makes all the kpse_selfdir
+     stuff useless for win32. */
   {
     char short_path[PATH_MAX], path[PATH_MAX], *fp;
       
@@ -565,10 +569,10 @@ kpse_set_program_name P2C(const_string, argv0, const_string, progname)
 #endif
 
   /* We need to find SELFAUTOLOC *before* removing the ".exe" suffix from
-     the program_name, otherwise the PATH search inside selfdir will fail,
+     the program_name, otherwise the PATH search inside kpse_selfdir will fail,
      since `prog' doesn't exists as a file, there's `prog.exe' instead.  */
 #ifndef WIN32
-  sdir = selfdir (program_invocation_name);
+  sdir = kpse_selfdir (program_invocation_name);
 #endif
   /* SELFAUTODIR is actually the parent of the invocation directory,
      and SELFAUTOPARENT the grandparent.  This is how teTeX did it.  */

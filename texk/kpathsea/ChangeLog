@@ -1,3 +1,15 @@
+2009-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Part 1 of patches from Taco Hoekwater for __MINGW32__
+	* mingw32.h: new.
+	* c-ctype.h, c-stat.h: do not #include <oldnames.h>.
+	* config.h: #include <kpathsea/mingw32.h>, not <win32lib.h>
+	* progname.c: do #include <kpathsea/mingw32.h>.
+	* xopendir.c: do build xopendir for __MINGW32__.
+
+	* progname.c, progname.h: changed static function selfdir()
+	into exported function kpse_selfdir() for use in luatex.
+
 2009-02-28  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (shell_escape_commands): add pstopdf and convert per

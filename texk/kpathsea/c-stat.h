@@ -22,9 +22,9 @@
 #include <kpathsea/systypes.h>
 #include <sys/stat.h>
 
-#ifdef WIN32
+#if defined (WIN32) && !defined (__MINGW32__)
 #include <oldnames.h>
-#endif /* WIN32 */
+#endif
 
 /* POSIX predicates for testing file attributes.  */
 
