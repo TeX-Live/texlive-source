@@ -1,3 +1,10 @@
+2009-03-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Part 2 of patches from Taco Hoekwater for __MINGW32__
+	* mingw32.c: new file.
+	* mingw32.h (look_for_cmd): use only two argumants.
+	* tex-make.c (maketex): arg4 of ReadFile is DOWRD, not int.
+
 2009-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Part 1 of patches from Taco Hoekwater for __MINGW32__

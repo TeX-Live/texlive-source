@@ -60,6 +60,6 @@ typedef struct volume_info_data {
 void init_user_info (void);
 BOOL win32_get_long_filename (char *, char *, int);
 void set_home_warning (void);
-BOOL look_for_cmd(const char *, char **, char **);
+BOOL look_for_cmd(const char *, char **);
 
 #endif

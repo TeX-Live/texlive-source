@@ -194,7 +194,11 @@ maketex P2C(kpse_file_format_type, format, string*, args)
     string new_cmd = NULL, app_name = NULL;
 
     char buf[1024+1];
+#ifdef __MINGW32__
+    DWORD num;
+#else
     int num;
+#endif
     extern char *quote_args(char **argv);
 
     if (look_for_cmd(args[0], &app_name) == FALSE) {
