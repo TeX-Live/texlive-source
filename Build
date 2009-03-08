@@ -1,6 +1,6 @@
 #!/bin/sh
 # $Id$
-# Originally written many years ago by Sebastian Rahtz.  Public domain.
+# Public domain.  Originally written many years ago by Sebastian Rahtz.
 # To build again from same sources, try Build --no-clean.
 # To build (mostly) without optimization, try Build --debug.
 # 
@@ -39,7 +39,7 @@ else
 fi
 
 : ${TL_BUILD_ENV=}
-if test "x$1" = x--debug; then
+if test "x$1" = x--debug || test "x$1" = x-g; then
   TL_BUILD_ENV="CFLAGS=-g CXXFLAGS=-g"
   shift
 fi
@@ -50,6 +50,9 @@ cd $TL_WORKDIR || exit 1
 
 # allow override of configure location, just in case.
 : ${TL_CONFIGURE=../configure}
+
+# default to static linking.
+: ${TL_CONF_SHARED=--disable-shared}
 
 # longinteger and off_t declarations are still inconsistent, do not
 # enable this unless you are testing.
@@ -77,14 +80,15 @@ cd $TL_WORKDIR || exit 1
 # build, so omit the warning about it.
 : ${KPATHSEA_WARNING=0}
 
-# set -vx
-
 # configure && make.  Keep the tee outside, so that we can detect
 # failure at either step.
 {
+  set +vx  # show the configure and make commands in the log.
+
   eval $TL_BUILD_ENV time $TL_CONFIGURE \
         --prefix=$TL_INSTALL_DEST \
         --datadir=$TL_INSTALL_DEST \
+        $TL_CONF_SHARED \
         $TL_CONF_LARGEFILE \
         $TL_CONF_XDVI_TOOLKIT \
         $TL_CONF_THREADS \

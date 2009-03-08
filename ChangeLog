@@ -1,3 +1,9 @@
+2009-03-08  Karl Berry  <karl@tug.org>
+
+	* Build (TL_CONF_SHARED): new variable, --disable-shared by default.
+	(-g): alias for --debug.
+	use set -vx to see configure && make commands in the log.	
+
 2009-01-24  Karl Berry  <karl@tug.org>
 
 	* utils/texinfo: remove, we will no longer include Texinfo in TeX Live
