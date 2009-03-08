@@ -496,7 +496,7 @@ shell_escape = p
 shell_escape_commands = \
 bibtex,convert,dvips,epstopdf,epspdf,etex,gnuplot,kpsewhich,\
 latex,luatex,lualatex,makeindex,mpost,\
-pdfcrop,pdflatex,pdfluatex,ps2pdf,pstopdf,pygmentize,\
+pdfcrop,pdflatex,pdfluatex,ps2pdf,ps4pdf,pstopdf,pygmentize,\
 tex,texexec,texmfstart\
 
 % plain TeX should remain unenhanced.
