@@ -1,3 +1,0 @@
-
-SUBDIRS = RangeCoder LZ LZMA LZMA_C
-
