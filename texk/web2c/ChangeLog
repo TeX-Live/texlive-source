@@ -1,3 +1,7 @@
+2009-03-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp-help.h [eTeX,TeX]: Document -synctex switch.
+
 2009-03-02  Karl Berry  <karl@tug.org>
 
 	* texmfmp-help.h (PDFTEXHELP): --no-mktex can now apply to pk
