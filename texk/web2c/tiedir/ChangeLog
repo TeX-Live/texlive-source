@@ -1,0 +1,6 @@
+2009-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tie-w2c.ch, tie.w: remove trailing whitespace.
+
+	* tie-w2c.ch: use kpse_open_file to locate input files,
+	in order to respect WEBINPUTS (ported from tangle.ch).

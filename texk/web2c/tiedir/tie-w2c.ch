@@ -33,6 +33,7 @@ typedef char* string;
 @y
 #include "cpascal.h"
 #include <stdio.h>
+#include <kpathsea/kpathsea.h>
 /* Also redefine usage to avoid clash with function from lib. */
 #define usage tieusage
 @z
@@ -52,10 +53,22 @@ void err_loc P1C(int, i) /* prints location of error */
 @z
 
 @x
-boolean lines_dont_match(i,j) 
+	  fopen(input_organization[0]->name_of_file,"r");
+@y
+	  kpse_open_file(input_organization[0]->name_of_file, kpse_web_format);
+@z
+
+@x
+	fopen(input_organization[i]->name_of_file,"r");
+@y
+	kpse_open_file(input_organization[i]->name_of_file, kpse_web_format);
+@z
+
+@x
+boolean lines_dont_match(i,j)
 	file_index i,j;
 @y
-boolean lines_dont_match P2C(file_index, i, file_index, j) 
+boolean lines_dont_match P2C(file_index, i, file_index, j)
 @z
 
 @x
@@ -103,6 +116,7 @@ int main P2C(int, argc, string *, argv)
   print_ln(banner); /* print a ``banner line'' */
   print_ln(copyright); /* include the copyright notice */
 @y
+  kpse_set_program_name(argv[0], "tie");
   print(banner); /* print a ``banner line'' */
   print_ln(versionstring);  /* Web2C version */
   print_ln(copyright); /* include the copyright notice */
