@@ -122,8 +122,14 @@ install-exec:
 	  $(INSTALL_SCRIPT) $(srcdir)/linked_scripts/`basename $$s` $(prefix)/$$s; \
 	  ln -s $$d/$$s $$target; \
 	done
+#
+# one -sys variant we don't want to program.
 	rm -f $(scriptdir)/getnonfreefonts-sys
 	ln -s getnonfreefonts $(scriptdir)/getnonfreefonts-sys
+#
+# man dir link for those mans which can use it.
+	rm -f $(scriptdir)/man
+	ln -s ../../texmf/doc/man $(scriptdir)/man
 
 kpse_include ../make/clean.mk
 

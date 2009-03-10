@@ -1,3 +1,9 @@
+2009-03-10  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (install-exec): also make a link to our man
+	directory, ../../texmf/doc/man, for the sake of those man programs
+	which can use it.  Suggested by Dick Koch.
+
 2009-02-26  Karl Berry  <karl@tug.org>
 
 	* Makefile.in (LINKED_SCRIPTS): add texloganalyser.
