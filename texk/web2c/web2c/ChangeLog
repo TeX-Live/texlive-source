@@ -1,3 +1,7 @@
+2009-03-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* splitup.c: avoid using program_invocation_name (from Taco).
+
 2009-02-26  Karl Berry  <karl@tug.org>
 
 	* texmf.defines (runsystem): new fn.
