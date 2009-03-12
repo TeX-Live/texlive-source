@@ -83,7 +83,7 @@ cd $TL_WORKDIR || exit 1
 # configure && make.  Keep the tee outside, so that we can detect
 # failure at either step.
 {
-  set +vx  # show the configure and make commands in the log.
+  set -vx  # show the configure and make commands in the log.
 
   eval $TL_BUILD_ENV time $TL_CONFIGURE \
         --prefix=$TL_INSTALL_DEST \
@@ -109,9 +109,9 @@ bindir=$TL_INSTALL_DEST/bin
 count=`find $bindir \! -type d -print | wc -l`
 if test "$count" -gt 0; then
   echo
-  echo "$0: $count binaries in $bindir."
+  echo "$0: $count executables in $bindir."
 else
-  echo "$0: Build failed, no binaries under $bindir."
+  echo "$0: Build failed, no executables under $bindir."
   exit 1
 fi | tee -a build.log
 
