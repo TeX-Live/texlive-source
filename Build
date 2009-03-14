@@ -40,11 +40,10 @@ fi
 
 : ${TL_BUILD_ENV=}
 if test "x$1" = x--debug || test "x$1" = x-g; then
-  TL_BUILD_ENV="CFLAGS=-g CXXFLAGS=-g"
+  TL_BUILD_ENV="CFLAGS=-g CXXFLAGS=-g OBJCFLAGS=-g $TL_BUILD_ENV"
   shift
 fi
 
-unset CDPATH
 test -d $TL_WORKDIR || mkdir $TL_WORKDIR
 cd $TL_WORKDIR || exit 1
 
