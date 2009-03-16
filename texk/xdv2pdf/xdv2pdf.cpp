@@ -934,7 +934,7 @@ extern "C" {
     UInt8* kpse_find_file(const UInt8* name, int type, int must_exist);
     UInt8* uppercasify(const UInt8* s);
 };
-extern	unsigned kpathsea_debug;
+//extern	unsigned kpathsea_debug;
 
 #include "xdv_kpse_formats.h"
 
@@ -2270,7 +2270,10 @@ xdv2pdf(int argc, char** argv)
             	break;
             
             case 'd':
+            	{
+            	unsigned int kpathsea_debug;
             	kpathsea_debug |= atoi(optarg);
+            	}
             	break;
             
             case 'v':
