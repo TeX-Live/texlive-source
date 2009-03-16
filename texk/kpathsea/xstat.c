@@ -22,7 +22,7 @@
 
 
 struct stat
-xstat P1C(const_string, path)
+xstat (const_string path)
 {
     struct stat s;
     
@@ -43,13 +43,12 @@ xstat P1C(const_string, path)
 // extern int lstat ();
 */
 struct stat
-xlstat P1C(const_string, path)
+xlstat (const_string path)
 {
     struct stat s;
   
     if (lstat(path, &s) != 0)
-        FATAL_PERROR(path);
-  
+        FATAL_PERROR(path);  
     return s;
 }
 #endif

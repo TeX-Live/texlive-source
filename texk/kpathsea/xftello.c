@@ -20,7 +20,7 @@
 
 
 off_t
-xftello P2C(FILE *, f,  string, filename)
+xftello (FILE *f,  string filename)
 {
     off_t where = ftello (f);
     

@@ -1,6 +1,11 @@
 ChangeLog.TL: Changes for dvipdfmx (teTeX / TeX live)
 =====================================================
 
+2009-03-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+	* src/cff.c, src/dpxutil.c, src/mem.c, src/pdfencoding.c,
+	src/pdfencrypt.c: Must include Kpathsea headers (via `system.h')
+	before including `mem.h'.
+
 2008-04-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.in: respect library dependencies.

@@ -22,14 +22,10 @@
 #include <kpathsea/c-proto.h>
 #include <kpathsea/types.h>
 
-extern KPSEDLL string program_invocation_name;
-extern KPSEDLL string program_invocation_short_name;
-extern KPSEDLL string kpse_program_name;
-
 /* Return directory ARGV0 comes from.  Check PATH if ARGV0 is not
    absolute.  */
 
-extern KPSEDLL string selfdir P1H(const_string argv0);
+extern KPSEDLL string kpathsea_selfdir (kpathsea kpse, const_string argv0);
 
 /* Set the first two variables above (if they're not predefined) to a copy
    of ARGV0 and everything in ARGV0 after the last directory separator,
@@ -37,14 +33,21 @@ extern KPSEDLL string selfdir P1H(const_string argv0);
    or the value of program_invocation_short_name if PROGNAME is NULL.
    This function also determines the AUTO* variables. */
 
-extern KPSEDLL void kpse_set_program_name P2H(const_string argv0,
-                                      const_string progname);
+extern KPSEDLL void kpathsea_set_program_name (kpathsea kpse,
+                            const_string argv0, const_string progname);
 
-/* See also `kpse_reset_program_name' which is defined in tex-file.c
+/* See also `kpathsea_reset_program_name' which is defined in tex-file.c
 
-   That function is to be used to set kpse_program_name to a different
+   That function is to be used to set kpse->program_name to a different
    value.  It clears the path searching information, to ensure that
    the search paths are appropriate to the new name. */
+
+
+#if defined (KPSE_COMPAT_API)
+extern KPSEDLL string kpse_selfdir (const_string argv0);
+
+extern KPSEDLL void kpse_set_program_name (const_string argv0,
+                                      const_string progname);
 
 /* DEPRECATED
    Set first two variables above (if they're not predefined) to a copy of
@@ -52,6 +55,8 @@ extern KPSEDLL void kpse_set_program_name P2H(const_string argv0,
    respectively.  kpse_program_name is _always_ set to a copy of everything
    in ARGV0 after the last directory separator. */
 
-extern KPSEDLL void kpse_set_progname P1H(const_string argv0);
+extern KPSEDLL void kpse_set_progname (const_string argv0);
+
+#endif
 
 #endif /* not KPATHSEA_PROGNAME_H */

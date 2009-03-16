@@ -23,7 +23,7 @@
    `concatn', which takes a variable number of arguments.  */
 
 string
-concat P2C(const_string, s1,  const_string, s2)
+concat (const_string s1,  const_string s2)
 {
   unsigned s1len = strlen(s1);
   unsigned s2len = strlen(s2);

@@ -20,7 +20,7 @@
 
 
 void *
-xmalloc P1C(unsigned, size)
+xmalloc (unsigned size)
 {
     void *new_mem = (void *)malloc(size ? size : 1);
 

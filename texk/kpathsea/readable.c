@@ -69,7 +69,7 @@ READABLE(const_string fn, unsigned int st)
    Generic const return warning.  See extend-fname.c.  */
 
 string
-kpse_readable_file P1C(const_string, name)
+kpathsea_readable_file (kpathsea kpse, const_string name)
 {
   string ret;
 
@@ -79,12 +79,12 @@ kpse_readable_file P1C(const_string, name)
   struct stat st;
 #endif
 
-  kpse_normalize_path((string)name);
+  kpathsea_normalize_path(kpse, (string)name);
   if (READABLE (name, st)) {
       ret = (string) name;
 #ifdef ENAMETOOLONG
   } else if (errno == ENAMETOOLONG) {
-      ret = kpse_truncate_filename (name);
+      ret = kpathsea_truncate_filename (kpse, name);
 
       /* Perhaps some other error will occur with the truncated name, so
          let's call access again.  */
@@ -95,7 +95,7 @@ kpse_readable_file P1C(const_string, name)
 #endif /* ENAMETOOLONG */
   } else { /* Some other error.  */
       if (errno == EACCES) { /* Maybe warn them if permissions are bad.  */
-          if (!kpse_tex_hush ("readable")) {
+          if (!kpathsea_tex_hush (kpse, "readable")) {
               perror (name);
           }
       }
@@ -103,3 +103,12 @@ kpse_readable_file P1C(const_string, name)
   }
   return ret;
 }
+
+#if defined (KPSE_COMPAT_API)
+string
+kpse_readable_file (const_string name) 
+{
+    return kpathsea_readable_file (kpse_def, name);
+}
+#endif
+

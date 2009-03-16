@@ -23,6 +23,10 @@
 
 /* Return true if WHAT is included in the TEX_HUSH environment
    variable/config value.  */
-extern KPSEDLL boolean kpse_tex_hush P1H(const_string what);
+extern KPSEDLL boolean kpathsea_tex_hush (kpathsea kpse, const_string what);
+
+#if defined (KPSE_COMPAT_API)
+extern KPSEDLL boolean kpse_tex_hush (const_string what);
+#endif
 
 #endif /* not KPATHSEA_TEX_HUSH_H */

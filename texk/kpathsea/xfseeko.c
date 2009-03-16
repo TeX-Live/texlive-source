@@ -18,9 +18,9 @@
 #include <kpathsea/config.h>
 
 void
-xfseeko P4C(FILE *, f,  off_t, offset,  int, wherefrom,  string, filename)
+xfseeko (FILE *f,  off_t offset,  int wherefrom,  string filename)
 {
   if (fseeko (f, offset, wherefrom) < 0) {
-    FATAL_PERROR (filename);
+        FATAL_PERROR(filename);
   }
 }

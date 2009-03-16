@@ -26,6 +26,10 @@
    getenv ('USERPROFILE") on Windows, or with NAME's home directory,
    respectively.  Excise trailing slashes.  FILENAME may not be null.  */
 
-extern string kpse_tilde_expand P1H(const_string filename);
+extern string kpathsea_tilde_expand (kpathsea kpse, const_string filename);
+
+#if defined (KPSE_COMPAT_API)
+extern string kpse_tilde_expand (const_string filename);
+#endif
 
 #endif /* not KPATHSEA_TILDE_H */

@@ -20,7 +20,7 @@
 
 
 unsigned long
-xftell P2C(FILE *, f,  string, filename)
+xftell (FILE *f,  string filename)
 {
     long where = ftello (f);
     

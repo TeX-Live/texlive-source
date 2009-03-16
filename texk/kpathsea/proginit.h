@@ -28,7 +28,13 @@
    etc., etc.  See the source.  */
 
 extern KPSEDLL void
-kpse_init_prog P4H(const_string prefix,  unsigned dpi,  const_string mode,
-                   const_string fallback);
+kpathsea_init_prog (kpathsea kpse, const_string prefix, unsigned dpi,  
+                    const_string mode, const_string fallback);
+
+#if defined (KPSE_COMPAT_API)
+extern KPSEDLL void
+kpse_init_prog (const_string prefix,  unsigned dpi,  const_string mode,
+                const_string fallback);
+#endif
 
 #endif /* not KPATHSEA_PROGINIT_H */

@@ -22,7 +22,7 @@
 
 #if !defined(WIN32) || defined(__MINGW32__)
 DIR *
-xopendir P1C(string, dirname)
+xopendir (string dirname)
 {
     DIR *d = opendir(dirname);
 
@@ -34,7 +34,7 @@ xopendir P1C(string, dirname)
 #endif /* not WIN32 */
 
 void
-xclosedir P1C(DIR *, d)
+xclosedir (DIR *d)
 {
 #ifdef CLOSEDIR_VOID
     closedir (d);

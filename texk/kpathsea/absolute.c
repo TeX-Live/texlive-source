@@ -25,8 +25,9 @@
    to usefully generalize.  */
 
 boolean
-kpse_absolute_p P2C(const_string, filename,  boolean, relative_ok)
+kpathsea_absolute_p (kpathsea kpse, const_string filename,  boolean relative_ok)
 {
+    (void)kpse; /* currenty not used */
 #ifdef VMS
 #include <string.h>
   return strcspn (filename, "]>:") != strlen (filename);
@@ -58,6 +59,14 @@ kpse_absolute_p P2C(const_string, filename,  boolean, relative_ok)
 #endif /* not VMS */
 }
 
+#if defined (KPSE_COMPAT_API)
+boolean 
+kpse_absolute_p (const_string filename, boolean relative_ok)
+{
+    return kpathsea_absolute_p (kpse_def, filename, relative_ok);
+}
+#endif
+
 #ifdef TEST
 int main()
 {
@@ -69,3 +78,9 @@ int main()
   }
 }
 #endif /* TEST */
+
+/*
+Local variables:
+standalone-compile-command: "gcc -g -I. -I.. -DTEST absolute.c kpathsea.a"
+End:
+*/

@@ -21,7 +21,7 @@
 
 
 string
-uppercasify P1C(const_string, s)
+uppercasify (const_string s)
 {
   string target;
   string ret = xstrdup (s);

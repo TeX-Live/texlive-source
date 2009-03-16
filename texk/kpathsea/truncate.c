@@ -27,13 +27,15 @@
    too bad this is necessary.  See comments in readable.c for why.  */
 
 string
-kpse_truncate_filename P1C(const_string, name)
+kpathsea_truncate_filename (kpathsea kpse, const_string name)
 {
   unsigned c_len = 0;        /* Length of current component.  */
   unsigned ret_len = 0;      /* Length of constructed result.  */
   
   /* Allocate enough space.  */
   string ret = (string) xmalloc (strlen (name) + 1);
+  
+  (void)kpse; /* currenty not used */
 
   for (; *name; name++)
     {
@@ -54,3 +56,11 @@ kpse_truncate_filename P1C(const_string, name)
 
   return ret;
 }
+
+#if defined (KPSE_COMPAT_API)
+string
+kpse_truncate_filename (const_string name)
+{
+    return kpathsea_truncate_filename (kpse_def, name);
+}
+#endif

@@ -23,7 +23,7 @@
 /* Add the new string STR to the end of the list L.  */
 
 void
-str_llist_add P2C(str_llist_type *, l,  string, str)
+str_llist_add (str_llist_type *l,  string str)
 {
   str_llist_elt_type *e;
   str_llist_elt_type *new_elt = XTALLOC1 (str_llist_elt_type);
@@ -49,7 +49,7 @@ str_llist_add P2C(str_llist_type *, l,  string, str)
    is thus a waste.  */
 
 void
-str_llist_float P2C(str_llist_type *, l,  str_llist_elt_type *, mover)
+str_llist_float (str_llist_type *l,  str_llist_elt_type *mover)
 {
   str_llist_elt_type *last_moved, *unmoved;
   

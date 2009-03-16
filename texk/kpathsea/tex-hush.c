@@ -23,16 +23,17 @@
 #include <kpathsea/variable.h>
 
 boolean
-kpse_tex_hush P1C(const_string, what)
+kpathsea_tex_hush (kpathsea kpse, const_string what)
 {
   string h;
-  string hush = kpse_var_value ("TEX_HUSH");
+  string hush = kpathsea_var_value (kpse, "TEX_HUSH");
   if (hush) {
     if (STREQ (hush, "all"))
         return true;
     if (STREQ (hush, "none"))
         return false;
-    for (h = kpse_path_element (hush); h; h = kpse_path_element (NULL)) {
+    for (h = kpathsea_path_element (kpse, hush); h; 
+         h = kpathsea_path_element (kpse, NULL)) {
       /* Don't do anything special with empty elements.  */
       if (STREQ (h, what))
         return true;
@@ -41,3 +42,11 @@ kpse_tex_hush P1C(const_string, what)
   
   return false;
 }
+
+#if defined (KPSE_COMPAT_API)
+boolean
+kpse_tex_hush (const_string what)
+{
+    return kpathsea_tex_hush (kpse_def, what);
+}
+#endif

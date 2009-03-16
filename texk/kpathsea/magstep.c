@@ -25,7 +25,7 @@
    magstep.h) for resolution BDPI.  From Tom Rokicki's dvips.  */
 
 static int
-magstep P2C(int, n,  int, bdpi)
+magstep (int n,  int bdpi)
 {
    double t;
    int step;
@@ -76,12 +76,13 @@ magstep P2C(int, n,  int, bdpi)
 #define MAGSTEP_MAX 40
 
 unsigned
-kpse_magstep_fix P3C(unsigned, dpi,  unsigned, bdpi,  int *, m_ret)
+kpathsea_magstep_fix (kpathsea kpse, unsigned dpi,  unsigned bdpi,  int *m_ret)
 {
   int m;
   int mdpi = -1;
   unsigned real_dpi = 0;
   int sign = dpi < bdpi ? -1 : 1; /* negative or positive magsteps? */
+  (void)kpse; /* currenty not used */
   
   for (m = 0; !real_dpi && m < MAGSTEP_MAX; m++) /* don't go forever */
     {
@@ -100,3 +101,12 @@ kpse_magstep_fix P3C(unsigned, dpi,  unsigned, bdpi,  int *, m_ret)
   /* Always return the true dpi found.  */
   return real_dpi ? real_dpi : dpi;
 }
+
+#if defined (KPSE_COMPAT_API)
+unsigned
+kpse_magstep_fix (unsigned dpi,  unsigned bdpi,  int *m_ret)
+{
+    return kpathsea_magstep_fix(kpse_def, dpi, bdpi, m_ret);
+}
+#endif
+

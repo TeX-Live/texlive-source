@@ -24,6 +24,10 @@
 /* Truncate any component in NAME longer than the system NAME_MAX, and
    return the result as a malloced string.  If none, return a copy of
    NAME.  */
-extern string kpse_truncate_filename P1H(const_string name);
+extern string kpathsea_truncate_filename (kpathsea kpse, const_string name);
+
+#if defined (KPSE_COMPAT_API)
+extern string kpse_truncate_filename (const_string name);
+#endif
 
 #endif /* not KPATHSEA_TRUNCATE_H */

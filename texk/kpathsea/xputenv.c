@@ -18,21 +18,15 @@
 
 
 #include <kpathsea/config.h>
+#include <kpathsea/types.h>
 
 #ifdef WIN32
 #include <stdlib.h>
 #else
 #if !HAVE_DECL_PUTENV
-extern int putenv P1H(char* entry);
+extern int putenv (char* entry);
 #endif
 #endif /* not WIN32 */
-
-/* These record the strings we've set and have to keep around.
- * This function can be called many times during a run, and this
- * allows us to reclaim memory we allocated.
- */
-static char **saved_env;
-static int    saved_count;
 
 /*
  * We have different arguments from the "standard" function.  A separate
@@ -44,7 +38,7 @@ static int    saved_count;
  * which include making copies of the passed string, and more.
  */
 void
-xputenv(const char *var, const char *value)
+kpathsea_xputenv(kpathsea kpse, const char *var, const char *value)
 {
     char  *cur_item;
     char  *old_item;
@@ -60,8 +54,8 @@ xputenv(const char *var, const char *value)
     var_lim = strlen(var) + 1;
     
     /* Have we stored something for this value already?  */
-    for (cur_loc = 0; cur_loc != saved_count; ++cur_loc) {
-        if (strncmp(saved_env[cur_loc], cur_item, var_lim) == 0) {
+    for (cur_loc = 0; cur_loc != kpse->saved_count; ++cur_loc) {
+        if (strncmp(kpse->saved_env[cur_loc], cur_item, var_lim) == 0) {
             /* Get the old value.  We need this is case another part
              * of the program didn't use us to change the environment.
              */
@@ -77,7 +71,7 @@ xputenv(const char *var, const char *value)
     } else {
         /* We set a different value. */
         if (putenv(cur_item) < 0)
-            FATAL1("putenv(%s)", cur_item);
+            LIB_FATAL1("putenv(%s)", cur_item);
         /* Get the new string. */
         new_item = getenv(var);
         if (new_item != cur_item+var_lim) {
@@ -90,15 +84,15 @@ xputenv(const char *var, const char *value)
     /* If we get here, it means getenv() returned a reference to cur_item.
      * So we save cur_item, and free the old string we also owned.
      */
-    if (cur_loc == saved_count) {
+    if (cur_loc == kpse->saved_count) {
         /* No old string. */
-        saved_count++;
-        saved_env = XRETALLOC(saved_env, saved_count, char *);
+        kpse->saved_count++;
+        kpse->saved_env = XRETALLOC(kpse->saved_env, kpse->saved_count, char *);
     } else {
         /* We owned the old string. */
-        free(saved_env[cur_loc]);
+        free(kpse->saved_env[cur_loc]);
     }
-    saved_env[cur_loc] = cur_item;
+    kpse->saved_env[cur_loc] = cur_item;
 
     return;
 }
@@ -109,10 +103,24 @@ xputenv(const char *var, const char *value)
    environment value.  */
 
 void
-xputenv_int P2C(const_string, var_name,  int, num)
+kpathsea_xputenv_int (kpathsea kpse, const_string var_name,  int num)
 {
   char str[MAX_INT_LENGTH];
   sprintf (str, "%d", num);
   
-  xputenv (var_name, str);
+  kpathsea_xputenv (kpse, var_name, str);
 }
+
+#if defined (KPSE_COMPAT_API)
+void
+xputenv(const char *var, const char *value)
+{
+    kpathsea_xputenv(kpse_def, var, value);
+}
+
+void
+xputenv_int (const_string var_name,  int num)
+{
+    kpathsea_xputenv_int(kpse_def, var_name, num);
+}
+#endif

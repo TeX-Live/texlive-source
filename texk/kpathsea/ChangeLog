@@ -1,3 +1,135 @@
+2009-03-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* db.c, debug.c, debug.h, dir.c, elt-dirs.c, hash.c, pathsearch.c,
+	progname.c, tex-file.c, variable.c:
+	Rename KPSE_DEBUG_P into KPATHSEA_DEBUG_P (using kpse->debug)
+	Define KPSE_DEBUG_SET and KPSE_DEBUG_P (using kpathsea_debug)
+	compatible with old API.
+
+2009-03-12  Taco Hoekwater  <taco@luatex.org>
+
+	New Kpathsea API: Make libkpathsea reenterable.
+
+	* src/texk/kpathsea/extend-fname.c, src/texk/kpathsea/file-p.c,
+	src/texk/kpathsea/xftello.c, src/texk/kpathsea/make-suffix.c,
+	src/texk/kpathsea/xcalloc.c, src/texk/kpathsea/line.c,
+	src/texk/kpathsea/readlink.c, src/texk/kpathsea/concat3.c,
+	src/texk/kpathsea/line.h, src/texk/kpathsea/str-llist.c,
+	src/texk/kpathsea/kpsestat.c, src/texk/kpathsea/xmalloc.c,
+	src/texk/kpathsea/str-llist.h, src/texk/kpathsea/xbasename.c,
+	src/texk/kpathsea/xfseeko.c, src/texk/kpathsea/xgetcwd.c,
+	src/texk/kpathsea/concat.c, src/texk/kpathsea/xstat.h,
+	src/texk/kpathsea/atou.c, src/texk/kpathsea/rm-suffix.c,
+	src/texk/kpathsea/str-list.c, src/texk/kpathsea/find-suffix.c,
+	src/texk/kpathsea/hash.c, src/texk/kpathsea/xfseek.c,
+	src/texk/kpathsea/debug.c, src/texk/kpathsea/str-list.h,
+	src/texk/kpathsea/hash.h, src/texk/kpathsea/xopendir.c,
+	src/texk/kpathsea/uppercasify.c, src/texk/kpathsea/debug.h,
+	src/texk/kpathsea/xopendir.h, src/texk/kpathsea/xftell.c,
+	src/texk/kpathsea/xfopen.c, src/texk/kpathsea/access.c,
+	src/texk/kpathsea/fn.c, src/texk/kpathsea/xdirname.c,
+	src/texk/kpathsea/fn.h, src/texk/kpathsea/xstrdup.c,
+	src/texk/kpathsea/xrealloc.c, src/texk/kpathsea/xstat.c:
+	All of these files have stopped using the PxC and PxH macros.
+
+	Besides this change, there are a few extra changes to specific
+	files.
+
+	* debug.c: add a guard that disables debug reporting if
+	the oldinterface is not compiled in the library, and uses the
+	kpse_def_inst structure otherwise.
+
+	* hash.c (hash_free): new function.
+
+	* concat3.c: now allows the second and third argument to be NULL
+
+	* src/texk/kpathsea/tex-hush.h, src/texk/kpathsea/tex-make.c,
+	src/texk/kpathsea/progname.h, src/texk/kpathsea/dir.c,
+	src/texk/kpathsea/absolute.c, src/texk/kpathsea/expand.c,
+	src/texk/kpathsea/tex-make.h, src/texk/kpathsea/tex-glyph.c,
+	src/texk/kpathsea/tex-file.h, src/texk/kpathsea/absolute.h,
+	src/texk/kpathsea/expand.h, src/texk/kpathsea/truncate.c,
+	src/texk/kpathsea/variable.c, src/texk/kpathsea/tex-glyph.h,
+	src/texk/kpathsea/default.h, src/texk/kpathsea/variable.h,
+	src/texk/kpathsea/truncate.h, src/texk/kpathsea/kdefault.c,
+	src/texk/kpathsea/readable.c, src/texk/kpathsea/tilde.c,
+	src/texk/kpathsea/fontmap.c, src/texk/kpathsea/readable.h,
+	src/texk/kpathsea/tilde.h, src/texk/kpathsea/cnf.c,
+	src/texk/kpathsea/fontmap.h, src/texk/kpathsea/cnf.h,
+	src/texk/kpathsea/path-elt.c, src/texk/kpathsea/pathsearch.c,
+	src/texk/kpathsea/elt-dirs.c, src/texk/kpathsea/db.c,
+	src/texk/kpathsea/pathsearch.h, src/texk/kpathsea/db.h,
+	src/texk/kpathsea/proginit.c, src/texk/kpathsea/magstep.c,
+	src/texk/kpathsea/proginit.h, src/texk/kpathsea/magstep.h,
+	src/texk/kpathsea/tex-hush.c:
+	All of these files have stopped using the PxC and PxH macros.
+
+	In all of these files, the exported functions whose names
+	started with 'kpse_' have been renamed to use the prefix
+	'kpathsea_' instead, and they now required an extra argument
+	that is a kpathsea instance structure. New one-line functions
+	with the old exported names have been added that use a default
+	kpathsea instance. The functions are build and exported only if
+	the preprocessor macro KPSE_COMPAT_API is defined (which it
+	usually is, though).
+
+	Besides these changes, there are a few extra changes to speficic
+	files.
+
+	* progname.c: Removed the variables program_invocation_name and
+	program_invocation_short_name, these are now part of the
+	kpathsea instance (in renamed form)
+
+	* progname.c, xputenv.c, lib.h: Some extra preprocessor macros
+	(LIB_FATALx) are added and a few others  are changed so that
+	the library functions can give the proper invocation_name
+	in fatal error messages
+
+	* tex-file.c: The default instance variable is moved to the new
+	file kpathsea.c
+
+	* src/texk/kpathsea/kpathsea.c: New file containing the default
+	instance variables and the new functions kpathsea_new() and
+	kpathsea_finish()
+
+	* src/texk/kpathsea/version.c: Variable kpse_bug_address renamed
+	to kpathsea_bug_address.
+
+	* src/texk/kpathsea/types.h:
+	Added a preprocessor define KPSE_COMPAT_API, used throughout the
+	library.  If it is undefined then the old-style functions and
+	definitions are not compiled.
+	Removed the win32-specific 'cached_home_directory' and 'volumes'
+	variables from the instance structure.
+	Added 'invocation_name' and 'invocation_short_name' variables to
+	the instance structure.
+	Removed the 'kpse_' prefix from the instance variables fallback_font,
+	fallback_resolutions_string, fallback_resolutions, and format_info.
+	Added prototypes for kpathsea_new() and kpathsea_finish().
+	Added #defines for  kpse_bug_address, kpse_fallback_font,
+	kpse_fallback_resolutions_string, kpse_fallback_resolutions,
+	kpse_format_info, program_invocation_name, and
+	program_invocation_short_name
+
+	* src/texk/kpathsea/mingw32.c:
+	Disabled home directory caching: removed the function
+	uncache_home_directory() and the cached_home_directory
+	structure item.
+	Disabled volume queries: removed win32_volumes typedef,
+	the static functions lookup_volume_info(), add_volume_info(),
+	and  GetCachedVolumeInformation(), as well as the functions
+	get_volume_info() and is_fat_volume().
+
+	* src/texk/kpathsea/mingw32.h: Removed volume_user_date typedef
+	and added declaration for get_home_directory()
+
+	* src/texk/kpathsea/kpsewhich.c: stop using PxC macros and
+	switch to new API interface
+
+	* src/texk/kpathsea/configure.ac: Bump the version numbers to 5.0.0  (provisionally)
+
+	* src/texk/kpathsea/Makefile.am: Add kpathsea.c
+
 2009-03-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Part 2 of patches from Taco Hoekwater for __MINGW32__

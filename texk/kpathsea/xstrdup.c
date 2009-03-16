@@ -22,7 +22,7 @@
 /* Return a copy of S in new storage.  */
 
 string
-xstrdup P1C(const_string, s)
+xstrdup (const_string s)
 {
   string new_string = (string)xmalloc(strlen (s) + 1);
   return strcpy(new_string, s);

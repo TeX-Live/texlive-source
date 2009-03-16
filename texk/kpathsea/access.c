@@ -28,7 +28,7 @@
  */
 
 int
-main P2C(int, argc, char **, argv)
+main (int argc, char **argv)
 {
     int mode;
     int status;

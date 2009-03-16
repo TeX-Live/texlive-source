@@ -24,7 +24,7 @@
    of NAME.  If the name is `foo' or `/foo.bar/baz', we have no extension.  */
 
 string
-find_suffix P1C(const_string, name)
+find_suffix (const_string name)
 {
   const_string slash_pos;
   string dot_pos = strrchr (name, '.');

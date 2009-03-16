@@ -27,7 +27,7 @@
  */
 
 int
-main P2C(int, argc, char **, argv)
+main (int argc, char **argv)
 {
     char * mode_string;
     int to_set, to_keep, to_clear;

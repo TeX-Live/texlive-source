@@ -40,6 +40,11 @@
    file, but before you look up any files -- do the usual floating-point
    computations, and then fix up the result.  */
 
-extern KPSEDLL unsigned kpse_magstep_fix P3H(unsigned dpi, unsigned bdpi, int *m_ret);
+extern KPSEDLL unsigned kpathsea_magstep_fix (kpathsea kpse, unsigned dpi, 
+                                              unsigned bdpi, int *m_ret);
+
+#if defined (KPSE_COMPAT_API)
+extern KPSEDLL unsigned kpse_magstep_fix (unsigned dpi, unsigned bdpi, int *m_ret);
+#endif
 
 #endif /* not KPATHSEA_MAGSTEP_H */

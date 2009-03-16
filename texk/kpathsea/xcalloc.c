@@ -20,7 +20,7 @@
 
 
 void *
-xcalloc P2C(unsigned, nelem,  unsigned, elsize)
+xcalloc (unsigned nelem,  unsigned elsize)
 {
     void *new_mem = (void*)calloc(nelem, elsize);
   

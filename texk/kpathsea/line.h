@@ -26,6 +26,6 @@
 /* Return NULL if we are at EOF, else the next line of F.  The newline
    character at the end of string is removed.  The string is allocated
    with malloc.  */
-extern KPSEDLL string read_line P1H(FILE *f);
+extern KPSEDLL string read_line (FILE *f);
 
 #endif /* not LINE_H */

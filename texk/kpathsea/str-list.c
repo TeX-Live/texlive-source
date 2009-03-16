@@ -25,7 +25,7 @@
 
 
 str_list_type
-str_list_init P1H(void)
+str_list_init (void)
 {
   str_list_type ret;
   
@@ -37,7 +37,7 @@ str_list_init P1H(void)
 
 
 void
-str_list_add P2C(str_list_type *, l,  string, s)
+str_list_add (str_list_type *l,  string s)
 {
   STR_LIST_LENGTH (*l)++;
   XRETALLOC (STR_LIST (*l), STR_LIST_LENGTH (*l), string);
@@ -49,7 +49,7 @@ str_list_add P2C(str_list_type *, l,  string, s)
    instead of calling str_list_add on each element.  */
    
 void
-str_list_concat P2C(str_list_type *, target,  str_list_type, more)
+str_list_concat (str_list_type *target,  str_list_type more)
 {
   unsigned e;
   unsigned prev_len = STR_LIST_LENGTH (*target);
@@ -67,7 +67,7 @@ str_list_concat P2C(str_list_type *, target,  str_list_type, more)
 /* Note that we free the old elements of target as well. */
 
 void
-str_list_concat_elements P2C(str_list_type *, target,  str_list_type, more)
+str_list_concat_elements (str_list_type *target,  str_list_type more)
 {
     if (STR_LIST_LENGTH(more) == 0) {
         return;
@@ -107,7 +107,7 @@ str_list_concat_elements P2C(str_list_type *, target,  str_list_type, more)
 /* Free the list (but not the elements within it).  */
 
 void
-str_list_free P1C(str_list_type *, l)
+str_list_free (str_list_type *l)
 {
   if (STR_LIST (*l))
     {
@@ -122,7 +122,7 @@ str_list_free P1C(str_list_type *, l)
    lists are so short, we do a maximally inefficient bubble search.  */
 
 void
-str_list_uniqify P1C(str_list_type *, l)
+str_list_uniqify (str_list_type *l)
 {
   unsigned e;
   str_list_type ret = str_list_init ();

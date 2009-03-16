@@ -23,7 +23,7 @@
    routines and abort if an error happens.  */
 
 FILE *
-xfopen P2C(const_string, filename,  const_string, mode)
+xfopen (const_string filename,  const_string mode)
 {
     FILE *f;
     
@@ -38,10 +38,11 @@ xfopen P2C(const_string, filename,  const_string, mode)
 
 
 void
-xfclose P2C(FILE *, f,  const_string, filename)
+xfclose (FILE *f,  const_string filename)
 {
     assert(f);
   
     if (fclose(f) == EOF)
         FATAL_PERROR(filename);
+
 }

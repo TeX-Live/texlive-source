@@ -24,7 +24,7 @@
    stat fails on either of the names, we return false, without error.  */
 
 boolean
-same_file_p P2C(const_string, filename1,  const_string, filename2)
+same_file_p (const_string filename1,  const_string filename2)
 {
     struct stat sb1, sb2;
     /* These are put in variables only so the results can be inspected

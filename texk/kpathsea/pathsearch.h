@@ -29,17 +29,17 @@
    the empty string.  When at the end of PATH, return NULL.  In any
    case, return a pointer to an area that may be overwritten on
    subsequent calls.  */
-extern KPSEDLL string kpse_path_element P1H(const_string path);
+extern KPSEDLL string kpathsea_path_element (kpathsea kpse, const_string path);
 
-/* Like `kpse_path_element', but for filename components (using
-   IS_DIR_SEP).  Uses same area as `kpse_path_element'.  */
-extern string kpse_filename_component P1H(const_string path);
+/* Like `kpathsea_path_element', but for filename components (using
+   IS_DIR_SEP).  Uses same area as `kpathsea_path_element'.  */
+extern string kpathsea_filename_component (kpathsea kpse, const_string path);
 
 /*
   This function may rewrite its argument to avoid bugs when calling
   stat() or equivalent under Win32.  Also, it returns the index after
   which the program should start to look for expandable constructs. */
-extern unsigned kpse_normalize_path P1H(string elt);
+extern unsigned kpathsea_normalize_path (kpathsea kpse, string elt);
 
 /* Given a path element ELT, return a pointer to a NULL-terminated list
    of the corresponding (existing) directory or directories, with
@@ -47,12 +47,12 @@ extern unsigned kpse_normalize_path P1H(string elt);
    current working directory.
    
    It's up to the caller to expand ELT.  This is because this routine is
-   most likely only useful to be called from `kpse_path_search', which
+   most likely only useful to be called from `kpathsea_path_search', which
    has already assumed expansion has been done.  */
-extern KPSEDLL str_llist_type *kpse_element_dirs P1H(string elt);
+extern KPSEDLL str_llist_type *kpathsea_element_dirs (kpathsea kpse, string elt);
 
 
-/* Call `kpse_expand' on NAME.  If the result is an absolute or
+/* Call `kpathsea_expand' on NAME.  If the result is an absolute or
    explicitly relative filename, check whether it is a readable
    (regular) file.
    
@@ -71,28 +71,48 @@ extern KPSEDLL str_llist_type *kpse_element_dirs P1H(string elt);
    In any case, return a matching filename if found, otherwise NULL.
    If more than one file matches, which one gets returned is
    unspecified.  */
-extern KPSEDLL string kpse_path_search
-  P3H(const_string path, const_string name, boolean must_exist);
+extern KPSEDLL string kpathsea_path_search
+  (kpathsea kpse, const_string path, const_string name, boolean must_exist);
 
-/* Like `kpse_path_search', except look for a list of NAMES.  */
-extern KPSEDLL string kpse_path_search_list
-  P3H(const_string path, const_string* names, boolean must_exist);
+/* Like `kpathsea_path_search', except look for a list of NAMES.  */
+extern KPSEDLL string kpathsea_path_search_list
+  (kpathsea kpse, const_string path, const_string* names, boolean must_exist);
 
-/* Like `kpse_path_search' with MUST_EXIST true, but always return all
+/* Like `kpathsea_path_search' with MUST_EXIST true, but always return all
    matches in a NULL-terminated list.  */
-extern KPSEDLL string *kpse_all_path_search
-  P2H(const_string path, const_string name);
+extern KPSEDLL string *kpathsea_all_path_search
+  (kpathsea kpse, const_string path, const_string name);
 
 /* Search for any of the NAMES in PATH, and allow specifying both
    MUST_EXIST and ALL.  */
-extern KPSEDLL string *kpse_path_search_list_generic
-  P4H(const_string path, const_string* names, boolean must_exist, boolean all);
+extern KPSEDLL string *kpathsea_path_search_list_generic
+  (kpathsea kpse, const_string path, const_string* names, boolean must_exist, boolean all);
 
 /* Search for any of NAMES, with MUST_EXIST and ALL true.  */
-extern KPSEDLL string *kpse_all_path_search_list
-  P2H(const_string path, const_string* names);
+extern KPSEDLL string *kpathsea_all_path_search_list
+  (kpathsea kpse, const_string path, const_string* names);
 
 /* The naming of all these functions is rather scattered and
    inconsistent, but they grew over time, and we don't want to change
    the meaning of existing names.  */
+
+#if defined(KPSE_COMPAT_API)
+
+extern KPSEDLL string kpse_path_element (const_string path);
+extern string kpse_filename_component (const_string path);
+extern unsigned kpse_normalize_path (string elt);
+extern KPSEDLL str_llist_type *kpse_element_dirs (string elt);
+extern KPSEDLL string kpse_path_search
+  (const_string path, const_string name, boolean must_exist);
+extern KPSEDLL string kpse_path_search_list
+  (const_string path, const_string* names, boolean must_exist);
+extern KPSEDLL string *kpse_all_path_search
+  (const_string path, const_string name);
+extern KPSEDLL string *kpse_path_search_list_generic
+  (const_string path, const_string* names, boolean must_exist, boolean all);
+extern KPSEDLL string *kpse_all_path_search_list
+  (const_string path, const_string* names);
+
+#endif
+
 #endif /* not KPATHSEA_PATHSEARCH_H */

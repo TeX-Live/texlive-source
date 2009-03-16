@@ -24,19 +24,26 @@
 
 /* Call kpse_var_expand and kpse_tilde_expand (in that order).  Result
    is always in fresh memory, even if no expansions were done.  */
-extern KPSEDLL string kpse_expand P1H(const_string s);
+extern KPSEDLL string kpathsea_expand (kpathsea kpse, const_string s);
 
 /* Do brace expansion and call `kpse_expand' on each element of the
    result; return the final expansion (always in fresh memory, even if
    no expansions were done).  We don't call `kpse_expand_default'
    because there is a whole sequence of defaults to run through; see
    `kpse_init_format'.  */
-extern KPSEDLL string kpse_brace_expand P1H(const_string path);
+extern KPSEDLL string kpathsea_brace_expand (kpathsea kpse, const_string path);
 
 /* Do brace expansion and call `kpse_expand' on each argument of the
    result, then expand any `//' constructs.  The final expansion (always
    in fresh memory) is a path of all the existing directories that match
    the pattern. */
-extern KPSEDLL string kpse_path_expand P1H(const_string path);
+extern KPSEDLL string kpathsea_path_expand (kpathsea kpse, const_string path);
+
+#if defined(KPSE_COMPAT_API)
+extern KPSEDLL string kpse_expand (const_string s);
+extern KPSEDLL string kpse_brace_expand (const_string path);
+extern KPSEDLL string kpse_path_expand (const_string path);
+#endif
+
 
 #endif /* not KPATHSEA_EXPAND_H */

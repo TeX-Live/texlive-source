@@ -38,7 +38,7 @@
 #endif
 
 static unsigned
-hash P2C(hash_table_type, table,  const_string, key)
+hash (hash_table_type table,  const_string key)
 {
   unsigned n = 0;
   
@@ -52,7 +52,7 @@ hash P2C(hash_table_type, table,  const_string, key)
 
 /* Identical has function as above, but does not normalize keys. */
 static unsigned
-hash_normalized P2C(hash_table_type, table,  const_string, key)
+hash_normalized (hash_table_type table,  const_string key)
 {
   unsigned n = 0;
   
@@ -65,11 +65,13 @@ hash_normalized P2C(hash_table_type, table,  const_string, key)
 }
 
 hash_table_type
-hash_create P1C(unsigned, size) 
+hash_create (unsigned size) 
 {
-  /* hash_table_type ret; changed into "static ..." to work around gcc
-     optimizer bug for Alpha.  */
-  static hash_table_type ret;
+  /* The was "static ..." since Oct3, 1997 to work around a gcc
+     optimizer bug for Alpha. That particular optimization bug
+     should be gone by now (Mar4, 2009).
+  */
+  hash_table_type ret; 
   unsigned b;
   ret.buckets = XTALLOC (size, hash_element_type *);
   ret.size = size;
@@ -85,9 +87,9 @@ hash_create P1C(unsigned, size)
    duplicate the strings, in case they're being purposefully shared.  */
 
 void
-hash_insert P3C(hash_table_type *, table,
-                const_string, key,
-                const_string, value)
+hash_insert (hash_table_type *table,
+             const_string key,
+             const_string value)
 {
   unsigned n = hash (*table, key);
   hash_element_type *new_elt = XTALLOC1 (hash_element_type);
@@ -111,9 +113,9 @@ hash_insert P3C(hash_table_type *, table,
 
 /* Same as above, for normalized keys. */
 void
-hash_insert_normalized P3C(hash_table_type *, table,
-                           const_string, key,
-                           const_string, value)
+hash_insert_normalized (hash_table_type *table,
+                        const_string key,
+                        const_string value)
 {
   unsigned n = hash_normalized (*table, key);
   hash_element_type *new_elt = XTALLOC1 (hash_element_type);
@@ -138,8 +140,8 @@ hash_insert_normalized P3C(hash_table_type *, table,
 /* Remove a (KEY, VALUE) pair.  */
 
 void
-hash_remove P3C(hash_table_type *, table,  const_string, key,
-                const_string, value)
+hash_remove (hash_table_type *table,  const_string key,
+             const_string value)
 {
   hash_element_type *p;
   hash_element_type *q;
@@ -160,13 +162,8 @@ hash_remove P3C(hash_table_type *, table,  const_string, key,
 /* Look up STR in MAP.  Return a (dynamically-allocated) list of the
    corresponding strings or NULL if no match.  */ 
 
-#ifdef KPSE_DEBUG
-/* Print the hash values as integers if this is nonzero.  */
-boolean kpse_debug_hash_lookup_int = false; 
-#endif
-
 string *
-hash_lookup P2C(hash_table_type, table,  const_string, key)
+hash_lookup (hash_table_type table,  const_string key)
 {
   hash_element_type *p;
   str_list_type ret;
@@ -184,7 +181,9 @@ hash_lookup P2C(hash_table_type, table,  const_string, key)
     str_list_add (&ret, NULL);
 
 #ifdef KPSE_DEBUG
-  if (KPSE_DEBUG_P (KPSE_DEBUG_HASH))
+#if defined (KPSE_COMPAT_API)
+  kpathsea kpse = kpse_def;
+  if (KPATHSEA_DEBUG_P (KPSE_DEBUG_HASH))
     {
       DEBUGF1 ("hash_lookup(%s) =>", key);
       if (!STR_LIST (ret))
@@ -195,7 +194,7 @@ hash_lookup P2C(hash_table_type, table,  const_string, key)
           for (r = STR_LIST (ret); *r; r++)
             {
               putc (' ', stderr);
-              if (kpse_debug_hash_lookup_int)
+              if (kpse->debug_hash_lookup_int)
                 fprintf (stderr, "%ld", (long) *r);
               else
                 fputs (*r, stderr);
@@ -205,6 +204,7 @@ hash_lookup P2C(hash_table_type, table,  const_string, key)
       fflush (stderr);
     }
 #endif
+#endif
 
   return STR_LIST (ret);
 }
@@ -212,7 +212,7 @@ hash_lookup P2C(hash_table_type, table,  const_string, key)
 /* We only print nonempty buckets, to decrease output volume.  */
 
 void
-hash_print P2C(hash_table_type, table,  boolean, summary_only)
+hash_print (hash_table_type table,  boolean summary_only)
 {
   unsigned b;
   unsigned total_elements = 0, total_buckets = 0;
@@ -248,3 +248,18 @@ hash_print P2C(hash_table_type, table,  boolean, summary_only)
           total_elements,
           total_buckets ? total_elements / (double) total_buckets : 0.0);
 }
+
+void
+hash_free (hash_table_type table)
+{
+    struct hash_element_struct *p, *q;
+    p = (struct hash_element_struct *)table.buckets;
+    while (p != NULL) {
+        q = p->next;
+        free ((char *)p->key);
+        free ((char *)p->value);
+        free (p);
+        p = q;
+    }
+}
+    

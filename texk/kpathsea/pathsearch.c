@@ -40,7 +40,6 @@
    need to do various special things in this case, since we obviously
    don't yet have the configuration files when we're searching for the
    configuration files.  */
-static boolean first_search = true;
 
 
 
@@ -49,24 +48,22 @@ static boolean first_search = true;
    record the filename(s) found in $TEXMFLOG.  */
 
 static void
-log_search P1C(str_list_type, filenames)
+log_search (kpathsea kpse, str_list_type filenames)
 {
-  static FILE *log_file = NULL;
-  static boolean first_time = true; /* Need to open the log file?  */
   
-  if (first_time) {
+  if (kpse->log_opened==false) {
     /* Get name from either envvar or config file.  */
-    string log_name = kpse_var_value ("TEXMFLOG");
-    first_time = false;
+      string log_name = kpathsea_var_value (kpse, "TEXMFLOG");
+    kpse->log_opened = true;
     if (log_name) {
-      log_file = fopen (log_name, FOPEN_A_MODE);
-      if (!log_file)
+      kpse->log_file = fopen (log_name, FOPEN_A_MODE);
+      if (!kpse->log_file)
         perror (log_name);
       free (log_name);
     }
   }
 
-  if (KPSE_DEBUG_P (KPSE_DEBUG_SEARCH) || log_file) {
+  if (KPATHSEA_DEBUG_P (KPSE_DEBUG_SEARCH) || kpse->log_file) {
     unsigned e;
 
     /* FILENAMES should never be null, but safety doesn't hurt.  */
@@ -75,14 +72,14 @@ log_search P1C(str_list_type, filenames)
       string filename = STR_LIST_ELT (filenames, e);
 
       /* Only record absolute filenames, for privacy.  */
-      if (log_file && kpse_absolute_p (filename, false))
-        fprintf (log_file, "%lu %s\n", (long unsigned) time (NULL),
+      if (kpse->log_file && kpathsea_absolute_p (kpse, filename, false))
+        fprintf (kpse->log_file, "%lu %s\n", (long unsigned) time (NULL),
                  filename);
 
       /* And show them online, if debugging.  We've already started
          the debugging line in `search', where this is called, so
          just print the filename here, don't use DEBUGF.  */
-      if (KPSE_DEBUG_P (KPSE_DEBUG_SEARCH)) {
+      if (KPATHSEA_DEBUG_P (KPSE_DEBUG_SEARCH)) {
         putc (' ', stderr);
         fputs (filename, stderr);
       }
@@ -103,8 +100,8 @@ log_search P1C(str_list_type, filenames)
 #define INIT_ALLOC 75  /* Doesn't much matter what this number is.  */
 
 static str_list_type
-dir_list_search P3C(str_llist_type *, dirs,  const_string, name,
-                    boolean, search_all)
+dir_list_search (kpathsea kpse, str_llist_type *dirs,  const_string name,
+                    boolean search_all)
 {
   str_llist_elt_type *elt;
   str_list_type ret;
@@ -128,7 +125,7 @@ dir_list_search P3C(str_llist_type *, dirs,  const_string, name,
       strcpy (potential, dir);
       strcat (potential, name);
       
-      if (kpse_readable_file (potential))
+      if (kpathsea_readable_file (kpse, potential))
         { 
           str_list_add (&ret, potential);
           
@@ -155,8 +152,8 @@ dir_list_search P3C(str_llist_type *, dirs,  const_string, name,
 }
 
 static str_list_type
-dir_list_search_list P3C(str_llist_type *, dirs,  const_string*, names,
-                         boolean, search_all)
+dir_list_search_list (kpathsea kpse, str_llist_type *dirs,  const_string* names,
+                         boolean search_all)
 {
   str_llist_elt_type *elt;
   str_list_type ret;
@@ -175,7 +172,7 @@ dir_list_search_list P3C(str_llist_type *, dirs,  const_string*, names,
           unsigned name_len;
 
           /* Don't bother with absolute & explicit relative. */
-          if (kpse_absolute_p(name, true))
+          if (kpathsea_absolute_p(kpse, name, true))
               continue;
           
           name_len = strlen(name);
@@ -188,7 +185,7 @@ dir_list_search_list P3C(str_llist_type *, dirs,  const_string*, names,
           strcpy (potential, dir);
           strcat (potential+dir_len, name);
 
-          if (kpse_readable_file (potential)) {
+          if (kpathsea_readable_file (kpse, potential)) {
               str_list_add (&ret, potential);
 
               /* Move this element towards the top of the list.  */
@@ -218,10 +215,10 @@ dir_list_search_list P3C(str_llist_type *, dirs,  const_string*, names,
    readable, return (a list containing) it; otherwise, return NULL.  */
 
 static str_list_type
-absolute_search P1C(string, name)
+absolute_search (kpathsea kpse, string name)
 {
   str_list_type ret_list;
-  string found = kpse_readable_file (name);
+  string found = kpathsea_readable_file (kpse, name);
   
   /* Some old compilers can't initialize structs.  */
   ret_list = str_list_init ();
@@ -241,16 +238,16 @@ absolute_search P1C(string, name)
    return the first file found.  Otherwise, search all elements of PATH.  */
 
 static str_list_type
-path_search P4C(const_string, path,  string, name,
-                boolean, must_exist,  boolean, all)
+path_search (kpathsea kpse, const_string path,  string name,
+             boolean must_exist,  boolean all)
 {
   string elt;
   str_list_type ret_list;
   boolean done = false;
   ret_list = str_list_init (); /* some compilers lack struct initialization */
 
-  for (elt = kpse_path_element (path); !done && elt;
-       elt = kpse_path_element (NULL)) {
+  for (elt = kpathsea_path_element (kpse, path); !done && elt;
+       elt = kpathsea_path_element (kpse, NULL)) {
     str_list_type *found;
     boolean allow_disk_search = true;
 
@@ -262,11 +259,11 @@ path_search P4C(const_string, path,  string, name,
     }
 
     /* See elt-dirs.c for side effects of this function */
-    kpse_normalize_path(elt);
+    kpathsea_normalize_path(kpse, elt);
     
     /* Try ls-R, unless we're searching for texmf.cnf.  Our caller
        (search), also tests first_search, and does the resetting.  */
-    found = first_search ? NULL : kpse_db_search (name, elt, all);
+    found = kpse->followup_search ? kpathsea_db_search (kpse, name, elt, all) : NULL;
 
     /* Search the filesystem if (1) the path spec allows it, and either
          (2a) we are searching for texmf.cnf ; or
@@ -276,11 +273,11 @@ path_search P4C(const_string, path,  string, name,
        In (2*), `found' will be NULL.
        In (3),  `found' will be an empty list. */
     if (allow_disk_search && (!found || (must_exist && !STR_LIST (*found)))) {
-      str_llist_type *dirs = kpse_element_dirs (elt);
+        str_llist_type *dirs = kpathsea_element_dirs (kpse, elt);
       if (dirs && *dirs) {
         if (!found)
           found = XTALLOC1 (str_list_type);
-        *found = dir_list_search (dirs, name, all);
+        *found = dir_list_search (kpse, dirs, name, all);
       }
     }
     
@@ -317,8 +314,8 @@ path_search P4C(const_string, path,  string, name,
    terminated with NULL.  */
 
 static string *
-search P4C(const_string, path,  const_string, original_name,
-           boolean, must_exist,  boolean, all)
+search (kpathsea kpse, const_string path,  const_string original_name,
+        boolean must_exist,  boolean all)
 {
   str_list_type ret_list;
   string name;
@@ -348,19 +345,19 @@ search P4C(const_string, path,  const_string, original_name,
 #endif
 
   /* Make a leading ~ count as an absolute filename, and expand $FOO's.  */
-  name = kpse_expand (original_name);
+  name = kpathsea_expand (kpse, original_name);
   
   /* If the first name is absolute or explicitly relative, no need to
      consider PATH at all.  */
-  absolute_p = kpse_absolute_p (name, true);
+  absolute_p = kpathsea_absolute_p (kpse, name, true);
   
-  if (KPSE_DEBUG_P (KPSE_DEBUG_SEARCH))
+  if (KPATHSEA_DEBUG_P (KPSE_DEBUG_SEARCH))
     DEBUGF4 ("start search(file=%s, must_exist=%d, find_all=%d, path=%s).\n",
              name, must_exist, all, path);
 
   /* Find the file(s). */
-  ret_list = absolute_p ? absolute_search (name)
-                        : path_search (path, name, must_exist, all);
+  ret_list = absolute_p ? absolute_search (kpse, name)
+                        : path_search (kpse, path, name, must_exist, all);
   
   /* Append NULL terminator if we didn't find anything at all, or we're
      supposed to find ALL and the list doesn't end in NULL now.  */
@@ -370,15 +367,15 @@ search P4C(const_string, path,  const_string, original_name,
 
   /* The very first search is for texmf.cnf.  We can't log that, since
      we want to allow setting TEXMFLOG in texmf.cnf.  */
-  if (first_search) {
-    first_search = false;
+  if (kpse->followup_search==false) {
+    kpse->followup_search = true;
   } else {
     /* Record the filenames we found, if desired.  And wrap them in a
        debugging line if we're doing that.  */
-    if (KPSE_DEBUG_P (KPSE_DEBUG_SEARCH))
+    if (KPATHSEA_DEBUG_P (KPSE_DEBUG_SEARCH))
       DEBUGF1 ("search(%s) =>", original_name);
-    log_search (ret_list);
-    if (KPSE_DEBUG_P (KPSE_DEBUG_SEARCH))
+    log_search (kpse, ret_list);
+    if (KPATHSEA_DEBUG_P (KPSE_DEBUG_SEARCH))
       putc ('\n', stderr);
   }  
 
@@ -396,8 +393,8 @@ search P4C(const_string, path,  const_string, original_name,
    contain just NULL.  If ALL is true, the list will be
    terminated with NULL.  */
 static string *
-search_list P4C(const_string, path,  const_string*, names,
-                boolean, must_exist,  boolean, all)
+search_list (kpathsea kpse, const_string path,  const_string* names,
+             boolean must_exist,  boolean all)
 {
   str_list_type ret_list;
   const_string* namep;
@@ -430,7 +427,7 @@ search_list P4C(const_string, path,  const_string*, names,
 
   ret_list = str_list_init();
 
-  if (KPSE_DEBUG_P (KPSE_DEBUG_SEARCH)) {
+  if (KPATHSEA_DEBUG_P (KPSE_DEBUG_SEARCH)) {
     DEBUGF1  ("start search(files=[%s", *names);
     for (namep = names+1; *namep != NULL; namep++) {
       fputc(' ', stderr);
@@ -444,8 +441,8 @@ search_list P4C(const_string, path,  const_string*, names,
 
   /* First catch any absolute or explicit relative names. */
   for (namep = names; *namep; namep++) {
-      if (kpse_absolute_p(*namep, true)) {
-          if (kpse_readable_file(*namep)) {
+      if (kpathsea_absolute_p(kpse, *namep, true)) {
+          if (kpathsea_readable_file(kpse, *namep)) {
           str_list_add(&ret_list, xstrdup(*namep));
           /* I know, I know... */
           if (!all)
@@ -462,8 +459,8 @@ search_list P4C(const_string, path,  const_string*, names,
       goto out;
 
   /* Look at each path element in turn. */
-  for (elt = kpse_path_element (path); !done && elt;
-       elt = kpse_path_element (NULL))
+  for (elt = kpathsea_path_element (kpse, path); !done && elt;
+       elt = kpathsea_path_element (kpse, NULL))
   {
     str_list_type *found;
     boolean allow_disk_search = true;
@@ -474,10 +471,10 @@ search_list P4C(const_string, path,  const_string*, names,
     }
 
     /* See elt-dirs.c for side effects of this function. */
-    kpse_normalize_path(elt);
+    kpathsea_normalize_path(kpse, elt);
 
     /* Try ls-R, unless we're searching for texmf.cnf. */
-    found = first_search ? NULL : kpse_db_search_list(names, elt, all);
+    found = kpse->followup_search ? kpathsea_db_search_list(kpse, names, elt, all) : NULL;
 
     /* Search the filesystem if (1) the path spec allows it, and either
          (2a) we are searching for texmf.cnf ; or
@@ -487,11 +484,11 @@ search_list P4C(const_string, path,  const_string*, names,
        In (2*), `found' will be NULL.
        In (3),  `found' will be an empty list. */
     if (allow_disk_search && (!found || (must_exist && !STR_LIST(*found)))) {
-      str_llist_type *dirs = kpse_element_dirs (elt);
+        str_llist_type *dirs = kpathsea_element_dirs (kpse, elt);
       if (dirs && *dirs) {
         if (!found)
           found = XTALLOC1 (str_list_type);
-        *found = dir_list_search_list (dirs, names, all);
+        *found = dir_list_search_list (kpse, dirs, names, all);
       }
     }
 
@@ -516,12 +513,12 @@ search_list P4C(const_string, path,  const_string*, names,
       || (all && STR_LIST_LAST_ELT (ret_list) != NULL))
     str_list_add (&ret_list, NULL);
 
-  if (first_search) {
-    first_search = false;
+  if (kpse->followup_search==false) {
+    kpse->followup_search = true;
   } else {
     /* Record the filenames we found, if desired.  And wrap them in a
        debugging line if we're doing that.  */
-    if (KPSE_DEBUG_P (KPSE_DEBUG_SEARCH)) {
+    if (KPATHSEA_DEBUG_P (KPSE_DEBUG_SEARCH)) {
       DEBUGF1 ("search([%s", *names);
       for (namep = names+1; *namep != NULL; namep++) {
         fputc (' ', stderr);
@@ -529,8 +526,8 @@ search_list P4C(const_string, path,  const_string*, names,
       }
       fputs ("]) =>", stderr);
     }
-    log_search (ret_list);
-    if (KPSE_DEBUG_P (KPSE_DEBUG_SEARCH))
+    log_search (kpse, ret_list);
+    if (KPATHSEA_DEBUG_P (KPSE_DEBUG_SEARCH))
       putc ('\n', stderr);
   }
 
@@ -545,10 +542,10 @@ search_list P4C(const_string, path,  const_string*, names,
 /* Search PATH for the first NAME according to MUST_EXIST.  */
 
 string
-kpse_path_search P3C(const_string, path,  const_string, name,
-                     boolean, must_exist)
+kpathsea_path_search (kpathsea kpse, const_string path,  const_string name,
+                      boolean must_exist)
 {
-  string *ret_list = search (path, name, must_exist, false);
+  string *ret_list = search (kpse, path, name, must_exist, false);
   string ret = *ret_list;
   free (ret_list);
   return ret;
@@ -557,11 +554,11 @@ kpse_path_search P3C(const_string, path,  const_string, name,
 /* Many inputs, return (more or less indeterminate) one matching string.  */
 
 string
-kpse_path_search_list P3C(const_string, path,  const_string*, names,
-                          boolean,  must_exist)
+kpathsea_path_search_list (kpathsea kpse, const_string path,  const_string* names,
+                           boolean must_exist)
 {
   string *ret_list
-    = kpse_path_search_list_generic (path, names, must_exist, false);
+      = kpathsea_path_search_list_generic (kpse, path, names, must_exist, false);
   string ret = *ret_list;
   free (ret_list);
   return ret;
@@ -571,9 +568,9 @@ kpse_path_search_list P3C(const_string, path,  const_string*, names,
    to assert `must_exist' here, but it's too late to change.  */
 
 string *
-kpse_all_path_search P2C(const_string, path,  const_string, name)
+kpathsea_all_path_search (kpathsea kpse, const_string path,  const_string name)
 {
-  string *ret = search (path, name, true, true);
+    string *ret = search (kpse, path, name, true, true);
   return ret;
 }
 
@@ -581,10 +578,11 @@ kpse_all_path_search P2C(const_string, path,  const_string, name)
 /* Many inputs, return list, allow specifying MUST_EXIST and ALL.  */
 
 string *
-kpse_path_search_list_generic P4C(const_string, path,  const_string*, names,
-                                  boolean, must_exist,  boolean, all)
+kpathsea_path_search_list_generic (kpathsea kpse, 
+                                   const_string path,  const_string* names,
+                                   boolean must_exist,  boolean all)
 {
-  string *ret = search_list (path, names, must_exist, all);
+  string *ret = search_list (kpse, path, names, must_exist, all);
   return ret;
 }    
 
@@ -592,10 +590,47 @@ kpse_path_search_list_generic P4C(const_string, path,  const_string*, names,
 /* Many inputs, return list, MUST_EXIST and ALL always true.  */
 
 string *
-kpse_all_path_search_list P2C(const_string, path,  const_string*, names)
+kpathsea_all_path_search_list (kpathsea kpse, const_string path,  
+                               const_string* names)
 {
-  return kpse_path_search_list_generic (path, names, true, true);
+  return kpathsea_path_search_list_generic (kpse, path, names, true, true);
 }
+
+#if defined (KPSE_COMPAT_API)
+
+string
+kpse_path_search (const_string path,  const_string name, boolean must_exist)
+{
+    return kpathsea_path_search (kpse_def, path,  name, must_exist);
+}
+
+string
+kpse_path_search_list (const_string path,  const_string* names, boolean must_exist)
+{
+    return kpathsea_path_search_list (kpse_def, path, names, must_exist);
+}
+
+string *
+kpse_all_path_search (const_string path,  const_string name)
+{
+    return kpathsea_all_path_search (kpse_def,  path, name);
+}
+
+string *
+kpse_path_search_list_generic (const_string path,  const_string* names,
+                               boolean must_exist,  boolean all)
+{
+  return kpathsea_path_search_list_generic (kpse_def, path, names, must_exist, all);
+}    
+
+string *
+kpse_all_path_search_list (const_string path, const_string* names)
+{
+  return kpathsea_all_path_search_list (kpse_def, path, names);
+}
+
+#endif
+
 
 #ifdef TEST
 
@@ -606,7 +641,7 @@ test_path_search (const_string path, const_string file)
   string *answer_list;
   
   printf ("\nSearch %s for %s:\t", path, file);
-  answer = kpse_path_search (path, file);
+  answer = kpse_path_search (path, file, 0);
   puts (answer ? answer : "(nil)");
 
   printf ("Search %s for all %s:\t", path, file);
@@ -623,8 +658,9 @@ test_path_search (const_string path, const_string file)
 #define TEXFONTS "/usr/local/lib/tex/fonts"
 
 int
-main ()
+main (int argc, char **argv)
 {
+  kpse_set_program_name(argv[0], NULL);
   /* All lists end with NULL.  */
   test_path_search (".", "nonexistent");
   test_path_search (".", "/nonexistent");
@@ -656,6 +692,6 @@ main ()
 
 /*
 Local variables:
-test-compile-command: "gcc -posix -g -I. -I.. -DTEST pathsearch.c kpathsea.a"
+standalone-compile-command: "gcc -posix -g -I. -I.. -DTEST pathsearch.c kpathsea.a"
 End:
 */

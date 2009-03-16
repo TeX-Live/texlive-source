@@ -23,7 +23,7 @@
 #include <kpathsea/types.h>
 
 /* Like opendir and closedir, but abort on error.  */
-extern DIR *xopendir P1H(string dirname);
-extern void xclosedir P1H(DIR *);
+extern DIR *xopendir (string dirname);
+extern void xclosedir (DIR *);
 
 #endif /* not (KPATHSEA_XOPENDIR_H or WIN32) */

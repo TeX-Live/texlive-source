@@ -24,7 +24,7 @@
 
 /* Return the (variable-expanded) environment variable value or config
    file value, or NULL.  */
-extern KPSEDLL string kpse_var_value P1H(const_string var);
+extern KPSEDLL string kpathsea_var_value (kpathsea kpse, const_string var);
 
 /* Expand $VAR, ${VAR}, and ~ references in SRC, returning the (always newly
    dynamically-allocated) result.  An unterminated ${ or any other
@@ -36,6 +36,11 @@ extern KPSEDLL string kpse_var_value P1H(const_string var);
    In any case, ``expansion'' means calling `getenv'; if the variable is not
    set, look in texmf.cnf files for a definition.  If not set there, either,
    the expansion is the empty string (no error).  */
-extern KPSEDLL string kpse_var_expand P1H(const_string src);
+extern KPSEDLL string kpathsea_var_expand (kpathsea kpse, const_string src);
+
+#if defined (KPSE_COMPAT_API)
+extern KPSEDLL string kpse_var_value (const_string var);
+extern KPSEDLL string kpse_var_expand (const_string src);
+#endif
 
 #endif /* not KPATHSEA_VARIABLE_H */

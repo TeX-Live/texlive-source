@@ -26,7 +26,7 @@
    returns "bar.baz".  */
 
 const_string
-xbasename P1C(const_string, name)
+xbasename (const_string name)
 {
     const_string base = NULL;
     unsigned len;

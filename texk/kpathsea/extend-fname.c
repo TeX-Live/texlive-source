@@ -22,7 +22,7 @@
    the return value is modifiable.  */
 
 string 
-extend_filename P2C(const_string, name, const_string, default_suffix)
+extend_filename (const_string name, const_string default_suffix)
 {
   string new_s;
   const_string suffix = find_suffix (name);

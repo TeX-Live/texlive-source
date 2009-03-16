@@ -25,6 +25,11 @@
 /* Return the value in the last-read cnf file for VAR, or NULL if none.
    On the first call, also read all the `texmf.cnf' files in the
    path for kpse_cnf_format (and initialize the path).  */
-extern KPSEDLL string kpse_cnf_get P1H(const_string var);
+
+extern KPSEDLL string kpathsea_cnf_get (kpathsea kpse, const_string name);
+
+#if defined(KPSE_COMPAT_API)
+extern KPSEDLL string kpse_cnf_get (const_string var);
+#endif
 
 #endif /* not KPATHSEA_CNF_H */

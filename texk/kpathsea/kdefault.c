@@ -29,10 +29,11 @@
    that is fastest.  Usually it will be leading or trailing.  */
 
 string 
-kpse_expand_default P2C(const_string, path,  const_string, fallback)
+kpathsea_expand_default (kpathsea kpse, const_string path,  const_string fallback)
 {
   unsigned path_length;
   string expansion;
+  (void)kpse; /* currenty not used */
   
   /* The default path better not be null.  */
   assert (fallback);
@@ -82,6 +83,14 @@ kpse_expand_default P2C(const_string, path,  const_string, fallback)
   
   return expansion;
 }
+#if defined (KPSE_COMPAT_API)
+string 
+kpse_expand_default (const_string path,  const_string fallback)
+{
+    return kpathsea_expand_default (kpse_def, path, fallback);
+}
+#endif
+
 
 #ifdef TEST
 
@@ -116,6 +125,6 @@ main ()
 
 /*
 Local variables:
-standalone-compile-command: "gcc -g -I. -I.. -DTEST default.c kpathsea.a"
+standalone-compile-command: "gcc -g -I. -I.. -DTEST kdefault.c kpathsea.a"
 End:
 */

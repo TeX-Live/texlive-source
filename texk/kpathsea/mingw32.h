@@ -42,24 +42,10 @@
                             && IS_DIR_SEP(*(name+1)) && isalnum(*(name+2)))
 #endif
 
-typedef struct volume_info_data {
-  struct volume_info_data * next;
-
-  /* time when info was obtained */
-  DWORD     timestamp;
-
-  /* actual volume info */
-  char *    root_dir;
-  DWORD     serialnum;
-  DWORD     maxcomp;
-  DWORD     flags;
-  char *    name;
-  char *    type;
-} volume_info_data;
-
 void init_user_info (void);
-BOOL win32_get_long_filename (char *, char *, int);
 void set_home_warning (void);
-BOOL look_for_cmd(const char *, char **);
+char *get_home_directory (void);
+BOOL look_for_cmd (const char *, char **);
+BOOL win32_get_long_filename (char *, char *, int);
 
 #endif

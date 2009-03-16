@@ -36,12 +36,13 @@
    <pwd.h>, just return NAME.  */
 
 string
-kpse_tilde_expand P1C(const_string, name)
+kpathsea_tilde_expand (kpathsea kpse, const_string name)
 {
   const_string expansion;
   const_string home;
   const_string prefix;
   
+  (void)kpse; /* currenty not used */
   assert (name);
 
   /* If there is a leading "!!", set prefix to "!!", otherwise use
@@ -126,6 +127,14 @@ kpse_tilde_expand P1C(const_string, name)
      be returning a malloc-ed string.  Callers beware.  Sorry.  */
   return (string) expansion;
 }
+
+#if defined (KPSE_COMPAT_API)
+string
+kpse_tilde_expand (const_string name)
+{
+    return kpathsea_tilde_expand (kpse_def, name);
+}
+#endif
 
 #ifdef TEST
 
@@ -140,10 +149,10 @@ test_expand_tilde (const_string filename)
 }
 
 int
-main ()
+main (int argc, char **argv)
 {
   string tilde_path = "tilde";
-
+  kpse_set_program_name(argv[0],NULL);
   test_expand_tilde ("");
   test_expand_tilde ("none");
   test_expand_tilde ("~root");

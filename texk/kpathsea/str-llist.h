@@ -46,10 +46,10 @@ typedef struct str_llist_elt *str_llist_type;
 
 
 /* Add the new string E to the end of the list L.  */
-extern void str_llist_add P2H(str_llist_type *l, string e);
+extern void str_llist_add (str_llist_type *l, string e);
 
 /* Reorganize L so that E is below only other elements that have already
    been moved.  Set `moved' member for E.  */
-extern void str_llist_float P2H(str_llist_type *l, str_llist_elt_type *e);
+extern void str_llist_float (str_llist_type *l, str_llist_elt_type *e);
 
 #endif /* not STR_LLIST_H */

@@ -27,7 +27,7 @@
 
 
 fn_type
-fn_init P1H(void)
+fn_init (void)
 {
   fn_type ret;
   
@@ -39,7 +39,7 @@ fn_init P1H(void)
 
 
 fn_type
-fn_copy0 P2C(const_string, s,  unsigned, len)
+fn_copy0 (const_string s,  unsigned len)
 {
   fn_type ret;
   
@@ -57,7 +57,7 @@ fn_copy0 P2C(const_string, s,  unsigned, len)
    empty, so give fatal error if nothing allocated.  */
 
 void
-fn_free P1C(fn_type *, f)
+fn_free (fn_type *f)
 {
   assert (FN_STRING (*f) != NULL);
   free (FN_STRING (*f));
@@ -72,7 +72,7 @@ fn_free P1C(fn_type *, f)
    presumably follow.  */
 
 static void
-grow P2C(fn_type *, f,  unsigned, len)
+grow (fn_type *f,  unsigned len)
 {
   while (FN_LENGTH (*f) + len > FN_ALLOCATED (*f))
     {
@@ -83,7 +83,7 @@ grow P2C(fn_type *, f,  unsigned, len)
 
 
 void
-fn_1grow P2C(fn_type *, f,  char, c)
+fn_1grow (fn_type *f,  char c)
 {
   grow (f, 1);
   FN_STRING (*f)[FN_LENGTH (*f)] = c;
@@ -92,7 +92,7 @@ fn_1grow P2C(fn_type *, f,  char, c)
 
 
 void
-fn_grow P3C(fn_type *, f,  const_string, source,  unsigned, len)
+fn_grow (fn_type *f,  const_string source,  unsigned len)
 {
   grow (f, len);
   strncpy (FN_STRING (*f) + FN_LENGTH (*f), source, len);
@@ -101,7 +101,7 @@ fn_grow P3C(fn_type *, f,  const_string, source,  unsigned, len)
 
 
 void
-fn_str_grow P2C(fn_type *, f,  const_string, s)
+fn_str_grow (fn_type *f,  const_string s)
 {
   unsigned more_len = strlen (s);
   grow (f, more_len);
@@ -111,7 +111,7 @@ fn_str_grow P2C(fn_type *, f,  const_string, s)
 
 
 void
-fn_shrink_to P2C(fn_type *, f,  unsigned, loc)
+fn_shrink_to (fn_type *f,  unsigned loc)
 {
   assert (FN_LENGTH (*f) > loc);
   FN_STRING (*f)[loc] = 0;

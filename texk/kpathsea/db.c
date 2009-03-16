@@ -30,7 +30,6 @@
 #include <kpathsea/tex-file.h>
 #include <kpathsea/variable.h>
 
-static hash_table_type db; /* The hash table for all the ls-R's.  */
 #ifndef DB_HASH_SIZE
 /* Based on the size of 2008 texmf-dist/ls-R, about 62000 entries.  But
    we don't want to make it too big, since texmf/ls-R only has about
@@ -50,7 +49,6 @@ static const_string db_names[] = {
     NULL
 };
 
-static hash_table_type alias_db;
 #ifndef ALIAS_NAME
 #define ALIAS_NAME "aliases"
 #endif
@@ -58,14 +56,13 @@ static hash_table_type alias_db;
 #define ALIAS_HASH_SIZE 1009
 #endif
 
-static str_list_type db_dir_list;
 
 /* If DIRNAME contains any element beginning with a `.' (that is more
    than just `./'), return true.  This is to allow ``hidden''
    directories -- ones that don't get searched.  */
 
 static boolean
-ignore_dir_p P1C(const_string, dirname)
+ignore_dir_p (const_string dirname)
 {
   const_string dot_pos = dirname;
   
@@ -82,7 +79,7 @@ ignore_dir_p P1C(const_string, dirname)
    Otherwise, add entries from DB_FILENAME to TABLE, and return true.  */
 
 static boolean
-db_build P2C(hash_table_type *, table,  const_string, db_filename)
+db_build (kpathsea kpse, hash_table_type *table,  const_string db_filename)
 {
   string line;
   unsigned dir_count = 0, file_count = 0, ignore_dir_count = 0;
@@ -102,7 +99,7 @@ db_build P2C(hash_table_type *, table,  const_string, db_filename)
          and explicitly relative (./...) names here.  It's a kludge to
          pass in the directory name with the trailing : still attached,
          but it doesn't actually hurt.  */
-      if (len > 0 && line[len - 1] == ':' && kpse_absolute_p (line, true)) {
+      if (len > 0 && line[len - 1] == ':' && kpathsea_absolute_p (kpse, line, true)) {
         /* New directory line.  */
         if (!ignore_dir_p (line)) {
           /* If they gave a relative name, prepend full directory name now.  */
@@ -146,11 +143,11 @@ db_build P2C(hash_table_type *, table,  const_string, db_filename)
       WARNING ("kpathsea: See the manual for how to generate ls-R");
       db_file = NULL;
     } else {
-      str_list_add (&db_dir_list, xstrdup (top_dir));
+      str_list_add (&(kpse->db_dir_list), xstrdup (top_dir));
     }
 
 #ifdef KPSE_DEBUG
-    if (KPSE_DEBUG_P (KPSE_DEBUG_HASH)) {
+    if (KPATHSEA_DEBUG_P (KPSE_DEBUG_HASH)) {
       /* Don't make this a debugging bit, since the output is so
          voluminous, and being able to specify -1 is too useful.
          Instead, let people who want it run the program under
@@ -177,11 +174,11 @@ db_build P2C(hash_table_type *, table,  const_string, db_filename)
    rebuilt.  */
 
 void
-kpse_db_insert P1C(const_string, passed_fname)
+kpathsea_db_insert (kpathsea kpse, const_string passed_fname)
 {
   /* We might not have found ls-R, or even had occasion to look for it
      yet, so do nothing if we have no hash table.  */
-  if (db.buckets) {
+  if (kpse->db.buckets) {
     const_string dir_part;
     string fname = xstrdup (passed_fname);
     string baseptr = (string)xbasename (fname);
@@ -191,16 +188,24 @@ kpse_db_insert P1C(const_string, passed_fname)
     dir_part = fname; /* That leaves the dir, with the trailing /.  */
 
     /* Note that we do not assuse that these names have been normalized. */
-    hash_insert (&db, file_part, dir_part);
+    hash_insert (&(kpse->db), file_part, dir_part);
   }
 }
+
+#if defined(KPSE_COMPAT_API)
+void
+kpse_db_insert (const_string passed_fname)
+{
+    kpathsea_db_insert(kpse_def, passed_fname);
+}
+#endif
 
 /* Return true if FILENAME could be in PATH_ELT, i.e., if the directory
    part of FILENAME matches PATH_ELT.  Have to consider // wildcards, but
    $ and ~ expansion have already been done.  */
      
 static boolean
-match P2C(const_string, filename,  const_string, path_elt)
+match (const_string filename,  const_string path_elt)
 {
   const_string original_filename = filename;
   boolean matched = false;
@@ -267,7 +272,7 @@ match P2C(const_string, filename,  const_string, path_elt)
    search in it, which is all we do anyway.  */
    
 static boolean
-elt_in_db P2C(const_string, db_dir,  const_string, path_elt)
+elt_in_db (const_string db_dir,  const_string path_elt)
 {
   boolean found = false;
 
@@ -288,7 +293,7 @@ elt_in_db P2C(const_string, db_dir,  const_string, path_elt)
 /* If ALIAS_FILENAME exists, read it into TABLE.  */
 
 static boolean
-alias_build P2C(hash_table_type *, table,  const_string, alias_filename)
+alias_build (kpathsea kpse, hash_table_type *table,  const_string alias_filename)
 {
   string line, real, alias;
   unsigned count = 0;
@@ -322,7 +327,7 @@ alias_build P2C(hash_table_type *, table,  const_string, alias_filename)
     }
 
 #ifdef KPSE_DEBUG
-    if (KPSE_DEBUG_P (KPSE_DEBUG_HASH)) {
+    if (KPATHSEA_DEBUG_P (KPSE_DEBUG_HASH)) {
       /* As with ls-R above ... */
       boolean hash_summary_only = true;
       DEBUGF2 ("%s: %u aliases.\n", alias_filename, count);
@@ -339,10 +344,10 @@ alias_build P2C(hash_table_type *, table,  const_string, alias_filename)
 }
 
 /* Initialize the path for ls-R files, and read them all into the hash
-   table `db'.  If no usable ls-R's are found, set db.buckets to NULL.  */
+   table `db'.  If no usable ls-R's are found, set kpse->db.buckets to NULL.  */
 
 void
-kpse_init_db P1H(void)
+kpathsea_init_db (kpathsea kpse)
 {
   boolean ok = false;
   const_string db_path;
@@ -351,16 +356,16 @@ kpse_init_db P1H(void)
 
   assert (sizeof(DB_NAME) == sizeof(DB_NAME_LC));
 
-  db_path = kpse_init_format (kpse_db_format);
-  db_files = kpse_all_path_search_list (db_path, db_names);
+  db_path = kpathsea_init_format (kpse, kpse_db_format);
+  db_files = kpathsea_all_path_search_list (kpse, db_path, db_names);
   orig_db_files = db_files;
   
   /* Must do this after the path searching (which ends up calling
-    kpse_db_search recursively), so db.buckets stays NULL.  */
-  db = hash_create (DB_HASH_SIZE);
+    kpse_db_search recursively), so kpse->db.buckets stays NULL.  */
+  kpse->db = hash_create (DB_HASH_SIZE);
 
   while (db_files && *db_files) {
-    if (db_build (&db, *db_files))
+      if (db_build (kpse, &(kpse->db), *db_files))
       ok = true;
     free (*db_files);
     db_files++;
@@ -369,8 +374,8 @@ kpse_init_db P1H(void)
   if (!ok) {
     /* If db can't be built, leave `size' nonzero (so we don't
        rebuild it), but clear `buckets' (so we don't look in it).  */
-    free (db.buckets);
-    db.buckets = NULL;
+    free (kpse->db.buckets);
+    kpse->db.buckets = NULL;
   }
 
   free (orig_db_files);
@@ -379,44 +384,52 @@ kpse_init_db P1H(void)
      one alias file along DB_NAME files.  This duplicates the above code
      -- should be a function.  */
   ok = false;
-  db_files = kpse_all_path_search (db_path, ALIAS_NAME);
+  db_files = kpathsea_all_path_search (kpse, db_path, ALIAS_NAME);
   orig_db_files = db_files;
 
-  alias_db = hash_create (ALIAS_HASH_SIZE);
+  kpse->alias_db = hash_create (ALIAS_HASH_SIZE);
 
   while (db_files && *db_files) {
-    if (alias_build (&alias_db, *db_files))
+      if (alias_build (kpse, &(kpse->alias_db), *db_files))
       ok = true;
     free (*db_files);
     db_files++;
   }
 
   if (!ok) {
-    free (alias_db.buckets);
-    alias_db.buckets = NULL;
+    free (kpse->alias_db.buckets);
+    kpse->alias_db.buckets = NULL;
   }
 
   free (orig_db_files);
 }
+
+#if defined(KPSE_COMPAT_API)
+void
+kpse_init_db (void)
+{
+    kpathsea_init_db(kpse_def);
+}
+#endif
+
 
 /* Avoid doing anything if this PATH_ELT is irrelevant to the databases. */
-
 str_list_type *
-kpse_db_search P3C(const_string, name,  const_string, orig_path_elt,
-                   boolean, all)
+kpathsea_db_search (kpathsea kpse, const_string name,  
+                    const_string orig_path_elt, boolean all)
 {
   string *db_dirs, *orig_dirs, *r;
   const_string last_slash;
   string path_elt;
   boolean done;
-  str_list_type *ret;
   unsigned e;
+  str_list_type *ret = NULL;
   string *aliases = NULL;
   boolean relevant = false;
   
   /* If we failed to build the database (or if this is the recursive
      call to build the db path), quit.  */
-  if (db.buckets == NULL)
+  if (kpse->db.buckets == NULL)
     return NULL;
   
   /* When tex-glyph.c calls us looking for, e.g., dpi600/cmr10.pk, we
@@ -441,15 +454,15 @@ kpse_db_search P3C(const_string, name,  const_string, orig_path_elt,
      extra couple of hash lookups matter -- they don't -- but rather
      because we want to return NULL in this case, so path_search can
      know to do a disk search.  */
-  for (e = 0; !relevant && e < STR_LIST_LENGTH (db_dir_list); e++) {
-    relevant = elt_in_db (STR_LIST_ELT (db_dir_list, e), path_elt);
+  for (e = 0; !relevant && e < STR_LIST_LENGTH (kpse->db_dir_list); e++) {
+    relevant = elt_in_db (STR_LIST_ELT (kpse->db_dir_list, e), path_elt);
   }
   if (!relevant)
     return NULL;
 
   /* If we have aliases for this name, use them.  */
-  if (alias_db.buckets)
-    aliases = hash_lookup (alias_db, name);
+  if (kpse->alias_db.buckets)
+    aliases = hash_lookup (kpse->alias_db, name);
 
   if (!aliases) {
     aliases = XTALLOC1 (string);
@@ -472,7 +485,7 @@ kpse_db_search P3C(const_string, name,  const_string, orig_path_elt,
     string ctry = *r;
 
     /* We have an ls-R db.  Look up `try'.  */
-    orig_dirs = db_dirs = hash_lookup (db, ctry);
+    orig_dirs = db_dirs = hash_lookup (kpse->db, ctry);
 
     ret = XTALLOC1 (str_list_type);
     *ret = str_list_init ();
@@ -485,7 +498,7 @@ kpse_db_search P3C(const_string, name,  const_string, orig_path_elt,
       boolean matched = match (db_file, path_elt);
 
 #ifdef KPSE_DEBUG
-      if (KPSE_DEBUG_P (KPSE_DEBUG_SEARCH))
+      if (KPATHSEA_DEBUG_P (KPSE_DEBUG_SEARCH))
         DEBUGF3 ("db:match(%s,%s) = %d\n", db_file, path_elt, matched);
 #endif
 
@@ -493,7 +506,7 @@ kpse_db_search P3C(const_string, name,  const_string, orig_path_elt,
          exists, possibly under an alias.  */
       if (matched) {
         string found = NULL;
-        if (kpse_readable_file (db_file)) {
+        if (kpathsea_readable_file (kpse, db_file)) {
           found = db_file;
           
         } else {
@@ -509,7 +522,7 @@ kpse_db_search P3C(const_string, name,  const_string, orig_path_elt,
              if one of the aliases actually exists, we use that.  */
           for (a = aliases + 1; *a && !found; a++) {
             string atry = concat (*db_dirs, *a);
-            if (kpse_readable_file (atry))
+            if (kpathsea_readable_file (kpse, atry))
               found = atry;
             else
               free (atry);
@@ -544,23 +557,32 @@ kpse_db_search P3C(const_string, name,  const_string, orig_path_elt,
 
   return ret;
 }
+
+#if defined(KPSE_COMPAT_API)
+str_list_type *
+kpse_db_search (const_string name,  const_string orig_path_elt,
+                boolean all)
+{
+    return kpathsea_db_search (kpse_def, name, orig_path_elt, all);
+}
+#endif
 
 str_list_type *
-kpse_db_search_list P3C(const_string*, names,  const_string, path_elt,
-                        boolean, all)
+kpathsea_db_search_list (kpathsea kpse, const_string* names,  
+                         const_string path_elt, boolean all)
 {
   string *db_dirs, *orig_dirs, *r;
   const_string last_slash, name, path;
   boolean done;
-  str_list_type *ret;
   unsigned e;
   string *aliases;
-  boolean relevant = false;
   int n;
+  str_list_type *ret = NULL;
+  boolean relevant = false;
   
   /* If we failed to build the database (or if this is the recursive
      call to build the db path), quit.  */
-  if (db.buckets == NULL)
+  if (kpse->db.buckets == NULL)
     return NULL;
 
   /* Don't bother doing any lookups if this `path_elt' isn't covered by
@@ -568,8 +590,8 @@ kpse_db_search_list P3C(const_string*, names,  const_string, path_elt,
      extra couple of hash lookups matter -- they don't -- but rather
      because we want to return NULL in this case, so path_search can
      know to do a disk search.  */
-  for (e = 0; !relevant && e < STR_LIST_LENGTH (db_dir_list); e++) {
-    relevant = elt_in_db (STR_LIST_ELT (db_dir_list, e), path_elt);
+  for (e = 0; !relevant && e < STR_LIST_LENGTH (kpse->db_dir_list); e++) {
+    relevant = elt_in_db (STR_LIST_ELT (kpse->db_dir_list, e), path_elt);
   }
   if (!relevant)
     return NULL;
@@ -580,7 +602,7 @@ kpse_db_search_list P3C(const_string*, names,  const_string, path_elt,
       name = names[n];
 
       /* Absolute names should have been caught in our caller. */
-      if (kpse_absolute_p(name, true))
+      if (kpathsea_absolute_p(kpse, name, true))
           continue;
 
       /* When tex-glyph.c calls us looking for, e.g., dpi600/cmr10.pk, we
@@ -603,8 +625,8 @@ kpse_db_search_list P3C(const_string*, names,  const_string, path_elt,
       }
       
       /* If we have aliases for this name, use them.  */
-      if (alias_db.buckets)
-          aliases = hash_lookup (alias_db, name);
+      if (kpse->alias_db.buckets)
+          aliases = hash_lookup (kpse->alias_db, name);
       else
           aliases = NULL;
 
@@ -628,7 +650,7 @@ kpse_db_search_list P3C(const_string*, names,  const_string, path_elt,
           string ctry = *r;
 
           /* We have an ls-R db.  Look up `try'.  */
-          orig_dirs = db_dirs = hash_lookup (db, ctry);
+          orig_dirs = db_dirs = hash_lookup (kpse->db, ctry);
           
           ret = XTALLOC1 (str_list_type);
           *ret = str_list_init ();
@@ -641,7 +663,7 @@ kpse_db_search_list P3C(const_string*, names,  const_string, path_elt,
               boolean matched = match (db_file, path);
               
 #ifdef KPSE_DEBUG
-              if (KPSE_DEBUG_P (KPSE_DEBUG_SEARCH))
+              if (KPATHSEA_DEBUG_P (KPSE_DEBUG_SEARCH))
                 DEBUGF3 ("db:match(%s,%s) = %d\n", db_file, path, matched);
 #endif
 
@@ -649,7 +671,7 @@ kpse_db_search_list P3C(const_string*, names,  const_string, path_elt,
                  exists, possibly under an alias.  */
               if (matched) {
                   string found = NULL;
-                  if (kpse_readable_file (db_file)) {
+                  if (kpathsea_readable_file (kpse, db_file)) {
                       found = db_file;
                       
                   } else {
@@ -665,7 +687,7 @@ kpse_db_search_list P3C(const_string*, names,  const_string, path_elt,
                          if one of the aliases actually exists, we use that.  */
                       for (a = aliases + 1; *a && !found; a++) {
                           string atry = concat (*db_dirs, *a);
-                          if (kpse_readable_file (atry))
+                          if (kpathsea_readable_file (kpse, atry))
                               found = atry;
                           else
                               free (atry);
@@ -699,3 +721,11 @@ kpse_db_search_list P3C(const_string*, names,  const_string, path_elt,
   
 }
 
+#if defined(KPSE_COMPAT_API)
+str_list_type *
+kpse_db_search_list (const_string* names,  const_string path_elt,
+                     boolean all)
+{
+    return kpathsea_db_search_list (kpse_def, names, path_elt, all);
+}
+#endif

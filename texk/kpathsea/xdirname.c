@@ -26,7 +26,7 @@
 #include <kpathsea/c-pathch.h>
 
 string
-xdirname P1C(const_string, name)
+xdirname (const_string name)
 {
     string ret;
     unsigned limit = 0, loc;
@@ -113,7 +113,7 @@ int main()
 
 /*
 Local variables:
-standalone-compile-command: "gcc -g -I. -I.. -DTEST variable.c kpathsea.a"
+standalone-compile-command: "gcc -g -I. -I.. -DTEST xdirname.c kpathsea.a"
 End:
 */
 

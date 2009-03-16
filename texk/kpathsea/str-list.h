@@ -37,25 +37,25 @@ typedef struct
 #define STR_LIST_LAST_ELT(l) STR_LIST_ELT (l, STR_LIST_LENGTH (l) - 1)
 
 /* Return a new, empty, list.  */
-extern str_list_type str_list_init P1H(void);
+extern str_list_type str_list_init (void);
 
 /* Append the string S to the list L.  It's up to the caller to not
    deallocate S; we don't copy it.  Also up to the caller to terminate
    the list with a null entry.  */
-extern void str_list_add P2H(str_list_type *l, string s);
+extern void str_list_add (str_list_type *l, string s);
 
 /* Append all the elements from MORE to TARGET.  */
-extern void str_list_concat P2H(str_list_type * target, str_list_type more);
+extern void str_list_concat (str_list_type * target, str_list_type more);
 
 /* Free the space for the list elements (but not the list elements
    themselves).  */
-extern void str_list_free P1H(str_list_type *l);
+extern void str_list_free (str_list_type *l);
 
 /* Append each element of MORE to each element of TARGET.  */
 extern void str_list_concat_elements
-  P2H(str_list_type *target, str_list_type more);
+  (str_list_type *target, str_list_type more);
 
 /* Remove duplicate elements from L, freeing their space.  */
-extern void str_list_uniqify P1H(str_list_type *l);
+extern void str_list_uniqify (str_list_type *l);
 
 #endif /* not KPATHSEA_STR_LIST_H */

@@ -32,7 +32,7 @@
  */
 
 int
-main P2C(int, argc, char **, argv)
+main (int argc, char **argv)
 {
 #ifdef S_ISLNK
     int status;

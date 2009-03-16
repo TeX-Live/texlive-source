@@ -25,6 +25,10 @@
 
 /* Look up KEY in all texfonts.map's in the glyph_format path, and
    return a null-terminated list of all matching entries, or NULL.  */
-extern string *kpse_fontmap_lookup P1H(const_string key);
+extern string *kpathsea_fontmap_lookup (kpathsea kpse, const_string key);
+
+#if defined (KPSE_COMPAT_API)
+extern string *kpse_fontmap_lookup (const_string key);
+#endif
 
 #endif /* not FONTMAP_H */

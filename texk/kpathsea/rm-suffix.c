@@ -23,7 +23,7 @@
 /* Generic const warning -- see extend-fname.c.  */
 
 string
-remove_suffix P1C(const_string, s)
+remove_suffix (const_string s)
 {
   string ret;
   const_string suffix = find_suffix (s);

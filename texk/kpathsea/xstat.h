@@ -29,11 +29,11 @@
   ((s1).st_ino == (s2).st_ino && (s1).st_dev == (s2).st_dev)
 
 /* Does stat(2) on PATH, and aborts if the stat fails.  */
-extern struct stat xstat P1H(const_string path);
+extern struct stat xstat (const_string path);
 
 /* Ditto, for lstat(2) (except that lstat might not exist).  */
 #ifdef S_ISLNK
-extern struct stat xlstat P1H(const_string path);
+extern struct stat xlstat (const_string path);
 #else
 #define xlstat xstat
 #endif

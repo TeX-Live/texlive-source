@@ -29,5 +29,5 @@ KPSEDLL char *kpathsea_version_string = (char *) KPSEVERSION;
 
    Thanks.  --kb@cs.umb.edu  */
 
-KPSEDLL char *kpse_bug_address = (char *) 
+KPSEDLL char *kpathsea_bug_address = (char *) 
   "Email bug reports to tex-k@mail.tug.org.\n";

@@ -52,14 +52,18 @@
 /* OK, we'll have tracing support.  */
 #define KPSE_DEBUG
 
-/* Bit vector defining what we should trace.  */
-extern KPSEDLL unsigned kpathsea_debug;
+/* Test if a bit is on.  */
+#define KPATHSEA_DEBUG_P(bit) (kpse->debug & (1 << (bit)))
+
+#if defined (KPSE_COMPAT_API)
 
 /* Set a bit.  */
 #define KPSE_DEBUG_SET(bit) kpathsea_debug |= 1 << (bit)
 
 /* Test if a bit is on.  */
 #define KPSE_DEBUG_P(bit) (kpathsea_debug & (1 << (bit)))
+
+#endif /* KPSE_COMPAT_API */
 
 #define KPSE_DEBUG_STAT 0		/* stat calls */
 #define KPSE_DEBUG_HASH 1		/* hash lookups */
@@ -87,10 +91,10 @@ extern KPSEDLL unsigned kpathsea_debug;
 
 #undef fopen
 #define fopen kpse_fopen_trace
-extern KPSEDLL FILE *fopen P2H(const_string filename, const_string mode);
+extern KPSEDLL FILE *fopen (const char *filename, const char *mode);
 #undef fclose
 #define fclose kpse_fclose_trace
-extern KPSEDLL int fclose P1H(FILE *);
+extern KPSEDLL int fclose (FILE *);
 
 #endif /* not NO_DEBUG */
 

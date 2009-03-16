@@ -27,10 +27,10 @@
 
 
 static void
-xchdir P1C(string, dirname)
+xchdir (string dirname)
 {
     if (chdir(dirname) != 0)
-        FATAL_PERROR(dirname);
+        _PERROR(dirname);
 }
 
 #endif /* not HAVE_GETCWD && not HAVE_GETWD */
@@ -39,7 +39,7 @@ xchdir P1C(string, dirname)
 /* Return the pathname of the current directory, or give a fatal error.  */
 
 string
-xgetcwd P1H(void)
+xgetcwd (void)
 {
     /* If the system provides getcwd, use it.  If not, use getwd if
        available.  But provide a way not to use getcwd: on some systems
@@ -105,7 +105,7 @@ xgetcwd P1H(void)
             }
         }
         if (!found)
-            FATAL2("No inode %d/device %d in parent directory",
+            LIB_FATAL2("No inode %d/device %d in parent directory",
                    cwd_stat.st_ino, cwd_stat.st_dev);
       
         xclosedir(parent_dir);

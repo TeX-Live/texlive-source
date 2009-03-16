@@ -26,6 +26,11 @@
    no extra colons, return PATH.  Only one extra colon is replaced.
    DFLT may not be NULL.  The result is always in new memory.  */
 
-extern string kpse_expand_default P2H(const_string path, const_string dflt);
+extern string kpathsea_expand_default (kpathsea kpse, const_string path, 
+                                       const_string dflt);
+
+#if defined(KPSE_COMPAT_API)
+extern string kpse_expand_default (const_string path, const_string dflt);
+#endif
 
 #endif /* not KPATHSEA_DEFAULT_H */

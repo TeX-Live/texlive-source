@@ -23,7 +23,7 @@
 #define BLOCK_SIZE 75
 
 char *
-read_line P1C(FILE*, f)
+read_line (FILE*f)
 {
     int c;
     unsigned limit = BLOCK_SIZE;

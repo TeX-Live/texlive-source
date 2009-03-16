@@ -19,13 +19,15 @@
 
 
 string
-concat3 P3C(const_string, s1,  const_string, s2,  const_string, s3)
+concat3 (const_string s1,  const_string s2,  const_string s3)
 {
+  int s2l = s2 ? strlen (s2) : 0;
+  int s3l = s3 ? strlen (s3) : 0;
   string answer
-    = (string) xmalloc (strlen (s1) + strlen (s2) + strlen (s3) + 1);
+      = (string) xmalloc (strlen(s1) + s2l + s3l + 1);
   strcpy (answer, s1);
-  strcat (answer, s2);
-  strcat (answer, s3);
+  if (s2) strcat (answer, s2);
+  if (s3) strcat (answer, s3);
 
   return answer;
 }

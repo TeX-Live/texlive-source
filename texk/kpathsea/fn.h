@@ -41,27 +41,27 @@ typedef struct
 
 
 /* Create a new empty fn.  */
-extern KPSEDLL fn_type fn_init P1H(void);
+extern KPSEDLL fn_type fn_init (void);
 
 /* Create a new fn from the first LEN characters from S and a null.  */
-extern KPSEDLL fn_type fn_copy0 P2H(const_string s,  unsigned len);
+extern KPSEDLL fn_type fn_copy0 (const_string s,  unsigned len);
 
 /* Free what's been allocated.  Can also just free the string if it's
    been extracted out.  Fatal error if nothing allocated in F.  */
-extern KPSEDLL void fn_free P1H(fn_type *f);
+extern KPSEDLL void fn_free (fn_type *f);
 
 /* Append the character C to the fn F.  Don't append trailing null.  */
-extern KPSEDLL void fn_1grow P2H(fn_type *f, char c);
+extern KPSEDLL void fn_1grow (fn_type *f, char c);
 
 /* Append LENGTH bytes from SOURCE to F.  */
-extern KPSEDLL void fn_grow P3H(fn_type *f, const_string source, unsigned length);
+extern KPSEDLL void fn_grow (fn_type *f, const_string source, unsigned length);
 
 /* Concatenate the component S to the fn F.  Assumes string currently in
    F is null terminated.  */
-extern KPSEDLL void fn_str_grow P2H(fn_type *f, const_string s);
+extern KPSEDLL void fn_str_grow (fn_type *f, const_string s);
 
 /* Add a null to F's string at position LOC, and update its length.
    Fatal error if LOC is past the end of the string.  */
-extern KPSEDLL void fn_shrink_to P2H(fn_type *f, unsigned loc);
+extern KPSEDLL void fn_shrink_to (fn_type *f, unsigned loc);
 
 #endif /* not KPATHSEA_FN_H */

@@ -28,29 +28,45 @@
 /* This should be called only after a system call fails.  Don't exit
    with status `errno', because that might be 256, which would mean
    success (exit statuses are truncated to eight bits).  */
-#define FATAL_PERROR(str) do { \
-  fprintf (stderr, "%s: ", program_invocation_name); \
-  perror (str); exit (EXIT_FAILURE); } while (0)
 
+#if defined (KPSE_COMPAT_API)
+/* This branch works as expected also in programs that use the new interface,
+   because kpathsea_set_program_name() sets up the kpse_def->invocation_name
+   whenever it is available.
+*/
+#define FATAL_PERROR(str) do { \
+  fprintf (stderr, "%s: ", kpse_def->invocation_name); \
+  perror (str); exit (EXIT_FAILURE); } while (0)
+#else
+/* If there is no global variable available, just output the error */
+#define FATAL_PERROR(str) do { \
+  perror (str); exit (EXIT_FAILURE); } while (0)
+#endif
+
+#if defined (KPSE_COMPAT_API)
 #define START_FATAL() do { \
-  fprintf (stderr, "%s: fatal: ", program_invocation_name);
+  fprintf (stderr, "%s: fatal: ", kpse_def->invocation_name);
+#else
+#define START_FATAL() do { \
+  fprintf (stderr, "fatal: ");
+#endif 
+
 #define END_FATAL() fputs (".\n", stderr); exit (1); } while (0)
 
 #define FATAL(str)							\
   START_FATAL (); fputs (str, stderr); END_FATAL ()
 #define FATAL1(str, e1)							\
   START_FATAL (); fprintf (stderr, str, e1); END_FATAL ()
-#define FATAL2(str, e1, e2)						\
-  START_FATAL (); fprintf (stderr, str, e1, e2); END_FATAL ()
-#define FATAL3(str, e1, e2, e3)						\
-  START_FATAL (); fprintf (stderr, str, e1, e2, e3); END_FATAL ()
-#define FATAL4(str, e1, e2, e3, e4)					\
-  START_FATAL (); fprintf (stderr, str, e1, e2, e3, e4); END_FATAL ()
-#define FATAL5(str, e1, e2, e3, e4, e5)					\
-  START_FATAL (); fprintf (stderr, str, e1, e2, e3, e4, e5); END_FATAL ()
-#define FATAL6(str, e1, e2, e3, e4, e5, e6)				\
-  START_FATAL (); fprintf (stderr, str, e1, e2, e3, e4, e5, e6); END_FATAL ()
-
+#define FATAL2(str, e1, e2)                             \
+   START_FATAL (); fprintf (stderr, str, e1, e2); END_FATAL ()
+#define FATAL3(str, e1, e2, e3)                             \
+   START_FATAL (); fprintf (stderr, str, e1, e2, e3); END_FATAL ()
+#define FATAL4(str, e1, e2, e3, e4)                             \
+   START_FATAL (); fprintf (stderr, str, e1, e2, e3, e4); END_FATAL ()
+#define FATAL5(str, e1, e2, e3, e4, e5)                             \
+   START_FATAL (); fprintf (stderr, str, e1, e2, e3, e4, e5); END_FATAL ()
+#define FATAL6(str, e1, e2, e3, e4, e5, e6)                       \
+   START_FATAL (); fprintf (stderr, str, e1, e2, e3, e4, e5, e6); END_FATAL ()
 
 #define START_WARNING() do { fputs ("warning: ", stderr)
 #define END_WARNING() fputs (".\n", stderr); fflush (stderr); } while (0)
@@ -65,6 +81,16 @@
   START_WARNING (); fprintf (stderr, str, e1, e2, e3); END_WARNING ()
 #define WARNING4(str, e1, e2, e3, e4)					\
   START_WARNING (); fprintf (stderr, str, e1, e2, e3, e4); END_WARNING ()
+
+#define LIB_START_FATAL() do { \
+  fprintf (stderr, "%s: fatal: ", kpse->invocation_name);
+
+#define LIB_FATAL(str)							\
+  LIB_START_FATAL (); fputs (str, stderr); END_FATAL ()
+#define LIB_FATAL1(str, e1)							\
+  LIB_START_FATAL (); fprintf (stderr, str, e1); END_FATAL ()
+#define LIB_FATAL2(str, e1, e2)						\
+  LIB_START_FATAL (); fprintf (stderr, str, e1, e2); END_FATAL ()
 
 
 /* I find this easier to read.  */
@@ -93,88 +119,98 @@
 #define ENVVAR(test, default) (getenv (test) ? (test) : (default))
 
 /* Return a fresh copy of S1 followed by S2, et al.  */
-extern KPSEDLL string concat P2H(const_string s1, const_string s2);
-extern KPSEDLL string concat3 P3H(const_string, const_string, const_string);
+extern KPSEDLL string concat (const_string s1, const_string s2);
+extern KPSEDLL string concat3 (const_string, const_string, const_string);
 /* `concatn' is declared in its own include file, to avoid pulling in
    all the varargs stuff.  */
 
 /* A fresh copy of just S.  */
-extern KPSEDLL string xstrdup P1H(const_string s);
+extern KPSEDLL string xstrdup (const_string s);
 
 /* Convert all lowercase characters in S to uppercase.  */
-extern KPSEDLL string uppercasify P1H(const_string s);
+extern KPSEDLL string uppercasify (const_string s);
 
 /* Like `atoi', but disallow negative numbers.  */
-extern KPSEDLL unsigned atou P1H(const_string);
+extern KPSEDLL unsigned atou (const_string);
 
 /* True if FILENAME1 and FILENAME2 are the same file.  If stat fails on
    either name, return false, no error message.
    Cf. `SAME_FILE_P' in xstat.h.  */
-extern KPSEDLL boolean same_file_p P2H(const_string filename1,
+extern KPSEDLL boolean same_file_p (const_string filename1,
                                          const_string filename2);
 
 /* Return NAME with any leading path stripped off.  This returns a
    pointer into NAME.  */
-extern KPSEDLL const_string xbasename P1H(const_string name);
+extern KPSEDLL const_string xbasename (const_string name);
 
 /* Return directory part of NAME. This returns a new string. */
-extern KPSEDLL string xdirname P1H(const_string name);
+extern KPSEDLL string xdirname (const_string name);
 
 #if !HAVE_DECL_STRSTR
-extern string strstr P2H(const_string haystack, const_string needle);
+extern string strstr (const_string haystack, const_string needle);
 #endif
 
 /* If NAME has a suffix, return a pointer to its first character (i.e.,
    the one after the `.'); otherwise, return NULL.  */
-extern KPSEDLL string find_suffix P1H(const_string name);
+extern KPSEDLL string find_suffix (const_string name);
 
 /* Return NAME with any suffix removed.  */
-extern KPSEDLL string remove_suffix P1H(const_string name);
+extern KPSEDLL string remove_suffix (const_string name);
 
 /* Return S with the suffix SUFFIX, removing any suffix already present.
    For example, `make_suffix ("/foo/bar.baz", "quux")' returns
    `/foo/bar.quux'.  Returns a string allocated with malloc.  */
-extern KPSEDLL string make_suffix P2H(const_string s,  const_string suffix);
+extern KPSEDLL string make_suffix (const_string s,  const_string suffix);
 
 /* Return NAME with STEM_PREFIX prepended to the stem. For example,
    `make_prefix ("/foo/bar.baz", "x")' returns `/foo/xbar.baz'.
    Returns a string allocated with malloc.  */
-extern KPSEDLL string make_prefix P2H(string stem_prefix, string name);
+extern KPSEDLL string make_prefix (string stem_prefix, string name);
 
 /* If NAME has a suffix, simply return it; otherwise, return
    `NAME.SUFFIX'.  */
-extern KPSEDLL string extend_filename P2H(const_string name,
+extern KPSEDLL string extend_filename (const_string name,
                                             const_string suffix);
 
 /* Call putenv with the string `VAR=VALUE' and abort on error.  */
-extern KPSEDLL void xputenv P2H(const_string var, const_string value);
-extern KPSEDLL void xputenv_int P2H(const_string var, int value);
+extern KPSEDLL void kpathsea_xputenv (kpathsea kpse, const_string var, const_string value);
+extern KPSEDLL void kpathsea_xputenv_int (kpathsea kpse, const_string var, int value);
+#if defined (KPSE_COMPAT_API)
+extern KPSEDLL void xputenv (const_string var, const_string value);
+extern KPSEDLL void xputenv_int (const_string var, int value);
+#endif
 
 /* Return the current working directory.  */
-extern KPSEDLL string xgetcwd P1H(void);
+extern KPSEDLL string xgetcwd (void);
 
 /* Returns true if FN is a directory or a symlink to a directory.  */
-extern KPSEDLL boolean dir_p P1H(const_string fn);
+extern KPSEDLL boolean kpathsea_dir_p (kpathsea kpse, const_string fn);
+#if defined (KPSE_COMPAT_API)
+extern KPSEDLL boolean dir_p (const_string fn);
+#endif
 
 /* If FN is a readable directory, return the number of links it has.
    Otherwise, return -1.  The nlinks parameter is a dummy on UNIX. */
-extern KPSEDLL int dir_links P2H(const_string fn, long nlinks);
+#if defined (KPSE_COMPAT_API)
+extern KPSEDLL int dir_links (const_string fn, long nlinks);
+#endif
+extern KPSEDLL int kpathsea_dir_links (kpathsea kpse, const_string fn, long nlinks);
 
 /* Like their stdio counterparts, but abort on error, after calling
    perror(3) with FILENAME as its argument.  */
-extern KPSEDLL FILE *xfopen P2H(const_string filename, const_string mode);
-extern KPSEDLL void xfclose P2H(FILE *, const_string filename);
-extern KPSEDLL void xfseek P4H(FILE *, long, int, string filename);
-extern KPSEDLL void xfseeko P4H(FILE *, off_t, int, string filename);
-extern KPSEDLL unsigned long xftell P2H(FILE *, string filename);
-extern KPSEDLL off_t xftello P2H(FILE *, string filename);
+extern KPSEDLL FILE *xfopen (const_string filename, const_string mode);
+extern KPSEDLL void xfclose (FILE *, const_string filename);
+extern KPSEDLL void xfseek (FILE *, long, int, string filename);
+extern KPSEDLL void xfseeko (FILE *, off_t, int, string filename);
+extern KPSEDLL unsigned long xftell (FILE *, string filename);
+extern KPSEDLL off_t xftello (FILE *, string filename);
 
 /* These call the corresponding function in the standard library, and
    abort if those routines fail.  Also, `xrealloc' calls `xmalloc' if
    OLD_ADDRESS is null.  */
-extern KPSEDLL address xmalloc P1H(unsigned size);
-extern KPSEDLL address xrealloc P2H(address old_address, unsigned new_size);
-extern KPSEDLL address xcalloc P2H(unsigned nelem, unsigned elsize);
+extern KPSEDLL address xmalloc (unsigned size);
+extern KPSEDLL address xrealloc (address old_address, unsigned new_size);
+extern KPSEDLL address xcalloc (unsigned nelem, unsigned elsize);
 
 /* (Re)Allocate N items of type T using xmalloc/xrealloc.  */
 #define XTALLOC(n, t) ((t *) xmalloc ((n) * sizeof (t)))

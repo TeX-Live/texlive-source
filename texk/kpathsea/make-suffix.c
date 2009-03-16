@@ -23,7 +23,7 @@
    was before. This returns a newly allocated string.  */ 
 
 string
-make_suffix P2C(const_string, s,  const_string, suffix)
+make_suffix (const_string s,  const_string suffix)
 {
   string new_s;
   const_string dot_pos = strrchr (s, '.');
