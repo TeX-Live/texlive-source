@@ -1,3 +1,9 @@
+2009-03-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* xdv2pdf.cpp: Reestablish the '-d' option.
+	#include <kpathsea/kpathsea.h> and reinterpret_cast for type
+	conversion.
+
 2009-03-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* xdv2pdf.cpp: As a temporary fix, disable the '-d' option.

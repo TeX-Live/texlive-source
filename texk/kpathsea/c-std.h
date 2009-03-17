@@ -87,12 +87,12 @@ extern ALLOC_RETURN_TYPE *calloc (), *malloc (), *realloc ();
 #include <unixlib.h>
 #include <unixio.h>
 #else
-#ifndef WIN32
+#if !defined (WIN32) && !defined (__cplusplus)
 /* `popen' and `pclose' are part of POSIX.2, not POSIX.1.  So
    STDC_HEADERS isn't enough.  */
 extern FILE *popen ();
 extern int pclose ();
-#endif /* not WIN32 */
+#endif /* not WIN32 && not __cplusplus */
 #endif /* not VMS */
 
 #endif /* not KPATHSEA_C_STD_H */

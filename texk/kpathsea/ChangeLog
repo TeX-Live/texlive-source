@@ -1,3 +1,7 @@
+2009-03-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* c-std.h, getopt.h: Avoid non-prototype declarations for C++.
+
 2009-03-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* db.c, debug.c, debug.h, dir.c, elt-dirs.c, hash.c, pathsearch.c,
