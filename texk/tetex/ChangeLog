@@ -1,3 +1,11 @@
+2009-03-17  Karl Berry  <karl@tug.org>
+
+	* updmap (main, cleanup): cd back to the original pwd instead of /,
+	to work around 
+	rm: cannot get current directory: Permission denied
+	error in (at least) coreutils 5.2.1 in some ill-defined circumstance.
+	Report from Lars Madsen.
+
 2008-10-27  Karl Berry  <karl@tug.org>
 
 	* updmap.pl: also adjust printed output.

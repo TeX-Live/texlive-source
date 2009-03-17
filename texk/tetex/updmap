@@ -774,7 +774,7 @@ cleanup()
 {
   rc=$1
   $needsCleanup && test -n "$tmpdir" && test -d "$tmpdir" \
-    && { cd / && rm -rf "$tmpdir"; }
+    && { cd $orig_pwd && rm -rf "$tmpdir"; }
   (exit $rc); exit $rc
 }
 
@@ -1323,6 +1323,7 @@ main()
   link_cmd="ln -s"
   copy_cmd="cp"
   copy=false
+  orig_pwd=`pwd`
 
   cfgparam=
   outputdirparam=
