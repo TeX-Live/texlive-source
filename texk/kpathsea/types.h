@@ -271,6 +271,7 @@ extern kpathsea kpse_def;
 #define kpse_fallback_resolutions_string  kpse_def_inst.fallback_resolutions_string
 #define kpse_fallback_resolutions    kpse_def_inst.fallback_resolutions
 #define kpse_format_info             kpse_def_inst.format_info
+#define kpse_debug_hash_lookup_int   kpse_def_inst.debug_hash_lookup_int
 
 #undef program_invocation_name
 #define program_invocation_name      kpse_def_inst.invocation_name
